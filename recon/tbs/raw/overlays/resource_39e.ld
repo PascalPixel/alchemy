@@ -25,7 +25,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ENSEMBLE.o"(.text)
         "*/resource_39e_overlay.o"(.text.x0200a574)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/PARTICLES.o"(.text)
-        "*/resource_39e_overlay.o"(.text.x0200a7ec)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/CURIOUS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ROOF_ENSEMBLE.o"(.text)
         "*/resource_39e_overlay.o"(.text.x0200be58)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/FINALE.o"(.text)

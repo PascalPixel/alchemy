@@ -1,19 +1,16 @@
-/* resource_39e:0200a7ec..0200aad0 (740 bytes with pool), still linked from
- * the listing. Remaining difference: its messages have catalogue names now; 170 halfwords
- * still differ from the ROM, and it names symbols no link defines
- * (bump_step). */
+/* The party walks in and actor 8, who can read minds, asks whether it is
+ * curious. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "TEMPLE.H"
 extern u8 MsgShianCanReadMindsKnowCurious[];
 extern u8 MsgShianExcellentRobin[];
 extern u8 MsgShianMonstersWaitInHidingWould[];
 extern u8 MsgShianDontTryHard[];
-/* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/TEMPLE.H. */
 
-void FieldScene_RunScene39e_020027ec(void)
+void ShianJiin_AskIfCurious(void)
 {
-    u32 i;
     s32 record;
 
     Event_Begin();
@@ -69,13 +66,13 @@ void FieldScene_RunScene39e_020027ec(void)
         Actor_ShowEmote(8, 0x102, 60);
         Event_SetMessage((s32)MsgShianCanReadMindsKnowCurious);
         Event_OpenMessage(8, 0);
-    L_0200299c:
+    ask_again:
         if (Event_ChooseYesNo(0, 0) == 1) {
             Event_Wait(10);
             Actor_ShowEmote(8, 0x102, 60);
             Event_SetMessage((s32)MsgShianDontTryHard);
             Event_OpenMessage(8, 0);
-            goto L_0200299c;
+            goto ask_again;
         }
     }
     Event_SetMessage((s32)MsgShianMonstersWaitInHidingWould);

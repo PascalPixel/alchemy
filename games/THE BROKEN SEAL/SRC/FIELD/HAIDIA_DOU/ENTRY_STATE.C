@@ -1,27 +1,15 @@
-/* Draft of resource_3a6 0x02009984 (HaidiaDou_ApplyEntryState), formerly
- * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/ENTRY_STATE.C.
- * Remaining difference: the ROM loads scenes 0x5e and 0x5f from the literal
- * pool, as link-time scene symbols would; C builds those constants with
- * movs. The Data_ spellings below are the old address-named forms. The
- * listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
 
 void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
+void WaitFrames(s32 frames);
+void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void *OverlayObject_CreateConfiguredB(s32 x, s32 y, s32 z, s32 kind);
 void DialogueLayout_ConfigureRowsByFlag301(void);
 s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 void FieldScene_RedrawActorFootprint(s32 actor);
 void SceneActor_FaceActorZero(union FieldObject *object);
-
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-};
-
-extern union GameStateRows Data_02000240_t;
-extern u8 Data_0000005e[];
-extern u8 Data_0000005f[];
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -38,8 +26,8 @@ void HaidiaDou_ApplyEntryState(void)
 {
     s32 flag;
 
-    if (Data_02000240_t.halves[224][0] == (s32)Data_0000005e) {
-        switch (Data_02000240_t.halves[225][0]) {
+    if (gGameState.scene == (s32)&SceneId_HaidiaDou2) {
+        switch (gGameState.entrance) {
         case 1:
         case 2:
         case 3:
@@ -58,10 +46,10 @@ void HaidiaDou_ApplyEntryState(void)
                 break;
             }
             Engine_GameFlagSet(0x200);
-            if (Data_02000240_t.halves[225][0] == 5) {
+            if (gGameState.entrance == 5) {
                 Engine_GameFlagSet(0x201);
             }
-            Engine_TaskWait(1);
+            WaitFrames(1);
             if (Engine_GameFlagIsSet(0x109) != 0) {
                 break;
             }
@@ -72,18 +60,18 @@ void HaidiaDou_ApplyEntryState(void)
         case 9:
         case 10:
             OverlayObject_CreateConfiguredB(0x2820000, 0, 0x2280000, 20);
-            Call6(Engine_MapCopyCellAttributes, 23, 34, 13, 3, 0, 34);
+            Call6(Map_CopyCellAttributeRect, 23, 34, 13, 3, 0, 34);
             DialogueLayout_ConfigureRowsByFlag301();
             if (Engine_GameFlagIsSet(0x200) != 0) {
-                Call6(Engine_MapCopyCellAttributes, 23, 41, 1, 1, 23, 39);
+                Call6(Map_CopyCellAttributeRect, 23, 41, 1, 1, 23, 39);
             }
             if (Engine_GameFlagIsSet(0x201) != 0) {
-                Call6(Engine_MapCopyCellAttributes, 31, 39, 2, 1, 27, 41);
+                Call6(Map_CopyCellAttributeRect, 31, 39, 2, 1, 27, 41);
             }
             break;
         }
-    } else if (Data_02000240_t.halves[224][0] == (s32)Data_0000005f) {
-        switch (Data_02000240_t.halves[225][0]) {
+    } else if (gGameState.scene == (s32)&SceneId_HaidiaDou3) {
+        switch (gGameState.entrance) {
         case 1:
         case 2:
         case 3:
@@ -104,8 +92,8 @@ void HaidiaDou_ApplyEntryState(void)
                 StagedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
             } else if (Engine_GameFlagIsSet(0x204) != 0) {
                 StagedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2, flag);
-                Call6(Engine_MapCopyCellAttributes, 14, 17, 2, 1, 14, 16);
-                Call6(Engine_MapCopyCellAttributes, 14, 13, 1, 1, 14, 15);
+                Call6(Map_CopyCellAttributeRect, 14, 17, 2, 1, 14, 16);
+                Call6(Map_CopyCellAttributeRect, 14, 13, 1, 1, 14, 15);
             } else {
                 FieldScene_RedrawActorFootprint(11);
                 Engine_ActorSetSpritePriority(11, 3);

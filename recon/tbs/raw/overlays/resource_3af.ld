@@ -18,7 +18,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RUN_OPENING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RUN_SCENE3AF.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DECK_STATE_EVENT.o"(.text)
-        "*/resource_3af_overlay.o"(.text.x02008ca0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/PRESENTATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.o"(.text)
         "*/resource_3af_overlay.o"(.text.x020093d4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY_STATE.o"(.text)

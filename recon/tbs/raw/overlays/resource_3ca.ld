@@ -18,7 +18,7 @@ SECTIONS
         "*/resource_3ca_overlay.o"(.text.x02008b34)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SETUP_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/HBLANK_SCROLL.o"(.text)
-        "*/resource_3ca_overlay.o"(.text.x02008f80)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/BUILD_SCROLL_PAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/STOP_DMA.o"(.text)
         "*/resource_3ca_overlay.o"(.text.x020091c4)

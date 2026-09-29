@@ -72,7 +72,7 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 s32 Func_080022fc(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 
 extern const u16 ParticleStreams_CellOffsets[];
 extern const s32 Data_080ee9f8[];
@@ -273,7 +273,7 @@ draw_particle:
 
             ObjectGroup_TickMemberTimers();
             work->transfer_pending = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
 
             target = work->effect;
             outer++;

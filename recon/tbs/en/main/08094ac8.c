@@ -1,6 +1,6 @@
 /* 2026-09-29 alchemy permute: score 882 on the permuter's scorer,
-   unchanged after 13,842 candidates in 5 minutes; Data_0809ff58 still
-   needs its own label in the data before adoption. */
+   unchanged after 13,842 candidates in 5 minutes; FieldFx_GroundParticleTiles is
+   now labelled; the residual is register allocation. */
 /* Draft, not exact (2026-09-24): 74 differing halfwords, 238 of 244 bytes.
    Residual: the loop zero lands in r6 where the reference gives the three
    leading particle words a walking pointer in r6 and holds the zero in r4,
@@ -37,7 +37,7 @@ void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 void Unnamed_08094820(void);
 
 extern s32 **Data_03001e70;
-extern const u8 Data_0809ff58[];
+extern const u8 FieldFx_GroundParticleTiles[];
 
 void Unnamed_08094ac8(void)
 {
@@ -58,7 +58,7 @@ void Unnamed_08094ac8(void)
     fill = 0;
     Dma_Set((const void *)&fill, work, 0x85000104, (volatile u32 *)0x040000d4);
     buffer = Runtime_AllocateBlock(14, 0x400);
-    Resource_DecodeByteLz(Data_0809ff58, buffer);
+    Resource_DecodeByteLz(FieldFx_GroundParticleTiles, buffer);
     work->entry = Resource_FindFreeEntry();
     work->vram = VramBlock_LoadCached(work->entry, 0x300, buffer);
     Runtime_ReleaseHeapBlock(14);

@@ -29,7 +29,7 @@ s32 BattleFx_EndCanvasLayer(void);
 s32 Func_080041d8(s32, s32);
 void Scheduler_RemoveCallback(s32);
 void Func_080f9010(s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_08002dd8(s32);
 void Func_080b50e8(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
@@ -115,7 +115,7 @@ next_frame:
         }
         ObjectGroup_TickMemberTimers();
         base->transfer_pending = flash;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame += 1;
         if (frame != 63)
             goto next_frame;

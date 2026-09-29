@@ -304,6 +304,7 @@ extern s32 gColossoParticleCount;
 
 /* The stage's per-frame tasks, still in the listing. */
 void ColossoLogRollingStage_SceneTask(void);
+void BattleEffect_PauseObject(s32 id);
 void Korosseo_UpdateModeTask(void);
 void Korosseo_UpdateMarker(void);
 

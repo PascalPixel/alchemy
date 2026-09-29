@@ -51,7 +51,7 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
@@ -287,7 +287,7 @@ void Func_080d41a4(void *object)
         Camera_ApplyShake(8, 16);
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(47);

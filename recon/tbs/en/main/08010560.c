@@ -19,7 +19,7 @@
 
 void Func_08010424(s32 source_x, s32 source_y, s32 destination_x,
                    u32 destination_y, s32 height, s32 width);
-void Func_080030f8(s32 delay);
+void WaitFrames(s32 delay);
 
 void Func_08010560(u16 *command, s32 destination_x, u32 destination_y)
 {
@@ -39,7 +39,7 @@ void Func_08010560(u16 *command, s32 destination_x, u32 destination_y)
                           (u16)height, (u16)width);
             command += 5;
             args += 5;
-            Func_080030f8((u16)delay);
+            WaitFrames((u16)delay);
             source = *command;
             if (source == 0xffff)
                 break;

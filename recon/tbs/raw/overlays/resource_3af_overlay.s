@@ -2,6 +2,9 @@
 	.thumb
 	.section .text.x020080c4,"ax",%progbits
 	.p2align 2
+	.global FuneKanpan_UpdateHoverGullA
+	.thumb_func
+FuneKanpan_UpdateHoverGullA:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -202,6 +205,10 @@
 	.4byte 0x002bfffe
 	.2byte 0x8000
 	.2byte 0xffff
+	.section .text.x020082ec,"ax",%progbits
+	.global FuneKanpan_UpdateHoverGullB
+	.thumb_func
+FuneKanpan_UpdateHoverGullB:
 	.2byte 0xb5e0
 	mov	r7, r8
 	push	{r7}
@@ -626,7 +633,7 @@ FuneKanpan_CrewActionsA:
 	.4byte 0x00000017
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x020080c5
+	.4byte FuneKanpan_UpdateHoverGullA
 	.global FuneKanpan_CrewActionsB
 FuneKanpan_CrewActionsB:
 	.4byte 0x00000015
@@ -645,7 +652,7 @@ FuneKanpan_CrewActionsB:
 	.4byte 0x00000017
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x020082ed
+	.4byte FuneKanpan_UpdateHoverGullB
 	.global FuneKanpan_CrewActionsC
 FuneKanpan_CrewActionsC:
 	.4byte 0x00000015

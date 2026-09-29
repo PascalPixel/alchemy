@@ -181,7 +181,7 @@ loop_15:
         }
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(temp_sl_23, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         temp_r2_373 = sp28 + 1;
         sp28 = temp_r2_373;
         if (temp_r2_373 != ((M2C_FIELD(M2C_FIELD(temp_sl_23, void **, 0x7828), s32 *, 0x14) << 5) + 0x60)) {

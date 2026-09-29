@@ -62,7 +62,7 @@ void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 s32 Func_080041d8(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 void Func_080f9010(s32 id);
 s32 Trig_Sin(s32 angle);
@@ -125,7 +125,7 @@ void Func_080d3854(void *object)
     M2C_FIELD(work, s32 *, 0x7784) = 50;
     Func_080041d8((void *)0x080CD261, 0x480);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1000;
-    Func_080030f8(1);
+    WaitFrames(1);
     Func_080f9010(141);
 
     while (frame != 80) {
@@ -280,7 +280,7 @@ void Func_080d3854(void *object)
         }
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame++;
     }
 

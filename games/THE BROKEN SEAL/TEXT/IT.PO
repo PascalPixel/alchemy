@@ -10695,7 +10695,7 @@ msgctxt "message"
 msgid "02671"
 msgstr "{argument_actor_name:1} non può{line_break}portare più {argument_item_name:5}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVenusDjinnJoined"
 msgid "02672"
 msgstr "Djinn Venere {text_color:5}{argument_ability_name}{text_color:16}{line_break}s'unisce a {argument_actor_name:1}.{end_wait}"
 

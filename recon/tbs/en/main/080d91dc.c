@@ -493,7 +493,7 @@ block_112:
         }
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(sp44, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         var_fp_344 += 1;
         if (var_fp_344 != ((M2C_FIELD(M2C_FIELD(sp44, void **, 0x7828), s32 *, 0x14) * 8) + 0x6C)) {
             goto loop_49;

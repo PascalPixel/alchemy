@@ -54,6 +54,9 @@ SerialRuntime_RemoveIrqHandlers:
 	.thumb_func
 Sound_LoadPresetParameters:
 	overlay_veneer Sound_LoadPresetParametersFar
+	.global SerialRuntime_BeginTransferA
+	.thumb_func
+SerialRuntime_BeginTransferA:
 	overlay_veneer SerialRuntime_BeginTransferAFar
 	.global SerialRuntime_BeginTransferB
 	.thumb_func

@@ -55,7 +55,7 @@ struct MotionFrame {
 extern struct MotionScene *Data_03001f30;
 
 s32 Math_Div(s32, s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 void Func_08009080(void *, s32);
 void Func_080090d0(void *);
@@ -128,29 +128,29 @@ void RunBattleEffect13(void)
         object->scale_x = value;
         object->scale_y = value;
         step++;
-        Func_080030f8(1);
+        WaitFrames(1);
     } while (!(step >= 11 != 0));
-    Func_080030f8(10);
+    WaitFrames(10);
     Func_08009080(object, 6);
-    Func_080030f8(15);
+    WaitFrames(15);
     step = 9;
     do {
         object->pos.y -= 0x20000;
-        Func_080030f8(1);
+        WaitFrames(1);
         step--;
     } while (step >= 0);
     Func_08009080(object, 5);
     Func_080f9010(0x84);
     if (frame.secondary_object != 0)
         Func_080090f0(frame.secondary_object, -0x90000, frame.secondary_object->pos.y);
-    Func_080030f8(20);
+    WaitFrames(20);
     step = 12;
     do {
         object->pos.y = object->pos.y + 0x18000;
-        Func_080030f8(1);
+        WaitFrames(1);
         step--;
     } while (step >= 0);
-    Func_080030f8(10);
+    WaitFrames(10);
     Func_080f9010(0x72);
     step = 0;
     do {
@@ -169,7 +169,7 @@ void RunBattleEffect13(void)
         value = tmp2;
         object->scale_x = value;
         object->scale_y = value;
-        Func_080030f8(1);
+        WaitFrames(1);
         ++step;
     } while (step < 11);
     Func_080090d0(object);

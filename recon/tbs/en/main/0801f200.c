@@ -52,7 +52,7 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *, s32, s32, s32);
 void UiWindow_SetTilemapEntry(struct RenderInput *, s32, s32, s32, u32);
 /* FAKEMATCH: these four legacy calls reuse the outgoing mode slot left
  * at zero by UiWindow_SetTilemapEntry; the reference passes four arguments. */
-void Func_08018efc();
+void UiWindow_PutGlyph();
 
 void UiWindow_DrawPartyStatusContents(s32 flags)
 {
@@ -166,10 +166,10 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005002, 2, row, 0);
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005003, 0, row + 1, 0);
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005004, 2, row + 1, 0);
-        Func_08018efc(window, djinn[0] + 48, 1, row);
-        Func_08018efc(window, djinn[1] + 48, 3, row);
-        Func_08018efc(window, djinn[2] + 48, 1, row + 1);
-        Func_08018efc(window, djinn[3] + 48, 3, row + 1);
+        UiWindow_PutGlyph(window, djinn[0] + 48, 1, row);
+        UiWindow_PutGlyph(window, djinn[1] + 48, 3, row);
+        UiWindow_PutGlyph(window, djinn[2] + 48, 1, row + 1);
+        UiWindow_PutGlyph(window, djinn[3] + 48, 3, row + 1);
     }
     work->busy = 0;
 }

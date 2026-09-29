@@ -10803,7 +10803,7 @@ msgctxt "message"
 msgid "02698"
 msgstr "Strumento maledetto."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "02699"
 msgstr "Davvero vuoi"
 
@@ -11139,7 +11139,7 @@ msgctxt "message"
 msgid "02782"
 msgstr "Anello"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "02783"
 msgstr "Sì"
 

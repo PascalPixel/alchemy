@@ -2,9 +2,21 @@
  * Draft: BattlePresentation_AppendLinkedActions does not yet match; its raw assembly links in its place.
  * The nested functions it contains match and link as their compiler's own
  * assembly (recon/tbs/raw/080b9554.s).
+ * 2026-09-29: the parent's allocation size divides with the operator
+ * (the reference calls __udivsi3), the interrupt master is saved and
+ * disabled by writing its own address as the link lobby does, and the
+ * seed word is Data_03001cb4 copied to gBattleRandomSeed. 188 of 195
+ * instructions: the reference keeps the battle work in r9 and the
+ * captured count's frame address in r7 (&result r8, &state sl); here the
+ * count is addressed through sp until a later copy in r8, the work takes
+ * r6, and the seed copy is scheduled after the IME restore. Declaring the
+ * work later, register and index order do not move it.
  */
 #include "TYPES.H"
 #include "SYSTEM.H"
+extern void *gBattleWork[];
+extern s32 gBattleRandomSeed;
+extern s32 Data_03001cb4;
 extern volatile u16 gLinkStatus;
 extern volatile u16 gSerialReceivedSize;
 u32 Math_DivU(u32, u32);
@@ -24,17 +36,17 @@ struct BattleLinkedAction {
 
 struct BattleLinkedActionState {
     s32 count;
-    s32 marker;
-    s32 display_table;
+    s32 check;
+    s32 seed;
     u8 unknown_0c[28];
 };
 
 s32 BattlePresentation_AppendLinkedActions(
     struct BattleLinkedAction *actions, s32 count)
 {
-    u8 *battle = *(u8 **)0x03001e74;
+    u8 *battle = (u8 *)gBattleWork[0];
     s32 result = 0;
-    s32 allocation_size = Math_DivU(count * 16 + 19, 20) * 20;
+    s32 allocation_size = (u32)(count * 16 + 19) / 20 * 20;
     struct BattleLinkedActionState *state = Runtime_BumpAllocateAlternatePool(40);
     s32 index;
 
@@ -115,15 +127,16 @@ s32 BattlePresentation_AppendLinkedActions(
 
     if (battle[82] == 0) {
         if (battle[80] == 0) {
-            u16 interrupt_enable;
+            volatile u16 *ime;
+            u32 saved;
 
             state->count = count;
-            state->marker = BattleRandom16Far();
-            interrupt_enable = *(u16 *)0x04000208;
-            *(u16 *)0x04000208 = 0x0208;
-            state->display_table = *(s32 *)0x03001cb4;
-            *(s32 *)0x020023a8 = state->display_table;
-            *(u16 *)0x04000208 = interrupt_enable;
+            state->check = BattleRandom16Far();
+            ime = (volatile u16 *)0x04000208;
+            saved = *ime;
+            *ime = (u16)(u32)ime;
+            gBattleRandomSeed = state->seed = Data_03001cb4;
+            *ime = saved;
             if (BattleLink_SendActions() < 0 || BattleLink_ReceiveActions() < 0) {
                 goto fail;
             }
@@ -137,10 +150,10 @@ s32 BattlePresentation_AppendLinkedActions(
             if (BattleLink_SendActions() < 0) {
                 goto fail;
             }
-            if (BattleRandom16Far() != state->marker) {
+            if (BattleRandom16Far() != state->check) {
                 goto fail;
             }
-            *(s32 *)0x020023a8 = state->display_table;
+            gBattleRandomSeed = state->seed;
         }
 
         for (index = 0; index < result; index++) {

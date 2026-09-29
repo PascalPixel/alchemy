@@ -12691,7 +12691,7 @@ msgctxt "message"
 msgid "03170"
 msgstr "呪われたアイテムなので"
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "03171"
 msgstr "ほんとうに"
 
@@ -13023,7 +13023,7 @@ msgctxt "message"
 msgid "03253"
 msgstr "リング"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "03254"
 msgstr "はい"
 

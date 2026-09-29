@@ -1,141 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008e20,"ax",%progbits
-	.balign 4
-	.global Func_02000e20
-	.thumb_func
-Func_02000e20:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000e20_0
-	ldr r0, [pc, #36]
-	b .L_02000e20_1
-.L_02000e20_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000e20_2
-	ldr r0, [pc, #36]
-	b .L_02000e20_1
-.L_02000e20_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000e20_3
-	ldr r0, [pc, #32]
-	b .L_02000e20_1
-.L_02000e20_3:
-	ldr r0, [pc, #32]
-.L_02000e20_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000039
-	.4byte 0x0200e50c
-	.4byte 0x00000038
-	.4byte 0x0200e35c
-	.4byte 0x00000037
-	.4byte 0x0200e23c
-	.4byte 0x0200e0ec
-	.section .text.x02008e80,"ax",%progbits
-	.p2align 2
-	.global Func_02000e80
-	.thumb_func
-Func_02000e80:
-	push {lr}
-	ldr r3, [pc, #56]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_02000e80_0
-	ldr r0, [pc, #44]
-	b .L_02000e80_1
-.L_02000e80_0:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_02000e80_2
-	ldr r0, [pc, #44]
-	b .L_02000e80_1
-.L_02000e80_2:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_02000e80_3
-	ldr r0, [pc, #40]
-	b .L_02000e80_1
-.L_02000e80_3:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000e80_4
-	ldr r0, [pc, #40]
-	b .L_02000e80_1
-.L_02000e80_4:
-	ldr r0, [pc, #40]
-.L_02000e80_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000036
-	.4byte 0x0200e700
-	.4byte 0x00000037
-	.4byte 0x0200e7a8
-	.4byte 0x00000038
-	.4byte 0x0200e838
-	.4byte 0x00000039
-	.4byte 0x0200e988
-	.4byte 0x0200e6e8
-	.section .text.x02008f30,"ax",%progbits
-	.p2align 2
-	.global Func_02000f30
-	.thumb_func
-Func_02000f30:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000f30_0
-	ldr r0, [pc, #36]
-	b .L_02000f30_1
-.L_02000f30_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000f30_2
-	ldr r0, [pc, #36]
-	b .L_02000f30_1
-.L_02000f30_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000f30_3
-	ldr r0, [pc, #32]
-	b .L_02000f30_1
-.L_02000f30_3:
-	ldr r0, [pc, #32]
-.L_02000f30_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000036
-	.4byte 0x0200ead8
-	.4byte 0x00000037
-	.4byte 0x0200ec10
-	.4byte 0x00000038
-	.4byte 0x0200ed60
-	.4byte 0x0200eec8
 	.section .text.x02009db4,"ax",%progbits
 	.p2align 2
 	.global FieldScene_RunPrimarySequence
@@ -450,103 +314,6 @@ FieldScene_RunPrimarySequence:
 	.4byte 0x02ca0000
 	.2byte 0x0000
 	.2byte 0xffff
-	.section .text.x0200b6ac,"ax",%progbits
-	.p2align 2
-	.global Func_020036ac
-	.thumb_func
-Func_020036ac:
-	push {lr}
-	sub sp, #8
-	bl 0x0200dab4
-	ldr r3, [pc, #192]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #184]
-	cmp r2, r3
-	bne .L_020036ac_0
-	movs r1, #236
-	movs r2, #150
-	movs r0, #0
-	lsls r1, r1, #1
-	lsls r2, r2, #2
-	bl 0x0200db0c
-	movs r1, #128
-	movs r0, #0
-	lsls r1, r1, #7
-	movs r2, #10
-	bl 0x0200db94
-	movs r0, #232
-	movs r1, #1
-	movs r2, #164
-	lsls r2, r2, #18
-	movs r3, #1
-	negs r1, r1
-	lsls r0, r0, #17
-	bl 0x0200dbb4
-	movs r0, #0
-	bl 0x0200dad4
-	movs r1, #0
-	bl 0x0200da2c
-	movs r0, #0
-	bl 0x0200dad4
-	ldr r2, [pc, #120]
-	movs r1, #0
-	movs r3, #223
-	ldr r0, [r0, #8]
-	bl 0x02008048
-	movs r3, #3
-	movs r2, #2
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r1, #46
-	movs r2, #92
-	movs r3, #40
-	movs r0, #92
-	bl 0x0200da04
-	movs r0, #0
-	bl 0x0200dad4
-	movs r3, #128
-	lsls r3, r3, #8
-	str r3, [r0, #72]
-	movs r1, #2
-	movs r0, #0
-	bl 0x0200db9c
-	movs r2, #1
-	movs r0, #0
-	movs r1, #6
-	negs r2, r2
-	bl 0x0200db54
-	ldr r3, [pc, #60]
-	movs r2, #224
-	ldr r3, [r3]
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	adds r2, #67
-	movs r0, #60
-	str r2, [r3]
-	bl 0x0200daac
-	movs r0, #8
-	bl 0x0200dbcc
-	b .L_020036ac_1
-.L_020036ac_0:
-	movs r2, #1
-	movs r0, #0
-	movs r1, #6
-	negs r2, r2
-	bl 0x0200db54
-.L_020036ac_1:
-	bl 0x0200dabc
-	sub sp, #-8
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000036
-	.4byte 0x02be0000
-	.4byte 0x03001ebc
 	.section .text.x0200bd20,"ax",%progbits
 	.p2align 2
 	.global Func_02003d20
@@ -3266,6 +3033,8 @@ MakyuriHeya_ColumnCells:
 	.4byte 0x002f007e
 	.4byte 0x00020001
 	.4byte 0xffff0002
+	.global gMakyuriHeyaEntrancesOther
+gMakyuriHeyaEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000f8
 	.4byte 0x40000158
@@ -3350,6 +3119,8 @@ MakyuriHeya_ColumnCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaEntrances2
+gMakyuriHeyaEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000f8
 	.4byte 0x40000158
@@ -3422,6 +3193,8 @@ MakyuriHeya_ColumnCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaEntrances3
+gMakyuriHeyaEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x000000f8
 	.4byte 0x40000158
@@ -3530,6 +3303,8 @@ MakyuriHeya_ColumnCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaEntrances4
+gMakyuriHeyaEntrances4:
 	.4byte 0xffff0000
 	.4byte 0x000000f8
 	.4byte 0x40000158
@@ -3651,12 +3426,16 @@ MakyuriHeya_SceneTable:
 	.4byte 0x0085a002
 	.4byte 0x0090503a
 	.4byte 0x000001ff
+	.global gMakyuriHeyaPlacementsOther
+gMakyuriHeyaPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaPlacements1
+gMakyuriHeyaPlacements1:
 	.4byte 0xffff0003
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -3699,6 +3478,8 @@ MakyuriHeya_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaPlacements2
+gMakyuriHeyaPlacements2:
 	.4byte 0xffff00e5
 	.4byte 0x00000007
 	.4byte 0x00980000
@@ -3735,6 +3516,8 @@ MakyuriHeya_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaPlacements3
+gMakyuriHeyaPlacements3:
 	.4byte 0x187700e0
 	.4byte 0x00000001
 	.4byte 0x00c80000
@@ -3819,6 +3602,8 @@ MakyuriHeya_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaPlacements4
+gMakyuriHeyaPlacements4:
 	.4byte 0xffff0003
 	.4byte 0x00000001
 	.4byte 0x03480000
@@ -3903,6 +3688,8 @@ MakyuriHeya_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaEvents1
+gMakyuriHeyaEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0034
 	.4byte 0x00000002
@@ -3981,6 +3768,8 @@ MakyuriHeya_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMakyuriHeyaEvents2
+gMakyuriHeyaEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0034
 	.4byte 0x00000002
@@ -4084,6 +3873,8 @@ MakyuriHeya_SceneTable:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gMakyuriHeyaEvents3
+gMakyuriHeyaEvents3:
 	movs	r1, r0
 	movs	r0, r0
 	movs	r3, r6
@@ -4280,6 +4071,8 @@ MakyuriHeya_SceneTable:
 .L_02006ec4:
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gMakyuriHeyaEventsOther
+gMakyuriHeyaEventsOther:
 	movs	r1, r0
 	movs	r0, r0
 	movs	r4, r5

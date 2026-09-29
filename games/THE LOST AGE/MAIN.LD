@@ -433,6 +433,8 @@ SECTIONS
         "*/recon/tla/raw/08042214.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08042244.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08042274.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/RENDER/OUTPUT.o"(.text)
+        "*/recon/tla/raw/08042450.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08042508.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804257c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08042690.o"(.text .rodata .data .padding)

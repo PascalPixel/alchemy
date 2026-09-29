@@ -1064,7 +1064,7 @@ Menu_AppendResourceEntry:
 	bgt.n	.L_0804d3e0
 	adds	r3, #1
 	strh	r3, [r2, #0]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	mov	r1, sl
 	adds	r6, r0, #0
 	lsls	r5, r7, #2

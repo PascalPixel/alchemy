@@ -33,7 +33,7 @@ Func_080d6b90:
 	adds	r1, r6, #0
 	ldr	r0, [pc, #132]
 	bl	0x0801591c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #192
 	adds	r2, r6, #0
 	lsls	r1, r1, #2
@@ -380,7 +380,7 @@ Func_080d6b90:
 	adds	r1, r6, #0
 	ldr	r0, [pc, #136]
 	bl	0x0801591c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #192
 	adds	r2, r6, #0
 	str	r0, [r5, #0]
@@ -482,7 +482,7 @@ Func_080d6b90:
 	adds	r1, r6, #0
 	ldr	r0, [pc, #136]
 	bl	0x0801591c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #192
 	adds	r2, r6, #0
 	str	r0, [r5, #0]

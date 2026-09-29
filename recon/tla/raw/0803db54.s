@@ -168,7 +168,7 @@ Func_0803db54:
 	strh	r5, [r7, #18]
 	strh	r5, [r3, #0]
 	ldr	r6, [pc, #112]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #185
 	lsls	r2, r2, #2
 	adds	r3, r7, r2

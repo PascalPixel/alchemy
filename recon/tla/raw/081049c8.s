@@ -85,7 +85,7 @@ Func_081049c8:
 	lsls	r3, r3, #18
 	adds	r3, #220
 	ldr	r5, [r3, #0]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #238
@@ -99,7 +99,7 @@ Func_081049c8:
 	movs	r1, #128
 	bl	Func_08108088
 .L_08104a80:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #158
 	lsls	r2, r2, #3
 	adds	r3, r5, r2

@@ -32,7 +32,7 @@ Func_08022d1c:
 	mov	sl, r0
 	bl	Resource_GetMetadataRecordFar
 	adds	r7, r0, #0
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r5, [r3, #16]

@@ -33,7 +33,7 @@ Func_0803ef48:
 	add	r2, sp, #8
 	add	r3, sp, #4
 	movs	r1, #0
-	bl	Func_0803d4e4
+	bl	Ui_BuildPairedPatternsToSlot
 .L_0803ef82:
 	add	sp, #12
 	pop	{pc}
@@ -70,7 +70,7 @@ Func_0803ef48:
 	add	r2, sp, #8
 	add	r3, sp, #4
 	movs	r1, #0
-	bl	Func_0803d4e4
+	bl	Ui_BuildPairedPatternsToSlot
 	bl	0x0803f6c8
 .L_0803efca:
 	add	sp, #12

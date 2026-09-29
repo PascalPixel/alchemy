@@ -2218,6 +2218,8 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.083f520d)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/SPARK_CELLS.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.083f53a6)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/SMOKE.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.083f5c33)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/BLUE_PALETTE.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/LIME_PALETTE.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/PINK_PALETTE.o"(.rodata)

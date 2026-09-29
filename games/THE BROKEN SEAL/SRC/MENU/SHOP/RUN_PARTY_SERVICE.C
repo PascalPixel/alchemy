@@ -22,7 +22,8 @@ void Shop_RunPartyMemberIconBurst(s32 member);
 s32 Party_AdjustSixDigitCounterAFar(s32 amount);
 void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);
 void Menu_ReleaseEntryObjectsFar(void);
-extern char Value_00000d27;
+extern char MsgReviveDonation;
+extern u8 MsgWhoToRevive[];
 
 
 /* Lets the player choose which party member receives the chosen sanctum
@@ -47,7 +48,7 @@ s32 Sanctum_RunPartyService(void)
     price_window = 0;
     redraw = 1;
     kind = shop->party_action;
-    UiMessage_ShowResolvedAndWait(0xd26);
+    UiMessage_ShowResolvedAndWait((s32)MsgWhoToRevive);
 
     list_window = UiWindow_CreateFar(1, 12, 13, 3, 2);
     shop->cursor.anchor->kind = 4;
@@ -69,7 +70,7 @@ s32 Sanctum_RunPartyService(void)
     for (;;) {
         if (retry != 0) {
             retry = 0;
-            UiMessage_ShowResolvedAndWait(0xd26);
+            UiMessage_ShowResolvedAndWait((s32)MsgWhoToRevive);
             redraw = 1;
             selection = 0;
             while (selection < shop->party_member_count) {
@@ -101,7 +102,7 @@ s32 Sanctum_RunPartyService(void)
             }
             UiWork_PushValueSlotFar(unit_id, 1);
             UiWork_PushValueSlotFar(price, 5);
-            message = (s32)&Value_00000d27;
+            message = (s32)&MsgReviveDonation;
             UiMessage_ShowResolvedAndWait(message);
             if (UiMessage_ShowChoiceVariant(0) != 0) {
                 UiMessage_ShowResolvedAndRestoreState(message + 2);

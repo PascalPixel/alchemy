@@ -72,10 +72,10 @@ struct PsynergyListWork {
     u8 mode;                                  /* 0x268 */
 };
 
-extern u8 Value_0000053a;
-extern u8 Value_00000b13;
-extern u8 Value_00000b14;
-extern u8 Value_00000b15;
+extern u8 MsgAbilityDescription;
+extern u8 MsgUsableInBattle;
+extern u8 MsgUsableInField;
+extern u8 MsgUsableAnywhere;
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -102,7 +102,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     WaitFrames(1);
     if (menu->psynergies[state->selected_index] != 0) {
         UiText_DrawCharacterAtOffsetFar((menu->psynergies[state->selected_index] & ACTION_ID_MASK)
-                + (s32)&Value_0000053a,
+                + (s32)&MsgAbilityDescription,
             (s32)menu->info_window, 0, 0);
         ability = BattleAction_Get(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
         UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
@@ -114,11 +114,11 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
             row |= 1;
         }
         if (row == 3) {
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b15, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableAnywhere, window, 0, 96);
         } else if (row == 2) {
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b14, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInField, window, 0, 96);
         } else if (row == 1) {
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b13, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, 96);
         }
     }
 

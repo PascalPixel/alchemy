@@ -5,8 +5,8 @@
    所持枠を左上から順に並べる。枠は5個目と10個目で折り返す。
    枠番号は0xd8からのu16列で、0が終端。 */
 
-extern u8 Value_00000c90;
-extern u8 Value_00000c8f;
+extern u8 MsgYouHave;
+extern u8 MsgShopNoneInStock;
 
 void UiWindow_Clear(s32 window);
 s32 Item_FindSlot(s32 unit_id, s32 item_id);
@@ -38,9 +38,9 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
         if (slot != -1) {
             off = slot * 2 + 216;
             UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c90, window, 0, 0);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgYouHave, window, 0, 0);
         } else {
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c8f, window, 0, 0);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgShopNoneInStock, window, 0, 0);
         }
         item_index = 0;
         first_offset = 216;

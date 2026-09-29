@@ -2,6 +2,14 @@
 #include "UI.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
+extern u8 MsgWeaponShopWelcome[];
+extern u8 MsgWhatWouldYouLike[];
+extern u8 MsgWhatToSell[];
+extern u8 MsgConnoisseur[];
+extern u8 MsgOutOfStock[];
+extern u8 MsgFixDamaged[];
+extern u8 MsgAnythingElse[];
+extern u8 MsgShopFarewell[];
 
 /* Runs a shop visit: set up the shop from its event-table row, show the
    keeper's window, then loop over the buy, sell, artifact and repair
@@ -63,38 +71,38 @@ s32 Shop_Run(s32 row, s32 keeper_id)
     anchor->unknown_00[4] = 0;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = anchor;
-    UiMessage_ShowAndWait(0xc9b);
+    UiMessage_ShowAndWait((s32)MsgWeaponShopWelcome);
 loop:
     {
         choice = Func_08015380(choice);
         shop->party_action = choice;
         if (choice == 0) {
             shop->stock_count = EventTable_CopyRowHeader(row, shop->stock_item_ids);
-            UiMessage_ShowAndWait(0xca7);
+            UiMessage_ShowAndWait((s32)MsgWhatWouldYouLike);
             Shop_SelBuy();
         } else if (choice == 1) {
-            UiMessage_ShowAndWait(0xca9);
+            UiMessage_ShowAndWait((s32)MsgWhatToSell);
             Shop_PickUnit();
         } else if (choice == 2) {
             if (AbilityMenu_BuildAvailableList() != 0) {
-                UiMessage_ShowAndWait(0xcb8);
+                UiMessage_ShowAndWait((s32)MsgConnoisseur);
                 Shop_SelBuy();
             } else {
-                UiMessage_ShowAndWait(0xcb7);
+                UiMessage_ShowAndWait((s32)MsgOutOfStock);
                 WaitFrames(1);
             }
         } else if (choice == 3) {
-            UiMessage_ShowAndWait(0xcb9);
+            UiMessage_ShowAndWait((s32)MsgFixDamaged);
             Shop_SelUnit();
         } else {
             goto done;
         }
         ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-        UiMessage_ShowAndWait(0xca4);
+        UiMessage_ShowAndWait((s32)MsgAnythingElse);
         goto loop;
     }
 done:
-    UiMessage_ShowAndWait(0xca5);
+    UiMessage_ShowAndWait((s32)MsgShopFarewell);
     UiWork_FinalizeFar(window, 2);
     Inn_Cleanup();
     return 0;

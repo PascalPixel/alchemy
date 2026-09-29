@@ -65,7 +65,7 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
     Owner_GetStateFar(work.secondary_id);
     Random16();
     UiWork_PushValueSlotFar(work.primary_id, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000814);
+    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
     BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);
     ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.primary_id)->object, 16);
     GetBattleObjectSlot(work.secondary_id);

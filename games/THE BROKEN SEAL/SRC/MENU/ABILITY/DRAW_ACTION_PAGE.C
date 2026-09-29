@@ -12,6 +12,9 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y
 struct BattleUnit *Owner_GetStateFar(s32 owner);
 struct BattleAction *BattleAction_Get(s32 action);
 extern u8 MsgAbilityName;
+extern u8 MsgShortcutHelp[];
+extern u8 MsgChangeCharacterHelp[];
+extern u8 MsgPsynergyPp[];
 
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state)
 {
@@ -29,9 +32,9 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
     if (2 & *(u16 *)((u8 *)menu + 0x220)) {
-        UiText_DrawCharacterAtOffsetFar(0xae1, window, 0, 88);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutHelp, window, 0, 88);
     } else {
-        UiText_DrawCharacterAtOffsetFar(0xb89, window, 0, 88);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, 0, 88);
     }
 
     first_entry = state->page * 5;
@@ -42,7 +45,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
     Menu_SetPageIcons(5, first_entry, window, 0x70, 0x22);
     Menu_DrawPageIndicator(window, state->entry_count, 5, state->page, 15);
-    UiText_DrawCharacterAtOffsetFar(0xaed, window, 0x60, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x60, 0);
 
     row = 0;
     if (visible_count > row) {

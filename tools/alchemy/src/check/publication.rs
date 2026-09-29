@@ -3510,6 +3510,30 @@ mod tests {
     use super::*;
 
     #[test]
+    fn message_archives_are_built_assembly_included_by_a_tracked_source() {
+        // Each game's TEXT/MESSAGES.S includes the assembly build rom writes
+        // from the edition's catalog, whose address words are relocations;
+        // the tracked source carries no bytes, and an .incbin of a built
+        // archive, which could hold no relocations, stays refused.
+        let root = crate::compiler::routing::root();
+        for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
+            let path = format!("games/{game}/TEXT/MESSAGES.S");
+            let data = std::fs::read(root.join(&path)).unwrap();
+            assert_eq!(publication_reason(&path, &data, None), None, "{path}");
+            assert!(String::from_utf8_lossy(&data).contains("\t.include \"text/messages.inc\"\n"));
+        }
+        assert!(super::incbin(
+            "games/THE BROKEN SEAL/TEXT/MESSAGES.S",
+            b".incbin \"text/messages.bin\"\n"
+        ));
+        let named = b"msgctxt \"MsgHpRecover\"\nmsgid \"02077\"\nmsgstr \"HP!\"\n";
+        assert_eq!(
+            publication_reason("games/THE BROKEN SEAL/TEXT/EN.PO", named, None),
+            None
+        );
+    }
+
+    #[test]
     fn editable_sources_need_no_calculated_asset_catalog() {
         use serde_json::json;
         for (path, data) in [

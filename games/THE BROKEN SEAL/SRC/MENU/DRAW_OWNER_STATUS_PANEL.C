@@ -40,10 +40,10 @@ struct PanelState {
 extern struct PanelState *Data_03001f2c;
 extern u8 IwramCopyWords[];
 extern u8 Data_080af20c[];
-extern u8 MsgClassName[], Value_00000333[];
-extern u8 Value_00000bd6[], Value_00000bd7[], Value_00000bd8[], Value_00000bd9[];
-extern u8 Value_00000b0e[], Value_00000b21[], Value_00000b22[], Value_00000b23[];
-extern u8 Value_00000b1c[];
+extern u8 MsgClassName[], MsgAbilityName[];
+extern u8 MsgPoisonLabel[], MsgVenomLabel[], MsgCurseLabel[], MsgHauntLabel[];
+extern u8 MsgExpLabel[], MsgCannotEquip[], MsgWillLearn[], MsgLearned[];
+extern u8 MsgPanelStatLabel[];
 
 struct PanelOwner *Owner_GetStateFar(s32 owner);
 struct PanelItem *Item_Get(s32 item);
@@ -99,19 +99,19 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         CharacterMenu_BuildAvailability(avail, 1, owner);
         cnt = 0;
         if (avail[1]) {
-            UiText_DrawCharacterAtOffsetFar((s32)Value_00000bd6, window, 32, cnt * 8 + 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPoisonLabel, window, 32, cnt * 8 + 8);
             cnt++;
         }
         if (avail[2]) {
-            UiText_DrawCharacterAtOffsetFar((s32)Value_00000bd7, window, 32, cnt * 8 + 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgVenomLabel, window, 32, cnt * 8 + 8);
             cnt++;
         }
         if (avail[3]) {
-            UiText_DrawCharacterAtOffsetFar((s32)Value_00000bd8, window, 32, cnt * 8 + 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCurseLabel, window, 32, cnt * 8 + 8);
             cnt++;
         }
         if (avail[4]) {
-            UiText_DrawCharacterAtOffsetFar((s32)Value_00000bd9, window, 32, cnt * 8 + 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgHauntLabel, window, 32, cnt * 8 + 8);
             cnt++;
         }
         if (cnt < 2) {
@@ -133,7 +133,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
         Ui_DrawValuePairRows(unit, window);
         value = unit->experience;
-        UiText_DrawCharacterAtOffsetFar((s32)Value_00000b0e, window, 0, 64);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 0, 64);
         UiText_DrawNumberInWindowFar(value, 8, window, 24, 72);
         break;
     case 6:
@@ -146,7 +146,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         void *backup;
 
         if (!Item_CanOwnerEquip(owner, item)) {
-            UiText_DrawCharacterAtOffsetFar((s32)Value_00000b21, window, 0, 48);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotEquip, window, 0, 48);
             break;
         }
         backup = Runtime_BumpAllocate(0x14c);
@@ -173,16 +173,16 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
             }
         }
         if (found) {
-            UiText_DrawCharacterAtOffsetFar(id + (s32)Value_00000333, window, 0, 48);
-            UiText_DrawCharacterAtOffsetFar((s32)Value_00000b23, window, 0, 56);
+            UiText_DrawCharacterAtOffsetFar(id + (s32)MsgAbilityName, window, 0, 48);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgLearned, window, 0, 56);
         } else {
-            UiText_DrawCharacterAtOffsetFar(id + (s32)Value_00000333, window, 0, 48);
-            UiText_DrawCharacterAtOffsetFar((s32)Value_00000b22, window, 0, 56);
+            UiText_DrawCharacterAtOffsetFar(id + (s32)MsgAbilityName, window, 0, 48);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgWillLearn, window, 0, 56);
         }
         break;
     }
     case 8: {
-        u8 *base = Value_00000b1c;
+        u8 *base = MsgPanelStatLabel;
 
         UiText_DrawCharacterAtOffsetFar((s32)base, window, 0, 40);
         value = *(u16 *)((u8 *)unit + 60);

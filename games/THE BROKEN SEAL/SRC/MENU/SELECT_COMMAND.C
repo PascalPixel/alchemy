@@ -35,7 +35,7 @@ struct CharacterCommandMenu {
 extern struct CharacterCommandMenu *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern u8 Value_00000b06;
+extern u8 MsgSwitchCharacterHelp;
 
 s32 Party_SumDjinnCountsFar(s32 side);
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
@@ -111,9 +111,9 @@ s32 CharacterMenu_SelectCommand(void)
                     selected = Math_Mod(selected + limit, limit);
                     RenderOutput_RedrawSavedRectFar(menu->help_window);
                     if (has_ailments == 0) {
-                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06,
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp,
                             menu->window, 80, -24);
-                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06 + 1,
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 1,
                             menu->window, 0, -24);
                     }
                 } else {

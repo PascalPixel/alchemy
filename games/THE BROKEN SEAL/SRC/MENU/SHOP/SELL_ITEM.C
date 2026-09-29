@@ -8,9 +8,9 @@ extern u8 Data_03001f2c[];
    text for broken, several, rare or ordinary items, and on agreement
    removes the items and pays out. */
 
-extern u8 Value_00000cab[], Value_00000cac[], Value_00000cae[], Value_00000caf[];
-extern u8 Value_00000cb0[], Value_00000cb1[], Value_00000cb2[], Value_00000cb3[];
-extern u8 Value_00000cb4[], Value_00000cb5[], Value_00000cb6[];
+extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
+extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];
+extern u8 MsgChangedMind[], MsgSold[], MsgKeepIt[];
 
 struct ItemDefinition *Item_Get(s32 item);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
@@ -39,32 +39,32 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
     total = Shop_SalePrice(unit->inventory[slot]) * count;
     if (total == 0) {
         UiWork_PushValueSlotFar(item_id, 2);
-        UiMessage_ShowAndRestoreState((s32)Value_00000cac);
+        UiMessage_ShowAndRestoreState((s32)MsgWeDoNotBuy);
         return;
     }
     if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
         UiWork_PushValueSlotFar(item_id, 2);
-        UiMessage_ShowAndRestoreState((s32)Value_00000cab);
+        UiMessage_ShowAndRestoreState((s32)MsgCannotSellEquipped);
         return;
     }
     if (all)
-        message = (s32)Value_00000cb2;
+        message = (s32)MsgOldItemSellOffer;
     else if (unit->inventory[slot] & 0x400)
-        message = (s32)Value_00000cb1;
+        message = (s32)MsgDamagedSellOffer;
     else if (count > 1)
-        message = (s32)Value_00000cb0;
+        message = (s32)MsgSellTotal;
     else if (rare)
-        message = (s32)Value_00000caf;
+        message = (s32)MsgRareSellOffer;
     else
-        message = (s32)Value_00000cae;
+        message = (s32)MsgSellOffer;
     UiWork_PushValueSlotFar(item_id, 2);
     UiWork_PushValueSlotFar(total, 5);
     UiMessage_ShowAndRestoreState(message);
     if (UiMessage_ShowChoice(0) != 0) {
         if (rare || all)
-            message = (s32)Value_00000cb6;
+            message = (s32)MsgKeepIt;
         else
-            message = (s32)Value_00000cb4;
+            message = (s32)MsgChangedMind;
         UiMessage_ShowAndRestoreState(message);
         return;
     }
@@ -75,8 +75,8 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
     Shop_DrawMoney();
     Shop_DrawUnitGrid(shop->item_window, unit_id);
     if (rare || all)
-        message = (s32)Value_00000cb5;
+        message = (s32)MsgSold;
     else
-        message = (s32)Value_00000cb3;
+        message = (s32)MsgDeal;
     UiMessage_ShowAndRestoreState(message);
 }

@@ -66,7 +66,7 @@ s32 BattlePres_RunAction(s16 *action)
 
     switch (action[3]) {
     case 99:
-        UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000843);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
         if (BattleEscape_PlayRun(action)!= 0)
             return 1;
         break;
@@ -135,7 +135,7 @@ s32 BattleEscape_PlayRun(s16 *action)
         WaitFrames(22);
         return 1;
     }
-    UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000844);
+    UiText_ShowMessageAndWaitCoreFar((s32)&MsgCannotEscape);
     return 0;
 }
 
@@ -161,6 +161,6 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
     }
     UiWork_ClearValueNameTablesFar();
     UiWork_PushValueSlotFar(object_id, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000816);
+    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
     return 0;
 }

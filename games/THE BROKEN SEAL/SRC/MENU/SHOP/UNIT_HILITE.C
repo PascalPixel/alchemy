@@ -45,8 +45,8 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
 }
 
 /* shop/draw/sel_msg.c */
-extern u8 Value_00000d2c;
-extern u8 Value_00000d2d;
+extern u8 MsgReviveCost;
+extern u8 MsgNoHealingNeeded;
 
 void UiWindow_Clear(s32 target);
 void UiText_DrawMessageAt(s32 message, s32 target, s32 arg2, s32 arg3);
@@ -62,9 +62,9 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
     if (target != 0) {
         UiWindow_Clear(target);
         if (Shop_CanServe(selection, variant) != 0) {
-            variant = (s32)&Value_00000d2c;
+            variant = (s32)&MsgReviveCost;
         } else {
-            variant = (s32)&Value_00000d2d;
+            variant = (s32)&MsgNoHealingNeeded;
         }
         variant = Shop_MsgByMode(variant);
         UiWork_PushValueSlotFar(message, 5);

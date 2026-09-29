@@ -58,10 +58,10 @@ struct ItemTargetMenu {
 extern struct ItemTargetMenu *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern char Value_00000075;
-extern char Value_00000b2f;
-extern char Value_00000b30;
-extern char Value_00000b31;
+extern char MsgItemPlainName;
+extern char MsgInStock;
+extern char MsgTradeForWhat;
+extern char MsgNoneInStock;
 
 void UiWindow_SetBounds(s32 window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -128,12 +128,12 @@ s8 ItemMenu_SelectTarget(s32 mode)
                     quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_item & 0x1ff);
                     if (quantity != 0) {
                         UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
-                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b2f, window, 24, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, 24, 72);
                     } else {
-                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b31, window, 16, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgNoneInStock, window, 16, 72);
                     }
                     if (ItemMenu_Count(menu->owner_ids[selection]) == 15 && quantity == 0)
-                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b30, window, 0, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 0, 72);
                 }
                 ItemMenu_DrawEquipPreview(menu->item_owner, menu->selected_slot, 0, menu->owner_ids[selection]);
             }
@@ -144,7 +144,7 @@ s8 ItemMenu_SelectTarget(s32 mode)
                     Menu_DrawOwnerStatusPanel(menu->status_window, menu->owner_ids[selection], menu->selected_slot, 0);
                 if (!GameFlag_TestFar(0x151) && !shown) {
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
-                    UiText_DrawCharacterAtOffsetFar((menu->selected_item & 0x1ff) + (s32)&Value_00000075, menu->info_window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((menu->selected_item & 0x1ff) + (s32)&MsgItemPlainName, menu->info_window, 0, 0);
                     shown = 1;
                 } else {
                     GameFlag_ClearBitFar(0x151);

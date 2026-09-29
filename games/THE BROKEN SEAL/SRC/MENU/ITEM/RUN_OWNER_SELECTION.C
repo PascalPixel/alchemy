@@ -37,7 +37,7 @@ extern struct OwnerSelectMenu *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
-extern char Value_00000b87;
+extern char MsgArrangeItemsHelp;
 
 struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -85,8 +85,8 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
         menu->help_icon = RenderOutput_CreateFromResourceFar(2, 0, menu->help_window, 0, result);
         menu->help_icon->state = 13;
     }
-    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b87, menu->help_window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b87 + 1, menu->help_window, 0, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp, menu->help_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp + 1, menu->help_window, 0, 8);
     menu->cursor->state = pending;
     while (!GameFlag_TestFar(0x150)) {
         selection = Math_Mod(selection + count, count);

@@ -3,9 +3,9 @@
 
 extern u8 MsgNoBackupMemory[];
 extern u8 MsgSaveFailed[];
-extern u8 Value_00000014[];
-extern u8 Value_00000017[];
-extern u8 Value_0000001a[];
+extern u8 MsgOverwriteConfirm[];
+extern u8 MsgGameSaved[];
+extern u8 MsgSaving[];
 extern s16 gSaveSlot;
 extern u8 gSaveBuffer[];
 extern u8 *gSaveWorkspace;
@@ -44,7 +44,7 @@ s32 Save_WriteSelectedSlot(void)
         } else {
             s32 off = (slot << 6) + 0x105c;
             if (base[off] != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)Value_00000014, 13);
+                UiText_ShowPositionedMessageAndWait((s32)MsgOverwriteConfirm, 13);
                 while (UiWork_IsComplete() == 0) {
                     WaitFrames(1);
                 }
@@ -56,7 +56,7 @@ s32 Save_WriteSelectedSlot(void)
             }
             gSaveSlot = slot;
             Audio_PlayCue(85);
-            UiText_ShowPositionedMessageAndWait((s32)Value_0000001a, 13);
+            UiText_ShowPositionedMessageAndWait((s32)MsgSaving, 13);
             while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);
             }
@@ -69,7 +69,7 @@ s32 Save_WriteSelectedSlot(void)
                 UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
                 result = -3;
             } else {
-                UiText_ShowPositionedMessageAndWait((s32)Value_00000017, 9);
+                UiText_ShowPositionedMessageAndWait((s32)MsgGameSaved, 9);
             }
         }
     }

@@ -44,7 +44,7 @@ struct OwnerActionState;
 extern struct PsynergyStatusMenu *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern u8 Value_00000b06;
+extern u8 MsgSwitchCharacterHelp;
 
 void Menu_BuildPatternTiles(void);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -100,8 +100,8 @@ s32 PsynergyMenu_SelectAction(void)
     }
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
     Menu_SpawnIconEntries(menu, menu->icon_window);
-    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06, menu->window, 80, -24);
-    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06 + 2, menu->window, 0, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->window, 80, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 2, menu->window, 0, -24);
 
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         ItemMenu_PosCategory();

@@ -10,7 +10,7 @@ extern u8 Data_03001f2c[];
 #define ACTION_Y 128
 #endif
 
-extern u8 Value_00000ca0;
+extern u8 MsgHowManyToBuy;
 extern void UiMessage_ShowAndWait(s32);
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Math_DivU(s32, s32);
@@ -33,7 +33,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
     item = Item_Get(item_id);
     result = 1;
     if (item->flags & 0x10) {
-        UiMessage_ShowAndWait((s32)&Value_00000ca0);
+        UiMessage_ShowAndWait((s32)&MsgHowManyToBuy);
         slot = Item_FindSlot(unit_id, item_id);
         if (slot != -1) {
             quantity = (unit->inventory[slot] >> 11) + 1;

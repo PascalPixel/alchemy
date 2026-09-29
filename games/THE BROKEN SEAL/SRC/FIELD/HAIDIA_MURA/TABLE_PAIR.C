@@ -50,10 +50,10 @@ void FieldScene_RunScene373SequenceE(void)
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
     Actor_SetSpeed(22, 0x18000, 0x10000);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 0x200f59c);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, gHaidiaMuraLeaderWalkActions);
     Event_Wait(10);
     Actor_ShowEmote(22, 0x103, 0);
-    Actor_EnableActionCallback(22, 0x200f5ec);
+    Actor_EnableActionCallback(22, gHaidiaMuraActor22WalkActions);
     Object_RefreshSelectorById(0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x100, 0x1da);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
@@ -66,8 +66,8 @@ void FieldScene_RunScene373SequenceE(void)
     Event_SetMessage(MSG_NOT_SNEAKING_UP_MT_ALEPH);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
-    *(s32 *)(record + 108) = 0x200d72d;
-    Actor_EnableActionCallback(22, 0x200e248);
+    *(s32 *)(record + 108) = (s32)SceneActor_RunStep18WhenTargetSet;
+    Actor_EnableActionCallback(22, gHaidiaMuraActor22Actions);
     GameFlag_Set(0x823);
     Event_End();
 }
@@ -113,8 +113,8 @@ void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
     Event_SetMessage(MSG_NOT_SNEAKING_UP_MT_ALEPH);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
-    *(s32 *)(record + 108) = 0x200d72d;
-    Actor_EnableActionCallback(22, 0x200e248);
+    *(s32 *)(record + 108) = (s32)SceneActor_RunStep18WhenTargetSet;
+    Actor_EnableActionCallback(22, gHaidiaMuraActor22Actions);
     Event_End();
 }
 

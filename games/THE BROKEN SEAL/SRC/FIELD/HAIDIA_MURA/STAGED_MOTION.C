@@ -191,7 +191,7 @@ void FieldScene_RunScene373_02000dc0(void)
     s32 record;
 
     Audio_PlayCue(188);
-    Map_AnimateCells(0x200f544, 45, 11);
+    Map_AnimateCells((s32)gHaidiaMuraCellAnimC, 45, 11);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1a4);
     Event_RequestExit(11);
 }
@@ -288,7 +288,7 @@ void FieldScene_RunPrimarySequence(void)
 void FieldScene_RunScene373SequenceA(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells(0x200f586, 52, 76); /* main:08009178 */
+    Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76); /* main:08009178 */
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6); /* object_id 0, x 0x176, z 0x4d6 */
     Event_RequestExit(9); /* main:0808a248 */
 }

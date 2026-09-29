@@ -5,8 +5,17 @@
    Remaining: the ROM loads the work pointer after starting the DISPCNT
    read, keeps the page in r6 and DISPCNT in r5 (here r5 and r6), holds the
    DMA channel in r1 and derives the DMA destination from it (channel - 144)
-   where this keeps the channel in r4 and reloads 0x04000020. */
+   where this keeps the channel in r4 and reloads 0x04000020.
+   2026-09-29 (alchemy permute scorer): 1120, unchanged with the linked
+   gMapAnimationPages and gFrameCount in place of 0x03001e6c/0x03001e40.
+   A 300-second search (40,000 candidates) found the end line read into a
+   local before the range test: 915 (36 register-only, 3 operand, 6
+   reordered, 1 inserted, 2 deleted). The register assignment above is
+   still the difference. */
 #include "DMA.H"
+
+extern u8 *gMapAnimationPages[];
+extern u32 gFrameCount;
 
 struct MapAffineWork {
     u8 unknown_000[0x100];
@@ -23,7 +32,7 @@ struct MapAffineWork {
    mode only while that range is on screen. */
 void MapAnimation_ApplyAffineFrame(void)
 {
-    u8 **pointers = (u8 **)0x03001e6c;
+    u8 **pointers = gMapAnimationPages;
     u8 *pages = *pointers++ + 0xc80;
     s16 dispcnt = *(volatile u16 *)0x04000000 & 0xfff8;
     struct MapAffineWork *work = *(struct MapAffineWork **)pointers;
@@ -38,7 +47,7 @@ void MapAnimation_ApplyAffineFrame(void)
     (void)channel[5];
     dst = (u32 *)0x04000020;
     if (pages != NULL) {
-        src = (u32 *)(pages + (*(u32 *)0x03001e40 & 1) * 0x1400);
+        src = (u32 *)(pages + (gFrameCount & 1) * 0x1400);
         *dst++ = *src++;
         *dst++ = *src++;
         *dst++ = *src++;
@@ -54,8 +63,11 @@ void MapAnimation_ApplyAffineFrame(void)
     start = work->start;
     mode = 0;
     if (start < 200) {
+        u16 end;
+
         mode = (work->end != 0) << 1;
-        if (start <= work->end) {
+        end = work->end;
+        if (start <= end) {
             mode = 0;
             if (start == 0)
                 mode = 2;

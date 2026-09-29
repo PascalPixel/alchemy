@@ -26,6 +26,9 @@ Party_Apply:
 	.thumb_func
 Ui_AdjustValueWithoutLimitFar:
 	overlay_veneer Ui_AdjustValueWithoutLimit
+	.global UiText_DecodeMessageFar
+	.thumb_func
+UiText_DecodeMessageFar:
 	overlay_veneer UiText_DecodeMessage
 	.global UiText_CopyMessageStringFar
 	.thumb_func

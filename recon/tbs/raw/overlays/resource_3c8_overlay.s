@@ -1,136 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008e04,"ax",%progbits
-	.balign 4
-	.global Func_02000e04
-	.thumb_func
-Func_02000e04:
-	push {lr}
-	ldr r3, [pc, #68]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000e04_0
-	ldr r0, [pc, #56]
-	b .L_02000e04_1
-.L_02000e04_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000e04_2
-	ldr r0, [pc, #56]
-	b .L_02000e04_1
-.L_02000e04_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000e04_3
-	ldr r0, [pc, #52]
-	b .L_02000e04_1
-.L_02000e04_3:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000e04_4
-	ldr r0, [pc, #52]
-	b .L_02000e04_1
-.L_02000e04_4:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000e04_5
-	ldr r0, [pc, #48]
-	b .L_02000e04_1
-.L_02000e04_5:
-	ldr r0, [pc, #48]
-.L_02000e04_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b5
-	.4byte 0x0200dd68
-	.4byte 0x000000b7
-	.4byte 0x0200e020
-	.4byte 0x000000b8
-	.4byte 0x0200e230
-	.4byte 0x000000b9
-	.4byte 0x0200e350
-	.4byte 0x000000ba
-	.4byte 0x0200e548
-	.4byte 0x0200ddc8
-	.section .text.x02008e88,"ax",%progbits
-	.balign 4
-	.global Func_02000e88
-	.thumb_func
-Func_02000e88:
-	push {r5, lr}
-	ldr r3, [pc, #88]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #80]
-	cmp r2, r3
-	bne .L_02000e88_0
-	ldr r0, [pc, #76]
-	b .L_02000e88_1
-.L_02000e88_0:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02000e88_2
-	ldr r5, [pc, #76]
-	b .L_02000e88_3
-.L_02000e88_2:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02000e88_4
-	ldr r5, [pc, #72]
-	b .L_02000e88_3
-.L_02000e88_4:
-	ldr r3, [pc, #72]
-	cmp r2, r3
-	bne .L_02000e88_5
-	ldr r5, [pc, #72]
-	b .L_02000e88_3
-.L_02000e88_5:
-	ldr r3, [pc, #72]
-	cmp r2, r3
-	bne .L_02000e88_6
-	ldr r5, [pc, #68]
-	b .L_02000e88_3
-.L_02000e88_6:
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02000e88_7
-	ldr r5, [pc, #68]
-.L_02000e88_3:
-	adds r0, r5, #0
-	bl 0x0200cea4
-	adds r0, r5, #0
-	b .L_02000e88_1
-.L_02000e88_7:
-	ldr r0, [pc, #60]
-.L_02000e88_1:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b5
-	.4byte 0x0200e904
-	.4byte 0x000000b6
-	.4byte 0x0200e9c4
-	.4byte 0x000000b7
-	.4byte 0x0200eb74
-	.4byte 0x000000b8
-	.4byte 0x0200ec04
-	.4byte 0x000000b9
-	.4byte 0x0200ec64
-	.4byte 0x000000ba
-	.4byte 0x0200ecf4
-	.4byte 0x0200e8ec
 	.section .text.x0200a47c,"ax",%progbits
 	.balign 4
 	.2byte 0xb5e0
@@ -888,79 +757,6 @@ Scene_RunScene3c8SequenceA:
 	.4byte 0x0200d7c8
 	.4byte 0x0200dac8
 	.2byte 0xdd3c
-	.2byte 0x0200
-	.section .text.x0200af8c,"ax",%progbits
-	.balign 4
-	.global Func_02002f8c
-	.thumb_func
-Func_02002f8c:
-	push {lr}
-	ldr r3, [pc, #72]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_02002f8c_0
-	ldr r0, [pc, #60]
-	b 0x0200afd4
-.L_02002f8c_0:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	beq 0x0200afd2
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02002f8c_1
-	ldr r0, [pc, #56]
-	b 0x0200afd4
-.L_02002f8c_1:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02002f8c_2
-	ldr r0, [pc, #56]
-	b 0x0200afd4
-.L_02002f8c_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne 0x0200afc8
-.L_02002fc4:
-	ldr r0, [pc, #52]
-	b .L_02002fc4_0
-	.2byte 0x4b0d
-	.2byte 0x429a
-	.2byte 0xd101
-	.2byte 0x480d
-	.2byte 0xe000
-	.2byte 0x480d
-.L_02002fc4_0:
-	pop {r1}
-	bx r1
-	.2byte 0x0240
-	.2byte 0x0200
-	.2byte 0x00b5
-	.2byte 0x0000
-	.2byte 0xee44
-	.2byte 0x0200
-	.2byte 0x00b6
-	.2byte 0x0000
-	.2byte 0x00b7
-	.2byte 0x0000
-	.2byte 0xf120
-	.2byte 0x0200
-	.2byte 0x00b8
-	.2byte 0x0000
-	.2byte 0xf300
-	.2byte 0x0200
-	.2byte 0x00b9
-	.2byte 0x0000
-	.4byte 0x0200f3b4
-	.2byte 0x00ba
-	.2byte 0x0000
-	.2byte 0xf4f8
-	.2byte 0x0200
-	.2byte 0xef1c
 	.2byte 0x0200
 	.section .text.x0200b068,"ax",%progbits
 	.balign 4
@@ -3668,6 +3464,8 @@ gVinasuSettleCells:
 	.4byte 0x00010038
 	.4byte 0x00060002
 	.4byte 0x0000ffff
+	.global gVinasuHeyaEntrances1
+gVinasuHeyaEntrances1:
 	.4byte 0xffff0001
 	.4byte 0x00000028
 	.4byte 0x00000108
@@ -3692,6 +3490,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrancesOther
+gVinasuHeyaEntrancesOther:
 	.4byte 0xffff0001
 	.4byte 0x00000078
 	.4byte 0xc00000c8
@@ -3842,6 +3642,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrances3
+gVinasuHeyaEntrances3:
 	.4byte 0xffff0001
 	.4byte 0x000001c8
 	.4byte 0x40000228
@@ -3974,6 +3776,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrances4
+gVinasuHeyaEntrances4:
 	.4byte 0xffff0001
 	.4byte 0x00000068
 	.4byte 0x40000078
@@ -4046,6 +3850,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrances5
+gVinasuHeyaEntrances5:
 	.4byte 0xffff0001
 	.4byte 0x00000088
 	.4byte 0x40000088
@@ -4172,6 +3978,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrances6
+gVinasuHeyaEntrances6:
 	.4byte 0xffff0001
 	.4byte 0x00000078
 	.4byte 0x400000f8
@@ -4407,12 +4215,16 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x014140ba
 	.4byte 0x015010bb
 	.4byte 0x000001ff
+	.global gVinasuHeyaPlacementsOther
+gVinasuHeyaPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements1
+gVinasuHeyaPlacements1:
 	.4byte 0x09810098
 	.4byte 0x00000001
 	.4byte 0x00800000
@@ -4461,6 +4273,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements2
+gVinasuHeyaPlacements2:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -4569,6 +4383,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements3
+gVinasuHeyaPlacements3:
 	.4byte 0x000000fd
 	.4byte 0x0200d204
 	.4byte 0x00f80000
@@ -4605,6 +4421,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements4
+gVinasuHeyaPlacements4:
 	.4byte 0x000001f4
 	.4byte 0x0200d1e0
 	.4byte 0x03280000
@@ -4629,6 +4447,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements5
+gVinasuHeyaPlacements5:
 	.4byte 0x000001f4
 	.4byte 0x0200d1e0
 	.4byte 0x03780000
@@ -4665,6 +4485,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements6
+gVinasuHeyaPlacements6:
 	.4byte 0x00000101
 	.4byte 0x00000007
 	.4byte 0x00680000
@@ -4749,6 +4571,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents1
+gVinasuHeyaEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -4803,6 +4627,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents2
+gVinasuHeyaEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -4932,6 +4758,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents3
+gVinasuHeyaEvents3:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -5052,6 +4880,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents4
+gVinasuHeyaEvents4:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -5097,6 +4927,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents5
+gVinasuHeyaEvents5:
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -5178,6 +5010,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents6
+gVinasuHeyaEvents6:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001

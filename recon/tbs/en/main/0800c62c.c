@@ -91,8 +91,8 @@ struct CameraSync {
 };
 
 extern u8 gObjectSlots[];
-extern u8 Data_08009bb8[];
-extern u8 Render_DecodeCodeSize[];
+extern u8 Render_DecodeFrame[];
+extern u8 Render_DecodeFrameCodeSize[];
 
 u8 *Runtime_AllocateHeapBlock(s32 slot, u32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -129,8 +129,8 @@ void ObjectSystem_UpdateCamera(void)
     cam_z = cam[1] & 0xffff0000;
     sync = *(struct CameraSync **)((u32)gObjectSlots + 4);
     /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
-    do { size = (u32)Render_DecodeCodeSize; } while (0);
-    Dma_Set(Data_08009bb8, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
+    do { size = (u32)Render_DecodeFrameCodeSize; } while (0);
+    Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
         (volatile u32 *)0x040000d4);
     obj = *(struct CameraObject **)(u32)gObjectSlots;
     sync->count = 0;

@@ -1,8 +1,6 @@
-/* Named link-time values the C loads from literal pools: hardware registers
-   and constants spelled as symbols. */
-Data_00000000 = 0x00000000;
-Value_00000000 = 0x00000000;
-Value_00000001 = 0x00000001;
+/* Named link-time values the C loads from literal pools: message, resource,
+   scene and selector numbers still spelled as symbols until their
+   generators own them. */
 Value_00000002 = 0x00000002;
 MsgStatusLabel = 0x00000009;
 Value_0000000c = 0x0000000c;
@@ -278,11 +276,11 @@ MsgAbilityName = 0x00000333;
 MsgEquipSlotLabels = 0x00000b24;
 /* Routines copied to RAM as one block across several modules: the length
    of each copy runs from its entry to the end label of its last module. */
-Resource_DecodeType2CodeSize = Resource_DecodeType2End - Func_08002808;
-Render_DecodeCodeSize = Render_DecodeEnd - Func_08009bb8;
-Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Func_08015afc;
-Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Func_08015d74;
-Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Func_08015e10;
+Resource_Decode2CodeSize = Resource_Decode2End - Resource_Decode2;
+Render_DecodeFrameCodeSize = Render_DecodeFrameEnd - Render_DecodeFrame;
+Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Tile_Decompress4bpp;
+Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMasked;
+Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Tile_ExpandOpaque;
 SentouKouka_TenkaiCodeSize = SentouKouka_TenkaiEnd - SentouKouka_Tenkai;
 Value_00000050 = 0x00000050;
 Value_00000051 = 0x00000051;

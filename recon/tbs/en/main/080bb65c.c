@@ -1,3 +1,5 @@
+/* alchemy permute: BattlePresentation_WaitForAdvance against recon/tbs/raw/080bb65c.s: score 710 (14 register-only, 10 reordered).
+   Job 7, iteration 7848; rewrites: 4x pointer arithmetic or indexing, 3x add a same-width cast, 2x reorder local declarations, 2x share one temporary between two statements, 2x drop a same-width cast, 2x toggle register, 1x swap commutative operands, 1x introduce a temporary, 1x test truth or compare with zero. */
 /* Draft, not exact (2026-09-26): candidate=356 reference=356 differing_halfwords=52,
    43 aligned edits. Retained the simpler bitfield model after three hypotheses.
    H3 (356 bytes, 46 differing halfwords, 44 aligned edits; commit 8a4089bda)
@@ -93,10 +95,13 @@ s32 BattlePresentation_WaitForAdvance(void)
     struct AdvanceSprite sprite;
     s32 frame;
     s32 slot;
-    struct UiCursorOrigin *origin;
     s32 src;
-    struct UiCursorOffset *offset;
+    struct UiCursorOrigin *origin;
     s32 offset_x;
+    register struct UiCursorOffset *offset;
+    s32 tmp;
+    s32 tmp2;
+    s32 tmp3;
 
     while (!UiWork_IsCompleteFar())
         WaitFrames(1);
@@ -109,10 +114,13 @@ loop:
     offset = gBattleDisplayWork->offset;
     QueueIoWriteDelay10(0x0400004a, 4);
     QueueIoWriteDelay6(0x0400004a, 16);
-    ((struct Io *)0x04000052)->a = 16;
-    spr->oam.raw[0] = 0xa400;
+    tmp3 = (s32)16;
+    tmp = tmp3;
+    ((struct Io *)0x04000052)->a = tmp;
+    spr[0].oam.raw[0] = 0xa400;
     spr->oam.raw[1] = 0;
-    spr->oam.attr.tile = Resource_GetBuffer(slot, src);
+    tmp3 = Resource_GetBuffer(slot, src);
+    spr->oam.attr.tile = tmp3;
     offset_x = offset->x >> 8;
     spr->oam.attr.x = origin->col * 8 + offset_x + 4;
     spr->oam.attr.y = Trig_Sin(gFrameCount << 12) / 32768 + origin->row * 8 + (offset->y >> 8) + 6;

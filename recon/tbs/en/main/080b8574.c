@@ -1,3 +1,5 @@
+/* alchemy permute: BattlePresentation_BuildSortedUnitEntries against recon/tbs/raw/080b8574.s: score 375 (19 register-only, 1 operand, 1 reordered, 1 inserted, 1 deleted).
+   Job 9, iteration 2129; rewrites: 5x change loop form, 4x reorder independent statements, 4x introduce a temporary, 4x split or join a compound assignment, 3x reorder local declarations, 2x share one temporary between two statements, 2x add a same-width cast, 2x drop a same-width cast, 2x pointer arithmetic or indexing, 1x swap commutative operands, 1x remove a temporary, 1x move an assignment into or out of a condition or call, 1x toggle register. */
 /* Draft, not-yet-C: complete reference extent is 376 bytes including pools.
  * 2026-09-26: three bounded hypotheses from the lawful TBS ROM and existing
  * battle headers. The old implicit-prototype lift was 384 bytes; this typed
@@ -36,23 +38,28 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 {
     struct BattleSortedUnitEntry swap;
     u16 unit_ids[14];
-    s32 count = 0;
     s32 first_count;
+    s32 count = 0;
     s32 second_count;
     s32 priority_range;
     s32 index;
     u16 *unit_id_ptr;
     struct BattleSortedUnitEntry *entry;
+    s32 tmp;
+    s32 tmp3;
 
-    first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
-    for (index = 0; index != 4; index++) {
+    index = 0;
+    tmp3 = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
+    tmp = tmp3;
+    while (index != 4) {
         Owner_GetStateFar(index);
+        index += 1;
     }
-
+    first_count = tmp;
+    tmp3 = BATTLE_SIDE_ENEMIES;
     for (index = 0; index < first_count; index++) {
         s32 unit_id = unit_ids[index];
         struct BattleUnit *unit = Owner_GetStateFar(unit_id);
-
         entry = &entries[index];
         entry->unit_id = unit_id;
         entry->value = unit->agility;
@@ -61,17 +68,15 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         entry->priority = 0x80;
         count++;
     }
-
     second_count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unit_ids);
     entry = &entries[first_count];
     priority_range = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
     if (second_count > 0) {
-        unit_id_ptr = unit_ids;
         index = second_count;
+        unit_id_ptr = unit_ids;
         do {
             s32 unit_id = *unit_id_ptr++;
             struct BattleUnit *unit = Owner_GetStateFar(unit_id);
-
             entry->unit_id = unit_id;
             entry->value = unit->agility >> 1;
             if (entry->value != 0) {
@@ -85,26 +90,26 @@ s32 BattlePresentation_BuildSortedUnitEntries(
             index--;
         } while (index != 0);
     }
-
-    for (index = count - 2; index > 0; index--) {
-        s32 swaps = 0;
-        s32 pos;
-
-        for (pos = count - 1; pos > 0; pos--) {
-            if (entries[pos].value > entries[pos - 1].value) {
-                Dma_Set(&entries[pos], &swap, 0x84000004,
-                        (volatile u32 *)0x040000d4);
-                Dma_Set(&entries[pos - 1], &entries[pos], 0x84000004,
-                        (volatile u32 *)0x040000d4);
-                Dma_Set(&swap, &entries[pos - 1], 0x84000004,
-                        (volatile u32 *)0x040000d4);
-                swaps++;
+    index = count - 2;
+    if (index > 0) {
+        do {
+            s32 swaps = 0;
+            s32 pos;
+            pos = count - 1;
+            while (0 < pos) {
+                if (entries[pos].value > entries[pos - 1].value) {
+                    Dma_Set(entries + pos, &swap, 0x84000004, (volatile u32 *)0x040000d4);
+                    Dma_Set(&entries[pos - 1], &entries[pos], 0x84000004, (volatile u32 *)0x040000d4);
+                    Dma_Set(&swap, &entries[pos - 1], 0x84000004, (volatile u32 *)0x040000d4);
+                    swaps++;
+                }
+                pos--;
             }
-        }
-        if (swaps == 0) {
-            break;
-        }
+            if (swaps == 0) {
+                break;
+            }
+            index--;
+        } while (index > 0);
     }
-
     return count;
 }

@@ -1,6 +1,6 @@
 /* Draft, not exact (2026-09-24): 155 differing halfwords, 436 of 440 bytes;
    control flow and calls match. Residual: the reference loads the party
-   state base (Data_02000240) from the pool at each use where this candidate
+   state base (gGameState) from the pool at each use where this candidate
    keeps it in r5, and loads the unit field into r0. The goto into the
    encounter pick follows the reference, which reaches it with the zone
    entry unset when flag 0x15f forces an encounter. */
@@ -23,8 +23,8 @@ struct FieldPartyState {
     s16 no_encounters;
 };
 
-extern u8 *Data_03001ebc;
-extern struct FieldPartyState Data_02000240;
+extern u8 *gEventWork;
+extern struct FieldPartyState gGameState;
 
 s32 GameFlag_TestFar(s32 flag);
 u8 *Owner_GetStateFar(s32 unit);
@@ -32,7 +32,7 @@ s32 Party_GetAverageLevelFar(void);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);
 
-s32 Func_0808ae74(s32 zone, s32 steps)
+s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 {
     u8 *work;
     struct EncounterZone *entry;
@@ -46,14 +46,14 @@ s32 Func_0808ae74(s32 zone, s32 steps)
     s32 i;
     u8 *weight;
 
-    work = Data_03001ebc;
+    work = gEventWork;
     if (GameFlag_TestFar(0x15f) != 0)
         goto encounter;
     if (GameFlag_TestFar(0x160) != 0 || GameFlag_TestFar(0x161) != 0)
         goto none;
     if (zone == 0)
         return 0;
-    if (Data_02000240.no_encounters != 0)
+    if (gGameState.no_encounters != 0)
         return 0;
     entry = &((struct EncounterZone *)0x0809c610)[zone];
     rate = entry->rate;
@@ -68,7 +68,7 @@ s32 Func_0808ae74(s32 zone, s32 steps)
         level = 0;
     if (level > 5)
         level = 5;
-    if (level > 0 && Data_02000240.encounters_off != 0) {
+    if (level > 0 && gGameState.encounters_off != 0) {
 none:
         return 0;
     }
@@ -83,7 +83,7 @@ none:
         *(s32 *)(work + 0x1a8) = bias;
     }
     step = ((s32 (*)(s32, s32))0x0300013c)((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
-    total = Data_02000240.encounter_steps += Iwram_MulQ16(step, steps);
+    total = gGameState.encounter_steps += Iwram_MulQ16(step, steps);
     if (total < *(s32 *)(work + 0x1ac))
         return 0;
 encounter:

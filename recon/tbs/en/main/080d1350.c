@@ -76,9 +76,9 @@ struct RuntimeCells {
     DrawRectangle draw_rectangle;
 };
 
-extern struct RuntimeCells Data_03001eec;
-extern u8 Data_00000073[];
-extern u8 Data_00000079[];
+extern struct RuntimeCells gBattleFxWork;
+extern u8 ResourceId_ParticleSpritesA[];
+extern u8 ResourceId_RuneSheet[];
 extern u16 ParticleStreams_CellOffsets[];
 extern u8 Data_080ee158[];
 extern struct EffectStep gMapCellBuffer[];
@@ -119,7 +119,7 @@ void Unnamed_080d1350(struct BattleEffectArgument *argument)
     struct BattleEffectArgument **argument_cell;
     void **cell_cursor;
 
-    cells = &Data_03001eec;
+    cells = &gBattleFxWork;
     cell_cursor = (void **)cells;
     runtime = *cell_cursor++;
     draw_destination = *cell_cursor;
@@ -131,9 +131,9 @@ void Unnamed_080d1350(struct BattleEffectArgument *argument)
     BattleFx_BeginCanvasLayer(1);
     ((WordCopy)0x03001388)(
         (void *)0x05000000,
-        (const void *)Resource_GetTableEntry((u32)Data_00000079),
+        (const void *)Resource_GetTableEntry((u32)ResourceId_RuneSheet),
         0x80);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)Data_00000073), graphics);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)ResourceId_ParticleSpritesA), graphics);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
 
     runtime->display_mode = 2;

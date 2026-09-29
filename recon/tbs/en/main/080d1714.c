@@ -5,7 +5,7 @@
 
 /*
  * Battle-presentation scene at 0x080d1714, a 400-frame sequence driven from
- * the shared cell window at Data_03001eec.  Structure recovered against
+ * the shared cell window at gBattleFxWork.  Structure recovered against
  * recon/tbs/raw/080d1714.s; the neighbouring draft
  * recon/tbs/en/main/080d1350.c supplied the cell window, the
  * EffectRuntime offsets (0x7780 display pair, 0x77a8 impact mode, 0x7824
@@ -13,7 +13,7 @@
  *
  * The frame body is one do-while over `frame`; the reference reaches it with
  * a long `bl` back-branch because the body exceeds Thumb's short-branch
- * range.  Skip input (Data_03001b04 & 3) fast-forwards `frame` to 160 or 395.
+ * range.  Skip input (gKeysRepeat & 3) fast-forwards `frame` to 160 or 395.
  *
  * runtime->points[64] is one 28-byte record array that the scene reuses in
  * three disjoint ranges: [0..31] for the ring/burst particles, [32..59] for
@@ -136,9 +136,9 @@ struct EffectRuntime {
  * neighbouring draft recon/tbs/en/main/080d1350.c walks the same
  * window from cell[-1] instead.
  */
-extern void *Data_03001eec[];
-extern struct SceneCameraObject Data_03001ce0;
-extern u32 Data_03001b04;
+extern void *gBattleFxWork[];
+extern struct SceneCameraObject gProjection;
+extern u32 gKeysRepeat;
 extern struct Particle gMapCellBuffer[];
 extern u8 Value_00000073;
 extern u8 Value_00000082;
@@ -156,27 +156,27 @@ extern u16 Data_080ee17e[];
 void BattleFx_BeginCanvasLayer(s32 mode);
 u8 *Resource_GetTableEntry(s32 resource_id);
 void Resource_DecodeType01(const void *source, void *destination);
-s32 Func_080041d8(void (*callback)(void), s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 interval);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 s32 Random16(void);
 s32 ArcTan2(s32 x, s32 z);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080022fc(s32 numerator, s32 denominator);
-s32 Func_08002304(s32 numerator, s32 denominator);
-s32 Func_0800231c(s32 angle);
+s32 Math_Mod(s32 numerator, s32 denominator);
+s32 Math_ModU(s32 numerator, s32 denominator);
+s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *source, void *destination);
 void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyRoll(s32 pitch);
 void SceneTransform_ApplyPosition(struct Vector3 *position);
-void Func_080f9010(s32 cue);
+void Audio_PlayCue(s32 cue);
 void EffectPosition_ApplyBaseAndYOffset(const void *source, struct Vector3 *output);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, s32, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
-void Func_080b50e8(s32 value);
+void BattleEventRuntime_BeginPhaseFar(s32 value);
 void BattleFx_SelectLivingTargets(struct EffectArgument *argument);
 void BattleFx_SpawnObjects(s32, s32, s32);
 void Object_ApplyProjectedPlacementFar(s32 handle, struct Placement *place, struct ScalePair *scale,
@@ -185,10 +185,10 @@ void ResourceObject_ReleaseFar(s32 handle);
 void BattleEffect_SetupBlendedDisplay(void);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 count);
-void Func_08002dd8(s32 block);
+void Runtime_ReleaseHeapBlock(s32 block);
 void BattleFx_EndCanvasLayer(void);
 
-void Func_080d1714(struct EffectArgument *argument)
+void Unnamed_080d1714(struct EffectArgument *argument)
 {
     void **cells;
     void *draw_destination;
@@ -229,7 +229,7 @@ void Func_080d1714(struct EffectArgument *argument)
     struct Placement place;
     struct ScalePair scale;
 
-    cells = Data_03001eec;
+    cells = gBattleFxWork;
     draw_destination = cells[0];
     view = *(void **)((u8 *)cells - 112);
     runtime = cells[-1];
@@ -250,7 +250,7 @@ void Func_080d1714(struct EffectArgument *argument)
 
     runtime->display_mode = 2;
     runtime->display_value = 50;
-    Func_080041d8(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     wave_x = 0x800000;
     wave_y = 0x280000;
@@ -291,7 +291,7 @@ void Func_080d1714(struct EffectArgument *argument)
 
     frame = 0;
     do {
-        if ((Data_03001b04 & 3) != 0) {
+        if ((gKeysRepeat & 3) != 0) {
             if (frame <= 159)
                 frame = 160;
             else if (frame <= 394)
@@ -302,17 +302,17 @@ void Func_080d1714(struct EffectArgument *argument)
         Graphics_PrepareTransferInIwramWork(view, (u8 *)view + 12);
 
         if (frame == 16)
-            Func_080f9010(141);
+            Audio_PlayCue(141);
         if (frame == 256)
-            Func_080f9010(140);
+            Audio_PlayCue(140);
         if (frame == 334)
-            Func_080f9010(212);
+            Audio_PlayCue(212);
         if (frame == 347)
-            Func_080f9010(212);
+            Audio_PlayCue(212);
         if (frame == 359)
-            Func_080f9010(212);
+            Audio_PlayCue(212);
         if (frame == 372)
-            Func_080f9010(212);
+            Audio_PlayCue(212);
 
         index = 0;
         if (runtime->argument->target_count != 0) {
@@ -324,7 +324,7 @@ void Func_080d1714(struct EffectArgument *argument)
                     object->x =
                         (radius[index] * Trig_Sin(heading[index])) >> 1;
                     object->z =
-                        (radius[index] * Func_0800231c(heading[index])) >> 1;
+                        (radius[index] * Trig_Cos(heading[index])) >> 1;
 
                     if (frame <= 159) {
                         if (frame > index * 16 + 16)
@@ -374,7 +374,7 @@ void Func_080d1714(struct EffectArgument *argument)
                 size = 48;
             draw_rectangle(
                 draw_destination,
-                (u8 *)runtime + Func_080022fc(frame / 4, 3) * 3072
+                (u8 *)runtime + Math_Mod(frame / 4, 3) * 3072
                     + (48 - size) * 48,
                 32,
                 112 - size,
@@ -388,7 +388,7 @@ void Func_080d1714(struct EffectArgument *argument)
                 size = 64;
             draw_rectangle(
                 draw_destination,
-                (u8 *)runtime + Func_080022fc(frame / 4, 3) * 3072
+                (u8 *)runtime + Math_Mod(frame / 4, 3) * 3072
                     + (64 - size) * 48,
                 32,
                 64 - size,
@@ -397,7 +397,7 @@ void Func_080d1714(struct EffectArgument *argument)
         }
 
         if ((u32)(frame - 160) <= 239) {
-            src = (u8 *)runtime + Func_080022fc(frame / 4, 3) * 3072;
+            src = (u8 *)runtime + Math_Mod(frame / 4, 3) * 3072;
             draw_rectangle(draw_destination, src, 8, 0, 48, 64);
             draw_rectangle(draw_destination, src, 8, 64, 48, 64);
         }
@@ -409,7 +409,7 @@ void Func_080d1714(struct EffectArgument *argument)
                 if (point->field_18 == 0) {
                     work.x = point->field_08 * Trig_Sin(point->field_10);
                     work.y = point->field_04;
-                    work.z = point->field_08 * Func_0800231c(point->field_10);
+                    work.z = point->field_08 * Trig_Cos(point->field_10);
                     EffectPosition_ApplyBaseAndYOffset(&work, &screen);
                     screen.x >>= 1;
                     if (point->field_04 <= 0x3fffff) {
@@ -475,7 +475,7 @@ void Func_080d1714(struct EffectArgument *argument)
                 } while (index != runtime->argument->target_count);
             }
 
-            Data_03001ce0.field_0c = 72;
+            gProjection.field_0c = 72;
 
             point = runtime->points;
             index = 0;
@@ -483,10 +483,10 @@ void Func_080d1714(struct EffectArgument *argument)
                 speed = Random16() & 127;
                 angle = (Random16() & 0x7fff) + 0x9fff;
                 point->field_00 = speed * Trig_Sin(angle);
-                point->field_04 = speed * Func_0800231c(angle);
+                point->field_04 = speed * Trig_Cos(angle);
                 point->field_18 = 0;
                 point->field_08 =
-                    (Func_08002304(Random16(), 200) - 100) << 16;
+                    (Math_ModU(Random16(), 200) - 100) << 16;
                 index++;
                 point++;
             } while (index != 32);
@@ -600,7 +600,7 @@ void Func_080d1714(struct EffectArgument *argument)
                             spark->field_0c =
                                 (Trig_Sin(angle) * speed) >> 6;
                             spark->field_10 =
-                                -(Func_0800231c(angle) * speed) >> 6;
+                                -(Trig_Cos(angle) * speed) >> 6;
                             spark->field_10 =
                                 ((Random16() & 255) - 128) << 10;
                             spark->field_00 = 0;
@@ -692,7 +692,7 @@ void Func_080d1714(struct EffectArgument *argument)
                             do {
                                 work.x = 0;
                                 work.y = spark->field_18
-                                    * Func_0800231c(angle);
+                                    * Trig_Cos(angle);
                                 work.z = spark->field_18
                                     * Trig_Sin(angle);
                                 spark->field_18 += 2;
@@ -733,7 +733,7 @@ void Func_080d1714(struct EffectArgument *argument)
         frame++;
     } while (frame != 400);
 
-    Func_080b50e8(134);
+    BattleEventRuntime_BeginPhaseFar(134);
 
     index = 0;
     if (runtime->argument->target_count != 0) {
@@ -747,7 +747,7 @@ void Func_080d1714(struct EffectArgument *argument)
         } while (index != runtime->argument->target_count);
     }
 
-    Data_03001ce0.field_0c = 120;
+    gProjection.field_0c = 120;
 
     BattleEffect_SetupBlendedDisplay();
 
@@ -758,7 +758,7 @@ void Func_080d1714(struct EffectArgument *argument)
     } while (index != 9);
 
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

@@ -145,9 +145,9 @@ Resource_DirectoryTable:
 	resource , Slots_FramePicture
 	resource , Slots_Icons
 	resource , Slots_JackpotBanner
-	resource , Slots_TablePicture
+	resource , LuckyDice_Board
 	resource , Slots_DomePicture
-	resource , Slots_Sprites
+	resource , LuckyDice_Sprites
 	resource , Resource_Data087
 	resource , Slots_YouWinBanner
 	resource , Slots_YouLoseBanner

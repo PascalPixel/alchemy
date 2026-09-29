@@ -14,7 +14,13 @@
    change that header for this draft. Remaining: count-zero scheduling,
    the 63/MulQ16 entry register order, tile-layer scratch r0 versus r1,
    and the missing tail kind copy (adds r3,r6,#0; ands r3,r2). The latter
-   shortens the body and shifts its final pool. No code or byte credit added. */
+   shortens the body and shifts its final pool. No code or byte credit added.
+   2026-09-29 (Venus): the tile layer in its own local (bits_val) fixes the
+   r0/r1 scratch, and testing flags_1d against 1 rather than kind fixes the
+   tail's operand order (23 to 11 diff lines). Left: the count-zero and
+   63/pool-load scheduling at the loop head, and the out-of-view path loads
+   flags_1d itself (ldrb r2) before joining the shared test; a goto into
+   the shared test reorders the whole body. */
 
 struct CameraTile {
     u32 unk_00 : 12;
@@ -163,9 +169,9 @@ void ObjectSystem_UpdateCamera(void)
                         sprite->second_priority = bits;
                     }
                 }
-                bits = tile->layer;
-                if (bits != 0)
-                    obj->layer = bits - 1;
+                bits_val = tile->layer;
+                if (bits_val != 0)
+                    obj->layer = bits_val - 1;
                 scale[0] = Iwram_MulQ16(obj->scale_x, sprite->scale);
                 scale[1] = Iwram_MulQ16(obj->scale_y, sprite->scale);
                 pos[0] = dx;
@@ -187,7 +193,7 @@ void ObjectSystem_UpdateCamera(void)
             }
             if (obj->held == 0) {
                 kind = 1;
-                if (!(sprite->flags_1d & kind)) {
+                if (!(sprite->flags_1d & 1)) {
                     Resource_ActivateEntry(sprite->resource);
                     sprite->activated = kind;
                 }
@@ -196,7 +202,7 @@ void ObjectSystem_UpdateCamera(void)
             kind = obj->kind & 15;
             if (kind == 1) {
                 sprite = obj->sprite;
-                if (obj->held == 0 && !(sprite->flags_1d & kind)) {
+                if (obj->held == 0 && !(sprite->flags_1d & 1)) {
                     Resource_ActivateEntry(sprite->resource);
                     sprite->activated = kind;
                 }

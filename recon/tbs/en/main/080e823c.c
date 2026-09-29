@@ -29,14 +29,14 @@
  *   - Tear down: release the fifteen handles, drop the scheduler callback and
  *     both graphics jobs.
  *
- * `Func_080072f4` is not a real symbol: it is the r4 entry of the
+ * `_call_via_r4` is not a real symbol: it is the r4 entry of the
  * `_call_via_rN` trampoline block at recon/tbs/raw/080072e4.s, so a `bl` there
  * is an indirect call through the DrawRectangleFn value carried in r4. That
  * finding is recorded in recon/tbs/en/dossiers.json#main:080dc1ec and is
  * modelled here the way the 0x080d41a4 draft models it.
  *
- * Uncertain, left neutral: the roles of Func_080cd594/Func_080c9048/
- * Func_080cd104/Func_080dbb24 and of the particle words at +0x08 and +0x14;
+ * Uncertain, left neutral: the roles of BattleFx_BeginCanvasLayer/BattlePres_ConfigureEffectDisplay/
+ * Unnamed_080cd104/BattleFx_SpawnObjects and of the particle words at +0x08 and +0x14;
  * the small link-time constants that the reference materialises from its
  * literal pool rather than as immediates (0, 0x3C, 0x73, 0xC0) are spelled as
  * `Value_<hex>` externs, which is the only ordinary-C reading that reproduces a
@@ -89,34 +89,34 @@ extern u16 Data_080eeef8[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattlePres_ConfigureEffectDisplay(void);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Unnamed_080cd104(s32 a, s32 b);
 void BattleFx_SelectLivingTargets(void *object);
 void BattleFx_SpawnObjects(s32 a, s32 b, s32 c);
-void *Func_08009030(s32 id);
-s32 Func_080022fc(s32 a, s32 b);
-void Func_08009020(void *object, s32 value);
+void *ResourceObject_CreateFar(s32 id);
+s32 Math_Mod(s32 a, s32 b);
+void AnimationObjects_SelectAnimationFar(void *object, s32 value);
 void WaitFrames(s32 frames);
 void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
 s32 Random16(void);
-void Func_080f9010(s32 id);
+void Audio_PlayCue(s32 id);
 void Object_ApplyProjectedPlacementFar(s32 handle, const s32 *pos, const s32 *clip, s32 mode);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 s32 Math_Div(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(SceneParticle *particle, s32 a, s32 b);
-void Func_080b5088(s32 member, s32 a);
+void BattleMotion_ApplyVariantMotionFar(s32 member, s32 a);
 void ObjectGroup_UpdateMembers(s32 member, s32 a, s32 b, s32 c, s32 d);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080b50e8(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 void BattleEffect_SetupBlendedDisplay(void);
 void ResourceObject_ReleaseFar(s32 handle);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 void BattleFx_EndCanvasLayer(void);
 
-void Func_080e823c(void *object)
+void BattleEffect_RunCirclingFallingScene(void *object)
 {
     void **cursor;
     void *work;
@@ -164,7 +164,7 @@ void Func_080e823c(void *object)
     *(u16 *)0x05000000 = (u16)(s32)&Value_00000000;
     *(u16 *)0x05000002 = (u16)(s32)&Value_00000000;
     ((struct BattleEffectWork *)work)->transfer_mode = 0;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
     Unnamed_080cd104(1, 0);
     BattleFx_SelectLivingTargets(((struct BattleEffectWork *)work)->effect);
     BattleFx_SpawnObjects(9, 0x17B, 2);
@@ -172,11 +172,11 @@ void Func_080e823c(void *object)
     /* Six drawable objects into handles 9..14 of the work table. */
     handle_off = 0x77FC;
     for (i = 0; i != 6; i++) {
-        drawable = Func_08009030(390);
+        drawable = ResourceObject_CreateFar(390);
         M2C_FIELD(work, void **, handle_off) = drawable;
         if (drawable != NULL) {
             M2C_FIELD(drawable, s8 *, 0x26) = 0;
-            Func_08009020(drawable, Func_080022fc(i, 3));
+            AnimationObjects_SelectAnimationFar(drawable, Math_Mod(i, 3));
             drawable = M2C_FIELD(work, void **, handle_off);
             M2C_FIELD(drawable, u8 *, 9) =
                 (u8)((M2C_FIELD(drawable, u8 *, 9) & ~0xC) | 4);
@@ -249,16 +249,16 @@ void Func_080e823c(void *object)
         clip_ptr = clip;
         do {
             if (frame == 94) {
-                Func_080f9010(156);
+                Audio_PlayCue(156);
             }
             if (frame == 136) {
-                Func_080f9010(156);
+                Audio_PlayCue(156);
             }
             if (frame == 178) {
-                Func_080f9010(156);
+                Audio_PlayCue(156);
             }
             if (frame == 260) {
-                Func_080f9010(145);
+                Audio_PlayCue(145);
             }
             clip[0] = Data_080edac8[0];
             clip[1] = Data_080edac8[1];
@@ -284,7 +284,7 @@ void Func_080e823c(void *object)
             if (frame <= 90) {
                 angle = frame << 9;
                 org.x = (Trig_Sin(angle) << 4) + 0x9C0000;
-                org.y = (Func_0800231c(angle) << 4) + 0x5C0000;
+                org.y = (Trig_Cos(angle) << 4) + 0x5C0000;
             }
 
             if (frame <= 196) {
@@ -406,7 +406,7 @@ void Func_080e823c(void *object)
                 if (count != 0) {
                     off = 36;
                     do {
-                        Func_080b5088(
+                        BattleMotion_ApplyVariantMotionFar(
                             ((struct BattleEffectArgument *)
                                 ((struct BattleEffectWork *)work)->effect)->actors[
                                 (off - 36) >> 1],
@@ -433,7 +433,7 @@ void Func_080e823c(void *object)
                         speed += 32;
                         entry->vx = (speed * Trig_Sin(angle)) >> 7;
                         entry->vy =
-                            -((speed * Func_0800231c(angle)) * 2) >> 7;
+                            -((speed * Trig_Cos(angle)) * 2) >> 7;
                         entry->timer = (Random16() & 15) + 32;
                         entry++;
                     }
@@ -467,14 +467,14 @@ void Func_080e823c(void *object)
         } while (frame != 320 && (*(s32 *)0x03001B04 & 3) == 0);
     }
 
-    Func_080b50e8(0x86);
+    BattleEventRuntime_BeginPhaseFar(0x86);
     BattleEffect_SetupBlendedDisplay();
     handle = (s32 *)((u8 *)work + 0x77D8);
     for (i = 0; i != 15; i++) {
         ResourceObject_ReleaseFar(*handle++);
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

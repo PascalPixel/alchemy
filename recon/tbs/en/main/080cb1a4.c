@@ -24,7 +24,7 @@
  * (template-main-080ce85c, games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C),
  * but the real callee set and constants match the 0x03001eec "battle work"
  * subsystem documented there and in games/THE BROKEN SEAL/src/battle/effects/puff_arc/
- * run.c and recon/tbs/en/main/080e01e4.c: same Func_080cd594(mode) /
+ * run.c and recon/tbs/en/main/080e01e4.c: same BattleFx_BeginCanvasLayer(mode) /
  * Resource_LoadAndDecompress((s32)&Value_XXXXXXXX, work, f, f) / work-offsets
  * 0x7780/0x7784/0x7824/0x7828 shape, the same 96-pass outer loop as
  * 080e01e4.c, and the same 0x7780=2 / 0x7784=75 pair as puff_arc's
@@ -32,7 +32,7 @@
  *
  * Unlike any of those siblings, this owner also drives a live
  * `struct MotionObject` pair through Object_ResetMotion/Object_SetPosition/
- * Object_SetMode (Func_08009140/Func_08009150/Func_08009080, aliased in
+ * Object_SetMode (Object_ResetMotion/Object_SetPosition/Object_SetMode, aliased in
  * types.h) and FixedPoint_Ratio (Math_Div) -- the same low-level shape
  * games/THE BROKEN SEAL/src/battle/motion/set_approach_motion.c uses, but inlined here
  * with its own scale (90, not 80) and without that function's
@@ -50,23 +50,23 @@
 extern u8 Value_0000007d;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-s32 Func_080b5070(s32 member_id);
+s32 Battle_GetObjectTableValueFar(s32 member_id);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 void Camera_ApplyShake(s32 a, s32 b);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 
-void Func_080cb1a4(void *object_param)
+void Unnamed_080cb1a4(void *object_param)
 {
     void **heap_cache;
     void **cursor;
@@ -103,7 +103,7 @@ void Func_080cb1a4(void *object_param)
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     draw[0] = (DrawRectangleFn)heap_cache[7];
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     first_context = GetBattleObjectSlotFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
@@ -115,9 +115,9 @@ void Func_080cb1a4(void *object_param)
     x = object->x + FixedPoint_Ratio(90 * (target->x - object->x), 100);
     z = object->z + FixedPoint_Ratio(90 * (target->z - object->z), 100);
 
-    y_offset_actor = Func_080b5070(
+    y_offset_actor = Battle_GetObjectTableValueFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
-    y_offset_member = Func_080b5070(
+    y_offset_member = Battle_GetObjectTableValueFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
 
     Object_ResetMotion(object);
@@ -197,7 +197,7 @@ void Func_080cb1a4(void *object_param)
                 angle = i << 12;
                 rx = (screen_ptr[0]
                     + ((radius * Trig_Sin(angle)) >> 16)) - 16;
-                ry = (radius * Func_0800231c(angle) >> 16) - frame + 100;
+                ry = (radius * Trig_Cos(angle) >> 16) - frame + 100;
                 draw[0](canvas, (u8 *)work + offset, rx, ry, 32, 64);
             }
         }
@@ -211,10 +211,10 @@ void Func_080cb1a4(void *object_param)
         }
 
         if (frame == 54) {
-            Func_080b50e8(134);
+            BattleEventRuntime_BeginPhaseFar(134);
         }
         if (frame == 0) {
-            Func_080f9010(136);
+            Audio_PlayCue(136);
             M2C_FIELD(work, s32 *, 0x77A8) = 6;
         }
         if (frame == 53) {
@@ -227,6 +227,6 @@ void Func_080cb1a4(void *object_param)
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

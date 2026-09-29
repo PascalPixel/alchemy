@@ -81,7 +81,7 @@ struct PasswordMoney {
     } amount;
 };
 
-extern struct PasswordMoney Data_02000240;
+extern struct PasswordMoney gGameState;
 
 /* FAKEMATCH: the inline boundary is retained from the matching experiment,
  * not evidence of an original helper. Inventory_Find and Inventory_GetQuantity
@@ -246,9 +246,9 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
                 }
             }
         }
-        out[165] = Data_02000240.amount.half.high;
-        out[166] = Data_02000240.amount.value >> 8;
-        out[167] = Data_02000240.amount.value;
+        out[165] = gGameState.amount.half.high;
+        out[166] = gGameState.amount.value >> 8;
+        out[167] = gGameState.amount.value;
     }
 
     if (mode != 2) {

@@ -95,7 +95,7 @@ extern u8 Value_000000b4;
 /* A rising curtain opens into nine staggered puffs, each releasing sixteen
  * particles. Particle z is an angle here; the 2-D physics step leaves it
  * untouched while advancing x/y and applying gravity. */
-void Func_080e08c0(struct BattleEffectArgument *effect)
+void Unnamed_080e08c0(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
     void **cursor;

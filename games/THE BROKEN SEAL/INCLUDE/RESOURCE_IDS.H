@@ -24,7 +24,7 @@ extern char ResourceId_SoruShindenBackdrop;
 extern char ResourceId_ForestBackdrop;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_DesertBackdrop;
-extern char ResourceId_StormCloudBackdrop;
+extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_RevealMaskA;
 extern char ResourceId_RevealMaskB;
 extern char ResourceId_RevealMaskC;
@@ -82,6 +82,8 @@ extern char ResourceId_LimePalette;
 
 extern char ResourceId_FireStreakSheet;
 extern char ResourceId_YellowOrbSheet;
+extern char ResourceId_BlueBurstSheet;
+extern char ResourceId_FirePillarSheetB;
 extern char ResourceId_SkullSheet;
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_RuneSheet;

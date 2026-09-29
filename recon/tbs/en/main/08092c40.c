@@ -32,15 +32,15 @@ struct PlayerTable {
 };
 
 extern struct WorkPointers gWindowWork;
-extern struct PlayerTable Data_02000240;
+extern struct PlayerTable gGameState;
 
 s32 ObjectTable_ReadActiveValue(s32 key);
 u8 *ObjectTable_Get(s32 id);
 s32 Render_ProjectPoint(const s32 *point, s32 *screen);
 s32 Object_GetScreenPosition(s32 id, s32 *screen);
-void Func_08015110(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
-void Func_08015108(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
-s32 Func_080151e0(s32 speaker);
+void UiText_GetResourceDimensionsAltFar(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
+void UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
+s32 Localization_LookupEntryIdFar(s32 speaker);
 void WaitFrames(s32 frames);
 s32 BattleFx_GetResourceId(s32 speaker);
 s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 style);
@@ -103,14 +103,14 @@ s32 UiText_OpenMessageAtObject(u32 arg)
             }
         } else if (id <= 7) {
             speaker = id;
-            object = ObjectTable_Get(Data_02000240.leader);
+            object = ObjectTable_Get(gGameState.leader);
             if (work->view_mode == 3) {
                 Render_ProjectPoint((s32 *)(object + 8), pos);
                 x = pos[0] >> 3;
                 y = pos[1] >> 3;
                 visible = 1;
             } else {
-                visible = Object_GetScreenPosition(Data_02000240.leader, pos) != -1;
+                visible = Object_GetScreenPosition(gGameState.leader, pos) != -1;
                 x = pos[0] >> 3;
                 y = pos[1] >> 3;
             }
@@ -121,7 +121,7 @@ s32 UiText_OpenMessageAtObject(u32 arg)
         } else {
             left = 0;
             top = 0;
-            Func_08015110(message, &left, &top, &width, &height);
+            UiText_GetResourceDimensionsAltFar(message, &left, &top, &width, &height);
             left = x - width / 2;
             if (flags & 0x4000)
                 top = y - height - 1;
@@ -150,10 +150,10 @@ s32 UiText_OpenMessageAtObject(u32 arg)
             if (column + margin > 29)
                 column = x - margin - 2;
         }
-        face = Func_080151e0(speaker);
+        face = Localization_LookupEntryIdFar(speaker);
         handle = -1;
         if (face != -1) {
-            Func_08015110(message, &left, &top, &width, &height);
+            UiText_GetResourceDimensionsAltFar(message, &left, &top, &width, &height);
             tail = top - 5;
             message = handle;
             if (top <= y)
@@ -164,13 +164,13 @@ s32 UiText_OpenMessageAtObject(u32 arg)
                 tail = top - 5;
             if (top < tail) {
                 lines = height;
-                Func_08015108(-1, &left, &top, &width, &height);
+                UiText_GetResourceDimensionsFar(-1, &left, &top, &width, &height);
                 extra = lines - height + 1;
                 message = -1;
             }
         } else if (top < y) {
             lines = height;
-            Func_08015108(message, &left, &top, &width, &height);
+            UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
             extra = lines - height + 1;
             message = face;
         }

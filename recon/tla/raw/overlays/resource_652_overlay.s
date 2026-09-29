@@ -167,51 +167,8 @@ Func_02000064:
 	pop	{r5, pc}
 	.2byte 0x156f
 	.2byte 0x0000
-	push	{lr}
-	bl 0x02008d24
-	movs	r0, #0
-	bl 0x02008db4
-	ldr	r0, [pc, #20]
-	bl 0x02008d6c
-	movs	r0, #19
-	movs	r1, #0
-	bl 0x02008d7c
-	bl 0x02008d2c
-	movs	r0, #0
-	pop	{pc}
-	.2byte 0x0000
-	.2byte 0x174a
-	.2byte 0x0000
-	push	{lr}
-	bl 0x02008d24
-	movs	r0, #0
-	bl 0x02008db4
-	ldr	r0, [pc, #20]
-	bl 0x02008d6c
-	movs	r0, #19
-	movs	r1, #0
-	bl 0x02008d7c
-	bl 0x02008d2c
-	movs	r0, #0
-	pop	{pc}
-	.2byte 0x0000
-	.2byte 0x1836
-	.2byte 0x0000
-	push	{lr}
-	bl 0x02008d24
-	movs	r0, #0
-	bl 0x02008db4
-	ldr	r3, [pc, #16]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r3, r3, r2
-	ldr	r0, [r3, #0]
-	movs	r1, #1
-	bl 0x02008d8c
-	pop	{pc}
-	.2byte 0x0000
-	.2byte 0x0240
-	.2byte 0x0200
+	.section .text.x02008218,"ax",%progbits
+	.balign 4
 	.global Func_02000218
 	.thumb_func
 Func_02000218:

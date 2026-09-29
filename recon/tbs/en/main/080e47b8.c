@@ -1,3 +1,24 @@
+/* Layout (folded from the retired 0x080e4e0c slice draft): the per-kind
+ * scene setup at 0x080e4e0c ends in the 34-way switch; its table fills
+ * 0x080e53f4..0x080e547c, then come ten 8-byte case stubs, a 14-word
+ * literal pool at 0x080e54cc, three more stubs and the default arm at
+ * 0x080e551a. 0x080e657c and 0x080e65f8 are tail blocks this routine
+ * reaches by bl, not separate functions. */
+/* 2026-09-29 (Mars, later): setting the kind 31 height before the first
+ * load gives 48 r9 and 2 sl as the reference does; 183 lines remain, about
+ * 98 of them the reference's jump-table words, so roughly 85 real. Kind 31
+ * still differs in low-register choice for the 2/48 constants. Unfolding
+ * gWorkSlot + 188 (local base pointer, index variable) always gives the
+ * pointer r6 and width 17 r8, 221 lines. */
+/* 2026-09-29 (Mars): the rising column takes (RectangleBlit *)gWorkSlot + 47
+ * directly instead of the shared work_blitters cursor, which restores the
+ * column's high-register assignment (r8 blitter, r9 column_y, sl column_x,
+ * fp rise). 185 instruction-diff lines remain, excluding the reference's
+ * jump-table words: the folded gWorkSlot+188 constant (the reference adds
+ * 188 in a register), the kind 31 constants 2/48 swapped between r9 and sl,
+ * a motion store scheduled before the Math_Div operand loads, and the
+ * tail's r8/r9/sl rotation. A per-call slot argument unfolds the address but
+ * gives the pointer r6 ahead of the width. */
 /* 2026-09-29: five minutes of permutation (--function
  * BattleFx_RunCastingImpact): 2621 -> 2380 (45 register-only, 37 operand,
  * 13 reordered, 3 inserted, 3 deleted) with four natural rewrites, the
@@ -763,10 +784,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             while (scroll > 104)
                 scroll -= 104;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            /* FAKEMATCH: Share the drawing cursor with the paired-image branch. */
-            work_blitters = (RectangleBlit *)gWorkSlot;
-            work_blitters += 47;
-            DrawRisingColumn(canvas, origin_x, rise, scroll, work_blitters);
+            DrawRisingColumn(canvas, origin_x, rise, scroll, (RectangleBlit *)gWorkSlot + 47);
             Runtime_ReleaseHeapBlock(47);
             if (frame == 8) {
                 work->shake_frames = frame;
@@ -803,9 +821,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             Runtime_ReleaseHeapBlock(46);
             if ((u32)(frame - 4) <= 19) {
                 pair_x = target_screen->x / 2;
+                height = 48;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 work_blitters = (RectangleBlit *)gWorkSlot;
-                height = 48;
                 DrawImage(canvas, IMAGE_WORK, pair_x - 24, 48, 24, height, work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
                 BattleEffect_LoadWork(47, 7, 7, 7, 2);

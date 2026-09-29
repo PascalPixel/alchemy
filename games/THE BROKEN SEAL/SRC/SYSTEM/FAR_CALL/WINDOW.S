@@ -12,6 +12,9 @@ FarCall_WindowTable:
 	.thumb_func
 Func_08015000:
 	overlay_veneer UiWork_InitializeWithResourceCounters
+	.global UiWork_InitializeFar
+	.thumb_func
+UiWork_InitializeFar:
 	overlay_veneer UiWork_Initialize
 	.global UiWindow_CreateFar
 	.thumb_func
@@ -160,7 +163,13 @@ UiWork_FinalizeEntityMatchingLocalizedIdFar:
 	.global Func_08015108
 	.thumb_func
 Func_08015108:
+	.global UiText_GetResourceDimensionsFar
+	.thumb_func
+UiText_GetResourceDimensionsFar:
 	overlay_veneer UiText_GetResourceDimensions
+	.global UiText_GetResourceDimensionsAltFar
+	.thumb_func
+UiText_GetResourceDimensionsAltFar:
 	overlay_veneer UiText_GetResourceDimensionsAlt
 	.global UiWork_ClearValueNameTablesFar
 	.thumb_func
@@ -176,16 +185,25 @@ UiWork_PushValueSlotFar:
 	.thumb_func
 Func_08015120:
 	overlay_veneer UiWork_PushValueSlot
+	.global UiWindow_CreateWithLayoutBoundsFar
+	.thumb_func
+UiWindow_CreateWithLayoutBoundsFar:
 	overlay_veneer UiWindow_CreateWithLayoutBounds
 	.global UiWindow_DrawPartyStatusContentsFar
 	.thumb_func
 UiWindow_DrawPartyStatusContentsFar:
 	overlay_veneer UiWindow_DrawPartyStatusContents
+	.global UiWork_FinalizeAndReleaseBlock16Far
+	.thumb_func
+UiWork_FinalizeAndReleaseBlock16Far:
 	overlay_veneer UiWork_FinalizeAndReleaseBlock16
 	.global UiWork_FinalizePendingCoreFar
 	.thumb_func
 UiWork_FinalizePendingCoreFar:
 	overlay_veneer UiWork_FinalizePendingCore
+	.global UiWork_DrainPendingFar
+	.thumb_func
+UiWork_DrainPendingFar:
 	overlay_veneer UiWork_DrainPending
 	overlay_veneer UiGlyph_ResetWorkState
 	overlay_veneer Resource_ClearOwnerListAndCounters
@@ -219,7 +237,13 @@ UiText_PrepareMessageWorkFar:
 	.global Func_080151e0
 	.thumb_func
 Func_080151e0:
+	.global Localization_LookupEntryIdFar
+	.thumb_func
+Localization_LookupEntryIdFar:
 	overlay_veneer Localization_LookupEntryId
+	.global Menu_RunTopSelectionFar
+	.thumb_func
+Menu_RunTopSelectionFar:
 	overlay_veneer Menu_RunTopSelection
 	.global Menu_SelectSaveSlotActionFar
 	.thumb_func
@@ -282,6 +306,9 @@ UiText_RenderWideStringAtOffsetFar:
 	.global Func_08015268
 	.thumb_func
 Func_08015268:
+	.global UiWindow_FillFromSceneFar
+	.thumb_func
+UiWindow_FillFromSceneFar:
 	overlay_veneer UiWindow_FillFromScene
 	.global RenderOutput_RedrawSavedRectFar
 	.thumb_func
@@ -298,7 +325,13 @@ RenderOutput_ClearListFar:
 	.thumb_func
 UiWindow_SetTilemapEntryFar:
 	overlay_veneer UiWindow_SetTilemapEntry
+	.global Menu_RunSelectionFar
+	.thumb_func
+Menu_RunSelectionFar:
 	overlay_veneer Menu_RunSelection
+	.global Menu_RunSelectionWithCursorObjectFar
+	.thumb_func
+Menu_RunSelectionWithCursorObjectFar:
 	overlay_veneer Menu_RunSelectionWithCursorObject
 	.global Func_08015298
 	.thumb_func
@@ -311,6 +344,9 @@ Resource_LoadByModeIntoSlotFar:
 	.global Func_080152a8
 	.thumb_func
 Func_080152a8:
+	.global UiWindow_MarkVisibleTileAttributesFar
+	.thumb_func
+UiWindow_MarkVisibleTileAttributesFar:
 	overlay_veneer UiWindow_MarkVisibleTileAttributes
 	overlay_veneer ItemIcon_Compose
 	.global BattleLayout_HighlightPartyPanelsFar
@@ -385,6 +421,9 @@ PaletteGlow_UpdateFar:
 	.global Func_08015370
 	.thumb_func
 Func_08015370:
+	.global Menu_RunWorkspaceResultLoopFar
+	.thumb_func
+Menu_RunWorkspaceResultLoopFar:
 	overlay_veneer Menu_RunWorkspaceResultLoop
 	overlay_veneer UiWindow_FillScreenBlockRect
 	.global Func_08015380
@@ -446,6 +485,9 @@ Graphics_ExpandVramTilesByColorTableFar:
 	.global Func_080153e0
 	.thumb_func
 Func_080153e0:
+	.global UiWork_SetAltFlagAndClearTableFar
+	.thumb_func
+UiWork_SetAltFlagAndClearTableFar:
 	overlay_veneer UiWork_SetAltFlagAndClearTable
 	.global Menu_AnimateSelectionToEntryFar
 	.thumb_func
@@ -454,7 +496,13 @@ Menu_AnimateSelectionToEntryFar:
 	.global Func_080153f0
 	.thumb_func
 Func_080153f0:
+	.global Ui_GetTableWordZeroFar
+	.thumb_func
+Ui_GetTableWordZeroFar:
 	overlay_veneer Ui_GetTableWordZero
+	.global UiText_OpenEntryMessageFar
+	.thumb_func
+UiText_OpenEntryMessageFar:
 	overlay_veneer UiText_OpenEntryMessage
 	.global SaveState_CountRecordsExcludingFlaggedFar
 	.thumb_func

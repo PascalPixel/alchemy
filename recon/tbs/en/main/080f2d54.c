@@ -1,5 +1,5 @@
 /* 2026-09-29: eight minutes of permutation (alchemy permute --symbol
- * Func_080f2d54): 910 -> 765 by setting the zero before the
+ * Unnamed_080f2d54): 910 -> 765 by setting the zero before the
  * display-register writes. Remaining: the extra saved r7 and the
  * buffer/cursor ownership described below, plus the resource number 0x19,
  * still a Value_ symbol (a plain 0x19 gives 980). A second 8-minute run

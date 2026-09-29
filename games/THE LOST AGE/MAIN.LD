@@ -27,6 +27,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SOUND/VSYNC_DMA_REFRESH.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08000630.o"(.text .rodata .data .padding)
     } > ROM
+    iwram_slots 0x3000000 (NOLOAD) : { "*/recon/tla/sym_iwram.o"(.sym_iwram_slots) } > IWRAM
     /* Startup copies this resident module bank to IWRAM with DMA3. */
     .iwram_runtime 0x3000100 :
     {
@@ -1976,7 +1977,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.087f9302)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BACKDROP/RED_HAZE.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/BACKDROP/DESERT.o"(.rodata)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/BACKDROP/DUSK_CLOUDS.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/BACKDROP/DUSK_CLOUDS.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088025ca)
         "*/games/COMMON/SRC/GRAPHICS/BACKDROP/AERIAL_VIEW.o"(.rodata)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BACKDROP/SUNSET.o"(.rodata)
@@ -1997,16 +1998,16 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.08845a4a)
         "*/games/THE LOST AGE/SRC/GRAPHICS/ENDING/THE_END.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0884b76a)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/SLOTS/FRAME.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/SLOTS/FRAME.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0884beed)
         "*/games/COMMON/SRC/GRAPHICS/SLOTS/ICONS.o"(.rodata)
         "*/games/THE LOST AGE/SRC/GRAPHICS/SLOTS/JACKPOT.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0884d83f)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/SLOTS/TABLE.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/LUCKY_DICE/BOARD.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0885065d)
         "*/games/THE LOST AGE/SRC/GRAPHICS/SLOTS/DOME.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08854572)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/SLOTS/SPRITES.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/LUCKY_DICE/SPRITES.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08857595)
         "*/games/THE LOST AGE/SRC/GRAPHICS/SLOTS/YOU_WIN.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088583a9)
@@ -2197,7 +2198,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.088bb937)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/FIRE_BURST.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088bd535)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/BLUE_CRESCENT.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/BATTLE_FX/BLUE_CRESCENT.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088bd756)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/VIOLET_MOTE.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088bdca5)

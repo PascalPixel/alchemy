@@ -54,7 +54,7 @@ struct BattleEffect03State {
     void (*finish_callback)(void);
 };
 
-extern struct BattleEffect03State *Data_03001f30;
+extern struct BattleEffect03State *gEffectWork;
 void BattleFx_UpdateShrinkingOrbitObject(void);
 void BattleFx_RunSparkEmitter(void);
 
@@ -62,17 +62,17 @@ void BattleEffect_InitializeSharedScene(void);
 struct BattleEffect03Object *Object_Spawn(s32, s32, s32, s32);
 struct BattleEffect03Link *Object_ReplaceResourceEntry(void *, struct BattleEffect03Link *);
 void WaitFrames(s32);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct BattleEffect03Object *, s32, s32);
 void Object_CommitPosition(struct BattleEffect03Object *);
-void Func_080090d0(struct BattleEffect03Object *);
+void Object_Destroy(struct BattleEffect03Object *);
 void Resource_ResetEntry(u8);
 void BattleFx_PrepareBufferInterpolation(void);
 
 void RunBattleEffect03(void)
 {
-    struct BattleEffect03State *state = Data_03001f30;
+    struct BattleEffect03State *state = gEffectWork;
     struct BattleEffect03Object *target = state->target;
     struct BattleEffect03Object *object;
     struct BattleEffect03Object *particle;
@@ -105,7 +105,7 @@ Spawn:
         goto Spawn;
 
     link_marker = last->marker;
-    Func_080f9010(0x82);
+    Audio_PlayCue(0x82);
     WaitFrames(110);
     object = Object_Spawn(0xe9, 0, 0, 0);
     particle = object;
@@ -119,7 +119,7 @@ Spawn:
         Animation_ApplyChildValuesFar(object, 7);
     }
 
-    Func_080f9010(0x83);
+    Audio_PlayCue(0x83);
     alive = particle != 0;
     WaitFrames(12);
     if (object != 0) {
@@ -135,7 +135,7 @@ Spawn:
     }
 
     Animation_ApplyChildValuesFar(particle, 0);
-    Func_080f9010(0x54);
+    Audio_PlayCue(0x54);
     if (alive) {
         object->callback = BattleFx_RunSparkEmitter;
         object->angle = 0;
@@ -151,7 +151,7 @@ Spawn:
         object->unknown_5a = 0;
         Motion_SetTargetPositionFromMagnitudeAngle(object, 0xc00000, 0xe800);
         Object_CommitPosition(object);
-        Func_080090d0(object);
+        Object_Destroy(object);
     }
     if (link_marker != 0x60)
         Resource_ResetEntry(link_marker);

@@ -132,7 +132,7 @@ typedef void (*ScriptObjectHook)(struct ScriptObjectRuntime *);
 
 extern ScriptCommandFn Data_08013624[];
 extern const s32 Data_080131c0[];
-extern struct ScriptObjectRuntime *Data_03001e64;
+extern struct ScriptObjectRuntime *gObjectSlots;
 /* FAKEMATCH: preserve independent multiply/divide address ownership, as
  * in the exact Object_SetMoveTarget neighbour. */
 #define MulQ16(left, right) Iwram_Call2((left), (right), IwramMulQ16ReturnIp)
@@ -172,7 +172,7 @@ void Object_UpdateAllThumb(void)
     u32 cmd;
     u32 phase;
 
-    obj = Data_03001e64;
+    obj = gObjectSlots;
     ctl = &obj->flags;
     act = &obj->unknown_56[0];
 

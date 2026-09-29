@@ -56,8 +56,8 @@ struct DrawRegistry {
     DrawRectangle rectangles[2];
 };
 
-extern struct RuntimeCells Data_03001eec;
-extern struct DrawRegistry Data_03001e50;
+extern struct RuntimeCells gBattleFxWork;
+extern struct DrawRegistry gWorkSlot;
 extern u16 BattleFx_PuffCells[];
 extern u8 BattleFx_PuffSizes[];
 extern u8 Data_080eded6[];
@@ -68,20 +68,20 @@ extern char Value_0000027f;
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattlePres_ConfigureEffectDisplay(void);
 s32 Random16(void);
-s32 Func_080041d8(void (*callback)(void), s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 interval);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void Func_080b50e8(s32 value);
+void BattleEventRuntime_BeginPhaseFar(s32 value);
 s32 Math_Div(s32 numerator, s32 denominator);
-void Func_080f9010(s32 value);
+void Audio_PlayCue(s32 value);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
 void WaitFrames(s32 frames);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Func_08002dd8(s32 resource_id);
+void Runtime_ReleaseHeapBlock(s32 resource_id);
 void BattleFx_EndCanvasLayer(void);
 
-void Func_080c91dc(struct EffectArgument *argument)
+void BattleEffect_RunFallingParticles(struct EffectArgument *argument)
 {
     struct RuntimeCells *cells;
     void **cell;
@@ -100,7 +100,7 @@ void Func_080c91dc(struct EffectArgument *argument)
     s32 color;
     u8 *graphics;
 
-    cells = &Data_03001eec;
+    cells = &gBattleFxWork;
     cell = (void **)cells;
     runtime = *cell++;
     draw_destination = *cell;
@@ -152,8 +152,8 @@ void Func_080c91dc(struct EffectArgument *argument)
         BattleEffect_LoadWork(47, 7, 7, 6, 3);
     }
 
-    rectangles[0] = Data_03001e50.rectangles[0];
-    rectangles[1] = Data_03001e50.rectangles[1];
+    rectangles[0] = gWorkSlot.rectangles[0];
+    rectangles[1] = gWorkSlot.rectangles[1];
     draw_functions = rectangles;
 
     if (runtime->argument->direction == 0) {
@@ -188,20 +188,20 @@ void Func_080c91dc(struct EffectArgument *argument)
         } while (particle_index != 160);
     }
 
-    Func_080041d8((void (*)(void))0x080c91a5, 0x480);
+    Scheduler_AddOrUpdateCallback((void (*)(void))0x080c91a5, 0x480);
     runtime->display_mode = 2;
     if (runtime->argument->variant == 1)
         runtime->display_value = 75;
     else
         runtime->display_value = 50;
-    Func_080041d8(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     frame = 0;
     if (Data_080eded6[runtime->argument->variant * 2 + 1] != 0) {
         do {
             if (frame
                 == Data_080eded6[runtime->argument->variant * 2 + 1] - 16) {
-                Func_080b50e8(132);
+                BattleEventRuntime_BeginPhaseFar(132);
             }
 
             particle_index = 0;
@@ -231,7 +231,7 @@ void Func_080c91dc(struct EffectArgument *argument)
                             particle->y += 64;
                         } else {
                             if ((particle_index & 3) == 0)
-                                Func_080f9010(115);
+                                Audio_PlayCue(115);
                             runtime->impact_mode = 2;
                             particle->frame = 0;
 
@@ -349,8 +349,8 @@ void Func_080c91dc(struct EffectArgument *argument)
 
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Scheduler_RemoveCallback((void (*)(void))0x080c91a5);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
     BattlePres_ConfigureEffectDisplay();
 }

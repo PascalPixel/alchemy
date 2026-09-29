@@ -23,16 +23,16 @@
  * a halfword pointer into a local and builds the sprite y in a u32 local;
  * several of its 75 rewrites (register locals, (*p).member, the empty for
  * loop) are noise, hence its FAKEMATCH tag.
- * Func_080153f0 remains the existing unnamed Ui_GetTableWordZero veneer;
+ * Ui_GetTableWordZeroFar remains the existing unnamed Ui_GetTableWordZero veneer;
  * other calls use registered names. No new aliases or compiler changes.
  * Reproduce with the scoring unit retained at d51144bd1; it owns the full
  * 280-byte extent. Main-image bindings (Thumb addresses without the mode bit):
- * Func_080153f0=080153f0, veneer of Ui_GetTableWordZero=08021bc8;
+ * Ui_GetTableWordZeroFar=080153f0, veneer of Ui_GetTableWordZero=08021bc8;
  * UiWork_IsCompleteFar=08015048; WaitFrames=080030f8;
  * Resource_LoadIntoFreeSlot=080040b4; Resource_GetBuffer=080040d0;
  * Resource_ResetEntry=08003f3c; Runtime_PushSlotEntry=08003dec;
  * QueueIoWriteDelay10=080039fc; QueueIoWriteDelay6=0800393c.
- * Data_03001c94=03001c94; Data_03001e40=03001e40.
+ * gKeyState=03001c94; gFrameCount=03001e40.
  */
 union BattlePromptEntry {
     s32 words[3];
@@ -61,11 +61,11 @@ struct PromptBlendRegister {
     u16 next;
 };
 
-extern volatile u32 Data_03001c94;
-extern volatile u32 Data_03001e40;
+extern volatile u32 gKeyState;
+extern volatile u32 gFrameCount;
 
 /* Existing unnamed veneer of Ui_GetTableWordZero; no new address alias. */
-s32 Func_080153f0(s32 index);
+s32 Ui_GetTableWordZeroFar(s32 index);
 s32 Resource_LoadIntoFreeSlot(s32 size);
 s32 Resource_GetBuffer(s32 index, s32 source);
 s32 Resource_ResetEntry(u32 index);
@@ -79,7 +79,7 @@ s32 Unnamed_080bb7c0(s32 x, s32 y)
     union BattlePromptEntry *prompt;
     register s32 sprite;
     register union BattlePromptEntry entry;
-    register s32 tiles = Func_080153f0(0);
+    register s32 tiles = Ui_GetTableWordZeroFar(0);
     u16 *tmp;
     u32 tmp2;
     s32 tmp4;
@@ -101,11 +101,11 @@ loop:
     *&prompt->words[2] = 0;
     (*prompt).sprite.tile = Resource_GetBuffer(sprite, tiles);
     tmp3 = *tmp;
-    prompt->sprite.x = tmp3 + 0xfffc + ((4 & Data_03001e40) >> 1);
-    tmp2 = pos[1] - ((Data_03001e40 & 4) >> 2) + 248;
+    prompt->sprite.x = tmp3 + 0xfffc + ((4 & gFrameCount) >> 1);
+    tmp2 = pos[1] - ((gFrameCount & 4) >> 2) + 248;
     prompt->sprite.y = tmp2;
     Runtime_PushSlotEntry(prompt->words, 240);
-    if (!((0x303 & Data_03001c94) != 0)) {
+    if (!((0x303 & gKeyState) != 0)) {
         WaitFrames(1);
         goto loop;
     }

@@ -81,12 +81,12 @@ extern char ResourceId_DefaultMapAnimation;
 extern char ResourceId_DefaultMetatileAttributes;
 void Transform_UpdateVertices(void);
 extern u8 Transform_UpdateVerticesSize;
-extern u32 Data_03001ce0[];
+extern u32 gProjection[];
 extern u32 Data_03001f60;
 extern u32 Data_03001af4;
-extern u32 Data_03001e40;
-extern void *Data_03001e50[];
-extern u16 Data_03001ad0[];
+extern u32 gFrameCount;
+extern void *gWorkSlot[];
+extern u16 gBgScroll[];
 
 void Blend_SetDarkenTarget0(s32);
 s32 Runtime_AllocateHeapBlock(s32, s32);
@@ -104,7 +104,7 @@ s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 void WorldMap_BuildScanlineTable(s32, s32 *, void *);
 s32 Scheduler_AddOrUpdateCallback(s32, s32);
-void Func_08010ff0(void);
+void MapAnimation_ApplyAffineFrame(void);
 void WorldMap_UpdateView(void);
 
 static __inline__ void Io_Set16(s32 value, u16 *reg)
@@ -194,8 +194,8 @@ s32 Map_InitializePerspectiveScene(void)
     work->turn = 0;
     camera->unknown_18 = 0;
     camera->unknown_1c = 0;
-    Data_03001ce0[3] = 120;
-    Data_03001ce0[4] = 96;
+    gProjection[3] = 120;
+    gProjection[4] = 96;
     Camera_StoreSceneParameters(far_plane, far_plane >> 1, far_plane << 1);
     position[0] = 0;
     position[1] = 0;
@@ -220,8 +220,8 @@ s32 Map_InitializePerspectiveScene(void)
                   position, tiles);
     Data_03001f60 = 0;
     Data_03001af4 = *pitch;
-    ((PlaneFn)Data_03001e50[46])(camera, position, tiles,
-                                 lines + (Data_03001e40 & 1) * 0x1400);
+    ((PlaneFn)gWorkSlot[46])(camera, position, tiles,
+                                 lines + (gFrameCount & 1) * 0x1400);
     position[0] = 0;
     position[1] = 0;
     position[2] = 0;
@@ -239,16 +239,16 @@ s32 Map_InitializePerspectiveScene(void)
               (s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
     *(volatile u16 *)0x0400004c = 0;
     Io_Put16((u16 *)0x04000000, 0x42);
-    Data_03001ad0[2] = 0;
-    Data_03001ad0[3] = 0;
-    Data_03001ad0[4] = 0;
-    Data_03001ad0[5] = 0;
-    Data_03001ad0[6] = 0;
-    Data_03001ad0[7] = 0;
+    gBgScroll[2] = 0;
+    gBgScroll[3] = 0;
+    gBgScroll[4] = 0;
+    gBgScroll[5] = 0;
+    gBgScroll[6] = 0;
+    gBgScroll[7] = 0;
     work->window_top = 0;
     work->window_bottom = 159;
     Scheduler_AddOrUpdateCallback((s32)WorldMap_UpdateView, 0xc85);
-    Scheduler_AddOrUpdateCallback((s32)Func_08010ff0, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)MapAnimation_ApplyAffineFrame, 0x480);
     for (i = 255; i >= 0; i--)
         work->lines[i] = i;
 }

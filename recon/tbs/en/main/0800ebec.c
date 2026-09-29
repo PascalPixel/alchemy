@@ -85,13 +85,13 @@ struct OwnerState {
 
 extern volatile u8 gDebugMode;
 extern u8 ResourceBlockOwners[];
-extern volatile u32 Data_03001ae8;
-extern struct PlayerState Data_02000240;
+extern volatile u32 gKeysHeld;
+extern struct PlayerState gGameState;
 extern s16 Data_08013254[];
 extern s16 Data_08013274[];
-extern struct FieldActor *Data_03001e64;
-extern u16 *Data_03001ebc;
-extern struct CameraState *Data_03001e70;
+extern struct FieldActor *gObjectSlots;
+extern u16 *gEventWork;
+extern struct CameraState *gMapWork;
 
 s32 GameFlag_TestFar(s32 flag);
 void Audio_PlayCue(s32 cue);
@@ -154,7 +154,7 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     if (gDebugMode != 0) {
         s32 mask;
         mask = 0x200;
-        if (Data_03001ae8 & mask) {
+        if (gKeysHeld & mask) {
             s32 count;
             count = mask;
         wait_a:
@@ -178,7 +178,7 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
                 goto wait_d;
         }
     }
-    if (Data_03001ae8 & Data_02000240.dash_keys) {
+    if (gKeysHeld & gGameState.dash_keys) {
         actor->speed = 0x18000;
         actor->accel = 0x4000;
         mode = 5;
@@ -187,12 +187,12 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
         actor->accel = 0x4000;
         mode = 2;
     }
-    if (GameFlag_TestFar(0x17f) != 0 && (Data_03001ae8 & 2)) {
+    if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & 2)) {
         actor->speed = 0x40000;
         actor->accel = 0x10000;
         mode = 5;
     }
-    angle = Data_08013254[(Data_03001ae8 >> 4) & 15] << 16;
+    angle = Data_08013254[(gKeysHeld >> 4) & 15] << 16;
     tmp2 = (u16)((u32)angle >> 16);
     if (tmp2 == 0xffff) {
         blocked |= 4;
@@ -206,7 +206,7 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     Vector_AddPolarOffset(0x80000, tmp, posA);
     if (gDebugMode != 0) {
         facing = angle >> 16;
-        if (Data_03001ae8 & 0x200)
+        if (gKeysHeld & 0x200)
             goto tail;
     }
     if (Func_080120dc(actor, posA) != 0)
@@ -287,7 +287,7 @@ move:
     posC[1] = actor->pos[1];
     posC[2] = actor->pos[2];
     Vector_AddPolarOffset(0x40000, (u16)facing, posC);
-    entry = Data_03001e64;
+    entry = gObjectSlots;
     for (i = 63; i >= 0; i -= 1, entry++) {
         s32 push;
         s32 radius;
@@ -345,18 +345,18 @@ move:
         actor->accel = 0x2000;
     }
 tail:
-    if (Data_03001ebc != 0) {
+    if (gEventWork != 0) {
         if (blocked & 3)
-            ++Data_03001ebc[206];
+            ++gEventWork[206];
         else
-            Data_03001ebc[206] = 0;
+            gEventWork[206] = 0;
     }
     if (handled != 0) {
         ObjectDispatch_ApplyArgumentToChildren(actor, 8);
     } else if (blocked != 0) {
         s32 kind;
         kind = 9;
-        if (Owner_GetStateFar(Data_02000240.leader)->hp == 0)
+        if (Owner_GetStateFar(gGameState.leader)->hp == 0)
             kind = 22;
         ObjectDispatch_ApplyArgumentToChildren(actor, kind);
     } else {
@@ -389,7 +389,7 @@ tail:
             actor->step_timer--;
     }
     dir = (u16)((u32)angle >> 16);
-    if (Data_03001e70->footprints != 0 && actor->step_timer == 0 && blocked == 0) {
+    if (gMapWork->footprints != 0 && actor->step_timer == 0 && blocked == 0) {
         struct FieldActor *print;
         print = Func_0800c150(25, actor->pos[0], actor->pos[1], actor->pos[2]);
         if (print != 0) {

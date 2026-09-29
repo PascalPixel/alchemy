@@ -97,8 +97,8 @@ struct PuzzleWork {
 
 enum { WORK_SHOWN, WORK_DELAY, WORK_UNUSED, WORK_ANGLE, WORK_SIZE, WORK_PHASE };
 
-extern struct PuzzleState gSceneState;
-extern u8 gSceneState;
+extern struct PuzzleState Data_02001001;
+extern u8 Data_02001000;
 extern struct PuzzleWork *ArutamiraDou_ClearTarget;
 
 void SceneActor_SetPositionFromTransformedBase(s32 id, s32 x, s32 angle);
@@ -141,12 +141,12 @@ void FieldScene_RunStatefulSequence(s32 action)
         actor->scale_x = 0x10000;
         actor->scale_y = 0x10000;
     }
-    state = gSceneState.state;
+    state = Data_02001001.state;
     {
         struct PuzzleWork *work = ArutamiraDou_ClearTarget;
 
-        next = gSceneState.next;
-        previous = (u8)gSceneState.next;
+        next = Data_02001001.next;
+        previous = (u8)Data_02001001.next;
         work->values[WORK_ANGLE] = Engine_MathDivide(next << 16, 5) + 0x4000;
     }
     if ((s8)state == 0) {
@@ -156,7 +156,7 @@ void FieldScene_RunStatefulSequence(s32 action)
         } else {
             Engine_AudioPlayCue(114);
         }
-        gSceneState = 0;
+        Data_02001000 = 0;
     } else if ((s8)state == 1) {
         if (action == 16) {
             Engine_AudioPlayCue(110);
@@ -216,16 +216,16 @@ void FieldScene_RunStatefulSequence(s32 action)
         }
     }
     /* FAKEMATCH: byte publication avoids a shared bit-field zero. */
-    *(u8 *)&gSceneState.state = state;
+    *(u8 *)&Data_02001001.state = state;
     if (complete != 0) {
-        u32 count = gSceneState + 1;
+        u32 count = Data_02001000 + 1;
         s32 choice;
         u8 completed;
 
-        gSceneState = count;
+        Data_02001000 = count;
         choice = Main_030003ac((s8)(((u32)(Engine_RandomNext() << 2) >> 16)
                                 + previous + 1) + 5, 5);
-        *(s8 *)&gSceneState.next = choice;
+        *(s8 *)&Data_02001001.next = choice;
         work = ArutamiraDou_ClearTarget;
         work->values[WORK_SHOWN] = 0;
         work->values[WORK_DELAY] = 0;
@@ -239,7 +239,7 @@ void FieldScene_RunStatefulSequence(s32 action)
             Engine_TaskWait(10);
             Engine_AudioPlayCue(110);
         } else {
-            gSceneState.state = 99;
+            Data_02001001.state = 99;
             while (ArutamiraDou_ClearTarget->values[WORK_SHOWN] != 2)
                 Engine_TaskWait(1);
             work = ArutamiraDou_ClearTarget;

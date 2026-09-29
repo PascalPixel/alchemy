@@ -34,11 +34,11 @@ struct FacingObject {
 s32 Event_FindFacingTrigger(s32 source)
 {
     struct FacingTriggerRuntime *runtime =
-        (struct FacingTriggerRuntime *)gEventWork;
+        (struct FacingTriggerRuntime *)Data_03001ebc;
     struct FacingTrigger *trigger = runtime->triggers;
     s32 facing = ((struct FacingObject *)ObjectTable_Get(
-        gGameState.object_id))->facing;
-    s32 selected = BattleEffect_SelectNearbyObject(gGameState.object_id);
+        Data_02000240.object_id))->facing;
+    s32 selected = BattleEffect_SelectNearbyObject(Data_02000240.object_id);
     s32 collision;
 
     source &= 0x1ff;

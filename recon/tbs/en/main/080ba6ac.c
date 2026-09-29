@@ -82,7 +82,7 @@ struct PresentationBattleWork {
 };
 
 extern s32 *gTransitionWork;
-extern struct PresentationBattleWork *gBattleWork;
+extern struct PresentationBattleWork *Data_03001e74;
 void BattleEvent_Playback(void);
 void Object_SetMode(struct MotionObject *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *, s32);
@@ -144,7 +144,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
         s32 fade = 0;
         i = 0;
         while (i <= 19) {
-            struct PresentationBattleWork *battle = gBattleWork;
+            struct PresentationBattleWork *battle = Data_03001e74;
             if (i <= 19) {
                 s32 value = 0x10000 - fade;
                 battle->palette_scale = value;
@@ -172,7 +172,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
         s32 result = Inventory_RemoveFar(saved_selection->actor_id, saved_selection->parameter);
         s32 index = saved_selection->parameter;
         if (result == 2) {
-            struct PresentationBattleWork *battle = gBattleWork;
+            struct PresentationBattleWork *battle = Data_03001e74;
             u32 row;
             row = 0;
             do {

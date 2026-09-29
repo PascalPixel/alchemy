@@ -81,7 +81,7 @@ struct TileEntry {
     u16 tile;
 };
 
-extern struct KawaState *gKorosseoWork;
+extern struct KawaState *Data_03001f3c;
 extern struct TileEntry gVramBlockCache[];
 extern u32 gFrameCount;
 
@@ -100,7 +100,7 @@ void Scene_RunScene3baSequenceA(void)
     s32 x;
     u8 *buffer;
 
-    state = gKorosseoWork;
+    state = Data_03001f3c;
     entry = state->oam;
     p = &entry->header;
     id = &state->id;

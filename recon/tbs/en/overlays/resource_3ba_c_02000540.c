@@ -36,7 +36,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern u32 gGameState[];
+extern u32 Data_02000240[];
 extern s32 Engine_AllocateBlock(s32 slot, s32 size);
 extern void Engine_ObjectCommitPosition(struct FieldActor *object);
 extern void Engine_ObjectInitFromTableWithArgument(s32 *table, struct FieldActor *object);
@@ -53,7 +53,7 @@ void KorosseoKawa_MoveActorsAndMap(void)
     struct FieldActor *actor;
     struct FieldActor *object;
 
-    selector = gGameState[125];
+    selector = Data_02000240[125];
     actor = Engine_ActorGet(selector);
     object = Engine_ActorGet(12);
     Engine_GameFlagSet(0x302);

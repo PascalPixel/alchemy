@@ -140,7 +140,7 @@ LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value205, struct SaveMenuRecord, value_205, 0
 LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value20f, struct SaveMenuRecord, value_20f, 0x20f);
 LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value22a, struct SaveMenuRecord, value_22a, 0x22a);
 
-extern union SaveMenuState gGameState;
+extern union SaveMenuState Data_02000240;
 extern u8 Data_02001100[];
 struct SaveLinkGreeting {
     u16 code[4];
@@ -150,7 +150,7 @@ struct SaveLinkGreeting {
 
 extern struct SaveLinkGreeting Data_02002224;
 extern struct SaveLinkGreeting gLinkPeerSignatures[4];
-extern u8 gEventWork[];
+extern u8 Data_03001ebc[];
 void Func_02000438();
 s32 Func_0200096c();
 s32 Func_020009e0();
@@ -349,10 +349,10 @@ s32 SaveMenu_Run(void)
     started = 0;
     Func_02000438();
     Value2(Func_0200171a, 0x20081fd, 0xc80);
-    *(s32 *)((*(u8 **)gEventWork + 0x1c0)) = started;
+    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = started;
     Func_020094ac();
     Func_020018c0();
-    if (gGameState.location.entrance == 2) {
+    if (Data_02000240.location.entrance == 2) {
         do {
             Func_020017b2((s32)MsgSaveAdventureQuestion, 5);
             rec = Value1(Func_020094c4, 1);
@@ -361,8 +361,8 @@ s32 SaveMenu_Run(void)
                 break;
             }
             Func_020017ca(((s32)MsgSaveAdventureQuestion + 1), 1);
-            base3_2000240 = (s32)&gGameState;
-            gGameState.record.value_20f = 1;
+            base3_2000240 = (s32)&Data_02000240;
+            Data_02000240.record.value_20f = 1;
             rec = Func_02001830();
             v5 = 0x7;
             v7 = rec;
@@ -388,8 +388,8 @@ s32 SaveMenu_Run(void)
         v6 = Value0(Func_020018b6);
         if (v6 < 0) {
             if (*(u8 *)0x03001f54 != 0) {
-                base3_2000240 = (s32)&gGameState;
-                gGameState.record.value_22a = 1;
+                base3_2000240 = (s32)&Data_02000240;
+                Data_02000240.record.value_22a = 1;
                 *(u8 *)0x03001d08 = 1;
                 Func_020093dc((s32)MsgNoBackupMemory, 1, 8);
             }
@@ -411,9 +411,9 @@ s32 SaveMenu_Run(void)
             goto L_0200057a;
         }
         Func_02001956();
-        base3_2000240 = (s32)&gGameState;
-        base2_2000240 = (s32)&gGameState;
-        Func_02001938(gGameState.record.value_205, gGameState.record.value_206);
+        base3_2000240 = (s32)&Data_02000240;
+        base2_2000240 = (s32)&Data_02000240;
+        Func_02001938(Data_02000240.record.value_205, Data_02000240.record.value_206);
         v7 = 0;
         v5 = 1;
         L_02000522:;
@@ -437,11 +437,11 @@ s32 SaveMenu_Run(void)
         goto L_02000522;
     }
     Func_020019dc();
-    gGameState.location.scene = 0x8;
+    Data_02000240.location.scene = 0x8;
     {
         s32 shown = 20;
 
-        gGameState.location.entrance = shown;
+        Data_02000240.location.entrance = shown;
     }
     goto L_02000c96;
     L_0200057a:;
@@ -452,28 +452,28 @@ s32 SaveMenu_Run(void)
             goto L_020004a8;
         }
         Call1(Func_020019f0, 0x109);
-        base5_2000240 = (s32)&gGameState;
+        base5_2000240 = (s32)&Data_02000240;
         v5 = base5_2000240;
         v5 = base5_2000240;
-        base3_2000240 = (s32)&gGameState;
-        base3_2000240 = (s32)&gGameState;
-        Func_020019c2(gGameState.record.value_205, gGameState.record.value_206);
+        base3_2000240 = (s32)&Data_02000240;
+        base3_2000240 = (s32)&Data_02000240;
+        Func_020019c2(Data_02000240.record.value_205, Data_02000240.record.value_206);
         record = Func_02001a2e();
-        if (gGameState.record.word_00 != record) {
-            gGameState.location.scene = gGameState.location.saved_scene;
-            gGameState.location.entrance = gGameState.location.saved_entrance;
+        if (Data_02000240.record.word_00 != record) {
+            Data_02000240.location.scene = Data_02000240.location.saved_scene;
+            Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
             Call1(Func_02001a38, 0x109);
         } else {
             if ((*(s32 *)0x03001ae8 & 0x208) == 0x208) {
                 if (Value0(Func_0200096c) != 0) {
                     goto L_02000664;
                 }
-                gGameState.location.scene = gGameState.location.saved_scene;
-                gGameState.location.entrance = gGameState.location.saved_entrance;
+                Data_02000240.location.scene = Data_02000240.location.saved_scene;
+                Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
                 Func_02009464(0x109);
                 Func_0200945c(0x13e);
             } else {
-                if (gGameState.record.word_04 != *(s32 *)Data_02001100) {
+                if (Data_02000240.record.word_04 != *(s32 *)Data_02001100) {
                     Value2(Func_020019ca, (s32)MsgSaveDataCorrupted, 9);
                     Func_020019d2(((s32)MsgSaveDataCorrupted + 1), 13);
                     if (Value4(Func_02001a6e, 1, 0, 0, 0) != 0) {
@@ -486,8 +486,8 @@ s32 SaveMenu_Run(void)
                         Func_020019fc(0x6, 9);
                         goto L_020004a8;
                     }
-                    gGameState.location.scene = gGameState.location.saved_scene;
-                    gGameState.location.entrance = gGameState.location.saved_entrance;
+                    Data_02000240.location.scene = Data_02000240.location.saved_scene;
+                    Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
                     Call1(Func_02001af2, 0x109);
                     Call1(Func_02001af0, 0x13f);
                 }
@@ -512,7 +512,7 @@ s32 SaveMenu_Run(void)
         v5 = 0x2000240;
         v5 = 0x2000240;
         v5 = 0x2000240;
-        gGameState.location.selected_actor = 0;
+        Data_02000240.location.selected_actor = 0;
         if (Value1(Func_02001b8e, 0x952) != 0) {
             Func_0200948c();
             Func_02009474(0);
@@ -524,9 +524,9 @@ s32 SaveMenu_Run(void)
             Func_02001bd8(2);
             Func_02001bde(3);
         }
-        base3_2000240 = (s32)&gGameState;
-        base3_2000240 = (s32)&gGameState;
-        Func_02001b9e(gGameState.record.value_205, gGameState.record.value_206);
+        base3_2000240 = (s32)&Data_02000240;
+        base3_2000240 = (s32)&Data_02000240;
+        Func_02001b9e(Data_02000240.record.value_205, Data_02000240.record.value_206);
         Call1(Func_02001bec, 0x109);
         Func_02009464(0x106);
         Func_0200945c(0x17e);
@@ -550,9 +550,9 @@ s32 SaveMenu_Run(void)
             if (v6 == -1) {
                 goto L_020004a8;
             }
-            base3_2000240 = (s32)&gGameState;
-            base2_2000240 = (s32)&gGameState;
-            Func_02001bf6(gGameState.record.value_205, gGameState.record.value_206);
+            base3_2000240 = (s32)&Data_02000240;
+            base2_2000240 = (s32)&Data_02000240;
+            Func_02001bf6(Data_02000240.record.value_205, Data_02000240.record.value_206);
             L_020007dc:;
             v6 = Func_02001bb4(0);
 
@@ -811,7 +811,7 @@ s32 SaveMenu_Run(void)
     Call1(Func_02001fb4, 0x12c);
     goto L_020004a8;
     L_02000c96:;
-    *(u16 *)((*(u8 **)gEventWork + 0x170)) = 0x3e7;
+    *(u16 *)((*(u8 **)Data_03001ebc + 0x170)) = 0x3e7;
     Func_0200213c(30);
     Func_0200217a(17);
     Func_02002166();

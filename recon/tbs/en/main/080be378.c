@@ -35,7 +35,7 @@ extern void BattleEventRuntime_WaitForReady(void);                 /* BattleEven
 extern s32 BattleFx_PlayUnitElementEffect(s16 id, s8 a, s32 mode, s32 arg3);
 extern void BattlePres_SetActorModes(s32 a, s32 b);
 extern void WaitFrames(s32 frames);           /* WaitFrames */
-extern struct BattleTurnOrder *gBattleWork;
+extern struct BattleTurnOrder *Data_03001e74;
 extern s16 RollWeaponUnleashFar(void *actor);   /* was declared (s16 id)->void; ground
                                            * truth (this pass) shows it takes
                                            * actor and its r0 return value is
@@ -207,7 +207,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattleP
     }
 
     actor = Owner_GetStateFar(*(s16 *)(req + 0));
-    battle = gBattleWork;
+    battle = Data_03001e74;
     targetPowerBase = Battle_GetTaggedSlotValue(*(s16 *)(req + 10));
     BattleEventRuntime_Reset();
 

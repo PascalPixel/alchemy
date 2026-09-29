@@ -45,7 +45,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/APPLY_FIVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/TOLBI_ARRIVAL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RUN_THREE.o"(.text)
-        "*/resource_3af_overlay.o"(.text.x0200bf30)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ROBIN_TALK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RUN_3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.o"(.text)
         "*/resource_3af_overlay.o"(.rodata)

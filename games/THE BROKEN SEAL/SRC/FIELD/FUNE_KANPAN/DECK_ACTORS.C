@@ -9,7 +9,7 @@ void Engine_TaskWait();
 void Engine_ActorDestroy();
 void Engine_ActorSetPosition();
 s32 Engine_GameFlagIsSet();
-void FieldScene_RunEncounterClosingSequence();
+void FuneKanpan_RunRobinTalk();
 void Engine_EventEnd();
 
 
@@ -78,7 +78,7 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
         }
     }
     if (gGameState.entrance == 6) {
-        FieldScene_RunEncounterClosingSequence();
+        FuneKanpan_RunRobinTalk();
     }
     Engine_EventEnd();
 }

@@ -1,14 +1,13 @@
-/* resource_3b8:02008070..020083b0 (832 bytes), still linked from the
- * listing. Remaining differences, all link-time values the game loads from
- * literal pools where integers become immediates or folded constants:
- * SceneData_SelectDataBySelectorAndFlags compares with 0x8b loaded from the
- * pool; the 0x105 emote is loaded from the pool too.
- * FieldScene_RunBranchedSteps1FF1, RunOpeningAuxiliarySequence,
- * FieldScene_RunScene3b8_02000264 and FieldScene_RunBranchedSteps2006 load
- * one message (MsgTorebiRunBabisSoldiers, MsgTorebiUseFourBeds,
- * MsgTorebiCameRestBefore, MsgTorebiPlanningEnterColosso) and derive the
- * next ones as base + n; the draft names those messages now, and with them
- * it is 880 bytes against 832, 318 halfwords differing. */
+/* resource_3b8:020080c8..020083b0 (744 bytes), still linked from the
+ * listing, after TOREBI_KYUDEN/GET_PLACEMENTS.C (the placements getter this
+ * draft began with, now linked). Remaining differences: the 0x105 emote is
+ * loaded from the pool; FieldScene_RunBranchedSteps1FF1,
+ * RunOpeningAuxiliarySequence, FieldScene_RunScene3b8_02000264 and
+ * FieldScene_RunBranchedSteps2006 load one message
+ * (MsgTorebiRunBabisSoldiers, MsgTorebiUseFourBeds, MsgTorebiCameRestBefore,
+ * MsgTorebiPlanningEnterColosso) and derive the next ones as base + n; with
+ * the messages named it was 880 bytes against 832 with the getter, 318
+ * halfwords differing. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -19,20 +18,6 @@ extern u8 MsgTorebiRunBabisSoldiers[];
 extern u8 MsgTorebiUseFourBeds[];
 extern u8 MsgTorebiWeHaveJustEnoughExtra[];
 /* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/KYUDEN.H. */
-
-s32 SceneData_SelectDataBySelectorAndFlags(void)
-{
-
-    s16 *tbl = (s16 *)Data_02000240;
-
-    if (tbl[0xe0] == 0x8b)
-        return (s32)Data_0200cb3c;
-    if (GameFlag_IsSet(0x950) != 0)
-        return (s32)Data_0200ce6c;
-    if (GameFlag_IsSet(0x962) != 0)
-        return (s32)Data_0200cd64;
-    return (s32)Data_0200cb84;
-}
 
 void FieldScene_RunBranchedSteps1FF1(s32 a)
 {

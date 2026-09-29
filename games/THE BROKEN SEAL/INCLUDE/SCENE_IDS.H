@@ -76,6 +76,8 @@ extern char SceneId_KareiTorebi1;
 extern char SceneId_KareiTorebi2;
 extern char SceneId_FuneHeya;
 extern char SceneId_KareiTorebi3;
+extern char SceneId_TorebiKyuden1;
+extern char SceneId_TorebiKyuden2;
 extern char SceneId_ArutamiraDou1;
 extern char SceneId_ArutamiraDou2;
 extern char SceneId_ArutamiraDou3;

@@ -1,16 +1,13 @@
-/* resource_3b8:0200c0b4..0200c340 (652 bytes with pool), still linked from
- * the listing. Remaining difference: the scene test loads 0x8b from the
- * literal pool (ldr r3, =0x8b; cmp r2, r3), a link-time value; an integer
- * scene compares with an immediate, and the function comes out 648 bytes
- * with 377 differing from +0x4f on. */
+/* The palace's scene start, entry veneer 0. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 void Map_SetLayerEntryFlagFar(s32 value);
-s32 Party_ListActiveOwnersFar(s16 *owners);
-void Owner_RecalculateRatiosFar(s32 owner);
-void InventorySnapshot_RestoreFar(void);
-void Engine_PartyAddActiveOwner(s32 owner);
+s32 Party_ListActiveOwners(s16 *owners);
+void Owner_RecalculateRatios(s32 owner);
+void InventorySnapshot_Restore(void);
+void Party_AddActiveOwner(s32 owner);
 void FieldScene_RunMainCutsceneSequence(void);
 void FieldScene_RunBranchingActorSequence(void);
 void FieldScene_RunScene3b8SequenceB(void);
@@ -24,7 +21,7 @@ struct OwnerState {
     u16 pp;
 };
 
-struct OwnerState *Engine_OwnerGetState(s32 owner);
+struct OwnerState *Owner_GetState(s32 owner);
 
 
 /* Restore the whole party: every owner's HP and PP to their maximums, and
@@ -36,19 +33,22 @@ static __inline__ void Party_RestoreAll(void)
     s32 cnt;
     s32 i;
 
-    cnt = Party_ListActiveOwnersFar(owners);
+    cnt = Party_ListActiveOwners(owners);
     for (i = 0; i < cnt; i++) {
-        state = Engine_OwnerGetState(owners[i]);
+        state = Owner_GetState(owners[i]);
         state->hp = state->max_hp;
         state->pp = state->max_pp;
-        Owner_RecalculateRatiosFar(owners[i]);
+        Owner_RecalculateRatios(owners[i]);
     }
-    Engine_PartyAddActiveOwner(1);
-    Engine_PartyAddActiveOwner(2);
-    Engine_PartyAddActiveOwner(3);
-    InventorySnapshot_RestoreFar();
+    Party_AddActiveOwner(1);
+    Party_AddActiveOwner(2);
+    Party_AddActiveOwner(3);
+    InventorySnapshot_Restore();
 }
 
+/* FAKEMATCH: these inline call and value wrappers pass their constants
+ * straight into the argument registers where the game does; direct calls
+ * share a pool constant with a later call and shift the pool. */
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
@@ -64,7 +64,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Babi's Palace entry: record the entrance flags, then outside area 0x8b restore the lighthouse-item scene and the guards, set the entrance selector and, arriving by entrance 99 or 98, restore the party and run its scene. */
+/* Babi's Palace entry: record the entrance flags, then outside the second scene restore the lighthouse-item scene and the guards, set the entrance selector and, arriving by entrance 99 or 98, restore the party and run its scene. */
 s32 TorebiKyuden_ApplyEntryState(void)
 {
     struct FieldActor *actor;
@@ -82,7 +82,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
         Engine_GameFlagSet(0x962);
         Engine_GameFlagSet(0x950);
     }
-    if (gGameState.scene != 0x8b) {
+    if (gGameState.scene != (s32)&SceneId_TorebiKyuden2) {
         if (gGameState.entrance == 11) {
             Engine_GameFlagClear(0x12f);
         }
@@ -97,12 +97,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
                 sprite = actor->sprite;
                 actor->y.fixed = 0x40000;
                 sprite->part_count = set;
-                {
-                    s32 v = -33;
-
-                    v &= ((u8 *)sprite)[5];
-                    ((u8 *)sprite)[5] = v;
-                }
+                sprite->full_color = 0;
                 sprite->palette = 0;
                 buf = Engine_HeapAllocate(17, 0x608);
                 Engine_ItemLoadIcon(205);

@@ -1,22 +1,20 @@
-/* Draft of resource_3a4 0x02009398 (FieldScene_RunScene3a4_02001398): it
- * matches the ROM byte for byte now that the message it loads from the
- * literal pool has a catalogue name (MsgArutinWatchFallingRocks). The listing
- * keeps these rows until the draft is adopted. */
+/* The falling-rocks sign on the mountain path. Unless flag 0x908 or 0xf14
+ * is set, it sets flag 0x205 and plays Gerald's scene at the wall, then the
+ * shared set piece. */
 #include "YAMA.H"
 extern u8 MsgArutinWatchFallingRocks[];
 
-
-void FieldScene_RunScene3a4_02001398(void)
+void FieldScene_RunFallingRocksWarning(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
     u32 i;
     u8 *record;
-    s32 base5_1953;
+    s32 msg;
 
     Event_Begin();
-    base5_1953 = (s32)MsgArutinWatchFallingRocks;
-    Value2(Engine_MessageShowCentered, base5_1953, 1);
+    msg = (s32)MsgArutinWatchFallingRocks;
+    Value2(Engine_MessageShowCentered, msg, 1);
     if (GameFlag_IsSet(0x908) != 0) {
     } else {
         if (GameFlag_IsSet(0xf14) != 0) {
@@ -33,7 +31,7 @@ void FieldScene_RunScene3a4_02001398(void)
             Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
             Actor_WalkToAndWait(ACTOR_GERALD, 0x320, 140);
             Actor_FaceDirection(ACTOR_GERALD, 0xc000, 20);
-            Event_SetMessage((base5_1953 + 1));
+            Event_SetMessage(msg + 1);
             Actor_SetAnimation(ACTOR_GERALD, 4);
             Event_Wait(20);
             Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);

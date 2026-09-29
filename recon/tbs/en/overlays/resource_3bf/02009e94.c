@@ -1,10 +1,11 @@
 /* Draft of FieldScene_RunSupplementalSequenceOne, resource_3bf at 0x02009e94, built with
  * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: a message number held across calls is a C constant,
- * which GCC's second scheduling pass hoists above the calls before its first
- * use; the ROM loads it after them, as it would a link-time value.
+ * Remaining difference: its messages have catalogue names now; 8 halfwords
+ * still differ from the ROM, and it names symbols no link defines
+ * (Party_SetFields1ceAnd1d0).
  * The listing keeps these rows. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaWho3[];
 
 /* Runs a scripted beat on the objects indexed 12, 13 and 14, stepping
  * through the entries at 0x2438 as it goes, then sets the scene
@@ -23,7 +24,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_ShowEmote(12, 0x100, 0);
     Event_Wait(30);
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
-    sequence_2438 = 0x2438;
+    sequence_2438 = (s32)MsgRunpaWho3;
     Event_SetMessage(sequence_2438);
     Event_ShowMessage(12, 0);
     Actor_ShowEmote(13, 0x100, 0);

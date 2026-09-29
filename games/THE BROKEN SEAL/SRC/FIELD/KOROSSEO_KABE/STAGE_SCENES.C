@@ -1,4 +1,8 @@
 #include "TASK.H"
+extern u8 MsgKorosseoHereYourObjectiveRideLogs[];
+extern u8 MsgKorosseoLogRollingStage[];
+extern u8 MsgKorosseoOperatorLiftsWillCheerFor[];
+extern u8 MsgKorosseoShiftingFloorStage[];
 
 void FieldScene_RunSecondActorInteraction(s32 a0)
 {
@@ -12,7 +16,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
         Event_Begin();
         rec = Value2(KorosseoKabe_RunStateInteraction, a0, 2);
         if (rec == 0) {
-            Event_SetMessage(MSG_SHIFTING_FLOOR_STAGE);
+            Event_SetMessage((s32)MsgKorosseoShiftingFloorStage);
             FieldScene_PlaceSpectatorRow();
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
@@ -34,7 +38,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             KorosseoKabe_ShowFollowUpPrompt(a0, 2);
         } else {
             if (rec == 1) {
-                Event_SetMessage(MSG_OPERATOR_LIFTS_WILL_CHEER_FOR);
+                Event_SetMessage((s32)MsgKorosseoOperatorLiftsWillCheerFor);
                 Event_ShowMessage(a0, 0);
             }
         }
@@ -56,7 +60,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
         rec2 = Value2(KorosseoKabe_RunStateInteraction, a0, 3);
         if (rec2 != 0) {
         } else {
-            Event_SetMessage(MSG_LOG_ROLLING_STAGE);
+            Event_SetMessage((s32)MsgKorosseoLogRollingStage);
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x2f00000, -1, 0xc00000, 1);
             Camera_WaitForMove();
@@ -89,7 +93,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             goto L_020016b0;
         }
         if (rec2 == 1) {
-            Event_SetMessage(MSG_HERE_YOUR_OBJECTIVE_RIDE_LOGS);
+            Event_SetMessage((s32)MsgKorosseoHereYourObjectiveRideLogs);
             Event_ShowMessage(a0, 0);
         }
         L_020016b0:;

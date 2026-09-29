@@ -1,10 +1,16 @@
-/* Draft of FieldScene_RunSupplementalSequenceTwo, resource_3b5 at 0x020082f0, built with
- * games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/MACHI.H.
- * Remaining difference: the ROM loads each branch's message number into r0 and
- * joins at one call; with the numbers as C constants GCC hoists each load above
- * its flag test (it only hoists constants, not link-time values), 100 bytes differ.
- * The listing keeps these rows. */
+/* Draft of resource_3b5 0x020082f0 (FieldScene_RunSupplementalSequenceTwo):
+ * it matches the ROM byte for byte now that the messages it loads from the
+ * literal pool have catalogue names (MsgTorebiHoorayFinalsSeven,
+ * MsgTorebiMainStreetTolbi, MsgTorebiOldestShouldntShare,
+ * MsgTorebiWheeFestivalColosso, MsgTorebiWinBigUsed, MsgTorebiYayEasyRun).
+ * The listing keeps these rows until the draft is adopted. */
 #include "MACHI.H"
+extern u8 MsgTorebiHoorayFinalsSeven[];
+extern u8 MsgTorebiMainStreetTolbi[];
+extern u8 MsgTorebiOldestShouldntShare[];
+extern u8 MsgTorebiWheeFestivalColosso[];
+extern u8 MsgTorebiWinBigUsed[];
+extern u8 MsgTorebiYayEasyRun[];
 
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
@@ -21,19 +27,19 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     actor->proximity_flags |= 2;
     if (work->psynergy_request == 0) {
         if (Engine_GameFlagIsSet(0x950) != 0) {
-            msg = 0x2365;
+            msg = (s32)MsgTorebiYayEasyRun;
         } else if (Engine_GameFlagIsSet(0x962) != 0) {
-            msg = 0x21e2;
+            msg = (s32)MsgTorebiHoorayFinalsSeven;
         } else {
-            msg = 0x1f95;
+            msg = (s32)MsgTorebiWheeFestivalColosso;
         }
     } else {
         if (Engine_GameFlagIsSet(0x950) != 0) {
-            msg = 0x2371;
+            msg = (s32)MsgTorebiMainStreetTolbi;
         } else if (Engine_GameFlagIsSet(0x962) != 0) {
-            msg = 0x21f5;
+            msg = (s32)MsgTorebiWinBigUsed;
         } else {
-            msg = 0x1faa;
+            msg = (s32)MsgTorebiOldestShouldntShare;
         }
     }
     Engine_EventSetMessage(msg);

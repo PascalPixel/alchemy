@@ -1,18 +1,23 @@
 /* resource_3b8:02008524..02008af8 (1492 bytes), still linked from the
  * listing. Remaining differences: SceneDialogue_ShowMessage22a8Branch,
  * SceneDialogue_RunChoiceSequence22ab and SceneDialogue_RunChoiceSequence2352
- * derive their answer messages from one loaded base (0x22a8, 0x22ab, 0x2352;
- * flag 0xf31 is pool-loaded too); FieldScene_RunScene3b8SequenceB loads
- * message 0x2280 from the pool where an integer becomes movs/lsls, which
- * shifts its whole register allocation (1152 of 1156 bytes, 618 differ). */
+ * derive their answer messages from one loaded base (MsgTorebiMeetBabi,
+ * MsgTorebiEasternShoresKaragol, MsgTorebiFoundCloakBall; flag 0xf31 is
+ * pool-loaded too); FieldScene_RunScene3b8SequenceB loads MsgTorebiGetUp
+ * from the pool. With the messages named the draft is 1624 bytes against
+ * 1492, and 468 halfwords differ. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgTorebiGetUp[];
+extern u8 MsgTorebiEasternShoresKaragol[];
+extern u8 MsgTorebiFoundCloakBall[];
+extern u8 MsgTorebiMeetBabi[];
 /* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/KYUDEN.H. */
 
 void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
-    s32 k = 0x22a8;
+    s32 k = (s32)MsgTorebiMeetBabi;
 
     Event_SetMessage(k);
     Event_OpenMessage(a, 0);
@@ -25,7 +30,7 @@ void SceneDialogue_ShowMessage22a8Branch(s32 a)
 
 void SceneDialogue_RunChoiceSequence22ab(s32 no)
 {
-    s32 msg = 0x22ab;
+    s32 msg = (s32)MsgTorebiEasternShoresKaragol;
 
     Event_SetMessage(msg);
     Event_OpenMessage(no, 0);
@@ -42,7 +47,7 @@ void SceneDialogue_RunChoiceSequence2352(void)
 
     Event_Begin();
     Battle_ResetEffectCounterFar();
-    msg = 0x2352;
+    msg = (s32)MsgTorebiFoundCloakBall;
     Event_SetMessage(msg);
     Event_ShowMessage(-1, 0);
     Event_Wait(10);
@@ -77,7 +82,7 @@ void FieldScene_RunScene3b8SequenceB(void)
     s32 v5;
 
     Engine_EventBegin();
-    Engine_EventSetMessage(0x2280);
+    Engine_EventSetMessage((s32)MsgTorebiGetUp);
     v5 = 0;
     *(u8 *)(Engine_ActorGet(0) + 84) = v5;
     *(u8 *)(Engine_ActorGet(10) + 84) = v5;

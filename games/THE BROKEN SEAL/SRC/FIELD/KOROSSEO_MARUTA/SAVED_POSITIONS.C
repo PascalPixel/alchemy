@@ -1,5 +1,7 @@
 /* Robin's look at the course, and clearing the saved actor positions. */
 #include "LOG_ROLLING.H"
+extern u8 MsgKorosseoRobinDidGetGoodLook[];
+extern u8 MsgKorosseoWaitShouldntDecideWhereBest[];
 
 void RunPartyCountInteractionCopyB(s32 actorId)
 {
@@ -13,7 +15,7 @@ void RunPartyCountInteractionCopyB(s32 actorId)
     Event_Begin();
 
     if (GetPartyMemberCount() <= 1) {
-        Event_SetMessage(MSG_ROBIN_DID_GET_GOOD_LOOK);
+        Event_SetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
         if (Event_AskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
@@ -26,7 +28,7 @@ void RunPartyCountInteractionCopyB(s32 actorId)
             Event_RequestExit(11);
         }
     } else {
-        Event_SetMessage(MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST);
+        Event_SetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
         Event_ShowMessage(actorId, 0);
     }
 

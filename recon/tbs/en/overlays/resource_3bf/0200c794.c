@@ -1,10 +1,14 @@
 /* Draft of FieldScene_RunScene3bf_02004794, resource_3bf at 0x0200c794, built with
  * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: a message number held across calls is a C constant,
- * which GCC's second scheduling pass hoists above the calls before its first
- * use; the ROM loads it after them, as it would a link-time value.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_EventOpenMessage, Engine_EventChooseYesNo).
  * The listing keeps these rows. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaDonpaGrateful[];
+extern u8 MsgRunpaDonpaKnowsCoddled[];
+extern u8 MsgRunpaMaybeDodonpasEyes[];
+extern u8 MsgRunpaShhhPleaseDont[];
 
 void FieldScene_RunScene3bf_02004794(void)
 {
@@ -15,18 +19,18 @@ void FieldScene_RunScene3bf_02004794(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x941) != 0) {
-        Event_SetMessage(0x2566);
+        Event_SetMessage((s32)MsgRunpaDonpaGrateful);
         Event_ShowMessage(18, 0);
         Event_End();
     } else {
         if (GameFlag_IsSet(0x313) != 0) {
-            Event_SetMessage(0x2457);
+            Event_SetMessage((s32)MsgRunpaMaybeDodonpasEyes);
             Event_OpenMessage(25, 0);
             Event_End();
         } else {
             Actor_ShowEmote(25, 0x102, 30);
             Actor_FaceActor(25, ACTOR_PARTY_LEADER, 0);
-            base5_244f = 0x244f;
+            base5_244f = (s32)MsgRunpaShhhPleaseDont;
             Event_SetMessage(base5_244f);
             Event_ShowMessage(25, 0);
             Actor_FaceActor(25, 24, 0);
@@ -55,7 +59,7 @@ void FieldScene_RunScene3bf_02004794(void)
             }
             Event_Wait(60);
             Actor_ShowEmote(25, 0x105, 60);
-            base5_2455 = 0x2455;
+            base5_2455 = (s32)MsgRunpaDonpaKnowsCoddled;
             Event_SetMessage(base5_2455);
             Event_OpenMessage(25, 0);
             Actor_RunRepeatedMotion(25, 1);

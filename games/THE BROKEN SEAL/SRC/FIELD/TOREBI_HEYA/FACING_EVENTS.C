@@ -1,5 +1,7 @@
 /* Scene tables, the primary sequence and the facing actors. */
 #include "TOREBI.H"
+extern u8 MsgTorebiHeWontSailShipEven[];
+extern u8 MsgTorebiHeyWhatsThis[];
 
 u8 *SceneData_GetTable8BB4(void)
 {
@@ -82,7 +84,7 @@ void FieldScene_RunScene3b6SequenceA(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_HEY_WHATS_THIS);
+    Event_SetMessage((s32)MsgTorebiHeyWhatsThis);
     Event_Wait(40);
     rec7 = Value4(Engine_ObjectCreate, 0x11c, 0x2580000, 0, 0x3380000);
     Actor_SetSpriteFlags(rec7, 0);
@@ -143,7 +145,7 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
     void Event_SetMessage(s32);
 
     Event_Begin();
-    Event_SetMessage(MSG_HE_WONT_SAIL_SHIP_EVEN);
+    Event_SetMessage((s32)MsgTorebiHeWontSailShipEven);
     Event_Wait(30);
     /* Same import, same first two arguments, differing only in the third.
      * Two call sites, not a loop. */

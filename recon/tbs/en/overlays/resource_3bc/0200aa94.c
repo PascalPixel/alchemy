@@ -3,8 +3,10 @@
  * InitializeStateInteraction, between FIELD/KOROSSEO_MARUTA/SAVED_POSITIONS.C
  * and MIDDLE.C, stay listing.
  *
- * Remaining difference: they load the round numbers 0x8f and 0x90 and the
- * finals messages from their pools, as link-time symbols do.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Func_0200760c,
+ * Func_0200741c, Func_0200747e, Value_0000008f, Value_00000090,
+ * Func_020074d2).
  */
 /* The per-site declarations this draft needs (formerly SITES.H). */
 /* Draft scaffolding for the resource_3bc drafts beside this file: the
@@ -16,14 +18,14 @@
 #define RESOURCE_3BC_SITES_H
 
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING.H"
+extern u8 MsgKorosseoStageFirstFinalsMatch[];
+extern u8 MsgKorosseoStageSecondFinalsMatch[];
+extern u8 MsgKorosseoStageThirdFinalsMatch[];
+extern u8 MsgKorosseoWouldYouLikeHearDescription[];
 
 extern void Func_02004d72(void);       /* site 0x20024e4 -> Func_0200288c veneer */
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
-extern u8 LinkedMessage_StageFirstFinalsMatch;
-extern u8 LinkedMessage_StageSecondFinalsMatch;
-extern u8 LinkedMessage_StageThirdFinalsMatch;
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern void Func_020062e0(s32 mode);          /* Func_02002e54 veneer #1 */
 extern void Func_02006324(s32 mode);          /* Func_02002e54 veneer #2 */
 extern s32 Func_02008092(void);               /* Func_080f9048 veneer (loop check) */
@@ -131,7 +133,6 @@ void Func_020059ee_arrival();
 s32 Func_02005a00_arrival();
 void Func_02005a0c_arrival();
 void Func_02005a5c_arrival();
-extern u8 Data_00002073[];
 void Func_02004c6a_head();
 void Func_02004c8a_head();
 void Func_02004cae_head();
@@ -419,11 +420,11 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction
     Func_0200741c(interaction_base, 5);
     stage_variant = gGameState.scene;
     if (stage_variant == (s32)&Value_0000008f) {
-        script_id = (s32)&LinkedMessage_StageFirstFinalsMatch;
+        script_id = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (stage_variant == (s32)&Value_00000090) {
-        script_id = (s32)&LinkedMessage_StageSecondFinalsMatch;
+        script_id = (s32)MsgKorosseoStageSecondFinalsMatch;
     } else {
-        script_id = (s32)&LinkedMessage_StageThirdFinalsMatch;
+        script_id = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Event_SetMessage(script_id);
     Event_ShowMessage(actor_handle, 0);
@@ -441,7 +442,7 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction
         return result;
     }
     GameFlag_Set(interaction_base + 520);
-    Event_SetMessage((s32)&LinkedMessage_WouldYouLikeHearDescription);
+    Event_SetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
     Event_OpenMessage(actor_handle, 0);
     return Event_ChooseYesNo(0, 0);
 }
@@ -454,11 +455,11 @@ void ColossoLogRollingStage_InitializeStateInteraction(s32 actor_handle, s32 int
     Func_020074d2(interaction_base, 5);
     stage_variant = gGameState.scene;
     if (stage_variant == (s32)&Value_0000008f) {
-        script_id = (s32)&LinkedMessage_StageFirstFinalsMatch;
+        script_id = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (stage_variant == (s32)&Value_00000090) {
-        script_id = (s32)&LinkedMessage_StageSecondFinalsMatch;
+        script_id = (s32)MsgKorosseoStageSecondFinalsMatch;
     } else {
-        script_id = (s32)&LinkedMessage_StageThirdFinalsMatch;
+        script_id = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Event_SetMessage(script_id + 1);
     Event_ShowMessage(actor_handle, 0);

@@ -1,11 +1,9 @@
-/* Draft of resource_3b6 0x02008760 (SceneDialogue_RunMessage1FBBStep), built with
- * games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/TOREBI.H.
- * Remaining difference: the ROM loads the message number once from the
- * literal pool and forms the following lines by adding to it, as a
- * link-time message value would; the C constant folds each sum into its
- * own pool constant (4 or 8 bytes longer).
- * The listing keeps these rows. */
+/* Draft of resource_3b6 0x02008760 (SceneDialogue_RunMessage1FBBStep): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgTorebiWantStay). The listing keeps
+ * these rows until the draft is adopted. */
 #include "TOREBI.H"
+extern u8 MsgTorebiWantStay[];
 
 void SceneDialogue_RunMessage1FBBStep(s32 subject)
 {
@@ -13,7 +11,7 @@ void SceneDialogue_RunMessage1FBBStep(s32 subject)
 
     Event_Begin();
 
-    msg = MSG_DO_YOU_WANT_TO_STAY_WITH_US;
+    msg = (s32)MsgTorebiWantStay;
     Event_SetMessage(msg);
     Event_OpenMessage(subject, 0);
 

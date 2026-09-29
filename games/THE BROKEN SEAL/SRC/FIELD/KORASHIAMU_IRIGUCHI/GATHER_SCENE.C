@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgKorashiamuDayTiredWaiting[];
+extern u8 MsgKorashiamuYouReadyForFinals[];
 extern struct EventWork *gEventWork;
 extern u8 KorashiamuIriguchi_ActionTable5[];
 extern u8 KorashiamuIriguchi_ActionTable6[];
@@ -104,7 +106,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
         Engine_CameraWaitForMove();
         Call3(Engine_ActorFaceDirection, 8, 0x3000, 20);
         Engine_ActorRunRepeatedMotion(8, 1);
-        Call1(Engine_EventSetMessage, 0x2125);
+        Call1(Engine_EventSetMessage, (s32)MsgKorashiamuYouReadyForFinals);
         Value2(Engine_EventOpenMessage, 0x8008, 0);
         rec = Value2(Engine_EventChooseYesNo, 0, 0);
         if (rec != 0) {
@@ -112,7 +114,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_EventWait(20);
             SceneState_ForwardMaskedHalfwordWith10(12, 0xd000);
             Engine_ActorRunRepeatedMotion(12, 1);
-            Call1(Engine_EventSetMessage, 0x212b);
+            Call1(Engine_EventSetMessage, (s32)MsgKorashiamuDayTiredWaiting);
             Call1(FieldScene_CallPairWith10, 0x400c);
             SceneState_ForwardMaskedHalfwordWith10(17, 0);
             SceneState_ForwardMaskedHalfwordWith10(0, 0x8000);

@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgKorosseoFocusRollingLogs[];
+extern u8 MsgKorosseoPlaceCalledBoard[];
 
 void Korosseo_FinishSoloRound(void);
 s32 KorosseoKabe_RunStateInteraction(s32 speaker, s32 base);
@@ -42,7 +44,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         s32 x;
         s32 z;
 
-        Engine_EventSetMessage(8366);
+        Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledBoard);
         Call2((void (*)())Engine_CameraSetSpeed, 0x20000, 0x4000);
         Call4((void (*)())Engine_CameraMoveTo, 0x1480000, -1, 0x1080000, 1);
         Engine_CameraWaitForMove();
@@ -71,7 +73,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         Call3((void (*)())Engine_ActorSetPosition, 16, 0x1880000, 0xd00000);
         KorosseoKabe_ShowFollowUpPrompt(speaker, 5);
     } else if (result == 1) {
-        Engine_EventSetMessage(8365);
+        Engine_EventSetMessage((s32)MsgKorosseoFocusRollingLogs);
         Engine_EventShowMessage(speaker, 0);
     }
     FieldScene_RunMiddleSequence(result, speaker, 5);

@@ -1,4 +1,8 @@
 #include "STATUS.H"
+extern u8 MsgKorashiamuPrepareYourselvesContestantsFinalsWill[];
+extern u8 MsgKorashiamuRobinOnlyOneEnteringFinals[];
+extern u8 MsgKorashiamuSeeYouveMadeThroughYour[];
+extern u8 MsgKorashiamuWonBothMatches[];
 
 /*
  * The case order is load-bearing and it is not the selector order: the arms
@@ -147,7 +151,7 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     Event_Wait(20);
-    Event_SetMessage(MSG_ROBIN_ONLY_ONE_ENTERING_FINALS);
+    Event_SetMessage((s32)MsgKorashiamuRobinOnlyOneEnteringFinals);
     FieldScene_CallPairWith10(2);
     Actor_SetAnimationAndWait(8, 3);
     FieldScene_CallPairWith10(8);
@@ -369,7 +373,7 @@ void FieldScene_RunScene3b9_020024d8(void)
     Actor_FaceDirection(16, 0x8000, 0);
     Actor_FaceDirection(17, 0xb000, 0);
     Actor_FaceDirection(18, 0xb000, 0);
-    Event_SetMessage(MSG_PREPARE_YOURSELVES_CONTESTANTS_FINALS_WILL);
+    Event_SetMessage((s32)MsgKorashiamuPrepareYourselvesContestantsFinalsWill);
     FieldScene_CallPairWith10(8);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     {
@@ -430,7 +434,7 @@ void FieldScene_RunScene3b9_02002668(void)
     Event_Wait(40);
     Actor_RunRepeatedMotion(8, 1);
     Actor_SetAnimation(8, 3);
-    Event_SetMessage(MSG_SEE_YOUVE_MADE_THROUGH_YOUR);
+    Event_SetMessage((s32)MsgKorashiamuSeeYouveMadeThroughYour);
     FieldScene_CallPairWith10(8);
     Actor_RunRepeatedMotion(9, 1);
     FieldScene_CallPairWith10(9);
@@ -533,7 +537,7 @@ void FieldScene_RunScene3b9_02002964(void)
     Event_Wait(40);
     Actor_RunRepeatedMotion(8, 1);
     Actor_SetAnimation(8, 3);
-    Event_SetMessage(SCENE_STEP_VALUE);
+    Event_SetMessage((s32)MsgKorashiamuWonBothMatches);
     FieldScene_CallPairWith10(8);
     Actor_RunRepeatedMotion(9, 1);
     FieldScene_CallPairWith10(9);

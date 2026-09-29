@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
+extern u8 MsgKorosseoOperatorWallsCheer[];
+extern u8 MsgKorosseoPlaceCalledWall[];
 
 void Korosseo_FinishSoloRound();
 s32 Korosseo_FadeInCompetitor();
@@ -60,7 +62,7 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
         rec8 = Value2(ColossoLogRollingStage_RunStateInteraction, a0, 3);
         if (rec8 == 0) {
             p8 = *(s32 *)&gEventWork;
-            Call1(Engine_EventSetMessage, 0x20bb);
+            Call1(Engine_EventSetMessage, (s32)MsgKorosseoPlaceCalledWall);
             ColossoLogRollingStage_ResetAndRunSceneTask();
             Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
             Call4(Engine_CameraMoveTo, 0x2680000, -1, 0xb80000, 1);
@@ -99,7 +101,7 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
             }
         } else {
             if (rec8 == 1) {
-                Call1(Engine_EventSetMessage, 0x20ba);
+                Call1(Engine_EventSetMessage, (s32)MsgKorosseoOperatorWallsCheer);
                 Engine_EventShowMessage(a0, 0);
             }
         }

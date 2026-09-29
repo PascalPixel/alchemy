@@ -1,5 +1,7 @@
 /* Tolbi town: actor proximity, the scene tables and the first dialogue steps. */
 #include "MACHI.H"
+extern u8 MsgTorebiFaceAwayTolbi[];
+extern u8 MsgTorebiTossLuckyMedal[];
 
 s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
                                     struct SceneActor *target,
@@ -137,12 +139,12 @@ void HideActorOneHundredTwo(void)
 
 void SceneDialogue_RunMessage0e36(void)
 {
-    Engine_EventSetMessage(0x0E36);
+    Engine_EventSetMessage((s32)MsgTorebiFaceAwayTolbi);
     Engine_EventShowMessage(-1, 0);
 }
 
 void SceneDialogue_RunMessage0e37(void)
 {
-    Engine_EventSetMessage(0x0E37);
+    Engine_EventSetMessage((s32)MsgTorebiTossLuckyMedal);
     Engine_EventShowMessage(-1, 0);
 }

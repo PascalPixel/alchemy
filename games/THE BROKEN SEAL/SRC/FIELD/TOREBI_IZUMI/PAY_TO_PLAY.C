@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgTorebiBuddyWannaTry[];
+extern u8 MsgTorebiYaDontEnough[];
 
 s32 Main_080772c8(void);
 void Main_0808a5b0(void);
@@ -25,13 +27,13 @@ void TorebiIzumi_PayToPlay(void)
     Engine_EventBegin();
     coins = Data_02000240_t.words[4];
     if (coins < cost) {
-        Engine_EventSetMessage(0xe12);
+        Engine_EventSetMessage((s32)MsgTorebiYaDontEnough);
         Engine_EventOpenMessage(9, 0);
         return;
     }
     *(u32 *)0x02001000 = coins;
     Main_0808a5b0();
-    Engine_EventSetMessage(0xe0e);
+    Engine_EventSetMessage((s32)MsgTorebiBuddyWannaTry);
     Main_08015120(cost, 5);
     Engine_EventOpenMessage(9, 0);
     if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) == 0) {

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgKorosseoDidntThinkBattles[];
 
 /* Audited retained supplemental scene body.
  * The complete production span preserves 40 calls, 1 loop(s), and 0 explicit memory operation(s).
@@ -51,7 +52,7 @@ void Scene_RunSupplementalSequenceOne(void)
     s32 i1;
 
     Func_020055ce();
-    base = 8307;
+    base = (s32)MsgKorosseoDidntThinkBattles;
     Func_0200568a();
     Func_0200569a();
     if (Func_020055fa(33555508, 0) == 0) {

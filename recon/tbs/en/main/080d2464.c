@@ -210,7 +210,7 @@ loop_23:
         }
         sp24 = 0xA0;
     }
-    Func_080049ac();
+    Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(sp30, spC);
     if (sp24 == 0xB2) {
         Func_080b50e8(0x86);

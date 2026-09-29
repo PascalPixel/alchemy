@@ -115,14 +115,14 @@ s32 Func_080041d8(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
 void Func_080f9010(s32 id);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void Func_08004cb4(s32 *vector);
+void SceneTransform_ApplyPosition(s32 *vector);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Graphics_SaveTransferWorkOnce(void);
-void Func_08004c1c(s32 angle);
-void Func_08004bd4(s32 angle);
-void Func_08004c6c(s32 angle);
+void SceneTransform_ApplyYaw(s32 angle);
+void SceneTransform_ApplyPitch(s32 angle);
+void SceneTransform_ApplyRoll(s32 angle);
 void EffectPosition_ApplyBaseAndYOffset(void *source, s32 *out_vector);
 void Graphics_RestoreTransferWork(void);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
@@ -290,7 +290,7 @@ void BattleFx_PrepareCanvasEffect(
                 Func_080f9010(212);
             }
 
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
             if (frame >= 6 && frame <= 45) {
@@ -298,7 +298,7 @@ void BattleFx_PrepareCanvasEffect(
                 base[1] += step[1];
                 base[2] += step[2];
             }
-            Func_08004cb4(base);
+            SceneTransform_ApplyPosition(base);
 
             if (frame == 0) {
                 ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s32 *, 8), 7, -1, -1, 0);
@@ -315,17 +315,17 @@ void BattleFx_PrepareCanvasEffect(
                     Graphics_SaveTransferWorkOnce();
                     switch (i & 3) {
                     case 0:
-                        Func_08004c1c(frame * (i * 32 + 256));
+                        SceneTransform_ApplyYaw(frame * (i * 32 + 256));
                         break;
                     case 1:
-                        Func_08004bd4((-frame) * (i * 32 + 256));
+                        SceneTransform_ApplyPitch((-frame) * (i * 32 + 256));
                         break;
                     case 2:
-                        Func_08004c6c((-frame) * (i * 32 + 256));
+                        SceneTransform_ApplyRoll((-frame) * (i * 32 + 256));
                         break;
                     case 3:
-                        Func_08004bd4((-frame) * (i * 32 + 256));
-                        Func_08004c6c((-frame) * (i * 32 + 256));
+                        SceneTransform_ApplyPitch((-frame) * (i * 32 + 256));
+                        SceneTransform_ApplyRoll((-frame) * (i * 32 + 256));
                         break;
                     }
 

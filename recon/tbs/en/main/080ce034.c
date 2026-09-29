@@ -28,7 +28,7 @@ void Func_080030f8();
 void Func_080041d8();
 void Scheduler_RemoveCallback();
 s32 Random16();
-void Func_080049ac();
+void Render_ResetTransformState();
 void Graphics_PrepareTransferInIwramWork();
 s32 Resource_DecodeType01();
 void _call_via_r3();
@@ -167,7 +167,7 @@ void Func_080ce034(s32 a0)
 L_080ce130:
     ;
     p5 = *(s32 *)0x03001e80;
-    Func_080049ac();
+    Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)p5, (s32)p5 + 12);
     if (v11 <= 17) {
         if (v11 != 0) {

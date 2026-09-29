@@ -120,15 +120,15 @@ loop_4:
 loop_15:
             temp_r5_216 = *GetBattleObjectSlotFar(M2C_FIELD(
                 M2C_FIELD(temp_sl_23, void **, 0x7828), s16 *, sp10));
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(sp1C, (s32)sp18);
             M2C_FIELD(&sp30, s32 *, 0) = (s32) M2C_FIELD(temp_r5_216, s32 *, 8);
             M2C_FIELD(&sp30, s32 *, 4) = 0x140000;
             M2C_FIELD(&sp30, s32 *, 8) = (s32) M2C_FIELD(temp_r5_216, s32 *, 0x10);
-            Func_08004cb4(&sp30);
+            SceneTransform_ApplyPosition(&sp30);
             temp_r5_233 = var_fp_192 << 5;
             if (sp28 > temp_r5_233) {
-                Func_08004bd4(sp28 << 9);
+                SceneTransform_ApplyPitch(sp28 << 9);
                 if (sp28 == (temp_r5_233 + 0x20)) {
                     ObjectGroup_UpdateMembers(M2C_FIELD(
                         M2C_FIELD(temp_sl_23, void **, 0x7828), s16 *, sp10),

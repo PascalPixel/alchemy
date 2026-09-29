@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 

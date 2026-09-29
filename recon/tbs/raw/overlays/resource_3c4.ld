@@ -7,8 +7,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/DISTANCE.o"(.text)
-        "*/resource_3c4_overlay.o"(.text.x0200806c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)

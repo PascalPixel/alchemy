@@ -51,7 +51,7 @@ extern u8 KorosseoKawa_ScriptA[];
 
 typedef void(*SceneTask)(void);
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
+void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -160,7 +160,7 @@ static __inline__ void AdvanceMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-void Object_SetMoveTarget();          /* veneer to Object_SetPosition */
+void Object_SetPosition();
 
 s32 SceneActor_ApplyValueAndMatchingSlots();           /* local thunk to Func_020020e8, site A */
 
@@ -215,7 +215,7 @@ s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 {
     struct FieldActor *o = Object_GetById((s16)a->unknown_64);
 
-    Object_SetMoveTarget(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
+    Object_SetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
     o->motion_flags = 0;
     Object_SetScript(o, (s32)KorosseoKawa_ScriptB);
     Audio_PlayCue(83);
@@ -260,7 +260,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     *(s32 *)(rec + 52) = 0x4000;
     *(s32 *)(rec + 48) = 0x10000;
 
-    Object_SetMoveTarget(rec, x, 0, z);
+    Object_SetPosition(rec, x, 0, z);
     GameFlag_Set(0x211);
     Object_SetScript(rec, (void *)0x0200c6fc);
 

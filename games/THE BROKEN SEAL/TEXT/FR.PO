@@ -33723,7 +33723,7 @@ msgctxt "message"
 msgid "08428"
 msgstr "Umm{pause_20_skippable}, {actor_name:1} ne{line_break}peut-il pas nous{line_break}accompagner?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteThirdFinals"
 msgid "08429"
 msgstr "Je parie que tu veux{line_break}en apprendre un maximum{line_break}sur les épreuves{page_break}qui t'attendent,{line_break}hein, {actor_name:1}?{end_now}"
 

@@ -197,9 +197,9 @@ void Runtime_BumpFree();           /* release a graphics handle */
 
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);  /* terrain probe */
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
+void Object_SetPosition(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
+void Object_SetPosition(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
 
 void Script_WaitForEventTimeout(struct FieldActor *);              /* re-attach the camera */
 
@@ -300,12 +300,12 @@ void StagedActor_PushActorAhead(void)
 
     target->speed = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetMoveTarget(target, pos.x, pos.y, pos.z);
+    Object_SetPosition(target, pos.x, pos.y, pos.z);
 
     /* The same destination block, moved onto the subject this time. */
     subject->speed = 0x3333;
     subject->acceleration = 0x3333;
-    Object_SetMoveTarget(subject, pos.x, pos.y, pos.z);
+    Object_SetPosition(subject, pos.x, pos.y, pos.z);
 
     Audio_PlayCue(0xee);
     Script_WaitForEventTimeout(target);

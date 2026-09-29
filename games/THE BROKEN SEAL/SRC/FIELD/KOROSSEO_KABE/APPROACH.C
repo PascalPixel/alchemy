@@ -45,7 +45,7 @@ s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a)
 {
     RaisedEffect *o = (RaisedEffect *)Engine_ActorGet(a->f64);
 
-    Engine_ObjectSetPosition(o, a->f08, a->f0c + 0x240000, a->f10);
+    Object_SetPosition(o, a->f08, a->f0c + 0x240000, a->f10);
     o->f55 = 0;
     Object_SetScript(o, KorosseoKabe_RaiseScript);
     Audio_PlayCue(83);
@@ -88,7 +88,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
     *(s32 *)(record + 52) = 0x4000;
     *(s32 *)(record + 48) = 0x10000;
 
-    Engine_ObjectSetPosition(record, x, 0, z);
+    Object_SetPosition(record, x, 0, z);
     GameFlag_Set(0x211);
     Object_SetScript(record, KorosseoKabe_ApproachScript);
 

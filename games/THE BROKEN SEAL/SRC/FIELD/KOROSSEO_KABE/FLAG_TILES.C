@@ -73,7 +73,7 @@ void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
 
         p->f30 = 0x10000;
         p->f34 = 0x8000;
-        Engine_ObjectSetPosition(p, x, p->f0c, y);
+        Object_SetPosition(p, x, p->f0c, y);
     }
     Object_SetAnimation(p, 27);
     {
@@ -82,7 +82,7 @@ void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
 
         q->f30 = 0x10000;
         q->f34 = 0x8000;
-        Engine_ObjectSetPosition(q, x, q->f0c, y);
+        Object_SetPosition(q, x, q->f0c, y);
     }
     if (a1 < 0 || a2 < 0) {
         Object_SetAnimation(q, 4);

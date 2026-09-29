@@ -72,7 +72,7 @@ extern volatile u32 Data_03001ae8;
 extern u8 HexDigits[];
 
 void Map_UpdateCellRect();
-void Object_SetMoveTarget();
+void Object_SetPosition();
 void Script_WaitForEventTimeout();
 
 typedef void(*SceneTask)(void);
@@ -83,7 +83,7 @@ s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 void GameFlag_SetByte(s32, s32);
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
+void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
 
 PartyInteractionRecord *GetPartyInteractionRecord(void);
@@ -370,12 +370,12 @@ void FieldScene_RunScene3ba_02000270(void)
     rec7[85] = none;
     *(s32 *)((s32)rec7 + 52) = 0x6666;
     *(s32 *)((s32)rec7 + 48) = 0xcccc;
-    Call4(Object_SetMoveTarget, (s32)rec7, *(s32 *)((s32)rec7 + 8), 0x80000, *(s32 *)((s32)rec7 + 16));
+    Call4(Object_SetPosition, (s32)rec7, *(s32 *)((s32)rec7 + 8), 0x80000, *(s32 *)((s32)rec7 + 16));
     rec7 = Value1(Object_GetById, 14);
     rec7[85] = none;
     *(s32 *)((s32)rec7 + 52) = 0x6666;
     *(s32 *)((s32)rec7 + 48) = 0xcccc;
-    Call4(Object_SetMoveTarget, (s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
+    Call4(Object_SetPosition, (s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
     Script_WaitForEventTimeout((s32)rec7);
     Event_Wait(45);
     Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
@@ -398,7 +398,7 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 
         leader->speed = 0x10000;
         leader->acceleration = 0x8000;
-        Object_SetMoveTarget(leader, x, leader->y.fixed, z);
+        Object_SetPosition(leader, x, leader->y.fixed, z);
     }
     Object_SetAnimation(leader, 27);
     {
@@ -407,7 +407,7 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 
         actor->speed = 0x10000;
         actor->acceleration = 0x8000;
-        Object_SetMoveTarget(actor, x, actor->y.fixed, z);
+        Object_SetPosition(actor, x, actor->y.fixed, z);
     }
     if (dx < 0 || dz < 0) {
         Object_SetAnimation(actor, 4);

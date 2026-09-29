@@ -197,9 +197,9 @@ void Runtime_BumpFree();           /* release a graphics handle */
 
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);  /* terrain probe */
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
+void Object_SetPosition(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
+void Object_SetPosition(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
 
 void Script_WaitForEventTimeout(struct FieldActor *);              /* re-attach the camera */
 

@@ -54,7 +54,7 @@ void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z)
 
         ObjectDispatch_InitFromTable6(actor);
         Object_SetAnimation(actor, 5);
-        Engine_ObjectSetPosition(actor, x << 16, actor[3], z << 16);
+        Object_SetPosition(actor, x << 16, actor[3], z << 16);
     }
 }
 
@@ -85,7 +85,7 @@ void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
 
     ObjectDispatch_InitFromTable6();
     Object_SetAnimation(obj, 5);
-    Engine_ObjectSetPosition(obj, x << 16, *(s32 *)(obj + 12), z << 16);
+    Object_SetPosition(obj, x << 16, *(s32 *)(obj + 12), z << 16);
     Object_CommitPosition(obj);
     Object_SetAnimation(obj, 1);
 }

@@ -127,23 +127,23 @@ void FieldScene_RunSupplementalSequenceOne(void)
         KorosseoKabe_SpectatorPhase ^= 1;
         if (KorosseoKabe_SpectatorPhase != 0) {
             record = (s32)Engine_ActorGet(22);
-            Call4(Engine_ObjectSetPosition, record, 0x3a80000, 0, 0xb80000);
+            Call4(Object_SetPosition, record, 0x3a80000, 0, 0xb80000);
             record = (s32)Engine_ActorGet(23);
-            Call4(Engine_ObjectSetPosition, record, 0x3c80000, 0, 0xf80000);
+            Call4(Object_SetPosition, record, 0x3c80000, 0, 0xf80000);
             record = (s32)Engine_ActorGet(24);
-            Call4(Engine_ObjectSetPosition, record, 0x3e80000, 0, 0xb80000);
+            Call4(Object_SetPosition, record, 0x3e80000, 0, 0xb80000);
             record = (s32)Engine_ActorGet(25);
-            Call4(Engine_ObjectSetPosition, record, 0x4080000, 0, 0xf80000);
+            Call4(Object_SetPosition, record, 0x4080000, 0, 0xf80000);
             Actor_SetAnimation(31, 11);
         } else {
             record = (s32)Engine_ActorGet(22);
-            Call4(Engine_ObjectSetPosition, record, 0x3a80000, 0, 0xd80000);
+            Call4(Object_SetPosition, record, 0x3a80000, 0, 0xd80000);
             record = (s32)Engine_ActorGet(23);
-            Call4(Engine_ObjectSetPosition, record, 0x3c80000, 0, 0xd80000);
+            Call4(Object_SetPosition, record, 0x3c80000, 0, 0xd80000);
             record = (s32)Engine_ActorGet(24);
-            Call4(Engine_ObjectSetPosition, record, 0x3e80000, 0, 0xd80000);
+            Call4(Object_SetPosition, record, 0x3e80000, 0, 0xd80000);
             record = (s32)Engine_ActorGet(25);
-            Call4(Engine_ObjectSetPosition, record, 0x4080000, 0, 0xd80000);
+            Call4(Object_SetPosition, record, 0x4080000, 0, 0xd80000);
             Actor_SetAnimation(31, 10);
         }
     }

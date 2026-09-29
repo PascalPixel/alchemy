@@ -14,7 +14,7 @@ s32 Korosseo_FadeInCompetitor();
 void Korosseo_RestoreCompetitor();
 void SceneActor_PlaceWithScale14000();
 void Engine_EventBegin();
-void Engine_ObjectSetPosition();
+void Object_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 void Engine_EventWait();
 void Engine_ActorSetSpeed();
 void Engine_CameraSetSpeed();
@@ -91,7 +91,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Call3(Engine_ActorSetSpeed, 0, 32768, 16384);
         Engine_ActorSetAnimation(0, 10);
         actor = Engine_ActorGet(0);
-        Engine_ObjectSetPosition(actor, *(s32 *)((u8 *)actor + 8),
+        Object_SetPosition(actor, *(s32 *)((u8 *)actor + 8),
             *(s32 *)((u8 *)actor + 12) + 4194304,
             *(s32 *)((u8 *)actor + 16));
         ObjectMotion_CommitCurrentPositionAndActivate(0);

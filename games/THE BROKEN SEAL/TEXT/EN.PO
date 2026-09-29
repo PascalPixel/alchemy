@@ -33723,7 +33723,7 @@ msgctxt "message"
 msgid "08428"
 msgstr "...{actor_name:1}, that first{line_break}match was terrific.{page_break}I'll be right here,{line_break}so tell me when you're{line_break}done looking around.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteThirdFinals"
 msgid "08429"
 msgstr "This is the site of the{line_break}third finals match.{end_wait}"
 

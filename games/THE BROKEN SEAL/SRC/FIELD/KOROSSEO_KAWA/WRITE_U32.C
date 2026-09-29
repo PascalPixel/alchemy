@@ -71,7 +71,7 @@ extern u8 KorosseoKawa_ScriptA[];
 
 typedef void(*SceneTask)(void);
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
+void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -180,7 +180,7 @@ static __inline__ void AdvanceMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-void Object_SetMoveTarget();          /* veneer to Object_SetPosition */
+void Object_SetPosition();
 
 s32 SceneActor_ApplyValueAndMatchingSlots();           /* local thunk to Func_020020e8, site A */
 

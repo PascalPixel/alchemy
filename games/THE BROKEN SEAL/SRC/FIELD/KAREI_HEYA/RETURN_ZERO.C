@@ -26,12 +26,10 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/*
- * Returns the in-image table at 0x02008728. The eight-byte owner includes its
- * one pool word, which holds that address and is returned without being
- * dereferenced.
- */
-u8 *SceneData_GetTable8728(void)
+extern u8 KareiHeya_Exits[];
+
+/* The exit table, the third entry the main image calls. */
+u8 *KareiHeya_GetExits(void)
 {
-    return (u8 *)0x02008728;
+    return KareiHeya_Exits;
 }

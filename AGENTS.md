@@ -183,3 +183,6 @@ a verified build.
 - 2026-09-29: gates: make land compares all twelve editions.
 - 2026-09-29: build ARM files with pret's agbcc_arm from the approved da598c1
   source, with -fomit-frame-pointer, and record its digest.
+- 2026-09-29: a rule that explains nearly all of ⚓️'s 2,000 constant-building
+  functions is solid evidence TLA was made with a modified 2.96: implement it
+  as native-sounding gcc flags (`-mthumb-split-constants`, TLA game code only).

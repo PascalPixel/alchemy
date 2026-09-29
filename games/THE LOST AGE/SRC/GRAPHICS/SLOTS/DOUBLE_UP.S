@@ -4,4 +4,4 @@
 	.global Slots_DoubleUpBanner
 Slots_DoubleUpBanner:
 	.incbin "GRAPHICS/SLOTS/DOUBLE_UP.gbapal"
-	.incbin "GRAPHICS/SLOTS/DOUBLE_UP.4bpp.lz"
+	.incbin "GRAPHICS/SLOTS/DOUBLE_UP.4bpp32x32.lz"

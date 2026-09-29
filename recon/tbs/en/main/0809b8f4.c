@@ -1,5 +1,5 @@
 /* Draft, not exact: EffectSlot_UpdateMotion, main:0809b8f4, complete
-   320-byte extent. 2026-09-29 permuter score 715 (1 register-only, 6
+   320-byte extent. 2026-09-29 permuter score 685 (3 register-only, 4
    operand, 3 reordered, 4 deleted), was 1135 with the old spellings. The
    IWRAM square root goes through Iwram_Sqrt, the trigonometry through
    Trig_Cos/Trig_Sin, and a word heading keeps the ldrh value zero-extended
@@ -7,8 +7,9 @@
    Remaining: at the merge the reference narrows the angle to u16 for the
    heading store and widens it back to s16 for the cos/sin argument it
    spills; a u16 temporary or a reread of the stored heading reallocates
-   r4/r5/r7 (scores 1155-2210). The speed sum loads speed before
-   acceleration, and the turn limit forms its offset in r7. */
+   r4/r5/r7 (scores 1155-2210). Adding acceleration to speed
+   loads speed first as the reference does, though into r3 where it has r2;
+   the turn limit forms its offset in r7. */
 
 #include "EFFECT_0809B11C.H"
 #include "IWRAM_CALL.H"
@@ -61,7 +62,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect)
         }
     }
     effect->heading = angle;
-    speed = effect->speed + effect->acceleration;
+    speed = effect->acceleration + effect->speed;
     if (speed > effect->max_speed)
         speed = effect->max_speed;
     effect->speed = speed;

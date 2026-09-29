@@ -1,17 +1,12 @@
-/* Draft of resource_381 0x020090c4 (SoruFunka_StepEmbers and what follows it in this file),
- * from games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA (FUNKA.H). Remaining
- * difference: it reads and writes the scene's variables that lie past the
- * overlay image (0x0200bac0 and on), which no source defines, so it cannot
- * link by name. The listing keeps these rows. */
 #include "TYPES.H"
 
-s32 Main_030003f0(s32 num, s32 den);
+s32 IwramUnsignedDivide(s32 num, s32 den);
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 void *Engine_ActorGet(s32 id);
 void Engine_ObjectSetAnimation(void *object, s32 animation);
 void Engine_ObjectSetPalette(void *object, s32 palette);
 s32 Engine_RandomNext(void);
-s32 Engine_MathModulo(s32 value, s32 modulus);
+s32 IwramUnsignedRemainder(s32 value, s32 modulus);
 s32 Engine_GameFlagIsSet(s32 flag);
 void Engine_AudioPlayCue(s32 cue);
 void Engine_ActorSetSpriteFlags(void *actor, s32 flags);
@@ -49,7 +44,9 @@ struct Ember {
     u8 motion_flags;
 };
 
-extern u8 *gFieldWork;
+extern u8 *gParticleWork;
+/* The embers' animation script, laid out after the code. */
+extern const s32 Funka_EmberScript[];
 extern s32 gEmberTimer;
 extern s32 gEmberState[16];
 extern s32 gEmberMask;
@@ -78,8 +75,8 @@ void SoruFunka_StepEmbers(void)
     s32 x;
     s32 z;
 
-    work = gFieldWork;
-    level = Main_030003f0(gEmberTimer, 10);
+    work = gParticleWork;
+    level = IwramUnsignedDivide(gEmberTimer, 10);
     if (level != 0) {
         *(s32 *)(work + 0x40c) = 0;
         Call3((void (*)())Engine_WorkSetValuesIfNonNegative, level << 16, level << 16, 0x10000);
@@ -121,7 +118,7 @@ void SoruFunka_StepEmbers(void)
     if (gEmberMask & gFrameCount)
         return;
     for (i = 0; i < 16; i++) {
-        angle = Engine_MathModulo(Engine_RandomNext(), 0xffff);
+        angle = IwramUnsignedRemainder(Engine_RandomNext(), 0xffff);
         ember = Engine_ActorGet(i + 16);
         if (gEmberState[i] == 0) {
             if (Engine_GameFlagIsSet(0x246) == 0)
@@ -133,7 +130,7 @@ void SoruFunka_StepEmbers(void)
             Engine_ActorSetSpriteFlags(ember, 0);
             ember->sprite->layer = 1;
             Engine_ObjectSetAnimation(ember, 2);
-            Engine_ObjectSetScript(ember, (const void *)0x0200ba00);
+            Engine_ObjectSetScript(ember, Funka_EmberScript);
             ember->x = Iwram_MulQ16(Engine_MathCos(angle), (((u32)(Engine_RandomNext() << 8) >> 16) << 16) + 0x1000000) + 0x1450000;
             ember->y = 0;
             ember->z = Iwram_MulQ16(Engine_MathSin(angle), (((u32)(Engine_RandomNext() << 8) >> 16) << 16) + 0x1000000) + 0x12e0000;

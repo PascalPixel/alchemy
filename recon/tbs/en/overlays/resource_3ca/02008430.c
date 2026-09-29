@@ -1,3 +1,9 @@
+/* Draft of resource_3ca 0x02008430 (Scene_RunExtendedPresentationSequence),
+ * from games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE. Remaining difference: it
+ * matches only by loading its last scene number (0) from the literal pool
+ * through Value_00000000, a name the main image's CONSTANTS.LD equates to
+ * 0, as a link-time value would; a C constant passes an immediate zero. The
+ * listing keeps these rows. */
 #include "TYPES.H"
 
 extern u8 gMapWork[];

@@ -35,6 +35,8 @@ Func_020000c4:
 	.2byte 0x0000
 	.4byte 0x000028be
 	.section .rodata,"a",%progbits
+	.global RariberoMachi_LamentActions
+RariberoMachi_LamentActions:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000
@@ -108,6 +110,8 @@ Func_020000c4:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global Placement_Scripts
+Placement_Scripts:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -198,6 +202,8 @@ Func_020000c4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Placement_Messages
+Placement_Messages:
 	.4byte 0x000000b2
 	.4byte 0x0011e0b4
 	.4byte 0x002010b3
@@ -213,6 +219,8 @@ Func_020000c4:
 	.4byte 0x0141e002
 	.4byte 0x0153b002
 	.4byte 0x000001ff
+	.global Placement_Actors
+Placement_Actors:
 	.4byte 0xffff0098
 	.4byte 0x00000001
 	.4byte 0x00e00000
@@ -315,6 +323,8 @@ Func_020000c4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Placement_Actors9a7
+Placement_Actors9a7:
 	.4byte 0xffff0098
 	.4byte 0x00000001
 	.4byte 0x00d80000
@@ -477,6 +487,8 @@ RariberoMachi_GateOpenSteps:
 	.4byte 0x00020024
 	.4byte 0x00020002
 	.4byte 0xffff0001
+	.global Placement_Effects
+Placement_Effects:
 	.4byte 0x00000001
 	.4byte 0xffff0014
 	.4byte 0x00000014
@@ -597,6 +609,8 @@ RariberoMachi_GateOpenSteps:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Placement_Effects9a7
+Placement_Effects9a7:
 	.4byte 0x00000002
 	.4byte 0x09ba0032
 	.4byte 0x020087c5

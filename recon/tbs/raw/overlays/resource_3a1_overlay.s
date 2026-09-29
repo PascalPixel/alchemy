@@ -1,24 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008504,"ax",%progbits
-	.balign 4
-	.global Func_02000504
-	.thumb_func
-Func_02000504:
-	.global SceneDialogue_RunActor12Dialogue
-	.thumb_func
-SceneDialogue_RunActor12Dialogue:
-	push {lr}
-	bl 0x0200865c
-	ldr r0, [pc, #20]
-	bl 0x02008694
-	movs r1, #0
-	movs r0, #12
-	bl 0x020086ac
-	bl 0x02008664
-	pop {r0}
-	bx r0
-	.4byte 0x00001a40
 	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001

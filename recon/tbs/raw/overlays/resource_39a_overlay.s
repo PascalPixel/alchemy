@@ -1,233 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008050,"ax",%progbits
-	.balign 4
-	.global SceneData_SelectTableBySceneId
-	.thumb_func
-SceneData_SelectTableBySceneId:
-	push {lr}
-	ldr r3, [pc, #88]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #80]
-	cmp r2, r3
-	bne .L_02000050_0
-	ldr r0, [pc, #76]
-	b .L_02000050_1
-.L_02000050_0:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02000050_2
-	ldr r0, [pc, #76]
-	b .L_02000050_1
-.L_02000050_2:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02000050_3
-	ldr r0, [pc, #72]
-	b .L_02000050_1
-.L_02000050_3:
-	ldr r3, [pc, #72]
-	cmp r2, r3
-	bne .L_02000050_4
-	ldr r0, [pc, #72]
-	b .L_02000050_1
-.L_02000050_4:
-	ldr r3, [pc, #72]
-	cmp r2, r3
-	bne .L_02000050_5
-	ldr r0, [pc, #68]
-	b .L_02000050_1
-.L_02000050_5:
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02000050_6
-	ldr r0, [pc, #68]
-	b .L_02000050_1
-.L_02000050_6:
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02000050_7
-	ldr r0, [pc, #64]
-	b .L_02000050_1
-.L_02000050_7:
-	ldr r0, [pc, #64]
-.L_02000050_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000034
-	.4byte 0x0200a4bc
-	.4byte 0x0000003e
-	.4byte 0x0200a504
-	.4byte 0x0000003f
-	.4byte 0x0200a5f4
-	.4byte 0x00000040
-	.4byte 0x0200a63c
-	.4byte 0x00000041
-	.4byte 0x0200a6cc
-	.4byte 0x00000042
-	.4byte 0x0200a744
-	.4byte 0x00000043
-	.4byte 0x0200a7bc
-	.4byte 0x0200a48c
-	.section .text.x020080f8,"ax",%progbits
-	.balign 4
-	.global SceneData_SelectDataByRuntimeSelector
-	.thumb_func
-SceneData_SelectDataByRuntimeSelector:
-	push {lr}
-	ldr r3, [pc, #76]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_020000f8_0
-	ldr r0, [pc, #64]
-	b .L_020000f8_1
-.L_020000f8_0:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_020000f8_2
-	ldr r0, [pc, #64]
-	b .L_020000f8_1
-.L_020000f8_2:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_020000f8_3
-	ldr r0, [pc, #60]
-	b .L_020000f8_1
-.L_020000f8_3:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_020000f8_4
-	ldr r0, [pc, #60]
-	b .L_020000f8_1
-.L_020000f8_4:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_020000f8_5
-	ldr r0, [pc, #56]
-	b .L_020000f8_1
-.L_020000f8_5:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_020000f8_6
-	ldr r0, [pc, #56]
-	b .L_020000f8_1
-.L_020000f8_6:
-	ldr r0, [pc, #56]
-.L_020000f8_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000034
-	.4byte 0x0200a9bc
-	.4byte 0x0000003e
-	.4byte 0x0200a9ec
-	.4byte 0x0000003f
-	.4byte 0x0200aa4c
-	.4byte 0x00000040
-	.4byte 0x0200aac4
-	.4byte 0x00000041
-	.4byte 0x0200ab3c
-	.4byte 0x00000043
-	.4byte 0x0200ab9c
-	.4byte 0x0200a9a4
-	.section .text.x02008f30,"ax",%progbits
-	.balign 4
-	.global SceneData_SelectDataByRuntimeSelectorB
-	.thumb_func
-SceneData_SelectDataByRuntimeSelectorB:
-	push {lr}
-	ldr r3, [pc, #88]
-	movs r1, #224
-.L_02000f36:
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #80]
-	cmp r2, r3
-	bne .L_02000f36_0
-	ldr r0, [pc, #76]
-	b 0x02008f86
-.L_02000f36_0:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02000f36_1
-	ldr r0, [pc, #76]
-	b 0x02008f86
-.L_02000f36_1:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02000f36_2
-	ldr r0, [pc, #72]
-	b 0x02008f86
-.L_02000f36_2:
-	ldr r3, [pc, #72]
-	cmp r2, r3
-	bne .L_02000f36_3
-	ldr r0, [pc, #72]
-	b 0x02008f86
-.L_02000f36_3:
-	ldr r3, [pc, #72]
-.L_02000f68:
-	cmp r2, r3
-	bne .L_02000f68_0
-	ldr r0, [pc, #68]
-	b .L_02000f68_1
-.L_02000f68_0:
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02000f68_2
-	ldr r0, [pc, #68]
-	b .L_02000f68_1
-.L_02000f68_2:
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02000f68_3
-	ldr r0, [pc, #64]
-	b .L_02000f68_1
-.L_02000f68_3:
-	ldr r0, [pc, #64]
-.L_02000f68_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.2byte 0x0240
-	.2byte 0x0200
-	.2byte 0x0034
-	.2byte 0x0000
-	.2byte 0xabd8
-	.2byte 0x0200
-	.2byte 0x003e
-	.2byte 0x0000
-	.2byte 0xac08
-	.2byte 0x0200
-	.2byte 0x003f
-	.2byte 0x0000
-	.2byte 0xad1c
-	.2byte 0x0200
-	.2byte 0x0040
-	.2byte 0x0000
-	.2byte 0xae24
-	.2byte 0x0200
-	.2byte 0x0041
-	.2byte 0x0000
-	.4byte 0x0200b058
-	.4byte 0x00000042
-	.4byte 0x0200b130
-	.4byte 0x00000043
-	.4byte 0x0200b184
-	.4byte 0x0200abcc
 	.section .text.x0200970c,"ax",%progbits
 	.balign 4
 	.global Func_0200170c
@@ -473,178 +245,6 @@ Func_020017e4:
 	.4byte 0x03001ee0
 	.4byte 0x03001ebc
 	.4byte 0x00203108
-	.global Func_02001948
-	.thumb_func
-Func_02001948:
-	push {lr}
-	ldr r1, [pc, #212]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #204]
-	sub sp, #8
-	cmp r2, r3
-	bne .L_02001948_0
-	movs r3, #8
-	movs r2, #42
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #8
-	movs r1, #29
-	movs r2, #15
-	movs r3, #5
-	bl 0x0200a2f0
-	bl 0x02009050
-	b .L_02001948_1
-.L_02001948_0:
-	ldr r3, [pc, #172]
-	cmp r2, r3
-	bne .L_02001948_2
-	movs r3, #0
-	movs r2, #28
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #12
-	movs r1, #8
-	movs r2, #10
-	movs r3, #18
-	bl 0x0200a2f0
-	bl 0x02009154
-	b .L_02001948_1
-.L_02001948_2:
-	ldr r3, [pc, #144]
-	cmp r2, r3
-	bne .L_02001948_3
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #1
-	beq .L_02001948_3
-	movs r3, #12
-	movs r2, #3
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #12
-	movs r1, #21
-	movs r2, #9
-	movs r3, #16
-	bl 0x0200a2f0
-	bl 0x020092cc
-	b .L_02001948_1
-.L_02001948_3:
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #92]
-	cmp r2, r3
-	bne .L_02001948_1
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	ldrh r3, [r3]
-	movs r0, #128
-	subs r3, #1
-	lsls r3, r3, #16
-	lsls r0, r0, #9
-	cmp r3, r0
-	bhi .L_02001948_4
-	movs r3, #22
-	movs r2, #20
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #14
-	movs r1, #10
-	movs r2, #9
-	movs r3, #8
-	bl 0x0200a2f0
-	b .L_02001948_5
-.L_02001948_4:
-	movs r3, #20
-	movs r2, #45
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #7
-	movs r1, #45
-	movs r2, #11
-	movs r3, #4
-	bl 0x0200a2f0
-.L_02001948_5:
-	bl 0x020095dc
-.L_02001948_1:
-	sub sp, #-8
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000003e
-	.4byte 0x0000003f
-	.4byte 0x00000040
-	.4byte 0x00000041
-	.global Func_02001a34
-	.thumb_func
-Func_02001a34:
-	push {r5, r6, lr}
-	ldr r3, [pc, #100]
-	movs r1, #182
-	ldr r3, [r3]
-	lsls r1, r1, #1
-	ldr r5, [pc, #96]
-	adds r3, r3, r1
-	adds r1, #84
-	movs r2, #0
-	ldrsh r6, [r3, r2]
-	adds r3, r5, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #84]
-	cmp r2, r3
-	bne .L_02001a34_0
-	cmp r6, #17
-	bne .L_02001a34_1
-	movs r1, #32
-	negs r1, r1
-	movs r0, #0
-	bl 0x02009ad0
-	b .L_02001a34_0
-.L_02001a34_1:
-	movs r0, #32
-	negs r0, r0
-	movs r1, #0
-	bl 0x02009ad0
-.L_02001a34_0:
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r5, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_02001a34_2
-	cmp r6, #25
-	bne .L_02001a34_2
-	ldr r0, [pc, #40]
-	bl 0x0200a318
-	cmp r0, #0
-	beq .L_02001a34_2
-	movs r0, #0
-	movs r1, #32
-	bl 0x02009ad0
-.L_02001a34_2:
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x0000003f
-	.4byte 0x00000040
-	.4byte 0x00000309
 	.section .text.x02009fac,"ax",%progbits
 	.balign 4
 	.global Func_02001fac
@@ -732,6 +332,8 @@ gImiruFuchinHeadings:
 	.global gImiruFuchinDragonsEye
 gImiruFuchinDragonsEye:
 	.4byte 0x00000000
+	.global gImiruFuchinEntrancesOther
+gImiruFuchinEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x00000100
 	.4byte 0x40000258
@@ -744,6 +346,8 @@ gImiruFuchinDragonsEye:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEntrances1
+gImiruFuchinEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -762,6 +366,8 @@ gImiruFuchinDragonsEye:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEntrances2
+gImiruFuchinEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000f8
 	.4byte 0x40000258
@@ -822,6 +428,8 @@ gImiruFuchinDragonsEye:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEntrances3
+gImiruFuchinEntrances3:
 	.4byte 0xffff0001
 	.4byte 0x000000f8
 	.4byte 0x40000078
@@ -840,6 +448,8 @@ gImiruFuchinDragonsEye:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEntrances4
+gImiruFuchinEntrances4:
 	.4byte 0xffff0001
 	.4byte 0x000000f8
 	.4byte 0x40000068
@@ -876,6 +486,8 @@ gImiruFuchinDragonsEye:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEntrances5
+gImiruFuchinEntrances5:
 	.4byte 0xffff0001
 	.4byte 0x00000148
 	.4byte 0x40000048
@@ -906,6 +518,8 @@ gImiruFuchinDragonsEye:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEntrances6
+gImiruFuchinEntrances6:
 	.4byte 0xffff0001
 	.4byte 0x00000108
 	.4byte 0xc00000e8
@@ -936,6 +550,8 @@ gImiruFuchinDragonsEye:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEntrances7
+gImiruFuchinEntrances7:
 	.4byte 0xffff0001
 	.4byte 0x00000118
 	.4byte 0x40000078
@@ -1060,12 +676,16 @@ gImiruFuchinExits:
 	.4byte 0x00b0803e
 	.4byte 0x00c0703e
 	.4byte 0x000001ff
+	.global gImiruFuchinPlacementsOther
+gImiruFuchinPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinPlacements1
+gImiruFuchinPlacements1:
 	.4byte 0x0059005c
 	.4byte 0x00000001
 	.4byte 0x01070000
@@ -1078,6 +698,8 @@ gImiruFuchinExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinPlacements2
+gImiruFuchinPlacements2:
 	.4byte 0xffff00ed
 	.4byte 0x00000007
 	.4byte 0x00880000
@@ -1102,6 +724,8 @@ gImiruFuchinExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinPlacements3
+gImiruFuchinPlacements3:
 	.4byte 0xffff00ed
 	.4byte 0x00000007
 	.4byte 0x00d80000
@@ -1132,6 +756,8 @@ gImiruFuchinExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinPlacements4
+gImiruFuchinPlacements4:
 	.4byte 0xffff00ed
 	.4byte 0x00000007
 	.4byte 0x01480000
@@ -1162,6 +788,8 @@ gImiruFuchinExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinPlacements5
+gImiruFuchinPlacements5:
 	.4byte 0xffff00ec
 	.4byte 0x00000007
 	.4byte 0x01480000
@@ -1186,6 +814,8 @@ gImiruFuchinExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinPlacements7
+gImiruFuchinPlacements7:
 	.4byte 0xffff00df
 	.4byte 0x00000007
 	.4byte 0x01380000
@@ -1198,9 +828,13 @@ gImiruFuchinExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEventsOther
+gImiruFuchinEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEvents1
+gImiruFuchinEvents1:
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte 0x02008fcd
@@ -1213,6 +847,8 @@ gImiruFuchinExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEvents2
+gImiruFuchinEvents2:
 	.4byte 0x00000602
 	.4byte 0xffff000b
 	.4byte 0x0200825d
@@ -1282,6 +918,8 @@ gImiruFuchinExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEvents3
+gImiruFuchinEvents3:
 	.4byte 0x00000602
 	.4byte 0x0306000b
 	.4byte 0x020083b9
@@ -1348,6 +986,8 @@ gImiruFuchinExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEvents4
+gImiruFuchinEvents4:
 	.4byte 0x00008602
 	.4byte 0xffff000a
 	.4byte 0x020085b9
@@ -1489,6 +1129,8 @@ gImiruFuchinExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEvents5
+gImiruFuchinEvents5:
 	.4byte 0x00004602
 	.4byte 0xffff000b
 	.4byte 0x02008d39
@@ -1543,6 +1185,8 @@ gImiruFuchinExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEvents6
+gImiruFuchinEvents6:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1564,6 +1208,8 @@ gImiruFuchinExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruFuchinEvents7
+gImiruFuchinEvents7:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

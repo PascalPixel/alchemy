@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-void ShianJiin_RunPraiseEvent(void);
+void ShianJiin_AskIfCurious(void);
 void FieldScene_RunRoofEnsembleSequence(void);
 void *NewEffectObject(s32 x, s32 y, s32 z, s32 kind);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
@@ -33,7 +33,7 @@ s32 ShianJiin_ApplyEntryState(void)
             } else {
                 Engine_ActorSetAnimation(8, 5);
                 if (Engine_GameFlagIsSet(0xf14) && !Engine_GameFlagIsSet(0x893) && !Engine_GameFlagIsSet(0x109)) {
-                    ShianJiin_RunPraiseEvent();
+                    ShianJiin_AskIfCurious();
                 }
             }
         } else if (gGameState.entrance == 2 || gGameState.entrance == 4) {

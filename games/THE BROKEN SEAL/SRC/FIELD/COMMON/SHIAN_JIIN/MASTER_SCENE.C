@@ -1,8 +1,4 @@
-/* Draft of resource_39e 0x0200902c (ShianJiin_RunMasterScene): it matches the
- * ROM byte for byte now that the messages it loads from the literal pool have
- * catalogue names (MsgShianCannotPushHands, MsgShianGreatWarriorTrain,
- * MsgShianWarriorsCannotUse). The listing keeps these rows until the draft is
- * adopted. */
+/* The Xian master's lines to his pupils before the training starts. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 extern u8 MsgShianCannotPushHands[];
@@ -16,7 +12,9 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 void ShianJiin_WalkByFacing(void);
 
-/* Xian training scene: actor 15 speaks the lines for the given mode, then actors 19 and 20 are placed and actor 15 walks up to them. */
+/* Actor 15 speaks the lines for the given mode, then actors 19 and 20 are
+ * placed and actor 15 walks up to them. The first mode's line is the one
+ * before its name, as the game counts down from it in instructions. */
 void ShianJiin_RunMasterScene(s32 mode)
 {
     s32 msg;

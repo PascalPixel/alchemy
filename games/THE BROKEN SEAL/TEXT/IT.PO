@@ -33203,7 +33203,7 @@ msgctxt "message"
 msgid "08298"
 msgstr "Beh, allora fai{line_break}del tuo meglio!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoCheeringChoices"
 msgid "08299"
 msgstr "Sì"
 

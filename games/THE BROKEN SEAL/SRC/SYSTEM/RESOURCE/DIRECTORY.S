@@ -96,7 +96,7 @@ Resource_DirectoryTable:
 	resource RevealMaskD, BattleFx_RevealMaskD
 	resource RevealMaskE, BattleFx_RevealMaskE
 	resource RevealMaskF, BattleFx_RevealMaskF
-	resource , BattleFx_SparkSheet
+	resource LimeColumnSheet, BattleFx_LimeColumnSheet
 	resource , BattleFx_RainSheet
 	resource , BattleFx_FlameSheetA
 	resource DemonFaceSheet, BattleFx_DemonFaceSheet
@@ -207,7 +207,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_BlueBurstSheet
 	resource DustPuffSheet, BattleFx_DustPuffSheet
 	resource , BattleFx_GoldShellSheet
-	resource , BattleFx_BlastSheet
+	resource BlastSheet, BattleFx_BlastSheet
 	resource , BattleFx_FlameSheetB
 	resource , BattleFx_FirePillarSheetB
 	resource , BattleFx_RockSpireSheet

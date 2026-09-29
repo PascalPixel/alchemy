@@ -18,6 +18,9 @@ Engine_TaskWait:
 	.thumb_func
 Engine_ScheduleCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Engine_TaskRemoveCallback
+	.thumb_func
+Engine_TaskRemoveCallback:
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -74,7 +77,13 @@ Engine_VramLoad:
 	.thumb_func
 Resource_FindFreeEntryFar:
 	overlay_veneer Func_080001d0
+	.global AffineMatrix_BuildForEffect
+	.thumb_func
+AffineMatrix_BuildForEffect:
 	overlay_veneer AffineMatrix_BuildForEffectFar
+	.global Runtime_PushSlotEntry
+	.thumb_func
+Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
 	overlay_veneer Resource_GetTableEntryFar
 	.global ResourceMetadata_ClearRecordFar

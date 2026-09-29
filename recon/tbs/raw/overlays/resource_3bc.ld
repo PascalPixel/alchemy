@@ -28,6 +28,7 @@ SECTIONS
         "*/resource_3bc_overlay.o"(.text.x0200aa94)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/MIDDLE.o"(.text)
         "*/resource_3bc_overlay.o"(.text.x0200ae54)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/MODE_TASK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/TRANSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.o"(.text)
@@ -49,4 +50,7 @@ SECTIONS
     }
     .bss (NOLOAD) : { "*/resource_3bc_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its division helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __divsi3 = Engine_MathDivide;
 }

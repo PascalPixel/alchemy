@@ -31,3 +31,4 @@ void Text_FormatHex(u32 value, u32 count, u8 *output) {
     for (index = count - 1; (s32)index >= 0; index--)
         *output++ = digits[index];
 }
+

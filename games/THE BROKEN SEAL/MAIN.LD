@@ -617,7 +617,7 @@ SECTIONS
         "*/recon/tbs/raw/08029094.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/MENU/RUN_SELECTION_WITH_CURSOR_OBJECT.o"(.text)
         "*/recon/tbs/raw/08029272.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_HEX.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/TEXT/FORMAT_HEX.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_FLAG_BIT_TABLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/FLAG_GRID_INPUT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/RESERVED_NO_OP.o"(.text)

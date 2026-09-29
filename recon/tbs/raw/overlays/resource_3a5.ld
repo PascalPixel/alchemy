@@ -21,7 +21,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/AREA_LAYOUT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/RETURN_TO_AREA3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/FLAG_MESSAGE.o"(.text)
-        "*/resource_3a5_overlay.o"(.text.x02008cd0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/QUARTER_TRIGGERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/PLANAR_DISTANCE.o"(.text)
         "*/resource_3a5_overlay.o"(.text.x02008e2c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/TRAVEL_DUST.o"(.text)

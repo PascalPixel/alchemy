@@ -31,7 +31,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/PSYNERGY_REQUEST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/MARKER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SETTLE_MOUNT.o"(.text)
-        "*/resource_3a4_overlay.o"(.text.x0200b5a8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/NO_OP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/TURN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/CUE288.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLL_STEP.o"(.text)

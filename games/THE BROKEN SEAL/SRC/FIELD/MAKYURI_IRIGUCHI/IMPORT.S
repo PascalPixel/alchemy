@@ -38,6 +38,9 @@ FixedSqrt:
 	.thumb_func
 Engine_MathSin:
 	overlay_veneer Trig_SinFar
+	.global Engine_MathCos
+	.thumb_func
+Engine_MathCos:
 	overlay_veneer Trig_CosFar
 	.global Vector_AddPolarOffset
 	.thumb_func
@@ -70,6 +73,9 @@ Engine_ObjectCreate:
 	.thumb_func
 Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Object_SetPosition
 	.thumb_func
@@ -99,12 +105,21 @@ Engine_ActorSetSpriteFlags:
 	.thumb_func
 Engine_ObjectSetBlendMode:
 	overlay_veneer Animation_SetStateField5Bits2To3Far
+	.global Engine_WorkSetValuesIfNonNegative
+	.thumb_func
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	.global Engine_MapRenderWaitForValues
+	.thumb_func
+Engine_MapRenderWaitForValues:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global UiText_ShowCenteredMessage
+	.thumb_func
+UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -205,6 +220,9 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
 	.global Engine_CameraSetSpeed
 	.thumb_func
@@ -238,6 +256,9 @@ Party_SetFields1ceAnd1d0:
 	.thumb_func
 Engine_ColorBufferApplyTarget:
 	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	.global Engine_ColorBufferApplySource
+	.thumb_func
+Engine_ColorBufferApplySource:
 	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Engine_ColorBufferInterpolate
 	.thumb_func
@@ -259,11 +280,17 @@ Engine_EventWaitForScreen:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
+	.global BattleFx_StartFadeOverlay
+	.thumb_func
+BattleFx_StartFadeOverlay:
 	overlay_veneer BattleFx_StartFadeOverlayFar
 	.global Engine_ActorWalkByAndWait
 	.thumb_func
 Engine_ActorWalkByAndWait:
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	.global BattleFx_SetQueuedSoundAndPlay
+	.thumb_func
+BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
 	.global BattleFx_PlayQueuedSound
 	.thumb_func

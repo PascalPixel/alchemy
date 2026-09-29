@@ -475,131 +475,6 @@ Func_02000b34:
 	.4byte 0x020097fc
 	.2byte 0x80b1
 	.2byte 0x0200
-	.section .text.x02008f80,"ax",%progbits
-	.align 2
-	.global Engine_BuildScrollPage
-	.thumb_func
-Engine_BuildScrollPage:
-	.global Func_02000f80
-	.thumb_func
-Func_02000f80:
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	ldr	r3, [pc, #288]
-	ldr	r0, [pc, #288]
-	ldr	r6, [r3, #0]
-	movs	r2, #14
-	ldrsh	r1, [r0, r2]
-	movs	r2, #240
-	lsls	r2, r2, #4
-.L_02000f9c:
-	adds	r3, r6, r2
-	ldrb	r3, [r3, #0]
-	movs	r2, #1
-	eors	r2, r3
-	lsls	r3, r2, #4
-	subs	r3, r3, r2
-	movs	r2, #241
-	lsls	r3, r3, #7
-	lsls	r2, r2, #4
-	adds	r5, r6, r3
-	adds	r3, r6, r2
-	ldr	r3, [r3, #0]
-	subs	r2, #14
-	lsls	r1, r1, #16
-	sub	sp, #4
-	mov	sl, r3
-	adds	r3, r6, r2
-	ldrh	r2, [r3, #0]
-	str	r1, [sp, #0]
-	lsrs	r3, r1, #16
-	ldr	r1, [pc, #240]
-	adds	r2, r2, r3
-	adds	r3, r6, r1
-	ldr	r3, [r3, #0]
-	adds	r4, r3, #0
-	muls	r4, r2
-	ldr	r2, [pc, #232]
-	adds	r3, r6, r2
-	ldr	r3, [r3, #0]
-	ldrh	r0, [r0, #12]
-	mov	lr, r3
-	ldr	r3, [pc, #228]
-	mov	r9, r0
-	movs	r0, #255
-	movs	r7, #0
-	mov	r8, r3
-	mov	fp, r0
-	mov	r1, fp
-	asrs	r3, r4, #16
-	ands	r3, r1
-	ldr	r2, [pc, #212]
-	lsls	r3, r3, #1
-	ldrsh	r0, [r2, r3]
-	mov	r1, lr
-	mov	ip, pc
-	bx	r8
-	.4byte 0xda002800
-	.4byte 0x020330ff
-	.4byte 0x444b0c1b
-	.4byte 0x802b3701
-	.4byte 0x35044454
-	.4byte 0xd1ea2fa0
-	.4byte 0x011222f0
-	.4byte 0x781b18b3
-	.4byte 0x405a2201
-	.4byte 0x1a9b0113
-	.4byte 0x01db4829
-	.4byte 0x1c9d18f3
-	.4byte 0x681b1833
-	.4byte 0x469a4927
-	.4byte 0x881a1873
-	.4byte 0x38089b00
-	.4byte 0x18330c19
-	.4byte 0x1852681b
-	.4byte 0x43541c1c
-	.4byte 0x18b34a22
-	.4byte 0x469e681b
-	.4byte 0x20ff4b1c
-	.4byte 0x46982700
-	.4byte 0x46834689
-	.4byte 0x14234659
-	.4byte 0x4a19400b
-	.4byte 0x5ed0005b
-	.4byte 0x00004671
-	.4byte 0x474046fc
-	.4byte 0xda002800
-	.4byte 0x020330ff
-	.4byte 0x444b0c1b
-	.4byte 0x802b3701
-	.4byte 0x35044454
-	.4byte 0xd1e92fa0
-	.4byte 0x18f24b11
-	.4byte 0x20f08813
-	.4byte 0x80133301
-	.4byte 0x18310100
-	.4byte 0x2201780b
-	.4byte 0x700b4053
-	.4byte 0xbce8b001
-	.4byte 0x46a94698
-	.4byte 0x46bb46b2
-	.4byte 0xbc01bce0
-	.4byte 0x00004700
-	.4byte 0x03001ed8
-	.4byte 0x03001ad0
-	.4byte 0x00000f08
-	.4byte 0x00000f18
-	.4byte 0x03000118
-	.4byte 0x020094c8
-	.4byte 0x00000f14
-	.4byte 0x00000f02
-	.2byte 0x0f1c
-	.2byte 0x0000
 	.section .text.x020091c4,"ax",%progbits
 	.align 2
 	.global BabiFune_StepFade
@@ -737,6 +612,8 @@ BabiFune_PaletteFrames:
 	.global BabiFune_DriftScript
 BabiFune_DriftScript:
 	.4byte 0x0000001b
+	.global BabiFune_WaveSine
+BabiFune_WaveSine:
 	.4byte 0x00640000
 	.4byte 0x012d00c8
 	.4byte 0x01f50191

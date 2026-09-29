@@ -1,13 +1,14 @@
 /* Draft of WorldMap_MeetVenusDjinni, resource_371 at 0x02009ca4 (FIELD/WORLD_MAP/VENUS_DJINNI.C).
- * Remaining difference (score 3120 against the listing's bare addresses, 8
- * register-only, 2 reordered): the two all-zero Djinni calls after the
- * leader-position join load r0 first where the ROM loads r1, r2, r0; GCC
- * orders arguments that way when r0 still holds a live value at the call.
- * The Ability message's jump (r2, r0, r1) and message (r1, r0) likewise; the
- * rise to 0x100000 builds its argument earlier; path B's walk loads x before
- * z. The scale-up loop now counts 15..0 with bge as the ROM does. Calling
- * Engine_ActorJump directly or passing a zero variable changes nothing.
- * Linking it needs the IMPORT.S labels it calls, which are committed. */
+ * Remaining difference (score 230 against the listing with a temporary label,
+ * 2 register-only, 5 operand, 2 reordered). Declaring Djinn_AddToOwner and
+ * Trade_AddOffer unprototyped returning s32, as MAKYURI_HEYA/PARTY_SCENE.C
+ * does, fixed the all-zero call order (was 260). Left: after
+ * Event_SetMessage(i) in the listened tail the ROM loads the jump as r2, r0,
+ * r1 and the following message as r1, r0; in the later-meeting tail the walk
+ * loads z (sl) before x (r9); the 0x800 scale step and the 0x100000 height
+ * build one instruction later. All sit just before a branch to the shared
+ * finish; direct Engine_ calls, temporaries, if/else in place of goto finish
+ * and 40k permuter candidates change nothing. */
 /* The world map's Venus Djinni: on the first meeting it joins Isaac, grows
  * from a speck and explains itself, asking until the party agrees to listen;
  * later it offers to explain Djinn again. */
@@ -24,8 +25,8 @@ extern u8 MsgWorldMapHmmmmExplainAgain[];
 extern u8 MsgWorldMapYeahWantLearn[];
 
 void Owner_RefreshActiveRatios(s32 owner);
-void Djinn_AddToOwner(u8 owner, u8 element, u8 index);
-void Trade_AddOffer(u8 owner, u8 element, u8 index);
+s32 Djinn_AddToOwner();
+s32 Trade_AddOffer();
 void BattleEffect_CleanupSceneObjects(void);
 void UiWork_PushValueSlot(s32 value, s32 slot);
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 a1, s32 a2);

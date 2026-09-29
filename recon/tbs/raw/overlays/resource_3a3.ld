@@ -11,9 +11,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/GET_PLACEMENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/GET_EVENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/MOTION_PARTICLE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/SCENE_INIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/MIDDLE_SEQUENCE.o"(.text)
-        "*/resource_3a3_overlay.o"(.text.x02008d58)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/IMPORT.o"(.text)
         "*/resource_3a3_overlay.o"(.rodata)
     }

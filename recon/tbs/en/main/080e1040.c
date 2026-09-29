@@ -1,3 +1,7 @@
+/* 2026-09-29: five minutes of permutation (--function Func_080e1040)
+ * reached 10179 from 12595 through 27 rewrites, mostly temporaries and
+ * reorders; not kept, since the draft is far from exact and its Data_
+ * resource numbers block adoption anyway. */
 /* 2026-09-29: callees carry the build's names; alchemy permute (--function
  * Func_080e1040) scores 12595, from 13075. */
 #include "types.h"

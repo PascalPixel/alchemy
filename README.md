@@ -19,7 +19,7 @@ things itself; it lays the foundation that makes them possible.
 
 ## Progress
 
-**☀️ 76.06% · ⚓️ 5.33%**
+**☀️ 76.08% · ⚓️ 5.33%**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 

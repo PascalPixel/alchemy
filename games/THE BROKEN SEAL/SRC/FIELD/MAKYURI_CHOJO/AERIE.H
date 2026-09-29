@@ -25,7 +25,7 @@ void Object_LinkPairFar();
 void ObjectMotion_SetPositionAndCommitFar();
 s32 UiText_OpenMessageAtObjectFar();
 
-s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position);
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 
 static __inline__ void Call0(void (*f)())
 {

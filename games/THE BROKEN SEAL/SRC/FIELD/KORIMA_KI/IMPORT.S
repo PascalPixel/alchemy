@@ -199,6 +199,9 @@ Engine_EventRequestExit:
 	.thumb_func
 Engine_ColorBufferApplyTarget:
 	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	.global Engine_ColorBufferApplySource
+	.thumb_func
+Engine_ColorBufferApplySource:
 	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Engine_ColorBufferInterpolate
 	.thumb_func

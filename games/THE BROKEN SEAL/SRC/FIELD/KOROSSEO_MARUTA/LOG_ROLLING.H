@@ -117,29 +117,29 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u16 gColossoModeTaskMode;
-extern u16 gColossoModeTaskParameter;
-extern u16 gColossoModeTaskStep;
-extern s32 gColossoModeTaskScript;
-extern u16 gColossoModeTaskTimer;
-extern u16 gColossoModeTaskCounterA;
-extern s32 gColossoModeTaskCounterB;
+extern u16 Korosseo_ModeTaskMode;
+extern u16 Korosseo_ModeTaskParam;
+extern u16 Korosseo_ModeTaskTimer;
+extern s32 Korosseo_ModeTaskScript;
+extern u16 Korosseo_ModeMoveTarget;
+extern u16 Korosseo_ModeMoveDuration;
+extern s32 Korosseo_ModeTaskPosition;
 extern s32 gColossoModeScriptDefault;   /* default handler (mode not 2/3/4) */
 extern s32 gColossoModeScript2;   /* handler for mode == 2 */
 extern s32 gColossoModeScript4;   /* handler for mode == 4 */
 extern struct ModeRecord gColossoModeScript3B;
 extern struct ModeRecord gColossoModeScript3A;
-extern s16 gColossoPaletteHandle;
-extern u16 gColossoPaletteFirst;
-extern u16 gColossoPaletteSecond;
-extern u16 gColossoPaletteMode;
-extern u16 gColossoPaletteStep;
-extern u16 gColossoPaletteFlags;
-extern u16 gColossoPaletteNextFirst;
-extern u16 gColossoPaletteNextSecond;
-extern u16 gColossoPaletteSavedFirst;
-extern u16 gColossoPaletteSavedSecond;
-extern u16 gColossoPaletteProgress;
+extern s16 Korosseo_MarkerSlot;
+extern u16 Korosseo_MarkerX;
+extern u16 Korosseo_MarkerY;
+extern u16 Korosseo_MarkerPriority;
+extern u16 Korosseo_MarkerBlink;
+extern u16 Korosseo_MarkerSteps;
+extern u16 Korosseo_MarkerEndX;
+extern u16 Korosseo_MarkerEndY;
+extern u16 Korosseo_MarkerStartX;
+extern u16 Korosseo_MarkerStartY;
+extern u16 Korosseo_MarkerStep;
 extern u8 gColossoRandomEffect[];
 extern u8 gColossoLinkedEffect[];
 extern u8 gColossoSceneDescriptor[];
@@ -317,7 +317,7 @@ extern s32 gColossoParticleCount;
 
 /* The stage's per-frame tasks, still in the listing. */
 void ColossoLogRollingStage_SceneTask(void);
-void ColossoLogRollingStage_ModeTask(void);
-void ColossoLogRollingStage_PaletteTask(void);
+void Korosseo_UpdateModeTask(void);
+void Korosseo_UpdateMarker(void);
 
 #endif

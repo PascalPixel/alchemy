@@ -82,10 +82,16 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global Engine_ColorBufferApplyTarget
+	.thumb_func
+Engine_ColorBufferApplyTarget:
 	.global BattleFx_ApplyColorToTargetBuffer
 	.thumb_func
 BattleFx_ApplyColorToTargetBuffer:
 	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	.global Engine_ColorBufferApplySource
+	.thumb_func
+Engine_ColorBufferApplySource:
 	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global BattleFx_PlayQueuedSound
 	.thumb_func

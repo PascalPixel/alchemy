@@ -3,11 +3,6 @@
 /* The game state's cells, read here as halfwords. */
 extern s16 gCell[];
 
-void SceneState_SetWorkHalfwordDc(s16 v)
-{
-    *(s16 *)(*(u8 **)(gWorkSlot + WORK_SLOT_STAGE * 4) + 0xdc) = v;
-}
-
 /* The placed actor whose cell holds a position.  Callers also pass the
  * record asking, which the search does not need. */
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self)

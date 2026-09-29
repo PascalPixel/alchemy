@@ -10,6 +10,9 @@
 	.thumb_func
 Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
+	.global Engine_MathModulo
+	.thumb_func
+Engine_MathModulo:
 	overlay_veneer IwramUnsignedRemainder
 	.global WaitFrames
 	.thumb_func

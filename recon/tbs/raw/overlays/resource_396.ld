@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/OBJECT_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/OBJECT_CONFIG.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/resource_396_overlay.o"(.text.x0200813c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TABLES.o"(.text)
         "*/resource_396_overlay.o"(.text.x02008334)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/STEPS.o"(.text)
@@ -28,4 +28,7 @@ SECTIONS
     }
     .bss : { "*/resource_396_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its division helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __divsi3 = Engine_MathDivide;
 }

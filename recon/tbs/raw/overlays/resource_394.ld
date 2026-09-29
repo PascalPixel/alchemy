@@ -18,9 +18,10 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/STAMP_RECORD.o"(.text)
         "*/resource_394_overlay.o"(.text.x02008be4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/ADJUST_PALETTE.o"(.text)
-        "*/resource_394_overlay.o"(.text.x02008f34)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KORIMA/PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/IMPORT.o"(.text)
         "*/resource_394_overlay.o"(.rodata)
     }
+    .bss : { "*/resource_394_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

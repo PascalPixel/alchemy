@@ -27,11 +27,12 @@
 //!
 //! - `.lz`: the packer's LZ, the smaller of its general (tag 0) and
 //!   palette (tag 1) encodings, the palette one on ties.
+//! - or `.plz`: the packer's palette LZ without its tag byte.
 //! - or `.mtf`: the tag-2 tile compressor.
 //! - or `.d7`: the backdrop codec, each 7-bit pixel as a delta from the one
 //!   before it.
 use crate::graphics::{indices, metatiles};
-use crate::lz::{compress_mtf4, compress_tagged, LzMachine};
+use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
 use psynergy::assets::compression::{encode_delta7, encode_tilemap_delta};
 use psynergy::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
@@ -97,6 +98,7 @@ pub fn build_file_with(
     match codec {
         None => Ok(pixels),
         Some("lz") => compress_tagged(&pixels, &PACKER),
+        Some("plz") => compress_palette(&pixels, &PACKER),
         Some("mtf") => compress_mtf4(&pixels),
         Some("d7") => encode_delta7(&pixels).map_err(|error| format!("{built}: {}", error.0)),
         Some(other) => Err(format!("{built}: unknown codec .{other}")),

@@ -427,6 +427,8 @@ SECTIONS
         "*/recon/tla/raw/0804e0d0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804e1d8.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.0804e584)
+        "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.0805c0e0)
         "*/games/THE LOST AGE/TEXT/MESSAGES.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080aa0dc)
         "*/recon/tla/raw/080ad000.o"(.text .rodata .data .padding)

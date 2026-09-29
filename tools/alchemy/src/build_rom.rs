@@ -721,8 +721,8 @@ fn graphics_files(root: &Path, source: &Path) -> Vec<String> {
         .collect()
 }
 
-/// Write every resource file `source` reads from the indexed PNG its name
-/// gives under the game's `SRC`, as pret's graphics rules build what its data sources read,
+/// Write every resource file `source` reads from the input its name gives
+/// under the `SRC` of the source's game or of `COMMON`, as pret's graphics rules build what its data sources read,
 /// rewriting a file only when its bytes change.
 fn build_graphics_files(
     root: &Path,
@@ -737,9 +737,13 @@ fn build_graphics_files(
                 source.display()
             ));
         }
-        let image = Path::new(target.game_dir())
-            .join("SRC")
-            .join(ags::resource::input_name(&built)?);
+        // Inputs sit under the SRC of the game, or COMMON, whose source reads them.
+        let game = if source.starts_with("games/COMMON") {
+            Path::new("games/COMMON")
+        } else {
+            Path::new(target.game_dir())
+        };
+        let image = game.join("SRC").join(ags::resource::input_name(&built)?);
         let png = fs::read(root.join(&image))
             .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
         let encoded = ags::resource::build_file_with(&built, &png, &|name| {

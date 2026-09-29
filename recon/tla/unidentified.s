@@ -42,7 +42,9 @@ Data_08054a14:
 	.incbin "baserom.gba", 0x00054a14, 0x00000410
 	.global Data_08054e24
 Data_08054e24:
-	.incbin "baserom.gba", 0x00054e24, 0x0000aaf0
+	.incbin "baserom.gba", 0x00054e24, 0x000056bc
+	.section .unidentified.0805c0e0,"a"
+	.incbin "baserom.gba", 0x0005c0e0, 0x00003834
 	.section .unidentified.080aa0dc,"a"
 	.incbin "baserom.gba", 0x000aa0dc, 0x00002f24
 	.section .unidentified.080b127c,"a"

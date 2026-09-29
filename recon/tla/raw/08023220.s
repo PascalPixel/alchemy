@@ -53,7 +53,7 @@ Func_08023220:
 	strb	r3, [r2, #0]
 	adds	r0, r7, #0
 	str	r5, [r6, #80]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #9]
 	lsrs	r3, r3, #1
 	strh	r3, [r6, #32]
@@ -103,7 +103,7 @@ Func_08023220:
 	cmp	r5, #0
 	beq.n	.L_080232fa
 	adds	r0, r7, #0
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #9]
 	movs	r2, #12
 	lsrs	r3, r3, #1

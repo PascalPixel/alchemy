@@ -71,7 +71,7 @@ Func_0810bea8:
 	cmp	r3, #0
 	beq.n	.L_0810bf6a
 	str	r4, [sp, #0]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	ldr	r4, [sp, #0]
 	cmp	r5, #95

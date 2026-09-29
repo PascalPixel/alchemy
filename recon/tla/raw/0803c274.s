@@ -49,7 +49,7 @@ Func_0803c274:
 	cmp	r3, #99
 	bne.n	.L_0803c2da
 	str	r4, [sp, #0]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	strh	r0, [r6, #0]
 	ldr	r4, [sp, #0]
 .L_0803c2da:

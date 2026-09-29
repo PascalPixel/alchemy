@@ -45,7 +45,7 @@ Func_080e1f2c:
 	bl	Resource_GetTableEntry
 	ldr	r1, [r6, #0]
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	str	r0, [sp, #8]
 	adds	r1, r5, #0
 	ldr	r2, [r6, #0]
@@ -128,7 +128,7 @@ Func_080e1f2c:
 	bl	Resource_GetTableEntry
 	ldr	r1, [r6, #0]
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	str	r0, [sp, #12]
 	movs	r1, #128
 	lsls	r1, r1, #1

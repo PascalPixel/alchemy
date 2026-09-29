@@ -62,7 +62,7 @@ Func_080da968:
 	ldr	r2, [pc, #168]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r3, #186
 	lsls	r3, r3, #1
 	str	r0, [r7, #0]

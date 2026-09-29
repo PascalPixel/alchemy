@@ -10,7 +10,13 @@
    count, and i = 0 precedes actor = 0. BattleEv_RunWait's name and the
    plain 999 result code (not a Value_ symbol) bring it to 150: 18
    register-only and one moved movs r1, #0. The register-only rows rotate
-   r5/r6/r7 among the ability-scan locals and the action id. */
+   r5/r6/r7 among the ability-scan locals and the action id: global
+   allocation ranks best (13 references over 130 insns) above the owner
+   index i (7 over 56), so best takes r6 where the reference gives i r6 and
+   best r7. A separate no-effect flag local, counting the single-actor scan
+   into matches, a one-argument BattleEv_RunWait and testing i in the loop
+   guard do not reorder them (150 to 370). A second 8-minute search from 150
+   found nothing lower. */
 #include "TYPES.H"
 
 #include "ITEM.H"

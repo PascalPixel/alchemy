@@ -34,6 +34,8 @@
  * (53,077 candidates), effect->state++, moving
  * the linked read, one combined flags expression, an object local between
  * the origin stores, x/z temporaries and an origin pointer: none below.
+ * The H2 inline wrapper (and its FAKEMATCH tag) is not needed: the launch
+ * offset written in place scores the same 280, so it is gone.
  */
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
@@ -104,19 +106,6 @@ void Vector_AddPolarOffset(
 void Camera_WorldToScreen(void *position);
 void Audio_PlayCue(s32 cue);
 
-/* FAKEMATCH: isolate only the coordinate input and its polar consumer. */
-static __inline__ void EffectPosition_AddLaunchOffset(
-    struct PhasedParticleSlot *effect, struct EffectVector *position)
-{
-    position->x = effect->x;
-    position->z = effect->z;
-    Vector_AddPolarOffset(
-        0x780000,
-        ((Random16() * 3 << 11) >> 16)
-            - ((Random16() * 3 << 11) >> 16)
-            + 0xc000,
-        position);
-}
 
 void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
 {
@@ -134,7 +123,14 @@ void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
     if (state == 0) {
         effect->x = effect->origin.x;
         effect->z = effect->origin.z;
-        EffectPosition_AddLaunchOffset(effect, &position);
+        position.x = effect->x;
+        position.z = effect->z;
+        Vector_AddPolarOffset(
+            0x780000,
+            ((Random16() * 3 << 11) >> 16)
+                - ((Random16() * 3 << 11) >> 16)
+                + 0xc000,
+            &position);
         effect->target_x = position.x;
         effect->target_z = position.z;
         effect->acceleration = 0x50000;

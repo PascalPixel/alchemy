@@ -1,38 +1,6 @@
 #include "TYPES.H"
+#include "SERIAL_RUNTIME.H"
 extern u8 Data_03001cb0[];
-
-#ifndef SERIAL_RUNTIME_TU
-union SerialDataRegisters {
-    u32 words[2];
-    u16 halfwords[4];
-};
-
-struct SerialRuntime {
-    u8 mode;
-    u8 phase;
-    u8 received_mask;
-    u8 current_mask;
-    u8 channel_flags[4];
-    u8 transfer_enabled;
-    u8 is_parent;
-    u8 reserved_0a;
-    u8 sequence;
-    u8 reserved_0c[8];
-    s32 send_index;
-    s32 receive_index[2];
-    u8 reserved_20[8];
-    u16 *send_buffer[2];
-    u16 *incoming_buffer[4];
-    u16 *ready_buffer[4];
-    u16 *pending_buffer[4];
-    u8 storage[0x100];
-};
-
-#define SERIAL_RUNTIME ((struct SerialRuntime *)0x02002240)
-#define REG_SIODATA32 ((volatile u32 *)0x04000120)
-#define REG_SIOCNT16 (*(volatile u16 *)0x04000128)
-#define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
-#endif
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {
@@ -49,7 +17,7 @@ void SerialRuntime_HandleTransferInterrupt(void)
     /* Capture volatile I/O through one stable, restricted local view. */
     *serial_snapshot =
         *(volatile union SerialDataRegisters *)REG_SIODATA32;
-    send_state = SERIAL_RUNTIME;
+    send_state = &gSerialRuntime;
     send_state->is_parent = (*sio_control << 25) >> 31;
 
     if (send_state->send_index == -1) {
@@ -64,7 +32,7 @@ void SerialRuntime_HandleTransferInterrupt(void)
         ((volatile u16 *)sio_control)[1] =
             send_state->send_buffer[1][send_state->send_index];
     }
-    receive_state = SERIAL_RUNTIME;
+    receive_state = &gSerialRuntime;
     if (receive_state->send_index <= 14)
         receive_state->send_index++;
 
@@ -91,7 +59,7 @@ receive_loop:
             }
         }
     }
-    tail_state = SERIAL_RUNTIME;
+    tail_state = &gSerialRuntime;
     if (tail_state->is_parent != 0)
         tail_state->channel_flags[channel] |= 2;
     if (tail_state->receive_index[channel] <= 14)
@@ -106,13 +74,8 @@ receive_loop:
         REG_TM3CNT_H = 0xc0;
     }
 }
-#include "GLOBAL_CELLS.H"
-
-#ifndef SERIAL_RUNTIME_TU
-typedef void (*InterruptHandler)(void);
 
 void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
-#endif
 
 void SerialRuntime_RemoveIrqHandlers(void)
 {

@@ -39,8 +39,11 @@ struct SaveWorkspace {
 
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
-#define SAVE_HEADER_TEMPLATE ((const struct SaveSlotHeader *)0x080079b8)
-#define SAVE_SIGNATURE ((const u8 *)0x080079b0)
+
+/* The signature a save slot's header starts with, and the eight bytes of
+   signature and record byte that each written slot's header starts from. */
+extern const u8 Save_Signature[];
+extern const u8 Save_HeaderTemplate[];
 
 #define START_DMA(source_, destination_, control_) \
     Dma_Set((const void *)(source_), (void *)(destination_), (control_), (volatile u32 *)0x040000d4)

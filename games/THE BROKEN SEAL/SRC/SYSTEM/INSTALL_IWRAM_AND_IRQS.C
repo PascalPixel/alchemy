@@ -8,6 +8,11 @@ extern u8 Data_030000e0[];
 extern u8 Data_03000000[];
 extern void *Data_03007ffc;
 
+/* The resident runtime bank's ROM image (MAIN.LD), and the ROM table of
+   the fourteen interrupt handlers its dispatch table starts with. */
+extern const u8 IwramRuntime_Rom[];
+extern void (*const Runtime_IrqHandlers[])(void);
+
 /* Copies the IWRAM runtime and its IRQ dispatch table into place with
    interrupts off, points the interrupt vector at it, then enables the
    V-blank and keypad interrupts. */
@@ -27,9 +32,9 @@ void Runtime_InstallIwramAndIrqs(void)
         *ime = zero;
     } while (0);
     iwram = Data_03000000;
-    Dma_Set((const void *)0x08000770, iwram, 0x84000500, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)IwramRuntime_Rom, iwram, 0x84000500, (volatile u32 *)0x040000d4);
     Data_03007ffc = iwram;
-    Dma_Set((const void *)0x08007320, (void *)Data_030000e0, 0x8400000e, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)Runtime_IrqHandlers, (void *)Data_030000e0, 0x8400000e, (volatile u32 *)0x040000d4);
     *(volatile u16 *)0x04000004 = zero;
     value = 0xc3ff;
     *(volatile u16 *)0x04000132 = value;

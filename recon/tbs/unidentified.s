@@ -3,10 +3,16 @@
 	.section .unidentified.08000000,"a"
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .unidentified.08007320,"a"
-	.incbin "baserom.gba", 0x00007320, 0x00000356
+	.global Runtime_IrqHandlers
+Runtime_IrqHandlers:
+	.incbin "baserom.gba", 0x00007320, 0x00000038
+	.incbin "baserom.gba", 0x00007358, 0x0000031e
 	.global Math_ArcTanTable
 Math_ArcTanTable:
-	.incbin "baserom.gba", 0x00007676, 0x00000126
+	.incbin "baserom.gba", 0x00007676, 0x00000106
+	.global Ui_WindowPalette
+Ui_WindowPalette:
+	.incbin "baserom.gba", 0x0000777c, 0x00000020
 	.global System_BasicColorPalette
 System_BasicColorPalette:
 	.incbin "baserom.gba", 0x0000779c, 0x000001c0
@@ -17,7 +23,13 @@ RomBytes_0800795c:
 Text_PowersOfTen:
 	.incbin "baserom.gba", 0x00007970, 0x00000024
 	.section .unidentified.080079b0,"a"
-	.incbin "baserom.gba", 0x000079b0, 0x0000005c
+	.global Save_Signature
+Save_Signature:
+	.incbin "baserom.gba", 0x000079b0, 0x00000008
+	.global Save_HeaderTemplate
+Save_HeaderTemplate:
+	.incbin "baserom.gba", 0x000079b8, 0x00000008
+	.incbin "baserom.gba", 0x000079c0, 0x0000004c
 	.global Flash_Chips
 Flash_Chips:
 	.incbin "baserom.gba", 0x00007a0c, 0x00000014
@@ -28,9 +40,11 @@ Flash_Chips:
 	.incbin "baserom.gba", 0x00007ab4, 0x00000008
 	.global Data_08007abc
 Data_08007abc:
-	.incbin "baserom.gba", 0x00007abc, 0x00000070
+	.incbin "baserom.gba", 0x00007abc, 0x00000058
 	.section .unidentified.08007b38,"a"
-	.incbin "baserom.gba", 0x00007b38, 0x000000ac
+	.incbin "baserom.gba", 0x00007b38, 0x0000008c
+	.section .unidentified.08007bcc,"a"
+	.incbin "baserom.gba", 0x00007bcc, 0x00000018
 	.global Data_08007be4
 Data_08007be4:
 	.incbin "baserom.gba", 0x00007be4, 0x0000002c
@@ -45,7 +59,10 @@ Data_08007c10:
 Runtime_ByteRemapTable:
 	.incbin "baserom.gba", 0x000097b8, 0x00000400
 	.section .unidentified.08012f20,"a"
-	.incbin "baserom.gba", 0x00012f20, 0x0000022c
+	.global Object_ShadowTiles
+Object_ShadowTiles:
+	.incbin "baserom.gba", 0x00012f20, 0x00000080
+	.incbin "baserom.gba", 0x00012fa0, 0x000001ac
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
 	.incbin "baserom.gba", 0x0001314c, 0x000000f4
@@ -276,7 +293,10 @@ Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0009c410, 0x00000200
 	.global Encounter_EnemyGroupTable
 Encounter_EnemyGroupTable:
-	.incbin "baserom.gba", 0x0009c610, 0x00001198
+	.incbin "baserom.gba", 0x0009c610, 0x00000b60
+	.global Battle_LocationRules
+Battle_LocationRules:
+	.incbin "baserom.gba", 0x0009d170, 0x00000638
 	.global BattleFx_ResultRules
 BattleFx_ResultRules:
 	.incbin "baserom.gba", 0x0009d7a8, 0x00000108
@@ -294,7 +314,10 @@ RomWords_0809e270:
 	.incbin "baserom.gba", 0x0009e270, 0x00000218
 	.global gBattleCueTable
 gBattleCueTable:
-	.incbin "baserom.gba", 0x0009e488, 0x000001fe
+	.incbin "baserom.gba", 0x0009e488, 0x00000046
+	.global Debug_PaletteSwatchTiles
+Debug_PaletteSwatchTiles:
+	.incbin "baserom.gba", 0x0009e4ce, 0x000001b8
 	.global BattleFx_TargetRangeByMode
 BattleFx_TargetRangeByMode:
 	.incbin "baserom.gba", 0x0009e686, 0x00000032
@@ -451,7 +474,11 @@ Data_080af238:
 	.incbin "baserom.gba", 0x000af238, 0x00000004
 	.global Data_080af23c
 Data_080af23c:
-	.incbin "baserom.gba", 0x000af23c, 0x00000058
+	.incbin "baserom.gba", 0x000af23c, 0x00000030
+	.global Menu_BackdropFrameTile
+Menu_BackdropFrameTile:
+	.incbin "baserom.gba", 0x000af26c, 0x00000020
+	.incbin "baserom.gba", 0x000af28c, 0x00000008
 	.global UiMenu_CursorBobX
 UiMenu_CursorBobX:
 	.incbin "baserom.gba", 0x000af294, 0x00000009
@@ -482,10 +509,35 @@ FourObjectMotion_ResourceIds:
 RomBytes_080af304:
 	.incbin "baserom.gba", 0x000af304, 0x00000cfc
 	.section .unidentified.080b3940,"a"
-	.incbin "baserom.gba", 0x000b3940, 0x00000400
+	.global Shop_HandTiles
+Shop_HandTiles:
+	.incbin "baserom.gba", 0x000b3940, 0x00000080
+	.global Shop_GemTiles
+Shop_GemTiles:
+	.incbin "baserom.gba", 0x000b39c0, 0x00000080
+	.global Shop_SmallDownArrowTiles
+Shop_SmallDownArrowTiles:
+	.incbin "baserom.gba", 0x000b3a40, 0x00000080
+	.global Shop_SmallUpArrowTiles
+Shop_SmallUpArrowTiles:
+	.incbin "baserom.gba", 0x000b3ac0, 0x00000080
+	.global Shop_UpArrowTiles
+Shop_UpArrowTiles:
+	.incbin "baserom.gba", 0x000b3b40, 0x00000080
+	.global Shop_DownArrowTiles
+Shop_DownArrowTiles:
+	.incbin "baserom.gba", 0x000b3bc0, 0x00000080
+	.incbin "baserom.gba", 0x000b3c40, 0x00000100
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:
-	.incbin "baserom.gba", 0x000b3d40, 0x000003c0
+	.incbin "baserom.gba", 0x000b3d40, 0x00000140
+	.global Shop_PriceTiles
+Shop_PriceTiles:
+	.incbin "baserom.gba", 0x000b3e80, 0x00000100
+	.global Shop_QuantityTiles
+Shop_QuantityTiles:
+	.incbin "baserom.gba", 0x000b3f80, 0x00000100
+	.incbin "baserom.gba", 0x000b4080, 0x00000080
 	.global RomBytes_080b4100
 RomBytes_080b4100:
 	.incbin "baserom.gba", 0x000b4100, 0x0000003c
@@ -560,7 +612,13 @@ PpHealFalloff:
 	.incbin "baserom.gba", 0x000c2b50, 0x00000018
 	.global HpDmgFalloff
 HpDmgFalloff:
-	.incbin "baserom.gba", 0x000c2b68, 0x00000a54
+	.incbin "baserom.gba", 0x000c2b68, 0x00000030
+	.global Battle_ActionStatus
+Battle_ActionStatus:
+	.incbin "baserom.gba", 0x000c2b98, 0x00000208
+	.global Battle_ActionFlags
+Battle_ActionFlags:
+	.incbin "baserom.gba", 0x000c2da0, 0x0000081c
 	.global BattleParty_RoundEndGroupOrder
 BattleParty_RoundEndGroupOrder:
 	.incbin "baserom.gba", 0x000c35bc, 0x00000048
@@ -590,7 +648,11 @@ BattleMotion_VariantVelocityY:
 	.incbin "baserom.gba", 0x000c59e4, 0x00000020
 	.global BattleMotion_VariantDistancePercent
 BattleMotion_VariantDistancePercent:
-	.incbin "baserom.gba", 0x000c5a04, 0x0000020c
+	.incbin "baserom.gba", 0x000c5a04, 0x0000002c
+	.global BattlePres_TileVariants
+BattlePres_TileVariants:
+	.incbin "baserom.gba", 0x000c5a30, 0x00000100
+	.incbin "baserom.gba", 0x000c5b30, 0x000000e0
 	.global Data_080c5c10
 Data_080c5c10:
 	.incbin "baserom.gba", 0x000c5c10, 0x00000028

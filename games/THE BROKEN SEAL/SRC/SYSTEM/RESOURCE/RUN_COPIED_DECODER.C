@@ -1,5 +1,6 @@
 #include "DMA.H"
 #include "SYSTEM.H"
+#include "MAP.H"
 
 extern const u8 TileMap_DrawRows[];
 
@@ -14,8 +15,8 @@ extern u8 gDecodeBuffer[];
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 
-/* Copies the ARM decoder at 0x08009e7c (Value_0000027c bytes) to a heap
-   block and runs the decoder installed at 0x03001f14 on a and b. */
+/* Copies the ARM decoder TileMap_DrawRows (Value_0000027c bytes) to a heap
+   block and runs the decoder gWorkSlot holds on a and b. */
 void Resource_RunCopiedDecoder(s32 a, s32 b)
 {
     u8 *base;
@@ -27,6 +28,6 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     do { size = (u32)Value_0000027c; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((const void *)TileMap_DrawRows, code, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
-    do { gWorkSlot.decode(a, b, (void *)0x0203c000, base + 0x1000); } while (0);
+    do { gWorkSlot.decode(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
     Runtime_ReleaseHeapBlock(49);
 }

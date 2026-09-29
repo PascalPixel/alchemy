@@ -94,8 +94,10 @@ LAYOUT_OFFSET_GUARD(
 #define BATTLE_AUTO_MODE    (*(volatile u8 *)gDebugMode)
 #define BATTLE_OPTIONS      (*(volatile u32 *)gKeysHeld)
 
-#define BATTLE_ACTION_FLAGS  ((const u32 *)0x080c2da0)
-#define BATTLE_ACTION_STATUS ((const u8 *)0x080c2b98)
+/* Per ability: the action's flag word (abilities 0 to 518) and the status
+   it applies (abilities 0 to 517, zero for none). */
+extern const u32 Battle_ActionFlags[];
+extern const u8 Battle_ActionStatus[];
 
 s32 BattleCommand_BuildPlan(
     struct BattleCommandRequest *request,

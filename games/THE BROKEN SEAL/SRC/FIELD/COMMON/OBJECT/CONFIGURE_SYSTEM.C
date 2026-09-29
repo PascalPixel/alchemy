@@ -1,6 +1,9 @@
 #include "DMA.H"
 extern u8 Func_0800a418[];
 
+/* The 16 by 8 oval, in colour 1, that objects draw beneath them. */
+extern const u8 Object_ShadowTiles[];
+
 /* The table size is a link-time symbol, loaded from the literal pool. */
 extern u8 Value_0000007c;
 
@@ -32,7 +35,7 @@ void ObjectSystem_Configure(s32 mode)
     Dma_Set((const void *)&zero, objects, 0x85000380, (volatile u32 *)0x040000d4);
     zero = 0;
     Dma_Set((const void *)&zero, states, 0x85000180, (volatile u32 *)0x040000d4);
-    VramBlock_LoadCached(93, 128, (const void *)0x08012f20);
+    VramBlock_LoadCached(93, 128, Object_ShadowTiles);
     size = (u32)&Value_0000007c;
     table = Runtime_AllocateHeapBlock(53, size);
     Dma_Set((const void *)Func_0800a418, table, 0x84000000 | (size >> 2),

@@ -188,9 +188,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_READ_ROUTINES.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/READ_FLASH_CORE.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_VERIFY.o"(.rodata)
-        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/ERASE_FLASH_CHIP.o"(.rodata)
-        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/ERASE_FLASH_SECTOR.o"(.rodata)
-        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_PROGRAM_BYTE.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SUMMARY.o"(.rodata)
@@ -202,9 +199,13 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/READ_FLASH.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/VERIFY_FLASH_SECTOR.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08007aa4)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/ERASE_FLASH_CHIP.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/ERASE_FLASH_SECTOR.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_PROGRAM_BYTE.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/PROGRAM_FLASH_SECTOR_WITH_ERASE_RETRY.o"(.rodata)
-        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/PROGRAM_FLASH_SECTOR.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08007b38)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/PROGRAM_FLASH_SECTOR.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.08007bcc)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/ERASE_ATMEL_FLASH_CHIP.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/ERASE_ATMEL_FLASH_SECTOR.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/ERASE_ATMEL_FLASH_BLOCK.o"(.rodata)
@@ -1744,6 +1745,8 @@ SECTIONS
     RenderResource_PairSourceTable2 = RenderResource_PairSourceTable;
     RenderResource_PairSourceTable3 = RenderResource_PairSourceTable;
     RenderResource_PairSourceTable4 = RenderResource_PairSourceTable;
+    /* Startup copies the resident runtime bank to IWRAM from its ROM image. */
+    IwramRuntime_Rom = LOADADDR(.iwram_runtime);
     /* The sound mixer runs in IWRAM; its ROM copy is called in place for its return trampoline. */
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));

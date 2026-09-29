@@ -4,6 +4,9 @@
 
 extern const u8 System_BasicColorPalette[];
 
+/* The window frame colours of background bank 15. */
+extern const u16 Ui_WindowPalette[];
+
 extern u8 Value_00000013;
 
 /* Loads the shared window graphics: resource 0x13 into BG character block
@@ -13,7 +16,7 @@ void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&Value_00000013), (void *)0x06000000, 0x84000800,
             (volatile u32 *)0x040000d4);
-    Dma_Set((const void *)0x0800777c, (void *)0x050001e0, 0x80000010,
+    Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
             (volatile u32 *)0x040000d4);
     /* FAKEMATCH: the two do-while blocks keep the value-before-address
        order of the palette stores */

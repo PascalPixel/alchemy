@@ -1,5 +1,5 @@
 /* Battle effect: pick the location rule for the current map and room from
-   the rule table at 0x0809d170 (a room of -1 matches any room; a flag of -1
+   Battle_LocationRules (a room of -1 matches any room; a flag of -1
    always applies, otherwise the rule applies while the flag is clear), then
    write a zero and seven consecutive results from the rule's base into
    work + 0x1a0 (all zero when nothing applies). A rule with the shift bit
@@ -28,6 +28,7 @@ struct FieldLocation {
 
 extern u8 *Data_03001ebc;
 extern struct FieldLocation Data_02000240;
+extern const struct BattleLocationRule Battle_LocationRules[];
 
 s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SetSpecialFromTable(void);
@@ -38,7 +39,7 @@ void BattleFx_SelectLocationRule(s32 check)
     s32 map;
     s32 room;
     u8 *out;
-    struct BattleLocationRule *entry;
+    const struct BattleLocationRule *entry;
     s32 track;
     s16 fade;
     u32 i;
@@ -47,7 +48,7 @@ void BattleFx_SelectLocationRule(s32 check)
     map = Data_02000240.map;
     room = Data_02000240.room;
     out = work + 0x1a0;
-    entry = (struct BattleLocationRule *)0x0809d170;
+    entry = Battle_LocationRules;
     track = 0;
     fade = 0;
     if (check != 0) {

@@ -18,7 +18,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ARMOR_SHOP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ITEM_SHOP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/SCENES.o"(.text)
-        "*/resource_399_overlay.o"(.text.x02008b70)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/PRIMARY.o"(.text)
         "*/resource_399_overlay.o"(.text.x020095b4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/CHOREOGRAPHY.o"(.text)

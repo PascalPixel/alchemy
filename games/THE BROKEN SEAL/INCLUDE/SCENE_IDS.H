@@ -9,6 +9,8 @@
  * use one as a case label.
  */
 extern char SceneId_WorldMap;
+extern char SceneId_ImiruMura1;
+extern char SceneId_ImiruMura2;
 extern char SceneId_ArutinYama5;
 extern char SceneId_KuupuappuDou1;
 extern char SceneId_KuupuappuDou2;

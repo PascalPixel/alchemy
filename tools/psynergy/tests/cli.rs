@@ -256,3 +256,20 @@ fn conversion_runs_without_a_project_and_refuses_overwrite() {
         [0x34, 0x12, 0xff, 0xff]
     );
 }
+
+#[test]
+fn similar_needs_an_explicit_build_and_keeps_no_corpus() {
+    let dir = tempfile::tempdir().unwrap();
+    let output = command(dir.path())
+        .args(["similar", "SomeFunction"])
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&output.stderr).contains("--build"));
+    let empty = command(dir.path())
+        .args(["similar", "--build", ".", "--out", "similar.tsv"])
+        .output()
+        .unwrap();
+    assert_eq!(empty.status.code(), Some(2));
+    assert!(fs::read_dir(dir.path()).unwrap().next().is_none());
+}

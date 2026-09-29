@@ -10803,7 +10803,7 @@ msgctxt "message"
 msgid "02698"
 msgstr "Ein verfluchtes Item."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "02699"
 msgstr "Willst du das"
 
@@ -11139,7 +11139,7 @@ msgctxt "message"
 msgid "02782"
 msgstr "Ring"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "02783"
 msgstr "Ja"
 

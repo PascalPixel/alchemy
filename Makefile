@@ -43,18 +43,20 @@ compiler-runtime: toolchain-check compiler-source-check
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check
 .PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
-.PHONY: progress progress-subject progress-report progress-check prepare-inputs raw clean
+.PHONY: progress progress-subject progress-report progress-check prepare-inputs raw similar clean
 
 help:
 	@printf '%s\n' \
 	  'make bootstrap       install the approved toolchain from pinned source' \
 	  'make native          compile/link the maintained source list' \
 	  'make compare-all     compare linked source and both private ROM compositions' \
+	  'make compare-editions  compare all twelve editions, the other ten through their recon scaffold' \
 	  'make test            Rust tests, formatting and source policy' \
 	  'make verify          verify source, publication and both ROM compositions' \
 	  'make coverage        update README and both published figures' \
 	  'make progress        report DONE from the linker maps of verified builds' \
-	  'make raw             generate private disassembly under out/'
+	  'make raw             generate private disassembly under out/' \
+	  'make similar         rank not-yet-C functions against C into out/reports/similar.tsv'
 
 bootstrap:
 	$(ALCHEMY) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
@@ -102,6 +104,16 @@ compare-tla:
 	@grep -F ' out/tla-en/' rom.sha1 | $(SHA1) -
 
 compare-all: compare compare-tla
+
+# The other ten editions link through their scaffold under recon/<game>/<lang>,
+# as pret's early builds linked a version through baserom.gba.
+EDITIONS := tbs-ja tbs-de tbs-es tbs-fr tbs-it tla-ja tla-de tla-es tla-fr tla-it
+COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
+.PHONY: compare-editions $(COMPARE_EDITIONS)
+compare-editions: compare-all $(COMPARE_EDITIONS)
+$(COMPARE_EDITIONS): compare-%:
+	$(BUILD) rom --target $*
+	@grep -F ' out/$*/' rom.sha1 | $(SHA1) -
 
 build-full build-rom:
 	$(BUILD) rom --target $(TARGET)
@@ -203,6 +215,11 @@ progress-subject:
 
 progress-report:
 	$(CHECK) progress --write-report
+
+# A report for people only: the build and the count never read it.
+similar:
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- similar --build out/tbs-en --build out/tla-en \
+	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)
 
 progress-check:
 	$(CHECK) progress --check

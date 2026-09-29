@@ -7,7 +7,7 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_02000980
+	overlay_veneer KorimaMagari_SetupBoard
 	overlay_veneer SceneData_GetTable9170
 	overlay_veneer SceneData_GetTable91d0
 	overlay_veneer SceneData_GetTable91e0

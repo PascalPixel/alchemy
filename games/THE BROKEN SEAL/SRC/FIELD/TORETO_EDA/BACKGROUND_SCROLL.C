@@ -54,7 +54,7 @@ extern u8 ToretoEda_SceneTable3[];
 
 void *Object_GetById(u32);
 void BattleFx_SetPhaseRequest(s32, s32);
-void State_ApplyTables826dAnd82a1(void);
+void ToretoEda_StartBg3Split(void);
 
 void State_SetActorEightValue3d(void)
 {
@@ -258,7 +258,7 @@ s32 State_SetRuntimeWord448To256(void)
         *slot = value;
     }
 
-    State_ApplyTables826dAnd82a1();
+    ToretoEda_StartBg3Split();
     return 0;
 }
 

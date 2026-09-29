@@ -128,8 +128,8 @@ Resource_DirectoryTable:
 	resource WaterSpraySheet, BattleFx_WaterSpraySheet
 	resource BlueFlameSheet, BattleFx_BlueFlameSheet
 	resource , BattleFx_ExplosionSheet
-	resource , BattleFx_MagentaSwirlSheet
-	resource , BattleFx_MagentaTailSheet
+	resource MagentaSwirlSheet, BattleFx_MagentaSwirlSheet
+	resource MagentaTailSheet, BattleFx_MagentaTailSheet
 	resource ParticleSpritesA, BattleFx_ParticleSpritesA
 	resource , BattleFx_ParticleSpritesB
 	resource , BattleFx_ParticleSpritesC
@@ -175,7 +175,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_PaletteRampImage
 	resource SmokeSheet, BattleFx_SmokeSheet
 	resource , BattleFx_BluePalette
-	resource , BattleFx_LimePalette
+	resource LimePalette, BattleFx_LimePalette
 	resource PinkPalette, BattleFx_PinkPalette
 	resource , BattleFx_VioletPaletteC
 	resource , BattleFx_CyanPalette

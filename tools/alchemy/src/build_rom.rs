@@ -41,7 +41,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
         }
     }
     let root = crate::compiler::routing::root();
-    let script = script.unwrap_or_else(|| Path::new(target.game_dir()).join("MAIN.LD"));
+    let script = script.unwrap_or_else(|| target.script());
     let output = output.unwrap_or_else(|| PathBuf::from(target.output_dir));
     let linked = link(
         root,
@@ -155,7 +155,11 @@ pub(crate) fn link(
         if let Some(pass) = &symbols {
             same_addresses(root, pass, &elf)?;
         }
-        checked_entries(root, target, &elf)?;
+        // Every build that links game code checks its fixed addresses; a
+        // build that is still only the original ROM places none of them.
+        if links_game_code(&sources, &objects)? {
+            checked_entries(root, target, &elf)?;
+        }
     }
     if let Err(error) = linked {
         if !keep_going || !elf.is_file() {
@@ -179,6 +183,30 @@ pub(crate) fn link(
         map,
         image,
     })
+}
+
+/// Whether the link places any code: a C source, or an object with a
+/// non-empty `.text`. Pictures and data are not code.
+fn links_game_code(sources: &[PathBuf], objects: &[PathBuf]) -> Result<bool, String> {
+    for (source, object) in sources.iter().zip(objects) {
+        let bytes = fs::read(object).map_err(|error| format!("{}: {error}", object.display()))?;
+        if carries_code(source, &bytes)? {
+            return Ok(true);
+        }
+    }
+    Ok(false)
+}
+
+fn carries_code(source: &Path, object: &[u8]) -> Result<bool, String> {
+    use object::{Object, ObjectSection};
+    if matches!(source.extension().and_then(|e| e.to_str()), Some("C" | "c")) {
+        return Ok(true);
+    }
+    let file =
+        object::File::parse(object).map_err(|error| format!("{}: {error}", source.display()))?;
+    Ok(file
+        .sections()
+        .any(|section| section.name() == Ok(".text") && section.size() > 0))
 }
 
 /// The linker command for the whole image.
@@ -615,6 +643,14 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
             hasher.update(fs::read(&stream).map_err(|error| error.to_string())?);
         }
         step.insert(1, format!("-I{}", base.display()));
+        // Assembly picks its edition as pret's sources test IF DEF(_RED).
+        step.splice(
+            1..1,
+            [
+                "--defsym".to_owned(),
+                format!("{}=1", target.edition_define),
+            ],
+        );
         hasher.update(step.join("\0").as_bytes());
         (format!("{:x}", hasher.finalize()), vec![step])
     };
@@ -1274,6 +1310,44 @@ mod tests {
         store_thumb_calls(&mut noise);
         patch_thumb_calls(&mut noise);
         assert_eq!(noise, original);
+    }
+
+    #[test]
+    fn fixed_addresses_are_checked_whenever_game_code_links() {
+        prefer_installed_binutils();
+        let dir = tempfile::tempdir().unwrap();
+        let assemble = |name: &str, text: &str| {
+            let (source, object) = (
+                dir.path().join(name),
+                dir.path().join(name).with_extension("o"),
+            );
+            fs::write(&source, text).unwrap();
+            command(
+                &assembly_command(&source.to_string_lossy(), &object.to_string_lossy()),
+                dir.path(),
+            )
+            .unwrap();
+            (source, object)
+        };
+        let rom = assemble(
+            "rom.s",
+            "\t.section .rom.00000000, \"a\"\n\t.byte 1, 2, 3, 4\n",
+        );
+        let picture = assemble("PICTURE.S", "\t.section .rodata\n\t.byte 5, 6, 7, 8\n");
+        let code = assemble("CODE.S", "\t.text\n\t.thumb\n\tbx lr\n");
+        let links = |parts: &[&(PathBuf, PathBuf)]| {
+            let (sources, objects): (Vec<_>, Vec<_>) = parts.iter().map(|p| (*p).clone()).unzip();
+            links_game_code(&sources, &objects).unwrap()
+        };
+        // A build that is still only the original ROM skips the check.
+        assert!(!links(&[&rom]));
+        // Pictures and data are not code.
+        assert!(!links(&[&rom, &picture]));
+        // Any object with code, or any C source, is checked.
+        assert!(links(&[&rom, &picture, &code]));
+        assert!(
+            carries_code(Path::new("games/A/SRC/X.C"), &fs::read(&picture.1).unwrap()).unwrap()
+        );
     }
 
     #[test]

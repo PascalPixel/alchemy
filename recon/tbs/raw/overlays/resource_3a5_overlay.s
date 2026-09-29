@@ -133,29 +133,7 @@ RamakanSabaku_RaiseQuarterTriggers:
 	.4byte 0x00000305
 	.2byte 0x0301
 	.2byte 0x0000
-	.global Func_02000e00
-	.thumb_func
-Func_02000e00:
-	push {lr}
-	ldmia r0!, {r3}
-	ldmia r1!, {r4}
-	ldr r2, [r0, #4]
-	subs r4, r4, r3
-	ldr r3, [r1]
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	asrs r4, r4, #16
-	adds r2, r3, #0
-	muls r2, r3
-	adds r0, r4, #0
-	muls r0, r4
-	adds r3, r2, #0
-	adds r0, r0, r3
-	ldr r3, [pc, #8]
-	bl 0x02009e58
-	pop {r1}
-	bx r1
-	.4byte 0x030001d8
+	.section .text.x02008e2c,"ax",%progbits
 	.global Func_02000e2c
 	.thumb_func
 Func_02000e2c:

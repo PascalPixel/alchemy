@@ -709,79 +709,6 @@ Func_02000a3c:
 	.4byte 0x000000e4
 	.2byte 0x99e1
 	.2byte 0x0200
-	.section .text.x0200a124,"ax",%progbits
-	.p2align 2
-	.global Func_02002124
-	.thumb_func
-Func_02002124:
-	.global Korosseo_LoadPortrait
-	.thumb_func
-Korosseo_LoadPortrait:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r5, r0, #0
-	movs r0, #229
-	lsls r0, r0, #5
-	bl 0x0200bb50
-	ldr r7, [pc, #104]
-	movs r2, #0
-	ldrsh r3, [r7, r2]
-	movs r2, #1
-	negs r2, r2
-	adds r6, r0, #0
-	cmp r3, r2
-	bne .L_02002124_0
-	bl 0x0200bb80
-	strh r0, [r7]
-.L_02002124_0:
-	ldr r3, [pc, #88]
-	ldrb r3, [r3, r5]
-	mov r8, r3
-	cmp r5, #8
-	bne .L_02002124_1
-	movs r5, #4
-.L_02002124_1:
-	ldr r0, [pc, #80]
-	bl 0x0200bb98
-	adds r1, r6, #0
-	bl 0x0200bb60
-	mov r2, r8
-	adds r0, r6, r2
-	ldr r3, [pc, #68]
-	ldr r1, [pc, #68]
-	ldr r2, [pc, #72]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	lsls r2, r5, #10
-	adds r2, r2, r6
-	movs r1, #128
-	adds r2, #160
-	lsls r1, r1, #3
-	movs r3, #0
-	ldrsh r0, [r7, r3]
-	bl 0x0200bb78
-	movs r2, #128
-	ldr r1, [pc, #36]
-	lsls r2, r2, #24
-.L_02002124_2:
-	ldr r3, [r1, #8]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02002124_2
-	adds r0, r6, #0
-	bl 0x0200bb58
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.4byte 0x0200c57c
-	.4byte 0x0200be44
-	.4byte 0x000000e7
-	.4byte 0x040000d4
-	.4byte 0x050003e0
-	.4byte 0x84000008
 	.section .text.x0200b3a0,"ax",%progbits
 	.p2align 2
 	.global Scene_RunScene3baSequenceA
@@ -1263,6 +1190,8 @@ Scene_RunScene3baSequenceA:
 	.2byte 0x1e40
 	.2byte 0x0300
 	.section .rodata.part1,"a",%progbits
+	.global Korosseo_PortraitPaletteOffsets
+Korosseo_PortraitPaletteOffsets:
 	.4byte 0x20202000
 	.4byte 0x40404060
 	.2byte 0x0080

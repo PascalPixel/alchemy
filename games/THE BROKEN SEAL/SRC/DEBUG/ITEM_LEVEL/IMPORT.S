@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_DebugRemainder
+	.thumb_func
+Engine_DebugRemainder:
 	overlay_veneer IwramSignedRemainder
 	.global Engine_TaskWait
 	.thumb_func
@@ -23,6 +26,9 @@ UiWork_Finalize:
 	.thumb_func
 UiText_DrawResource:
 	overlay_veneer UiText_DrawResourceFar
+	.global UiText_DrawCharacterAtOffset
+	.thumb_func
+UiText_DrawCharacterAtOffset:
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
 	.global UiText_DrawStringAtOffset
 	.thumb_func
@@ -32,6 +38,9 @@ UiText_DrawStringAtOffset:
 	.thumb_func
 UiText_DrawStringInWindow:
 	overlay_veneer UiText_DrawStringInWindowFar
+	.global UiText_DrawNumberAtOffset
+	.thumb_func
+UiText_DrawNumberAtOffset:
 	overlay_veneer UiText_DrawNumberAtOffsetFar
 	.global UiText_DrawNumberInWindow
 	.thumb_func
@@ -41,6 +50,9 @@ UiText_DrawNumberInWindow:
 	.thumb_func
 RenderOutput_RedrawSavedRect:
 	overlay_veneer RenderOutput_RedrawSavedRectFar
+	.global Engine_DebugClearWindow
+	.thumb_func
+Engine_DebugClearWindow:
 	overlay_veneer RenderOutput_ClearListFar
 	.global DebugMenu_BrowseIcons
 	.thumb_func
@@ -58,7 +70,13 @@ Owner_GetState:
 	.thumb_func
 Owner_RecalculateStats:
 	overlay_veneer Owner_RecalculateStatsFar
+	.global Engine_DebugGetItem
+	.thumb_func
+Engine_DebugGetItem:
 	overlay_veneer Func_08077018
+	.global PartyInventory_Add
+	.thumb_func
+PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
 	overlay_veneer Func_08077080
 	.global Party_ListActiveOwners
@@ -69,6 +87,9 @@ Party_ListActiveOwners:
 	.thumb_func
 Party_AdvanceOwnerCountToTarget:
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+	.global PartyInventory_HasSpace
+	.thumb_func
+PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
 	.global Engine_ActorGet
 	.thumb_func
@@ -94,6 +115,9 @@ Engine_ActorShowEmote:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global Engine_DebugDrawItemDetails
+	.thumb_func
+Engine_DebugDrawItemDetails:
 	overlay_veneer ItemMenu_DrawItemDetailsFar
 	.global Engine_AudioPlayCue
 	.thumb_func

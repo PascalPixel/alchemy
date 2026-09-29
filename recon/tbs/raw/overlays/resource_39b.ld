@@ -21,7 +21,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/DOOR_SCENE.o"(.text)
         "*/resource_39b_overlay.o"(.text.x02009a3c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/RISE_EFFECT.o"(.text)
-        "*/resource_39b_overlay.o"(.text.x02009cb4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/FOLLOW_LEADER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/SPARK_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/RAISE_PILLAR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/CLEAR_RECORD.o"(.text)

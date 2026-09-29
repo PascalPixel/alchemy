@@ -1,31 +1,29 @@
+/* The link lobby's connection: wait for the other console to answer (or
+   give up), walk the leader into the battle room, exchange the party
+   records and copy what arrived into the map cell buffer's second half. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-#include "SYSTEM.H"
+#include "SCENE_IDS.H"
+#include "SERIAL_RUNTIME.H"
+
 extern u8 MsgLobbyAwaitingOpponent[];
 extern u8 MsgLobbyGoodLuck[];
-
-/* Run the link-lobby connection sequence and copy the received party data.
- * Reconstructed from the complete own-ROM 820-byte owner, including pools. */
+extern u8 gMapCellBuffer[];
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
-s32 Local_020007b0(void);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
-void UiWork_FinalizeFar(s32 window, s32 mode);
-void Main_080000d8(void *buf);
-void Main_080000d0(void *buf, s32 size);
-void Main_080003b8(void *buf, s32 mode);
-void Main_08009188(s32 mode);
-void Main_08009190(s32 mode);
-s32 Main_0808a020(void);
-s32 Main_0808a260(s32 value, s32 index);
-void Main_0808a268(s32 value, s32 index);
-void Main_0808a250(s32 first, s32 second);
-
-extern u8 Data_02008149[];
-extern u8 Data_02018000[];
-extern s32 Data_02002224[];
-extern u8 Value_000000be, Value_000007c7;
+s32 LinkLobby_ExchangePartyRecords(void);
+void LinkLobby_PollPeerReady(void);
+s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
+void UiWork_Finalize(s32 window, s32 flags);
+u8 *Runtime_AllocateBlock(s32 slot, s32 size);
+void Runtime_ReleaseHeapBlock(s32 slot);
+void Scheduler_SetCallbackMask(void (*callback)(void), s32 mask);
+void Map_ClearLayerEntryFlag(s32 layer);
+void Map_SetLayerEntryFlag(s32 layer);
+void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
+void Event_SetPair1d4(s32 scene, s32 entrance);
+void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
 /* FAKEMATCH: the aggregate keeps the shared packet value in halfword mode. */
 struct PacketHalf {
@@ -63,7 +61,7 @@ s32 LinkLobby_RunConnectionSequence(void)
         Engine_GameFlagSet(0x203);
         LinkLobby_WriteSlotValue(2);
         if (!LinkLobby_PeerSlotMatches(2))
-            window = UiText_OpenMessageWindowFar((s32)MsgLobbyAwaitingOpponent, 5, 4, 1);
+            window = UiText_OpenMessageWindow((s32)MsgLobbyAwaitingOpponent, 5, 4, 1);
         while (!LinkLobby_PeerSlotMatches(2)) {
             Engine_TaskWait(1);
             stop = 0;
@@ -89,15 +87,15 @@ s32 LinkLobby_RunConnectionSequence(void)
             }
         }
         if (window)
-            UiWork_FinalizeFar(window, 1);
+            UiWork_Finalize(window, 1);
         Engine_TaskWait(5);
     }
     if (!failed) {
-        buf = Engine_HeapAllocate(54, 0x7c8);
-        Main_080000d8(Data_02008149);
-        Main_08009188(5);
+        buf = Runtime_AllocateBlock(54, 0x7c8);
+        Engine_TaskRemoveCallback(LinkLobby_PollPeerReady);
+        Map_ClearLayerEntryFlag(5);
         Engine_TaskWait(8);
-        Main_08009190(5);
+        Map_SetLayerEntryFlag(5);
         if (Engine_GameFlagIsSet(0x173)) {
             Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
             Engine_EventSetMessage((s32)MsgLobbyGoodLuck);
@@ -114,18 +112,18 @@ s32 LinkLobby_RunConnectionSequence(void)
             Engine_ActorWaitForMove(0);
             Actor_SetSpeed(0, 0x1999, 0xccc);
             Engine_ActorWalkTo(0, 216, 168);
-            if (Local_020007b0() < 0) {
+            if (LinkLobby_ExchangePartyRecords() < 0) {
                 Actor_SetSpeed(0, 0x10000, 0x8000);
                 Engine_ActorWalkTo(0, 216, 200);
-                Main_08009188(5);
+                Map_ClearLayerEntryFlag(5);
                 Engine_TaskWait(8);
-                Main_08009190(5);
+                Map_SetLayerEntryFlag(5);
                 Engine_ActorWaitForMove(0);
                 Runtime_ReleaseHeapBlock(54);
                 LinkLobby_WriteSlotValue(0);
                 LinkLobby_WriteSlotValue(4);
-                Main_080000d0(Data_02008149, 0xc80);
-                Main_080003b8(Data_02008149, 1);
+                Engine_TaskAddCallback(LinkLobby_PollPeerReady, 0xc80);
+                Scheduler_SetCallbackMask(LinkLobby_PollPeerReady, 1);
                 Engine_GameFlagClear(0x201);
                 Engine_GameFlagClear(0x202);
                 Engine_GameFlagClear(0x303);
@@ -138,15 +136,15 @@ s32 LinkLobby_RunConnectionSequence(void)
             Engine_ActorWaitForMove(0);
         }
         if (Engine_GameFlagIsSet(0x173)) {
-            Main_0808a260((s32)&Value_000000be, 8);
-            Main_0808a268((s32)&Value_000000be, 9);
+            Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 8);
+            Event_SetPair1d4((s32)&SceneId_LinkLobby, 9);
         } else {
-            Main_0808a260((s32)&Value_000000be, 10);
-            Main_0808a268((s32)&Value_000000be, 11);
+            Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 10);
+            Event_SetPair1d4((s32)&SceneId_LinkLobby, 11);
         }
-        gGameState.unknown_1f8[0x33] = 4;
-        Main_0808a250(1, 1);
-        tbl = (u16 *)Data_02002224;
+        gGameState.unknown_1f8[0x22b - 0x1f8] = 4;
+        BattleFx_SetWeightedResult(1, 1);
+        tbl = (u16 *)gSerialTransfer.reserved;
         value.value = 0x45;
         tbl[1] = 0x58;
         tbl[0] = value.value;
@@ -154,13 +152,14 @@ s32 LinkLobby_RunConnectionSequence(void)
         tbl[3] = 0x43;
         i = 0;
         src = buf;
-        dst = Data_02018000;
+        dst = gMapCellBuffer + 0x8000;
         do {
             i++;
             *dst++ = *src++;
-        } while (i <= (u32)&Value_000007c7);
+        } while (i <= 0x7c7);
         Runtime_ReleaseHeapBlock(54);
     }
 done:
-    return Main_0808a020();
+    /* FAKEMATCH: the scene returns whatever the event end leaves in r0. */
+    return ((s32 (*)(void))Engine_EventEnd)();
 }

@@ -17,6 +17,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/RECEIVE_PARTY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/COPY_ENTRIES.o"(.text)
         "*/resource_3cb_overlay.o"(.text.x02008580)
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CONNECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/APPLY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/WINS_TALK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CHOICE_PROMPT.o"(.text)

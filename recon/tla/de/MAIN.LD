@@ -421,6 +421,8 @@ SECTIONS
         "*/games/THE LOST AGE/SOUND/SEQUENCE/BGM_754.o"(.rodata)
         "*/games/THE LOST AGE/SOUND/SEQUENCE/BGM_799.o"(.rodata)
         "*/recon/tla/de/rom.o"(.rom.002f9030)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPRITES.o"(.rodata)
+        "*/recon/tla/de/rom.o"(.rom.006322b2)
         "*/games/COMMON/SRC/GRAPHICS/UI/WINDOW_TILES.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/UI/SMALL_FONT.o"(.rodata)
         "*/recon/tla/de/rom.o"(.rom.006848d0)

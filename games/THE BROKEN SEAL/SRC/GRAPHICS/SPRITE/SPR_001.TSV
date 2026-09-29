@@ -1,0 +1,21 @@
+anim	00 04 f1 00
+anim	00 78 05 05 00 3c 05 05 00 3c 05 05 00 0f 0f 3c fd 00
+anim	32 07 19 06 1e 06 23 07 28 06 2d 06 fd 00
+anim	0a 0a fe 01
+anim	0f 06 00 03 14 06 00 03 0f 06 00 03 14 06 00 03 fe 01
+anim	32 04 19 04 1e 04 23 04 28 04 2d 04 fd 00
+anim	f0 11 3a 0f f1 00
+anim	00 78 f1 00
+anim	32 0e 19 0c 1e 0c 23 0e 28 0c 2d 0c f1 00
+anim	fe 01
+anim	f0 11 37 07 38 09 39 07 38 09 fd 00
+anim	f0 11 39 07 3a 0f f1 00
+anim	f0 11 5a f0 5b 5a 5a 3c 5c 5a 5a 3c 5b 2d 5a 0f 5c 5a fd 00
+anim	f0 03 40 0f 3b 0f f1 00
+anim	45 04 4a 18 4f 08 54 0f f1 00
+anim	f0 11 59 0f f1 00
+anim	45 04 4a 18 f1 00
+anim	4a 02 4f 08 54 0f f1 00
+anim	5a f0 f1 00
+anim	32 04 19 04 1e 04 23 04 28 04 2d 04 fd 00
+animations	0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 14 14 14 15 15 16 17 18 18 18 18 18 18 18 19 19

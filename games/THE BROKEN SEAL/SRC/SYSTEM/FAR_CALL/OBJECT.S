@@ -380,10 +380,10 @@ BattleFx_SetBlock30Values128OneFar:
 BattleFx_StartBufferBlendFar:
 	overlay_veneer BattleFx_StartBufferBlend
 	overlay_veneer Unnamed_08094da0
-	.global Func_0808a2f8
+	.global FieldEffect_InitSparklesFar
 	.thumb_func
-Func_0808a2f8:
-	overlay_veneer Unnamed_0809509c
+FieldEffect_InitSparklesFar:
+	overlay_veneer FieldEffect_InitSparkles
 	.global DisplayTransition_InitializeBattleEffectStateFar
 	.thumb_func
 DisplayTransition_InitializeBattleEffectStateFar:

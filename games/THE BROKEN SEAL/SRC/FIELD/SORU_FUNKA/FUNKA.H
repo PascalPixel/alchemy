@@ -109,7 +109,7 @@ void Party_RemoveOwnerRestored();
 void SceneState_InitStateWordsAndSlots();
 s32 Engine_TaskAddCallback(void (*)(), s32);
 void FieldScene_RunVariantStep();
-void Unnamed_0809509c(void);
+void FieldEffect_InitSparkles(void);
 void SceneState_ForwardByRuntimeWordBits(s32 object);
 void SceneActor_MoveTo232_125AndFace4000(s32 no);
 void SceneState_ApplyRectsByCondition(s32 a);

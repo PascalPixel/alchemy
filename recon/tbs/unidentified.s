@@ -961,12 +961,7 @@ Character_DescriptorTable:
 	.global Resource_BuildStamp
 Resource_BuildStamp:
 	.incbin "baserom.gba", 0x00320fa0, 0x00000010
-	.global Ui_WindowTiles
-Ui_WindowTiles:
-	.incbin "baserom.gba", 0x00320fb0, 0x00002000
-	.global UiText_GlyphData
-UiText_GlyphData:
-	.incbin "baserom.gba", 0x00322fb0, 0x000008c0
+	.section .unidentified.08323870,"a"
 	.global Title_IntroGraphicsA
 Title_IntroGraphicsA:
 	.incbin "baserom.gba", 0x00323870, 0x00001178
@@ -979,10 +974,8 @@ Title_IntroGraphicsC:
 	.global Title_NintendoLogo
 Title_NintendoLogo:
 	.incbin "baserom.gba", 0x003337a0, 0x00000828
-	.section .unidentified.08333fc8,"a"
-	.global Title_IntroTiles
-Title_IntroTiles:
-	.incbin "baserom.gba", 0x00333fc8, 0x0000182c
+	.section .unidentified.083357f1,"a"
+	.incbin "baserom.gba", 0x003357f1, 0x00000003
 	.section .unidentified.08337101,"a"
 	.incbin "baserom.gba", 0x00337101, 0x00000003
 	.section .unidentified.0833ac05,"a"
@@ -1024,12 +1017,10 @@ Title_IntroTilesB:
 	.incbin "baserom.gba", 0x003c3cf5, 0x00000003
 	.section .unidentified.083c5677,"a"
 	.incbin "baserom.gba", 0x003c5677, 0x00000001
-	.global LuckyDice_GraphicsA
-LuckyDice_GraphicsA:
-	.incbin "baserom.gba", 0x003c5678, 0x00002e20
-	.global LuckyDice_GraphicsB
-LuckyDice_GraphicsB:
-	.incbin "baserom.gba", 0x003c8498, 0x00003024
+	.section .unidentified.083c8495,"a"
+	.incbin "baserom.gba", 0x003c8495, 0x00000003
+	.section .unidentified.083cb4b9,"a"
+	.incbin "baserom.gba", 0x003cb4b9, 0x00000003
 	.section .unidentified.083cbd01,"a"
 	.incbin "baserom.gba", 0x003cbd01, 0x00000003
 	.global BattleFx_CyanSparkSheet
@@ -1291,24 +1282,16 @@ BattleFx_CrystalSheet:
 	.incbin "baserom.gba", 0x004101cf, 0x00000001
 	.section .unidentified.08411275,"a"
 	.incbin "baserom.gba", 0x00411275, 0x00000003
-	.global BattleFx_StagedParticleData
-BattleFx_StagedParticleData:
-	.incbin "baserom.gba", 0x00411278, 0x000001a8
-	.global BattleFx_DualStreamData
-BattleFx_DualStreamData:
-	.incbin "baserom.gba", 0x00411420, 0x00000054
+	.section .unidentified.08411474,"a"
 	.global Field_PerspectiveDataA
 Field_PerspectiveDataA:
 	.incbin "baserom.gba", 0x00411474, 0x0000f828
-	.global Field_DefaultMapCells
-Field_DefaultMapCells:
-	.incbin "baserom.gba", 0x00420c9c, 0x000039ec
-	.global Field_PerspectiveDataB
-Field_PerspectiveDataB:
-	.incbin "baserom.gba", 0x00424688, 0x00000154
-	.global Field_PerspectiveDataC
-Field_PerspectiveDataC:
-	.incbin "baserom.gba", 0x004247dc, 0x00000490
+	.section .unidentified.08424687,"a"
+	.incbin "baserom.gba", 0x00424687, 0x00000001
+	.section .unidentified.084247d9,"a"
+	.incbin "baserom.gba", 0x004247d9, 0x00000003
+	.section .unidentified.08424c6a,"a"
+	.incbin "baserom.gba", 0x00424c6a, 0x00000002
 	.section .unidentified.08424e61,"a"
 	.incbin "baserom.gba", 0x00424e61, 0x00000003
 	.section .unidentified.0842651e,"a"
@@ -1327,42 +1310,15 @@ Field_PerspectiveDataC:
 	.incbin "baserom.gba", 0x0042dc66, 0x00000002
 	.section .unidentified.084303b3,"a"
 	.incbin "baserom.gba", 0x004303b3, 0x00000001
-	.global Graphics_PictureA
-Graphics_PictureA:
-	.incbin "baserom.gba", 0x004303b4, 0x0000189c
-	.global Graphics_PictureB
-Graphics_PictureB:
-	.incbin "baserom.gba", 0x00431c50, 0x000015c8
-	.global Graphics_PictureC
-Graphics_PictureC:
-	.incbin "baserom.gba", 0x00433218, 0x00001a90
-	.global Graphics_TilesK
-Graphics_TilesK:
-	.incbin "baserom.gba", 0x00434ca8, 0x00001250
-	.global Shop_CursorFrameA
-Shop_CursorFrameA:
-	.incbin "baserom.gba", 0x00435ef8, 0x00000100
-	.global Shop_CursorFrameB
-Shop_CursorFrameB:
-	.incbin "baserom.gba", 0x00435ff8, 0x00000100
-	.global Shop_CursorFrameC
-Shop_CursorFrameC:
-	.incbin "baserom.gba", 0x004360f8, 0x00000100
-	.global Shop_CursorFrameD
-Shop_CursorFrameD:
-	.incbin "baserom.gba", 0x004361f8, 0x00000100
-	.global Shop_CursorFrameE
-Shop_CursorFrameE:
-	.incbin "baserom.gba", 0x004362f8, 0x00000100
-	.global Shop_CursorFrameF
-Shop_CursorFrameF:
-	.incbin "baserom.gba", 0x004363f8, 0x00000100
-	.global Shop_CursorFrameG
-Shop_CursorFrameG:
-	.incbin "baserom.gba", 0x004364f8, 0x00000100
-	.global Shop_CursorFrameH
-Shop_CursorFrameH:
-	.incbin "baserom.gba", 0x004365f8, 0x00000100
+	.section .unidentified.08431c4d,"a"
+	.incbin "baserom.gba", 0x00431c4d, 0x00000003
+	.section .unidentified.08433216,"a"
+	.incbin "baserom.gba", 0x00433216, 0x00000002
+	.section .unidentified.08434ca6,"a"
+	.incbin "baserom.gba", 0x00434ca6, 0x00000002
+	.section .unidentified.08435ef7,"a"
+	.incbin "baserom.gba", 0x00435ef7, 0x00000001
+	.section .unidentified.084366f8,"a"
 	.global Ui_Icons
 Ui_Icons:
 	.incbin "baserom.gba", 0x004366f8, 0x0000592c

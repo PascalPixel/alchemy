@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 FuneKanpan_CrewActionsE[];
+extern u8 FuneKanpan_CrewScriptB[];
 extern u8 MsgFuneArrgh[];
 extern struct EventWork *gEventWork;
 extern u8 FuneKanpan_CrewScript[];
@@ -83,7 +85,7 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_ActorSetSpriteFlags(record, 0);
     Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Call1(Event_CallWithLastActiveObjectId, 0x200d268);
+    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptB);
     Engine_TaskWait(1);
     Engine_ActorSetAnimation(31, 0);
     record = Engine_ActorGet(24);
@@ -139,7 +141,7 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_ActorEnableActionCallback(29, action_c7ec);
     Engine_AudioPlayCue(240);
     Call3(Engine_ActorSetPosition, 31, 0x860000, 0x2520000);
-    Call2(Engine_ActorEnableActionCallback, 31, 0x200c814);
+    Call2(Engine_ActorEnableActionCallback, 31, (s32)FuneKanpan_CrewActionsE);
     Engine_EventWait(10);
     Call3(Engine_ActorSetPosition, 30, 0x860000, 0x2480000);
     Call3(Engine_ActorSetSpeed, 30, 0x40000, 0x20000);

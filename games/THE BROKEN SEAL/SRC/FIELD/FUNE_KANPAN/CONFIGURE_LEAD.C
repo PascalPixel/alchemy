@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 FuneKanpan_LeadActionsB[];
+extern u8 FuneKanpan_LeadActionsC[];
 extern u8 MsgFuneCanSeeLand[];
 extern u8 MsgFuneThankRobinDidGoodAgainst[];
 extern u8 FuneKanpan_CrewScript[];
@@ -134,7 +136,7 @@ void FieldScene_ConfigureLeadActors(void)
 
         *(u16 *)(record + 6) = shown;
     }
-    Actor_EnableActionCallback(22, 0x200c980);
+    Actor_EnableActionCallback(22, FuneKanpan_LeadActionsC);
     {
         /* Set the high bit of the flag byte at +89. */
         u8 *record = ((u8 *(*)())Object_GetById)(21);
@@ -144,7 +146,7 @@ void FieldScene_ConfigureLeadActors(void)
         record[89] = bits;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
-    Actor_EnableActionCallback(21, 0x200c628);
+    Actor_EnableActionCallback(21, FuneKanpan_LeadActionsB);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_OpenScreen();
     Event_WaitForScreen();

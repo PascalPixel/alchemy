@@ -521,22 +521,6 @@ Func_020009fc:
 	.4byte 0x00000928
 	.4byte 0x0200d958
 	.4byte 0x0200d778
-	.section .text.x02008b98,"ax",%progbits
-	.p2align 2
-	.global Func_02000b98
-	.thumb_func
-Func_02000b98:
-	push {lr}
-	bl 0x0200c2ec
-	ldr r0, [pc, #20]
-	bl 0x0200c3ac
-	movs r1, #0
-	movs r0, #21
-	bl 0x0200c3cc
-	bl 0x0200c2f4
-	pop {r0}
-	bx r0
-	.4byte 0x00001f00
 	.section .text.x02008ca0,"ax",%progbits
 	.p2align 2
 	.global Func_02000ca0
@@ -2717,6 +2701,8 @@ FuneKanpan_DeckEventActions:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global FuneKanpan_LeadActionsA
+FuneKanpan_LeadActionsA:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -2756,6 +2742,8 @@ FuneKanpan_DeckEventActions:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global FuneKanpan_LeadActionsB
+FuneKanpan_LeadActionsB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -2887,6 +2875,8 @@ FuneKanpan_CrewActionsC:
 FuneKanpan_CrewActionsD:
 	.4byte 0x00000022
 	.4byte 0x02008571
+	.global FuneKanpan_CrewActionsE
+FuneKanpan_CrewActionsE:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000015
@@ -2988,6 +2978,8 @@ FuneKanpan_RosterActions:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global FuneKanpan_LeadActionsC
+FuneKanpan_LeadActionsC:
 	.4byte 0x00000015
 	.4byte 0x00000027
 	.4byte 0x00000000
@@ -3566,6 +3558,8 @@ FuneKanpan_CrewScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global FuneKanpan_CrewScriptB
+FuneKanpan_CrewScriptB:
 	.4byte 0xffff00c4
 	.4byte 0x00000007
 	.4byte 0x00000000
@@ -3620,6 +3614,8 @@ FuneKanpan_CrewScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global FuneKanpan_CrewScriptC
+FuneKanpan_CrewScriptC:
 	.4byte 0xffff00bd
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -3674,6 +3670,8 @@ FuneKanpan_CrewScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global FuneKanpan_CrewScriptD
+FuneKanpan_CrewScriptD:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000

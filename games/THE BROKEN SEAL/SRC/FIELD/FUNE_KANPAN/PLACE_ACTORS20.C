@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 FuneKanpan_LeadActionsA[];
+extern u8 FuneKanpan_LeadActionsB[];
+extern u8 FuneKanpan_LeadActionsC[];
 extern u8 FuneKanpan_CrewScript[];
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 u8 *Object_GetById();
@@ -176,7 +179,7 @@ void FieldScene_RunScene3af_0200185c(void)
         record[89] = value | bits;
     }
     Actor_SetSpeed(22, 0x9999, 0x4ccc);
-    Actor_EnableActionCallback(22, 0x200c58c);
+    Actor_EnableActionCallback(22, FuneKanpan_LeadActionsA);
     {
         u8 *record = Object_GetById(21);
 
@@ -184,7 +187,7 @@ void FieldScene_RunScene3af_0200185c(void)
         record[89] = bits;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
-    Actor_EnableActionCallback(21, 0x200c628);
+    Actor_EnableActionCallback(21, FuneKanpan_LeadActionsB);
     if (GameFlag_IsSet(0x109) != 0) {
         FieldScene_RunScene3af_02004218();
     }
@@ -207,7 +210,7 @@ void FieldScene_RunScene3af_02001920(void)
 
         *(u16 *)(record + 6) = shown;
     }
-    Actor_EnableActionCallback(22, 0x200c980);
+    Actor_EnableActionCallback(22, FuneKanpan_LeadActionsC);
     {
         u8 *record = Object_GetById(21);
         u8 bits = 128;
@@ -216,7 +219,7 @@ void FieldScene_RunScene3af_02001920(void)
         record[89] = bits;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
-    Actor_EnableActionCallback(21, 0x200c628);
+    Actor_EnableActionCallback(21, FuneKanpan_LeadActionsB);
     if (GameFlag_IsSet(0x109) != 0) {
         FieldScene_RunScene3af_02004218();
     }

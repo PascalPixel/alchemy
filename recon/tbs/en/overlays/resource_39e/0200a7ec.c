@@ -1,11 +1,14 @@
 /* resource_39e:0200a7ec..0200aad0 (740 bytes with pool), still linked from
- * the listing. Remaining difference: message 0x17e0 is loaded once from the
- * literal pool and its followers derived from it, as a link-time value is;
- * an integer message is propagated into separate constants (740 bytes, 150
- * differ). */
+ * the listing. Remaining difference: its messages have catalogue names now; 170 halfwords
+ * still differ from the ROM, and it names symbols no link defines
+ * (bump_step). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgShianCanReadMindsKnowCurious[];
+extern u8 MsgShianExcellentRobin[];
+extern u8 MsgShianMonstersWaitInHidingWould[];
+extern u8 MsgShianDontTryHard[];
 /* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/TEMPLE.H. */
 
 void FieldScene_RunScene39e_020027ec(void)
@@ -29,7 +32,7 @@ void FieldScene_RunScene39e_020027ec(void)
     record = Actor_Get(8);
     *(s32 *)(record + 40) = 0x80000;
     Actor_SetAnimation(8, 1);
-    Event_SetMessage(MSG_EXCELLENT_ROBIN);
+    Event_SetMessage((s32)MsgShianExcellentRobin);
     Event_ShowMessageAndWait(8, 0, 20);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -64,18 +67,18 @@ void FieldScene_RunScene39e_020027ec(void)
     if (Event_ChooseYesNo(0, 0) == 1) {
         Event_Wait(10);
         Actor_ShowEmote(8, 0x102, 60);
-        Event_SetMessage(MSG_CAN_READ_MINDS_KNOW_CURIOUS);
+        Event_SetMessage((s32)MsgShianCanReadMindsKnowCurious);
         Event_OpenMessage(8, 0);
     L_0200299c:
         if (Event_ChooseYesNo(0, 0) == 1) {
             Event_Wait(10);
             Actor_ShowEmote(8, 0x102, 60);
-            Event_SetMessage((s32)0x17e0);
+            Event_SetMessage((s32)MsgShianDontTryHard);
             Event_OpenMessage(8, 0);
             goto L_0200299c;
         }
     }
-    Event_SetMessage(MSG_MONSTERS_WAIT_IN_HIDING_WOULD);
+    Event_SetMessage((s32)MsgShianMonstersWaitInHidingWould);
     Event_Wait(10);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(20);

@@ -5,6 +5,7 @@
  * here as the equate Data_0000002d; and the action tables it installs are
  * still spelled as overlay addresses, which need their labels. */
 #include "TYPES.H"
+extern u8 MsgToretoHmHrooom[];
 extern struct EventWork *gEventWork;
 
 s32 Engine_GameFlagIsSet();
@@ -75,7 +76,7 @@ void ToretoHeya_RunTableScene(void)
     rec8 = Value1(Engine_GameFlagIsSet, 3);
     Engine_EventBegin();
     Engine_AudioPlayCue(17);
-    Call1(Engine_EventSetMessage, 0x14ce);
+    Call1(Engine_EventSetMessage, (s32)MsgToretoHmHrooom);
     Call3(Engine_EventShowMessageAndWait, 0x8009, 0, 20);
     Engine_AudioPlayCue(29);
     Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);

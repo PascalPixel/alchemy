@@ -1,4 +1,5 @@
 #include "ENTRANCE.H"
+extern u8 MsgMakyuriWhoHonorsHeart[];
 
 void FieldScene_Forward31d4(void)
 {
@@ -34,7 +35,7 @@ void FieldScene_RunStepWithValue1632(void)
 {
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Message_ShowCentered(0x1632, 1);
+    Message_ShowCentered((s32)MsgMakyuriWhoHonorsHeart, 1);
     Event_End();
 }
 

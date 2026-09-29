@@ -22523,7 +22523,7 @@ msgctxt "MsgKorimaQuiet"
 msgid "05628"
 msgstr "やけに しずかだなあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaMatterIvan"
 msgid "05629"
 msgstr "どうした {actor_name:3}?{end_wait}"
 
@@ -22555,7 +22555,7 @@ msgctxt "MsgKorimaWhatIsIt"
 msgid "05636"
 msgstr "こんどは なんだ {actor_name:3}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaSparklyStuffOnGround"
 msgid "05637"
 msgstr "地めんに おちている{line_break}かがやいているもの・・・{line_break}これは なんでしょう?{end_wait}"
 
@@ -22859,11 +22859,11 @@ msgctxt "message"
 msgid "05712"
 msgstr "この森が ほろびる前に{line_break}いそいで さりなさい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaHealingWatersMercuryLighthouseMight"
 msgid "05713"
 msgstr "マーキュリーの灯台にある{line_break}さいせいの いずみの水なら{line_break}トレトを すくえるかも・・・{page_break}でも いずみはもう{line_break}かれてしまったと・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaSilence"
 msgid "05714"
 msgstr "・・・・・・。{end_wait}"
 
@@ -22875,7 +22875,7 @@ msgctxt "message"
 msgid "05716"
 msgstr "いま トレトのすべて・・・{line_break}しはいするのは このわたしだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaControlTretsHeartShallNot"
 msgid "05717"
 msgstr "いまは わたしがトレトを{line_break}しはいしているのだ{line_break}なにも させはしないぞ!{end_wait}"
 
@@ -22883,7 +22883,7 @@ msgctxt "message"
 msgid "05718"
 msgstr "トレトも コリマの村や森も{line_break}われとともに ほろびるのだ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToretoHmHrooom"
 msgid "05719"
 msgstr "ム{pause_20_skippable} ムーン・・・。{end_wait}"
 
@@ -22903,7 +22903,7 @@ msgctxt "message"
 msgid "05723"
 msgstr "ここで まとめて木となり{line_break}われとともに ほろびるがいい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToretoMmmmm"
 msgid "05724"
 msgstr "ウ{pause_20_skippable} ウーン・・・。{end_wait}"
 
@@ -22943,7 +22943,7 @@ msgctxt "message"
 msgid "05733"
 msgstr "まだ そこにいたのか・・・{line_break}なにか ようでもあるのかな?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgToretoDoingNowsNot"
 msgid "05734"
 msgstr "なにいってんだよ {actor_name:1}{line_break}ふざけてるばあいかよ!{end_wait}"
 
@@ -22951,7 +22951,7 @@ msgctxt "message"
 msgid "05735"
 msgstr "そうですよ {actor_name:1}・・・{pause_20_skippable}{line_break}トレトに 木にかえられた{line_break}コリマの村人をたすけないと!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToretoTurnedPeopleKolima"
 msgid "05736"
 msgstr "なんと{pause_20_skippable} このわたしが{line_break}コリマの村人を木に・・・。{end_wait}"
 
@@ -22999,19 +22999,19 @@ msgctxt "message"
 msgid "05747"
 msgstr "いそぎましょう {actor_name:1}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaSilence2"
 msgid "05748"
 msgstr "・・・・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaPeopleKolimaForgiveMe"
 msgid "05749"
 msgstr "ゆるしてくれ・・・{line_break}コリマの村人よ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWaterHermesSeepedIntoTret"
 msgid "05750"
 msgstr "ヘルメスの水が{line_break}トレトに しみこんでいった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaFeelGreatPowerSpreadingThrough"
 msgid "05751"
 msgstr "力が あふれるようだ・・・。{end_wait}"
 
@@ -23063,7 +23063,7 @@ msgctxt "message"
 msgid "05763"
 msgstr "そうか そうだった・・・{line_break}いそいで たすけねば。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaShouldDoPeopleKolimaCursed"
 msgid "05764"
 msgstr "これで だいじょうぶだ{pause_20_skippable}{line_break}みんな もとのすがたに{line_break}もどっているだろう。{end_wait}"
 
@@ -23087,7 +23087,7 @@ msgctxt "message"
 msgid "05769"
 msgstr "ちがうって いいたい{line_break}気もちは わかるけど・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWasIndeedAngryPeopleHad"
 msgid "05770"
 msgstr "あの時・・・森をあらされ{line_break}じぶんにも オノを入れられ{line_break}わたしは いかっていた。{end_wait}"
 
@@ -23183,7 +23183,7 @@ msgctxt "message"
 msgid "05793"
 msgstr "それならばよいが・・・もし行くのなら{line_break}はやめのほうが よいだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaOweGreatDebtHaveSaved"
 msgid "05794"
 msgstr "わたしとコリマの村と森を{line_break}すくってくれたこと・・・{line_break}けっして わすれはしない。{end_wait}"
 
@@ -23195,23 +23195,23 @@ msgctxt "message"
 msgid "05796"
 msgstr "おどろきました {actor_name:1}?{line_break}わたしには こういう力も{line_break}さずけられましたの。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaNowHaveSuchPowerAxe"
 msgid "05797"
 msgstr "この力をえた わたしだ{line_break}かんたんに オノなど{line_break}入れさせたりはしない{page_break}さあ あんしんして{line_break}出発するがいい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaForestKolimaAlive"
 msgid "05798"
 msgstr "あなたたちに たすけられ{line_break}コリマの森は こうして{line_break}よみがえりました・・・{page_break}これからは わたしたちで{line_break}森をまもっていきますわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaKnowCannotStopButPlease"
 msgid "05799"
 msgstr "お前たちを とめたところで{line_break}出発を やめはすまい{page_break}じゅうぶんに ちゅういして{line_break}たびをすすめるのだぞ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaMustHorribleBeyondRiverAm"
 msgid "05800"
 msgstr "ああ 川の南がわは{line_break}なんて おそろしいことに・・・{page_break}{actor_name:1}たちの これからが{line_break}しんぱいで なりません。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWho"
 msgid "05801"
 msgstr "だれです あなた・・・。{end_wait}"
 
@@ -23231,7 +23231,7 @@ msgctxt "message"
 msgid "05805"
 msgstr "わたしたちは トレトとともに{line_break}もうすぐ ほろびをむかえます{page_break}この森が ほろびる前に{line_break}いそいで さりなさい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaLeaveBeforeForest"
 msgid "05806"
 msgstr "この森が ほろびる前に{line_break}いそいで さりなさい・・・。{end_wait}"
 
@@ -23243,7 +23243,7 @@ msgctxt "message"
 msgid "05808"
 msgstr "「ウラからは よめないよ」{line_break}{pause_20_skippable}・・・と かいてある{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFlippedSwitch"
 msgid "05809"
 msgstr "{protagonist_name}は スイッチを そうさした{end_wait}"
 
@@ -23707,7 +23707,7 @@ msgctxt "message"
 msgid "05924"
 msgstr "エナジストの{actor_name:4}が{line_break}なかまにくわわった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriLighthouseAlreadyLit"
 msgid "05925"
 msgstr "おそかった! 灯台の火は{line_break}ともされちゃった みたいだ。{end_wait}"
 
@@ -23931,7 +23931,7 @@ msgctxt "message"
 msgid "05980"
 msgstr "しょうぶを はやめねば・・・{line_break}行くぞ! おろかモノたち!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriGot"
 msgid "05981"
 msgstr "かったな {actor_name:1}・・・。{end_wait}"
 
@@ -24307,7 +24307,7 @@ msgctxt "message"
 msgid "06074"
 msgstr "いずみの水が こんなにも{line_break}はやりのやまいに きくとはの!{line_break}ああ ありがたいことですわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriWhoHonorsHeart"
 msgid "06075"
 msgstr "女神のこころに いのりし者{line_break}3つのはもんの きせきにより{line_break}はくちょうのごとく みなもに立つ。{end_wait}"
 
@@ -24799,7 +24799,7 @@ msgctxt "message"
 msgid "06197"
 msgstr "ごはんが たべられないなら{line_break}ボク これからどうやって{line_break}大人に なればいいのさ?{page_break}子どもをたべさせるのは{line_break}大人の せきにんだぞ{line_break}ひどい グレてやるぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaFuchinTempleOnOtherSide"
 msgid "06198"
 msgstr "川むこうのフーチン寺は{line_break}ずいぶん ゆうめいらしい{page_break}もしも じかんがあるなら{line_break}行ってみるといいよ。{end_wait}"
 
@@ -24807,7 +24807,7 @@ msgctxt "message"
 msgid "06199"
 msgstr "フーチン寺のニュンパは{line_break}かなり かわってるって{line_break}はなしだけどねぇ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaGrandBridgeAcrossRiverPride"
 msgid "06200"
 msgstr "川にかかる りっぱなはしは{line_break}コリマ村の じまんなんだ。{end_wait}"
 
@@ -24815,7 +24815,7 @@ msgctxt "message"
 msgid "06201"
 msgstr "はしをかけるために{line_break}たくさんの木をきったのが{line_break}いまでは もうしわけないね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWhenWasTreeLearnedAppreciate"
 msgid "06202"
 msgstr "木になってみたら{line_break}お日様の ありがたさが{line_break}みに しみましたわ。{end_wait}"
 
@@ -24839,7 +24839,7 @@ msgctxt "message"
 msgid "06207"
 msgstr "ご神木の いかりだけが{line_break}げんいんだったとすれば{line_break}わたしは 大神官しっかくです{page_break}ご神木に オノを入れることは{line_break}わたしも しょうちしていましたから。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaTheySayMccoyHaltedConstruction"
 msgid "06208"
 msgstr "マッコイさん 宮殿つくるの{line_break}やめちまったらしいよ{page_break}しごとが へっちまったら{line_break}出かせぎの木こりたちは{line_break}みんな ここをはなれるな。{end_wait}"
 
@@ -25683,7 +25683,7 @@ msgctxt "message"
 msgid "06418"
 msgstr "この人は 知らないだろうが{line_break}このはしを わたれるのは{line_break}ホント しあわせなことだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianHowDidGetHereBridge"
 msgid "06419"
 msgstr "あんた いったい どこから{line_break}きたんだい? まさか はしが{line_break}とおれるようになったのかい?{end_now}"
 
@@ -25723,7 +25723,7 @@ msgctxt "message"
 msgid "06428"
 msgstr "ニュンパ様は もう なん日も{line_break}しょくじを とられず・・・きっと{line_break}ミイラになられるつもりでしょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianIsntNobleHimTrySave"
 msgid "06429"
 msgstr "そくしんぶつと なってまで{line_break}世の中を すくいたいなんて{line_break}すばらしいと おもいませんか?{end_now}"
 
@@ -25767,7 +25767,7 @@ msgctxt "message"
 msgid "06439"
 msgstr "・・・・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMmmmWhoWhoSpeaksMy"
 msgid "06440"
 msgstr "ぬ ぬぬぬ だれじゃ・・・{line_break}ワシの こころの中に{line_break}かたりかけて くる者は?{end_wait}"
 
@@ -25787,7 +25787,7 @@ msgctxt "message"
 msgid "06444"
 msgstr "やはり そうであったか!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianFollowThemDoNot"
 msgid "06445"
 msgstr "お主ら ヤツらのあとを{line_break}おっているのであろう?{end_now}"
 
@@ -25815,15 +25815,15 @@ msgctxt "message"
 msgid "06451"
 msgstr "どうだ やるか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShianThenCannotTellGiveUp"
 msgid "06452"
 msgstr "それでは おしえられんぞ{line_break}あきらめて かえるのだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMustSurviveTestGrottoBefore"
 msgid "06453"
 msgstr "モゴルの森をぬけたいなら{line_break}たきのどうくつの しれんを{line_break}こえなければならん{page_break}どうだ やるか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShianDoNotWorryWillPermitted"
 msgid "06454"
 msgstr "たきのどうくつに 行けるよう{line_break}ねんを おくっておいたから{line_break}あんしん するがよい。{end_wait}"
 
@@ -25839,7 +25839,7 @@ msgctxt "message"
 msgid "06457"
 msgstr "たきにあたっている ぼうずに{line_break}はなしかけてみるがよいぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianEnjoyReadingMindsOthersDo"
 msgid "06458"
 msgstr "お主は どうやら よほど{line_break}人の こころを見るのが{line_break}すきなようじゃな?{end_now}"
 
@@ -25851,7 +25851,7 @@ msgctxt "message"
 msgid "06460"
 msgstr "まあよい 人のこころを{line_break}のぞくのが たのしいのも{line_break}さいしょだけじゃろう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianAlreadyHeardTest"
 msgid "06461"
 msgstr "お主の しゅぎょうのはなしは{line_break}ニュンパ殿から きいておる{line_break}ここをとおして しんぜよう。{end_wait}"
 
@@ -25863,7 +25863,7 @@ msgctxt "message"
 msgid "06463"
 msgstr "はたして このわかい戦士に{line_break}このどうくつの しゅぎょう{line_break}・・・たえられるだろうか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianYoungMasterDidCompleteTest"
 msgid "06464"
 msgstr "お主 まさか しれんを{line_break}のりこえたと いうのか?{end_now}"
 
@@ -25891,7 +25891,7 @@ msgctxt "message"
 msgid "06470"
 msgstr "やはり この戦士たちは{line_break}フーチン寺の おうぎを{line_break}きわめてしまったのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianExcellentRobin"
 msgid "06471"
 msgstr "みごとなり {actor_name:1}よ!{end_wait}"
 
@@ -25931,11 +25931,11 @@ msgctxt "message"
 msgid "06480"
 msgstr "ふふ どうじゃ{line_break}知りたいだろ?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShianCanReadMindsKnowCurious"
 msgid "06481"
 msgstr "また ムリしおって・・・{pause_20_skippable}{line_break}ホントは 知りたいのじゃろ?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShianMonstersWaitInHidingWould"
 msgid "06482"
 msgstr "かくれていた まものが{line_break}すがたを あらわすのじゃ{page_break}お主ら とうぜん{line_break}うちたおすであろう?{end_now}"
 
@@ -25987,7 +25987,7 @@ msgctxt "message"
 msgid "06494"
 msgstr "ニュンパ様 ほんとうに{line_break}ミイラになっちゃいました。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianNowHeTrulyBeyondWorlds"
 msgid "06495"
 msgstr "世の中のため いのちをかけ{line_break}ミイラとなって死ぬ・・・{line_break}これでよかったのでしょうか?{end_now}"
 
@@ -26023,11 +26023,11 @@ msgctxt "message"
 msgid "06503"
 msgstr "・・・・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianRobinAmCountingOnBring"
 msgid "06504"
 msgstr "{actor_name:1}・・・{pause_20_skippable}か・・・{pause_20_skippable}{line_break}世の中・・・{pause_20_skippable}へいわ・・・{pause_20_skippable}{line_break}たのん・・・{pause_20_skippable}だぞ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianDontTryHard"
 msgid "06505"
 msgstr "やせがまんせんでも いいぞ{pause_20_skippable}{line_break}ホントは 知りたいのじゃろ?{end_now}"
 
@@ -26303,7 +26303,7 @@ msgctxt "message"
 msgid "06573"
 msgstr "シーアン村に 長くいると{line_break}はなしことば ヘンになる{page_break}おっと あたまの中まで{line_break}みだれてきたアル・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMasterFehsSchoolCameWatch"
 msgid "06574"
 msgstr "ここ せんせいチンの{line_break}どうじょうネ・・・{line_break}けんがくアルか?{end_now}"
 
@@ -26323,7 +26323,7 @@ msgctxt "message"
 msgid "06578"
 msgstr "とても おぼえたいもの{line_break}はやいパンチ いいヨ{line_break}せんせいチン すごいネ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianFlexibilityJumpingVeryImportantIn"
 msgid "06579"
 msgstr "クンフーは からだのバネ{line_break}ジャンプ力 とてもだいじヨ。{end_wait}"
 
@@ -26335,7 +26335,7 @@ msgctxt "message"
 msgid "06581"
 msgstr "武じゅつ おそわるだけ{line_break}うまく なれないネ・・・{line_break}わたし 見て べんきょうヨ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMasterFehVeryBusyDo"
 msgid "06582"
 msgstr "せんせいチン いそがしい{line_break}それでも あいたいアルか?{end_now}"
 
@@ -26387,11 +26387,11 @@ msgctxt "message"
 msgid "06594"
 msgstr "アイヤ どうしたか・・・{line_break}木が かってに たおれたアル。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianCannotPushHands"
 msgid "06595"
 msgstr "手でおす ちがうアル{line_break}エイヤで たおすネ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianDidDoWarrior"
 msgid "06596"
 msgstr "戦士さん なにしたアルか?{end_wait}"
 
@@ -26595,7 +26595,7 @@ msgctxt "message"
 msgid "06646"
 msgstr "戦士さん エイヤできること{line_break}わたし とてもショック{page_break}せんせいチン 見たら{line_break}おもうこと なにアルか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWarriorWillShowMeYour"
 msgid "06647"
 msgstr "戦士さん エイヤを{line_break}やるつもりに なったか?{end_now}"
 
@@ -26643,7 +26643,7 @@ msgctxt "message"
 msgid "06658"
 msgstr "戦士さん エイヤできること{line_break}せんせいチン かくすはダメ{line_break}わたし まるでウソつきアル。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianLookTreeFell"
 msgid "06659"
 msgstr "おお 木が たおれたネ。{end_wait}"
 
@@ -26679,7 +26679,7 @@ msgctxt "message"
 msgid "06667"
 msgstr "おしいよ 戦士さん{line_break}エイヤはラインからヨ{line_break}もういちどやる よろし。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianYaTreeFell"
 msgid "06668"
 msgstr "おお 木が たおれたネ。{end_wait}"
 
@@ -26787,7 +26787,7 @@ msgctxt "message"
 msgid "06694"
 msgstr "手に 力あつめる・・・{line_break}エイヤの力 とばせること{line_break}せんせいチン おしえるヨ{page_break}でも それ むずかしヨ{line_break}ウルムチ ラマ寺行って{line_break}ハモ様 おそわってるアル。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianLamaTempleFarWestIn"
 msgid "06695"
 msgstr "ラマ寺 ずっと西の方ね{line_break}ラマカンさばくのところヨ{page_break}ウルムチ しゅぎょう行った{line_break}きっと つよくなってるネ。{end_wait}"
 
@@ -26843,15 +26843,15 @@ msgctxt "message"
 msgid "06708"
 msgstr "こんなわかい 戦士さんが{line_break}ホントに できるのアルか{line_break}ちょっと しんじられないネ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianGreatWarriorTrain"
 msgid "06709"
 msgstr "さすが 戦士さんアル{line_break}れんしゅう かかさないネ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianItIsLocked"
 msgid "06710"
 msgstr "かぎが かかっている。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWarriorsCannotUse"
 msgid "06711"
 msgstr "まさか 戦士さんの・・・{line_break}エイヤと ちがうアルな。{end_wait}"
 
@@ -27599,7 +27599,7 @@ msgctxt "message"
 msgid "06897"
 msgstr "ハモ様のもっている力は{line_break}エイヤだけではない・・・{line_break}とても いだいなお方だ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMasterHamaMeditatingPleaseExtremely"
 msgid "06898"
 msgstr "ハモ様は めいそう中{line_break}おしずかに ねがいます。{end_wait}"
 
@@ -28315,7 +28315,7 @@ msgctxt "message"
 msgid "07076"
 msgstr "あせのかきすぎで やせそう・・・{pause_20_skippable}{line_break}じゃなくて ひからびそうです!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianImTravelingAroundWorldSpread"
 msgid "07077"
 msgstr "わたしは たびをしながら{line_break}かくちに 神のこえを{line_break}伝えているのです。{end_wait}"
 
@@ -28555,7 +28555,7 @@ msgctxt "message"
 msgid "07136"
 msgstr "ウルムチ 岩にまけたアル{line_break}クンフー まけてはダメ{line_break}だから キックきたえるヨ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWaterMonstersFloodedAltinDid"
 msgid "07137"
 msgstr "アルティン村 水びたし{line_break}水モンスターのしわざヨ{line_break}戦士さん たおしたアルか?{end_now}"
 
@@ -28567,7 +28567,7 @@ msgctxt "message"
 msgid "07139"
 msgstr "あれ コウランいってた{line_break}つよい わかい戦士さん{line_break}あなた ちがったアルか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianHsuDidNotPracticeJumping"
 msgid "07140"
 msgstr "ウルムチ ジャンプ力のこと{line_break}きっと なまけていたアル{page_break}もし大岩くずれてきたなら{line_break}ジャンプで よけるよろし。{end_wait}"
 

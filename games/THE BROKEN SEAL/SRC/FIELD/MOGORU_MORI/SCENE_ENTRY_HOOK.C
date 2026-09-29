@@ -71,6 +71,9 @@ s32 FieldScene_RunSceneEntryHook(void)
     s32 pos;
     s32 tmp;
 
+    /* FAKEMATCH: one scoped offset of 448 serves both the event work's start
+       transition and the game state's scene, so the constant is loaded once
+       into a register the two accesses share. */
     {
         u8 *work = (u8 *)gEventWork;
         s32 off = 448;

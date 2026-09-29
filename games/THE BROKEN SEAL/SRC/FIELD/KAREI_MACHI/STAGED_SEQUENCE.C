@@ -1,14 +1,9 @@
-/* Draft: FieldScene_RunStagedGroupSequence, resource_3a8 at 0x02008590 (listing 0x02000590).
- * Not linked: it reaches ids or an IWRAM work pointer the main image does not name: scene ids loaded from the literal pool as link-time constants (Value_00000063, Value_00001a9e, Value_00001aa2) that spelled as plain constants compile differently, or the pointer word at 0x03001ee0.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SCENE_FIELD_1C8 (*(s32 *)(*(u8 **)Data_03001ebc + 0x1c8))
-#define SCENE_FIELD_1C0 (*(s32 *)(*(u8 **)Data_03001ebc + 0x1c0))
 
 #include "RESOURCE_3A8_EFFECT.H"
 extern u8 MsgKareiOkListeningLets[];
@@ -21,7 +16,6 @@ enum {
     /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
-
 
 struct Obj {
     u8 filler00[6];
@@ -129,14 +123,29 @@ typedef struct OrbitingSceneObject {
 } OrbitingSceneObject;
 extern const u32 SceneAction_GroupMotion[];
 extern const u32 SceneAction_GroupOffsetMotion[];
-void Func_02003c04();
-void Func_02003cec();
-void Func_02003bc4();
-void Func_02003c3c();
-void Func_02003c4c();
-void Func_02001ed8();
-void Func_02003b24();
-void Func_02003d54();
+extern u8 KareiMachi_StagedGroupScript[];
+extern u8 KareiMachi_DanceScriptB[];
+extern u8 KareiMachi_DanceScriptC[];
+extern u8 KareiMachi_DanceScriptD[];
+extern u8 KareiMachi_DanceScriptE[];
+extern u8 KareiMachi_DanceScriptF[];
+void KareiMachi_AlternateDance();
+extern u8 *gActorEffectWork;
+
+/* FAKEMATCH: a value-returning call spelled through this wrapper sets r0
+ * last of its arguments. */
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+void Event_CallWithLastActiveObjectId();
+void Ui_SetRenderResultFromObject();
+void UiText_ShowCenteredMessage();
+void Object_RefreshSelectorById();
+void Object_SetActionCallbackAndRefreshById();
+void KareiMachi_SpeedUpActors();
+void Scheduler_RemoveCallback();
+void Audio_PlayCueFromEventWork();
 
 void FieldScene_RunStagedGroupSequence(void)
 {
@@ -159,7 +168,7 @@ void FieldScene_RunStagedGroupSequence(void)
     u8 *actor20AfterSecondMove;
     u8 *sceneWorkspace;
 
-    sceneWorkspace = *(u8 **)0x03001ebc;
+    sceneWorkspace = *(u8 **)&gEventWork;
     Event_Begin();
     if (GameFlag_IsSet(2320) == 0) {
         goto skip_scene;
@@ -167,7 +176,7 @@ void FieldScene_RunStagedGroupSequence(void)
     if (GameFlag_IsSet(2321) != 0) {
         goto skip_scene;
     }
-    Func_02003c04(33605960);
+    Event_CallWithLastActiveObjectId((s32)KareiMachi_StagedGroupScript);
     Actor_SetPosition(20, 16515072, 17825792);
     Actor_SetPosition(27, 18612224, 17301504);
     Actor_SetPosition(28, 18612224, 18350080);
@@ -179,8 +188,8 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_SetPosition(34, 21757952, 18350080);
     Actor_SetPosition(21, 23855104, 17825792);
     Audio_PlayCue(17);
-    Func_02003cec(20);
-    Func_02003bc4((s32)MsgKareiOkListeningLets, 1, 0);
+    Ui_SetRenderResultFromObject(20);
+    UiText_ShowCenteredMessage((s32)MsgKareiOkListeningLets, 1, 0);
     Audio_PlayCue(9);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -218,7 +227,7 @@ void FieldScene_RunStagedGroupSequence(void)
     }
     Engine_ActorEnableActionCallback(21, actionDescriptor);
     Camera_MoveTo(12189696, -1, 17825792, 1);
-    Func_02003c3c(20);
+    Object_RefreshSelectorById(20);
     Actor_FaceDirection(20, 0, 0);
     do {
         Task_Wait(1);
@@ -330,7 +339,7 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_SetAnimationAndWait(21, 3);
     Actor_FaceDirection(21, 0, 0);
     Actor_SetSpeed(20, 104857, 52428);
-    Func_02003c4c(20, 33603504);
+    Object_SetActionCallbackAndRefreshById(20, (s32)KareiMachi_DanceScriptB);
     Actor_WalkToAndWait(20, 228, 296);
     Actor_FaceDirection(20, 49152, 40);
     Actor_WalkToAndWait(20, 212, 296);
@@ -345,7 +354,7 @@ void FieldScene_RunStagedGroupSequence(void)
     messageId = (s32)MsgKareiShortOnePerson;
     Event_SetMessage(messageId);
     Event_ShowMessageAndWait(20, 0, 40);
-    Func_02001ed8();
+    KareiMachi_SpeedUpActors();
     Actor_WalkToAndWait(20, 178, 272);
     Actor_FaceDirection(20, 0, 0);
     Event_Wait(240);
@@ -376,7 +385,7 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_RunRepeatedMotion(30, 1);
     Event_SetMessage(messageId + 6);
     Event_ShowMessageAndWait(30, 0, 10);
-    Func_02003b24(33595157);
+    Scheduler_RemoveCallback((s32)KareiMachi_AlternateDance);
     Actor_Stop(20);
     Actor_Stop(21);
     Task_Wait(1);
@@ -386,8 +395,8 @@ void FieldScene_RunStagedGroupSequence(void)
     *(u16 *)(actor21PairedWait + 100) = idleState;
     Actor_SetSpeed(20, 52428, 26214);
     Actor_SetSpeed(21, 52428, 26214);
-    Engine_ActorEnableActionCallback(20, 33603636);
-    Engine_ActorEnableActionCallback(21, 33603788);
+    Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptC);
+    Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptD);
     Actor_Stop(29);
     Task_Wait(1);
     Actor_FaceDirection(29, 20480, 10);
@@ -401,8 +410,8 @@ void FieldScene_RunStagedGroupSequence(void)
         Task_Wait(1);
     } while (*(s16 *)((u8 *)Actor_Get(20) + 100) == 0 ||
              *(s16 *)((u8 *)Actor_Get(21) + 100) != 1);
-    Engine_ActorEnableActionCallback(20, 33603940);
-    Engine_ActorEnableActionCallback(21, 33604012);
+    Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptE);
+    Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptF);
     Actor_Stop(31);
     Task_Wait(1);
     Actor_FaceDirection(31, 0x5000, 10);
@@ -628,7 +637,7 @@ void FieldScene_RunStagedGroupSequence(void)
             *(u16 *)(playerFinalFacing + 6) = value;
         }
     }
-    Func_02003d54();
+    Audio_PlayCueFromEventWork();
     GameFlag_Set(0x911);
     goto finish;
 skip_scene:
@@ -638,4 +647,23 @@ skip_scene:
     Event_WaitForScreen();
 finish:
     Event_End();
+}
+
+void SceneState_ClearWord24WhenFlag200(void)
+{
+    if (GameFlag_IsSet(0x200) != 0) {
+        *(s32 *)(gActorEffectWork + 24) = 0;
+        GameFlag_Clear(0x200);
+    }
+}
+
+void SceneState_LinkRecordZeroWhenFlag200Clear(void)
+{
+    u8 *work;
+
+    if (GameFlag_IsSet(0x200) == 0) {
+        work = gActorEffectWork;
+        *(s32 *)(work + 24) = Value1((s32 (*)())Engine_ActorGet, ACTOR_PARTY_LEADER);
+        GameFlag_Set(0x200);
+    }
 }

@@ -100,6 +100,9 @@ Engine_ActorSetSpriteFlags:
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global UiText_ShowCenteredMessage
+	.thumb_func
+UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
 	.global Engine_ItemLoadIcon
 	.thumb_func
@@ -129,6 +132,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global Event_CallWithLastActiveObjectId
+	.thumb_func
+Event_CallWithLastActiveObjectId:
 	overlay_veneer Event_CallWithLastActiveObjectIdFar
 	.global Engine_PartyGiveItem
 	.thumb_func
@@ -160,6 +166,9 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorStop
 	.thumb_func
@@ -245,6 +254,9 @@ Engine_EventAskYesNo:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Ui_SetRenderResultFromObject
+	.thumb_func
+Ui_SetRenderResultFromObject:
 	overlay_veneer Ui_SetRenderResultFromObjectFar
 	.global Engine_ActorSetSpritePriority
 	.thumb_func
@@ -294,6 +306,9 @@ Engine_ItemShowFound:
 	.thumb_func
 BattleFx_StartFadeOverlay:
 	overlay_veneer BattleFx_StartFadeOverlayFar
+	.global Audio_PlayCueFromEventWork
+	.thumb_func
+Audio_PlayCueFromEventWork:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
 	.global BattleFx_RunPageEffectForSlot
 	.thumb_func

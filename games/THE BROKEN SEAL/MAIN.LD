@@ -379,7 +379,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_COUNTERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/MESSAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BUSY_FLAGS.o"(.text)
-        "*/recon/tbs/raw/08017658.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/OPEN_MESSAGE_WINDOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/SHOW_POSITIONED_MESSAGE_AND_WAIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_PROCESS_ALL.o"(.text)
         "*/recon/tbs/raw/080178ae.o"(.text .rodata .data .padding)

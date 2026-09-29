@@ -35,7 +35,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data013
 	resource , Resource_Data014
 	resource , Resource_Data015
-	resource , Resource_Data016
+	resource , Title_ScreenPicture
 	resource , Resource_Data017
 	resource , Resource_Data018
 	resource , Resource_Data019
@@ -47,7 +47,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data01F
 	resource , Resource_Data020
 	resource , Resource_Data021
-	resource , Resource_Data022
+	resource , Title_LogoOnBlackPicture
 	resource , Resource_Data023
 	resource , Resource_Data024
 	resource , Resource_Data025
@@ -142,29 +142,29 @@ Resource_DirectoryTable:
 	resource , Ending_ReunionPicture
 	resource , Ending_SunsetPlainPicture
 	resource , Ending_TheEndPicture
-	resource , Resource_Data081
+	resource , Slots_FramePicture
 	resource , Slots_Icons
-	resource , Resource_Data083
-	resource , Resource_Data084
-	resource , Resource_Data085
-	resource , Resource_Data086
+	resource , Slots_JackpotBanner
+	resource , Slots_TablePicture
+	resource , Slots_DomePicture
+	resource , Slots_Sprites
 	resource , Resource_Data087
-	resource , Resource_Data088
-	resource , Resource_Data089
-	resource , Resource_Data08A
-	resource , Resource_Data08B
-	resource , Resource_Data08C
-	resource , Resource_Data08D
-	resource , Resource_Data08E
-	resource , Resource_Data08F
-	resource , Resource_Data090
-	resource , Resource_Data091
-	resource , Resource_Data092
-	resource , Resource_Data093
-	resource , Resource_Data094
-	resource , Resource_Data095
-	resource , Resource_Data096
-	resource , Resource_Data097
+	resource , Slots_YouWinBanner
+	resource , Slots_YouLoseBanner
+	resource , Slots_HigherBanner
+	resource , Slots_LowerBanner
+	resource , Slots_DoubleUpBanner
+	resource , Slots_CashOutBanner
+	resource , Slots_PinkDigits
+	resource , Slots_OrangeDigits
+	resource , Slots_GreenDigits
+	resource , Slots_TimesSign
+	resource , Slots_SmallDoubleUpBanner
+	resource , Slots_OnePairBanner
+	resource , Slots_TwoPairBanner
+	resource , Slots_TripleBanner
+	resource , Slots_PerfectBanner
+	resource , Slots_FinalGameBanner
 	resource , Resource_Data098
 	resource , Resource_Data099
 	resource , Resource_Data09A

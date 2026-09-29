@@ -27,6 +27,14 @@
  *    UiWork_SetParamNibble and evidently selects the same text colour.
  *  - The 0x0000f018/0x0000f019 arguments to Func_080251d4 are tilemap-shaped
  *    words whose low ten bits that helper uses as a tile index.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 21,667
+ * candidates; the best scored 5113 against 12579 (34 register-only, 88
+ * stack-only, 24 operand, 28 reordered, 11 inserted, 15 deleted) after 115
+ * rewrites (reorder independent statements, swap commutative operands, test
+ * truth or compare with zero, introduce a temporary), none of them kept.
+ * One hundred fifteen rewrites, mostly statement moves and temporaries,
+ * which trade register differences for 88 stack-only ones; they stay out of
+ * the draft. Its pooled 0x53a is MsgAbilityDescription in the catalogs.
  */
 
 

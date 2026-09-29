@@ -4,7 +4,14 @@
    its divide call; the typed model alone gave 448 bytes / 174 halfwords.
    Remaining: step in r8 rather than r7, destination in r7 rather than r8,
    origin-load order, and strength-reduced scale instead of a multiply.
- */
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 34,546
+   candidates; the best scored 1795 against 2645 (44 register-only, 9
+   operand, 3 reordered, 6 inserted, 6 deleted) after 32 rewrites (reorder
+   independent statements, introduce a temporary, swap commutative operands,
+   pointer arithmetic or indexing), none of them kept. The gains come from
+   moving the destination and origin loads and the waits around through
+   temporaries standing for the loaded fields; they depend on one another
+   and are not natural, so they stay out of the draft. */
 #include "TYPES.H"
 #include "EFFECT_0809B11C.H"
 

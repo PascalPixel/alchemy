@@ -7,9 +7,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_02001f78
-	overlay_veneer Func_020009f0
+	overlay_veneer Scene_Initialize
+	overlay_veneer Scene_GetEntrances
 	overlay_veneer SceneData_GetTablea970
-	overlay_veneer Func_02000a50
-	overlay_veneer Func_02000ee0
+	overlay_veneer Scene_GetPlacements
+	overlay_veneer Scene_GetEvents
 	overlay_veneer SceneData_ReturnZero

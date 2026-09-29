@@ -4,6 +4,7 @@ mod assets;
 mod bootstrap;
 mod build;
 mod build_rom;
+mod build_text;
 mod check;
 mod compiler;
 mod coverage;

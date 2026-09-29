@@ -183,7 +183,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_WispSheet
 	resource GreenVineSheet, BattleFx_GreenVineSheet
 	resource , BattleFx_PortalSheet
-	resource , BattleFx_SheepSheet
+	resource SheepSheet, BattleFx_SheepSheet
 	resource , BattleFx_SkullSheet
 	resource , BattleFx_HeartSheet
 	resource CounterRevealSheet, BattleFx_CounterRevealSheet

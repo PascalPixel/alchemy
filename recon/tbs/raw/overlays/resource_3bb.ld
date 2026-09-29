@@ -33,7 +33,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/MOTION_RESET.o"(.text)
         "*/resource_3bb_overlay.o"(.text.x0200ae84)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/MARKER.o"(.text)
-        "*/resource_3bb_overlay.o"(.text.x0200b138)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/ITEM_ICON.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/HEX_TEXT.o"(.text)
         "*/resource_3bb_overlay.o"(.text.x0200b22c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/APPROACH.o"(.text)

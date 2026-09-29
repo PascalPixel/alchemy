@@ -31,11 +31,17 @@ Math_Atan2:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
-	overlay_veneer Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlockFar
+	.thumb_func
+Runtime_AllocateHeapBlockFar:
+	overlay_veneer Func_08000140
 	.global Engine_AllocateBlock
 	.thumb_func
 Engine_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
+	.global Runtime_ReleaseHeapBlock
+	.thumb_func
+Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
@@ -54,6 +60,9 @@ Engine_ResourceDecodeType01:
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
 	overlay_veneer Resource_ActivateEntryFar
+	.global VramBlock_LoadCached
+	.thumb_func
+VramBlock_LoadCached:
 	.global Engine_VramLoad
 	.thumb_func
 Engine_VramLoad:
@@ -69,7 +78,10 @@ Resource_FindFreeEntry:
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
 	overlay_veneer Scheduler_SetCallbackMaskFar
-	overlay_veneer ResourceMetadata_ClearRecordFar
+	.global ResourceMetadata_ClearRecordFar
+	.thumb_func
+ResourceMetadata_ClearRecordFar:
+	overlay_veneer Func_08009060
 	.global Engine_ObjectSetAnimation
 	.thumb_func
 Engine_ObjectSetAnimation:
@@ -123,7 +135,10 @@ Engine_MessageShowCentered:
 	.thumb_func
 UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
-	overlay_veneer ItemIcon_LoadTilesFar
+	.global ItemIcon_LoadTilesFar
+	.thumb_func
+ItemIcon_LoadTilesFar:
+	overlay_veneer Ui_PrepareTransferForItemFar
 	overlay_veneer PartyTalkMenu_ChooseFar
 	.global Resource_LoadFixedBlockBIntoFreeSlot
 	.thumb_func
@@ -193,10 +208,13 @@ Engine_EventEnd:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Object_GetByIdFar
+	.thumb_func
+Object_GetByIdFar:
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
-	overlay_veneer Object_GetByIdFar
+	overlay_veneer Func_0808a080
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:

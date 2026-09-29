@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
 
 struct DisplayTransitionState {
     u8 reserved_000[0x52a];
@@ -31,9 +32,9 @@ void Runtime_SetIrqHandler(s32 irq, s32 flags, s32 handler);
 void DisplayTransition_UpdateFromCentre(void)
 {
     struct DisplayTransitionState *state =
-        *(struct DisplayTransitionState **)0x03001ecc;
+        *(struct DisplayTransitionState **)Ram_DisplayWork;
     struct DisplayTransitionWindow *window =
-        *(struct DisplayTransitionWindow **)0x03001e70;
+        *(struct DisplayTransitionWindow **)Ram_MapWork;
     s8 *duration = &state->duration;
     u16 value;
 

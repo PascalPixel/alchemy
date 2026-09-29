@@ -139,7 +139,7 @@ Func_0808e23c:
 	lsls	r2, r2, #1
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	Func_0808ddec
+	bl	BattleEffect_SelectNearbyObject
 	adds	r5, r0, #0
 	bl	Battle_Reset
 	ldr	r0, [r6, #8]

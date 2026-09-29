@@ -1,14 +1,8 @@
-/* Draft of resource_380 0x0200978c (Scene_UnmaskGarcia): it matches the ROM
- * byte for byte now that the messages it loads from the literal pool have
- * catalogue names (MsgSoruDontHandOver, MsgSoruGuessTakeElemental,
- * MsgSoruRightTake, MsgSoruWontLetGo). The listing keeps these rows until the
- * draft is adopted. */
 #include "STAR.H"
 extern u8 MsgSoruDontHandOver[];
 extern u8 MsgSoruGuessTakeElemental[];
 extern u8 MsgSoruRightTake[];
 extern u8 MsgSoruWontLetGo[];
-
 
 void Scene_UnmaskGarcia(void)
 {

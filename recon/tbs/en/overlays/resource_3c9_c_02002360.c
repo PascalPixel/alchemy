@@ -7,6 +7,7 @@
  * improves source ownership, not exactness.
  * WALL: Scene and particle-loop stack/register lifetimes remain structural. */
 #include "FIELD_EFFECT.H"
+#include "SCENE_IDS.H"
 extern u8 MsgVinasuBeatEm[];
 
 s32 Scene_CallPairWith10();
@@ -22,7 +23,6 @@ void Engine_Import08077268();
 
 
 extern u8 Data_00000000[];
-extern u8 Data_000000bb[];
 extern u8 Data_02000240[];
 
 /* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
@@ -711,11 +711,11 @@ void Scene_RunPairedActorEffectSequence(void)
     Engine_EventWait(20);
     base3_2000240 = (s32)Data_02000240;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
-    Value2(Engine_GameStateSetReturn, (s32)Data_000000bb, 3);
-    Call2((void (*)())Engine_Import0808a268, (s32)Data_000000bb, 9);
+    Value2(Engine_GameStateSetReturn, (s32)&SceneId_VinasuChojo, 3);
+    Call2((void (*)())Engine_Import0808a268, (s32)&SceneId_VinasuChojo, 9);
     Value2(Engine_Import0808a250, 98, 0);
     Engine_Import08077268();
     Call1(Engine_GameFlagSet, 0x351);
-    p10 = (s32)Data_000000bb;
+    p10 = (s32)&SceneId_VinasuChojo;
     p11 = base7_0;
 }

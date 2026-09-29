@@ -14,10 +14,10 @@
  * record restores separate coordinate loads instead of ldmia (23 differences).
  * Retain the phase-local actors and typed coordinate record.
  * Hand-written: picks the landing spot nearest the leader for this scene
- * (Value_00000059/5a select the table), drops the leader onto it with two
+ * (RamakanSabaku1 or 2 selects the table), drops the leader onto it with two
  * Effect_Spawn bursts and holds the meter at gGameState+0x232 down by 5 a
  * frame for 60 frames. Binds the scene unit's calls plus gFrameCount-free
- * data: Value_00000059, Value_0000005a, Data_02000240_t. Remaining: global
+ * data: the two scene rows and Data_02000240_t. Remaining: global
  * allocation swaps the spot counter and byte offset (r6/r7); the hold-store
  * and timer-decrement scratch registers swap r2/r3. The second parameter
  * block is now exact through H4 below. Further work needs a new structural
@@ -78,6 +78,7 @@
  * no further loop or parameter spelling sweeps. No new DONE or alignment. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
+#include "SCENE_IDS.H"
 
 void SceneState_SetHalfwordB030(s32 value);
 s32 RamakanSabaku_CalculatePlanarDistance(s32 *from, s32 *to);
@@ -95,8 +96,6 @@ union GameStateRows {
 };
 
 extern union GameStateRows Data_02000240_t;
-extern u8 Value_00000059;
-extern u8 Value_0000005a;
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -133,10 +132,10 @@ void Func_02000e2c(void)
     best = 0xf00000;
     Call1((void (*)())Engine_GameFlagSet, 0x200);
     SceneState_SetHalfwordB030(1);
-    if (Data_02000240_t.halves[224][0] == (s32)&Value_00000059) {
+    if (Data_02000240_t.halves[224][0] == (s32)&SceneId_RamakanSabaku1) {
         count = 3;
         spots = (s32 *)0x02009f30;
-    } else if (Data_02000240_t.halves[224][0] == (s32)&Value_0000005a) {
+    } else if (Data_02000240_t.halves[224][0] == (s32)&SceneId_RamakanSabaku2) {
         count = 5;
         spots = (s32 *)0x02009f48;
     } else {

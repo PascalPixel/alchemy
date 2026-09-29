@@ -460,6 +460,8 @@ SECTIONS
         "*/recon/tla/raw/08045780.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08045794.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080457d0.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
+        "*/recon/tla/raw/08046412.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08046414.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080464dc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08049a04.o"(.text .rodata .data .padding)

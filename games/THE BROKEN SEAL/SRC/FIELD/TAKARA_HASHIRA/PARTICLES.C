@@ -9,9 +9,9 @@ void SceneEffect_SpawnRandomizedParticle(void)
     u32 draw;
     u32 mask;
 
-    if ((Data_03001e40 & 2) != 0)
+    if ((*(volatile s32 *)&gFrameCount & 2) != 0)
         return;
-    if ((Data_03001e40 & 7) == 0)
+    if ((*(volatile s32 *)&gFrameCount & 7) == 0)
         Audio_PlayCue(136);
 
     d = descriptor;
@@ -24,7 +24,7 @@ void SceneEffect_SpawnRandomizedParticle(void)
     mask = 0x0ffff000;
     mask &= draw;
     *(u16 *)(d + 32) = (u16)mask;
-    *(s32 *)(d + 36) = 0x020093b1;
+    *(s32 *)(d + 36) = (s32)FieldScene_RunScene3b3SequenceE;
 
     draw = (u32)Random_Next();
     spread = -((s32)((draw * 5) >> 16) * 0x10000 + 0x60000);
@@ -40,7 +40,7 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(u8 *actor)
 {
     u8 desc[40];
     u8 *p;
-    u32 phase = (u32)Data_03001e40 & 7;
+    u32 phase = (u32)*(volatile s32 *)&gFrameCount & 7;
     s32 x;
     s32 y;
     s32 z;

@@ -42,7 +42,6 @@ struct PeriodicEffectConfig {
     u8 pad_20[8];
 };
 
-extern u32 Data_03001e40;
 extern u8 ShianMura_EffectConfig[];
 extern u8 gShianMuraEntrances[];
 extern u8 gShianMuraExits[];

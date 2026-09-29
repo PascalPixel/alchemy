@@ -18,8 +18,7 @@ void FieldScene_RunScene3a0_02000de8(s32 a0)
 }
 
 /*
- * The scene table is reached through the IWRAM pointer Data_03001ebc, not
- * through the resident workspace, and the selector is its halfword [182],
+ * The selector is halfword [182] of the event work,
  * guarded to the range 1..7.  The pointer is loaded before the first call and
  * held across all of them, so it is a function-top local.  Cases 2 and 3 set
  * the two shared arguments and jump into the middle of case 6 to share its
@@ -27,9 +26,7 @@ void FieldScene_RunScene3a0_02000de8(s32 a0)
  */
 void SceneEffect_DispatchStep(void)
 {
-    extern u8 *Data_03001ebc;
-
-    s16 *scene = (s16 *)Data_03001ebc;
+    s16 *scene = (s16 *)gEventWork;
     u8 *shared0;
     s32 shared1;
 

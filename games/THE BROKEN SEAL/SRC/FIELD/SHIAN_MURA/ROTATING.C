@@ -12,7 +12,7 @@ void SceneEffect_SpawnPeriodicEffect(void)
 {
     u8 *entity = Actor_Get(14);
 
-    if ((Data_03001e40 & 3) == 0) {
+    if ((gFrameCount & 3) == 0) {
         struct PeriodicEffectConfig config;
         config.kind = 1;
         config.variant = 9;

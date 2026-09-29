@@ -2,7 +2,7 @@
 #include "BATTLE_EFX.H"
 
 extern u8 Data_00000058[];
-extern u8 Data_000000b4[];
+extern u8 ResourceId_EmberStreakSheet[];
 extern u8 Data_00001000[];
 s32 Math_Div();
 s32 Math_Mod();
@@ -127,7 +127,7 @@ void BattleFx_RunFiveMode(s32 a0, s32 a1)
     if ((u32)slot68 <= 4) {
     } else {
     }
-    record = Value1(Resource_GetTableEntry, (s32)Data_000000b4);
+    record = Value1(Resource_GetTableEntry, (s32)ResourceId_EmberStreakSheet);
     Call4(_call_via_r3, 0x5000000, record, 128, 0x3001388);
     *(s32 *)((slot64 + 0x7780)) = 2;
     *(s32 *)((slot64 + 0x7784)) = 50;

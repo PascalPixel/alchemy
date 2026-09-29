@@ -5,9 +5,9 @@
 #include "BATTLE_EFX.H"
 
 extern u8 Data_00000055[];
-extern u8 Data_00000073[];
-extern u8 Data_0000007d[];
-extern u8 Data_000000c0[];
+extern u8 ResourceId_ParticleSpritesA[];
+extern u8 ResourceId_FlashBurstSheet[];
+extern u8 ResourceId_BlastSheet[];
 s32 Math_Div();
 s32 Trig_Cos();
 s32 Trig_Sin();
@@ -115,8 +115,8 @@ void Unnamed_080e94b8(s32 a0)
     Object_SetMode(slot28, 2);
     ObjectDispatch_ApplyValueToChildrenFar(slot28, 48);
     Resource_LoadAndDecompress((s32)Data_00000055, p11, 1, 1);
-    Resource_LoadAndDecompress((s32)Data_0000007d, (0x2000 + p11), 1, 0);
-    Resource_LoadAndDecompress((s32)Data_00000073, slot32, 0, 0);
+    Resource_LoadAndDecompress((s32)ResourceId_FlashBurstSheet, (0x2000 + p11), 1, 0);
+    Resource_LoadAndDecompress((s32)ResourceId_ParticleSpritesA, slot32, 0, 0);
     slot36 = 0;
     p9 = slot36;
     v8 = p11;
@@ -214,7 +214,7 @@ void Unnamed_080e94b8(s32 a0)
         }
     }
     if (v9 > 16) {
-        BattleFx_StepPaletteToResource((s32)Data_000000c0);
+        BattleFx_StepPaletteToResource((s32)ResourceId_BlastSheet);
     }
     slot36 = 0;
     slot20 = 22;

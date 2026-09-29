@@ -41,7 +41,7 @@ extern u8 Data_00000046[];
 extern u8 Data_00000047[];
 extern u8 Data_00000048[];
 extern u8 Data_00000070[];
-extern u8 Data_00000076[];
+extern u8 ResourceId_ParticleSpritesD[];
 extern u8 Data_00000100[];
 extern u8 Data_00001000[];
 s32 Math_Mod();
@@ -156,7 +156,7 @@ void Unnamed_080cb7f8(s32 a0)
     *(u16 *)0x04000052 = 0x100c;
     *(u16 *)0x04000020 = (s32)Data_00000100;
     Resource_LoadAndDecompress((s32)Data_00000057, rec3, 1, 0);
-    Resource_LoadAndDecompress((s32)Data_00000076, slot24, 0, 0);
+    Resource_LoadAndDecompress((s32)ResourceId_ParticleSpritesD, slot24, 0, 0);
     switch (*(s32 *)*(s32 *)(0x7828 + rec3)) {
     case 0:
         record = (s32)Data_00000048;

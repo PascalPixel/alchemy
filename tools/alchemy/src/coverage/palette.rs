@@ -21,7 +21,7 @@ pub(crate) const DARK: &str = "#103840";
 pub(crate) const WELL: &str = "#17606f";
 pub(crate) const GRID: &str = "#246f7e";
 /// A lighter band across a well: a marked day, a selected row.
-pub(crate) const BAND: &str = "#b8322a";
+pub(crate) const BAND: &str = "#6e2a30";
 /// Labels: white ink over a black one-pixel shadow; muted and hover tones.
 pub(crate) const INK: &str = "#ffffff";
 pub(crate) const SHADOW: &str = "#000000";

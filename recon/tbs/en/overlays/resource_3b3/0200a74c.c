@@ -1,3 +1,10 @@
+/* resource_3b3 0x0200a74c..0x0200aa2c TakaraHashira_SetupArea (736 bytes with
+ * pool), formerly FIELD/TAKARA_HASHIRA/SETUP.C; the listing keeps the rows.
+ * Compiles exactly with this spelling. Remaining difference: it compares
+ * the scene with 0x74, 0x77, 0x79 and 0x7a loaded from its literal pool, the
+ * shape of link-time symbols, spelled here as the equates Data_000000xx;
+ * plain numbers compile to cmp with an immediate. Data_02000240_t is
+ * gGameState. */
 #include "TYPES.H"
 extern u8 TakaraHashira_PillarSlots[];
 extern struct EventWork *gEventWork;

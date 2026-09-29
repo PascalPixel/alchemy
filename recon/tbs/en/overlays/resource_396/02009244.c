@@ -1,3 +1,11 @@
+/* resource_396 0x02009244..0x02009424 ToretoPalette_ApplyTint (480 bytes with
+ * pool), formerly FIELD/TORETO_HEYA/TINT.C; the listing keeps the rows.
+ * Compiles exactly. Remaining difference: its divisions by 3 and 5 call
+ * the compiler's __divsi3, a name the publication gate keeps out of game
+ * source, while the overlay's divider veneer is Engine_MathDivide. Spelled
+ * as explicit Engine_MathDivide calls (plain, const-attributed, and with
+ * the halving split around the call) the schedule differs: the libcall
+ * lets GCC place the halves on either side of each call. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

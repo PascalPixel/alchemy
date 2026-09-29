@@ -1,3 +1,8 @@
+/* resource_396 0x0200962c..0x020097ec ToretoHeya_SpawnSwirlSparks (448 bytes
+ * with pool), formerly FIELD/TORETO_HEYA/SPAWN_SPARKS.C; the listing keeps
+ * the rows. Compiles exactly. Remaining difference: its unsigned divisions
+ * call the compiler's __udivsi3, a name the publication gate keeps out of
+ * game source; the overlay's unsigned divider veneer has no other name. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

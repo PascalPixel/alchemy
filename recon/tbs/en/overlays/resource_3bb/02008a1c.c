@@ -1,3 +1,9 @@
+/* resource_3bb 0x02008a1c..0x02008b30 KorosseoKabe_RunStageStart (276 bytes
+ * with pool), formerly FIELD/KOROSSEO_KABE/STAGE_START.C; the listing keeps
+ * the rows. Compiles exactly with this spelling. Remaining difference: it
+ * loads 0x90 from its literal pool, the shape of a link-time symbol, spelled
+ * here as the equate Data_00000090; its Func_ calls need the names of the
+ * veneers and owners they reach. */
 #include "TYPES.H"
 
 extern u8 Data_00000090[];

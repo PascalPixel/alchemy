@@ -1,3 +1,9 @@
+/* resource_396 0x0200869c..0x02008918 ToretoHeya_RunTableScene (636 bytes
+ * with pool), formerly FIELD/TORETO_HEYA/TABLE_SCENE.C; the listing keeps the
+ * rows. Compiles exactly with this spelling. Remaining difference: it loads
+ * map 0x2d from its literal pool, the shape of a link-time symbol, spelled
+ * here as the equate Data_0000002d; and the action tables it installs are
+ * still spelled as overlay addresses, which need their labels. */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
 

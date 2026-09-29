@@ -1,6 +1,6 @@
 #include "TYPES.H"
 extern u8 FuneKanpan_CrewActionsE[];
-extern u8 FuneKanpan_CrewScriptB[];
+extern u8 FuneKanpan_CrewScriptC[];
 extern u8 MsgFuneArrgh[];
 extern struct EventWork *gEventWork;
 extern u8 FuneKanpan_CrewScript[];
@@ -85,7 +85,7 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_ActorSetSpriteFlags(record, 0);
     Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptB);
+    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptC);
     Engine_TaskWait(1);
     Engine_ActorSetAnimation(31, 0);
     record = Engine_ActorGet(24);

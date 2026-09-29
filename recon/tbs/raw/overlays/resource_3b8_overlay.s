@@ -1454,6 +1454,8 @@ Func_020040b4:
 	.4byte 0x00000209
 	.4byte 0x00000967
 	.section .rodata,"a",%progbits
+	.global TorebiKyuden_CellSteps
+TorebiKyuden_CellSteps:
 	.4byte 0x001c0019
 	.4byte 0x00030001
 	.4byte 0x001a0005

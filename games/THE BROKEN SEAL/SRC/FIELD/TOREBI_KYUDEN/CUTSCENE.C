@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
+extern const u16 TorebiKyuden_CellSteps[];
 extern u8 MsgTorebiCallsName[];
 extern u8 MsgTorebiIodemIodem[];
 extern u8 MsgTorebiLikeSleep[];
@@ -1656,7 +1657,7 @@ void RunSceneEffectSetup(void)
     Event_Begin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
     Audio_PlayCue(158);
-    Map_AnimateCells(33604944, 36, 10);
+    Map_AnimateCells(TorebiKyuden_CellSteps, 36, 10);
     SetSceneEffectOffset(0, 2, -16);
     Event_Wait(16);
     Event_RequestExit(2);

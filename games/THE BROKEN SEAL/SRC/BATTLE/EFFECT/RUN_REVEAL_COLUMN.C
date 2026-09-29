@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -6,17 +7,12 @@
 
 extern u8 gBattleFxWork[];
 extern BattleEffectDrawRectangle Data_03001e50[];
-extern u8 IwramClearWords[];
 extern u8 Value_0000004b;
 extern u8 Value_0000004c;
 extern u8 Value_0000004d;
 extern u8 Value_0000004e;
 extern u8 Value_0000004f;
 extern u8 Value_00000050;
-
-/* IwramClearWords zeroes its value register and falls into the word fill
-   one ARM instruction later; the fill is entered there by address. */
-typedef void (*FillWordsFn)(void *destination, s32 size, s32 value);
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_EndCanvasLayer(void);
@@ -82,7 +78,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         else if (frame <= 15)
             draw[0](canvas, (void *)0x02013840, 0, 0, 120, 120);
         if (frame >= 16 && frame <= 19)
-            ((FillWordsFn)(IwramClearWords + 4))(canvas, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
         if (frame == 18)
             BattleEventRuntime_BeginPhaseFar(134);
         if (frame == 20) {

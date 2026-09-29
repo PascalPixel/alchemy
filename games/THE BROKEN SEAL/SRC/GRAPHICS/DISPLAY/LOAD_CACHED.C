@@ -1,5 +1,6 @@
 #include "VRAM_BLOCK.H"
 #include "DMA.H"
+#include "IWRAM_CALL.H"
 
 
 
@@ -31,7 +32,7 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
         entry->offset = offset;
         if (source != 0) {
             if (source == (const void *)-1) {
-                ((void (*)(void *, u32))0x03000164)(destination, size);
+                Iwram_ClearWords(destination, size);
             } else {
                 Dma_Set(source, destination, (size >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
             }

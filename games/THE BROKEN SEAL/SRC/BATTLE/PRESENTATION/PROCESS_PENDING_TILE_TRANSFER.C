@@ -1,10 +1,9 @@
 #include "DMA.H"
-
-typedef void (*FillWordsFn)(void *dst, s32 size, s32 value);
+#include "IWRAM_CALL.H"
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
-    ((FillWordsFn)0x03000168)(dst, size, value);
+    Iwram_FillWords(dst, size, value);
 }
 
 extern u8 *Data_03001eec[2];

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -36,7 +37,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * -- so each call is a genuine indirect call through a traced function
  * pointer, not a call to a real symbol at that address.
  */
-typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
 extern u8 Value_000000ab;
 extern u8 Value_000000ac;
@@ -88,7 +88,7 @@ void BattleFx_RunCounterReveal(void *object)
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
     palette = Resource_GetTableEntry((s32)&Value_000000ab);
-    status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
+    status = Iwram_CopyWords((void *)0x05000000, palette, 128);
     palette = (u8 *)palette + 128;
     status = Resource_DecodeType01(palette, work);
     sprite_vram = (void *)0x02010000;
@@ -206,8 +206,7 @@ void BattleFx_RunCounterReveal(void *object)
                     canvas, (u8 *)work + 0x15D2, CounterReveal_PanelX[idx_a * 7 + 1],
                     CounterReveal_PanelY[idx_b * 7 + 1] + screen_y, 99, 69);
                 if ((u32)(frame - 88) <= 1U) {
-                    status = ((WordCopyFn)0x03000168)(
-                        canvas, (void *)0x4000, (void *)0x3F3F3F3F);
+                    status = Iwram_FillWords(canvas, 0x4000, 0x3F3F3F3F);
                 }
                 if ((u32)(frame - 90) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(

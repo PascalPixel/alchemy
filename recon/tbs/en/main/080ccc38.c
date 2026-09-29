@@ -1,180 +1,138 @@
+/* Draft, not exact (2026-09-29): permuter score 1193 (was the unparsed
+   m2c listing). The cell tables now carry labels in unidentified.s and the
+   three resources are named rows. What lines up: loading the kind-46
+   blitter in each branch after BattleEffect_LoadWork lets jump2 cross-jump
+   the call and the load into one tail, as the reference has; sharing one
+   temporary between the canvas word and the removed callback gives the
+   canvas r9 and spills the blitter (a fake, to drop if another route to
+   that allocation appears). Remaining: the reference hoists the cell
+   offsets table into fp before the frame loop and rematerialises
+   work + 0x77a8 at both shake stores (the spilled pseudo is the frame's
+   extra word, 32 bytes against 28); here loop.c hoists the shake address
+   instead and the offsets table is reloaded in each branch. The m2c form
+   (a tableA local) does the same. Eight minutes of permutation from here
+   found nothing lower. */
+/* alchemy permute: BattleFx_RunTwoResource against recon/tbs/raw/080ccc38.s: score 1373 (11 register-only, 3 stack-only, 15 operand, 5 reordered, 4 inserted, 3 deleted).
+   Job 0, iteration 1200; rewrites: 1x share one temporary between two statements. */
 #include "TYPES.H"
-#include "B5_CONTEXT.H"
-#include "EFFECT_STEP.H"
+#include "IWRAM_CALL.H"
+#include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "RESOURCE_IDS.H"
 
-/*
- * Battle-presentation sub-effect at 0x080ccc38.
- *
- * Structurally related to games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PUFF_ARC.C
- * (main:080d9fc8) and games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C
- * (main:080ce85c): the same kind-39 "battle work" heap cache read directly
- * from 0x03001eec, the same caller-state pointer republished at
- * work + 0x7828, the same 0x04000020 BG2PA identity write, the same
- * kind-46 rectangle blitter fetched through BattleEffect_LoadWork and called
- * through the r4 trampoline slot (Func_080072f4 = 0x080072e4 + 0x10).
- * Despite the identical 644-byte length, the puff_arc template's body is
- * NOT a match here: this owner loads two resources (kind ids forced
- * through the pool via the Value_ idiom) into two different destinations,
- * conditionally streams a palette through the fixed word-copy routine at
- * 0x03001388 only when mode == 0, drives a frame loop bounded by 74 or 48
- * (not puff_arc's fixed 80), and its per-frame draw step indexes five
- * small tables at 0x080ee064-0x080ee088 by a signed cell = frame / 4
- * (valid range 0-5) rather than puff_arc's per-puff tick field.
- */
+extern u8 gBattleFxWork[];
 
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
-
-typedef s32 (*WordCopyFn)(void *, const void *, s32);
-
-/* Value_ symbols carry a literal the reference loads from its pool rather
-   than materializing with a mov; see puff_arc/run.c for the established
-   convention this project uses for such call sites. */
-extern u8 Value_00000071;
-extern u8 Value_00000072;
-extern u8 Value_000000a0;
-
-void BattleFx_BeginCanvasLayer(s32);
-void *Resource_GetTableEntry(s32);
-s32 Func_080041d8(s32, s32);
-void EffectPosition_ApplyStepAndYOffset(s32, struct EffectPosition *);
-void Func_080b50e8(s32);
-void Func_080b5088(s32, s32);
-void Func_080f9010(s32);
-void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void Camera_ApplyShake(s32, u32);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void *Resource_GetTableEntry(s32 id);
+void **GetBattleObjectSlotFar(s32 member_id);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
+void Audio_PlayCue(s32 cue);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32);
-void Scheduler_RemoveCallback(s32);
-void Func_08002dd8(s32);
 s32 BattleFx_EndCanvasLayer(void);
 
-/* Five per-cell tables, six entries each (cell 0-5): source byte offset,
-   an X value indexed by a second field-derived row, a width, a signed Y
-   bias, and a height.  Addresses are read directly off the retained pool;
-   no independent evidence of their exact original grouping exists yet. */
-extern u16 Data_080ee070[];
-extern u8 Data_080ee07c[];
-extern u8 Data_080ee064[];
-extern s8 Data_080ee088[];
-extern u8 Data_080ee06a[];
+/* Six animation cells: width, height, the source offset (cells 0 to 3 in
+   the work block, 4 and 5 in the map cell buffer), the x for either side
+   and the vertical bias. */
+extern u8 TwoResource_CellWidths[];
+extern u8 TwoResource_CellHeights[];
+extern u16 TwoResource_CellSourceOffsets[];
+extern u8 TwoResource_CellX[];
+extern s8 TwoResource_CellBiasY[];
 
-void Func_080ccc38(void *param0, s32 mode)
+#define WORK_EFX (work->effect)
+
+/* Plays a six-cell sheet whose first four cells load into the work block
+   and last two into the map cell buffer, four frames a cell, while the
+   screen shakes; mode 1 runs 74 frames and launches the target, other
+   modes 48. */
+void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 {
     u32 *cache;
     u32 *entry;
-    u8 *work;
-    void *dst;
-    s32 tag;
-    s32 status;
-    void *palette;
-    struct B5Context *ctx;
-    void *object;
+    struct BattleEffectWork *work;
+    void *canvas;
+    DrawRectangle draw;
+    s32 *object;
     struct EffectPosition position;
-    s32 frame_limit;
-    s32 count;
-    const u16 *tableA;
+    s32 frames;
+    s32 frame;
+    s32 cell;
+    u16 *offsets = TwoResource_CellSourceOffsets;
+    u32 tmp;
 
-    cache = (u32 *)0x03001eec;
+    cache = (u32 *)gBattleFxWork;
     entry = cache;
-    work = (u8 *)*entry++;
-    dst = (void *)*entry;
-    M2C_FIELD(work, void **, 0x7828) = param0;
+    work = (struct BattleEffectWork *)*entry++;
+    tmp = *entry;
+    canvas = (void *)tmp;
+    work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
-
-    tag = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4);
-    if (tag == 1) {
-        BattleEffect_LoadWork(46, 7, 7, 3, tag);
+    *(s16 *)0x04000020 = 0x100;
+    if (WORK_EFX->side == 1) {
+        BattleEffect_LoadWork(46, 7, 7, 3, 1);
+        draw = (DrawRectangle)cache[46 - 39];
     } else {
-        tag = 1;
-        BattleEffect_LoadWork(46, 7, 7, 7, tag);
+        BattleEffect_LoadWork(46, 7, 7, 7, 1);
+        draw = (DrawRectangle)cache[46 - 39];
     }
-    Resource_LoadAndDecompress((s32)&Value_00000071, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000072, (void *)0x02010000, 1, 0);
-
-    if (mode == 0) {
-        palette = Resource_GetTableEntry((s32)&Value_000000a0);
-        status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    }
-
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8(0x080cd261, 0x480);
-
-    ctx = GetBattleObjectSlotFar(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
-    object = ctx->object;
-    EffectPosition_ApplyStepAndYOffset(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36), &position);
-    if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) != 0) {
-        M2C_FIELD((void *)0x04000028, s32 *, 0) = (112 - position.x) << 8;
-    } else {
-        M2C_FIELD((void *)0x04000028, s32 *, 0) = (16 - position.x) << 8;
-    }
-
-    frame_limit = 74;
-    if (mode != 1) {
-        frame_limit = 48;
-    }
-
-    tableA = Data_080ee070;
-    for (count = 0; count != frame_limit; count++) {
-        s32 cell = count / 4;
-
+    Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet, (void *)0x02010000, 1, 0);
+    if (mode == 0)
+        Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    object = *GetBattleObjectSlotFar(WORK_EFX->actors[0]);
+    EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[0], &position);
+    if (WORK_EFX->side == 0)
+        *(s32 *)0x04000028 = (16 - position.x) << 8;
+    else
+        *(s32 *)0x04000028 = (112 - position.x) << 8;
+    frames = 74;
+    if (mode != 1)
+        frames = 48;
+    for (frame = 0; frame != frames; frame++) {
+        cell = frame / 4;
         if (cell <= 5) {
-            s32 side = M2C_FIELD(
-                M2C_FIELD(work, void **, 0x7828), s32 *, 4);
-
-            if (cell > 3) {
-                ((DrawRectangleFn)cache[46 - 39])(dst,
-                    (void *)(0x02010000 + tableA[cell]),
-                    Data_080ee07c[cell + side * 6],
-                    Data_080ee088[cell] + 32,
-                    Data_080ee064[cell], Data_080ee06a[cell]);
-            } else {
-                ((DrawRectangleFn)cache[46 - 39])(dst, work + tableA[cell],
-                    Data_080ee07c[cell + side * 6],
-                    Data_080ee088[cell] + 32,
-                    Data_080ee064[cell], Data_080ee06a[cell]);
-            }
+            if (cell <= 3)
+                draw(canvas, (u8 *)work + offsets[cell], TwoResource_CellX[cell + WORK_EFX->side * 6], TwoResource_CellBiasY[cell] + 32, TwoResource_CellWidths[cell], TwoResource_CellHeights[cell]);
+            else
+                draw(canvas, (u8 *)0x02010000 + offsets[cell], TwoResource_CellX[cell + WORK_EFX->side * 6], TwoResource_CellBiasY[cell] + 32, TwoResource_CellWidths[cell], TwoResource_CellHeights[cell]);
         }
-
-        if (count == 8) {
+        if (frame == 8) {
             if (mode == 0) {
-                Func_080b50e8(133);
-                Func_080b5088(
-                    M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36),
-                    1);
+                BattleEventRuntime_BeginPhaseFar(0x85);
+                BattleMotion_ApplyVariantMotionFar(WORK_EFX->actors[0], 1);
             } else {
-                Func_080f9010(134);
-                ObjectGroup_UpdateMembers(
-                    M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36),
-                    7, 5, 0, 4);
+                Audio_PlayCue(0x86);
+                ObjectGroup_UpdateMembers(WORK_EFX->actors[0], 7, 5, 0, 4);
             }
-            M2C_FIELD(work, s32 *, 0x77a8) = 8;
+            work->shake_frames = 8;
         }
-
         if (mode == 1) {
-            if (count == 13) {
-                M2C_FIELD(object, s32 *, 40) = 0xC0000;
-                M2C_FIELD(object, s32 *, 72) = 0x7851;
-                M2C_FIELD(object, s32 *, 68) = 0x4000;
+            if (frame == 13) {
+                object[10] = 0xc0000;
+                object[18] = 0x7851;
+                object[17] = 0x4000;
             }
-            if (count == 65) {
-                M2C_FIELD(work, s32 *, 0x77a8) = 4;
-                Func_080b50e8(134);
+            if (frame == 65) {
+                work->shake_frames = 4;
+                BattleEventRuntime_BeginPhaseFar(0x86);
             }
         }
-
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        work->transfer_pending = 1;
+        WaitFrames(1);
     }
-
-    Scheduler_RemoveCallback(0x080cd261);
-    Func_08002dd8(46);
+    tmp = (u32)BattlePresentation_ProcessPendingGraphicsTransfer;
+    Scheduler_RemoveCallback(tmp);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

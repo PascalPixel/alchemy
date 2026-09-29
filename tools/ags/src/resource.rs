@@ -47,6 +47,18 @@
 //!   form, such as `BLUE_FLAME_COLUMN\tbitmap`, or `table` for a table beside
 //!   it; the parts are built in turn and joined.
 //!
+//! - `.icons4`: an icon bank of 4-bit icons, each with its own palette. Each
+//!   line names a 32x32 icon image beside the list, or `-` for an empty
+//!   slot. The bank is a table of each slot's halfword offset, 0 when empty,
+//!   then each icon's 16-colour palette and its pixels, row by row, in the
+//!   4-bit icon coder (Psynergy's icon4), zero-padded to a word.
+//!
+//! A block map reads its grid `STEM.TSV`, one line per row of hex words:
+//!
+//! - `.blocks`: the grid cut into 16x16 blocks, left to right and top to
+//!   bottom. The bank is a table of each block's word offset, then each
+//!   block's words, little-endian, in the packer's palette LZ without its tag.
+//!
 //! Either may then be packed:
 //!
 //! - `.lz`: the packer's LZ, the smaller of its general (tag 0) and
@@ -57,7 +69,9 @@
 //!   before it.
 use crate::graphics::{indices, metatiles};
 use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
-use psynergy::assets::compression::{encode_delta7, encode_tilemap_delta, encode_zero_skip};
+use psynergy::assets::compression::{
+    encode_delta7, encode_icon4, encode_tilemap_delta, encode_zero_skip,
+};
 use psynergy::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
 /// The resource packer's compressor, as the streams in both games show: the
@@ -69,7 +83,7 @@ pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 fn data_form(form: &str) -> bool {
     matches!(
         form,
-        "bin" | "delta0" | "delta1" | "delta2" | "parts" | "table"
+        "bin" | "delta0" | "delta1" | "delta2" | "parts" | "table" | "icons4" | "blocks"
     )
 }
 
@@ -82,7 +96,7 @@ pub fn input_name(built: &str) -> Result<String, String> {
         .ok_or_else(|| format!("{built} names no form"))?;
     let form = rest.split('.').next().unwrap_or_default();
     let extension = match form {
-        "parts" | "table" => "TSV",
+        "parts" | "table" | "icons4" | "blocks" => "TSV",
         form if data_form(form) => "BIN",
         _ => "PNG",
     };
@@ -117,6 +131,8 @@ pub fn build_file_with(
             "bin" => input.to_vec(),
             "parts" => parts(built, input, sibling)?,
             "table" => table(built, input)?,
+            "icons4" => icon4_bank(built, input, sibling)?,
+            "blocks" => block_map(built, input)?,
             _ => encode_tilemap_delta(input, form.as_bytes()[5] - b'0')
                 .map_err(|error| format!("{built}: {}", error.0))?,
         }
@@ -212,6 +228,79 @@ fn table(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
             }
             output.extend(&value.to_le_bytes()[..size]);
         }
+    }
+    Ok(output)
+}
+
+/// A bank of 16x16 blocks of words cut from a grid, each packed.
+fn block_map(built: &str, grid: &[u8]) -> Result<Vec<u8>, String> {
+    let text = std::str::from_utf8(grid).map_err(|_| format!("{built}: grid is not text"))?;
+    let rows = text
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| {
+            line.split('\t')
+                .map(|word| {
+                    u32::from_str_radix(word.trim(), 16)
+                        .map_err(|_| format!("{built}: {word:?} is not a hex word"))
+                })
+                .collect::<Result<Vec<_>, _>>()
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let width = rows.first().map_or(0, Vec::len);
+    if width == 0
+        || !width.is_multiple_of(16)
+        || !rows.len().is_multiple_of(16)
+        || rows.iter().any(|row| row.len() != width)
+    {
+        return Err(format!("{built}: the grid must be whole 16x16 blocks"));
+    }
+    let count = width / 16 * (rows.len() / 16);
+    let mut output = vec![0u8; 4 * count];
+    for index in 0..count {
+        let (x, y) = (index % (width / 16) * 16, index / (width / 16) * 16);
+        let words: Vec<u8> = rows[y..y + 16]
+            .iter()
+            .flat_map(|row| row[x..x + 16].iter().flat_map(|word| word.to_le_bytes()))
+            .collect();
+        let at = output.len() as u32;
+        output[4 * index..4 * index + 4].copy_from_slice(&at.to_le_bytes());
+        output.extend(compress_palette(&words, &PACKER)?);
+    }
+    Ok(output)
+}
+
+/// A bank of 4-bit icons with their own palettes from its slot list.
+fn icon4_bank(
+    built: &str,
+    list: &[u8],
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<Vec<u8>, String> {
+    let text = std::str::from_utf8(list).map_err(|_| format!("{built}: icon list is not text"))?;
+    let slots: Vec<&str> = text
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    let mut output = vec![0u8; 2 * slots.len()];
+    for (index, slot) in slots.iter().enumerate() {
+        if *slot == "-" {
+            continue;
+        }
+        let at = u16::try_from(output.len()).map_err(|_| format!("{built}: bank too large"))?;
+        output[2 * index..2 * index + 2].copy_from_slice(&at.to_le_bytes());
+        let image = indexed_bitmap_png(&sibling(&format!("{slot}.PNG"))?)
+            .map_err(|error| format!("{built}: {slot}: {}", error.0))?;
+        let palette =
+            bgr555_palette_of(&image).map_err(|error| format!("{built}: {slot}: {}", error.0))?;
+        if (image.width, image.height) != (32, 32) || palette.len() != 32 {
+            return Err(format!("{built}: {slot} must be 32x32 in 16 colours"));
+        }
+        output.extend(palette);
+        output.extend(
+            encode_icon4(&indices(&image))
+                .map_err(|error| format!("{built}: {slot}: {}", error.0))?,
+        );
+        output.resize(output.len().next_multiple_of(4), 0);
     }
     Ok(output)
 }
@@ -390,6 +479,24 @@ mod tests {
             &png_from_bitmap(&[0; 16 * 32], &[0, 0], 16).unwrap()
         )
         .is_err());
+        // A 4-bit icon bank: an empty slot is 0; an icon is its palette and
+        // its stream, padded to a word.
+        let bank = build_file_with("B.icons4", b"-\nA\n", &|name| {
+            assert_eq!(name, "A.PNG");
+            Ok(png_from_bitmap(&[0; 32 * 32], &[0; 32], 32).unwrap())
+        })
+        .unwrap();
+        assert_eq!(&bank[..4], [0, 0, 4, 0]);
+        assert_eq!(bank.len(), 4 + 32 + 132);
+        assert_eq!(&bank[36..40], [0, 0, 0, 0]);
+        // A block map: two blocks side by side, a word offset each.
+        let row = format!("{}\n", ["c80"; 32].join("\t"));
+        let blocks = build_file("M.blocks", row.repeat(16).as_bytes()).unwrap();
+        assert_eq!(&blocks[..4], [8, 0, 0, 0]);
+        let second = u32::from_le_bytes(blocks[4..8].try_into().unwrap()) as usize;
+        assert_eq!(blocks[8..second], blocks[second..]);
+        assert!(build_file("M.blocks", b"c80\t0\n").is_err());
+        assert!(build_file("M.blocks", b"x\n").is_err());
         // Parts join in list order.
         let joined = build_file_with("P.parts", b"A\tbitmap\nB\tbitmap\n", &|name| {
             Ok(match name {

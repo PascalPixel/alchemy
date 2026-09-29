@@ -50,7 +50,10 @@ impl Symbols {
         let mut addresses = BTreeMap::new();
         for symbol in file.symbols() {
             let Ok(name) = symbol.name() else { continue };
-            if name.is_empty() || name.starts_with('$') || !defined(&symbol) {
+            // Link-time values such as the text build's message numbers are
+            // absolute symbols: a pool word the listing spells as a number.
+            let absolute = symbol.section() == object::SymbolSection::Absolute;
+            if name.is_empty() || name.starts_with('$') || !(defined(&symbol) || absolute) {
                 continue;
             }
             addresses

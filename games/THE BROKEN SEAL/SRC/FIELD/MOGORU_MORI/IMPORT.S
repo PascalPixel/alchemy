@@ -77,7 +77,13 @@ Engine_ActorSetSpriteFlags:
 	.thumb_func
 Engine_ObjectSetBlendMode:
 	overlay_veneer Animation_SetStateField5Bits2To3Far
+	.global Engine_WorkSetValuesIfNonNegative
+	.thumb_func
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	.global Engine_MapWaitWorkValuesBelow256
+	.thumb_func
+Engine_MapWaitWorkValuesBelow256:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
 	.global Engine_MessageShowCentered
 	.thumb_func
@@ -122,8 +128,14 @@ Engine_ActorGet:
 	.thumb_func
 ObjectMotion_SetSpeedParameters:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Engine_ActorEnableActionCallback
+	.thumb_func
+Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	.global ObjectMotion_OffsetPositionAndResetMotion
 	.thumb_func
@@ -173,6 +185,9 @@ Engine_ActorFaceDirection:
 	.thumb_func
 Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
+	.global Engine_ActorShowEmote
+	.thumb_func
+Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
 	.global Engine_ActorSetAttachedEffect
 	.thumb_func
@@ -198,13 +213,25 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_CameraMoveToActor:
 	overlay_veneer Object_PlaceCurrentWithinCameraBoundsFar
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
 	.global BattleFx_SetPhaseRequest
 	.thumb_func
 BattleFx_SetPhaseRequest:
 	overlay_veneer BattleFx_SetPhaseRequestFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
+	.global Engine_EventOpenScreen
+	.thumb_func
+Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
+	.global Engine_EventWaitForScreen
+	.thumb_func
+Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.global Engine_ItemShowFound
 	.thumb_func

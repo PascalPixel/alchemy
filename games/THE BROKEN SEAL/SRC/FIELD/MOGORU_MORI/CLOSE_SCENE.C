@@ -1,8 +1,5 @@
-/* Draft of resource_39f 0x0200a2c0 (MogoruMori_RunClosingChoreography), from
- * the former games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/CLOSE_SCENE.C.
- * Remaining difference: none in its bytes, but the ROM loads scene number 0x46 from the literal pool as a link-time value, and no source defines it.
- * The listing keeps these rows. */
 #include "TYPES.H"
+#include "SCENE_IDS.H"
 
 u8 *Engine_ActorGet();
 void Engine_EventBegin();
@@ -12,7 +9,7 @@ void Engine_ActorSetPosition();
 void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
-void Engine_EventWait();
+void Battle_WaitMode0();
 void Engine_WorkSetValuesIfNonNegative();
 void MogoruMori_SpawnPuffRing();
 void Engine_ActorStartRepeatedMotion();
@@ -22,14 +19,12 @@ void FieldScene_RunScene39f_02000d90();
 s32 Engine_MathCos();
 s32 Engine_MathSin();
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, s32 params);
-void Engine_AudioPlayCue();
+void Audio_PlayCue();
 void Engine_ActorRunRepeatedMotion();
-void Engine_GameStateSetReturn();
-void Engine_Import0808a250();
+void Party_SetFields1ceAnd1d0();
+void BattleFx_SetWeightedResult();
 void Engine_EventEnd();
 
-
-extern u8 Data_00000046[];
 extern u8 Data_02000240[];
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -88,25 +83,25 @@ void MogoruMori_RunClosingChoreography(void)
     Call2(Engine_CameraSetSpeed, 0x8000, 0x1000);
     Call4(Engine_CameraMoveTo, 0x880000, -1, 0x1880000, 1);
     Engine_CameraWaitForMove();
-    Engine_EventWait(60);
+    Battle_WaitMode0(60);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
     MogoruMori_SpawnPuffRing(18);
     Engine_ActorStartRepeatedMotion(0, 2);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
-    Engine_EventWait(40);
+    Battle_WaitMode0(40);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
     MogoruMori_SpawnPuffRing(18);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
-    Engine_EventWait(40);
+    Battle_WaitMode0(40);
     MogoruMori_SpawnPuffRing(18);
     *(s32 *)(actor + 24) = 0x13333;
     *(s32 *)(actor + 28) = 0x13333;
     Engine_ActorSetChildValue(18, 5);
     FieldScene_RunScene39f_02000d90(18, 136, 0x188, 0xf0000);
-    Engine_EventWait(15);
+    Battle_WaitMode0(15);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
     for (i = 0; i <= 16; i++) {
         v = &dir;
@@ -122,24 +117,24 @@ void MogoruMori_RunClosingChoreography(void)
         v->x = x;
         Effect_Spawn(*(s32 *)(actor + 8), 0, *(s32 *)(actor + 16), x, v->y, z, 1, zero);
     }
-    Engine_EventWait(30);
+    Battle_WaitMode0(30);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
-    Engine_AudioPlayCue(148);
+    Audio_PlayCue(148);
     Engine_ActorRunRepeatedMotion(18, 2);
-    Engine_EventWait(20);
+    Battle_WaitMode0(20);
     {
         s32 px = *(s16 *)(Engine_ActorGet(0) + 10);
 
         FieldScene_RunScene39f_02000d90(18, px, *(s16 *)(Engine_ActorGet(0) + 18) - 16, 0x80000);
     }
-    Engine_EventWait(10);
+    Battle_WaitMode0(10);
     /* FAKEMATCH: an empty do-while here moves px into r1 after the
      * other arguments of the call above. */
     do { } while (0);
     base3_2000240 = (s32)Data_02000240;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
-    Engine_GameStateSetReturn((s32)Data_00000046, 15);
-    Engine_Import0808a250(53, 1);
+    Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
+    BattleFx_SetWeightedResult(53, 1);
     Engine_EventEnd();
 }

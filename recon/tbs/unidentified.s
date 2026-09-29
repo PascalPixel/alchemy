@@ -1102,10 +1102,6 @@ Title_IntroTilesB:
 	.incbin "baserom.gba", 0x003e78c3, 0x00000001
 	.section .unidentified.083e7bbf,"a"
 	.incbin "baserom.gba", 0x003e7bbf, 0x00000001
-	.section .unidentified.083e7f60,"a"
-	.global BattleFx_WhirlwindSheet
-BattleFx_WhirlwindSheet:
-	.incbin "baserom.gba", 0x003e7f60, 0x000016b0
 	.section .unidentified.083e9d6d,"a"
 	.incbin "baserom.gba", 0x003e9d6d, 0x00000003
 	.section .unidentified.083eab3b,"a"

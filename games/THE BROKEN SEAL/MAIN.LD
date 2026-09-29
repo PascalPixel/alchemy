@@ -2172,7 +2172,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/COMET_B.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.083e7bbf)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/COMET_C.o"(.rodata)
-        "*/recon/tbs/unidentified.o"(.unidentified.083e7f60)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/WHIRLWIND.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/BATTLE_FX/GREEN_PILLAR.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.083e9d6d)
         "*/games/COMMON/SRC/GRAPHICS/BATTLE_FX/VINE.o"(.rodata)

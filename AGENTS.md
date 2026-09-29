@@ -53,9 +53,10 @@ in assets. Banning forms only moves the answer; hold these invariants instead.
    definition or a label, and layout is the linker scripts' object order. No
    equate, alias, `#define` or table gives a name an address, except
    Camelot's own: ROM code calls the resident IWRAM routines through fixed
-   entry addresses or offsets from the bank's first routine, listed once in
-   each game's `IWRAM_CALL.H` and checked by the build against where the
-   linker placed each routine.
+   entry addresses or offsets from the bank's first routine, and reaches
+   fixed RAM buffers its code addressed as constants, each listed once in a
+   game header beside its linked name and checked by the build against
+   where the linker placed it.
 3. **The map counts.** DONE is pret's calcrom over the linker maps of
    byte-identical builds: the code the linker places from `games/`. `games/`
    holds only real source: C from an approved compiler, or proven library,
@@ -153,3 +154,12 @@ a verified build.
   IWRAM routine's address before the arguments, which only a call through a
   fixed address reproduces; a label compiles to a direct `bl` and `long_call`
   loads the address last.
+- 2026-09-29: compiler-steering idioms are fakes and carry a FAKEMATCH tag:
+  inline call or value wrappers, volatile on plain RAM, forced temporaries,
+  dead code and jumps into blocks, unless rewritten as plain C.
+- 2026-09-29: fixed RAM buffers that Camelot's code addressed as constants
+  are checked entries, as the IWRAM routines are.
+- 2026-09-29: gates: overlay code never branches straight into the main
+  image; scene and resource ids come only from their tables and are used
+  whole; one name per place; sound sources may include the files the build
+  makes from MIDI and WAV.

@@ -37,6 +37,10 @@
  * Canonical H1 restored: 964/964, 143 halfwords, 99 edits; all witnesses
  * remain committed separately. Retain the semantic/interface corrections.
  * Three hypotheses complete. No credit and no further cursor/order sweeps.
+ * H4: EffectStep-typed motes (one array, x/y as high halves, z as a phase)
+ * and a returning-void word copier: 968/964 bytes, 135 aligned edits, worse
+ * than H1; the motes also need a linker-placed name for their EWRAM buffer
+ * and an Iwram_CopyWords entry. H1 stays canonical.
  */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"

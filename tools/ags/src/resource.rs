@@ -6,6 +6,9 @@
 //! - `.gbapal`: the image's palette as little-endian BGR555.
 //! - `.bitmap`: the pixels row by row, one palette index per byte.
 //! - `.4bpp`, `.8bpp`: the pixels as GBA tiles, row-major.
+//! - `.glyphs`: 1-bit glyphs. The image is one glyph, 8 pixels, wide with its
+//!   glyphs stacked; each row is a byte, its leftmost pixel in bit 0 and any
+//!   non-zero index inked.
 //! - `.icons`: an icon bank. The image is one 32x32 icon wide with its icons
 //!   stacked. The bank is a table of each icon's halfword offset, then each
 //!   icon as 8-bit tiles in the packer's palette LZ without its tag,
@@ -325,6 +328,15 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
         "frames" => sprite_bank(built, &indices(&image), width, height)?,
         "icons" => icon_bank(built, &indices(&image), width, height)?,
+        "glyphs" if width == 8 => indices(&image)
+            .chunks(8)
+            .map(|row| {
+                row.iter()
+                    .enumerate()
+                    .fold(0u8, |byte, (x, &pixel)| byte | u8::from(pixel != 0) << x)
+            })
+            .collect(),
+        "glyphs" => return Err(format!("{built}: glyphs are 8 pixels wide, stacked")),
         other => return Err(format!("{built}: unknown form .{other}")),
     })
 }
@@ -387,6 +399,13 @@ mod tests {
         })
         .unwrap();
         assert_eq!(joined, [1, 2, 3]);
+        // 1-bit glyph rows: the leftmost pixel in bit 0.
+        let mut rows = vec![0u8; 16];
+        rows[0] = 1;
+        rows[15] = 2;
+        let glyphs = png_from_bitmap(&rows, &[0, 0, 0xff, 0x7f, 0x1f, 0], 8).unwrap();
+        assert_eq!(build_file("G.glyphs", &glyphs).unwrap(), [1, 0x80]);
+        assert!(build_file("G.glyphs", &png_from_bitmap(&[0; 32], &[0, 0], 16).unwrap()).is_err());
         // A table packs each record's fields in their columns' types.
         assert_eq!(input_name("M/PATH.table.lz").unwrap(), "M/PATH.TSV");
         assert_eq!(

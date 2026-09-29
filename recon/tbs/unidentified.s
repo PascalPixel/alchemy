@@ -961,12 +961,7 @@ Character_DescriptorTable:
 	.global Resource_BuildStamp
 Resource_BuildStamp:
 	.incbin "baserom.gba", 0x00320fa0, 0x00000010
-	.global Ui_WindowTiles
-Ui_WindowTiles:
-	.incbin "baserom.gba", 0x00320fb0, 0x00002000
-	.global UiText_GlyphData
-UiText_GlyphData:
-	.incbin "baserom.gba", 0x00322fb0, 0x000008c0
+	.section .unidentified.08323870,"a"
 	.global Title_IntroGraphicsA
 Title_IntroGraphicsA:
 	.incbin "baserom.gba", 0x00323870, 0x00001178

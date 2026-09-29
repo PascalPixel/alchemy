@@ -35,7 +35,7 @@ Resource_DirectoryTable:
 	resource , FarCall_ResourceTable
 	resource , FarCall_ResourceTable
 	resource WindowTiles, Ui_WindowTiles
-	resource , UiText_GlyphData
+	resource , UiText_SmallFont
 	resource , Title_IntroGraphicsA
 	resource , Title_IntroGraphicsB
 	resource , Title_IntroGraphicsC

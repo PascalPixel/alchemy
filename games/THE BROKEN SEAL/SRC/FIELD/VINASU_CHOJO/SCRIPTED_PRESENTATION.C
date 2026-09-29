@@ -1,5 +1,6 @@
 /* Bracketed scenes, the pair's defeat and the multi-actor presentation. */
 #include "CHOJO.H"
+extern u8 MsgVinasuPairDefeated[];
 
 void FieldScene_RunThreeStepsInBracket(void)
 {
@@ -148,9 +149,6 @@ void FieldScene_RunScene3c9_02003924(void)
     Event_RequestExit(2);
 }
 
-enum {
-    MSG_PAIR_DEFEATED = 0x2809
-};
 
 void SceneEffect_SpawnParticlesAboveActor(void);
 
@@ -217,7 +215,7 @@ void FieldScene_RunPairDefeat(void)
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
     Event_Wait(10);
-    Event_SetMessage(MSG_PAIR_DEFEATED);
+    Event_SetMessage((s32)MsgVinasuPairDefeated);
     VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
     Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 3);
     Event_Wait(20);

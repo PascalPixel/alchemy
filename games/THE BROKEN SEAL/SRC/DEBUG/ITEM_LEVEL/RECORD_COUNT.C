@@ -1,6 +1,7 @@
 /* The item and level debug room: its scene tables, actor 13's steps and the
  * record counts it adjusts. */
 #include "LEVEL.H"
+extern u8 MsgDebugWontStopYou[];
 
 u8 *ItemLevel_GetEntrances(void)
 {
@@ -24,7 +25,7 @@ u8 *ItemLevel_GetPlacements(void)
 
 void FieldScene_RunActor13Mode102Step(void)
 {
-    Call1(Engine_EventSetMessage, 0x23cd);
+    Call1(Engine_EventSetMessage, (s32)MsgDebugWontStopYou);
     Call3(Engine_ActorShowEmote, 13, 0x102, 0);
     Engine_EventShowMessage(13, 0);
 }
@@ -32,7 +33,7 @@ void FieldScene_RunActor13Mode102Step(void)
 void FieldScene_RunActor13Mode105Step(void)
 {
     Engine_ActorShowEmote(13, 0x105, 0);
-    Engine_EventSetMessage(0x23cd);
+    Engine_EventSetMessage((s32)MsgDebugWontStopYou);
     Engine_EventShowMessage(13, 0);
 }
 

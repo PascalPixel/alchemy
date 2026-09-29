@@ -1,9 +1,9 @@
-/* Draft of resource_3c7 0x02008eec..0x0200904c (352 bytes with pool),
- * FieldScene_RunSecondaryScript; the listing keeps the rows. Remaining
- * difference: the reference loads message 0x2880 from its literal pool as a
- * link-time value; the integer message is scheduled differently (348
- * bytes). */
+/* Draft of resource_3c7 0x02008eec (FieldScene_RunSecondaryScript): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgRariberoTellOthers). The listing
+ * keeps these rows until the draft is adopted. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/HEYA.H"
+extern u8 MsgRariberoTellOthers[];
 
 /*
  * Cutscene script at 0x02000eec.  The owner runs to 0x0200103a and also owns
@@ -20,7 +20,7 @@ void FieldScene_RunSecondaryScript(void)
     void Event_Wait(s32);
     void Event_Wait(s32);
 
-    Event_SetMessage(0x2880);
+    Event_SetMessage((s32)MsgRariberoTellOthers);
     Event_Wait(20);
 
     Actor_RunRepeatedMotion(11, 2);

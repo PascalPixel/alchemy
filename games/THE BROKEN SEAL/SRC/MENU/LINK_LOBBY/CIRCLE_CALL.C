@@ -1,5 +1,6 @@
 /* The link lobby: the attendant's call into the circle. */
 #include "TYPES.H"
+extern u8 MsgLobbyWantParticipatePlease[];
 
 s32 Engine_GameFlagIsSet(s32 flag);
 void Engine_GameFlagSet(s32 flag);
@@ -25,7 +26,7 @@ static __inline__ void Call1(void (*f)(s32), s32 a0)
 }
 
 /* Unless flag 0x203 is set, has the attendant call "please step into the
- * circle!" (message 10542) once every 300 frames: flag 0x200 marks a call
+ * circle!" (MsgLobbyWantParticipatePlease) once every 300 frames: flag 0x200 marks a call
  * already made in the current period. */
 s32 LinkLobby_CallIntoCircle(void)
 {
@@ -44,7 +45,7 @@ s32 LinkLobby_CallIntoCircle(void)
         return set;
     }
     Engine_EventBegin();
-    Engine_EventSetMessage(10542);
+    Engine_EventSetMessage((s32)MsgLobbyWantParticipatePlease);
     Engine_EventOpenMessage(8, 0);
     Engine_TaskWait(5);
     Call1(Engine_GameFlagSet, 0x200);

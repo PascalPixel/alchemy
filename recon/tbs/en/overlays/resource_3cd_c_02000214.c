@@ -30,8 +30,8 @@
 
 #include "ITEM.H"
 
-extern u8 Value_00000182;
-extern u8 Value_00000075;
+extern u8 MsgItemName[];
+extern u8 MsgItemPlainName[];
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
 
 extern u8 gDebugItemPrompt[];
@@ -84,8 +84,8 @@ void DebugMenu_SelectItem(void)
                 UiText_DrawStringInWindowFar(gDebugItemCapacityLabel, window, 0, 32);
                 index = item & 0x1ff;
                 Engine_DebugGetItem(index);
-                UiText_DrawCharacterAtOffsetFar(index + (s32)&Value_00000182, window, 120, 0);
-                UiText_DrawCharacterAtOffsetFar(index + (s32)&Value_00000075, window, 0, 16);
+                UiText_DrawCharacterAtOffsetFar(index + (s32)MsgItemName, window, 120, 0);
+                UiText_DrawCharacterAtOffsetFar(index + (s32)MsgItemPlainName, window, 0, 16);
                 Engine_DebugRedrawWindow(details);
                 Engine_DebugDrawItemDetails(details, item);
             } else {

@@ -10731,19 +10731,19 @@ msgctxt "message"
 msgid "02680"
 msgstr "Niederlage - {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyChooseParameters"
 msgid "02681"
 msgstr "Wähle deine Einstellungen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyTease"
 msgid "02682"
 msgstr "Was soll das? Veräppelung?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyNoParameterAsk"
 msgid "02683"
 msgstr "Diese Einstellung gibt es nicht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbySettingsMadeRest"
 msgid "02684"
 msgstr "Die Einstellungen sind getroffen.{end_wait}"
 
@@ -12115,7 +12115,7 @@ msgctxt "message"
 msgid "03026"
 msgstr "Du findest robuste Ausrüstung!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugRaiseEveryonesLevel"
 msgid "03027"
 msgstr "Erhöht Level von jedem."
 
@@ -36547,7 +36547,7 @@ msgctxt "MsgKaragoruDoYouWishCrossInto"
 msgid "09134"
 msgstr "Möchtet ihr die Brücke{line_break}nach Gondowan überqueren?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDebugWontStopYou"
 msgid "09135"
 msgstr "Ich werde euch nicht{line_break}aufhalten, aber ich würde{line_break}nicht gehen, wenn ich{page_break}dort nicht etwas Wichtiges{line_break}zu erledigen hätte.{page_break}Viel eher würde ich nach{line_break}Tolbi gehen und mir Colosso{line_break}ansehen!{end_wait}"
 
@@ -38511,7 +38511,7 @@ msgctxt "message"
 msgid "09625"
 msgstr "Dies ist Suhalla.{page_break}Versucht nicht, die Wüste{line_break}zu durchqueren. Die Sand-{line_break}stürme sind zu stark.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaTryingGetLalivero"
 msgid "09626"
 msgstr "Versucht ihr, nach{line_break}Lalivero zu kommen?{end_now}"
 
@@ -38603,7 +38603,7 @@ msgctxt "message"
 msgid "09648"
 msgstr "Gut, dass man nicht leicht{line_break}nach Lalivero gelangen{line_break}kann.{page_break}Wenn es anders wäre,{line_break}würde Suhalla völlig{line_break}bedeutungslos sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaOursOnlyStore"
 msgid "09649"
 msgstr "Wir betreiben den{line_break}einzigen Laden in{line_break}Suhalla.{page_break}Dies ist nur ein kleines{line_break}Dorf, daher ist ein{line_break}Laden völlig ausreichend.{end_wait}"
 
@@ -38611,7 +38611,7 @@ msgctxt "message"
 msgid "09650"
 msgstr "In einem so kleinen{line_break}Dorf können mehrere{line_break}Läden nicht überleben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaSighNothinMaybe"
 msgid "09651"
 msgstr "Seufz, nichts zu tun...{page_break}Vielleicht geht das Geschäft{line_break}wieder besser, nachdem das{line_break}Fest in Tolbi vorbei ist.{end_wait}"
 
@@ -38627,7 +38627,7 @@ msgctxt "message"
 msgid "09654"
 msgstr "Aus irgendeinem Grund landet{line_break}jeder, der in die Sandstürme{line_break}gerät, wieder hier.{page_break}Danach geben es alle auf,{line_break}die Wüste durchqueren zu{line_break}wollen und suchen Zuflucht{page_break}in Suhalla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaGetSickThinkingAboutLalivero"
 msgid "09655"
 msgstr "Die Vorstellung, dass{line_break}Lalivero unter die Herr-{line_break}schaft von Tolbi geraten{page_break}könnte, macht mich regel-{line_break}recht krank!{end_wait}"
 
@@ -38655,7 +38655,7 @@ msgctxt "message"
 msgid "09661"
 msgstr "Die Leute aus Angara sind{line_break}an dem Sandsturm schuld!{page_break}Wenn ihr dieses Ding in{line_break}Lalivero nicht erbaut{line_break}hättet,{page_break}wären die Geister jetzt{line_break}auch nicht erzürnt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaBroughtSuhallaSandstorm"
 msgid "09662"
 msgstr "Ihr wurdet durch einen{line_break}Sandsturm nach Suhalla{line_break}getragen, oder?{end_now}"
 
@@ -38715,7 +38715,7 @@ msgctxt "message"
 msgid "09676"
 msgstr "Ich bin erstaunt, dass{line_break}die Soldaten diese{line_break}Verwundungen überlebt haben.{page_break}Sie müssen in sehr guter{line_break}Verfassung gewesen sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaIodem"
 msgid "09677"
 msgstr "Iodem...{end_wait}"
 
@@ -38911,7 +38911,7 @@ msgctxt "message"
 msgid "09725"
 msgstr "\"Du, der du suchst...\"{line_break}Irgendetwas von den Augen der{line_break}Wahrheit... Wie war das doch?{page_break}\"Wenn den Schatz du{line_break}ergreifst, wird eine{line_break}Kreatur der Finsternis...\"{page_break}Oh, so ein Mist, ich habe es{line_break}vergessen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaArentSurprisedFind"
 msgid "09726"
 msgstr "Bist du nicht überrascht,{line_break}so wenig Geschäfte zu{line_break}finden?{end_now}"
 
@@ -38927,7 +38927,7 @@ msgctxt "message"
 msgid "09729"
 msgstr "Aufgrund der vielen Sand-{line_break}stürme hatten wir in{line_break}letzter Zeit viele Kunden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaBusyEverSince"
 msgid "09730"
 msgstr "Seit dieser Welle von{line_break}Sandstürmen sind wir{line_break}sehr beschäftigt.{page_break}Es ist zwar gut für uns,{line_break}aber die Reisenden tun{line_break}uns sehr Leid.{end_wait}"
 
@@ -38943,7 +38943,7 @@ msgctxt "message"
 msgid "09733"
 msgstr "Die Sandstürme sind so{line_break}schlimm, dass wir es{line_break}aufgegeben haben,{page_break}zu Babis Leuchtturm zu{line_break}gelangen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaSupposeFolkBlown"
 msgid "09734"
 msgstr "Liege ich richtig, dass ihr{line_break}auf eurem Weg zu Babis{line_break}Leuchtturm von einem{page_break}Sandsturm hierher geweht{line_break}worden seid?{end_now}"
 
@@ -38975,7 +38975,7 @@ msgctxt "message"
 msgid "09741"
 msgstr "Als uns der Wirbelsturm{line_break}durch die Luft schleuderte,{line_break}dachte ich, wir wären{page_break}verloren! Ich bin so froh,{line_break}noch am Leben zu sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaWonderWhySandstorms"
 msgid "09742"
 msgstr "Ich frage mich, woher all{line_break}diese Sandstürme kommen.{end_wait}"
 
@@ -38983,7 +38983,7 @@ msgctxt "message"
 msgid "09743"
 msgstr "Wenn ich daran denke, dass{line_break}mich die Sandstürme erwischen,{line_break}wenn ich die Stadt verlasse,{page_break}bekomme ich das kalte{line_break}Schaudern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaSandstorm"
 msgid "09744"
 msgstr "Ein Sandsturm!{end_wait}"
 
@@ -39003,7 +39003,7 @@ msgctxt "message"
 msgid "09748"
 msgstr "Wenn wir dieser Wüste ent-{line_break}kommen wollen, müssen wir{line_break}vorsichtig voranschreiten.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaNowhereFound"
 msgid "09749"
 msgstr "{actor_name:7} ist nirgends{line_break}zu finden.{end_wait}"
 
@@ -39111,7 +39111,7 @@ msgctxt "message"
 msgid "09775"
 msgstr "Ihr dürft hier nur mit{line_break}gültigen Papieren durch.{page_break}Wenn ihr nicht über solche{line_break}verfügt, müsst ihr sofort{line_break}wieder umkehren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaWantGoBabi"
 msgid "09776"
 msgstr "Möchtet ihr zu Babis{line_break}Leuchtturm gehen?{end_now}"
 
@@ -39135,7 +39135,7 @@ msgctxt "message"
 msgid "09781"
 msgstr "Ich frage mich, ob das{line_break}diesjährige Colosso schon{line_break}vorüber ist.{page_break}Ich würde es gerne nächstes{line_break}Jahr sehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaMeaning"
 msgid "09782"
 msgstr "Was hat das zu bedeuten?{end_wait}"
 
@@ -39215,7 +39215,7 @@ msgctxt "message"
 msgid "09801"
 msgstr "Oooh!{pause_20_skippable} Es hat keinen Sinn.{line_break}Ich glaube nicht, dass ich{line_break}aufstehen kann.{page_break}Schickt Hilfe, nachdem ihr{line_break}Babis Leuchtturm erreicht{line_break}habt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSuharaPityColossoVictor"
 msgid "09802"
 msgstr "Was für ein Jammer, dass es{line_break}einem Sieger von Colosso so{line_break}ergehen muss.{page_break}Wenn ich sie das nächste Mal{line_break}sehe, werde ich mit ihnen die{line_break}Rechnung begleichen!{end_wait}"
 
@@ -39235,7 +39235,7 @@ msgctxt "message"
 msgid "09806"
 msgstr "Klippen, Wüsten...{line_break}Gondowan ist ein leeres{line_break}Ödland!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldVenusLighthouseWasAttackedBy"
 msgid "09807"
 msgstr "Der Venus-Leuchtturm wurde...{pause_20_skippable}{line_break}von merkwürdigen... Leuten...{pause_20_skippable}{line_break}angegriffen...{end_wait}"
 
@@ -39247,7 +39247,7 @@ msgctxt "message"
 msgid "09809"
 msgstr "Oooh! Wie können diese{line_break}Barbaren nur harmlose{line_break}Gelehrte angreifen!?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuIveWaitedLongSeeIts"
 msgid "09810"
 msgstr "So lange habe ich gewartet,{line_break}um den Venus-Leuchtturm von{line_break}innen zu sehen, aber...{end_wait}"
 
@@ -39299,7 +39299,7 @@ msgctxt "message"
 msgid "09822"
 msgstr "Kraden ging hinein, kam{line_break}aber gleich wieder zurück{line_break}und sagte, dies sei nicht{page_break}der Eingang. Aber wir haben{line_break}den Leuchtturm untersucht{page_break}und keinen anderen Eingang{line_break}gefunden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuThoughtIdExploreAfterDoor"
 msgid "09823"
 msgstr "Ich dachte mir, ich sollte{line_break}etwas forschen, solange die{line_break}Tür offen steht.{page_break}Während ich diesen Raum{line_break}abgesucht habe, sind Kraden{line_break}und die anderen erschienen.{end_wait}"
 
@@ -39319,7 +39319,7 @@ msgctxt "message"
 msgid "09827"
 msgstr "Ich frage mich, welche{line_break}Geheimnisse diese Statue{line_break}in sich birgt.{page_break}Kraden sagte, die Statue{line_break}würde den rechten Weg{line_break}weisen. Aber wie?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuThereWordsCarvedIntoRelief"
 msgid "09828"
 msgstr "Hier sind Worte in den{line_break}Stein gemeiselt...{page_break}Willst du den Venus-Leucht-{line_break}turm erklimmen, suche zuerst{line_break}die Kraft im Inneren.{page_break}Um diese Kraft zu erlangen,{line_break}schaue durch die Augen der{line_break}Wahrheit.{page_break}Erst dann wird der Weg sich{line_break}öffnen.{page_break}Doch der Pfad, den ich weise,{line_break}ist nicht der Anfang.{page_break}Zum wahren Anfang führen{line_break}alte Pfade auf fremder{line_break}Erde.{end_wait}"
 
@@ -39343,7 +39343,7 @@ msgctxt "message"
 msgid "09833"
 msgstr "Der wahre Weg wird sich{line_break}nur jenem offenbaren, der{line_break}von reinem Herzen ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuStatueSpeaksRobinSoulYe"
 msgid "09834"
 msgstr "Die Statue spricht zu{line_break}{actor_name:1}{possessive_suffix} Seele...{page_break}Dir, der du es wünschst, den{line_break}Venus-Leuchtturm zu erklimmen,{line_break}werde ich den Wunsch gewähren.{page_break}Der lang verschlossene Pfad{line_break}soll nicht hier geöffnet{line_break}werden.{page_break}Der Pfad beginnt weit entfernt{line_break}von hier, auf dem Land eines{line_break}alten Volkes,{page_break}wo die Sonne zu deiner Linken{line_break}steht, wenn du auf den{line_break}Leuchtturm blickst.{end_wait}"
 
@@ -39379,7 +39379,7 @@ msgctxt "message"
 msgid "09842"
 msgstr "Violett erstrahle{line_break}südöstlich{line_break}von mir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuHmmmWeCantPushBlock"
 msgid "09843"
 msgstr "Hmm, wir können den Block{line_break}nicht weiter schieben,{line_break}als bis hierher.{end_wait}"
 
@@ -39387,11 +39387,11 @@ msgctxt "message"
 msgid "09844"
 msgstr "Es wäre großartig, wenn wir{line_break}den Block tragen und auf{line_break}den Boden fallen lassen{page_break}könnten. Ob uns unsere{line_break}Psynergy hier weiterhilft?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBabiSeemsLocked"
 msgid "09845"
 msgstr "Scheint versperrt zu{line_break}sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoMoreTolbisSoldiersLayDefeated"
 msgid "09846"
 msgstr "Noch mehr besiegte Soldaten{line_break}aus Tolbi...{end_wait}"
 
@@ -39499,7 +39499,7 @@ msgctxt "message"
 msgid "09872"
 msgstr "Sie waren furchtbar!{line_break}Wir hatten keine Chance...{line_break}Sie waren schrecklich!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoOhhTheyTookShebaHeaded"
 msgid "09873"
 msgstr "{text_effect:4}Ooh...{reset_text_style} Sie nahmen {actor_name:7}{line_break}und machten sich zu den{line_break}Ruinen auf.{end_wait}"
 
@@ -39707,7 +39707,7 @@ msgctxt "message"
 msgid "09924"
 msgstr "Dieses Paar hat {actor_name:7}{line_break}wie ihr eigenes Kind{line_break}aufgezogen.{page_break}Wenn jemand wie {actor_name:7}{line_break}entführt wird, betrifft{line_break}uns das alle!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoTakenHostageFaran"
 msgid "09925"
 msgstr "{actor_name:7} wurde als{line_break}Geisel genommen und Faran{line_break}hat sie verfolgt?{end_now}"
 
@@ -39723,7 +39723,7 @@ msgctxt "message"
 msgid "09928"
 msgstr "Die Laliveraner sind sehr{line_break}wortkarg. Man kann nicht{line_break}wirklich auf sie zählen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoWarriorRightPlease"
 msgid "09929"
 msgstr "Du bist doch ein Krieger.{line_break}Bitte, rette {actor_name:7}!{page_break}Wenn du sie rettest, gebe{line_break}ich dir Rabatt auf meine{line_break}Waren.{end_wait}"
 
@@ -39731,7 +39731,7 @@ msgctxt "message"
 msgid "09930"
 msgstr "Ich kann {actor_name:7} nicht{line_break}retten. Wenn ich nur mutiger{line_break}wäre, vielleicht dann...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoGuessPeopleAngara"
 msgid "09931"
 msgstr "Ich glaube, es waren{line_break}Leute aus Angara, die{line_break}{actor_name:7} entführten.{page_break}Jeder weiß, dass dieser{line_break}Kontinent voller Barbaren{line_break}und Meuchelmörder ist.{end_wait}"
 
@@ -39739,11 +39739,11 @@ msgctxt "message"
 msgid "09932"
 msgstr "Wenn {actor_name:7} etwas{line_break}zustößt,{page_break}werde ich nie wieder mit{line_break}jemandem aus Angara einen{line_break}Handel abschließen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoWantStayLet"
 msgid "09933"
 msgstr "Wenn ihr übernachten wollt,{line_break}habe ich nichts dagegen, weil{line_break}mir das Geld einbringt.{page_break}Aber wenn ihr Krieger seid,{line_break}solltet ihr {actor_name:7}{line_break}retten.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoImSorry"
 msgid "09934"
 msgstr "Oh, es tut mir Leid.{end_wait}"
 
@@ -39783,7 +39783,7 @@ msgctxt "message"
 msgid "09943"
 msgstr "Du sollst mich nicht von{line_break}der Arbeit abhalten!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoBabiIsntBuilding"
 msgid "09944"
 msgstr "Babi erbaut keinen Leucht-{line_break}turm, sondern einen Turm!{page_break}Vielleicht versucht er, sich{line_break}selbst mit den Göttern auf{line_break}eine Stufe zu stellen.{end_wait}"
 
@@ -39831,7 +39831,7 @@ msgctxt "message"
 msgid "09955"
 msgstr "Keiner von ihnen trug{line_break}Fackeln.{page_break}Das Feuer erschien{line_break}wie aus dem Nichts!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBabiYoureSureTheyWentThrough"
 msgid "09956"
 msgstr "Bist du sicher, dass{line_break}sie durch diese Tür{line_break}gegangen sind?{end_wait}"
 
@@ -40011,7 +40011,7 @@ msgctxt "message"
 msgid "10000"
 msgstr "Ich hoffe, sie können die{line_break}Tür öffnen, aber ich werde{line_break}es nicht glauben,{page_break}bevor ich es nicht mit{line_break}eigenen Augen sehe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBabiTheDoor"
 msgid "10001"
 msgstr "Die Tür!{end_wait}"
 
@@ -40167,11 +40167,11 @@ msgctxt "message"
 msgid "10039"
 msgstr "Ich will {actor_name:7}{possessive_suffix}{line_break}Rettung nicht im Wege{line_break}stehen!{page_break}Von hier an überlasse ich{line_break}alles diesen Kriegern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBabiTruthDoorOpenThoseSeeing"
 msgid "10040"
 msgstr "Die Wahrheit über diese Tür{line_break}ist offen für alle, die mit{line_break}dem Herzen sehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuLongLastTime"
 msgid "10041"
 msgstr "Endlich ist die Zeit ge-{line_break}kommen, das Licht des Venus-{line_break}Leuchtturms zu entzünden.{end_wait}"
 
@@ -40391,7 +40391,7 @@ msgctxt "message"
 msgid "10095"
 msgstr "Drück dich jetzt nicht!{line_break}Wenn wir zögern, entzünden{line_break}sie das Leuchtfeuer!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuRobin"
 msgid "10096"
 msgstr "{actor_name:1}...{end_wait}"
 
@@ -40567,7 +40567,7 @@ msgctxt "message"
 msgid "10139"
 msgstr "Mach schon, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuRobinHandedOverShamansRod"
 msgid "10140"
 msgstr "{actor_name:1} übergibt{line_break}den Schamanen-Stab.{end_wait}"
 
@@ -40651,7 +40651,7 @@ msgctxt "message"
 msgid "10160"
 msgstr "Seid bereit, den wahren{line_break}Schrecken zu erleben, den{page_break}euch ein meisterlicher{line_break}Feuer-Adept bereiten kann!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuBeatEm"
 msgid "10161"
 msgstr "Wir haben es geschafft!{line_break}Wir haben sie besiegt!{end_wait}"
 
@@ -40883,7 +40883,7 @@ msgctxt "message"
 msgid "10218"
 msgstr "Sie haben sich zu einem{line_break}Wesen verbunden!{page_break}Bleibt zurück!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuPairDefeated"
 msgid "10219"
 msgstr "Wie...{pause_20_skippable} Wie...{line_break}konnten wir verlieren?{end_wait}"
 
@@ -41011,7 +41011,7 @@ msgctxt "message"
 msgid "10250"
 msgstr "Das ist nicht alles! Von{line_break}unten kommt ein Licht!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuNoooo"
 msgid "10251"
 msgstr "Neeiin!{pause_20_skippable} {actor_name:7}!{end_wait}"
 
@@ -41031,7 +41031,7 @@ msgctxt "message"
 msgid "10255"
 msgstr "Sieh nach unten...{pause_20_skippable}{pause_20_skippable} Das{line_break}Fundament des Leuchtturms{line_break}stürzt zusammen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuWhyHappeningProtectVenusLighthouse"
 msgid "10256"
 msgstr "Warum geschieht das? Soll so{line_break}der Venus-Leuchtturm geschützt{line_break}werden?{end_wait}"
 
@@ -41163,11 +41163,11 @@ msgctxt "message"
 msgid "10288"
 msgstr "Also gut{pause_20_skippable}, lass uns gehen,{line_break}{actor_name:1}!{pause_20_skippable} Es ist Zeit,{line_break}{actor_name:6} zu finden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuDespiteLongTiring"
 msgid "10289"
 msgstr "Doch trotz einer langen{line_break}und ermüdenden Suche...{page_break}...konnte {actor_name:6} nicht{line_break}gefunden werden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoHowDidSearchForSheba"
 msgid "10290"
 msgstr "Zu welchem Ergebnis kam{line_break}die Suche nach {actor_name:7}?{end_wait}"
 
@@ -41235,7 +41235,7 @@ msgctxt "message"
 msgid "10306"
 msgstr "Nicht wahr,{line_break}{actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRariberoDoNotWorryAboutSheba"
 msgid "10307"
 msgstr "Keine Sorge wegen{line_break}{actor_name:7}. Ich hoffe nur,{line_break}ihr könnt {actor_name:6} finden.{end_wait}"
 
@@ -41359,7 +41359,7 @@ msgctxt "message"
 msgid "10337"
 msgstr "Vielen Dank! Ich hoffe,{line_break}eure Suche nach {actor_name:7}{line_break}wird von Erfolg gekrönt sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoTellOthers"
 msgid "10338"
 msgstr "Aber sagt mir, was ist mit{line_break}{actor_name:6} und den{line_break}anderen?{end_wait}"
 
@@ -41403,7 +41403,7 @@ msgctxt "message"
 msgid "10348"
 msgstr "Du wirst {actor_name:6}{line_break}finden. Ich weiß es...{line_break}Lebe wohl!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoPleaseWaitForMeOutside"
 msgid "10349"
 msgstr "Bitte wartet vor Farans{line_break}Haus auf mich. Ich würde{line_break}gerne mit euch sprechen.{end_wait}"
 
@@ -41415,7 +41415,7 @@ msgctxt "message"
 msgid "10351"
 msgstr "Ich muss Lord Babi ihr{line_break}Versprechen erklären,{line_break}bevor es zu spät ist!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoWhereGoingRobinIodemAsked"
 msgid "10352"
 msgstr "Wohin gehst du, {actor_name:1}?{line_break}Iodem bat uns, auf ihn zu{line_break}warten. Schon vergessen?{end_now}"
 
@@ -41507,7 +41507,7 @@ msgctxt "message"
 msgid "10374"
 msgstr "Ihr werdet ihn brauchen,{line_break}um Babis Schiff zu steuern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoBabiToldMeShipAncients"
 msgid "10375"
 msgstr "Babi sagte mir, das Schiff{line_break}des Alten Volkes ist ein{line_break}unglaubliches Gefährt.{end_wait}"
 
@@ -41551,7 +41551,7 @@ msgctxt "message"
 msgid "10385"
 msgstr "Es ist Zeit für unsere{line_break}Abreise.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoThoughtShipWeSawAt"
 msgid "10386"
 msgstr "Ich dachte, das Schiff,{line_break}welches wir in Idejima{line_break}gesehen haben,{page_break}wäre das von Babi{line_break}gewesen.{end_wait}"
 
@@ -41579,11 +41579,11 @@ msgctxt "message"
 msgid "10392"
 msgstr "Es wird uns sicherlich bei{line_break}unserer Suche nach{page_break}{actor_name:6} sehr hilfreich{line_break}sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoWhereGoingArentWeTaking"
 msgid "10393"
 msgstr "Wohin gehst du? Nehmen{line_break}wir denn nicht Babis Schiff?{page_break}Dann sollten wir zu der{line_break}Werft gehen, die der Soldat{line_break}in der Stadt bewacht hat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoWasToldLetInIf"
 msgid "10394"
 msgstr "Mir wurde gesagt, ich{line_break}solle euch einlassen,{line_break}wenn ihr kommen würdet.{page_break}Das Tor steht euch offen.{end_wait}"
 
@@ -41607,7 +41607,7 @@ msgctxt "message"
 msgid "10399"
 msgstr "Wo {actor_name:7} wohl sein{line_break}mag? Ich mache mir Sorgen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoCue28be"
 msgid "10400"
 msgstr "Verlasst ihr Lalivero?{end_now}"
 
@@ -41807,7 +41807,7 @@ msgctxt "message"
 msgid "10449"
 msgstr "Bitte benutzt das Schiff,{line_break}um Lemuria zu finden.{page_break}Das Land, nach dem Babi{line_break}gesucht hat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoWentOceanLook"
 msgid "10450"
 msgstr "Ich ging heute ans Meer,{line_break}um nach {actor_name:7} zu{line_break}suchen.{page_break}Aber die See war zu rau.{end_wait}"
 
@@ -41815,7 +41815,7 @@ msgctxt "message"
 msgid "10451"
 msgstr "Niemand könnte bei{line_break}diesem Seegang im{line_break}Meer überleben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoWantedSendShips"
 msgid "10452"
 msgstr "Wir wollten Schiffe aussenden,{line_break}um {actor_name:7} zu finden.{line_break}Aber das geht leider nicht.{page_break}Die Schiffe würden bei{line_break}diesem Seegang sofort{line_break}kentern.{end_wait}"
 
@@ -41823,7 +41823,7 @@ msgctxt "message"
 msgid "10453"
 msgstr "Wann wird sich der Ozean{line_break}wieder beruhigen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoImpossibleGoOcean"
 msgid "10454"
 msgstr "Momentan ist es unmöglich,{line_break}den Ozean zu befahren. Seid{line_break}vorsichtig, wenn ihr es tut.{page_break}Die Champa, die das Meer{line_break}beherrschen, sind äußerst{line_break}gefährlich. Hütet euch!{end_wait}"
 
@@ -41831,7 +41831,7 @@ msgctxt "message"
 msgid "10455"
 msgstr "Die Champa sind die{line_break}Bewohner einer Küstenstadt{line_break}in Angara.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoDidntKnowTime"
 msgid "10456"
 msgstr "Ich wusste es zwar nicht,{line_break}aber das laute Geräusch,{line_break}das ich vernommen habe,{page_break}war das Leuchtfeuer, das{line_break}entzündet worden ist. Die{line_break}Gäste waren alle erschrocken{page_break}und sind ins Freie gerannt.{end_wait}"
 
@@ -41855,7 +41855,7 @@ msgctxt "message"
 msgid "10461"
 msgstr "Was soll ich heute Abend{line_break}zu essen bereiten?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRariberoBabiLighthouseStruck"
 msgid "10462"
 msgstr "Babis Leuchtturm wurde{line_break}eingeebnet. Genau, wie{line_break}ich es vermutet habe.{end_wait}"
 
@@ -41863,7 +41863,7 @@ msgctxt "message"
 msgid "10463"
 msgstr "Zuerst wurde der Leuchtturm{line_break}zerstört und als Nächstes{line_break}wird Babi bestraft.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLooksLikeFinally"
 msgid "10464"
 msgstr "Es scheint, als wäre nun{line_break}die Zeit gekommen, Gondowan{line_break}zu verlassen.{end_wait}"
 
@@ -42027,35 +42027,35 @@ msgctxt "message"
 msgid "10504"
 msgstr "Was ist das?{line_break}Alex, was ist geschehen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyLinkDisconnected"
 msgid "10505"
 msgstr "Die Verbindung wurde{line_break}unterbrochen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyAwaitingOpponent"
 msgid "10506"
 msgstr "Wir erwarten deinen{line_break}Gegner...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLobbyNoteCantUse"
 msgid "10507"
 msgstr "Hinweis: Die Funktion{line_break}\"Schlafen\" kann hier{line_break}nicht ausgeführt werden!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbySavingBattleResults"
 msgid "10508"
 msgstr "Resultate werden gespeichert.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLobbyBattleResultsSaved"
 msgid "10509"
 msgstr "Resultate wurden gespeichert.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbySavingMonsterBattle"
 msgid "10510"
 msgstr "Monster-Kampf-Resultate{line_break}werden gespeichert.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLobbyMonsterBattleResults"
 msgid "10511"
 msgstr "Monster-Kampf-Resultate{line_break}wurden gespeichert.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyWantParticipatePlease"
 msgid "10512"
 msgstr "Wenn du teilnehmen willst,{line_break}tritt bitte in den Kreis.{end_wait}"
 
@@ -42063,7 +42063,7 @@ msgctxt "message"
 msgid "10513"
 msgstr "Willkommen in der Kampf-{line_break}Arena, wo sich Krieger,{line_break}die sich nach einem Kampf{page_break}sehnen, zusammenfinden!{line_break}Beweise dein Geschick{line_break}in Link-Kämpfen und{page_break}Monster-Kämpfen! Sprich{line_break}mit dem Mädchen hinter{line_break}dem Tresen, wenn du dich{page_break}der Herausforderung stellen{line_break}willst!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyPleaseSpeakWhen"
 msgid "10514"
 msgstr "Wenn du an einem Kampf{line_break}teilnehmen willst, wende{line_break}dich bitte an mich.{end_wait}"
 
@@ -42099,27 +42099,27 @@ msgctxt "message"
 msgid "10522"
 msgstr "Das Monster ist nun bereit.{page_break}Bitte beende deine{line_break}Vorbereitungen und tritt{line_break}in den Kreis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyWonNumberBattle"
 msgid "10523"
 msgstr "Gewonnene Kämpfe: {argument_signed_number}{page_break}Wenn du nochmals kämpfen{line_break}willst, wende dich bitte{line_break}an mich.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyWonNumberBattleTold"
 msgid "10524"
 msgstr "Gewonnene Kämpfe: {argument_signed_number}{page_break}Ich sagte doch, dass{line_break}unsere Monster nicht{line_break}schlecht sind!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyGoodLuck"
 msgid "10525"
 msgstr "Viel Glück!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyWonNumberBattleBroke"
 msgid "10526"
 msgstr "Gewonnene Kämpfe: {argument_signed_number}{line_break}Ein neuer Rekord!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyOpponentArrived"
 msgid "10527"
 msgstr "Dein Gegner ist{line_break}eingetroffen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyNotBadNextMonster"
 msgid "10528"
 msgstr "Nicht übel! Möchtest du{line_break}gegen das nächste Monster{line_break}antreten?{end_now}"
 
@@ -42183,7 +42183,7 @@ msgctxt "message"
 msgid "10543"
 msgstr "Unglaublich!!! Das nächste{line_break}Monster verfügt über Stärke{line_break}jenseits alles Bekannten!{page_break}Du wirst doch kämpfen,{line_break}oder?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLobbyCantWaitLets"
 msgid "10544"
 msgstr "Ich kann es kaum erwarten,{line_break}{actor_name:1}! Los, holen{line_break}wir sie uns!{end_wait}"
 
@@ -42203,7 +42203,7 @@ msgctxt "message"
 msgid "10548"
 msgstr "Wohin bringt ihr mich?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyGoingFightAlone"
 msgid "10549"
 msgstr "Hey, {actor_name:1}, willst{line_break}du etwa alleine kämpfen?{page_break}Du machst wohl Witze!{end_wait}"
 
@@ -42223,7 +42223,7 @@ msgctxt "message"
 msgid "10553"
 msgstr "Schnapp sie dir!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyTryingGetAway"
 msgid "10554"
 msgstr "Hey, versuchst du etwa,{line_break}dich zu drücken?{page_break}Ich werde auch alleine{line_break}gewinnen. Pass nur auf!{end_wait}"
 
@@ -42303,7 +42303,7 @@ msgctxt "message"
 msgid "10573"
 msgstr "Wir haben gewonnen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyWonWithoutWell"
 msgid "10574"
 msgstr "Was? Du hast ohne mich{line_break}gewonnen?{page_break}Nun, du hättest sicher{line_break}eher gewonnen, wenn ich{line_break}dabei gewesen wäre!{end_wait}"
 
@@ -42323,7 +42323,7 @@ msgctxt "message"
 msgid "10578"
 msgstr "Du hast gewonnen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyNotFaultLost"
 msgid "10579"
 msgstr "{actor_name:1}, es ist nicht{line_break}meine Schuld, dass wir{line_break}verloren haben.{page_break}Wir müssen an unserem{line_break}Teamwork arbeiten.{page_break}Beim nächsten Mal müssen{line_break}wir besser sein!{end_wait}"
 
@@ -42343,7 +42343,7 @@ msgctxt "message"
 msgid "10583"
 msgstr "Wir haben verloren!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyKnewLostBecause"
 msgid "10584"
 msgstr "Ich wusste es! Du hast{line_break}nur verloren, weil du{line_break}mich nicht dabei hattest!{end_wait}"
 
@@ -42363,7 +42363,7 @@ msgctxt "message"
 msgid "10588"
 msgstr "Oh, nein!{line_break}Wir haben verloren!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyLooksLikeFirst"
 msgid "10589"
 msgstr "Sieht so aus, als wärst{line_break}du zum ersten Mal hier.{page_break}Ich werde dir erklären,{line_break}wie die Kämpfe hier{line_break}ablaufen.{end_wait}"
 
@@ -42371,7 +42371,7 @@ msgctxt "message"
 msgid "10590"
 msgstr "Gewonnene Link-Kämpfe:{line_break}{argument_signed_number}{line_break}Nur weiter so!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyLooksLikeFirstTime"
 msgid "10591"
 msgstr "Sieht so aus, als wärst{line_break}du zum ersten Mal hier.{page_break}Kommst du später wieder{line_break}zu mir, kann ich dir deine{line_break}Kampfergebnisse nennen.{end_wait}"
 
@@ -42379,7 +42379,7 @@ msgctxt "message"
 msgid "10592"
 msgstr "Gewonnene Link-Kämpfe:{line_break}{argument_signed_number}{page_break}Schau dir die Tafel an{line_break}der Wand an, um die besten{line_break}Ergebnisse einzusehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyThreeAlliesFight"
 msgid "10593"
 msgstr "Bis zu drei Kämpfer{line_break}können in einem Link-{line_break}Kampf antreten.{page_break}Die Resultate hängen stark{line_break}davon ab, wen du mit welchen{line_break}Dschinns verbündest.{end_wait}"
 
@@ -42391,7 +42391,7 @@ msgctxt "message"
 msgid "10595"
 msgstr "So ein Pech! Manchmal hängt{line_break}der Sieg auch vom Glück ab.{line_break}Sei nicht zu enttäuscht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyBattleArenaOld"
 msgid "10596"
 msgstr "Ist das die Kampf-Arena,{line_break}von der der alte Mann{line_break}gesprochen hat?{page_break}Ich dachte, das sei nur{line_break}eine Legende!{page_break}Oder ist es vielleicht{line_break}der Traum des alten{line_break}Mannes?{end_wait}"
 
@@ -42415,31 +42415,31 @@ msgctxt "message"
 msgid "10601"
 msgstr "Ihr müsst mehr trainieren.{page_break}Kämpft mit euren Herzen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyTellTotalWins"
 msgid "10602"
 msgstr "Ich werde euch eure{line_break}Gesamt-Ergebnisse{line_break}mitteilen,{page_break}wenn ihr das Link-Finale{line_break}bestanden habt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyTellConsecutiveWins"
 msgid "10603"
 msgstr "Wenn ihr das Finale{line_break}überstanden habt, sage{line_break}ich euch,{page_break}wie oft ihr in Folge{line_break}gewonnen habt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyWonNumberConsecutive"
 msgid "10604"
 msgstr "Gewinne in Folge{line_break}bei Monster-Kämpfen:{line_break}{argument_signed_number}{page_break}Macht weiter so!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyCantWaitSee"
 msgid "10605"
 msgstr "Ich kann es kaum erwarten{line_break}zu sehen, wie viele{line_break}Monster-Kämpfe ihr{page_break}gewinnen werdet! Ich{line_break}rechne mit eurem Sieg!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyThreeAlliesFightLinked"
 msgid "10606"
 msgstr "Bis zu drei Kämpfer{line_break}können im Finale der{line_break}Link-Kämpfe antreten.{page_break}Du hast vier Leute im{line_break}Team, also muss der{line_break}rechts außen aussetzen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyThreeAlliesFightLinkedFinals"
 msgid "10607"
 msgstr "Bis zu drei Kämpfer{line_break}können im Finale der{line_break}Link-Kämpfe antreten.{page_break}Also darf dein momentanes{line_break}Team teilnehmen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyChangeOrderParty"
 msgid "10608"
 msgstr "Du kannst die Reihenfolge{line_break}deiner Mitglieder im Status-{line_break}Bildschirm verändern.{page_break}Das wusstest du sicher{line_break}schon, oder?{end_wait}"
 

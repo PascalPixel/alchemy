@@ -18,11 +18,9 @@
 //!   each frame's offset in that order, ending 0, then the back frames and
 //!   then the front frames, each zero-skip coded.
 //!
-//! Data forms read the identified table or tilemap `STEM.BIN`:
+//! A data form reads the identified table `STEM.BIN`:
 //!
 //! - `.bin`: the table's bytes as they are.
-//! - `.delta0`, `.delta1`, `.delta2`: the tilemap's 16-bit entries
-//!   delta-coded in that mode (Psynergy's tilemap delta).
 //!
 //! A table reads its text `STEM.TSV`:
 //!
@@ -30,6 +28,13 @@
 //!   column and its type, such as `x:s16\ty:s16` (`u8`, `s8`, `u16`, `s16`,
 //!   `u32` or `s32`); each further line is a record of decimal or `0x` hex
 //!   values in those columns. Only the last record may stop short.
+//! - `.delta0`, `.delta1`, `.delta2`: the table's bytes as 16-bit tilemap
+//!   entries, delta-coded in that mode (Psynergy's tilemap delta).
+//! - `.script`: a halfword command script, one command per line, its values
+//!   decimal or `0x` hex: `channel N` (0xfd00 | N), `jump N` (0xfe00 | N),
+//!   `stop` (0xfeff), `end` (0xffff), and the commands `frame SOURCE COUNT
+//!   DESTINATION DELAY`, `control BLDCNT` and `level VALUE DELAY`, written
+//!   as their halfwords.
 //!
 //! A font reads two inputs, `STEM.PNG` and its table `STEM.TSV`:
 //!
@@ -83,7 +88,7 @@ pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 fn data_form(form: &str) -> bool {
     matches!(
         form,
-        "bin" | "delta0" | "delta1" | "delta2" | "parts" | "table" | "icons4" | "blocks"
+        "bin" | "delta0" | "delta1" | "delta2" | "parts" | "table" | "icons4" | "blocks" | "script"
     )
 }
 
@@ -96,8 +101,8 @@ pub fn input_name(built: &str) -> Result<String, String> {
         .ok_or_else(|| format!("{built} names no form"))?;
     let form = rest.split('.').next().unwrap_or_default();
     let extension = match form {
-        "parts" | "table" | "icons4" | "blocks" => "TSV",
-        form if data_form(form) => "BIN",
+        "bin" => "BIN",
+        form if data_form(form) => "TSV",
         _ => "PNG",
     };
     Ok(if directory.is_empty() {
@@ -133,7 +138,8 @@ pub fn build_file_with(
             "table" => table(built, input)?,
             "icons4" => icon4_bank(built, input, sibling)?,
             "blocks" => block_map(built, input)?,
-            _ => encode_tilemap_delta(input, form.as_bytes()[5] - b'0')
+            "script" => script(built, input)?,
+            _ => encode_tilemap_delta(&table(built, input)?, form.as_bytes()[5] - b'0')
                 .map_err(|error| format!("{built}: {}", error.0))?,
         }
     } else if form == "font" {
@@ -230,6 +236,46 @@ fn table(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
         }
     }
     Ok(output)
+}
+
+/// A halfword command script, one command per line.
+fn script(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
+    let text = std::str::from_utf8(text).map_err(|_| format!("{built}: script is not text"))?;
+    let mut words: Vec<u16> = Vec::new();
+    for line in text.lines().filter(|line| !line.trim().is_empty()) {
+        let mut fields = line.split('\t').map(str::trim);
+        let command = fields.next().unwrap_or_default();
+        let values = fields
+            .map(|field| {
+                match field.strip_prefix("0x") {
+                    Some(hex) => u16::from_str_radix(hex, 16),
+                    None => field.parse::<u16>(),
+                }
+                .map_err(|_| format!("{built}: {field:?} is not a halfword"))
+            })
+            .collect::<Result<Vec<u16>, _>>()?;
+        let (arity, prefix) = match command {
+            "channel" => (1, Some(0xfd00)),
+            "jump" => (1, Some(0xfe00)),
+            "stop" => (0, Some(0xfeff)),
+            "end" => (0, Some(0xffff)),
+            "frame" => (4, None),
+            "control" => (1, None),
+            "level" => (2, None),
+            _ => return Err(format!("{built}: unknown command {command:?}")),
+        };
+        if values.len() != arity {
+            return Err(format!("{built}: {line:?} needs {arity} values"));
+        }
+        match prefix {
+            Some(_) if arity == 1 && values[0] > 0xff => {
+                return Err(format!("{built}: {line:?} takes a byte"));
+            }
+            Some(base) => words.push(base | values.first().copied().unwrap_or(0)),
+            None => words.extend(values),
+        }
+    }
+    Ok(words.iter().flat_map(|word| word.to_le_bytes()).collect())
 }
 
 /// A bank of 16x16 blocks of words cut from a grid, each packed.
@@ -444,15 +490,35 @@ mod tests {
         assert!(input_name("GRAPHICS/FX/STAR").is_err());
         assert_eq!(
             input_name("MAP/M/CELLS.delta1.lz").unwrap(),
-            "MAP/M/CELLS.BIN"
+            "MAP/M/CELLS.TSV"
         );
+        assert_eq!(input_name("M/T.bin").unwrap(), "M/T.BIN");
         assert_eq!(build_file("T.bin", &[1, 2, 3]).unwrap(), [1, 2, 3]);
         assert_eq!(
-            build_file("T.delta2", &[1, 0, 3, 0]).unwrap(),
+            build_file("T.delta2", b"a:u16\tb:u16\n1\t3\n").unwrap(),
             [2, 1, 0, 2, 0]
         );
-        assert_eq!(build_file("T.delta1.lz", &[1, 0]).unwrap()[0] <= 1, true);
-        assert!(build_file("T.delta3", &[1, 0]).is_err());
+        assert_eq!(
+            build_file("T.delta1.lz", b"a:u16\n1\n").unwrap()[0] <= 1,
+            true
+        );
+        assert!(build_file("T.delta3", b"a:u16\n1\n").is_err());
+        // A script writes each command as its halfwords.
+        assert_eq!(
+            build_file(
+                "T.script",
+                b"channel\t0x84\nframe\t0x600\t2\t0x480\t0\njump\t0\nstop\nend\n"
+            )
+            .unwrap(),
+            [0x84, 0xfd, 0, 6, 2, 0, 0x80, 4, 0, 0, 0, 0xfe, 0xff, 0xfe, 0xff, 0xff]
+        );
+        assert_eq!(
+            build_file("T.script", b"control\t0x3f44\nlevel\t0x1008\t10\n").unwrap(),
+            [0x44, 0x3f, 8, 0x10, 10, 0]
+        );
+        assert!(build_file("T.script", b"frame\t1\t2\n").is_err());
+        assert!(build_file("T.script", b"jump\t0x100\n").is_err());
+        assert!(build_file("T.script", b"wait\t1\n").is_err());
         // A font: one 16x16 cell whose row 1 inks the leftmost and rightmost pixels.
         let mut pixels = vec![0u8; 256];
         pixels[16] = 1;

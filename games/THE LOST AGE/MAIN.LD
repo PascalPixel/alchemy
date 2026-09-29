@@ -1383,7 +1383,7 @@ SECTIONS
         "*/games/COMMON/SRC/SOUND/CGB_KEY_TO_FREQUENCY.o"(.text)
         "*/games/COMMON/SRC/SOUND/CGB_CHANNEL_MUTE.o"(.text)
         "*/games/COMMON/SRC/SOUND/CGB_NOTE_UPDATE_PAN_ENVELOPE.o"(.text)
-        "*/recon/tla/raw/081c2af4.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/SOUND/CGB_UPDATE_CHANNELS.o"(.text)
         "*/games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PITCH_AND_UPDATE_FREQUENCY.o"(.text)
         "*/games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_VOLUME.o"(.text)
         "*/games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PITCH.o"(.text)

@@ -143,7 +143,10 @@ Sound_CgbFrequencySteps:
 	.incbin "baserom.gba", 0x001c364c, 0x00000018
 	.global Sound_NoisePitchCodes
 Sound_NoisePitchCodes:
-	.incbin "baserom.gba", 0x001c3664, 0x0000004c
+	.incbin "baserom.gba", 0x001c3664, 0x0000003c
+	.global Sound_Cgb3LevelCodes
+Sound_Cgb3LevelCodes:
+	.incbin "baserom.gba", 0x001c36a0, 0x00000010
 	.global Sound_ClockLengths
 Sound_ClockLengths:
 	.incbin "baserom.gba", 0x001c36b0, 0x00000034

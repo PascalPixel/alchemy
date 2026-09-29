@@ -1,10 +1,10 @@
-/* Draft of resource_3a4 0x02009398 (FieldScene_RunScene3a4_02001398), built with
- * games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/YAMA.H.
- * Remaining difference: the ROM holds message 0x1953 in r5 across the calls and adds one to it, as a link-time value would; the constant 0x1953 is folded into two pool words instead.
- * The listing keeps these rows. */
+/* Draft of resource_3a4 0x02009398 (FieldScene_RunScene3a4_02001398): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgArutinWatchFallingRocks). The listing
+ * keeps these rows until the draft is adopted. */
 #include "YAMA.H"
+extern u8 MsgArutinWatchFallingRocks[];
 
-extern u8 Data_00001953[];
 
 void FieldScene_RunScene3a4_02001398(void)
 {
@@ -15,7 +15,7 @@ void FieldScene_RunScene3a4_02001398(void)
     s32 base5_1953;
 
     Event_Begin();
-    base5_1953 = (s32)Data_00001953;
+    base5_1953 = (s32)MsgArutinWatchFallingRocks;
     Value2(Engine_MessageShowCentered, base5_1953, 1);
     if (GameFlag_IsSet(0x908) != 0) {
     } else {

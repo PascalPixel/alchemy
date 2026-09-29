@@ -1,4 +1,8 @@
 #include "ARUTAMIRA.H"
+extern u8 MsgArutamiraDontTrustAnyone[];
+extern u8 MsgArutamiraKiddingHaventActually[];
+extern u8 MsgArutamiraSaidCouldntMove[];
+extern u8 MsgArutamiraSee[];
 
 /*
  * Every call site is written out separately and repeated calls must not be
@@ -14,7 +18,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Value1(Engine_AudioPlayCue, 24);
     Event_Begin();
     Value0(Battle_ResetEffectCounter); /* main:0808a460 */
-    Event_SetMessage(0x214f);
+    Event_SetMessage((s32)MsgArutamiraSee);
     Value2(Engine_ActorRunRepeatedMotion, 8, 2);
     Value1(Engine_EventWait, 20);
     Value2(Engine_EventShowMessage, 8, 0);
@@ -109,7 +113,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Value1(Engine_EventSetMessage, 0x2164);
+        Value1(Engine_EventSetMessage, (s32)MsgArutamiraKiddingHaventActually);
         Value1(Engine_EventWait, 20);
         Actor_ShowEmote(ACTOR_GERALD, 0x100, 40);
         Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
@@ -118,7 +122,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
         Value2(Engine_EventShowMessage, 1, 0);
     } else {
-        Value1(Engine_EventSetMessage, 0x2168);
+        Value1(Engine_EventSetMessage, (s32)MsgArutamiraDontTrustAnyone);
         Value1(Engine_EventWait, 10);
         Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
         Value3(Engine_ActorWalkByAndWait, 1, 0, -16);
@@ -129,7 +133,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         Value2(Engine_EventShowMessage, 1, 0);
     }
 
-    line = 0x2165;
+    line = (s32)MsgArutamiraSaidCouldntMove;
     Value1(Engine_EventSetMessage, line);
     Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
     Actor_SetSpeed(ACTOR_IVAN, 0x20000, 0x10000);

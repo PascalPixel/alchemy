@@ -1,5 +1,8 @@
 /* Draft of SceneEffect_SelectSlotValueAndPosition, resource_3af at 0x0200b5ec (split from FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.C).
- * Remaining difference: it loads constants through address-derived symbols (Value_/Data_0000/LinkedMessage_ names) that no link defines, so the overlay keeps its listing rows. */
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Func_0200790e_a,
+ * Func_02007a40, Func_02007a54, Func_02007a68, Func_02007a7c, Data_0200db70,
+ * ...). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -38,24 +41,6 @@
 #define SCENE_WORK (*(u8 **)0x03001ebc)
 #define SCENE_PHASE_02003f30 (*(s32 *)(SCENE_WORK + 0x1c0))
 
-enum MultiEncounterMessage {
-    MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
-    MSG_TOLD_WERE_LEAVING_SOON_SET = 0x1d36,
-    MSG_IF_WE_DONT_LEAVE_SOON = 0x1d37,
-    MSG_SOMEBODY_STOP_THEM = 0x1d6f,
-    MSG_THEY_CANT_PLANNING_MUTINY = 0x1d70,
-    MSG_DIDNT_DO_ANYTHING = 0x1d8d,
-    MSG_NOW_WE_HAVE_PROTECT_SHIP = 0x1e08,
-    MSG_HAVE_MAKE_THEM_PROMISE_HELP = 0x1e09,
-    MSG_PREPARATIONS_READY = 0x1e39,
-    MSG_AYE_CAPTAIN_SEA_MONSTERS = 0x1e41,
-    MSG_THANK_ROBIN_DID_GOOD_AGAINST = 0x1ee1,
-    MSG_CAN_SEE_LAND = 0x1ee5,
-    MSG_ROBIN_DONT_TALK_LIKE_SHOULDNT = 0x1f53,
-    MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR = 0x1f55,
-    MSG_SEE_YOURE_GOING_GO_FOR = 0x1f5b,
-    MSG_HOW_WAS_ROBIN_DID_EXPLORE = 0x1f69
-};
 
 union Slot {
     s32 w;
@@ -81,7 +66,6 @@ extern u8 Data_0200da54[];
 extern u8 Data_0200d958[];
 extern u8 Data_0200d778[];
 extern s32 Data_0200db08[];
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
 extern unsigned char Value_00001f00;
 extern u8 *Data_03001e70;
 extern u32 Data_0200db58;
@@ -306,14 +290,6 @@ static __inline__ void Call1_02003a0c(void (*f)(), s32 a0)
 
     f(a0);
 }
-
-#if defined(TBS_EDITION_JA)
-#define SCENE_STEP_VALUE 0x20ac
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define SCENE_STEP_VALUE 0x1f05
-#else
-#define SCENE_STEP_VALUE 0x1f23
-#endif
 
 /* EN draft. In the German, Spanish, French and Italian overlays this work
  * block sits 0x40 bytes later, and the German event-work pointer 16 bytes

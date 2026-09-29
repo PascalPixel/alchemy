@@ -1,16 +1,17 @@
-/* NONMATCHING: resource_3bd 0x0200b4bc, FieldScene_RunTwoArmSequenceWithValue217f,
- * from FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C (2026-09-28).
- * The game loads message 0x217f once from a literal and speaks base + 1 and
- * base + 2 from it; a plain constant folds each line into its own literal.
- * Remaining: the message base without an equate. */
+/* Draft of resource_3bd 0x0200b4bc
+ * (FieldScene_RunTwoArmSequenceWithValue217f): it matches the ROM byte for
+ * byte now that the message it loads from the literal pool has a catalogue
+ * name (MsgArutamiraForgetOrderRock). The listing keeps these rows until the
+ * draft is adopted. */
 #include "ARUTAMIRA.H"
+extern u8 MsgArutamiraForgetOrderRock[];
 
 void FieldScene_RunTwoArmSequenceWithValue217f(void)
 {
     s32 val;
 
     Event_Begin();
-    val = (s32)&Value_0000217f;
+    val = (s32)MsgArutamiraForgetOrderRock;
     Event_SetMessage(val);
     Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {

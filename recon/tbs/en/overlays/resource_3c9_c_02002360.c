@@ -7,6 +7,7 @@
  * improves source ownership, not exactness.
  * WALL: Scene and particle-loop stack/register lifetimes remain structural. */
 #include "FIELD_EFFECT.H"
+extern u8 MsgVinasuBeatEm[];
 
 s32 Scene_CallPairWith10();
 void State_ApplyArgMode0AndSet10();
@@ -187,7 +188,7 @@ void Scene_RunPairedActorEffectSequence(void)
     Engine_EventWait(80);
     Call3((void (*)())Engine_ActorJump, 1, 2, 20);
     Call2((void (*)())Scene_CallPairWith10, 1, 0x2000);
-    Call1(Engine_EventSetMessage, 0x27cf);
+    Call1(Engine_EventSetMessage, (s32)MsgVinasuBeatEm);
     Call1(State_ApplyArgMode0AndSet10, 0x1001);
     Call2((void (*)())Scene_CallPairWith10, 3, 0xa000);
     State_ApplyArgMode0AndSet10(3);

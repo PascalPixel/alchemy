@@ -1,5 +1,6 @@
 /* The link lobby: the scene teardown that clears the lobby flags. */
 #include "LOBBY.H"
+extern u8 MsgLobbyLinkDisconnected[];
 
 /*
  * Scene teardown: reset one workspace field, clear three flags, play cue
@@ -31,7 +32,7 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
         *p = (u16)val;
     }
 
-    Engine_EventSetMessage(0x2927);
+    Engine_EventSetMessage((s32)MsgLobbyLinkDisconnected);
     Engine_EventOpenMessage(8, 0);
     Engine_GameFlagClear(0x205);
     return Engine_EventEnd();

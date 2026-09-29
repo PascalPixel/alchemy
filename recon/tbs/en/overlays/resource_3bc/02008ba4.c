@@ -2,9 +2,9 @@
  * FieldScene_RunSupplementalSequenceOne, after FIELD/KOROSSEO_MARUTA/ACTIVE_ACTOR.C,
  * stays listing.
  *
- * Remaining difference: it loads message 0x2073 once from its pool and shows
- * later lines from that register, as a link-time message symbol does; the
- * main image has no name for the message.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Func_02003262_head,
+ * StageSceneWork); it also lacks declarations it needs to compile.
  */
 /* The per-site declarations this draft needs (formerly SITES.H). */
 /* Draft scaffolding for the resource_3bc drafts beside this file: the
@@ -16,14 +16,11 @@
 #define RESOURCE_3BC_SITES_H
 
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING.H"
+extern u8 MsgKorosseoDidntThinkBattles[];
 
 extern void Func_02004d72(void);       /* site 0x20024e4 -> Func_0200288c veneer */
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
-extern u8 LinkedMessage_StageFirstFinalsMatch;
-extern u8 LinkedMessage_StageSecondFinalsMatch;
-extern u8 LinkedMessage_StageThirdFinalsMatch;
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern void Func_020062e0(s32 mode);          /* Func_02002e54 veneer #1 */
 extern void Func_02006324(s32 mode);          /* Func_02002e54 veneer #2 */
 extern s32 Func_02008092(void);               /* Func_080f9048 veneer (loop check) */
@@ -131,7 +128,6 @@ void Func_020059ee_arrival();
 s32 Func_02005a00_arrival();
 void Func_02005a0c_arrival();
 void Func_02005a5c_arrival();
-extern u8 Data_00002073[];
 void Func_02004c6a_head();
 void Func_02004c8a_head();
 void Func_02004cae_head();
@@ -425,7 +421,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     mode = *(s16 *)(base + 450);
     if (mode == 2) {
         Event_Begin();
-        base7_2073 = (s32)Data_00002073;
+        base7_2073 = (s32)MsgKorosseoDidntThinkBattles;
         threea0 = (a0 << 1) + a0;
         Event_SetMessage(threea0 + base7_2073);
         Event_OpenMessage(a0, 0);

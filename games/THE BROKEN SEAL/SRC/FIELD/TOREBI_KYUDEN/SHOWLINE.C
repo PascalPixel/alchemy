@@ -2,6 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
+extern u8 MsgTorebiBabiWaitingForAtColosseum[];
+extern u8 MsgTorebiRobinIdReallyLikeThank[];
 
 void SceneDialogue_ShowLine2239Or223A(void)
 {
@@ -10,10 +12,10 @@ void SceneDialogue_ShowLine2239Or223A(void)
 
     if (GameFlag_IsSet(0x96d) == 0) {
         GameFlag_Set(0x96d);
-        Event_SetMessage(MSG_ROBIN_ID_REALLY_LIKE_THANK);
+        Event_SetMessage((s32)MsgTorebiRobinIdReallyLikeThank);
         Event_ShowMessage(9, 0);
     } else {
-        Event_SetMessage(MSG_BABI_WAITING_FOR_AT_COLOSSEUM);
+        Event_SetMessage((s32)MsgTorebiBabiWaitingForAtColosseum);
         Event_ShowMessage(9, 0);
     }
 }

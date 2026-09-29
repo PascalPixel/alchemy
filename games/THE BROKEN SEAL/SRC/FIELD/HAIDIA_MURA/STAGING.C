@@ -1,5 +1,9 @@
 #include "STAGED_MOTION.H"
 #include "IWRAM_CALL.H"
+extern u8 MsgHaidiaAsStubbornAsYourFather[];
+extern u8 MsgHaidiaDevastatedWhenKyle[];
+extern u8 MsgHaidiaGoodJob[];
+extern u8 MsgHaidiaWorkingYourselvesBone[];
 extern u8 gGeraldAction[];
 extern u8 gJasmineAction[];
 
@@ -221,7 +225,7 @@ void Scene_RepairTheHouse(void)
     *(s32 *)(scene + 24) = 0x10000;
     *(s32 *)(scene + 28) = 0x10000;
     Actor_Jump(ACTOR_DORA, 2, 20);
-    Event_SetMessage(MSG_GOOD_JOB);
+    Event_SetMessage((s32)MsgHaidiaGoodJob);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x1000, 10);
     HaidiaMura_RunWalkScene032B0(21, 5, 6, 0);
@@ -254,7 +258,7 @@ void Scene_RepairTheHouse(void)
         Actor_SetAnimationAndWait(ACTOR_DORA, 4);
     }
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-    Event_SetMessage(MSG_STUDYING_PSYNERGY_TO_THE_BONE);
+    Event_SetMessage((s32)MsgHaidiaWorkingYourselvesBone);
     Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
@@ -268,7 +272,7 @@ void Scene_RepairTheHouse(void)
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-    Event_SetMessage(MSG_DEVASTATED_WHEN_KYLE_DIED);
+    Event_SetMessage((s32)MsgHaidiaDevastatedWhenKyle);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
     Event_Wait(10);
@@ -404,7 +408,7 @@ void Scene_RepairTheHouse(void)
         bump_step(1);
     }
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-    Event_SetMessage(MSG_AS_STUBBORN_AS_YOUR_FATHER);
+    Event_SetMessage((s32)MsgHaidiaAsStubbornAsYourFather);
     Actor_ShowEmote(ACTOR_DORA, 259, 0);
     Actor_RunRepeatedMotion(ACTOR_DORA, 3);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);

@@ -1,11 +1,13 @@
-/* Draft of resource_380 0x0200978c (Scene_UnmaskGarcia), built with
- * games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/STAR.H. Remaining difference:
- * the ROM loads messages 0x10b0 and 0x10b2 from the literal pool where the
- * lines are shown and derives the following lines from them, as link-time
- * message values would; the C constants are hoisted and folded, which
- * shifts the register choices through the rest of the function. The
- * listing keeps these rows. */
+/* Draft of resource_380 0x0200978c (Scene_UnmaskGarcia): it matches the ROM
+ * byte for byte now that the messages it loads from the literal pool have
+ * catalogue names (MsgSoruDontHandOver, MsgSoruGuessTakeElemental,
+ * MsgSoruRightTake, MsgSoruWontLetGo). The listing keeps these rows until the
+ * draft is adopted. */
 #include "STAR.H"
+extern u8 MsgSoruDontHandOver[];
+extern u8 MsgSoruGuessTakeElemental[];
+extern u8 MsgSoruRightTake[];
+extern u8 MsgSoruWontLetGo[];
 
 
 void Scene_UnmaskGarcia(void)
@@ -121,7 +123,7 @@ void Scene_UnmaskGarcia(void)
     } while (left >= 0);
     Event_OpenMessage(ACTOR_GERALD, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        mes_a = MSG_TAKE_THE_STARS_TO_THEM;
+        mes_a = (s32)MsgSoruGuessTakeElemental;
         Event_SetMessage(mes_a);
         Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
         Event_Wait(10);
@@ -132,12 +134,12 @@ void Scene_UnmaskGarcia(void)
             Event_Wait(10);
             UiText_ShowCenteredMessage((mes_a + 1), 1, 0);
         } else {
-            Event_SetMessage(MSG_GERALD_ILL_TAKE_THEM);
+            Event_SetMessage((s32)MsgSoruRightTake);
             Event_SayThenWait(ACTOR_GERALD, 30);
         }
     } else {
         if (cnt <= 2) {
-            mes_b = MSG_THEY_WONT_LET_JASMINE_GO;
+            mes_b = (s32)MsgSoruDontHandOver;
             Event_SetMessage(mes_b);
             Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
             Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
@@ -161,7 +163,7 @@ void Scene_UnmaskGarcia(void)
                 obj[90] = flags;
             }
         } else {
-            Event_SetMessage(MSG_GERALD_THEY_WONT_LET_JASMINE_GO);
+            Event_SetMessage((s32)MsgSoruWontLetGo);
             Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
             Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
             Event_SayThenWait(1, 10);

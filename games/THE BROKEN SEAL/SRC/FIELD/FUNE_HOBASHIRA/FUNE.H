@@ -10,11 +10,6 @@ enum {
     ITEM_ANCHOR_CHARM = 232
 };
 
-enum ObjectScaleMessage {
-    MSG_SHIPS_COURSE_CLEAR = 0x1e3a,
-    MSG_MONSTERS = 0x1e49,
-    MSG_LAND_HO = 0x1ee4
-};
 
 /* A record's four-byte field at the given byte offset. */
 #define RECORD_S32(rec, off) (*(s32 *)((rec) + (off)))

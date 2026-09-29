@@ -1,9 +1,15 @@
 /* Draft of LinkLobby_TalkByProgress, resource_3cb at 0x02008f8c (was
  * MENU/LINK_LOBBY/PROGRESS_TALK.C).
- * Remaining difference: each branch's message number is a C constant GCC
- * hoists above its test; the ROM loads it after, as a link-time value.
+ * Remaining difference: its messages have catalogue names now; 40 halfwords
+ * still differ from the ROM.
  * The listing keeps these rows. */
 #include "TYPES.H"
+extern u8 MsgLobbyTryingGetAway[];
+extern u8 MsgLobbyCantWaitLets[];
+extern u8 MsgLobbyGoingFightAlone[];
+extern u8 MsgLobbyKnewLostBecause[];
+extern u8 MsgLobbyNotFaultLost[];
+extern u8 MsgLobbyWonWithoutWell[];
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -29,7 +35,7 @@ static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
 /* A lobby actor's line, one per actor from each base: with flag 0x304 set, by flag 0x305 and the actor's own flag 0x2f0 + actor; otherwise by what LinkLobby_PartyContains reports for actor 0 and for this actor. */
 s32 LinkLobby_TalkByProgress(s32 actor)
 {
-    s32 base = 0x294e;
+    s32 base = (s32)MsgLobbyCantWaitLets;
     s32 lead = LinkLobby_PartyContains(0);
     s32 own = LinkLobby_PartyContains(actor);
 
@@ -44,18 +50,18 @@ s32 LinkLobby_TalkByProgress(s32 actor)
             if (seen)
                 base = 0x2967;
             else
-                base = 0x296c;
+                base = (s32)MsgLobbyWonWithoutWell;
         } else {
             if (seen)
-                base = 0x2971;
+                base = (s32)MsgLobbyNotFaultLost;
             else
-                base = 0x2976;
+                base = (s32)MsgLobbyKnewLostBecause;
         }
     } else if (lead != 0) {
         if (own == 0)
-            base = 0x2953;
+            base = (s32)MsgLobbyGoingFightAlone;
     } else {
-        base = 0x2958;
+        base = (s32)MsgLobbyTryingGetAway;
     }
     Engine_EventSetMessage(base + actor - 1);
     Engine_EventShowMessage(actor, 0);

@@ -8,26 +8,14 @@
 #define SCENE_FIELD_1C0 (*(s32 *)(*(u8 **)Data_03001ebc + 0x1c0))
 
 #include "RESOURCE_3A8_EFFECT.H"
+extern u8 MsgFieldPeeredWell[];
+extern u8 MsgKareiVeryCleanMaintained[];
 
 enum {
     /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
-enum StagedGroupMessage {
-    MSG_ROBIN_PEERED_INTO = 0x947,
-    MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE = 0x1a7c,
-    MSG_WHY_WE_STOPPING_AT_PLACE = 0x1a92,
-    MSG_THATS_WE_CANT_WAIT_ANY = 0x1ab2,
-    MSG_LORD_HAMMET_SELLS_HIS_BEST = 0x1acf,
-    MSG_DID_FIND_NEEDED_IN_WEAPON = 0x1ad1,
-    MSG_LADY_LAYANA_SHARED_IN_LORD = 0x1ad5,
-    MSG_LORD_HAMMETS_PALACE_LORD_AWAY = 0x1b05,
-    MSG_WEVE_ARRIVED_HAMMET = 0x256f,
-    MSG_DO_WANT_GO_CAVE_UP = 0x2584,
-    MSG_LAYANA_WAS_VERY_HARD_ON = 0x25b3,
-    MSG_VERY_CLEAN_MAINTAINED = 0x29df
-};
 
 struct Obj {
     u8 filler00[6];
@@ -137,8 +125,8 @@ typedef struct OrbitingSceneObject {
 void FieldScene_RunStepWithValue29df(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_ROBIN_PEERED_INTO, 1);
-    Message_ShowCentered(MSG_VERY_CLEAN_MAINTAINED, 1);
+    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
+    Message_ShowCentered((s32)MsgKareiVeryCleanMaintained, 1);
     Event_End();
 }
 

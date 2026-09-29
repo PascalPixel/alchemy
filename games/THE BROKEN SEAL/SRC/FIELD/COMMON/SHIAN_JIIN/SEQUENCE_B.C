@@ -2,6 +2,18 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
+extern u8 MsgShianDoNotWorryWillPermitted[];
+extern u8 MsgShianEnjoyReadingMindsOthersDo[];
+extern u8 MsgShianFlexibilityJumpingVeryImportantIn[];
+extern u8 MsgShianFollowThemDoNot[];
+extern u8 MsgShianHsuDidNotPracticeJumping[];
+extern u8 MsgShianLamaTempleFarWestIn[];
+extern u8 MsgShianMasterFehVeryBusyDo[];
+extern u8 MsgShianMasterFehsSchoolCameWatch[];
+extern u8 MsgShianMmmmWhoWhoSpeaksMy[];
+extern u8 MsgShianMustSurviveTestGrottoBefore[];
+extern u8 MsgShianThenCannotTellGiveUp[];
+extern u8 MsgShianYoungMasterDidCompleteTest[];
 
 void Scene_RunActorNineTransition(void)
 {
@@ -9,7 +21,7 @@ void Scene_RunActorNineTransition(void)
     GameFlag_Set(2196);
     Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
-    Event_SetMessage(MSG_YOUNG_MASTER_DID_COMPLETE_TEST);
+    Event_SetMessage((s32)MsgShianYoungMasterDidCompleteTest);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
     Scene_Call3(Engine_ActorFaceDirection, 0, 32768, 20);
@@ -46,9 +58,9 @@ void Scene_RunScene39eSequenceB(void)
         *(s32 *)(record + 40) = 0x80000;
         Actor_SetAnimation(8, 1);
         Event_Wait(30);
-        Event_SetMessage(MSG_MUST_SURVIVE_TEST_GROTTO_BEFORE);
+        Event_SetMessage((s32)MsgShianMustSurviveTestGrottoBefore);
     } else {
-        Event_SetMessage(MSG_MMMM_WHO_WHO_SPEAKS_MY);
+        Event_SetMessage((s32)MsgShianMmmmWhoWhoSpeaksMy);
         FieldScene_SetFlag140AndFinishSequence(0, 8);
         Call1((void (*)())Engine_EventWait, 30);
         Event_ShowMessage(8, 0);
@@ -84,7 +96,7 @@ void Scene_RunScene39eSequenceB(void)
         Actor_SetAnimationAndWait(8, 3);
         Event_Wait(30);
         Actor_ShowEmote(8, 0x100, 60);
-        Event_SetMessage(MSG_FOLLOW_THEM_DO_NOT);
+        Event_SetMessage((s32)MsgShianFollowThemDoNot);
         Event_OpenMessage(8, 0);
         if (Event_ChooseYesNo(0, 0) == 1) {
             Actor_ShowEmote(8, 0x105, 60);
@@ -122,11 +134,11 @@ void Scene_RunScene39eSequenceB(void)
     }
     Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) == 1) {
-        Event_SetMessage(MSG_THEN_CANNOT_TELL_GIVE_UP);
+        Event_SetMessage((s32)MsgShianThenCannotTellGiveUp);
         Event_ShowMessage(8, 0);
         GameFlag_Set(0x300);
     } else {
-        Event_SetMessage(MSG_DO_NOT_WORRY_WILL_PERMITTED);
+        Event_SetMessage((s32)MsgShianDoNotWorryWillPermitted);
         Event_Wait(30);
         Actor_SetAnimationAndWait(8, 3);
         Event_Wait(20);
@@ -157,7 +169,7 @@ void Scene_RunScene39eSequenceB(void)
 void FieldScene_ShowDialogue17B1(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_ENJOY_READING_MINDS_OTHERS_DO);
+    Event_SetMessage((s32)MsgShianEnjoyReadingMindsOthersDo);
     Event_AskYesNo(8, 0);
     Event_End();
 }
@@ -165,7 +177,7 @@ void FieldScene_ShowDialogue17B1(void)
 void FieldScene_ShowDialogue1825(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_MASTER_FEHS_SCHOOL_CAME_WATCH);
+    Event_SetMessage((s32)MsgShianMasterFehsSchoolCameWatch);
     Event_AskYesNo(9, 0);
     Event_End();
 }
@@ -195,11 +207,11 @@ testPendingWork:
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
 
     if (GameFlag_IsSet(0x895) != 0) {
-        Event_SetMessage(MSG_HSU_DID_NOT_PRACTICE_JUMPING);
+        Event_SetMessage((s32)MsgShianHsuDidNotPracticeJumping);
     } else if (GameFlag_IsSet(0x89b) != 0) {
-        Event_SetMessage(MSG_LAMA_TEMPLE_FAR_WEST_IN);
+        Event_SetMessage((s32)MsgShianLamaTempleFarWestIn);
     } else {
-        Event_SetMessage(MSG_FLEXIBILITY_JUMPING_VERY_IMPORTANT_IN);
+        Event_SetMessage((s32)MsgShianFlexibilityJumpingVeryImportantIn);
     }
 
     Event_ShowMessage(12, 0);
@@ -215,7 +227,7 @@ testPendingWork:
 void FieldScene_ShowDialogue182D(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_MASTER_FEH_VERY_BUSY_DO);
+    Event_SetMessage((s32)MsgShianMasterFehVeryBusyDo);
     Event_AskYesNo(15, 0);
     Event_End();
 }

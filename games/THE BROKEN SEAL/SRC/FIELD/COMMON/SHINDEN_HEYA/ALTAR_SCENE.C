@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgShindenWorldBeganDrifting[];
 extern struct BattleEffectBuffers *Data_03001ed0;
 
 struct ShrineWork {
@@ -41,7 +42,7 @@ void ShindenHeya_RunAltarScene(void)
     work->lamps[2] = 1;
     work->lamps[3] = 1;
     Engine_EventWait(1);
-    UiText_ShowCenteredMessage(0x116d, 1, 0);
+    UiText_ShowCenteredMessage((s32)MsgShindenWorldBeganDrifting, 1, 0);
     Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(120);

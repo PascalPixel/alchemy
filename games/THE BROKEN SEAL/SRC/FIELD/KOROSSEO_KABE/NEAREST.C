@@ -1,4 +1,5 @@
 #include "TASK.H"
+extern u8 MsgKorosseoMatchAboutBeginPleaseTake[];
 
 void KorosseoKabe_MarkSceneProgress(void)
 {
@@ -47,7 +48,7 @@ void KorosseoKabe_SelectNearestActor(void)
             }
         }
     }
-    Event_SetMessage(MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE);
+    Event_SetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Event_ShowMessage(best, 0);
     q = (s32 *)(state + 448);
     *q = 512;

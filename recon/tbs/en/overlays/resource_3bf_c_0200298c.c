@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgRunpaDodonpaPulledLever[];
+extern u8 MsgRunpaTimeEat[];
 
 /* AUDITED GENERATED CALL SCRIPT for RunEventScript01: 195 calls, 0 loops, 0 memory operations.
  * Recovered from the complete decoded owner. Calls, arguments, control flow,
@@ -186,7 +188,7 @@ void RunEventScript01(void)
     Func_0200805e(0, 1);
     Func_02008164(17);
     Func_02007fea(30);
-    base = 9316;
+    base = (s32)MsgRunpaTimeEat;
     Func_020080b2(base);
     Func_020080ca(12, 0);
     Func_020080b4(0, 12, 0);
@@ -359,7 +361,7 @@ void RunEventScript01(void)
     Func_02008608(13);
     Func_0200859e(60);
     Func_02008724(155);
-    Func_02008584(9342, 1);
+    Func_02008584((s32)MsgRunpaDodonpaPulledLever, 1);
     Func_02008620(13, 8, -8);
     Func_0200866a(13, 11, 0);
     Func_02005596();

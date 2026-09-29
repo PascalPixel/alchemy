@@ -22,29 +22,6 @@ enum {
     ACTOR_DORA = 21
 };
 
-enum ValeMessage {
-    MSG_GOOD_JOB = 0xf03,
-    MSG_STUDYING_PSYNERGY_TO_THE_BONE = 0xf0a,
-    MSG_DEVASTATED_WHEN_KYLE_DIED = 0xf0e,
-    MSG_AS_STUBBORN_AS_YOUR_FATHER = 0xf27,
-    MSG_SUKURETA_IS_WAITING_FOR_US = 0xf39,
-    MSG_YOU_MAKE_ME_SO_MAD = 0xf63,
-    MSG_ILL_GET_YOU_FOR_MY_FLOWERS = 0xf66,
-    MSG_I_TOLD_GERALD_IT_WAS_ALL_RIGHT = 0xf68,
-    MSG_IT_WONT_RAIN_FOR_SOME_TIME = 0xf69,
-    MSG_DO_YOU_NEED_TO_GO_PAST = 0xf7c,
-    MSG_DONT_GO_BEYOND_SUKURETAS_COTTAGE = 0xf7e,
-    MSG_YOUR_GRANDPA_IS_THE_MAYOR = 0xf81,
-    MSG_NOT_SNEAKING_UP_MT_ALEPH = 0xfce,
-    MSG_YOU_CANT_BE_ROBIN = 0x11b6,
-    MSG_SUKURETA_HASNT_COME_BACK = 0x11c9,
-    MSG_THE_GROUND_STILL_SHAKES = 0x11cc,
-    MSG_HOW_HAVE_YOU_BEEN = 0x1c53,
-    MSG_IS_JASMINE_BACK_YET = 0x1c8d,
-    MSG_I_USED_TO_PLAY_HERE_WITH_GARCIA = 0x1c90,
-    MSG_I_FELT_ANOTHER_ONE = 0x1c9a,
-    MSG_NO_TRAVELERS_SINCE_THE_ERUPTION = 0x1c9d
-};
 
 /*
  * Reset or tear down a consecutive run of scene actors -- resource_373.
@@ -191,13 +168,6 @@ extern s32 gHaidiaMuraPairTableC[];
 extern s32 gHaidiaMuraPairTableD[];
 extern s32 gDustBurstScript[];
 
-enum {
-    MSG_RRRUFF_RRRRUFF = 0xf4d,
-    MSG_AH = 0x1c45,
-    MSG_WHATEVER_YOU_DO_YOU = 0x1c60,
-    MSG_DOOR_WONT_OPEN_FORCE_IMPACT = 0xee4,
-    MSG_REPAIR_CAPTION = 0xee8
-};
 
 void Object_RefreshSelectorById();
 s32 Object_SetActionCallbackAndRefreshById();

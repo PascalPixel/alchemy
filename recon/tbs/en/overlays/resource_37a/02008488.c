@@ -1,23 +1,21 @@
-/* resource_37a 0x02008488..0x02008d9c: FieldScene_RunScene37aSequenceF,
- * Scene_EnterInnerSanctum and UpdateStatueTrapActor, written against
- * FIELD/SORU_NICHIGETSU/SANCTUM.H. With the old link-time names for their
- * constants they compiled exactly; with the plain numbers they differ.
- * Remaining difference: the message and step numbers 0xfe3, 0xff0..0xff2,
- * 0x4010, 0xffc and 0x1000 are loaded from literal pools and reused as
- * base+1 / base+2 the way GCC treats symbol offsets, not integers, and
- * 0x1000 is pooled rather than built with movs/lsls. Only link-time names
- * explain that shape, and the main image defines none (the old Data_,
- * Value_ and LinkedMessage_ spellings were equates). */
+/* Draft of resource_37a 0x02008488 (FieldScene_RunScene37aSequenceF): it
+ * matches the ROM byte for byte now that the messages it loads from the
+ * literal pool have catalogue names (MsgSoruFound, MsgSoruGoBackVillage,
+ * MsgSoruLunaSolRooms, MsgSoruMeanLookFarther, MsgSoruPutWayDont,
+ * MsgSoruRoomLunaOne, MsgSoruThank, MsgSoruWayLeadsOutSanctum,
+ * MsgSoruWhRoom). The listing keeps these rows until the draft is adopted. */
 #include "SANCTUM.H"
+extern u8 MsgSoruWayLeadsOutSanctum[];
+extern u8 MsgSoruThank[];
+extern u8 MsgSoruFound[];
+extern u8 MsgSoruGoBackVillage[];
+extern u8 MsgSoruLunaSolRooms[];
+extern u8 MsgSoruMeanLookFarther[];
+extern u8 MsgSoruPutWayDont[];
+extern u8 MsgSoruRoomLunaOne[];
+extern u8 MsgSoruWhRoom[];
 
 /* The old link-time names the shape needs; none is defined anywhere now. */
-extern u8 Data_00000fe3[];
-extern u8 Data_00000ff0[];
-extern u8 Data_00000ff1[];
-extern u8 Data_00000ff2[];
-extern u8 Data_00004010[];
-extern u8 LinkedMessage_LookFartherUpThePassage[];
-extern u8 LinkedMessage_WayLeadsOutSanctumShould;
 
 void FieldScene_RunScene37aSequenceF(void)
 {
@@ -28,7 +26,7 @@ void FieldScene_RunScene37aSequenceF(void)
     }
     if (Value1(Engine_GameFlagIsSet, 0x809) == 0) {
         Engine_EventBegin();
-        Call1(Engine_EventSetMessage, 0xfe3);
+        Call1(Engine_EventSetMessage, (s32)MsgSoruFound);
         Engine_AudioPlayCue(17);
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Call3(Engine_ActorWalkToAndWait, 0, 0x120, 232);
@@ -126,9 +124,9 @@ void FieldScene_RunScene37aSequenceF(void)
         Engine_EventWait(6);
         Value2(Engine_EventOpenMessage, 16, 0);
         if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
-            Engine_EventSetMessage(0xff0);
+            Engine_EventSetMessage((s32)MsgSoruThank);
         } else {
-            Call1(Engine_EventSetMessage, 0xff1);
+            Call1(Engine_EventSetMessage, (s32)MsgSoruGoBackVillage);
             Call3(Engine_ActorShowEmote, 16, 0x107, 20);
         }
         Engine_ActorJump(16, 4, 20);
@@ -136,7 +134,7 @@ void FieldScene_RunScene37aSequenceF(void)
         Call3(Engine_ActorFaceDirection, 1, 0xe000, 0);
         Call3(Engine_ActorFaceDirection, 5, 0xa000, 0);
         SetSolShindenActorStep(16, 6);
-        Call1(Engine_EventSetMessage, 0xff2);
+        Call1(Engine_EventSetMessage, (s32)MsgSoruPutWayDont);
         Engine_EventWait(30);
         Engine_ActorSetAnimationAndWait(5, 4);
         Call2(SetSolShindenActorStep, 0x2005, 6);
@@ -189,7 +187,7 @@ void Scene_EnterInnerSanctum(void)
     s32 base5_4010;
     s32 base5_4010_2;
 
-    Event_SetMessage(MSG_WHAT_IS_THIS_ROOM);
+    Event_SetMessage((s32)MsgSoruWhRoom);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e8, 176);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
@@ -219,14 +217,14 @@ void Scene_EnterInnerSanctum(void)
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
     Event_OpenMessage(base5_4010, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(MSG_SUKURETA_THESE_ROOMS_HIDE_A_SECRET);
+        Event_SetMessage((s32)MsgSoruLunaSolRooms);
     } else {
-        Event_SetMessage(MSG_SUKURETA_A_ROOM_FOR_LUNA_AND_SOL);
+        Event_SetMessage((s32)MsgSoruRoomLunaOne);
     }
     base5_4010_2 = 0x4010;
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     SetSolShindenActorStep(base5_4010_2, 10);
-    base6_ffc = 0xffc;
+    base6_ffc = (s32)MsgSoruMeanLookFarther;
     Event_SetMessage(base6_ffc);
     Actor_FaceDirection(ACTOR_SUKURETA, 0, 40);
     Actor_ShowEmote(ACTOR_SUKURETA, 0x105, 40);
@@ -284,7 +282,7 @@ void UpdateStatueTrapActor(void)
     }
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
-    Event_SetMessage(0x1000);
+    Event_SetMessage((s32)MsgSoruWayLeadsOutSanctum);
     if (GameFlag_IsSet(g1)!= 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
         target_actor = Engine_ActorGet(0);
         if (target_actor != 0) {

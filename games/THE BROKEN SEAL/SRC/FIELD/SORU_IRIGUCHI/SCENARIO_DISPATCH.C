@@ -1,4 +1,7 @@
 #include "SORU.H"
+extern u8 MsgSoruMinotaurReliefBothEyes[];
+extern u8 MsgSoruMinotaurReliefOneEye[];
+extern u8 MsgSoruSetSmallGem[];
 
 void FieldScene_RunScene37fSequenceA(void)
 {
@@ -35,9 +38,9 @@ void SceneDialogue_RunFlag81aMessageBranch(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x81a) != 0) {
-        Message_ShowCentered(MSG_MINOTAUR_RELIEF_BOTH_EYES, 1);
+        Message_ShowCentered((s32)MsgSoruMinotaurReliefBothEyes, 1);
     } else {
-        Message_ShowCentered(MSG_MINOTAUR_RELIEF_ONE_EYE, 1);
+        Message_ShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
         if (GameFlag_IsSet(0xf01) != 0) {
             u16 *p = (u16 *)(gWork + 370);
             u16 val = 1;
@@ -65,7 +68,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Map_CopyCellsTo(0, 70, 30, 42, v5, v5);
             Map_Redraw();
             Event_Wait(40);
-            id = 0x1032;
+            id = (s32)MsgSoruSetSmallGem;
             Message_ShowCentered(id, 1);
             Event_Wait(20);
             v6 = 3;
@@ -103,10 +106,10 @@ void FieldScene_RunFlag821Dialogue(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x821) != 0) {
-        Message_ShowCentered(MSG_MINOTAUR_RELIEF_BOTH_EYES, 1);
+        Message_ShowCentered((s32)MsgSoruMinotaurReliefBothEyes, 1);
     } else if (GameFlag_IsSet(0xf02) != 0) {
         work = gWork;
-        Message_ShowCentered(MSG_MINOTAUR_RELIEF_ONE_EYE, 1);
+        Message_ShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
         {
             /*
              * The halfword store goes through a pointer local and then an
@@ -120,7 +123,7 @@ void FieldScene_RunFlag821Dialogue(void)
             *frame = (u16)one;
         }
     } else {
-        Message_ShowCentered(MSG_MINOTAUR_RELIEF_ONE_EYE, 1);
+        Message_ShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
     }
 
     Event_End();

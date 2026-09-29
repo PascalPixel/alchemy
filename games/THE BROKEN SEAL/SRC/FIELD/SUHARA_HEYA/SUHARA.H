@@ -6,9 +6,6 @@
 #include "FIELD_SCENE.H"
 #include "SCENE.H"
 
-enum RecordSetupMessage {
-    MSG_GET_SICK_THINKING_ABOUT_LALIVERO = 0x25d5
-};
 
 
 #define STEP_COUNTER (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))

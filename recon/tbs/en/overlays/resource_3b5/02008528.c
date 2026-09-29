@@ -1,9 +1,9 @@
-/* Draft of FieldScene_RunScene3b5_02000528, resource_3b5 at 0x02008528, built with
- * games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/MACHI.H.
- * Remaining difference: the ROM loads message 0x1fa0 from its literal pool, as a
- * link-time value; as a C constant GCC builds it with mov and lsl (30 bytes).
- * The listing keeps these rows. */
+/* Draft of resource_3b5 0x02008528 (FieldScene_RunScene3b5_02000528): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgTorebiPatientLittleGuy). The listing
+ * keeps these rows until the draft is adopted. */
 #include "MACHI.H"
+extern u8 MsgTorebiPatientLittleGuy[];
 
 void FieldScene_RunScene3b5_02000528(void)
 {
@@ -11,7 +11,7 @@ void FieldScene_RunScene3b5_02000528(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_EventSetMessage(0x1fa0);
+    Engine_EventSetMessage((s32)MsgTorebiPatientLittleGuy);
     Call3(Engine_ActorFaceDirection, 25, 0xc000, 0);
     Engine_EventShowMessage(25, 0);
     Call3(Engine_ActorFaceDirection, 25, 0x8000, 0);

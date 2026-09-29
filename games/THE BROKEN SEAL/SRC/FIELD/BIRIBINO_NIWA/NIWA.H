@@ -15,12 +15,6 @@ enum {
     ITEM_NUT = 181
 };
 
-enum OrbitingMessage {
-    MSG_ROBIN_PEERED_INTO = 0x947,
-    MSG_TELLING_ME_IM_RESPONSIBLE_FOR = 0x13c3,
-    MSG_DO_THINK_CAN_BECOME_AS = 0x1751,
-    MSG_UPON_CLOSER_INSPECTION_SEEMS_DRIED = 0x29de
-};
 
 struct SceneHandle {
     u8 unknown_00[9];

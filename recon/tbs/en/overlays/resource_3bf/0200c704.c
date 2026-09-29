@@ -1,10 +1,9 @@
-/* Draft of FieldScene_RunActorTwentyOneSequence, resource_3bf at 0x0200c704, built with
- * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: a message number held across calls is a C constant,
- * which GCC's second scheduling pass hoists above the calls before its first
- * use; the ROM loads it after them, as it would a link-time value.
- * The listing keeps these rows. */
+/* Draft of resource_3bf 0x0200c704 (FieldScene_RunActorTwentyOneSequence): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgRunpaLeftGuardHearsSomeone). The
+ * listing keeps these rows until the draft is adopted. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaLeftGuardHearsSomeone[];
 
 void FieldScene_RunActorTwentyOneSequence(void)
 {
@@ -18,7 +17,7 @@ void FieldScene_RunActorTwentyOneSequence(void)
     Event_Wait(50);
     Actor_FaceDirection(21, 0x5000, 0);
     Event_Wait(50);
-    base5_2411 = 0x2411;
+    base5_2411 = (s32)MsgRunpaLeftGuardHearsSomeone;
     Event_SetMessage(base5_2411);
     Event_ShowMessage(21, 0);
     Actor_SetAnimation(21, 4);

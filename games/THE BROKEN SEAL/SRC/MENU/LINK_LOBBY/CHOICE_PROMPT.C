@@ -1,4 +1,8 @@
 #include "TYPES.H"
+extern u8 MsgLobbyChooseParameters[];
+extern u8 MsgLobbyNoParameterAsk[];
+extern u8 MsgLobbySettingsMadeRest[];
+extern u8 MsgLobbyTease[];
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];
 
@@ -26,7 +30,7 @@ s32 LinkLobby_RunChoicePrompt(s32 id)
 
     Engine_EventBegin();
     Engine_ActorFaceActor(id, gGameState[125][0], 0);
-    Engine_EventSetMessage(0x989);
+    Engine_EventSetMessage((s32)MsgLobbyChooseParameters);
     Engine_EventShowMessage(id, 0);
     window = Engine_DebugCreateWindow(0, 0, 6, 4, 2);
     choice = 0;
@@ -63,18 +67,18 @@ s32 LinkLobby_RunChoicePrompt(s32 id)
         if (choice >= 0) {
             ok = DebugParty_LoadPreset(choice);
         } else {
-            message = 0x98a;
+            message = (s32)MsgLobbyTease;
             goto show;
         }
         /* FAKEMATCH: the refusal jumps into the 0x98b branch so the two share
          * one message call, as the reference lays them out. */
         if (ok != 0) {
-            message = 0x98b;
+            message = (s32)MsgLobbyNoParameterAsk;
         show:
             Engine_EventSetMessage(message);
             Engine_EventShowMessage(9, 0);
         } else {
-            Engine_EventSetMessage(0x98c);
+            Engine_EventSetMessage((s32)MsgLobbySettingsMadeRest);
             Engine_EventShowMessage(9, 0);
         }
     }

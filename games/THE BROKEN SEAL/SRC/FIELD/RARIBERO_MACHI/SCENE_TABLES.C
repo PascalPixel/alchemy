@@ -1,13 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgRariberoOhhTheyTookShebaHeaded[];
 
 /* Lalivero's scene tables and the first actor setups that precede
    FLAGGED_CUE.C in the overlay. */
 
-enum {
-    MSG_OHH_THEY_TOOK_SHEBA_HEADED = 0x26af
-};
 
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
@@ -66,7 +64,7 @@ void SceneActor_StartLament(s32 actor)
     object->scale_x = 0x10000;
     object = (struct FieldActor *)Value1(Engine_ActorGet, actor);
     object->scale_y = 0x10000;
-    Event_SetMessage(MSG_OHH_THEY_TOOK_SHEBA_HEADED);
+    Event_SetMessage((s32)MsgRariberoOhhTheyTookShebaHeaded);
     Event_ShowMessage(actor, 0);
     Actor_FaceDirection(actor, 0xc000, 0);
     Event_Wait(20);

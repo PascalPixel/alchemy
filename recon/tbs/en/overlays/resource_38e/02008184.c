@@ -1,8 +1,7 @@
-/* Draft of resource_38e 0x02008184 (SceneDialogue_RunActor9Message13c0),
- * from games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA. Remaining difference:
- * the ROM loads message 0x13c0 from the literal pool, as a link-time
- * message value would; the C constant is built with a move and a shift. The
- * listing keeps these rows. */
+/* Draft of resource_38e 0x02008184 (SceneDialogue_RunActor9Message13c0): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgBiribinoHaveYouSeenBarricadeWe). The
+ * listing keeps these rows until the draft is adopted. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -10,18 +9,13 @@
 #define NULL ((void *)0)
 
 #include "FACING_OBJECT.H"
+extern u8 MsgBiribinoHaveYouSeenBarricadeWe[];
 
 enum {
     /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
-enum OrbitingMessage {
-    MSG_ROBIN_PEERED_INTO = 0x947,
-    MSG_TELLING_ME_IM_RESPONSIBLE_FOR = 0x13c3,
-    MSG_DO_THINK_CAN_BECOME_AS = 0x1751,
-    MSG_UPON_CLOSER_INSPECTION_SEEMS_DRIED = 0x29de
-};
 
 struct SceneHandle {
     u8 unknown_00[9];
@@ -99,7 +93,6 @@ extern u8 Data_02008c7c[];
 extern u8 Data_02008c64[];
 extern u8 Data_02008d30[];
 extern u8 Data_02008d24[];
-extern u8 LinkedMessage_HaveYouSeenBarricadeWe;
 extern u8 UpdateOrbitingSceneObject;
 
 s32 CalculateFacingAngle(s32, s32);
@@ -133,7 +126,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 void SceneDialogue_RunActor9Message13c0(void)
 {
     Event_Begin();
-    Event_SetMessage((s32)&LinkedMessage_HaveYouSeenBarricadeWe);
+    Event_SetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
     Event_AskYesNo(9, 0);
     Event_End();
 }

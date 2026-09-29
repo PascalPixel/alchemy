@@ -1,9 +1,8 @@
 /* Draft of resource_375 0x02008be0 (Scene_OverhearSaturosAndMenardi), from
- * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference:
- * the ROM loads messages from the literal pool and derives the following
- * lines from them, as link-time message values would, and two halfwords
- * differ in register choice (see below). Its imports still carry their old
- * call-site names. The listing keeps these rows. */
+ * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Func_020026e0,
+ * Engine_CameraSetSpeed, Data_02009b85, Engine_EventOpenMessage,
+ * Engine_EventChooseYesNo, Engine_ActorFaceEachOther, ...). The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -29,32 +28,16 @@ enum CottageFlag {
 #define NULL ((void *)0)
 
 #include "FACING_OBJECT.H"
+extern u8 MsgHaidiaSaturosGo[];
+extern u8 MsgHaidiaTheyKnowLittleOfThe[];
+extern u8 MsgHaidiaYoureTheOnesSneakingAround[];
 
-enum CottageMessage {
-    MSG_SATUROS_GO = 0xf98,
-    MSG_SUKURETA_OH_ROBIN = 0xfa6,
-    MSG_SUKURETA_I_WAITED_YEARS_FOR_THE_SANCTUM = 0xfb1,
-    MSG_JASMINE_THEY_MIGHT_BE_THIEVES = 0xfb2,
-    MSG_SUKURETA_WE_ONLY_CHECK_THE_MOUNTAIN = 0xfbd,
-    MSG_SUKURETA_WE_ONLY_CHECK_MT_ALEPH = 0xfbe,
-    MSG_JASMINE_OUR_SECRET = 0xfc2,
-    MSG_GERALD_YOU_CAN_HANDLE_THE_DANGER = 0xfc6,
-    MSG_GERALD_ILL_TAKE_OVER_IF_NERVOUS = 0xfc9,
-    MSG_SUKURETA_OUR_BEST_BET = 0xfcc,
-    MSG_ILL_CLIMB_THE_FENCE_SOMEDAY = 0x11c4,
-    MSG_MEMORIES_OF_THIS_COTTAGE = 0x1c96
-};
 
 extern u8 Data_0200a028[];
 extern u8 Data_02009fb0[];
 extern u8 Data_02009efc[];
-extern u8 LinkedMessage_YouCannotEnterMtAleph[];
-extern u8 LinkedMessage_FineIfTheyDontSeeUs[];
 extern u8 Data_03001ebc[];
 extern u8 Data_0200a0ac[];
-extern u8 Value_00000f76;
-extern u8 LinkedMessage_TheyKnowLittleOfTheSanctum[];
-extern u8 LinkedMessage_YoureTheOnesSneakingAround[];
 extern u8 Data_02009ce0[];
 
 s32 CalculateFacingAngle(s32, s32);
@@ -277,7 +260,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Audio_PlayCue(17);
     GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
-    evt = (s32)LinkedMessage_TheyKnowLittleOfTheSanctum;
+    evt = (s32)MsgHaidiaTheyKnowLittleOfThe;
     Event_SetMessage(evt);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
 
@@ -369,7 +352,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Event_ShowMessageAndWait(0x100f, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
 
-    evt2 = (s32)LinkedMessage_YoureTheOnesSneakingAround;
+    evt2 = (s32)MsgHaidiaYoureTheOnesSneakingAround;
     Event_SetMessage(evt2);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_FaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
@@ -401,7 +384,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_FaceActor(ACTOR_SATUROS, ACTOR_JASMINE, 30);
     Actor_ShowEmote(ACTOR_SATUROS, 0x105, 80);
     Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
-    Event_SetMessage(MSG_SATUROS_GO);
+    Event_SetMessage((s32)MsgHaidiaSaturosGo);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 6);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);

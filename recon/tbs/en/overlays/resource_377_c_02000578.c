@@ -95,6 +95,7 @@
  * Admission requires preserving all three high-register roles and direct
  * +90 byte stores while separating the zero's producer from rotation. */
 #include "FIELD_EVENT.H"
+extern u8 MsgHaidiaWake[];
 
 struct SceneMapState {
     u8 unknown_0000[0x1f84];
@@ -212,7 +213,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a0f0(8, 34996224, 45088768);
     Main_08009208();
     Main_0808a1d8(8);
-    base = 3666;
+    base = (s32)MsgHaidiaWake;
     Call3(Engine_UiTextShowCenteredMessage, base, 1, 0);
     Main_0808a010(40);
     MapRender_SetValues(65536, 65536, 65536);

@@ -1,4 +1,14 @@
 #include "TIMED_EVENTS.H"
+extern u8 MsgHaidiaAWiseManFleesWhen[];
+extern u8 MsgHaidiaGoodArmorDrawsOutStrength[];
+extern u8 MsgHaidiaGoodWeaponsDrawOutStrength[];
+extern u8 MsgHaidiaHey2[];
+extern u8 MsgHaidiaImNotSadJustGo[];
+extern u8 MsgHaidiaTheRumorWasTrue[];
+extern u8 MsgHaidiaValeFeelsEmpty[];
+extern u8 MsgHaidiaWhenDidYouComeBack[];
+extern u8 MsgHaidiaYouCameBack[];
+extern u8 MsgHaidiaYoureLeavingAgainSoon[];
 
 /* The 76-byte shared numbered-scene owner includes its two pool words. */
 void SceneState_SetRuntimeWord448To521AndRun(s32 value)
@@ -140,13 +150,13 @@ void FieldScene_RunByActorDirectionAndFlags(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x87a) != 0) {
-        Event_SetMessage(MSG_YOU_CAME_BACK);
+        Event_SetMessage((s32)MsgHaidiaYouCameBack);
         Event_AskYesNo(21, 0);
     } else {
         if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-            Event_SetMessage(MSG_VALE_FEELS_EMPTY);
+            Event_SetMessage((s32)MsgHaidiaValeFeelsEmpty);
         } else {
-            Event_SetMessage(MSG_GOOD_WEAPONS_DRAW_OUT_STRENGTH);
+            Event_SetMessage((s32)MsgHaidiaGoodWeaponsDrawOutStrength);
         }
         Event_ShowMessage(21, 0);
     }
@@ -163,12 +173,12 @@ void FieldScene_RunScene376_0200055c(void)
     } else {
         ((void (*)())Engine_EventBegin)();
         if (GameFlag_IsSet(0x87a) != 0) {
-            Event_SetMessage(MSG_THE_RUMOR_WAS_TRUE);
+            Event_SetMessage((s32)MsgHaidiaTheRumorWasTrue);
         } else {
             if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-                Event_SetMessage(MSG_IM_NOT_SAD_JUST_GO);
+                Event_SetMessage((s32)MsgHaidiaImNotSadJustGo);
             } else {
-                Event_SetMessage(MSG_GOOD_ARMOR_DRAWS_OUT_STRENGTH);
+                Event_SetMessage((s32)MsgHaidiaGoodArmorDrawsOutStrength);
             }
         }
         Event_ShowMessage(22, 0);
@@ -186,7 +196,7 @@ void FieldScene_RunScene376_020005d4(void)
     } else {
         if (GameFlag_IsSet(0x87a) != 0) {
             Event_Begin();
-            Event_SetMessage(MSG_WHEN_DID_YOU_COME_BACK);
+            Event_SetMessage((s32)MsgHaidiaWhenDidYouComeBack);
             Event_ShowMessage(20, 0);
             Event_End();
         } else {
@@ -194,7 +204,7 @@ void FieldScene_RunScene376_020005d4(void)
                 Scene_GiveFarewellHerb();
             } else {
                 Event_Begin();
-                Event_SetMessage(MSG_A_WISE_MAN_FLEES_WHEN_INJURED);
+                Event_SetMessage((s32)MsgHaidiaAWiseManFleesWhen);
                 Event_ShowMessage(20, 0);
                 Event_End();
             }
@@ -277,7 +287,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_SetAnimationAndWait(10, 4);
     Event_Wait(40);
     Actor_FaceDirection(10, 0xd000, 20);
-    Event_SetMessage(MSG_HEY);
+    Event_SetMessage((s32)MsgHaidiaHey2);
     Event_ShowMessageAndWait(0x900a, 0, 20);
     Actor_Stop(ACTOR_PARTY_LEADER);
     Actor_Stop(ACTOR_GERALD);
@@ -388,7 +398,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Event_ShowMessage(10, 0);
     Actor_SetAnimationAndWait(11, 4);
     Event_Wait(20);
-    Event_SetMessage(MSG_YOURE_LEAVING_AGAIN_SOON);
+    Event_SetMessage((s32)MsgHaidiaYoureLeavingAgainSoon);
     Event_ShowMessage(0x200b, 0);
     Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
     Event_Wait(20);

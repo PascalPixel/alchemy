@@ -3,16 +3,13 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "ITEM_IDS.H"
+extern u8 MsgRariberoBabiToldMeShipAncients[];
+extern u8 MsgRariberoMoreTolbisSoldiersLayDefeated[];
+extern u8 MsgRariberoThoughtShipWeSawAt[];
+extern u8 MsgRariberoWasToldLetInIf[];
+extern u8 MsgRariberoWhereGoingArentWeTaking[];
+extern u8 MsgRariberoWhereGoingRobinIodemAsked[];
 
-enum FlaggedCueMessage {
-    MSG_MORE_TOLBIS_SOLDIERS_LAY_DEFEATED = 0x2694,
-    MSG_OHH_THEY_TOOK_SHEBA_HEADED = 0x26af,
-    MSG_WHERE_GOING_ROBIN_IODEM_ASKED = 0x288e,
-    MSG_BABI_TOLD_ME_SHIP_ANCIENTS = 0x28a5,
-    MSG_THOUGHT_SHIP_WE_SAW_AT = 0x28b0,
-    MSG_WHERE_GOING_ARENT_WE_TAKING = 0x28b7,
-    MSG_WAS_TOLD_LET_IN_IF = 0x28b8
-};
 
 
 #define NULL ((void *)0)
@@ -107,7 +104,7 @@ void SceneActor_SetupActor18Event(void)
     void Actor_FaceDirection(s32, s32, s32);
 
     GameFlag_Set(2491);
-    Event_SetMessage(MSG_WAS_TOLD_LET_IN_IF);
+    Event_SetMessage((s32)MsgRariberoWasToldLetInIf);
     Event_ShowMessage(18, 0);
     PlaceActor(18, 65536, 32768);
     SetOffset(18, -16, 0);
@@ -157,7 +154,7 @@ void Scene_RunPrimarySequence(void)
     u8 *record;
 
     Event_Begin();
-    Event_SetMessage(MSG_MORE_TOLBIS_SOLDIERS_LAY_DEFEATED);
+    Event_SetMessage((s32)MsgRariberoMoreTolbisSoldiersLayDefeated);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xf80000, 0x1a80000);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_SetAnimation(8, 0);
@@ -350,7 +347,7 @@ void FieldScene_RunSecondarySequence(void)
 
     GameFlag_Set(0x9ba);
     Event_Begin();
-    Event_SetMessage(MSG_WHERE_GOING_ROBIN_IODEM_ASKED);
+    Event_SetMessage((s32)MsgRariberoWhereGoingRobinIodemAsked);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 0x178);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Call4(Motion_LaunchFromFocusedObject, 1, -32, 0, 0);
@@ -509,7 +506,7 @@ void FieldScene_RunSecondarySequence(void)
     if (GameFlag_IsSet(0x9bf) != 0) {
         FieldScene_RunScene3c6SequenceA();
     }
-    Event_SetMessage(MSG_BABI_TOLD_ME_SHIP_ANCIENTS);
+    Event_SetMessage((s32)MsgRariberoBabiToldMeShipAncients);
     Event_Wait(10);
     Actor_RunRepeatedMotion(22, 2);
     Event_Wait(20);
@@ -630,7 +627,7 @@ void FieldScene_RunScene3c6SequenceA(void)
     u32 i;
     u8 *record;
 
-    Event_SetMessage(MSG_THOUGHT_SHIP_WE_SAW_AT);
+    Event_SetMessage((s32)MsgRariberoThoughtShipWeSawAt);
     Event_Wait(20);
     Actor_RunRepeatedMotion(22, 2);
     Event_Wait(20);
@@ -675,7 +672,7 @@ void FieldScene_RunSequenceB(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_WHERE_GOING_ARENT_WE_TAKING);
+    Event_SetMessage((s32)MsgRariberoWhereGoingArentWeTaking);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
     Event_End();

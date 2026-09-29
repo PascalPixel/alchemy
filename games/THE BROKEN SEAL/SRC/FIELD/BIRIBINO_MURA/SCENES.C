@@ -1,30 +1,42 @@
 #include "MURA.H"
+extern u8 MsgBiribinoAreaOffLimitsThoseWithout[];
+extern u8 MsgBiribinoCurseWasBrokenThanksEfforts[];
+extern u8 MsgBiribinoDidSeeTreeAtEntrance[];
+extern u8 MsgBiribinoHaveEverBeenVillageImil[];
+extern u8 MsgBiribinoHaveTriedHeadingSoutheastFrom[];
+extern u8 MsgBiribinoItsTreeButAlmostLooks[];
+extern u8 MsgBiribinoJillGaveRobinSpecialGift[];
+extern u8 MsgBiribinoMccoysHiddenWarehouseDoNot[];
+extern u8 MsgBiribinoThankSavedMeFromBeing[];
+extern u8 MsgBiribinoThereTreeLooksLikePerson[];
+extern u8 MsgBiribinoWasTurnedIntoTreeFor[];
+extern u8 MsgBiribinoYoureGuy[];
 
 void FieldScene_RunScriptedStep1472(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_AREA_OFF_LIMITS_THOSE_WITHOUT, 1);
+    Message_ShowCentered((s32)MsgBiribinoAreaOffLimitsThoseWithout, 1);
     Event_End();
 }
 
 void FieldScene_RunScriptedStep146E(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_MCCOYS_HIDDEN_WAREHOUSE_DO_NOT, 1);
+    Message_ShowCentered((s32)MsgBiribinoMccoysHiddenWarehouseDoNot, 1);
     Event_End();
 }
 
 void SceneDialogue_RunLine1470(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_THERE_TREE_LOOKS_LIKE_PERSON, 1);
+    Message_ShowCentered((s32)MsgBiribinoThereTreeLooksLikePerson, 1);
     Event_End();
 }
 
 void FieldScene_RunScene38b_02000240(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_ITS_TREE_BUT_ALMOST_LOOKS);
+    Event_SetMessage((s32)MsgBiribinoItsTreeButAlmostLooks);
     if (GameFlag_IsSet(0x301) != 0) {
         bump_step_020001ec(1);
     }
@@ -36,7 +48,7 @@ void FieldScene_RunScene38b_02000240(void)
 void SceneDialogue_RunActorTwelveDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DID_SEE_TREE_AT_ENTRANCE);
+    Event_SetMessage((s32)MsgBiribinoDidSeeTreeAtEntrance);
     Event_AskYesNo(12, 0);
     Event_End();
 }
@@ -44,7 +56,7 @@ void SceneDialogue_RunActorTwelveDialogue(void)
 void SceneDialogue_RunActorFourteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_HAVE_TRIED_HEADING_SOUTHEAST_FROM);
+    Event_SetMessage((s32)MsgBiribinoHaveTriedHeadingSoutheastFrom);
     Event_AskYesNo(14, 0);
     Event_End();
 }
@@ -52,7 +64,7 @@ void SceneDialogue_RunActorFourteenDialogue(void)
 void SceneDialogue_ShowLine16BF(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_WAS_TURNED_INTO_TREE_FOR);
+    Event_SetMessage((s32)MsgBiribinoWasTurnedIntoTreeFor);
     Event_AskYesNo(21, 0);
     Event_End();
 }
@@ -60,7 +72,7 @@ void SceneDialogue_ShowLine16BF(void)
 void SceneDialogue_RunActorSixteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_CURSE_WAS_BROKEN_THANKS_EFFORTS);
+    Event_SetMessage((s32)MsgBiribinoCurseWasBrokenThanksEfforts);
     Event_AskYesNo(16, 0);
     Event_End();
 }
@@ -68,7 +80,7 @@ void SceneDialogue_RunActorSixteenDialogue(void)
 void SceneDialogue_ShowLine16CC(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_HAVE_EVER_BEEN_VILLAGE_IMIL);
+    Event_SetMessage((s32)MsgBiribinoHaveEverBeenVillageImil);
     Event_AskYesNo(18, 0);
     Event_End();
 }
@@ -169,7 +181,7 @@ void FieldScene_RunScene38bSequenceC(void)
         Actor_SetSpritePriority(11, 2);
         RunSceneTransitionEffect(0, 11);
         Task_Wait(10);
-        Event_SetMessage(MSG_THANK_SAVED_ME_FROM_BEING);
+        Event_SetMessage((s32)MsgBiribinoThankSavedMeFromBeing);
         Event_ShowMessage(11, 0);
         Psynergy_Cancel();
         Task_Wait(10);
@@ -203,13 +215,13 @@ void FieldScene_RunScene38b_02000584(void)
             if (record->x.fixed > rec7->x.fixed) {
                 Actor_FaceDirection(13, 0x5000, 20);
                 Actor_ShowEmote(13, 0x100, 20);
-                Event_SetMessage(MSG_YOURE_GUY);
+                Event_SetMessage((s32)MsgBiribinoYoureGuy);
                 Event_ShowMessageAndWait(13, 0, 10);
                 Actor_ShowEmote(12, 0x100, 0);
             } else {
                 Actor_FaceDirection(12, 0x3000, 20);
                 Actor_ShowEmote(12, 0x100, 20);
-                Event_SetMessage(MSG_YOURE_GUY);
+                Event_SetMessage((s32)MsgBiribinoYoureGuy);
                 Event_ShowMessageAndWait(12, 0, 10);
                 Actor_ShowEmote(13, 0x100, 0);
             }
@@ -244,7 +256,7 @@ void FieldScene_RunScene38b_02000584(void)
             Event_Wait(10);
             Actor_SetAnimationAndWait(14, 3);
             Event_ShowMessageAndWait(14, 0, 10);
-            Message_ShowCentered(MSG_JILL_GAVE_ROBIN_SPECIAL_GIFT, 1);
+            Message_ShowCentered((s32)MsgBiribinoJillGaveRobinSpecialGift, 1);
             bump_step(1);
             Item_ShowFound(ITEM_HARD_NUT, 3);
             Party_GiveItem(ITEM_HARD_NUT, 0);

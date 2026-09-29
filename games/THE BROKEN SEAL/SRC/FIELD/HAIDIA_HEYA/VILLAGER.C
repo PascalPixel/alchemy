@@ -1,4 +1,10 @@
 #include "TIMED_EVENTS.H"
+extern u8 MsgHaidiaDidYouHearAboutDora[];
+extern u8 MsgHaidiaLetsScareSukuretasVisitors[];
+extern u8 MsgHaidiaSukuretaCameToStudyMt[];
+extern u8 MsgHaidiaTheCulpritsHadStrangePowers[];
+extern u8 MsgHaidiaThisIsMyFarewellGift[];
+extern u8 MsgHaidiaYouMustSaveJasmine[];
 
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
@@ -89,7 +95,7 @@ void *SceneData_SelectTable9c00ByFlags(void)
 void Villager_AskWhySukuretaCame(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_SUKURETA_CAME_TO_STUDY_MT_ALEPH);
+    Event_SetMessage((s32)MsgHaidiaSukuretaCameToStudyMt);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 15, 6);
     Event_AskYesNo(15, 0);
     Event_End();
@@ -99,7 +105,7 @@ void Villager_AskWhySukuretaCame(void)
 void Villager_PlanToScareVisitors(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_LETS_SCARE_SUKURETAS_VISITORS);
+    Event_SetMessage((s32)MsgHaidiaLetsScareSukuretasVisitors);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 19, 6);
     Event_AskYesNo(19, 0);
     Event_End();
@@ -112,12 +118,12 @@ void Scene_GiveFarewellHerb(void)
 
     Event_Begin();
     if (GameFlag_IsSet(FLAG_GOT_FAREWELL_HERB) != 0) {
-        Event_SetMessage(MSG_YOU_MUST_SAVE_JASMINE);
+        Event_SetMessage((s32)MsgHaidiaYouMustSaveJasmine);
         Event_ShowMessage(20, 0);
         callback = (s32)gValeFaceTargetScript;
         Call3(Object_SetTargetAndCallback, 20, 0x10000, callback);
     } else {
-        base5_11a4 = MSG_THIS_IS_MY_FAREWELL_GIFT;
+        base5_11a4 = (s32)MsgHaidiaThisIsMyFarewellGift;
         Event_SetMessage(base5_11a4);
         Event_ShowMessageAndWait(20, 0, 20);
         Message_ShowCentered((base5_11a4 + 1), 1);
@@ -131,7 +137,7 @@ void Scene_GiveFarewellHerb(void)
 void Villager_AskAboutStrangePowers(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_THE_CULPRITS_HAD_STRANGE_POWERS);
+    Event_SetMessage((s32)MsgHaidiaTheCulpritsHadStrangePowers);
     Event_AskYesNo(16, 0);
     Event_End();
 }
@@ -140,7 +146,7 @@ void Villager_AskAboutStrangePowers(void)
 void Villager_AskAboutDora(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DID_YOU_HEAR_ABOUT_DORA);
+    Event_SetMessage((s32)MsgHaidiaDidYouHearAboutDora);
     Event_AskYesNo(10, 0);
     Event_End();
 }

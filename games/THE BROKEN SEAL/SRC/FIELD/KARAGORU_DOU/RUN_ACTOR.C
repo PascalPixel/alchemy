@@ -4,13 +4,8 @@
 
 #include "STAGED_ACTOR_PAIR_SCENE.H"
 #include "STAGED_ACTOR.H"
+extern u8 MsgKaragoruIveBeenWaitingForRobin[];
 
-enum StagedPairMessage {
-    MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
-    MSG_WE_MISSED_COLOSSO_BECAUSE_WE = 0x23d5,
-    MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
-    MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
-};
 
 struct EffectRecord {
     u8 pad[9];
@@ -35,7 +30,6 @@ struct HeightTrackedObject {
     s32 height;                 /* +12 */
 };
 
-extern u8 LinkedMessage_DoYouWishCrossInto[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -85,7 +79,7 @@ void ActorPresentation_RunActorElevenRecoveryScene(void)
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(10);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
-    Event_SetMessage(MSG_IVE_BEEN_WAITING_FOR_ROBIN);
+    Event_SetMessage((s32)MsgKaragoruIveBeenWaitingForRobin);
     Event_ShowMessage(11, 0);
     Actor_SetAnimation(11, 2);
     {

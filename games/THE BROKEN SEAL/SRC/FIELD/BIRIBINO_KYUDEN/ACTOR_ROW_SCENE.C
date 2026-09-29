@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgBiribinoLordMccoyOrdered[];
 
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
@@ -66,7 +67,7 @@ void BiribinoKyuden_RunActorRowScene(void)
     Engine_ActorSetAnimation(19, 1);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(19, 1);
-    Engine_EventSetMessage(0x1746);
+    Engine_EventSetMessage((s32)MsgBiribinoLordMccoyOrdered);
     Call3((void (*)())Engine_EventShowMessageAndWait, 19, 0, 10);
     Call3((void (*)())Engine_ActorWalkToAndWait, 19, 0x26e, 0x30c);
     Call3((void (*)())Engine_ActorFaceDirection, 19, 0xc000, 10);

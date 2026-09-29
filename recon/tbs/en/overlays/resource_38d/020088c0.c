@@ -1,14 +1,19 @@
 /* Draft of resource_38d 0x020088c0 (FieldScene_RunLongBranchingChoreography),
  * built with games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/KYUDEN.H. It
- * matched the ROM apart from its names. Remaining difference: the ROM loads
- * message 0x1440 from the literal pool where the Kolima offer is refused, as
- * a link-time message value would; the C constant is built with a move and a
- * shift. Its imports still carry their old call-site names: each reaches the
- * import veneer IMPORT.S labels for the same main-image code. The listing
- * keeps these rows. */
+ * matched the ROM apart from its names. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Func_02002e68,
+ * Func_02002fae, Func_02002fc2, Func_02002fe0, Func_0200311c, Func_020031f6,
+ * ...). */
 #include "KYUDEN.H"
+extern u8 MsgBiribinoComeSaidYoud[];
+extern u8 MsgBiribinoHmmmWellGrant[];
+extern u8 MsgBiribinoMatter[];
+extern u8 MsgBiribinoSeriousDoesntBother[];
+extern u8 MsgBiribinoTooYoungForTheJob[];
+extern u8 MsgBiribinoWellDontLet[];
+extern u8 MsgBiribinoWellSGoing[];
+extern u8 MsgBiribinoYehveChangeHeart[];
 
-extern u8 LinkedMessage_TooYoungForTheJob;
 
 s32 Func_02002e68();
 s32 Func_02002fae();
@@ -83,7 +88,7 @@ void FieldScene_RunLongBranchingChoreography(void)
         Engine_EventWait(20);
         Actor_SetAnimationAndWait(18, 3);
         Event_Wait(10);
-        Call1(Engine_EventSetMessage, 0x1437);
+        Call1(Engine_EventSetMessage, (s32)MsgBiribinoMatter);
         Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
         Actor_RunRepeatedMotion(19, 2);
         Engine_EventShowMessageAndWait(19, 0, 20);
@@ -163,7 +168,7 @@ void FieldScene_RunLongBranchingChoreography(void)
             goto L_02000f86;
         }
     L_02000cb6:
-        Engine_EventSetMessage((s32)&LinkedMessage_TooYoungForTheJob);
+        Engine_EventSetMessage((s32)MsgBiribinoTooYoungForTheJob);
         Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
         Call3(Engine_ActorFaceDirection, 19, 0x3000, 0);
         Engine_ActorSetAnimationAndWait(18, 4);
@@ -241,7 +246,7 @@ void FieldScene_RunLongBranchingChoreography(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0xc000, 20);
     Call3(Engine_ActorShowEmote, 18, 0x101, 60);
-    Event_SetMessage(MSG_YEHVE_HAD_CHANGE_HEART_YEH);
+    Event_SetMessage((s32)MsgBiribinoYehveChangeHeart);
     Value2(Engine_EventOpenMessage, 0x2012, 0);
     if (Value2(Engine_EventChooseYesNo, 0, 0) == 1) {
         goto L_02000cb6;
@@ -256,7 +261,7 @@ L_02000f86:
     Engine_ActorSetAnimation(1, 3);
     Engine_ActorSetAnimationAndWait(2, 3);
     Call3(Engine_ActorShowEmote, 18, 0x105, 60);
-    Call1(Engine_EventSetMessage, 0x1443);
+    Call1(Engine_EventSetMessage, (s32)MsgBiribinoHmmmWellGrant);
     Call2(Engine_EventShowMessage, 0x2012, 0);
     record = Func_0200348a(20);
     Func_02003438(record, 0);
@@ -289,12 +294,12 @@ L_02000f86:
         do {
             Func_020035fc(1, 2);
             Engine_ActorRunRepeatedMotion(2, 2);
-            Call1(Engine_EventSetMessage, 0x1447);
+            Call1(Engine_EventSetMessage, (s32)MsgBiribinoSeriousDoesntBother);
             Value2(Engine_EventOpenMessage, 0x4001, 0);
         } while (Value2(Engine_EventChooseYesNo, 0, 0) != 1);
     }
     Engine_ActorSetAnimationAndWait(1, 3);
-    Call1(Engine_EventSetMessage, 0x1448);
+    Call1(Engine_EventSetMessage, (s32)MsgBiribinoWellDontLet);
     Call3(Engine_EventShowMessageAndWait, 0x4001, 0, 10);
     Call3(Engine_ActorFaceDirection, 3, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
@@ -328,7 +333,7 @@ L_02000f86:
     Call3(Engine_ActorFaceDirection, 2, 0xa000, 0);
     Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
     while (Event_ChooseYesNo(0, 0) != 0) {
-        Call1(Engine_EventSetMessage, 0x144e);
+        Call1(Engine_EventSetMessage, (s32)MsgBiribinoComeSaidYoud);
         Call2(Func_020037f0, 0x4001, 0);
     }
     Engine_EventWait(10);
@@ -339,7 +344,7 @@ L_02000f86:
     Call3(Engine_ActorShowEmote, 2, 0x105, 60);
     Call3(Engine_ActorFaceDirection, 2, 0x8000, 10);
     Engine_ActorSetAnimationAndWait(2, 4);
-    Call1(Engine_EventSetMessage, 0x144f);
+    Call1(Engine_EventSetMessage, (s32)MsgBiribinoWellSGoing);
     Call3(Engine_EventShowMessageAndWait, 0x4002, 0, 20);
     Engine_ActorRunRepeatedMotion(18, 1);
     Call3(Engine_ActorFaceDirection, 18, 0x5000, 10);

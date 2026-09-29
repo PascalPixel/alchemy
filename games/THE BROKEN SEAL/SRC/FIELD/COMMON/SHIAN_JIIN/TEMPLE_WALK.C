@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgShianAlreadyHeardTest[];
 
 s32 Engine_ActorGet();
 void Engine_EventBegin();
@@ -58,7 +59,7 @@ void ShianJiin_RunTempleWalkScene(void)
 
     rec8 = Value1(Engine_ActorGet, 9);
     Engine_EventBegin();
-    Call1(Engine_EventSetMessage, 0x17b4);
+    Call1(Engine_EventSetMessage, (s32)MsgShianAlreadyHeardTest);
     Engine_EventShowMessageAndWait(9, 0, 20);
     Call3(Engine_ActorWalkToAndWait, 0, 168, 0x188);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);

@@ -1,9 +1,11 @@
 /* Draft of resource_3ad 0x02009448..0x02009760 (792 bytes with pool),
- * Party_StaysBehind; the listing keeps the rows. Remaining difference: the
- * reference loads message 0x254e from its literal pool as a link-time value;
- * the integer message is scheduled differently (792 bytes, 18 differ from
- * +0x2). */
+ * Party_StaysBehind; the listing keeps the rows. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Engine_ActorShowEmote,
+ * Engine_ActorRunRepeatedMotion, Engine_EventWait,
+ * Engine_ActorSetAnimationAndWait, Engine_ActorFaceDirection,
+ * Engine_ActorSetDestinationOffset, ...). */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/CAVE.H"
+extern u8 MsgRunpaInsistStick[];
 
 /*
  * Hammet and Bunza say goodbye and leave for the wagon; the party watches
@@ -16,7 +18,7 @@ void Party_StaysBehind(void)
 
     Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 5, 60);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
-    farewell = 0x254e;
+    farewell = (s32)MsgRunpaInsistStick;
     Event_SetMessage(farewell + FAREWELL_GERALD_STAYS);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);

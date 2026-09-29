@@ -19,20 +19,6 @@ enum StormNightActor {
     ACTOR_KYLE
 };
 
-enum StormNightMessage {
-    MSG_GO_ON_YOUR_OWN = 0xe65,
-    MSG_GO_SOUTH_TO_THE_PLAZA = 0xe66,
-    MSG_UGH_HRNGHHH = 0xe6c,
-    MSG_DUMP_MY_STUFF = 0xe6e,
-    MSG_DONT_LEAVE_ME_HERE = 0xe71,
-    MSG_NORTH_LEADS_TO_MT_ALEPH = 0xe7b,
-    MSG_CANT_GET_AROUND_THIS_ROCK = 0xe7d,
-    MSG_THE_BOULDER_IS_FALLING = 0xe7f,
-    MSG_ILL_GO = 0xed1,
-    MSG_I_CANT_MOVE_GET_HELP = 0xed2,
-    MSG_ROBIN = 0xed3,
-    MSG_THE_DOOR_WONT_OPEN = 0xee4
-};
 
 #define ACTOR_ID 22
 
@@ -111,14 +97,6 @@ extern u8 HaidiaArashi_CellSteps0[];
 extern u8 HaidiaArashi_CellSteps1[];
 
 
-enum {
-    MSG_CAN_THEY_STOP_THE_BOULDER = 0xe5c,
-    MSG_HEY_ROBIN = 0xe74,
-    MSG_HUH_ROBIN = 0xe67,
-    MSG_ITS_GERALD_CHEST_VALUABLES = 0x1120,
-    MSG_NO_MY_BROTHER = 0xe8c,
-    MSG_ROBIN_BOULDER_WE_NEED_GET = 0xed0
-};
 
 
 extern u8 HaidiaArashi_ActorNineteenScript[];

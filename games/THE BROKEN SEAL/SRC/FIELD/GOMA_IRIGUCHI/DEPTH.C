@@ -6,6 +6,7 @@
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
+extern u8 MsgGomaNoUsePsynergy[];
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
@@ -51,7 +52,7 @@ void FieldScene_RunScene387SequenceA(void)
     BattleFx_PlayQueuedSound();
     Event_Begin();
     Event_Wait(30);
-    Event_SetMessage(0x138f);
+    Event_SetMessage((s32)MsgGomaNoUsePsynergy);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);

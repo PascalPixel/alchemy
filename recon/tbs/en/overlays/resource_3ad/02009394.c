@@ -1,9 +1,10 @@
 /* Draft of resource_3ad 0x02009394..0x0200941c (136 bytes with pool),
- * Bunza_CannotWait; the listing keeps the rows. Remaining difference: the
- * reference loads message 0x255e from its literal pool after the emote, as a
- * link-time value; the integer message is loaded before it (136 bytes, 10
- * differ from +0xc). */
+ * Bunza_CannotWait; the listing keeps the rows. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Engine_ActorShowEmote,
+ * Engine_ActorFaceDirection, Engine_EventWait,
+ * Engine_ActorSetAnimationAndWait). */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/CAVE.H"
+extern u8 MsgRunpaMeaningWontRide[];
 
 /* Bunza cannot wait any longer, and Mia asks whether the party stays. */
 u8 Bunza_CannotWait(void)
@@ -12,7 +13,7 @@ u8 Bunza_CannotWait(void)
 
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | 2, 60);
-    warning = 0x255e;
+    warning = (s32)MsgRunpaMeaningWontRide;
     Event_SetMessage(warning + WARNING_IVAN_ASKS_IF_STAYING);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);

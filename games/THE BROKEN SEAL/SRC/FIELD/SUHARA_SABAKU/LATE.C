@@ -1,5 +1,6 @@
 /* The Suhara desert: the late steps and actor 13's restoration. */
 #include "SABAKU.H"
+extern u8 MsgSuharaNowhereFound[];
 
 void FieldScene_RunLateActor8Step(void) { SuharaSabaku_RestoreActorScaleAndBlend(8); }
 void FieldScene_RunLateActor9Step(void) { SuharaSabaku_RestoreActorScaleAndBlend(9); }
@@ -19,7 +20,7 @@ void FieldScene_RunActorThirteenRestoration(void)
             } else {
                 GameFlag_Set(0x9b5);
                 Event_Begin();
-                Event_SetMessage(0x2633);
+                Event_SetMessage((s32)MsgSuharaNowhereFound);
                 /* Record layout observed here: s32 at +8, s32 at +16. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {

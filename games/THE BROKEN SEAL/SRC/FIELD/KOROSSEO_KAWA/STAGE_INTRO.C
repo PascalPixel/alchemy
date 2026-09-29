@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgKorosseoCallRockChallenge[];
+extern u8 MsgKorosseoObjectiveStageClear[];
 
 void Korosseo_FinishSoloRound();
 void Engine_EventBegin();
@@ -77,7 +79,7 @@ void KorosseoKawa_RunStageIntro(s32 a0)
         rec = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 1);
         if (rec != 0) {
         } else {
-            Call1(Engine_EventSetMessage, 0x208c);
+            Call1(Engine_EventSetMessage, (s32)MsgKorosseoCallRockChallenge);
             Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
             Call4(Engine_CameraMoveTo, 0x1480000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
@@ -119,7 +121,7 @@ void KorosseoKawa_RunStageIntro(s32 a0)
             goto L_020013c2;
         }
         if (rec == 1) {
-            Call1(Engine_EventSetMessage, 0x208b);
+            Call1(Engine_EventSetMessage, (s32)MsgKorosseoObjectiveStageClear);
             Engine_EventShowMessage(a0, 0);
         }
         L_020013c2:;

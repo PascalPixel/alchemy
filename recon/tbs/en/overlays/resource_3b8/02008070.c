@@ -2,14 +2,22 @@
  * listing. Remaining differences, all link-time values the game loads from
  * literal pools where integers become immediates or folded constants:
  * SceneData_SelectDataBySelectorAndFlags compares with 0x8b loaded from the
- * pool; FieldScene_RunBranchedSteps1FF1, RunOpeningAuxiliarySequence,
+ * pool; the 0x105 emote is loaded from the pool too.
+ * FieldScene_RunBranchedSteps1FF1, RunOpeningAuxiliarySequence,
  * FieldScene_RunScene3b8_02000264 and FieldScene_RunBranchedSteps2006 load
- * one message (0x1ff1, 0x1ff8, 0x2241, 0x2006) and derive the next ones as
- * base + n, which an integer message propagates into separate constants;
- * the 0x105 emote is loaded from the pool too. */
+ * one message (MsgTorebiRunBabisSoldiers, MsgTorebiUseFourBeds,
+ * MsgTorebiCameRestBefore, MsgTorebiPlanningEnterColosso) and derive the
+ * next ones as base + n; the draft names those messages now, and with them
+ * it is 880 bytes against 832, 318 halfwords differing. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgTorebiTiredFeelFreeRest[];
+extern u8 MsgTorebiCameRestBefore[];
+extern u8 MsgTorebiPlanningEnterColosso[];
+extern u8 MsgTorebiRunBabisSoldiers[];
+extern u8 MsgTorebiUseFourBeds[];
+extern u8 MsgTorebiWeHaveJustEnoughExtra[];
 /* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/KYUDEN.H. */
 
 s32 SceneData_SelectDataBySelectorAndFlags(void)
@@ -28,7 +36,7 @@ s32 SceneData_SelectDataBySelectorAndFlags(void)
 
 void FieldScene_RunBranchedSteps1FF1(s32 a)
 {
-    s32 k = 0x1ff1;
+    s32 k = (s32)MsgTorebiRunBabisSoldiers;
 
     Event_SetMessage(k);
     Event_OpenMessage(a, 0);
@@ -54,7 +62,7 @@ void RunOpeningAuxiliarySequence(s32 a)
     if (Value1_scene_effect_sequence_head(Engine_GameFlagIsSet, 512) == 0) {
         Call1_scene_effect_sequence_head(Engine_GameFlagSet, 512);
         GameFlag_Clear(0x969);
-        Event_SetMessage(MSG_WE_HAVE_JUST_ENOUGH_EXTRA);
+        Event_SetMessage((s32)MsgTorebiWeHaveJustEnoughExtra);
         Event_ShowMessage(a, 0);
         Event_Wait(10);
         t = v << 16;
@@ -74,7 +82,7 @@ void RunOpeningAuxiliarySequence(s32 a)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         Event_Wait(20);
-        c = 0x1ff8;
+        c = (s32)MsgTorebiUseFourBeds;
         Event_SetMessage(c);
         Event_OpenMessage(a, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
@@ -108,7 +116,7 @@ void FieldScene_RunScene3b8_02000264(s32 a0)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         Event_Wait(20);
-        base6_2241 = (s32)0x2241;
+        base6_2241 = (s32)MsgTorebiCameRestBefore;
         Event_SetMessage(base6_2241);
         Event_OpenMessage(a0, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
@@ -125,7 +133,7 @@ void FieldScene_RunScene3b8_02000264(s32 a0)
         Actor_WalkByAndWait(a0, -64, 0);
         Engine_ActorWalkByAndWait(a0, 0, 48);
     } else {
-        Call1(Engine_EventSetMessage, 0x2245);
+        Call1(Engine_EventSetMessage, (s32)MsgTorebiTiredFeelFreeRest);
         Event_OpenMessage(a0, 0);
     }
     Event_End();
@@ -133,7 +141,7 @@ void FieldScene_RunScene3b8_02000264(s32 a0)
 
 void FieldScene_RunBranchedSteps2006(s32 a)
 {
-    s32 k = 0x2006;
+    s32 k = (s32)MsgTorebiPlanningEnterColosso;
 
     Event_SetMessage(k);
     Event_OpenMessage(a, 0);

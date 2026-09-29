@@ -1,10 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgHaidiaMtAlephWasInactive[];
 
-enum ValeMessage {
-    MSG_MT_ALEPH_WAS_INACTIVE = 0x1122
-};
 
 extern u8 HaidiaFunka_ActionScript[];
 /* The scene's four tables, in the overlay's read-only data. */
@@ -132,7 +130,7 @@ void RunEventScript01(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     MapRender_WaitForValues();
     Event_Wait(60);
-    Event_SetMessage(MSG_MT_ALEPH_WAS_INACTIVE);
+    Event_SetMessage((s32)MsgHaidiaMtAlephWasInactive);
     Actor_ShowEmote(8, 0x102, 0);
     Event_Wait(60);
     Event_ShowMessage(8, 0);

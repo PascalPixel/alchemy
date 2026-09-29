@@ -1,10 +1,12 @@
-/* Draft of resource_374 0x02008248 (Villager_ShowOffPsynergy), built with
- * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.H. Remaining difference:
- * the ROM loads message 0x1197 once from the literal pool and forms 0x119a
- * and 0x119b by adding 3 and 4 to it, as a link-time message value would;
- * the C constant folds each sum into its own pool constant (8 bytes longer).
- * The listing keeps these rows until the message number has a source. */
+/* Draft of resource_374 0x02008248 (Villager_ShowOffPsynergy): it matches the
+ * ROM byte for byte now that the messages it loads from the literal pool have
+ * catalogue names (MsgHaidiaArentWorriedCrossing,
+ * MsgHaidiaBeholdPowerPsynergy, MsgHaidiaShownNewAbility). The listing keeps
+ * these rows until the draft is adopted. */
 #include "HAIDIA.H"
+extern u8 MsgHaidiaArentWorriedCrossing[];
+extern u8 MsgHaidiaBeholdPowerPsynergy[];
+extern u8 MsgHaidiaShownNewAbility[];
 
 void Villager_ShowOffPsynergy(void)
 {
@@ -15,7 +17,7 @@ void Villager_ShowOffPsynergy(void)
 
     Event_Begin();
     if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        base5_1197 = MSG_ARENT_YOU_WORRIED_ABOUT_CROSSING;
+        base5_1197 = (s32)MsgHaidiaArentWorriedCrossing;
         Event_SetMessage(base5_1197);
         if (GameFlag_IsSet(2) != 0) {
             bump_step(1);
@@ -32,7 +34,7 @@ void Villager_ShowOffPsynergy(void)
         Event_ShowMessage(17, 0);
     } else {
         p6 = *(volatile s32 *)(*(volatile s32 *)0x03001e70);
-        Event_SetMessage(MSG_HAVE_I_SHOWN_YOU_MY_ABILITY);
+        Event_SetMessage((s32)MsgHaidiaShownNewAbility);
         Actor_FaceEachOther(17, ACTOR_PARTY_LEADER, 0);
         Event_AskYesNo(17, 0);
         Event_Wait(20);
@@ -63,7 +65,7 @@ void Villager_ShowOffPsynergy(void)
         FieldScene_Forward4dac();
         Actor_SetChildValue(17, 0);
         Event_Wait(40);
-        Event_SetMessage(MSG_BEHOLD_THE_POWER_OF_PSYNERGY);
+        Event_SetMessage((s32)MsgHaidiaBeholdPowerPsynergy);
         Event_ShowMessage(17, 0);
     }
     Event_End();

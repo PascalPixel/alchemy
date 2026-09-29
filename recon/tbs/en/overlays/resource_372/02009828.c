@@ -1,9 +1,13 @@
 /* NONMATCHING: resource_372 at 0x02009828, from FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_E.C, stays listing.
  *
- * Remaining difference: the ROM keeps a message number in a saved register and loads it from the literal pool where the source named a link-time symbol; the main image has no name for it, and a plain constant is loaded ahead of the preceding call instead.
+ * Remaining difference: its messages have catalogue names now; 2 halfwords
+ * still differ from the ROM, and it names symbols no link defines
+ * (Func_02005ff6, Engine_EventAskYesNo, Func_0200606c); it also lacks
+ * declarations it needs to compile.
  */
 
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaHey[];
 
 void FieldScene_RunScene372SequenceE(void)
 {
@@ -16,7 +20,7 @@ void FieldScene_RunScene372SequenceE(void)
     } else {
         Event_Begin();
         Actor_SetAttachedEffect(22, 0x100);
-        base5_e74 = MSG_HEY_ROBIN;
+        base5_e74 = (s32)MsgHaidiaHey;
         Event_SetMessage(base5_e74);
         Event_ShowMessage(22, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);

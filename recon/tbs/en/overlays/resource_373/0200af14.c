@@ -1,10 +1,11 @@
-/* Draft of resource_373 0x0200af14..0x0200b1b4 (672 bytes with pool),
- * FieldScene_RunPrimaryActorSequence; the listing keeps the rows. Remaining
- * difference: the reference loads message 0x1c60 from its literal pool, as a
- * link-time message symbol is loaded; the constant compiles to movs #113 /
- * lsls #6 and the register allocation after it shifts (167 bytes differ from
- * +0xa). */
+/* Draft of resource_373 0x0200af14 (FieldScene_RunPrimaryActorSequence): it
+ * matches the ROM byte for byte now that the messages it loads from the
+ * literal pool have catalogue names (MsgHaidiaEverProtectFamily,
+ * MsgHaidiaHowHaveYouBeen). The listing keeps these rows until the draft is
+ * adopted. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.H"
+extern u8 MsgHaidiaEverProtectFamily[];
+extern u8 MsgHaidiaHowHaveYouBeen[];
 
 /* Runs the actor 0 / 1 / 9 setup sequence: position, speed and animation
  * calls in a fixed order. Two steps look up a record for one actor and
@@ -26,7 +27,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x15a, 0x2e9);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
-    Event_SetMessage(MSG_HOW_HAVE_YOU_BEEN);
+    Event_SetMessage((s32)MsgHaidiaHowHaveYouBeen);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_RunRepeatedMotion(9, 2);
     Actor_ShowEmote(9, 0x100, 0);
@@ -69,7 +70,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     }
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 10);
-    Event_SetMessage(MSG_WHATEVER_YOU_DO_YOU);
+    Event_SetMessage((s32)MsgHaidiaEverProtectFamily);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_SetAnimationAndWait(9, 3);
     Event_ShowMessageAndWait(9, 0, 20);

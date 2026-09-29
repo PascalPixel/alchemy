@@ -61,7 +61,6 @@ extern u8 Data_0200c808[];
 extern u8 Data_0200c850[];
 extern u8 Data_0200c5e0[];
 extern u8 Data_02001004;
-extern u8 Value_0000217f;
 extern u16 *Data_0200bf6c;
 extern s8 Data_02001002;
 extern u8 Data_02008ee1;

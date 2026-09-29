@@ -1,14 +1,22 @@
 /* The Lunpa fortress: the scene variants of actors 24 and 25 and the second
  * supplemental sequence. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaDifficultDonpaRight[];
+extern u8 MsgRunpaFatherSorryDodonpa[];
+extern u8 MsgRunpaFatherStayAngry[];
+extern u8 MsgRunpaOwwwDontHurt[];
+extern u8 MsgRunpaSomeonePunishDodonpa[];
+extern u8 MsgRunpaThankHelpDodonpa[];
+extern u8 MsgRunpaWellWorriedDodonpa[];
+extern u8 MsgRunpaZZZZ[];
 
 void SelectActor25SceneVariant(void)
 {
     if (GameFlag_IsSet(0x941)) {
-        Event_SetMessage(0x2568);
+        Event_SetMessage((s32)MsgRunpaDifficultDonpaRight);
         Event_ShowMessage(25, 0);
     } else {
-        Event_SetMessage(0x2458);
+        Event_SetMessage((s32)MsgRunpaSomeonePunishDodonpa);
         Event_ShowMessage(25, 0);
     }
 }
@@ -16,10 +24,10 @@ void SelectActor25SceneVariant(void)
 void SelectActor24SceneVariant(void)
 {
     if (GameFlag_IsSet(0x941)) {
-        Event_SetMessage(0x2569);
+        Event_SetMessage((s32)MsgRunpaFatherStayAngry);
         Event_ShowMessage(24, 0);
     } else {
-        Event_SetMessage(0x244e);
+        Event_SetMessage((s32)MsgRunpaFatherSorryDodonpa);
         Event_ShowMessage(24, 0);
     }
 }
@@ -34,7 +42,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 
     if (GameFlag_IsSet(2369) != 0) {
         if (GameFlag_IsSet(2382) == 0 && GameFlag_IsSet(788) == 0) {
-        sequence_id = 9569;
+        sequence_id = (s32)MsgRunpaThankHelpDodonpa;
         Event_SetMessage(sequence_id);
         Event_ShowMessage(PRIMARY_ID, 0);
         Value2(Engine_ActorRunRepeatedMotion, PRIMARY_ID, 1);
@@ -78,11 +86,11 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         Value1(Battle_WaitMode0, 30);
         GameFlag_Set(788);
         } else {
-            Event_SetMessage(9575);
+            Event_SetMessage((s32)MsgRunpaWellWorriedDodonpa);
             Event_ShowMessage(PRIMARY_ID, 0);
         }
     } else {
-        Event_SetMessage(0x244d);
+        Event_SetMessage((s32)MsgRunpaZZZZ);
         Event_ShowMessage(PRIMARY_ID, 0);
     }
 }
@@ -96,6 +104,6 @@ void ConfigureSceneActor26(void)
 void ConfigureSceneActor14(void)
 {
     Actor_RunRepeatedMotion(14, 2);
-    Event_SetMessage(0x2441);
+    Event_SetMessage((s32)MsgRunpaOwwwDontHurt);
     Event_ShowMessage(14, 0);
 }

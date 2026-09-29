@@ -1,4 +1,8 @@
 #include "TYPES.H"
+extern u8 MsgBiribinoLordMccoyDifficult[];
+extern u8 MsgBiribinoLordOnlyMeet[];
+extern u8 MsgBiribinoMasterQuiteCranky[];
+extern u8 MsgBiribinoWhere[];
 extern struct EventWork *gEventWork;
 
 /* Main-image code reached through the overlay's import veneers, declared
@@ -67,21 +71,21 @@ void BiribinoNiwa_RunGardenEvent(void)
     if (Value1(Engine_GameFlagIsSet, 0x84a) != 0) {
         if (Value1(Engine_GameFlagIsSet, 0x304) != 0) {
             if (Value1(Engine_GameFlagIsSet, 0x201) == 0) {
-                Call1(Engine_EventSetMessage, 0x1414);
+                Call1(Engine_EventSetMessage, (s32)MsgBiribinoWhere);
                 Engine_EventShowMessageAndWait(12, 0, 10);
                 Call3(Engine_ActorShowEmote, 12, 0x107, 40);
                 Engine_EventShowMessageAndWait(12, 0, 10);
                 Engine_ActorRunRepeatedMotion(12, 2);
                 Call1(Engine_GameFlagSet, 0x201);
             }
-            Call1(Engine_EventSetMessage, 0x1416);
+            Call1(Engine_EventSetMessage, (s32)MsgBiribinoMasterQuiteCranky);
             Engine_EventShowMessage(12, 0);
             goto L_0200041c;
         }
-        Call1(Engine_EventSetMessage, 0x1413);
+        Call1(Engine_EventSetMessage, (s32)MsgBiribinoLordMccoyDifficult);
         Engine_EventShowMessage(12, 0);
     } else {
-        Call1(Engine_EventSetMessage, 0x140d);
+        Call1(Engine_EventSetMessage, (s32)MsgBiribinoLordOnlyMeet);
         Value2(Engine_EventOpenMessage, 12, 0);
         if (Value2(Engine_EventChooseYesNo, 0, 0) != 0) {
             goto L_02000408;

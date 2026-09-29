@@ -7,9 +7,10 @@ extern u8 Value_00000015[];
 /* AUDITED GENERATED SCENE SCRIPT for FieldScene_RunVaultClosingSequence:
  * all 169 calls and arguments are represented in machine order.
  *
- * The two message runs are linked message identities (4805, 4828 in the
- * English build; the Japanese catalog holds other text at those numbers):
- * as plain integers their pool loads were scheduled two calls early.
+ * The two message runs start at MsgKuupuappuVaultCutFree and
+ * MsgKuupuappuVaultThievesCaught, loaded from the pool; the lines that
+ * follow each are derived from it. As plain integers their pool loads were
+ * scheduled two calls early.
  *
  * Exact 2026-09-23 (1,608 bytes), with one tagged fake match: the
  * reference loads Data_02000240 before the 0x22b offset, which plain array,
@@ -199,8 +200,8 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 extern u8 Data_02000240[];
-extern u8 LinkedMessage_VaultCutFree;
-extern u8 LinkedMessage_VaultThievesCaught;
+extern u8 MsgKuupuappuVaultCutFree[];
+extern u8 MsgKuupuappuVaultThievesCaught[];
 
 void Func_02001348(void)
 {
@@ -212,7 +213,7 @@ void Func_02001348(void)
     Call3(Func_020060ee, 2, 52428, 26214);
     Func_0200616e(0, 3);
     Func_020060b4(20);
-    base = (s32)&LinkedMessage_VaultCutFree;
+    base = (s32)MsgKuupuappuVaultCutFree;
     Func_02006078(base, 1);
     base = base + 1;
     Func_0200619e(base);
@@ -351,7 +352,7 @@ void Func_02001348(void)
         Event_Wait(40);
         Func_02006666(1, 10, 0);
         Func_02006670(2, 10, 0);
-        base = (s32)&LinkedMessage_VaultThievesCaught;
+        base = (s32)MsgKuupuappuVaultThievesCaught;
         Func_02006688(base);
         Func_02006678(10, 2);
         Func_020065be(20);

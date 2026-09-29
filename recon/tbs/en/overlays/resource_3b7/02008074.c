@@ -1,12 +1,11 @@
 /* Draft of FieldScene_RunActorCueBranch, resource_3b7 at 0x02008074 (from FIELD/TOREBI_IZUMI/TOPIC.C).
- * Remaining difference: its message 0xe39 is loaded once as a link-time value and the next two are derived from it (base + 1, + 2); integer messages fold into separate pool constants. */
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_EventChooseYesNo, Engine_EventWait, Engine_EventShowMessage). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgTorebiLuckyMedal[];
 
-enum TopicMessage {
-    MSG_LUCKY_WHEELS_RULES_PULL_LEVER = 0xe34,
-    MSG_LUCKY_WHEELS_PRIZES_PRIZES_DETERMINED = 0xe35
-};
 
 
 /* Signed topic cursors share the scene workspace with its halfword state. */
@@ -14,8 +13,6 @@ extern s8 SceneWork_Bytes[];
 extern u8 Value_000000bd;
 extern u8 Data_02009aec[];
 extern u8 Data_02009cfc[];
-extern u8 Value_00000e39;
-extern u8 Value_00000e19;
 extern u8 Data_02009f30[];
 extern u8 Data_02009e1c[];
 extern s32 Data_0200a018[];     /* in-image, file offset 0x2018: 5 topics x 3 ids */
@@ -34,7 +31,7 @@ void Func_02002f80();
 
 void FieldScene_RunActorCueBranch(s32 object)
 {
-    s32 cue = (s32)&Value_00000e39;
+    s32 cue = (s32)MsgTorebiLuckyMedal;
     Event_SetMessage(cue);
     Event_OpenMessage(object, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {

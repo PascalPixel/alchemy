@@ -1,11 +1,12 @@
-/* Draft of resource_3b6 0x02008500 (SceneDialogue_RunFacingPrompt), built with
- * games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/TOREBI.H.
- * Remaining difference: the ROM loads the message number once from the
- * literal pool and forms the following lines by adding to it, as a
- * link-time message value would; the C constant folds each sum into its
- * own pool constant (4 or 8 bytes longer).
- * The listing keeps these rows. */
+/* Draft of resource_3b6 0x02008500 (SceneDialogue_RunFacingPrompt): it
+ * matches the ROM byte for byte now that the messages it loads from the
+ * literal pool have catalogue names (MsgTorebiFirstTimeTolbi,
+ * MsgTorebiRequireLotHealing, MsgTorebiRightOneWell). The listing keeps these
+ * rows until the draft is adopted. */
 #include "TOREBI.H"
+extern u8 MsgTorebiFirstTimeTolbi[];
+extern u8 MsgTorebiRequireLotHealing[];
+extern u8 MsgTorebiRightOneWell[];
 
 void SceneDialogue_RunFacingPrompt(s32 no)
 {
@@ -14,13 +15,13 @@ void SceneDialogue_RunFacingPrompt(s32 no)
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0x8000) {
         Shop_Open(28, no);
     } else if (GameFlag_IsSet(0x950) != 0) {
-        Scene_Call1(Engine_EventSetMessage, 0x238d);
+        Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiRightOneWell);
         Event_ShowMessage(no, 0);
     } else if (GameFlag_IsSet(0x962) != 0) {
-        Scene_Call1(Engine_EventSetMessage, 0x221b);
+        Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiRequireLotHealing);
         Event_ShowMessage(no, 0);
     } else {
-        msg = MSG_FIRST_TIME_TO_TOLBI;
+        msg = (s32)MsgTorebiFirstTimeTolbi;
         Event_SetMessage(msg);
         Scene_Value2(Engine_EventOpenMessage, no, 0);
         if (Scene_Value2(Engine_EventChooseYesNo, 0, 0) == 0) {

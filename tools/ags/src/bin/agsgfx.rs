@@ -16,6 +16,7 @@ const USAGE: &str = "usage: agsgfx INPUT OUTPUT [options]
   X.png  -> Y.gbapal           the PNG's palette as little-endian BGR555
   X.png  -> Y.bitmap[.lz|.mtf] any build recipe, as the build makes it (see ags::resource)
   X.bin  -> Y.delta1.lz        a data recipe from an identified BIN
+  X.tsv  -> Y.parts.lz         pictures joined from a part list
   X.4bpp | X.8bpp -> Y.png     tiles back to an indexed PNG (--palette P.gbapal|P.png --width TILES)
   X.bitmap -> Y.png            a linear 8-bit bitmap to an indexed PNG (--palette P --width PIXELS)
   X      -> Y.lz               compress (--lz general|palette|tagged|mtf4; the LZ kinds
@@ -102,12 +103,11 @@ fn run(args: &[String]) -> Result<(), String> {
             )?
         }
         ("png", "gbapal") => bgr555_palette_from_png(&data).map_err(|error| error.0)?,
-        ("png", _) => ags::resource::build_file_with(output, &data, &|name| {
-            let path = std::path::Path::new(input).with_file_name(name);
-            fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
-        })?,
-        ("bin", _) if option(options, "--lz").is_none() => {
-            ags::resource::build_file(output, &data)?
+        ("png" | "bin" | "tsv", _) if from == "png" || option(options, "--lz").is_none() => {
+            ags::resource::build_file_with(output, &data, &|name| {
+                let path = std::path::Path::new(input).with_file_name(name);
+                fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
+            })?
         }
         ("4bpp" | "8bpp", "png") => {
             let path = option(options, "--palette").ok_or("needs --palette")?;

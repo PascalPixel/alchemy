@@ -840,7 +840,7 @@ SECTIONS
         "*/recon/tbs/raw/08094bbc.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08094da0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPARKLES.o"(.text)
-        "*/recon/tbs/raw/0809509c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPARKLES_INIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/START_TWELVE_FRAME_BLEND.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BLOCK_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/START_BUFFER_BLEND.o"(.text)

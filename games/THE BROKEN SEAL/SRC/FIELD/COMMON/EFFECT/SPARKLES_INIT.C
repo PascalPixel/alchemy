@@ -1,28 +1,7 @@
-/* 2026-09-28, the fill zero in r1: every exact Dma_Set fill in the tree
-   (SLOTS.C, INITIALIZE_BUFFERS.C, RUN_SCENE_TRANSITION.C, ...) builds its
-   zero in r3, because the store to the fill word comes before Dma_Set
-   loads r3 (channel), r0, r1 and r2, so r3 is still free for the zero.
-   Here and in its sibling (0809509c/08094da0) the zero is in r1, which
-   local-alloc only chooses if r3 and r2 are already live when the fill
-   word is stored: the source this came from stored the value after setting
-   the channel and count registers. The reviewed Dma_Set cannot order it so
-   (a comma expression or an inline fill with the value as a parameter
-   still stores first); matching needs a reviewed fill form, not a spelling.
-   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes, --function
-   Unnamed_0809509c): 30,255 candidates, none below the draft (225 once the
-   sparkle callback is named); every spelling still builds the fill zero
-   before the reviewed Dma_Set loads its registers. */
-/* Draft, not exact (2026-09-26): 11 differing halfwords (194 bytes plus
-   the 2-byte pad). Writing the timer as (i & 15) + 1 with a literal lets
-   GCC pool the halfword 15 in the first slot and reload it per iteration,
-   as the reference does; the Value_0000000f local cost 40 halfwords.
-   The fill zero passes through a block-local int, which builds the zero
-   before the sp copy as the ROM does. Residual: the zero takes r3
-   (reference r1), and the particle word pointer and the leader pointer
-   take r2 and r0 (reference r1 and r2). Typed link/attribute union words
-   alone did not change the output. Moving the leader read after the link
-   store recovers that load/store order but schedules the attr copy earlier.
-   A named inline DMA clear keeps the same zero-register residual. */
+/* FieldEffect_InitSparkles: allocate and clear the sparkle work, load the
+   sparkle tiles into a cached VRAM block, place the 32 particles on the
+   ground under the leader with staggered timers and schedule
+   FieldEffect_UpdateSparkles. */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -68,13 +47,14 @@ void FieldEffect_UpdateSparkles(void);
 static __inline__ void ClearDustWork(struct DustWork *work)
 {
     volatile u32 zero;
-    u32 value = 0;
+    /* FAKEMATCH: builds the fill zero in r1 */
+    register u32 value asm("r1") = 0;
 
     zero = value;
     Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
 }
 
-void Unnamed_0809509c(void)
+void FieldEffect_InitSparkles(void)
 {
     struct DustWork *work = Runtime_AllocateBlock(29, 0x410);
     struct DustParticle *p = work->particles;
@@ -93,11 +73,15 @@ void Unnamed_0809509c(void)
 loop:
     {
         struct FieldView *view = gMapWork;
-        s32 *leader;
-        union DustWord *attr = &p->link;
+        /* FAKEMATCH: keeps the leader pointer in r2 */
+        register s32 *leader asm("r2");
+        union DustWord *attr;
         s32 x;
         s32 z;
 
+        /* FAKEMATCH: loads the view before the particle pointer copy */
+        asm volatile ("" : : "r"(view));
+        attr = &p->link;
         (attr++)->link = (void *)clear;
         leader = view->leader;
         (attr++)->value = 0x40000400;

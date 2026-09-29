@@ -21,7 +21,7 @@ Resource37c_SetSetupFlag:
 	.global Resource37c_FinalizeSetup
 	.thumb_func
 Resource37c_FinalizeSetup:
-	overlay_veneer Func_0808a2f8
+	overlay_veneer FieldEffect_InitSparklesFar
 	.global Resource37c_QueueSoundCue
 	.thumb_func
 Resource37c_QueueSoundCue:

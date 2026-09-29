@@ -1159,6 +1159,8 @@ SECTIONS
         "*/recon/tla/raw/08156134.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08156140.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08157530.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/TILE/TRANSPOSE_COPY.o"(.text)
+        "*/recon/tla/raw/08157636.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08157638.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0815a074.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0815a080.o"(.text .rodata .data .padding)

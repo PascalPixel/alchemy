@@ -38,5 +38,6 @@ extern u8 IwramMulQ16ReturnIp[];
  * entry against the routine named beside it. */
 #define Iwram_CopyWords ((s32 (*)(void *destination, const void *source, s32 size))0x03001388) /* IwramCopyWords */
 #define Iwram_Sqrt ((s32 (*)(s32 value))0x030001d8) /* IwramSqrt */
+#define Iwram_ClearWords ((void (*)(void *destination, s32 size))0x03000164) /* IwramClearWords */
 
 #endif

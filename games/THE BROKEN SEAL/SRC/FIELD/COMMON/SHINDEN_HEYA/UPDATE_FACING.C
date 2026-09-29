@@ -2,6 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 extern u8 *Data_03001ebc;
+/* The one placement the second scene sequence spawns. */
+extern const s32 ShindenHeya_PlacementSequenceB[];
 
 /* Calls use this overlay's loader veneers. The early long branch shares
  * the dialogue tail and epilogue; the two timing loops each run six times. */
@@ -470,7 +472,7 @@ void FieldScene_RunScene378SequenceB(void)
     s32 record;
 
     Event_Begin();
-    Call1(Event_CallWithLastActiveObjectId, 0x200bc9c);
+    Call1(Event_CallWithLastActiveObjectId, (s32)ShindenHeya_PlacementSequenceB);
     Call1((void (*)())Engine_TaskWait, 1);
     Event_SetMessage(MSG_ROBIN_YOUR_NEW_FRIENDS_ADEPTS);
     Event_OpenMessage(9, 0);

@@ -8,6 +8,9 @@ void WaitFrames();
 void Runtime_ReleaseHeapBlock();
 s32 VramBlock_LoadCached();
 void Ui_PrepareTransferForItem();
+/* The motion scripts that pop the icon in and delete it a second later. */
+extern const s32 ShindenHeya_ItemIconGrowScript[];
+extern const s32 ShindenHeya_ItemIconEndScript[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -49,7 +52,7 @@ void ShindenHeya_RaiseItemIcon(s32 item)
     obj = Value1(Engine_ObjectCreate, 22);
     zero = 0;
     if (obj != 0) {
-        Call2(ObjectDispatch_Initialize, (s32)obj, 0x200b8f8);
+        Call2(ObjectDispatch_Initialize, (s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
         spr = *(u8 **)(obj + 80);
         spr[38] = zero;
         spr[39] = zero;
@@ -68,6 +71,6 @@ void ShindenHeya_RaiseItemIcon(s32 item)
                 *flag = z;
             WaitFrames(1);
         }
-        ObjectDispatch_Initialize((s32)obj, 0x200ba9c);
+        ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
     }
 }

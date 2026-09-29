@@ -1,10 +1,5 @@
-/* Draft of resource_3a5 0x020084e4 (RamakanSabaku_ApplyEntryState), formerly
- * games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/ENTRY_STATE.C.
- * Remaining difference: the ROM loads desert scenes 0x59-0x5c from the
- * literal pool, as link-time scene symbols would; C builds those constants
- * with movs. The Data_ spellings below are the old address-named forms. The
- * listing keeps these rows. */
 #include "TYPES.H"
+#include "SCENE_IDS.H"
 
 void Engine_GameFlagClear();
 void Engine_MapCopyCells();
@@ -14,15 +9,7 @@ void Engine_ActorSetPosition();
 s32 Engine_MapObjectSetPosition();
 s32 Engine_DisplayScrollStartHBlankDma();
 
-
-/* FAKEMATCH: ids the reference loads from the literal pool rather than
- * building inline are spelled as link symbols at those values. */
-extern u8 Data_00000059[];
-extern u8 Data_0000005a[];
-extern u8 Data_0000005b[];
-extern u8 Data_0000005c[];
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+extern s16 gGameState[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -45,8 +32,8 @@ static __inline__ s32 Value7(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
 }
 
 /* Lamakan Desert entry: clear flag 0x201, lay out the map cells for the
- * entrance taken, park the scene actors and, away from entrance 0x5c,
- * start the heat-shimmer scroll. */
+ * entrance taken, park the scene actors and, outside the fourth area
+ * (SceneId_RamakanSabaku4), start the heat-shimmer scroll. */
 s32 RamakanSabaku_ApplyEntryState(void)
 {
     u32 i;
@@ -54,7 +41,7 @@ s32 RamakanSabaku_ApplyEntryState(void)
     s32 v5;
 
     Call1(Engine_GameFlagClear, 0x201);
-    if (Data_02000240_t[224][0] == (s32)Data_00000059) {
+    if (gGameState[224][0] == (s32)&SceneId_RamakanSabaku1) {
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 22, 7);
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 8, 10);
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 23, 21);
@@ -63,7 +50,7 @@ s32 RamakanSabaku_ApplyEntryState(void)
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 36, 44);
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 14, 55);
     } else {
-        if (Data_02000240_t[224][0] != (s32)Data_0000005a) {
+        if (gGameState[224][0] != (s32)&SceneId_RamakanSabaku2) {
         } else {
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 42, 5);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 20, 11);
@@ -85,7 +72,7 @@ s32 RamakanSabaku_ApplyEntryState(void)
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 43, 56);
             goto L_020007e6;
         }
-        if (Data_02000240_t[224][0] == (s32)Data_0000005b) {
+        if (gGameState[224][0] == (s32)&SceneId_RamakanSabaku3) {
             Call6(Engine_MapCopyCellsLayered, 69, 99, 4, 2, 8, 16);
             Call6(Engine_MapCopyCellsLayered, 69, 99, 4, 2, 6, 20);
             Call6(Engine_MapCopyCellsLayered, 69, 99, 4, 2, 10, 23);
@@ -112,7 +99,7 @@ s32 RamakanSabaku_ApplyEntryState(void)
         record = Engine_MapObjectSetPosition(v5, 0, 0);
         v5 = (v5 + 1);
     } while (v5 <= 107);
-    if (Data_02000240_t[224][0] != (s32)Data_0000005c) {
+    if (gGameState[224][0] != (s32)&SceneId_RamakanSabaku4) {
         record = Value7(Engine_DisplayScrollStartHBlankDma, 0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
         return record;
     }

@@ -121,15 +121,23 @@ pub(crate) fn link(
         .iter()
         .map(|source| output.join("obj").join(source).with_extension("o"))
         .collect();
+    let mut linked_objects: Vec<(PathBuf, PathBuf)> = sources
+        .iter()
+        .cloned()
+        .zip(objects.iter().cloned())
+        .collect();
     let mut symbols = None;
     if !streamed.is_empty() {
         let pass = symbols_pass(root, script, &text, &output, name, &sources, &streamed)?;
         for source in &streamed {
-            build_overlay_streams(root, target, source, &output, &pass)?;
+            linked_objects.extend(build_overlay_streams(root, target, source, &output, &pass)?);
         }
         compile_all(root, target, &streamed, &output)?;
         symbols = Some(pass);
     }
+    linked_objects.sort();
+    linked_objects.dedup();
+    crate::gate::ids::check(Path::new(target.game_dir()), &linked_objects)?;
     let elf = output.join(format!("{name}.elf"));
     let map = output.join(format!("{name}.map"));
     let image = output.join(format!("{name}.gba"));
@@ -601,13 +609,15 @@ fn stream_paths(root: &Path, source: &Path, output: &Path) -> Vec<PathBuf> {
         .collect()
 }
 
+/// Link and compress every overlay `source` reads, and return each object
+/// the overlays link with its source: their maintained objects and listings.
 fn build_overlay_streams(
     root: &Path,
     target: DecompTarget,
     source: &Path,
     output: &Path,
     symbols: &Path,
-) -> Result<(), String> {
+) -> Result<Vec<(PathBuf, PathBuf)>, String> {
     let ids = stream_ids(root, source);
     let listings = source
         .parent()
@@ -663,7 +673,20 @@ fn build_overlay_streams(
     if !errors.is_empty() {
         return Err(errors.join("\n"));
     }
-    Ok(())
+    let mut objects: Vec<(PathBuf, PathBuf)> = sources
+        .into_iter()
+        .map(|source| {
+            let object = output.join("obj").join(&source).with_extension("o");
+            (source, object)
+        })
+        .collect();
+    objects.extend(ids.iter().map(|id| {
+        (
+            listings.join(format!("resource_{id}_overlay.s")),
+            directory.join(format!("resource_{id}_overlay.o")),
+        )
+    }));
+    Ok(objects)
 }
 
 /// Link one overlay listing alone at its load address, with its own script
@@ -737,8 +760,18 @@ fn build_overlay(
     // packer's transform) belong to this build implementation.
     hasher.update(env!("ALCHEMY_BUILD_IMPLEMENTATION").as_bytes());
     let key = format!("{:x}", hasher.finalize());
-    if stream.is_file() && fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str()) {
-        return Ok(());
+    // The gates run on every build, on a reused link too: this one on the
+    // linked image, the id gate on the listing's object.
+    let kept = [
+        stream.as_path(),
+        Path::new(&elf),
+        Path::new(&map),
+        Path::new(&object),
+    ]
+    .iter()
+    .all(|path| path.is_file());
+    if kept && fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str()) {
+        return overlay_gate(&elf, &map);
     }
     let _ = fs::remove_file(&stamp);
     command(&assemble, root)?;
@@ -782,11 +815,20 @@ fn build_overlay(
     for step in &steps {
         command(step, root)?;
     }
+    overlay_gate(&elf, &map)?;
     let mut decoded = fs::read(&image).map_err(|error| error.to_string())?;
     store_thumb_calls(&mut decoded);
     let encoded = compress_tagged(&decoded, &OVERLAY_MACHINE)?;
     fs::write(&stream, encoded).map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
+}
+
+/// Overlay code never branches straight into the main image: the gate reads
+/// the linked ELF and its map, before the packer's call transform.
+fn overlay_gate(elf: &str, map: &str) -> Result<(), String> {
+    let image = fs::read(elf).map_err(|error| format!("{elf}: {error}"))?;
+    let map = fs::read_to_string(map).map_err(|error| format!("{map}: {error}"))?;
+    crate::gate::overlay::check(&image, &map)
 }
 
 /// The resource packer's form of a code block's Thumb calls: every bl pair

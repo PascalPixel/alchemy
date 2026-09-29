@@ -61,6 +61,7 @@ extern char SceneId_HaidiaDou3;
 extern char SceneId_KuupuappuDou1;
 extern char SceneId_KuupuappuDou2;
 extern char SceneId_KuupuappuDou3;
+extern char SceneId_KareiKyuden;
 extern char SceneId_RunpaSuhara;
 extern char SceneId_KareiTorebi1;
 extern char SceneId_KareiTorebi2;

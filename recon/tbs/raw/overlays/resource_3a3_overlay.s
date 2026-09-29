@@ -1,37 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02000030_0
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02000030_2
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_2:
-	ldr r0, [pc, #24]
-.L_02000030_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000004b
-	.4byte 0x02009120
-	.4byte 0x0000004c
-	.4byte 0x02009288
-	.4byte 0x020090f0
 	.section .text.x0200807c,"ax",%progbits
 	.global Func_0200007c
 	.thumb_func
@@ -108,38 +76,6 @@ Func_0200007c:
 	.4byte 0x000008fe
 	.4byte 0x00000907
 	.4byte 0x020093f4
-	.global Func_0200011c
-	.thumb_func
-Func_0200011c:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_0200011c_0
-	ldr r0, [pc, #24]
-	b .L_0200011c_1
-.L_0200011c_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_0200011c_2
-	ldr r0, [pc, #24]
-	b .L_0200011c_1
-.L_0200011c_2:
-	ldr r0, [pc, #24]
-.L_0200011c_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000004b
-	.4byte 0x02009730
-	.4byte 0x0000004c
-	.4byte 0x020099f4
-	.4byte 0x02009724
 	.section .text.x02008874,"ax",%progbits
 	.global Func_02000874
 	.thumb_func
@@ -356,6 +292,8 @@ Func_02000d58:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
+	.global gArutinMuraEntrancesOther
+gArutinMuraEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x0000017c
 	.4byte 0x400001b1
@@ -368,6 +306,8 @@ Func_02000d58:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinMuraEntrances1
+gArutinMuraEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x0000017c
 	.4byte 0x400001b1
@@ -458,6 +398,8 @@ Func_02000d58:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinMuraEntrances2
+gArutinMuraEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000c8
 	.4byte 0x400000c8
@@ -755,9 +697,13 @@ Placement_Messages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinMuraEventsOther
+gArutinMuraEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinMuraEvents1
+gArutinMuraEvents1:
 	.4byte 0x0000c402
 	.4byte 0xffff000a
 	.4byte 0x020086a5
@@ -935,6 +881,8 @@ Placement_Messages:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinMuraEvents2
+gArutinMuraEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

@@ -1116,9 +1116,8 @@ BattleFx_TargetBurstImage:
 	.global BattleFx_WaterSpraySheet
 BattleFx_WaterSpraySheet:
 	.incbin "baserom.gba", 0x003df3a8, 0x00001258
-	.global BattleFx_BlueFlameSheet
-BattleFx_BlueFlameSheet:
-	.incbin "baserom.gba", 0x003e0600, 0x00000af0
+	.section .unidentified.083e10ee,"a"
+	.incbin "baserom.gba", 0x003e10ee, 0x00000002
 	.section .unidentified.083e1ec5,"a"
 	.incbin "baserom.gba", 0x003e1ec5, 0x00000003
 	.section .unidentified.083e26f2,"a"
@@ -1225,9 +1224,8 @@ BattleFx_PortalSheet:
 	.incbin "baserom.gba", 0x003f7a9d, 0x00000003
 	.section .unidentified.083f7ec1,"a"
 	.incbin "baserom.gba", 0x003f7ec1, 0x00000003
-	.global BattleFx_HeartSheet
-BattleFx_HeartSheet:
-	.incbin "baserom.gba", 0x003f7ec4, 0x00000298
+	.section .unidentified.083f815b,"a"
+	.incbin "baserom.gba", 0x003f815b, 0x00000001
 	.global BattleFx_CounterRevealSheet
 BattleFx_CounterRevealSheet:
 	.incbin "baserom.gba", 0x003f815c, 0x00001500

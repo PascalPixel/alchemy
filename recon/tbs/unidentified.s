@@ -1321,9 +1321,8 @@ Field_PerspectiveDataA:
 	.incbin "baserom.gba", 0x00433216, 0x00000002
 	.section .unidentified.08434ca6,"a"
 	.incbin "baserom.gba", 0x00434ca6, 0x00000002
-	.global Graphics_TilesK
-Graphics_TilesK:
-	.incbin "baserom.gba", 0x00434ca8, 0x00001250
+	.section .unidentified.08435ef7,"a"
+	.incbin "baserom.gba", 0x00435ef7, 0x00000001
 	.global Shop_CursorFrameA
 Shop_CursorFrameA:
 	.incbin "baserom.gba", 0x00435ef8, 0x00000100

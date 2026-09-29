@@ -3,6 +3,8 @@
  * Canonical declarations are retained; the remaining source model is not exact. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 gKeysHeld[];
+extern u8 gKeysRepeat[];
 
 /*
  * Draft reconstruction, not yet verified byte-exact against
@@ -38,14 +40,14 @@
  * the second constant.
  */
 
-extern void Func_08077098(void);
-extern void Func_0800479c(void);
-extern void Func_08004760(void);
-extern void Func_08004858(void);
-extern void Func_080770c8(s32);
+extern void GameState_InitDefaultsFar(void);
+extern void Ui_LoadWindowGraphics(void);
+extern void Bg0_ClearTilemap(void);
+extern void Runtime_InitializeHeap(void);
+extern void GameFlag_SetBitFar(s32);
 extern void Func_080770d0(s32);
 extern void Func_080b5534(void);
-extern s32 Func_080b5368(s32);
+extern s32 DebugParty_LoadPreset(s32);
 extern void Battle_RunEncounter(s32);
 
 void WaitFrames(s32);
@@ -64,19 +66,19 @@ void Func_080b56e0(void)
     u16 *halfPtr;
 
     held = 0;
-    Func_08077098();
+    GameState_InitDefaultsFar();
 
     for (;;) {
-        Func_0800479c();
-        Func_08004760();
+        Ui_LoadWindowGraphics();
+        Bg0_ClearTilemap();
         Scheduler_ResetTaskTable();
-        Func_08004858();
+        Runtime_InitializeHeap();
         Resource_InitializeTable();
-        Func_080770c8(362);
+        GameFlag_SetBitFar(362);
         val1 = 257;
 
-        if ((*(volatile u32 *)ADDR_03001AE8 & 0x80) == 0) {
-            Func_080770c8(354);
+        if ((*(volatile u32 *)gKeysHeld & 0x80) == 0) {
+            GameFlag_SetBitFar(354);
             Battle_RunEncounter(257);
             continue;
         }
@@ -92,48 +94,48 @@ void Func_080b56e0(void)
             WaitFrames(1);
 
             for (;;) {
-                if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 0x10) != 0)
                     val1 += 1;
-                if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 0x20) != 0)
                     val1 -= 1;
-                if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 0x40) != 0)
                     val1 -= 10;
-                if ((*(volatile u32 *)ADDR_03001B04 & 0x80) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 0x80) != 0)
                     val1 += 10;
-                if ((*(volatile u32 *)ADDR_03001B04 & 0x100) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 0x100) != 0)
                     val2 += 1;
-                if ((*(volatile u32 *)ADDR_03001B04 & 0x200) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 0x200) != 0)
                     val2 -= 1;
-                if ((*(volatile u32 *)ADDR_03001B04 & 1) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 1) != 0)
                     break;
-                if ((*(volatile u32 *)ADDR_03001B04 & 8) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 8) != 0)
                     Func_080b5534();
-                if ((*(volatile u32 *)ADDR_03001B04 & 4) != 0)
+                if ((*(volatile u32 *)gKeysRepeat & 4) != 0)
                     Battle_ReservedNoOp2A08();
-                if ((*(volatile u32 *)ADDR_03001B04 & 2) != 0 || held != 0) {
+                if ((*(volatile u32 *)gKeysRepeat & 2) != 0 || held != 0) {
                     held = 1;
                     *bytePtr = 5;
                 }
                 if (val2 != prev2) {
-                    Func_08077098();
-                    Func_080b5368(val2);
+                    GameState_InitDefaultsFar();
+                    DebugParty_LoadPreset(val2);
                     prev2 = val2;
                 }
                 WaitFrames(1);
             }
 
-            if ((*(volatile u32 *)ADDR_03001AE8 & 0x80) != 0)
-                Func_080770c8(364);
+            if ((*(volatile u32 *)gKeysHeld & 0x80) != 0)
+                GameFlag_SetBitFar(364);
             BattleUnit_Recalculate(0);
             *halfPtr = 29;
             if (val1 == 28)
-                Func_080770c8(366);
-            Func_080770c8(354);
+                GameFlag_SetBitFar(366);
+            GameFlag_SetBitFar(354);
             Battle_RunEncounter(val1);
-            Func_0800479c();
-            Func_08004760();
+            Ui_LoadWindowGraphics();
+            Bg0_ClearTilemap();
             Scheduler_ResetTaskTable();
-            Func_08004858();
+            Runtime_InitializeHeap();
             Resource_InitializeTable();
         }
     }

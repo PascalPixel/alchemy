@@ -8,6 +8,7 @@
 #include "TYPES.H"
 #include "MAP.H"
 #include "GLOBAL_CELLS.H"
+extern u8 gMapWork[];
 
 /* Same object-field shape check_object_tile.c already established (x@8,
    y@16, map_layer@34); this owner additionally reads a u32 "height" field
@@ -60,7 +61,7 @@ s32 Func_080120dc(struct MapObject *object, struct MapPosition *position)
 
     x = position->x;
     z = position->z;
-    state = *(struct MapState **)ADDR_03001E70;
+    state = *(struct MapState **)gMapWork;
     if (state == 0)
         return 0;
 

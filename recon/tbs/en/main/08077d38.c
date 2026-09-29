@@ -26,8 +26,8 @@
    Psynergy cost table. */
 
 extern u16 Data_02000240[];
-extern u8 Data_02001000[];
-extern u8 Data_02000040[];
+extern u8 gSceneState[];
+extern u8 GameFlagBytes[];
 extern u8 Data_02000500[];
 extern u8 Value_00000000, Value_00000001, Value_00000004, Value_00000008;
 extern u8 Value_ffffffff;
@@ -56,11 +56,11 @@ void GameState_InitDefaults(void)
     zero = 0;
     Dma_Set((void *)&zero, Data_02000240, 0x850000b0, DMA3);
     zero = 0;
-    Dma_Set((void *)&zero, Data_02001000, 0x850003e1, DMA3);
+    Dma_Set((void *)&zero, gSceneState, 0x850003e1, DMA3);
     while (0x80000000 & DMA3[2]);
     zero = 0;
-    Dma_Set((void *)&zero, Data_02000040, 0x85000080, DMA3);
-    tmp4 = Data_02001000;
+    Dma_Set((void *)&zero, GameFlagBytes, 0x85000080, DMA3);
+    tmp4 = gSceneState;
     tmp4[0x104] = 0xff;
     zero = 0;
     Dma_Set((void *)&zero, Data_02000500, 0x85000298, DMA3);

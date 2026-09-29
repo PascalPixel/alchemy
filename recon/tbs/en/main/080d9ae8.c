@@ -31,26 +31,26 @@ extern const u16 Data_080eea08[];
 extern const u8 Data_080eea20[];
 extern const u8 Data_080eea2c[];
 
-void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 id);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void *Resource_GetTableEntry(s32 id);
 s32 Func_080041d8(s32 callback, s32 interval);
-void Func_08004278(s32 callback);
+void Scheduler_RemoveCallback(s32 callback);
 void Func_080049ac(void);
-void Func_080051d8(s32 a, s32 b);
-void **Func_080b5098(s32 member_id);
-void Func_080e3944(const void *src, void *dest);
-s32 Func_08002322(s32 angle);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void **GetBattleObjectSlotFar(s32 member_id);
+void EffectPosition_ApplyBaseAndYOffset(const void *src, void *dest);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_08004cb4(void *record);
-void Func_080cef64(s32 flag, DrawRectangleFn *out_pair);
-u32 Func_08004458(void);
+void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_pair);
+u32 Random16(void);
 s32 Func_080022fc(s32 a, s32 b);
-void Func_080e38b8(void *particle, s32 a, s32 b);
+void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 s32 RunPaletteRampEffect(s32 effect, s32 mode)
 {
@@ -81,7 +81,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     draw_destination = *cursor;
     M2C_FIELD(work, void **, 0x7828) = (void *)effect;
 
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
 
     if (mode == 0) {
@@ -97,7 +97,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     } else {
         palette_id = (s32) &Value_000000bb;
     }
-    palette = Func_08002f40(palette_id);
+    palette = Resource_GetTableEntry(palette_id);
     ((WordCopyFn) 0x03001388)((void *) 0x05000000, palette, 128);
 
     Resource_LoadAndDecompress((s32) &Value_0000009d, (u8 *) work + 0x2580, 0, 0);
@@ -152,7 +152,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
             s32 bucket;
             s32 quarter;
 
-            angle = (s32) (Func_08004458() & 0xFFFF);
+            angle = (s32) (Random16() & 0xFFFF);
             particle[0] = 0;
             if (mode == 0) {
                 bucket = ((frame & 31) / 4) * 3;
@@ -171,13 +171,13 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                 particle[3] = -0x20000;
             }
             particle[4] = ((Func_0800231c(angle) * radius) >> 6) + 0x10000;
-            particle[5] = (Func_08002322(angle) * radius) >> 6;
-            particle[6] = (s32) (Func_08004458() & 0xFF);
+            particle[5] = (Trig_Sin(angle) * radius) >> 6;
+            particle[6] = (s32) (Random16() & 0xFF);
             particle += 7;
         }
     }
 
-    Func_080cef64(
+    BattleFx_FetchRectangleBlitters(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4),
         callback_pair);
 
@@ -213,24 +213,24 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                     member_id = M2C_FIELD(
                         M2C_FIELD(work, void **, 0x7828), s16 *,
                         36 + member * 2);
-                    member_object = *Func_080b5098(member_id);
+                    member_object = *GetBattleObjectSlotFar(member_id);
 
                     if (local_frame > 0) {
                         Func_080049ac();
-                        Func_080051d8(facing, facing_end);
+                        Graphics_PrepareTransferInIwramWork(facing, facing_end);
 
                         rec[0] = M2C_FIELD(member_object, s32 *, 8);
                         rec[1] = 160 << 13;
                         rec[2] = M2C_FIELD(member_object, s32 *, 16);
 
                         Func_080049ac();
-                        Func_080051d8(facing, facing_end);
+                        Graphics_PrepareTransferInIwramWork(facing, facing_end);
                         Func_08004cb4(rec);
 
                         zero_vec[0] = 0;
                         zero_vec[1] = 0;
                         zero_vec[2] = 0;
-                        Func_080e3944(zero_vec, screen);
+                        EffectPosition_ApplyBaseAndYOffset(zero_vec, screen);
 
                         x = screen[0] + y_offset;
                         y2 = screen[1];
@@ -285,7 +285,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                             sel = (outer % 4) * 3;
                             idx = Func_080022fc(
                                 (particle[6] + local_frame) / 8, 3);
-                            Func_080e3944(particle, screen);
+                            EffectPosition_ApplyBaseAndYOffset(particle, screen);
                             x = screen[0] + y_offset;
                             y2 = screen[1];
 
@@ -298,7 +298,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                                 x, y2,
                                 Data_080eea20[idx], Data_080eea2c[idx]);
 
-                            Func_080e38b8(particle, 60, 0);
+                            EffectStep_AdvanceWithGravity3D(particle, 60, 0);
                             particle += 7;
                         }
                     }
@@ -322,8 +322,8 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                 + 64);
     }
 
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

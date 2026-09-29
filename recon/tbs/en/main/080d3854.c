@@ -57,24 +57,24 @@ typedef void (*FillFn)(void *dest, s32 size, u32 pattern);
 
 extern u8 Value_000000ce;
 
-void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 id);
-u32 Func_08005340(const void *source, void *destination);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void *Resource_GetTableEntry(s32 id);
+u32 Resource_DecodeType01(const void *source, void *destination);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_080030f8(s32 frames);
-u32 Func_08004458(void);
+u32 Random16(void);
 void Func_080f9010(s32 id);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080b50e8(s32 id);
 s32 Func_080022fc(s32 a, s32 b);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id, s32 mode);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 void Func_080d3854(void *object)
 {
@@ -94,11 +94,11 @@ void Func_080d3854(void *object)
     work = *cursor++;
     canvas = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
-    palette = Func_08002f40((s32)&Value_000000ce);
+    palette = Resource_GetTableEntry((s32)&Value_000000ce);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    status = Func_08005340((u8 *)palette + 128, work);
+    status = Resource_DecodeType01((u8 *)palette + 128, work);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rectangle[0] = heap_cache[7];
     status = BattleEffect_LoadWork(47, 7, 7, 7, 2);
@@ -113,10 +113,10 @@ void Func_080d3854(void *object)
         i = 0;
         entry = (u8 *)work + 0x7080;
         do {
-            M2C_FIELD(entry, s32 *, 0) = Func_08004458() & 31;
-            M2C_FIELD(entry, s32 *, 4) = (Func_08004458() & 63) + 16;
+            M2C_FIELD(entry, s32 *, 0) = Random16() & 31;
+            M2C_FIELD(entry, s32 *, 4) = (Random16() & 63) + 16;
             i++;
-            M2C_FIELD(entry, s32 *, 24) = -(Func_08004458() & 15);
+            M2C_FIELD(entry, s32 *, 24) = -(Random16() & 15);
             entry = (u8 *)entry + 28;
         } while (i != 16);
     }
@@ -132,7 +132,7 @@ void Func_080d3854(void *object)
         s32 x_delta;
         s32 y_pos;
 
-        wave = Func_08002322(frame << 10) << 4;
+        wave = Trig_Sin(frame << 10) << 4;
         if (frame == 32) {
             Func_080b50e8(133);
         }
@@ -182,7 +182,7 @@ void Func_080d3854(void *object)
 
                 idx = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 24)
                     * 3;
-                sin_val = Func_08002322(angle);
+                sin_val = Trig_Sin(angle);
                 y_pos = (((*(u8 *)(0x080ee1ca + idx + 1)) * sin_val + wave)
                     >> 16) + 40;
                 cos_val = Func_0800231c(angle);
@@ -219,8 +219,8 @@ void Func_080d3854(void *object)
                     field24 = M2C_FIELD(p, s32 *, 24) + 1;
                     M2C_FIELD(p, s32 *, 24) = field24;
                     if (field24 == 6) {
-                        M2C_FIELD(p, s32 *, 0) = Func_08004458() & 31;
-                        M2C_FIELD(p, s32 *, 4) = (Func_08004458() & 63) + 16;
+                        M2C_FIELD(p, s32 *, 0) = Random16() & 31;
+                        M2C_FIELD(p, s32 *, 4) = (Random16() & 63) + 16;
                         M2C_FIELD(p, s32 *, 24) = 0;
                     }
                     p = (u8 *)p + 28;
@@ -250,7 +250,7 @@ void Func_080d3854(void *object)
                 threshold = member_offset + 16;
                 do {
                     if (frame == threshold) {
-                        Func_080d6888(
+                        ObjectGroup_UpdateMembers(
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                 s16 *, member_id_offset),
                             7, 5, member, 4);
@@ -276,9 +276,9 @@ void Func_080d3854(void *object)
             sfx = *(u8 *)(0x080ee1ca
                 + (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 24)
                     * 3) + 2);
-            Func_080e155c(sfx, sfx * 2);
+            Camera_ApplyShake(sfx, sfx * 2);
         }
-        Func_080cd52c();
+        ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
         frame++;
@@ -286,6 +286,6 @@ void Func_080d3854(void *object)
 
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_08004278((void *)0x080CD261);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback((void *)0x080CD261);
+    BattleFx_EndCanvasLayer();
 }

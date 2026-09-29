@@ -91,19 +91,19 @@ typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
  */
 #define PLOT_AT(off) (*(u8 *)(WORK_PIXELS + (off)) = 2)
 
-void *Func_080048b0(s32 id, s32 size);
+void *Runtime_AllocateHeapBlock(s32 id, s32 size);
 void Func_08002dd8(s32 id);
 void Func_080030f8(s32 arg0);
 s32 Func_080041d8(s32 entry, s32 arg1);
-void Func_08004278(s32 entry);
-s32 Func_08004458(void);
+void Scheduler_RemoveCallback(s32 entry);
+s32 Random16(void);
 void Func_080b5028(s32 a, s32 b, s32 c, s32 d);
-void Func_080b5038(s32 a, s32 b, s32 c);
-void Func_080b5040(s32 a, s32 b, s32 c);
-void Func_080cd508(void);
-void Func_080cd52c(void);
-void Func_080d6888(s32 set, s32 object, s32 group, s32 slot, s32 value);
-void Func_080e3908(void *ent, s32 arg1, s32 arg2);
+void BattlePresentation_ConfigurePaletteFadeFar(s32 a, s32 b, s32 c);
+void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
+void Runtime_ApplyValueToWork7818(void);
+void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_UpdateMembers(s32 set, s32 object, s32 group, s32 slot, s32 value);
+void EffectStep_AdvanceWithGravity2D(void *ent, s32 arg1, s32 arg2);
 void Func_080f9010(s32 id);
 
 /* Only the m2c spellings this draft actually uses. */
@@ -180,16 +180,16 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     s32 ime;
     s32 qcnt;
 
-    work = Func_080048b0(0x27, 0x782C);
-    canvas = Func_080048b0(0x28, 0x4000);
-    Func_080048b0(0x29, 0x302);
+    work = Runtime_AllocateHeapBlock(0x27, 0x782C);
+    canvas = Runtime_AllocateHeapBlock(0x28, 0x4000);
+    Runtime_AllocateHeapBlock(0x29, 0x302);
     sys = gBattleWork;
     ctl = gTransitionWork;
     work->effect = arg0;
-    Func_080cd508();
+    Runtime_ApplyValueToWork7818();
     ctl->field_000c = 1;
     gBgScroll[3] = 0x20;
-    Func_080b5038(1, M2C_FIELD(sys, u16 *, 0x648), 0);
+    BattlePresentation_ConfigurePaletteFadeFar(1, M2C_FIELD(sys, u16 *, 0x648), 0);
     *(u16 *)0x0400000c = 0x784;
     Func_080b5028(0, 0, 0, 0x64);
     idx = 0;
@@ -295,7 +295,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
 
     fill((void *)0x050000C0, 0x100, 0x7FFF7FFF);
     Func_080f9010(0xD4);
-    Func_080d6888(((struct BattleEffectArgument *)work->effect)->actors[0],
+    ObjectGroup_UpdateMembers(((struct BattleEffectArgument *)work->effect)->actors[0],
                   7, 3, 0, 0x1E);
 
     frame = 0;
@@ -307,7 +307,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
             Func_080f9010(0xD4);
         }
         if (frame == 0x1C) {
-            Func_080d6888(
+            ObjectGroup_UpdateMembers(
                 ((struct BattleEffectArgument *)work->effect)->actors[0],
                 -1, 3, -1, 0);
         }
@@ -317,7 +317,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
         if (frame == 5) {
             Func_080f9010(0x91);
             gBgScroll[2] = (u16) M2C_FIELD(work, s32 *, 0x77A0);
-            Func_080b5040(1, M2C_FIELD(sys, u16 *, 0x648), -1);
+            BattleBackground_LoadFar(1, M2C_FIELD(sys, u16 *, 0x648), -1);
         }
 
         /* Step every object-palette entry one level towards its target. */
@@ -483,7 +483,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
                       (s32) BattlePieceWidth[cnt],
                       (s32) BattlePieceHeight[cnt]);
                 if (frame > 3) {
-                    Func_080e3908(ent, 0x40, 0x4000);
+                    EffectStep_AdvanceWithGravity2D(ent, 0x40, 0x4000);
                 }
                 cnt += 1;
                 ent += 1;
@@ -518,11 +518,11 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
             ent = (struct EffectStep *)((u8 *)work + 0x7080);
             do {
                 ent->x =
-                    (s32) (((Func_08004458() & 0x1F) + 0x20) << 0x10);
-                ent->y = ((Func_08004458() & 0x1F) + 0x50) << 0x10;
+                    (s32) (((Random16() & 0x1F) + 0x20) << 0x10);
+                ent->y = ((Random16() & 0x1F) + 0x50) << 0x10;
                 cnt += 1;
                 ent->velocity_x =
-                    ((0x1FF & Func_08004458()) + 0xFFFFFF00) << 0xC;
+                    ((0x1FF & Random16()) + 0xFFFFFF00) << 0xC;
                 ent->velocity_y = 0;
                 ent->variant = 0;
                 ent += 1;
@@ -547,7 +547,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
                         draw1(canvas, (u8 *)work + (lvl << 0xB),
                               *(s16 *)((u8 *)&ent->x + 2) - 0x10,
                               *(s16 *)((u8 *)&ent->y + 2) - 0x20, 0x20, 0x40);
-                        Func_080e3908(ent, 0x3C, 0xFFFFF000);
+                        EffectStep_AdvanceWithGravity2D(ent, 0x3C, 0xFFFFF000);
                         ent->variant += 1;
                     }
                 }
@@ -556,7 +556,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
             } while (cnt != 0x20);
         }
 
-        Func_080cd52c();
+        ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         Func_080030f8(1);
         frame += 1;
@@ -564,12 +564,12 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
 
     Func_08002dd8(0x2F);
     Func_08002dd8(0x2E);
-    Func_08004278(0x080CD261);
-    Func_080d6888(((struct BattleEffectArgument *)work->effect)->actors[0],
+    Scheduler_RemoveCallback(0x080CD261);
+    ObjectGroup_UpdateMembers(((struct BattleEffectArgument *)work->effect)->actors[0],
                   -1, 1, -1, 0);
     gBgScroll[2] = (u16) M2C_FIELD(work, s32 *, 0x77A0);
     gBgScroll[3] = 0x20;
-    Func_080b5038(2, M2C_FIELD(sys, u16 *, 0x648), 0);
+    BattlePresentation_ConfigurePaletteFadeFar(2, M2C_FIELD(sys, u16 *, 0x648), 0);
     Func_080030f8(1);
 
     ime = *(u16 *)0x04000208;

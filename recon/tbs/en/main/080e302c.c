@@ -125,7 +125,7 @@ extern void *Data_03001e50[];
 extern void *Data_03001eec[];
 
 extern struct Pair Data_080edab0;
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 extern u16 Data_080eed7e[];
 extern u8 Data_080eed90[];
 extern u16 Data_080eed9a[];
@@ -134,28 +134,28 @@ extern u8 Data_080eeda3[];
 extern s8 Data_080eeda6[];
 extern u8 Data_080eedac[];
 
-void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 id);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void *Resource_GetTableEntry(s32 id);
 void *Func_08009030(s32 kind);
 void Func_08009020(void *object, s32 index);
-void Func_08009008(
+void Object_ApplyProjectedPlacementFar(
     void *object, struct Transform *transform, struct Pair *pair, s32 mode);
-void Func_08009038(void *object);
+void ResourceObject_ReleaseFar(void *object);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
-u32 Func_08004458(void);
+void Scheduler_RemoveCallback(void *callback);
+u32 Random16(void);
 s32 Func_08002304(s32 value, s32 range);
 s32 Math_Div(s32 value, s32 shift);
 s32 Func_080022fc(s32 value, s32 divisor);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
 void Func_080b5088(s32 member, s32 kind);
-void Func_080d6888(s32 member, s32 a, s32 b, s32 index, s32 e);
-void Func_080e155c(s32 x, s32 y);
-void Func_080cd52c(void);
+void ObjectGroup_UpdateMembers(s32 member, s32 a, s32 b, s32 index, s32 e);
+void Camera_ApplyShake(s32 x, s32 y);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-void Func_080cdbc0(void);
+void BattleFx_EndCanvasLayer(void);
 
 void Func_080e302c(void *object)
 {
@@ -212,7 +212,7 @@ void Func_080e302c(void *object)
     draw_target = *cursor;
     sprite_src = heap[2];
     STATE = object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
 
     mode = M2C_FIELD(STATE, s32 *, 0x18);
     if (mode == 0) {
@@ -243,7 +243,7 @@ void Func_080e302c(void *object)
 
     Resource_LoadAndDecompress((s32)&Value_0000007b, (void *)0x02010000, 1, 0);
     ((CopyFn)0x03001388)(
-        (void *)0x05000000, Func_08002f40((s32)&Value_0000007c), 0x80);
+        (void *)0x05000000, Resource_GetTableEntry((s32)&Value_0000007c), 0x80);
 
     /* Darken every foreground palette entry by eight per channel. */
     pal = (u16 *)0x05000002;
@@ -391,10 +391,10 @@ void Func_080e302c(void *object)
     spark = sparks;
     i = 0;
     do {
-        pos = (s32)(Func_08004458() & 0xF) + 0x58;
+        pos = (s32)(Random16() & 0xF) + 0x58;
         spark->height = 0x80;
         spark->pos = pos;
-        y = (s32)(Func_08004458() & 0xF);
+        y = (s32)(Random16() & 0xF);
         spark->rate = 1;
         spark->unk_14 = 0x8000;
         spark->phase = i;
@@ -417,11 +417,11 @@ void Func_080e302c(void *object)
     drop = drops;
     i = 0;
     do {
-        drop->pos = (s32)(((Func_08004458() & 0x3F) + bias + 0x20) << 0x10);
-        drop->height = (s32)(((7 & Func_08004458()) + 0x60) << 0x10);
-        drop->rate = (s32)(((Func_08004458() & 0x3F) + 0x20) << 0xD);
+        drop->pos = (s32)(((Random16() & 0x3F) + bias + 0x20) << 0x10);
+        drop->height = (s32)(((7 & Random16()) + 0x60) << 0x10);
+        drop->rate = (s32)(((Random16() & 0x3F) + 0x20) << 0xD);
         i++;
-        drop->timer = (s32)(0x1F & Func_08004458());
+        drop->timer = (s32)(0x1F & Random16());
         drop++;
     } while (i != 0x100);
 
@@ -531,7 +531,7 @@ void Func_080e302c(void *object)
                     h = size * 2;
                     blit_a(draw_target,
                         (u8 *)sprite_src
-                            + *(u16 *)((u8 *)Data_080ede48 + (h - 2)),
+                            + *(u16 *)((u8 *)ParticleStreams_CellOffsets + (h - 2)),
                         M2C_FIELD(drop, s16 *, 2) - (size >> 1),
                         M2C_FIELD(drop, s16 *, 6) - size, size, h);
                     pos = drop->height - drop->rate;
@@ -591,7 +591,7 @@ void Func_080e302c(void *object)
                         idx = Func_080022fc((fp / 2) + i, 0xB);
                         timer = -1;
                         if (idx != -1) {
-                            Func_08009008(
+                            Object_ApplyProjectedPlacementFar(
                                 M2C_FIELD(work, void **, (idx * 4) + 0x77D8),
                                 &transform, &pair, 0);
                         }
@@ -608,17 +608,17 @@ void Func_080e302c(void *object)
                             } else {
                                 if (fp > 0x57) {
                                     spark->fall =
-                                        (s32)((7 & Func_08004458()) + 8);
+                                        (s32)((7 & Random16()) + 8);
                                     spread = M2C_FIELD(STATE, s32 *, 0x18);
                                     if (spread == 0) {
                                         pos = Func_08002304(
-                                            Func_08004458(), 0x60) + 0x2A;
+                                            Random16(), 0x60) + 0x2A;
                                     } else if (spread == 1) {
                                         pos = Func_08002304(
-                                            Func_08004458(), 0x70) + 0x22;
+                                            Random16(), 0x70) + 0x22;
                                     } else {
                                         pos = Func_08002304(
-                                            Func_08004458(), 0xA0) + 0xA;
+                                            Random16(), 0xA0) + 0xA;
                                     }
                                     spark->pos = pos;
                                 }
@@ -641,7 +641,7 @@ void Func_080e302c(void *object)
                 do {
                     if (fp > 0x55) {
                         if (Func_080022fc(fp, 0xC) == 0) {
-                            Func_080d6888(
+                            ObjectGroup_UpdateMembers(
                                 M2C_FIELD(STATE, s16 *, off), 7, 5, j, 6);
                         }
                         if (!(fp & 3)) {
@@ -655,18 +655,18 @@ void Func_080e302c(void *object)
         }
 
         if ((u32)(fp - 0x5A) > 0x46U) {
-            Func_080e155c(2, 2);
+            Camera_ApplyShake(2, 2);
         } else {
-            Func_080e155c(8, 8);
+            Camera_ApplyShake(8, 8);
         }
 
-        Func_080cd52c();
+        ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
         fp++;
     } while (fp != 0xC0);
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(0x2F);
     Func_08002dd8(0x2E);
 
@@ -675,8 +675,8 @@ void Func_080e302c(void *object)
     do {
         node = *cursor++;
         i++;
-        Func_08009038(node);
+        ResourceObject_ReleaseFar(node);
     } while (i != 0xB);
 
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

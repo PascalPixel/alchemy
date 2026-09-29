@@ -123,30 +123,30 @@ extern u8 Value_0000006e;
 extern u8 Value_00000073;
 extern u8 Value_00000085;
 
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 extern u8 Data_080ee1ac[];
 extern s32 Data_080ee1b4[];
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
-void *Func_08002f40(s32 id);
-u32 Func_08005340(const void *source, void *destination);
-s32 Func_08004458(void);
+void *Resource_GetTableEntry(s32 id);
+u32 Resource_DecodeType01(const void *source, void *destination);
+s32 Random16(void);
 void BattleFx_SelectLivingTargets(void *argument);
 void Func_080030f8(s32 frames);
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, s32 variant);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
-void Func_080e6d3c(s32 channel, s32 x, s32 y);
+void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
 void Func_080e6eac(s32 channel, s32 x, s32 y);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Func_080022fc(s32 numerator, s32 denominator);
-void **Func_080b5098(s32 member_id);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void **GetBattleObjectSlotFar(s32 member_id);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Runtime_ReleaseHeapBlock(s32 id);
-void Func_08009038(void *object);
-void Func_080cdbc0(void);
+void ResourceObject_ReleaseFar(void *object);
+void BattleFx_EndCanvasLayer(void);
 
 void BattleEffect_RunEmberColumns(struct EffectArgument *object)
 {
@@ -175,19 +175,19 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
     work = (struct EffectRuntime *)cursor[-1];
     graphics = (u8 *)cursor[1];
     work->argument = object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000052 = 0x1010;
     rectangle_slot = rectangle;
     BattleFx_FetchRectangleBlitters(0, (u32 *)rectangle_slot);
 
-    palette = (u8 *)Func_08002f40((s32)&Value_0000006e);
+    palette = (u8 *)Resource_GetTableEntry((s32)&Value_0000006e);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     palette += 128;
-    Func_08005340(palette, work);
-    palette = (u8 *)Func_08002f40((s32)&Value_00000085);
+    Resource_DecodeType01(palette, work);
+    palette = (u8 *)Resource_GetTableEntry((s32)&Value_00000085);
     palette += 128;
-    Func_08005340(palette, work->column_tiles);
-    Func_08005340(Func_08002f40((s32)&Value_00000073), graphics);
+    Resource_DecodeType01(palette, work->column_tiles);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000073), graphics);
 
     work->display_mode = 2;
     work->display_value = 75;
@@ -203,9 +203,9 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
         work->particles[i].life = -1;
 
     for (i = 0; i != 16; i++) {
-        work->particles[i + 24].x = Func_08004458() & 127;
-        work->particles[i + 24].y = (Func_08004458() & 7) + 56;
-        work->particles[i + 24].life = -(Func_08004458() & 15);
+        work->particles[i + 24].x = Random16() & 127;
+        work->particles[i + 24].y = (Random16() & 7) + 56;
+        work->particles[i + 24].life = -(Random16() & 15);
     }
 
     for (i = 0; i != 1024; i++)
@@ -234,7 +234,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
             if (pos_x <= 0x77FFFF)
                 vel_x += 0x8000;
         }
-        Func_080e6d3c(1, pos_x, pos_y);
+        BattleFx_PlaceFormationObjects(1, pos_x, pos_y);
 
         if (frame == 28) {
             particle = (Particle *)0x02010000;
@@ -243,14 +243,14 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
                     s32 radius;
                     s32 angle;
 
-                    radius = Func_08004458() & 63;
-                    angle = Func_08004458() & 0xFFFF;
+                    radius = Random16() & 63;
+                    angle = Random16() & 0xFFFF;
                     particle->x =
-                        ((Func_08002322(angle) * radius) >> 3) + 0x200000;
+                        ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
                     particle->y =
                         ((Func_0800231c(angle) * radius) >> 2) + 0x600000;
-                    particle->vx = ((Func_08004458() & 63) - 32) << 14;
-                    particle->vy = (-(Func_08004458() & 63) - 8) << 13;
+                    particle->vx = ((Random16() & 63) - 32) << 14;
+                    particle->vy = (-(Random16() & 63) - 8) << 13;
                     particle->life = 0;
                 }
                 particle++;
@@ -266,14 +266,14 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
                     s32 radius;
                     s32 angle;
 
-                    radius = Func_08004458() & 63;
-                    angle = Func_08004458() & 0xFFFF;
+                    radius = Random16() & 63;
+                    angle = Random16() & 0xFFFF;
                     particle->x =
-                        ((Func_08002322(angle) * radius) >> 3) + 0x200000;
+                        ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
                     particle->y =
                         ((Func_0800231c(angle) * radius) >> 2) + 0x600000;
-                    particle->vx = ((Func_08004458() & 63) - 32) << 14;
-                    particle->vy = (-(Func_08004458() & 63) - 8) << 13;
+                    particle->vx = ((Random16() & 63) - 32) << 14;
+                    particle->vy = (-(Random16() & 63) - 8) << 13;
                     particle->life = 0;
                     seeded++;
                     if (seeded == 16)
@@ -343,7 +343,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
                 if (frame > 76)
                     size = 10;
                 ((DrawRectangleFn)rectangle_slot[particle->vy > 0 ? 1 : 0])(
-                    canvas, graphics + Data_080ede48[size - 1],
+                    canvas, graphics + ParticleStreams_CellOffsets[size - 1],
                     M2C_FIELD(particle, s16 *, 2) - (size / 2),
                     M2C_FIELD(particle, s16 *, 6) - size,
                     size, size * 2);
@@ -378,16 +378,16 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
                         if (step == 0) {
                             void *member;
 
-                            member = *Func_080b5098(
+                            member = *GetBattleObjectSlotFar(
                                 M2C_FIELD(work->argument, s16 *, id_ofs));
-                            Func_080d6888(
+                            ObjectGroup_UpdateMembers(
                                 M2C_FIELD(work->argument, s16 *, id_ofs),
                                 7, 5, -1, step);
                             M2C_FIELD(member, s32 *, 40) = 0x48000;
                             M2C_FIELD(member, s32 *, 72) = 0xAB85;
                         }
                         if (step == 6) {
-                            Func_080d6888(
+                            ObjectGroup_UpdateMembers(
                                 M2C_FIELD(work->argument, s16 *, id_ofs),
                                 0, 5, -1, 0);
                         }
@@ -408,7 +408,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
     Func_080e6eac(1, pos_x, pos_y);
     cursor = work->objects;
     for (i = 0; i != 12; i++) {
-        Func_08009038(*cursor++);
+        ResourceObject_ReleaseFar(*cursor++);
     }
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

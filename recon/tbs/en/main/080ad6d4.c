@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
+extern u8 gMenuWork[];
+extern u8 gWindowWork[];
 
 /*
  * Modal owner-action comparison loop for the shared 0x03001f2c scene work.
@@ -42,7 +44,7 @@
 #define VRAM_STRIP 0x060052c0
 
 extern u8 Data_02000240[];
-extern u8 Data_080af26c[];
+extern u8 Menu_BackdropFrameTile[];
 extern volatile u32 Data_03001c94;
 extern volatile u32 Data_03001b04;
 
@@ -76,17 +78,17 @@ void FourObjectMotion_SetSlotPhase(s32, s32);
 s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
 
 void Sys_Free(void *);
-s32 Func_08002322(s32);
+s32 Trig_Sin(s32);
 void _call_via_r3(s32, s32, s32, s32);
 void Func_080072f4(s32, s32, s32);
 void Func_080072f8(s32, s32, s32);
-void Func_08015068(s32, s32, s32, s32, s32);
-void Func_08015278(s32);
+void UiWindow_ClearInteriorTilesFar(s32, s32, s32, s32, s32);
+void RenderOutput_ClearListFar(s32);
 void Func_080152a8(void);
-void Func_080771a8(s32, s32, s32);
+void Djinn_AddToOwnerFar(s32, s32, s32);
 void Func_080771b0(s32, s32, s32);
 void Func_080771b8(s32, s32, s32);
-void Func_080a19a0(void);
+void Menu_UpdateEntryObjectTransforms(void);
 void Func_080a1ac0(s32, s32);
 s32 Func_080acab8(s32, s32, s32, u8, s32, s32, s32, s32, s32);
 
@@ -111,7 +113,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     u16 attr;
     s32 i;
 
-    state = *(void **)ADDR_03001F2C;
+    state = *(void **)gMenuWork;
     anim = 0;
     dirty = 1;
     page = 2;
@@ -130,7 +132,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     FIELD_AT_OFFSET(state, s16, 0x134 + FIELD_AT_OFFSET(state, s8, 0x1c) * 2) = 0x10;
     FIELD_AT_OFFSET(state, s16, 0x144 + FIELD_AT_OFFSET(state, s8, 0x1c) * 2) = 0x20;
 
-    Func_08015278(FIELD_AT_OFFSET(state, s32, 0x30));
+    RenderOutput_ClearListFar(FIELD_AT_OFFSET(state, s32, 0x30));
     WaitFrames(1);
     UiWindow_CloseIfOpen(&FIELD_AT_OFFSET(state, s32, 0x10c), 1);
     UiWindow_UpdateOrCreate(&FIELD_AT_OFFSET(state, s32, 0x10c), 0, 0, 30, 5, 2);
@@ -171,7 +173,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             second_pal = FIELD_AT_OFFSET(state, u8, 0x257);
             second_bank = FIELD_AT_OFFSET(state, u8, 0x255) & 31;
             second_flag = (u16)(FIELD_AT_OFFSET(state, u16, 0x17a) & 0x8000);
-            Func_080771a8(first_id, second_pal, second_bank);
+            Djinn_AddToOwnerFar(first_id, second_pal, second_bank);
             if (second_flag != 0) {
                 Func_080771b0(first_id, second_pal, second_bank);
             }
@@ -187,7 +189,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         if (mode == 0) {
             Func_080771b8(second_id, second_pal, second_bank);
         }
-        Func_080771a8(second_id, first_pal, first_bank);
+        Djinn_AddToOwnerFar(second_id, first_pal, first_bank);
         if (first_flag != 0) {
             Func_080771b0(second_id, first_pal, first_bank);
         }
@@ -305,7 +307,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     }
 
     for (;;) {
-        render = *(u8 **)ADDR_03001E8C;
+        render = *(u8 **)gWindowWork;
         scene = FIELD_AT_OFFSET(state, u8 *, 0x184);
         input_edge = Data_03001c94;
         input_held = Data_03001b04;
@@ -381,7 +383,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         if (dirty != 0) {
             if (mode <= 1) {
-                Func_08015068(FIELD_AT_OFFSET(state, s32, 0x10c), 128, 16, 224, 24);
+                UiWindow_ClearInteriorTilesFar(FIELD_AT_OFFSET(state, s32, 0x10c), 128, 16, 224, 24);
                 if (page == 1) {
                     UiText_DrawAt(0xba1, FIELD_AT_OFFSET(state, s32, 0x10c), 128, 16);
                 } else {
@@ -475,7 +477,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             s32 rise;
             s32 slide;
 
-            rise = -Iwram_MulQ16(16, Func_08002322(Modulo(step, 30) * 0x444));
+            rise = -Iwram_MulQ16(16, Trig_Sin(Modulo(step, 30) * 0x444));
             if (rise < -6) {
                 rise = -6;
             }
@@ -499,7 +501,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         if ((frame & 3) == 0) {
             if ((frame & 4) != 0) {
-                _call_via_r3(VRAM_STRIP, (s32)Data_080af26c, 32, IWRAM_WORD_COPY);
+                _call_via_r3(VRAM_STRIP, (s32)Menu_BackdropFrameTile, 32, IWRAM_WORD_COPY);
             } else {
                 _call_via_r3(VRAM_STRIP, 32, 0x44444444, IWRAM_WORD_FILL);
             }
@@ -549,9 +551,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
     FourObjectMotion_SetSlotPhase(0, 0);
     FourObjectMotion_SetSlotPhase(1, 0);
-    ScheduleCallbackAfterFrames(Func_080a19a0, 0xc80);
+    ScheduleCallbackAfterFrames(Menu_UpdateEntryObjectTransforms, 0xc80);
 
-    render = *(u8 **)ADDR_03001E8C;
+    render = *(u8 **)gWindowWork;
     render[0xea6] = 1;
     UiWindow_CloseIfOpen(&FIELD_AT_OFFSET(state, s32, 0x10c), 1);
     WaitFrames(1);
@@ -561,7 +563,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     UiWindow_Commit(FIELD_AT_OFFSET(state, s32, 0x30));
     UiWindow_Commit(FIELD_AT_OFFSET(state, s32, 0x28));
     UiWindow_Commit(FIELD_AT_OFFSET(state, s32, 0x10));
-    render = *(u8 **)ADDR_03001E8C;
+    render = *(u8 **)gWindowWork;
     render[0xea6] = 0;
     WaitFrames(1);
     return result;

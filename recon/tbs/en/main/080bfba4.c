@@ -47,17 +47,17 @@ struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void BattleUnit_Recalculate(s32 unit_id);
 s32 Func_08077118(s32 unit_id, s32 amount);
 void Func_080771b8(s32 unit_id, s32 element, s32 index);
-void *Func_08004970(s32 size);
+void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *block);
 s32 Math_Div(s32 numerator, s32 denominator);
 void Func_08009080(void *object, s32 animation);
-void Func_08009088(void *object, s32 flags);
+void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 flags);
 void Func_080f9010(s32 cue);
-struct BattleMotionSlot *Func_080b7dd0(s32 unit_id);
-u32 Func_080bb938(void);
-void Func_080bd808(s32 phase);
-u32 Func_080bdfec(void);
-void Func_080be02c(void);
+struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
+u32 BattleEv_DispatchQueued(void);
+void BattleEventRuntime_SchedulePhase(s32 phase);
+u32 BattleEventRuntime_Reset(void);
+void BattleEventRuntime_WaitForReady(void);
 s32 Func_080c1798(s32 unit_id, s32 element, s32 mode, s32 arg);
 
 /* End of one unit's turn. The Djinn it summoned with join its side's
@@ -147,7 +147,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         s32 gain;
 
         most = 0;
-        before = Func_08004970(sizeof(struct BattleUnit));
+        before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
         ((BlockCopy)0x03001388)(before, unit, sizeof(struct BattleUnit));
         best = -1;
         for (i = 0; i <= 3; i++) {
@@ -163,18 +163,18 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         for (i = 0; i <= 3; i++) {
             gain = unit->elements[i].power - before->elements[i].power;
             if (gain > 0) {
-                Func_080bdfec();
-                Func_080bd808(25);
+                BattleEventRuntime_Reset();
+                BattleEventRuntime_SchedulePhase(25);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 BattleEv_Push(BATTLE_EVENT_VALUE, gain);
                 BattleEv_Push(BATTLE_EVENT_SOUND, 175);
                 BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgEarthPowerUp + i);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                 Func_080f9010(212);
-                Func_08009080(Func_080b7dd0(id)->object, 3);
-                Func_08009088(Func_080b7dd0(id)->object, 32);
+                Func_08009080(GetBattleObjectSlot(id)->object, 3);
+                ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
                 Func_080c1798(id, i, 2, most - 1);
-                Func_080be02c();
+                BattleEventRuntime_WaitForReady();
             }
         }
         Sys_Free(before);
@@ -183,7 +183,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
     if (both_sides != 0) {
         s8 *poison;
 
-        Func_080bdfec();
+        BattleEventRuntime_Reset();
         if (plan->pending_amount_60 != 0) {
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
@@ -204,9 +204,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
             }
         }
-        Func_080bb938();
+        BattleEv_DispatchQueued();
 
-        Func_080bdfec();
+        BattleEventRuntime_Reset();
         poison = &unit->poison;
         if (*poison != 0) {
             s32 damage = Math_Div(*poison * unit->max_hp, 10);
@@ -236,9 +236,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
             }
         }
-        Func_080bb938();
+        BattleEv_DispatchQueued();
 
-        Func_080bdfec();
+        BattleEventRuntime_Reset();
         if (unit->death_count != 0) {
             if (--unit->death_count == 0
                 && Func_08077118(id, 0xc0000000) == 0) {
@@ -254,7 +254,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 }
             }
         }
-        Func_080bb938();
+        BattleEv_DispatchQueued();
     }
     BattleUnit_Recalculate(id);
 }

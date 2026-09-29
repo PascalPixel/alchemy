@@ -27,7 +27,7 @@ struct OwnerEquipment {
     u16 equipment[15];          /* 0xd8 */
 };
 
-extern u16 Data_02001078[];
+extern u16 gInventorySnapshot[];
 struct GameStateView {
     u8 unknown_000[0x1f8];
     u16 leader_x;               /* 0x1f8 */
@@ -62,7 +62,7 @@ void Func_0807a664(void)
     register s16 scene;
     s16 entrance;
 
-    save = Data_02001078;
+    save = gInventorySnapshot;
     if (*save != EQUIPMENT_SNAPSHOT_MARK) {
         *save++ = EQUIPMENT_SNAPSHOT_MARK;
         scene = Data_02000240.scene;

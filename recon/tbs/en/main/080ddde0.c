@@ -52,7 +52,7 @@ extern u8 Data_080edeca[];      /* per-mask byte table (announce geometry A) */
 extern u8 Data_080eded0[];      /* per-mask byte table (announce geometry B) */
 extern u8 Data_080eebe2[];     /* random draw-mode flags */
 extern u8 Data_080eebe6[];      /* effect-variant draw selector */
-extern u16 Data_080ede48[];     /* per-step halfword table (shared w/ 080d82b0.c) */
+extern u16 ParticleStreams_CellOffsets[];     /* per-step halfword table (shared w/ 080d82b0.c) */
 
 /* The particle draw uses the kind-46 callback cached at sp+32. The fill
  * routine is the entry at 0x03000168 itself, not a pointer stored there.
@@ -252,7 +252,7 @@ void Func_080ddde0(struct BattleEffectArgument *table_param)
                             step += 15;
                         step = 1 + (step >> 4);
                         {
-                            const u8 *source = (const u8 *)extra_target + Data_080ede48[step - 1];
+                            const u8 *source = (const u8 *)extra_target + ParticleStreams_CellOffsets[step - 1];
                             s32 x = (slot3->x >> 16) - step / 2;
                             s32 y = (slot3->y >> 16) - step;
                             draw_cb_46(draw_destination, source, x, y, step, step * 2);

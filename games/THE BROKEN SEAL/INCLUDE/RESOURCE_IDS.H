@@ -67,5 +67,6 @@ extern char ResourceId_PictureB;
 extern char ResourceId_ShopCursorFrames;
 extern char ResourceId_Icons;
 extern char ResourceId_CommandIcons;
+extern char ResourceId_SheepSheet;
 
 #endif

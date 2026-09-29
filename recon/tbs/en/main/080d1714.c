@@ -139,11 +139,11 @@ struct EffectRuntime {
 extern void *Data_03001eec[];
 extern struct SceneCameraObject Data_03001ce0;
 extern u32 Data_03001b04;
-extern struct Particle Data_02010000[];
+extern struct Particle gMapCellBuffer[];
 extern u8 Value_00000073;
 extern u8 Value_00000082;
 extern u8 Value_00000088;
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 extern const struct ScalePair Data_080eda78;
 extern u8 Data_080ee15a[];
 extern u8 Data_080ee163[];
@@ -153,40 +153,40 @@ extern u8 Data_080ee177[];
 extern u8 Data_080ee17a[];
 extern u16 Data_080ee17e[];
 
-void Func_080cd594(s32 mode);
-u8 *Func_08002f40(s32 resource_id);
-void Func_08005340(const void *source, void *destination);
+void BattleFx_BeginCanvasLayer(s32 mode);
+u8 *Resource_GetTableEntry(s32 resource_id);
+void Resource_DecodeType01(const void *source, void *destination);
 s32 Func_080041d8(void (*callback)(void), s32 interval);
-void Func_08004278(void (*callback)(void));
-void Func_080cd260(void);
-s32 Func_08004458(void);
-s32 Func_080044d0(s32 x, s32 z);
+void Scheduler_RemoveCallback(void (*callback)(void));
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+s32 Random16(void);
+s32 ArcTan2(s32 x, s32 z);
 s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002304(s32 numerator, s32 denominator);
 s32 Func_0800231c(s32 angle);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 void Func_080049ac(void);
-void Func_080051d8(void *source, void *destination);
+void Graphics_PrepareTransferInIwramWork(void *source, void *destination);
 void Func_08004c1c(s32 yaw);
 void Func_08004c6c(s32 pitch);
 void Func_08004cb4(struct Vector3 *position);
 void Func_080f9010(s32 cue);
-void Func_080e3944(const void *source, struct Vector3 *output);
-void Func_080d6888(s32, s32, s32, s32, s32);
-void Func_080b5038(s32, s32, s32);
-void Func_080b5040(s32, s32, s32);
+void EffectPosition_ApplyBaseAndYOffset(const void *source, struct Vector3 *output);
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
+void BattlePresentation_ConfigurePaletteFadeFar(s32, s32, s32);
+void BattleBackground_LoadFar(s32, s32, s32);
 void Func_080b50e8(s32 value);
-void Func_080d6750(struct EffectArgument *argument);
-void Func_080dbb24(s32, s32, s32);
-void Func_08009008(s32 handle, struct Placement *place, struct ScalePair *scale,
+void BattleFx_SelectLivingTargets(struct EffectArgument *argument);
+void BattleFx_SpawnObjects(s32, s32, s32);
+void Object_ApplyProjectedPlacementFar(s32 handle, struct Placement *place, struct ScalePair *scale,
     s32 mode);
-void Func_08009038(s32 handle);
-void Func_080d67dc(void);
-void Func_080cd52c(void);
+void ResourceObject_ReleaseFar(s32 handle);
+void BattleEffect_SetupBlendedDisplay(void);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 count);
 void Func_08002dd8(s32 block);
-void Func_080cdbc0(void);
+void BattleFx_EndCanvasLayer(void);
 
 void Func_080d1714(struct EffectArgument *argument)
 {
@@ -236,21 +236,21 @@ void Func_080d1714(struct EffectArgument *argument)
     graphics = (u8 *)cells[1];
     runtime->argument = argument;
 
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle = (DrawRectangle)cells[6];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
     draw_rectangle_alt = (DrawRectangle)cells[7];
 
-    tbl = Func_08002f40((s32)&Value_00000082);
+    tbl = Resource_GetTableEntry((s32)&Value_00000082);
     ((WordCopy)0x03001388)((void *)0x05000000, tbl, 0x80);
     tbl += 0x80;
-    Func_08005340(tbl, runtime);
-    Func_08005340(Func_08002f40((s32)&Value_00000073), graphics);
+    Resource_DecodeType01(tbl, runtime);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000073), graphics);
 
     runtime->display_mode = 2;
     runtime->display_value = 50;
-    Func_080041d8(Func_080cd260, 0x480);
+    Func_080041d8(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     wave_x = 0x800000;
     wave_y = 0x280000;
@@ -260,12 +260,12 @@ void Func_080d1714(struct EffectArgument *argument)
     index = 0;
     if (runtime->argument->target_count != 0) {
         do {
-            context = Func_080b5098(runtime->argument->target_ids[index]);
+            context = GetBattleObjectSlotFar(runtime->argument->target_ids[index]);
             object = (struct EffectObject *)context->object;
             home[index].x = object->x;
             home[index].y = object->z;
             base_angle[index] = object->angle;
-            heading[index] = (u16)Func_080044d0(object->x, object->z);
+            heading[index] = (u16)ArcTan2(object->x, object->z);
             radius[index] = ((IntegerSquareRoot)0x030001d8)(
                 (object->x >> 8) * (object->x >> 8)
                     + (object->z >> 8) * (object->z >> 8)) >> 7;
@@ -281,10 +281,10 @@ void Func_080d1714(struct EffectArgument *argument)
         point->field_08 = 120;
         point->field_04 = 0;
         /* The reference discards this draw; kept so the sequence matches. */
-        Func_08004458();
+        Random16();
         point->field_10 = 0;
         point->field_0c = 0;
-        point->field_18 = Func_08004458() & 63;
+        point->field_18 = Random16() & 63;
         index++;
         point++;
     } while (index != 64);
@@ -299,7 +299,7 @@ void Func_080d1714(struct EffectArgument *argument)
         }
 
         Func_080049ac();
-        Func_080051d8(view, (u8 *)view + 12);
+        Graphics_PrepareTransferInIwramWork(view, (u8 *)view + 12);
 
         if (frame == 16)
             Func_080f9010(141);
@@ -318,11 +318,11 @@ void Func_080d1714(struct EffectArgument *argument)
         if (runtime->argument->target_count != 0) {
             do {
                 if (frame > index * 16) {
-                    context = Func_080b5098(
+                    context = GetBattleObjectSlotFar(
                         runtime->argument->target_ids[index]);
                     object = (struct EffectObject *)context->object;
                     object->x =
-                        (radius[index] * Func_08002322(heading[index])) >> 1;
+                        (radius[index] * Trig_Sin(heading[index])) >> 1;
                     object->z =
                         (radius[index] * Func_0800231c(heading[index])) >> 1;
 
@@ -351,7 +351,7 @@ void Func_080d1714(struct EffectArgument *argument)
                     do {
                         if (frame == Data_080ee16c[slot]) {
                             object->word_28 = 0;
-                            Func_080d6888(
+                            ObjectGroup_UpdateMembers(
                                 runtime->argument->target_ids[index],
                                 7,
                                 5,
@@ -407,10 +407,10 @@ void Func_080d1714(struct EffectArgument *argument)
             index = 0;
             do {
                 if (point->field_18 == 0) {
-                    work.x = point->field_08 * Func_08002322(point->field_10);
+                    work.x = point->field_08 * Trig_Sin(point->field_10);
                     work.y = point->field_04;
                     work.z = point->field_08 * Func_0800231c(point->field_10);
-                    Func_080e3944(&work, &screen);
+                    EffectPosition_ApplyBaseAndYOffset(&work, &screen);
                     screen.x >>= 1;
                     if (point->field_04 <= 0x3fffff) {
                         draw_rectangle(
@@ -446,17 +446,17 @@ void Func_080d1714(struct EffectArgument *argument)
         }
 
         if (frame == 160) {
-            Func_080b5040(1, 0x3b, 0);
-            Func_080b5038(1, 0x3b, 8);
-            Func_080d6750(runtime->argument);
-            Func_080dbb24(9, 376, 2);
+            BattleBackground_LoadFar(1, 0x3b, 0);
+            BattlePresentation_ConfigurePaletteFadeFar(1, 0x3b, 8);
+            BattleFx_SelectLivingTargets(runtime->argument);
+            BattleFx_SpawnObjects(9, 376, 2);
 
-            tbl = Func_08002f40((s32)&Value_00000088);
+            tbl = Resource_GetTableEntry((s32)&Value_00000088);
             ((WordCopy)0x03001388)((void *)0x05000000, tbl, 0x80);
             tbl += 0x80;
-            Func_08005340(tbl, (u8 *)runtime + 0x3600);
+            Resource_DecodeType01(tbl, (u8 *)runtime + 0x3600);
 
-            spark = Data_02010000;
+            spark = gMapCellBuffer;
             index = 0;
             do {
                 spark->field_18 = 0;
@@ -467,10 +467,10 @@ void Func_080d1714(struct EffectArgument *argument)
             index = 0;
             if (runtime->argument->target_count != 0) {
                 do {
-                    context = Func_080b5098(
+                    context = GetBattleObjectSlotFar(
                         runtime->argument->target_ids[index]);
                     object = (struct EffectObject *)context->object;
-                    object->y = ((Func_08004458() & 15) + 8) << 16;
+                    object->y = ((Random16() & 15) + 8) << 16;
                     index++;
                 } while (index != runtime->argument->target_count);
             }
@@ -480,13 +480,13 @@ void Func_080d1714(struct EffectArgument *argument)
             point = runtime->points;
             index = 0;
             do {
-                speed = Func_08004458() & 127;
-                angle = (Func_08004458() & 0x7fff) + 0x9fff;
-                point->field_00 = speed * Func_08002322(angle);
+                speed = Random16() & 127;
+                angle = (Random16() & 0x7fff) + 0x9fff;
+                point->field_00 = speed * Trig_Sin(angle);
                 point->field_04 = speed * Func_0800231c(angle);
                 point->field_18 = 0;
                 point->field_08 =
-                    (Func_08002304(Func_08004458(), 200) - 100) << 16;
+                    (Func_08002304(Random16(), 200) - 100) << 16;
                 index++;
                 point++;
             } while (index != 32);
@@ -507,8 +507,8 @@ void Func_080d1714(struct EffectArgument *argument)
             if (frame - 160 <= 64)
                 size = 32;
 
-            wave_x -= (Func_08002322((frame - 160) << 7) * 32) >> 6;
-            wave_y += (size * Func_08002322((frame - 160) << 9)) >> 6;
+            wave_x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
+            wave_y += (size * Trig_Sin((frame - 160) << 9)) >> 6;
             wave_x += drift_x;
             wave_y += drift_y;
             drift_x /= 2;
@@ -523,7 +523,7 @@ void Func_080d1714(struct EffectArgument *argument)
                 place.y = 0xff0000 + slot * 0x400000;
                 place.z =
                     ((Data_080ee163[slot] + slot * 64) << 16) + wave_y;
-                Func_08009008(runtime->objects[slot], &place, &scale, 0);
+                Object_ApplyProjectedPlacementFar(runtime->objects[slot], &place, &scale, 0);
                 slot++;
             } while (slot != 9);
 
@@ -546,7 +546,7 @@ void Func_080d1714(struct EffectArgument *argument)
                                 + (point->field_08 >> 8)
                                     * (point->field_08 >> 8)) >> 9;
                         if (dist != 0) {
-                            Func_080e3944(point, &screen);
+                            EffectPosition_ApplyBaseAndYOffset(point, &screen);
                             screen.x =
                                 (screen.x >> 17) + (wave_x >> 17) + 32;
                             screen.y = ((s16 *)&screen)[3]
@@ -559,7 +559,7 @@ void Func_080d1714(struct EffectArgument *argument)
                             span = 6 - Math_Div(screen.z - 170, 36);
                             draw_rectangle_alt(
                                 draw_destination,
-                                graphics + Data_080ede48[span - 1],
+                                graphics + ParticleStreams_CellOffsets[span - 1],
                                 screen.x - span / 2,
                                 screen.y - span,
                                 span,
@@ -581,7 +581,7 @@ void Func_080d1714(struct EffectArgument *argument)
                         span = Math_Div(alive, 10) + 1;
                         draw_rectangle_alt(
                             draw_destination,
-                            graphics + Data_080ede48[span - 1],
+                            graphics + ParticleStreams_CellOffsets[span - 1],
                             (wave_x >> 17) - span / 2 + 32,
                             (wave_y >> 16) - span - 4,
                             span,
@@ -592,32 +592,32 @@ void Func_080d1714(struct EffectArgument *argument)
                 slot = 0;
                 do {
                     if (frame == Data_080ee16c[slot]) {
-                        spark = &Data_02010000[slot * 128];
+                        spark = &gMapCellBuffer[slot * 128];
                         index = 0;
                         do {
-                            speed = (Func_08004458() & 127) + 16;
-                            angle = Func_08004458() & 0xffff;
+                            speed = (Random16() & 127) + 16;
+                            angle = Random16() & 0xffff;
                             spark->field_0c =
-                                (Func_08002322(angle) * speed) >> 6;
+                                (Trig_Sin(angle) * speed) >> 6;
                             spark->field_10 =
                                 -(Func_0800231c(angle) * speed) >> 6;
                             spark->field_10 =
-                                ((Func_08004458() & 255) - 128) << 10;
+                                ((Random16() & 255) - 128) << 10;
                             spark->field_00 = 0;
                             spark->field_04 = 0;
                             spark->field_08 = 0;
-                            spark->field_18 = (Func_08004458() & 15) + 64;
+                            spark->field_18 = (Random16() & 15) + 64;
                             index++;
                             spark++;
                         } while (index != 96);
                     }
 
                     if (frame >= Data_080ee16c[0]) {
-                        spark = Data_02010000;
+                        spark = gMapCellBuffer;
                         index = 0;
                         do {
                             if (spark->field_18 > 0) {
-                                Func_080e3944(spark, &screen);
+                                EffectPosition_ApplyBaseAndYOffset(spark, &screen);
                                 screen.x = (screen.x >> 17) + 32;
                                 screen.y = ((s16 *)&screen)[3] + 56;
                                 screen.z = ((s16 *)&screen)[5];
@@ -629,7 +629,7 @@ void Func_080d1714(struct EffectArgument *argument)
                                     3 - Math_Div(screen.z - 170, 90);
                                 draw_rectangle(
                                     draw_destination,
-                                    graphics + Data_080ede48[span - 1],
+                                    graphics + ParticleStreams_CellOffsets[span - 1],
                                     screen.x - span / 2,
                                     screen.y - span,
                                     span,
@@ -694,9 +694,9 @@ void Func_080d1714(struct EffectArgument *argument)
                                 work.y = spark->field_18
                                     * Func_0800231c(angle);
                                 work.z = spark->field_18
-                                    * Func_08002322(angle);
+                                    * Trig_Sin(angle);
                                 spark->field_18 += 2;
-                                Func_080e3944(&work, &screen);
+                                EffectPosition_ApplyBaseAndYOffset(&work, &screen);
                                 screen.x =
                                     (screen.x >> 17) + runtime->points[index + 60].field_0c;
                                 screen.y = ((s16 *)&screen)[3]
@@ -710,7 +710,7 @@ void Func_080d1714(struct EffectArgument *argument)
                                     - Math_Div(screen.z - 170, 90);
                                 draw_rectangle(
                                     draw_destination,
-                                    graphics + Data_080ede48[span - 1],
+                                    graphics + ParticleStreams_CellOffsets[span - 1],
                                     screen.x - span / 2,
                                     screen.y - span,
                                     span,
@@ -727,7 +727,7 @@ void Func_080d1714(struct EffectArgument *argument)
             }
         }
 
-        Func_080cd52c();
+        ObjectGroup_TickMemberTimers();
         runtime->frame_ready = 1;
         Func_080030f8(1);
         frame++;
@@ -738,7 +738,7 @@ void Func_080d1714(struct EffectArgument *argument)
     index = 0;
     if (runtime->argument->target_count != 0) {
         do {
-            context = Func_080b5098(runtime->argument->target_ids[index]);
+            context = GetBattleObjectSlotFar(runtime->argument->target_ids[index]);
             object = (struct EffectObject *)context->object;
             object->x = home[index].x;
             object->z = home[index].y;
@@ -749,16 +749,16 @@ void Func_080d1714(struct EffectArgument *argument)
 
     Data_03001ce0.field_0c = 120;
 
-    Func_080d67dc();
+    BattleEffect_SetupBlendedDisplay();
 
     index = 0;
     do {
-        Func_08009038(runtime->objects[index]);
+        ResourceObject_ReleaseFar(runtime->objects[index]);
         index++;
     } while (index != 9);
 
-    Func_08004278(Func_080cd260);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

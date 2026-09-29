@@ -74,28 +74,28 @@ extern const u16 Data_080ee0aa[];
 extern const u8 Data_080ee0b0[];
 extern const u8 Data_080ee0b3[];
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 void Func_080de2f8(
     void *object, s32 variant, s32 flag, s32 unk, s32 *out_x, s32 *out_y);
-void *Func_08002f40(s32 id);
-u32 Func_08005340(const void *source, void *destination);
-u32 Func_08004458(void);
-void Func_080e396c(s32 member_id, s32 *out);
+void *Resource_GetTableEntry(s32 id);
+u32 Resource_DecodeType01(const void *source, void *destination);
+u32 Random16(void);
+void EffectPosition_ApplyStepAndYOffset(s32 member_id, s32 *out);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 void BattleFx_FetchRectangleBlitters(s32 flag, void **pair);
 void Runtime_ReleaseHeapBlock(s32 id);
-void **Func_080b5098(s32 member_id);
+void **GetBattleObjectSlotFar(s32 member_id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *record);
-void Func_080e3944(void *source, s32 *screen);
+void EffectPosition_ApplyBaseAndYOffset(void *source, s32 *screen);
 s32 Math_Div(s32 value, s32 divisor);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080030f8(s32 frames);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunMemberBeam(void *object, s32 variant)
 {
@@ -134,7 +134,7 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
     work = *cursor++;
     canvas = *cursor;
     FIELD_AT_OFFSET(work, void **, 0x7828) = object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     state = FIELD_AT_OFFSET(work, void **, 0x7828);
     if (FIELD_AT_OFFSET(state, s32 *, 28) == 1) {
         Func_080de2f8(object, variant,
@@ -143,36 +143,36 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
             0, &out_x, &out_y);
     }
 
-    palette = Func_08002f40((s32)&Value_0000007b);
+    palette = Resource_GetTableEntry((s32)&Value_0000007b);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    status = Func_08005340((u8 *)palette + 128, work);
+    status = Resource_DecodeType01((u8 *)palette + 128, work);
 
-    palette = Func_08002f40((s32)&Value_000000b1);
+    palette = Resource_GetTableEntry((s32)&Value_000000b1);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    status = Func_08005340((u8 *)palette + 128, (u8 *)work + 0x2710);
+    status = Resource_DecodeType01((u8 *)palette + 128, (u8 *)work + 0x2710);
 
     if (variant == 0) {
         id = (s32)&Value_00000093;
     } else {
         id = (s32)&Value_00000091;
     }
-    palette = Func_08002f40(id);
+    palette = Resource_GetTableEntry(id);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    status = Func_08005340((u8 *)palette + 128, (u8 *)work + 0x65c0);
+    status = Resource_DecodeType01((u8 *)palette + 128, (u8 *)work + 0x65c0);
 
     particle = (s32 *)0x02010000;
     for (i = 0; i != 512; i++) {
         particle[0] = 0;
         particle[1] = 0x500000;
-        particle[2] = (s32)((Func_08004458() & 31) - 32) << 14;
-        particle[6] = (s32)(Func_08004458() & 255);
+        particle[2] = (s32)((Random16() & 31) - 32) << 14;
+        particle[6] = (s32)(Random16() & 255);
         particle = (s32 *)((u8 *)particle + 28);
     }
 
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
     state = FIELD_AT_OFFSET(work, void **, 0x7828);
     if (FIELD_AT_OFFSET(state, s32 *, 20) == 1) {
-        Func_080e396c(FIELD_AT_OFFSET(state, s16 *, 36), tmp);
+        EffectPosition_ApplyStepAndYOffset(FIELD_AT_OFFSET(state, s16 *, 36), tmp);
         y_offset = 64 - tmp[0];
     } else if (FIELD_AT_OFFSET(state, s32 *, 4) == 1) {
         y_offset = -112;
@@ -204,7 +204,7 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
             s32 y;
 
             angle = frame << 11;
-            x = (((-Func_08002322(angle)) * 20) >> 16) + out_x + y_offset - 20;
+            x = (((-Trig_Sin(angle)) * 20) >> 16) + out_x + y_offset - 20;
             y = ((Func_0800231c(angle) * 4) >> 16) + out_y;
             BattleFx_FetchRectangleBlitters(
                 FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
@@ -240,7 +240,7 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
                 s32 window;
                 s32 k;
 
-                member_ptr = *Func_080b5098(
+                member_ptr = *GetBattleObjectSlotFar(
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
                         s16 *, (member * 2) + 36));
                 window = member << 4;
@@ -260,9 +260,9 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
                             s32 wobble;
                             s32 shape;
 
-                            Func_080e3944(p, screen);
+                            EffectPosition_ApplyBaseAndYOffset(p, screen);
                             screen[0] = screen[0] + y_offset;
-                            wobble = (Func_08002322(
+                            wobble = (Trig_Sin(
                                 FIELD_AT_OFFSET(p, s32 *, 24) << 10) << 4)
                                 >> 16;
                             if ((k & 1) != 0) {
@@ -308,23 +308,23 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
                     s32 j;
 
                     statep = (void **)((u8 *)work + 0x7828);
-                    member_ptr = *Func_080b5098(
+                    member_ptr = *GetBattleObjectSlotFar(
                         FIELD_AT_OFFSET(*statep, s16 *, id_ofs));
                     Render_ResetTransformState();
                     Graphics_PrepareTransferInIwramWork(facing, facing + 12);
                     if (frame == window2) {
-                        Func_080d6888(FIELD_AT_OFFSET(*statep, s16 *, id_ofs),
+                        ObjectGroup_UpdateMembers(FIELD_AT_OFFSET(*statep, s16 *, id_ofs),
                             1, -1, -1, 0);
                     }
                     gap = window2 + 16;
                     if (frame == gap) {
-                        Func_080d6888(FIELD_AT_OFFSET(*statep, s16 *, id_ofs),
+                        ObjectGroup_UpdateMembers(FIELD_AT_OFFSET(*statep, s16 *, id_ofs),
                             0, -1, -1, 0);
                     }
                     record2[0] = FIELD_AT_OFFSET(member_ptr, s32 *, 8);
                     record2[1] = 0;
                     record2[2] = FIELD_AT_OFFSET(member_ptr, s32 *, 16);
-                    Func_080e3944(record2, screen);
+                    EffectPosition_ApplyBaseAndYOffset(record2, screen);
                     screen[0] = screen[0] + y_offset;
                     if (frame < base + 104) {
                         q = frame / 4;
@@ -374,5 +374,5 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

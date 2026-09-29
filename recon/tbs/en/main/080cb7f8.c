@@ -46,26 +46,26 @@ extern u8 Data_00000100[];
 extern u8 Data_00001000[];
 s32 Func_080022fc();
 s32 Func_0800231c();
-s32 Func_08002322();
+s32 Trig_Sin();
 void Func_08002dd8();
-s32 Func_08002f40();
+s32 Resource_GetTableEntry();
 void Func_080030f8();
 s32 Func_080041d8();
-void Func_08004278();
-s32 Func_08004458();
-s32 Func_080048b0();
+void Scheduler_RemoveCallback();
+s32 Random16();
+s32 Runtime_AllocateHeapBlock();
 void Func_080049ac();
-void Func_080051d8();
+void Graphics_PrepareTransferInIwramWork();
 void _call_via_r3();
 void Func_080072f4();
 void Func_080072fc();
-void Func_080b5098();
-void Func_080cd52c();
-void Func_080cd594();
-void Func_080cdbc0();
-void Func_080d6888();
-s32 Func_080e3944();
-void Func_080e3980();
+void GetBattleObjectSlotFar();
+void ObjectGroup_TickMemberTimers();
+void BattleFx_BeginCanvasLayer();
+void BattleFx_EndCanvasLayer();
+void ObjectGroup_UpdateMembers();
+s32 EffectPosition_ApplyBaseAndYOffset();
+void EffectPosition_ApplyAlternateStepAndYOffset();
 void Func_080f9010();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -141,15 +141,15 @@ void Func_080cb7f8(s32 a0)
     s32 tmp4;
     s32 tmp7;
 
-    rec3 = Value2(Func_080048b0, 39, 0x782c);
+    rec3 = Value2(Runtime_AllocateHeapBlock, 39, 0x782c);
     r9 = rec3;
-    record = Value2(Func_080048b0, 40, 0x4000);
+    record = Value2(Runtime_AllocateHeapBlock, 40, 0x4000);
     slot36 = record;
-    record = Value2(Func_080048b0, 41, 0x60e);
+    record = Value2(Runtime_AllocateHeapBlock, 41, 0x60e);
     slot24 = record;
     (u32)(slot20 = *(s32 *)0x03001e80);
     *(s32 *)(0x7828 + rec3) = a0;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(s32 *)(0x77b4 + rec3) = 24;
     *(s32 *)(0x77b8 + rec3) = 0;
     v6 = (s32)Data_00000057;
@@ -171,16 +171,16 @@ void Func_080cb7f8(s32 a0)
         record = (s32)Data_00000046;
         break;
     }
-    record = Value1(Func_08002f40, record);
+    record = Value1(Resource_GetTableEntry, record);
     ((PaletteCopy)0x03001388)((void *)0x05000000, (void *)record, 128);
     base5_2010000 = 0x2010000;
     none = 0;
     v8 = none;
     do {
         *(s32 *)(base5_2010000 + 4) = 0;
-        record = Func_08004458();
+        record = Random16();
         *(s32 *)base5_2010000 = 0xffff & record;
-        record = Func_08004458();
+        record = Random16();
         p4 = v8;
         *(s32 *)(base5_2010000 + 8) = (0x1ff & record) + (s32)((s32)p4 << 1);
         *(s32 *)(base5_2010000 + 24) = -p4;
@@ -208,7 +208,7 @@ void Func_080cb7f8(s32 a0)
     v10 = none;
 L_080cb982:
     ;
-    Func_080e3980(*(s32 *)(*(s32 *)slot16 + 8), slot8);
+    EffectPosition_ApplyAlternateStepAndYOffset(*(s32 *)(*(s32 *)slot16 + 8), slot8);
     tmp7 = *(s32 *)slot8;
     *(s32 *)0x04000028 = (64 - tmp7) << 8;
     if (v10 > 49) {
@@ -216,7 +216,7 @@ L_080cb982:
     }
     p4b = v10;
     if (p4b == 16) {
-        Func_080d6888(*(s16 *)(*(s32 *)slot16 + 36), 7, -1, 0, 20);
+        ObjectGroup_UpdateMembers(*(s16 *)(*(s32 *)slot16 + 36), 7, -1, 0, 20);
     }
     if (55 >= p4b) {
         DrawRectangle *tmp3;
@@ -245,10 +245,10 @@ L_080cb982:
         blit[1]((void *)slot36, (void *)((((rec << 7) + rec) << 3) + r9 + 0x1100), 64, *(s32 *)(slot8 + 4) - 36, 24, 43);
         Func_08002dd8(47);
     }
-    Func_080b5098(*(s32 *)(*(s32 *)slot16 + 8));
+    GetBattleObjectSlotFar(*(s32 *)(*(s32 *)slot16 + 8));
     base5_2010000 = 0x2010000;
     Func_080049ac();
-    Func_080051d8(slot20, slot12);
+    Graphics_PrepareTransferInIwramWork(slot20, slot12);
     none = 0;
     v8 = none;
     do {
@@ -256,7 +256,7 @@ L_080cb982:
         tmp2 = *(s32 *)(base5_2010000 + 24);
         if (tmp2 >= 0) {
             s32 tmp;
-            record = Func_08002322(*(s32 *)base5_2010000);
+            record = Trig_Sin(*(s32 *)base5_2010000);
             pos.world[0] = (*(s32 *)(base5_2010000 + 8) * record) >> 4;
             record = Func_0800231c(*(s32 *)base5_2010000);
             pos.world[2] = -((*(s32 *)(base5_2010000 + 8) * record) >> 4);
@@ -265,7 +265,7 @@ L_080cb982:
             *(s32 *)(base5_2010000 + 4) += 0x50000;
             tmp = base5_2010000 + 8;
             *(s32 *)tmp = *(s32 *)tmp + 64;
-            Value2(Func_080e3944, (s32)pos.world, (s32)pos.screen);
+            Value2(EffectPosition_ApplyBaseAndYOffset, (s32)pos.world, (s32)pos.screen);
             v2 = (pos.screen[0] + ((u32)pos.screen[0] >> 31)) >> 1;
             pos.screen[0] = (pos.screen[0] + ((u32)pos.screen[0] >> 31)) >> 1;
             blit[0]((void *)slot36, (void *)(slot24 + *(u16 *)(0x080ede5c + (((*(s32 *)(*(s32 *)slot16 + 24) + (1 & v8)) << 1) - 2))), v2 - ((1 & v8) + *(s32 *)(*(s32 *)slot16 + 24)), pos.screen[1] - ((1 & v8) + *(s32 *)(*(s32 *)slot16 + 24)), (*(s32 *)(*(s32 *)slot16 + 24) + (1 & v8)) << 1, ((1 & v8) + *(s32 *)(*(s32 *)slot16 + 24)) << 1);
@@ -274,7 +274,7 @@ L_080cb982:
         *(s32 *)(base5_2010000 + 24) += 1;
         base5_2010000 += 28;
     } while (v8 != 32);
-    Func_080cd52c();
+    ObjectGroup_TickMemberTimers();
     *(s32 *)(0x7824 + r9) = 1;
     Func_080030f8(1);
     tmp4 = p4b + 1;
@@ -284,8 +284,8 @@ L_080cb982:
         goto L_080cb982;
     }
     Func_08002dd8(46);
-    Call1(Func_08004278, 0x80cd261);
-    Func_080cdbc0();
+    Call1(Scheduler_RemoveCallback, 0x80cd261);
+    BattleFx_EndCanvasLayer();
     Func_08002dd8(41);
     Func_08002dd8(40);
     tmp6 = (s32)pos.screen;

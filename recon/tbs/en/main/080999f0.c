@@ -48,14 +48,14 @@ extern struct Effect05State *Data_03001f30;
 s32 Math_Div(s32, s32);
 void WaitFrames(s32);
 s32 Random16(void);
-void Func_0800447c(s32, s32, struct Vec3 *);
+void Vector_AddPolarOffset(s32, s32, struct Vec3 *);
 void Func_08009080(struct EffectObject *, s32);
 void Func_080090d0(struct EffectObject *);
 s32 Func_080091a8(s32, s32, s32);
-void Func_08009240(struct EffectObject *, s32);
-struct EffectObject *Func_08096c80(s32, s32, s32, s32);
-void Func_08097384(void);
-void Func_0809748c(void);
+void Animation_ApplyChildValuesFar(struct EffectObject *, s32);
+struct EffectObject *Object_Spawn(s32, s32, s32, s32);
+void BattleEffect_InitializeSharedScene(void);
+void BattleFx_PrepareBufferInterpolation(void);
 void Func_080f9010(s32);
 
 static inline s32 Interpolate(s32 start, s32 end, s32 step)
@@ -76,15 +76,15 @@ void Func_080999f0(void)
 
     /* FAKEMATCH: the first step also supplies the spawn's zero X. */
     i = 0;
-    main = Func_08096c80(0xef, i, 0, 0);
+    main = Object_Spawn(0xef, i, 0, 0);
     if (main == 0)
         return;
-    Func_08097384();
+    BattleEffect_InitializeSharedScene();
     Func_080f9010(0x8a);
     if (state->initialized == 0) {
         state->x = target->position.x;
         state->z = target->position.z;
-        Func_0800447c(0x100000, state->angle, (struct Vec3 *)&state->x);
+        Vector_AddPolarOffset(0x100000, state->angle, (struct Vec3 *)&state->x);
         state->y = Func_080091a8(0, state->x, state->z);
     }
     start.x = target->position.x;
@@ -115,14 +115,14 @@ void Func_080999f0(void)
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;
-            Func_0800447c(Random16() * 5 + 0x30000, Random16(), &spawn);
+            Vector_AddPolarOffset(Random16() * 5 + 0x30000, Random16(), &spawn);
             if (i == count - 1) {
                 WaitFrames(25);
                 spawn.x = main->x;
                 spawn.y = main->y;
                 spawn.z = main->z;
             }
-            particle = Func_08096c80(0xf0, spawn.x, spawn.y, spawn.z);
+            particle = Object_Spawn(0xf0, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
                 particle->altitude = spawn.y - 0x200000;
                 particle->callback = (void *)0x08099921;
@@ -139,14 +139,14 @@ void Func_080999f0(void)
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;
-            Func_0800447c(Random16() * 5 + 0x30000, Random16(), &spawn);
-            particle = Func_08096c80(0x11c, spawn.x, spawn.y, spawn.z);
+            Vector_AddPolarOffset(Random16() * 5 + 0x30000, Random16(), &spawn);
+            particle = Object_Spawn(0x11c, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
                 particle->callback = (void *)0x080999a9;
                 particle->mode = 0;
                 particle->child[9] = (particle->child[9] & ~12) | 8;
                 Func_08009080(particle, 8);
-                Func_08009240(particle, 7);
+                Animation_ApplyChildValuesFar(particle, 7);
             }
             WaitFrames(6);
         }
@@ -164,5 +164,5 @@ void Func_080999f0(void)
         WaitFrames(1);
     }
     Func_080090d0(main);
-    Func_0809748c();
+    BattleFx_PrepareBufferInterpolation();
 }

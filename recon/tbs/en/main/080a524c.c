@@ -13,12 +13,12 @@ extern u8 Data_00000b2c[];
 
 s32 Func_080022fc(s32, s32);
 void Func_080030f8(s32 frames);
-s32 Func_08015010(s32, s32, s32, s32, s32);
-void Func_08015018(s32, s32);
+s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
+void UiWork_FinalizeFar(s32, s32);
 void Func_08015080(s32, s32, s32, s32);
 void Item_Get(s32);
 s32 GameFlag_TestFar(s32);
-void Func_080a1a40(s32, s32);
+void UiMenu_PositionCursor(s32, s32);
 void Func_080a1ac0(s32, s32);
 void Func_080f9010(s32 cue);
 
@@ -32,7 +32,7 @@ s32 Func_080a524c(s32 a0)
     s32 sel;
     s32 changed;
 
-    win = Func_08015010(13, 3, 17, 10, 2);
+    win = UiWindow_CreateFar(13, 3, 17, 10, 2);
     slot = a0 & 0x1ff;
     Item_Get(slot);
     Func_08015080(slot + (s32)Data_00000182, win, 24, 0);
@@ -64,7 +64,7 @@ s32 Func_080a524c(s32 a0)
             sel = 1;
             break;
         }
-        Func_080a1a40(104, (sel << 4) + 70);
+        UiMenu_PositionCursor(104, (sel << 4) + 70);
         pad = &Data_03001b04;
         if (*pad & 64) {
             sel -= 1;
@@ -81,6 +81,6 @@ s32 Func_080a524c(s32 a0)
     if (GameFlag_TestFar(0x150) != 0) {
         sel = 1;
     }
-    Func_08015018(win, 1);
+    UiWork_FinalizeFar(win, 1);
     return sel;
 }

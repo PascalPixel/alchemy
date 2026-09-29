@@ -99,8 +99,8 @@ struct RuntimeCells {
     u8 *graphics;
 };
 
-extern u8 Data_080ede84[];
-extern u8 Data_080ede96[];
+extern u8 BattleFx_PuffCells[];
+extern u8 BattleFx_PuffSizes[];
 extern u8 Data_080eea62[];
 extern u8 Data_080eea88[];
 extern u8 Data_080eea91[];
@@ -114,25 +114,25 @@ extern u16 Data_080eeacc[];
 extern char Value_000000b8;
 extern char Value_000000ba;
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
-s32 Func_08004458(void);
+s32 Random16(void);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_080b50e8(s32 value);
 void Func_080049ac(void);
 void Func_08004cb4(s32 *position);
 void Func_080f9010(s32 value);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002304(s32 value, s32 range);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080e3944(void *source, void *screen);
+void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 resource_id);
-void Func_080cdbc0(void);
+void BattleFx_EndCanvasLayer(void);
 
 void BattleEffect_RunRisingMotes(struct EffectArgument *object)
 {
@@ -160,7 +160,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
     canvas = *cursor;
     graphics = cells->graphics;
     work->argument = object;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000020 = 0x100;
     Resource_LoadAndDecompress(&Value_000000b8, work, 1, 1);
     Resource_LoadAndDecompress(&Value_000000ba, graphics, 0, 0);
@@ -169,9 +169,9 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
 
     mote = work->motes;
     for (i = 0; i != 64; i++) {
-        mote->angle = Func_08004458() & 0xffff;
-        mote->radius = (Func_08004458() & 63) + 56;
-        mote->height = ((Func_08004458() & 31) - 64) << 16;
+        mote->angle = Random16() & 0xffff;
+        mote->radius = (Random16() & 63) + 56;
+        mote->height = ((Random16() & 31) - 64) << 16;
         mote++;
     }
 
@@ -211,7 +211,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
             i = 0;
             do {
                 if (frame == i * 4 + 40) {
-                    Func_080d6888(
+                    ObjectGroup_UpdateMembers(
                         work->argument->member_ids[i], 9, 5, -1, 0);
                 }
                 i++;
@@ -236,10 +236,10 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                         s32 width;
                         s32 height;
 
-                        record[0] = mote->radius * Func_08002322(mote->angle);
+                        record[0] = mote->radius * Trig_Sin(mote->angle);
                         record[1] = mote->height;
                         record[2] = mote->radius * Func_0800231c(mote->angle);
-                        Func_080e3944(record, screen);
+                        EffectPosition_ApplyBaseAndYOffset(record, screen);
                         screen[0] = (screen[0] >> 17) + 64;
                         screen[1] = M2C_FIELD(screen, s16 *, 6) + 60;
                         width = Data_080eea91[slot];
@@ -318,11 +318,11 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
 
             ember = (Ember *)0x02010000;
             for (m = 0; m != 32; m++) {
-                ember->x = (Func_08004458() & 127) << 16;
-                ember->y = ((Func_08004458() & 15) + 80) << 16;
-                ember->unk_08 = ((Func_08004458() & 63) - 32) << 12;
-                ember->vy = ((-Func_08004458() & 15) - 16) << 13;
-                ember->life = (Func_08004458() & 15) + 16;
+                ember->x = (Random16() & 127) << 16;
+                ember->y = ((Random16() & 15) + 80) << 16;
+                ember->unk_08 = ((Random16() & 63) - 32) << 12;
+                ember->vy = ((-Random16() & 15) - 16) << 13;
+                ember->life = (Random16() & 15) + 16;
                 ember++;
             }
         }
@@ -363,15 +363,15 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
         if (frame == Data_080eea88[work->argument->variant * 3 + 2]) {
             mote = work->motes;
             for (m = 0; m != 32; m++) {
-                mote->x = (Func_08004458() & 127) << 16;
+                mote->x = (Random16() & 127) << 16;
                 if (ymax == ymin) {
                     mote->y = ymin << 16;
                 } else {
                     mote->y =
-                        (Func_08002304(Func_08004458(), ymax - ymin) + ymin)
+                        (Func_08002304(Random16(), ymax - ymin) + ymin)
                         << 16;
                 }
-                mote->frame = (Func_08004458() & 15) + 20;
+                mote->frame = (Random16() & 15) + 20;
                 mote++;
             }
         }
@@ -389,11 +389,11 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                     s32 half;
 
                     image = (17 - mote->frame) / 2;
-                    size = Data_080ede96[image];
+                    size = BattleFx_PuffSizes[image];
                     half = (u32)size >> 1;
                     ((DrawRectangleFn)rectangle_slot[1])(
                         canvas,
-                        graphics + Data_080ede84[image],
+                        graphics + BattleFx_PuffCells[image],
                         M2C_FIELD(mote, s16 *, 14) - half,
                         (M2C_FIELD(mote, s16 *, 18) - half) - drop,
                         size,
@@ -405,9 +405,9 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                             < Data_080eea88[
                                 work->argument->variant * 3 + 2] + 35) {
                         mote->frame = 17;
-                        mote->x = (Func_08004458() & 127) << 16;
+                        mote->x = (Random16() & 127) << 16;
                         mote->y =
-                            (Func_08002304(Func_08004458(), ymax - ymin)
+                            (Func_08002304(Random16(), ymax - ymin)
                                 + ymin) << 16;
                     }
                 }
@@ -422,6 +422,6 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
 
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_08004278((void *)0x080CD261);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback((void *)0x080CD261);
+    BattleFx_EndCanvasLayer();
 }

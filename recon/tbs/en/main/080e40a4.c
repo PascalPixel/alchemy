@@ -146,7 +146,7 @@ typedef void (*ClearFn)(void *dest, s32 count);
 extern void *Data_03001e50[];
 
 /* Sixteen halfword cell offsets shared with the rest of the family. */
-extern u16 Data_080ede5c[];
+extern u16 BattleFx6_FlareCells[];
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
@@ -181,28 +181,28 @@ struct Member {
 
 void Func_080b5030(s32 a, s32 b, s32 c);
 void Func_080030f8(s32 frames);
-void Func_080cdd58(void);
+void BattleFx_SetupCanvasTileMap(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
-void *Func_08002f40(s32 id);                                       /* get */
+void *Resource_GetTableEntry(s32 id);                                       /* get */
 void _call_via_r3(void *dest, const void *src, s32 count, CopyFn copier);
-struct Member **Func_080b5098(s32 member);
-u32 Func_08004458(void);                                           /* random_16 */
-void Func_08009088(struct Member *member, s32 mode);
-void Func_080e396c(s32 source, s32 *out);                          /* apply_step_and_y_offset */
+struct Member **GetBattleObjectSlotFar(s32 member);
+u32 Random16(void);                                           /* random_16 */
+void ObjectDispatch_ApplyValueToChildrenFar(struct Member *member, s32 mode);
+void EffectPosition_ApplyStepAndYOffset(s32 source, s32 *out);                          /* apply_step_and_y_offset */
 void Func_080f9010(s32 id);
 void Func_080049ac(void);                                          /* Render_ResetTransformState */
 void Func_08004c6c(s32 angle);
 void Func_08004bd4(s32 angle);                                     /* SceneTransform_ApplyPitch */
 void Func_08004c1c(s32 angle);                                     /* SceneTransform_ApplyYaw */
-void Func_080e3944(const void *particle, s32 *out);                /* apply_base_and_y_offset */
+void EffectPosition_ApplyBaseAndYOffset(const void *particle, s32 *out);                /* apply_base_and_y_offset */
 s32 Func_080b5070(s32 member);
 void Func_080b50e8(s32 id);
 void Func_080b5088(s32 member, s32 kind);
-void Func_080051d8(void *a, void *b);                              /* Graphics_PrepareTransferInIwramWork */
-void Func_080e38b8(void *particle, s32 a, s32 b);                  /* advance_with_gravity_3d */
+void Graphics_PrepareTransferInIwramWork(void *a, void *b);                              /* Graphics_PrepareTransferInIwramWork */
+void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);                  /* advance_with_gravity_3d */
 void Func_08002dd8(s32 id);                                        /* Runtime_ReleaseHeapBlock */
 void Func_080b5048(s32 cue, s32 level);
-void Func_080cdd14(void);                                          /* BattleFx_SetTransitionFlagAndDisplay */
+void BattleFx_SetTransitionFlagAndDisplay(void);                                          /* BattleFx_SetTransitionFlagAndDisplay */
 
 void BattlePres_RunRingAndSparkScene(void *object)
 {
@@ -251,7 +251,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     Func_080b5030(
         M2C_FIELD(object, s32 *, 8), M2C_FIELD(object, s32 *, 12), 130);
     Func_080030f8(1);
-    Func_080cdd58();
+    BattleFx_SetupCanvasTileMap();
     *(u16 *)0x0400000A = (s32)&Value_00001f80;
 
     if (M2C_FIELD(STATE, s32 *, 4) == 0) {
@@ -276,7 +276,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
 
     if (M2C_FIELD(STATE, s32 *, 8) > 7) {
         _call_via_r3((void *)0x05000000,
-            Func_08002f40((s32)&Value_0000008e), 128, (CopyFn)0x03001388);
+            Resource_GetTableEntry((s32)&Value_0000008e), 128, (CopyFn)0x03001388);
     }
 
     Func_080b5030(
@@ -293,21 +293,21 @@ void BattlePres_RunRingAndSparkScene(void *object)
 
     if (big == 1) {
         /* Seed the ring: a shrinking radius and three random angles. */
-        member = *Func_080b5098(M2C_FIELD(STATE, s32 *, 8));
+        member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s32 *, 8));
         p = (struct Particle *)(work + 0x7080);
         i = 0;
         do {
-            p->x = (s32)(Func_08004458() & 63) + 16;
+            p->x = (s32)(Random16() & 63) + 16;
             p->y = 0;
             p->z = 0;
-            p->vx = (s32)(Func_08004458() & 0xFFFF);
-            p->vy = (s32)(Func_08004458() & 0xFFFF);
-            p->vz = (s32)(Func_08004458() & 0xFFFF);
+            p->vx = (s32)(Random16() & 0xFFFF);
+            p->vy = (s32)(Random16() & 0xFFFF);
+            p->vz = (s32)(Random16() & 0xFFFF);
             i++;
             p++;
         } while (i != 64);
 
-        Func_08009088(member, 0);
+        ObjectDispatch_ApplyValueToChildrenFar(member, 0);
         saved24 = M2C_FIELD(member, s32 *, 0x24);
         saved28 = M2C_FIELD(member, s32 *, 0x28);
         saved2c = M2C_FIELD(member, s32 *, 0x2C);
@@ -319,7 +319,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
         M2C_FIELD(member, s32 *, 0x34) = 0;
         M2C_FIELD(member, s32 *, 0x48) = 0;
 
-        Func_080e396c(M2C_FIELD(STATE, s32 *, 8), pos);
+        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s32 *, 8), pos);
         shake = 64 - pos[0];
         SHAKE.offset = (u16)shake;
         val = 80;
@@ -342,7 +342,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
                     Func_08004c6c(p->vz);
                     Func_08004bd4(p->vx);
                     Func_08004c1c(p->vy);
-                    Func_080e3944(p, tmp);
+                    EffectPosition_ApplyBaseAndYOffset(p, tmp);
                     tmp[0] = tmp[0] + 64;
                     tmp[1] = tmp[1] + pos[1] + 24;
                     if (tmp[2] < -60) {
@@ -353,7 +353,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
                     }
                     tmp[2] = tmp[2] + 60;
                     blit[0](draw_target,
-                        (u8 *)sprite_src + Data_080ede5c[size - 1],
+                        (u8 *)sprite_src + BattleFx6_FlareCells[size - 1],
                         tmp[0] - size, tmp[1] - size, size * 2, size * 2);
                     p->x = p->x - 4;
                 }
@@ -365,8 +365,8 @@ void BattlePres_RunRingAndSparkScene(void *object)
             frame++;
         } while (frame != 32);
 
-        Func_08004278((void *)0x080CD4B5);
-        Func_08009088(member, 16);
+        Scheduler_RemoveCallback((void *)0x080CD4B5);
+        ObjectDispatch_ApplyValueToChildrenFar(member, 16);
         M2C_FIELD(member, s32 *, 0x24) = saved24;
         M2C_FIELD(member, s32 *, 0x28) = saved28;
         M2C_FIELD(member, s32 *, 0x2C) = saved2c;
@@ -381,7 +381,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     val = 0x1F81;
     *(u16 *)0x0400000A = val;
 
-    Func_080e396c(M2C_FIELD(STATE, s16 *, 0x24), anchor);
+    EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s16 *, 0x24), anchor);
     if (M2C_FIELD(STATE, s32 *, 4) == 0) {
         shake = 32 - anchor[0];
     } else {
@@ -399,7 +399,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     SHAKE.offset = (u16)shake;
 
     /* Reseed the same records as sparks at the actor's world position. */
-    member = *Func_080b5098(M2C_FIELD(STATE, s16 *, 0x24));
+    member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 0x24));
     half = Func_080b5070(M2C_FIELD(STATE, s16 *, 0x24)) / 2;
     p = (struct Particle *)(work + (s32)&Value_00007080);
     i = 0;
@@ -407,9 +407,9 @@ void BattlePres_RunRingAndSparkScene(void *object)
         p->x = member->x;
         p->y = member->y + half;
         p->z = member->z;
-        p->vx = (s32)(Func_08004458() & 255) << 10;
-        p->vy = (s32)(Func_08004458() & 255) << 10;
-        p->vz = ((s32)(Func_08004458() & 255) - 127) << 10;
+        p->vx = (s32)(Random16() & 255) << 10;
+        p->vy = (s32)(Random16() & 255) << 10;
+        p->vz = ((s32)(Random16() & 255) - 127) << 10;
         if (p->x > 0) {
             p->vx = -p->vx;
         }
@@ -426,7 +426,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
         if (frame == 4) {
             Func_080b5088(M2C_FIELD(STATE, s16 *, 0x24), 0);
         }
-        Func_080e396c(M2C_FIELD(STATE, s32 *, 8), pos);
+        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s32 *, 8), pos);
         pos[1] = pos[1] + 16;
 
         if (frame <= 1) {
@@ -440,7 +440,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
         }
 
         Func_080049ac();
-        Func_080051d8(xfer, (u8 *)xfer + 12);
+        Graphics_PrepareTransferInIwramWork(xfer, (u8 *)xfer + 12);
 
         if (frame >= 4 && frame <= 31) {
             i = 0;
@@ -449,14 +449,14 @@ void BattlePres_RunRingAndSparkScene(void *object)
                 p = (struct Particle *)(work + (s32)&Value_00007080) + j;
                 timer = p->timer;
                 if (timer > 0) {
-                    Func_080e3944(p, tmp2);
+                    EffectPosition_ApplyBaseAndYOffset(p, tmp2);
                     tmp2[0] = tmp2[0] + shake;
                     size = (timer >> 3) + 2;
                     tmp2[1] = tmp2[1] + 16;
                     blit[j & 1](draw_target,
-                        (u8 *)sprite_src + Data_080ede5c[size - 1],
+                        (u8 *)sprite_src + BattleFx6_FlareCells[size - 1],
                         tmp2[0] - size, tmp2[1] - size, size * 2, size * 2);
-                    Func_080e38b8(p, 60, -0x400);
+                    EffectStep_AdvanceWithGravity3D(p, 60, -0x400);
                     p->timer = p->timer - 1;
                 }
                 i++;
@@ -468,7 +468,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
         frame++;
     } while (frame != 32);
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
     val = 32;
@@ -482,5 +482,5 @@ void BattlePres_RunRingAndSparkScene(void *object)
         i++;
     } while (i != 7);
 
-    Func_080cdd14();
+    BattleFx_SetTransitionFlagAndDisplay();
 }

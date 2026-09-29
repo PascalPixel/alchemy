@@ -46,7 +46,7 @@ void BattlePresentation_RunUnitTransition(
     u32 kept_count;
     u32 primary_record;
 
-    Func_080b9d34(selection, context);
+    BattlePres_BuildTargetList(selection, context);
     primary_unit = selection->primary_unit;
     opposing_unit = selection->units[0];
 
@@ -62,11 +62,11 @@ void BattlePresentation_RunUnitTransition(
         }
     }
 
-    Func_080c10e8(0, 0);
-    Func_08015130((FIELD8(*(void **)0x03001e74, 0x41)) & ~1);
-    primary_record = *(u32 *)Func_080b7dd0(primary_unit);
+    BattlePres_SetActorModes(0, 0);
+    UiWindow_DrawPartyStatusContentsFar((FIELD8(*(void **)0x03001e74, 0x41)) & ~1);
+    primary_record = *(u32 *)GetBattleObjectSlot(primary_unit);
     *(u16 *)0x04000050 = 0x3f40;
-    visible_count = Func_080b6c08(3, visible_units);
+    visible_count = BattleParty_ListActorIds(3, visible_units);
 
     for (index = 0; index < visible_count; index++) {
         u16 unit = visible_units[index];
@@ -74,7 +74,7 @@ void BattlePresentation_RunUnitTransition(
             if (unit == primary_unit) {
                 Func_08009080(primary_record, 3);
             } else if ((opposing_unit <= 7) != (unit <= 7)) {
-                Func_080c0f98(unit, 1);
+                BattlePres_SetActorRecordMode(unit, 1);
             }
         }
     }
@@ -82,7 +82,7 @@ void BattlePresentation_RunUnitTransition(
     Func_080f9010(0x9a);
     Func_080c1798(FIELD32(context, 8), selection->presentation_data, 0, 0);
     if (mode & 1) {
-        Func_080c0f98(primary_unit, 1);
+        BattlePres_SetActorRecordMode(primary_unit, 1);
     }
 
     for (index = 0; index < 16; index++) {
@@ -92,13 +92,13 @@ void BattlePresentation_RunUnitTransition(
 
     if (selection->message_mode != 0) {
         if (selection->message_mode == 1) {
-            Func_080bbabc(0, primary_unit);
-            Func_080bbabc(4, 0x856);
+            BattleEv_Push(0, primary_unit);
+            BattleEv_Push(4, 0x856);
         } else {
-            Func_080bbabc(4, 0x855);
+            BattleEv_Push(4, 0x855);
         }
-        Func_080bb938();
-        Func_080c1a14();
+        BattleEv_DispatchQueued();
+        BattlePres_RunWithZeroArguments();
     } else {
         kept_count = 0;
         for (index = 0; index < visible_count; index++) {
@@ -124,7 +124,7 @@ void BattlePresentation_RunUnitTransition(
             u32 ability;
             u32 ability_count;
             u32 unit = FIELD16(context, 0x24 + index * 2);
-            info = Func_080b7f70(*(u32 *)Func_080b7dd0(unit), 0);
+            info = GetMotionRecord(*(u32 *)GetBattleObjectSlot(unit), 0);
             ability_count = info->ability_count - 1;
             for (ability = 0; ability < ability_count; ability++) {
                 FIELD8(context, 0x34 + index * 4 + ability) =
@@ -143,23 +143,23 @@ void BattlePresentation_RunUnitTransition(
 
         Func_080041d8(0x080bd899, 0xc80);
         if (selection->flags & 0x8000) {
-            Func_080c9010(context);
+            BattleFx_InitializeModeFar(context);
         } else if (selection->flags & 0x4000) {
-            Func_080c9008(context);
+            BattleFx_DispatchByIdRangeFar(context);
         } else {
             Func_080c9018(context);
         }
-        Func_080be02c();
+        BattleEventRuntime_WaitForReady();
     }
 
-    Func_080b6c90();
-    refreshed_count = Func_080b6c08(3, visible_units);
+    BattleActor_CommitPlacement();
+    refreshed_count = BattleParty_ListActorIds(3, visible_units);
     *(u16 *)0x04000050 = (s32)&Value_00003f40;
     for (index = 0; index < refreshed_count; index++) {
         u16 unit = visible_units[index];
         if (unit != 0xfe && unit != primary_unit &&
             ((opposing_unit <= 7) != (unit <= 7))) {
-            Func_080c0f98(unit, 1);
+            BattlePres_SetActorRecordMode(unit, 1);
         }
     }
     for (index = 0; index < 16; index++) {
@@ -167,8 +167,8 @@ void BattlePresentation_RunUnitTransition(
         Func_080030f8(1);
     }
     for (index = 0; index < refreshed_count; index++) {
-        Func_080c0f98(visible_units[index], 0);
+        BattlePres_SetActorRecordMode(visible_units[index], 0);
     }
-    Func_080c0cec(0, 0, 0, 0x64);
+    BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
     Func_080030f8(1);
 }

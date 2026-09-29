@@ -83,30 +83,30 @@
 
 typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_x, s32 *out_y);
-void *Func_08002f40(s32 id);
+void *Resource_GetTableEntry(s32 id);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
-void **Func_080b5098(s32 member_id);
+void **GetBattleObjectSlotFar(s32 member_id);
 s32 Func_080b5070(s32 member_id);
-u32 Func_08004458(void);
+u32 Random16(void);
 s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 value, s32 divisor);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080049ac(void);
-void Func_080051d8(s32 a, s32 b);
-void Func_080e3944(void *source, s32 *out_pair);
-void Func_080e3908(void *particle, s32 a, s32 b);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void EffectPosition_ApplyBaseAndYOffset(void *source, s32 *out_pair);
+void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id, s32 flag);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
 
 extern u8 Value_0000005b;
@@ -132,7 +132,7 @@ extern u8 Data_080eec36[];  /* per-half-frame flare span   */
 extern u8 Data_080eec3d[];  /* per-half-frame flare offset */
 extern u16 Data_080eec44[]; /* per-half-frame flare tile offset */
 extern u16 Data_080eec52[]; /* per-shot spark tile offset, 4 entries */
-extern u16 Data_080ede48[]; /* shared spark-size tile table */
+extern u16 ParticleStreams_CellOffsets[]; /* shared spark-size tile table */
 
 s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
 {
@@ -172,9 +172,9 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
     variant = M2C_FIELD(object, s32 *, 24);
 
     if (kind == 10) {
-        Func_080cd594(0);
+        BattleFx_BeginCanvasLayer(0);
     } else {
-        Func_080cd594(1);
+        BattleFx_BeginCanvasLayer(1);
     }
 
     if (M2C_FIELD(STATE, s32 *, 28) == 1) {
@@ -215,12 +215,12 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
         }
         if (kind == 5) {
             ((WordCopyFn)0x03001388)((void *)(160 << 19),
-                Func_08002f40((s32) &Value_000000b9), 128);
+                Resource_GetTableEntry((s32) &Value_000000b9), 128);
         }
         Resource_LoadAndDecompress((s32) &Value_000000c7, (s8 *)work + (128 << 6), 1, 0);
         if (kind == 5) {
             ((WordCopyFn)0x03001388)((void *)(160 << 19),
-                Func_08002f40((s32) &Value_000000b9), 128);
+                Resource_GetTableEntry((s32) &Value_000000b9), 128);
         }
         M2C_FIELD(work, s32 *, 0x7780) = 2;
         M2C_FIELD(work, s32 *, 0x7784) = 75;
@@ -231,7 +231,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
         M2C_FIELD(work, s32 *, 0x7784) = 0;
     } else if (kind == 2) {
         ((WordCopyFn)0x03001388)((void *)(160 << 19),
-            Func_08002f40((s32) &Value_0000007f), 128);
+            Resource_GetTableEntry((s32) &Value_0000007f), 128);
         Resource_LoadAndDecompress((s32) &Value_0000005c, work, 0, 0);
         M2C_FIELD(work, s32 *, 0x7780) = kind;
         M2C_FIELD(work, s32 *, 0x7784) = 50;
@@ -250,7 +250,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
 
     Func_080041d8((void *) 0x080CD261, 144 << 3);
 
-    launcher = *Func_080b5098(M2C_FIELD(STATE, s32 *, 8));
+    launcher = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s32 *, 8));
     shots = Data_080eebec[kind * 5];
     aim_divisor = Data_080eebec[kind * 5 + 1];
     shot_stagger = Data_080eebec[kind * 5 + 2];
@@ -274,7 +274,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
             s32 half;
             s32 *projectile;
 
-            target = *Func_080b5098(M2C_FIELD(STATE, s16 *, id_offset));
+            target = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, id_offset));
             target_half =
                 Func_080b5070(M2C_FIELD(STATE, s16 *, id_offset));
             shot = 0;
@@ -285,7 +285,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                     projectile[0] = M2C_FIELD(launcher, s32 *, 8);
                     if (kind == 7) {
                         projectile[1] = M2C_FIELD(launcher, s32 *, 12)
-                            + ((s32)(Func_08004458() & 15) << 16)
+                            + ((s32)(Random16() & 15) << 16)
                             + (232 << 14);
                     } else if (kind == 10) {
                         projectile[1] =
@@ -295,13 +295,13 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                             M2C_FIELD(launcher, s32 *, 12) + half;
                     } else if (kind == 9) {
                         projectile[1] = M2C_FIELD(launcher, s32 *, 12) + half
-                            + ((16 - (s32)(Func_08004458() & 31)) << 16);
+                            + ((16 - (s32)(Random16() & 31)) << 16);
                     } else if (kind == 3 || kind == 4) {
                         projectile[1] = M2C_FIELD(launcher, s32 *, 12) + half
-                            + ((16 - (s32)(Func_08004458() & 31)) << 16);
+                            + ((16 - (s32)(Random16() & 31)) << 16);
                     } else if (kind == 11) {
                         projectile[1] = M2C_FIELD(launcher, s32 *, 12) + half
-                            + ((32 - (s32)(Func_08004458() & 63)) << 16);
+                            + ((32 - (s32)(Random16() & 63)) << 16);
                     } else if (kind == 5) {
                         projectile[1] =
                             M2C_FIELD(launcher, s32 *, 12) + half;
@@ -317,25 +317,25 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                     if (kind == 7) {
                         projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12)
-                                + ((s32)(Func_08004458() & 63) << 16))
+                                + ((s32)(Random16() & 63) << 16))
                                 - projectile[1] - (12 << 16),
                             aim_divisor);
                     } else if (kind == 8) {
                         projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12)
-                                + ((s32)(Func_08004458() & 7) << 16))
+                                + ((s32)(Random16() & 7) << 16))
                                 - projectile[1] + (176 << 13),
                             aim_divisor);
                     } else if (kind == 9) {
                         projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12)
-                                + ((64 - (s32)(Func_08004458() & 63)) << 16))
+                                + ((64 - (s32)(Random16() & 63)) << 16))
                                 - projectile[1],
                             aim_divisor);
                     } else if (kind == 10) {
                         projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12)
-                                + ((s32)(Func_08004458() & 31) << 16))
+                                + ((s32)(Random16() & 31) << 16))
                                 - projectile[1] + (128 << 11),
                             aim_divisor);
                     } else if (kind == 3 || kind == 4 || kind == 11
@@ -344,7 +344,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                     } else if (kind == 6) {
                         s32 spread;
 
-                        spread = (s32)(Func_08004458() & 15);
+                        spread = (s32)(Random16() & 15);
                         projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12) + target_half / 2
                                 + (spread << 16))
@@ -353,7 +353,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                     } else {
                         s32 spread;
 
-                        spread = (s32)(Func_08004458() & 15);
+                        spread = (s32)(Random16() & 15);
                         projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12) + target_half
                                 - (spread << 16))
@@ -433,7 +433,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                 s32 muzzle_y;
 
                 angle = frame << 11;
-                muzzle_x = ((-Func_08002322(angle) << 2) >> 16)
+                muzzle_x = ((-Trig_Sin(angle) << 2) >> 16)
                     + anchor_x / 2 - 10;
                 muzzle_y = ((Func_0800231c(angle) << 1) >> 16) + anchor_y - 24;
                 if (frame > 69) {
@@ -456,7 +456,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
             }
 
             Func_080049ac();
-            Func_080051d8(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
             /* ---- advance and draw every live projectile ---- */
             pool_index = 0;
@@ -470,7 +470,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                     s32 tick;
                     s32 *impact;
 
-                    target = *Func_080b5098(
+                    target = *GetBattleObjectSlotFar(
                         M2C_FIELD(STATE, s16 *, member_id_offset));
                     shot = 0;
                     if (shots != 0) {
@@ -483,7 +483,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                             if (tick + gate < frame) {
                                 projectile = (s32 *)((s8 *)work + 0x7080
                                     + (shots * member + shot) * 28);
-                                Func_080e3944(projectile, pos);
+                                EffectPosition_ApplyBaseAndYOffset(projectile, pos);
                                 pos[0] = pos[0] >> 1;
                                 projectile[0] += projectile[3];
                                 projectile[1] += projectile[4];
@@ -502,11 +502,11 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                         if (trail[6] == 0) {
                                             trail[0] = pos[0] << 16;
                                             trail[1] = pos[1] << 16;
-                                            trail[3] = ((s32)(Func_08004458()
+                                            trail[3] = ((s32)(Random16()
                                                 & 255) - 128) << 11;
-                                            trail[4] = ((s32)(Func_08004458()
+                                            trail[4] = ((s32)(Random16()
                                                 & 255) - 128) << 11;
-                                            trail[6] = (s32)(Func_08004458()
+                                            trail[6] = (s32)(Random16()
                                                 & 7) + 32;
                                             made++;
                                             if (made == 2) {
@@ -559,9 +559,9 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                             if (kind == 2) {
                                                 s32 kick;
 
-                                                kick = ((s32)(Func_08004458()
+                                                kick = ((s32)(Random16()
                                                     & 31) + 32) << 12;
-                                                if ((Func_08004458() & 1)
+                                                if ((Random16() & 1)
                                                         != 0) {
                                                     projectile[4] += kick;
                                                 } else {
@@ -580,7 +580,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                                 M2C_FIELD(work, s32 *,
                                                     0x77A8) = 2;
                                             }
-                                            Func_080d6888(
+                                            ObjectGroup_UpdateMembers(
                                                 M2C_FIELD(STATE, s16 *,
                                                     member_id_offset),
                                                 7, 5, member, 8);
@@ -605,13 +605,13 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                                     spark2[0] = pos[0] << 16;
                                                     spark2[1] = pos[1] << 16;
                                                     spark2[3] =
-                                                        ((s32)(Func_08004458()
+                                                        ((s32)(Random16()
                                                         & 255) - 128) << shift;
                                                     spark2[4] =
-                                                        ((s32)(Func_08004458()
+                                                        ((s32)(Random16()
                                                         & 255) - 128) << shift;
                                                     spark2[6] =
-                                                        (s32)(Func_08004458()
+                                                        (s32)(Random16()
                                                         & 7) + 16;
                                                     made++;
                                                     if (made
@@ -796,11 +796,11 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
 
                     size = (life >> 3) + 1;
                     draw_cb(draw_destination,
-                        (s8 *)extra_target + Data_080ede48[size - 1],
+                        (s8 *)extra_target + ParticleStreams_CellOffsets[size - 1],
                         M2C_FIELD(spark, s16 *, 2) - size / 2,
                         M2C_FIELD(spark, s16 *, 6) - size,
                         size, size << 1);
-                    Func_080e3908(spark, 60, 128 << 5);
+                    EffectStep_AdvanceWithGravity2D(spark, 60, 128 << 5);
                     if (spark[1] > (224 << 15)) {
                         spark[4] = (-spark[4]) / 2;
                     }
@@ -820,19 +820,19 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
 
                     size = (life >> 4) + 1;
                     draw_cb(draw_destination,
-                        (s8 *)extra_target + Data_080ede48[size - 1],
+                        (s8 *)extra_target + ParticleStreams_CellOffsets[size - 1],
                         M2C_FIELD(spark, s16 *, 2) - size / 2,
                         M2C_FIELD(spark, s16 *, 6) - size,
                         size, size << 1);
-                    Func_080e3908(spark, 60, -16384);
+                    EffectStep_AdvanceWithGravity2D(spark, 60, -16384);
                     spark[6]--;
                 }
                 member++;
                 spark = (s32 *)((s8 *)spark + 28);
             } while (member != 1024);
 
-            Func_080e155c(4, 4);
-            Func_080cd52c();
+            Camera_ApplyShake(4, 4);
+            ObjectGroup_TickMemberTimers();
             M2C_FIELD(work, s32 *, 0x7824) = 1;
             Func_080030f8(1);
 
@@ -840,7 +840,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
         } while (frame != total);
     }
 
-    Func_08004278((void *) 0x080CD261);
+    Scheduler_RemoveCallback((void *) 0x080CD261);
     Func_08002dd8(46);
-    return Func_080cdbc0();
+    return BattleFx_EndCanvasLayer();
 }

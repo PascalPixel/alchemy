@@ -153,22 +153,22 @@ void Func_080eb754(s32 arg0) {
     work = cursor[-1];
     sheet = cursor[1];
     work->effect = (void *)arg0;
-    Func_080cd594(0);
-    Func_080c9048();
+    BattleFx_BeginCanvasLayer(0);
+    BattlePres_ConfigureEffectDisplay();
     *(u16 *)0x0400000c = 0x784;
     M2C_FIELD((void *)0x05000000, s16 *, 0) = (s16) (s32) &Value_00000000;
     M2C_FIELD((void *)0x05000000, s16 *, 2) = (s16) (s32) &Value_00000000;
     work->transfer_mode = 0;
     Func_080041d8(0x080CD261, 0x480);
-    Func_080cd104(1, 0);
-    Func_080dbb24(9, 0x175, 1);
+    Unnamed_080cd104(1, 0);
+    BattleFx_SpawnObjects(9, 0x175, 1);
     gProjection[4] = 0xF0;
-    Func_080d6750(work->effect);
+    BattleFx_SelectLivingTargets(work->effect);
     *(u16 *)0x04000048 = 0x2737;
     *(u16 *)0x04000038 = (u16) (s32) &Value_000000ca;
     Func_080030f8(1);
-    Func_080b5040(1, (s32) &Value_0000003a, 0);
-    Func_080cd104(1, 1);
+    BattleBackground_LoadFar(1, (s32) &Value_0000003a, 0);
+    Unnamed_080cd104(1, 1);
     Resource_LoadAndDecompress((s32) &Value_00000073, sheet, 0, 0);
     Resource_LoadAndDecompress((s32) &Value_00000095, work, 1, 1);
     M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;
@@ -186,10 +186,10 @@ void Func_080eb754(s32 arg0) {
 
     sp = (struct ScenePoint *)((s8 *)work + SPARK_POOL);
     for (k = 0; k != 0x40; k++) {
-        sp[k].x = (s32) ((Func_08004458() & 0x1F) + 0x10);
-        sp[k].y = (s32) (((Func_08004458() & 0x1F) + 0x30) << 0x10);
-        sp[k].vy = (s32) (((Func_08004458() & 0x1F) - 0x10) << 0x10);
-        sp[k].life = (s32) (Func_08002304(Func_08004458(), 0x30) + 2);
+        sp[k].x = (s32) ((Random16() & 0x1F) + 0x10);
+        sp[k].y = (s32) (((Random16() & 0x1F) + 0x30) << 0x10);
+        sp[k].vy = (s32) (((Random16() & 0x1F) - 0x10) << 0x10);
+        sp[k].life = (s32) (Func_08002304(Random16(), 0x30) + 2);
     }
 
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 3);
@@ -246,7 +246,7 @@ void Func_080eb754(s32 arg0) {
                 if (ang > 0x8000) {
                     ang += 0xFFFF8000;
                 }
-                wave = (s32) (amp * Func_08002322(ang)) >> 0x10;
+                wave = (s32) (amp * Trig_Sin(ang)) >> 0x10;
                 if ((0x1F & frame) == 8) {
                     M2C_FIELD(work, s32 *, 0x77A8) = 4;
                 }
@@ -259,7 +259,7 @@ void Func_080eb754(s32 arg0) {
                     (s32) ((((base_x + *(u8 *)(0x080EEF56 + k)) - lift) << 0x10) + 0xE00000);
                 M2C_FIELD(&place, s32 *, 8) =
                     (s32) (((*(u8 *)(0x080EEF5F + k) - wave) << 0x10) + 0x480000);
-                Func_08009008(*objs++, &place, &pos1, 0);
+                Object_ApplyProjectedPlacementFar(*objs++, &place, &pos1, 0);
             }
         }
         if (frame <= 0x1A) {
@@ -278,7 +278,7 @@ void Func_080eb754(s32 arg0) {
                 half = (s32) (cnt + ((u32) cnt >> 0x1F)) >> 1;
                 for (k = 0; k != num; k++) {
                     ang = k << 0xA;
-                    lo = ((s32) ((radius_x + 8) * Func_08002322(ang)) >> 0x10) + grow;
+                    lo = ((s32) ((radius_x + 8) * Trig_Sin(ang)) >> 0x10) + grow;
                     hi = ((s32) (radius_y * Func_0800231c(ang)) >> 0x10) + 0x40;
                     blit(dest,
                          (void *) (sheet + *(u16 *)(0x080EDE48 + (idx - 2))),
@@ -314,9 +314,9 @@ void Func_080eb754(s32 arg0) {
                     sp->life = (s32) (sp->life - 1);
                 }
                 if ((sp->x > 0x80) || (sp->life == 1)) {
-                    sp->x = (s32) ((Func_08004458() & 0x1F) + base_x + 0xAC);
-                    sp->y = (s32) ((((Func_08004458() & 0x1F) - wave) + 0x38) << 0x10);
-                    sp->vy = (s32) (((Func_08004458() & 0x1F) - 0x10) << 0xF);
+                    sp->x = (s32) ((Random16() & 0x1F) + base_x + 0xAC);
+                    sp->y = (s32) ((((Random16() & 0x1F) - wave) + 0x38) << 0x10);
+                    sp->vy = (s32) (((Random16() & 0x1F) - 0x10) << 0xF);
                 }
                 sp++;
             }
@@ -329,7 +329,7 @@ void Func_080eb754(s32 arg0) {
             }
             hi = 0;
             for (k = 0; k != 6; k++) {
-                lo = (Func_08004458() & 3) * 3;
+                lo = (Random16() & 3) * 3;
                 blit(dest, (s8 *)work + (lo << 9), 0x78 - lift, hi, 0x30, 0x20);
                 hi += 0x12;
             }
@@ -338,7 +338,7 @@ void Func_080eb754(s32 arg0) {
         if (tmp > 0) {
             M2C_FIELD(work, s32 *, 0x77A8) = (s32) (tmp - 1);
             gBgScroll[3] =
-                (Func_08004458() & (s32) &Value_00000007) + 0x1C;
+                (Random16() & (s32) &Value_00000007) + 0x1C;
         } else {
             gBgScroll[3] = 0x20;
         }
@@ -348,7 +348,7 @@ void Func_080eb754(s32 arg0) {
 
     gBgScroll[2] = saved_row;
     M2C_FIELD(ctrl, s32 *, 0x10) = 0;
-    Func_080d67dc();
+    BattleEffect_SetupBlendedDisplay();
     *(u16 *)0x04000040 = (u16) (s32) &Value_000000f0;
 
     objs = (s32 *)((s8 *)work + OBJECT_LIST);
@@ -364,7 +364,7 @@ void Func_080eb754(s32 arg0) {
     }
     jitter = jit_buf;
     for (k = 0; k != 0x10; k++) {
-        jitter[k] = (u8) (Func_08004458() & 0x1F);
+        jitter[k] = (u8) (Random16() & 0x1F);
     }
     for (k = 0; k != 0x140; k++) {
         SCENE_POOL[k].life = 0;
@@ -385,14 +385,14 @@ void Func_080eb754(s32 arg0) {
                 if (ang > 0x8000) {
                     ang = tmp + 0xFFFFC000;
                 }
-                lo = Func_08002322(ang) << 6;
+                lo = Trig_Sin(ang) << 6;
             } else {
                 tmp = frame << 0xB;
                 ang = tmp + 0x4000;
                 if (ang > 0x8000) {
                     ang = tmp + 0xFFFFC000;
                 }
-                lo = Func_08002322(ang) << 5;
+                lo = Trig_Sin(ang) << 5;
             }
             hi = lo >> 0x10;
             M2C_FIELD(&place2, s32 *, 0xC) = 0;
@@ -403,7 +403,7 @@ void Func_080eb754(s32 arg0) {
                     (s32) ((row_y + *(u8 *)(0x080EEF56 + k)) << 0x10);
                 M2C_FIELD(&place2, s32 *, 8) =
                     (s32) (((*(u8 *)(0x080EEF5F + k) - hi) << 0x10) + 0x480000);
-                Func_08009008(*objs++, &place2, &pos2, 0);
+                Object_ApplyProjectedPlacementFar(*objs++, &place2, &pos2, 0);
             }
         }
         if (frame == 8) {
@@ -422,7 +422,7 @@ void Func_080eb754(s32 arg0) {
             slot = 0x24;
             do {
                 if (hit[m] == 0) {
-                    Func_080e3980(
+                    EffectPosition_ApplyAlternateStepAndYOffset(
                         EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1],
                         &mpos);
                     if ((s32) M2C_FIELD(&mpos, s32 *, 0) > row_y) {
@@ -431,12 +431,12 @@ void Func_080eb754(s32 arg0) {
                         for (k = 0; k != 0x20; k++) {
                             sp->x = (s32) (M2C_FIELD(&mpos, s32 *, 0) << 0xF);
                             sp->y = (s32) ((M2C_FIELD(&mpos, s32 *, 4) - 0x10) << 0x10);
-                            sp->vx = (s32) ((Func_08004458() - 0x80) << 0xA);
-                            tmp = Func_08004458() - 0xC0;
+                            sp->vx = (s32) ((Random16() - 0x80) << 0xA);
+                            tmp = Random16() - 0xC0;
                             sp->vy = (s32) (tmp << 0xB);
                             sp->x = (s32) (sp->x + (sp->vx * 4));
                             sp->y = (s32) (sp->y + (tmp << 0xD));
-                            sp->life = (s32) ((0xF & Func_08004458()) + 8);
+                            sp->life = (s32) ((0xF & Random16()) + 8);
                             sp++;
                         }
                         Func_080b5088(
@@ -469,7 +469,7 @@ void Func_080eb754(s32 arg0) {
             ((struct BattleEffectWork *)work)->transfer_value = 0x4B;
             hi = -8;
             for (k = 0; k != 0x10; k++) {
-                blit(dest, (s8 *)work + (((Func_08004458() & 3) * 3) << 9),
+                blit(dest, (s8 *)work + (((Random16() & 3) * 3) << 9),
                      (jitter[k] - slide) + 0x78, hi, 0x30, 0x20);
                 hi += 8;
             }
@@ -482,7 +482,7 @@ void Func_080eb754(s32 arg0) {
             if (EFFECT_ARGUMENT(work)->count != 0) {
                 slot = 0x24;
                 do {
-                    Func_080d6888(
+                    ObjectGroup_UpdateMembers(
                         EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1],
                         0xE, 5, -1, 0);
                     m += 1;
@@ -490,8 +490,8 @@ void Func_080eb754(s32 arg0) {
                 } while (m != EFFECT_ARGUMENT(work)->count);
             }
         }
-        Func_080e155c(8, 8);
-        Func_080cd52c();
+        Camera_ApplyShake(8, 8);
+        ObjectGroup_TickMemberTimers();
         ((struct BattleEffectWork *)work)->transfer_pending = 1;
         Func_080030f8(1);
         slide += 0xC;
@@ -500,9 +500,9 @@ void Func_080eb754(s32 arg0) {
     Func_080b50e8(0x86);
     objs = (s32 *)((s8 *)work + OBJECT_LIST);
     for (k = 0; k != 9; k++) {
-        Func_08009038(*objs++);
+        ResourceObject_ReleaseFar(*objs++);
     }
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     Func_08002dd8(0x2E);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

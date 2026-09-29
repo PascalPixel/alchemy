@@ -23,7 +23,7 @@ extern char ResourceId_SoruShindenBackdrop;
 extern char ResourceId_ForestBackdrop;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_DesertBackdrop;
-extern char ResourceId_StormCloudBackdrop;
+extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_RevealMaskA;
 extern char ResourceId_RevealMaskB;
 extern char ResourceId_RevealMaskC;

@@ -76,9 +76,9 @@ Resource_DirectoryTable:
 	resource ForestBackdrop, Battle_ForestBackdrop
 	resource VioletSkyBackdrop, Battle_VioletSkyBackdrop
 	resource DesertBackdrop, Battle_DesertBackdrop
-	resource StormCloudBackdrop, Battle_StormCloudBackdrop
+	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
 	resource , Battle_AerialViewBackdrop
-	resource , Slots_Screen
+	resource , Slots_FramePicture
 	resource , Slots_Icons
 	resource , Slots_Jackpot
 	resource , LuckyDice_Board

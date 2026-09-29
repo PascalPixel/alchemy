@@ -145,7 +145,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     BattleFx_SpawnObjects(8, 0x17a, 1);
     gProjection.unk10 = 240;
     WaitFrames(1);
-    BattleBackground_LoadFar(1, (s32)&ResourceId_StormCloudBackdrop, 0);
+    BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet + 0x4e20, 0, 0);

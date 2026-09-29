@@ -1,13 +1,9 @@
-/* Draft of resource_375 0x02009760 (HaidiaSukureta_RunActorSequence), from
- * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines (Engine_ActorStop,
- * Engine_EventOpenMessage, Engine_UiWorkWaitThenFinalizeCapacity,
- * Engine_ActorFaceActor, Main_0808a168, Main_0808a0b0, ...). The listing keeps these rows. */
 #include "TYPES.H"
 extern u8 MsgHaidiaRockslideDestroyedFence[];
 extern u8 MsgHaidiaSaveYourselves[];
 
-extern u8 Data_02009ce0[];
+extern u8 Sukureta_StrangerActions[];
+extern u8 Sukureta_Actor11RockslideActions[];
 
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
@@ -25,18 +21,16 @@ s32 Engine_ActorGet();
 void Engine_ActorSetPosition();
 void Engine_EventWait();
 s32 Engine_EventOpenMessage();
-s32 Engine_UiWorkWaitThenFinalizeCapacity();
+s32 Engine_EventChooseYesNo();
 void Engine_GameFlagSet();
 void Engine_ActorFaceActor();
 void Engine_ActorSetAnimation();
 void Engine_ActorJump();
 void Engine_ActorSetAnimationAndWait();
-void Main_0808a168();
-void Main_0808a0b0();
+void Object_SetTargetAndCallback();
+void Object_SetActionCallbackAndRefreshById();
 void Engine_ActorSetDestination();
 void Engine_ActorWaitForMove();
-
-
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -75,10 +69,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 void HaidiaSukureta_RunActorSequence(void)
 {
-    u32 i;
     s32 record;
-    s32 base5_e85;
-    s32 base5_2009ce0;
+    s32 base;
+    s32 actions;
 
     if (Value1(Engine_GameFlagIsSet, 0x839) != 0) {
     } else {
@@ -92,8 +85,8 @@ void HaidiaSukureta_RunActorSequence(void)
             Engine_EventBegin();
             Engine_ActorStop(11);
             Engine_ActorRunRepeatedMotion(11, 1);
-            base5_e85 = (s32)MsgHaidiaRockslideDestroyedFence;
-            Engine_EventSetMessage(base5_e85);
+            base = (s32)MsgHaidiaRockslideDestroyedFence;
+            Engine_EventSetMessage(base);
             Engine_EventShowMessageAndWait(11, 0, 20);
             Call3(Engine_ActorShowEmote, 0, 0x100, 30);
             Call4(Engine_CameraMoveTo, 0x620000, -1, 0x11b0000, 1);
@@ -108,16 +101,16 @@ void HaidiaSukureta_RunActorSequence(void)
             Engine_ActorRunRepeatedMotion(11, 2);
             Engine_EventWait(40);
             Value2(Engine_EventOpenMessage, 11, 0);
-            if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 0) {
+            if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
                 Engine_ActorRunRepeatedMotion(11, 2);
                 Engine_EventWait(20);
-                Engine_EventSetMessage((base5_e85 + 2));
+                Engine_EventSetMessage((base + 2));
                 Engine_EventShowMessage(11, 0);
                 Call1(Engine_GameFlagSet, 0x82f);
             } else {
                 Engine_ActorRunRepeatedMotion(11, 2);
                 Engine_EventWait(20);
-                Engine_EventSetMessage((base5_e85 + 3));
+                Engine_EventSetMessage((base + 3));
                 Engine_EventShowMessageAndWait(11, 0, 40);
                 Engine_ActorFaceActor(11, 0, 0);
                 Engine_ActorSetAnimation(11, 1);
@@ -130,10 +123,10 @@ void HaidiaSukureta_RunActorSequence(void)
                 Engine_ActorSetAnimationAndWait(11, 3);
                 Engine_EventShowMessageAndWait(11, 0, 10);
                 Engine_ActorSetAnimationAndWait(11, 3);
-                base5_2009ce0 = (s32)Data_02009ce0;
-                Call3(Main_0808a168, 0, 0x1000b, base5_2009ce0);
-                Call3(Main_0808a168, 1, 0x1000b, base5_2009ce0);
-                Call2(Main_0808a0b0, 11, 0x2009bdc);
+                actions = (s32)Sukureta_StrangerActions;
+                Call3(Object_SetTargetAndCallback, 0, 0x1000b, actions);
+                Call3(Object_SetTargetAndCallback, 1, 0x1000b, actions);
+                Call2(Object_SetActionCallbackAndRefreshById, 11, (s32)Sukureta_Actor11RockslideActions);
                 Engine_ActorStop(0);
                 Engine_ActorStop(1);
                 Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);

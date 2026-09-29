@@ -1,30 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_02000030_0
-	ldr r0, [pc, #16]
-	b .L_02000030_1
-.L_02000030_0:
-	ldr r0, [pc, #16]
-.L_02000030_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000067
-	.4byte 0x02009c04
-	.4byte 0x02009bd4
 	.section .text.x0200806c,"ax",%progbits
 	.p2align 2
 	.global Func_0200006c
@@ -55,31 +30,6 @@ Func_0200006c:
 	.4byte 0x00000067
 	.4byte 0x02009df4
 	.4byte 0x02009ddc
-	.global Func_020000a4
-	.thumb_func
-Func_020000a4:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_020000a4_0
-	ldr r0, [pc, #16]
-	b .L_020000a4_1
-.L_020000a4_0:
-	ldr r0, [pc, #16]
-.L_020000a4_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000067
-	.4byte 0x02009f38
-	.4byte 0x02009f2c
 	.section .text.x02008230,"ax",%progbits
 	.p2align 2
 	.global Func_02000230
@@ -126,6 +76,8 @@ KareiKyuden_PartyActions:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gKareiKyudenEntrancesOther
+gKareiKyudenEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0xc00000a8
@@ -138,6 +90,8 @@ KareiKyuden_PartyActions:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiKyudenEntrances
+gKareiKyudenEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0xc00000a8
@@ -342,9 +296,13 @@ Placement_Messages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiKyudenEventsOther
+gKareiKyudenEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiKyudenEvents
+gKareiKyudenEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

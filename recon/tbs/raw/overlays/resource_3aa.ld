@@ -6,9 +6,10 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/ENTRY.o"(.text)
-        "*/resource_3aa_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/GET_ENTRANCES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/RETURN_ZERO.o"(.text)
         "*/resource_3aa_overlay.o"(.text.x0200806c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/GET_EVENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/RUN_ACTOR13.o"(.text)
         "*/resource_3aa_overlay.o"(.text.x02008230)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/PARTY_EVENTS.o"(.text)

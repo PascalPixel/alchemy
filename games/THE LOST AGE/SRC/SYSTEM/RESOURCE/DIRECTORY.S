@@ -52,7 +52,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data024
 	resource , Resource_Data025
 	resource , Resource_Data026
-	resource , Resource_Data027
+	resource , Battle_PurpleMoonBackdrop
 	resource , Battle_SuharaGateBackdrop
 	resource , Battle_TakaraShimaBackdrop
 	resource , Battle_TakaraShimaCaveBackdrop
@@ -83,57 +83,57 @@ Resource_DirectoryTable:
 	resource , Battle_SoruShindenBackdrop
 	resource , Battle_ForestBackdrop
 	resource , Battle_VioletSkyBackdrop
-	resource , Resource_Data046
-	resource , Resource_Data047
-	resource , Resource_Data048
-	resource , Resource_Data049
-	resource , Resource_Data04A
-	resource , Resource_Data04B
-	resource , Resource_Data04C
-	resource , Resource_Data04D
-	resource , Resource_Data04E
-	resource , Resource_Data04F
-	resource , Resource_Data050
-	resource , Resource_Data051
-	resource , Resource_Data052
-	resource , Resource_Data053
-	resource , Resource_Data054
-	resource , Resource_Data055
-	resource , Resource_Data056
-	resource , Resource_Data057
-	resource , Resource_Data058
-	resource , Resource_Data059
-	resource , Resource_Data05A
-	resource , Resource_Data05B
-	resource , Resource_Data05C
-	resource , Resource_Data05D
-	resource , Resource_Data05E
-	resource , Resource_Data05F
-	resource , Resource_Data060
-	resource , Resource_Data061
-	resource , Resource_Data062
-	resource , Resource_Data063
-	resource , Resource_Data064
-	resource , Resource_Data065
-	resource , Resource_Data066
-	resource , Resource_Data067
-	resource , Resource_Data068
-	resource , Resource_Data069
-	resource , Resource_Data06A
-	resource , Resource_Data06B
-	resource , Resource_Data06C
-	resource , Resource_Data06D
-	resource , Resource_Data06E
-	resource , Resource_Data06F
-	resource , Resource_Data070
-	resource , Resource_Data071
-	resource , Resource_Data072
+	resource , Battle_GrasslandBBackdrop
+	resource , Battle_RockyBeachBackdrop
+	resource , Battle_DenseForestBackdrop
+	resource , Battle_FireCavePoolBackdrop
+	resource , Battle_CanyonMeadowBackdrop
+	resource , Battle_BlueCaveBackdrop
+	resource , Battle_RedMesaBackdrop
+	resource , Battle_PinkRocksBackdrop
+	resource , Battle_PinkTotemBackdrop
+	resource , Battle_StoneTownBackdrop
+	resource , Battle_PalmCliffBackdrop
+	resource , Battle_ToyRoomBackdrop
+	resource , Battle_ShipCabinBackdrop
+	resource , Battle_ShipDeckBackdrop
+	resource , Battle_GoldRocksBackdrop
+	resource , Battle_StoneCorridorBackdrop
+	resource , Battle_FaceTempleBackdrop
+	resource , Battle_MistyHillsBackdrop
+	resource , Battle_LavaCaveBackdrop
+	resource , Battle_WaterfallGorgeBackdrop
+	resource , Battle_MossCaveBackdrop
+	resource , Battle_BlueRuinsBackdrop
+	resource , Battle_GreenRuinsBackdrop
+	resource , Battle_StatueCliffBackdrop
+	resource , Battle_LavaTempleBackdrop
+	resource , Battle_ArrowBeachBackdrop
+	resource , Battle_StormySeaBackdrop
+	resource , Battle_AngelHallBackdrop
+	resource , Battle_PurpleLighthouseBackdrop
+	resource , Battle_StormyLighthouseBackdrop
+	resource , Battle_SerpentStarsBackdrop
+	resource , Battle_IceHallBackdrop
+	resource , Battle_OrbAltarBackdrop
+	resource , Battle_PurpleCaveBackdrop
+	resource , Battle_BeastWallBackdrop
+	resource , Battle_DragonHallABackdrop
+	resource , Battle_DragonHallBBackdrop
+	resource , Battle_GorgePoolBackdrop
+	resource , Battle_SpikeHallBackdrop
+	resource , Battle_SnowfieldBBackdrop
+	resource , Battle_BlizzardBackdrop
+	resource , Battle_SnowfieldCBackdrop
+	resource , Battle_SerpentStarsBBackdrop
+	resource , Battle_SunbeamCloudsBackdrop
+	resource , Battle_RedHazeBackdrop
 	resource , Resource_Data073
 	resource , Resource_Data074
 	resource , Resource_Data075
-	resource , Resource_Data076
-	resource , Resource_Data077
-	resource , Resource_Data078
+	resource , Battle_SunsetBackdrop
+	resource , Battle_StarfieldFlareBackdrop
+	resource , Battle_EarthHorizonBackdrop
 	resource , Resource_Data079
 	resource , Resource_Data07A
 	resource , Resource_Data07B

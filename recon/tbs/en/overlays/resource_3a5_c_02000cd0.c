@@ -1,3 +1,8 @@
+/* NONMATCHING (2026-09-29, Mercury): 304/304 bytes. gGameState row reads
+ * through the GameStateRows view reproduce every instruction and the pool;
+ * only the entry load order differs (candidate state, event, 0x232; the
+ * game 0x232, event, state). The 0x232 load is a reload insn, so sched2
+ * ranks it after both pseudos. Earlier draft history is in Git. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

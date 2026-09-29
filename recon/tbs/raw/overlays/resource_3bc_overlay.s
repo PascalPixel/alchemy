@@ -3155,6 +3155,8 @@ gKorosseoMarutaEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global KorosseoMaruta_Actor8Action
+KorosseoMaruta_Actor8Action:
 	.4byte 0x00000016
 	.4byte 0x0000000a
 	.4byte 0x00000200
@@ -3207,6 +3209,8 @@ gKorosseoMarutaEvents:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global KorosseoMaruta_LeaderActionA
+KorosseoMaruta_LeaderActionA:
 	.4byte 0x00000016
 	.4byte 0x0000000a
 	.4byte 0x00000200
@@ -3259,6 +3263,8 @@ gKorosseoMarutaEvents:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global KorosseoMaruta_LeaderActionB
+KorosseoMaruta_LeaderActionB:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000
@@ -3300,6 +3306,8 @@ gKorosseoMarutaEvents:
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
 	.4byte 0x00000010
+	.global KorosseoMaruta_LeaderActionC
+KorosseoMaruta_LeaderActionC:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000

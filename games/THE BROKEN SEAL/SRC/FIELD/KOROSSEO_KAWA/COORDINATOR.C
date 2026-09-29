@@ -257,7 +257,7 @@ void SceneState_ResetCounterAndStartTask(void)
     SceneTask task;
 
     KorosseoKawa_Countdown = 0;
-    task = (SceneTask) 0x0200804D;
+    task = (SceneTask)FieldScene_RunOpeningAuxiliarySequence;
     Scheduler_RemoveCallbackFar(task);
     task();
 }
@@ -270,7 +270,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
     s32 *mode = (s32 *)&KorosseoKawa_Countdown;
 
     *mode = value;
-    Engine_ScheduleCallback(0x0200804D, 0xC80);
+    Engine_ScheduleCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
 }
 
 void SceneState_WaitUntilWordC41cIs22(void)

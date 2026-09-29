@@ -14,6 +14,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
@@ -48,7 +49,7 @@ struct PillarWork {
     struct BattleEffectArgument *effect;
 };
 
-#define PARTICLES ((struct EffectStep *)0x02010000)
+#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
 {

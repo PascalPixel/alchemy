@@ -54,7 +54,7 @@ Func_080f9a9a:
 	bx	lr
 	.align 2
 .L_080f9a80_source:
-	.4byte 0x080fb7a0
+	.4byte Sound_CommandTableTemplate
 
 	.global Func_080f9ab4
 	.thumb_func

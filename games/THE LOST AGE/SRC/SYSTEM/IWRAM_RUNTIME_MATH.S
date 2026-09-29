@@ -17,6 +17,8 @@ AlchemyUncredited_08000810:
 	.arm
 AlchemyUncreditedEnd_08000810:
 	mov	r2, #0
+	.global IwramFillWords
+IwramFillWords:
 AlchemyUncredited_08000818:
 	andeq	r4, r0, #120, 14
 AlchemyUncreditedEnd_08000818:

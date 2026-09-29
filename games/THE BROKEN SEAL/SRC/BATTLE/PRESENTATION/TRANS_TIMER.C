@@ -1,17 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "TBS_EDITION.H"
+#include "RAM_BUFFER.H"
 s32 BattlePres_SetupTransitionScene(s32, s32, s32, s32);
 
 /* battle/presentation/trans/timer.c */
-#if defined(TBS_EDITION_DE)
-#define TIMER_CELL_ADDR 0x03001F08
-#define POSITION_ADDR   0x03001AE0
-#else
-#define TIMER_CELL_ADDR 0x03001EF8
-#define POSITION_ADDR   0x03001AD0
-#endif
-
 struct Display080c01bc {
   u8 padding_00[0x36];
   s16 field_36;
@@ -30,9 +22,9 @@ void BattlePres_AdvanceTransitionTimer(void)
   struct Position080c01bc *pos;
   u32 t;
   u32 next;
-  timer = *((u32 **)TIMER_CELL_ADDR);
+  timer = *((u32 **)Ram_Disp);
   t = *timer;
-  disp = *((struct Display080c01bc **)(TIMER_CELL_ADDR - 0x78));
+  disp = *((struct Display080c01bc **)Ram_CameraWork);
   v = 0x34 - t;
   if (v > 0x20)
   {
@@ -41,7 +33,7 @@ void BattlePres_AdvanceTransitionTimer(void)
       v = 0x20;
     }
   }
-  pos = (struct Position080c01bc *)POSITION_ADDR;
+  pos = (struct Position080c01bc *)Ram_BgScroll;
   if (v < 0)
   {
     if (v || t)

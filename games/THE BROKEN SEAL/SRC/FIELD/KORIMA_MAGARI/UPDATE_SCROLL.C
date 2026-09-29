@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
+extern u8 gBgScroll[];
 
 struct TileRun {
     s16 id;
@@ -98,7 +99,7 @@ void State_UpdateScrollRegistersWithPreset(void)
     volatile u32 *destination;
 
     line = *(volatile u16 *)0x04000006;
-    source = (u32 *)0x03001ad4;
+    source = (u32 *)(gBgScroll + 4);
     destination = (volatile u32 *)0x04000014;
 
     if (line == 227 || line <= 52) {
@@ -119,7 +120,7 @@ void State_CopyPresetA0d0WithOffsetB0(void)
     const u32 *src;
     u16 *p;
 
-    src = (const u32 *)0x03001ad4;
+    src = (const u32 *)(gBgScroll + 4);
     dst = (u32 *)0x0200a0d0;
     *dst++ = *src++;
     *dst++ = *src++;

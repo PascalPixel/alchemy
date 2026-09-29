@@ -111,6 +111,8 @@ extern void KuupuappuDou_RaiseActorPriorities(void);
 #include "TYPES.H"
 
 #include "TYPES.H"
+void FieldScene_RunOpeningAuxiliarySequence(void);
+void FieldScene_RunScene3a7SequenceD(void);
 
 enum SelectByRuntimeSelectorMessage {
     MSG_DOOR_TIGHTLY_LOCKED = 0x953,
@@ -139,7 +141,7 @@ void SceneActor_InitSlots10To15AndStartTask(void)
     {
         s32 rank = 0xc80;
 
-        Scheduler_AddOrUpdateCallback(0x02008aa1, rank);
+        Scheduler_AddOrUpdateCallback((s32)FieldScene_RunScene3a7SequenceD, rank);
     }
 }
 
@@ -164,6 +166,6 @@ void SceneActor_SetupActors11To14AndInstallTask(void)
     {
         s32 rate = 0xc80;
 
-        Scheduler_AddOrUpdateCallback(0x020089c1, rate);
+        Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, rate);
     }
 }

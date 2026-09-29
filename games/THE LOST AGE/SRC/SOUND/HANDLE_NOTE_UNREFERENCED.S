@@ -289,4 +289,4 @@ AlchemyUncredited_081c1dfe:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c1dfe:
 	.4byte	0x03007ff0
-	.4byte	0x081c36b0
+	.4byte	Sound_ClockLengths

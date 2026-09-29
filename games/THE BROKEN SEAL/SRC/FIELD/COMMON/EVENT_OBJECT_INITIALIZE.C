@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "TBS_EDITION.H"
+#include "RAM_BUFFER.H"
 
 void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
 void BattleFx_FlickerObjectAndTick();
@@ -11,23 +11,6 @@ void BattleFx_CycleObjectValueByCounter();
 
 extern u8 MsgAbilityAnnounce[];
 
-#if defined(TBS_EDITION_JA)
-#define WORK_CELL_ADDR  0x03001F30
-#define RENDER_CELL_ADDR 0x03001EBC
-#elif defined(TBS_EDITION_DE)
-#define WORK_CELL_ADDR  0x03001F40
-#define RENDER_CELL_ADDR 0x03001ECC
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
-#define WORK_CELL_ADDR  0x03001F30
-#define RENDER_CELL_ADDR 0x03001EBC
-#elif defined(TBS_EDITION_IT)
-#define WORK_CELL_ADDR  0x03001F30
-#define RENDER_CELL_ADDR 0x03001EBC
-#else
-#define WORK_CELL_ADDR  0x03001F30
-#define RENDER_CELL_ADDR 0x03001EBC
-#endif
-
 void EventObject_Initialize(void)
 {
     s32 zero;
@@ -37,8 +20,8 @@ void EventObject_Initialize(void)
     void *event_state;
     void *render_state;
 
-    event_state = *(void **)WORK_CELL_ADDR;
-    render_state = *(void **)RENDER_CELL_ADDR;
+    event_state = *(void **)Ram_EffectWork;
+    render_state = *(void **)Ram_EventWork;
     zero = 0;
     event_object = *(void **)((u8 *)event_state + 0x10);
     event_value = (s32)(*(s16 *)((u8 *)(event_state) + 0x1C));

@@ -16,7 +16,7 @@ void BattlePresentation_BuildTilemap(s32 *destination)
     FillWords(destination, 0x100, -1);
     destination += 0x40;
     FillWords(destination, 0x80, 0x03ff03ff);
-    entry = 0x02010200;
+    entry = (0x0201 << 16) | 0x0200;
     destination += 0x20;
     index = 0;
     do {

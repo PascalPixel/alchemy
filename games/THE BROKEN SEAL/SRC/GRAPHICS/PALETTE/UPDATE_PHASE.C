@@ -1,7 +1,8 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 
-typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
+typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination,
                                    const void *source, s32 size)
@@ -54,6 +55,6 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 
         index++;
     } while (index != 64);
 
-    copy = (WordCopy)0x03001388;
+    copy = Iwram_CopyWords;
     CopyPalette(copy, (void *)0x05000002, palette, sizeof(palette));
 }

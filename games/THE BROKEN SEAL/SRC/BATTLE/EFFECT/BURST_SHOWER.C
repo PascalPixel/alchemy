@@ -1,4 +1,5 @@
 #include "BATTLE_PRESENTATION.H"
+#include "IWRAM_CALL.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -10,7 +11,7 @@ void WaitFrames(s32);
    Called through the r4 bx bank, so it is an indirect call through a
    cached blitter entry rather than a fixed callee. */
 
-/* The word-copy entry the runtime publishes at 0x03001388; reached through
+/* The resident word copy, handed to the palette copy and reached through
    the r3 bx bank. */
 typedef s32 (*CopyWords)(void *, const void *, s32);
 
@@ -174,7 +175,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                 id = (s32)&Value_0000008d;
                 break;
             }
-            CopyPalette((CopyWords)0x03001388, (void *)0x05000000, Resource_GetTableEntry(id), 128);
+            CopyPalette(Iwram_CopyWords, (void *)0x05000000, Resource_GetTableEntry(id), 128);
         }
     }
 

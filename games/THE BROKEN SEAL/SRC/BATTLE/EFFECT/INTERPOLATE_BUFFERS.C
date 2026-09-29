@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 
 void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3)
@@ -9,7 +10,7 @@ void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3)
     s32 (*divide)(s32, s32);
 
     if (arg3 > 0) {
-        divide = (s32 (*)(s32, s32))0x03000380;
+        divide = Iwram_SignedDivide;
         index = 0x53F;
         do {
             first = *arg0;

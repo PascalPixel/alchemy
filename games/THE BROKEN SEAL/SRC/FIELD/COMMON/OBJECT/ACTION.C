@@ -12,6 +12,7 @@ s32 Object_ResetAndClearField59(void *obj)
     return 0;
 }
 
+#include "IWRAM_CALL.H"
 #include "OBJECT_RUNTIME.H"
 
 u16 ArcTan2(s32, s32);
@@ -51,7 +52,7 @@ s32 ObjectMotion_MoveTowardTarget(s32 arg0)
         if (deltaY < 0)
             deltaY += 0xffff;
         cellY = deltaY >> 16;
-        distance = ((s32 (*)(s32))0x030001d8)(cellX * cellX + cellY * cellY);
+        distance = Iwram_Sqrt(cellX * cellX + cellY * cellY);
         arg0 = *(s16 *)(object + 0x64);
         if (distance >= arg0) {
             newX = *(s32 *)(object + 8) +
@@ -181,7 +182,7 @@ struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32
         }
         dx = (entry->x - self->x) / 0x10000;
         dz = (entry->z - self->z) / 0x10000;
-        dist = ((s32 (*)(s32))0x030001d8)(dx *dx + dz *dz);
+        dist = Iwram_Sqrt(dx *dx + dz *dz);
         if (dist >= best)
             continue;
         angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);

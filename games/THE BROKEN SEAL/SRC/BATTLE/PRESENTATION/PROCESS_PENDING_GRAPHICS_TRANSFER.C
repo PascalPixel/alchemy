@@ -3,24 +3,20 @@
    copy, copy and clear, one of two blends, or a fade by amount); otherwise
    count the frames since the last flush. */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 extern u8 gBattleFxWork[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-/* The IWRAM word copy returns a value the callers ignore; declaring it
-   changes how the scheduler orders the argument loads around the call. */
-typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
-typedef void (*FillWordsFn)(void *destination, s32 size, s32 value);
-
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
-    ((CopyWordsFn)0x03001388)(destination, source, size);
+    Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ void FillWords(void *destination, s32 size, s32 value)
 {
-    ((FillWordsFn)0x03000168)(destination, size, value);
+    Iwram_FillWords(destination, size, value);
 }
 
 void ColorBuffer_BackupAndHalve(void *source, void *destination, s32 size);

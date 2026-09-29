@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 extern u8 Data_03001e8c[];
@@ -88,18 +89,16 @@ reset_field04:
     return selected;
 }
 
-typedef s32 (*FillWordsFn)(void *dst, s32 size, s32 value);
-
 s32 Ui_ClearVramBlock(void)
 {
-    FillWordsFn fill = (FillWordsFn)0x03000168;
+    s32 (*fill)(void *, s32, u32) = Iwram_FillWords;
 
     return fill((void *)0x06002500, 0xF00, 0);
 }
 
 s32 Ui_FillVramBlockPattern(void)
 {
-    FillWordsFn fill = (FillWordsFn)0x03000168;
+    s32 (*fill)(void *, s32, u32) = Iwram_FillWords;
 
     return fill((void *)0x06002500, 0xF00, 0x44444444);
 }

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_MOTION.H"
@@ -72,7 +73,7 @@ void BattleMotion_ApproachTarget(
     s32 cell_z = step_z >> 8;
     s32 dist;
 
-    dist = ((s32 (*)(s32))0x030001d8)(
+    dist = Iwram_Sqrt(
         cell_x * cell_x + cell_z * cell_z);
     dist = Math_Div(dist << 8, travel_divisor);
     object->acceleration = dist;

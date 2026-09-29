@@ -1,9 +1,9 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "DMA.H"
 
 extern const u8 Func_0800a37c[];
 
-typedef void (*WordCopyFn)(void *destination, const void *source, s32 size);
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -14,7 +14,7 @@ extern u8 Value_0000009c;
 
 static __inline__ void CopyWords(void *dst, const void *src, s32 size)
 {
-    ((WordCopyFn)0x03001388)(dst, src, size);
+    Iwram_CopyWords(dst, src, size);
 }
 
 /* Converts the map at 0x02010000 into 0x02018000 with the ARM routine at

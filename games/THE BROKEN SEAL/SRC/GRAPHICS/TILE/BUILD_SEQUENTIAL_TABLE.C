@@ -1,13 +1,12 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
-
-typedef void (*FillWordsFn)(void *dst, s32 size, s32 value);
 
 void Graphics_BuildSequentialTileTable(s32 *destination)
 {
     s32 value;
     s32 count;
-    FillWordsFn fill;
+    s32 (*fill)(void *, s32, u32);
 
     value = 0x03020100;
     count = 0;
@@ -25,6 +24,6 @@ void Graphics_BuildSequentialTileTable(s32 *destination)
         value += 0x04040404;
     } while ((u32)count <= 0x37);
 
-    fill = (FillWordsFn)0x03000168;
+    fill = Iwram_FillWords;
     fill(destination, 0x220, -1);
 }

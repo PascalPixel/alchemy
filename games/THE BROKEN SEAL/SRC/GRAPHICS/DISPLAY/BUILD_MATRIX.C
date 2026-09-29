@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
-
-typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
+#include "IWRAM_CALL.H"
 
 struct Effect {
     unsigned x : 16;
@@ -37,11 +36,11 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
     matrix = &gObjAffineMatrices[index];
     coefficient = matrix->coefficients;
     if ((x_scale == y_scale || -x_scale == y_scale) && angle == 0) {
-        SignedDivide divide;
+        s32 (*divide)(s32, s32);
         s32 reciprocal;
         s32 x_reciprocal;
 
-        divide = (SignedDivide)0x03000380;
+        divide = Iwram_SignedDivide;
         reciprocal = divide(0x10000, y_scale);
         x_reciprocal = reciprocal;
         if (-x_scale == y_scale)

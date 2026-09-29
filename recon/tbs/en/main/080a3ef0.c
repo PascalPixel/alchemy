@@ -10,11 +10,11 @@ struct EquipPreviewMenu {
     s32 status_window;
 };
 
-extern u8 Data_03001388[];
+extern u8 IwramCopyWords[];
 s32 _call_via_r3(void *dst, const void *src, s32 size, void *copy);
 static __inline__ s32 CopyWords(void *dst, const void *src, s32 size)
 {
-    return _call_via_r3(dst, src, size, Data_03001388);
+    return _call_via_r3(dst, src, size, IwramCopyWords);
 }
 
 extern struct EquipPreviewMenu *gMenuWork;

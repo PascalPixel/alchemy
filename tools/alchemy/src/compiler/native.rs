@@ -376,7 +376,14 @@ fn build_scoped(
                     execute(&step, &root, &mut log)?;
                 }
                 execute(
-                    &compiler_assembly_command(&assembly_text, &object_text),
+                    &compiler_assembly_command(
+                        &assembly_text,
+                        &object_text,
+                        crate::compiler::routing::is_arm(
+                            target.compiler,
+                            &relative.to_string_lossy(),
+                        ),
+                    ),
                     &root,
                     &mut log,
                 )?;

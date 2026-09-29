@@ -6,7 +6,15 @@ use crate::compiler::{
 use fs2::FileExt;
 use std::{fs, path::Path, process::Command};
 
-const FILES: [&str; 6] = ["xgcc", "cpp0", "tradcpp0", "cc1", "as", "agbcc/old_agbcc"];
+const FILES: [&str; 7] = [
+    "xgcc",
+    "cpp0",
+    "tradcpp0",
+    "cc1",
+    "as",
+    "agbcc/old_agbcc",
+    "agbcc/agbcc_arm",
+];
 const BINUTILS_SHA256: &str = "fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15";
 const MODERN_BINUTILS_VERSION: &str = "2.33.1";
 const MODERN_BINUTILS_SHA256: &str =
@@ -209,6 +217,11 @@ fn build_from_sources() -> Result<(), String> {
         fs::copy(
             root().join("agbcc/gcc/old_agbcc"),
             stage.path().join("agbcc/old_agbcc"),
+        )
+        .map_err(|e| e.to_string())?;
+        fs::copy(
+            root().join("agbcc/agbcc_arm"),
+            stage.path().join("agbcc/agbcc_arm"),
         )
         .map_err(|e| e.to_string())?;
         install(stage.path(), &bundle(), validate_installation)

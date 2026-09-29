@@ -6,13 +6,13 @@ struct Workspace {
     struct FieldActor actor;
 };
 
-extern struct Workspace *gWorkspace;
+extern struct Workspace *gMapWork;
 extern const u16 TorebiIzumi_AlphaSteps[];
 
 /* Lifts the workspace actor sixteen pixels with a cue, then steps the blend alpha through its eight-entry table. */
 void TorebiIzumi_RiseAndFadeIn(void)
 {
-    u8 *p = (u8 *)gWorkspace;
+    u8 *p = (u8 *)gMapWork;
     s32 i;
 
     Engine_AudioPlayCue(216);

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 u8 *Engine_ActorGet();
-void Main_08009088();
+void ObjectDispatch_ApplyValueToChildren();
 
 struct Half {
     u16 v;
@@ -24,7 +24,7 @@ void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
         zero.v = 0;
         actor[85] = zero.v;
         (*(u8 **)(actor + 80))[38] = zero.v;
-        Main_08009088(actor, value);
+        ObjectDispatch_ApplyValueToChildren(actor, value);
     }
     sprite = *(u8 **)(actor + 80);
     n = sprite[39];

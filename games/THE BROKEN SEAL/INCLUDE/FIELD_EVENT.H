@@ -392,6 +392,7 @@ void WaitFrames(s32 frames);
 struct FieldActor *Object_GetById(s32 actor);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void Object_SetModeById(s32 actor, s32 animation);
 void Object_SetMode(struct FieldActor *object, s32 animation);
 void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
@@ -528,10 +529,17 @@ static inline void Actor_SetDestination(s32 actor, s32 x, s32 z)
     Engine_ActorSetDestination(actor, x, z);
 }
 
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz)
 {
     Engine_ActorSetDestinationOffset(actor, dx, dz);
 }
+#else
+static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz)
+{
+    ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
+}
+#endif
 
 static inline void Actor_WalkTo(s32 actor, s32 x, s32 z)
 {

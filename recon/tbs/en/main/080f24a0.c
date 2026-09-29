@@ -7,6 +7,7 @@
    strips the map pointer is r1, the column r0, the row r4, and the tile is
    copied to r2 for each store. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "DMA.H"
 
 struct BgScroll {
@@ -14,8 +15,6 @@ struct BgScroll {
     u16 y;
 };
 
-extern u8 Value_00000015;
-extern u8 Value_00000017;
 
 void *Resource_GetTableEntry(s32 index);
 void Resource_DecodeByteLz(const void *source, void *destination);
@@ -32,12 +31,12 @@ void Unnamed_080f24a0(void)
     u16 blank = 0x1ff;
 
     *(u16 *)0x04000000 = 0;
-    resource = Resource_GetTableEntry((s32)&Value_00000015);
+    resource = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
     Dma_Set(resource, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
     *(u16 *)0x05000200 = 0;
     Resource_DecodeByteLz(resource + 0x200, (void *)0x02010000);
     Dma_Set((void *)0x02010000, (void *)0x06010000, 0x80000f00, (volatile u32 *)0x040000d4);
-    resource = Resource_GetTableEntry((s32)&Value_00000017);
+    resource = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
     Dma_Set(resource, (void *)0x05000000, 0x84000080, (volatile u32 *)0x040000d4);
     *(u16 *)0x05000000 = 0;
     Resource_DecodeByteLz(resource + 0x200, (void *)0x02010000);

@@ -7,7 +7,7 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
 {
     u8 *tbl;
 
-    if (gGameState.scene == (s32)&Value_000000ac) {
+    if (gGameState.scene == (s32)&SceneId_BabiChika1) {
         tbl = Data_0200b8f4;
     } else {
         tbl = Data_0200ba74;

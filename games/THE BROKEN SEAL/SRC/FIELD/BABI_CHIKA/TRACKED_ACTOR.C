@@ -1,10 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-
-
-/* FAKEMATCH: ids the reference loads from the literal pool rather than
- * building inline are spelled as link symbols at those values. */
-extern u8 Value_000000ac[];
+#include "SCENE_IDS.H"
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -22,7 +18,7 @@ void BabiChika_UpdateTrackedActor(void)
     actor = (u8 *)Engine_ActorGet(0);
     work = *(u8 **)0x03001ee0;
     limit = 0;
-    if (gGameState.scene == (s32)Value_000000ac) {
+    if (gGameState.scene == (s32)&SceneId_BabiChika1) {
         switch (gGameState.entrance) {
         case 3:
         case 4:

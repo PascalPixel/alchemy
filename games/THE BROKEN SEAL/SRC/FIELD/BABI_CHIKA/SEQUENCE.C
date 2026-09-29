@@ -328,7 +328,7 @@ void FieldScene_RunScriptedStep953(void)
 
 s32 SceneData_SelectTableByWord224(void)
 {
-    if (gGameState.scene == (s32)&Value_000000ac) {
+    if (gGameState.scene == (s32)&SceneId_BabiChika1) {
         return (s32)Data_0200bc0c;
     }
     return (s32)Data_0200bef4;

@@ -61,7 +61,6 @@ struct EffectRecord {
     u8 pad5c[6];
     u8 active;
 };
-extern u8 Value_0000006f;
 extern u8 FuneHeya_SceneTable02[];
 extern u8 FuneHeya_SceneTable01[];
 extern u8 FuneHeya_SceneTable03;
@@ -109,7 +108,7 @@ s32 StagedActor_SetReadyState(struct FieldActor *work)
  */
 s32 SceneData_SelectTableByWord224(void)
 {
-    if (gGameState.scene == (s32)&Value_0000006f) {
+    if (gGameState.scene == (s32)&SceneId_FuneHeya) {
         return (s32)FuneHeya_SceneTable02;
     }
     return (s32)FuneHeya_SceneTable01;

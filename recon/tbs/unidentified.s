@@ -83,7 +83,10 @@ WorldMap_TerrainBehaviorTable:
 	.incbin "baserom.gba", 0x0001353c, 0x00000048
 	.global Battle_FormationPlacementScale
 Battle_FormationPlacementScale:
-	.incbin "baserom.gba", 0x00013584, 0x0000000c
+	.incbin "baserom.gba", 0x00013584, 0x00000008
+	.global ObjectDispatch_DefaultScript
+ObjectDispatch_DefaultScript:
+	.incbin "baserom.gba", 0x0001358c, 0x00000004
 	.global ObjectDispatch_Table0Script
 ObjectDispatch_Table0Script:
 	.incbin "baserom.gba", 0x00013590, 0x00000018

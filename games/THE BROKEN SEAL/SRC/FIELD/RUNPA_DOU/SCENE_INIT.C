@@ -1,14 +1,12 @@
-/* Draft of resource_3ad 0x02009a0c..0x02009ad4 (200 bytes with pool),
- * Scene_Initialize, the overlay's first entry; the listing keeps the rows.
- * Remaining difference: the reference compares the scene with the cave's own
- * id 0x6a loaded from its literal pool, a link-time value; the integer scene
- * is an immediate (196 bytes, 81 differ from +0x12). */
-#include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/CAVE.H"
+#include "CAVE.H"
 
+/* The cave's scene start: open with the window transition, hide the four
+   puddles, set the north one's scale, and redraw the gate and the pillars
+   its flags record. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    if (gGameState.scene == 0x6a) {
+    if (gGameState.scene == (s32)&SceneId_RunpaDou) {
         Actor_SetSpriteFlags(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTH_PUDDLE), 0);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_GATE_PUDDLE), 0);

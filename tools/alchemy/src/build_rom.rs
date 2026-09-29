@@ -319,8 +319,8 @@ fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), 
         let Ok(text) = fs::read_to_string(root.join(&header)) else {
             continue;
         };
-        let entries =
-            entry_list(kind, &text).map_err(|error| format!("{}: {error}", header.display()))?;
+        let entries = entry_list(kind, &text, &[target.edition_define])
+            .map_err(|error| format!("{}: {error}", header.display()))?;
         if !entries.is_empty() {
             headers.push((header, entries));
         }
@@ -382,10 +382,17 @@ struct CheckedEntry {
 }
 
 /// The `#define <prefix>X ((type)0x........) /* Name */` entries and the
-/// `#define <prefix>XOffset 0x.... /* Name - FromName */` offsets; any other
-/// definition spelling an address the header refuses, or an offset, is
-/// refused.
-fn entry_list(kind: &EntryHeader, text: &str) -> Result<Vec<CheckedEntry>, String> {
+/// `#define <prefix>XOffset 0x.... /* Name - FromName */` offsets that apply
+/// when only `defined` macros are defined: an edition whose layout moves a
+/// buffer lists it under `#if defined(EDITION)` beside the others' entry.
+/// Any definition, in any branch, spelling an address the header refuses or
+/// an offset without its names is refused, as is a condition other than
+/// `defined` tests joined by `||`.
+fn entry_list(
+    kind: &EntryHeader,
+    text: &str,
+    defined: &[&str],
+) -> Result<Vec<CheckedEntry>, String> {
     let (prefix, region, refused) = (kind.prefix, kind.region, kind.refused);
     let entry = regex::Regex::new(&format!(
         r"^#define\s+{prefix}\w+\s+\(\(.*\)\s*0x({region})\)\s*/\*\s*(\w+)\s*\*/\s*$"
@@ -399,27 +406,88 @@ fn entry_list(kind: &EntryHeader, text: &str) -> Result<Vec<CheckedEntry>, Strin
     let offset_name =
         regex::Regex::new(&format!(r"^#define\s+{prefix}\w+Offset\b")).expect("static pattern");
     let mut entries = Vec::new();
-    for line in text
-        .lines()
-        .filter(|line| line.trim_start().starts_with("#define"))
-    {
-        if let Some(capture) = entry.captures(line) {
-            entries.push(CheckedEntry {
-                name: capture[2].to_owned(),
-                from: None,
-                value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
-            });
-        } else if let Some(capture) = offset.captures(line) {
-            entries.push(CheckedEntry {
-                name: capture[2].to_owned(),
-                from: Some(capture[3].to_owned()),
-                value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
-            });
-        } else if address.is_match(line) || offset_name.is_match(line) {
-            return Err(format!("an entry without its linked name: {line}"));
+    // Each open conditional: whether its enclosing text applies, whether its
+    // current branch applies, and whether an earlier branch already did.
+    let mut open: Vec<(bool, bool, bool)> = Vec::new();
+    let applies = |open: &[(bool, bool, bool)]| open.last().is_none_or(|state| state.1);
+    for line in text.lines() {
+        let directive = line.trim_start();
+        let Some(directive) = directive.strip_prefix('#') else {
+            continue;
+        };
+        let directive = directive.trim_start();
+        let (word, rest) = directive
+            .split_once(char::is_whitespace)
+            .unwrap_or((directive, ""));
+        match word {
+            "if" | "ifdef" | "ifndef" => {
+                let outer = applies(&open);
+                let holds = match word {
+                    "if" => condition(rest, defined)?,
+                    "ifdef" => defined.contains(&rest.trim()),
+                    _ => !defined.contains(&rest.trim()),
+                };
+                open.push((outer, outer && holds, holds));
+            }
+            "elif" => {
+                let holds = condition(rest, defined)?;
+                let state = open.last_mut().ok_or("#elif without #if")?;
+                state.1 = state.0 && !state.2 && holds;
+                state.2 |= holds;
+            }
+            "else" => {
+                let state = open.last_mut().ok_or("#else without #if")?;
+                state.1 = state.0 && !state.2;
+                state.2 = true;
+            }
+            "endif" => {
+                open.pop().ok_or("#endif without #if")?;
+            }
+            "define" => {
+                let found = if let Some(capture) = entry.captures(line) {
+                    CheckedEntry {
+                        name: capture[2].to_owned(),
+                        from: None,
+                        value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
+                    }
+                } else if let Some(capture) = offset.captures(line) {
+                    CheckedEntry {
+                        name: capture[2].to_owned(),
+                        from: Some(capture[3].to_owned()),
+                        value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
+                    }
+                } else if address.is_match(line) || offset_name.is_match(line) {
+                    return Err(format!("an entry without its linked name: {line}"));
+                } else {
+                    continue;
+                };
+                if applies(&open) {
+                    entries.push(found);
+                }
+            }
+            _ => {}
         }
     }
+    if !open.is_empty() {
+        return Err("#if without #endif".into());
+    }
     Ok(entries)
+}
+
+/// A header condition: `defined(NAME)` or `defined NAME` tests, optionally
+/// negated with `!`, joined by `||`.
+fn condition(text: &str, defined: &[&str]) -> Result<bool, String> {
+    let test = regex::Regex::new(r"^(!?)\s*defined\s*(?:\(\s*(\w+)\s*\)|\s(\w+))$")
+        .expect("static pattern");
+    let mut holds = false;
+    for part in text.split("||") {
+        let capture = test
+            .captures(part.trim())
+            .ok_or_else(|| format!("unsupported condition: {}", text.trim()))?;
+        let name = capture.get(2).or(capture.get(3)).expect("a name").as_str();
+        holds |= defined.contains(&name) != (&capture[1] == "!");
+    }
+    Ok(holds)
 }
 
 /// Scaffolding reads not-yet-sourced data from the builder's own verified ROM as
@@ -952,7 +1020,7 @@ mod tests {
             #define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords - IwramIrqMain */\n\
             #define SCREEN_WIDTH 240\n";
         assert_eq!(
-            entry_list(&IWRAM_CALLS, header).unwrap(),
+            entry_list(&IWRAM_CALLS, header, &[]).unwrap(),
             [
                 entry("IwramCopyWords", None, 0x0300_1388),
                 entry("IwramSqrt", None, 0x0300_01d8),
@@ -966,7 +1034,7 @@ mod tests {
             "#define Iwram_CopyWordsOffset 0x1388\n",
             "#define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords */\n",
         ] {
-            assert!(entry_list(&IWRAM_CALLS, unnamed).is_err(), "{unnamed}");
+            assert!(entry_list(&IWRAM_CALLS, unnamed, &[]).is_err(), "{unnamed}");
         }
     }
 
@@ -985,7 +1053,7 @@ mod tests {
             #define Ram_IwramHeapEnd ((u8 *)0x03007800) /* gIwramHeapEnd */\n\
             #define SCREEN_WIDTH 240\n";
         assert_eq!(
-            entry_list(&RAM_BUFFERS, header).unwrap(),
+            entry_list(&RAM_BUFFERS, header, &[]).unwrap(),
             [
                 entry("gMapCellBuffer", None, 0x0201_0000),
                 entry("gIwramHeapEnd", None, 0x0300_7800),
@@ -1000,7 +1068,47 @@ mod tests {
             // A ROM address is no RAM buffer: ROM data has labels.
             "#define Ram_Table ((u8 *)0x0809e8a0) /* Table */\n",
         ] {
-            assert!(entry_list(&RAM_BUFFERS, unnamed).is_err(), "{unnamed}");
+            assert!(entry_list(&RAM_BUFFERS, unnamed, &[]).is_err(), "{unnamed}");
+        }
+    }
+
+    #[test]
+    fn an_edition_lists_the_buffers_its_layout_moves() {
+        let header = "#ifndef ALCHEMY_RAM_BUFFER_H\n\
+            #define ALCHEMY_RAM_BUFFER_H\n\
+            #define Ram_MapCellBuffer ((u8 *)0x02010000) /* gMapCellBuffer */\n\
+            #if defined(TBS_EDITION_DE)\n\
+            #define Ram_Disp ((u8 **)0x03001f08) /* gDisp */\n\
+            #elif defined(TBS_EDITION_JA) || defined TBS_EDITION_IT\n\
+            #define Ram_Disp ((u8 **)0x03001e78) /* gDisp */\n\
+            #else\n\
+            #define Ram_Disp ((u8 **)0x03001ef8) /* gDisp */\n\
+            #endif\n\
+            #endif\n";
+        let disp = |defined: &[&str]| {
+            entry_list(&RAM_BUFFERS, header, defined)
+                .unwrap()
+                .into_iter()
+                .map(|entry| entry.value)
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(disp(&["TBS_EDITION_EN"]), [0x0201_0000, 0x0300_1ef8]);
+        assert_eq!(disp(&["TBS_EDITION_DE"]), [0x0201_0000, 0x0300_1f08]);
+        assert_eq!(disp(&["TBS_EDITION_JA"]), [0x0201_0000, 0x0300_1e78]);
+        assert_eq!(disp(&["TBS_EDITION_IT"]), [0x0201_0000, 0x0300_1e78]);
+        // An unnamed address is refused even in a branch this edition skips,
+        // and conditions beyond defined tests are not guessed.
+        for refused in [
+            "#if defined(TBS_EDITION_DE)\n#define Ram_Disp ((u8 **)0x03001f08)\n#endif\n",
+            "#if TBS_EDITION_DE\n#endif\n",
+            "#if defined(TBS_EDITION_DE) && defined(TBS_EDITION_JA)\n#endif\n",
+            "#if defined(TBS_EDITION_DE)\n",
+            "#endif\n",
+        ] {
+            assert!(
+                entry_list(&RAM_BUFFERS, refused, &["TBS_EDITION_EN"]).is_err(),
+                "{refused}"
+            );
         }
     }
 

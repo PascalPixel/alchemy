@@ -9,9 +9,9 @@
 @ credit: library — TBS/TLA common sound-driver mixer and clear-buffer module
 .syntax unified
 	.thumb
-	.global Func_080f9674
+	.global SoundDriver_Mixer
 	.thumb_func
-Func_080f9674:
+SoundDriver_Mixer:
 	ldrb	r3, [r0, #5]
 	cmp	r3, #0
 	beq .L_03007060

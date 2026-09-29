@@ -36,8 +36,8 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
 
     result = 0;
     obj = ObjectTable_Get(gGameState[125]);
-    state = *(u8 **)0x03001ebc;
-    map = *(u8 **)0x03001e70;
+    state = *(u8 **)Ram_EventWork;
+    map = *(u8 **)Ram_MapWork;
     if (obj != 0) {
         pos.x = obj->pos.x;
         pos.y = obj->pos.y;

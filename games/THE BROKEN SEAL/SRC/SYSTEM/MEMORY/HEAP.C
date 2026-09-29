@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "RAM_BUFFER.H"
 
 extern u8 Data_03007800[];
 extern u8 Data_03001e50[];
@@ -33,7 +34,7 @@ s32 Runtime_AllocateHeapBlock(s32 kind, s32 size)
         cached_address = allocator_state[1];
         aligned_size = (((u32)size + 3) >> 2) * 4;
         next = cached_address + aligned_size;
-        if (next > 0x030077FFU) {
+        if (next >= (u32)Ram_IwramHeapEnd) {
             address = allocator_state[0];
             next_address = address + aligned_size;
             if (next_address >= 0x02040000U) {
@@ -70,7 +71,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
         if (next >= (u32)(129 << 18)) {
             address = allocator_state[1];
             next_address = address + aligned_size;
-            if (next_address > 0x030077FFU) {
+            if (next_address >= (u32)Ram_IwramHeapEnd) {
                 return NULL;
             }
             allocator_state[1] = next_address;
@@ -95,7 +96,7 @@ u32 Runtime_BumpAllocate(s32 size)
     allocation_address = allocator_state[1];
     size = (s32)(aligned_words << 2);
     next = allocation_address + (u32)size;
-    if (next > 0x030077FFU) {
+    if (next >= (u32)Ram_IwramHeapEnd) {
         allocation_address = allocator_state[0];
         next_address = allocation_address + (u32)size;
         if (next_address >= 0x02040000U) {
@@ -125,7 +126,7 @@ s16 *Runtime_BumpAllocateAlternatePool(s32 arg0)
     if (primary_next_address >= 0x02040000U) {
         allocation_address = FIELD_AT_OFFSET((void *)allocator_state_address, u32 *, 4);
         alternate_next_address = allocation_address + (u32)arg0;
-        if (alternate_next_address > 0x030077FFU) {
+        if (alternate_next_address >= (u32)Ram_IwramHeapEnd) {
             return NULL;
         }
         FIELD_AT_OFFSET((void *)allocator_state_address, u32 *, 4) = alternate_next_address;

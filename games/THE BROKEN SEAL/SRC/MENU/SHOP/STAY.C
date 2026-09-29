@@ -64,7 +64,7 @@ struct InnObject {
 };
 
 extern struct InnGlobalState gGameState;
-extern char Value_00000d1c;
+extern char MsgInnWelcome;
 
 void Shop_InitializeCursorWork(void);
 void Inn_Cleanup(void);
@@ -121,7 +121,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
 
     amount = Inn_RoomPrice(mode);
     UiWork_PushValueSlotFar(amount, 5);
-    message_base = (s32)&Value_00000d1c;
+    message_base = (s32)&MsgInnWelcome;
     UiMessage_ShowAndWait(message_base);
     state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
     Shop_DrawMoney();

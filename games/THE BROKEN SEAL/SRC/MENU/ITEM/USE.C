@@ -4,7 +4,7 @@
 #include "TBS_EDITION.H"
 
 /* menu/item_menu/use.c */
-extern char Value_00000bef;
+extern char MsgItemUseResult;
 extern struct ItemMenuState *gMenuWork;
 s32 Audio_PlayCue(s32);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -27,7 +27,7 @@ s32 ItemMenu_Use(void)
         Audio_PlayCue(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar(menu->info_window);
         InventoryMenu_ShowModalMessage(
-            menu->message_offset + (s32)&Value_00000bef, result, result);
+            menu->message_offset + (s32)&MsgItemUseResult, result, result);
 #if defined(TBS_EDITION_JA)
         RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif

@@ -214,7 +214,9 @@ Menu_SaveSlotActionByPosition:
 	.incbin "baserom.gba", 0x0003740f, 0x00000019
 	.global Menu_ColonString
 Menu_ColonString:
-	.incbin "baserom.gba", 0x00037428, 0x0003c3ea
+	.incbin "baserom.gba", 0x00037428, 0x0000003c
+	.section .unidentified.08073808,"a"
+	.incbin "baserom.gba", 0x00073808, 0x0000000a
 	.global WorkspaceOptions_SliderPalette
 WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x00073812, 0x00000042

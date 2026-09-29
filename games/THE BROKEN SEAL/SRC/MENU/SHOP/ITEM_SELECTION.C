@@ -6,6 +6,8 @@ void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 extern u8 Data_03001f2c[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
+extern u8 MsgCannotDropIt[];
+extern u8 MsgCannotRemoveIt[];
 
 
 s32 Math_Mod(s32 value, s32 divisor);
@@ -200,9 +202,9 @@ s32 Shop_SelUse(s32 actor)
                 result = selection;
                 goto exit_loop;
             } else if (status == -4) {
-                UiText_OpenMessageWindowFar(0xc96, 8, 1, 2);
+                UiText_OpenMessageWindowFar((s32)MsgCannotDropIt, 8, 1, 2);
             } else if (result == -3) {
-                UiText_OpenMessageWindowFar(0xc97, 8, 1, 2);
+                UiText_OpenMessageWindowFar((s32)MsgCannotRemoveIt, 8, 1, 2);
             }
             Audio_PlayCue(113);
             while (UiWork_IsCompleteFar() == 0)
@@ -263,9 +265,9 @@ exit_loop:
 }
 
 extern u8 MsgItemName;
-extern u8 Value_00000c94;
-extern u8 Value_00000c95;
-extern u8 Value_00000c8d;
+extern u8 MsgCannotDrop;
+extern u8 MsgCannotRemove;
+extern u8 MsgPriceHeading;
 
 void *Owner_GetStateFar(s32);
 void RenderOutput_RedrawSavedRectFar(s32);
@@ -288,9 +290,9 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);
         if (result == -4) {
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c94, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 0, 8);
         } else if (result == -3) {
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c95, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 0, 8);
         } else {
             s32 qty;
             s32 total;
@@ -298,9 +300,9 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
             qty = Shop_SalePrice(*(u16 *)(unit + slot_offset));
             total = mult *qty;
 
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c8d, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c8d - 5, window, 80, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 80, 8);
         }
     }
 }

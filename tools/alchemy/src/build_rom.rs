@@ -108,6 +108,7 @@ pub(crate) fn link(
     for source in &sources {
         build_sound_files(root, target, source, &output)?;
     }
+    crate::build_text::build(root, target, &output)?;
     // Sources that read built overlay streams wait for the overlays, and the
     // overlays link against the main image's symbols: a first pass links the
     // main image with empty streams, which move nothing the overlays can see.
@@ -466,13 +467,13 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
         }
         (format!("{:x}", hasher.finalize()), steps)
     } else {
-        let mut hasher = Sha256::new();
-        hasher.update(with_includes(root, &root.join(source))?);
-        let mut step = assembly_command(&source_text, &object_text);
         let base = object
             .ancestors()
             .find(|path| path.join("baserom.gba").exists())
             .ok_or("the base ROM link is missing")?;
+        let mut hasher = Sha256::new();
+        hasher.update(with_includes(&[root, base], &root.join(source))?);
+        let mut step = assembly_command(&source_text, &object_text);
         let sounds = sound_files(root, source)
             .into_iter()
             .map(|built| base.join(built));
@@ -721,7 +722,7 @@ fn build_overlay(
             .to_vec(),
     ];
     let mut hasher = Sha256::new();
-    hasher.update(with_includes(root, &root.join(&listing))?);
+    hasher.update(with_includes(&[root], &root.join(&listing))?);
     hasher.update(fs::read(root.join(script)).map_err(|error| error.to_string())?);
     for object in objects {
         let stamp = object.with_extension("o.key");
@@ -848,16 +849,23 @@ fn preprocessor_only(
     Ok(command)
 }
 
-/// Assembly text followed by every file it `.include`s, recursively.
-fn with_includes(root: &Path, source: &Path) -> Result<Vec<u8>, String> {
+/// Assembly text followed by every file it `.include`s, recursively, each
+/// found as the assembler finds it: in the first of `directories` (the
+/// working directory, then the build directory) that holds it.
+fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String> {
     let text = fs::read(source).map_err(|error| format!("{}: {error}", source.display()))?;
     let mut key = text.clone();
     for line in String::from_utf8_lossy(&text).lines() {
         let Some(rest) = line.trim().strip_prefix(".include") else {
             continue;
         };
-        let path = root.join(rest.trim().trim_matches('"'));
-        key.extend_from_slice(&with_includes(root, &path)?);
+        let include = rest.trim().trim_matches('"');
+        let path = directories
+            .iter()
+            .map(|directory| directory.join(include))
+            .find(|path| path.is_file())
+            .unwrap_or_else(|| directories[0].join(include));
+        key.extend_from_slice(&with_includes(directories, &path)?);
     }
     Ok(key)
 }

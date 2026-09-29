@@ -9,26 +9,23 @@ void BattleFx_CycleObjectValueByCounter();
 #define CALLBACK_1      (u32)BattleFx_FlickerObjectAndTick
 #define CALLBACK_2      (u32)BattleFx_CycleObjectValueByCounter
 
+extern u8 MsgAbilityAnnounce[];
+
 #if defined(TBS_EDITION_JA)
 #define WORK_CELL_ADDR  0x03001F30
 #define RENDER_CELL_ADDR 0x03001EBC
-#define MESSAGE_NO      0x94B
 #elif defined(TBS_EDITION_DE)
 #define WORK_CELL_ADDR  0x03001F40
 #define RENDER_CELL_ADDR 0x03001ECC
-#define MESSAGE_NO      0xA16
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
 #define WORK_CELL_ADDR  0x03001F30
 #define RENDER_CELL_ADDR 0x03001EBC
-#define MESSAGE_NO      0xA16
 #elif defined(TBS_EDITION_IT)
 #define WORK_CELL_ADDR  0x03001F30
 #define RENDER_CELL_ADDR 0x03001EBC
-#define MESSAGE_NO      0xA16
 #else
 #define WORK_CELL_ADDR  0x03001F30
 #define RENDER_CELL_ADDR 0x03001EBC
-#define MESSAGE_NO      0x926
 #endif
 
 void EventObject_Initialize(void)
@@ -61,9 +58,9 @@ void EventObject_Initialize(void)
         ObjectGroup_SetActionForOthers(event_object, 1, 0);
         UiWork_PushValueSlotFar((s32)event_index, 4);
         if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x21) != 0) {
-            UiText_ShowPositionedMessageAndWaitFar((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
+            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         } else {
-            UiText_ShowPositionedMessageAndWaitFar((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
+            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         }
         ObjectGroup_SetActionForOthers(event_object, 0, 0x10);
     }

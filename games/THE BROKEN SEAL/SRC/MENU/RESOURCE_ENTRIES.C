@@ -18,7 +18,7 @@ struct MenuSelectionState {
 
 extern struct MenuSelectionState *gMenuSelectWork;
 extern u8 Menu_SelectionStepDelays[];
-extern u8 Data_0000001f;
+extern u8 MsgCommandName;
 
 void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacterAtOffset(s32 resource_id, void *work, s32 x, s32 y);
@@ -58,7 +58,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         if (resource_base != 0) {
             resource_id = resource_base + state->selection;
         } else {
-            resource_id = state->resource_ids[state->selection] + (s32)&Data_0000001f;
+            resource_id = state->resource_ids[state->selection] + (s32)&MsgCommandName;
         }
         UiText_DrawCharacterAtOffset(resource_id, state->work, 0, 0);
 

@@ -4,8 +4,8 @@
 @ through the carry with ldreq and rrxseq. It runs from RAM copies of exactly
 @ these 320 bytes (two loaders) and saves r5 and r6 without lr. GCC never
 @ branches on the carry out of a shift, never emits rrx and saves lr with any
-@ register. Every TBS and TLA edition has it, differing only in one relocated
-@ address.
+@ register. Every TBS and TLA edition has it, differing only in where its one
+@ literal, Text_MessageContexts, lies.
 @ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
 .text
@@ -100,6 +100,6 @@ Func_08015430:
 	movs	r0, r1
 	pop	{r5, r6}
 	bx	lr
-	.4byte 0x0803842c
+	.4byte Text_MessageContexts
 	.global Text_DecodeSymbolCodeSize
 	.set Text_DecodeSymbolCodeSize, . - Func_08015430

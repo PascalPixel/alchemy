@@ -12,7 +12,7 @@ s32 Menu_RunWorkspaceOptions(void);
 #define RESULT_CELL_ADDR 0x03001CC8
 #endif
 
-extern char Value_00000c2a;
+extern char MsgSleepMode;
 
 s32 Menu_RunWorkspaceResultLoop(void)
 {
@@ -28,7 +28,7 @@ retry:
             goto retry;
         }
     } else if (result == 1) {
-        UiText_ShowPositionedMessageAndWait((s32)&Value_00000c2a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)&MsgSleepMode, 1);
         *(u8 *)RESULT_CELL_ADDR = result;
     } else if (result == 2) {
         if (Menu_RunWorkspaceOptions() == -1) {

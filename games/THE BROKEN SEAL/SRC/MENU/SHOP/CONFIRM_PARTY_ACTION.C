@@ -2,6 +2,9 @@
 #include "UI.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
+extern u8 MsgSanctumWelcome[];
+extern u8 MsgSanctumMoreAid[];
+extern u8 MsgSanctumFarewell[];
 
 s32 Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
@@ -58,7 +61,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     cursor_anchor->unknown_00[4] = 0;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
-    UiMessage_ShowResolvedAndWait(0xd21);
+    UiMessage_ShowResolvedAndWait((s32)MsgSanctumWelcome);
 
     shop->money_window = UiWindow_CreateFar(16, 11, 12, 4, 2);
     Shop_DrawMoney();
@@ -83,10 +86,10 @@ s32 Shop_ConfirmAct(s32 unit_id)
         }
         shop->party_action = 0;
         ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-        UiMessage_ShowResolvedAndWait(0xd22);
+        UiMessage_ShowResolvedAndWait((s32)MsgSanctumMoreAid);
     }
 
-    UiMessage_ShowResolvedAndWait(0xd23);
+    UiMessage_ShowResolvedAndWait((s32)MsgSanctumFarewell);
     UiWork_FinalizeFar(shop->money_window, 2);
     UiWork_FinalizeFar(list_window, 2);
     Inn_Cleanup();

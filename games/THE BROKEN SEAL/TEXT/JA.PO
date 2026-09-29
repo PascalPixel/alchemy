@@ -12911,7 +12911,7 @@ msgctxt "message"
 msgid "03225"
 msgstr "まい"
 
-msgctxt "message"
+msgctxt "MsgRearrangeHelp"
 msgid "03226"
 msgstr "LR:ならびかえ"
 

@@ -11031,7 +11031,7 @@ msgctxt "message"
 msgid "02755"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgRearrangeHelp"
 msgid "02756"
 msgstr "{button_icon:3}-{button_icon:4}:Charaktere"
 

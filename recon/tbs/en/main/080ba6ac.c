@@ -29,7 +29,7 @@
  * use-type still loses the reference copy and second-branch zero extension.
  * No matching-C credit claimed.
  * 2026-09-29: callees carry the build's names; alchemy permute (with
- * --function Func_080ba6ac) scores 2480, from 2700. Func_080c9018 stays
+ * --function Func_080ba6ac) scores 2480, from 2700. BattleFx_DispatchModeFar stays
  * unresolved: the BattleFx_DispatchMode veneer in SYSTEM/FAR_CALL/EFFECT.S
  * has no label yet.
  * Eight minutes of permutation then found 2120: the queued-command scan as a
@@ -96,7 +96,7 @@ s32 BattleEventRuntime_WaitForReady(void);
 void BattlePres_SetActorModes(u16 *, s32);
 s32 Graphics_ScaleRgb555Clamped(u16 *, u16 *, s32, s32);
 void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
-void Func_080c9018(struct PresentationWork *);
+void BattleFx_DispatchModeFar(struct PresentationWork *);
 
 s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
                   struct BattleCommandRequest *selection)
@@ -157,7 +157,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
         if (saved_input->presentation_flags & 0x4000)
             BattleFx_DispatchByIdRangeFar(&work);
         else
-            Func_080c9018(&work);
+            BattleFx_DispatchModeFar(&work);
     } else {
         WaitFrames(60);
     }

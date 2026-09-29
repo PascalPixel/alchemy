@@ -60,7 +60,7 @@ struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void Object_SetMode(void *actor, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *actor, s32 mode);
 void Func_080c9020(struct BattlePresentationWork *work);
-void Func_080c9018(struct BattlePresentationWork *work);
+void BattleFx_DispatchModeFar(struct BattlePresentationWork *work);
 void Actor_ResetMotionAtAnchor(s32 unit_id);
 
 s32 BattlePres_RunUnitAction(s16 *action)
@@ -152,7 +152,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
     work.stage = 3;
     Func_080c9020(&work);
     work.stage = 0;
-    Func_080c9018(&work);
+    BattleFx_DispatchModeFar(&work);
 
     Object_SetMode(primary_actor, 1);
     i = 0;

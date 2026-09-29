@@ -151,7 +151,7 @@ s32 Ui_LoadEntryForKind(s32 owner, s32 handle);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 style);
 u8 *Runtime_GetObject(s32 owner);
 void BattleUnit_Recalculate(s32 owner);
-s32 Func_080771f8(s32 owner, s32 index);
+s32 Owner_GetResistanceValueFar(s32 owner, s32 index);
 s32 Owner_GetLevelThresholdFar(s32 owner, s32 level);
 s32 Party_SumDjinnCountsFar(s32 request);
 struct UiSpriteRecord **GetBattleObjectSlotFar(s32 owner);
@@ -481,7 +481,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         UiText_DrawNumberInWindow(object[0x118 + i], 1,
                             winMain, 48 + i * 32 + 8, 72);
                     }
-                    UiText_DrawNumberInWindow(Func_080771f8(owner, i), 2,
+                    UiText_DrawNumberInWindow(Owner_GetResistanceValueFar(owner, i), 2,
                         winMain, 48 + i * 32, 80);
                     UiText_DrawNumberInWindow(
                         M2C_FIELD(object, s16 *, 0x48 + i * 4), 3, winMain,

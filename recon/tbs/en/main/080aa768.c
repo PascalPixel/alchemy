@@ -97,7 +97,7 @@ void Audio_PlayCue(s32);
 void RenderOutput_ClearListFar(s32);
 void Owner_RecalculateStatsFar(s32);
 s32 Djinn_ActivateFar(s32, s32, s32);
-u32 Func_080771b8(s32, s32, s32);
+u32 Djinn_DeactivateFar(s32, s32, s32);
 s32 Trade_RemoveOfferFar(s32, s32, s32);
 u32 *Trade_AddOfferFar(u32, u32, u32);
 s32 Djinn_TransferFar(s32, s32, s32, s32);
@@ -286,7 +286,7 @@ s32 Unnamed_080aa768(void)
             /* fall through */
         case 12:
             Audio_PlayCue(175);
-            Func_080771b8(menu->source_owner, menu->element[0], menu->number[0]);
+            Djinn_DeactivateFar(menu->source_owner, menu->element[0], menu->number[0]);
             result = (s32)Trade_AddOfferFar(menu->source_owner, menu->element[0], menu->number[0]);
             goto refresh_owner;
         case 9:

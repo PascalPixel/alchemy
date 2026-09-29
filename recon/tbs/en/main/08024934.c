@@ -82,7 +82,7 @@ void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
 void UiWork_SetParamNibble(s32 colour);
 void UiText_DrawCharacterAtOffset(s32, struct SummonWindow *, s32, s32);
 void Ui_SetRectHighlight(s32, s32, s32, s32, s32);
-s32 Func_080771d8(u8 *ids);
+s32 Trade_ListFlaggedEntriesFar(u8 *ids);
 void Audio_PlayCue(s32 cue);
 
 s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
@@ -147,7 +147,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         } while (--index >= 0);
 
     }
-    count = Func_080771d8(available);
+    count = Trade_ListFlaggedEntriesFar(available);
     used = 0;
     last = count - 1;
     if (last >= 0) {

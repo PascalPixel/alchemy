@@ -45,7 +45,7 @@ void Audio_PlayCue(s32 cue);
 s32 GameFlag_TestFar(s32 flag);
 s32 Math_Mod(s32 numerator, s32 denominator);
 void Owner_RecalculateStatsFar(s32 owner);
-void Func_080772c0(s32 owner);
+void Owner_RefreshClassActionsFar(s32 owner);
 
 s32 Unnamed_080a5388(void)
 {
@@ -106,6 +106,6 @@ done:
         CopyWords((WordCopyFn)Iwram_CopyWords, state, backup, 0x14c);
     Runtime_BumpFree(backup);
     Owner_RecalculateStatsFar(menu->owner);
-    Func_080772c0(menu->owner);
+    Owner_RefreshClassActionsFar(menu->owner);
     return selection;
 }

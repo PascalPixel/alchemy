@@ -32,8 +32,8 @@ void Graphics_ResetVramBlockAndReleaseHeapBlocks(s32);
 void Graphics_ScaleRgb555Clamped(void *, void *, s32, s32);
 void Func_080c9020(void);
 void Func_080c9030(void);
-void Func_080c9038(s32);
-void Func_080c9040(void);
+void BattlePresentation_PrepareSceneFar(s32);
+void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
 
 static inline void QueueObjectUpdate(void *destination)
 {
@@ -94,7 +94,7 @@ void BattleFx_PlayUnitElementEffect(s32 actor, s32 value, s32 mode, s32 paramete
         break;
     }
     case 1:
-        Func_080c9038(value);
+        BattlePresentation_PrepareSceneFar(value);
         for (i = 39; i >= 0; i--) {
             u8 *object = gBattleFxWork;
             BattleMotion_ProjectScaledPosition(actor, &position_b);
@@ -104,7 +104,7 @@ void BattleFx_PlayUnitElementEffect(s32 actor, s32 value, s32 mode, s32 paramete
             FIELD(object, s32, 0x13cc) = 1;
             WaitFrames(1);
         }
-        Func_080c9040();
+        BattleFx_ScheduleCallbacksAndReleaseBlocksFar();
         break;
     case 2:
         task_a.value = value;

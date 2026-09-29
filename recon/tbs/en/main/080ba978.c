@@ -59,7 +59,7 @@ void BattlePres_SetActorModes(u16 *, s32);
 void BattleFx_PlayUnitElementEffect(s32, s32, s32, s32);
 void BattlePres_RunWithZeroArguments(void);
 void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
-void Func_080c9018(struct PresentationWork *);
+void BattleFx_DispatchModeFar(struct PresentationWork *);
 void Audio_PlayCue(s32);
 
 s32 Func_080ba978(struct PresentationInput *input, s32 flags)
@@ -143,7 +143,7 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
             if (input->flags & 0x4000)
                 BattleFx_DispatchByIdRangeFar(&work);
             else
-                Func_080c9018(&work);
+                BattleFx_DispatchModeFar(&work);
         } else {
             BattlePres_RunWithZeroArguments();
         }

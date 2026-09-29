@@ -71,9 +71,9 @@ extern char Value_00000c30;
 extern char Value_00000c32;
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_Clear(s32 window);
-void Func_080152a8(void);
+void UiWindow_MarkVisibleTileAttributesFar(void);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
-s32 Func_080153f8(s32 window, s32 message);
+s32 UiText_OpenEntryMessageFar(s32 window, s32 message);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 palette);
 s32 Menu_DrawAtWindowOffset(void *window, s32 x, s32 y, s32 width, s32 height, s32 palette);
@@ -119,7 +119,7 @@ s32 Func_080ab314(void)
     list = UiWindow_CreateFar(0, 9, 8, 10, 6);
     win_b = UiWindow_CreateFar(8, 12, 22, 7, 2);
     win_a = UiWindow_CreateFar(8, 9, 22, 3, 2);
-    Func_080152a8();
+    UiWindow_MarkVisibleTileAttributesFar();
     cnt = 0;
     list_message = (s32)&Value_00000c32;
     do {
@@ -129,7 +129,7 @@ s32 Func_080ab314(void)
     do {
         UiWindow_Clear(win_a);
         UiText_DrawMessageAt(selection + (s32)&Value_00000c32, win_a, 0, 0);
-        slot = (struct ChooserMessage **)Func_080153f8(win_b, selection + 0xc39);
+        slot = (struct ChooserMessage **)UiText_OpenEntryMessageFar(win_b, selection + 0xc39);
         Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
         Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);
         previous = selection;
@@ -188,7 +188,7 @@ s32 Func_080ab314(void)
     UiWork_FinalizeFar(win_a, 1);
     UiWork_FinalizeFar(list, 1);
     UiWork_FinalizeFar(win_b, 1);
-    Func_080152a8();
+    UiWindow_MarkVisibleTileAttributesFar();
     if (result == -2) {
         UiWindow_Clear(menu->message_window);
         UiWindow_Clear(menu->option_window);

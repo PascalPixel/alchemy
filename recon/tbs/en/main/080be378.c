@@ -23,8 +23,8 @@ extern s32 Djinn_ActivateFar(s16 id, s8 a, u8 b);
 extern void Trade_RemoveOfferFar(s16 id, s8 a, u8 b);
 extern s32 Trade_AddOfferFar(s16 id, s8 a, u8 b);
 extern s32 SummonDefinition_Get(s16 id);
-extern s32 Func_080771e8(s8 a, u8 b);
-extern s32 Func_08077208(s16 id, s8 a, u8 b);
+extern s32 Djinn_GetDefinitionHeaderFar(s8 a, u8 b);
+extern s32 Djinn_IsActiveFar(s16 id, s8 a, u8 b);
 extern s32 Trade_CanOfferDjinnFar(s16 id, s8 a, u8 b);
 extern void *GetBattleObjectSlot(s16 id);              /* GetBattleObjectSlot */
 extern void Object_SetMode(void *obj, s32 mode);  /* Object_SetMode */
@@ -36,20 +36,20 @@ extern s32 BattleFx_PlayUnitElementEffect(s16 id, s8 a, s32 mode, s32 arg3);
 extern void BattlePres_SetActorModes(s32 a, s32 b);
 extern void WaitFrames(s32 frames);           /* WaitFrames */
 extern struct BattleTurnOrder *gBattleWork;
-extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
+extern s16 RollWeaponUnleashFar(void *actor);   /* was declared (s16 id)->void; ground
                                            * truth (this pass) shows it takes
                                            * actor and its r0 return value is
                                            * used directly as abilityId */
 extern s32 Inventory_GetEquippedItemFar(void *actor, s32 flag);
 extern void BattleEv_SetRuntimeField8(void);
 extern s32 GameFlag_TestFar(s32 flagId);            /* GameFlag_IsSet */
-extern s32 Func_08077170(s16 id);
+extern s32 Item_GetEquippedElementFar(s16 id);
 extern s32 Battle_GetEntryField2LowBits(u8 value);
 extern s32 Func_080771a0_rng(void);
 extern void BattlePresentation_WaitForAdvance(void);
 extern void Func_080bf1d4(void); /* unreachable; long-branch veneer target only, never a real call site */
 extern void Math_Div(s32 a, s32 b);         /* FixedPoint_Ratio */
-extern void Func_080772f8(s16 id);
+extern void Equipment_GetUnleashRateBonusFar(s16 id);
 extern s32 Ability_CheckStatusOrSpecialId(s16 id);
 extern s32 Battle_HitCheck(s16 id, u8 a, u8 b, u8 c, s32 mode);
 
@@ -344,12 +344,12 @@ L_080be76c:
     /*
      * Ground-truth fix (this pass): standalone objdump of
      * recon/tbs/raw/080be76c.s shows `ldr r4,[sp,#12]` (actor) feeding
-     * Func_08077160's argument, and its r0 return value moved straight into
+     * RollWeaponUnleashFar's argument, and its r0 return value moved straight into
      * fp and used as the BattleCommand_SelectTargets argument -- the prior draft had
      * mislabeled the call argument as req+0 and separately recomputed
      * abilityId from req+0 (a value never actually reloaded on this path).
      */
-    abilityId = Func_08077160(actor);
+    abilityId = RollWeaponUnleashFar(actor);
     lookupResult = BattleCommand_SelectTargets(abilityId);
     if (lookupResult == -1) {
         goto L_080bf1d6_shared;
@@ -560,8 +560,8 @@ L_080beb08:
     subKind = (s8)((packed << 8) >> 8) >> 0; /* placeholder decode, see SUBKIND_MASK note */
     subKind = (s8)(packed >> 8) & SUBKIND_MASK;
     lowByte = (u8)packed;
-    abilityId = Func_080771e8(subKind, lowByte);
-    if (Func_08077208(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
+    abilityId = Djinn_GetDefinitionHeaderFar(subKind, lowByte);
+    if (Djinn_IsActiveFar(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                        (u8)*(u16 *)(req + 8)) == 0) {
         goto L_080beb48;
     }
@@ -655,7 +655,7 @@ L_080becea:
 L_080bee08:
     targetUnit = Owner_GetStateFar(tgt[2]);
     *(u32 *)(tgt + 76) = 1;
-    *(s32 *)(tgt + 80) = Func_08077170(*(s16 *)(req + 0));
+    *(s32 *)(tgt + 80) = Item_GetEquippedElementFar(*(s16 *)(req + 0));
     *(s32 *)(tgt + 84) = 2;
     if (((u8 *)actor)[297] != 0) {
         *(s32 *)(tgt + 88) = 0x4000 | Battle_GetEntryField2LowBits(*((u8 *)actor + 296));
@@ -727,8 +727,8 @@ L_080befb4_shared:
     {
         s16 impactPower;
         s32 rangeMask;
-        impactPower = *(s16 *)(req + 0); /* placeholder wiring for Func_080772f8/Math_Div chain */
-        Func_080772f8(impactPower);
+        impactPower = *(s16 *)(req + 0); /* placeholder wiring for Equipment_GetUnleashRateBonusFar/Math_Div chain */
+        Equipment_GetUnleashRateBonusFar(impactPower);
         Math_Div(200 << 16, 0);
         rangeMask = BattleRandom16Far();
         (void)rangeMask;
@@ -764,7 +764,7 @@ L_080befb4_shared:
      *                                   value as the actor+297 flag used in
      *                                   L_080bee08 above, but this file's own
      *                                   sp+12 slot holds &req throughout, per
-     *                                   the region head's Func_080772f8(req[0])
+     *                                   the region head's Equipment_GetUnleashRateBonusFar(req[0])
      *                                   usage, so it is modeled as req here)
      */
 L_080befb4_tail:

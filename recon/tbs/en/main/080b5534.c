@@ -20,7 +20,7 @@ void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32, s32);
 s32 UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
-void Func_08015148(s32);
+void UiWork_DrainPendingFar(s32);
 void UiWindow_Close(s32, s32);
 u8 *Runtime_GetObject(s32);
 
@@ -128,7 +128,7 @@ read_keys:
             goto read_keys;
 
 close_message:
-        Func_08015148(1);
+        UiWork_DrainPendingFar(1);
         UiWindow_Close(window, 1);
         flag_val = 0;
         flag_ptr = (u8 *)(*(s32 *)gWindowWork + 0x12f8);

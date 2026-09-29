@@ -220,11 +220,17 @@ Party_AddActiveOwnerFar:
 	.thumb_func
 Party_ListActiveOwnersFar:
 	overlay_veneer Party_ListActiveOwners
+	.global RollWeaponUnleashFar
+	.thumb_func
+RollWeaponUnleashFar:
 	overlay_veneer RollWeaponUnleash
 	.global Party_RemoveActiveOwnerFar
 	.thumb_func
 Party_RemoveActiveOwnerFar:
 	overlay_veneer Party_RemoveActiveOwner
+	.global Item_GetEquippedElementFar
+	.thumb_func
+Item_GetEquippedElementFar:
 	overlay_veneer Item_GetEquippedElement
 	.global Battle_HitCheck
 	.thumb_func
@@ -267,6 +273,9 @@ Func_080771b0:
 	.global Func_080771b8
 	.thumb_func
 Func_080771b8:
+	.global Djinn_DeactivateFar
+	.thumb_func
+Djinn_DeactivateFar:
 	overlay_veneer Djinn_Deactivate
 	.global Trade_RemoveOfferFar
 	.thumb_func
@@ -280,6 +289,9 @@ Trade_AddOfferFar:
 	.thumb_func
 Djinn_TransferFar:
 	overlay_veneer Djinn_Transfer
+	.global Trade_ListFlaggedEntriesFar
+	.thumb_func
+Trade_ListFlaggedEntriesFar:
 	overlay_veneer Trade_ListFlaggedEntries
 	.global SummonDefinition_Get
 	.thumb_func
@@ -288,6 +300,9 @@ SummonDefinition_Get:
 	.global Func_080771e8
 	.thumb_func
 Func_080771e8:
+	.global Djinn_GetDefinitionHeaderFar
+	.thumb_func
+Djinn_GetDefinitionHeaderFar:
 	overlay_veneer Djinn_GetDefinitionHeader
 	.global Func_080771f0
 	.thumb_func
@@ -296,11 +311,17 @@ Func_080771f0:
 	.thumb_func
 Party_AdvanceOwnerCountToTargetFar:
 	overlay_veneer Party_AdvanceOwnerCountToTarget
+	.global Owner_GetResistanceValueFar
+	.thumb_func
+Owner_GetResistanceValueFar:
 	overlay_veneer Owner_GetResistanceValue
 	overlay_veneer Trade_CountPendingOffers
 	.global Func_08077208
 	.thumb_func
 Func_08077208:
+	.global Djinn_IsActiveFar
+	.thumb_func
+Djinn_IsActiveFar:
 	overlay_veneer Djinn_IsActive
 	.global Trade_CanOfferDjinnFar
 	.thumb_func
@@ -415,6 +436,9 @@ Func_080772b8:
 	.global Func_080772c0
 	.thumb_func
 Func_080772c0:
+	.global Owner_RefreshClassActionsFar
+	.thumb_func
+Owner_RefreshClassActionsFar:
 	overlay_veneer Owner_RefreshClassActions
 	.global Party_GetAverageLevelFar
 	.thumb_func
@@ -441,6 +465,9 @@ PartyInventory_DiscardFar:
 GameFlag_RefreshLureCapFar:
 Func_080772f0:
 	overlay_veneer GameFlag_RefreshLureCap
+	.global Equipment_GetUnleashRateBonusFar
+	.thumb_func
+Equipment_GetUnleashRateBonusFar:
 	overlay_veneer Equipment_GetUnleashRateBonus
 	.global Runtime_GetBuildStampTimeFar
 	.thumb_func

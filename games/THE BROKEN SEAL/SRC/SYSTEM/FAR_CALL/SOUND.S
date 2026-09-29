@@ -56,6 +56,9 @@ Audio_Check:
 	.global Func_080f9070
 	.thumb_func
 Func_080f9070:
+	.global AudioCommand_GetSecondaryStateByteFar
+	.thumb_func
+AudioCommand_GetSecondaryStateByteFar:
 	overlay_veneer AudioCommand_GetSecondaryStateByte
 	.global AudioCommand_WaitForCompletionFar
 	.thumb_func

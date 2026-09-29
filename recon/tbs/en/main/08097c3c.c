@@ -67,8 +67,8 @@ void BattleFx_SnapScaleToFull(void *);
 void Animation_ApplyRandomChildValues(void *);
 u16 BattleFx_GetCycledTableWord(u32 ignored_input);
 s32 Object_CheckMovementCollision(void *, s32 *);
-void *Func_080092a0(void *, s32 *);
-s32 Func_080092a8(s32, s32, s32);
+void *ScriptObject_FindOverlappingEntryFar(void *, s32 *);
+s32 Map_GetCellAttributeLowNibbleFar(s32, s32, s32);
 void *Object_GetById(u32);
 void Audio_PlayCue(s32);
 void Animation_ApplyChildValuesFar(void *, s32);
@@ -179,7 +179,7 @@ select:
     Vector_AddPolarOffset(0x200000, direction, positions.nearby);
     if (Object_CheckMovementCollision(actor, positions.pos) > 0)
         goto blocked;
-    if ((hit = Func_080092a0(actor, positions.pos)) == 0)
+    if ((hit = ScriptObject_FindOverlappingEntryFar(actor, positions.pos)) == 0)
         goto move;
     tmp7 = hit != parent;
     if (tmp7)
@@ -191,7 +191,7 @@ select:
     z = positions.nearby[2];
     if (parent_x != (-lift & (x = *positions.nearby)) || parent_z != (z & -lift))
         goto move;
-    if (Func_080092a8(parent->object.terrain_id, x, z) == 0)
+    if (Map_GetCellAttributeLowNibbleFar(parent->object.terrain_id, x, z) == 0)
         goto move_parent;
 blocked:
     Object_SetMode(preview, 4);

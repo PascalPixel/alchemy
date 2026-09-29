@@ -16,7 +16,7 @@
  *
  * Each buffer holds two leading control halfwords followed by 160 pairs of
  * halfwords; only the first halfword of each pair is written here, packed as
- * (left << 8) | right in the GBA window-register layout.  Func_08015268 is
+ * (left << 8) | right in the GBA window-register layout.  UiWindow_FillFromSceneFar is
  * handed the line array before the mode fill runs.
  *
  * Uncertain, and left as raw offsets or neutral names:
@@ -46,7 +46,7 @@
 
 /* Resolved project symbols. */
 void Scheduler_RemoveCallback(void *callback);  /* Scheduler_RemoveCallback */
-void Func_08015268(void *lines);
+void UiWindow_FillFromSceneFar(void *lines);
 u32 Random16(void);             /* Random16 */
 s32 Math_Div(s32 num, s32 den); /* Math_Div */
 void *ObjectTable_Get(s32 id);         /* ObjectTable_Get */
@@ -165,7 +165,7 @@ void DisplayTransition_UpdateScanlineTable(void)
     }
 
     dst = p->buf[1 ^ p->page];
-    Func_08015268(dst + 2);
+    UiWindow_FillFromSceneFar(dst + 2);
 
     switch (p->mode) {
     case 0:

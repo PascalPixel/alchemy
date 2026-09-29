@@ -89,10 +89,10 @@ void *Runtime_AllocateBlock(s32 tag, s32 size);
 void Scheduler_ResetTaskTable(void);
 void Render_ResetTransformState(void);
 void GameFlag_SetBitFar(s32 id);
-s32 Func_0808a4a0(void);
-void Func_08009078(s32 mode);
+s32 Event_GetSpecialValueFar(void);
+void ObjectSystem_InitializeFar(s32 mode);
 s32 GameFlag_TestFar(s32 flag);
-void Func_08015008(s32 mode);
+void UiWork_InitializeFar(s32 mode);
 s32 BattleFormation_BuildEnemyList(s32 value);
 void WaitFrames(s32 frames);
 s32 GameFlag_GetByteFar(s32 id);
@@ -105,7 +105,7 @@ void BattleUnit_RefreshPlacement(void);
 void BattlePlacement_UpdateEntries(void);
 void BattleSummon_UpdateAvailability(void);
 s32 *Trade_GetOfferStateFar(s32 index);
-void Func_08015128(s32 value);
+void UiWindow_CreateWithLayoutBoundsFar(s32 value);
 void Camera_InitDefaultTransform(void);
 void BattleActor_CommitPlacement(void);
 void BattlePresentation_InitializeWorkAndResetState(void);
@@ -200,14 +200,14 @@ s32 Battle_RunEncounter(s32 arg)
     work->field_00 = arg;
     dst = (u8 *)Runtime_AllocateBlock(37, 12);
     Dma3Fill(dma, fill, dst, 12);
-    work->field_648 = (u16)Func_0808a4a0();
+    work->field_648 = (u16)Event_GetSpecialValueFar();
     Runtime_AllocateBlock(4, 0xe00);
     Runtime_AllocateBlock(3, 0x600);
-    Func_08009078(4);
+    ObjectSystem_InitializeFar(4);
     if (GameFlag_TestFar(0x16e) != 0)
-        Func_08015008(1);
+        UiWork_InitializeFar(1);
     else
-        Func_08015008(0);
+        UiWork_InitializeFar(0);
 
     cam->field_04 = 0x400000;
     cam->field_00 = 0;
@@ -274,7 +274,7 @@ s32 Battle_RunEncounter(s32 arg)
         work->field_41 = 3;
     else
         work->field_41 = 1;
-    Func_08015128(9);
+    UiWindow_CreateWithLayoutBoundsFar(9);
     Camera_InitDefaultTransform();
     BattleActor_CommitPlacement();
     BattlePresentation_InitializeWorkAndResetState();

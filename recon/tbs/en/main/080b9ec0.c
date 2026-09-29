@@ -147,7 +147,7 @@ void BattlePresentation_RunUnitTransition(
         } else if (selection->flags & 0x4000) {
             BattleFx_DispatchByIdRangeFar(context);
         } else {
-            Func_080c9018(context);
+            BattleFx_DispatchModeFar(context);
         }
         BattleEventRuntime_WaitForReady();
     }

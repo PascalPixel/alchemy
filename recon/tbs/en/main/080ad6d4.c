@@ -84,10 +84,10 @@ void _call_via_r4(s32, s32, s32);
 void _call_via_r5(s32, s32, s32);
 void UiWindow_ClearInteriorTilesFar(s32, s32, s32, s32, s32);
 void RenderOutput_ClearListFar(s32);
-void Func_080152a8(void);
+void UiWindow_MarkVisibleTileAttributesFar(void);
 void Djinn_AddToOwnerFar(s32, s32, s32);
 void Djinn_ActivateFar(s32, s32, s32);
-void Func_080771b8(s32, s32, s32);
+void Djinn_DeactivateFar(s32, s32, s32);
 void Menu_UpdateEntryObjectTransforms(void);
 void UiMenu_SlideCursor(s32, s32);
 s32 DjinnMenu_DrawStatPreview(s32, s32, s32, u8, s32, s32, s32, s32, s32);
@@ -168,7 +168,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         unit = Runtime_GetObject(first_id);
         _call_via_r3((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
-        Func_080771b8(first_id, first_pal, first_bank);
+        Djinn_DeactivateFar(first_id, first_pal, first_bank);
         if (mode == 0) {
             second_pal = FIELD_AT_OFFSET(state, u8, 0x257);
             second_bank = FIELD_AT_OFFSET(state, u8, 0x255) & 31;
@@ -187,7 +187,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         unit = Runtime_GetObject(second_id);
         _call_via_r5((s32)unit_copy, (s32)unit, 0x14c);
         if (mode == 0) {
-            Func_080771b8(second_id, second_pal, second_bank);
+            Djinn_DeactivateFar(second_id, second_pal, second_bank);
         }
         Djinn_AddToOwnerFar(second_id, first_pal, first_bank);
         if (first_flag != 0) {
@@ -220,7 +220,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         unit = Runtime_GetObject(first_id);
         _call_via_r3((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
-        Func_080771b8(first_id, first_pal, first_bank);
+        Djinn_DeactivateFar(first_id, first_pal, first_bank);
         if (apply_second != 0) {
             Djinn_ActivateFar(first_id, first_pal, first_bank);
         }
@@ -346,7 +346,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     }
                     UiWindow_Close(work, 1);
                     _call_via_r3((s32)render, (s32)saved, 0x200, IWRAM_WORD_COPY);
-                    Func_080152a8();
+                    UiWindow_MarkVisibleTileAttributesFar();
                     render[0xea3] = 1;
                     dirty = 1;
                     FIELD_AT_OFFSET(scene, s32, 0x2128) = 0;
@@ -366,7 +366,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     }
                     UiWindow_Close(work, 1);
                     _call_via_r3((s32)render, (s32)saved, 0x200, IWRAM_WORD_COPY);
-                    Func_080152a8();
+                    UiWindow_MarkVisibleTileAttributesFar();
                     render[0xea3] = 1;
                     WaitFrames(1);
                     dirty = 1;

@@ -134,7 +134,7 @@ void UiText_DrawNumberInWindow(s32 value, s32 digits, s32 work, s32 x, s32 y);
 void UiWork_SetParamNibble(s32 value);
 struct BattleUnit *Owner_GetStateFar(s32 id);
 s32 GameFlag_TestFar(s32 flag);
-void Func_080b50b8(s32 id, struct ScreenPos *out);
+void BattleMotion_ProjectConditionalPositionFar(s32 id, struct ScreenPos *out);
 void BattlePres_SetActorModesFar(u16 *ids, s32 highlight);
 void UiText_CopyMessageString(s32 message, u16 *text, s32 limit);
 s32 UiText_GetWideStringWidth(u16 *text);
@@ -310,7 +310,7 @@ step_back:
     }
 
     if (mode != 2) {
-        Func_080b50b8(sel, &markPos);
+        BattleMotion_ProjectConditionalPositionFar(sel, &markPos);
         tbl[0].flags = 8;
         tbl[0].x = (u8)markPos.x;
         tbl[0].y = 0x80;
@@ -321,7 +321,7 @@ step_back:
 
     for (;;) {
         pending = 0;
-        Func_080b50b8(ids[cursor], &pos);
+        BattleMotion_ProjectConditionalPositionFar(ids[cursor], &pos);
         M2C_FIELD(head, s32 *, 4) = 0x40002000;
         M2C_FIELD(head, s32 *, 8) = pending;
         head->tile = Resource_GetBuffer(
@@ -415,7 +415,7 @@ step_back:
             goto frame_tail;
 
         unit = Owner_GetStateFar(ids[cursor]);
-        Func_080b50b8(ids[cursor], &pos);
+        BattleMotion_ProjectConditionalPositionFar(ids[cursor], &pos);
         if (infoWin != 0)
             UiWork_Finalize(infoWin, 1);
 
@@ -585,7 +585,7 @@ draw_name:
         if (spread == 0xFF)
             goto frame_tail;
         unit = Owner_GetStateFar(ids[cursor]);
-        Func_080b50b8(ids[cursor], &namePos);
+        BattleMotion_ProjectConditionalPositionFar(ids[cursor], &namePos);
         namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
         if (unit->class_id == 125 || unit->class_id == 122) {
             width = 0x80E;
@@ -617,7 +617,7 @@ frame_end:
             entry = head + 1;
             for (i = 1; i < cnt; i++, entry++) {
                 slot = &tbl[selSlot[i]];
-                Func_080b50b8(selIds[i], &targetPos);
+                BattleMotion_ProjectConditionalPositionFar(selIds[i], &targetPos);
                 targetPos.y += Trig_Sin(gFrameCount << 12) / 32768;
                 *entry = *head;
                 if (slot->flags & 1) {

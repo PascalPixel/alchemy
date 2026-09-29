@@ -46,6 +46,9 @@ Engine_VramLoad:
 	.thumb_func
 Object_CreateFar:
 	overlay_veneer Func_080090c8
+	.global Engine_ObjectDispatchRelease
+	.thumb_func
+Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -124,6 +127,9 @@ Engine_EventEnd:
 	.thumb_func
 Event_PrepareObjectAndApplyValue:
 	overlay_veneer Event_PrepareObjectAndApplyValueFar
+	.global Party_RemoveOwnerRestored
+	.thumb_func
+Party_RemoveOwnerRestored:
 	overlay_veneer Party_RemoveOwnerRestoredFar
 	.global Engine_PartyGiveItem
 	.thumb_func
@@ -159,6 +165,9 @@ Object_RefreshSelectorById:
 	.thumb_func
 Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global Engine_ActorMoveToAndWait
+	.thumb_func
+Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -168,6 +177,9 @@ Engine_ActorWalkTo:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	.global Engine_ActorSetDestinationOffset
+	.thumb_func
+Engine_ActorSetDestinationOffset:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
 	.global Engine_ActorWaitForMove
 	.thumb_func
@@ -280,6 +292,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global BattleFx_PlayCueAndStartEmitterOnTarget
+	.thumb_func
+BattleFx_PlayCueAndStartEmitterOnTarget:
 	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.global Engine_ItemShowFound
 	.thumb_func

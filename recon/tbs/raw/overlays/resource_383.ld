@@ -35,7 +35,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/PROMPT.o"(.text)
         "*/resource_383_overlay.o"(.text.x0200af98)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/RUN_EVENT.o"(.text)
-        "*/resource_383_overlay.o"(.text.x0200b6f8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/VAULT_PROMPT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/SET_WORD1C0.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/NEAREST_STOP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/RECORD_NEAR_POINT.o"(.text)

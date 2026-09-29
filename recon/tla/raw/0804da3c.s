@@ -1,51 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_0804d9e0
-	.thumb_func
-Func_0804d9e0:
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	adds	r5, r2, #0
-	adds	r6, r3, #0
-	movs	r3, #0
-	adds	r7, r0, #0
-	mov	sl, r1
-	mov	r8, r3
-	bl	0x0804d0dc
-	cmp	r5, #0
-	bne.n	.L_0804d9fe
-	movs	r5, #3
-.L_0804d9fe:
-	cmp	r7, #0
-	beq.n	.L_0804da06
-	movs	r3, #17
-	mov	r8, r3
-.L_0804da06:
-	movs	r0, #5
-	bl	0x0804d38c
-	movs	r0, #6
-	bl	0x0804d38c
-	adds	r1, r5, #0
-	mov	r2, sl
-	mov	r0, r8
-	bl	0x0804d3e8
-	adds	r0, r6, #0
-	bl	0x0804d16c
-	adds	r6, r0, #0
-	bl	0x0804d118
-	movs	r3, #1
-	negs	r3, r3
-	cmp	r6, r3
-	bne.n	.L_0804da32
-	movs	r6, #1
-.L_0804da32:
-	adds	r0, r6, #0
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7, pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

@@ -298,7 +298,7 @@ Func_080d7024:
 	adds	r1, r6, #0
 	ldr	r0, [pc, #112]
 	bl	0x0801591c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	adds	r2, r6, #0
 	str	r0, [r5, #0]

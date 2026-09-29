@@ -1,61 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_081ac0f8
-	.thumb_func
-Func_081ac0f8:
-.L_081ac0f8:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	adds	r7, r0, #0
-	adds	r6, r1, #0
-	adds	r5, r2, #0
-	cmp	r3, #0
-	ble.n	.L_081ac154
-	movs	r1, #31
-	mov	r8, r1
-	movs	r2, #248
-	movs	r1, #248
-	lsls	r2, r2, #2
-	lsls	r1, r1, #7
-	mov	lr, r2
-	mov	ip, r1
-	adds	r0, r3, #0
-.L_081ac11a:
-	ldrh	r4, [r7, #0]
-	mov	r2, r8
-	adds	r3, r4, #0
-	ands	r3, r2
-	mov	r1, lr
-	adds	r2, r4, #0
-	ands	r2, r1
-	muls	r3, r5
-	mov	r1, ip
-	muls	r2, r5
-	ands	r1, r4
-	muls	r1, r5
-	lsrs	r4, r3, #16
-	mov	r3, r8
-	ands	r4, r3
-	lsrs	r2, r2, #16
-	mov	r3, lr
-	ands	r2, r3
-	orrs	r4, r2
-	lsrs	r1, r1, #16
-	mov	r2, ip
-	ands	r1, r2
-	orrs	r4, r1
-	subs	r0, #1
-	strh	r4, [r6, #0]
-	adds	r7, #2
-	adds	r6, #2
-	cmp	r0, #0
-	bne.n	.L_081ac11a
-.L_081ac154:
-	movs	r0, #0
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -194,13 +138,13 @@ Func_081ac0f8:
 	ldr	r1, [pc, #132]
 	ldr	r0, [sp, #116]
 	movs	r2, #0
-	bl	.L_081ac0f8
+	bl	Graphics_ScaleRgb555Buffer
 	movs	r1, #160
 	adds	r3, r5, #0
 	lsls	r1, r1, #19
 	movs	r2, #0
 	add	r0, sp, #256
-	bl	.L_081ac0f8
+	bl	Graphics_ScaleRgb555Buffer
 	ldr	r3, [pc, #48]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -444,13 +388,13 @@ Func_081ac0f8:
 	adds	r2, r5, #0
 	adds	r3, r6, #0
 	ldr	r0, [sp, #116]
-	bl	.L_081ac0f8
+	bl	Graphics_ScaleRgb555Buffer
 	movs	r1, #160
 	add	r0, sp, #256
 	lsls	r1, r1, #19
 	adds	r2, r5, #0
 	adds	r3, r6, #0
-	bl	.L_081ac0f8
+	bl	Graphics_ScaleRgb555Buffer
 .L_081ac4ce:
 	bl	Func_08014de4
 	ldr	r0, [sp, #104]
@@ -2261,7 +2205,7 @@ Func_081ac0f8:
 	adds	r2, r5, #0
 	ldr	r1, [pc, #88]
 	adds	r3, r6, #0
-	bl	.L_081ac0f8
+	bl	Graphics_ScaleRgb555Buffer
 	adds	r2, r5, #0
 	movs	r1, #160
 	movs	r5, #1
@@ -2269,7 +2213,7 @@ Func_081ac0f8:
 	lsls	r1, r1, #19
 	adds	r3, r6, #0
 	add	fp, r5
-	bl	.L_081ac0f8
+	bl	Graphics_ScaleRgb555Buffer
 	mov	r7, fp
 	movs	r0, #1
 	bl	0x08013560

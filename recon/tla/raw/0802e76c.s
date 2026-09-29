@@ -12,7 +12,7 @@ Func_0802e76c:
 	lsls	r3, r3, #18
 	adds	r0, r7, #0
 	ldr	r6, [r3, #16]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	movs	r3, #3
 	ands	r3, r5
 	lsls	r3, r3, #2

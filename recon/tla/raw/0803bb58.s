@@ -523,7 +523,7 @@ Func_0803bb58:
 	adds	r7, #16
 	cmp	r3, #99
 	bne.n	.L_0803bf3e
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	strh	r0, [r6, #0]
 .L_0803bf3e:
 	mov	r3, r8

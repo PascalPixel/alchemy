@@ -731,7 +731,7 @@ Func_08109188:
 	bne.n	.L_08109744
 	b.n	.L_0810989e
 .L_08109744:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	str	r0, [sp, #4]
 	cmp	r0, #96
 	bne.n	.L_08109750

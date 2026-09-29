@@ -27,10 +27,10 @@ Func_0803f1d4:
 	add	r3, sp, #4
 	adds	r0, r5, #0
 	str	r1, [sp, #0]
-	bl	Func_0803d4e4
+	bl	Ui_BuildPairedPatternsToSlot
 	b.n	.L_0803f22e
 .L_0803f206:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r2, r0, #0
 	str	r2, [sp, #8]
 	adds	r0, r6, #0
@@ -67,7 +67,7 @@ Func_0803f1d4:
 	adds	r6, r4, #0
 	cmp	r4, r3
 	bne.n	.L_0803f25e
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r4, r0, #0
 	str	r0, [sp, #8]
 	adds	r0, r6, #0
@@ -96,7 +96,7 @@ Func_0803f1d4:
 	add	r3, sp, #4
 	adds	r0, r5, #0
 	mov	r1, r8
-	bl	Func_0803d4e4
+	bl	Ui_BuildPairedPatternsToSlot
 	b.n	.L_0803f2d2
 	adds	r2, r4, #0
 	adds	r0, r5, #0
@@ -161,7 +161,7 @@ Func_0803f1d4:
 	add	r2, sp, #8
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	Func_0803d4e4
+	bl	Ui_BuildPairedPatternsToSlot
 	ldr	r3, [pc, #152]
 	b.n	.L_0803f352
 .L_0803f320:

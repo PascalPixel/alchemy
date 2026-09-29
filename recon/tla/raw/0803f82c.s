@@ -717,7 +717,7 @@ Func_0803f82c:
 	adds	r7, #12
 	adds	r2, r7, #0
 	bl	0x08108048
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r6, r0, #0
 	cmp	r6, #95
 	bgt.n	.L_0803feec
@@ -817,7 +817,7 @@ Func_0803f82c:
 	orrs	r3, r5
 	strb	r3, [r4, #25]
 .L_0803feec:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r6, r0, #0
 	cmp	r6, #95
 	bgt.n	.L_0803ff6a
@@ -876,7 +876,7 @@ Func_0803f82c:
 	adds	r2, r7, #0
 	bl	0x08108048
 .L_0803ff6a:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r6, r0, #0
 	cmp	r6, #95
 	bgt.n	.L_0803ffea

@@ -1,9 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080143ac
+	.global Resource_FindFreeEntry
 	.thumb_func
-Func_080143ac:
-.L_080143ac:
+Resource_FindFreeEntry:
 	push	{lr}
 	ldr	r1, [pc, #44]
 	movs	r4, #255
@@ -34,7 +33,7 @@ Func_080143ac:
 	.2byte 0x0200
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	.L_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r1, r6, #0
 	movs	r2, #0
 	adds	r5, r0, #0

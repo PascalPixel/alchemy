@@ -968,9 +968,6 @@ Resource_BuildStamp:
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x0032b0a8, 0x000086f8
-	.global Title_NintendoLogo
-Title_NintendoLogo:
-	.incbin "baserom.gba", 0x003337a0, 0x00000828
 	.section .unidentified.083357f1,"a"
 	.incbin "baserom.gba", 0x003357f1, 0x00000003
 	.section .unidentified.08337101,"a"
@@ -1141,9 +1138,8 @@ BattleFx_LavaOrbSheet:
 	.incbin "baserom.gba", 0x003f520d, 0x00000003
 	.section .unidentified.083f53a6,"a"
 	.incbin "baserom.gba", 0x003f53a6, 0x00000002
-	.global BattleFx_SmokeSheet
-BattleFx_SmokeSheet:
-	.incbin "baserom.gba", 0x003f53a8, 0x0000088c
+	.section .unidentified.083f5c33,"a"
+	.incbin "baserom.gba", 0x003f5c33, 0x00000001
 	.section .unidentified.083f66fa,"a"
 	.incbin "baserom.gba", 0x003f66fa, 0x00000002
 	.section .unidentified.083f6c12,"a"

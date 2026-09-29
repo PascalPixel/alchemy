@@ -88,6 +88,8 @@ extern char SceneId_KareiMachi5;
 extern char SceneId_KareiMachi6;
 extern char SceneId_BabiChika1;
 extern char SceneId_BabiChika2;
+extern char SceneId_BabiIriguchi1;
+extern char SceneId_BabiIriguchi2;
 extern char SceneId_BabiIriguchi3;
 extern char SceneId_VinasuHeya1;
 extern char SceneId_VinasuHeya2;

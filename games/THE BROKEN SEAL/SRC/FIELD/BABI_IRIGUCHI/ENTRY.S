@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer BabiIriguchi_SetupScene
-	overlay_veneer SceneData_SelectByRuntimeSelector
+	overlay_veneer Scene_GetEntrances
 	overlay_veneer BabiIriguchi_GetExits
-	overlay_veneer SceneData_SelectDataByRuntimeSelector
-	overlay_veneer SceneData_SelectTableB91cByRuntimeSelector
-	overlay_veneer SceneData_SelectTableB5b8ByState
+	overlay_veneer Scene_GetPlacements
+	overlay_veneer Scene_GetEvents
+	overlay_veneer Scene_GetRegions

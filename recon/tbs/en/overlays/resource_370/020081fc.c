@@ -1,3 +1,10 @@
+/* resource_370 0x020081fc..0x020082f4 Clear_CheckButtonCodes (248 bytes with
+ * pool), formerly MENU/CLEAR/BUTTON_CODES.C; the listing keeps the rows.
+ * Compiles exactly with this spelling. Remaining difference: each code loads
+ * the constant 1 from its literal pool, as a link-time symbol does, which
+ * this draft spells as the equate Value_00000001; a plain 1 compiles to
+ * movs. Data_03001ae8 is gKeysHeld, and the code sequences and six state
+ * halfwords need labels in the overlay's data before adopting. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

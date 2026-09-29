@@ -1,3 +1,13 @@
+/* 2026-09-29 alchemy permute: score 1115 to 400 (with the build's names) on the permuter's scorer
+   (0 is exact); remaining 3 register-only, 8 operand, 2 reordered, 1
+   inserted. Kept rewrites: 4x reorder independent statements, 3x reorder
+   local declarations, 3x introduce a temporary, 2x swap commutative
+   operands, 2x test truth or compare with zero, 1x drop a same-width cast,
+   1x change loop form, 1x pointer arithmetic or indexing, 1x move an
+   assignment into or out of a condition, 1x toggle register. FAKEMATCH:
+   the permuter's temporaries, register hints and swapped operand orders
+   below only steer allocation and scheduling; no programmer would write
+   them, so they stay tagged until a natural spelling replaces them. */
 #include "TYPES.H"
 
 /* main:08091a58 PartyInventory_GiveItem - draft, 95 of 226
@@ -35,13 +45,13 @@ extern s32 gGameState[];
 s32 PartyInventory_AddFar(s32 item);
 struct ItemData *Item_Get(s32 item);
 void *Owner_GetStateFar(s32 owner);
-s32 Func_08077020(s32 owner, s32 slot);
-void Func_080772b0(s32 owner, s32 slot);
-void Func_08077240(s32 item, s32 delta);
+s32 Shop_GetSelectionState(s32 owner, s32 slot);
+void Inventory_DiscardFar(s32 owner, s32 slot);
+void Item_AdjustCounterFar(s32 item, s32 delta);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 position);
 void UiWork_FinalizePendingCoreFar(void);
-s32 Func_080b0058(s32 *owner, s32 *slot);
+s32 Shop_PickUnitItemFar(s32 *owner, s32 *slot);
 s32 Object_CallSpawnRoutineAtOrigin(s32 mode);
 void Audio_PlayCue(s32 cue);
 
@@ -49,14 +59,14 @@ s32 PartyInventory_GiveItem(s32 item)
 {
     struct EventWork *work;
     s16 *position;
-    s16 saved;
     s32 owner;
+    s16 saved;
     s32 message;
     s32 text;
     s32 result;
-    s32 count;
     s32 member;
     s32 slot;
+    register s32 count;
 
     work = gEventWork;
     position = &work->message_position;
@@ -67,11 +77,12 @@ s32 PartyInventory_GiveItem(s32 item)
         UiText_ShowPositionedMessageAndWaitFar((s32)Value_0000096a, 1);
         UiText_ShowPositionedMessageAndWaitFar((s32)Value_00000977, 1);
     retry:
-        do {
+        while (1) {
             message = (s32)Value_00000978;
             UiText_ShowPositionedMessageAndWaitFar(message, 1);
-            result = Func_080b0058(&member, &slot);
+            result = Shop_PickUnitItemFar(&member, &slot);
             if (result == -1) {
+                s32 tmp2;
                 if (Item_Get(item)->flags & 8) {
                     UiWork_PushValueSlotFar(item, 2);
                     UiText_ShowPositionedMessageAndWaitFar(message + 4, 1);
@@ -79,25 +90,29 @@ s32 PartyInventory_GiveItem(s32 item)
                 }
                 UiWork_PushValueSlotFar(item, 2);
                 UiText_ShowPositionedMessageAndWaitFar(message + 1, 5);
-                result = Object_CallSpawnRoutineAtOrigin(1);
+                tmp2 = Object_CallSpawnRoutineAtOrigin(1);
                 UiWork_FinalizePendingCoreFar();
+                result = tmp2;
                 if (result != 0)
                     goto retry;
-                Func_08077240(item, 1);
+                Item_AdjustCounterFar(item, 1);
                 UiWork_PushValueSlotFar(item, 2);
-                UiText_ShowPositionedMessageAndWaitFar(message + 2, 1);
+                UiText_ShowPositionedMessageAndWaitFar(2 + message, 1);
                 work->message_position = saved;
             } else {
+                s32 tmp;
+                s32 tmp3;
                 Owner_GetStateFar(member);
-                result = Func_08077020(member, slot);
-                if (result > 0) {
+                if ((result = Shop_GetSelectionState(member, slot)) > 0) {
                     count = result;
                     do {
+                        Inventory_DiscardFar(member, slot);
                         count--;
-                        Func_080772b0(member, slot);
                     } while (count != 0);
                 }
-                owner = PartyInventory_AddFar(item);
+                tmp3 = PartyInventory_AddFar(item);
+                tmp = tmp3;
+                owner = tmp;
                 Audio_PlayCue(83);
                 if (owner == gGameState[125]) {
                     UiWork_PushValueSlotFar(item, 2);
@@ -105,14 +120,16 @@ s32 PartyInventory_GiveItem(s32 item)
                 } else {
                     UiWork_PushValueSlotFar(item, 2);
                     UiWork_PushValueSlotFar(owner, 1);
-                    UiText_ShowPositionedMessageAndWaitFar((s32)Value_0000096a + 1, 3);
+                    UiText_ShowPositionedMessageAndWaitFar(1 + (s32)Value_0000096a, 3);
                 }
                 /* FAKEMATCH: distinguish this published position restore
                    from the discard branch's otherwise identical tail. */
-                *(volatile s16 *)&work->message_position = saved;
+                *&work->message_position = saved;
                 return owner;
             }
-        } while (0);
+            if (!0)
+                break;
+        }
     } else {
         Audio_PlayCue(83);
         UiWork_PushValueSlotFar(item, 2);
@@ -123,7 +140,7 @@ s32 PartyInventory_GiveItem(s32 item)
             UiWork_PushValueSlotFar(owner, 1);
             UiText_ShowPositionedMessageAndWaitFar(text + 1, 3);
         }
-        *position = saved;
+        position[0] = saved;
     }
     return owner;
 }

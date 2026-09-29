@@ -1,3 +1,7 @@
+/* 2026-09-29 alchemy permute (with --symbol Func_080d59b0): score 115 on
+   the permuter's scorer (19 register-only, 1 operand for the
+   Value_000000a8 resource id), unchanged after 41,098 candidates in five minutes;
+   the swap of the rock pointer and the floor constant stays. */
 /* Draft, not exact (2026-09-29): 664 of 664 bytes, 19 differing halfwords,
  * all one register swap. Rewritten from the listing in the style of the
  * matched effect family (TARGET_BURSTS.C, SWIRLING_STARS.C): 32 rocks are

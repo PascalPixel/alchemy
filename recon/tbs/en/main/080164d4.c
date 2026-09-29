@@ -1,3 +1,13 @@
+/* 2026-09-29 alchemy permute: score 1490 to 1015 on the permuter's scorer
+   (0 is exact); remaining 27 register-only, 5 operand, 9 reordered, 2
+   deleted. Kept rewrites: 12x reorder independent statements, 6x introduce
+   a temporary, 4x reorder local declarations, 3x remove a temporary, 3x
+   toggle register, 2x change loop form, 2x split or join a compound
+   assignment, 1x add a same-width cast, 1x drop a same-width cast.
+   FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* NONMATCHING: complete 152-byte listing through 0801656c, including the
  * final alignment halfword; candidate 150 bytes, 50 differing halfwords /
  * 48 aligned edits (2026-09-26). Separate coordinate conversion and origin
@@ -19,31 +29,46 @@ void Func_080164d4(const struct RenderInput *window,
     u8 *work;
     u16 *tiles;
     s32 x;
+    u32 height;
     s32 y;
     u32 width;
-    u32 height;
     u32 row;
-    u32 column;
+    u32 tmp;
+    register u32 column;
+    u32 tmp4;
+    u16 tmp2;
 
-    work = Data_03001e8c;
-    x = left >> 3;
     y = top >> 3;
-    right = (right + 7) >> 3;
-    bottom = (bottom + 7) >> 3;
-    x += window->x;
+    tmp4 = right + 7;
+    tmp = (bottom + 7) >> 3;
+    work = Data_03001e8c;
+    bottom = tmp;
+    x = left >> 3;
+    right = tmp4 >> 3;
     y += window->y;
+    tmp2 = window->x;
+    x += tmp2;
+    bottom = bottom + window->y;
     right += window->x;
-    bottom += window->y;
     width = right - x;
     height = bottom - y;
     x++;
-    y++;
-    UiWindow_ClearTileAttributesInRect(x, y, width, height);
+    ++y;
     tiles = (u16 *)work + y * 32 + x;
-    for (row = 0; row < height; row++) {
-        for (column = 0; column < width; column++)
-            *tiles++ = 0xf020;
-        tiles += 32 - width;
+    row = 0;
+    UiWindow_ClearTileAttributesInRect(x, y, width, height);
+    if (row < height) {
+        do {
+            column = 0;
+            if (column < width) {
+                do {
+                    *tiles++ = 0xf020;
+                    column++;
+                } while (column < width);
+            }
+            tiles += 32 - width;
+            row++;
+        } while (row < height);
     }
     work[0xea3] = 1;
 }

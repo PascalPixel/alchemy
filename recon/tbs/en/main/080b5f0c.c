@@ -1,3 +1,6 @@
+/* 2026-09-29 alchemy permute: score 1545 to 895 on the permuter's scorer
+   (0 is exact); remaining 22 register-only, 2 operand, 4 reordered, 1
+   inserted, 4 deleted. Kept rewrites: 1x change loop form. */
 /* Whole owner [080b5f0c, 080b606c), 352 bytes including two pool words.
    2026-09-26 H3 (bounded stop): typed owner-map/Djinn records and a separate
    final-loop counter. Candidate 344/352, 166 differing halfwords, 59 aligned
@@ -61,19 +64,15 @@ s32 Func_080b5f0c(void)
 
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(340);
     table = gBattleWork;
-
     for (i = 7; i >= 0; i--) {
         table->owner_map[i] = 0xff;
     }
-
     count = BattleParty_PrepareActiveOwners(sp_names);
     for (i = 0; i < count; i++) {
         struct BattleUnit *object = Owner_GetStateFar(sp_names[i]);
         CopyWords(buffer, object, 340);
         ((struct BattleUnit *)buffer)->status_12a = 2;
-
         table->owner_map[sp_names[i]] = (u8)(i - 128);
-
         result = SerialRuntime_BeginTransferA((s32)buffer, 340);
         if (result == -1) {
             break;
@@ -81,7 +80,6 @@ s32 Func_080b5f0c(void)
         SerialRuntime_WaitForTransferA();
         WaitFrames(2);
     }
-
     while (i <= 2) {
         ((struct BattleUnit *)buffer)->status_12a = 0;
         result = SerialRuntime_BeginTransferA((s32)buffer, 340);
@@ -92,33 +90,31 @@ s32 Func_080b5f0c(void)
         WaitFrames(2);
         i++;
     }
-
     Runtime_BumpFree(buffer);
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(320);
     {
         struct DjinnRecoveryTable *unit = Trade_GetOfferStateFar(0);
         CopyWords(buffer, unit, 320);
     }
-
     {
-        struct DjinnRecoveryList *list =
-            &((struct DjinnRecoveryTable *)buffer)->list;
+        struct DjinnRecoveryList *list = &((struct DjinnRecoveryTable *)buffer)->list;
         struct DjinnRecoveryEntry *entry = list->entries;
         s32 i;
-
-        for (i = 0; i < list->count; i++) {
-            entry->unit_id = table->owner_map[entry->unit_id];
-            entry++;
+        i = 0;
+        if (i < list->count) {
+            do {
+                entry->unit_id = table->owner_map[entry->unit_id];
+                entry++;
+                i++;
+            } while (i < list->count);
         }
     }
-
     result = SerialRuntime_BeginTransferA((s32)buffer, 320);
     if (result != -1) {
         SerialRuntime_WaitForTransferA();
         WaitFrames(1);
         WaitFrames(2);
     }
-
     Runtime_BumpFree(buffer);
     /* FAKEMATCH: preserve the reference's value-returning epilogue although
        the last callee and the observable operation return no value. */

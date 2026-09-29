@@ -1,3 +1,21 @@
+/* 2026-09-29 alchemy permute: score 665 to 545 on the permuter's scorer (0
+   is exact); remaining 7 register-only, 1 operand, 3 reordered, 1
+   inserted, 2 deleted. Kept rewrites: 4x introduce a temporary, 3x reorder
+   independent statements, 1x remove a temporary, 1x drop a same-width
+   cast, 1x pointer arithmetic or indexing. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
+/* 2026-09-29 alchemy permute: score 975 to 665 on the permuter's scorer (0
+   is exact); remaining 8 register-only, 4 operand, 4 reordered, 1
+   inserted, 2 deleted. Kept rewrites: 6x introduce a temporary, 5x swap
+   commutative operands, 4x pointer arithmetic or indexing, 3x reorder
+   independent statements, 3x reorder local declarations, 2x remove a
+   temporary, 1x split or join a compound assignment, 1x toggle register.
+   FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 #include "TYPES.H"
 #include "SHOP.H"
 
@@ -26,27 +44,40 @@ void ShopCursor_SetPositionImmediate(
 {
     struct ShopCursorSprite *sprite;
     u32 coordinate_mask;
-    s8 active;
+    register s8 active;
     u32 screen_x;
-    u32 attributes;
+    struct ShopCursorSprite *tmp;
+    u32 tmp2;
+    struct ShopCursorAnchor *tmp4;
+    u32 tmp5;
+    struct ShopCursorAnchor *tmp6;
+    s32 tmp7;
+    s32 tmp3;
+    u8 *tmp8;
 
-    sprite = (struct ShopCursorSprite *)cursor->anchor;
+    tmp4 = cursor->anchor;
+    sprite = (struct ShopCursorSprite *)tmp4;
     coordinate_mask = 0xffff;
-    active = (s8)(s32)Data_00000000;
+    tmp8 = Data_00000000;
+    tmp3 = (s32)tmp8;
+    active = (s8)tmp3;
     cursor->kind = 1;
     sprite->x = x;
     cursor->target_x = x;
     cursor->x = x;
-    screen_x = x & coordinate_mask;
-    screen_x &= 0x1ff;
     cursor->active = active;
-    attributes = sprite->attributes & ~0x1ff;
-    sprite->attributes = screen_x | attributes;
-
-    sprite = (struct ShopCursorSprite *)cursor->anchor;
+    tmp7 = ~0x1ff;
+    tmp5 = coordinate_mask & x;
+    screen_x = tmp5;
+    screen_x &= 0x1ff;
+    sprite->attributes = screen_x | (sprite->attributes & tmp7);
+    tmp6 = cursor->anchor;
+    tmp = (struct ShopCursorSprite *)tmp6;
+    sprite = tmp;
+    tmp2 = y & coordinate_mask;
     cursor->target_y = y;
     cursor->y = y;
     sprite->y = y;
-    y &= coordinate_mask;
-    sprite->screen_y = y;
+    y = tmp2;
+    (*sprite).screen_y = y;
 }

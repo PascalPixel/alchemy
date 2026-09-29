@@ -1,3 +1,11 @@
+/* 2026-09-29 alchemy permute: score 115 on the permuter's scorer (10
+   register-only, 1 reordered), unchanged after 73,810 candidates from seed
+   1 and 47,253 from seed 11 (15 minutes). By hand: the local and global
+   register dumps show the symbol address (a block-local pseudo) takes r2
+   before tile is allocated, so tile loses r2 to r4; the reference
+   evidently freed r3 for it by moving variant to r5. Register or unsigned
+   parameters, callee prototype widths, ternaries, per-branch calls and
+   loads without the data local all leave it or regress. */
 /* NONMATCHING: 13 halfwords, register allocation only. The reference keeps
  * tile in r2 and copies variant to r5 and y to r6; here variant ties to r3 and
  * tile moves to r4. Testing variant twice keeps tile in r2 but gives variant r1.

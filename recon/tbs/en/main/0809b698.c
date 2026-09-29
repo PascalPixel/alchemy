@@ -13,20 +13,20 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 
-extern void Func_080030f8(s32);
-extern s32 Func_08003f3c(s32);
-extern s32 Func_08003fa4(s32, s32, const void *);
-extern s16 Func_08004080(void);
-extern s32 Func_080041d8(const void *, s32);
-extern void Func_08004278(const void *);
-extern void Func_080091e0(void *, s32);
-extern void Func_08009240(void *, s32);
-extern void Func_08015040(s32, s32);
+extern void WaitFrames(s32);
+extern s32 Resource_ResetEntry(s32);
+extern s32 VramBlock_LoadCached(s32, s32, const void *);
+extern s16 Resource_FindFreeEntry(void);
+extern s32 Scheduler_AddOrUpdateCallback(const void *, s32);
+extern void Scheduler_RemoveCallback(const void *);
+extern void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+extern void Animation_ApplyChildValuesFar(void *, s32);
+extern void UiText_DrawMessage(s32, s32);
 extern s32 GameFlag_TestFar(s32);
-extern void Func_080f9010(s32);
+extern void Audio_PlayCue(s32);
 
-extern u8 *Data_03001f30;
-extern u8 Data_02000240[];
+extern u8 *gEffectWork;
+extern u8 gGameState[];
 
 void RunBattleEffect16(void)
 {
@@ -41,56 +41,56 @@ void RunBattleEffect16(void)
     s32 entry_mode;
     s32 count;
 
-    scene = Data_03001f30;
+    scene = gEffectWork;
     object = *(u8 **)(scene + 16);
     group = ((struct MotionObject *)object)->records;
     saved = ((struct MotionObject *)object)->angle;
     entry = *(u8 **)(group + 40);
-    value = Func_08004080();
+    value = Resource_FindFreeEntry();
     {
         s32 zero = 0;
         *(s16 *)(scene + 0x71a) = value;
-        Func_08003fa4((s16)value, 0x100, (const void *)0x0809c510);
+        VramBlock_LoadCached((s16)value, 0x100, (const void *)0x0809c510);
         index = 145;
-        ((s32 *)Data_02000240)[index] = 0x09600000;
+        ((s32 *)gGameState)[index] = 0x09600000;
         index = 146;
-        *(s8 *)&((s32 *)Data_02000240)[index] = GameFlag_TestFar(0x145);
-        Func_08009240(object, zero);
+        *(s8 *)&((s32 *)gGameState)[index] = GameFlag_TestFar(0x145);
+        Animation_ApplyChildValuesFar(object, zero);
         *(void **)(object + 108) = (void *)0x0809b5dd;
         *(s16 *)(object + 100) = zero;
         *(s16 *)(object + 102) = zero;
     }
-    Func_080f9010(0x8c);
-    Func_080030f8(15);
+    Audio_PlayCue(0x8c);
+    WaitFrames(15);
     active = 1;
     *(s16 *)(object + 100) = active;
-    Func_080030f8(10);
+    WaitFrames(10);
     entry_mode = 7;
 
     for (count = 0; count <= 19; count++) {
         *(s8 *)(entry + 5) = entry_mode;
         *(s8 *)(group + 37) = 1;
-        Func_080030f8(2);
+        WaitFrames(2);
         *(s8 *)(group + 37) = 1;
         *(s8 *)(entry + 5) = 0;
         *(s8 *)(group + 38) = 1;
 
-        Func_080030f8(3);
+        WaitFrames(3);
     }
     *(void **)(object + 108) = 0;
     *(u16 *)(object + 6) = saved;
-    Func_080041d8((const void *)0x0809b589, 0xc80);
-    Func_080030f8(15);
-    Func_080f9010(0xae);
-    Func_080030f8(55);
-    Func_08004278((const void *)0x0809b589);
+    Scheduler_AddOrUpdateCallback((const void *)0x0809b589, 0xc80);
+    WaitFrames(15);
+    Audio_PlayCue(0xae);
+    WaitFrames(55);
+    Scheduler_RemoveCallback((const void *)0x0809b589);
     index = 147;
-    if (((s16 *)Data_02000240)[index * 2] != 0) {
-        Func_080091e0(object, 2);
+    if (((s16 *)gGameState)[index * 2] != 0) {
+        ObjectDispatch_SetSingleChildField26Far(object, 2);
     } else {
-        Func_080091e0(object, 1);
+        ObjectDispatch_SetSingleChildField26Far(object, 1);
     }
-    Func_08009240(object, 0);
-    Func_08003f3c(*(s16 *)(scene + 0x71a));
-    Func_08015040(0x922, 1);
+    Animation_ApplyChildValuesFar(object, 0);
+    Resource_ResetEntry(*(s16 *)(scene + 0x71a));
+    UiText_DrawMessage(0x922, 1);
 }

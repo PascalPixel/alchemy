@@ -7,7 +7,7 @@
    fetched through the same running byte offset), cross-checked against the
    ARM twin at games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_SYMBOL.S which
    references the same literal address and lookup shape. */
-#define Data_0803842c ((const u8 *)0x0803842c)
+extern const u8 Text_MessageContexts[];
 
 struct Func_08019bfcState {
     u32 code;   /* in: context index (hi byte = table row, lo byte = column);
@@ -42,9 +42,9 @@ s32 Func_08019bfc(struct Func_08019bfcState *state) {
     hi = state->code >> 8;
     lo = state->code & 0xff;
     offset = hi << 3;
-    tableBase = *(const u8 * const *)(Data_0803842c + offset);
+    tableBase = *(const u8 * const *)(Text_MessageContexts + offset);
     offset += 4;
-    tableDeltas = *(const u16 * const *)(Data_0803842c + offset);
+    tableDeltas = *(const u16 * const *)(Text_MessageContexts + offset);
     pos = tableBase + tableDeltas[lo];
 
     readPtr = state->ptr;

@@ -39,18 +39,18 @@ struct OwnerSelectMenu {
     u16 mode;
 };
 
-extern struct OwnerSelectMenu *Data_03001f2c;
+extern struct OwnerSelectMenu *gMenuWork;
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 GameFlag_TestFar(s32 flag);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiMenu_SlideCursor(s32 x, s32 y);
 s32 PsynergyMenu_SelectOwner(void);
-s32 Func_080a7a34(void);
+s32 CharacterSelector_RunRearrange(void);
 void UiIcon_PrepareObject(struct OwnerCursor *cursor);
 void WaitFrames(s32 frames);
 
-s32 Func_080a77a4(s32 slot)
+s32 CharacterMenu_SelectOwner(s32 slot)
 {
     register struct OwnerSelectMenu *menu;
     register s32 index;
@@ -61,7 +61,7 @@ s32 Func_080a77a4(s32 slot)
 
     owner_offset = slot + 28;
     cursor_offset = slot * 4;
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     result = 0;
     {
         s32 off = cursor_offset + 20;
@@ -80,7 +80,7 @@ s32 Func_080a77a4(s32 slot)
     if (menu->mode == 3)
         result = PsynergyMenu_SelectOwner();
     else
-        result = Func_080a7a34();
+        result = CharacterSelector_RunRearrange();
     {
         s32 off = cursor_offset + 20;
         UiIcon_PrepareObject(*(struct OwnerCursor **)((u8 *)menu + off));

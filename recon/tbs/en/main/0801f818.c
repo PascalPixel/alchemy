@@ -67,12 +67,14 @@ struct OwnerState {
     u8 class_id;
 };
 
-extern u8 Data_02000000[];
-extern u8 Data_02001000[];
-#define gSaveSummary (*(struct SaveSummary *)(Data_02000000 - 16))
-#define gSaveGameState (*(struct SaveGameState *)0x02000240)
+extern u8 gSaveBuffer[];
+extern u8 gSceneState[];
+extern struct SaveGameState gGameState;
+extern u32 gLoadedStateWord;
+extern u8 gOptionMirror;
+extern u32 GameFlagBytes[];
 
-u32 Func_08077300(s32);
+u32 Runtime_GetBuildStampTimeFar(s32);
 struct OwnerState *Owner_GetStateFar(s32 owner);
 u16 BattleFx_FindConditionResourceFar(s32 map, s32 entrance);
 u8 Party_SumDjinnCountsFar(s32 element);
@@ -90,24 +92,24 @@ u32 SaveState_BuildSummaryHeader(void)
     s32 i;
     u32 sum = 0;
 
-    summary = &gSaveSummary;
-    gSaveGameState.unknown_000 = Func_08077300(0);
-    gSaveGameState.play_time = *(u32 *)0x03001c9c;
+    summary = (struct SaveSummary *)(gSaveBuffer - 16);
+    gGameState.unknown_000 = Runtime_GetBuildStampTimeFar(0);
+    gGameState.play_time = gLoadedStateWord;
     {
-        u32 *copy = (u32 *)Data_02001000;
-        copy[64] = *(u32 *)0x03001c9c;
+        u32 *copy = (u32 *)gSceneState;
+        copy[64] = gLoadedStateWord;
     }
-    gSaveGameState.unknown_22a = *(u8 *)0x03001d08;
-    owner = Owner_GetStateFar(gSaveGameState.leader);
+    gGameState.unknown_22a = gOptionMirror;
+    owner = Owner_GetStateFar(gGameState.leader);
     destination = summary->name;
     source = owner->name;
     for (i = 11; i >= 0; i--)
         *destination++ = *source++;
     summary->level = owner->level;
-    summary->play_time = gSaveGameState.play_time;
-    summary->area = BattleFx_FindConditionResourceFar(gSaveGameState.map, gSaveGameState.entrance);
+    summary->play_time = gGameState.play_time;
+    summary->area = BattleFx_FindConditionResourceFar(gGameState.map, gGameState.entrance);
     summary->class_id = owner->class_id;
-    summary->coins = gSaveGameState.coins;
+    summary->coins = gGameState.coins;
     summary->djinn[0] = Party_SumDjinnCountsFar(0);
     summary->djinn[1] = Party_SumDjinnCountsFar(1);
     summary->djinn[2] = Party_SumDjinnCountsFar(2);
@@ -116,9 +118,9 @@ u32 SaveState_BuildSummaryHeader(void)
     for (i = 0; i <= 3 && owners[i] != 255; i++)
         summary->party[i] = owners[i];
     summary->party[i] = -1;
-    summary->unknown_24 = gSaveGameState.unknown_205;
-    summary->unknown_25 = gSaveGameState.unknown_206;
-    summary->unknown_21 = gSaveGameState.unknown_20f;
+    summary->unknown_24 = gGameState.unknown_205;
+    summary->unknown_25 = gGameState.unknown_206;
+    summary->unknown_21 = gGameState.unknown_20f;
     summary->flag_count = 0;
     for (i = 48; i <= 127; i++) {
         if (GameFlag_TestFar(i))
@@ -128,10 +130,10 @@ u32 SaveState_BuildSummaryHeader(void)
     {
         s32 n;
 
-        word = (u32 *)0x02000040;
+        word = GameFlagBytes;
         i = 0;
         n = 968;
-        summary->frames = gSaveGameState.unknown_000;
+        summary->frames = gGameState.unknown_000;
         goto test;
         do {
             sum += *word++;

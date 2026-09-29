@@ -53,7 +53,7 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 s32 Func_080041d8(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void BattleFx_SelectLivingTargets(void *object);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void Func_080f9010(s32 id);
 void Func_080b5088(s32 member_id, s32 unk);
@@ -263,7 +263,7 @@ void Func_080d6970(void *object)
         if (t == 224) {
             M2C_FIELD(work, s32 *, 0x7780) = 0;
         }
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
         if (t == 31) {

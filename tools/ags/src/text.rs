@@ -19,7 +19,25 @@ pub struct ArchiveSpec {
     pub target: &'static str,
     pub language: &'static str,
     pub output: &'static str,
-    pub characters: Option<&'static str>,
+    pub charmap: Option<&'static str>,
+}
+
+impl ArchiveSpec {
+    /// The edition's alphabet from its font's character map: one character
+    /// per code from 0x20, U+FFFD for a slot that draws no character.
+    pub fn characters(&self) -> Option<String> {
+        self.charmap.map(|charmap| {
+            charmap
+                .lines()
+                .filter(|line| !line.starts_with('#') && !line.is_empty())
+                .map(|line| match line.split('\t').nth(1) {
+                    Some("SPACE") => ' ',
+                    Some("BOX") | None => '\u{fffd}',
+                    Some(text) => text.chars().next().unwrap_or('\u{fffd}'),
+                })
+                .collect()
+        })
+    }
 }
 
 /// Each edition's catalog and alphabet; the alphabets map font slots,
@@ -29,73 +47,77 @@ pub static ARCHIVES: [ArchiveSpec; 12] = [
         target: "tbs-ja",
         language: "ja",
         output: "games/THE BROKEN SEAL/TEXT/JA.PO",
-        characters: Some(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[¥]^_`abcdefghijklmnopqrstuvwxyz{|}~�������をぁぃぅぇぉゃゅょっ�あいうえおかきくけこさしすせそ�。｢｣、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚たちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん��神殿名前中武器長剣発動呪使水火風地毒見宝石町行炎船海氷道具島男女力土大上玉山気目入口岩天空防母北戦手出下品同死木像以宮村東南森西灯台寺分先遺跡立人方時様主者陸説明士世光知伝金売客商屋子×年兄川官錬日民父冬古代夜雪春「」草原黄文○"),
+        charmap: Some(include_str!(
+            "../../../games/COMMON/SRC/GRAPHICS/FONT/CHARMAP_JA.TSV"
+        )),
     },
     ArchiveSpec {
         target: "tbs-en",
         language: "en",
         output: "games/THE BROKEN SEAL/TEXT/EN.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tbs-de",
         language: "de",
         output: "games/THE BROKEN SEAL/TEXT/DE.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tbs-es",
         language: "es",
         output: "games/THE BROKEN SEAL/TEXT/ES.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tbs-fr",
         language: "fr",
         output: "games/THE BROKEN SEAL/TEXT/FR.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tbs-it",
         language: "it",
         output: "games/THE BROKEN SEAL/TEXT/IT.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tla-ja",
         language: "ja",
         output: "games/THE LOST AGE/TEXT/JA.PO",
-        characters: Some(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[¥]^_`abcdefghijklmnopqrstuvwxyz{|}~�������をぁぃぅぇぉゃゅょっ�あいうえおかきくけこさしすせそ�。｢｣、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚たちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん��神殿後名前黄金太陽開封印失時代力手武器長剣発動呪使水火風地毒見宝石中炎船海氷道具灯台運光様目下山男女土大上玉気左右入口岩天空防母行北戦出品同以死木像人先島陸小村寺高原町遺跡東西南古屋頂通信世界錬文明者年日士兄「」生知方売客商子主王父一官白茶×説分今立川伝森○…足夜買門冬雪月民宮春多草床正店星城外絵心闘体"),
+        charmap: Some(include_str!(
+            "../../../games/COMMON/SRC/GRAPHICS/FONT/CHARMAP_TLA_JA.TSV"
+        )),
     },
     ArchiveSpec {
         target: "tla-en",
         language: "en",
         output: "games/THE LOST AGE/TEXT/EN.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tla-de",
         language: "de",
         output: "games/THE LOST AGE/TEXT/DE.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tla-es",
         language: "es",
         output: "games/THE LOST AGE/TEXT/ES.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tla-fr",
         language: "fr",
         output: "games/THE LOST AGE/TEXT/FR.PO",
-        characters: None,
+        charmap: None,
     },
     ArchiveSpec {
         target: "tla-it",
         language: "it",
         output: "games/THE LOST AGE/TEXT/IT.PO",
-        characters: None,
+        charmap: None,
     },
 ];
 
@@ -432,7 +454,7 @@ fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
         } else {
             Some(text_symbols(
                 &entry.value,
-                spec.characters.as_deref(),
+                spec.characters().as_deref(),
                 symbol_count,
             )?)
         });
@@ -643,8 +665,8 @@ mod tests {
         ] {
             assert_eq!(
                 text_symbols(
-                    &symbols_text(&symbols, ARCHIVES[0].characters.as_deref()),
-                    ARCHIVES[0].characters.as_deref(),
+                    &symbols_text(&symbols, ARCHIVES[0].characters().as_deref()),
+                    ARCHIVES[0].characters().as_deref(),
                     512
                 )
                 .unwrap(),
@@ -659,8 +681,9 @@ mod tests {
             0x28, 0xc3, 0xde, 0xb0, 0xc0, 0x96, 0xde, 0x9a, 0xfc, 0xfa, 0xe3, 0x92, 0xef, 0x9d,
             0x29,
         ];
-        for spec in ARCHIVES.iter().filter(|spec| spec.characters.is_some()) {
-            let characters = spec.characters.as_deref();
+        for spec in ARCHIVES.iter().filter(|spec| spec.charmap.is_some()) {
+            let alphabet = spec.characters();
+            let characters = alphabet.as_deref();
             let text = symbols_text(&symbols, characters);
             assert_eq!(text, "(データがこわれています)");
             assert_eq!(text_symbols(&text, characters, 512).unwrap(), symbols);
@@ -676,11 +699,11 @@ mod tests {
             assert!(text_symbols("😀", characters, 512).is_err());
         }
         assert_eq!(
-            symbols_text(&[0x102], ARCHIVES[0].characters.as_deref()),
+            symbols_text(&[0x102], ARCHIVES[0].characters().as_deref()),
             "名"
         );
         assert_eq!(
-            symbols_text(&[0x102], ARCHIVES[6].characters.as_deref()),
+            symbols_text(&[0x102], ARCHIVES[6].characters().as_deref()),
             "後"
         );
     }
@@ -688,7 +711,8 @@ mod tests {
     #[test]
     fn every_japanese_glyph_including_unused_slots_round_trips() {
         for (spec, count) in [(&ARCHIVES[0], 370), (&ARCHIVES[6], 408)] {
-            let characters = spec.characters.as_deref();
+            let alphabet = spec.characters();
+            let characters = alphabet.as_deref();
             assert_eq!(characters.unwrap().chars().count(), count - 32);
             for symbol in 32..count as u16 {
                 let text = symbols_text(&[symbol], characters);
@@ -701,7 +725,7 @@ mod tests {
             }
         }
         for spec in ARCHIVES.iter() {
-            assert_eq!(spec.characters.is_some(), spec.language == "ja");
+            assert_eq!(spec.charmap.is_some(), spec.language == "ja");
         }
     }
 }

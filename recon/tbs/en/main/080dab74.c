@@ -120,8 +120,8 @@ s32 Random16(void);
 s32 Func_080041d8(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Func_080b50e8(s32 value);
-void Func_080049ac(void);
-void Func_08004cb4(s32 *position);
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(s32 *position);
 void Func_080f9010(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 s32 Math_Div(s32 numerator, s32 denominator);
@@ -198,8 +198,8 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
         view[0] = 0;
         view[1] = 0;
         view[2] = 0x2000000;
-        Func_080049ac();
-        Func_08004cb4(view);
+        Render_ResetTransformState();
+        SceneTransform_ApplyPosition(view);
 
         phase = frame - 36;
         if ((u32)phase <= 27 && (frame & 3) == 0)

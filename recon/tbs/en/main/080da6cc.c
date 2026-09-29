@@ -77,7 +77,7 @@ s32 Func_080041d8(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Func_080b50e8(s32 id);
 void Func_080b5028(s32 a, s32 b, s32 c, s32 d);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 s32 Func_080022fc(s32 a, s32 b);
@@ -178,7 +178,7 @@ void Func_080da6cc(void *object)
             }
 
             Func_080b5028(0, 0, 0, 100);
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing2);
 
             if (Data_080eea41[M2C_FIELD(

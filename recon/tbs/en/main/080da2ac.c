@@ -31,7 +31,7 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_080f9010(s32 id);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void Func_080b50e8(s32 id);
 void **GetBattleObjectSlotFar(s32 member_id);
@@ -139,7 +139,7 @@ void Func_080da2ac(void *object)
         b_arg = facing + 12;
 
         do {
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, b_arg);
 
             variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);

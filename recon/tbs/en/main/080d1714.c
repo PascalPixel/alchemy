@@ -166,11 +166,11 @@ s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002304(s32 numerator, s32 denominator);
 s32 Func_0800231c(s32 angle);
 s32 Trig_Sin(s32 angle);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *source, void *destination);
-void Func_08004c1c(s32 yaw);
-void Func_08004c6c(s32 pitch);
-void Func_08004cb4(struct Vector3 *position);
+void SceneTransform_ApplyYaw(s32 yaw);
+void SceneTransform_ApplyRoll(s32 pitch);
+void SceneTransform_ApplyPosition(struct Vector3 *position);
 void Func_080f9010(s32 cue);
 void EffectPosition_ApplyBaseAndYOffset(const void *source, struct Vector3 *output);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
@@ -298,7 +298,7 @@ void Func_080d1714(struct EffectArgument *argument)
                 frame = 395;
         }
 
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(view, (u8 *)view + 12);
 
         if (frame == 16)
@@ -531,8 +531,8 @@ void Func_080d1714(struct EffectArgument *argument)
                 shake.z = 0x1000000;
                 shake.x = 0;
                 shake.y = 0;
-                Func_080049ac();
-                Func_08004cb4(&shake);
+                Render_ResetTransformState();
+                SceneTransform_ApplyPosition(&shake);
 
                 alive = 0;
                 if (frame <= 329) {
@@ -683,8 +683,8 @@ void Func_080d1714(struct EffectArgument *argument)
                         runtime->points[index + 60].field_04 += 2;
 
                         if (frame < threshold + 8) {
-                            Func_08004c6c(-2048);
-                            Func_08004c1c(-4096);
+                            SceneTransform_ApplyRoll(-2048);
+                            SceneTransform_ApplyYaw(-4096);
 
                             angle = 0;
                             spark = &runtime->points[32];

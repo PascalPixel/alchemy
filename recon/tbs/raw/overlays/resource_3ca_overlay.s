@@ -725,6 +725,711 @@ Func_020011c4:
 	.4byte 0x02009af8
 	.2byte 0x4000
 	.2byte 0x8000
+	.section .text.x02008430,"ax",%progbits
+	.align 2
+	.global Scene_RunExtendedPresentationSequence
+	.thumb_func
+Scene_RunExtendedPresentationSequence:
+	push	{r5, r6, lr}
+	sub	sp, #8
+	bl	0x020093bc
+	movs	r0, #1
+	movs	r1, #1
+	movs	r2, #1
+	negs	r0, r0
+	negs	r1, r1
+	negs	r2, r2
+	movs	r3, #0
+	bl	0x0200944c
+	movs	r3, #18
+	movs	r2, #12
+	str	r3, [sp, #0]
+	str	r2, [sp, #4]
+	movs	r1, #0
+	movs	r2, #3
+	movs	r3, #1
+	movs	r0, #18
+	bl	0x0200938c
+	ldr	r0, [pc, #936]
+	bl	0x0200941c
+	movs	r1, #10
+	movs	r3, #192
+	movs	r0, #1
+	negs	r1, r1
+	movs	r2, #16
+	lsls	r3, r3, #8
+	bl	0x02009484
+	movs	r3, #192
+	movs	r0, #3
+	movs	r1, #0
+	movs	r2, #24
+	lsls	r3, r3, #8
+	bl	0x02009484
+	movs	r3, #192
+	lsls	r3, r3, #8
+	movs	r2, #16
+	movs	r1, #10
+	movs	r0, #2
+	bl	0x02009484
+	movs	r0, #1
+	bl	0x020093fc
+	movs	r0, #50
+	bl	0x020093b4
+	movs	r1, #2
+	movs	r0, #1
+	bl	0x02009414
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #1
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #3
+	movs	r0, #2
+	bl	0x0200940c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #2
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #128
+	movs	r2, #0
+	lsls	r1, r1, #7
+	movs	r0, #3
+	bl	0x02009434
+	movs	r0, #40
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #3
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #128
+	movs	r0, #0
+	lsls	r1, r1, #7
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #128
+	movs	r0, #1
+	lsls	r1, r1, #7
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #128
+	movs	r2, #0
+	lsls	r1, r1, #7
+	movs	r0, #2
+	bl	0x02009434
+	movs	r0, #60
+	bl	0x020093b4
+	movs	r0, #0
+	movs	r1, #3
+	bl	0x02009404
+	movs	r0, #1
+	movs	r1, #3
+	bl	0x02009404
+	movs	r1, #3
+	movs	r0, #2
+	bl	0x0200940c
+	movs	r0, #60
+	bl	0x020093b4
+	movs	r1, #2
+	movs	r0, #1
+	bl	0x02009414
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #224
+	lsls	r1, r1, #8
+	movs	r2, #0
+	movs	r0, #1
+	bl	0x02009434
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #1
+	bl	0x02009424
+	movs	r0, #0
+	movs	r1, #0
+	bl	0x020093cc
+	cmp	r0, #0
+	bne	.L_02000430_16c
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #129
+	movs	r2, #50
+	movs	r0, #1
+	lsls	r1, r1, #1
+	bl	0x0200943c
+	movs	r0, #1
+	movs	r1, #0
+	bl	0x0200942c
+	ldr	r3, [pc, #640]
+	ldr	r2, [r3, #0]
+	movs	r3, #236
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r3, #1
+	strh	r3, [r2, #0]
+	b	.L_02000430_196
+.L_02000430_16c:
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #129
+	movs	r0, #1
+	lsls	r1, r1, #1
+	movs	r2, #50
+	bl	0x0200943c
+	ldr	r3, [pc, #604]
+	ldr	r2, [r3, #0]
+	movs	r3, #236
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r3, #1
+	strh	r3, [r2, #0]
+	movs	r0, #1
+	movs	r1, #0
+	bl	0x0200942c
+.L_02000430_196:
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #128
+	lsls	r1, r1, #8
+	movs	r2, #0
+	movs	r0, #2
+	bl	0x02009434
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r2, #50
+	movs	r0, #2
+	ldr	r1, [pc, #556]
+	bl	0x0200943c
+	movs	r1, #0
+	movs	r0, #2
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r2, #0
+	movs	r0, #1
+	bl	0x02009434
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r2, #60
+	movs	r0, #1
+	ldr	r1, [pc, #516]
+	bl	0x0200943c
+	movs	r1, #2
+	movs	r0, #3
+	bl	0x02009414
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #160
+	movs	r2, #0
+	lsls	r1, r1, #8
+	movs	r0, #3
+	bl	0x02009434
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #3
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #128
+	movs	r2, #50
+	movs	r0, #1
+	lsls	r1, r1, #1
+	bl	0x0200943c
+	movs	r1, #0
+	movs	r0, #1
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #2
+	movs	r0, #2
+	bl	0x02009414
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #2
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #192
+	movs	r2, #0
+	lsls	r1, r1, #8
+	movs	r0, #3
+	bl	0x02009434
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #4
+	movs	r0, #3
+	bl	0x0200940c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #3
+	bl	0x02009424
+	movs	r0, #0
+	movs	r1, #0
+	bl	0x020093cc
+	cmp	r0, #0
+	bne	.L_02000430_2b8
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #2
+	movs	r0, #1
+	bl	0x02009414
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #224
+	movs	r2, #0
+	lsls	r1, r1, #8
+	movs	r0, #1
+	bl	0x02009434
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r0, #1
+	movs	r1, #0
+	bl	0x0200942c
+	ldr	r3, [pc, #308]
+	ldr	r2, [r3, #0]
+	movs	r3, #236
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r3, #1
+	strh	r3, [r2, #0]
+	b	.L_02000430_2f6
+.L_02000430_2b8:
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #2
+	movs	r0, #1
+	bl	0x02009414
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #224
+	lsls	r1, r1, #8
+	movs	r2, #0
+	movs	r0, #1
+	bl	0x02009434
+	movs	r0, #20
+	bl	0x020093b4
+	ldr	r3, [pc, #252]
+	ldr	r2, [r3, #0]
+	movs	r3, #236
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r3, #1
+	strh	r3, [r2, #0]
+	movs	r0, #1
+	movs	r1, #0
+	bl	0x0200942c
+.L_02000430_2f6:
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #129
+	lsls	r1, r1, #1
+	movs	r2, #50
+	movs	r0, #0
+	bl	0x0200943c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #160
+	movs	r2, #0
+	lsls	r1, r1, #8
+	movs	r0, #2
+	bl	0x02009434
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #3
+	movs	r0, #2
+	bl	0x0200940c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #2
+	bl	0x0200942c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #1
+	bl	0x0200942c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #3
+	movs	r0, #0
+	bl	0x0200940c
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #3
+	movs	r0, #3
+	bl	0x0200940c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #3
+	bl	0x02009424
+	movs	r1, #224
+	movs	r0, #1
+	lsls	r1, r1, #8
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #192
+	movs	r0, #3
+	lsls	r1, r1, #8
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #160
+	lsls	r1, r1, #8
+	movs	r0, #2
+	movs	r2, #0
+	bl	0x02009434
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r0, #0
+	movs	r1, #0
+	bl	0x020093cc
+	cmp	r0, #0
+	bne	.L_02000430_3e4
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #3
+	movs	r0, #3
+	bl	0x0200940c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r0, #3
+	movs	r1, #0
+	bl	0x0200942c
+	ldr	r3, [pc, #20]
+	ldr	r2, [r3, #0]
+	movs	r3, #236
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r3, #1
+	strh	r3, [r2, #0]
+	b	.L_02000430_410
+	.4byte 0x000028fe
+	.4byte 0x03001ebc
+	.4byte 0x00000101
+.L_02000430_3e4:
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #3
+	movs	r0, #3
+	bl	0x0200940c
+	movs	r0, #20
+	bl	0x020093b4
+	ldr	r3, [pc, #724]
+	ldr	r2, [r3, #0]
+	movs	r3, #236
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r3, #1
+	strh	r3, [r2, #0]
+	movs	r0, #3
+	movs	r1, #0
+	bl	0x0200942c
+.L_02000430_410:
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #192
+	movs	r2, #0
+	lsls	r1, r1, #8
+	movs	r0, #1
+	bl	0x02009434
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #1
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #192
+	lsls	r1, r1, #8
+	movs	r2, #0
+	movs	r0, #0
+	bl	0x02009434
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #192
+	movs	r2, #0
+	lsls	r1, r1, #8
+	movs	r0, #2
+	bl	0x02009434
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #3
+	movs	r0, #2
+	bl	0x0200940c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #2
+	bl	0x0200942c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r1, #3
+	movs	r0, #3
+	bl	0x0200940c
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #0
+	movs	r0, #3
+	bl	0x0200942c
+	movs	r0, #17
+	bl	0x0200949c
+	movs	r0, #10
+	bl	0x020093b4
+	movs	r0, #0
+	movs	r1, #3
+	bl	0x02009404
+	movs	r0, #1
+	movs	r1, #3
+	bl	0x02009404
+	movs	r1, #3
+	movs	r0, #2
+	bl	0x0200940c
+	movs	r0, #40
+	bl	0x020093b4
+	movs	r0, #0
+	ldr	r1, [pc, #532]
+	ldr	r2, [pc, #532]
+	bl	0x020093dc
+	movs	r0, #1
+	ldr	r1, [pc, #520]
+	ldr	r2, [pc, #524]
+	bl	0x020093dc
+	movs	r0, #2
+	ldr	r1, [pc, #512]
+	ldr	r2, [pc, #512]
+	bl	0x020093dc
+	ldr	r2, [pc, #508]
+	movs	r0, #3
+	ldr	r1, [pc, #500]
+	bl	0x020093dc
+	ldr	r1, [pc, #500]
+	movs	r0, #0
+	bl	0x020093e4
+	movs	r0, #50
+	bl	0x020093b4
+	movs	r0, #132
+	movs	r1, #1
+	movs	r2, #200
+	movs	r3, #1
+	lsls	r2, r2, #16
+	lsls	r0, r0, #17
+	negs	r1, r1
+	bl	0x0200944c
+	ldr	r1, [pc, #472]
+	movs	r0, #1
+	bl	0x020093e4
+	movs	r0, #50
+	bl	0x020093b4
+	ldr	r1, [pc, #464]
+	movs	r0, #2
+	bl	0x020093e4
+	movs	r0, #2
+	bl	0x020093ec
+	movs	r1, #128
+	movs	r0, #0
+	lsls	r1, r1, #7
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #128
+	movs	r0, #1
+	lsls	r1, r1, #7
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #128
+	movs	r0, #2
+	lsls	r1, r1, #7
+	movs	r2, #0
+	bl	0x02009434
+	movs	r2, #32
+	movs	r1, #0
+	negs	r2, r2
+	movs	r0, #3
+	bl	0x0200948c
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r1, #128
+	lsls	r1, r1, #7
+	movs	r2, #0
+	movs	r0, #3
+	bl	0x02009434
+	movs	r0, #60
+	bl	0x020093b4
+	movs	r1, #128
+	movs	r2, #0
+	lsls	r1, r1, #8
+	movs	r0, #3
+	bl	0x02009434
+	movs	r0, #20
+	bl	0x020093b4
+	ldr	r1, [pc, #364]
+	movs	r0, #3
+	bl	0x020093e4
+	movs	r0, #3
+	bl	0x020093ec
+	movs	r1, #192
+	lsls	r1, r1, #8
+	movs	r2, #0
+	movs	r0, #3
+	bl	0x02009434
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r0, #216
+	movs	r1, #1
+	movs	r2, #168
+	movs	r3, #1
+	negs	r1, r1
+	lsls	r2, r2, #16
+	lsls	r0, r0, #16
+	bl	0x0200944c
+	bl	0x02009454
+	movs	r0, #20
+	bl	0x020093b4
+	movs	r1, #128
+	movs	r0, #0
+	lsls	r1, r1, #8
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #128
+	movs	r0, #1
+	lsls	r1, r1, #8
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #128
+	movs	r0, #2
+	lsls	r1, r1, #8
+	movs	r2, #0
+	bl	0x02009434
+	movs	r1, #128
+	movs	r2, #0
+	lsls	r1, r1, #8
+	movs	r0, #3
+	bl	0x02009434
+	movs	r0, #40
+	bl	0x020093b4
+	movs	r0, #0
+	movs	r1, #3
+	bl	0x02009404
+	movs	r0, #1
+	movs	r1, #3
+	bl	0x02009404
+	movs	r0, #3
+	movs	r1, #3
+	bl	0x02009404
+	movs	r1, #3
+	movs	r0, #2
+	bl	0x0200940c
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r0, #67
+	bl	0x0200949c
+	movs	r0, #240
+	bl	0x020094a4
+	bl	0x020092ac
+	movs	r0, #80
+	bl	0x020093b4
+	ldr	r6, [pc, #192]
+	movs	r0, #8
+	ldr	r5, [r6, #0]
+	bl	0x020093d4
+	movs	r3, #131
+	str	r3, [r0, #52]
+	movs	r3, #128
+	lsls	r3, r3, #10
+	str	r3, [r0, #48]
+	movs	r3, #142
+	lsls	r3, r3, #1
+	adds	r5, r5, r3
+	ldr	r3, [pc, #172]
+	movs	r0, #8
+	str	r3, [r5, #0]
+	movs	r1, #60
+	movs	r2, #0
+	bl	0x0200948c
+	ldr	r3, [pc, #160]
+	movs	r2, #0
+	str	r3, [r5, #0]
+	movs	r1, #60
+	movs	r0, #8
+	bl	0x0200948c
+	movs	r0, #80
+	bl	0x020093b4
+	movs	r0, #100
+	bl	0x020093b4
+	ldr	r0, [pc, #140]
+	ldr	r1, [pc, #140]
+	bl	0x02009444
+	movs	r0, #202
+	movs	r1, #1
+	movs	r2, #168
+	negs	r1, r1
+	lsls	r2, r2, #16
+	movs	r3, #1
+	lsls	r0, r0, #18
+	bl	0x0200944c
+	movs	r0, #150
+	lsls	r0, r0, #1
+	bl	0x020093b4
+	ldr	r1, [r6, #76]
+	movs	r3, #224
+	lsls	r3, r3, #1
+	adds	r2, r1, r3
+	subs	r3, #192
+	str	r3, [r2, #0]
+	movs	r2, #0
+	movs	r3, #160
+	lsls	r3, r3, #19
+	strh	r2, [r3, #0]
+	movs	r3, #228
+	lsls	r3, r3, #1
+	adds	r2, r1, r3
+	movs	r3, #96
+	str	r3, [r2, #0]
+	bl	0x0200946c
+	bl	0x02009474
+	movs	r0, #30
+	bl	0x020093b4
+	movs	r0, #141
+	lsls	r0, r0, #1
+	bl	0x020093ac
+	ldr	r0, [pc, #60]
+	movs	r1, #9
+	bl	0x0200945c
+	add	sp, #8
+	pop	{r5, r6}
+	pop	{r0}
+	bx	r0
+	.4byte 0x03001ebc
+	.4byte 0x00013333
+	.4byte 0x00009999
+	.4byte 0x02009820
+	.4byte 0x020098e0
+	.4byte 0x0200998c
+	.4byte 0x02009a4c
+	.4byte 0x03001e70
+	.4byte 0xffffd000
+	.4byte 0xffffa000
+	.4byte 0x00023333
+	.4byte 0x0000028f
+	.4byte 0x00000000
 	.section .rodata.part1,"a",%progbits
 	.global BabiFune_PaletteFrames
 BabiFune_PaletteFrames:

@@ -14,7 +14,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/COUNTDOWN.o"(.text)
         "*/resource_3ca_overlay.o"(.text.x02008194)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/STORE_FIELDS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/EXTENDED_PRESENTATION.o"(.text)
+        "*/resource_3ca_overlay.o"(.text.x02008430)
         "*/resource_3ca_overlay.o"(.text.x02008b34)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SETUP_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/HBLANK_SCROLL.o"(.text)

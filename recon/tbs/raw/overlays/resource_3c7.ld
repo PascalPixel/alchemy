@@ -10,6 +10,7 @@ SECTIONS
         "*/resource_3c7_overlay.o"(.text.x0200804c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/EXITS.o"(.text)
         "*/resource_3c7_overlay.o"(.text.x02008084)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/ITEM_SHOP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/FACING_BRANCH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/ALTERNATE_FACING_BRANCH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/FACING_ACTION.o"(.text)
@@ -18,7 +19,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/SEQUENCE.o"(.text)
         "*/resource_3c7_overlay.o"(.text.x020084b0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/SCRIPT.o"(.text)
-        "*/resource_3c7_overlay.o"(.text.x02008eec)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/TELL_OTHERS.o"(.text)
+        "*/resource_3c7_overlay.o"(.text.x0200904c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/IMPORT.o"(.text)
         "*/resource_3c7_overlay.o"(.rodata)
     }

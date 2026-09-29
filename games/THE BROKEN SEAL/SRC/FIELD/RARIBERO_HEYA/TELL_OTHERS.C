@@ -1,25 +1,13 @@
-/* Draft of resource_3c7 0x02008eec (FieldScene_RunSecondaryScript): it
- * matches the ROM byte for byte now that the message it loads from the
- * literal pool has a catalogue name (MsgRariberoTellOthers). The listing
- * keeps these rows until the draft is adopted. */
-#include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/HEYA.H"
+#include "HEYA.H"
 extern u8 MsgRariberoTellOthers[];
 
 /*
- * Cutscene script at 0x02000eec.  The owner runs to 0x0200103a and also owns
- * the alignment halfword at 0x0200103e and the literal pool at
- * 0x02001040-0x0200104b; the body is straight-line, with no branch.  The
- * script is a sequence of "act on channel N, then wait k frames" beats.  The
- * channel ids and beat constants are transcribed literally: what each channel
- * drives is not established, and the middle argument 0x105 is unidentified.
+ * "But tell me, what of the others?" Actor 11 asks, and the party and actor
+ * 12 answer in turn, each beat an action on one actor and then a wait; the
+ * last line stays open for the question that follows.
  */
 void FieldScene_RunSecondaryScript(void)
 {
-    void Event_Wait(s32);
-    void Event_Wait(s32);
-    void Event_Wait(s32);
-    void Event_Wait(s32);
-
     Event_SetMessage((s32)MsgRariberoTellOthers);
     Event_Wait(20);
 

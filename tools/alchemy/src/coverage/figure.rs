@@ -82,7 +82,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         canvas.mark(key_x, 6, key, ink, SHADOW);
         key_x -= 12;
     }
-    let stricter = "Credit corrections";
+    let stricter = "Overhauls";
     key_x -= letters.width(stricter) as i32;
     canvas.text(letters, key_x, 6, stricter, INK, Some(SHADOW));
     canvas.fill(key_x - 14, 9, 10, 10, BAND);

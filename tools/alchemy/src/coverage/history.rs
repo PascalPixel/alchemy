@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 pub(crate) const PATH: &str = "recon/tbs/metrics/history.tsv";
-const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttla_done\ttla_executable\ttla_percent\tmodels\tcredit_correction";
+const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttla_done\ttla_executable\ttla_percent\tmodels\toverhaul";
 
 /// One game's value on one day: bytes when they were recorded, else the
 /// percentage published at the time.

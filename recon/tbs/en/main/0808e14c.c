@@ -5,7 +5,8 @@
  * check and type. Remaining: loop-body register assignment (the facing
  * nibble and check flag in r7/r5 where the reference has r5/r7), and the
  * reference reads the facing halfword a second time as ldrh where this
- * reads it once; unsigned reads of either field score worse (945, 1990). */
+ * reads it once; unsigned reads of either field score worse (945, 1990).
+ * A second 8-minute run from 650 with another seed found nothing lower. */
 #include "TYPES.H"
 #include "OBJECT_LOOKUP.H"
 

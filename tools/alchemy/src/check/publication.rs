@@ -1,7 +1,7 @@
 //! Fail-closed publication checks for staged changes, outgoing history and
 //! whole tracked trees. Only what pret would commit passes: editable build
 //! inputs, source and tooling, never presentation material made from the game.
-use psynergy::assets::image::{indexed_png, PNG_SIGNATURE};
+use psynergy::assets::image::{indexed_bitmap_png, PNG_SIGNATURE};
 use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
 use psynergy::assets::wav::wav_pcm8;
 use std::collections::BTreeSet;
@@ -417,14 +417,18 @@ fn check_documents(root: &Path) -> Result<(), String> {
         ))
     }
 }
-/// An `.incbin` directive, except three forms that commit no bytes. In
+/// An `.incbin` directive, except four forms that commit no bytes. In
 /// scaffolding: pret's base-ROM range `.incbin "baserom.gba", OFFSET, SIZE`,
 /// which reads the builder's own ROM as pokeemerald's early data files did,
 /// and a code overlay the build links from its listing and compresses,
 /// `.incbin "overlays/resource_XXX.lz"`. In a game's sound data sources: a
 /// file the build makes from the like-named editable input beside them,
 /// `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"` from `WAVE_00.PCM8.WAV`, as
-/// pret's data files read the `.bin` files wav2agb makes.
+/// pret's data files read the `.bin` files wav2agb makes. In a game's asset
+/// sources under `SRC`: a file the build makes from the like-named indexed
+/// PNG, named by its recipe, `.incbin "GRAPHICS/FX/STAR.bitmap.lz"` from
+/// `SRC/GRAPHICS/FX/STAR.PNG`, as pret's data files read the `.4bpp.lz`
+/// files gbagfx makes.
 fn incbin(path: &str, data: &[u8]) -> bool {
     let base_rom = regex::Regex::new(
         r#"^\s*\.incbin\s+"baserom\.gba"\s*,\s*0x[0-9a-f]+\s*,\s*0x[0-9a-f]+\s*$"#,
@@ -435,15 +439,25 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     let built_sound =
         regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
             .expect("built sound pattern");
+    let built_graphics = regex::Regex::new(
+        r#"^\s*\.incbin\s+"GRAPHICS(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp)(?:\.(?:lz|mtf))?"\s*$"#,
+    )
+    .expect("built graphics pattern");
     let scaffolding = path.starts_with("recon/");
+    let parts = path.split('/').collect::<Vec<_>>();
     let sound_source = matches!(
-        path.split('/').collect::<Vec<_>>().as_slice(),
+        parts.as_slice(),
         ["games", game, "SOUND", .., _] if *game != "COMMON"
+    );
+    let asset_source = matches!(
+        parts.as_slice(),
+        ["games", game, "SRC", .., _] if *game != "COMMON"
     );
     let text = String::from_utf8_lossy(data);
     text.split(['\n', '\r'])
         .filter(|line| !(scaffolding && (base_rom.is_match(line) || overlay.is_match(line))))
         .filter(|line| !(sound_source && built_sound.is_match(line)))
+        .filter(|line| !(asset_source && built_graphics.is_match(line)))
         .any(|line| {
             let trimmed =
                 line.trim_start_matches(|ch: char| ch.is_whitespace() || ch == '\u{feff}');
@@ -564,7 +578,8 @@ fn inflate_exact(stream: &[u8], size: usize) -> Option<Vec<u8>> {
 /// scanlines, and pixels the asset build reads.
 fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
     exact_indexed_stream(data)?;
-    let image = indexed_png(data).ok()?;
+    // A tile sheet or a linear bitmap: bitmaps may be any size.
+    let image = indexed_bitmap_png(data).ok()?;
     let depth = data[24];
     Some(
         image
@@ -3505,6 +3520,37 @@ mod tests {
             super::publication_data_reason("games/THE BROKEN SEAL/SOUND/SAMPLES.S", sample, None),
             None
         );
+    }
+
+    #[test]
+    fn asset_sources_may_incbin_only_the_graphics_files_the_build_makes() {
+        let sheet = b"BattleFx_Star:\n\t.incbin \"GRAPHICS/FX/STAR.gbapal\"\n\t.incbin \"GRAPHICS/FX/STAR.bitmap.lz\"\n";
+        let tiles =
+            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n";
+        for path in [
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S",
+            "games/THE LOST AGE/SRC/BATTLE/EFFECT/STAR.S",
+        ] {
+            assert!(!super::incbin(path, sheet), "{path}");
+            assert!(!super::incbin(path, tiles), "{path}");
+        }
+        // Only a game's sources under SRC, and only recipes under GRAPHICS.
+        let star = "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S";
+        for (path, line) in [
+            ("recon/tbs/unidentified.s", sheet.as_slice()),
+            ("games/COMMON/SRC/GRAPHICS/STAR.S", sheet),
+            ("games/THE BROKEN SEAL/SOUND/STAR.S", sheet),
+            (star, b".incbin \"GRAPHICS/FX/STAR.PNG\"\n"),
+            (star, b".incbin \"GRAPHICS/FX/STAR.bin\"\n"),
+            (star, b".incbin \"GRAPHICS/FX/STAR.4bpp.zip\"\n"),
+            (star, b".incbin \"GRAPHICS/FX/star.4bpp\"\n"),
+            (star, b".incbin \"GRAPHICS/../../roms/tbs-en.4bpp\"\n"),
+            (star, b".incbin \"GRAPHICS/FX/STAR.4bpp\", 0, 16\n"),
+            (star, b".incbin \"baserom.gba\", 0x003cd090, 0x00000488\n"),
+        ] {
+            assert!(super::incbin(path, line), "{path}");
+        }
+        assert_eq!(super::publication_data_reason(star, sheet, None), None);
     }
 
     use super::*;

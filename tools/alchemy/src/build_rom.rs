@@ -2,12 +2,12 @@
 //! pret links `ld_script.ld`. Every symbol resolves from its definition; the
 //! image is written for `sha1sum -c rom.sha1` and nothing is copied from a
 //! reference ROM except what the script's scaffolding reads explicitly.
-use crate::assets::lz::{compress_tagged, LzMachine};
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{
     assembly_command, compiler_assembly_command, prefer_installed_binutils,
 };
 use crate::targets::{decomp_target, DecompTarget};
+use ags::lz::{compress_tagged, LzMachine};
 use psynergy::process::run as command;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
@@ -107,6 +107,7 @@ pub(crate) fn link(
     base_rom(root, target, &output)?;
     for source in &sources {
         build_sound_files(root, target, source, &output)?;
+        build_graphics_files(root, target, source, &output)?;
     }
     crate::build_text::build(root, target, &output)?;
     // Sources that read built overlay streams wait for the overlays, and the
@@ -238,18 +239,26 @@ fn symbols_pass(
             objects.push(output.join("obj").join(source).with_extension("o"));
         }
     }
+    // The stubs define nothing, so the labels of the streamed sources, such as
+    // the directory rows naming each overlay, stay unresolved here; each is a
+    // word whose size does not depend on its value, and the final link
+    // resolves them all.
     let elf = pass.join(format!("{name}.elf"));
-    command(&link_command(root, script, text, &objects, &elf), root)?;
+    let mut arguments = link_command(root, script, text, &objects, &elf);
+    arguments.insert(1, "--unresolved-symbols=ignore-all".to_owned());
+    command(&arguments, root)?;
     Ok(elf)
 }
 
-/// Every symbol the overlays could see keeps its address in the final image.
+/// Every global symbol, the only kind the overlays can see, keeps its
+/// address in the final image.
 fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
     let table = |path: &Path| -> Result<std::collections::BTreeMap<String, String>, String> {
         let text = command(
             &[
                 "arm-none-eabi-nm",
                 "--defined-only",
+                "--extern-only",
                 &path.to_string_lossy(),
             ],
             root,
@@ -620,7 +629,7 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
 /// reusing the object while the converted text and command are unchanged.
 fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), String> {
     let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
-    let text = crate::assets::sound::sequence_assembly(&midi)?;
+    let text = ags::sound::sequence_assembly(&midi)?;
     let assembly = object.with_extension("s");
     let step = assembly_command(&assembly.to_string_lossy(), &object.to_string_lossy());
     let mut hasher = Sha256::new();
@@ -681,7 +690,7 @@ fn build_sound_files(
             ));
         };
         let bytes = fs::read(root.join(input)).map_err(|error| error.to_string())?;
-        let encoded = crate::assets::sound::build_sound_file(&input.to_string_lossy(), &bytes)
+        let encoded = ags::sound::build_sound_file(&input.to_string_lossy(), &bytes)
             .map_err(|error| format!("{}: {error}", input.display()))?;
         let path = output.join(&built);
         if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
@@ -694,11 +703,56 @@ fn build_sound_files(
     Ok(())
 }
 
-/// The compressor Camelot's resource packer ran on every code overlay, as
-/// the streams in both games show: the general ring's window, read-ahead and
-/// reach, and the palette ring's read-ahead. Each overlay takes the smaller
-/// of the two encodings, the palette one on ties.
-const OVERLAY_MACHINE: LzMachine = LzMachine::new(4123, 485, 4126, 272);
+/// The compressor Camelot's resource packer ran on every code overlay. Each
+/// overlay takes the smaller of the two encodings, the palette one on ties.
+const OVERLAY_MACHINE: LzMachine = ags::resource::PACKER;
+
+/// The resource files an assembly source reads with
+/// `.incbin "GRAPHICS/..."`, each named by its recipe.
+fn graphics_files(root: &Path, source: &Path) -> Vec<String> {
+    let Ok(text) = fs::read_to_string(root.join(source)) else {
+        return Vec::new();
+    };
+    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"(GRAPHICS/[A-Za-z0-9_./]+)""#)
+        .expect("static pattern");
+    pattern
+        .captures_iter(&text)
+        .map(|capture| capture[1].to_owned())
+        .collect()
+}
+
+/// Write every resource file `source` reads from the indexed PNG its name
+/// gives under the game's `SRC`, as pret's graphics rules build what its data sources read,
+/// rewriting a file only when its bytes change.
+fn build_graphics_files(
+    root: &Path,
+    target: DecompTarget,
+    source: &Path,
+    output: &Path,
+) -> Result<(), String> {
+    for built in graphics_files(root, source) {
+        if built.split('/').any(|part| part.is_empty() || part == "..") {
+            return Err(format!(
+                "{}: {built} is not a resource file path",
+                source.display()
+            ));
+        }
+        let image = Path::new(target.game_dir())
+            .join("SRC")
+            .join(ags::resource::image_name(&built)?);
+        let png = fs::read(root.join(&image))
+            .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
+        let encoded = ags::resource::build_file(&built, &png)?;
+        let path = output.join(&built);
+        if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
+            continue;
+        }
+        fs::create_dir_all(path.parent().expect("resource file directory"))
+            .map_err(|error| error.to_string())?;
+        fs::write(&path, encoded).map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
 
 /// The code overlays an assembly source reads with
 /// `.incbin "overlays/resource_XXX.lz"`, each linked from its listing beside

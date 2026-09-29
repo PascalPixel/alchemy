@@ -1,3 +1,6 @@
+/* 2026-09-29: five minutes of permutation reached 7394 from 16667 through
+ * 71 rewrites; not kept, since the owner (4888 bytes) is far from exact and
+ * its messages 0xb98 and 0xc40 are still Value_ symbols. */
 /* 2026-09-29: the address macros for the menu, window and key cells are now
  * extern declarations of the build's names (gMenuWork, gWindowWork,
  * gKeysHeld, gKeysRepeat, gKeyState, Data_03001af8) and callees are

@@ -128,9 +128,9 @@ Resource_DirectoryTable:
 	resource , Battle_SerpentStarsBBackdrop
 	resource , Battle_SunbeamCloudsBackdrop
 	resource , Battle_RedHazeBackdrop
-	resource , Resource_Data073
+	resource , Battle_DesertBackdrop
 	resource , Resource_Data074
-	resource , Resource_Data075
+	resource , Battle_AerialViewBackdrop
 	resource , Battle_SunsetBackdrop
 	resource , Battle_StarfieldFlareBackdrop
 	resource , Battle_EarthHorizonBackdrop
@@ -143,7 +143,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data07F
 	resource , Resource_Data080
 	resource , Resource_Data081
-	resource , Resource_Data082
+	resource , Slots_Icons
 	resource , Resource_Data083
 	resource , Resource_Data084
 	resource , Resource_Data085
@@ -243,7 +243,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_SheepCardSheet
 	resource , BattleFx_SkeletonCardSheet
 	resource , BattleFx_SwordCardSheet
-	resource , BattleFx_BoulderSheet
+	resource , BattleFx_BoulderPicture
 	resource , BattleFx_BladeSheet
 	resource , BattleFx_ClawSlashSheet
 	resource , Resource_Data0E9
@@ -283,7 +283,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_GreyCrescentSheet
 	resource , BattleFx_StarCrescentSheet
 	resource , BattleFx_RevealMaskA
-	resource , Resource_Data10E
+	resource , BattleFx_RevealMaskB
 	resource , BattleFx_RevealMaskC
 	resource , BattleFx_RevealMaskD
 	resource , BattleFx_RevealMaskE
@@ -298,13 +298,13 @@ Resource_DirectoryTable:
 	resource , Resource_Data11A
 	resource , BattleFx_SpiderWebSheet
 	resource , BattleFx_VioletLightningSheetA
-	resource , Resource_Data11D
+	resource , BattleFx_YellowSparkSheet
 	resource , Resource_Data11E
 	resource , BattleFx_ShurikenSheet
 	resource , Resource_Data120
 	resource , Resource_Data121
 	resource , BattleFx_VioletPaletteB
-	resource , Resource_Data123
+	resource , BattleFx_FireSwirlSheet
 	resource , BattleFx_VioletLightningSheetB
 	resource , BattleFx_FireBurstSheet
 	resource , BattleFx_BlueCrescentSheet
@@ -312,12 +312,12 @@ Resource_DirectoryTable:
 	resource , BattleFx_VioletMoteSheet
 	resource , BattleFx_FireballSheet
 	resource , Resource_Data12A
-	resource , Resource_Data12B
+	resource , BattleFx_SlashSheet
 	resource , BattleFx_WaveSheet
 	resource , Resource_Data12D
 	resource , BattleFx_PinkStarSheet
 	resource , Resource_Data12F
-	resource , Resource_Data130
+	resource , BattleFx_BlueFlameSheet
 	resource , BattleFx_ExplosionSheet
 	resource , BattleFx_MagentaSwirlSheet
 	resource , BattleFx_MagentaTailSheet
@@ -329,24 +329,24 @@ Resource_DirectoryTable:
 	resource , BattleFx_CrossedDaggersSheet
 	resource , BattleFx_RuneSheet
 	resource , BattleFx_FlameColumnSheet
-	resource , Resource_Data13C
+	resource , BattleFx_EarthWallSheet
 	resource , BattleFx_OrangePaletteA
 	resource , BattleFx_FlashBurstSheet
-	resource , Resource_Data13F
+	resource , BattleFx_ThornSheet
 	resource , BattleFx_CometSheetA
 	resource , BattleFx_CometSheetB
 	resource , BattleFx_CometSheetC
 	resource , Resource_Data143
-	resource , Resource_Data144
-	resource , Resource_Data145
+	resource , BattleFx_GreenPillarSheet
+	resource , BattleFx_VineSheet
 	resource , Resource_Data146
 	resource , BattleFx_RedPaletteB
 	resource , BattleFx_OrangePaletteB
 	resource , BattleFx_EffectPalette02
 	resource , BattleFx_EffectPalette03
-	resource , Resource_Data14B
+	resource , BattleFx_VioletCometSheet
 	resource , BattleFx_FlameballSheet
-	resource , Resource_Data14D
+	resource , BattleFx_BoulderSheet
 	resource , BattleFx_RockWallSheet
 	resource , Resource_Data14F
 	resource , BattleFx_MarsDjinnSheet
@@ -379,8 +379,8 @@ Resource_DirectoryTable:
 	resource , BattleFx_GreenVineSheet
 	resource , Resource_Data16C
 	resource , BattleFx_SkullSheet
-	resource , Resource_Data16E
-	resource , Resource_Data16F
+	resource , BattleFx_HeartSheet
+	resource , BattleFx_CounterRevealSheet
 	resource , Resource_Data170
 	resource , Resource_Data171
 	resource , BattleFx_RedCrescentSheetB

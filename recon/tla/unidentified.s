@@ -285,16 +285,10 @@ Resource_Data026:
 	.incbin "baserom.gba", 0x007f284e, 0x00000002
 	.section .unidentified.087f9302,"a"
 	.incbin "baserom.gba", 0x007f9302, 0x00000002
-	.section .unidentified.087fb824,"a"
-	.global Resource_Data073
-Resource_Data073:
-	.incbin "baserom.gba", 0x007fb824, 0x000033fc
+	.section .unidentified.087fec20,"a"
 	.global Resource_Data074
 Resource_Data074:
 	.incbin "baserom.gba", 0x007fec20, 0x000039ac
-	.global Resource_Data075
-Resource_Data075:
-	.incbin "baserom.gba", 0x008025cc, 0x00005180
 	.section .unidentified.08809fee,"a"
 	.incbin "baserom.gba", 0x00809fee, 0x00000002
 	.section .unidentified.088101c0,"a"
@@ -325,9 +319,7 @@ Resource_Data080:
 	.global Resource_Data081
 Resource_Data081:
 	.incbin "baserom.gba", 0x0084b76c, 0x00000784
-	.global Resource_Data082
-Resource_Data082:
-	.incbin "baserom.gba", 0x0084bef0, 0x00001334
+	.section .unidentified.0884d224,"a"
 	.global Resource_Data083
 Resource_Data083:
 	.incbin "baserom.gba", 0x0084d224, 0x0000061c
@@ -679,9 +671,8 @@ Resource_Data107:
 	.incbin "baserom.gba", 0x008aee43, 0x00000001
 	.section .unidentified.088af506,"a"
 	.incbin "baserom.gba", 0x008af506, 0x00000002
-	.global Resource_Data10E
-Resource_Data10E:
-	.incbin "baserom.gba", 0x008af508, 0x000002e8
+	.section .unidentified.088af7ed,"a"
+	.incbin "baserom.gba", 0x008af7ed, 0x00000003
 	.section .unidentified.088b0b53,"a"
 	.incbin "baserom.gba", 0x008b0b53, 0x00000001
 	.section .unidentified.088b0f3d,"a"
@@ -703,10 +694,8 @@ Resource_Data11A:
 	.incbin "baserom.gba", 0x008b46d0, 0x00000fc8
 	.section .unidentified.088b58f2,"a"
 	.incbin "baserom.gba", 0x008b58f2, 0x00000002
-	.section .unidentified.088b7050,"a"
-	.global Resource_Data11D
-Resource_Data11D:
-	.incbin "baserom.gba", 0x008b7050, 0x00000300
+	.section .unidentified.088b734d,"a"
+	.incbin "baserom.gba", 0x008b734d, 0x00000003
 	.global Resource_Data11E
 Resource_Data11E:
 	.incbin "baserom.gba", 0x008b7350, 0x000001b4
@@ -718,10 +707,8 @@ Resource_Data120:
 	.global Resource_Data121
 Resource_Data121:
 	.incbin "baserom.gba", 0x008b9624, 0x00000278
-	.section .unidentified.088b9920,"a"
-	.global Resource_Data123
-Resource_Data123:
-	.incbin "baserom.gba", 0x008b9920, 0x00000444
+	.section .unidentified.088b9d62,"a"
+	.incbin "baserom.gba", 0x008b9d62, 0x00000002
 	.section .unidentified.088bb937,"a"
 	.incbin "baserom.gba", 0x008bb937, 0x00000001
 	.section .unidentified.088bd535,"a"
@@ -738,9 +725,8 @@ Resource_Data127:
 	.global Resource_Data12A
 Resource_Data12A:
 	.incbin "baserom.gba", 0x008be288, 0x000004a0
-	.global Resource_Data12B
-Resource_Data12B:
-	.incbin "baserom.gba", 0x008be728, 0x00000d14
+	.section .unidentified.088bf43a,"a"
+	.incbin "baserom.gba", 0x008bf43a, 0x00000002
 	.section .unidentified.088bf97c,"a"
 	.global Resource_Data12D
 Resource_Data12D:
@@ -750,9 +736,8 @@ Resource_Data12D:
 	.global Resource_Data12F
 Resource_Data12F:
 	.incbin "baserom.gba", 0x008c054c, 0x00001258
-	.global Resource_Data130
-Resource_Data130:
-	.incbin "baserom.gba", 0x008c17a4, 0x00000af0
+	.section .unidentified.088c2292,"a"
+	.incbin "baserom.gba", 0x008c2292, 0x00000002
 	.section .unidentified.088c3069,"a"
 	.incbin "baserom.gba", 0x008c3069, 0x00000003
 	.section .unidentified.088c3896,"a"
@@ -774,14 +759,10 @@ Resource_Data137:
 	.incbin "baserom.gba", 0x008c56c9, 0x00000003
 	.section .unidentified.088c5a77,"a"
 	.incbin "baserom.gba", 0x008c5a77, 0x00000001
-	.global Resource_Data13C
-Resource_Data13C:
-	.incbin "baserom.gba", 0x008c5a78, 0x00000ad4
 	.section .unidentified.088c7a1b,"a"
 	.incbin "baserom.gba", 0x008c7a1b, 0x00000001
-	.global Resource_Data13F
-Resource_Data13F:
-	.incbin "baserom.gba", 0x008c7a1c, 0x00000d9c
+	.section .unidentified.088c87b7,"a"
+	.incbin "baserom.gba", 0x008c87b7, 0x00000001
 	.section .unidentified.088c89d3,"a"
 	.incbin "baserom.gba", 0x008c89d3, 0x00000001
 	.section .unidentified.088c8ccf,"a"
@@ -790,24 +771,17 @@ Resource_Data13F:
 	.global Resource_Data143
 Resource_Data143:
 	.incbin "baserom.gba", 0x008c9070, 0x000016b0
-	.global Resource_Data144
-Resource_Data144:
-	.incbin "baserom.gba", 0x008ca720, 0x00000760
-	.global Resource_Data145
-Resource_Data145:
-	.incbin "baserom.gba", 0x008cae80, 0x00000dcc
+	.section .unidentified.088cae7d,"a"
+	.incbin "baserom.gba", 0x008cae7d, 0x00000003
+	.section .unidentified.088cbc4b,"a"
+	.incbin "baserom.gba", 0x008cbc4b, 0x00000001
 	.global Resource_Data146
 Resource_Data146:
 	.incbin "baserom.gba", 0x008cbc4c, 0x00000c74
-	.section .unidentified.088ccad0,"a"
-	.global Resource_Data14B
-Resource_Data14B:
-	.incbin "baserom.gba", 0x008ccad0, 0x000003e8
+	.section .unidentified.088cceb5,"a"
+	.incbin "baserom.gba", 0x008cceb5, 0x00000003
 	.section .unidentified.088cd40f,"a"
 	.incbin "baserom.gba", 0x008cd40f, 0x00000001
-	.global Resource_Data14D
-Resource_Data14D:
-	.incbin "baserom.gba", 0x008cd410, 0x00000c18
 	.section .unidentified.088cecf9,"a"
 	.incbin "baserom.gba", 0x008cecf9, 0x00000003
 	.global Resource_Data14F
@@ -853,12 +827,9 @@ Resource_Data16C:
 	.incbin "baserom.gba", 0x008d7f34, 0x00000624
 	.section .unidentified.088d8979,"a"
 	.incbin "baserom.gba", 0x008d8979, 0x00000003
-	.global Resource_Data16E
-Resource_Data16E:
-	.incbin "baserom.gba", 0x008d897c, 0x00000298
-	.global Resource_Data16F
-Resource_Data16F:
-	.incbin "baserom.gba", 0x008d8c14, 0x00001500
+	.section .unidentified.088d8c13,"a"
+	.incbin "baserom.gba", 0x008d8c13, 0x00000001
+	.section .unidentified.088da114,"a"
 	.global Resource_Data170
 Resource_Data170:
 	.incbin "baserom.gba", 0x008da114, 0x0000049c

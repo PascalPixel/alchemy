@@ -64,7 +64,7 @@ extern const u8 MakyuriIriguchi_Actor8Path2[];
 extern const u8 MakyuriIriguchi_Actor8Path3[];
 extern const s32 MakyuriIriguchi_RiseScript[];
 extern const s32 MakyuriIriguchi_SparkBurstScript[];
-extern const s32 Makyuri_StartMoveScript[];
+extern const s32 Makyuri_ScaleCounterScript[];
 extern u8 MakyuriIriguchi_SceneTableA[];
 extern u8 MakyuriIriguchi_SceneTableB[];
 extern u8 MakyuriIriguchi_SceneTableC[];

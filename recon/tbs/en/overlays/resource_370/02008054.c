@@ -1,3 +1,11 @@
+/* resource_370 0x02008054..0x02008154 Clear_LoadBackground (256 bytes with
+ * pool), formerly MENU/CLEAR/BG_SETUP.C; the listing keeps the rows.
+ * Remaining difference: the reference loads resource id 0x1a from its
+ * literal pool into r5 before the first call, the shape of a link-time
+ * symbol, which this draft spells as the equate Value_0000001a; and GCC
+ * keeps gMapCellBuffer in r5 across the decode call where the reference
+ * reloads it from the pool (139 bytes differ, 4 bytes longer). Data_03001ad0
+ * is gBgScroll. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIELD_EVENT.H"

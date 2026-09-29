@@ -1,3 +1,9 @@
+/* resource_370 0x02008384..0x020083cc Scene_GetModeMask (72 bytes with pool),
+ * formerly MENU/CLEAR/MODE_MASK.C; the listing keeps the rows. Compiles
+ * exactly with this spelling. Remaining difference: it xors the mode with 2
+ * loaded from its literal pool, as a link-time symbol does, which this draft
+ * spells as the equate Value_00000002; a plain 2 compiles to movs.
+ * Func_020017e0 is the overlay's flag-test import veneer. */
 #include "TYPES.H"
 
 extern s16 gGameState[];

@@ -10,6 +10,9 @@
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Random16
 	.thumb_func
@@ -131,7 +134,13 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	.global Engine_CameraFollowActor
+	.thumb_func
+Engine_CameraFollowActor:
 	overlay_veneer Object_AttachWorkTargetToObjectFar
 	.global Engine_CameraMoveTo
 	.thumb_func
@@ -149,6 +158,9 @@ Engine_EventRequestExit:
 	.thumb_func
 FieldEffect_UpdateGridPlacement:
 	overlay_veneer FieldEffect_UpdateGridPlacementFar
+	.global battle_owner_69
+	.thumb_func
+battle_owner_69:
 	overlay_veneer battle_owner_69Far
 	.global Engine_EventOpenScreen
 	.thumb_func

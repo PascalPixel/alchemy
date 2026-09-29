@@ -185,6 +185,9 @@ void HaidiaMura_RunWalkScene03380(s32 actor, s32 animation, s32 next_animation, 
 void FieldScene_RunStep8C();
 void SceneState_SetValue0ThenCall();
 void FieldScene_RunStep17();
+void SceneState_SetValue1ThenCall();
+void FieldScene_RunStep9();
+void Effect_ConfigureSpawnedParticle(struct SourceEntity *source);
 void SceneState_SetValue24ThenCall();
 void SceneState_SetValue25ThenCall();
 void Effect_PlayStepSound();

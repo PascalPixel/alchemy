@@ -23,7 +23,7 @@ u16 EraseAtmelFlashChip(void)
 
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xFFFC) |
-        ((struct FlashConfig08007028 *)Data_08007c10)->wait;
+        ((struct FlashConfig08007028 *)Flash_ChipAtmelLayout)->wait;
 
     command = (volatile u8 *)0x0E005555;
     *command = 0xAA;

@@ -7,9 +7,9 @@ struct FlashInfo08007220 {
     u16 control;
 };
 
-extern struct FlashInfo08007220 Data_08007be4;
-extern struct FlashInfo08007220 Data_08007c10;
-extern u16 Data_02004c0c;
+extern struct FlashInfo08007220 Flash_ChipAtmel;
+extern struct FlashInfo08007220 Flash_ChipAtmelLayout;
+extern u16 gFlashNumRemainingBytes;
 
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source)
 {
@@ -24,12 +24,12 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source)
     CopyFlashReadRoutineToRam(savedCode);
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xfffc) |
-        Data_08007c10.control;
+        Flash_ChipAtmelLayout.control;
 
     current = sector << 5;
-    Data_02004c0c = Data_08007be4.size;
+    gFlashNumRemainingBytes = Flash_ChipAtmel.size;
 
-    while (Data_02004c0c != 0) {
+    while (gFlashNumRemainingBytes != 0) {
         retries = 2;
         goto attempt;
         do {
@@ -44,8 +44,8 @@ attempt:
         if (result != 0)
             break;
 
-        Data_02004c0c -= Data_08007c10.size;
-        source += Data_08007c10.size;
+        gFlashNumRemainingBytes -= Flash_ChipAtmelLayout.size;
+        source += Flash_ChipAtmelLayout.size;
         current += 1;
     }
 

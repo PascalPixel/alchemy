@@ -20,7 +20,7 @@ u16 EraseAtmelFlashBlock(u16 sector)
     CopyFlashReadRoutineToRam(savedCode);
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xfffc) |
-        ((struct FlashInfo_0800711c *)Data_08007c10)->control;
+        ((struct FlashInfo_0800711c *)Flash_ChipAtmelLayout)->control;
 
     current = sector << 4;
     current = (u16)(current << 1);

@@ -10,7 +10,7 @@ struct FlashChipInfo {
 };
 
 extern struct FlashChipInfo *gFlash;
-extern u16 Data_02004c0c;
+extern u16 gFlashNumRemainingBytes;
 
 /* RAM 常駐の書き込み手続き。RunFlashEraseVerifier との差が複写長になる。 */
 void CountRemainingErasedFlashBytes(void);
@@ -84,8 +84,8 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
     chip = gFlash;
     *waitcnt = setting | chip->wait;
 
-    Data_02004c0c = chip->blockSize;
-    counter = &Data_02004c0c;
+    gFlashNumRemainingBytes = chip->blockSize;
+    counter = &gFlashNumRemainingBytes;
     while (*counter != 0) {
         status = ProgramFlashByte(source, destination);
         if (status != 0) {

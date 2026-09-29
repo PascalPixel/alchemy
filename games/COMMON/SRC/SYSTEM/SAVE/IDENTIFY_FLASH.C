@@ -11,7 +11,7 @@ struct FlashChip {
 extern const struct FlashChip *const Flash_Chips[];
 extern u32 Flash_Handler3;
 extern u32 Flash_Handler0;
-extern const void *Flash_Layout;
+extern const void *gFlash;
 extern u32 Flash_Handler1;
 extern u32 Flash_Handler2;
 extern u32 Flash_Handler4;
@@ -39,6 +39,6 @@ s32 IdentifyFlash(void)
     Flash_Handler2 = (*chip)->handlers[2];
     Flash_Handler3 = (*chip)->handlers[3];
     Flash_Handler4 = (*chip)->handlers[4];
-    Flash_Layout = (*chip)->layout;
+    gFlash = (*chip)->layout;
     return missing;
 }

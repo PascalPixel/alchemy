@@ -1,0 +1,6 @@
+shape:u8	height0:u8	height1:u8	height2:u8
+0	0	0	0
+8	3	0	0
+8	0	3	0
+0	2	0	0
+0	3	0	0

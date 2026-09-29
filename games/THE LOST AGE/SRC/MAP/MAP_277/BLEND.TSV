@@ -1,0 +1,9 @@
+control	0x3f42
+level	0x1007	16
+level	0x1008	16
+level	0x1009	16
+level	0x100a	16
+level	0x1009	16
+level	0x1008	16
+jump	0
+end

@@ -1,0 +1,29 @@
+@ Field_Map116: a field map.
+	.include "games/THE BROKEN SEAL/SRC/MAP/MAP.INC"
+	.section .rodata
+	.global Field_Map116
+Field_Map116:
+	map_header 0, 0, 34, 40, 3, 2, 1, 1, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 60, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map116, .LField_Map116_METATILES
+	map_block Field_Map116, .LField_Map116_SHAPES
+	map_block Field_Map116, .LField_Map116_GRID
+	map_block Field_Map116, .LField_Map116_ANIMATION
+	map_block Field_Map116
+	map_block Field_Map116, .LField_Map116_MARKERS
+.LField_Map116_METATILES:
+	.incbin "MAP/MAP_116/METATILES.delta1.lz"
+	.balign 4, 0
+.LField_Map116_SHAPES:
+	.incbin "MAP/MAP_116/SHAPES.table.lz"
+	.balign 4, 0
+.LField_Map116_GRID:
+	.incbin "MAP/MAP_116/GRID.parts.lz"
+	.balign 4, 0
+.LField_Map116_ANIMATION:
+	.incbin "MAP/MAP_116/ANIMATION.script.lz"
+	.balign 4, 0
+.LField_Map116_MARKERS:
+	.incbin "MAP/MAP_116/MARKERS.table"

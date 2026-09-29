@@ -159,7 +159,7 @@ void FieldScene_PlaceSpectatorRow(void)
 {
     KorosseoKabe_SpectatorTimer = 0;
     KorosseoKabe_SpectatorPhase = 0;
-    Call1(Engine_TaskRemoveCallback, 0x2008715);
+    Call1(Engine_TaskRemoveCallback, (s32)FieldScene_RunSupplementalSequenceOne);
     Actor_SetPosition(22, 0x3a80000, 0xd80000);
     Actor_SetPosition(23, 0x3c80000, 0xd80000);
     Actor_SetPosition(24, 0x3e80000, 0xd80000);
@@ -169,7 +169,7 @@ void FieldScene_PlaceSpectatorRow(void)
 
 void SceneState_ApplyTable8715AndValue104(void)
 {
-    Engine_TaskAddCallback(0x2008715, 0xC85);
+    Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
     GameFlag_Clear(0x104);
 }
 

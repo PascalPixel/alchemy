@@ -1,8 +1,26 @@
 /* The Lunpa fortress: the guards' lines and the first searchable objects. */
 #include "FORTRESS.H"
 extern u8 MsgRunpaGuardWhosThat[];
+extern u8 MsgRunpaIntruder[];
 extern u8 MsgRunpaScoundrel[];
 extern u8 MsgRunpaShiftAlready[];
+
+void RunActorScriptedSequenceB(s32 handle)
+{
+    u8 *id;
+
+    Actor_RunRepeatedMotion(handle, 1);
+    id = (s32)MsgRunpaIntruder;
+    Event_SetMessage((s32)id);
+    Event_ShowMessage(handle, 0);
+    Actor_ShowEmoteAt(handle);
+    Event_SetMessage((s32)(id + 1));
+    Event_ShowMessage(handle, 0);
+    id += 2;
+    Actor_SetAnimationAndWait(handle, 4);
+    Event_SetMessage((s32)id);
+    Event_ShowMessage(handle, 0);
+}
 
 void RunActorScriptedSequenceC(s32 actor_id)
 {

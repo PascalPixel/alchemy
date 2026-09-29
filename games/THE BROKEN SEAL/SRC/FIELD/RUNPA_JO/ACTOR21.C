@@ -1,7 +1,9 @@
-/* The Lunpa fortress: actor 21's line by the day's draw. */
+/* The Lunpa fortress: actor 21's line by the day's draw, and the guard who
+ * thinks he heard someone. */
 #include "FORTRESS.H"
 extern u8 MsgRunpaDodonpasOrdersAbsolute[];
 extern u8 MsgRunpaHammetGreatMerchant[];
+extern u8 MsgRunpaLeftGuardHearsSomeone[];
 extern u8 MsgRunpaSighBadCouldnt[];
 extern u8 MsgRunpaStrangeSwearSomeone[];
 extern u8 MsgRunpaTakeCareAnybody[];
@@ -52,4 +54,27 @@ void FieldScene_SelectActorTwentyOneMessage(void)
         Event_ShowMessage(21, 0);
         break;
     }
+}
+
+void FieldScene_RunActorTwentyOneSequence(void)
+{
+
+    s32 msg;
+
+    Actor_ShowEmote(21, 0x101, 30);
+    Actor_FaceDirection(21, 0xd000, 0);
+    Event_Wait(50);
+    Actor_FaceDirection(21, 0xb000, 0);
+    Event_Wait(50);
+    Actor_FaceDirection(21, 0x5000, 0);
+    Event_Wait(50);
+    msg = (s32)MsgRunpaLeftGuardHearsSomeone;
+    Event_SetMessage(msg);
+    Event_ShowMessage(21, 0);
+    Actor_SetAnimation(21, 4);
+    Event_Wait(60);
+    Actor_FaceDirection(21, 0xb000, 0);
+    Event_Wait(40);
+    Event_SetMessage(msg + 1);
+    Event_ShowMessage(21, 0);
 }

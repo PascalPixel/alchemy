@@ -1,340 +1,5 @@
 .syntax unified
 	.thumb
-	.global Scene_GetEntrances
-	.thumb_func
-Scene_GetEntrances:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02000030_0
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02000030_2
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_2:
-	ldr r0, [pc, #24]
-.L_02000030_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000008c
-	.4byte 0x0200b094
-	.4byte 0x0000008e
-	.4byte 0x0200b274
-	.4byte 0x0200b034
-	.section .text.x0200807c,"ax",%progbits
-	.balign 4
-	.global Scene_GetPlacements
-	.thumb_func
-Scene_GetPlacements:
-	push {lr}
-	ldr r1, [pc, #380]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #372]
-	cmp r2, r3
-	beq .L_0200007c_0
-	b .L_0200007c_1
-.L_0200007c_0:
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	subs r3, #5
-	cmp r3, #65
-	bls .L_0200007c_2
-	b .L_0200007c_3
-.L_0200007c_2:
-	ldr r2, [pc, #348]
-	lsls r3, r3, #2
-	ldr r3, [r3, r2]
-	mov pc, r3
-	strh r4, [r6, #12]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r7, #12]
-	lsls r0, r0, #8
-	strh r4, [r7, #12]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r0, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r4, [r7, #12]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r4, [r7, #12]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r0, [r1, #14]
-	lsls r0, r0, #8
-	strh r4, [r7, #12]
-	lsls r0, r0, #8
-	strh r4, [r7, #12]
-	lsls r0, r0, #8
-	strh r4, [r0, #14]
-	lsls r0, r0, #8
-	strh r4, [r7, #12]
-	lsls r0, r0, #8
-	strh r4, [r0, #14]
-	lsls r0, r0, #8
-	strh r4, [r6, #12]
-	lsls r0, r0, #8
-	strh r0, [r7, #12]
-	lsls r0, r0, #8
-	ldr r0, [pc, #80]
-	b .L_0200007c_4
-	.2byte 0x4814
-	.2byte 0xe01c
-	.2byte 0x4814
-	.2byte 0xe01a
-	.2byte 0x4814
-	.2byte 0xe018
-	.2byte 0x4814
-	.2byte 0xe016
-.L_0200007c_3:
-	ldr r0, [pc, #80]
-	b .L_0200007c_4
-.L_0200007c_1:
-	ldr r3, [pc, #80]
-	cmp r2, r3
-	bne .L_0200007c_5
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x0200abbc
-	cmp r0, #0
-	beq .L_0200007c_6
-	ldr r0, [pc, #68]
-	b .L_0200007c_4
-.L_0200007c_6:
-	ldr r0, [pc, #68]
-	bl 0x0200abbc
-	cmp r0, #0
-	beq .L_0200007c_7
-	ldr r0, [pc, #60]
-	b .L_0200007c_4
-.L_0200007c_7:
-	ldr r0, [pc, #60]
-	b .L_0200007c_4
-.L_0200007c_5:
-	ldr r0, [pc, #60]
-.L_0200007c_4:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000008c
-	.4byte 0x020080ac
-	.4byte 0x0200b39c
-	.2byte 0xb5f4
-	.2byte 0x0200
-	.2byte 0xb7bc
-	.2byte 0x0200
-	.2byte 0xb87c
-	.2byte 0x0200
-	.2byte 0xb99c
-	.2byte 0x0200
-	.4byte 0x0200b75c
-	.4byte 0x0000008e
-	.4byte 0x0200be1c
-	.4byte 0x00000962
-	.4byte 0x0200bbdc
-	.4byte 0x0200ba44
-	.4byte 0x0200b324
-	.global Scene_GetEvents
-	.thumb_func
-Scene_GetEvents:
-	push {lr}
-	ldr r1, [pc, #64]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000238_0
-	ldr r0, [pc, #52]
-	b .L_02000238_1
-.L_02000238_0:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000238_2
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #12
-	bne .L_02000238_3
-	ldr r0, [pc, #36]
-	b .L_02000238_1
-.L_02000238_3:
-	ldr r0, [pc, #36]
-	b .L_02000238_1
-.L_02000238_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000238_4
-	ldr r0, [pc, #36]
-	b .L_02000238_1
-.L_02000238_4:
-	ldr r0, [pc, #36]
-.L_02000238_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000008d
-	.4byte 0x0200be70
-	.4byte 0x0000008c
-	.4byte 0x0200c110
-	.4byte 0x0200be94
-	.4byte 0x0000008e
-	.4byte 0x0200bf60
-	.4byte 0x0200be64
-	.section .text.x02009a14,"ax",%progbits
-	.balign 4
-	.global Scene_Initialize
-	.thumb_func
-Scene_Initialize:
-	push {lr}
-	ldr r3, [pc, #40]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #32]
-	cmp r2, r3
-	bne .L_02001a14_0
-	bl 0x02009a4c
-	b .L_02001a14_1
-.L_02001a14_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02001a14_1
-	bl 0x02009c6c
-.L_02001a14_1:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000008c
-	.4byte 0x0000008e
 	.section .rodata,"a",%progbits
 	.global KorashiamuIriguchi_ActionTable1
 KorashiamuIriguchi_ActionTable1:
@@ -544,6 +209,8 @@ KorashiamuIriguchi_ActionTable9:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiEntrancesOther
+gKorashiamuIriguchiEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x00000048
 	.4byte 0x40000048
@@ -568,6 +235,8 @@ KorashiamuIriguchi_ActionTable9:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiEntrances1
+gKorashiamuIriguchiEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x00000038
 	.4byte 0x40000128
@@ -688,6 +357,8 @@ KorashiamuIriguchi_ActionTable9:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiEntrances3
+gKorashiamuIriguchiEntrances3:
 	.4byte 0xffff0001
 	.4byte 0x00000060
 	.4byte 0xc0000120
@@ -734,6 +405,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x0010c087
 	.4byte 0x0024008c
 	.4byte 0x000001ff
+	.global gKorashiamuIriguchiPlacementsOther
+gKorashiamuIriguchiPlacementsOther:
 	.4byte 0xffff00cb
 	.4byte 0x00000001
 	.4byte 0x00a80000
@@ -764,6 +437,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements1Entrance5
+gKorashiamuIriguchiPlacements1Entrance5:
 	.4byte 0xffff00f6
 	.4byte 0x00000001
 	.4byte 0x01f00000
@@ -914,6 +589,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements1Entrance7
+gKorashiamuIriguchiPlacements1Entrance7:
 	.4byte 0xffff00f6
 	.4byte 0x00000001
 	.4byte 0x00fa0000
@@ -1004,6 +681,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements1
+gKorashiamuIriguchiPlacements1:
 	.4byte 0xffff0098
 	.4byte 0x00000001
 	.4byte 0x00c80000
@@ -1028,6 +707,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements1Entrance8
+gKorashiamuIriguchiPlacements1Entrance8:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1076,6 +757,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements1Entrance12
+gKorashiamuIriguchiPlacements1Entrance12:
 	.4byte 0xffff0098
 	.4byte 0x00000001
 	.4byte 0x03280000
@@ -1148,6 +831,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements1Entrance66
+gKorashiamuIriguchiPlacements1Entrance66:
 	.4byte 0xffff00cb
 	.4byte 0x00000001
 	.4byte 0x02180000
@@ -1190,6 +875,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements3
+gKorashiamuIriguchiPlacements3:
 	.4byte 0xffff006c
 	.4byte 0x00000001
 	.4byte 0x01080000
@@ -1292,6 +979,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements3Flag962
+gKorashiamuIriguchiPlacements3Flag962:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1436,6 +1125,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiPlacements3Flag950
+gKorashiamuIriguchiPlacements3Flag950:
 	.4byte 0xffff006c
 	.4byte 0x00000002
 	.4byte 0x00500000
@@ -1454,9 +1145,13 @@ gKorashiamuIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiEventsOther
+gKorashiamuIriguchiEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiEvents2
+gKorashiamuIriguchiEvents2:
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1466,6 +1161,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiEvents1
+gKorashiamuIriguchiEvents1:
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1517,6 +1214,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiEvents3
+gKorashiamuIriguchiEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1625,6 +1324,8 @@ gKorashiamuIriguchiExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorashiamuIriguchiEvents1Entrance12
+gKorashiamuIriguchiEvents1Entrance12:
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x00002113

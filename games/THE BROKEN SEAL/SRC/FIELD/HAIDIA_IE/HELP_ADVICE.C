@@ -1,12 +1,9 @@
-/* Draft of resource_374 0x020085e8 (SceneDialogue_ShowLineEB1OrEB0): it
- * matches the ROM byte for byte now that the messages it loads from the
- * literal pool have catalogue names (MsgHaidiaSureHelp, MsgHaidiaWentOffWay).
- * The listing keeps these rows until the draft is adopted. */
+/* The villager who points the way the others went. */
 #include "HAIDIA.H"
-extern u8 MsgHaidiaWentOffWay[];
 extern u8 MsgHaidiaSureHelp[];
+extern u8 MsgHaidiaWentOffWay[];
 
-void SceneDialogue_ShowLineEB1OrEB0(void)
+void Villager_PointTheWay(void)
 {
     Event_Begin();
     Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 10);

@@ -1,14 +1,12 @@
-/* resource_39d:02008b24..02009af0 (4044 bytes with pool), still linked from
- * the listing. Remaining difference: the call that records scene 0x3a
- * (Party_SetFields1ceAnd1d0Far) loads the scene from the literal pool, a
- * link-time value; an integer scene is an immediate (movs r0, #0x3a), which
- * also drops a pool word (4040 bytes, 6 differ). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "OVERLAY_OBJECT.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-/* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/AERIE.H. */
+#include "AERIE.H"
+
+void Party_SetFields1ceAnd1d0();
+void BattleFx_SetWeightedResult();
 
 void RunScene58Sequence(void)
 {
@@ -472,10 +470,10 @@ void RunScene58Sequence(void)
     Call1(Engine_EventWait, 0x14);
     Call3(Engine_EventShowMessageAndWait, 0x16, 0, 0x14);
     Call3(Engine_ActorWalkToAndWait, 0x16, 0x150, 0xD8);
-    Call2(Party_SetFields1ceAnd1d0Far, 0x3a, 2);
+    Call2(Party_SetFields1ceAnd1d0, (s32)&SceneId_MakyuriChojo1, 2);
     do {
         Data_02000240[0x22B] = 3;
     } while (0);
-    Call2(BattleFx_SetWeightedResultFar, 0x24, 2);
+    Call2(BattleFx_SetWeightedResult, 0x24, 2);
     Call0(Engine_EventEnd);
 }

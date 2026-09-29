@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
+extern u8 MsgShianMasterHamaMeditatingPleaseExtremely[];
 
 /* Long scripted sequence: sets up and steps a series of actors (indices 0-3,
  * 8-10, 17, 20) through position, pose, animation, wait, and flag-bit calls,
@@ -20,7 +21,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Actor_FaceDirection(9, 0, 20);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_MASTER_HAMA_MEDITATING_PLEASE_EXTREMELY);
+    Event_SetMessage((s32)MsgShianMasterHamaMeditatingPleaseExtremely);
     Event_ShowMessageAndWait(9, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

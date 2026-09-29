@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgKorimaGoingCrossBridge[];
 
 /* Actor 8's path and the debris script, laid out after the code. */
 extern u8 KorimaMura_Actor8Path[];
@@ -95,7 +96,7 @@ void KorimaMura_RunObjectSpreadScene(void)
     Engine_EventWait(20);
     Call3(Engine_ActorShowEmote, 8, 0x100, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
-    Call1(Engine_EventSetMessage, 0x1786);
+    Call1(Engine_EventSetMessage, (s32)MsgKorimaGoingCrossBridge);
     Engine_EventShowMessage(8, 0);
     Call2(Engine_CameraSetSpeed, 0x6666, 0xccc);
     Call4(Engine_CameraMoveTo, 0xa80000, 0, 0xea0000, 1);

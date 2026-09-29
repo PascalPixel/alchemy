@@ -1,15 +1,30 @@
 /* The Lunpa fortress: the guards' lines and the first searchable objects. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaGuardWhosThat[];
+extern u8 MsgRunpaIntruder[];
+extern u8 MsgRunpaScoundrel[];
+extern u8 MsgRunpaShiftAlready[];
+
+void RunActorScriptedSequenceB(s32 handle)
+{
+    u8 *id;
+
+    Actor_RunRepeatedMotion(handle, 1);
+    id = (s32)MsgRunpaIntruder;
+    Event_SetMessage((s32)id);
+    Event_ShowMessage(handle, 0);
+    Actor_ShowEmoteAt(handle);
+    Event_SetMessage((s32)(id + 1));
+    Event_ShowMessage(handle, 0);
+    id += 2;
+    Actor_SetAnimationAndWait(handle, 4);
+    Event_SetMessage((s32)id);
+    Event_ShowMessage(handle, 0);
+}
 
 void RunActorScriptedSequenceC(s32 actor_id)
 {
-#if defined(TBS_EDITION_JA)
-    u8 *t = 0x25aa;
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    u8 *t = 0x2403;
-#else
-    u8 *t = 0x2421;
-#endif
+    u8 *t = MsgRunpaGuardWhosThat;
 
     Event_SetMessage((s32)t);
     Event_ShowMessage(actor_id, 0);
@@ -25,26 +40,26 @@ void FieldScene_RunScene3bf_02001cf0(s32 a0)
 {
     u32 i;
     s32 record;
-    s32 base6_2424;
+    s32 intruder;
 
-    base6_2424 = 0x2424;
-    Event_SetMessage(base6_2424);
+    intruder = (s32)MsgRunpaShiftAlready;
+    Event_SetMessage(intruder);
     Event_ShowMessage(a0, 0);
     Event_Wait(120);
     Actor_ShowEmote(a0, 0x101, 60);
-    Event_SetMessage((base6_2424 + 1));
+    Event_SetMessage((intruder + 1));
     Event_ShowMessage(a0, 0);
     Actor_RunRepeatedMotion(a0, 1);
-    Event_SetMessage((base6_2424 + 2));
+    Event_SetMessage((intruder + 2));
     Event_ShowMessage(a0, 0);
     Actor_SetAnimationAndWait(a0, 4);
-    Event_SetMessage((base6_2424 + 3));
+    Event_SetMessage((intruder + 3));
     Event_ShowMessage(a0, 0);
 }
 
 void RunActorScriptedSequenceD(s32 actor_id)
 {
-    u8 *t = 0x2428;
+    u8 *t = (s32)MsgRunpaScoundrel;
 
     Event_SetMessage((s32)t);
     Event_ShowMessage(actor_id, 0);

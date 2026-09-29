@@ -46,7 +46,7 @@ extern struct ShopRuntime *gMenuWork;
  */
 
 extern u8 Value_00000c98[];
-extern u8 Value_00000182[];
+extern u8 MsgItemName[];
 
 struct ItemDefinition *Item_Get(s32 item);
 void Func_08015060(s32 window);
@@ -127,5 +127,5 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
         row += 2;
     }
     if (replaced != -1)
-        UiText_DrawCharacterAtOffsetFar(replaced + (s32)Value_00000182, window, 0, 48);
+        UiText_DrawCharacterAtOffsetFar(replaced + (s32)MsgItemName, window, 0, 48);
 }

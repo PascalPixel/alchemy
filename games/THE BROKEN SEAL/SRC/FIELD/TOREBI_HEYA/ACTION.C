@@ -1,5 +1,8 @@
 /* The facing action line. */
 #include "TOREBI.H"
+extern u8 MsgTorebiIfCanMakeNameFor[];
+extern u8 MsgTorebiMaybeCloseShop[];
+extern u8 MsgTorebiWasntAbleWatch[];
 
 void SceneDialogue_RunFacingAction(s32 no)
 {
@@ -8,13 +11,13 @@ void SceneDialogue_RunFacingAction(s32 no)
         Shop_Open(27, no);
     } else {
         if (GameFlag_IsSet(0x950) != 0) {
-            Scene_Call1(Engine_EventSetMessage, 0x238f);
+            Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiWasntAbleWatch);
             Event_ShowMessage(no, 0);
         } else if (GameFlag_IsSet(0x962) != 0) {
-            Scene_Call1(Engine_EventSetMessage, 0x221d);
+            Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiMaybeCloseShop);
             Event_ShowMessage(no, 0);
         } else {
-            Event_SetMessage(MSG_IF_CAN_MAKE_NAME_FOR);
+            Event_SetMessage((s32)MsgTorebiIfCanMakeNameFor);
             Event_ShowMessage(no, 0);
         }
     }

@@ -5,6 +5,12 @@
 #include "FLAG_IDS.H"
 #include "ITEM_IDS.H"
 #include "SOUND_IDS.H"
+extern u8 MsgKuupuappuLeftThiefRegretsEscape[];
+extern u8 MsgKuupuappuLeftThiefThoughts[];
+extern u8 MsgKuupuappuRightThiefRegretsStaying[];
+extern u8 MsgKuupuappuRightThiefThoughts[];
+extern u8 MsgKuupuappuThiefLeaderSilencesThieves[];
+extern u8 MsgKuupuappuThiefLeaderThoughts[];
 
 /*
  * The jail cell on the underground way between the Vault and Lunpa. While
@@ -64,12 +70,6 @@ enum JailSprite {
 };
 
 enum JailMessage {
-    MSG_LEFT_THIEF_REGRETS_ESCAPE = 0x1388,
-    MSG_RIGHT_THIEF_REGRETS_STAYING = 0x1389,
-    MSG_THIEF_LEADER_SILENCES_THIEVES = 0x138a,
-    MSG_LEFT_THIEF_THOUGHTS = 0x138c,
-    MSG_RIGHT_THIEF_THOUGHTS = 0x138d,
-    MSG_THIEF_LEADER_THOUGHTS = 0x138e,
     MSG_PRISONER_REGRETS_FIGHT = 0x1cf6,
     MSG_PRISONER_THOUGHTS = 0x1cf7
 };
@@ -129,7 +129,7 @@ void ThiefLeader_Talk(void)
     Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
     Event_Wait(40);
 
-    Event_SetMessage(MSG_THIEF_LEADER_SILENCES_THIEVES);
+    Event_SetMessage((s32)MsgKuupuappuThiefLeaderSilencesThieves);
     Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
 
     Actor_StartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -152,7 +152,7 @@ void LeftThief_Talk(void)
     Event_Begin();
     Actor_RunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_LEFT_THIEF_REGRETS_ESCAPE);
+    Event_SetMessage((s32)MsgKuupuappuLeftThiefRegretsEscape);
     Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
     Event_End();
 }
@@ -162,7 +162,7 @@ void RightThief_Talk(void)
     Event_Begin();
     Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Event_SetMessage(MSG_RIGHT_THIEF_REGRETS_STAYING);
+    Event_SetMessage((s32)MsgKuupuappuRightThiefRegretsStaying);
     Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
     Event_End();
 }
@@ -170,7 +170,7 @@ void RightThief_Talk(void)
 void ThiefLeader_ReadMind(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_THIEF_LEADER_THOUGHTS);
+    Event_SetMessage((s32)MsgKuupuappuThiefLeaderThoughts);
     Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
     Event_End();
 }
@@ -178,7 +178,7 @@ void ThiefLeader_ReadMind(void)
 void LeftThief_ReadMind(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_LEFT_THIEF_THOUGHTS);
+    Event_SetMessage((s32)MsgKuupuappuLeftThiefThoughts);
     Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
     Event_End();
 }
@@ -186,7 +186,7 @@ void LeftThief_ReadMind(void)
 void RightThief_ReadMind(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_RIGHT_THIEF_THOUGHTS);
+    Event_SetMessage((s32)MsgKuupuappuRightThiefThoughts);
     Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
     Event_End();
 }

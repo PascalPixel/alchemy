@@ -1,32 +1,17 @@
 /* Draft of SceneState_SendIdBySceneId, resource_3ba at 0x02009e20 (split from FIELD/KOROSSEO_KAWA/COORDINATOR.C).
- * Remaining difference: it loads constants through address-derived symbols (Value_/Data_0000/LinkedMessage_ names) that no link defines, so the overlay keeps its listing rows.
- * Twins: resource_3bb:0x0200a0b8 and resource_3bc:0x0200ab50 hold the same
- * 92 bytes with identical pools (scene numbers 0x8f and 0x90, messages
- * 0x2076 and 0x2078, plus 0x207a), so this one draft serves all three once
- * link-time numbers exist. */
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Func_02005a4a,
+ * Value_0000008f, Value_00000090). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+extern u8 MsgKorosseoStageFirstFinalsMatch[];
+extern u8 MsgKorosseoStageSecondFinalsMatch[];
+extern u8 MsgKorosseoStageThirdFinalsMatch[];
 
 enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a,
-    MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
-    MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
-    MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
-    MSG_DO_YOUR_BEST = 0x2083,
-    MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE = 0x2084,
-    MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE = 0x2085,
-    MSG_OPERATOR_BRIDGE_WILL_ALSO_CHEER = 0x2094,
-    MSG_THEY_CALL_BROKEN_BRIDGE = 0x2095,
-    MSG_LOGS_KEY_CLEARING_STAGE = 0x2098,
-    MSG_PLACE_NORMALLY_CALLED_LUMBER_WATER = 0x2099,
-    MSG_SITE_FIRST_FINALS_BATTLE = 0x20cb,
-    MSG_ASK_ATTENDANTS_FOR_EXPLANATIONS_STAGES = 0x20d4,
-    MSG_WARRIORS_ENTER_FINALS_WITHOUT_ANY = 0x20d5,
-    MSG_ROBIN_YOURE_CONTESTANT_IN_FINALS = 0x20e1,
-    MSG_ROBIN_DID_GET_GOOD_LOOK = 0x20e5,
-    MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8
+    MSG_ROBIN_GOT = 0x96a
 };
 
 typedef struct Ctl {
@@ -83,9 +68,6 @@ extern u16 Data_0200c76c;
 extern u32 Data_0200c770;
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
-extern u8 Value_00002076;
-extern u8 Value_00002078;
-extern u8 Value_0000207a;
 extern s16 Data_0200c6a6;
 extern u8 Data_0200abed[];
 extern u16 Data_0200c7f4;
@@ -99,7 +81,6 @@ extern u16 Data_0200c7a4;
 extern u16 Data_0200c7bc;
 extern u16 Data_0200c750;
 extern u8 *Data_03001f3c;
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 Data_0200c420[];
 extern u8 Data_0200bf14[];
 extern u8 Data_0200b1c1[];
@@ -412,11 +393,11 @@ void SceneState_SendIdBySceneId(s32 a, s32 b)
     Func_02005a4a(b, 5);
     v = gGameState.scene;
     if (v == (s32)&Value_0000008f) {
-        id = (s32)&Value_00002076;
+        id = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (v == (s32)&Value_00000090) {
-        id = (s32)&Value_00002078;
+        id = (s32)MsgKorosseoStageSecondFinalsMatch;
     } else {
-        id = (s32)&Value_0000207a;
+        id = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Event_SetMessage(id + 1);
     Event_ShowMessage(a, 0);

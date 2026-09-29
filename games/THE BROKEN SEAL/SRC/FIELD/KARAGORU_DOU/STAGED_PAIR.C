@@ -4,13 +4,9 @@
 
 #include "STAGED_ACTOR_PAIR_SCENE.H"
 #include "STAGED_ACTOR.H"
+extern u8 MsgKaragoruWarriorsHaveBeenFightingWhile[];
+extern u8 MsgKaragoruWeMissedColossoBecauseWe[];
 
-enum StagedPairMessage {
-    MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
-    MSG_WE_MISSED_COLOSSO_BECAUSE_WE = 0x23d5,
-    MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
-    MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
-};
 
 struct EffectRecord {
     u8 pad[9];
@@ -35,7 +31,6 @@ struct HeightTrackedObject {
     s32 height;                 /* +12 */
 };
 
-extern u8 LinkedMessage_DoYouWishCrossInto[];
 
 s32 *Object_GetById();
 
@@ -82,9 +77,9 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 void ActorPresentation_SelectActorNineScript(void)
 {
     if (GameFlag_IsSet(2384) != 0 && GameFlag_IsSet(2415) == 0)
-        Event_SetMessage(MSG_WE_MISSED_COLOSSO_BECAUSE_WE);
+        Event_SetMessage((s32)MsgKaragoruWeMissedColossoBecauseWe);
     else
-        Event_SetMessage(MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE);
+        Event_SetMessage((s32)MsgKaragoruWarriorsHaveBeenFightingWhile);
     Event_ShowMessage(9, 0);
 }
 

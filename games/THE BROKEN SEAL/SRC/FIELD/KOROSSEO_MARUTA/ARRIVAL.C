@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
+extern u8 MsgKorosseoObjectiveGetAcross[];
+extern u8 MsgKorosseoStageCalledScales[];
 
 
 
@@ -59,7 +61,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
     Engine_EventBegin();
     state = Value2(ColossoLogRollingStage_RunStateInteraction, scene, 1);
     if (state == 0) {
-        Call1(Engine_EventSetMessage, 8370);
+        Call1(Engine_EventSetMessage, (s32)MsgKorosseoStageCalledScales);
         Call2(Engine_CameraSetSpeed, 196608, 24576);
         Call4(Engine_CameraMoveTo, 9961472, -1, 13107200, 1);
         Engine_CameraWaitForMove();
@@ -109,7 +111,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         Call2(Engine_CameraFollowActor, 0, 0);
         Call2(ColossoLogRollingStage_InitializeStateInteraction, scene, 1);
     } else if (state == 1) {
-        Call1(Engine_EventSetMessage, 0x20b1);
+        Call1(Engine_EventSetMessage, (s32)MsgKorosseoObjectiveGetAcross);
         Call2(Engine_EventShowMessage, scene, 0);
     }
     Value3(FieldScene_RunMiddleSequence, state, scene, 1);

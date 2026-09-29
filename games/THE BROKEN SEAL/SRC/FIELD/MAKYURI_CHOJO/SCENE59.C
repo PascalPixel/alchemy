@@ -4,6 +4,7 @@
 #include "OVERLAY_OBJECT.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "AERIE.H"
+extern u8 MsgMakyuriGot[];
 
 void RunScene59Sequence(void)
 {
@@ -47,7 +48,7 @@ void RunScene59Sequence(void)
     Call2(Engine_ActorRunRepeatedMotion, 1, 2);
     Call1(Engine_EventWait, 0x14);
     Call3(Engine_ActorFaceDirection, 1, 0, 0x14);
-    Call1(Event_SetValue1d8Far, 0x000015d4);
+    Call1(Event_SetValue1d8Far, (s32)MsgMakyuriGot);
     Call3(Engine_EventShowMessageAndWait, 1, 0, 0x14);
     Call3(Engine_ActorFaceDirection, 0, 0x8000, 0x14);
     Call2(Engine_ActorSetAnimationAndWait, 0, 3);

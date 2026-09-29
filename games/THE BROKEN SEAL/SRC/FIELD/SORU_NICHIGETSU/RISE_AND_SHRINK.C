@@ -1,5 +1,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgSoruHa[];
 
 /*
  * Exact 2026-09-23 (1,120 bytes), with two tagged fake matches for the
@@ -135,7 +136,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Actor_SetAnimation(16, 1);
         base5_8010 = 0x8010;
         Engine_ActorSetAnimation(0, 0);
-        Call1(Engine_EventSetMessage, 0x102e);
+        Call1(Engine_EventSetMessage, (s32)MsgSoruHa);
         SetSolShindenActorStep(base5_8010, 6);
         Actor_SetAnimationAndWait(16, 3);
         Actor_SetAnimation(16, 1);

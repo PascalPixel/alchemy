@@ -4,6 +4,7 @@
  * Event_SetPairWork1c0 from its literal pool, a link-time value; the integer
  * scene is an immediate (1142 bytes, 9 differ from +0x3dc). */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/STORY.H"
+extern u8 MsgWorldMapSukuretaHowLongWillIsland[];
 
 extern u8 gPresentGuide9[];
 extern u8 gPresentGuide8[];
@@ -31,7 +32,7 @@ void FieldScene_RunActorPresentationSequence(void)
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
     Event_Wait(20);
-    Event_SetMessage(MSG_SUKURETA_HOW_LONG_WILL_ISLAND);
+    Event_SetMessage((s32)MsgWorldMapSukuretaHowLongWillIsland);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
     Actor_RunRepeatedMotion(8, 2);
     Event_Wait(20);

@@ -1,4 +1,8 @@
 #include "GATE.H"
+extern u8 MsgFieldVenusLighthouseWasAttackedBy[];
+extern u8 MsgSuharaMeaning[];
+extern u8 MsgSuharaPityColossoVictor[];
+extern u8 MsgSuharaWantGoBabi[];
 
 void Scene_RunScene3c3SequenceC(void)
 {
@@ -73,7 +77,7 @@ void Scene_RunScene3c3SequenceA(void)
     Actor_FaceDirection(11, 0xd000, 40);
     Actor_FaceDirection(11, 0, 20);
     Actor_StartRepeatedMotion(11, 2);
-    Event_SetMessage(0x2654);
+    Event_SetMessage((s32)MsgSuharaMeaning);
     Event_ShowMessageAndWait(11, 0, 40);
     Actor_ShowEmote(8, 0x100, 0);
     Actor_RunRepeatedMotion(8, 2);
@@ -165,11 +169,11 @@ void Scene_RunActorNinePromptDialogue(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x89f) != 0) {
-        Event_SetMessage(0x2668);
+        Event_SetMessage((s32)MsgSuharaPityColossoVictor);
         goto close;
     }
 
-    Event_SetMessage(0x264e);
+    Event_SetMessage((s32)MsgSuharaWantGoBabi);
     {
         s32 mode = 0;
         s32 no = 9;
@@ -206,7 +210,7 @@ void Scene_RunActorTenRepeatedMotion(void)
 
     Event_Begin();
 
-    Event_SetMessage(0x266d);
+    Event_SetMessage((s32)MsgFieldVenusLighthouseWasAttackedBy);
     Event_ShowMessageAndWait(10, 0, 10);
 
     beat = 0;

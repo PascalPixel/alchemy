@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgHaidiaWho[];
 
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
@@ -61,7 +62,7 @@ void HaidiaSukureta_RunArrivalScene(void)
     } else {
         Engine_EventBegin();
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-        Call1(Engine_EventSetMessage, 0xf9f);
+        Call1(Engine_EventSetMessage, (s32)MsgHaidiaWho);
         Engine_EventShowMessage(13, 0);
         record = Engine_ActorGet(0);
         {

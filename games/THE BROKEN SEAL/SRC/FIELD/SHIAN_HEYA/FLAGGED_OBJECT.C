@@ -1,19 +1,16 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgShianDoPlanCrossDesertWarrior[];
+extern u8 MsgShianHsusInjuryTaughtGoodLesson[];
+extern u8 MsgShianKungFuMakesQuickDoes[];
+extern u8 MsgShianMartialArtistsCantUseHeavy[];
+extern u8 MsgShianSomethingWrongOnSilkRoad[];
+extern u8 MsgShianWarriorsShouldLearnAboutTowns[];
+extern u8 MsgShianWeHaveFewCustomersThese[];
+extern u8 MsgShianXianHasMartialArtsBut[];
+extern u8 MsgShianXiansSpecialArmorNotSuited[];
 
-enum FlaggedObjectMessage {
-    MSG_XIAN_HAS_MARTIAL_ARTS_BUT = 0x1817,
-    MSG_MARTIAL_ARTISTS_CANT_USE_HEAVY = 0x1819,
-    MSG_XIANS_SPECIAL_ARMOR_NOT_SUITED = 0x181b,
-    MSG_WARRIORS_SHOULD_LEARN_ABOUT_TOWNS = 0x181d,
-    MSG_SOMETHING_WRONG_ON_SILK_ROAD = 0x1a3a,
-    MSG_HSUS_INJURY_TAUGHT_GOOD_LESSON = 0x1a46,
-    MSG_KUNG_FU_MAKES_QUICK_DOES = 0x1a48,
-    MSG_DO_PLAN_CROSS_DESERT_WARRIOR = 0x1a4a,
-    MSG_WE_HAVE_FEW_CUSTOMERS_THESE = 0x1a4e,
-    MSG_WARRIOR_WELCOME = 0x1a64
-};
 
 
 #define NULL ((void *)0)
@@ -67,9 +64,9 @@ void SceneDialogue_RunActor14FlaggedDialogue(void)
         Shop_Open(16, 14);
     } else {
         if (GameFlag_IsSet(0x895) == 0) {
-            Event_SetMessage(MSG_XIAN_HAS_MARTIAL_ARTS_BUT);
+            Event_SetMessage((s32)MsgShianXianHasMartialArtsBut);
         } else {
-            Event_SetMessage(MSG_HSUS_INJURY_TAUGHT_GOOD_LESSON);
+            Event_SetMessage((s32)MsgShianHsusInjuryTaughtGoodLesson);
         }
         Event_ShowMessage(14, 0);
     }
@@ -86,9 +83,9 @@ void SceneDialogue_RunActor15FlaggedDialogue(void)
         Shop_Open(17, 15);
     } else {
         if (GameFlag_IsSet(0x895) == 0) {
-            Event_SetMessage(MSG_MARTIAL_ARTISTS_CANT_USE_HEAVY);
+            Event_SetMessage((s32)MsgShianMartialArtistsCantUseHeavy);
         } else {
-            Event_SetMessage(MSG_KUNG_FU_MAKES_QUICK_DOES);
+            Event_SetMessage((s32)MsgShianKungFuMakesQuickDoes);
         }
         Event_ShowMessage(15, 0);
     }
@@ -107,10 +104,10 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
     if (value >= 0xa001 && value <= 0xdfff) {
         Shop_Open(18, 16);
     } else if (GameFlag_IsSet(0x895) == 0) {
-        Event_SetMessage(MSG_XIANS_SPECIAL_ARMOR_NOT_SUITED);
+        Event_SetMessage((s32)MsgShianXiansSpecialArmorNotSuited);
         Event_ShowMessage(16, 0);
     } else {
-        Event_SetMessage(MSG_DO_PLAN_CROSS_DESERT_WARRIOR);
+        Event_SetMessage((s32)MsgShianDoPlanCrossDesertWarrior);
         Event_AskYesNo(16, 0);
     }
     Event_End();
@@ -128,9 +125,9 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
         Inn_Open(5, 17);
     } else {
         if (GameFlag_IsSet(0x895) == 0) {
-            Event_SetMessage(MSG_WARRIORS_SHOULD_LEARN_ABOUT_TOWNS);
+            Event_SetMessage((s32)MsgShianWarriorsShouldLearnAboutTowns);
         } else {
-            Event_SetMessage(MSG_WE_HAVE_FEW_CUSTOMERS_THESE);
+            Event_SetMessage((s32)MsgShianWeHaveFewCustomersThese);
         }
         Event_ShowMessage(17, 0);
     }
@@ -142,7 +139,7 @@ void SceneDialogue_RunActor10Dialogue(void)
     s32 Event_AskYesNo(s32, s32);
 
     Event_Begin();
-    Event_SetMessage(MSG_SOMETHING_WRONG_ON_SILK_ROAD);
+    Event_SetMessage((s32)MsgShianSomethingWrongOnSilkRoad);
     Event_AskYesNo(10, 0);
     Event_End();
 }

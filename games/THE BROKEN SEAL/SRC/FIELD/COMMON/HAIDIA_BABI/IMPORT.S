@@ -70,6 +70,9 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Map_ClearLayerEntryFlag:
 	overlay_veneer Map_ClearLayerEntryFlagFar
+	.global Map_SetLayerEntryFlag
+	.thumb_func
+Map_SetLayerEntryFlag:
 	overlay_veneer Map_SetLayerEntryFlagFar
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Engine_MapCopyCellAttributes
@@ -140,7 +143,13 @@ Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
 	overlay_veneer Object_RefreshSelectorByIdFar
 	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
+	.global Engine_ActorSetDestination
+	.thumb_func
+Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global Engine_ObjectMotionSetPositionAndCommit
+	.thumb_func
+Engine_ObjectMotionSetPositionAndCommit:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	.global Engine_ActorWalkToAndWait

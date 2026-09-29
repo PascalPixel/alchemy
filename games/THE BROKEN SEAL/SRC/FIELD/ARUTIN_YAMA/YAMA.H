@@ -16,12 +16,6 @@ enum {
     ITEM_FROST_JEWEL = 202
 };
 
-enum SetPieceMessage {
-    MSG_ROBIN_FLIPPED_SWITCH = 0x1528,
-    MSG_WE_DID_ROBIN_WE_BEAT = 0x190c,
-    MSG_GUARDIAN_STATUES_WERE_CREATED_LONG = 0x1910
-};
-
 struct Frame {
     s32 f00;
     s32 f04;
@@ -68,7 +62,7 @@ void Audio_PlayCueFromEventWork();
 s32 BattleFx_SetQueuedSoundAndPlay();
 void BattleFx_PlayQueuedSound();
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -142,7 +136,7 @@ s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst);
 s32 OverlayObject_IntegrateAndDamp(u8 *p);
 u8 *SceneData_GetTableC85c(void);
 void FieldScene_RunSharedSetPiece(s32 a0);
-void FieldScene_RunScene3a4_02001398(void);
+void FieldScene_RunFallingRocksWarning(void);
 void SceneState_SetByte22bTo3AndSend51(void);
 void SceneActor_UpdateSlot10ByTileX(void);
 void ActorPresentation_SetCellAndLowerActorEight(void);

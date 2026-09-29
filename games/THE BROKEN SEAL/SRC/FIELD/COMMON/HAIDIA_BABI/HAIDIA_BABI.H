@@ -19,17 +19,6 @@ enum {
     ITEM_MYTHRIL_BAG = 224
 };
 
-enum ValeMessage {
-    MSG_THE_THREE_TRAVELERS_SEEM_ODD = 0xf58,
-    MSG_HEY_BOY = 0xf5b,
-    MSG_THE_VISITORS_CAUSED_THE_ERUPTION = 0x11a9,
-    MSG_THE_MASKED_MAN_WAS_GARCIA = 0x11aa,
-    MSG_YOUVE_GROWN_SO_MUCH = 0x1c13,
-    MSG_YOU_CAME_BACK = 0x1c14,
-    MSG_HOME_JUST_TO_STAY = 0x1c15,
-    MSG_DORA_WAS_STRUCK_WITH_ILLNESS = 0x1c1a,
-    MSG_DORA_WOULDNT_LET_HIM_STAY = 0x1c1b
-};
 
 /* The scene's tables, in the overlay's read-only data. */
 extern s32 gHaidiaBabiEntrances[];

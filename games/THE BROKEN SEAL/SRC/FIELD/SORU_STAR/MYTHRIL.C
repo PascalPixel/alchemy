@@ -1,5 +1,7 @@
 /* The mythril bags. */
 #include "STAR.H"
+extern u8 MsgSoruGotFourMythrilBags[];
+extern u8 MsgSoruTooManyItems[];
 
 /*
  * Drain until room: save the s16 counter at scene workspace + 472, prime two
@@ -18,13 +20,13 @@ void Scene_GiveMythrilBags(void)
 
     Audio_PlayCue(0x53);
     Item_ShowFound(ITEM_MYTHRIL_BAG, 3);
-    Message_ShowCentered(MSG_GOT_FOUR_MYTHRIL_BAGS, 1);
+    Message_ShowCentered((s32)MsgSoruGotFourMythrilBags, 1);
     do {
         cnt = 30 - Inventory_Count(0);
         cnt -= Inventory_Count(1);
 
         if (cnt <= 3) {
-            Message_ShowCentered(MSG_TOO_MANY_ITEMS, 1);
+            Message_ShowCentered((s32)MsgSoruTooManyItems, 1);
             if (Shop_PickUnitItem(&second, &first) != -1)
                 Inventory_Discard(second, first);
         }

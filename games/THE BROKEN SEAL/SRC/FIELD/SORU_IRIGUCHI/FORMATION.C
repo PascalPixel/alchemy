@@ -1,4 +1,6 @@
 #include "SORU.H"
+extern u8 MsgFieldDoorTightlyLocked[];
+extern u8 MsgSoruMoreStatuesOutOfReach[];
 
 void Scene_RunTransitionCue(void)
 {
@@ -36,7 +38,7 @@ void Scene_RunTransitionCue(void)
     Event_Wait(20);
     Actor_RunRepeatedMotion(8, 2);
     Actor_FaceDirection(8, 0, 30);
-    Event_SetMessage(MSG_MORE_STATUES_OUT_OF_REACH);
+    Event_SetMessage((s32)MsgSoruMoreStatuesOutOfReach);
     Event_ShowMessageAndWait(0x4008, 0, 10);
     Actor_ShowEmote(8, 0x100, 40);
     Actor_RunRepeatedMotion(8, 1);
@@ -159,7 +161,7 @@ void Scene_RunActorFormation(s32 a0)
 void FieldScene_RunScriptedStep953(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_THE_DOOR_IS_LOCKED, 1);
+    Message_ShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
     Event_End();
 }
 

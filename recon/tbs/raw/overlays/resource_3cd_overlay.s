@@ -1,141 +1,6 @@
 .syntax unified
 	.thumb
-	.section .text.x020080ec,"ax",%progbits
-	.global Func_020000ec
-	.thumb_func
-Func_020000ec:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	ldr r3, [pc, #272]
-	movs r2, #250
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldr r0, [r3]
-	sub sp, #4
-	bl 0x02008850
-	movs r3, #2
-	str r3, [sp, #0]
-	movs r1, #0
-	movs r2, #30
-	movs r3, #9
-	mov r8, r0
-	movs r0, #0
-	bl 0x020087f0
-	ldr r5, [pc, #240]
-	adds r6, r0, #0
-	adds r1, r6, #0
-	adds r0, r5, #0
-	movs r2, #0
-	movs r3, #0
-	bl 0x02008800
-	adds r0, r5, #1
-	adds r1, r6, #0
-	movs r2, #0
-	movs r3, #16
-	adds r5, #2
-	bl 0x02008800
-	adds r0, r5, #0
-	adds r1, r6, #0
-	movs r2, #0
-	movs r3, #32
-	movs r7, #1
-	bl 0x02008800
-	cmp r7, #0
-	beq .L_020000ec_0
-	adds r0, r6, #0
-	bl 0x02008830
-	mov r0, r8
-	adds r1, r6, #0
-	movs r2, #0
-	movs r3, #48
-	bl 0x02008810
-	ldr r0, [pc, #180]
-	adds r1, r6, #0
-	movs r2, #48
-	movs r3, #48
-	bl 0x02008818
-	mov r3, r8
-	ldrb r0, [r3, #15]
-	movs r3, #48
-	str r3, [sp, #0]
-	movs r1, #0
-	adds r2, r6, #0
-	movs r3, #72
-	movs r7, #0
-	bl 0x02008828
-.L_020000ec_0:
-	ldr r5, [pc, #152]
-	ldr r3, [r5]
-	movs r2, #8
-	ands r3, r2
-.L_0200017e:
-	cmp r3, #0
-	bne .L_0200017e_0
-	ldr r3, [r5]
-	movs r2, #4
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200017e_1
-.L_0200017e_0:
-	movs r0, #5
-	bl 0x020080c0
-	movs r0, #93
-	bl 0x020088c8
-	movs r7, #1
-.L_0200017e_1:
-	ldr r3, [r5]
-	movs r2, #1
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200017e_2
-	movs r0, #1
-	bl 0x020080c0
-	movs r0, #91
-	bl 0x020088c8
-	movs r7, #1
-.L_0200017e_2:
-	ldr r3, [r5]
-	movs r2, #2
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200017e_3
-	movs r0, #113
-	bl 0x020088c8
-	adds r0, r6, #0
-	bl 0x02008830
-	movs r0, #1
-	bl 0x020087e8
-	movs r1, #1
-	adds r0, r6, #0
-	bl 0x020087f8
-	movs r0, #0
-	bl 0x02008858
-	movs r0, #1
-	bl 0x02008858
-	movs r0, #3
-	bl 0x02008858
-	movs r0, #2
-	bl 0x02008858
-	sub sp, #-4
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-.L_0200017e_3:
-	movs r0, #1
-	bl 0x020087e8
-	b 0x02008140
-	.2byte 0x0000
-	.2byte 0x0240
-	.2byte 0x0200
-	.2byte 0x0c20
-	.2byte 0x0000
-	.2byte 0x88d0
-	.2byte 0x0200
-	.2byte 0x1c94
-	.2byte 0x0300
+	.section .text.x02008214,"ax",%progbits
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -707,6 +572,8 @@ Func_020000ec:
 	.2byte 0x010f
 	.2byte 0x0000
 	.section .rodata,"a",%progbits
+	.global gItemLevelLvLabel
+gItemLevelLvLabel:
 	.4byte 0x0000764c
 	.4byte 0x6d657449
 	.4byte 0x3a6f4e20

@@ -4,6 +4,14 @@
 #include "KORIMA_MURA.H"
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
+extern u8 MsgKorimaHesAsStumpedAsWe[];
+extern u8 MsgKorimaKnowThoseFieldsWere[];
+extern u8 MsgKorimaMatterIvan[];
+extern u8 MsgKorimaSparklyStuffOnGround[];
+extern u8 MsgKorimaThatsReliefRobinThoughtYoud[];
+extern u8 MsgKorimaWasOurPsynergy[];
+extern u8 MsgKorimaWatchOutItsHappeningAgain[];
+extern u8 MsgKorimaYoureRobinThereIsntMuch[];
 
 struct Struct3848 {
     u8 pad00[8];
@@ -264,16 +272,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-enum BranchingFormationMessage {
-    MSG_MATTER_IVAN = 0x1474,
-    MSG_SPARKLY_STUFF_ON_GROUND = 0x147c,
-    MSG_KNOW_THOSE_FIELDS_WERE = 0x1488,
-    MSG_WAS_OUR_PSYNERGY = 0x1489,
-    MSG_WATCH_OUT_ITS_HAPPENING_AGAIN = 0x149d,
-    MSG_HES_AS_STUMPED_AS_WE = 0x14b4,
-    MSG_YOURE_ROBIN_THERE_ISNT_MUCH = 0x14b6,
-    MSG_THATS_RELIEF_ROBIN_THOUGHT_YOUD = 0x14bf
-};
 
 void Object_RefreshSelectorById(s32 id);
 void SceneActor_SetPairZeroAndValue(s32 actor, s32 facing, s32 frames);
@@ -426,9 +424,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     SceneActor_SetPairZeroAndValue(0, 0x6000, 10);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_SetMessage(MSG_MATTER_IVAN);
+    Event_SetMessage((s32)MsgKorimaMatterIvan);
     Event_SayThenWait(ACTOR_GERALD, 10);
-    Event_SetMessage(MSG_SPARKLY_STUFF_ON_GROUND);
+    Event_SetMessage((s32)MsgKorimaSparklyStuffOnGround);
     SceneActor_SetPairZeroAndValue(2, 0xc000, 20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_SayThenWait(ACTOR_IVAN, 20);
@@ -636,14 +634,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (*formation_flag != 0) {
         Actor_RunRepeatedMotion(ACTOR_MIA, 2);
         Battle_WaitMode0(10);
-        Event_SetMessage(MSG_KNOW_THOSE_FIELDS_WERE);
+        Event_SetMessage((s32)MsgKorimaKnowThoseFieldsWere);
         Event_SayThenWait(ACTOR_MIA, 40);
     }
     Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Battle_WaitMode0(80);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_SetMessage(MSG_WAS_OUR_PSYNERGY);
+    Event_SetMessage((s32)MsgKorimaWasOurPsynergy);
     Event_SayThenWait(ACTOR_IVAN, 40);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
     Battle_WaitMode0(40);
@@ -833,7 +831,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Battle_WaitMode0(60);
     SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
-    Event_SetMessage(MSG_WATCH_OUT_ITS_HAPPENING_AGAIN);
+    Event_SetMessage((s32)MsgKorimaWatchOutItsHappeningAgain);
     Event_SayThenWait(ACTOR_IVAN, 10);
     SceneActor_SetPairZeroAndValue(1, 0xc000, 10);
     SceneActor_SetPairZeroAndValue(0, 0xc000, 10);
@@ -1025,7 +1023,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
             Battle_WaitMode0(40);
             SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
-            Event_SetMessage(MSG_HES_AS_STUMPED_AS_WE);
+            Event_SetMessage((s32)MsgKorimaHesAsStumpedAsWe);
             Event_SayThenWait(ACTOR_GERALD, 20);
             Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
             Event_SayThenWait(ACTOR_IVAN, 20);
@@ -1037,7 +1035,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Battle_WaitMode0(20);
     Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Battle_WaitMode0(10);
-    Event_SetMessage(MSG_YOURE_ROBIN_THERE_ISNT_MUCH);
+    Event_SetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
     Event_SayThenWait(ACTOR_GERALD, 10);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
@@ -1097,7 +1095,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
     Battle_WaitMode0(40);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Event_SetMessage(MSG_THATS_RELIEF_ROBIN_THOUGHT_YOUD);
+    Event_SetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
     Event_SayThenWait(ACTOR_IVAN, 20);
     if (*finish_flag != 0) {
         SceneActor_SetPairZeroAndValue(3, 0, 10);

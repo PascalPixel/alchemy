@@ -1,11 +1,16 @@
 /* The psynergy stone falling on the hut. */
 #include "HAIDIA.H"
+extern u8 MsgHaidiaAnythingInterestingOnYourTrip[];
+extern u8 MsgHaidiaCanIUsePsynergy[];
+extern u8 MsgHaidiaIHaveSomePsynergyLeft[];
+extern u8 MsgHaidiaTheStoneFellOnThe[];
+extern u8 MsgHaidiaYouSawTheWiseOne[];
 
 void SceneDialogue_RunFlagGatedMessageStep(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x87a) != 0) {
-        Event_SetMessage(MSG_ANYTHING_INTERESTING_ON_YOUR_TRIP);
+        Event_SetMessage((s32)MsgHaidiaAnythingInterestingOnYourTrip);
         Event_OpenMessage(15, 0);
         if (Event_ChooseYesNo(0, 0) == 1) {
             Event_ShowMessage(15, 0);
@@ -15,10 +20,10 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
             Event_AskYesNo(15, 0);
         }
     } else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        Event_SetMessage(MSG_YOU_SAW_THE_WISE_ONE);
+        Event_SetMessage((s32)MsgHaidiaYouSawTheWiseOne);
         Event_AskYesNo(11, 0);
     } else {
-        Event_SetMessage(MSG_CAN_I_USE_PSYNERGY);
+        Event_SetMessage((s32)MsgHaidiaCanIUsePsynergy);
         Event_AskYesNo(11, 0);
     }
     Event_End();
@@ -30,7 +35,7 @@ void Scene_StoneFellOnTheHut(void)
     Actor_SetAnimation(26, 1);
     Actor_FaceActor(26, ACTOR_PARTY_LEADER, 20);
     Actor_FaceActor(26, 21, 40);
-    Event_SetMessage(MSG_THE_STONE_FELL_ON_THE_HUT);
+    Event_SetMessage((s32)MsgHaidiaTheStoneFellOnThe);
     Event_SayThenWait(26, 20);
     Camera_SetSpeed(0x19999, 0x3333);
     Camera_MoveTo(0x1510000, -1, 0x1100000, 1);
@@ -54,7 +59,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Event_Begin();
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 82, 0x2f8);
     Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 30);
-    Event_SetMessage(MSG_I_HAVE_SOME_PSYNERGY_LEFT);
+    Event_SetMessage((s32)MsgHaidiaIHaveSomePsynergyLeft);
     Event_SayThenWait(15, 20);
     Value3(SceneActor_SetPairZeroAndValue, 15, 0xa000, 20);
     Actor_SetAttachedEffect(15, 0x102);

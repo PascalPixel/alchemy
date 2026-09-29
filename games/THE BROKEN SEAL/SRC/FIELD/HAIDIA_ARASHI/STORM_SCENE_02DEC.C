@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgHaidiaMomDadBack[];
 
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
@@ -116,7 +117,7 @@ void HaidiaArashi_RunScene02DEC(void)
             Call3(Engine_ActorWalkToAndWait, 8, 221, 0x569);
             Call3(Engine_ActorFaceDirection, 8, 0xb000, 60);
             Engine_ActorRunRepeatedMotion(26, 2);
-            Call1(Engine_EventSetMessage, 0xec6);
+            Call1(Engine_EventSetMessage, (s32)MsgHaidiaMomDadBack);
             Engine_EventShowMessageAndWait(26, 0, 40);
             Call3(Engine_ActorSetPosition, 9, 0x650000, 0x4ad0000);
             Call3(Engine_ActorFaceDirection, 9, 0x2000, 0);

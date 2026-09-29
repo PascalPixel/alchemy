@@ -8,6 +8,8 @@
 #define SCENE_FIELD_1C0 (*(s32 *)(*(u8 **)Data_03001ebc + 0x1c0))
 
 #include "RESOURCE_3A8_EFFECT.H"
+extern u8 MsgKareiLordHammetsPalaceLordAway[];
+extern u8 MsgKareiWeveArrivedHammet[];
 
 extern const s32 KareiMachi_ActionScript01[];
 extern const s32 KareiMachi_Script02[];
@@ -17,20 +19,6 @@ enum {
     ITEM_NUT = 181
 };
 
-enum StagedGroupMessage {
-    MSG_ROBIN_PEERED_INTO = 0x947,
-    MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE = 0x1a7c,
-    MSG_WHY_WE_STOPPING_AT_PLACE = 0x1a92,
-    MSG_THATS_WE_CANT_WAIT_ANY = 0x1ab2,
-    MSG_LORD_HAMMET_SELLS_HIS_BEST = 0x1acf,
-    MSG_DID_FIND_NEEDED_IN_WEAPON = 0x1ad1,
-    MSG_LADY_LAYANA_SHARED_IN_LORD = 0x1ad5,
-    MSG_LORD_HAMMETS_PALACE_LORD_AWAY = 0x1b05,
-    MSG_WEVE_ARRIVED_HAMMET = 0x256f,
-    MSG_DO_WANT_GO_CAVE_UP = 0x2584,
-    MSG_LAYANA_WAS_VERY_HARD_ON = 0x25b3,
-    MSG_VERY_CLEAN_MAINTAINED = 0x29df
-};
 
 struct Obj {
     u8 filler00[6];
@@ -270,7 +258,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     }
     Event_Wait(20);
     Actor_SetAnimationAndWait(8, 4);
-    Event_SetMessage(MSG_LORD_HAMMETS_PALACE_LORD_AWAY);
+    Event_SetMessage((s32)MsgKareiLordHammetsPalaceLordAway);
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_FaceDirection(9, 0x5000, 10);
     Actor_SetAnimationAndWait(9, 3);
@@ -505,7 +493,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, motionActions);
     Actor_Jump(11, 2, 20);
     Actor_SetAnimationAndWait(11, 3);
-    Event_SetMessage(MSG_WEVE_ARRIVED_HAMMET);
+    Event_SetMessage((s32)MsgKareiWeveArrivedHammet);
     Event_ShowMessageAndWait(11, 0, 10);
     Actor_SetAnimationAndWait(10, 3);
     object = Actor_Get(ACTOR_PARTY_LEADER);

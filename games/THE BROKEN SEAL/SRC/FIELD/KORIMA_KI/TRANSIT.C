@@ -1,4 +1,17 @@
 #include "KORIMAKI.H"
+extern u8 MsgKorimaControlTretsHeartShallNot[];
+extern u8 MsgKorimaFeelGreatPowerSpreadingThrough[];
+extern u8 MsgKorimaHealingWatersMercuryLighthouseMight[];
+extern u8 MsgKorimaKnowCannotStopButPlease[];
+extern u8 MsgKorimaMustHorribleBeyondRiverAm[];
+extern u8 MsgKorimaNowHaveSuchPowerAxe[];
+extern u8 MsgKorimaOweGreatDebtHaveSaved[];
+extern u8 MsgKorimaPeopleKolimaForgiveMe[];
+extern u8 MsgKorimaShouldDoPeopleKolimaCursed[];
+extern u8 MsgKorimaSilence[];
+extern u8 MsgKorimaSilence2[];
+extern u8 MsgKorimaWasIndeedAngryPeopleHad[];
+extern u8 MsgKorimaWaterHermesSeepedIntoTret[];
 
 s32 gKorimaKiSparkOrigin[3] __attribute__((section(".bss")));
 s32 gKorimaKiSparkCount __attribute__((section(".bss")));
@@ -13,13 +26,13 @@ void FieldScene_RunScene395_02000158(void)
     Event_Begin();
     if (GameFlag_IsSet(0x845) != 0) {
         KorimaKi_PlayGesture(10, 1);
-        Event_SetMessage(MSG_NOW_HAVE_SUCH_POWER_AXE);
+        Event_SetMessage((s32)MsgKorimaNowHaveSuchPowerAxe);
         Event_ShowMessage(8, 0);
         KorimaKi_PlayGesture(10, 0);
     } else {
         if (GameFlag_IsSet(0x844) != 0) {
             KorimaKi_PlayGesture(10, 1);
-            Event_SetMessage(MSG_SILENCE_2);
+            Event_SetMessage((s32)MsgKorimaSilence2);
             Event_ShowMessage(8, 0);
             Value2(KorimaKi_PlayGesture, 10, 0);
             record = PartyInventory_FindOwner(184);
@@ -33,7 +46,7 @@ void FieldScene_RunScene395_02000158(void)
                 *target = shown;
             }
         } else {
-            Event_SetMessage(MSG_SILENCE);
+            Event_SetMessage((s32)MsgKorimaSilence);
             Event_ShowMessage(8, 0);
             ColorBuffer_ApplyTarget(0x406218, 1);
             ColorBuffer_Interpolate(20);
@@ -54,9 +67,9 @@ void PaletteScene_RunActorNineBranch(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x845) != 0) {
-        Event_SetMessage(MSG_MUST_HORRIBLE_BEYOND_RIVER_AM);
+        Event_SetMessage((s32)MsgKorimaMustHorribleBeyondRiverAm);
     } else {
-        Event_SetMessage(MSG_HEALING_WATERS_MERCURY_LIGHTHOUSE_MIGHT);
+        Event_SetMessage((s32)MsgKorimaHealingWatersMercuryLighthouseMight);
     }
     Event_ShowMessage(9, 0);
     Event_End();
@@ -66,9 +79,9 @@ void PaletteScene_RunActorEightBranch(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x845) != 0) {
-        Event_SetMessage(MSG_KNOW_CANNOT_STOP_BUT_PLEASE);
+        Event_SetMessage((s32)MsgKorimaKnowCannotStopButPlease);
     } else {
-        Event_SetMessage(MSG_PEOPLE_KOLIMA_FORGIVE_ME);
+        Event_SetMessage((s32)MsgKorimaPeopleKolimaForgiveMe);
     }
     Event_ShowMessage(8, 0);
     Event_End();
@@ -131,7 +144,7 @@ void RunEventScript01(void)
         record[90] = flags;
     }
     Event_Wait(80);
-    Event_SetMessage(MSG_CONTROL_TRETS_HEART_SHALL_NOT);
+    Event_SetMessage((s32)MsgKorimaControlTretsHeartShallNot);
     Event_ShowMessageAndWait(0x200e, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
@@ -171,7 +184,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 212);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
     Audio_PlayCue(17);
-    Message_ShowCentered(MSG_WATER_HERMES_SEEPED_INTO_TRET, 1);
+    Message_ShowCentered((s32)MsgKorimaWaterHermesSeepedIntoTret, 1);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     object = Actor_Get(ACTOR_PARTY_LEADER);
@@ -243,7 +256,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 1);
     Event_Wait(40);
     Audio_PlayCue(7);
-    Event_SetMessage(MSG_FEEL_GREAT_POWER_SPREADING_THROUGH);
+    Event_SetMessage((s32)MsgKorimaFeelGreatPowerSpreadingThrough);
     Event_ShowMessage(8, 0);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
@@ -347,7 +360,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_Wait(40);
     KorimaKi_PlayGesture(10, 1);
     Event_Wait(10);
-    Event_SetMessage(MSG_SHOULD_DO_PEOPLE_KOLIMA_CURSED);
+    Event_SetMessage((s32)MsgKorimaShouldDoPeopleKolimaCursed);
     Event_ShowMessage(0x8008, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
     Actor_SetAnimation(ACTOR_GERALD, 3);
@@ -371,7 +384,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_ShowMessage(ACTOR_GERALD, 0);
     KorimaKi_PlayGesture(10, 4);
     Event_Wait(20);
-    Event_SetMessage(MSG_WAS_INDEED_ANGRY_PEOPLE_HAD);
+    Event_SetMessage((s32)MsgKorimaWasIndeedAngryPeopleHad);
     Event_ShowMessage(0x8008, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
@@ -520,7 +533,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 4);
     KorimaKi_PlayGesture(10, 4);
     Event_Wait(20);
-    Event_SetMessage(MSG_OWE_GREAT_DEBT_HAVE_SAVED);
+    Event_SetMessage((s32)MsgKorimaOweGreatDebtHaveSaved);
     Event_ShowMessage(0x8008, 0);
     KorimaKi_PlayGesture(11, 4);
     KorimaKi_PlayGesture(11, 4);

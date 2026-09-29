@@ -4,7 +4,7 @@
  * Entry is referenced by the overlay's callback table as runtime 02009ca5;
  * it consumes no entry arguments. Neighbors end at 02001ca4 and begin at
  * 02002274. Main callees and both local callees were resolved from own ROM.
- * Message 03172 identifies the Venus Djinni joining the leader, followed by
+ * MsgWorldMapAbilityVenusDjinni identifies the Venus Djinni joining the leader, followed by
  * the Djinn tutorial; the name is descriptive, not original source spelling.
  *
  * Registered baseline: 1488 bytes, 118 halfwords, 52 edits. H1 reconstructs
@@ -71,6 +71,15 @@
  * Stop with the canonical 1488 / 118 / 52 draft; no newly adopted bytes.
  */
 #include "FIELD_EVENT.H"
+extern u8 MsgWorldMapAbilityVenusDjinni[];
+extern u8 MsgWorldMapComePromiseWont[];
+extern u8 MsgWorldMapGoSetStandby[];
+extern u8 MsgWorldMapHmmmmExplainAgain[];
+extern u8 MsgWorldMapMeanieDontCare[];
+extern u8 MsgWorldMapOh[];
+extern u8 MsgWorldMapSeeDjinnUseful[];
+extern u8 MsgWorldMapSeeWontRegret[];
+extern u8 MsgWorldMapYeahWantLearn[];
 
 /*
  * resource_371 owner at 0x02001ca4, 1,488 bytes.
@@ -83,8 +92,8 @@
  *   - flag clear: the long first-visit presentation.  It sets 0x16e, plays
  *     the approach animation, walks actor 8 to the anchor, runs a 60-frame
  *     alternating-mode idle driven by the shared frame counter at 0x03001e40,
- *     shows message 0xc4f, then pages messages 0xc5c..0xc62 while the reader
- *     keeps confirming (message 0xc63 when the reader cancels), draws a
+ *     shows MsgWorldMapOh, then pages messages 0xc5c..0xc62 while the reader
+ *     keeps confirming (MsgWorldMapSeeWontRegret when the reader cancels), draws a
  *     quantity, and finishes with message 0xc64/0xc65.
  *   - flag set: the short repeat-visit branch.  It shows message 0xc68/0xc6a,
  *     sets 0x16f and clears 0x171, and asks two yes/no questions.  Both
@@ -244,7 +253,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
         }
         Engine_ActorFaceActor(ACTOR, 0, 0);
         Engine_TaskWait(16);
-        Call1(Engine_EventSetMessage, 0xc4f);
+        Call1(Engine_EventSetMessage, (s32)MsgWorldMapOh);
         Engine_EventShowMessage(ACTOR, 0);
         Main_0808a3e0();
         Call2(Main_0808a5c0, 0x13333, 6);
@@ -335,11 +344,11 @@ void WorldMap_RunVenusDjinniMeeting(void)
             Engine_ActorJump(ACTOR, 2, 20);
             Engine_ActorJump(ACTOR, 2, 20);
             if (page == 6) {
-                Call1(Engine_EventSetMessage, 0xc62);
+                Call1(Engine_EventSetMessage, (s32)MsgWorldMapMeanieDontCare);
                 Engine_EventShowMessage(ACTOR, 0);
                 goto paged;
             }
-            Engine_EventSetMessage(page + 0xc5c);
+            Engine_EventSetMessage(page + (s32)MsgWorldMapComePromiseWont);
             Engine_EventOpenMessage(ACTOR, 0);
             page = page + 1;
             goto page_loop;
@@ -348,12 +357,12 @@ void WorldMap_RunVenusDjinniMeeting(void)
         Engine_ActorSetAnimation(0, 22);
         Engine_ActorJump(ACTOR, 2, 20);
         Engine_ActorJump(ACTOR, 4, 20);
-        Call1(Engine_EventSetMessage, 0xc63);
+        Call1(Engine_EventSetMessage, (s32)MsgWorldMapSeeWontRegret);
         Engine_EventShowMessage(ACTOR, 0);
     paged:
         Call2(Engine_UiWorkPushValueSlot, 0x12c, 4);
         Engine_AudioPlayCue(81);
-        text = 0xc64;
+        text = (s32)MsgWorldMapAbilityVenusDjinni;
         Call2(Engine_MessageShowCentered, text, 3);
         text = text + 1;
         Call1(Engine_EventSetMessage, text);
@@ -375,7 +384,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
     Engine_ActorFaceActor(ACTOR, 0, 0);
     Engine_ActorFaceActor(0, ACTOR, 0);
     Engine_ActorSetAnimation(0, 22);
-    Call1(Engine_EventSetMessage, 0xc68);
+    Call1(Engine_EventSetMessage, (s32)MsgWorldMapSeeDjinnUseful);
     Engine_ActorJump(ACTOR, 2, 20);
     Engine_ActorJump(ACTOR, 2, 20);
     Engine_EventShowMessage(ACTOR, 0);
@@ -386,7 +395,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
     Discard1(Engine_GameFlagSet, 0x16f);
     Call1(Engine_GameFlagClear, 0x171);
     Main_080a1040();
-    Call1(Engine_EventSetMessage, 0xc6a);
+    Call1(Engine_EventSetMessage, (s32)MsgWorldMapGoSetStandby);
     Engine_ObjectSetPosition(rec8, ANCHOR_X, 0, ANCHOR_Y);
     Engine_EventWait(30);
     Engine_EventShowMessage(ACTOR, 0);
@@ -396,7 +405,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
     if (Value2(Main_0808a070, 0, 0) == 1) {
         Engine_ActorSetAnimation(0, 22);
         Engine_ActorRunRepeatedMotion(ACTOR, 2);
-        Call1(Engine_EventSetMessage, 0xc6d);
+        Call1(Engine_EventSetMessage, (s32)MsgWorldMapHmmmmExplainAgain);
         Value2(Engine_EventOpenMessage, ACTOR, 0);
         if (Value2(Main_0808a070, 0, 0) != 1) {
             Engine_EventShowMessage(ACTOR, 0);
@@ -409,7 +418,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
     }
     /* Declined: undo the branch flags and leave. */
     Engine_ActorSetAnimation(0, 22);
-    Call1(Engine_EventSetMessage, 0xc6f);
+    Call1(Engine_EventSetMessage, (s32)MsgWorldMapYeahWantLearn);
     Engine_ActorJump(ACTOR, 2, 20);
     Engine_ActorJump(ACTOR, 2, 20);
     Engine_ActorSetAnimationAndWait(0, 3);

@@ -196,33 +196,10 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  */
 
 #include "TYPES.H"
+extern u8 MsgShindenAcceptRobinCantMean[];
+extern u8 MsgShindenRobinWillAcceptResponsibilityFor[];
+extern u8 MsgShindenWeHadIdeaTrueSanctum[];
 
-enum FacingGatedMessage {
-    MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS = 0x1035,
-    MSG_WE_HAD_IDEA_TRUE_SANCTUM = 0x1138,
-    MSG_ROBIN_WILL_ACCEPT_RESPONSIBILITY_FOR = 0x1162,
-    MSG_ARE_YOU_SURE = 0x1164,
-    MSG_ONCE_STEP_OUTSIDE_VILLAGE_CANNOT = 0x116c,
-    MSG_ACCEPT_ROBIN_CANT_MEAN = 0x1171,
-    MSG_MY_CONTROL_OVER_PSYNERGY_HAS = 0x119d,
-    MSG_DO_FEEL_ANY_CHANGE_IN = 0x119f,
-    MSG_WE_WILL_HELP_ANYTIME_AS = 0x1288,
-    MSG_HEALER_MUST_WORRIED_ABOUT_NEVER = 0x1289,
-    MSG_WONDER_IF_EVER_SEE_OUR = 0x128b,
-    MSG_WAS_HAND_FATE_RETURNED_GOLD = 0x1376,
-    MSG_WHEN_STRAY_FROM_YOUR_WORLDLY = 0x1377,
-    MSG_CHILD_HAS_AWAKENED_OUR_TEACHINGS = 0x1379,
-    MSG_AM_STARTING_FEEL_ONLY_BEGINNING = 0x1408,
-    MSG_CURSE_MAY_OVER_BUT_WE = 0x171c,
-    MSG_CAME_XIAN_FROM_VERY_DISTANT = 0x1823,
-    MSG_WAS_AFTER_EERIE_NIGHT_WHEN = 0x190a,
-    MSG_SAVED_ALTIN_FROM_MONSTERS_CLEARLY = 0x1951,
-    MSG_PATH_SOL_SANCTUM_STILL_CLOSED = 0x1bfc,
-    MSG_ROBIN_YOUR_NEW_FRIENDS_ADEPTS = 0x1bfd,
-    MSG_MAY_WRONG_BUT_LATELY_THERE = 0x1ce8,
-    MSG_POLISHED_GOLD_STATUE_RETURNED_US = 0x1ce9,
-    MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP = 0x1ceb
-};
 
 void FieldScene_RunScriptedSceneSequence(void)
 {
@@ -275,7 +252,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Actor_SetSpeed(8, 0xcccc, 0x6666);
     Event_Wait(0x1e);
     Actor_RunRepeatedMotion(0xc, 2);
-    Event_SetMessage(MSG_WE_HAD_IDEA_TRUE_SANCTUM);
+    Event_SetMessage((s32)MsgShindenWeHadIdeaTrueSanctum);
     Event_ShowMessage(0xc, 0);
     Event_Wait(0xa);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -715,7 +692,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(0x1e);
 dialogue:
-    Event_SetMessage(MSG_ROBIN_WILL_ACCEPT_RESPONSIBILITY_FOR);
+    Event_SetMessage((s32)MsgShindenRobinWillAcceptResponsibilityFor);
     Actor_RunRepeatedMotion(8, 1);
     Event_Wait(0x14);
     Event_OpenMessage(8, 0);
@@ -789,7 +766,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
     Event_Wait(20);
-    Event_SetMessage(MSG_ACCEPT_ROBIN_CANT_MEAN);
+    Event_SetMessage((s32)MsgShindenAcceptRobinCantMean);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
     Actor_FaceActor(12, ACTOR_GERALD, 0);

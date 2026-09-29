@@ -6,6 +6,7 @@
 #include "VINASU.H"
 #include "FIELD_EFFECT.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgVinasuBeatEm[];
 
 extern u8 LinkedValue_Zero;
 extern u8 LinkedScene_VinasuChojo;
@@ -65,7 +66,6 @@ static __inline__ void MakeBurstVelocity(s32 velocity[3], s32 angle)
 }
 
 enum {
-    MSG_WE_BEAT_THEM = 0x27cf,
     ITEM_VENUS_STAR = 220
 };
 
@@ -121,7 +121,7 @@ void Scene_RunPairedActorEffectSequence(void)
 
     Actor_Launch(ACTOR_GERALD, 2, 20);
     VinasuChojo_FaceActor(ACTOR_GERALD, FACING_SOUTHEAST);
-    Event_SetMessage(MSG_WE_BEAT_THEM);
+    Event_SetMessage((s32)MsgVinasuBeatEm);
     VinasuChojo_ShowMessage(0x1001);
     VinasuChojo_FaceActor(ACTOR_MIA, FACING_NORTHWEST);
     VinasuChojo_ShowMessage(ACTOR_MIA);

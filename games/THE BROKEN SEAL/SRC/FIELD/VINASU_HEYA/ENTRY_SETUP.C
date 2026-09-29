@@ -1,5 +1,6 @@
 #include "ENTRY_SETUP.H"
 #include "IWRAM_CALL.H"
+extern u8 *gActorEffectWork;
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
 {
@@ -301,7 +302,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Audio_PlayCue(228);
         /* Override field at +108 of the entry record; holds an EWRAM
          * address while the effect sequence below runs. */
-        *(s32 *)(entry + 108) = 0x20086a1;
+        *(s32 *)(entry + 108) = (s32)SceneEffect_SpawnTwoRandomizedParticles;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
         Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
         Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
@@ -315,8 +316,6 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Event_End();
     }
 }
-
-extern u8 *gActorEffectWork;
 
 void SceneState_StoreLookupZeroToWord24(void)
 {
@@ -443,7 +442,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     actor->motion_flags = 3;
     Event_Wait(24);
     options.palette = 7;
-    options.update = (void (*)(union FieldObject *))0x200896d;
+    options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
     options.start_scale_x = 0xcccc;
     options.start_scale_y = 0xcccc;
     for (i = 0; i <= 16; i++) {

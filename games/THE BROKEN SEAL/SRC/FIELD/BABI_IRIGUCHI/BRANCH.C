@@ -1,4 +1,7 @@
 #include "IRIGUCHI.H"
+extern u8 MsgBabiSeemsLocked[];
+extern u8 MsgBabiTheDoor[];
+extern u8 MsgBabiYoureSureTheyWentThrough[];
 
 void FieldScene_RunFourCallSequence(void)
 {
@@ -79,7 +82,7 @@ void FieldScene_RunStepWithValue2693(void)
 {
     Event_Begin();
     Iriguchi_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Message_ShowCentered(MSG_SEEMS_LOCKED, 1);
+    Message_ShowCentered((s32)MsgBabiSeemsLocked, 1);
     Event_End();
 }
 
@@ -91,7 +94,7 @@ void FieldScene_RunBranchingActorSequence(void)
     GameFlag_Set(0x98a);
     Event_Begin();
     Battle_ResetEffectCounter();
-    Event_SetMessage(MSG_YOURE_SURE_THEY_WENT_THROUGH);
+    Event_SetMessage((s32)MsgBabiYoureSureTheyWentThrough);
     Iriguchi_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x160);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
@@ -365,7 +368,7 @@ void FieldScene_RunActorEventSequence(void)
     GameFlag_Set(0x989);
     Event_Begin();
     Battle_ResetEffectCounter();
-    Event_SetMessage(MSG_THE_DOOR);
+    Event_SetMessage((s32)MsgBabiTheDoor);
     Iriguchi_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x138);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);

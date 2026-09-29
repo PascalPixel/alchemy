@@ -2,6 +2,9 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
+extern u8 MsgShianHowDidGetHereBridge[];
+extern u8 MsgShianIsntNobleHimTrySave[];
+extern u8 MsgShianNowHeTrulyBeyondWorlds[];
 
 void FieldScene_RunScene39e_02000414(void)
 {
@@ -9,7 +12,7 @@ void FieldScene_RunScene39e_02000414(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_HOW_DID_GET_HERE_BRIDGE);
+    Event_SetMessage((s32)MsgShianHowDidGetHereBridge);
     if (GameFlag_IsSet(0x890) != 0) {
         bump_step(4);
     }
@@ -29,11 +32,11 @@ void FieldScene_RunFlag88FBranch(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x88F) != 0) {
-        Event_SetMessage(MSG_NOW_HE_TRULY_BEYOND_WORLDS);
+        Event_SetMessage((s32)MsgShianNowHeTrulyBeyondWorlds);
         Event_AskYesNo(12, 0);
         Event_End();
     } else {
-        Event_SetMessage(MSG_ISNT_NOBLE_HIM_TRY_SAVE);
+        Event_SetMessage((s32)MsgShianIsntNobleHimTrySave);
         Event_OpenMessage(12, 0);
         if (Event_ChooseYesNo(0, 0) == 1) {
             u16 *q = (u16 *)(gWork + 0x1D8);

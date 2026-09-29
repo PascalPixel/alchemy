@@ -1,9 +1,14 @@
 /* NONMATCHING: resource_372 at 0x02008a10, from FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C, stays listing.
  *
- * Remaining difference: the ROM keeps a message number in a saved register and loads it from the literal pool where the source named a link-time symbol; the main image has no name for it, and a plain constant is loaded ahead of the preceding call instead.
+ * Remaining difference: its messages have catalogue names now; 3 halfwords
+ * still differ from the ROM, and it names symbols no link defines
+ * (Func_02005264_a, Func_02005270, Func_02005284, Func_020052ea, ...).
  */
 
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaBigBoyWhy[];
+extern u8 MsgHaidiaKnowWayGo[];
+extern u8 MsgHaidiaKyleAbleStop[];
 
 void Scene_DoraSendsRobinToThePlaza(void)
 {
@@ -42,7 +47,7 @@ void Scene_DoraSendsRobinToThePlaza(void)
     Actor_SetAnimation(ACTOR_DORA, 1);
     Actor_RunRepeatedMotion(ACTOR_DORA, 1);
     Actor_FaceDirection(ACTOR_DORA, 0xc000, 60);
-    base5_e5c = MSG_CAN_THEY_STOP_THE_BOULDER;
+    base5_e5c = (s32)MsgHaidiaKyleAbleStop;
     Event_SetMessage(base5_e5c);
     Event_ShowMessage(ACTOR_DORA, 0);
     Actor_WalkToAndWait(ACTOR_KYLE, 0x126, 0x346);
@@ -77,11 +82,11 @@ void Scene_DoraSendsRobinToThePlaza(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     while (Event_ChooseYesNo(0, 0) == 1) {
         Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-        Event_SetMessage(MSG_GO_ON_YOUR_OWN);
+        Event_SetMessage((s32)MsgHaidiaBigBoyWhy);
         Event_OpenMessage(ACTOR_DORA, 0);
     }
     Actor_SetAnimationAndWait(ACTOR_DORA, 3);
-    Event_SetMessage(MSG_GO_SOUTH_TO_THE_PLAZA);
+    Event_SetMessage((s32)MsgHaidiaKnowWayGo);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);

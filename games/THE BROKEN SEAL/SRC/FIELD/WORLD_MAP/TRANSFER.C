@@ -1,4 +1,7 @@
 #include "STORY.H"
+extern u8 MsgWorldMapAfterBringingDjinniIntoYour[];
+extern u8 MsgWorldMapNextIllShowHowCan[];
+extern u8 MsgWorldMapWeCantStayAnotherMinute[];
 
 void RunEventScript01(void)
 {
@@ -110,7 +113,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
     Actor_SetPosition(8, 0x16d80000, 0x6380000);
     Task_Wait(1);
-    Event_SetMessage(MSG_WE_CANT_STAY_ANOTHER_MINUTE);
+    Event_SetMessage((s32)MsgWorldMapWeCantStayAnotherMinute);
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 40);
@@ -633,7 +636,7 @@ void FieldScene_RunScene371_02001c08(void)
     Event_WaitForDisplayField358Clear();
     Battle_SetObjectFlag5bWhenMode3();
     Actor_RunRepeatedMotion(8, 2);
-    Event_SetMessage(MSG_AFTER_BRINGING_DJINNI_INTO_YOUR);
+    Event_SetMessage((s32)MsgWorldMapAfterBringingDjinniIntoYour);
     Event_ShowMessage(8, 0);
     Event_Wait(30);
     Audio_PlayCue(111);
@@ -642,7 +645,7 @@ void FieldScene_RunScene371_02001c08(void)
     GameFlag_Clear(0x171);
     ItemMenu_Open();
     Actor_Jump(8, 4, 30);
-    Event_SetMessage(MSG_NEXT_ILL_SHOW_HOW_CAN);
+    Event_SetMessage((s32)MsgWorldMapNextIllShowHowCan);
     Event_ShowMessage(8, 0);
     GameFlag_Clear(0x16f);
     GameFlag_Set(0x171);

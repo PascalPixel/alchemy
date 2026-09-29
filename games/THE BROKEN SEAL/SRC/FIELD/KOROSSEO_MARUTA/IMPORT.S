@@ -83,6 +83,9 @@ AffineMatrix_BuildForEffect:
 	.thumb_func
 Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
+	.global Resource_GetTableEntry
+	.thumb_func
+Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
 	.global ResourceMetadata_ClearRecordFar
 	.thumb_func
@@ -108,6 +111,9 @@ ObjectDispatch_InitFromTable4WithArgument:
 	.thumb_func
 ObjectDispatch_InitFromTable6:
 	overlay_veneer ObjectDispatch_InitFromTable6Far
+	.global ObjectDispatch_WaitForValue16
+	.thumb_func
+ObjectDispatch_WaitForValue16:
 	overlay_veneer ObjectDispatch_WaitForValue16Far
 	.global Object_SetPosition
 	.thumb_func
@@ -154,6 +160,9 @@ Graphics_EnableObjLayerAndCallbacks:
 	.thumb_func
 SetMapCellCollision:
 	overlay_veneer SetMapCellCollisionFar
+	.global Engine_MessageShowCentered
+	.thumb_func
+Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	.global UiText_DrawQuantity
 	.thumb_func

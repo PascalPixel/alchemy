@@ -398,7 +398,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
             .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012])(?:\.(?:lz|mtf))?"\s*$"#,
+        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012]|font)(?:\.(?:lz|mtf|d7))?"\s*$"#,
     )
     .expect("built graphics pattern");
     let scaffolding = path.starts_with("recon/");
@@ -407,10 +407,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         parts.as_slice(),
         ["games", game, "SOUND", .., _] if *game != "COMMON"
     );
-    let asset_source = matches!(
-        parts.as_slice(),
-        ["games", game, "SRC", .., _] if *game != "COMMON"
-    );
+    let asset_source = matches!(parts.as_slice(), ["games", _, "SRC", .., _]);
     let text = String::from_utf8_lossy(data);
     text.split(['\n', '\r'])
         .filter(|line| !(scaffolding && (base_rom.is_match(line) || overlay.is_match(line))))
@@ -1373,9 +1370,9 @@ fn asset_game(path: &str) -> Option<&str> {
     };
     asset.then_some(*game)
 }
-/// The shared root holds only nested C source and interface headers that every
-/// game compiles byte-exact from the same text; assets and metadata stay in a
-/// game.
+/// The shared root holds only what every game builds byte-exact from the
+/// same text: nested C source, interface headers, and asset sources with the
+/// PNG, TSV and BIN inputs they are built from.
 fn shared_root_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, root, rest @ ..] = components.as_slice() else {
@@ -1384,10 +1381,12 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
     if !top.eq_ignore_ascii_case("games") || !root.eq_ignore_ascii_case("COMMON") {
         return None;
     }
-    let source = matches!(rest, ["SRC", _, .., leaf] if extension(leaf) == "C");
+    let source = matches!(rest, ["SRC", _, .., leaf]
+        if listed(extension(leaf), &["C", "S", "PNG", "TSV", "BIN"]));
     let interface = matches!(rest, ["INCLUDE", _, .., leaf] if extension(leaf) == "H");
-    (!(source || interface))
-        .then_some("games/COMMON holds only shared SRC/<module>/*.C and INCLUDE/<module>/*.H")
+    (!(source || interface)).then_some(
+        "games/COMMON holds only shared SRC/<module>/ sources and inputs and INCLUDE/<module>/*.H",
+    )
 }
 const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, C drafts under an edition and metrics/history.tsv";
 /// `recon/` fails closed as `games/` does: pret's scaffolding forms and the
@@ -2687,6 +2686,11 @@ fn text_fixtures() -> Vec<Fixture> {
             Some("games/COMMON holds only"),
         ),
         (
+            "games/COMMON/SRC/GRAPHICS/FONT/TEXT.TSV",
+            b"first\t20\n".to_vec(),
+            None,
+        ),
+        (
             "games/COMMON/SRC/SOUND/X.H",
             b"void f(void);\n".to_vec(),
             Some("games/COMMON holds only"),
@@ -3114,7 +3118,6 @@ mod tests {
         let star = "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S";
         for (path, line) in [
             ("recon/tbs/unidentified.s", sheet.as_slice()),
-            ("games/COMMON/SRC/GRAPHICS/STAR.S", sheet),
             ("games/THE BROKEN SEAL/SOUND/STAR.S", sheet),
             (star, b".incbin \"GRAPHICS/FX/STAR.PNG\"\n"),
             (star, b".incbin \"GRAPHICS/FX/STAR.raw\"\n"),

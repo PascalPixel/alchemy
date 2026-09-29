@@ -216,7 +216,7 @@ Func_0803a8fc:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
-	.4byte 0x0805a4e0
+	.4byte UiText_Glyphs
 	.4byte 0x03000258
 	.4byte 0x03000314
 	.2byte 0xa0e0

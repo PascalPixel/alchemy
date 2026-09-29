@@ -113,7 +113,7 @@ Func_081c0e70:
 	ldr	r5, [pc, #48]
 	ldrh	r1, [r6, #0]
 	adds	r0, r5, #0
-	bl	Func_081c2f40
+	bl	MusicPlayer_SetPitchAndUpdateFrequency
 	movs	r0, #0
 	ldrsh	r3, [r6, r0]
 	movs	r1, #255
@@ -144,7 +144,7 @@ Func_081c0e70:
 	lsls	r1, r1, #16
 	ldr	r0, [pc, #8]
 	lsrs	r1, r1, #16
-	bl	Func_081c2f40
+	bl	MusicPlayer_SetPitchAndUpdateFrequency
 	pop	{pc}
 	.2byte 0x6a90
 	.2byte 0x0200

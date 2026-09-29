@@ -38,7 +38,13 @@ Engine_MathSin:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
+	.global Engine_HeapAllocate
+	.thumb_func
+Engine_HeapAllocate:
 	overlay_veneer Runtime_AllocateHeapBlockFar
+	.global Engine_HeapRelease
+	.thumb_func
+Engine_HeapRelease:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
@@ -56,6 +62,9 @@ Resource_DecodeType01:
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global QueueIoWriteDelay2
 	.thumb_func
@@ -81,11 +90,17 @@ Engine_ObjectCreate:
 	.thumb_func
 Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
+	.global ObjectDispatch_InitFromTable6
+	.thumb_func
+ObjectDispatch_InitFromTable6:
 	overlay_veneer ObjectDispatch_InitFromTable6Far
 	.global Engine_ObjectSetPosition
 	.thumb_func
 Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
+	.global Engine_ObjectCommitPosition
+	.thumb_func
+Engine_ObjectCommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
 	.global Map_LoadDefaultCellsAndUpdateBlock
 	.thumb_func
@@ -119,6 +134,9 @@ Engine_MessageShowCentered:
 	.thumb_func
 UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
+	.global Engine_ItemLoadIcon
+	.thumb_func
+Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
 	.global PaletteGlow_Update
 	.thumb_func
@@ -188,6 +206,9 @@ Engine_EventChooseYesNo:
 	.thumb_func
 Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
+	.global Engine_ActorDestroy
+	.thumb_func
+Engine_ActorDestroy:
 	overlay_veneer ObjectTable_DestroyByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

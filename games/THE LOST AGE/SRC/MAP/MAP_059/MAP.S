@@ -1,0 +1,35 @@
+@ Field_Map059: a field map of 3 layers.
+	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
+	.section .rodata
+	.global Field_Map059
+Field_Map059:
+	map_header 0x0, 0x78, 0x78, 3, 1, 2, 0, 2, 2, 0x0, 0x0
+	map_layer 16, 16, 0, -1, 0x78
+	map_layer 16, 16, 0, -1, 0x7800
+	map_layer 16, 16, 0, -1, 0x40
+	.2byte 0x0
+	map_block Field_Map059, .LField_Map059_1
+	map_block Field_Map059, .LField_Map059_2
+	map_block Field_Map059, .LField_Map059_3
+	map_block Field_Map059, .LField_Map059_4
+	map_block Field_Map059, .LField_Map059_5
+	map_block Field_Map059, .LField_Map059_6
+	.incbin "MAP/MAP_059/CELLS.delta2.lz"
+	.balign 4, 0
+.LField_Map059_1:
+	.incbin "MAP/MAP_059/SLOT_1.bin.lz"
+	.balign 4, 0
+.LField_Map059_2:
+	.incbin "MAP/MAP_059/SLOT_2.bin.lz"
+	.balign 4, 0
+.LField_Map059_3:
+	.incbin "MAP/MAP_059/SLOT_3.bin.lz"
+	.balign 4, 0
+.LField_Map059_4:
+	.incbin "MAP/MAP_059/SLOT_4.bin.lz"
+	.balign 4, 0
+.LField_Map059_5:
+	.incbin "MAP/MAP_059/SLOT_5.bin.lz"
+	.balign 4, 0
+.LField_Map059_6:
+	.incbin "MAP/MAP_059/SLOT_6.bin.lz"

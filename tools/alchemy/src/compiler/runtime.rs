@@ -5,7 +5,6 @@ use crate::compiler::routing::{bundle, runtime_library_cflags, CompilerTarget};
 use crate::compiler::sha256;
 use fs2::FileExt;
 use psynergy::process::run;
-use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
@@ -223,8 +222,7 @@ fn member_command(
 const ARCHIVE_FORMAT: u32 = 1;
 const ARCHIVE_USAGE: &str = "usage: alchemy build runtime --output tools/out/compiler-runtime/.../libgcc.a MEMBER=SOURCE...\nBuild an ordinary archive from approved agscc sources using their existing library rules.";
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug)]
 struct ArchiveReceipt {
     format: u32,
     compiler_sha256: String,
@@ -233,14 +231,35 @@ struct ArchiveReceipt {
     members: Vec<MemberReceipt>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug)]
 struct MemberReceipt {
     member: String,
     source: String,
     source_sha256: String,
     plan_sha256: String,
     object_sha256: String,
+}
+
+impl ArchiveReceipt {
+    /// The receipt as TSV: its settings as `# name value` lines, then one
+    /// row per member under a header row.
+    fn table(&self) -> Vec<u8> {
+        let mut table = format!(
+            "# format\t{}\n# compiler_sha256\t{}\n# ar_sha256\t{}\n# archive_sha256\t{}\nmember\tsource\tsource_sha256\tplan_sha256\tobject_sha256\n",
+            self.format, self.compiler_sha256, self.ar_sha256, self.archive_sha256
+        );
+        for member in &self.members {
+            table += &format!(
+                "{}\t{}\t{}\t{}\t{}\n",
+                member.member,
+                member.source,
+                member.source_sha256,
+                member.plan_sha256,
+                member.object_sha256
+            );
+        }
+        table.into_bytes()
+    }
 }
 
 fn validate_members(root: &Path, members: &[(String, String)]) -> Result<(), String> {
@@ -372,7 +391,7 @@ fn check_archive_outputs(root: &Path, archive: &Path) -> Result<(), String> {
     for path in [
         archive.with_extension("lock"),
         archive.with_extension("objects"),
-        archive.with_extension("a.provenance.json"),
+        archive.with_extension("a.provenance.tsv"),
     ] {
         if std::fs::symlink_metadata(&path).is_ok()
             && !std::fs::canonicalize(&path)
@@ -409,13 +428,12 @@ fn member_plan(
                 .replace(&text(root), "<root>")
         })
         .collect();
-    let plan = serde_json::to_vec(&(
-        "runtime-archive-v1",
-        portable,
-        sha256::hex(expanded.as_bytes()),
-    ))
-    .map_err(|e| e.to_string())?;
-    Ok((command, source_sha256, sha256::hex(&plan)))
+    let plan = format!(
+        "runtime-archive-v1\n{}\n{}\n",
+        portable.join("\t"),
+        sha256::hex(expanded.as_bytes())
+    );
+    Ok((command, source_sha256, sha256::hex(plan.as_bytes())))
 }
 
 fn compile_member(command: &[String], member: &str, work: &Path) -> Result<PathBuf, String> {
@@ -502,10 +520,7 @@ pub fn build_archive(
         std::fs::remove_dir_all(&directory).map_err(|e| e.to_string())?;
     }
     std::fs::rename(work.keep(), directory).map_err(|e| e.to_string())?;
-    write(
-        output.with_extension("a.provenance.json"),
-        serde_json::to_vec_pretty(&receipt).map_err(|e| e.to_string())?,
-    )?;
+    write(output.with_extension("a.provenance.tsv"), receipt.table())?;
     Ok(output)
 }
 

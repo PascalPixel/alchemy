@@ -9,7 +9,6 @@ path = "src/lib.rs"
 
 [dependencies]
 psynergy = { path = "../psynergy" }
-serde_json = { version = "1", features = ["preserve_order"] }
 encoding_rs = "0.8"
 unicode-normalization = "0.1"
 

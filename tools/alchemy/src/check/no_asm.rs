@@ -97,17 +97,19 @@ fn clean_key(root: &Path, label: &str, prefix: &[String], source: &str) -> Optio
         &[prefix.to_vec()],
     )
     .ok()?;
-    let identity = serde_json::to_vec(&(
-        "no-asm-clean-v1",
-        crate::compiler::bundle::executable_signature().ok()?,
-        crate::compiler::bundle::compiler_bundle_signature(),
-        label,
-        crate::compiler::source_inputs::portable_commands(root, &[prefix.to_vec()]),
-        source,
-        crate::compiler::sha256::hex(&tree),
-    ))
-    .ok()?;
-    Some(crate::compiler::sha256::hex(&identity))
+    let identity = format!(
+        "{:?}",
+        (
+            "no-asm-clean-v1",
+            crate::compiler::bundle::executable_signature().ok()?,
+            crate::compiler::bundle::compiler_bundle_signature(),
+            label,
+            crate::compiler::source_inputs::portable_commands(root, &[prefix.to_vec()]),
+            source,
+            crate::compiler::sha256::hex(&tree),
+        )
+    );
+    Some(crate::compiler::sha256::hex(identity.as_bytes()))
 }
 
 /// Preprocessing batches for every source not already known clean, with

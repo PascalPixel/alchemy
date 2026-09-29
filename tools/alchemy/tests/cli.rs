@@ -46,7 +46,7 @@ fn compression_recipe_writers_are_retired() {
     for flag in ["--compact-plans", "--derive-plans"] {
         assert!(!String::from_utf8_lossy(&help.stdout).contains(flag));
         let output = command()
-            .args(["build", "assets", flag, "missing-plan.json"])
+            .args(["build", "assets", flag, "missing-plan.tsv"])
             .output()
             .unwrap();
         assert!(

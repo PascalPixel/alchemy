@@ -483,7 +483,7 @@ Resource_DirectoryTable:
 	resource , Shop_CursorFrameG
 	resource , Shop_CursorFrameH
 	resource , Resource_Data1D5
-	resource , Resource_Data1D6
+	resource , Ui_Icons
 	resource , Ui_CommandIcons
 	resource , Resource_Data1D8
 	resource , Resource_Data1D9

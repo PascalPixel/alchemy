@@ -975,6 +975,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/GRAPHICS/FIELD/WALK_PATH_I.o"(.rodata)
         "*/games/THE LOST AGE/SRC/GRAPHICS/FIELD/WALK_PATH_J.o"(.rodata)
         "*/recon/tla/it/rom.o"(.rom.00959c75)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/LETTERING/BANNER.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/SHOP/CURSOR.o"(.rodata)
         "*/recon/tla/it/rom.o"(.rom.0095b0f0)
         "*/games/THE LOST AGE/SRC/GRAPHICS/UI/ICONS.o"(.rodata)

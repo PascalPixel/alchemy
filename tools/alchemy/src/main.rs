@@ -11,7 +11,6 @@ mod disasm;
 mod format;
 mod gate;
 mod overlay;
-mod parallel;
 mod permute;
 mod raw;
 mod recovery;

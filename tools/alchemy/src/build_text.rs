@@ -42,6 +42,7 @@ pub(crate) fn build(root: &Path, target: DecompTarget, output: &Path) -> Result<
 /// Every `Msg<Name>` a game's source uses is the `msgctxt` of exactly one
 /// entry in each of its editions' catalogs, and no linker script under
 /// `games/` assigns one a number by hand.
+#[cfg(test)]
 pub(crate) fn check_names(root: &Path) -> Result<(), String> {
     let mut problems = Vec::new();
     let mut games = BTreeSet::new();
@@ -74,6 +75,7 @@ pub(crate) fn check_names(root: &Path) -> Result<(), String> {
 
 /// Collect the message names in `directory`'s C, headers and assembly, and
 /// refuse any linker script that sets one.
+#[cfg(test)]
 fn used_names(
     directory: &Path,
     used: &mut BTreeSet<String>,

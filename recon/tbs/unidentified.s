@@ -169,9 +169,8 @@ RenderResource_PairSourceTable:
 	.global UiText_SecondGlyphs
 UiText_SecondGlyphs:
 	.incbin "baserom.gba", 0x00031e24, 0x00000400
-	.global Data_08032224
-Data_08032224:
-	.incbin "baserom.gba", 0x00032224, 0x000020d4
+	.section .unidentified.08033e24,"a"
+	.incbin "baserom.gba", 0x00033e24, 0x000004d4
 	.global Menu_CursorObjectTiles
 Menu_CursorObjectTiles:
 	.incbin "baserom.gba", 0x000342f8, 0x00000400
@@ -992,108 +991,37 @@ Field_WorldMapPicture:
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033ac08, 0x000002b4
-	.global Battle_SuharaGateBackdrop
-Battle_SuharaGateBackdrop:
-	.incbin "baserom.gba", 0x0033aebc, 0x00004444
-	.global Battle_TakaraShimaBackdrop
-Battle_TakaraShimaBackdrop:
-	.incbin "baserom.gba", 0x0033f300, 0x00004700
-	.global Battle_TakaraShimaCaveBackdrop
-Battle_TakaraShimaCaveBackdrop:
-	.incbin "baserom.gba", 0x00343a00, 0x0000411c
-	.global Battle_KorosseoBackdrop
-Battle_KorosseoBackdrop:
-	.incbin "baserom.gba", 0x00347b1c, 0x00004218
-	.global Battle_VinasuChojoStormBackdrop
-Battle_VinasuChojoStormBackdrop:
-	.incbin "baserom.gba", 0x0034bd34, 0x00003d3c
-	.global Battle_VinasuChojoBackdrop
-Battle_VinasuChojoBackdrop:
-	.incbin "baserom.gba", 0x0034fa70, 0x000035f0
-	.global Battle_VinasuHeyaBackdrop
-Battle_VinasuHeyaBackdrop:
-	.incbin "baserom.gba", 0x00353060, 0x00003e58
-	.global Battle_SuharaSabakuBackdrop
-Battle_SuharaSabakuBackdrop:
-	.incbin "baserom.gba", 0x00356eb8, 0x00003b74
-	.global Battle_ArutamiraDouBackdrop
-Battle_ArutamiraDouBackdrop:
-	.incbin "baserom.gba", 0x0035aa2c, 0x000040d8
-	.global Battle_BabiChikaBackdrop
-Battle_BabiChikaBackdrop:
-	.incbin "baserom.gba", 0x0035eb04, 0x00003f7c
-	.global Battle_BabiIriguchiBackdrop
-Battle_BabiIriguchiBackdrop:
-	.incbin "baserom.gba", 0x00362a80, 0x00004400
-	.global Battle_RamakanSabakuBackdrop
-Battle_RamakanSabakuBackdrop:
-	.incbin "baserom.gba", 0x00366e80, 0x0000400c
-	.global Battle_MogoruMoriBackdrop
-Battle_MogoruMoriBackdrop:
-	.incbin "baserom.gba", 0x0036ae8c, 0x00004328
-	.global Battle_MakyuriChojoBackdrop
-Battle_MakyuriChojoBackdrop:
-	.incbin "baserom.gba", 0x0036f1b4, 0x00003a28
-	.global Battle_FuneHeyaBackdrop
-Battle_FuneHeyaBackdrop:
-	.incbin "baserom.gba", 0x00372bdc, 0x00004078
-	.global Battle_ImiruFuchinBackdrop
-Battle_ImiruFuchinBackdrop:
-	.incbin "baserom.gba", 0x00376c54, 0x00003840
-	.global Battle_KorimaMoriBackdrop
-Battle_KorimaMoriBackdrop:
-	.incbin "baserom.gba", 0x0037a494, 0x00004a38
-	.global Battle_ToretoHeyaBackdrop
-Battle_ToretoHeyaBackdrop:
-	.incbin "baserom.gba", 0x0037eecc, 0x000049fc
-	.global Battle_GomaDouBackdrop
-Battle_GomaDouBackdrop:
-	.incbin "baserom.gba", 0x003838c8, 0x0000427c
-	.global Battle_InteriorBackdrop
-Battle_InteriorBackdrop:
-	.incbin "baserom.gba", 0x00387b44, 0x00003660
-	.global Battle_ArutinYamaBackdrop
-Battle_ArutinYamaBackdrop:
-	.incbin "baserom.gba", 0x0038b1a4, 0x00003b4c
-	.global Battle_FuneKanpanBackdrop
-Battle_FuneKanpanBackdrop:
-	.incbin "baserom.gba", 0x0038ecf0, 0x00003e88
-	.global Battle_MakyuriHeyaBackdrop
-Battle_MakyuriHeyaBackdrop:
-	.incbin "baserom.gba", 0x00392b78, 0x00004034
-	.global Battle_HaidiaArashiBackdrop
-Battle_HaidiaArashiBackdrop:
-	.incbin "baserom.gba", 0x00396bac, 0x00004a90
-	.global Battle_ToretoEdaBackdrop
-Battle_ToretoEdaBackdrop:
-	.incbin "baserom.gba", 0x0039b63c, 0x000042b4
-	.global Battle_BeachBackdrop
-Battle_BeachBackdrop:
-	.incbin "baserom.gba", 0x0039f8f0, 0x00003980
-	.global Battle_SnowfieldBackdrop
-Battle_SnowfieldBackdrop:
-	.incbin "baserom.gba", 0x003a3270, 0x00004210
-	.global Battle_GrasslandBackdrop
-Battle_GrasslandBackdrop:
-	.incbin "baserom.gba", 0x003a7480, 0x00004374
-	.global Battle_SoruShindenBackdrop
-Battle_SoruShindenBackdrop:
-	.incbin "baserom.gba", 0x003ab7f4, 0x000042b8
-	.global Battle_ForestBackdrop
-Battle_ForestBackdrop:
-	.incbin "baserom.gba", 0x003afaac, 0x0000471c
-	.global Battle_VioletSkyBackdrop
-Battle_VioletSkyBackdrop:
-	.incbin "baserom.gba", 0x003b41c8, 0x00003484
-	.global Battle_DesertBackdrop
-Battle_DesertBackdrop:
-	.incbin "baserom.gba", 0x003b764c, 0x000033fc
-	.global Battle_StormCloudBackdrop
-Battle_StormCloudBackdrop:
-	.incbin "baserom.gba", 0x003baa48, 0x000039ac
-	.global Battle_AerialViewBackdrop
-Battle_AerialViewBackdrop:
-	.incbin "baserom.gba", 0x003be3f4, 0x00005180
+	.section .unidentified.0833f2fe,"a"
+	.incbin "baserom.gba", 0x0033f2fe, 0x00000002
+	.section .unidentified.0834fa6e,"a"
+	.incbin "baserom.gba", 0x0034fa6e, 0x00000002
+	.section .unidentified.0835305e,"a"
+	.incbin "baserom.gba", 0x0035305e, 0x00000002
+	.section .unidentified.0835eb02,"a"
+	.incbin "baserom.gba", 0x0035eb02, 0x00000002
+	.section .unidentified.0836f1b2,"a"
+	.incbin "baserom.gba", 0x0036f1b2, 0x00000002
+	.section .unidentified.08376c52,"a"
+	.incbin "baserom.gba", 0x00376c52, 0x00000002
+	.section .unidentified.0837a492,"a"
+	.incbin "baserom.gba", 0x0037a492, 0x00000002
+	.section .unidentified.083838c6,"a"
+	.incbin "baserom.gba", 0x003838c6, 0x00000002
+	.section .unidentified.0838ecee,"a"
+	.incbin "baserom.gba", 0x0038ecee, 0x00000002
+	.section .unidentified.08396baa,"a"
+	.incbin "baserom.gba", 0x00396baa, 0x00000002
+	.section .unidentified.0839b63a,"a"
+	.incbin "baserom.gba", 0x0039b63a, 0x00000002
+	.section .unidentified.0839f8ee,"a"
+	.incbin "baserom.gba", 0x0039f8ee, 0x00000002
+	.section .unidentified.083a326e,"a"
+	.incbin "baserom.gba", 0x003a326e, 0x00000002
+	.section .unidentified.083afaaa,"a"
+	.incbin "baserom.gba", 0x003afaaa, 0x00000002
+	.section .unidentified.083be3f2,"a"
+	.incbin "baserom.gba", 0x003be3f2, 0x00000002
+	.section .unidentified.083c3574,"a"
 	.global BattleFx_ParticleSequenceDataA
 BattleFx_ParticleSequenceDataA:
 	.incbin "baserom.gba", 0x003c3574, 0x00000784

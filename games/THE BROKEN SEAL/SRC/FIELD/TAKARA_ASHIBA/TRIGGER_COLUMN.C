@@ -291,3 +291,44 @@ void SceneActor_BranchOnSlotZeroAtTile38(void);
 void FieldScene_RunScene3b4_02002188(void);
 void FieldScene_RunScene3b4_02002290(void);
 void FieldScene_RunScene3b4_02002334(void);
+
+/* Repaints the lifted block's cell at a column and raises actor 8 to it. */
+static __inline__ void LiftBlock(s32 column, u8 lowered)
+{
+    { s32 fifth = column; s32 last = 42; Map_CopyCellAttributes(61, 36, 1, 1, fifth, last); }
+    Object_GetById(8)[85] = lowered;
+    *(s32 *)(Object_GetById(8) + 12) = 0x200000;
+}
+
+/* Acts on the map column actor 8 stands in: marks it when it rests on the
+ * ground, repaints the four gate cells, then opens the passage for columns
+ * 40 to 42, or lifts the block in columns 37 to 39. Each of those three
+ * columns lifts it on its own branch. */
+void TakaraAshiba_DispatchByActorEightColumn(void)
+{
+    u8 *actor = Object_GetById(8);
+    s32 x = *(s32 *)(actor + 8);
+    s32 height = *(s32 *)(actor + 12);
+    s32 column = x / 0x100000;
+    u8 lowered;
+
+    if (height == 0) {
+        Object_GetById(8)[35] = 2;
+    }
+    SceneState_ApplyFourRectsAndSetActor8Byte85();
+    lowered = 0;
+    Object_GetById(8)[85] = 3;
+    if (column == 40) {
+        SceneState_ApplyRectAndSetSlotEightByte35();
+    } else if (column == 42) {
+        ActorPresentation_SetSceneCell58AndMarkActorEight();
+    } else if (column == 41) {
+        SceneState_ApplyRectAndSetActor8Byte35();
+    } else if (column == 39) {
+        LiftBlock(column, lowered);
+    } else if (column == 38) {
+        LiftBlock(column, lowered);
+    } else if (column == 37) {
+        LiftBlock(column, lowered);
+    }
+}

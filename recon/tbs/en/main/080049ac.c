@@ -2,6 +2,14 @@
  * Hypothesis 2: explicit row stores avoid the initializer's unresolved memset;
  * copies emit ldmia/stmia triples plus fourth-word str, with a 16-byte frame.
  * Full extent/pool differ; separate globals keep all three address literals.
+ * 2026-09-29 slice 4: the reference's three stmia r0!, {r1, r2, r3, r4}
+ * stores take the base in r0 and the four row words in r1 to r4, the
+ * fixed-register shape of an asm block like the reviewed Dma_Set, not a
+ * structure copy (GCC 2.96's Thumb block move uses three-register
+ * ldmia/stmia pairs and a memset call for the initializer); 080c0eb8 has
+ * the same three stores. It needs a reviewed store macro before it can
+ * match. alchemy permute (3 jobs, 10 minutes) reached 2610 with 43 casts
+ * and reorders; not kept.
  */
 #include "TYPES.H"
 

@@ -12,6 +12,9 @@
  * entries lives in fp instead of [sp+12], moving IDs/swap to +12/+40 instead
  * of +16/+44. A first-scan pointer copy and multiply operand order also
  * differ. Stop here; no register/declaration spelling sweep was attempted.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): multiplying
+ * Random16's result by the range, kept here, gives 1220; nothing else moved
+ * the 56-byte frame or the entries spill.
  */
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
@@ -76,7 +79,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
             }
             entry->width = 0;
             entry->mode = 0;
-            entry->priority = (u32)(priority_range * Random16()) >> 16;
+            entry->priority = (u32)(Random16() * priority_range) >> 16;
             count++;
             entry++;
             index--;

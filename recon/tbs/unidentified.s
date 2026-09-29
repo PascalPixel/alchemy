@@ -312,7 +312,10 @@ Enemy_ElementPresetTable:
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008926c, 0x00000d94
 	.section .unidentified.0809c410,"a"
-	.incbin "baserom.gba", 0x0009c410, 0x00000200
+	.incbin "baserom.gba", 0x0009c410, 0x00000100
+	.global BattleFx_ArcSparkTiles
+BattleFx_ArcSparkTiles:
+	.incbin "baserom.gba", 0x0009c510, 0x00000100
 	.global Encounter_EnemyGroupTable
 Encounter_EnemyGroupTable:
 	.incbin "baserom.gba", 0x0009c610, 0x00000b60

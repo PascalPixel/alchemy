@@ -7,7 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/BACKGROUND_SCROLL.o"(.text)
-        "*/resource_397_overlay.o"(.text.x020082e0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/BG3_SPLIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/IMPORT.o"(.text)
         "*/resource_397_overlay.o"(.rodata)
     }

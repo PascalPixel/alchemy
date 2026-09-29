@@ -28,9 +28,18 @@ Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
 	overlay_veneer Runtime_BumpAllocateFar
 	overlay_veneer Sys_FreeFar
+	.global Resource_DecodeType01
+	.thumb_func
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	overlay_veneer Resource_ActivateEntryFar
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
+	.global Resource_FindFreeEntry
+	.thumb_func
+Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
 	overlay_veneer Runtime_PushSlotEntryFar
 	overlay_veneer QueueIoWriteDelay3Far

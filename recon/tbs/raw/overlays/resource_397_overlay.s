@@ -1,26 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020082e0,"ax",%progbits
-	.global Func_020002e0
-	.thumb_func
-Func_020002e0:
-	.global State_ApplyTables826dAnd82a1
-	.thumb_func
-State_ApplyTables826dAnd82a1:
-	push {lr}
-	ldr r2, [pc, #24]
-	movs r0, #1
-	movs r1, #0
-	bl 0x0200830c
-	movs r1, #200
-	lsls r1, r1, #4
-	ldr r0, [pc, #12]
-	bl 0x02008304
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x0200826d
-	.4byte 0x020082a1
 	.section .rodata,"a",%progbits
 	.global ToretoEda_SceneTable0
 ToretoEda_SceneTable0:

@@ -205,6 +205,9 @@ Engine_ActorWalkTo:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	.global Engine_ActorWaitForMove
+	.thumb_func
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorSetPosition
 	.thumb_func
@@ -218,6 +221,9 @@ Engine_ActorSetAnimation:
 	.thumb_func
 Engine_ActorSetAnimationAndWait:
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	.global ObjectMotion_WaitForAnimationChange
+	.thumb_func
+ObjectMotion_WaitForAnimationChange:
 	overlay_veneer ObjectMotion_WaitForAnimationChangeFar
 	.global Engine_ActorJump
 	.thumb_func

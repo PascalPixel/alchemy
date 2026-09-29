@@ -2,21 +2,21 @@
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 
-void Main_080091b8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void KorimaMagari_PlaceObjects();
 s32 State_StampRecordCells(u16 *records, s32 value);
 void Scene_RepaintBoardRecords(void);
 void Effect_AdjustPaletteColors(s32 amount);
 
-extern u16 *Data_020092c0;
-extern u16 *Data_020092c4;
-extern u16 *Data_020092c8;
-extern u16 Data_0200911c[];
-extern u16 Data_02001000[];
+extern u16 *gKorimaMagariRecords;
+extern u16 *gKorimaMagariReturned;
+extern u16 *gKorimaMagariLayout;
+extern u16 KorimaMagari_DefaultRecords[];
 
-/* Set up the board: point the three state cells into the buffer at 0x02001000,
- * copy the map cells, reset the board records unless flag 0x109 is set, place
- * the objects and actors, and fade the palette unless flag 0x845 is set. */
+/* Set up the board: point the three state cells into the scene state, copy
+ * the map cells, reset the board records unless flag 0x109 is set, place the
+ * objects and actors, and fade the palette unless flag 0x845 is set. */
 s32 KorimaMagari_SetupBoard(void)
 {
     struct FieldActor *actor;
@@ -24,20 +24,20 @@ s32 KorimaMagari_SetupBoard(void)
     /* FAKEMATCH: the one-pass loop keeps the third cell store ahead of the
      * shared zero. */
     do {
-        Data_020092c4 = Data_02001000;
-        Data_020092c8 = Data_02001000 + 1;
-        Data_020092c0 = Data_02001000 + 2;
+        gKorimaMagariReturned = (u16 *)gSceneState;
+        gKorimaMagariLayout = (u16 *)gSceneState + 1;
+        gKorimaMagariRecords = (u16 *)gSceneState + 2;
     } while (0);
-    Main_080091b8(32, 0, 64, 32, 0, 64);
-    Engine_MapCopyCellAttributes(0, 0, 32, 32, 0, 64);
-    Engine_MapCopyCellAttributes(32, 0, 32, 32, 0, 32);
+    Engine_MapCopyCells(32, 0, 64, 32, 0, 64);
+    Map_CopyCellAttributeRect(0, 0, 32, 32, 0, 64);
+    Map_CopyCellAttributeRect(32, 0, 32, 32, 0, 32);
     if (Engine_GameFlagIsSet(0x109) == 0) {
-        Dma_Set(Data_0200911c, Data_020092c0, 0x84000012, (volatile u32 *)0x040000d4);
-        *Data_020092c4 = 0;
-        *Data_020092c8 = 1;
+        Dma_Set(KorimaMagari_DefaultRecords, gKorimaMagariRecords, 0x84000012, (volatile u32 *)0x040000d4);
+        *gKorimaMagariReturned = 0;
+        *gKorimaMagariLayout = 1;
     }
-    KorimaMagari_PlaceObjects(Data_020092c0);
-    State_StampRecordCells(Data_0200911c, 255);
+    KorimaMagari_PlaceObjects(gKorimaMagariRecords);
+    State_StampRecordCells(KorimaMagari_DefaultRecords, 255);
     Scene_RepaintBoardRecords();
     Engine_ActorSetAnimation(9, 0);
     Engine_ActorGet(9)->motion_flags = 0;

@@ -1,3 +1,16 @@
+/* Draft of the title overlay's code after its tables, resource_36f at
+ * 0x02008054..0x02008538 (was MENU/TITLE/TITLE.C; the table getters link
+ * from MENU/TITLE/TABLES.C).
+ * Remaining differences, function by function:
+ * - FunctionHead_02000054 and Title_Func020001c0: the ROM loads 0, 1, 4,
+ *   0xb and 0x1c from their literal pools as link-time values.
+ * - Title_RevealSpriteRow and Title_RevealScreen: they keep a counter
+ *   (0x0200868c) and the sprite row (0x020086a0) past the loaded image, with
+ *   0x3a unreferenced bytes between the image and the counter; their layout
+ *   is not known well enough to define it.
+ * - Title_LoadBackground: its body differs from 0x2e on, and the ROM loads
+ *   its resource number 0x1a as a link-time value.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 extern struct MapRenderWork *gMapWork;
 extern u8 gMapCellBuffer[];
@@ -125,47 +138,6 @@ static __inline__ void ResetCounter(s16 *destination)
 static __inline__ void DecodeBackground(const u8 *res)
 {
     Engine_ResourceDecodeType01(res, (void *)gMapCellBuffer);
-}
-
-/*
- * The eight-byte owner at 0x02000030 includes its one pool word, which holds
- * the returned table address 0x020085f8.
- */
-u8 *FunctionHead_02000030(void)
-{
-    return (u8 *)0x020085f8;
-}
-
-s32 FunctionHead_02000038(void)
-{
-    return 0;
-}
-
-/*
- * The eight-byte owner at 0x0200003c includes its one pool word, which holds
- * the returned table address 0x02008628.
- */
-u8 *FunctionHead_0200003c(void)
-{
-    return (u8 *)0x02008628;
-}
-
-/*
- * The eight-byte owner at 0x02000044 includes its one pool word, which holds
- * the returned table address 0x0200862c.
- */
-u8 *FunctionHead_02000044(void)
-{
-    return (u8 *)0x0200862c;
-}
-
-/*
- * The eight-byte owner at 0x0200004c includes its one pool word, which holds
- * the returned table address 0x02008644.
- */
-u8 *FunctionHead_0200004c(void)
-{
-    return (u8 *)0x02008644;
 }
 
 s32 FunctionHead_02000054(void)

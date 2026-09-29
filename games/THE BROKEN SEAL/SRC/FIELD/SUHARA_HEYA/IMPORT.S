@@ -62,6 +62,9 @@ Engine_EventRequestExit:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	.global Engine_ShopOpen
+	.thumb_func
+Engine_ShopOpen:
 	overlay_veneer Shop_RunFar
 	.global Shop_ConfirmAct
 	.thumb_func

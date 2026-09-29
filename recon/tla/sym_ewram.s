@@ -28,6 +28,45 @@ Sound_CgbNotes:
 	.space 0x000002c0
 	.global Sound_WorkBytes
 Sound_WorkBytes:
-	.space 0x000009d2
+	.space 0x000008b0
+	.global Flash_Handler3
+Flash_Handler3:
+	.space 0x00000004
+	.global Flash_Handler0
+Flash_Handler0:
+	.space 0x00000004
+	.global gFlash
+gFlash:
+	.space 0x00000004
+	.global gFlashNumRemainingBytes
+gFlashNumRemainingBytes:
+	.space 0x00000004
+	.global Flash_Handler1
+Flash_Handler1:
+	.space 0x00000004
+	.global Flash_Handler2
+Flash_Handler2:
+	.space 0x00000004
+	.global Flash_Handler4
+Flash_Handler4:
+	.space 0x00000004
+	.global gFlashReadRoutine
+gFlashReadRoutine:
+	.space 0x00000004
+	.global gFlashTimerNum
+gFlashTimerNum:
+	.space 0x00000002
+	.global gFlashTimerCount
+gFlashTimerCount:
+	.space 0x00000002
+	.global gFlashTimeoutFlag
+gFlashTimeoutFlag:
+	.space 0x00000004
+	.global gFlashTimerReg
+gFlashTimerReg:
+	.space 0x00000004
+	.global gFlashSavedIme
+gFlashSavedIme:
+	.space 0x000000f6
 	.global gScrollTarget
 gScrollTarget:

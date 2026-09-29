@@ -5,9 +5,14 @@ SECTIONS
     .rom :
     {
         "*/recon/tbs/de/rom.o"(.rom.00000000)
+        "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
+        "*/recon/tbs/de/rom.o"(.rom.00032bd4)
+        "*/games/COMMON/SRC/GRAPHICS/UI/WINDOW_TILES.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/UI/SMALL_FONT.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/INTRO_SUN.o"(.rodata)
         "*/recon/tbs/de/rom.o"(.rom.003247e7)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/SCREEN.o"(.rodata)
+        "*/recon/tbs/de/rom.o"(.rom.0032ae9b)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/NINTENDO_SPLASH.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/CAMELOT_LOGO.o"(.rodata)
         "*/recon/tbs/de/rom.o"(.rom.003355e5)

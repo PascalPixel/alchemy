@@ -271,7 +271,7 @@ Func_08015778:
 	subs	r3, #12
 	ldr	r1, [pc, #48]
 	movs	r0, #2
-	bl	Func_08016f5c
+	bl	SetFlashTimerIntr
 	movs	r0, #0
 	mov	r8, r0
 	b.n	.L_080159b6
@@ -284,7 +284,7 @@ Func_08015778:
 	mov	r2, r8
 	cmp	r2, #7
 	bhi.n	.L_080159c8
-	bl	Func_08016ea4
+	bl	IdentifyFlash
 	lsls	r0, r0, #16
 	cmp	r0, #0
 	bne.n	.L_080159ac
@@ -509,7 +509,7 @@ Func_08015778:
 	bne.n	.L_08015bea
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	Func_080171fc
+	bl	Flash_VerifySector
 	cmp	r0, #0
 	bne.n	.L_08015bea
 	cmp	r5, #0
@@ -536,7 +536,7 @@ Func_08015778:
 	bne.n	.L_08015bea
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	Func_080171fc
+	bl	Flash_VerifySector
 	cmp	r0, #0
 	bne.n	.L_08015bea
 	cmp	r5, #0
@@ -563,7 +563,7 @@ Func_08015778:
 	bne.n	.L_08015bea
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	Func_080171fc
+	bl	Flash_VerifySector
 	cmp	r0, #0
 	beq.n	.L_08015bee
 .L_08015bea:
@@ -605,7 +605,7 @@ Func_08015778:
 	movs	r1, #0
 	sub	sp, #16
 	mov	r8, r3
-	bl	Func_0801713c
+	bl	ReadFlash
 	movs	r3, #128
 	adds	r0, r5, #1
 	lsls	r3, r3, #5
@@ -615,7 +615,7 @@ Func_08015778:
 	lsrs	r0, r0, #16
 	mov	r3, r8
 	movs	r1, #0
-	bl	Func_0801713c
+	bl	ReadFlash
 	movs	r3, #128
 	adds	r5, #2
 	lsls	r3, r3, #6
@@ -627,7 +627,7 @@ Func_08015778:
 	adds	r2, r6, #0
 	mov	r3, r8
 	movs	r1, #0
-	bl	Func_0801713c
+	bl	ReadFlash
 	movs	r3, #128
 	movs	r2, #132
 	lsls	r3, r3, #19

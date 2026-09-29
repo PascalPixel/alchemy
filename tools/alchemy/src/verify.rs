@@ -26,7 +26,7 @@ pub const WAVES: &[&[&str]] = &[
         "tooling-index-check",
         "prepare-inputs",
     ],
-    &["compare", "compare-tla"],
+    &["compare", "compare-tla", "compare-other-editions"],
     &["coverage-check"],
 ];
 
@@ -34,7 +34,7 @@ const USAGE: &str = "usage: alchemy verify\n\
 Runs every gate (make verify) in dependency waves, concurrently within a wave, one line per\n\
 passing gate and the whole output of a failing one. Logs: out/verify/<gate>.log.\n\
        alchemy verify --land\n\
-On main, before committing a landing (make land): the staged checks, the tests, both games\n\
+On main, before committing a landing (make land): the staged checks, the tests, all twelve editions\n\
 built and compared, and README and both progress figures written and staged.\n\
        alchemy verify --pre-commit\n\
 The commit hooks' staged checks, on every branch; they build and publish nothing.\n\

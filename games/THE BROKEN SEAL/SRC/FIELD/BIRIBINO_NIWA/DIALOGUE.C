@@ -1,6 +1,15 @@
 #include "NIWA.H"
 extern u8 MsgBiribinoDoThinkCanBecomeAs[];
 extern u8 MsgBiribinoTellingMeImResponsibleFor[];
+extern u8 MsgBiribinoHaveYouSeenBarricadeWe[];
+
+void SceneDialogue_RunActor9Message13c0(void)
+{
+    Event_Begin();
+    Event_SetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
+    Event_AskYesNo(9, 0);
+    Event_End();
+}
 
 void SceneDialogue_RunActor10Message13c3(void)
 {

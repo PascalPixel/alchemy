@@ -228,7 +228,7 @@ void SceneDialogue_RunMessage0e37(void);
 
 void FieldScene_RunSupplementalSequenceTwo(void);
 
-void Func_020003d0(void);
+void FieldScene_RunSiblingsTalk(void);
 
 u8 *TorebiMachi_SelectEvents(void);
 
@@ -236,7 +236,7 @@ void SceneDialogue_RunActor15Message1f92(void);
 
 void SceneDialogue_RunActor24Message1f9d(void);
 
-void FieldScene_RunScene3b5_02000528(void);
+void FieldScene_RunPatientTalk(void);
 
 void FieldScene_RunScene3b5_02000568(void);
 

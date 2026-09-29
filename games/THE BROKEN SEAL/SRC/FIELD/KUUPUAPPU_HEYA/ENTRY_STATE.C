@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 extern u8 MsgKuupuappuUhnnUhnn[];
+void SceneState_SetFlagByActorPosition(void);
+void SceneActor_FaceActors24And25TowardActorZero(void);
 
 s32 Engine_GameFlagIsSet();
 void Engine_ActorSetPosition();
@@ -93,7 +95,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
             Call2((void (*)())Engine_ActorEnableActionCallback, 18, 1);
             Call3((void (*)())Engine_ActorFaceDirection, 18, 0x4000, 0);
             OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000, 0x2a00000);
-            Call2((void (*)())Engine_TaskAddCallback, 0x200a71d, 0xc80);
+            Call2((void (*)())Engine_TaskAddCallback, (s32)SceneState_SetFlagByActorPosition, 0xc80);
         } else if (Engine_GameFlagIsSet(0x853) != 0) {
             Call3((void (*)())Engine_ActorSetPosition, 18, 0, 0);
         }
@@ -102,7 +104,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x852) != 0
             && Engine_GameFlagIsSet(0x853) == 0 && Engine_GameFlagIsSet(0x300) != 0) {
             Call6((void (*)())Engine_MapCopyCellAttributes, 14, 45, 3, 1, 14, 44);
-            Call2((void (*)())Engine_TaskAddCallback, 0x200aba1, 0xc80);
+            Call2((void (*)())Engine_TaskAddCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
             break;
         }
         if (Engine_GameFlagIsSet(0x856) != 0) {
@@ -117,7 +119,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
             }
             ((struct ActorMode *)((u8 *)Engine_ActorGet(24)))->mode = 5;
             ((struct ActorMode *)((u8 *)Engine_ActorGet(25)))->mode = 4;
-            Call2((void (*)())Engine_TaskAddCallback, 0x200aba1, 0xc80);
+            Call2((void (*)())Engine_TaskAddCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
         }
         break;
     case 13:

@@ -1,4 +1,6 @@
 #include "ENTRY_SETUP.H"
+extern u8 gVinasuLeaderApproachScript[];
+s32 SceneEffect_SpawnRandomEveryEightFramesB();
 extern u8 MsgFieldDoorTightlyLocked[];
 extern u8 MsgFieldVenusLighthouseWasAttackedBy[];
 extern u8 MsgVinasuHmmmWeCantPushBlock[];
@@ -125,7 +127,7 @@ void FieldScene_RunLeaderSurpriseApproach(void)
 
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     Event_Begin();
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 0x200d21c);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, gVinasuLeaderApproachScript);
     Engine_ActorStartAction(0);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 6);
     actor->velocity_y = 0x40000;
@@ -141,7 +143,7 @@ void FieldScene_RunLeaderSurpriseApproach(void)
     Event_Wait(1);
     SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a, 1);
     Event_Wait(20);
-    actor->update = (void (*)(union FieldObject *))0x20085e5;
+    actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEveryEightFramesB;
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);

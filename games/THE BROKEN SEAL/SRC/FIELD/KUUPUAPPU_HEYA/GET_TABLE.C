@@ -6,6 +6,11 @@ void Owner_RecalculateStats();
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 s32 Object_GetById();
 
+/* The scene's tables, in the overlay's read-only data. */
+extern u8 KuupuappuHeya_Scripts[];
+extern u8 KuupuappuHeya_Messages[];
+extern u8 KuupuappuHeya_Regions[];
+
 enum {
     /* Message 0x182 + 189. */
     ITEM_WATER_OF_LIFE = 189,
@@ -232,38 +237,17 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-/*
- * Head export stub at 0x02000030. The eight-byte owner includes its one pool
- * word at 0x02000034, which the load reads and which sits past the return.
- * The word is an address returned without being dereferenced, so this is a
- * getter for an in-image table; it names bytes only while this overlay is
- * resident at 0x02000000.
- */
-u8 *SceneData_GetTableD8f8(void)
+u8 *SceneData_GetScriptTable(void)
 {
-    return (u8 *)0x0200d8f8;
+    return KuupuappuHeya_Scripts;
 }
 
-/*
- * Head export stub at 0x02000038. The eight-byte owner includes its one pool
- * word at 0x0200003c, which the load reads and which sits past the return.
- * The word is an address returned without being dereferenced, so this is a
- * getter for an in-image table; it names bytes only while this overlay is
- * resident at 0x02000000.
- */
-u8 *SceneData_GetTableDa60(void)
+u8 *SceneData_GetRegionTable(void)
 {
-    return (u8 *)0x0200da60;
+    return KuupuappuHeya_Regions;
 }
 
-/*
- * Head export stub at 0x02000040. The eight-byte owner includes its one pool
- * word at 0x02000044, which the load reads and which sits past the return.
- * The word is an address returned without being dereferenced, so this is a
- * getter for an in-image table; it names bytes only while this overlay is
- * resident at 0x02000000.
- */
-u8 *SceneData_GetTableDa80(void)
+u8 *SceneData_GetMessageTable(void)
 {
-    return (u8 *)0x0200da80;
+    return KuupuappuHeya_Messages;
 }

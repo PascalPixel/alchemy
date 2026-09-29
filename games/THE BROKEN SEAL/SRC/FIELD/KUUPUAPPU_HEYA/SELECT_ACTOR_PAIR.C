@@ -16,6 +16,8 @@ void SceneState_SetValue2ThenFinish();
 u8 *Object_GetById();
 void KuupuappuHeya_RunScene021C8();
 void Engine_ScheduleCallback();
+void KuupuappuHeya_UpdateActorStops(void);
+void SceneActor_FaceActors24And25TowardActorZero(void);
 
 /* Constant-bearing scene calls use shared inline argument helpers. */
 
@@ -54,7 +56,7 @@ void FieldScene_SelectActorPair(void)
 
     work = (u8 *)Data_03001ebc;
     Event_Begin();
-    Call1(Scheduler_RemoveCallback, 0x200c8c9);
+    Call1(Scheduler_RemoveCallback, (s32)KuupuappuHeya_UpdateActorStops);
     GameFlag_Clear(0x107);
     GameFlag_Clear(0x250);
     Actor_SetAnimation(24, 1);
@@ -141,7 +143,7 @@ void FieldScene_SelectActorPair(void)
 
         *(u16 *)((s32)record + 100) = shown;
     }
-    Call2(Engine_ScheduleCallback, 0x200aba1, 0xc80);
+    Call2(Engine_ScheduleCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
     Data_03001ebc->value_1c0 = 0x209;
     Event_End();
 }

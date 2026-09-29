@@ -36,6 +36,9 @@ void SceneActor_SetPairZeroAndValue();
 void Audio_PlayCueFromEventWork();
 
 void Scheduler_AddOrUpdateCallback();
+void SceneActor_FaceActors24And25TowardActorZero(void);
+extern u8 KuupuappuHeya_PairScriptB[];
+extern u8 KuupuappuHeya_PairScriptO[];
 void Object_RefreshSelectorById();
 
 void Object_RefreshSelectorById(s32);
@@ -211,13 +214,13 @@ void FieldScene_RunOpeningSequenceThird(void)
     Call2(SceneActor_SetModeZeroAndValue, 24, 30);
     Actor_SetSpeed(24, 262144, 131072);
     Actor_SetSpeed(25, 229376, 114688);
-    Value2(Engine_ActorEnableActionCallback, 25, 33609776);
-    Value2(Engine_ActorEnableActionCallback, 24, 33609056);
+    Value2(Engine_ActorEnableActionCallback, 25, (s32)KuupuappuHeya_PairScriptO);
+    Value2(Engine_ActorEnableActionCallback, 24, (s32)KuupuappuHeya_PairScriptB);
     Call1(Object_RefreshSelectorById, 24);
     Map_CopyCellAttributes(14, 45, 3, 1, 14, 44); /* main:080091c0 */
     GameFlag_Set(2130);
     GameFlag_Set(768);
-    Call2(Scheduler_AddOrUpdateCallback, 33598369, 3200); /* main:080000d0 */
+    Call2(Scheduler_AddOrUpdateCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
     /* Starting movement steps for the two thieves. */
     ((struct FieldActor *)actor24)->unknown_64 = 1;
     ((struct FieldActor *)actor25)->unknown_64 = 3;

@@ -296,59 +296,6 @@ Func_02000df0:
 	.2byte 0x0000
 	.2byte 0x1ebc
 	.2byte 0x0300
-	.section .text.x02008fd0,"ax",%progbits
-	.p2align 2
-	.global Func_02000fd0
-	.thumb_func
-Func_02000fd0:
-	push {r5, lr}
-	ldr r5, [pc, #96]
-	adds r0, r5, #0
-	bl 0x0200958c
-	movs r1, #0
-	movs r0, #8
-	bl 0x02009594
-	movs r0, #0
-	movs r1, #0
-	bl 0x0200952c
-	cmp r0, #0
-	bne .L_02000fd0_0
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x020094fc
-	cmp r0, #0
-	beq .L_02000fd0_1
-	ldr r0, [pc, #60]
-	bl 0x020094fc
-	cmp r0, #0
-	bne .L_02000fd0_1
-	adds r0, r5, #0
-	adds r0, #8
-	bl 0x0200958c
-.L_02000fd0_1:
-	movs r0, #8
-	movs r1, #0
-	bl 0x0200959c
-	b .L_02000fd0_2
-.L_02000fd0_0:
-	ldr r3, [pc, #36]
-	ldr r2, [r3]
-	movs r3, #236
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-	movs r0, #8
-	movs r1, #0
-	bl 0x0200959c
-.L_02000fd0_2:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x000023cc
-	.4byte 0x0000096f
-	.4byte 0x03001ebc
 	.section .text.x02009394,"ax",%progbits
 	.p2align 2
 	.global Func_02001394
@@ -667,6 +614,8 @@ gEffectScripts:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global KaragoruDou_Messages
+KaragoruDou_Messages:
 	.4byte 0x00000098
 	.4byte 0x00119002
 	.4byte 0x00236002

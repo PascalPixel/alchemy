@@ -1,4 +1,6 @@
 #include "ENTRY_SETUP.H"
+struct FieldActor;
+s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor);
 
 void FieldScene_RunLeaderDropSequence(void)
 {
@@ -56,7 +58,7 @@ void FieldScene_RunLeaderDropSequence(void)
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(40);
-    *(s32 *)(rec + 108) = 0x200c969;
+    *(s32 *)(rec + 108) = (s32)VinasuHeya_UpdateRisingSpray;
     Event_Wait(60);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpritePriority(20, 1);

@@ -6,6 +6,8 @@ extern u8 MsgRunpaLeftGuardThoughts[];
 extern u8 MsgRunpaRightGuardBoasts[];
 extern u8 MsgRunpaRightGuardFeelsCreepy[];
 extern u8 MsgRunpaRightGuardWondersHow[];
+extern u8 MsgRunpaYoudShadowSneak[];
+extern u8 MsgRunpaRightGuardReopenedThoughts[];
 
 void RightGuard_Talk(void)
 {
@@ -44,4 +46,14 @@ void LeftGuard_MindRead(void)
         Event_SetMessage((s32)MsgRunpaLeftGuardThoughts);
     }
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
+}
+
+void RightGuard_MindRead(void)
+{
+    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+        Event_SetMessage((s32)MsgRunpaRightGuardReopenedThoughts);
+    } else {
+        Event_SetMessage((s32)MsgRunpaYoudShadowSneak);
+    }
+    Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }

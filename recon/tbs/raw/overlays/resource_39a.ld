@@ -13,9 +13,9 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/TRANSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/GET_EVENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/LAYOUT.o"(.text)
-        "*/resource_39a_overlay.o"(.text.x0200970c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ENTRY_HOOK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ARRIVAL.o"(.text)
-        "*/resource_39a_overlay.o"(.text.x020097e4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ENTRY_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ROOM_LAYOUT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/CAMERA_STEP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/DRAGON_EYE.o"(.text)
@@ -27,5 +27,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMPORT.o"(.text)
         "*/resource_39a_overlay.o"(.rodata)
     }
+    .bss : { "*/resource_39a_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -17,6 +17,11 @@
  * still keeps r8 instead of the reference r6 and spills the wrong loop role.
  * Stop after the single structural followup: no established closing path.
  * No matching-C credit claimed.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): testing the
+ * primary side as > 7 with the far target first, kept here, gives 1690
+ * against 1930 (after names first); the search's 1660 also assigned the
+ * script test to an unused local, which is not kept. The first divergence
+ * is still the target angle branch.
  */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
@@ -76,10 +81,10 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         if (input->primary > 7)
             current = angle + 0x1800;
         current = (s16)current;
-        if (input->primary <= 7)
-            target = 0x2000;
-        else
+        if (input->primary > 7)
             target = -0x2000;
+        else
+            target = 0x2000;
         current += (target - current) * 3 / 4;
         if (input->secondary <= 7)
             same_team = input->primary <= 7;

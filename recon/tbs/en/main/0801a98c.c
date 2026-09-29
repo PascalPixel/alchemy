@@ -4,6 +4,12 @@
  * aligned edits; branch topology and 24-byte frame agree. The first broad
  * divergence keeps cnt on the stack and cursor_entry in fp, where the
  * reference keeps cnt in fp and cursor_entry at sp+8. No new variant tried.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 24,941
+ * candidates; the best scored 4140 against 5805 (174 register-only, 8
+ * operand, 27 reordered, 8 inserted, 6 deleted) after 18 rewrites (swap
+ * commutative operands, reorder independent statements, change loop form,
+ * introduce a temporary), none of them kept. Register choice (174
+ * register-only) is still most of the difference.
  */
 #include "TYPES.H"
 

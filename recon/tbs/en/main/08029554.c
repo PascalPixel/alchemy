@@ -9,7 +9,15 @@
  * literal key-state address produced identical code here. Remaining:
  * the key base is shared across blocks instead of reloaded, zero-copy and
  * argument scheduling differ, and 8 lives across number-rendering calls.
- * The complete 16-byte frame, row loop and both icon-loader tails match. */
+ * The complete 16-byte frame, row loop and both icon-loader tails match.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 30,830
+ * candidates; the best scored 1481 against 2305 (21 register-only, 1
+ * stack-only, 14 operand, 8 reordered, 6 deleted) after 31 rewrites
+ * (reorder independent statements, introduce a temporary, add a same-width
+ * cast, swap commutative operands), none of them kept. Its gains are
+ * statement moves and temporaries around the key and label calls; the five
+ * label tables (Data_08037440 to Data_08037460) still need ROM labels.
+ */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 

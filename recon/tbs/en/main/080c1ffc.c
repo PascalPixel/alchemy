@@ -12,7 +12,15 @@
    Remaining: register allocation throughout. The ROM keeps i in r7 and the
    extra/offset cursor in r6 (here swapped), spills the counts address to
    sp+12 and member_ids to sp+8 (here the other way round), and the shuffled
-   and sequential copies precompute count * 2 instead of walking a pointer. */
+   and sequential copies precompute count * 2 instead of walking a pointer.
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 32,206
+   candidates; the best scored 2785 against 3293 (99 register-only, 5
+   stack-only, 6 operand, 20 reordered, 6 inserted, 3 deleted) after 54
+   rewrites (swap commutative operands, reorder local declarations, reorder
+   independent statements, introduce a temporary), none of them kept. Its
+   gains come from register keywords, temporaries and loop forms spread over
+   the whole function; most of the remaining 99 register-only differences
+   are the counters' and work pointer's roles. */
 #include "TYPES.H"
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_FORMATION.H"

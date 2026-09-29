@@ -39,6 +39,9 @@ FixedSqrt:
 Engine_MathSin:
 	overlay_veneer Trig_SinFar
 	overlay_veneer Trig_CosFar
+	.global Vector_AddPolarOffset
+	.thumb_func
+Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
 	.global Runtime_AllocateBlock
 	.thumb_func
@@ -142,6 +145,9 @@ ObjectMotion_SetSpeedParameters:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Engine_ActorMoveToAndWait
+	.thumb_func
+Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -249,6 +255,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global ObjectTable_Get
+	.thumb_func
+ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
 	overlay_veneer BattleFx_StartFadeOverlayFar
 	.global Engine_ActorWalkByAndWait

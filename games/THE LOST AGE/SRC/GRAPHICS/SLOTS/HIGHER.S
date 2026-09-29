@@ -4,4 +4,4 @@
 	.global Slots_HigherBanner
 Slots_HigherBanner:
 	.incbin "GRAPHICS/SLOTS/HIGHER.gbapal"
-	.incbin "GRAPHICS/SLOTS/HIGHER.4bpp.lz"
+	.incbin "GRAPHICS/SLOTS/HIGHER.4bpp32x32.lz"

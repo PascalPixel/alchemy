@@ -941,7 +941,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CIRCLE_ANCHOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT14.o"(.text)
         "*/recon/tbs/raw/0809a8c2.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0809a8c4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT14.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_RADIAL_CAMERA.o"(.text)
         "*/recon/tbs/raw/0809abb4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_PAUSE.o"(.text)

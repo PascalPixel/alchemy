@@ -1,115 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008040,"ax",%progbits
-	.p2align 2
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02000040_0
-	ldr r0, [pc, #24]
-	b .L_02000040_1
-.L_02000040_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02000040_2
-	ldr r0, [pc, #24]
-	b .L_02000040_1
-.L_02000040_2:
-	ldr r0, [pc, #24]
-.L_02000040_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x000000aa
-	.4byte 0x02008a40
-	.4byte 0x000000ab
-	.4byte 0x02008ad0
-	.4byte 0x02008998
-	.section .text.x0200808c,"ax",%progbits
-	.p2align 2
-	.global Func_0200008c
-	.thumb_func
-Func_0200008c:
-	push {lr}
-	ldr r3, [pc, #52]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_0200008c_0
-	ldr r0, [pc, #40]
-	b .L_0200008c_1
-.L_0200008c_0:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_0200008c_2
-	ldr r0, [pc, #40]
-	bl 0x0200887c
-	cmp r0, #0
-	beq .L_0200008c_3
-	ldr r0, [pc, #32]
-	b .L_0200008c_1
-.L_0200008c_3:
-	ldr r0, [pc, #32]
-	b .L_0200008c_1
-.L_0200008c_2:
-	ldr r0, [pc, #32]
-.L_0200008c_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000aa
-	.4byte 0x02008ba8
-	.4byte 0x000000a9
-	.4byte 0x0000096f
-	.4byte 0x02008c98
-	.4byte 0x02008c50
-	.4byte 0x02008b90
-	.global Func_020000e4
-	.thumb_func
-Func_020000e4:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_020000e4_0
-	ldr r0, [pc, #24]
-	b .L_020000e4_1
-.L_020000e4_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_020000e4_2
-	ldr r0, [pc, #24]
-	b .L_020000e4_1
-.L_020000e4_2:
-	ldr r0, [pc, #24]
-.L_020000e4_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x000000aa
-	.4byte 0x02008ddc
-	.4byte 0x000000ab
-	.4byte 0x02008e54
-	.4byte 0x02008d10
+	.section .text.x02008124,"ax",%progbits
+	.balign 4
 	.global Func_02000124
 	.thumb_func
 Func_02000124:
@@ -280,6 +172,8 @@ Func_02000124:
 	.4byte 0x0000001c
 	.4byte 0x00000005
 	.4byte 0x00000010
+	.global gSuharaGateEntrancesOther
+gSuharaGateEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x00000098
 	.4byte 0x400001f8
@@ -322,6 +216,8 @@ Func_02000124:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaGateEntrances2
+gSuharaGateEntrances2:
 	.4byte 0xffff0001
 	.4byte 0x00000028
 	.4byte 0x00000130
@@ -358,6 +254,8 @@ Func_02000124:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaGateEntrances3
+gSuharaGateEntrances3:
 	.4byte 0xffff0001
 	.4byte 0x00000048
 	.4byte 0xc0000108
@@ -408,12 +306,16 @@ SuharaGate_SceneTable:
 	.4byte 0x003020ab
 	.4byte 0x00421002
 	.4byte 0x000001ff
+	.global gSuharaGatePlacementsOther
+gSuharaGatePlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaGatePlacements2
+gSuharaGatePlacements2:
 	.4byte 0xffff00ee
 	.4byte 0x00000007
 	.4byte 0x01080000
@@ -456,6 +358,8 @@ SuharaGate_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaGatePlacements1
+gSuharaGatePlacements1:
 	.4byte 0xffff0098
 	.4byte 0x00000001
 	.4byte 0x00780000
@@ -474,6 +378,8 @@ SuharaGate_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaGatePlacements1Flagged
+gSuharaGatePlacements1Flagged:
 	.4byte 0xffff0098
 	.4byte 0x02008980
 	.4byte 0x00880000
@@ -504,6 +410,8 @@ SuharaGate_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaGateEventsOther
+gSuharaGateEventsOther:
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte 0x020082f9
@@ -555,6 +463,8 @@ SuharaGate_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaGateEvents2
+gSuharaGateEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -585,6 +495,8 @@ SuharaGate_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaGateEvents3
+gSuharaGateEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

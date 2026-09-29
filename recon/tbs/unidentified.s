@@ -387,7 +387,13 @@ BattleFx_BurstParticleObjectScript:
 	.incbin "baserom.gba", 0x0009f11c, 0x00000044
 	.global BattleFx_RandomChildValues
 BattleFx_RandomChildValues:
-	.incbin "baserom.gba", 0x0009f160, 0x00000048
+	.incbin "baserom.gba", 0x0009f160, 0x00000008
+	.global WorldMap_MarkerBlendCycle
+WorldMap_MarkerBlendCycle:
+	.incbin "baserom.gba", 0x0009f168, 0x00000020
+	.global WorldMap_CursorDirectionAngles
+WorldMap_CursorDirectionAngles:
+	.incbin "baserom.gba", 0x0009f188, 0x00000020
 	.section .unidentified.0809f7f0,"a"
 	.incbin "baserom.gba", 0x0009f7f0, 0x00000020
 	.global Data_0809f810
@@ -446,7 +452,10 @@ BattleFx_UntargetedObjectScript:
 	.incbin "baserom.gba", 0x000a0128, 0x00000004
 	.global gEffectScripts
 gEffectScripts:
-	.incbin "baserom.gba", 0x000a012c, 0x00000ed4
+	.incbin "baserom.gba", 0x000a012c, 0x0000000c
+	.global WorldMap_PlaceMarkers
+WorldMap_PlaceMarkers:
+	.incbin "baserom.gba", 0x000a0138, 0x00000ec8
 	.section .unidentified.080aea4c,"a"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:

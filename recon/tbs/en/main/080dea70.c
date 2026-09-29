@@ -99,7 +99,7 @@ s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 value, s32 divisor);
 s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(void *source, s32 *out_pair);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
@@ -455,7 +455,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                 Func_08002dd8(47);
             }
 
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
             /* ---- advance and draw every live projectile ---- */

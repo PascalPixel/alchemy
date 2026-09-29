@@ -177,7 +177,7 @@ void Func_080b5088(s32 member, s32 kind);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void Func_08002dd8(s32 id);                      /* Runtime_ReleaseHeapBlock */
-void Func_080049ac(void);                        /* Render_ResetTransformState */
+void Render_ResetTransformState(void);                        /* Render_ResetTransformState */
 void Graphics_PrepareTransferInIwramWork(void *a, void *b);            /* Graphics_PrepareTransferInIwramWork */
 void EffectPosition_ApplyBaseAndYOffset(const void *source, s32 *out); /* apply_base_and_y_offset */
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b); /* advance_with_gravity_3d */
@@ -374,7 +374,7 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
 
             Func_08002dd8(47);
             Func_08002dd8(46);
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(xfer, (u8 *)xfer + 12);
             BattleEffect_LoadWork(46, 7, 7, 3, 3);
             BattleEffect_LoadWork(47, 7, 7, 3, 2);

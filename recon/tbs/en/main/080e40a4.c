@@ -190,10 +190,10 @@ u32 Random16(void);                                           /* random_16 */
 void ObjectDispatch_ApplyValueToChildrenFar(struct Member *member, s32 mode);
 void EffectPosition_ApplyStepAndYOffset(s32 source, s32 *out);                          /* apply_step_and_y_offset */
 void Func_080f9010(s32 id);
-void Func_080049ac(void);                                          /* Render_ResetTransformState */
-void Func_08004c6c(s32 angle);
-void Func_08004bd4(s32 angle);                                     /* SceneTransform_ApplyPitch */
-void Func_08004c1c(s32 angle);                                     /* SceneTransform_ApplyYaw */
+void Render_ResetTransformState(void);                                          /* Render_ResetTransformState */
+void SceneTransform_ApplyRoll(s32 angle);
+void SceneTransform_ApplyPitch(s32 angle);                                     /* SceneTransform_ApplyPitch */
+void SceneTransform_ApplyYaw(s32 angle);                                     /* SceneTransform_ApplyYaw */
 void EffectPosition_ApplyBaseAndYOffset(const void *particle, s32 *out);                /* apply_base_and_y_offset */
 s32 Func_080b5070(s32 member);
 void Func_080b50e8(s32 id);
@@ -338,10 +338,10 @@ void BattlePres_RunRingAndSparkScene(void *object)
             do {
                 if (p->x >= 0 && frame >= i / 4) {
                     size = (i & 1) + 5;
-                    Func_080049ac();
-                    Func_08004c6c(p->vz);
-                    Func_08004bd4(p->vx);
-                    Func_08004c1c(p->vy);
+                    Render_ResetTransformState();
+                    SceneTransform_ApplyRoll(p->vz);
+                    SceneTransform_ApplyPitch(p->vx);
+                    SceneTransform_ApplyYaw(p->vy);
                     EffectPosition_ApplyBaseAndYOffset(p, tmp);
                     tmp[0] = tmp[0] + 64;
                     tmp[1] = tmp[1] + pos[1] + 24;
@@ -439,7 +439,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
             blit[0](draw_target, (void *)0x02013840, 0, 0, 120, 120);
         }
 
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(xfer, (u8 *)xfer + 12);
 
         if (frame >= 4 && frame <= 31) {

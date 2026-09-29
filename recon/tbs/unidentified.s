@@ -979,15 +979,14 @@ Title_IntroGraphicsC:
 	.global Title_NintendoLogo
 Title_NintendoLogo:
 	.incbin "baserom.gba", 0x003337a0, 0x00000828
+	.section .unidentified.08333fc8,"a"
 	.global Title_IntroTiles
 Title_IntroTiles:
 	.incbin "baserom.gba", 0x00333fc8, 0x0000182c
-	.global Title_GoldenSunLogo
-Title_GoldenSunLogo:
-	.incbin "baserom.gba", 0x003357f4, 0x00001910
-	.global Field_WorldMapPicture
-Field_WorldMapPicture:
-	.incbin "baserom.gba", 0x00337104, 0x00003b04
+	.section .unidentified.08337101,"a"
+	.incbin "baserom.gba", 0x00337101, 0x00000003
+	.section .unidentified.0833ac05,"a"
+	.incbin "baserom.gba", 0x0033ac05, 0x00000003
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033ac08, 0x000002b4
@@ -1031,9 +1030,8 @@ LuckyDice_GraphicsA:
 	.global LuckyDice_GraphicsB
 LuckyDice_GraphicsB:
 	.incbin "baserom.gba", 0x003c8498, 0x00003024
-	.global BattleFx_TileAnimationMask
-BattleFx_TileAnimationMask:
-	.incbin "baserom.gba", 0x003cb4bc, 0x00000848
+	.section .unidentified.083cbd01,"a"
+	.incbin "baserom.gba", 0x003cbd01, 0x00000003
 	.global BattleFx_CyanSparkSheet
 BattleFx_CyanSparkSheet:
 	.incbin "baserom.gba", 0x003cbd04, 0x00001200
@@ -1066,25 +1064,20 @@ BattleFx_FiveModeImage:
 	.incbin "baserom.gba", 0x003d3390, 0x00000fc8
 	.section .unidentified.083d45b2,"a"
 	.incbin "baserom.gba", 0x003d45b2, 0x00000002
-	.section .unidentified.083d5d10,"a"
-	.global BattleFx_YellowSparkSheet
-BattleFx_YellowSparkSheet:
-	.incbin "baserom.gba", 0x003d5d10, 0x00000300
+	.section .unidentified.083d600d,"a"
+	.incbin "baserom.gba", 0x003d600d, 0x00000003
 	.global BattleFx_ProjectileVolleyImage
 BattleFx_ProjectileVolleyImage:
 	.incbin "baserom.gba", 0x003d6010, 0x000001b4
 	.section .unidentified.083d6559,"a"
 	.incbin "baserom.gba", 0x003d6559, 0x00000003
-	.global BattleFx_FlareSheet
-BattleFx_FlareSheet:
-	.incbin "baserom.gba", 0x003d655c, 0x00001d88
+	.section .unidentified.083d82e2,"a"
+	.incbin "baserom.gba", 0x003d82e2, 0x00000002
 	.global BattleFx_FlareImage
 BattleFx_FlareImage:
 	.incbin "baserom.gba", 0x003d82e4, 0x00000278
-	.section .unidentified.083d85e0,"a"
-	.global BattleFx_FireSwirlSheet
-BattleFx_FireSwirlSheet:
-	.incbin "baserom.gba", 0x003d85e0, 0x00000444
+	.section .unidentified.083d8a22,"a"
+	.incbin "baserom.gba", 0x003d8a22, 0x00000002
 	.section .unidentified.083da5f7,"a"
 	.incbin "baserom.gba", 0x003da5f7, 0x00000001
 	.section .unidentified.083dc1f5,"a"
@@ -1104,9 +1097,8 @@ BattleFx_OverlayImageB:
 	.global BattleFx_MemberBurstImage
 BattleFx_MemberBurstImage:
 	.incbin "baserom.gba", 0x003dd0e4, 0x000004a0
-	.global BattleFx_SlashSheet
-BattleFx_SlashSheet:
-	.incbin "baserom.gba", 0x003dd584, 0x00000d14
+	.section .unidentified.083de296,"a"
+	.incbin "baserom.gba", 0x003de296, 0x00000002
 	.section .unidentified.083de7d8,"a"
 	.global BattleFx_TargetBurstImage
 BattleFx_TargetBurstImage:
@@ -1135,22 +1127,16 @@ BattleFx_ParticleSpritesC:
 	.global BattleFx_ParticleSpritesD
 BattleFx_ParticleSpritesD:
 	.incbin "baserom.gba", 0x003e387c, 0x00000418
-	.section .unidentified.083e3d18,"a"
-	.global BattleFx_SwordSlashSheet
-BattleFx_SwordSlashSheet:
-	.incbin "baserom.gba", 0x003e3d18, 0x000004c8
+	.section .unidentified.083e41df,"a"
+	.incbin "baserom.gba", 0x003e41df, 0x00000001
 	.section .unidentified.083e45b9,"a"
 	.incbin "baserom.gba", 0x003e45b9, 0x00000003
 	.section .unidentified.083e4967,"a"
 	.incbin "baserom.gba", 0x003e4967, 0x00000001
-	.global BattleFx_EarthWallSheet
-BattleFx_EarthWallSheet:
-	.incbin "baserom.gba", 0x003e4968, 0x00000ad4
 	.section .unidentified.083e690b,"a"
 	.incbin "baserom.gba", 0x003e690b, 0x00000001
-	.global BattleFx_ThornSheet
-BattleFx_ThornSheet:
-	.incbin "baserom.gba", 0x003e690c, 0x00000d9c
+	.section .unidentified.083e76a7,"a"
+	.incbin "baserom.gba", 0x003e76a7, 0x00000001
 	.section .unidentified.083e78c3,"a"
 	.incbin "baserom.gba", 0x003e78c3, 0x00000001
 	.section .unidentified.083e7bbf,"a"
@@ -1159,24 +1145,17 @@ BattleFx_ThornSheet:
 	.global BattleFx_WhirlwindSheet
 BattleFx_WhirlwindSheet:
 	.incbin "baserom.gba", 0x003e7f60, 0x000016b0
-	.global BattleFx_GreenPillarSheet
-BattleFx_GreenPillarSheet:
-	.incbin "baserom.gba", 0x003e9610, 0x00000760
-	.global BattleFx_VineSheet
-BattleFx_VineSheet:
-	.incbin "baserom.gba", 0x003e9d70, 0x00000dcc
+	.section .unidentified.083e9d6d,"a"
+	.incbin "baserom.gba", 0x003e9d6d, 0x00000003
+	.section .unidentified.083eab3b,"a"
+	.incbin "baserom.gba", 0x003eab3b, 0x00000001
 	.global BattleFx_FirePillarSheetA
 BattleFx_FirePillarSheetA:
 	.incbin "baserom.gba", 0x003eab3c, 0x00000c74
-	.section .unidentified.083eb8b8,"a"
-	.global BattleFx_VioletCometSheet
-BattleFx_VioletCometSheet:
-	.incbin "baserom.gba", 0x003eb8b8, 0x000003e8
+	.section .unidentified.083ebc9d,"a"
+	.incbin "baserom.gba", 0x003ebc9d, 0x00000003
 	.section .unidentified.083ec1f7,"a"
 	.incbin "baserom.gba", 0x003ec1f7, 0x00000001
-	.global BattleFx_BoulderSheet
-BattleFx_BoulderSheet:
-	.incbin "baserom.gba", 0x003ec1f8, 0x00000c18
 	.section .unidentified.083edae1,"a"
 	.incbin "baserom.gba", 0x003edae1, 0x00000003
 	.global BattleFx_StarDotSheet
@@ -1226,9 +1205,7 @@ BattleFx_PortalSheet:
 	.incbin "baserom.gba", 0x003f7ec1, 0x00000003
 	.section .unidentified.083f815b,"a"
 	.incbin "baserom.gba", 0x003f815b, 0x00000001
-	.global BattleFx_CounterRevealSheet
-BattleFx_CounterRevealSheet:
-	.incbin "baserom.gba", 0x003f815c, 0x00001500
+	.section .unidentified.083f965c,"a"
 	.global BattleFx_RedCrescentSheetA
 BattleFx_RedCrescentSheetA:
 	.incbin "baserom.gba", 0x003f965c, 0x0000049c

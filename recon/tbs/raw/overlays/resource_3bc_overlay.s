@@ -1622,158 +1622,6 @@ Korosseo_LoadPortrait:
 	.4byte 0x040000d4
 	.4byte 0x050003e0
 	.4byte 0x84000008
-	.section .text.x0200b91c,"ax",%progbits
-	.balign 4
-	.global ColossoLogRollingStage_PaletteTask
-	.thumb_func
-ColossoLogRollingStage_PaletteTask:
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	ldr	r3, [pc, #180]
-	movs	r1, #0
-	ldrsh	r3, [r3, r1]
-	ldr	r2, [pc, #176]
-	lsls	r3, r3, #2
-	adds	r3, r3, r2
-	ldrh	r3, [r3, #2]
-	ldr	r2, [pc, #172]
-	lsrs	r3, r3, #5
-	ldr	r0, [pc, #172]
-	mov	sl, r3
-	movs	r3, #0
-	ldrsh	r7, [r2, r3]
-	mov	fp, r0
-	mov	r9, r2
-	cmp	r7, #0
-	beq.n	.L_020039b0
-	ldr	r3, [pc, #160]
-	ldrh	r5, [r3, #0]
-	adds	r5, #1
-	strh	r5, [r3, #0]
-	ldr	r0, [pc, #156]
-	ldr	r1, [pc, #160]
-	ldr	r3, [pc, #160]
-	mov	r8, r0
-	movs	r0, #0
-	ldrsh	r2, [r3, r0]
-	movs	r0, #0
-	ldrsh	r3, [r1, r0]
-	lsls	r5, r5, #16
-	subs	r2, r2, r3
-	asrs	r5, r5, #16
-	ldrh	r6, [r1, #0]
-	adds	r0, r5, #0
-	muls	r0, r2
-	adds	r1, r7, #0
-	bl 0x0200c830
-	ldr	r2, [pc, #136]
-	adds	r6, r6, r0
-	mov	r1, r8
-	strh	r6, [r1, #0]
-	mov	r8, r2
-	ldr	r3, [pc, #128]
-	ldr	r2, [pc, #132]
-	movs	r0, #0
-	ldrsh	r3, [r3, r0]
-	ldrh	r6, [r2, #0]
-	movs	r1, #0
-	ldrsh	r2, [r2, r1]
-	subs	r3, r3, r2
-	adds	r0, r5, #0
-	muls	r0, r3
-	adds	r1, r7, #0
-	bl 0x0200c830
-	mov	r2, r8
-	adds	r6, r6, r0
-	strh	r6, [r2, #0]
-	cmp	r5, r7
-	blt.n	.L_020039aa
-	ldr	r3, [pc, #52]
-	mov	r0, r9
-	strh	r3, [r0, #0]
-.L_020039aa:
-	ldr	r2, [pc, #96]
-	ldr	r3, [pc, #44]
-	strh	r3, [r2, #0]
-.L_020039b0:
-	ldr	r2, [pc, #88]
-	ldrh	r3, [r2, #0]
-	adds	r3, #1
-	strh	r3, [r2, #0]
-	lsls	r3, r3, #16
-	asrs	r3, r3, #16
-	cmp	r3, #13
-	bgt.n	.L_02003a3c
-	ldr	r3, [pc, #48]
-	movs	r2, #0
-	ldrsh	r1, [r3, r2]
-	ldr	r3, [pc, #56]
-	movs	r0, #0
-	ldrsh	r2, [r3, r0]
-	mov	r0, fp
-	movs	r3, #0
-	stmia	r0!, {r3}
-	subs	r1, #8
-	ldr	r3, [pc, #56]
-	lsls	r1, r1, #16
-	b.n	.L_02003a14
-	.2byte 0x0000
-	.4byte 0x00000000
-	.4byte 0x0200dace
-	.4byte 0x03001b10
-	.4byte 0x0200dbcc
-	.4byte 0x0200dbf0
-	.4byte 0x0200db90
-	.4byte 0x0200dc34
-	.4byte 0x0200dbe4
-	.4byte 0x0200dba0
-	.4byte 0x0200dbc0
-	.4byte 0x0200dc40
-	.4byte 0x0200dbfc
-	.4byte 0x0200dbb4
-	.2byte 0xdb98
-	.2byte 0x0200
-.L_02003a14:
-	subs	r2, #8
-	orrs	r2, r1
-	movs	r4, #128
-	movs	r1, #0
-	ldrsh	r3, [r3, r1]
-	lsls	r4, r4, #23
-	lsls	r3, r3, #28
-	orrs	r2, r4
-	orrs	r2, r3
-	movs	r3, #128
-	stmia	r0!, {r2}
-	lsls	r3, r3, #3
-	mov	r2, sl
-	orrs	r2, r3
-	str	r2, [r0, #0]
-	movs	r1, #255
-	mov	r0, fp
-	bl 0x0200c8c8
-	b.n	.L_02003a44
-.L_02003a3c:
-	cmp	r3, #19
-	ble.n	.L_02003a44
-	ldr	r3, [pc, #16]
-	strh	r3, [r2, #0]
-.L_02003a44:
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x0000
 	.section .text.x0200bcc4,"ax",%progbits
 	.balign 4
 	.global ColossoLogRollingStage_SetBalanceStateReady
@@ -3685,8 +3533,8 @@ gColossoModeScript3A:
 	.4byte 0x000601c0
 	.4byte 0x00067fff
 	.2byte 0xffff
-	.global gColossoPaletteHandle
-gColossoPaletteHandle:
+	.global Korosseo_MarkerSlot
+Korosseo_MarkerSlot:
 	.2byte 0xffff
 	.4byte 0x0000001c
 	.4byte 0x00000002
@@ -3735,20 +3583,20 @@ gColossoPaletteHandle:
 	.global gColossoParticleCount
 gColossoParticleCount:
 	.space 16
-	.global gColossoPaletteProgress
-gColossoPaletteProgress:
+	.global Korosseo_MarkerStep
+Korosseo_MarkerStep:
 	.space 4
 	.global Korosseo_ModeScaleDuration
 Korosseo_ModeScaleDuration:
 	.space 4
-	.global gColossoPaletteMode
-gColossoPaletteMode:
+	.global Korosseo_MarkerPriority
+Korosseo_MarkerPriority:
 	.space 4
 	.global Korosseo_CompetitorStartZ
 Korosseo_CompetitorStartZ:
 	.space 4
-	.global gColossoPaletteNextFirst
-gColossoPaletteNextFirst:
+	.global Korosseo_MarkerEndX
+Korosseo_MarkerEndX:
 	.space 4
 	.global Korosseo_ModeTaskParam
 Korosseo_ModeTaskParam:
@@ -3762,8 +3610,8 @@ Korosseo_ModeMoveDuration:
 	.global Korosseo_ModeTaskPosition
 Korosseo_ModeTaskPosition:
 	.space 4
-	.global gColossoPaletteStep
-gColossoPaletteStep:
+	.global Korosseo_MarkerBlink
+Korosseo_MarkerBlink:
 	.space 4
 	.global Korosseo_ModeScaleTarget
 Korosseo_ModeScaleTarget:
@@ -3771,8 +3619,8 @@ Korosseo_ModeScaleTarget:
 	.global Korosseo_ModeMoveStep
 Korosseo_ModeMoveStep:
 	.space 4
-	.global gColossoPaletteSecond
-gColossoPaletteSecond:
+	.global Korosseo_MarkerY
+Korosseo_MarkerY:
 	.space 4
 	.global Korosseo_ModeBlendStep
 Korosseo_ModeBlendStep:
@@ -3780,8 +3628,8 @@ Korosseo_ModeBlendStep:
 	.global Korosseo_CompetitorStartAngle
 Korosseo_CompetitorStartAngle:
 	.space 4
-	.global gColossoPaletteFlags
-gColossoPaletteFlags:
+	.global Korosseo_MarkerSteps
+Korosseo_MarkerSteps:
 	.space 4
 	.global Korosseo_ModeTaskMode
 Korosseo_ModeTaskMode:
@@ -3798,14 +3646,17 @@ Korosseo_ModeTaskTimer:
 	.global Korosseo_ModeTaskScript
 Korosseo_ModeTaskScript:
 	.space 4
-	.global gColossoPaletteSavedFirst
-gColossoPaletteSavedFirst:
+	.global Korosseo_MarkerStartX
+Korosseo_MarkerStartX:
 	.space 4
 	.global Korosseo_ModeBlendDuration
 Korosseo_ModeBlendDuration:
-	.space 20
-	.global gColossoPaletteSavedSecond
-gColossoPaletteSavedSecond:
+	.space 8
+	.global Korosseo_MarkerOam
+Korosseo_MarkerOam:
+	.space 12
+	.global Korosseo_MarkerStartY
+Korosseo_MarkerStartY:
 	.space 4
 	.global Korosseo_ModeTaskSprites
 Korosseo_ModeTaskSprites:
@@ -3813,8 +3664,8 @@ Korosseo_ModeTaskSprites:
 	.global Korosseo_ModeMoveStart
 Korosseo_ModeMoveStart:
 	.space 4
-	.global gColossoPaletteFirst
-gColossoPaletteFirst:
+	.global Korosseo_MarkerX
+Korosseo_MarkerX:
 	.space 4
 	.global Korosseo_ModeMoveTarget
 Korosseo_ModeMoveTarget:
@@ -3822,8 +3673,8 @@ Korosseo_ModeMoveTarget:
 	.global Korosseo_ModeScaleStep
 Korosseo_ModeScaleStep:
 	.space 4
-	.global gColossoPaletteNextSecond
-gColossoPaletteNextSecond:
+	.global Korosseo_MarkerEndY
+Korosseo_MarkerEndY:
 	.space 4
 	.global Korosseo_CompetitorStartX
 Korosseo_CompetitorStartX:

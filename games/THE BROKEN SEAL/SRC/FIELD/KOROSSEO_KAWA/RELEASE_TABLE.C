@@ -62,7 +62,7 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern s16 KorosseoKawa_ResourceEntry;
+extern s16 Korosseo_MarkerSlot;
 extern u8 Korosseo_UpdateMarker[];
 extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 HexDigits[];
@@ -184,8 +184,8 @@ void SceneState_ReleaseTableAndResetC6a6(void)
 {
 
     Scheduler_RemoveCallbackFar(Korosseo_UpdateMarker);
-    Resource_ResetEntry(KorosseoKawa_ResourceEntry);
-    KorosseoKawa_ResourceEntry = -1;
+    Resource_ResetEntry(Korosseo_MarkerSlot);
+    Korosseo_MarkerSlot = -1;
 }
 
 void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)

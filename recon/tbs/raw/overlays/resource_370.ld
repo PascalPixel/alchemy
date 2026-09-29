@@ -7,9 +7,9 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/GET_SCRIPT.o"(.text)
-        "*/resource_370_overlay.o"(.text.x02008054)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/BACKGROUND.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/BLEND_FADE.o"(.text)
-        "*/resource_370_overlay.o"(.text.x020081fc)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/BUTTON_CODES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/NAME_CHARACTER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/MODE_MASK.o"(.text)
         "*/resource_370_overlay.o"(.text.x020083cc)

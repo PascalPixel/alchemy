@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/RUN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/SPRITES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/REVEAL.o"(.text)
-        "*/resource_36f_overlay.o"(.text.x02008454)
+        "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/BACKGROUND.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/IMPORT.o"(.text)
         "*/resource_36f_overlay.o"(.rodata)
     }

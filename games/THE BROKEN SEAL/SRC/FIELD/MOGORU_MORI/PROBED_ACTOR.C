@@ -1,11 +1,7 @@
-/* Draft of resource_39f 0x02009454 (FieldScene_RunProbedActorEightOrTenScene), built with
- * games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MORI.H.
- * Remaining difference: none in its bytes, but its cue call reaches the veneer COMMON/OBJECT/STAGED_ACTOR.C names Audio_PlayCue, which FIELD_EVENT.H's inline of that name hides from this source; linking it would give the veneer a second name.
- * The listing keeps these rows. */
+/* Mogall Forest: after the probe moves actor 8 or actor 10, copy the cells
+ * it opened; actor 10 at column 35 settles and sets flag 0x311. */
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "MORI.H"
-
-void Func_02001a82(struct Resource39fProbe);
-u8 *Func_0200429c(s32);
 
 void FieldScene_RunProbedActorEightOrTenScene(void)
 {
@@ -18,8 +14,8 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
     /* No argument register is written before this branch. */
     Event_Begin();
 
-    if (StagedActor_FindClearPosition(&probe) != 0) {
-        Func_02001a82(probe);
+    if (StagedActor_FindClearPosition((struct StagedActorProbe *)&probe) != 0) {
+        SceneActor_MoveAndRedraw(*(StagedActorMovementRequest *)&probe);
 
         if (probe.word[1] == 8 && (probe.word[4] >> 20) == 23) {
             fifth = 35;
@@ -36,7 +32,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
             Actor_SetAnimation(10, 8);
             Audio_PlayCue(240);
 
-            Func_0200429c(10)[35] = 2;
+            ((u8 *)Object_GetById(10))[35] = 2;
 
             fifth = 34;
             sixth = 30;

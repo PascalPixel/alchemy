@@ -137,7 +137,7 @@
 	.4byte 0xe2877001
 	.4byte 0xea000002
 	.4byte 0x0805f484
-	.4byte 0x0805a4e0
+	.4byte UiText_Glyphs
 	.4byte 0xe2477001
 	.4byte 0xe59d3004
 	.4byte 0xe59d0024

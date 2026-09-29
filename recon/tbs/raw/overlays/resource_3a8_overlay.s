@@ -1,187 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020080ec,"ax",%progbits
-	.align 2
-	.global Func_020000ec
-	.thumb_func
-Func_020000ec:
-	push {lr}
-	ldr r3, [pc, #76]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_020000ec_0
-	ldr r0, [pc, #64]
-	b .L_020000ec_1
-.L_020000ec_0:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_020000ec_2
-	ldr r0, [pc, #64]
-	b .L_020000ec_1
-.L_020000ec_2:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_020000ec_3
-	ldr r0, [pc, #60]
-	b .L_020000ec_1
-.L_020000ec_3:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_020000ec_4
-	ldr r0, [pc, #60]
-	b .L_020000ec_1
-.L_020000ec_4:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_020000ec_5
-	ldr r0, [pc, #56]
-	b .L_020000ec_1
-.L_020000ec_5:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_020000ec_6
-	ldr r0, [pc, #56]
-	b .L_020000ec_1
-.L_020000ec_6:
-	ldr r0, [pc, #56]
-.L_020000ec_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000063
-	.4byte 0x0200c2c8
-	.4byte 0x00000066
-	.4byte 0x0200c448
-	.4byte 0x00000099
-	.4byte 0x0200c4a8
-	.4byte 0x0000009a
-	.4byte 0x0200c520
-	.4byte 0x0000009b
-	.4byte 0x0200c580
-	.4byte 0x0000009c
-	.4byte 0x0200c628
-	.4byte 0x0200c298
-	.section .text.x02008180,"ax",%progbits
-	.align 2
-	.global Func_02000180
-	.thumb_func
-Func_02000180:
-	push {lr}
-	ldr r3, [pc, #56]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_02000180_0
-	ldr r0, [pc, #44]
-	b .L_02000180_1
-.L_02000180_0:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_02000180_2
-	ldr r0, [pc, #44]
-	b .L_02000180_1
-.L_02000180_2:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_02000180_3
-	ldr r0, [pc, #40]
-	b .L_02000180_1
-.L_02000180_3:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000180_4
-	ldr r0, [pc, #40]
-	b .L_02000180_1
-.L_02000180_4:
-	ldr r0, [pc, #40]
-.L_02000180_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000063
-	.4byte 0x0200c768
-	.4byte 0x00000066
-	.4byte 0x0200ca20
-	.4byte 0x00000099
-	.4byte 0x0200ca80
-	.4byte 0x0000009c
-	.4byte 0x0200cb58
-	.4byte 0x0200c750
-	.section .text.x02008240,"ax",%progbits
-	.align 2
-	.global Func_02000240
-	.thumb_func
-Func_02000240:
-	push {lr}
-	ldr r3, [pc, #76]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02000240_0
-	ldr r0, [pc, #64]
-	b .L_02000240_1
-.L_02000240_0:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_02000240_2
-	ldr r0, [pc, #64]
-	b .L_02000240_1
-.L_02000240_2:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_02000240_3
-	ldr r0, [pc, #60]
-	b .L_02000240_1
-.L_02000240_3:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000240_4
-	ldr r0, [pc, #60]
-	b .L_02000240_1
-.L_02000240_4:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000240_5
-	ldr r0, [pc, #56]
-	b .L_02000240_1
-.L_02000240_5:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000240_6
-	ldr r0, [pc, #56]
-	b .L_02000240_1
-.L_02000240_6:
-	ldr r0, [pc, #56]
-.L_02000240_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000063
-	.4byte 0x0200cbf4
-	.4byte 0x00000066
-	.4byte 0x0200ce88
-	.4byte 0x00000099
-	.4byte 0x0200cedc
-	.4byte 0x0000009a
-	.4byte 0x0200cf24
-	.4byte 0x0000009b
-	.4byte 0x0200cf54
-	.4byte 0x0000009c
-	.4byte 0x0200cf9c
-	.4byte 0x0200cbe8
 	.section .text.x02008590,"ax",%progbits
 	.align 2
 	.global Func_02000590
@@ -2232,6 +2050,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x0000006c
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global gKareiMachiEntrancesOther
+gKareiMachiEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2244,6 +2064,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances1
+gKareiMachiEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000e0
 	.4byte 0x40000118
@@ -2340,6 +2162,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances2
+gKareiMachiEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2364,6 +2188,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances3
+gKareiMachiEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2394,6 +2220,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances4
+gKareiMachiEntrances4:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2418,6 +2246,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances5
+gKareiMachiEntrances5:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2460,6 +2290,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances6
+gKareiMachiEntrances6:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2536,12 +2368,16 @@ KareiMachi_SceneTable01:
 	.4byte 0x0030209b
 	.4byte 0x0040e063
 	.4byte 0x000001ff
+	.global gKareiMachiPlacementsOther
+gKareiMachiPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiPlacements1
+gKareiMachiPlacements1:
 	.4byte 0xffff0099
 	.4byte 0x00000001
 	.4byte 0x00bc0000
@@ -2716,6 +2552,8 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiPlacements2
+gKareiMachiPlacements2:
 	.4byte 0xffff0002
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -2740,6 +2578,8 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiPlacements3
+gKareiMachiPlacements3:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -2794,6 +2634,8 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiPlacements6
+gKareiMachiPlacements6:
 	.4byte 0xffff00cb
 	.4byte 0x00000001
 	.4byte 0x01780000
@@ -2830,9 +2672,13 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEventsOther
+gKareiMachiEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents1
+gKareiMachiEvents1:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte 0x02008465
@@ -2998,6 +2844,8 @@ KareiMachi_SceneTable01:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents2
+gKareiMachiEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3019,6 +2867,8 @@ KareiMachi_SceneTable01:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents3
+gKareiMachiEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3037,6 +2887,8 @@ KareiMachi_SceneTable01:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents4
+gKareiMachiEvents4:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3049,6 +2901,8 @@ KareiMachi_SceneTable01:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents5
+gKareiMachiEvents5:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3067,6 +2921,8 @@ KareiMachi_SceneTable01:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents6
+gKareiMachiEvents6:
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001

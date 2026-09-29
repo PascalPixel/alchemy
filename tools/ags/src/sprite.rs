@@ -5,18 +5,34 @@
 //! `SPRITE.TSV` per sprite with animations.
 //!
 //! The record table's columns are `sprite width height scale draw adjust_x
-//! adjust_y box_x box_y codec frames animations`; `frames` and `animations`
-//! name the sprite whose list a record uses, or `-` for none. A sprite's
-//! own TSV holds `anim` lines, each an animation script as hex bytes, and
-//! `same SPRITE N` lines, which reuse the Nth `anim` of a sprite; a `list`
-//! line gives the frame list as frame numbers when it is not each frame
-//! once in order.
+//! adjust_y box_x box_y codec frames animations`, one row per record in id
+//! order; `frames` and `animations` name the sprite whose list a record
+//! uses, or `-` for none; `SPRITE:N` uses the first N of that sprite's
+//! animations. A `sprite` of `NAME=FILES` reads its PNG and TSV from FILES,
+//! as an edition's table names its own pictures of a sprite. A sprite's
+//! own TSV holds lines of a key and its
+//! values:
 //!
-//! The bank lays out every record, then every animation list, every frame
-//! list, every script and every frame, each in record order. Frames are
-//! coded by the record's codec: 0 zero-skip, 1 the packer's tagged LZ of the
-//! pixels, 3 arena streams whose copies read the sprite's earlier frames
-//! (an all-transparent frame is an empty stream).
+//! - `anim`: one of the sprite's animation scripts, as hex bytes, in the
+//!   order they are laid out.
+//! - `animations`: the animation list, when it is not each script once in
+//!   order: script numbers, or `SPRITE:N` for another sprite's script.
+//! - `list`: the frame list, when it is not each frame once in order: frame
+//!   numbers, or `-` for an empty entry.
+//! - `empty`: blank frames stored as empty streams.
+//!
+//! Frames are coded by the record's codec: 0 zero-skip, 1 the packer's
+//! tagged LZ of the pixels, 3 arena streams whose copies read the sprite's
+//! earlier frames.
+//!
+//! Two layouts exist. `.sprites` (⚓️) lays out every record, then every
+//! animation list, every frame list, every script and every frame, each in
+//! record order. `.spriteblocks` (☀️) lays out every record, then for each
+//! sprite in the order `LAYOUT.TSV` lists them its scripts and animation
+//! list, then again for each its frames and its frame list, which ends in
+//! a null word; scripts and frames are padded to a word. A `section NAME`
+//! line in the layout continues the bank in section `.rodata.NAME`, so
+//! another object can be linked between.
 use crate::asm::Data;
 use crate::graphics::indices;
 use crate::lz::compress_tagged;
@@ -25,17 +41,40 @@ use psynergy::assets::compression::encode_zero_skip;
 use psynergy::assets::image::indexed_bitmap_png;
 use psynergy::assets::lz::compress_arena;
 use std::collections::HashMap;
+use std::fmt::Write;
 
 struct Record {
     name: String,
+    /// The stem of the sprite's PNG and TSV.
+    files: String,
     bytes: [u8; 12],
     frames: Option<String>,
     animations: Option<String>,
+    /// How many of the list's animations the record uses, when not all.
+    count: Option<usize>,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
 enum Script {
-    Own(Vec<u8>),
-    Same(String, usize),
+    Own(usize),
+    Other(String, usize),
+}
+
+/// A sprite's own TSV.
+#[derive(Default)]
+struct Sprite {
+    scripts: Vec<Vec<u8>>,
+    animations: Option<Vec<Script>>,
+    list: Option<Vec<Option<usize>>>,
+    empty: Vec<usize>,
+}
+
+impl Sprite {
+    fn animations(&self) -> Vec<Script> {
+        self.animations
+            .clone()
+            .unwrap_or_else(|| (0..self.scripts.len()).map(Script::Own).collect())
+    }
 }
 
 fn number(built: &str, field: &str) -> Result<i64, String> {
@@ -87,61 +126,77 @@ fn records(built: &str, text: &str) -> Result<Vec<Record>, String> {
             bytes[9] = byte(fields[8], 0, 255)?;
             bytes[10] = byte(fields[9], 0, 255)?;
             let reference = |field: &str| (field != "-").then(|| field.to_owned());
+            let (animations, count) = match fields[11].split_once(':') {
+                Some((owner, count)) => (Some(owner.to_owned()), Some(frame_number(built, count)?)),
+                None => (reference(fields[11]), None),
+            };
             Ok(Record {
-                name: fields[0].to_owned(),
+                name: fields[0]
+                    .split_once('=')
+                    .map_or(fields[0], |(name, _)| name)
+                    .to_owned(),
+                files: fields[0]
+                    .split_once('=')
+                    .map_or(fields[0], |(_, files)| files)
+                    .to_owned(),
                 bytes,
                 frames: reference(fields[10]),
-                animations: reference(fields[11]),
+                animations,
+                count,
             })
         })
         .collect()
 }
 
-/// A sprite's own TSV: its animation scripts, its frame list when that is
-/// not each frame once, and the blank frames stored as empty streams.
-#[derive(Default)]
-struct Sprite {
-    scripts: Vec<Script>,
-    list: Option<Vec<usize>>,
-    empty: Vec<usize>,
-}
-
-fn numbers(built: &str, text: &str) -> Result<Vec<usize>, String> {
-    text.split(' ')
-        .map(|n| {
-            n.parse()
-                .map_err(|_| format!("{built}: {n:?} is not a frame"))
-        })
-        .collect()
+fn frame_number(built: &str, text: &str) -> Result<usize, String> {
+    text.parse()
+        .map_err(|_| format!("{built}: {text:?} is not a number"))
 }
 
 fn sprite_text(built: &str, text: &str) -> Result<Sprite, String> {
     let mut sprite = Sprite::default();
     for line in text.lines().filter(|line| !line.trim().is_empty()) {
-        let fields: Vec<&str> = line.split('\t').collect();
-        match fields.as_slice() {
-            ["anim", bytes] => sprite.scripts.push(Script::Own(
-                bytes
-                    .split(' ')
+        let (key, values) = line
+            .split_once('\t')
+            .ok_or_else(|| format!("{built}: {line:?} needs a key and values"))?;
+        let values = values.split(' ');
+        match key {
+            "anim" => sprite.scripts.push(
+                values
                     .map(|byte| {
                         u8::from_str_radix(byte, 16)
                             .map_err(|_| format!("{built}: {byte:?} is not a hex byte"))
                     })
                     .collect::<Result<_, _>>()?,
-            )),
-            ["same", owner, index] => sprite.scripts.push(Script::Same(
-                (*owner).to_owned(),
-                index
-                    .parse()
-                    .map_err(|_| format!("{built}: {index:?} is not an animation number"))?,
-            )),
-            ["list", list] => sprite.list = Some(numbers(built, list)?),
-            ["empty", list] => sprite.empty = numbers(built, list)?,
-            _ => {
-                return Err(format!(
-                    "{built}: {line:?} is not an anim, same, list or empty line"
-                ))
+            ),
+            "animations" => {
+                sprite.animations = Some(
+                    values
+                        .map(|value| match value.split_once(':') {
+                            Some((owner, n)) => {
+                                Ok(Script::Other(owner.to_owned(), frame_number(built, n)?))
+                            }
+                            None => Ok(Script::Own(frame_number(built, value)?)),
+                        })
+                        .collect::<Result<_, String>>()?,
+                )
             }
+            "list" => {
+                sprite.list = Some(
+                    values
+                        .map(|value| match value {
+                            "-" => Ok(None),
+                            value => frame_number(built, value).map(Some),
+                        })
+                        .collect::<Result<_, _>>()?,
+                )
+            }
+            "empty" => {
+                sprite.empty = values
+                    .map(|value| frame_number(built, value))
+                    .collect::<Result<_, _>>()?
+            }
+            _ => return Err(format!("{built}: {key:?} is not a sprite key")),
         }
     }
     Ok(sprite)
@@ -179,130 +234,239 @@ fn frame_streams(
     }
     Ok(streams)
 }
+
 /// The label of a sprite's own item.
 fn label(sprite: &str, item: &str) -> String {
     format!("Sprite_{sprite}_{item}")
 }
 
-/// A field sprite bank from its record table and each sprite's files.
+/// Everything a bank is built from.
+struct Bank {
+    records: Vec<Record>,
+    sprites: HashMap<String, Sprite>,
+}
+
+impl Bank {
+    fn read(
+        built: &str,
+        table: &[u8],
+        sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+    ) -> Result<Self, String> {
+        let text = std::str::from_utf8(table).map_err(|_| format!("{built}: table is not text"))?;
+        let records = records(built, text)?;
+        let mut sprites = HashMap::new();
+        for record in &records {
+            let owns = |list: &Option<String>| list.as_deref() == Some(record.name.as_str());
+            let name = format!("{}.TSV", record.files);
+            if owns(&record.animations) || (owns(&record.frames) && sibling(&name).is_ok()) {
+                let text = String::from_utf8(sibling(&name)?)
+                    .map_err(|_| format!("{built}: {name} is not text"))?;
+                sprites.insert(record.name.clone(), sprite_text(built, &text)?);
+            }
+        }
+        Ok(Self { records, sprites })
+    }
+    fn sprite(&self, built: &str, name: &str) -> Result<&Sprite, String> {
+        self.sprites
+            .get(name)
+            .ok_or_else(|| format!("{built}: {name} has no TSV"))
+    }
+    fn owns_animations(&self, name: &str) -> bool {
+        self.records
+            .iter()
+            .any(|r| r.name == name && r.animations.as_deref() == Some(name))
+    }
+    fn owns_frames(&self, name: &str) -> Option<&Record> {
+        self.records
+            .iter()
+            .find(|r| r.name == name && r.frames.as_deref() == Some(name))
+    }
+    fn records(&self, built: &str, data: &mut Data) -> Result<(), String> {
+        for record in &self.records {
+            data.bytes.extend(&record.bytes[..5]);
+            let count = match &record.animations {
+                Some(owner) => {
+                    let all = self.sprite(built, owner)?.animations().len();
+                    match record.count {
+                        Some(count) if count <= all => count,
+                        Some(count) => {
+                            return Err(format!("{built}: {owner} has no {count} animations"))
+                        }
+                        None => all,
+                    }
+                }
+                None => 0,
+            };
+            data.bytes
+                .push(u8::try_from(count).map_err(|_| format!("{built}: too many animations"))?);
+            data.bytes.extend(&record.bytes[6..12]);
+            for (list, item) in [
+                (&record.frames, "Frames"),
+                (&record.animations, "Animations"),
+            ] {
+                match list {
+                    Some(owner) => data.pointer(&label(owner, item), 0),
+                    None => data.bytes.extend([0; 4]),
+                }
+            }
+        }
+        Ok(())
+    }
+    fn animation_list(&self, built: &str, name: &str, data: &mut Data) -> Result<(), String> {
+        data.label(&label(name, "Animations"), false);
+        let sprite = self.sprite(built, name)?;
+        for script in sprite.animations() {
+            let (owner, number) = match &script {
+                Script::Own(number) => (name, *number),
+                Script::Other(owner, number) => (owner.as_str(), *number),
+            };
+            if self.sprite(built, owner)?.scripts.len() <= number {
+                return Err(format!("{built}: {owner} has no animation {number}"));
+            }
+            data.pointer(&label(owner, &format!("Animation{number}")), 0);
+        }
+        Ok(())
+    }
+    fn scripts(&self, built: &str, name: &str, data: &mut Data) -> Result<(), String> {
+        for (number, bytes) in self.sprite(built, name)?.scripts.iter().enumerate() {
+            data.label(&label(name, &format!("Animation{number}")), false);
+            data.bytes.extend(bytes);
+        }
+        Ok(())
+    }
+    /// A sprite's frame list and its frames.
+    fn frames(
+        &self,
+        built: &str,
+        record: &Record,
+        sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+    ) -> Result<(Data, Data), String> {
+        let name = &record.name;
+        let png = sibling(&format!("{}.PNG", record.files))?;
+        let image =
+            indexed_bitmap_png(&png).map_err(|error| format!("{built}: {name}: {}", error.0))?;
+        let (width, height) = (record.bytes[0] as usize, record.bytes[1] as usize);
+        if image.width as usize != width || height == 0 || image.height as usize % height != 0 {
+            return Err(format!(
+                "{built}: {name} is not {width}x{height} frames stacked"
+            ));
+        }
+        let pixels = indices(&image);
+        let frames: Vec<&[u8]> = pixels.chunks(width * height).collect();
+        let sprite = self.sprites.get(name);
+        let list = sprite
+            .and_then(|sprite| sprite.list.clone())
+            .unwrap_or_else(|| (0..frames.len()).map(Some).collect());
+        let empty = sprite
+            .map(|sprite| sprite.empty.clone())
+            .unwrap_or_default();
+        let mut list_data = Data::default();
+        list_data.label(&label(name, "Frames"), false);
+        for number in list {
+            match number {
+                Some(number) if number < frames.len() => {
+                    list_data.pointer(&label(name, &format!("Frame{number}")), 0)
+                }
+                Some(number) => return Err(format!("{built}: {name} has no frame {number}")),
+                None => list_data.bytes.extend([0; 4]),
+            }
+        }
+        let mut frame_data = Data::default();
+        let streams = frame_streams(built, record.bytes[10], &frames, &empty)?;
+        for (number, stream) in streams.into_iter().enumerate() {
+            frame_data.label(&label(name, &format!("Frame{number}")), false);
+            frame_data.bytes.extend(stream);
+        }
+        Ok((list_data, frame_data))
+    }
+}
+
+/// ⚓️'s bank: records, animation lists, frame lists, scripts and frames.
 pub fn bank(
     built: &str,
     table: &[u8],
     sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
 ) -> Result<Data, String> {
-    let text = std::str::from_utf8(table).map_err(|_| format!("{built}: table is not text"))?;
-    let records = records(built, text)?;
-    let mut sprites: HashMap<String, Sprite> = HashMap::new();
-    for record in &records {
-        let owns = |list: &Option<String>| list.as_deref() == Some(record.name.as_str());
-        if owns(&record.animations)
-            || (owns(&record.frames) && sibling(&format!("{}.TSV", record.name)).is_ok())
-        {
-            let text = sibling(&format!("{}.TSV", record.name))?;
-            let text = String::from_utf8(text)
-                .map_err(|_| format!("{built}: {}.TSV is not text", record.name))?;
-            sprites.insert(record.name.clone(), sprite_text(built, &text)?);
-        }
-    }
+    let bank = Bank::read(built, table, sibling)?;
     let mut data = Data::default();
-    for record in &records {
-        data.bytes.extend(&record.bytes[..5]);
-        let count = match &record.animations {
-            Some(owner) => sprites
-                .get(owner)
-                .ok_or_else(|| format!("{built}: {owner} has no animations"))?
-                .scripts
-                .len(),
-            None => 0,
-        };
-        data.bytes
-            .push(u8::try_from(count).map_err(|_| format!("{built}: too many animations"))?);
-        data.bytes.extend(&record.bytes[6..12]);
-        for (list, item) in [
-            (&record.frames, "Frames"),
-            (&record.animations, "Animations"),
-        ] {
-            match list {
-                Some(owner) => data.pointer(&label(owner, item), 0),
-                None => data.bytes.extend([0; 4]),
-            }
+    bank.records(built, &mut data)?;
+    for record in &bank.records {
+        if bank.owns_animations(&record.name) {
+            bank.animation_list(built, &record.name, &mut data)?;
         }
     }
-    // Animation lists, naming each script by its owner and number.
-    for record in records
-        .iter()
-        .filter(|r| r.animations.as_deref() == Some(&r.name))
-    {
-        data.label(&label(&record.name, "Animations"), false);
-        let mut own = 0;
-        for script in &sprites[&record.name].scripts {
-            match script {
-                Script::Own(_) => {
-                    data.pointer(&label(&record.name, &format!("Animation{own}")), 0);
-                    own += 1;
-                }
-                Script::Same(owner, index) => {
-                    data.pointer(&label(owner, &format!("Animation{index}")), 0)
-                }
-            }
-        }
-    }
-    // Frame lists, and each sprite's frames.
     let mut frame_data = Data::default();
-    for record in records
-        .iter()
-        .filter(|r| r.frames.as_deref() == Some(&r.name))
-    {
-        let png = sibling(&format!("{}.PNG", record.name))?;
-        let image = indexed_bitmap_png(&png)
-            .map_err(|error| format!("{built}: {}: {}", record.name, error.0))?;
-        let (width, height) = (record.bytes[0] as usize, record.bytes[1] as usize);
-        if image.width as usize != width || height == 0 || image.height as usize % height != 0 {
-            return Err(format!(
-                "{built}: {} is not {width}x{height} frames stacked",
-                record.name
-            ));
-        }
-        let pixels = indices(&image);
-        let frames: Vec<&[u8]> = pixels.chunks(width * height).collect();
-        let list = sprites
-            .get(&record.name)
-            .and_then(|sprite| sprite.list.clone())
-            .unwrap_or_else(|| (0..frames.len()).collect());
-        data.label(&label(&record.name, "Frames"), false);
-        for number in list {
-            if number >= frames.len() {
-                return Err(format!("{built}: {} has no frame {number}", record.name));
-            }
-            data.pointer(&label(&record.name, &format!("Frame{number}")), 0);
-        }
-        let empty = sprites
-            .get(&record.name)
-            .map(|sprite| sprite.empty.clone())
-            .unwrap_or_default();
-        for (number, stream) in frame_streams(built, record.bytes[10], &frames, &empty)?
-            .into_iter()
-            .enumerate()
-        {
-            frame_data.label(&label(&record.name, &format!("Frame{number}")), false);
-            frame_data.bytes.extend(stream);
+    for record in &bank.records {
+        if bank.owns_frames(&record.name).is_some() {
+            let (list, frames) = bank.frames(built, record, sibling)?;
+            data.append(list)?;
+            frame_data.append(frames)?;
         }
     }
-    for record in records
-        .iter()
-        .filter(|r| r.animations.as_deref() == Some(&r.name))
-    {
-        let mut own = 0;
-        for script in &sprites[&record.name].scripts {
-            if let Script::Own(bytes) = script {
-                data.label(&label(&record.name, &format!("Animation{own}")), false);
-                data.bytes.extend(bytes);
-                own += 1;
-            }
+    for record in &bank.records {
+        if bank.owns_animations(&record.name) {
+            bank.scripts(built, &record.name, &mut data)?;
         }
     }
     data.append(frame_data)?;
     Ok(data)
+}
+
+/// ☀️'s bank as sections: the name of the section each part continues in,
+/// or `None` for the first, and the part.
+pub fn blocks(
+    built: &str,
+    table: &[u8],
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<Vec<(Option<String>, Data)>, String> {
+    let bank = Bank::read(built, table, sibling)?;
+    let layout = String::from_utf8(sibling("LAYOUT.TSV")?)
+        .map_err(|_| format!("{built}: LAYOUT.TSV is not text"))?;
+    let mut parts = vec![(None, Data::default())];
+    bank.records(built, &mut parts[0].1)?;
+    let mut order = Vec::new();
+    for line in layout.lines().filter(|line| !line.trim().is_empty()) {
+        match line.split_once('\t') {
+            Some(("section", name)) => parts.push((Some(name.to_owned()), Data::default())),
+            None => {
+                let data = &mut parts.last_mut().expect("a part").1;
+                if bank.owns_animations(line) {
+                    bank.scripts(built, line, data)?;
+                    data.align_to(4, 0)?;
+                    bank.animation_list(built, line, data)?;
+                }
+                order.push(line);
+            }
+            Some(_) => return Err(format!("{built}: layout line {line:?} is not a sprite")),
+        }
+    }
+    let data = &mut parts.last_mut().expect("a part").1;
+    for name in order {
+        if let Some(record) = bank.owns_frames(name) {
+            let (list, frames) = bank.frames(built, record, sibling)?;
+            data.append(frames)?;
+            data.align_to(4, 0)?;
+            data.append(list)?;
+            data.bytes.extend([0; 4]);
+        }
+    }
+    Ok(parts)
+}
+
+/// ☀️'s bank as assembler source.
+pub fn blocks_source(
+    built: &str,
+    table: &[u8],
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<String, String> {
+    let mut text = String::new();
+    for (section, data) in blocks(built, table, sibling)? {
+        if let Some(section) = section {
+            writeln!(text, "\t.section .rodata.{section},\"a\"").unwrap();
+        }
+        text.push_str(&data.source()?);
+    }
+    Ok(text)
 }
 
 #[cfg(test)]
@@ -311,23 +475,38 @@ mod tests {
     use psynergy::assets::image::png_from_bitmap;
     use psynergy::assets::lz::decode_arena;
 
+    const HEADER: &str =
+        "sprite\twidth\theight\tscale\tdraw\tadjust_x\tadjust_y\tbox_x\tbox_y\tcodec\tframes\tanimations\n";
+
+    fn files(name: &str) -> Result<Vec<u8>, String> {
+        let palette: Vec<u8> = (0..16u16).flat_map(|c| c.to_le_bytes()).collect();
+        Ok(match name {
+            // Two 2x2 frames, the second repeating the first.
+            "A.PNG" => png_from_bitmap(&[1, 2, 3, 4, 1, 2, 3, 4], &palette, 2).unwrap(),
+            "A.TSV" => b"list\t0 1 - 1\nanim\t00 05 f1 00\n".to_vec(),
+            "B.TSV" => b"anim\t01 02\nanimations\tA:0 0\n".to_vec(),
+            "LAYOUT.TSV" => b"B\nsection\tafter\nA\n".to_vec(),
+            other => return Err(format!("no {other}")),
+        })
+    }
+
+    fn table() -> String {
+        format!(
+            "{HEADER}A\t2\t2\t0x100\t5\t0\t-2\t20\t16\t0\tA\tA\n\
+             B\t2\t2\t0x100\t5\t0\t0\t20\t16\t2\t-\tB\n"
+        )
+    }
+
+    fn symbols(data: &Data) -> Vec<&str> {
+        data.pointers
+            .iter()
+            .map(|(_, p)| p.symbol.as_str())
+            .collect()
+    }
+
     #[test]
     fn bank_lays_out_records_lists_scripts_and_frames() {
-        let palette: Vec<u8> = (0..16u16).flat_map(|c| c.to_le_bytes()).collect();
-        // Two 2x2 frames, the second repeating the first.
-        let png = png_from_bitmap(&[1, 2, 3, 4, 1, 2, 3, 4], &palette, 2).unwrap();
-        let table = "sprite\twidth\theight\tscale\tdraw\tadjust_x\tadjust_y\tbox_x\tbox_y\tcodec\tframes\tanimations\n\
-            A\t2\t2\t0x100\t5\t0\t-2\t20\t16\t0\tA\tA\n\
-            B\t2\t2\t0x100\t5\t0\t0\t20\t16\t2\t-\tB\n";
-        let sibling = |name: &str| -> Result<Vec<u8>, String> {
-            Ok(match name {
-                "A.PNG" => png.clone(),
-                "A.TSV" => b"list\t0 1 1\nanim\t00 05 f1 00\n".to_vec(),
-                "B.TSV" => b"same\tA\t0\nanim\t01 02\n".to_vec(),
-                other => return Err(format!("no {other}")),
-            })
-        };
-        let data = bank("S.sprites", table.as_bytes(), &sibling).unwrap();
+        let data = bank("S.sprites", table().as_bytes(), &files).unwrap();
         // Records: A has one animation, B two; B has no frames.
         assert_eq!(
             &data.bytes[..12],
@@ -335,13 +514,8 @@ mod tests {
         );
         assert_eq!(&data.bytes[20..32], &[2, 2, 0, 1, 5, 2, 0, 0, 20, 16, 2, 0]);
         assert_eq!(&data.bytes[32..36], &[0; 4]);
-        let names: Vec<&str> = data
-            .pointers
-            .iter()
-            .map(|(_, p)| p.symbol.as_str())
-            .collect();
         assert_eq!(
-            names,
+            symbols(&data),
             [
                 "Sprite_A_Frames",
                 "Sprite_A_Animations",
@@ -354,9 +528,34 @@ mod tests {
                 "Sprite_A_Frame1"
             ]
         );
-        // Scripts, then the zero-skip frames.
+        // The list's empty entry, then the scripts and the zero-skip frames.
         let tail = &data.bytes[data.bytes.len() - 16..];
-        assert_eq!(tail, &[0, 5, 0xf1, 0, 1, 2, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0]);
+        assert_eq!(tail, [0, 5, 0xf1, 0, 1, 2, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0]);
+    }
+
+    #[test]
+    fn blocks_put_each_sprites_scripts_before_its_list_and_frames_before_theirs() {
+        let parts = blocks("S.spriteblocks", table().as_bytes(), &files).unwrap();
+        assert_eq!(parts.len(), 2);
+        assert_eq!(parts[1].0.as_deref(), Some("after"));
+        // B's script, padded to a word, then B's list.
+        let first = &parts[0].1;
+        assert_eq!(&first.bytes[40..44], &[1, 2, 0, 0]);
+        assert_eq!(first.bytes.len(), 52);
+        // A's script and list, then A's frames padded to a word, its list and a null word.
+        let second = &parts[1].1;
+        assert_eq!(&second.bytes[..4], &[0, 5, 0xf1, 0]);
+        assert_eq!(&second.bytes[8..20], &[1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 0, 0]);
+        assert_eq!(second.bytes.len(), 20 + 16 + 4);
+        assert_eq!(
+            symbols(second),
+            [
+                "Sprite_A_Animation0",
+                "Sprite_A_Frame0",
+                "Sprite_A_Frame1",
+                "Sprite_A_Frame1"
+            ]
+        );
     }
 
     #[test]
@@ -372,5 +571,7 @@ mod tests {
         let (decoded, _, _) = decode_arena(&container, at).unwrap();
         assert_eq!(decoded, encode_zero_skip(&first).unwrap());
         assert!(streams[2].len() < streams[0].len());
+        // A frame that is not blank cannot be empty.
+        assert!(frame_streams("S", 3, &[&first], &[0]).is_err());
     }
 }

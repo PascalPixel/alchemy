@@ -4,11 +4,4 @@ anim	1e 08 0f 08 12 08 15 08 18 08 1b 08 fd 00
 anim	06 0b fe 01
 anim	09 08 00 07 0c 08 00 07 09 08 00 07 0c 08 00 07 fe 01
 anim	03 06 f1 00
-same	SPR_115	5
-same	SPR_115	5
-same	SPR_115	5
-same	SPR_115	5
-same	SPR_115	5
-same	SPR_115	5
-same	SPR_115	5
-same	SPR_115	5
+animations	0 1 2 3 4 5 5 5 5 5 5 5 5 5

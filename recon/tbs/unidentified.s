@@ -660,7 +660,10 @@ Data_080c3f34:
 	.incbin "baserom.gba", 0x000c3f34, 0x00001a04
 	.global BattlePres_ActorObjectScript
 BattlePres_ActorObjectScript:
-	.incbin "baserom.gba", 0x000c5938, 0x0000006c
+	.incbin "baserom.gba", 0x000c5938, 0x00000004
+	.global Resource_SlotAssignments
+Resource_SlotAssignments:
+	.incbin "baserom.gba", 0x000c593c, 0x00000068
 	.global BattleMotion_VariantAcceleration
 BattleMotion_VariantAcceleration:
 	.incbin "baserom.gba", 0x000c59a4, 0x00000020

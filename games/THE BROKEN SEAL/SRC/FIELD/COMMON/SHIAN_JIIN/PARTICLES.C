@@ -105,7 +105,7 @@ void FieldScene_RunScene39e_02002778(void)
 
     Event_Begin();
     Audio_PlayCue(188);
-    Map_AnimateCells(0x200c764, 77, 8);
+    Map_AnimateCells((const u16 *)ShianJiin_CellStepsA, 77, 8);
     *(u8 *)(((s32)Engine_ActorGet(0)) + 85) = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

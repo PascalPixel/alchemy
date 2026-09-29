@@ -75,7 +75,6 @@ fn update_readme(text: &str, status: &str) -> String {
 mod tests {
     use super::{status_line, update_readme};
     use crate::coverage::progress::GameDone;
-    use serde_json::json;
     #[test]
     #[ignore = "slow: writes and compresses both figures twice"]
     fn figures_are_redrawn_with_each_count_and_match_the_readme() {
@@ -85,11 +84,14 @@ mod tests {
         std::fs::create_dir_all(history::path(root).parent().unwrap()).unwrap();
         std::fs::write(
             history::path(root),
-            history::text(
-                &json!({"format": 1, "began": "2026-07-16", "stricter": [], "days": [
-                    {"date": "2026-07-16", "tbs": {"percent": 1.0}}
-                ]}),
-            ),
+            history::text(&history::History {
+                began: "2026-07-16".into(),
+                days: vec![history::Day {
+                    tbs: Some(history::Measure::published(1.0)),
+                    ..history::Day::new("2026-07-16")
+                }],
+                ..history::History::default()
+            }),
         )
         .unwrap();
         assert!(std::process::Command::new("git")
@@ -113,12 +115,10 @@ mod tests {
         let _ = map;
         let recorded = history::load(root).unwrap();
         let today = history::today();
-        let row = recorded["days"].as_array().unwrap().last().unwrap().clone();
-        assert_eq!(
-            (row["date"].as_str(), history::percent(&row["tbs"])),
-            (Some(today.as_str()), Some(61.0))
-        );
-        assert_eq!(history::percent(&recorded["figures"]["tbs"]), Some(61.0));
+        let row = recorded.days.last().unwrap().clone();
+        let tbs = |row: &history::Day| row.tbs.as_ref().and_then(history::Measure::percent);
+        assert_eq!((row.date.as_str(), tbs(&row)), (today.as_str(), Some(61.0)));
+        assert_eq!(tbs(recorded.figures.as_ref().unwrap()), Some(61.0));
         check_figures(root).unwrap();
         // A README stating another number fails.
         std::fs::write(root.join("README.md"), "**☀️ 60.00% · ⚓️ pending**\n").unwrap();
@@ -162,7 +162,7 @@ mod tests {
 /// Both README figures as the history's recorded figure date draws them.
 fn render_figures(
     root: &Path,
-    history: &serde_json::Value,
+    history: &history::History,
 ) -> Result<(raster::Canvas, raster::Canvas), String> {
     let letters = letters::Letters::face();
     let chart = figure::chart(&letters, &history::as_drawn(history));
@@ -206,33 +206,30 @@ fn check_figures(root: &Path) -> Result<(), String> {
         ))
     };
     let history = history::load(root)?;
-    let date = history["figures"]["date"]
-        .as_str()
-        .unwrap_or("")
-        .to_string();
+    let figures = history.figures.clone().unwrap_or_default();
+    let date = figures.date.clone();
     let today = history::today();
-    let has_today = history["days"]
-        .as_array()
-        .is_some_and(|days| days.iter().any(|row| row["date"] == today.as_str()));
+    let has_today = history.days.iter().any(|row| row.date == today);
     if !figure_date_current(&date, &today, has_today) {
         return stale(&format!("drawn on {date:?}"));
     }
-    let latest = history["days"].as_array().and_then(|days| days.last());
+    let latest = history.days.last();
+    let percent = |row: &history::Day, game| row.game(game).and_then(history::Measure::percent);
     for game in ["tbs", "tla"] {
-        let shown = history::percent(&history["figures"][game]);
-        if latest.map(|row| history::percent(&row[game])) != Some(shown) {
+        let shown = percent(&figures, game);
+        if latest.map(|row| percent(row, game)) != Some(shown) {
             return stale(&format!("{game} is not the latest recorded row"));
         }
     }
     let readme = std::fs::read_to_string(root.join("README.md")).unwrap_or_default();
     for (icon, game) in [("☀️", "tbs"), ("⚓️", "tla")] {
-        if history["pending"][game] == true {
+        if history.pending(game) {
             if readme.contains("**☀️ ") && !readme.contains(&format!("{icon} pending")) {
                 return stale(&format!("{game} has no verified current measurement"));
             }
             continue;
         }
-        if let Some(shown) = history::percent(&history["figures"][game]) {
+        if let Some(shown) = percent(&figures, game) {
             // The README floors to hundredths, as the chart labels do.
             let shown = (shown * 100.0 + 1e-9).floor() / 100.0;
             if readme.contains("**☀️ ") && !readme.contains(&format!("{icon} {shown:.2}%")) {
@@ -282,7 +279,7 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     let root = root();
     if o.models {
-        // Relabel every day's commits by model from the local agent logs.
+        // Relabel every day's commits by model from their trailers and authors.
         let mut history = history::load(&root)?;
         let moved = history::relabel_models(&root, &mut history)?;
         write(&history::path(&root), &history::text(&history))?;

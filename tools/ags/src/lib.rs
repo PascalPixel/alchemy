@@ -1,6 +1,6 @@
 //! The Golden Sun asset encoders, as pret's gbagfx, mid2agb, wav2agb and
 //! preproc are for Pokémon: each turns one editable input (an indexed PNG,
-//! a tilemap, a JSON table or sequence, a MIDI, a WAV, a PO catalog) into
+//! a tilemap or table, a MIDI, a WAV, a PO catalog) into
 //! the bytes or assembler source the build links, and compresses with the
 //! resource packer's rules. None reads a ROM and none takes an address: data
 //! that points at other data is emitted as `asm::Data` whose address words
@@ -13,5 +13,4 @@ pub mod graphics;
 pub mod lz;
 pub mod resource;
 pub mod sound;
-pub mod table;
 pub mod text;

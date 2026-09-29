@@ -2,50 +2,56 @@
 use crate::coverage::calcrom::{measure, Measurement};
 use crate::coverage::jsnum::{commas, floor_percent};
 use crate::coverage::tree::root;
-use serde_json::{json, Value};
 use std::path::Path;
 
-const USAGE: &str = "usage: alchemy check progress [--target tbs-en|tla-en] [--check|--subject|--json|--write-report|--self-test]";
+const USAGE: &str = "usage: alchemy check progress [--target tbs-en|tla-en] [--check|--subject|--write-report|--self-test]";
 
-fn report_json(report: &GameDone, target: &str) -> Value {
+/// The progress report as TSV rows of field and value.
+fn report_rows(report: &GameDone, target: &str) -> Vec<(&'static str, String)> {
     let exact = report.common_c + report.game_c;
     let executable = report.executable;
-    json!({
-        "format": 3,
-        "metric": "done-executable-byte-share",
-        "measurement": "linker-map-text-sections",
-        "target": target,
-        "exact_c_bytes": exact,
-        "permanent_assembly_bytes": report.common_asm + report.game_asm,
-        "done_bytes": report.bytes(),
-        "executable_bytes": executable,
-        "remaining_bytes": executable - report.bytes(),
-        "done_percent": report.percent(),
-        "exact_c_percent": floor_percent(exact, executable),
-        "parts": report,
-        "state": "verified"
-    })
+    vec![
+        ("target", target.to_string()),
+        ("state", "verified".into()),
+        ("exact_c_bytes", exact.to_string()),
+        (
+            "permanent_assembly_bytes",
+            (report.common_asm + report.game_asm).to_string(),
+        ),
+        ("common_asm", report.common_asm.to_string()),
+        ("common_c", report.common_c.to_string()),
+        ("game_asm", report.game_asm.to_string()),
+        ("game_c", report.game_c.to_string()),
+        ("done_bytes", report.bytes().to_string()),
+        ("executable_bytes", executable.to_string()),
+        ("remaining_bytes", (executable - report.bytes()).to_string()),
+        ("done_percent", report.percent().to_string()),
+        (
+            "exact_c_percent",
+            floor_percent(exact, executable).to_string(),
+        ),
+    ]
 }
 
-fn pending_json(target: &str, reason: &str) -> Value {
-    json!({
-        "format": 3,
-        "metric": "done-executable-byte-share",
-        "measurement": "linker-map-text-sections",
-        "target": target,
-        "state": "pending",
-        "reason": reason,
-        "done_bytes": Value::Null,
-        "executable_bytes": Value::Null,
-        "done_percent": Value::Null
-    })
+fn pending_rows(target: &str, reason: &str) -> Vec<(&'static str, String)> {
+    vec![
+        ("target", target.to_string()),
+        ("state", "pending".into()),
+        ("reason", reason.replace(['\t', '\n'], " ")),
+    ]
+}
+
+fn table(rows: &[(&'static str, String)]) -> String {
+    rows.iter()
+        .map(|(field, value)| format!("{field}\t{value}\n"))
+        .collect()
 }
 
 /// One game's DONE: shared permanent assembly, shared exact C, the game's own
 /// permanent assembly (with the compiler library) and the game's own exact C,
 /// over every executable byte its verified build links. The Broken Seal is
 /// ☀️ and The Lost Age ⚓️.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct GameDone {
     pub common_asm: i64,
     pub common_c: i64,
@@ -140,7 +146,7 @@ fn command(argv: &[String]) -> Result<Option<(String, &str)>, String> {
                 };
             }
             "-h" | "--help" => return Ok(None),
-            flag @ ("--check" | "--subject" | "--json" | "--write-report" | "--self-test") => {
+            flag @ ("--check" | "--subject" | "--write-report" | "--self-test") => {
                 if !action.is_empty() {
                     return Err("choose only one progress action".into());
                 }
@@ -175,19 +181,16 @@ fn run(argv: &[String]) -> Result<String, String> {
         Ok(measurement) => Ok(measurement.done),
         Err(reason) => Err(reason),
     };
-    let document = match &report {
-        Ok(report) => report_json(report, &target),
-        Err(reason) => pending_json(&target, reason),
+    let rows = match &report {
+        Ok(report) => report_rows(report, &target),
+        Err(reason) => pending_rows(&target, reason),
     };
     match action {
         "--check" => report.map(|report| display(&report)),
-        "--json" => serde_json::to_string(&document).map_err(|error| error.to_string()),
         "--write-report" => {
-            let path = root.join("out").join(&target).join("reports/progress.json");
-            let output =
-                serde_json::to_string_pretty(&document).map_err(|error| error.to_string())?;
+            let path = root.join("out").join(&target).join("reports/progress.tsv");
             std::fs::create_dir_all(path.parent().unwrap()).map_err(|error| error.to_string())?;
-            std::fs::write(&path, format!("{output}\n")).map_err(|error| error.to_string())?;
+            std::fs::write(&path, table(&rows)).map_err(|error| error.to_string())?;
             let shown = path.strip_prefix(&root).unwrap_or(&path).display();
             Ok(match report {
                 Ok(report) => format!(
@@ -225,10 +228,10 @@ mod tests {
             executable: 200,
         };
         assert_eq!(done.percent(), 25.0);
-        let report = report_json(&done, "tla-en");
-        assert_eq!(report["done_percent"], 25.0);
-        assert_eq!(report["exact_c_percent"], 15.0);
-        assert_eq!(pending_json("tla-en", "pending")["state"], "pending");
+        let report = table(&report_rows(&done, "tla-en"));
+        assert!(report.contains("done_percent\t25\n"), "{report}");
+        assert!(report.contains("exact_c_percent\t15\n"), "{report}");
+        assert!(table(&pending_rows("tla-en", "pending")).contains("state\tpending\n"));
     }
 
     #[test]

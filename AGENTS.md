@@ -167,3 +167,6 @@ a verified build.
 - 2026-09-29: gates: asset sources may include the files the build makes
   from their editable inputs (PNGs, tilemaps, fonts, maps), as pret's do.
   The symbols-pass check compares global symbols only.
+- 2026-09-29: JSON is banned from the repository for good: tables are TSV,
+  sequence skeletons and events are text, and the publication check refuses
+  JSON by name or content.

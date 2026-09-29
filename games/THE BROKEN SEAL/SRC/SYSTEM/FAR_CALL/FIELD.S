@@ -67,6 +67,9 @@ Func_08009060:
 Animation_SetWorkEntryFar:
 Func_08009070:
 	overlay_veneer Animation_SetWorkEntry
+	.global ObjectSystem_InitializeFar
+	.thumb_func
+ObjectSystem_InitializeFar:
 	overlay_veneer ObjectSystem_Initialize
 	.global Func_08009080
 	.thumb_func
@@ -89,9 +92,21 @@ ObjectDispatch_ApplyValueToChildrenFar:
 ObjectDispatch_InitializeFar:
 Func_08009098:
 	overlay_veneer ObjectDispatch_Initialize
+	.global ObjectDispatch_InitFromTable2Far
+	.thumb_func
+ObjectDispatch_InitFromTable2Far:
 	overlay_veneer ObjectDispatch_InitFromTable2
+	.global ObjectDispatch_InitFromTable3Far
+	.thumb_func
+ObjectDispatch_InitFromTable3Far:
 	overlay_veneer ObjectDispatch_InitFromTable3
+	.global ObjectDispatch_InitFromTable1Far
+	.thumb_func
+ObjectDispatch_InitFromTable1Far:
 	overlay_veneer ObjectDispatch_InitFromTable1
+	.global ObjectDispatch_InitFromTable0Far
+	.thumb_func
+ObjectDispatch_InitFromTable0Far:
 	overlay_veneer ObjectDispatch_InitFromTable0
 	overlay_veneer ObjectDispatch_FindFreeObject
 	.global Object_CreateFar
@@ -137,7 +152,13 @@ Map_RenderAnimatedTileFramesForObjectFar:
 	.thumb_func
 Map_RenderAllAnimatedTileFramesFar:
 	overlay_veneer Map_RenderAllAnimatedTileFrames
+	.global Map_LoadLayeredSceneFar
+	.thumb_func
+Map_LoadLayeredSceneFar:
 	overlay_veneer Map_LoadLayeredScene
+	.global Map_InitializePerspectiveSceneFar
+	.thumb_func
+Map_InitializePerspectiveSceneFar:
 	overlay_veneer Map_InitializePerspectiveScene
 	overlay_veneer Map_SetCameraCenter
 	.global Map_ApplyWorkOriginAndSpanFar
@@ -146,7 +167,13 @@ Map_RenderAllAnimatedTileFramesFar:
 Map_ApplyWorkOriginAndSpanFar:
 Func_08009128:
 	overlay_veneer Map_ApplyWorkOriginAndSpan
+	.global Map_UpdateCurrentTileBlockFar
+	.thumb_func
+Map_UpdateCurrentTileBlockFar:
 	overlay_veneer Map_UpdateCurrentTileBlock
+	.global WorldMap_LoadGraphicsFar
+	.thumb_func
+WorldMap_LoadGraphicsFar:
 	overlay_veneer WorldMap_LoadGraphics
 	.global Object_ResetMotion
 	.thumb_func
@@ -349,6 +376,12 @@ Map_EnableUpdateCallbackFar:
 	.thumb_func
 Map_DisableUpdateCallbackFar:
 	overlay_veneer Map_DisableUpdateCallback
+	.global ScriptObject_FindOverlappingEntryFar
+	.thumb_func
+ScriptObject_FindOverlappingEntryFar:
 	overlay_veneer ScriptObject_FindOverlappingEntry
+	.global Map_GetCellAttributeLowNibbleFar
+	.thumb_func
+Map_GetCellAttributeLowNibbleFar:
 	overlay_veneer Map_GetCellAttributeLowNibble
 	overlay_veneer Ui_RunIconMonitor

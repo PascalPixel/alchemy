@@ -107,8 +107,8 @@ struct BgScroll {
     s16 y;
 };
 
-extern struct WaveState *Data_03001ed8;
-extern struct BgScroll Data_03001ad0;
+extern struct WaveState *gHBlankScrollWork;
+extern struct BgScroll gBgScroll;
 extern s16 Data_020094c8[];
 
 void Local_02000f80(void)
@@ -122,15 +122,15 @@ void Local_02000f80(void)
     s32 amplitude;
     s32 phase;
 
-    state = Data_03001ed8;
-    scroll_y = Data_03001ad0.y;
+    state = gHBlankScrollWork;
+    scroll_y = gBgScroll.y;
     line = state->pages[state->page ^ 1];
     step = state->step_x;
     phase = state->phase_x + scroll_y;
     acc = state->frequency_x;
     acc *= phase;
     amplitude = state->amplitude_x;
-    base = Data_03001ad0.x;
+    base = gBgScroll.x;
     {
         s32 i;
         u16 off;

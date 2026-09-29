@@ -2,7 +2,7 @@
 #include "STAGED_ACTOR.H"
 
 extern u32 Data_02009d3c[];
-extern s16 Data_02000240[];
+extern s16 gGameState[];
 struct StagedActor *Func_02001e94(s32);
 struct StagedActor *Func_02001b6e(s32, s32);
 s32 Func_02001ea2(struct StagedActor *, s32 *);
@@ -58,7 +58,7 @@ void SceneActor_PushPuzzleActor(void)
             actor->unknown_24 = zero;
             actor->unknown_2c = zero;
             Func_02001eb2(player, 1);
-            scene = Data_02000240[224];
+            scene = gGameState[224];
             if (scene == 35)
                 Func_02001b44();
             else if (scene == 30)

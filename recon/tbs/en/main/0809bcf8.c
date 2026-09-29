@@ -95,10 +95,10 @@ struct WorldMapVramBlock {
     u16 offset;
 };
 
-#define Data_02010000 (*(struct WorldMapWork *)0x02010000)
-extern struct WorldMapVramBlock Data_03001b10[];
-extern u32 Data_03001e40;
-extern u32 Data_03001ae8;
+#define gMapCellBuffer (*(struct WorldMapWork *)0x02010000)
+extern struct WorldMapVramBlock gVramBlockCache[];
+extern u32 gFrameCount;
+extern u32 gKeysHeld;
 extern const u8 WorldMap_MarkerBlendCycle[];
 extern const u16 WorldMap_CursorDirectionAngles[];
 extern const s32 WorldMap_PlaceMarkers[];
@@ -191,22 +191,22 @@ void Map_UpdateWorldMapMarkers(void)
     struct IoWriteQueue *q;
     volatile u16 *ime;
 
-    work = &Data_02010000;
+    work = &gMapCellBuffer;
     leader = gGameState.current_owner;
     place = WorldMap_PlaceMarkers;
-    tile_base = Data_03001b10[work->vram_block].offset >> 5;
+    tile_base = gVramBlockCache[work->vram_block].offset >> 5;
     marker = work->markers;
     best = -1;
     best_distance = 100;
-    blend = WorldMap_MarkerBlendCycle[(Data_03001e40 >> 1) & 31];
-    if (!GameFlag_TestFar(0x11c) && (Data_03001ae8 & 0x300)) {
+    blend = WorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
+    if (!GameFlag_TestFar(0x11c) && (gKeysHeld & 0x300)) {
         object = ObjectTable_Get(gGameState.current_owner);
         if (object == NULL)
             goto markers;
         cursor_x = ((object->x - 0x10000000) >> 16) * 240 / 4096;
         cursor_y = object->z.part.whole * 160 / 4096;
     } else {
-        angle = WorldMap_CursorDirectionAngles[(Data_03001ae8 >> 4) & 15];
+        angle = WorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
         if (angle != 0xffff) {
             position[0] = work->x.value;
             position[1] = 0;
@@ -269,10 +269,10 @@ markers:
             best_x = x;
             best_y = y;
         }
-        if (i != 0 || (Data_03001e40 & 15) <= 7)
+        if (i != 0 || (gFrameCount & 15) <= 7)
             Runtime_PushSlotEntry(marker++, y);
     }
-    if (best != -1 && (Data_03001e40 & 15) <= 7) {
+    if (best != -1 && (gFrameCount & 15) <= 7) {
         marker->blend_mode = 0;
         marker->tile = tile_base + 3;
         marker->x = best_x - 2;

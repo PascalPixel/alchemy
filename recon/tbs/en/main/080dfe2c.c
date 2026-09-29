@@ -12,11 +12,11 @@
  * set, field offsets, and control flow were recovered from its own retained
  * assembly, not transcribed from the assigned template. In particular the
  * heap_cache/cursor prologue, the M2C_FIELD field-offset idiom, the
- * DrawRectangleFn typedef, and the Func_080cef64/Resource_LoadAndDecompress/
- * Func_080e3908/Func_080e155c/Func_080cd52c/WaitFrames calling shapes are
+ * DrawRectangleFn typedef, and the BattleFx_FetchRectangleBlitters/Resource_LoadAndDecompress/
+ * EffectStep_AdvanceWithGravity2D/Camera_ApplyShake/ObjectGroup_TickMemberTimers/WaitFrames calling shapes are
  * shared with 080e01e4.c and documented there; the 512-slot sentinel-init
  * loop at 0x02010018, the final 256-slot particle-scan draw (idx = (lifetime
- * >>4)+2, half = (idx+(idx>>31))>>1, src = extra_target+Data_080ede48[idx-1])
+ * >>4)+2, half = (idx+(idx>>31))>>1, src = extra_target+ParticleStreams_CellOffsets[idx-1])
  * and the two-callback-pair via a retained callback_ptr are byte-identical
  * in shape to 080e01e4's equivalents, just with this owner's own constants.
  *
@@ -29,7 +29,7 @@
  * table (Data_080eec5a) of trigger frame numbers, where slot 0 has its own
  * specialized activation formula (compiled separately from slots 1..4, which
  * share a small search loop) and slot-index*7-plus-6 additionally cues
- * Func_080d6888/Func_080b5088 for every real party member.
+ * ObjectGroup_UpdateMembers/BattleMotion_ApplyVariantMotionFar for every real party member.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
@@ -38,17 +38,17 @@
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 void Graphics_TransposeCopy(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 u32 Random16(void);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
+void Audio_PlayCue(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 b);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
@@ -96,7 +96,7 @@ void Func_080dfe2c(void *object)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     slot = (s32 *)((u8 *)work + 0x7098);
     n = 0;
@@ -114,11 +114,11 @@ void Func_080dfe2c(void *object)
         slot += 7;
     } while (n != 512);
 
-    Func_080f9010(162);
+    Audio_PlayCue(162);
     frame = 0;
     do {
         if (frame == 56) {
-            Func_080b50e8(133);
+            BattleEventRuntime_BeginPhaseFar(133);
         }
 
         record = (u8 *)work + 0x7080;
@@ -135,7 +135,7 @@ void Func_080dfe2c(void *object)
                 M2C_FIELD(record, s32 *, 24) =
                     M2C_FIELD(record, s32 *, 24) + 1;
                 if (M2C_FIELD(record, s32 *, 24) == 5) {
-                    Func_080f9010(133);
+                    Audio_PlayCue(133);
                     M2C_FIELD(work, s32 *, 0x77A8) = 4;
                     particle = (u8 *)0x02010000 + particle_offset;
                     n = 0;
@@ -152,7 +152,7 @@ void Func_080dfe2c(void *object)
                         M2C_FIELD(particle, s32 *, 12) =
                             (angle * Trig_Sin((s32)kind)) >> 8;
                         M2C_FIELD(particle, s32 *, 16) =
-                            (angle * Func_0800231c((s32)kind)) >> 7;
+                            (angle * Trig_Cos((s32)kind)) >> 7;
                         M2C_FIELD(particle, s32 *, 24) =
                             (s32)((Random16() & 15) + 32);
                         particle += 28;
@@ -178,7 +178,7 @@ void Func_080dfe2c(void *object)
             scale = 64 - frame * 2;
             dx = (sin_val * scale) >> 17;
             x_base = dx + 96;
-            cos_val = Func_0800231c(angle);
+            cos_val = Trig_Cos(angle);
             dy = (cos_val * scale) >> 16;
             y_base = dy + 60;
             callback_ptr[1](
@@ -219,7 +219,7 @@ void Func_080dfe2c(void *object)
                                 target = *target_slot;
                                 member_id = M2C_FIELD(
                                     target, s16 *, member_id_offset);
-                                Func_080b5088(member_id, 6);
+                                BattleMotion_ApplyVariantMotionFar(member_id, 6);
                                 target = *target_slot;
                                 count = M2C_FIELD(target, s32 *, 20);
                                 idx2++;
@@ -283,7 +283,7 @@ void Func_080dfe2c(void *object)
     } while (frame != 96);
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

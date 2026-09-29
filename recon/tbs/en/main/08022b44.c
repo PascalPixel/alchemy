@@ -18,7 +18,7 @@
  * nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c) is emitted
  * first in the same object and is not exact yet, so the unit keeps it as
  * retained assembly (NONMATCHING) and links the parent alone; the parent's
- * calls to Func_08022a7c.0 are aliased to the retained owner. The nested
+ * calls to DjinnMenu_DrawStatArrow.0 are aliased to the retained owner. The nested
  * function is 198+2 bytes with 7 halfwords off: in the reference the
  * word/zero stores of the sprite attributes follow the sentinel and scale
  * stores through the entry pointer, and its zero is materialised late in r5;
@@ -118,9 +118,9 @@ extern u8 Data_080313a4[];
 extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 DjinnMenu_ListChangedDjinn(u8 *oldGrid, u8 *newGrid, u16 *out, s32 *gained, s32 *lost);
-s32 Func_08077208(s32 owner, s32 col, s32 row);
-void Func_080771b0(s32 owner, s32 col, s32 row);
-void Func_080771b8(s32 owner, s32 col, s32 row);
+s32 Djinn_IsActiveFar(s32 owner, s32 col, s32 row);
+void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
+void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
 
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 void *Runtime_BumpAllocate(s32 size);
@@ -161,7 +161,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     s32 i;
 
 
-    void Func_08022a7c(s32 x, s32 y, s32 rising)
+    void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising)
     {
         struct RenderOutput *output = RenderOutput_AcquireFree();
         struct PreviewSprite *entry;
@@ -201,10 +201,10 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     /* Apply the pending change to the live record, then recompute. */
     col = (code >> 8) & 15;
     row = code & 255;
-    if (Func_08077208(owner, col, row) != 0)
-        Func_080771b8(owner, col, row);
+    if (Djinn_IsActiveFar(owner, col, row) != 0)
+        Djinn_DeactivateFar(owner, col, row);
     else
-        Func_080771b0(owner, col, row);
+        Djinn_ActivateFar(owner, col, row);
     BattleUnit_Recalculate(owner);
 
     total = DjinnMenu_ListChangedDjinn(snap->grid, unit->grid, list, &gained, &lost);
@@ -313,7 +313,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             val = 0;
             if (unit->hp > oldHp)
                 val = 1;
-            Func_08022a7c(80, 14, val);
+            DjinnMenu_DrawStatArrow(80, 14, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->pp);
@@ -322,7 +322,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             val = 0;
             if (unit->pp > oldPp)
                 val = 1;
-            Func_08022a7c(80, 22, val);
+            DjinnMenu_DrawStatArrow(80, 22, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->atk);
@@ -331,7 +331,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             val = 0;
             if (unit->atk > oldAtk)
                 val = 1;
-            Func_08022a7c(80, 30, val);
+            DjinnMenu_DrawStatArrow(80, 30, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->def);
@@ -340,7 +340,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             val = 0;
             if (unit->def > oldDef)
                 val = 1;
-            Func_08022a7c(80, 38, val);
+            DjinnMenu_DrawStatArrow(80, 38, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->agi);
@@ -349,7 +349,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             val = 0;
             if (unit->agi > oldAgi)
                 val = 1;
-            Func_08022a7c(80, 46, val);
+            DjinnMenu_DrawStatArrow(80, 46, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->luk);
@@ -358,7 +358,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             val = 0;
             if (unit->luk > snap->luk)
                 val = 1;
-            Func_08022a7c(80, 54, val);
+            DjinnMenu_DrawStatArrow(80, 54, val);
         }
     }
 

@@ -25,7 +25,7 @@
  *    reproduced literally rather than made consistent.
  *  - Render-work byte 0xea7 has no established macro; it is written next to
  *    UiWork_SetParamNibble and evidently selects the same text colour.
- *  - The 0x0000f018/0x0000f019 arguments to Func_080251d4 are tilemap-shaped
+ *  - The 0x0000f018/0x0000f019 arguments to Vram_CopyTile are tilemap-shaped
  *    words whose low ten bits that helper uses as a tile index.
  * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 21,667
  * candidates; the best scored 5113 against 12579 (34 register-only, 88

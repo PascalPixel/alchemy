@@ -17,7 +17,7 @@
  * uses a fixed id, but the big VRAM blit source is chosen 0xBB/0x8D/0x91 by
  * variant) and indexes a two-byte-per-variant table at 0x080ee090
  * (Data_080ee090) for the outer frame-loop length and the per-frame burst
- * count. Per Func_080cef64's already-recovered body
+ * count. Per BattleFx_FetchRectangleBlitters's already-recovered body
  * (games/THE BROKEN SEAL/src/battle/effects/work/fetch_rectangle_blitters.c) the function
  * unconditionally copies the kind-46/47 allocator-cache slot pair; this
  * owner never calls BattleEffect_LoadWork itself, so it is reading back whatever
@@ -34,22 +34,22 @@ u32 Resource_DecodeType01(const void *source, void *destination);
 void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_pair);
 void **GetBattleObjectSlotFar(s32 member_id);
-s32 Func_080b5070(s32 member_id);
+s32 Battle_GetObjectTableValueFar(s32 member_id);
 u32 Random16(void);
-s32 Func_080041d8(void *callback, s32 interval);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
+void Audio_PlayCue(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Trig_Sin(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyBaseAndYOffset(void *src, void *dest);
-s32 Func_080022fc(s32 a, s32 b);
+s32 Math_Mod(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
 extern u8 Value_00000069;
@@ -58,7 +58,7 @@ extern u8 Value_0000008d;
 extern u8 Value_00000091;
 extern const u8 Data_080ee090[];
 
-s32 Func_080ceb54(void *object, s32 variant)
+s32 BattleFx_RunMemberBurst(void *object, s32 variant)
 {
     void **heap_cache;
     void **cursor;
@@ -121,7 +121,7 @@ s32 Func_080ceb54(void *object, s32 variant)
             state = M2C_FIELD(work, void **, 0x7828);
             member_ptr = *GetBattleObjectSlotFar(M2C_FIELD(state, s32 *, 8));
             state = M2C_FIELD(work, void **, 0x7828);
-            handle = Func_080b5070(M2C_FIELD(state, s32 *, 8));
+            handle = Battle_GetObjectTableValueFar(M2C_FIELD(state, s32 *, 8));
 
             particle = (s32 *)((u8 *)0x02010000 + member_offset);
             for (i = 0; i != 128; i++) {
@@ -144,11 +144,11 @@ s32 Func_080ceb54(void *object, s32 variant)
             != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
     }
 
-    Func_080041d8((void *)0x080DBB9D, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080DBB9D, 0x480);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
-    Func_080f9010(146);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    Audio_PlayCue(146);
 
     loop_start = variant * 2;
     if (Data_080ee090[loop_start + 1]
@@ -165,9 +165,9 @@ s32 Func_080ceb54(void *object, s32 variant)
 
             if (outer == 80) {
                 if (variant == 0) {
-                    Func_080b50e8(134);
+                    BattleEventRuntime_BeginPhaseFar(134);
                 } else {
-                    Func_080b50e8(133);
+                    BattleEventRuntime_BeginPhaseFar(133);
                 }
             }
             Render_ResetTransformState();
@@ -203,13 +203,13 @@ s32 Func_080ceb54(void *object, s32 variant)
                     member_ptr = *GetBattleObjectSlotFar(member_id);
                     state = M2C_FIELD(work, void **, 0x7828);
                     member_id = M2C_FIELD(state, s16 *, member_id_offset);
-                    growth = Func_080b5070(member_id) / 2;
+                    growth = Battle_GetObjectTableValueFar(member_id) / 2;
 
                     if (outer == fp + 71) {
                         if (variant == 0) {
-                            Func_080f9010(134);
+                            Audio_PlayCue(134);
                         } else {
-                            Func_080f9010(133);
+                            Audio_PlayCue(133);
                         }
                     }
                     if (outer == fp + 70) {
@@ -243,7 +243,7 @@ s32 Func_080ceb54(void *object, s32 variant)
                                     ((DrawRectangleFn)callback_pair[0])(
                                         draw_destination,
                                         (u8 *)work
-                                            + (Func_080022fc(k, 3) * 5 << 7),
+                                            + (Math_Mod(k, 3) * 5 << 7),
                                         x, screen[1] - 16, 20, 32);
                                     EffectStep_AdvanceWithGravity3D(particle, 62, 0);
                                     if (outer > base_fp + k + 30) {
@@ -294,8 +294,8 @@ s32 Func_080ceb54(void *object, s32 variant)
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback((void *)0x080DBB9D);
     return BattleFx_EndCanvasLayer();
 }

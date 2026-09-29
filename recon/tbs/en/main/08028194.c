@@ -52,10 +52,10 @@ struct IconSlot {
     u16 offset;
 };
 
-extern struct AffineEffectWork *Data_03001f38;
-extern u32 Data_03001e40;
+extern struct AffineEffectWork *gMenuSelectWork;
+extern u32 gFrameCount;
 extern u16 Data_080366f8[];
-extern struct IconSlot Data_03001b10[];
+extern struct IconSlot gVramBlockCache[];
 extern u8 *Data_03001ecc;
 
 s32 AffineMatrix_BuildForEffect(struct AffineEffectScale *source);
@@ -81,8 +81,8 @@ void AffineEffect_UpdateFrame(void)
     u32 mask;
     u8 *buffers;
 
-    work = Data_03001f38;
-    scale = Data_080366f8[(Data_03001e40 * 2) & 31];
+    work = gMenuSelectWork;
+    scale = Data_080366f8[(gFrameCount * 2) & 31];
     sprite = work->sprites;
     scale = (scale - 256) / 4 + 304;
     effect.x = scale;
@@ -107,13 +107,13 @@ void AffineEffect_UpdateFrame(void)
             attr = &sprite->link;
             *attr++ = 0;
             *attr++ = (matrix << 25) | y | (left << 16) | 0x80002300;
-            *attr = Data_03001b10[sprite->icon].offset >> 5;
+            *attr = gVramBlockCache[sprite->icon].offset >> 5;
             slot = 246;
         } else {
             attr = &sprite->link;
             *attr++ = 0;
             *attr++ = sprite->y | (x << 16) | 0x80002000;
-            *attr = Data_03001b10[sprite->icon].offset >> 5;
+            *attr = gVramBlockCache[sprite->icon].offset >> 5;
             slot = 245;
         }
         Runtime_PushSlotEntry(sprite, slot);

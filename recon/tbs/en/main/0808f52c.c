@@ -16,7 +16,7 @@
  *
  * Each buffer holds two leading control halfwords followed by 160 pairs of
  * halfwords; only the first halfword of each pair is written here, packed as
- * (left << 8) | right in the GBA window-register layout.  Func_08015268 is
+ * (left << 8) | right in the GBA window-register layout.  UiWindow_FillFromSceneFar is
  * handed the line array before the mode fill runs.
  *
  * Uncertain, and left as raw offsets or neutral names:
@@ -46,7 +46,7 @@
 
 /* Resolved project symbols. */
 void Scheduler_RemoveCallback(void *callback);  /* Scheduler_RemoveCallback */
-void Func_08015268(void *lines);
+void UiWindow_FillFromSceneFar(void *lines);
 u32 Random16(void);             /* Random16 */
 s32 Math_Div(s32 num, s32 den); /* Math_Div */
 void *ObjectTable_Get(s32 id);         /* ObjectTable_Get */
@@ -55,7 +55,7 @@ struct BattleSelectionWork {
     u8 unk_000[500];
     s32 object_id;
 };
-extern struct BattleSelectionWork Data_02000240;
+extern struct BattleSelectionWork gGameState;
 extern u8 Data_03001e70_a[]; /* IWRAM cell table; [0] and [23] are used here */
 extern u8 Data_0809e8ac[];  /* 33 unsigned radii, indexed by the phase step */
 extern s8 Data_0809e8ce[];  /* 32 signed widths, indexed by a running counter */
@@ -165,7 +165,7 @@ void DisplayTransition_UpdateScanlineTable(void)
     }
 
     dst = p->buf[1 ^ p->page];
-    Func_08015268(dst + 2);
+    UiWindow_FillFromSceneFar(dst + 2);
 
     switch (p->mode) {
     case 0:
@@ -311,7 +311,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)ObjectTable_Get(Data_02000240.object_id);
+        obj = (s32 *)ObjectTable_Get(gGameState.object_id);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 16;
         FrameCounter;
@@ -407,7 +407,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)ObjectTable_Get(Data_02000240.object_id);
+        obj = (s32 *)ObjectTable_Get(gGameState.object_id);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 16;
         FrameCounter;
@@ -448,7 +448,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)ObjectTable_Get(Data_02000240.object_id);
+        obj = (s32 *)ObjectTable_Get(gGameState.object_id);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 8;
         FrameCounter;

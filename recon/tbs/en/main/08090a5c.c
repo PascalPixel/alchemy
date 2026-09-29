@@ -35,7 +35,7 @@
  *    0x10004 drive all three components from a single ramp, and the other
  *    cases mix them.  They are declared separately here because that is all
  *    the reference proves; do not read them as "the red/green/blue ramp".
- *  - Func_03000118 is a second ARM-mode IWRAM helper (Func_03000380 is the
+ *  - IwramMulQ16ReturnIp is a second ARM-mode IWRAM helper (IwramSignedDivide is the
  *    signed divide).  It takes two 16.16-looking operands and only the high
  *    halfword of its result is consumed, which is consistent with a scaling
  *    routine, but the operation itself is not established here.  The reference

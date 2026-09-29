@@ -33,8 +33,8 @@ struct SceneColorWork {
     u8 unknown_1a0[38];
     u16 step;
 };
-extern struct SceneColorWork *Data_03001ebc;
-extern s16 Data_02000240[];
+extern struct SceneColorWork *gEventWork;
+extern s16 gGameState[];
 extern u16 Data_050001e6;
 extern const u8 Value_00007fff;
 extern const u8 Value_00000401;
@@ -48,8 +48,8 @@ void Func_080941e0(void)
 {
     register struct SceneColorWork *work;
 
-    work = Data_03001ebc;
-    Audio_PlayCue(Data_02000240[247]);
+    work = gEventWork;
+    Audio_PlayCue(gGameState[247]);
     Audio_PlayCue(288);
     Audio_PlayCue(147);
     if (work->mode == 3) {

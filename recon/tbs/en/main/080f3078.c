@@ -22,7 +22,7 @@ extern u8 Value_00007c00;
 extern u8 Value_000003e0;
 extern u8 Value_0000f800;
 extern u8 Value_00000600;
-#include "video_dma_family.h"
+#include "DMA.H"
 #include "IWRAM_CALL.H"
 
 /* games/THE BROKEN SEAL/INCLUDE/TYPES.H already aliases this owner; the identical
@@ -64,9 +64,9 @@ extern u8 Value_00000600;
  *    IWRAM_CALL.H, matching the reference's `mov ip, pc` / `bx r3` contract.
  *  - The reference issues each DMA request as one three-word block store
  *    (`stmia r3!, {r0,r1,r2}` then `subs r3, #12`), where the shared
- *    StartDmaTransfer helper emits three separate word stores.
+ *    Dma_Set call emits three separate word stores.
  *  - The reference also cross-jumps its two DMA request sites into one shared
- *    tail at the end of the function; the two StartDmaTransfer calls here are
+ *    tail at the end of the function; the two Dma_Set calls here are
  *    expanded separately.
  *  - In cases 0x10003 and 0x10007 the reference emits Math_Div before the
  *    three channel clamps, while the spelling kept here schedules the red
@@ -125,7 +125,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         dst++[0] = (mode & (s32)&Value_000003e0) << 5;
         *dst++ = (mode & 0x001f) << 10;
         tmp8 = ((cnt - 1) * 6) >> 1;
-        StartDmaTransfer(dst - 3, dst, tmp8 | 0x80000000);
+        Dma_Set(dst - 3, dst, tmp8 | 0x80000000, (volatile u32 *)0x040000d4);
     } else if (0x100000 > mode) {
         switch (mode) {
             u16 *tmp7;
@@ -355,6 +355,6 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         if (2 == half) {
             mode += (s32)&Value_00000600;
         }
-        StartDmaTransfer((const void *)mode, dst, ((cnt * 6) >> 2) | 0x84000000);
+        Dma_Set((const void *)mode, dst, ((cnt * 6) >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
     }
 }

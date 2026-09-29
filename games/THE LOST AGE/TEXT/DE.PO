@@ -25607,7 +25607,7 @@ msgctxt "message"
 msgid "06399"
 msgstr "Oh, ich bin völlig ausgehungert!{line_break}Wollen wir nicht endlich{line_break}weitergehen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriBeenBefore"
 msgid "06400"
 msgstr "Ihr kommt mir nicht bekannt vor.{line_break}Wart ihr denn schon mal in Daila?{end_now}"
 
@@ -25619,11 +25619,11 @@ msgctxt "message"
 msgid "06402"
 msgstr "Nun denn, willkommen in Daila,{line_break}der nördlichsten Stadt auf dem{line_break}Kontinent Indra!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWaveNoInjuries"
 msgid "06403"
 msgstr "Wir wurden vor kurzem von einer{line_break}gigantischen Flutwelle überrascht.{page_break}Glücklicherweise wurde aber{line_break}niemand dabei verletzt. Es{line_break}grenzt an ein Wunder!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriIndraMoved"
 msgid "06404"
 msgstr "Als uns die Welle erfasst hat,{line_break}schien es, als würde sich ganz{line_break}Indra in Bewegung setzen,{page_break}nicht wahr?{end_now}"
 
@@ -25663,7 +25663,7 @@ msgctxt "message"
 msgid "06413"
 msgstr "Zwar hat unser Dorf die Welle{line_break}überstanden, aber all unsere{line_break}Boote wurden zerstört...{page_break}Wir sitzen für eine ganze Weile{line_break}auf dem Trockenen, aber{line_break}irgendwie schaffen wir es schon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWantBoat"
 msgid "06414"
 msgstr "Hm? Du willst ein Boot?{end_now}"
 
@@ -25831,11 +25831,11 @@ msgctxt "message"
 msgid "06455"
 msgstr "Ihr seid sicher neu hier in der{line_break}Gegend. Was führt euch hierher?{page_break}Auf diesem gottverlassenen{line_break}Kontinent gibt es nicht viel{line_break}zu sehen.{page_break}Ihr müsst ja wirklich{line_break}merkwürdige Vögel sein!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaScamps"
 msgid "06456"
 msgstr "Wenn diese beiden Lausebengel{line_break}wüssten, dass Reisende in der{line_break}Stadt sind,{page_break}hätten sie sicher einen{line_break}Heidenspaß!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiWorry"
 msgid "06457"
 msgstr "Ich habe Tavi und Riki schon{line_break}länger nicht mehr gesehen...{page_break}Ich mag die kleinen Kerlchen,{line_break}daher bin ich ihretwegen{line_break}auch ziemlich besorgt.{end_wait}"
 
@@ -26463,7 +26463,7 @@ msgctxt "message"
 msgid "06613"
 msgstr "Ah, die See ist wieder ruhig und{line_break}wir können unser normales Leben{line_break}wieder fortführen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHurtHip"
 msgid "06614"
 msgstr "Ich wette, ihr denkt, dass mich{line_break}die Welle umgerissen und meine{line_break}Hüfte verletzt hat, wie?{end_now}"
 
@@ -26775,11 +26775,11 @@ msgctxt "message"
 msgid "06691"
 msgstr "Zwar leben nicht viele Menschen{line_break}in Daila, dennoch ist die Stadt{line_break}sehr weitläufig.{page_break}Manchmal verwirrt mich der{line_break}Grundriss aber ein wenig...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaMazeTreasure"
 msgid "06692"
 msgstr "Vielleicht haben sie ihre{line_break}Schätze hier versteckt, weil die{line_break}ganze Stadt wie ein Irrgarten ist!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiHome"
 msgid "06693"
 msgstr "Tavi und Riki sind wieder{line_break}wohlbehalten nach Hause{line_break}zurückgekehrt.{page_break}Sie haben sogar kurz hier{line_break}angehalten, um uns zu{line_break}begrüßen!{page_break}Was für entzückende Kinder.{end_wait}"
 

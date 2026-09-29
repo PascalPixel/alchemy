@@ -33,23 +33,23 @@ extern const u8 Data_080eea2c[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
-s32 Func_080041d8(s32 callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 interval);
 void Scheduler_RemoveCallback(s32 callback);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
 void EffectPosition_ApplyBaseAndYOffset(const void *src, void *dest);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void SceneTransform_ApplyPosition(void *record);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_pair);
 u32 Random16(void);
-s32 Func_080022fc(s32 a, s32 b);
+s32 Math_Mod(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
 s32 RunPaletteRampEffect(s32 effect, s32 mode)
@@ -170,7 +170,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
             } else {
                 particle[3] = -0x20000;
             }
-            particle[4] = ((Func_0800231c(angle) * radius) >> 6) + 0x10000;
+            particle[4] = ((Trig_Cos(angle) * radius) >> 6) + 0x10000;
             particle[5] = (Trig_Sin(angle) * radius) >> 6;
             particle[6] = (s32) (Random16() & 0xFF);
             particle += 7;
@@ -183,7 +183,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, (s32)&Value_00007784) = 50;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
 
     frame = 0;
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) * 4 != -64) {
@@ -196,7 +196,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
             facing = *(s32 *) 0x03001E80;
 
             if (frame == 72) {
-                Func_080b50e8(0);
+                BattleEventRuntime_BeginPhaseFar(0);
             }
 
             member = 0;
@@ -239,7 +239,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                             if (local_frame <= 26) {
                                 s32 v;
 
-                                v = Func_080022fc(local_frame / 4, 7);
+                                v = Math_Mod(local_frame / 4, 7);
                                 ((DrawRectangleFn) callback_pair[0])(
                                     draw_destination,
                                     (u8 *) work + ((v * 15) << 6),
@@ -249,7 +249,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                             if (local_frame <= 23) {
                                 s32 v;
 
-                                v = Func_080022fc(local_frame / 4, 6);
+                                v = Math_Mod(local_frame / 4, 6);
                                 ((DrawRectangleFn) callback_pair[1])(
                                     draw_destination,
                                     (u8 *) work + ((v * 25) << 6),
@@ -258,7 +258,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                         }
 
                     if (local_frame == 24) {
-                        Func_080f9010(143);
+                        Audio_PlayCue(143);
                     }
 
                     if ((u32) threshold <= 36) {
@@ -283,7 +283,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                             s32 idx;
 
                             sel = (outer % 4) * 3;
-                            idx = Func_080022fc(
+                            idx = Math_Mod(
                                 (particle[6] + local_frame) / 8, 3);
                             EffectPosition_ApplyBaseAndYOffset(particle, screen);
                             x = screen[0] + y_offset;
@@ -323,7 +323,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     }
 
     Scheduler_RemoveCallback(0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

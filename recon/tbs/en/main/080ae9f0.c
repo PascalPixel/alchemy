@@ -12,7 +12,7 @@
  */
 #include "TYPES.H"
 
-extern u8 *Data_03001f2c;
+extern u8 *gMenuWork;
 
 struct MarkerObject {
     u8 pad00[4];
@@ -22,13 +22,13 @@ struct MarkerObject {
     u16 timer;
 };
 
-struct MarkerObject *Func_080150c8(u32 resource, u32 flags, s32 x, s32 y, s32 tile);
+struct MarkerObject *RenderOutput_CreateFar(u32 resource, u32 flags, s32 x, s32 y, s32 tile);
 
 s32 UiIcon_DrawVariantWithTileOffset(s32 x, s32 y, s32 tile, s32 variant)
 {
     struct MarkerObject *object;
     u32 resource;
-    u8 *data = Data_03001f2c;
+    u8 *data = gMenuWork;
 
     if (variant == 0) {
         resource = *(u16 *)(data + 0x392);
@@ -37,7 +37,7 @@ s32 UiIcon_DrawVariantWithTileOffset(s32 x, s32 y, s32 tile, s32 variant)
         resource = *(u16 *)(data + 0x394);
         tile -= 4;
     }
-    object = Func_080150c8(resource, 0x40000000, x, y, tile);
+    object = RenderOutput_CreateFar(resource, 0x40000000, x, y, tile);
     if (object == 0)
         return -1;
     object->state = 0;

@@ -49,7 +49,7 @@ struct HudObject {
     s32 z;
 };
 
-extern struct HudBlock Data_03001b10[];
+extern struct HudBlock gVramBlockCache[];
 
 s32 Func_020089f4(s32 size);
 void Func_02008a0e(const void *src, s32 dst);
@@ -87,7 +87,7 @@ void FieldScene_RunScene3bcSequenceB(void)
     u32 shape;
     struct HudObject *obj;
 
-    tile = Data_03001b10[work->block].offset >> 5;
+    tile = gVramBlockCache[work->block].offset >> 5;
     count = work->count;
     if (work->shown != 0) {
         work->level = 2;

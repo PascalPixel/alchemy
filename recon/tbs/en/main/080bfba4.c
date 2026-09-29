@@ -32,7 +32,7 @@ struct BattleState {
     s32 poison_cue;
 };
 
-extern struct BattleState *Data_03001e74;
+extern struct BattleState *gBattleWork;
 
 /* The KO messages link as offsets from "goes down": the Grim Reaper's
    call three after it, the enemy's "strength is exhausted" three after
@@ -42,23 +42,23 @@ extern struct BattleState *Data_03001e74;
 
 typedef void (*BlockCopy)(void *destination, const void *source, s32 size);
 
-struct DjinnRecoveryTable *Func_08077000(s32 side);
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void BattleUnit_Recalculate(s32 unit_id);
-s32 Func_08077118(s32 unit_id, s32 amount);
-void Func_080771b8(s32 unit_id, s32 element, s32 index);
+s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
+void Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *block);
 s32 Math_Div(s32 numerator, s32 denominator);
-void Func_08009080(void *object, s32 animation);
+void Object_SetMode(void *object, s32 animation);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 flags);
-void Func_080f9010(s32 cue);
+void Audio_PlayCue(s32 cue);
 struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 u32 BattleEv_DispatchQueued(void);
 void BattleEventRuntime_SchedulePhase(s32 phase);
 u32 BattleEventRuntime_Reset(void);
 void BattleEventRuntime_WaitForReady(void);
-s32 Func_080c1798(s32 unit_id, s32 element, s32 mode, s32 arg);
+s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
 
 /* End of one unit's turn. The Djinn it summoned with join its side's
    recovery order and raise their element's level; the power each element
@@ -80,13 +80,13 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
     id = plan->actor_id;
     both_sides = 0;
     unit = Owner_GetStateFar(id);
-    list = &Func_08077000((u32)id > 7)->list;
+    list = &Trade_GetOfferStateFar((u32)id > 7)->list;
     i = 0;
     if (i < list->count) {
         entry = list->entries;
         do {
             if (entry->unit_id == id && entry->turns == -1) {
-                Func_080771b8(id, entry->element, entry->index);
+                Djinn_DeactivateFar(id, entry->element, entry->index);
             }
             i++;
             entry++;
@@ -97,7 +97,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         both_sides = 1;
     }
 
-    list = &Func_08077000((u32)id > 7)->list;
+    list = &Trade_GetOfferStateFar((u32)id > 7)->list;
     count = counts;
     for (i = 3; i >= 0; i--) {
         count[i] = 0;
@@ -170,10 +170,10 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_SOUND, 175);
                 BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgEarthPowerUp + i);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
-                Func_080f9010(212);
-                Func_08009080(GetBattleObjectSlot(id)->object, 3);
+                Audio_PlayCue(212);
+                Object_SetMode(GetBattleObjectSlot(id)->object, 3);
                 ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
-                Func_080c1798(id, i, 2, most - 1);
+                BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
                 BattleEventRuntime_WaitForReady();
             }
         }
@@ -189,7 +189,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, plan->pending_amount_60);
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurseDamage);
-            if (Func_08077118(id, -plan->pending_amount_60) == 0) {
+            if (Owner_AdjustFirstValueFar(id, -plan->pending_amount_60) == 0) {
                 s32 text;
 
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
@@ -210,7 +210,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         poison = &unit->poison;
         if (*poison != 0) {
             s32 damage = Math_Div(*poison * unit->max_hp, 10);
-            struct BattleState *state = Data_03001e74;
+            struct BattleState *state = gBattleWork;
 
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
@@ -221,7 +221,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             } else {
                 state->poison_cue = 133;
             }
-            if (Func_08077118(id, -damage) == 0) {
+            if (Owner_AdjustFirstValueFar(id, -damage) == 0) {
                 s32 text;
 
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
@@ -241,7 +241,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         BattleEventRuntime_Reset();
         if (unit->death_count != 0) {
             if (--unit->death_count == 0
-                && Func_08077118(id, 0xc0000000) == 0) {
+                && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 BattleEv_Push(BATTLE_EVENT_TEXT, MSG_REAPER_CALLS);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);

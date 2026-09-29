@@ -18,15 +18,15 @@
 
 extern u8 Data_00000970[];
 extern u8 Data_00001000[];
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 extern u16 Data_02000240_t[][2];
 void WaitFrames();
 void Engine_ObjectSetAnimation();
 void ObjectDispatch_ReleaseFar();
 s32 UiText_ShowPositionedMessageAndWaitFar();
 void UiWork_PushValueSlotFar();
-void Func_08015128();
-void Func_08015138();
+void UiWindow_CreateWithLayoutBoundsFar();
+void UiWork_FinalizeAndReleaseBlock16Far();
 s32 PartyInventory_AddFar();
 s32 GameFlag_TestFar();
 void GameFlag_SetBitFar();
@@ -110,7 +110,7 @@ s32 Func_0808d9a4(s32 a0)
     u8 *p5;
 
     p8 = a0;
-    p6 = *(s32 *)((s16 *)Data_02000240 + 250);
+    p6 = *(s32 *)((s16 *)gGameState + 250);
     i = p8 - 242;
     if (i <= 5) {
         Battle_InitializeRenderObject();
@@ -141,7 +141,7 @@ s32 Func_0808d9a4(s32 a0)
             } else {
                 if (Value1(GameFlag_IsConditionActive, p10) != 0) {
                     rec->action.callback(
-                        *(s32 *)((s16 *)Data_02000240 + 250));
+                        *(s32 *)((s16 *)gGameState + 250));
                 }
                 if (Value1(GameFlag_TestFar, 0x142) == 0) {
                     goto L_0808dd6a;
@@ -181,10 +181,10 @@ s32 Func_0808d9a4(s32 a0)
                         UiWork_PushValueSlotFar(rec->action.message, 5);
                         Value2(UiText_ShowPositionedMessageAndWaitFar, (s32)Data_00000970, 3);
                         Call2(BattleParty_ApplyDrain, 0x3e7, 0);
-                        Func_08015128(1);
+                        UiWindow_CreateWithLayoutBoundsFar(1);
                         Audio_PlayCue(126);
                         ((void (*)())UiText_ShowPositionedMessageAndWaitFar)(((s32)Data_00000970 + 1), 1);
-                        Func_08015138();
+                        UiWork_FinalizeAndReleaseBlock16Far();
                         Engine_ObjectSetAnimation(rec8, 2);
                         Audio_PlayCue(246);
                         Battle_WaitMode0(30);
@@ -208,7 +208,7 @@ s32 Func_0808d9a4(s32 a0)
                         }
                         record = Value2(BattleFx_GetWeightedResult, 99, rec->action.message);
                         *(u16 *)(((s32)p5 + 0x17c)) = record;
-                        base2_2000240 = (s32)Data_02000240;
+                        base2_2000240 = (s32)gGameState;
                         *(u8 *)((base2_2000240 + 0x22b)) = 2;
                         BattleFx_SelectBattleCue(99, rec->action.message);
                         Audio_PlayCue(*(s16 *)(0x200042e));

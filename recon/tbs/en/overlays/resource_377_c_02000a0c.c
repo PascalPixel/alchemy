@@ -80,7 +80,7 @@ void Main_0808a368();
 void Main_0808a370();
 void Main_080f9010();
 
-extern u8 Data_03001e70[];
+extern u8 gMapWork[];
 struct RampWork {
     u8 unknown_00[0x1c0];
     s32 blend_config;

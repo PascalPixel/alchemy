@@ -48,6 +48,9 @@ Func_080b0038:
 	.thumb_func
 ShopCursor_SetPositionImmediateFar:
 	overlay_veneer ShopCursor_SetPositionImmediate
+	.global Shop_FillSelectorFar
+	.thumb_func
+Shop_FillSelectorFar:
 	overlay_veneer Shop_FillSelector
 	.global Unnamed_080b0840Far
 	.thumb_func

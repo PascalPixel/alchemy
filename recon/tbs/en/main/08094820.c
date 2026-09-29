@@ -52,17 +52,17 @@ struct FieldView {
     s32 camera[2];
 };
 
-extern void *Data_03001e70[];
+extern void *gMapWork[];
 extern s16 Data_0809ef84[];
 s32 GameFlag_TestFar(s32 flag);
 void Runtime_PushSlotEntry(void *entry, s32 value);
 s32 Random16(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-void Func_08094820(void)
+void Unnamed_08094820(void)
 {
-    struct FieldView *view = Data_03001e70[0];
-    struct DustWork *work = Data_03001e70[21];
+    struct FieldView *view = gMapWork[0];
+    struct DustWork *work = gMapWork[21];
     s32 *camera = view->camera;
     s32 camera_x = camera[0];
     s32 camera_z = camera[1];

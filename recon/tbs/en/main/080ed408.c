@@ -18,7 +18,7 @@
  *   - A word budget is counted first, exactly mirroring the emit sequence
  *     below, and Runtime_AllocateHeapBlock(id, words * 4) reserves the block.
  *   - `src` then walks a 97-word ARM instruction template that starts at
- *     Data_080edcc4 and ends at Data_080ede48.  Fixed runs are moved with a
+ *     SentouKouka_Gousei and ends at ParticleStreams_CellOffsets.  Fixed runs are moved with a
  *     DMA3 32-bit transfer; single instructions are copied by hand so that
  *     immediate fields can be patched (`+ (1 << a)`, `+ Data_080ef034[a]`,
  *     `+ ((a - 3) << 7)`) or so that one of two encodings can be selected
@@ -32,7 +32,7 @@
  *     template word afterwards -- `+` where the template word carries no
  *     displacement yet, `|=` where the word was already emitted.
  *   - The return value is the template walk's own consistency check:
- *     1 when `src` landed exactly on Data_080ede48, 0 otherwise.
+ *     1 when `src` landed exactly on ParticleStreams_CellOffsets, 0 otherwise.
  *
  * Parameter roles that are established by use only:
  *   - `id` is the heap slot; it is passed straight through.
@@ -52,8 +52,8 @@
  * comparison is the stronger evidence and is what this file follows.
  *
  * Not established here: what the generated routine draws, what the four
- * `mode` bodies (Data_080edaf0/af8, db00/db10, dbe8/dbf8, dc88/dca0,
- * db20/db84, dc08/dc48, Data_080eefa4/efdc) are, or what the individual
+ * `mode` bodies (SentouKouka_YomiGyaku/af8, db00/db10, dbe8/dbf8, dc88/dca0,
+ * db20/db84, dc08/dc48, SentouKouka_IroJun/efdc) are, or what the individual
  * flag bits mean.  They are left as raw addresses and raw bit tests.
  *
  */

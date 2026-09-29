@@ -95,7 +95,7 @@ union GameStateRows {
 extern union GameStateRows Data_02000240_t;
 extern u16 Data_0200a00c[];
 extern s32 Data_02009fd0[];
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeyState;
 /* MsgTorebiThrow, as a link-time value; the prompts that follow it are derived from it. */
 
 s32 TorebiIzumi_RunSpringGame(void)
@@ -173,10 +173,10 @@ play:
     Engine_TaskWait(5);
     Engine_AudioPlayCue(116);
     for (;;) {
-        if (Data_03001c94 & 1) {
+        if (gKeyState & 1) {
             goto pressed;
         }
-        if (Data_03001c94 & 2) {
+        if (gKeyState & 2) {
             break;
         }
         Engine_TaskWait(1);

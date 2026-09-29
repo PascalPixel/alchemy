@@ -88,7 +88,7 @@
  * Score with --unit retained-save-menu: scoring the owner alone selects
  * the stale legacy 2368-byte draft. No serial or pool variants reopened.
  * Cleanup H2 restores pre-H1 flow and transfers the exact workspace/flag
- * menu volatile Data_03001c94 interface for password input, plus the
+ * menu volatile gKeyState interface for password input, plus the
  * void UiWork_Finalize(window, mode) interface from SELECT_RESOURCE_LAYOUT.
  * Own veneers 08015018 -> 08016418 and 08015060 -> 08016478 establish the
  * finalize/redraw bindings. Both password exits now use one declaration
@@ -111,11 +111,11 @@ extern u8 MsgClearPasswordLabel[];
 extern u8 MsgClearSaveLabel[];
 
 
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeyState;
 void Engine_UiWorkFinalize(s32 window, s32 mode);
 void Engine_RenderOutputPrepareForRedraw(s32 window);
 
-extern u8 Data_02000000[];
+extern u8 gSaveBuffer[];
 /* The menu consumes the saved-location fields and the same record's header
  * words and bytes. FIELD_EVENT.H owns the shared location layout; names for
  * the remaining bytes stay neutral until their consumers prove a meaning. */
@@ -149,7 +149,7 @@ struct SaveLinkGreeting {
 
 
 extern struct SaveLinkGreeting Data_02002224;
-extern struct SaveLinkGreeting Data_02002024[4];
+extern struct SaveLinkGreeting gLinkPeerSignatures[4];
 extern u8 Data_03001ebc[];
 void Func_02000438();
 s32 Func_0200096c();
@@ -576,7 +576,7 @@ s32 SaveMenu_Run(void)
         v7 = 0;
         v1 = 0;
         {
-            struct SaveLinkGreeting *greeting = Data_02002024;
+            struct SaveLinkGreeting *greeting = gLinkPeerSignatures;
 
             do {
                 v1 = (v1 + 1);
@@ -591,7 +591,7 @@ s32 SaveMenu_Run(void)
             if ((3 & *(u16 *)0x03001f64) == 3) {
                 u32 control = REG_SIOCNT;
                 u32 peer = ((control << 26) >> 30) ^ 1;
-                u16 *received = Data_02002024[peer].code;
+                u16 *received = gLinkPeerSignatures[peer].code;
 
                 if (received[0] == 85) {
                     if (received[1] == 86) {
@@ -615,7 +615,7 @@ s32 SaveMenu_Run(void)
 
         Call4(Func_02001cb6, (s32)MsgClearSendingData, v6, 0, 4);
         Func_02001c34(10);
-        Value2(Func_02001c94, (s32)Data_02000000, 0x1004);
+        Value2(Func_02001c94, (s32)gSaveBuffer, 0x1004);
         Func_02001c42(10);
         missing_link_frames = 0;
         count = 0;
@@ -701,10 +701,10 @@ s32 SaveMenu_Run(void)
         page = none;
         L_02000aaa:;
         Call1(Func_02001ee2, 0x6002500);
-        if ((Data_03001c94 & 2) != 0) {
+        if ((gKeyState & 2) != 0) {
             goto L_020009a6;
         }
-        if ((Data_03001c94 & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             page = (page + 1);
             v7 = 1;
             if (page == page_count) {
@@ -712,7 +712,7 @@ s32 SaveMenu_Run(void)
             }
             Func_02001fa2(111);
         } else {
-            if ((Data_03001c94 & 32) != 0) {
+            if ((gKeyState & 32) != 0) {
                 if (page_count <= 1) {
                     goto L_02000b30;
                 }
@@ -720,7 +720,7 @@ s32 SaveMenu_Run(void)
                 rec5 = Func_02001e6e(((page + page_count) - 1), page_count);
             } else {
                 L_02000b30:;
-                if ((Data_03001c94 & 16) == 0) {
+                if ((gKeyState & 16) == 0) {
                     goto L_02000b58;
                 }
                 if (page_count <= 1) {

@@ -8,7 +8,7 @@
 typedef s32 M2C_UNK;
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-void Func_08099da4(void) {
+void Battle_unk3_2(void) {
     void *sp0;
     void **sp4;
     void *sp8;
@@ -48,7 +48,7 @@ void Func_08099da4(void) {
     }
     BattleEffect_InitializeSharedScene();
     M2C_FIELD(sp1C, void **, 0x68) = temp_r7_20;
-    Func_08009098(sp1C, 0x0809F0BC);
+    Engine_ObjectSetScript(sp1C, 0x0809F0BC);
     temp_r0_33 = M2C_FIELD(temp_r3_16, s32 *, 4);
     M2C_FIELD(&sp20, s32 *, 0) = temp_r0_33;
     temp_r1_40 = M2C_FIELD(temp_r3_16, s32 *, 8) + 0x100000;
@@ -68,20 +68,20 @@ void Func_08099da4(void) {
     M2C_FIELD(&sp20, s32 *, 0) = temp_r1_77;
     M2C_FIELD(&sp20, s32 *, 4) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) + 0x100000);
     M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x10);
-    Func_08009150(temp_r0_52, temp_r1_77 + 0x100000);
-    Func_08009150(temp_r0_63, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
-    Func_08009158(temp_r0_52);
-    Func_08009158(temp_r0_63);
+    Object_SetPosition(temp_r0_52, temp_r1_77 + 0x100000);
+    Object_SetPosition(temp_r0_63, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
+    Object_CommitPosition(temp_r0_52);
+    Object_CommitPosition(temp_r0_63);
     M2C_FIELD(temp_r0_52, s32 *, 0x24) = 0;
     M2C_FIELD(temp_r0_52, s32 *, 8) = (s32) (M2C_FIELD(&sp20, s32 *, 0) + 0x100000);
     M2C_FIELD(temp_r0_63, s32 *, 8) = (s32) (M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000);
     M2C_FIELD(temp_r0_63, s32 *, 0x24) = 0;
     M2C_FIELD(temp_r7_20, s32 *, 0x6C) = 0x08096B89;
-    Func_080041d8(0x08099D19, 0xC80);
-    Func_080f9010(0x82);
+    Scheduler_AddOrUpdateCallback(0x08099D19, 0xC80);
+    Audio_PlayCue(0x82);
     sp10 = temp_r7_20 + 0x55;
     M2C_FIELD(temp_r7_20, s8 *, 0x55) = 4;
-    Func_080091e0(temp_r7_20, 0);
+    ObjectDispatch_SetSingleChildField26Far(temp_r7_20, 0);
     if ((sp14 != NULL) && (sp18 != NULL) && ((s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) - M2C_FIELD(temp_r7_20, s32 *, 0x14)) <= 0x180000)) {
         var_r1_149 = (void *)0x6000;
         do {
@@ -111,62 +111,62 @@ loop_18:
             M2C_FIELD(&sp20, s32 *, 0) = temp_r1_211;
             M2C_FIELD(&sp20, s32 *, 4) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) + 0x100000);
             M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x10);
-            Func_08009150(sp14, temp_r1_211 + 0x100000);
-            Func_08009150(sp18, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
-            Func_08009080(sp14, 1);
-            Func_08009080(sp18, 1);
+            Object_SetPosition(sp14, temp_r1_211 + 0x100000);
+            Object_SetPosition(sp18, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
+            Object_SetMode(sp14, 1);
+            Object_SetMode(sp18, 1);
             goto loop_18;
         }
         M2C_FIELD(&sp20, s32 *, 0) = (s32) M2C_FIELD(temp_r7_20, s32 *, 8);
         M2C_FIELD(&sp20, s32 *, 4) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) + 0x100000);
         M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x10);
         Vector_AddPolarOffset(0x20000, temp_r6_207, &sp20);
-        Func_08009150(sp14, M2C_FIELD(&sp20, s32 *, 0) + 0x100000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
-        Func_08009150(sp18, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
-        Func_08009158(sp14);
-        Func_08009158(sp18);
+        Object_SetPosition(sp14, M2C_FIELD(&sp20, s32 *, 0) + 0x100000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
+        Object_SetPosition(sp18, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
+        Object_CommitPosition(sp14);
+        Object_CommitPosition(sp18);
         M2C_FIELD(&sp20, s32 *, 0) = (s32) M2C_FIELD(temp_r7_20, s32 *, 8);
         M2C_FIELD(&sp20, s32 *, 4) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x14);
         M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x10);
         Vector_AddPolarOffset(0x100000, temp_r6_207, &sp20);
         temp_r0_277 = ScriptObject_CheckOverlapFar(temp_r7_20, &sp20);
-        if ((temp_r0_277 != 0) || (M2C_FIELD(temp_r7_20, s32 *, 0x14) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0x14) + 0x100000), temp_r0_288 = Func_080091d8(temp_r7_20, &sp20), M2C_FIELD(temp_r7_20, s32 *, 0x14) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0x14) + 0xFFF00000), (temp_r0_288 > 0))) {
-            Func_08009080(sp14, 4);
-            Func_08009080(sp18, 4);
+        if ((temp_r0_277 != 0) || (M2C_FIELD(temp_r7_20, s32 *, 0x14) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0x14) + 0x100000), temp_r0_288 = Object_CheckMovementCollision(temp_r7_20, &sp20), M2C_FIELD(temp_r7_20, s32 *, 0x14) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0x14) + 0xFFF00000), (temp_r0_288 > 0))) {
+            Object_SetMode(sp14, 4);
+            Object_SetMode(sp18, 4);
             if (!(*(s32 *)0x03001E40 & 0xF)) {
-                Func_080f9010(0x72);
+                Audio_PlayCue(0x72);
             }
             goto loop_18;
         }
-        Func_080f9010(0xAF);
+        Audio_PlayCue(0xAF);
         temp_r5_317 = M2C_FIELD(&sp20, s32 *, 0);
         temp_r6_318 = M2C_FIELD(&sp20, s32 *, 8);
-        Func_08009080(sp14, 4);
-        Func_08009080(sp18, 4);
+        Object_SetMode(sp14, 4);
+        Object_SetMode(sp18, 4);
         WaitFrames(0xF);
         M2C_FIELD(temp_r7_20, s8 *, 0x5B) = temp_r0_277;
         M2C_FIELD(temp_r7_20, s32 *, 0x30) = 0x3333;
         M2C_FIELD(temp_r7_20, s32 *, 0x34) = 0x3333;
-        Func_08009150(temp_r7_20, M2C_FIELD(&sp20, s32 *, 0), M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
+        Object_SetPosition(temp_r7_20, M2C_FIELD(&sp20, s32 *, 0), M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
         M2C_FIELD(sp14, s32 *, 0x30) = 0x3333;
         M2C_FIELD(sp14, s32 *, 0x34) = 0x3333;
         M2C_FIELD(sp8, s32 *, 0x30) = 0x3333;
         M2C_FIELD(sp8, s32 *, 0x34) = 0x3333;
-        Func_08009150(sp14, M2C_FIELD(&sp20, s32 *, 0) + 0x100000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
-        Func_08009150(sp8, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
-        Func_08009158(temp_r7_20);
+        Object_SetPosition(sp14, M2C_FIELD(&sp20, s32 *, 0) + 0x100000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
+        Object_SetPosition(sp8, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
+        Object_CommitPosition(temp_r7_20);
         M2C_FIELD(temp_r7_20, s32 *, 8) = temp_r5_317;
         M2C_FIELD(temp_r7_20, s32 *, 0x10) = temp_r6_318;
         M2C_FIELD(temp_r7_20, s32 *, 0x24) = (s32) temp_r0_277;
         M2C_FIELD(temp_r7_20, s32 *, 0x2C) = (s32) temp_r0_277;
         WaitFrames(0xA);
     }
-    Func_08009080(sp14, 4);
-    Func_08009080(sp18, 4);
+    Object_SetMode(sp14, 4);
+    Object_SetMode(sp18, 4);
     Scheduler_RemoveCallback(0x08099D19);
-    Func_080f9010(0x87);
+    Audio_PlayCue(0x87);
     WaitFrames(0xF);
-    Func_080f9010(0x87);
+    Audio_PlayCue(0x87);
     WaitFrames(0xF);
     M2C_FIELD(&sp20, s32 *, 0) = (s32) M2C_FIELD(temp_r7_20, s32 *, 8);
     M2C_FIELD(&sp20, s32 *, 4) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) + 0x100000);
@@ -178,7 +178,7 @@ loop_18:
         *sp4 = temp_r0_447;
         sp4 += 4;
         if (temp_r0_447 != NULL) {
-            Func_08009098(temp_r0_447, 0x0809F0D4);
+            Engine_ObjectSetScript(temp_r0_447, 0x0809F0D4);
             temp_r0_457 = Random16();
             M2C_FIELD(temp_r0_447, s32 *, 0x34) = 0x20000;
             M2C_FIELD(temp_r0_447, s32 *, 0x30) = (s32) (temp_r0_457 + 0x20000);
@@ -188,11 +188,11 @@ loop_18:
         }
         var_r8_440 -= 1;
     } while (var_r8_440 >= 0);
-    Func_080f9010(0x83);
-    Func_080090d0(sp14);
-    Func_080090d0(sp18);
+    Audio_PlayCue(0x83);
+    Object_Destroy(sp14);
+    Object_Destroy(sp18);
     Animation_ApplyChildValuesFar(temp_r7_20, M2C_FIELD(temp_r3_16, u8 *, 0x44));
-    Func_08009098(temp_r7_20, M2C_FIELD(temp_r3_16, s32 *, 0x3C));
+    Engine_ObjectSetScript(temp_r7_20, M2C_FIELD(temp_r3_16, s32 *, 0x3C));
     M2C_FIELD(temp_r7_20, s32 *, 0x6C) = (s32) M2C_FIELD(temp_r3_16, s32 *, 0x38);
     *sp10 = 3;
     M2C_FIELD(temp_r7_20, s32 *, 0x28) = 0xA0000;

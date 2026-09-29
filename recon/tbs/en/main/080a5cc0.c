@@ -31,7 +31,7 @@ extern u8 Value_00003fff;
 #include "BATTLE_CALC.H"
 
 /*
- * Data_03001f2c is the polymorphic menu-runtime cell (see item_menu.h /
+ * gMenuWork is the polymorphic menu-runtime cell (see item_menu.h /
  * psynergy_menu.h). This owner reads and writes fields shared by both the
  * Inventory and Psynergy menu views (item_owner/target_owner at 0x21a/0x21b,
  * info_window at 0x2c, the selected id at 0x178, entry_count at 0x218), plus
@@ -64,7 +64,7 @@ struct MenuActionWork {
     u8 mode;                   /* 0x268 */
 };
 
-extern struct MenuActionWork *Data_03001f2c;
+extern struct MenuActionWork *gMenuWork;
 
 extern char Value_00000ae2;
 extern char Value_00000ae3;
@@ -88,7 +88,7 @@ s32 PsynergyMenu_SelectTarget(s32 unused);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 BattleEffect_ApplyToTargets(s32 action, s32 owner, s32 target, s32 flags);
 void Ability_PlayUseAnimation();
-void Func_080f9010(s32 cue);
+void Audio_PlayCue(s32 cue);
 
 /*
  * State machine that resolves the currently selected item/Psynergy command:
@@ -114,7 +114,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
 
     state = 0;
     done = 0;
-    work = Data_03001f2c;
+    work = gMenuWork;
     result = 0;
 
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {

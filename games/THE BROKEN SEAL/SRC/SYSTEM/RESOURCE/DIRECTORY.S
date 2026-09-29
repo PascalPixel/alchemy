@@ -204,12 +204,12 @@ Resource_DirectoryTable:
 	resource SparkleDots, BattleFx_SparkleDots
 	resource PinkBurstSheet, BattleFx_PinkBurstSheet
 	resource , BattleFx_LightFanSheet
-	resource , BattleFx_BlueBurstSheet
+	resource BlueBurstSheet, BattleFx_BlueBurstSheet
 	resource DustPuffSheet, BattleFx_DustPuffSheet
 	resource , BattleFx_GoldShellSheet
 	resource BlastSheet, BattleFx_BlastSheet
 	resource , BattleFx_FlameSheetB
-	resource , BattleFx_FirePillarSheetB
+	resource FirePillarSheetB, BattleFx_FirePillarSheetB
 	resource RockSpireSheet, BattleFx_RockSpireSheet
 	resource LightningBoltSheet, BattleFx_LightningBoltSheet
 	resource , BattleFx_BeamSequenceImage

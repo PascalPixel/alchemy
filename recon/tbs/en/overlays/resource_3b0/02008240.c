@@ -1,14 +1,13 @@
 /* NONMATCHING: resource_3b0 0x02008240, FuneHobashira_ApplyEntryState, formerly
  * FIELD/FUNE_HOBASHIRA/ENTRY_STATE.C (2026-09-28).
  * Stores scene 0x6f loaded from a literal (a link-time value; a plain constant
- * becomes movs #0x6f) and writes the sway angles at 0x02009928 and 0x02009940
- * in the overlay's work RAM past the image, which nothing names. Remaining:
- * the scene id and the work RAM names. */
+ * becomes movs #0x6f). The sway angles it seeds are now named in
+ * FIELD/FUNE_HOBASHIRA/SWAY.C. Remaining: the scene id. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 void Main_0808a2b0(void);
-void Local_020010a0(void);
+void FuneHobashira_UpdateSway(void);
 void FieldScene_RunScene3b0_02000468(void);
 void FieldScene_RunScene3b0_0200040c(void);
 void Scene_RunFourActorStagingSequence(void);
@@ -23,8 +22,8 @@ union GameStateRows {
 
 extern union GameStateRows Data_02000240_t;
 extern u8 Data_0000006f[];
-extern u32 Data_02009940;
-extern u32 Data_02009928;
+extern u32 FuneHobashira_SwayX;
+extern u32 FuneHobashira_SwayY;
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -45,9 +44,9 @@ s32 FuneHobashira_ApplyEntryState(void)
     gEventWork->start_transition = 0x209;
     if ((Engine_GameFlagIsSet(0x927) != 0 || Engine_GameFlagIsSet(0x928) != 0) && Engine_GameFlagIsSet(0x93e) == 0
         && Engine_GameFlagIsSet(0x8a0) == 0) {
-        Data_02009940 = (u16)Engine_RandomNext();
-        Data_02009928 = (u16)Engine_RandomNext();
-        Engine_TaskAddCallback(Local_020010a0, 0xc80);
+        FuneHobashira_SwayX = (u16)Engine_RandomNext();
+        FuneHobashira_SwayY = (u16)Engine_RandomNext();
+        Engine_TaskAddCallback(FuneHobashira_UpdateSway, 0xc80);
     }
     if (Engine_GameFlagIsSet(0x925) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
         Call3(Engine_ActorSetPosition, 8, 0xa40000, 0x1480000);

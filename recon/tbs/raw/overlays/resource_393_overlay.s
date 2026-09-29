@@ -4,9 +4,6 @@
 	.global KorimaPalette_SaveFirst
 	.thumb_func
 KorimaPalette_SaveFirst:
-	.global Func_02000d5c
-	.thumb_func
-Func_02000d5c:
 	ldr r2, [pc, #12]
 	ldr r3, [pc, #16]
 	ldr r0, [r2]
@@ -22,9 +19,6 @@ Func_02000d5c:
 	.global KorimaPalette_SaveSecond
 	.thumb_func
 KorimaPalette_SaveSecond:
-	.global Func_02000d7c
-	.thumb_func
-Func_02000d7c:
 	ldr r2, [pc, #12]
 	ldr r3, [pc, #16]
 	ldr r0, [r2]
@@ -40,9 +34,6 @@ Func_02000d7c:
 	.global KorimaPalette_Capture
 	.thumb_func
 KorimaPalette_Capture:
-	.global Func_02000d9c
-	.thumb_func
-Func_02000d9c:
 	push {lr}
 	ldr r3, [pc, #44]
 	ldr r4, [r3]
@@ -70,9 +61,9 @@ Func_02000d9c:
 	.4byte 0x040000d4
 	.4byte 0x84000070
 	.4byte 0x05000200
-	.global Func_02000ddc
+	.global KorimaPalette_Restore
 	.thumb_func
-Func_02000ddc:
+KorimaPalette_Restore:
 	push {lr}
 	ldr r3, [pc, #40]
 	ldr r1, [r3]

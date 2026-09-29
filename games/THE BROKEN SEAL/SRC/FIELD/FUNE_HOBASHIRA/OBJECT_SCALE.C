@@ -11,7 +11,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     record = (u8 *)Engine_ActorGet(0);
     Actor_SetSpriteFlags(record, 0);
     Task_Wait(1);
-    Call1((void (*)())Event_CallWithLastActiveObjectId, 0x200976c);
+    Call1((void (*)())Event_CallWithLastActiveObjectId, (s32)FuneHobashira_EnsembleObjects);
     Task_Wait(1);
     OverlayObject_InitWithRandomFields(9);
     OverlayObject_InitWithRandomFields(10);
@@ -20,7 +20,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     OverlayObject_InitWithRandomFields(13);
     OverlayObject_InitWithRandomFields(14);
     OverlayObject_InitWithRandomFields(15);
-    Engine_ActorEnableActionCallback(8, 0x200939c);
+    Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
     gEventWork->start_transition = 0x203;
     Event_OpenScreen();
     Event_WaitForScreen();
@@ -52,7 +52,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Actor_SetSpeed(9, 0x20000, 0x10000);
     OverlayObject_InitWithRandomFields(9);
     Event_Wait(20);
-    Engine_ActorEnableActionCallback(8, 0x200939c);
+    Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
     Event_Wait(120);
     Actor_Stop(9);
     /* Same reset pattern on record 9 for the second cycle. */
@@ -135,9 +135,9 @@ void FieldScene_RunPrimarySequence(void)
     id0_state = (u8 *)Engine_ActorGet(0);
     Actor_SetSpriteFlags(id0_state, 0);
     Task_Wait(1);
-    Call1((void (*)())Event_CallWithLastActiveObjectId, 0x200976c);
+    Call1((void (*)())Event_CallWithLastActiveObjectId, (s32)FuneHobashira_EnsembleObjects);
     Task_Wait(1);
-    Call1((void (*)())Event_CallWithLastActiveObjectId, 0x2009844);
+    Call1((void (*)())Event_CallWithLastActiveObjectId, (s32)FuneHobashira_LandingObjects);
     Task_Wait(1);
     OverlayObject_InitWithRandomFields(9);
     OverlayObject_InitWithRandomFields(10);
@@ -146,7 +146,7 @@ void FieldScene_RunPrimarySequence(void)
     OverlayObject_InitWithRandomFields(13);
     OverlayObject_InitWithRandomFields(14);
     OverlayObject_InitWithRandomFields(15);
-    Actor_EnableActionCallback(8, 0x200939c);
+    Actor_EnableActionCallback(8, FuneHobashira_LookoutActions);
     gEventWork->start_transition = 0x203;
     Event_OpenScreen();
     Event_WaitForScreen();
@@ -223,7 +223,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_Jump(8, 6, 20);
     Audio_PlayCue(147);
     Event_Wait(20);
-    Actor_EnableActionCallback(8, 0x20093ac);
+    Actor_EnableActionCallback(8, FuneHobashira_WaveActions);
     Event_Wait(80);
     Actor_SetSpritePriority(17, 1);
     Actor_SetSpeed(17, 0x10000, 0x8000);

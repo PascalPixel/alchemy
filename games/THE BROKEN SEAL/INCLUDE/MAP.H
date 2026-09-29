@@ -34,4 +34,23 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position);
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position);
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind);
 
+/* The map's block table: a field map's metatiles, two words of tile entries
+   each, or the world map's 32 by 32 grid of blocks. */
+extern u32 gMapBlocks[];
+
+/* Map data the world map and layered scenes decode beside their blocks. */
+extern u8 gMapLayerData[];
+
+/* The map's collision tables: a field map's cell attributes, or the world
+   map's 4bpp collision tiles, back layer first and front layer at +0x800. */
+extern u8 gMapCollision[];
+
+/* The area's four tile banks, staged here and copied to BG character
+   blocks 2 and 3. */
+extern u8 gBgTileBuffer[];
+
+/* The area's animation pages, which MapAnimation_Start decodes a frame
+   from. */
+extern u8 *gMapAnimationPages;
+
 #endif

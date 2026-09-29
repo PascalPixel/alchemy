@@ -1,4 +1,5 @@
 #include "SHOP.H"
+#include "PARTY_STATE.H"
 #include "BATTLE_RUNTIME.H"
 #include "TBS_EDITION.H"
 extern struct ShopRuntime *gMenuWork;
@@ -43,7 +44,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 
         chance = 30;
         if (item->price != 0)
-            chance = Math_DivU(SHOP_PARTY_STATE.money, item->price);
+            chance = Math_DivU(gGameState.money, item->price);
 
         if (shop->party_action == 2) {
             maximum = Ability_GetMaximum(item_id, 0);

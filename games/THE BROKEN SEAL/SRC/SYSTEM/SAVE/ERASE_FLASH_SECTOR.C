@@ -26,6 +26,7 @@
  *     pattern-matched against other files.
  */
 #include "FLASH.H"
+#include "FLASH_DATA.H"
 
 struct FlashChipInfo {
     u8 unknown_00[8];
@@ -33,6 +34,9 @@ struct FlashChipInfo {
     u8 unknown_09[7];
     u16 wait;
 };
+
+extern struct FlashChipInfo *gFlash;
+extern FlashWaitProc Flash_Handler3;
 
 s32 _call_via_r3(s32, u8 *, u8, s32);
 
@@ -54,7 +58,7 @@ u16 EraseFlashSector(u16 sector)
 
     waitcnt = (volatile u16 *)0x04000204;
     setting = *waitcnt & 0xFFFC;
-    chip = *(struct FlashChipInfo **)0x02004C08;
+    chip = gFlash;
     *waitcnt = setting | chip->wait;
 
     target = (volatile u8 *)((sector << chip->sectorShift) + 0x0E000000);
@@ -70,7 +74,7 @@ u16 EraseFlashSector(u16 sector)
 
     CopyFlashReadRoutineToRam(savedCode);
 
-    status = (s32 *)0x02004C00;
+    status = (s32 *)&Flash_Handler3;
     result = _call_via_r3(2, (u8 *)target, 255, *status);
 
     *waitcnt = (*waitcnt & 0xFFFC) | 3;

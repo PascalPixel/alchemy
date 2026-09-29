@@ -5,6 +5,9 @@
 
 extern u8 gMenuWork[];
 
+/* The frame tile the backdrop screen loads into BG character block 1. */
+extern const u8 Menu_BackdropFrameTile[];
+
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
@@ -52,7 +55,7 @@ s32 Menu_OpenBackdropScreen(void)
     FillWords(Iwram_FillWords, (void *)0x06004000, 0x2000, 0x33333333);
     FillWords(Iwram_FillWords, (void *)0x05000080, 128, 0x55555555);
     Func_080153d8((void *)0x06005000);
-    CopyWords(Iwram_CopyWords, (void *)0x060052c0, (void *)0x080af26c, 32);
+    CopyWords(Iwram_CopyWords, (void *)0x060052c0, Menu_BackdropFrameTile, 32);
     Dma_Set(Runtime_GetLowTableAddress(), (void *)0x050000a0, 0x80000010,
             (volatile u32 *)0x040000d4);
     *(volatile u16 *)0x050000bc = *(volatile u16 *)0x050001e8;

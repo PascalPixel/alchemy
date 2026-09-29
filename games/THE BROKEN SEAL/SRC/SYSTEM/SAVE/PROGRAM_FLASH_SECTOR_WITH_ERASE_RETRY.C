@@ -1,6 +1,6 @@
 #include "FLASH.H"
 
-/* 0x02004c08 が指すフラッシュ機種表。 */
+/* gFlash が指すフラッシュ機種表。 */
 struct FlashChipInfo {
     u8 unknown_00[4];
     s32 blockSize;
@@ -9,7 +9,10 @@ struct FlashChipInfo {
     u16 wait;
 };
 
-/* RAM 常駐の書き込み手続き。0x08006f6c との差が複写長になる。 */
+extern struct FlashChipInfo *gFlash;
+extern u16 Data_02004c0c;
+
+/* RAM 常駐の書き込み手続き。RunFlashEraseVerifier との差が複写長になる。 */
 void CountRemainingErasedFlashBytes(void);
 s32 RunFlashEraseVerifier(u8 *, u8 *);
 
@@ -35,7 +38,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
         return 0x80FF;
     }
 
-    destination = (u8 *)((sector << (*(struct FlashChipInfo **)0x02004C08)->sectorShift)
+    destination = (u8 *)((sector << gFlash->sectorShift)
                          + 0x0E000000);
 
     sourceCode = (u16 *)((s32)CountRemainingErasedFlashBytes ^ 1);
@@ -78,11 +81,11 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
 
     waitcnt = (volatile u16 *)0x04000204;
     setting = *waitcnt & 0xFFFC;
-    chip = *(struct FlashChipInfo **)0x02004C08;
+    chip = gFlash;
     *waitcnt = setting | chip->wait;
 
-    *(u16 *)0x02004C0C = chip->blockSize;
-    counter = (u16 *)0x02004C0C;
+    Data_02004c0c = chip->blockSize;
+    counter = &Data_02004c0c;
     while (*counter != 0) {
         status = ProgramFlashByte(source, destination);
         if (status != 0) {

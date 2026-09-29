@@ -1,4 +1,5 @@
 #include "SHOP.H"
+#include "PARTY_STATE.H"
 #include "BATTLE_RUNTIME.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
@@ -54,7 +55,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
         UiMessage_ShowAndRestoreState((s32)MsgCursedWontComeOff);
         return;
     }
-    if (price > SHOP_PARTY_STATE.money) {
+    if (price > gGameState.money) {
         UiMessage_ShowAndRestoreState((s32)MsgNotEnoughMoney);
         return;
     }

@@ -26,7 +26,7 @@ Func_0808e14c:
 	ldrh	r0, [r0, #6]
 	mov	fp, r0
 	ldr	r0, [r5, #0]
-	bl	Func_0808ddec
+	bl	BattleEffect_SelectNearbyObject
 	ldr	r3, [pc, #96]
 	mov	r2, r8
 	ands	r2, r3

@@ -13,17 +13,23 @@
  * in r7.  Here loop strength reduction walks both pointers instead.  Index
  * types (u8/s16/u16), a volatile id list, and a goto-built copy of the
  * reference layout (86 halfwords) did not stop the reduction.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): reading ids[i]
+ * into a u16 inside the inner loop, kept here, keeps that load in the loop
+ * and takes the score from 1647 to 1290 (13 register-only, 5 operand, 5
+ * reordered, 4 inserted, 4 deleted); the same local read before the inner
+ * loop lets it be reduced again (2485). Func_080b5090 has no label in the
+ * build.
  */
 #include "TYPES.H"
 
-extern u8 *Data_03001e74;
+extern u8 *gBattleWork;
 
 s32 Func_080b5090(s32 side, s32 group);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
 
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
-    u8 *battle = Data_03001e74;
+    u8 *battle = gBattleWork;
     s32 count;
     s32 i;
     s32 j;
@@ -32,7 +38,9 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids)
     Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
     for (i = 0; i < 4 && ids[i] != 0xff; i++) {
         for (j = 0; j < 4; j++) {
-            if (((s16 *)(battle + 88))[j] == ids[i])
+            u16 id = ids[i];
+
+            if (((s16 *)(battle + 88))[j] == id)
                 break;
             if (((s16 *)(battle + 88))[j] == 0xff) {
                 j = 4;

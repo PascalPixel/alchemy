@@ -2,11 +2,18 @@
  * instructions exact after correcting the resource callee and byte row
  * arithmetic. Remaining: X sum and masks, index-store scheduling.
  * Halfword columns and word/bitfield unions regressed; no allocator sweep.
+ * 2026-09-29 slice 4: 165 against 480 (4 register-only, 1 operand, 2
+ * reordered). Written as a number, the 0xfffe column offset folds into the
+ * multiply (0x7fff4); held in its own local it stays a separate pool add,
+ * which is what the link-time Value_0000fffe did. The tilemap write is an
+ * element of a tile array, which puts the base first ([r5, r2]) as the
+ * reference does; the window work is gWindowWork. Four alchemy permute runs
+ * (about 136,000 candidates) end at this score; left: the height and y rows
+ * swap r2/r3 and the attribute or sits one slot later.
  */
 #include "TYPES.H"
 
-extern u8 *Data_03001e8c;
-extern const u8 Value_0000fffe;
+extern u8 *gWindowWork;
 
 void *RenderOutput_AcquireFree(void);
 s32 Resource_FindFreeEntry(void);
@@ -41,27 +48,37 @@ struct RenderOutput {
     struct SpriteAttr attr;
 };
 
+struct WindowTilemap {
+    u16 tiles[640];
+};
+
 void Func_08018efc(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
-    struct RenderOutput *out = (struct RenderOutput *)Data_03001e8c;
+    struct RenderOutput *out = (struct RenderOutput *)gWindowWork;
     u8 *base = (u8 *)out;
-    struct SpriteAttr *attr;
     s32 idx;
     u16 *slot;
+    struct SpriteAttr *attr;
     u32 pos;
     u16 row;
 
-    if (y > (u32)(win->height - 2)) return;
-    if (x > (u32)(win->width - 2)) return;
+    if (y > (u32)(win->height - 2))
+        return;
+    if (x > (u32)(win->width - 2))
+        return;
     if (mode == 1) {
+        s32 column;
         out = RenderOutput_AcquireFree();
-        if (out == NULL) return;
+        if (out == NULL)
+            return;
         idx = (out - (struct RenderOutput *)(base + 0x698)) * 4;
         out->one5 = 2;
-        slot = (u16 *)(base + 0x12b6);
         attr = &out->attr;
-        if (*slot == 99) *slot = Resource_FindFreeEntry();
-        attr->x = (win->width + (s32)&Value_0000fffe + win->x) * 8 + 4;
+        slot = (u16 *)(base + 0x12b6);
+        if (*slot == 99)
+            *slot = Resource_FindFreeEntry();
+        column = 0xfffe;
+        attr->x = (win->width + (win->x + column)) * 8 + 4;
         row = (u8)win->height + 254;
         row += (u8)win->y;
         attr->y = row * 8 - 1;
@@ -69,12 +86,14 @@ void Func_08018efc(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         out->y = attr->y;
         out->zero = 0;
         out->index = idx;
-        if (out->one5 == 0) out->one5 = mode;
+        if (out->one5 == 0)
+            out->one5 = mode;
         RenderOutput_AppendToList(win, (s8 *)out);
     } else if (tile <= 0xff) {
         x++;
         y++;
         pos = (win->y + y) * 32 + (win->x + x);
-        if (pos < 640) ((u16 *)out)[pos] = tile | 0xf000;
+        if (pos < 640)
+            ((struct WindowTilemap *)out)->tiles[pos] = tile | 0xf000;
     }
 }

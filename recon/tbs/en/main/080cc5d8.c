@@ -1,5 +1,12 @@
 /* 2026-09-24: 69 differing halfwords (from 70) after a do-while wrap and
-   statement-swap sweep; the do-while wraps are search artefacts. */
+   statement-swap sweep; the do-while wraps are search artefacts.
+   2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+   M2C_FIELD takes a type as a macro argument. Preprocessed, it scores 2,050
+   with 21 symbols the linked build does not define, too far for a 10-minute
+   search, so none was run.
+   A 5-minute search (2 jobs) on the preprocessed copy reached 1675 after 25
+   rewrites, pointer and temporary spellings that cannot be written back to
+   this macro form. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 

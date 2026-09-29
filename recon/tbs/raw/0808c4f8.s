@@ -692,7 +692,7 @@ Func_0808c4f8:
 	bl	UiTimedNotice_CloseIfActiveFar
 	ldr	r1, [pc, #64]
 	ldr	r0, [r1, #0]
-	bl	Func_0808ddec
+	bl	BattleEffect_SelectNearbyObject
 	movs	r2, #1
 	adds	r5, r0, #0
 	negs	r2, r2

@@ -46,8 +46,8 @@ typedef struct ActiveSubjectSlot {
 extern u8 HexDigits[];
 
 struct FieldActor *Object_GetById(s32);
-void GameFlag_SetByteFar();
-void GameFlag_SetByteFar(s32, s32);
+void GameFlag_SetByte();
+void GameFlag_SetByte(s32, s32);
 void Korosseo_SelectSoloCompetitor(s32);
 typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
@@ -216,11 +216,11 @@ void FieldScene_RunNearestActor165Scene(void)
     Event_CloseScreen();
     Event_WaitForScreen();
     base = n << 4;
-    GameFlag_SetByteFar(base + 880, p->x.fixed >> 20);
+    GameFlag_SetByte(base + 880, p->x.fixed >> 20);
     {
         s32 v = p->z.fixed >> 20;
 
-        GameFlag_SetByteFar(base + 888, v);
+        GameFlag_SetByte(base + 888, v);
     }
     n++;
     if (n > 3) {

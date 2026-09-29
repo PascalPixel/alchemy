@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 struct DisplayTransitionState {
     u8 reserved_000[0x52a];
@@ -17,8 +18,6 @@ struct DisplayTransitionWindow {
 };
 
 extern volatile u32 gFrameCount;
-
-typedef s32 (*SignedDivide)(s32, s32);
 
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_SetIrqHandler(s32 irq, s32 flags, s32 handler);
@@ -51,7 +50,7 @@ void DisplayTransition_UpdateFromCentre(void)
             s32 offset;
 
             (*step)++;
-            offset = ((SignedDivide)0x03000380)(delta * *step, *duration);
+            offset = Iwram_SignedDivide(delta * *step, *duration);
             state->value = state->start + offset;
         }
     }

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -86,14 +87,14 @@ s32 ActionMenu_Open(void)
     state->flags = 0;
     state->character_count = Party_ListActiveOwnersFar(state->character_ids);
     Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
-    CopyWords((WordCopyFn)0x03001388, palette, (void *)0x05000000, 64);
+    CopyWords(Iwram_CopyWords, palette, (void *)0x05000000, 64);
     Palette_LightenBankHighlight(14);
     Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, (volatile u32 *)0x040000d4);
-    CopyWords((WordCopyFn)0x03001388, tiles, (void *)0x06004000, 0x2000);
-    FillWords((WordFillFn)0x03000168, (void *)0x06004000, 0x2000, 0x33333333);
+    CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, 0x2000);
+    FillWords(Iwram_FillWords, (void *)0x06004000, 0x2000, 0x33333333);
     Func_080153e0(1);
     state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < 8; index++)
@@ -119,8 +120,8 @@ s32 ActionMenu_Open(void)
     Func_080152a8();
     Func_080153e0(0);
     WaitFrames(1);
-    CopyWords((WordCopyFn)0x03001388, (void *)0x05000000, palette, 64);
-    CopyWords((WordCopyFn)0x03001388, (void *)0x06004000, tiles, 0x2000);
+    CopyWords(Iwram_CopyWords, (void *)0x05000000, palette, 64);
+    CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, 0x2000);
     Runtime_BumpFree(tiles);
     Runtime_BumpFree(palette);
     FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, 0xea6) = 1;

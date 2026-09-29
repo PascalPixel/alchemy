@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "DMA.H"
 
 /* The fixed-camera variant of the field object pass: it aims the view from
@@ -95,7 +96,7 @@ void ObjectSystem_UpdateCameraFixed(void)
     Render_ResetTransformState();
     if (GameFlag_TestFar(0x16b)) {
         angle += 0xffffe000;
-        ((void (*)(u32))0x030002c0)(0x08013190);
+        Iwram_TransformMatrix((const s32 *)0x08013190);
         Graphics_PrepareTransferAndRun(eye, target);
     } else {
         Graphics_PrepareTransferInIwramWork(eye, target);

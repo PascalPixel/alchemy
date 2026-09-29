@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
@@ -77,9 +78,9 @@ void Camera_ConfigureScene(s32 pos)
     local.first = 0;
     local.second = 0;
     local.third = state->field20;
-    ((void (*)(struct SceneCameraTransfer *, struct SceneCameraState *))0x03000250)(&local, state);
+    Iwram_TransformVector((s32 *)&local, (s32 *)state);
 
-    result = ((u32 (*)(u32, u32))0x0300013c)(0x03c90000, 192 << 8);
+    result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
     Camera_StoreSceneParameters(0, result, 0x07920000);
 
     gProjection.anchor = pos + 120;

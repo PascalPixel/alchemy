@@ -5,7 +5,7 @@ extern u8 Data_030000e0[];
 
 /* IWRAM start, where the runtime (SYSTEM/RUNTIME.S) is copied and the
    interrupt vector points. */
-extern u8 Data_03000000[];
+extern u8 IwramIrqMain[];
 extern void *Data_03007ffc;
 
 /* Copies the IWRAM runtime and its IRQ dispatch table into place with
@@ -26,7 +26,7 @@ void Runtime_InstallIwramAndIrqs(void)
     do {
         *ime = zero;
     } while (0);
-    iwram = Data_03000000;
+    iwram = IwramIrqMain;
     Dma_Set((const void *)0x08000770, iwram, 0x84000500, (volatile u32 *)0x040000d4);
     Data_03007ffc = iwram;
     Dma_Set((const void *)0x08007320, (void *)Data_030000e0, 0x8400000e, (volatile u32 *)0x040000d4);

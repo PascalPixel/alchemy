@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
@@ -52,8 +53,6 @@ struct DisplayTransitionRegisters {
 
 extern s32 Scheduler_RemoveCallback(void (*)(void));
 
-typedef s32 (*SignedDivide)(s32, s32);
-
 void DisplayTransition_Update(void)
 {
     struct DisplayTransitionState *state =
@@ -76,7 +75,7 @@ void DisplayTransition_Update(void)
             s32 value;
 
             (*step)++;
-            value = ((SignedDivide)0x03000380)(delta * *step, *duration);
+            value = Iwram_SignedDivide(delta * *step, *duration);
             state->transition_value = state->transition_start + value;
         }
     }

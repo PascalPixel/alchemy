@@ -11,9 +11,6 @@ extern u8 gObjectSlots[];
 
 #define TARGET_UNSET ((s32)0x80000000)
 
-#define IwramLength ((s32 (*)(s32))0x030001d8)
-#define IwramRatio ((s32 (*)(s32, s32))0x0300013c)
-
 struct MotionObject {
     s32 active;          /* 0x00 */
     u16 unk_04;
@@ -75,24 +72,24 @@ void Object_UpdateAllMotion(void)
             if (obj->target_x != TARGET_UNSET) {
                 dx = (obj->target_x - x) / 65536;
                 dz = (obj->target_z - z) / 65536;
-                dist = IwramLength(dx * dx + dz * dz) << 16;
+                dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
                 if (dist <= 0xffffff) {
                     dx = obj->target_x - x;
                     dz = obj->target_z - z;
-                    dist = IwramLength(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
+                    dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
                 }
                 if (dist == 0) {
                     x = obj->target_x;
                     z = obj->target_z;
                 } else {
-                    ratio = IwramRatio(dist, obj->acceleration);
+                    ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
                     vx = obj->vx + Iwram_MulQ16(dx, ratio);
                     obj->vx = vx;
                     dx = obj->vz + Iwram_MulQ16(dz, ratio);
                     obj->vz = dx;
-                    dist = IwramLength(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(dx, dx)) << 8;
+                    dist = Iwram_Sqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(dx, dx)) << 8;
                     if (dist > obj->speed_limit) {
-                        ratio = IwramRatio(dist, obj->speed_limit);
+                        ratio = Iwram_RatioMulQ14(dist, obj->speed_limit);
                         obj->vx = Iwram_MulQ16(vx, ratio);
                         obj->vz = Iwram_MulQ16(dx, ratio);
                     }
@@ -101,13 +98,13 @@ void Object_UpdateAllMotion(void)
                 dx = obj->vx;
                 dz = obj->vz;
                 if ((dx | dz) != 0) {
-                    dist = IwramLength(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
+                    dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
                     if (dist != 0) {
                         if (dist - obj->acceleration < 0) {
                             obj->vx = 0;
                             obj->vz = 0;
                         } else {
-                            ratio = IwramRatio(dist, dist - obj->acceleration);
+                            ratio = Iwram_RatioMulQ14(dist, dist - obj->acceleration);
                             obj->vx = Iwram_MulQ16(dx, ratio);
                             obj->vz = Iwram_MulQ16(dz, ratio);
                         }

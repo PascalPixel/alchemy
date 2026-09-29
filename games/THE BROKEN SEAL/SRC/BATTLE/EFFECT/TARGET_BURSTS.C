@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -15,8 +16,6 @@ extern u8 gCameraWork[];
  * sheet under light gravity and the sixth from the second sheet under
  * heavier gravity, each cel advancing every six frames.
  */
-
-typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
 /* Resource ids the reference loads from its literal pool. */
 extern u8 Value_0000009e;
@@ -56,7 +55,7 @@ void BattleFx_RunTargetBursts(void *object)
     Resource_LoadAndDecompress((s32)&Value_0000009e, work, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_0000006c, (u8 *)work + 0x1b00, 0, 0);
     palette = Resource_GetTableEntry((s32)&Value_000000bb);
-    ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
+    Iwram_CopyWords((void *)0x05000000, palette, 128);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     rectangle_a = heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 3, 2);

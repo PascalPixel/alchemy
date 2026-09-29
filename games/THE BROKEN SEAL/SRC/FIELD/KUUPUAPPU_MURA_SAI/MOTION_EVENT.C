@@ -3,6 +3,7 @@
  */
 
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
@@ -131,7 +132,6 @@ extern const u16 KuupuappuMuraSai_Scene9Cells[];
 extern const u16 KuupuappuMuraSai_Scene10Cells[];
 extern const u16 KuupuappuMuraSai_Scene12Cells[];
 
-typedef s32(*IwramIntegerSquareRoot)(s32);
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 u32 ArcTan2(s32, s32);
 s32 PartyInventory_FindOwner(s32 item);
@@ -232,7 +232,7 @@ s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
     s32 delta_y_squared = delta_y *delta_y;
     s32 delta_z_squared = delta_z *delta_z;
 
-    return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
+    return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
 s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target,

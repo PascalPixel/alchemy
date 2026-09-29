@@ -1,4 +1,5 @@
 #include "RESOURCE.H"
+#include "IWRAM_CALL.H"
 
 void Resource_DecodeType01(void *, void *);
 
@@ -8,7 +9,7 @@ void Resource_LoadAndDecompress(s32 resource_id, void *destination,
     u8 *resource = Resource_GetTableEntry(resource_id);
 
     if (copy_palette != 0) {
-        void (*copy)(void *, void *, s32) = (void (*)(void *, void *, s32))0x03001388;
+        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 
         copy((void *)0x05000000, resource, 0x80);
     }

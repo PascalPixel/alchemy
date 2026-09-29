@@ -1,20 +1,28 @@
-/* 2026-09-24: hand-written, 18 differing halfwords, register swap only:
-   the reference keeps the key-repeat address in r6 and the mode pointer in
-   r0; here they are the other way round. */
+/* NONMATCHING: complete owner [08029094,080291e4), 334 bytes plus the
+ * two-byte pad; 18 differing halfwords, register swap only (2026-09-28).
+ * The reference keeps &gKeysRepeat in r6 and the mode pointer in r0; here
+ * they are the other way round. Global allocation takes the key address
+ * first: 9 refs over 60 (its constant equivalence doubles the length) give
+ * it priority 27/60 against the mode pointer's 14/44 (7 refs), so it lands
+ * in r0 before the mode pointer is placed. The reference needs the mode
+ * pointer first, which by that measure means one more mode reference or
+ * two fewer key references. Parameter types, a local key pointer, a local
+ * mode copy, storing *mode into *sub and name-length changes do not move it.
+ */
 #include "TYPES.H"
 
-extern volatile u32 Data_03001b04;
-void Func_08028ef0(s32 arg, s32 value, s16 *sub);
+extern volatile u32 gKeysRepeat;
+void Menu_DrawSelectionRow(s32 arg, s32 value, s16 *sub);
 
-s32 Func_08029094(s32 arg, s16 value, s16 *sub, s16 *mode)
+s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 {
-    if (Data_03001b04 & 1)
+    if (gKeysRepeat & 1)
         return -1;
-    if (Data_03001b04 & 2)
+    if (gKeysRepeat & 2)
         return -2;
-    if ((Data_03001b04 & 0x80) || (Data_03001b04 & 0x40)) {
+    if ((gKeysRepeat & 0x80) || (gKeysRepeat & 0x40)) {
         *mode ^= 1;
-    } else if (Data_03001b04 & 0x10) {
+    } else if (gKeysRepeat & 0x10) {
         if (*mode == 0) {
             value++;
         } else {
@@ -24,8 +32,8 @@ s32 Func_08029094(s32 arg, s16 value, s16 *sub, s16 *mode)
         }
         if (value > 200)
             value = 0;
-        Func_08028ef0(arg, value, sub);
-    } else if (Data_03001b04 & 0x20) {
+        Menu_DrawSelectionRow(arg, value, sub);
+    } else if (gKeysRepeat & 0x20) {
         if (*mode == 0) {
             value--;
         } else {
@@ -35,8 +43,8 @@ s32 Func_08029094(s32 arg, s16 value, s16 *sub, s16 *mode)
         }
         if (value < 0)
             value = 200;
-        Func_08028ef0(arg, value, sub);
-    } else if (Data_03001b04 & 0x100) {
+        Menu_DrawSelectionRow(arg, value, sub);
+    } else if (gKeysRepeat & 0x100) {
         if (*mode == 0) {
             *sub = 0;
             value += 10;
@@ -47,8 +55,8 @@ s32 Func_08029094(s32 arg, s16 value, s16 *sub, s16 *mode)
         }
         if (value > 200)
             value = 0;
-        Func_08028ef0(arg, value, sub);
-    } else if (Data_03001b04 & 0x200) {
+        Menu_DrawSelectionRow(arg, value, sub);
+    } else if (gKeysRepeat & 0x200) {
         if (*mode == 0) {
             *sub = 0;
             value -= 10;
@@ -59,7 +67,7 @@ s32 Func_08029094(s32 arg, s16 value, s16 *sub, s16 *mode)
         }
         if (value < 0)
             value = 200;
-        Func_08028ef0(arg, value, sub);
+        Menu_DrawSelectionRow(arg, value, sub);
     }
     return value;
 }

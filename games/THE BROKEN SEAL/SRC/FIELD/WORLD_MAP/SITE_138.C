@@ -17,29 +17,30 @@ struct WorldMapMark {
     u8 unknown_16[2];
 };
 
-extern struct WorldMapSite WorldMap_Sites[];
-extern struct WorldMapMark WorldMap_Marks[];
+extern struct WorldMapSite gWorldMapEvents[];
+extern struct WorldMapMark gWorldMapPlacements[];
+void FieldScene_RunScene371_02002858(void);
 
-/* Switch every kind-1 site with id 138 to kind 2 with the handler at 0x0200a858, then move mark 57 to (0x1794, 0xd48) with flags 0x3000. */
+/* Switch every kind-1 site with id 138 to kind 2 with the Robin dialogue as its handler, then move mark 57 to (0x1794, 0xd48) with flags 0x3000. */
 void WorldMap_ActivateSite138(void)
 {
     s32 i;
 
     for (i = 0;; i++) {
-        if (WorldMap_Sites[i].kind == 1 && WorldMap_Sites[i].id == 138) {
-            WorldMap_Sites[i].kind = 2;
-            WorldMap_Sites[i].handler = 0x0200a859;
+        if (gWorldMapEvents[i].kind == 1 && gWorldMapEvents[i].id == 138) {
+            gWorldMapEvents[i].kind = 2;
+            gWorldMapEvents[i].handler = (s32)FieldScene_RunScene371_02002858;
         }
         /* FAKEMATCH: a goto past the loop, not a break, keeps the ROM's strength-reduced offsets. */
-        if (WorldMap_Sites[i].kind == -1)
+        if (gWorldMapEvents[i].kind == -1)
             goto marks;
     }
 marks:
     for (i = 0;; i++) {
-        if (WorldMap_Marks[i].id == 57) {
-            WorldMap_Marks[i].x = 0x17940000;
-            WorldMap_Marks[i].z = 0x0d480000;
-            WorldMap_Marks[i].flags = 0x3000;
+        if (gWorldMapPlacements[i].id == 57) {
+            gWorldMapPlacements[i].x = 0x17940000;
+            gWorldMapPlacements[i].z = 0x0d480000;
+            gWorldMapPlacements[i].flags = 0x3000;
             return;
         }
     }

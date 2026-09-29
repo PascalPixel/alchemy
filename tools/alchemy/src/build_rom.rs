@@ -141,6 +141,7 @@ pub(crate) fn link(
         if let Some(pass) = &symbols {
             same_addresses(root, pass, &elf)?;
         }
+        iwram_entries(root, target, &elf)?;
     }
     if let Err(error) = linked {
         if !keep_going || !elf.is_file() {
@@ -267,6 +268,70 @@ fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
             "symbols moved after the overlays linked: {moved:?}"
         ))
     }
+}
+
+/// ROM code calls the resident IWRAM routines through fixed entry addresses,
+/// as Camelot's did: a call through a label compiles to a direct `bl`, which
+/// cannot reach IWRAM. Each game's IWRAM_CALL.H lists those entries, each
+/// naming its routine, and every routine must sit where the linker put it.
+fn iwram_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), String> {
+    let header = Path::new(target.game_dir()).join("INCLUDE/IWRAM_CALL.H");
+    let Ok(text) = fs::read_to_string(root.join(&header)) else {
+        return Ok(());
+    };
+    let entries =
+        iwram_entry_list(&text).map_err(|error| format!("{}: {error}", header.display()))?;
+    if entries.is_empty() {
+        return Ok(());
+    }
+    let symbols = command(
+        &["arm-none-eabi-nm", "--defined-only", &elf.to_string_lossy()],
+        root,
+    )?;
+    let placed: std::collections::BTreeMap<&str, u32> = symbols
+        .lines()
+        .filter_map(|line| {
+            let mut parts = line.split_whitespace();
+            let (value, _, name) = (parts.next()?, parts.next()?, parts.next()?);
+            Some((name, u32::from_str_radix(value, 16).ok()?))
+        })
+        .collect();
+    for (routine, address) in &entries {
+        match placed.get(routine.as_str()) {
+            Some(value) if value == address => {}
+            Some(value) => {
+                return Err(format!(
+                    "{}: {routine} is listed at {address:#010x} but linked at {value:#010x}",
+                    header.display()
+                ))
+            }
+            None => return Err(format!("{}: {routine} is not linked", header.display())),
+        }
+    }
+    Ok(())
+}
+
+/// The (routine, address) pairs of `#define Iwram_X ((type)0x03......) /* Routine */`
+/// lines; any other definition spelling an IWRAM address is refused.
+fn iwram_entry_list(text: &str) -> Result<Vec<(String, u32)>, String> {
+    let entry = regex::Regex::new(
+        r"^#define\s+Iwram_\w+\s+\(\(.*\)\s*0x(0?3[0-9a-fA-F]{6})\)\s*/\*\s*(\w+)\s*\*/\s*$",
+    )
+    .expect("static pattern");
+    let address = regex::Regex::new(r"0x0?3[0-9a-fA-F]{6}").expect("static pattern");
+    let mut entries = Vec::new();
+    for line in text
+        .lines()
+        .filter(|line| line.trim_start().starts_with("#define"))
+    {
+        if let Some(capture) = entry.captures(line) {
+            let value = u32::from_str_radix(&capture[1], 16).expect("hex digits");
+            entries.push((capture[2].to_owned(), value));
+        } else if address.is_match(line) {
+            return Err(format!("an IWRAM address without its routine: {line}"));
+        }
+    }
+    Ok(entries)
 }
 
 /// Scaffolding reads not-yet-sourced data from the builder's own verified ROM as
@@ -430,7 +495,7 @@ fn build_overlay_streams(
     let mut linked = Vec::with_capacity(ids.len());
     let mut sources = Vec::new();
     for id in &ids {
-        let script = overlay_script(root, target, &listings, id);
+        let script = overlay_script(&listings, id);
         let text = fs::read_to_string(root.join(&script))
             .map_err(|error| format!("{}: {error}", script.display()))?;
         let own = format!("resource_{id}_overlay");
@@ -480,13 +545,9 @@ fn build_overlay_streams(
 /// Link one overlay listing alone at its load address, with its own script
 /// when it places compiler-library members and the game's otherwise, and
 /// compress the image. The map stays beside it for progress.
-fn overlay_script(root: &Path, target: DecompTarget, listings: &Path, id: &str) -> PathBuf {
-    let own = listings.join(format!("resource_{id}.ld"));
-    if root.join(&own).is_file() {
-        own
-    } else {
-        Path::new(target.game_dir()).join("OVERLAY.LD")
-    }
+/// Each overlay's own script, beside its listing, places its objects.
+fn overlay_script(listings: &Path, id: &str) -> PathBuf {
+    listings.join(format!("resource_{id}.ld"))
 }
 
 fn build_overlay(
@@ -703,6 +764,28 @@ mod tests {
             let low = 0xf800 | ((call >> 1) & 0x7ff);
             block[at - 4..at - 2].copy_from_slice(&(high as u16).to_le_bytes());
             block[at - 2..at].copy_from_slice(&(low as u16).to_le_bytes());
+        }
+    }
+
+    #[test]
+    fn every_iwram_entry_names_its_routine() {
+        let header = "/* 0x03000000 is only prose here */\n\
+            #define Iwram_CopyWords ((s32 (*)(void *, const void *, s32))0x03001388) /* IwramCopyWords */\n\
+            #define Iwram_Sqrt ((s32 (*)(s32))0x030001d8) /* IwramSqrt */\n\
+            #define SCREEN_WIDTH 240\n";
+        assert_eq!(
+            iwram_entry_list(header).unwrap(),
+            [
+                ("IwramCopyWords".to_owned(), 0x0300_1388),
+                ("IwramSqrt".to_owned(), 0x0300_01d8)
+            ]
+        );
+        for unnamed in [
+            "#define Iwram_Sqrt ((s32 (*)(s32))0x030001d8)\n",
+            "#define SQRT ((s32 (*)(s32))0x030001d8) /* IwramSqrt */\n",
+            "#define WORK ((u8 *)0x03001ebc)\n",
+        ] {
+            assert!(iwram_entry_list(unnamed).is_err(), "{unnamed}");
         }
     }
 

@@ -1,17 +1,11 @@
+#include "MAKYURI.H"
 #include "MAKYURI_HEYA.H"
 
-void Engine_EventBegin();
-void Engine_EventWait();
-void Func_0200ae08();
-void Func_0200d98c();
-void Engine_MapCopyCellsTo();
-void Engine_AudioPlayCue();
-u32 Func_0200d994(void);
-void Func_0200013c(s32, s32, s32, s32, s32, s32, s32, void *);
-void Engine_WorkSetValuesIfNonNegative();
-void Func_0200dc5c();
-s32 Engine_GameFlagIsSet(s32);
-void Func_0200ae6c();
+void MakyuriHeya_FadePaletteToBlack();
+void SceneEffect_RotatePaletteEntries97To103(void);
+extern const u8 MakyuriHeya_SparkBurstScript[];
+void BattleFx_PlayQueuedSound();
+void MakyuriHeya_SinkActorWithSparks();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -69,35 +63,35 @@ void FieldScene_RunRandomEffectActorSequence(void)
 
     Event_Begin();
     Event_Wait(20);
-    Func_0200ae08();
-    Call1(Func_0200d98c, 0x200adcd);
+    MakyuriHeya_FadePaletteToBlack();
+    Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_RotatePaletteEntries97To103);
     Call6(Engine_MapCopyCellsTo, 45, 77, 45, 73, 9, 4);
     Event_Wait(30);
     effect = &options;
     effect->mode_bits = 1;
     effect->mode = 5;
     effect->kind = 0x11e;
-    effect->callback_arg = 0x200de70;
+    effect->callback_arg = (s32)MakyuriHeya_SparkBurstScript;
     zero = 0;
     phase = zero;
     do {
         u32 x, z;
 
         if ((1 & phase) != 0) {
-            Engine_AudioPlayCue(246);
+            Audio_PlayCue(246);
         }
-        value = Func_0200d994();
+        value = Engine_RandomNext();
         x = value * 48;
         x >>= 16;
         x <<= 16;
         x += 0x3000000;
-        value = Func_0200d994();
+        value = Engine_RandomNext();
         z = value * 56;
         z >>= 16;
         z <<= 16;
         z += 0x880000;
-        Func_0200013c(x, 0, z, 0, 0, 0, 0x330001, effect);
-        Call1((void (*)())Engine_EventWait, 2);
+        Effect_Spawn(x, 0, z, 0, 0, 0, 0x330001, effect);
+        Call1((void (*)())Battle_WaitMode0, 2);
         phase = (phase + 1);
     } while ((u32)phase <= 15);
     Event_Wait(40);
@@ -108,26 +102,26 @@ void FieldScene_RunRandomEffectActorSequence(void)
         s32 speed;
 
         if ((1 & phase) != 0) {
-            Engine_AudioPlayCue(246);
+            Audio_PlayCue(246);
         }
-        value = Func_0200d994();
+        value = Engine_RandomNext();
         x = value * 48;
         x >>= 16;
         x <<= 16;
         x += 0x3000000;
-        value = Func_0200d994();
+        value = Engine_RandomNext();
         z = value * 56;
         z >>= 16;
         z <<= 16;
         z += 0x980000;
-        value = Value0(Func_0200d994);
+        value = Value0(Engine_RandomNext);
         speed = -((value * 10 >> 16) * 0x3333) - 0x3333;
-        Func_0200013c(x, 0, z, 0, 0, speed, 0x330001, effect);
+        Effect_Spawn(x, 0, z, 0, 0, speed, 0x330001, effect);
         Event_Wait(2);
         phase = (phase + 1);
     } while ((u32)phase <= 15);
     Event_Wait(60);
-    Engine_AudioPlayCue(141);
+    Audio_PlayCue(141);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
     Event_Wait(60);
     effect->mode = 7;
@@ -144,20 +138,20 @@ void FieldScene_RunRandomEffectActorSequence(void)
         particle = 0;
         row_offset = (phase << 4);
         do {
-            value = Value0(Func_0200d994);
+            value = Value0(Engine_RandomNext);
             x = ((((u32)(((value << 1) + value) << 4) >> 16) << 16) + 0x3000000);
-            velocity_x = (0x1999 * ((u32)(Func_0200d994() << 3) >> 16)) - 0x6664;
-            speed = 0x1999 * ((u32)(Func_0200d994() << 3) >> 16);
-            Func_0200013c(x, 0, ((s32)(-((u32)particle >> 1) - row_offset) << 16) + 0xc00000, velocity_x, 0, speed, 0xd0001, effect);
+            velocity_x = (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
+            speed = 0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16);
+            Effect_Spawn(x, 0, ((s32)(-((u32)particle >> 1) - row_offset) << 16) + 0xc00000, velocity_x, 0, speed, 0xd0001, effect);
             particle = (particle + 1);
             Event_Wait(2);
         } while ((u32)particle <= 31);
         phase = (phase + 1);
     } while ((u32)phase <= 3);
-    Call1(Engine_AudioPlayCue, 0x121);
+    Call1(Audio_PlayCue, 0x121);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     MapRender_WaitForValues();
-    Func_0200dc5c();
+    BattleFx_PlayQueuedSound();
     Event_Wait(30);
     if (GameFlag_IsSet(0x881) != 0) {
         Actor_SetSpeed(0, 0xcccc, 0x6666);
@@ -169,9 +163,9 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Actor_WalkTo(0, 0x318, 200);
         Event_Wait(10);
         Actor_SetAnimation(0, 18);
-        Func_0200ae6c(0);
+        MakyuriHeya_SinkActorWithSparks(0);
         Event_Wait(60);
-        Call1(Func_0200d98c, 0x200adcd);
+        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_RotatePaletteEntries97To103);
         ColorBuffer_ApplySource(0x10000, 0);
         ColorBuffer_ApplyTarget(0x10005, 0);
         ColorBuffer_Interpolate(120);
@@ -197,7 +191,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Event_Wait(40);
         Actor_FaceDirection(3, 0xc000, 20);
         Actor_WalkToAndWait(3, 0x318, 200);
-        Func_0200ae6c(3);
+        MakyuriHeya_SinkActorWithSparks(3);
         Event_Wait(20);
         Actor_RunRepeatedMotion(0, 2);
         Event_Wait(30);
@@ -235,7 +229,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Actor_ShowEmote(2, 0x100, 0);
         Actor_StartRepeatedMotion(1, 2);
         Actor_StartRepeatedMotion(2, 2);
-        Func_0200ae6c(0);
+        MakyuriHeya_SinkActorWithSparks(0);
         Event_Wait(60);
         Actor_ShowEmote(1, 0x102, 0);
         Actor_ShowEmote(2, 0x102, 80);
@@ -247,13 +241,13 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Actor_FaceDirection(2, 0xe000, 0);
         Actor_WalkToAndWait(1, 0x318, 200);
         Event_Wait(30);
-        Func_0200ae6c(1);
+        MakyuriHeya_SinkActorWithSparks(1);
         Actor_WalkToAndWait(2, 0x318, 216);
         Actor_WalkToAndWait(2, 0x318, 200);
         Event_Wait(30);
-        Func_0200ae6c(2);
+        MakyuriHeya_SinkActorWithSparks(2);
         ColorBuffer_ApplySource(0x10000, 0);
-        Call1(Func_0200d98c, 0x200adcd);
+        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_RotatePaletteEntries97To103);
         ColorBuffer_ApplyTarget(0x10005, 0);
         ColorBuffer_Interpolate(120);
         Event_Wait(120);

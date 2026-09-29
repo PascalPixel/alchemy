@@ -7,9 +7,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_020003f8
-	overlay_veneer Func_02000088
-	overlay_veneer Func_02000094
-	overlay_veneer Func_020000b8
-	overlay_veneer Func_02000160
-	overlay_veneer Func_02000090
+	overlay_veneer HaidiaBabi_RestoreEntryState
+	overlay_veneer HaidiaBabi_GetEntrances
+	overlay_veneer HaidiaBabi_SelectExits
+	overlay_veneer HaidiaBabi_SelectPlacements
+	overlay_veneer HaidiaBabi_SelectEvents
+	overlay_veneer SceneData_ReturnZero

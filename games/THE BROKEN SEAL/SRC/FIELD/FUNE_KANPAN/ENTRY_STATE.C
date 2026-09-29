@@ -24,15 +24,12 @@ void FieldScene_RunScene3af_0200185c(void);
 void SceneActor_PlaceActors20To27(void);
 void FuneKanpan_PlaceRandomDeckActors(void);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-};
-
-extern union GameStateRows Data_02000240_t;
-extern s32 Data_0200db50[];
-extern s32 Data_0200db60[];
-extern u8 *Data_03001e70;
+/* The saved game as halfwords. */
+extern s16 gCell[][1];
+/* The scroll of map layer 5 and its speed (ROCK.C). */
+extern s32 FuneKanpan_LayerScroll[];
+extern s32 FuneKanpan_LayerSpeed[];
+extern u8 *gMapWork;
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
@@ -60,19 +57,19 @@ void FuneKanpan_ApplyEntryState(void)
         SceneState_ApplyFiveRectsAtColumn78();
         SceneEffect_InitSlotsEightToNineteen();
         Value2(Engine_TaskAddCallback, (s32)SceneState_ConfigureEntries8Through19, 0xc80);
-        Data_0200db50[1] = 0x200000;
-        Data_0200db60[1] = 0x13333;
+        FuneKanpan_LayerScroll[1] = 0x200000;
+        FuneKanpan_LayerSpeed[1] = 0x13333;
         Value2(Engine_TaskAddCallback, (s32)FuneKanpan_RockDeck, 0xc80);
     } else if (Engine_GameFlagIsSet(0x928) != 0) {
         SceneState_ApplyFiveRectsAtColumn78();
-        Data_0200db50[1] = flag;
-        Data_0200db60[1] = flag;
+        FuneKanpan_LayerScroll[1] = flag;
+        FuneKanpan_LayerSpeed[1] = flag;
         Value2(Engine_TaskAddCallback, (s32)FuneKanpan_RockDeck, 0xc80);
     }
     if (Engine_GameFlagIsSet(0x927) == 0) {
         SceneState_InitActorSlots8To19();
     }
-    switch (Data_02000240_t.halves[225][0]) {
+    switch (gCell[225][0]) {
     case 4:
         Engine_ActorGet(0)->sprite->priority = 1;
         break;
@@ -118,7 +115,7 @@ void FuneKanpan_ApplyEntryState(void)
         return;
     }
     if (Engine_GameFlagIsSet(0x93e) != 0) {
-        *(s32 *)(Data_03001e70 + 236) = 0x410000;
+        *(s32 *)(gMapWork + 236) = 0x410000;
     } else if (Engine_GameFlagIsSet(0x8a0) != 0) {
         FuneKanpan_PlaceDeckActors();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {

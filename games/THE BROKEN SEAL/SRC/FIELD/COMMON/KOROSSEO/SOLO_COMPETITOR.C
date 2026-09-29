@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
-extern s32 Data_02000240_t[][1];
-extern u8 Korosseo_ZeroWord[];
+/* The game state, read here as words: word 125 holds the solo competitor. */
+extern s32 gGameState[];
 void Engine_PartyRemoveActiveOwner(s32 id);
 void Engine_PartyAddActiveOwner(s32 id);
 void Engine_ObjectAttachWorkTarget(s32 id, s32 target);
@@ -25,17 +25,21 @@ void Korosseo_SelectSoloCompetitor(s32 id)
     Engine_PartyRemoveActiveOwner(3);
     Engine_PartyRemoveActiveOwner(5);
     Engine_PartyAddActiveOwner(id);
-    Data_02000240_t[125][0] = id;
+    gGameState[125] = id;
     Engine_ObjectAttachWorkTarget(id, 0);
     rec = Engine_OwnerGetState(id);
     {
-        /* FAKEMATCH: the zero byte is a HImode pool constant; its short pool
-         * range dumps the literal pool at the first clamp branch. */
-        s32 z = (u16)(u32)Korosseo_ZeroWord;
+        /* FAKEMATCH: a one-halfword aggregate holds the zero byte, so it
+         * loads as a halfword pool constant whose short pool range dumps the
+         * literal pool at the first clamp branch. */
+        struct Half {
+            u16 v;
+        } z;
 
+        z.v = 0;
         *(u16 *)(rec + 56) = *(u16 *)(rec + 52);
         *(u16 *)(rec + 58) = *(u16 *)(rec + 54);
-        rec[0x131] = z;
+        rec[0x131] = z.v;
     }
     v = Engine_MathDivide(*(s16 *)(rec + 56) << 14, *(s16 *)(rec + 52));
     t = 0x4000;

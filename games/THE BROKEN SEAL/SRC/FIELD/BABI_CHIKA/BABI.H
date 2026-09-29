@@ -3,6 +3,7 @@
 #define BABI_H
 
 #include "TYPES.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
@@ -206,7 +207,7 @@ extern u8 Data_0200ba74[];
 extern u8 Data_0200bc0c[];
 extern u8 Data_0200bef4[];
 
-void Engine_ObjectSetPosition();
+void Object_SetPosition();
 s32 Object_CheckMovementCollision();
 s32 Vector_AddPolarOffset();
 void Func_0808b868(u8 *);

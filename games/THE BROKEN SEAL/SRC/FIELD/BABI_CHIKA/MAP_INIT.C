@@ -31,10 +31,10 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
 
     GameFlag_Set(0x200);
     if (GameFlag_IsSet(0x201) != 0) {
-        ((u8* (*)())Engine_ActorGet)(14)[98] = 0;
-        ((u8* (*)())Engine_ActorGet)(14)[89] &= (u8)0xf7;
+        ((u8* (*)())Object_GetById)(14)[98] = 0;
+        ((u8* (*)())Object_GetById)(14)[89] &= (u8)0xf7;
     } else {
-        ((u8* (*)())Engine_ActorGet)(14)[98] = 1;
+        ((u8* (*)())Object_GetById)(14)[98] = 1;
         flags = Actor_Get(14);
         flags += 89;
         value = 8;
@@ -50,10 +50,10 @@ void SceneActor_SetActor14Field98ByFlag200(void)
 
     GameFlag_Set(0x201);
     if (GameFlag_IsSet(0x200) != 0) {
-        ((u8* (*)())Engine_ActorGet)(14)[98] = 0;
-        ((u8* (*)())Engine_ActorGet)(14)[89] &= (u8)0xf7;
+        ((u8* (*)())Object_GetById)(14)[98] = 0;
+        ((u8* (*)())Object_GetById)(14)[89] &= (u8)0xf7;
     } else {
-        ((u8* (*)())Engine_ActorGet)(14)[98] = 1;
+        ((u8* (*)())Object_GetById)(14)[98] = 1;
         p = Actor_Get(14);
         p += 89;
         val = 8;
@@ -98,7 +98,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     u8 *frame;
 
     Event_Begin();
-    actor = (struct FieldActor *)Value1(Engine_ActorGet, 18);
+    actor = (struct FieldActor *)Value1(Object_GetById, 18);
     if ((actor->x.fixed >> 20) == 46) {
         Event_Wait(30);
         rec2 = OverlayObject_CreateAndInitialize(0x2e80000, 0, 0xb80000, 253);
@@ -158,7 +158,7 @@ void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
     Actor_SetAnimation(20, 1);
     Actor_SetChildValue(20, 0);
     Actor_SetAnimation(20, 2);
-    flags = ((u8* (*)())Engine_ActorGet)(20) + 35;
+    flags = ((u8* (*)())Object_GetById)(20) + 35;
     *flags &= 0xFD;
     GameFlag_Set(0x200);
 }
@@ -178,7 +178,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     u8 *slot;
 
     Engine_EventBegin();
-    actor = (struct FieldActor *)Value1(Engine_ActorGet, 19);
+    actor = (struct FieldActor *)Value1(Object_GetById, 19);
     if ((actor->x.fixed >> 20) == 48) {
         if (GameFlag_IsSet(0x202) != 0) {
             Event_Wait(30);
@@ -252,7 +252,7 @@ void SceneActor_ConfigureSlot21AndSetFlag201(void)
     Actor_SetAnimation(21, 1);
     Actor_SetChildValue(21, 0);
     Actor_SetAnimation(21, 2);
-    flags = ((u8* (*)())Engine_ActorGet)(21) + 35;
+    flags = ((u8* (*)())Object_GetById)(21) + 35;
     *flags &= 0xFD;
     GameFlag_Set(0x201);
 }
@@ -322,14 +322,14 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
     Actor_SetAnimation(9, 2);
 
     {
-        u8 *flag = ((u8* (*)())Engine_ActorGet)(9) + 35;
+        u8 *flag = ((u8* (*)())Object_GetById)(9) + 35;
         *flag &= (u8)0xfd;
     }
 
     GameFlag_Set(0x204);
 
-    col = ((Slot_02001a10* (*)())Engine_ActorGet)(9)->col;
-    row = ((Slot_02001a10* (*)())Engine_ActorGet)(9)->row >> 20;
+    col = ((Slot_02001a10* (*)())Object_GetById)(9)->col;
+    row = ((Slot_02001a10* (*)())Object_GetById)(9)->row >> 20;
     Map_CopyCellAttributes(26, 8, 1, 1, col >> 20, row);
 
     desc = Actor_Get(9);

@@ -6,7 +6,13 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathDivide
+	.thumb_func
+Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
+	.global Engine_MathRemainder
+	.thumb_func
+Engine_MathRemainder:
 	overlay_veneer IwramSignedRemainder
 	.global Engine_TaskWait
 	.thumb_func
@@ -46,7 +52,13 @@ SerialRuntime_BeginTransferB:
 SerialRuntime_GetActiveTransfers:
 	overlay_veneer SerialRuntime_GetActiveTransfersFar
 	overlay_veneer Scheduler_SetCallbackMaskFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
 	overlay_veneer Map_ClearLayerEntryFlagFar
 	overlay_veneer Map_SetLayerEntryFlagFar
@@ -63,7 +75,13 @@ UiWork_Finalize:
 	.thumb_func
 Ui_AdjustValueWithoutLimit:
 	overlay_veneer Ui_AdjustValueWithoutLimitFar
+	.global UiText_OpenMessageWindow
+	.thumb_func
+UiText_OpenMessageWindow:
 	overlay_veneer UiText_OpenMessageWindowFar
+	.global UiWork_IsComplete
+	.thumb_func
+UiWork_IsComplete:
 	overlay_veneer UiWork_IsCompleteFar
 	.global RenderOutput_PrepareForRedraw
 	.thumb_func
@@ -81,6 +99,9 @@ UiWork_ClearValueNameTables:
 	.thumb_func
 UiText_DrawQuantity:
 	overlay_veneer UiWork_PushValueSlotFar
+	.global SaveState_ProcessSelectedSlot
+	.thumb_func
+SaveState_ProcessSelectedSlot:
 	overlay_veneer SaveState_ProcessSelectedSlotFar
 	.global Trade_GetOfferState
 	.thumb_func
@@ -165,4 +186,7 @@ Engine_SanctumOpen:
 	.thumb_func
 DebugParty_LoadPreset:
 	overlay_veneer DebugParty_LoadPresetFar
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
 	overlay_veneer AudioCommand_PlayFar

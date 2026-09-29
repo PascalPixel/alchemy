@@ -42,10 +42,9 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
     void Map_ClearLayerEntryFlag();
 
-    u8 *work = *(u8 **)Data_03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
@@ -112,9 +111,8 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
-    extern u8 Data_03001ebc[];
 
-    *(u16 *)(*(u8 **)Data_03001ebc + 0x1d8) += amount;
+    *(u16 *)(*(u8 **)&gEventWork + 0x1d8) += amount;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -122,12 +120,10 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/*
- * Returns the in-image table address 0x02009d9c, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr.
- */
-u8 *SceneData_GetTable9d9c(void)
+/* The scene's message table, laid out after the code. */
+extern u8 Placement_Messages[];
+
+u8 *SceneData_GetMessageTable(void)
 {
-    return (u8 *)0x02009d9c;
+    return Placement_Messages;
 }

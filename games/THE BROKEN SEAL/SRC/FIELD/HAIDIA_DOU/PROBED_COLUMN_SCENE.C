@@ -4,29 +4,19 @@ struct Probe {
     s32 word[6];
 };
 
-s32 Func_0200197a();
-s32 Func_02001990();
-s32 Func_020019a2();
-s32 Func_020019b2();
-s32 Func_02001afa(struct Probe *probe);
-void Func_02001ca6(struct Probe probe);
-void Func_020020f2();
-void Func_02003046();
-s32 Func_0200308c();
-s32 Func_02003098();
-s32 Func_020030c2();
-void Func_020030c6();
-void Func_020030ce();
-void Func_020030da();
-void Func_020030dc();
-s32 Func_020030ec();
-void Func_020030f4();
-void Func_020030fc();
-void Func_0200311c();
-void Func_02003124();
-void Func_02003126();
-void Func_0200314e();
-void Func_020031f2();
+s32 StagedActor_FillGridAttributeRectangle();
+s32 StagedActor_FindClearPosition(struct Probe *probe);
+void SceneActor_MoveAndRedraw(struct Probe probe);
+void SceneActor_WaitActorDescent();
+void Engine_EventBegin();
+s32 Object_GetById();
+void Object_SetModeById();
+void ObjectMotion_OffsetPositionAndResetMotion();
+void ObjectMotion_CommitCurrentPositionAndActivate();
+void Engine_ActorSetSpritePriority();
+void Engine_GameFlagSet();
+void Engine_EventEnd();
+void Audio_PlayCue();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -69,38 +59,38 @@ void HaidiaDou_RunProbedColumnScene(void)
     s32 two;
     struct Probe probe;
 
-    Func_02003046();
-    if (Func_02001afa(&probe) != 0) {
-        Func_02001ca6(probe);
+    Engine_EventBegin();
+    if (StagedActor_FindClearPosition(&probe) != 0) {
+        SceneActor_MoveAndRedraw(probe);
         if ((probe.word[2] >> 20) == 17) {
-            Func_020030c6(probe.word[1], 3);
+            Object_SetModeById(probe.word[1], 3);
             v6 = 0;
-            *(u8 *)(Func_0200308c(probe.word[1]) + 85) = v6;
-            record = Func_02003098(probe.word[1]);
+            *(u8 *)(Object_GetById(probe.word[1]) + 85) = v6;
+            record = Object_GetById(probe.word[1]);
             *(s32 *)(record + 68) = v6;
-            Call3(Func_020030ce, probe.word[1], -12, 0);
-            Func_020030dc(probe.word[1]);
-            Func_020030f4(probe.word[1], 3);
-            Func_0200311c(10, 3);
-            *(u8 *)(Func_020030c2(probe.word[1]) + 85) = 3;
-            Call3(Func_020030fc, probe.word[1], -6, 0);
-            Func_020030da(probe.word[1]);
-            Func_020020f2();
-            Func_02003126(probe.word[1], 8);
+            Call3(ObjectMotion_OffsetPositionAndResetMotion, probe.word[1], -12, 0);
+            ObjectMotion_CommitCurrentPositionAndActivate(probe.word[1]);
+            Object_SetModeById(probe.word[1], 3);
+            Engine_ActorSetSpritePriority(10, 3);
+            *(u8 *)(Object_GetById(probe.word[1]) + 85) = 3;
+            Call3(ObjectMotion_OffsetPositionAndResetMotion, probe.word[1], -6, 0);
+            Object_GetById(probe.word[1]);
+            SceneActor_WaitActorDescent();
+            Object_SetModeById(probe.word[1], 8);
             {
-                u8 *obj = (u8 *)Func_020030ec(probe.word[1]);
+                u8 *obj = (u8 *)Object_GetById(probe.word[1]);
 
                 two = 2;
                 obj[35] = two;
             }
             v5 = 4;
-            Func_0200197a(0, (probe.word[2] >> 20), ((probe.word[4] >> 20) - 2), 1, v5, v6);
-            Func_02001990(2, (probe.word[2] >> 20), ((probe.word[4] >> 20) - 2), 1, v5, v6);
-            Func_020019a2(2, 16, 18, 1, two, v6);
-            Func_020019b2(0, 16, 16, 1, v5, v6);
-            Call1(Func_02003124, 0x203);
-            Func_020031f2(240);
+            StagedActor_FillGridAttributeRectangle(0, (probe.word[2] >> 20), ((probe.word[4] >> 20) - 2), 1, v5, v6);
+            StagedActor_FillGridAttributeRectangle(2, (probe.word[2] >> 20), ((probe.word[4] >> 20) - 2), 1, v5, v6);
+            StagedActor_FillGridAttributeRectangle(2, 16, 18, 1, two, v6);
+            StagedActor_FillGridAttributeRectangle(0, 16, 16, 1, v5, v6);
+            Call1(Engine_GameFlagSet, 0x203);
+            Audio_PlayCue(240);
         }
     }
-    Func_0200314e();
+    Engine_EventEnd();
 }

@@ -3,31 +3,46 @@
 use crate::compiler::routing::CompilerTarget;
 
 macro_rules! target_registry {
-    ($($id:ident => ($name:literal, $rom:literal, $define:literal, $output:literal)),+ $(,)?) => {
+    ($($id:ident => ($name:literal, $rom:literal, $define:literal, $output:literal, $sha256:literal)),+ $(,)?) => {
         #[repr(u8)]
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
         pub enum DecompTargetId { $($id),+ }
 
         pub const TARGET_IDS: [DecompTargetId; 12] = [$(DecompTargetId::$id),+];
-        const TARGETS: [(&str, &str, &str, &str); 12] = [$(
-            ($name, $rom, $define, $output)
+        const TARGETS: [(&str, &str, &str, &str, &str); 12] = [$(
+            ($name, $rom, $define, $output, $sha256)
         ),+];
     };
 }
 
+// Each edition's approved reference ROM is known by its SHA-256 alone: an
+// intentional record that admits the builder's own copy, never a source of
+// build input.
 target_registry! {
-    TbsJa => ("tbs-ja", "roms/tbs-ja.gba", "TBS_EDITION_JA", "out/tbs-ja"),
-    TbsEn => ("tbs-en", "roms/tbs-en.gba", "TBS_EDITION_EN", "out/tbs-en"),
-    TbsDe => ("tbs-de", "roms/tbs-de.gba", "TBS_EDITION_DE", "out/tbs-de"),
-    TbsEs => ("tbs-es", "roms/tbs-es.gba", "TBS_EDITION_ES", "out/tbs-es"),
-    TbsFr => ("tbs-fr", "roms/tbs-fr.gba", "TBS_EDITION_FR", "out/tbs-fr"),
-    TbsIt => ("tbs-it", "roms/tbs-it.gba", "TBS_EDITION_IT", "out/tbs-it"),
-    TlaJa => ("tla-ja", "roms/tla-ja.gba", "TLA_EDITION_JA", "out/tla-ja"),
-    TlaEn => ("tla-en", "roms/tla-en.gba", "TLA_EDITION_EN", "out/tla-en"),
-    TlaDe => ("tla-de", "roms/tla-de.gba", "TLA_EDITION_DE", "out/tla-de"),
-    TlaEs => ("tla-es", "roms/tla-es.gba", "TLA_EDITION_ES", "out/tla-es"),
-    TlaFr => ("tla-fr", "roms/tla-fr.gba", "TLA_EDITION_FR", "out/tla-fr"),
-    TlaIt => ("tla-it", "roms/tla-it.gba", "TLA_EDITION_IT", "out/tla-it"),
+    TbsJa => ("tbs-ja", "roms/tbs-ja.gba", "TBS_EDITION_JA", "out/tbs-ja",
+        "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26"),
+    TbsEn => ("tbs-en", "roms/tbs-en.gba", "TBS_EDITION_EN", "out/tbs-en",
+        "c14f1151897e8d73f25ffdd67e21eebb6dc57973ff2458872ee89fa9060aaca1"),
+    TbsDe => ("tbs-de", "roms/tbs-de.gba", "TBS_EDITION_DE", "out/tbs-de",
+        "d7a61803600a002bc80be8063a7d8d281bc77c2261cfb812cea552d3f95f3dd1"),
+    TbsEs => ("tbs-es", "roms/tbs-es.gba", "TBS_EDITION_ES", "out/tbs-es",
+        "c067f04d05a65677eca3b8e3609a6ef9b86898604ef252ccf54c2b41d49f2eb8"),
+    TbsFr => ("tbs-fr", "roms/tbs-fr.gba", "TBS_EDITION_FR", "out/tbs-fr",
+        "5eb59f508c25548fb0ef72911cc75a81867f16b0ef8fca2a22cb6d026a862cd8"),
+    TbsIt => ("tbs-it", "roms/tbs-it.gba", "TBS_EDITION_IT", "out/tbs-it",
+        "fc6ef60c1c271de7352be610eb4dca29ab5edea1e4b33f05a548a65f522a452d"),
+    TlaJa => ("tla-ja", "roms/tla-ja.gba", "TLA_EDITION_JA", "out/tla-ja",
+        "19dd48b74726f323cd829e226b60aa1b373c51fb2e840804efe2d2dc2891a890"),
+    TlaEn => ("tla-en", "roms/tla-en.gba", "TLA_EDITION_EN", "out/tla-en",
+        "4199d82f845edf3e2e92f3783bca00190b5bc102d7c8aa339b951de280b1e6cc"),
+    TlaDe => ("tla-de", "roms/tla-de.gba", "TLA_EDITION_DE", "out/tla-de",
+        "993cfc34b6b28f6a9bfb135dc04023ee2b64693841ce90ab89536b97fbb4afed"),
+    TlaEs => ("tla-es", "roms/tla-es.gba", "TLA_EDITION_ES", "out/tla-es",
+        "c6bb68229971c36febe8bdf5081a4aa658c5c5417a2f4d3c7e0c3762c3ecb18a"),
+    TlaFr => ("tla-fr", "roms/tla-fr.gba", "TLA_EDITION_FR", "out/tla-fr",
+        "8f9a854618332d4a2886170a03ab0b10624d1202ea8562dabf0002807f7b56a8"),
+    TlaIt => ("tla-it", "roms/tla-it.gba", "TLA_EDITION_IT", "out/tla-it",
+        "7f3fbb2ee3e493784e63069899b5a53cf79742cb1a64560094c570b0ed3a05c2"),
 }
 
 impl DecompTargetId {
@@ -45,6 +60,8 @@ impl std::fmt::Display for DecompTargetId {
 pub struct DecompTarget {
     pub id: DecompTargetId,
     pub rom: &'static str,
+    /// The approved reference ROM's SHA-256.
+    pub rom_sha256: &'static str,
     pub rom_size: u64,
     pub compiler: CompilerTarget,
     pub edition_define: &'static str,
@@ -57,6 +74,16 @@ pub struct DecompTarget {
 }
 
 impl DecompTarget {
+    /// Refuse `rom` unless it is this edition's approved reference ROM.
+    pub fn verify_reference(&self, rom: &[u8]) -> Result<(), String> {
+        if crate::compiler::sha256::hex(rom) != self.rom_sha256 {
+            return Err(format!(
+                "ROM differs from the approved {} reference ROM",
+                self.id
+            ));
+        }
+        Ok(())
+    }
     /// The game's physical root, `games/THE BROKEN SEAL` or `games/THE LOST AGE`.
     pub fn game_dir(&self) -> &'static str {
         self.source_dir
@@ -107,12 +134,13 @@ pub fn decomp_target(id: Option<&str>) -> Result<DecompTarget, String> {
 
 pub fn target_for(id: DecompTargetId) -> DecompTarget {
     let index = id as usize;
-    let (name, rom, edition_define, output_dir) = TARGETS[index];
+    let (name, rom, edition_define, output_dir, rom_sha256) = TARGETS[index];
     let (compiler, rom_size, source_dir, asm_dir, overlay_entry_veneers) = PRODUCTS[index / 6];
     debug_assert_eq!(name, id.as_str());
     DecompTarget {
         id,
         rom,
+        rom_sha256,
         rom_size,
         compiler,
         edition_define,
@@ -169,6 +197,23 @@ mod tests {
         );
         assert_eq!(tla.overlay_entry_veneers, 7);
         assert_eq!(target_for(DEFAULT_TARGET).overlay_entry_veneers, 6);
+    }
+    #[test]
+    fn each_edition_admits_only_its_own_reference_rom() {
+        let mut identities = std::collections::HashSet::new();
+        for id in TARGET_IDS {
+            let target = target_for(id);
+            assert_eq!(target.rom, format!("roms/{id}.gba"));
+            assert_eq!(target.rom_sha256.len(), 64);
+            assert!(target
+                .rom_sha256
+                .bytes()
+                .all(|byte| matches!(byte, b'0'..=b'9' | b'a'..=b'f')));
+            assert!(identities.insert(target.rom_sha256));
+            assert!(target
+                .verify_reference(b"a local ROM is not an approved reference")
+                .is_err());
+        }
     }
     #[test]
     fn registry_covers_isolated_targets() {

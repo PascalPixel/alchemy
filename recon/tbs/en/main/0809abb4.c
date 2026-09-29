@@ -40,7 +40,7 @@ extern struct BattleEffectMotionState *Data_03001f30;
 struct BattleEffectMotionObject *Func_08096c80(s32, s32, s32, s32);
 void Func_08009080(struct BattleEffectMotionObject *, s32);
 void Func_08097384(void);
-s32 Func_080022ec(s32, s32);
+s32 Math_Div(s32, s32);
 void Func_080030f8(s32);
 void Func_080f9010(s32);
 void Func_080974d8(s32 *);
@@ -57,7 +57,7 @@ static __inline__ s32 InterpolateCoordinate(s32 from, s32 to, s32 step)
     s32 delta;
 
     delta = to - from;
-    return from + Func_080022ec(step * delta, 10);
+    return from + Math_Div(step * delta, 10);
 }
 
 void BattleEffect_RunFallbackObjectTransition(void)
@@ -93,7 +93,7 @@ Interpolate:
         object->x = InterpolateCoordinate(origin.x, destination.x, step);
         object->y = InterpolateCoordinate(origin.y, destination.y, step);
         object->z = InterpolateCoordinate(origin.z, destination.z, step);
-        scale = Func_080022ec(step * 0xc000, 10) + 0x4000;
+        scale = Math_Div(step * 0xc000, 10) + 0x4000;
         object->scale_x = scale;
         object->scale_y = scale;
         step++;

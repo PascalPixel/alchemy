@@ -4,9 +4,6 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define CreateOverlayObject Func_02001b22
-#define SetOverlayObjectMode Func_02001b7c
-#define SetOverlayObjectSlot Func_02001c2c
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "CONFIGURED_EFFECT_SPAWN.H"

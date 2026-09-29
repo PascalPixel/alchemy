@@ -4,10 +4,7 @@
 #include "TYPES.H"
 
 void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 wait);
-s32 Func_080ed408(s32 kind, s32 width, s32 height, s32 count, u32 mode);
-
-#define Resource_LoadAndDecompress Resource_LoadAndDecompress
-#define BattleEffect_LoadWork      Func_080ed408
+s32 BattleEffect_LoadWork(s32 kind, s32 width, s32 height, s32 count, u32 mode);
 
 /* The rectangle blitters return a value every caller ignores; declaring it
    still matters, because a call that sets r0 changes how the scheduler

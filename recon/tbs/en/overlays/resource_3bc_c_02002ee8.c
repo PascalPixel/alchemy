@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define CommandInterpolationRenderer_Update Func_02002ee8
-
 /*
  * resource_3bc owner at 0x02002ee8, 1,264 bytes.  This is the callback
  * installed by resource_3bc_c_020033d8.c at 0x0200aee9.  It starts with the
@@ -44,7 +42,7 @@ extern void Func_02007ad2();
 extern void Func_02007b4e();
 extern void Func_02007bac();
 extern void Func_02007c00();
-void Func_02002ee8(void)
+void CommandInterpolationRenderer_Update(void)
 {
     volatile s16 *paletteSlot = (volatile s16 *)0x0200d9a4;
     volatile s16 *stateCell = (volatile s16 *)0x0200dbdc;

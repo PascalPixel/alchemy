@@ -3,7 +3,7 @@
  * for FIELD/HAIDIA_ARASHI/F_031AC.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Remaining: 1133 differing halfwords. Fresh decompile with
- * Local_030003e0 aliased to Func_02004634 (IWRAM import). WALL: far from
+ * Local_030003e0 aliased to Local_030003e0 (IWRAM import). WALL: far from
  * exact — hand-write from inspect --asm next; prior Func_02 recon was
  * 1309. */
 #include "TYPES.H"
@@ -61,8 +61,7 @@ s32 Engine_ActorGet();
 void Engine_EventWait();
 void Engine_ActorSetSpeed();
 s32 Engine_ActorEnableActionCallback();
-s32 Func_02004634();
-#define Local_030003e0 Func_02004634
+s32 Local_030003e0();
 s32 Engine_WorkSetValuesIfNonNegative();
 s32 Engine_RandomNext();
 void Engine_CameraSetSpeed();

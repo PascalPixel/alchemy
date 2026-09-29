@@ -1026,7 +1026,7 @@ void Scene_RunTransitionCue(void)
     s32 record;
 
     Event_Begin();
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x204;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x204;
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);

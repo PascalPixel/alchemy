@@ -27,7 +27,7 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
     s32 next_offset;
     u8 *icon;
 
-    unit = (u8 *)BattleUnit_Get(unit_id);
+    unit = (u8 *)Owner_GetStateFar(unit_id);
     x = 8;
     y = 8;
     if (window != 0) {

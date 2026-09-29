@@ -266,7 +266,7 @@ void VinasuChojo_RunActorTransition(void)
     ObjectTable_Snapshot();
     Event_SetPairWork1c0((s32)Value_00000002, 91);
     { s32 white = 0x7fff; *(u16 *)0x05000000 = white; }
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c8)) = 1;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c8)) = 1;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
 }

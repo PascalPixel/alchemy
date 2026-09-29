@@ -14,8 +14,7 @@ struct IoWriteQueue {
     u32 entries[32][3];
 };
 
-extern struct IoWriteQueue Data_02002090;
-#define gIoWriteQueue Data_02002090
+extern struct IoWriteQueue gIoWriteQueue;
 
 void QueueIoWriteDelay1(u32 address, u32 value);
 void QueueIoWriteDelay2(u32 address, u32 value);

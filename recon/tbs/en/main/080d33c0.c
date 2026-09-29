@@ -64,7 +64,7 @@ s32 Func_080d33c0(s32 actor) {
     temp_r8_25 = temp_r7_17 + 0x7828;
     Func_080cd594(1);
     temp_r0_28 = Func_08002f40((s32)&Value_000000cd);
-    Func_080072f0(0x05000000, temp_r0_28, 0x80, 0x03001388);
+    _call_via_r3(0x05000000, temp_r0_28, 0x80, 0x03001388);
     Func_08005340(temp_r0_28 + 0x80, temp_r7_17);
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     rectangle[0] = (DrawRectangleFn)heap_cache[7];

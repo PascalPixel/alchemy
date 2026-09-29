@@ -22,7 +22,7 @@ extern void Func_08004278(const void *);
 extern void Func_080091e0(void *, s32);
 extern void Func_08009240(void *, s32);
 extern void Func_08015040(s32, s32);
-extern s32 Func_080770c0(s32);
+extern s32 GameFlag_TestFar(s32);
 extern void Func_080f9010(s32);
 
 extern u8 *Data_03001f30;
@@ -54,7 +54,7 @@ void RunBattleEffect16(void)
         index = 145;
         ((s32 *)Data_02000240)[index] = 0x09600000;
         index = 146;
-        *(s8 *)&((s32 *)Data_02000240)[index] = Func_080770c0(0x145);
+        *(s8 *)&((s32 *)Data_02000240)[index] = GameFlag_TestFar(0x145);
         Func_08009240(object, zero);
         *(void **)(object + 108) = (void *)0x0809b5dd;
         *(s16 *)(object + 100) = zero;

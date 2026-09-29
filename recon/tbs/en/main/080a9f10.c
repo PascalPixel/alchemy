@@ -72,18 +72,16 @@ struct Runtime_080a9f10 {
 
 extern struct Runtime_080a9f10 *Data_03001f2c;
 
-struct Object_080a9f10 *Func_08077008(s32);
-void Func_08077010(s32);
-struct BattleAction *Func_08077080(s32);
-void Func_08077128(s32);
-s32 Func_08077190(s32, s32, s32);
+struct Object_080a9f10 *Owner_GetStateFar(s32);
+void BattleUnit_Recalculate(s32);
+struct BattleAction *BattleAction_Get(s32);
+void Owner_RecalculateRatiosFar(s32);
+s32 Battle_CalcRestore(s32, s32, s32);
 s32 Func_08004458(void);
 void Func_08015120(s32, s32);
-s32 Func_080022ec(s32, s32);
+s32 Math_Div(s32, s32);
 
-#define BattleFx_ApplyToTargets Func_080a9f10
-
-s32 BattleFx_ApplyToTargets(
+s32 BattleEffect_ApplyToTargets(
     s32 effect_id,
     s32 source_id,
     s32 target_id,
@@ -102,23 +100,23 @@ s32 BattleFx_ApplyToTargets(
     s32 amount;
     s32 result_code;
 
-    effect = Func_08077080(effect_id);
+    effect = BattleAction_Get(effect_id);
     runtime = Data_03001f2c;
     changed = 0;
     result_code = 0;
     later_target = 0;
 
     if (target_id != 9)
-        target = Func_08077008(target_id);
+        target = Owner_GetStateFar(target_id);
     else
-        target = Func_08077008(0);
+        target = Owner_GetStateFar(0);
 
     index = 0;
     if (runtime->target_count != 0) {
         do {
             if (effect->range == 0xff) {
                 target_id = runtime->targets[index];
-                target = Func_08077008(target_id);
+                target = Owner_GetStateFar(target_id);
             }
 
             amount = effect->power;
@@ -128,12 +126,12 @@ s32 BattleFx_ApplyToTargets(
                     if (effect->damage_class != 4) {
                         s32 stat_offset;
 
-                        source = Func_08077008(source_id);
+                        source = Owner_GetStateFar(source_id);
                         stat_offset = effect->damage_class * 4 + 0x48;
                         scale = *(s16 *)((u8 *)source + stat_offset);
                     } else
                         scale = 100;
-                    amount = Func_08077190(amount, scale, 0x100);
+                    amount = Battle_CalcRestore(amount, scale, 0x100);
                 }
 
                 if (target->hp <= 0) {
@@ -153,7 +151,7 @@ s32 BattleFx_ApplyToTargets(
                         } else if (later_target == 0) {
                             result_code = 1;
                         }
-                        Func_08077128(target_id);
+                        Owner_RecalculateRatiosFar(target_id);
                         changed = 1;
                         if (effect->range == 0xff) {
                             later_target = 1;
@@ -224,7 +222,7 @@ s32 BattleFx_ApplyToTargets(
                     } else if (later_target == 0) {
                         result_code = 6;
                     }
-                    Func_08077128(target_id);
+                    Owner_RecalculateRatiosFar(target_id);
                     changed = 1;
                     if (effect->range == 0xff) {
                         later_target = 1;
@@ -258,7 +256,7 @@ s32 BattleFx_ApplyToTargets(
                     } else if (later_target == 0) {
                         result_code = 1;
                     }
-                    Func_08077128(target_id);
+                    Owner_RecalculateRatiosFar(target_id);
                     changed = 1;
                 }
                 break;
@@ -276,7 +274,7 @@ s32 BattleFx_ApplyToTargets(
                     } else if (later_target == 0) {
                         result_code = 6;
                     }
-                    Func_08077128(target_id);
+                    Owner_RecalculateRatiosFar(target_id);
                     changed = 1;
                 }
                 break;
@@ -284,7 +282,7 @@ s32 BattleFx_ApplyToTargets(
             case EFX_REVIVE_FULL:
                 if (target->hp == 0) {
                     target->hp = target->max_hp;
-                    Func_08077128(target_id);
+                    Owner_RecalculateRatiosFar(target_id);
                     changed = 1;
                     if (later_target == 0)
                         result_code = 0xc;
@@ -296,7 +294,7 @@ s32 BattleFx_ApplyToTargets(
             case EFX_REVIVE_HALF:
                 if (target->hp == 0) {
                     target->hp = target->max_hp / 2;
-                    Func_08077128(target_id);
+                    Owner_RecalculateRatiosFar(target_id);
                     if (later_target == 0)
                         result_code = 0xc;
                 } else if (later_target == 0) {
@@ -306,9 +304,9 @@ s32 BattleFx_ApplyToTargets(
 
             case EFX_REVIVE_80:
                 if (target->hp == 0) {
-                    target->hp = Func_080022ec(
+                    target->hp = Math_Div(
                         target->max_hp * 7, 10);
-                    Func_08077128(target_id);
+                    Owner_RecalculateRatiosFar(target_id);
                     if (later_target == 0)
                         result_code = 0xc;
                 } else if (later_target == 0) {
@@ -342,7 +340,7 @@ s32 BattleFx_ApplyToTargets(
     index = 0;
     if (index < runtime->target_count) {
         do {
-            Func_08077010(runtime->targets[index]);
+            BattleUnit_Recalculate(runtime->targets[index]);
             index = (u8)(index + 1);
         } while (index < runtime->target_count);
     }

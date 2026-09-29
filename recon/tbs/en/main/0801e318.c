@@ -7,8 +7,6 @@
 
 extern u8 *Data_03001e8c;
 
-#define UiWindow_MarkVisibleTileAttributes Func_0801e318
-
 /* Mark attributes used by the visible 30 by 20 tilemap and clear stale marks. */
 void UiWindow_MarkVisibleTileAttributes(void)
 {

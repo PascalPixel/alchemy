@@ -14,62 +14,38 @@ static __inline__ void bump_step(s32 amount)
 }
 #define SCENE_FIELD_1C8 (*(s32 *)(SCENE_WORK + 0x1c8))
 
-void Func_02002410();
-#define Scene_CallPairWith10 Func_02002410
-void Func_0200244a();
-#define State_ForwardMaskedHalfwordWith10 Func_0200244a
-s32 Func_020032d2();
-#define GameFlag_IsSet Func_020032d2
+void Scene_CallPairWith10();
+void State_ForwardMaskedHalfwordWith10();
+s32 GameFlag_IsSet();
 void Data_0200abc4();
-void Func_020033a2();
-#define Battle_WaitMode0 Func_020033a2
-void Func_02003314();
-#define Battle_Reset Func_02003314
-void Func_020039a2();
-#define Battle_SchedShoulder Func_020039a2
-s32 Func_02003634();
-#define UiWork_WaitThenFinalizeCapacity Func_02003634
+void Battle_WaitMode0();
+void Battle_Reset();
+void Battle_SchedShoulder();
+s32 UiWork_WaitThenFinalizeCapacity();
 s32 Func_02003548();
 void Func_0200351e();
-void Func_02003668();
-#define Motion_EnableActCb Func_02003668
-void Func_02003688();
-#define Motion_MarkActiveAndSetActionCallback Func_02003688
-void Func_020035ca();
-#define Motion_ResetPosMode2 Func_020035ca
-void Func_0200354c();
-#define Motion_SetPosReset Func_0200354c
-void Func_020035b2();
-#define Motion_SetHPosTerrain Func_020035b2
-void Func_02003510();
-#define Object_SetModeById Func_02003510
-void Func_0200343c();
-#define Motion_CallWaitAnim Func_0200343c
-void Func_020033d8();
-#define Motion_SetVarCb Func_020033d8
-void Func_020033a4();
-#define Motion_SetVarCbObj Func_020033a4
-void Data_0200ac94();
-#define SceneWork_SetStepValue Data_0200ac94
+void Motion_EnableActCb();
+void Motion_MarkActiveAndSetActionCallback();
+void Motion_ResetPosMode2();
+void Motion_SetPosReset();
+void Motion_SetHPosTerrain();
+void Object_SetModeById();
+void Motion_CallWaitAnim();
+void Motion_SetVarCb();
+void Motion_SetVarCbObj();
+void SceneWork_SetStepValue();
 void Func_020036ac();
 void Func_020034c4();
-void Func_020033fa();
-#define Motion_ArmCb Func_020033fa
-void Func_02003486();
-#define BattleFx_SpawnLinked Func_02003486
+void Motion_ArmCb();
+void BattleFx_SpawnLinked();
 void Func_020034ac();
-void Func_02003476();
-#define Motion_SetSpeedLim Func_02003476
-void Func_0200375a();
-#define Motion_CamBounds Func_0200375a
-void Data_0200acec();
-#define Object_CommitPositionThenWaitIfModeZero Data_0200acec
-u8 *Func_02003480();
-#define RuntimeBlock_GetOffset1e0Pointer Func_02003480
+void Motion_SetSpeedLim();
+void Motion_CamBounds();
+void Object_CommitPositionThenWaitIfModeZero();
+u8 *RuntimeBlock_GetOffset1e0Pointer();
 void Func_02003a98();
 void Func_020039be();
-void Func_020039ca();
-#define Motion_SetSpeed Func_020039ca
+void Motion_SetSpeed();
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {

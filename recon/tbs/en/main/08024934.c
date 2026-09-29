@@ -154,7 +154,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         src = available + last;
         do {
             id = *src;
-            required = Func_080771e0(id)->djinn_required;
+            required = SummonDefinition_Get(id)->djinn_required;
             supply = standby;
             element = 0;
             while (*required <= *supply) {
@@ -192,7 +192,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
                 window->width - 2, 1, 15);
             Ui_FillVramBlockPattern();
-            summon = Func_080771e0(ordered[page + row]);
+            summon = SummonDefinition_Get(ordered[page + row]);
             UiText_CopyMessageString(summon->name_message_id + (s32)&Value_0000053a, text, 52);
             UiText_RenderWideStringAtOffset(text, description, 0, 4);
             mask = 0;
@@ -223,7 +223,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
 
                     index = 0;
                     while (index <= 3 && (id = ordered[page + index]) != 32) {
-                        summon = Func_080771e0(id);
+                        summon = SummonDefinition_Get(id);
                         required = summon->djinn_required;
                         supply = standby;
                         element = 0;
@@ -239,7 +239,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
                         sprites[index].attr.tile = glyph;
                         if (!affordable)
                             UiWork_SetParamNibble(2);
-                        UiText_DrawCharacterAtOffset(Func_080771e0(id)->name_message_id + (s32)&Value_00000333,
+                        UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&Value_00000333,
                             window, 16, index * 16);
                         required = summon->djinn_required;
                         col = 13;

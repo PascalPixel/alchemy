@@ -106,7 +106,7 @@ extern u8 Data_0200e250[];
 extern u8 Data_0200de30[];
 extern u8 Data_0200cf2c[];
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
-extern u8 Value_00000854;
+extern u8 MsgNoEffect;
 extern u8 Value_000012c3;
 extern s32 Data_0200e4a8[];
 extern s32 Data_0200e4c0[];
@@ -519,13 +519,13 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 /* Runs the second part of an opening sequence: two parameterised calls, then
- * (only if a flag read via Value_00000854 is clear) a short block of setup
+ * (only if a flag read via MsgNoEffect is clear) a short block of setup
  * calls, then unconditionally sets a scene work field and two more calls. */
 void FieldScene_RunOpeningSequenceSecond(void)
 {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384); /* object 0, speed_limit 32768, acceleration 16384 */
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408); /* object 0, x 744, z 408 */
-    if (GameFlag_IsSet((s32)&Value_00000854) == 0) {
+    if (GameFlag_IsSet((s32)&MsgNoEffect) == 0) {
         Event_Begin();
         SceneWork_SetStepValue_1_020019e4((s32)&Value_000012c3);
         Event_ShowMessage(8, 0); /* action 8 */

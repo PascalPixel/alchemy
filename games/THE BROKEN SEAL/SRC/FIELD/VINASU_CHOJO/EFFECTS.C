@@ -3,19 +3,19 @@
 
 void SceneEffect_UpdateObjectByFrameParity(s32 a)
 {
-    if (*(s32 *)0x03001e40 & 2) {
+    if (*(s32 *)&gFrameCount & 2) {
         Object_SetPartPalettes(a, 7);
     } else {
         Object_SetPartPalettes(a, 0);
     }
-    if (IwramUnsignedRemainder(*(s32 *)0x03001e40, 15) == 0) {
+    if (IwramUnsignedRemainder(*(s32 *)&gFrameCount, 15) == 0) {
         VinasuChojo_SpawnLinkedPairEffects(a);
     }
 }
 
 void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
-    volatile u32 *p = (u32 *)0x03001e40;
+    volatile u32 *p = (u32 *)&gFrameCount;
 
     if (*p & 1) {
         Object_SetPartPalettes(a, IwramUnsignedRemainder(*p >> 1, 6));

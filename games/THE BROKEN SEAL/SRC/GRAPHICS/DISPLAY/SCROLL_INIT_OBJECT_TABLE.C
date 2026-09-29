@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
+extern u8 Data_02004c0c[];
 
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
@@ -24,13 +25,13 @@ void DisplayScroll_InitObjectTable(void)
     u32 i;
     u32 j;
 
-    *(void **)0x02004c0c = Runtime_BumpAllocateAlternatePool(0x400);
+    *(void **)Data_02004c0c = Runtime_BumpAllocateAlternatePool(0x400);
     fill = 0;
     Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, (volatile u32 *)0x040000d4);
     fill = 0x11111111;
     Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, (volatile u32 *)0x040000d4);
 
-    entry = *(u32 **)0x02004c0c;
+    entry = *(u32 **)Data_02004c0c;
     for (i = 0; i < 8; i++) {
         u32 *q = entry;
 

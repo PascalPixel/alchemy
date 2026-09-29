@@ -1,6 +1,7 @@
 #include "TYPES.H"
+extern u8 gMapCellBuffer[];
 
-#define MAP_CELLS ((u32 *)0x02010000)
+#define MAP_CELLS ((u32 *)gMapCellBuffer)
 #define MAP_CELL_TILE_MASK 0x00000fff
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000
 

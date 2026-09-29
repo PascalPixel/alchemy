@@ -1,10 +1,10 @@
 #include "TYPES.H"
 
 void Engine_EventBegin();
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_GameFlagSet();
 void Engine_GameFlagClear();
-s32 Engine_MapCopyCellAttributes();
+s32 Map_CopyCellAttributeRect();
 void Engine_EventEnd();
 
 
@@ -37,7 +37,7 @@ void MakyuriHeya_SyncBlockFlags(void)
 
     Engine_EventBegin();
     for (i = 0, flag = 0x330; i <= 3; i++, flag += 2) {
-        x = *(s32 *)(Value1(Engine_ActorGet, i + 15) + 8) / 0x100000;
+        x = *(s32 *)(Value1(Object_GetById, i + 15) + 8) / 0x100000;
         if (x == (i << 2) + 39) {
             Engine_GameFlagSet(flag);
             Engine_GameFlagClear(flag + 1);
@@ -49,19 +49,19 @@ void MakyuriHeya_SyncBlockFlags(void)
             Engine_GameFlagClear(flag + 1);
         }
     }
-    x = *(s32 *)(Value1(Engine_ActorGet, 19) + 8) / 0x100000;
+    x = *(s32 *)(Value1(Object_GetById, 19) + 8) / 0x100000;
     if (x == 57) {
         Call1(Engine_GameFlagSet, 0x338);
         Call1(Engine_GameFlagClear, 0x339);
-        Call6(Engine_MapCopyCellAttributes, 53, 10, 1, 1, 58, 7);
+        Call6(Map_CopyCellAttributeRect, 53, 10, 1, 1, 58, 7);
     } else if (x == 59) {
         Call1(Engine_GameFlagSet, 0x339);
         Call1(Engine_GameFlagClear, 0x338);
-        Call6(Engine_MapCopyCellAttributes, 53, 10, 1, 1, 58, 7);
+        Call6(Map_CopyCellAttributeRect, 53, 10, 1, 1, 58, 7);
     } else {
         Call1(Engine_GameFlagClear, 0x338);
         Call1(Engine_GameFlagClear, 0x339);
-        Call6(Engine_MapCopyCellAttributes, 53, 11, 1, 1, 58, 7);
+        Call6(Map_CopyCellAttributeRect, 53, 11, 1, 1, 58, 7);
     }
     Engine_EventEnd();
 }

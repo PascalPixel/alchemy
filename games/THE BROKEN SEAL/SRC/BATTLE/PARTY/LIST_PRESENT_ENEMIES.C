@@ -16,13 +16,13 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
     entry_limit = 6;
     battle_result = 0;
     if (output != NULL) {
-        if (BattleFlag_Test(0x16C) != 0) {
+        if (GameFlag_TestFar(0x16C) != 0) {
             entry_limit = 3;
         }
         id = 0x80;
         entry_limit += 0x80;
         for (; id < entry_limit; id += 1) {
-            if (FIELD_AT_OFFSET(BattleUnit_Get(id), u8 *, 0x12A) != 0) {
+            if (FIELD_AT_OFFSET(Owner_GetStateFar(id), u8 *, 0x12A) != 0) {
                 *output = (s16)id;
                 entry_count += 1;
                 output += 1;

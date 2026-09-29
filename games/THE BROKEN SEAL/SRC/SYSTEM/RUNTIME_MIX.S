@@ -219,54 +219,54 @@ IwramSoundMixArm:
 	mul	r9, r7, ip
 @ 実行時に補間命令へ置換される自己書換え雛形。
 AlchemyUncredited_08000f98:
-	.inst 0xfedcba98
-	.inst 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
 AlchemyUncreditedEnd_08000f98:
 	mlane	r0, fp, r9, r0
 AlchemyUncredited_08000fa4:
-	.inst 0xfedcba98
-	.inst 0xfedcba98
-	.inst 0xfedcba98
-	.inst 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
 AlchemyUncreditedEnd_08000fa4:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08000fbc:
-	.inst 0xfedcba98
-	.inst 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
 AlchemyUncreditedEnd_08000fbc:
 	mlane	r1, fp, r9, r1
 AlchemyUncredited_08000fc8:
-	.inst 0xfedcba98
-	.inst 0xfedcba98
-	.inst 0xfedcba98
-	.inst 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
 AlchemyUncreditedEnd_08000fc8:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08000fe0:
-	.inst 0xfedcba98
-	.inst 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
 AlchemyUncreditedEnd_08000fe0:
 	mlane	sl, fp, r9, sl
 AlchemyUncredited_08000fec:
-	.inst 0xfedcba98
-	.inst 0xfedcba98
-	.inst 0xfedcba98
-	.inst 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
 AlchemyUncreditedEnd_08000fec:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08001004:
-	.inst 0xfedcba98
-	.inst 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
 AlchemyUncreditedEnd_08001004:
 	mlane	lr, fp, r9, lr
 AlchemyUncredited_08001010:
-	.inst 0xfedcba98
-	.inst 0xfedcba98
-	.inst 0xfedcba98
-	.inst 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
+	.4byte 0xfedcba98
 AlchemyUncreditedEnd_08001010:
 	bic	r7, r7, r2, asr #1
 	stmia	r5!, {r0, r1, sl, lr}

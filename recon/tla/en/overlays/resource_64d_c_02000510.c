@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Scene_RunSoldierInterception Func_02000510
-
 void Func_020023a4();
 void Func_020026f4();
 void Func_020027b0();

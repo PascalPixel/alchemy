@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "MAKYURI.H"
 
 struct ColumnProbe {
     s32 word[6];
@@ -7,7 +7,7 @@ struct ColumnProbe {
 
 s32 StagedActor_FindClearPosition(struct ColumnProbe *probe);
 void SceneActor_MoveAndRedraw(struct ColumnProbe probe);
-s32 MakyuriHeya_RefreshColumns(void);
+s32 MakyuriHeya_StartPillarPush(void);
 void SceneEffect_SpawnParticleRowsByMode(s32 mode);
 void FieldScene_RunPrimarySequence(s32 mode);
 s32 SceneData_ApplyTableA2c5AndReturnZero(void);
@@ -43,7 +43,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
             GameFlag_Set(0x319);
             GameFlag_Clear(0x31a);
             GameFlag_Clear(0x31b);
-            MakyuriHeya_RefreshColumns();
+            MakyuriHeya_StartPillarPush();
             if (start == 54)
                 SceneEffect_SpawnParticleRowsByMode(0);
             else if (start == 48)
@@ -54,7 +54,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
             GameFlag_Set(0x31a);
             GameFlag_Clear(0x31b);
             GameFlag_Clear(0x319);
-            if (MakyuriHeya_RefreshColumns() != 0) {
+            if (MakyuriHeya_StartPillarPush() != 0) {
                 s32 x;
 
                 SceneEffect_SpawnParticleRowsByMode(2);
@@ -71,7 +71,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 Event_Wait(40);
                 GameFlag_Set(0x877);
                 ColorBuffer_ApplySource(0x10000, 0);
-                *(s32 *)&(*(struct GameState **)0x03001ebc)->scene = 0x100;
+                *(s32 *)&(*(struct GameState **)&gEventWork)->scene = 0x100;
                 Event_CloseScreen();
                 Event_WaitForScreen();
                 Event_RequestExit(15);
@@ -85,7 +85,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
             GameFlag_Set(0x31b);
             GameFlag_Clear(0x319);
             GameFlag_Clear(0x31a);
-            MakyuriHeya_RefreshColumns();
+            MakyuriHeya_StartPillarPush();
             SceneEffect_SpawnParticleRowsByMode(0);
         wait:
             Event_Wait(60);
@@ -93,7 +93,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
             GameFlag_Clear(0x319);
             GameFlag_Clear(0x31a);
             GameFlag_Clear(0x31b);
-            MakyuriHeya_RefreshColumns();
+            MakyuriHeya_StartPillarPush();
             if (start == 47)
                 SceneEffect_SpawnParticleRowsByMode(2);
             else if (start == 48)

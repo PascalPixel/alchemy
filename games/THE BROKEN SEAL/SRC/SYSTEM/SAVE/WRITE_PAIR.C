@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "RUNTIME_INTERFACES.H"
+extern u8 gSaveSlot[];
 
 s32 SaveState_InitializeWorkspace(void);
 s32 SaveState_WriteRecord(s32, void *);
@@ -17,7 +18,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
     s32 error;
 
     result = 0;
-    value = *(s16 *)0x02002004;
+    value = *(s16 *)gSaveSlot;
     if (value != -1) {
         found = SaveState_InitializeWorkspace();
         if (found != 0) {
@@ -30,8 +31,8 @@ s16 SaveState_WriteCurrentSlotPair(void)
             void *base = &gSaveBuffer;
             s32 next;
 
-            found = SaveState_WriteRecord(*(s16 *)0x02002004, base);
-            next = *(s16 *)0x02002004;
+            found = SaveState_WriteRecord(*(s16 *)gSaveSlot, base);
+            next = *(s16 *)gSaveSlot;
             base = (char *)base + 0x1000;
             found |= SaveState_WriteRecord(next + 3, base);
             if (found != 0) {

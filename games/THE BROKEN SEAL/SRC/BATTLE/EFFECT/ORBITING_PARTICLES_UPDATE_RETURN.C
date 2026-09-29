@@ -10,7 +10,6 @@ struct Output_08097f80 {
 };
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect)
 {
@@ -25,7 +24,7 @@ next_state:
 
         position.x = effect->origin_x;
         position.z = effect->origin_z;
-        angle = Rand();
+        angle = Random16();
         Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
         effect->target_x = position.x;
         effect->target_z = position.z;

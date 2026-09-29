@@ -1,5 +1,6 @@
 #ifndef SHIAN_JIIN_TEMPLE_H
 #define SHIAN_JIIN_TEMPLE_H
+extern struct EventWork *gEventWork;
 
 enum TempleRoomsMessage {
     MSG_HOW_DID_GET_HERE_BRIDGE = 0x178a,
@@ -249,7 +250,7 @@ static __inline__ u8 *Record1(u8 *(*f)(), s32 a0)
 /* The scene step counter at +472 of the shared scene work record. */
 static __inline__ void Scene_BumpStep(s32 amount)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + amount);
 }

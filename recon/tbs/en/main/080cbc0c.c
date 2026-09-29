@@ -1,15 +1,51 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
-#include "shared-aggregates.h"
 #include "BATTLE_EFX.H"
+#include "IO_WRITE_QUEUE.H"
+
+/* The battle scene work gBattleWork points at. */
+struct BattleSceneWork {
+    u8 unknown_0000[0x4];
+    u16 field_0004;
+    u8 unknown_0006[0x3a];
+    u8 field_0040;
+    u8 field_0041;
+    u8 field_0042;
+    u8 unknown_0043[0x1];
+    u8 field_0044;
+    u8 field_0045;
+    u8 unknown_0046[0x9];
+    u8 field_004f;
+    u8 field_0050;
+    u8 unknown_0051[0x1];
+    u8 field_0052;
+    u8 unknown_0053[0x7];
+    s16 field_005a;
+    s16 field_005c;
+    u8 unknown_005e[0x8];
+    u16 field_0066;
+};
+
+/* The transition control gTransitionWork points at. */
+struct TransitionWork {
+    u32 field_0000;
+    u32 field_0004;
+    u8 unknown_0008[0x4];
+    u32 field_000c;
+    u32 field_0010;
+};
+
+extern struct BattleSceneWork *gBattleWork;
+extern struct TransitionWork *gTransitionWork;
+extern u16 gBgScroll[];
+extern u32 gWorkSlot[];
+extern u8 gMapCellBuffer[];
 
 extern u8 BattlePieceStartX[];
 extern u8 BattlePieceStartY[];
 extern u8 BattlePieceWidth[];
 extern u8 BattlePieceHeight[];
 extern u16 BattlePieceOffset[];
-
-#define BattleFx_RunTileAndPaletteAnimation Func_080cbc0c
 
 /*
  * Blocking battle effect scene at 0x080cbc0c.
@@ -37,7 +73,7 @@ extern u16 BattlePieceOffset[];
 typedef void (*ClearFn)(void *dst, s32 size);
 typedef void (*FillFn)(void *dst, s32 size, u32 value);
 typedef void (*CopyFn)(void *dst, const void *src, s32 size);
-/* Rectangle blitter published in absolute_03001e50 by BattleEffect_LoadWork. */
+/* Rectangle blitter published in gWorkSlot by BattleEffect_LoadWork. */
 typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
 
 #define IWRAM_CLEAR ((ClearFn)0x03000164)
@@ -73,12 +109,12 @@ void Func_080f9010(s32 id);
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
+void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     struct BattleEffectWork *work;
     void *canvas;
     struct EffectStep *ent;
-    struct M2cAggregate_deref_absolute_03001e74_0 *sys;
-    struct M2cAggregate_deref_absolute_03001e74_8c *ctl;
+    struct BattleSceneWork *sys;
+    struct TransitionWork *ctl;
     ClearFn clr;
     FillFn fill;
     BlitFn draw0;
@@ -147,14 +183,14 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
     work = Func_080048b0(0x27, 0x782C);
     canvas = Func_080048b0(0x28, 0x4000);
     Func_080048b0(0x29, 0x302);
-    sys = absolute_03001e74.field_0000;
-    ctl = absolute_03001e74.field_008c;
+    sys = gBattleWork;
+    ctl = gTransitionWork;
     work->effect = arg0;
     Func_080cd508();
     ctl->field_000c = 1;
-    absolute_03001ad0.field_0006 = 0x20;
+    gBgScroll[3] = 0x20;
     Func_080b5038(1, M2C_FIELD(sys, u16 *, 0x648), 0);
-    absolute_0400000c.field_0000 = 0x784;
+    *(u16 *)0x0400000c = 0x784;
     Func_080b5028(0, 0, 0, 0x64);
     idx = 0;
     ctl->field_000c = 0;
@@ -197,10 +233,10 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
 
     ime = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
-    qcnt = absolute_02002090.field_0000;
+    qcnt = gIoWriteQueue.count;
     if (qcnt <= 0x1F) {
-        slot = (u8 *)&absolute_02002090 + (qcnt * 0xC);
-        absolute_02002090.field_0000 = qcnt + 1;
+        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
+        gIoWriteQueue.count = qcnt + 1;
         M2C_FIELD(slot, s32 *, 4) = 0x7741;
         M2C_FIELD(slot, s32 *, 8) = 0x04000000;
         M2C_FIELD(slot, s32 *, 12) = 0x20000;
@@ -214,9 +250,9 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
     work->transfer_value = 0;
     Func_080041d8(0x080CD261, 0x480);
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 1);
-    draw0 = (BlitFn)absolute_03001e50.field_00b8;
+    draw0 = (BlitFn)gWorkSlot[46];
     BattleEffect_LoadWork(0x2F, 7, 7, 3, 2);
-    draw1 = (BlitFn)absolute_03001e50.field_00bc;
+    draw1 = (BlitFn)gWorkSlot[47];
 
     /* Seed the 0x21 pieces from the two byte tables of start coordinates. */
     rad = 0;
@@ -237,22 +273,22 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
         ent += 1;
     } while (cnt != 0x21);
 
-    IWRAM_COPY(&absolute_02010000, (void *)0x06008000, 0x7800);
+    IWRAM_COPY(gMapCellBuffer, (void *)0x06008000, 0x7800);
     fill = IWRAM_FILL;
-    fill(&absolute_02010000, 0x7800, 0x01010101);
+    fill(gMapCellBuffer, 0x7800, 0x01010101);
     ctl->field_0010 = 1;
-    M2C_FIELD(work, s32 *, 0x77A0) = (s32) absolute_03001ad0.field_0004;
-    M2C_FIELD(work, s32 *, 0x77A4) = (s32) absolute_03001ad0.field_0006;
-    absolute_03001ad0.field_0004 = 0;
+    M2C_FIELD(work, s32 *, 0x77A0) = (s32) gBgScroll[2];
+    M2C_FIELD(work, s32 *, 0x77A4) = (s32) gBgScroll[3];
+    gBgScroll[2] = 0;
 
     ime = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
-    qcnt = absolute_02002090.field_0000;
+    qcnt = gIoWriteQueue.count;
     if (qcnt <= 0x1F) {
-        slot = (u8 *)&absolute_02002090 + (qcnt * 0xC);
-        absolute_02002090.field_0000 = qcnt + 1;
+        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
+        gIoWriteQueue.count = qcnt + 1;
         M2C_FIELD(slot, s32 *, 4) = 0x1F81;
-        M2C_FIELD(slot, s32 *, 8) = (u32) &absolute_0400000a;
+        M2C_FIELD(slot, s32 *, 8) = (u32) (u16 *)0x0400000a;
         M2C_FIELD(slot, s32 *, 12) = 0x20000;
     }
     *(u16 *)0x04000208 = (u16) ime;
@@ -280,7 +316,7 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
         }
         if (frame == 5) {
             Func_080f9010(0x91);
-            absolute_03001ad0.field_0004 = (u16) M2C_FIELD(work, s32 *, 0x77A0);
+            gBgScroll[2] = (u16) M2C_FIELD(work, s32 *, 0x77A0);
             Func_080b5040(1, M2C_FIELD(sys, u16 *, 0x648), -1);
         }
 
@@ -434,7 +470,7 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
                     rad += 1;
                 } while (rad != radMax);
             }
-            IWRAM_COPY((void *)0x06008000, &absolute_02010000, 0x7800);
+            IWRAM_COPY((void *)0x06008000, gMapCellBuffer, 0x7800);
         }
 
         if (frame <= 0x32) {
@@ -477,7 +513,7 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
                 *pal = (lvl << 0xA) | ((lvl / 2) << 5) | lvl;
                 pal += 1;
             } while (cnt != 0x40);
-            absolute_04000050.field_0000 = 0x3F44;
+            *(u16 *)0x04000050 = 0x3F44;
             cnt = 0;
             ent = (struct EffectStep *)((u8 *)work + 0x7080);
             do {
@@ -531,17 +567,17 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
     Func_08004278(0x080CD261);
     Func_080d6888(((struct BattleEffectArgument *)work->effect)->actors[0],
                   -1, 1, -1, 0);
-    absolute_03001ad0.field_0004 = (u16) M2C_FIELD(work, s32 *, 0x77A0);
-    absolute_03001ad0.field_0006 = 0x20;
+    gBgScroll[2] = (u16) M2C_FIELD(work, s32 *, 0x77A0);
+    gBgScroll[3] = 0x20;
     Func_080b5038(2, M2C_FIELD(sys, u16 *, 0x648), 0);
     Func_080030f8(1);
 
     ime = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
-    qcnt = absolute_02002090.field_0000;
+    qcnt = gIoWriteQueue.count;
     if (qcnt <= 0x1F) {
-        slot = (u8 *)&absolute_02002090 + (qcnt * 0xC);
-        absolute_02002090.field_0000 = qcnt + 1;
+        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
+        gIoWriteQueue.count = qcnt + 1;
         M2C_FIELD(slot, s32 *, 4) = 0x7541;
         M2C_FIELD(slot, s32 *, 8) = 0x04000000;
         M2C_FIELD(slot, s32 *, 12) = 0x20000;

@@ -23,7 +23,7 @@ void Blend_SetDarkenTarget0(s32 duration);
 void Blend_SetDarkenTarget16(s32 duration);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
-void Func_0808f52c(void);
+void DisplayTransition_UpdateScanlineTable(void);
 void BattleFx_StartWindowHBlankDma(void);
 void DisplayTransition_UpdateFrame(void);
 void DisplayTransition_Update(void);
@@ -55,7 +55,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
         state->timer = 32;
         state->level = 63;
         state->step = 1;
-        Scheduler_AddOrUpdateCallback(Func_0808f52c, 0xc80);
+        Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
         Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
         WaitFrames(1);
         state->start = 32;

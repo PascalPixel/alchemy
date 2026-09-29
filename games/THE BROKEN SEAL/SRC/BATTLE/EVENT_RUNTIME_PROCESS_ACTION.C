@@ -3,7 +3,6 @@
 extern u8 Data_03001ebc[];
 
 extern u8 gGameState;
-#define PARTY_STATE gGameState
 
 s32 UiText_OpenMessageAtObject(s32);
 s32 Inventory_PromptAndSetObjectMode(void *, s32);
@@ -16,7 +15,7 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
     u8 *global_table;
 
     UiText_OpenMessageAtObject(object_id);
-    global_table = &PARTY_STATE;
+    global_table = &gGameState;
     result = Inventory_PromptAndSetObjectMode(*(void **)(global_table + 500), 0);
     if (result == 0) {
         BattleEv_RunWait(object_id, action_id);

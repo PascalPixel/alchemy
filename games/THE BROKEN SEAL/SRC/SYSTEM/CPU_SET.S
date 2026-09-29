@@ -6,9 +6,9 @@
 @ credit: library — TBS/TLA common BIOS call wrappers
 .syntax unified
 	.thumb
-	.global Func_08006864
+	.global Bios_CpuSet
 	.thumb_func
-Func_08006864:
+Bios_CpuSet:
 	svc	11
 	bx	lr
 	.global Func_08006868

@@ -1,6 +1,5 @@
 #include "TYPES.H"
-
-#define KuupuappuHeya_RunVaultEvent Func_02002db4
+extern struct EventWork *gEventWork;
 
 extern u8 Data_00000015[];
 extern u8 Data_02000240[];
@@ -84,7 +83,7 @@ void KuupuappuHeya_RunVaultEvent(void)
     do {
         Func_02007c5e(8, 10, 0);
     } while (0);
-    base5_3001ebc = 0x3001ebc;
+    base5_3001ebc = (u32)&gEventWork;
     *(s32 *)(*(s32 *)base5_3001ebc + 0x1c0) = 0x209;
     Func_02007cba(0, 0);
     Func_02007cce();

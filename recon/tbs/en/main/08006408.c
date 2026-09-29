@@ -34,8 +34,8 @@ s32 Func_08006408(s32 value)
 
 begin_transfer:
     {
-        saved_interrupt_master = Data_04000208;
-        Data_04000208 = (u16)&Data_04000208;
+        saved_interrupt_master = RegIme;
+        RegIme = (u16)&RegIme;
         do {
             state->status = 0x81;
             SERIAL_VALUE_B = current;
@@ -50,7 +50,7 @@ begin_transfer:
                 SERIAL_RESULT = value;
             } while (0);
         } while (0);
-        Data_04000208 = saved_interrupt_master;
+        RegIme = saved_interrupt_master;
         value = 0;
     }
 transfer_complete:

@@ -2,8 +2,6 @@
 @ projects read their base ROM. Each section shrinks as its data gains source.
 	.section .unidentified.08000000,"a"
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
-	.section .unidentified.0800380a,"a"
-	.incbin "baserom.gba", 0x0000380a, 0x00000006
 	.section .unidentified.08007320,"a"
 	.incbin "baserom.gba", 0x00007320, 0x00000356
 	.global Math_ArcTanTable
@@ -46,12 +44,6 @@ Data_08007c10:
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
 	.incbin "baserom.gba", 0x000097b8, 0x00000400
-	.section .unidentified.0800c0c6,"a"
-	.incbin "baserom.gba", 0x0000c0c6, 0x00000006
-	.section .unidentified.0800c628,"a"
-	.incbin "baserom.gba", 0x0000c628, 0x00000004
-	.section .unidentified.0800c87c,"a"
-	.incbin "baserom.gba", 0x0000c87c, 0x00000004
 	.section .unidentified.08012f20,"a"
 	.incbin "baserom.gba", 0x00012f20, 0x0000022c
 	.global Map_TileDissolveOrder
@@ -99,15 +91,9 @@ ObjectDispatch_Table6Script:
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x000136e0, 0x00001920
-	.section .unidentified.0801c466,"ax"
-	.incbin "baserom.gba", 0x0001c466, 0x00000002
-	.global Func_0801c468
-	.thumb_func
-Func_0801c468:
-	.incbin "baserom.gba", 0x0001c468, 0x00000004
-	.section .unidentified.080209cc,"a"
-	.incbin "baserom.gba", 0x000209cc, 0x00000004
 	.section .unidentified.08029910,"a"
+	.global WorkspaceOptions_SliderTiles
+WorkspaceOptions_SliderTiles:
 	.incbin "baserom.gba", 0x00029910, 0x00000100
 	.global RomBytes_08029a10
 RomBytes_08029a10:
@@ -228,7 +214,10 @@ Menu_SaveSlotActionByPosition:
 	.incbin "baserom.gba", 0x0003740f, 0x00000019
 	.global Menu_ColonString
 Menu_ColonString:
-	.incbin "baserom.gba", 0x00037428, 0x0003c42c
+	.incbin "baserom.gba", 0x00037428, 0x0003c3ea
+	.global WorkspaceOptions_SliderPalette
+WorkspaceOptions_SliderPalette:
+	.incbin "baserom.gba", 0x00073812, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
 	.incbin "baserom.gba", 0x00073854, 0x00000114
@@ -283,16 +272,6 @@ Enemy_ElementPresetTable:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008926c, 0x00000d94
-	.section .unidentified.08091778,"a"
-	.incbin "baserom.gba", 0x00091778, 0x00000004
-	.section .unidentified.080917c2,"ax"
-	.incbin "baserom.gba", 0x000917c2, 0x00000002
-	.global Func_080917c4
-	.thumb_func
-Func_080917c4:
-	.incbin "baserom.gba", 0x000917c4, 0x0000000c
-	.section .unidentified.08091c3e,"a"
-	.incbin "baserom.gba", 0x00091c3e, 0x00000006
 	.section .unidentified.0809c410,"a"
 	.incbin "baserom.gba", 0x0009c410, 0x00000200
 	.global Encounter_EnemyGroupTable
@@ -555,32 +534,32 @@ BattlePlacement_StepPairs:
 	.global Camera_FlagTransformWork
 Camera_FlagTransformWork:
 	.incbin "baserom.gba", 0x000c2a7c, 0x0000003c
-	.global Data_080c2ab8
-Data_080c2ab8:
+	.global HitFalloff
+HitFalloff:
 	.incbin "baserom.gba", 0x000c2ab8, 0x00000008
-	.global Data_080c2ac0
-Data_080c2ac0:
+	.global PpLossFalloff
+PpLossFalloff:
 	.incbin "baserom.gba", 0x000c2ac0, 0x00000018
-	.global Data_080c2ad8
-Data_080c2ad8:
+	.global HpHealFalloff
+HpHealFalloff:
 	.incbin "baserom.gba", 0x000c2ad8, 0x00000018
-	.global Data_080c2af0
-Data_080c2af0:
+	.global PpDmgFalloff
+PpDmgFalloff:
 	.incbin "baserom.gba", 0x000c2af0, 0x00000018
-	.global Data_080c2b08
-Data_080c2b08:
+	.global HpDmgFalloff5
+HpDmgFalloff5:
 	.incbin "baserom.gba", 0x000c2b08, 0x00000018
-	.global Data_080c2b20
-Data_080c2b20:
+	.global HpDmgFalloff8
+HpDmgFalloff8:
 	.incbin "baserom.gba", 0x000c2b20, 0x00000018
-	.global Data_080c2b38
-Data_080c2b38:
+	.global HpDmgFalloff6
+HpDmgFalloff6:
 	.incbin "baserom.gba", 0x000c2b38, 0x00000018
-	.global Data_080c2b50
-Data_080c2b50:
+	.global PpHealFalloff
+PpHealFalloff:
 	.incbin "baserom.gba", 0x000c2b50, 0x00000018
-	.global Data_080c2b68
-Data_080c2b68:
+	.global HpDmgFalloff
+HpDmgFalloff:
 	.incbin "baserom.gba", 0x000c2b68, 0x00000a54
 	.global BattleParty_RoundEndGroupOrder
 BattleParty_RoundEndGroupOrder:

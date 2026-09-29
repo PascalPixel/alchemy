@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08023e70
+	.global Battle_SelectAbility
 	.thumb_func
-Func_08023e70:
+Battle_SelectAbility:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

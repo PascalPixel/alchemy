@@ -83,7 +83,7 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         struct { u16 value; } end;
         count = Party_CountActiveOwnersFar();
         for (i = 0; i < count; i++)
-            owners[i] = PARTY_STATE.active_owners[i];
+            owners[i] = gGameState.active_owners[i];
         end.value = 255;
         owners[i] = end.value;
     }

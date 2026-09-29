@@ -1,4 +1,5 @@
 #include "ARUTAMIRA.H"
+extern u8 gEffectWork[];
 
 void FieldScene_RunTwoCallSequence(void)
 {
@@ -9,7 +10,7 @@ void FieldScene_RunTwoCallSequence(void)
 /* Contiguous unnamed state-owner run for resource_3bd. */
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
-    u8 *obj = *(u8 **)0x03001f30;
+    u8 *obj = *(u8 **)gEffectWork;
     Ent_02000d58 *p = (Ent_02000d58 *)Engine_ActorGet(11);
     Vec v;
 
@@ -24,7 +25,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
 
 void FieldScene_RunActorElevenCellSetup(void)
 {
-    u8 *obj = *(u8 **)0x03001f30;
+    u8 *obj = *(u8 **)gEffectWork;
     u8 *p = (u8 *)Engine_ActorGet(11);
     s32 t;
 

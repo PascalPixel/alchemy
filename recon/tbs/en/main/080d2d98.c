@@ -81,8 +81,6 @@
  * reached by naming the index either.
  */
 
-#define BattleEffect_RunEmberShower Func_080d2d98
-
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
@@ -146,7 +144,7 @@ void Runtime_ReleaseHeapBlock(s32 id);
 void Func_08009038(void *object);
 void Func_080cdbc0(void);
 
-void BattleEffect_RunEmberShower(struct EffectArgument *object)
+void BattleEffect_RunEmberColumns(struct EffectArgument *object)
 {
     void *canvas;
     struct EffectRuntime *work;

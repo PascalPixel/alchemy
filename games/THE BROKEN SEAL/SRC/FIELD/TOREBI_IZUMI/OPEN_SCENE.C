@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 Data_03001d18[];
 
 void SceneState_InitFourActorRecordsAndInstallTask(void);
 void Main_08015120(s32 value, s32 digits);
@@ -57,7 +58,7 @@ s32 TorebiIzumi_OpenScene(void)
         if (Engine_GameFlagIsSet(0x950)) {
             Engine_ActorSetPosition(17, 0, 0);
         }
-        *(u8 *)0x03001d18 = 1;
+        *(u8 *)Data_03001d18 = 1;
         gEventWork->start_transition = 0x209;
         if (Data_02000240_t.halves[225][0] == 10) {
             Engine_ActorSetChildValue(8, 1);

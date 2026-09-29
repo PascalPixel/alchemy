@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080f7f78
+	.global AudioTrack_PackStream
 	.thumb_func
-Func_080f7f78:
+AudioTrack_PackStream:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

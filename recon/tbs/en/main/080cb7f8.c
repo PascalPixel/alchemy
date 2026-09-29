@@ -45,7 +45,7 @@ s32 Func_08004458();
 s32 Func_080048b0();
 void Func_080049ac();
 void Func_080051d8();
-void Func_080072f0();
+void _call_via_r3();
 void Func_080072f4();
 void Func_080072fc();
 void Func_080b5098();

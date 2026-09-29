@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 
 void FieldScene_RunScene3af_02000bb8();
@@ -26,7 +27,7 @@ void FuneKanpan_RunDeckStateEvent(void)
     s32 v5;
     u8 *p6;
 
-    p6 = *(s32 *)0x03001ebc;
+    p6 = *(s32 *)&gEventWork;
     Battle_Reset();
     v5 = 0;
     switch (*(s16 *)(((s32)p6 + 0x16c))) {

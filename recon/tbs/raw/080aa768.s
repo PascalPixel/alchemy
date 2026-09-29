@@ -304,7 +304,7 @@ Func_080aa768:
 	movs	r5, #14
 	b.n	.L_080aac56
 	movs	r0, #1
-	bl	Func_080ad6d4
+	bl	OwnerAction_RunCompareLoop
 	movs	r2, #2
 	adds	r4, r0, #0
 	negs	r2, r2
@@ -411,7 +411,7 @@ Func_080aa768:
 	.2byte 0x0256
 	.2byte 0x0000
 	movs	r0, #2
-	bl	Func_080ad6d4
+	bl	OwnerAction_RunCompareLoop
 	movs	r2, #2
 	adds	r4, r0, #0
 	negs	r2, r2
@@ -445,7 +445,7 @@ Func_080aa768:
 	bl	Trade_AddOfferFar
 	b.n	.L_080aac30
 	movs	r0, #0
-	bl	Func_080ad6d4
+	bl	OwnerAction_RunCompareLoop
 	movs	r3, #2
 	adds	r4, r0, #0
 	negs	r3, r3
@@ -573,7 +573,7 @@ Func_080aa768:
 	movs	r5, #7
 	b.n	.L_080aac56
 	movs	r0, #3
-	bl	Func_080ad6d4
+	bl	OwnerAction_RunCompareLoop
 	movs	r2, #2
 	adds	r4, r0, #0
 	negs	r2, r2

@@ -17,7 +17,6 @@ extern char Value_0000000c;
 extern char gSaveBuffer;
 extern s16 gSaveSlot;
 extern struct State_080208e4 gGameState;
-#define PARTY_STATE gGameState
 extern s32 gLoadedStateWord;
 extern u8 gOptionMirror;
 extern s16 gPostLoadCounter;
@@ -47,8 +46,8 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
                 UiText_ShowPositionedMessageAndWait((s32)&Value_0000000c, 1);
                 ret = -2;
             } else {
-                gLoadedStateWord = PARTY_STATE.value;
-                gOptionMirror = ((u8 *)&PARTY_STATE)[0x22a];
+                gLoadedStateWord = gGameState.value;
+                gOptionMirror = ((u8 *)&gGameState)[0x22a];
                 gPostLoadCounter = 0;
                 gSaveSlot = value;
             }

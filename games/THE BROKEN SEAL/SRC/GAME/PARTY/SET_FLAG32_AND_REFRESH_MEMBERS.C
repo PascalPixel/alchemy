@@ -108,7 +108,7 @@ void Party_ApplyStatePreset(void)
     OwnerAction_Add(1, 140);
     OwnerAction_Add(2, 141);
 
-    PARTY_STATE.money += 300;
+    gGameState.money += 300;
 }
 
 /* owner/Owner_RefreshActiveRatios.c */
@@ -127,7 +127,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        obj = Owner_GetState(PARTY_STATE.active_owners[n]);
+        obj = Owner_GetState(gGameState.active_owners[n]);
 
         do {
             *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);

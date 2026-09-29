@@ -1,11 +1,14 @@
-/* Draft, not exact (2026-09-28): 124 of 124 bytes, 28 differing halfwords
-   (was 116 bytes / 52). Both scans as ordinary for loops, the enemy scan
-   nested in the party scan's end-of-list branch, give the reference's
-   size and the rotated party loop. Remaining: the reference strength-
-   reduces the party scan (offset from 88) but not the enemy scan (index
-   shifted each pass, 0xfe reloaded from the pool); here it is the other
-   way round. A goto enemy loop keeps it unreduced but breaks the party
-   loop's rotation; do/while and sequential forms regress (54-64). */
+/* Draft, not exact (2026-09-28): 120 of 124 bytes, 14 aligned edits (was
+   124 bytes / 26 edits with the enemy scan nested in the party scan).
+   Sequential scans: the party scan as a for loop that breaks at the end of
+   its list now matches the reference exactly (rotated, strength-reduced
+   offset from 88, 0xfe hoisted). The enemy scan must stay unreduced, as
+   the reference indexes (battle + 2) + (i * 2 + 100) each pass and loads
+   0xfe inside the loop; every for-loop spelling tried here is reduced and
+   hoists 0xfe, while do/while, while and goto spellings keep it unreduced
+   but stop the party scan's rotation (duplicated exit test instead of the
+   entry jump). Removal outside the enemy loop keeps 0xfe unhoisted but is
+   still reduced. */
 #include "TYPES.H"
 
 struct RosterTarget {
@@ -38,6 +41,7 @@ void BattleActor_RemoveFromLists(s32 actor)
     struct BattleRoster *work;
     s32 i;
     u32 j;
+    s32 unit;
 
     work = gBattleWork;
     Owner_GetStateFar(actor)->in_battle = 0;
@@ -46,16 +50,18 @@ void BattleActor_RemoveFromLists(s32 actor)
             work->party[i] = 0xfe;
             goto removed;
         }
-        if (work->party[i] == 0xff) {
-            for (i = 0; ; i++) {
-                if (work->enemies[i] == actor) {
-                    work->enemies[i] = 0xfe;
-                    goto removed;
-                }
-                if (work->enemies[i] == 0xff)
-                    return;
-            }
+        if (work->party[i] == 0xff)
+            break;
+    }
+    for (i = 0; ; ) {
+        unit = work->enemies[i];
+        if (unit == actor) {
+            work->enemies[i] = 0xfe;
+            goto removed;
         }
+        i++;
+        if (unit == 0xff)
+            return;
     }
 removed:
     Summon_ReleaseCharge(actor);

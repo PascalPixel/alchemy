@@ -2,6 +2,7 @@
 #include "ABILITY_IDS.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 Data_03001ecc[];
 
 enum ActorPresentationMessage {
     MSG_CAME_BACK_PLEASE_DRAUGHT_QUICKLY = 0x2183,
@@ -381,7 +382,7 @@ void FieldScene_RunExtendedActorPresentation(void)
     Event_OpenMessage(9, 0);
     Event_SetMessage(MSG_BABI);
     Event_ChooseYesNo(0, 0);
-    display = *(u8 **)0x03001ecc;
+    display = *(u8 **)Data_03001ecc;
     {
         u16 *slot = (u16 *)(display + 0x52a);
         s32 value = 32;

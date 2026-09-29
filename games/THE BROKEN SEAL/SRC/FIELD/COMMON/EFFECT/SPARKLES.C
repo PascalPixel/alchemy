@@ -53,8 +53,8 @@ struct MapWork {
 
 /* FAKEMATCH: the map work pointer is reached 84 bytes below the sparkle work
    pointer, so both loads share one pool address. */
-extern struct SparkleWork *Data_03001ec4;
-#define SparkleMap (*(struct MapWork **)((u8 *)&Data_03001ec4 - 84))
+extern struct SparkleWork *gParticleWork;
+#define SparkleMap (*(struct MapWork **)((u8 *)&gParticleWork - 84))
 /* The frame counter is an unsigned long: a type no sparkle field shares, so
    reading it does not keep the size store apart from the flip store. */
 extern unsigned long Data_03001e40;
@@ -89,7 +89,7 @@ void FieldEffect_UpdateSparkles(void)
     u32 b;
     u32 frames;
 
-    work = Data_03001ec4;
+    work = gParticleWork;
     spawned = 0;
     map = SparkleMap;
     camera = &map->camera_x;

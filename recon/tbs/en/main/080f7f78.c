@@ -89,7 +89,6 @@ struct AudioPackWork {
 
 /* The owner register carries no name for this address yet, so the readable
    name is bound to the Func_<address> compatibility alias here. */
-#define AudioTrack_PackStream Func_080f7f78
 
 extern struct AudioPackWork *Data_02004c00;
 

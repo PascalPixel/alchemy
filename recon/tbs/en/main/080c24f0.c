@@ -35,8 +35,6 @@
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
-#define BattleEnemy_RecordDefeat Func_080c24f0
-
 /* Counts one defeated enemy toward the battle spoils: its coins and
    experience (randomly raised in proportion to the enemy's level when the
    party earned them), the formation slot it came from, and a chance at its

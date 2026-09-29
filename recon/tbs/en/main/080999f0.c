@@ -45,11 +45,9 @@ struct Effect05State {
 };
 
 extern struct Effect05State *Data_03001f30;
-s32 Func_080022ec(s32, s32);
-#define Math_Div Func_080022ec
+s32 Math_Div(s32, s32);
 void WaitFrames(s32);
-s32 Func_08004458(void);
-#define Random_Next Func_08004458
+s32 Random16(void);
 void Func_0800447c(s32, s32, struct Vec3 *);
 void Func_08009080(struct EffectObject *, s32);
 void Func_080090d0(struct EffectObject *);
@@ -117,7 +115,7 @@ void Func_080999f0(void)
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;
-            Func_0800447c(Random_Next() * 5 + 0x30000, Random_Next(), &spawn);
+            Func_0800447c(Random16() * 5 + 0x30000, Random16(), &spawn);
             if (i == count - 1) {
                 WaitFrames(25);
                 spawn.x = main->x;
@@ -141,7 +139,7 @@ void Func_080999f0(void)
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;
-            Func_0800447c(Random_Next() * 5 + 0x30000, Random_Next(), &spawn);
+            Func_0800447c(Random16() * 5 + 0x30000, Random16(), &spawn);
             particle = Func_08096c80(0x11c, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
                 particle->callback = (void *)0x080999a9;

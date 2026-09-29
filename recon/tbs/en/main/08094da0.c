@@ -1,3 +1,13 @@
+/* 2026-09-28, the fill zero in r1: every exact Dma_Set fill in the tree
+   (SLOTS.C, INITIALIZE_BUFFERS.C, RUN_SCENE_TRANSITION.C, ...) builds its
+   zero in r3, because the store to the fill word comes before Dma_Set
+   loads r3 (channel), r0, r1 and r2, so r3 is still free for the zero.
+   Here and in its sibling (0809509c/08094da0) the zero is in r1, which
+   local-alloc only chooses if r3 and r2 are already live when the fill
+   word is stored: the source this came from stored the value after setting
+   the channel and count registers. The reviewed Dma_Set cannot order it so
+   (a comma expression or an inline fill with the value as a parameter
+   still stores first); matching needs a reviewed fill form, not a spelling. */
 /* 2026-09-24: hand-written, 16 differing halfwords, same code: the fill
    zero goes to r3 (reference r1) and the position pointer to r0 (reference
    r2). The BLDCNT block is a tagged do-while wrap of volatile int stores.

@@ -12,7 +12,7 @@ s32 BattleTarget_ReplaceDefeated(const u8 *action)
     s32 living_count;
 
     target_id = ((const s16 *)action)[5];
-    if (BattleUnit_Get(target_id)->hp != 0) {
+    if (Owner_GetStateFar(target_id)->hp != 0) {
         return target_id;
     }
 

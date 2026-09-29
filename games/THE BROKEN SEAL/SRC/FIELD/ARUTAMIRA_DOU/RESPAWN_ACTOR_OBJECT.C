@@ -1,5 +1,6 @@
 #include "DMA.H"
 #include "TYPES.H"
+extern u8 gEffectWork[];
 
 
 s32 Engine_ObjectCreate();
@@ -29,7 +30,7 @@ void ArutamiraDou_RespawnActorObject(void)
     u8 *p6;
     u8 *p5;
 
-    p6 = *(s32 *)0x03001f30;
+    p6 = *(s32 *)gEffectWork;
     p5 = *(s32 *)((s32)p6 + 16);
     Call3(Engine_ActorFaceDirection, *(s16 *)((s32)p6 + 24), 0x4000, 0);
     Animation_ApplyChildValues((s32)p5, 0);

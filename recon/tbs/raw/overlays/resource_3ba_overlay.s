@@ -310,9 +310,9 @@
 	.2byte 0x0000
 	.section .text.x02008840,"ax",%progbits
 	.p2align 2
-	.global Func_02000840
+	.global KorosseoKawa_RunStageStart
 	.thumb_func
-Func_02000840:
+KorosseoKawa_RunStageStart:
 	push {r5, r6, lr}
 	bl 0x0200af90
 	bl 0x0200bca0

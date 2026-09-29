@@ -138,92 +138,6 @@ FieldScene_RunScene39f_02000d90:
 	pop {r5, r6}
 	pop {r0}
 	bx r0
-	.section .text.x02008ee0,"ax",%progbits
-	.balign 4
-	.global Func_02000ee0
-	.thumb_func
-Func_02000ee0:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000ee0_0
-	ldr r0, [pc, #36]
-	b .L_02000ee0_1
-.L_02000ee0_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000ee0_2
-	ldr r0, [pc, #36]
-	b .L_02000ee0_1
-.L_02000ee0_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000ee0_3
-	ldr r0, [pc, #32]
-	b .L_02000ee0_1
-.L_02000ee0_3:
-	ldr r0, [pc, #32]
-.L_02000ee0_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000044
-	.4byte 0x0200b0f4
-	.4byte 0x00000045
-	.4byte 0x0200b1e4
-	.4byte 0x00000046
-	.4byte 0x0200b334
-	.4byte 0x0200b4b4
-	.section .text.x02008f40,"ax",%progbits
-	.balign 4
-	.global Func_02000f40
-	.thumb_func
-Func_02000f40:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000f40_0
-	ldr r0, [pc, #36]
-	b .L_02000f40_1
-.L_02000f40_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000f40_2
-	ldr r0, [pc, #36]
-	b .L_02000f40_1
-.L_02000f40_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000f40_3
-	ldr r0, [pc, #32]
-	b .L_02000f40_1
-.L_02000f40_3:
-	ldr r0, [pc, #32]
-.L_02000f40_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000044
-	.4byte 0x0200b6a0
-	.4byte 0x00000045
-	.4byte 0x0200b790
-	.4byte 0x00000046
-	.4byte 0x0200b8b0
-	.4byte 0x0200ba30
 	.section .text.x02009244,"ax",%progbits
 	.balign 4
 	.global Func_02001244
@@ -634,48 +548,6 @@ Func_02001d04:
 	.4byte 0x00000307
 	.4byte 0x02000240
 	.4byte 0x0000022b
-	.section .text.x0200a4ac,"ax",%progbits
-	.global Func_020024ac
-	.thumb_func
-Func_020024ac:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_020024ac_0
-	ldr r0, [pc, #36]
-	b .L_020024ac_1
-.L_020024ac_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020024ac_2
-	ldr r0, [pc, #36]
-	b .L_020024ac_1
-.L_020024ac_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020024ac_3
-	ldr r0, [pc, #32]
-	b .L_020024ac_1
-.L_020024ac_3:
-	ldr r0, [pc, #32]
-.L_020024ac_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000044
-	.4byte 0x0200ba48
-	.4byte 0x00000045
-	.4byte 0x0200bb20
-	.4byte 0x00000046
-	.4byte 0x0200bc1c
-	.4byte 0x0200bd54
 	.section .text.x02008ae8,"ax",%progbits
 	.balign 4
 	.p2align 2
@@ -1055,6 +927,8 @@ MogoruMori_ActorScript:
 	.4byte 0x00000000
 	.4byte 0x00000002
 	.4byte 0x00000010
+	.global gMogoruMoriEntrances1
+gMogoruMoriEntrances1:
 	.4byte 0xffff0001
 	.4byte 0x00000088
 	.4byte 0x40000018
@@ -1115,6 +989,8 @@ MogoruMori_ActorScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriEntrances2
+gMogoruMoriEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000095
@@ -1199,6 +1075,8 @@ MogoruMori_ActorScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriEntrances3
+gMogoruMoriEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x400000a0
@@ -1295,6 +1173,8 @@ MogoruMori_ActorScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriEntrancesOther
+gMogoruMoriEntrancesOther:
 	.4byte 0xffff0001
 	.4byte 0x00000138
 	.4byte 0x00000080
@@ -1420,6 +1300,8 @@ MogoruMori_SceneTable:
 	.4byte 0x01309047
 	.4byte 0x0140a047
 	.4byte 0x000001ff
+	.global gMogoruMoriPlacements1
+gMogoruMoriPlacements1:
 	.4byte 0xffff00cd
 	.4byte 0x00000007
 	.4byte 0x01e80000
@@ -1480,6 +1362,8 @@ MogoruMori_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriPlacements2
+gMogoruMoriPlacements2:
 	.4byte 0xffff00cf
 	.4byte 0x00000007
 	.4byte 0x02500000
@@ -1552,6 +1436,8 @@ MogoruMori_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriPlacements3
+gMogoruMoriPlacements3:
 	.4byte 0xffff00cd
 	.4byte 0x00000007
 	.4byte 0x02a80000
@@ -1648,12 +1534,16 @@ MogoruMori_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriPlacementsOther
+gMogoruMoriPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriEvents1
+gMogoruMoriEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1708,6 +1598,8 @@ MogoruMori_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriEvents2
+gMogoruMoriEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1771,6 +1663,8 @@ MogoruMori_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriEvents3
+gMogoruMoriEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1849,6 +1743,8 @@ MogoruMori_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gMogoruMoriEventsOther
+gMogoruMoriEventsOther:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

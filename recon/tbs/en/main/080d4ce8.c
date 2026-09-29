@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 typedef s32 (*CopyWords)(void *, const void *, s32);
@@ -13,7 +14,7 @@ typedef struct Anchor {
     s32 x, y, z, unused0c, unused10, unused14, unused18;
 } Anchor;
 extern void *gWorkSlot[];
-extern u8 Value_00000085, Value_00000073, Value_00000086, Value_00000087;
+extern u8 Value_00000085, Value_00000086, Value_00000087;
 extern u8 Data_080ee29a[], Data_080ee2a9[];
 extern s8 Data_080ee29d[];
 extern u16 ParticleStreams_CellOffsets[];
@@ -72,7 +73,7 @@ void Region_080d4ce8(Effect *effect)
     BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000052 = 0x1010;
     Resource_LoadAndDecompress((s32)&Value_00000085, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000073, extra, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra, 0, 0);
     if (EFFECT->variant == 0) {
         palette = Resource_GetTableEntry((s32)&Value_00000086);
         status = ((CopyWords)0x03001388)((void *)0x05000000, palette, 128);

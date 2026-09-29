@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -163,9 +164,6 @@ extern const u8 Data_080eedb8[];
    than materializing with a mov. */
 extern u8 Value_0000004a;
 extern u8 Value_0000006b;
-extern u8 Value_00000076;
-extern u8 Value_0000008e;
-extern u8 Value_00000099;
 extern u8 Value_000000b5;
 extern u8 Value_000000b6;
 extern u8 Value_000000c5;
@@ -314,14 +312,14 @@ void BattlePres_RunBeamSequence(void *object)
 
     if (M2C_FIELD(STATE, s32 *, 8) > 7) {
         IWRAM_COPY((void *)0x05000000,
-            Resource_GetTableEntry((s32)&Value_0000008e), 0x80);
+            Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 0x80);
     } else {
         IWRAM_COPY((void *)0x05000000,
             Resource_GetTableEntry((s32)&Value_0000004a), 0x80);
     }
     WaitFrames(1);
-    Resource_LoadAndDecompress((s32)&Value_00000076, sprite_src, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000099, (void *)0x02010000, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprite_src, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, (void *)0x02010000, 1, 0);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);

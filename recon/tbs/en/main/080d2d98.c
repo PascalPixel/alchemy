@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -119,8 +120,6 @@ struct EffectRuntime {
     struct EffectArgument *argument; /* 0x7828 */
 };
 
-extern u8 Value_0000006e;
-extern u8 Value_00000073;
 extern u8 Value_00000085;
 
 extern u16 ParticleStreams_CellOffsets[];
@@ -180,14 +179,14 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
     rectangle_slot = rectangle;
     BattleFx_FetchRectangleBlitters(0, (u32 *)rectangle_slot);
 
-    palette = (u8 *)Resource_GetTableEntry((s32)&Value_0000006e);
+    palette = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     palette += 128;
     Resource_DecodeType01(palette, work);
     palette = (u8 *)Resource_GetTableEntry((s32)&Value_00000085);
     palette += 128;
     Resource_DecodeType01(palette, work->column_tiles);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000073), graphics);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
 
     work->display_mode = 2;
     work->display_value = 75;

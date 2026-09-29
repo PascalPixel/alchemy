@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -37,7 +38,6 @@ typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
 extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
-extern u8 Value_00000073;
 extern u8 Value_0000007b;
 extern u8 Value_0000007c;
 
@@ -103,7 +103,7 @@ void BattleFx_RunParticlePool(void *object, s32 mode)
     status = BattleEffect_LoadWork(47, 7, 7, 11, 2);
     second_blit_kind = gWorkSlot[47];
 
-    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra_target, 0, 0);
 
     _call_via_r3((void *)(160 << 19),
         Resource_GetTableEntry(mode == 0 ? (s32)&Value_0000007c : (s32)&Value_0000007b),

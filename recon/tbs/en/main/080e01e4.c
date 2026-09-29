@@ -41,6 +41,7 @@
  * No credit until whole-owner match, ordinary-C lint, compare/coverage/verify.
  */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
@@ -61,8 +62,6 @@ void Camera_ApplyShake(s32 mask, u32 range);
 void ObjectGroup_TickMemberTimers(void);
 
 extern const u16 ParticleStreams_CellOffsets[];
-extern u8 Value_00000073;
-extern u8 Value_00000090;
 extern u8 Value_00000089;
 
 #define WORK_EFX ((struct BattleEffectArgument *)work->effect)
@@ -96,8 +95,8 @@ void Unnamed_080e01e4(struct BattleEffectArgument *effect)
     *(s16 *)0x04000052 = 0x1010;
     draw = callbacks;
     BattleFx_FetchRectangleBlitters((s32)0, (u32 *)draw);
-    Resource_LoadAndDecompress((s32)&Value_00000073, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000090, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000089, (u8 *)work + 0x320, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;

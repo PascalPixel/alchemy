@@ -1,3 +1,5 @@
+/* alchemy permute: Unnamed_080bb7c0 against recon/tbs/raw/080bb7c0.s: score 1550 (26 register-only, 5 operand, 16 reordered, 1 inserted, 2 deleted).
+   Job 5, iteration 12906; rewrites: 7x share one temporary between two statements, 6x reorder local declarations, 6x add a same-width cast, 5x swap commutative operands, 4x reorder independent statements, 4x drop a same-width cast, 3x introduce a temporary, 3x change loop form, 3x toggle register, 3x test truth or compare with zero, 2x pointer arithmetic or indexing, 1x remove a temporary. */
 #include "SYSTEM.H"
 #include "UI.H"
 #include "IO_WRITE_QUEUE.H"
@@ -80,35 +82,59 @@ s32 Unnamed_080bb7c0(s32 x, s32 y)
     register s32 sprite;
     register union BattlePromptEntry entry;
     register s32 tiles = Ui_GetTableWordZeroFar(0);
-    u16 *tmp;
-    u32 tmp2;
     s32 tmp4;
-    u16 tmp3;
+    register u16 tmp3;
+    u32 tmp2;
+    register u16 *tmp;
+    s32 tmp6;
+    register s32 tmp7;
+    u32 tmp8;
+    s32 tmp9;
+    s32 tmp10;
+    s32 tmp11;
+    u16 *tmp5;
+    s32 tmp12;
+    s32 tmp13;
 
     *pos = x;
     for (; !UiWork_IsCompleteFar(); WaitFrames(1)) {
     }
     prompt = &entry;
-    sprite = Resource_LoadIntoFreeSlot(0x80);
+    tmp13 = Resource_LoadIntoFreeSlot(0x80);
+    tmp9 = tmp13;
     pos[1] = y;
+    tmp6 = tmp9;
+    sprite = tmp6;
 loop:
     QueueIoWriteDelay10(0x0400004a, 4);
     tmp4 = 16;
     tmp = (u16 *)pos;
     QueueIoWriteDelay6(0x0400004a, 16);
-    (*(struct PromptBlendRegister *)0x04000052).value = tmp4;
-    prompt[0].words[1] = 0x40000000;
-    *&prompt->words[2] = 0;
-    (*prompt).sprite.tile = Resource_GetBuffer(sprite, tiles);
+    ((struct PromptBlendRegister *)0x04000052)->value = tmp4;
+    ((s32 *)prompt[0].words)[1] = 0x40000000;
+    tmp6 = 0;
+    *&*(prompt->words + 2) = tmp6;
+    tmp11 = Resource_GetBuffer(sprite, tiles);
+    tmp10 = tmp11;
+    tmp7 = tmp10;
+    (*prompt).sprite.tile = tmp7;
     tmp3 = *tmp;
-    prompt->sprite.x = tmp3 + 0xfffc + ((4 & gFrameCount) >> 1);
-    tmp2 = pos[1] - ((gFrameCount & 4) >> 2) + 248;
+    tmp12 = (s32)4;
+    tmp10 = tmp12;
+    tmp9 = tmp10;
+    tmp7 = tmp9;
+    tmp8 = 0xfffc + (((tmp7 & gFrameCount) >> 1) + tmp3);
+    prompt->sprite.x = tmp8;
+    tmp13 = pos[1];
+    tmp11 = tmp13;
+    tmp2 = tmp11 - ((gFrameCount & 4) >> 2) + 248;
     prompt->sprite.y = tmp2;
     Runtime_PushSlotEntry(prompt->words, 240);
     if (!((0x303 & gKeyState) != 0)) {
         WaitFrames(1);
         goto loop;
     }
-    Resource_ResetEntry(sprite);
+    tmp12 = (s32)sprite;
+    Resource_ResetEntry(tmp12);
     WaitFrames(1);
 }

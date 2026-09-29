@@ -9,7 +9,7 @@ void FieldScene_RunScene3b1_02003d10(void);
 void FieldScene_RunScene3b1_02003eec(void);
 void FieldScene_RunScene3b1_02003e34(void);
 void FieldScene_RunFlagBranchedSetupCascade(void);
-void FieldScene_RunScene3b1_020040e8(void);
+void FuneHeya_AskAboutMonsters(void);
 void FieldScene_RunScene3b1_0200413c(void);
 void FieldScene_RunScene3b1_02004198(void);
 void FieldScene_RunActors24And25Setup(void);
@@ -96,7 +96,7 @@ s32 FuneHeya_ApplyEntryState(void)
         FieldScene_RunFlagBranchedSetupCascade();
         break;
     case 13:
-        FieldScene_RunScene3b1_020040e8();
+        FuneHeya_AskAboutMonsters();
         break;
     case 14:
         FieldScene_RunScene3b1_0200413c();

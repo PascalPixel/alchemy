@@ -189,7 +189,7 @@ s32 Runtime_BumpAllocateAlternatePool();            /* reserve a graphics handle
 
 void Resource_DecodeType01();           /* upload image data to a handle */
 
-s32 Resource_FindFreeEntryFar();            /* next palette slot index */
+s32 Resource_FindFreeEntry();            /* next palette slot index */
 
 void Engine_ScheduleCallback();           /* install a per-frame task (callback, rate) */
 
@@ -246,7 +246,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
 
     Resource_DecodeType01(KorosseoKawa_ImageData, handle);
 
-    pal = Resource_FindFreeEntryFar();
+    pal = Resource_FindFreeEntry();
     *(u16 *)(desc + 216) = (u16)pal;
     Vram_Load((s16)pal, 512, handle);
 

@@ -246,7 +246,7 @@ Resource_DirectoryTable:
 	resource , Graphics_PictureA
 	resource PictureB, Graphics_PictureB
 	resource PictureC, Graphics_PictureC
-	resource , Graphics_TilesK
+	resource TilesK, Graphics_TilesK
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC

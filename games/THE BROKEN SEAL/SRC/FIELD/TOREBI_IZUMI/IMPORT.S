@@ -38,6 +38,9 @@ ObjectDispatch_ApplyValueToChildren:
 	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
 	overlay_veneer UiText_DrawNumberInWindowFar
+	.global UiWork_PushValueSlot
+	.thumb_func
+UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
 	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Menu_SelectEntry20To21Far
@@ -51,8 +54,17 @@ Engine_GameFlagIsSet:
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
 	overlay_veneer Party_AdjustSixDigitCounterAFar
+	.global Party_GetAverageLevel
+	.thumb_func
+Party_GetAverageLevel:
 	overlay_veneer Party_GetAverageLevelFar
+	.global PartyInventory_CountItem
+	.thumb_func
+PartyInventory_CountItem:
 	overlay_veneer PartyInventory_CountItemFar
+	.global PartyInventory_CountFreeSlots
+	.thumb_func
+PartyInventory_CountFreeSlots:
 	overlay_veneer PartyInventory_CountFreeSlotsFar
 	.global Engine_EventWait
 	.thumb_func
@@ -101,12 +113,21 @@ Engine_EventShowMessage:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
+	.global Event_SetPair1c0AndSetValue170
+	.thumb_func
+Event_SetPair1c0AndSetValue170:
 	overlay_veneer Event_SetPair1c0AndSetValue170Far
 	overlay_veneer Event_SetStatus1c6Far
 	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer BattleFx_StartEffectObject22Far
 	overlay_veneer Battle_ResetEffectCounterFar
+	.global ObjectTable_Snapshot
+	.thumb_func
+ObjectTable_Snapshot:
 	overlay_veneer SaveState_CaptureObjectTableFar
 	overlay_veneer AudioCommand_WaitForStateByteClearFar
 	.global Engine_AudioPlayCue

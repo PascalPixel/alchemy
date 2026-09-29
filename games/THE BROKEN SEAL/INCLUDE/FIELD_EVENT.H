@@ -11,7 +11,10 @@
 
 /* The part of the saved game that records where the party is. */
 struct GameState {
-    u8 unknown_000[0x1c0];
+    u8 unknown_000[0x10];
+    /* The party's coins. */
+    u32 coins;
+    u8 unknown_014[0x1ac];
     s16 scene;
     s16 entrance;
     s16 saved_scene;
@@ -37,6 +40,7 @@ struct GameState {
     s16 cloaked;
 };
 
+LAYOUT_OFFSET_GUARD(GameState_Coins, struct GameState, coins, 0x10);
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
 LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
 LAYOUT_OFFSET_GUARD(GameState_MovementMode, struct GameState, movement_mode, 0x1f2);

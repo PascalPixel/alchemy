@@ -22,7 +22,7 @@ struct EventWork {
     s32 window;
 };
 
-extern struct EventWork *Data_03001ebc;
+extern struct EventWork *gEventWork;
 void *ObjectTable_Get(s32 id);
 s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
 s32 UiWork_IsIdleFar(s32 window);
@@ -31,7 +31,7 @@ void Func_080930bc(s32 speaker)
 {
     s32 x;
     s32 y;
-    struct EventWork *state = Data_03001ebc;
+    struct EventWork *state = gEventWork;
 
     speaker &= 0xfff;
     ObjectTable_Get(speaker);

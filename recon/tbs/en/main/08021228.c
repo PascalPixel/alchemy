@@ -27,7 +27,7 @@ struct SpriteRecord {
     u32 tile;
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 extern s16 Data_080371fe[];
 extern u8 MsgVenusDjinnJoined[];
 
@@ -46,11 +46,11 @@ s32 AudioCommand_GetStateByteFar(void);
 void UiWork_Finalize(struct MessageWindow *, s32);
 void Resource_ResetEntry(s32);
 
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeyState;
 
 void Djinn_ShowJoinedMessage(s32 p1, s32 p2, s32 p3)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gWindowWork;
     s32 tableVal;
     struct MessageWindow *obj;
     struct SpriteRecord buf;
@@ -92,7 +92,7 @@ void Djinn_ShowJoinedMessage(s32 p1, s32 p2, s32 p3)
         do {
             Runtime_PushSlotEntry(display, 250);
             WaitFrames(1);
-        } while (AudioCommand_GetStateByteFar() != 0 && (Data_03001c94 & 0x303) == 0);
+        } while (AudioCommand_GetStateByteFar() != 0 && (gKeyState & 0x303) == 0);
 
         UiWork_Finalize(obj, 2);
         WaitFrames(1);

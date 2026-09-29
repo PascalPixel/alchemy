@@ -24,7 +24,7 @@
  * re-seeds them.  A spark is drawn once the frame counter passes its index
  * and while its variant field is still zero, so the burst opens one particle
  * per frame.  Each drawn spark is rendered through the depth-scaled cell
- * table Data_080ede48 (nine sizes, one 64-unit depth band each, clamped to
+ * table ParticleStreams_CellOffsets (nine sizes, one 64-unit depth band each, clamped to
  * the 250..634 band), advanced by the shared gravity helper, and after
  * another thirty frames pulled back toward the origin by a 1/256
  * acceleration.  From frame 83 a single 20x34 sprite drawn from the work
@@ -38,7 +38,7 @@
  * the travelling target position, then for every listed member gathers that
  * member's 64 sparks inward: distance is the IWRAM integer square root at
  * 0x030001d8 of the sum of the squared 1/256 components, the spark is drawn
- * with the Data_080ede84/Data_080ede96 cell pair chosen by
+ * with the BattleFx_PuffCells/BattleFx_PuffSizes cell pair chosen by
  * (index * 4 + frame) % 9, and each component is reduced by
  * component / distance so the cloud converges on the member.
  *
@@ -88,9 +88,9 @@
  * halfwords, 445 aligned edits, equal topology. Full normalized diff read:
  * the 164/172-byte frame and broad saved-local ownership disagreement remain.
  * No old register-spelling axis was reopened; no DONE credit. The legacy
- * Resource_LoadAndDecompress, Func_08004458 and Func_080d6888 declarations
+ * Resource_LoadAndDecompress, Random16 and ObjectGroup_UpdateMembers declarations
  * below remain outside this narrow interface audit and keep their
- * Func_ spelling here, as the sibling owners do.  Func_080072f4 and
+ * Func_ spelling here, as the sibling owners do.  _call_via_r4 and
  * _call_via_r3 are never named in this source: they are the compiler
  * runtime's call-via-r4 and call-via-r3 thunks and are reached only as typed
  * indirect calls.
@@ -128,9 +128,9 @@ void BattleFx_FetchRectangleBlitters(s32 alternate, void **output);
 void **GetBattleObjectSlotFar(s32 member_id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 s32 Math_Div(s32 value, s32 divisor);
-s32 Func_080022fc(s32 value, s32 divisor);
+s32 Math_Mod(s32 value, s32 divisor);
 void Render_ResetTransformState(void);
 void Graphics_SaveTransferWorkOnce(void);
 void Graphics_RestoreTransferWork(void);
@@ -140,7 +140,7 @@ void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPosition(s32 *position);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080f9010(s32 id);
+void Audio_PlayCue(s32 id);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
@@ -205,7 +205,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
         step->z = 0;
         step->velocity_x = (Trig_Sin(heading) * (speed + 128)) >> 5;
         step->velocity_y = 0;
-        step->velocity_z = (Func_0800231c(heading) * (speed + 128)) >> 5;
+        step->velocity_z = (Trig_Cos(heading) * (speed + 128)) >> 5;
         step->variant = 0;
         i++;
         step++;
@@ -229,10 +229,10 @@ s32 BattleEffect_RunSparkTravel(void *object)
     do {
         facing = *(s32 *)0x03001E80;
         if (frame == 8) {
-            Func_080f9010(212);
+            Audio_PlayCue(212);
         }
         if (frame == 80) {
-            Func_080f9010(142);
+            Audio_PlayCue(142);
         }
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
@@ -366,7 +366,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                     pos[2] = M2C_FIELD(member_object, s32 *, 16);
                     SceneTransform_ApplyPosition(pos);
                     if (frame == stagger + 30) {
-                        Func_080f9010(126);
+                        Audio_PlayCue(126);
                     }
                     if (frame == stagger + 40) {
                         ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s16 *, id_offset),
@@ -407,7 +407,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                                     if (view[2] > 634) {
                                         view[2] = 634;
                                     }
-                                    cel = Func_080022fc(grain * 4 + frame, 9);
+                                    cel = Math_Mod(grain * 4 + frame, 9);
                                     src = (u8 *)graphics + BattleFx_PuffCells[cel];
                                     size = BattleFx_PuffSizes[cel];
                                     half = (u32)size >> 1;

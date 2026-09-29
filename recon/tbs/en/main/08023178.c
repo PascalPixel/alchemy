@@ -108,7 +108,7 @@ extern u8 Data_080373d8[];  /* "Lv" label */
 extern u8 Data_080373dc[];  /* attack label */
 extern u8 Data_080373e0[];  /* separator */
 extern u8 Data_080373e4[];  /* defence label */
-extern u8 Data_080310a4[];  /* cursor frame resource */
+extern u8 Resource_FixedBlockBTiles[];  /* cursor frame resource */
 
 extern u8 MsgClassName;  /* element glyph base */
 extern u8 Value_000008ba;  /* stat label glyph base */
@@ -145,14 +145,14 @@ void UiText_DrawStringAtOffset(
     const u8 *text, struct UiWindow *window, s32 x, s32 y);
 void UiText_DrawNumberInWindow(
     s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
-void Func_0801f200(s32 id);
+void UiWindow_DrawPartyStatusContents(s32 id);
 void Resource_LoadTableEntryToBuffer(s32 icon, s32 handle);
 s32 Ui_LoadEntryForKind(s32 owner, s32 handle);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 style);
 u8 *Runtime_GetObject(s32 owner);
 void BattleUnit_Recalculate(s32 owner);
-s32 Func_080771f8(s32 owner, s32 index);
-s32 Func_08077258(s32 owner, s32 level);
+s32 Owner_GetResistanceValueFar(s32 owner, s32 index);
+s32 Owner_GetLevelThresholdFar(s32 owner, s32 level);
 s32 Party_SumDjinnCountsFar(s32 request);
 struct UiSpriteRecord **GetBattleObjectSlotFar(s32 owner);
 
@@ -402,7 +402,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         M2C_FIELD(&objCursor, u32 *, 4) = 0x40000400;
         M2C_FIELD(&objCursor, u32 *, 8) = 0;
-        objCursor.tile = Resource_GetBuffer(handleCursor, Data_080310a4)
+        objCursor.tile = Resource_GetBuffer(handleCursor, Resource_FixedBlockBTiles)
             & 0x3FF;
         objCursor.x = (colPixels + winMain->x * 8
                           - ((RENDER_FLAGS & 4) >> 2))
@@ -481,7 +481,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         UiText_DrawNumberInWindow(object[0x118 + i], 1,
                             winMain, 48 + i * 32 + 8, 72);
                     }
-                    UiText_DrawNumberInWindow(Func_080771f8(owner, i), 2,
+                    UiText_DrawNumberInWindow(Owner_GetResistanceValueFar(owner, i), 2,
                         winMain, 48 + i * 32, 80);
                     UiText_DrawNumberInWindow(
                         M2C_FIELD(object, s16 *, 0x48 + i * 4), 3, winMain,
@@ -697,7 +697,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 UiText_CopyMessageString(iconIdx + (s32)&Value_000008d2, text, 0x80);
             } else if (cur.entry == 2 && object[15] <= 98) {
                 UiWork_PushValueSlot(
-                    Func_08077258(owner, object[15] + 1)
+                    Owner_GetLevelThresholdFar(owner, object[15] + 1)
                         - M2C_FIELD(object, s32 *, 0x124),
                     5);
                 UiText_CopyMessageString((s32)&Value_000008bf, text, 0x80);
@@ -766,7 +766,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     UiWindow_MarkVisibleTileAttributes();
     UiWork_Finalize(winMain, 1);
     UiWork_Finalize(winDesc, 1);
-    Func_0801f200(SESSION_WORK[65]);
+    UiWindow_DrawPartyStatusContents(SESSION_WORK[65]);
     UI_GLOBALS.screen->busy = 0;
     WaitFrames(1);
     return 0;

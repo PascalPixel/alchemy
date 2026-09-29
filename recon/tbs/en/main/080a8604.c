@@ -89,7 +89,7 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x, s3
 void UiWindow_SetTilemapEntryFar(void *window, s32 index, s32 x, s32 y, s32 tile);
 void UiWork_SetParamNibbleFar(s32 color);
 void WaitFrames(s32 frames);
-s32 Func_080771f8(s32 unit, s32 element);
+s32 Owner_GetResistanceValueFar(s32 unit, s32 element);
 
 void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
 {
@@ -186,7 +186,7 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
                     UiText_DrawNumberInWindowFar(status->djinn_total[count], 1, window, power_x, 8 + row * 8);
                     UiText_DrawStringInWindowFar(Data_080af230, window, level_x - 8, 8 + row * 8);
                 }
-                UiText_DrawNumberInWindowFar(Func_080771f8(unit, count), 2, window, tmp, row * 8 + 16);
+                UiText_DrawNumberInWindowFar(Owner_GetResistanceValueFar(unit, count), 2, window, tmp, row * 8 + 16);
                 UiText_DrawNumberInWindowFar(status->element_stats[count].power, 3, window, power_x, row * 8 + 24);
                 UiText_DrawNumberInWindowFar(status[0].element_stats[count].resistance, 3, window, power_x, row * 8 + 32);
             }

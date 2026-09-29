@@ -7,16 +7,16 @@
 
 typedef void (*ClearFn)(void *dest, s32 size);
 
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
-void Func_080f9010(s32 id);
+void Audio_PlayCue(s32 id);
 s32 Math_Div(s32 numerator, s32 denominator);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 void BattleFx_PlaceFormationObjects(void *object, s32 a, s32 b);
 
 #define Table_080eee66 ((u16 *)0x080EEE66)
@@ -24,7 +24,7 @@ void BattleFx_PlaceFormationObjects(void *object, s32 a, s32 b);
 #define Table_080eee5e ((u8 *)0x080EEE5E)
 extern const u16 ParticleStreams_CellOffsets[];
 
-void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
+void Unnamed_080e6eac(void *object, s32 x_arg, s32 y_arg)
 {
     void **heap_cache;
     void **cursor;
@@ -61,7 +61,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     {
         void *record_cursor;
@@ -78,7 +78,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             M2C_FIELD(record_cursor, s32 *, 0xC) =
                 (amp * Trig_Sin(seed)) >> 7;
             M2C_FIELD(record_cursor, s32 *, 0x10) =
-                0 - ((amp * Func_0800231c(seed)) >> 6);
+                0 - ((amp * Trig_Cos(seed)) >> 6);
             M2C_FIELD(record_cursor, s32 *, 0x18) =
                 (0xF & Random16()) + 0x10;
             record_cursor = (u8 *)record_cursor + 0x1C;
@@ -97,7 +97,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             M2C_FIELD(record_cursor, s32 *, 0xC) =
                 (Trig_Sin(angle) << 5) >> 6;
             M2C_FIELD(record_cursor, s32 *, 0x10) =
-                0 - ((Func_0800231c(angle) << 5) >> 5);
+                0 - ((Trig_Cos(angle) << 5) >> 5);
             angle += 0x5555;
             record_cursor = (u8 *)record_cursor + 0x1C;
         }
@@ -118,7 +118,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             M2C_FIELD(record_cursor, s32 *, 0xC) =
                 (amp * Trig_Sin(seed)) >> 6;
             M2C_FIELD(record_cursor, s32 *, 0x10) =
-                0 - ((amp * Func_0800231c(seed)) >> 5);
+                0 - ((amp * Trig_Cos(seed)) >> 5);
             M2C_FIELD(record_cursor, s32 *, 0x18) =
                 (0xF & Random16()) + 0x14;
             record_cursor = (u8 *)record_cursor + 0x1C;
@@ -127,10 +127,10 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
 
     for (frame = 0; frame != 72; frame++) {
         if (frame == 4) {
-            Func_080f9010(0x9A);
+            Audio_PlayCue(0x9A);
         }
         if (frame == 32) {
-            Func_080f9010(0xD4);
+            Audio_PlayCue(0xD4);
         }
         if (frame <= 47) {
             s32 idx;
@@ -249,6 +249,6 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
 
     Scheduler_RemoveCallback((void *)0x080CD261);
     ((ClearFn)0x03000164)((void *)0x06004000, 0x4000);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
 }

@@ -30,7 +30,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
-extern u8 Data_03001ebc[];
+extern u8 gEventWork[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -64,7 +64,7 @@ void BattleFx_EmitRandomParticle(void)
 
     tmp2 = ObjectTable_Get(gGameState.value_1F4);
     object = tmp2;
-    entry = ((u8 **)(u32)&Data_03001ebc)[0] + 0x11C;
+    entry = ((u8 **)(u32)&gEventWork)[0] + 0x11C;
     index = 0;
     if (entry[4]) {
         s32 tmp3;

@@ -9,7 +9,7 @@
  * games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PREPARE_SCENE.C (0x080ccaec).
  *
  * The owner republishes the effect object at work + 0x7828, asks
- * Func_080de2f8 for a pair of screen coordinates when state field 28 is 1,
+ * BattleFx_PrepareCanvasEffect for a pair of screen coordinates when state field 28 is 1,
  * loads three palettes into palette RAM through the IWRAM word-copy kernel
  * at 0x03001388 and their trailing 128-byte tile payloads into the kind-39
  * work block at +0, +0x2710 and +0x65c0, seeds 512 twenty-eight-byte
@@ -75,16 +75,16 @@ extern const u8 Data_080ee0b0[];
 extern const u8 Data_080ee0b3[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-void Func_080de2f8(
+void BattleFx_PrepareCanvasEffect(
     void *object, s32 variant, s32 flag, s32 unk, s32 *out_x, s32 *out_y);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 u32 Random16(void);
 void EffectPosition_ApplyStepAndYOffset(s32 member_id, s32 *out);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
+void Audio_PlayCue(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void BattleFx_FetchRectangleBlitters(s32 flag, void **pair);
 void Runtime_ReleaseHeapBlock(s32 id);
 void **GetBattleObjectSlotFar(s32 member_id);
@@ -137,7 +137,7 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
     BattleFx_BeginCanvasLayer(0);
     state = FIELD_AT_OFFSET(work, void **, 0x7828);
     if (FIELD_AT_OFFSET(state, s32 *, 28) == 1) {
-        Func_080de2f8(object, variant,
+        BattleFx_PrepareCanvasEffect(object, variant,
             FIELD_AT_OFFSET(state, s32 *, 4)
                 ^ FIELD_AT_OFFSET(state, s32 *, 28),
             0, &out_x, &out_y);
@@ -191,10 +191,10 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
             frame++) {
         facing = *(s32 *)0x03001E80;
         if (frame == 64) {
-            Func_080f9010(212);
+            Audio_PlayCue(212);
         }
         if (frame == 80) {
-            Func_080b50e8(0);
+            BattleEventRuntime_BeginPhaseFar(0);
         }
         flag = FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
             s32 *, 28);
@@ -205,7 +205,7 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
 
             angle = frame << 11;
             x = (((-Trig_Sin(angle)) * 20) >> 16) + out_x + y_offset - 20;
-            y = ((Func_0800231c(angle) * 4) >> 16) + out_y;
+            y = ((Trig_Cos(angle) * 4) >> 16) + out_y;
             BattleFx_FetchRectangleBlitters(
                 FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
                     s32 *, 4) ^ flag,

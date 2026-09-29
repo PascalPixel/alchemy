@@ -14,7 +14,7 @@
        724 bytes, 346 differing halfwords, 203 aligned edits.
    Stopped after three hypotheses; independent scalars from (2) restored.
    Caller audit: RUN_COMMANDS passes (0, quantity, single); -1 cancels and
-   the result is otherwise zero-based. Func_080b0040 is a void tile writer
+   the result is otherwise zero-based. Shop_FillSelectorFar is a void tile writer
    through the veneer to 080b06c0. No bytes are adopted by this draft. */
 /* Item menu: choose how many of the selected item to hand from one party
    member to another. Left and right step the amount, A
@@ -42,7 +42,7 @@ void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 Math_Mod(s32 value, s32 modulus);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void Func_080b0040(s32 value, s32 column, void *tiles);
+void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void *Owner_GetStateFar(s32 owner);
 void UiText_DrawStringAtOffsetFar(void *text, s32 window, s32 x, s32 y);
@@ -88,10 +88,10 @@ update:
     RenderOutput_RedrawSavedRectFar(window);
     UiText_DrawCharacterAtOffsetFar(0xade, window, 32, 0);
     Dma_Set(Data_080af08c, tiles, 0x84000040, (volatile u32 *)0x040000d4);
-    Func_080b0040(30, 14, tiles);
-    Func_080b0040(range + base, 0, tiles);
-    Func_080b0040(base + quantity + 1, 10, tiles);
-    Func_080b0040(base, 2, tiles);
+    Shop_FillSelectorFar(30, 14, tiles);
+    Shop_FillSelectorFar(range + base, 0, tiles);
+    Shop_FillSelectorFar(base + quantity + 1, 10, tiles);
+    Shop_FillSelectorFar(base, 2, tiles);
     VramBlock_LoadCached(slot, 256, tiles);
     UiText_DrawNumberInWindowFar(quantity + 1, 2, window, 32, 32);
     UiText_DrawCharacterAtOffsetFar((menu->selected_item & (u16)(s32)&Value_000001ff)

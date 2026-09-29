@@ -128,12 +128,12 @@ union GameStateRows {
 };
 
 extern union GameStateRows Data_02000240_t;
-extern u8 Data_000000b5[];
-extern u8 Data_000000b6[];
-extern u8 Data_000000b7[];
-extern u8 Data_000000b8[];
-extern u8 Data_000000b9[];
-extern u8 Data_000000ba[];
+extern u8 SceneId_VinasuHeya1[];
+extern u8 SceneId_VinasuHeya2[];
+extern u8 SceneId_VinasuHeya3[];
+extern u8 SceneId_VinasuHeya4[];
+extern u8 SceneId_VinasuHeya5[];
+extern u8 SceneId_VinasuHeya6[];
 
 #define UPDATE_8C9 ((void (*)(union FieldObject *))0x20088c9)
 #define UPDATE_B99 ((void (*)(union FieldObject *))0x2008b99)
@@ -156,7 +156,7 @@ s32 Scene_RunEntrySetup(void)
     Engine_GameFlagSet(0x110);
     gEventWork->start_transition = 0x204;
     area = Data_02000240_t.halves[224][0];
-    if (area == (s32)Data_000000b5) {
+    if (area == (s32)SceneId_VinasuHeya1) {
         gEventWork->start_transition = 0x100;
         if (!Engine_GameFlagIsSet(0x981))
             SceneActor_ClearActorModeAndSetState5(8);
@@ -172,7 +172,7 @@ s32 Scene_RunEntrySetup(void)
         SceneActor_ClearActorModeAndSetState5(14);
         goto end;
     }
-    if (area == (s32)Data_000000b6) {
+    if (area == (s32)SceneId_VinasuHeya2) {
         switch (Data_02000240_t.halves[225][0]) {
         case 1:
         case 2:
@@ -238,7 +238,7 @@ s32 Scene_RunEntrySetup(void)
             }
             break;
         }
-    } else if (area == (s32)Data_000000b7) {
+    } else if (area == (s32)SceneId_VinasuHeya3) {
         switch (Data_02000240_t.halves[225][0]) {
         case 16:
             Engine_GameFlagClear(0x12f);
@@ -302,7 +302,7 @@ s32 Scene_RunEntrySetup(void)
         case 19:
             goto cue;
         }
-    } else if (area == (s32)Data_000000b8) {
+    } else if (area == (s32)SceneId_VinasuHeya4) {
         switch (Data_02000240_t.halves[225][0]) {
         case 2:
             FieldScene_RunOpeningAuxiliarySequence();
@@ -364,7 +364,7 @@ s32 Scene_RunEntrySetup(void)
         case 1:
             goto cue;
         }
-    } else if (area == (s32)Data_000000b9) {
+    } else if (area == (s32)SceneId_VinasuHeya5) {
         switch (Data_02000240_t.halves[225][0]) {
         case 19:
             Scene_RunParticleWaveSequence();
@@ -447,7 +447,7 @@ s32 Scene_RunEntrySetup(void)
         case 6:
             goto cue;
         }
-    } else if (area == (s32)Data_000000ba) {
+    } else if (area == (s32)SceneId_VinasuHeya6) {
         switch (Data_02000240_t.halves[225][0]) {
         case 1:
         case 2:

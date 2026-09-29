@@ -19,7 +19,7 @@ struct GridTileCell_08093fa0 {
 
 extern struct GridTileCell_08093fa0 Data_0200fe00[];
 extern struct GridTileCell_08093fa0 gMapCellBuffer[];
-extern struct BattleWork Data_02000240;
+extern struct BattleWork gGameState;
 extern u8 Value_00000001;
 
 struct ObjectRuntime *Object_GetById(u32 object_id);
@@ -34,9 +34,9 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 object_id);
 void Battle_WaitMode0(s32 should_wait);
 void BattleFx_FinishAction(void);
 
-s32 Func_08093fa0(void)
+s32 battle_owner_69(void)
 {
-    struct BattleWork *work = &Data_02000240;
+    struct BattleWork *work = &gGameState;
     struct ObjectRuntime *object = Object_GetById(work->object_id);
     s32 variant = 1;
     s32 tile_x = *(s16 *)((u8 *)object + 10);

@@ -12,12 +12,12 @@ struct ModeRecord {
 };
 extern struct ModeRecord Data_0200cac8;
 extern struct ModeRecord Data_0200c0f6;
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 extern u8 gIoWriteQueue[];
 extern u8 Data_0200cbfc[];
 extern u8 Data_0200cc28[];
 extern u8 Data_0200cca4[];
-extern u8 Data_03001ebc[];
+extern u8 gEventWork[];
 extern u8 Data_02000240_t[][2];
 void Func_02004eda();
 void Func_02004f06();
@@ -90,7 +90,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
+    u8 *work = *(u8 **)gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }

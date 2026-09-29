@@ -7,7 +7,7 @@
    sl, which this C folds into constants and recomputes.
    2026-09-29 (alchemy permute scorer): the draft scored 2395; with the
    right-marker tiles as the linked Menu_CursorObjectTiles and the left ones
-   as Data_08033ef8 (the last 0x400 bytes of the Data_08032224 scaffold
+   as Menu_CursorLeftObjectTiles (the last 0x400 bytes of the UiText_Glyphs scaffold
    block, still unlabelled, one fixed operand) it scores 2530. A 300-second
    search (36,000 candidates) reached this body at 1100 (11 register-only,
    3 operand, 6 reordered, 5 inserted, 1 deleted); the fp/sl pointers above
@@ -16,7 +16,7 @@
 #include "TYPES.H"
 
 extern const u8 Menu_CursorObjectTiles[];
-extern const u8 Data_08033ef8[];
+extern const u8 Menu_CursorLeftObjectTiles[];
 
 struct SelectionOam {
     u16 y:8;
@@ -88,7 +88,7 @@ void Menu_SetupSelectionSide(struct SelectionMenu *menu, s32 index)
         u16 tmp;
         menu->sides[0].x = menu->first - 9;
         tmp = menu->other;
-        gfx = Data_08033ef8;
+        gfx = Menu_CursorLeftObjectTiles;
         tmp2 = tmp != 0;
         if (tmp2)
             menu->sides[0].more = 1;

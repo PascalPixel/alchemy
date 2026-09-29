@@ -35,9 +35,9 @@ struct MapState {
     struct MapShape *shape;
 };
 
-extern struct MapState *Data_03001e60;
-extern volatile u32 Data_03001ae8;
-extern s32 Data_03001800;
+extern struct MapState *gSpriteObjects;
+extern volatile u32 gKeysHeld;
+extern s32 gFrameTick;
 
 void Vector_AddPolarOffset(s32 radius, u16 angle, struct ProbePoint *point);
 
@@ -51,9 +51,9 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
     struct MapShape *tmp;
 
     angle = 0;
-    tmp = Data_03001e60->shape;
-    if ((Data_03001ae8 & 2) != 0)
-        angle = Data_03001800 << 8;
+    tmp = gSpriteObjects->shape;
+    if ((gKeysHeld & 2) != 0)
+        angle = gFrameTick << 8;
     switch ((u32)tmp->kind) {
     case 3:
         for (i = 0; i < 6; i++) {

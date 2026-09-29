@@ -14,16 +14,16 @@
  * Field 0x24 (36) of that object is read directly as a single s16
  * (a target id), not as the start of a member-id array.
  *
- * `Data_03001e50[46]` and `Data_03001e50[47]` are the same
- * "Data_03001e50[kind] holds kind's block address" heap-allocation cache
+ * `gWorkSlot[46]` and `gWorkSlot[47]` are the same
+ * "gWorkSlot[kind] holds kind's block address" heap-allocation cache
  * documented in recon/tbs/en/main/080e7404.c: this owner registers
  * two rectangle-blit routines through BattleEffect_LoadWork(46, ...) and
  * BattleEffect_LoadWork(47, ...) and then reads the resulting callbacks back out
  * of that cache by kind, exactly as 080e7404.c's own
- * `draw_rectangle = (DrawRectangle) Data_03001e50[46];` does.
+ * `draw_rectangle = (DrawRectangle) gWorkSlot[46];` does.
  *
  * Value_0000007b, Value_0000008d, and Value_00000068 follow the
- * Value_<addr> convention already established for Func_08002f40's
+ * Value_<addr> convention already established for Resource_GetTableEntry's
  * resource-id argument (see games/THE BROKEN SEAL/src/map/locations/heidia/prologue and
  * games/THE BROKEN SEAL/src/unidentified/overlays/state_update): every retained call
  * site loads the id through the literal pool rather than a movs
@@ -37,7 +37,7 @@
  * the r6 slot of the _call_via_rN trampoline (recon/tbs/raw/080072e4.s),
  * exactly as in the template.  The two per-frame rectangle draws route
  * through the r4 slot of the same trampoline, using function pointers
- * staged from Data_03001e50[46]/[47] before the loop and spilled across
+ * staged from gWorkSlot[46]/[47] before the loop and spilled across
  * it (r8/r9/sl/fp are already occupied by work, &pos, mode, and the
  * table_a base respectively, so canvas and the two draw callbacks live
  * on the stack for the whole function).
@@ -47,7 +47,7 @@
 
 typedef void (*WordCopy)(void *dest, const void *src, s32 words);
 
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern u8 Value_0000007b;
 extern u8 Value_0000008d;
 extern u8 Value_00000068;
@@ -57,20 +57,20 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080041d8(void *callback, s32 interval);
-void Func_080f9010(s32 value);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
+void Audio_PlayCue(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b50e8(s32 value);
+void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 arg0, struct EffectPosition *position);
 
-void Func_080ceff8(void *object, s32 mode)
+void BattleFx_RunFortyEightFrameEffect(void *object, s32 mode)
 {
     void **heap_cache;
     void **cursor;
@@ -113,20 +113,20 @@ void Func_080ceff8(void *object, s32 mode)
     }
 
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw_a = (DrawRectangle)Data_03001e50[46];
+    draw_a = (DrawRectangle)gWorkSlot[46];
     BattleEffect_LoadWork(47, 7, 7, 7, 2);
-    draw_b = (DrawRectangle)Data_03001e50[47];
+    draw_b = (DrawRectangle)gWorkSlot[47];
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     if (mode == 2) {
         M2C_FIELD(work, s32 *, 0x77A8) = 0;
-        Func_080f9010(212);
+        Audio_PlayCue(212);
     } else if (mode == 1) {
         M2C_FIELD(work, s32 *, 0x77A8) = 8;
-        Func_080f9010(212);
+        Audio_PlayCue(212);
     } else {
         M2C_FIELD(work, s32 *, 0x77A8) = 32;
     }
@@ -145,10 +145,10 @@ void Func_080ceff8(void *object, s32 mode)
             }
         }
         if (frame == 24) {
-            Func_080b50e8(0);
+            BattleEventRuntime_BeginPhaseFar(0);
         }
         if (frame == 8 && mode == 0) {
-            Func_080f9010(126);
+            Audio_PlayCue(126);
         }
         if (frame <= 31) {
             idx = frame / 4;
@@ -181,7 +181,7 @@ void Func_080ceff8(void *object, s32 mode)
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

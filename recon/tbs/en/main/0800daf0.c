@@ -37,7 +37,7 @@ struct FieldBounds {
     s32 bottom;
 };
 
-extern struct FieldBounds *Data_03001e70;
+extern struct FieldBounds *gMapWork;
 
 s32 FixedSqrt(s32 value);
 
@@ -60,7 +60,7 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
     s32 step;
     s32 (*div)(s32, s32);
 
-    bounds = Data_03001e70;
+    bounds = gMapWork;
     leader = obj->leader;
     min_x = bounds->left + 0x780000;
     min_z = bounds->top + leader->y + 0x600000;

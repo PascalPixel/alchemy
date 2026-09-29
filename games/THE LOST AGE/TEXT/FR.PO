@@ -25435,7 +25435,7 @@ msgctxt "message"
 msgid "06356"
 msgstr "J'ai une faim de loup! Nous{line_break}ferions mieux de partir, non?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriBeenBefore"
 msgid "06357"
 msgstr "Je ne vous reconnais{line_break}pas. Avez-vous déjà{line_break}séjourné à Daïla?{end_now}"
 
@@ -25447,11 +25447,11 @@ msgctxt "message"
 msgid "06359"
 msgstr "Eh bien, bienvenue à Daïla,{line_break}le village situé à l'extrême{line_break}nord du continent d'Indra!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWaveNoInjuries"
 msgid "06360"
 msgstr "Un énorme raz de marée{line_break}a frappé notre village.{page_break}Mais, comme par miracle, on{line_break}ne déplore aucune victime...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriIndraMoved"
 msgid "06361"
 msgstr "N'avez-vous pas senti Indra{line_break}bouger lorsque la vague{line_break}s'est abattue sur nous?{end_now}"
 
@@ -25491,7 +25491,7 @@ msgctxt "message"
 msgid "06370"
 msgstr "Notre village a survécu au{line_break}raz de marée, mais tous nos{line_break}navires ont été détruits...{page_break}Même si nous ne sommes{line_break}plus en mesure de naviguer,{line_break}nous nous en tirerons...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWantBoat"
 msgid "06371"
 msgstr "Hein? Vous voulez un bateau?{end_now}"
 
@@ -25659,11 +25659,11 @@ msgctxt "message"
 msgid "06412"
 msgstr "Bien le bonjour étrangers!{line_break}Quel bon vent vous amène?{page_break}Il n'y a pas grand-chose à voir{line_break}sur ce continent déserté.{page_break}Mais vous n'avez peut-être{line_break}rien de mieux à faire!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaScamps"
 msgid "06413"
 msgstr "Ah, si ces deux garnements{line_break}savaient qu'il y a des{line_break}étrangers en ville...{page_break}Ils sauteraient de joie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiWorry"
 msgid "06414"
 msgstr "Il y a un bail que je n'ai{line_break}pas vu Tavi et Riki...{page_break}J'adore ces gamins,{line_break}c'est pourquoi je me fais{line_break}tant de souci pour eux.{end_wait}"
 
@@ -26291,7 +26291,7 @@ msgctxt "message"
 msgid "06570"
 msgstr "La mer s'est calmée...{line_break}Nous pouvons désormais{line_break}reprendre une vie normale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHurtHip"
 msgid "06571"
 msgstr "Pour sûr, tu penses que c'est{line_break}cette vague qui m'a jeté à terre{line_break}et blessé à la hanche, pas vrai?{end_now}"
 
@@ -26603,11 +26603,11 @@ msgctxt "message"
 msgid "06648"
 msgstr "Daïla compte très peu{line_break}d'habitants si l'on considère{line_break}son importante superficie...{page_break}Il m'arrive de m'y perdre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaMazeTreasure"
 msgid "06649"
 msgstr "Ce village est un véritable{line_break}labyrinthe! Pas étonnant qu'ils{line_break}y aient caché leur trésor...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiHome"
 msgid "06650"
 msgstr "Tavi et Riki sont de retour.{line_break}Ils sont sains et saufs...{page_break}Ils sont passés me voir{line_break}en chemin... Comme ces{line_break}enfants sont adorables!{end_wait}"
 

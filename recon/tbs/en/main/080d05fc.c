@@ -62,8 +62,8 @@ void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 u8 *Resource_GetTableEntry(s32);
 void Resource_DecodeType01(const void *, void *);
-s32 Func_080041d8(s32, s32);
-void Func_080f9010(s32);
+s32 Scheduler_AddOrUpdateCallback(s32, s32);
+void Audio_PlayCue(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void Graphics_UpdatePhasePalette(s32, s32, s32, s32);
 s32 Trig_Sin(s32);
@@ -117,12 +117,12 @@ void Func_080d05fc(Effect *effect)
     Resource_DecodeType01(resource + 128, (u8 *)work + 0x2000);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Func_080041d8(0x080cd261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);
     EffectPosition_ApplyStepAndYOffset(
         WORK_EFFECT->actors[0], &anchor);
     shift = 64 - anchor.x;
     *(s32 *)0x04000028 = shift << 8;
-    Func_080f9010(142);
+    Audio_PlayCue(142);
     frame = 0;
     while (frame != WORK_EFFECT->count * 20 + 72) {
         if (frame == 64) BattleEventRuntime_BeginPhaseFar(0);

@@ -26,12 +26,12 @@ extern u8 Value_00007824;
  * sine/cosine orbit math at all.  The real callee set and constants instead
  * match the same subsystem already recovered across recon/tbs/en/
  * main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and 080e01e4.c: a
- * single Func_080041d8(0x080CD261,0x480) callback, Func_08004458() as the
+ * single Scheduler_AddOrUpdateCallback(0x080CD261,0x480) callback, Random16() as the
  * RNG, and (per recon/tbs/en/dossiers.json#main:080e01e4's already-resolved
- * derivation) Func_080072f4 is not a real callee -- it is the r4 slot of
+ * derivation) _call_via_r4 is not a real callee -- it is the r4 slot of
  * the _call_via_rN trampoline at recon/tbs/raw/080072e4.s, so every call
  * through it below is modeled as a genuine indirect call through a
- * DrawRectangleFn value read out of the `callbacks` pair Func_080cef64
+ * DrawRectangleFn value read out of the `callbacks` pair BattleFx_FetchRectangleBlitters
  * fills in.
  *
  * This owner grows an up-to-8-slot ring of particles at work + 0x7080
@@ -52,14 +52,14 @@ extern u8 Value_00007824;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 u32 Random16(void);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
-s32 Func_080022fc(s32 a, s32 b);
+void Audio_PlayCue(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+s32 Math_Mod(s32 a, s32 b);
 s32 Math_Div(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -74,7 +74,7 @@ extern const u8 Data_080ee1fb[];
 extern const u8 Data_080ee207[];
 extern const s32 Data_080ee214[];
 
-void Func_080d3c80(void *object)
+void Unnamed_080d3c80(void *object)
 {
     void **cursor;
     void *work;
@@ -104,7 +104,7 @@ void Func_080d3c80(void *object)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *) 0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *) 0x080CD261, 0x480);
 
     if (Data_080ee1f5[
             M2C_FIELD(M2C_FIELD(work, void **, (s32)&Value_00007828), s32 *, 0x18) * 2]
@@ -160,7 +160,7 @@ void Func_080d3c80(void *object)
             if (frame == Data_080ee1f5[
                     M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *,
                         0x18) * 2 + 1] - 80) {
-                Func_080b50e8(0x86);
+                BattleEventRuntime_BeginPhaseFar(0x86);
             }
             if (frame == Data_080ee1f5[
                     M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *,
@@ -191,8 +191,8 @@ void Func_080d3c80(void *object)
                                 s32 y;
                                 s32 delta;
 
-                                idx = Func_080022fc(j, 5) * 3
-                                    + Func_080022fc(
+                                idx = Math_Mod(j, 5) * 3
+                                    + Math_Mod(
                                         Math_Div(
                                             M2C_FIELD(sub, s32 *, 0x18),
                                             0x60),
@@ -264,7 +264,7 @@ void Func_080d3c80(void *object)
                                     sub += 28;
                                 } while (k != 16);
                                 M2C_FIELD(work, s32 *, 0x77A8) = 8;
-                                Func_080f9010(144);
+                                Audio_PlayCue(144);
                                 if (M2C_FIELD(
                                         M2C_FIELD(work, void **, 0x7828),
                                         s32 *, 0x14) != 0) {
@@ -312,7 +312,7 @@ void Func_080d3c80(void *object)
     }
 
     Scheduler_RemoveCallback((void *) 0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

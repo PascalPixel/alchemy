@@ -22,8 +22,8 @@ void UiMenu_PositionCursor(s32 x, s32 y);
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 arg3);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused1, s32 unused2);
 
-extern volatile u32 Data_03001c94;
-extern volatile u32 Data_03001b04;
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 GameFlag_TestFar(s32 flag);
 void Audio_PlayCue(s32 cue);
@@ -175,7 +175,7 @@ s32 Func_080a414c(void)
         UiMenu_PositionCursor(x, y);
         WaitFrames(1);
 
-        if ((Data_03001c94 & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             if (command_states[index] == -1) {
                 Audio_PlayCue(114);
             } else {
@@ -203,26 +203,26 @@ s32 Func_080a414c(void)
             }
         }
 
-        if ((Data_03001c94 & 2) != 0) {
+        if ((gKeyState & 2) != 0) {
             Audio_PlayCue(113);
             index = -1;
             FIELD(menu, s8 *, 0x25d) = (s8)index;
             break;
         }
 
-        if ((Data_03001b04 & 0x40) != 0) {
+        if ((gKeysRepeat & 0x40) != 0) {
             row -= 1;
             need_redraw = 1;
             Audio_PlayCue(111);
-        } else if ((Data_03001b04 & 0x80) != 0) {
+        } else if ((gKeysRepeat & 0x80) != 0) {
             row += 1;
             need_redraw = 1;
             Audio_PlayCue(111);
-        } else if ((Data_03001b04 & 0x10) != 0) {
+        } else if ((gKeysRepeat & 0x10) != 0) {
             col += 1;
             need_redraw = 1;
             Audio_PlayCue(111);
-        } else if ((Data_03001b04 & 0x20) != 0) {
+        } else if ((gKeysRepeat & 0x20) != 0) {
             col -= 1;
             need_redraw = 1;
             Audio_PlayCue(111);

@@ -12,11 +12,11 @@
  *
  * Inner stage reads the two shared pad cells: ADDR_03001AE8 is the held mask
  * and ADDR_03001B04 is the repeat/trigger mask.  With the held bit 8 down the
- * direction keys nudge the (x, y) placement handed to Func_08012b2c; otherwise
+ * direction keys nudge the (x, y) placement handed to Map_BuildProbeRing; otherwise
  * they move the column cursor `slot` and the edited field selector `mode`.
  * Shoulder-shaped bits 256/512 in the trigger mask decrement/increment the
  * field named by `mode`, trigger bit 1 applies or toggles a column, and
- * trigger bit 4 leaves through Func_08002f0c and restarts the outer stage.
+ * trigger bit 4 leaves through RuntimeDispatch_ReturnZero and restarts the outer stage.
  *
  * Reading aids the reader should not misread:
  *   - Ui_SetGridColumnByte5 and Ui_SetGridColumnByte6 are named for the grid
@@ -27,7 +27,7 @@
  *   - The pointer ResourceObject_Create returns is the 56 byte record
  *     ResourceMetadata_Register walks.  Byte 38 of that record is the same
  *     byte the ADDR_03001C94 toggle loop below rewrites with a stride of 56.
- *   - The project registers Func_08002f0c as RuntimeDispatch_ReservedStatusZero
+ *   - The project registers RuntimeDispatch_ReturnZero as RuntimeDispatch_ReservedStatusZero
  *     and its recovered body takes no arguments and returns 0, yet this call
  *     site sets up two.  The raw spelling is kept so the call site stays
  *     honest about what the reference passes.
@@ -37,7 +37,7 @@
  *
  * Uncertain: the roles of the two byte fields at column offsets 5 and 6 (only
  * their 0..3 and 0..15 wrap ranges are evidenced), the meaning of the mask
- * bits, and what the 0x08185000 argument handed to Func_08002f0c selects.
+ * bits, and what the 0x08185000 argument handed to RuntimeDispatch_ReturnZero selects.
  *
  * Known residual against the reference, all compiler-decision rather than
  * control flow:
@@ -83,11 +83,11 @@ void Blend_SetDarkenTarget0(s32);
 void WaitFrames(s32);
 void RuntimeDispatch_ReturnZero(s32, void *);
 void ObjectSystem_Initialize(s32);
-void Func_0800b6b8(s32, void *, s32, s32);
+void ResourceSlot_Load(s32, void *, s32, s32);
 u8 *ResourceObject_Create(s32);
 s32 ResourceMetadata_Register(u8 *, s32);
 s32 Ui_FindNextNumberWithMetadata(s32, s32);
-void Func_08012b2c(s32, s32, void *);
+void Map_BuildProbeRing(s32, s32, void *);
 void Ui_SetGridColumnByte5(s32, s32);
 void Ui_SetGridColumnByte6(s32, s32);
 void Ui_FillGridColumnFromMetadata(s32, s32);
@@ -148,14 +148,14 @@ restart:
     work = Runtime_AllocateBlock(9, 160);
     Resource_InitializeTable();
     ObjectSystem_Initialize(2);
-    Func_0800b6b8(0, (void *)0x02010000, ent[0].no, 0);
-    md = (u8 *)Func_08185000(ent[0].no);
+    ResourceSlot_Load(0, (void *)0x02010000, ent[0].no, 0);
+    md = (u8 *)Resource_GetMetadataRecordFar(ent[0].no);
     if (md[4] == 20) {
-        Func_0800b6b8(1, (void *)0x02018000, ent[0].no + 1, 0);
+        ResourceSlot_Load(1, (void *)0x02018000, ent[0].no + 1, 0);
     }
 
     for (i = 0; i <= 9; i++) {
-        md = (u8 *)Func_08185000(ent[0].no);
+        md = (u8 *)Resource_GetMetadataRecordFar(ent[0].no);
         alt = 0;
         if (md[4] == 20 && (i & 1) != 0) {
             alt = 1;
@@ -177,7 +177,7 @@ restart:
         Ui_FillGridColumnFromMetadata(i, ent[i].val);
     }
 
-    Func_08012b2c(x, y, work);
+    Map_BuildProbeRing(x, y, work);
     /* Thumb entry of the per-frame hook that draws the monitor. */
     Scheduler_AddOrUpdateCallback(0x08012E29, 3200);
 
@@ -197,7 +197,7 @@ restart:
             if ((*keys & 128) != 0) {
                 y++;
             }
-            Func_08012b2c(x, y, work);
+            Map_BuildProbeRing(x, y, work);
         } else {
             /* The reference opens this arm with a load of the trigger cell
                whose result is discarded before the first test. */

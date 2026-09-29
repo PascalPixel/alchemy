@@ -98,7 +98,7 @@ Resource_DirectoryTable:
 	resource RevealMaskF, BattleFx_RevealMaskF
 	resource LimeColumnSheet, BattleFx_LimeColumnSheet
 	resource , BattleFx_RainSheet
-	resource , BattleFx_FlameSheetA
+	resource FlameSheetA, BattleFx_FlameSheetA
 	resource DemonFaceSheet, BattleFx_DemonFaceSheet
 	resource , BattleFx_FlameBladeSheet
 	resource , BattleFx_SwordSheet
@@ -136,7 +136,7 @@ Resource_DirectoryTable:
 	resource ParticleSpritesD, BattleFx_ParticleSpritesD
 	resource , BattleFx_GreenPalette
 	resource , BattleFx_SwordSlashSheet
-	resource , BattleFx_RuneSheet
+	resource RuneSheet, BattleFx_RuneSheet
 	resource FlameColumnSheet, BattleFx_FlameColumnSheet
 	resource , BattleFx_EarthWallSheet
 	resource , BattleFx_OrangePaletteA
@@ -157,18 +157,18 @@ Resource_DirectoryTable:
 	resource , BattleFx_RockWallSheet
 	resource StarDotSheet, BattleFx_StarDotSheet
 	resource MarsDjinnSheet, BattleFx_MarsDjinnSheet
-	resource , BattleFx_MarsDjinnSmallSheet
+	resource MarsDjinnSmallSheet, BattleFx_MarsDjinnSmallSheet
 	resource , BattleFx_JupiterDjinnSheet
-	resource , BattleFx_JupiterDjinnSmallSheet
+	resource JupiterDjinnSmallSheet, BattleFx_JupiterDjinnSmallSheet
 	resource , BattleFx_MercuryDjinnSheet
 	resource MercuryDjinnSmallSheet, BattleFx_MercuryDjinnSmallSheet
 	resource , BattleFx_VenusDjinnSheet
-	resource , BattleFx_VenusDjinnSmallSheet
+	resource VenusDjinnSmallSheet, BattleFx_VenusDjinnSmallSheet
 	resource , BattleFx_FireBlobSheet
-	resource , BattleFx_FireStreakSheet
+	resource FireStreakSheet, BattleFx_FireStreakSheet
 	resource , BattleFx_LavaOrbSheet
 	resource , BattleFx_YellowRingSheet
-	resource , BattleFx_YellowOrbSheet
+	resource YellowOrbSheet, BattleFx_YellowOrbSheet
 	resource , BattleFx_BubbleSheet
 	resource , BattleFx_ShieldSheet
 	resource , BattleFx_DaggerSheet
@@ -178,18 +178,18 @@ Resource_DirectoryTable:
 	resource LimePalette, BattleFx_LimePalette
 	resource PinkPalette, BattleFx_PinkPalette
 	resource , BattleFx_VioletPaletteC
-	resource , BattleFx_CyanPalette
-	resource , BattleFx_TanPalette
+	resource CyanPalette, BattleFx_CyanPalette
+	resource TanPalette, BattleFx_TanPalette
 	resource , BattleFx_WispSheet
 	resource GreenVineSheet, BattleFx_GreenVineSheet
 	resource , BattleFx_PortalSheet
 	resource SheepSheet, BattleFx_SheepSheet
-	resource , BattleFx_SkullSheet
+	resource SkullSheet, BattleFx_SkullSheet
 	resource , BattleFx_HeartSheet
 	resource CounterRevealSheet, BattleFx_CounterRevealSheet
 	resource RedCrescentSheetA, BattleFx_RedCrescentSheetA
-	resource , BattleFx_BlueBeastSheet
-	resource , BattleFx_RedCrescentSheetB
+	resource BlueBeastSheet, BattleFx_BlueBeastSheet
+	resource RedCrescentSheetB, BattleFx_RedCrescentSheetB
 	resource SpiralSheet, BattleFx_SpiralSheet
 	resource , BattleFx_VioletStreakSheet
 	resource , BattleFx_CrescentMoonSheet
@@ -210,8 +210,8 @@ Resource_DirectoryTable:
 	resource BlastSheet, BattleFx_BlastSheet
 	resource , BattleFx_FlameSheetB
 	resource , BattleFx_FirePillarSheetB
-	resource , BattleFx_RockSpireSheet
-	resource , BattleFx_LightningBoltSheet
+	resource RockSpireSheet, BattleFx_RockSpireSheet
+	resource LightningBoltSheet, BattleFx_LightningBoltSheet
 	resource , BattleFx_BeamSequenceImage
 	resource , BattleFx_TwelveModeImage
 	resource , BattleFx_WindStreakSheet

@@ -1,3 +1,15 @@
+/* 2026-09-29: with stock agscc the plain constants -0x800 and 0xa3d now
+ * load from the pool like the reference, so the Value_ symbols are gone;
+ * eight minutes of permutation also set the scale step before the start
+ * cue. Score 515, from 660: 10 register-only, 1 reordered, 3 inserted, 1
+ * deleted. What remains is the constant ownership the header describes: the
+ * reference keeps the scale step in r5 and 0x10000 in sl across the loops,
+ * where this rematerialises -0x800 inside the first loop and 0x10000 in the
+ * scale addition. */
+/* 2026-09-29: the fragment script is BattleFx_FragmentScript and the setter
+ * Engine_ObjectSetScript, so the draft compiles again; alchemy permute
+ * scores 660 (8 register-only, 1 operand for the Value_ constant, 4
+ * inserted, 2 deleted). */
 /* Draft, not exact (2026-09-26): 232 of 228 bytes, 66 differing halfwords.
    Complete rising-burst owner, including padding and its literal pool.
    Symbol constants recover the scale decrement and animation-id loads.
@@ -32,14 +44,12 @@ struct ParticleInstance {
     u8 mode;
 };
 
-extern const u8 Value_fffff800;
-extern const u8 Value_00000a3d;
 
 void Audio_PlayCue(s32 sound);
 void WaitFrames(s32 frames);
 struct ParticleInstance *Object_Spawn(
     s32 kind, s32 x, s32 y, s32 z);
-void Object_SetCallback(struct ParticleInstance *particle, const void *callback);
+void Engine_ObjectSetScript(struct ParticleInstance *particle, const void *callback);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Motion_SetTargetPositionFromMagnitudeAngle(
@@ -51,9 +61,9 @@ void Func_080981b0(struct ParticleBurstEffect *effect)
     s32 scale_step;
     s32 base_scale;
 
+    scale_step = -0x800;
     Audio_PlayCue(0x9a);
     count = 30;
-    scale_step = (s32)&Value_fffff800;
     do {
         effect->y += 0x10000;
         effect->angle += 0x2000;
@@ -75,13 +85,13 @@ void Func_080981b0(struct ParticleBurstEffect *effect)
             s32 random;
             s32 speed;
 
-            Object_SetCallback(particle, &Data_0809f0d4);
+            Engine_ObjectSetScript(particle, &BattleFx_FragmentScript);
             scale = Random16();
             particle->base_scale = base_scale;
             scale += particle->base_scale;
             particle->scale = (s32)scale;
             particle->mode = 2;
-            particle->animation_id = (s32)&Value_00000a3d;
+            particle->animation_id = 0xa3d;
             random = Random16();
             particle->random_offset = (s32)(random - Random16());
             speed = Random16() * 24 + 0x80000;

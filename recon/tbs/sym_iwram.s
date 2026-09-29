@@ -80,8 +80,8 @@ Data_03001ca0:
 	.global gBlendTargetLevel
 gBlendTargetLevel:
 	.space 0x00000008
-	.global Data_03001cb0
-Data_03001cb0:
+	.global gSerialExchangeActive
+gSerialExchangeActive:
 	.space 0x00000004
 	.global Data_03001cb4
 Data_03001cb4:

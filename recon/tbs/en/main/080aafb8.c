@@ -1,3 +1,6 @@
+/* 2026-09-29: eight minutes of permutation reached 3815 from 4970 through
+ * 63 rewrites; not kept, since the owner is far from exact and still needs
+ * its message 0xbad and mask 0x8000 as Value_ symbols. */
 /* DRAFT: 564/572 bytes, 266 differing halfwords, 207 aligned edits. The
  * linked mask now uses ands, but the short-reach message puts the first
  * pool at +0x9c instead of the reference +0xe8. The index stays in fp

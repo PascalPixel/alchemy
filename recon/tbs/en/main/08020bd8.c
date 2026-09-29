@@ -1,3 +1,6 @@
+/* 2026-09-29: five minutes of permutation reached 9291 from 10306 through
+ * 70 rewrites, mostly operand swaps, casts and temporaries; not kept, since
+ * the owner is far from exact. */
 /* Complete owner [08020bd8, 0802106c): 1172 bytes including both final
  * pool words. The default unregistered score incorrectly included the
  * following menu and Djinn functions (1928 bytes); score this extent only.

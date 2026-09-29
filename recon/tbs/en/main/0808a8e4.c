@@ -1,3 +1,8 @@
+/* 2026-09-29: eight minutes of permutation reached 2130 from 2520 through
+ * 26 rewrites (a 0x7fff mask temporary, the scene read into s16 locals, an
+ * inverted cue test and several same-type casts); not kept here. The scene
+ * numbers 0, 1 and 5 are Value_ symbols, so the draft cannot be adopted as
+ * written. */
 /* Draft, not exact (2026-09-24): 628 bytes for the 612-byte owner, 195
    halfwords differ. The prologue, the start-up branches (scene values are
    pool-loaded link symbols; the entrance stores are immediates) and the

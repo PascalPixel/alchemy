@@ -4,7 +4,7 @@
 	.global Mura_VillagerActions
 Mura_VillagerActions:
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte SceneActor_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -394,31 +394,31 @@ gBiribinoMuraEvents1:
 	.4byte 0x0000000b
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008241
+	.4byte FieldScene_RunScene38b_02000240
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x020082c9
+	.4byte SceneDialogue_ShowLine16BF
 	.4byte 0x00000000
 	.4byte 0x0845000a
 	.4byte 0x000013b1
@@ -433,7 +433,7 @@ gBiribinoMuraEvents1:
 	.4byte 0x000016c3
 	.4byte 0x00000000
 	.4byte 0x0845000c
-	.4byte 0x02008289
+	.4byte SceneDialogue_RunActorTwelveDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x000016c4
@@ -445,7 +445,7 @@ gBiribinoMuraEvents1:
 	.4byte 0x000016c5
 	.4byte 0x00000000
 	.4byte 0x0845000e
-	.4byte 0x020082a9
+	.4byte SceneDialogue_RunActorFourteenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x000016c6
@@ -460,7 +460,7 @@ gBiribinoMuraEvents1:
 	.4byte 0x000013bb
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020082e9
+	.4byte SceneDialogue_RunActorSixteenDialogue
 	.4byte 0x00000000
 	.4byte 0x08450011
 	.4byte 0x000013bc
@@ -472,7 +472,7 @@ gBiribinoMuraEvents1:
 	.4byte 0x000013bd
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x02008309
+	.4byte SceneDialogue_ShowLine16CC
 	.4byte 0x00000000
 	.4byte 0x08450013
 	.4byte 0x000013be
@@ -547,10 +547,10 @@ gBiribinoMuraEvents1:
 	.4byte 0x000016dd
 	.4byte 0x00008c15
 	.4byte 0xffff0014
-	.4byte 0x020089cd
+	.4byte Scene_UpdatePuzzleActors
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00004e15
 	.4byte 0xffff0008
 	.4byte 0x00000000
@@ -562,7 +562,7 @@ gBiribinoMuraEvents1:
 	.4byte 0x00200005
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x02008171
+	.4byte FieldScene_RunScriptedSteps947And29DD
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -576,16 +576,16 @@ gBiribinoMuraEvents3:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008225
+	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008225
+	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008225
+	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x02008225
+	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00008d15
 	.4byte 0x18810009
 	.4byte 0x00001771
@@ -642,31 +642,31 @@ gBiribinoMuraEvents3:
 	.4byte 0x00001783
 	.4byte 0x00000003
 	.4byte 0xffff000b
-	.4byte 0x020081ed
+	.4byte FieldScene_RunScriptedStep1472
 	.4byte 0x00000003
 	.4byte 0xffff001e
 	.4byte 0x00400953
 	.4byte 0x00000002
 	.4byte 0x0849000d
-	.4byte 0x02008585
+	.4byte FieldScene_RunScene38b_02000584
 	.4byte 0x00008c15
 	.4byte 0x0848000b
-	.4byte 0x02008405
+	.4byte FieldScene_RunScene38bSequenceC
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0x00008602
 	.4byte 0xffff000a
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0x00004602
 	.4byte 0xffff000a
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00000202
 	.4byte 0xffff000c
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x02008cb5
+	.4byte ActorPresentation_RepaintTenCellsAndActorEightCell
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -680,31 +680,31 @@ gBiribinoMuraEvents2:
 	.4byte 0x00000002
 	.4byte 0x00000003
 	.4byte 0xffff000a
-	.4byte 0x02008209
+	.4byte FieldScene_RunScriptedStep146E
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0200810d
+	.4byte SceneState_SetValues9_3_0
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x02008fa1
+	.4byte FieldScene_DrawTilesByActor8Row
 	.4byte 0x00004602
 	.4byte 0xffff000b
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x0000c602
 	.4byte 0xffff000c
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00000202
 	.4byte 0xffff000d
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

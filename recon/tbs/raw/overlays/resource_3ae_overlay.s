@@ -707,13 +707,13 @@ gKareiTorebiEvents1:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x020087dd
+	.4byte KareiTorebi_LeaveScene
 	.4byte 0x00000001
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008241
+	.4byte SceneDialogue_ShowLine1CF8
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001cfb
@@ -722,7 +722,7 @@ gKareiTorebiEvents1:
 	.4byte 0x00001cfc
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008261
+	.4byte FieldScene_RunScene3ae_02000260
 	.4byte 0x00000000
 	.4byte 0x0911000c
 	.4byte 0x00001d12
@@ -737,10 +737,10 @@ gKareiTorebiEvents1:
 	.4byte 0x02008329
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x020082dd
+	.4byte FieldScene_RunScene3ae_020002dc
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x020084b9
+	.4byte FieldScene_RunActorThirteenFlagDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001d00
@@ -767,7 +767,7 @@ gKareiTorebiEvents1:
 	.4byte 0x00001d1e
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008031
+	.4byte SceneState_ApplyValues14And0And5
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -781,7 +781,7 @@ gKareiTorebiEvents1Flag93e:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x020087dd
+	.4byte KareiTorebi_LeaveScene
 	.4byte 0x00000001
 	.4byte 0xffff0004
 	.4byte 0x00000004
@@ -799,7 +799,7 @@ gKareiTorebiEvents1Flag93e:
 	.4byte 0x00001f88
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008031
+	.4byte SceneState_ApplyValues14And0And5
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -813,22 +813,22 @@ gKareiTorebiEvents3:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x020087dd
+	.4byte KareiTorebi_LeaveScene
 	.4byte 0x00000002
 	.4byte 0x08aa0014
-	.4byte 0x02008145
+	.4byte FieldScene_RunScene3ae_02000144
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008689
+	.4byte SceneDialogue_RunActor8Message1f09
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001f0c
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020086a9
+	.4byte SceneDialogue_RunActor10Message1f15
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x020086c9
+	.4byte FieldScene_RunScene3ae_020006c8
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x00001f1d
@@ -840,7 +840,7 @@ gKareiTorebiEvents3:
 	.4byte 0x00001f20
 	.4byte 0x00008d15
 	.4byte 0xffff040b
-	.4byte 0x020086c9
+	.4byte FieldScene_RunScene3ae_020006c8
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte 0x00001f1f
@@ -858,10 +858,10 @@ gKareiTorebiEvents3:
 	.4byte 0x00001f0e
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte 0x02008af9
+	.4byte FieldScene_PlaceSlots14And15
 	.4byte 0x00008c15
 	.4byte 0xffff000f
-	.4byte 0x02008af9
+	.4byte FieldScene_PlaceSlots14And15
 	.4byte 0x00000013
 	.4byte 0x0f960064
 	.4byte 0x001000b7
@@ -881,10 +881,10 @@ gKareiTorebiEvents3Flag950:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x020087dd
+	.4byte KareiTorebi_LeaveScene
 	.4byte 0x00000002
 	.4byte 0x08ab0032
-	.4byte 0x02008e41
+	.4byte FieldScene_RunScene3aeSequenceB
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000023e1
@@ -935,10 +935,10 @@ gKareiTorebiEvents3Flag950:
 	.4byte 0x00002408
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte 0x02008af9
+	.4byte FieldScene_PlaceSlots14And15
 	.4byte 0x00008c15
 	.4byte 0xffff000f
-	.4byte 0x02008af9
+	.4byte FieldScene_PlaceSlots14And15
 	.4byte 0x00000013
 	.4byte 0x0f960064
 	.4byte 0x001000b7
@@ -958,7 +958,7 @@ gKareiTorebiEvents2:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200851d
+	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001d0c

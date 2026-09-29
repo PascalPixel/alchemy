@@ -153,7 +153,7 @@ MakyuriChojo_FlickerActorEight:
 	.4byte 0x0200bc54
 	.4byte 0x0ffff000
 	.4byte 0x000fffff
-	.4byte 0x0200b461
+	.4byte SceneEffect_UpdateArcPosition
 .L_020034bc_5:
 	ldrb r1, [r5, #9]
 	movs r3, #13
@@ -400,28 +400,28 @@ MakyuriChojo_ActorTable:
 MakyuriChojo_EventTable:
 	.4byte 0x00000002
 	.4byte 0x08800005
-	.4byte 0x02008b25
+	.4byte RunScene58Sequence
 	.4byte 0x00000002
 	.4byte 0x02510006
-	.4byte 0x0200addd
+	.4byte FieldScene_RunScene39d_02002ddc
 	.4byte 0x00000202
 	.4byte 0xffff000b
-	.4byte 0x02008929
+	.4byte SceneActor_InitializeMotion
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008ad1
+	.4byte SceneActor_SetMode55OnSevenRecords
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x02008929
+	.4byte SceneActor_InitializeMotion
 	.4byte 0x00000002
 	.4byte 0x0250000a
-	.4byte 0x020089fd
+	.4byte FieldScene_RunScene39d_020009fc
 	.4byte 0x00000003
 	.4byte 0x03500064
 	.4byte 0x00300000
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x0200aeb9
+	.4byte FieldScene_RunScene39d_02002eb8
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

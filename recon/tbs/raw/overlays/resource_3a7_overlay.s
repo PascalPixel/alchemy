@@ -1609,10 +1609,10 @@ gKuupuappuDouEvents1:
 	.4byte 0x0000000d
 	.4byte 0x00000003
 	.4byte 0xffff0014
-	.4byte 0x020088a9
+	.4byte FieldScene_RunScene3a7SequenceB
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte 0x020082cd
+	.4byte SceneState_SetFlag953
 	.4byte 0x00000013
 	.4byte 0x0ef30064
 	.4byte 0x00500003
@@ -1665,34 +1665,34 @@ gKuupuappuDouEvents2:
 	.4byte 0x00100082
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte 0x020082cd
+	.4byte SceneState_SetFlag953
 	.4byte 0x00008c15
 	.4byte 0x09a90009
-	.4byte 0x020083e1
+	.4byte FieldScene_RunScene3a7SequenceA
 	.4byte 0x00000202
 	.4byte 0xffff003c
-	.4byte 0x02008369
+	.4byte FieldScene_RunFlag9a9GuardedScene
 	.4byte 0x00001815
 	.4byte 0x02000010
-	.4byte 0x0200850d
+	.4byte SceneState_ApplyRectAndMarkActor16
 	.4byte 0x00001815
 	.4byte 0x02010011
-	.4byte 0x02008555
+	.4byte SceneState_ConfigureRegion26_30AndMarkActor17
 	.4byte 0x00001815
 	.4byte 0x02020012
-	.4byte 0x020085a1
+	.4byte SceneState_ConfigureRegion26_30AndClearActor18Mode
 	.4byte 0x00001815
 	.4byte 0x02030013
-	.4byte 0x020085ed
+	.4byte SceneState_ApplyRectAndSetupActor19
 	.4byte 0x00001815
 	.4byte 0x02040014
-	.4byte 0x02008641
+	.4byte SceneActor_SetupSlotTwenty
 	.4byte 0x00001815
 	.4byte 0x02050015
-	.4byte 0x02008691
+	.4byte SceneActor_MarkSlot21AndSetFlag205
 	.4byte 0x00004e15
 	.4byte 0x03000016
-	.4byte 0x020082bd
+	.4byte SceneState_ApplyFlag300
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1718,16 +1718,16 @@ gKuupuappuDouEvents3:
 	.4byte 0x00000006
 	.4byte 0x00000202
 	.4byte 0xffff0032
-	.4byte 0x0200848d
+	.4byte FieldScene_RunGuardedStep9AAAfterSetup
 	.4byte 0x00008c15
 	.4byte 0x09aa000a
-	.4byte 0x020084d1
+	.4byte FieldScene_RunGuardedStep9AA
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x020084cd
+	.4byte Resource3a7_NoOpCallback
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte 0x020082cd
+	.4byte SceneState_SetFlag953
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

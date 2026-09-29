@@ -543,13 +543,13 @@ gImiruFuchinEventsOther:
 gImiruFuchinEvents1:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x02008fcd
+	.4byte SceneState_SetServiceZeroValue06
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02008ff9
+	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008031
+	.4byte SceneState_ApplyValues8And2And1
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -557,40 +557,40 @@ gImiruFuchinEvents1:
 gImiruFuchinEvents2:
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte 0x0200825d
+	.4byte ActorPresentation_SetupActorEightForFlag301
 	.4byte 0x00008602
 	.4byte 0xffff000c
-	.4byte 0x0200829d
+	.4byte SceneState_RunSlot8OffsetStep
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00004602
 	.4byte 0xffff000d
-	.4byte 0x020082e1
+	.4byte FieldScene_RunActor9Transition302
 	.4byte 0x0000c602
 	.4byte 0xffff000e
-	.4byte 0x02008315
+	.4byte ActorPresentation_SetupActorNineForFlag302
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x02008e91
+	.4byte FieldScene_SetActor9Values1And2
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008e91
+	.4byte FieldScene_SetActor9Values1And2
 	.4byte 0x00004602
 	.4byte 0xffff000f
-	.4byte 0x0200834d
+	.4byte ActorPresentation_SetupActorTenForFlag303
 	.4byte 0x0000c602
 	.4byte 0xffff0010
-	.4byte 0x02008381
+	.4byte FieldScene_RunActor10Transition303
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000002
 	.4byte 0xffff0010
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000001
 	.4byte 0xffff0015
 	.4byte 0x00000001
@@ -617,7 +617,7 @@ gImiruFuchinEvents2:
 	.4byte 0x00000008
 	.4byte 0x00000003
 	.4byte 0xffff0001
-	.4byte 0x02009f05
+	.4byte SceneState_SetValue17e1
 	.4byte 0x00000013
 	.4byte 0x0ef10064
 	.4byte 0x00500001
@@ -628,58 +628,58 @@ gImiruFuchinEvents2:
 gImiruFuchinEvents3:
 	.4byte 0x00000602
 	.4byte 0x0306000b
-	.4byte 0x020083b9
+	.4byte FieldScene_RunActor8Transition304
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte 0x0200842d
+	.4byte FieldScene_RunActor8Transition305
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte 0x02009a35
+	.4byte ImiruFuchin_HopOnTrigger
 	.4byte 0x00000602
 	.4byte 0xffff0011
-	.4byte 0x02008465
+	.4byte FieldScene_RunActor8FlaggedSequence
 	.4byte 0x00008602
 	.4byte 0xffff000c
-	.4byte 0x020083ed
+	.4byte FieldScene_RunActor8Transition304And305
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00000002
 	.4byte 0xffff0011
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00008602
 	.4byte 0xffff000d
-	.4byte 0x02009a35
+	.4byte ImiruFuchin_HopOnTrigger
 	.4byte 0x00008602
 	.4byte 0x0304000e
-	.4byte 0x02009a35
+	.4byte ImiruFuchin_HopOnTrigger
 	.4byte 0x00004602
 	.4byte 0xffff000d
-	.4byte 0x020084bd
+	.4byte ActorPresentation_SetupActorNineForFlag306
 	.4byte 0x0000c602
 	.4byte 0xffff000e
-	.4byte 0x020084f1
+	.4byte FieldScene_RunActor9Flag306Sequence
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x02008e91
+	.4byte FieldScene_SetActor9Values1And2
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008e91
+	.4byte FieldScene_SetActor9Values1And2
 	.4byte 0x00004602
 	.4byte 0xffff000f
-	.4byte 0x02008529
+	.4byte ActorPresentation_SetupActorTenForFlag307
 	.4byte 0x0000c602
 	.4byte 0xffff0010
-	.4byte 0x02008569
+	.4byte FieldScene_RunActorTenDepthSequence
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000002
 	.4byte 0xffff0010
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -688,7 +688,7 @@ gImiruFuchinEvents3:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008041
+	.4byte SceneState_ApplyValues11And62
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -696,124 +696,124 @@ gImiruFuchinEvents3:
 gImiruFuchinEvents4:
 	.4byte 0x00008602
 	.4byte 0xffff000a
-	.4byte 0x020085b9
+	.4byte FieldScene_PlaceActorEightByFlags
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte 0x0200862d
+	.4byte FieldScene_RunActor8Transition308And309
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte 0x02008669
+	.4byte ActorPresentation_SetupActorEightForFlags308And309Guarded
 	.4byte 0x0000c602
 	.4byte 0xffff000b
-	.4byte 0x02009ab1
+	.4byte FieldScene_ApplyOffset0Neg32
 	.4byte 0x00000602
 	.4byte 0xffff000c
-	.4byte 0x020086c1
+	.4byte ActorPresentation_SetupActorEightForFlags308And309
 	.4byte 0x0000c602
 	.4byte 0x130b000c
-	.4byte 0x02009ab1
+	.4byte FieldScene_ApplyOffset0Neg32
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00008602
 	.4byte 0xffff000e
-	.4byte 0x020086fd
+	.4byte ActorPresentation_SetupActorNineForFlag30a
 	.4byte 0x00000602
 	.4byte 0xffff000d
-	.4byte 0x02008735
+	.4byte FieldScene_RunActor9Transition30A
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x02008e91
+	.4byte FieldScene_SetActor9Values1And2
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008e91
+	.4byte FieldScene_SetActor9Values1And2
 	.4byte 0x0000c602
 	.4byte 0xffff000f
-	.4byte 0x02008769
+	.4byte FieldScene_PlaceActorTenByFlags
 	.4byte 0x00004602
 	.4byte 0xffff0010
-	.4byte 0x020087f1
+	.4byte FieldScene_RunFlag308DialogueBranch
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte 0x020088cd
+	.4byte FieldScene_RunActor10Transition30BTo30E
 	.4byte 0x00004602
 	.4byte 0x03080011
-	.4byte 0x02008921
+	.4byte FieldScene_RunFlag311DialogueBranch
 	.4byte 0x0000c602
 	.4byte 0xffff0012
-	.4byte 0x020089d1
+	.4byte ActorPresentation_SetupActorTenForFlags30bAnd30d
 	.4byte 0x00004602
 	.4byte 0x03100012
-	.4byte 0x02008a11
+	.4byte FieldScene_RunActor10Flags30bTo30eSequenceA
 	.4byte 0x0000c602
 	.4byte 0xffff0013
-	.4byte 0x02008a61
+	.4byte FieldScene_RunActor10Flags30bTo30eSequenceB
 	.4byte 0x00004602
 	.4byte 0xffff0013
-	.4byte 0x02008ab5
+	.4byte FieldScene_RunActor10Flags30bTo30eSequenceC
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000002
 	.4byte 0xffff0010
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000002
 	.4byte 0xffff0011
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000002
 	.4byte 0xffff0012
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000002
 	.4byte 0xffff0013
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x0000c602
 	.4byte 0xffff0014
-	.4byte 0x02008b05
+	.4byte FieldScene_RunActorElevenFlaggedSteps
 	.4byte 0x00004602
 	.4byte 0x03080015
-	.4byte 0x02008bf5
+	.4byte FieldScene_RunActor11Offset128Sequence
 	.4byte 0x0000c602
 	.4byte 0xffff0016
-	.4byte 0x02008c25
+	.4byte FieldScene_RunActor11Flags30fTo312Sequence
 	.4byte 0x00004602
 	.4byte 0xffff0016
-	.4byte 0x02008c79
+	.4byte ActorPresentation_SetupActorElevenAt0_112
 	.4byte 0x00008602
 	.4byte 0xffff0017
-	.4byte 0x02009ac1
+	.4byte SceneState_ApplyOffsetMinus32
 	.4byte 0x00004602
 	.4byte 0xffff0017
-	.4byte 0x02008ca9
+	.4byte ActorPresentation_SetupActorElevenAt0_64
 	.4byte 0x0000c602
 	.4byte 0xffff0018
-	.4byte 0x02008cd9
+	.4byte ActorPresentation_SetupActorElevenAt0_80
 	.4byte 0x00004602
 	.4byte 0xffff0018
-	.4byte 0x02008d09
+	.4byte FieldScene_RunActor11Transition
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte 0x02008ec1
+	.4byte SceneActor_SetActor11Values1And2
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x02008ec1
+	.4byte SceneActor_SetActor11Values1And2
 	.4byte 0x00000002
 	.4byte 0xffff0016
-	.4byte 0x02008ec1
+	.4byte SceneActor_SetActor11Values1And2
 	.4byte 0x00000002
 	.4byte 0xffff0017
-	.4byte 0x02008ec1
+	.4byte SceneActor_SetActor11Values1And2
 	.4byte 0x00000002
 	.4byte 0xffff0018
-	.4byte 0x02008ec1
+	.4byte SceneActor_SetActor11Values1And2
 	.4byte 0x00004602
 	.4byte 0xffff0019
-	.4byte 0x02009a35
+	.4byte ImiruFuchin_HopOnTrigger
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -831,7 +831,7 @@ gImiruFuchinEvents4:
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0x0f13001e
-	.4byte 0x02009b9d
+	.4byte ImiruFuchin_TakeDragonsEye
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -839,40 +839,40 @@ gImiruFuchinEvents4:
 gImiruFuchinEvents5:
 	.4byte 0x00004602
 	.4byte 0xffff000b
-	.4byte 0x02008d39
+	.4byte ActorPresentation_SetupActorEightForFlag313
 	.4byte 0x0000c602
 	.4byte 0xffff000c
-	.4byte 0x02008d6d
+	.4byte FieldScene_RunActor8Transition313
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x02008e79
+	.4byte ActorPresentation_AdvanceActorEightStates
 	.4byte 0x00008602
 	.4byte 0x0313000d
-	.4byte 0x02008da5
+	.4byte FieldScene_RunActor9Flag314Sequence
 	.4byte 0x00000602
 	.4byte 0xffff000e
-	.4byte 0x02008dd9
+	.4byte ActorPresentation_SetupActorNineForFlag314
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x02008e91
+	.4byte FieldScene_SetActor9Values1And2
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008e91
+	.4byte FieldScene_SetActor9Values1And2
 	.4byte 0x00000602
 	.4byte 0xffff000f
-	.4byte 0x02008e0d
+	.4byte ActorPresentation_SetupActorTenForFlag315
 	.4byte 0x00008602
 	.4byte 0xffff0010
-	.4byte 0x02008e41
+	.4byte FieldScene_RunActor10Flag315Sequence
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000002
 	.4byte 0xffff0010
-	.4byte 0x02008ea9
+	.4byte ActorPresentation_AdvanceActorTenStates
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -907,7 +907,7 @@ gImiruFuchinEvents6:
 	.4byte 0x00000004
 	.4byte 0x00000003
 	.4byte 0xffff0007
-	.4byte 0x02009f21
+	.4byte SceneDialogue_RunLine17e2
 	.4byte 0x00000013
 	.4byte 0x0f140064
 	.4byte 0x001000c8
@@ -954,22 +954,22 @@ gImiruFuchinEvents7:
 	.4byte 0x0000000c
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x0200970d
+	.4byte ImiruFuchin_StartTrackingLeader
 	.4byte 0x00000002
 	.4byte 0xffff0010
-	.4byte 0x02009731
+	.4byte ImiruFuchin_StopTrackingLeader
 	.4byte 0x00000003
 	.4byte 0xffff0013
-	.4byte 0x02009f3d
+	.4byte FieldScene_RunScriptedStep17E3
 	.4byte 0x0000e604
 	.4byte 0x08200014
-	.4byte 0x02009e09
+	.4byte FieldScene_RunFourPassCallbackSequence
 	.4byte 0x00000003
 	.4byte 0xffff0014
-	.4byte 0x02009f59
+	.4byte SceneState_SetWorkspace370ByFlag820
 	.4byte 0x40009085
 	.4byte 0x08200000
-	.4byte 0x02009fad
+	.4byte ImiruFuchin_StartFadeIn
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -979,7 +979,7 @@ gImiruFuchinEvents7:
 	.4byte 0x00000016
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02009c09
+	.4byte OverlayObject_ApplyValue15
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000002
@@ -995,7 +995,7 @@ gImiruFuchinEvents7:
 	.4byte 0x0000002c
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02009c09
+	.4byte OverlayObject_ApplyValue15
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000002
@@ -1011,7 +1011,7 @@ gImiruFuchinEvents7:
 	.4byte 0x0000007e
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02009c09
+	.4byte OverlayObject_ApplyValue15
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000002

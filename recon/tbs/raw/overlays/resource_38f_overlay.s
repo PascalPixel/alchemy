@@ -117,7 +117,7 @@ KorimaMura_ActionTable6:
 	.4byte 0x00000046
 	.4byte 0xc0010000
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte SceneState_FlushPendingWordB698
 	.4byte 0x00000010
 	.global KorimaMura_ActionTable7
 KorimaMura_ActionTable7:
@@ -160,21 +160,21 @@ KorimaMura_EntryActions:
 	.4byte 0x00000000
 	.4byte 0x80010000
 	.4byte 0x00000022
-	.4byte 0x02008051
+	.4byte SceneEffect_AdvanceCounterAndSwitchMode
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.global KorimaMura_DebrisScript
 KorimaMura_DebrisScript:
 	.4byte 0x00000022
-	.4byte 0x020080cd
+	.4byte SceneEffect_UpdateFallingObject
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.global KorimaMura_Actor8Path
 KorimaMura_Actor8Path:
 	.4byte 0x00000022
-	.4byte 0x02008115
+	.4byte SceneActor_TurnTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -557,19 +557,19 @@ gKorimaMuraEvents:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008305
+	.4byte KorimaMura_AnimateSwitchOrExit
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008305
+	.4byte KorimaMura_AnimateSwitchOrExit
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008305
+	.4byte KorimaMura_AnimateSwitchOrExit
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008305
+	.4byte KorimaMura_AnimateSwitchOrExit
 	.4byte 0x00004602
 	.4byte 0xffff0009
-	.4byte 0x02008305
+	.4byte KorimaMura_AnimateSwitchOrExit
 	.4byte 0x00000001
 	.4byte 0xffff000a
 	.4byte 0x0000000a
@@ -599,10 +599,10 @@ gKorimaMuraEvents:
 	.4byte 0x00001694
 	.4byte 0x00000000
 	.4byte 0x18450010
-	.4byte 0x02008231
+	.4byte FieldScene_RunActor16MessageBranch
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x02008275
+	.4byte FieldScene_RunActor27Step
 	.4byte 0x00008d15
 	.4byte 0x18450008
 	.4byte 0x00001695
@@ -676,7 +676,7 @@ gKorimaMuraEvents3:
 	.4byte 0x00000002
 	.4byte 0x00000002
 	.4byte 0x0847000a
-	.4byte 0x020083c9
+	.4byte KorimaMura_RunObjectSpreadScene
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001788
@@ -689,7 +689,7 @@ gKorimaMuraEvents3:
 	.global KorimaMura_Object26Script
 KorimaMura_Object26Script:
 	.4byte 0x00000022
-	.4byte 0x0200a5d9
+	.4byte SceneEffect_AdvanceAngleUntilIdle
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -710,14 +710,14 @@ gFallingEffectScript:
 	.4byte 0x00000006
 	.4byte 0xfffe0000
 	.4byte 0x00000022
-	.4byte 0x0200a6a5
+	.4byte SceneEffect_SetModeByFrameBit1
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000016
 	.4byte 0x00000006
 	.4byte 0xfffe0000
 	.4byte 0x00000022
-	.4byte 0x0200a6a5
+	.4byte SceneEffect_SetModeByFrameBit1
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -728,12 +728,12 @@ gFallingEffectScript:
 	.4byte 0x00000006
 	.4byte 0xffff0000
 	.4byte 0x00000022
-	.4byte 0x0200a6a5
+	.4byte SceneEffect_SetModeByFrameBit1
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
 	.4byte 0x00000028
 	.4byte 0xc0010000
 	.4byte 0x00000022
-	.4byte 0x0200a6cd
+	.4byte KorimaMura_TriggerRegionScript
 	.4byte 0x0000001b

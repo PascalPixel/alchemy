@@ -1230,10 +1230,10 @@ gSoruIriguchiEvents2:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008155
+	.4byte FieldScene_RunScene37fSequenceA
 	.4byte 0x00000003
 	.4byte 0xffff000a
-	.4byte 0x02009aad
+	.4byte FieldScene_RunScriptedStep953
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x0000111d
@@ -1298,10 +1298,10 @@ gSoruIriguchiEvents1:
 	.4byte 0x001000e1
 	.4byte 0x0000e104
 	.4byte 0xffff0414
-	.4byte 0x02008259
+	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00000003
 	.4byte 0xffff0014
-	.4byte 0x02008201
+	.4byte SceneDialogue_RunFlag81aMessageBranch
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1357,19 +1357,19 @@ gSoruIriguchiEvents1Entrances11To13:
 	.4byte 0x00000010
 	.4byte 0x00008c15
 	.4byte 0x02340009
-	.4byte 0x0200856d
+	.4byte Scene_UpdateOuterActor9Flags
 	.4byte 0x00008c15
 	.4byte 0x0234000a
-	.4byte 0x020085ad
+	.4byte Scene_UpdateOuterActor10Flags
 	.4byte 0x00000202
 	.4byte 0xffff0016
-	.4byte 0x020087d1
+	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0x00000602
 	.4byte 0xffff0017
-	.4byte 0x020087d1
+	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0x00008602
 	.4byte 0xffff0019
-	.4byte 0x020087d1
+	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1425,31 +1425,31 @@ gSoruIriguchiEvents1Entrances14To16:
 	.4byte 0x00000010
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x020085ed
+	.4byte Scene_UpdateFormationActor9Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x02008635
+	.4byte Scene_UpdateFormationActor10Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x0200867d
+	.4byte Scene_UpdateFormationActor11Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x020086c5
+	.4byte Scene_UpdateFormationActor12Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte 0x0200870d
+	.4byte Scene_UpdateFormationActor13Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte 0x02008755
+	.4byte Scene_UpdateFormationActor14Flags
 	.4byte 0x00000202
 	.4byte 0xffff0018
-	.4byte 0x020087d1
+	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0x0000e104
 	.4byte 0xffff0415
 	.4byte 0x02008421
 	.4byte 0x00000003
 	.4byte 0xffff0015
-	.4byte 0x020083bd
+	.4byte FieldScene_RunFlag821Dialogue
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

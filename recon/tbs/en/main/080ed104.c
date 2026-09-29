@@ -1,3 +1,10 @@
+/* Draft of BattleFx_RunRisingBurst (0x080ed104, 772 bytes): this C matches
+ * byte for byte, but only through the value-named symbols Value_00000051,
+ * Value_00000073 and Value_000000c0, which it passes as resource numbers:
+ * the ROM loads each from the literal pool, which GCC 2.96 does only for a
+ * link-time symbol. It links again once resource numbers have an honest,
+ * linker-computed definition. */
+
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"

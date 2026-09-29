@@ -11095,7 +11095,7 @@ msgctxt "message"
 msgid "02771"
 msgstr "That's a cursed item."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "02772"
 msgstr "Are you sure you"
 
@@ -11447,7 +11447,7 @@ msgctxt "message"
 msgid "02859"
 msgstr "Ring"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "02860"
 msgstr "Yes"
 

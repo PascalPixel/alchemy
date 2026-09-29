@@ -1,10 +1,3 @@
-/* NONMATCHING (number-bound): Korosseo_RunGreetScene, resource_3bb at
- * 0x020090dc (532 bytes with its pool); twin resource_3bc:0x02009a0c.
- * Formerly FIELD/COMMON/KOROSSEO/GREET_SCENE.C, which no script linked.
- *
- * Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines
- * (Engine_ActorRunRepeatedMotion, Engine_ActorSetDestination). */
 #include "TYPES.H"
 extern u8 MsgKorosseoSiteSecondFinals[];
 
@@ -25,8 +18,6 @@ void Engine_ActorSetDestination();
 void Engine_ActorWalkToAndWait();
 void Engine_ActorFaceDirection();
 void Engine_EventEnd();
-
-
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -53,9 +44,10 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-
 /* Colosso: line the other competitors up around actor a0, show its message
  * and walk it back to its place while the others gather on actor 0. */
+/* Colosso: the competitors are greeted before a trial. The same scene sits
+ * in the wall and log-rolling trial overlays. */
 void Korosseo_RunGreetScene(s32 a0)
 {
     s32 p10;

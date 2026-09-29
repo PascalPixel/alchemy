@@ -707,47 +707,6 @@ Func_02000f94:
 	.4byte 0xfffff400
 	.2byte 0x8f95
 	.2byte 0x0200
-	.section .text.x0200b4bc,"ax",%progbits
-	.p2align 2
-	.global Func_020034bc
-	.thumb_func
-Func_020034bc:
-	push {r5, lr}
-	bl 0x0200bcb0
-	ldr r5, [pc, #80]
-	adds r0, r5, #0
-	bl 0x0200bd60
-	movs r1, #0
-	movs r0, #8
-	bl 0x0200bd68
-	movs r0, #0
-	movs r1, #0
-	bl 0x0200bcc0
-	cmp r0, #0
-	bne .L_020034bc_0
-	movs r0, #20
-	bl 0x0200bca8
-	adds r0, r5, #1
-	bl 0x0200bd60
-	movs r0, #8
-	movs r1, #0
-	bl 0x0200bd70
-	b .L_020034bc_1
-.L_020034bc_0:
-	movs r0, #20
-	bl 0x0200bca8
-	adds r0, r5, #2
-	bl 0x0200bd60
-	movs r0, #8
-	movs r1, #0
-	bl 0x0200bd70
-.L_020034bc_1:
-	bl 0x0200bcb8
-	pop {r5}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x0000217f
 	.section .text.x0200b598,"ax",%progbits
 	.p2align 2
 	.global Func_02003598

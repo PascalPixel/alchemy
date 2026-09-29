@@ -24,7 +24,7 @@ SECTIONS
         "*/resource_3bd_overlay.o"(.text.x02008f94)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/CUTSCENE.o"(.text)
-        "*/resource_3bd_overlay.o"(.text.x0200b4bc)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ROCK_ORDER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ACTOR_EIGHT.o"(.text)
         "*/resource_3bd_overlay.o"(.text.x0200b598)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/MATCH_PRIORITY.o"(.text)

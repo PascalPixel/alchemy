@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -17,8 +18,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  */
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
-
-typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
 /* A small absolute link-time constant.  The resource id must be built from a
  * literal pool word, which an ordinary integer literal cannot produce. */
@@ -68,7 +67,7 @@ void BattleFx_RunMemberOrbit(void *object)
     BattleFx_BeginCanvasLayer(0);
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
     palette = Resource_GetTableEntry((s32)&Value_000000af);
-    status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
+    status = Iwram_CopyWords((void *)0x05000000, palette, 128);
     status = Resource_DecodeType01((u8 *)palette + 128, work);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rectangle[0] = heap_cache[7];

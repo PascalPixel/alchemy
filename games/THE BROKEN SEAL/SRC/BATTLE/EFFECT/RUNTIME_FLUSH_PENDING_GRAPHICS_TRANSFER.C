@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "BATTLE_EFFECT_WORK.H"
 
@@ -7,18 +8,16 @@ void ColorBuffer_BackupAndHalve(const void *source, void *destination, s32 size)
 void ColorBuffer_BackupAndScaleThreeQuarters(const void *source, void *destination, s32 size);
 void ColorBuffer_BackupAndDarken(const void *source, s32 mode, void *destination, s32 size);
 
-typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
-
 static __inline__ void CopyWords(
     void *destination, const void *source, s32 size)
 {
-    ((WordCopyFn)0x03001388)(destination, source, size);
+    Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ void FillWords(
     void *destination, s32 size, s32 value)
 {
-    ((WordCopyFn)0x03000168)(destination, (void *)size, value);
+    Iwram_FillWords(destination, size, value);
 }
 
 /* Flush the battle compositor's pending display transfer. */

@@ -1,10 +1,9 @@
 #include "TYPES.H"
-
-typedef void (*FillFn)(void *dst, s32 size, s32 value);
+#include "IWRAM_CALL.H"
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
-    ((FillFn)0x03000168)(dst, size, value);
+    Iwram_FillWords(dst, size, value);
 }
 
 /* Builds the battle presentation tilemap: 256 blank words, 128 border words,

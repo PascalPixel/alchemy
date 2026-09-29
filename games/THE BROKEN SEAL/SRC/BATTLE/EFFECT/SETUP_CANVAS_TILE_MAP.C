@@ -5,12 +5,13 @@
    routines are called through value-returning pointers, which loads each
    destination before the routine as the ROM does. */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 
 extern u8 gBattleWork[];
 
 typedef s32 (*ClearFn)(void *dst, s32 size);
-typedef s32 (*FillFn)(void *dst, s32 size, s32 value);
+typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ void ClearWords(ClearFn clear, void *dst, s32 size)
 {
@@ -50,8 +51,8 @@ void BattleFx_SetupCanvasTileMap(void)
     BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
     Data_03001ad0[3] = 32;
     layer->offset = 0;
-    ClearWords((ClearFn)0x03000164, (void *)0x06003fc0, 64);
-    FillWords((FillFn)0x03000168, (void *)0x0600f900, 0x200, -1);
+    ClearWords(Iwram_ClearWords, (void *)0x06003fc0, 64);
+    FillWords(Iwram_FillWords, (void *)0x0600f900, 0x200, -1);
     off = 0;
     for (row = 0; row != 16; row++) {
         for (col = 0; col != 32; col++, off += 2) {
@@ -71,8 +72,8 @@ void BattleFx_SetupCanvasTileMap(void)
     *(volatile u16 *)0x04000048 = 0x3537;
     *(volatile u16 *)0x0400004a = 0x3f21;
     *(volatile u16 *)0x04000052 = 0x100e;
-    ClearWords((ClearFn)0x03000164, canvas, 0x4000);
-    ClearWords((ClearFn)0x03000164, (void *)0x06004000, 0x4000);
+    ClearWords(Iwram_ClearWords, canvas, 0x4000);
+    ClearWords(Iwram_ClearWords, (void *)0x06004000, 0x4000);
     WaitFrames(1);
 }
 

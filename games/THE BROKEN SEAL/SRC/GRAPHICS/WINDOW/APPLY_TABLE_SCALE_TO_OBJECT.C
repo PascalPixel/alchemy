@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 void UiWindow_SetTilemapEntry(s32, s32, s32, s32, s32);
 
@@ -56,16 +57,12 @@ struct TileMask {
     u32 word1;
 };
 
-typedef void (*FillProc)(void *dst, s32 size, u32 word);
-
 static __inline__ u32 XorWord(u32 word, u32 mask)
 {
     return word ^ mask;
 }
 
 extern const struct TileMask Data_08037250[];
-
-#define FillWords ((FillProc)0x03000168)
 
 s32 Menu_BuildLocalizedPatternTiles(void)
 {
@@ -78,7 +75,7 @@ s32 Menu_BuildLocalizedPatternTiles(void)
             u32 *tile = vram + set * 0x60 + n * 0x10;
             s32 x;
 
-            FillWords(tile, 64, 0x44444444);
+            Iwram_FillWords(tile, 64, 0x44444444);
             for (x = 1; x <= 7; x++) {
                 s32 mi = n;
 

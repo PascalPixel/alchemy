@@ -11,6 +11,7 @@
    through an explicit u16 pointer; the queue and IME pointers are held for
    the whole function as the ROM keeps them. */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
@@ -120,7 +121,7 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
         }
     }
 
-    ClearWords((ClearWordsFn)0x03000164, canvas, 0x4000);
-    ClearWords((ClearWordsFn)0x03000164, (void *)0x06004000, 0x4000);
+    ClearWords(Iwram_ClearWords, canvas, 0x4000);
+    ClearWords(Iwram_ClearWords, (void *)0x06004000, 0x4000);
     WaitFrames(1);
 }

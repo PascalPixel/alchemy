@@ -13,8 +13,6 @@
 
 	.global IwramIrqMain
 IwramIrqMain:
-	.global Data_03000000
-Data_03000000:
 	mov	r3, #0x04000000
 	ldr	r2, [r3, #0x200]!
 	ldrh	r1, [r3, #8]

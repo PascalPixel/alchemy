@@ -1,10 +1,10 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "RESOURCE.H"
 
-typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
-    ((CopyWordsFn)0x03001388)(destination, source, size);
+    Iwram_CopyWords(destination, source, size);
 }
 
 /* Step every background colour one unit per channel towards the palette

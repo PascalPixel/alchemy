@@ -5,6 +5,7 @@
 #include "STAGED_ACTOR_PAIR_SCENE.H"
 #include "STAGED_ACTOR.H"
 extern u8 MsgKaragoruIveBeenWaitingForRobin[];
+extern u8 MsgKaragoruDoYouWishCrossInto[];
 
 
 struct EffectRecord {
@@ -93,4 +94,24 @@ void ActorPresentation_RunActorElevenRecoveryScene(void)
     Event_Wait(20);
     GameFlag_Set(2464);
     Event_End();
+}
+
+void KaragoruDou_AskToCross(void)
+{
+    s32 base;
+
+    base = (s32)MsgKaragoruDoYouWishCrossInto;
+    Event_SetMessage(base);
+    Event_OpenMessage(8, 0);
+    if (Event_ChooseYesNo(0, 0) == 0) {
+        if (GameFlag_IsSet(0x950) != 0) {
+            if (GameFlag_IsSet(0x96f) == 0) {
+                Event_SetMessage((base + 8));
+            }
+        }
+        Event_ShowMessage(8, 0);
+    } else {
+        bump_step(1);
+        Event_ShowMessage(8, 0);
+    }
 }

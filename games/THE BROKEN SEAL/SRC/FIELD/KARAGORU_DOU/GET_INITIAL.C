@@ -79,7 +79,9 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 
 s32 StagedActorPairScene_GetInitialValue(void) { return 0; }
 
+extern u8 KaragoruDou_Messages[];
+
 u8 *StagedActorPairScene_GetMessageData(void)
 {
-    return (u8 *)0x0200991c;
+    return KaragoruDou_Messages;
 }

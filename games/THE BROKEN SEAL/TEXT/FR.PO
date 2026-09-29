@@ -42403,7 +42403,7 @@ msgctxt "message"
 msgid "10598"
 msgstr "Que s'est-il passé?{line_break}Il faut mieux faire!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyTravelingWarrior"
 msgid "10599"
 msgstr "Je suis un guerrier{line_break}itinérant. Je suis venu{line_break}pour devenir plus fort...{page_break}Ne sous-estimez pas{line_break}les monstres que vous{line_break}trouverez ici...{end_wait}"
 

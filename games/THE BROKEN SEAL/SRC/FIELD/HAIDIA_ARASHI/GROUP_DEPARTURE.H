@@ -115,6 +115,7 @@ extern u8 HaidiaArashi_CellSteps2[];
 extern u8 HaidiaArashi_CellSteps3[];
 extern u8 HaidiaArashi_LastObjectCall[];
 extern u8 HaidiaArashi_LeaderScript[];
+extern u8 HaidiaArashi_ActorTwentyScript[];
 extern u8 HaidiaArashi_ActorTwentyTwoScript[];
 
 s32 IwramUnsignedRemainder(s32, s32);

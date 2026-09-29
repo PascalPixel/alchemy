@@ -7,6 +7,7 @@ extern u8 MsgFuneNowWeHaveProtectShip[];
 extern u8 MsgFuneSomebodyStopThem[];
 extern u8 MsgFuneTheyCantPlanningMutiny[];
 extern u8 MsgFuneToldWereLeavingSoonSet[];
+extern u8 MsgFuneHeadedColosso[];
 extern u8 FuneKanpan_RandomActorActions[];
 
 
@@ -165,5 +166,13 @@ void FieldScene_RunScene3afSequenceA(void)
             Event_ShowMessage(24, 0);
         }
     }
+    Event_End();
+}
+
+void SceneDialogue_RunActor21Line(void)
+{
+    Event_Begin();
+    Event_SetMessage((s32)MsgFuneHeadedColosso);
+    Event_AskYesNo(21, 0);
     Event_End();
 }

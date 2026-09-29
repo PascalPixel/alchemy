@@ -42,6 +42,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
@@ -55,7 +58,13 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Engine_ActorStop
+	.thumb_func
+Engine_ActorStop:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	.global Object_SetActionCallbackAndRefreshById
+	.thumb_func
+Object_SetActionCallbackAndRefreshById:
 	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
 	.global Engine_ActorSetDestination
 	.thumb_func
@@ -89,12 +98,21 @@ Engine_ActorSetAnimationAndWait:
 	.thumb_func
 Engine_ActorJump:
 	overlay_veneer ObjectMotion_LaunchFar
+	.global Engine_ActorStartRepeatedMotion
+	.thumb_func
+Engine_ActorStartRepeatedMotion:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
 	.global Engine_ActorRunRepeatedMotion
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
+	.global Engine_ActorFaceActor
+	.thumb_func
+Engine_ActorFaceActor:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
+	.global Engine_ActorFaceEachOther
+	.thumb_func
+Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
 	.global Object_SetTargetAndCallback
 	.thumb_func
@@ -104,6 +122,9 @@ Object_SetTargetAndCallback:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
@@ -125,11 +146,17 @@ Engine_ActorFaceDirection:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
 	.global Engine_CameraFollowActor
 	.thumb_func
 Engine_CameraFollowActor:
 	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Engine_CameraSetSpeed
+	.thumb_func
+Engine_CameraSetSpeed:
 	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Engine_CameraMoveTo
 	.thumb_func
@@ -163,11 +190,17 @@ Engine_ColorBufferApplySource:
 	.thumb_func
 Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
+	.global Engine_EventCloseScreen
+	.thumb_func
+Engine_EventCloseScreen:
 	overlay_veneer Event_ClearStatus1c6Far
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Audio_PlayCueFromEventWork
+	.thumb_func
+Audio_PlayCueFromEventWork:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
 	.global Engine_AudioPlayCue
 	.thumb_func

@@ -63,6 +63,8 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 extern u8 FuneKanpan_DeckEventActions[];
+extern u8 FuneKanpan_CrewScript[];
+extern u8 FuneKanpan_CrewScriptB[];
 
 void FieldScene_RunShipDeckEventScript(void)
 {
@@ -74,9 +76,9 @@ void FieldScene_RunShipDeckEventScript(void)
     s32 v;
 
     Battle_Reset();
-    Call1(Event_CallWithLastActiveObjectId, 33608032);
+    Call1(Event_CallWithLastActiveObjectId, (s32)FuneKanpan_CrewScript);
     WaitFrames(1);
-    Call1(Event_CallWithLastActiveObjectId, 33608200);
+    Call1(Event_CallWithLastActiveObjectId, (s32)FuneKanpan_CrewScriptB);
     WaitFrames(1);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 21, 16252928, 47710208);
     ObjectGroup_ConfigureChildValue(0, 15);

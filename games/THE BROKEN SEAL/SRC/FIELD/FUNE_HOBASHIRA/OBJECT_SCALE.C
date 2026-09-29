@@ -1,4 +1,5 @@
 #include "FUNE.H"
+extern u8 MsgFuneMonsters2[];
 
 void FieldScene_RunActorNinePresentationCycles(void)
 {
@@ -87,7 +88,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Actor_Jump(8, 6, 40);
     Audio_PlayCue(29);
     GameFlag_Set(0x8f0);
-    Event_SetMessage(MSG_MONSTERS);
+    Event_SetMessage((s32)MsgFuneMonsters2);
     Event_ShowMessageAndWait(16, 0, 20);
     Actor_ShowEmote(8, 0x100, 0);
     Actor_WalkToAndWait(8, 164, 0x158);

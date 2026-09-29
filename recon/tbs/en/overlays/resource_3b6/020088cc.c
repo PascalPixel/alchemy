@@ -1,11 +1,9 @@
-/* Draft of resource_3b6 0x020088cc (SceneDialogue_RunMessage23acStep), built with
- * games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/TOREBI.H.
- * Remaining difference: the ROM loads the message number once from the
- * literal pool and forms the following lines by adding to it, as a
- * link-time message value would; the C constant folds each sum into its
- * own pool constant (4 or 8 bytes longer).
- * The listing keeps these rows. */
+/* Draft of resource_3b6 0x020088cc (SceneDialogue_RunMessage23acStep): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgTorebiWarriorRemember). The listing
+ * keeps these rows until the draft is adopted. */
 #include "TOREBI.H"
+extern u8 MsgTorebiWarriorRemember[];
 
 void SceneDialogue_RunMessage23acStep(s32 subject)
 {
@@ -13,7 +11,7 @@ void SceneDialogue_RunMessage23acStep(s32 subject)
 
     Event_Begin();
 
-    message = MSG_DO_YOU_REMEMBER_ME;
+    message = (s32)MsgTorebiWarriorRemember;
     Event_SetMessage(message);
     Event_OpenMessage(subject, 0);
 

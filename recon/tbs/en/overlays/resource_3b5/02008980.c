@@ -1,9 +1,9 @@
-/* Draft of FieldScene_RunPrimarySequence, resource_3b5 at 0x02008980, built with
- * games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/MACHI.H.
- * Remaining difference: the message base 0x1fb6 kept in r5 is loaded before the
- * second speed call instead of after it, so ten bytes differ.
- * The listing keeps these rows. */
+/* Draft of resource_3b5 0x02008980 (FieldScene_RunPrimarySequence): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgTorebiSeenAnyoneWho). The listing
+ * keeps these rows until the draft is adopted. */
 #include "MACHI.H"
+extern u8 MsgTorebiSeenAnyoneWho[];
 
 /*
  * Set up objects 29, 30 and 32, branch on a query result to run one of two
@@ -21,7 +21,7 @@ void FieldScene_RunPrimarySequence(void)
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Call3(Engine_ActorSetSpeed, 29, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 30, 0x10000, 0x8000);
-    list_00001fb6 = 0x1fb6;
+    list_00001fb6 = (s32)MsgTorebiSeenAnyoneWho;
     Engine_EventSetMessage(list_00001fb6);
     Call3(Engine_ActorSetPosition, 29, 0x480000, 0xd00000);
     Call3(Engine_ActorSetPosition, 30, 0x380000, 0xd00000);

@@ -1,5 +1,7 @@
 /* The periodic particles and the multi-phase actor sequence. */
 #include "LOG_ROLLING.H"
+extern u8 MsgKorosseoRobin[];
+extern u8 MsgKorosseoRobinFellAsleep[];
 
 s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle)
 {
@@ -131,7 +133,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     ColorBuffer_ApplyTarget(0x10001, 1);
     Event_OpenScreen();
     Event_WaitForScreen();
-    Event_SetMessage(MSG_ROBIN);
+    Event_SetMessage((s32)MsgKorosseoRobin);
     Event_Wait(60);
     data_table_addr = (s32)gColossoMultiPhaseData;
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
@@ -265,7 +267,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Graphics_EnableObjLayerAndCallbacks();
     ColorBuffer_ApplyTarget(0x10000, 2);
     ColorBuffer_Interpolate(1);
-    Event_SetMessage(MSG_ROBIN_FELL_ASLEEP);
+    Event_SetMessage((s32)MsgKorosseoRobinFellAsleep);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_ShowMessage(ACTOR_MIA, 0);

@@ -1,6 +1,8 @@
 /* Cabin dialogue and actor movement vary with the passenger story flags. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgFuneBack[];
+extern u8 MsgFuneBackBroughtOarsman[];
 
 void FieldScene_RunSceneStep();
 void OverlayObject_SetPositionAndHeading();
@@ -74,7 +76,7 @@ void Scene_RunConditionalActorPresentation(s32 a0)
         Engine_ActorRunRepeatedMotion(27, 1);
         Engine_EventWait(20);
         Engine_ActorFaceEachOther(27, 0, 10);
-        Call1(Engine_EventSetMessage, 0x1ebc);
+        Call1(Engine_EventSetMessage, (s32)MsgFuneBackBroughtOarsman);
         Call1(FieldScene_RunStepThen10, CabinSpeakerRequest);
         Engine_ActorSetAnimationAndWait(0, 3);
         v7 = 0;
@@ -136,7 +138,7 @@ void Scene_RunConditionalActorPresentation(s32 a0)
         FieldScene_RunSceneStep(9, 10, 0);
         goto L_02004592;
     }
-    Call1(Engine_EventSetMessage, 0x1eb7);
+    Call1(Engine_EventSetMessage, (s32)MsgFuneBack);
     Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
     Call3(Engine_ActorShowEmote, 27, 0x101, 60);
     /* FAKEMATCH: start the saved speaker at repeated dialogue; the initial

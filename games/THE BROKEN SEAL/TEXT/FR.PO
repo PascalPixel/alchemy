@@ -10607,7 +10607,7 @@ msgctxt "message"
 msgid "02649"
 msgstr "{protagonist_name} gagne{line_break}{argument_signed_number} pièce{control:13}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoRobinGotItem"
 msgid "02650"
 msgstr "{protagonist_name} prend:{line_break}{argument_item_name:1}.{end_wait}"
 
@@ -14279,7 +14279,7 @@ msgctxt "message"
 msgid "03567"
 msgstr "...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiBuddyWannaTry"
 msgid "03568"
 msgstr "Hé, mec, tu veux{line_break}tenter ta chance{line_break}aux dés?{page_break}C'est {argument_signed_number} pièce{control:13}{line_break}la partie.{end_now}"
 
@@ -14295,15 +14295,15 @@ msgctxt "message"
 msgid "03571"
 msgstr "Lis la pancarte si tu{line_break}connais pas les règles.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiYaDontEnough"
 msgid "03572"
 msgstr "Hé! T'as pas assez de{line_break}pièces! Il faut payer{line_break}pour jouer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiYaWonNumber"
 msgid "03573"
 msgstr "T'as gagné {argument_signed_number} pièce{control:13}!{line_break}Tu parles d'un veinard!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiYaLostNumber"
 msgid "03574"
 msgstr "T'as perdu {argument_signed_number} pièce{control:13}.{line_break}Reviens tenter ta chance.{end_wait}"
 
@@ -14323,7 +14323,7 @@ msgctxt "message"
 msgid "03578"
 msgstr "T'as perdu {argument_signed_number} pièce{control:13}.{line_break}T'as pas eu de chance.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiYerFirstTime"
 msgid "03579"
 msgstr "C'est la première fois{line_break}que tu joues aux{line_break}dés du destin?{end_now}"
 
@@ -14363,7 +14363,7 @@ msgctxt "message"
 msgid "03588"
 msgstr "J'ai épuisé mes{line_break}réserves de chance. Je{line_break}devrais arrêter de jouer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiStepRightTry"
 msgid "03589"
 msgstr "Avance et tente ta{line_break}chance sur le jackpot{line_break}du destin!{end_wait}"
 
@@ -14387,11 +14387,11 @@ msgctxt "message"
 msgid "03594"
 msgstr "Si tu as trop d'objets,{line_break}tu ne pourras pas{line_break}emporter ton lot.{page_break}Tu es d'accord?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTorebiGetRidItems"
 msgid "03595"
 msgstr "Alors débarrasse-toi{line_break}de quelques objets et{line_break}reviens ici.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiStepRightEnjoy"
 msgid "03596"
 msgstr "Avance et amuse-toi{line_break}comme un fou.{end_wait}"
 
@@ -14407,43 +14407,43 @@ msgctxt "message"
 msgid "03599"
 msgstr "Commençons la{line_break}manche {argument_signed_number}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiCongratulations"
 msgid "03600"
 msgstr "Félicitations!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWonItemGo"
 msgid "03601"
 msgstr "Tu as gagné: {argument_item_name:1}!{line_break}Bravo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWonItemGo2"
 msgid "03602"
 msgstr "Et tu as gagné:{line_break}{argument_item_name:1}!{line_break}Bravo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiComeAgain"
 msgid "03603"
 msgstr "Reviens bientôt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiBadComeBack"
 msgid "03604"
 msgstr "Dommage...{line_break}Reviens quand tu auras{line_break}gagné quelques tickets.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiBadLikeUse"
 msgid "03605"
 msgstr "Dommage...{page_break}Veux-tu utiliser{line_break}tes tickets pour{line_break}continuer à jouer?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTorebiLuckyWheelsRulesPullLever"
 msgid "03606"
 msgstr "Règles du jackpot du destin.{page_break}Tire le levier et{line_break}aligne des icônes{line_break}identiques pour gagner.{page_break}Tu as droit à 5 essais{line_break}pour réussir.{page_break}Appuie sur l'étoile{line_break}pour bloquer une roue.{page_break}Tu as une ligne pour{line_break}1 ticket de jeu,{line_break}3 lignes pour 2 tickets,{page_break}5 lignes pour 3 tickets,{line_break}7 lignes pour 4 tickets.{page_break}Utilise tous tes{line_break}tickets sur le{line_break}jackpot du destin!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiLuckyWheelsPrizesPrizesDetermined"
 msgid "03607"
 msgstr "Lots du jackpot du destin{page_break}Les lots dépendent des{line_break}icônes que vous alignez.{page_break}Chemises pour des chemises,{line_break}Anneaux pour des anneaux,{line_break}Bottes pour des bottes,{page_break}Etoiles et Coeurs donnent{line_break}des objets. Lunes donnent{line_break}n'importe quel type de lot.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiFaceAwayTolbi"
 msgid "03608"
 msgstr "Tournez le dos à la{line_break}fontaine de Tolbi et{line_break}lancez-y une pièce.{page_break}Si vous avez de la{line_break}chance, quelque chose de{line_break}bien vous arrivera.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiTossLuckyMedal"
 msgid "03609"
 msgstr "Si tu jettes un{line_break}porte-bonheur et que{line_break}tu as de la chance,{page_break}tu gagneras un meilleur{line_break}lot qu'avec une simple{line_break}pièce.{end_wait}"
 
@@ -14451,7 +14451,7 @@ msgctxt "message"
 msgid "03610"
 msgstr "La fontaine de Tolbi a{line_break}des pouvoirs magiques.{page_break}Tourne le dos à la{line_break}fontaine et lance une{line_break}pièce sur la cible!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiLuckyMedal"
 msgid "03611"
 msgstr "As-tu un{line_break}porte-bonheur?{end_now}"
 
@@ -14467,7 +14467,7 @@ msgctxt "message"
 msgid "03614"
 msgstr "Dommage que je n'en aie{line_break}qu'un.{page_break}Je ne prendrai{line_break}pas le risque de le{line_break}perdre...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWantTestLuck"
 msgid "03615"
 msgstr "Hum? Tu veux tester{line_break}ta chance sur la{line_break}fontaine de Tolbi?{end_now}"
 
@@ -14491,7 +14491,7 @@ msgctxt "message"
 msgid "03620"
 msgstr "Voulez-vous essayer la{line_break}fontaine de Tolbi?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTorebiThrow"
 msgid "03621"
 msgstr "Qu'allez-vous lancer?{end_now}"
 
@@ -14503,7 +14503,7 @@ msgctxt "message"
 msgid "03623"
 msgstr "Plus de porte-bonheur!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWonNumberCoin"
 msgid "03624"
 msgstr "Vous avez gagné{line_break}{argument_signed_number} pièce{control:13}!{end_wait}"
 
@@ -14515,7 +14515,7 @@ msgctxt "message"
 msgid "03626"
 msgstr "{protagonist_name} a abandonné!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiCoins"
 msgid "03627"
 msgstr "Pièces"
 
@@ -14527,7 +14527,7 @@ msgctxt "message"
 msgid "03629"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgTorebiToss"
 msgid "03630"
 msgstr "{button_icon:1} Lancer"
 
@@ -29775,11 +29775,11 @@ msgctxt "message"
 msgid "07441"
 msgstr "Hum. Que faire...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneItsTooLateHireMercenaries"
 msgid "07442"
 msgstr "Il est trop tard pour{line_break}enrôler des{line_break}mercenaires... Nous{page_break}n'avons plus{line_break}le temps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneButWeCantSendShip"
 msgid "07443"
 msgstr "Mais nous ne pouvons{line_break}pas partir sans{line_break}engager des guerriers.{end_wait}"
 
@@ -29895,7 +29895,7 @@ msgctxt "message"
 msgid "07471"
 msgstr "Il y a des monstres{line_break}là-bas... Si nous ne{line_break}nous préparons pas,{page_break}nous sommes fichus!{line_break}Argh! Si seulement{line_break}nous avions de{page_break}puissants guerriers...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneLongerWeSitHereMore"
 msgid "07472"
 msgstr "Plus nous attendons ici,{line_break}plus nous aurons de{line_break}temps pour réfléchir.{page_break}Je me demande où en est{line_break}notre participation{line_break}au Colysée.{end_wait}"
 
@@ -29903,7 +29903,7 @@ msgctxt "message"
 msgid "07473"
 msgstr "On dirait qu'on ne{line_break}peut plus prendre la{line_break}route de la soie...{page_break}Je suppose qu'on est les{line_break}seuls passagers à avoir{line_break}pu s'offrir un ticket.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneTheresWholeBunchReallyMuscular"
 msgid "07474"
 msgstr "Il y a tout un tas{line_break}d'hommes musclés à{line_break}l'étage inférieur.{page_break}Ces gens sont les{line_break}rameurs, non?{end_wait}"
 
@@ -29927,7 +29927,7 @@ msgctxt "message"
 msgid "07479"
 msgstr "Nous avons laissé{line_break}mamie à la maison pour{line_break}pouvoir prendre notre{page_break}temps au Colysée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneIfWeArentGoingSet"
 msgid "07480"
 msgstr "Si nous ne larguons pas{line_break}les amarres dans peu de{line_break}temps, je débarque!{end_wait}"
 
@@ -30163,7 +30163,7 @@ msgctxt "message"
 msgid "07538"
 msgstr "J'ai caché{line_break}l'ancre enchantée...{page_break}Personne ne penserait à{line_break}regarder en haut du mât.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneNowWantSeeCaptainToo"
 msgid "07539"
 msgstr "Oui? Vous aussi vous{line_break}voulez voir le capitaine?{end_now}"
 
@@ -30171,7 +30171,7 @@ msgctxt "message"
 msgid "07540"
 msgstr "Et bien, vous n'avez{line_break}rien à faire ici!{line_break}Ouste!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneYoureTryingLaunchShip"
 msgid "07541"
 msgstr "Vous essayez de faire{line_break}partir le navire?{end_wait}"
 
@@ -30403,7 +30403,7 @@ msgctxt "message"
 msgid "07598"
 msgstr "Vous avez entendu le{line_break}capitaine! Ce bateau{line_break}ne va nulle part!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneBadLuckLosingMyLucky"
 msgid "07599"
 msgstr "Oh! Quelle poisse!{line_break}Perdre mon{line_break}porte-bonheur!{page_break}Ce navire ne partira{line_break}pas sans qu'on l'ait{line_break}trouvé!{end_wait}"
 
@@ -30419,7 +30419,7 @@ msgctxt "message"
 msgid "07602"
 msgstr "Je n'avais pas la{line_break}moindre idée qu'il{line_break}était si superstitieux.{page_break}Je pensais qu'il{line_break}blaguait...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneYouCameAskCaptainSet"
 msgid "07603"
 msgstr "Vous êtes venus demander{line_break}au capitaine de lever{line_break}l'ancre, non?{end_now}"
 
@@ -30431,7 +30431,7 @@ msgctxt "message"
 msgid "07605"
 msgstr "Hé! Hé! Dans ce cas,{line_break}pourquoi ne visitez-vous{line_break}pas le navire?{page_break}J'aurai peut-être besoin{line_break}d'un coup de main plus{line_break}tard. J'espère que vous{page_break}me donnerez un coup{line_break}de main.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneIfShipFromTolbiHad"
 msgid "07606"
 msgstr "Si le navire de Tolbi{line_break}était venu, j'aurais{line_break}réagi différemment,{page_break}mais là... Je ne bougerai{line_break}pas sans mon ancre!{end_wait}"
 
@@ -30459,7 +30459,7 @@ msgctxt "message"
 msgid "07612"
 msgstr "J'ai attendu trop{line_break}longtemps... J'aurai{line_break}des ennuis si je ne{page_break}trouve pas quelque{line_break}chose... Je vais devoir{line_break}tout avouer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneItsMyLuckyAnchor"
 msgid "07613"
 msgstr "Hé!{line_break}C'est mon{line_break}porte-bonheur!{end_wait}"
 
@@ -30631,7 +30631,7 @@ msgctxt "message"
 msgid "07655"
 msgstr "Bien, tout le monde,{line_break}préparons-nous à{line_break}larguer les amarres!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneWeDontKnowMightHappen"
 msgid "07656"
 msgstr "Nous ne savons pas ce{line_break}qui pourrait se passer.{line_break}Soyez sur vos gardes.{end_wait}"
 
@@ -30683,7 +30683,7 @@ msgctxt "message"
 msgid "07668"
 msgstr "Vous avez tous été{line_break}d'accord.{page_break}C'est pourquoi,{line_break}j'aimerais votre{line_break}pleine coopération!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneTheseProudWarriorsNotGoing"
 msgid "07669"
 msgstr "Ces fiers guerriers{line_break}ne vont sans doute pas{line_break}aimer qu'on leur dise{page_break}de ramer.{end_wait}"
 
@@ -30707,7 +30707,7 @@ msgctxt "message"
 msgid "07674"
 msgstr "Tout cet argent pour{line_break}des tickets et en plus{line_break}on doit ramer???{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneYouGoingRow"
 msgid "07675"
 msgstr "Allez-vous ramer? {end_now}"
 
@@ -30763,7 +30763,7 @@ msgctxt "message"
 msgid "07688"
 msgstr "De garde? La mer est si{line_break}vaste! Comment{line_break}pouvez-vous voir{page_break}quoi que ce soit?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneOurReplacementNeverArrivedBut"
 msgid "07689"
 msgstr "L'autre navette n'est{line_break}jamais arrivée, mais ça{line_break}ne change rien pour nous.{end_wait}"
 
@@ -30839,23 +30839,23 @@ msgctxt "MsgFunePreparationsReady"
 msgid "07707"
 msgstr "Paré à larguer les amarres!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneShipsCourseClear"
 msgid "07708"
 msgstr "Trajectoire calculée!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneCastOff"
 msgid "07709"
 msgstr "Bien. Larguez les amarres!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneRowThoseOars"
 msgid "07710"
 msgstr "Souquez ferme!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneWereOff"
 msgid "07711"
 msgstr "Nous sommes en route!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneAvast"
 msgid "07712"
 msgstr "A la proue!{end_wait}"
 
@@ -30863,7 +30863,7 @@ msgctxt "message"
 msgid "07713"
 msgstr "Monstres en vue!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneMonsters"
 msgid "07714"
 msgstr "Des monstres?{end_wait}"
 
@@ -30875,7 +30875,7 @@ msgctxt "message"
 msgid "07716"
 msgstr "Capitaine, mettez le{line_break}gouvernail à bâbord toute!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneImTurning"
 msgid "07717"
 msgstr "Bien compris!{end_wait}"
 
@@ -30887,7 +30887,7 @@ msgctxt "MsgFuneArrgh"
 msgid "07719"
 msgstr "{text_effect:4}Arrgh!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneMonstersBelowdecks"
 msgid "07720"
 msgstr "Des monstres dans{line_break}le navire!{end_wait}"
 
@@ -30895,11 +30895,11 @@ msgctxt "message"
 msgid "07721"
 msgstr "{actor_name:1}! Occupe-toi{line_break}de ces monstres et{line_break}sauve mes hommes!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneWhereGoingSlay"
 msgid "07722"
 msgstr "Où vas-tu,{line_break}{actor_name:1}? Tue les monstres{line_break}et sauve mes hommes!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneMonsters2"
 msgid "07723"
 msgstr "Des monstres!{end_wait}"
 
@@ -31047,7 +31047,7 @@ msgctxt "message"
 msgid "07759"
 msgstr "Je préfèrerais être{line_break}mangé par un monstre{line_break}marin plutôt que de ramer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHeyAreYouOk"
 msgid "07760"
 msgstr "Ca va?{end_wait}"
 
@@ -31087,7 +31087,7 @@ msgctxt "message"
 msgid "07769"
 msgstr "Tu dois te sentir{line_break}bien important à donner{line_break}des ordres!{page_break}J'ai un boulot à{line_break}faire! Je ne peux{line_break}pas ramer!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneNoooooNotGoing"
 msgid "07770"
 msgstr "{text_effect:4}Noooon!{pause_20_skippable}{reset_text_style} Vous n'allez{line_break}pas me demander de{line_break}ramer, quand même?{end_now}"
 
@@ -31099,7 +31099,7 @@ msgctxt "message"
 msgid "07772"
 msgstr "Je ne suis qu'un{line_break}homme d'affaire.{page_break}Je suis trop faible{line_break}pour servir à quoi{line_break}que ce soit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneJokingWantRow"
 msgid "07773"
 msgstr "Vous...{pause_20_skippable} Vous blaguez...{line_break}Vous voulez que{line_break}je rame?{end_now}"
 
@@ -31111,7 +31111,7 @@ msgctxt "message"
 msgid "07775"
 msgstr "Ouais. En plus,{line_break}une spatule m'est plus{line_break}utile qu'une rame.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneDontTellGoing"
 msgid "07776"
 msgstr "Ne me dites pas{pause_20_skippable} que vous{line_break}aller demander à une{line_break}dame de ramer?{end_now}"
 
@@ -31123,7 +31123,7 @@ msgctxt "message"
 msgid "07778"
 msgstr "Vous m'avez effrayée.{line_break}Ne recommencez plus,{line_break}vilains garnements!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneOhhhhNooooGoingMakeMe"
 msgid "07779"
 msgstr "Quoi? {text_effect:4}Ohhhh, nooon...{pause_20_skippable}{line_break}{reset_text_style}Vous voulez me{line_break}faire ramer?{end_now}"
 
@@ -31135,7 +31135,7 @@ msgctxt "message"
 msgid "07781"
 msgstr "Quoi?{pause_20_skippable} Vous n'allez{line_break}pas me choisir? Vous{line_break}êtes de braves petits!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHaHaHaRowingFeel"
 msgid "07782"
 msgstr "Ha ha. Ramer, c'est ça?{line_break}Choisissez qui vous{line_break}voulez.{end_wait}"
 
@@ -31151,7 +31151,7 @@ msgctxt "message"
 msgid "07785"
 msgstr "Ouf! Ne me faites{line_break}plus de frayeurs{line_break}comme celle-là!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneNotThinkingMaking"
 msgid "07786"
 msgstr "Hé!{pause_20_skippable} Vous ne pensez{line_break}quand même pas faire{line_break}de moi un rameur, non?{end_now}"
 
@@ -31163,7 +31163,7 @@ msgctxt "message"
 msgid "07788"
 msgstr "Hé hé!{pause_20_skippable} Vous avez fait{line_break}le bon choix en ne me{line_break}choisissant pas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneOarsmanGiveBreak"
 msgid "07789"
 msgstr "Quoi?{pause_20_skippable} Moi? Un rameur?{line_break}La bonne blague!{line_break}Sérieusement?{end_now}"
 
@@ -31175,7 +31175,7 @@ msgctxt "message"
 msgid "07791"
 msgstr "Hahhh... {pause_20_skippable}Vous m'avez{line_break}fait si peur que j'ai{line_break}failli avoir une attaque!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFunePoorOarsmanFeel"
 msgid "07792"
 msgstr "Ce pauvre rameur. Il me{line_break}fait de la peine.{page_break}Quoi?{pause_20_skippable} Vous voulez que{line_break}je prenne sa place?{end_now}"
 
@@ -31187,7 +31187,7 @@ msgctxt "message"
 msgid "07794"
 msgstr "C'est vrai... On ne peut{line_break}pas demander à une{line_break}demoiselle de faire{page_break}un tel travail!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFunePeopleAskingFrail"
 msgid "07795"
 msgstr "Parmi tous ces gens,{line_break}c'est à un vieillard{line_break}comme moi que{page_break}vous demandez?{end_now}"
 
@@ -31239,39 +31239,39 @@ msgctxt "message"
 msgid "07807"
 msgstr "Nous avons assez{line_break}d'ennuis comme ça{line_break}pour trouver assez{page_break}de passagers! C'est{page_break}pas comme si nous avions{line_break}des rameurs remplaçants.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneLooksLikeYouveBeenChosen"
 msgid "07808"
 msgstr "Vous allez remplacer{line_break}un rameur, non?{line_break}Alors dépêchez-vous!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHaHaHaChosenOarsman"
 msgid "07809"
 msgstr "Ha ha ha!{pause_20_skippable}{line_break}Vous allez ramer, hein?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneYouFinallyPickedSomeoneDidnt"
 msgid "07810"
 msgstr "Vous avez enfin trouvé{line_break}quelqu'un?{line_break}Allez au travail!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneGivesMeChillsThinkCould"
 msgid "07811"
 msgstr "Et dire que ça{line_break}a failli être moi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneRobinYouveGotGoodEye"
 msgid "07812"
 msgstr "Hé, {actor_name:1}. Tu as{line_break}bien choisi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneThatsWhoYouPickedOarsman"
 msgid "07813"
 msgstr "C'est ça ton{line_break}rameur?{page_break}Joli choix!{line_break}On dirait un vrai...{line_break}rameur.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneIfYouveChosenOarsmanLets"
 msgid "07814"
 msgstr "Si vous avez choisi{line_break}un rameur, alors{line_break}allons-y!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneYouveBeenChosenAsOarsman"
 msgid "07815"
 msgstr "C'est vous qui allez{line_break}ramer? Quel immense{line_break}honneur!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHoHoPersonGoingGet"
 msgid "07816"
 msgstr "Ho ho! C'est ça qui{line_break}va ramer jusqu'à Tolbi?{end_wait}"
 
@@ -31319,7 +31319,7 @@ msgctxt "message"
 msgid "07827"
 msgstr "Je suis désolé que le{line_break}rameur ait été blessé.{page_break}Assure-toi qu'aucun{line_break}autre ne le soit,{line_break}OK, {actor_name:1}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneOarsmanWasInjured"
 msgid "07828"
 msgstr "Un rameur a été blessé?{end_wait}"
 
@@ -31339,7 +31339,7 @@ msgctxt "message"
 msgid "07832"
 msgstr "Nous connaissions les{line_break}risques lorsque nous{line_break}sommes partis...{page_break}Mais cela fait toujours{line_break}de la peine de voir{line_break}un marin blessé.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneBack"
 msgid "07833"
 msgstr "{actor_name:1}, tu es revenu.{end_wait}"
 
@@ -31359,7 +31359,7 @@ msgctxt "message"
 msgid "07837"
 msgstr "Désolé, mais il va{line_break}falloir choisir{line_break}quelqu'un d'autre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneBackBroughtOarsman"
 msgid "07838"
 msgstr "{actor_name:1}, tu es revenu!{line_break}Et tu as amené un{line_break}rameur avec toi!{end_wait}"
 
@@ -31379,7 +31379,7 @@ msgctxt "message"
 msgid "07842"
 msgstr "Si nous ne partons{line_break}pas bientôt...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneWonderWhatsWrongShipShouldnt"
 msgid "07843"
 msgstr "Je me demande ce{line_break}qu'il se passe...{pause_20_skippable}{page_break}Le bateau ne devrait pas{line_break}tanguer autant.{end_wait}"
 
@@ -31431,23 +31431,23 @@ msgctxt "message"
 msgid "07855"
 msgstr "Si le navire coule,{line_break}nous sommes foutus.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneThingHasKajaHisMen"
 msgid "07856"
 msgstr "Cette chose inquiète{line_break}Kaja et ses hommes. Le{line_break}combat sera rude.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneMonstersEverywhereImStuckRowing"
 msgid "07857"
 msgstr "Des monstres partout et{line_break}je dois ramer...{page_break}J'aurais dû rester{line_break}chez moi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneShipStartingListIfWe"
 msgid "07858"
 msgstr "Le navire commence à{line_break}prendre l'eau...{page_break}Si on ne fait rien,{line_break}nous allons couler!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHowManyMonstersOutThere"
 msgid "07859"
 msgstr "Combien de monstres{line_break}y a-t-il?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneAnotherMonsterIsntFirstClass"
 msgid "07860"
 msgstr "Un autre monstre? C'est{line_break}comme ça qu'on est traité{line_break}en première classe?{end_wait}"
 
@@ -31483,23 +31483,23 @@ msgctxt "message"
 msgid "07868"
 msgstr "Je me demande si le{line_break}monstre est suffisamment{line_break}gros pour couler le{page_break}navire.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneDontCareTakesJustHurry"
 msgid "07869"
 msgstr "Peu m'importe{line_break}comment, mais tuez{line_break}ce monstre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneIfThoseMonstersComeBack"
 msgid "07870"
 msgstr "Si ces monstres{line_break}reviennent, donnez-leur{line_break}une autre correction!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneBoatsRockingMuchImCertain"
 msgid "07871"
 msgstr "Le bateau tangue{line_break}énormément. Nous allons{line_break}tous mourir!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHadIdeaThereWereMany"
 msgid "07872"
 msgstr "Je n'avais pas la moindre{line_break}idée qu'il y avait{line_break}tant de monstres{page_break}en pleine mer...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneWereSurroundedByMonstersStill"
 msgid "07873"
 msgstr "Nous sommes entourés{line_break}par des monstres et{line_break}toujours pas de terre!{end_wait}"
 
@@ -31519,7 +31519,7 @@ msgctxt "message"
 msgid "07877"
 msgstr "Je dois examiner la{line_break}coque. Trouve quelqu'un{line_break}pour ramer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneLandHo"
 msgid "07878"
 msgstr "Terre!{end_wait}"
 
@@ -31795,7 +31795,7 @@ msgctxt "message"
 msgid "07946"
 msgstr "Il nous faut du{line_break}temps pour déterminer{line_break}la position du navire...{page_break}Dirigeons-nous vers{line_break}cette île pour trouver{line_break}des repères.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneReachedIslandRowers"
 msgid "07947"
 msgstr "Nous avons atteint l'île!{pause_20_skippable}{line_break}Rameurs, vous pouvez{line_break}vous reposer!{end_wait}"
 
@@ -31811,7 +31811,7 @@ msgctxt "message"
 msgid "07950"
 msgstr "Uh... Tolbi n'est pas une{line_break}île, non?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneShipWentOff"
 msgid "07951"
 msgstr "Le navire a dévié et{line_break}nous sommes...{line_break}quelque part!{page_break}Nous sommes venus sur{line_break}cette île pour nous{line_break}repérer.{end_wait}"
 
@@ -31915,11 +31915,11 @@ msgctxt "message"
 msgid "07976"
 msgstr "Les passagers n'ont{line_break}pas l'air de vouloir{line_break}descendre à terre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneDontFeelDontTalkMe"
 msgid "07977"
 msgstr "J'me sens pas bien...{line_break}Me parlez pas...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHateArguing"
 msgid "07978"
 msgstr "Je n'aime pas{line_break}discuter pour rien...{end_wait}"
 
@@ -32111,7 +32111,7 @@ msgctxt "message"
 msgid "08025"
 msgstr "Ca n'est pas très loin.{line_break}Je vais demander aux{line_break}rameurs un dernier effort.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneSorryEveryoneButWeNeed"
 msgid "08026"
 msgstr "Désolé, tout le monde{pause_20_skippable},{line_break}mais nous devons{line_break}alterner les équipes!{page_break}Nous avons dévié car{line_break}l'équipe de gauche a{line_break}un mauvais timing.{end_wait}"
 
@@ -32123,7 +32123,7 @@ msgctxt "message"
 msgid "08028"
 msgstr "Allez!{pause_20_skippable} Allons à{line_break}Tolbi, maintenant!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneImSpreadingGoodwillWhereverTravel"
 msgid "08029"
 msgstr "Je répands la bonne{line_break}parole partout où{line_break}je vais.{end_wait}"
 
@@ -32131,7 +32131,7 @@ msgctxt "message"
 msgid "08030"
 msgstr "Même si je suis contre{line_break}la violence, j'ai hâte{line_break}d'aller au Colysée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneShipsCrewReadyForAnything"
 msgid "08031"
 msgstr "L'équipage est prêt à{line_break}tout et je suis là pour{line_break}le soutenir.{page_break}Demandez aux autres{line_break}de ramer.{end_wait}"
 
@@ -32139,7 +32139,7 @@ msgctxt "message"
 msgid "08032"
 msgstr "Je ne peux pas ramer,{line_break}mais j'espère qu'on{line_break}s'en sortira.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneShipsCrewReadyAnything"
 msgid "08033"
 msgstr "L'équipage est prêt à{line_break}tout et je suis là pour{line_break}le soutenir.{page_break}Demandez aux autres{line_break}de ramer.{end_wait}"
 
@@ -32147,7 +32147,7 @@ msgctxt "message"
 msgid "08034"
 msgstr "Cette épreuve cruelle{line_break}est-elle de sinistre{line_break}augure pour moi?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneGoodShipHasArrivedSafely"
 msgid "08035"
 msgstr "C'est cool que le{line_break}navire soit bien arrivé.{end_wait}"
 
@@ -32215,7 +32215,7 @@ msgctxt "message"
 msgid "08051"
 msgstr "Babi était déjà vieux{line_break}lorsque je suis né.{page_break}J'ai 65 ans, maintenant,{line_break}alors j'imagine à peine{line_break}l'âge qu'il doit avoir!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiSomeoneLiveMore"
 msgid "08052"
 msgstr "Est-ce qu'on peut{line_break}vraiment avoir plus de{line_break}100 ans?{end_now}"
 
@@ -32227,11 +32227,11 @@ msgctxt "message"
 msgid "08054"
 msgstr "Vous avez peut-être{line_break}raison. Mais Babi?{page_break}Il a au moins 50 ans{line_break}de plus que moi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWheeFestivalColosso"
 msgid "08055"
 msgstr "Waou! C'est un festival!{line_break}C'est le Colysée!{page_break}Je ne sais même pas{line_break}ce que je vais pouvoir{line_break}acheter avec l'argent{page_break}que m'a donné maman!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWaahSaidMoney"
 msgid "08056"
 msgstr "Waah! Elle a dit que{line_break}l'argent était pour{line_break}nous deux!{end_wait}"
 
@@ -32259,7 +32259,7 @@ msgctxt "message"
 msgid "08062"
 msgstr "Ouais. Ce jeu de dés{line_break}a l'air rigolo.{page_break}Si vous aimez jouer ET{line_break}gagner des récompenses,{line_break}pourquoi ne pas essayer?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiChildrenLoveSouvenirs"
 msgid "08063"
 msgstr "Les enfants adorent{line_break}les souvenirs, non?{end_now}"
 
@@ -32271,7 +32271,7 @@ msgctxt "message"
 msgid "08065"
 msgstr "Humph! Vous dites cela{line_break}car vos parents ne vous{line_break}ont jamais rien acheté!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiPatientLittleGuy"
 msgid "08066"
 msgstr "Sois patient, petiot.{end_wait}"
 
@@ -32279,11 +32279,11 @@ msgctxt "message"
 msgid "08067"
 msgstr "Je t'achèterai de{line_break}meilleures choses la{line_break}prochaine fois.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWaahBuySweets"
 msgid "08068"
 msgstr "{text_effect:4}Waah!{reset_text_style} Achète-moi{line_break}des bonbons! Je veux{line_break}des bonbons!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiInnsFullStaying"
 msgid "08069"
 msgstr "Les auberges sont{line_break}pleines, alors je{line_break}dors ici.{page_break}Cette arche me protège{line_break}de la pluie... Elle{line_break}vaut une bonne auberge.{end_wait}"
 
@@ -32311,11 +32311,11 @@ msgctxt "message"
 msgid "08075"
 msgstr "Et si Babi était une{line_break}tout autre personne{page_break}sans qu'on s'en{line_break}doute?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiOldestShouldntShare"
 msgid "08076"
 msgstr "Je suis le plus âgé!{line_break}Je ne devrais pas{line_break}partager mon{page_break}argent de poche.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiMamaToldShare"
 msgid "08077"
 msgstr "Maman nous a dit de{line_break}partager l'argent. Ne{line_break}s'en souvient-il pas?{end_wait}"
 
@@ -32359,7 +32359,7 @@ msgctxt "message"
 msgid "08087"
 msgstr "J'ai gardé des places,{line_break}mais elles ne sont pas{line_break}terribles. Je me{page_break}demande si mes amis{line_break}vont bientôt arriver...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiSeenAnyoneWho"
 msgid "08088"
 msgstr "Hé, vous avez déjà vu{line_break}quelqu'un qui{line_break}ressemble à ça?{end_now}"
 
@@ -32379,7 +32379,7 @@ msgctxt "message"
 msgid "08092"
 msgstr "Tolbi est remplie de{line_break}touristes pendant le{line_break}Colysée et les auberges{page_break}sont pleines. J'aligne{line_break}quelques lits et hop!{line_break}Je deviens aubergiste!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWantStay"
 msgid "08093"
 msgstr "Voulez-vous rester{line_break}avec nous?{end_now}"
 
@@ -32471,7 +32471,7 @@ msgctxt "message"
 msgid "08115"
 msgstr "Il faut avoir la{line_break}grosse tête pour donner{line_break}son nom à un phare, non?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiLookStrongGo"
 msgid "08116"
 msgstr "Tu as l'air fort...{line_break}Va combattre au{line_break}Colysée!{end_wait}"
 
@@ -32483,7 +32483,7 @@ msgctxt "message"
 msgid "08118"
 msgstr "Je suppose que je n'y{line_break}serais jamais arrivé,{line_break}alors tant pis...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiFirstTimeTolbi"
 msgid "08119"
 msgstr "C'est votre première{line_break}fois à Tolbi?{end_now}"
 
@@ -32499,7 +32499,7 @@ msgctxt "message"
 msgid "08122"
 msgstr "Ils vendent de belles{line_break}choses à Tolbi.{page_break}Allez donc faire un{line_break}peu de shopping!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiIfCanMakeNameFor"
 msgid "08123"
 msgstr "Si vous vous faites{line_break}un nom au Colysée,{line_break}vous pourrez peut-être{page_break}devenir un garde de{line_break}Babi.{end_wait}"
 
@@ -32571,7 +32571,7 @@ msgctxt "message"
 msgid "08140"
 msgstr "Si j'avais participé{line_break}au Colysée, j'aurais{line_break}sans doute gagné!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWasteStuckHereWhenSuch"
 msgid "08141"
 msgstr "Quel dommage d'être{line_break}coincé ici alors qu'il{line_break}y a un grand festival...{end_wait}"
 
@@ -32595,7 +32595,7 @@ msgctxt "message"
 msgid "08146"
 msgstr "Je me demande combien{line_break}de personnes vont rester{line_break}ici après le Colysée...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiRunBabisSoldiers"
 msgid "08147"
 msgstr "Etez-vous tombés sur{line_break}des soldats de Babi?{end_now}"
 
@@ -32619,11 +32619,11 @@ msgctxt "message"
 msgid "08152"
 msgstr "Les guerriers n'ont pas{line_break}le droit de rester dans{line_break}le palais s'ils ne{page_break}participent pas au{line_break}Colysée!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWeHaveJustEnoughExtra"
 msgid "08153"
 msgstr "Nous avons suffisamment{line_break}de lits pour tout{line_break}le monde ici.{page_break}Veuillez me suivre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiUseFourBeds"
 msgid "08154"
 msgstr "Vous pouvez utiliser{line_break}ces quatre lits.{page_break}Allez-vous faire un{line_break}petit somme?{end_now}"
 
@@ -32635,7 +32635,7 @@ msgctxt "message"
 msgid "08156"
 msgstr "Et bien, n'hésitez pas{line_break}à revenir quand vous{line_break}serez fatigués!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiLikeSleep"
 msgid "08157"
 msgstr "Voulez-vous{line_break}dormir?{end_now}"
 
@@ -32679,7 +32679,7 @@ msgctxt "message"
 msgid "08167"
 msgstr "Allez, {actor_name:1}!{line_break}Une longue journée{line_break}nous attend!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiPlanningEnterColosso"
 msgid "08168"
 msgstr "Vous voulez participer{line_break}au Colysée?{end_now}"
 
@@ -32691,7 +32691,7 @@ msgctxt "message"
 msgid "08170"
 msgstr "Vous aussi, vous{line_break}avez été blessés?{page_break}C'est pas de chance{line_break}de se faire blesser{line_break}aux éliminatoires.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiCantFightBecauseLittleIndigestion"
 msgid "08171"
 msgstr "Je ne peux pas combattre{line_break}à cause d'une petite{line_break}indigestion! Ri-di-cule!{end_wait}"
 
@@ -32787,7 +32787,7 @@ msgctxt "message"
 msgid "08194"
 msgstr "Lord Babi fondait de{line_break}grands espoirs sur{line_break}le voyage de Thélos.{page_break}Je me demande ce{line_break}qu'il attendait comme{line_break}résultats.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiIodemIodem"
 msgid "08195"
 msgstr "Iodem, Iodem!{end_wait}"
 
@@ -32983,7 +32983,7 @@ msgctxt "message"
 msgid "08243"
 msgstr "{actor_name:7} n'a pas{line_break}le droit de quitter{line_break}cette pièce.{page_break}Même si elle descend{line_break}vraiment des dieux,{line_break}elle ne pourra jamais{page_break}arriver toute seule{line_break}à Gondowan.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiEvenIfEscapedBabiPalace"
 msgid "08244"
 msgstr "Même si je m'échappais{line_break}du palais de Babi, je{line_break}ne serais jamais assez{page_break}forte pour arriver à{line_break}Lalivero. Ce serait{line_break}impossible de traverser{page_break}le désert de Suhalla.{end_wait}"
 
@@ -33003,7 +33003,7 @@ msgctxt "message"
 msgid "08248"
 msgstr "Soupir... Le Colysée{line_break}est plein à craquer.{line_break}Je n'y rentrerai jamais!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuHopingGetInSeeColosso"
 msgid "08249"
 msgstr "Vous espérez entrer{line_break}dans le Colysée?{end_now}"
 
@@ -33023,15 +33023,15 @@ msgctxt "message"
 msgid "08253"
 msgstr "J'ai parié pendant des{line_break}années à Instinct-destin,{line_break}mais je n'ai jamais gagné.{page_break}J'aimerais bien gagner{line_break}une fois dans ma vie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuColossosLuckyGuessMakesBattles"
 msgid "08254"
 msgstr "C'est Instinct-destin{line_break}qui rend les combats{line_break}du Colysée intéressants.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuWantWinBigPutOn"
 msgid "08255"
 msgstr "J'aimerais bien gagner{line_break}le gros lot, alors j'ai{line_break}tout misé sur un guerrier{page_break}sur lequel personne n'a{line_break}parié.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuDoKnowLuckyGuess"
 msgid "08256"
 msgstr "Vous savez en quoi{line_break}consiste Instinct-destin?{end_now}"
 
@@ -33091,15 +33091,15 @@ msgctxt "message"
 msgid "08270"
 msgstr "J'ai attendu une{line_break}année entière pour{line_break}voir le Colysée.{page_break}J'ai hâte de voir{line_break}les finales!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuSilence"
 msgid "08271"
 msgstr "!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuHaveMakeThroughCountlessMatches"
 msgid "08272"
 msgstr "Vous aurez à gagner de{line_break}nombreux combats pour{line_break}accéder aux finales.{page_break}Ce guerrier a échoué{line_break}aux éliminatoires.{line_break}Il est disqualifié.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuHavePerfectTechniquesLikeThose"
 msgid "08273"
 msgstr "Vous devez perfectionner{line_break}des techniques comme{line_break}celle-là pour arriver{page_break}aux finales.{line_break}Ce guerrier a réussi les{line_break}éliminatoires et je{page_break}suis sûr qu'il réussira{line_break}à remporter les finales.{end_wait}"
 
@@ -33115,7 +33115,7 @@ msgctxt "message"
 msgid "08276"
 msgstr "Quels physiques de{line_break}rêve! Si seulement{line_break}j'étais plus jeune...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoDidntThinkBattles"
 msgid "08277"
 msgstr "Je ne pensais pas que{line_break}les combats des{line_break}éliminatoires pouvaient{page_break}être si intenses. Je{line_break}n'ose imaginer les{line_break}combats des finales!{end_wait}"
 
@@ -33127,7 +33127,7 @@ msgctxt "message"
 msgid "08279"
 msgstr "{actor_name:1} lit la pancarte.{page_break}Auberge{line_break}Complet {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoStageFirstFinalsMatch"
 msgid "08280"
 msgstr "C'est le niveau {argument_signed_number}{line_break}de la première série{line_break}de finales.{end_wait}"
 
@@ -33135,7 +33135,7 @@ msgctxt "message"
 msgid "08281"
 msgstr "C'est le niveau {argument_signed_number}{line_break}de la première série{line_break}de finales.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoStageSecondFinalsMatch"
 msgid "08282"
 msgstr "C'est le niveau {argument_signed_number}{line_break}de la deuxième série{line_break}de finales.{end_wait}"
 
@@ -33143,7 +33143,7 @@ msgctxt "message"
 msgid "08283"
 msgstr "C'est le niveau {argument_signed_number}{line_break}de la deuxième série{line_break}de finales.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoStageThirdFinalsMatch"
 msgid "08284"
 msgstr "C'est le niveau {argument_signed_number}{line_break}de la troisième série{line_break}de finales.{end_wait}"
 
@@ -33151,19 +33151,19 @@ msgctxt "message"
 msgid "08285"
 msgstr "C'est le niveau {argument_signed_number}{line_break}de la troisième série{line_break}de finales.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoWouldYouLikeHearDescription"
 msgid "08286"
 msgstr "Voulez-vous une{line_break}description de{line_break}ce niveau?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoWouldLikeFriendCheerFor"
 msgid "08287"
 msgstr "Voulez-vous qu'un ami{line_break}vous encourage ici?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoIfKnowWhoWantCheer"
 msgid "08288"
 msgstr "Dites-moi si vous{line_break}avez choisi qui va{line_break}vous encourager.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoRobinWillCheerForWay"
 msgid "08289"
 msgstr "{argument_actor_name:1} va vous{line_break}encourager? Par ici,{line_break}s'il vous plaît.{end_wait}"
 
@@ -33179,19 +33179,19 @@ msgctxt "message"
 msgid "08292"
 msgstr "Rien"
 
-msgctxt "message"
+msgctxt "MsgKorosseoDoYourBest"
 msgid "08293"
 msgstr "Bien, faites de{line_break}votre mieux!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoUnfortunatelyWeHaveFullHouse"
 msgid "08294"
 msgstr "Malheureusement, il n'y{line_break}a plus de place.{line_break}Veuillez aller ailleurs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoMatchAboutBeginPleaseTake"
 msgid "08295"
 msgstr "Le combat va commencer.{line_break}Veuillez prendre place.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoCheering"
 msgid "08296"
 msgstr "Hein? Vous avez{line_break}terminé?{end_now}"
 
@@ -33211,11 +33211,11 @@ msgctxt "message"
 msgid "08300"
 msgstr "Nan"
 
-msgctxt "message"
+msgctxt "MsgKorosseoObjectiveStageClear"
 msgid "08301"
 msgstr "L'objectif de cette{line_break}manche est d'avancer{line_break}le plus vite possible.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoCallRockChallenge"
 msgid "08302"
 msgstr "On l'appelle le{line_break}\"défi rocailleux\".{end_wait}"
 
@@ -33227,11 +33227,11 @@ msgctxt "message"
 msgid "08304"
 msgstr "Les guerriers n'ont{line_break}le droit d'utiliser que{line_break}ce qu'ils trouvent ici,{page_break}ainsi que leur force et{line_break}leur intelligence,{line_break}bien sûr.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoObjectiveMakeGood"
 msgid "08305"
 msgstr "Ici, il faut se{line_break}servir intelligemment{line_break}des balances.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoAreaCalledPipeworks"
 msgid "08306"
 msgstr "On appelle cette{line_break}section la \"tuyauterie\".{end_wait}"
 
@@ -33247,11 +33247,11 @@ msgctxt "message"
 msgid "08309"
 msgstr "En vous servant de ça,{line_break}vous devez trouver un{line_break}moyen d'atteindre{page_break}la prochaine section.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoOperatorBridgeWillAlsoCheer"
 msgid "08310"
 msgstr "L'opérateur du pont{line_break}vous acclamera{line_break}également.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoTheyCallBrokenBridge"
 msgid "08311"
 msgstr "On l'appelle le{line_break}\"pont Sanfon\".{end_wait}"
 
@@ -33263,11 +33263,11 @@ msgctxt "message"
 msgid "08313"
 msgstr "Si vous n'avez pas le{line_break}bon timing, vous risquez{line_break}de tomber et donc,{page_break}de perdre du temps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoLogsKeyClearingStage"
 msgid "08314"
 msgstr "Les rondins de bois{line_break}sont la clé d'une{line_break}réussite facile.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoPlaceNormallyCalledLumberWater"
 msgid "08315"
 msgstr "Cet endroit est{line_break}appelé le \"croisement{line_break}du bûcheron\".{end_wait}"
 
@@ -33283,11 +33283,11 @@ msgctxt "message"
 msgid "08318"
 msgstr "Mais si vous voulez{line_break}atteindre le coffre, il{line_break}faudra faire attention.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoMainThingStage"
 msgid "08319"
 msgstr "Ici, il faut sortir{line_break}du labyrinthe...{page_break}Sans paniquer et{line_break}sans se perdre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoStageDubbedMini"
 msgid "08320"
 msgstr "Cette section est{line_break}nommée \"mini-laby\".{end_wait}"
 
@@ -33299,11 +33299,11 @@ msgctxt "message"
 msgid "08322"
 msgstr "Mais il faudra réagir{line_break}vite et bien pour{line_break}gagner.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoOperatorLiftsWillCheerFor"
 msgid "08323"
 msgstr "La personne qui actionne{line_break}les ascenseurs vous{line_break}encouragera.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoShiftingFloorStage"
 msgid "08324"
 msgstr "C'est la section{line_break}du \"sol décolle\".{end_wait}"
 
@@ -33315,11 +33315,11 @@ msgctxt "message"
 msgid "08326"
 msgstr "Si vous êtes bien{line_break}en rythme, vous gagnerez{line_break}beaucoup de temps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoHereYourObjectiveRideLogs"
 msgid "08327"
 msgstr "Votre objectif est de{line_break}franchir les rondins de{line_break}bois aussi vite que{page_break}possible.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoLogRollingStage"
 msgid "08328"
 msgstr "Voici \"roule rondin\".{end_wait}"
 
@@ -33331,11 +33331,11 @@ msgctxt "message"
 msgid "08330"
 msgstr "Essayez d'atteindre{line_break}la berge opposée pour{line_break}atteindre la{page_break}section suivante.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoScalingWallQuickly"
 msgid "08331"
 msgstr "Il faut escalader le{line_break}mur le plus vite{line_break}possible.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoFansJustCallWall"
 msgid "08332"
 msgstr "Les amateurs{line_break}l'appellent le mur.{end_wait}"
 
@@ -33347,11 +33347,11 @@ msgctxt "message"
 msgid "08334"
 msgstr "Trouvez les coins{line_break}où vous pouvez sauter{line_break}rapidement.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoFocusRollingLogs"
 msgid "08335"
 msgstr "Vous devrez{line_break}passer sur le chemin{line_break}formé par les{page_break}rondins de bois.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoPlaceCalledBoard"
 msgid "08336"
 msgstr "Cet endroit est appelé{line_break}\"la planche\".{end_wait}"
 
@@ -33363,11 +33363,11 @@ msgctxt "message"
 msgid "08338"
 msgstr "Poussez-les pour{line_break}ouvrir un passage et{line_break}progresser.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoObjectiveGetAcross"
 msgid "08339"
 msgstr "Vous devez franchir{line_break}les fosses le plus{line_break}vite possible.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoStageCalledScales"
 msgid "08340"
 msgstr "Voici la{line_break}\"balance de justice\".{end_wait}"
 
@@ -33383,11 +33383,11 @@ msgctxt "message"
 msgid "08343"
 msgstr "Utilisez les bras{line_break}de la balance pour{line_break}franchir les fosses{page_break}et atteindre l'étape{line_break}suivante.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoYourGoalInStageSimple"
 msgid "08344"
 msgstr "Votre objectif est{line_break}simple: trouver le{line_break}chemin le plus rapide.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSteppingStoneStage"
 msgid "08345"
 msgstr "C'est la \"section des{line_break}marches\".{end_wait}"
 
@@ -33399,11 +33399,11 @@ msgctxt "message"
 msgid "08347"
 msgstr "Etudiez la position{line_break}des pierres pour{line_break}déterminer le chemin{page_break}le plus rapide.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoOperatorWallsCheer"
 msgid "08348"
 msgstr "La personne qui{line_break}actionne les murs{line_break}vous encouragera!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoPlaceCalledWall"
 msgid "08349"
 msgstr "Voici le précipice.{end_wait}"
 
@@ -33415,11 +33415,11 @@ msgctxt "message"
 msgid "08351"
 msgstr "Si vous avez un{line_break}mauvais timing, un{line_break}piston risque de{page_break}vous faire tomber.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoClearStageMustAbleChange"
 msgid "08352"
 msgstr "Pour réussir cette{line_break}épreuve, vous devez{line_break}être capable de{page_break}changer de direction{line_break}tout en grimpant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoPlaceNormallyCalledFreeClimb"
 msgid "08353"
 msgstr "Cet endroit est{line_break}habituellement appelé{line_break}la \"zone varappe\".{end_wait}"
 
@@ -33431,11 +33431,11 @@ msgctxt "message"
 msgid "08355"
 msgstr "En vous en servant,{line_break}escaladez-le pour{line_break}atteindre{page_break}l'étape suivante.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoInStageMustTryOutpace"
 msgid "08356"
 msgstr "Ici, il faut être{line_break}plus rapide que le{line_break}tapis roulant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoCalledMovingSidewalkStage"
 msgid "08357"
 msgstr "C'est la section{line_break}\"chemin sans fin\".{end_wait}"
 
@@ -33447,11 +33447,11 @@ msgctxt "message"
 msgid "08359"
 msgstr "Franchissez-le pour{line_break}atteindre l'étape{line_break}suivante.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoHereMustFigureOutHow"
 msgid "08360"
 msgstr "Ici, il faut deviner{line_break}de quelle manière{line_break}déplacer les rondins{page_break}et les pierres.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoAnotherLogRollingArea"
 msgid "08361"
 msgstr "C'est une autre{line_break}section à rondins.{end_wait}"
 
@@ -33467,7 +33467,7 @@ msgctxt "message"
 msgid "08364"
 msgstr "Vous pourrez la{line_break}franchir sans peine en{line_break}déplaçant les rondins{page_break}et les pierres.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteFirstFinalsBattle"
 msgid "08365"
 msgstr "C'est ici qu'a lieu{line_break}le duel de la première{line_break}manche des finales.{end_wait}"
 
@@ -33503,11 +33503,11 @@ msgctxt "message"
 msgid "08373"
 msgstr "Très bien. Laissez-moi{line_break}vous expliquer en{line_break}détails...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoAskAttendantsForExplanationsStages"
 msgid "08374"
 msgstr "Demandez au personnel{line_break}qu'il vous décrive{line_break}les manches.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoWarriorsEnterFinalsWithoutAny"
 msgid "08375"
 msgstr "Les guerriers commencent{line_break}les finales sans le{line_break}moindre équipement.{end_wait}"
 
@@ -33555,7 +33555,7 @@ msgctxt "message"
 msgid "08386"
 msgstr "Laissez-moi reprendre{line_break}depuis le début.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoRobinYoureContestantInFinals"
 msgid "08387"
 msgstr "{actor_name:1}, vous participez{line_break}aux finales.{line_break}Ne l'oubliez pas.{page_break}Revenez me voir quand{line_break}vous aurez fini de{line_break}jeter un coup d'oeil.{end_wait}"
 
@@ -33571,7 +33571,7 @@ msgctxt "message"
 msgid "08390"
 msgstr "Oui. Nous déciderons où{line_break}encourager {actor_name:1} après{line_break}avoir entendu les{page_break}descriptifs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoRobinDidGetGoodLook"
 msgid "08391"
 msgstr "{actor_name:1}, tu as bien{line_break}observé partout?{end_now}"
 
@@ -33583,11 +33583,11 @@ msgctxt "message"
 msgid "08393"
 msgstr "Dites-moi quand vous{line_break}aurez fini de jeter{line_break}un coup d'oeil.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoWaitShouldntDecideWhereBest"
 msgid "08394"
 msgstr "Vous ne deviez pas{line_break}décider où était le{line_break}meilleur endroit où{page_break}encourager {actor_name:1}?{page_break}Vous pouvez encourager{line_break}votre poulain à partir{line_break}de n'importe quelle{page_break}section. Le choix{line_break}n'est pas facile.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteSecondFinals"
 msgid "08395"
 msgstr "Voici le lieu du{line_break}deuxième duel des{line_break}finales.{end_wait}"
 
@@ -33619,7 +33619,7 @@ msgctxt "message"
 msgid "08402"
 msgstr "Franchement, {actor_name:1},{line_break}je ne pensais pas que{line_break}vous iriez si loin!{page_break}Je ne bougerai pas.{line_break}Revenez me voir quand{line_break}vous serez prêts.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoRobin"
 msgid "08403"
 msgstr "{actor_name:1}!!!{end_wait}"
 
@@ -33647,7 +33647,7 @@ msgctxt "message"
 msgid "08409"
 msgstr "{actor_name:1}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuRobinOnlyOneEnteringFinals"
 msgid "08410"
 msgstr "Huh?{pause_20_skippable} {actor_name:1} est{line_break}le seul qui participe{line_break}aux finales?{end_wait}"
 
@@ -33751,7 +33751,7 @@ msgctxt "message"
 msgid "08435"
 msgstr "Etes-vous prêt?{line_break}Je vais vous faire{line_break}visiter l'arène.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuPrepareYourselvesContestantsFinalsWill"
 msgid "08436"
 msgstr "Participants,{line_break}préparez-vous! Les{line_break}finales ne vont pas{page_break}tarder à commencer.{end_wait}"
 
@@ -33759,7 +33759,7 @@ msgctxt "message"
 msgid "08437"
 msgstr "Je suis Morgan, le{line_break}favori.{page_break}Je vais gagner les{line_break}finales!{line_break}Je suis invincible!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuImRatedAsSecondBest"
 msgid "08438"
 msgstr "Je suis le deuxième{line_break}meilleur, mais je vais{line_break}leur montrer ma force!{page_break}Je m'appelle Azart.{page_break}Ne me dis pas que c'est{line_break}toi que Babi a fait{line_break}passer jusqu'aux{page_break}finales?{end_wait}"
 
@@ -33767,7 +33767,7 @@ msgctxt "message"
 msgid "08439"
 msgstr "Je ne perdrai pas{line_break}contre quelqu'un qui{line_break}n'a même pas passé{page_break}les éliminatoires.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuWaahDontFrightenMe"
 msgid "08440"
 msgstr "{text_effect:4}Waah!{reset_text_style} Vous m'avez fait peur!{end_wait}"
 
@@ -33775,7 +33775,7 @@ msgctxt "message"
 msgid "08441"
 msgstr "Moi? Je suis Galahad,{line_break}le troisième guerrier{line_break}le plus côté.{page_break}Je n'en peux plus{line_break}d'attendre. Quand{line_break}commence-t-on?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuWhoHaveComeQuestionMe"
 msgid "08442"
 msgstr "... Toi qui es venu{line_break}me questionner...{line_break}Tu es... {pause_20_skippable}{actor_name:1}!{end_wait}"
 
@@ -33787,7 +33787,7 @@ msgctxt "message"
 msgid "08444"
 msgstr "Je suis Satrage.{line_break}Guerrier classé{line_break}quatrième.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuDekkaMustWinFinalsDekka"
 msgid "08445"
 msgstr "Dekka doit gagner{line_break}les finales.{line_break}Dekka.{pause_20_skippable} Dekka...{end_wait}"
 
@@ -33803,7 +33803,7 @@ msgctxt "message"
 msgid "08448"
 msgstr "On ne peut pas gagner{line_break}les finales aussi{line_break}facilement!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuAmNavampaGondowanSixthRanked"
 msgid "08449"
 msgstr "Je suis Navampa de{line_break}Gondowan, classé{line_break}sixième.{end_wait}"
 
@@ -33815,7 +33815,7 @@ msgctxt "message"
 msgid "08451"
 msgstr "J'ai entendu des rumeurs{line_break}comme quoi vous étiez{line_break}énorme. Comme quoi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuImBufordSeventhSeed"
 msgid "08452"
 msgstr "Je suis Buford, le{line_break}septième guerrier.{end_wait}"
 
@@ -33827,7 +33827,7 @@ msgctxt "message"
 msgid "08454"
 msgstr "C'est un duel équilibré{line_break}n'importe qui{line_break}pourrait gagner{page_break}aujourd'hui!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuYouReadyForFinals"
 msgid "08455"
 msgstr "Etes-vous prêt{line_break}pour les finales? {end_now}"
 
@@ -33851,7 +33851,7 @@ msgctxt "message"
 msgid "08460"
 msgstr "Quand le gong retentira,{pause_20_skippable}{line_break}les finales commenceront.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuDayTiredWaiting"
 msgid "08461"
 msgstr "Hé! Nous en avons{line_break}assez d'attendre!{page_break}Faites en sorte que{line_break}ça commence!{end_wait}"
 
@@ -33887,7 +33887,7 @@ msgctxt "message"
 msgid "08469"
 msgstr "Bien! Que les{line_break}jeux commencent!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuSeeYouveMadeThroughYour"
 msgid "08470"
 msgstr "Je vois que vous{line_break}avez aisément{line_break}remporté votre{page_break}premier match.{end_wait}"
 
@@ -33903,7 +33903,7 @@ msgctxt "message"
 msgid "08473"
 msgstr "Maintenant, on peut{line_break}jeter un coup{line_break}d'oeil sur la prochaine{page_break}série d'épreuves...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuWonBothMatches"
 msgid "08474"
 msgstr "Vous avez réussi à{line_break}gagner tous vos{line_break}duels.{end_wait}"
 
@@ -33983,7 +33983,7 @@ msgctxt "message"
 msgid "08493"
 msgstr "Un touriste m'a dit que{line_break}je ressemble au type{line_break}qui travaille à côté!{page_break}Quel toupet!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoRobinFellAsleep"
 msgid "08494"
 msgstr "{actor_name:1} s'est endormi...{end_wait}"
 
@@ -33995,7 +33995,7 @@ msgctxt "message"
 msgid "08496"
 msgstr "Laissons-le dormir{line_break}pour le moment.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraSee"
 msgid "08497"
 msgstr "Vous...{pause_20_skippable} pouvez {pause_20_skippable}me voir?{end_wait}"
 
@@ -34079,11 +34079,11 @@ msgctxt "message"
 msgid "08517"
 msgstr "On fait de l'humour?{line_break}Ce n'est pas le moment!{page_break}Pouvez-vous me rendre{line_break}ce service?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraKiddingHaventActually"
 msgid "08518"
 msgstr "Tu blagues, {actor_name:1}?{line_break}Nous n'avons même{line_break}pas vu ce mec!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraSaidCouldntMove"
 msgid "08519"
 msgstr "Il a dit qu'il ne{line_break}pouvait pas bouger,{line_break}pas vrai?{page_break}C'est normal d'aider{line_break}quelqu'un qui a des{line_break}ennuis!{end_wait}"
 
@@ -34095,7 +34095,7 @@ msgctxt "message"
 msgid "08521"
 msgstr "Bah! OK! Nous aiderons{line_break}ceux qui en ont besoin.{line_break}Ca vous va???{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraDontTrustAnyone"
 msgid "08522"
 msgstr "Je suis avec toi, {actor_name:1}.{line_break}Je ne crois en personne{line_break}qui a peur de se{page_break}montrer.{end_wait}"
 
@@ -34179,7 +34179,7 @@ msgctxt "message"
 msgid "08542"
 msgstr "Il semble souffrir{line_break}horriblement. Nous{line_break}ferions bien de trouver{page_break}cette caverne, {actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraWait"
 msgid "08543"
 msgstr "Attendez...{end_wait}"
 
@@ -34187,7 +34187,7 @@ msgctxt "message"
 msgid "08544"
 msgstr "Le breuvage est sur{line_break}une table derrière{line_break}la porte.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraForgetOrderRock"
 msgid "08545"
 msgstr "Avez-vous oublié{line_break}l'ordre des couleurs{line_break}des pierres?{end_now}"
 
@@ -34203,7 +34203,7 @@ msgctxt "message"
 msgid "08548"
 msgstr "S'ils n'arrivent pas{line_break}à trouver ce breuvage,{line_break}je{pause_20_skippable}... je vais...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraCameBackPleaseDraughtQuickly"
 msgid "08549"
 msgstr "Vous... êtes revenus...{line_break}Donnez-moi vite{line_break}la potion.{end_wait}"
 
@@ -34231,15 +34231,15 @@ msgctxt "message"
 msgid "08555"
 msgstr "Mon apparition soudaine{line_break}semble vous avoir{line_break}effrayés...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraWouldHaveRevealedMyselfSooner"
 msgid "08556"
 msgstr "Je serais bien apparu{line_break}avant, mais je ne{line_break}pouvais pas bouger...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraMustTraveledIndeedIfDidnt"
 msgid "08557"
 msgstr "Vous devez avoir pas{line_break}mal voyagé si ça ne{line_break}vous a pas étonnés.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraHowDidBecomeParalyzedWhile"
 msgid "08558"
 msgstr "Comment vous êtes-vous{line_break}retrouvé paralysé tout{line_break}en étant invisible?{end_wait}"
 
@@ -34335,15 +34335,15 @@ msgctxt "message"
 msgid "08581"
 msgstr "Attends, {actor_name:1}!{page_break}Tu te souviens quand on{line_break}était dans le temple{line_break}de Sol?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraThatsSukuretaSaidAlchemyCould"
 msgid "08582"
 msgstr "C'est vrai! Thélos disait{line_break}que l'alchimie pouvait{line_break}même vaincre la mort!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraForgotSukuretaSaidAlchemyCould"
 msgid "08583"
 msgstr "Tu as oublié? Thélos disait{line_break}que l'alchimie pouvait{line_break}même vaincre la mort!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraWhatWasThat"
 msgid "08584"
 msgstr "Quoi?{end_wait}"
 
@@ -34351,7 +34351,7 @@ msgctxt "message"
 msgid "08585"
 msgstr "Vous connaissez{line_break}Thélos?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraBabi"
 msgid "08586"
 msgstr "Babi!{end_wait}"
 
@@ -34503,15 +34503,15 @@ msgctxt "message"
 msgid "08623"
 msgstr "Les finales...{line_break}Devrait-on y participer?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraSoWellDoIt"
 msgid "08624"
 msgstr "Qu'en pensez-vous?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraDontWantEitherDo"
 msgid "08625"
 msgstr "Toi non plus, tu{line_break}ne veux pas?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraEitherWayWereStuckHere"
 msgid "08626"
 msgstr "De toutes façons, nous{line_break}sommes coincés à{line_break}Tolbi jusqu'à ce{page_break}que le Colysée soit{line_break}terminé.{end_wait}"
 
@@ -34539,7 +34539,7 @@ msgctxt "message"
 msgid "08632"
 msgstr "Nous n'avons{line_break}qu'à participer{line_break}au Colysée, hein?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraGreatItsDecidedJustHave"
 msgid "08633"
 msgstr "Parfait! Nous allons{line_break}faire de notre{line_break}mieux!{end_wait}"
 
@@ -34547,7 +34547,7 @@ msgctxt "message"
 msgid "08634"
 msgstr "Si tu y tiens,{line_break}{actor_name:1}, nous{line_break}serons à tes côtés.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraDontLetMeDownLike"
 msgid "08635"
 msgstr "Quoi? Ne me laissez{line_break}pas tomber comme ça!{end_wait}"
 
@@ -34555,7 +34555,7 @@ msgctxt "message"
 msgid "08636"
 msgstr "Attendons d'arriver{line_break}à Tolbi et là, {actor_name:1}{line_break}prendra sa décision.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutamiraRotatedRock"
 msgid "08637"
 msgstr "{protagonist_name} tourne{line_break}la pierre.{end_wait}"
 
@@ -34583,11 +34583,11 @@ msgctxt "message"
 msgid "08643"
 msgstr "Personne d'autre n'a{line_break}remarqué que le festival{line_break}de cette année était{page_break}plus long que{line_break}d'habitude.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHoorayFinalsSeven"
 msgid "08644"
 msgstr "Hourra! Ce sont les finales!{line_break}Sept guerriers restent!{line_break}Un seul sera victorieux!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWaahBigBrother"
 msgid "08645"
 msgstr "Aaah! Mon grand frère{line_break}a dépensé l'argent des{line_break}souvenirs sur{page_break}\"Instinct-destin\"!{end_wait}"
 
@@ -34659,11 +34659,11 @@ msgctxt "message"
 msgid "08662"
 msgstr "Le festival de cette{line_break}année est vraiment{line_break}plus long!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWinBigUsed"
 msgid "08663"
 msgstr "Nous aurions pu gagner{line_break}le gros lot si nous{line_break}avions tout mis sur{page_break}\"Instinct-destin\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiMamaWhyListen"
 msgid "08664"
 msgstr "M'man, pourquoi tu as{line_break}écouté mon frère?{end_wait}"
 
@@ -34803,7 +34803,7 @@ msgctxt "message"
 msgid "08698"
 msgstr "Babi a fait d'étranges{line_break}références à sa mort.{page_break}Il semble prêt à{line_break}risquer sa vie pour ce{line_break}qu'il recherche.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiColossoFinalsFinally"
 msgid "08699"
 msgstr "C'est enfin les{line_break}finales du Colysée!{page_break}Une fois le Colysée{line_break}terminé, on aura{line_break}la possibilité de{page_break}gagner gros!{end_wait}"
 
@@ -34811,7 +34811,7 @@ msgctxt "message"
 msgid "08700"
 msgstr "Les touristes achètent{line_break}de l'équipement quand{line_break}ils partent.{page_break}C'est génial!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiRequireLotHealing"
 msgid "08701"
 msgstr "Ils ont besoin de{line_break}nombreuses herbes{line_break}de guérison avant{page_break}les finales.{line_break}Cela montre à quel{line_break}point les finales{page_break}sont violentes.{end_wait}"
 
@@ -34819,7 +34819,7 @@ msgctxt "message"
 msgid "08702"
 msgstr "Vous pouvez dire que les{line_break}guerriers des finales{line_break}sont des surhommes.{page_break}Ils regagnent leur{line_break}force bien plus vite{line_break}que les autres.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiMaybeCloseShop"
 msgid "08703"
 msgstr "Hum... Peut-être que{line_break}je devrais fermer{line_break}boutique pour aller{page_break}regarder les finales.{end_wait}"
 
@@ -34899,7 +34899,7 @@ msgctxt "message"
 msgid "08722"
 msgstr "Les éliminatoires ne{line_break}sont pas comme j'avais{line_break}imaginé...{page_break}Ca m'a donné envie de{line_break}voir les finales!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiMissFinalsTolbis"
 msgid "08723"
 msgstr "Si vous manquez les{line_break}finales du Colysée, vous{line_break}vous en mordrez les doigts.{page_break}Dépêchez-vous d'aller{line_break}au Colysée pour le{line_break}combat final.{end_wait}"
 
@@ -34907,7 +34907,7 @@ msgctxt "message"
 msgid "08724"
 msgstr "Si le combat final ne{line_break}vous intéresse pas,{line_break}peut-être pourrions-nous{page_break}échanger nos places?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiArent"
 msgid "08725"
 msgstr "Vous êtes {actor_name:1},{line_break}non?{end_now}"
 
@@ -34931,11 +34931,11 @@ msgctxt "message"
 msgid "08730"
 msgstr "Babi veut que vous{line_break}alliez au Colysée.{page_break}Ca n'est pas la peine{line_break}d'aller au palais.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiRobinIdReallyLikeThank"
 msgid "08731"
 msgstr "{actor_name:1}, je voulais te{line_break}remercier d'avoir{line_break}sauvé Babi.{page_break}Il t'attend maintenant{line_break}au Colysée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiBabiWaitingForAtColosseum"
 msgid "08732"
 msgstr "Babi vous attend au{line_break}Colysée. Il veut que{line_break}vous y alliez.{end_wait}"
 
@@ -34963,7 +34963,7 @@ msgctxt "message"
 msgid "08738"
 msgstr "Il ne reste plus{line_break}que les finales{line_break}cette année...{page_break}J'ai hâte de voir{line_break}les combats qui{line_break}nous attendent!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiCameRestBefore"
 msgid "08739"
 msgstr "Vous êtes venus vous{line_break}reposer avant le match,{line_break}c'est ça?{page_break}Voulez-vous dormir{line_break}un peu?{end_now}"
 
@@ -34979,7 +34979,7 @@ msgctxt "message"
 msgid "08742"
 msgstr "Voulez-vous vous reposer?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiTiredFeelFreeRest"
 msgid "08743"
 msgstr "N'hésitez pas à vous{line_break}reposer si vous vous{line_break}sentez las.{end_wait}"
 
@@ -35027,7 +35027,7 @@ msgctxt "message"
 msgid "08754"
 msgstr "J'ai appris que Babi avait{line_break}fait entrer des guerriers{line_break}dans les finales!{page_break}Je suis curieuse de{line_break}voir ces puissants{line_break}guerriers!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuColosseumAlreadyFullIfReally"
 msgid "08755"
 msgstr "Le Colysée est déjà{line_break}plein!{page_break}Si vous voulez vraiment{line_break}y assister, achetez un{line_break}ticket chez les vendeurs{page_break}à la sauvette.{end_wait}"
 
@@ -35039,7 +35039,7 @@ msgctxt "message"
 msgid "08757"
 msgstr "Faire entrer un guerrier{line_break}qui n'était pas là aux{line_break}éliminatoires va{page_break}changer la donne!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuWantWatchFinalsFromGood"
 msgid "08758"
 msgstr "Je veux observer les{line_break}finales d'un bon endroit{pause_20_skippable},{line_break}mais ça coûte trop cher!{end_wait}"
 
@@ -35047,7 +35047,7 @@ msgctxt "message"
 msgid "08759"
 msgstr "J'ai eu du mal à obtenir{line_break}des places... Allez,{line_break}décidez-vous à la fin!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuHoldOnSecond"
 msgid "08760"
 msgstr "Hé! Un instant!{end_wait}"
 
@@ -35063,7 +35063,7 @@ msgctxt "message"
 msgid "08763"
 msgstr "Quoi? V'zavez un problème?{line_break}Je suis occupé, là. Ne me{line_break}dérangez pas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuWantTryOutLuckyGuess"
 msgid "08764"
 msgstr "Voulez-vous jouer à{line_break}Instinct-destin?{end_now}"
 
@@ -35079,7 +35079,7 @@ msgctxt "message"
 msgid "08767"
 msgstr "Vous ne pouvez pas{line_break}me le cacher...{line_break}Vous lui ressemblez trait{page_break}pour trait!{page_break}Désolé, les participants{line_break}n'ont pas le droit de{line_break}jouer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuLookImSorryButWe"
 msgid "08768"
 msgstr "Désolé, mais il y a{line_break}certaines règles qu'on{line_break}se doit de respecter.{page_break}Les guerriers participant{line_break}aux finales et leurs{line_break}équipiers n'ont pas le{page_break}droit de jouer.{end_wait}"
 
@@ -35115,7 +35115,7 @@ msgctxt "message"
 msgid "08776"
 msgstr "Tous les profits{line_break}d'Instinct-destin{line_break}reviennent à Babi.{page_break}Sans ça, nous aurions{line_break}été ultra-riches!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorashiamuHeyYouRe"
 msgid "08777"
 msgstr "Hé! Vous êtes {actor_name:1}!{end_wait}"
 
@@ -35215,7 +35215,7 @@ msgctxt "message"
 msgid "08801"
 msgstr "Parfait!{line_break}Allons-y!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiGetUp"
 msgid "08802"
 msgstr "{actor_name:1}!{page_break}Réveille-toi, {actor_name:1}!{end_wait}"
 
@@ -35263,7 +35263,7 @@ msgctxt "message"
 msgid "08813"
 msgstr "J'espère que les finales{line_break}se passeront bien pour{line_break}vous!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiCallsName"
 msgid "08814"
 msgstr "{actor_name:1}...{end_wait}"
 
@@ -35355,7 +35355,7 @@ msgctxt "message"
 msgid "08836"
 msgstr "J'ai perdu tout{line_break}enthousiasme depuis la{line_break}fin du Colysée.{page_break}Vivement celui de{line_break}l'année prochaine!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWarriorsWhoStayed"
 msgid "08837"
 msgstr "Tous les guerriers qui{line_break}logeaient au palais{line_break}sont partis une fois{page_break}le Colysée terminé.{line_break}Allez-vous partir,{line_break}vous aussi?{end_now}"
 
@@ -35375,7 +35375,7 @@ msgctxt "message"
 msgid "08841"
 msgstr "Tous les redoutables{line_break}guerriers qui ont{line_break}participé au Colysée{page_break}devraient rester à Tolbi.{page_break}Trouver des guerriers{line_break}comme ceux-là est la{line_break}raison d'être du Colysée!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiMeetBabi"
 msgid "08842"
 msgstr "Vous avez rencontré Babi?{end_now}"
 
@@ -35387,7 +35387,7 @@ msgctxt "message"
 msgid "08844"
 msgstr "Pourquoi n'iriez-vous{line_break}pas discuter un peu{line_break}avec Babi?{page_break}Il voudrait vous parler{line_break}avant que vous partiez.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiEasternShoresKaragol"
 msgid "08845"
 msgstr "Alors, vous venez{line_break}de l'est de la mer{line_break}de Karagol, hein?{page_break}Vous voulez déjà{line_break}rentrer chez vous?{end_now}"
 
@@ -35487,7 +35487,7 @@ msgctxt "message"
 msgid "08869"
 msgstr "Thélos doit avoir une{line_break}raison de ne pas être{line_break}rentré à Tolbi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWaitingCompanions"
 msgid "08870"
 msgstr "Je t'attendais, toi{line_break}et tes compagnons,{line_break}{actor_name:1}!{end_wait}"
 
@@ -36055,7 +36055,7 @@ msgctxt "message"
 msgid "09011"
 msgstr "J'ai peur de ce qui{line_break}arriverait à Tolbi{line_break}si Babi disparaissait!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiFoundCloakBall"
 msgid "09012"
 msgstr "Vous avez trouvé{line_break}la Balle d'ombre.{end_wait}"
 
@@ -36107,7 +36107,7 @@ msgctxt "message"
 msgid "09024"
 msgstr "Je m'ennuie depuis{line_break}que le Colysée est{line_break}terminé!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiFinalsWerent"
 msgid "09025"
 msgstr "Vous avez participé{line_break}aux finales, non?{end_now}"
 
@@ -36131,11 +36131,11 @@ msgctxt "message"
 msgid "09030"
 msgstr "C'est si calme!{page_break}Le tohu-bohu du Colysée{line_break}semble être sorti{line_break}d'un rêve!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiYayEasyRun"
 msgid "09031"
 msgstr "Ouais! C'est plus{line_break}facile de courir quand{line_break}les rues sont vides.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHaHaHa"
 msgid "09032"
 msgstr "Ha ha ha ha. C'est rigolo!{line_break}Mon grand frère est{line_break}redevenu gentil!{end_wait}"
 
@@ -36143,7 +36143,7 @@ msgctxt "message"
 msgid "09033"
 msgstr "Je reviendrai faire{line_break}des affaires l'année{line_break}prochaine.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiLeftovers"
 msgid "09034"
 msgstr "Hé! Ce sont des restes...{line_break}Prenez-en!{end_wait}"
 
@@ -36151,7 +36151,7 @@ msgctxt "message"
 msgid "09035"
 msgstr "Vous avez du maïs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiFestivalLongerUsual"
 msgid "09036"
 msgstr "Le festival a duré plus{line_break}longtemps que d'habitude{line_break}cette année, alors j'ai{page_break}gagné plus d'argent.{line_break}J'espère que ce sera{line_break}pareil l'année{page_break}prochaine.{end_wait}"
 
@@ -36179,11 +36179,11 @@ msgctxt "message"
 msgid "09042"
 msgstr "Ca fait du bien un{line_break}peu de calme après la{line_break}tempête. Pas vrai?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiMainStreetTolbi"
 msgid "09043"
 msgstr "La rue principale de{line_break}Tolbi est si vaste!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiBrotherMeanDuring"
 msgid "09044"
 msgstr "Mon frère a été{line_break}méchant pendant{line_break}le festival!{end_wait}"
 
@@ -36275,7 +36275,7 @@ msgctxt "message"
 msgid "09066"
 msgstr "Il n'y a pas beaucoup{line_break}de marchands au phare{line_break}pour le moment.{page_break}Je suis sûr de pouvoir{line_break}y devenir riche.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiComeWayKalay"
 msgid "09067"
 msgstr "Vous avez fait le{line_break}trajet depuis Kalay?{end_now}"
 
@@ -36291,7 +36291,7 @@ msgctxt "message"
 msgid "09070"
 msgstr "Même sans les navires,{line_break}je pourrais peut-être{line_break}rentrer dans mes frais{page_break}s'ils réparent la route.{page_break}Je donnerais n'importe{line_break}quoi pour que ça arrive{line_break}viiiiiite!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiRightOneWell"
 msgid "09071"
 msgstr "Vous êtes {actor_name:1}, non?{line_break}Vous vous êtes bien{line_break}débrouillé pendant les{page_break}finales. Je suis{line_break}impressionnée qu'un{line_break}enfant ait fait{page_break}aussi bien!{end_wait}"
 
@@ -36299,7 +36299,7 @@ msgctxt "message"
 msgid "09072"
 msgstr "Est-ce que tous les{line_break}guerriers qui ont{line_break}combattu pendant{page_break}les finales sont devenus{line_break}les soldats de Babi?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWasntAbleWatch"
 msgid "09073"
 msgstr "Je n'ai pas eu l'occasion{line_break}de voir les finales{line_break}cette année!{page_break}Ma mère dit qu'un petit{line_break}nouveau appelé {actor_name:1}{line_break}a fait sensation.{end_wait}"
 
@@ -36319,7 +36319,7 @@ msgctxt "message"
 msgid "09077"
 msgstr "Nous sommes remplis tous{line_break}les jours!!! J'ai tant de{line_break}travail que j'ai la{page_break}tête qui tourne! Moi qui{line_break}pensais que ce serait les{line_break}vacances après le Colysée!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeyWhatsThis"
 msgid "09078"
 msgstr "Qu'est-ce que c'est?{end_wait}"
 
@@ -36339,7 +36339,7 @@ msgctxt "message"
 msgid "09082"
 msgstr "C'est impoli d'effrayer{line_break}les gens!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeeHeeLook"
 msgid "09083"
 msgstr "Hi hi! J'ai l'air si{line_break}excité que ça?{end_now}"
 
@@ -36351,15 +36351,15 @@ msgctxt "message"
 msgid "09085"
 msgstr "Ouais! Je suis comme{line_break}à mon habitude.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHello"
 msgid "09086"
 msgstr "Oh... Bonjour!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHoHumFine"
 msgid "09087"
 msgstr "Heu hum. Ca va.{line_break}C'est rien.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiLookLikeWarrior"
 msgid "09088"
 msgstr "Vous avez l'air d'un{line_break}guerrier, mais vous{line_break}assistiez au Colysée,{page_break}pas vrai?{end_now}"
 
@@ -36371,7 +36371,7 @@ msgctxt "message"
 msgid "09090"
 msgstr "Oh? Vous n'avez même{line_break}pas regardé?{page_break}Vous êtes cinglé?{line_break}Y a rien de mieux{line_break}que le Colysée!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiGrrrChefInBadMood"
 msgid "09091"
 msgstr "Grrr! Le chef est de{line_break}mauvaise humeur car il{line_break}n'a pas pu assister{page_break}au Colysée!{line_break}C'est pas sympa de passer{line_break}ses nerfs sur nous!{end_wait}"
 
@@ -36383,7 +36383,7 @@ msgctxt "message"
 msgid "09093"
 msgstr "Le Colysée est terminé,{line_break}mais on ne peut toujours{line_break}pas traverser la Karagol.{page_break}Peut-être qu'ils vont{line_break}nous raccompagner chez{line_break}nous si on accepte de{page_break}les aider à nouveau...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeWontSailShipEven"
 msgid "09094"
 msgstr "Il ne bougera pas le{line_break}navire, même si on{line_break}accepte de les aider?{end_wait}"
 
@@ -36399,7 +36399,7 @@ msgctxt "message"
 msgid "09097"
 msgstr "Dites au capitaine{line_break}qu'il doit mettre les{line_break}voiles dès demain.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiGrrrScamWhyWontThey"
 msgid "09098"
 msgstr "Grrr! Quel scandale!{line_break}Pourquoi ne laissent-ils{line_break}pas partir les navires???{end_wait}"
 
@@ -36415,7 +36415,7 @@ msgctxt "message"
 msgid "09101"
 msgstr "Tolbi est très{line_break}ennuyeuse une fois{line_break}le festival terminé!{page_break}Je veux rentrer!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiWarriorRemember"
 msgid "09102"
 msgstr "Hé! Tu es ce{line_break}guerrier, non? Tu{line_break}te souviens de moi?{end_now}"
 
@@ -36443,11 +36443,11 @@ msgctxt "message"
 msgid "09108"
 msgstr "Tout le monde travaille{line_break}sur le phare de Babi,{line_break}alors il n'y a personne{page_break}pour réparer la route!{line_break}On dirait que les{line_break}auberges vont bien{page_break}marcher cette année!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHehHehSheJustHid"
 msgid "09109"
 msgstr "Hé hé! J'ai caché{line_break}cette chose derrière{line_break}des ordures.{page_break}Personne pensera à{line_break}regarder là...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiThingFoundDefinitelySameAs"
 msgid "09110"
 msgstr "Cette chose que j'ai{line_break}trouvée est la même que{line_break}celle que cet homme m'a{page_break}montrée. Mais il ne tient{line_break}pas à ce que je lui{line_break}rende, quand même?{end_wait}"
 
@@ -36491,7 +36491,7 @@ msgctxt "message"
 msgid "09120"
 msgstr "Quoi qu'il arrive,{line_break}je retournerai au{line_break}Colysée l'année prochaine!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiShipsArentGoing"
 msgid "09121"
 msgstr "Si les navires ne{line_break}partent pas,{line_break}pourquoi ne pas rester{page_break}à Tolbi?{end_wait}"
 
@@ -36543,7 +36543,7 @@ msgctxt "message"
 msgid "09133"
 msgstr "Les combats de cette{line_break}année ont été{line_break}incroyables!{page_break}Rester devant cette{line_break}porte me rend immensément{line_break}mélancolique.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKaragoruDoYouWishCrossInto"
 msgid "09134"
 msgstr "Vous voulez aller{line_break}en Gondowan?{end_now}"
 
@@ -36567,7 +36567,7 @@ msgctxt "message"
 msgid "09139"
 msgstr "Ceux qui vont à Gondowan{line_break}ne savent pas à quoi{line_break}s'attendre.{page_break}Je n'essaierais même{line_break}pas d'y aller.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKaragoruWarriorsHaveBeenFightingWhile"
 msgid "09140"
 msgstr "Les guerriers ont{line_break}combattu pendant que{line_break}nous gardions ce pont.{page_break}Etre de garde un jour{line_break}comme celui-là...{line_break}Quelle poisse!{end_wait}"
 
@@ -36579,7 +36579,7 @@ msgctxt "message"
 msgid "09142"
 msgstr "Je ne vous en{line_break}empêcherai pas, mais à{line_break}votre place, j'éviterais.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKaragoruWeMissedColossoBecauseWe"
 msgid "09143"
 msgstr "Nous avons manqué{line_break}tout le Colysée{line_break}parce que nous devions{page_break}garder ce pont...{line_break}Quelle poisse!{end_wait}"
 
@@ -36595,11 +36595,11 @@ msgctxt "message"
 msgid "09146"
 msgstr "Même si vous allez{line_break}à l'est à partir{line_break}d'ici, vous n'atteindrez{page_break}pas Kalay!{line_break}Quelques guerriers un{line_break}peu casse-cou l'ont{page_break}tenté, mais aucun{line_break}n'est revenu!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKaragoruIveBeenWaitingForRobin"
 msgid "09147"
 msgstr "Je t'attendais, {actor_name:1}!{line_break}Allons vers le{line_break}phare de Babi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKaragoruWhyGoingBackRobinDo"
 msgid "09148"
 msgstr "Pourquoi reviens-tu sur{line_break}tes pas, {actor_name:1}?{page_break}Tu as oublié quelque{line_break}chose?{end_now}"
 
@@ -36803,7 +36803,7 @@ msgctxt "message"
 msgid "09198"
 msgstr "Et oui, personne n'a{line_break}le droit d'entrer ici!{line_break}Allez, ouste!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWho2"
 msgid "09199"
 msgstr "Qui êtes-vous?{end_wait}"
 
@@ -36831,35 +36831,35 @@ msgctxt "message"
 msgid "09205"
 msgstr "Personne ne vient ici!{page_break}Je ne sais même pas{line_break}pourquoi nous sommes{line_break}de garde.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaHammetGreatMerchant"
 msgid "09206"
 msgstr "Hammet, le marchand de{line_break}Kalay, est notre meilleure{line_break}source de revenus.{page_break}Je le protègerai quoi{line_break}qu'il arrive.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaZZZ"
 msgid "09207"
 msgstr "Z-z-z-z Z-z-z-z-z...{line_break}Qu'il fait chauud!{page_break}Mes paupières sont{line_break}lourdes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDodonpasOrdersAbsolute"
 msgid "09208"
 msgstr "Les ordres de Dodonpa{line_break}sont clairs!{page_break}Moi vivant, nul{line_break}ne rentrera dans{line_break}la forteresse!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaSighBadCouldnt"
 msgid "09209"
 msgstr "Soupir. Quel dommage{line_break}que je n'ai pas pu aller{line_break}à Tolbi cette année.{page_break}Je me demande comment le{line_break}Colysée s'est déroulé.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaStrangeSwearSomeone"
 msgid "09210"
 msgstr "C'est étrange! J'aurais{line_break}juré avoir vu quelqu'un{line_break}passer tout près!{page_break}Je dois être{line_break}fatigué.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaTakeCareAnybody"
 msgid "09211"
 msgstr "Je vais m'occuper de{line_break}tout ce qui bouge!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaToldStandGuard"
 msgid "09212"
 msgstr "On m'a dit de{line_break}rester sur mes gardes,{line_break}mais je suis un lâche!{page_break}J'espère juste{line_break}que ma ronde se{line_break}passera sans anicroche.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWhoDisruptingSleep"
 msgid "09213"
 msgstr "Qui dérange mon{line_break}sommeil???{end_wait}"
 
@@ -36871,7 +36871,7 @@ msgctxt "message"
 msgid "09215"
 msgstr "Qui dérange mon{line_break}sommeil???{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaIntruder"
 msgid "09216"
 msgstr "Un intrus!{end_wait}"
 
@@ -36883,7 +36883,7 @@ msgctxt "message"
 msgid "09218"
 msgstr "Désolé, mais il{line_break}va falloir vous battre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGuardWhosThat"
 msgid "09219"
 msgstr "Huh? Qui est-ce?{end_wait}"
 
@@ -36895,7 +36895,7 @@ msgctxt "message"
 msgid "09221"
 msgstr "Pas de chance d'être{line_break}tombés sur moi!{page_break}Montrez-moi ce que{line_break}vous savez faire!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaShiftAlready"
 msgid "09222"
 msgstr "C'est déjà mon{line_break}tour de garde?{end_wait}"
 
@@ -36911,7 +36911,7 @@ msgctxt "message"
 msgid "09225"
 msgstr "Venez vous battre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaScoundrel"
 msgid "09226"
 msgstr "Vauriens!{end_wait}"
 
@@ -36935,7 +36935,7 @@ msgctxt "message"
 msgid "09231"
 msgstr "Presque toutes ces{line_break}femmes ont été amenées{line_break}ici contre leur gré.{page_break}Soupir. J'aimerais revoir{line_break}mon village natal juste{line_break}une dernière fois...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWhWhWho"
 msgid "09232"
 msgstr "Qu{pause_20_skippable}-qu{pause_20_skippable}-qui va là!{end_wait}"
 
@@ -36943,7 +36943,7 @@ msgctxt "message"
 msgid "09233"
 msgstr "Qu{pause_20_skippable}-qui êtes-vous?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDontLookNearly"
 msgid "09234"
 msgstr "Vous n'avez pas l'air{line_break}aussi méchants que les{line_break}voleurs de la forteresse.{end_wait}"
 
@@ -36959,11 +36959,11 @@ msgctxt "message"
 msgid "09237"
 msgstr "Qui se faufilerait{line_break}sans raison dans un{line_break}lieu aussi dangereux?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWontTellAnyone"
 msgid "09238"
 msgstr "Je ne le raconterai à{line_break}personne, mais vous{line_break}devriez partir avant{page_break}que les gardes ne{line_break}vous trouvent.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaMaybeMerchantReason"
 msgid "09239"
 msgstr "Peut-être que c'est{line_break}à cause de ce marchand{line_break}qu'ils ont fermé les{page_break}portes de la caverne{line_break}inférieure...{end_wait}"
 
@@ -36975,7 +36975,7 @@ msgctxt "message"
 msgid "09241"
 msgstr "Je sais que Donpa nous{line_break}laisserait partir s'il{line_break}était en bonne santé...{page_break}J'espère qu'il se{line_break}rétablira vite!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWho3"
 msgid "09242"
 msgstr "Qui êtes-vous?{end_wait}"
 
@@ -37003,15 +37003,15 @@ msgctxt "message"
 msgid "09248"
 msgstr "Vous n'irez pas plus{line_break}loin! Pas sans quelques{line_break}bleus, en tout cas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGuysTougherThought"
 msgid "09249"
 msgstr "Vous êtes plus forts{line_break}qu'on ne le pensait.{page_break}On vous laisse partir{line_break}pour cette fois.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaRightRightGive"
 msgid "09250"
 msgstr "OK, OK. On abandonne!{line_break}Hammet est tout{line_break}en bas de la caverne.{page_break}Allez le chercher!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaOwwwDontHurt"
 msgid "09251"
 msgstr "Aouch! Hé! Me faites{line_break}plus mal, bande de{line_break}petits vauriens!{page_break}Je vous déteste! Allez{line_break}sauver Hammet qu'on{line_break}n'en parle plus.{end_wait}"
 
@@ -37059,15 +37059,15 @@ msgctxt "message"
 msgid "09262"
 msgstr "Tant que nous aurons{line_break}Hammet, on pourra{line_break}s'approprier tous les{page_break}gains de Kalay.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaZZZZ"
 msgid "09263"
 msgstr "Z-z-z-z... Z-z-z-z...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaFatherSorryDodonpa"
 msgid "09264"
 msgstr "Père... Je suis désolé{line_break}pour Dodonpa.{page_break}Quelqu'un devrait lui{line_break}donner une bonne leçon,{line_break}un jour...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaShhhPleaseDont"
 msgid "09265"
 msgstr "Chut! Ne réveillez{line_break}pas Donpa!{end_wait}"
 
@@ -37091,7 +37091,7 @@ msgctxt "message"
 msgid "09270"
 msgstr "Oh, ça n'est pas vous?{line_break}Pouvez-vous quand même{line_break}le faire???{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDonpaKnowsCoddled"
 msgid "09271"
 msgstr "Donpa sait qu'il a trop{line_break}gâté Dodonpa quand il{line_break}était enfant.{end_wait}"
 
@@ -37099,15 +37099,15 @@ msgctxt "message"
 msgid "09272"
 msgstr "Ca lui fait beaucoup de{line_break}peine. Il ne peut pas{line_break}mourir en laissant{page_break}les choses comme elles{line_break}le sont.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaMaybeDodonpasEyes"
 msgid "09273"
 msgstr "Peut-être que si Dodonpa{line_break}ouvrait les yeux, Lunpa{line_break}redeviendrait un endroit{page_break}agréable.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaSomeonePunishDodonpa"
 msgid "09274"
 msgstr "Si quelqu'un voulait bien{line_break}punir Dodonpa, je suis{line_break}sûre que Donpa offrirait{page_break}une récompense.{page_break}Il pourrait même donner{line_break}les biens volés par{line_break}Dodonpa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaKnowWhereDodonpa"
 msgid "09275"
 msgstr "Savez-vous où se{line_break}trouve Dodonpa?{end_now}"
 
@@ -37151,7 +37151,7 @@ msgctxt "message"
 msgid "09285"
 msgstr "{actor_name:1} appuie sur{line_break}l'interrupteur.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaTimeEat"
 msgid "09286"
 msgstr "C'est l'heure du repas?{end_wait}"
 
@@ -37247,15 +37247,15 @@ msgctxt "message"
 msgid "09309"
 msgstr "Ce petit piège marque{line_break}la fin de vos petites{line_break}aventures!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaPrepareBecomeMonster"
 msgid "09310"
 msgstr "Préparez-vous à{line_break}devenir de la purée!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaBackMoreGuess"
 msgid "09311"
 msgstr "Vous en voulez encore?{line_break}Vous n'avez pas retenu{line_break}la leçon?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDodonpaPulledLever"
 msgid "09312"
 msgstr "Dodonpa actionne{line_break}un levier.{end_wait}"
 
@@ -37267,7 +37267,7 @@ msgctxt "message"
 msgid "09314"
 msgstr "Préparez-vous à{line_break}devenir de la purée!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaUhnnGetOff"
 msgid "09315"
 msgstr "Hun! Aidez-moi!{end_wait}"
 
@@ -37319,7 +37319,7 @@ msgctxt "message"
 msgid "09327"
 msgstr "Je pense qu'on devrait{line_break}au moins essayer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaAbleGet"
 msgid "09328"
 msgstr "Voilà. Je pense{line_break}que ça devrait aller!{end_wait}"
 
@@ -37415,7 +37415,7 @@ msgctxt "message"
 msgid "09351"
 msgstr "Laissez-le moisir ici{line_break}quelques temps!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDad"
 msgid "09352"
 msgstr "Papa!{end_wait}"
 
@@ -38163,7 +38163,7 @@ msgctxt "message"
 msgid "09538"
 msgstr "Alors... avez-vous{line_break}l'intention de rester{line_break}ici?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaThankHelpDodonpa"
 msgid "09539"
 msgstr "Merci de votre{line_break}aide pour Dodonpa.{end_wait}"
 
@@ -38183,19 +38183,19 @@ msgctxt "message"
 msgid "09543"
 msgstr "Je vous la donne.{line_break}Prenez en soin.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDonpaGrateful"
 msgid "09544"
 msgstr "Donpa vous est{line_break}reconnaissant de ce{line_break}que vous avez fait.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWellWorriedDodonpa"
 msgid "09545"
 msgstr "Personnellement, je ne{line_break}crois pas au repentir{line_break}de l'ignoble Dodonpa!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDifficultDonpaRight"
 msgid "09546"
 msgstr "Ce doit être difficile{line_break}pour Donpa.{page_break}Difficile d'apprendre{line_break}quelque chose à un{line_break}enfant têtu.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaFatherStayAngry"
 msgid "09547"
 msgstr "Quel père peut rester{line_break}longtemps en colère{line_break}après ses enfants?{page_break}En fait, j'aimerais{line_break}libérer Dodonpa dès{line_break}maintenant.{end_wait}"
 
@@ -38207,11 +38207,11 @@ msgctxt "message"
 msgid "09549"
 msgstr "En fait, Dodonpa{line_break}est là-dedans, mais{line_break}peu de gens sont{page_break}au courant. Tant que{line_break}nous serons de garde,{line_break}ça ne changera pas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWrongTurnOver"
 msgid "09550"
 msgstr "J'ai eu tort!{line_break}Je vais changer, papa!{line_break}Pardonne-moi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaCantBelieveWhen"
 msgid "09551"
 msgstr "Je n'arrive pas à croire{line_break}ce que vous m'avez{line_break}fait. Quand je sortirai{page_break}je m'occuperai de vous!{end_wait}"
 
@@ -42767,7 +42767,7 @@ msgctxt "MsgKareiVeryCleanMaintained"
 msgid "10689"
 msgstr "C'est un puits bien{line_break}entretenu.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiItsFilledWithFreshClean"
 msgid "10690"
 msgstr "Il est rempli d'eau{line_break}fraîche et pure.{end_wait}"
 

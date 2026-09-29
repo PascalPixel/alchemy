@@ -1,5 +1,6 @@
 /* Marking the stage's progress and choosing the nearest obstacle. */
 #include "LOG_ROLLING.H"
+extern u8 MsgKorosseoMatchAboutBeginPleaseTake[];
 
 void ColossoLogRollingStage_MarkSceneProgress(void)
 {
@@ -80,7 +81,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
             best = adx + dz;
         }
     }
-    Event_SetMessage(MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE);
+    Event_SetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Event_ShowMessage(best_slot, 0);
     frame = (s32 *)(state + 448);
     *frame = 0x200;

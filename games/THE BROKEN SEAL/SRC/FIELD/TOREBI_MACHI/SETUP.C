@@ -1,5 +1,11 @@
 /* Tolbi town: actor lines, the entry setup and the first sequence. */
 #include "MACHI.H"
+extern u8 MsgTorebiFestivalLongerUsual[];
+extern u8 MsgTorebiFinalsWerent[];
+extern u8 MsgTorebiInnsFullStaying[];
+extern u8 MsgTorebiLeftovers[];
+extern u8 MsgTorebiWaahBuySweets[];
+extern u8 MsgTorebiWantTestLuck[];
 
 void FieldScene_RunScene3b5_02000568(void)
 {
@@ -9,7 +15,7 @@ void FieldScene_RunScene3b5_02000568(void)
     Engine_EventBegin();
     Call3(Engine_ActorFaceDirection, 26, 0x4000, 0);
     Engine_ActorStartRepeatedMotion(26, 2);
-    Call1(Engine_EventSetMessage, 0x1fa2);
+    Call1(Engine_EventSetMessage, (s32)MsgTorebiWaahBuySweets);
     Engine_EventShowMessage(26, 0);
     Engine_EventEnd();
 }
@@ -17,7 +23,7 @@ void FieldScene_RunScene3b5_02000568(void)
 void SceneDialogue_RunActor27Message1fa3(void)
 {
     Engine_EventBegin();
-    Engine_EventSetMessage(0x1FA3);
+    Engine_EventSetMessage((s32)MsgTorebiInnsFullStaying);
     Engine_EventShowMessage(0x1B, 0);
     Engine_EventEnd();
 }
@@ -25,7 +31,7 @@ void SceneDialogue_RunActor27Message1fa3(void)
 void SceneDialogue_RunActor24Message235f(void)
 {
     Engine_EventBegin();
-    Engine_EventSetMessage(0x235F);
+    Engine_EventSetMessage((s32)MsgTorebiFinalsWerent);
     Engine_EventAskYesNo(24, 0);
     Engine_EventEnd();
 }
@@ -39,14 +45,14 @@ void FieldScene_RunScene3b5_020005dc(void)
     Event_Begin();
     if (Value1(Engine_GameFlagIsSet, 0x8bf) == 0) {
         GameFlag_Set(0x8bf);
-        Call1(Engine_EventSetMessage, 0x2368);
+        Call1(Engine_EventSetMessage, (s32)MsgTorebiLeftovers);
         Engine_EventShowMessage(19, 0);
         Engine_ItemShowFound(233, 3);
         Engine_EventShowMessage(19, 0);
         Engine_ActorSetAnimation(0, 1);
         Engine_PartyGiveItem(233, 0);
     } else {
-        Call1(Engine_EventSetMessage, 0x236a);
+        Call1(Engine_EventSetMessage, (s32)MsgTorebiFestivalLongerUsual);
         Engine_EventShowMessage(19, 0);
     }
     Engine_EventEnd();
@@ -161,7 +167,7 @@ void FieldScene_RunScene3b5SequenceA(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 28, 0x4000, 0);
     Engine_EventWait(20);
-    Call1(Engine_EventSetMessage, 0xe3d);
+    Call1(Engine_EventSetMessage, (s32)MsgTorebiWantTestLuck);
     Event_OpenMessage(28, 0);
     if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
         bump_step(1);

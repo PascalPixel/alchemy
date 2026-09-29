@@ -3,6 +3,7 @@
  * Stores scene 0x6f into the game state from a literal load (a link-time
  * value; a plain constant becomes movs #0x6f). Remaining: the scene id. */
 #include "FUNE.H"
+extern u8 MsgFuneLandHo[];
 
 void FieldScene_RunSevenActorEnsemble(void)
 {
@@ -58,7 +59,7 @@ void FieldScene_RunSevenActorEnsemble(void)
     Actor_WalkToAndWait(8, 164, 344);
     Actor_Jump(8, 4, 10);
     Actor_Jump(8, 6, 20);
-    Event_SetMessage(MSG_LAND_HO);
+    Event_SetMessage((s32)MsgFuneLandHo);
     Event_ShowMessageAndWait(8, 0, 20);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();

@@ -4,10 +4,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-enum TopicMessage {
-    MSG_LUCKY_WHEELS_RULES_PULL_LEVER = 0xe34,
-    MSG_LUCKY_WHEELS_PRIZES_PRIZES_DETERMINED = 0xe35
-};
 
 
 /* The overlay's scene tables and topic, tile and heading tables. */

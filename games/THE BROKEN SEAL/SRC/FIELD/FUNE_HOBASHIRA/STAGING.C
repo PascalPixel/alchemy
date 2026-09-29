@@ -1,4 +1,5 @@
 #include "FUNE.H"
+extern u8 MsgFuneAvast[];
 
 /* The IWRAM field globals: the map work first, the event work at +0x4c. */
 struct FieldGlobals {
@@ -49,7 +50,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_TaskWait(1);
     Call3((void (*)())Engine_ActorShowEmote, 8, 0x100, 0);
     Engine_ActorFaceDirection(8, 0xb000, 0);
-    Engine_EventSetMessage(0x1e3e);
+    Engine_EventSetMessage((s32)MsgFuneAvast);
     Engine_EventShowMessageAndWait(8, 0, 10);
     Call3((void (*)())Engine_ActorSetPosition, 10, x, 0xd20000);
     Call3((void (*)())Engine_ActorSetPosition, 11, x, 0xd20000);

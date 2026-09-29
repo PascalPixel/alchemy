@@ -1340,42 +1340,24 @@ Field_PerspectiveDataB:
 	.global Field_PerspectiveDataC
 Field_PerspectiveDataC:
 	.incbin "baserom.gba", 0x004247dc, 0x00000490
-	.global Graphics_DataA
-Graphics_DataA:
-	.incbin "baserom.gba", 0x00424c6c, 0x000001f8
-	.global Graphics_TilesA
-Graphics_TilesA:
-	.incbin "baserom.gba", 0x00424e64, 0x000016bc
-	.global Graphics_TilesB
-Graphics_TilesB:
-	.incbin "baserom.gba", 0x00426520, 0x00001520
-	.global Graphics_TilesC
-Graphics_TilesC:
-	.incbin "baserom.gba", 0x00427a40, 0x00000bcc
-	.global Graphics_TilesD
-Graphics_TilesD:
-	.incbin "baserom.gba", 0x0042860c, 0x00000b74
-	.global Graphics_TilesE
-Graphics_TilesE:
-	.incbin "baserom.gba", 0x00429180, 0x00001ea8
-	.global Graphics_DataB
-Graphics_DataB:
-	.incbin "baserom.gba", 0x0042b028, 0x000001f0
-	.global Graphics_TilesF
-Graphics_TilesF:
-	.incbin "baserom.gba", 0x0042b218, 0x000015a0
-	.global Graphics_TilesG
-Graphics_TilesG:
-	.incbin "baserom.gba", 0x0042c7b8, 0x000014b0
-	.global Graphics_TilesH
-Graphics_TilesH:
-	.incbin "baserom.gba", 0x0042dc68, 0x00000908
-	.global Graphics_TilesI
-Graphics_TilesI:
-	.incbin "baserom.gba", 0x0042e570, 0x00000904
-	.global Graphics_TilesJ
-Graphics_TilesJ:
-	.incbin "baserom.gba", 0x0042ee74, 0x00001540
+	.section .unidentified.08424e61,"a"
+	.incbin "baserom.gba", 0x00424e61, 0x00000003
+	.section .unidentified.0842651e,"a"
+	.incbin "baserom.gba", 0x0042651e, 0x00000002
+	.section .unidentified.08427a3d,"a"
+	.incbin "baserom.gba", 0x00427a3d, 0x00000003
+	.section .unidentified.08428609,"a"
+	.incbin "baserom.gba", 0x00428609, 0x00000003
+	.section .unidentified.0842917e,"a"
+	.incbin "baserom.gba", 0x0042917e, 0x00000002
+	.section .unidentified.0842b027,"a"
+	.incbin "baserom.gba", 0x0042b027, 0x00000001
+	.section .unidentified.0842c7b5,"a"
+	.incbin "baserom.gba", 0x0042c7b5, 0x00000003
+	.section .unidentified.0842dc66,"a"
+	.incbin "baserom.gba", 0x0042dc66, 0x00000002
+	.section .unidentified.084303b3,"a"
+	.incbin "baserom.gba", 0x004303b3, 0x00000001
 	.global Graphics_PictureA
 Graphics_PictureA:
 	.incbin "baserom.gba", 0x004303b4, 0x0000189c

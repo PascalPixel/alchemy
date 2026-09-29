@@ -23,7 +23,7 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
     target = (s32 *)record[5];
     if (target != 0) {
         *(short *)((u8 *)target + 0x64) = 0;
-        Engine_ObjectSetScript(target, (s32)Makyuri_StartMoveScript);
+        Engine_ObjectSetScript(target, (s32)Makyuri_ScaleCounterScript);
         Object_SetAnimation(target, 7);
         record[5] = 0;
     }

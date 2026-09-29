@@ -37,7 +37,7 @@
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
-extern u8 Value_000000a9;
+#include "RESOURCE_IDS.H"
 extern u8 gWorkSlot[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -77,7 +77,7 @@ void BattleFx_RunOrbitingSparks(void)
     BattleFx_BeginCanvasLayer(1);
     *(volatile u16 *)0x04000020 = 0x100;
     *(volatile u16 *)0x04000052 = (u32)0x1010;
-    palette = Resource_GetTableEntry((s32)&Value_000000a9);
+    palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     tmp5 = palette + 128;
     Resource_DecodeType01(tmp5, work);

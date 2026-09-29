@@ -1,6 +1,7 @@
 #include "TYPES.H"
 extern u8 MsgSoruVenusStarBagged[];
 extern u16 SoruStar_StarCells[];
+extern struct EventWork *gEventWork;
 
 /* The party bags the Venus Star while its chamber changes around them. */
 
@@ -124,7 +125,7 @@ void Scene_BagVenusStar(void)
     Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 1, 41, 10);
     Call6(Engine_MapCopyCellsTo, 87, 42, 41, 12, 1, 2);
     Engine_EventWait(40);
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x202;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x202;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Call4(Engine_CameraMoveTo, 0x2c60000, -1, 0x1da0000, 0);

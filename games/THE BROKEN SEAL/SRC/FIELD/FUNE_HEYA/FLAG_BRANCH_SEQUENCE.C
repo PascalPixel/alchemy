@@ -36,8 +36,7 @@ void FuneHeya_RunFlagBranchSequence(void)
     Battle_ResetEffectCounterFar();
     base3_2000240 = (s32)gGameState;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
-    /* FAKEMATCH: the do/while orders the flag store before this call, and
-     * 0x6f comes from the literal pool through a link symbol. */
+    /* FAKEMATCH: the do/while orders the flag store before this call. */
     do {
         Call1(Engine_GameFlagClear, 0x8f0);
     } while (0);

@@ -27,6 +27,9 @@ Engine_RandomNext:
 	.thumb_func
 ArcTan2:
 	overlay_veneer ArcTan2Far
+	.global FixedSqrt
+	.thumb_func
+FixedSqrt:
 	overlay_veneer FixedSqrtFar
 	.global Engine_MathSin
 	.thumb_func

@@ -21,7 +21,13 @@
    candidate) the ring draw matches and only the packing call's load
    stays early, so the ring difference is the name compiling as a symbol
    rather than a constant. Needs Graphics_PackTileRows' real interface
-   or argument form, and a ruling on the fixed EWRAM buffer. */
+   or argument form, and a ruling on the fixed EWRAM buffer.
+   2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): best 340 against
+   460 by moving the frame count's increment ahead of the ring draw and a
+   declaration; not kept, because the draft stays blocked either way: its
+   seven resource numbers are CONSTANTS.LD Value_ symbols (0x73, 0x99, 0xbd
+   and the four palettes), 140 of the 340 points. The rest is two registers
+   and three reorders. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"

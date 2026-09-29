@@ -7,7 +7,11 @@
    word is stored: the source this came from stored the value after setting
    the channel and count registers. The reviewed Dma_Set cannot order it so
    (a comma expression or an inline fill with the value as a parameter
-   still stores first); matching needs a reviewed fill form, not a spelling. */
+   still stores first); matching needs a reviewed fill form, not a spelling.
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes, --function
+   Func_0809509c): 30,255 candidates, none below the draft (225 once the
+   sparkle callback is named); every spelling still builds the fill zero
+   before the reviewed Dma_Set loads its registers. */
 /* Draft, not exact (2026-09-26): 11 differing halfwords (194 bytes plus
    the 2-byte pad). Writing the timer as (i & 15) + 1 with a literal lets
    GCC pool the halfword 15 in the first slot and reload it per iteration,

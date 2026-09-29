@@ -8,7 +8,13 @@
    dump chooses r1 for the initial rows reload, not the reference's r0.
    Narrowing CreateFrame's first argument to s8 and using a packed signed-byte
    bitfield table both reproduce this same binary; do not repeat those axes.
-   An unpacked one-byte struct has a four-byte stride and is not equivalent. */
+   An unpacked one-byte struct has a four-byte stride and is not equivalent.
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): best 995 against
+   1370 after 25 rewrites, mostly operand swaps and casts; not kept. The
+   three pooled message ids (Value_00000c23/c25/c27) block adoption whatever
+   the spelling. The build names Data_03001f54 gDebugMode and Data_080367dc
+   Menu_WorkspaceIconFrames, but the renamed draft does not compile against
+   the declarations here, so it keeps the old spellings. */
 #include "TYPES.H"
 #include "WORKSPACE_OPTIONS.H"
 

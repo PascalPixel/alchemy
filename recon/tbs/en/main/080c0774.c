@@ -6,7 +6,11 @@
    60-byte reach places the literal pool inside the fade loop as the
    reference does. Residual: register choice in the fade loop (the reference
    has the mask in r7, the index in r6, the source offset in r0 and the
-   destination in r4). */
+   destination in r4).
+   2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): 17,525
+   candidates, none below the draft (115 once the tile builders are named).
+   The pooled 0x1f mask stays a link-time symbol (Value_0000001f), which
+   blocks adoption. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"

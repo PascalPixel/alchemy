@@ -12399,27 +12399,27 @@ msgctxt "message"
 msgid "03097"
 msgstr "Turn auto-sleep on or off."
 
-msgctxt "message"
+msgctxt "MsgDebugWentLevel"
 msgid "03098"
 msgstr "You went up a level!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugBodyTornApart"
 msgid "03099"
 msgstr "The body is being torn apart.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotTreasure"
 msgid "03100"
 msgstr "You got treasure!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotDjinni"
 msgid "03101"
 msgstr "You got a Djinni!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotItem"
 msgid "03102"
 msgstr "You got an item!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotSturdyEquipment"
 msgid "03103"
 msgstr "You got sturdy equipment!{end_wait}"
 
@@ -13795,7 +13795,7 @@ msgctxt "message"
 msgid "03446"
 msgstr "Aiyaah! You no want!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorArmorShopWelcome"
 msgid "03447"
 msgstr "Talk to me, warrior. I{line_break}have good armor.{end_now}"
 
@@ -13967,7 +13967,7 @@ msgctxt "message"
 msgid "03489"
 msgstr "You don't need it,{line_break}warrior?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorItemShopWelcome"
 msgid "03490"
 msgstr "I have much travel{line_break}gear. Look at it all.{end_now}"
 

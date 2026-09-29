@@ -12091,27 +12091,27 @@ msgctxt "message"
 msgid "03020"
 msgstr "Veille auto. oui/non."
 
-msgctxt "message"
+msgctxt "MsgDebugWentLevel"
 msgid "03021"
 msgstr "Vous passez de niveau!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugBodyTornApart"
 msgid "03022"
 msgstr "Le corps est déchiqueté.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotTreasure"
 msgid "03023"
 msgstr "Vous trouvez un trésor!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotDjinni"
 msgid "03024"
 msgstr "Vous trouvez un Djinn!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotItem"
 msgid "03025"
 msgstr "Vous trouvez un objet!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotSturdyEquipment"
 msgid "03026"
 msgstr "Vous trouvez de l'équipement!{end_wait}"
 
@@ -13903,7 +13903,7 @@ msgctxt "message"
 msgid "03473"
 msgstr "Quoi? V'zen voulez pas???{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorArmorShopWelcome"
 msgid "03474"
 msgstr "Guerrier! J'ai de{line_break}bonnes armures.{end_now}"
 
@@ -14075,7 +14075,7 @@ msgctxt "message"
 msgid "03516"
 msgstr "Vous n'en voulez{line_break}pas, guerrier?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorItemShopWelcome"
 msgid "03517"
 msgstr "J'ai beaucoup de matériel.{line_break}Jetez un oeil.{end_now}"
 

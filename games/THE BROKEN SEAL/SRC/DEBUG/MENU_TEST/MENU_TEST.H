@@ -7,9 +7,11 @@
 
 extern s16 Data_02000240[];
 extern volatile s32 Data_03001ae8;
-extern u8 Value_00000c9b;
-extern u8 Value_00000cc6;
-extern u8 Value_00000cf1;
+/* The shops' welcome lines open their blocks of messages; the menu steps
+ * through a block as long as the distance between the first two. */
+extern u8 MsgWeaponShopWelcome[];
+extern u8 MsgArmorShopWelcome[];
+extern u8 MsgItemShopWelcome[];
 extern u8 *Data_03001f30[];
 extern u8 Data_03001ebc[];
 extern u8 MenuTest_SlotValues[];

@@ -36,6 +36,11 @@
 //! - `.parts`: each line names a part image beside the list and that part's
 //!   form, such as `BLUE_FLAME_COLUMN\tbitmap`; the parts are built in turn and
 //!   joined.
+//! - `.icons4`: an icon bank of 4-bit icons, each with its own palette. Each
+//!   line names a 32x32 icon image beside the list, or `-` for an empty
+//!   slot. The bank is a table of each slot's halfword offset, 0 when empty,
+//!   then each icon's 16-colour palette and its pixels, row by row, in the
+//!   4-bit icon coder (Psynergy's icon4), zero-padded to a word.
 //!
 //! Either may then be packed:
 //!
@@ -47,7 +52,9 @@
 //!   before it.
 use crate::graphics::{indices, metatiles};
 use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
-use psynergy::assets::compression::{encode_delta7, encode_tilemap_delta, encode_zero_skip};
+use psynergy::assets::compression::{
+    encode_delta7, encode_icon4, encode_tilemap_delta, encode_zero_skip,
+};
 use psynergy::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
 /// The resource packer's compressor, as the streams in both games show: the
@@ -57,7 +64,10 @@ pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 
 /// Whether a form reads a table or tilemap rather than an image.
 fn data_form(form: &str) -> bool {
-    matches!(form, "bin" | "delta0" | "delta1" | "delta2" | "parts")
+    matches!(
+        form,
+        "bin" | "delta0" | "delta1" | "delta2" | "parts" | "icons4"
+    )
 }
 
 /// The input a built file name reads, relative to the same directory: the
@@ -69,7 +79,7 @@ pub fn input_name(built: &str) -> Result<String, String> {
         .ok_or_else(|| format!("{built} names no form"))?;
     let form = rest.split('.').next().unwrap_or_default();
     let extension = match form {
-        "parts" => "TSV",
+        "parts" | "icons4" => "TSV",
         form if data_form(form) => "BIN",
         _ => "PNG",
     };
@@ -103,6 +113,7 @@ pub fn build_file_with(
         match form {
             "bin" => input.to_vec(),
             "parts" => parts(built, input, sibling)?,
+            "icons4" => icon4_bank(built, input, sibling)?,
             _ => encode_tilemap_delta(input, form.as_bytes()[5] - b'0')
                 .map_err(|error| format!("{built}: {}", error.0))?,
         }
@@ -141,6 +152,41 @@ fn parts(
         }
         let name = format!("{part}.{form}");
         output.extend(build_file(&name, &sibling(&input_name(&name)?)?)?);
+    }
+    Ok(output)
+}
+
+/// A bank of 4-bit icons with their own palettes from its slot list.
+fn icon4_bank(
+    built: &str,
+    list: &[u8],
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<Vec<u8>, String> {
+    let text = std::str::from_utf8(list).map_err(|_| format!("{built}: icon list is not text"))?;
+    let slots: Vec<&str> = text
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    let mut output = vec![0u8; 2 * slots.len()];
+    for (index, slot) in slots.iter().enumerate() {
+        if *slot == "-" {
+            continue;
+        }
+        let at = u16::try_from(output.len()).map_err(|_| format!("{built}: bank too large"))?;
+        output[2 * index..2 * index + 2].copy_from_slice(&at.to_le_bytes());
+        let image = indexed_bitmap_png(&sibling(&format!("{slot}.PNG"))?)
+            .map_err(|error| format!("{built}: {slot}: {}", error.0))?;
+        let palette =
+            bgr555_palette_of(&image).map_err(|error| format!("{built}: {slot}: {}", error.0))?;
+        if (image.width, image.height) != (32, 32) || palette.len() != 32 {
+            return Err(format!("{built}: {slot} must be 32x32 in 16 colours"));
+        }
+        output.extend(palette);
+        output.extend(
+            encode_icon4(&indices(&image))
+                .map_err(|error| format!("{built}: {slot}: {}", error.0))?,
+        );
+        output.resize(output.len().next_multiple_of(4), 0);
     }
     Ok(output)
 }
@@ -319,6 +365,16 @@ mod tests {
         })
         .unwrap();
         assert_eq!(joined, [1, 2, 3]);
+        // A 4-bit icon bank: an empty slot is 0; an icon is its palette and
+        // its stream, padded to a word.
+        let bank = build_file_with("B.icons4", b"-\nA\n", &|name| {
+            assert_eq!(name, "A.PNG");
+            Ok(png_from_bitmap(&[0; 32 * 32], &[0; 32], 32).unwrap())
+        })
+        .unwrap();
+        assert_eq!(&bank[..4], [0, 0, 4, 0]);
+        assert_eq!(bank.len(), 4 + 32 + 132);
+        assert_eq!(&bank[36..40], [0, 0, 0, 0]);
         let palette: Vec<u8> = (0..16u16)
             .flat_map(|color| (color * 0x421).to_le_bytes())
             .collect();

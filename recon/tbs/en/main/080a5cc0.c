@@ -6,7 +6,10 @@
  * is the text build's MsgItemUseResult: 610. Seven more message numbers
  * (0xae2..0xaf1) are still Value_ symbols and cost 140 of that. The rest:
  * the 0x174 halfword clear swaps r2/r3, and the reference forms r7 + 0x268
- * from its own constant where this adds 80 to a neighbouring offset. */
+ * from its own constant where this adds 80 to a neighbouring offset
+ * (move2add reuses the 0x218 already in r2; reading the mode through a
+ * local or reordering the case does not stop it). A second 8-minute run
+ * from 610 with another seed found nothing lower. */
 /* NONMATCHING, 2026-09-26: 794/800 bytes, 323 differing halfwords, 98
  * aligned edits (previously 800/800, 239/120). Shared return types audited.
  * ROM corrections: case 0 clears the halfword at 0x174, not selected_action

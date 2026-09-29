@@ -6,7 +6,8 @@
  * through a flag (s32 last = rows - 1 == row), which frees the registers
  * the column loop needs but costs the five inserted instructions that build
  * the flag, where the reference branches on cmp/bne. Testing the row
- * directly gives 1865. */
+ * directly gives 1865. A second 8-minute run from 860 with another seed
+ * found nothing lower. */
 /* Not-yet-C: complete 288-byte owner, separated from the former 1644-byte
  * bundle. RenderInput fixes the old draft's swapped x/y fields; first column
  * starts at index 1 unless flags select bias 5, and the bottom cap is 0xf019.

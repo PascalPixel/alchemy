@@ -1,3 +1,7 @@
+/* 2026-09-29: five minutes of permutation reached 2271 from 2911 through 33
+ * rewrites; not kept, since the owner is far from exact and still reads
+ * Value_ constants (0, 0x16, 0x1440, 0x1540) and RegIme, which the build does
+ * not define. */
 /* Draft, not exact (2026-09-25): 1156 of 1152 bytes, 400 differing
    halfwords, 214 differing instruction lines; the block layout matches.
    The title intro: two backgrounds scroll up a row every eight lines, the

@@ -6,6 +6,8 @@ SECTIONS
     {
         "*/games/THE LOST AGE/SRC/FIELD/DERI_HEYA/ENTRY.o"(.text)
         "*/resource_652_overlay.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/DERI_HEYA/LINES.o"(.text)
+        "*/resource_652_overlay.o"(.text.x02008218)
         "*/games/THE LOST AGE/SRC/FIELD/DERI_HEYA/IMPORT.o"(.text)
         "*/resource_652_overlay.o"(.rodata.x02008e04)
     }

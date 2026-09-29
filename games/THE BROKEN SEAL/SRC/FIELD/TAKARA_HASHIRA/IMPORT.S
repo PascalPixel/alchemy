@@ -34,10 +34,16 @@ Vector_AddPolarOffset:
 	.thumb_func
 Runtime_SetIrqHandler:
 	overlay_veneer Runtime_SetIrqHandlerFar
+	.global Engine_ObjectSetAnimation
+	.thumb_func
+Engine_ObjectSetAnimation:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	.global Engine_ObjectSetScript
+	.thumb_func
+Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
 	.global Engine_ObjectCreate
 	.thumb_func

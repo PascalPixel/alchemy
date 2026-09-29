@@ -1,3 +1,7 @@
+/* 2026-09-29: callees carry the build's names and eight minutes of
+ * permutation stored the action through pointer arithmetic (*(unit_stack +
+ * 14)); alchemy permute scores 1935, from 2195. Messages 0x648 and 0x654
+ * are still Value_ symbols. */
 /* Draft, not exact (2026-09-24): candidate=516 reference=516 differing_halfwords=147. Constants the reference loads from
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
@@ -37,7 +41,7 @@ s32 BattlePresentation_DispatchAction(s16 *action, s32 delay)
     if (*(s16 *)(actor + 0x38) == 0)
         return -1;
     if (actor[0x129] == 0)
-        Func_080bd424(action, 1);
+        BattleCommand_SelectAutomatic(action, 1);
 
     transition_slot = (u8 **)0x03001f00;
     transition = *(struct BattlePresentationTransition **)transition_slot;
@@ -46,31 +50,31 @@ s32 BattlePresentation_DispatchAction(s16 *action, s32 delay)
     transition->active = 0;
     *(s32 *)(battle + 0x644) = 0x10000;
     render_state = *(transition_slot - 32);
-    Func_080049ac();
-    Func_080051d8(render_state, render_state + 12);
-    do { Func_08005258(0x01fe0000, _call_via_r3(0x01fe0000, 0xc000), 0x7fff0000); } while (0); /* FAKEMATCH */
+    Render_ResetTransformState();
+    Graphics_PrepareTransferInIwramWork(render_state, render_state + 12);
+    do { Camera_StoreSceneParameters(0x01fe0000, _call_via_r3(0x01fe0000, 0xc000), 0x7fff0000); } while (0); /* FAKEMATCH */
 
     if (delay != 0) {
         transition->blend = 0x2000;
-        Func_080030f8(delay);
+        WaitFrames(delay);
     }
-    unit_stack[14] = action[0];
+    *(unit_stack + 14) = action[0];
     do { unit_stack[15] = 0xff; } while (0); /* FAKEMATCH */
-    Func_080c10e8(unit_stack + 14, 1);
+    BattlePres_SetActorModes(unit_stack + 14, 1);
 
     result = BattleCommand_BuildPlan(action, battle + 0x654);
     if (result == 0) {
         switch (*(s32 *)(battle + 0x6a8)) {
-        case 1: Func_080ba27c(battle + 0x654, 0); break;
-        case 2: Func_080ba2c0(battle + 0x654, 0); break;
-        case 3: Func_080b9ec0(battle + 0x654, 1); break;
-        case 4: Func_080b9ec0(battle + 0x654, 0); break;
+        case 1: BattlePres_RunActorEntries(battle + 0x654, 0); break;
+        case 2: RunBattlePresentation(battle + 0x654, 0); break;
+        case 3: BattlePresentation_RunUnitTransition(battle + 0x654, 1); break;
+        case 4: BattlePresentation_RunUnitTransition(battle + 0x654, 0); break;
         case 5: Func_080ba978(battle + 0x654, 0); break;
         case 6: Func_080ba978(battle + 0x654, 1); break;
         case 7: Func_080ba978(battle + 0x654, 2); break;
         case 8: Func_080ba6ac(battle + (s32)&Value_00000654, 0, action); break;
         case 9:
-            if (Func_080b9dc4(battle + (s32)&Value_00000654) != 0)
+            if (BattlePresentation_RunEncounterOrUnitTrigger(battle + (s32)&Value_00000654) != 0)
                 preserve_action = 1;
             break;
         }
@@ -78,21 +82,21 @@ s32 BattlePresentation_DispatchAction(s16 *action, s32 delay)
             goto finish;
     } else {
         if (result == -1) {
-            Func_080bb65c();
-            Func_080030f8(3);
+            BattlePresentation_WaitForAdvance();
+            WaitFrames(3);
         }
-        Func_080c10e8(0, 0);
+        BattlePres_SetActorModes(0, 0);
     }
 
-    Func_080b7e7c();
-    Func_080bfba4(battle + 0x654);
-    Func_080b6c90();
-    visible_count = Func_080b6c08(3, unit_stack);
+    BattleMotion_DestroyAllSlotObjects();
+    BattleUnit_ProcessTurnEnd(battle + 0x654);
+    BattleActor_CommitPlacement();
+    visible_count = BattleParty_ListActorIds(3, unit_stack);
     for (index = 0; index < visible_count; index++)
-        Func_080b8000(unit_stack[index]);
+        Actor_ResetMotionAtAnchor(unit_stack[index]);
     action[0] = 0xff;
 
 finish:
-    Func_080c0774(2, *(u16 *)(battle + (s32)&Value_00000648), 0);
+    BattlePresentation_ConfigurePaletteFade(2, *(u16 *)(battle + (s32)&Value_00000648), 0);
     return preserve_action;
 }

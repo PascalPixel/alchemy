@@ -96,91 +96,8 @@ KorimaMagari_DrawPanel:
 	.4byte 0x02020004
 	.2byte 0x2840
 	.2byte 0x0600
-	.section .text.x020087e0,"ax",%progbits
+	.section .text.x020088b0,"ax",%progbits
 	.p2align 2
-	.global KorimaMagari_RunReturnSequence
-	.thumb_func
-KorimaMagari_RunReturnSequence:
-	push {r5, lr}
-	sub sp, #8
-	bl 0x0200909c
-	movs r1, #8
-	movs r0, #0
-	bl 0x020090dc
-	movs r0, #6
-	bl 0x02009094
-	movs r0, #239
-	bl 0x02009114
-	movs r1, #128
-	ldr r2, [pc, #164]
-	movs r0, #8
-	lsls r1, r1, #8
-	bl 0x020090b4
-	movs r0, #8
-	movs r1, #2
-	bl 0x020090dc
-	movs r2, #176
-	movs r1, #72
-	movs r0, #8
-	bl 0x020090bc
-	movs r0, #6
-	bl 0x02009094
-	movs r0, #0
-	movs r1, #2
-	bl 0x020090dc
-	movs r0, #0
-	ldr r1, [pc, #124]
-	ldr r2, [pc, #116]
-	bl 0x020090b4
-	movs r1, #8
-	movs r2, #0
-	negs r1, r1
-	movs r0, #0
-	bl 0x020090c4
-	movs r0, #24
-	bl 0x02009094
-	movs r1, #1
-	movs r0, #0
-	bl 0x020090dc
-	movs r0, #8
-	bl 0x020090cc
-	movs r1, #1
-	movs r0, #8
-	bl 0x020090dc
-	movs r0, #144
-	lsls r0, r0, #1
-	bl 0x02009114
-	movs r0, #213
-	bl 0x02009114
-	movs r3, #6
-	str r3, [sp, #0]
-	movs r5, #9
-	movs r0, #5
-	movs r1, #9
-	movs r2, #1
-	movs r3, #4
-	str r5, [sp, #4]
-	bl 0x02009074
-	movs r3, #4
-	movs r0, #0
-	movs r1, #0
-	movs r2, #1
-	str r3, [sp, #0]
-	str r5, [sp, #4]
-	bl 0x02009074
-	ldr r3, [pc, #28]
-	ldr r2, [r3]
-	ldr r3, [pc, #12]
-	strh r3, [r2]
-	bl 0x020090a4
-	sub sp, #-8
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x00000001
-	.4byte 0x00003333
-	.4byte 0x00004ccc
-	.4byte 0x020092c4
 	.global Func_020008b0
 	.thumb_func
 Func_020008b0:
@@ -762,7 +679,10 @@ Scene_PushBlockAlongRun:
 	.space 8
 	.global gKorimaMagariRecords
 gKorimaMagariRecords:
-	.space 8
+	.space 4
+	.global gKorimaMagariReturned
+gKorimaMagariReturned:
+	.space 4
 	.global gKorimaMagariLayout
 gKorimaMagariLayout:
 	.space 8

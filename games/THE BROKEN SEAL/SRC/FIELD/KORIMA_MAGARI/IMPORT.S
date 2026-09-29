@@ -68,6 +68,9 @@ Engine_ActorSetSpriteFlags:
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer GameFlag_TestFar
+	.global Engine_EventWait
+	.thumb_func
+Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
@@ -78,9 +81,21 @@ Engine_EventBegin:
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
 	overlay_veneer Object_GetByIdFar
+	.global Engine_ActorSetSpeed
+	.thumb_func
+Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Engine_ActorSetDestination
+	.thumb_func
+Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global Engine_ActorSetDestinationOffset
+	.thumb_func
+Engine_ActorSetDestinationOffset:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	.global Engine_ActorWaitForMove
+	.thumb_func
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorSetPosition
 	.thumb_func

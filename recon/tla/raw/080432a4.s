@@ -524,7 +524,7 @@ Func_080432a4:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #1
-	bl	Func_0804d9e0
+	bl	Menu_RunConfirmSelection
 	cmp	r0, #0
 	beq.n	.L_0804370c
 	bl	0x0803ce1c
@@ -761,7 +761,7 @@ Func_080432a4:
 	movs	r1, #0
 	movs	r2, #3
 	movs	r3, #1
-	bl	Func_0804d9e0
+	bl	Menu_RunConfirmSelection
 	cmp	r0, #0
 	beq.n	.L_0804392c
 	bl	0x0803ce1c

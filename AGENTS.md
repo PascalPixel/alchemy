@@ -171,6 +171,8 @@ a verified build.
 - 2026-09-29: JSON is banned from the repository for good: tables are TSV,
   sequence skeletons and events are text, and the publication check refuses
   JSON by name or content.
+- 2026-09-29: gates: the fixed-address check runs on every build that links
+  game code; builds that are still only the original ROM skip it.
 - 2026-09-29: a PNG may carry an all-grey palette when the build writes that
   palette into the ROM from the PNG, as pret's grey images with their own palettes do.
 - 2026-09-29: gates: asset recipes may carry the sprite shape, one of the 12

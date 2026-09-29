@@ -1,17 +1,9 @@
-/* NONMATCHING: resource_377 at 0x02008f90 (940 bytes with its pool),
- * HaidiaBabi_RunEventScript01, between FIELD/COMMON/HAIDIA_BABI/HOME_TALK.C
- * and ACTOR_EIGHT_MESSAGE.C, stays listing. It was
- * FIELD/COMMON/HAIDIA_BABI/EVENT_SCRIPT_01.C.
- *
- * Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines
- * (Engine_ActorSetDestination, Main_08009190, Main_08009188,
- * Engine_UiWorkWaitThenFinalizeCapacity,
- * Engine_ObjectMotionSetPositionAndCommit).
- */
+/* The sickbed visit: actor 8 coughs, asks who told the party about the
+ * illness and leaves the bed; the scene ends by setting flags 0x81e and 0x203. */
 #include "TYPES.H"
 extern u8 MsgHaidiaCoughCoughWho[];
 extern u8 MsgHaidiaWhoToldIll[];
+
 extern struct EventWork *gEventWork;
 
 void Engine_EventBegin();
@@ -25,12 +17,12 @@ s32 Engine_ActorShowEmote();
 void Engine_ActorRunRepeatedMotion();
 void Engine_EventWait();
 void Engine_ActorSetDestination();
-void Main_08009190();
-void Main_08009188();
+void Map_SetLayerEntryFlag();
+void Map_ClearLayerEntryFlag();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetAnimationAndWait();
 s32 Engine_EventOpenMessage();
-s32 Engine_UiWorkWaitThenFinalizeCapacity();
+s32 Engine_EventChooseYesNo();
 s32 Engine_GameFlagIsSet();
 void Engine_EventShowMessage();
 u8 * Engine_ActorGet();
@@ -67,11 +59,11 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void HaidiaBabi_RunEventScript01(void)
+void HaidiaBabi_RunSickbedVisit(void)
 {
     u32 i;
     u8 *record;
-    s32 base5_1c6f;
+    s32 msg;
 
     Engine_EventBegin();
     Call3(Engine_ActorSetSpeed, 0, 0x9999, 0x4ccc);
@@ -87,8 +79,8 @@ void HaidiaBabi_RunEventScript01(void)
     Engine_EventWait(80);
     Call3(Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
     Call3(Engine_ActorSetDestination, 8, 0x248, 0x196);
-    Main_08009190(11);
-    Main_08009188(12);
+    Map_SetLayerEntryFlag(11);
+    Map_ClearLayerEntryFlag(12);
     Engine_ActorSetAnimation(8, 12);
     Engine_EventWait(80);
     Engine_ActorRunRepeatedMotion(8, 2);
@@ -110,7 +102,7 @@ void HaidiaBabi_RunEventScript01(void)
     Call3(Engine_ActorShowEmote, 0, 0x102, 60);
     Engine_ActorSetAnimation(8, 13);
     Value2(Engine_EventOpenMessage, 8, 0);
-    if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 1) {
+    if (Value2(Engine_EventChooseYesNo, 0, 0) == 1) {
         *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
@@ -119,10 +111,10 @@ void HaidiaBabi_RunEventScript01(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
     Call3(Engine_ActorShowEmote, 8, 0x107, 60);
-    base5_1c6f = (s32)MsgHaidiaWhoToldIll;
-    Engine_EventSetMessage(base5_1c6f);
+    msg = (s32)MsgHaidiaWhoToldIll;
+    Engine_EventSetMessage(msg);
     Value2(Engine_EventOpenMessage, 8, 0);
-    if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 1) {
+    if (Value2(Engine_EventChooseYesNo, 0, 0) == 1) {
         *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
@@ -131,7 +123,7 @@ void HaidiaBabi_RunEventScript01(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
     Call3(Engine_ActorShowEmote, 8, 0x107, 60);
-    Engine_EventSetMessage((base5_1c6f + 3));
+    Engine_EventSetMessage(msg + 3);
     Engine_EventShowMessage(8, 0);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_EventWait(20);

@@ -166,7 +166,7 @@ Func_080b56e0:
 	lsls	r0, r0, #1
 	bl	GameFlag_SetBitFar
 	adds	r0, r6, #0
-	bl	Func_080b63c8
+	bl	Battle_RunEncounter
 	bl	Ui_LoadWindowGraphics
 	bl	Bg0_ClearTilemap
 	bl	Scheduler_ResetTaskTable
@@ -178,7 +178,7 @@ Func_080b56e0:
 	lsls	r0, r0, #1
 	bl	GameFlag_SetBitFar
 	ldr	r0, [pc, #12]
-	bl	Func_080b63c8
+	bl	Battle_RunEncounter
 	b.n	.L_080b56f6
 	movs	r0, r0
 	.4byte 0x03001ae8

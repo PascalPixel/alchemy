@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
@@ -131,7 +132,7 @@ void ToretoHeya_RunTableScene(void)
     Local_02001424(11);
     Call2(Engine_EventShowMessage, 0x8008, 0);
     {
-        u8 *work = *(u8 **)0x03001ebc;
+        u8 *work = *(u8 **)&gEventWork;
 
         *(s32 *)(work + 0x1c0) = 0x200;
         *(s32 *)(work + 0x1c8) = 64;

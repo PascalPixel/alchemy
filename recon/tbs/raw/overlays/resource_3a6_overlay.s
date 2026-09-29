@@ -917,9 +917,9 @@ Func_02001378:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02001390
+	.global HaidiaDou_RunProbedColumnScene
 	.thumb_func
-Func_02001390:
+HaidiaDou_RunProbedColumnScene:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -1152,9 +1152,9 @@ Func_020014ac:
 	bx r0
 	.4byte 0x00001999
 	.4byte 0x00000202
-	.global Func_020015cc
+	.global HaidiaDou_RunLoweredActorScene
 	.thumb_func
-Func_020015cc:
+HaidiaDou_RunLoweredActorScene:
 	push {r5, lr}
 	sub sp, #32
 	bl 0x02009cac

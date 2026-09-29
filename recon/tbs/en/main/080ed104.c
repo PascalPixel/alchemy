@@ -90,7 +90,7 @@ s32 Func_0800231c(s32 angle);
 void Func_080b50e8(s32 id);
 void Func_080b5088(s32 member_id, s32 flag);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080e3908(void *particle, s32 count, s32 flags);
 void Func_080e155c(s32 a, s32 b);
 void Func_080cd52c(void);
@@ -233,7 +233,7 @@ void Func_080ed104(void *object)
                     s32 sh;
                     void *src;
 
-                    bucket = Func_080022ec(lifetime, 3);
+                    bucket = Math_Div(lifetime, 3);
                     sy = M2C_FIELD(star, s16 *, 2);
                     sh = M2C_FIELD(star, s16 *, 6);
                     if (bucket > 6) {

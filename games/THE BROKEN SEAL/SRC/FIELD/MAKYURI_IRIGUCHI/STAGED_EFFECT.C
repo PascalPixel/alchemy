@@ -4,10 +4,6 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define OverlayObject_CreateConfigured      Func_02000048
-#define CreateOverlayObject Func_020024fe
-#define SetOverlayObjectMode Func_02002568
-#define SetOverlayObjectSlot Func_02002640
 #define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 

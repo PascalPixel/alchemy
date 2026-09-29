@@ -33,7 +33,7 @@ s32 ItemMenu_PrepOwner(s32 party_slot)
     }
     offset = (s32)(menu + 0x1C8);
     *(s8 *)(menu + 0x218) =
-        (s8)InventoryMenu_CollectItems((void *)result, (u16 *)offset, 0);
+        (s8)ItemMenu_Collect((void *)result, (u16 *)offset, 0);
     result = ItemMenu_RunOwnerSelection(menu + 0x208, (void *)offset);
     {
         s32 cursor_offset = party_slot * 4 + 20;

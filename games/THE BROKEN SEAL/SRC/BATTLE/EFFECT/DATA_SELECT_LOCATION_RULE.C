@@ -29,7 +29,7 @@ struct FieldLocation {
 extern u8 *Data_03001ebc;
 extern struct FieldLocation Data_02000240;
 
-s32 Func_080770c0(s32 flag);
+s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SetSpecialFromTable(void);
 
 void BattleFx_SelectLocationRule(s32 check)
@@ -53,7 +53,7 @@ void BattleFx_SelectLocationRule(s32 check)
     if (check != 0) {
         while (entry->map != -1) {
             if (entry->map == map && (entry->room == -1 || entry->room == room)) {
-                if (entry->flag == -1 || Func_080770c0(entry->flag) == 0) {
+                if (entry->flag == -1 || GameFlag_TestFar(entry->flag) == 0) {
                     track = entry->result;
                     fade = entry->shift;
                     break;

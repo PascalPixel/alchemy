@@ -45,8 +45,8 @@ void Effect_MoveWithDrag(union FieldObject *object)
     object->effect.y += object->effect.velocity_y;
     velocity_z = object->effect.velocity_z;
     object->effect.z += velocity_z;
-    object->effect.velocity_x = velocity_x - Math_Divide(velocity_x, 22);
-    object->effect.velocity_z = velocity_z - Math_Divide(velocity_z, 20);
+    object->effect.velocity_x = velocity_x - velocity_x / 22;
+    object->effect.velocity_z = velocity_z - velocity_z / 20;
     object->effect.scale_x += object->effect.scale_rate_x;
     object->effect.scale_y += object->effect.scale_rate_y;
     object->effect.sprite->rotation += object->effect.spin;
@@ -125,7 +125,7 @@ s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
 
 s32 SceneActor_FindNearestSlotOfKindF2(void)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
     Spr_020004bc **p;
     s32 best = 0;
     Spr_020004bc *ref;

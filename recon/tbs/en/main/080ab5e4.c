@@ -108,8 +108,7 @@ enum DjinnTutorialMessage {
 #define gKeysRepeat (*(u32 *)ADDR_03001B04)
 #define gKeysPressed (*(u32 *)ADDR_03001C94)
 extern const char Data_080af28c[];
-extern u8 Data_02000240[];
-#define gGameState Data_02000240
+extern u8 gGameState[];
 
 struct DjinnMenuOwner *Runtime_GetObject(s32 owner);
 void BattleUnit_Recalculate(s32 owner);

@@ -25,7 +25,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SOUND/RESAMPLER_RECORDS_PAD_2.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SOUND/RESAMPLER_RECORDS_4.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SOUND/VSYNC_DMA_REFRESH.o"(.text .rodata .data .padding)
-        "*/games/THE LOST AGE/SRC/SOUND/CHANNEL_UPDATE_ENTRY.o"(.text .rodata .data .padding)
+        "*/recon/tla/raw/08000630.o"(.text .rodata .data .padding)
     } > ROM
     /* Startup copies this resident module bank to IWRAM with DMA3. */
     .iwram_runtime 0x3000100 :
@@ -54,9 +54,10 @@ SECTIONS
     {
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/DECODE_BYTE_LZ.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BUILD_OAM_LIST.o"(.text .rodata .data .padding)
+        "*/recon/tla/raw/080019f4.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/COLOR_BACKUP_KERNELS.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/COLOR_BRIGHTEN_KERNEL.o"(.text .rodata .data .padding)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/COLOR_FADE_LOADERS.o"(.text .rodata .data .padding)
+        "*/recon/tla/raw/08001c90.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/COLOR_KERNELS.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/COLOR_KERNEL_LOADERS.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/DECODE_HALFWORD_LZ.o"(.text .rodata .data .padding)
@@ -240,6 +241,7 @@ SECTIONS
         "*/recon/tla/raw/08025f9a.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08025f9c.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_4.o"(.text)
+        "*/recon/tla/raw/08026278.o"(.text)
         "*/recon/tla/raw/08026320.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0802632c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080279b0.o"(.text .rodata .data .padding)
@@ -837,7 +839,7 @@ SECTIONS
         "*/recon/tla/raw/08118244.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/MODEL_BIT_COMMANDS.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08118394.o"(.text .rodata .data .padding)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/COLOR_SCALE_LOADER.o"(.text .rodata .data .padding)
+        "*/recon/tla/raw/08118410.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08118430.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811843c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081185c4.o"(.text .rodata .data .padding)
@@ -1284,7 +1286,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SOUND/MIDI_KEY_FREQUENCY_TABLES.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SOUND/CHANNEL_UNLINK.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c075a.o"(.text .rodata .data .padding)
-        "*/games/THE LOST AGE/SRC/SOUND/HANDLE_NOTE.o"(.text .rodata .data .padding)
+        "*/recon/tla/raw/081c0772.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c09d0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c0c1c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c0e30.o"(.text .rodata .data .padding)

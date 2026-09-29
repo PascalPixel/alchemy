@@ -4,18 +4,6 @@
 
 /* Runs the three-member menu used to choose a party member. */
 
-#define Menu_RunOwnerSelectionLoop Func_08020244
-
-#define Ui_ApplyTableOffsetToPair Func_080216b4
-#define StatusMenu_DrawCharacterSummary Func_08020198
-#define Menu_ClearFirstObjectRowAndScheduleUpdate Func_0801ff14
-#define Menu_ClearSecondObjectRowAndScheduleUpdate Func_08020088
-#define Menu_SpawnFourObjectsAtOrigin Func_0801ffd8
-#define UiText_DrawFourNumbersInRow Func_08020150
-#define Scheduler_ScheduleCallbackAAfterFrames Func_0801fd84
-#define Scheduler_ScheduleCallbackA Func_0801fd98
-#define Runtime_ReleaseHeapBlock Func_08002dd8
-
 /* One selectable owner slot; three of them live at workspace + 0x1040. */
 struct MenuOwnerEntry {
     u8 unk_00[0x10];
@@ -81,7 +69,7 @@ void Ui_ApplyTableOffsetToPair(void *pair);
 void UiWork_Finalize(void *work, s32 kind);
 void RenderOutput_RedrawSavedRect(void *win);
 
-s32 Menu_RunOwnerSelectionLoop(s32 idx, s32 mode)
+s32 SaveMenu_SelectSlot(s32 idx, s32 mode)
 {
     struct MenuOwnerEntry *e;
     u8 *base;

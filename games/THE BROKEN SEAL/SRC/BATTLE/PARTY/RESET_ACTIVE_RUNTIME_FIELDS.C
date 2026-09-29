@@ -4,8 +4,8 @@
 #include "BATTLE_TYPES.H"
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners);
-struct BattleUnit *Func_08077008(s32 owner);
-void Func_08077010(s32 owner);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
+void BattleUnit_Recalculate(s32 owner);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {
@@ -22,7 +22,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
         s32 remaining;
 
         do {
-            unit = Func_08077008(owners[i]);
+            unit = Owner_GetStateFar(owners[i]);
             cursor = &unit->status_12f;
             remaining = 3;
 
@@ -54,7 +54,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
             unit->agility_modifier = 0;
             unit->battle_end_state = 0;
 
-            Func_08077010(owners[i]);
+            BattleUnit_Recalculate(owners[i]);
             i++;
         } while (i < count);
     }

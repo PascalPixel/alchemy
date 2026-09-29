@@ -1,11 +1,12 @@
 #include "TYPES.H"
 
-extern u8 Data_02009ce0[];
+extern u8 Sukureta_StrangerActions[];
+extern u8 Sukureta_Actor11Actions[];
 
 void Engine_GameFlagClear();
 s32 Engine_GameFlagIsSet();
-s32 Main_0808a2c0();
-void Main_0808a2c8();
+s32 Effect_SoundAndFlash();
+void BattleFx_StartTwelveFrameBlend();
 void Engine_EventBegin();
 void Engine_ActorSetPosition();
 u8 * Engine_ActorGet();
@@ -15,11 +16,11 @@ void Engine_ActorEnableActionCallback();
 void Engine_EventEnd();
 void Engine_MapCopyCellAttributes();
 void Scene_LeaveForMtAleph();
-void Main_0808a168();
+void Object_SetTargetAndCallback();
 
 
-extern u8 Data_02000240[];
-extern u16 Data_02000240_t[][1];
+struct GameState;
+extern struct GameState gGameState;
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -56,15 +57,15 @@ s32 HaidiaSukureta_RestoreEntryState(void)
     u32 i;
     u8 *record;
     s32 v5;
-    s32 base5_2009ce0;
+    s32 stranger_actions;
     s16 *room;
 
     {
-        /* FAKEMATCH: indexing through a variable keeps the table base in a
-         * register and adds the row offset, as the reference does. */
+        /* FAKEMATCH: indexing through a variable keeps the game state base in a
+         * register and adds the entrance offset, as the reference does. */
         s32 k = 225;
 
-        room = &Data_02000240_t[k][0];
+        room = (s16 *)&gGameState + k;
     }
     if (*room == 5 || *room == 6) {
         Call1(Engine_GameFlagClear, 0x12f);
@@ -73,8 +74,8 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         Call1(Engine_GameFlagClear, 0x242);
     }
     if (Value1(Engine_GameFlagIsSet, 0x834) != 0) {
-        ((void (*)())Main_0808a2c0)();
-        Main_0808a2c8();
+        ((void (*)())Effect_SoundAndFlash)();
+        BattleFx_StartTwelveFrameBlend();
         Engine_EventBegin();
         Engine_ActorSetPosition(12, 0, 0);
         Engine_ActorSetPosition(13, 0, 0);
@@ -96,7 +97,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         
             *(u16 *)((s32)record + 32) = shown;
         }
-        Call2(Engine_ActorEnableActionCallback, 11, 0x2009c34);
+        Call2(Engine_ActorEnableActionCallback, 11, (s32)Sukureta_Actor11Actions);
         if (Value1(Engine_GameFlagIsSet, 0x839) != 0) {
             Engine_ActorSetPosition(11, 0, 0);
         }
@@ -129,9 +130,9 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         if (Value1(Engine_GameFlagIsSet, 0x808) != 0) {
             Call3(Engine_ActorSetPosition, 14, 0x1880000, 0x1780000);
             Call3(Engine_ActorSetPosition, 15, 0x1780000, 0x1780000);
-            base5_2009ce0 = (s32)Data_02009ce0;
-            Call3(Main_0808a168, 14, 0x10000, base5_2009ce0);
-            Call3(Main_0808a168, 15, 0x10000, base5_2009ce0);
+            stranger_actions = (s32)Sukureta_StrangerActions;
+            Call3(Object_SetTargetAndCallback, 14, 0x10000, stranger_actions);
+            Call3(Object_SetTargetAndCallback, 15, 0x10000, stranger_actions);
         }
     }
     if (Value1(Engine_GameFlagIsSet, 0x87a) != 0) {

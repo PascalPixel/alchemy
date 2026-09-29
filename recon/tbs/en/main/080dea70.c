@@ -95,7 +95,7 @@ void Func_080f9010(s32 id);
 void **Func_080b5098(s32 member_id);
 s32 Func_080b5070(s32 member_id);
 u32 Func_08004458(void);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 value, s32 divisor);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
@@ -310,30 +310,30 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                             M2C_FIELD(launcher, s32 *, 12) + launch_half;
                     }
                     projectile[2] = M2C_FIELD(launcher, s32 *, 16);
-                    projectile[3] = Func_080022ec(
+                    projectile[3] = Math_Div(
                         M2C_FIELD(target, s32 *, 8) - projectile[0],
                         aim_divisor);
 
                     if (kind == 7) {
-                        projectile[4] = Func_080022ec(
+                        projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12)
                                 + ((s32)(Func_08004458() & 63) << 16))
                                 - projectile[1] - (12 << 16),
                             aim_divisor);
                     } else if (kind == 8) {
-                        projectile[4] = Func_080022ec(
+                        projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12)
                                 + ((s32)(Func_08004458() & 7) << 16))
                                 - projectile[1] + (176 << 13),
                             aim_divisor);
                     } else if (kind == 9) {
-                        projectile[4] = Func_080022ec(
+                        projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12)
                                 + ((64 - (s32)(Func_08004458() & 63)) << 16))
                                 - projectile[1],
                             aim_divisor);
                     } else if (kind == 10) {
-                        projectile[4] = Func_080022ec(
+                        projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12)
                                 + ((s32)(Func_08004458() & 31) << 16))
                                 - projectile[1] + (128 << 11),
@@ -345,7 +345,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                         s32 spread;
 
                         spread = (s32)(Func_08004458() & 15);
-                        projectile[4] = Func_080022ec(
+                        projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12) + target_half / 2
                                 + (spread << 16))
                                 - projectile[1],
@@ -354,14 +354,14 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                         s32 spread;
 
                         spread = (s32)(Func_08004458() & 15);
-                        projectile[4] = Func_080022ec(
+                        projectile[4] = Math_Div(
                             (M2C_FIELD(target, s32 *, 12) + target_half
                                 - (spread << 16))
                                 - projectile[1],
                             aim_divisor);
                     }
 
-                    projectile[5] = Func_080022ec(
+                    projectile[5] = Math_Div(
                         M2C_FIELD(target, s32 *, 16) - projectile[2],
                         aim_divisor);
                     projectile[6] = 0;

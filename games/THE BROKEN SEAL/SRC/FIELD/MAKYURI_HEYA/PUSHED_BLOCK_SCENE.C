@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "MAKYURI.H"
 
 struct BlockProbe {
     s32 word[6];
@@ -8,7 +8,7 @@ struct BlockProbe {
 s32 StagedActor_FindClearPosition(struct BlockProbe *probe);
 void SceneActor_MoveAndRedraw(struct BlockProbe probe);
 void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w);
-void FieldScene_RunScene39c_020010c0(void);
+void MakyuriHeya_ExitWhenChannelsOpen(void);
 
 /* Mercury Lighthouse: after a block is pushed, open or close the water
  * cells it controls. Actor 9 in row 8 opens the first channel (flag 0x310),
@@ -27,15 +27,15 @@ void MakyuriHeya_RunPushedBlockScene(void)
         if (probe.word[4] >> 20 == 8) {
             SceneActor_MoveAndRedraw(probe);
             Event_Wait(20);
-            Map_CopyCells(119, 9, 109, 11, 1, 1);
+            Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
             SceneEffect_SpawnRandomizedBurst(0x2d60000, 0, 0xb40000, 0x8000);
             GameFlag_Set(0x310);
         } else {
             s32 one = 1;
 
-            Map_CopyCells(117, 9, 104, 7, one, one);
-            Map_CopyCells(119, 8, 109, 11, one, one);
-            Map_CopyCells(118, 8, 104, 13, one, one);
+            Map_CopyCellsTo(117, 9, 104, 7, one, one);
+            Map_CopyCellsTo(119, 8, 109, 11, one, one);
+            Map_CopyCellsTo(118, 8, 104, 13, one, one);
             SceneActor_MoveAndRedraw(probe);
             GameFlag_Clear(0x310);
         }
@@ -45,17 +45,17 @@ void MakyuriHeya_RunPushedBlockScene(void)
             SceneActor_MoveAndRedraw(probe);
             Event_Wait(10);
             if (GameFlag_IsSet(0x310)) {
-                Map_CopyCells(118, 9, 104, 13, 1, 1);
+                Map_CopyCellsTo(118, 9, 104, 13, 1, 1);
                 SceneEffect_SpawnRandomizedBurst(0x2840000, 0, 0xd20000, 0x4000);
             }
             GameFlag_Set(0x311);
         } else {
             s32 one = 1;
 
-            Map_CopyCells(119, 8, 109, 11, one, one);
+            Map_CopyCellsTo(119, 8, 109, 11, one, one);
             if (GameFlag_IsSet(0x310)) {
-                Map_CopyCells(119, 9, 109, 11, one, one);
-                Map_CopyCells(118, 8, 104, 13, one, one);
+                Map_CopyCellsTo(119, 9, 109, 11, one, one);
+                Map_CopyCellsTo(118, 8, 104, 13, one, one);
             }
             SceneActor_MoveAndRedraw(probe);
             GameFlag_Clear(0x311);
@@ -72,7 +72,7 @@ void MakyuriHeya_RunPushedBlockScene(void)
         }
         break;
     }
-    FieldScene_RunScene39c_020010c0();
+    MakyuriHeya_ExitWhenChannelsOpen();
 end:
     Event_End();
 }

@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 
-#define FrameCounter (*(u32 *)0x03001e40)
+#define FrameCounter (*(u32 *)&gFrameCount)
 
 extern s32 Data_0200b1f0;
 extern u8 Value_00000000;

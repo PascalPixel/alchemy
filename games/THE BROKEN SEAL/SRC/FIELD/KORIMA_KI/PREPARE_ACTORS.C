@@ -20,7 +20,7 @@ s32 KorimaKi_PrepareActors(void)
     second = Engine_ActorGet(11);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(14, 15);
-    *(s32 *)(*(u8 **)0x03001ebc + 0x1c0) = 0x204;
+    *(s32 *)(*(u8 **)&gEventWork + 0x1c0) = 0x204;
     Data_02000240_t[288][0] = (u16)(u32)&Value_00000028;
     Data_02000240_t[289][0] = 4;
     zero = (u8)(u32)&Value_00000000;

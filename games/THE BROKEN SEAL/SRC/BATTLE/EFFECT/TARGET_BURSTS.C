@@ -4,6 +4,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+extern u8 gBattleFxWork[];
+extern u8 gCameraWork[];
 
 /*
  * Battle effect: a burst of six particles over each affected unit in turn.
@@ -45,7 +47,7 @@ void BattleFx_RunTargetBursts(void *object)
     struct EffectPosition screen;
     s32 record[3];
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -89,7 +91,7 @@ void BattleFx_RunTargetBursts(void *object)
         s32 member;
         s32 facing;
 
-        facing = *(s32 *)0x03001e80;
+        facing = *(s32 *)gCameraWork;
         for (member = 0; member != work->effect->count; member++) {
             void *member_object;
 

@@ -4,9 +4,7 @@
 extern u8 gTransitionWork[];
 
 #if defined(TBS_EDITION_DE)
-#define TRANSITION_CELL_ADDR 0x03001F10
 #else
-#define TRANSITION_CELL_ADDR (s32)gTransitionWork
 #endif
 
 s32 WaitFrames(s32);
@@ -19,8 +17,8 @@ void BattleFx_SetTransitionFlagAndDisplay(void)
   s32 transfer;
   s32 *flag;
 
-  flag = (s32 *)((u8 *)*((void **)TRANSITION_CELL_ADDR) + 0xC);
-  state = *((u8 **)(TRANSITION_CELL_ADDR - 0x8C));
+  flag = (s32 *)((u8 *)*((void **)(s32)gTransitionWork) + 0xC);
+  state = *((u8 **)((s32)gTransitionWork - 0x8C));
   *flag = 1;
   transfer = 0x1541;
   QueueIoWriteDelay2(0x04000000, transfer);

@@ -97,108 +97,108 @@
 	ldm	r5, {r0, r1, sl, lr}
 	mul	r9, r7, ip
 AlchemyUncredited_08000f64:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000f64:
 	mlane	r0, fp, r9, r0
 AlchemyUncredited_08000f70:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000f70:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08000f88:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000f88:
 	mlane	r1, fp, r9, r1
 AlchemyUncredited_08000f94:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000f94:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08000fac:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000fac:
 	mlane	sl, fp, r9, sl
 AlchemyUncredited_08000fb8:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000fb8:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08000fd0:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000fd0:
 	mlane	lr, fp, r9, lr
 AlchemyUncredited_08000fdc:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000fdc:
 	bic	r7, r7, r2, asr #1
 	stmia	r5!, {r0, r1, sl, lr}
 	ldm	r5, {r0, r1, sl, lr}
 	mulne	r9, r7, ip
 AlchemyUncredited_08000ffc:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08000ffc:
 	mlane	r0, fp, r9, r0
 AlchemyUncredited_08001008:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08001008:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08001020:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08001020:
 	mlane	r1, fp, r9, r1
 AlchemyUncredited_0800102c:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_0800102c:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08001044:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08001044:
 	mlane	sl, fp, r9, sl
 AlchemyUncredited_08001050:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08001050:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
 AlchemyUncredited_08001068:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08001068:
 	mlane	lr, fp, r9, lr
 AlchemyUncredited_08001074:
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
-	.inst	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
+	.4byte	0xfedcba98
 AlchemyUncreditedEnd_08001074:
 	bic	r7, r7, r2, asr #1
 	stmia	r5!, {r0, r1, sl, lr}

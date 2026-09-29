@@ -90,8 +90,7 @@ struct CameraSync {
     s16 frozen;
 };
 
-extern u8 Data_03001e64_a[];
-#define FIELD_RUNTIME ((u32)Data_03001e64_a)
+extern u8 gObjectSlots[];
 extern u8 Data_08009bb8[];
 extern u8 Value_000002c4[];
 
@@ -124,16 +123,16 @@ void ObjectSystem_UpdateCamera(void)
     s32 height;
     u32 bits_val;
 
-    state = *(struct CameraState **)(FIELD_RUNTIME + 12);
+    state = *(struct CameraState **)((u32)gObjectSlots + 12);
     cam = &state->x;
     cam_x = cam[0] & 0xffff0000;
     cam_z = cam[1] & 0xffff0000;
-    sync = *(struct CameraSync **)(FIELD_RUNTIME + 4);
+    sync = *(struct CameraSync **)((u32)gObjectSlots + 4);
     /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
     do { size = (u32)Value_000002c4; } while (0);
     Dma_Set(Data_08009bb8, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
         (volatile u32 *)0x040000d4);
-    obj = *(struct CameraObject **)FIELD_RUNTIME;
+    obj = *(struct CameraObject **)(u32)gObjectSlots;
     sync->count = 0;
     for (cnt = 63; cnt >= 0; cnt--, obj++) {
         if (obj->active == 0)

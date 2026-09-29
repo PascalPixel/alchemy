@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define Scene_RunPrimarySequence Func_020010de
-
 /* Audited retained field-scene body at 0x020010de.
  * The complete production body preserves 54 decoded calls, 0 loop(s), and 16 explicit memory operation(s).
  * Approved GCC changes scheduling, allocation, control-flow lowering, and
@@ -55,7 +53,7 @@ void *Func_02002ffa();
 void *Func_02003002();
 void Func_02003030();
 
-void Func_020010de(void)
+void Scene_RunPrimarySequence(void)
 {
     void *p1;
     void *p27;

@@ -1,9 +1,10 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
+extern u8 Data_02004c0c[];
 
-void Unnamed_080f0538(void);
-void Unnamed_080f0614(void);
+void DisplayScroll_UpdateObjects(void);
+void DisplayScroll_RenderEnteringLine(void);
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Func_080f07f0(void *resource, s32 offset, s32 mode);
@@ -24,13 +25,13 @@ void DisplayScroll_InitObjectTable(void)
     u32 i;
     u32 j;
 
-    *(void **)0x02004c0c = Runtime_BumpAllocateAlternatePool(0x400);
+    *(void **)Data_02004c0c = Runtime_BumpAllocateAlternatePool(0x400);
     fill = 0;
     Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, (volatile u32 *)0x040000d4);
     fill = 0x11111111;
     Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, (volatile u32 *)0x040000d4);
 
-    entry = *(u32 **)0x02004c0c;
+    entry = *(u32 **)Data_02004c0c;
     for (i = 0; i < 8; i++) {
         u32 *q = entry;
 
@@ -72,8 +73,8 @@ void DisplayScroll_InitObjectTable(void)
     Data_02004c00 = 0;
     Data_02004c08 = 0;
     Data_02004c04 = 0;
-    Scheduler_AddOrUpdateCallback((s32)Unnamed_080f0538, 0x480);
-    Scheduler_AddOrUpdateCallback((s32)Unnamed_080f0614, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0xc80);
     for (i = 0; i < 32; i++)
         Func_080f07f0(*(void **)0x080f1220, i * 24, 1);
 }

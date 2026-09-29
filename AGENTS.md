@@ -26,10 +26,12 @@ corrections separately. Timebox work that cannot move this number.
    veneer modules count as assembly; difficulty never changes that classification.
 4. Commit each adoption and attempt; keep near misses as drafts with the
    remaining difference in their header. Never throw work away.
-5. Commit code, tooling, our documentation and identified editable inputs.
-   Never commit ROMs, the cartridge logo, asset dumps, another project's Golden
-   Sun work, SDK or leaked code. Evidence comes from our ROMs, this repository
-   and public documentation.
+5. Commit code, tooling, our documentation and editable assets, as pret does:
+   indexed PNGs with the game's palettes, tilemaps, sound, text and game
+   definitions, built into the ROM by our tools. Never commit ROMs, the
+   cartridge logo, raw dumps (grey sheets, whole-area blobs, compression
+   tokens), another project's Golden Sun work, SDK or leaked code. Evidence
+   comes from our ROMs, this repository and public documentation.
 6. Only Pascal changes credit standards, approves compiler source, binaries
    and digests, or authorises pushes and parallel workflows. Record approvals below.
 
@@ -78,8 +80,11 @@ and proven common code in `games/COMMON`; instanced code spells no address names
 Scaffolding stays under `recon/tbs` and `recon/tla` and shrinks toward zero.
 
 Assets are individual indexed PNGs with real palettes, identified tilemap/table
-BINs, WAV, MIDI, PO and editable game definitions. Compression comes from these
-inputs and per-file encoder options; unresolved ROM-derived material stays local.
+BINs, WAV, MIDI, PO and editable game definitions, converted by our tools in
+the build as pret's gbagfx, mid2agb and preproc convert theirs. Compression
+comes from these inputs and per-file encoder options. Asset tooling and
+identified assets are source: never delete them as dumps. Bytes not yet
+identified stay in the baserom scaffold.
 
 ## Work and build
 
@@ -93,7 +98,7 @@ portable reading, decoding, analysis and comparison. Prefer existing commands
 and read `--help`. Scripts are TypeScript on Bun or Rust. New tooling must solve
 a demonstrated recurring blocker and carry a test.
 
-Use approved agscc (GCC 2.96), with TLA's `-mgs2` route. Compiler family and flags
+Use approved agscc (GCC 2.96) for both games with stock options. Compiler family and flags
 apply to whole files with their reason recorded in compiler routing; never tune
 individual functions. Library routes remain agbcc `-O` for flash and `-O2` for
 MusicPlayer2000; RAM-executed ARM code uses `-marm -mno-apcs-frame`.
@@ -135,3 +140,8 @@ a verified build.
   `.incbin "baserom.gba", OFFSET, SIZE` scaffolding in `recon/<game>`.
 - 2026-09-28: the cheating rule is restated as oracle leakage: five invariants
   that keep the answer out of the build and the count, not a list of forms.
+- 2026-09-28: compilers take stock options only; a game-specific compiler flag
+  is an invented answer. agscc is GCC 2.96 with its host ports, and agbcc is
+  called with pret's flags.
+- 2026-09-28: pret publishes graphics, sound, text and maps as editable files
+  built by its tools; so does Alchemy.

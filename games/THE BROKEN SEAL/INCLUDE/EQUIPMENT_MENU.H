@@ -5,6 +5,5 @@
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
 void EquipmentMenu_StartCompatibilityIndicators(void);
-#define EquipmentMenu_CompatibilityUpdateEntry EquipmentMenu_UpdateCompatibilityIndicators
 
 #endif

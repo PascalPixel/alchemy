@@ -29,8 +29,6 @@
  * base reuse. Separate display and DMA register lifetimes also improve the
  * result. Reopen only with a new control-flow, type or lifetime fact. */
 
-#define ReelGame_RunFrame Func_080f6440
-
 u32 Func_08004458(void);
 s32 Func_080022fc(s32 value, s32 modulus);
 s32 Func_08002322(s32 angle);

@@ -19,20 +19,20 @@ struct DisplayTransferQueue {
     struct DisplayTransfer entries[32];
 };
 
-extern struct DisplayTransferQueue gWorldMapTransferQueue;
-extern u16 gWorldMapBlend;
-extern volatile u16 Value_04000208;
+extern struct DisplayTransferQueue gIoWriteQueue;
+extern volatile u16 RegIme;
+u16 gWorldMapBlend;
 extern const u8 gWorldMapPalettes[];
 extern const u8 gWorldMapPackedTiles[];
 extern const u8 gWorldMapPackedFrames[];
 
-void *Main_08000170(s32 size);
-void Main_08000178(void *buffer);
-s32 Main_080001a8(const void *source, void *destination);
-void Main_08009230(void);
-void Main_08009238(void);
-void WorldMap_RestoreBlend(void);
-void WorldMap_UpdateBlend(void);
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+void Sys_Free(void *buffer);
+s32 Resource_DecodeType01(const void *source, void *destination);
+void Map_ResumeAnimation(void);
+void Map_LoadAreaGraphics(void);
+void SceneEffect_RestoreBlendRegisters(void);
+void FieldScene_RunLateSequence(void);
 
 /* FAKEMATCH: the one-pass read preserves the saved-IME copy before masking.
  * Each request preserves IME while publishing one complete DMA transfer.
@@ -46,10 +46,10 @@ void WorldMap_UpdateBlend(void);
     s32 n; \
     do { saved = *ime; } while (0); \
     *ime = (u16)(u32)ime; \
-    n = *(u16 *)&gWorldMapTransferQueue; \
+    n = *(u16 *)&gIoWriteQueue; \
     if (n < 32) { \
         p = (u32 *)&q->entries[n]; \
-        *(u16 *)&gWorldMapTransferQueue = n + 1; \
+        *(u16 *)&gIoWriteQueue = n + 1; \
         *p++ = (u32)(source); \
         *p++ = (u32)(destination); \
         *p = (control); \
@@ -71,18 +71,18 @@ void Scene_RunScene371SequenceA(s32 palette)
 {
     struct DisplayTransferQueue *q;
     volatile u16 *ime;
-    u8 *buffer = Main_08000170(0x4000);
+    u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
 
     Engine_TaskWait(1);
     Engine_GameFlagClear(0x109);
-    Main_08009230();
-    Main_080001a8(gWorldMapPackedTiles, buffer);
-    Main_080001a8(gWorldMapPackedFrames, buffer + 0x1000);
-    q = &gWorldMapTransferQueue;
-    ime = &Value_04000208;
+    Map_ResumeAnimation();
+    Resource_DecodeType01(gWorldMapPackedTiles, buffer);
+    Resource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
+    q = &gIoWriteQueue;
+    ime = &RegIme;
     QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010)
     QueueTransfer(buffer, (void *)0x06001000, 0x84000400)
-    StartCallback(WorldMap_RestoreBlend, 0xc80);
+    StartCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
     Engine_EventBegin();
     QueueFrame(buffer, 0x3a80)
     Engine_ActorGet(gGameState.selected_actor)->active = 0;
@@ -130,8 +130,8 @@ void Scene_RunScene371SequenceA(s32 palette)
     Engine_EventWait(4);
     gWorldMapBlend = 0xc00;
     QueueFrame(buffer, 0x3a80)
-    Main_08009238();
-    Engine_TaskAddCallback(WorldMap_UpdateBlend, 0xc80);
+    Map_LoadAreaGraphics();
+    Engine_TaskAddCallback(FieldScene_RunLateSequence, 0xc80);
     Engine_AudioPlayCue(141);
     gWorldMapBlend = 0xd00;
     Engine_EventWait(4);
@@ -143,6 +143,6 @@ void Scene_RunScene371SequenceA(s32 palette)
     Engine_EventWait(45);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Main_08000178(buffer);
+    Sys_Free(buffer);
     Engine_GameFlagSet(0x101);
 }

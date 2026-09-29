@@ -66,7 +66,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 
         Party_AddActiveOwnerFar(owner);
         Func_080771f0(owner, Data_080c3f34[row].level);
-        state = (struct OwnerBitState *)OwnerState_GetFar(owner);
+        state = (struct OwnerBitState *)Owner_GetStateFar(owner);
         for (i = 0; i < 4; i++) {
             state->bit_counts[i] = 0;
             state->bit_counts[i + 4] = 0;

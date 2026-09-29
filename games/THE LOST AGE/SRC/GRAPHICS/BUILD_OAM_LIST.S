@@ -1,5 +1,5 @@
-@ ARM list builder that runs from the stack, with its Thumb loader. The
-@ loader reads {DMA3 register base, 0x080018b4, 0x84000050} from a PC-relative
+@ ARM list builder that runs from the stack. Its Thumb loader (raw
+@ 080019f4.S) reads {DMA3 register base, 0x080018b4, 0x84000050} from a PC-relative
 @ block with add r1, pc and ldmia r1, {r1, r2, r4}, has DMA3 copy these 320
 @ bytes into a 320-byte stack buffer and calls the copy; neither approved
 @ compiler emits an add rd, pc address form. Behind its bx pc entry the ARM
@@ -8,13 +8,14 @@
 @ add lr, pc; bx r4, as the TBS object-attribute list builder
 @ (GRAPHICS/RENDER/BUILD_OAM_LIST.S, 0x08001dc8) does. The body is TLA's own.
 @ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: handwritten — stack-executed ARM list builder with its stack-copy wrapper
+@ credit: handwritten — stack-executed ARM list builder
 .syntax unified
 	.thumb
 	.global Render_BuildOamListKernel
 	.thumb_func
 Render_BuildOamListKernel:
-.L_080018b4:
+	.global Render_BuildOamListKernelCode
+Render_BuildOamListKernelCode:
 AlchemyUncredited_080018b4:
 	bx	pc
 	.2byte	0x0200
@@ -108,20 +109,3 @@ AlchemyUncreditedEnd_080018b4:
 	.4byte	0x02003010
 	.4byte	0x020054d0
 	.4byte	0x03000260
-	.thumb
-	.global Render_BuildOamList
-	.thumb_func
-Render_BuildOamList:
-	push	{lr}
-	add	r1, pc, #16
-	ldmia	r1, {r1, r2, r4}
-	sub	sp, #0x140
-	mov	r3, sp
-	stmia	r1!, {r2, r3, r4}
-	mov	lr, sp
-	.inst.n	0xf800
-	add	sp, #0x140
-	pop	{pc}
-	.4byte	0x040000d4
-	.4byte	.L_080018b4
-	.4byte	0x84000050

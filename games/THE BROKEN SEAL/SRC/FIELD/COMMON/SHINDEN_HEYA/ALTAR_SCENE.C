@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern struct BattleEffectBuffers *Data_03001ed0;
 
 struct ShrineWork {
     u8 unknown_0000[0xe5a];
@@ -28,7 +29,7 @@ void ShindenHeya_RunAltarScene(void)
     Engine_ColorBufferApplyTarget(0x10002, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(180);
-    work = *(struct ShrineWork **)0x03001ed0;
+    work = *(struct ShrineWork **)&Data_03001ed0;
     work->colors[0] = 0x7c00;
     work->colors[1] = 0x7c00;
     work->colors[2] = 0x7c00;

@@ -64,7 +64,7 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-#define SCENE_WORD_1C8 (*(u32 *)(*(u8 **)0x03001ebc + 456))
+#define SCENE_WORD_1C8 (*(u32 *)(*(u8 **)&gEventWork + 456))
 
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.

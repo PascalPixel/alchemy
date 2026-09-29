@@ -13,8 +13,7 @@
 
 extern const u8 SentouKouka_Tenkai[];
 
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 extern void *Data_03001e50[];
 extern u8 Value_00000230[];
@@ -65,7 +64,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
         q = &gIoWriteQueue;
         do {
             do {
-                ime = &REG_IME;
+                ime = &RegIme;
                 saved = *ime;
             } while (0);
             *ime = (u16)ime;

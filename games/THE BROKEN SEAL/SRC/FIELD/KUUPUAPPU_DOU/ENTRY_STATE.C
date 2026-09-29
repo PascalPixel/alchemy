@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 s32 Engine_GameFlagIsSet();
 void Engine_MapCopyCellAttributes();
@@ -56,7 +57,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* Kuupuappu Cave entry: set the entrance selector, then for each of the three areas set the actors and map cells of its story state. */
 s32 KuupuappuDou_ApplyEntryState(void)
 {
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x204;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x204;
     if (Data_02000240_t.halves[224][0] == (s32)Data_00000060) {
         switch (Data_02000240_t.halves[225][0]) {
         case 5:

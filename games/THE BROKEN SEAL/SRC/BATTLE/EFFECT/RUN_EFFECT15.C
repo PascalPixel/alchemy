@@ -63,7 +63,6 @@ extern u32 gFrameCount;
 
 void Camera_WorldToScreen(struct Output *);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Vector_AddPolarOffset(s32, s32, struct Output *);
 void Audio_PlayCue(s32);
 
@@ -90,11 +89,11 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
         position.z = effect->origin_z;
         position.x = effect->origin_x;
 
-        first_random = Rand();
+        first_random = Random16();
         Vector_AddPolarOffset(
             0x780000,
             ((first_random << 13) >> 16)
-                - ((Rand() << 13) >> 16)
+                - ((Random16() << 13) >> 16)
                 + 0xc000,
             &position);
 

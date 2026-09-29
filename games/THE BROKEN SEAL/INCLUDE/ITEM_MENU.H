@@ -137,8 +137,6 @@ LAYOUT_SIZE_GUARD(
     struct ItemMenuState,
     0x25c);
 
-extern char Value_00000ad7;
-
-#define ItemMenu_EmptyMsg         Value_00000ad7
+extern char MsgItemMenuEmpty;
 
 #endif

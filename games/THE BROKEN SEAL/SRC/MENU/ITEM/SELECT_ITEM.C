@@ -4,8 +4,8 @@
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 #include "UI.H"
-extern u8 Data_03001c94[];
-extern u8 Data_03001b04[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -44,8 +44,6 @@ extern struct ItemListWork *gMenuWork;
 /* "{L}-{R}:Switch characters", then "{A}:Status". */
 extern u8 Value_00000b06;
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 #define KEY_A 1
 #define KEY_B 2
@@ -155,23 +153,23 @@ s32 ItemMenu_SelectItem(void)
             if (nav == -1)
                 redraw = 0;
 
-            if (INPUT_NEW_KEYS & KEY_A) {
+            if (gKeyState & KEY_A) {
                 Audio_PlayCue(0x70);
                 result = 1;
                 done = 1;
                 break;
             }
-            if (INPUT_NEW_KEYS & KEY_B) {
+            if (gKeyState & KEY_B) {
                 Audio_PlayCue(0x71);
                 result = -1;
                 done = 1;
                 break;
             }
-            if ((INPUT_REPEAT_KEYS & KEY_R) || (INPUT_REPEAT_KEYS & KEY_L)) {
+            if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
                 Audio_PlayCue(0x6f);
                 tab = menu->tab_index[0];
                 menu->selected_index_by_owner[menu->owner_table[tab]] = state.selected_index;
-                if (INPUT_REPEAT_KEYS & KEY_R)
+                if (gKeysRepeat & KEY_R)
                     tab++;
                 else
                     tab--;

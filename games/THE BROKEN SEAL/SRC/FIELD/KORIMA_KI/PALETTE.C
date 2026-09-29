@@ -192,7 +192,7 @@ void PaletteScene_Initialize(void)
 {
     void *scene;
 
-    scene = *(void **)0x03001EBC;
+    scene = *(void **)&gEventWork;
     Event_Begin();
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
     Event_RequestExit(FIELD_AT_OFFSET(scene, s16 *, 0x16C));
@@ -496,7 +496,7 @@ void PaletteScene_RunActorTransitionSequence(void)
         Event_ShowMessage(0x4009, 0);
         Event_ShowMessage(0x8008, 0);
     } else {
-        sceneWorkSlot = 0x3001ebc;
+        sceneWorkSlot = (u32)&gEventWork;
         *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 2;
         Actor_ShowEmote(ACTOR_MIA, 0x103, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 0);
@@ -564,7 +564,7 @@ void PaletteScene_RunActorTransitionSequence(void)
         Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
     } else {
         Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Event_ShowMessage(ACTOR_GERALD, 0);
     Func_020012f4(10, 4);
@@ -690,7 +690,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
     if (Event_ChooseYesNo(0, 0) == 1) {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Event_Wait(10);
     Func_020012f4(10, 2);

@@ -33,7 +33,6 @@ extern s32 *gTransitionWork;
 
 void Owner_GetStateFar(s32);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void UiWork_PushValueSlotFar(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32);
 struct ObjectSlot_080b8b48 *GetBattleObjectSlot(s32);
@@ -64,7 +63,7 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
 
     Owner_GetStateFar(work.primary_id);
     Owner_GetStateFar(work.secondary_id);
-    Rand();
+    Random16();
     UiWork_PushValueSlotFar(work.primary_id, 1);
     UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000814);
     BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);

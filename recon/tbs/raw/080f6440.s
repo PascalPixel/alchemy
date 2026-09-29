@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.global Unnamed_080f6440
-	.global Func_080f6440
+	.global ReelGame_RunFrame
 	.thumb_func
 Unnamed_080f6440:
-Func_080f6440:
+ReelGame_RunFrame:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

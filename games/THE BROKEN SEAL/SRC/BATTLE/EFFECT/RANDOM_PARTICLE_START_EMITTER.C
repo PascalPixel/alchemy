@@ -57,9 +57,6 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 void BattleFx_EmitRandomParticleFromEmitter(void);
 void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 
-#define EfxWork gEventWork
-#define EmitterData BattleFx_ParticleEmitterScript
-#define ParticleData BattleFx_ParticleScript
 #define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
 
@@ -67,7 +64,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
 {
     struct EfxObj *obj;
     /* GCC shape: work holds the state base, then the pool count. */
-    s32 work = (s32)EfxWork;
+    s32 work = (s32)gEventWork;
     u32 off = (obj_id * 4) + 0x14;
     /* GCC shape: src_z holds the source pointer, then the spawn Z. */
     s32 src_z = (s32)*(struct EfxSrc **)(work + off);
@@ -97,7 +94,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
                 if (ent->proc == (void (*)(void))BattleFx_SpawnRandomParticleAtPosition) {
                     Object_Destroy(ent);
                 }
-                if (ent->data == (s32)ParticleData) {
+                if (ent->data == (s32)BattleFx_ParticleScript) {
                     Object_Destroy(ent);
                 }
             }
@@ -111,7 +108,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
     if (obj == 0)
         return 0;
 
-    ObjectDispatch_InitializeFar(obj, (s32)EmitterData);
+    ObjectDispatch_InitializeFar(obj, (s32)BattleFx_ParticleEmitterScript);
     {
         struct EfxVisual *vis = obj->vis;
         void *buf;

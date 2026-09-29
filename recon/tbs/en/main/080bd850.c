@@ -237,7 +237,7 @@ void BattleEvent_Playback(void)
                             state->events.operands[event_index],
                             state->actor_mode);
                         BattleActor_ResetRuntimeFields(state->actor_id);
-                        unit = BattleUnit_Get(state->actor_id);
+                        unit = Owner_GetStateFar(state->actor_id);
                         record_index = 0;
                         while ((record = GetMotionRecord(
                                     GetBattleObjectSlot(state->actor_id)->object,
@@ -394,7 +394,7 @@ void BattleEvent_Playback(void)
                     s32 sound;
 
                     sound = Summon_GetEntryByte3Kind(
-                        BattleUnit_Get(state->actor_id)->class_id);
+                        Owner_GetStateFar(state->actor_id)->class_id);
                     if (sound >= 0) {
                         sound--;
                         if (sound < 0)
@@ -410,7 +410,7 @@ void BattleEvent_Playback(void)
                     s32 sound;
 
                     sound = Summon_GetEntryByte3Kind(
-                        BattleUnit_Get(state->actor_id)->class_id);
+                        Owner_GetStateFar(state->actor_id)->class_id);
                     if (sound >= 0)
                         Audio_PlayCue(sound + 0x92);
                 }

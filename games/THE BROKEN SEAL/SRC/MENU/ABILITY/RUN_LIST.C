@@ -8,9 +8,9 @@
 s32 GameFlag_IsSet(s32 message);
 void Object_InitializeMode(s32 object, s32 mode);
 struct BattleAction *Ability_GetData(s32 action);
-extern u8 Data_03001ae8[];
-extern u8 Data_03001c94[];
-extern u8 Data_03001b04[];
+extern volatile u32 gKeysHeld;
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
 /*
  * Psynergy / action list selection loop.
@@ -119,9 +119,6 @@ void Audio_PlayCue(s32 cue);
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
-#define INPUT_HELD_KEYS (*(volatile u32 *)((u32)&Data_03001ae8))
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 #define KEY_A 1
 #define KEY_B 2
@@ -208,7 +205,7 @@ s32 PsynergyMenu_RunList(s32 pane)
             WaitFrames(1);
             prev = state.selected_index;
 
-            if ((INPUT_HELD_KEYS & KEY_SELECT) == 0) {
+            if ((gKeysHeld & KEY_SELECT) == 0) {
                 nav = Menu_HandlePageInput(
                     0, state.entry_count, LIST_PAGE_SIZE,
                     &state.row, &state.page);
@@ -228,7 +225,7 @@ s32 PsynergyMenu_RunList(s32 pane)
 
             /* The shortcut prompt only appears in plain selection mode. */
             if (menu->mode == 0) {
-                if ((INPUT_NEW_KEYS & KEY_SELECT) != 0 && prompt == 0) {
+                if ((gKeyState & KEY_SELECT) != 0 && prompt == 0) {
                     ability = Ability_GetData(
                         menu->psynergies[state.selected_index] &
                         ACTION_ID_MASK);
@@ -242,7 +239,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                         UiText_DrawCharacterAtOffsetFar(0xae1, window, 0, 88);
                     }
                 }
-                if ((INPUT_HELD_KEYS & KEY_SELECT) == 0 && prompt == 1) {
+                if ((gKeysHeld & KEY_SELECT) == 0 && prompt == 1) {
                     prompt = 0;
                     menu->flags &= 0xfffd;
                     UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
@@ -257,7 +254,7 @@ s32 PsynergyMenu_RunList(s32 pane)
              * action the owner cannot pay for.  Both arms leave through the
              * one exit the reference shares.
              */
-            if ((INPUT_NEW_KEYS & KEY_A) != 0) {
+            if ((gKeyState & KEY_A) != 0) {
                 if (menu->mode != 0) {
                     Audio_PlayCue(130);
                     result = menu->psynergies[state.selected_index];
@@ -285,23 +282,23 @@ s32 PsynergyMenu_RunList(s32 pane)
             }
 
         no_accept:
-            if ((INPUT_NEW_KEYS & KEY_B) != 0) {
+            if ((gKeyState & KEY_B) != 0) {
                 Audio_PlayCue(113);
                 result = -1;
                 done = 1;
                 break;
             }
 
-            if (((INPUT_REPEAT_KEYS & KEY_R) != 0 ||
-                 (INPUT_REPEAT_KEYS & KEY_L) != 0) &&
-                (INPUT_HELD_KEYS & KEY_SELECT) == 0) {
+            if (((gKeysRepeat & KEY_R) != 0 ||
+                 (gKeysRepeat & KEY_L) != 0) &&
+                (gKeysHeld & KEY_SELECT) == 0) {
                 mode = menu->mode != 0 ? 1 : 2;
                 Audio_PlayCue(111);
                 menu->selected_index_by_owner[menu->owner_ids[pane]] =
                     state.selected_index;
                 tab = menu->tab_index[pane];
                 do {
-                    if ((INPUT_REPEAT_KEYS & KEY_R) != 0) {
+                    if ((gKeysRepeat & KEY_R) != 0) {
                         tab = tab + 1;
                     } else {
                         tab = tab - 1;
@@ -324,8 +321,8 @@ s32 PsynergyMenu_RunList(s32 pane)
                 break;
             }
 
-            if ((INPUT_NEW_KEYS & KEY_L) != 0 &&
-                (INPUT_HELD_KEYS & KEY_SELECT) != 0) {
+            if ((gKeyState & KEY_L) != 0 &&
+                (gKeysHeld & KEY_SELECT) != 0) {
                 ability = Ability_GetData(
                     menu->psynergies[state.selected_index] & ACTION_ID_MASK);
                 if (ability->type_0c == 0) {
@@ -344,8 +341,8 @@ s32 PsynergyMenu_RunList(s32 pane)
                 }
             }
 
-            if ((INPUT_NEW_KEYS & KEY_R) != 0 &&
-                (INPUT_HELD_KEYS & KEY_SELECT) != 0) {
+            if ((gKeyState & KEY_R) != 0 &&
+                (gKeysHeld & KEY_SELECT) != 0) {
                 ability = Ability_GetData(
                     menu->psynergies[state.selected_index] & ACTION_ID_MASK);
                 if (ability->type_0c == 0) {

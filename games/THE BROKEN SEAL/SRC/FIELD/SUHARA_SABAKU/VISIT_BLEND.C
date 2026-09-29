@@ -2,8 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 void Main_0808a5e0(s32 cue);
 
@@ -13,7 +12,7 @@ void Main_0808a5e0(s32 cue);
     q = &gIoWriteQueue;                                                     \
     do {                                                                    \
         do {                                                                \
-            ime = &REG_IME;                                                 \
+            ime = &RegIme;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \

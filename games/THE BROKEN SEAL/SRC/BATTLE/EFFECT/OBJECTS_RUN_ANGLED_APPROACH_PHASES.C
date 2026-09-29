@@ -27,7 +27,6 @@ struct Target {
 };
 
 extern s32 gGameState[];
-#define PARTY_STATE gGameState
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 struct Target *Object_GetById(s32);
@@ -39,7 +38,7 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
     struct Target *target;
     struct Vec pos;
 
-    target = Object_GetById(PARTY_STATE[125]);
+    target = Object_GetById(gGameState[125]);
     if (actor->phase == 0) {
         actor->yaw += 1;
         actor->pitch += 1;

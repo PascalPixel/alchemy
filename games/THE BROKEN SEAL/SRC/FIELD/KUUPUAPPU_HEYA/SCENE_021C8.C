@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void Engine_AudioPlaySceneCue();
 void Engine_ActorSetSpritePriority();
@@ -103,7 +104,7 @@ void KuupuappuHeya_RunScene021C8(void)
     Engine_MapRedraw();
     Engine_EventWait(30);
     {
-        u8 *work = *(u8 **)0x03001ebc;
+        u8 *work = *(u8 **)&gEventWork;
 
         *(s32 *)(work + 0x1c8) = 24;
         *(s32 *)(work + 0x1c0) = 0x201;

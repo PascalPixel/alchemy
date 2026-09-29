@@ -862,8 +862,6 @@ void FieldScene_RunActorPositionTransition(void)
                 "-mthumb".into(),
                 "-mthumb-interwork".into(),
                 "-mcpu=arm7tdmi".into(),
-                "-fno-builtin".into(),
-                "-ffreestanding".into(),
                 "-fcall-used-r4".into(),
                 "-quiet".into(),
                 "-o".into(),

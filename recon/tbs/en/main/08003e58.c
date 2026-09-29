@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define ResourceTable_AllocateBlocks Func_08003e58
-
 /*
  * Nonmatching: 26 halfword edits. Block layout, branches and the pool match.
  * The reference keeps the block map in two registers: ip for the fill and the

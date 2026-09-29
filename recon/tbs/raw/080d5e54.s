@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.global Unnamed_080d5e54
-	.global Func_080d5e54
+	.global BattleEffect_RunSparkTravel
 	.thumb_func
 Unnamed_080d5e54:
-Func_080d5e54:
+BattleEffect_RunSparkTravel:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

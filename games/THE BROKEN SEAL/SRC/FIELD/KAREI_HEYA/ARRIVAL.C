@@ -97,7 +97,7 @@ void FieldScene_RunArrivalPlacement(void)
 {
     u8 *Object_GetById();
 
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
     u32 slot;
     s32 idx;
     u8 *p;

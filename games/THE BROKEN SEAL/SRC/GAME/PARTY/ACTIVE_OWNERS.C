@@ -27,11 +27,11 @@ s32 Party_AddActiveOwner(s32 value)
     GameFlag_SetBit(value);
     index = 0;
     while (index < count) {
-        if (PARTY_STATE.active_owners[index] == value)
+        if (gGameState.active_owners[index] == value)
             return count;
         index++;
     }
-    PARTY_STATE.active_owners[index] = value;
+    gGameState.active_owners[index] = value;
     return count + 1;
 }
 
@@ -43,10 +43,10 @@ s32 Party_RemoveActiveOwner(s32 value)
 
     GameFlag_ClearBit(value);
     for (i = 0; i < count; i++) {
-        if (PARTY_STATE.active_owners[i] == value)
+        if (gGameState.active_owners[i] == value)
             break;
     }
     for (j = i; j < count - 1; j++)
-        PARTY_STATE.active_owners[j] = PARTY_STATE.active_owners[j + 1];
+        gGameState.active_owners[j] = gGameState.active_owners[j + 1];
     return Party_CountActiveOwners();
 }

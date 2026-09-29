@@ -51,7 +51,7 @@ extern u16 Data_080ede48[];
 extern u8 Data_080eeae2[];
 
 /* Sprite-offset / size halfword pair tables, indexed together by the same
-   Func_080022ec selection while a near-field particle is still growing. */
+   Math_Div selection while a near-field particle is still growing. */
 extern u16 Data_080eeaec[];
 extern u16 Data_080eeafa[];
 
@@ -69,7 +69,7 @@ void Func_080051d8(s32 a, s32 b);
 void Func_080e3944(void *source, void *screen);
 void Func_080e38b8(void *record, s32 a, s32 b);
 s32 Func_08004458(void);
-s32 Func_080022ec(s32 a, s32 b);
+s32 Math_Div(s32 a, s32 b);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id, s32 mode);
 void Func_080030f8(s32 frames);
@@ -248,7 +248,7 @@ void Func_080db6e0(void *object, s32 variant)
                         - 16;
                     age = M2C_FIELD(particle, s32 *, 24);
                     if ((u32)age <= 20) {
-                        which = Func_080022ec(age, 3);
+                        which = Math_Div(age, 3);
                         sprite_off = Data_080eeaec[which];
                         size = Data_080eeafa[which];
                         half = (u32) size >> 1;

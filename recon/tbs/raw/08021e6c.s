@@ -226,7 +226,7 @@ Func_08021e6c:
 .L_08022018:
 	mov	r0, r9
 	mov	r1, r8
-	bl	Func_08021d88
+	bl	UiText_DrawCharacter
 	movs	r4, #1
 	add	r8, r4
 	mov	r0, r8
@@ -702,7 +702,7 @@ Func_08021e6c:
 	mov	r4, r9
 	ldr	r2, [r4, r3]
 	mov	r0, r9
-	bl	Func_08021d88
+	bl	UiText_DrawCharacter
 .L_080223c4:
 	movs	r0, #218
 	lsls	r0, r0, #1

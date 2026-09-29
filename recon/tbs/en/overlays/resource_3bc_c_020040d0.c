@@ -17,8 +17,6 @@
 #include "TYPES.H"
 #include "DMA.H"
 
-#define FieldScene_RunScene3bcSequenceB Func_020040d0
-
 struct HudBlock {
     u16 base;
     u16 offset;

@@ -18,7 +18,6 @@ extern u8 Value_00007824;
 /* Runs the palette-ramp battle presentation for one effect mode. */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
-#define RunPaletteRampEffect Func_080d9ae8
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 

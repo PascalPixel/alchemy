@@ -1,6 +1,7 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
 #include "TBS_EDITION.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
@@ -27,8 +28,8 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
     s32 maximum;
     s32 result;
 
-    shop = SHOP_RUNTIME;
-    unit = BattleUnit_Get(unit_id);
+    shop = gMenuWork;
+    unit = Owner_GetStateFar(unit_id);
     item = Item_Get(item_id);
     result = 1;
     if (item->flags & 0x10) {

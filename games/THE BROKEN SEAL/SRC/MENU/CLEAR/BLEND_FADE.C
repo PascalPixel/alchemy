@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 extern u16 Clear_BlendFrame;
 
 void Clear_UpdateBlend(void);
@@ -10,7 +10,7 @@ void Clear_UpdateBlend(void);
 static __inline__ void RestoreInterrupts(u32 saved)
 {
     /* FAKEMATCH: keep the final hardware address local to restoration. */
-    do { Data_04000208 = saved; } while (0);
+    do { RegIme = saved; } while (0);
 }
 
 /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
@@ -22,7 +22,7 @@ static __inline__ void RestoreInterrupts(u32 saved)
         s32 count;                                                          \
                                                                             \
         do {                                                                \
-            ime = &Data_04000208;                                           \
+            ime = &RegIme;                                           \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \

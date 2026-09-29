@@ -17,14 +17,6 @@
  */
 
 
-#define Resource_LoadIntoFreeSlot        Func_080040b4
-#define Ui_FillVramBlockPattern          Func_08016738
-#define UiWork_SetParamNibble            Func_0801e71c
-#define Resource_LoadKind26EntryToBuffer Func_08021af0
-#define UiWindow_SetTilemapEntry         Func_08019000
-#define Item_ClassifyUseAbility          Func_08025180
-#define Runtime_SetMainState19           Func_0800352c
-#define Vram_CopyTile                    Func_080251d4
 
 /* The window record produced by UiWindow_Create. Only the three tile-unit
  * geometry fields this routine reads are named. */

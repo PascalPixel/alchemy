@@ -195,7 +195,7 @@ Func_08078bf0:
 	cmp	r3, #0
 	beq.n	.L_08078dc4
 	ldrh	r0, [r0, r1]
-	bl	Func_08078414
+	bl	Item_GetDirect
 	ldrb	r3, [r0, #12]
 	cmp	r3, #3
 	bne.n	.L_08078dc4

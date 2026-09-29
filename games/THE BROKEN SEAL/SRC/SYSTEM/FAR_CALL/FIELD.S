@@ -289,7 +289,7 @@ ObjectDispatch_RegisterChildMetadataFar:
 	.global Map_ResumeAnimationFar
 	.thumb_func
 Map_ResumeAnimationFar:
-	overlay_veneer Func_08011590
+	overlay_veneer MapAnimation_Start
 	.global Map_LoadAreaGraphicsFar
 	.thumb_func
 Map_LoadAreaGraphicsFar:

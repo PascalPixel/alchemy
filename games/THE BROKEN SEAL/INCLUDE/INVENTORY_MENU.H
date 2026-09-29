@@ -139,82 +139,44 @@ LAYOUT_SIZE_GUARD(
     0x25c);
 
 extern struct InventoryMenuState *gMenuWork;
-extern char Value_00000ad7;
+extern char MsgItemMenuEmpty;
 
-s32 Func_080a3ce4(s32 item);
-void Func_080a38a8(s32 owner);
-void Func_080a3cf8(s32 unused, s32 message);
+s32 ItemMenu_IsSpecial(s32 item);
+void ItemMenu_OpenCategory(s32 owner);
+void ItemMenu_DrawMsg(s32 unused, s32 message);
 void Menu_HideEmptyEntryIcons(const u16 *items);
 s32 ItemMenu_Count(s32 owner);
-s32 Func_080a3d9c(s32 owner, s32 item);
+s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 struct OwnerInventoryState;
 s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
-void Func_080a3e88(s32 owner, s32 mode);
-void Func_080a3eec(void);
-s32 Func_080a32b8(void);
+void ItemMenu_RefreshOwner(s32 owner, s32 mode);
+void InventoryMenu_NoOp(void);
+s32 ItemMenu_Use(void);
 void ItemMenu_HideAllIcons(void);
-void Func_080a3480(void);
+void ItemMenu_HidePageIcons(void);
 void ItemMenu_Close(void);
-void Func_080a3354(void);
-s32 Func_080a355c(s32 party_slot);
-s32 Func_080a4110(s32 column, s32 row);
-s32 Func_080a413c(s32 column, s32 row);
-void Func_080a448c(s8 *command_states);
-void Func_080a45cc(void *command_states, s32 window);
-void Func_080a4754(void);
-s32 Func_080a47b4(s32 item_index);
-void Func_080a4db4(s32 delta, s32 unused, s32 window, s32 x, s32 y);
-void Func_080a4e20(void);
-void Func_080a4e44(void);
-void Func_080a4e68(void);
-void Func_080a4e90(void);
-void Func_080a4eb8(void);
-void Func_080a4ee0(void);
-void Func_080a51d0(void);
-s32 Func_080a9e48(s32 slot, s32 owner, s32 target);
-s32 Func_080a5578(struct MenuResult *result, s32 index);
-s32 Func_080a56c8(s32 window, s32 unused, const struct MenuResult *state);
-s32 Func_080a5780(void);
+void ItemMenu_Init(void);
+s32 ItemMenu_PrepOwner(s32 party_slot);
+s32 ItemMenu_CmdCursorX(s32 column, s32 row);
+s32 ItemMenu_CmdCursorY(s32 column, s32 row);
+void ItemMenu_BuildCmd(s8 *command_states);
+void ItemMenu_DrawCmd(void *command_states, s32 window);
+void ItemMenu_TryBreak(void);
+s32 ItemMenu_OpenDetail(s32 item_index);
+void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
+void ItemMenu_SetItemWin5(void);
+void ItemMenu_SetItemWin3(void);
+void ItemMenu_SetMsgWin5(void);
+void ItemMenu_SetMsgWin6(void);
+void ItemMenu_SetMsgWin7(void);
+void ItemMenu_SetMsgWin3(void);
+void ItemMenu_DrawItemHead(void);
+s32 Item_Use(s32 slot, s32 owner, s32 target);
+s32 ItemMenu_PageResult(struct MenuResult *result, s32 index);
+s32 ItemMenu_DrawNamePage(s32 window, s32 unused, const struct MenuResult *state);
+s32 InventoryMenu_ItemNamePageReturnTrue(void);
 void ItemMenu_DrawCategory(s32 window, s32 owner, s32 mode);
-void Func_08015298(s32 style, u16 item, u8 target, s32 flags);
-
-#define InventoryMenu_IsSpecialItemRange   Func_080a3ce4
-#define InventoryMenu_OpenCategoryItems    Func_080a38a8
-#define InventoryMenu_DrawMessage          Func_080a3cf8
-#define Menu_HideEmptyEntryIcons           Menu_HideEmptyEntryIcons
-#define InventoryMenu_CountItems           ItemMenu_Count
-#define InventoryMenu_GetItemQuantity      Func_080a3d9c
-#define InventoryMenu_CollectItems         ItemMenu_Collect
-#define InventoryMenu_DrawItemIcons        ItemMenu_DrawIcons
-#define InventoryMenu_RefreshOwnerItems    Func_080a3e88
-#define InventoryMenu_NoOp                 Func_080a3eec
-#define InventoryMenu_UseSelectedItem      Func_080a32b8
-#define InventoryMenu_HideAllItemIcons     ItemMenu_HideAllIcons
-#define InventoryMenu_HidePageStartIcons   Func_080a3480
-#define InventoryMenu_CloseWindows         ItemMenu_Close
-#define InventoryMenu_InitializeInterface  Func_080a3354
-#define InventoryMenu_PrepareOwnerItems    Func_080a355c
-#define InventoryMenu_GetCommandCursorX    Func_080a4110
-#define InventoryMenu_GetCommandCursorY    Func_080a413c
-#define InventoryMenu_BuildCommandStates   Func_080a448c
-#define InventoryMenu_DrawCommandLabels    Func_080a45cc
-#define InventoryMenu_MaybeBreakSelectedItem Func_080a4754
-#define InventoryMenu_OpenItemDetails      Func_080a47b4
-#define InventoryMenu_DrawStatDelta        Func_080a4db4
-#define InventoryMenu_SetItemWindowFiveRowBounds Func_080a4e20
-#define InventoryMenu_SetItemWindowThreeRowBounds Func_080a4e44
-#define InventoryMenu_SetMessageWindowRow5Bounds Func_080a4e68
-#define InventoryMenu_SetMessageWindowRow6Bounds Func_080a4e90
-#define InventoryMenu_SetMessageWindowRow7Bounds Func_080a4eb8
-#define InventoryMenu_SetMessageWindowRow3Bounds Func_080a4ee0
-#define InventoryMenu_DrawSelectedItemHeader Func_080a51d0
-#define Item_Use                            Func_080a9e48
-#define InventoryMenu_BuildPageResult      Func_080a5578
-#define InventoryMenu_DrawItemNamePage     Func_080a56c8
-#define InventoryMenu_ItemNamePageReturnTrue Func_080a5780
-#define InventoryMenu_DrawCategoryItems    ItemMenu_DrawCategory
-#define InventoryMenu_DrawItemIcon         Func_08015298
-#define InventoryMenu_EmptyMessage         Value_00000ad7
+void Resource_LoadByModeIntoSlotFar(s32 style, u16 item, u8 target, s32 flags);
 
 #endif

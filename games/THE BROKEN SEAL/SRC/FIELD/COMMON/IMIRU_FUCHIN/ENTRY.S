@@ -9,7 +9,7 @@
 	.balign 4
 	overlay_veneer Func_02001750
 	overlay_veneer Func_02000050
-	overlay_veneer Func_020000f0
+	overlay_veneer ImiruFuchin_GetExits
 	overlay_veneer Func_020000f8
 	overlay_veneer Func_02000f30
-	overlay_veneer Func_020000ec
+	overlay_veneer SceneData_ReturnZero

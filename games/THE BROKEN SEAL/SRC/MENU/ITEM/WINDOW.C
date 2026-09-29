@@ -4,8 +4,6 @@ void UiWindow_SetBounds( struct WindowBounds *, s32, s32, s32, s32);
 
 extern u8 Menu_PlusSignString;
 extern u8 Menu_MinusSignString;
-#define InventoryMenu_IncreaseGlyph Menu_PlusSignString
-#define InventoryMenu_DecreaseGlyph Menu_MinusSignString
 
 void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
@@ -34,10 +32,10 @@ void ItemMenu_DrawStat(
     }
     if (delta > 0) {
         UiText_DrawStringInWindowFar(
-            &InventoryMenu_IncreaseGlyph, window, x - digits * 8 + 16, y);
+            &Menu_PlusSignString, window, x - digits * 8 + 16, y);
     } else {
         UiText_DrawStringInWindowFar(
-            &InventoryMenu_DecreaseGlyph, window, x - digits * 8 + 16, y);
+            &Menu_MinusSignString, window, x - digits * 8 + 16, y);
     }
 }
 

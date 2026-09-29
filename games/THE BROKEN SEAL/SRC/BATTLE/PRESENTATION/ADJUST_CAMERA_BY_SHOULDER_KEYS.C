@@ -111,7 +111,6 @@ s32 BattleObject_IsValidId(u32 object_id)
 
 /* battle/escape/play_run.c */
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 
 s32 BattleEscape_PlayRun(s16 *action)
 {
@@ -121,7 +120,7 @@ s32 BattleEscape_PlayRun(s16 *action)
     s32 member_slot;
 
     (void)action;
-    if (((u32)(Rand() << 4) >> 16) != 0) {
+    if (((u32)(Random16() << 4) >> 16) != 0) {
         party_size = BattleParty_ListLivingUnits(
             BATTLE_SIDE_PARTY,
             party_members);

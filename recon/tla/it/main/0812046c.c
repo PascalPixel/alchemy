@@ -1,7 +1,6 @@
-/* DRAFT: needs edition-local names. The edition switch below used to select a
- * cross-edition catalog of renamed addresses for the shared Japanese draft;
- * that catalog is gone, so this edition's callees, data and constants must be
- * defined by its own source before the draft can compile. */
+/* DRAFT: needs edition-local names. This edition shares the Japanese
+ * draft's body, whose callees, data and constants must be defined by this
+ * edition's own source before the draft can compile. The owner keeps its one
+ * name, Battle_ResolveTargetAction; this edition's link places it. */
 #define TLA_EDITION_IT
-#define BATTLE_RESOLVE_OWNER Func_0812046c
 #include "../../ja/main/08120450.c"

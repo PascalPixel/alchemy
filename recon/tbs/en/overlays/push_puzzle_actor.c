@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "STAGED_ACTOR.H"
 
-#define SceneActor_PushPuzzleActor Func_02000db4
-
 extern u32 Data_02009d3c[];
 extern s16 Data_02000240[];
 struct StagedActor *Func_02001e94(s32);

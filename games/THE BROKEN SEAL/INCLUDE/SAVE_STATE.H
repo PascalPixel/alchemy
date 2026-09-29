@@ -37,7 +37,6 @@ struct SaveWorkspace {
     u8 summary[3][64];
 };
 
-#define SAVE_WORKSPACE (*(struct SaveWorkspace **)Data_03001f1c_a)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
 #define SAVE_HEADER_TEMPLATE ((const struct SaveSlotHeader *)0x080079b8)
@@ -55,7 +54,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 
 void *Func_080048f4(s32 kind, s32 size);
 s32 Func_080030f8(s32 frames);
-s32 Func_080072f0(s32, s32, s32, s32);
+s32 _call_via_r3(s32, s32, s32, s32);
 s32 Flash_VerifySector(u16 sector, s32 source);
 s32 Func_080058ac(s32 index);
 u32 Func_08005810(s32 record_id);

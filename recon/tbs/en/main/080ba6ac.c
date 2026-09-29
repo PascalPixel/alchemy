@@ -79,7 +79,7 @@ void BattleEvent_Playback(void);
 void Func_08009080(struct MotionObject *, s32);
 void Func_08009088(struct MotionObject *, s32);
 s32 Func_08077058(s32, s32);
-s32 Func_08077060(s32, s32);
+s32 Inventory_BreakFar(s32, s32);
 void Func_080b8000(s32);
 s32 Func_080b9d34(void *, struct PresentationWork *);
 u32 Func_080bb938(void);
@@ -155,7 +155,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
     for (i = 0; i != work.count; i++)
         Func_080b8000(work.table[i]);
 
-    unit = BattleUnit_Get(saved_selection->actor_id);
+    unit = Owner_GetStateFar(saved_selection->actor_id);
     ability = unit->inventory[saved_selection->parameter];
     kind = Item_Get(ability)->use_type;
     if (kind == 1) {
@@ -177,10 +177,10 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
             }
         }
     } else if ((u8)kind == 2) {
-        if ((Func_080771a0() & 7) == 0) {
+        if ((BattleRandom16Far() & 7) == 0) {
             Func_080bbabc(2, unit->inventory[saved_selection->parameter]);
             Func_080bbabc(4, 0x81c);
-            Func_08077060(saved_selection->actor_id, saved_selection->parameter);
+            Inventory_BreakFar(saved_selection->actor_id, saved_selection->parameter);
             Func_080bb938();
         }
     } else if ((u8)kind == 4) {

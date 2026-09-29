@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define RenderScriptGlyphTiles Func_0801de5c
-
 /*
  * Parses the control-word stream, expands packed glyph rows from resource 19
  * into a temporary 4bpp tile buffer, allocates available render tile slots,
@@ -18,7 +16,7 @@ void *Func_08004938(s32 size);
 void *Func_08002f40(s32 resource_id);
 extern u8 Value_00000013;
 
-s32 RenderScriptGlyphTiles(
+s32 UiText_RenderStringTiles(
     u16 *script, u16 *tile_out, u16 *mirror_out, s32 start_column, s32 unused) {
     s32 sp0;
     u8 *sp4;
@@ -236,6 +234,6 @@ loop_50:
             goto loop_43;
         }
     }
-    Func_08002df0(sp8);
+    Sys_Free(sp8);
     return (s32) temp_r6_245;
 }

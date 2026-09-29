@@ -73,7 +73,7 @@ void Func_08004278(void *callback);
 u32 Func_08004458(void);
 s32 Func_08002304(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 a, s32 b);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void Func_080e3908(void *particle, s32 count, s32 flags);
@@ -197,7 +197,7 @@ void Func_080e2538(void *object)
                             it = (u8 *)0x02010000 + row * 0x24C + item * 0x1C;
                             shape = Func_080022fc(item, 5) * 3
                                 + Func_080022fc(
-                                    Func_080022ec(
+                                    Math_Div(
                                         M2C_FIELD(it, s32 *, 0x18), 0x60),
                                     3);
                             w = Data_080eecff[shape];

@@ -15,9 +15,9 @@ Func_02000030:
 	strb r3, [r0, #9]
 	bx lr
 	.2byte 0x0000
-	.global Func_02000048
+	.global OverlayObject_CreateConfigured
 	.thumb_func
-Func_02000048:
+OverlayObject_CreateConfigured:
 	push {r5, r6, lr}
 	adds r4, r0, #0
 	adds r5, r1, #0
@@ -973,9 +973,9 @@ Func_0200116c:
 	.4byte 0x00000205
 	.4byte 0x0200a874
 	.4byte 0x0200a8c8
-	.global Func_020011b4
+	.global MakyuriIriguchi_OpenEntrance
 	.thumb_func
-Func_020011b4:
+MakyuriIriguchi_OpenEntrance:
 	push {lr}
 	bl 0x0200a4dc
 	movs r1, #2

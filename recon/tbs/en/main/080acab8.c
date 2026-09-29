@@ -1,4 +1,6 @@
-#include "shared-aggregates.h"
+#include "TYPES.H"
+
+extern void *gWindowWork;
 
 /* Only the m2c spellings this draft actually uses. */
 typedef s32 M2C_UNK;
@@ -83,7 +85,7 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
     sp40 = arg1;
     sp3C = arg2;
     sp38 = arg3;
-    sp34 = (void *)Func_08077008(arg3);
+    sp34 = (void *)Owner_GetStateFar(arg3);
     temp_r4_27 = *(s32 *)0x03001F2C;
     temp_r0_29 = temp_r4_27 + 2;
     temp_r3_30 = arg4 + 0x254;
@@ -96,7 +98,7 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
     sp18 = (s32)(u16)(0x8000 & *(u16 *)(temp_r4_27 + ((arg5 * 2) + 0x178)));
     temp_r0_65 = Func_08004938(0x14C);
     sp30 = temp_r0_65;
-    Func_080072f0(temp_r0_65, sp34, 0x14C, 0x03001388);
+    _call_via_r3(temp_r0_65, sp34, 0x14C, 0x03001388);
     if (arg7 != 0) {
 
     } else {
@@ -156,8 +158,8 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
         }
         break;
     }
-    Func_08077010(sp38);
-    sp34 = Func_08077008(sp38);
+    BattleUnit_Recalculate(sp38);
+    sp34 = Owner_GetStateFar(sp38);
     if (arg7 == 0) {
         temp_r0_303 = sp40 * 8;
         temp_r7_305 = sp3C * 8;
@@ -294,7 +296,7 @@ loop_62:
                 temp_r6_798 = var_r2_741;
                 temp_r5_807 = ((sp3C + (temp_r6_798 * 2)) * 8) + 8;
                 Func_08015080((0x3FFF & *var_r7_753) + 0x333, arg0, sp14 + 0x10, temp_r5_807);
-                Func_080150a8(M2C_FIELD(Func_08077080(*var_r7_753), u8 *, 9), 2, arg0, sp14 + 0x58, temp_r5_807);
+                Func_080150a8(M2C_FIELD(BattleAction_Get(*var_r7_753), u8 *, 9), 2, arg0, sp14 + 0x58, temp_r5_807);
                 temp_r1_828 = (u32) (spC + 0x01000000) >> 0x18;
                 var_r8_726 += 1;
                 var_r2_741 = (s8) (u8) (temp_r6_798 + 1);
@@ -332,12 +334,12 @@ loop_62:
             Func_080150b8(0xF);
             Func_08015070(arg0, 0, 0xB, 0xD, 0xB);
         }
-        M2C_FIELD(absolute_03001e8c.field_0000, s8 *, 0xEA3) = 1;
+        M2C_FIELD(gWindowWork, s8 *, 0xEA3) = 1;
     }
     if (arg7 == 0) {
         Func_080150d8(sp38, 0, arg8, arg0, arg7, arg7);
     }
-    Func_080072f0(sp34, sp30, 0x14C, 0x03001388);
-    Func_08002df0(sp30);
+    _call_via_r3(sp34, sp30, 0x14C, 0x03001388);
+    Sys_Free(sp30);
     return 1;
 }

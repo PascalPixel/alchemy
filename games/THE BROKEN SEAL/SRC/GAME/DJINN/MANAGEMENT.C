@@ -63,10 +63,10 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
     if (best_no < result) {
         s32 off = 252;
 
-        owners = (u8 *)&PARTY_STATE + off * 2;
+        owners = (u8 *)&gGameState + off * 2;
         count = result;
         do {
-            u8 *p = OwnerState_Get(*owners);
+            u8 *p = Owner_GetState(*owners);
 
             if (((struct OwnerState_0807a0f4 *)p)->values[index] <= 9 &&
                 (p += 280, 1)) {
@@ -157,7 +157,7 @@ void Owner_RefreshDerivedData(s32 owner);
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
     struct OwnerDjinnState *state =
-        (struct OwnerDjinnState *)OwnerState_Get(owner);
+        (struct OwnerDjinnState *)Owner_GetState(owner);
     s32 result = Trade_CanOfferDjinn(owner, index, bit);
 
     if (result != 0) {
@@ -178,7 +178,7 @@ void Owner_RefreshDerivedData(s32 owner);
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
     struct OwnerDjinnState *state =
-        (struct OwnerDjinnState *)OwnerState_Get(owner);
+        (struct OwnerDjinnState *)Owner_GetState(owner);
     u32 present = Djinn_IsActive(owner, index, bit);
 
     if (present != 0) {
@@ -318,7 +318,7 @@ s32 Party_SumDjinnCounts(s32 index)
         s32 remaining = count;
 
         do {
-            struct OwnerValueState *state = OwnerState_Get(*owner++);
+            struct OwnerValueState *state = Owner_GetState(*owner++);
 
             if (index == -1) {
                 result += state->values[0];

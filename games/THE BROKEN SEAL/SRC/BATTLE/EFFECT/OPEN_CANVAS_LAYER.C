@@ -21,8 +21,7 @@ void Func_080b5028(s32, s32, s32, s32);
 void Palette_StepFadeTransfer(void);
 
 extern u8 gWorkSlot[];
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 struct Cells03001ad0 {
     u16 unk00;
@@ -76,7 +75,7 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
     WaitFrames(1);
     *(volatile u16 *)0x04000050 = 0;
     q = &gIoWriteQueue;
-    ime = &REG_IME;
+    ime = &RegIme;
     QUEUE_DISPLAY_CONTROL(0x1741);
     gBgScroll.unk06 = 32;
     WaitFrames(1);

@@ -84,7 +84,7 @@ void Render_ResetTransformState(void);
 void Func_080770c8(s32 id);
 s32 Func_0808a4a0(void);
 void Func_08009078(s32 mode);
-s32 Func_080770c0(s32 flag);
+s32 GameFlag_TestFar(s32 flag);
 void Func_08015008(s32 mode);
 s32 Func_080c1ffc(s32 value);
 void Func_080030f8(s32 frames);
@@ -108,7 +108,7 @@ void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Func_080b5b14(s32 value);
 void Summon_ClearWorkFields(void);
 s32 Resource_LoadIntoFreeSlot(s32 size);
-s32 Func_080771a0(void);
+s32 BattleRandom16Far(void);
 void Func_080c02a4(s32 object, s32 arg);
 void Battle_ReservedNoOp9B2C(void);
 void Func_08015130(s32 mode);
@@ -129,7 +129,7 @@ s32 Func_08015048(void);
 void Func_08015018(s32 handle, s32 mode);
 void Func_080bb7c0(s32 a, s32 b);
 void Battle_ApplyValueToWork2224(void);
-void Func_08077140(s32 a, s32 b, s32 c);
+void BattleUnit_AssignFar(s32 a, s32 b, s32 c);
 void Func_08015118(void);
 void Func_08015120(s32 a, s32 b);
 void Func_080151c8(s32 id);
@@ -143,8 +143,6 @@ void Func_080b5b18(void);
 void BattlePlacement_UpdateTimedEntries(void);
 void Scheduler_RemoveCallback(s32 callback);
 void Runtime_ReleaseHeapBlock10(void);
-
-#define Battle_RunEncounter Func_080b63c8
 
 s32 Battle_RunEncounter(s32 arg)
 {
@@ -199,7 +197,7 @@ s32 Battle_RunEncounter(s32 arg)
     Func_080048f4(4, 0xe00);
     Func_080048f4(3, 0x600);
     Func_08009078(4);
-    if (Func_080770c0(0x16e) != 0)
+    if (GameFlag_TestFar(0x16e) != 0)
         Func_08015008(1);
     else
         Func_08015008(0);
@@ -215,7 +213,7 @@ s32 Battle_RunEncounter(s32 arg)
     scene->field_20 = 0x1000000;
     object = Func_080c1ffc(work->field_00);
 
-    if (Func_080770c0(0x16c) != 0) {
+    if (GameFlag_TestFar(0x16c) != 0) {
         work->field_44 = 1;
         Data_02000240[0x22b] = 4;
     }
@@ -252,7 +250,7 @@ s32 Battle_RunEncounter(s32 arg)
     }
     if (cue != 0) {
         Func_080f9010(cue);
-        if (Func_080770c0(0x16c) != 0) {
+        if (GameFlag_TestFar(0x16c) != 0) {
             Func_080f9010(55);
             Func_080037d4(4);
         }
@@ -281,12 +279,12 @@ s32 Battle_RunEncounter(s32 arg)
     Summon_ClearWorkFields();
     work->field_54 = Resource_LoadIntoFreeSlot(128);
     work->field_45 = 0;
-    if (Func_080770c0(0x16e) != 0) {
+    if (GameFlag_TestFar(0x16e) != 0) {
         work->field_45 = 1;
     } else if (Data_02000240[0x22b] == 0) {
-        if ((Func_080771a0() & 15) == 0)
+        if ((BattleRandom16Far() & 15) == 0)
             work->field_45 = 1;
-        else if ((Func_080771a0() & 31) == 0)
+        else if ((BattleRandom16Far() & 31) == 0)
             work->field_45 = 2;
     }
     Func_080c02a4(object, arg);
@@ -307,7 +305,7 @@ s32 Battle_RunEncounter(s32 arg)
         /* __call_via_r3: clear the twenty action slots. */
         IWRAM_BLOCK_CLEAR(work->actions, 0x140);
         Func_08003f3c(work->field_54);
-        if (Func_080770c0(0x16a) == 0) {
+        if (GameFlag_TestFar(0x16a) == 0) {
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
             cnt = BattlePresentation_BuildActions(work->actions);
@@ -325,7 +323,7 @@ s32 Battle_RunEncounter(s32 arg)
             actor = work->actions[i].h[0];
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
-            if (Func_080770c0(0x16a) == 0) {
+            if (GameFlag_TestFar(0x16a) == 0) {
                 delay = 10;
                 if (i != 0)
                     delay = 0;
@@ -358,7 +356,7 @@ s32 Battle_RunEncounter(s32 arg)
         } else {
             Func_080030f8(20);
         }
-        if (Func_080770c0(0x16e) == 0)
+        if (GameFlag_TestFar(0x16e) == 0)
             continue;
 
         handle = Func_08015038(0xc47, 0, 4, 1);
@@ -374,13 +372,13 @@ s32 Battle_RunEncounter(s32 arg)
 
 resolved:
     Battle_ApplyValueToWork2224();
-    if (Func_080770c0(0x16e) == 0) {
+    if (GameFlag_TestFar(0x16e) == 0) {
         if (work->field_44 != 0)
             Func_080f9010(58);
         if (work->field_538 != 0) {
             Func_080f9010(58);
             if (work->field_3e <= 1) {
-                Func_08077140(128, work->msg_ids[work->field_3c], 26);
+                BattleUnit_AssignFar(128, work->msg_ids[work->field_3c], 26);
                 Func_08015118();
                 Func_08015120(128, 1);
                 Func_080151c8(work->field_3e + 0x838);

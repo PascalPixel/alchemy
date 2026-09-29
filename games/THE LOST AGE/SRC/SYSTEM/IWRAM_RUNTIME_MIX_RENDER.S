@@ -49,6 +49,7 @@ AlchemyUncreditedEnd_080012f8:
 .L_03000db0:
 	add	r2, r2, lr, lsr #9
 	add	r4, r4, lr, lsr #9
+.L_03000db8:
 	eor	ip, r2, r2, lsl #1
 	ands	ip, ip, lr
 	eoreq	ip, r4, r4, lsl #1
@@ -95,6 +96,7 @@ AlchemyUncreditedEnd_080012f8:
 .L_03000e60:
 	ldmgt	r0, {r2, r4}
 AlchemyUncredited_0800141c:
+.L_03000e64:
 	bgt	.L_03000db0
 AlchemyUncreditedEnd_0800141c:
 	ldr	r2, [pc, #-316]
@@ -105,8 +107,9 @@ AlchemyUncreditedEnd_0800141c:
 	bgt	.L_03000e60
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.inst	0xcaffffd3	@ bgt template, stored over 0x03000e64
-	.inst	0xcaffffd1	@ bgt template, stored over 0x03000e64
+@ The two bgt templates, encoded for the loop branch they are stored over.
+	.4byte	0xca000000 | (((.L_03000db8 - (.L_03000e64 + 8)) >> 2) & 0x00ffffff)
+	.4byte	0xca000000 | (((.L_03000db0 - (.L_03000e64 + 8)) >> 2) & 0x00ffffff)
 .L_03000e90:
 	ror	r7, ip, #16
 	adds	r7, r7, r7

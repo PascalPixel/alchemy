@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define Scene_RunKorimaMagariSequence Func_020003f0
-
 extern u8 Data_00000001[];
 void Func_020006de();
 void Func_020006f2();

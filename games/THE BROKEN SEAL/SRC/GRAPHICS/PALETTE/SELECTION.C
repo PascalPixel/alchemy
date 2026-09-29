@@ -1,7 +1,6 @@
 #include "TYPES.H"
 
 extern u8 gGameState[];
-#define PARTY_STATE gGameState
 
 void GraphicsPalette_DecrementSelectionWrap(void *base)
 {
@@ -45,15 +44,15 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
     switch (sel) {
     case 0:
         off = 0x20C;
-        p = &PARTY_STATE[off];
+        p = &gGameState[off];
         break;
     case 1:
         off = 0x205;
-        p = &PARTY_STATE[off];
+        p = &gGameState[off];
         break;
     case 2:
         off = 0x206;
-        p = &PARTY_STATE[off];
+        p = &gGameState[off];
         break;
     default:
         return;
@@ -73,21 +72,21 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
     switch (sel) {
     case 0:
         off = 0x20C;
-        sp = &PARTY_STATE[off];
+        sp = &gGameState[off];
         if (*sp <= 1) {
             break;
         }
         return;
     case 1:
         off = 0x205;
-        sp = &PARTY_STATE[off];
+        sp = &gGameState[off];
         if (*sp <= 23) {
             break;
         }
         return;
     case 2:
         off = 0x206;
-        sp = &PARTY_STATE[off];
+        sp = &gGameState[off];
         if (*sp <= 14) {
             break;
         }

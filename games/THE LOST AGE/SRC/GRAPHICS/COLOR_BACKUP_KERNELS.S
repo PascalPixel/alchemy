@@ -1,7 +1,7 @@
 @ Colour-buffer kernels that fade a buffer while saving a backup copy: each
 @ stores every original block to the backup buffer (stmia r1! or r2!) before
 @ writing it scaled by 3/4, halved or darkened. Each is ARM code behind a
-@ 4-byte Thumb entry (bx pc) that its loader in COLOR_FADE_LOADERS.S copies
+@ 4-byte Thumb entry (bx pc) that its loader in raw 08001c90.S copies
 @ to the stack, and each moves eight data words per ldm/stm pair, where
 @ GCC 2.96's block moves take at most four; the scaling and halving kernels
 @ also save r5-sl without lr, where GCC saves lr with any register. They are

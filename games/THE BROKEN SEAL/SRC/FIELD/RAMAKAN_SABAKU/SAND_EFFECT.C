@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u32 gFrameCount;
 
 void Engine_AudioPlayCue();
 s32 Engine_RandomNext();
@@ -20,10 +21,10 @@ s32 RamakanSabaku_EmitSandEffect(u8 *actor)
     struct EffectParams params;
     s32 phase;
 
-    if ((*(volatile u32 *)0x03001e40 & 7) == 0) {
+    if ((*(volatile u32 *)&gFrameCount & 7) == 0) {
         Engine_AudioPlayCue(118);
     }
-    phase = *(volatile u32 *)0x03001e40 & 15;
+    phase = *(volatile u32 *)&gFrameCount & 15;
     if (phase != 0) {
         return 0;
     }

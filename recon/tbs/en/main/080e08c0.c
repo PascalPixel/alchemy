@@ -86,7 +86,6 @@ extern u8 PuffArc_CellWidths[];
 extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
-extern u8 Value_000000b7;
 
 #define WORK_EFX ((struct BattleEffectArgument *)work->effect)
 
@@ -122,7 +121,7 @@ void Unnamed_080e08c0(struct BattleEffectArgument *effect)
 
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_000000b7, (u8 *)work + 0x320, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, (u8 *)work + 0x320, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);

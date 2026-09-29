@@ -78,6 +78,9 @@ Func_08127ba0:
 	str	r3, [r6, r1]
 .L_08127c2a:
 	pop	{r5, r6, pc}
+	.global Summon_ResetCharge
+	.thumb_func
+Summon_ResetCharge:
 	push	{r5, r6, r7, lr}
 	adds	r6, r0, #0
 	movs	r5, #0

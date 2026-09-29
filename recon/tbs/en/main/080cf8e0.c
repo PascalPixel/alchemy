@@ -149,7 +149,6 @@ extern u8 Value_00000077;
 extern u8 Value_0000008d;
 extern u8 Value_0000009f;
 extern u8 Value_000000a0;
-extern u8 Value_000000bf;
 
 extern s8 Data_080ee0b6[];
 extern u8 Data_080ee0c4[];
@@ -211,7 +210,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
     BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000052 = 0x1010;
 
-    palette = (u8 *)Resource_GetTableEntry((s32)&Value_000000bf);
+    palette = (u8 *)Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     Resource_DecodeType01(palette + 128, work);
     palette = (u8 *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
@@ -230,7 +229,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
     else if (variant == 3)
         resource_id = (s32)&Value_00000077;
     else if (variant == 4)
-        resource_id = (s32)&Value_000000bf;
+        resource_id = (s32)&ResourceId_GoldShellSheet;
     else if (variant == 6)
         resource_id = (s32)&Value_0000008d;
     else

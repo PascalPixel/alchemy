@@ -72,7 +72,6 @@ s32 BattleFx_EndCanvasLayer(void);
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov; the family already uses this spelling in
    games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PUFF_ARC.C. */
-extern u8 Value_000000cc;
 extern u8 Value_0000027f;
 
 /* Per-"layers"-kind table, four bytes per kind: [0] active ring count,
@@ -134,7 +133,7 @@ void Func_080c972c(void *object) {
     M2C_FIELD(temp_r1_17, void **, 0x7828) = object;
     BattleFx_BeginCanvasLayer(0x2001);
     *(s16 *)0x04000020 = 0x100;
-    Resource_LoadAndDecompress((s32)&Value_000000cc, (u8 *)temp_r1_17 + 0x604, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, (u8 *)temp_r1_17 + 0x604, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, temp_r1_17, 0, 0);
     BattlePres_ConfigureEffectDisplay();
     *(s16 *)0x04000050 = 0x3F44;

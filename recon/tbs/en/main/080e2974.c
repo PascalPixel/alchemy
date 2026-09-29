@@ -130,12 +130,9 @@ extern u8 Data_080eed3e[];
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
-extern u8 Value_0000006b;
 extern u8 Value_0000008d;
 extern u8 Value_000000a0;
 extern u8 Value_000000b4;
-extern u8 Value_000000b5;
-extern u8 Value_000000b6;
 
 /* 0x1C-byte spark records at a fixed EWRAM address; 768 are seeded and
    the first 512 are stepped and drawn. */
@@ -241,11 +238,11 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
     } while (i != 288);
 
     if (Data_080eed3e[scene * 7] == 0) {
-        Resource_LoadAndDecompress((s32)&Value_000000b5, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work, 1, 1);
     } else {
-        Resource_LoadAndDecompress((s32)&Value_000000b6, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work, 1, 1);
     }
-    Resource_LoadAndDecompress((s32)&Value_0000006b, (void *)0x02015E00, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, (void *)0x02015E00, 1, 0);
 
     switch (Data_080eed3e[scene * 7 + 1]) {
     case 0:
@@ -255,7 +252,7 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
         res = (s32)&Value_000000a0;
         break;
     case 2:
-        res = (s32)&Value_000000b6;
+        res = (s32)&ResourceId_BlueArcSheetB;
         break;
     default:
         res = (s32)&Value_000000b4;

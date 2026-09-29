@@ -10,6 +10,9 @@ Math_Div:
 	bx	r3
 	.2byte 0x0528
 	.2byte 0x0300
+	.global Math_DivU
+	.thumb_func
+Math_DivU:
 	ldr	r3, [pc, #0]
 	bx	r3
 	.2byte 0x0534

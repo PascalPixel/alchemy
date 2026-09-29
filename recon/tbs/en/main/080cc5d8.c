@@ -62,7 +62,6 @@ extern const u8 Data_080ee058[4];
 extern const u8 Data_080ee05c[4];
 extern const u8 Data_080ee060[4];
 extern const u16 BattleFx6_FlareCells[];
-extern u8 Value_00000045;
 extern u8 Value_00000046;
 extern u8 Value_00000047;
 extern u8 Value_00000048;
@@ -114,7 +113,7 @@ void Func_080cc5d8(void *object)
     M2C_FIELD((void *)0x04000052, u16 *, 0) = 0x100c;
     M2C_FIELD((void *)0x04000020, u16 *, 0) = 0x100;
 
-    Resource_LoadAndDecompress((s32)&Value_00000045, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, trail_source, 0, 0);
 
     switch (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0)) {

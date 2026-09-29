@@ -113,7 +113,7 @@ void Func_080d05fc(Effect *effect)
     Resource_DecodeType01(resource + 128, work);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sheet);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), (u8 *)work + 0x1000);
-    resource = Resource_GetTableEntry((s32)&Value_0000008f);
+    resource = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
     Resource_DecodeType01(resource + 128, (u8 *)work + 0x2000);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;

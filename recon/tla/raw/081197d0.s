@@ -1136,6 +1136,9 @@ Func_081197d0:
 	.4byte 0x000000ff
 	.2byte 0x0240
 	.2byte 0x0200
+	.global BattleParty_ListPresentEnemies
+	.thumb_func
+BattleParty_ListPresentEnemies:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -1571,6 +1574,9 @@ Func_081197d0:
 	.2byte 0x00ff
 	.2byte 0x0000
 .L_0811a44c:
+	.global BattleActor_CommitPlacement
+	.thumb_func
+BattleActor_CommitPlacement:
 	push	{r5, lr}
 	sub	sp, #28
 	mov	r5, sp

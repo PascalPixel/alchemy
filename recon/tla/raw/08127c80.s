@@ -3,6 +3,9 @@
 	.global Func_08127c80
 	.thumb_func
 Func_08127c80:
+	.global BattleFormation_SelectRandomAvailableMember
+	.thumb_func
+BattleFormation_SelectRandomAvailableMember:
 	push	{r5, r6, lr}
 	movs	r3, #165
 	lsls	r3, r3, #2

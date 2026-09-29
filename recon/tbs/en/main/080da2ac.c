@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -23,7 +24,6 @@ typedef struct {
     s32 a, b, c, d;
 } Bounds4;
 
-extern u8 Value_0000008b;
 extern const u8 Data_080eea38[];
 extern const Bounds4 Data_080eda88;
 
@@ -79,7 +79,7 @@ void Func_080da2ac(void *object)
     BattleFx_BeginCanvasLayer(1);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
     M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0;
-    Resource_LoadAndDecompress((s32)&Value_0000008b, (u8 *)work + 0x1E00, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, (u8 *)work + 0x1E00, 1, 1);
     _call_via_r3(
         (void *)0x02010000, (void *)0x06008000, 0x8000,
         (WordCopyFn)0x03001388);

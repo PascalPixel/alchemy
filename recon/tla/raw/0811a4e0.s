@@ -356,6 +356,9 @@ Func_0811a4e0:
 	pop	{r5, r6, r7, pc}
 	.2byte 0xcacc
 	.2byte 0x0812
+	.global BattlePresentation_SpawnActorObject
+	.thumb_func
+BattlePresentation_SpawnActorObject:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

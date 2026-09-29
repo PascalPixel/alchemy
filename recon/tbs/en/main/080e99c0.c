@@ -1,10 +1,12 @@
 /* 2026-09-29: five minutes of permutation reached 6941 from 8151 through 88
  * rewrites, mostly operand swaps, casts and temporaries; that candidate is
  * not kept, since the draft is far from exact and blocked by Value_
- * resource numbers anyway. */
+ * resource numbers anyway. The IWRAM fill is now Iwram_FillWords rather
+ * than a Value_ address: 7751. */
 /* 2026-09-29: callees carry the build's names; alchemy permute scores 8151,
  * from 8331. */
 #include "EFFECT_STEP.H"
+#include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -129,7 +131,6 @@ extern char Value_0000007d;
 extern char Value_00000085;
 extern char Value_000000c0;
 extern char Value_000000c4;
-extern char Value_03000168;
 
 extern const u16 Data_080ede48[];
 extern const u8 Data_080eef12[];
@@ -474,10 +475,10 @@ void Func_080e99c0(void *object)
         }
 
         if (frame == 9) {
-            _call_via_r3(canvas, 128 << 7, 0x3F3F3F3F, &Value_03000168);
+            Iwram_FillWords(canvas, 128 << 7, 0x3F3F3F3F);
         }
         if (frame == 60) {
-            _call_via_r3(canvas, 128 << 7, 0x3F3F3F3F, &Value_03000168);
+            Iwram_FillWords(canvas, 128 << 7, 0x3F3F3F3F);
         }
 
         Func_080e155c(16, 16);

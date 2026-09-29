@@ -49,7 +49,7 @@ extern u8 HexDigits[];
 typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-void GameFlag_SetByteFar(s32, s32);
+void GameFlag_SetByte(s32, s32);
 Rec *Owner_GetState(s32);
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
@@ -188,10 +188,10 @@ void RunPartyCountInteraction(s32 actorId)
 
 void FieldScene_RunSixSteps380To3A8(void)
 {
-    GameFlag_SetByteFar(896, 0);
-    GameFlag_SetByteFar(904, 0);
-    GameFlag_SetByteFar(912, 0);
-    GameFlag_SetByteFar(920, 0);
-    GameFlag_SetByteFar(928, 0);
-    GameFlag_SetByteFar(936, 0);
+    GameFlag_SetByte(896, 0);
+    GameFlag_SetByte(904, 0);
+    GameFlag_SetByte(912, 0);
+    GameFlag_SetByte(920, 0);
+    GameFlag_SetByte(928, 0);
+    GameFlag_SetByte(936, 0);
 }

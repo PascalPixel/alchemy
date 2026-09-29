@@ -33603,7 +33603,7 @@ msgctxt "message"
 msgid "08398"
 msgstr "{actor_name:1}, la primera{line_break}ronda fue increíble.{page_break}Estaré por aquí. Vuelve{line_break}cuando hayas terminado{line_break}de examinar todo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteThirdFinals"
 msgid "08399"
 msgstr "Aquí tendrá lugar la tercera{line_break}ronda de las finales.{end_wait}"
 

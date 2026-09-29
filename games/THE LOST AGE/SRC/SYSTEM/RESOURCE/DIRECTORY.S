@@ -640,67 +640,67 @@ Resource_DirectoryTable:
 	resource , Resource_Data270
 	resource , Resource_Data271
 	resource , Resource_Data272
-	resource , Resource_Data273
-	resource , Resource_Data274
-	resource , Resource_Data275
+	resource , Tileset_Set00Palette
+	resource , Tileset_Set00TilesA
+	resource , Tileset_Set00TilesB
 	resource , Resource_Data276
-	resource , Resource_Data277
+	resource , Tileset_Set00TilesD
 	resource , Resource_Data278
-	resource , Resource_Data279
-	resource , Resource_Data27A
-	resource , Resource_Data27B
-	resource , Resource_Data27C
-	resource , Resource_Data27D
+	resource , Tileset_Set01Palette
+	resource , Tileset_Set01TilesA
+	resource , Tileset_Set01TilesB
+	resource , Tileset_Set01TilesC
+	resource , Tileset_Set01TilesD
 	resource , Resource_Data27E
-	resource , Resource_Data27F
-	resource , Resource_Data280
-	resource , Resource_Data281
-	resource , Resource_Data282
-	resource , Resource_Data283
+	resource , Tileset_Set02Palette
+	resource , Tileset_Set02TilesA
+	resource , Tileset_Set02TilesB
+	resource , Tileset_Set02TilesC
+	resource , Tileset_Set02TilesD
 	resource , Resource_Data284
-	resource , Resource_Data285
-	resource , Resource_Data286
-	resource , Resource_Data287
-	resource , Resource_Data288
-	resource , Resource_Data289
+	resource , Tileset_Set03Palette
+	resource , Tileset_Set03TilesA
+	resource , Tileset_Set03TilesB
+	resource , Tileset_Set03TilesC
+	resource , Tileset_Set03TilesD
 	resource , Resource_Data28A
 	resource , Resource_Data28B
-	resource , Resource_Data28C
-	resource , Resource_Data28D
-	resource , Resource_Data28E
-	resource , Resource_Data28F
-	resource , Resource_Data290
+	resource , Tileset_Set04Palette
+	resource , Tileset_Set04TilesA
+	resource , Tileset_Set04TilesB
+	resource , Tileset_Set04TilesC
+	resource , Tileset_Set04TilesD
 	resource , Resource_Data291
-	resource , Resource_Data292
-	resource , Resource_Data293
-	resource , Resource_Data294
-	resource , Resource_Data295
-	resource , Resource_Data296
+	resource , Tileset_Set05Palette
+	resource , Tileset_Set05TilesA
+	resource , Tileset_Set05TilesB
+	resource , Tileset_Set05TilesC
+	resource , Tileset_Set05TilesD
 	resource , Resource_Data297
-	resource , Resource_Data298
-	resource , Resource_Data299
-	resource , Resource_Data29A
-	resource , Resource_Data29B
-	resource , Resource_Data29C
+	resource , Tileset_Set06Palette
+	resource , Tileset_Set06TilesA
+	resource , Tileset_Set06TilesB
+	resource , Tileset_Set06TilesC
+	resource , Tileset_Set06TilesD
 	resource , Resource_Data29D
 	resource , Resource_Data29E
-	resource , Resource_Data29F
-	resource , Resource_Data2A0
-	resource , Resource_Data2A1
-	resource , Resource_Data2A2
-	resource , Resource_Data2A3
+	resource , Tileset_Set07Palette
+	resource , Tileset_Set07TilesA
+	resource , Tileset_Set07TilesB
+	resource , Tileset_Set07TilesC
+	resource , Tileset_Set07TilesD
 	resource , Resource_Data2A4
-	resource , Resource_Data2A5
-	resource , Resource_Data2A6
-	resource , Resource_Data2A7
-	resource , Resource_Data2A8
-	resource , Resource_Data2A9
+	resource , Tileset_Set08Palette
+	resource , Tileset_Set08TilesA
+	resource , Tileset_Set08TilesB
+	resource , Tileset_Set08TilesC
+	resource , Tileset_Set08TilesD
 	resource , Resource_Data2AA
-	resource , Resource_Data2AB
-	resource , Resource_Data2AC
-	resource , Resource_Data2AD
-	resource , Resource_Data2AE
-	resource , Resource_Data2AF
+	resource , Tileset_Set09Palette
+	resource , Tileset_Set09TilesA
+	resource , Tileset_Set09TilesB
+	resource , Tileset_Set09TilesC
+	resource , Tileset_Set09TilesD
 	resource , Resource_Data2B0
 	resource , Resource_Data2B1
 	resource , Resource_Data2B2
@@ -708,17 +708,17 @@ Resource_DirectoryTable:
 	resource , Resource_Data2B4
 	resource , Resource_Data2B5
 	resource , Resource_Data2B6
-	resource , Resource_Data2B7
-	resource , Resource_Data2B8
+	resource , Tileset_Set10Palette
+	resource , Tileset_Set10TilesA
 	resource , Resource_Data2B9
-	resource , Resource_Data2BA
-	resource , Resource_Data2BB
-	resource , Resource_Data2BC
-	resource , Resource_Data2BD
-	resource , Resource_Data2BE
+	resource , Tileset_Set11Palette
+	resource , Tileset_Set11TilesA
+	resource , Tileset_Set11TilesB
+	resource , Tileset_Set11TilesC
+	resource , Tileset_Set11TilesD
 	resource , Resource_Data2BF
-	resource , Resource_Data2C0
-	resource , Resource_Data2C1
+	resource , Tileset_Set12Palette
+	resource , Tileset_Set12TilesA
 	resource , Resource_Data2C2
 	resource , Resource_Data2C3
 	resource , Resource_Data2C4
@@ -729,139 +729,139 @@ Resource_DirectoryTable:
 	resource , Resource_Data2C9
 	resource , Resource_Data2CA
 	resource , Resource_Data2CB
-	resource , Resource_Data2CC
-	resource , Resource_Data2CD
-	resource , Resource_Data2CE
-	resource , Resource_Data2CF
-	resource , Resource_Data2D0
+	resource , Tileset_Set13Palette
+	resource , Tileset_Set13TilesA
+	resource , Tileset_Set13TilesB
+	resource , Tileset_Set13TilesC
+	resource , Tileset_Set13TilesD
 	resource , Resource_Data2D1
-	resource , Resource_Data2D2
-	resource , Resource_Data2D3
-	resource , Resource_Data2D4
-	resource , Resource_Data2D5
-	resource , Resource_Data2D6
+	resource , Tileset_Set14Palette
+	resource , Tileset_Set14TilesA
+	resource , Tileset_Set14TilesB
+	resource , Tileset_Set14TilesC
+	resource , Tileset_Set14TilesD
 	resource , Resource_Data2D7
-	resource , Resource_Data2D8
-	resource , Resource_Data2D9
-	resource , Resource_Data2DA
-	resource , Resource_Data2DB
-	resource , Resource_Data2DC
+	resource , Tileset_Set15Palette
+	resource , Tileset_Set15TilesA
+	resource , Tileset_Set15TilesB
+	resource , Tileset_Set15TilesC
+	resource , Tileset_Set15TilesD
 	resource , Resource_Data2DD
-	resource , Resource_Data2DE
-	resource , Resource_Data2DF
-	resource , Resource_Data2E0
-	resource , Resource_Data2E1
-	resource , Resource_Data2E2
+	resource , Tileset_Set16Palette
+	resource , Tileset_Set16TilesA
+	resource , Tileset_Set16TilesB
+	resource , Tileset_Set16TilesC
+	resource , Tileset_Set16TilesD
 	resource , Resource_Data2E3
-	resource , Resource_Data2E4
-	resource , Resource_Data2E5
-	resource , Resource_Data2E6
-	resource , Resource_Data2E7
-	resource , Resource_Data2E8
+	resource , Tileset_Set17Palette
+	resource , Tileset_Set17TilesA
+	resource , Tileset_Set17TilesB
+	resource , Tileset_Set17TilesC
+	resource , Tileset_Set17TilesD
 	resource , Resource_Data2E9
-	resource , Resource_Data2EA
-	resource , Resource_Data2EB
-	resource , Resource_Data2EC
-	resource , Resource_Data2ED
-	resource , Resource_Data2EE
+	resource , Tileset_Set18Palette
+	resource , Tileset_Set18TilesA
+	resource , Tileset_Set18TilesB
+	resource , Tileset_Set18TilesC
+	resource , Tileset_Set18TilesD
 	resource , Resource_Data2EF
-	resource , Resource_Data2F0
-	resource , Resource_Data2F1
-	resource , Resource_Data2F2
-	resource , Resource_Data2F3
-	resource , Resource_Data2F4
+	resource , Tileset_Set19Palette
+	resource , Tileset_Set19TilesA
+	resource , Tileset_Set19TilesB
+	resource , Tileset_Set19TilesC
+	resource , Tileset_Set19TilesD
 	resource , Resource_Data2F5
-	resource , Resource_Data2F6
-	resource , Resource_Data2F7
-	resource , Resource_Data2F8
-	resource , Resource_Data2F9
-	resource , Resource_Data2FA
+	resource , Tileset_Set20Palette
+	resource , Tileset_Set20TilesA
+	resource , Tileset_Set20TilesB
+	resource , Tileset_Set20TilesC
+	resource , Tileset_Set20TilesD
 	resource , Resource_Data2FB
-	resource , Resource_Data2FC
-	resource , Resource_Data2FD
-	resource , Resource_Data2FE
-	resource , Resource_Data2FF
-	resource , Resource_Data300
+	resource , Tileset_Set21Palette
+	resource , Tileset_Set21TilesA
+	resource , Tileset_Set21TilesB
+	resource , Tileset_Set21TilesC
+	resource , Tileset_Set21TilesD
 	resource , Resource_Data301
-	resource , Resource_Data302
-	resource , Resource_Data303
-	resource , Resource_Data304
-	resource , Resource_Data305
-	resource , Resource_Data306
+	resource , Tileset_Set22Palette
+	resource , Tileset_Set22TilesA
+	resource , Tileset_Set22TilesB
+	resource , Tileset_Set22TilesC
+	resource , Tileset_Set22TilesD
 	resource , Resource_Data307
-	resource , Resource_Data308
-	resource , Resource_Data309
-	resource , Resource_Data30A
-	resource , Resource_Data30B
-	resource , Resource_Data30C
+	resource , Tileset_Set23Palette
+	resource , Tileset_Set23TilesA
+	resource , Tileset_Set23TilesB
+	resource , Tileset_Set23TilesC
+	resource , Tileset_Set23TilesD
 	resource , Resource_Data30D
-	resource , Resource_Data30E
-	resource , Resource_Data30F
-	resource , Resource_Data310
-	resource , Resource_Data311
-	resource , Resource_Data312
+	resource , Tileset_Set24Palette
+	resource , Tileset_Set24TilesA
+	resource , Tileset_Set24TilesB
+	resource , Tileset_Set24TilesC
+	resource , Tileset_Set24TilesD
 	resource , Resource_Data313
-	resource , Resource_Data314
-	resource , Resource_Data315
-	resource , Resource_Data316
-	resource , Resource_Data317
-	resource , Resource_Data318
+	resource , Tileset_Set25Palette
+	resource , Tileset_Set25TilesA
+	resource , Tileset_Set25TilesB
+	resource , Tileset_Set25TilesC
+	resource , Tileset_Set25TilesD
 	resource , Resource_Data319
-	resource , Resource_Data31A
-	resource , Resource_Data31B
-	resource , Resource_Data31C
-	resource , Resource_Data31D
-	resource , Resource_Data31E
+	resource , Tileset_Set26Palette
+	resource , Tileset_Set26TilesA
+	resource , Tileset_Set26TilesB
+	resource , Tileset_Set26TilesC
+	resource , Tileset_Set26TilesD
 	resource , Resource_Data31F
-	resource , Resource_Data320
-	resource , Resource_Data321
-	resource , Resource_Data322
-	resource , Resource_Data323
-	resource , Resource_Data324
+	resource , Tileset_Set27Palette
+	resource , Tileset_Set27TilesA
+	resource , Tileset_Set27TilesB
+	resource , Tileset_Set27TilesC
+	resource , Tileset_Set27TilesD
 	resource , Resource_Data325
-	resource , Resource_Data326
-	resource , Resource_Data327
-	resource , Resource_Data328
-	resource , Resource_Data329
-	resource , Resource_Data32A
+	resource , Tileset_Set28Palette
+	resource , Tileset_Set28TilesA
+	resource , Tileset_Set28TilesB
+	resource , Tileset_Set28TilesC
+	resource , Tileset_Set28TilesD
 	resource , Resource_Data32B
 	resource , Resource_Data32C
 	resource , Resource_Data32D
 	resource , Resource_Data32E
 	resource , Resource_Data32F
-	resource , Resource_Data330
-	resource , Resource_Data331
-	resource , Resource_Data332
-	resource , Resource_Data333
-	resource , Resource_Data334
+	resource , Tileset_Set29Palette
+	resource , Tileset_Set29TilesA
+	resource , Tileset_Set29TilesB
+	resource , Tileset_Set29TilesC
+	resource , Tileset_Set29TilesD
 	resource , Resource_Data335
-	resource , Resource_Data336
-	resource , Resource_Data337
-	resource , Resource_Data338
-	resource , Resource_Data339
-	resource , Resource_Data33A
+	resource , Tileset_Set30Palette
+	resource , Tileset_Set30TilesA
+	resource , Tileset_Set30TilesB
+	resource , Tileset_Set30TilesC
+	resource , Tileset_Set30TilesD
 	resource , Resource_Data33B
-	resource , Resource_Data33C
-	resource , Resource_Data33D
-	resource , Resource_Data33E
+	resource , Tileset_Set31Palette
+	resource , Tileset_Set31TilesA
+	resource , Tileset_Set31TilesB
 	resource , Resource_Data33F
-	resource , Resource_Data340
-	resource , Resource_Data341
-	resource , Resource_Data342
-	resource , Resource_Data343
-	resource , Resource_Data344
+	resource , Tileset_Set32Palette
+	resource , Tileset_Set32TilesA
+	resource , Tileset_Set32TilesB
+	resource , Tileset_Set32TilesC
+	resource , Tileset_Set32TilesD
 	resource , Resource_Data345
-	resource , Resource_Data346
-	resource , Resource_Data347
-	resource , Resource_Data348
-	resource , Resource_Data349
-	resource , Resource_Data34A
+	resource , Tileset_Set33Palette
+	resource , Tileset_Set33TilesA
+	resource , Tileset_Set33TilesB
+	resource , Tileset_Set33TilesC
+	resource , Tileset_Set33TilesD
 	resource , Resource_Data34B
-	resource , Resource_Data34C
-	resource , Resource_Data34D
-	resource , Resource_Data34E
-	resource , Resource_Data34F
-	resource , Resource_Data350
+	resource , Tileset_Set34Palette
+	resource , Tileset_Set34TilesA
+	resource , Tileset_Set34TilesB
+	resource , Tileset_Set34TilesC
+	resource , Tileset_Set34TilesD
 	resource , Resource_Data351
 	resource , Resource_Data352
 	resource , Resource_Data353
@@ -876,11 +876,11 @@ Resource_DirectoryTable:
 	resource , Resource_Data35C
 	resource , Resource_Data35D
 	resource , Resource_Data35E
-	resource , Resource_Data35F
-	resource , Resource_Data360
-	resource , Resource_Data361
-	resource , Resource_Data362
-	resource , Resource_Data363
+	resource , Tileset_Set35Palette
+	resource , Tileset_Set35TilesA
+	resource , Tileset_Set35TilesB
+	resource , Tileset_Set35TilesC
+	resource , Tileset_Set35TilesD
 	resource , Resource_Data364
 	resource , Resource_Data365
 	resource , Resource_Data366
@@ -893,28 +893,28 @@ Resource_DirectoryTable:
 	resource , Resource_Data36D
 	resource , Resource_Data36E
 	resource , Resource_Data36F
-	resource , Resource_Data370
-	resource , Resource_Data371
+	resource , Tileset_Set36Palette
+	resource , Tileset_Set36TilesA
 	resource , Resource_Data372
-	resource , Resource_Data373
-	resource , Resource_Data374
+	resource , Tileset_Set37Palette
+	resource , Tileset_Set37TilesA
 	resource , Resource_Data375
-	resource , Resource_Data376
-	resource , Resource_Data377
+	resource , Tileset_Set38Palette
+	resource , Tileset_Set38TilesA
 	resource , Resource_Data378
-	resource , Resource_Data379
-	resource , Resource_Data37A
-	resource , Resource_Data37B
-	resource , Resource_Data37C
-	resource , Resource_Data37D
+	resource , Tileset_Set39Palette
+	resource , Tileset_Set39TilesA
+	resource , Tileset_Set39TilesB
+	resource , Tileset_Set39TilesC
+	resource , Tileset_Set39TilesD
 	resource , Resource_Data37E
 	resource , Resource_Data37F
 	resource , Resource_Data380
-	resource , Resource_Data381
-	resource , Resource_Data382
-	resource , Resource_Data383
-	resource , Resource_Data384
-	resource , Resource_Data385
+	resource , Tileset_Set40Palette
+	resource , Tileset_Set40TilesA
+	resource , Tileset_Set40TilesB
+	resource , Tileset_Set40TilesC
+	resource , Tileset_Set40TilesD
 	resource , Resource_Data386
 	resource , Resource_Data387
 	resource , Resource_Data388
@@ -924,102 +924,102 @@ Resource_DirectoryTable:
 	resource , Resource_Data38C
 	resource , Resource_Data38D
 	resource , Resource_Data38E
-	resource , Resource_Data38F
-	resource , Resource_Data390
-	resource , Resource_Data391
-	resource , Resource_Data392
-	resource , Resource_Data393
+	resource , Tileset_Set41Palette
+	resource , Tileset_Set41TilesA
+	resource , Tileset_Set41TilesB
+	resource , Tileset_Set41TilesC
+	resource , Tileset_Set41TilesD
 	resource , Resource_Data394
 	resource , Resource_Data395
 	resource , Resource_Data396
-	resource , Resource_Data397
-	resource , Resource_Data398
+	resource , Tileset_Set42Palette
+	resource , Tileset_Set42TilesA
 	resource , Resource_Data399
 	resource , Resource_Data39A
-	resource , Resource_Data39B
-	resource , Resource_Data39C
-	resource , Resource_Data39D
-	resource , Resource_Data39E
-	resource , Resource_Data39F
+	resource , Tileset_Set43Palette
+	resource , Tileset_Set43TilesA
+	resource , Tileset_Set43TilesB
+	resource , Tileset_Set43TilesC
+	resource , Tileset_Set43TilesD
 	resource , Resource_Data3A0
-	resource , Resource_Data3A1
-	resource , Resource_Data3A2
-	resource , Resource_Data3A3
-	resource , Resource_Data3A4
-	resource , Resource_Data3A5
+	resource , Tileset_Set44Palette
+	resource , Tileset_Set44TilesA
+	resource , Tileset_Set44TilesB
+	resource , Tileset_Set44TilesC
+	resource , Tileset_Set44TilesD
 	resource , Resource_Data3A6
-	resource , Resource_Data3A7
-	resource , Resource_Data3A8
-	resource , Resource_Data3A9
-	resource , Resource_Data3AA
-	resource , Resource_Data3AB
+	resource , Tileset_Set45Palette
+	resource , Tileset_Set45TilesA
+	resource , Tileset_Set45TilesB
+	resource , Tileset_Set45TilesC
+	resource , Tileset_Set45TilesD
 	resource , Resource_Data3AC
 	resource , Resource_Data3AD
 	resource , Resource_Data3AE
-	resource , Resource_Data3AF
-	resource , Resource_Data3B0
-	resource , Resource_Data3B1
-	resource , Resource_Data3B2
-	resource , Resource_Data3B3
+	resource , Tileset_Set46Palette
+	resource , Tileset_Set46TilesA
+	resource , Tileset_Set46TilesB
+	resource , Tileset_Set46TilesC
+	resource , Tileset_Set46TilesD
 	resource , Resource_Data3B4
-	resource , Resource_Data3B5
-	resource , Resource_Data3B6
-	resource , Resource_Data3B7
-	resource , Resource_Data3B8
-	resource , Resource_Data3B9
+	resource , Tileset_Set47Palette
+	resource , Tileset_Set47TilesA
+	resource , Tileset_Set47TilesB
+	resource , Tileset_Set47TilesC
+	resource , Tileset_Set47TilesD
 	resource , Resource_Data3BA
-	resource , Resource_Data3BB
-	resource , Resource_Data3BC
-	resource , Resource_Data3BD
-	resource , Resource_Data3BE
-	resource , Resource_Data3BF
+	resource , Tileset_Set48Palette
+	resource , Tileset_Set48TilesA
+	resource , Tileset_Set48TilesB
+	resource , Tileset_Set48TilesC
+	resource , Tileset_Set48TilesD
 	resource , Resource_Data3C0
 	resource , Resource_Data3C1
-	resource , Resource_Data3C2
-	resource , Resource_Data3C3
-	resource , Resource_Data3C4
-	resource , Resource_Data3C5
-	resource , Resource_Data3C6
+	resource , Tileset_Set49Palette
+	resource , Tileset_Set49TilesA
+	resource , Tileset_Set49TilesB
+	resource , Tileset_Set49TilesC
+	resource , Tileset_Set49TilesD
 	resource , Resource_Data3C7
 	resource , Resource_Data3C8
 	resource , Resource_Data3C9
-	resource , Resource_Data3CA
-	resource , Resource_Data3CB
+	resource , Tileset_Set50Palette
+	resource , Tileset_Set50TilesA
 	resource , Resource_Data3CC
-	resource , Resource_Data3CD
-	resource , Resource_Data3CE
+	resource , Tileset_Set50TilesC
+	resource , Tileset_Set50TilesD
 	resource , Resource_Data3CF
-	resource , Resource_Data3D0
-	resource , Resource_Data3D1
-	resource , Resource_Data3D2
-	resource , Resource_Data3D3
-	resource , Resource_Data3D4
+	resource , Tileset_Set51Palette
+	resource , Tileset_Set51TilesA
+	resource , Tileset_Set51TilesB
+	resource , Tileset_Set51TilesC
+	resource , Tileset_Set51TilesD
 	resource , Resource_Data3D5
-	resource , Resource_Data3D6
-	resource , Resource_Data3D7
-	resource , Resource_Data3D8
-	resource , Resource_Data3D9
-	resource , Resource_Data3DA
+	resource , Tileset_Set52Palette
+	resource , Tileset_Set52TilesA
+	resource , Tileset_Set52TilesB
+	resource , Tileset_Set52TilesC
+	resource , Tileset_Set52TilesD
 	resource , Resource_Data3DB
-	resource , Resource_Data3DC
-	resource , Resource_Data3DD
-	resource , Resource_Data3DE
-	resource , Resource_Data3DF
-	resource , Resource_Data3E0
+	resource , Tileset_Set53Palette
+	resource , Tileset_Set53TilesA
+	resource , Tileset_Set53TilesB
+	resource , Tileset_Set53TilesC
+	resource , Tileset_Set53TilesD
 	resource , Resource_Data3E1
-	resource , Resource_Data3E2
-	resource , Resource_Data3E3
-	resource , Resource_Data3E4
-	resource , Resource_Data3E5
-	resource , Resource_Data3E6
+	resource , Tileset_Set54Palette
+	resource , Tileset_Set54TilesA
+	resource , Tileset_Set54TilesB
+	resource , Tileset_Set54TilesC
+	resource , Tileset_Set54TilesD
 	resource , Resource_Data3E7
 	resource , Resource_Data3E8
 	resource , Resource_Data3E9
-	resource , Resource_Data3EA
-	resource , Resource_Data3EB
-	resource , Resource_Data3EC
-	resource , Resource_Data3ED
-	resource , Resource_Data3EE
+	resource , Tileset_Set55Palette
+	resource , Tileset_Set55TilesA
+	resource , Tileset_Set55TilesB
+	resource , Tileset_Set55TilesC
+	resource , Tileset_Set55TilesD
 	resource , Resource_Data3EF
 	resource , Resource_Data3F0
 	resource , Resource_Data3F1
@@ -1031,91 +1031,91 @@ Resource_DirectoryTable:
 	resource , Resource_Data3F7
 	resource , Resource_Data3F8
 	resource , Resource_Data3F9
-	resource , Resource_Data3FA
-	resource , Resource_Data3FB
-	resource , Resource_Data3FC
-	resource , Resource_Data3FD
-	resource , Resource_Data3FE
+	resource , Tileset_Set56Palette
+	resource , Tileset_Set56TilesA
+	resource , Tileset_Set56TilesB
+	resource , Tileset_Set56TilesC
+	resource , Tileset_Set56TilesD
 	resource , Resource_Data3FF
 	resource , Resource_Data400
 	resource , Resource_Data401
-	resource , Resource_Data402
-	resource , Resource_Data403
-	resource , Resource_Data404
-	resource , Resource_Data405
-	resource , Resource_Data406
+	resource , Tileset_Set57Palette
+	resource , Tileset_Set57TilesA
+	resource , Tileset_Set57TilesB
+	resource , Tileset_Set57TilesC
+	resource , Tileset_Set57TilesD
 	resource , Resource_Data407
 	resource , Resource_Data408
 	resource , Resource_Data409
-	resource , Resource_Data40A
-	resource , Resource_Data40B
-	resource , Resource_Data40C
-	resource , Resource_Data40D
-	resource , Resource_Data40E
+	resource , Tileset_Set58Palette
+	resource , Tileset_Set58TilesA
+	resource , Tileset_Set58TilesB
+	resource , Tileset_Set58TilesC
+	resource , Tileset_Set58TilesD
 	resource , Resource_Data40F
-	resource , Resource_Data410
-	resource , Resource_Data411
-	resource , Resource_Data412
-	resource , Resource_Data413
-	resource , Resource_Data414
+	resource , Tileset_Set59Palette
+	resource , Tileset_Set59TilesA
+	resource , Tileset_Set59TilesB
+	resource , Tileset_Set59TilesC
+	resource , Tileset_Set59TilesD
 	resource , Resource_Data415
 	resource , Resource_Data416
 	resource , Resource_Data417
 	resource , Resource_Data418
 	resource , Resource_Data419
-	resource , Resource_Data41A
-	resource , Resource_Data41B
-	resource , Resource_Data41C
-	resource , Resource_Data41D
-	resource , Resource_Data41E
+	resource , Tileset_Set60Palette
+	resource , Tileset_Set60TilesA
+	resource , Tileset_Set60TilesB
+	resource , Tileset_Set60TilesC
+	resource , Tileset_Set60TilesD
 	resource , Resource_Data41F
 	resource , Resource_Data420
 	resource , Resource_Data421
 	resource , Resource_Data422
-	resource , Resource_Data423
-	resource , Resource_Data424
-	resource , Resource_Data425
-	resource , Resource_Data426
-	resource , Resource_Data427
+	resource , Tileset_Set61Palette
+	resource , Tileset_Set61TilesA
+	resource , Tileset_Set61TilesB
+	resource , Tileset_Set61TilesC
+	resource , Tileset_Set61TilesD
 	resource , Resource_Data428
 	resource , Resource_Data429
 	resource , Resource_Data42A
 	resource , Resource_Data42B
 	resource , Resource_Data42C
-	resource , Resource_Data42D
-	resource , Resource_Data42E
-	resource , Resource_Data42F
-	resource , Resource_Data430
-	resource , Resource_Data431
+	resource , Tileset_Set62Palette
+	resource , Tileset_Set62TilesA
+	resource , Tileset_Set62TilesB
+	resource , Tileset_Set62TilesC
+	resource , Tileset_Set62TilesD
 	resource , Resource_Data432
 	resource , Resource_Data433
 	resource , Resource_Data434
-	resource , Resource_Data435
-	resource , Resource_Data436
-	resource , Resource_Data437
-	resource , Resource_Data438
-	resource , Resource_Data439
+	resource , Tileset_Set63Palette
+	resource , Tileset_Set63TilesA
+	resource , Tileset_Set63TilesB
+	resource , Tileset_Set63TilesC
+	resource , Tileset_Set63TilesD
 	resource , Resource_Data43A
 	resource , Resource_Data43B
 	resource , Resource_Data43C
 	resource , Resource_Data43D
-	resource , Resource_Data43E
-	resource , Resource_Data43F
-	resource , Resource_Data440
-	resource , Resource_Data441
-	resource , Resource_Data442
+	resource , Tileset_Set64Palette
+	resource , Tileset_Set64TilesA
+	resource , Tileset_Set64TilesB
+	resource , Tileset_Set64TilesC
+	resource , Tileset_Set64TilesD
 	resource , Resource_Data443
-	resource , Resource_Data444
-	resource , Resource_Data445
-	resource , Resource_Data446
-	resource , Resource_Data447
-	resource , Resource_Data448
+	resource , Tileset_Set65Palette
+	resource , Tileset_Set65TilesA
+	resource , Tileset_Set65TilesB
+	resource , Tileset_Set65TilesC
+	resource , Tileset_Set65TilesD
 	resource , Resource_Data449
-	resource , Resource_Data44A
-	resource , Resource_Data44B
-	resource , Resource_Data44C
-	resource , Resource_Data44D
-	resource , Resource_Data44E
+	resource , Tileset_Set66Palette
+	resource , Tileset_Set66TilesA
+	resource , Tileset_Set66TilesB
+	resource , Tileset_Set66TilesC
+	resource , Tileset_Set66TilesD
 	resource , Resource_Data44F
 	resource , Resource_Data450
 	resource , Resource_Data451
@@ -1126,42 +1126,42 @@ Resource_DirectoryTable:
 	resource , Resource_Data456
 	resource , Resource_Data457
 	resource , Resource_Data458
-	resource , Resource_Data459
-	resource , Resource_Data45A
-	resource , Resource_Data45B
-	resource , Resource_Data45C
-	resource , Resource_Data45D
+	resource , Tileset_Set67Palette
+	resource , Tileset_Set67TilesA
+	resource , Tileset_Set67TilesB
+	resource , Tileset_Set67TilesC
+	resource , Tileset_Set67TilesD
 	resource , Resource_Data45E
-	resource , Resource_Data45F
-	resource , Resource_Data460
-	resource , Resource_Data461
-	resource , Resource_Data462
-	resource , Resource_Data463
+	resource , Tileset_Set68Palette
+	resource , Tileset_Set68TilesA
+	resource , Tileset_Set68TilesB
+	resource , Tileset_Set68TilesC
+	resource , Tileset_Set68TilesD
 	resource , Resource_Data464
-	resource , Resource_Data465
-	resource , Resource_Data466
-	resource , Resource_Data467
-	resource , Resource_Data468
-	resource , Resource_Data469
+	resource , Tileset_Set69Palette
+	resource , Tileset_Set69TilesA
+	resource , Tileset_Set69TilesB
+	resource , Tileset_Set69TilesC
+	resource , Tileset_Set69TilesD
 	resource , Resource_Data46A
-	resource , Resource_Data46B
-	resource , Resource_Data46C
-	resource , Resource_Data46D
-	resource , Resource_Data46E
-	resource , Resource_Data46F
+	resource , Tileset_Set70Palette
+	resource , Tileset_Set70TilesA
+	resource , Tileset_Set70TilesB
+	resource , Tileset_Set70TilesC
+	resource , Tileset_Set70TilesD
 	resource , Resource_Data470
-	resource , Resource_Data471
-	resource , Resource_Data472
-	resource , Resource_Data473
-	resource , Resource_Data474
-	resource , Resource_Data475
+	resource , Tileset_Set71Palette
+	resource , Tileset_Set71TilesA
+	resource , Tileset_Set71TilesB
+	resource , Tileset_Set71TilesC
+	resource , Tileset_Set71TilesD
 	resource , Resource_Data476
 	resource , Resource_Data477
-	resource , Resource_Data478
-	resource , Resource_Data479
-	resource , Resource_Data47A
-	resource , Resource_Data47B
-	resource , Resource_Data47C
+	resource , Tileset_Set72Palette
+	resource , Tileset_Set72TilesA
+	resource , Tileset_Set72TilesB
+	resource , Tileset_Set72TilesC
+	resource , Tileset_Set72TilesD
 	resource , Resource_Data47D
 	resource , Resource_Data47E
 	resource , Resource_Data47F
@@ -1173,39 +1173,39 @@ Resource_DirectoryTable:
 	resource , Resource_Data485
 	resource , Resource_Data486
 	resource , Resource_Data487
-	resource , Resource_Data488
-	resource , Resource_Data489
-	resource , Resource_Data48A
-	resource , Resource_Data48B
-	resource , Resource_Data48C
+	resource , Tileset_Set73Palette
+	resource , Tileset_Set73TilesA
+	resource , Tileset_Set73TilesB
+	resource , Tileset_Set73TilesC
+	resource , Tileset_Set73TilesD
 	resource , Resource_Data48D
-	resource , Resource_Data48E
-	resource , Resource_Data48F
-	resource , Resource_Data490
-	resource , Resource_Data491
-	resource , Resource_Data492
+	resource , Tileset_Set74Palette
+	resource , Tileset_Set74TilesA
+	resource , Tileset_Set74TilesB
+	resource , Tileset_Set74TilesC
+	resource , Tileset_Set74TilesD
 	resource , Resource_Data493
-	resource , Resource_Data494
-	resource , Resource_Data495
+	resource , Tileset_Set75Palette
+	resource , Tileset_Set75TilesA
 	resource , Resource_Data496
-	resource , Resource_Data497
-	resource , Resource_Data498
+	resource , Tileset_Set76Palette
+	resource , Tileset_Set76TilesA
 	resource , Resource_Data499
 	resource , Resource_Data49A
 	resource , Resource_Data49B
 	resource , Resource_Data49C
 	resource , Resource_Data49D
-	resource , Resource_Data49E
-	resource , Resource_Data49F
-	resource , Resource_Data4A0
-	resource , Resource_Data4A1
-	resource , Resource_Data4A2
+	resource , Tileset_Set77Palette
+	resource , Tileset_Set77TilesA
+	resource , Tileset_Set77TilesB
+	resource , Tileset_Set77TilesC
+	resource , Tileset_Set77TilesD
 	resource , Resource_Data4A3
-	resource , Resource_Data4A4
-	resource , Resource_Data4A5
-	resource , Resource_Data4A6
-	resource , Resource_Data4A7
-	resource , Resource_Data4A8
+	resource , Tileset_Set78Palette
+	resource , Tileset_Set78TilesA
+	resource , Tileset_Set78TilesB
+	resource , Tileset_Set78TilesC
+	resource , Tileset_Set78TilesD
 	resource , Resource_Data4A9
 	resource , Resource_Data4AA
 	resource , Resource_Data4AB
@@ -1214,28 +1214,28 @@ Resource_DirectoryTable:
 	resource , Resource_Data4AE
 	resource , Resource_Data4AF
 	resource , Resource_Data4B0
-	resource , Resource_Data4B1
-	resource , Resource_Data4B2
+	resource , Tileset_Set79Palette
+	resource , Tileset_Set79TilesA
 	resource , Resource_Data4B3
-	resource , Resource_Data4B4
-	resource , Resource_Data4B5
+	resource , Tileset_Set79TilesC
+	resource , Tileset_Set79TilesD
 	resource , Resource_Data4B6
 	resource , Resource_Data4B7
 	resource , Resource_Data4B8
 	resource , Resource_Data4B9
 	resource , Resource_Data4BA
 	resource , Resource_Data4BB
-	resource , Resource_Data4BC
-	resource , Resource_Data4BD
-	resource , Resource_Data4BE
-	resource , Resource_Data4BF
-	resource , Resource_Data4C0
+	resource , Tileset_Set80Palette
+	resource , Tileset_Set80TilesA
+	resource , Tileset_Set80TilesB
+	resource , Tileset_Set80TilesC
+	resource , Tileset_Set80TilesD
 	resource , Resource_Data4C1
-	resource , Resource_Data4C2
-	resource , Resource_Data4C3
-	resource , Resource_Data4C4
-	resource , Resource_Data4C5
-	resource , Resource_Data4C6
+	resource , Tileset_Set81Palette
+	resource , Tileset_Set81TilesA
+	resource , Tileset_Set81TilesB
+	resource , Tileset_Set81TilesC
+	resource , Tileset_Set81TilesD
 	resource , Resource_Data4C7
 	resource , Resource_Data4C8
 	resource , Resource_Data4C9
@@ -1254,31 +1254,31 @@ Resource_DirectoryTable:
 	resource , Resource_Data4D6
 	resource , Resource_Data4D7
 	resource , Resource_Data4D8
-	resource , Resource_Data4D9
-	resource , Resource_Data4DA
-	resource , Resource_Data4DB
-	resource , Resource_Data4DC
-	resource , Resource_Data4DD
+	resource , Tileset_Set82Palette
+	resource , Tileset_Set82TilesA
+	resource , Tileset_Set82TilesB
+	resource , Tileset_Set82TilesC
+	resource , Tileset_Set82TilesD
 	resource , Resource_Data4DE
 	resource , Resource_Data4DF
 	resource , Resource_Data4E0
-	resource , Resource_Data4E1
-	resource , Resource_Data4E2
-	resource , Resource_Data4E3
-	resource , Resource_Data4E4
-	resource , Resource_Data4E5
+	resource , Tileset_Set83Palette
+	resource , Tileset_Set83TilesA
+	resource , Tileset_Set83TilesB
+	resource , Tileset_Set83TilesC
+	resource , Tileset_Set83TilesD
 	resource , Resource_Data4E6
-	resource , Resource_Data4E7
-	resource , Resource_Data4E8
-	resource , Resource_Data4E9
-	resource , Resource_Data4EA
-	resource , Resource_Data4EB
+	resource , Tileset_Set84Palette
+	resource , Tileset_Set84TilesA
+	resource , Tileset_Set84TilesB
+	resource , Tileset_Set84TilesC
+	resource , Tileset_Set84TilesD
 	resource , Resource_Data4EC
-	resource , Resource_Data4ED
-	resource , Resource_Data4EE
-	resource , Resource_Data4EF
-	resource , Resource_Data4F0
-	resource , Resource_Data4F1
+	resource , Tileset_Set85Palette
+	resource , Tileset_Set85TilesA
+	resource , Tileset_Set85TilesB
+	resource , Tileset_Set85TilesC
+	resource , Tileset_Set85TilesD
 	resource , Resource_Data4F2
 	resource , Resource_Data4F3
 	resource , Resource_Data4F4
@@ -1290,42 +1290,42 @@ Resource_DirectoryTable:
 	resource , Resource_Data4FA
 	resource , Resource_Data4FB
 	resource , Resource_Data4FC
-	resource , Resource_Data4FD
-	resource , Resource_Data4FE
+	resource , Tileset_Set86Palette
+	resource , Tileset_Set86TilesA
 	resource , Resource_Data4FF
 	resource , Resource_Data500
 	resource , Resource_Data501
-	resource , Resource_Data502
-	resource , Resource_Data503
-	resource , Resource_Data504
-	resource , Resource_Data505
-	resource , Resource_Data506
+	resource , Tileset_Set87Palette
+	resource , Tileset_Set87TilesA
+	resource , Tileset_Set87TilesB
+	resource , Tileset_Set87TilesC
+	resource , Tileset_Set87TilesD
 	resource , Resource_Data507
-	resource , Resource_Data508
-	resource , Resource_Data509
-	resource , Resource_Data50A
-	resource , Resource_Data50B
-	resource , Resource_Data50C
+	resource , Tileset_Set88Palette
+	resource , Tileset_Set88TilesA
+	resource , Tileset_Set88TilesB
+	resource , Tileset_Set88TilesC
+	resource , Tileset_Set88TilesD
 	resource , Resource_Data50D
 	resource , Resource_Data50E
 	resource , Resource_Data50F
-	resource , Resource_Data510
-	resource , Resource_Data511
-	resource , Resource_Data512
-	resource , Resource_Data513
-	resource , Resource_Data514
+	resource , Tileset_Set89Palette
+	resource , Tileset_Set89TilesA
+	resource , Tileset_Set89TilesB
+	resource , Tileset_Set89TilesC
+	resource , Tileset_Set89TilesD
 	resource , Resource_Data515
-	resource , Resource_Data516
-	resource , Resource_Data517
-	resource , Resource_Data518
-	resource , Resource_Data519
-	resource , Resource_Data51A
+	resource , Tileset_Set90Palette
+	resource , Tileset_Set90TilesA
+	resource , Tileset_Set90TilesB
+	resource , Tileset_Set90TilesC
+	resource , Tileset_Set90TilesD
 	resource , Resource_Data51B
-	resource , Resource_Data51C
-	resource , Resource_Data51D
-	resource , Resource_Data51E
-	resource , Resource_Data51F
-	resource , Resource_Data520
+	resource , Tileset_Set91Palette
+	resource , Tileset_Set91TilesA
+	resource , Tileset_Set91TilesB
+	resource , Tileset_Set91TilesC
+	resource , Tileset_Set91TilesD
 	resource , Resource_Data521
 	resource , Resource_Data522
 	resource , Resource_Data523
@@ -1341,90 +1341,90 @@ Resource_DirectoryTable:
 	resource , Resource_Data52D
 	resource , Resource_Data52E
 	resource , Resource_Data52F
-	resource , Resource_Data530
-	resource , Resource_Data531
+	resource , Tileset_Set92Palette
+	resource , Tileset_Set92TilesA
 	resource , Resource_Data532
-	resource , Resource_Data533
-	resource , Resource_Data534
-	resource , Resource_Data535
-	resource , Resource_Data536
-	resource , Resource_Data537
+	resource , Tileset_Set93Palette
+	resource , Tileset_Set93TilesA
+	resource , Tileset_Set93TilesB
+	resource , Tileset_Set93TilesC
+	resource , Tileset_Set93TilesD
 	resource , Resource_Data538
-	resource , Resource_Data539
-	resource , Resource_Data53A
+	resource , Tileset_Set94Palette
+	resource , Tileset_Set94TilesA
 	resource , Resource_Data53B
-	resource , Resource_Data53C
-	resource , Resource_Data53D
-	resource , Resource_Data53E
-	resource , Resource_Data53F
-	resource , Resource_Data540
+	resource , Tileset_Set95Palette
+	resource , Tileset_Set95TilesA
+	resource , Tileset_Set95TilesB
+	resource , Tileset_Set95TilesC
+	resource , Tileset_Set95TilesD
 	resource , Resource_Data541
 	resource , Resource_Data542
 	resource , Resource_Data543
 	resource , Resource_Data544
-	resource , Resource_Data545
-	resource , Resource_Data546
-	resource , Resource_Data547
-	resource , Resource_Data548
-	resource , Resource_Data549
+	resource , Tileset_Set96Palette
+	resource , Tileset_Set96TilesA
+	resource , Tileset_Set96TilesB
+	resource , Tileset_Set96TilesC
+	resource , Tileset_Set96TilesD
 	resource , Resource_Data54A
-	resource , Resource_Data54B
-	resource , Resource_Data54C
-	resource , Resource_Data54D
-	resource , Resource_Data54E
-	resource , Resource_Data54F
+	resource , Tileset_Set97Palette
+	resource , Tileset_Set97TilesA
+	resource , Tileset_Set97TilesB
+	resource , Tileset_Set97TilesC
+	resource , Tileset_Set97TilesD
 	resource , Resource_Data550
 	resource , Resource_Data551
 	resource , Resource_Data552
-	resource , Resource_Data553
-	resource , Resource_Data554
-	resource , Resource_Data555
-	resource , Resource_Data556
-	resource , Resource_Data557
+	resource , Tileset_Set98Palette
+	resource , Tileset_Set98TilesA
+	resource , Tileset_Set98TilesB
+	resource , Tileset_Set98TilesC
+	resource , Tileset_Set98TilesD
 	resource , Resource_Data558
 	resource , Resource_Data559
 	resource , Resource_Data55A
-	resource , Resource_Data55B
-	resource , Resource_Data55C
+	resource , Tileset_Set99Palette
+	resource , Tileset_Set99TilesA
 	resource , Resource_Data55D
 	resource , Resource_Data55E
 	resource , Resource_Data55F
 	resource , Resource_Data560
 	resource , Resource_Data561
 	resource , Resource_Data562
-	resource , Resource_Data563
-	resource , Resource_Data564
-	resource , Resource_Data565
-	resource , Resource_Data566
-	resource , Resource_Data567
+	resource , Tileset_Set100Palette
+	resource , Tileset_Set100TilesA
+	resource , Tileset_Set100TilesB
+	resource , Tileset_Set100TilesC
+	resource , Tileset_Set100TilesD
 	resource , Resource_Data568
 	resource , Resource_Data569
-	resource , Resource_Data56A
-	resource , Resource_Data56B
-	resource , Resource_Data56C
-	resource , Resource_Data56D
-	resource , Resource_Data56E
+	resource , Tileset_Set101Palette
+	resource , Tileset_Set101TilesA
+	resource , Tileset_Set101TilesB
+	resource , Tileset_Set101TilesC
+	resource , Tileset_Set101TilesD
 	resource , Resource_Data56F
-	resource , Resource_Data570
-	resource , Resource_Data571
-	resource , Resource_Data572
-	resource , Resource_Data573
-	resource , Resource_Data574
+	resource , Tileset_Set102Palette
+	resource , Tileset_Set102TilesA
+	resource , Tileset_Set102TilesB
+	resource , Tileset_Set102TilesC
+	resource , Tileset_Set102TilesD
 	resource , Resource_Data575
-	resource , Resource_Data576
-	resource , Resource_Data577
-	resource , Resource_Data578
-	resource , Resource_Data579
-	resource , Resource_Data57A
+	resource , Tileset_Set103Palette
+	resource , Tileset_Set103TilesA
+	resource , Tileset_Set103TilesB
+	resource , Tileset_Set103TilesC
+	resource , Tileset_Set103TilesD
 	resource , Resource_Data57B
 	resource , Resource_Data57C
 	resource , Resource_Data57D
 	resource , Resource_Data57E
-	resource , Resource_Data57F
-	resource , Resource_Data580
-	resource , Resource_Data581
-	resource , Resource_Data582
-	resource , Resource_Data583
+	resource , Tileset_Set104Palette
+	resource , Tileset_Set104TilesA
+	resource , Tileset_Set104TilesB
+	resource , Tileset_Set104TilesC
+	resource , Tileset_Set104TilesD
 	resource , Resource_Data584
 	resource , Resource_Data585
 	resource , Resource_Data586
@@ -1438,25 +1438,25 @@ Resource_DirectoryTable:
 	resource , Resource_Data58E
 	resource , Resource_Data58F
 	resource , Resource_Data590
-	resource , Resource_Data591
-	resource , Resource_Data592
-	resource , Resource_Data593
-	resource , Resource_Data594
-	resource , Resource_Data595
+	resource , Tileset_Set105Palette
+	resource , Tileset_Set105TilesA
+	resource , Tileset_Set105TilesB
+	resource , Tileset_Set105TilesC
+	resource , Tileset_Set105TilesD
 	resource , Resource_Data596
-	resource , Resource_Data597
-	resource , Resource_Data598
-	resource , Resource_Data599
-	resource , Resource_Data59A
-	resource , Resource_Data59B
+	resource , Tileset_Set106Palette
+	resource , Tileset_Set106TilesA
+	resource , Tileset_Set106TilesB
+	resource , Tileset_Set106TilesC
+	resource , Tileset_Set106TilesD
 	resource , Resource_Data59C
 	resource , Resource_Data59D
 	resource , Resource_Data59E
-	resource , Resource_Data59F
-	resource , Resource_Data5A0
-	resource , Resource_Data5A1
-	resource , Resource_Data5A2
-	resource , Resource_Data5A3
+	resource , Tileset_Set107Palette
+	resource , Tileset_Set107TilesA
+	resource , Tileset_Set107TilesB
+	resource , Tileset_Set107TilesC
+	resource , Tileset_Set107TilesD
 	resource , Resource_Data5A4
 	resource , Resource_Data5A5
 	resource , Resource_Data5A6
@@ -1465,27 +1465,27 @@ Resource_DirectoryTable:
 	resource , Resource_Data5A9
 	resource , Resource_Data5AA
 	resource , Resource_Data5AB
-	resource , Resource_Data5AC
-	resource , Resource_Data5AD
+	resource , Tileset_Set108Palette
+	resource , Tileset_Set108TilesA
 	resource , Resource_Data5AE
-	resource , Resource_Data5AF
-	resource , Resource_Data5B0
-	resource , Resource_Data5B1
-	resource , Resource_Data5B2
-	resource , Resource_Data5B3
+	resource , Tileset_Set109Palette
+	resource , Tileset_Set109TilesA
+	resource , Tileset_Set109TilesB
+	resource , Tileset_Set109TilesC
+	resource , Tileset_Set109TilesD
 	resource , Resource_Data5B4
 	resource , Resource_Data5B5
 	resource , Resource_Data5B6
 	resource , Resource_Data5B7
-	resource , Resource_Data5B8
-	resource , Resource_Data5B9
-	resource , Resource_Data5BA
+	resource , Tileset_Set110Palette
+	resource , Tileset_Set110TilesA
+	resource , Tileset_Set110TilesB
 	resource , Resource_Data5BB
 	resource , Resource_Data5BC
 	resource , Resource_Data5BD
-	resource , Resource_Data5BE
-	resource , Resource_Data5BF
-	resource , Resource_Data5C0
+	resource , Tileset_Set111Palette
+	resource , Tileset_Set111TilesA
+	resource , Tileset_Set111TilesB
 	resource , Resource_Data5C1
 	resource , Resource_Data5C2
 	resource , Resource_Data5C3
@@ -1504,38 +1504,38 @@ Resource_DirectoryTable:
 	resource , Resource_Data5D0
 	resource , Resource_Data5D1
 	resource , Resource_Data5D2
-	resource , Resource_Data5D3
-	resource , Resource_Data5D4
-	resource , Resource_Data5D5
-	resource , Resource_Data5D6
-	resource , Resource_Data5D7
+	resource , Tileset_Set112Palette
+	resource , Tileset_Set112TilesA
+	resource , Tileset_Set112TilesB
+	resource , Tileset_Set112TilesC
+	resource , Tileset_Set112TilesD
 	resource , Resource_Data5D8
-	resource , Resource_Data5D9
-	resource , Resource_Data5DA
-	resource , Resource_Data5DB
-	resource , Resource_Data5DC
-	resource , Resource_Data5DD
+	resource , Tileset_Set113Palette
+	resource , Tileset_Set113TilesA
+	resource , Tileset_Set113TilesB
+	resource , Tileset_Set113TilesC
+	resource , Tileset_Set113TilesD
 	resource , Resource_Data5DE
-	resource , Resource_Data5DF
-	resource , Resource_Data5E0
-	resource , Resource_Data5E1
-	resource , Resource_Data5E2
-	resource , Resource_Data5E3
+	resource , Tileset_Set114Palette
+	resource , Tileset_Set114TilesA
+	resource , Tileset_Set114TilesB
+	resource , Tileset_Set114TilesC
+	resource , Tileset_Set114TilesD
 	resource , Resource_Data5E4
-	resource , Resource_Data5E5
-	resource , Resource_Data5E6
-	resource , Resource_Data5E7
-	resource , Resource_Data5E8
-	resource , Resource_Data5E9
+	resource , Tileset_Set115Palette
+	resource , Tileset_Set115TilesA
+	resource , Tileset_Set115TilesB
+	resource , Tileset_Set115TilesC
+	resource , Tileset_Set115TilesD
 	resource , Resource_Data5EA
 	resource , Resource_Data5EB
 	resource , Resource_Data5EC
 	resource , Resource_Data5ED
-	resource , Resource_Data5EE
-	resource , Resource_Data5EF
-	resource , Resource_Data5F0
-	resource , Resource_Data5F1
-	resource , Resource_Data5F2
+	resource , Tileset_Set116Palette
+	resource , Tileset_Set116TilesA
+	resource , Tileset_Set116TilesB
+	resource , Tileset_Set116TilesC
+	resource , Tileset_Set116TilesD
 	resource , Resource_Data5F3
 	resource , Resource_Data5F4
 	resource , Resource_Data5F5
@@ -1543,37 +1543,37 @@ Resource_DirectoryTable:
 	resource , Resource_Data5F7
 	resource , Resource_Data5F8
 	resource , Resource_Data5F9
-	resource , Resource_Data5FA
-	resource , Resource_Data5FB
-	resource , Resource_Data5FC
-	resource , Resource_Data5FD
-	resource , Resource_Data5FE
+	resource , Tileset_Set117Palette
+	resource , Tileset_Set117TilesA
+	resource , Tileset_Set117TilesB
+	resource , Tileset_Set117TilesC
+	resource , Tileset_Set117TilesD
 	resource , Resource_Data5FF
 	resource , Resource_Data600
 	resource , Resource_Data601
-	resource , Resource_Data602
-	resource , Resource_Data603
-	resource , Resource_Data604
-	resource , Resource_Data605
-	resource , Resource_Data606
+	resource , Tileset_Set118Palette
+	resource , Tileset_Set118TilesA
+	resource , Tileset_Set118TilesB
+	resource , Tileset_Set118TilesC
+	resource , Tileset_Set118TilesD
 	resource , Resource_Data607
-	resource , Resource_Data608
-	resource , Resource_Data609
-	resource , Resource_Data60A
-	resource , Resource_Data60B
-	resource , Resource_Data60C
+	resource , Tileset_Set119Palette
+	resource , Tileset_Set119TilesA
+	resource , Tileset_Set119TilesB
+	resource , Tileset_Set119TilesC
+	resource , Tileset_Set119TilesD
 	resource , Resource_Data60D
-	resource , Resource_Data60E
-	resource , Resource_Data60F
-	resource , Resource_Data610
-	resource , Resource_Data611
-	resource , Resource_Data612
+	resource , Tileset_Set120Palette
+	resource , Tileset_Set120TilesA
+	resource , Tileset_Set120TilesB
+	resource , Tileset_Set120TilesC
+	resource , Tileset_Set120TilesD
 	resource , Resource_Data613
-	resource , Resource_Data614
-	resource , Resource_Data615
-	resource , Resource_Data616
-	resource , Resource_Data617
-	resource , Resource_Data618
+	resource , Tileset_Set121Palette
+	resource , Tileset_Set121TilesA
+	resource , Tileset_Set121TilesB
+	resource , Tileset_Set121TilesC
+	resource , Tileset_Set121TilesD
 	resource , Resource_Data619
 	resource , Resource_Data61A
 	resource , Resource_Data61B

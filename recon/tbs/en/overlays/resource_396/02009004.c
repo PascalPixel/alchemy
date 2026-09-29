@@ -1,3 +1,10 @@
+/* resource_396 0x02009004..0x02009224 ToretoHeya_EnterRoom (544 bytes with
+ * pool), formerly FIELD/TORETO_HEYA/ENTER_ROOM.C; the listing keeps the rows.
+ * Compiles exactly with this spelling. Remaining difference: it loads map
+ * 0x2d from its literal pool, the shape of a link-time symbol, spelled here
+ * as the equate Data_0000002d; it reaches the EWRAM buffer at 0x02001000,
+ * which the main image does not name; and the tint callback it installs is
+ * ToretoPalette_ApplyTint, still spelled by address. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"

@@ -1,3 +1,9 @@
+/* resource_3bb 0x02008bd4..0x020090dc KorosseoKabe_ApplyEntryState (1288 bytes
+ * with pool), formerly FIELD/KOROSSEO_KABE/ENTRY_STATE.C; the listing keeps
+ * the rows. Compiles exactly with this spelling. Remaining difference: it
+ * loads 0xe5 from its literal pool, the shape of a link-time symbol, spelled
+ * here as the equate Value_000000e5; its Main_ calls need the names of the
+ * import veneers they reach, and Data_02000240_t is gGameState. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -1,3 +1,10 @@
+/* resource_396 0x02008334..0x02008494 ToretoHeya_HandleFloorSwitch (352 bytes
+ * with pool), formerly FIELD/TORETO_HEYA/FLOOR_SWITCH.C; the listing keeps
+ * the rows. Compiles exactly with this spelling. Remaining difference: it
+ * loads map 0x2d and step 0x2000 from its literal pool, the shape of
+ * link-time symbols, which this draft spells as the equates Data_0000002d
+ * and Data_00002000; plain numbers compile to movs/lsls. Data_0200add0 is
+ * the overlay's own bss word. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

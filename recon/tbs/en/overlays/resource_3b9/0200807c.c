@@ -1,3 +1,10 @@
+/* resource_3b9 0x0200807c..0x02008238 KorashiamuIriguchi_GetAreaScript (444
+ * bytes with pool), formerly FIELD/KORASHIAMU_IRIGUCHI/AREA_SCRIPT.C; the
+ * listing keeps the rows. Compiles exactly with this spelling. Remaining
+ * difference: it compares the scene with 0x8c and 0x8e loaded from its
+ * literal pool, the shape of link-time symbols, spelled here as the equates
+ * Data_0000008c and Data_0000008e; the scripts it returns are listing rows
+ * that need labels, and Data_02000240_t is gGameState. */
 #include "TYPES.H"
 extern u8 Data_0200b39c[];
 extern u8 Data_0200b5f4[];

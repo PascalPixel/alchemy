@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer ImiruMura_ApplyEntryState
-	overlay_veneer Func_02000130
+	overlay_veneer Scene_GetEntrances
 	overlay_veneer SceneData_GetTableA990
-	overlay_veneer Func_0200016c
-	overlay_veneer Func_020001ec
+	overlay_veneer Scene_GetPlacements
+	overlay_veneer Scene_GetEvents
 	overlay_veneer SceneData_ReturnZero

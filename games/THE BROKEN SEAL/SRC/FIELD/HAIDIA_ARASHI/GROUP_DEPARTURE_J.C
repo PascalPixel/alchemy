@@ -1,6 +1,8 @@
 #include "GROUP_DEPARTURE.H"
 extern u8 MsgHaidiaDontLeaveMeHere[];
 extern u8 MsgHaidiaUghHrnghhh[];
+extern u8 MsgHaidiaBoulderNeedGet[];
+extern u8 MsgHaidiaWantDumpStuff[];
 
 void FieldScene_RunScene372SequenceB(void)
 {
@@ -33,5 +35,25 @@ void FieldScene_RunActor22SceneWhenFlag836Only(void)
         Event_SetMessage((s32)MsgHaidiaDontLeaveMeHere);
         HaidiaArashi_RunCallOutSequence();
         Event_End();
+    }
+}
+
+void FieldScene_RunScene372SequenceC(void)
+{
+    if (GameFlag_IsSet(0x841) != 0) {
+        Event_Begin();
+        Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
+        Event_Wait(20);
+        Event_SetMessage((s32)MsgHaidiaBoulderNeedGet);
+        Event_ShowMessage(22, 0);
+        Actor_FaceDirection(22, 0xe000, 10);
+        Event_End();
+    } else {
+        if (GameFlag_IsSet(0x837) == 0) {
+            Event_Begin();
+            Event_SetMessage((s32)MsgHaidiaWantDumpStuff);
+            HaidiaArashi_RunCallOutSequence();
+            Event_End();
+        }
     }
 }

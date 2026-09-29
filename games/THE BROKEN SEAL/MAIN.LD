@@ -333,7 +333,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/SET_WORK_TRIPLE_IF_NON_NEGATIVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/WAIT_WORK_VALUES_BELOW256.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RUN_COPIED_DECODER.o"(.text)
-        "*/recon/tbs/raw/080123f4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/BUILD_SCANLINE_TABLE.o"(.text)
         "*/recon/tbs/raw/08012518.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/FIND_NEXT_NUMBER_WITH_METADATA.o"(.text)
         "*/recon/tbs/raw/08012b2c.o"(.text .rodata .data .padding)

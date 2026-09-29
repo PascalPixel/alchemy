@@ -1,5 +1,7 @@
-use crate::compiler::bundle_data::{HostDigests, AGBCC_EXPECTED, EXPECTED};
-use crate::compiler::routing::{agbcc_driver, bundle, bundle_for, root, CompilerTarget};
+use crate::compiler::bundle_data::{HostDigests, AGBCC_ARM_EXPECTED, AGBCC_EXPECTED, EXPECTED};
+use crate::compiler::routing::{
+    agbcc_arm_driver, agbcc_driver, bundle, bundle_for, root, CompilerTarget,
+};
 use crate::compiler::sha256;
 use fs2::FileExt;
 use std::fs::{self, File, OpenOptions};
@@ -250,35 +252,47 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     if validation_cached("agbcc") {
         return Ok(());
     }
-    let driver = agbcc_driver();
-    validate_agbcc_driver(&driver)?;
+    validate_agbcc_driver(&agbcc_driver())?;
+    validate_agbcc_arm_driver(&agbcc_arm_driver())?;
     cache_validation("agbcc");
     Ok(())
 }
 fn validate_agbcc_driver(driver: &Path) -> Result<()> {
+    validate_driver(
+        driver,
+        "agbcc/old_agbcc",
+        AGBCC_EXPECTED,
+        &["-mthumb-interwork", "-O2"],
+    )
+}
+fn validate_agbcc_arm_driver(driver: &Path) -> Result<()> {
+    validate_driver(
+        driver,
+        "agbcc/agbcc_arm",
+        AGBCC_ARM_EXPECTED,
+        &["-mthumb-interwork", "-O2"],
+    )
+}
+fn validate_driver(driver: &Path, name: &str, table: &[HostDigests], flags: &[&str]) -> Result<()> {
     let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
-    let missing = "compiler bundle agbcc bundle is missing executable old_agbcc".to_string();
+    let missing = format!("compiler bundle is missing executable {name}");
     if executable_mode(&driver) != Some(true) {
         return Err(missing);
     }
     let bytes = fs::read(&driver).map_err(|_| missing)?;
     let actual = sha256::hex(&bytes);
-    let expected = lookup(AGBCC_EXPECTED, host).unwrap_or(&[]);
+    let expected = lookup(table, host).unwrap_or(&[]);
     if expected.is_empty() {
-        return Err(host_admission_message(host, "agbcc/old_agbcc"));
+        return Err(host_admission_message(host, name));
     }
     if !expected.contains(&actual.as_str()) {
-        return Err("compiler bundle agbcc/old_agbcc has an unapproved digest".to_string());
+        return Err(format!("compiler bundle {name} has an unapproved digest"));
     }
-    smoke(&[
-        driver.to_string_lossy().into_owned(),
-        "/dev/null".into(),
-        "-mthumb-interwork".into(),
-        "-O2".into(),
-        "-o".into(),
-        "/dev/null".into(),
-    ])
-    .map_err(|detail| format!("compiler bundle agbcc smoke compile failed: {detail}"))?;
+    let mut command = vec![driver.to_string_lossy().into_owned(), "/dev/null".into()];
+    command.extend(flags.iter().map(|flag| flag.to_string()));
+    command.extend(["-o".into(), "/dev/null".into()]);
+    smoke(&command)
+        .map_err(|detail| format!("compiler bundle {name} smoke compile failed: {detail}"))?;
     Ok(())
 }
 /// Validate a prospective installation without changing routing or cache state.
@@ -286,7 +300,8 @@ pub fn validate_installation(directory: &Path) -> Result<()> {
     ensure_no_codegen_environment_overrides()?;
     validate_game_directory(directory, CompilerTarget::Tbs)?;
     validate_game_directory(directory, CompilerTarget::Tla)?;
-    validate_agbcc_driver(&directory.join("agbcc/old_agbcc"))
+    validate_agbcc_driver(&directory.join("agbcc/old_agbcc"))?;
+    validate_agbcc_arm_driver(&directory.join("agbcc/agbcc_arm"))
 }
 pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
@@ -297,6 +312,7 @@ pub fn signature_paths() -> Vec<PathBuf> {
         bundle_dir.join("cc1"),
         bundle_dir.join("as"),
         agbcc_driver(),
+        agbcc_arm_driver(),
     ]
 }
 fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Path) {

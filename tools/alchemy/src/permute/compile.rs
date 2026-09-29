@@ -4,7 +4,7 @@
 use crate::build_rom::preprocessor_only;
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{
-    assembly_command, compiler_assembly_command, prefer_installed_binutils, root,
+    assembly_command, compiler_assembly_command, is_arm, prefer_installed_binutils, root,
 };
 use crate::targets::DecompTarget;
 use psynergy::process::run;
@@ -37,6 +37,7 @@ impl Toolchain {
         steps.push(compiler_assembly_command(
             &input.with_extension("s").to_string_lossy(),
             &input.with_extension("o").to_string_lossy(),
+            is_arm(self.target.compiler, &self.route),
         ));
         Ok(steps)
     }

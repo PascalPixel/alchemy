@@ -76,3 +76,15 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
     ),
     ("linux-arm64", &[]),
 ];
+
+/// pret's ARM compiler, agbcc/gcc_arm from the approved da598c1 source, built
+/// as pret's build.sh builds it (Pascal, 2026-09-29).
+pub static AGBCC_ARM_EXPECTED: &[HostDigests] = &[
+    (
+        "darwin-arm64",
+        &["bfd96c296dcd02aa7084ecbb9495f9f2350640e2b2e16d931059dbc0cfebbcd1"],
+    ),
+    ("darwin-x64", &[]),
+    ("linux-x64", &[]),
+    ("linux-arm64", &[]),
+];

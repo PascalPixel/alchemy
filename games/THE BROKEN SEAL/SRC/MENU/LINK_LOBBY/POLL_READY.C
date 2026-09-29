@@ -11,7 +11,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
 
 /* Frames the peers have been waited for; it follows the overlay's image. */
-static s32 sWaitFrames;
+s32 gLinkLobbyWaitFrames;
 extern struct LobbyPanel gLinkPeerSignatures[];
 
 s32 LinkLobby_PollPeerReady(void)
@@ -28,17 +28,17 @@ s32 LinkLobby_PollPeerReady(void)
     if (work->raised_trigger != 2) {
         LinkLobby_PeerSlotMatches(0);
         if (!Engine_GameFlagIsSet(0x303)) {
-            if (++sWaitFrames > 25) {
+            if (++gLinkLobbyWaitFrames > 25) {
                 for (i = 0; i < 4; i++) {
                     Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
                 }
-                sWaitFrames = 0;
+                gLinkLobbyWaitFrames = 0;
                 LinkLobby_WriteSlotValue(4);
             }
         } else {
-            sWaitFrames = 0;
+            gLinkLobbyWaitFrames = 0;
         }
-        if (sWaitFrames == 0) {
+        if (gLinkLobbyWaitFrames == 0) {
             if (LinkLobby_PeerSlotMatches(0)
                 && (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
                 Engine_GameFlagSet(0x201);
@@ -56,7 +56,7 @@ s32 LinkLobby_PollPeerReady(void)
         }
     }
     if ((GameFlag_IsSet(0x201) || GameFlag_IsSet(0x202)) && !GameFlag_IsSet(0x173)
-        && !LinkLobby_PeerSlotMatches(0) && sWaitFrames > 24) {
+        && !LinkLobby_PeerSlotMatches(0) && gLinkLobbyWaitFrames > 24) {
         work->raised_trigger = 2;
         GameFlag_Set(0x205);
         GameFlag_Clear(0x201);

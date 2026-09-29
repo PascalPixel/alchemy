@@ -13,7 +13,7 @@ s32 Engine_EventEnd(void);
 
 /* Frames since the attendant last called out; it follows the overlay's
  * image, after the peers' wait. */
-static u32 sCallFrames;
+u32 gLinkLobbyCallFrames;
 
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
 {
@@ -36,8 +36,8 @@ s32 LinkLobby_CallIntoCircle(void)
     if (set != 0) {
         return set;
     }
-    if (++sCallFrames == 300) {
-        sCallFrames = 0;
+    if (++gLinkLobbyCallFrames == 300) {
+        gLinkLobbyCallFrames = 0;
         Call1(Engine_GameFlagClear, 0x200);
     }
     set = Value1(Engine_GameFlagIsSet, 0x200);

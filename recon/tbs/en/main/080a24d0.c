@@ -1,3 +1,8 @@
+/* 2026-09-29: psynergy editions: the pooled 1 is the same in all five
+ * matching editions, a plain constant, so it is written as 1 (score 1570,
+ * was 820 with an invented symbol). The reference also keeps
+ * &Data_03001e68.process_state in r6 and reuses the screen register for
+ * 0xea6 after RenderOutput_ClearListFar. */
 /* 2026-09-29: eight minutes of permutation (--function
  * RunAssetSelectionScreen): 1530 -> 820 (11 register-only, 6 operand, 4
  * reordered, 2 inserted, 2 deleted) by taking the address of the
@@ -109,8 +114,6 @@ s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 void UiWindow_EraseBorderRectFar(s32, s32, s32, s32);
 void Event_ClearInvalidPackedValuesFar(void);
 
-extern u8 Value_00000001;
-
 /* Run the modal asset-selection screen and publish an accepted selection. */
 s32 RunAssetSelectionScreen(void)
 {
@@ -122,7 +125,6 @@ s32 RunAssetSelectionScreen(void)
     s32 result;
     s32 size;
     CopyFn copy;
-    u8 *busy;
 
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
@@ -153,9 +155,8 @@ s32 RunAssetSelectionScreen(void)
         style = screen->selection_style;
         *(u16 *)(selection + 0x19a) = style;
     }
-    busy = &Value_00000001;
     RenderOutput_ClearListFar(screen->resource_handle);
-    (&Data_03001e68)->process_state[0xea6] = (s32)busy;
+    (&Data_03001e68)->process_state[0xea6] = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Menu_ResetTwoResourceEntries();

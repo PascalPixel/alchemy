@@ -471,7 +471,7 @@ SECTIONS
         "*/recon/tbs/raw/0801c2ee.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_CLEAR_WORK_STATE_AND_WAIT_FRAME.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/RUN_SELECTION_FOR_VALUE.o"(.text)
-        "*/recon/tbs/raw/0801c34c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/TIMED_NOTICE_CREATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/TIMED_NOTICE_TICK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/TIMED_NOTICE_CLOSE_IF_ACTIVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/CALL_HANDLER_48.o"(.text)

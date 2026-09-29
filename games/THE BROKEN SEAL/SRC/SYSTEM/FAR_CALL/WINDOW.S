@@ -224,10 +224,10 @@ Menu_SelectSaveSlotActionFar:
 	.thumb_func
 Menu_SelectResourceLayoutFar:
 	overlay_veneer Menu_SelectResourceLayout
-	.global Func_08015200
+	.global UiTimedNotice_CreateFar
 	.thumb_func
-Func_08015200:
-	overlay_veneer Func_0801c34c
+UiTimedNotice_CreateFar:
+	overlay_veneer UiTimedNotice_Create
 	.global UiTimedNotice_CloseIfActiveFar
 	.thumb_func
 UiTimedNotice_CloseIfActiveFar:

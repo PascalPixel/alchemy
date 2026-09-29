@@ -65,7 +65,7 @@ void Func_08015000();
 void Func_08015040();
 void Func_08015120();
 void Func_080151e8();
-void Func_08015200();
+void UiTimedNotice_CreateFar();
 void Func_08015208();
 void Func_08015288();
 void Func_08015290();
@@ -247,7 +247,7 @@ s32 Func_0808c4f8(void)
         }
         if (GameFlag_IsSet(0x12F) != 0) {
             GameFlag_Clear(0x12F);
-            Func_08015200(FIELD_AT_OFFSET(g, s16 *, 0x1C0));
+            UiTimedNotice_CreateFar(FIELD_AT_OFFSET(g, s16 *, 0x1C0));
         }
         if (FIELD_AT_OFFSET(g, s16 *, 0x234) != 0) {
             Func_08095778(FIELD_AT_OFFSET(g, s16 *, 0x234), 1);

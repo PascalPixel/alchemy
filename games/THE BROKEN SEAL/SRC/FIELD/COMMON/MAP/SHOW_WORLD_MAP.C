@@ -40,6 +40,7 @@ struct FieldState {
 
 extern u8 gWorkSlot[];
 extern u8 Value_0000001b[];
+extern u8 MsgNotOnMap[];
 extern u32 gKeysRepeat;
 extern volatile u16 RegIme;
 
@@ -99,7 +100,7 @@ void Map_ShowWorldMap(void)
     BattleFx_SetupResourcesAndWindow();
     Scheduler_AddOrUpdateCallback((s32)Map_UpdateWorldMapMarkers, 0xc80);
     if (GameFlag_TestFar(284))
-        UiText_ShowPositionedMessageAndWaitFar(0x985, 1);
+        UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotOnMap, 1);
     do {
         WaitFrames(1);
     } while ((gKeysRepeat & 3) == 0);

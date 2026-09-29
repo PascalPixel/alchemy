@@ -63,20 +63,20 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32
     return copy(dst, src, size);
 }
 
-extern char Value_00000ad8;
-extern char Value_00000ad9;
-extern char Value_00000adb;
-extern char Value_00000adc;
-extern char Value_00000add;
-extern char Value_00000b7c;
-extern char Value_00000b7d;
-extern char Value_00000b7f;
-extern char Value_00000b80;
-extern char Value_00000b81;
-extern char Value_00000b82;
-extern char Value_00000b84;
-extern char Value_00000b85;
-extern char Value_00000bef;
+extern char MsgWhoseItem;
+extern char MsgWhichItem;
+extern char MsgUseOnWhom;
+extern char MsgGiveToWhom;
+extern char MsgSwapForWhat;
+extern char MsgEquippedIt;
+extern char MsgDroppedIt;
+extern char MsgGiven;
+extern char MsgRemoved;
+extern char MsgTraded;
+extern char MsgCannotRemoveItem;
+extern char MsgCannotTrade;
+extern char MsgCannotHoldMore;
+extern char MsgItemUseResult;
 
 void WaitFrames(s32 frames);
 void *Runtime_BumpAllocate(s32 size);
@@ -178,7 +178,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
             menu->selected_item_icon->state = 13;
-            ItemMenu_DrawMsg(0, (s32)&Value_00000ad8);
+            ItemMenu_DrawMsg(0, (s32)&MsgWhoseItem);
             RenderOutput_RedrawSavedRectFar(menu->info_window);
             UiText_DrawWorkValueWithLabel(menu->info_window);
             command = ItemMenu_PrepOwner(0);
@@ -201,7 +201,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetItemWin3();
             menu->selected_item_icon->state = 13;
             menu->list.icon->state = 1;
-            ItemMenu_DrawMsg(0, (s32)&Value_00000ad9);
+            ItemMenu_DrawMsg(0, (s32)&MsgWhichItem);
             sel = ItemMenu_RunList(0);
             state = 0;
             if (sel == -1) {
@@ -235,7 +235,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     ItemMenu_Use();
                     RenderOutput_ClearListFar(menu->info_window);
                     InventoryMenu_ShowModalMessage(
-                        menu->message_offset + (s32)&Value_00000bef, 0, -1);
+                        menu->message_offset + (s32)&MsgItemUseResult, 0, -1);
                     menu->list.icon->state = 13;
                     menu->item_count = ItemMenu_Collect(
                         Owner_GetStateFar(menu->item_owner), menu->items, 0);
@@ -274,7 +274,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             RenderOutput_RedrawSavedRectFar(menu->message_window);
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
-                (s32)&Value_00000adb, menu->message_window, 16, 16);
+                (s32)&MsgUseOnWhom, menu->message_window, 16, 16);
             if (ItemMenu_SelectTarget(0) != -1) {
                 command = 0;
                 if (ItemMenu_IsSpecial(
@@ -287,7 +287,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 if (result != -1) {
                     RenderOutput_ClearListFar(menu->info_window);
                     InventoryMenu_ShowModalMessage(
-                        menu->message_offset + (s32)&Value_00000bef, 0, -1);
+                        menu->message_offset + (s32)&MsgItemUseResult, 0, -1);
                     menu->list.icon->state = 13;
                     ItemMenu_TryBreak();
                     state = 1;
@@ -307,7 +307,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             RenderOutput_RedrawSavedRectFar(menu->message_window);
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
-                (s32)&Value_00000adc, menu->message_window, 16, 16);
+                (s32)&MsgGiveToWhom, menu->message_window, 16, 16);
             n = ItemMenu_SelectTarget(1);
             state = 4;
             if (n == -1) {
@@ -358,7 +358,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 menu->list.icon->state = 13;
                 WaitFrames(1);
                 RenderOutput_ClearListFar(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&Value_00000b7d, 14, 13);
+                InventoryMenu_ShowModalMessage((s32)&MsgDroppedIt, 14, 13);
                 menu->completion_flag = 1;
                 state = 1;
             } else {
@@ -448,23 +448,23 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             WaitFrames(1);
             if (aborted == 1) {
                 RenderOutput_ClearListFar(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&Value_00000b85, 15, 14);
+                InventoryMenu_ShowModalMessage((s32)&MsgCannotHoldMore, 15, 14);
             } else {
                 RenderOutput_ClearListFar(menu->info_window);
                 if (result == 1) {
                     InventoryMenu_ShowModalMessage(
-                        (s32)&Value_00000b7f, 15, 14);
+                        (s32)&MsgGiven, 15, 14);
                 } else {
                     ItemMenu_DrawEquipPreview(
                         menu->target_owner, menu->target_slot, 0, menu->target_owner);
                     InventoryMenu_ShowModalMessage(
-                        (s32)&Value_00000b7c, 15, 14);
+                        (s32)&MsgEquippedIt, 15, 14);
                     item = Item_Get(menu->selected_item);
                     if ((item->flags & 1) != 0) {
                         Audio_PlayCue(0x67);
                         RenderOutput_ClearListFar(menu->info_window);
                         InventoryMenu_ShowModalMessage(
-                            (s32)&Value_00000b7c + 7, 14, 14);
+                            (s32)&MsgEquippedIt + 7, 14, 14);
                     }
                 }
             }
@@ -476,7 +476,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             aborted = 0;
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
-            ItemMenu_DrawMsg(0, (s32)&Value_00000add);
+            ItemMenu_DrawMsg(0, (s32)&MsgSwapForWhat);
             sel = ItemMenu_RunList(1);
             if (sel == -1) {
                 state = 6;
@@ -546,7 +546,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 CopyWords(IWRAM_COPY_WORDS, source, source_copy, 0x14c);
                 CopyWords(IWRAM_COPY_WORDS, target, target_copy, 0x14c);
                 RenderOutput_ClearListFar(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&Value_00000b84, 15, 14);
+                InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 15, 14);
             } else {
                 Owner_RecalculateStatsFar(menu->item_owner);
                 Owner_RecalculateStatsFar(menu->target_owner);
@@ -568,17 +568,17 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                         ItemMenu_DrawEquipPreview(
                             menu->target_owner, menu->target_slot, 0, menu->target_owner);
                         InventoryMenu_ShowModalMessage(
-                            (s32)&Value_00000b7c, 15, 14);
+                            (s32)&MsgEquippedIt, 15, 14);
                         item = Item_Get(menu->selected_item);
                         if ((item->flags & 1) != 0) {
                             Audio_PlayCue(0x67);
                             RenderOutput_ClearListFar(menu->info_window);
                             InventoryMenu_ShowModalMessage(
-                                (s32)&Value_00000b7c + 7, 14, 14);
+                                (s32)&MsgEquippedIt + 7, 14, 14);
                         }
                     } else {
                         InventoryMenu_ShowModalMessage(
-                            (s32)&Value_00000b81, 15, 14);
+                            (s32)&MsgTraded, 15, 14);
                     }
                 }
             }
@@ -596,7 +596,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             if (result == -2) {
                 RenderOutput_ClearListFar(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&Value_00000b82, 0, -1);
+                InventoryMenu_ShowModalMessage((s32)&MsgCannotRemoveItem, 0, -1);
                 state = 1;
                 break;
             }
@@ -610,13 +610,13 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_DrawEquipPreview(
                 menu->item_owner, menu->selected_slot, 0, menu->item_owner);
             RenderOutput_ClearListFar(menu->info_window);
-            InventoryMenu_ShowModalMessage((s32)&Value_00000b7c, 15, 8);
+            InventoryMenu_ShowModalMessage((s32)&MsgEquippedIt, 15, 8);
             item = Item_Get(menu->selected_item);
             if ((item->flags & 1) != 0) {
                 Audio_PlayCue(0x67);
                 RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage(
-                    (s32)&Value_00000b7c + 7, 14, 8);
+                    (s32)&MsgEquippedIt + 7, 14, 8);
             }
             state = 1;
             break;
@@ -636,7 +636,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 menu->item_owner, menu->selected_slot, 0, menu->item_owner);
             menu->equip_preview = 0;
             RenderOutput_ClearListFar(menu->info_window);
-            InventoryMenu_ShowModalMessage((s32)&Value_00000b80, 14, 8);
+            InventoryMenu_ShowModalMessage((s32)&MsgRemoved, 14, 8);
             Event_ClearInvalidPackedValuesFar();
             state = 1;
             break;

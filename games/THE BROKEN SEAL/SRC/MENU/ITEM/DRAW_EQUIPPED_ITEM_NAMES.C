@@ -4,7 +4,7 @@
 #include "TYPES.H"
 #include "ITEM.H"
 
-extern u8 Value_00000182;
+extern u8 MsgItemName;
 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
@@ -18,16 +18,16 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items)
             item = items[i] & 0x1ff;
             switch (Item_Get(item)->type) {
             case 1:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&Value_00000182, window, 8, 8);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 8, 8);
                 break;
             case 2:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&Value_00000182, window, 8, 56);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 8, 56);
                 break;
             case 3:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&Value_00000182, window, 8, 40);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 8, 40);
                 break;
             case 4:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&Value_00000182, window, 8, 24);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 8, 24);
                 break;
             }
         }

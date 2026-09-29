@@ -24,7 +24,7 @@ extern u8 gGameState[];
 extern void *gBattleWork;
 extern volatile s32 gKeyState;
 extern void *gLinkCountdownWork;
-extern char Value_00000845;
+extern char MsgNoTimeToRun;
 
 s32 UiText_ShowLocalizedMessageAndWait(void)
 {
@@ -50,7 +50,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 active:
         work = UiWindow_Create(0, 7, 30, 4, 42);
         Ui_FillVramBlockPattern();
-        UiText_CopyMessageString((s32)&Value_00000845, buffer, TEXT_COUNT);
+        UiText_CopyMessageString((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {
             WaitFrames(1);

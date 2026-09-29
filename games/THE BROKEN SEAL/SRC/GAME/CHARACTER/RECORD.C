@@ -98,7 +98,7 @@ struct OwnerEquipTemplate {
 };
 
 extern s32 Character_StartingEquipOwnerIds[];
-extern u8 Value_00000066;
+extern u8 MsgCharacterName;
 
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void Party_AdvanceOwnerCountToTarget(s32, u8);
@@ -118,7 +118,7 @@ void Owner_InitRecords(void)
 
     for (owner = 0; owner <= 7; owner++) {
         state = (struct OwnerRecordState *)Owner_GetState(owner);
-        Ui_AdjustValueWithoutLimitFar(owner + (s32)&Value_00000066, name_buf);
+        Ui_AdjustValueWithoutLimitFar(owner + (s32)&MsgCharacterName, name_buf);
         name = state->name;
         name[0] = name_buf[0];
         i = 0;

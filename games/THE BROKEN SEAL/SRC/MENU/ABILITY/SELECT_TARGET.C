@@ -56,7 +56,7 @@ struct PsynergyTargetMenu {
 extern struct PsynergyTargetMenu *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern char Value_0000053a;
+extern char MsgAbilityDescription;
 
 void *Owner_GetStateFar(s32 owner);
 s32 Math_Mod(s32 numerator, s32 denominator);
@@ -105,7 +105,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
                 if (!GameFlag_TestFar(0x151) && !shown) {
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
                     UiText_DrawCharacterAtOffsetFar(
-                        (menu->selected_action & 0x3fff) + (s32)&Value_0000053a,
+                        (menu->selected_action & 0x3fff) + (s32)&MsgAbilityDescription,
                         menu->info_window, 0, 0);
                     shown = 1;
                 } else {

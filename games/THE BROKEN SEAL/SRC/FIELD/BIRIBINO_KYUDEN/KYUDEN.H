@@ -31,7 +31,7 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32, s32, s32);
 
 void FieldScene_RunChestStep(s32 flag);
 void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag);
-void FieldScene_RunLongBranchingChoreography(void);
+void Kyuden_RunKolimaRequest(void);
 void FieldScene_RunPalaceGreeting(void);
 void ConfigurePrimarySceneChannels(void);
 void ConfigureSecondarySceneChannels(void);

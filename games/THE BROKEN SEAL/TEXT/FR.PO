@@ -10695,7 +10695,7 @@ msgctxt "message"
 msgid "02671"
 msgstr "{argument_actor_name:1} ne peut pas{line_break}porter plus de: {argument_item_name:1}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVenusDjinnJoined"
 msgid "02672"
 msgstr "Le Djinn de Vénus{line_break}{text_color:5}{argument_ability_name}{text_color:16} rejoint {argument_actor_name:1}.{end_wait}"
 

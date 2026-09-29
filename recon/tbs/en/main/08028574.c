@@ -24,7 +24,7 @@ struct MenuSelectionState {
     s16 resource_base;
 };
 extern struct MenuSelectionState *gMenuSelectWork;
-extern u8 Value_0000001f;
+extern u8 MsgCommandName;
 extern volatile u32 gKeyState, gKeysRepeat;
 void RenderOutput_PrepareForRedraw(void *);
 void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
@@ -41,7 +41,7 @@ s32 Menu_RunResourceSelectionLoop(s32 initial)
         if (work->resource_base != 0)
             resource = work->resource_base + work->selection;
         else
-            resource = work->resource_ids[work->selection] + (s32)&Value_0000001f;
+            resource = work->resource_ids[work->selection] + (s32)&MsgCommandName;
         UiText_DrawCharacterAtOffset(resource, work->work, 0, 0);
         while (1) {
             WaitFrames(1);

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "OBJECT_LOOKUP.H"
 #include "FIXED_MATH.H"
 
@@ -74,7 +75,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
             deltaZ += 0xffff;
         cellZ = deltaZ >> 16;
 
-        distance = ((s32 (*)(s32))0x030001d8)(deltaX * deltaX + cellZ * cellZ);
+        distance = Iwram_Sqrt(deltaX * deltaX + cellZ * cellZ);
         if ((candidate->flags & 0x10) != 0)
             distance = Math_Div(distance * 2, 3);
         if (distance >= bestDistance)

@@ -30,6 +30,6 @@ void SceneTransform_ApplyRotation(s32 *angles)
     m[9] = 0;
     m[10] = 0;
     m[11] = 0;
-    ((void (*)(s32 *))0x030002c0)(m);
+    Iwram_TransformMatrix(m);
 }
 

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
@@ -26,12 +27,6 @@ struct Local_080b7f9c {
 
 extern struct State_080b7f9c *gCameraWork;
 
-/*
- * The tail call below is a typed indirect call to the relocated routine at
- * 0x03000250, whose argument count is not established. Sys_Apply names
- * the bx rN veneer slot that reaches it, not a routine at that address.
- */
-
 void Camera_InitDefaultTransform(void)
 {
     struct State_080b7f9c *state = gCameraWork;
@@ -54,5 +49,5 @@ void Camera_InitDefaultTransform(void)
     transfer.first = 0;
     transfer.second = 0;
     transfer.third = state->field20;
-    ((void (*)(struct Local_080b7f9c *, struct State_080b7f9c *))0x03000250)(&transfer, state);
+    Iwram_TransformVector((s32 *)&transfer, (s32 *)state);
 }

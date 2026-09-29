@@ -2,8 +2,6 @@
 #include "IWRAM_CALL.H"
 #include "BATTLE_PRESENTATION.H"
 
-typedef s32 (*ArmRatio)(s32 numerator, s32 denominator);
-
 /* BG2 affine parameters as the HDMA work block keeps them. */
 struct Affine {
     u16 pa;
@@ -34,9 +32,10 @@ extern u8 Data_03001f00[];
 
 s32 GameFlag_TestFar(s32 flag);
 
-static __inline__ s32 Iwram_DivQ16(s32 numerator, s32 denominator)
+/* Inline, so the arguments are computed before the routine's address. */
+static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
-    return ((ArmRatio)0x0300013c)(numerator, denominator);
+    return Iwram_RatioMulQ14(divisor, value);
 }
 
 /* Zoom the battle floor about (cx, cy) by scale (16.16): set the BG2 affine
@@ -74,7 +73,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
     if (view->mode != 2)
         return;
     line = work->lines[work->page ^ 1];
-    ratio = Iwram_DivQ16(scale, 0x10000);
+    ratio = DivQ16(scale, 0x10000);
     step = ratio >> 8;
     affine = &work->affine;
     affine->pa = step;
@@ -86,7 +85,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
     affine->x = ((x + 0x7fff) >> 8) + ox + horizon;
     y = ((y + 0x7fff) >> 8) + oy - 0x1000;
     affine->y = y;
-    count = (Iwram_DivQ16((s16)step, 0x4000 - y) >> 16) + 1;
+    count = (DivQ16((s16)step, 0x4000 - y) >> 16) + 1;
     i = 0;
     if (!GameFlag_TestFar(0x16b)) {
         for (; i < 16; i++)

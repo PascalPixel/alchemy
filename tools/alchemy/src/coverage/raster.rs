@@ -138,7 +138,7 @@ impl Canvas {
         let edge = |across: i32, down: i32| {
             let near = |offset: i32, span: i32| offset.min(span - 1 - offset);
             let (a, d) = (near(across, width), near(down, height));
-            !cut(a, d, corner) && (a == 0 || d == 0 || (a + d == corner - 1))
+            !cut(a, d, corner) && (cut(a - 1, d, corner) || cut(a, d - 1, corner))
         };
         for down in 0..height {
             for across in 0..width {

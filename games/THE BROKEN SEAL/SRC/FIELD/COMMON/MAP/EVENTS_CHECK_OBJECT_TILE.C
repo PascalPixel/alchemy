@@ -61,8 +61,8 @@ void CheckObjectMapTile(void)
             y += 0x1fffff;
         tile_y = (y >> 21) & 31;
 
-        tile = (u8 *)(0x02020000 +
-            ((tile_x + (tile_y << 5)) << 2));
+        tile = (u8 *)gMapBlocks +
+            ((tile_x + (tile_y << 5)) << 2);
     } else {
         if (object->map_layer <= 2) {
             tile = (u8 *)((struct MapState *)tile)

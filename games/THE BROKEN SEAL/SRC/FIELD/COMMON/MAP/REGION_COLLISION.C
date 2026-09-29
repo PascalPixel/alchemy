@@ -62,7 +62,7 @@ u8 GetFocusedObjectCollision(void)
             y += 0x1fffff;
         tile_y = (y >> 21) & 31;
 
-        tile = (u8 *)(0x02020000 + ((tile_x + (tile_y << 5)) << 2));
+        tile = (u8 *)gMapBlocks + ((tile_x + (tile_y << 5)) << 2);
     } else {
         tile = (u8 *)map->layers[0].cells;
 

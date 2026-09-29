@@ -1,4 +1,5 @@
 #include "DMA.H"
+#include "MAP.H"
 extern u32 gFrameCount;
 extern u8 Data_03001cfc[];
 extern u8 gDecodeBuffer[];
@@ -23,7 +24,9 @@ void Resource_RunCopiedDecoder(void *source, void *destination);
    decodes this frame's animation page into the buffer. */
 void MapAnimation_Start(void)
 {
-    u8 **pointers = (u8 **)0x03001e6c;
+    /* FAKEMATCH: the map work pointer, gMapWork, is read as the word after
+       the pages through one base; the reference loads one address for both. */
+    u8 **pointers = &gMapAnimationPages;
     u8 *pages = *pointers++;
     struct MapAnimationWork *work = *(struct MapAnimationWork **)pointers;
     s32 one = 1;

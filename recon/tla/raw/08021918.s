@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08021918
+	.global Resource_GetMetadataRecordFar
 	.thumb_func
-Func_08021918:
+Resource_GetMetadataRecordFar:
 	push	{lr}
 	movs	r3, #240
 	lsls	r3, r3, #4

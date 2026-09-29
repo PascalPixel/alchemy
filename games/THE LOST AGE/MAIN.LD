@@ -224,6 +224,8 @@ SECTIONS
         "*/recon/tla/raw/08022bd8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08022c84.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08022d1c.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/SYSTEM/RESOURCE/METADATA_SUM_COMMAND_LENGTHS.o"(.text)
+        "*/recon/tla/raw/08022f22.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08022f24.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080231a4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080231c8.o"(.text .rodata .data .padding)

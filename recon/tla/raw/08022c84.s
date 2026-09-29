@@ -19,7 +19,7 @@ Func_08022c84:
 	movs	r4, #0
 	str	r4, [sp, #0]
 	adds	r7, r0, #0
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r6, r0, #0

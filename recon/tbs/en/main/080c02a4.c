@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 3435 to 1990 on the permuter's scorer
+   (0 is exact); remaining 28 register-only, 14 operand, 11 reordered, 5
+   inserted, 4 deleted. Kept rewrites: 7x reorder independent statements,
+   6x swap commutative operands, 5x introduce a temporary, 5x remove a
+   temporary, 5x pointer arithmetic or indexing, 3x drop a same-width cast,
+   3x change loop form, 3x split or join a compound assignment, 3x test
+   truth or compare with zero, 2x add a same-width cast, 2x toggle
+   register, 1x reorder local declarations. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
 /* Draft, not exact (2026-09-25): 1120 of 1116 bytes, 451 differing halfwords.
    Hand-written from the assembly: the battle-entry transition. The normal
    entry copies seven 32-byte palette rows, fills two tile blocks, draws the
@@ -64,7 +75,7 @@ void BattlePres_SetActorRecordMode(s32 id, s32 mode);
 void Func_080c02a4(s32 enemy_count, s32 kind)
 {
     struct TransitionWork *work;
-    s32 *timer;
+    register s32 *timer;
     u16 *map;
     u16 tile;
     u32 i;
@@ -72,7 +83,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
     s32 count;
     s32 id;
     u8 *object;
-    u8 *link;
+    register u8 *link;
     u16 *ids;
     volatile u32 fill;
     struct ActorList list;
@@ -81,21 +92,21 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
     s32 zero;
     s32 mode;
     struct BgScroll *scroll;
-    struct IoWriteQueue *q;
     volatile u16 *ime;
+    struct IoWriteQueue *q;
     u32 saved;
 
-    work = (struct TransitionWork *)gTransitionWork[0];
+    work = (struct TransitionWork *)*gTransitionWork;
     timer = Runtime_AllocateHeapBlock(42, 4);
     if (kind != 0x15b) {
         Dma_Set(Data_080c5b30, (void *)0x06005020, 0x84000008, (volatile u32 *)0x040000d4);
+        mode = 1;
         Dma_Set(Data_080c5b30 + 32, (void *)0x06005040, 0x84000008, (volatile u32 *)0x040000d4);
-        Dma_Set(Data_080c5b30 + 64, (void *)0x06005060, 0x84000008, (volatile u32 *)0x040000d4);
+        Dma_Set(64 + Data_080c5b30, (void *)0x06005060, 0x84000008, (volatile u32 *)0x040000d4);
         Dma_Set(Data_080c5b30 + 96, (void *)0x06005080, 0x84000008, (volatile u32 *)0x040000d4);
         Dma_Set(Data_080c5b30 + 128, (void *)0x060050a0, 0x84000008, (volatile u32 *)0x040000d4);
         Dma_Set(Data_080c5b30 + 160, (void *)0x060050c0, 0x84000008, (volatile u32 *)0x040000d4);
         Dma_Set(Data_080c5b30 + 192, (void *)0x060050e0, 0x84000008, (volatile u32 *)0x040000d4);
-        mode = 1;
         *(u16 *)((u8 *)0x040000d4 - 212) = mode;
         work->visible = mode;
         work->phase = mode;
@@ -104,24 +115,24 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         Dma_Set((void *)&fill, (void *)0x06005000, 0x85000008, (volatile u32 *)0x040000d4);
         fill = 0;
         Dma_Set((void *)&fill, (void *)0x06005100, 0x85000008, (volatile u32 *)0x040000d4);
-        *(volatile u16 *)0x0400000a = 0xc04;
+        ((volatile u16 *)0x0400000a)[0] = 0xc04;
+        zero = 0;
         *(volatile u16 *)0x04000008 |= 2;
         work->phase = 2;
         map = (u16 *)0x06006000;
-        for (i = 0; i < 32; i++) {
-            if (i <= 20) {
+        for (i = 0; 32 > i; i++) {
+            if (20 >= i) {
                 tile = 0xf080;
             } else {
                 tile = 0xf088;
             }
-            for (j = 0; j < 32; j++) {
+            for (j = 0; j < 32; j += 1) {
                 *map++ = tile;
             }
         }
         scroll = (struct BgScroll *)0x03001ad0;
-        zero = 0;
         scroll[0].y = 32;
-        scroll[1].y = 32;
+        (*(scroll + 1)).y = 32;
         scroll[1].x = 8;
         WaitFrames(1);
         *(volatile u16 *)0x04000040 = 0xf0;
@@ -148,45 +159,46 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         scroll[0].y = zero;
         Runtime_SetIrqHandler(2, 0, 0);
     } else {
-        link = *(u8 **)((u8 *)gTransitionWork - 140); /* FAKEMATCH: 0x03001e74 spelled from the work cell so both share one pool entry */
+        link = *(u8 **)((u8 *)gTransitionWork - 140);
+        /* FAKEMATCH: 0x03001e74 spelled from the work cell so both share one pool entry */
         work->visible = 1;
         work->done = 0;
         count = BattleParty_ListActorIds(3, party);
-        for (i = 0; i != count; i++) {
+        i = 0;
+        while (i != count) {
             id = i + 120;
-            if ((s32)i <= 7) {
+            if (7 >= (s32)i) {
                 id = i;
             }
             object = GetBattleObjectSlot(id);
             if (Owner_GetStateFar(id)[0x128] != 148) {
                 *(s32 *)(object + 24) = 0xb333;
             }
+            i++;
         }
-
         q = &gIoWriteQueue;
         do {
             ime = &RegIme;
             saved = *ime;
-        } while (0);
+        } while (0 != 0);
         *ime = (u16)ime;
         count = q->count;
-        if (count <= 31) {
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
-            *(u16 *)&q->count = count + 1;
+        if (31 >= count) {
+            u32 *destination = (u32 *)((u8 *)q + 12 * count + 4);
+            *&q->count = count + 1;
             *destination++ = 0x6041;
             *destination++ = 0x04000000;
             *destination = 0x20000;
         }
         *ime = saved;
         WaitFrames(1);
-
-        zero = 0;
         *(u16 *)(link + 0x648) = 0x21;
         list.count = BattleParty_ListActorIds(2, list.ids);
         list.ids[list.count] = 0xff;
         BattleActor_SpawnObjectsForList(list.ids, 0);
         Func_080c9028(&list);
         BattlePres_SetupTransitionScene(0, 0, 0, 100);
+        zero = 0;
         *timer = zero;
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         WaitFrames(1);
@@ -200,28 +212,33 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         ids[count] = 0xff;
         BattleActor_SpawnObjectsForList(ids, 0);
         count = BattleParty_ListActorIds(1, ids);
-        for (i = 0; i != count; i++) {
-            BattlePres_SetActorRecordMode(ids[i], 1);
+        i = 0;
+        while (i != count) {
+            BattlePres_SetActorRecordMode(*(ids + i), 1);
+            i++;
         }
-        for (i = 0; i != 16; i++) {
+        for (i = 0; i != 16; i += 1) {
             *(volatile u16 *)0x04000052 = i | 0x1000;
             WaitFrames(1);
         }
-        for (i = 0; i != count; i++) {
-            BattlePres_SetActorRecordMode(ids[i], 0);
+        i = 0;
+        if (i != count) {
+            do {
+                BattlePres_SetActorRecordMode(ids[i], 0);
+                i++;
+            } while (i != count);
         }
         BattleIntro_AnnounceEncounter(enemy_count);
         ((volatile u16 *)0x03001ad0)[1] = 0;
         WaitFrames(1);
         Runtime_SetIrqHandler(2, 0, 0);
     }
-
     Runtime_SetIrqHandler(2, 0, 0);
     *(volatile u16 *)0x0400000a = 0x1f83;
     WaitFrames(1);
     *(volatile u16 *)0x0400000a = 0x1f83;
     *(volatile u16 *)0x04000008 &= 0xfffd;
     ((volatile u16 *)0x03001ad0)[2] = 8;
-    *(volatile u16 *)0x04000000 = 0x1541;
+    ((volatile u16 *)0x04000000)[0] = 0x1541;
     Runtime_ReleaseHeapBlock(42);
 }

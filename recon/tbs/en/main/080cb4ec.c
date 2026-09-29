@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 4332 to 3242 on the permuter's scorer
+   (0 is exact); remaining 63 register-only, 2 stack-only, 10 operand, 16
+   reordered, 13 inserted, 4 deleted. Kept rewrites: 8x reorder independent
+   statements, 7x swap commutative operands, 6x introduce a temporary, 3x
+   reorder local declarations, 3x add a same-width cast, 3x move an
+   assignment into or out of a condition, 2x remove a temporary, 2x drop a
+   same-width cast, 2x change loop form, 2x test truth or compare with
+   zero. FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* Draft, not exact (2026-09-26): baseline 792 of 780 bytes, 153 aligned edits.
    Complete owner and frame (36 bytes); remaining branch stores hoist 3 and 2
    into saved registers instead of the reference's shared immediate/store tail;
@@ -84,14 +95,15 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
 {
     void **heap_cache;
     void **cursor;
-    u8 *work;
     void *canvas;
+    u8 *work;
     struct EffectPosition pos;
     void *rectangle[2];
     void **rectangle_slot;
     s32 frame;
     s32 i;
     Particle *p;
+    s32 tmp2;
 
     heap_cache = (void **)0x03001EEC;
     cursor = heap_cache;
@@ -111,17 +123,16 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
     *(s32 *)(work + 0x7784) = 0;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[0], &pos);
-    *(s32 *)0x04000028 = (0x40 - pos.x) << 8;
-
+    tmp2 = (0x40 - pos.x) << 8;
+    *(s32 *)0x04000028 = tmp2;
     {
         i = 0;
         p = (Particle *)(work + 0x7080);
-        do {
+        while (1) {
             s32 v;
-
             v = Math_ModU(Random16(), 0x60) + 16;
             p->pos_x = v;
-            p->pos_y = (24 - (i / 4)) << 16;
+            p->pos_y = (24 - i / 4) << 16;
             if (v <= 0x2B) {
                 p->vel_x = 3;
             } else if (v <= 0x33) {
@@ -145,30 +156,30 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
             i += 1;
             p->pos_x = p->pos_x << 16;
             p += 1;
-        } while (i != 64);
+            if (i == 64)
+                break;
+        }
     }
-
     Audio_PlayCue(0xD4);
     frame = 0;
     do {
-        if (frame <= 0x10) {
+        u8 *tmp5;
+        if (0x10 >= frame) {
             *(s16 *)0x04000052 = frame | 0x1000;
             if (frame == 0x10) {
                 *(s16 *)0x04000050 = 0;
             }
         }
-        if (frame > 0x67) {
+        if (0x67 < frame) {
             *(s16 *)0x04000052 = (0x78 - frame) | 0x1000;
             if (frame == 0x68) {
                 *(s16 *)0x04000050 = 0x3F44;
             }
         }
-
         i = 15;
         p = (Particle *)(work + 0x7224);
-        do {
+        while (1 != 0) {
             s32 tick;
-            s32 abs_tick;
             s32 cell;
             s32 threshold;
             s32 width;
@@ -176,51 +187,53 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
             s32 x;
             s32 y;
             void *src;
-
             tick = p->vel_x;
-            abs_tick = (tick < 0) ? -tick : tick;
-            cell = abs_tick >> 17;
-            threshold = i * 4;
-            if (frame < threshold + 25) {
-                src = work + Data_080edf88[cell];
+            cell = (0 > tick ? -tick : tick) >> 17;
+            if (frame < (threshold = (u32)(i * 4)) + 25) {
+                u8 *tmp3;
+                tmp3 = Data_080edf88[cell] + work;
                 width = Data_080edf7f[cell];
-                x = (p->pos_x >> 16) - (width / 2);
+                x = (p->pos_x >> 16) - width / 2;
+                src = tmp3;
                 height = Data_080edf83[cell];
-                y = (p->pos_y >> 16) - (height / 2);
-                ((DrawRectangleFn)rectangle_slot[(u32)tick >> 31])(
-                    canvas, src, x, y, width, height);
+                y = (p->pos_y >> 16) - height / 2;
+                ((DrawRectangleFn)rectangle_slot[(u32)tick >> 31])(canvas, src, x, y, width, height);
                 if (frame >= threshold + 16) {
                     p->pos_x += p->vel_x;
                     p->pos_y += p->vel_y;
                 }
             } else {
-                src = work + Data_080edf88[cell];
+                s32 tmp;
+                u8 *tmp4;
                 width = Data_080edf7f[cell];
-                x = (p->pos_x >> 16) - (width / 2);
+                x = (p->pos_x >> 16) - width / 2;
+                tmp4 = work + Data_080edf88[cell];
                 height = Data_080edf83[cell];
-                y = (p->pos_y >> 16) - (height / 2);
+                tmp = height / 2;
+                y = (p->pos_y >> 16) - tmp;
+                src = tmp4;
                 height -= 4;
-                ((DrawRectangleFn)rectangle_slot[(u32)tick >> 31])(
-                    canvas, src, x, y, width, height);
+                ((DrawRectangleFn)rectangle_slot[(u32)tick >> 31])(canvas, src, x, y, width, height);
             }
             i -= 1;
             p -= 1;
-        } while (i != -1);
-
-        if (((u32)(frame - 0x17) <= 0x40) && !(3 & frame)) {
+            if (-1 == i)
+                break;
+        }
+        if ((u32)(frame - 0x17) <= 0x40 && !(3 & frame)) {
             ObjectGroup_UpdateMembers(WORK_EFX->actors[0], 7, 5, 0, 2);
             *(s32 *)(work + 0x77A8) = 1;
-            if (!(7 & frame)) {
+            if (!((7 & frame) != 0)) {
                 Audio_PlayCue(0x85);
             }
         }
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
-        *(s32 *)(work + 0x7824) = 1;
+        tmp5 = work + 0x7824;
+        *(s32 *)tmp5 = 1;
         WaitFrames(1);
         frame += 1;
     } while (frame != 0x78);
-
     Scheduler_RemoveCallback(0x080CD261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);

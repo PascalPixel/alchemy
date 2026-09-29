@@ -1,14 +1,12 @@
 /* 2026-09-29 alchemy permute: score 775 to 435 on the permuter's scorer (0
-   is exact); remaining 20 register-only, 1 operand, 5 reordered. Kept
-   rewrites: 4x reorder independent statements, 4x introduce a temporary,
-   3x reorder local declarations, 3x change loop form, 3x move an
-   assignment into or out of a condition, 2x remove a temporary, 2x add a
-   same-width cast, 2x split or join a compound assignment, 1x swap
-   commutative operands, 1x drop a same-width cast, 1x toggle register.
-   FAKEMATCH: the permuter's temporaries, register hints and swapped
-   operand orders below only steer allocation and scheduling; no programmer
-   would write them, so they stay tagged until a natural spelling replaces
-   them. */
+   is exact); remaining 20 register-only, 1 operand, 5 reordered, all the
+   cursor pointer in r5 where the reference has r7 and px in r7 where it
+   has r5. Kept, after reverting every permuter rewrite that did not pay:
+   the step count declared after the coordinates, the cursor y offset and
+   the x offset spelled as additions, y offset after the clamp, the y clamp
+   through a halfword copy (tagged), and the steps divided by the step
+   count itself, which is the __divsi3 call the reference makes with 2 (a
+   constant divisor would become shifts). */
 /* 2026-09-28: 264/264 bytes, 34 aligned edits (was 40). Reading the cursor
  * y into py before its eight-pixel pull-back, and again after it, gives the
  * reference's single y load kept in r6 for the test and the slide. The
@@ -82,7 +80,6 @@ struct CursorWork {
 
 extern struct CursorWork *gMenuWork;
 
-s32 Math_Div(s32 numerator, s32 denominator);
 void WaitFrames(s32 frames);
 
 void UiMenu_SlideCursor(s32 x, s32 y)
@@ -90,13 +87,12 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     struct CursorWork *work = gMenuWork;
     struct CursorIcon *cursor;
     struct CursorWindow *window;
-    register s32 px;
+    s32 px;
     s32 py;
     s32 cnt;
     s32 dx;
     s32 dy;
-    s32 tmp;
-    u16 tmp2;
+    u16 cursor_y;
 
     cnt = 2;
     if (work->skip_slide != 0) {
@@ -111,26 +107,26 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     if (cursor->x - 8 > 0) {
         cursor->x -= 8;
     }
-    tmp2 = cursor->y;
-    if ((py = tmp2) - 8 > 0)
+    cursor_y = cursor->y;
+    /* FAKEMATCH: the halfword copy and the unsigned pull-back only keep the reference allocation. */
+    if ((py = cursor_y) - 8 > 0)
         cursor->y = (u32)py - 8;
     py = cursor->y;
     y += 64;
     px = cursor->x << 4;
-    dx = Math_Div((x << 4) - px + 1, 2);
+    dx = ((x << 4) - px + 1) / cnt;
     py <<= 4;
-    tmp = (y << 4) - py + 1;
-    dy = Math_Div(tmp, 2);
-    while (1) {
+    dy = ((y << 4) - py + 1) / cnt;
+    do {
         window = work->window;
         px += dx;
-        cursor->attributes.x = cursor->x = (px >> 4) + (window->tile_x << 3) - 56;
+        cursor->attributes.x = cursor->x =
+            (px >> 4) + (window->tile_x << 3) - 56;
         py += dy;
-        cursor->attributes.y = cursor->y = (py >> 4) + (window->tile_y << 3) - 56;
-        cnt -= 1;
+        cursor->attributes.y = cursor->y =
+            (py >> 4) + (window->tile_y << 3) - 56;
+        cnt--;
         if (cnt != 0)
             WaitFrames(1);
-        if (cnt == 0)
-            break;
-    }
+    } while (cnt != 0);
 }

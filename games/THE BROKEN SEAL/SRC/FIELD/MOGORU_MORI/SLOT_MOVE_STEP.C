@@ -1,10 +1,8 @@
-/* Draft of resource_39f 0x02008cd0 (SceneActor_TryRunSlotZeroMoveStep), built with
- * games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MORI.H.
- * Remaining difference: none in its bytes, but its cue call reaches the veneer COMMON/OBJECT/STAGED_ACTOR.C names Audio_PlayCue, which FIELD_EVENT.H's inline of that name hides from this source; linking it would give the veneer a second name.
- * The listing keeps these rows. */
+/* Mogall Forest: when the leader can step onto the next slot, play the hop
+ * and move the leader there. The forest links the staged-actor code, so its
+ * scenes reach the engine by the names that code gives the imports. */
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "MORI.H"
-
-s32 Func_02003a40(s32 *p, s16 *q);
 
 /* 0x02004918 serves two imports: the two-argument mode select and the
  * zero-argument bracket close. */
@@ -14,7 +12,7 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
     u8 *f = (u8 *)p + 0x55;
     s32 saved = *f;
 
-    s32 r = Func_02003a40(p, arg);
+    s32 r = Object_CheckMovementCollision(p, arg);
 
     if (r == 0) {
         s32 m;

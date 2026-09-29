@@ -1,7 +1,9 @@
-/* Draft of resource_39f 0x020099b8 (MogoruMori_RunProbedLandingScene), from
- * the former games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/PROBED_LANDING.C.
- * Remaining difference: none in its bytes, but its cue call reaches the veneer COMMON/OBJECT/STAGED_ACTOR.C names Audio_PlayCue, which FIELD_EVENT.H's inline of that name hides from this source; linking it would give the veneer a second name.
- * The listing keeps these rows. */
+/* Mogall Forest: after the probe moves an actor, copy the cells it opened;
+ * when actor 9 reaches column 42 or actor 11 column 40, raise its priority,
+ * set flag 0x312 or 0x313 and play its landing. The forest links the
+ * staged-actor code, so its scenes reach the engine by the names that code
+ * gives the imports. */
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -11,7 +13,6 @@ struct Resource39fProbe {
 
 s32 StagedActor_FindClearPosition(struct Resource39fProbe *probe);
 void SceneActor_MoveAndRedraw(struct Resource39fProbe probe);
-s32 Engine_SetTriggerFlag(s32 flag);
 
 /* Mogoru Forest: after a probed actor moves, copy the cells it opened; when
  * actor 9 reaches column 42 or actor 11 column 40, raise its priority, set
@@ -44,9 +45,7 @@ void MogoruMori_RunProbedLandingScene(void)
             Map_CopyCellAttributes(26, 20, 2, 4, probe.word[2] >> 20, 32);
             Actor_SetSpritePriority(11, 1);
             landed = 1;
-            /* FAKEMATCH: a second name for the flag setter keeps the two
-             * branch tails from being cross-jumped together. */
-            Engine_SetTriggerFlag(0x313);
+            GameFlag_Set(0x313);
         }
     join:
         if (landed == 0) {

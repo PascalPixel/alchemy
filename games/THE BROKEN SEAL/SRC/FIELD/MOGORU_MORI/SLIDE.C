@@ -1,16 +1,13 @@
-/* Draft of resource_39f 0x02008d90 (FieldScene_RunScene39f_02000d90), built with
- * games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MORI.H.
- * Remaining difference: none in its bytes, but its cue call reaches the veneer COMMON/OBJECT/STAGED_ACTOR.C names Audio_PlayCue, which FIELD_EVENT.H's inline of that name hides from this source; linking it would give the veneer a second name.
- * The listing keeps these rows. */
+/* Mogall Forest: slide an actor to a point with the swish of cue 152,
+ * lifting it by the given height while it moves. */
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "MORI.H"
-
-s32 Func_02003b62();
 
 void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3)
 {
     s32 rec7;
 
-    rec7 = Func_02003b62();
+    rec7 = (s32)Object_GetById(a0);
     Actor_SetSpritePriority(a0, 1);
     Actor_SetSpeed(a0, 0x30000, 0x18000);
     Audio_PlayCue(152);

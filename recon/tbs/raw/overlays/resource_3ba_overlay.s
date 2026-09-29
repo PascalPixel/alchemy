@@ -1153,9 +1153,6 @@ SceneState_StoreParamsAndInitTable:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02002d8c
-	.thumb_func
-Func_02002d8c:
 	.global SceneState_InitTableWordsAndLoad3200
 	.thumb_func
 SceneState_InitTableWordsAndLoad3200:

@@ -438,7 +438,7 @@ Func_080405dc:
 .L_08040954:
 	ldr	r0, [sp, #16]
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	bl	.L_08040614
 	movs	r0, #1
 	bl	0x08013560

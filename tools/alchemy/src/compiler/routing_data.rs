@@ -8,7 +8,6 @@ pub static AGBCC_DIRECTORIES: &[&str] = &["games/COMMON/SRC/SOUND"];
 // Edition-specific MusicPlayer2000 modules and the two agbcc -O2 flash helpers.
 // Their neighbouring game-owned SOUND and SAVE files keep the Game family.
 pub static AGBCC_SOURCES: &[&str] = &[
-    "games/THE BROKEN SEAL/SRC/SOUND/CGB_UPDATE_CHANNELS.C",
     "games/THE BROKEN SEAL/SRC/SOUND/COMMAND_INVOKE_SLOT34.C",
     "games/THE BROKEN SEAL/SRC/SOUND/COMMAND_INVOKE_SLOT35.C",
     "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C",

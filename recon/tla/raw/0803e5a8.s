@@ -89,7 +89,7 @@ Func_0803e5a8:
 	cmp	r3, r7
 	beq.n	.L_0803e670
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #9
 	subs	r0, r0, r5
 	movs	r3, #6
@@ -166,7 +166,7 @@ Func_0803e5a8:
 	adds	r3, r6, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	movs	r2, #210

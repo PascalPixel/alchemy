@@ -107,7 +107,7 @@ Func_0804e1d8:
 	movs	r1, #2
 	mov	r9, r0
 	mov	r0, sl
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r3, #12
 	movs	r0, #10
 	movs	r1, #0
@@ -247,7 +247,7 @@ Func_0804e1d8:
 .L_0804e3ba:
 	mov	r0, sl
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #24]
@@ -447,10 +447,10 @@ Func_0804e1d8:
 .L_0804e54c:
 	adds	r0, r7, #0
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #12]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	movs	r0, #0

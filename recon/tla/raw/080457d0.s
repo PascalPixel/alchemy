@@ -976,7 +976,7 @@ Func_080457d0:
 	bl	0x08118128
 	movs	r1, #1
 	ldr	r0, [sp, #20]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	mov	r2, r8
 	ldr	r3, [r2, #0]
 	adds	r3, #1
@@ -1135,7 +1135,7 @@ Func_080457d0:
 	add	r3, r9
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r3, #240
 	movs	r7, #128
 	lsls	r3, r3, #8

@@ -112,7 +112,7 @@ Func_0803a7ac:
 	bne.n	.L_0803a898
 	adds	r0, r5, #0
 	adds	r1, r7, #0
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	b.n	.L_0803a88e
 .L_0803a888:
 	movs	r0, #1

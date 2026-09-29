@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f6c0
+	.global UiTextResource_Release
 	.thumb_func
-Func_0803f6c0:
+UiTextResource_Release:
 	push	{lr}
 	bl	0x08014274
 	pop	{pc}

@@ -654,7 +654,6 @@
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000af206)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION_2.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000af2cc)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION_3.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000af344)
     "*/recon/tla/it/rom.o"(.rom.000af384)

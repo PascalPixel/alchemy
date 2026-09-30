@@ -449,7 +449,7 @@ Func_0811c66c:
 	ldrsh	r1, [r5, r3]
 	ldr	r0, [r5, #8]
 	movs	r3, #0
-	bl	0x0811c120
+	bl	Func_0811c120
 	ldr	r0, [r5, #8]
 	bl	0x0811be3c
 	movs	r1, #16

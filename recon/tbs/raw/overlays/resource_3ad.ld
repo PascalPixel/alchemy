@@ -6,15 +6,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/SCENE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/GET_PLACEMENTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/GATE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/REUNION.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/WAGON.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/WAIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/THINGS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/PARTING.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/SCENE_INIT.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/DOU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/IMPORT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/DATA.o"(.rodata)
     }

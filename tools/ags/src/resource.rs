@@ -102,6 +102,36 @@ use psynergy::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 /// read-ahead. It packed every code overlay and every LZ data resource.
 pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 
+/// The codecs a built file may end in, after its form.
+pub const CODECS: &[&str] = &["lz", "plz", "mtf", "d7"];
+
+/// Whether `built` names a file this encoder builds: `STEM.FORM` or
+/// `STEM.FORM.CODEC` with a form and a codec it knows. The publication check
+/// admits exactly these, so a new form never needs a check of its own, as
+/// pret's gbagfx rules know every conversion their makefile names.
+pub fn is_recipe(built: &str) -> bool {
+    let file = built.rsplit('/').next().unwrap_or(built);
+    let mut parts = file.split('.');
+    let stem = parts.next().unwrap_or_default();
+    let extensions: Vec<&str> = parts.collect();
+    let (form, codec) = match extensions.as_slice() {
+        [form] => (*form, None),
+        [form, codec] => (*form, Some(*codec)),
+        _ => return false,
+    };
+    let tiles = ["4bpp", "8bpp"].iter().any(|bpp| {
+        form.strip_prefix(bpp)
+            .is_some_and(|shape| shape.is_empty() || obj_shape(shape).is_some())
+    });
+    let form = tiles
+        || data_form(form)
+        || matches!(
+            form,
+            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "glyphs"
+        );
+    !stem.is_empty() && form && codec.is_none_or(|codec| CODECS.contains(&codec))
+}
+
 /// Whether a form reads a table or tilemap rather than an image.
 fn data_form(form: &str) -> bool {
     matches!(
@@ -738,6 +768,43 @@ mod tests {
         assert_eq!(joined[4..4 + 64], [0; 64]);
         assert_eq!(joined[4 + 64..], [1; 64]);
         assert!(build_file_with("P.parts", b"A\t8bpp\tM\t0\n", &|_| Ok(Vec::new())).is_err());
+    }
+
+    #[test]
+    fn recipes_are_the_forms_and_codecs_this_encoder_builds() {
+        for built in [
+            "GRAPHICS/FX/STAR.4bpp.mtf",
+            "GRAPHICS/FX/STAR.8bpp",
+            "GRAPHICS/FX/STAR.4bpp32x16.lz",
+            "MAP/M/METATILES.delta1.lz",
+            "GRAPHICS/UI/ICONS.icons4",
+            "GRAPHICS/FX/STAR.gbapal.plz",
+            "GRAPHICS/FX/STAR.bitmap.d7",
+        ] {
+            assert!(is_recipe(built), "{built}");
+        }
+        for built in [
+            "GRAPHICS/FX/STAR.raw",
+            "GRAPHICS/FX/STAR.4bpp.zip",
+            "GRAPHICS/FX/STAR.4bpp24x8",
+            "MAP/M/CELLS.delta3.lz",
+            "GRAPHICS/UI/ICONS.icons5",
+            "MAP/M/END.bin",
+            "GRAPHICS/FX/STAR.PNG",
+            "GRAPHICS/FX/STAR",
+            "GRAPHICS/FX/.4bpp",
+            "GRAPHICS/FX/STAR.4bpp.lz.lz",
+        ] {
+            assert!(!is_recipe(built), "{built}");
+        }
+        // Every codec a recipe may name is one the encoder writes.
+        let png = png_from_bitmap(&[0u8; 64], &[0, 0, 1, 0], 8).unwrap();
+        for codec in CODECS {
+            assert!(
+                build_file(&format!("T.4bpp.{codec}"), &png).is_ok(),
+                "{codec}"
+            );
+        }
     }
 
     #[test]

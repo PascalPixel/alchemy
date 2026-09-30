@@ -31,7 +31,7 @@ compiler-runtime: toolchain-check compiler-source-check
 .PHONY: help bootstrap compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-full build-rom
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
-.PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check
+.PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check untracked-check
 .PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
 .PHONY: progress progress-subject progress-report progress-check prepare-inputs raw drafts similar deps clean
 
@@ -182,8 +182,13 @@ corpus-check:
 	test "$$roots" = 'THE BROKEN SEAL|THE LOST AGE|'
 	@printf 'corpus roots ok\n'
 
+# The staged checks read the working tree, so it must match the index.
 index-sync-check:
 	@git diff --quiet --ignore-submodules -- || { printf 'stage tracked changes before make verify\n'; exit 1; }
+
+# A build reads the working tree, so what main builds must all be tracked.
+# Branch commits leave untracked files out of the commit and skip this.
+untracked-check:
 	@set -e; untracked=$$(git ls-files --others --exclude-standard); test -z "$$untracked" || { printf 'untracked files:\n%s\n' "$$untracked"; exit 1; }
 
 tool-tests:

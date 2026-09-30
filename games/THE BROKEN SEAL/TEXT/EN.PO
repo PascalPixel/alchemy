@@ -11739,7 +11739,7 @@ msgctxt "message"
 msgid "02932"
 msgstr "it can't be used"
 
-msgctxt "message"
+msgctxt "MsgEffectRateSuffix"
 msgid "02933"
 msgstr "="
 

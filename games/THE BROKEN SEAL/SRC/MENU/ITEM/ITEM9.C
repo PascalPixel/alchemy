@@ -26,7 +26,7 @@ void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
 extern u8 MsgEquipEffectHeading[], MsgStatLabel[], MsgDefenseLabel[], MsgEquipEffectName[];
 extern u8 MsgItemCursed[], MsgBestowsPsynergy[], MsgUsesHeading[], MsgSingleUse[];
-extern u8 MsgBrokenNotice[], MsgMightBreak[], MsgNumberHeading[];
+extern u8 MsgBrokenNotice[], MsgMightBreak[], MsgNumberHeading[], MsgEffectRateSuffix[];
 extern u8 MsgRareItem[], MsgImportantItem[], MsgDetailsUnknown[];
 extern u8 Data_080af21c[], Data_080af220[];
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -217,6 +217,19 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         case 13:
         case 14:
             UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + (s32)MsgEquipEffectName, window, 0, row * 8);
+#if defined(TBS_EDITION_JA)
+            /* The Japanese rate reads 1.5 and then its word for times. */
+            if (amount > 9) {
+                UiText_DrawNumberInWindowFar(1, 1, window, 48, row * 8);
+                UiText_DrawStringInWindowFar(Data_080af220, window, 56, row * 8);
+                UiText_DrawNumberInWindowFar(amount - 10, 1, window, 64, row * 8);
+            } else {
+                UiText_DrawNumberInWindowFar(0, 1, window, 48, row * 8);
+                UiText_DrawStringInWindowFar(Data_080af220, window, 56, row * 8);
+                UiText_DrawNumberInWindowFar(amount, 1, window, 64, row * 8);
+            }
+            UiText_DrawCharacterAtOffsetFar((s32)MsgEffectRateSuffix, window, 72, row * 8);
+#else
             UiText_DrawStringInWindowFar(Data_080af21c, window, 64, row * 8);
             if (amount > 9) {
                 UiText_DrawNumberInWindowFar(1, 1, window, 72, row * 8);
@@ -227,6 +240,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
                 UiText_DrawStringInWindowFar(Data_080af220, window, 80, row * 8);
                 UiText_DrawNumberInWindowFar(amount, 1, window, 88, row * 8);
             }
+#endif
             break;
         case 23:
         case 25:
@@ -286,8 +300,14 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         UiText_DrawCharacterAtOffsetFar(i, window, 16, row * 8);
         row++;
         amount = (item & 0xf800) / 2048;
+#if defined(TBS_EDITION_JA)
+        /* The Japanese note draws the count before its words. */
+        UiText_DrawNumberInWindowFar(amount + 1, 2, window, 0, row * 8);
+        UiText_DrawCharacterAtOffsetFar(i + 1, window, 16, row * 8);
+#else
         UiWork_PushValueSlotFar(amount + 1, 5);
         UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
+#endif
         row++;
     }
     found = 0;

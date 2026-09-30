@@ -13319,7 +13319,7 @@ msgctxt "message"
 msgid "03327"
 msgstr "つかえません"
 
-msgctxt "message"
+msgctxt "MsgEffectRateSuffix"
 msgid "03328"
 msgstr "ばい"
 

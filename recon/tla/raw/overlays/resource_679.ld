@@ -42,7 +42,7 @@ SECTIONS
         "*/resource_679_overlay.o"(.text.x02008f58)
         "*/resource_679_overlay.o"(.text.x02008f98)
         "*/resource_679_overlay.o"(.text.x02008fb8)
-        "*/resource_679_overlay.o"(.text.x02009050)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_679/PREPARE.o"(.text)
         "*/resource_679_overlay.o"(.text.x02009054)
         "*/resource_679_overlay.o"(.text.x020090b4)
         "*/resource_679_overlay.o"(.text.x020090d0)

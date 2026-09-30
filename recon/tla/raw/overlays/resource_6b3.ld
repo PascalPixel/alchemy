@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_6b3_overlay.o"(.text.x02008158)
         "*/resource_6b3_overlay.o"(.text.x02008244)
         "*/resource_6b3_overlay.o"(.text.x02008318)
-        "*/resource_6b3_overlay.o"(.text.x02008788)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B3/PREPARE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B3/IMPORT.o"(.text)
         "*/resource_6b3_overlay.o"(.rodata.x02008874)
     }

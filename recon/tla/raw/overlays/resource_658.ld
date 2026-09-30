@@ -24,7 +24,7 @@ SECTIONS
         "*/resource_658_overlay.o"(.text.x02008670)
         "*/resource_658_overlay.o"(.text.x0200868c)
         "*/resource_658_overlay.o"(.text.x020086ac)
-        "*/resource_658_overlay.o"(.text.x02008838)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_658/PREPARE.o"(.text)
         "*/resource_658_overlay.o"(.text.x0200883c)
         "*/resource_658_overlay.o"(.text.x02008894)
         "*/resource_658_overlay.o"(.text.x02008968)

@@ -51,7 +51,7 @@ SECTIONS
         "*/resource_6b0_overlay.o"(.text.x02009d68)
         "*/resource_6b0_overlay.o"(.text.x02009df4)
         "*/resource_6b0_overlay.o"(.text.x02009e64)
-        "*/resource_6b0_overlay.o"(.text.x0200a6fc)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B0/PREPARE.o"(.text)
         "*/resource_6b0_overlay.o"(.text.x0200a700)
         "*/resource_6b0_overlay.o"(.text.x0200a748)
         "*/resource_6b0_overlay.o"(.text.x0200a780)

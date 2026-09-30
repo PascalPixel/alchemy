@@ -1799,12 +1799,6 @@ Func_02000b18:
 	add sp, #8
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x02008fa0,"ax",%progbits
-	.global Func_02000fa0
-	.thumb_func
-Func_02000fa0:
-	movs r0, #0
-	bx lr
 	.section .text.x02008fa4,"ax",%progbits
 	.global Func_02000fa4
 	.thumb_func

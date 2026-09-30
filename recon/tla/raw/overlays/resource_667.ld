@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_667_overlay.o"(.text.x02008370)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_667/SCENE_EVENTS.o"(.text)
         "*/resource_667_overlay.o"(.text.x02008514)
-        "*/resource_667_overlay.o"(.text.x02008654)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_667/PREPARE.o"(.text)
         "*/resource_667_overlay.o"(.text.x02008658)
         "*/resource_667_overlay.o"(.text.x02009488)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_667/IMPORT.o"(.text)

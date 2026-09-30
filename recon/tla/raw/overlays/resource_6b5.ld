@@ -34,7 +34,7 @@ SECTIONS
         "*/resource_6b5_overlay.o"(.text.x02009400)
         "*/resource_6b5_overlay.o"(.text.x02009414)
         "*/resource_6b5_overlay.o"(.text.x0200945c)
-        "*/resource_6b5_overlay.o"(.text.x020098c8)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/PREPARE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/IMPORT.o"(.text)
         "*/resource_6b5_overlay.o"(.rodata.x02009ae4)
     }

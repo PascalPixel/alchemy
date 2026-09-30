@@ -17,7 +17,7 @@ SECTIONS
         "*/resource_64f_overlay.o"(.text.x020082e0)
         "*/resource_64f_overlay.o"(.text.x02008308)
         "*/resource_64f_overlay.o"(.text.x02008378)
-        "*/resource_64f_overlay.o"(.text.x020083a8)
+        "*/games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/PREPARE.o"(.text)
         "*/resource_64f_overlay.o"(.text.x020083ac)
         "*/resource_64f_overlay.o"(.text.x02008494)
         "*/resource_64f_overlay.o"(.text.x020085e8)

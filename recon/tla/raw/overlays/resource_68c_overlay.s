@@ -316,12 +316,6 @@ Func_02000284:
 	movs r0, #0
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x02008318,"ax",%progbits
-	.global Func_02000318
-	.thumb_func
-Func_02000318:
-	movs r0, #0
-	bx lr
 	.section .text.x0200831c,"ax",%progbits
 	.global Func_0200031c
 	.thumb_func

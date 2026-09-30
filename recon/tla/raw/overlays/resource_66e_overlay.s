@@ -1940,12 +1940,6 @@ Func_02000f28:
 	.4byte gPartyState
 .L_02009060:
 	.4byte 0xfffc0000
-	.section .text.x02009064,"ax",%progbits
-	.global Func_02001064
-	.thumb_func
-Func_02001064:
-	movs r0, #0
-	bx lr
 	.section .rodata.x020091b0,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:

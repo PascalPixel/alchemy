@@ -1093,12 +1093,6 @@ Func_0200086c:
 	.4byte 0x0000008d
 .L_02008958:
 	.4byte 0x0000008e
-	.section .text.x0200895c,"ax",%progbits
-	.global Func_0200095c
-	.thumb_func
-Func_0200095c:
-	movs r0, #0
-	bx lr
 	.section .rodata.x02008a98,"a",%progbits
 .L_02008a98:
 	.4byte 0x00000016

@@ -45,7 +45,7 @@ SECTIONS
         "*/resource_6b8_overlay.o"(.text.x02008748)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B8/SCENE_EVENTS.o"(.text)
         "*/resource_6b8_overlay.o"(.text.x0200879c)
-        "*/resource_6b8_overlay.o"(.text.x02008918)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B8/PREPARE.o"(.text)
         "*/resource_6b8_overlay.o"(.text.x0200891c)
         "*/resource_6b8_overlay.o"(.text.x02008924)
         "*/resource_6b8_overlay.o"(.text.x0200892c)

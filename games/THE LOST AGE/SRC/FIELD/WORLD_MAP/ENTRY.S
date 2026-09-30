@@ -13,4 +13,4 @@
 	overlay_veneer Func_020003f8
 	overlay_veneer Scene_GetEvents
 	overlay_veneer Scene_GetRegions
-	overlay_veneer Func_020011f8
+	overlay_veneer Scene_PrepareMap

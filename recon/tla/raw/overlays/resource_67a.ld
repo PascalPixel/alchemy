@@ -9,7 +9,7 @@ SECTIONS
         "*/resource_67a_overlay.o"(.text.x02008054)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67A/SCENE_EVENTS.o"(.text)
         "*/resource_67a_overlay.o"(.text.x02008070)
-        "*/resource_67a_overlay.o"(.text.x02008084)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67A/PREPARE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67A/IMPORT.o"(.text)
         "*/resource_67a_overlay.o"(.rodata.x02008090)
     }

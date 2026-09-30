@@ -69,7 +69,7 @@ SECTIONS
         "*/resource_696_overlay.o"(.text.x0200bd30)
         "*/resource_696_overlay.o"(.text.x0200bf78)
         "*/resource_696_overlay.o"(.text.x0200bff8)
-        "*/resource_696_overlay.o"(.text.x0200c05c)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_696/PREPARE.o"(.text)
         "*/resource_696_overlay.o"(.text.x0200c060)
         "*/resource_696_overlay.o"(.text.x0200c1b8)
         "*/resource_696_overlay.o"(.text.x0200c2c8)

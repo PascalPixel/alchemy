@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x020081f4)
         "*/resource_64a_overlay.o"(.text.x020082e0)
         "*/resource_64a_overlay.o"(.text.x02008328)
-        "*/resource_64a_overlay.o"(.text.x02008a6c)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_64A/PREPARE.o"(.text)
         "*/resource_64a_overlay.o"(.text.x02008a70)
         "*/resource_64a_overlay.o"(.text.x02008b24)
         "*/resource_64a_overlay.o"(.text.x02008db4)

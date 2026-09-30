@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_64d_overlay.o"(.text.x020080c8)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/SCENE_EVENTS.o"(.text)
         "*/resource_64d_overlay.o"(.text.x02008128)
-        "*/resource_64d_overlay.o"(.text.x02008308)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/PREPARE.o"(.text)
         "*/resource_64d_overlay.o"(.text.x0200830c)
         "*/resource_64d_overlay.o"(.text.x02008440)
         "*/resource_64d_overlay.o"(.text.x02008510)

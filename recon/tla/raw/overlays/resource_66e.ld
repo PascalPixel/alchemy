@@ -30,7 +30,7 @@ SECTIONS
         "*/resource_66e_overlay.o"(.text.x02008ba0)
         "*/resource_66e_overlay.o"(.text.x02008c04)
         "*/resource_66e_overlay.o"(.text.x02008f28)
-        "*/resource_66e_overlay.o"(.text.x02009064)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_66E/PREPARE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_66E/IMPORT.o"(.text)
         "*/resource_66e_overlay.o"(.rodata.x020091b0)
     }

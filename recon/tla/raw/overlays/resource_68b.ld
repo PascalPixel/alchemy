@@ -38,7 +38,7 @@ SECTIONS
         "*/resource_68b_overlay.o"(.text.x02008b28)
         "*/resource_68b_overlay.o"(.text.x02008bbc)
         "*/resource_68b_overlay.o"(.text.x02008bdc)
-        "*/resource_68b_overlay.o"(.text.x02008e78)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68B/PREPARE.o"(.text)
         "*/resource_68b_overlay.o"(.text.x02008e7c)
         "*/resource_68b_overlay.o"(.text.x0200909c)
         "*/resource_68b_overlay.o"(.text.x02009160)

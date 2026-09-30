@@ -26,7 +26,7 @@ SECTIONS
         "*/resource_677_overlay.o"(.text.x02008524)
         "*/resource_677_overlay.o"(.text.x0200877c)
         "*/resource_677_overlay.o"(.text.x0200886c)
-        "*/resource_677_overlay.o"(.text.x0200895c)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_677/PREPARE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_677/IMPORT.o"(.text)
         "*/resource_677_overlay.o"(.rodata.x02008a98)
     }

@@ -43,7 +43,7 @@ Func_080ae118:
 	ble.n	.L_080ae11c
 	movs	r0, #0
 	bl	.L_080ae358
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	cmp	r0, #0
 	ble.n	.L_080ae166
 	ldr	r3, [pc, #24]
@@ -69,7 +69,7 @@ Func_080ae16c:
 	mov	r7, r8
 	push	{r7}
 	mov	r8, r0
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	movs	r6, #0
 	adds	r7, r0, #0
 	cmp	r6, r7
@@ -164,7 +164,7 @@ Func_080ae220:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	movs	r7, #0
 	mov	r8, r0
 	cmp	r7, r8
@@ -332,7 +332,7 @@ Func_080ae220:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #12
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	mov	fp, r0
 .L_080ae36e:
 	movs	r2, #0

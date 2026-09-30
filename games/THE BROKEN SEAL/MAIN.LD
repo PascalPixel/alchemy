@@ -623,7 +623,7 @@ SECTIONS
         "*/recon/tbs/raw/080783a2.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/VALUES.o"(.text)
         "*/recon/tbs/raw/08078412.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/DEFINITION.o"(.text)
+        "*/games/COMMON/SRC/GAME/ITEM/DEFINITION.o"(.text)
         "*/recon/tbs/raw/0807847e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/GET_EQUIPMENT_GROUP.o"(.text)
         "*/recon/tbs/raw/080784ae.o"(.text .rodata .data .padding)

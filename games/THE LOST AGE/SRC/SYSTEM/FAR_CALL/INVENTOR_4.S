@@ -10,8 +10,8 @@
 Djinn_AddToLeastLoadedOwnerFar:
 	overlay_veneer Djinn_AddToLeastLoadedOwner
 	overlay_veneer Party_SumDjinnCounts
-	overlay_veneer Func_080afed4
-	overlay_veneer Func_080aff00
+	overlay_veneer Party_AdjustSixDigitCounterB
+	overlay_veneer Party_AdjustCounterCappedAt28
 	overlay_veneer Func_080af244
 	overlay_veneer Func_080af1fc
 	.global Inventory_DiscardFar

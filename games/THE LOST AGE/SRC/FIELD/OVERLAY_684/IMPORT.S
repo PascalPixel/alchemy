@@ -10,5 +10,11 @@
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global Func_020000b0
+	.thumb_func
+Func_020000b0:
 	overlay_veneer Func_080c8200
+	.global Func_020000b8
+	.thumb_func
+Func_020000b8:
 	overlay_veneer Func_08108010

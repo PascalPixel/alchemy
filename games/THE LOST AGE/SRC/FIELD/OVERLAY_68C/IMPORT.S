@@ -22,15 +22,33 @@ Math_Sine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
+	.global Func_020027e4
+	.thumb_func
+Func_020027e4:
 	overlay_veneer Func_080003c8
+	.global Func_020027ec
+	.thumb_func
+Func_020027ec:
 	overlay_veneer Func_080003d0
+	.global Func_020027f4
+	.thumb_func
+Func_020027f4:
 	overlay_veneer Object_SetMode
+	.global Func_020027fc
+	.thumb_func
+Func_020027fc:
 	overlay_veneer Object_SetCallback
+	.global Func_02002804
+	.thumb_func
+Func_02002804:
 	overlay_veneer Func_080200c0
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Func_02002814
+	.thumb_func
+Func_02002814:
 	overlay_veneer Func_08020228
 	.global Party_RemoveActiveOwner
 	.thumb_func
@@ -40,7 +58,13 @@ Party_RemoveActiveOwner:
 	.thumb_func
 Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
+	.global Func_0200282c
+	.thumb_func
+Func_0200282c:
 	overlay_veneer Func_080c8018
+	.global Func_02002834
+	.thumb_func
+Func_02002834:
 	overlay_veneer Func_080c8020
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
@@ -70,6 +94,9 @@ ObjectMotion_SetPositionAndReset:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Func_02002874
+	.thumb_func
+Func_02002874:
 	overlay_veneer Func_080c80f8
 	.global Object_SetModeById
 	.thumb_func
@@ -91,18 +118,57 @@ ObjectMotion_SetVariantCallback:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
+	.global Func_020028a4
+	.thumb_func
+Func_020028a4:
 	overlay_veneer Func_080c8158
+	.global Func_020028ac
+	.thumb_func
+Func_020028ac:
 	overlay_veneer Func_080c8180
+	.global Func_020028b4
+	.thumb_func
+Func_020028b4:
 	overlay_veneer Func_080c8188
+	.global Func_020028bc
+	.thumb_func
+Func_020028bc:
 	overlay_veneer Func_080c8198
+	.global Func_020028c4
+	.thumb_func
+Func_020028c4:
 	overlay_veneer Func_080c81a0
+	.global Func_020028cc
+	.thumb_func
+Func_020028cc:
 	overlay_veneer Func_080c81d0
+	.global Func_020028d4
+	.thumb_func
+Func_020028d4:
 	overlay_veneer Func_080c8200
+	.global Func_020028dc
+	.thumb_func
+Func_020028dc:
 	overlay_veneer Func_080c8210
+	.global Func_020028e4
+	.thumb_func
+Func_020028e4:
 	overlay_veneer Func_080c8218
+	.global Func_020028ec
+	.thumb_func
+Func_020028ec:
 	overlay_veneer Func_080c8238
+	.global Func_020028f4
+	.thumb_func
+Func_020028f4:
 	overlay_veneer Func_080c8240
+	.global Func_020028fc
+	.thumb_func
+Func_020028fc:
 	overlay_veneer Func_080c84e0
+	.global Func_02002904
+	.thumb_func
+Func_02002904:
 	overlay_veneer Func_080c85e8
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
@@ -112,5 +178,11 @@ ObjectMotion_CommitPositionAndActivate:
 	.thumb_func
 Object_LinkObjectAndSetCallback:
 	overlay_veneer Object_LinkObjectAndSetCallbackFar
+	.global Func_0200291c
+	.thumb_func
+Func_0200291c:
 	overlay_veneer Func_080c8778
+	.global Func_02002924
+	.thumb_func
+Func_02002924:
 	overlay_veneer Audio_PlayCue

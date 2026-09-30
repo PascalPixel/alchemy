@@ -104,7 +104,7 @@ Func_080ea8d4:
 	movs	r1, #0
 	bl	Object_SetMode
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080ea9bc
 .L_080ea9b4:
 	adds	r0, r7, #0
@@ -258,7 +258,7 @@ Func_080ea8d4:
 	beq.n	.L_080eaaf0
 	adds	r0, r5, #0
 	subs	r7, #4
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080eaaf8
 .L_080eaaf0:
 	adds	r0, r5, #0

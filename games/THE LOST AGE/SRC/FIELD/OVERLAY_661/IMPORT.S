@@ -40,7 +40,7 @@
 	overlay_veneer Func_080201e8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_080202d8
-	overlay_veneer Func_080202e0
+	overlay_veneer Map_DisableUpdateCallbackFar
 	overlay_veneer Func_080202f0
 	overlay_veneer Func_08038040
 	overlay_veneer Func_08038248

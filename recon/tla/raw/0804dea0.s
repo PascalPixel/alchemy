@@ -120,7 +120,7 @@ Menu_HandleFlagGridInput:
 	cmp	r0, #0
 	beq.n	.L_0804df96
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_0804e092
 .L_0804df96:
 	adds	r0, r5, #0

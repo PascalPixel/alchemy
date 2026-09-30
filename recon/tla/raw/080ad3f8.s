@@ -1042,7 +1042,7 @@ Func_080ad3f8:
 	movs	r0, #104
 	adds	r0, #255
 	sub	sp, #8
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	0x080afdbc
 	mov	sl, r0
 	movs	r0, #0

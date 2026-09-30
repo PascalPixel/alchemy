@@ -957,7 +957,7 @@ Func_0811cfd0:
 .L_0811d702:
 	movs	r0, #108
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	0x0811bddc
 	movs	r3, #192
 	lsls	r3, r3, #18

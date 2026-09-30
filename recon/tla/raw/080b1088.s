@@ -173,7 +173,7 @@ Func_080b1088:
 	lsls	r6, r6, #4
 .L_080b11d4:
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r3, #224
 	lsls	r3, r3, #4
 	adds	r6, #1
@@ -248,7 +248,7 @@ Func_080b1088:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	pop	{r5, r6, pc}
 	.4byte 0x020023c4
 	.4byte 0x02000240

@@ -273,7 +273,7 @@ Func_080fcf14:
 .L_080fd148:
 	movs	r0, #82
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080fd150:
 	ldr	r2, [sp, #20]
 	adds	r3, r2, #0
@@ -630,7 +630,7 @@ Func_080fcf14:
 .L_080fd428:
 	movs	r0, #82
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080fd430:
 	ldr	r4, [sp, #0]
 	adds	r3, r4, #0
@@ -1244,7 +1244,7 @@ Func_080fcf14:
 	movs	r0, #128
 	lsls	r0, r0, #2
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080fd910:
 	movs	r2, #1
 	movs	r6, #0

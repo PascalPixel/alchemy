@@ -161,6 +161,9 @@ GameFlag_TestFar:
 	movs	r0, r0
 	.2byte 0x0040
 	.2byte 0x0200
+	.global GameFlag_ClearBitFar
+	.thumb_func
+GameFlag_ClearBitFar:
 	movs	r3, #7
 	ands	r3, r0
 	ldr	r1, [pc, #16]

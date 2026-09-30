@@ -18,7 +18,7 @@ Func_080ec1d0:
 	ldr	r5, [r3, #108]
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r2, #197
 	lsls	r2, r2, #1
 	adds	r3, r5, r2

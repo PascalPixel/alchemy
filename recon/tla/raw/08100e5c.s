@@ -205,7 +205,7 @@ Func_08100e5c:
 	.2byte 0xf800
 	.2byte 0x2001
 	bl	0x08013560
-	bl	Func_080f80a8
+	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r1, #0
 	movs	r0, #0
 	movs	r2, #30

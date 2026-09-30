@@ -38,11 +38,11 @@ Func_08118958:
 	adds	r0, r5, #0
 	mov	r8, r3
 	mov	fp, r2
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r5, [pc, #280]
 .L_081189ae:
 	movs	r0, #32
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #1
 	bl	0x08013560
 	b.n	.L_081189e4

@@ -52,7 +52,7 @@ Func_080cb8e8:
 	.2byte 0xf800
 	.2byte 0x2004
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r5, [pc, #116]
 	movs	r0, #240
 	lsls	r0, r0, #1
@@ -217,7 +217,7 @@ Func_080cb8e8:
 .L_080cbaaa:
 	.2byte 0x2020
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	0x080d1684
 	movs	r0, #128
 	lsls	r0, r0, #9
@@ -366,7 +366,7 @@ Func_080cb8e8:
 .L_080cbbf0:
 	movs	r0, #10
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	Func_080cafc4
 	cmp	r0, #0
 	beq.n	.L_080cbc02
@@ -511,7 +511,7 @@ Func_080cb8e8:
 	cmp	r0, #0
 	beq.n	.L_080cbd38
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r3, [pc, #180]
 	movs	r4, #240
 	lsls	r4, r4, #1
@@ -1198,7 +1198,7 @@ Func_080cb8e8:
 	bl	Func_080cb8a4
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	Func_080ad2b8
 	mov	r4, sl
 	mov	r0, fp
@@ -1400,7 +1400,7 @@ Func_080cb8e8:
 	bl	Func_080cb8a4
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r3, #175
 .L_080cc476:
 	lsls	r3, r3, #1
@@ -1415,7 +1415,7 @@ Func_080cb8e8:
 .L_080cc488:
 	movs	r0, #130
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	.L_080cb8e8
 	cmp	r0, #0
 	beq.n	.L_080cc49c

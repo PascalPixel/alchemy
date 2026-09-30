@@ -352,7 +352,7 @@ Func_080afb80:
 	bl	.L_080afdbc
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r1, #0
 	cmp	r1, r6
 	bge.n	.L_080afe4e

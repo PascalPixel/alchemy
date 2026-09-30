@@ -12,7 +12,7 @@ Func_080cacec:
 	lsls	r0, r0, #1
 	adds	r7, #255
 	ldr	r6, [r3, #32]
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	adds	r0, r7, #0
 	bl	0x08016cfc
 	movs	r2, #0

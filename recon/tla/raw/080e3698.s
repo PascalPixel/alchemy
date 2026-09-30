@@ -149,6 +149,9 @@ Func_080e3698:
 	.4byte 0x080e3061
 	.2byte 0x0000
 	.2byte 0xfffa
+	.global Func_080e37e0
+	.thumb_func
+Func_080e37e0:
 	.2byte 0xb5e0
 	mov	r7, sl
 	mov	r6, r8
@@ -1458,6 +1461,9 @@ Func_080e3698:
 	.4byte 0x03001150
 	.2byte 0x38c9
 	.2byte 0x080e
+	.global Func_080e4244
+	.thumb_func
+Func_080e4244:
 .L_080e4244:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -1614,7 +1620,7 @@ Func_080e3698:
 	cmp	r7, #0
 	beq.n	.L_080e4392
 	adds	r0, r5, #0
-	bl	.L_080e4244
+	bl	Func_080e4244
 	movs	r3, #2
 	ands	r0, r3
 	cmp	r0, #0

@@ -717,7 +717,7 @@ Func_080e1f2c:
 	lsls	r1, r1, #20
 	ldrb	r2, [r3, #0]
 	str	r4, [sp, #4]
-	bl	0x080dbdc8
+	bl	Func_080dbdc8
 	movs	r5, #0
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16

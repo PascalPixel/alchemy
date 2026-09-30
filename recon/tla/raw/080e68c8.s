@@ -303,7 +303,7 @@ Func_080e68c8:
 	ldr	r0, [r1, #4]
 	ldrb	r2, [r5, #0]
 	ldr	r1, [r1, #12]
-	bl	0x080dbdc8
+	bl	Func_080dbdc8
 	cmp	r0, #255
 	bne.n	.L_080e6b32
 	movs	r2, #4
@@ -1007,6 +1007,9 @@ Func_080e68c8:
 	movs	r0, r0
 	.2byte 0x6401
 	.2byte 0x080e
+	.global Func_080e70f8
+	.thumb_func
+Func_080e70f8:
 .L_080e70f8:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
@@ -1148,14 +1151,14 @@ Func_080e68c8:
 	str	r3, [r6, #12]
 	ldr	r3, [r7, #16]
 	str	r3, [r6, #16]
-	bl	0x080d3b28
+	bl	Func_080d3b28
 	movs	r3, #208
 	lsls	r3, r3, #4
 	adds	r3, #52
 	add	r3, r8
 	strh	r5, [r3, #0]
 	movs	r0, #79
-	bl	.L_080e70f8
+	bl	Func_080e70f8
 .L_080e7228:
 	pop	{r3}
 	mov	r8, r3

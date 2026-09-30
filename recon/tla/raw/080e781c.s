@@ -131,7 +131,7 @@ Func_080e781c:
 	ldr	r1, [r2, #8]
 	ldr	r0, [r2, #0]
 	ldrb	r2, [r5, #0]
-	bl	0x080dbdc8
+	bl	Func_080dbdc8
 	ldr	r4, [sp, #68]
 	adds	r2, r0, #0
 	movs	r0, #160

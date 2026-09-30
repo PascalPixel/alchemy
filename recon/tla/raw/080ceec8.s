@@ -42,7 +42,7 @@ Func_080ceec8:
 	ldrsh	r3, [r3, r2]
 	lsls	r3, r3, #16
 	str	r3, [r5, #16]
-	bl	0x080e70f8
+	bl	Func_080e70f8
 .L_080cef1c:
 	pop	{r3}
 	mov	r8, r3

@@ -3,8 +3,8 @@
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
+#include "BATTLE_EFFECT_RUNTIME.H"
 
-void Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 void Resource_DecodeByteLz(const void *src, void *dst);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
@@ -141,6 +141,19 @@ static __inline__ void ClearDustWork(struct DustWork *work)
     zero = value;
     Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
 }
+
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
+s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mode);
+void BattleFx_InterpolateBuffers(s16 *from, s16 *to, s16 *step, s32 frames);
+void BattleFx_UpdateStormFlash(void);
+
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
+
+struct EffectBlockState {
+    u8 filler[0x1F80];
+    u16 field_1f80;
+    u16 field_1f82;
+};
 
 void FieldMotes_Start(void)
 {
@@ -317,4 +330,89 @@ loop:
     if (i < 32)
         goto loop;
     ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(FieldEffect_UpdateSparkles, 0xc80);
+}
+
+/* Builds two 0xa80-byte buffers and the per-frame step between them for a
+   twelve-frame blend, then schedules the blend. */
+void BattleFx_StartTwelveFrameBlend(void)
+{
+    u8 *work;
+    struct BattleEffectBuffers *buffers;
+    volatile u32 zero;
+    s32 value;
+    s32 one;
+    u8 *target;
+    u16 *frames;
+
+    work = Runtime_AllocateBlock(30, 0x1f88);
+    buffers = Data_03001ed0;
+    zero = 0;
+    Dma_Set((const void *)&zero, work, 0x850007e2, (volatile u32 *)0x040000d4);
+    BattleFx_BuildBuffer(0x10003, buffers, work, 1);
+    BattleFx_BuildBuffer(0x10005, buffers, work + 0xa80, 1);
+    BattleFx_InterpolateBuffers((s16 *)(work + 0xa80), (s16 *)work, (s16 *)(work + 0x1500), 12);
+    BattleFx_BuildBuffer((s32)work, 0, buffers->buffer_e00, 1);
+    /* FAKEMATCH: the halfword constants pass through an int so GCC builds them
+       with mov instead of loading them from the pool, and the block pointer
+       itself is advanced to the second count. */
+    frames = (u16 *)(work + 0x1f80);
+    value = 600;
+    *frames = value;
+    work += 0x1f82;
+    one = 1;
+    *(u16 *)work = one;
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateStormFlash, 0xc80);
+}
+
+void BattleFx_SetBlock30ValuesMaxZero(void)
+{
+    struct EffectBlockState *state = Runtime_AllocateBlock(30, 0x1F88);
+    state->field_1f80 = 0x7FFF;
+    state->field_1f82 = 0;
+}
+
+void BattleFx_SetBlock30Values12Zero(void)
+{
+    struct EffectBlockState *state = Runtime_AllocateBlock(30, 0x1F88);
+    state->field_1f80 = 12;
+    state->field_1f82 = 0;
+}
+
+void BattleFx_SetBlock30Values128One(void)
+{
+    struct EffectBlockState *state = Runtime_AllocateBlock(30, 0x1F88);
+    state->field_1f80 = 128;
+    state->field_1f82 = 1;
+}
+
+/* Builds the buffers for two effect sources and the per-frame step between
+   them for a twelve-frame blend, then schedules the blend. The work block
+   holds the from buffer, the to buffer at +0xa80, the step at +0x1500 and
+   the frame count and position at +0x1f80. */
+void BattleFx_StartBufferBlend(s32 from, s32 to)
+{
+    u8 *work;
+    struct BattleEffectBuffers *buffers;
+    volatile u32 zero;
+    s32 value;
+    u8 *target;
+    u16 *frames;
+
+    work = Runtime_AllocateBlock(30, 0x1f88);
+    buffers = Data_03001ed0;
+    zero = 0;
+    Dma_Set((const void *)&zero, work, 0x850007e2, (volatile u32 *)0x040000d4);
+    BattleFx_BuildBuffer(from, buffers, work, 1);
+    target = work + 0xa80;
+    BattleFx_BuildBuffer(to, buffers, target, 1);
+    BattleFx_InterpolateBuffers((s16 *)target, (s16 *)work, (s16 *)(work + 0x1500), 12);
+    BattleFx_BuildBuffer((s32)work, 0, buffers->buffer_e00, 1);
+    frames = (u16 *)(work + 0x1f80);
+    /* FAKEMATCH: the halfword constants pass through an int so GCC builds
+       them with mov instead of loading them from the pool. */
+    value = 120;
+    *frames = value;
+    value = 0;
+    *(u16 *)(work + 0x1f82) = value;
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateStormFlash, 0xc80);
 }

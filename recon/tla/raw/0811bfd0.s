@@ -272,12 +272,3 @@ Func_0811c120:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x02d4
 	.2byte 0x0300
-	push	{r5, lr}
-	bl	0x0811be3c
-	ldr	r5, [r0, #0]
-	adds	r0, r5, #0
-	bl	Object_ResetMotion
-	adds	r0, r5, #0
-	movs	r1, #2
-	bl	Object_SetMode
-	pop	{r5, pc}

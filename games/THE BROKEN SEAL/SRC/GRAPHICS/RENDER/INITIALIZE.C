@@ -12,6 +12,9 @@ extern void UiWork_UploadDirtyBlocks(void);
 #if defined(TBS_EDITION_JA)
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
+/* FAKEMATCH: passing the routine through an inline wrapper loads its fixed
+   address before the fill value, the order of the Japanese literal pool; a
+   plain call loads the value first. */
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 {
     return fill(dst, size, value);

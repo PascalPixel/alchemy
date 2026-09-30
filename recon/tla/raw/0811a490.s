@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_0811a490
-	.thumb_func
-Func_0811a490:
 	.global Summon_ClassValid
 	.thumb_func
 Summon_ClassValid:

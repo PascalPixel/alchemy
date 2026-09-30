@@ -1,6 +1,8 @@
 @ tbs-es's scaffold: the base-ROM ranges its MAIN.LD places between the
 @ lines it links from source, with a label where the source names a place.
 	.section .rom.00000000, "ax"
+	.global Rom_Start
+Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
@@ -46,42 +48,12 @@ RuntimeDispatch_ReservedNoOpE:
 	.thumb_func
 RuntimeDispatch_ReturnZero:
 	.incbin "baserom.gba", 0x00002f6c, 0x00000004
-	.section .rom.00002f70, "ax"
-	.global Resource_LoadWorkHeader
-	.type Resource_LoadWorkHeader, %function
-	.thumb_func
-Resource_LoadWorkHeader:
-	.incbin "baserom.gba", 0x00002f70, 0x0000002c
-	.section .rom.00002f9c, "ax"
-	.global RuntimeDispatch_NoOpHook
-	.type RuntimeDispatch_NoOpHook, %function
-	.thumb_func
-RuntimeDispatch_NoOpHook:
-	.incbin "baserom.gba", 0x00002f9c, 0x00000004
-	.section .rom.00002fa0, "ax"
-	.global Resource_GetTableEntry
-	.type Resource_GetTableEntry, %function
-	.thumb_func
-Resource_GetTableEntry:
-	.incbin "baserom.gba", 0x00002fa0, 0x00000070
-	.section .rom.00003010, "ax"
-	.global Resource_LoadCode
-	.type Resource_LoadCode, %function
-	.thumb_func
-Resource_LoadCode:
-	.incbin "baserom.gba", 0x00003010, 0x00000058
 	.section .rom.00003eb8, "ax"
 	.global ResourceTable_AllocateBlocks
 	.type ResourceTable_AllocateBlocks, %function
 	.thumb_func
 ResourceTable_AllocateBlocks:
 	.incbin "baserom.gba", 0x00003eb8, 0x0000007c
-	.section .rom.000047fc, "ax"
-	.global Ui_LoadWindowGraphics
-	.type Ui_LoadWindowGraphics, %function
-	.thumb_func
-Ui_LoadWindowGraphics:
-	.incbin "baserom.gba", 0x000047fc, 0x0000009c
 	.section .rom.00005044, "ax"
 	.global Graphics_PrepareTransfer
 	.type Graphics_PrepareTransfer, %function
@@ -124,7 +96,10 @@ Runtime_IrqHandlers:
 	.incbin "baserom.gba", 0x00007380, 0x00000356
 	.global Math_ArcTanTable
 Math_ArcTanTable:
-	.incbin "baserom.gba", 0x000076d6, 0x00000126
+	.incbin "baserom.gba", 0x000076d6, 0x00000106
+	.global Ui_WindowPalette
+Ui_WindowPalette:
+	.incbin "baserom.gba", 0x000077dc, 0x00000020
 	.global System_BasicColorPalette
 System_BasicColorPalette:
 	.incbin "baserom.gba", 0x000077fc, 0x000001c0
@@ -274,18 +249,6 @@ Map_UpdateCurrentTileBlock:
 	.thumb_func
 Map_UpdateCurrentTileBlockUntilBlocked:
 	.incbin "baserom.gba", 0x00010ca0, 0x000000c8
-	.section .rom.00010e44, "ax"
-	.global Map_LoadAreaGraphics
-	.type Map_LoadAreaGraphics, %function
-	.thumb_func
-Map_LoadAreaGraphics:
-	.incbin "baserom.gba", 0x00010e44, 0x000000f8
-	.section .rom.00010f3c, "ax"
-	.global Map_LoadDefaultCellsAndUpdateBlock
-	.type Map_LoadDefaultCellsAndUpdateBlock, %function
-	.thumb_func
-Map_LoadDefaultCellsAndUpdateBlock:
-	.incbin "baserom.gba", 0x00010f3c, 0x00000060
 	.section .rom.00010f9c, "ax"
 	.global MapAnimation_Update
 	.type MapAnimation_Update, %function
@@ -447,12 +410,6 @@ UiText_DecodeMessage:
 	.thumb_func
 ItemIcon_Compose:
 	.incbin "baserom.gba", 0x00019068, 0x0000021c
-	.section .rom.000194dc, "ax"
-	.global UiGlyph_LoadEntryWithPalette
-	.type UiGlyph_LoadEntryWithPalette, %function
-	.thumb_func
-UiGlyph_LoadEntryWithPalette:
-	.incbin "baserom.gba", 0x000194dc, 0x000000a4
 	.section .rom.000197d4, "ax"
 	.global MenuSelection_BuildEntries
 	.type MenuSelection_BuildEntries, %function
@@ -483,14 +440,6 @@ Menu_ScrollSelectionList:
 	.thumb_func
 Menu_ConfirmSelection:
 	.incbin "baserom.gba", 0x0001ae60, 0x00000244
-	.section .rom.0001b166, "ax"
-	.incbin "baserom.gba", 0x0001b166, 0x00000002
-	.section .rom.0001b168, "ax"
-	.global Menu_LoadSelectedResource
-	.type Menu_LoadSelectedResource, %function
-	.thumb_func
-Menu_LoadSelectedResource:
-	.incbin "baserom.gba", 0x0001b168, 0x00000094
 	.section .rom.0001b224, "ax"
 	.global Menu_RunTopSelection
 	.type Menu_RunTopSelection, %function
@@ -513,14 +462,6 @@ Debug_SelectAbilityPair:
 	.thumb_func
 Menu_Check:
 	.incbin "baserom.gba", 0x0001b4ac, 0x00000360
-	.section .rom.0001bf56, "ax"
-	.incbin "baserom.gba", 0x0001bf56, 0x00000002
-	.section .rom.0001bf58, "ax"
-	.global GraphicsPalette_LoadSelectionResourcesAndAdvance
-	.type GraphicsPalette_LoadSelectionResourcesAndAdvance, %function
-	.thumb_func
-GraphicsPalette_LoadSelectionResourcesAndAdvance:
-	.incbin "baserom.gba", 0x0001bf58, 0x000000cc
 	.section .rom.0001c9e4, "ax"
 	.global Menu_CreateWorkspaceWindows
 	.type Menu_CreateWorkspaceWindows, %function
@@ -645,36 +586,12 @@ Party_ShowJoinedMessage:
 	.thumb_func
 Party_ShowPairJoinedMessage:
 	.incbin "baserom.gba", 0x000204c4, 0x00000158
-	.section .rom.00020724, "ax"
-	.global RenderResource_LoadFrame
-	.type RenderResource_LoadFrame, %function
-	.thumb_func
-RenderResource_LoadFrame:
-	.incbin "baserom.gba", 0x00020724, 0x00000068
-	.section .rom.0002078c, "ax"
-	.global RenderResource_CreateFrame
-	.type RenderResource_CreateFrame, %function
-	.thumb_func
-RenderResource_CreateFrame:
-	.incbin "baserom.gba", 0x0002078c, 0x00000054
 	.section .rom.00020c70, "ax"
 	.global Link_CreateCountdownLabelWindow
 	.type Link_CreateCountdownLabelWindow, %function
 	.thumb_func
 Link_CreateCountdownLabelWindow:
 	.incbin "baserom.gba", 0x00020c70, 0x00000030
-	.section .rom.00020ca0, "ax"
-	.global Resource_LoadIndexedIntoBuffer
-	.type Resource_LoadIndexedIntoBuffer, %function
-	.thumb_func
-Resource_LoadIndexedIntoBuffer:
-	.incbin "baserom.gba", 0x00020ca0, 0x00000054
-	.section .rom.00020cf4, "ax"
-	.global UiText_LoadRemappedGlyph
-	.type UiText_LoadRemappedGlyph, %function
-	.thumb_func
-UiText_LoadRemappedGlyph:
-	.incbin "baserom.gba", 0x00020cf4, 0x000000d0
 	.section .rom.00020ea6, "ax"
 	.incbin "baserom.gba", 0x00020ea6, 0x000008fe
 	.section .rom.00021858, "ax"
@@ -705,18 +622,6 @@ AffineEffect_UpdateFrame:
 	.thumb_func
 Menu_RunResourceSelectionLoop:
 	.incbin "baserom.gba", 0x00027734, 0x0000012c
-	.section .rom.00027860, "ax"
-	.global Menu_SelectResource
-	.type Menu_SelectResource, %function
-	.thumb_func
-Menu_SelectResource:
-	.incbin "baserom.gba", 0x00027860, 0x00000108
-	.section .rom.00027968, "ax"
-	.global Menu_AppendResourceEntry
-	.type Menu_AppendResourceEntry, %function
-	.thumb_func
-Menu_AppendResourceEntry:
-	.incbin "baserom.gba", 0x00027968, 0x00000060
 	.section .rom.00027dc4, "ax"
 	.global Menu_SelectResourceLayout
 	.type Menu_SelectResourceLayout, %function
@@ -839,7 +744,10 @@ gRomShiftedTilePair:
 	.incbin "baserom.gba", 0x00036550, 0x00000040
 	.global Graphics_ExpandNibbleTable
 Graphics_ExpandNibbleTable:
-	.incbin "baserom.gba", 0x00036590, 0x00000147
+	.incbin "baserom.gba", 0x00036590, 0x0000013f
+	.global Menu_SelectionStepDelays
+Menu_SelectionStepDelays:
+	.incbin "baserom.gba", 0x000366cf, 0x00000008
 	.global Menu_TopEntryCommandByPosition
 Menu_TopEntryCommandByPosition:
 	.incbin "baserom.gba", 0x000366d7, 0x0000000c
@@ -871,6 +779,8 @@ Ui_FixedTileBlocks:
 	.type Trade_GetOfferStateFar, %function
 	.thumb_func
 Trade_GetOfferStateFar:
+	.global FarCall_GameTable
+FarCall_GameTable:
 	.incbin "baserom.gba", 0x0007c000, 0x00000008
 	.section .rom.0007c008, "ax"
 	.global Runtime_GetObject
@@ -1254,8 +1164,6 @@ GameFlag_RefreshLureCapFar:
 	.thumb_func
 Runtime_GetBuildStampTimeFar:
 	.incbin "baserom.gba", 0x0007c300, 0x00000020
-	.section .rom.0007cc10, "ax"
-	.incbin "baserom.gba", 0x0007cc10, 0x00000128
 	.section .rom.0007cd38, "ax"
 	.global GameState_InitDefaults
 	.type GameState_InitDefaults, %function
@@ -1346,12 +1254,6 @@ Encounter_SelectEnemyGroup:
 	.thumb_func
 BattleFx_FindConditionResource:
 	.incbin "baserom.gba", 0x00090160, 0x00000080
-	.section .rom.000902b8, "ax"
-	.global BattleFx_SelectResultPointer
-	.type BattleFx_SelectResultPointer, %function
-	.thumb_func
-BattleFx_SelectResultPointer:
-	.incbin "baserom.gba", 0x000902b8, 0x00000070
 	.section .rom.000903f2, "ax"
 	.incbin "baserom.gba", 0x000903f2, 0x00000002
 	.section .rom.000903f4, "ax"
@@ -1432,18 +1334,6 @@ Object_EffectSpawnCallback:
 	.thumb_func
 PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x00096ac4, 0x000001e4
-	.section .rom.00096f3c, "ax"
-	.global BattleFx_SetWeightedResult
-	.type BattleFx_SetWeightedResult, %function
-	.thumb_func
-BattleFx_SetWeightedResult:
-	.incbin "baserom.gba", 0x00096f3c, 0x00000064
-	.section .rom.00096fa0, "ax"
-	.global BattleFx_SetPhaseRequest
-	.type BattleFx_SetPhaseRequest, %function
-	.thumb_func
-BattleFx_SetPhaseRequest:
-	.incbin "baserom.gba", 0x00096fa0, 0x0000007c
 	.section .rom.00097ccc, "ax"
 	.global UiText_OpenMessageAtObject
 	.type UiText_OpenMessageAtObject, %function
@@ -1565,7 +1455,11 @@ RunBattleEffect16:
 EffectSlot_UpdateMotion:
 	.incbin "baserom.gba", 0x000a098c, 0x00000140
 	.section .rom.000a0d90, "ax"
-	.incbin "baserom.gba", 0x000a0d90, 0x000006dc
+	.global Map_UpdateWorldMapMarkers
+	.type Map_UpdateWorldMapMarkers, %function
+	.thumb_func
+Map_UpdateWorldMapMarkers:
+	.incbin "baserom.gba", 0x000a0d90, 0x00000500
 	.section .rom.000a1568, "ax"
 	.incbin "baserom.gba", 0x000a1568, 0x00000200
 	.global Encounter_EnemyGroupTable
@@ -2239,20 +2133,14 @@ BattleEffect_RunTileAndPaletteAnimation:
 	.thumb_func
 Func_080cc5d8:
 	.incbin "baserom.gba", 0x000cfdd8, 0x00000388
-	.section .rom.000d02ec, "ax"
-	.global BattlePresentation_PrepareScene
-	.type BattlePresentation_PrepareScene, %function
+	.section .rom.000d0438, "ax"
+	.global BattleFx_RunTwoResource
+	.type BattleFx_RunTwoResource, %function
 	.thumb_func
-BattlePresentation_PrepareScene:
-	.incbin "baserom.gba", 0x000d02ec, 0x000000f0
-	.section .rom.000d03dc, "ax"
-	.global BattleFx_ScheduleCallbacksAndReleaseBlocks
-	.type BattleFx_ScheduleCallbacksAndReleaseBlocks, %function
-	.thumb_func
-BattleFx_ScheduleCallbacksAndReleaseBlocks:
-	.incbin "baserom.gba", 0x000d03dc, 0x00000528
+BattleFx_RunTwoResource:
+	.incbin "baserom.gba", 0x000d0438, 0x000004cc
 	.section .rom.000d1834, "ax"
-	.incbin "baserom.gba", 0x000d1834, 0x00000afc
+	.incbin "baserom.gba", 0x000d1834, 0x00000828
 	.section .rom.000d2354, "ax"
 	.global BattleFx_RunMemberBurst
 	.type BattleFx_RunMemberBurst, %function
@@ -2276,7 +2164,7 @@ BattleFx_RunMemberBeam:
 	.type BattleFx_RunSevenMode, %function
 	.thumb_func
 BattleFx_RunSevenMode:
-	.incbin "baserom.gba", 0x000d30e0, 0x00000b88
+	.incbin "baserom.gba", 0x000d30e0, 0x00000614
 	.section .rom.000d3dfc, "ax"
 	.incbin "baserom.gba", 0x000d3dfc, 0x00001118
 	.section .rom.000d4f14, "ax"
@@ -2310,19 +2198,17 @@ BattleFx_RunSparkGroups:
 	.type BattleFx_RenderMode, %function
 	.thumb_func
 BattleFx_RenderMode:
-	.incbin "baserom.gba", 0x000d8ac8, 0x0000123c
+	.incbin "baserom.gba", 0x000d8ac8, 0x000006e8
+	.section .rom.000d9654, "ax"
+	.incbin "baserom.gba", 0x000d9654, 0x000006b0
 	.section .rom.000da170, "ax"
 	.global BattleEffect_RunDitherDissolveScene
 	.type BattleEffect_RunDitherDissolveScene, %function
 	.thumb_func
 BattleEffect_RunDitherDissolveScene:
 	.incbin "baserom.gba", 0x000da170, 0x00000cec
-	.section .rom.000dae5c, "ax"
-	.global BattleFx_InitializeMode10
-	.type BattleFx_InitializeMode10, %function
-	.thumb_func
-BattleFx_InitializeMode10:
-	.incbin "baserom.gba", 0x000dae5c, 0x000012ec
+	.section .rom.000dbab0, "ax"
+	.incbin "baserom.gba", 0x000dbab0, 0x00000698
 	.section .rom.000dc1ac, "ax"
 	.global BattleEffectA
 	.type BattleEffectA, %function
@@ -2340,7 +2226,7 @@ BattleEffectB:
 	.type RunPaletteRampEffect, %function
 	.thumb_func
 RunPaletteRampEffect:
-	.incbin "baserom.gba", 0x000dd2e8, 0x00000764
+	.incbin "baserom.gba", 0x000dd2e8, 0x000004e0
 	.section .rom.000ddaac, "ax"
 	.incbin "baserom.gba", 0x000ddaac, 0x0000141c
 	.section .rom.000deee0, "ax"
@@ -2349,20 +2235,16 @@ RunPaletteRampEffect:
 	.thumb_func
 RunParticleFieldEffect:
 	.incbin "baserom.gba", 0x000deee0, 0x00000444
-	.section .rom.000df3dc, "ax"
-	.incbin "baserom.gba", 0x000df3dc, 0x00000d8c
+	.section .rom.000dfc54, "ax"
+	.incbin "baserom.gba", 0x000dfc54, 0x00000268
 	.section .rom.000e0168, "ax"
 	.global BattleEffect_RunStagedParticles
 	.type BattleEffect_RunStagedParticles, %function
 	.thumb_func
 BattleEffect_RunStagedParticles:
 	.incbin "baserom.gba", 0x000e0168, 0x00000944
-	.section .rom.000e0ac4, "ax"
-	.global BattleFx_RunDualTable
-	.type BattleFx_RunDualTable, %function
-	.thumb_func
-BattleFx_RunDualTable:
-	.incbin "baserom.gba", 0x000e0ac4, 0x00001034
+	.section .rom.000e15e0, "ax"
+	.incbin "baserom.gba", 0x000e15e0, 0x00000518
 	.section .rom.000e1af8, "ax"
 	.global BattleFx_PrepareCanvasEffect
 	.type BattleFx_PrepareCanvasEffect, %function
@@ -2377,16 +2259,12 @@ BattleFx_PrepareCanvasEffect:
 	.thumb_func
 BattleFx_RunProjectileVolley:
 	.incbin "baserom.gba", 0x000e2270, 0x00000e48
-	.section .rom.000e3248, "ax"
-	.global BattleFx_RunParticleFieldVariant
-	.type BattleFx_RunParticleFieldVariant, %function
-	.thumb_func
-BattleFx_RunParticleFieldVariant:
-	.incbin "baserom.gba", 0x000e3248, 0x00000394
 	.section .rom.000e362a, "ax"
 	.incbin "baserom.gba", 0x000e362a, 0x000006fa
 	.section .rom.000e3d64, "ax"
-	.incbin "baserom.gba", 0x000e3d64, 0x00000ff8
+	.incbin "baserom.gba", 0x000e3d64, 0x00000720
+	.section .rom.000e4840, "ax"
+	.incbin "baserom.gba", 0x000e4840, 0x0000051c
 	.section .rom.000e4de8, "ax"
 	.global BattleFx_InitializeMode12
 	.type BattleFx_InitializeMode12, %function
@@ -2449,18 +2327,6 @@ Unnamed_080ea0d8:
 	.thumb_func
 Unnamed_080eb754:
 	.incbin "baserom.gba", 0x000eef54, 0x0000098c
-	.section .rom.000ef900, "ax"
-	.global BattleFx_InitializeMode6
-	.type BattleFx_InitializeMode6, %function
-	.thumb_func
-BattleFx_InitializeMode6:
-	.incbin "baserom.gba", 0x000ef900, 0x00000d7c
-	.section .rom.000f06f4, "ax"
-	.global BattleFx_RunRevealColumn
-	.type BattleFx_RunRevealColumn, %function
-	.thumb_func
-BattleFx_RunRevealColumn:
-	.incbin "baserom.gba", 0x000f06f4, 0x00000514
 	.section .rom.000f0c08, "ax"
 	.global Unnamed_080ed408
 	.type Unnamed_080ed408, %function
@@ -2468,18 +2334,170 @@ BattleFx_RunRevealColumn:
 Unnamed_080ed408:
 	.global BattleEffect_LoadWork
 BattleEffect_LoadWork:
-	.incbin "baserom.gba", 0x000f0c08, 0x000006b0
+	.incbin "baserom.gba", 0x000f0c08, 0x00000678
+	.global BattleFx10_UnitScale
+BattleFx10_UnitScale:
+	.incbin "baserom.gba", 0x000f1280, 0x00000038
 	.global Data_080edab8
 Data_080edab8:
 	.incbin "baserom.gba", 0x000f12b8, 0x00000008
 	.global Data_080edac0
 Data_080edac0:
-	.incbin "baserom.gba", 0x000f12c0, 0x00000030
+	.incbin "baserom.gba", 0x000f12c0, 0x00000028
+	.global BattleFx6_UnitScale
+BattleFx6_UnitScale:
+	.incbin "baserom.gba", 0x000f12e8, 0x00000008
 	.section .rom.000f1648, "ax"
-	.incbin "baserom.gba", 0x000f1648, 0x0000046c
+	.global ParticleStreams_CellOffsets
+ParticleStreams_CellOffsets:
+	.incbin "baserom.gba", 0x000f1648, 0x00000014
+	.global BattleFx6_FlareCells
+BattleFx6_FlareCells:
+	.incbin "baserom.gba", 0x000f165c, 0x00000028
+	.global BattleFx_PuffCells
+BattleFx_PuffCells:
+	.incbin "baserom.gba", 0x000f1684, 0x00000012
+	.global BattleFx_PuffSizes
+BattleFx_PuffSizes:
+	.incbin "baserom.gba", 0x000f1696, 0x00000009
+	.global PuffArc_CellWidths
+PuffArc_CellWidths:
+	.incbin "baserom.gba", 0x000f169f, 0x00000006
+	.global PuffArc_CellHeights
+PuffArc_CellHeights:
+	.incbin "baserom.gba", 0x000f16a5, 0x00000006
+	.global PuffArc_CellBiasY
+PuffArc_CellBiasY:
+	.incbin "baserom.gba", 0x000f16ab, 0x00000007
+	.global PuffArc_CellSourceOffsets
+PuffArc_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000f16b2, 0x0000025a
+	.global CounterReveal_PanelX
+CounterReveal_PanelX:
+	.incbin "baserom.gba", 0x000f190c, 0x0000000e
+	.global CounterReveal_PanelY
+CounterReveal_PanelY:
+	.incbin "baserom.gba", 0x000f191a, 0x0000019a
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
-	.incbin "baserom.gba", 0x000f1ab4, 0x00000b6a
+	.incbin "baserom.gba", 0x000f1ab4, 0x000006c0
+	.global BattleFx10_Points
+BattleFx10_Points:
+	.incbin "baserom.gba", 0x000f2174, 0x00000020
+	.global BattleFx10_ShakeOffsets
+BattleFx10_ShakeOffsets:
+	.incbin "baserom.gba", 0x000f2194, 0x00000004
+	.global BattleFx10_RockCells
+BattleFx10_RockCells:
+	.incbin "baserom.gba", 0x000f2198, 0x00000006
+	.global BattleFx10_RockWidths
+BattleFx10_RockWidths:
+	.incbin "baserom.gba", 0x000f219e, 0x00000003
+	.global BattleFx10_RockHeights
+BattleFx10_RockHeights:
+	.incbin "baserom.gba", 0x000f21a1, 0x00000003
+	.global BattleFx10_Animations
+BattleFx10_Animations:
+	.incbin "baserom.gba", 0x000f21a4, 0x00000004
+	.global BattleFx10_DebrisWidths
+BattleFx10_DebrisWidths:
+	.incbin "baserom.gba", 0x000f21a8, 0x0000000b
+	.global BattleFx10_DebrisHeights
+BattleFx10_DebrisHeights:
+	.incbin "baserom.gba", 0x000f21b3, 0x0000000b
+	.global BattleFx10_DebrisCells
+BattleFx10_DebrisCells:
+	.incbin "baserom.gba", 0x000f21be, 0x00000016
+	.global BattleFx10_SprayWidths
+BattleFx10_SprayWidths:
+	.incbin "baserom.gba", 0x000f21d4, 0x00000003
+	.global BattleFx10_SprayHeights
+BattleFx10_SprayHeights:
+	.incbin "baserom.gba", 0x000f21d7, 0x00000003
+	.global BattleFx10_SprayCells
+BattleFx10_SprayCells:
+	.incbin "baserom.gba", 0x000f21da, 0x00000006
+	.global BattleFx10_BoulderCells
+BattleFx10_BoulderCells:
+	.incbin "baserom.gba", 0x000f21e0, 0x00000006
+	.global BattleFx10_BoulderWidths
+BattleFx10_BoulderWidths:
+	.incbin "baserom.gba", 0x000f21e6, 0x00000003
+	.global BattleFx10_BoulderHeights
+BattleFx10_BoulderHeights:
+	.incbin "baserom.gba", 0x000f21e9, 0x00000003
+	.global BattleFx10_FallWidths
+BattleFx10_FallWidths:
+	.incbin "baserom.gba", 0x000f21ec, 0x00000003
+	.global BattleFx10_FallHeights
+BattleFx10_FallHeights:
+	.incbin "baserom.gba", 0x000f21ef, 0x00000003
+	.global BattleFx10_FallCells
+BattleFx10_FallCells:
+	.incbin "baserom.gba", 0x000f21f2, 0x00000156
+	.global Data_080eeb48
+Data_080eeb48:
+	.incbin "baserom.gba", 0x000f2348, 0x00000003
+	.global Data_080eeb4b
+Data_080eeb4b:
+	.incbin "baserom.gba", 0x000f234b, 0x00000003
+	.global Data_080eeb4e
+Data_080eeb4e:
+	.incbin "baserom.gba", 0x000f234e, 0x00000006
+	.global Data_080eeb54
+Data_080eeb54:
+	.incbin "baserom.gba", 0x000f2354, 0x00000004
+	.global Data_080eeb58
+Data_080eeb58:
+	.incbin "baserom.gba", 0x000f2358, 0x00000006
+	.global Data_080eeb5e
+Data_080eeb5e:
+	.incbin "baserom.gba", 0x000f235e, 0x00000003
+	.global Data_080eeb61
+Data_080eeb61:
+	.incbin "baserom.gba", 0x000f2361, 0x00000010
+	.global Data_080eeb71
+Data_080eeb71:
+	.incbin "baserom.gba", 0x000f2371, 0x00000008
+	.global Data_080eeb79
+Data_080eeb79:
+	.incbin "baserom.gba", 0x000f2379, 0x00000007
+	.global Data_080eeb80
+Data_080eeb80:
+	.incbin "baserom.gba", 0x000f2380, 0x00000008
+	.global Data_080eeb88
+Data_080eeb88:
+	.incbin "baserom.gba", 0x000f2388, 0x0000000e
+	.global RisingColumns_ColumnOffsets
+RisingColumns_ColumnOffsets:
+	.incbin "baserom.gba", 0x000f2396, 0x00000010
+	.global BattleFxPillar_Kinds
+BattleFxPillar_Kinds:
+	.incbin "baserom.gba", 0x000f23a6, 0x00000008
+	.global BattleFxPillar_X
+BattleFxPillar_X:
+	.incbin "baserom.gba", 0x000f23ae, 0x00000008
+	.global BattleFxPillar_Counts
+BattleFxPillar_Counts:
+	.incbin "baserom.gba", 0x000f23b6, 0x00000003
+	.global BattleFxPillar_PuffWidths
+BattleFxPillar_PuffWidths:
+	.incbin "baserom.gba", 0x000f23b9, 0x00000007
+	.global BattleFxPillar_PuffHeights
+BattleFxPillar_PuffHeights:
+	.incbin "baserom.gba", 0x000f23c0, 0x00000008
+	.global BattleFxPillar_PuffCells
+BattleFxPillar_PuffCells:
+	.incbin "baserom.gba", 0x000f23c8, 0x00000097
+	.global ParticleReveal_CellWidths
+ParticleReveal_CellWidths:
+	.incbin "baserom.gba", 0x000f245f, 0x00000004
+	.global ParticleReveal_CellHeights
+ParticleReveal_CellHeights:
+	.incbin "baserom.gba", 0x000f2463, 0x00000005
+	.global ParticleReveal_CellSourceOffsets
+ParticleReveal_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000f2468, 0x000001b6
 	.global Data_080eee1e
 Data_080eee1e:
 	.incbin "baserom.gba", 0x000f261e, 0x0000000c
@@ -2497,7 +2515,22 @@ Data_080eee46:
 	.incbin "baserom.gba", 0x000f2646, 0x00000008
 	.global Data_080eee4e
 Data_080eee4e:
-	.incbin "baserom.gba", 0x000f264e, 0x00000156
+	.incbin "baserom.gba", 0x000f264e, 0x0000011a
+	.global BattleFx6_ObjectX
+BattleFx6_ObjectX:
+	.incbin "baserom.gba", 0x000f2768, 0x00000008
+	.global BattleFx6_ObjectY
+BattleFx6_ObjectY:
+	.incbin "baserom.gba", 0x000f2770, 0x00000008
+	.global BattleFx6_Gravity
+BattleFx6_Gravity:
+	.incbin "baserom.gba", 0x000f2778, 0x00000010
+	.global RisingBurst_SparkCells
+RisingBurst_SparkCells:
+	.incbin "baserom.gba", 0x000f2788, 0x0000000e
+	.global RisingBurst_SparkSizes
+RisingBurst_SparkSizes:
+	.incbin "baserom.gba", 0x000f2796, 0x0000000e
 	.section .rom.000f2814, "ax"
 	.incbin "baserom.gba", 0x000f2814, 0x000007ec
 	.section .rom.000f33f0, "ax"
@@ -2527,12 +2560,6 @@ Func_080f26ec:
 	.thumb_func
 Func_080f2b6c:
 	.incbin "baserom.gba", 0x000f5b6c, 0x00000004
-	.section .rom.000f5b70, "ax"
-	.global Title_ShowSplashScreen
-	.type Title_ShowSplashScreen, %function
-	.thumb_func
-Title_ShowSplashScreen:
-	.incbin "baserom.gba", 0x000f5b70, 0x000001e4
 	.section .rom.000f5d54, "ax"
 	.global Unnamed_080f2d54
 	.type Unnamed_080f2d54, %function
@@ -2603,17 +2630,27 @@ Sound_PlayerSlots:
 	.section .rom.00186e98, "ax"
 	.incbin "baserom.gba", 0x00186e98, 0x00000968
 	.section .rom.003217d8, "ax"
-	.incbin "baserom.gba", 0x003217d8, 0x00000fd8
+	.incbin "baserom.gba", 0x003217d8, 0x00000028
+	.section .rom.003227a0, "ax"
+	.global Resource_BuildStamp
+Resource_BuildStamp:
+	.incbin "baserom.gba", 0x003227a0, 0x00000010
 	.section .rom.003261e7, "ax"
 	.incbin "baserom.gba", 0x003261e7, 0x00000001
 	.section .rom.0032c89b, "ax"
-	.incbin "baserom.gba", 0x0032c89b, 0x000086f9
+	.incbin "baserom.gba", 0x0032c89b, 0x00000001
+	.global Title_IntroGraphicsC
+Title_IntroGraphicsC:
+	.incbin "baserom.gba", 0x0032c89c, 0x000086f8
 	.section .rom.00336fe5, "ax"
 	.incbin "baserom.gba", 0x00336fe5, 0x00000003
 	.section .rom.003388f5, "ax"
 	.incbin "baserom.gba", 0x003388f5, 0x00000003
 	.section .rom.0033c3f9, "ax"
-	.incbin "baserom.gba", 0x0033c3f9, 0x0000071f
+	.incbin "baserom.gba", 0x0033c3f9, 0x00000003
+	.global Title_IntroTilesB
+Title_IntroTilesB:
+	.incbin "baserom.gba", 0x0033c3fc, 0x0000071c
 	.section .rom.00340f5a, "ax"
 	.incbin "baserom.gba", 0x00340f5a, 0x00000002
 	.section .rom.003516ca, "ax"
@@ -2761,7 +2798,10 @@ Sound_PlayerSlots:
 	.section .rom.003f243f, "ax"
 	.incbin "baserom.gba", 0x003f243f, 0x00000001
 	.section .rom.003f3a02, "ax"
-	.incbin "baserom.gba", 0x003f3a02, 0x00000a6e
+	.incbin "baserom.gba", 0x003f3a02, 0x00000002
+	.global BattleFx_LavaOrbSheet
+BattleFx_LavaOrbSheet:
+	.incbin "baserom.gba", 0x003f3a04, 0x00000a6c
 	.section .rom.003f5246, "ax"
 	.incbin "baserom.gba", 0x003f5246, 0x00000002
 	.section .rom.003f55c9, "ax"
@@ -2795,7 +2835,10 @@ Sound_PlayerSlots:
 	.section .rom.003ff867, "ax"
 	.incbin "baserom.gba", 0x003ff867, 0x00000001
 	.section .rom.003ffef9, "ax"
-	.incbin "baserom.gba", 0x003ffef9, 0x00000a37
+	.incbin "baserom.gba", 0x003ffef9, 0x00000003
+	.global BattleFx_IceShardSheet
+BattleFx_IceShardSheet:
+	.incbin "baserom.gba", 0x003ffefc, 0x00000a34
 	.section .rom.00401d01, "ax"
 	.incbin "baserom.gba", 0x00401d01, 0x00000003
 	.section .rom.004027d2, "ax"
@@ -2803,7 +2846,10 @@ Sound_PlayerSlots:
 	.section .rom.0040330f, "ax"
 	.incbin "baserom.gba", 0x0040330f, 0x00000001
 	.section .rom.0040394f, "ax"
-	.incbin "baserom.gba", 0x0040394f, 0x00001589
+	.incbin "baserom.gba", 0x0040394f, 0x00000001
+	.global BattleFx_IceBlockSheet
+BattleFx_IceBlockSheet:
+	.incbin "baserom.gba", 0x00403950, 0x00001588
 	.section .rom.00404f39, "ax"
 	.incbin "baserom.gba", 0x00404f39, 0x00000003
 	.section .rom.004052a7, "ax"
@@ -2941,7 +2987,22 @@ Sound_PlayerSlots:
 	.section .rom.004b78bf, "ax"
 	.incbin "baserom.gba", 0x004b78bf, 0x00000001
 	.section .rom.004bc26f, "ax"
-	.incbin "baserom.gba", 0x004bc26f, 0x0000051d
+	.incbin "baserom.gba", 0x004bc26f, 0x00000001
+	.global Resource_Data129
+Resource_Data129:
+	.incbin "baserom.gba", 0x004bc270, 0x0000000c
+	.global Resource_Data12A
+Resource_Data12A:
+	.incbin "baserom.gba", 0x004bc27c, 0x00000150
+	.global Resource_Data12B
+Resource_Data12B:
+	.incbin "baserom.gba", 0x004bc3cc, 0x00000140
+	.global Resource_Data12C
+Resource_Data12C:
+	.incbin "baserom.gba", 0x004bc50c, 0x00000140
+	.global Resource_Data12D
+Resource_Data12D:
+	.incbin "baserom.gba", 0x004bc64c, 0x00000140
 	.section .rom.004c1b9b, "ax"
 	.incbin "baserom.gba", 0x004c1b9b, 0x00000001
 	.section .rom.004c1d29, "ax"
@@ -3147,7 +3208,10 @@ Sound_PlayerSlots:
 	.section .rom.00579729, "ax"
 	.incbin "baserom.gba", 0x00579729, 0x00000003
 	.section .rom.0057b782, "ax"
-	.incbin "baserom.gba", 0x0057b782, 0x00001cee
+	.incbin "baserom.gba", 0x0057b782, 0x00000002
+	.global Resource_Data1B7
+Resource_Data1B7:
+	.incbin "baserom.gba", 0x0057b784, 0x00001cec
 	.section .rom.0057ec19, "ax"
 	.incbin "baserom.gba", 0x0057ec19, 0x00000003
 	.section .rom.005818f5, "ax"
@@ -3201,6 +3265,8 @@ Sound_PlayerSlots:
 	.section .rom.005ac283, "ax"
 	.incbin "baserom.gba", 0x005ac283, 0x00000001
 	.section .rom.005ad210, "ax"
+	.global Resource_Data1DA
+Resource_Data1DA:
 	.incbin "baserom.gba", 0x005ad210, 0x000022d8
 	.section .rom.005b1fd9, "ax"
 	.incbin "baserom.gba", 0x005b1fd9, 0x00000003
@@ -3307,7 +3373,10 @@ Sound_PlayerSlots:
 	.section .rom.0060aa47, "ax"
 	.incbin "baserom.gba", 0x0060aa47, 0x00000001
 	.section .rom.0060ac0f, "ax"
-	.incbin "baserom.gba", 0x0060ac0f, 0x00002905
+	.incbin "baserom.gba", 0x0060ac0f, 0x00000001
+	.global Resource_Data221
+Resource_Data221:
+	.incbin "baserom.gba", 0x0060ac10, 0x00002904
 	.section .rom.00611019, "ax"
 	.incbin "baserom.gba", 0x00611019, 0x00000003
 	.section .rom.0061258a, "ax"
@@ -3579,7 +3648,10 @@ Sound_PlayerSlots:
 	.section .rom.00716962, "ax"
 	.incbin "baserom.gba", 0x00716962, 0x00000002
 	.section .rom.007192b2, "ax"
-	.incbin "baserom.gba", 0x007192b2, 0x00001166
+	.incbin "baserom.gba", 0x007192b2, 0x00000002
+	.global Resource_Data2EE
+Resource_Data2EE:
+	.incbin "baserom.gba", 0x007192b4, 0x00001164
 	.section .rom.0071bbfd, "ax"
 	.incbin "baserom.gba", 0x0071bbfd, 0x00000003
 	.section .rom.0071ee43, "ax"
@@ -3637,13 +3709,18 @@ Sound_PlayerSlots:
 	.section .rom.00755241, "ax"
 	.incbin "baserom.gba", 0x00755241, 0x00000003
 	.section .rom.0075729c, "ax"
+	.global Tileset_Palette47
+Tileset_Palette47:
 	.incbin "baserom.gba", 0x0075729c, 0x000000e4
 	.section .rom.0075a097, "ax"
 	.incbin "baserom.gba", 0x0075a097, 0x00000001
 	.section .rom.0075a27e, "ax"
 	.incbin "baserom.gba", 0x0075a27e, 0x00000002
 	.section .rom.0075d51a, "ax"
-	.incbin "baserom.gba", 0x0075d51a, 0x00004602
+	.incbin "baserom.gba", 0x0075d51a, 0x00000002
+	.global Resource_Data326
+Resource_Data326:
+	.incbin "baserom.gba", 0x0075d51c, 0x00004600
 	.section .rom.00761c22, "ax"
 	.incbin "baserom.gba", 0x00761c22, 0x00000002
 	.section .rom.007637f5, "ax"
@@ -3681,18 +3758,426 @@ Sound_PlayerSlots:
 	.section .rom.00776587, "ax"
 	.incbin "baserom.gba", 0x00776587, 0x00000001
 	.section .rom.007768d3, "ax"
-	.incbin "baserom.gba", 0x007768d3, 0x0000051d
+	.incbin "baserom.gba", 0x007768d3, 0x00000001
+	.global Resource_Data340
+Resource_Data340:
+	.incbin "baserom.gba", 0x007768d4, 0x0000000c
+	.global Resource_Data341
+Resource_Data341:
+	.incbin "baserom.gba", 0x007768e0, 0x00000150
+	.global Resource_Data342
+Resource_Data342:
+	.incbin "baserom.gba", 0x00776a30, 0x00000140
+	.global Resource_Data343
+Resource_Data343:
+	.incbin "baserom.gba", 0x00776b70, 0x00000140
+	.global Resource_Data344
+Resource_Data344:
+	.incbin "baserom.gba", 0x00776cb0, 0x00000140
 	.section .rom.0077713b, "ax"
-	.incbin "baserom.gba", 0x0077713b, 0x0000051d
+	.incbin "baserom.gba", 0x0077713b, 0x00000001
+	.global Resource_Data346
+Resource_Data346:
+	.incbin "baserom.gba", 0x0077713c, 0x0000000c
+	.global Resource_Data347
+Resource_Data347:
+	.incbin "baserom.gba", 0x00777148, 0x00000150
+	.global Resource_Data348
+Resource_Data348:
+	.incbin "baserom.gba", 0x00777298, 0x00000140
+	.global Resource_Data349
+Resource_Data349:
+	.incbin "baserom.gba", 0x007773d8, 0x00000140
+	.global Resource_Data34A
+Resource_Data34A:
+	.incbin "baserom.gba", 0x00777518, 0x00000140
 	.section .rom.007779a3, "ax"
-	.incbin "baserom.gba", 0x007779a3, 0x0000051d
+	.incbin "baserom.gba", 0x007779a3, 0x00000001
+	.global Resource_Data34C
+Resource_Data34C:
+	.incbin "baserom.gba", 0x007779a4, 0x0000000c
+	.global Resource_Data34D
+Resource_Data34D:
+	.incbin "baserom.gba", 0x007779b0, 0x00000150
+	.global Resource_Data34E
+Resource_Data34E:
+	.incbin "baserom.gba", 0x00777b00, 0x00000140
+	.global Resource_Data34F
+Resource_Data34F:
+	.incbin "baserom.gba", 0x00777c40, 0x00000140
+	.global Resource_Data350
+Resource_Data350:
+	.incbin "baserom.gba", 0x00777d80, 0x00000140
 	.section .rom.0077820b, "ax"
-	.incbin "baserom.gba", 0x0077820b, 0x0000051d
+	.incbin "baserom.gba", 0x0077820b, 0x00000001
+	.global Resource_Data352
+Resource_Data352:
+	.incbin "baserom.gba", 0x0077820c, 0x0000000c
+	.global Resource_Data353
+Resource_Data353:
+	.incbin "baserom.gba", 0x00778218, 0x00000150
+	.global Resource_Data354
+Resource_Data354:
+	.incbin "baserom.gba", 0x00778368, 0x00000140
+	.global Resource_Data355
+Resource_Data355:
+	.incbin "baserom.gba", 0x007784a8, 0x00000140
+	.global Resource_Data356
+Resource_Data356:
+	.incbin "baserom.gba", 0x007785e8, 0x00000140
 	.section .rom.00778a73, "ax"
-	.incbin "baserom.gba", 0x00778a73, 0x0000051d
+	.incbin "baserom.gba", 0x00778a73, 0x00000001
+	.global Resource_Data358
+Resource_Data358:
+	.incbin "baserom.gba", 0x00778a74, 0x0000000c
+	.global Resource_Data359
+Resource_Data359:
+	.incbin "baserom.gba", 0x00778a80, 0x00000150
+	.global Resource_Data35A
+Resource_Data35A:
+	.incbin "baserom.gba", 0x00778bd0, 0x00000140
+	.global Resource_Data35B
+Resource_Data35B:
+	.incbin "baserom.gba", 0x00778d10, 0x00000140
+	.global Resource_Data35C
+Resource_Data35C:
+	.incbin "baserom.gba", 0x00778e50, 0x00000140
 	.section .rom.007792db, "ax"
-	.incbin "baserom.gba", 0x007792db, 0x0000051d
+	.incbin "baserom.gba", 0x007792db, 0x00000001
+	.global Resource_Data35E
+Resource_Data35E:
+	.incbin "baserom.gba", 0x007792dc, 0x0000000c
+	.global Resource_Data35F
+Resource_Data35F:
+	.incbin "baserom.gba", 0x007792e8, 0x00000150
+	.global Resource_Data360
+Resource_Data360:
+	.incbin "baserom.gba", 0x00779438, 0x00000140
+	.global Resource_Data361
+Resource_Data361:
+	.incbin "baserom.gba", 0x00779578, 0x00000140
+	.global Resource_Data362
+Resource_Data362:
+	.incbin "baserom.gba", 0x007796b8, 0x00000140
 	.section .rom.00779b43, "ax"
-	.incbin "baserom.gba", 0x00779b43, 0x0000051d
+	.incbin "baserom.gba", 0x00779b43, 0x00000001
+	.global Resource_Data364
+Resource_Data364:
+	.incbin "baserom.gba", 0x00779b44, 0x0000000c
+	.global Resource_Data365
+Resource_Data365:
+	.incbin "baserom.gba", 0x00779b50, 0x00000150
+	.global Resource_Data366
+Resource_Data366:
+	.incbin "baserom.gba", 0x00779ca0, 0x00000140
+	.global Resource_Data367
+Resource_Data367:
+	.incbin "baserom.gba", 0x00779de0, 0x00000140
+	.global Resource_Data368
+Resource_Data368:
+	.incbin "baserom.gba", 0x00779f20, 0x00000140
 	.section .rom.0077a3ab, "ax"
-	.incbin "baserom.gba", 0x0077a3ab, 0x00085c55
+	.incbin "baserom.gba", 0x0077a3ab, 0x00000001
+	.global Resource_Data36A
+Resource_Data36A:
+	.incbin "baserom.gba", 0x0077a3ac, 0x0000000c
+	.global Resource_Data36B
+Resource_Data36B:
+	.incbin "baserom.gba", 0x0077a3b8, 0x00000150
+	.global Resource_Data36C
+Resource_Data36C:
+	.incbin "baserom.gba", 0x0077a508, 0x00000140
+	.global Resource_Data36D
+Resource_Data36D:
+	.incbin "baserom.gba", 0x0077a648, 0x00000140
+	.global Resource_Data36E
+Resource_Data36E:
+	.incbin "baserom.gba", 0x0077a788, 0x00000140
+	.global Resource_Overlay36F
+Resource_Overlay36F:
+	.incbin "baserom.gba", 0x0077a8c8, 0x0000046c
+	.global Resource_Overlay370
+Resource_Overlay370:
+	.incbin "baserom.gba", 0x0077ad34, 0x000011d0
+	.global Resource_Overlay371
+Resource_Overlay371:
+	.incbin "baserom.gba", 0x0077bf04, 0x00003550
+	.global Resource_Overlay372
+Resource_Overlay372:
+	.incbin "baserom.gba", 0x0077f454, 0x00002b68
+	.global Resource_Overlay373
+Resource_Overlay373:
+	.incbin "baserom.gba", 0x00781fbc, 0x00003afc
+	.global Resource_Overlay374
+Resource_Overlay374:
+	.incbin "baserom.gba", 0x00785ab8, 0x00001dd0
+	.global Resource_Overlay375
+Resource_Overlay375:
+	.incbin "baserom.gba", 0x00787888, 0x00000ed0
+	.global Resource_Overlay376
+Resource_Overlay376:
+	.incbin "baserom.gba", 0x00788758, 0x00000ef4
+	.global Resource_Overlay377
+Resource_Overlay377:
+	.incbin "baserom.gba", 0x0078964c, 0x000014c8
+	.global Resource_Overlay378
+Resource_Overlay378:
+	.incbin "baserom.gba", 0x0078ab14, 0x00001974
+	.global Resource_Overlay379
+Resource_Overlay379:
+	.incbin "baserom.gba", 0x0078c488, 0x00000674
+	.global Resource_Overlay37A
+Resource_Overlay37A:
+	.incbin "baserom.gba", 0x0078cafc, 0x000014c4
+	.global Resource_Overlay37B
+Resource_Overlay37B:
+	.incbin "baserom.gba", 0x0078dfc0, 0x00001514
+	.global Resource_Overlay37C
+Resource_Overlay37C:
+	.incbin "baserom.gba", 0x0078f4d4, 0x000000c0
+	.global Resource_Overlay37D
+Resource_Overlay37D:
+	.incbin "baserom.gba", 0x0078f594, 0x000000d8
+	.global Resource_Overlay37E
+Resource_Overlay37E:
+	.incbin "baserom.gba", 0x0078f66c, 0x000000d0
+	.global Resource_Overlay37F
+Resource_Overlay37F:
+	.incbin "baserom.gba", 0x0078f73c, 0x000010a0
+	.global Resource_Overlay380
+Resource_Overlay380:
+	.incbin "baserom.gba", 0x007907dc, 0x0000280c
+	.global Resource_Overlay381
+Resource_Overlay381:
+	.incbin "baserom.gba", 0x00792fe8, 0x00001fdc
+	.global Resource_Overlay382
+Resource_Overlay382:
+	.incbin "baserom.gba", 0x00794fc4, 0x00001354
+	.global Resource_Overlay383
+Resource_Overlay383:
+	.incbin "baserom.gba", 0x00796318, 0x00002c80
+	.global Resource_Overlay384
+Resource_Overlay384:
+	.incbin "baserom.gba", 0x00798f98, 0x00000250
+	.global Resource_Overlay385
+Resource_Overlay385:
+	.incbin "baserom.gba", 0x007991e8, 0x00000e18
+	.global Resource_Overlay386
+Resource_Overlay386:
+	.incbin "baserom.gba", 0x0079a000, 0x0000061c
+	.global Resource_Overlay387
+Resource_Overlay387:
+	.incbin "baserom.gba", 0x0079a61c, 0x00000bf4
+	.global Resource_Overlay388
+Resource_Overlay388:
+	.incbin "baserom.gba", 0x0079b210, 0x00000124
+	.global Resource_Overlay389
+Resource_Overlay389:
+	.incbin "baserom.gba", 0x0079b334, 0x0000101c
+	.global Resource_Overlay38A
+Resource_Overlay38A:
+	.incbin "baserom.gba", 0x0079c350, 0x0000067c
+	.global Resource_Overlay38B
+Resource_Overlay38B:
+	.incbin "baserom.gba", 0x0079c9cc, 0x00000f74
+	.global Resource_Overlay38C
+Resource_Overlay38C:
+	.incbin "baserom.gba", 0x0079d940, 0x0000066c
+	.global Resource_Overlay38D
+Resource_Overlay38D:
+	.incbin "baserom.gba", 0x0079dfac, 0x00001654
+	.global Resource_Overlay38E
+Resource_Overlay38E:
+	.incbin "baserom.gba", 0x0079f600, 0x0000083c
+	.global Resource_Overlay38F
+Resource_Overlay38F:
+	.incbin "baserom.gba", 0x0079fe3c, 0x00001a50
+	.global Resource_Overlay390
+Resource_Overlay390:
+	.incbin "baserom.gba", 0x007a188c, 0x0000049c
+	.global Resource_Overlay391
+Resource_Overlay391:
+	.incbin "baserom.gba", 0x007a1d28, 0x00001b44
+	.global Resource_Overlay392
+Resource_Overlay392:
+	.incbin "baserom.gba", 0x007a386c, 0x00000c00
+	.global Resource_Overlay393
+Resource_Overlay393:
+	.incbin "baserom.gba", 0x007a446c, 0x00000c00
+	.global Resource_Overlay394
+Resource_Overlay394:
+	.incbin "baserom.gba", 0x007a506c, 0x00000b84
+	.global Resource_Overlay395
+Resource_Overlay395:
+	.incbin "baserom.gba", 0x007a5bf0, 0x00000ea8
+	.global Resource_Overlay396
+Resource_Overlay396:
+	.incbin "baserom.gba", 0x007a6a98, 0x000015c8
+	.global Resource_Overlay397
+Resource_Overlay397:
+	.incbin "baserom.gba", 0x007a8060, 0x0000030c
+	.global Resource_Overlay398
+Resource_Overlay398:
+	.incbin "baserom.gba", 0x007a836c, 0x000007b8
+	.global Resource_Overlay399
+Resource_Overlay399:
+	.incbin "baserom.gba", 0x007a8b24, 0x00001a08
+	.global Resource_Overlay39A
+Resource_Overlay39A:
+	.incbin "baserom.gba", 0x007aa52c, 0x000017a4
+	.global Resource_Overlay39B
+Resource_Overlay39B:
+	.incbin "baserom.gba", 0x007abcd0, 0x00001ea8
+	.global Resource_Overlay39C
+Resource_Overlay39C:
+	.incbin "baserom.gba", 0x007adb78, 0x00004190
+	.global Resource_Overlay39D
+Resource_Overlay39D:
+	.incbin "baserom.gba", 0x007b1d08, 0x00001c78
+	.global Resource_Overlay39E
+Resource_Overlay39E:
+	.incbin "baserom.gba", 0x007b3980, 0x000024e0
+	.global Resource_Overlay39F
+Resource_Overlay39F:
+	.incbin "baserom.gba", 0x007b5e60, 0x00002114
+	.global Resource_Overlay3A0
+Resource_Overlay3A0:
+	.incbin "baserom.gba", 0x007b7f74, 0x00001128
+	.global Resource_Overlay3A1
+Resource_Overlay3A1:
+	.incbin "baserom.gba", 0x007b909c, 0x00000790
+	.global Resource_Overlay3A2
+Resource_Overlay3A2:
+	.incbin "baserom.gba", 0x007b982c, 0x00000d90
+	.global Resource_Overlay3A3
+Resource_Overlay3A3:
+	.incbin "baserom.gba", 0x007ba5bc, 0x00001004
+	.global Resource_Overlay3A4
+Resource_Overlay3A4:
+	.incbin "baserom.gba", 0x007bb5c0, 0x000029d4
+	.global Resource_Overlay3A5
+Resource_Overlay3A5:
+	.incbin "baserom.gba", 0x007bdf94, 0x0000182c
+	.global Resource_Overlay3A6
+Resource_Overlay3A6:
+	.incbin "baserom.gba", 0x007bf7c0, 0x000016f8
+	.global Resource_Overlay3A7
+Resource_Overlay3A7:
+	.incbin "baserom.gba", 0x007c0eb8, 0x000013d8
+	.global Resource_Overlay3A8
+Resource_Overlay3A8:
+	.incbin "baserom.gba", 0x007c2290, 0x000026c8
+	.global Resource_Overlay3A9
+Resource_Overlay3A9:
+	.incbin "baserom.gba", 0x007c4958, 0x00000760
+	.global Resource_Overlay3AA
+Resource_Overlay3AA:
+	.incbin "baserom.gba", 0x007c50b8, 0x00000e60
+	.global Resource_Overlay3AB
+Resource_Overlay3AB:
+	.incbin "baserom.gba", 0x007c5f18, 0x00001380
+	.global Resource_Overlay3AC
+Resource_Overlay3AC:
+	.incbin "baserom.gba", 0x007c7298, 0x00000588
+	.global Resource_Overlay3AD
+Resource_Overlay3AD:
+	.incbin "baserom.gba", 0x007c7820, 0x00000cb0
+	.global Resource_Overlay3AE
+Resource_Overlay3AE:
+	.incbin "baserom.gba", 0x007c84d0, 0x00000ff0
+	.global Resource_Overlay3AF
+Resource_Overlay3AF:
+	.incbin "baserom.gba", 0x007c94c0, 0x00002acc
+	.global Resource_Overlay3B0
+Resource_Overlay3B0:
+	.incbin "baserom.gba", 0x007cbf8c, 0x00000c84
+	.global Resource_Overlay3B1
+Resource_Overlay3B1:
+	.incbin "baserom.gba", 0x007ccc10, 0x00003ab0
+	.global Resource_Overlay3B2
+Resource_Overlay3B2:
+	.incbin "baserom.gba", 0x007d06c0, 0x0000211c
+	.global Resource_Overlay3B3
+Resource_Overlay3B3:
+	.incbin "baserom.gba", 0x007d27dc, 0x000022b0
+	.global Resource_Overlay3B4
+Resource_Overlay3B4:
+	.incbin "baserom.gba", 0x007d4a8c, 0x00001a14
+	.global Resource_Overlay3B5
+Resource_Overlay3B5:
+	.incbin "baserom.gba", 0x007d64a0, 0x00000d40
+	.global Resource_Overlay3B6
+Resource_Overlay3B6:
+	.incbin "baserom.gba", 0x007d71e0, 0x00000bf4
+	.global Resource_Overlay3B7
+Resource_Overlay3B7:
+	.incbin "baserom.gba", 0x007d7dd4, 0x0000127c
+	.global Resource_Overlay3B8
+Resource_Overlay3B8:
+	.incbin "baserom.gba", 0x007d9050, 0x00001f60
+	.global Resource_Overlay3B9
+Resource_Overlay3B9:
+	.incbin "baserom.gba", 0x007dafb0, 0x00001aec
+	.global Resource_Overlay3BA
+Resource_Overlay3BA:
+	.incbin "baserom.gba", 0x007dca9c, 0x00002ac4
+	.global Resource_Overlay3BB
+Resource_Overlay3BB:
+	.incbin "baserom.gba", 0x007df560, 0x00002da0
+	.global Resource_Overlay3BC
+Resource_Overlay3BC:
+	.incbin "baserom.gba", 0x007e2300, 0x000034e0
+	.global Resource_Overlay3BD
+Resource_Overlay3BD:
+	.incbin "baserom.gba", 0x007e57e0, 0x00002564
+	.global Resource_Overlay3BE
+Resource_Overlay3BE:
+	.incbin "baserom.gba", 0x007e7d44, 0x00001208
+	.global Resource_Overlay3BF
+Resource_Overlay3BF:
+	.incbin "baserom.gba", 0x007e8f4c, 0x000039b8
+	.global Resource_Overlay3C0
+Resource_Overlay3C0:
+	.incbin "baserom.gba", 0x007ec904, 0x00000ed4
+	.global Resource_Overlay3C1
+Resource_Overlay3C1:
+	.incbin "baserom.gba", 0x007ed7d8, 0x000003a0
+	.global Resource_Overlay3C2
+Resource_Overlay3C2:
+	.incbin "baserom.gba", 0x007edb78, 0x000007c8
+	.global Resource_Overlay3C3
+Resource_Overlay3C3:
+	.incbin "baserom.gba", 0x007ee340, 0x00000794
+	.global Resource_Overlay3C4
+Resource_Overlay3C4:
+	.incbin "baserom.gba", 0x007eead4, 0x00002454
+	.global Resource_Overlay3C5
+Resource_Overlay3C5:
+	.incbin "baserom.gba", 0x007f0f28, 0x00002000
+	.global Resource_Overlay3C6
+Resource_Overlay3C6:
+	.incbin "baserom.gba", 0x007f2f28, 0x00000d44
+	.global Resource_Overlay3C7
+Resource_Overlay3C7:
+	.incbin "baserom.gba", 0x007f3c6c, 0x00000d58
+	.global Resource_Overlay3C8
+Resource_Overlay3C8:
+	.incbin "baserom.gba", 0x007f49c4, 0x00003f78
+	.global Resource_Overlay3C9
+Resource_Overlay3C9:
+	.incbin "baserom.gba", 0x007f893c, 0x00003688
+	.global Resource_Overlay3CA
+Resource_Overlay3CA:
+	.incbin "baserom.gba", 0x007fbfc4, 0x00000fb8
+	.global Resource_Overlay3CB
+Resource_Overlay3CB:
+	.incbin "baserom.gba", 0x007fcf7c, 0x00001190
+	.global Resource_Overlay3CC
+Resource_Overlay3CC:
+	.incbin "baserom.gba", 0x007fe10c, 0x00000108
+	.global Resource_Overlay3CD
+Resource_Overlay3CD:
+	.incbin "baserom.gba", 0x007fe214, 0x000005fc
+	.global Resource_Overlay3CE
+Resource_Overlay3CE:
+	.incbin "baserom.gba", 0x007fe810, 0x000017f0

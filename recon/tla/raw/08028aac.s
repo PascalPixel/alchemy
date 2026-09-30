@@ -18,7 +18,7 @@ Func_08028aac:
 	movs r0, #0
 	str r0, [sp, #4]
 	mov r0, r8
-	bl Func_0802dac0
+	bl GetWorldMapCollision
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r1, [r3, #108]

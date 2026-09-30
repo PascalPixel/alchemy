@@ -567,7 +567,7 @@ SECTIONS
         "*/recon/tla/raw/0802d958.o"(.text)
         "*/recon/tla/raw/0802da24.o"(.text)
         "*/recon/tla/raw/0802da88.o"(.text)
-        "*/recon/tla/raw/0802dac0.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/MAP/WORLD_COLLISION.o"(.text)
         "*/recon/tla/raw/0802db64.o"(.text)
         "*/recon/tla/raw/0802db88.o"(.text)
         "*/recon/tla/raw/0802dbd0.o"(.text)

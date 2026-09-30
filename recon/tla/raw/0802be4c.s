@@ -243,7 +243,7 @@ Func_0802be4c:
 .L_0802c040:
 	.4byte Data_02038000
 .L_0802c044:
-	.4byte Data_0202c000
+	.4byte gMapCollision
 .L_0802c048:
 	.4byte 0x06008000
 .L_0802c04c:

@@ -763,8 +763,8 @@ Data_0202a654:
 	.global Data_0202a656
 Data_0202a656:
 	.space 0x000019aa
-	.global Data_0202c000
-Data_0202c000:
+	.global gMapCollision
+gMapCollision:
 	.space 0x00000001
 	.global Data_0202c001
 Data_0202c001:

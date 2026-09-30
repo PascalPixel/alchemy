@@ -12647,7 +12647,7 @@ msgctxt "message"
 msgid "03159"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgEnemyLabel"
 msgid "03160"
 msgstr "Enemy"
 

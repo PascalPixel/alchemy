@@ -19,6 +19,7 @@ pub const WAVES: &[&[&str]] = &[
         "toolchain-check",
         "native-format-check",
         "index-sync-check",
+        "untracked-check",
         "publication-tree-check",
         "corpus-check",
         "language-check",
@@ -322,7 +323,11 @@ fn run_waves(root: &Path, executable: &Path, pre_commit: bool, main: bool) -> Re
         finished.extend(wave);
     }
     if pre_commit && main {
-        for gate in ["index-sync-check", "publication-staged-check"] {
+        for gate in [
+            "untracked-check",
+            "index-sync-check",
+            "publication-staged-check",
+        ] {
             let arguments = make_arguments(&executable, &[], gate, true);
             let outcome = run_gate(root, gate, &arguments, logs.join(format!("{gate}.log")))?;
             if !report(&[outcome], root) {

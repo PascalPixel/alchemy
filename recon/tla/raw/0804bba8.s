@@ -1037,7 +1037,7 @@ Func_0804bba8:
 	cmp	r2, r3
 	ble.n	.L_0804c410
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_0804c424
 	movs	r0, r0
 	.4byte 0x000003ff
@@ -1052,7 +1052,7 @@ Func_0804bba8:
 	cmp	r3, #0
 	beq.n	.L_0804c424
 	movs	r0, #9
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_0804c424:
 	ldr	r3, [sp, #56]
 	ldr	r0, [pc, #180]
@@ -1071,7 +1071,7 @@ Func_0804bba8:
 	movs	r3, #15
 	strb	r3, [r7, #7]
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	movs	r1, #240
 	lsls	r1, r1, #8
 	adds	r1, #31
@@ -1308,7 +1308,7 @@ Func_0804bba8:
 	cmp	r4, #0
 	bne.n	.L_0804c648
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r4, [sp, #4]
 .L_0804c648:
 	adds	r0, r6, #0
@@ -1644,7 +1644,7 @@ Func_0804bba8:
 	ldr	r2, [pc, #60]
 	orrs	r3, r2
 	strh	r3, [r1, #6]
-	bl	0x08041f70
+	bl	Func_08041f70
 	movs	r2, #160
 	lsls	r2, r2, #7
 	adds	r2, #1
@@ -1666,7 +1666,7 @@ Func_0804bba8:
 	movs	r3, #0
 	bl	UiText_DrawCharacterAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_0804c940
 	.4byte 0x00000040
 	.2byte 0x06d3

@@ -262,14 +262,14 @@ Func_08049a30:
 	adds	r0, r5, #0
 	bl	Item_Get
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	adds	r1, r5, #0
 	ldr	r0, [sp, #80]
 	bl	0x080499b4
 	cmp	r0, #0
 	beq.n	.L_08049c68
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08049c78
 	movs	r0, r0
 	.2byte 0x0d46
@@ -281,7 +281,7 @@ Func_08049a30:
 	cmp	r3, #0
 	beq.n	.L_08049c78
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08049c78:
 	movs	r0, #128
 	ldr	r3, [pc, #88]
@@ -294,7 +294,7 @@ Func_08049a30:
 	movs	r2, #16
 	bl	UiText_DrawCharacterAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r3, [sp, #4]
 	adds	r0, r5, #0
 	ldmia	r3!, {r1}
@@ -1177,7 +1177,7 @@ Func_08049a30:
 	cmp	r3, #0
 	bne.n	.L_0804a3b0
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_0804a3d8
 	movs	r0, r0
 	.4byte 0x000003ff
@@ -1192,7 +1192,7 @@ Func_08049a30:
 	cmp	r2, r3
 	ble.n	.L_0804a3c4
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_0804a3d8
 .L_0804a3c4:
 	ldr	r1, [sp, #48]
@@ -1203,7 +1203,7 @@ Func_08049a30:
 	cmp	r3, #0
 	beq.n	.L_0804a3d8
 	movs	r0, #9
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_0804a3d8:
 	ldr	r0, [sp, #64]
 	movs	r3, #5
@@ -1222,7 +1222,7 @@ Func_08049a30:
 	str	r5, [sp, #0]
 	bl	UiText_DrawNumberAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r1, [sp, #64]
 	movs	r3, #15
 	strb	r3, [r1, #7]
@@ -2643,7 +2643,7 @@ Func_08049a30:
 	bl	0x08039260
 	mov	r9, r0
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r0, [pc, #548]
 	b.n	.L_0804b29e
 	mov	r2, fp
@@ -3128,7 +3128,7 @@ Func_08049a30:
 	b.n	.L_0804b3ac
 .L_0804b296:
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r0, [pc, #184]
 .L_0804b29e:
 	mov	r1, r9
@@ -3136,7 +3136,7 @@ Func_08049a30:
 	movs	r3, #0
 	bl	UiText_DrawCharacterAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_0804b3ac
 .L_0804b2b0:
 	ldr	r1, [sp, #84]

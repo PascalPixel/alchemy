@@ -1064,7 +1064,7 @@ void InspectOrdinaryObject(void)
     Actor_ShowEmote(15, 256, 60);
     TurnActorToSceneDirection(15);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+    gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(15, 0, 0);
     Event_End();
@@ -1079,7 +1079,7 @@ void InspectEmptyChest(void)
     Actor_ShowEmote(11, 256, 60);
     TurnActorToSceneDirection(11);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+    gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(11, 0, 0);
     Event_End();
@@ -1142,7 +1142,7 @@ void RunpaJo_RunGuardChallenge(void)
     Event_ShowMessage(12, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo2, 31);
-    gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+    gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 3);
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(13, 0, 0);
@@ -1174,7 +1174,7 @@ void InspectEmptySceneObject(void)
     Actor_ShowEmote(16, 256, 60);
     TurnActorToSceneDirection(16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+    gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(16, 0, 0);
     Event_End();
@@ -1488,7 +1488,7 @@ void PlayStoryScene(void)
         SHARED_RECORD_FIELD_448 = 512;
         Event_Wait(1);
         do {
-            gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+            gGameState.unknown_200[0x22b - 0x200] = 3;
         } while (0);
         Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         BattleFx_SetWeightedResult(98, 4);
@@ -1687,7 +1687,7 @@ void PlayStoryScene(void)
         SHARED_RECORD_FIELD_448 = 512;
         Event_Wait(1);
         do {
-            gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+            gGameState.unknown_200[0x22b - 0x200] = 3;
         } while (0);
         Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         BattleFx_SetWeightedResult(98, 4);

@@ -1,7 +1,7 @@
-@ Summon_GoldenDragonHeadTiles: 8-bit sprite tiles in a column 1084 pixels tall, their 240-colour
-@ palette and then the tiles as a packed 8-bit bitmap.
+@ Summon_GoldenDragonHeadTiles: its 240-colour palette, then 8 8-bit sprites of
+@ 32x32 and 480 zero bytes (ZERO_FILL.TSV), joined and packed by the resource packer.
 	.section .rodata
 	.global Summon_GoldenDragonHeadTiles
 Summon_GoldenDragonHeadTiles:
 	.incbin "GRAPHICS/SUMMON/GOLDEN_DRAGON_HEAD.gbapal"
-	.incbin "GRAPHICS/SUMMON/GOLDEN_DRAGON_HEAD.bitmap.lz"
+	.incbin "GRAPHICS/SUMMON/GOLDEN_DRAGON_HEAD.parts.lz"

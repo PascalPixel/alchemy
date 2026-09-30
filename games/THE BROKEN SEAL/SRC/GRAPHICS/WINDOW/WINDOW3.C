@@ -1,78 +1,129 @@
-#include "TBS_EDITION.H"
 #include "TYPES.H"
+#include "RUNTIME_INTERFACES.H"
+#include "TBS_EDITION.H"
+#include "GLOBAL_CELLS.H"
 
+s32 UiText_MeasureStringVariant(s32 start, s32 *width, s32 *count, s32 mode);
 extern u8 *gWindowWork;
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
-u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
-/* Draws a window frame into the text canvas: corners, edges and a blank
-   interior. The alternate frame style (byte RENDER_MODE_OFS) uses the flipped corner
-   tiles of the second border set. */
-void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
+extern u8 Data_03001e8c[];
+s32 UiText_BuildRenderEntries(s32, s32);
+
+void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);
+
+/* The European editions never widen a window for the render mode. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+
+#define FIT_FIXED_LIMIT 1
+#endif
+
+void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 {
-    u8 *base = gWindowWork;
-    u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
-    u32 row;
+#if !defined(FIT_FIXED_LIMIT)
+    u8 *base;
+#endif
+    s32 x;
+    s32 y;
+    s32 limit;
+    s32 right;
+    s32 bottom;
+    s32 over;
+    s32 pos;
 
-    if (width <= 1 || height <= 1 || width > 30 || height > 30)
-        return;
-    UiWindow_ClearTileAttributesInRect(x, y, width, height);
-    if (base[RENDER_MODE_OFS] != 0)
-        *cursor++ = 0xf01c;
-    else
-        *cursor++ = 0xf010;
-    cursor = Memory_FillHalfwordsDma(cursor, 0xf011f011, width - 2);
-    if (base[RENDER_MODE_OFS] != 0)
-        *cursor++ = 0xf41c;
-    else
-        *cursor++ = 0xf012;
-    cursor += 32 - width;
-    for (row = 1; row < height - 1; row++) {
-        *cursor++ = 0xf016;
-        if (width != 2)
-            cursor = Memory_FillHalfwordsDma(cursor, 0xf020f020, width - 2);
-        *cursor++ = 0xf017;
-        cursor += 32 - width;
+#if !defined(FIT_FIXED_LIMIT)
+    base = gWindowWork;
+#endif
+    x = *px;
+    y = *py;
+    limit = 30;
+
+    if (!(flags & 2)) {
+        if (flags & 1)
+            UiText_MeasureStringVariant(no, (s32 *)pw, (s32 *)ph, mode);
+        else
+            UiText_MeasureEntryDimensions(no, (s32 *)pw, (s32 *)ph, mode);
     }
-    if (base[RENDER_MODE_OFS] != 0)
-        *cursor++ = 0xf81c;
-    else
-        *cursor++ = 0xf013;
-    cursor = Memory_FillHalfwordsDma(cursor, 0xf014f014, width - 2);
-    if (base[RENDER_MODE_OFS] != 0)
-        *cursor = 0xfc1c;
-    else
-        *cursor = 0xf015;
-    base[RENDER_DIRTY_OFS] = 1;
+
+    if (*pw == 0 && *ph == 0)
+        return;
+
+    if (!(flags & 2)) {
+        *pw = (*pw + 19) >> 3;
+        *ph = (*ph + 15) >> 3;
+#if !defined(FIT_FIXED_LIMIT)
+        if (base[RENDER_MODE_OFS] != 0) {
+            *pw += 2;
+            limit = 29;
+        }
+#endif
+    }
+
+    right = x + *pw;
+    if (right > limit) {
+        over = right - limit;
+        pos = x - over;
+        if (pos >= 0)
+            x = pos;
+        else
+            x = 0;
+    }
+    bottom = y + *ph;
+    if (bottom > 20) {
+        over = bottom - 20;
+        pos = y - over;
+        if (pos >= 0)
+            y = pos;
+        else
+            y = 0;
+    }
+    if (x < 0)
+        x = 0;
+    if (y < 0)
+        y = 0;
+    if (x > limit - *pw)
+        x = limit - *pw;
+    if (y > 20 - *ph)
+        y = 20 - *ph;
+    *px = x;
+    *py = y;
 }
 
-/* Fills a window's interior with the text canvas tiles, numbered down each
-   column from tile 0x127, so glyphs drawn into the canvas show through.
-   The full-width form covers the border columns too. */
-void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width)
+void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 {
-    u8 *base = gWindowWork;
-    u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
-    u32 row;
-    u32 col;
+    UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), x, y, 0);
+}
 
-    if (width <= 1 || height <= 1 || width > 30 || height > 30)
-        return;
-    cursor += 32;
-    if (full_width == 0) {
-        for (row = 1; row < height - 1; row++) {
-            cursor++;
-            for (col = 1; col < width - 1; col++)
-                *cursor++ = ((0x127 + row + (col - 1) * (height - 2)) & 0xfff) | 0xf000;
-            cursor++;
-            cursor += 32 - width;
-        }
-    } else {
-        for (row = 1; row < height - 1; row++) {
-            for (col = 0; col < width; col++)
-                *cursor++ = ((0x127 + row + col * (height - 2)) & 0xfff) | 0xf000;
-            cursor += 32 - width;
-        }
+s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+{
+    u16 *base;
+    s32 temp;
+    s32 offset;
+
+    base = *(u16 **)((u32)&Data_03001e8c);
+    temp = UiText_BuildRenderEntries(no, 0);
+    offset = temp * 2 + RENDER_ENTRY_TBL_OFS;
+    if (*(u16 *)((u8 *)base + offset) == 0)
+    {
+        return 0;
     }
-    base[RENDER_DIRTY_OFS] = 1;
+    UiWindow_FitOnScreen(temp, arg1, arg2, arg3, arg4, 0, 0);
+    return 1;
+}
+
+s32 UiText_GetResourceDimensionsAlt(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+{
+    u16 *base;
+    s32 idx;
+    s32 ofs;
+
+    base = *(u16 **)((u32)&Data_03001e8c);
+    idx = UiText_BuildRenderEntries(no, 0);
+    ofs = idx * 2 + RENDER_ENTRY_TBL_OFS;
+    if (*(u16 *)((u8 *)base + ofs) == 0)
+    {
+        return 0;
+    }
+    UiWindow_FitOnScreen(idx, arg1, arg2, arg3, arg4, 0, 1);
+    return 1;
 }

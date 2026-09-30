@@ -1,42 +1,88 @@
-#include "A9_MOTION.H"
 #include "TYPES.H"
+#include "TBS_EDITION.H"
+#include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-#include "FIXED_MATH.H"
+#include "SOUND_IDS.H"
 
-extern u8 Data_03001f2c[];
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+extern u8 *volatile gWindowWork;
+void Audio_PlayCue(s32 cue);
 
-void UiIcon_PrepareObject(void *arg0);
+extern u8 Data_03001c94[];
 
-void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
+/* menu/input/cancel_sound_tick.c */
+s32 Scheduler_RemoveCallback(s32);
+s32 GameFlag_SetBitFar(s32);
+
+/* menu/input/reset_cancel_sound.c */
+s32 Scheduler_AddOrUpdateCallback(s32, s32);
+s32 GameFlag_ClearBitFar(s32);
+void Menu_CancelSoundTick(void);
+
+/* menu/input/ensure_cancel_sound.c */
+s32 GameFlag_TestFar(s32);
+
+/* ui/render/set_palette_color_15.c */
+s32 UiWork_SetParamNibbleFar(s32);
+
+void UiWork_SetMenuBusy(void)
 {
-    s32 i;
-    struct Object080a9bd8 *obj;
-    struct Object080a9bd8 **tbl;
-
-    i = 0;
-    tbl =
-        (struct Object080a9bd8 **)(*(s32 *)((u32)&Data_03001f2c) + 0x48);
-    do {
-        obj = *tbl++;
-        if (obj != NULL) {
-            Menu_PlaceEntryObjectInGrid(obj, i, origin_x, origin_y, phase);
-        }
-        i += 1;
-    } while (i <= 0x1F);
+    u8 *base = gWindowWork;
+    u8 *p = base + RENDER_MENU_BUSY_OFS;
+    u8 flag = 1;
+    *p = flag;
 }
 
-void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
-    s32 origin_x, s32 origin_y, s32 phase) {
-    s32 no;
+void UiWork_ClearMenuBusy(void)
+{
+    u8 *base = gWindowWork;
+    u8 *p = base + RENDER_MENU_BUSY_OFS;
+    u8 flag = 0;
+    *p = flag;
+}
 
-    no = index;
-    if (no > 0x1F) {
-        no = 0;
+s32 Audio_PlayCueReturnOne(s32 cue)
+{
+    Audio_PlayCue(cue);
+    return 1;
+}
+
+/* menu/input/cancel_sound_tick.c */
+void Menu_CancelSoundTick(void)
+{
+    if (*(s32 *)((u32)&Data_03001c94) & 8) {
+        Audio_PlayCue(SOUND_MENU_CANCEL);
+        GameFlag_SetBitFar(0x150);
+        Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);
     }
-    obj->y =
-        (s16)((Math_Div(no, phase) * 0x10) + origin_y);
-    obj->x =
-        (s16)((Math_Mod(no, phase) * 0x10) + origin_x);
-    UiIcon_PrepareObject(obj);
+}
+
+void Menu_CancelSoundReset(void)
+{
+    GameFlag_ClearBitFar(0x150);
+    Scheduler_AddOrUpdateCallback((s32)Menu_CancelSoundTick, 0xC80);
+}
+
+void Menu_EnsureCancelSound(void)
+{
+    if (GameFlag_TestFar(0x150) == 0) {
+        Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);
+    }
+}
+
+/* ui/render/palette_set_color15.c */
+void UiPalette_SetColor15(void)
+{
+    UiWork_SetParamNibbleFar(15);
+}
+
+/* ui/render/set_palette_color_2.c */
+void UiPalette_SetColor2(void)
+{
+    UiWork_SetParamNibbleFar(2);
+}
+
+/* ui/render/set_palette_color_4.c */
+void UiPalette_SetColor4(void)
+{
+    UiWork_SetParamNibbleFar(4);
 }

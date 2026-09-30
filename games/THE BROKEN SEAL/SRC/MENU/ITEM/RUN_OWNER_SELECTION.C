@@ -39,7 +39,6 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 extern char MsgArrangeItemsHelp;
 
-struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_SpawnIconEntries(struct OwnerSelectMenu *menu, s32 window);
 struct OwnerSelectIcon *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, s32 window, s32 x, s32 y);
@@ -52,7 +51,7 @@ void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
 #endif
 s32 Math_Mod(s32 numerator, s32 denominator);
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode);
+s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
 void ItemMenu_OpenCategory(s32 owner);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
@@ -70,7 +69,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
     s32 selection;
     s32 count;
     s32 result;
-    struct OwnerInventoryState *owner;
+    struct BattleUnit *owner;
     u8 sort_mode;
     s32 by_category;
     s32 pending;

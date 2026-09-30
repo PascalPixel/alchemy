@@ -2,6 +2,7 @@
 #define ALCHEMY_OWNER_STATE_H
 
 #include "LAYOUT_GUARD.H"
+#include "BATTLE_RUNTIME.H"
 
 struct OwnerInventoryState {
     u8 unknown_000[0xd8];
@@ -92,6 +93,5 @@ LAYOUT_OFFSET_GUARD(
  */
 
 void *Owner_GetState();
-struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
 
 #endif

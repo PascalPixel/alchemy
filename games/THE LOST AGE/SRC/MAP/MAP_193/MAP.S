@@ -18,7 +18,7 @@ Field_Map193:
 	.incbin "MAP/MAP_193/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map193_SHAPES:
-	.incbin "MAP/MAP_193/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_170/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map193_GRID:
 	.incbin "MAP/MAP_193/GRID.parts.lz"
@@ -27,7 +27,7 @@ Field_Map193:
 	.incbin "MAP/MAP_193/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map193_ANIMATION:
-	.incbin "MAP/MAP_193/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_170/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map193_BLEND:
 	.incbin "MAP/MAP_001/BLEND.script.lz"

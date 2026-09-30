@@ -38,12 +38,6 @@ extern u8 MsgLobbyOpponentArrived[];
 extern u8 MsgLobbyPleaseSpeakWhen[];
 u32 State_RunQueryWithInterruptMasterSaved(void);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
 s32 LinkLobby_ExchangePartyRecords(void)
 {
     s32 result;
@@ -199,7 +193,7 @@ s32 LinkLobby_RunConnectionSequence(void)
             Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 10);
             Event_SetPair1d4((s32)&SceneId_LinkLobby, 11);
         }
-        gGameState.unknown_1f8[0x22b - 0x1f8] = 4;
+        gGameState.unknown_200[0x22b - 0x200] = 4;
         BattleFx_SetWeightedResult(1, 1);
         tbl = (u16 *)gSerialTransfer.reserved;
         value.value = 0x45;
@@ -251,7 +245,7 @@ s32 LinkLobby_RunBattleApplication(void)
                 Engine_GameFlagSet(0x202);
                 /* FAKEMATCH: Select the shared-tail message before its answer store. */
                 line = msg + 7;
-                (*(union GameStateRows *)&gGameState).halves[341][0] = answer;
+                gGameState.link_tallies[3] = answer;
                 goto message;
             } else {
                 Engine_GameFlagClear(0x173);

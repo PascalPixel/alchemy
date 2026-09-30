@@ -1,7 +1,7 @@
-@ Summon_RedCrescentTiles: 8-bit sprite tiles in a column 572 pixels tall, their 32-colour
-@ palette and then the tiles as a packed 8-bit bitmap.
+@ Summon_RedCrescentTiles: its 32-colour palette, then 1 8-bit sprites of
+@ 64x64 and 480 zero bytes (ZERO_FILL.TSV), joined and packed by the resource packer.
 	.section .rodata
 	.global Summon_RedCrescentTiles
 Summon_RedCrescentTiles:
 	.incbin "GRAPHICS/SUMMON/RED_CRESCENT.gbapal"
-	.incbin "GRAPHICS/SUMMON/RED_CRESCENT.bitmap.lz"
+	.incbin "GRAPHICS/SUMMON/RED_CRESCENT.parts.lz"

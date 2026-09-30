@@ -114,7 +114,8 @@ extern u8 HaidiaArashi_ActorTwentyTwoScript[];
 
 s32 IwramUnsignedRemainder(s32, s32);
 
-void HaidiaArashi_SpawnEffectPair(s32);
+union PairObject;
+void HaidiaArashi_SpawnEffectPair(union PairObject *parent);
 
 void BattleFx_SetQueuedSoundAndPlay(s32);
 
@@ -200,8 +201,8 @@ void FieldScene_BuildPlacementGrid(void);
 void SceneState_SetWords1c0And1c8AndRun(void);
 void SceneState_SetWorkWordsAndFlag87f(void);
 void SceneActor_SetModeByFrameBit1(s32 o);
-void SceneEffect_UpdateArcOverAnchor(Obj *o);
-void OverlayObject_UpdateArcFromParent(Obj *o);
+void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
+void OverlayObject_UpdateArcFromParent(union FieldObject *object);
 void SceneState_SetValue140Mode0(void);
 void FieldScene_RunSingleStep(void);
 void FieldScene_RunFourPairedSteps(void);

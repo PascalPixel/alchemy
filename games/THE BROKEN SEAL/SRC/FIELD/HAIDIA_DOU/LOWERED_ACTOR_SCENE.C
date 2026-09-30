@@ -1,15 +1,9 @@
 #include "TYPES.H"
+#include "STAGED_ACTOR.H"
 #include "CALL.H"
-
-struct Probe {
-    s32 word[6];
-};
 
 void Object_SetModeById(s32 id, s32 mode);
 
-s32 StagedActor_FillGridAttributeRectangle();
-s32 StagedActor_FindClearPosition(struct Probe *probe);
-void SceneActor_MoveAndRedraw(struct Probe probe);
 void Engine_EventBegin();
 void Battle_WaitMode0();
 void ObjectMotion_SetSpeedParameters();
@@ -26,7 +20,7 @@ void Audio_PlayCue();
 void HaidiaDou_RunLoweredActorScene(void)
 {
     s32 record;
-    struct Probe probe;
+    struct StagedActorProbe probe;
 
     Engine_EventBegin();
     if (StagedActor_FindClearPosition(&probe) != 0) {
@@ -43,9 +37,9 @@ void HaidiaDou_RunLoweredActorScene(void)
             s32 zero = 0;
 
             obj[35] = two;
-            StagedActor_FillGridAttributeRectangle(0, 13, (probe.word[4] >> 20) - 1, 4, two, zero);
+            StagedActor_FillGridAttributeRectangle(0, 13, (probe.position_z >> 20) - 1, 4, two, zero);
         }
-        if ((probe.word[4] >> 20) == 20) {
+        if ((probe.position_z >> 20) == 20) {
             Engine_GameFlagSet(0x205);
         } else {
             Engine_GameFlagSet(0x204);

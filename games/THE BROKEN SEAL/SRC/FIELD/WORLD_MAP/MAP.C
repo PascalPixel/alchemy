@@ -306,7 +306,7 @@ s32 StoryActor_ClearActiveFlag(u8 *actor)
  * when their test fails. The case arms are in the order the reference uses,
  * not ascending, and that order is what reproduces it.
  */
-u8 *StoryScene_SelectPlacementTable(void)
+struct ScenePlacement *StoryScene_SelectPlacementTable(void)
 {
     s16 *scene_table = (s16 *)&gGameState;
     s32 scene_id = scene_table[225];
@@ -420,7 +420,7 @@ void FieldScene_RunStep7D3B1E(void)
     StoryScene_SetBranchValueFromZ(0x7D, 0x3B, 0x1E);
 }
 
-u8 *WorldMap_GetEvents(void)
+struct SceneEvent *WorldMap_GetEvents(void)
 {
     return gWorldMapEvents;
 }

@@ -52,7 +52,7 @@ void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Graphics_ScaleRgb555Clamped(u16 *src, void *dst, s32 scale, s32 count);
 void Graphics_BuildSequentialTileTable(void *dst);
 void BattlePresentation_BuildTilemap(void *dst);
-void Func_080b5138(void);
+void BitDecoder_DecodeImage(void);
 void BattlePres_UpdateHBlankScroll(void);
 void Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 
@@ -66,7 +66,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 
     table = Runtime_AllocateHeapBlock(49, size);
     size >>= 2;
-    Dma_Set((void *)Func_080b5138, table, 0x84000000 | size, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)BitDecoder_DecodeImage, table, 0x84000000 | size, (volatile u32 *)0x040000d4);
     ((DecodeFn)gTransitionWork[5])(data + 0x100, (void *)0x06008000);
     Runtime_ReleaseHeapBlock(49);
     Dma_Set(data, screen->palette, 0x84000040, (volatile u32 *)0x040000d4);

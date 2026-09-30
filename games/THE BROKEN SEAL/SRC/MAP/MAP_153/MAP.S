@@ -14,16 +14,16 @@ Field_Map153:
 	map_block Field_Map153, .LField_Map153_BLEND
 	map_block Field_Map153, .LField_Map153_MARKERS
 .LField_Map153_METATILES:
-	.incbin "MAP/MAP_153/METATILES.delta0.lz"
+	.incbin "COMMON/MAP/MAP_153/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map153_SHAPES:
-	.incbin "MAP/MAP_153/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_153/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map153_GRID:
 	.incbin "MAP/MAP_153/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map153_ANIMATION:
-	.incbin "MAP/MAP_153/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_153/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map153_BLEND:
 	.incbin "MAP/MAP_020/BLEND.script.lz"

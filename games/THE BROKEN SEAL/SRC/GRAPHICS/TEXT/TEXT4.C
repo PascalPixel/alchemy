@@ -1,8 +1,11 @@
-#include "RENDER_INPUT.H"
-#include "TBS_EDITION.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "TBS_EDITION.H"
+#include "RENDER_INPUT.H"
 #include "SYSTEM.H"
+
+extern u8 Data_03001e8c[];
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 /* The window work's message state. Its leading records hold words: typed
    as words, a store to the message cursor may alias the spilled x, so the
@@ -23,16 +26,32 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 UiText_QueueRenderEntries(struct RenderInput *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
-
-extern u8 Data_03001e8c[];
 struct Work;
 s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 s32 Object_GetScreenPositionFar(s32 object, s32 *out);
 s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct Work *work);
 extern s32 gGameState[];
-
 struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed);
+
+void UiWork_ProcessRenderChannels(void);
+s32 UiWork_ProcessDirectWork(void);
+s32 UiWork_AnimateSpriteSlots(void);
+
+void UiWork_SetBusyFlags(s32 flags)
+{
+    void *work;
+
+    work = *(void **)((u32)&Data_03001e8c);
+    if (work != NULL) {
+        if (flags & 1) {
+            FIELD_AT_OFFSET(work, s8 *, RENDER_BUSY_OFS + 1) = 1;
+        }
+        if (2 & flags) {
+            FIELD_AT_OFFSET(work, s8 *, RENDER_BUSY_OFS + 2) = 1;
+        }
+    }
+}
 
 /* Build a message's render entries, fit a window for them on screen and
    queue them there. Bits 16-27 of packed select the first entry; its low
@@ -168,4 +187,11 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
     *(u16 *)(base + RENDER_RESULT_OFS) = zero;
     *(u16 *)(base + RENDER_RESULT_OFS + 2) = zero;
     WaitFrames(3);
+}
+
+void UiWork_ProcessAll(void)
+{
+    UiWork_ProcessDirectWork();
+    UiWork_ProcessRenderChannels();
+    UiWork_AnimateSpriteSlots();
 }

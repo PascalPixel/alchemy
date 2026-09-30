@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
-struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
 
 /*
  * The item menu's quantity of one item in an owner's inventory: the packed
@@ -10,7 +9,7 @@ struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
  */
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item)
 {
-    struct OwnerInventoryState *state;
+    struct BattleUnit *state;
     s32 i;
     s32 quantity;
 

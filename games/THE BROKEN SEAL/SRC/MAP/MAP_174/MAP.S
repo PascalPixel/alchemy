@@ -14,10 +14,10 @@ Field_Map174:
 	map_block Field_Map174
 	map_block Field_Map174, .LField_Map174_MARKERS
 .LField_Map174_METATILES:
-	.incbin "MAP/MAP_001/METATILES.delta0.lz"
+	.incbin "COMMON/MAP/MAP_001/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map174_SHAPES:
-	.incbin "MAP/MAP_001/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_001/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map174_GRID:
 	.incbin "MAP/MAP_001/GRID.parts.lz"

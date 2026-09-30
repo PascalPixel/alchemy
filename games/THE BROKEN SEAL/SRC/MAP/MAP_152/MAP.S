@@ -15,7 +15,7 @@ Field_Map152:
 	map_block Field_Map152, .LField_Map152_BLEND
 	map_block Field_Map152, .LField_Map152_MARKERS
 .LField_Map152_METATILES:
-	.incbin "MAP/MAP_152/METATILES.delta0.lz"
+	.incbin "COMMON/MAP/MAP_152/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map152_SHAPES:
 	.incbin "MAP/MAP_152/SHAPES_ES.table.lz"
@@ -24,7 +24,7 @@ Field_Map152:
 	.incbin "MAP/MAP_152/GRID_ES.parts.lz"
 	.balign 4, 0
 .LField_Map152_ANIMATION:
-	.incbin "MAP/MAP_031/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_031/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map152_BLEND:
 	.incbin "MAP/MAP_020/BLEND.script.lz"
@@ -44,7 +44,7 @@ Field_Map152:
 	map_block Field_Map152, .LField_Map152_BLEND
 	map_block Field_Map152, .LField_Map152_MARKERS
 .LField_Map152_METATILES:
-	.incbin "MAP/MAP_152/METATILES.delta0.lz"
+	.incbin "COMMON/MAP/MAP_152/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map152_SHAPES:
 	.incbin "MAP/MAP_152/SHAPES_ES.table.lz"
@@ -53,7 +53,7 @@ Field_Map152:
 	.incbin "MAP/MAP_152/GRID_ES.parts.lz"
 	.balign 4, 0
 .LField_Map152_ANIMATION:
-	.incbin "MAP/MAP_031/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_031/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map152_BLEND:
 	.incbin "MAP/MAP_020/BLEND.script.lz"
@@ -73,7 +73,7 @@ Field_Map152:
 	map_block Field_Map152, .LField_Map152_BLEND
 	map_block Field_Map152, .LField_Map152_MARKERS
 .LField_Map152_METATILES:
-	.incbin "MAP/MAP_152/METATILES.delta0.lz"
+	.incbin "COMMON/MAP/MAP_152/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map152_SHAPES:
 	.incbin "MAP/MAP_152/SHAPES_ES.table.lz"
@@ -82,7 +82,7 @@ Field_Map152:
 	.incbin "MAP/MAP_152/GRID_ES.parts.lz"
 	.balign 4, 0
 .LField_Map152_ANIMATION:
-	.incbin "MAP/MAP_031/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_031/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map152_BLEND:
 	.incbin "MAP/MAP_020/BLEND.script.lz"
@@ -101,16 +101,16 @@ Field_Map152:
 	map_block Field_Map152, .LField_Map152_BLEND
 	map_block Field_Map152, .LField_Map152_MARKERS
 .LField_Map152_METATILES:
-	.incbin "MAP/MAP_152/METATILES.delta0.lz"
+	.incbin "COMMON/MAP/MAP_152/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map152_SHAPES:
-	.incbin "MAP/MAP_152/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_152/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map152_GRID:
 	.incbin "MAP/MAP_152/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map152_ANIMATION:
-	.incbin "MAP/MAP_031/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_031/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map152_BLEND:
 	.incbin "MAP/MAP_020/BLEND.script.lz"

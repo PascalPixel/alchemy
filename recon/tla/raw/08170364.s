@@ -480,7 +480,7 @@ Func_08170364:
 .L_08170732:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #76]
 	adds r1, r0, #0
 	lsls r0, r2, #11
@@ -540,7 +540,7 @@ Func_08170364:
 	lsrs r0, r3, #31
 	adds r0, r3, r0
 	asrs r0, r0, #1
-	bl __modsi3
+	bl Math_Mod
 	ldr r7, [sp, #76]
 	movs r1, #128
 	adds r3, r0, #0
@@ -755,7 +755,7 @@ Func_08170364:
 	adds r0, r3, r0
 	movs r1, #9
 	asrs r0, r0, #1
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_081709cc
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -1161,7 +1161,7 @@ Func_08170364:
 	blt .L_08170ce0
 	mov r0, r9
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, [r5, #16]
 	adds r4, r0, #1
 	movs r6, #4

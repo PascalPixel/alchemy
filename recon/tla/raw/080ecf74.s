@@ -37,7 +37,7 @@ Func_080ecf74:
 	movs r1, #192
 	lsls r1, r1, #2
 	adds r0, #128
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #128
 	lsls r3, r3, #1
 	mov r2, r10

@@ -1102,7 +1102,7 @@ Func_08182aa8:
 .L_081832de:
 	mov r0, r8
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, [sp, #56]
 	lsls r0, r0, #21
 	adds r0, r0, r3
@@ -1224,7 +1224,7 @@ Func_08182aa8:
 .L_081833e0:
 	movs r1, #9
 	mov r0, r10
-	bl __modsi3
+	bl Math_Mod
 	lsls r3, r0, #3
 	subs r3, r3, r0
 	add r3, r8
@@ -1795,7 +1795,7 @@ Func_08182aa8:
 	movs r1, #7
 	mov r0, r8
 	subs r7, r3, r2
-	bl __modsi3
+	bl Math_Mod
 	mov r1, r11
 	lsls r0, r0, #3
 	subs r0, r1, r0

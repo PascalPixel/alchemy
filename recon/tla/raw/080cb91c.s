@@ -121,7 +121,7 @@ Func_080cb91c:
 .L_080cba0e:
 	bl Func_080e2718
 .L_080cba12:
-	bl Resource_FarCall004
+	bl UiWork_InitializeWithResourceCountersFar
 	adds r0, r7, #0
 	bl Func_08020088
 	bl BattleFx_ResetCounters

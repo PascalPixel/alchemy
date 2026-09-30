@@ -916,14 +916,14 @@ Func_08186dfc:
 .L_08187524:
 	ldr r0, [sp, #48]
 	movs r1, #13
-	bl __modsi3
+	bl Math_Mod
 	ldr r5, [sp, #48]
 	adds r4, r0, #0
 	adds r5, #1
 	movs r1, #13
 	adds r0, r5, #0
 	str r4, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #44]
 	ldr r1, .L_08187678
 	mov r9, r2
@@ -1208,7 +1208,7 @@ Func_08186dfc:
 .L_0818775c:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_08187a50
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]

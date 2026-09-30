@@ -92,7 +92,7 @@ Func_081885f0:
 	strb r2, [r6, #8]
 	adds r1, r4, #0
 	adds r0, r7, #0
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #0]
 	mov r1, r8
 	adds r2, r0, r1
@@ -103,7 +103,7 @@ Func_081885f0:
 	adds r1, r4, #0
 	mov r0, r10
 	str r2, [sp, #4]
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #0]
 	ldr r2, [sp, #4]
 	adds r3, r0, r4

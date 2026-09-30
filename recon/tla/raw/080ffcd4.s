@@ -211,7 +211,7 @@ Func_080ffcd4:
 	adds r3, r7, r4
 	ldrb r1, [r3]
 	adds r0, r0, r1
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #129
 	lsls r2, r0, #1
 	lsls r3, r3, #2

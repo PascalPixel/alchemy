@@ -483,7 +483,7 @@ Func_08188cb0:
 .L_08189060:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r0, #0
 	lsls r1, r1, #8
 	movs r2, #139
@@ -527,7 +527,7 @@ Func_08188cb0:
 .L_081890b8:
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	lsls r1, r0, #3
 	adds r1, r1, r0
 	lsls r1, r1, #6

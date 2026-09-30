@@ -245,7 +245,7 @@ Func_081197f0:
 	bl Func_08118eb0
 	bl Func_08118f6c
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	ldrh r3, [r0]
 	cmp r3, #0
 	beq .L_08119a18
@@ -399,7 +399,7 @@ Func_081197f0:
 	bl Func_0811d7e4
 	bl Func_08118f6c
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	ldrh r3, [r0]
 	cmp r3, #0
 	beq .L_08119b5e

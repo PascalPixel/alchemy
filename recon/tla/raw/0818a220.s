@@ -410,7 +410,7 @@ Func_0818a220:
 	ldr r3, [sp, #84]
 	ldr r0, [sp, #72]
 	ldr r1, [r3, #20]
-	bl __modsi3
+	bl Math_Mod
 	adds r5, r0, #0
 	bl Random16
 	lsls r3, r5, #1
@@ -455,7 +455,7 @@ Func_0818a220:
 	bgt .L_0818a5da
 	adds r0, r1, #0
 	movs r1, #56
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #52]
 	ldr r2, [sp, #80]
 	ldr r3, [r4]
@@ -498,14 +498,14 @@ Func_0818a220:
 	bhi .L_0818a67c
 	movs r1, #5
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	adds r0, r6, #0
 	bl Math_Div
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0818a7a0
 	adds r5, r5, r0
 	lsls r3, r5, #2
@@ -1046,7 +1046,7 @@ Func_0818a220:
 	str r3, [r5, #16]
 	movs r1, #3
 	adds r0, r6, r4
-	bl __modsi3
+	bl Math_Mod
 	movs r1, #128
 	movs r2, #1
 	lsls r0, r0, #12
@@ -1111,7 +1111,7 @@ Func_0818a220:
 	str r3, [r5, #20]
 	adds r0, r6, r2
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #128
 	lsls r0, r0, #12
 	lsls r3, r3, #4

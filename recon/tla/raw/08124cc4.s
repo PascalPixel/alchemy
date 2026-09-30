@@ -10,7 +10,7 @@ Func_08124cc4:
 	push {r5, r6, r7}
 	movs r2, #0
 	mov r9, r2
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	movs r2, #8
 	adds r3, r0, #0
 	adds r2, r2, r3

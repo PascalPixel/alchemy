@@ -110,7 +110,7 @@ Func_080e1214:
 .L_080e12f4:
 	adds r0, r5, #0
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	bne .L_080e1308
 	mov r2, r8

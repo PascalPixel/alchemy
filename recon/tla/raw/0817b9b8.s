@@ -391,7 +391,7 @@ Func_0817b9b8:
 .L_0817bcd8:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r0, #0
 	lsls r1, r1, #8
 	movs r3, #139

@@ -249,7 +249,7 @@ Func_0814e744:
 	blt .L_0814e9a6
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0814ea34
 	adds r0, #1
 	lsls r4, r0, #1

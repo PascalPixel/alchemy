@@ -408,7 +408,7 @@ Func_081811d4:
 	ble .L_081814e2
 	subs r0, #22
 	movs r1, #12
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #3
 	ble .L_081814e2
 	movs r1, #1

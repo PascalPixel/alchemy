@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f1d4
+	.global Resource_LoadByMode
 	.thumb_func
-Func_0803f1d4:
+Resource_LoadByMode:
 	push	{r5, r6, lr}
 	movs	r6, #1
 	sub	sp, #12

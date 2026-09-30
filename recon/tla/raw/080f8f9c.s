@@ -1,58 +1,6 @@
 .syntax unified
 	.thumb
-	.global Menu_CopyListOrder
-	.thumb_func
-Menu_CopyListOrder:
-	push	{lr}
-	ldr	r2, [pc, #72]
-	cmp	r0, #1
-	beq.n	.L_080f8f5c
-	cmp	r0, #1
-	bgt.n	.L_080f8f52
-	cmp	r0, #0
-	beq.n	.L_080f8f58
-	b.n	.L_080f8f62
-.L_080f8f52:
-	cmp	r0, #2
-	beq.n	.L_080f8f60
-	b.n	.L_080f8f62
-.L_080f8f58:
-	ldr	r2, [pc, #52]
-	b.n	.L_080f8f62
-.L_080f8f5c:
-	ldr	r2, [pc, #52]
-	b.n	.L_080f8f62
-.L_080f8f60:
-	ldr	r2, [pc, #52]
-.L_080f8f62:
-	ldrb	r3, [r2, #0]
-	movs	r4, #255
-	strb	r3, [r1, #0]
-	lsls	r4, r4, #24
-	lsls	r3, r3, #24
-	movs	r0, #0
-	cmp	r3, r4
-	beq.n	.L_080f8f8a
-.L_080f8f72:
-	adds	r0, #1
-	cmp	r0, #31
-	bgt.n	.L_080f8f8a
-	adds	r2, #1
-	ldrb	r3, [r2, #0]
-	adds	r1, #1
-	movs	r4, #255
-	strb	r3, [r1, #0]
-	lsls	r4, r4, #24
-	lsls	r3, r3, #24
-	cmp	r3, r4
-	bne.n	.L_080f8f72
-.L_080f8f8a:
-	pop	{pc}
-	.4byte 0x081059ee
-	.4byte 0x08105a20
-	.4byte 0x08105a08
-	.2byte 0x59fb
-	.2byte 0x0810
+	.balign 4
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

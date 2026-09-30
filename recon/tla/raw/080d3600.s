@@ -132,7 +132,7 @@ Func_080d36c8:
 .L_080d36e4:
 	str	r3, [r0, #108]
 	adds	r1, r5, #0
-	bl	Func_080d3744
+	bl	Object_SetPartAttribute
 .L_080d36ec:
 	pop	{r5, pc}
 	movs	r0, r0
@@ -181,10 +181,12 @@ Func_080d36c8:
 	.4byte 0x0300122c
 	.2byte 0x088c
 	.2byte 0x080f
-	.global Func_080d3744
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_080d3744:
-.L_080d3744:
+Object_SetPartAttribute:
+	.global Object_SetPartAttribute
+	.thumb_func
+Object_SetPartAttribute:
 	push	{r5, r6, lr}
 	adds	r3, r0, #0
 	adds	r3, #84

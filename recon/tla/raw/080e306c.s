@@ -19,7 +19,7 @@ Func_080e306c:
 	adds	r1, #56
 	movs	r0, #92
 	sub	sp, #56
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	mov	r9, r0
@@ -360,7 +360,7 @@ Func_080e306c:
 	adds	r0, r2, #0
 	adds	r1, r2, #0
 	movs	r3, #0
-	bl	Func_080d440c
+	bl	Motion_CamBounds
 	mov	r4, sl
 	mov	r2, sl
 	ldr	r3, [r4, #16]
@@ -510,7 +510,7 @@ Func_080e306c:
 	adds	r0, r2, #0
 	adds	r1, r2, #0
 	movs	r3, #0
-	bl	Func_080d440c
+	bl	Motion_CamBounds
 	mov	r3, sl
 	ldr	r2, [r3, #12]
 	ldr	r1, [r3, #8]

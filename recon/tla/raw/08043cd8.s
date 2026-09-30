@@ -15,7 +15,7 @@
 	adds	r1, #236
 	movs	r0, #220
 	sub	sp, #40
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	movs	r1, #0

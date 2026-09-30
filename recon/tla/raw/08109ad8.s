@@ -1,0 +1,976 @@
+.syntax unified
+	.thumb
+	.balign 4
+	push	{r5, r6, r7, lr}
+	mov	r7, sl
+	mov	r6, r9
+	mov	r5, r8
+	push	{r5, r6, r7}
+	movs	r3, #192
+	lsls	r3, r3, #18
+	adds	r3, #220
+	sub	sp, #8
+	ldr	r6, [r3, #0]
+	movs	r0, #0
+	movs	r5, #2
+	movs	r1, #9
+	movs	r2, #12
+	movs	r3, #4
+	str	r0, [sp, #4]
+	str	r5, [sp, #0]
+	mov	r8, r0
+	bl	UiWindow_CreateFar
+	str	r0, [r6, #12]
+	bl	Func_08109188
+	movs	r1, #12
+	movs	r2, #14
+	movs	r3, #8
+	movs	r0, #16
+	str	r5, [sp, #0]
+	bl	UiWindow_CreateFar
+	movs	r1, #14
+	str	r0, [r6, #36]
+	movs	r2, #13
+	movs	r3, #3
+	movs	r0, #0
+	str	r5, [sp, #0]
+	bl	UiWindow_CreateFar
+	movs	r1, #192
+	lsls	r1, r1, #4
+	movs	r2, #128
+	adds	r1, #232
+	lsls	r2, r2, #3
+	adds	r3, r6, r1
+	adds	r2, #220
+	str	r0, [r3, #0]
+	adds	r3, r6, r2
+	ldr	r2, [r3, #0]
+	movs	r3, #4
+	strb	r3, [r2, #5]
+	movs	r3, #160
+	lsls	r3, r3, #3
+	adds	r3, #5
+	adds	r2, r6, r3
+	movs	r3, #12
+	strb	r3, [r2, #0]
+	movs	r1, #2
+	movs	r2, #0
+	mov	sl, r0
+	bl	0x080f8060
+	movs	r0, #160
+	lsls	r0, r0, #3
+	adds	r0, #5
+	adds	r0, r0, r6
+	movs	r7, #1
+	mov	r9, r0
+.L_08109b5e:
+	cmp	r7, #0
+	beq.n	.L_08109bc4
+	ldr	r4, [sp, #4]
+	movs	r1, #153
+	lsls	r1, r1, #3
+	lsls	r2, r4, #1
+	adds	r3, r6, #2
+	adds	r2, r2, r1
+	ldrsh	r0, [r3, r2]
+	adds	r3, r4, #0
+	mov	r8, r0
+	cmp	r4, #0
+	bge.n	.L_08109b7a
+	adds	r3, r4, #3
+.L_08109b7a:
+	asrs	r3, r3, #2
+	lsls	r3, r3, #2
+	subs	r3, r4, r3
+	lsls	r1, r3, #1
+	adds	r1, r1, r3
+	lsls	r1, r1, #3
+	movs	r2, #0
+	subs	r1, #12
+	mov	r0, sl
+	bl	Func_08108af0
+	movs	r3, #3
+	mov	r2, r9
+	strb	r3, [r2, #0]
+	cmp	r7, #2
+	bne.n	.L_08109bb0
+	ldr	r0, [sp, #4]
+	cmp	r0, #0
+	bge.n	.L_08109ba2
+	adds	r0, #3
+.L_08109ba2:
+	asrs	r0, r0, #2
+	lsls	r0, r0, #2
+	bl	Func_080f8058
+	movs	r0, #1
+	bl	WaitFrames
+.L_08109bb0:
+	ldr	r1, [sp, #4]
+	mov	r0, sl
+	movs	r2, #0
+	bl	Func_0810928c
+	ldr	r0, [r6, #36]
+	mov	r1, r8
+	bl	Func_0810a004
+	movs	r7, #0
+.L_08109bc4:
+	ldr	r1, [pc, #224]
+	movs	r3, #1
+	ldr	r2, [r1, #4]
+	ands	r2, r3
+	cmp	r2, #0
+	beq.n	.L_08109c3e
+	movs	r0, #1
+	bl	WaitFrames
+	mov	r0, r8
+	bl	0x080ad1f0
+	cmp	r0, #0
+	bne.n	.L_08109be8
+	movs	r0, #113
+	bl	Audio_PlayCue
+	b.n	.L_08109b5e
+.L_08109be8:
+	mov	r0, sl
+	bl	0x08038060
+	movs	r0, #112
+	bl	Audio_PlayCue
+	movs	r0, #129
+	lsls	r0, r0, #3
+	adds	r0, #255
+	adds	r3, r6, r0
+	ldrb	r3, [r3, #0]
+	lsls	r3, r3, #24
+	asrs	r3, r3, #24
+	cmp	r3, #1
+	bne.n	.L_08109c0e
+	mov	r0, r8
+	bl	.L_08109cac
+	b.n	.L_08109c26
+.L_08109c0e:
+	cmp	r3, #3
+	bne.n	.L_08109c1a
+	mov	r0, r8
+	bl	0x0810a2d0
+	b.n	.L_08109c26
+.L_08109c1a:
+	mov	r0, r8
+	bl	0x0810b6c4
+	adds	r5, r0, #0
+	cmp	r5, #0
+	beq.n	.L_08109c72
+.L_08109c26:
+	movs	r1, #128
+	lsls	r1, r1, #3
+	adds	r1, #220
+	adds	r3, r6, r1
+	ldr	r2, [r3, #0]
+	movs	r3, #4
+	strb	r3, [r2, #5]
+	movs	r3, #12
+	mov	r2, r9
+	strb	r3, [r2, #0]
+	movs	r7, #2
+	b.n	.L_08109b5e
+.L_08109c3e:
+	ldr	r3, [r1, #4]
+	movs	r2, #2
+	ands	r3, r2
+	cmp	r3, #0
+	beq.n	.L_08109c54
+	movs	r0, #113
+	movs	r5, #1
+	bl	Audio_PlayCue
+	negs	r5, r5
+	b.n	.L_08109c72
+.L_08109c54:
+	movs	r0, #160
+	lsls	r0, r0, #3
+	adds	r0, #4
+	adds	r3, r6, r0
+	movs	r1, #0
+	ldrsb	r1, [r3, r1]
+	add	r0, sp, #4
+	movs	r2, #4
+	bl	Func_08108690
+	adds	r7, r0, #0
+	movs	r0, #1
+	bl	WaitFrames
+	b.n	.L_08109b5e
+.L_08109c72:
+	movs	r0, #0
+	bl	Func_0810bea8
+	bl	0x080f8068
+	mov	r0, sl
+	movs	r1, #2
+	bl	UiWork_FinalizeFar
+	ldr	r0, [r6, #36]
+	movs	r1, #2
+	bl	UiWork_FinalizeFar
+	ldr	r0, [r6, #12]
+	movs	r1, #2
+	bl	UiWork_FinalizeFar
+	movs	r0, #1
+	bl	WaitFrames
+	adds	r0, r5, #0
+	add	sp, #8
+	pop	{r3, r5, r6}
+	mov	r8, r3
+	mov	r9, r5
+	mov	sl, r6
+	pop	{r5, r6, r7, pc}
+	.2byte 0x1150
+	.2byte 0x0300
+.L_08109cac:
+	push	{r5, r6, r7, lr}
+	mov	r7, fp
+	mov	r6, sl
+	mov	r5, r9
+	push	{r5, r6, r7}
+	mov	r7, r8
+	push	{r7}
+	sub	sp, #28
+	str	r0, [sp, #24]
+	movs	r3, #192
+	lsls	r3, r3, #18
+	adds	r3, #220
+	ldr	r3, [r3, #0]
+	mov	fp, r3
+	bl	Owner_GetState
+	movs	r1, #0
+	movs	r2, #1
+	movs	r3, #2
+	str	r0, [sp, #12]
+	str	r2, [sp, #8]
+	str	r3, [sp, #0]
+	mov	sl, r1
+	movs	r0, #15
+	movs	r1, #8
+	movs	r2, #15
+	movs	r3, #4
+	bl	UiWindow_CreateFar
+	str	r0, [sp, #16]
+.L_08109ce8:
+	movs	r3, #2
+	str	r3, [sp, #0]
+	movs	r2, #30
+	movs	r3, #3
+	movs	r0, #0
+	movs	r1, #5
+	bl	UiWindow_CreateFar
+	movs	r3, #128
+	str	r0, [sp, #20]
+	lsls	r3, r3, #3
+	adds	r3, #220
+	add	r3, fp
+	ldr	r2, [r3, #0]
+	movs	r3, #18
+	strb	r3, [r2, #5]
+	movs	r2, #160
+	lsls	r2, r2, #3
+	adds	r2, #5
+	movs	r3, #12
+	add	r2, fp
+	strb	r3, [r2, #0]
+	movs	r3, #1
+	mov	r9, r3
+.L_08109d18:
+	mov	r1, r9
+	cmp	r1, #0
+	beq.n	.L_08109dda
+	movs	r2, #0
+	ldr	r0, [sp, #24]
+	mov	r9, r2
+	bl	0x080ad1f0
+	adds	r3, r0, #0
+	subs	r3, #1
+	str	r0, [sp, #8]
+	cmp	sl, r3
+	ble.n	.L_08109d34
+	mov	sl, r3
+.L_08109d34:
+	mov	r1, sl
+	lsls	r3, r1, #1
+	adds	r7, r3, #0
+	ldr	r3, [sp, #12]
+	adds	r7, #216
+	ldrh	r2, [r3, r7]
+	ldr	r3, [pc, #60]
+	mov	r0, sl
+	adds	r1, r3, #0
+	ands	r1, r2
+	mov	r8, r1
+	mov	r2, fp
+	movs	r1, #5
+	ldr	r6, [r2, #36]
+	bl	Math_Mod
+	movs	r1, #5
+	adds	r5, r0, #0
+	mov	r0, sl
+	bl	Math_Div
+	adds	r2, r0, #0
+	lsls	r5, r5, #4
+	lsls	r2, r2, #4
+	adds	r2, #8
+	adds	r0, r6, #0
+	adds	r1, r5, #0
+	bl	Func_08108af0
+	movs	r2, #160
+	lsls	r2, r2, #3
+	adds	r2, #5
+	movs	r3, #3
+	add	r2, fp
+	strb	r3, [r2, #0]
+	movs	r3, #129
+	b.n	.L_08109d84
+	movs	r0, r0
+	.2byte 0x01ff
+	.2byte 0x0000
+.L_08109d84:
+	lsls	r3, r3, #3
+	adds	r3, #255
+	add	r3, fp
+	ldrb	r3, [r3, #0]
+	lsls	r3, r3, #24
+	asrs	r3, r3, #24
+	cmp	r3, #1
+	bne.n	.L_08109da4
+	ldr	r3, [sp, #12]
+	ldrh	r0, [r3, r7]
+	bl	Shop_GetSellPrice
+	mov	r1, r8
+	adds	r2, r0, #0
+	movs	r3, #1
+	b.n	.L_08109db6
+.L_08109da4:
+	cmp	r3, #3
+	bne.n	.L_08109dbe
+	ldr	r1, [sp, #12]
+	ldrh	r0, [r1, r7]
+	bl	.L_0810a2ac
+	mov	r1, r8
+	adds	r2, r0, #0
+	movs	r3, #2
+.L_08109db6:
+	ldr	r0, [sp, #16]
+	bl	Func_081091cc
+	b.n	.L_08109dd0
+.L_08109dbe:
+	mov	r0, r8
+	bl	0x0810a748
+	mov	r1, r8
+	adds	r2, r0, #0
+	movs	r3, #3
+	ldr	r0, [sp, #16]
+	bl	Func_081091cc
+.L_08109dd0:
+	ldr	r1, [pc, #540]
+	ldr	r0, [sp, #20]
+	add	r1, r8
+	bl	Func_08109270
+.L_08109dda:
+	ldr	r4, [pc, #536]
+	movs	r3, #1
+	ldr	r2, [r4, #4]
+	ands	r2, r3
+	cmp	r2, #0
+	beq.n	.L_08109de8
+	b.n	.L_08109f9a
+.L_08109de8:
+	ldr	r6, [r4, #4]
+	movs	r7, #2
+	ands	r6, r7
+	cmp	r6, #0
+	beq.n	.L_08109df4
+	b.n	.L_08109f8e
+.L_08109df4:
+	ldr	r3, [r4, #0]
+	movs	r2, #4
+	ands	r3, r2
+	mov	r8, r2
+	cmp	r3, #0
+	beq.n	.L_08109e82
+	ldr	r2, [sp, #12]
+	mov	r1, sl
+	lsls	r3, r1, #1
+	adds	r3, #216
+	movs	r0, #126
+	ldrh	r5, [r2, r3]
+	str	r4, [sp, #4]
+	bl	Audio_PlayCue
+	movs	r3, #10
+	movs	r1, #9
+	movs	r2, #16
+	movs	r0, #0
+	str	r7, [sp, #0]
+	bl	UiWindow_CreateFar
+	adds	r1, r5, #0
+	adds	r7, r0, #0
+	bl	0x080f8038
+	movs	r3, #160
+	lsls	r3, r3, #3
+	adds	r3, #9
+	add	r3, fp
+	strb	r6, [r3, #0]
+	ldr	r4, [sp, #4]
+	mov	r1, r8
+	ldr	r3, [r4, #0]
+	ands	r3, r1
+	cmp	r3, #0
+	beq.n	.L_08109e50
+	adds	r6, r4, #0
+	movs	r5, #4
+.L_08109e42:
+	movs	r0, #1
+	bl	WaitFrames
+	ldr	r3, [r6, #0]
+	ands	r3, r5
+	cmp	r3, #0
+	bne.n	.L_08109e42
+.L_08109e50:
+	movs	r2, #160
+	lsls	r2, r2, #3
+	adds	r2, #9
+	add	r2, fp
+	movs	r3, #1
+	strb	r3, [r2, #0]
+	movs	r1, #2
+	adds	r0, r7, #0
+	bl	UiWork_FinalizeFar
+	bl	Func_08109188
+	movs	r3, #192
+	lsls	r3, r3, #4
+	adds	r3, #232
+	add	r3, fp
+	ldr	r0, [r3, #0]
+	bl	0x08038060
+	movs	r0, #1
+	bl	WaitFrames
+	movs	r2, #1
+	mov	r9, r2
+	b.n	.L_08109d18
+.L_08109e82:
+	ldr	r3, [r4, #12]
+	movs	r2, #32
+	ands	r3, r2
+	cmp	r3, #0
+	beq.n	.L_08109eac
+	movs	r0, #111
+	str	r4, [sp, #4]
+	bl	Audio_PlayCue
+	movs	r3, #1
+	ldr	r0, [sp, #8]
+	negs	r3, r3
+	add	sl, r3
+	add	r0, sl
+	ldr	r1, [sp, #8]
+	bl	Math_Mod
+	ldr	r4, [sp, #4]
+	movs	r1, #1
+	mov	sl, r0
+	mov	r9, r1
+.L_08109eac:
+	ldr	r3, [r4, #12]
+	movs	r2, #16
+	ands	r3, r2
+	cmp	r3, #0
+	beq.n	.L_08109ed4
+	movs	r0, #111
+	str	r4, [sp, #4]
+	bl	Audio_PlayCue
+	ldr	r0, [sp, #8]
+	movs	r2, #1
+	add	sl, r2
+	add	r0, sl
+	ldr	r1, [sp, #8]
+	bl	Math_Mod
+	ldr	r4, [sp, #4]
+	movs	r3, #1
+	mov	sl, r0
+	mov	r9, r3
+.L_08109ed4:
+	ldr	r3, [r4, #12]
+	movs	r2, #64
+	ands	r3, r2
+	cmp	r3, #0
+	beq.n	.L_08109f0a
+	movs	r1, #5
+	negs	r1, r1
+	add	sl, r1
+	mov	r2, sl
+	cmp	r2, #0
+	bge.n	.L_08109eee
+	movs	r3, #15
+	add	sl, r3
+.L_08109eee:
+	ldr	r1, [sp, #8]
+	cmp	sl, r1
+	blt.n	.L_08109f00
+.L_08109ef4:
+	movs	r2, #5
+	ldr	r3, [sp, #8]
+	negs	r2, r2
+	add	sl, r2
+	cmp	sl, r3
+	bge.n	.L_08109ef4
+.L_08109f00:
+	movs	r0, #111
+	bl	Audio_PlayCue
+	movs	r1, #1
+	mov	r9, r1
+.L_08109f0a:
+	ldr	r3, [pc, #232]
+	movs	r2, #128
+	ldr	r3, [r3, #12]
+	ands	r3, r2
+	cmp	r3, #0
+	beq.n	.L_08109f40
+	ldr	r3, [sp, #8]
+	movs	r2, #5
+	add	sl, r2
+	cmp	sl, r3
+	blt.n	.L_08109f26
+	movs	r1, #15
+	negs	r1, r1
+	add	sl, r1
+.L_08109f26:
+	mov	r2, sl
+	cmp	r2, #0
+	bge.n	.L_08109f36
+.L_08109f2c:
+	movs	r3, #5
+	add	sl, r3
+	mov	r1, sl
+	cmp	r1, #0
+	blt.n	.L_08109f2c
+.L_08109f36:
+	movs	r0, #111
+	bl	Audio_PlayCue
+	movs	r2, #1
+	mov	r9, r2
+.L_08109f40:
+	movs	r0, #1
+	bl	WaitFrames
+	b.n	.L_08109d18
+.L_08109f48:
+	ldr	r0, [sp, #20]
+	movs	r1, #2
+	bl	UiWork_FinalizeFar
+	movs	r0, #1
+	bl	WaitFrames
+	cmp	r5, #0
+	bne.n	.L_08109fd8
+	movs	r3, #129
+	lsls	r3, r3, #3
+	adds	r3, #255
+	add	r3, fp
+	ldrb	r3, [r3, #0]
+	lsls	r3, r3, #24
+	asrs	r3, r3, #24
+	cmp	r3, #1
+	bne.n	.L_08109fa4
+	ldr	r0, [sp, #24]
+	mov	r1, sl
+	bl	.L_0810a03c
+	movs	r3, #1
+	adds	r2, r0, #0
+	negs	r3, r3
+	cmp	r2, r3
+	beq.n	.L_08109f86
+	ldr	r0, [sp, #24]
+	mov	r1, sl
+	bl	Func_0810a108
+.L_08109f86:
+	ldr	r0, [pc, #112]
+	bl	0x081084f4
+	b.n	.L_08109fcc
+.L_08109f8e:
+	movs	r0, #113
+	movs	r5, #1
+	bl	Audio_PlayCue
+	negs	r5, r5
+	b.n	.L_08109f48
+.L_08109f9a:
+	movs	r0, #112
+	bl	Audio_PlayCue
+	movs	r5, #0
+	b.n	.L_08109f48
+.L_08109fa4:
+	cmp	r3, #3
+	bne.n	.L_08109fb8
+	ldr	r0, [sp, #24]
+	mov	r1, sl
+	bl	0x0810a2d8
+	ldr	r0, [pc, #72]
+	bl	0x081084f4
+	b.n	.L_08109fcc
+.L_08109fb8:
+	ldr	r0, [sp, #24]
+	mov	r1, sl
+	bl	0x0810b6cc
+	adds	r5, r0, #0
+	cmp	r5, #0
+	beq.n	.L_08109fd8
+	ldr	r0, [pc, #56]
+	bl	0x081084f4
+.L_08109fcc:
+	ldr	r0, [sp, #24]
+	bl	0x080ad1f0
+	cmp	r0, #0
+	beq.n	.L_08109fd8
+	b.n	.L_08109ce8
+.L_08109fd8:
+	ldr	r0, [sp, #16]
+	movs	r1, #2
+	bl	UiWork_FinalizeFar
+	adds	r0, r5, #0
+	add	sp, #28
+	pop	{r3, r5, r6, r7}
+	mov	r8, r3
+	mov	r9, r5
+	mov	sl, r6
+	mov	fp, r7
+	pop	{r5, r6, r7, pc}
+	.4byte 0x00000092
+	.4byte 0x03001150
+	.4byte 0x0000125b
+	.4byte 0x00001273
+	.2byte 0x12fe
+	.2byte 0x0000
+	.global Func_0810a004
+	.thumb_func
+Func_0810a004:
+	push	{r5, r6, lr}
+	adds	r5, r0, #0
+	adds	r6, r1, #0
+	cmp	r5, #0
+	beq.n	.L_0810a034
+	bl	0x08038060
+	adds	r0, r5, #0
+	movs	r1, #8
+	movs	r2, #0
+	adds	r3, r6, #0
+	bl	Func_0810bf98
+	adds	r0, r6, #0
+	bl	0x080ad1f0
+	cmp	r0, #0
+	bne.n	.L_0810a034
+	ldr	r0, [pc, #12]
+	adds	r1, r5, #0
+	movs	r2, #8
+	movs	r3, #20
+	bl	0x08038078
+.L_0810a034:
+	pop	{r5, r6, pc}
+	movs	r0, r0
+	.2byte 0x123e
+	.2byte 0x0000
+.L_0810a03c:
+	push	{r5, r6, r7, lr}
+	mov	r7, fp
+	mov	r6, sl
+	mov	r5, r9
+	push	{r5, r6, r7}
+	mov	r7, r8
+	push	{r7}
+	movs	r3, #192
+	lsls	r3, r3, #18
+	adds	r3, #220
+	sub	sp, #4
+	ldr	r7, [r3, #0]
+	mov	sl, r0
+	mov	r9, r1
+	bl	Owner_GetState
+	mov	r1, r9
+	lsls	r5, r1, #1
+	adds	r6, r0, #0
+	adds	r5, #216
+	ldrh	r0, [r6, r5]
+	bl	Item_Get
+	movs	r2, #1
+	str	r2, [sp, #0]
+	mov	r8, r0
+	ldrh	r0, [r6, r5]
+	bl	Shop_GetSellPrice
+	mov	r1, r9
+	mov	fp, r0
+	mov	r0, sl
+	bl	0x080ad018
+	mov	r3, r8
+	ldrb	r2, [r3, #3]
+	movs	r3, #16
+	ands	r3, r2
+	mov	sl, r0
+	cmp	r3, #0
+	beq.n	.L_0810a0f4
+	cmp	r0, #1
+	ble.n	.L_0810a0f4
+	ldr	r0, [pc, #112]
+	bl	0x081084f4
+	movs	r1, #128
+	lsls	r1, r1, #3
+	adds	r1, #228
+	adds	r3, r7, r1
+	movs	r1, #0
+	ldrsh	r2, [r3, r1]
+	movs	r0, #0
+	mov	r8, r2
+	movs	r2, #128
+	lsls	r2, r2, #3
+	adds	r2, #230
+	adds	r3, r7, r2
+	subs	r2, #10
+	adds	r5, r7, r2
+	ldr	r2, [r5, #0]
+	movs	r1, #0
+	ldrsh	r6, [r3, r1]
+	movs	r3, #4
+	strb	r3, [r2, #5]
+	movs	r3, #160
+	lsls	r3, r3, #3
+	adds	r3, #5
+	adds	r2, r7, r3
+	movs	r3, #12
+	strb	r3, [r2, #0]
+	movs	r1, #128
+	movs	r2, #48
+	bl	Func_08108af0
+	mov	r1, sl
+	mov	r2, fp
+	movs	r0, #0
+	bl	Func_081096f8
+	str	r0, [sp, #0]
+	movs	r0, #1
+	bl	WaitFrames
+	ldr	r0, [r5, #0]
+	bl	UiIcon_PrepareObjectFar
+	movs	r0, #0
+	mov	r1, r8
+	adds	r2, r6, #0
+	bl	Func_08108af0
+.L_0810a0f4:
+	ldr	r0, [sp, #0]
+	add	sp, #4
+	pop	{r3, r5, r6, r7}
+	mov	r8, r3
+	mov	r9, r5
+	mov	sl, r6
+	mov	fp, r7
+	pop	{r5, r6, r7, pc}
+	.2byte 0x125e
+	.2byte 0x0000
+	.global Func_0810a108
+	.thumb_func
+Func_0810a108:
+	push	{r5, r6, r7, lr}
+	mov	r7, fp
+	mov	r6, sl
+	mov	r5, r9
+	push	{r5, r6, r7}
+	mov	r7, r8
+	push	{r7}
+	sub	sp, #20
+	str	r1, [sp, #16]
+	movs	r3, #192
+	lsls	r3, r3, #18
+	adds	r3, #220
+	ldr	r3, [r3, #0]
+	adds	r7, r2, #0
+	str	r3, [sp, #12]
+	mov	r8, r0
+	bl	Owner_GetState
+	ldr	r2, [sp, #16]
+	adds	r6, r0, #0
+	lsls	r2, r2, #1
+	str	r2, [sp, #8]
+	adds	r5, r2, #0
+	adds	r5, #216
+	ldrh	r3, [r6, r5]
+	movs	r2, #128
+	lsls	r2, r2, #1
+	adds	r2, #255
+	ands	r2, r3
+	mov	r9, r2
+	mov	r0, r9
+	bl	Item_Get
+	ldrb	r2, [r0, #3]
+	movs	r3, #4
+	ands	r3, r2
+	lsls	r3, r3, #24
+	lsrs	r3, r3, #24
+	movs	r2, #1
+	str	r3, [sp, #4]
+	negs	r2, r2
+	movs	r3, #0
+	mov	fp, r0
+	str	r3, [sp, #0]
+	cmp	r7, r2
+	bne.n	.L_0810a16a
+	movs	r3, #1
+	str	r3, [sp, #0]
+	movs	r7, #1
+.L_0810a16a:
+	ldrh	r0, [r6, r5]
+	bl	Shop_GetSellPrice
+	adds	r2, r7, #0
+	muls	r2, r0
+	mov	sl, r2
+	cmp	r2, #0
+	bne.n	.L_0810a18a
+	mov	r0, r9
+	movs	r1, #2
+	bl	UiText_DrawQuantity
+	ldr	r0, [pc, #252]
+	bl	0x0810857c
+	b.n	.L_0810a270
+.L_0810a18a:
+	ldrh	r2, [r6, r5]
+	movs	r3, #128
+	lsls	r3, r3, #2
+	ands	r3, r2
+	cmp	r3, #0
+	beq.n	.L_0810a1b2
+	mov	r3, fp
+	ldrb	r2, [r3, #3]
+	movs	r3, #2
+	ands	r3, r2
+	cmp	r3, #0
+	beq.n	.L_0810a1b2
+	mov	r0, r9
+	movs	r1, #2
+	bl	UiText_DrawQuantity
+	ldr	r0, [pc, #216]
+	bl	0x0810857c
+	b.n	.L_0810a270
+.L_0810a1b2:
+	ldr	r2, [sp, #0]
+	cmp	r2, #0
+	beq.n	.L_0810a1bc
+	ldr	r5, [pc, #204]
+	b.n	.L_0810a1e4
+.L_0810a1bc:
+	ldr	r3, [sp, #8]
+	adds	r3, #216
+	ldrh	r2, [r6, r3]
+	movs	r3, #128
+	lsls	r3, r3, #3
+	ands	r3, r2
+	cmp	r3, #0
+	beq.n	.L_0810a1d0
+	ldr	r5, [pc, #188]
+	b.n	.L_0810a1e4
+.L_0810a1d0:
+	cmp	r7, #1
+	ble.n	.L_0810a1d8
+	ldr	r5, [pc, #184]
+	b.n	.L_0810a1e4
+.L_0810a1d8:
+	ldr	r3, [sp, #4]
+	cmp	r3, #0
+	beq.n	.L_0810a1e2
+	ldr	r5, [pc, #180]
+	b.n	.L_0810a1e4
+.L_0810a1e2:
+	ldr	r5, [pc, #180]
+.L_0810a1e4:
+	mov	r0, r9
+	movs	r1, #2
+	bl	UiText_DrawQuantity
+	mov	r0, sl
+	movs	r1, #5
+	bl	UiText_DrawQuantity
+	adds	r0, r5, #0
+	bl	0x0810857c
+	movs	r0, #0
+	bl	0x08108630
+	cmp	r0, #0
+	beq.n	.L_0810a21e
+	ldr	r2, [sp, #4]
+	cmp	r2, #0
+	bne.n	.L_0810a210
+	ldr	r3, [sp, #0]
+	cmp	r3, #0
+	beq.n	.L_0810a214
+.L_0810a210:
+	ldr	r5, [pc, #136]
+	b.n	.L_0810a216
+.L_0810a214:
+	ldr	r5, [pc, #136]
+.L_0810a216:
+	adds	r0, r5, #0
+	bl	0x0810857c
+	b.n	.L_0810a270
+.L_0810a21e:
+	movs	r0, #102
+	bl	Audio_PlayCue
+	cmp	r7, #0
+	ble.n	.L_0810a238
+	adds	r5, r7, #0
+.L_0810a22a:
+	mov	r0, r8
+	ldr	r1, [sp, #16]
+	subs	r5, #1
+	bl	0x080ad278
+	cmp	r5, #0
+	bne.n	.L_0810a22a
+.L_0810a238:
+	mov	r0, r8
+	bl	0x080ad288
+	mov	r0, r8
+	bl	0x080ad008
+	mov	r0, sl
+	bl	0x080ad1d8
+	bl	Func_08109188
+	ldr	r2, [sp, #12]
+	mov	r1, r8
+	ldr	r0, [r2, #36]
+	bl	Func_0810a004
+	ldr	r3, [sp, #4]
+	cmp	r3, #0
+	bne.n	.L_0810a264
+	ldr	r2, [sp, #0]
+	cmp	r2, #0
+	beq.n	.L_0810a268
+.L_0810a264:
+	ldr	r5, [pc, #60]
+	b.n	.L_0810a26a
+.L_0810a268:
+	ldr	r5, [pc, #60]
+.L_0810a26a:
+	adds	r0, r5, #0
+	bl	0x0810857c
+.L_0810a270:
+	add	sp, #20
+	pop	{r3, r5, r6, r7}
+	mov	r8, r3
+	mov	r9, r5
+	mov	sl, r6
+	mov	fp, r7
+	pop	{r5, r6, r7, pc}
+	movs	r0, r0
+	.4byte 0x0000125d
+	.4byte 0x0000125c
+	.4byte 0x00001263
+	.4byte 0x00001262
+	.4byte 0x00001261
+	.4byte 0x00001260
+	.4byte 0x0000125f
+	.4byte 0x00001267
+	.4byte 0x00001265
+	.4byte 0x00001266
+	.2byte 0x1264
+	.2byte 0x0000
+.L_0810a2ac:
+	push	{r5, lr}
+	adds	r5, r0, #0
+	bl	Item_Get
+	ldrh	r3, [r0, #0]
+	lsrs	r0, r3, #2
+	movs	r3, #128
+	lsls	r3, r3, #3
+	ands	r3, r5
+	cmp	r3, #0
+	bne.n	.L_0810a2c4
+	movs	r0, #0
+.L_0810a2c4:
+	pop	{r5, pc}
+	.2byte 0x0000

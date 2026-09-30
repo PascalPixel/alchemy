@@ -18,6 +18,6 @@ Audio_PlayCue:
 	overlay_veneer Func_081c0cb0
 	overlay_veneer Func_081c0f3c
 	overlay_veneer Func_081c0f44
-	overlay_veneer Func_081c0f58
+	overlay_veneer MusicCommand_SetPitch
 	overlay_veneer Func_081c0f70
-	overlay_veneer Func_081c0f84
+	overlay_veneer MusicCommand_SetVolume

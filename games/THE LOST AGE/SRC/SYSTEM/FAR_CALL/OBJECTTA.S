@@ -44,7 +44,7 @@ Func_080c8408:
 	.global Func_080c8420
 	.thumb_func
 Func_080c8420:
-	overlay_veneer Func_080cee40
+	overlay_veneer Object_SetWideSprite
 	.global Func_080c8428
 	.thumb_func
 Func_080c8428:

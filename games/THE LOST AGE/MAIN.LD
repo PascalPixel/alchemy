@@ -985,6 +985,8 @@ SECTIONS
         "*/recon/tla/raw/08108af0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08108b34.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08109188.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/MENU/SHOP/SELL_PRICE.o"(.text)
+        "*/recon/tla/raw/08109ad8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0810a2c8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0810a760.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0810a804.o"(.text .rodata .data .padding)

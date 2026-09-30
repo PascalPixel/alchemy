@@ -42,7 +42,7 @@ void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
 void BattleFx_PlaceFormationObjects(s32, s32, s32);
-void Unnamed_080e6eac(s32, s32, s32);
+void BattleEffect_RunImpactBurst(s32, s32, s32);
 void ResourceObject_ReleaseFar(void *);
 void Runtime_ReleaseHeapBlock(s32);
 void BattleFx_EndCanvasLayer(void);
@@ -587,7 +587,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 
     Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback(0x080CD261);
-    Unnamed_080e6eac(0, cam_x, cam_y);
+    BattleEffect_RunImpactBurst(0, cam_x, cam_y);
     for (i = 0; i != 9; i++) {
         ResourceObject_ReleaseFar(work->objects[i]);
     }

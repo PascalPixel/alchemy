@@ -27,6 +27,8 @@ const GAME: &[ExecutableDigests] = &[
         &[
             "b8cccb0243ee353ac91ef78c5ee20204cc06ac679f840040d3d81177f87b81a7",
             "89182424c7f15cf31a905ca5ac4b608cd663c8b2869784fd3a113e4d732424ce",
+            // agscc a3964ae adds -mthumb-call-via-lr (Pascal, 2026-09-30).
+            "4396963c5e3846315f0c04da1d1700f12dc5bcbd3a37f3a0305711c5da396d3d",
         ],
     ),
     (

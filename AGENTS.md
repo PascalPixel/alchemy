@@ -111,8 +111,8 @@ expected answer steers the build or the count is cheating, whatever its form.
   RAM-executed ARM code uses pret's agbcc_arm with `-fomit-frame-pointer`.
   Families and flags apply to whole files, with the reason in compiler routing;
   never tune a single function. _Check: routing tests._
-- **K2** ⚓️ game code adds `-mthumb-split-constants`, Camelot's constant rule
-  found across ⚓️. A compiler change needs Pascal's approval and evidence
+- **K2** ⚓️ game code adds `-mthumb-split-constants` and `-mthumb-call-via-lr`,
+  Camelot's constant and call-through-register rules found across ⚓️. A compiler change needs Pascal's approval and evidence
   across many functions; every compiler binary's digest is recorded.
   _Check: compiler-source-check, bundle validation._
 

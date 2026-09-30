@@ -2,7 +2,7 @@
  * similarity; every call site is in the ROM's order. Rewritten from the ROM:
  * the four delay loops are goto loops (a do/while is unrolled away); the
  * timer and footprint-phase stores go through the actor's members so the
- * constants become movs; Func_0800c150 takes the kind first; the ungated
+ * constants become movs; FieldObject_Create takes the kind first; the ungated
  * path squares the x and z velocity through Iwram_MulQ16, takes FixedSqrt
  * and redirects it along the facing. Remaining: the ROM keeps angle << 16 in
  * [sp+4] and derives (u32)angle >> 16 afresh after each join, where GCSE
@@ -102,7 +102,7 @@ s32 ScriptObject_CheckOverlap(struct FieldActor *actor, s32 *pos);
 s32 ArcTan2(s32 y, s32 x);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *actor, s32 argument);
 void ObjectDispatch_Initialize(struct FieldActor *actor, s16 *table);
-struct FieldActor *Func_0800c150(s32 kind, s32 x, s32 y, s32 z);
+struct FieldActor *FieldObject_Create(s32 kind, s32 x, s32 y, s32 z);
 void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 void Object_SetMoveTarget(struct FieldActor *actor, s32 x, s32 y, s32 z);
 struct OwnerState *Owner_GetStateFar(s32 id);
@@ -391,7 +391,7 @@ tail:
     dir = (u16)((u32)angle >> 16);
     if (gMapWork->footprints != 0 && actor->step_timer == 0 && blocked == 0) {
         struct FieldActor *print;
-        print = Func_0800c150(25, actor->pos[0], actor->pos[1], actor->pos[2]);
+        print = FieldObject_Create(25, actor->pos[0], actor->pos[1], actor->pos[2]);
         if (print != 0) {
             u16 *phase;
             struct FieldSprite *sprite;

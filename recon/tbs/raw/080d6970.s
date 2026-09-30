@@ -1574,7 +1574,7 @@ Func_080d6970:
 	lsls	r1, r1, #16
 	ldr	r2, [sp, #56]
 	ldr	r5, [pc, #84]
-	bl	Unnamed_080e6eac
+	bl	BattleEffect_RunImpactBurst
 	movs	r0, #0
 	mov	sl, r0
 	add	r5, r9

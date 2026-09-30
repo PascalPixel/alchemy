@@ -56,11 +56,16 @@ fn parse(argv: &[String]) -> Result<Options, String> {
 }
 /// The README status line under "## Progress": ☀️ The Broken Seal and
 /// ⚓️ The Lost Age, each pending until a byte-identical build measures it.
+/// ⚓️ is always shown in its parts: C, assembly and 8-byte stubs.
 fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let show = |done: Option<GameDone>| {
         done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
     };
-    format!("**☀️ {} · ⚓️ {}**", show(sun), show(anchor))
+    let parts = anchor.map_or(String::new(), |d| {
+        let (c, assembly, stubs) = d.parts();
+        format!(" (C {c:.2} + assembly {assembly:.2} + stubs {stubs:.2})")
+    });
+    format!("**☀️ {} · ⚓️ {}{parts}**", show(sun), show(anchor))
 }
 fn update_readme(text: &str, status: &str) -> String {
     let mut out = text.to_string();
@@ -149,6 +154,17 @@ mod tests {
         };
         let status = status_line(Some(sun), None);
         assert_eq!(status, "**☀️ 59.00% · ⚓️ pending**");
+        let anchor = GameDone {
+            game_c: 10,
+            game_asm: 50,
+            veneers: 30,
+            executable: 1000,
+            ..GameDone::default()
+        };
+        assert_eq!(
+            status_line(Some(sun), Some(anchor)),
+            "**☀️ 59.00% · ⚓️ 6.00% (C 1.00 + assembly 2.00 + stubs 3.00)**"
+        );
         let updated = update_readme(
             "# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**\n\nDetails\n",
             &status,

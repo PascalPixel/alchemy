@@ -37,6 +37,9 @@
 #define Ram_CameraWork ((void **)0x03001e90) /* gCameraWork */
 #define Ram_EventWork ((void **)0x03001ecc) /* gEventWork */
 #define Ram_DisplayWork ((void **)0x03001edc) /* Data_03001ecc */
+#define Ram_BattleWork ((void **)0x03001e84) /* gBattleWork */
+#define Ram_BattleFxWork ((void **)0x03001efc) /* gBattleFxWork */
+#define Ram_TransitionWork ((void **)0x03001f10) /* gTransitionWork */
 #define Ram_ActorEffectWork ((void **)0x03001ef0) /* gActorEffectWork */
 #define Ram_Disp ((void **)0x03001f08) /* gDisp */
 #define Ram_EffectWork ((void **)0x03001f40) /* gEffectWork */
@@ -47,6 +50,9 @@
 #define Ram_CameraWork ((void **)0x03001e80) /* gCameraWork */
 #define Ram_EventWork ((void **)0x03001ebc) /* gEventWork */
 #define Ram_DisplayWork ((void **)0x03001ecc) /* Data_03001ecc */
+#define Ram_BattleWork ((void **)0x03001e74) /* gBattleWork */
+#define Ram_BattleFxWork ((void **)0x03001eec) /* gBattleFxWork */
+#define Ram_TransitionWork ((void **)0x03001f00) /* gTransitionWork */
 #define Ram_ActorEffectWork ((void **)0x03001ee0) /* gActorEffectWork */
 #define Ram_Disp ((void **)0x03001ef8) /* gDisp */
 #define Ram_EffectWork ((void **)0x03001f30) /* gEffectWork */

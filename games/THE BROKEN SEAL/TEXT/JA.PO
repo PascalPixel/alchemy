@@ -115,7 +115,7 @@ msgctxt "MsgSaving"
 msgid "00026"
 msgstr "きろく中です{end_now}"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00027"
 msgstr "{argument_actor_name:150}゙ なかまになった{end_wait}"
 
@@ -14007,7 +14007,7 @@ msgctxt "message"
 msgid "03499"
 msgstr "Bボタン:おしまい"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceSaveQuest"
 msgid "03500"
 msgstr "ぼうけんをきろく"
 
@@ -14015,7 +14015,7 @@ msgctxt "message"
 msgid "03501"
 msgstr "いますぐスリープ"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceChangeSettings"
 msgid "03502"
 msgstr "かんきょうせってい"
 
@@ -14023,7 +14023,7 @@ msgctxt "message"
 msgid "03503"
 msgstr "たいせんきろく"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceRoughMenu"
 msgid "03504"
 msgstr "がさつメニュー"
 

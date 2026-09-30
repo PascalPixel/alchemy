@@ -115,7 +115,7 @@ msgctxt "MsgSaving"
 msgid "00026"
 msgstr "Saving...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00027"
 msgstr "{argument_actor_name:1} joined your{line_break}party.{end_wait}"
 
@@ -12435,7 +12435,7 @@ msgctxt "message"
 msgid "03106"
 msgstr "B Button: End"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceSaveQuest"
 msgid "03107"
 msgstr "Save your quest"
 
@@ -12443,7 +12443,7 @@ msgctxt "message"
 msgid "03108"
 msgstr "Sleep"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceChangeSettings"
 msgid "03109"
 msgstr "Change settings"
 
@@ -12451,7 +12451,7 @@ msgctxt "message"
 msgid "03110"
 msgstr "Battle Records"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceRoughMenu"
 msgid "03111"
 msgstr "Rough menu"
 

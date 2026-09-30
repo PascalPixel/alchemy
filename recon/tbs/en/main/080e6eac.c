@@ -24,7 +24,7 @@ void BattleFx_PlaceFormationObjects(void *object, s32 a, s32 b);
 #define Table_080eee5e ((u8 *)0x080EEE5E)
 extern const u16 ParticleStreams_CellOffsets[];
 
-void Unnamed_080e6eac(void *object, s32 x_arg, s32 y_arg)
+void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
 {
     void **heap_cache;
     void **cursor;

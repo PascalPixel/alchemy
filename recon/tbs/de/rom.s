@@ -391,12 +391,6 @@ Menu_ScrollSelectionList:
 	.thumb_func
 Menu_ConfirmSelection:
 	.incbin "baserom.gba", 0x0001aaf4, 0x00000244
-	.section .rom.0001aeb8, "ax"
-	.global Menu_RunTopSelection
-	.type Menu_RunTopSelection, %function
-	.thumb_func
-Menu_RunTopSelection:
-	.incbin "baserom.gba", 0x0001aeb8, 0x000000d0
 	.section .rom.0001b140, "ax"
 	.global Debug_SelectAbilityPair
 	.type Debug_SelectAbilityPair, %function
@@ -486,7 +480,13 @@ AffineEffect_UpdateFrame:
 Menu_RunResourceSelectionLoop:
 	.incbin "baserom.gba", 0x00027238, 0x0000012c
 	.section .rom.0002756c, "ax"
-	.incbin "baserom.gba", 0x0002756c, 0x000000f4
+	.incbin "baserom.gba", 0x0002756c, 0x00000078
+	.section .rom.000275e4, "ax"
+	.global Menu_SelectTopEntry
+	.type Menu_SelectTopEntry, %function
+	.thumb_func
+Menu_SelectTopEntry:
+	.incbin "baserom.gba", 0x000275e4, 0x0000007c
 	.section .rom.00027660, "ax"
 	.global Menu_AnimateSelectionToEntry
 	.type Menu_AnimateSelectionToEntry, %function
@@ -733,8 +733,6 @@ Enemy_ElementPresetTable:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008d06c, 0x00000594
-	.section .rom.0008dbf8, "ax"
-	.incbin "baserom.gba", 0x0008dbf8, 0x00000008
 	.section .rom.0008dcec, "ax"
 	.incbin "baserom.gba", 0x0008dcec, 0x000001ec
 	.section .rom.0008deec, "ax"
@@ -777,14 +775,6 @@ Func_0808c4f8:
 	.thumb_func
 BattleFx_EmitRandomParticle:
 	.incbin "baserom.gba", 0x00092414, 0x000000d8
-	.section .rom.00092894, "ax"
-	.incbin "baserom.gba", 0x00092894, 0x00000048
-	.section .rom.000928dc, "ax"
-	.global BattleFx_SpawnRandomParticleAtPosition
-	.type BattleFx_SpawnRandomParticleAtPosition, %function
-	.thumb_func
-BattleFx_SpawnRandomParticleAtPosition:
-	.incbin "baserom.gba", 0x000928dc, 0x00000094
 	.section .rom.00092b98, "ax"
 	.global DisplayTransition_UpdateScanlineTable
 	.type DisplayTransition_UpdateScanlineTable, %function

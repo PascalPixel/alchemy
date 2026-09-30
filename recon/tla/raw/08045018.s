@@ -303,7 +303,7 @@ Func_08045018:
 	mov	r3, r9
 	str	r6, [sp, #0]
 	mov	sl, r0
-	bl	0x0803c378
+	bl	Func_0803c378
 	movs	r3, #243
 	lsls	r3, r3, #8
 	adds	r3, #20
@@ -314,7 +314,7 @@ Func_08045018:
 	mov	r3, r9
 	adds	r2, #1
 	str	r6, [sp, #0]
-	bl	0x0803c378
+	bl	Func_0803c378
 	movs	r3, #2
 	add	r8, r3
 	mov	r0, sl
@@ -322,7 +322,7 @@ Func_08045018:
 	mov	r2, r8
 	mov	r3, r9
 	str	r6, [sp, #0]
-	bl	0x0803c378
+	bl	Func_0803c378
 	add	sp, #4
 	pop	{r3, r5, r6}
 	mov	r8, r3

@@ -17,6 +17,9 @@
 //!   stacked. The bank is a table of each icon's halfword offset, then each
 //!   icon as 8-bit tiles in the packer's palette LZ without its tag,
 //!   its stream zero-padded to a multiple of 32 bytes.
+//! - `.icon4`: one 4-bit icon, its pixels row by row in the 4-bit icon
+//!   coder (Psynergy's icon4), without a palette; its data source lists the
+//!   icons of a table by label, as pret's item icon table does.
 //! - `.frames`: a sprite bank. The image is one square frame wide with its
 //!   frames stacked, a front and a back pose in turn. The bank is a table of
 //!   each frame's offset in that order, ending 0, then the back frames and
@@ -127,7 +130,7 @@ pub fn is_recipe(built: &str) -> bool {
         || data_form(form)
         || matches!(
             form,
-            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "glyphs"
+            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "icon4" | "glyphs"
         );
     !stem.is_empty() && form && codec.is_none_or(|codec| CODECS.contains(&codec))
 }
@@ -166,6 +169,38 @@ pub fn input_name(built: &str) -> Result<String, String> {
         format!("{stem}.{extension}")
     } else {
         format!("{directory}/{stem}.{extension}")
+    })
+}
+
+/// Where a recipe's further input `name` lies: beside its first input
+/// `input`; for `COMMON/NAME`, in games/COMMON's folder of the same path
+/// under `SRC`; and for `COMMON/DIR/.../NAME`, at that path under
+/// games/COMMON's `SRC`. There lives once what both games draw alike.
+pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::PathBuf, String> {
+    let Some(shared) = name.strip_prefix("COMMON/") else {
+        return Ok(input.with_file_name(name));
+    };
+    if shared
+        .split('/')
+        .any(|part| part.is_empty() || part == ".." || part == "." || part.contains('\\'))
+    {
+        return Err(format!("{name} names no file in COMMON"));
+    }
+    let (games, folder) = input
+        .parent()
+        .and_then(|folder| {
+            let text = folder.to_str()?;
+            let at = text
+                .find("/SRC/")
+                .or_else(|| text.ends_with("/SRC").then(|| text.len() - 4))?;
+            let games = std::path::Path::new(&text[..at]).parent()?;
+            Some((games.to_path_buf(), text[at + 1..].to_owned()))
+        })
+        .ok_or_else(|| format!("{} lies under no game's SRC", input.display()))?;
+    Ok(if shared.contains('/') {
+        games.join("COMMON/SRC").join(shared)
+    } else {
+        games.join("COMMON").join(folder).join(shared)
     })
 }
 
@@ -707,6 +742,9 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         }
         "frames" => sprite_bank(built, &indices(&image), width, height)?,
         "icons" => icon_bank(built, &indices(&image), width, height)?,
+        "icon4" => {
+            encode_icon4(&indices(&image)).map_err(|error| format!("{built}: {}", error.0))?
+        }
         "glyphs" if width == 8 => indices(&image)
             .chunks(8)
             .map(|row| {
@@ -724,6 +762,43 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
 mod tests {
     use super::*;
     use psynergy::assets::image::{png_from_bitmap, png_from_gba_tiles};
+
+    #[test]
+    fn a_common_sibling_lies_in_commons_folder_of_the_same_path() {
+        use std::path::Path;
+        let input = Path::new("games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPRITES.TSV");
+        assert_eq!(
+            sibling_path(input, "SPR_001.PNG").unwrap(),
+            Path::new("games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPR_001.PNG")
+        );
+        assert_eq!(
+            sibling_path(input, "COMMON/SPR_020.PNG").unwrap(),
+            Path::new("games/COMMON/SRC/GRAPHICS/SPRITE/SPR_020.PNG")
+        );
+        let absolute = Path::new("/w/games/THE BROKEN SEAL/SRC/GRAPHICS/SPRITE/SPRITES.TSV");
+        assert_eq!(
+            sibling_path(absolute, "COMMON/SPR_020.PNG").unwrap(),
+            Path::new("/w/games/COMMON/SRC/GRAPHICS/SPRITE/SPR_020.PNG")
+        );
+        assert_eq!(
+            sibling_path(input, "COMMON/MAP/MAP_153/GRID_METATILE.TSV").unwrap(),
+            Path::new("games/COMMON/SRC/MAP/MAP_153/GRID_METATILE.TSV")
+        );
+        assert!(sibling_path(input, "COMMON/MAP//X.TSV").is_err());
+        assert!(sibling_path(input, "COMMON/../X.PNG").is_err());
+        assert!(sibling_path(input, "COMMON/..").is_err());
+        assert!(sibling_path(Path::new("X/Y.TSV"), "COMMON/Z.PNG").is_err());
+    }
+
+    #[test]
+    fn an_icon4_is_its_pixels_in_the_icon_coder_without_a_palette() {
+        let pixels: Vec<u8> = (0..256).map(|index| (index % 16) as u8).collect();
+        let png = png_from_bitmap(&pixels, &[0u8; 32], 16).unwrap();
+        let built = build_file("UI/ICON.icon4", &png).unwrap();
+        assert_eq!(built, encode_icon4(&pixels).unwrap());
+        assert!(is_recipe("UI/ICON.icon4"));
+        assert_eq!(input_name("UI/ICON.icon4").unwrap(), "UI/ICON.PNG");
+    }
 
     #[test]
     fn metatile_forms_cut_the_sheet_into_their_obj_shape() {

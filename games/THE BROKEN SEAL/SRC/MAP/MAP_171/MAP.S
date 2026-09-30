@@ -14,16 +14,16 @@ Field_Map171:
 	map_block Field_Map171, .LField_Map171_BLEND
 	map_block Field_Map171, .LField_Map171_MARKERS
 .LField_Map171_METATILES:
-	.incbin "MAP/MAP_171/METATILES.delta1.lz"
+	.incbin "COMMON/MAP/MAP_171/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map171_SHAPES:
-	.incbin "MAP/MAP_171/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_171/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map171_GRID:
 	.incbin "MAP/MAP_171/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map171_ANIMATION:
-	.incbin "MAP/MAP_171/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_171/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map171_BLEND:
 	.incbin "MAP/MAP_020/BLEND.script.lz"

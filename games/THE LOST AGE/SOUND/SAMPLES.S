@@ -150,43 +150,43 @@ Sound_Wave35:
 	.incbin "SOUND/SAMPLE/WAVE_35.PCM8.bin"
 	.global Sound_Wave36
 Sound_Wave36:
-	.incbin "SOUND/SAMPLE/WAVE_36.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_20.PCM8.bin"
 	.global Sound_Wave37
 Sound_Wave37:
-	.incbin "SOUND/SAMPLE/WAVE_37.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_21.PCM8.bin"
 	.global Sound_Wave38
 Sound_Wave38:
-	.incbin "SOUND/SAMPLE/WAVE_38.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_22.PCM8.bin"
 	.global Sound_Wave39
 Sound_Wave39:
-	.incbin "SOUND/SAMPLE/WAVE_39.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_23.PCM8.bin"
 	.global Sound_Wave40
 Sound_Wave40:
-	.incbin "SOUND/SAMPLE/WAVE_40.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_24.PCM8.bin"
 	.global Sound_Wave41
 Sound_Wave41:
-	.incbin "SOUND/SAMPLE/WAVE_41.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_25.PCM8.bin"
 	.global Sound_Wave42
 Sound_Wave42:
 	.incbin "SOUND/SAMPLE/WAVE_42.PCM8.bin"
 	.global Sound_Wave43
 Sound_Wave43:
-	.incbin "SOUND/SAMPLE/WAVE_43.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_26.PCM8.bin"
 	.global Sound_Wave44
 Sound_Wave44:
-	.incbin "SOUND/SAMPLE/WAVE_44.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_27.PCM8.bin"
 	.global Sound_Wave45
 Sound_Wave45:
-	.incbin "SOUND/SAMPLE/WAVE_45.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_28.PCM8.bin"
 	.global Sound_Wave46
 Sound_Wave46:
-	.incbin "SOUND/SAMPLE/WAVE_46.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_29.PCM8.bin"
 	.global Sound_Wave47
 Sound_Wave47:
-	.incbin "SOUND/SAMPLE/WAVE_47.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_30.PCM8.bin"
 	.global Sound_Wave48
 Sound_Wave48:
-	.incbin "SOUND/SAMPLE/WAVE_48.PCM8.bin"
+	.incbin "COMMON/SOUND/SAMPLE/WAVE_31.PCM8.bin"
 	.global Sound_Wave49
 Sound_Wave49:
 	.incbin "SOUND/SAMPLE/WAVE_49.PCM8.bin"

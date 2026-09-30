@@ -1,7 +1,7 @@
-@ Summon_GreenHairedMaidenTiles: 8-bit sprite tiles in a column 1596 pixels tall, their 240-colour
-@ palette and then the tiles as a packed 8-bit bitmap.
+@ Summon_GreenHairedMaidenTiles: its 240-colour palette, then 12 8-bit sprites of
+@ 32x32 and 480 zero bytes (ZERO_FILL.TSV), joined and packed by the resource packer.
 	.section .rodata
 	.global Summon_GreenHairedMaidenTiles
 Summon_GreenHairedMaidenTiles:
 	.incbin "GRAPHICS/SUMMON/GREEN_HAIRED_MAIDEN.gbapal"
-	.incbin "GRAPHICS/SUMMON/GREEN_HAIRED_MAIDEN.bitmap.lz"
+	.incbin "GRAPHICS/SUMMON/GREEN_HAIRED_MAIDEN.parts.lz"

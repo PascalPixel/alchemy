@@ -208,7 +208,7 @@ Func_08044348:
 	movs	r0, #0
 	mov	r2, sp
 	movs	r3, #0
-	bl	0x0803b918
+	bl	UiText_MeasureEntryDimensions
 	ldr	r0, [sp, #4]
 	add	sp, #8
 	b.n	.L_080444e4

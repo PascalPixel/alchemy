@@ -390,6 +390,8 @@ SECTIONS
         "*/recon/tla/raw/0803a8fc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803acd4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803b794.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/RESOURCE_MEASURE.o"(.text)
+        "*/recon/tla/raw/0803b880.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803b8cc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803bb58.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803c170.o"(.text .rodata .data .padding)

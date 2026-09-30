@@ -25,7 +25,7 @@ Func_08042010:
 	mov	r3, r8
 	movs	r1, #1
 	strh	r3, [r5, #0]
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	ldrh	r3, [r5, #0]
 	movs	r4, #244
 	lsls	r4, r4, #4

@@ -117,7 +117,7 @@ void FieldScene_RunCountAdjustPanel(void)
     s32 flag;
     s32 msg;
 
-    record = Owner_GetState(gGameState.current_owner);
+    record = Owner_GetState(gGameState.selected_actor);
     win = UiWindow_Create(0, 0, 30, 9, 2);
 
     msg = (s32)MsgDebugRaiseEveryonesLevel;

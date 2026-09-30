@@ -210,7 +210,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
         UiMessage_ShowAndRestoreState((s32)MsgCursedWontComeOff);
         return;
     }
-    if (price > gGameState.money) {
+    if (price > gGameState.coins) {
         UiMessage_ShowAndRestoreState((s32)MsgNotEnoughMoney);
         return;
     }

@@ -8,7 +8,7 @@
 struct GameState {
     u8 unknown_000[0x10];
     /* The party's coins. */
-    u32 coins;
+    s32 coins;
     u8 unknown_014[0x118];
     /* The prizes the last lucky wheels game won, ended by -1; -2 once handed out. */
     s8 won_prizes[0x10];
@@ -34,7 +34,9 @@ struct GameState {
     u8 unknown_1f3;
     /* The actor whose position actor contact is measured from. */
     s32 selected_actor;
-    u8 unknown_1f8[0x34];
+    /* The ids of the party's active members, 0xff after the last. */
+    u8 active_owners[8];
+    u8 unknown_200[0x2c];
     u16 unknown_22c;
     u16 unknown_22e;
     u16 unknown_230;
@@ -60,6 +62,7 @@ LAYOUT_OFFSET_GUARD(GameState_Special, struct GameState, special, 0x1d6);
 LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
 LAYOUT_OFFSET_GUARD(GameState_MovementMode, struct GameState, movement_mode, 0x1f2);
 LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0x1f4);
+LAYOUT_OFFSET_GUARD(GameState_ActiveOwners, struct GameState, active_owners, 0x1f8);
 LAYOUT_OFFSET_GUARD(GameState_RetreatEntrance, struct GameState, retreat_entrance, 0x242);
 LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);
 LAYOUT_OFFSET_GUARD(GameState_LinkTallies, struct GameState, link_tallies, 0x2a4);

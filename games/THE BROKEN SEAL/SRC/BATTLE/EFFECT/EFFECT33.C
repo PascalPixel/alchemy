@@ -203,7 +203,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
     u8 priority;
     u8 flags;
 
-    owner = Object_GetById(gGameState.current_owner);
+    owner = Object_GetById(gGameState.selected_actor);
     state = effect->state;
 
     if (state == 0) {
@@ -289,7 +289,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     s8 *slot_state;
 
     source_object = Object_GetById(arg);
-    target_object = Object_GetById(gGameState.current_owner);
+    target_object = Object_GetById(gGameState.selected_actor);
     if (source_object == NULL)
         return;
 
@@ -336,9 +336,9 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     } while (remaining >= 0);
 
     WaitFrames(60);
-    ObjectMotion_ArmCallback(gGameState.current_owner, 0x4000, 0);
+    ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
     WaitFrames(20);
-    Object_SetMode(Object_GetById(gGameState.current_owner), 28);
+    Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
     {
         s32 next_state;
 
@@ -407,7 +407,7 @@ void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
     s16 value;
     s32 y;
 
-    other = (struct Object08095fcc *)Object_GetById(gGameState.current_owner);
+    other = (struct Object08095fcc *)Object_GetById(gGameState.selected_actor);
     raw = arg->timer - 1;
     arg->timer = raw;
     value = arg->timer;
@@ -432,7 +432,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
     u32 random;
 
     source = (struct PositionSource_08096048 *)
-        Object_GetById(gGameState.current_owner);
+        Object_GetById(gGameState.selected_actor);
     state = effect->state;
 
     if (state == 0) {
@@ -487,7 +487,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     s32 scale;
     s32 position[3];
 
-    leader = Object_GetById(gGameState.current_owner);
+    leader = Object_GetById(gGameState.selected_actor);
     djinni = Object_GetById(arg);
     if (djinni == NULL)
         return;
@@ -510,9 +510,9 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
     Object_SetMode(djinni, 3);
     WaitFrames(90);
-    ObjectMotion_ArmCallback(gGameState.current_owner, 0x4000, 0);
+    ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
     WaitFrames(20);
-    Object_SetMode(Object_GetById(gGameState.current_owner), 28);
+    Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
     WaitFrames(30);
     Func_080091f0(0x19999, 0x19999, 0x10000);
 
@@ -608,7 +608,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
     s8 *state_pointer;
     s32 state;
 
-    source = Object_GetById(gGameState.current_owner);
+    source = Object_GetById(gGameState.selected_actor);
     state_pointer = &effect->state;
     state = *state_pointer;
 

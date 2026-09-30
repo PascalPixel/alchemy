@@ -7,7 +7,6 @@
 #include "BATTLE_COMMAND.H"
 
 extern u8 *Data_03001e74;
-extern struct PartyState gGameState;
 s32 Party_CountActiveOwnersFar(void);
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 

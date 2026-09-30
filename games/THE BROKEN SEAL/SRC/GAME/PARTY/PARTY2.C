@@ -127,7 +127,7 @@ void Party_ApplyStatePreset(void)
     OwnerAction_Add(1, 140);
     OwnerAction_Add(2, 141);
 
-    gGameState.money += 300;
+    gGameState.coins += 300;
 }
 
 void Owner_RefreshActiveRatios(s32 arg0)

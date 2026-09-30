@@ -162,10 +162,10 @@ s32 LinkLobby_PartyContains(s32 id)
         count = max;
     }
     for (i = 0; i < count; i++) {
-        if (gGameState.unknown_1f8[i] == 0xff) {
+        if (gGameState.active_owners[i] == 0xff) {
             return 0;
         }
-        if (gGameState.unknown_1f8[i] == id) {
+        if (gGameState.active_owners[i] == id) {
             return 1;
         }
     }
@@ -525,7 +525,7 @@ s32 LinkLobby_RunRoundResult(void)
         SerialRuntime_Initialize();
         Engine_GameFlagClear(0x172);
         GameFlag_SetByte(0x3f8, -1);
-        if (gGameState.unknown_1f8[0x32] != 0) {
+        if (gGameState.unknown_200[0x2a] != 0) {
             Engine_EventBegin();
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
@@ -534,7 +534,7 @@ s32 LinkLobby_RunRoundResult(void)
             Engine_EventShowMessage(8, 0);
             Engine_EventEnd();
         }
-        gGameState.unknown_1f8[0x32] = 0;
+        gGameState.unknown_200[0x2a] = 0;
         *(u8 *)gOptionMirror = 0;
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);

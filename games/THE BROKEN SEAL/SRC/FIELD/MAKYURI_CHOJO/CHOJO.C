@@ -897,7 +897,7 @@ void RunScene58Sequence(void)
     /* FAKEMATCH: the do/while loads the game state's base before the 0x22b
        offset, which fixes their registers and literal-pool order. */
     do {
-        gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+        gGameState.unknown_200[0x22b - 0x200] = 3;
     } while (0);
     BattleFx_SetWeightedResult(0x24, 2);
     Event_End();

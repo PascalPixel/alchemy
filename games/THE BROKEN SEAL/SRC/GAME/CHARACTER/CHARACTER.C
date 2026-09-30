@@ -131,7 +131,6 @@ struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
 /* Distance between a stored value and one recomputed from its ratio. */
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-extern struct PartyState gGameState;
 void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_SetBit(s32 flag);
 

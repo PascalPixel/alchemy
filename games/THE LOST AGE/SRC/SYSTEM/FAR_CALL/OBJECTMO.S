@@ -121,7 +121,7 @@ Func_080c8168:
 	.global Func_080c8170
 	.thumb_func
 Func_080c8170:
-	overlay_veneer Func_080d3744
+	overlay_veneer Object_SetPartAttribute
 	overlay_veneer Func_080d3780
 	.global Func_080c8180
 	.thumb_func

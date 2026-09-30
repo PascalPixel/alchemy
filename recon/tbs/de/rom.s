@@ -1367,12 +1367,7 @@ Shop_SelectQuantity:
 	.thumb_func
 Sanctum_RunPartyService:
 	.incbin "baserom.gba", 0x000b5110, 0x00000298
-	.section .rom.000b5a44, "ax"
-	.global Shop_PickUnitItem
-	.type Shop_PickUnitItem, %function
-	.thumb_func
-Shop_PickUnitItem:
-	.incbin "baserom.gba", 0x000b5a44, 0x000004fc
+	.section .rom.000b5f40, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:
 	.incbin "baserom.gba", 0x000b5f40, 0x00000080

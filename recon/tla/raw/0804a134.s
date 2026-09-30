@@ -382,7 +382,7 @@ Func_0804a134:
 	mov r0, r9
 	mov r2, r10
 	adds r7, #1
-	bl Func_0804524c
+	bl UiWindow_DrawThreeTileColumn
 	cmp r7, #4
 	bgt .L_0804a456
 	mov r1, r11

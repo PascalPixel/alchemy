@@ -28,7 +28,7 @@ Func_080c83c8:
 	.global Func_080c83d0
 	.thumb_func
 Func_080c83d0:
-	overlay_veneer Func_080cdc40
+	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTarget
 	.global Func_080c83d8
 	.thumb_func
 Func_080c83d8:

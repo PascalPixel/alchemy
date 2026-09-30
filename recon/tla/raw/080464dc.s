@@ -347,7 +347,7 @@ Func_080464dc:
 	movs r1, #16
 	mov r2, r9
 	str r4, [sp, #0]
-	bl Func_0804524c
+	bl UiWindow_DrawThreeTileColumn
 	ldrh r3, [r6]
 	movs r1, #252
 	lsls r1, r1, #6

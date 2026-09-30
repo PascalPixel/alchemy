@@ -12,7 +12,7 @@ BattleActor_CommitPlacementFar:
 	.global Func_08118120
 	.thumb_func
 Func_08118120:
-	overlay_veneer Func_0811b724
+	overlay_veneer ReleaseBattleObjectRecords
 	.global Func_08118128
 	.thumb_func
 Func_08118128:

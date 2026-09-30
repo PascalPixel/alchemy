@@ -9,7 +9,7 @@
    exposes this loader. Audited callees establish ScaleRgb555Clamped returns
    s32 (this older draft still says void); the copied 560-byte decoder is the
    maintained DECODE/BIT_DISPATCH/BIT_COMMANDS library block, not game C.
-   2026-09-30: the size is the decoder block's own length, BIT_DECODER_SIZE,
+   2026-09-30: the size is the decoder block's linked length, BitDecoder_Size,
    replacing the Value_00000230 symbol (an address-named answer): 100/103
    instructions, 45 differing lines (was 51).
    2026-09-24: hand-written, 141 differing halfwords. The reference reaches
@@ -43,9 +43,9 @@ struct BattleScreen {
     s32 brightness;
 };
 
-/* The RAM copy of the tile bit decoder: DECODE.S, BIT_DISPATCH.S, their jump
-   tables and BIT_COMMANDS.S in one 560-byte block. */
-#define BIT_DECODER_SIZE 0x230
+/* The length of the tile bit decoder block copied to RAM (DECODE.S through
+   BIT_COMMANDS.S), linked in MAIN.LD. */
+extern u8 BitDecoder_Size;
 extern void *gTransitionWork[];
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
@@ -61,7 +61,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
     struct BattleBgState *state = gTransitionWork[0];
     u8 *data = GetResource(resource);
     struct BattleScreen *screen = gTransitionWork[-35];
-    u32 size = BIT_DECODER_SIZE;
+    u32 size = (u32)&BitDecoder_Size;
     void *table;
 
     table = Runtime_AllocateHeapBlock(49, size);

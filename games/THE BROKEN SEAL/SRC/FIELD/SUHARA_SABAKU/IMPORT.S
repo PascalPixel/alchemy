@@ -62,6 +62,9 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
 	.global GameFlag_GetByte
 	.thumb_func
@@ -95,6 +98,9 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Engine_ActorStop
+	.thumb_func
+Engine_ActorStop:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
 	.global Engine_ActorSetDestination
 	.thumb_func
@@ -168,6 +174,9 @@ Engine_CameraMoveTo:
 	.thumb_func
 Event_SetPairWork1c0:
 	overlay_veneer Event_SetPairWork1c0Far
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
 	.global BattleFx_SetPhaseRequest
 	.thumb_func

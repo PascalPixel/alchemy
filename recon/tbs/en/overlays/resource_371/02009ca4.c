@@ -24,7 +24,15 @@
  * then shifts it in place (asrs r3, r3; adds r2, r3) instead of
  * asrs r2, r3. Still left: the 0x800 scale step's lsls r7 after movs r5,
  * #15 (ROM: before) and the 0x100000 height's lsls r2 before mov r1, r9
- * (ROM: after mov r1, r9). */
+ * (ROM: after mov r1, r9).
+ * 2026-09-30 (Jupiter): pinning x to r2 and shifting z into r2 with a
+ * tagged asr after the tile x fixes the walk: 1488 bytes, two differences
+ * left (scale step and height). A late tagged lsl on a 0x80 height with x
+ * pinned to r1 gets the lsl after mov r1, r9 but then movs r2 follows the
+ * flag store and adds r0 follows mov r1 (8); pinning the height across the
+ * flag store or the djinni to r0 breaks the allocation (237-264). A 0x80 step
+ * shifted by a tagged lsl before the counter, plain or volatile, or pinned
+ * to r7, moves the loop registers (73-365). */
 /* The world map's Venus Djinni: on the first meeting it joins Isaac, grows
  * from a speck and explains itself, asking until the party agrees to listen;
  * later it offers to explain Djinn again. */
@@ -239,9 +247,14 @@ listened:
     Event_ShowMessage(DJINNI, 0);
     {
         register s32 far asm("r3") = z; /* FAKEMATCH: pins z to r3 */
+        register s32 near asm("r2") = x; /* FAKEMATCH: pins x to r2 */
+        register s32 tile_x asm("r1"); /* FAKEMATCH: pins the tile x to r1 */
+        register s32 tile_z asm("r2"); /* FAKEMATCH: reuses r2 for the tile z */
 
-        asm volatile("" : : "r"(far)); /* FAKEMATCH: copies z before x */
-        Actor_WalkToAndWait(DJINNI, x >> 16, far >> 16);
+        asm volatile("" : : "r"(far), "r"(near)); /* FAKEMATCH: copies z before x */
+        tile_x = near >> 16;
+        asm("asr %0, %1, #16" : "=l"(tile_z) : "l"(far), "l"(tile_x)); /* FAKEMATCH: shifts z into r2 after the tile x */
+        Actor_WalkToAndWait(DJINNI, tile_x, tile_z);
     }
 finish:
     FieldScene_RunScene371_02001c08();

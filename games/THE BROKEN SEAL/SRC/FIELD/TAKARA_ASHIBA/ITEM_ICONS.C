@@ -1,14 +1,10 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 
 extern s32 TakaraAshiba_IconTimer;
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Run a sixteen-frame cycle: on frame 12 return the actors whose flags are clear to their marks, and on the even frames before it show their item icons in turn. */
 void TakaraAshiba_UpdateItemIcons(void)

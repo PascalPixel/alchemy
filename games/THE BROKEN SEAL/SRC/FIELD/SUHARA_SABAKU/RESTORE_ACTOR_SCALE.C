@@ -4,28 +4,8 @@
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
+#include "CALL.H"
 extern u8 MsgSuharaSandstorm[];
-
-
-/* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {
@@ -60,7 +40,7 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     p10 = a0;
     rec7 = Engine_ActorGet(gGameState.selected_actor);
     rec = Engine_ActorGet(p10);
-    rec2 = Value1(Engine_GameFlagIsSet, 0x340);
+    rec2 = Engine_GameFlagIsSet(0x340);
     p9 = rec7->x.part.pixel;
     p11 = rec7->z.part.pixel;
     ime = &REG_IME;
@@ -97,12 +77,12 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
         i = next_frame;
     } while (i <= 15);
     Engine_GameFlagSet((0x1fe + p10));
-    Call1(Engine_GameFlagSet, 0x340);
-    if (Value1(Engine_GameFlagIsSet, 0x9a0) == 0) {
+    Engine_GameFlagSet(0x340);
+    if (Engine_GameFlagIsSet(0x9a0) == 0) {
     } else {
         if (Value1(Engine_GameFlagIsSet, 0x9b6) != 0) {
         } else {
-            Call1(Engine_GameFlagSet, 0x9b6);
+            Engine_GameFlagSet(0x9b6);
             Call3(Engine_ActorSetSpeed, 13, 0x10000, 0x8000);
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
             record = Engine_ActorGet(0);
@@ -117,8 +97,8 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
             Engine_EventWait(1);
             SetFlagBits(&Engine_ActorGet(0)->unknown_5a, 1);
             Engine_ActorSetAnimation(13, 1);
-            Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
-            Call1(Engine_EventSetMessage, (s32)MsgSuharaSandstorm);
+            Engine_ActorFaceDirection(0, 0x4000, 0);
+            Engine_EventSetMessage((s32)MsgSuharaSandstorm);
             Call3(Engine_ActorShowEmote, 13, 0x106, 60);
             Engine_EventShowMessage(13, 0);
             Call3(Engine_ActorShowEmote, 13, 0x102, 60);

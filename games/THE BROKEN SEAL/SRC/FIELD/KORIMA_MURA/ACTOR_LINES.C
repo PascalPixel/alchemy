@@ -73,15 +73,6 @@ u16 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 void BattleEffect_CleanupSceneObjects(void);
 
-/* Calls spelled through this wrapper pass their constants straight into the
- * argument registers. Spelling them as direct calls instead precomputes a
- * costly constant into a temporary that is shared with later uses in the same
- * block. A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 void FieldScene_RunActor16MessageBranch(void)
 {
     struct Rec *q = Engine_ActorGet(0);
@@ -108,40 +99,6 @@ void FieldScene_RunPairedStepA();
 void FieldScene_RunPairedStepB();
 void Object_SetActionCallbackAndRefreshById();
 void Audio_PlayCueFromEventWork();
-
-/* The inline adapters retain argument lifetimes at constant-valued calls.
- * Their return types follow the target helpers. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ struct ObjectRuntime *Pointer1(struct ObjectRuntime *(*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 
 extern u8 KorimaMura_ActionTable1[];
 extern u8 KorimaMura_ActionTable2[];

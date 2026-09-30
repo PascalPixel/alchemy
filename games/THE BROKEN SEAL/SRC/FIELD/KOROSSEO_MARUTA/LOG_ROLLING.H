@@ -124,53 +124,6 @@ extern u8 gColossoLinkedEffect[];
 extern u8 gColossoSceneDescriptor[];
 extern u32 StagedActor_DirectionSteps[];
 
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 extern u8 gColossoMultiPhaseData[];
 /* The action scripts the multi-phase sequence gives actor 8 and the leader. */
 extern u8 KorosseoMaruta_Actor8Action[];
@@ -180,12 +133,6 @@ extern u8 KorosseoMaruta_LeaderActionC[];
 
 /* COMMON/KOROSSEO/SOLO_COMPETITOR.C: enter one competitor's trial. */
 void Korosseo_SelectSoloCompetitor(s32 competitor);
-
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 typedef struct StageObstacleActor {
     u8 unk_00[6];
@@ -258,7 +205,6 @@ typedef struct StageMotionEffect {
     u8 state;
 } StageMotionEffect;
 
-
 typedef struct PartyInteractionRecord {
     u8 padding_00[10];
     s16 x;
@@ -277,8 +223,6 @@ static inline void InitializeSelectedActor(s32 actorId)
 {
     Actor_SetSpeed(actorId, 0x10000, 0x8000);
 }
-
-
 
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */

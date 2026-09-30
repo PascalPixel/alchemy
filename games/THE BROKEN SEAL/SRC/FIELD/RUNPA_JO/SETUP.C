@@ -1,6 +1,7 @@
 /* The Lunpa fortress: the scene tasks and the actors restored from the story
  * flags. */
 #include "FORTRESS.H"
+#include "CALL.H"
 
 void FieldScene_InstallSceneTasks(void)
 {
@@ -15,7 +16,7 @@ void FieldScene_InstallSceneTasks(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Value2(Engine_TaskAddCallback, (s32)TriggerSceneStage95FromActor12, 3200);
         Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene3bfSequenceB, 3200);
-        Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene3bfSequenceC, 3200);
+        Engine_TaskAddCallback((s32)FieldScene_RunScene3bfSequenceC, 3200);
         Map_SetWorkFlagBits9To11(0xe00);
         break;
     case 12:
@@ -28,7 +29,7 @@ void FieldScene_InstallSceneTasks(void)
     case 18:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Value2(Engine_TaskAddCallback, (s32)FieldScene_UpdateActorEighteenInteraction, 3200);
-        Value2(Engine_TaskAddCallback, (s32)TriggerScene41AtVillagePath, 3200);
+        Engine_TaskAddCallback((s32)TriggerScene41AtVillagePath, 3200);
         Task_Wait(1);
         Map_Redraw();
         Task_Wait(1);
@@ -39,7 +40,7 @@ void FieldScene_InstallSceneTasks(void)
     case 14:
     case 15:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-        Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene3bfSequenceA, 3200);
+        Engine_TaskAddCallback((s32)FieldScene_RunScene3bfSequenceA, 3200);
         break;
     default:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);

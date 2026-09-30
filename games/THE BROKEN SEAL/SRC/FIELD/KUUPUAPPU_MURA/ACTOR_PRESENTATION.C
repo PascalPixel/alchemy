@@ -2,7 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -100,31 +99,7 @@ s32 SceneActor_CheckFacingAndRange();
 void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 
-/*
- * The wrapper helpers below pass their constants straight into the argument
- * registers. A direct call precomputes an expensive constant into a value the
- * compiler then shares with later uses in the same block.
- */
 void SceneActor_RunActorCommandWithFlag91(s32 x);
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-/*
- * A value-returning call sets r0 last of its arguments, so the callee must be
- * spelled as returning a value even where the result is unused.
- */
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
@@ -135,27 +110,6 @@ static __inline__ void bump_step(s32 amount)
 static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
 {
     Actor_SetSpeed(actor, horizontal, vertical);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    void Actor_SetPosition();
-
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    void Actor_SetPosition();
-
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    void Actor_SetPosition();
-
-    f(a0, a1, a2, a3);
 }
 
 /*
@@ -284,17 +238,6 @@ extern u8 MsgKuupuappuThoseTravelersLeftInBig[];
 extern u8 MsgKuupuappuWaitDontWantTakeYour[];
 extern u8 MsgKuupuappuWasntEruptionMtAlephIncredible[];
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 void FieldScene_RunScene382_020004a0(void)
@@ -326,7 +269,7 @@ void FieldScene_RunScene382_020004a0(void)
     Event_SetMessage((s32)MsgKuupuappuLeavingImStillWorriedAbout);
     Event_ShowMessageAndWait(0x9002, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    if (Value0(OverlayObject_GetObject2Byte280)!= 0) {
+    if (OverlayObject_GetObject2Byte280()!= 0) {
         Event_SetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
         Event_ShowMessage(ACTOR_IVAN, 0);
         OverlayObject_RunObject2WhenFlagged();

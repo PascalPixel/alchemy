@@ -149,55 +149,6 @@ void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 
 extern u8 *Data_03001e8c[];
 
-static __inline__ s32 Scene_QueryFlag(s32 (*func)(s32), s32 flag)
-{
-    return func(flag);
-}
-
-static __inline__ void Scene_SetFlag(void (*func)(s32), s32 flag)
-{
-    func(flag);
-}
-
-static __inline__ void Scene_Call3(void (*func)(s32, s32, s32), s32 a, s32 b, s32 c)
-{
-    func(a, b, c);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call0(void (*f)())
-{
-    f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
@@ -207,26 +158,6 @@ static __inline__ void bump_step(s32 amount)
 static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
 {
     Actor_SetSpeed(actor, horizontal, vertical);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void PlaceActor(void (*place)(s32, s32, s32),
-                                 s32 actor, s32 x, s32 z)
-{
-
-    place(actor, x, z);
-}
-
-static __inline__ void UpdateRect(void (*update)(s32, s32, s32, s32, s32, s32),
-                                 s32 x, s32 z, s32 width, s32 height,
-                                 s32 sourceX, s32 sourceZ)
-{
-
-    update(x, z, width, height, sourceX, sourceZ);
 }
 
 void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgKorosseoCheering[];
 extern u8 MsgKorosseoCheeringChoices[];
 extern struct EventWork *gEventWork;
@@ -20,12 +21,6 @@ void Engine_EventEnd();
 
 /* The game state, read here as words: word 125 holds the solo competitor. */
 extern s32 gGameState[];
-
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a value-returning call also sets r0 last of
- * its arguments. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1) { f(a0, a1); }
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1) { return f(a0, a1); }
 
 /* Colosso: actor id asks whether the party is done cheering, its two answers
  * starting at MsgKorosseoCheeringChoices. On yes the solo competitor's
@@ -50,7 +45,7 @@ void Korosseo_FinishSoloRound(s32 id)
     Engine_EventBegin();
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);
-    Value2((s32 (*)())Engine_EventOpenMessage, id, 0);
+    ((s32 (*)())Engine_EventOpenMessage)(id, 0);
     /* FAKEMATCH: the choice list and its count go through one work pointer
      * and word-sized locals, which keeps the reference's pool loads and
      * halfword stores in its order. */

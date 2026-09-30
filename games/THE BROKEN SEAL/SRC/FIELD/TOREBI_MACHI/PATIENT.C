@@ -1,4 +1,5 @@
 #include "MACHI.H"
+#include "CALL.H"
 extern u8 MsgTorebiPatientLittleGuy[];
 
 void FieldScene_RunPatientTalk(void)

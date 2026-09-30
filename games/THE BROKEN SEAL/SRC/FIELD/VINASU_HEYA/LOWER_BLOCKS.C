@@ -1,22 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 extern s32 gVinasuBlockHeights[];
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 /* Moves actors 8 and 9 to the heights their table rows name, then marks the
  * cell under each of actors 8 to 12 that has sunk below the floor. */
@@ -27,7 +13,7 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     u32 i;
 
     Call3((void (*)())Engine_ActorSetSpeed, 8, 0x8000, 0x4000);
-    Call3((void (*)())Engine_ActorSetSpeed, 9, 0x8000, 0x4000);
+    ((void (*)())Engine_ActorSetSpeed)(9, 0x8000, 0x4000);
     if (wait != 0) {
         Engine_AudioPlayCue(180);
     }

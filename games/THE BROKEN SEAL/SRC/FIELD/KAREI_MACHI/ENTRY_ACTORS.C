@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 void SceneEffect_UpdateLobeOrbitEffect26();
 
@@ -14,36 +15,6 @@ void Engine_HeapRelease();
 void Engine_TaskAddCallback();
 
 extern s16 gGameState[][1];
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 struct SpriteBits {
     u8 pad0[5];
@@ -65,24 +36,24 @@ void KareiMachi_SetupEntryActors(void)
     s32 record;
     u8 *p6;
 
-    if (Value1(Engine_GameFlagIsSet, 0x941) != 0) {
-        Call1(Engine_GameFlagSet, 0x321);
-        Call1(Engine_GameFlagSet, 0x913);
-        Call1(Engine_GameFlagSet, 0x912);
-        Call1(Engine_GameFlagSet, 0x915);
+    if (Engine_GameFlagIsSet(0x941) != 0) {
+        Engine_GameFlagSet(0x321);
+        Engine_GameFlagSet(0x913);
+        Engine_GameFlagSet(0x912);
+        Engine_GameFlagSet(0x915);
     }
-    if (Value1(Engine_GameFlagIsSet, 0x940) != 0) {
-        Call1(Engine_GameFlagSet, 0x321);
+    if (Engine_GameFlagIsSet(0x940) != 0) {
+        Engine_GameFlagSet(0x321);
     }
     if (gGameState[225][0] == 14) {
         Call3(Engine_ActorSetPosition, 25, 0x1a80000, 0x580000);
     }
     Engine_ActorSetChildValue(21, 2);
-    rec2 = Value1(Engine_GameFlagIsSet, 0x916);
+    rec2 = Engine_GameFlagIsSet(0x916);
     if (rec2 != 0) {
         Engine_ActorSetPosition(26, 0, 0);
     } else {
-        rec = Value1(Engine_ActorGet, 26);
+        rec = Engine_ActorGet(26);
         p6 = *(s32 *)((s32)rec + 80);
         ((struct SpriteBits *)p6)->mode = 1;
         ((struct SpriteBits *)p6)->hidden = 0;
@@ -92,7 +63,7 @@ void KareiMachi_SetupEntryActors(void)
         *(u8 *)((((s32)rec + 92) - 7)) = rec2;
         *(s32 *)((s32)rec + 12) = 0xa0000;
         rec[97] = 1;
-        rec7 = Value2(Engine_HeapAllocate, 17, 0x608);
+        rec7 = Engine_HeapAllocate(17, 0x608);
         Engine_ItemLoadIcon(181);
         Engine_VramLoad(p6[28], 128, (rec7 + 0x400));
         Engine_HeapRelease(17);
@@ -100,6 +71,6 @@ void KareiMachi_SetupEntryActors(void)
         *(s32 *)((s32)rec + 56) = *(s32 *)((s32)rec + 8);
         *(s32 *)((s32)rec + 60) = *(s32 *)((s32)rec + 12);
         *(s32 *)((s32)rec + 64) = *(s32 *)((s32)rec + 16);
-        Call2(Engine_TaskAddCallback, (s32)SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
+        Engine_TaskAddCallback((s32)SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
     }
 }

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 s32 OverlayObject_SpawnWithMode14();
 void OverlayObject_WaitUntilIdle();
@@ -24,36 +25,6 @@ void Engine_EventRequestExit();
 void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 void Scene_RunActorLeapSequence(void)
 {
     u32 i;
@@ -62,7 +33,7 @@ void Scene_RunActorLeapSequence(void)
     s32 zero;
 
     zero = 0;
-    rec7 = Value1(Engine_ActorGet, 0);
+    rec7 = Engine_ActorGet(0);
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     record = Engine_ActorGet(0);
@@ -73,7 +44,7 @@ void Scene_RunActorLeapSequence(void)
         *(u16 *)(rec7 + 6) = shown;
     }
     Call3(Engine_ActorSetSpeed, 0, 0x30000, 0x18000);
-    Call3(Engine_ActorMoveToAndWait, 0, *(s16 *)(rec7 + 10), 0x228);
+    Engine_ActorMoveToAndWait(0, *(s16 *)(rec7 + 10), 0x228);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(0, 22);
     Engine_EventWait(30);
@@ -95,7 +66,7 @@ void Scene_RunActorLeapSequence(void)
         *(s32 *)(rec7 + 68) = zero;
         OverlayObject_SpawnWithMode14(*(s32 *)(rec7 + 8), 0, z, 223);
     }
-    Call6(Engine_MapCopyCellAttributes, 34, 35, 5, 1, 34, 34);
+    Engine_MapCopyCellAttributes(34, 35, 5, 1, 34, 34);
     OverlayObject_WaitUntilIdle(0);
     Engine_ActorSetChildValue(0, 15);
     Engine_EventRequestExit(20);

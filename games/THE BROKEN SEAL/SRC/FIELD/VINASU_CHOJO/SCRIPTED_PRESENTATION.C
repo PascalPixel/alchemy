@@ -46,7 +46,7 @@ void FieldScene_RunScene3c9_02003924(void)
     s32 rec4;
     s32 record;
 
-    rec4 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    rec4 = Engine_ActorGet(ACTOR_PARTY_LEADER);
     Event_Begin();
     *((u8 *)Engine_EventGetViewCenter() + 85) = 0;
     Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
@@ -116,19 +116,19 @@ void FieldScene_RunScene3c9_02003924(void)
     Actor_SetPosition(21, 0xc40000, 0xdc0000);
     Actor_SetAnimation(21, 5);
     Actor_SetPosition(6, 0xbc0000, 0x13c0000);
-    Call2((void (*)())Engine_ActorSetAnimation, 6, 5);
+    ((void (*)())Engine_ActorSetAnimation)(6, 5);
     record = Actor_Get(6);
     Actor_SetSpriteFlags(record, 0);
     record = Actor_Get(8);
     *(s32 *)(record + 8) += -0x100000;
     SceneActor_ParkRecord((u8 *)record);
-    record = Value1(Engine_ActorGet, 9);
+    record = Engine_ActorGet(9);
     *(s32 *)(record + 8) += -0x100000;
     SceneActor_ParkRecord((u8 *)record);
     record = Actor_Get(10);
     *(s32 *)(record + 8) += 0x100000;
     SceneActor_ParkRecord((u8 *)record);
-    record = Value1(Engine_ActorGet, 11);
+    record = Engine_ActorGet(11);
     *(s32 *)(record + 8) += 0x100000;
     SceneActor_ParkRecord((u8 *)record);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
@@ -138,7 +138,7 @@ void FieldScene_RunScene3c9_02003924(void)
     Actor_SetChildValue(23, 4);
     record = Actor_Get(23);
     *(s32 *)(record + 12) = 0x280000;
-    Call2((void (*)())Engine_TaskAddCallback, (s32)SceneEffect_SpawnParticlesBesideActor, 0xc80);
+    ((void (*)())Engine_TaskAddCallback)((s32)SceneEffect_SpawnParticlesBesideActor, 0xc80);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     gEventWork->transition_frames = 24;
     Event_OpenScreen();
@@ -148,7 +148,6 @@ void FieldScene_RunScene3c9_02003924(void)
     GameFlag_Set(0x9a7);
     Event_RequestExit(2);
 }
-
 
 void SceneEffect_SpawnParticlesAboveActor(void);
 

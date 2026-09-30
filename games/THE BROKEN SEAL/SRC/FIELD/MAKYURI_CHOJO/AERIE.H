@@ -19,51 +19,6 @@ s32 UiText_OpenMessageAtObjectFar();
 
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 
-static __inline__ void Call0(void (*f)())
-{
-    f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
 extern u8 *gWork;
 extern u8 *gCam;
 
@@ -91,11 +46,6 @@ s32 UiText_OpenMessageAtObjectFar();
 s32 UiText_OpenMessageAtObjectFar();
 s32 UiText_OpenMessageAtObjectFar();
 void Audio_PlayCueFromEventWorkFar();
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -152,11 +102,6 @@ void MakyuriChojo_LowerCollectedActors();
 
 /* Two s16 fields (offsets 0xa and 0x12) read together from an actor slot
  * record and forwarded as a pair of arguments. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 /* Configures four actor slots (0-3), advances the shared scene phase, then
  * drives handles 1-3 through a sequence of timed calls, some of which use

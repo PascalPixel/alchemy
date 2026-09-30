@@ -1,18 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
+#include "CALL.H"
 
 struct FieldActor *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind);
 void Map_CopyCellAttributeRect();
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* When the pillar (actor 9) stands in column 23, steps the leader aside and
  * lowers the pillar into the floor amid a spray of dust between two

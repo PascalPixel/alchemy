@@ -1,5 +1,6 @@
 /* The Lunpa fortress: actor 12's drop and the first bridge supports. */
 #include "FORTRESS.H"
+#include "CALL.H"
 
 void ConfigureSceneActor12(void)
 {
@@ -39,7 +40,7 @@ void FieldScene_UpdateActorTwelveTransition(void)
 {
     struct FieldActor *actor;
 
-    actor = (struct FieldActor *)Value1(Object_GetById, 12);
+    actor = (struct FieldActor *)Object_GetById(12);
     if ((actor->z.fixed >> 20) > 22) {
         Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);

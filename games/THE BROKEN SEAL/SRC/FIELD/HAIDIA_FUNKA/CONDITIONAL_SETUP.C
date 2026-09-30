@@ -14,37 +14,7 @@ void BattleFx_SetBlock30Values12Zero();
 void BattleFx_StartBufferBlend();
 void Object_RefreshSelectorById();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 static __inline__ void bump_step(s32 amount)
 {
     u8 *work = (u8 *)gEventWork;
@@ -103,7 +73,7 @@ void RunEventScript01(void)
     Actor_FaceDirection(11, 0xa000, 0);
     Actor_WalkToAndWait(12, 0x100, 0x1f4);
     Actor_FaceDirection(12, 0xa000, 0);
-    Call2(BattleFx_StartBufferBlend, 0x10003, 0x10006);
+    BattleFx_StartBufferBlend(0x10003, 0x10006);
     BattleFx_SetBlock30Values12Zero();
     Task_Wait(60);
     Camera_MoveTo(0x1000000, -1, 0x2640000, 0);

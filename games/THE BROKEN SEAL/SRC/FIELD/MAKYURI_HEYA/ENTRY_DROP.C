@@ -11,7 +11,7 @@ void MakyuriHeya_ArriveWithSparks(void)
         Event_Begin();
         Camera_MoveTo(-1, -1, -1, 0);
         actor->motion_flags = 0;
-        Value3(Engine_ActorSetPosition, 0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) - 0x100000);
+        Engine_ActorSetPosition(0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) - 0x100000);
         Actor_SetChildValue(0, 15);
         Actor_SetSpriteFlags(Actor_Get(0), 0);
         Event_OpenScreen();

@@ -322,8 +322,8 @@ void FieldScene_RunScene373SequenceC(void)
     s32 rec8;
     s32 record;
 
-    rec8 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    rec7 = Value1(Engine_ActorGet, ACTOR_JASMINE);
+    rec8 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec7 = Engine_ActorGet(ACTOR_JASMINE);
     Event_Begin();
     *(s32 *)(rec7 + 8) = *(s32 *)(rec8 + 8);
     *(s32 *)(rec7 + 12) = *(s32 *)(rec8 + 12);
@@ -348,7 +348,7 @@ void FieldScene_RunScene373SequenceC(void)
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(2);
     Actor_SetAnimation(ACTOR_JASMINE, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

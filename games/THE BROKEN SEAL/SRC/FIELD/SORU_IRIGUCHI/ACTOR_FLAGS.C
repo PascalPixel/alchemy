@@ -1,4 +1,5 @@
 #include "SORU.H"
+#include "CALL.H"
 
 void Scene_UpdateOuterActor9Flags(void)
 {
@@ -9,12 +10,12 @@ void Scene_UpdateOuterActor9Flags(void)
         return;
     }
     pos = work[2] >> 20;
-    Scene_Call(Engine_GameFlagClear, 0x302);
-    Scene_Call(Engine_GameFlagClear, 0x303);
+    Call1(Engine_GameFlagClear, 0x302);
+    Call1(Engine_GameFlagClear, 0x303);
     if (pos == 93) {
-        Scene_Call(Engine_GameFlagSet, 0x303);
+        Engine_GameFlagSet(0x303);
     } else if (pos == 95) {
-        Scene_Call(Engine_GameFlagSet, 0x302);
+        Engine_GameFlagSet(0x302);
     }
 }
 
@@ -27,12 +28,12 @@ void Scene_UpdateOuterActor10Flags(void)
         return;
     }
     pos = work[2] >> 20;
-    Scene_Call(Engine_GameFlagClear, 0x300);
-    Scene_Call(Engine_GameFlagClear, 0x301);
+    Call1(Engine_GameFlagClear, 0x300);
+    Call1(Engine_GameFlagClear, 0x301);
     if (pos == 115) {
-        Scene_Call(Engine_GameFlagSet, 0x300);
+        Engine_GameFlagSet(0x300);
     } else if (pos == 113) {
-        Scene_Call(Engine_GameFlagSet, 0x301);
+        Engine_GameFlagSet(0x301);
     }
 }
 
@@ -45,14 +46,14 @@ void Scene_UpdateFormationActor9Flags(void)
         return;
     }
     pos = work[2] >> 20;
-    Scene_Call(Engine_GameFlagClear, 0x310);
-    Scene_Call(Engine_GameFlagClear, 0x311);
+    Call1(Engine_GameFlagClear, 0x310);
+    Call1(Engine_GameFlagClear, 0x311);
     if (pos == 99) {
-        Scene_Call(Engine_GameFlagSet, 0x311);
+        Engine_GameFlagSet(0x311);
     } else if (pos == 101) {
-        Scene_Call(Engine_GameFlagSet, 0x310);
+        Engine_GameFlagSet(0x310);
     }
-    Scene_Call(Scene_RunActorFormation, 0);
+    Scene_RunActorFormation(0);
 }
 
 void Scene_UpdateFormationActor10Flags(void)
@@ -64,14 +65,14 @@ void Scene_UpdateFormationActor10Flags(void)
         return;
     }
     pos = work[2] >> 20;
-    Scene_Call(Engine_GameFlagClear, 0x312);
-    Scene_Call(Engine_GameFlagClear, 0x313);
+    Call1(Engine_GameFlagClear, 0x312);
+    Call1(Engine_GameFlagClear, 0x313);
     if (pos == 103) {
-        Scene_Call(Engine_GameFlagSet, 0x313);
+        Engine_GameFlagSet(0x313);
     } else if (pos == 105) {
-        Scene_Call(Engine_GameFlagSet, 0x312);
+        Engine_GameFlagSet(0x312);
     }
-    Scene_Call(Scene_RunActorFormation, 0);
+    Scene_RunActorFormation(0);
 }
 
 void Scene_UpdateFormationActor11Flags(void)
@@ -83,14 +84,14 @@ void Scene_UpdateFormationActor11Flags(void)
         return;
     }
     pos = work[2] >> 20;
-    Scene_Call(Engine_GameFlagClear, 0x314);
-    Scene_Call(Engine_GameFlagClear, 0x315);
+    Call1(Engine_GameFlagClear, 0x314);
+    Call1(Engine_GameFlagClear, 0x315);
     if (pos == 107) {
-        Scene_Call(Engine_GameFlagSet, 0x315);
+        Engine_GameFlagSet(0x315);
     } else if (pos == 109) {
-        Scene_Call(Engine_GameFlagSet, 0x314);
+        Engine_GameFlagSet(0x314);
     }
-    Scene_Call(Scene_RunActorFormation, 0);
+    Scene_RunActorFormation(0);
 }
 
 void Scene_UpdateFormationActor12Flags(void)
@@ -102,14 +103,14 @@ void Scene_UpdateFormationActor12Flags(void)
         return;
     }
     pos = work[2] >> 20;
-    Scene_Call(Engine_GameFlagClear, 0x316);
-    Scene_Call(Engine_GameFlagClear, 0x317);
+    Call1(Engine_GameFlagClear, 0x316);
+    Call1(Engine_GameFlagClear, 0x317);
     if (pos == 111) {
-        Scene_Call(Engine_GameFlagSet, 0x317);
+        Engine_GameFlagSet(0x317);
     } else if (pos == 113) {
-        Scene_Call(Engine_GameFlagSet, 0x316);
+        Engine_GameFlagSet(0x316);
     }
-    Scene_Call(Scene_RunActorFormation, 0);
+    Scene_RunActorFormation(0);
 }
 
 void Scene_UpdateFormationActor13Flags(void)
@@ -121,14 +122,14 @@ void Scene_UpdateFormationActor13Flags(void)
         return;
     }
     pos = work[2] >> 20;
-    Scene_Call(Engine_GameFlagClear, 0x318);
-    Scene_Call(Engine_GameFlagClear, 0x319);
+    Call1(Engine_GameFlagClear, 0x318);
+    Call1(Engine_GameFlagClear, 0x319);
     if (pos == 115) {
-        Scene_Call(Engine_GameFlagSet, 0x319);
+        Engine_GameFlagSet(0x319);
     } else if (pos == 117) {
-        Scene_Call(Engine_GameFlagSet, 0x318);
+        Engine_GameFlagSet(0x318);
     }
-    Scene_Call(Scene_RunActorFormation, 0);
+    Scene_RunActorFormation(0);
 }
 
 void Scene_UpdateFormationActor14Flags(void)
@@ -138,14 +139,14 @@ void Scene_UpdateFormationActor14Flags(void)
 
     if (work == 0) return;
     pos = work[2] >> 20;
-    Scene_Call(Engine_GameFlagClear, 0x31a);
-    Scene_Call(Engine_GameFlagClear, 0x31b);
+    Call1(Engine_GameFlagClear, 0x31a);
+    Call1(Engine_GameFlagClear, 0x31b);
     if (pos == 119) {
-        Scene_Call(Engine_GameFlagSet, 0x31b);
+        Engine_GameFlagSet(0x31b);
     } else if (pos == 121) {
-        Scene_Call(Engine_GameFlagSet, 0x31a);
+        Engine_GameFlagSet(0x31a);
     }
-    Scene_Call(Scene_RunActorFormation, 0);
+    Scene_RunActorFormation(0);
 }
 
 s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)

@@ -45,17 +45,17 @@ void Scene_LeaveForMtAleph(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0xcccc, 0x6666);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1((s32 (*)())Engine_ActorGet, 0);
+    record = ((s32 (*)())Engine_ActorGet)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_SetAnimation(ACTOR_JASMINE, 2);
-    record = Value1((s32 (*)())Engine_ActorGet, 0);
+    record = ((s32 (*)())Engine_ActorGet)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_SetAnimation(ACTOR_SUKURETA, 2);
-    record = Value1((s32 (*)())Engine_ActorGet, 0);
+    record = ((s32 (*)())Engine_ActorGet)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

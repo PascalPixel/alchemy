@@ -58,8 +58,22 @@ pub struct GameDone {
     pub game_asm: i64,
     pub game_c: i64,
     pub executable: i64,
+    /// Whole 8-byte far-call stubs (veneers), counted within the assembly.
+    pub veneers: i64,
 }
 impl GameDone {
+    /// DONE in its parts, in percentage points of the executable bytes: C,
+    /// assembly without the stubs, and the 8-byte stubs.
+    pub fn parts(&self) -> (f64, f64, f64) {
+        (
+            floor_percent(self.common_c + self.game_c, self.executable),
+            floor_percent(
+                self.common_asm + self.game_asm - self.veneers,
+                self.executable,
+            ),
+            floor_percent(self.veneers, self.executable),
+        )
+    }
     pub fn bytes(&self) -> i64 {
         self.common_asm + self.common_c + self.game_asm + self.game_c
     }
@@ -98,10 +112,12 @@ fn done_line(mark: &str, game: &str, status: Result<Measurement, String>) -> Str
     match status {
         Ok(m) => {
             let d = m.done;
+            let (c, assembly, stubs) = d.parts();
             let mut line = format!(
-                "{mark} {game} DONE: {} / {} executable bytes ({:.2}%) = common assembly {} + common C {} + game assembly {} (compiler library {}) + game C {}; not yet C: disassembly {} + overlay listings {}",
+                "{mark} {game} DONE: {} / {} executable bytes ({:.2}%) = C {} ({c:.2} points) + assembly {} ({assembly:.2}, compiler library {} of it) + 8-byte stubs {} ({stubs:.2}); FAKEMATCH-steered C {} ({:.2} points, removed last); uncredited padding {} not counted; not yet C: disassembly {} + overlay listings {}",
                 commas(d.bytes()), commas(d.executable), d.percent(),
-                commas(d.common_asm), commas(d.common_c), commas(d.game_asm), commas(m.library), commas(d.game_c),
+                commas(d.common_c + d.game_c), commas(d.common_asm + d.game_asm - d.veneers), commas(m.library), commas(d.veneers),
+                commas(m.steered), floor_percent(m.steered, d.executable), commas(m.uncredited),
                 commas(m.raw), commas(m.listings)
             );
             for (object, bytes) in &m.other {
@@ -252,6 +268,7 @@ mod tests {
             game_asm: 20,
             common_asm: 0,
             executable: 200,
+            veneers: 0,
         };
         assert_eq!(done.percent(), 25.0);
         let report = table(&report_rows(&done, "tla-en"));

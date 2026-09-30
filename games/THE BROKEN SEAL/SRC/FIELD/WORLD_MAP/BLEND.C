@@ -24,7 +24,7 @@ void FieldScene_RunLateSequence(void)
     record = Actor_Get(gGameState.selected_actor);
     sx = *(s16 *)(record + 10);
     sy = *(s16 *)(record + 18);
-    if (Value2(Engine_MathModulo, *(volatile s32 *)&gFrameCount, 3) == 0) {
+    if (Engine_MathModulo(*(volatile s32 *)&gFrameCount, 3) == 0) {
         mode = (u32)(Random_Next() << 2) >> 16;
         switch (mode) {
         case 0:

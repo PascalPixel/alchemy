@@ -51,7 +51,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             UiWork_PushValueSlot(six00, 5);
             Event_OpenMessage(8, 0);
             rec7 = UiWindow_Create(19, 8, 11, 4, 2);
-            Call4(UiText_DrawCharacterAtOffset, 0xc8a, rec7, 0, 0);
+            UiText_DrawCharacterAtOffset(0xc8a, rec7, 0, 0);
             base6_2000240 = (s32)Data_02000240;
             UiText_DrawNumberInWindow(*(s32 *)(base6_2000240 + 16), 6, rec7, 24, 8);
             if (Event_ChooseYesNo(-1, 0) == 1) {
@@ -80,7 +80,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Event_ShowMessage(8, 0);
             Party_GiveItem(235, 0);
             GameFlag_Set(0x8a5);
-            Call1(Party_AdjustSixDigitCounterA, -six00);
+            Party_AdjustSixDigitCounterA(-six00);
         }
         L_02000660:;
         Event_End();

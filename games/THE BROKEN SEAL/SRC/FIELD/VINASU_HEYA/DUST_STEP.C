@@ -16,14 +16,6 @@ struct DustParams {
     u8 unknown_24[4];
 };
 
-
-
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
 void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 {
     s32 id;
@@ -61,7 +53,7 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
         }
     }
     if (hit < 0) {
-        Call2((void (*)())Engine_ActorSetAttachedEffect, id, 0x102);
+        ((void (*)())Engine_ActorSetAttachedEffect)(id, 0x102);
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + 0x80000);
         Engine_ObjectSetAnimation(actor, 7);
         Engine_ObjectCommitPosition(actor);

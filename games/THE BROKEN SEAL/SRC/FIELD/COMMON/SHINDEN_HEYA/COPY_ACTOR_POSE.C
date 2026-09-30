@@ -5,18 +5,6 @@ void Engine_ActorSetPosition();
 void Engine_ActorSetAnimation();
 void ShindenHeya_FollowLeaderOffset();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 struct Flags9 {
     u8 pad[9];
     u8 low : 2;
@@ -52,17 +40,17 @@ void ShindenHeya_CopyActorPose(void)
     u8 *v2;
     u8 *p5;
 
-    record = Value1(Engine_ActorGet, 8);
+    record = Engine_ActorGet(8);
     if (record != 0) {
         Engine_ActorSetPosition(14, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Engine_ActorSetAnimation(14, 0);
-    rec7 = Value1(Engine_ActorGet, 14);
-    record = Value1(Engine_ActorGet, 8);
+    rec7 = Engine_ActorGet(14);
+    record = Engine_ActorGet(8);
     *(u16 *)(rec7 + 6) = *(u16 *)(record + 6);
     record = Engine_ActorGet(14);
     *(s32 *)(record + 108) = (s32)ShindenHeya_FollowLeaderOffset;
-    record = Value1(Engine_ActorGet, 14);
+    record = Engine_ActorGet(14);
     p5 = *(s32 *)(record + 80);
     {
         for (i = 0; i < ((struct Flags39 *)p5)->count; i++) {

@@ -1,4 +1,5 @@
 #include "ENTRANCE.H"
+#include "CALL.H"
 extern u8 MsgMakyuriWhoHonorsHeart[];
 
 void FieldScene_Forward31d4(void)
@@ -133,7 +134,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
             Audio_PlayCue(246);
             x = 208 - ((u32)(Random_Next() << 4) >> 16);
             y = 560 - ((u32)(Random_Next() << 4) >> 16);
-            t = ((u32)(Value0(Engine_RandomNext) << 2) >> 16);
+            t = ((u32)(Engine_RandomNext() << 2) >> 16);
             record = Math_Divide((((t << 4) - t) << 16) + 0x3c0000, 100);
             Effect_Spawn(x << 16, 0, y << 16, 0, record, zero, 0x320001, slot);
             Event_Wait(4);
@@ -142,7 +143,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         Audio_PlayCue(220);
         Event_Wait(60);
         GameFlag_Set(0x875);
-        Value2(Engine_TaskAddCallback, (s32)Makyuri_CyclePalette, 0xc80);
+        Engine_TaskAddCallback((s32)Makyuri_CyclePalette, 0xc80);
         Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
         Map_CopyCellAttributes(70, 32, 13, 7, 6, 32);
         ColorBuffer_ApplyTarget(0x10000, 0);
@@ -169,7 +170,7 @@ void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
     s32 field8;
     s32 quotient;
 
-    record = Value1(Object_GetById, ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     field8 = *(s32 *)(record + 8);
     quotient = field8 / 0x100000;
     GameFlag_Set(0x205);

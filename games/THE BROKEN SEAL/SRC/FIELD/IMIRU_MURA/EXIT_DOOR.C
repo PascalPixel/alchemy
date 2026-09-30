@@ -1,13 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 extern const u16 *ImiruMura_ExitCellSteps[];
 extern s16 ImiruMura_ExitCellPoints[][2];
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Imil door exit: freeze the area's actors, open the door touched (trigger 50 + exit) with its cell animation, walk the leader out and request that exit. */
 void ImiruMura_RunExitDoor(void)

@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+#include "CALL.H"
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -104,10 +105,6 @@ s32 AudioCommand_GetStateByte();
  * it by one, and specific values select which sub-sequence runs this call.
  * Reaching 0 restarts the countdown at 120 after running its own branch. */
 
-/* FAKEMATCH: Calls through these inline helpers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
@@ -115,46 +112,6 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
 
 static inline void InitializeActorZero(void)
 {
@@ -164,11 +121,6 @@ static inline void InitializeActorZero(void)
 static inline void InitializeSelectedActor(s32 actorId)
 {
     Actor_SetSpeed(actorId, 0x10000, 0x8000);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
 }
 
 /* Selects a later line in the current dialogue. */
@@ -257,7 +209,7 @@ void FieldScene_RunLateSequence(s32 a0)
         kind = 8;
     }
     Actor_ShowEmote(kind, 0x105, 0);
-    while (Value0(AudioCommand_GetStateByte)!= 0) {
+    while (AudioCommand_GetStateByte()!= 0) {
         Task_Wait(1);
     }
     Audio_PlayCue(19);

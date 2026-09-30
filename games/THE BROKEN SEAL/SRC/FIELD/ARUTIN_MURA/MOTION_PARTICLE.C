@@ -1,4 +1,5 @@
 #include "ARUTIN.H"
+#include "CALL.H"
 extern u8 MsgArutinDefeatedThoseMonstersDidnt[];
 extern u8 MsgArutinDidSeeWaterGushingOut[];
 extern u8 MsgArutinDoWantWeapons[];
@@ -267,7 +268,7 @@ void FieldScene_RunEarlySequence(void)
     work = (u8 *)gEventWork;
     Event_Begin();
     for (i = 8; i <= 65; i++) {
-        record = (u8 *)Value1(Engine_ActorGet, i);
+        record = (u8 *)Engine_ActorGet(i);
         if (record != 0) {
             record[85] = 0;
         }
@@ -366,7 +367,7 @@ void FieldScene_RunScene3a3SequenceC(void)
 {
     struct SceneMotion *motion;
 
-    motion = (struct SceneMotion *)Value1(Engine_ActorGet, 18);
+    motion = (struct SceneMotion *)Engine_ActorGet(18);
     motion->timer = 0;
     motion->delay = 0;
     *(s32 *)((u8 *)motion + 72) = 0x6666;
@@ -436,7 +437,7 @@ void FieldScene_RunMiddleSequence(void)
     s32 rec0;
     s32 kind;
 
-    scene = Value1(Engine_ActorGet, 0);
+    scene = Engine_ActorGet(0);
     rec5 = GameFlag_IsSet(0x242);
     if (rec5 != 0) {
         Map_CopyCellsTo(64, 32, 0, 32, 32, 32);
@@ -475,7 +476,7 @@ L_020009da:
         BattleFx_SetQueuedSoundAndPlay(170);
         Actor_SetChildValue(18, 2);
         Actor_SetAnimation(18, 3);
-        Call2((void (*)())Engine_TaskAddCallback, (s32)SceneEffect_SpawnDriftingParticle, 0xc80);
+        ((void (*)())Engine_TaskAddCallback)((s32)SceneEffect_SpawnDriftingParticle, 0xc80);
     }
     if (gGameState.entrance == 3) {
         GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
@@ -486,7 +487,7 @@ L_020009da:
     }
     Actor_SetSpriteFlags((s32)Engine_ActorGet(19), 0);
     Actor_SetChildValue(22, 15);
-    Call2((void (*)())Engine_ActorSetChildValue, 23, 15);
+    ((void (*)())Engine_ActorSetChildValue)(23, 15);
     Actor_SetChildValue(24, 15);
     {
         u8 bits = 8;
@@ -556,19 +557,19 @@ void FieldScene_RunScene3a3SequenceD(void)
     } else {
         u8 flags;
 
-        actor = (u8 *)Value1(Engine_ActorGet, 15);
+        actor = (u8 *)Engine_ActorGet(15);
         flags = 4;
         flags |= actor[89];
         actor[89] = flags;
     }
-    actor = (u8 *)Value1(Engine_ActorGet, 17);
+    actor = (u8 *)Engine_ActorGet(17);
     if (actor != 0) {
         u8 flags = 4;
 
         flags |= actor[89];
         actor[89] = flags;
     }
-    actor = (u8 *)Value1(Engine_ActorGet, 16);
+    actor = (u8 *)Engine_ActorGet(16);
     if (actor != 0) {
         u8 flags = 4;
 
@@ -623,7 +624,7 @@ void SceneEffect_SpawnDriftingParticle(void)
 {
     struct SceneMotion *work;
     if ((gFrameCount & 3) == 0) {
-        work = CreateActor((struct SceneMotion *(*)(s32, s32, s32, s32))Engine_ObjectCreate, 222, 0x400000, 0, 0x1900000);
+        work = ((struct SceneMotion *)Value4((struct SceneMotion *(*)(s32, s32, s32, s32))Engine_ObjectCreate, 222, 0x400000, 0, 0x1900000));
         if (work != 0) {
             work->timer = 20;
             work->delay = 0;

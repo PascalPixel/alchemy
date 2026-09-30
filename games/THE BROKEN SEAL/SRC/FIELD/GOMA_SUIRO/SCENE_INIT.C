@@ -1,6 +1,7 @@
 #include "GOMA.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 
 void Map_CopyCellAttributeRect();
 void Object_SetModeById();
@@ -20,11 +21,11 @@ s32 FieldScene_PlaceActor8OnEntry(void)
     gEventWork->start_transition = 0x204;
     if (gGameState.scene == (s32)&SceneId_GomaSuiro1) {
         if (gGameState.entrance == 5) {
-            Call1(Engine_GameFlagClear, 0x12f);
+            Engine_GameFlagClear(0x12f);
         } else {
             SetFlagBits((u8 *)Engine_ActorGet(8) + 89, 16);
-            if (Value1(Engine_GameFlagIsSet, 0x864) != 0) {
-                Call3(Engine_ActorSetPosition, 8, 0x15a0000, 0x1240000);
+            if (Engine_GameFlagIsSet(0x864) != 0) {
+                Engine_ActorSetPosition(8, 0x15a0000, 0x1240000);
                 record = Engine_ActorGet(8);
                 Engine_ActorSetSpriteFlags(record, 0);
                 *((u8 *)Engine_ActorGet(8) + 35) |= 2;

@@ -14,13 +14,6 @@ void SceneEffect_ApplyThreeValuesAndFinish();
 void SceneActor_SetPairZeroAndValue();
 s32 PartyInventory_HasSpace();
 
-/* FAKEMATCH: a value-returning call spelled through this wrapper sets r0
- * last of its arguments. */
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
@@ -44,7 +37,7 @@ void FieldScene_RunScene383SequenceC(void)
         SceneActor_SetPairZeroAndValue(0, 16, 20);
         SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
         bump_step(1);
-        if (Value0(PartyInventory_HasSpace) == 0) {
+        if (PartyInventory_HasSpace() == 0) {
             Event_SetMessage(((s32)MsgKuupuappuYouWereSuchGreatHelp + 3));
             SceneActor_SetModeZeroAndValue(16, 20);
             Event_End();

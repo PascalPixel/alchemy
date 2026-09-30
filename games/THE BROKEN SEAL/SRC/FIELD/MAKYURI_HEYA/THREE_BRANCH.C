@@ -90,7 +90,7 @@ void FieldScene_RunActorThreeBranchSequence(void)
     Actor_SetAnimationAndWait(3, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(3, 0, 20);
-    Call1((void (*)())Engine_GameFlagSet, 0x870);
+    ((void (*)())Engine_GameFlagSet)(0x870);
     Event_End();
 }
 

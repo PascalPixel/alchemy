@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void Effect_Spawn();
 void RamakanSabaku_UpdateTravelDust(void);
@@ -16,12 +17,6 @@ union GameStateRows {
     s16 halves[512][1];
     s32 words[256];
 };
-
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
 
 void RamakanSabaku_UpdateDustAndProbe(void)
 {

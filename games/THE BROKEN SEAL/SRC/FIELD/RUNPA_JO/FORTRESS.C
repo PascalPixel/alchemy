@@ -176,9 +176,9 @@ void FieldScene_RunScene3bfSequenceA(void)
 
     work = gEventWork;
     if (GameFlag_IsSet(0x214) == 0) {
-        if (Value0(IsPlayerOutsideSceneRectangle) == 0) {
+        if (IsPlayerOutsideSceneRectangle() == 0) {
             if (gGameState.cloaked == 0) {
-                if (Value1(IsActorInteractionAvailable, 17) != 0) {
+                if (IsActorInteractionAvailable(17) != 0) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
                 }
@@ -219,11 +219,11 @@ void FieldScene_RunScene3bfSequenceB(void)
 
     work = gEventWork;
     if (GameFlag_IsSet(0x225) == 0) {
-        if (Value1(IsActorInteractionAvailable, 13) != 0) {
+        if (IsActorInteractionAvailable(13) != 0) {
             if (gGameState.cloaked == 0) {
                 GameFlag_Set(0x225);
-                Call1(Engine_TaskRemoveCallback, (s32)FieldScene_RunScene3bfSequenceB);
-                Call1(Engine_TaskRemoveCallback, (s32)FieldScene_RunScene3bfSequenceC);
+                Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceB);
+                Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceC);
                 work->raised_trigger = 96;
             }
         }
@@ -237,11 +237,11 @@ void FieldScene_RunScene3bfSequenceC(void)
 
     work = gEventWork;
     if (GameFlag_IsSet(0x225) == 0) {
-        if (Value1(IsActorInteractionAvailable, 21) != 0) {
+        if (IsActorInteractionAvailable(21) != 0) {
             if (gGameState.cloaked == 0) {
                 GameFlag_Set(0x225);
-                Call1(Engine_TaskRemoveCallback, (s32)FieldScene_RunScene3bfSequenceC);
-                Call1(Engine_TaskRemoveCallback, (s32)FieldScene_RunScene3bfSequenceB);
+                Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceC);
+                Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceB);
                 work->raised_trigger = 96;
             }
         }

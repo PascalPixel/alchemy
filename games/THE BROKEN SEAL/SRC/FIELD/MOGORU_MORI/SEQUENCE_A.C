@@ -21,7 +21,7 @@ void FieldScene_RunScene39fSequenceA(void)
     big = 0x80000;
     Event_Begin();
     FieldScene_RunSixCallSetupSequence(15, 0);
-    Call4(FieldScene_RunScene39f_02000d90, 15, 0x1d8, 104, big);
+    FieldScene_RunScene39f_02000d90(15, 0x1d8, 104, big);
     Event_Wait(10);
     Effect_Spawn(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + big), 0, 0, 0, 1, 0);
     Camera_FollowActor(15, 1);
@@ -34,7 +34,7 @@ void FieldScene_RunScene39fSequenceA(void)
     first = Actor_Get(ACTOR_PARTY_LEADER);
     shown = *(s16 *)(first + 10);
     second = Actor_Get(ACTOR_PARTY_LEADER);
-    Call4(FieldScene_RunScene39f_02000d90, 15, shown, *(s16 *)(second + 18), 0x60000);
+    FieldScene_RunScene39f_02000d90(15, shown, *(s16 *)(second + 18), 0x60000);
     /* FAKEMATCH: called as returning a doubleword, the wait keeps the
      * registers the game keeps across it. */
     ((s64 (*)())Battle_WaitMode0)(10);

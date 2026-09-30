@@ -667,7 +667,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SOUND/PLAY_PLAY_CUE_FROM_EVENT_WORK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_SELECT_LOCATION_RULE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOOKUP_RESULT.o"(.text)
-        "*/recon/tbs/raw/0808ae74.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
         "*/recon/tbs/raw/0808b158.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/RESOLVE_TABLE_PAIR.o"(.text)

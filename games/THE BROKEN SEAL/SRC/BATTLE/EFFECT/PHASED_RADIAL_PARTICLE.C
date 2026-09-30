@@ -45,9 +45,6 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
     }
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /*
  * Moves a particle out from its origin to a random point on a ring,
  * waits there, then flies it to a random point near the current owner's
@@ -162,4 +159,3 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
             BattleFx_ClearOwnedSlot(effect);
     }
 }
-#endif

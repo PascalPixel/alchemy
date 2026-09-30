@@ -16,8 +16,9 @@ void BattleFx_CleanupResourcesAndWindow(void)
     UiWork_FinalizeFar(*(u32 *)(gMapCellBuffer + 0x1c), 2);
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA)
+/* The European editions build the marker window their own way, which stays
+   in their scaffolds for now. */
 
 struct MapMarker {
     struct MapMarker *link;
@@ -76,6 +77,7 @@ extern const u8 WorldMap_MarkerBlendCycle[];
 extern const u16 WorldMap_CursorDirectionAngles[];
 extern const s32 WorldMap_PlaceMarkers[];
 extern u8 MsgDebugEntryName[];
+extern u8 MsgPresentLocation[];
 
 s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);
@@ -238,7 +240,7 @@ markers:
         UiWindow_Clear(work->window);
         if (best != -1) {
             if (best == 0)
-                best_message = 0x984;
+                best_message = (s32)MsgPresentLocation;
             else
                 best_message = BattleFx_FindConditionResource(best_message, 1) + (s32)MsgDebugEntryName;
             UiText_MeasureResourceEntriesFar(best_message, &width, &height);

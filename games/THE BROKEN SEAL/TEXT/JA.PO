@@ -8539,7 +8539,7 @@ msgctxt "message"
 msgid "02132"
 msgstr "{argument_actor_name:234} ガードした!"
 
-msgctxt "message"
+msgctxt "MsgNimblyDodgesBlow"
 msgid "02133"
 msgstr "{argument_actor_name:234} すばやくかわした!"
 
@@ -9899,7 +9899,7 @@ msgctxt "message"
 msgid "02472"
 msgstr "{argument_actor_name:234} ジュピターのジン{line_break}{text_color:10}{argument_ability_name}{text_color:16}を ゲットした{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "02473"
 msgstr "げんざいち"
 

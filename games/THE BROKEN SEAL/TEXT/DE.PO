@@ -9519,7 +9519,7 @@ msgctxt "message"
 msgid "02377"
 msgstr "{argument_actor_name:1} schützt sich!"
 
-msgctxt "message"
+msgctxt "MsgNimblyDodgesBlow"
 msgid "02378"
 msgstr "{argument_actor_name:1} weicht dem Schlag aus!"
 
@@ -10711,7 +10711,7 @@ msgctxt "message"
 msgid "02675"
 msgstr "Der Jupiter-Dschinn{line_break}{text_color:10}{argument_ability_name}{text_color:16} folgt {argument_actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "02676"
 msgstr "Derzeitige Position"
 

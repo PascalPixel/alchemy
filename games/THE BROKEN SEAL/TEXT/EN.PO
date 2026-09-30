@@ -8531,7 +8531,7 @@ msgctxt "message"
 msgid "02130"
 msgstr "{argument_actor_name:1} puts up his guard!"
 
-msgctxt "message"
+msgctxt "MsgNimblyDodgesBlow"
 msgid "02131"
 msgstr "{argument_actor_name:1} nimbly dodges the blow!"
 
@@ -9751,7 +9751,7 @@ msgctxt "message"
 msgid "02435"
 msgstr "The Jupiter Djinni{line_break}{text_color:10}{argument_ability_name}{text_color:16} joined {argument_actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "02436"
 msgstr "Present location."
 

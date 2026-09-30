@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08038f40
+	.global UiWork_InitializeWithResourceCounters
 	.thumb_func
-Func_08038f40:
+UiWork_InitializeWithResourceCounters:
 	push	{r5, r6, lr}
 	movs	r6, #152
 	lsls	r6, r6, #5
@@ -96,9 +96,9 @@ Func_08038f40:
 	pop	{pc}
 	.2byte 0x0258
 	.2byte 0x0300
-	.global Func_08039004
+	.global UiWork_Initialize
 	.thumb_func
-Func_08039004:
+UiWork_Initialize:
 	push	{r5, r6, lr}
 	mov	r6, r9
 	mov	r5, r8

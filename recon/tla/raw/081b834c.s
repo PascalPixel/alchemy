@@ -578,7 +578,7 @@ Func_081b834c:
 	adds	r6, #28
 	cmp	r0, #4
 	bne.n	.L_081b879c
-	bl	Func_08038000
+	bl	UiWork_InitializeWithResourceCountersFar
 	movs	r1, #6
 	str	r1, [sp, #0]
 	mov	r8, r1

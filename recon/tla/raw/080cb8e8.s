@@ -147,7 +147,7 @@ Func_080cb8e8:
 .L_080cba0e:
 	bl	0x080e2718
 .L_080cba12:
-	bl	Func_08038000
+	bl	UiWork_InitializeWithResourceCountersFar
 	adds	r0, r7, #0
 	bl	0x08020088
 	bl	BattleFx_ResetCounters
@@ -546,7 +546,7 @@ Func_080cb8e8:
 	bne.n	.L_080cbd74
 	ldrh	r0, [r5, #0]
 	movs	r1, #0
-	bl	Func_080d260c
+	bl	PartyInventory_GiveItem
 .L_080cbd74:
 	bl	Func_080cb8a4
 	movs	r3, #0

@@ -61,7 +61,7 @@ Func_0811bd50:
 	ldr	r5, [r5, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	adds	r6, r0, #0
 	bl	.L_0811bd10
 	ldr	r3, [r5, #8]
@@ -83,9 +83,9 @@ Func_0811bd50:
 	movs	r0, r0
 	.2byte 0x021c
 	.2byte 0x0300
-	.global Func_0811bdb0
+	.global GetMotionRecord
 	.thumb_func
-Func_0811bdb0:
+GetMotionRecord:
 .L_0811bdb0:
 	push	{lr}
 	cmp	r0, #0

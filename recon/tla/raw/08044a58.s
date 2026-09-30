@@ -41,7 +41,7 @@ Func_08044a58:
 	movs	r1, #4
 	movs	r2, #0
 	str	r3, [sp, #0]
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #1
 	strb	r3, [r5, #3]
 	adds	r0, r7, #0
@@ -179,7 +179,7 @@ Func_08044b98:
 	movs	r2, #0
 	movs	r3, #4
 	str	r3, [sp, #0]
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #1
 	strb	r3, [r5, #3]
 	mov	r0, sl
@@ -290,7 +290,7 @@ Func_08044c80:
 	movs	r3, #4
 	movs	r2, #0
 	str	r3, [sp, #0]
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #1
 	mov	r2, r8
 	strb	r3, [r2, #3]

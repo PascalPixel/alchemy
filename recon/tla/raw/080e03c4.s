@@ -192,7 +192,7 @@ Func_080e03c4:
 	ldr	r2, [r2, #12]
 	ldr	r0, [sp, #0]
 	adds	r1, r3, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 .L_080e055a:
 	movs	r0, #20
 	bl	WaitFrames
@@ -523,7 +523,7 @@ Func_080e03c4:
 	ldr	r3, [r1, #12]
 	ldr	r1, [r6, #0]
 	str	r3, [r6, #8]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	movs	r1, #132
 	lsls	r1, r1, #6
 	adds	r1, #6
@@ -540,7 +540,7 @@ Func_080e03c4:
 	ldr	r1, [r3, #4]
 	ldr	r2, [r3, #8]
 	ldr	r3, [r3, #12]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	movs	r1, #132
 	lsls	r1, r1, #6
 	adds	r1, #6
@@ -1566,7 +1566,7 @@ Func_080e03c4:
 .L_080e109c:
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	mov	r2, r8
 	strb	r2, [r5, #26]
 	ldrb	r0, [r5, #16]

@@ -86,13 +86,13 @@ Func_080fbe6c:
 	adds	r2, r7, #0
 	movs	r3, #48
 	str	r5, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	adds	r1, r6, #0
 	adds	r2, r7, #0
 	ldr	r0, [sp, #16]
 	movs	r3, #80
 	str	r5, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	ldrh	r1, [r0, #24]
 	ldr	r3, [pc, #24]
 	lsls	r2, r1, #22
@@ -222,7 +222,7 @@ Func_080fbe6c:
 	movs	r2, #16
 	adds	r1, r7, #0
 	movs	r3, #16
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r2, [sp, #20]
 	cmp	r2, #0
 	bne.n	.L_080fc070
@@ -235,7 +235,7 @@ Func_080fbe6c:
 	adds	r1, r7, #0
 	movs	r2, #80
 	movs	r3, #16
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 .L_080fc070:
 	ldr	r5, [pc, #180]
 	movs	r2, #1
@@ -368,7 +368,7 @@ Func_080fbe6c:
 	ldr	r1, [r6, #0]
 	movs	r2, #16
 	movs	r3, #0
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	mov	r2, r8
 	ldrh	r3, [r2, #0]
 	movs	r0, #128
@@ -1164,7 +1164,7 @@ Func_080fbe6c:
 	adds	r3, #248
 	ldr	r0, [r7, r3]
 	movs	r1, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	adds	r3, r5, #1
 	lsls	r3, r3, #24
 	lsrs	r5, r3, #24
@@ -1211,7 +1211,7 @@ Func_080fbe6c:
 	adds	r3, #248
 	ldr	r0, [r7, r3]
 	movs	r1, #3
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_080fc876:
 	adds	r3, r5, #1
 	lsls	r3, r3, #24

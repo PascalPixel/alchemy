@@ -18,7 +18,7 @@ Func_080d4580:
 	beq.n	.L_080d45b6
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	Func_080200d8
+	bl	ObjectDispatch_InitFromTable4WithArgumentFar
 	str	r6, [r5, #104]
 	cmp	r7, #0
 	bne.n	.L_080d45b6

@@ -375,7 +375,7 @@ Func_08104da8:
 	cmp	r5, #0
 	beq.n	.L_08104ed8
 	movs	r1, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldrb	r3, [r5, #9]
 	mov	r2, sl
 	ands	r3, r2

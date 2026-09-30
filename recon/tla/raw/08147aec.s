@@ -264,28 +264,28 @@ Func_08147aec:
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #8
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #224
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #9
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #232
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #10
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #236
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #11
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_08147d32:
 	ldr	r6, [sp, #64]
 	movs	r7, #0
@@ -911,28 +911,28 @@ Func_08147aec:
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #8
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #224
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #9
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #232
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #10
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #236
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #11
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_0814824a:
 	ldr	r3, [sp, #48]
 	cmp	r3, #176
@@ -943,28 +943,28 @@ Func_08147aec:
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #224
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #232
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #3
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #238
 	lsls	r3, r3, #7
 	adds	r3, #236
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	movs	r1, #4
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_08148290:
 	ldr	r6, [sp, #24]
 	cmp	r6, #1

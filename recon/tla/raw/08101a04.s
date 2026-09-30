@@ -26,7 +26,7 @@ Func_08101a04:
 	mov	r0, r8
 	adds	r1, r7, #0
 	adds	r2, r6, #0
-	bl	Func_080ad1b0
+	bl	Djinn_IsActiveFar
 	cmp	r0, #0
 	beq.n	.L_08101a4a
 .L_08101a3c:

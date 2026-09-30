@@ -461,7 +461,7 @@ Func_080fa870:
 	adds	r3, #248
 	ldr	r0, [r6, r3]
 	movs	r1, #3
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	b.n	.L_080fac44
 	movs	r0, r0
 	.4byte 0x000001ff
@@ -472,7 +472,7 @@ Func_080fa870:
 	adds	r3, #248
 	ldr	r0, [r6, r3]
 	movs	r1, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_080fac44:
 	movs	r2, #128
 	lsls	r2, r2, #17

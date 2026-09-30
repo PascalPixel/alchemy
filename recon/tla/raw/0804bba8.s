@@ -35,7 +35,7 @@ Func_0804bba8:
 	movs	r2, #52
 	subs	r5, #8
 	ldr	r0, [pc, #24]
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	ldr	r3, [r5, #0]
 	adds	r0, r6, #0
 	ldr	r1, [r3, #68]
@@ -378,7 +378,7 @@ Func_0804bc08:
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
 	bl	Func_0804297c
-	bl	Func_08118118
+	bl	BattleActor_CommitPlacementFar
 	ldr	r4, [sp, #36]
 	movs	r0, #130
 	ldr	r3, [r4, #0]
@@ -1517,7 +1517,7 @@ Func_0804bc08:
 	ldr	r0, [sp, #64]
 	adds	r1, r7, #0
 	str	r4, [sp, #4]
-	bl	Func_080ad1b0
+	bl	Djinn_IsActiveFar
 	adds	r5, r0, #0
 	ldr	r4, [sp, #4]
 	cmp	r5, #0

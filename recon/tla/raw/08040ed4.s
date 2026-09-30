@@ -208,7 +208,7 @@ Func_08040ed4:
 	adds	r0, r6, #0
 	movs	r1, #0
 	str	r5, [sp, #0]
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #1
 	adds	r5, #2
 	add	r8, r3

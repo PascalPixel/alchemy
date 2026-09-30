@@ -278,7 +278,7 @@ Func_081080a8:
 	adds	r3, r7, r1
 	strb	r0, [r3, #0]
 	adds	r0, r5, #0
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	ldr	r3, [r0, #80]
 	movs	r1, #128
 	ldr	r3, [r3, #40]
@@ -313,7 +313,7 @@ Func_081080a8:
 	movs	r3, #0
 	mov	r2, r9
 	str	r3, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r3, #255
 	adds	r5, r0, #0
 	strb	r3, [r5, #15]
@@ -657,7 +657,7 @@ Func_081084e0:
 	adds	r7, r0, #0
 	ldr	r0, [r5, #0]
 	ldrb	r6, [r0, #5]
-	bl	Func_080f8028
+	bl	UiIcon_PrepareObjectFar
 	adds	r2, r7, #0
 	movs	r1, #5
 	movs	r0, #7

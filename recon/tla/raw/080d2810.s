@@ -29,9 +29,9 @@ Func_080d2810:
 	beq.n	.L_080d282c
 .L_080d283e:
 	pop	{r5, r6, r7, pc}
-	.global Func_080d2840
+	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
-Func_080d2840:
+Inventory_PromptAndSetObjectMode:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

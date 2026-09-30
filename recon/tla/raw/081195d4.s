@@ -88,7 +88,7 @@ Func_081195d4:
 	ldr	r1, [r4, #8]
 	ldr	r2, [r4, #12]
 	ldr	r3, [r4, #16]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	mov	r1, fp
 	strb	r6, [r1, #0]
 	ldr	r1, [sp, #8]

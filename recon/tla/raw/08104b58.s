@@ -29,7 +29,7 @@ Func_08104b58:
 	lsls	r1, r1, #23
 	adds	r2, r4, #0
 	adds	r3, r6, #0
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	cmp	r0, #0
 	bne.n	.L_08104b96
 	movs	r0, #1

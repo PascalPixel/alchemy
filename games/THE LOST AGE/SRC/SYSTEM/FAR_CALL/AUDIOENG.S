@@ -7,9 +7,9 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.global Resource_FarCall010
 Resource_FarCall010:
-	.global Func_081c0000
+	.global AudioEngine_RunMixerFar
 	.thumb_func
-Func_081c0000:
+AudioEngine_RunMixerFar:
 	overlay_veneer AudioEngine_RunMixer
 	overlay_veneer Func_081c0c1c
 	.global Audio_PlayCue

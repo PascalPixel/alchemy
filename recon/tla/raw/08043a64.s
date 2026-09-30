@@ -46,7 +46,7 @@ Func_08043a64:
 	cmp	r5, #0
 	beq.n	.L_08043ad0
 	movs	r1, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #0
 	strb	r3, [r5, #26]
 	movs	r1, #13

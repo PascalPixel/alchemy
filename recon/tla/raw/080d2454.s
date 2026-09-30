@@ -30,9 +30,9 @@ Func_080d2454:
 	pop	{r5, r6, pc}
 	.2byte 0x0240
 	.2byte 0x0200
-	.global Func_080d2488
+	.global Party_RemoveOwnerRestored
 	.thumb_func
-Func_080d2488:
+Party_RemoveOwnerRestored:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -227,9 +227,9 @@ Func_080d25c8:
 	pop	{r5, r6, pc}
 	.2byte 0x0e26
 	.2byte 0x0000
-	.global Func_080d260c
+	.global PartyInventory_GiveItem
 	.thumb_func
-Func_080d260c:
+PartyInventory_GiveItem:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -442,9 +442,9 @@ Func_080d260c:
 	.4byte 0x02000240
 	.2byte 0x0e12
 	.2byte 0x0000
-	.global Func_080d27ec
+	.global Inventory_TryAddAndReturnOwner
 	.thumb_func
-Func_080d27ec:
+Inventory_TryAddAndReturnOwner:
 	push	{r5, lr}
 	adds	r5, r2, #0
 	adds	r1, r0, #0

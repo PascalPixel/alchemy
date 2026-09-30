@@ -11,9 +11,9 @@ Func_080c9934:
 	bx	lr
 	.2byte 0x17a8
 	.2byte 0x080f
-	.global Func_080c9944
+	.global Game_ResetForNewGame
 	.thumb_func
-Func_080c9944:
+Game_ResetForNewGame:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

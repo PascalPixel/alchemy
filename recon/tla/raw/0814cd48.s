@@ -96,7 +96,7 @@ Func_0814cd48:
 	beq.n	.L_0814cdfa
 	adds	r0, r6, #0
 	mov	r1, fp
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_0814cdfa:
 	ldr	r3, [sp, #8]
 	adds	r3, #1

@@ -538,7 +538,7 @@ Func_080d4084:
 	bl	.L_080d3c88
 	bl	Func_080cdf5c
 	movs	r1, #0
-	bl	Func_080d2840
+	bl	Inventory_PromptAndSetObjectMode
 	adds	r7, r0, #0
 	cmp	r7, #0
 	bne.n	.L_080d40ba

@@ -72,7 +72,7 @@ Func_08044558:
 	movs	r1, #18
 	movs	r2, #0
 	movs	r3, #18
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	add	r2, sp, #16
 	ldr	r3, [sp, #20]
 	ldrb	r2, [r2, #0]

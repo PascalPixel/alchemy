@@ -106,7 +106,7 @@ Func_080405dc:
 	movs	r3, #19
 	subs	r5, #1
 	str	r6, [sp, #0]
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	adds	r6, #3
 	cmp	r5, #0
 	bne.n	.L_0804069e
@@ -296,7 +296,7 @@ Func_080405dc:
 	strb	r3, [r5, #15]
 	adds	r0, r5, #0
 	str	r4, [sp, #0]
-	bl	Func_080f8028
+	bl	UiIcon_PrepareObjectFar
 	movs	r3, #160
 	lsls	r3, r3, #3
 	adds	r3, #116

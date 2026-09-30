@@ -5,8 +5,8 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080200d8
+	.global ObjectDispatch_InitFromTable4WithArgumentFar
 	.thumb_func
-Func_080200d8:
+ObjectDispatch_InitFromTable4WithArgumentFar:
 	overlay_veneer ObjectDispatch_InitFromTable4WithArgument
 	overlay_veneer Func_08023510

@@ -537,7 +537,7 @@ PsynergyMenu_DrawListPage:
 	mov	r1, r8
 	movs	r2, #40
 	movs	r3, #0
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r1, [sp, #4]
 	movs	r2, #42
 	adds	r2, #255
@@ -1198,7 +1198,7 @@ Func_081000e0:
 	adds	r1, r7, #0
 	movs	r2, #40
 	movs	r3, #0
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r5, [pc, #88]
 	adds	r1, r7, #0
 	adds	r0, r5, #0

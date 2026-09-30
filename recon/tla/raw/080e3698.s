@@ -114,7 +114,7 @@ Func_080e3698:
 	mov	r2, fp
 	mov	r1, r9
 	adds	r0, r7, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	movs	r0, #136
 	bl	Audio_PlayCue
 	movs	r1, #6

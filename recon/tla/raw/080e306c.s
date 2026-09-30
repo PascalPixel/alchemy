@@ -367,7 +367,7 @@ Func_080e306c:
 	ldr	r1, [r2, #8]
 	mov	r0, sl
 	ldr	r2, [r2, #12]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	movs	r1, #0
 	mov	r0, sl
 	bl	ObjectDispatch_SetSingleChildField26Far
@@ -516,7 +516,7 @@ Func_080e306c:
 	ldr	r1, [r3, #8]
 	mov	r0, sl
 	ldr	r3, [r3, #16]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	movs	r1, #0
 	mov	r0, sl
 	bl	ObjectDispatch_SetSingleChildField26Far

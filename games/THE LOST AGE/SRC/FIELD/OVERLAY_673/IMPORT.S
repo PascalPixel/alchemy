@@ -15,18 +15,18 @@
 	overlay_veneer Func_080201f0
 	overlay_veneer Func_08020210
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_08020278
+	overlay_veneer Animation_ApplyChildValuesFar
 	overlay_veneer Func_08038210
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c80c0
-	overlay_veneer Func_080c80e8
-	overlay_veneer Func_080c80f0
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8110
-	overlay_veneer Func_080c8118
+	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0
 	overlay_veneer Func_080c81d0

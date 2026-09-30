@@ -18,7 +18,7 @@ Func_08038390:
 Func_080383b8:
 	overlay_veneer Func_080453d0
 	overlay_veneer Func_08041c0c
-	.global Func_080383c8
+	.global Menu_AnimateSelectionToEntryFar
 	.thumb_func
-Func_080383c8:
+Menu_AnimateSelectionToEntryFar:
 	overlay_veneer Menu_AnimateSelectionToEntry

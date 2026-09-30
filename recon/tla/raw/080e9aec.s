@@ -92,7 +92,7 @@ Func_080e9aec:
 	ldr	r3, [r7, #16]
 	ldr	r1, [r7, #8]
 	adds	r0, r7, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	adds	r0, r7, #0
 	movs	r1, #0
 	bl	Func_080e1420
@@ -353,7 +353,7 @@ Func_080e9aec:
 	ldr	r2, [r5, #12]
 	ldr	r3, [r5, #16]
 	adds	r0, r5, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	adds	r1, r5, #0
 	adds	r1, #85
 	movs	r3, #3

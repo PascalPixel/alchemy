@@ -455,7 +455,7 @@ Func_081b22b8:
 	beq.n	.L_081b262a
 .L_081b261a:
 	movs	r0, #228
-	bl	Func_080ad040
+	bl	PartyInventory_RemoveFar
 	mov	r0, r8
 	ldr	r3, [r0, #0]
 	adds	r5, #1
@@ -2798,7 +2798,7 @@ Func_081b22b8:
 	ldr	r2, [pc, #148]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	Func_08038000
+	bl	UiWork_InitializeWithResourceCountersFar
 	bl	.L_081b336c
 	movs	r7, #0
 	mov	sl, r7

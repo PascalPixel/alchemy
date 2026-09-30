@@ -98,7 +98,7 @@ Func_0803ce64:
 	bl	WaitFrames
 .L_0803cf28:
 	adds	r0, r5, #0
-	bl	Func_0803a3e4
+	bl	UiWork_IsIdle
 	cmp	r0, #0
 	beq.n	.L_0803cf22
 	b.n	.L_0803cf3c

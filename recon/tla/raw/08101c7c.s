@@ -959,7 +959,7 @@ Func_08101c7c:
 	adds	r1, r6, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	adds	r3, r5, r7
 	ldrb	r0, [r3, #0]
 	ldr	r3, [pc, #144]
@@ -972,7 +972,7 @@ Func_08101c7c:
 	adds	r1, r6, #0
 	movs	r2, #48
 	movs	r3, #0
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	movs	r3, #0
 	ldrb	r0, [r5, #15]
 	movs	r1, #2

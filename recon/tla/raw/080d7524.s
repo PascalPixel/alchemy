@@ -324,7 +324,7 @@ Func_080d7788:
 .L_080d77d0:
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	Func_080ad248
+	bl	Djinn_AddToLeastLoadedOwnerFar
 	adds	r7, r0, #0
 .L_080d77da:
 	cmp	r7, #0
@@ -462,7 +462,7 @@ Func_080d7788:
 	ldr	r1, [r5, #8]
 	ldr	r2, [r5, #12]
 	ldr	r3, [r5, #16]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	b.n	.L_080d7914
 .L_080d78fc:
 	mov	r1, r9
@@ -474,7 +474,7 @@ Func_080d7788:
 	ldr	r0, [pc, #44]
 	adds	r3, r3, r0
 	adds	r0, r6, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 .L_080d7914:
 	adds	r0, r6, #0
 	movs	r1, #1

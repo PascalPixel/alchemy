@@ -236,7 +236,7 @@ s32 Func_0800206c(s32, s32);
 void Func_08020010(struct SpriteObject *, s32 *, s32 *, s32);
 s32 Func_08002096(s32);
 s32 Func_08002090(s32);
-s32 Func_08002054(s32, s32);
+s32 Math_Div(s32, s32);
 void Func_08020048(struct SpriteObject *);
 void *Func_08014dac(s32);
 struct Model *Func_081969f8(s32);

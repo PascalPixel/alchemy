@@ -62,7 +62,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/GRAPHICS/COLOR_KERNELS.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/COLOR_KERNEL_LOADERS.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/DECODE_HALFWORD_LZ.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/08002054.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/IWRAM_ENTRY.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/LIB/LONG_MULTIPLY.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/LIB/TRIG.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/LIB/SINE_TABLE.o"(.text .rodata .data .padding)

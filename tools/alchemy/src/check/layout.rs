@@ -8,6 +8,13 @@
 //! set side by side in the wrong order) and the check refuses it. Sprite
 //! banks (`.frames`) stay one frame wide by their format and are not tile
 //! recipes.
+//!
+//! A part list that carries a tilemap (a table of u16 columns) builds a
+//! background: each of its tile parts must be drawn by that map, as the
+//! picture the map shows or as animation frames of the tiles it swaps in
+//! (`PART FORM MAP FIRST COUNT [frames]`), so a picture holds exactly the
+//! tiles its map shows. A tile part cut plainly beside a tilemap is refused;
+//! a drawn part's layout is the map's and the finder does not judge it.
 use psynergy::assets::image::{
     indexed_bitmap_png, sprite_runs, sprite_runs_score, tile_sheet_layout, tile_sheet_score,
     GbaBpp, SpriteRun, TileLayout,
@@ -59,7 +66,12 @@ fn form_of(built: &str) -> Option<&str> {
 }
 
 /// The tile recipes a source's `.incbin` names read, relative to `source_root`.
-fn recipes_in(source_root: &Path, text: &str, found: &mut BTreeSet<Recipe>) {
+fn recipes_in(
+    source_root: &Path,
+    text: &str,
+    found: &mut BTreeSet<Recipe>,
+    problems: &mut Vec<String>,
+) {
     for line in text.lines() {
         let Some(rest) = line.trim().strip_prefix(".incbin") else {
             continue;
@@ -88,12 +100,21 @@ fn recipes_in(source_root: &Path, text: &str, found: &mut BTreeSet<Recipe>) {
                 continue;
             };
             let directory = input.parent().unwrap_or(source_root);
+            let sibling = |name: &str| {
+                std::fs::read(directory.join(name)).map_err(|error| format!("{name}: {error}"))
+            };
+            problems.extend(
+                tilemap_problems(&list, &sibling)
+                    .into_iter()
+                    .map(|problem| format!("{}: {problem}", input.display())),
+            );
             for line in list.lines() {
-                if let Some((part, form)) = line.split_once('\t') {
-                    if tile_form(form.trim()).is_some() {
+                let fields: Vec<&str> = line.split('\t').map(str::trim).collect();
+                if let [part, form] = fields.as_slice() {
+                    if tile_form(form).is_some() {
                         found.insert(Recipe {
                             png: directory.join(format!("{part}.PNG")),
-                            form: form.trim().to_owned(),
+                            form: (*form).to_owned(),
                         });
                     }
                 }
@@ -102,9 +123,64 @@ fn recipes_in(source_root: &Path, text: &str, found: &mut BTreeSet<Recipe>) {
     }
 }
 
-/// Every tile recipe under `games/`.
-fn recipes(root: &Path) -> Result<BTreeSet<Recipe>, String> {
+/// What a part list that carries a tilemap draws wrongly: tile parts cut
+/// plainly beside it, or drawings that do not build.
+fn tilemap_problems(list: &str, sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>) -> Vec<String> {
+    let lines: Vec<Vec<&str>> = list
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| line.split('\t').map(str::trim).collect())
+        .collect();
+    let maps: Vec<&str> = lines
+        .iter()
+        .filter(|fields| fields.get(1) == Some(&"table"))
+        .filter(|fields| {
+            sibling(&format!("{}.TSV", fields[0]))
+                .is_ok_and(|text| ags::resource::tilemap(fields[0], &text).is_ok())
+        })
+        .map(|fields| fields[0])
+        .collect();
+    if maps.is_empty() {
+        return Vec::new();
+    }
+    let mut problems = Vec::new();
+    for fields in &lines {
+        let [part, form, drawing @ ..] = fields.as_slice() else {
+            continue;
+        };
+        if tile_form(form).is_none() {
+            continue;
+        }
+        if drawing.is_empty() {
+            problems.push(format!(
+                "{part}.PNG is cut plainly beside the tilemap {}; draw it as the picture the map shows \
+                 and the tiles the map never shows as frames (PART FORM MAP FIRST COUNT [frames])",
+                maps.join(", ")
+            ));
+            continue;
+        }
+        let built = format!("{part}.{form}");
+        let result = ags::resource::MapPart::parse(&built, drawing).and_then(|drawn| {
+            if !maps.contains(&drawn.map.as_str()) {
+                return Err(format!(
+                    "{built} is drawn by {}, not this list's tilemap",
+                    drawn.map
+                ));
+            }
+            drawn.layout(&built, sibling)?;
+            Ok(())
+        });
+        if let Err(error) = result {
+            problems.push(error);
+        }
+    }
+    problems
+}
+
+/// Every tile recipe under `games/`, and every tilemap part-list problem.
+fn recipes(root: &Path) -> Result<(BTreeSet<Recipe>, Vec<String>), String> {
     let mut found = BTreeSet::new();
+    let mut problems = Vec::new();
     for entry in walkdir::WalkDir::new(root.join("games")).sort_by_file_name() {
         let entry = entry.map_err(|error| format!("games: {error}"))?;
         let path = entry.path();
@@ -118,9 +194,9 @@ fn recipes(root: &Path) -> Result<BTreeSet<Recipe>, String> {
         let source_root = PathBuf::from(&text[..at + 4]);
         let source = std::fs::read_to_string(path)
             .map_err(|error| format!("{}: {error}", path.display()))?;
-        recipes_in(&source_root, &source, &mut found);
+        recipes_in(&source_root, &source, &mut found, &mut problems);
     }
-    Ok(found)
+    Ok((found, problems))
 }
 
 /// A sheet's drawn layout and score, and the finder's.
@@ -229,9 +305,10 @@ fn describe(layout: TileLayout) -> String {
 }
 
 fn run(root: &Path, report: bool) -> Result<(), String> {
+    let (recipes, tilemaps) = recipes(root)?;
     let mut banked = Vec::new();
     let mut judged = 0;
-    for recipe in recipes(root)? {
+    for recipe in recipes {
         let Ok(png) = std::fs::read(&recipe.png) else {
             continue;
         };
@@ -283,9 +360,23 @@ fn run(root: &Path, report: bool) -> Result<(), String> {
     if judged == 0 {
         return Err("layout check judged no tile sheet".into());
     }
-    if report || banked.is_empty() {
-        println!("layout judged={judged} banked={}", banked.len());
+    if report || (banked.is_empty() && tilemaps.is_empty()) {
+        for problem in &tilemaps {
+            println!("TILEMAP {problem}");
+        }
+        println!(
+            "layout judged={judged} banked={} tilemap={}",
+            banked.len(),
+            tilemaps.len()
+        );
         return Ok(());
+    }
+    if !tilemaps.is_empty() {
+        return Err(format!(
+            "{} tilemap part list problem(s):\n{}",
+            tilemaps.len(),
+            tilemaps.join("\n")
+        ));
     }
     Err(format!(
         "{} banked tile sheet(s); redraw each at the finder's layout (agsgfx X.4bpp Y.png), or a mixed\n\
@@ -395,6 +486,42 @@ mod tests {
         assert!(judgement.banked(), "{judgement:?}");
     }
 
+    /// A 4x2 tilemap showing tiles 1 and 2 side by side at row 1, the rest 0.
+    fn map_sibling(name: &str) -> Result<Vec<u8>, String> {
+        match name {
+            "M.TSV" => Ok(b"a:u16\tb:u16\tc:u16\td:u16\n0\t0\t0\t0\n0\t1\t2\t0\n".to_vec()),
+            "T.TSV" => Ok(b"a:u8\n1\n".to_vec()),
+            other => Err(format!("{other} is missing")),
+        }
+    }
+
+    #[test]
+    fn a_tile_part_cut_plainly_beside_its_tilemap_is_refused() {
+        let problems = tilemap_problems("P\tgbapal\nM\ttable\nP\t8bpp\n", &map_sibling);
+        assert_eq!(problems.len(), 1, "{problems:?}");
+        assert!(problems[0].contains("P.PNG is cut plainly"), "{problems:?}");
+    }
+
+    #[test]
+    fn tile_parts_drawn_by_their_tilemap_pass() {
+        let list = "P\tgbapal\nM\ttable\nP\t8bpp\tM\t0\t3\nF\t8bpp\tM\t1\t3\tframes\n";
+        assert!(tilemap_problems(list, &map_sibling).is_empty());
+        // A drawing by a map the list does not carry, or of tiles it never shows.
+        assert_eq!(
+            tilemap_problems("M\ttable\nP\t8bpp\tN\t0\t3\n", &map_sibling).len(),
+            1
+        );
+        assert_eq!(
+            tilemap_problems("M\ttable\nP\t8bpp\tM\t5\t3\n", &map_sibling).len(),
+            1
+        );
+    }
+
+    #[test]
+    fn part_lists_without_a_tilemap_are_not_judged_by_one() {
+        assert!(tilemap_problems("T\ttable\nP\t8bpp\n", &map_sibling).is_empty());
+    }
+
     #[test]
     fn tile_forms_name_their_depth_and_obj_shape() {
         assert_eq!(tile_form("4bpp"), Some((GbaBpp::Bpp4, (1, 1))));
@@ -414,11 +541,14 @@ mod tests {
         )
         .unwrap();
         let mut found = BTreeSet::new();
+        let mut problems = Vec::new();
         recipes_in(
             root,
             "\t.incbin \"A/LOGO.parts.lz\"\n\t.incbin \"A/WORD.4bpp32x16.lz\"\n\t.incbin \"A/HERO.frames\"\n",
             &mut found,
+            &mut problems,
         );
+        assert!(problems.is_empty(), "{problems:?}");
         let found: Vec<_> = found
             .into_iter()
             .map(|recipe| {

@@ -1225,6 +1225,9 @@ Func_080adbec:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080add5c
+	.thumb_func
+Func_080add5c:
 	push	{r5, lr}
 	cmp	r0, #0
 	ble.n	.L_080add6e

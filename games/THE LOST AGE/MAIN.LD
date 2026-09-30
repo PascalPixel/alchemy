@@ -524,7 +524,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_23.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/INVENTOR_4.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/PARTYINV.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080ad2e8.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_24.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad318.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad338.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad348.o"(.text .rodata .data .padding)

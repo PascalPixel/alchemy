@@ -939,7 +939,7 @@ Func_08101c7c:
 	ldr	r0, [sp, #84]
 	ldr	r1, [sp, #28]
 	adds	r2, r5, #0
-	bl	0x081052ac
+	bl	Func_081052ac
 .L_081023de:
 	ldr	r1, [sp, #80]
 	mov	r2, fp

@@ -98,6 +98,9 @@ Func_081051a8:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global Func_0810526c
+	.thumb_func
+Func_0810526c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -130,6 +133,9 @@ Func_081051a8:
 	movs	r0, r0
 	.2byte 0x50cd
 	.2byte 0x0810
+	.global Func_081052ac
+	.thumb_func
+Func_081052ac:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

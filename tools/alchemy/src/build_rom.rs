@@ -59,7 +59,6 @@ pub fn run(args: &[String]) -> Result<(), String> {
 
 pub(crate) struct Linked {
     pub objects: Vec<PathBuf>,
-    pub elf: PathBuf,
     pub map: PathBuf,
     pub image: PathBuf,
 }
@@ -179,7 +178,6 @@ pub(crate) fn link(
     )?;
     Ok(Linked {
         objects,
-        elf,
         map,
         image,
     })

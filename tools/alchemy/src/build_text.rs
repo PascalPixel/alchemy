@@ -5,8 +5,11 @@
 //! `Msg<Name>` for each message the code names, set to that message's number
 //! in this edition. The linker places the archive and fills every literal
 //! pool that loads a message number.
-use crate::targets::{DecompTarget, TARGET_IDS};
+use crate::targets::DecompTarget;
+#[cfg(test)]
+use crate::targets::TARGET_IDS;
 use ags::text::{self, ARCHIVES};
+#[cfg(test)]
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::Path;

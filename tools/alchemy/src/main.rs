@@ -37,14 +37,6 @@ fn main() -> ExitCode {
         return ExitCode::from(2);
     };
     let rest = &arguments[1..];
-    if matches!(
-        command,
-        "adopt" | "unit" | "overlay" | "land" | "score" | "targets" | "cross-edition"
-    ) {
-        return result(Err(format!(
-            "{command} used the removed owner/translation-unit catalogs; use maintained source and Make/linker rules"
-        )));
-    }
     match command {
         "bootstrap" => result(bootstrap::run(rest)),
         "build" => build::entry(rest),

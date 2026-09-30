@@ -4,6 +4,7 @@
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 #include "RESOURCE_IDS.H"
+
 extern u8 Data_03001f38[];
 
 struct MenuSelectionState {
@@ -20,7 +21,6 @@ struct MenuSelectionState {
 extern struct MenuSelectionState *gMenuSelectWork;
 extern u8 Menu_SelectionStepDelays[];
 extern u8 MsgCommandName;
-
 void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacterAtOffset(s32 resource_id, void *work, s32 x, s32 y);
 void Audio_PlayCue(s32 sound_id);
@@ -31,6 +31,30 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
         return diff;
     return rhs - lhs;
 }
+
+u32 Runtime_BumpAllocate(s32 size);
+u32 Resource_DecodeByteLz(const void *, void *);
+void VramBlock_LoadCached(s32, s32, void *);
+void Runtime_BumpFree(void *);
+
+struct CenterEntry {
+    u8 unknown_00[12];
+    s16 x;
+    s16 y;
+    u8 unknown_10[4];
+};
+
+struct CenterMenu {
+    struct CenterEntry entries[6];
+    s32 window;                     /* 0x78 */
+    u8 unknown_7c[0x8e - 0x7c];
+    s16 count;                      /* 0x8e */
+    s16 width;
+    s16 height;
+    s16 row;
+};
+
+s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 s32 Menu_SelectResource(s32 start, s32 goal)
 {
@@ -83,12 +107,6 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     return goal;
 }
 
-
-u32 Runtime_BumpAllocate(s32 size);
-u32 Resource_DecodeByteLz(const void *, void *);
-void VramBlock_LoadCached(s32, s32, void *);
-void Runtime_BumpFree(void *);
-
 void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
     s32 size = 1024;
@@ -125,4 +143,28 @@ void Menu_AppendResourceEntry(s32 no)
         *(u16 *)(entry + 18) = slot;
         base[off] = (u8)no;
     }
+}
+
+/* Lays the menu's entries out three tiles apart on the given tile row,
+   centred with the window for their text, and opens that window. */
+void Menu_CenterResourceEntries(s32 row, s32 width, s32 height)
+{
+    struct CenterMenu *menu = ((struct CenterMenu *)gMenuSelectWork);
+    s32 x;
+    s32 i;
+    s32 count;
+
+    menu->width = width + 2;
+    menu->height = height;
+    menu->row = row;
+    count = menu->count;
+    x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
+    for (i = 0; i < menu->count; i++) {
+        struct CenterEntry *entry = &menu->entries[i];
+
+        entry->x = x * 8;
+        entry->y = row * 8;
+        x += 3;
+    }
+    menu->window = UiWindow_Create(x, row, menu->width, 3, 2);
 }

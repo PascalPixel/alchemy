@@ -94,7 +94,7 @@ BattleEffect_RunImpactBurst:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #732]
 	movs	r7, #225
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	lsls	r7, r7, #7
 	movs	r1, #0
 	mov	r8, r1

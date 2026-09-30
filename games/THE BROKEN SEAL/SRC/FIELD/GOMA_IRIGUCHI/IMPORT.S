@@ -168,9 +168,9 @@ Engine_ActorFaceActor:
 	.thumb_func
 Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
-	.global Engine_ObjectSetPalette
+	.global ObjectGroup_SetChildValue
 	.thumb_func
-Engine_ObjectSetPalette:
+ObjectGroup_SetChildValue:
 	.global SetOverlayObjectSlot
 	.thumb_func
 SetOverlayObjectSlot:

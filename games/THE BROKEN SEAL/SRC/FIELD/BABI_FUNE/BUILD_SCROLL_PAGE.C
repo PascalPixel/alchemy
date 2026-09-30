@@ -28,7 +28,7 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 /* Babi Fune: fill the page the DMA is not reading with this frame's wave,
  * each line's horizontal and vertical BG3 offset swayed from the scroll by
  * a sine of the line, then flip pages and advance the phase. */
-void Engine_BuildScrollPage(void)
+void DisplayScroll_BuildAndSwapHBlankPage(void)
 {
     struct ScrollWork *work;
     u16 *line;

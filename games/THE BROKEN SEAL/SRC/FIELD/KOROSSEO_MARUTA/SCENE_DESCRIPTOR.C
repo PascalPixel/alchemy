@@ -5,7 +5,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
                    s32 mode, s32 centre, s32 extra, s32 third_actor,
                    s32 fourth_actor)
 {
-    extern u8 *Engine_AllocateBlock();
+    extern u8 *Runtime_AllocateBlock();
     extern s32 Runtime_BumpAllocateAlternatePool();
     extern void Resource_DecodeType01();
     extern s32 Resource_FindFreeEntry();
@@ -18,7 +18,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     s32 handle;
     s32 extent;
 
-    descriptor = Engine_AllocateBlock(59, 0x7170);
+    descriptor = Runtime_AllocateBlock(59, 0x7170);
     handle = Runtime_BumpAllocateAlternatePool(512);
 
     *(u16 *)(descriptor + 222) = (u16)first_actor;

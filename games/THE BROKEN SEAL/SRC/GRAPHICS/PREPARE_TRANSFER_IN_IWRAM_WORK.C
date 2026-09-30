@@ -5,7 +5,7 @@
 #include "TRANSFORM.H"
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
-extern u8 Data_03001ce0[];
+extern u8 gProjection[];
 void Graphics_PrepareTransfer(void *src, void *dst, void *work);
 
 /* graphics/prepare_transfer_in_iwram_work.c */
@@ -44,15 +44,15 @@ void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
         first,
         Trig_Cos(half)* 0x50
     );
-    ((struct CameraWork *)((u32)&Data_03001ce0))->param1 = param1;
-    ((struct CameraWork *)((u32)&Data_03001ce0))->result = result;
-    ((struct CameraWork *)((u32)&Data_03001ce0))->param2 = param2;
+    ((struct CameraWork *)((u32)&gProjection))->param1 = param1;
+    ((struct CameraWork *)((u32)&gProjection))->result = result;
+    ((struct CameraWork *)((u32)&gProjection))->param2 = param2;
 }
 
 /* camera/scene/store_parameters.c */
 void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2)
 {
-    u32 *work = (u32 *)((u32)&Data_03001ce0);
+    u32 *work = (u32 *)((u32)&gProjection);
 
     work[0] = value0;
     work[1] = value1;

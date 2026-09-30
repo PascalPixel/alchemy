@@ -170,9 +170,9 @@ Engine_ActorRunRepeatedMotion:
 	.thumb_func
 Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
-	.global Engine_ObjectSetPalette
+	.global ObjectGroup_SetChildValue
 	.thumb_func
-Engine_ObjectSetPalette:
+ObjectGroup_SetChildValue:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func

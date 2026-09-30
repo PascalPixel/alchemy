@@ -77,7 +77,7 @@ void Script_WaitForEventTimeout();
 
 typedef void(*SceneTask)(void);
 void Scheduler_RemoveCallbackFar(SceneTask);
-s32 Engine_ScheduleCallback(s32, s32);
+s32 Scheduler_AddOrUpdateCallback(s32, s32);
 
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
@@ -270,7 +270,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
     s32 *mode = (s32 *)&KorosseoKawa_Countdown;
 
     *mode = value;
-    Engine_ScheduleCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
+    Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
 }
 
 void SceneState_WaitUntilWordC41cIs22(void)
@@ -484,7 +484,7 @@ void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
 void StagedActor_PushActorAhead(void);
 
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
-u8 *Engine_AllocateBlock(s32 id, s32 size);
+u8 *Runtime_AllocateBlock(s32 id, s32 size);
 
 void KorosseoKawa_RaisePipes(void)
 {
@@ -507,7 +507,7 @@ void KorosseoKawa_RaisePipes(void)
     Object_SetMoveTarget(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
     Event_Wait(6);
     Actor_SetAnimation(leader_id, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Engine_AllocateBlock(27, 0xccc) + 480), actor);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 480), actor);
     Actor_SetSpeed(leader_id, 0x4ccc, 0x3333);
     Object_SetMoveTarget(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
     Actor_WaitForMove(leader_id);

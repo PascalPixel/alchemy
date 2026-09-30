@@ -3,8 +3,8 @@
 s32 Func_080f07f0(const void *text, s32 tile, s32 mode);
 
 extern u16 Data_02004c00;
-extern s16 Data_02004c04;
-extern s16 Data_02004c08;
+extern s16 Flash_Handler0;
+extern s16 Flash_Layout;
 extern const void *DisplayScroll_LineTable[];
 
 /* When no line is still being drawn and the scroll position has entered a
@@ -15,12 +15,12 @@ void DisplayScroll_RenderEnteringLine(void)
     u32 current;
     s32 line;
 
-    if (Data_02004c04 == 0) {
+    if (Flash_Handler0 == 0) {
         current = Data_02004c00;
-        if ((s16)Data_02004c00 / 8 != Data_02004c08 / 8) {
+        if ((s16)Data_02004c00 / 8 != Flash_Layout / 8) {
             line = (s16)Data_02004c00 / 8;
-            Data_02004c08 = current;
-            Data_02004c04 = Func_080f07f0(DisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
+            Flash_Layout = current;
+            Flash_Handler0 = Func_080f07f0(DisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
         }
     }
 }

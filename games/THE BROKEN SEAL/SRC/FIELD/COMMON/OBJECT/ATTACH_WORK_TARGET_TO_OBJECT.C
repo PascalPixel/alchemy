@@ -6,7 +6,7 @@
 #include "OBJECT_RUNTIME.H"
 void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
 void Map_ApplyWorkOriginAndSpanFar(void);
-extern u8 Data_03001e70[];
+extern u8 gCam[];
 
 void WaitFrames(s32);
 
@@ -24,7 +24,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
     obj = ObjectTable_Get(id);
     work = Runtime_AllocateBlock(0x1B, 0xCCC);
     target = FIELD_AT_OFFSET(work, void **, 0x1E0);
-    p = *(s32 **)((u32)&Data_03001e70);
+    p = *(s32 **)((u32)&gCam);
     if (obj != 0) {
         *p = (s32)((u8 *)target + 8);
         ObjectDispatch_InitFromTable4WithArgumentFar(target, (void *)obj);
@@ -82,7 +82,7 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
     position_z = requested_z;
     runtime_block = Runtime_AllocateBlock(0x1B, 0xCCC);
     object = FIELD_AT_OFFSET(runtime_block, void **, 0x1E0);
-    camera_state = *(void **)((u32)&Data_03001e70);
+    camera_state = *(void **)((u32)&gCam);
     minimum_x = FIELD_AT_OFFSET(camera_state, s32, 0xEC) + 0x780000;
     object_z_offset = FIELD_AT_OFFSET(object, s32, 0xC);
     minimum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF0) + object_z_offset + 0x600000;

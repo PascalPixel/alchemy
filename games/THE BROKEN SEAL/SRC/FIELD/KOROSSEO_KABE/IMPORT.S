@@ -38,9 +38,9 @@ Vector_AddPolarOffset:
 	.thumb_func
 Runtime_AllocateHeapBlockFar:
 	overlay_veneer Func_08000140
-	.global Engine_AllocateBlock
+	.global Runtime_AllocateBlock
 	.thumb_func
-Engine_AllocateBlock:
+Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func

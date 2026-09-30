@@ -2,7 +2,7 @@
 #include "DMA.H"
 
 extern u16 Data_02004c00;
-extern s16 Data_02004c04;
+extern s16 Flash_Handler0;
 extern u32 *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
@@ -34,6 +34,6 @@ void DisplayScroll_UpdateObjects(void)
         }
     }
     Dma_Set(gFlashNumRemainingBytes, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
-    if (Data_02004c04 == 0 && (gFrameTick & 3) == 0)
+    if (Flash_Handler0 == 0 && (gFrameTick & 3) == 0)
         Data_02004c00++;
 }

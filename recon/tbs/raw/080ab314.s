@@ -300,7 +300,7 @@ Func_080ab314:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #64]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r0, [sp, #12]
 	add	sp, #32
 	pop	{r3, r5, r6, r7}

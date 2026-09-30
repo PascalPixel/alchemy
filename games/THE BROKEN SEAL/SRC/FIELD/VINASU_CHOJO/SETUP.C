@@ -34,7 +34,7 @@ s32 OverlayObject_StepScaleByCounter(Spr *s)
 }
 
 /*
- * Moves an effect like Effect_Move, and slows its horizontal velocity by a
+ * Moves an effect like BattleFx_UpdateObjectMotionScaleAndLinkedAngle, and slows its horizontal velocity by a
  * twenty-second across and a twentieth in depth each frame.
  */
 void Effect_MoveWithDrag(union FieldObject *object)

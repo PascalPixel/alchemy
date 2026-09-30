@@ -4,7 +4,7 @@ u8 *Object_GetById(s32 actor);
 u8 *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetMode(u8 *obj, s32 anim);
 void Engine_ObjectSetScript(u8 *obj, u8 *script);
-void Engine_ObjectSetPalette(u8 *obj, s32 palette);
+void ObjectGroup_SetChildValue(u8 *obj, s32 palette);
 
 struct ScriptTable {
     u8 *script[3];
@@ -41,7 +41,7 @@ void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flag
     spr = *(struct Sprite389 **)(obj + 80);
     Object_SetMode(obj, (flags + 1) & 15);
     Engine_ObjectSetScript(obj, table.script[flags & 15]);
-    Engine_ObjectSetPalette(obj, ((u32)flags >> 16) & 15);
+    ObjectGroup_SetChildValue(obj, ((u32)flags >> 16) & 15);
     obj[85] = 0;
     ((u8 *)spr)[38] = 0;
     *(s32 *)(obj + 108) = (s32)SceneEffect_AdvancePositionByAxisMode;

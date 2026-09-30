@@ -201,8 +201,6 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x000308a0, 0x00000804
-	.global Data_080310a4
-Data_080310a4:
 	.global Resource_FixedBlockBTiles
 Resource_FixedBlockBTiles:
 	.global RomBytes_080310a4
@@ -425,8 +423,6 @@ Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x00084a9c, 0x00000080
 	.global Class_DefinitionTable
 Class_DefinitionTable:
-	.global Data_08084b1c
-Data_08084b1c:
 	.incbin "baserom.gba", 0x00084b1c, 0x0000429c
 	.global Data_08088db8
 Data_08088db8:
@@ -877,8 +873,6 @@ Data_080c5c10:
 	.incbin "baserom.gba", 0x000c5c10, 0x00000028
 	.global BattleFormation_Records
 BattleFormation_Records:
-	.global Data_080c5c38
-Data_080c5c38:
 	.incbin "baserom.gba", 0x000c5c38, 0x000017c0
 	.global RomBytes_080c73f8
 RomBytes_080c73f8:

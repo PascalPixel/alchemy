@@ -9,7 +9,7 @@ struct Half {
     u16 v;
 };
 void FieldScene_ConfigurePairedActors();
-void Engine_ScheduleCallback();
+void Scheduler_AddOrUpdateCallback();
 void Engine_GameFlagClear();
 void Engine_EventBegin();
 void Engine_EventEnd();
@@ -83,7 +83,7 @@ void KuupuappuHeya_StartActorStops(void)
         zero.v = 0;
         *timer = zero.v;
     }
-    Call2(Engine_ScheduleCallback, (s32)KuupuappuHeya_UpdateActorStops, 0xc94);
+    Call2(Scheduler_AddOrUpdateCallback, (s32)KuupuappuHeya_UpdateActorStops, 0xc94);
     Call1(Engine_GameFlagClear, 0x1ff);
     Engine_EventEnd();
     Engine_AudioPlayCue(9);

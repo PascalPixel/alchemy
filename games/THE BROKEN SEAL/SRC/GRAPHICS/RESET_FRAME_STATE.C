@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 extern u8 IwramClearWords[];
-extern u8 Data_03001d00[];
+extern u8 gObjAffineCount[];
 extern u8 Data_03001400[];
 
 /*
@@ -13,6 +13,6 @@ s32 _call_via_r3(s32, s32, s32, s32);
 
 void Graphics_ResetFrameState(void)
 {
-    *(s8 *)((u32)&Data_03001d00) = 0;
-    _call_via_r3(((u32)&Data_03001400), 0x400, ((u32)&Data_03001d00), (u32)IwramClearWords);
+    *(s8 *)((u32)&gObjAffineCount) = 0;
+    _call_via_r3(((u32)&Data_03001400), 0x400, ((u32)&gObjAffineCount), (u32)IwramClearWords);
 }

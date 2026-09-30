@@ -76,7 +76,7 @@ typedef void(*SceneTask)(void);
 void Scene_RunScene3baSequenceA(void);
 s32 Resource_GetTableEntryFar(void);
 void Resource_DecodeType01(s32, s32);
-void Engine_ScheduleCallback(s32, s32);
+void Scheduler_AddOrUpdateCallback(s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -183,7 +183,7 @@ static __inline__ void AdvanceMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-u8 *Engine_AllocateBlock();            /* allocate a record by (id, size) */
+u8 *Runtime_AllocateBlock();            /* allocate a record by (id, size) */
 
 s32 Runtime_BumpAllocateAlternatePool();            /* reserve a graphics handle */
 
@@ -191,7 +191,7 @@ void Resource_DecodeType01();           /* upload image data to a handle */
 
 s32 Resource_FindFreeEntry();            /* next palette slot index */
 
-void Engine_ScheduleCallback();           /* install a per-frame task (callback, rate) */
+void Scheduler_AddOrUpdateCallback();           /* install a per-frame task (callback, rate) */
 
 void Runtime_BumpFree();           /* release a graphics handle */
 
@@ -221,7 +221,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     s32 handle;
     s32 pal;
 
-    desc = Engine_AllocateBlock(59, 0x7170);
+    desc = Runtime_AllocateBlock(59, 0x7170);
     handle = Runtime_BumpAllocateAlternatePool(512);
 
     *(u16 *)(desc + 222) = (u16)first;
@@ -250,7 +250,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     *(u16 *)(desc + 216) = (u16)pal;
     Vram_Load((s16)pal, 512, handle);
 
-    Engine_ScheduleCallback((s32)Scene_RunScene3baSequenceA + 1, 0xc76);
+    Scheduler_AddOrUpdateCallback((s32)Scene_RunScene3baSequenceA + 1, 0xc76);
 
     Runtime_BumpFree(handle);
 }

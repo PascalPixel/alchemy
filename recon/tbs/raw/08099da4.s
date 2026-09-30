@@ -122,7 +122,7 @@ Battle_unk3_2:
 	str	r3, [r7, #108]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #564]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #130
 	bl	Audio_PlayCue
 	adds	r1, r7, #0

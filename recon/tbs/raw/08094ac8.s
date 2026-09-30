@@ -12,7 +12,7 @@ Func_08094ac8:
 	lsls	r1, r1, #3
 	movs	r0, #29
 	sub	sp, #8
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	ldr	r3, [pc, #180]
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #0]
@@ -33,7 +33,7 @@ Func_08094ac8:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #14
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #140]
@@ -91,7 +91,7 @@ Func_08094ac8:
 	ldr	r0, [pc, #44]
 	movs	r1, #200
 	lsls	r1, r1, #4
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	add	sp, #8
 	b.n	.L_08094bb0
 	movs	r0, r0

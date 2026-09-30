@@ -70,7 +70,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 }
 
 
-void Effect_Move(void *object);
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 
 /* The object is accessed through word fields and a linked record. Keep the
  * shared storage view so the record load follows the position stores. */

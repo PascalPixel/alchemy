@@ -135,7 +135,7 @@ Func_080d6970:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #744]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [pc, #740]
 	ldr	r2, [pc, #740]
 	movs	r4, #90
@@ -1258,7 +1258,7 @@ Func_080d6970:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #60]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r2, [pc, #20]
 	mov	r1, r9
 	ldr	r3, [r1, r2]

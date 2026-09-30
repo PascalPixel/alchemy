@@ -33,12 +33,12 @@ struct DisplayWork {
 #define REG_BG2X (*(s32 *)0x04000028)
 #define REG_BG2Y (*(s32 *)0x0400002c)
 
-extern struct DisplayWork *Data_03001eec;
+extern struct DisplayWork *gBattleFxWork;
 
 /* graphics/registers/Display_ApplyWindowBlend.c */
 void Graphics_ApplyWindowBlendRegisters(void)
 {
-    struct DisplayWork *work = Data_03001eec;
+    struct DisplayWork *work = gBattleFxWork;
 
     REG_WIN0H = work->win0h;
     REG_WIN0V = work->win0v;
@@ -54,7 +54,7 @@ void Graphics_ApplyWindowBlendRegisters(void)
 /* graphics/registers/Display_ApplyBg2Reference.c */
 void Display_ApplyBg2Reference(void)
 {
-    struct DisplayWork *work = Data_03001eec;
+    struct DisplayWork *work = gBattleFxWork;
 
     REG_BG2X = work->bg2x;
     REG_BG2Y = work->bg2y;

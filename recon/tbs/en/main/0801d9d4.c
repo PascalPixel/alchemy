@@ -49,7 +49,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
     s32 slot;
     s32 msg;
 
-    work = (struct WorkspaceMenu *)Data_03001ea0;
+    work = (struct WorkspaceMenu *)gSelectionWork;
     rows = 3;
     has_flag = GameFlag_TestFar(382);
     first = 0;

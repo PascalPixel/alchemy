@@ -76,7 +76,7 @@ Func_080d0ee0:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #772]
 	str	r6, [sp, #60]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	mov	r2, r8
 	ldr	r3, [r2, #0]
 	ldr	r0, [r3, #8]

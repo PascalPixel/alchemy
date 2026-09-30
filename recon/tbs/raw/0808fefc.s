@@ -106,11 +106,11 @@ Func_0808fefc:
 	strh	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #316]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #312]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r1, [pc, #284]
@@ -176,7 +176,7 @@ Func_0808fefc:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #192]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r1, [pc, #148]
 	ldr	r4, [pc, #152]
 	ldrh	r3, [r4, #0]
@@ -266,7 +266,7 @@ Func_0808fefc:
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #112]
 .L_0809013a:
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r2, [pc, #112]
 	movs	r1, #0
 	movs	r0, #1

@@ -111,7 +111,7 @@ Func_080e7404:
 	str	r2, [r3, #0]
 	lsls	r1, r1, #3
 	adds	r0, r5, #0
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #0
 	movs	r1, #0
 	bl	BattleEffect_WipeCanvas
@@ -366,11 +366,11 @@ Func_080e7404:
 	str	r1, [r2, #0]
 	ldr	r0, [pc, #284]
 	ldr	r1, [pc, #284]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r1, #144
 	ldr	r0, [pc, #280]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	add	r2, sp, #152
 	mov	sl, r2
 	movs	r7, #63
@@ -522,7 +522,7 @@ Func_080e7404:
 	str	r3, [r2, #0]
 	ldr	r1, [pc, #300]
 	ldr	r0, [pc, #300]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r1, [sp, #60]
 	ldr	r4, [pc, #296]
 	ldr	r3, [r1, #0]
@@ -1249,7 +1249,7 @@ Func_080e7404:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #680]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #232
 	ldr	r3, [sp, #60]
 	mov	r4, sp

@@ -2,7 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 extern u8 Data_03001e74[];
-extern u8 Data_03001e80[];
+extern u8 gCameraWork[];
 extern u8 Data_03001ae8[];
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
@@ -74,7 +74,7 @@ next_second:
 /* battle/presentation/cam/shoulder_alt.c */
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
-    void **slot = (void **)((u32)&Data_03001e80);
+    void **slot = (void **)((u32)&gCameraWork);
     u8 *cam = slot[0];
     u8 *trans = slot[32];
     volatile u32 *keys = (volatile u32 *)((u32)&Data_03001ae8);

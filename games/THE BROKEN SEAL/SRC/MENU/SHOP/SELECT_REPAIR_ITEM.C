@@ -7,7 +7,7 @@
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
-extern u8 Data_03001b04[];
+extern u8 gKeysRepeat[];
 
 void UiWork_FinalizeFar(s32, s32);
 s32 Inventory_CountFar(s32);
@@ -79,19 +79,19 @@ s32 Shop_SelRepair(s32 unit_id)
                 result = -1;
                 goto done;
             }
-            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x20) != 0) {
+            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
                 selection = Math_Mod(selection + item_count, item_count);
                 redraw = 1;
             }
-            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x10) != 0) {
+            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
                 selection = Math_Mod(selection + item_count, item_count);
                 redraw = 1;
             }
-            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x40) != 0) {
+            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x40) != 0) {
                 selection -= 5;
                 if (selection < 0)
                     selection += 15;
@@ -100,7 +100,7 @@ s32 Shop_SelRepair(s32 unit_id)
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
-            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x80) != 0) {
+            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x80) != 0) {
                 selection += 5;
                 if (selection >= item_count)
                     selection -= 15;

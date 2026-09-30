@@ -1,6 +1,25 @@
 #include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
+
+extern u8 Data_03001cb4[];
+
+u32 Random16(void)
+{
+    u32 value = *(u32 *)((u32)&Data_03001cb4) * 0x41c64e6d + 0x3039;
+
+    *(u32 *)((u32)&Data_03001cb4) = value;
+    return (value << 8) >> 16;
+}
+
+/* Moves an (x, y, z) position radius along angle in the x-z plane. */
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position)
+{
+    *position++ += Iwram_MulQ16(radius, Trig_Sin(angle + 0x4000));
+    position++;
+    *position += Iwram_MulQ16(radius, Trig_Sin(angle));
+}
 
 extern const u16 Math_ArcTanTable[];
 

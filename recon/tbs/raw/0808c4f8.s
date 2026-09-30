@@ -13,7 +13,7 @@ Func_0808c4f8:
 	ldr	r1, [pc, #744]
 	movs	r0, #27
 	sub	sp, #16
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r7, #0
 	mov	r8, r0
 	add	r0, sp, #12

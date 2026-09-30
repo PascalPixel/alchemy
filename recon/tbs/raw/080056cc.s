@@ -16,7 +16,7 @@ Func_080056cc:
 	lsls	r1, r1, #5
 	movs	r0, #51
 	sub	sp, #24
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	mov	fp, r0
 	add	r0, sp, #4

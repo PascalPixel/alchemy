@@ -17,7 +17,7 @@ struct Half {
     u16 v;
 };
 
-s32 Engine_ScheduleCallback(void (*callback)(void), s32 priority);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void BattlePres_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *);
 void BattlePresentation_BuildTilemap(void *);
@@ -27,7 +27,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
     s32 *transition = *(s32 **)gTransitionWork;
 
     if (transition[2] == 0) {
-        Engine_ScheduleCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
+        Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
     }
     transition[2] = mode;
 

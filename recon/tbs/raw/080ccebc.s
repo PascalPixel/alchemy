@@ -86,7 +86,7 @@ Func_080ccebc:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #80]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #143
 	bl	Audio_PlayCue
 	movs	r2, #0

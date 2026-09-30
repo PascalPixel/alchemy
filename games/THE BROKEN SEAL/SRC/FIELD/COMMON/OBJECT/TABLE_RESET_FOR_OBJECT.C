@@ -77,7 +77,7 @@ struct ResourceMetadata {
 extern struct ObjectWork *Data_03001ebc;
 extern struct PlayerState Data_02000240;
 extern const struct EventObjectEntry Data_0809f810[2];
-extern void **Data_03001e70;
+extern void **gCam;
 
 void ObjectTable_ClearBattleSlots(void);
 void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot);
@@ -142,6 +142,6 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
         meta->width = 15;
         meta->height = 9;
     }
-    *Data_03001e70 = &camera->x;
+    *gCam = &camera->x;
     work->camera_object = camera;
 }

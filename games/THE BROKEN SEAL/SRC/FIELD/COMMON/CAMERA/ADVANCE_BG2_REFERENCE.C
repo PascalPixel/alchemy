@@ -1,14 +1,14 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern u8 Data_03001eec[];
+extern u8 gBattleFxWork[];
 
 void Camera_AdvanceBg2Reference(void)
 {
     s32 cnt;
     void *state;
 
-    state = *(void **)((u32)&Data_03001eec);
+    state = *(void **)((u32)&gBattleFxWork);
     cnt = FIELD_AT_OFFSET(state, s32 *, 0x7790) + 1;
     FIELD_AT_OFFSET(state, s32 *, 0x7790) = cnt;
     if (cnt == FIELD_AT_OFFSET(state, s32 *, 0x7794)) {

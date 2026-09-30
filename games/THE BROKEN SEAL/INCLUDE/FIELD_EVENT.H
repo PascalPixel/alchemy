@@ -355,7 +355,7 @@ struct FieldActor *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y, s32 f
 void Engine_ObjectSetAnimation(struct FieldActor *object, s32 animation);
 void Engine_ObjectSetScript(struct FieldActor *object, const s32 *script);
 void Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
-void Engine_ObjectSetPalette(struct FieldActor *object, s32 palette);
+void ObjectGroup_SetChildValue(struct FieldActor *object, s32 palette);
 void Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 void Engine_MapAnimateCells(const u16 *steps, s32 dest_x, s32 dest_y);
@@ -845,7 +845,7 @@ static inline void Object_SetBlendMode(struct FieldActor *object, s32 mode)
 
 static inline void Object_SetPalette(struct FieldActor *object, s32 palette)
 {
-    Engine_ObjectSetPalette(object, palette);
+    ObjectGroup_SetChildValue(object, palette);
 }
 
 static inline void Object_SetPartPalettes(struct FieldActor *object, s32 palette)

@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Engine_ScheduleCallback
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Engine_ScheduleCallback:
+Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Runtime_SetIrqHandler
 	.thumb_func

@@ -14,26 +14,26 @@ Battle_RunEncounter:
 	str	r0, [sp, #12]
 	movs	r1, #76
 	movs	r0, #12
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	ldr	r1, [pc, #556]
 	mov	sl, r0
 	movs	r0, #9
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r5, #249
 	lsls	r5, r5, #3
 	adds	r1, r5, #0
 	mov	r8, r0
 	movs	r0, #54
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r1, #32
 	adds	r6, r0, #0
 	movs	r0, #44
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r1, #160
 	str	r0, [sp, #8]
 	lsls	r1, r1, #2
 	movs	r0, #11
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r1, #12
 	add	r1, sl
 	ldr	r3, [pc, #508]
@@ -82,7 +82,7 @@ Battle_RunEncounter:
 	movs	r0, #37
 	str	r2, [r1, #0]
 	movs	r1, #12
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	str	r7, [r5, #0]
 	adds	r1, r0, #0
 	ldr	r3, [pc, #412]
@@ -98,11 +98,11 @@ Battle_RunEncounter:
 	strh	r0, [r3, #0]
 	lsls	r1, r1, #4
 	movs	r0, #4
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	movs	r0, #3
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r0, #4
 	bl	0x08009078
 	movs	r0, #183
@@ -227,7 +227,7 @@ Battle_RunEncounter:
 .L_080b65a2:
 	ldr	r1, [pc, #172]
 	ldr	r0, [pc, #172]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [pc, #132]
 	movs	r1, #247
 	lsls	r1, r1, #1
@@ -387,7 +387,7 @@ Battle_RunEncounter:
 	strb	r2, [r3, #0]
 	ldr	r0, [pc, #620]
 	lsls	r1, r1, #4
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 .L_080b6736:
 	bl	Battle_ReservedNoOp9B2C
 	bl	BattleSummon_UpdateAvailability

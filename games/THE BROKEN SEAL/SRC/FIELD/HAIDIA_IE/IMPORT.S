@@ -14,9 +14,9 @@ IwramUnsignedRemainder:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Engine_ScheduleCallback
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Engine_ScheduleCallback:
+Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallback
 	.thumb_func

@@ -75,7 +75,7 @@ Func_080dc454:
 	ldr	r0, [pc, #436]
 	lsls	r1, r1, #3
 	str	r6, [sp, #36]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [pc, #432]
 	add	r3, r9
 	ldr	r3, [r3, #0]

@@ -168,7 +168,7 @@ Func_080db264:
 	str	r3, [r2, #0]
 	adds	r1, #128
 	ldr	r0, [pc, #740]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #138
 	bl	Audio_PlayCue
 	movs	r2, #0

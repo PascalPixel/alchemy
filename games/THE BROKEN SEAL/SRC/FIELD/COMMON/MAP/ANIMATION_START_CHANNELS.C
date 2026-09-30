@@ -16,7 +16,7 @@ struct MapState {
     struct MapAnimation anim[16];
 };
 
-extern struct MapState *Data_03001e70;
+extern struct MapState *gCam;
 
 /* Clears the sixteen tile-animation channels, then reads a 0xffff-terminated
    command list: each 0xfdXX command starts channel XX & 15 on the commands
@@ -29,7 +29,7 @@ void MapAnimation_StartChannels(const u16 *script)
     u32 command;
     volatile u32 zero;
 
-    state = Data_03001e70;
+    state = gCam;
     count = 0;
     zero = 0;
     Dma_Set((const void *)&zero, state->anim, 0x85000030, (volatile u32 *)0x040000d4);

@@ -42,7 +42,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     if ((flags & 0xffff0000) == 0 || extra == 0)
         return;
     if (flags & EFFECT_USE_PALETTE)
-        Engine_ObjectSetPalette((struct FieldActor *)obj, extra->palette);
+        ObjectGroup_SetChildValue((struct FieldActor *)obj, extra->palette);
     if (flags & EFFECT_USE_PRIORITY) {
         obj->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
         spr->priority = extra->priority;

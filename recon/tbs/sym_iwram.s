@@ -4,8 +4,6 @@
 	.global Data_03001400
 Data_03001400:
 	.space 0x00000400
-	.global Data_03001800
-Data_03001800:
 	.global gFrameTick
 gFrameTick:
 	.space 0x00000004
@@ -27,8 +25,6 @@ gBlendFramesLeft:
 	.global Data_03001ac4
 Data_03001ac4:
 	.space 0x0000000c
-	.global Data_03001ad0
-Data_03001ad0:
 	.global gBgScroll
 gBgScroll:
 	.space 0x00000018
@@ -55,13 +51,9 @@ Data_03001afc:
 	.global Data_03001b00
 Data_03001b00:
 	.space 0x00000004
-	.global Data_03001b04
-Data_03001b04:
 	.global gKeysRepeat
 gKeysRepeat:
 	.space 0x0000000c
-	.global Data_03001b10
-Data_03001b10:
 	.global ResourceTableEntries
 ResourceTableEntries:
 	.global gVramBlockCache
@@ -75,8 +67,6 @@ Data_03001c94:
 	.global gKeyState
 gKeyState:
 	.space 0x00000004
-	.global Data_03001c98
-Data_03001c98:
 	.global gBlendDuration
 gBlendDuration:
 	.space 0x00000004
@@ -101,8 +91,6 @@ Data_03001cb4:
 	.global Data_03001cb8
 Data_03001cb8:
 	.space 0x00000004
-	.global Data_03001cbc
-Data_03001cbc:
 	.global gDebugTextCursor
 gDebugTextCursor:
 	.space 0x00000004
@@ -124,8 +112,6 @@ gLagFramesShown:
 	.global gBlendBrighten
 gBlendBrighten:
 	.space 0x0000000c
-	.global Data_03001ce0
-Data_03001ce0:
 	.global gProjection
 gProjection:
 	.space 0x00000014
@@ -138,16 +124,12 @@ gBlendLayers:
 	.global Data_03001cfc
 Data_03001cfc:
 	.space 0x00000004
-	.global Data_03001d00
-Data_03001d00:
 	.global gObjAffineCount
 gObjAffineCount:
 	.space 0x00000004
 	.global Data_03001d04
 Data_03001d04:
 	.space 0x00000004
-	.global Data_03001d08
-Data_03001d08:
 	.global gOptionMirror
 gOptionMirror:
 	.space 0x00000004
@@ -201,21 +183,15 @@ Data_03001e60:
 	.global gSpriteObjects
 gSpriteObjects:
 	.space 0x00000004
-	.global Data_03001e64
-Data_03001e64:
 	.global gObjectSlots
 gObjectSlots:
 	.space 0x00000004
-	.global Data_03001e68
-Data_03001e68:
 	.global gMenuCtrlWork
 gMenuCtrlWork:
 	.space 0x00000004
 	.global gMapAnimationPages
 gMapAnimationPages:
 	.space 0x00000004
-	.global Data_03001e70
-Data_03001e70:
 	.global gCam
 gCam:
 	.global gMapWork
@@ -228,8 +204,6 @@ Data_03001e74_a:
 	.global gBattleWork
 gBattleWork:
 	.space 0x0000000c
-	.global Data_03001e80
-Data_03001e80:
 	.global gCameraWork
 gCameraWork:
 	.space 0x0000000c
@@ -252,13 +226,9 @@ gResQueueWork:
 	.global Data_03001e9c
 Data_03001e9c:
 	.space 0x00000004
-	.global Data_03001ea0
-Data_03001ea0:
 	.global gSelectionWork
 gSelectionWork:
 	.space 0x00000008
-	.global Data_03001ea8
-Data_03001ea8:
 	.global gBattleBgFxWork
 gBattleBgFxWork:
 	.space 0x00000014
@@ -295,16 +265,12 @@ Data_03001ee4:
 	.global gBattleDisplayWork
 gBattleDisplayWork:
 	.space 0x00000008
-	.global Data_03001eec
-Data_03001eec:
 	.global gBattleFxWork
 gBattleFxWork:
 	.space 0x0000000c
 	.global gDisp
 gDisp:
 	.space 0x00000008
-	.global Data_03001f00
-Data_03001f00:
 	.global gTransitionWork
 gTransitionWork:
 	.space 0x0000001c
@@ -351,13 +317,9 @@ gSleepComboFrames:
 	.global Data_03001f60
 Data_03001f60:
 	.space 0x00000004
-	.global Data_03001f64
-Data_03001f64:
 	.global gLinkStatus
 gLinkStatus:
 	.space 0x0000000c
-	.global Data_03001f70
-Data_03001f70:
 	.global gNumberTextBuffer
 gNumberTextBuffer:
 	.space 0x00000008

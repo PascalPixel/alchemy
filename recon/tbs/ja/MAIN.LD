@@ -761,7 +761,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/USE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/INTERFACE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/PREPARE_OWNER_ITEMS.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0009a4d0)
+    "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN_OWNER_SELECTION.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/OPEN_CATEGORY_ITEMS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/SELECT_TARGET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM.o"(.text)

@@ -44,6 +44,12 @@ s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s3
 void Menu_SpawnIconEntries(struct OwnerSelectMenu *menu, s32 window);
 struct OwnerSelectIcon *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+#if defined(TBS_EDITION_JA)
+/* The key names the Japanese help lines follow: "L+A:" and "R:". */
+extern u8 ItemMenu_ArrangeKeysString[];
+extern u8 ItemMenu_EquipmentKeyString[];
+void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
+#endif
 s32 Math_Mod(s32 numerator, s32 denominator);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode);
@@ -85,8 +91,16 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
         menu->help_icon = RenderOutput_CreateFromResourceFar(2, 0, menu->help_window, 0, result);
         menu->help_icon->state = 13;
     }
+#if defined(TBS_EDITION_JA)
+    /* The Japanese help lines follow their key names. */
+    UiText_DrawStringInWindowFar(ItemMenu_ArrangeKeysString, menu->help_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp, menu->help_window, 32, 0);
+    UiText_DrawStringInWindowFar(ItemMenu_EquipmentKeyString, menu->help_window, 16, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp + 1, menu->help_window, 32, 8);
+#else
     UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp, menu->help_window, 0, 0);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp + 1, menu->help_window, 0, 8);
+#endif
     menu->cursor->state = pending;
     while (!GameFlag_TestFar(0x150)) {
         selection = Math_Mod(selection + count, count);

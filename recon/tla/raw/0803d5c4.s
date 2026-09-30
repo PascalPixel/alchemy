@@ -17,7 +17,7 @@ Func_0803d5c4:
 	movs	r0, #68
 	mov	r8, r2
 	mov	r9, r3
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r5, r0, #0
 	bl	Ui_CountIconTableEntries
 	cmp	r6, r0
@@ -383,7 +383,7 @@ UiIcon_CopyResourceToSlot:
 	lsls	r1, r1, #3
 	movs	r0, #68
 	mov	sl, r2
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	mov	r1, r8
 	adds	r5, r0, #0
 	adds	r0, r6, #0

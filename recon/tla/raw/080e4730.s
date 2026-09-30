@@ -16,7 +16,7 @@ Func_080e4730:
 	adds	r1, #44
 	movs	r0, #92
 	sub	sp, #40
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	adds	r3, r2, #0
@@ -368,7 +368,7 @@ Func_080e4730:
 	adds	r1, #44
 	movs	r0, #92
 	sub	sp, #48
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	adds	r3, r2, #0
@@ -1926,7 +1926,7 @@ Func_080e4730:
 	adds	r1, #16
 	movs	r0, #92
 	sub	sp, #40
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r5, #192
 	lsls	r5, r5, #18
 	adds	r3, r5, #0
@@ -2682,7 +2682,7 @@ Func_080e4730:
 	adds	r1, #180
 	movs	r0, #92
 	sub	sp, #44
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	str	r0, [sp, #28]
 	movs	r2, #192
 	lsls	r2, r2, #18

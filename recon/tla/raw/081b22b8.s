@@ -2384,12 +2384,12 @@ Func_081b22b8:
 	adds	r1, #14
 	movs	r0, #100
 	sub	sp, #120
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #128
 	str	r0, [sp, #48]
 	lsls	r1, r1, #8
 	movs	r0, #96
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #246
 	lsls	r1, r1, #7
 	str	r0, [sp, #44]

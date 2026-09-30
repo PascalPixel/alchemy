@@ -13,7 +13,7 @@ Func_080d1a18:
 	adds	r7, r0, #0
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r3, [pc, #132]
 	mov	r5, sp
 	str	r3, [r5, #0]
@@ -357,7 +357,7 @@ Func_080d1cc0:
 	adds	r6, r0, #0
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #0
 	adds	r4, r0, #0
 	mov	r0, sp
@@ -428,7 +428,7 @@ Func_080d1d54:
 	lsls	r1, r1, #3
 	movs	r0, #56
 	sub	sp, #4
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r4, r0, #0
 	cmp	r5, #0
 	bne.n	.L_080d1d78

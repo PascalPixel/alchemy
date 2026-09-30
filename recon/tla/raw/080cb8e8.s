@@ -384,7 +384,7 @@ Func_080cb8e8:
 	lsls	r1, r1, #5
 	adds	r1, #184
 	movs	r0, #92
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r0, #20
 	bl	WaitFrames
 	movs	r0, #92
@@ -406,7 +406,7 @@ Func_080cb8e8:
 	lsls	r1, r1, #5
 	adds	r1, #184
 	movs	r0, #92
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r0, #20
 	bl	WaitFrames
 	movs	r0, #92

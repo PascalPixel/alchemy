@@ -816,7 +816,7 @@ Func_080e37e0:
 	adds	r1, #168
 	movs	r0, #92
 	sub	sp, #32
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	adds	r3, r2, #0
@@ -1658,7 +1658,7 @@ Func_080e4244:
 	bne.n	.L_080e43ee
 	ldr	r1, [pc, #144]
 	movs	r0, #80
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r2, [pc, #140]
 	adds	r1, r0, #0
 	ldr	r0, [pc, #140]

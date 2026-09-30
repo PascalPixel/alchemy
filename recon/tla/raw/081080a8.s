@@ -92,7 +92,7 @@ Func_081080a8:
 	adds	r1, #236
 	movs	r0, #220
 	sub	sp, #4
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r5, r0, #0
 	bl	Func_080c84d8
 	movs	r3, #0

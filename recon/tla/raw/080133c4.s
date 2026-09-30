@@ -247,7 +247,7 @@ WaitFrames:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #80
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	bl	Render_BuildOamList
 	b.n	.L_080135ba
 .L_080135b0:

@@ -15,7 +15,7 @@ Func_080fe274:
 	adds	r1, #236
 	movs	r0, #220
 	sub	sp, #12
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r6, r0, #0
 	movs	r0, #64
 	bl	Runtime_BumpAllocateAlternatePool

@@ -74,7 +74,7 @@ Func_080ea0d8:
 	bl	Engine_ScheduleCallback
 	movs	r1, #0
 	movs	r0, #0
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	ldr	r0, [r6, #0]
 	bl	BattleFx_SelectLivingTargets
 	movs	r1, #191
@@ -98,7 +98,7 @@ Func_080ea0d8:
 	movs	r0, #0
 	strh	r5, [r3, #4]
 	movs	r1, #1
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	ldr	r3, [pc, #52]
 	movs	r2, #128
 	lsls	r2, r2, #19

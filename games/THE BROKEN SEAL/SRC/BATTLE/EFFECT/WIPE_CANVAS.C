@@ -11,7 +11,7 @@ extern u8 gWorkSlot[];
 u32 Random16(void);
 void WaitFrames(s32 frames);
 
-void Unnamed_080cd104(s32 mode, s32 value)
+void BattleEffect_WipeCanvas(s32 mode, s32 value)
 {
     u8 *work;
     u8 *canvas;

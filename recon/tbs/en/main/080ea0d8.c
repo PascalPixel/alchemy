@@ -26,7 +26,7 @@ u32 Random16(void);
 void Audio_PlayCue(s32);
 void BattleFx_BeginCanvasLayer(s32);
 void BattlePres_ConfigureEffectDisplay(void);
-void Unnamed_080cd104(s32, s32);
+void BattleEffect_WipeCanvas(s32, s32);
 void BattleFx_SelectLivingTargets(s32);
 void BattleBackground_LoadFar(s32, s32, s32);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, s32, s32);
@@ -232,7 +232,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     draw = (DrawRectangle)cache[46 - 40];
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    Unnamed_080cd104(0, 0);
+    BattleEffect_WipeCanvas(0, 0);
     BattleFx_SelectLivingTargets((s32)work->effect);
     BattleFx_SpawnObjects(16, 0x17e, 1);
     gProjection.unk10 = 240;
@@ -240,7 +240,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     BattleBackground_LoadFar(1, (s32)&Value_0000003b, 0);
     ctrl[4] = 1;
     gBgScroll.unk04 = 0;
-    Unnamed_080cd104(0, 1);
+    BattleEffect_WipeCanvas(0, 1);
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x1010;

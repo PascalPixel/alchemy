@@ -18,7 +18,7 @@ Func_08024dac:
 	cmp	r3, #0
 	bne.n	.L_08024dd2
 	adds	r0, r5, #0
-	bl	Func_08024cdc
+	bl	Script_FindLabel
 	strh	r0, [r5, #4]
 	b.n	.L_08024dd6
 .L_08024dd2:

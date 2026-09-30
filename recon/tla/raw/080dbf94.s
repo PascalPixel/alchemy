@@ -138,6 +138,9 @@ Func_080dbf94:
 	pop	{r5, r6, pc}
 	.2byte 0x0e78
 	.2byte 0x080f
+	.global Func_080dc0b8
+	.thumb_func
+Func_080dc0b8:
 	push	{lr}
 	ldr	r1, [pc, #24]
 	movs	r2, #128

@@ -133,7 +133,7 @@ Func_080dc410:
 	beq.n	.L_080dc48c
 	b.n	.L_080dc5fc
 .L_080dc48c:
-	bl	0x080dc0b8
+	bl	Func_080dc0b8
 	ldr	r3, [pc, #16]
 	adds	r2, r6, #0
 	subs	r3, r3, r0

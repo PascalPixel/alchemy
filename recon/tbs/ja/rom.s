@@ -960,12 +960,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
-	.section .rom.000984f0, "ax"
-	.global Ui_DrawValuePairRows
-	.type Ui_DrawValuePairRows, %function
-	.thumb_func
-Ui_DrawValuePairRows:
-	.incbin "baserom.gba", 0x000984f0, 0x000000ac
 	.section .rom.00098a6a, "ax"
 	.incbin "baserom.gba", 0x00098a6a, 0x00000002
 	.section .rom.00098a6c, "ax"
@@ -974,12 +968,6 @@ Ui_DrawValuePairRows:
 	.thumb_func
 UiMenu_SlideCursor:
 	.incbin "baserom.gba", 0x00098a6c, 0x00000108
-	.section .rom.00098cb4, "ax"
-	.global InventoryMenu_ShowModalMessage
-	.type InventoryMenu_ShowModalMessage, %function
-	.thumb_func
-InventoryMenu_ShowModalMessage:
-	.incbin "baserom.gba", 0x00098cb4, 0x000000f8
 	.section .rom.00099454, "ax"
 	.global RunAssetSelectionScreen
 	.type RunAssetSelectionScreen, %function
@@ -988,8 +976,6 @@ RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x00099454, 0x00000d74
 	.section .rom.0009b008, "ax"
 	.incbin "baserom.gba", 0x0009b008, 0x00000330
-	.section .rom.0009b6b4, "ax"
-	.incbin "baserom.gba", 0x0009b6b4, 0x0000010c
 	.section .rom.0009b7c0, "ax"
 	.global ItemMenu_DrawItemDetails
 	.type ItemMenu_DrawItemDetails, %function
@@ -1080,7 +1066,13 @@ Data_080aedcc:
 	.incbin "baserom.gba", 0x000a5cec, 0x00000440
 	.global Data_080af20c
 Data_080af20c:
-	.incbin "baserom.gba", 0x000a612c, 0x00000014
+	.incbin "baserom.gba", 0x000a612c, 0x00000004
+	.global Ui_HpRowString
+Ui_HpRowString:
+	.incbin "baserom.gba", 0x000a6130, 0x00000008
+	.global Ui_EpRowString
+Ui_EpRowString:
+	.incbin "baserom.gba", 0x000a6138, 0x00000008
 	.global ItemMenu_ArrangeKeysString
 ItemMenu_ArrangeKeysString:
 	.incbin "baserom.gba", 0x000a6140, 0x00000008

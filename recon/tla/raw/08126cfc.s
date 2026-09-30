@@ -25,7 +25,7 @@ BattlePres_SetActorModes:
 	adds r3, #84
 	mov r1, r10
 	strh r1, [r3]
-	bl Func_08126ba0
+	bl BattlePres_ClearAllActorRecordModes
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #128

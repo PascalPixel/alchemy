@@ -109,7 +109,7 @@ Func_081263fc:
 	strh r2, [r3]
 .L_081264d2:
 	ldr r0, .L_08126534
-	bl Func_08125b78
+	bl Graphics_BuildSequentialTileTable
 	ldr r0, .L_08126538
 	bl Func_08125bb8
 	ldr r3, .L_0812653c

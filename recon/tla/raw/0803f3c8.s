@@ -24,7 +24,7 @@ Func_0803f3c8:
 	mov r8, r0
 	adds r0, r5, #0
 	mov r9, r2
-	bl Func_0803efd4
+	bl Menu_SendNodeCountList
 	mov r0, r10
 	ldrh r1, [r0]
 	adds r0, r5, #0

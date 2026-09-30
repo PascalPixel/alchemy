@@ -9,6 +9,9 @@
 	.thumb_func
 Func_081c0040:
 	overlay_veneer Func_081c0fac
+	.global Audio_Check
+	.thumb_func
+Audio_Check:
 	overlay_veneer Func_081c0fd0
 	overlay_veneer Func_081c1014
 	overlay_veneer Func_081c0fc0

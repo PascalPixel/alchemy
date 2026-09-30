@@ -973,6 +973,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_41.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_42.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081080a8.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SOUND/COMMAND_WAIT_FOR_STATE_BYTE_CLEAR.o"(.text)
+        "*/recon/tla/raw/081084f4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08108660.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08108690.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08108948.o"(.text .rodata .data .padding)

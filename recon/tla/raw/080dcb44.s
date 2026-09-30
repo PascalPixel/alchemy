@@ -100,7 +100,7 @@ Func_080dcb44:
 	orrs	r0, r3
 	bl	Func_080d170c
 	movs	r0, #1
-	bl	0x080d17ac
+	bl	Func_080d17ac
 .L_080dcc0e:
 	movs	r2, #164
 	lsls	r2, r2, #2

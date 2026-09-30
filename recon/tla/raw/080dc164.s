@@ -106,7 +106,7 @@ Func_080dc164:
 	lsls	r0, r0, #1
 	bl	GameFlag_SetBitFar
 	adds	r0, r7, #0
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.4byte 0x84000150

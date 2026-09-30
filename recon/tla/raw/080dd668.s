@@ -261,7 +261,7 @@ UpdateRisingParticleBurst:
 	adds	r0, #1
 	bl	Func_080d170c
 	movs	r0, #1
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	movs	r2, #192
 	lsls	r2, r2, #4
 	adds	r2, #164
@@ -400,7 +400,7 @@ UpdateRisingParticleBurst:
 	adds	r0, r5, #0
 	bl	Func_080d170c
 	movs	r0, #1
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	movs	r0, #0
 	movs	r1, #0
 	bl	Func_080d172c
@@ -408,7 +408,7 @@ UpdateRisingParticleBurst:
 	adds	r0, r5, #0
 	bl	Func_080d170c
 	movs	r0, #30
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #8

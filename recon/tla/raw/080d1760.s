@@ -41,6 +41,9 @@ Func_080d1760:
 	cmp	r4, #0
 	bne.n	.L_080d1788
 	pop	{r5, r6, r7, pc}
+	.global Func_080d17ac
+	.thumb_func
+Func_080d17ac:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

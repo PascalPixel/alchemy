@@ -856,7 +856,7 @@ Func_080e781c:
 	movs	r1, #0
 	bl	Func_080d170c
 	movs	r0, #100
-	bl	0x080d17ac
+	bl	Func_080d17ac
 .L_080e7ed6:
 	ldr	r2, [sp, #56]
 	movs	r1, #2

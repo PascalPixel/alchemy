@@ -4549,39 +4549,7 @@ Func_0200168c:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0000
-	.global Func_02002c30
-	.thumb_func
-Func_02002c30:
-	bx lr
-	.2byte 0x0000
-	.global Func_02002c34
-	.thumb_func
-Func_02002c34:
-	bx lr
-	.2byte 0x0000
-	.global Func_02002c38
-	.thumb_func
-Func_02002c38:
-	push {r5, lr}
-	movs r5, #180
-	bl 0x0200ac30
-.L_02002c38_1:
-	movs r3, #1
-	subs r5, #1
-	negs r3, r3
-	cmp r5, r3
-	beq .L_02002c38_0
-	movs r0, #1
-	bl 0x0200b138
-	ldr r3, [pc, #12]
-	ldr r3, [r3, #4]
-	cmp r3, #0
-	beq .L_02002c38_1
-.L_02002c38_0:
-	bl 0x0200ac34
-	pop {r5, pc}
-	.2byte 0x0000
-	.4byte 0x03001150
+	.section .text.x0200ac64,"ax",%progbits
 	push	{r5, lr}
 	bl 0x0200ac30
 	bl 0x0200b1b8
@@ -4867,11 +4835,7 @@ Func_02002ec8:
 	.4byte 0x0200aefc
 	.2byte 0x000c
 	.2byte 0x0000
-	.global Func_02002f84
-	.thumb_func
-Func_02002f84:
-	movs r0, #0
-	bx lr
+	.section .text.x0200af88,"ax",%progbits
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	bl 0x0200b1d8

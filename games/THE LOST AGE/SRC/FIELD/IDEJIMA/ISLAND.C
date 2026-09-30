@@ -7,14 +7,6 @@
  * sea, the drifting island and the steps of the scene where Felix wakes.
  */
 
-/* The controller state the engine refreshes each frame. */
-struct InputState {
-    u32 held;
-    u32 pressed;
-};
-
-extern struct InputState gInput;
-
 struct MapLayer {
     u8 unknown_00[6];
     s16 y;
@@ -73,36 +65,4 @@ void SceneObject_Spawn(s32 x, s32 y, s32 z, s16 value)
         sprite->unknown_1a = 0;
         sprite->unknown_12 = value;
     }
-}
-
-/* Marks the start of each step of the scene where Felix wakes; does nothing. */
-void FelixWake_BeginStep(void)
-{
-}
-
-/* Marks the end of each step of the scene where Felix wakes; does nothing. */
-void FelixWake_EndStep(void)
-{
-}
-
-/* Holds the scene for up to three seconds, or until a button is pressed. */
-void FelixWake_WaitForButton(void)
-{
-    s32 frames = 180;
-
-    FelixWake_BeginStep();
-wait:
-    if (--frames != -1) {
-        Task_Wait(1);
-        if (gInput.pressed == 0) {
-            goto wait;
-        }
-    }
-    FelixWake_EndStep();
-}
-
-/* The scene's last loader hook; Idejima needs nothing. */
-s32 Scene_PrepareMap(void)
-{
-    return 0;
 }

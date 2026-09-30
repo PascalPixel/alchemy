@@ -4,6 +4,25 @@
 #include "STAGED_ACTOR.H"
 #include "CALL.H"
 
+/* The mode task's records in the river overlay's data. */
+extern u16 KorosseoKawa_RoundSpans[];
+extern u8 KorosseoKawa_ModeRecordTwo[];
+extern u8 KorosseoKawa_ModeRecordFour[];
+struct ModeRecord;
+extern struct ModeRecord KorosseoKawa_SpanA;
+extern struct ModeRecord KorosseoKawa_SpanB;
+
+/* The mode task's state in the overlay's work area. */
+extern u16 Korosseo_ModeTaskMode;
+extern u16 Korosseo_ModeTaskParam;
+extern u16 Korosseo_ModeTaskTimer;
+extern s32 Korosseo_ModeTaskScript;
+extern u16 Korosseo_ModeMoveTarget;
+extern u16 Korosseo_ModeMoveDuration;
+extern s32 Korosseo_ModeTaskPosition;
+void Korosseo_UpdateModeTask(void);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -65,7 +84,6 @@ typedef struct ActiveSubjectSlot {
 
 extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 HexDigits[];
-
 typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
@@ -75,6 +93,64 @@ s32 AudioCommand_GetStateByte(void);
 void Audio_PlayCueFromEventWork(void);
 void Korosseo_LoadPortrait();
 s32 AudioCommand_GetStateByte();
+s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
+void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
+s32 *SceneActor_FindOccupantAheadOfSubject(void);
+void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
+
+static inline void InitializeActorZero(void)
+{
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+}
+
+static inline void InitializeSelectedActor(s32 actorId)
+{
+    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+}
+
+/* Selects a later line in the current dialogue. */
+static __inline__ void AdvanceMessage(s32 amount)
+{
+    gEventWork->message += amount;
+}
+
+void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param);
+
+/*
+ * The mode task's per-frame routine is installed as a callback.  The branch
+ * chain picks one of five mode records by mode, consulting param only when
+ * mode is 3.  The stores that follow reset the rest of the task's state.
+ */
+void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
+{
+    s32 handler;
+
+    Korosseo_ModeTaskMode = (u16)mode;
+    Korosseo_ModeTaskParam = (u16)(param << 4);
+
+    Scheduler_AddOrUpdateCallback(Korosseo_UpdateModeTask, 0xc80);
+
+    handler = (s32)KorosseoKawa_RoundSpans;
+    if (mode == 2) {
+        handler = (s32)KorosseoKawa_ModeRecordTwo;
+    }
+    if (mode == 4) {
+        handler = (s32)KorosseoKawa_ModeRecordFour;
+    }
+    if (mode == 3) {
+        if (param != 0) {
+            handler = (s32)&KorosseoKawa_SpanB;
+        } else {
+            handler = (s32)&KorosseoKawa_SpanA;
+        }
+    }
+
+    Korosseo_ModeTaskTimer = 0;
+    Korosseo_ModeTaskScript = handler;
+    Korosseo_ModeMoveTarget = 0;
+    Korosseo_ModeMoveDuration = 0;
+    Korosseo_ModeTaskPosition = 0;
+}
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
 
@@ -104,37 +180,8 @@ s32 AudioCommand_GetStateByte();
 /* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
  * it by one, and specific values select which sub-sequence runs this call.
  * Reaching 0 restarts the countdown at 120 after running its own branch. */
-
-s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
-
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-
-s32 *SceneActor_FindOccupantAheadOfSubject(void);
-
-void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
-
-static inline void InitializeActorZero(void)
-{
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-}
-
-static inline void InitializeSelectedActor(s32 actorId)
-{
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
-}
-
-/* Selects a later line in the current dialogue. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-void SceneData_SelectBlockAndResetCounters(s32 a, s32 b);
-
 void FieldScene_RunTwoArmSequence(s32 a)
 {
-    extern u16 KorosseoKawa_RoundSpans[];
-
     if (a == 0) {
         Event_Begin();
         Event_OpenScreen();
@@ -182,8 +229,6 @@ void FieldScene_RunTwoArmSequence(s32 a)
 
 void FieldScene_RunLateSequence(s32 a0)
 {
-    extern struct ModeRecord KorosseoKawa_SpanB;
-    extern struct ModeRecord KorosseoKawa_SpanA;
     void Task_Wait();
 
     s32 kind;

@@ -17,7 +17,10 @@ struct GameState {
     s16 entrance;
     s16 saved_scene;
     s16 saved_entrance;
-    u8 unknown_1c8[0x14];
+    u8 unknown_1c8[0x0e];
+    /* The value Event_GetSpecialValue returns, which battle effects set. */
+    s16 special;
+    u8 unknown_1d8[4];
     /* The party's position on the map, in 16.16 fixed point. */
     s32 x;
     s32 y;
@@ -45,6 +48,7 @@ struct GameState {
 LAYOUT_OFFSET_GUARD(GameState_Coins, struct GameState, coins, 0x10);
 LAYOUT_OFFSET_GUARD(GameState_WonPrizes, struct GameState, won_prizes, 0x12c);
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
+LAYOUT_OFFSET_GUARD(GameState_Special, struct GameState, special, 0x1d6);
 LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
 LAYOUT_OFFSET_GUARD(GameState_MovementMode, struct GameState, movement_mode, 0x1f2);
 LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0x1f4);

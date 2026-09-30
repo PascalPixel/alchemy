@@ -2,6 +2,10 @@
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
+
+/* The tile in character block 1 that holds the window frame. */
+#define FRAME_TILE 150
 
 extern u8 gMenuWork[];
 
@@ -50,18 +54,18 @@ s32 Menu_OpenBackdropScreen(void)
 
     UiWindow_UpdateOrCreate(&work->window, 0, 5, 30, 15, 2);
     WaitFrames(1);
-    CopyWords(Iwram_CopyWords, backdrop->tiles, (void *)0x06004000, 0x2000);
-    CopyWords(Iwram_CopyWords, backdrop->palette, (void *)0x05000080, 128);
-    FillWords(Iwram_FillWords, (void *)0x06004000, 0x2000, 0x33333333);
-    FillWords(Iwram_FillWords, (void *)0x05000080, 128, 0x55555555);
-    Func_080153d8((void *)0x06005000);
-    CopyWords(Iwram_CopyWords, (void *)0x060052c0, Menu_BackdropFrameTile, 32);
-    Dma_Set(Runtime_GetLowTableAddress(), (void *)0x050000a0, 0x80000010,
-            (volatile u32 *)0x040000d4);
-    *(volatile u16 *)0x050000bc = *(volatile u16 *)0x050001e8;
-    Dma_Set((void *)0x050001e0, (void *)0x050000e0, 0x80000010, (volatile u32 *)0x040000d4);
+    CopyWords(Iwram_CopyWords, backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
+    CopyWords(Iwram_CopyWords, backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
+    FillWords(Iwram_FillWords, BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
+    FillWords(Iwram_FillWords, (void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
+    Func_080153d8(BG_CHAR_BLOCK(1) + 0x1000);
+    CopyWords(Iwram_CopyWords, BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP,
+              Menu_BackdropFrameTile, TILE_SIZE_4BPP);
+    Dma_Set(Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(5, 0), 0x80000010, REG_DMA3);
+    BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
+    Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0), 0x80000010, REG_DMA3);
     Graphics_AdjustPaletteBank(8);
-    *(volatile u16 *)0x050000e8 = *(volatile u16 *)0x050001e8;
-    *(volatile u16 *)0x050000c8 = *(volatile u16 *)0x050001e8;
+    BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
+    BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
     return Func_080aafb8(backdrop);
 }

@@ -14,6 +14,14 @@
 /* The first backdrop colour of the palette RAM. */
 #define PLTT_BACKDROP (*(volatile u16 *)0x05000000)
 
+/* Background palette RAM: sixteen palettes of sixteen colours. */
+#define BG_PLTT ((volatile u16 *)0x05000000)
+#define BG_PLTT_COLOR(palette, color) (BG_PLTT[(palette) * 16 + (color)])
+
+/* Background character blocks of 16 KiB each in VRAM. */
+#define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
+#define TILE_SIZE_4BPP 32
+
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
 

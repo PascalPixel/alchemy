@@ -2357,8 +2357,6 @@ Inventory_Remove:
 	.incbin "baserom.gba", 0x000aa144, 0x00000080
 	.section .rom.000aa1f6, "ax"
 	.incbin "baserom.gba", 0x000aa1f6, 0x0000009e
-	.section .rom.000aa2bc, "ax"
-	.incbin "baserom.gba", 0x000aa2bc, 0x00000028
 	.section .rom.000aa334, "ax"
 	.incbin "baserom.gba", 0x000aa334, 0x00000040
 	.section .rom.000aa374, "ax"

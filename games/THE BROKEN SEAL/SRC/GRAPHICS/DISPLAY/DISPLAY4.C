@@ -1,22 +1,9 @@
 #include "DMA.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "MAP.H"
 
-struct BlendScriptState {
-    u16 *script;
-    u16 *cursor;
-    u16 delay;
-    u16 paused;
-};
-
-struct FieldCells {
-    u8 unknown_00[0xd8];
-    struct BlendScriptState blend;   /* 0xd8 */
-    u8 unknown_e4[0x1f];
-    u8 blend_control;                /* 0x103: last BLDCNT written */
-};
-
-extern struct FieldCells *gMapWork;
+extern struct MapState *gMapWork;
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 flags);
 s32 Scheduler_EnableCallbacks(u32 value);
 s32 Scheduler_DisableCallbacks(u32 value);
@@ -60,7 +47,7 @@ void Scheduler_RemoveCallback(void *);
    BLDCNT and the alpha or brightness level on a frame delay. */
 void DisplayBlend_RunScript(void)
 {
-    struct FieldCells *work = gMapWork;
+    struct MapState *work = gMapWork;
     struct BlendScriptState *state;
     u16 *cursor;
     u32 command;

@@ -1,3 +1,4 @@
+/* 2026-09-30 asm-only (inline asm not yet permitted to workers): a FAKEMATCH-tagged one-instruction asm copy "mov %0, %1" of result into pass hides the zero from cse and gives the mov r4, sl. */
 /* 2026-09-29 alchemy permute: score 200 on the permuter's scorer (1
    inserted, 1 deleted), unchanged after 56,705 candidates in 10 minutes.
    The cse dump confirms the cause in the header: cse folds pass = result

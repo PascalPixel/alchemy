@@ -173,16 +173,20 @@ pub fn input_name(built: &str) -> Result<String, String> {
 }
 
 /// Where a recipe's further input `name` lies: beside its first input
-/// `input`, or for `COMMON/NAME` in games/COMMON's folder of the same path
-/// under `SRC`, where a picture both games draw alike lives once.
+/// `input`; for `COMMON/NAME`, in games/COMMON's folder of the same path
+/// under `SRC`; and for `COMMON/DIR/.../NAME`, at that path under
+/// games/COMMON's `SRC`. There lives once what both games draw alike.
 pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::PathBuf, String> {
     let Some(shared) = name.strip_prefix("COMMON/") else {
         return Ok(input.with_file_name(name));
     };
-    if shared.is_empty() || shared.contains(['/', '\\']) || shared == ".." {
+    if shared
+        .split('/')
+        .any(|part| part.is_empty() || part == ".." || part == "." || part.contains('\\'))
+    {
         return Err(format!("{name} names no file in COMMON"));
     }
-    let folder = input
+    let (games, folder) = input
         .parent()
         .and_then(|folder| {
             let text = folder.to_str()?;
@@ -190,10 +194,14 @@ pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::Pa
                 .find("/SRC/")
                 .or_else(|| text.ends_with("/SRC").then(|| text.len() - 4))?;
             let games = std::path::Path::new(&text[..at]).parent()?;
-            Some(games.join("COMMON").join(&text[at + 1..]))
+            Some((games.to_path_buf(), text[at + 1..].to_owned()))
         })
         .ok_or_else(|| format!("{} lies under no game's SRC", input.display()))?;
-    Ok(folder.join(shared))
+    Ok(if shared.contains('/') {
+        games.join("COMMON/SRC").join(shared)
+    } else {
+        games.join("COMMON").join(folder).join(shared)
+    })
 }
 
 /// Build the file `built` names from the bytes of its input.
@@ -772,6 +780,11 @@ mod tests {
             sibling_path(absolute, "COMMON/SPR_020.PNG").unwrap(),
             Path::new("/w/games/COMMON/SRC/GRAPHICS/SPRITE/SPR_020.PNG")
         );
+        assert_eq!(
+            sibling_path(input, "COMMON/MAP/MAP_153/GRID_METATILE.TSV").unwrap(),
+            Path::new("games/COMMON/SRC/MAP/MAP_153/GRID_METATILE.TSV")
+        );
+        assert!(sibling_path(input, "COMMON/MAP//X.TSV").is_err());
         assert!(sibling_path(input, "COMMON/../X.PNG").is_err());
         assert!(sibling_path(input, "COMMON/..").is_err());
         assert!(sibling_path(Path::new("X/Y.TSV"), "COMMON/Z.PNG").is_err());

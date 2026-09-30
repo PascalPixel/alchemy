@@ -1417,7 +1417,7 @@ Func_08123648:
 	beq.n	.L_08124256
 	movs	r0, #1
 .L_08124256:
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	adds	r0, #8
 	str	r0, [sp, #4]
 	mov	r3, r8

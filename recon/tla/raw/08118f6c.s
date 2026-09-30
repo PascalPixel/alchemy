@@ -18,7 +18,7 @@ Func_08118f6c:
 	bl	0x0811a038
 	mov	fp, r0
 	movs	r0, #0
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	ldr	r0, [r0, #0]
 	ldr	r3, [pc, #184]
 	mov	r9, r0
@@ -106,7 +106,7 @@ Func_08118f6c:
 	cmp	r1, #15
 	ble.n	.L_08118fec
 	movs	r0, #0
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	mov	r2, r9
 	str	r2, [r0, #0]
 	add	sp, #32

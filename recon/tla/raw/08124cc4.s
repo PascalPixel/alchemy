@@ -10,7 +10,7 @@ Func_08124cc4:
 	push	{r5, r6, r7}
 	movs	r2, #0
 	mov	r9, r2
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	movs	r2, #8
 	adds	r3, r0, #0
 	adds	r2, r2, r3
@@ -191,7 +191,7 @@ Func_08124cc4:
 	b.n	.L_08124f9a
 .L_08124e54:
 	mov	r0, r9
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	movs	r2, #148
 	adds	r3, r0, #0
 	movs	r5, #8
@@ -923,7 +923,7 @@ Battle_ApplyActionExtras:
 	bls.n	.L_081254b8
 	movs	r0, #1
 .L_081254b8:
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	movs	r4, #148
 	adds	r3, r0, #0
 	lsls	r4, r4, #1
@@ -962,7 +962,7 @@ Battle_ApplyActionExtras:
 	bls.n	.L_08125500
 	movs	r0, #1
 .L_08125500:
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	movs	r4, #148
 	adds	r3, r0, #0
 	lsls	r4, r4, #1
@@ -1143,7 +1143,7 @@ Battle_ApplyActionExtras:
 	bls.n	.L_0812565a
 	movs	r0, #1
 .L_0812565a:
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	adds	r3, r0, #0
 	movs	r0, #148
 	lsls	r0, r0, #1
@@ -1207,7 +1207,7 @@ Battle_ApplyActionExtras:
 	beq.n	.L_081256d8
 	movs	r0, #1
 .L_081256d8:
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	add	r3, sp, #16
 	mov	fp, r3
 	adds	r6, r0, #0

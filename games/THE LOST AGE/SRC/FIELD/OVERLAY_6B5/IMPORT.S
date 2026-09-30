@@ -43,7 +43,7 @@
 	overlay_veneer Func_08038118
 	overlay_veneer Func_08038120
 	overlay_veneer Func_080382e0
-	overlay_veneer Func_080ad000
+	overlay_veneer Trade_GetOfferStateFar
 	overlay_veneer Func_080ad0f0
 	overlay_veneer Func_080ad208
 	overlay_veneer Func_080c8010

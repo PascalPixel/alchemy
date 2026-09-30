@@ -121,9 +121,9 @@ Func_080ad150:
 	bx	r4
 	.2byte 0x0b79
 	.2byte 0x080b
-	.global Func_080ad158
+	.global Djinn_ActivateFar
 	.thumb_func
-Func_080ad158:
+Djinn_ActivateFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x0c9d
@@ -132,6 +132,9 @@ Func_080ad158:
 	bx	r4
 	.2byte 0x0d05
 	.2byte 0x080b
+	.global Trade_RemoveOfferFar
+	.thumb_func
+Trade_RemoveOfferFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x0d59

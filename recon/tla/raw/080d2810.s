@@ -123,7 +123,7 @@ Func_080d2810:
 	mov	r0, r8
 	bl	Object_SetModeById
 	mov	r0, r9
-	bl	0x08038100
+	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	bl	0x08038140
 	ldr	r3, [pc, #76]
 	movs	r2, #139
@@ -141,7 +141,7 @@ Func_080d2810:
 	mov	r0, r8
 	bl	Object_SetModeById
 	mov	r0, r9
-	bl	0x08038100
+	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	bl	0x08038140
 	ldr	r3, [pc, #36]
 	movs	r0, #139

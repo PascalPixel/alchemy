@@ -22,7 +22,7 @@ Func_080d3c88:
 	str	r3, [sp, #28]
 	mov	sl, r2
 	mov	r9, r2
-	bl	0x080d3bf8
+	bl	ObjectTable_ReadActiveValue
 	movs	r2, #240
 	movs	r1, #4
 	lsls	r2, r2, #8
@@ -437,7 +437,7 @@ Func_080d3c88:
 	movs	r0, #1
 	bl	0x08013560
 	adds	r0, r7, #0
-	bl	0x080d3bf8
+	bl	ObjectTable_ReadActiveValue
 	movs	r5, #0
 	mov	r8, r0
 	cmp	r7, #7
@@ -453,7 +453,7 @@ Func_080d3c88:
 	mov	r8, r6
 .L_080d3ff2:
 	mov	r0, r8
-	bl	0x08038100
+	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	movs	r3, #220
 	lsls	r3, r3, #1
 	add	r3, r9

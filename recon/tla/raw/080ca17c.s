@@ -715,5 +715,8 @@ Func_080ca6a4:
 	.4byte 0x02000240
 	.2byte 0x0001
 	.2byte 0x0000
+	.global Func_080ca6e4
+	.thumb_func
+Func_080ca6e4:
 	bx	lr
 	.2byte 0x0000

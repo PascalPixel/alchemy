@@ -802,6 +802,9 @@ Func_080ea14c:
 	.4byte 0x080f3614
 	.2byte 0x9f69
 	.2byte 0x080e
+	.global Func_080ea7c0
+	.thumb_func
+Func_080ea7c0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -885,7 +888,7 @@ Func_080ea14c:
 	bne.n	.L_080ea7ea
 .L_080ea86a:
 	mov	r0, r9
-	bl	0x080eaa14
+	bl	Func_080eaa14
 	ldr	r3, [pc, #48]
 	movs	r2, #133
 	lsls	r2, r2, #2

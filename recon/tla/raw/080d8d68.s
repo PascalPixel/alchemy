@@ -450,6 +450,9 @@ Func_080d8d68:
 	movs	r0, r0
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_080d9104
+	.thumb_func
+Func_080d9104:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -681,6 +684,9 @@ Func_080d8d68:
 	ldr	r3, [r2, #12]
 	str	r3, [r1, #8]
 	pop	{pc}
+	.global Func_080d92d4
+	.thumb_func
+Func_080d92d4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1209,6 +1215,9 @@ Func_080d8d68:
 	.4byte 0x0300021c
 	.2byte 0x02d4
 	.2byte 0x0300
+	.global Func_080d9710
+	.thumb_func
+Func_080d9710:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

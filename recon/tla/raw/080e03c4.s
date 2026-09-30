@@ -1022,7 +1022,7 @@ Func_080e03c4:
 	adds	r3, r2, r4
 	movs	r2, #0
 	ldrsb	r2, [r3, r2]
-	bl	0x080d92d4
+	bl	Func_080d92d4
 	movs	r3, #132
 	lsls	r3, r3, #6
 	adds	r3, #18

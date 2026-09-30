@@ -570,7 +570,7 @@ Func_080c9dc8:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	adds	r5, r1, #0
-	bl	0x080ed804
+	bl	Func_080ed804
 	movs	r2, #1
 	negs	r2, r2
 	b.n	.L_080c9df2

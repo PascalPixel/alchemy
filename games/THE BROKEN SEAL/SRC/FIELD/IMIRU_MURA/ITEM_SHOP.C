@@ -1,5 +1,8 @@
 #include "TYPES.H"
 #include "CALL.H"
+extern u8 MsgMakyuriRecoveredThanksFountain[];
+extern u8 MsgMakyuriMomsSickGetWhatever[];
+extern u8 MsgMakyuriDadLumberjack[];
 
 s32 Object_GetById();
 s32 Engine_GameFlagIsSet();
@@ -26,20 +29,20 @@ void ImiruMura_RunItemShop(void)
         }
         Engine_EventBegin();
         Engine_ActorFaceActor(15, 0, 0);
-        Engine_EventSetMessage(0x164f);
+        Engine_EventSetMessage((s32)MsgMakyuriRecoveredThanksFountain);
         Engine_EventShowMessage(15, 0);
         Call3(Engine_ActorFaceDirection, 15, 0x4000, 0);
         Engine_EventEnd();
     } else {
         if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000) {
             Engine_EventBegin();
-            Engine_EventSetMessage(0x1546);
+            Engine_EventSetMessage((s32)MsgMakyuriMomsSickGetWhatever);
             Engine_EventShowMessage(14, 0);
             Engine_ShopOpen(12, 14);
             Engine_EventEnd();
         } else {
             Engine_ActorFaceActor(14, 0, 10);
-            Engine_EventSetMessage(0x1547);
+            Engine_EventSetMessage((s32)MsgMakyuriDadLumberjack);
             Engine_EventShowMessage(14, 0);
             Call3(Engine_ActorFaceDirection, 14, 0x5000, 10);
         }

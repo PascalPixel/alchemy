@@ -1026,6 +1026,9 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventWait(80);
     Call3(Engine_ActorShowEmote, 12, 0x101, 40);
     SceneActor_SetPairZeroAndValue(12, 0x7000, 20);
+    /* MsgHaidiaWhysEveryoneHanging and, below, MsgHaidiaFarewell stay
+       numbers: spelled as those link-time symbols, this scene is allocated
+       differently. */
     Call1(Engine_EventSetMessage, 0x11fa);
     Event_SayThenWait(12, 10);
     Call3(Engine_ActorShowEmote, 11, 0x102, 20);

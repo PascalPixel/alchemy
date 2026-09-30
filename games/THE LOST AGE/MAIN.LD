@@ -403,6 +403,8 @@ SECTIONS
         "*/recon/tla/raw/0803c198.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803c274.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803c40c.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/ADJUST_VALUE_WITHOUT_LIMIT.o"(.text)
+        "*/recon/tla/raw/0803c9bc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803cb1c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803cba8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803ccd0.o"(.text .rodata .data .padding)

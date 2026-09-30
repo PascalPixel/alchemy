@@ -397,7 +397,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_TILEMAP_ENTRY.o"(.text)
         "*/recon/tbs/raw/0801908c.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080191cc.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/ADJUST_VALUE_WITHOUT_LIMIT.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/ADJUST_VALUE_WITHOUT_LIMIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/COPY_MESSAGE_STRING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_MESSAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/CLEAR_WORD_IF_SET.o"(.text)

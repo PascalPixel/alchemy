@@ -1,5 +1,7 @@
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
+#include "TYPES.H"
+#include "TBS_EDITION.H"
 
 /* A text window's glyph palette: the slot each font colour was given, 0xff
    while unassigned, and the number of slots used. */
@@ -14,6 +16,16 @@ s32 Resource_DecodeByteLz(const void *source, void *destination);
 u8 *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
 void Runtime_ReleaseHeapBlock(s32 slot);
+
+s32 Resource_LoadIndexedIntoBuffer(u16 packed, u32 value);
+
+typedef struct
+{
+    u16 code : 10;
+    u16 style : 6;
+} CharacterCell;
+
+void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
 
 /* Decodes one glyph of the font resource, remaps its colours through the
    window's glyph palette (assigning and uploading new colours while slots
@@ -49,4 +61,25 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     Dma_Set(remapped, (void *)(0x06004000 + tile * 64), 0x84000100, (volatile u32 *)0x040000d4);
     Runtime_BumpFree(remapped);
     Runtime_ReleaseHeapBlock(17);
+}
+
+void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
+{
+    u8 *entry;
+    s32 offset;
+    s32 store_offset;
+    s32 load_offset;
+
+    offset = index * 28;
+    entry = base + offset + 0x104;
+    ((s32 (*)())UiText_LoadRemappedGlyph)(base, value, index * 16, index * 16);
+    store_offset = offset + 0x11C;
+    *(u32 *)(base + store_offset) = value;
+    /* FAKEMATCH: the empty do-while around this store only moves the
+       scheduler; the reference sets the constant after the value store. */
+    do { *(u32 *)(entry + 4) = 0x80002000; } while (0);
+    *(u32 *)(entry + 8) = 0;
+    load_offset = offset + 0x110;
+    ((CharacterCell *)(entry + 8))->code =
+        Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
 }

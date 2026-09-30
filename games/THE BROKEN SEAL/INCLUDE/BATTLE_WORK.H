@@ -5,7 +5,7 @@
 #include "LAYOUT_GUARD.H"
 #include "BATTLE_TYPES.H"
 #include "BATTLE_EVENT.H"
-#include "../../COMMON/INCLUDE/BATTLE/BATTLE_SESSION.H"
+#include "BATTLE_SESSION.H"
 
 /* Queued battle events and the state of their playback. */
 struct BattleEventState {

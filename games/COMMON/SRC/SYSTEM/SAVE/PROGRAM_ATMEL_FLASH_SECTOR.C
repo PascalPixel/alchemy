@@ -1,4 +1,4 @@
-#include "FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
 
 struct Config_080071a8 {
     u8 pad_00[24];

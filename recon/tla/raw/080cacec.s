@@ -12,9 +12,9 @@ Scene_AssignViewFlags:
 	lsls	r0, r0, #1
 	adds	r7, #255
 	ldr	r6, [r3, #32]
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	adds	r0, r7, #0
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	movs	r2, #0
 	ldrsh	r3, [r5, r2]
 	movs	r2, #1

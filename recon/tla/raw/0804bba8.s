@@ -303,7 +303,7 @@ Func_0804bc08:
 	movs	r0, #183
 	str	r1, [r3, #0]
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0804be1e
 	ldr	r3, [sp, #36]

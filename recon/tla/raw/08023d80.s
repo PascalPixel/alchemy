@@ -16,7 +16,7 @@ Func_08023d80:
 	sub	sp, #4
 	mov	sl, r1
 	mov	r8, r3
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08023da4
 	ldr	r3, [pc, #112]
@@ -137,7 +137,7 @@ Func_08023d80:
 	movs	r0, #108
 	strh	r3, [r2, #0]
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08023ea6
 	bl	Func_08014de4

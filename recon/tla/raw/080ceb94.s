@@ -68,7 +68,7 @@ Func_080ceb94:
 	negs	r2, r2
 	cmp	r0, r2
 	beq.n	.L_080cec16
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080cebbe
 .L_080cec16:
@@ -140,7 +140,7 @@ Func_080ceb94:
 	cmp	sl, r2
 	beq.n	.L_080ceca4
 	mov	r0, sl
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ceca4
 	b.n	.L_080cee08
@@ -257,7 +257,7 @@ Func_080ceb94:
 	movs	r1, #0
 	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r0, sl
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ced92
 	adds	r0, r5, #0

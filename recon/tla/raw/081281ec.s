@@ -165,7 +165,7 @@ Func_081281ec:
 	movs	r0, #116
 	str	r3, [r7, #8]
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08128322
 	b.n	.L_081284b2
@@ -182,7 +182,7 @@ Func_081281ec:
 	adds	r0, r3, #0
 	lsls	r1, r1, #3
 	adds	r0, r0, r1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 .L_0812833e:
 	ldrh	r0, [r5, #0]
 	bl	0x080ad140

@@ -34,7 +34,7 @@ Func_0802b63c:
 	lsls	r0, r0, #4
 	adds	r0, #255
 	ands	r0, r5
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0802b6ce
 	ldr	r3, [sp, #8]

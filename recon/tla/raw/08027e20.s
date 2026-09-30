@@ -56,7 +56,7 @@ Func_08027e20:
 	str	r5, [r1, #48]
 	str	r3, [r1, #52]
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08027ea0
 	ldr	r0, [pc, #516]
@@ -1327,7 +1327,7 @@ Func_08027e20:
 	beq.n	.L_080288aa
 	movs	r0, #72
 	adds	r0, #255
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	movs	r1, #181
 	lsls	r1, r1, #1
 	adds	r2, r5, r1
@@ -3392,7 +3392,7 @@ Func_08027e20:
 .L_08029896:
 	movs	r0, #163
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080298b4
 	movs	r3, #179

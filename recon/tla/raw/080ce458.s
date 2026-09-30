@@ -274,14 +274,14 @@ Func_080ce458:
 	strh	r0, [r3, #0]
 	movs	r0, #70
 	adds	r0, #255
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	cmp	r7, #15
 	bne.n	.L_080ce684
 	movs	r7, #0
 .L_080ce684:
 	movs	r0, #191
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ce6aa
 	adds	r0, r7, #0
@@ -336,12 +336,12 @@ Func_080ce458:
 	movs	r0, #252
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ce71c
 	movs	r0, #72
 	adds	r0, #255
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	ldr	r3, [sp, #12]
 	movs	r0, #181
 	lsls	r0, r0, #1
@@ -389,7 +389,7 @@ Func_080ce458:
 	bne.n	.L_080ce7ee
 	movs	r0, #162
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ce794
 	adds	r0, r7, #0
@@ -604,10 +604,10 @@ Func_080ce458:
 .L_080ce948:
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	movs	r0, #66
 	adds	r0, #255
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	ldr	r1, [sp, #8]
 	movs	r0, #1
 	negs	r0, r0
@@ -639,7 +639,7 @@ Func_080ce458:
 	movs	r5, #66
 	adds	r5, #255
 	adds	r0, r5, #0
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	mov	r3, r8
 	cmp	r3, #0
 	beq.n	.L_080ce9b6
@@ -651,9 +651,9 @@ Func_080ce458:
 	beq.n	.L_080ce9b6
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	adds	r0, r5, #0
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 .L_080ce9b6:
 	mov	r0, r9
 	movs	r1, #0
@@ -735,12 +735,12 @@ Func_080ce458:
 	bl	.L_080ceafc
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080cea78
 	movs	r0, #66
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080cea74
 	bl	0x080db670
@@ -781,7 +781,7 @@ Func_080ce458:
 	lsls	r5, r5, #1
 	bl	.L_080ceafc
 	adds	r0, r5, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ceacc
 	bl	0x080db848
@@ -795,10 +795,10 @@ Func_080ce458:
 	strb	r2, [r3, #0]
 	bl	Func_080dc7e8
 	adds	r0, r5, #0
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	movs	r0, #66
 	adds	r0, #255
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 .L_080ceaec:
 	movs	r0, #0
 .L_080ceaee:
@@ -837,7 +837,7 @@ Func_080ce458:
 	.2byte 0xf800
 	.2byte 0x20a1
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ceb50
 	bl	Func_080d22a8

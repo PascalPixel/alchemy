@@ -866,14 +866,14 @@ Func_080ea7c0:
 	movs	r3, #255
 	strb	r3, [r5, #2]
 	adds	r0, r6, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ea856
 	adds	r0, r7, #0
 	movs	r1, #0
 	bl	Object_SetMode
 	adds	r0, r6, #0
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	b.n	.L_080ea85e
 .L_080ea856:
 	adds	r0, r7, #0

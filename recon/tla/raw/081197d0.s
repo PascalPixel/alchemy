@@ -7,7 +7,7 @@ Func_081197d0:
 	push	{lr}
 	movs	r0, #118
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_081197e2
 	ldr	r0, [pc, #8]
@@ -83,10 +83,10 @@ Func_081197f0:
 	str	r7, [r1, #28]
 	strh	r2, [r3, #0]
 	adds	r0, #255
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	movs	r0, #106
 	adds	r0, #255
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	bl	Func_08014de4
 	ldr	r5, [pc, #560]
 	movs	r1, #76
@@ -132,7 +132,7 @@ Func_081197f0:
 	bl	0x08020088
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_081198f2
 	movs	r0, #1
@@ -149,7 +149,7 @@ Func_081197f0:
 	adds	r6, r0, #0
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0811992a
 	adds	r5, #68
@@ -250,7 +250,7 @@ Func_081197f0:
 	bl	Audio_PlayCue
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_081199f0
 	movs	r0, #55
@@ -335,7 +335,7 @@ Func_081197f0:
 	str	r1, [sp, #24]
 	lsls	r0, r0, #1
 	strb	r5, [r1, #0]
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08119ad0
 	ldr	r2, [sp, #24]
@@ -449,7 +449,7 @@ Func_081197f0:
 	bl	Func_08014274
 	movs	r0, #181
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_08119bb4
 	adds	r0, r5, #0
@@ -515,7 +515,7 @@ Func_081197f0:
 	movs	r0, #181
 	lsls	r0, r0, #1
 	str	r4, [sp, #4]
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	ldr	r4, [sp, #4]
 	cmp	r0, #0
 	bne.n	.L_08119c46
@@ -796,7 +796,7 @@ Func_081197f0:
 .L_08119e4c:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08119eb0
 	bl	.L_081197d0
@@ -851,7 +851,7 @@ Func_081197f0:
 	beq.n	.L_08119f2e
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_08119f2e
 	ldr	r0, [sp, #16]
@@ -921,7 +921,7 @@ Func_081197f0:
 	add	r3, r9
 	lsls	r0, r0, #2
 	ldr	r7, [r3, #0]
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	b.n	.L_08119fea
 	.4byte 0x00000001
 	.2byte 0x0c84
@@ -1160,7 +1160,7 @@ BattleParty_ListPresentEnemies:
 	beq.n	.L_0811a17c
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0811a14e
 	movs	r7, #3
@@ -1215,7 +1215,7 @@ Func_0811a188:
 	sub	sp, #20
 	mov	r8, r1
 	mov	r9, r2
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0811a1b0
 	movs	r3, #3
@@ -1320,7 +1320,7 @@ Func_0811a188:
 	sub	sp, #24
 	mov	r8, r1
 	mov	r9, r2
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0811a274
 	movs	r3, #3

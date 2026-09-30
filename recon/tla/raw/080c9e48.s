@@ -63,7 +63,7 @@ Func_080c9e48:
 	ldrsh	r0, [r5, r1]
 	cmp	r0, r2
 	beq.n	.L_080c9ec4
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080c9ece
 .L_080c9ec4:
@@ -176,7 +176,7 @@ Func_080c9e48:
 	ldrsh	r0, [r5, r3]
 	cmp	r0, r2
 	beq.n	.L_080c9fa2
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080c9faa
 .L_080c9fa2:
@@ -223,17 +223,17 @@ Func_080c9e48:
 	movs	r0, #96
 	adds	r0, #255
 	mov	fp, r3
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080ca0ea
 	movs	r0, #176
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080ca072
 	movs	r0, #98
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080ca072
 	ldr	r0, [sp, #4]

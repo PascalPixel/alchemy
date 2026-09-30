@@ -97,14 +97,14 @@ Func_080ea8d4:
 	ldr	r3, [r7, #20]
 	bl	0x080ea8a8
 	adds	r0, r6, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ea9b4
 	adds	r0, r7, #0
 	movs	r1, #0
 	bl	Object_SetMode
 	adds	r0, r6, #0
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	b.n	.L_080ea9bc
 .L_080ea9b4:
 	adds	r0, r7, #0
@@ -197,7 +197,7 @@ Func_080eaa14:
 	lsls	r3, r3, #16
 	lsrs	r0, r3, #16
 	mov	fp, r3
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080eaa74
 	cmp	r5, #0
@@ -256,17 +256,17 @@ Func_080eaa14:
 	lsrs	r5, r3, #16
 	asrs	r7, r0, #19
 	adds	r0, r5, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080eaaf0
 	adds	r0, r5, #0
 	subs	r7, #4
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	b.n	.L_080eaaf8
 .L_080eaaf0:
 	adds	r0, r5, #0
 	adds	r7, #4
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 .L_080eaaf8:
 	ldr	r3, [r6, #8]
 	ldr	r2, [r6, #16]
@@ -286,7 +286,7 @@ Func_080eaa14:
 	mov	r1, fp
 	strb	r0, [r3, #0]
 	lsrs	r0, r1, #16
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080eab34
 	movs	r3, #0

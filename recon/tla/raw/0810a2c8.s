@@ -418,11 +418,11 @@ Func_0810a2c8:
 	lsls	r3, r3, #3
 	adds	r6, r5, r3
 	adds	r0, r6, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_0810a6b2
 	adds	r0, r6, #0
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	lsls	r3, r5, #5
 	ldr	r2, [pc, #36]
 	adds	r3, r3, r5

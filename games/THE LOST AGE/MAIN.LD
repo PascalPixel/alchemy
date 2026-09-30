@@ -118,6 +118,8 @@ SECTIONS
         "*/recon/tla/raw/080164e8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080167d8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08016bdc.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST.o"(.text)
+        "*/recon/tla/raw/08016cfc.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/FLAGS/SET_BYTE.o"(.text)
         "*/recon/tla/raw/08016d7c.o"(.text .rodata .data .padding)

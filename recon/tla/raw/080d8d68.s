@@ -270,7 +270,7 @@ Func_080d8d68:
 	ldrsh	r0, [r2, r3]
 	cmp	r0, #0
 	beq.n	.L_080d8f90
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 .L_080d8f90:
 	ldr	r0, [sp, #32]
 	add	sp, #52
@@ -1199,7 +1199,7 @@ Func_080d92d4:
 	ldrsh	r0, [r0, r2]
 	cmp	r0, #0
 	beq.n	.L_080d96f2
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 .L_080d96f2:
 	ldr	r0, [sp, #28]
 	bl	Func_08013164
@@ -1325,7 +1325,7 @@ Func_080d9710:
 	str	r2, [r5, #24]
 	cmp	r0, #0
 	beq.n	.L_080d97ee
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 .L_080d97ee:
 	ldr	r2, [sp, #20]
 	cmp	r2, #0

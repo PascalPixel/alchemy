@@ -319,7 +319,6 @@
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/LOAD_MAIN_SCRIPT.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_3.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_5.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00024e3c)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/TOGGLE_FLAG.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00024ea6)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/SKIP_COMMAND.o"(.text)

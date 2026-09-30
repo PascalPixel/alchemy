@@ -14411,7 +14411,7 @@ msgctxt "MsgCoins"
 msgid "03600"
 msgstr "コイン"
 
-msgctxt "MsgCoin"
+msgctxt "MsgPiece"
 msgid "03601"
 msgstr "コ"
 

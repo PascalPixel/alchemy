@@ -12951,7 +12951,7 @@ msgctxt "MsgCoins"
 msgid "03235"
 msgstr "Pièces"
 
-msgctxt "MsgCoin"
+msgctxt "MsgPiece"
 msgid "03236"
 msgstr "Pièce"
 

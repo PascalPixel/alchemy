@@ -64,7 +64,7 @@ sub_08124af8:
 	mov	r0, sl
 	bl	0x080ad0d0
 .L_08124b7a:
-	bl	Func_081201c4
+	bl	BattleEv_DispatchQueued
 	movs	r2, #159
 	lsls	r2, r2, #1
 	add	r2, r8

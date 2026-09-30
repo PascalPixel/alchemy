@@ -16,7 +16,7 @@ Func_080db4b8:
 	ldrsh	r5, [r6, r1]
 	cmp	r2, #1
 	bne.n	.L_080db4d8
-	bl	Func_080dd4e8
+	bl	BattleFx_RunItemBreakSequence
 	b.n	.L_080db668
 .L_080db4d8:
 	cmp	r2, #7

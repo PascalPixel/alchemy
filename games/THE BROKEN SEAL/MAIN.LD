@@ -56,7 +56,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/COLOR_BACKUP_KERNELS.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/COLOR_KERNELS.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DECODE_HALFWORD_LZ.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080022ec.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/IWRAM_ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/LIB/TRIG.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/LIB/SINE_TABLE.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DECODE_01.o"(.text .rodata .data .padding)

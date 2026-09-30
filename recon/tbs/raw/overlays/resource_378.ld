@@ -18,11 +18,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/STEP_ELLIPSE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/SPAWN_EFFECT.o"(.text)
         "*/resource_378_overlay.o"(.text.x0200a7d4)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/RUN_PAIRED.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ITEM_ICON.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/RISE_SPARK.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/SPAWN_SPARK.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/APPLY_TWO.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/HEYA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/IMPORT.o"(.text)
         "*/resource_378_overlay.o"(.rodata)
     }

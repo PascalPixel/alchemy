@@ -7,15 +7,13 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/KI.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/TRANSIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/KI2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KORIMA/PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/IMPORT.o"(.text)
         "*/resource_395_overlay.o"(.rodata)
     }
     .bss ALIGN(16) (NOLOAD) :
     {
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/TRANSIT.o"(.bss)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/KI.o"(.bss)
         "*/resource_395_overlay.o"(.bss)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

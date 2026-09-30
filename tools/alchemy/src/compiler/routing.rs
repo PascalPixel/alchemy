@@ -256,15 +256,7 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
     let Some(source) = natural_source(target, source) else {
         return CompilerFamily::Game;
     };
-    if has(AGBCC_SOURCES, &source)
-        || (source
-            .extension()
-            .and_then(|ext| ext.to_str())
-            .is_some_and(|ext| ext.eq_ignore_ascii_case("c"))
-            && AGBCC_DIRECTORIES
-                .iter()
-                .any(|directory| source.starts_with(directory)))
-    {
+    if has(AGBCC_SOURCES, &source) {
         return CompilerFamily::Agbcc;
     }
     if has(AGBCC_FLASH_SOURCES, &source) {
@@ -542,11 +534,18 @@ mod target_tests {
                 assert!(files.insert(*entry), "duplicate family for {entry}");
             }
         }
-        for directory in AGBCC_DIRECTORIES {
-            assert!(root().join(directory).is_dir());
-            assert!(!files
-                .iter()
-                .any(|file| Path::new(file).starts_with(directory)));
+        // The shared MusicPlayer2000 folder holds only that library: every
+        // module in it is routed by name.
+        let library = root().join("games/COMMON/SRC/SOUND");
+        for entry in std::fs::read_dir(&library).unwrap() {
+            let name = entry.unwrap().file_name().to_string_lossy().into_owned();
+            if name.ends_with(".C") {
+                let source = format!("games/COMMON/SRC/SOUND/{name}");
+                assert!(
+                    AGBCC_SOURCES.contains(&source.as_str()),
+                    "unrouted library module {source}"
+                );
+            }
         }
     }
     #[test]
@@ -571,7 +570,7 @@ mod target_tests {
         );
         for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
             assert_eq!(
-                family_for_source(target, "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C"),
+                family_for_source(target, "games/COMMON/SRC/SOUND/SOUND2.C"),
                 CompilerFamily::Agbcc
             );
             for source in [
@@ -622,7 +621,7 @@ mod target_tests {
             agbcc_flash_cflags()
         );
         for source in [
-            "games/COMMON/SRC/SOUND/CGB_UPDATE_CHANNELS.C",
+            "games/COMMON/SRC/SOUND/SOUND2.C",
             "games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
         ] {
             assert_eq!(

@@ -361,7 +361,7 @@ Func_080af6f4:
 	b.n	.L_080af790
 .L_080af76c:
 	adds	r0, r7, #0
-	bl	0x080b02d4
+	bl	Func_080b02d4
 	movs	r3, #88
 	ldrh	r3, [r5, r3]
 	movs	r1, #0

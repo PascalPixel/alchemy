@@ -324,7 +324,7 @@ Owner_LevelUp:
 	adds	r3, #1
 	strb	r2, [r3, #0]
 	mov	r0, fp
-	bl	0x080b02d4
+	bl	Func_080b02d4
 	mov	r0, fp
 	bl	Owner_RecalculateStats
 .L_080afb6a:

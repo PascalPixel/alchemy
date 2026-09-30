@@ -405,6 +405,9 @@ Func_080afeb0:
 	.4byte 0x02000240
 	.2byte 0x423f
 	.2byte 0x000f
+	.global Func_080afed4
+	.thumb_func
+Func_080afed4:
 	push	{lr}
 	ldr	r3, [pc, #32]
 	movs	r2, #156
@@ -428,6 +431,9 @@ Func_080afeb0:
 	.4byte 0x02000240
 	.2byte 0x423f
 	.2byte 0x000f
+	.global Func_080aff00
+	.thumb_func
+Func_080aff00:
 	push	{lr}
 	ldr	r3, [pc, #32]
 	movs	r2, #158

@@ -466,7 +466,7 @@ Func_08120454:
 	b.n	.L_08120942
 .L_081207e0:
 	adds	r0, r5, #0
-	bl	Func_0811a490
+	bl	Summon_ClassValid
 	cmp	r0, #0
 	bne.n	.L_081207ec
 	b.n	.L_08120942

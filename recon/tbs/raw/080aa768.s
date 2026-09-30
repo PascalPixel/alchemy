@@ -120,7 +120,7 @@ Func_080aa768:
 	movs	r3, #1
 	mov	r8, r3
 	b.n	.L_080aabbc
-	bl	Func_080ab314
+	bl	DjinnMenu_ShowHelp
 	movs	r1, #2
 	adds	r4, r0, #0
 	negs	r1, r1

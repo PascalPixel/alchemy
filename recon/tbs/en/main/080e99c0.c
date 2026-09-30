@@ -126,8 +126,6 @@
 #define SPARK ((struct EffectStep *)0x02014AD0)
 
 
-extern char Value_00000056;
-extern char Value_00000085;
 extern char Value_000000c0;
 extern char Value_000000c4;
 
@@ -217,8 +215,8 @@ void Unnamed_080e99c0(void *object)
     BattleEffect_LoadWork(47, 7, 7, 3, 1);
     draw2 = (DrawRectangleFn)heap[8];
 
-    Resource_LoadAndDecompress((s32)&Value_00000056, (u8 *)work + 20000, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000085, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet, (u8 *)work + 20000, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, (u8 *)work + (221 << 4), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 

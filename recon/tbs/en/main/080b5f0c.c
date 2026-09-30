@@ -1,3 +1,5 @@
+/* alchemy permute: Func_080b5f0c against recon/tbs/raw/080b5f0c.s: score 865 (23 register-only, 2 operand, 5 reordered, 1 inserted, 3 deleted).
+   Job 5, iteration 15189; rewrites: 4x swap commutative operands, 4x reorder independent statements, 4x move an assignment into or out of a condition or call, 3x reorder local declarations, 3x share one temporary between two statements, 2x introduce a temporary, 2x remove a temporary, 2x pointer arithmetic or indexing, 1x add a same-width cast, 1x drop a same-width cast, 1x change loop form, 1x split or join a compound assignment. */
 /* 2026-09-29 alchemy permute: score 1545 to 895 on the permuter's scorer
    (0 is exact); remaining 22 register-only, 2 operand, 4 reordered, 1
    inserted, 4 deleted. Kept rewrites: 1x change loop form. */
@@ -59,8 +61,10 @@ s32 Func_080b5f0c(void)
     u8 *buffer;
     u16 sp_names[8];
     s32 count;
-    s32 i;
     s32 result;
+    s32 i;
+    s32 tmp4;
+    s32 tmp3;
 
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(340);
     table = gBattleWork;
@@ -92,25 +96,27 @@ s32 Func_080b5f0c(void)
     }
     Runtime_BumpFree(buffer);
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(320);
+    tmp4 = 320;
     {
         struct DjinnRecoveryTable *unit = Trade_GetOfferStateFar(0);
         CopyWords(buffer, unit, 320);
     }
     {
         struct DjinnRecoveryList *list = &((struct DjinnRecoveryTable *)buffer)->list;
-        struct DjinnRecoveryEntry *entry = list->entries;
         s32 i;
+        struct DjinnRecoveryEntry *entry = list->entries;
         i = 0;
         if (i < list->count) {
             do {
                 entry->unit_id = table->owner_map[entry->unit_id];
-                entry++;
                 i++;
+                entry++;
             } while (i < list->count);
         }
     }
-    result = SerialRuntime_BeginTransferA((s32)buffer, 320);
-    if (result != -1) {
+    tmp4 = SerialRuntime_BeginTransferA((s32)buffer, tmp4);
+    tmp3 = -1;
+    if (tmp3 != (result = tmp4)) {
         SerialRuntime_WaitForTransferA();
         WaitFrames(1);
         WaitFrames(2);

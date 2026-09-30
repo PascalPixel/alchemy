@@ -12,6 +12,9 @@ Func_080ad000:
 	.global Func_080ad008
 	.thumb_func
 Func_080ad008:
+	.global BattleUnit_Recalculate
+	.thumb_func
+BattleUnit_Recalculate:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xd3f9

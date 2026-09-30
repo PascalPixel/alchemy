@@ -95,8 +95,6 @@ extern const u8 Data_080ee2ae[];
 extern u8 Value_0000008d;
 extern u8 Value_000000a0;
 extern u8 Value_000000a3;
-extern u8 Value_000000aa;
-extern u8 Value_000000b7;
 extern u8 Value_000000bb;
 extern u8 Value_000000c0;
 extern u8 Value_000000cd;
@@ -227,11 +225,11 @@ void BattleFx_RenderMode(void *object, u32 kind)
     } else if (kind == 4) {
         resource_id = (s32)&Value_000000bb;
     } else if (kind == 5) {
-        resource_id = (s32)&Value_000000b7;
+        resource_id = (s32)&ResourceId_GlowOrbSheet;
         Resource_LoadAndDecompress(resource_id, work, 1, 0);
     } else if (kind == 7) {
         count = 24;
-        Resource_LoadAndDecompress((s32)&Value_000000b7, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work, 1, 0);
         resource_id = (s32)&Value_0000008d;
     } else {
         resource_id = (s32)&Value_000000cd;
@@ -243,7 +241,7 @@ void BattleFx_RenderMode(void *object, u32 kind)
         (void *)0x05000000, Resource_GetTableEntry(resource_id), 128);
 
     if (kind == 4) {
-        Resource_LoadAndDecompress((s32)&Value_000000aa, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work, 1, 1);
     }
     if (kind == 3) {
         Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, (s8 *)work + (150 << 6), 1, 0);

@@ -145,6 +145,9 @@ Func_0811b180:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Summon_FindSlot
+	.thumb_func
+Summon_FindSlot:
 	push	{r5, r6, lr}
 	movs	r5, #0
 	b.n	.L_0811b29c
@@ -173,6 +176,9 @@ Func_0811b180:
 	adds	r0, r6, #0
 .L_0811b2c2:
 	pop	{r5, r6, pc}
+	.global Summon_Refresh
+	.thumb_func
+Summon_Refresh:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

@@ -150,9 +150,11 @@ verify-clean: toolchain-check
 
 publication-tree-check:
 	$(CHECK) publication --tree
+	$(CHECK) layout
 
 publication-staged-check:
 	$(CHECK) publication --staged
+	$(CHECK) layout
 
 tooling-index-check:
 	$(CHECK) publication --documents

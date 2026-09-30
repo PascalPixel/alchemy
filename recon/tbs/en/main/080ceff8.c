@@ -49,8 +49,6 @@
 typedef void (*WordCopy)(void *dest, const void *src, s32 words);
 
 extern void *gWorkSlot[];
-extern u8 Value_0000007b;
-extern u8 Value_00000068;
 extern u8 Value_000000cc;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -91,13 +89,13 @@ void BattleFx_RunFortyEightFrameEffect(void *object, s32 mode)
     M2C_FIELD(work, void **, 0x7828) = object;
     BattleFx_BeginCanvasLayer(0);
 
-    palette = Resource_GetTableEntry((s32)&Value_0000007b);
+    palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
     ((WordCopy)0x03001388)((void *)0x05000000, palette, 128);
     Resource_DecodeType01((u8 *)palette + 128, work);
     palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     ((WordCopy)0x03001388)((void *)0x05000000, palette, 128);
     if (mode == 2) {
-        palette = Resource_GetTableEntry((s32)&Value_00000068);
+        palette = Resource_GetTableEntry((s32)&ResourceId_FireballSheet);
         ((WordCopy)0x03001388)((void *)0x05000000, palette, 128);
     }
 

@@ -2,6 +2,7 @@
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 extern u8 Value_00007828;
 extern u8 Value_00000100;
 extern u8 Value_00002580;
@@ -21,9 +22,6 @@ extern u8 Value_00007824;
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
-extern u8 Value_0000009b;
-extern u8 Value_0000009c;
-extern u8 Value_0000009d;
 extern u8 Value_000000b7;
 extern u8 Value_000000bb;
 
@@ -85,9 +83,9 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
 
     if (mode == 0) {
-        Resource_LoadAndDecompress((s32) &Value_0000009c, work, 1, 1);
+        Resource_LoadAndDecompress((s32) &ResourceId_DaggerSheet, work, 1, 1);
     } else {
-        Resource_LoadAndDecompress((s32) &Value_0000009b, work, 1, 1);
+        Resource_LoadAndDecompress((s32) &ResourceId_ShieldSheet, work, 1, 1);
     }
 
     if (mode == 0) {
@@ -100,7 +98,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     palette = Resource_GetTableEntry(palette_id);
     ((WordCopyFn) 0x03001388)((void *) 0x05000000, palette, 128);
 
-    Resource_LoadAndDecompress((s32) &Value_0000009d, (u8 *) work + 0x2580, 0, 0);
+    Resource_LoadAndDecompress((s32) &ResourceId_PaletteRampImage, (u8 *) work + 0x2580, 0, 0);
 
     {
         s32 dst_offset;

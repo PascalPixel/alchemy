@@ -16,6 +16,7 @@
    i * 140 plus a 448-step giv). Other residuals: the item loop's and the
    main loop's register choices and the frame bound reload. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -32,7 +33,6 @@ extern u8 ShatterRocks_RockCounts[];
 extern u8 ShatterRocks_ShardWidths[];
 extern u8 ShatterRocks_ShardHeights[];
 extern u16 ShatterRocks_ShardCells[];
-extern u8 Value_0000008a;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_EndCanvasLayer(void);
@@ -78,7 +78,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
     BattleFx_BeginCanvasLayer(1);
     *(volatile u16 *)0x04000020 = 0x100;
     *(volatile u16 *)0x04000050 = 0;
-    Resource_LoadAndDecompress((s32)&Value_0000008a, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     blit = heap_cache[7];
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);

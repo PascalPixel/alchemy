@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -14,7 +15,6 @@
 void *Resource_GetTableEntry(s32 resource_id);
 void **GetBattleObjectSlotFar(s32 member_id);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-extern u8 Value_000000cd;
 
 
 s32 Unnamed_080d33c0(s32 actor) {
@@ -63,7 +63,7 @@ s32 Unnamed_080d33c0(s32 actor) {
     M2C_FIELD(temp_r7_17, s32 *, 0x7828) = actor;
     temp_r8_25 = temp_r7_17 + 0x7828;
     BattleFx_BeginCanvasLayer(1);
-    temp_r0_28 = Resource_GetTableEntry((s32)&Value_000000cd);
+    temp_r0_28 = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
     _call_via_r3(0x05000000, temp_r0_28, 0x80, 0x03001388);
     Resource_DecodeType01(temp_r0_28 + 0x80, temp_r7_17);
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);

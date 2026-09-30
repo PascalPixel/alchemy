@@ -188,9 +188,9 @@ Func_080d4330:
 	.4byte 0x02000240
 	.2byte 0x330c
 	.2byte 0x080f
-	.global Func_080d4384
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_080d4384:
+Object_AttachWorkTargetToObject:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

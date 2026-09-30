@@ -186,7 +186,7 @@ Func_080c8220:
 	.global Func_080c8228
 	.thumb_func
 Func_080c8228:
-	overlay_veneer Func_080d4384
+	overlay_veneer Object_AttachWorkTargetToObject
 	.global Func_080c8230
 	.thumb_func
 Func_080c8230:
@@ -194,7 +194,7 @@ Func_080c8230:
 	.global Func_080c8238
 	.thumb_func
 Func_080c8238:
-	overlay_veneer Func_080d440c
+	overlay_veneer Motion_CamBounds
 	.global Func_080c8240
 	.thumb_func
 Func_080c8240:

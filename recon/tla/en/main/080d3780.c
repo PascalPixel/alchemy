@@ -1,3 +1,7 @@
+/*
+ * Draft: Object_SetTargetAndCallback does not yet match; 3 halfwords differ from ☀️'s C, first at +0x30 (ldr r1, [pc, #24]).
+ * Links as recon/tla/raw/080d3600.s.
+ */
 #include "OBJECT_RUNTIME.H"
 #include "FIELD_EVENT.H"
 

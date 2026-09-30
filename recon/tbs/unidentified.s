@@ -217,6 +217,12 @@ RomBytes_080317e4:
 	.incbin "baserom.gba", 0x000317e4, 0x00000080
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
+	.global RenderResource_PairSourceTable3
+RenderResource_PairSourceTable3:
+	.global RenderResource_PairSourceTable4
+RenderResource_PairSourceTable4:
+	.global RenderResource_PairSourceTable2
+RenderResource_PairSourceTable2:
 	.incbin "baserom.gba", 0x00031864, 0x000005c0
 	.global UiText_SecondGlyphs
 UiText_SecondGlyphs:
@@ -279,7 +285,13 @@ SideObject_ActorKindIdMap:
 	.incbin "baserom.gba", 0x0003680c, 0x000000c8
 	.global Data_080368d4
 Data_080368d4:
-	.incbin "baserom.gba", 0x000368d4, 0x000008f0
+	.incbin "baserom.gba", 0x000368d4, 0x00000800
+	.global Data_080370d4
+Data_080370d4:
+	.incbin "baserom.gba", 0x000370d4, 0x000000e0
+	.global Data_080371b4
+Data_080371b4:
+	.incbin "baserom.gba", 0x000371b4, 0x00000010
 	.global Data_080371c4
 Data_080371c4:
 	.incbin "baserom.gba", 0x000371c4, 0x0000001c
@@ -340,12 +352,14 @@ Data_080373e0:
 	.global Data_080373e4
 Data_080373e4:
 	.incbin "baserom.gba", 0x000373e4, 0x00000002
+	.incbin "baserom.gba", 0x000373e6, 0x00000001
 	.global Data_080373e7
 Data_080373e7:
-	.incbin "baserom.gba", 0x000373e6, 0x00000004
+	.incbin "baserom.gba", 0x000373e7, 0x00000003
+	.incbin "baserom.gba", 0x000373ea, 0x00000001
 	.global Data_080373eb
 Data_080373eb:
-	.incbin "baserom.gba", 0x000373ea, 0x00000005
+	.incbin "baserom.gba", 0x000373eb, 0x00000004
 	.global Menu_SelectionStepDelays
 Menu_SelectionStepDelays:
 	.incbin "baserom.gba", 0x000373ef, 0x00000008
@@ -380,13 +394,24 @@ Data_08037458:
 Data_08037460:
 	.incbin "baserom.gba", 0x00037460, 0x00000004
 	.section .unidentified.08073808,"a"
-	.incbin "baserom.gba", 0x00073808, 0x0000000a
+	.global Data_08073808
+Data_08073808:
+	.incbin "baserom.gba", 0x00073808, 0x00000003
+	.global Data_0807380b
+Data_0807380b:
+	.incbin "baserom.gba", 0x0007380b, 0x00000003
+	.global Data_0807380e
+Data_0807380e:
+	.incbin "baserom.gba", 0x0007380e, 0x00000004
 	.global WorkspaceOptions_SliderPalette
 WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x00073812, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x00073854, 0x00000114
+	.incbin "baserom.gba", 0x00073854, 0x00000010
+	.global Data_08073864
+Data_08073864:
+	.incbin "baserom.gba", 0x00073864, 0x00000104
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x00073968, 0x00003698
@@ -408,7 +433,10 @@ Item_DefinitionTable:
 	.incbin "baserom.gba", 0x0007b6a8, 0x000037b0
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
-	.incbin "baserom.gba", 0x0007ee58, 0x00002070
+	.incbin "baserom.gba", 0x0007ee58, 0x000019b0
+	.global Data_08080808
+Data_08080808:
+	.incbin "baserom.gba", 0x00080808, 0x000006c0
 	.global Data_08080ec8
 Data_08080ec8:
 	.incbin "baserom.gba", 0x00080ec8, 0x00003624
@@ -475,7 +503,10 @@ gBattleCueTable:
 	.incbin "baserom.gba", 0x0009e488, 0x00000046
 	.global Debug_PaletteSwatchTiles
 Debug_PaletteSwatchTiles:
-	.incbin "baserom.gba", 0x0009e4ce, 0x000001b8
+	.incbin "baserom.gba", 0x0009e4ce, 0x000001b2
+	.global Data_0809e680
+Data_0809e680:
+	.incbin "baserom.gba", 0x0009e680, 0x00000006
 	.global BattleFx_TargetRangeByMode
 BattleFx_TargetRangeByMode:
 	.incbin "baserom.gba", 0x0009e686, 0x00000032
@@ -520,7 +551,10 @@ ObjectMotion_VariantScripts:
 	.incbin "baserom.gba", 0x0009ebfc, 0x00000184
 	.global ObjectGroup_BlinkChildValues
 ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x0009ed80, 0x00000204
+	.incbin "baserom.gba", 0x0009ed80, 0x00000004
+	.global Data_0809ed84
+Data_0809ed84:
+	.incbin "baserom.gba", 0x0009ed84, 0x00000200
 	.global Data_0809ef84
 Data_0809ef84:
 	.incbin "baserom.gba", 0x0009ef84, 0x000000a0
@@ -694,7 +728,10 @@ Menu_BackdropFrameTile:
 	.incbin "baserom.gba", 0x000af26c, 0x00000020
 	.global Data_080af28c
 Data_080af28c:
-	.incbin "baserom.gba", 0x000af28c, 0x00000008
+	.incbin "baserom.gba", 0x000af28c, 0x00000004
+	.global Data_080af290
+Data_080af290:
+	.incbin "baserom.gba", 0x000af290, 0x00000004
 	.global UiMenu_CursorBobX
 UiMenu_CursorBobX:
 	.incbin "baserom.gba", 0x000af294, 0x00000009
@@ -828,7 +865,16 @@ PpHealFalloff:
 	.incbin "baserom.gba", 0x000c2b50, 0x00000018
 	.global HpDmgFalloff
 HpDmgFalloff:
-	.incbin "baserom.gba", 0x000c2b68, 0x00000030
+	.incbin "baserom.gba", 0x000c2b68, 0x00000018
+	.global Data_080c2b80
+Data_080c2b80:
+	.incbin "baserom.gba", 0x000c2b80, 0x00000008
+	.global Data_080c2b88
+Data_080c2b88:
+	.incbin "baserom.gba", 0x000c2b88, 0x00000008
+	.global Data_080c2b90
+Data_080c2b90:
+	.incbin "baserom.gba", 0x000c2b90, 0x00000008
 	.global Battle_ActionStatus
 Battle_ActionStatus:
 	.incbin "baserom.gba", 0x000c2b98, 0x00000208
@@ -882,7 +928,10 @@ Data_080c5c10:
 	.incbin "baserom.gba", 0x000c5c10, 0x00000028
 	.global BattleFormation_Records
 BattleFormation_Records:
-	.incbin "baserom.gba", 0x000c5c38, 0x000017c0
+	.incbin "baserom.gba", 0x000c5c38, 0x00000010
+	.global Data_080c5c48
+Data_080c5c48:
+	.incbin "baserom.gba", 0x000c5c48, 0x000017b0
 	.global RomBytes_080c73f8
 RomBytes_080c73f8:
 	.incbin "baserom.gba", 0x000c73f8, 0x00000028
@@ -898,7 +947,10 @@ BattleFx10_UnitScale:
 	.incbin "baserom.gba", 0x000eda80, 0x00000008
 	.global Data_080eda88
 Data_080eda88:
-	.incbin "baserom.gba", 0x000eda88, 0x00000028
+	.incbin "baserom.gba", 0x000eda88, 0x00000010
+	.global Data_080eda98
+Data_080eda98:
+	.incbin "baserom.gba", 0x000eda98, 0x00000018
 	.global Data_080edab0
 Data_080edab0:
 	.incbin "baserom.gba", 0x000edab0, 0x00000008
@@ -910,7 +962,16 @@ Data_080edac0:
 	.incbin "baserom.gba", 0x000edac0, 0x00000008
 	.global Data_080edac8
 Data_080edac8:
-	.incbin "baserom.gba", 0x000edac8, 0x00000020
+	.incbin "baserom.gba", 0x000edac8, 0x00000008
+	.global Data_080edad0
+Data_080edad0:
+	.incbin "baserom.gba", 0x000edad0, 0x00000008
+	.global Data_080edad8
+Data_080edad8:
+	.incbin "baserom.gba", 0x000edad8, 0x00000008
+	.global Data_080edae0
+Data_080edae0:
+	.incbin "baserom.gba", 0x000edae0, 0x00000008
 	.global BattleFx6_UnitScale
 BattleFx6_UnitScale:
 	.incbin "baserom.gba", 0x000edae8, 0x00000008
@@ -953,7 +1014,13 @@ Data_080eded6:
 	.incbin "baserom.gba", 0x000eded6, 0x00000006
 	.global Data_080ededc
 Data_080ededc:
-	.incbin "baserom.gba", 0x000ededc, 0x00000028
+	.incbin "baserom.gba", 0x000ededc, 0x0000000c
+	.global Data_080edee8
+Data_080edee8:
+	.incbin "baserom.gba", 0x000edee8, 0x00000014
+	.global Data_080edefc
+Data_080edefc:
+	.incbin "baserom.gba", 0x000edefc, 0x00000008
 	.global Data_080edf04
 Data_080edf04:
 	.incbin "baserom.gba", 0x000edf04, 0x00000054
@@ -972,18 +1039,36 @@ Data_080edf70:
 	.global Data_080edf76
 Data_080edf76:
 	.incbin "baserom.gba", 0x000edf76, 0x00000004
+	.incbin "baserom.gba", 0x000edf7a, 0x00000001
 	.global Data_080edf7b
 Data_080edf7b:
-	.incbin "baserom.gba", 0x000edf7a, 0x00000004
+	.incbin "baserom.gba", 0x000edf7b, 0x00000003
+	.incbin "baserom.gba", 0x000edf7e, 0x00000001
 	.global Data_080edf7f
 Data_080edf7f:
-	.incbin "baserom.gba", 0x000edf7e, 0x00000004
+	.incbin "baserom.gba", 0x000edf7f, 0x00000003
+	.incbin "baserom.gba", 0x000edf82, 0x00000001
 	.global Data_080edf83
 Data_080edf83:
-	.incbin "baserom.gba", 0x000edf82, 0x00000006
+	.incbin "baserom.gba", 0x000edf83, 0x00000005
 	.global Data_080edf88
 Data_080edf88:
-	.incbin "baserom.gba", 0x000edf88, 0x000000d0
+	.incbin "baserom.gba", 0x000edf88, 0x00000008
+	.global Data_080edf90
+Data_080edf90:
+	.incbin "baserom.gba", 0x000edf90, 0x00000021
+	.global Data_080edfb1
+Data_080edfb1:
+	.incbin "baserom.gba", 0x000edfb1, 0x00000021
+	.global Data_080edfd2
+Data_080edfd2:
+	.incbin "baserom.gba", 0x000edfd2, 0x00000044
+	.global Data_080ee016
+Data_080ee016:
+	.incbin "baserom.gba", 0x000ee016, 0x00000021
+	.global Data_080ee037
+Data_080ee037:
+	.incbin "baserom.gba", 0x000ee037, 0x00000021
 	.global Data_080ee058
 Data_080ee058:
 	.incbin "baserom.gba", 0x000ee058, 0x00000004
@@ -1010,7 +1095,16 @@ TwoResource_CellBiasY:
 	.incbin "baserom.gba", 0x000ee088, 0x00000008
 	.global Data_080ee090
 Data_080ee090:
-	.incbin "baserom.gba", 0x000ee090, 0x00000012
+	.incbin "baserom.gba", 0x000ee090, 0x00000006
+	.global Data_080ee096
+Data_080ee096:
+	.incbin "baserom.gba", 0x000ee096, 0x00000006
+	.global Data_080ee09c
+Data_080ee09c:
+	.incbin "baserom.gba", 0x000ee09c, 0x00000003
+	.global Data_080ee09f
+Data_080ee09f:
+	.incbin "baserom.gba", 0x000ee09f, 0x00000003
 	.global Data_080ee0a2
 Data_080ee0a2:
 	.incbin "baserom.gba", 0x000ee0a2, 0x00000008
@@ -1020,9 +1114,10 @@ Data_080ee0aa:
 	.global Data_080ee0b0
 Data_080ee0b0:
 	.incbin "baserom.gba", 0x000ee0b0, 0x00000002
+	.incbin "baserom.gba", 0x000ee0b2, 0x00000001
 	.global Data_080ee0b3
 Data_080ee0b3:
-	.incbin "baserom.gba", 0x000ee0b2, 0x00000004
+	.incbin "baserom.gba", 0x000ee0b3, 0x00000003
 	.global Data_080ee0b6
 Data_080ee0b6:
 	.incbin "baserom.gba", 0x000ee0b6, 0x0000000e
@@ -1043,49 +1138,88 @@ CounterReveal_PanelY:
 	.incbin "baserom.gba", 0x000ee11a, 0x0000000e
 	.global Data_080ee128
 Data_080ee128:
-	.incbin "baserom.gba", 0x000ee128, 0x00000030
+	.incbin "baserom.gba", 0x000ee128, 0x0000000c
+	.global Data_080ee134
+Data_080ee134:
+	.incbin "baserom.gba", 0x000ee134, 0x0000000c
+	.global Data_080ee140
+Data_080ee140:
+	.incbin "baserom.gba", 0x000ee140, 0x00000018
 	.global Data_080ee158
 Data_080ee158:
 	.incbin "baserom.gba", 0x000ee158, 0x00000002
 	.global Data_080ee15a
 Data_080ee15a:
 	.incbin "baserom.gba", 0x000ee15a, 0x00000008
+	.incbin "baserom.gba", 0x000ee162, 0x00000001
 	.global Data_080ee163
 Data_080ee163:
-	.incbin "baserom.gba", 0x000ee162, 0x0000000a
+	.incbin "baserom.gba", 0x000ee163, 0x00000009
 	.global Data_080ee16c
 Data_080ee16c:
 	.incbin "baserom.gba", 0x000ee16c, 0x00000008
 	.global Data_080ee174
 Data_080ee174:
 	.incbin "baserom.gba", 0x000ee174, 0x00000002
+	.incbin "baserom.gba", 0x000ee176, 0x00000001
 	.global Data_080ee177
 Data_080ee177:
-	.incbin "baserom.gba", 0x000ee176, 0x00000004
+	.incbin "baserom.gba", 0x000ee177, 0x00000003
 	.global Data_080ee17a
 Data_080ee17a:
 	.incbin "baserom.gba", 0x000ee17a, 0x00000004
 	.global Data_080ee17e
 Data_080ee17e:
-	.incbin "baserom.gba", 0x000ee17e, 0x0000002e
+	.incbin "baserom.gba", 0x000ee17e, 0x00000006
+	.global Data_080ee184
+Data_080ee184:
+	.incbin "baserom.gba", 0x000ee184, 0x00000004
+	.global Data_080ee188
+Data_080ee188:
+	.incbin "baserom.gba", 0x000ee188, 0x00000002
+	.global Data_080ee18a
+Data_080ee18a:
+	.incbin "baserom.gba", 0x000ee18a, 0x00000004
+	.global Data_080ee18e
+Data_080ee18e:
+	.incbin "baserom.gba", 0x000ee18e, 0x00000006
+	.global Data_080ee194
+Data_080ee194:
+	.incbin "baserom.gba", 0x000ee194, 0x00000006
+	.global Data_080ee19a
+Data_080ee19a:
+	.incbin "baserom.gba", 0x000ee19a, 0x00000006
+	.global Data_080ee1a0
+Data_080ee1a0:
+	.incbin "baserom.gba", 0x000ee1a0, 0x0000000c
 	.global Data_080ee1ac
 Data_080ee1ac:
 	.incbin "baserom.gba", 0x000ee1ac, 0x00000008
 	.global Data_080ee1b4
 Data_080ee1b4:
-	.incbin "baserom.gba", 0x000ee1b4, 0x0000001e
+	.incbin "baserom.gba", 0x000ee1b4, 0x00000010
+	.global Data_080ee1c4
+Data_080ee1c4:
+	.incbin "baserom.gba", 0x000ee1c4, 0x00000006
+	.global Data_080ee1ca
+Data_080ee1ca:
+	.incbin "baserom.gba", 0x000ee1ca, 0x00000008
+	.incbin "baserom.gba", 0x000ee1d2, 0x00000001
 	.global Data_080ee1d3
 Data_080ee1d3:
-	.incbin "baserom.gba", 0x000ee1d2, 0x00000022
+	.incbin "baserom.gba", 0x000ee1d3, 0x00000021
+	.incbin "baserom.gba", 0x000ee1f4, 0x00000001
 	.global Data_080ee1f5
 Data_080ee1f5:
-	.incbin "baserom.gba", 0x000ee1f4, 0x00000006
+	.incbin "baserom.gba", 0x000ee1f5, 0x00000005
+	.incbin "baserom.gba", 0x000ee1fa, 0x00000001
 	.global Data_080ee1fb
 Data_080ee1fb:
-	.incbin "baserom.gba", 0x000ee1fa, 0x0000000c
+	.incbin "baserom.gba", 0x000ee1fb, 0x0000000b
+	.incbin "baserom.gba", 0x000ee206, 0x00000001
 	.global Data_080ee207
 Data_080ee207:
-	.incbin "baserom.gba", 0x000ee206, 0x0000000e
+	.incbin "baserom.gba", 0x000ee207, 0x0000000d
 	.global Data_080ee214
 Data_080ee214:
 	.incbin "baserom.gba", 0x000ee214, 0x00000030
@@ -1107,12 +1241,14 @@ Data_080ee294:
 	.global Data_080ee29a
 Data_080ee29a:
 	.incbin "baserom.gba", 0x000ee29a, 0x00000002
+	.incbin "baserom.gba", 0x000ee29c, 0x00000001
 	.global Data_080ee29d
 Data_080ee29d:
-	.incbin "baserom.gba", 0x000ee29c, 0x0000000c
+	.incbin "baserom.gba", 0x000ee29d, 0x0000000b
+	.incbin "baserom.gba", 0x000ee2a8, 0x00000001
 	.global Data_080ee2a9
 Data_080ee2a9:
-	.incbin "baserom.gba", 0x000ee2a8, 0x00000006
+	.incbin "baserom.gba", 0x000ee2a9, 0x00000005
 	.global Data_080ee2ae
 Data_080ee2ae:
 	.incbin "baserom.gba", 0x000ee2ae, 0x00000006
@@ -1128,9 +1264,10 @@ Data_080ee916:
 	.global Data_080ee920
 Data_080ee920:
 	.incbin "baserom.gba", 0x000ee920, 0x00000004
+	.incbin "baserom.gba", 0x000ee924, 0x00000001
 	.global Data_080ee925
 Data_080ee925:
-	.incbin "baserom.gba", 0x000ee924, 0x00000006
+	.incbin "baserom.gba", 0x000ee925, 0x00000005
 	.global Data_080ee92a
 Data_080ee92a:
 	.incbin "baserom.gba", 0x000ee92a, 0x00000006
@@ -1143,9 +1280,10 @@ Data_080ee934:
 	.global Data_080ee93e
 Data_080ee93e:
 	.incbin "baserom.gba", 0x000ee93e, 0x00000004
+	.incbin "baserom.gba", 0x000ee942, 0x00000001
 	.global Data_080ee943
 Data_080ee943:
-	.incbin "baserom.gba", 0x000ee942, 0x00000006
+	.incbin "baserom.gba", 0x000ee943, 0x00000005
 	.global Data_080ee948
 Data_080ee948:
 	.incbin "baserom.gba", 0x000ee948, 0x0000000a
@@ -1227,9 +1365,10 @@ Data_080eea2c:
 	.global Data_080eea38
 Data_080eea38:
 	.incbin "baserom.gba", 0x000eea38, 0x00000008
+	.incbin "baserom.gba", 0x000eea40, 0x00000001
 	.global Data_080eea41
 Data_080eea41:
-	.incbin "baserom.gba", 0x000eea40, 0x00000004
+	.incbin "baserom.gba", 0x000eea41, 0x00000003
 	.global Data_080eea44
 Data_080eea44:
 	.incbin "baserom.gba", 0x000eea44, 0x00000006
@@ -1248,12 +1387,14 @@ Data_080eea62:
 	.global Data_080eea88
 Data_080eea88:
 	.incbin "baserom.gba", 0x000eea88, 0x00000008
+	.incbin "baserom.gba", 0x000eea90, 0x00000001
 	.global Data_080eea91
 Data_080eea91:
-	.incbin "baserom.gba", 0x000eea90, 0x00000008
+	.incbin "baserom.gba", 0x000eea91, 0x00000007
+	.incbin "baserom.gba", 0x000eea98, 0x00000001
 	.global Data_080eea99
 Data_080eea99:
-	.incbin "baserom.gba", 0x000eea98, 0x0000000a
+	.incbin "baserom.gba", 0x000eea99, 0x00000009
 	.global Data_080eeaa2
 Data_080eeaa2:
 	.incbin "baserom.gba", 0x000eeaa2, 0x00000010
@@ -1263,12 +1404,14 @@ Data_080eeab2:
 	.global Data_080eeab8
 Data_080eeab8:
 	.incbin "baserom.gba", 0x000eeab8, 0x00000002
+	.incbin "baserom.gba", 0x000eeaba, 0x00000001
 	.global Data_080eeabb
 Data_080eeabb:
-	.incbin "baserom.gba", 0x000eeaba, 0x00000008
+	.incbin "baserom.gba", 0x000eeabb, 0x00000007
+	.incbin "baserom.gba", 0x000eeac2, 0x00000001
 	.global Data_080eeac3
 Data_080eeac3:
-	.incbin "baserom.gba", 0x000eeac2, 0x0000000a
+	.incbin "baserom.gba", 0x000eeac3, 0x00000009
 	.global Data_080eeacc
 Data_080eeacc:
 	.incbin "baserom.gba", 0x000eeacc, 0x00000010
@@ -1283,7 +1426,10 @@ Data_080eeaec:
 	.incbin "baserom.gba", 0x000eeaec, 0x0000000e
 	.global Data_080eeafa
 Data_080eeafa:
-	.incbin "baserom.gba", 0x000eeafa, 0x0000004e
+	.incbin "baserom.gba", 0x000eeafa, 0x00000046
+	.global Data_080eeb40
+Data_080eeb40:
+	.incbin "baserom.gba", 0x000eeb40, 0x00000008
 	.global Data_080eeb48
 Data_080eeb48:
 	.incbin "baserom.gba", 0x000eeb48, 0x00000003
@@ -1347,24 +1493,27 @@ Data_080eebe2:
 	.global Data_080eebe6
 Data_080eebe6:
 	.incbin "baserom.gba", 0x000eebe6, 0x00000002
+	.incbin "baserom.gba", 0x000eebe8, 0x00000001
 	.global Data_080eebe9
 Data_080eebe9:
-	.incbin "baserom.gba", 0x000eebe8, 0x00000004
+	.incbin "baserom.gba", 0x000eebe9, 0x00000003
 	.global Data_080eebec
 Data_080eebec:
 	.incbin "baserom.gba", 0x000eebec, 0x0000003c
 	.global Data_080eec28
 Data_080eec28:
 	.incbin "baserom.gba", 0x000eec28, 0x00000006
+	.incbin "baserom.gba", 0x000eec2e, 0x00000001
 	.global Data_080eec2f
 Data_080eec2f:
-	.incbin "baserom.gba", 0x000eec2e, 0x00000008
+	.incbin "baserom.gba", 0x000eec2f, 0x00000007
 	.global Data_080eec36
 Data_080eec36:
 	.incbin "baserom.gba", 0x000eec36, 0x00000006
+	.incbin "baserom.gba", 0x000eec3c, 0x00000001
 	.global Data_080eec3d
 Data_080eec3d:
-	.incbin "baserom.gba", 0x000eec3c, 0x00000008
+	.incbin "baserom.gba", 0x000eec3d, 0x00000007
 	.global Data_080eec44
 Data_080eec44:
 	.incbin "baserom.gba", 0x000eec44, 0x0000000e
@@ -1382,7 +1531,52 @@ ParticleReveal_CellHeights:
 	.incbin "baserom.gba", 0x000eec63, 0x00000005
 	.global ParticleReveal_CellSourceOffsets
 ParticleReveal_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000eec68, 0x000000d6
+	.incbin "baserom.gba", 0x000eec68, 0x00000008
+	.global Data_080eec70
+Data_080eec70:
+	.incbin "baserom.gba", 0x000eec70, 0x00000004
+	.global Data_080eec74
+Data_080eec74:
+	.incbin "baserom.gba", 0x000eec74, 0x00000009
+	.global Data_080eec7d
+Data_080eec7d:
+	.incbin "baserom.gba", 0x000eec7d, 0x00000009
+	.global Data_080eec86
+Data_080eec86:
+	.incbin "baserom.gba", 0x000eec86, 0x00000012
+	.global Data_080eec98
+Data_080eec98:
+	.incbin "baserom.gba", 0x000eec98, 0x00000009
+	.global Data_080eeca1
+Data_080eeca1:
+	.incbin "baserom.gba", 0x000eeca1, 0x00000009
+	.global Data_080eecaa
+Data_080eecaa:
+	.incbin "baserom.gba", 0x000eecaa, 0x00000004
+	.global Data_080eecae
+Data_080eecae:
+	.incbin "baserom.gba", 0x000eecae, 0x00000004
+	.global Data_080eecb2
+Data_080eecb2:
+	.incbin "baserom.gba", 0x000eecb2, 0x00000040
+	.global Data_080eecf2
+Data_080eecf2:
+	.incbin "baserom.gba", 0x000eecf2, 0x00000005
+	.global Data_080eecf7
+Data_080eecf7:
+	.incbin "baserom.gba", 0x000eecf7, 0x00000005
+	.global Data_080eecfc
+Data_080eecfc:
+	.incbin "baserom.gba", 0x000eecfc, 0x00000003
+	.global Data_080eecff
+Data_080eecff:
+	.incbin "baserom.gba", 0x000eecff, 0x0000000f
+	.global Data_080eed0e
+Data_080eed0e:
+	.incbin "baserom.gba", 0x000eed0e, 0x00000010
+	.global Data_080eed1e
+Data_080eed1e:
+	.incbin "baserom.gba", 0x000eed1e, 0x00000020
 	.global Data_080eed3e
 Data_080eed3e:
 	.incbin "baserom.gba", 0x000eed3e, 0x00000040
@@ -1398,9 +1592,10 @@ Data_080eed9a:
 	.global Data_080eeda0
 Data_080eeda0:
 	.incbin "baserom.gba", 0x000eeda0, 0x00000002
+	.incbin "baserom.gba", 0x000eeda2, 0x00000001
 	.global Data_080eeda3
 Data_080eeda3:
-	.incbin "baserom.gba", 0x000eeda2, 0x00000004
+	.incbin "baserom.gba", 0x000eeda3, 0x00000003
 	.global Data_080eeda6
 Data_080eeda6:
 	.incbin "baserom.gba", 0x000eeda6, 0x00000006
@@ -1434,18 +1629,20 @@ CastingImpact_OrbitCells:
 	.global Data_080eedf4
 Data_080eedf4:
 	.incbin "baserom.gba", 0x000eedf4, 0x00000006
+	.incbin "baserom.gba", 0x000eedfa, 0x00000001
 	.global Data_080eedfb
 Data_080eedfb:
-	.incbin "baserom.gba", 0x000eedfa, 0x00000008
+	.incbin "baserom.gba", 0x000eedfb, 0x00000007
 	.global Data_080eee02
 Data_080eee02:
 	.incbin "baserom.gba", 0x000eee02, 0x0000000e
 	.global Data_080eee10
 Data_080eee10:
 	.incbin "baserom.gba", 0x000eee10, 0x00000006
+	.incbin "baserom.gba", 0x000eee16, 0x00000001
 	.global Data_080eee17
 Data_080eee17:
-	.incbin "baserom.gba", 0x000eee16, 0x00000008
+	.incbin "baserom.gba", 0x000eee17, 0x00000007
 	.global Data_080eee1e
 Data_080eee1e:
 	.incbin "baserom.gba", 0x000eee1e, 0x0000000c
@@ -1463,25 +1660,74 @@ Data_080eee46:
 	.incbin "baserom.gba", 0x000eee46, 0x00000008
 	.global Data_080eee4e
 Data_080eee4e:
-	.incbin "baserom.gba", 0x000eee4e, 0x0000008a
+	.incbin "baserom.gba", 0x000eee4e, 0x00000008
+	.global Data_080eee56
+Data_080eee56:
+	.incbin "baserom.gba", 0x000eee56, 0x00000008
+	.global Data_080eee5e
+Data_080eee5e:
+	.incbin "baserom.gba", 0x000eee5e, 0x00000008
+	.global Data_080eee66
+Data_080eee66:
+	.incbin "baserom.gba", 0x000eee66, 0x00000010
+	.global Data_080eee76
+Data_080eee76:
+	.incbin "baserom.gba", 0x000eee76, 0x0000002a
+	.global Data_080eeea0
+Data_080eeea0:
+	.incbin "baserom.gba", 0x000eeea0, 0x0000001c
+	.global Data_080eeebc
+Data_080eeebc:
+	.incbin "baserom.gba", 0x000eeebc, 0x0000000e
+	.global Data_080eeeca
+Data_080eeeca:
+	.incbin "baserom.gba", 0x000eeeca, 0x0000000e
 	.global Data_080eeed8
 Data_080eeed8:
 	.incbin "baserom.gba", 0x000eeed8, 0x00000008
+	.incbin "baserom.gba", 0x000eeee0, 0x00000001
 	.global Data_080eeee1
 Data_080eeee1:
-	.incbin "baserom.gba", 0x000eeee0, 0x0000000a
+	.incbin "baserom.gba", 0x000eeee1, 0x00000009
 	.global Data_080eeeea
 Data_080eeeea:
 	.incbin "baserom.gba", 0x000eeeea, 0x0000000e
 	.global Data_080eeef8
 Data_080eeef8:
-	.incbin "baserom.gba", 0x000eeef8, 0x0000001a
+	.incbin "baserom.gba", 0x000eeef8, 0x0000000e
+	.global Data_080eef06
+Data_080eef06:
+	.incbin "baserom.gba", 0x000eef06, 0x00000006
+	.global Data_080eef0c
+Data_080eef0c:
+	.incbin "baserom.gba", 0x000eef0c, 0x00000006
 	.global Data_080eef12
 Data_080eef12:
 	.incbin "baserom.gba", 0x000eef12, 0x00000006
 	.global Data_080eef18
 Data_080eef18:
-	.incbin "baserom.gba", 0x000eef18, 0x00000050
+	.incbin "baserom.gba", 0x000eef18, 0x00000010
+	.global Data_080eef28
+Data_080eef28:
+	.incbin "baserom.gba", 0x000eef28, 0x00000008
+	.global Data_080eef30
+Data_080eef30:
+	.incbin "baserom.gba", 0x000eef30, 0x0000000e
+	.global Data_080eef3e
+Data_080eef3e:
+	.incbin "baserom.gba", 0x000eef3e, 0x0000000c
+	.global Data_080eef4a
+Data_080eef4a:
+	.incbin "baserom.gba", 0x000eef4a, 0x00000006
+	.global Data_080eef50
+Data_080eef50:
+	.incbin "baserom.gba", 0x000eef50, 0x00000006
+	.global Data_080eef56
+Data_080eef56:
+	.incbin "baserom.gba", 0x000eef56, 0x00000009
+	.global Data_080eef5f
+Data_080eef5f:
+	.incbin "baserom.gba", 0x000eef5f, 0x00000009
 	.global BattleFx6_ObjectX
 BattleFx6_ObjectX:
 	.incbin "baserom.gba", 0x000eef68, 0x00000008
@@ -1506,9 +1752,10 @@ Data_080ef034:
 	.global DisplayScroll_SlideResources
 DisplayScroll_SlideResources:
 	.incbin "baserom.gba", 0x000f0a5c, 0x00000760
+	.incbin "baserom.gba", 0x000f11bc, 0x00000001
 	.global Data_080f11bd
 Data_080f11bd:
-	.incbin "baserom.gba", 0x000f11bc, 0x00000064
+	.incbin "baserom.gba", 0x000f11bd, 0x00000063
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f1220, 0x00000550
@@ -1521,13 +1768,17 @@ Data_080f1770:
 Func_080f2b6c:
 	.incbin "baserom.gba", 0x000f2b6c, 0x00000004
 	.section .unidentified.080f38bc,"a"
+	.global Data_080f38bc
+Data_080f38bc:
 	.incbin "baserom.gba", 0x000f38bc, 0x000000ee
+	.incbin "baserom.gba", 0x000f39aa, 0x00000001
 	.global Data_080f39ab
 Data_080f39ab:
-	.incbin "baserom.gba", 0x000f39aa, 0x00000006
+	.incbin "baserom.gba", 0x000f39ab, 0x00000005
+	.incbin "baserom.gba", 0x000f39b0, 0x00000001
 	.global Data_080f39b1
 Data_080f39b1:
-	.incbin "baserom.gba", 0x000f39b0, 0x0000003e
+	.incbin "baserom.gba", 0x000f39b1, 0x0000003d
 	.global Data_080f39ee
 Data_080f39ee:
 	.incbin "baserom.gba", 0x000f39ee, 0x00000040

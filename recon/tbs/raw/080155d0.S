@@ -164,8 +164,8 @@ Func_080155d0:
 	sub	r9, r9, #1
 	add	r7, r7, #1
 	b .L_080157f8
-	.4byte 0x080370d4
-	.4byte 0x08032224
+	.4byte Data_080370d4
+	.4byte UiText_Glyphs
 .L_080157f4:
 	sub	r7, r7, #1
 .L_080157f8:

@@ -267,13 +267,28 @@ gBattleDisplayWork:
 	.space 0x00000008
 	.global gBattleFxWork
 gBattleFxWork:
-	.space 0x0000000c
+	.space 0x00000004
+	.global Data_03001ef0
+Data_03001ef0:
+	.space 0x00000008
 	.global gDisp
 gDisp:
-	.space 0x00000008
+	.space 0x00000004
+	.global Data_03001efc
+Data_03001efc:
+	.space 0x00000004
 	.global gTransitionWork
 gTransitionWork:
-	.space 0x0000001c
+	.space 0x00000004
+	.global Data_03001f04
+Data_03001f04:
+	.space 0x00000004
+	.global Data_03001f08
+Data_03001f08:
+	.space 0x00000004
+	.global Data_03001f0c
+Data_03001f0c:
+	.space 0x00000010
 	.global Data_03001f1c
 Data_03001f1c:
 	.global gSaveWorkspace

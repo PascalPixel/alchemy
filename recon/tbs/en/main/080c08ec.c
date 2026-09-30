@@ -56,7 +56,7 @@ void Func_080b5138(void);
 void BattlePres_UpdateHBlankScroll(void);
 void Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 
-void Func_080c08ec(s32 mode, s32 resource, s32 level)
+void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {
     struct BattleBgState *state = gTransitionWork[0];
     u8 *data = GetResource(resource);

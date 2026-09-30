@@ -37,7 +37,7 @@
  * modelled here the way the 0x080d41a4 draft models it.
  *
  * Uncertain, left neutral: the roles of BattleFx_BeginCanvasLayer/BattlePres_ConfigureEffectDisplay/
- * Unnamed_080cd104/BattleFx_SpawnObjects and of the particle words at +0x08 and +0x14;
+ * BattleEffect_WipeCanvas/BattleFx_SpawnObjects and of the particle words at +0x08 and +0x14;
  * the small link-time constants that the reference materialises from its
  * literal pool rather than as immediates (0, 0x3C, 0x73, 0xC0) are spelled as
  * `Value_<hex>` externs, which is the only ordinary-C reading that reproduces a
@@ -89,7 +89,7 @@ extern u16 Data_080eeef8[];
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattlePres_ConfigureEffectDisplay(void);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Unnamed_080cd104(s32 a, s32 b);
+void BattleEffect_WipeCanvas(s32 a, s32 b);
 void BattleFx_SelectLivingTargets(void *object);
 void BattleFx_SpawnObjects(s32 a, s32 b, s32 c);
 void *ResourceObject_CreateFar(s32 id);
@@ -164,7 +164,7 @@ void BattleEffect_RunCirclingFallingScene(void *object)
     *(u16 *)0x05000002 = (u16)(s32)&Value_00000000;
     ((struct BattleEffectWork *)work)->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
-    Unnamed_080cd104(1, 0);
+    BattleEffect_WipeCanvas(1, 0);
     BattleFx_SelectLivingTargets(((struct BattleEffectWork *)work)->effect);
     BattleFx_SpawnObjects(9, 0x17B, 2);
 
@@ -199,7 +199,7 @@ void BattleEffect_RunCirclingFallingScene(void *object)
     *io = 0x1088;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&Value_0000003c, 0);
-    Unnamed_080cd104(1, 1);
+    BattleEffect_WipeCanvas(1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprite_sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 1);
     *(u16 *)0x04000000 = 0x7741;

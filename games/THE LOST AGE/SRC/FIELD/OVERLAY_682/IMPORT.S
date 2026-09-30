@@ -61,7 +61,7 @@
 	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c8408
 	overlay_veneer Func_080c84e0
-	overlay_veneer Func_080c85c8
+	overlay_veneer BattleFx_GetResourceIdFar
 	overlay_veneer Func_080c85e8
 	overlay_veneer ObjectMotion_OffsetPositionAndResetFar
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar

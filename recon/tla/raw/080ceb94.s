@@ -8,7 +8,7 @@ Func_080ceb94:
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #16]
 	movs r0, #0
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	str r0, [r5, #12]
 	str r0, [r5, #20]
 	pop {r5, pc}

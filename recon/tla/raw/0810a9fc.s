@@ -25,10 +25,10 @@ Func_0810a9fc:
 	adds r3, #250
 	add r3, r8
 	ldrh r0, [r3]
-	bl Func_080c85c8
+	bl BattleFx_GetResourceIdFar
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl Func_0810a960
+	bl Shop_MsgByMode
 	ldr r2, [r6]
 	movs r3, #13
 	strb r3, [r2, #5]

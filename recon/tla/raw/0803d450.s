@@ -10,7 +10,7 @@ Func_0803d450:
 	movs r2, #161
 	lsls r2, r2, #3
 	adds r5, r6, r2
-	bl Func_0803d2f0
+	bl Localization_LookupEntryId
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3

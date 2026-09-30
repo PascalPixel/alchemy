@@ -58,7 +58,7 @@
 	overlay_veneer PartyInventory_AddFar
 	overlay_veneer Func_080ad090
 	overlay_veneer Party_AddActiveOwnerFar
-	overlay_veneer Func_080ad110
+	overlay_veneer Party_RemoveActiveOwnerFar
 	overlay_veneer Func_080ad200
 	overlay_veneer Func_080ad238
 	overlay_veneer Djinn_AddToLeastLoadedOwnerFar

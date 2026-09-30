@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081192d0
+	.global BattlePres_WaitSync
 	.thumb_func
-Func_081192d0:
+BattlePres_WaitSync:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18

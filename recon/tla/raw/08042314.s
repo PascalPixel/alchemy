@@ -11,7 +11,7 @@ RenderOutput_Create:
 	mov r10, r1
 	mov r8, r2
 	adds r6, r3, #0
-	bl Func_08038eb0
+	bl RenderOutput_AcquireFree
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_08042338

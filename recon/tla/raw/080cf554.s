@@ -97,7 +97,7 @@ Func_080cf554:
 	lsls r5, r3, #16
 	adds r2, r5, #0
 	str r4, [sp, #0]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	adds r6, r0, #0
 	ldr r4, [sp, #0]
 	b .L_080cf63e

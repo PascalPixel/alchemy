@@ -30,7 +30,7 @@
 	overlay_veneer Func_08020178
 	overlay_veneer Func_08020198
 	overlay_veneer Func_080201b0
-	overlay_veneer Func_080201c0
+	overlay_veneer Map_GetTerrainHeightFar
 	overlay_veneer Func_080201d8
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_080201f0

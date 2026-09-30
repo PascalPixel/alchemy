@@ -917,7 +917,7 @@ Func_0818df5c:
 	ldrsh r3, [r6, r1]
 	mov r1, r9
 	str r3, [r4, #8]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	mov r2, r9
 	ldr r3, [r2, #8]
 	cmp r3, #0

@@ -10,4 +10,4 @@ Func_080c9934:
 	ldrsh r0, [r0, r3]
 	bx lr
 .L_080c9940:
-	.4byte Data_080f17a8
+	.4byte Field_SceneTable

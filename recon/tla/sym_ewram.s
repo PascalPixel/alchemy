@@ -301,8 +301,8 @@ Data_02007528:
 	.global Data_0200752c
 Data_0200752c:
 	.space 0x00000ad4
-	.global Data_02008000
-Data_02008000:
+	.global gOverlayArea
+gOverlayArea:
 	.space 0x00007f58
 	.global Data_0200ff58
 Data_0200ff58:

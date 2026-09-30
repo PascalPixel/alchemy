@@ -327,7 +327,7 @@ Func_08144b14:
 	bl Func_08014de4
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #36]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, [r5, #8]
 	adds r0, r7, #0
 	str r3, [r7]
@@ -483,7 +483,7 @@ Func_08144b14:
 	ldr r0, [sp, #40]
 	adds r1, r0, #0
 	adds r1, #12
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r0, [sp, #48]
 	ldr r1, [sp, #28]
 	cmp r0, r1

@@ -26,7 +26,7 @@ Func_0803c274:
 	ldr r2, [sp, #24]
 	cmp r2, #1
 	bne .L_0803c344
-	bl Func_08038eb0
+	bl RenderOutput_AcquireFree
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0803c36c

@@ -54,7 +54,7 @@ Func_08039ed0:
 	ldrsh r2, [r5, r3]
 	movs r4, #34
 	ldrsh r3, [r5, r4]
-	bl Func_0803911c
+	bl UiWindow_EraseBorderRect
 	adds r0, r5, #0
 	movs r1, #1
 	bl Func_08039f94
@@ -72,7 +72,7 @@ Func_08039ed0:
 	ldrsh r2, [r5, r3]
 	movs r4, #34
 	ldrsh r3, [r5, r4]
-	bl Func_0803911c
+	bl UiWindow_EraseBorderRect
 	movs r3, #1
 	str r6, [r5]
 	str r6, [r5, #4]

@@ -6,7 +6,7 @@ Menu_AnimateSelectionToEntry:
 	push {r5, r6, lr}
 	adds r6, r1, #0
 	adds r5, r0, #0
-	bl Func_0803f800
+	bl UiWindow_OpenMode1AndWaitFrame
 	bl AffineEffect_InitializeWork
 	movs r0, #1
 	bl Menu_AppendResourceEntry
@@ -18,7 +18,7 @@ Menu_AnimateSelectionToEntry:
 	bl Menu_AppendResourceEntry
 	subs r1, r6, #1
 	adds r0, r5, #0
-	bl Func_0804d28c
+	bl Menu_SelectResource
 	adds r6, r0, #0
 	bl Menu_EndResourceSelection
 	bl Func_0803f810

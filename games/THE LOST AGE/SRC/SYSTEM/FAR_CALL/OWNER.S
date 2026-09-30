@@ -49,9 +49,9 @@ Party_ListActiveOwnersFar:
 	.thumb_func
 Func_080ad108:
 	overlay_veneer Func_080b04bc
-	.global Func_080ad110
+	.global Party_RemoveActiveOwnerFar
 	.thumb_func
-Func_080ad110:
+Party_RemoveActiveOwnerFar:
 	overlay_veneer Func_080afe1c
 	.global Func_080ad118
 	.thumb_func
@@ -80,7 +80,7 @@ Func_080ad140:
 	.global BattleRandom16Far
 	.thumb_func
 BattleRandom16Far:
-	overlay_veneer Func_080b0378
+	overlay_veneer BattleRandom16
 	.global Djinn_AddToOwnerFar
 	.thumb_func
 Djinn_AddToOwnerFar:

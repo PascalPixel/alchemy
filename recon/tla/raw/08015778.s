@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08015778
+	.global Render_ProjectPoint
 	.thumb_func
-Func_08015778:
+Render_ProjectPoint:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

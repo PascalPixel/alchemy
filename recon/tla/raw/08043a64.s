@@ -40,7 +40,7 @@ Func_08043a64:
 	mov r3, r8
 	ldrsb r0, [r4, r3]
 	str r4, [sp, #0]
-	bl Func_08020040
+	bl GetBattleEffectObject
 	adds r5, r0, #0
 	ldr r4, [sp, #0]
 	cmp r5, #0

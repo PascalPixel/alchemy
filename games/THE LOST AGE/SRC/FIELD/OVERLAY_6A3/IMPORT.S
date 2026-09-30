@@ -36,7 +36,7 @@
 	overlay_veneer Func_08020120
 	overlay_veneer Object_SetPosition
 	overlay_veneer Object_CommitPosition
-	overlay_veneer Func_080201c0
+	overlay_veneer Map_GetTerrainHeightFar
 	overlay_veneer Func_080201e0
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_080201f0
@@ -54,7 +54,7 @@
 	overlay_veneer Owner_AdjustFirstValueFar
 	overlay_veneer Owner_AdjustSecondValueFar
 	overlay_veneer Party_AddActiveOwnerFar
-	overlay_veneer Func_080ad110
+	overlay_veneer Party_RemoveActiveOwnerFar
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020

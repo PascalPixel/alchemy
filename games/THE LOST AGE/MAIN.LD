@@ -1859,6 +1859,8 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.086848d0)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TITLE/TITLE_SCREEN.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0868a3fe)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/TITLE/INTRO_LIGHTHOUSE.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.086a36f0)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TITLE/LOGO_ON_BLACK.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.086aa06b)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BACKDROP/PURPLE_MOON.o"(.rodata)

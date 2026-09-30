@@ -38,7 +38,7 @@ Resource_DirectoryTable:
 	resource , Title_ScreenPicture
 	resource , Resource_Data017
 	resource , Resource_Data018
-	resource , Resource_Data019
+	resource , Title_IntroLighthousePicture
 	resource , Resource_Data01A
 	resource , Resource_Data01B
 	resource , Resource_Data01C

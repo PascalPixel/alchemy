@@ -428,6 +428,8 @@ SECTIONS
         "*/recon/tla/it/rom.o"(.rom.006848d0)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TITLE/TITLE_SCREEN.o"(.rodata)
         "*/recon/tla/it/rom.o"(.rom.0068a153)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/TITLE/INTRO_LIGHTHOUSE.o"(.rodata)
+        "*/recon/tla/it/rom.o"(.rom.006a3390)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TITLE/LOGO_ON_BLACK.o"(.rodata)
         "*/recon/tla/it/rom.o"(.rom.006a99e3)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BACKDROP/PURPLE_MOON.o"(.rodata)

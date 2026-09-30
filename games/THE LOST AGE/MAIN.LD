@@ -882,6 +882,8 @@ SECTIONS
         "*/recon/tla/raw/080fad48.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080fad88.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080fae2c.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GAME/INVENTORY/REMOVE_FIRST_UNFLAGGED.o"(.text)
+        "*/recon/tla/raw/080fb104.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080fb554.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080fb6d4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080fb780.o"(.text .rodata .data .padding)

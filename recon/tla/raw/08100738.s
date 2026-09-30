@@ -60,7 +60,7 @@ Func_08100738:
 	bne.n	.L_081007d2
 	mov	r1, fp
 	adds	r0, r7, #0
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	ldr	r2, [sp, #0]
 	movs	r3, #226
 	lsls	r3, r3, #1

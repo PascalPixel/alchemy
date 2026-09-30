@@ -210,7 +210,7 @@ Func_080fa870:
 	adds	r3, r3, r2
 	ldrh	r3, [r6, r3]
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 .L_080faa20:
 	mov	r3, sl
 	cmp	r3, #0

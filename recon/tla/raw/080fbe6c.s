@@ -561,7 +561,7 @@ Func_080fbe6c:
 	adds	r0, r3, #0
 	movs	r2, #0
 	lsls	r5, r5, #1
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	adds	r0, r5, #0
 	bl	Func_08014d78
 	ldr	r3, [pc, #316]
@@ -1132,7 +1132,7 @@ Func_080fbe6c:
 	ldr	r1, [r1, #24]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	mov	r3, r8
 	ldr	r2, [r3, #24]
 	lsls	r3, r2, #1

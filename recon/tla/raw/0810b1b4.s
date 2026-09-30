@@ -668,7 +668,7 @@ Func_0810b1b4:
 	bl	0x0810857c
 	mov	r1, sl
 	adds	r0, r7, #0
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	mov	r2, r9
 	ldr	r0, [r2, #36]
 	adds	r1, r7, #0

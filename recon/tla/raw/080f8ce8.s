@@ -145,6 +145,9 @@ Func_080f8ce8:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.global InventoryMenu_SortByListOrder
+	.thumb_func
+InventoryMenu_SortByListOrder:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -160,7 +163,7 @@ Func_080f8ce8:
 	mov	fp, r0
 	adds	r0, r1, #0
 	adds	r1, r5, #0
-	bl	Func_080f8f40
+	bl	Menu_CopyListOrder
 	add	r1, sp, #48
 	mov	r9, r1
 	movs	r2, #0

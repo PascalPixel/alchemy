@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080f8f40
+	.global Menu_CopyListOrder
 	.thumb_func
-Func_080f8f40:
+Menu_CopyListOrder:
 	push	{lr}
 	ldr	r2, [pc, #72]
 	cmp	r0, #1

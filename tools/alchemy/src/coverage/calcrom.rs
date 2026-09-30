@@ -28,8 +28,8 @@ pub(crate) struct Measurement {
     pub data_scaffold: i64,
     /// The main image's symbol names, as pret's calcrom counts them.
     pub names: Names,
-    /// Text of C objects whose source carries a FAKEMATCH tag: counted in
-    /// DONE until both games are done (AGENTS.md S2), shown on its own.
+    /// Text of the C functions a FAKEMATCH tag steers: counted in DONE until
+    /// both games are done (AGENTS.md S2), shown on its own.
     pub steered: i64,
     /// Padding a source marks as carrying no credit, between its
     /// `AlchemyUncredited_X` and `AlchemyUncreditedEnd_X` labels: placed,
@@ -38,12 +38,23 @@ pub(crate) struct Measurement {
 }
 
 /// What a `games/` source says about its object's bytes.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Mark {
     /// C steered by a FAKEMATCH workaround.
-    pub steered: bool,
+    pub steered: Steered,
     /// Assembly credited as whole 8-byte stubs (`@ credit: reconstructed_veneer`).
     pub veneer: bool,
+}
+
+/// Which of a C source's functions its FAKEMATCH tags steer.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) enum Steered {
+    #[default]
+    None,
+    /// A tag outside any function: the whole object counts.
+    Whole,
+    /// Tags inside or just before these functions.
+    Functions(std::collections::BTreeSet<String>),
 }
 
 /// Read the marks of the maintained source a `games/` object was built from.
@@ -54,9 +65,64 @@ fn source_mark(root: &Path, stem: &str) -> Mark {
             std::fs::read_to_string(root.join(format!("{stem}.{extension}"))).ok()
         })
         .map_or_else(Mark::default, |text| Mark {
-            steered: text.contains("FAKEMATCH"),
+            steered: if !text.contains("FAKEMATCH") {
+                Steered::None
+            } else {
+                crate::permute::parse::tagged_functions(&text, "FAKEMATCH")
+                    .map_or(Steered::Whole, Steered::Functions)
+            },
             veneer: text.contains("@ credit: reconstructed_veneer"),
         })
+}
+
+/// The bytes of `names` in one object's text section of `size` bytes: each
+/// function runs from its symbol to the next symbol, or to the section's
+/// end. The whole section when the object cannot be read.
+fn function_bytes(object: &str, names: &std::collections::BTreeSet<String>, size: i64) -> i64 {
+    let Ok(nm) = std::process::Command::new("arm-none-eabi-nm")
+        .args(["--defined-only", "--numeric-sort"])
+        .arg(object)
+        .output()
+    else {
+        return size;
+    };
+    if !nm.status.success() {
+        return size;
+    }
+    let listed = String::from_utf8_lossy(&nm.stdout);
+    let symbols: Vec<(i64, &str)> = listed
+        .lines()
+        .filter_map(|line| {
+            let mut fields = line.split_whitespace();
+            let (address, kind, name) = (fields.next()?, fields.next()?, fields.next()?);
+            matches!(kind, "t" | "T")
+                .then(|| Some((i64::from_str_radix(address, 16).ok()?, name)))?
+        })
+        .collect();
+    function_spans(&symbols, names, size)
+}
+
+/// Sum the spans of `names` among `symbols`, sorted by offset in a section
+/// of `size` bytes.
+fn function_spans(
+    symbols: &[(i64, &str)],
+    names: &std::collections::BTreeSet<String>,
+    size: i64,
+) -> i64 {
+    symbols
+        .iter()
+        .enumerate()
+        .filter(|(_, (_, name))| names.contains(*name))
+        .map(|(index, (start, _))| {
+            let end = symbols
+                .iter()
+                .skip(index + 1)
+                .map(|(next, _)| *next)
+                .find(|next| next > start)
+                .unwrap_or(size);
+            end.min(size) - start
+        })
+        .sum()
 }
 
 /// The bytes between each `AlchemyUncredited_X` label and its
@@ -310,9 +376,11 @@ fn tally(
                 } else {
                     measurement.done.game_c += size;
                 }
-                if marked().steered {
-                    measurement.steered += size;
-                }
+                measurement.steered += match marked().steered {
+                    Steered::None => 0,
+                    Steered::Whole => size,
+                    Steered::Functions(names) => function_bytes(object, &names, size),
+                };
             }
             origin @ (Origin::CommonAsm | Origin::GameAsm) => {
                 if origin == Origin::CommonAsm {
@@ -425,10 +493,11 @@ pub(crate) fn measure(
     let source = |stem: &str| maintained_source(root, stem);
     let marks = std::cell::RefCell::new(std::collections::HashMap::new());
     let mark = |stem: &str| {
-        *marks
+        marks
             .borrow_mut()
             .entry(stem.to_string())
             .or_insert_with(|| source_mark(root, stem))
+            .clone()
     };
     let mut measurement = Measurement::default();
     let mut images = vec![root.join(format!("{output}/{}.elf", target.id))];
@@ -541,7 +610,11 @@ Linker script and memory map
     fn placed_text_is_counted_by_its_object_and_nothing_else() {
         let mut measurement = Measurement::default();
         let mark = |stem: &str| Mark {
-            steered: stem == "games/G/SRC/A",
+            steered: if stem == "games/G/SRC/A" {
+                Steered::Whole
+            } else {
+                Steered::None
+            },
             veneer: stem == "games/COMMON/SRC/D",
         };
         tally(
@@ -610,6 +683,52 @@ Linker script and memory map
 ";
         // Two closed spans of 4 and 6 bytes; a start with no end counts nothing.
         assert_eq!(uncredited_bytes(nm), 10);
+    }
+
+    #[test]
+    fn a_tag_steers_only_the_function_it_sits_in_or_before() {
+        let source = "\
+#include \"GLOBAL.H\"
+void Plain(void) { }
+/* FAKEMATCH: order. */
+void Before(void) { }
+void Inside(void)
+{
+    /* FAKEMATCH: registers. */
+    do { } while (0);
+}
+void After(void) { }
+";
+        let steered = crate::permute::parse::tagged_functions(source, "FAKEMATCH").unwrap();
+        assert_eq!(
+            steered.into_iter().collect::<Vec<_>>(),
+            ["Before", "Inside"]
+        );
+        // A tag at file scope before a declaration, or inside a macro,
+        // steers the whole object.
+        let file_scope =
+            "/* FAKEMATCH: pinned. */\nregister int r asm(\"r4\");\nvoid F(void) { }\n";
+        assert_eq!(
+            crate::permute::parse::tagged_functions(file_scope, "FAKEMATCH"),
+            None
+        );
+        let macro_tag = "#define W(x) /* FAKEMATCH: wrap */ (x)\nvoid F(void) { }\n";
+        assert_eq!(
+            crate::permute::parse::tagged_functions(macro_tag, "FAKEMATCH"),
+            None
+        );
+    }
+
+    #[test]
+    fn a_steered_function_runs_to_the_next_symbol_or_the_section_end() {
+        let symbols = [
+            (0, "Plain"),
+            (0x10, "Before"),
+            (0x24, "Inside"),
+            (0x40, "After"),
+        ];
+        let names = ["Before", "After"].map(String::from).into_iter().collect();
+        assert_eq!(function_spans(&symbols, &names, 0x50), 0x14 + 0x10);
     }
 
     #[test]

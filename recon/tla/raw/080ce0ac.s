@@ -356,7 +356,7 @@ Func_080ce0ac:
 .L_080ce3a0:
 	movs	r2, #6
 	ldrsh	r0, [r5, r2]
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	beq.n	.L_080ce426
 	mov	r3, r8

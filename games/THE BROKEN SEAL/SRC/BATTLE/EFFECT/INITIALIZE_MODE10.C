@@ -21,7 +21,7 @@ u32 Random16(void);
 void Audio_PlayCue(s32);
 void BattleFx_BeginCanvasLayer(s32);
 void BattlePres_ConfigureEffectDisplay(void);
-void Unnamed_080cd104(s32, s32);
+void BattleEffect_WipeCanvas(s32, s32);
 void BattleFx_SelectLivingTargets(s32);
 void BattleBackground_LoadFar(s32, s32, s32);
 void BattleFx_SpawnObjects(s32, s32, s32);
@@ -138,7 +138,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     *(u16 *)0x04000048 = 0x2137;
-    Unnamed_080cd104(1, 0);
+    BattleEffect_WipeCanvas(1, 0);
     *(u16 *)0x04000040 = 0xf0f0;
     Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, aux, 0, 0);

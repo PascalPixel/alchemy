@@ -165,7 +165,7 @@ Func_080e15e8:
 	mov	r8, r1
 	movs	r0, #0
 	movs	r1, #0
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	ldr	r1, [pc, #104]
 	movs	r0, #1
 	movs	r2, #0
@@ -175,7 +175,7 @@ Func_080e15e8:
 	str	r3, [r2, #16]
 	movs	r0, #0
 	movs	r1, #1
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	ldr	r6, [pc, #88]
 	ldr	r5, [pc, #52]
 	movs	r3, #3

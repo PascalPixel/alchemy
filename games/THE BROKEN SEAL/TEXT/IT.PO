@@ -10859,11 +10859,11 @@ msgctxt "MsgShortcutHelp"
 msgid "02712"
 msgstr "{button_icon:3}{button_icon:4}:Assegna presel."
 
-msgctxt "message"
+msgctxt "MsgShortcutSetL"
 msgid "02713"
 msgstr "Assegnata Psinergia a {button_icon:3}."
 
-msgctxt "message"
+msgctxt "MsgShortcutSetR"
 msgid "02714"
 msgstr "Assegnata Psinergia a {button_icon:4}."
 
@@ -10887,15 +10887,15 @@ msgctxt "message"
 msgid "02719"
 msgstr "{button_icon:4}:{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseOwner"
 msgid "02720"
 msgstr "Psinergia di chi?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseAbility"
 msgid "02721"
 msgstr "Quale Psinergia?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseTarget"
 msgid "02722"
 msgstr "Usare su chi?"
 
@@ -10915,11 +10915,11 @@ msgctxt "MsgNoPsynergy"
 msgid "02726"
 msgstr "Non hai Psinergia."
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForR"
 msgid "02727"
 msgstr "{button_icon:4}:Quale Psinergia?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForL"
 msgid "02728"
 msgstr "{button_icon:3}:Quale Psinergia?"
 

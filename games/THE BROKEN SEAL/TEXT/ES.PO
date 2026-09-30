@@ -10859,11 +10859,11 @@ msgctxt "MsgShortcutHelp"
 msgid "02712"
 msgstr "{button_icon:3}{button_icon:4}:Asignar Psi."
 
-msgctxt "message"
+msgctxt "MsgShortcutSetL"
 msgid "02713"
 msgstr "La Psinergía fue asignada a {button_icon:3}."
 
-msgctxt "message"
+msgctxt "MsgShortcutSetR"
 msgid "02714"
 msgstr "La Psinergía fue asignada a {button_icon:4}."
 
@@ -10887,15 +10887,15 @@ msgctxt "message"
 msgid "02719"
 msgstr "{button_icon:4}:{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseOwner"
 msgid "02720"
 msgstr "¿De quién?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseAbility"
 msgid "02721"
 msgstr "¿Qué Psinergía?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseTarget"
 msgid "02722"
 msgstr "¿Sobre quién?"
 
@@ -10915,11 +10915,11 @@ msgctxt "MsgNoPsynergy"
 msgid "02726"
 msgstr "No tiene Psinergía."
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForR"
 msgid "02727"
 msgstr "{button_icon:4}:¿Qué Psinergía?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForL"
 msgid "02728"
 msgstr "{button_icon:3}:¿Qué Psinergía?"
 

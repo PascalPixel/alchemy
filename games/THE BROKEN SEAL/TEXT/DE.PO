@@ -10859,11 +10859,11 @@ msgctxt "MsgShortcutHelp"
 msgid "02712"
 msgstr "{button_icon:3}{button_icon:4}:Abkürz. festl."
 
-msgctxt "message"
+msgctxt "MsgShortcutSetL"
 msgid "02713"
 msgstr "{button_icon:3} wurde mit Abk. belegt."
 
-msgctxt "message"
+msgctxt "MsgShortcutSetR"
 msgid "02714"
 msgstr "{button_icon:4} wurde mit Abk. belegt."
 
@@ -10887,15 +10887,15 @@ msgctxt "message"
 msgid "02719"
 msgstr "{button_icon:4}:{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseOwner"
 msgid "02720"
 msgstr "Wessen Psynergy?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseAbility"
 msgid "02721"
 msgstr "Welche Psynergy?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseTarget"
 msgid "02722"
 msgstr "Auf wen anwenden?"
 
@@ -10915,11 +10915,11 @@ msgctxt "MsgNoPsynergy"
 msgid "02726"
 msgstr "Keine Psynergy."
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForR"
 msgid "02727"
 msgstr "{button_icon:4}:Welche Psynergy?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForL"
 msgid "02728"
 msgstr "{button_icon:3}:Welche Psynergy?"
 

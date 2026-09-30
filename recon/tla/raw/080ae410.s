@@ -209,7 +209,7 @@ Func_080ae410:
 	cmp	r6, #0
 	bge.n	.L_080ae57e
 	adds	r0, r7, #0
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	movs	r1, #166
 	lsls	r1, r1, #1
 	adds	r7, #1
@@ -329,7 +329,7 @@ Func_080ae410:
 	str	r3, [r0, r2]
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	cmp	r5, r7
 	blt.n	.L_080ae66e
 	mov	r1, r8
@@ -412,7 +412,7 @@ Func_080ae410:
 .L_080ae758:
 	adds	r0, r2, #0
 	str	r2, [sp, #0]
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	ldr	r2, [sp, #0]
 	adds	r2, #1
 	cmp	r2, #7

@@ -52,7 +52,7 @@ Func_080ae0f0:
 	ldrb	r0, [r5, #0]
 	subs	r6, #1
 	adds	r5, #1
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	cmp	r6, #0
 	bne.n	.L_080ae158
 .L_080ae166:

@@ -139,7 +139,7 @@ Func_080b1088:
 	mov	r0, sl
 	bl	Func_080b0298
 	mov	r0, sl
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	movs	r2, #1
 	add	sl, r2
 	mov	r3, sl
@@ -217,7 +217,7 @@ Func_080b1088:
 	bl	Func_080b0298
 	adds	r0, r6, #0
 	adds	r6, #1
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	cmp	r6, #7
 	ble.n	.L_080b120e
 	ldr	r1, [pc, #60]

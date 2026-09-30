@@ -69,6 +69,6 @@ Inventory_Remove:
 	movs	r6, #2
 .L_080af1be:
 	adds	r0, r7, #0
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	adds	r0, r6, #0
 	pop	{r5, r6, r7, pc}

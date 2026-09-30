@@ -96,7 +96,7 @@ Func_080aef34:
 	strh	r2, [r7, r3]
 	bl	0x080b02d4
 	mov	r0, r8
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	movs	r0, #0
 	b.n	.L_080aeffc
 	movs	r0, r0

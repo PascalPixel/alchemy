@@ -137,7 +137,7 @@ Func_080af794:
 	bl	Func_080b0298
 	mov	r3, r8
 	ldr	r0, [r3, #0]
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 .L_080af8ae:
 	movs	r1, #4
 	add	r8, r1

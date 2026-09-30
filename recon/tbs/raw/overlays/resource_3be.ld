@@ -12,8 +12,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/DOU.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/GOING_BACK.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/DOU2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3be_overlay.o"(.rodata.part1)

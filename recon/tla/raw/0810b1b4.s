@@ -43,7 +43,7 @@ Func_0810b1b4:
 	ldrsb	r0, [r2, r3]
 	bl	Audio_PlayCue
 	ldr	r0, [pc, #352]
-	bl	0x081088d8
+	bl	Func_081088d8
 	mov	r0, sl
 	lsls	r0, r0, #2
 	mov	r9, r0
@@ -121,7 +121,7 @@ Func_0810b1b4:
 	adds	r5, #72
 	cmp	r7, #17
 	ble.n	.L_0810b25e
-	bl	0x081084e0
+	bl	Func_081084e0
 	movs	r2, #160
 	lsls	r2, r2, #3
 	adds	r2, #76
@@ -186,7 +186,7 @@ Func_0810b1b4:
 	ldr	r0, [r2, r3]
 	movs	r1, #16
 	bl	0x080202c8
-	bl	0x08108928
+	bl	Func_08108928
 	movs	r0, #30
 	bl	WaitFrames
 	movs	r3, #128
@@ -374,7 +374,7 @@ Func_0810b1b4:
 	mov	r0, r8
 	bl	UiWork_FinalizeFar
 	adds	r0, r5, #0
-	bl	.L_0810b520
+	bl	Func_0810b520
 	mov	r0, r9
 	bl	Func_080c8088
 	ldr	r3, [r0, #80]
@@ -405,6 +405,9 @@ Func_0810b1b4:
 	.4byte 0x000012cd
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_0810b520
+	.thumb_func
+Func_0810b520:
 .L_0810b520:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -463,7 +466,7 @@ Func_0810b1b4:
 	bl	0x080c83b8
 	movs	r0, #86
 	bl	Audio_PlayCue
-	bl	0x081084e0
+	bl	Func_081084e0
 	movs	r0, #10
 	bl	WaitFrames
 	bl	Func_080c83a8
@@ -694,6 +697,9 @@ Func_0810b1b4:
 	.4byte 0x00001305
 	.2byte 0x1306
 	.2byte 0x0000
+	.global Func_0810b79c
+	.thumb_func
+Func_0810b79c:
 	push	{lr}
 	movs	r2, #1
 	bl	Func_0810b7b4

@@ -481,6 +481,9 @@ Func_081080a8:
 	.4byte 0x02000240
 	.2byte 0x0d40
 	.2byte 0x0003
+	.global Func_081084e0
+	.thumb_func
+Func_081084e0:
 	push	{lr}
 	b.n	.L_081084ea
 .L_081084e4:

@@ -273,3 +273,26 @@ fn similar_needs_an_explicit_build_and_keeps_no_corpus() {
     assert_eq!(empty.status.code(), Some(2));
     assert!(fs::read_dir(dir.path()).unwrap().next().is_none());
 }
+
+#[test]
+fn deps_needs_a_build_and_an_output_directory_and_keeps_no_index() {
+    let dir = tempfile::tempdir().unwrap();
+    let output = command(dir.path())
+        .args(["deps", "--out-dir", "reports"])
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&output.stderr).contains("--build"));
+    let missing = command(dir.path())
+        .args(["deps", "--build", "."])
+        .output()
+        .unwrap();
+    assert_eq!(missing.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&missing.stderr).contains("--out-dir"));
+    let empty = command(dir.path())
+        .args(["deps", "--build", ".", "--out-dir", "reports"])
+        .output()
+        .unwrap();
+    assert_eq!(empty.status.code(), Some(2));
+    assert!(fs::read_dir(dir.path()).unwrap().next().is_none());
+}

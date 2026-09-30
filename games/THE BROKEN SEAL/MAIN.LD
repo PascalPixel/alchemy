@@ -376,7 +376,6 @@ SECTIONS
         "*/recon/tbs/raw/08021e6a.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08021e6c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_RECT_HIGHLIGHT.o"(.text)
-        "*/recon/tbs/raw/0802281c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU16.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
         "*/recon/tbs/raw/08022a7a.o"(.text .rodata .data .padding)

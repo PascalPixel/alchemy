@@ -44,7 +44,7 @@ Func_080cb8e8:
 	adds	r1, r5, #0
 	movs	r0, #108
 	sub	sp, #12
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r1, r5, #0
 	ldr	r3, [pc, #128]
 	mov	r8, r0
@@ -388,7 +388,7 @@ Func_080cb8e8:
 	movs	r0, #20
 	bl	WaitFrames
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_080cbc2a:
 	mov	r1, fp
 	mov	r2, r9
@@ -410,7 +410,7 @@ Func_080cb8e8:
 	movs	r0, #20
 	bl	WaitFrames
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_080cbc5c:
 	movs	r3, #160
 	lsls	r3, r3, #19
@@ -1491,7 +1491,7 @@ Func_080cb8e8:
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #108
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	adds	r0, r6, #0
 	add	sp, #12
 	pop	{r3, r5, r6, r7}

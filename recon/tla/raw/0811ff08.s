@@ -64,7 +64,7 @@ BattlePresentation_WaitForAdvance:
 	str	r3, [r7, #8]
 	adds	r1, r5, #0
 	mov	r0, fp
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #48]
 	ldr	r2, [pc, #48]
 	ands	r0, r3
@@ -214,7 +214,7 @@ BattlePresentation_WaitForAdvance:
 	str	r3, [r5, #8]
 	mov	r1, sl
 	adds	r0, r6, #0
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #48]
 	ldr	r2, [pc, #52]
 	ands	r0, r3

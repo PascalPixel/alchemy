@@ -37,7 +37,7 @@ Func_0802372c:
 	bl	VramBlock_LoadCached
 	adds	r5, r0, #0
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r3, r8
 	strb	r3, [r6, #27]
 	strb	r3, [r6, #25]

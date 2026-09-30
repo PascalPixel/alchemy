@@ -87,7 +87,7 @@ Func_080eb824:
 	movs	r1, #128
 	lsls	r1, r1, #6
 	movs	r0, #180
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r6, #0
 	movs	r7, #7
 .L_080eb8d8:
@@ -140,11 +140,11 @@ Func_080eb824:
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #180
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #240
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	.2byte 0xb6a1
 	.2byte 0x080e
@@ -493,7 +493,7 @@ Func_080eb824:
 	ldr	r0, [sp, #24]
 	bl	0x08014274
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #48
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

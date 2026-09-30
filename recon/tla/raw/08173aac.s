@@ -4511,7 +4511,7 @@ Func_08173aac:
 	bl	.L_0817414a
 .L_08175f2e:
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r1, [sp, #52]
 	cmp	r1, #0
 	beq.n	.L_08175f3e

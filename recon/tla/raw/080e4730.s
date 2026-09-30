@@ -338,7 +338,7 @@ Func_080e4730:
 	ldr	r0, [sp, #28]
 	bl	0x08014274
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #40
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -742,7 +742,7 @@ Func_080e4730:
 	bl	0x080dc384
 .L_080e4d60:
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #208
 	ldr	r6, [sp, #40]
 	lsls	r0, r0, #4
@@ -2278,7 +2278,7 @@ Func_080e4730:
 	bl	0x080dc384
 	bl	0x080eb930
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #40
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -3334,7 +3334,7 @@ Func_080e4730:
 .L_080e62d2:
 	bl	0x080dc384
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #44
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

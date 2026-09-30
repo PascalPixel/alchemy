@@ -189,7 +189,7 @@ Func_08108690:
 	mov	sl, r2
 	adds	r7, r3, #0
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	mov	r9, r3
 	movs	r2, #132
@@ -270,7 +270,7 @@ Func_08108690:
 	mov	r9, r0
 .L_081088ba:
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r0, r9
 	add	sp, #4
 	pop	{r3, r5, r6}

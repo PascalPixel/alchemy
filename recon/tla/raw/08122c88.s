@@ -539,7 +539,7 @@ Func_08122c88:
 	str	r2, [r1, #8]
 	mov	r1, sl
 	ldr	r0, [r6, #0]
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #52]
 	mov	r4, r9
 	ands	r0, r3

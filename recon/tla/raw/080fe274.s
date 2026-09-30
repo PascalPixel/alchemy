@@ -205,7 +205,7 @@ Func_080fe274:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r2, fp
 	ldr	r3, [r2, #24]
 	ldr	r2, [pc, #28]
@@ -433,7 +433,7 @@ Func_080fe274:
 	mov	r3, sl
 	adds	r3, #20
 	ldr	r0, [r5, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r6, #0

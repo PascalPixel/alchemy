@@ -23,17 +23,17 @@
 	str	r0, [sp, #116]
 	adds	r1, #124
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	str	r0, [sp, #112]
 	adds	r1, #20
 	movs	r0, #180
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #76
 	str	r0, [sp, #108]
 	movs	r0, #48
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #104]
 	ldr	r0, [pc, #308]
 	bl	0x080132fc
@@ -751,7 +751,7 @@
 	adds	r3, r4, r5
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #16
@@ -885,7 +885,7 @@
 .L_081ac8aa:
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	.L_081ad2d2
 .L_081ac8b6:
 	ldr	r3, [r6, #12]
@@ -903,7 +903,7 @@
 	adds	r3, r2, r4
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r6, #1
 	str	r6, [sp, #96]
 	bl	0x080ad290
@@ -2220,15 +2220,15 @@
 	cmp	r7, #17
 	bne.n	.L_081ad2da
 	movs	r0, #48
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #180
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #192
 	lsls	r3, r3, #2
 	add	sp, r3

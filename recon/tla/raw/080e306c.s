@@ -756,7 +756,7 @@ Func_080e306c:
 	strh	r3, [r2, #6]
 	bl	0x080eb930
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #56
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

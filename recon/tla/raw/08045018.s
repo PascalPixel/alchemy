@@ -39,7 +39,7 @@ Func_08045018:
 	movs	r0, #56
 	mov	r1, sl
 	mov	r8, r2
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r5, r0, #0
 	ldr	r0, [pc, #64]
 	bl	Resource_GetTableEntry
@@ -64,7 +64,7 @@ Func_08045018:
 	adds	r2, r5, #0
 	bl	VramBlock_LoadCached
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0804509e:
 	pop	{r3, r5}
 	mov	r8, r3

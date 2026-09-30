@@ -312,7 +312,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #23
 	movs	r0, #188
 	bl	Func_081963ec
@@ -333,7 +333,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #27
 	movs	r0, #188
 	bl	Func_081963ec
@@ -354,7 +354,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #31
 	movs	r0, #188
 	bl	Func_081963ec
@@ -375,7 +375,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	b.n	.L_0818fa44
 .L_0818f918:
 	ldr	r3, [sp, #44]
@@ -457,7 +457,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #23
 	movs	r0, #188
 	bl	Func_081963ec
@@ -477,7 +477,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #27
 	movs	r0, #188
 	bl	Func_081963ec
@@ -497,7 +497,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #31
 	movs	r0, #188
 	bl	Func_081963ec
@@ -517,7 +517,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0818fa44:
 	ldr	r6, [sp, #56]
 	cmp	r6, #0
@@ -958,7 +958,7 @@ Func_0818f620:
 	ldr	r0, [pc, #68]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r6, [sp, #56]
 	cmp	r6, #0
 	bne.n	.L_0818fdd6
@@ -2602,7 +2602,7 @@ Func_0818f620:
 	ldr	r0, [pc, #96]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 	add	sp, #220
 	pop	{r3, r5, r6, r7}
@@ -3108,7 +3108,7 @@ Func_0818f620:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_08190f62:
 	mov	r3, fp
 	cmp	r3, #89
@@ -3405,7 +3405,7 @@ Func_0818f620:
 	.2byte 0x2f01
 	bne.n	.L_081911b2
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_081911b2:
 	ldr	r0, [sp, #16]
 	ldr	r1, [sp, #12]
@@ -3786,7 +3786,7 @@ Func_0818f620:
 	ldr	r0, [pc, #80]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 	add	sp, #136
 	pop	{r3, r5, r6, r7}
@@ -3946,7 +3946,7 @@ Func_0818f620:
 	adds	r0, r5, #0
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #704]
 	mov	r1, r9
 	movs	r2, #1
@@ -4293,7 +4293,7 @@ Func_0818f620:
 	ldr	r0, [pc, #44]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 	add	sp, #28
 	pop	{r3, r5, r6, r7}

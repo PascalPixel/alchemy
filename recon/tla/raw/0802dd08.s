@@ -214,7 +214,7 @@ Func_0802dd08:
 	mov	r8, r3
 	str	r2, [sp, #12]
 	str	r3, [sp, #8]
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	ldr	r2, [pc, #128]
 	movs	r3, #3
 	str	r0, [sp, #4]
@@ -294,7 +294,7 @@ Func_0802dd08:
 	bl	0x080144c0
 	movs	r1, #160
 	movs	r0, #36
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #4]
 	bl	0x08014368
 	movs	r0, #2

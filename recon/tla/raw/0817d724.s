@@ -1138,7 +1138,7 @@ Func_0817d724:
 	bl	.L_0817d83e
 .L_0817e056:
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #20]
 	bl	Func_08014644
 	bl	Func_08143bb8

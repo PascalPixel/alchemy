@@ -346,7 +346,7 @@ Func_0810a2c8:
 	b.n	.L_0810a508
 .L_0810a5d0:
 	mov	r0, r8
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	movs	r0, #101
 	bl	Audio_PlayCue
 	ldr	r0, [pc, #132]

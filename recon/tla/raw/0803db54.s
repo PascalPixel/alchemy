@@ -99,7 +99,7 @@ Func_0803db54:
 	movs	r1, #249
 	lsls	r1, r1, #2
 	movs	r0, #72
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r2, #210
 	adds	r7, r0, #0
 	lsls	r2, r2, #2

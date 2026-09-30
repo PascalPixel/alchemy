@@ -27,7 +27,7 @@ Func_08041fa4:
 	mov	sl, r1
 	strh	r2, [r6, #0]
 	movs	r1, #1
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	ldrh	r3, [r6, #0]
 	movs	r1, #244
 	lsls	r1, r1, #4

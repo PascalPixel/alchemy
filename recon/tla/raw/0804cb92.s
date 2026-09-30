@@ -249,7 +249,7 @@ Func_0804cb92:
 	movs	r0, #0
 	bl	0x081180d0
 	movs	r0, #228
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r1, [sp, #80]
 	cmp	r1, #0
 	blt.n	.L_0804cd90
@@ -703,7 +703,7 @@ AffineEffect_InitializeWork:
 	movs	r1, #152
 	movs	r0, #232
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	adds	r5, r0, #0
 	mov	r0, sp
@@ -763,7 +763,7 @@ Menu_EndResourceSelection:
 	blt.n	.L_0804d146
 .L_0804d158:
 	movs	r0, #232
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{r5, r6, r7, pc}

@@ -13,7 +13,7 @@ Func_080d45d8:
 	lsls	r1, r1, #4
 	movs	r0, #108
 	ldr	r7, [r3, #32]
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #230
 	lsls	r1, r1, #1
 	adds	r0, r0, r1
@@ -110,7 +110,7 @@ Func_080d45d8:
 	adds	r6, r0, #0
 	movs	r0, #108
 	ldr	r5, [r3, #32]
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #197
 	lsls	r1, r1, #1
 	adds	r3, r0, r1
@@ -162,7 +162,7 @@ Func_080d45d8:
 	lsls	r1, r1, #4
 	movs	r0, #108
 	ldr	r6, [r3, #32]
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r2, #197
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

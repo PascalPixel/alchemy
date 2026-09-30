@@ -2202,7 +2202,7 @@ Func_081a6030:
 	ldr	r0, [pc, #40]
 	bl	Func_08014644
 	movs	r0, #172
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #1

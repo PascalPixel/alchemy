@@ -242,7 +242,7 @@ Func_080ebf68:
 	bl	0x08014274
 	ldr	r0, [r5, #28]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	pop	{r5, pc}
 	movs	r0, r0
 	.2byte 0xa000

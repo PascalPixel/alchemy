@@ -644,7 +644,7 @@ BattlePres_SetActorModes:
 	str	r3, [r2, #8]
 	adds	r1, #208
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	mov	r9, r0
 	lsls	r1, r1, #7
@@ -909,13 +909,13 @@ BattlePres_SetActorModes:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [pc, #20]
 	movs	r2, #128
 	lsls	r2, r2, #19

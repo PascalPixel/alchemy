@@ -488,6 +488,9 @@ Func_0803acd4:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.global UiText_BuildRenderEntries
+	.thumb_func
+UiText_BuildRenderEntries:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1414,7 +1417,7 @@ Func_0803acd4:
 	adds	r2, r0, r1
 	strh	r3, [r2, #0]
 	movs	r0, #200
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r5, #152
 	ldr	r2, [sp, #44]
 	add	r0, sp, #32

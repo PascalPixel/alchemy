@@ -22,7 +22,7 @@ Func_080fbe6c:
 	mov	fp, r0
 	movs	r0, #56
 	mov	r9, r3
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r2, #1
 	movs	r3, #0
 	str	r2, [sp, #12]
@@ -300,7 +300,7 @@ Func_080fbe6c:
 	adds	r0, r7, #0
 	bl	0x08038268
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #134
 	lsls	r3, r3, #2
 	add	r3, r9
@@ -357,7 +357,7 @@ Func_080fbe6c:
 	ldr	r2, [r5, #0]
 	strh	r3, [r2, #8]
 	ldr	r0, [r5, #0]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r2, #128
 	lsls	r2, r2, #2
 	adds	r2, #22
@@ -515,7 +515,7 @@ Func_080fbe6c:
 .L_080fc2bc:
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r0, r6, #0
 	add	sp, #4
 	pop	{r3}
@@ -561,7 +561,7 @@ Func_080fbe6c:
 	adds	r0, r3, #0
 	movs	r2, #0
 	lsls	r5, r5, #1
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	adds	r0, r5, #0
 	bl	Func_08014d78
 	ldr	r3, [pc, #316]
@@ -1028,7 +1028,7 @@ Func_080fbe6c:
 	adds	r0, r5, #0
 	movs	r2, #3
 	movs	r3, #17
-	bl	0x080f811c
+	bl	Func_080f811c
 	ldr	r5, [r5, #0]
 	movs	r1, #0
 	str	r5, [sp, #36]
@@ -1085,7 +1085,7 @@ Func_080fbe6c:
 	lsls	r3, r1, #2
 	adds	r3, #76
 	ldr	r0, [r7, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 .L_080fc774:
 	ldr	r3, [sp, #28]
 	cmp	r3, #0
@@ -1132,7 +1132,7 @@ Func_080fbe6c:
 	ldr	r1, [r1, #24]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	mov	r3, r8
 	ldr	r2, [r3, #24]
 	lsls	r3, r2, #1
@@ -1450,7 +1450,7 @@ Func_080fbe6c:
 	movs	r3, #120
 	bl	0x08038068
 	ldr	r0, [r7, #72]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	ldr	r4, [sp, #8]
 	movs	r1, #180
 	lsls	r1, r1, #1
@@ -1591,7 +1591,7 @@ Func_080fbe6c:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r1, r8
 	ldr	r2, [r1, #24]
 	movs	r3, #0

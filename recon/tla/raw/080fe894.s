@@ -726,7 +726,7 @@ Func_080fe894:
 	movs	r1, #0
 	movs	r2, #5
 	movs	r3, #30
-	bl	0x080f811c
+	bl	Func_080f811c
 	ldr	r5, [r5, #0]
 .L_080fee70:
 	cmp	r0, #0
@@ -796,7 +796,7 @@ Func_080fe894:
 	movs	r3, #30
 	mov	r8, r0
 	adds	r0, r5, #0
-	bl	0x080f811c
+	bl	Func_080f811c
 	movs	r0, #1
 	negs	r0, r0
 	ldr	r5, [r5, #0]

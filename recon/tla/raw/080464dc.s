@@ -866,7 +866,7 @@ Func_080464dc:
 	movs	r1, #1
 	stmia	r7!, {r0}
 	negs	r1, r1
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #40]
 	mov	r4, r8
 	ands	r0, r3
@@ -1852,7 +1852,7 @@ Func_080464dc:
 	str	r3, [r0, #8]
 	ldr	r0, [sp, #120]
 	ldr	r1, [pc, #32]
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #8]
 	b.n	.L_080473a8
 	movs	r0, r0
@@ -2211,7 +2211,7 @@ Func_080464dc:
 	lsls	r3, r4, #2
 	ldr	r1, [r2, r3]
 	adds	r0, r5, #0
-	bl	Func_080454a0
+	bl	Resource_LoadKind26EntryToBuffer
 	ldr	r3, [pc, #40]
 	ldr	r2, [pc, #40]
 	ands	r0, r3
@@ -2261,7 +2261,7 @@ Func_080464dc:
 	movs	r1, #1
 	ldmia	r6!, {r0}
 	negs	r1, r1
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #28]
 	movs	r2, #1
 	ands	r0, r3
@@ -2695,7 +2695,7 @@ Func_080464dc:
 	movs	r1, #1
 	ldmia	r6!, {r0}
 	negs	r1, r1
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #28]
 	ands	r0, r3
 	ldrh	r3, [r5, #0]
@@ -5424,7 +5424,7 @@ Func_080464dc:
 	str	r3, [r2, #8]
 	ldr	r0, [sp, #60]
 	ldr	r1, [pc, #72]
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #52]
 	ldr	r1, [sp, #4]
 	ands	r0, r3
@@ -5726,7 +5726,7 @@ Func_080464dc:
 	movs	r1, #1
 	negs	r1, r1
 	stmia	r6!, {r0}
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #24]
 	ldr	r4, [sp, #4]
 	ands	r0, r3
@@ -6006,7 +6006,7 @@ Func_080464dc:
 	subs	r5, r1, r5
 	movs	r1, #0
 	str	r4, [sp, #4]
-	bl	0x0803d98c
+	bl	Ability_LoadGlyph
 	ldr	r4, [sp, #4]
 	ldr	r2, [sp, #28]
 	lsls	r3, r4, #1
@@ -6240,7 +6240,7 @@ Func_080464dc:
 	movs	r5, #0
 	lsrs	r0, r1, #16
 	ldr	r1, [pc, #72]
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #52]
 	ldr	r2, [sp, #24]
 	ands	r0, r3

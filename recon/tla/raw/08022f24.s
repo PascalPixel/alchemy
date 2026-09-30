@@ -232,12 +232,12 @@ Func_08022f24:
 	movs	r1, #92
 	movs	r0, #24
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	lsls	r1, r1, #6
 	mov	r8, r0
 	movs	r0, #20
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r6, r0, #0
 	adds	r0, r7, #0
 	bl	Func_08022bd8

@@ -760,7 +760,7 @@ Func_080219cc:
 	cmp	r3, #0
 	bne.n	.L_08022000
 	movs	r0, #80
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	b.n	.L_08022000
 	movs	r0, r0
 	.4byte 0x000003ff

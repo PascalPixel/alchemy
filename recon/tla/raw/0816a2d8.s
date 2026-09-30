@@ -478,9 +478,9 @@ Func_0816a2d8:
 	b.n	.L_0816a50e
 .L_0816a68e:
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #112]
 	bl	Func_08014644
 	ldr	r1, [sp, #12]
@@ -769,7 +769,7 @@ Func_0816a2d8:
 	mov	lr, ip
 	.2byte 0xf800
 	.2byte 0x2068
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r2, #1
 	add	r8, r2
 	mov	r3, r8
@@ -838,9 +838,9 @@ Func_0816a2d8:
 	cmp	r2, #16
 	bne.n	.L_0816a92c
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r3, r9
 	cmp	r3, #7
 	bgt.n	.L_0816a9b0
@@ -1359,9 +1359,9 @@ Func_0816a2d8:
 	b.n	.L_0816aafe
 .L_0816adde:
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #80]
 	bl	Func_08014644
 	bl	Func_08143bb8

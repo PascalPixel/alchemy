@@ -14,7 +14,7 @@ Func_0803d8f0:
 	bl	Func_08014cc0
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	0x0803da78
+	bl	Ui_PrepareTransferFromTableEntry
 	movs	r3, #128
 	lsls	r3, r3, #3
 	adds	r5, r5, r3
@@ -23,7 +23,7 @@ Func_0803d8f0:
 	mov	r0, r8
 	bl	VramBlock_LoadCached
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 	pop	{r3}
 	mov	r8, r3

@@ -2518,7 +2518,7 @@ Func_08027e20:
 	lsls	r3, r3, #2
 	adds	r0, r6, #0
 	adds	r5, r1, r3
-	bl	0x0802da24
+	bl	Func_0802da24
 	cmp	r0, #0
 	bne.n	.L_0802920e
 	mov	r3, sl

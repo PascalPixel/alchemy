@@ -549,6 +549,9 @@ Func_0802d87c:
 	.4byte 0x0802efc4
 	.2byte 0xc001
 	.2byte 0x0202
+	.global Func_0802da24
+	.thumb_func
+Func_0802da24:
 	push	{lr}
 	ldr	r3, [r0, #0]
 	cmp	r3, #0

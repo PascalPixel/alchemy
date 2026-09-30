@@ -1,16 +1,17 @@
+/* 2026-09-30 Mercury: addresses now spelled by name (gTransitionWork,
+   gBattleWork, REG_BLDCNT/REG_BLDALPHA, BattleEvent_Playback) and plain
+   integer constants instead of Value_ symbols: 960 of 956 bytes, 380
+   differing listing lines. The ROM anchors on gBattleWork (pool) and reaches
+   gTransitionWork as base + 140, keeps selection in r9 and a 124-byte frame
+   (this spelling: sl, 128). */
 /* Draft, not exact (2026-09-24): candidate=956 reference=956 differing_halfwords=437. Constants the reference loads from
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
-extern u8 Value_00008000;
-extern u8 Value_00002000;
-extern u8 Value_00005000;
-extern u8 Value_00003f40;
-extern u8 Value_00001000;
-extern u8 Value_00000856;
-extern u8 Value_00000855;
-extern u8 Value_00000c80;
-extern u8 Value_00004000;
+#include "IO_REG.H"
+#include "BATTLE_WORK.H"
+extern u8 gTransitionWork[];
+void BattleEvent_Playback(void);
 
 struct BattlePresentationSelection {
     u8 primary_unit;
@@ -51,21 +52,21 @@ void BattlePresentation_RunUnitTransition(
     opposing_unit = selection->units[0];
 
     if (selection->flags & 0x8000) {
-        u32 *transition = *(u32 **)0x03001f00;
-        transition[0] = primary_unit <= 7 ? 0x2000 : (s32)&Value_00005000;
+        u32 *transition = *(u32 **)gTransitionWork;
+        transition[0] = primary_unit <= 7 ? 0x2000 : 0x00005000;
         transition[1] = 60;
     } else {
-        u32 *transition = *(u32 **)0x03001f00;
-        u32 target = primary_unit <= 7 ? (s32)&Value_00002000 : 0xffffe000;
+        u32 *transition = *(u32 **)gTransitionWork;
+        u32 target = primary_unit <= 7 ? 0x00002000 : 0xffffe000;
         if (transition[0] != target) {
             transition[0] = target;
         }
     }
 
     BattlePres_SetActorModes(0, 0);
-    UiWindow_DrawPartyStatusContentsFar((FIELD8(*(void **)0x03001e74, 0x41)) & ~1);
+    UiWindow_DrawPartyStatusContentsFar((FIELD8((void *)gBattleWork, 0x41)) & ~1);
     primary_record = *(u32 *)GetBattleObjectSlot(primary_unit);
-    *(u16 *)0x04000050 = 0x3f40;
+    REG_BLDCNT = 0x3f40;
     visible_count = BattleParty_ListActorIds(3, visible_units);
 
     for (index = 0; index < visible_count; index++) {
@@ -86,7 +87,7 @@ void BattlePresentation_RunUnitTransition(
     }
 
     for (index = 0; index < 16; index++) {
-        *(u16 *)0x04000052 = (16 - index) | 0x1000;
+        REG_BLDALPHA = (16 - index) | 0x1000;
         WaitFrames(1);
     }
 
@@ -141,7 +142,7 @@ void BattlePresentation_RunUnitTransition(
             FIELD32(context, 4) ^= 1;
         }
 
-        Scheduler_AddOrUpdateCallback(0x080bd899, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
         if (selection->flags & 0x8000) {
             BattleFx_InitializeModeFar(context);
         } else if (selection->flags & 0x4000) {
@@ -154,7 +155,7 @@ void BattlePresentation_RunUnitTransition(
 
     BattleActor_CommitPlacement();
     refreshed_count = BattleParty_ListActorIds(3, visible_units);
-    *(u16 *)0x04000050 = (s32)&Value_00003f40;
+    REG_BLDCNT = 0x00003f40;
     for (index = 0; index < refreshed_count; index++) {
         u16 unit = visible_units[index];
         if (unit != 0xfe && unit != primary_unit &&
@@ -163,7 +164,7 @@ void BattlePresentation_RunUnitTransition(
         }
     }
     for (index = 0; index < 16; index++) {
-        *(u16 *)0x04000052 = index | 0x1000;
+        REG_BLDALPHA = index | 0x1000;
         WaitFrames(1);
     }
     for (index = 0; index < refreshed_count; index++) {

@@ -69,7 +69,7 @@ s32 SceneActor_ClearSpriteFlags(struct FieldActor *actor)
 /* Arriving by entrance 99 places a different set of actors. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-    if (gGameState.entrance == ENTRANCE_ALTERNATE_PLACEMENTS) {
+    if (gPartyState.entrance == ENTRANCE_ALTERNATE_PLACEMENTS) {
         return gScenePlacementsEntrance99;
     }
     return gScenePlacements;

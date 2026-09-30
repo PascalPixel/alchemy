@@ -7,19 +7,6 @@
  * sea, the drifting island and the steps of the scene where Felix wakes.
  */
 
-enum {
-    ENTRANCE_WAKE = 2,
-    ENTRANCE_WAKE_AGAIN = 4
-};
-
-/* The controller state the engine refreshes each frame. */
-struct InputState {
-    u32 held;
-    u32 pressed;
-};
-
-extern struct InputState gInput;
-
 struct MapLayer {
     u8 unknown_00[6];
     s16 y;
@@ -40,51 +27,9 @@ struct FieldWork {
 
 #define FIELD_WORK ((struct FieldWork *)0x03000000)
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const u32 gSceneExits[];
-extern const struct ScenePlacement gScenePlacements[];
-extern const struct SceneEvent gSceneEvents[];
-extern const struct SceneEvent gSceneEventsEntrance1[];
-/* The search events that start the wake-up scenes. */
-extern const struct SceneEvent gSceneEventsWake[];
 extern const u8 gSpawnedObjectScript[];
 extern s16 gScanlineWavePage;
 extern s32 gScanlineWaveCount;
-
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    return gSceneEntrances;
-}
-
-/* This scene declares no regions. */
-const struct SceneRegion *Scene_GetRegions(void)
-{
-    return 0;
-}
-
-const u32 *Scene_GetExits(void)
-{
-    return gSceneExits;
-}
-
-const struct ScenePlacement *Scene_GetPlacements(void)
-{
-    return gScenePlacements;
-}
-
-const struct SceneEvent *Scene_GetEvents(void)
-{
-    switch (gGameState.entrance) {
-    case 1:
-    case 3:
-        return gSceneEventsEntrance1;
-    case ENTRANCE_WAKE:
-    case ENTRANCE_WAKE_AGAIN:
-        return gSceneEventsWake;
-    default:
-        return gSceneEvents;
-    }
-}
 
 void ScanlineWave_Reset(void)
 {
@@ -120,36 +65,4 @@ void SceneObject_Spawn(s32 x, s32 y, s32 z, s16 value)
         sprite->unknown_1a = 0;
         sprite->unknown_12 = value;
     }
-}
-
-/* Marks the start of each step of the scene where Felix wakes; does nothing. */
-void FelixWake_BeginStep(void)
-{
-}
-
-/* Marks the end of each step of the scene where Felix wakes; does nothing. */
-void FelixWake_EndStep(void)
-{
-}
-
-/* Holds the scene for up to three seconds, or until a button is pressed. */
-void FelixWake_WaitForButton(void)
-{
-    s32 frames = 180;
-
-    FelixWake_BeginStep();
-wait:
-    if (--frames != -1) {
-        Task_Wait(1);
-        if (gInput.pressed == 0) {
-            goto wait;
-        }
-    }
-    FelixWake_EndStep();
-}
-
-/* The scene's last loader hook; Idejima needs nothing. */
-s32 Scene_PrepareMap(void)
-{
-    return 0;
 }

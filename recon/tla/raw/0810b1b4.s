@@ -361,18 +361,18 @@ Func_0810b1b4:
 	bl	0x081084f4
 	ldr	r0, [r6, #12]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	b.n	.L_0810b4fe
 .L_0810b4bc:
 	movs	r1, #2
 	ldr	r0, [r6, #12]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	adds	r0, #1
 	bl	0x081084f4
 	movs	r1, #2
 	mov	r0, r8
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r0, r5, #0
 	bl	.L_0810b520
 	mov	r0, r9
@@ -393,7 +393,7 @@ Func_0810b1b4:
 .L_0810b4fe:
 	mov	r0, r8
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	0x0810824c
 	movs	r0, #0
 	add	sp, #4
@@ -580,7 +580,7 @@ Func_0810b1b4:
 .L_0810b69c:
 	mov	r0, fp
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	0x0810824c
 	movs	r0, #0
 	add	sp, #4

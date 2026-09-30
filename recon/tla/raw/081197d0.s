@@ -813,7 +813,7 @@ Func_081197d0:
 	beq.n	.L_08119e6c
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	bl	.L_081197d0
@@ -828,7 +828,7 @@ Func_081197d0:
 	bl	0x08120060
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 .L_08119eb0:

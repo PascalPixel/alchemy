@@ -412,7 +412,7 @@ Func_081080a8:
 	bl	.L_081084f4
 	mov	r0, r9
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	.L_0810824c
 	movs	r0, #0
 	add	sp, #4

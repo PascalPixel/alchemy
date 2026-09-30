@@ -751,7 +751,7 @@
 	adds	r3, r4, r5
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #16
@@ -885,7 +885,7 @@
 .L_081ac8aa:
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	.L_081ad2d2
 .L_081ac8b6:
 	ldr	r3, [r6, #12]
@@ -903,7 +903,7 @@
 	adds	r3, r2, r4
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r6, #1
 	str	r6, [sp, #96]
 	bl	0x080ad290

@@ -193,7 +193,7 @@ Func_080fa458:
 	movs	r1, #13
 	movs	r2, #3
 	movs	r3, #17
-	bl	0x080f811c
+	bl	Func_080f811c
 	cmp	r0, #0
 	beq.n	.L_080fa604
 	ldr	r1, [r5, #0]
@@ -211,7 +211,7 @@ Func_080fa458:
 	movs	r1, #13
 	movs	r2, #13
 	movs	r3, #17
-	bl	0x080f811c
+	bl	Func_080f811c
 	cmp	r0, #0
 	beq.n	.L_080fa640
 	ldr	r1, [sp, #12]

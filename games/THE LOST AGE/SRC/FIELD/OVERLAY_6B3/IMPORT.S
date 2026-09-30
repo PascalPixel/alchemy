@@ -18,7 +18,7 @@
 	overlay_veneer Func_08000290
 	overlay_veneer Func_080003d8
 	overlay_veneer Func_08038000
-	overlay_veneer Func_08038018
+	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer Func_08038038
 	overlay_veneer Func_08038048
 	overlay_veneer Func_080380f8

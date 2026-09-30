@@ -20,9 +20,9 @@ Func_08038010:
 	bx	r4
 	.2byte 0x9261
 	.2byte 0x0803
-	.global Func_08038018
+	.global UiWork_FinalizeFar
 	.thumb_func
-Func_08038018:
+UiWork_FinalizeFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x939d

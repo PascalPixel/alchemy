@@ -211,7 +211,7 @@ Func_08108b34:
 .L_08108cee:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	ldr	r0, [sp, #28]
 	ldr	r1, [sp, #36]
 	bl	.L_08109068
@@ -238,10 +238,10 @@ Func_08108b34:
 .L_08108d2c:
 	ldr	r0, [sp, #24]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #2
 	ldr	r0, [sp, #28]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	cmp	r5, #0
@@ -514,10 +514,10 @@ Func_08108b34:
 	bl	0x080f8068
 	mov	r0, r8
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r0, r7, #0
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	cmp	r5, #0
@@ -596,11 +596,11 @@ Func_08108b34:
 .L_08109038:
 	ldr	r0, [sp, #32]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r1, sl
 	ldr	r0, [r1, #12]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #0

@@ -161,7 +161,7 @@ Func_080fcf14:
 	movs	r2, #3
 	movs	r3, #17
 	str	r6, [sp, #4]
-	bl	0x080f811c
+	bl	Func_080f811c
 	cmp	r0, #0
 	beq.n	.L_080fd068
 	ldr	r1, [r5, #0]
@@ -177,7 +177,7 @@ Func_080fcf14:
 	movs	r2, #13
 	movs	r3, #17
 	str	r6, [sp, #4]
-	bl	0x080f811c
+	bl	Func_080f811c
 	cmp	r0, #0
 	beq.n	.L_080fd09e
 	ldr	r3, [sp, #12]
@@ -1497,7 +1497,7 @@ Func_080fcf14:
 	movs	r1, #13
 	movs	r2, #3
 	movs	r3, #17
-	bl	0x080f811c
+	bl	Func_080f811c
 	ldr	r5, [r5, #0]
 	movs	r2, #0
 	mov	r8, r5

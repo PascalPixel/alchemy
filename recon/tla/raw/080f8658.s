@@ -313,7 +313,7 @@ Func_080f8658:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #13
-	bl	0x080f811c
+	bl	Func_080f811c
 	ldr	r5, [r5, #0]
 	movs	r3, #3
 	str	r3, [sp, #0]

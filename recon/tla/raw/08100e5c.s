@@ -1010,7 +1010,7 @@ Func_08100e5c:
 	ldr	r0, [sp, #8]
 	movs	r2, #5
 	movs	r3, #30
-	bl	0x080f811c
+	bl	Func_080f811c
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r3, [pc, #324]

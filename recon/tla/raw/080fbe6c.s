@@ -515,7 +515,7 @@ Func_080fbe6c:
 .L_080fc2bc:
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r0, r6, #0
 	add	sp, #4
 	pop	{r3}
@@ -1028,7 +1028,7 @@ Func_080fbe6c:
 	adds	r0, r5, #0
 	movs	r2, #3
 	movs	r3, #17
-	bl	0x080f811c
+	bl	Func_080f811c
 	ldr	r5, [r5, #0]
 	movs	r1, #0
 	str	r5, [sp, #36]

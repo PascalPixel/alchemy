@@ -103,7 +103,7 @@ Func_080fb780:
 	bl	WaitFrames
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r3, r8
 	ldr	r0, [r3, #16]
 	bl	0x08038260

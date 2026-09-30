@@ -1,66 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x0200b7f8
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x0200b828
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x0200b844
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #2
-	beq .L_02000054_0
-	cmp r3, #2
-	bgt .L_02000054_1
-	cmp r3, #1
-	beq .L_02000054_2
-	b .L_02000054_3
-.L_02000054_1:
-	cmp r3, #3
-	beq .L_02000054_2
-	cmp r3, #4
-	beq .L_02000054_0
-	b .L_02000054_3
-.L_02000054_2:
-	ldr r0, [pc, #16]
-	b .L_02000054_4
-.L_02000054_0:
-	ldr r0, [pc, #16]
-	b .L_02000054_4
-.L_02000054_3:
-	ldr r0, [pc, #16]
-.L_02000054_4:
-	pop {pc}
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0200b8f8
-	.4byte 0x0200b910
-	.4byte 0x0200b8ec
+	.section .text.x02008098,"ax",%progbits
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	bl 0x0200b1d8
@@ -5432,6 +5372,8 @@ Func_02002f84:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global gIdejimaEntrances
+gIdejimaEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -5444,6 +5386,8 @@ Func_02002f84:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaExits
+gIdejimaExits:
 	.4byte 0x00000009
 	.4byte 0x00303009
 	.4byte 0x00401002
@@ -5451,6 +5395,8 @@ Func_02002f84:
 	.4byte 0x00c03000
 	.4byte 0x00d41002
 	.4byte 0x000001ff
+	.global gIdejimaPlacements
+gIdejimaPlacements:
 	.4byte 0xffff0038
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -5493,15 +5439,21 @@ Func_02002f84:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaEvents
+gIdejimaEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaEventsEntrance1
+gIdejimaEventsEntrance1:
 	.4byte 0x0000c602
 	.4byte 0xffff0003
 	.4byte 0x02008641
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaEventsWake
+gIdejimaEventsWake:
 	.4byte 0x00000001
 	.4byte 0xffff0004
 	.4byte 0x00000004

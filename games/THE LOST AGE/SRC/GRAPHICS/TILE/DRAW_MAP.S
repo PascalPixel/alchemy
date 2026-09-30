@@ -11,6 +11,8 @@
 @ credit: handwritten — relocated ARM map-draw kernel (TLA revision of TBS DRAW_MAP)
 .syntax unified
 	.thumb
+	.global Render_DrawMapCode
+Render_DrawMapCode:
 	.global Render_DrawMap
 	.thumb_func
 Render_DrawMap:

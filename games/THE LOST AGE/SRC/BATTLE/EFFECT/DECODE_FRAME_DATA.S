@@ -13,7 +13,10 @@
 	.arm
 	.4byte	0x00000000
 	.4byte	0x080c88ec
-	.4byte	0x080c88cc, 0, 0, 0, 0, 0, 0, 0
+	.4byte	0x080c88cc
+	.global BattleFx_DecodeFrameCopyEnd
+BattleFx_DecodeFrameCopyEnd:
+	.4byte	0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0

@@ -11,6 +11,8 @@
 @ credit: library — TBS/TLA common relocated ARM Q16 dot-product kernel
 .syntax unified
 	.thumb
+	.global Math_DotProductQ16Code
+Math_DotProductQ16Code:
 	.global Math_DotProductQ16
 	.thumb_func
 Math_DotProductQ16:

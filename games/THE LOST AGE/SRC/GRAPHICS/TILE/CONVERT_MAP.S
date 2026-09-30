@@ -8,6 +8,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, map conversion kernel
 .syntax unified
 	.thumb
+	.global Render_ConvertMapCode
+Render_ConvertMapCode:
 	.global Render_ConvertMap
 	.thumb_func
 Render_ConvertMap:

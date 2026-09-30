@@ -14,6 +14,8 @@
 @ credit: handwritten — TLA variant model/bit-stream decoder of the battle-effect bank
 .syntax unified
 	.thumb
+	.global SentouKouka_Tenkai2Code
+SentouKouka_Tenkai2Code:
 	.global SentouKouka_Tenkai2
 	.thumb_func
 SentouKouka_Tenkai2:

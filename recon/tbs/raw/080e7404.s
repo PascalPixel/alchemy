@@ -114,7 +114,7 @@ Func_080e7404:
 	bl	Engine_ScheduleCallback
 	movs	r0, #0
 	movs	r1, #0
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	adds	r0, r5, #0
 	bl	Scheduler_RemoveCallback
 	ldr	r3, [sp, #76]

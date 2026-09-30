@@ -23,8 +23,8 @@ extern u8 MsgSoruTheStarsHaveEnormousPower[];
 void Scene_BagMarsStar(void)
 {
     u8 pass;
-    s32 rec7;
-    s32 record;
+    s32 star;
+    struct FieldActor *leader;
 
     Event_Begin();
     Audio_PlayCue(141);
@@ -43,9 +43,9 @@ void Scene_BagMarsStar(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Map_CopyCellsTo(0, 40, 13, 46, 3, 3);
     Event_Wait(20);
-    rec7 = Value4(Scene_PresentItem, 222, 0xe80000, 0x100000, 0x900000);
+    star = Value4(Scene_PresentItem, 222, 0xe80000, 0x100000, 0x900000);
     Event_Wait(40);
-    UiWork_PushValueSlotFar(rec7, 1);
+    UiWork_PushValueSlotFar(star, 1);
     Message_ShowCentered((s32)MsgSoruMarsStarBagged, 1);
     Actor_SetPosition(ACTOR_JASMINE, 0x1330000, 0x1150000);
     Actor_SetPosition(ACTOR_SUKURETA, 0x1330000, 0x1150000);
@@ -55,9 +55,9 @@ void Scene_BagMarsStar(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 156);
     Event_Wait(10);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    leader = (struct FieldActor *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    if (leader != NULL) {
+        Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
     Actor_WalkToAndWait(ACTOR_GERALD, 218, 172);
@@ -186,17 +186,17 @@ void FieldScene_Forward72b4(void)
 void Scene_EnterStarRoom(void)
 {
     u16 i;
-    u8 *p10;
-    u8 *p10b;
-    u8 *p9;
-    u8 *p9b;
-    u8 *p9c;
-    u8 *rec;
-    u8 *rec2;
-    u8 *record;
-    s32 base5_4009;
-    s32 v6;
-    s32 base5_8009;
+    u8 *leader_motion;
+    u8 *sukureta_motion;
+    u8 *leader_sprite;
+    u8 *sukureta_sprite;
+    struct FieldActor *rising;
+    struct FieldActor *glow;
+    struct FieldActor *leader;
+    u8 *sukureta_flags;
+    s32 say_4009;
+    s32 height;
+    s32 say_8009;
     s32 zero;
 
     Event_Begin();
@@ -204,19 +204,19 @@ void Scene_EnterStarRoom(void)
     Camera_MoveTo(0x1d70000, -1, 0x1050000, 0);
     Camera_WaitForMove();
     Map_Redraw();
-    rec2 = (u8 *)Actor_Get(8);
-    *(s32 *)(rec2 + 24) = 0x1999;
-    *(s32 *)(rec2 + 28) = 0x1999;
-    rec = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    p9 = *(u8 **)(rec + 80) + 38;
-    *p9 = 0;
-    *(s32 *)(rec + 24) = 0x1999;
-    *(s32 *)(rec + 28) = 0x1999;
+    glow = Actor_Get(8);
+    glow->scale_x = 0x1999;
+    glow->scale_y = 0x1999;
+    rising = Actor_Get(ACTOR_PARTY_LEADER);
+    leader_sprite = &rising->sprite->flags;
+    *leader_sprite = 0;
+    rising->scale_x = 0x1999;
+    rising->scale_y = 0x1999;
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0x100);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1d70000, 0x1220000);
-    p10 = rec + 85;
-    *p10 = 0;
-    *(s32 *)(rec + 12) = 0x280000;
+    leader_motion = &rising->motion_flags;
+    *leader_motion = 0;
+    rising->y.fixed = 0x280000;
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     gEventWork->transition_frames = 32;
     Event_OpenScreen();
@@ -226,34 +226,34 @@ void Scene_EnterStarRoom(void)
     Audio_PlayCue(190);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
     for (i = 0; i != 90; i++) {
-        *(s32 *)(rec + 12) += -0x1999;
-        *(s32 *)(rec + 24) += 0x28f;
-        *(s32 *)(rec + 28) += 0x28f;
-        *(s32 *)(rec2 + 24) += 0x28f;
-        *(s32 *)(rec2 + 28) += 0x28f;
+        rising->y.fixed += -0x1999;
+        rising->scale_x += 0x28f;
+        rising->scale_y += 0x28f;
+        glow->scale_x += 0x28f;
+        glow->scale_y += 0x28f;
         Event_Wait(1);
     }
-    *p10 = 5;
+    *leader_motion = 5;
     Event_Wait(80);
     Camera_SetSpeed(0x4ccc, 0x999);
     Camera_MoveTo(0x1d70000, -1, 0x1220000, 1);
     for (i = 0; i != 60; i++) {
-        *(s32 *)(rec + 12) += -0x8000;
+        rising->y.fixed += -0x8000;
         Event_Wait(1);
     }
-    *p10 = 3;
+    *leader_motion = 3;
     Event_Wait(20);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
     {
-        u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        s32 flags = 1 | record[35];
-        record[35] = flags;
+        struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
+        s32 flags = 1 | actor->priority_flags;
+        actor->priority_flags = flags;
     }
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
     {
         s32 shown = 1;
 
-        *p9 = shown;
+        *leader_sprite = shown;
     }
     ((void (*)())Engine_ActorSetPosition)(8, 0, 0);
     Camera_WaitForMove();
@@ -265,13 +265,13 @@ void Scene_EnterStarRoom(void)
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
     zero = 0;
-    record = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    if ((s32)record != 0) {
-        Actor_SetPosition(ACTOR_JASMINE, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    if (leader != NULL) {
+        Actor_SetPosition(ACTOR_JASMINE, leader->x.fixed, leader->z.fixed);
     }
-    record = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    if ((s32)record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    if (leader != NULL) {
+        Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_JASMINE, 0x8000, 0x4000);
@@ -331,18 +331,18 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x3000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0x6000, 60);
-    rec = (u8 *)Actor_Get(ACTOR_SUKURETA);
-    p9b = *(u8 **)(rec + 80) + 38;
-    *p9b = zero;
-    *(s32 *)(rec + 24) = 0x1999;
-    *(s32 *)(rec + 28) = 0x1999;
-    *(s32 *)(rec2 + 24) = 0x1999;
-    *(s32 *)(rec2 + 28) = 0x1999;
+    rising = Actor_Get(ACTOR_SUKURETA);
+    sukureta_sprite = &rising->sprite->flags;
+    *sukureta_sprite = zero;
+    rising->scale_x = 0x1999;
+    rising->scale_y = 0x1999;
+    glow->scale_x = 0x1999;
+    glow->scale_y = 0x1999;
     Actor_SetChildValue(ACTOR_SUKURETA, 0x100);
     Actor_SetPosition(ACTOR_SUKURETA, 0x1d70000, 0x1220000);
-    p10b = rec + 85;
-    *p10b = zero;
-    *(s32 *)(rec + 12) = 0x280000;
+    sukureta_motion = &rising->motion_flags;
+    *sukureta_motion = zero;
+    rising->y.fixed = 0x280000;
     Event_Wait(1);
     Event_SetMessage((s32)MsgSoruSukuretaWhereAreWe);
     Event_ShowMessage(ACTOR_SUKURETA, 0);
@@ -359,32 +359,32 @@ void Scene_EnterStarRoom(void)
     Audio_PlayCue(190);
     Actor_SetSpritePriority(ACTOR_SUKURETA, 2);
     for (i = 0; i != 90; i++) {
-        *(s32 *)(rec + 12) += -0x1999;
-        *(s32 *)(rec + 24) += 0x28f;
-        *(s32 *)(rec + 28) += 0x28f;
-        *(s32 *)(rec2 + 24) += 0x28f;
-        *(s32 *)(rec2 + 28) += 0x28f;
+        rising->y.fixed += -0x1999;
+        rising->scale_x += 0x28f;
+        rising->scale_y += 0x28f;
+        glow->scale_x += 0x28f;
+        glow->scale_y += 0x28f;
         Event_Wait(1);
     }
-    *p10b = 5;
+    *sukureta_motion = 5;
     Event_Wait(80);
     for (i = 0; i != 60; i++) {
-        *(s32 *)(rec + 12) += -0x8000;
+        rising->y.fixed += -0x8000;
         Event_Wait(1);
     }
-    *p10b = 3;
+    *sukureta_motion = 3;
     Event_Wait(30);
     Actor_SetSpritePriority(ACTOR_SUKURETA, 1);
     {
-        u8 *record = Actor_Get(ACTOR_SUKURETA);
-        s32 flags = 1 | record[35];
-        record[35] = flags;
+        struct FieldActor *actor = Actor_Get(ACTOR_SUKURETA);
+        s32 flags = 1 | actor->priority_flags;
+        actor->priority_flags = flags;
     }
     Actor_SetChildValue(ACTOR_SUKURETA, 0);
     {
         s32 shown = 1;
 
-        *p9b = shown;
+        *sukureta_sprite = shown;
     }
     Actor_SetPosition(8, 0, 0);
     Call1((void (*)())Engine_EventWait, 30);
@@ -422,10 +422,10 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
     Event_Wait(30);
-    base5_4009 = 0x4009;
+    say_4009 = 0x4009;
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
     Event_Wait(40);
-    Event_SayThenWait(base5_4009, 30);
+    Event_SayThenWait(say_4009, 30);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
     Event_Wait(40);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -433,13 +433,13 @@ void Scene_EnterStarRoom(void)
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
     Event_SayThenWait(1, 40);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 20);
-    Event_SayThenWait(base5_4009, 20);
+    Event_SayThenWait(say_4009, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xe000, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Actor_ShowEmote(ACTOR_JASMINE, 0x101, 40);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
-    Event_SayThenWait(base5_4009, 10);
+    Event_SayThenWait(say_4009, 10);
     Actor_SetAnimation(ACTOR_GERALD, 3);
     Actor_SetAnimation(ACTOR_JASMINE, 3);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -683,18 +683,18 @@ void Scene_EnterStarRoom(void)
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
     Event_Wait(20);
     Event_SayThenWait(0x8009, 40);
-    rec = (u8 *)Actor_Get(ACTOR_SUKURETA);
-    v6 = 192;
+    rising = Actor_Get(ACTOR_SUKURETA);
+    height = 192;
     Task_Wait(6);
-    *(s32 *)(rec + 48) = 0x30000;
-    *(s32 *)(rec + 52) = 0x20000;
+    rising->speed = 0x30000;
+    rising->acceleration = 0x20000;
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = (v6 << 11);
+    rising->velocity_y = (height << 11);
     Actor_MoveToAndWait(ACTOR_SUKURETA, 0x1d7, 0x18b);
     Task_Wait(6);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x4ccc, 0x2666);
-    p9c = rec + 90;
-    *p9c &= 254;
+    sukureta_flags = &rising->unknown_5a;
+    *sukureta_flags &= 254;
     Actor_SetDestination(ACTOR_SUKURETA, 0x1d9, 0x18b);
     Actor_WaitForMove(ACTOR_SUKURETA);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
@@ -707,7 +707,7 @@ void Scene_EnterStarRoom(void)
     Actor_SetSpeed(ACTOR_SUKURETA, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x19b);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x4ccc, 0x2666);
-    *p9c &= 254;
+    *sukureta_flags &= 254;
     Actor_SetDestination(ACTOR_SUKURETA, 0x1da, 0x19b);
     Actor_WaitForMove(ACTOR_SUKURETA);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 3);
@@ -724,15 +724,15 @@ void Scene_EnterStarRoom(void)
     Actor_EnableActionCallback(ACTOR_SUKURETA, 1);
     Event_Wait(30);
     {
-        s32 flags = 1 | *p9c;
-        *p9c = flags;
+        s32 flags = 1 | *sukureta_flags;
+        *sukureta_flags = flags;
     }
     Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 60);
     Task_Wait(6);
-    *(s32 *)(rec + 48) = 0x30000;
-    *(s32 *)(rec + 52) = 0x20000;
+    rising->speed = 0x30000;
+    rising->acceleration = 0x20000;
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = (v6 << 11);
+    rising->velocity_y = (height << 11);
     Actor_MoveToAndWait(ACTOR_SUKURETA, 0x1d7, 0x168);
     Task_Wait(6);
     Event_Wait(40);
@@ -795,11 +795,11 @@ void Scene_EnterStarRoom(void)
     Actor_SetSpeed(ACTOR_SUKURETA, 0x3333, 0x1999);
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x160);
     Event_Wait(20);
-    base5_8009 = 0x8009;
+    say_8009 = 0x8009;
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
     Event_Wait(20);
-    Event_SayThenWait(base5_8009, 60);
-    *p9c &= 254;
+    Event_SayThenWait(say_8009, 60);
+    *sukureta_flags &= 254;
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1c8, 0x168);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
@@ -813,18 +813,18 @@ void Scene_EnterStarRoom(void)
     Event_SayThenWait(1, 10);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xd000, 20);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
-    Event_SayThenWait(base5_8009, 20);
+    Event_SayThenWait(say_8009, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 40);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
-    Event_SayThenWait(base5_8009, 10);
+    Event_SayThenWait(say_8009, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x5000, 30);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
     Event_Wait(10);
-    Event_SayThenWait(base5_8009, 30);
+    Event_SayThenWait(say_8009, 30);
     Actor_SetAnimation(ACTOR_GERALD, 3);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(20);
@@ -836,9 +836,9 @@ void Scene_EnterStarRoom(void)
     Event_Wait(10);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    if ((s32)record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+    leader = (struct FieldActor *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    if (leader != NULL) {
+        Actor_SetDestination(ACTOR_GERALD, leader->x.part.pixel, leader->z.part.pixel);
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);

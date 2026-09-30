@@ -44,7 +44,7 @@
  *   - from frame 30, while frame <= 79, every listed party member is driven
  *     through ObjectGroup_UpdateMembers on the frames where frame/12 is 0 or 6.
  * Afterwards the callback is removed, heap kinds 46/47 are released, the
- * focus point is handed to Unnamed_080e6eac and the twelve spawned objects are
+ * focus point is handed to BattleEffect_RunImpactBurst and the twelve spawned objects are
  * released through ResourceObject_ReleaseFar.
  *
  * Uncertain, and left as read from the reference:
@@ -136,7 +136,7 @@ void BattleFx_SpawnObjects(s32 entry_count, s32 kind, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 void Audio_PlayCue(s32 id);
 void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
-void Unnamed_080e6eac(s32 channel, s32 x, s32 y);
+void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 s32 Math_Mod(s32 numerator, s32 denominator);
@@ -403,7 +403,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
     Scheduler_RemoveCallback((void *)0x080CD261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Unnamed_080e6eac(1, pos_x, pos_y);
+    BattleEffect_RunImpactBurst(1, pos_x, pos_y);
     cursor = work->objects;
     for (i = 0; i != 12; i++) {
         ResourceObject_ReleaseFar(*cursor++);

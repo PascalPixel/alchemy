@@ -58,7 +58,7 @@ void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void Audio_PlayCue(s32 id);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 unk);
 void BattleFx_PlaceFormationObjects(s32 channel, s32 a, s32 b);
-void Unnamed_080e6eac(s32 channel, s32 a, s32 b);
+void BattleEffect_RunImpactBurst(s32 channel, s32 a, s32 b);
 s32 Math_Div(s32 numerator, s32 denominator);
 s32 Math_Mod(s32 numerator, s32 denominator);
 s32 Math_ModU(s32 numerator, s32 denominator);
@@ -839,7 +839,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleEventRuntime_BeginPhaseFar(134);
-    Unnamed_080e6eac(2, 0x800000, fade);
+    BattleEffect_RunImpactBurst(2, 0x800000, fade);
     {
         void **cursor;
         s32 i;

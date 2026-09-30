@@ -51,7 +51,7 @@ void *ResourceObject_Create(s32 id);
 struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 void Object_SetPositionAndResetMotion(struct FieldObject *object, s32 x, s32 y, s32 z);
 
-struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
+struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 {
     struct FieldObject *object;
     void *sprite;

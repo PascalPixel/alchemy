@@ -115,7 +115,7 @@ ObjectDispatch_InitFromTable0Far:
 Object_CreateFar:
 	.thumb_func
 Func_080090c8:
-	overlay_veneer Func_0800c150
+	overlay_veneer FieldObject_Create
 	.global Func_080090d0
 	.thumb_func
 Func_080090d0:

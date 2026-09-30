@@ -1,10 +1,8 @@
 .syntax unified
 	.thumb
-	.global Unnamed_080e6eac
-	.global Func_080e6eac
+	.global BattleEffect_RunImpactBurst
 	.thumb_func
-Unnamed_080e6eac:
-Func_080e6eac:
+BattleEffect_RunImpactBurst:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

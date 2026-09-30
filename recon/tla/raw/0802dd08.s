@@ -298,7 +298,7 @@ Func_0802dd08:
 	str	r0, [sp, #4]
 	bl	Func_08014368
 	movs	r0, #2
-	bl	0x080230e0
+	bl	Func_080230e0
 	mov	r0, sl
 	movs	r3, #0
 	ldrsh	r2, [r0, r3]

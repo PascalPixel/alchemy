@@ -194,7 +194,7 @@ Func_080219cc:
 	.2byte 0x0802
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x08022acc
+	bl	Func_08022acc
 	strb	r5, [r7, #24]
 	b.n	.L_08021afe
 	strb	r5, [r6, #20]

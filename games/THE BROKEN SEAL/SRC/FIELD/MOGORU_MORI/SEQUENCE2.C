@@ -165,7 +165,7 @@ void FieldScene_RunScene39f_020021b0(void)
 {
     s32 rec7;
 
-    rec7 = Engine_ActorGet(18);
+    rec7 = Object_GetById(18);
     Event_Begin();
     Actor_SetPosition(18, 0x880000, 0x1680000);
     FieldScene_RunSixCallSetupSequence(18, 1);

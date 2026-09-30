@@ -18,8 +18,8 @@ void FieldScene_RunLargeStagingSequence(void)
     s32 k;
     s32 facing;
 
-    rec3 = Engine_ActorGet(ACTOR_PARTY_LEADER);
-    rec8 = Engine_ActorGet(14);
+    rec3 = Object_GetById(ACTOR_PARTY_LEADER);
+    rec8 = Object_GetById(14);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -29,28 +29,28 @@ void FieldScene_RunLargeStagingSequence(void)
     Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
     Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
     Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
-    rec = Engine_ActorGet(11);
+    rec = Object_GetById(11);
     *(u8 *)(rec + 85) = 0;
     k = 0x1840000;
     *(s32 *)(rec + 12) = 0xa00000;
     *(s32 *)(rec + 16) = 0x3480000;
     *(s32 *)(rec + 8) = k;
     Actor_SetSpriteFlags(rec, 0);
-    rec = Engine_ActorGet(12);
+    rec = Object_GetById(12);
     *(u8 *)(rec + 85) = 0;
     *(s32 *)(rec + 12) = 0xa00000;
     *(s32 *)(rec + 16) = 0x34c0000;
     *(s32 *)(rec + 8) = k;
     Actor_SetSpriteFlags(rec, 0);
-    rec = Engine_ActorGet(13);
+    rec = Object_GetById(13);
     *(u8 *)(rec + 85) = 0;
     *(s32 *)(rec + 16) = 0x3500000;
     *(s32 *)(rec + 12) = 0xa00000;
     *(s32 *)(rec + 8) = k;
     Actor_SetSpriteFlags(rec, 0);
-    record = Engine_ActorGet(11);
+    record = Object_GetById(11);
     Actor_SetSpriteFlags((struct FieldActor *)record, 0);
-    record = Engine_ActorGet(12);
+    record = Object_GetById(12);
     Actor_SetSpriteFlags((struct FieldActor *)record, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, (s32)gLeaderHammerAction);
@@ -146,13 +146,13 @@ void FieldScene_RunLargeStagingSequence(void)
     Event_ShowMessageAndWait(0x2001, 0, 20);
     Audio_PlayCue(131);
     for (i = 0; i < 60; i++) {
-        OverlayObject_UpdateOnFrameBit1(Engine_ActorGet(ACTOR_GERALD));
+        OverlayObject_UpdateOnFrameBit1(Object_GetById(ACTOR_GERALD));
         Task_Wait(1);
     }
     Actor_SetSpritePriority(ACTOR_GERALD, 1);
     Call2(Engine_TaskAddCallback, (s32)SceneState_SetValue1ThenCall, 0xc80);
     Value2(Engine_TaskAddCallback, (s32)FieldScene_RunStep9, 0xc80);
-    record = Engine_ActorGet(14);
+    record = Object_GetById(14);
     Actor_SetSpriteFlags((struct FieldActor *)record, 0);
     none2 = 0;
     rec8[85] = none2;
@@ -169,7 +169,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Actor_SetSpeed(9, 0x2666, 0x1333);
     Actor_SetSpeed(14, 0x2666, 0x1333);
     /* FAKEMATCH: the reference looks actor 9 up here and drops the result. */
-    Engine_ActorGet(9);
+    Object_GetById(9);
     Object_SetPosition((s32)rec8, 0x1880000, 0xd00000, 0x2480000);
     Actor_MoveToAndWait(9, 0x17a, 0x248);
     Event_Wait(20);

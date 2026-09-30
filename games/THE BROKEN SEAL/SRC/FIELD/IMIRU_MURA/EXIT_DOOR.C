@@ -16,7 +16,7 @@ void ImiruMura_RunExitDoor(void)
     event = gEventWork;
     Engine_EventBegin();
     for (i = 8; i <= 65; i++) {
-        actor = Engine_ActorGet(i);
+        actor = Object_GetById(i);
         if (actor != NULL) {
             actor->motion_flags = 0;
         }
@@ -41,7 +41,7 @@ void ImiruMura_RunExitDoor(void)
         Engine_ActorSetSpritePriority(0, 3);
         Call3((void (*)())Engine_ActorSetDestinationOffset, 0, 0, -8);
     } else {
-        Engine_ActorGet(0)->motion_flags = 0;
+        Object_GetById(0)->motion_flags = 0;
         Call3((void (*)())Engine_ActorCenterAndWalk, 0, 3, -16);
     }
     Engine_EventWait(16);

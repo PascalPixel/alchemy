@@ -243,7 +243,7 @@ Func_080ce034:
 	bl	Object_SetPosition
 	mov	r0, sl
 	movs	r1, #2
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r2, [pc, #496]
 	ldr	r1, [sp, #36]
 	mov	r0, fp

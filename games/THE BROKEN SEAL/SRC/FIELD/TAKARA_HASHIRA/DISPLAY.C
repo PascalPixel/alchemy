@@ -82,7 +82,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Audio_PlayCue(240);
         Actor_SetSpritePriority(REC_ID, 1);
         /* Flag byte at +85: cleared, since queried is zero here. */
-        *((u8 *)Engine_ActorGet(REC_ID) + 85) = queried;
+        *((u8 *)Object_GetById(REC_ID) + 85) = queried;
         record = Actor_Get(REC_ID);
         *(s32 *)(record + 12) = -0x200000;
         Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
@@ -106,7 +106,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Event_Wait(30);
         Audio_PlayCue(230);
         /* Flag byte at +85: cleared unconditionally in this branch. */
-        *((u8 *)Engine_ActorGet(REC_ID) + 85) = 0;
+        *((u8 *)Object_GetById(REC_ID) + 85) = 0;
         record = Actor_Get(REC_ID);
         *(s32 *)(record + 12) = -0x200000;
         Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);

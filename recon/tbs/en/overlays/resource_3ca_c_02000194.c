@@ -115,25 +115,25 @@ void BabiFune_UpdateWaves(void)
         map->layers[6].y = Data_02009804 + bob;
         map->layers[7].y = Data_02009808 + bob;
         if (BabiFune_StoredSlot0 != -0x10000) {
-            actor = Engine_ActorGet(0);
+            actor = Object_GetById(0);
             actor->y.fixed = BabiFune_StoredSlot0 + bob;
             *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + bob;
             actor->motion_flags = 0;
         }
         if (BabiFune_StoredRecord1 != -0x10000) {
-            actor = Engine_ActorGet(1);
+            actor = Object_GetById(1);
             actor->y.fixed = BabiFune_StoredRecord1 + bob;
             *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + bob;
             actor->motion_flags = 0;
         }
         if (BabiFune_StoredSlot3 != -0x10000) {
-            actor = Engine_ActorGet(3);
+            actor = Object_GetById(3);
             actor->y.fixed = BabiFune_StoredSlot3 + bob;
             *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + bob;
             actor->motion_flags = 0;
         }
         if (BabiFune_StoredRecord2 != -0x10000) {
-            actor = Engine_ActorGet(2);
+            actor = Object_GetById(2);
             actor->y.fixed = BabiFune_StoredRecord2 + bob;
             *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + bob;
             actor->motion_flags = 0;
@@ -155,7 +155,7 @@ void BabiFune_UpdateWaves(void)
             actor->priority_flags = 2;
             actor->sprite->priority = 2;
             Engine_ObjectSetBlendMode(actor, 0);
-            Engine_ObjectSetAnimation(actor, 0);
+            Object_SetMode(actor, 0);
         }
     }
 }

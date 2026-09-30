@@ -55,7 +55,7 @@ void RunDialoguePromptScene(void)
     GameFlag_Set(0x855);
     Event_Begin();
     {
-        u8 *record = (u8 *)Engine_ActorGet(12);
+        u8 *record = (u8 *)Object_GetById(12);
         /* FAKEMATCH: a result temporary, not a compound or-assign: the
          * reference merges the byte into the mask's register, which the
          * two-address ORR does only when the result is its own object. */
@@ -75,11 +75,11 @@ void RunDialoguePromptScene(void)
     Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
-    record = (u8 *)Engine_ActorGet(10);
+    record = (u8 *)Object_GetById(10);
     Actor_SetSpriteFlags((struct FieldActor *)record, 1);
-    record = (u8 *)Engine_ActorGet(11);
+    record = (u8 *)Object_GetById(11);
     Actor_SetSpriteFlags((struct FieldActor *)record, 1);
-    record = (u8 *)Engine_ActorGet(12);
+    record = (u8 *)Object_GetById(12);
     Actor_SetSpriteFlags((struct FieldActor *)record, 1);
     Actor_SetPosition(13, 0x3000000, 0x1980000);
     Actor_SetPosition(14, 0x3000000, 0x1a80000);
@@ -215,7 +215,7 @@ void RunDialoguePromptScene(void)
         s32 t = 0;
         u16 zero_sym = (u16)(t + t);
 
-        rec = (u8 *)Engine_ActorGet(19);
+        rec = (u8 *)Object_GetById(19);
         rec[85] = zero_sym;
     }
     Actor_SetSpritePriority(19, 1);
@@ -342,7 +342,7 @@ void RunDialoguePromptScene(void)
     Actor_FaceDirection(ACTOR_IVAN, 0xd000, 0);
     Object_RefreshSelectorById(9);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-    rec8 = (((s32 (*)())Engine_ActorGet))(14);
+    rec8 = (((s32 (*)())Object_GetById))(14);
     {
         u8 *target = rec8 + 91;
         /* FAKEMATCH: the flag goes through a word-sized local and a
@@ -480,7 +480,7 @@ void RunDialoguePromptScene(void)
     SceneActor_SetModeZeroAndValue(1, 20);
     SceneEffect_ApplyThreeValuesAndFinish(0, 3, 20);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = (((s32 (*)())Engine_ActorGet))(0);
+    record = (((s32 (*)())Object_GetById))(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

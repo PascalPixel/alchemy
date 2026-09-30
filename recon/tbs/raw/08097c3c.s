@@ -127,7 +127,7 @@ FunctionHead_08097c3c:
 	bl	Object_SetPosition
 	mov	r0, sl
 	movs	r1, #1
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	mov	r0, sl
 	str	r5, [r0, #36]
 	str	r5, [r0, #40]
@@ -231,7 +231,7 @@ FunctionHead_08097c3c:
 .L_08097e16:
 	mov	r0, sl
 	movs	r1, #4
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r3, [pc, #336]
 	ldr	r3, [r3, #0]
 	movs	r2, #15
@@ -259,7 +259,7 @@ FunctionHead_08097c3c:
 	lsrs	r3, r3, #30
 	ldrb	r1, [r2, r3]
 	mov	r0, sl
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r0, #15
 	bl	WaitFrames
 	adds	r3, r6, #0
@@ -298,7 +298,7 @@ FunctionHead_08097c3c:
 	ldr	r2, [sp, #24]
 	movs	r1, #24
 	ldrsh	r0, [r2, r1]
-	bl	Engine_ActorGet
+	bl	Object_GetById
 	adds	r0, #90
 	ldrb	r2, [r0, #0]
 	movs	r3, #254
@@ -354,7 +354,7 @@ FunctionHead_08097c3c:
 	ldr	r1, [sp, #24]
 	movs	r3, #24
 	ldrsh	r0, [r1, r3]
-	bl	Engine_ActorGet
+	bl	Object_GetById
 	adds	r0, #90
 	ldrb	r2, [r0, #0]
 	movs	r3, #1

@@ -2,8 +2,8 @@
 
 s32 IwramUnsignedDivide(s32 num, s32 den);
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
-void *Engine_ActorGet(s32 id);
-void Engine_ObjectSetAnimation(void *object, s32 animation);
+void *Object_GetById(s32 id);
+void Object_SetMode(void *object, s32 animation);
 void ObjectGroup_SetChildValue(void *object, s32 palette);
 s32 Engine_RandomNext(void);
 s32 IwramUnsignedRemainder(s32 value, s32 modulus);
@@ -83,11 +83,11 @@ void SoruFunka_StepEmbers(void)
 
     for (i = 0; i < 16; i++) {
         if (gEmberState[i] != 0) {
-            spark = Engine_ActorGet(i + 16);
+            spark = Object_GetById(i + 16);
             if (spark->target_x == (s32)0x80000000 && spark->target_z == (s32)0x80000000) {
                 gEmberState[i]++;
                 if (gEmberState[i] == 2)
-                    Engine_ObjectSetAnimation(spark, 3);
+                    Object_SetMode(spark, 3);
                 if (gEmberState[i] == 19) {
                     spark->x = 0;
                     spark->y = 0;
@@ -112,7 +112,7 @@ void SoruFunka_StepEmbers(void)
         return;
     for (i = 0; i < 16; i++) {
         angle = IwramUnsignedRemainder(Engine_RandomNext(), 0xffff);
-        ember = Engine_ActorGet(i + 16);
+        ember = Object_GetById(i + 16);
         if (gEmberState[i] == 0) {
             if (Engine_GameFlagIsSet(0x246) == 0)
                 Engine_AudioPlayCue(246);
@@ -122,7 +122,7 @@ void SoruFunka_StepEmbers(void)
             ember->acceleration = 0x10000;
             Engine_ActorSetSpriteFlags(ember, 0);
             ember->sprite->layer = 1;
-            Engine_ObjectSetAnimation(ember, 2);
+            Object_SetMode(ember, 2);
             Engine_ObjectSetScript(ember, Funka_EmberScript);
             ember->x = Iwram_MulQ16(Engine_MathCos(angle), (((u32)(Engine_RandomNext() << 8) >> 16) << 16) + 0x1000000) + 0x1450000;
             ember->y = 0;

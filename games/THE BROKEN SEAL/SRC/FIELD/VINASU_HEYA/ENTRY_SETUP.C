@@ -480,7 +480,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
     s32 x;
     s32 z;
 
-    object = (struct SceneObject *)Engine_ActorGet(actor);
+    object = (struct SceneObject *)Object_GetById(actor);
     params.unk00 = 1;
     params.mode = 7;
     params.callback = (s32)Effect_AdvanceMotion;

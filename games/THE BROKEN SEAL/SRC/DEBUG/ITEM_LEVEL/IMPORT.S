@@ -94,9 +94,9 @@ Party_AdvanceOwnerCountToTarget:
 	.thumb_func
 PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetAnimation
 	.thumb_func

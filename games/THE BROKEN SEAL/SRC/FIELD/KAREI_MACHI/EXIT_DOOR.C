@@ -22,7 +22,7 @@ void KareiMachi_RunExitDoor(void)
     event = gEventWork;
     Engine_EventBegin();
     for (i = 8; i <= 65; i++) {
-        actor = Engine_ActorGet(i);
+        actor = Object_GetById(i);
         if (actor != NULL) {
             actor->motion_flags = 0;
         }
@@ -37,7 +37,7 @@ void KareiMachi_RunExitDoor(void)
         Engine_MapAnimateCells(KareiMachi_DoorCells[door].steps, x, y);
     }
     Engine_ActorSetSpeed(0, 0x8000, 0x4000);
-    Engine_ActorGet(0)->motion_flags = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(0, 2);
     Call3(Engine_ActorCenterAndWalk, 0, 2, -8);
     Engine_EventWait(10);

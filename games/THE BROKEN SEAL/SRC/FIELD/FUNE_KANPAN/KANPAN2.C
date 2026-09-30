@@ -17,14 +17,13 @@ union Slot {
 
 extern u8 LinkedMessage_TheresNothingWeCanDo[];
 s32 BuildMotionCountdown(s32, s16);
-u8 *Object_GetById(s32);
 
 void SceneEffect_InitSlotsEightToNineteen(void)
 {
-    Engine_ActorGet(8)->collision_flags = 0;
-    Engine_ActorGet(9)->collision_flags = 0;
-    Engine_ActorGet(10)->collision_flags = 0;
-    Engine_ActorGet(11)->collision_flags = 0;
+    Object_GetById(8)->collision_flags = 0;
+    Object_GetById(9)->collision_flags = 0;
+    Object_GetById(10)->collision_flags = 0;
+    Object_GetById(11)->collision_flags = 0;
     OverlayObject_ActivateSlotWithMode3(8);
     OverlayObject_ActivateSlotWithMode3(9);
     OverlayObject_ActivateSlotWithMode3(10);
@@ -33,28 +32,28 @@ void SceneEffect_InitSlotsEightToNineteen(void)
     OverlayObject_ActivateSlotWithMode3(13);
     OverlayObject_ActivateSlotWithMode3(14);
     OverlayObject_ActivateSlotWithMode3(15);
-    FuneKanpan_SlotDepth[0] = Engine_ActorGet(12)->z.fixed;
-    FuneKanpan_SlotDepth[1] = Engine_ActorGet(13)->z.fixed;
-    FuneKanpan_SlotDepth[2] = Engine_ActorGet(14)->z.fixed;
-    FuneKanpan_SlotDepth[3] = Engine_ActorGet(15)->z.fixed;
+    FuneKanpan_SlotDepth[0] = Object_GetById(12)->z.fixed;
+    FuneKanpan_SlotDepth[1] = Object_GetById(13)->z.fixed;
+    FuneKanpan_SlotDepth[2] = Object_GetById(14)->z.fixed;
+    FuneKanpan_SlotDepth[3] = Object_GetById(15)->z.fixed;
     OverlayObject_ActivateSlotWithMode3(16);
     OverlayObject_ActivateSlotWithMode3(17);
     OverlayObject_ActivateSlotWithMode3(18);
     OverlayObject_ActivateSlotWithMode3(19);
-    Engine_ActorGet(16)->scale_x = 0xffff0000;
-    Engine_ActorGet(17)->scale_x = 0xffff0000;
-    Engine_ActorGet(18)->scale_x = 0xffff0000;
-    Engine_ActorGet(19)->scale_x = 0xffff0000;
-    FuneKanpan_SlotDepth[4] = Engine_ActorGet(16)->z.fixed;
-    FuneKanpan_SlotDepth[5] = Engine_ActorGet(17)->z.fixed;
-    FuneKanpan_SlotDepth[6] = Engine_ActorGet(18)->z.fixed;
-    FuneKanpan_SlotDepth[7] = Engine_ActorGet(19)->z.fixed;
+    Object_GetById(16)->scale_x = 0xffff0000;
+    Object_GetById(17)->scale_x = 0xffff0000;
+    Object_GetById(18)->scale_x = 0xffff0000;
+    Object_GetById(19)->scale_x = 0xffff0000;
+    FuneKanpan_SlotDepth[4] = Object_GetById(16)->z.fixed;
+    FuneKanpan_SlotDepth[5] = Object_GetById(17)->z.fixed;
+    FuneKanpan_SlotDepth[6] = Object_GetById(18)->z.fixed;
+    FuneKanpan_SlotDepth[7] = Object_GetById(19)->z.fixed;
     FuneKanpan_ChooseSlotModes();
 }
 
 void OverlayObject_ActivateSlotWithMode3(s32 a)
 {
-    u8 *p = Object_GetById(a);
+    u8 *p = (u8 *)Object_GetById(a);
 
     if (p != 0) {
         Actor_SetSpritePriority(a, 3);

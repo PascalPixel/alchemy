@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "CALL.H"
 
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_EventBegin();
 void Engine_ActorShowEmote();
 void ObjectMotion_SetSpeedParameters();
@@ -16,7 +16,7 @@ void BabiIriguchi_JumpFromLedge(void)
 {
     s32 rec7;
 
-    rec7 = Engine_ActorGet(0);
+    rec7 = Object_GetById(0);
     Engine_EventBegin();
     if ((*(s32 *)(rec7 + 8) >> 20) != 6) {
         if ((*(s32 *)(rec7 + 8) >> 20) != 18) {

@@ -158,7 +158,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Event_ShowMessageAndWait(14, 0, 10);
         ready_flag = GameFlag_IsSet(0x8ff);
         if (ready_flag == 0) {
-            rec18 = (u8 *)Engine_ActorGet(18);
+            rec18 = (u8 *)Object_GetById(18);
             /* Clear the byte at +85 of the lookup result. */
             *(u8 *)(Battle_GetWorkObject1e0() + 85) = ready_flag;
             Camera_SetSpeed(0x10000, 0x2000);
@@ -167,7 +167,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Actor_FaceDirection(14, 0x3000, 0);
             Camera_WaitForMove();
             Event_Wait(120); /* should_wait 120 */
-            record = (u8 *)Engine_ActorGet(0);
+            record = (u8 *)Object_GetById(0);
             Camera_MoveTo(*(s32 *)(record + 8), *(s32 *)(record + 12), *(s32 *)(record + 16), 1); /* use_setter 1 */
             Camera_WaitForMove();
         }
@@ -226,7 +226,7 @@ void SceneDialogue_RunActor21Message194a(void)
 
 s32 SceneActor_IsSlotZeroAngleInRange(void)
 {
-    struct Slot02000338 *slot = (struct Slot02000338 *)Engine_ActorGet(0);
+    struct Slot02000338 *slot = (struct Slot02000338 *)Object_GetById(0);
 
     if ((u32)((slot->angle + 0x5FFF) << 16) <= 0x3FFE0000) {
         return 1;
@@ -318,7 +318,7 @@ void FieldScene_RunFacingGatedDialogue18(void)
 {
     u8 *rec;
 
-    rec = (u8 *)Engine_ActorGet(0);
+    rec = (u8 *)Object_GetById(0);
 
     if ((u32)((*(u16 *)(rec + 6) + 0x5fff) << 16) <= 0x3ffe0000) {
         Inn_Open(6, 18);
@@ -354,7 +354,7 @@ void FieldScene_RunEarlySequence(void)
     work = (u8 *)gEventWork;
     Event_Begin();
     for (i = 8; i <= 65; i++) {
-        record = (u8 *)Engine_ActorGet(i);
+        record = (u8 *)Object_GetById(i);
         if (record != 0) {
             record[85] = 0;
         }
@@ -383,7 +383,7 @@ void FieldScene_RunEarlySequence(void)
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x100;
-    *(u8 *)((s32)Engine_ActorGet(0) + 85) = 0;
+    *(u8 *)((s32)Object_GetById(0) + 85) = 0;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
     if (idx == 6) {
         Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
@@ -408,7 +408,7 @@ void FieldScene_RunScene3a3SequenceB(void)
 
     work = (u8 *)gEventWork;
     Event_Begin();
-    *(u8 *)((s32)Engine_ActorGet(0) + 85) = 0;
+    *(u8 *)((s32)Object_GetById(0) + 85) = 0;
     Audio_PlayCue(123);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
     Event_RequestExit(*(s16 *)(work + 0x16c));
@@ -453,7 +453,7 @@ void FieldScene_RunScene3a3SequenceC(void)
 {
     struct SceneMotion *motion;
 
-    motion = (struct SceneMotion *)Engine_ActorGet(18);
+    motion = (struct SceneMotion *)Object_GetById(18);
     motion->timer = 0;
     motion->delay = 0;
     *(s32 *)((u8 *)motion + 72) = 0x6666;
@@ -472,7 +472,7 @@ void FieldScene_RunScene3a3SequenceC(void)
 
 void SceneState_SetFlag906ByActorNineteenX(void)
 {
-    struct Actor *p = (struct Actor *)Engine_ActorGet(19);
+    struct Actor *p = (struct Actor *)Object_GetById(19);
 
     if ((p->f08 >> 20) == 22) {
         GameFlag_Set(0x906);
@@ -520,7 +520,7 @@ void FieldScene_RunMiddleSequence(void)
     s32 rec0;
     s32 kind;
 
-    scene = Engine_ActorGet(0);
+    scene = Object_GetById(0);
     rec5 = GameFlag_IsSet(0x242);
     if (rec5 != 0) {
         Map_CopyCellsTo(64, 32, 0, 32, 32, 32);
@@ -568,37 +568,37 @@ L_020009da:
     if (GameFlag_IsSet(0x906) != 0) {
         Actor_SetPosition(19, 0x1680000, 0xa80000);
     }
-    Actor_SetSpriteFlags((s32)Engine_ActorGet(19), 0);
+    Actor_SetSpriteFlags((s32)Object_GetById(19), 0);
     Actor_SetChildValue(22, 15);
     ((void (*)())Engine_ActorSetChildValue)(23, 15);
     Actor_SetChildValue(24, 15);
     {
         u8 bits = 8;
-        u8 *flags = (u8 *)Engine_ActorGet(22) + 89;
+        u8 *flags = (u8 *)Object_GetById(22) + 89;
         u8 value = *flags;
 
         value |= bits;
         *flags = value;
-        flags = (u8 *)Engine_ActorGet(23) + 89;
+        flags = (u8 *)Object_GetById(23) + 89;
         value = *flags;
         value |= bits;
         *flags = value;
-        flags = (u8 *)Engine_ActorGet(24) + 89;
+        flags = (u8 *)Object_GetById(24) + 89;
         bits |= *flags;
         *flags = bits;
     }
     {
         u8 bits = 2;
-        u8 *flags = (u8 *)Engine_ActorGet(22) + 35;
+        u8 *flags = (u8 *)Object_GetById(22) + 35;
         u8 value = *flags;
 
         value |= bits;
         *flags = value;
-        flags = (u8 *)Engine_ActorGet(23) + 35;
+        flags = (u8 *)Object_GetById(23) + 35;
         value = *flags;
         value |= bits;
         *flags = value;
-        flags = (u8 *)Engine_ActorGet(24) + 35;
+        flags = (u8 *)Object_GetById(24) + 35;
         bits |= *flags;
         *flags = bits;
     }
@@ -620,39 +620,39 @@ void FieldScene_RunScene3a3SequenceD(void)
 
     if (GameFlag_IsSet(0x240) == 0) {
         Actor_SetPosition(8, 0x3280000, 0x2d70000);
-        actor = (u8 *)Engine_ActorGet(8);
+        actor = (u8 *)Object_GetById(8);
         facing = 0x3000;
         *(u16 *)(actor + 6) = facing;
         Actor_SetPosition(9, 0x31a0000, 0x3390000);
     }
     if (GameFlag_IsSet(0x241) == 0) {
         Actor_SetPosition(10, 0x2300000, 0x2c60000);
-        actor = (u8 *)Engine_ActorGet(10);
+        actor = (u8 *)Object_GetById(10);
         facing = 0x1000;
         *(u16 *)(actor + 6) = facing;
         Actor_SetPosition(11, 0x2400000, 0x2c60000);
     }
     if (GameFlag_IsSet(0x242) == 0) {
         Actor_SetPosition(15, 0x1270000, 0x2e80000);
-        actor = (u8 *)Engine_ActorGet(15);
+        actor = (u8 *)Object_GetById(15);
         facing = 0xb000;
         *(u16 *)(actor + 6) = facing;
     } else {
         u8 flags;
 
-        actor = (u8 *)Engine_ActorGet(15);
+        actor = (u8 *)Object_GetById(15);
         flags = 4;
         flags |= actor[89];
         actor[89] = flags;
     }
-    actor = (u8 *)Engine_ActorGet(17);
+    actor = (u8 *)Object_GetById(17);
     if (actor != 0) {
         u8 flags = 4;
 
         flags |= actor[89];
         actor[89] = flags;
     }
-    actor = (u8 *)Engine_ActorGet(16);
+    actor = (u8 *)Object_GetById(16);
     if (actor != 0) {
         u8 flags = 4;
 

@@ -40,8 +40,8 @@ s32 KorimaMagari_SetupBoard(void)
     State_StampRecordCells(KorimaMagari_DefaultRecords, 255);
     Scene_RepaintBoardRecords();
     Engine_ActorSetAnimation(9, 0);
-    Engine_ActorGet(9)->motion_flags = 0;
-    actor = Engine_ActorGet(10);
+    Object_GetById(9)->motion_flags = 0;
+    actor = Object_GetById(10);
     actor->radius = 8;
     actor->scale_x = 0xc000;
     actor->scale_y = 0xc000;

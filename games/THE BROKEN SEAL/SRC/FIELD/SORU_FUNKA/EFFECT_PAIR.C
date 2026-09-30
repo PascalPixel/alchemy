@@ -91,9 +91,9 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
         }
     }
     pair[0]->object.actor.update = (void (*)(union FieldObject *))SceneEffect_UpdateAnchoredRiseArc;
-    pair[0]->object.actor.sprite->priority = Engine_ActorGet(15)->sprite->priority;
+    pair[0]->object.actor.sprite->priority = Object_GetById(15)->sprite->priority;
     {
-        struct FieldActor *q = Engine_ActorGet(15);
+        struct FieldActor *q = Object_GetById(15);
         struct FieldActor *p = &pair[1]->object.actor;
 
         p->sprite->priority = q->sprite->priority;

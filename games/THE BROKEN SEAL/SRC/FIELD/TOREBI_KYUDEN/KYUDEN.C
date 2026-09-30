@@ -255,7 +255,7 @@ void RunMiddleAuxiliarySequence(s32 a)
     u8 *obj;
     u8 *q;
 
-    obj = (u8 *)((s32 (*)())Engine_ActorGet)();
+    obj = (u8 *)((s32 (*)())Object_GetById)();
     Event_Begin();
     q = TorebiKyuden_MiddleActionScript;
     Actor_EnableActionCallback(a, q);
@@ -375,16 +375,16 @@ void FieldScene_RunScene3b8SequenceB(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiGetUp);
-    Engine_ActorGet(0)->active = 0;
-    Engine_ActorGet(10)->active = 0;
+    Object_GetById(0)->active = 0;
+    Object_GetById(10)->active = 0;
     Engine_TaskWait(1);
     *(volatile u16 *)0x04000000 = 0x1140;
     Call2(Engine_EventShowMessage, -1, 0);
     *(volatile u16 *)0x04000000 = 0x140;
-    Engine_ActorGet(0)->active = 1;
-    Engine_ActorGet(10)->active = 1;
+    Object_GetById(0)->active = 1;
+    Object_GetById(10)->active = 1;
     Engine_ActorSetAnimation(0, 31);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Call3(Engine_ActorSetPosition, 1, 0x780000, 0x680000);
     Call3(Engine_ActorSetPosition, 3, 0x680000, 0x500000);
@@ -405,9 +405,9 @@ void FieldScene_RunScene3b8SequenceB(void)
     Engine_EventWait(30);
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     record->z.fixed += -0x30000;
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     record->target_z += -0x30000;
     Engine_ActorSetAnimation(0, 32);
     Engine_EventWait(40);
@@ -475,7 +475,7 @@ void FieldScene_RunScene3b8SequenceB(void)
     Engine_ActorJump(0, 6, 0);
     Call3(Engine_ActorSetSpeed, 0, 0x1e666, 0xf333);
     Engine_ActorWalkByAndWait(0, -32, 0);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorFaceDirection, 3, 0x4000, 0);
     Engine_ActorFaceDirection(2, 0xc000, 0);
@@ -490,21 +490,21 @@ void FieldScene_RunScene3b8SequenceB(void)
     Call3(Engine_ActorSetSpeed, 3, 0x13333, 0x9999);
     Call3(Engine_ActorSetSpeed, 2, 0x13333, 0x9999);
     Engine_ActorSetAnimation(1, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         ObjectMotion_ResetAndSetPositionFar(1, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(1);
     Engine_ActorSetPosition(1, 0, 0);
     Engine_ActorSetAnimation(3, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         ObjectMotion_ResetAndSetPositionFar(3, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(3);
     Engine_ActorSetPosition(3, 0, 0);
     Engine_ActorSetAnimation(2, 2);
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
         ObjectMotion_ResetAndSetPositionFar(2, record->x.part.pixel, record->z.part.pixel);
     }
@@ -520,7 +520,7 @@ void FieldScene_RunScene3b8SequenceA(void)
     s16 dir;
     u16 facing;
 
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     dir = (*(u16 *)(record + 6) + 0x2000) & -0x4000;
     Engine_EventBegin();
     Battle_ResetEffectCounterFar();
@@ -654,21 +654,21 @@ void FieldScene_RunScene3b8SequenceA(void)
         Call3(Engine_ActorSetSpeed, 2, 0x13333, 0x9999);
         Call3(Engine_ActorSetSpeed, 3, 0x13333, 0x9999);
         Engine_ActorSetAnimation(1, 2);
-        record = Engine_ActorGet(0);
+        record = Object_GetById(0);
         if (record != 0) {
             ObjectMotion_ResetAndSetPositionFar(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Actor_WaitForMove(ACTOR_GERALD);
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetAnimation(3, 2);
-        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
             ObjectMotion_ResetAndSetPositionFar(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Actor_WaitForMove(ACTOR_MIA);
         Engine_ActorSetPosition(3, 0, 0);
         Engine_ActorSetAnimation(2, 2);
-        record = Engine_ActorGet(0);
+        record = Object_GetById(0);
         if (record != 0) {
             ObjectMotion_ResetAndSetPositionFar(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -945,7 +945,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiCallsName);
     Engine_ActorSetAnimation(0, 31);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Call3(Engine_ActorSetPosition, 1, 0x680000, 0x680000);
     Call3(Engine_ActorSetPosition, 3, 0x580000, 0x780000);
@@ -1001,9 +1001,9 @@ void FieldScene_RunBranchingActorSequence(void)
     Engine_ActorFaceDirection(3, 0x2000, 0);
     Engine_EventWait(10);
     Engine_EventShowMessage(3, 0);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     *(s32 *)(record + 16) += -0x30000;
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     *(s32 *)(record + 64) += -0x30000;
     Engine_ActorSetAnimation(0, 32);
     Engine_EventWait(40);
@@ -1146,7 +1146,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Engine_ActorJump(0, 6, 0);
     Call3(Engine_ActorSetSpeed, 0, 0x1e666, 0xf333);
     Engine_ActorWalkByAndWait(0, -32, -8);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 1);
     Engine_EventWait(20);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
@@ -1177,21 +1177,21 @@ void FieldScene_RunBranchingActorSequence(void)
     Call3(Engine_ActorSetSpeed, 3, 0x13333, 0x9999);
     Call3(Engine_ActorSetSpeed, 2, 0x13333, 0x9999);
     Engine_ActorSetAnimation(1, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         ObjectMotion_ResetAndSetPositionFar(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(1);
     Engine_ActorSetPosition(1, 0, 0);
     Engine_ActorSetAnimation(3, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         ObjectMotion_ResetAndSetPositionFar(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(3);
     Engine_ActorSetPosition(3, 0, 0);
     Engine_ActorSetAnimation(2, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         ObjectMotion_ResetAndSetPositionFar(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -1276,9 +1276,9 @@ void FieldScene_RunMainCutsceneSequence(void)
         Value3(Engine_ActorFaceDirection, 20, 0x4000, 0);
         Engine_EventWait(20);
         Value3(Engine_ActorSetSpeed, 20, 0xcccc, 0x6666);
-        Engine_ActorGet(20)->unknown_5a &= 0xfe;
+        Object_GetById(20)->unknown_5a &= 0xfe;
         Value3(Engine_ActorWalkByAndWait, 20, 0, -16);
-        Engine_ActorGet(20)->unknown_5a |= 1;
+        Object_GetById(20)->unknown_5a |= 1;
         Value3(Engine_ActorFaceDirection, 14, 0x4000, 0);
         Engine_EventWait(40);
         Call3(Engine_ActorSetSpeed, 14, 0xcccc, 0x6666);
@@ -2104,7 +2104,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Call3(Engine_ActorSetSpeed, 2, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Engine_ActorSetAnimation(1, 2);
-    position = Engine_ActorGet(0);
+    position = Object_GetById(0);
     if (position != 0)
         ObjectMotion_ResetAndSetPositionFar(1, position[5], position[9]);
     Engine_ActorWaitForMove(1);
@@ -2116,7 +2116,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Engine_ActorWaitForMove(2);
     Engine_ActorSetPosition(2, 0, 0);
     Engine_ActorSetAnimation(3, 2);
-    position = Engine_ActorGet(0);
+    position = Object_GetById(0);
     if (position != 0)
         ObjectMotion_ResetAndSetPositionFar(3, position[5], position[9]);
     Engine_ActorWaitForMove(3);
@@ -2303,7 +2303,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
             if (set) {
                 Engine_ActorSetPosition(16, 0, 0);
             } else {
-                actor = Engine_ActorGet(16);
+                actor = Object_GetById(16);
                 actor->unknown_5c = 1;
                 actor->motion_flags = set;
                 sprite = actor->sprite;
@@ -2322,12 +2322,12 @@ s32 TorebiKyuden_ApplyEntryState(void)
                 FieldScene_RunMainCutsceneSequence();
             }
             Engine_ActorSetAnimation(14, 5);
-            Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 0);
+            Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
         } else if (Engine_GameFlagIsSet(0x962) && !Engine_GameFlagIsSet(0x966)) {
             Call3(Engine_ActorSetPosition, 10, 0x780000, 0x480000);
         }
         gEventWork->start_transition = 0x209;
-        Engine_ActorGet(9)->collision_flags |= 4;
+        Object_GetById(9)->collision_flags |= 4;
         if (gGameState.entrance == 99) {
             Party_RestoreAll();
             FieldScene_RunBranchingActorSequence();

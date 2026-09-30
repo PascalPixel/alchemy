@@ -2,7 +2,7 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
-u8 *Engine_ActorGet();
+u8 *Object_GetById();
 void Engine_EventBegin();
 void Engine_ActorSetChildValue();
 void Engine_ActorSetSpriteFlags();
@@ -46,10 +46,10 @@ void MogoruMori_RunClosingChoreography(void)
     s32 zero;
     s32 game;
 
-    actor = (u8 *)Engine_ActorGet(18);
+    actor = (u8 *)Object_GetById(18);
     Engine_EventBegin();
     Engine_ActorSetChildValue(18, 15);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(18), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
     Call3(Engine_ActorSetPosition, 18, 0x880000, 0x1680000);
     Engine_CameraSetSpeed(0x8000, 0x1000);
     Call4(Engine_CameraMoveTo, 0x880000, -1, 0x1880000, 1);
@@ -95,9 +95,9 @@ void MogoruMori_RunClosingChoreography(void)
     Engine_ActorRunRepeatedMotion(18, 2);
     Battle_WaitMode0(20);
     {
-        s32 px = *(s16 *)(Engine_ActorGet(0) + 10);
+        s32 px = *(s16 *)(Object_GetById(0) + 10);
 
-        FieldScene_RunScene39f_02000d90(18, px, *(s16 *)(Engine_ActorGet(0) + 18) - 16, 0x80000);
+        FieldScene_RunScene39f_02000d90(18, px, *(s16 *)(Object_GetById(0) + 18) - 16, 0x80000);
     }
     Battle_WaitMode0(10);
     /* FAKEMATCH: an empty do-while here moves px into r1 after the

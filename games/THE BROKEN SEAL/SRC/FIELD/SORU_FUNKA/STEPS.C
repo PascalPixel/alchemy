@@ -13,5 +13,5 @@ void FieldScene_CallHelper6620(void)
 
 void FieldScene_RunActor15TwoStep(void)
 {
-    SceneState_ForwardByRuntimeWordBits((s32)Engine_ActorGet(15));
+    SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(15));
 }

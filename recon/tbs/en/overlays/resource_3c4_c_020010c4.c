@@ -91,16 +91,16 @@ void advance_effect_motion(union FieldObject *object);
 
 void BabiChika_RunLeaderSpray(void)
 {
-    struct FieldActor *leader = Engine_ActorGet(0);
+    struct FieldActor *leader = Object_GetById(0);
     u8 *flags;
     struct EffectOptions options;
     struct EffectOptions *o;
     u32 i;
 
     Engine_EventBegin();
-    Engine_ObjectSetAnimation(leader, 6);
+    Object_SetMode(leader, 6);
     Main_0808a118(0);
-    Engine_ObjectSetAnimation(leader, 1);
+    Object_SetMode(leader, 1);
     Engine_ActorSetSpriteFlags(leader, 0);
     flags = &leader->motion_flags;
     *flags |= 2;

@@ -117,7 +117,7 @@ void Scene_RunScene3c8SequenceA(void)
     CopyCells(69, 48, 4, 2, 5, 48);
     CopyCells(73, 37, 9, 13, 9, 37);
     for (id = 15; id <= 18; id++) {
-        actor = Engine_ActorGet(id);
+        actor = Object_GetById(id);
         flags = &actor->priority_flags;
         if (*flags != 2)
             CopyCells(72, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
@@ -136,7 +136,7 @@ void Scene_RunScene3c8SequenceA(void)
         if (slot == 8)
             continue;
         for (i = 15; i <= 18; i++) {
-            other = Engine_ActorGet(i);
+            other = Object_GetById(i);
             if (id != i
                 && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
                 && (actor->z.fixed >> 20) == (other->z.fixed >> 20)) {
@@ -154,13 +154,13 @@ void Scene_RunScene3c8SequenceA(void)
             Main_0808a1e0(0, 3);
         }
         for (i = 15; i <= 18; i++) {
-            other = Engine_ActorGet(i);
+            other = Object_GetById(i);
             if (id != i
                 && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
                 && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20))
                 Main_0808a1e0(i, 3);
         }
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(id), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(id), 0);
         actor->unknown_22 = 0;
         motion = &actor->motion_flags;
         *motion = 3;
@@ -176,14 +176,14 @@ void Scene_RunScene3c8SequenceA(void)
         *flags = 2;
         CopyCells(73, 48, 1, 1, Data_0200d164[slot].x, Data_0200d164[slot].z);
         Main_0808a1e0(0, priority);
-        Engine_ActorGet(0)->priority_flags |= 1;
+        Object_GetById(0)->priority_flags |= 1;
         for (i = 15; i <= 18; i++) {
-            other = Engine_ActorGet(i);
+            other = Object_GetById(i);
             if (id != i
                 && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
                 && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20)) {
                 Main_0808a1e0(i, 1);
-                Engine_ActorGet(i)->priority_flags |= 1;
+                Object_GetById(i)->priority_flags |= 1;
             }
         }
         Main_080090d0(effect);
@@ -194,7 +194,7 @@ void Scene_RunScene3c8SequenceA(void)
         actor = Actor_Get(15);
         b = Actor_Get(16);
         c = Actor_Get(17);
-        d = Engine_ActorGet(18);
+        d = Object_GetById(18);
         if ((actor->priority_flags & b->priority_flags & c->priority_flags & d->priority_flags) & 2) {
             struct SwitchEffect *first;
             struct SwitchEffect *second;

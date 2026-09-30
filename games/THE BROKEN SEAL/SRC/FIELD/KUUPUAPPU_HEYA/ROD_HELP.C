@@ -12,7 +12,7 @@ void Engine_MessageShowCentered();
 void Engine_EventWait();
 void Event_PrepareObjectAndApplyValue();
 void Engine_EventChooseYesNo();
-u8 * Engine_ActorGet();
+u8 * Object_GetById();
 void Engine_ActorWalkTo();
 void Engine_ActorWalkToAndWait();
 void Engine_ActorWaitForMove();
@@ -37,7 +37,7 @@ void Scene_JoinRodSearch(void)
     s32 mes;
 
     Engine_EventWait(20);
-    *(u8 *)(Engine_ActorGet(2) + 91) = 0;
+    *(u8 *)(Object_GetById(2) + 91) = 0;
     Engine_ActorJump(2, 4, 0);
     Engine_EventWait(40);
     mes = (s32)MsgKuupuappuThankHelpBelieve;
@@ -53,11 +53,11 @@ void Scene_JoinRodSearch(void)
     SceneState_SetValue2ThenFinish();
     v5 = 254;
     Engine_ActorRunRepeatedMotion(0, 1);
-    *(u8 *)(Engine_ActorGet(0) + 90) &= v5;
+    *(u8 *)(Object_GetById(0) + 90) &= v5;
     Call3(Engine_ActorWalkToAndWait, 0, 0x180, 0x1a8);
     v6 = 1;
     Engine_EventWait(1);
-    *(u8 *)(Engine_ActorGet(0) + 90) |= v6;
+    *(u8 *)(Object_GetById(0) + 90) |= v6;
     Engine_EventWait(30);
     Engine_EventShowMessage(2, 0);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
@@ -97,11 +97,11 @@ void Scene_JoinRodSearch(void)
     Call3(Engine_ActorShowEmote, 1, 0x102, 0);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(1, 1);
-    *(u8 *)(Engine_ActorGet(1) + 90) &= v5;
+    *(u8 *)(Object_GetById(1) + 90) &= v5;
     Call3(Engine_ActorWalkToAndWait, 1, 0x160, 0x198);
     Engine_EventWait(1);
     {
-        u8 *record = Engine_ActorGet(1);
+        u8 *record = Object_GetById(1);
         /* FAKEMATCH: retain this byte read before the flag merge. */
         u8 value = *(volatile u8 *)&record[90];
 

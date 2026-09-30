@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_EventBegin();
 void FieldScene_RunSixCallSetupSequence();
 void FieldScene_RunScene39f_02000d90();
@@ -21,7 +21,7 @@ void MogoruMori_RunBranchHopScene(void)
 {
     s32 rec7;
 
-    rec7 = Engine_ActorGet(12);
+    rec7 = Object_GetById(12);
     Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(12, 1);
     FieldScene_RunScene39f_02000d90(12, 0x188, 104, 0x70000);

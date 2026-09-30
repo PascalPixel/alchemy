@@ -23,12 +23,12 @@ s32 FieldScene_PlaceActor8OnEntry(void)
         if (gGameState.entrance == 5) {
             Engine_GameFlagClear(0x12f);
         } else {
-            SetFlagBits((u8 *)Engine_ActorGet(8) + 89, 16);
+            SetFlagBits((u8 *)Object_GetById(8) + 89, 16);
             if (Engine_GameFlagIsSet(0x864) != 0) {
                 Engine_ActorSetPosition(8, 0x15a0000, 0x1240000);
-                record = Engine_ActorGet(8);
+                record = Object_GetById(8);
                 Engine_ActorSetSpriteFlags(record, 0);
-                *((u8 *)Engine_ActorGet(8) + 35) |= 2;
+                *((u8 *)Object_GetById(8) + 35) |= 2;
                 Object_SetModeById(8, 2);
                 Call6(Map_CopyCellAttributeRect, 19, 74, 9, 3, 19, 17);
             }

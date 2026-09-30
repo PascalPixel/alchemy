@@ -17,7 +17,7 @@ Func_08093fa0:
 	mov	r9, r0
 	ldr	r0, [r1, #0]
 	sub	sp, #24
-	bl	Engine_ActorGet
+	bl	Object_GetById
 	adds	r7, r0, #0
 	movs	r3, #10
 	ldrsh	r5, [r7, r3]
@@ -100,12 +100,12 @@ Func_08093fa0:
 	bl	ObjectMotion_SetPositionAndCommit
 	movs	r1, #6
 	adds	r0, r7, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r0, #4
 	bl	WaitFrames
 	movs	r1, #7
 	adds	r0, r7, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r3, #128
 	lsls	r3, r3, #11
 	str	r3, [r7, #40]
@@ -127,7 +127,7 @@ Func_08093fa0:
 	adds	r0, r7, #0
 	movs	r1, #12
 	str	r5, [r7, #40]
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r0, #4
 	bl	WaitFrames
 	movs	r3, #1
@@ -144,7 +144,7 @@ Func_08093fa0:
 	strb	r6, [r5, #0]
 	adds	r0, r7, #0
 	movs	r1, #11
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	mov	r2, r8
 	lsls	r1, r2, #16
 	movs	r3, #128

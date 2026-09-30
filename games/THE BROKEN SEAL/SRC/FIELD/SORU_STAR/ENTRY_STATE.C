@@ -19,7 +19,7 @@ s32 SoruStar_ApplyEntryState(void)
     Engine_GameFlagSet(0x144);
     base5_f = 15;
     do {
-        *(u8 *)((u8 *)Engine_ActorGet(base5_f) + 89) = 0;
+        *(u8 *)((u8 *)Object_GetById(base5_f) + 89) = 0;
         Engine_ActorSetSpritePriority(base5_f++, 1);
     } while ((u32)base5_f <= 24);
     SoruStar_SetupElementalRings(15, 16);

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "CALL.H"
 
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_ActorSetSpeed();
 void Engine_ActorWalkToAndWait();
 void Engine_ActorFaceDirection();
@@ -35,7 +35,7 @@ void HaidiaMura_RunWalkScene03380(s32 a0, s32 a1, s32 a2, s32 a3)
     p9 = a3;
     p8 = a1;
     p10 = a2;
-    rec8 = Engine_ActorGet();
+    rec8 = Object_GetById();
     p5 = *(s32 *)(rec8 + 80);
     Call3(Engine_ActorSetSpeed, a0, 0x10000, 0x8000);
     Call3(Engine_ActorWalkToAndWait, a0, 0x188, 0x35b);

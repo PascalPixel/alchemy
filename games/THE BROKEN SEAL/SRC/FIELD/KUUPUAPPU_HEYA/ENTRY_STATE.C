@@ -47,9 +47,9 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         {
             s32 zero = 0;
 
-            ((u8 *)Engine_ActorGet(8))[85] = zero;
-            *(s32 *)(((u8 *)Engine_ActorGet(8)) + 12) = zero;
-            *(s32 *)(((u8 *)Engine_ActorGet(8)) + 20) = zero;
+            ((u8 *)Object_GetById(8))[85] = zero;
+            *(s32 *)(((u8 *)Object_GetById(8)) + 12) = zero;
+            *(s32 *)(((u8 *)Object_GetById(8)) + 20) = zero;
         }
         break;
     case 10:
@@ -95,8 +95,8 @@ s32 KuupuappuHeya_ApplyEntryState(void)
                 ((void (*)())Engine_MapCopyCellAttributes)(14, 50, 3, 1, 14, 44);
                 break;
             }
-            ((struct ActorMode *)((u8 *)Engine_ActorGet(24)))->mode = 5;
-            ((struct ActorMode *)((u8 *)Engine_ActorGet(25)))->mode = 4;
+            ((struct ActorMode *)((u8 *)Object_GetById(24)))->mode = 5;
+            ((struct ActorMode *)((u8 *)Object_GetById(25)))->mode = 4;
             ((void (*)())Engine_TaskAddCallback)((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
         }
         break;
@@ -108,8 +108,8 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         ((void (*)())Engine_MapCopyCellsTo)(54, 2, 35, 80, 2, 10);
         Call6((void (*)())Engine_MapCopyCellsTo, 54, 2, 46, 21, 4, 8);
         ((void (*)())Engine_MapCopyCellsTo)(54, 2, 46, 81, 4, 8);
-        ((struct ActorFlags *)((u8 *)Engine_ActorGet(26)))->flags |= 4;
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(26), 0);
+        ((struct ActorFlags *)((u8 *)Object_GetById(26)))->flags |= 4;
+        Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
         if (Engine_GameFlagIsSet(0x859) != 0) {
             Call3((void (*)())Engine_ActorSetPosition, 26, 0x2a40000, 0x19b0000);
             Call6((void (*)())Engine_MapCopyCellAttributes, 101, 24, 3, 4, 41, 24);

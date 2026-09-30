@@ -101,7 +101,7 @@ Func_08097644:
 	lsls	r4, r4, #2
 	adds	r3, r7, r4
 	ldrh	r0, [r3, #0]
-	bl	Engine_ActorGet
+	bl	Object_GetById
 	movs	r1, #0
 	bl	Animation_ApplyChildPalette
 	ldr	r0, [pc, #268]
@@ -118,13 +118,13 @@ Func_08097644:
 	lsls	r1, r1, #2
 	adds	r5, r7, r1
 	ldrh	r0, [r5, #0]
-	bl	Engine_ActorGet
+	bl	Object_GetById
 	ldr	r2, [pc, #240]
 	adds	r2, r2, r7
 	adds	r6, r0, #0
 	ldrh	r0, [r2, #0]
 	mov	fp, r2
-	bl	Engine_ActorGet
+	bl	Object_GetById
 	mov	r9, r0
 	cmp	r6, #0
 	beq.n	.L_08097806

@@ -116,9 +116,9 @@ Event_CallWithLastActiveObjectId:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

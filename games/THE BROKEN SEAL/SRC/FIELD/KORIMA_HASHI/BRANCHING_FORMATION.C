@@ -65,7 +65,6 @@ extern const struct SceneEvent KorimaHashi_Events[];
 extern u8 KorimaHashi_Object26Script[];
 extern u8 KorimaHashi_TriggerScript[];
 
-void *Object_GetById(u32 id);
 
 /* The main-image services this bridge reaches through veneers the
    staged-actor module names. */
@@ -152,7 +151,7 @@ void FieldScene_RunTile10x20Transition(void)
             DrawPlacement(0, 17, 2, 4, 19, 17);
             StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);
             GameFlag_Set(0x200);
-            actor = Object_GetById(10);
+            actor = (void *)Object_GetById(10);
             Actor_SetSpriteFlags((struct FieldActor *)actor, 0);
         }
     }
@@ -162,7 +161,7 @@ void FieldScene_RunTile10x20Transition(void)
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 {
-    struct StagedActorEffect *actor = Object_GetById(0);
+    struct StagedActorEffect *actor = (void *)Object_GetById(0);
     u8 *flags = &actor->motion_flags;
     u8 saved = *flags;
     s32 ret = Object_CheckMovementCollision(actor, request);
@@ -206,7 +205,7 @@ void SceneActor_PassSubjectOffsetPosition(void)
 {
     u32 buf[3];
     s32 off = 500;
-    struct Struct3848 *p = Object_GetById(*(s32 *)((u8 *)&gGameState + off));
+    struct Struct3848 *p = (void *)Object_GetById(*(s32 *)((u8 *)&gGameState + off));
     u32 base = p->field08 & 0xfff00000;
 
     buf[0] = base + 0x80000;
@@ -293,23 +292,23 @@ void FieldScene_RunBranchingFormationPresentation(void)
     flag_work = &KorimaHashi_PartyFlag;
     flag = GameFlag_IsSet(3);
     *flag_work = flag;
-    record = Object_GetById(13);
+    record = (void *)Object_GetById(13);
     Actor_SetSpriteFlags((s32)record, 0);
-    record = Object_GetById(14);
+    record = (void *)Object_GetById(14);
     Actor_SetSpriteFlags((s32)record, 0);
-    record = Object_GetById(15);
+    record = (void *)Object_GetById(15);
     Actor_SetSpriteFlags((s32)record, 0);
-    record = Object_GetById(16);
+    record = (void *)Object_GetById(16);
     Actor_SetSpriteFlags((s32)record, 0);
-    record = Object_GetById(17);
+    record = (void *)Object_GetById(17);
     Actor_SetSpriteFlags((s32)record, 0);
-    record = Object_GetById(18);
+    record = (void *)Object_GetById(18);
     Actor_SetSpriteFlags((s32)record, 0);
-    record = Object_GetById(19);
+    record = (void *)Object_GetById(19);
     Actor_SetSpriteFlags((s32)record, 0);
-    record = Object_GetById(20);
+    record = (void *)Object_GetById(20);
     Actor_SetSpriteFlags((s32)record, 0);
-    record = Object_GetById(21);
+    record = (void *)Object_GetById(21);
     Actor_SetSpriteFlags((s32)record, 0);
     entry_action = (s32)KorimaHashi_EntryAction;
     Actor_EnableActionCallback(17, entry_action);
@@ -328,14 +327,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetMotionSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Actor_SetMotionSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
     {
-        u8 *record = Object_GetById(0);
+        u8 *record = (void *)Object_GetById(0);
 
         if (record != 0) {
             Actor_SetPosition(ACTOR_GERALD, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
         }
     }
     {
-        u8 *record = Object_GetById(0);
+        u8 *record = (void *)Object_GetById(0);
 
         if (record != 0) {
             Actor_SetPosition(ACTOR_IVAN, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
@@ -346,7 +345,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (*flag_work != 0) {
         Actor_SetMotionSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
         {
-            u8 *record = Object_GetById(0);
+            u8 *record = (void *)Object_GetById(0);
 
             if (record != 0) {
                 Actor_SetPosition(ACTOR_MIA, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
@@ -422,42 +421,42 @@ void FieldScene_RunBranchingFormationPresentation(void)
     party_flag = &KorimaHashi_PartyFlag;
     if (*party_flag != 0) {
         value = 128;
-        record = Object_GetById(3);
+        record = (void *)Object_GetById(3);
         *(s32 *)((s32)record + 40) = (value << 10);
         Battle_WaitMode0(10);
         Actor_SetMotionSpeed(ACTOR_MIA, (value << 10), (value << 10));
         Actor_OffsetDestination(ACTOR_MIA, -2, 0);
         Actor_EnableActionCallback(ACTOR_MIA, (s32)KorimaHashi_ResetAction);
-        record = Object_GetById(3);
+        record = (void *)Object_GetById(3);
         Actor_SetSpriteFlags((s32)record, 0);
         Object_SetModeById(ACTOR_MIA, 19);
         Battle_WaitMode0(10);
     }
     value = 128;
-    record = Object_GetById(0);
+    record = (void *)Object_GetById(0);
     *(s32 *)((s32)record + 40) = (value << 10);
     Battle_WaitMode0(10);
     Actor_SetMotionSpeed(ACTOR_PARTY_LEADER, (value << 10), (value << 10));
     reset_action = (s32)KorimaHashi_ResetAction;
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, reset_action);
-    record = Object_GetById(0);
+    record = (void *)Object_GetById(0);
     Actor_SetSpriteFlags((s32)record, 0);
     Object_SetModeById(ACTOR_PARTY_LEADER, 19);
     Battle_WaitMode0(20);
-    record = Object_GetById(1);
+    record = (void *)Object_GetById(1);
     *(s32 *)((s32)record + 40) = (value << 10);
     Battle_WaitMode0(10);
     Actor_SetMotionSpeed(ACTOR_GERALD, (value << 10), (value << 10));
     Actor_EnableActionCallback(ACTOR_GERALD, reset_action);
-    record = Object_GetById(1);
+    record = (void *)Object_GetById(1);
     Actor_SetSpriteFlags((s32)record, 0);
     Object_SetModeById(ACTOR_GERALD, 19);
     Battle_WaitMode0(40);
-    record = Object_GetById(2);
+    record = (void *)Object_GetById(2);
     *(s32 *)((s32)record + 40) = (value << 10);
     Battle_WaitMode0(10);
     Actor_EnableActionCallback(ACTOR_IVAN, reset_action);
-    record = Object_GetById(2);
+    record = (void *)Object_GetById(2);
     Actor_SetSpriteFlags((s32)record, 0);
     Object_SetModeById(ACTOR_IVAN, 19);
     KorimaHashi_SparkleSound = 0;
@@ -507,10 +506,10 @@ void FieldScene_RunBranchingFormationPresentation(void)
     }
     formation_phase = &gFallingEffectState;
     *formation_phase = 3;
-    *(u8 *)(Object_GetById(0) + 35) &= 254;
-    *(u8 *)(Object_GetById(1) + 35) &= 254;
-    *(u8 *)(Object_GetById(2) + 35) &= 254;
-    *(u8 *)(Object_GetById(3) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(0) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(1) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(2) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(3) + 35) &= 254;
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     Actor_SetSpritePriority(ACTOR_GERALD, 3);
     Actor_SetSpritePriority(ACTOR_IVAN, 3);
@@ -519,22 +518,22 @@ void FieldScene_RunBranchingFormationPresentation(void)
     KorimaHashi_TriggerPending = value;
     Engine_TaskAddCallback((s32)SceneActor_AlternateSlots13To16Field0c, 0xc80);
     Audio_PlayCue(220);
-    *(u8 *)(Object_GetById(13) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(13) + 35) &= 254;
     Actor_SetSpritePriority(13, 2);
     Actor_SetPosition(13, 0xfd0000, 0x25b0000);
     formation_action = (s32)KorimaHashi_FormationAction;
     Actor_EnableActionCallback(13, formation_action);
-    *(u8 *)(Object_GetById(14) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(14) + 35) &= 254;
     Actor_SetSpritePriority(14, 2);
     Actor_SetPosition(14, 0xe90000, 0x2750000);
     Actor_EnableActionCallback(14, formation_action);
     if (KorimaHashi_PartyFlag != 0) {
-        *(u8 *)(Object_GetById(15) + 35) &= 254;
+        *(u8 *)((void *)Object_GetById(15) + 35) &= 254;
         Actor_SetSpritePriority(15, 2);
         Actor_SetPosition(15, 0xcf0000, 0x2610000);
         Actor_EnableActionCallback(15, formation_action);
     }
-    *(u8 *)(Object_GetById(16) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(16) + 35) &= 254;
     Actor_SetSpritePriority(16, 2);
     Actor_SetPosition(16, 0xe30000, 0x2440000);
     Actor_EnableActionCallback(16, formation_action);
@@ -594,8 +593,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
     Battle_WaitMode0(40);
     Actor_SetSpritePriority(ACTOR_GERALD, 2);
-    *(u8 *)(Object_GetById(1) + 35) |= 1;
-    record = Object_GetById(1);
+    *(u8 *)((void *)Object_GetById(1) + 35) |= 1;
+    record = (void *)Object_GetById(1);
     Actor_SetSpriteFlags((s32)record, 1);
     Actor_Jump(ACTOR_GERALD, 6, 0);
     Actor_OffsetDestination(ACTOR_GERALD, -3, 0);
@@ -625,8 +624,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_RunRepeatedMotion(ACTOR_MIA, 2);
         Battle_WaitMode0(80);
         Actor_SetSpritePriority(ACTOR_MIA, 2);
-        *(u8 *)(Object_GetById(3) + 35) |= 1;
-        record = Object_GetById(3);
+        *(u8 *)((void *)Object_GetById(3) + 35) |= 1;
+        record = (void *)Object_GetById(3);
         Actor_SetSpriteFlags((s32)record, 1);
         Actor_Jump(ACTOR_MIA, 4, 0);
         Actor_OffsetDestination(ACTOR_MIA, -2, 0);
@@ -651,8 +650,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Battle_WaitMode0(20);
     value = 1;
     Actor_SetSpritePriority(ACTOR_IVAN, 2);
-    *(u8 *)(Object_GetById(2) + 35) |= value;
-    record = Object_GetById(2);
+    *(u8 *)((void *)Object_GetById(2) + 35) |= value;
+    record = (void *)Object_GetById(2);
     Actor_SetSpriteFlags((s32)record, 1);
     Actor_Jump(ACTOR_IVAN, 4, 0);
     Object_SetModeById(ACTOR_IVAN, 1);
@@ -661,12 +660,12 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Battle_WaitMode0(10);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
     {
-        u8 *record = Object_GetById(0);
+        u8 *record = (void *)Object_GetById(0);
         u8 flags = (u8)(value | record[35]);
 
         record[35] = flags;
     }
-    record = Object_GetById(0);
+    record = (void *)Object_GetById(0);
     Actor_SetSpriteFlags((s32)record, 1);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
@@ -787,10 +786,10 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (*sequence_flag != 0) {
         SceneActor_SetPairZeroAndValue(3, 0xc000, 10);
     }
-    *(u8 *)(Object_GetById(0) + 35) &= 254;
-    *(u8 *)(Object_GetById(1) + 35) &= 254;
-    *(u8 *)(Object_GetById(2) + 35) &= 254;
-    *(u8 *)(Object_GetById(3) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(0) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(1) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(2) + 35) &= 254;
+    *(u8 *)((void *)Object_GetById(3) + 35) &= 254;
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     Actor_SetSpritePriority(ACTOR_GERALD, 3);
     Actor_SetSpritePriority(ACTOR_IVAN, 3);
@@ -932,11 +931,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetSpritePriority(ACTOR_IVAN, 2);
     value = 1;
     Actor_SetSpritePriority(ACTOR_MIA, 2);
-    *(u8 *)(Object_GetById(0) + 35) |= value;
-    *(u8 *)(Object_GetById(1) + 35) |= value;
-    *(u8 *)(Object_GetById(2) + 35) |= value;
+    *(u8 *)((void *)Object_GetById(0) + 35) |= value;
+    *(u8 *)((void *)Object_GetById(1) + 35) |= value;
+    *(u8 *)((void *)Object_GetById(2) + 35) |= value;
     {
-        u8 *record = Object_GetById(3);
+        u8 *record = (void *)Object_GetById(3);
         u8 flags = (u8)(value | record[35]);
 
         record[35] = flags;
@@ -1081,7 +1080,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetMotionSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Object_SetModeById(ACTOR_GERALD, 2);
     {
-        u8 *record = Object_GetById(0);
+        u8 *record = (void *)Object_GetById(0);
 
         if (record != 0) {
             Actor_SetDestination(ACTOR_GERALD, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
@@ -1091,7 +1090,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Object_SetModeById(ACTOR_IVAN, 2);
     {
-        u8 *record = Object_GetById(0);
+        u8 *record = (void *)Object_GetById(0);
 
         if (record != 0) {
             Actor_SetDestination(ACTOR_IVAN, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
@@ -1102,7 +1101,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (KorimaHashi_PartyFlag != 0) {
         Object_SetModeById(ACTOR_MIA, 2);
         {
-            u8 *record = Object_GetById(0);
+            u8 *record = (void *)Object_GetById(0);
 
             if (record != 0) {
                 Actor_SetDestination(ACTOR_MIA, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));

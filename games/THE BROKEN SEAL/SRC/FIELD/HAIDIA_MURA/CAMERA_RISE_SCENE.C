@@ -11,7 +11,6 @@ void ObjectMotion_SetSpeedParameters();
 void Engine_MessageShowCentered();
 void Engine_MapRedraw();
 void Battle_WaitMode0();
-s32 Object_GetById();
 void Battle_WaitMode0();
 void Battle_WaitMode0();
 void Battle_WaitMode0();

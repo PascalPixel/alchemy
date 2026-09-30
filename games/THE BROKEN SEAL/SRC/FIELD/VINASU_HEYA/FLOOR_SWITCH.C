@@ -4,7 +4,7 @@
 /* Floor switch under actor 0 (pixel x 676 to 683, z 788 to 795): stepping on it sets flag 0x201, redraws the switch cell and the 3x5 cells at (41, 117), plays cue 161 and lowers the actor two pixels; standing off it clears the flag and restores them. */
 void VinasuHeya_UpdateFloorSwitch(void)
 {
-    struct FieldActor *leader = Engine_ActorGet(0);
+    struct FieldActor *leader = Object_GetById(0);
     s32 x = leader->x.part.pixel;
     s32 z = leader->z.part.pixel;
 

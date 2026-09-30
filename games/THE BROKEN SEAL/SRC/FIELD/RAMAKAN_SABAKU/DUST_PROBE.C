@@ -36,7 +36,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
         id = gGameState.selected_actor;
         center = event->view_center;
     }
-    actor = Engine_ActorGet(id);
+    actor = Object_GetById(id);
     pos[0] = actor->x.fixed;
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + 0x18000;
@@ -51,12 +51,12 @@ void RamakanSabaku_UpdateDustAndProbe(void)
     if (hit < 0) {
         Call2((void (*)())Engine_ActorSetAttachedEffect, id, 0x102);
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + 0x80000);
-        Engine_ObjectSetAnimation(actor, 7);
+        Object_SetMode(actor, 7);
         Engine_ObjectCommitPosition(actor);
         do {
             Engine_TaskWait(1);
         } while (actor->y.fixed != *(s32 *)((u8 *)actor + 20));
-        Engine_ObjectSetAnimation(actor, 6);
+        Object_SetMode(actor, 6);
         Engine_TaskWait(3);
         return;
     }

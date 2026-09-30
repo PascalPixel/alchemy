@@ -127,7 +127,7 @@ s32 SuharaGate_EnterScene(void)
         Engine_ActorSetAnimation(10, 3);
         Engine_ActorSetAnimation(11, 4);
         Engine_ActorSetAnimation(12, 3);
-        Engine_ActorGet(15)->scale_y = 0x19999;
+        Object_GetById(15)->scale_y = 0x19999;
         Map_CopyCellAttributes(108, 38, 1, 1, 102, 56);
     }
     return 0;

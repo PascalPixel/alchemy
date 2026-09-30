@@ -57,7 +57,7 @@ extern u8 Data_00000000[];
 extern u8 Data_00000002[];
 void SceneState_SetFlag210AndConfigureRegion40_89();
 void FieldScene_RunScene372_02003c48();
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_EventWait();
 void Engine_ActorSetSpeed();
 s32 Engine_ActorEnableActionCallback();
@@ -158,8 +158,8 @@ void Scene_RunActorGroupDepartureSequence(void)
     s32 v1;
     u8 *slot0;
 
-    rec = Value1(Engine_ActorGet, 19);
-    rec8 = Value1(Engine_ActorGet, 27);
+    rec = Value1(Object_GetById, 19);
+    rec8 = Value1(Object_GetById, 27);
     p11 = *(s32 *)((s32)rec8 + 80);
     p10 = *(s32 *)((s32)rec + 80);
     Call2(Engine_CameraSetSpeed, 0x10000, 0x2000);
@@ -180,7 +180,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Engine_ActorEnableActionCallback(22, base5_200cd6c);
     Engine_EventWait(128);
     SceneState_SetFlag210AndConfigureRegion40_89();
-    Call4(Engine_ActorGet, 0xae0000, -1, 0x5940000, 1);
+    Call4(Object_GetById, 0xae0000, -1, 0x5940000, 1);
     Engine_EventWait(104);
     Call4(Engine_CameraMoveTo, 0x990000, -1, 0x52d0000, 1);
     Call3(Engine_ActorWalkToAndWait, 9, 158, 0x4f8);
@@ -203,21 +203,21 @@ void Scene_RunActorGroupDepartureSequence(void)
     FieldScene_BuildPlacementGrid(26, 8, 0);
     Engine_ActorFaceEachOther(22, 0, 0);
     Engine_EventWait(20);
-    rec7 = Value1(Engine_ActorGet, 0);
+    rec7 = Value1(Object_GetById, 0);
     record = Engine_RandomNext();
     *(u16 *)(rec7 + 100) = (Local_030003e0(record, 20) + 20);
     none = 0;
     p8 = (s32)Data_00000000;
-    rec7 = Value1(Engine_ActorGet, 22);
+    rec7 = Value1(Object_GetById, 22);
     record = Engine_RandomNext();
     *(u16 *)(rec7 + 100) = (Local_030003e0(record, 20) + 20);
-    rec7 = Value1(Engine_ActorGet, 26);
+    rec7 = Value1(Object_GetById, 26);
     record = Engine_RandomNext();
     *(u16 *)(rec7 + 100) = (Local_030003e0(record, 20) + 20);
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec7 = Value1(Object_GetById, 8);
     record = Engine_RandomNext();
     *(u16 *)(rec7 + 100) = (Local_030003e0(record, 20) + 20);
-    rec7 = Value1(Engine_ActorGet, 9);
+    rec7 = Value1(Object_GetById, 9);
     record = Engine_RandomNext();
     *(u16 *)(rec7 + 100) = (Local_030003e0(record, 20) + 20);
     base5_200ceb4 = 0x200ceb4;
@@ -259,9 +259,9 @@ void Scene_RunActorGroupDepartureSequence(void)
     Engine_ColorBufferInterpolate(40);
     Engine_TaskWait(40);
     Engine_ActorSetChildValue(19, 0);
-    record = Engine_ActorGet(19);
+    record = Object_GetById(19);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = Engine_ActorGet(27);
+    record = Object_GetById(27);
     Engine_ActorSetSpriteFlags(record, 0);
     *(s32 *)((s32)rec8 + 24) = 0xcccc;
     *(s32 *)((s32)rec8 + 28) = 0xcccc;
@@ -370,7 +370,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Engine_ActorStop(24);
     Engine_ActorStop(25);
     Engine_TaskWait(1);
-    rec8 = Value1(Engine_ActorGet, 10);
+    rec8 = Value1(Object_GetById, 10);
     p11b = *(s32 *)((s32)rec8 + 80);
     rec8[35] &= 254;
     *(s32 *)((s32)rec8 + 24) = 0x10000;
@@ -382,7 +382,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     }
     p11b[9] &= (v5 - 13);
     Engine_ActorSetAnimation(10, 0);
-    rec8 = Value1(Engine_ActorGet, 24);
+    rec8 = Value1(Object_GetById, 24);
     p11c = *(s32 *)((s32)rec8 + 80);
     rec8[35] &= 254;
     *(s32 *)((s32)rec8 + 24) = 0x10000;
@@ -394,7 +394,7 @@ void Scene_RunActorGroupDepartureSequence(void)
         *(u16 *)((s32)rec8 + 6) = shown;
     }
     Engine_ActorSetAnimation(24, 5);
-    rec8 = Value1(Engine_ActorGet, 25);
+    rec8 = Value1(Object_GetById, 25);
     p11d = *(s32 *)((s32)rec8 + 80);
     rec8[35] &= 254;
     *(s32 *)((s32)rec8 + 24) = 0x10000;
@@ -406,7 +406,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     }
     p11d[9] &= (v5 - 13);
     Main_08009188(25, 5);
-    rec8 = Value1(Engine_ActorGet, 27);
+    rec8 = Value1(Object_GetById, 27);
     p11e = *(s32 *)((s32)rec8 + 80);
     FieldScene_RunScene372_02003c48();
     *(s32 *)((s32)rec + 12) = 0x300000;
@@ -447,7 +447,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     FieldScene_BuildPlacementGrid();
     Call3(Engine_ActorSetPosition, 9, 0xa50000, 0x4cd0000);
     Engine_ActorSetAnimation(9, 1);
-    rec = Engine_ActorGet(9);
+    rec = Object_GetById(9);
     {
         s32 shown = 0xe000;
     
@@ -464,7 +464,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Engine_ActorEnableActionCallback(9, base5_200cec8);
     Call3(Engine_ActorSetPosition, 26, 0xa50000, 0x4e60000);
     Engine_ActorSetAnimation(26, 1);
-    rec = Value1(Engine_ActorGet, 26);
+    rec = Value1(Object_GetById, 26);
     {
         s32 shown = 0xe000;
     
@@ -476,7 +476,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Engine_ActorEnableActionCallback(26, base5_200cec8);
     Call3(Engine_TaskWait, 22, 0x980000, 0x5050000);
     Engine_ActorEnableActionCallback(22, 1);
-    rec = Engine_ActorGet(22);
+    rec = Object_GetById(22);
     {
         s32 shown = 0xe000;
     
@@ -491,7 +491,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     }
     Engine_ActorEnableActionCallback(22, base5_200cec8);
     Call3(Engine_ActorSetPosition, 8, 0xb40000, 0x51f0000);
-    rec = Engine_ActorGet(8);
+    rec = Object_GetById(8);
     {
         s32 shown = 0xe000;
     
@@ -506,13 +506,13 @@ void Scene_RunActorGroupDepartureSequence(void)
     }
     Engine_ActorEnableActionCallback(8, base5_200cec8);
     Engine_ActorSetAnimation(8, 6);
-    *(u8 *)(Engine_ActorGet(22) + 35) &= 254;
-    v1 = (254 & *(u8 *)(Engine_ActorGet(8) + 35));
-    *(u8 *)(Engine_ActorGet(8) + 35) &= 254;
+    *(u8 *)(Object_GetById(22) + 35) &= 254;
+    v1 = (254 & *(u8 *)(Object_GetById(8) + 35));
+    *(u8 *)(Object_GetById(8) + 35) &= 254;
     p10b = v1;
     Value2(Engine_TaskAddCallback, 0x200c5b9, 0xc80);
     Call3(Engine_ActorSetPosition, 0, 0xb50000, 0x4f90000);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     {
         s32 shown = 0xe000;
     

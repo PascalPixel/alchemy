@@ -14,7 +14,6 @@ struct EventActor {
 };
 
 s16 ArcTan2(s32, s32);
-void *Object_GetById(s32);
 
 extern const struct SceneEntrance YamaRama_TempleEntrances[];
 extern const struct SceneEntrance YamaRama_Entrances[];
@@ -109,7 +108,7 @@ s32 OverlayObject_SetFacingTowardObject10(void *self)
 {
     void *obj;
 
-    obj = Object_GetById(0xA);
+    obj = (void *)Object_GetById(0xA);
     FIELD_AT_OFFSET(self, s16 *, 6) = ArcTan2(FIELD_AT_OFFSET(obj, s32 *, 0x10) - FIELD_AT_OFFSET(self, s32 *, 0x10), FIELD_AT_OFFSET(obj, s32 *, 8) - FIELD_AT_OFFSET(self, s32 *, 8));
     return 0;
 }
@@ -195,7 +194,7 @@ void FieldScene_RunPrimaryScript(void)
 {
     Audio_PlayCue(188);
     Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
-    *(u8 *)(Object_GetById(0) + 85) = 0;
+    *(u8 *)((void *)Object_GetById(0) + 85) = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -446,9 +445,9 @@ void Scene_RunEventTransition(void)
         Event_ShowMessageAndWait(10, 0, 20);
         Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Event_Wait(20);
-        record = Object_GetById(0);
+        record = (void *)Object_GetById(0);
         *(s32 *)((s32)record + 108) = (s32)OverlayObject_SetFacingTowardObject10;
-        record = Object_GetById(0);
+        record = (void *)Object_GetById(0);
         if ((*(s32 *)((s32)record + 16) >> 20) == 13) {
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
         }
@@ -456,7 +455,7 @@ void Scene_RunEventTransition(void)
         Actor_SetSpritePriority(10, 2);
         Actor_WalkToAndWait(10, 0x198, 216);
         {
-            u8 *record = Object_GetById(10);
+            u8 *record = (void *)Object_GetById(10);
             u32 flag = 1;
 
             flag = flag | record[35];
@@ -479,7 +478,7 @@ void Scene_RunEventTransition(void)
         Object_RefreshSelectorById(0);
         Event_Wait(10);
         none = 0;
-        record = Object_GetById(0);
+        record = (void *)Object_GetById(0);
         *(s32 *)((s32)record + 108) = none;
         Event_Wait(30);
         Actor_RunRepeatedMotion(10, 2);
@@ -578,8 +577,8 @@ void Scene_RunActorSequence(void)
     Event_Wait(20);
     mask = 254;
     Event_ShowMessageAndWait(8, 0, 20);
-    *(u8 *)(Object_GetById(8) + 90) &= mask;
-    *(u8 *)(Object_GetById(10) + 90) &= mask;
+    *(u8 *)((void *)Object_GetById(8) + 90) &= mask;
+    *(u8 *)((void *)Object_GetById(10) + 90) &= mask;
     Actor_SetSpeed(8, 0x3333, 0x1999);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Actor_SetAnimation(8, 5);
@@ -639,7 +638,7 @@ void Scene_RunActorSequence(void)
     Event_ShowMessageAndWait(8, 0, 30);
     Event_ShowMessageAndWait(8, 0, 20);
     {
-        u8 *record = Object_GetById(10);
+        u8 *record = (void *)Object_GetById(10);
         u32 flag = 1;
 
         flag = flag | record[90];
@@ -719,8 +718,8 @@ s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor)
 
 void SceneActor_UpdateActorFourteenByDepth(void)
 {
-    struct Actor *current = Object_GetById(0);
-    struct Actor *other = Object_GetById(14);
+    struct Actor *current = (void *)Object_GetById(0);
+    struct Actor *other = (void *)Object_GetById(14);
 
     if (current->f10 <= other->f10) {
         Actor_SetSpritePriority(14, 1);
@@ -737,7 +736,7 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     ((u8 *)Object_GetById(14))[35] &= 0xfd;
     ((u8 *)Object_GetById(14))[89] &= 0xfd;
     ((u8 *)Object_GetById(14))[85] = zero;
-    *(void **)(Object_GetById(14) + 108) = (void *)SceneActor_SetFlagBitByRankAgainstActorZero;
+    *(void **)((void *)Object_GetById(14) + 108) = (void *)SceneActor_SetFlagBitByRankAgainstActorZero;
 
     Map_CopyCellAttributes(55, 16, 1, 1, 56, 18);
     Map_CopyCellAttributes(55, 16, 1, 1, 20, 18);
@@ -759,7 +758,7 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
 
         Map_CopyCellAttributes(14, 6, 1, 2, fifth, sixth);
     }
-    slot = Object_GetById(15) + 89;
+    slot = (void *)Object_GetById(15) + 89;
     *slot = 254;
     GameFlag_Set(0x201);
     Event_End();

@@ -260,7 +260,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
         }
         Engine_ActorSetSpritePriority(13, 1);
         if (Engine_GameFlagIsSet(0x87a) != 0) {
-            record = (s32)Engine_ActorGet(17);
+            record = (s32)Object_GetById(17);
             Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
             if (gGameState.entrance != 6 && gGameState.entrance != 7) {
                 goto L_02000550;
@@ -274,7 +274,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
                 goto L_02000550;
             }
             Map_ClearLayerEntryFlag(11);
-            record = (s32)Engine_ActorGet(8);
+            record = (s32)Object_GetById(8);
             Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
             Engine_ActorSetAnimation(8, 10);
         } else {

@@ -6,33 +6,96 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathRemainder
+	.thumb_func
+Engine_MathRemainder:
 	overlay_veneer IwramSignedRemainder
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
 	overlay_veneer WaitFramesFar
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer Owner_GetStateFar
+	.global UiWindow_Create
+	.thumb_func
+UiWindow_Create:
 	overlay_veneer UiWindow_CreateFar
+	.global UiWork_Finalize
+	.thumb_func
+UiWork_Finalize:
 	overlay_veneer UiWork_FinalizeFar
+	.global UiText_DrawResource
+	.thumb_func
+UiText_DrawResource:
 	overlay_veneer UiText_DrawResourceFar
+	.global UiText_DrawCharacterAtOffset
+	.thumb_func
+UiText_DrawCharacterAtOffset:
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	.global UiText_DrawStringAtOffset
+	.thumb_func
+UiText_DrawStringAtOffset:
 	overlay_veneer UiText_DrawStringAtOffsetFar
+	.global UiText_DrawStringInWindow
+	.thumb_func
+UiText_DrawStringInWindow:
 	overlay_veneer UiText_DrawStringInWindowFar
+	.global UiText_DrawNumberAtOffset
+	.thumb_func
+UiText_DrawNumberAtOffset:
 	overlay_veneer UiText_DrawNumberAtOffsetFar
+	.global UiText_DrawNumberInWindow
+	.thumb_func
+UiText_DrawNumberInWindow:
 	overlay_veneer UiText_DrawNumberInWindowFar
 	overlay_veneer UiText_DrawQuantity
+	.global RenderOutput_RedrawSavedRect
+	.thumb_func
+RenderOutput_RedrawSavedRect:
 	overlay_veneer RenderOutput_RedrawSavedRectFar
+	.global RenderOutput_ClearList
+	.thumb_func
+RenderOutput_ClearList:
 	overlay_veneer RenderOutput_ClearListFar
 	overlay_veneer Func_08038318
 	overlay_veneer Func_08038320
+	.global Owner_RecalculateStats
+	.thumb_func
+Owner_RecalculateStats:
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Item_Get
+	.global PartyInventory_Add
+	.thumb_func
+PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
+	.global Party_ListActiveOwners
+	.thumb_func
+Party_ListActiveOwners:
 	overlay_veneer Party_ListActiveOwnersFar
+	.global Party_AdvanceOwnerCountToTarget
+	.thumb_func
+Party_AdvanceOwnerCountToTarget:
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+	.global PartyInventory_HasSpace
+	.thumb_func
+PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c80f8
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global ObjectMotion_WaitForAnimationChange
+	.thumb_func
+ObjectMotion_WaitForAnimationChange:
 	overlay_veneer ObjectMotion_WaitForAnimationChangeFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0

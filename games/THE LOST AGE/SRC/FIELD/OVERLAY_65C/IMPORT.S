@@ -8,7 +8,13 @@
 	.balign 4
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080003d0
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c86a8
 	overlay_veneer Func_080c86b0

@@ -6,24 +6,63 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathDivide
+	.thumb_func
+Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
+	.global Engine_MathRemainder
+	.thumb_func
+Engine_MathRemainder:
 	overlay_veneer IwramSignedRemainder
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
 	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
+	.global Random16Far
+	.thumb_func
+Random16Far:
 	overlay_veneer Func_080000f8
+	.global Math_Sine
+	.thumb_func
+Math_Sine:
 	overlay_veneer Math_SineFar
+	.global Math_Cosine
+	.thumb_func
+Math_Cosine:
 	overlay_veneer Math_CosineFar
+	.global Vector_AddPolarOffsetFar
+	.thumb_func
+Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
 	overlay_veneer Func_08000170
+	.global Sys_Free
+	.thumb_func
+Sys_Free:
 	overlay_veneer Sys_FreeFar
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
+	.global GameFlag_GetByte
+	.thumb_func
+GameFlag_GetByte:
 	overlay_veneer GameFlag_GetByteFar
+	.global GameFlag_SetByte
+	.thumb_func
+GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
+	.global ResourceMetadata_Register
+	.thumb_func
+ResourceMetadata_Register:
 	overlay_veneer ResourceMetadata_RegisterFar
 	overlay_veneer Object_SetMode
+	.global ObjectDispatch_ApplyValueToChildren
+	.thumb_func
+ObjectDispatch_ApplyValueToChildren:
 	overlay_veneer ObjectDispatch_ApplyValueToChildrenFar
 	overlay_veneer Object_SetCallback
 	overlay_veneer Func_080200c0
@@ -38,32 +77,92 @@
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_080201f0
 	overlay_veneer Func_080201f8
+	.global ObjectDispatch_SetSingleChildField26
+	.thumb_func
+ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Animation_SetStateFlags
+	.thumb_func
+Animation_SetStateFlags:
 	overlay_veneer Animation_SetStateFlagsFar
 	overlay_veneer Func_08020228
 	overlay_veneer Func_08020230
+	.global Animation_ApplyChildValues
+	.thumb_func
+Animation_ApplyChildValues:
 	overlay_veneer Animation_ApplyChildValuesFar
 	overlay_veneer Func_08020290
+	.global UiText_ShowPositionedMessageAndWait
+	.thumb_func
+UiText_ShowPositionedMessageAndWait:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global PartyInventory_FindOwner
+	.thumb_func
+PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
+	.global UiText_DrawQuantityPairWithCue
+	.thumb_func
+UiText_DrawQuantityPairWithCue:
 	overlay_veneer UiText_DrawQuantityPairWithCueFar
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetSpeedParameters
+	.thumb_func
+ObjectMotion_SetSpeedParameters:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global ObjectMotion_EnableActionAndSetCallback
+	.thumb_func
+ObjectMotion_EnableActionAndSetCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
+	.global ObjectMotion_EnableActionAndResetMotion
+	.thumb_func
+ObjectMotion_EnableActionAndResetMotion:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	.global ObjectMotion_ResetAndSetPosition
+	.thumb_func
+ObjectMotion_ResetAndSetPosition:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global ObjectMotion_ResetAndSetPositionInMode2
+	.thumb_func
+ObjectMotion_ResetAndSetPositionInMode2:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	.global ObjectMotion_OffsetPositionAndResetMotion
+	.thumb_func
+ObjectMotion_OffsetPositionAndResetMotion:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8110
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global Motion_SetModeAndWaitAnimation
+	.thumb_func
+Motion_SetModeAndWaitAnimation:
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	.global ObjectMotion_Launch
+	.thumb_func
+ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
+	.global ObjectMotion_SetVariantCallback
+	.thumb_func
+ObjectMotion_SetVariantCallback:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
 	overlay_veneer Func_080c8150
 	overlay_veneer Func_080c8158
@@ -89,8 +188,17 @@
 	overlay_veneer Func_080c8378
 	overlay_veneer Func_080c8380
 	overlay_veneer Func_080c8390
+	.global Event_SetStatus1c6
+	.thumb_func
+Event_SetStatus1c6:
 	overlay_veneer Event_SetStatus1c6Far
+	.global Event_ClearStatus1c6
+	.thumb_func
+Event_ClearStatus1c6:
 	overlay_veneer Event_ClearStatus1c6Far
+	.global Event_WaitValue1c8Frames
+	.thumb_func
+Event_WaitValue1c8Frames:
 	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c8480
 	overlay_veneer Func_080c84e0
@@ -99,6 +207,9 @@
 	overlay_veneer Func_080c8778
 	overlay_veneer Func_080c8780
 	overlay_veneer Func_080c88d0
+	.global ObjectMotion_ResetTargetsAndVelocity
+	.thumb_func
+ObjectMotion_ResetTargetsAndVelocity:
 	overlay_veneer ObjectMotion_ResetTargetsAndVelocityFar
 	overlay_veneer Func_080c8940
 	overlay_veneer Func_080c8948

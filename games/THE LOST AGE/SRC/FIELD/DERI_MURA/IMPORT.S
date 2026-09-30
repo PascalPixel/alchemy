@@ -39,23 +39,47 @@ Engine_ActorGet:
 	.thumb_func
 Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global ObjectMotion_ResetAndSetPosition
+	.thumb_func
+ObjectMotion_ResetAndSetPosition:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global ObjectMotion_SetPositionAndCommit
+	.thumb_func
+ObjectMotion_SetPositionAndCommit:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	.global ObjectMotion_SetPositionAndReset
+	.thumb_func
+ObjectMotion_SetPositionAndReset:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	.global Engine_ActorCenterAndWalk
 	.thumb_func
 Engine_ActorCenterAndWalk:
 	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
+	.global ObjectMotion_Launch
+	.thumb_func
+ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
+	.global ObjectMotion_SetVariantCallback
+	.thumb_func
+ObjectMotion_SetVariantCallback:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	.global Motion_SetVarCbAndRefresh
+	.thumb_func
+Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
 	overlay_veneer Func_080c8158
+	.global Object_LinkPair
+	.thumb_func
+Object_LinkPair:
 	overlay_veneer Object_LinkPairFar
 	.global Engine_EventSetMessage
 	.thumb_func

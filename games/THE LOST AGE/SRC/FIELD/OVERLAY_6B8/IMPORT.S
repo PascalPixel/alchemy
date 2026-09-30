@@ -6,44 +6,122 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathModulo
+	.thumb_func
+Engine_MathModulo:
 	overlay_veneer IwramUnsignedRemainder
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
 	overlay_veneer WaitFramesFar
+	.global Math_Sine
+	.thumb_func
+Math_Sine:
 	overlay_veneer Math_SineFar
 	overlay_veneer Func_080001b8
+	.global VramBlock_LoadCached
+	.thumb_func
+VramBlock_LoadCached:
 	overlay_veneer VramBlock_LoadCachedFar
+	.global Resource_FindFreeEntry
+	.thumb_func
+Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
 	overlay_veneer Func_080200c0
 	overlay_veneer Func_080201e0
+	.global ObjectDispatch_SetSingleChildField26
+	.thumb_func
+ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Animation_ApplyChildValues
+	.thumb_func
+Animation_ApplyChildValues:
 	overlay_veneer Animation_ApplyChildValuesFar
 	overlay_veneer Func_08020300
+	.global UiWork_Finalize
+	.thumb_func
+UiWork_Finalize:
 	overlay_veneer UiWork_FinalizeFar
+	.global UiText_OpenMessageWindow
+	.thumb_func
+UiText_OpenMessageWindow:
 	overlay_veneer UiText_OpenMessageWindowFar
+	.global UiText_ShowPositionedMessageAndWait
+	.thumb_func
+UiText_ShowPositionedMessageAndWait:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global UiWork_IsComplete
+	.thumb_func
+UiWork_IsComplete:
 	overlay_veneer UiWork_IsCompleteFar
 	overlay_veneer Func_080380f8
 	overlay_veneer UiText_DrawQuantity
+	.global UiWork_FinalizePendingCore
+	.thumb_func
+UiWork_FinalizePendingCore:
 	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Func_080382f8
 	overlay_veneer Func_08038318
+	.global Owner_RecalculateStats
+	.thumb_func
+Owner_RecalculateStats:
 	overlay_veneer Owner_RecalculateStatsFar
+	.global Inventory_AddItem
+	.thumb_func
+Inventory_AddItem:
 	overlay_veneer Inventory_AddItemFar
+	.global Owner_AdjustFirstValue
+	.thumb_func
+Owner_AdjustFirstValue:
 	overlay_veneer Owner_AdjustFirstValueFar
+	.global Owner_AdjustSecondValue
+	.thumb_func
+Owner_AdjustSecondValue:
 	overlay_veneer Owner_AdjustSecondValueFar
+	.global Djinn_AddToOwner
+	.thumb_func
+Djinn_AddToOwner:
 	overlay_veneer Djinn_AddToOwnerFar
+	.global Djinn_Activate
+	.thumb_func
+Djinn_Activate:
 	overlay_veneer Djinn_ActivateFar
+	.global Party_AdvanceOwnerCountToTarget
+	.thumb_func
+Party_AdvanceOwnerCountToTarget:
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+	.global Item_AdjustCounter
+	.thumb_func
+Item_AdjustCounter:
 	overlay_veneer Item_AdjustCounterFar
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8078
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetPositionAndReset
+	.thumb_func
+ObjectMotion_SetPositionAndReset:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global ObjectMotion_Launch
+	.thumb_func
+ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
 	overlay_veneer Func_080c8158
 	overlay_veneer Func_080c8180

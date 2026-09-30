@@ -1070,12 +1070,6 @@ PsynergyMenu_DrawRangePage:
 	.thumb_func
 PsynergyMenu_DrawListPage:
 	.incbin "baserom.gba", 0x0009fe3c, 0x0000017c
-	.section .rom.000a0498, "ax"
-	.global Shop_DrawItemPage
-	.type Shop_DrawItemPage, %function
-	.thumb_func
-Shop_DrawItemPage:
-	.incbin "baserom.gba", 0x000a0498, 0x0000013c
 	.section .rom.000a1664, "ax"
 	.global Func_080aa768
 Func_080aa768:

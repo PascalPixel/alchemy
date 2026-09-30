@@ -807,7 +807,7 @@
     "*/recon/tbs/ja/rom.o"(.rom.0009fe3c)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ABILITY4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/DRAW_EQUIP_PAGE.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000a0498)
+    "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_PARTY_ITEM_PAGE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/SELECT_ITEM.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/INPUT_MOVE_GRID_CURSOR.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/RESERVED_STATUS_ONE.o"(.text)

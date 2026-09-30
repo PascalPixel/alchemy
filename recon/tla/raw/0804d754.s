@@ -245,6 +245,9 @@ Func_0804d7fc:
 	.4byte 0x0804d755
 	.2byte 0x1178
 	.2byte 0x0000
+	.global Func_0804d968
+	.thumb_func
+Func_0804d968:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	bl	AffineEffect_InitializeWork

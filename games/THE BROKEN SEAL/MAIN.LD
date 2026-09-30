@@ -83,7 +83,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RESET_FRAME_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/BUILD_MATRIX.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/SLOT.o"(.text)
-        "*/recon/tbs/raw/08003e58.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/FREE_RUN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/LOAD_CACHED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/INITIALIZE.o"(.text)

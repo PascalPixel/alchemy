@@ -435,7 +435,6 @@ SECTIONS
         "*/recon/tbs/raw/080784ae.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/INVENT2.o"(.text)
         "*/recon/tbs/raw/08078bf0.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/RECORD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER2.o"(.text)
         "*/games/COMMON/SRC/GAME/PARTY/ADVANCE_OWNER_COUNT_TO_TARGET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/FLAGS/TEST.o"(.text)

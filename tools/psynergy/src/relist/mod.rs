@@ -237,8 +237,7 @@ pub fn plan(image: Image, regions: &[Region], names: &[Name]) -> Result<Plan, St
     let in_listing = |address: u32| area_of(address).is_some_and(|(_, listing)| listing);
     let mut firm: BTreeSet<u32> = runs
         .iter()
-        .filter(|(area, _)| area.parts.first().is_some_and(|part| part.1))
-        .map(|(area, _)| area.opening(image))
+        .filter_map(|(area, _)| area.opening(image))
         .collect();
     let mut weak = BTreeSet::new();
     for name in names
@@ -765,6 +764,27 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                 .next_back()
                 .is_some_and(|(_, &end)| at + 4 <= end)
     };
+    // Unreached listing bytes are mostly ARM routines behind a Thumb entry;
+    // the words their PC-relative loads read are pool words too.
+    for (&start, &end) in &unreached {
+        let mut at = start.next_multiple_of(4);
+        while at + 4 <= end {
+            let word = image.word(at);
+            if word & 0x0f7f_0000 == 0x051f_0000 {
+                let offset = word & 0xfff;
+                let target = if word & 0x0080_0000 != 0 {
+                    at.checked_add(8 + offset)
+                } else {
+                    (at + 8).checked_sub(offset)
+                };
+                if let Some(target) = target.filter(|&target| data_word(target)) {
+                    pools.insert(target);
+                    named.insert(image.word(target) & !1);
+                }
+            }
+            at += 4;
+        }
+    }
     let mut rows = BTreeSet::new();
     for piece in &pieces {
         let mut cursor = piece.start;
@@ -1116,4 +1136,119 @@ pub fn relist(input: &Input) -> Result<Output, String> {
         notes,
         plan,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::relist::flow::tests::halves;
+
+    fn region(start: u32, end: u32, kind: RegionKind, object: &str, section: &str) -> Region {
+        Region {
+            start,
+            end,
+            kind,
+            object: object.into(),
+            section: section.into(),
+        }
+    }
+
+    #[test]
+    fn a_function_an_earlier_listing_cut_in_two_becomes_one_named_piece() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0xb500, // push {lr}
+            0xf000, 0xf805, // bl 0x08000010
+            0x4801, // ldr r0, [pc, #4]: the word at 0x0c
+            0xbd00, // 0x08: pop {pc}; an earlier listing began a piece here
+            0x0000, // padding
+        ]);
+        bytes.extend(0x0200_0004u32.to_le_bytes()); // 0x0c: a RAM address
+        bytes.extend(halves(&[0x2001, 0x4770])); // 0x10: Beta
+        bytes.extend([1, 2, 3, 4]); // 0x14: included data
+        let listing = RegionKind::Listing { regenerate: true };
+        let input = Input {
+            image: Image {
+                bytes: &bytes,
+                base,
+            },
+            regions: vec![
+                region(0x0200_0000, 0x0200_0010, RegionKind::Space { scaffold: 0 }, "sym", ".sym"),
+                region(base, base + 8, listing.clone(), "08000000", ".text"),
+                region(base + 8, base + 0x10, listing.clone(), "08000008", ".text"),
+                region(base + 0x10, base + 0x14, listing, "08000010", ".text"),
+                region(
+                    base + 0x14,
+                    base + 0x18,
+                    RegionKind::Incbin { scaffold: 0 },
+                    "unidentified",
+                    ".unidentified.08000014",
+                ),
+            ],
+            names: vec![
+                Name {
+                    name: "Func_08000008".into(),
+                    address: base + 8,
+                    thumb: true,
+                    absolute: false,
+                },
+                Name {
+                    name: "Beta".into(),
+                    address: base + 0x10,
+                    thumb: true,
+                    absolute: false,
+                },
+            ],
+            external: BTreeSet::new(),
+            incbin: vec![scaffold::parse(
+                "\t.section .unidentified.08000014,\"a\"\n\t.incbin \"baserom.gba\", 0x00000014, 0x00000004\n",
+            )
+            .unwrap()],
+            space: vec![scaffold::parse("\t.section .sym,\"aw\",%nobits\n\t.space 0x00000010\n").unwrap()],
+        };
+        let output = relist(&input).unwrap();
+        assert_eq!(
+            output.pieces.keys().copied().collect::<Vec<_>>(),
+            vec![base, base + 0x10]
+        );
+        let first = &output.pieces[&base];
+        assert!(first.contains("\t.thumb_func\nFunc_08000000:\n"), "{first}");
+        assert!(first.contains("\tbl Beta\n"), "{first}");
+        assert!(first.contains("\tldr r0, .L_0800000c\n"), "{first}");
+        assert!(
+            first.contains(".L_0800000c:\n\t.4byte Data_02000004\n"),
+            "{first}"
+        );
+        assert!(!first.contains("Func_08000008"), "{first}");
+        assert!(
+            !first.contains("0x08") && !first.contains("0x02"),
+            "{first}"
+        );
+        assert!(output.pieces[&(base + 0x10)].contains("\t.thumb_func\nBeta:\n"));
+        let space = scaffold::render(&output.space[0]);
+        assert!(
+            space.contains("\t.space 0x00000004\n\t.global Data_02000004\nData_02000004:\n"),
+            "{space}"
+        );
+        let incbin = |section: &str| Entry::Incbin {
+            scaffold: 0,
+            section: section.into(),
+        };
+        assert_eq!(
+            output.script,
+            vec![(
+                vec![
+                    Entry::Listing("08000000".into()),
+                    Entry::Listing("08000008".into()),
+                    Entry::Listing("08000010".into()),
+                    incbin(".unidentified.08000014"),
+                ],
+                vec![
+                    Entry::Listing("08000000".into()),
+                    Entry::Listing("08000010".into()),
+                    incbin(".unidentified.08000014"),
+                ],
+            )]
+        );
+    }
 }

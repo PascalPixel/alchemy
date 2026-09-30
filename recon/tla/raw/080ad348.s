@@ -21,7 +21,7 @@ Trade_GetOfferState:
 	.2byte 0x0200
 	push	{r5, r6, r7, lr}
 	sub	sp, #4
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	adds	r7, r0, #0
 	movs	r6, #0
 	movs	r0, #0
@@ -55,6 +55,9 @@ Trade_GetOfferState:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ad3a8
+	.thumb_func
+Func_080ad3a8:
 	push	{lr}
 	movs	r3, #250
 	subs	r0, #8

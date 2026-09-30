@@ -42,7 +42,7 @@ Func_080ae834:
 	beq.n	.L_080ae886
 	b.n	.L_080aea18
 .L_080ae886:
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	mov	fp, r0
 	cmp	r0, #0
 	ble.n	.L_080ae8aa
@@ -72,7 +72,7 @@ Func_080ae834:
 	lsls	r0, r0, #24
 	asrs	r0, r0, #24
 	adds	r6, #1
-	bl	0x080afe1c
+	bl	Func_080afe1c
 	cmp	r5, #0
 	bne.n	.L_080ae8b4
 .L_080ae8c6:
@@ -80,7 +80,7 @@ Func_080ae834:
 .L_080ae8c8:
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	cmp	r5, #3
 	ble.n	.L_080ae8c8
 	movs	r0, #0
@@ -225,7 +225,7 @@ Func_080ae834:
 .L_080ae9f0:
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	0x080afe1c
+	bl	Func_080afe1c
 	cmp	r5, #3
 	ble.n	.L_080ae9f0
 	mov	r3, fp
@@ -239,7 +239,7 @@ Func_080ae834:
 	lsls	r0, r0, #24
 	asrs	r0, r0, #24
 	adds	r6, #1
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	cmp	r5, #0
 	bne.n	.L_080aea06
 .L_080aea18:

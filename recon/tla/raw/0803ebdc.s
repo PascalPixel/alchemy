@@ -221,7 +221,7 @@ Func_0803ebdc:
 	ldr	r3, [r3, #0]
 	movs	r1, #0
 	ldrh	r0, [r3, #10]
-	bl	Func_0803e5a8
+	bl	Menu_OpenSelectionWindow
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{r3, r5}

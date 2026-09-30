@@ -28,7 +28,7 @@ Func_080de060:
 	str	r3, [r5, #0]
 	ldr	r3, [r7, #24]
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	lsls	r1, r1, #16
 	movs	r0, #200
@@ -84,7 +84,7 @@ Func_080de060:
 	bl	Func_0801489c
 	adds	r0, r5, #0
 	bl	Func_080dc390
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r5, #0
@@ -174,7 +174,7 @@ Func_080de060:
 	beq.n	.L_080de1f4
 	ldr	r1, [pc, #80]
 	bl	Object_SetCallback
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r6, #0
 	adds	r2, #85
 	mov	r4, sl
@@ -183,14 +183,14 @@ Func_080de060:
 	str	r4, [r6, #52]
 	str	r0, [r6, #48]
 	strb	r3, [r2, #0]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0
@@ -791,14 +791,14 @@ Func_080de060:
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080de742
-	bl	Func_08014878
+	bl	Random16
 	movs	r4, #128
 	lsls	r4, r4, #8
 	lsrs	r0, r0, #1
 	adds	r0, r0, r4
 	str	r0, [r6, #28]
 	str	r0, [r6, #24]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #1
 	ands	r0, r3
 	cmp	r0, #0
@@ -809,13 +809,13 @@ Func_080de060:
 	ldr	r3, [pc, #292]
 .L_080de6ea:
 	str	r3, [r6, #108]
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r6, #0
 	adds	r2, #100
 	movs	r3, #60
 	strh	r0, [r6, #6]
 	strh	r3, [r2, #0]
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r6, #0
 	adds	r3, #102
 	movs	r1, #9
@@ -829,13 +829,13 @@ Func_080de060:
 	str	r3, [r7, #4]
 	ldr	r3, [r2, #12]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	adds	r5, r0, #0
 	lsls	r3, r3, #10
 	lsls	r5, r5, #2
 	adds	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r7, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
@@ -948,7 +948,7 @@ Func_080de060:
 	ldrsh	r0, [r7, r3]
 	movs	r6, #128
 	lsls	r0, r0, #9
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r6, r6, #11
 	adds	r1, r0, #0
 	ldr	r3, [pc, #44]
@@ -1051,7 +1051,7 @@ Func_080de060:
 	cmp	r0, r2
 	beq.n	.L_080de940
 	lsls	r0, r0, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r5, #192
 	lsls	r5, r5, #11
 	adds	r1, r0, #0
@@ -1105,10 +1105,10 @@ Func_080de060:
 	str	r3, [r6, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r5, #1
 	adds	r1, r0, #0
 	adds	r2, r6, #0
@@ -1138,7 +1138,7 @@ Func_080de060:
 	movs	r3, #229
 	lsls	r3, r3, #1
 	str	r3, [r5, #72]
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r5, #0
 	lsrs	r0, r0, #9
 	adds	r3, #100

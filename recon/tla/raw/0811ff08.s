@@ -100,7 +100,7 @@ BattlePresentation_WaitForAdvance:
 .L_0811ffd4:
 	strh	r3, [r7, #6]
 	lsls	r0, r0, #12
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_0811ffe8
 	movs	r2, #254

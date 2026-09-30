@@ -49,7 +49,7 @@ Func_080dcb44:
 	movs	r1, #160
 	lsls	r0, r0, #16
 	bl	Math_Div
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r5, #1
 	asrs	r0, r0, #14
 	strh	r0, [r6, #0]

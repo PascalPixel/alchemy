@@ -41,7 +41,7 @@ Func_0810b04c:
 	movs	r1, #5
 	adds	r5, r0, #0
 	mov	r0, r8
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	movs	r2, #0
@@ -72,7 +72,7 @@ Func_0810b04c:
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #24]
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #160
 	lsls	r0, r0, #14
@@ -86,7 +86,7 @@ Func_0810b04c:
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #24]
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r5, #0

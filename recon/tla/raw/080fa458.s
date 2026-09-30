@@ -366,7 +366,7 @@ Func_080fa458:
 	mov	r0, fp
 	mov	r1, r9
 	adds	r0, #216
-	bl	0x080f8e08
+	bl	InventoryMenu_SortByListOrder
 	mov	r3, r9
 	adds	r3, #1
 	lsls	r3, r3, #24

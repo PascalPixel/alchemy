@@ -340,21 +340,21 @@ Func_080e03c4:
 	str	r3, [r7, #4]
 	ldr	r3, [r0, #16]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r1, #128
 	lsls	r1, r1, #11
 	lsls	r5, r5, #2
 	adds	r5, r5, r1
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r7, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
 	bl	Func_0801489c
 	movs	r2, #0
 	str	r2, [r7, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r0, r0, #1
 	lsls	r3, r3, #10
@@ -362,12 +362,12 @@ Func_080e03c4:
 	str	r3, [r7, #16]
 	movs	r3, #0
 	str	r3, [r7, #20]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
 	movs	r0, #192
 	lsls	r0, r0, #9
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #208
 	lsls	r2, r2, #5
 	adds	r2, #12
@@ -494,9 +494,9 @@ Func_080e03c4:
 	.4byte 0x080e08da
 	.2byte 0x0924
 	.2byte 0x080e
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r1, [sp, #8]
 	lsls	r3, r5, #1
 	ldr	r2, [r1, #4]
@@ -507,9 +507,9 @@ Func_080e03c4:
 	add	r6, sp, #12
 	subs	r2, r2, r3
 	str	r2, [r6, #0]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r1, [sp, #8]
 	lsls	r3, r5, #1
 	ldr	r2, [r1, #8]
@@ -887,7 +887,7 @@ Func_080e03c4:
 	str	r3, [r6, #4]
 	ldr	r3, [r0, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #192
 	adds	r2, r6, #0
@@ -1158,9 +1158,9 @@ Func_080e03c4:
 	adds	r3, r3, r2
 	str	r3, [r7, #24]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r5, #13
 	lsls	r0, r0, #13
 	lsrs	r0, r0, #16
@@ -1328,13 +1328,13 @@ Func_080e03c4:
 	adds	r0, r6, #0
 	movs	r1, #7
 	bl	Func_080ebea8
-	bl	Func_08014878
+	bl	Random16
 	lsls	r1, r0, #3
 	subs	r1, r1, r0
 	lsrs	r1, r1, #16
 	ldr	r0, [r6, #0]
 	bl	0x08020280
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #104]
 	lsrs	r0, r0, #1
 	adds	r0, r0, r3
@@ -1721,7 +1721,7 @@ Func_080e03c4:
 	bne.n	.L_080e11f0
 	movs	r0, #150
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #36]
 	movs	r1, #1
 	bl	0x08038040
@@ -1729,7 +1729,7 @@ Func_080e03c4:
 .L_080e11f0:
 	movs	r0, #236
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #20]
 	movs	r1, #1
 	bl	0x08038040
@@ -2141,7 +2141,7 @@ Func_080e1420:
 	movs	r3, #0
 	ldrsh	r0, [r6, r3]
 	lsls	r0, r0, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #0
 	ldrsh	r3, [r6, r1]
 	mov	r8, r0
@@ -3229,13 +3229,13 @@ Func_080e1650:
 	ldr	r0, [r7, #24]
 	cmp	r0, #0
 	bne.n	.L_080e1e62
-	bl	Func_08014878
+	bl	Random16
 	movs	r6, #255
 	movs	r1, #128
 	lsls	r1, r1, #1
 	ands	r6, r0
 	adds	r6, r6, r1
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #248
 	lsls	r5, r5, #5
 	movs	r3, #240
@@ -3250,13 +3250,13 @@ Func_080e1650:
 	lsls	r3, r3, #13
 	str	r3, [r7, #4]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r6, #0
 	muls	r3, r0
 	asrs	r3, r3, #6
 	str	r3, [r7, #12]
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r6, #0
 	muls	r3, r0
 	asrs	r3, r3, #6

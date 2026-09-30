@@ -389,8 +389,8 @@ WorkspaceOptions_SliderPalette:
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
 	.incbin "baserom.gba", 0x00073854, 0x00000114
-	.global Data_08073968
-Data_08073968:
+	.global Ui_FixedTileBlocks
+Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x00073968, 0x00003698
 	.section .unidentified.0807a828,"a"
 	.global Character_ElementGroupTable

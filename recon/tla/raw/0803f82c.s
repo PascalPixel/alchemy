@@ -21,7 +21,7 @@ Func_0803f82c:
 	bl	Func_0803e7ac
 	movs	r1, #5
 	movs	r0, #0
-	bl	Func_0803e5a8
+	bl	Menu_OpenSelectionWindow
 	bl	Func_0803df00
 	movs	r0, #1
 	bl	Func_0803e998

@@ -66,9 +66,18 @@ Data_08054a14:
 Data_08054e24:
 	.incbin "baserom.gba", 0x00054e24, 0x000056bc
 	.section .unidentified.0805c0e0,"a"
-	.incbin "baserom.gba", 0x0005c0e0, 0x00003834
+	.incbin "baserom.gba", 0x0005c0e0, 0x00003560
+	.global StatusMenu_LevelLetterString
+StatusMenu_LevelLetterString:
+	.incbin "baserom.gba", 0x0005f640, 0x00000170
+	.global Link_TimeLabelString
+Link_TimeLabelString:
+	.incbin "baserom.gba", 0x0005f7b0, 0x00000164
 	.section .unidentified.080aa0dc,"a"
-	.incbin "baserom.gba", 0x000aa0dc, 0x00002f24
+	.incbin "baserom.gba", 0x000aa0dc, 0x00000300
+	.global Ui_FixedTileBlocks
+Ui_FixedTileBlocks:
+	.incbin "baserom.gba", 0x000aa3dc, 0x00002c24
 	.section .unidentified.080b127c,"a"
 	.incbin "baserom.gba", 0x000b127c, 0x00000cac
 	.section .unidentified.080b1f2c,"a"

@@ -6,7 +6,10 @@
 gHeapSlots:
 	.space 0x00000070
 	.section .sym_iwram,"aw",%nobits
-	.space 0x000000b0
+	.space 0x00000060
+	.global gFrameTick
+gFrameTick:
+	.space 0x00000050
 	.global gInput
 gInput:
 	.space 0x00000024

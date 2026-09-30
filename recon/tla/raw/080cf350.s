@@ -195,7 +195,7 @@ Func_080cf424:
 	push	{r5, r6, lr}
 	sub	sp, #12
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #100
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -208,9 +208,9 @@ Func_080cf424:
 	str	r3, [r6, #4]
 	ldr	r3, [r5, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r5, #4
 	adds	r1, r0, #0
 	adds	r2, r6, #0
@@ -828,7 +828,7 @@ Func_080cf424:
 	subs	r6, r3, r5
 .L_080cfa7c:
 	str	r4, [sp, #0]
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r6, #0
 	muls	r3, r0
 	ldr	r4, [sp, #0]
@@ -989,7 +989,7 @@ Func_080cf424:
 	lsls	r5, r5, #4
 .L_080cfbb6:
 	str	r4, [sp, #0]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #4
 	lsrs	r0, r0, #16
 	adds	r0, r5, r0

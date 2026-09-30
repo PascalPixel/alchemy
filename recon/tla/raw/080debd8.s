@@ -233,9 +233,9 @@ Func_080decb8:
 	ldr	r3, [r6, #12]
 	adds	r3, r3, r2
 	str	r3, [r6, #12]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r6, #8]
 	subs	r5, r5, r0
 	adds	r3, r3, r5
@@ -449,13 +449,13 @@ Func_080decb8:
 	str	r3, [r1, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [r1, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #192
 	lsls	r5, r0, #2
 	lsls	r2, r2, #10
 	adds	r5, r5, r0
 	adds	r5, r5, r2
-	bl	Func_08014878
+	bl	Random16
 	mov	r2, r9
 	adds	r1, r0, #0
 	adds	r0, r5, #0
@@ -569,13 +569,13 @@ Func_080decb8:
 	str	r3, [r6, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #192
 	lsls	r5, r0, #2
 	lsls	r3, r3, #10
 	adds	r5, r5, r0
 	adds	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
@@ -702,7 +702,7 @@ Func_080decb8:
 	mov	r6, sp
 	ldr	r3, [r5, #8]
 	str	r3, [r6, #0]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r5, #12]
 	lsls	r0, r0, #4
 	movs	r2, #192
@@ -712,10 +712,10 @@ Func_080decb8:
 	str	r3, [r6, #4]
 	ldr	r3, [r5, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r5, #4
 	adds	r1, r0, #0
 	adds	r2, r6, #0
@@ -1210,7 +1210,7 @@ Func_080decb8:
 	beq.n	.L_080df614
 	ldr	r1, [pc, #272]
 	bl	Object_SetCallback
-	bl	Func_08014878
+	bl	Random16
 	mov	r3, r9
 	adds	r2, r6, #0
 	adds	r2, #85
@@ -1219,14 +1219,14 @@ Func_080decb8:
 	movs	r3, #0
 	str	r0, [r6, #48]
 	strb	r3, [r2, #0]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0
@@ -1429,7 +1429,7 @@ Func_080decb8:
 	beq.n	.L_080df7ec
 	ldr	r1, [pc, #100]
 	bl	Object_SetCallback
-	bl	Func_08014878
+	bl	Random16
 	mov	r3, r9
 	adds	r2, r6, #0
 	adds	r2, #85
@@ -1438,14 +1438,14 @@ Func_080decb8:
 	movs	r3, #0
 	str	r0, [r6, #48]
 	strb	r3, [r2, #0]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0

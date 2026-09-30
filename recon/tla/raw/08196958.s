@@ -87,7 +87,7 @@ Func_08196958:
 	subs	r0, r0, r5
 	lsls	r0, r0, #2
 	adds	r0, #28
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r3, r5, #1
 	adds	r1, r0, #0
 	cmp	r3, #0

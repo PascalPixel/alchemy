@@ -10,4 +10,4 @@ Resource_FarCall00D:
 	.global Func_081ac000
 	.thumb_func
 Func_081ac000:
-	overlay_veneer Func_081ac008
+	overlay_veneer Runtime_BlankDisplayAndRun

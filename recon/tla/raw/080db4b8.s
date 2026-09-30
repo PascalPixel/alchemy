@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_080db4b8
+	.balign 4
+	.global BattleFx_Run
 	.thumb_func
-Func_080db4b8:
+BattleFx_Run:
 	push	{r5, r6, r7, lr}
 	movs	r2, #192
 	lsls	r2, r2, #18
@@ -218,6 +219,9 @@ Func_080db4b8:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global BattleFx_DispatchRequestKind
+	.thumb_func
+BattleFx_DispatchRequestKind:
 	push	{r5, r6, lr}
 	movs	r2, #192
 	lsls	r2, r2, #18
@@ -454,6 +458,9 @@ Func_080db4b8:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global BattleFx_ClearChildValueOnMismatch
+	.thumb_func
+BattleFx_ClearChildValueOnMismatch:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -484,6 +491,9 @@ Func_080db4b8:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global FieldEvent_RunTypeHandler
+	.thumb_func
+FieldEvent_RunTypeHandler:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

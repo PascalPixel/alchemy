@@ -60,7 +60,7 @@
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer Func_08038210
 	overlay_veneer Func_08038248
-	overlay_veneer Inventory_AddFar
+	overlay_veneer Inventory_AddItemFar
 	overlay_veneer PartyInventory_RemoveFar
 	overlay_veneer Func_080ad048
 	overlay_veneer Func_080ad0f0

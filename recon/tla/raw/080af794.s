@@ -6,7 +6,9 @@ Func_080af794:
 	push	{lr}
 	bl	Func_080afb80
 	pop	{pc}
-.L_080af79c:
+	.global Owner_GetRecordStride180
+	.thumb_func
+Owner_GetRecordStride180:
 	movs	r3, #180
 	ldr	r2, [pc, #8]
 	muls	r0, r3
@@ -83,7 +85,7 @@ Func_080af7ac:
 	strh	r3, [r2, #0]
 	movs	r5, #14
 	ldrh	r0, [r2, #0]
-	bl	.L_080af79c
+	bl	Owner_GetRecordStride180
 	ldr	r2, [pc, #32]
 	adds	r3, r7, #0
 	mov	sl, r0
@@ -113,7 +115,7 @@ Func_080af7ac:
 	ldrh	r3, [r6, #0]
 	mov	r1, r9
 	ands	r1, r3
-	bl	Inventory_Add
+	bl	Inventory_AddItem
 	mov	r2, r8
 	adds	r1, r0, #0
 	adds	r5, #1

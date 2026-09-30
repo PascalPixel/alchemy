@@ -12,7 +12,7 @@ struct ItemDefinition {
 
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Inventory_Count(s32 owner);
-s32 Inventory_Add(s32 owner, s32 item);
+s32 Inventory_AddItem(s32 owner, s32 item);
 s32 Inventory_Find(s32 owner, s32 item);
 
 #endif

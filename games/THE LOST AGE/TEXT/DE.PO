@@ -47,7 +47,7 @@ msgctxt "message"
 msgid "00009"
 msgstr "Du kannst dein Abenteuer{line_break}nicht mit diesen Daten fortsetzen.{page_break}Wähle einen Speicherplatz,{line_break}um deine Daten zu sichern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Spielzeit:"
 
@@ -235,7 +235,7 @@ msgctxt "message"
 msgid "00056"
 msgstr "{line_break}Dschinns auf Standby.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgAbilityLearned"
 msgid "00057"
 msgstr "{argument_actor_name:1} erlernt{line_break}{argument_ability_name}.{end_wait}"
 
@@ -443,11 +443,11 @@ msgctxt "message"
 msgid "00108"
 msgstr "Wie!?"
 
-msgctxt "message"
+msgctxt "MsgItemNotHeld"
 msgid "00109"
 msgstr "Das hast du nicht."
 
-msgctxt "message"
+msgctxt "MsgAbilityNotKnown"
 msgid "00110"
 msgstr "Du weißt es nicht."
 
@@ -11667,7 +11667,7 @@ msgctxt "message"
 msgid "02914"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgClassName"
 msgid "02915"
 msgstr "?"
 
@@ -16623,7 +16623,7 @@ msgctxt "message"
 msgid "04153"
 msgstr "Garoh"
 
-msgctxt "message"
+msgctxt "MsgCoinsLabel"
 msgid "04154"
 msgstr "Yampi-Wüste"
 
@@ -18651,7 +18651,7 @@ msgctxt "message"
 msgid "04660"
 msgstr "Entf."
 
-msgctxt "message"
+msgctxt "MsgCoins"
 msgid "04661"
 msgstr "Das Anlegen zeigt keinen Effekt."
 

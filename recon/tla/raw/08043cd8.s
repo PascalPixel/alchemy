@@ -1,77 +1,6 @@
 .syntax unified
 	.thumb
-.L_08043c30:
-	push	{r5, r6, r7, lr}
-	adds	r5, r0, #0
-	sub	sp, #20
-	adds	r7, r1, #0
-	cmp	r5, #0
-	beq.n	.L_08043cc4
-	bl	0x080393fc
-	movs	r3, #4
-	str	r3, [sp, #0]
-	adds	r0, r5, #0
-	movs	r1, #0
-	movs	r2, #4
-	movs	r3, #13
-	bl	UiWindow_DrawDividerLine
-	adds	r0, r7, #0
-	adds	r0, #16
-	adds	r1, r5, #0
-	movs	r2, #0
-	movs	r3, #0
-	bl	UiText_DrawStringAtOffset
-	ldr	r0, [pc, #104]
-	adds	r1, r5, #0
-	movs	r2, #72
-	movs	r3, #0
-	bl	UiText_DrawStringInWindow
-	movs	r6, #0
-	ldrb	r0, [r7, #28]
-	movs	r1, #2
-	adds	r2, r5, #0
-	movs	r3, #80
-	str	r6, [sp, #0]
-	bl	UiText_DrawNumberAtOffset
-	ldr	r3, [pc, #80]
-	ldrb	r0, [r7, #29]
-	adds	r1, r5, #0
-	adds	r0, r0, r3
-	movs	r2, #0
-	movs	r3, #16
-	bl	UiText_DrawCharacterAtOffset
-	movs	r2, #0
-	movs	r3, #32
-	ldr	r0, [pc, #64]
-	adds	r1, r5, #0
-	bl	UiText_DrawCharacterAtOffset
-	ldr	r0, [r7, #32]
-	add	r1, sp, #4
-	bl	Func_080431b0
-	adds	r1, r5, #0
-	movs	r2, #48
-	movs	r3, #40
-	bl	UiText_DrawStringInWindow
-	movs	r6, #48
-	ldr	r0, [r7, #36]
-	movs	r1, #6
-	adds	r2, r5, #0
-	movs	r3, #0
-	str	r6, [sp, #0]
-	bl	UiText_DrawNumberInWindow
-	ldr	r0, [pc, #24]
-	adds	r1, r5, #0
-	movs	r2, #48
-	movs	r3, #48
-	bl	UiText_DrawCharacterAtOffset
-.L_08043cc4:
-	add	sp, #20
-	pop	{r5, r6, r7, pc}
-	.4byte 0x0805f640
-	.4byte 0x00000b63
-	.4byte 0x0000000a
-	.2byte 0x1235
-	.2byte 0x0000
+	.balign 4
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -517,7 +446,7 @@
 	adds	r6, r3, r2
 	ldr	r0, [sp, #32]
 	adds	r1, r6, #0
-	bl	.L_08043c30
+	bl	StatusMenu_DrawCharacterSummary
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r3, [sp, #28]

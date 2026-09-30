@@ -38,7 +38,7 @@ Func_0811e3ac:
 	orrs	r2, r3
 	lsrs	r2, r2, #31
 	str	r2, [sp, #4]
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	add	r2, sp, #4
 	mov	r9, r0
 	ldrb	r2, [r2, #0]
@@ -348,7 +348,7 @@ Func_0811e3ac:
 	beq.n	.L_0811e6bc
 	movs	r0, #128
 	lsls	r0, r0, #8
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	r3, r9
 	str	r0, [r3, #44]
 	b.n	.L_0811e6c2

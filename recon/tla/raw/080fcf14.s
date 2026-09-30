@@ -266,7 +266,7 @@ Func_080fcf14:
 	ldr	r0, [r7, #48]
 	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r0, [r7, #48]
-	bl	0x080f9374
+	bl	UiText_DrawWorkValueWithLabel
 	movs	r1, #1
 	str	r1, [sp, #8]
 	b.n	.L_080fd150
@@ -852,7 +852,7 @@ Func_080fcf14:
 	adds	r0, r7, #0
 	ands	r0, r2
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #0
@@ -899,7 +899,7 @@ Func_080fcf14:
 	adds	r0, r7, #0
 	ands	r0, r2
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #8

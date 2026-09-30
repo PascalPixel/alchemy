@@ -41,10 +41,10 @@ Func_0811cfd0:
 	movs	r0, #0
 	b.n	.L_0811d152
 .L_0811d018:
-	bl	Func_08014878
+	bl	Random16
 	mov	r5, sl
 	muls	r5, r0
-	bl	Func_08014878
+	bl	Random16
 	mov	r2, sl
 	muls	r2, r0
 	lsrs	r5, r5, #16
@@ -65,7 +65,7 @@ Func_0811cfd0:
 	ldrb	r3, [r1, #0]
 	cmp	r3, #2
 	bne.n	.L_0811d064
-	bl	Func_08014878
+	bl	Random16
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r3, r3, #16
@@ -608,7 +608,7 @@ Func_0811cfd0:
 	lsls	r3, r3, #2
 	movs	r0, #40
 	str	r3, [sp, #12]
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	ldr	r3, [r7, #0]
 	add	r5, sp, #16
 	mov	sl, r5

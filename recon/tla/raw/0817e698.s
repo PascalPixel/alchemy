@@ -330,7 +330,7 @@ Func_0817e698:
 	cmp	r2, #27
 	bgt.n	.L_0817e99e
 	movs	r0, #32
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r6, r0, #0
 	movs	r0, #1
 	bl	0x081969f8

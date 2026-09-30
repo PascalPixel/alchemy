@@ -1086,12 +1086,12 @@ Func_08103218:
 	b.n	.L_08103c5c
 .L_08103ae8:
 	movs	r0, #96
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r5, #166
 	lsls	r5, r5, #1
 	str	r0, [sp, #76]
 	adds	r0, r5, #0
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r1, #0
 	movs	r3, #128
 	str	r1, [sp, #72]
@@ -1264,11 +1264,11 @@ Func_08103218:
 	cmp	r3, #1
 	bhi.n	.L_08103d1a
 	movs	r0, #96
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #48]
 	movs	r0, #166
 	lsls	r0, r0, #1
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r3, #128
 	lsls	r3, r3, #2
 	adds	r3, #22
@@ -1557,7 +1557,7 @@ Func_08103218:
 .L_08103ec8:
 	movs	r0, #128
 	lsls	r0, r0, #2
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r1, #132
 	mov	r9, r0
 	movs	r0, #0
@@ -1824,7 +1824,7 @@ Func_08103218:
 	adds	r2, #2
 	ldrb	r0, [r2, r3]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #192]
 	ldr	r1, [sp, #84]
 	movs	r2, #128
@@ -2083,7 +2083,7 @@ Func_08103218:
 	lsls	r0, r0, #4
 	adds	r0, r0, r3
 	lsls	r0, r0, #2
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #516]
 	adds	r1, r0, #0
 	movs	r0, #16
@@ -2387,11 +2387,11 @@ Func_08103218:
 	str	r7, [sp, #72]
 	str	r7, [r0, #4]
 	movs	r0, #96
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r5, r0, #0
 	movs	r0, #166
 	lsls	r0, r0, #1
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r3, #128
 	lsls	r3, r3, #2
 	adds	r3, #22

@@ -105,10 +105,10 @@ Func_080ae868:
 	mov	r9, r2
 	mov	sl, r6
 .L_080ae8fc:
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #2
 	lsrs	r5, r0, #16
-	bl	Func_08014878
+	bl	Random16
 	lsls	r3, r0, #3
 	subs	r3, r3, r0
 	lsls	r0, r5, #2
@@ -162,7 +162,7 @@ Func_080ae868:
 	subs	r3, r3, r2
 	cmp	r3, #1
 	bgt.n	.L_080ae99e
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #100
 	adds	r2, r0, #0
 	muls	r2, r3

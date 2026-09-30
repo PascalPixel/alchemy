@@ -230,7 +230,7 @@ Camera_ConfigureScene:
 	mov	r9, r3
 	cmp	r3, #0
 	ble.n	.L_0811cf72
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #156
 	lsls	r3, r3, #6
 	adds	r3, #16
@@ -271,7 +271,7 @@ Camera_ConfigureScene:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r0, #17
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	adds	r0, r5, #0

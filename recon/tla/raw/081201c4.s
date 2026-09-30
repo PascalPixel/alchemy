@@ -63,13 +63,13 @@ BattleEv_DispatchQueued:
 	adds	r3, #64
 	ldr	r0, [r6, r3]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	b.n	.L_08120346
 	lsls	r3, r7, #2
 	adds	r3, #64
 	ldr	r0, [r6, r3]
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	b.n	.L_08120346
 	lsls	r3, r7, #2
 	adds	r3, #64
@@ -79,7 +79,7 @@ BattleEv_DispatchQueued:
 	adds	r3, #255
 	ands	r0, r3
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	b.n	.L_08120346
 	lsls	r3, r7, #2
 	adds	r3, #64
@@ -89,7 +89,7 @@ BattleEv_DispatchQueued:
 	adds	r3, #255
 	ands	r0, r3
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	b.n	.L_08120346
 	movs	r3, #192
 	lsls	r3, r3, #18

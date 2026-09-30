@@ -1342,7 +1342,7 @@ Func_081000e0:
 	adds	r5, r7, r1
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x080f8e08
+	bl	InventoryMenu_SortByListOrder
 	add	r2, sp, #52
 	mov	r8, r2
 	movs	r1, #0

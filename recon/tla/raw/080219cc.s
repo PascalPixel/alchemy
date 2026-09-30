@@ -1065,10 +1065,10 @@ Func_080220f0:
 	b.n	.L_08022288
 .L_08022234:
 	ldrh	r0, [r7, #18]
-	bl	Math_Sine
+	bl	Trig_Sin
 	str	r0, [sp, #0]
 	ldrh	r0, [r7, #18]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	movs	r3, #22
 	ldrsb	r3, [r7, r3]
 	movs	r2, #23
@@ -1355,10 +1355,10 @@ Func_08022318:
 	b.n	.L_080224c2
 .L_0802246c:
 	ldrh	r0, [r7, #18]
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	sl, r0
 	ldrh	r0, [r7, #18]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	movs	r3, #22
 	ldrsb	r3, [r7, r3]
 	mov	r8, r0

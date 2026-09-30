@@ -61,7 +61,7 @@ Func_081a6030:
 .L_081a60a0:
 	movs	r0, #1
 	bl	WaitFrames
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r7, #4]
 	movs	r0, #1
 	cmp	r3, #0

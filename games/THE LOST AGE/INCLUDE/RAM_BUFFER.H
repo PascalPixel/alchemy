@@ -30,7 +30,10 @@ struct HeapSlots {
     void *unknown_28[5];
     /* The window tilemap: a dirty flag at 3, then 32 x 32 cells from 8. */
     u8 *window_tiles;
-    void *unknown_40[11];
+    void *unknown_40[2];
+    /* The menu screen work, which The Broken Seal keeps as gResQueueWork. */
+    void *menu_work;
+    void *unknown_4c[8];
     /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
 };

@@ -48,7 +48,7 @@
 	overlay_veneer Func_08020350
 	overlay_veneer Func_08020358
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_08038140
 	overlay_veneer Func_08038348
 	overlay_veneer Menu_AnimateSelectionToEntryFar
@@ -66,7 +66,7 @@
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	overlay_veneer UiText_DrawQuantityPairWithCueFar
+	overlay_veneer Func_080c8078
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar

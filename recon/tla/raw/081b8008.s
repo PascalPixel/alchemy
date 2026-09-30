@@ -133,7 +133,7 @@ Func_081b8008:
 	adds	r0, r3, #0
 	mov	r8, r2
 	adds	r5, r1, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	negs	r0, r0
 	lsls	r0, r0, #4
 	asrs	r0, r0, #16

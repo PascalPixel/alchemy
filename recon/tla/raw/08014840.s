@@ -32,9 +32,9 @@ Func_08014840:
 	.4byte 0x03001228
 	.2byte 0x3610
 	.2byte 0x0200
-	.global Func_08014878
+	.global Random16
 	.thumb_func
-Func_08014878:
+Random16:
 	ldr	r1, [pc, #24]
 	ldr	r3, [pc, #28]
 	ldr	r2, [r1, #0]
@@ -65,7 +65,7 @@ Func_0801489c:
 	lsls	r0, r0, #7
 	add	r0, r8
 	adds	r5, r2, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r6, [pc, #44]
 	adds	r1, r0, #0
 	mov	r0, sl
@@ -75,7 +75,7 @@ Func_0801489c:
 	adds	r3, r3, r0
 	stmia	r5!, {r3}
 	mov	r0, r8
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r0, #0
 	mov	r0, sl
 	mov	lr, r6

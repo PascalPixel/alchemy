@@ -68,7 +68,7 @@ Func_080464dc:
 	bl	Func_08014d78
 	str	r0, [sp, #52]
 	movs	r0, #96
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r2, r5, #0
 	str	r0, [sp, #24]
 	ldr	r3, [pc, #648]
@@ -779,7 +779,7 @@ Func_080464dc:
 	lsls	r0, r0, #1
 	str	r4, [sp, #92]
 	str	r4, [sp, #88]
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #84]
 	movs	r0, #0
 	str	r0, [sp, #80]
@@ -4274,7 +4274,7 @@ Func_080464dc:
 	str	r0, [sp, #60]
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #56]
 	ldr	r0, [sp, #64]
 	movs	r3, #0

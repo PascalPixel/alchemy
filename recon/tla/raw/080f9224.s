@@ -183,24 +183,3 @@ Func_080f92ac:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
-	push	{r5, lr}
-	ldr	r3, [pc, #36]
-	sub	sp, #4
-	adds	r5, r0, #0
-	ldr	r0, [r3, #16]
-	movs	r3, #0
-	str	r3, [sp, #0]
-	adds	r2, r5, #0
-	movs	r1, #7
-	movs	r3, #8
-	bl	UiText_DrawNumberAtOffsetFar
-	ldr	r0, [pc, #16]
-	adds	r1, r5, #0
-	movs	r2, #64
-	movs	r3, #0
-	bl	0x08038080
-	add	sp, #4
-	pop	{r5, pc}
-	.4byte 0x02000240
-	.2byte 0x103a
-	.2byte 0x0000

@@ -26,10 +26,10 @@ Item_Get:
 	.thumb_func
 Inventory_GetQuantityFar:
 	overlay_veneer Inventory_GetQuantity
-	.global Inventory_AddFar
+	.global Inventory_AddItemFar
 	.thumb_func
-Inventory_AddFar:
-	overlay_veneer Inventory_Add
+Inventory_AddItemFar:
+	overlay_veneer Inventory_AddItem
 	.global PartyInventory_AddFar
 	.thumb_func
 PartyInventory_AddFar:

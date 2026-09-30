@@ -99,7 +99,7 @@ Func_080ea14c:
 	mov	r8, r1
 	add	r5, r9
 .L_080ea220:
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #4
 	lsrs	r0, r0, #16
 	lsls	r0, r0, #1
@@ -697,7 +697,7 @@ Func_080ea14c:
 	mov	fp, r2
 	mov	r8, r1
 .L_080ea6d0:
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [sp, #4]
 	movs	r1, #128
 	lsls	r5, r3, #3
@@ -719,7 +719,7 @@ Func_080ea14c:
 	str	r3, [r7, #4]
 	ldr	r3, [r1, #16]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #10
 	lsls	r0, r0, #2
@@ -733,7 +733,7 @@ Func_080ea14c:
 	str	r1, [r7, #12]
 	str	r3, [r7, #16]
 	str	r1, [r7, #20]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #4
 	adds	r3, #12

@@ -32,7 +32,7 @@
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	overlay_veneer UiText_DrawQuantityPairWithCueFar
+	overlay_veneer Func_080c8078
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar

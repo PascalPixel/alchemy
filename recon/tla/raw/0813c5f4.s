@@ -227,7 +227,7 @@ Func_0813c5f4:
 	lsls	r5, r2, #12
 .L_0813c7c8:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r0, r0, #1
 	subs	r0, r7, r0
 	asrs	r0, r0, #10

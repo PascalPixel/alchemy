@@ -41,7 +41,7 @@
 	overlay_veneer RenderOutput_PrepareForRedrawFar
 	overlay_veneer UiText_DrawNumberFar
 	overlay_veneer Func_08038118
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_080382e0
 	overlay_veneer Trade_GetOfferStateFar
 	overlay_veneer Func_080ad0f0

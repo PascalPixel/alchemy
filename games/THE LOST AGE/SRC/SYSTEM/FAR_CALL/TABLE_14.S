@@ -22,9 +22,9 @@ Func_08038108:
 	.thumb_func
 Func_08038118:
 	overlay_veneer Func_0803cca8
-	.global Func_08038120
+	.global UiText_DrawQuantity
 	.thumb_func
-Func_08038120:
+UiText_DrawQuantity:
 	overlay_veneer Func_0803ccd0
 	overlay_veneer Func_08042690
 	.global UiWindow_DrawPartyStatusContentsFar
@@ -42,7 +42,7 @@ Func_08038140:
 	overlay_veneer Func_0803dd68
 	overlay_veneer Func_0803df00
 	overlay_veneer Func_0803df14
-	overlay_veneer Func_0803e5a8
+	overlay_veneer Menu_OpenSelectionWindow
 	overlay_veneer Func_0803e6d8
 	overlay_veneer Func_0803e7ac
 	overlay_veneer Func_0803e918

@@ -1,9 +1,11 @@
 .syntax unified
 	.thumb
-	.global Func_080af8d0
+	.global Owner_GetLevelThreshold
 	.thumb_func
-Func_080af8d0:
-.L_080af8d0:
+Owner_GetLevelThreshold:
+	.global Owner_GetLevelThreshold
+	.thumb_func
+Owner_GetLevelThreshold:
 	push	{r5, lr}
 	adds	r5, r1, #0
 	bl	Owner_GetState
@@ -58,7 +60,7 @@ Owner_LevelUp:
 	bl	Owner_GetState
 	mov	sl, r0
 	movs	r0, #44
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r3, #42
 	adds	r3, #255
 	add	r3, sl
@@ -92,7 +94,7 @@ Owner_LevelUp:
 	strh	r3, [r6, #0]
 	ldrb	r1, [r0, #15]
 	mov	r0, fp
-	bl	.L_080af8d0
+	bl	Owner_GetLevelThreshold
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r0, r3
@@ -106,7 +108,7 @@ Owner_LevelUp:
 	str	r0, [r2, #0]
 .L_080af994:
 	mov	r0, fp
-	bl	0x080af79c
+	bl	Owner_GetRecordStride180
 	movs	r2, #0
 	ldrsh	r3, [r6, r2]
 	adds	r1, r0, #0
@@ -176,7 +178,7 @@ Owner_LevelUp:
 	subs	r3, #2
 	ldrsh	r3, [r1, r3]
 	subs	r7, r2, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r0, #0
 	lsls	r0, r3, #2
 	adds	r0, r0, r3
@@ -196,7 +198,7 @@ Owner_LevelUp:
 	subs	r3, #2
 	ldrsh	r3, [r2, r3]
 	subs	r7, r1, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r0, #0
 	lsls	r0, r3, #2
 	adds	r0, r0, r3
@@ -216,7 +218,7 @@ Owner_LevelUp:
 	subs	r3, #2
 	ldrh	r3, [r2, r3]
 	subs	r7, r1, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r0, #0
 	lsls	r0, r3, #2
 	adds	r0, r0, r3
@@ -236,7 +238,7 @@ Owner_LevelUp:
 	subs	r3, #2
 	ldrh	r3, [r2, r3]
 	subs	r7, r1, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r0, #0
 	lsls	r0, r3, #2
 	adds	r0, r0, r3
@@ -256,7 +258,7 @@ Owner_LevelUp:
 	subs	r3, #2
 	ldrh	r3, [r2, r3]
 	subs	r7, r1, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r0, #0
 	lsls	r0, r3, #2
 	adds	r0, r0, r3
@@ -276,7 +278,7 @@ Owner_LevelUp:
 	subs	r3, #1
 	ldrb	r3, [r2, r3]
 	subs	r7, r1, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r0, #0
 	lsls	r0, r3, #2
 	adds	r0, r0, r3
@@ -324,7 +326,7 @@ Owner_LevelUp:
 	adds	r3, #1
 	strb	r2, [r3, #0]
 	mov	r0, fp
-	bl	Func_080b02d4
+	bl	Owner_RefreshClassActions
 	mov	r0, fp
 	bl	Owner_RecalculateStats
 .L_080afb6a:

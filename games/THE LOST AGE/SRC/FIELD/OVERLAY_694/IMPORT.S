@@ -34,7 +34,7 @@
 	overlay_veneer Animation_ApplyChildValuesFar
 	overlay_veneer Func_08020290
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_080ad240
 	overlay_veneer Func_080ad290
 	overlay_veneer PartyInventory_CountItemFar

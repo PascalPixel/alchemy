@@ -169,7 +169,7 @@ Func_080ff1f4:
 	ldr	r3, [r3, #0]
 	movs	r1, #5
 	subs	r0, r0, r3
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 .L_080ff33c:
 	movs	r0, #128
 	bl	Func_08014d78

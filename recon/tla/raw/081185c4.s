@@ -307,7 +307,7 @@ DebugParty_LoadPreset:
 	beq.n	.L_08118834
 	adds	r1, r3, #0
 	mov	r0, r8
-	bl	0x080ad080
+	bl	OwnerAction_AddFar
 	b.n	.L_08118834
 	.4byte 0x00000000
 	.2byte 0xa174

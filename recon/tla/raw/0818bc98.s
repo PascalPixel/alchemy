@@ -88,7 +88,7 @@ Func_0818bc98:
 	cmp	r3, #0
 	bne.n	.L_0818bd56
 	lsls	r0, r6, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r0, r0, #7
 	asrs	r0, r0, #16
 	mov	r2, r8
@@ -97,7 +97,7 @@ Func_0818bc98:
 	b.n	.L_0818bd66
 .L_0818bd56:
 	lsls	r0, r6, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r3, r0, #6
 	subs	r3, r3, r0
 	asrs	r3, r3, #16
@@ -288,9 +288,9 @@ Func_0818bc98:
 .L_0818bedc:
 	negs	r3, r7
 	str	r3, [r5, #24]
-	bl	Func_08014878
+	bl	Random16
 	str	r0, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #32
@@ -475,7 +475,7 @@ Func_0818bc98:
 	mov	r1, r8
 	str	r0, [r5, #0]
 	str	r1, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #32
 	lsls	r0, r0, #14
@@ -484,17 +484,17 @@ Func_0818bc98:
 	ldr	r3, [r2, #4]
 	cmp	r3, #0
 	bne.n	.L_0818c06c
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	negs	r0, r0
 	b.n	.L_0818c072
 .L_0818c06c:
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 .L_0818c072:
 	lsls	r0, r0, #13
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #16
@@ -581,7 +581,7 @@ Func_0818bc98:
 	cmp	r3, #0
 	blt.n	0x0818c180
 	ldr	r0, [r6, #0]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [r6, #4]
 	muls	r3, r0
 	ldr	r0, [sp, #32]
@@ -589,7 +589,7 @@ Func_0818bc98:
 	adds	r0, r0, r3
 	mov	r8, r0
 	ldr	r0, [r6, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r2, [r6, #4]
 	ldr	r1, [sp, #28]
 	adds	r3, r2, #0
@@ -756,7 +756,7 @@ Func_0818bc98:
 .L_0818c270:
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #16]
 	movs	r0, #1
 	bl	0x081969f8

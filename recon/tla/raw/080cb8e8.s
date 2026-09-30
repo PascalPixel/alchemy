@@ -660,7 +660,7 @@ Func_080cb8e8:
 	mov	r3, r8
 	ldrsh	r0, [r6, r3]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #60]
 	movs	r1, #1
 	bl	0x08038040

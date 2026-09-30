@@ -106,19 +106,19 @@ Func_08144628:
 	adds	r7, #1
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	mov	r3, r8
 	ands	r0, r3
 	subs	r0, #128
 	lsls	r0, r0, #10
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, r8
 	ands	r0, r1
 	subs	r0, #128
 	lsls	r0, r0, #10
 	str	r0, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	mov	r2, r8
 	ands	r0, r2
 	subs	r0, #128
@@ -224,7 +224,7 @@ Func_08144628:
 	lsls	r3, r3, #2
 	adds	r1, r1, r3
 	bl	Math_Div
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #460]
 	lsls	r0, r0, #4
 	ldrh	r1, [r3, #4]
@@ -235,7 +235,7 @@ Func_08144628:
 	adds	r0, r5, #0
 	str	r1, [sp, #12]
 	str	r4, [sp, #8]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r4, [sp, #8]
 	ldr	r1, [sp, #12]
 	adds	r3, r4, #0

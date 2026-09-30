@@ -21,7 +21,7 @@ Func_080f94a4:
 	mov	sl, r1
 	adds	r5, r0, #0
 	mov	r0, sl
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r7, #192
 	ldr	r3, [pc, #60]
 	lsls	r7, r7, #18

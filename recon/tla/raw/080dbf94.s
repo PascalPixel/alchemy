@@ -102,7 +102,7 @@ Func_080dbf94:
 	beq.n	.L_080dc0b0
 	ldr	r1, [pc, #80]
 	bl	Object_SetCallback
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r2, r6, #0
@@ -116,19 +116,19 @@ Func_080dbf94:
 	lsls	r3, r3, #4
 	adds	r3, #61
 	str	r3, [r6, #72]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	subs	r5, r5, r0
 	str	r5, [r6, #40]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r3, #128
 	lsls	r3, r3, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0

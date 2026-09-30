@@ -330,7 +330,7 @@ Func_08118958:
 	ldrh	r0, [r6, #0]
 	movs	r1, #1
 	adds	r6, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	cmp	r5, r8
 	bne.n	.L_08118c0c
 	ldr	r0, [pc, #80]

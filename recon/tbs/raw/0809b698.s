@@ -108,7 +108,7 @@ Func_0809b698:
 	strh	r2, [r3, #6]
 	lsls	r1, r1, #4
 	adds	r0, r5, #0
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #15
 	bl	WaitFrames
 	movs	r0, #174

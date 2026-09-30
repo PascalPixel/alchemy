@@ -176,9 +176,9 @@ Engine_ActorFaceEachOther:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
-	.global Engine_ObjectSetPalette
+	.global ObjectGroup_SetChildValue
 	.thumb_func
-Engine_ObjectSetPalette:
+ObjectGroup_SetChildValue:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Engine_ActorFaceDirection
 	.thumb_func

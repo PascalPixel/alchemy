@@ -312,7 +312,7 @@ Func_080dea70:
 	lsls	r1, r1, #3
 	add	r5, fp
 	ldr	r0, [pc, #712]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [r5, #0]
 	ldr	r0, [r3, #8]
 	bl	GetBattleObjectSlotFar

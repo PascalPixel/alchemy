@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-void Effect_Move(union FieldObject *object)
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object)
 {
     object->effect.x += object->effect.velocity_x;
     object->effect.y += object->effect.velocity_y;

@@ -65,7 +65,7 @@ Func_080d1350:
 	mov	r5, r8
 	ldr	r0, [pc, #792]
 	str	r6, [sp, #32]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [r5, #0]
 	ldr	r0, [r3, #8]
 	bl	GetBattleObjectSlotFar

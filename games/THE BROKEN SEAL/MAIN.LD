@@ -3410,12 +3410,6 @@ SECTIONS
     Engine_ObjectCreate = Object_CreateFar;
     Engine_ObjectSetAnimation = Object_SetMode;
     Engine_ObjectSetScript = ObjectDispatch_InitializeFar;
-    Engine_ObjectSetPalette = ObjectGroup_SetChildValue;
-    Effect_Move = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
-    Engine_AllocateBlock = Runtime_AllocateBlock;
-    Engine_ScheduleCallback = Scheduler_AddOrUpdateCallback;
-    Engine_BuildScrollPage = DisplayScroll_BuildAndSwapHBlankPage;
-    Engine_ArmScrollDma = DisplayScroll_ArmHBlankDma;
     /* The compiler calls its division helpers by their ABI names; here they are
        the veneers into the resident IWRAM divider (DIVISION_ENTRY.S). */
     __divsi3 = IwramSignedDivideEntry;

@@ -45,7 +45,7 @@ Func_080eb754:
 	str	r3, [r7, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #40]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #1
 	movs	r1, #0
 	bl	BattleEffect_WipeCanvas

@@ -22,7 +22,7 @@ Func_080a4f08:
 	mov	fp, r0
 	movs	r0, #14
 	mov	r9, r3
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	movs	r2, #1
 	str	r3, [sp, #8]

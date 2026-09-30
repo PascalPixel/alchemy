@@ -70,7 +70,7 @@ Func_080ce4e8:
 	lsls	r5, r5, #3
 	adds	r1, r5, #0
 	ldr	r0, [pc, #704]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r3, #239
 	lsls	r3, r3, #7
 	add	r3, sl
@@ -82,7 +82,7 @@ Func_080ce4e8:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #692]
 	ldr	r5, [pc, #696]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r6, #255
 	movs	r4, #0
 .L_080ce59c:

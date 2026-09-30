@@ -22,7 +22,7 @@ struct SoruRingEntry {
 extern s32 Soru_RingOffsetX[];
 extern s32 Soru_RingOffsetZ[];
 void Soru_UpdateRing(void);
-struct SoruRingEntry *Engine_AllocateBlock(s32 slot, s32 size);
+struct SoruRingEntry *Runtime_AllocateBlock(s32 slot, s32 size);
 struct SoruRingObject *Engine_ActorGet(s32 actor);
 void Engine_ObjectSetBlendMode(struct SoruRingObject *obj, s32 mode);
 s32 Engine_TaskAddCallback(void *callback, s32 priority);
@@ -41,7 +41,7 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
     s32 cleared;
     volatile u32 zero;
 
-    list = Engine_AllocateBlock(33, 0x194);
+    list = Runtime_AllocateBlock(33, 0x194);
     zero = 0;
     entry = list;
     Dma_Set((const void *)&zero, list, 0x85000065, (volatile u32 *)0x040000d4);

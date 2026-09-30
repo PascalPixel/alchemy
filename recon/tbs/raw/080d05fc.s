@@ -105,7 +105,7 @@ Func_080d05fc:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #916]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [r7, #0]
 	mov	r2, sp
 	adds	r2, #120

@@ -20,7 +20,7 @@ Func_080c1470:
 	str	r3, [r2, #8]
 	ldr	r1, [pc, #516]
 	movs	r0, #39
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	mov	fp, r0
 	lsls	r1, r1, #7
@@ -251,10 +251,10 @@ Func_080c1470:
 	bl	Func_080c9000
 	adds	r1, r5, #0
 	ldr	r0, [pc, #92]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	adds	r1, r5, #0
 	ldr	r0, [pc, #88]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	add	sp, #36
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

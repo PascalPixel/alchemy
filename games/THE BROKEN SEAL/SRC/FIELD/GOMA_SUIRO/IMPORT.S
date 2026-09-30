@@ -90,9 +90,9 @@ Engine_ActorSetPosition:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
-	.global Engine_ObjectSetPalette
+	.global ObjectGroup_SetChildValue
 	.thumb_func
-Engine_ObjectSetPalette:
+ObjectGroup_SetChildValue:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Audio_PlayCue
 	.thumb_func

@@ -100,7 +100,7 @@ LAYOUT_OFFSET_GUARD(EffectOptions_Update, struct EffectOptions, update, 0x24);
 void Effect_SetPriority(struct FieldEffect *effect, s32 priority);
 struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type);
 struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type);
-void Effect_Move(union FieldObject *object);
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
                   const struct EffectOptions *options);
 

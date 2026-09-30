@@ -20,7 +20,7 @@ extern const s8 KorimaMagari_PushStepZ[];
 struct TileRun *SceneData_FindTileRunAt(struct TileRun *runs, s32 x, s32 z);
 s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *point);
-u8 *Engine_AllocateBlock(s32 block, s32 size);
+u8 *Runtime_AllocateBlock(s32 block, s32 size);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FieldActor *object);
@@ -86,7 +86,7 @@ void Scene_PushBlockAlongRun(struct TileRun *runs)
     Object_SetPosition(actor, x, 0, z);
     Event_Wait(6);
     Actor_SetAnimation(0, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Engine_AllocateBlock(27, 0xccc) + 0x1e0), actor);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);
     Actor_SetSpeed(0, 0x4ccc, 0x3333);
     Actor_SetDestinationOffset(0, KorimaMagari_PushStepX[quarter], KorimaMagari_PushStepZ[quarter]);
     Event_Wait(24);

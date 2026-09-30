@@ -11,9 +11,9 @@
 IwramUnsignedDivide:
 	overlay_veneer IwramUnsignedDivideArm
 	overlay_veneer WaitFramesFar
-	.global Engine_ScheduleCallback
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Engine_ScheduleCallback:
+Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_TaskRemoveCallback
 	.thumb_func
@@ -24,9 +24,9 @@ Engine_TaskRemoveCallback:
 Engine_RandomNext:
 	overlay_veneer Random16Far
 	overlay_veneer Trig_SinFar
-	.global Engine_AllocateBlock
+	.global Runtime_AllocateBlock
 	.thumb_func
-Engine_AllocateBlock:
+Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func

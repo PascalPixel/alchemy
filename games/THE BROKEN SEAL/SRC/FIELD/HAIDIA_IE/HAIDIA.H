@@ -139,7 +139,7 @@ void BattleEffect_CleanupSceneObjects(void);
 void BattleFx_SetBlock30ValuesMaxZero(void);
 void Scheduler_RemoveCallback();
 s32 IwramUnsignedRemainder();
-s32 Engine_ScheduleCallback();
+s32 Scheduler_AddOrUpdateCallback();
 void UiWork_FinalizePendingCore(void);
 void BattleParty_ApplyDrain(s32, s32);
 s32 ArcTan2(s32, s32);

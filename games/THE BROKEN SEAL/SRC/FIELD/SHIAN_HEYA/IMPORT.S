@@ -66,9 +66,9 @@ Engine_ActorSetAnimation:
 	.thumb_func
 Engine_ActorFaceActor:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
-	.global Engine_ObjectSetPalette
+	.global ObjectGroup_SetChildValue
 	.thumb_func
-Engine_ObjectSetPalette:
+ObjectGroup_SetChildValue:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func

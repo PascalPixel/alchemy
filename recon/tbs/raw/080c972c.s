@@ -241,7 +241,7 @@ Func_080c972c:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #780]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [pc, #776]
 	add	r3, sl
 	ldr	r3, [r3, #0]
@@ -283,7 +283,7 @@ Func_080c972c:
 	movs	r1, #144
 	ldr	r0, [pc, #716]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r3, #0
 	str	r3, [sp, #24]
 	ldr	r2, [pc, #696]

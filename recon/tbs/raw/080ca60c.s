@@ -371,7 +371,7 @@ Func_080ca60c:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #324]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r5, [pc, #296]
 	add	r5, fp
 	ldr	r3, [r5, #0]

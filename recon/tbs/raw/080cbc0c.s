@@ -219,7 +219,7 @@ Func_080cbc0c:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #48]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r1, #7
 	movs	r2, #7
 	b.n	.L_080cbe1c

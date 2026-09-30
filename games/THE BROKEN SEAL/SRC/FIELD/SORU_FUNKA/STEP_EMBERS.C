@@ -4,7 +4,7 @@ s32 IwramUnsignedDivide(s32 num, s32 den);
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 void *Engine_ActorGet(s32 id);
 void Engine_ObjectSetAnimation(void *object, s32 animation);
-void Engine_ObjectSetPalette(void *object, s32 palette);
+void ObjectGroup_SetChildValue(void *object, s32 palette);
 s32 Engine_RandomNext(void);
 s32 IwramUnsignedRemainder(s32 value, s32 modulus);
 s32 Engine_GameFlagIsSet(s32 flag);
@@ -105,7 +105,7 @@ void SoruFunka_StepEmbers(void)
                     spark->target_x = 0x80000000;
                     spark->target_y = 0x80000000;
                     spark->target_z = 0x80000000;
-                    Engine_ObjectSetPalette(spark, 15);
+                    ObjectGroup_SetChildValue(spark, 15);
                 } else if (gEmberState[i] == 20) {
                     gEmberState[i] = 0;
                 }
@@ -137,7 +137,7 @@ void SoruFunka_StepEmbers(void)
             x = Iwram_MulQ16(Engine_MathCos(angle), ((Engine_RandomNext() & 63) << 16) + 0x80000);
             z = Iwram_MulQ16(Engine_MathSin(angle), ((Engine_RandomNext() & 63) << 16) + 0x80000);
             Engine_ObjectSetPosition(ember, x + 0x1450000, 0, z + 0x11e0000);
-            Engine_ObjectSetPalette(ember, 0);
+            ObjectGroup_SetChildValue(ember, 0);
             gEmberTimer = 30;
             return;
         }

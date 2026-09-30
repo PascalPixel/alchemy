@@ -14,7 +14,7 @@ extern u8 MsgShianXiansSpecialArmorNotSuited[];
 
 
 #define NULL ((void *)0)
-void Effect_Move(void *object);
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 
 union Slot {
     s32 w;

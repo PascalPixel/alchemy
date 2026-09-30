@@ -33,7 +33,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     Object_SetScript((struct FieldActor *)effect, gEffectScripts[table_offset >> 2]);
     effect->motion_flags = 0;
     sprite->flags = 0;
-    effect->update = Effect_Move;
+    effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
     effect->velocity_x = velocity_x;
     effect->velocity_y = velocity_y;
     effect->velocity_z = velocity_z;

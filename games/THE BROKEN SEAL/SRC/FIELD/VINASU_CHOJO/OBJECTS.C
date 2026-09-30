@@ -33,7 +33,7 @@ void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
         ret[0x55] = 0;
         ret[0x59] = 8;
         Engine_ActorSetSpriteFlags(ret, 0);
-        Engine_ObjectSetPalette(ret, 14);
+        ObjectGroup_SetChildValue(ret, 14);
         OverlayObject_SetValue1(ret, 1);
         return ret;
     }
@@ -57,7 +57,7 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
         result[0x55] = 0;
         result[0x59] = 8;
         Engine_ActorSetSpriteFlags(result, 0);
-        Engine_ObjectSetPalette(result, 15);
+        ObjectGroup_SetChildValue(result, 15);
         result[0x23] = (result[0x23] & 0xfe) | 2;
         return result;
     }

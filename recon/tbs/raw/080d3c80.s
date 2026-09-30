@@ -61,7 +61,7 @@ Func_080d3c80:
 	.2byte 0xd261
 	.2byte 0x080c
 .L_080d3d00:
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r4, [pc, #536]
 	str	r4, [sp, #12]
 	movs	r3, #0

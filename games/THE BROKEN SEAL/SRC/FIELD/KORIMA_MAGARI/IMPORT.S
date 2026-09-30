@@ -34,9 +34,9 @@ Vector_AddPolarOffset:
 	.thumb_func
 Runtime_SetIrqHandler:
 	overlay_veneer Runtime_SetIrqHandlerFar
-	.global Engine_AllocateBlock
+	.global Runtime_AllocateBlock
 	.thumb_func
-Engine_AllocateBlock:
+Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
 	.global Engine_ObjectSetAnimation
 	.thumb_func

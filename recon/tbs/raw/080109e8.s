@@ -131,7 +131,7 @@ Func_080109e8:
 	str	r6, [r3, #0]
 	movs	r0, #12
 	movs	r1, #76
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	ldr	r1, [pc, #520]
 	mov	r9, r0
 	movs	r0, #7
@@ -314,11 +314,11 @@ Func_080109e8:
 	strh	r3, [r2, #0]
 	ldr	r1, [pc, #168]
 	ldr	r0, [pc, #168]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #164]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r1, [pc, #160]
 	movs	r3, #255
 	adds	r0, r7, r1

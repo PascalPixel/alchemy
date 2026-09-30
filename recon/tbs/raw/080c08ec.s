@@ -91,7 +91,7 @@ BattleBackground_Load:
 	bne.n	.L_080c09ae
 	ldr	r0, [pc, #112]
 	ldr	r1, [pc, #112]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 .L_080c09ae:
 	mov	r3, r9
 	mov	r2, sl

@@ -50,7 +50,7 @@ Func_080cb1a4:
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #716]
 	str	r7, [sp, #48]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	mov	r4, sl
 	ldr	r3, [r4, #0]
 	ldr	r0, [r3, #8]

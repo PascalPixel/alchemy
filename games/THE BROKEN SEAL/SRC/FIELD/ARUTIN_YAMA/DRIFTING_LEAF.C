@@ -35,7 +35,7 @@ void ArutinYama_UpdateDriftingLeaf(struct FieldActor *object)
         object->scale_y += 0x7ae;
     }
     if ((u32)((*(s16 *)&(object)->unknown_64) * Engine_RandomNext()) >> 16 == 0)
-        Engine_ObjectSetPalette(object, 7);
+        ObjectGroup_SetChildValue(object, 7);
     if ((*(s16 *)&(object)->unknown_64) != 0)
         (*(s16 *)&(object)->unknown_64) -= 2;
     else

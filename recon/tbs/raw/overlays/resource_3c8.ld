@@ -34,7 +34,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/TILES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/GET_EVENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/STEP_SLOTS.o"(.text)
-        "*/resource_3c8_overlay.o"(.text.x0200b068)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ENTRY_RUN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/PASS_RANGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/DUST_STEP.o"(.text)
         "*/resource_3c8_overlay.o"(.text.x0200c2bc)

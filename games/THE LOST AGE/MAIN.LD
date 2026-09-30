@@ -94,6 +94,8 @@ SECTIONS
         "*/recon/tla/raw/08013f80.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08014220.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080143ac.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/INITIALIZE.o"(.text)
+        "*/recon/tla/raw/080143f6.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080143f8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08014504.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0801451c.o"(.text .rodata .data .padding)

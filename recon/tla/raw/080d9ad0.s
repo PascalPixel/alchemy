@@ -60,7 +60,7 @@ Func_080d9ad0:
 	adds	r2, r6, #0
 	ldr	r0, [r5, #8]
 	movs	r1, #64
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #32]

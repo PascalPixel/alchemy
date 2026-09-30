@@ -425,7 +425,7 @@ Func_080e68c8:
 	adds	r1, r5, #0
 	mov	r2, r9
 	str	r0, [sp, #20]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	str	r0, [sp, #16]
 	movs	r3, #200
 	add	r0, sp, #16
@@ -544,7 +544,7 @@ Func_080e68c8:
 	mov	r2, r9
 	adds	r1, r5, #0
 	str	r0, [sp, #20]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	str	r0, [sp, #16]
 	movs	r3, #200
 	add	r2, sp, #16
@@ -647,7 +647,7 @@ Func_080e68c8:
 	movs	r1, #128
 	mov	r2, r9
 	str	r0, [sp, #20]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	str	r0, [sp, #16]
 	movs	r3, #200
 	add	r0, sp, #16
@@ -758,7 +758,7 @@ Func_080e68c8:
 	lsls	r1, r1, #3
 	movs	r2, #0
 	str	r0, [sp, #12]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r3, #200
 	lsls	r3, r3, #5
 	adds	r3, #46
@@ -1191,7 +1191,7 @@ Func_080e68c8:
 	adds	r1, r5, #0
 	ldr	r2, [sp, #16]
 	str	r0, [sp, #8]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r2, [sp, #16]
 	movs	r3, #239
 	movs	r1, #0
@@ -1525,7 +1525,7 @@ Func_080e68c8:
 	adds	r1, r5, #0
 	ldr	r2, [sp, #20]
 	str	r0, [sp, #12]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r2, [sp, #20]
 	movs	r3, #239
 	movs	r1, #0

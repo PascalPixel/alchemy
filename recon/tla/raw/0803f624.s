@@ -14,7 +14,7 @@ UiTextResource_Initialize:
 	mov	r2, r8
 	str	r0, [r6, #0]
 	movs	r1, #128
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #56]
 	ldrh	r2, [r5, #8]
 	ands	r0, r3

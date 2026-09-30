@@ -98,7 +98,7 @@ Func_0803e7c8:
 	movs	r1, #128
 	ldrh	r0, [r6, r5]
 	mov	r2, fp
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	adds	r5, r6, r5
 	strh	r0, [r5, #2]
 	movs	r0, #230

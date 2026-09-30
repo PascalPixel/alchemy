@@ -7,7 +7,7 @@ Func_08022c84:
 	ldr	r2, [pc, #12]
 	movs	r1, #128
 	movs	r0, #93
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0xe89c

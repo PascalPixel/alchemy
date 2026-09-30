@@ -3,8 +3,8 @@
 Golden Sun: **The Broken Seal (TBS)** ☀️ and **The Lost Age (TLA)** ⚓️,
 rebuilt byte for byte from readable C, assembly and editable assets. Japanese
 releases are the source editions; localizations are measured differences.
-Build IDs are `tbs` and `tla`. Today only the English editions build their
-code from C.
+Build IDs are `tbs` and `tla`. Every ☀️ edition builds its code from C; of
+the ⚓️ editions, only English does so far.
 
 This file is the only place Alchemy's rules live. `README.md` is for fans.
 Every rule has an ID; a rule a tool can enforce names its check, and every

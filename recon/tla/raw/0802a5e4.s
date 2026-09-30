@@ -428,7 +428,7 @@
 	cmp	r0, #0
 	beq.n	.L_0802a982
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_0802aa24
 .L_0802a982:
 	movs	r2, #128

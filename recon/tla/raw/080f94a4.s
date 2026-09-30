@@ -159,7 +159,7 @@ Func_080f94a4:
 	bl	Func_08013164
 	movs	r0, #1
 	bl	0x08013560
-	bl	Func_080f80a8
+	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r0, #1
 	bl	0x08013560
 	movs	r0, #0

@@ -208,7 +208,7 @@ Func_080ae834:
 	bl	0x08016cfc
 .L_080ae9d0:
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #1
 	add	r8, r0
 	mov	r1, r8

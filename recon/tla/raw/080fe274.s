@@ -157,7 +157,7 @@ Func_080fe274:
 	ldr	r0, [r6, #40]
 	bl	0x08038268
 	bl	0x0810526c
-	bl	Func_080f80a8
+	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r3, #20
 	movs	r1, #0
 	movs	r2, #30

@@ -521,7 +521,7 @@ Func_08040a48:
 	movs	r0, #245
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #170

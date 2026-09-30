@@ -280,7 +280,7 @@ Func_080fa870:
 .L_080faaaa:
 	movs	r0, #82
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080faab2:
 	movs	r5, #0
 .L_080faab4:

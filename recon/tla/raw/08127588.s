@@ -257,7 +257,7 @@ Func_08127588:
 	lsls	r5, r5, #3
 	adds	r5, #113
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #239
 	lsls	r0, r0, #3
 	bl	0x08016ce4
@@ -275,7 +275,7 @@ Func_08127588:
 	adds	r0, r0, r2
 	adds	r5, #1
 	adds	r6, #2
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	cmp	r5, #86
 	bls.n	.L_081277a0
 	movs	r0, #71

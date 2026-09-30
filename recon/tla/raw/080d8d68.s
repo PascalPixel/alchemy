@@ -1316,7 +1316,7 @@ Func_080d8d68:
 	str	r2, [r5, #24]
 	cmp	r0, #0
 	beq.n	.L_080d97ee
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080d97ee:
 	ldr	r2, [sp, #20]
 	cmp	r2, #0

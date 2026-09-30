@@ -100,7 +100,7 @@ Func_080d2260:
 	bl	0x080145a8
 	movs	r0, #153
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r3, [pc, #28]
 	movs	r1, #240
 	lsls	r1, r1, #1

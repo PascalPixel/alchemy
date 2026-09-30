@@ -1,18 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080f80a8
-	.thumb_func
-Func_080f80a8:
-	push	{lr}
-	bl	0x0801479c
-	bl	0x080202e0
-	movs	r0, #179
-	lsls	r0, r0, #1
-	bl	0x08016d18
-	movs	r0, #169
-	lsls	r0, r0, #1
-	bl	0x08016d18
-	pop	{pc}
 	push	{lr}
 	movs	r0, #169
 	lsls	r0, r0, #1

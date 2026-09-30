@@ -40,7 +40,7 @@
 	overlay_veneer Func_08020230
 	overlay_veneer Func_08020278
 	overlay_veneer Func_080202d8
-	overlay_veneer Func_080202e0
+	overlay_veneer Map_DisableUpdateCallbackFar
 	overlay_veneer Func_08020360
 	overlay_veneer Func_080c8010
 	overlay_veneer Func_080c8018

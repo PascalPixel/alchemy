@@ -65,7 +65,7 @@ Func_080f93c4:
 	push	{lr}
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]

@@ -870,7 +870,7 @@ Func_080ea14c:
 	movs	r1, #0
 	bl	Object_SetMode
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080ea85e
 .L_080ea856:
 	adds	r0, r7, #0

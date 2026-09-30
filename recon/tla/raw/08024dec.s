@@ -54,7 +54,7 @@ Func_08024dec:
 	adds	r3, #87
 	strb	r0, [r3, #0]
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #2
@@ -79,7 +79,7 @@ Func_08024dec:
 	cmp	r0, r3
 	bne.n	.L_08024e96
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_08024e9c
 .L_08024e96:
 	adds	r0, r5, #0

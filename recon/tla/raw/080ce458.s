@@ -274,7 +274,7 @@ Func_080ce458:
 	strh	r0, [r3, #0]
 	movs	r0, #70
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	cmp	r7, #15
 	bne.n	.L_080ce684
 	movs	r7, #0
@@ -607,7 +607,7 @@ Func_080ce458:
 	bl	0x08016cfc
 	movs	r0, #66
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r1, [sp, #8]
 	movs	r0, #1
 	negs	r0, r0
@@ -651,9 +651,9 @@ Func_080ce458:
 	beq.n	.L_080ce9b6
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080ce9b6:
 	mov	r0, r9
 	movs	r1, #0
@@ -795,10 +795,10 @@ Func_080ce458:
 	strb	r2, [r3, #0]
 	bl	Func_080dc7e8
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #66
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080ceaec:
 	movs	r0, #0
 .L_080ceaee:

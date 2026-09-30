@@ -1327,7 +1327,7 @@ Func_08027e20:
 	beq.n	.L_080288aa
 	movs	r0, #72
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r1, #181
 	lsls	r1, r1, #1
 	adds	r2, r5, r1

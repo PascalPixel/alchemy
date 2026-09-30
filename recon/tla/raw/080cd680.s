@@ -249,7 +249,7 @@ Func_080cd680:
 .L_080cd874:
 	movs	r0, #161
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080cd87c:
 	ldr	r2, [r5, #8]
 	movs	r3, #240
@@ -310,7 +310,7 @@ Func_080cd680:
 .L_080cd8f0:
 	movs	r0, #161
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080cd8f8:
 	movs	r0, #0
 	pop	{r5, r6, r7, pc}

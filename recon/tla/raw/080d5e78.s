@@ -87,7 +87,7 @@ Func_080d5e78:
 	movs	r0, #24
 	bl	.L_080d5e78
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r6, #1
 	b.n	.L_080d5fcc
 .L_080d5f3a:
@@ -100,7 +100,7 @@ Func_080d5e78:
 	movs	r0, #23
 	bl	.L_080d5e78
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r6, #2
 	b.n	.L_080d5fcc
 .L_080d5f58:
@@ -111,7 +111,7 @@ Func_080d5e78:
 	cmp	r0, #0
 	beq.n	.L_080d5fcc
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r3, [pc, #96]
 	movs	r2, #133
 	lsls	r2, r2, #2

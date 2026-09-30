@@ -5,6 +5,6 @@
 Func_0815a074:
 	push	{lr}
 	movs	r1, #0
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 	pop	{pc}
 	.2byte 0x0000

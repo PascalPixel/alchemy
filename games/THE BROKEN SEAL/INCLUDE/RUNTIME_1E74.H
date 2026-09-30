@@ -26,4 +26,9 @@ static inline struct Runtime1e74 *Runtime1e74_Get(void)
     return *(struct Runtime1e74 **)Data_03001e74_a;
 }
 
+/* BATTLE/EVENT_RUNTIME_RESET.C returns no value of its own: its callers hand on
+   the r0 it leaves. */
+u32 BattleEventRuntime_Reset(void);
+s32 BattleEventRuntime_WaitForReady(void);
+
 #endif

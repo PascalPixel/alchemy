@@ -1,9 +1,10 @@
-/* Set palette `palette` on every tile of a clipped rectangle of the 32x32
-   tile map that uses palette 15, and mark the touched rows dirty. */
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 #include "UI.H"
+
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+void UiWindow_SetPaletteBitRectFar(s32, s32, s32, s32, s32);
 
 extern u8 *Data_03001e8c;
 
@@ -59,9 +60,15 @@ s32 Resource_ResetEntry(u32 resource);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Menu_UpdateEntryObjectTransforms(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 
+s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
+{
+    UiWindow_SetPaletteBitRectFar(FIELD_AT_OFFSET(win, u16 *, 0xC) + arg1 + 1, FIELD_AT_OFFSET(win, u16 *, 0xE) + arg2 + 1, arg3, arg4, arg5);
+}
+
+/* Set palette `palette` on every tile of a clipped rectangle of the 32x32
+   tile map that uses palette 15, and mark the touched rows dirty. */
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
 {
     u8 *base;
@@ -231,4 +238,3 @@ s32 DjinnMenu_ShowHelp(void)
     Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
     return result;
 }
-

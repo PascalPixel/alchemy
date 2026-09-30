@@ -8,7 +8,7 @@ extern u8 gMapCellBuffer[];
  * footprint and direction tables. */
 
 extern u8 *gWork;
-/* A word, not a pointer: an integer read shares the alias set of the request
+/* A word, not a pointer: an integer read shares the alias set of the probe
  * fields SceneActor_MoveAndRedraw spills, which keeps those spills first. */
 extern u32 gCam;
 extern s32 StagedActor_DirectionSteps[];
@@ -263,7 +263,7 @@ s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
     s32 near_edge, far_edge;
     s32 offset;
 
-    probe->unknown_14 = 0;
+    probe->callback = 0;
     actor = (struct StagedActor *)FieldScene_FindActorRegion(
         &direction, &probe->actor_slot, &probe->footprint_index);
     if (actor == 0) {
@@ -330,7 +330,7 @@ found:
     return 1;
 }
 
-void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
+void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
     u8 *workspace;
     StagedActorRecord *actor;
@@ -343,10 +343,10 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
 
     workspace = (u8 *)gCam;
     direction = ((StagedActorRecord *)Object_GetById(0))->orientation >> 12;
-    actor = Object_GetById(request.actor_id);
+    actor = Object_GetById(probe.actor_slot);
     footprint_table = (u8 *)StagedActor_FootprintBounds;
     {
-        s32 footprint_offset = request.movement_index << 4;
+        s32 footprint_offset = probe.footprint_index << 4;
         s32 table_offset = footprint_offset + 4;
         s32 extent_a = *(s32 *)(footprint_table + table_offset);
         s32 extent_b;
@@ -374,7 +374,7 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
     original_position.x = actor->x;
     original_position.y = actor->y;
     {
-        s32 table_offset = request.movement_index << 4;
+        s32 table_offset = probe.footprint_index << 4;
         tile_position.x =
             (actor->x +
              (*(s32 *)(footprint_table + table_offset) << 16));
@@ -393,13 +393,13 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
     Battle_WaitMode0(15);
 
     {
-        s32 horizontal_delta = request.target_x - original_position.x;
+        s32 horizontal_delta = probe.position_x - original_position.x;
         if (horizontal_delta < 0)
             horizontal_delta += 0x1ffff;
         horizontal_delta >>= 17;
         {
             s32 vertical_delta =
-                request.tail.target_y - original_position.y;
+                probe.position_z - original_position.y;
             if (vertical_delta < 0)
                 vertical_delta += 0x1ffff;
             vertical_delta >>= 17;
@@ -415,8 +415,8 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
         Object_SetMode(actor, 2);
 
     Audio_PlayCue(239);
-    Object_SetPosition(actor, request.target_x, request.target_depth,
-                       request.tail.target_y);
+    Object_SetPosition(actor, probe.position_x, probe.position_y,
+                       probe.position_z);
     ObjectMotion_CommitCurrentPositionAndActivate(0);
     Object_SetModeById(0, 2);
     ConfigureStagedActorMotion(0, 0x4ccc, 0x1999);
@@ -426,8 +426,8 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
         ObjectMotion_OffsetPositionAndResetMotion(0, ((s16)(packed_orientation >> 16)) / 2,
                                                   ((s16)packed_orientation) / 2);
     }
-    if (request.tail.callback != 0)
-        request.tail.callback();
+    if (probe.callback != 0)
+        probe.callback();
 
     ObjectMotion_CommitCurrentPositionAndActivate(0);
     Object_SetModeById(0, 1);
@@ -436,8 +436,8 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
     Audio_PlayCue(288);
     Audio_PlayCue(213);
 
-    actor->x = request.target_x;
-    actor->y = request.tail.target_y;
+    actor->x = probe.position_x;
+    actor->y = probe.position_z;
     actor->horizontal_velocity = 0;
     actor->vertical_velocity = 0;
     Object_SetMode(actor, 1);
@@ -448,28 +448,28 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
         s32 vertical_origin;
 
         {
-            s32 table_offset = request.movement_index << 4;
-            request.target_x =
-                (request.target_x +
+            s32 table_offset = probe.footprint_index << 4;
+            probe.position_x =
+                (probe.position_x +
                  (*(s32 *)(table + table_offset) << 16));
             table_offset += 4;
-            request.tail.target_y =
-                (request.tail.target_y +
+            probe.position_z =
+                (probe.position_z +
                  (*(s32 *)(table + table_offset) << 16));
-            request.target_x >>= 20;
-            request.tail.target_y >>= 20;
+            probe.position_x >>= 20;
+            probe.position_z >>= 20;
         }
         horizontal_origin = *(s32 *)(workspace + 316) >> 20;
         vertical_origin = *(s32 *)(workspace + 320) >> 20;
 
-        Call6(Map_CopyCellAttributeRect, request.target_x, request.tail.target_y, horizontal_extent, vertical_extent, horizontal_origin + request.target_x, vertical_origin + request.tail.target_y);
-        StagedActor_FillGridAttributeRectangle(0, request.target_x, request.tail.target_y,
+        Call6(Map_CopyCellAttributeRect, probe.position_x, probe.position_z, horizontal_extent, vertical_extent, horizontal_origin + probe.position_x, vertical_origin + probe.position_z);
+        StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z,
                                                horizontal_extent, vertical_extent, 255);
-        StagedActor_FillGridAttributeRectangle(2, request.target_x, request.tail.target_y,
+        StagedActor_FillGridAttributeRectangle(2, probe.position_x, probe.position_z,
                                                horizontal_extent, vertical_extent, 255);
 
         {
-            s32 table_offset = request.movement_index << 4;
+            s32 table_offset = probe.footprint_index << 4;
             original_position.x =
                 (original_position.x +
                  (*(s32 *)(table + table_offset) << 16));

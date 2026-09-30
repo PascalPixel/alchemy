@@ -118,7 +118,7 @@ BattleBackground_Load:
 .L_080c09d8:
 	.4byte 0x040000d4
 .L_080c09dc:
-	.4byte Func_080b5138
+	.4byte BitDecoder_DecodeImage
 .L_080c09e0:
 	.4byte 0x06008000
 .L_080c09e4:

@@ -2,6 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 #include "RAMAKAN.H"
+#include "GAME_STATE.H"
+#include "SCENE_IDS.H"
 
 void Effect_Spawn();
 
@@ -14,18 +16,18 @@ struct DustParams {
     u8 unknown_24[4];
 };
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
 void Object_SetActionById();
 s32 RamakanSabaku_EmitSandEffect(u8 *actor);
 void BattleFx_SetWeightedResult();
-
 void RamakanSabaku_UpdateTravelDust(void);
 s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
+
+extern struct EventWork *gEventWork;
+void RamakanSabaku_ClaimSandEffectVram();
+void Engine_MapCopyCells();
+void BattleFx_SetQueuedSoundAndPlay();
+void RamakanSabaku_RaiseQuarterTriggers(void);
+void RamakanSabaku_ApplyEntryState();
 
 void RamakanSabaku_UpdateTravelDust(void)
 {
@@ -35,14 +37,12 @@ void RamakanSabaku_UpdateTravelDust(void)
     s32 dx;
     s32 z;
     s32 phase;
-    union GameStateRows *rows = (union GameStateRows *)&gGameState;
-
-    actor = Object_GetById(rows->words[125]);
+    actor = Object_GetById(gGameState.selected_actor);
     event = gEventWork;
     if (actor->target_x == (s32)0x80000000) {
         return;
     }
-    rows->halves[281][0]++;
+    gGameState.unknown_232++;
     if (event->touched_trigger == 30) {
         return;
     }
@@ -269,4 +269,70 @@ void FieldScene_RunScene3a5_020014b0(void)
             SceneState_SetHalfwordB030(0);
         }
     }
+}
+
+/* Lamakan Desert: reset the area timers and, outside the town variant, open
+ * the map cells of the stored area variant before applying the entry state. */
+s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
+{
+    s32 v5;
+
+    gGameState.unknown_22c = 0x258;
+    gGameState.unknown_22e = 0;
+    gGameState.unknown_230 = 0x119;
+    if (gGameState.scene == (s32)&SceneId_RamakanSabaku4) {
+    } else {
+        *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x100;
+        RamakanSabaku_ClaimSandEffectVram();
+        Engine_TaskAddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
+        if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {
+            Call6(Engine_MapCopyCells, 22, 7, 4, 2, 64, 126);
+            Engine_MapCopyCells(8, 10, 4, 2, 68, 126);
+            Engine_MapCopyCells(23, 21, 4, 2, 72, 126);
+            Engine_MapCopyCells(16, 42, 4, 2, 76, 126);
+            Engine_MapCopyCells(36, 44, 4, 2, 80, 126);
+            Engine_MapCopyCells(14, 55, 4, 2, 84, 126);
+        } else {
+            if (gGameState.scene != (s32)&SceneId_RamakanSabaku2) {
+                goto third_area;
+            }
+            Call6(Engine_MapCopyCells, 42, 5, 4, 2, 64, 126);
+            Engine_MapCopyCells(20, 11, 4, 2, 68, 126);
+            Engine_MapCopyCells(14, 12, 4, 2, 72, 126);
+            Engine_MapCopyCells(56, 18, 4, 2, 76, 126);
+            Engine_MapCopyCells(7, 22, 4, 2, 80, 126);
+            Engine_MapCopyCells(44, 23, 4, 2, 84, 126);
+            Engine_MapCopyCells(38, 24, 4, 2, 88, 126);
+            Engine_MapCopyCells(26, 28, 4, 2, 92, 126);
+            Engine_MapCopyCells(17, 35, 4, 2, 96, 126);
+            Engine_MapCopyCells(50, 36, 4, 2, 100, 126);
+            Engine_MapCopyCells(34, 43, 4, 2, 104, 126);
+            Engine_MapCopyCells(6, 46, 4, 2, 108, 126);
+            Engine_MapCopyCells(27, 55, 4, 2, 112, 126);
+            Engine_MapCopyCells(43, 56, 4, 2, 116, 126);
+        }
+        goto apply_entry_state;
+        third_area:;
+        if (gGameState.scene == (s32)&SceneId_RamakanSabaku3) {
+            v5 = 124;
+            BattleFx_SetQueuedSoundAndPlay(169);
+            Engine_MapCopyCells(8, 14, 4, 4, 64, v5);
+            Engine_MapCopyCells(6, 18, 4, 4, 68, v5);
+            Engine_MapCopyCells(10, 21, 4, 4, 72, v5);
+        }
+        apply_entry_state:;
+        RamakanSabaku_ApplyEntryState();
+    }
+    return 0;
+}
+
+void FieldScene_RunScene3a5_02001874(void)
+{
+    u32 i;
+    s32 record;
+
+    Actor_SetSpeed(8, 0x8000, 0x4000);
+    Actor_SetAnimation(8, 1);
+    Actor_WalkToAndWait(8, 168, 96);
+    Actor_SetAnimation(8, 2);
 }

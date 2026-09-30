@@ -179,11 +179,30 @@ pub(crate) fn link(
         ],
         root,
     )?;
+    pad_to_cartridge(&image)?;
     Ok(Linked {
         objects,
         map,
         image,
     })
+}
+
+/// Fill the image with zeros to the next power of two, the size of the ROM
+/// chip that holds it, as pret's `gbafix -p` pads a build to its cartridge
+/// (with 0xff there). The size follows from the image alone.
+fn pad_to_cartridge(image: &Path) -> Result<(), String> {
+    let mut bytes = fs::read(image).map_err(|error| format!("{}: {error}", image.display()))?;
+    let size = cartridge_size(bytes.len());
+    if size != bytes.len() {
+        bytes.resize(size, 0);
+        fs::write(image, bytes).map_err(|error| format!("{}: {error}", image.display()))?;
+    }
+    Ok(())
+}
+
+/// The smallest power-of-two cartridge that holds `length` bytes.
+fn cartridge_size(length: usize) -> usize {
+    length.next_power_of_two()
 }
 
 /// Whether the link places any code: a C source, or an object with a
@@ -693,13 +712,15 @@ fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), Str
 /// The sound files a game's data source reads, as pret's data files read the
 /// `.bin` files its build makes: `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"`
 /// names the file the build writes from `SOUND/SAMPLE/WAVE_00.PCM8.WAV`,
-/// relative to the build directory.
+/// relative to the build directory. `COMMON/SOUND/...` names a file built
+/// from the input of that path in games/COMMON, one both games share.
 fn sound_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"(SOUND/[A-Za-z0-9_./]+\.bin)""#)
-        .expect("static pattern");
+    let pattern =
+        regex::Regex::new(r#"(?m)^\s*\.incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)""#)
+            .expect("static pattern");
     pattern
         .captures_iter(&text)
         .map(|capture| capture[1].to_owned())
@@ -722,9 +743,13 @@ fn build_sound_files(
                 source.display()
             ));
         }
+        let (game, stem) = match stem.strip_prefix("COMMON/") {
+            Some(shared) => ("games/COMMON", shared),
+            None => (target.game_dir(), stem),
+        };
         let inputs: Vec<PathBuf> = ["WAV", "PCM4"]
             .iter()
-            .map(|extension| Path::new(target.game_dir()).join(format!("{stem}.{extension}")))
+            .map(|extension| Path::new(game).join(format!("{stem}.{extension}")))
             .filter(|path| root.join(path).is_file())
             .collect();
         let [input] = inputs.as_slice() else {
@@ -753,14 +778,16 @@ const OVERLAY_MACHINE: LzMachine = ags::resource::PACKER;
 
 /// The resource files an assembly source reads with
 /// `.incbin "GRAPHICS/..."`, or as assembler source with `.include`, each
-/// named by its recipe.
+/// named by its recipe. `COMMON/GRAPHICS/...` names a file built from the
+/// input of that path in games/COMMON, one both games share.
 fn graphics_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern =
-        regex::Regex::new(r#"(?m)^\s*\.(?:incbin|include)\s+"((?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)""#)
-            .expect("static pattern");
+    let pattern = regex::Regex::new(
+        r#"(?m)^\s*\.(?:incbin|include)\s+"((?:COMMON/)?(?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)""#,
+    )
+    .expect("static pattern");
     pattern
         .captures_iter(&text)
         .map(|capture| capture[1].to_owned())
@@ -783,17 +810,18 @@ fn build_graphics_files(
                 source.display()
             ));
         }
-        // Inputs sit under the SRC of the game, or COMMON, whose source reads them.
-        let game = if source.starts_with("games/COMMON") {
-            Path::new("games/COMMON")
-        } else {
-            Path::new(target.game_dir())
+        // Inputs sit under the SRC of the game, or COMMON, whose source reads
+        // them, or of COMMON when the name says so.
+        let (game, recipe) = match built.strip_prefix("COMMON/") {
+            Some(shared) => (Path::new("games/COMMON"), shared),
+            None if source.starts_with("games/COMMON") => (Path::new("games/COMMON"), &*built),
+            None => (Path::new(target.game_dir()), &*built),
         };
-        let image = game.join("SRC").join(ags::resource::input_name(&built)?);
+        let image = game.join("SRC").join(ags::resource::input_name(recipe)?);
         let png = fs::read(root.join(&image))
             .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
-        let encoded = ags::resource::build_file_with(&built, &png, &|name| {
-            let path = root.join(image.with_file_name(name));
+        let encoded = ags::resource::build_file_with(recipe, &png, &|name| {
+            let path = root.join(ags::resource::sibling_path(&image, name)?);
             fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
         })?;
         let path = output.join(&built);
@@ -1160,6 +1188,18 @@ mod tests {
             block[at - 4..at - 2].copy_from_slice(&(high as u16).to_le_bytes());
             block[at - 2..at].copy_from_slice(&(low as u16).to_le_bytes());
         }
+    }
+
+    #[test]
+    fn an_image_fills_the_smallest_power_of_two_cartridge_with_zeros() {
+        assert_eq!(cartridge_size(0x7f_d4bc), 0x80_0000);
+        assert_eq!(cartridge_size(0x80_0000), 0x80_0000);
+        assert_eq!(cartridge_size(0x80_0001), 0x100_0000);
+        let directory = tempfile::tempdir().unwrap();
+        let image = directory.path().join("a.gba");
+        fs::write(&image, [1u8, 2, 3]).unwrap();
+        pad_to_cartridge(&image).unwrap();
+        assert_eq!(fs::read(&image).unwrap(), [1, 2, 3, 0]);
     }
 
     #[test]

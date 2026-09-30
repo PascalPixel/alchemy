@@ -11,8 +11,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/CHOJO.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/DISTANCE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/CHOJO2.o"(.text)
         "*/resource_39d_overlay.o"(.text.x0200b4bc)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

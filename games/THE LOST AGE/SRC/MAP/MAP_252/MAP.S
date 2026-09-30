@@ -30,7 +30,7 @@ Field_Map252:
 	.incbin "MAP/MAP_252/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map252_BLEND:
-	.incbin "MAP/MAP_010/BLEND.script.lz"
+	.incbin "COMMON/MAP/MAP_018/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map252_SCENE:
 	.incbin "MAP/MAP_252/SCENE.parts.lz"

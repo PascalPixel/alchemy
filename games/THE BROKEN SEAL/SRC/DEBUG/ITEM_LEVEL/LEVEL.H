@@ -5,6 +5,7 @@
  * sources share. */
 
 #include "TYPES.H"
+#include "OWNER_STATE.H"
 
 extern struct EventWork *gEventWork;
 extern u8 gEffectWork[];
@@ -22,7 +23,6 @@ extern u8 gItemLevelLvLabel[];
 
 /* Old-style declarations: the import veneers vary in arity between call
  * sites. */
-u8 *Owner_GetState();
 void Owner_RecalculateStats();
 s32 Party_ListActiveOwners();
 void Party_AdvanceOwnerCountToTarget();

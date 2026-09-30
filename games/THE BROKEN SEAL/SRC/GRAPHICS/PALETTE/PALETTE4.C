@@ -1,147 +1,85 @@
+#include "DMA.H"
 #include "TYPES.H"
+#include "SCENE.H"
+#include "GLOBAL_CELLS.H"
 
-/* Scales each 5-bit component by its own Q16 factor and packs BGR555. */
-u16 Color_ScaleComponents(const s16 *rgb, s32 red, s32 green, s32 blue);
-extern const u8 PaletteGlow_WaveTable[];
-#define GLOW_PALETTE ((u16 *)0x050001e8)
+void *Runtime_AllocateBlock(s32, u32);
+void Unnamed_080f3078(u32, void *, void *, s32);
+void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
+void TitlePalette_UpdateFade(void);
 
-extern u8 gGameState[];
+s32 Runtime_ReleaseHeapBlock(s32);
 
-/* Cycles a base color around the wave table and writes seven shades of it
-   to OBJ palette 15, entries 4 to 10. */
-void PaletteGlow_Update(s32 phase, s32 brightness)
+/* runtime/memory/schedule_callback_and_release_block_32_a.c */
+s32 Scheduler_RemoveCallback(s32);
+
+extern u8 Data_03001ed0[];
+void Graphics_InterpolatePaletteBuffers(s16 *, s16 *, s16 *, s32);
+
+struct PaletteInterpolationState {
+    u8 unknown_0000[0x400];
+    s16 first[0x600];
+    s16 second[0x600];
+    s16 output[0xa00];
+    u8 unknown_3000;
+    s8 value;
+    s8 zero;
+};
+
+void TitlePalette_InitializeBuffers(void)
 {
-    s16 rgb[3];
-    s16 step;
-    s16 red;
-    s16 green;
-    s16 blue;
-    s16 offset;
+    volatile u32 zero;
+    u8 *buffer;
+    s32 operation;
 
-    step = ((phase + 12) % 24) * 4;
-    offset = brightness - 7;
-    red = PaletteGlow_WaveTable[(s16)(step % 96)] + offset;
-    green = PaletteGlow_WaveTable[(step + 32) % 96] + offset;
-    blue = PaletteGlow_WaveTable[(step + 64) % 96] + offset;
-    if (red < 0)
-        red = 0;
-    if (red > 31)
-        red = 31;
-    if (green < 0)
-        green = 0;
-    if (green > 31)
-        green = 31;
-    if (blue < 0)
-        blue = 0;
-    if (blue > 31)
-        blue = 31;
-    rgb[0] = red;
-    rgb[1] = green;
-    rgb[2] = blue;
-    GLOW_PALETTE[0] = Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110);
-    GLOW_PALETTE[1] = Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee);
-    GLOW_PALETTE[2] = Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc);
-    GLOW_PALETTE[3] = Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
-    GLOW_PALETTE[4] = Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
-    GLOW_PALETTE[5] = Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555);
-    GLOW_PALETTE[6] = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
+    buffer = Runtime_AllocateBlock(32, 0x3004);
+    zero = 0;
+    Dma_Set(&zero, buffer, 0x85000c01, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000000, buffer, 0x84000080, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000200, buffer + 512, 0x84000080, (volatile u32 *)0x040000d4);
+    Unnamed_080f3078(0x10000, buffer, buffer + 4096, 0);
+    operation = 3200;
+    Scheduler_AddOrUpdateCallback(TitlePalette_UpdateFade, operation);
 }
 
-void GraphicsPalette_DecrementSelectionWrap(void *base)
+void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 {
-    s32 v;
-    u16 t;
-    s32 cur;
+    Scheduler_RemoveCallback((s32)&TitlePalette_UpdateFade);
+    Runtime_ReleaseHeapBlock(0x20);
+}
 
-    base = (u8 *)base + 0x574;
-    v = *(u16 *)base;
-    t = v;
-    cur = t;
+void Graphics_TransformLargePalette(s32 index, s32 transform)
+{
+    void *target = *(void **)((u32)&Data_03001ed0);
 
-    if (cur == 0) {
-        cur = 2;
-    } else {
-        cur = v + 0xFFFF;
+    if (target != NULL)
+        Unnamed_080f3078(index, target, (u8 *)target + 0x1000, transform);
+}
+
+void Graphics_TransformSmallPalette(s32 index, s32 transform)
+{
+    void *target = *(void **)((u32)&Data_03001ed0);
+
+    if (target != NULL)
+        Unnamed_080f3078(index, target, (u8 *)target + 0x400, transform);
+}
+
+void Graphics_SetPaletteTransformValue(s32 value)
+{
+    u16 *target = *(u16 **)((u32)&Data_03001ed0);
+
+    if (target != NULL)
+        *target = value;
+}
+
+void Graphics_UpdatePaletteInterpolation(s32 value)
+{
+    struct PaletteInterpolationState *state =
+        *(struct PaletteInterpolationState **)((u32)&Data_03001ed0);
+
+    if (state != NULL) {
+        state->value = value;
+        state->zero = 0;
+        Graphics_InterpolatePaletteBuffers(state->first, state->second, state->output, value);
     }
-    *(u16 *)base = cur;
-}
-
-void Menu_AdvanceWorkspaceIndexModulo3(void *arg0)
-{
-  unsigned int zero;
-  unsigned long cnt;
-  cnt = 1 + (*((u16 *)(0x574 + ((u8 *)arg0))));
-  zero = 0U;
-  *((u16 *)(((u8 *)arg0) + 0x574)) = cnt;
-  if (((u32)(cnt << 0x10)) >= (((unsigned long) 0x20000U) + 1))
-  {
-    *((u16 *)(((u8 *)arg0) + 0x574)) = zero;
-  }
-}
-
-void GraphicsPalette_DecrementSelectedCounter(s32 work)
-{
-    u8 *p;
-    u16 sel;
-    s32 off;
-
-    sel = *(u16 *)((u8 *)work + 0x574);
-    switch (sel) {
-    case 0:
-        off = 0x20C;
-        p = &gGameState[off];
-        break;
-    case 1:
-        off = 0x205;
-        p = &gGameState[off];
-        break;
-    case 2:
-        off = 0x206;
-        p = &gGameState[off];
-        break;
-    default:
-        return;
-    }
-    if (*p) {
-        (*p)--;
-    }
-}
-
-void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
-{
-    u8 *sp;
-    u16 sel;
-    s32 off;
-
-    sel = *(u16 *)((u8 *)arg0 + 0x574);
-    switch (sel) {
-    case 0:
-        off = 0x20C;
-        sp = &gGameState[off];
-        if (*sp <= 1) {
-            break;
-        }
-        return;
-    case 1:
-        off = 0x205;
-        sp = &gGameState[off];
-        if (*sp <= 23) {
-            break;
-        }
-        return;
-    case 2:
-        off = 0x206;
-        sp = &gGameState[off];
-        if (*sp <= 14) {
-            break;
-        }
-        return;
-    default:
-        return;
-    }
-    (*sp)++;
-}
-
-void GraphicsPalette_SelectionNoOp(void)
-{
 }

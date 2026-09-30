@@ -15,10 +15,10 @@ Field_Map001:
 	map_block Field_Map001, .LField_Map001_BLEND
 	map_block Field_Map001, .LField_Map001_SCENE
 .LField_Map001_METATILES:
-	.incbin "MAP/MAP_001/METATILES.delta1.lz"
+	.incbin "COMMON/MAP/MAP_171/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map001_SHAPES:
-	.incbin "MAP/MAP_001/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_171/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map001_GRID:
 	.incbin "MAP/MAP_001/GRID.parts.lz"
@@ -27,7 +27,7 @@ Field_Map001:
 	.incbin "MAP/MAP_001/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map001_ANIMATION:
-	.incbin "MAP/MAP_001/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_171/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map001_BLEND:
 	.incbin "MAP/MAP_001/BLEND.script.lz"

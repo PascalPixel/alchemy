@@ -18,16 +18,16 @@ Field_Map163:
 	.incbin "MAP/MAP_163/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map163_SHAPES:
-	.incbin "MAP/MAP_163/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_163/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map163_GRID:
 	.incbin "MAP/MAP_163/GRID_JA.parts.lz"
 	.balign 4, 0
 .LField_Map163_ANIMATION:
-	.incbin "MAP/MAP_163/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_163/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map163_BLEND:
-	.incbin "MAP/MAP_054/BLEND.script.lz"
+	.incbin "COMMON/MAP/MAP_054/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map163_MARKERS:
 	.incbin "MAP/MAP_163/MARKERS_JA.table"
@@ -46,16 +46,16 @@ Field_Map163:
 	.incbin "MAP/MAP_163/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map163_SHAPES:
-	.incbin "MAP/MAP_163/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_163/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map163_GRID:
 	.incbin "MAP/MAP_163/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map163_ANIMATION:
-	.incbin "MAP/MAP_163/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_163/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map163_BLEND:
-	.incbin "MAP/MAP_054/BLEND.script.lz"
+	.incbin "COMMON/MAP/MAP_054/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map163_MARKERS:
 	.incbin "MAP/MAP_163/MARKERS.table"

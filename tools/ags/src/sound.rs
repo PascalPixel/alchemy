@@ -13,9 +13,12 @@
 //! header sound_000 block_count=0 priority=0 reverb=178 tone_bank=Voices tracks=track_1
 //! ```
 //!
-//! and each stream track carries the events that are not notes as marker
-//! events of one line each, such as `volume 100` or `goto loop_1`: the
-//! event's kind, then its integers and labels.
+//! and each stream track carries its notes and controls as MIDI events, as
+//! a MIDI editor shows them: tempo, program changes, volume, pan and
+//! modulation control changes, pitch bends, and the bend range and tuning
+//! registered parameters (see `MIDI_CONTROLS`). What MIDI has no event for
+//! is a marker event of one line, such as `key_shift 0` or `goto loop_1`:
+//! the event's kind, then its integers and labels.
 use super::asm::{identifier, Data, Pointer};
 use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
 use std::collections::{BTreeSet, HashMap};
@@ -736,6 +739,85 @@ struct MidiNode {
     order: usize,
     event: Event,
 }
+
+/// The sequence controls a MIDI carries as its own events, as pret's mid2agb
+/// reads them: a tempo meta, a program change (`voice`), control changes 7
+/// (`volume`), 10 (`pan`) and 1 (`modulation_depth`), a pitch bend, and the
+/// registered parameters 0 (`pitch_bend_range`) and 1 (`tuning`). A marker
+/// never spells one, so a control lives once, where a MIDI editor shows it.
+const MIDI_CONTROLS: [&str; 8] = [
+    "tempo",
+    "voice",
+    "volume",
+    "pan",
+    "modulation_depth",
+    "pitch_bend",
+    "pitch_bend_range",
+    "tuning",
+];
+
+/// The engine tempo a tempo meta's microseconds per quarter note give. A
+/// MIDI quarter is 96 ticks, four of the engine's 24-tick beats, and the
+/// engine plays twice its tempo in beats a minute at the GBA's frame rate of
+/// 16,777,216 / 280,896 Hz against the 60 Hz it counts in.
+fn midi_tempo(micros: u32) -> Result<i64, String> {
+    // T = 60e6 * 120 / (frame rate * micros), rounded.
+    let numerator = 7_200_000_000u128 * 280_896;
+    let denominator = 16_777_216u128 * u128::from(micros);
+    if micros == 0 {
+        return Err("MIDI tempo is zero".to_string());
+    }
+    Ok(((2 * numerator + denominator) / (2 * denominator)) as i64)
+}
+
+/// The control a channel event sets, if any. `parameter` is the registered
+/// parameter the stream has selected; `preamble` is whether no meta event or
+/// note has come yet, where a player's bank, reverb and default bend range
+/// set up playback and are not the sequence's.
+fn midi_control(
+    status: u8,
+    data: &[u8],
+    parameter: &mut (Option<u8>, Option<u8>),
+    preamble: bool,
+) -> Result<Option<Event>, String> {
+    let value = |index: usize| {
+        data.get(index)
+            .map(|byte| i64::from(*byte))
+            .ok_or_else(|| "MIDI channel event is truncated".to_string())
+    };
+    let control = |kind: &str, value: i64| Ok(Some(Event::new(kind, vec![value.into()])));
+    match status & 0xf0 {
+        0xc0 => control("voice", value(0)?),
+        // The engine keeps a bend's high seven bits.
+        0xe0 => control("pitch_bend", value(1)?),
+        0xb0 => match value(0)? {
+            7 => control("volume", value(1)?),
+            10 => control("pan", value(1)?),
+            1 => control("modulation_depth", value(1)?),
+            101 => {
+                parameter.0 = Some(value(1)? as u8);
+                Ok(None)
+            }
+            100 => {
+                parameter.1 = Some(value(1)? as u8);
+                Ok(None)
+            }
+            6 => match *parameter {
+                (Some(0), Some(0)) if preamble => Ok(None),
+                (Some(0), Some(0)) => control("pitch_bend_range", value(1)?),
+                (Some(0), Some(1)) => control("tuning", value(1)?),
+                _ => Err("MIDI data entry names no registered parameter".to_string()),
+            },
+            // Bank select, data entry's low byte and reverb set up playback.
+            0 | 38 | 91 => Ok(None),
+            other => Err(format!(
+                "MIDI control change {other} is no sequence command"
+            )),
+        },
+        _ => Ok(None),
+    }
+}
+
 fn reconstruct_midi_stream(
     events: &[MidiEvent],
     meter: &[(i64, i64)],
@@ -746,9 +828,42 @@ fn reconstruct_midi_stream(
     let mut depth = 0i32;
     let mut bracket_start = 0i64;
     let mut removed = 0i64;
+    let mut parameter = (None, None);
+    let mut preamble = true;
     let mut sorted = events.to_vec();
     sorted.sort_by_key(|event| (event.tick, event.order));
     for event in sorted {
+        let derived = match &event.body {
+            EventBody::Meta { meta: 0x51, data } => {
+                let micros = match data.as_slice() {
+                    [a, b, c] => u32::from_be_bytes([0, *a, *b, *c]),
+                    _ => return Err("MIDI tempo is not three bytes".to_string()),
+                };
+                Some(Event::new("tempo", vec![midi_tempo(micros)?.into()]))
+            }
+            EventBody::Channel { status, data } if !matches!(status & 0xf0, 0x80 | 0x90) => {
+                midi_control(*status, data, &mut parameter, preamble)?
+            }
+            _ => None,
+        };
+        if matches!(event.body, EventBody::Meta { .. })
+            || matches!(&event.body, EventBody::Channel { status, .. } if status & 0xf0 == 0x90)
+        {
+            preamble = false;
+        }
+        if let Some(control) = derived {
+            // A control inside a pattern's inline copy belongs to the pattern.
+            if depth == 0 {
+                grid.push(nodes.len());
+                nodes.push(MidiNode {
+                    compact_tick: event.tick - removed,
+                    raw_tick: event.tick,
+                    order: event.order,
+                    event: control,
+                });
+            }
+            continue;
+        }
         match &event.body {
             EventBody::Meta { meta: 0x2f, .. } | EventBody::Meta { meta: 0x51, .. } => continue,
             EventBody::Meta { meta: 0x07, data } => {
@@ -774,17 +889,23 @@ fn reconstruct_midi_stream(
                 }
             }
             EventBody::Meta { meta: 0x06, data } => {
+                let text = std::str::from_utf8(data)
+                    .map_err(|_| "MIDI event marker is not UTF-8".to_string())?;
+                let marked = Event::parse(text).map_err(|e| format!("MIDI event marker: {e}"))?;
+                if MIDI_CONTROLS.contains(&marked.kind.as_str()) {
+                    return Err(format!(
+                        "MIDI marker {text:?} spells a control the MIDI's own event carries"
+                    ));
+                }
                 if depth > 0 {
                     continue;
                 }
-                let text = std::str::from_utf8(data)
-                    .map_err(|_| "MIDI event marker is not UTF-8".to_string())?;
                 let index = nodes.len();
                 nodes.push(MidiNode {
                     compact_tick: event.tick - removed,
                     raw_tick: event.tick,
                     order: event.order,
-                    event: Event::parse(text).map_err(|e| format!("MIDI event marker: {e}"))?,
+                    event: marked,
                 });
                 grid.push(index);
             }
@@ -1324,11 +1445,20 @@ fn sequence_midi_reading_follows_bar_lines_time_slots_and_jump_targets() {
 }
 #[test]
 fn sequence_midi_reading_derives_control_running_status() {
+    let cc = |tick, order, number, value| MidiEvent {
+        tick,
+        track: 1,
+        order,
+        body: EventBody::Channel {
+            status: 0xb0,
+            data: vec![number, value],
+        },
+    };
     let stream = [
-        marker(0, 0, "volume 80"),
-        marker(12, 1, "volume 90"),
-        marker(12, 2, "pan 64"),
-        marker(12, 3, "pan 60"),
+        cc(0, 0, 7, 80),
+        cc(12, 1, 7, 90),
+        cc(12, 2, 10, 64),
+        cc(12, 3, 10, 60),
         marker(24, 4, "note_end 60"),
         marker(24, 5, "note_end 64"),
         marker(36, 6, "note_end 62"),
@@ -1361,6 +1491,76 @@ fn sequence_midi_reading_derives_control_running_status() {
             .contains("derives")
     );
     assert!(reconstruct_midi_stream(&[marker(0, 0, "[\"fine\"]")], &[(0, 96)]).is_err());
+}
+#[test]
+fn sequence_controls_come_from_the_midi_events_alone() {
+    let at = |order: usize, body| MidiEvent {
+        tick: 0,
+        track: 1,
+        order,
+        body,
+    };
+    let channel = |order, status, data: &[u8]| {
+        at(
+            order,
+            EventBody::Channel {
+                status,
+                data: data.to_vec(),
+            },
+        )
+    };
+    let stream = [
+        // A player's set-up: bank, reverb and a default bend range.
+        channel(0, 0xb0, &[0, 0]),
+        channel(1, 0xb0, &[91, 50]),
+        channel(2, 0xb0, &[101, 0]),
+        channel(3, 0xb0, &[100, 0]),
+        channel(4, 0xb0, &[6, 2]),
+        channel(5, 0xb0, &[38, 0]),
+        marker(0, 6, "key_shift 0"),
+        at(
+            7,
+            EventBody::Meta {
+                meta: 0x51,
+                data: vec![0x1f, 0xb6, 0xc5],
+            },
+        ),
+        channel(8, 0xc0, &[45]),
+        channel(9, 0xb0, &[7, 86]),
+        channel(10, 0xb0, &[10, 64]),
+        channel(11, 0xb0, &[101, 0]),
+        channel(12, 0xb0, &[100, 1]),
+        channel(13, 0xb0, &[6, 64]),
+        channel(14, 0xb0, &[38, 0]),
+        channel(15, 0xe0, &[0, 64]),
+        channel(16, 0xb0, &[1, 5]),
+        channel(17, 0xb0, &[101, 0]),
+        channel(18, 0xb0, &[100, 0]),
+        channel(19, 0xb0, &[6, 12]),
+    ];
+    assert_eq!(
+        reconstruct_midi_stream(&stream, &[(0, 96)]).unwrap(),
+        events(&[
+            "key_shift 0",
+            "tempo 58",
+            "voice 45",
+            "volume 86",
+            "pan 64",
+            "tuning 64",
+            "pitch_bend 64",
+            "modulation_depth 5",
+            "pitch_bend_range 12",
+        ])
+    );
+    assert_eq!(midi_tempo(4_821_899).unwrap(), 25);
+    assert_eq!(midi_tempo(4_018_250).unwrap(), 30);
+    // A marker never spells a control the MIDI carries as its own event.
+    let spelled = [marker(0, 0, "volume 86")];
+    assert!(reconstruct_midi_stream(&spelled, &[(0, 96)])
+        .unwrap_err()
+        .contains("spells a control"));
+    let unknown = [channel(0, 0xb0, &[64, 127])];
+    assert!(reconstruct_midi_stream(&unknown, &[(0, 96)]).is_err());
 }
 #[cfg(test)]
 fn track_chunk(events: &[MidiEvent]) -> Vec<u8> {

@@ -5652,4 +5652,4 @@ Resource_Data647:
 Resource_Data648:
 	.incbin "baserom.gba", 0x00ec3738, 0x00000140
 	.section .unidentified.08f79646,"a"
-	.incbin "baserom.gba", 0x00f79646, 0x000869ba
+	.incbin "baserom.gba", 0x00f79646, 0x00000002

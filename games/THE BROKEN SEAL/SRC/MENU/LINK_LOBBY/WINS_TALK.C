@@ -1,15 +1,9 @@
 #include "TYPES.H"
+#include "GAME_STATE.H"
 extern u8 MsgLobbyLooksLikeFirst[];
 extern u8 MsgLobbyLooksLikeFirstTime[];
 extern u8 MsgLobbyTellConsecutiveWins[];
 extern u8 MsgLobbyTellTotalWins[];
-
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    u16 counts[512];
-    s32 words[256];
-};
 
 struct LobbyActor {
     u8 unknown_00[6];
@@ -24,8 +18,6 @@ void UiWork_ClearValueNameTables(void);
 void UiText_DrawQuantity(s32 value, s32 digits);
 s32 Engine_EventShowMessage(s32 actor, s32 mode);
 
-extern union GameStateRows gGameState;
-
 /* The attendant's win count: by the player's facing, total or consecutive linked wins; with none yet, the matching wait line, otherwise the count as a five-digit argument before the line. The empty case of the first branch shares the printing tail. */
 s32 LinkLobby_TalkLinkedWins(s32 actor)
 {
@@ -34,17 +26,17 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
     s32 base;
 
     Engine_EventBegin();
-    Engine_ActorFaceActor(actor, gGameState.words[125], 0);
+    Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
     if ((u32)(facing - 0xa001) <= 0x3ffe) {
         base = (s32)MsgLobbyLooksLikeFirst;
-        count = &gGameState.counts[342];
+        count = &gGameState.link_tallies[4];
         if (*count == 0) {
             Engine_EventSetMessage((s32)MsgLobbyTellTotalWins);
             return Engine_EventShowMessage(actor, 0);
         }
     } else {
         base = (s32)MsgLobbyLooksLikeFirstTime;
-        count = &gGameState.counts[345];
+        count = &gGameState.link_tallies[7];
         if (*count == 0)
             goto none;
     }

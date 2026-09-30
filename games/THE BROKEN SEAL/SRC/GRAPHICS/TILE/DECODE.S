@@ -10,8 +10,8 @@
 .syntax unified
 .text
 	.arm
-	.global Func_080b5138
-Func_080b5138:
+	.global BitDecoder_DecodeImage
+BitDecoder_DecodeImage:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldr	r2, [pc, #196]
 	add	r3, pc, #240

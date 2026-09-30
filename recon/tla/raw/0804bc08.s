@@ -1720,7 +1720,7 @@ Func_0804bc08:
 	bl Item_Get
 	adds r1, r5, #0
 	ldr r0, [sp, #64]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	ldr r3, [sp, #8]
 	ldr r4, [sp, #4]
 	cmp r0, #0
@@ -1760,7 +1760,7 @@ Func_0804bc08:
 	bl Item_Get
 	adds r1, r5, #0
 	ldr r0, [sp, #64]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	ldr r2, [sp, #12]
 	ldr r4, [sp, #4]
 	cmp r0, #0

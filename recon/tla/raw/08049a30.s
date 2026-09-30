@@ -202,7 +202,7 @@ Func_08049a30:
 	adds r5, r3, r2
 	ldrh r1, [r5]
 	ldr r0, [sp, #80]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	cmp r0, #2
 	bne .L_08049bd8
 	ldr r5, [sp, #32]
@@ -269,7 +269,7 @@ Func_08049a30:
 	bl Func_08041f70
 	adds r1, r5, #0
 	ldr r0, [sp, #80]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	cmp r0, #0
 	beq .L_08049c68
 	movs r0, #4
@@ -617,7 +617,7 @@ Func_08049a30:
 	bne .L_08049f1c
 	ldrh r1, [r5]
 	ldr r0, [sp, #80]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_08049f1c

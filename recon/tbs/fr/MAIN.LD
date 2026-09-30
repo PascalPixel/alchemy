@@ -496,7 +496,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN_CHANGE_LIST.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.00021a1e)
-    "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/CLASSIFY_USE_ABILITY.o"(.text)
+    "*/games/COMMON/SRC/GAME/ITEM/CLASSIFY_USE_ABILITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/COPY_TILE.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000241a4)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/UPDATE_SESSION_COUNTDOWN.o"(.text)

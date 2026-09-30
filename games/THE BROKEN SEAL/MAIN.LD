@@ -554,7 +554,7 @@ SECTIONS
         "*/recon/tbs/raw/08023178.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08023e70.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08024934.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/CLASSIFY_USE_ABILITY.o"(.text)
+        "*/games/COMMON/SRC/GAME/ITEM/CLASSIFY_USE_ABILITY.o"(.text)
         "*/recon/tbs/raw/080251d2.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/COPY_TILE.o"(.text)
         "*/recon/tbs/raw/08025200.o"(.text .rodata .data .padding)

@@ -77,7 +77,7 @@ Func_080cd5bc:
 .L_080cd648:
 	movs	r0, #128
 	bl	Audio_PlayCue
-	bl	0x080d5e50
+	bl	Func_080d5e50
 	b.n	.L_080cd66a
 .L_080cd654:
 	movs	r0, #129

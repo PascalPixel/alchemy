@@ -1167,6 +1167,9 @@ Func_080e70f8:
 	.4byte 0x02000240
 	.2byte 0x0fc0
 	.2byte 0x080f
+	.global Func_080e7238
+	.thumb_func
+Func_080e7238:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1495,6 +1498,9 @@ Func_080e70f8:
 	.4byte 0x000001ef
 	.2byte 0x0000
 	.2byte 0xfffc
+	.global Func_080e74d8
+	.thumb_func
+Func_080e74d8:
 .L_080e74d8:
 	.2byte 0xb5e0
 	mov	r7, fp
@@ -1884,8 +1890,11 @@ Func_080e70f8:
 	.4byte 0xfffc0000
 	.2byte 0x6000
 	.2byte 0xffff
+	.global Func_080e7804
+	.thumb_func
+Func_080e7804:
 	.2byte 0xb500
-	bl	.L_080e74d8
+	bl	Func_080e74d8
 	bl	0x080dc384
 	movs	r0, #10
 	bl	WaitFrames

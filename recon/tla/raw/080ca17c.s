@@ -272,6 +272,9 @@ Func_080ca280:
 	.4byte 0x02000240
 	.2byte 0xf824
 	.2byte 0x080e
+	.global Func_080ca368
+	.thumb_func
+Func_080ca368:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -343,6 +346,9 @@ Func_080ca280:
 	.4byte 0xffff0000
 	.2byte 0x04b8
 	.2byte 0x0200
+	.global Func_080ca3f4
+	.thumb_func
+Func_080ca3f4:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

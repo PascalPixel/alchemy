@@ -1046,7 +1046,7 @@ Func_080adbec:
 	adds	r0, #255
 	sub	sp, #8
 	bl	GameFlag_ClearBit
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	mov	sl, r0
 	movs	r0, #0
 	mov	r8, r0
@@ -1128,7 +1128,7 @@ Func_080adc90:
 	movs	r2, #0
 	mov	r8, r2
 	movs	r6, #0
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	cmp	r0, #0
 	bne.n	.L_080adca8
 	movs	r0, #0
@@ -1177,7 +1177,7 @@ Func_080adc90:
 	negs	r2, r2
 	movs	r7, #0
 	mov	r8, r2
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	cmp	r0, #0
 	bne.n	.L_080add06
 	movs	r0, #0

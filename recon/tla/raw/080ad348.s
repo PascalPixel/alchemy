@@ -24,7 +24,7 @@ Trade_GetOfferState:
 Func_080ad360:
 	push	{r5, r6, r7, lr}
 	sub	sp, #4
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	adds	r7, r0, #0
 	movs	r6, #0
 	movs	r0, #0

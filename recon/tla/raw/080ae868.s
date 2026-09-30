@@ -1,32 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_080ae834
-	.thumb_func
-Func_080ae834:
-.L_080ae834:
-	push	{r5, r6, lr}
-	mov	r6, sl
-	mov	r5, r8
-	push	{r5, r6}
-	adds	r6, r1, #0
-	lsls	r5, r6, #2
-	adds	r5, r5, r6
-	mov	r8, r2
-	lsls	r5, r5, #2
-	mov	sl, r0
-	add	r5, r8
-	bl	Djinn_AddToOwner
-	adds	r5, #48
-	mov	r0, sl
-	adds	r1, r6, #0
-	mov	r2, r8
-	bl	Trade_AddOffer
-	adds	r0, r5, #0
-	bl	GameFlag_SetBit
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, pc}
+	.balign 4
 	.global Func_080ae868
 	.thumb_func
 Func_080ae868:
@@ -89,11 +63,11 @@ Func_080ae868:
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	.L_080ae834
+	bl	Djinn_AddFoundToOwner
 	movs	r2, #0
 	movs	r0, #3
 	movs	r1, #1
-	bl	.L_080ae834
+	bl	Djinn_AddFoundToOwner
 	movs	r3, #1
 	mov	r6, sp
 	movs	r2, #0

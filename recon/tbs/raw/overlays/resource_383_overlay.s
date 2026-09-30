@@ -441,7 +441,7 @@ KuupuappuHeya_UpdateActorStops:
 	pop {r0}
 	bx r0
 .L_0200cb20:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0200cb24:
 	.4byte 0xfffff000
 .L_0200cb28:

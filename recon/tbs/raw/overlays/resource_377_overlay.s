@@ -87,7 +87,7 @@ FieldScene_RunComplexActorSequence:
 .L_0200863c:
 	.4byte 0x00000000
 .L_02008640:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_02008644:
 	.4byte 0x00000555
 .L_02008648:

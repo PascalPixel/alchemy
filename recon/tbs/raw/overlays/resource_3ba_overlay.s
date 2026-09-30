@@ -341,7 +341,7 @@ Scene_RunScene3baSequenceA:
 	lsls r5, r5, #12
 	subs r0, r0, r3
 	adds r1, r5, #0
-	bl __divsi3
+	bl Engine_MathDivide
 	ldr r3, [sp, #16]
 	adds r3, #236
 	ldr r3, [r3]
@@ -351,7 +351,7 @@ Scene_RunScene3baSequenceA:
 	adds r1, r5, #0
 	subs r0, r0, r3
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Engine_MathDivide
 	ldr r3, [sp, #16]
 	adds r3, #218
 	movs r1, #0
@@ -406,7 +406,7 @@ Scene_RunScene3baSequenceA:
 	lsls r5, r5, #12
 	subs r0, r0, r3
 	adds r1, r5, #0
-	bl __divsi3
+	bl Engine_MathDivide
 	ldr r3, [sp, #16]
 	adds r3, #236
 	ldr r3, [r3]
@@ -416,7 +416,7 @@ Scene_RunScene3baSequenceA:
 	adds r1, r5, #0
 	subs r0, r0, r3
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Engine_MathDivide
 	ldr r3, [sp, #16]
 	adds r3, #218
 	movs r1, #0

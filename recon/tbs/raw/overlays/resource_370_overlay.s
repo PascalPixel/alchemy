@@ -353,7 +353,7 @@ Func_020003cc:
 .L_020086b8:
 	.4byte Clear_CheckButtonCodes
 .L_020086bc:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_020086c0:
 	.4byte gCell
 .L_020086c4:
@@ -387,7 +387,7 @@ Func_020003cc:
 .L_020086fc:
 	.4byte 0x00000109
 .L_02008700:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_02008704:
 	.4byte 0x00000006
 .L_02008708:
@@ -1109,11 +1109,11 @@ Func_020003cc:
 .L_02008ce8:
 	.4byte 0x0000f129
 .L_02008cec:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_02008cf0:
 	.4byte 0x00000ea3
 .L_02008cf4:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_02008cf8:
 	.4byte 0x000003e7
 	.section .text.x02008de2,"ax",%progbits

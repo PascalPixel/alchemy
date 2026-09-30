@@ -513,7 +513,7 @@ Scene_RunPairedActorEffectSequence:
 .L_0200a848:
 	.4byte 0x00000105
 .L_0200a84c:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0200a850:
 	.4byte 0x00003333
 .L_0200a854:
@@ -1378,7 +1378,7 @@ Scene_RunPairedActorEffectSequence:
 	movs r2, #40
 	b .L_0200b094
 .L_0200b064:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0200b068:
 	.4byte 0xffff0000
 .L_0200b06c:

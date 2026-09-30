@@ -98,7 +98,7 @@ MakyuriChojo_FlickerActorEight:
 	lsls r1, r1, #11
 	adds r7, r0, #0
 	mov r0, r8
-	bl __divsi3
+	bl IwramSignedDivideEntry
 	mov r8, r0
 	mov r1, r8
 	lsls r1, r1, #16

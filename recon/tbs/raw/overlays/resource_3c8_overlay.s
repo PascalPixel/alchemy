@@ -1038,7 +1038,7 @@ Scene_RunPairedParticleWaveSequence:
 	pop {r0}
 	bx r0
 .L_0200c510:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0200c514:
 	.4byte 0x00004ccc
 .L_0200c518:
@@ -1092,7 +1092,7 @@ VinasuHeya_SpawnRandomParticles:
 	lsls r0, r0, #16
 	adds r0, r0, r3
 	movs r1, #10
-	bl __divsi3
+	bl IwramSignedDivideEntry
 	lsls r5, r5, #1
 	mov r3, r10
 	lsrs r5, r5, #16

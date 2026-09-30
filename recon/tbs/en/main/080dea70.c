@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 
@@ -109,18 +110,6 @@ void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
-extern u8 Value_0000005b;
-extern u8 Value_0000005c;
-extern u8 Value_0000005d;
-extern u8 Value_00000068;
-extern u8 Value_00000073;
-extern u8 Value_0000007f;
-extern u8 Value_00000080;
-extern u8 Value_00000081;
-extern u8 Value_00000092;
-extern u8 Value_000000b8;
-extern u8 Value_000000b9;
-extern u8 Value_000000c7;
 
 extern void *gWorkSlot[];
 extern u8 Data_080eebec[];  /* [kind][5]: shots, aim divisor, shot stagger,
@@ -197,7 +186,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
     }
     draw_cb = (DrawRectangleFn) gWorkSlot[46];
 
-    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32) &ResourceId_ParticleSpritesA, extra_target, 0, 0);
 
     if (kind == 0 || kind == 5 || kind == 8) {
         if (kind == 5) {
@@ -207,42 +196,42 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
             variant = 0;
         }
         if (variant == 0) {
-            Resource_LoadAndDecompress((s32) &Value_0000007f, (s8 *)work + (128 << 5), 1, 1);
+            Resource_LoadAndDecompress((s32) &ResourceId_CometSheetA, (s8 *)work + (128 << 5), 1, 1);
         } else if (variant == 1) {
-            Resource_LoadAndDecompress((s32) &Value_00000080, (s8 *)work + (128 << 5), 1, 1);
+            Resource_LoadAndDecompress((s32) &ResourceId_CometSheetB, (s8 *)work + (128 << 5), 1, 1);
         } else {
-            Resource_LoadAndDecompress((s32) &Value_00000081, (s8 *)work + (128 << 5), 1, 1);
+            Resource_LoadAndDecompress((s32) &ResourceId_CometSheetC, (s8 *)work + (128 << 5), 1, 1);
         }
         if (kind == 5) {
             ((WordCopyFn)0x03001388)((void *)(160 << 19),
-                Resource_GetTableEntry((s32) &Value_000000b9), 128);
+                Resource_GetTableEntry((s32) &ResourceId_IceBlockSheet), 128);
         }
-        Resource_LoadAndDecompress((s32) &Value_000000c7, (s8 *)work + (128 << 6), 1, 0);
+        Resource_LoadAndDecompress((s32) &ResourceId_WindStreakSheet, (s8 *)work + (128 << 6), 1, 0);
         if (kind == 5) {
             ((WordCopyFn)0x03001388)((void *)(160 << 19),
-                Resource_GetTableEntry((s32) &Value_000000b9), 128);
+                Resource_GetTableEntry((s32) &ResourceId_IceBlockSheet), 128);
         }
         M2C_FIELD(work, s32 *, 0x7780) = 2;
         M2C_FIELD(work, s32 *, 0x7784) = 75;
     } else if (kind == 1) {
-        Resource_LoadAndDecompress((s32) &Value_0000005d, work, 1, 1);
+        Resource_LoadAndDecompress((s32) &ResourceId_ShurikenSheet, work, 1, 1);
         *(u16 *) 0x04000050 = 0;
         M2C_FIELD(work, s32 *, 0x7780) = kind;
         M2C_FIELD(work, s32 *, 0x7784) = 0;
     } else if (kind == 2) {
         ((WordCopyFn)0x03001388)((void *)(160 << 19),
-            Resource_GetTableEntry((s32) &Value_0000007f), 128);
-        Resource_LoadAndDecompress((s32) &Value_0000005c, work, 0, 0);
+            Resource_GetTableEntry((s32) &ResourceId_CometSheetA), 128);
+        Resource_LoadAndDecompress((s32) &ResourceId_ProjectileVolleyImage, work, 0, 0);
         M2C_FIELD(work, s32 *, 0x7780) = kind;
         M2C_FIELD(work, s32 *, 0x7784) = 50;
     } else {
         if (kind == 3 || kind == 4 || kind == 11) {
-            Resource_LoadAndDecompress((s32) &Value_0000005b, work, 1, 1);
+            Resource_LoadAndDecompress((s32) &ResourceId_YellowSparkSheet, work, 1, 1);
         } else if (kind == 6) {
-            Resource_LoadAndDecompress((s32) &Value_00000068, work, 1, 1);
+            Resource_LoadAndDecompress((s32) &ResourceId_FireballSheet, work, 1, 1);
         } else {
-            Resource_LoadAndDecompress((s32) &Value_000000b8, work, 1, 1);
-            Resource_LoadAndDecompress((s32) &Value_00000092, (s8 *)work + 0x65C0, 1, 0);
+            Resource_LoadAndDecompress((s32) &ResourceId_IceChipSheet, work, 1, 1);
+            Resource_LoadAndDecompress((s32) &ResourceId_MercuryDjinnSmallSheet, (s8 *)work + 0x65C0, 1, 0);
         }
         M2C_FIELD(work, s32 *, 0x7780) = 2;
         M2C_FIELD(work, s32 *, 0x7784) = 50;

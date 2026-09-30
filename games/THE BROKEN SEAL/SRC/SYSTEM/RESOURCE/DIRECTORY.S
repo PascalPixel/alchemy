@@ -106,9 +106,9 @@ Resource_DirectoryTable:
 	resource , BattleFx_FiveModeImage
 	resource , BattleFx_SpiderWebSheet
 	resource VioletLightningSheetA, BattleFx_VioletLightningSheetA
-	resource , BattleFx_YellowSparkSheet
-	resource , BattleFx_ProjectileVolleyImage
-	resource , BattleFx_ShurikenSheet
+	resource YellowSparkSheet, BattleFx_YellowSparkSheet
+	resource ProjectileVolleyImage, BattleFx_ProjectileVolleyImage
+	resource ShurikenSheet, BattleFx_ShurikenSheet
 	resource , BattleFx_FlareSheet
 	resource , BattleFx_FlareImage
 	resource VioletPaletteB, BattleFx_VioletPaletteB
@@ -142,9 +142,9 @@ Resource_DirectoryTable:
 	resource , BattleFx_OrangePaletteA
 	resource FlashBurstSheet, BattleFx_FlashBurstSheet
 	resource ThornSheet, BattleFx_ThornSheet
-	resource , BattleFx_CometSheetA
-	resource , BattleFx_CometSheetB
-	resource , BattleFx_CometSheetC
+	resource CometSheetA, BattleFx_CometSheetA
+	resource CometSheetB, BattleFx_CometSheetB
+	resource CometSheetC, BattleFx_CometSheetC
 	resource , BattleFx_WhirlwindSheet
 	resource GreenPillarSheet, BattleFx_GreenPillarSheet
 	resource VineSheet, BattleFx_VineSheet
@@ -214,7 +214,7 @@ Resource_DirectoryTable:
 	resource LightningBoltSheet, BattleFx_LightningBoltSheet
 	resource BeamSequenceImage, BattleFx_BeamSequenceImage
 	resource , BattleFx_TwelveModeImage
-	resource , BattleFx_WindStreakSheet
+	resource WindStreakSheet, BattleFx_WindStreakSheet
 	resource YellowPaletteB, BattleFx_YellowPaletteB
 	resource , BattleFx_BlueRingSheet
 	resource , BattleFx_RedPaletteC

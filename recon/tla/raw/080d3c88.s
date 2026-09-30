@@ -76,7 +76,7 @@ UiText_OpenMessageAtObject:
 	add r5, sp, #52
 	adds r1, r5, #0
 	adds r0, #8
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [r5]
 	movs r7, #1
 	asrs r4, r3, #3
@@ -107,7 +107,7 @@ UiText_OpenMessageAtObject:
 	add r5, sp, #52
 	adds r1, r5, #0
 	adds r0, #8
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [r5]
 	movs r7, #1
 	b .L_080d3d7c

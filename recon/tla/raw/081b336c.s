@@ -75,7 +75,7 @@ Func_081b336c:
 .L_081b33f0:
 	.4byte 0xffe00000
 .L_081b33f4:
-	.4byte Data_081b48c6
+	.4byte ReelGame_TitleLetterWidths
 .L_081b33f8:
 	.4byte 0xfff80000
 .L_081b33fc:

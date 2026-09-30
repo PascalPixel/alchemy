@@ -22,7 +22,7 @@ Func_0810857c:
 	mov r10, r3
 	adds r3, r6, r2
 	ldrh r0, [r3]
-	bl Func_080c85c8
+	bl BattleFx_GetResourceIdFar
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #6

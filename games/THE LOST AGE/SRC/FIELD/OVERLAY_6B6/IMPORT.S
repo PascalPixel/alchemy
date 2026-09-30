@@ -6,5 +6,11 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Func_020000b4
+	.thumb_func
+Func_020000b4:
 	overlay_veneer Func_080003d8
+	.global Func_020000bc
+	.thumb_func
+Func_020000bc:
 	overlay_veneer Func_080c8580

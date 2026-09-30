@@ -3539,7 +3539,7 @@ Func_081b83c4:
 	mov r10, r2
 	mov r0, r10
 	str r4, [sp, #12]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r4, [sp, #12]
 	movs r3, #94
 	ldr r2, [r4, #8]
@@ -3681,7 +3681,7 @@ Func_081b83c4:
 	ldr r3, [r4, #8]
 	str r4, [sp, #12]
 	str r3, [r0, #8]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [r6, #8]
 	movs r1, #94
 	adds r1, #255
@@ -3912,7 +3912,7 @@ Func_081b83c4:
 	bl Func_08014de4
 	ldr r0, [sp, #116]
 	ldr r1, [sp, #36]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r5, [sp, #96]
 	cmp r5, #0
 	beq .L_081ba250

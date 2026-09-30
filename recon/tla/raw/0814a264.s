@@ -196,7 +196,7 @@ Func_0814a264:
 	adds r1, r5, #0
 	adds r0, r5, #0
 	adds r1, #12
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r0, [sp, #36]
 	cmp r0, #63
 	ble .L_0814a3f4

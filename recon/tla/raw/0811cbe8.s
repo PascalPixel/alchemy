@@ -76,7 +76,7 @@ Func_0811cbe8:
 	bl UiText_DrawQuantity
 .L_0811cc88:
 	adds r0, r5, #0
-	bl Func_0811ccf0
+	bl BattleMotion_SetMode5AndActivateSlot
 	cmp r5, #7
 	bhi .L_0811ccaa
 	movs r2, #56

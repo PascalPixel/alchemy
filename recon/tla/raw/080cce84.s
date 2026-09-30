@@ -10,4 +10,4 @@ Func_080cce84:
 	.2byte 0xf800
 	pop {pc}
 .L_080cce90:
-	.4byte Data_02008000
+	.4byte gOverlayArea

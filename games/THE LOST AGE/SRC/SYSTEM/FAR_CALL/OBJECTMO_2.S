@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c85c8
+	.global BattleFx_GetResourceIdFar
 	.thumb_func
-Func_080c85c8:
+BattleFx_GetResourceIdFar:
 	overlay_veneer Func_080d1eac
 	.global Event_ClearInvalidPackedValuesFar
 	.thumb_func

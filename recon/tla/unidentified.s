@@ -53,8 +53,8 @@ Flash_ChipAtmelLayout:
 	.global Data_080203a8
 Data_080203a8:
 	.incbin "baserom.gba", 0x000203a8, 0x00000500
-	.global Data_080208a8
-Data_080208a8:
+	.global Runtime_ByteRemapTable
+Runtime_ByteRemapTable:
 	.incbin "baserom.gba", 0x000208a8, 0x00000100
 	.global Data_080209a8
 Data_080209a8:
@@ -231,8 +231,8 @@ Data_08054a14:
 	.global Data_08054e24
 Data_08054e24:
 	.incbin "baserom.gba", 0x00054e24, 0x000041d0
-	.global Data_08058ff4
-Data_08058ff4:
+	.global UiIcon_MiscIconPointers
+UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x00058ff4, 0x00000804
 	.global Data_080597f8
 Data_080597f8:
@@ -738,8 +738,8 @@ Data_080f1120:
 	.global Data_080f1140
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f1140, 0x00000668
-	.global Data_080f17a8
-Data_080f17a8:
+	.global Field_SceneTable
+Field_SceneTable:
 	.incbin "baserom.gba", 0x000f17a8, 0x00000a2c
 	.global Data_080f21d4
 Data_080f21d4:
@@ -843,8 +843,8 @@ Data_080f3950:
 	.global Data_080f3954
 Data_080f3954:
 	.incbin "baserom.gba", 0x000f3954, 0x00000020
-	.global Data_080f3974
-Data_080f3974:
+	.global BattleFx_UntargetedObjectScript
+BattleFx_UntargetedObjectScript:
 	.incbin "baserom.gba", 0x000f3974, 0x00000004
 	.global Data_080f3978
 Data_080f3978:
@@ -2979,8 +2979,8 @@ Data_081b48aa:
 	.global Data_081b48b8
 Data_081b48b8:
 	.incbin "baserom.gba", 0x001b48b8, 0x0000000e
-	.global Data_081b48c6
-Data_081b48c6:
+	.global ReelGame_TitleLetterWidths
+ReelGame_TitleLetterWidths:
 	.incbin "baserom.gba", 0x001b48c6, 0x0000373a
 	.section .unidentified.081ba30c,"a"
 	.global Data_081ba30c

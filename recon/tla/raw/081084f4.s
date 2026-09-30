@@ -14,7 +14,7 @@ Func_081084f4:
 	adds r3, r5, r2
 	adds r6, r0, #0
 	ldrh r0, [r3]
-	bl Func_080c85c8
+	bl BattleFx_GetResourceIdFar
 	adds r7, r0, #0
 	bl UiWork_FinalizePendingCoreFar
 	movs r3, #160

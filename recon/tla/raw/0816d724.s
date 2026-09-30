@@ -484,7 +484,7 @@ Func_0816d724:
 	ldr r3, [sp, #36]
 	ldr r7, [r0]
 	ldr r0, [r3, #8]
-	bl Func_08118070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
@@ -496,7 +496,7 @@ Func_0816d724:
 	adds r1, r5, #0
 	adds r0, r5, #0
 	adds r1, #12
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	movs r0, #48
 	movs r4, #0
 	add r0, sp

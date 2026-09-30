@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f800
+	.global UiWindow_OpenMode1AndWaitFrame
 	.thumb_func
-Func_0803f800:
+UiWindow_OpenMode1AndWaitFrame:
 	push {lr}
 	movs r0, #1
 	bl Func_08042690

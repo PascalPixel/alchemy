@@ -33,7 +33,7 @@ Func_08044b98:
 	strb r3, [r5, #3]
 	mov r0, r10
 	bl Func_08044b80
-	bl Func_0803d2f0
+	bl Localization_LookupEntryId
 	movs r1, #14
 	add r2, sp, #12
 	add r3, sp, #8

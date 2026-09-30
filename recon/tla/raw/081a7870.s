@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081a7870
+	.global Graphics_InterpolatePaletteBuffers
 	.thumb_func
-Func_081a7870:
+Graphics_InterpolatePaletteBuffers:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

@@ -131,7 +131,7 @@ Func_080fb780:
 	movs r1, #0
 	movs r2, #17
 	movs r3, #10
-	bl Func_080383e8
+	bl UiWindow_DrawFrameFar
 	adds r0, r6, #0
 	add sp, #4
 	pop {r3, r5, r6}

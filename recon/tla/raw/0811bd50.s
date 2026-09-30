@@ -39,7 +39,7 @@ Func_0811bd50:
 	str r3, [r0, #4]
 	ldr r3, [r5, #16]
 	str r3, [r0, #8]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r1, [r6, #12]
 	ldr r3, .L_0811bdac
 	mov lr, r3

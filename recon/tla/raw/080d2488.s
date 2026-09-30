@@ -7,7 +7,7 @@ Party_RemoveOwnerRestored:
 	mov r7, r8
 	push {r7}
 	adds r5, r0, #0
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	bl Event_ClearValidPackedIds
 	adds r0, r5, #0
 	bl Owner_GetState

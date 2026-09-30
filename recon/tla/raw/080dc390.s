@@ -19,7 +19,7 @@ Camera_WorldToScreen:
 	bne .L_080dc3c0
 	mov r5, sp
 	adds r1, r5, #0
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [r5]
 	lsls r3, r3, #16
 	str r3, [r6]

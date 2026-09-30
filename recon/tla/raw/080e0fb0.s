@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080e0fb0
+	.global BattleFx_UpdateDescendingParticleNegativeArc
 	.thumb_func
-Func_080e0fb0:
+BattleFx_UpdateDescendingParticleNegativeArc:
 	push {r5, r6, lr}
 	ldr r3, .L_080e1018
 	ldr r1, [r0, #20]

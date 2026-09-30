@@ -74,10 +74,10 @@ Func_080132fc:
 Resource_GetTableEntry:
 	.incbin "baserom.gba", 0x00013300, 0x0000006c
 	.section .rom.0001336c, "ax"
-	.global Func_0801336c
-	.type Func_0801336c, %function
+	.global Resource_LoadCode
+	.type Resource_LoadCode, %function
 	.thumb_func
-Func_0801336c:
+Resource_LoadCode:
 	.incbin "baserom.gba", 0x0001336c, 0x000000cc
 	.section .rom.00013438, "ax"
 	.global Func_08013438
@@ -492,10 +492,10 @@ Func_0801524c:
 Func_08015384:
 	.incbin "baserom.gba", 0x00015384, 0x00000364
 	.section .rom.000156e8, "ax"
-	.global Func_080156e8
-	.type Func_080156e8, %function
+	.global Graphics_PrepareTransferInIwramWork
+	.type Graphics_PrepareTransferInIwramWork, %function
 	.thumb_func
-Func_080156e8:
+Graphics_PrepareTransferInIwramWork:
 	.incbin "baserom.gba", 0x000156e8, 0x00000010
 	.section .rom.000156f8, "ax"
 	.global Func_080156f8
@@ -510,10 +510,10 @@ Func_080156f8:
 Func_08015714:
 	.incbin "baserom.gba", 0x00015714, 0x00000054
 	.section .rom.00015778, "ax"
-	.global Func_08015778
-	.type Func_08015778, %function
+	.global Render_ProjectPoint
+	.type Render_ProjectPoint, %function
 	.thumb_func
-Func_08015778:
+Render_ProjectPoint:
 	.incbin "baserom.gba", 0x00015778, 0x00000104
 	.section .rom.0001587c, "ax"
 	.global Func_0801587c
@@ -1361,10 +1361,10 @@ UiWork_InitializeWithResourceCounters:
 UiWork_Initialize:
 	.incbin "baserom.gba", 0x00038ff8, 0x00000118
 	.section .rom.00039110, "ax"
-	.global Func_0803911c
-	.type Func_0803911c, %function
+	.global UiWindow_EraseBorderRect
+	.type UiWindow_EraseBorderRect, %function
 	.thumb_func
-Func_0803911c:
+UiWindow_EraseBorderRect:
 	.incbin "baserom.gba", 0x00039110, 0x00000144
 	.section .rom.00039254, "ax"
 	.global UiWindow_Create
@@ -1573,10 +1573,10 @@ Func_0803ce64:
 Func_0803d020:
 	.incbin "baserom.gba", 0x0003d148, 0x000002dc
 	.section .rom.0003d424, "ax"
-	.global Func_0803d2f0
-	.type Func_0803d2f0, %function
+	.global Localization_LookupEntryId
+	.type Localization_LookupEntryId, %function
 	.thumb_func
-Func_0803d2f0:
+Localization_LookupEntryId:
 	.incbin "baserom.gba", 0x0003d424, 0x000000d0
 	.section .rom.0003d4f4, "ax"
 	.global Func_0803d3c0
@@ -2574,8 +2574,8 @@ FieldEvent_RunTypeHandler:
 	.incbin "baserom.gba", 0x000dfcb4, 0x0000c124
 	.section .rom.000ebdea, "ax"
 	.incbin "baserom.gba", 0x000ebdea, 0x000058ca
-	.global Data_080f17a8
-Data_080f17a8:
+	.global Field_SceneTable
+Field_SceneTable:
 	.incbin "baserom.gba", 0x000f16b4, 0x00001b28
 	.global Object_OffsetMotionScript
 Object_OffsetMotionScript:

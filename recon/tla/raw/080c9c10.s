@@ -14,11 +14,11 @@ Func_080c9c10:
 	lsls r3, r3, #3
 	ldrsh r0, [r3, r2]
 	ldr r1, .L_080c9c34
-	bl Func_0801336c
+	bl Resource_LoadCode
 	pop {pc}
 .L_080c9c2c:
 	.4byte gPartyState
 .L_080c9c30:
-	.4byte Data_080f17a8
+	.4byte Field_SceneTable
 .L_080c9c34:
-	.4byte Data_02008000
+	.4byte gOverlayArea

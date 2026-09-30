@@ -26,7 +26,7 @@ Func_0802254c:
 	add r1, sp, #28
 	ldr r0, [sp, #12]
 	mov r10, r1
-	bl Func_08015778
+	bl Render_ProjectPoint
 	mov r2, r10
 	ldr r3, [r2, #8]
 	adds r5, r0, #0
@@ -230,7 +230,7 @@ Func_0802254c:
 	str r3, [r0, #4]
 	ldr r3, [r2, #8]
 	str r3, [r0, #8]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [sp, #4]
 	movs r4, #8
 	cmp r3, #3

@@ -32,9 +32,7 @@ static __inline__ void bump_step(s32 amount)
 {
     void Map_ClearLayerEntryFlag();
 
-    u8 *work = *(u8 **)&gEventWork;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
@@ -100,7 +98,7 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 
-    *(u16 *)(*(u8 **)&gEventWork + 0x1d8) += amount;
+    gEventWork->message += amount;
 }
 
 void SceneDialogue_RunActor13Message1b83(void)

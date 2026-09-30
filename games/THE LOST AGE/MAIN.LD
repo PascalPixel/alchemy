@@ -190,7 +190,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/RESOURCE_2.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OBJECTDI.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OBJECTDI_2.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080200c0.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OBJECTDI_3.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080200d8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080200e8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08020120.o"(.text .rodata .data .padding)

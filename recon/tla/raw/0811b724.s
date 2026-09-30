@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_0811b724
+	.thumb_func
+Func_0811b724:
 	push	{r5, r6, lr}
 	bl	0x0811be3c
 	cmp	r0, #0

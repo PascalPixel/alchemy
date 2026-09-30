@@ -298,7 +298,7 @@ Func_0811e3ac:
 	beq.n	.L_0811e64a
 	mov	r3, r8
 	ldrb	r0, [r3, #0]
-	bl	0x0811b724
+	bl	Func_0811b724
 	b.n	.L_0811e67a
 .L_0811e64a:
 	mov	r1, r8
@@ -316,7 +316,7 @@ Func_0811e3ac:
 	adds	r5, r0, #0
 .L_0811e666:
 	ldrh	r0, [r6, r7]
-	bl	0x0811b724
+	bl	Func_0811b724
 	subs	r5, #1
 	ldrh	r0, [r6, r7]
 	bl	0x0811a5fc

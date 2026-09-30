@@ -20,7 +20,7 @@ Func_0811d7e8:
 .L_0811d802:
 	mov	sl, sp
 	mov	r1, sl
-	bl	0x0811a39c
+	bl	Func_0811a39c
 	ldr	r3, [pc, #140]
 	mov	r8, r0
 	movs	r1, #104
@@ -110,7 +110,7 @@ Func_0811d7e8:
 .L_0811d8b2:
 	mov	r8, sp
 	mov	r1, r8
-	bl	0x0811a39c
+	bl	Func_0811a39c
 	mov	sl, r0
 	cmp	r0, #0
 	ble.n	.L_0811d8fa
@@ -173,7 +173,7 @@ Func_0811d7e8:
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r7, r0
-	bl	0x0811a0b0
+	bl	Func_0811a0b0
 	adds	r5, r5, r0
 	b.n	.L_0811d946
 .L_0811d93a:

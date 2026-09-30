@@ -390,7 +390,7 @@ Func_08124cc4:
 	bne.n	.L_08125004
 	lsls	r0, r0, #1
 	add	r0, fp
-	bl	0x0811a0b0
+	bl	Func_0811a0b0
 	add	r8, r0
 .L_08125004:
 	movs	r3, #0

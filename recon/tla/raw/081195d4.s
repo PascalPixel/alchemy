@@ -42,7 +42,7 @@ Func_081195d4:
 	str	r0, [sp, #12]
 	adds	r0, r2, #0
 	str	r2, [sp, #0]
-	bl	0x0811a0b0
+	bl	Func_0811a0b0
 	cmp	r8, r0
 	ble.n	.L_08119632
 	mov	r8, r0
@@ -171,6 +171,9 @@ Func_081195d4:
 	str	r1, [r0, #8]
 	str	r3, [r0, #32]
 	pop	{pc}
+	.global Func_08119734
+	.thumb_func
+Func_08119734:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

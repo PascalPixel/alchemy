@@ -405,7 +405,7 @@ Func_081197f0:
 .L_08119b32:
 	movs	r0, #1
 	movs	r1, #0
-	bl	.L_0811a39c
+	bl	Func_0811a39c
 	cmp	r0, #0
 	bne.n	.L_08119b42
 	bl	0x081195ec
@@ -828,7 +828,7 @@ Func_081197f0:
 	movs	r1, #24
 	adds	r5, r0, #0
 	movs	r0, #44
-	bl	0x08120060
+	bl	Func_08120060
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	UiWork_FinalizeFar
@@ -1075,6 +1075,9 @@ Func_0811a038:
 	.4byte 0x000000ff
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_0811a0b0
+	.thumb_func
+Func_0811a0b0:
 .L_0811a0b0:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -1334,7 +1337,7 @@ Func_0811a188:
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r6, r0
-	bl	.L_0811a0b0
+	bl	Func_0811a0b0
 	adds	r5, r5, r0
 	cmp	r8, r5
 	bge.n	.L_0811a2c0
@@ -1489,6 +1492,9 @@ BattleParty_ListActorIds:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x00ff
 	.2byte 0x0000
+	.global Func_0811a39c
+	.thumb_func
+Func_0811a39c:
 .L_0811a39c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

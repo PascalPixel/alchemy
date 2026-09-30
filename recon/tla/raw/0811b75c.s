@@ -31,7 +31,7 @@ Func_0811b75c:
 	bgt.n	.L_0811b790
 	mov	r0, fp
 .L_0811b790:
-	bl	0x0811b724
+	bl	Func_0811b724
 .L_0811b794:
 	movs	r3, #1
 	add	fp, r3

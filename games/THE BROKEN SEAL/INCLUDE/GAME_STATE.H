@@ -25,7 +25,10 @@ struct GameState {
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_1e8[0x0a];
+    /* The party's heading and turn, which a restored view sets. */
+    u32 heading;
+    u16 turn;
+    u8 unknown_1ee[4];
     /* How the leader moves: 1 on a ladder, 2 in the Suhara desert's sand. */
     u8 movement_mode;
     u8 unknown_1f3;

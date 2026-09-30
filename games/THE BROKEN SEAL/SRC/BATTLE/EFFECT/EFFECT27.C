@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "GAME_STATE.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 
@@ -34,7 +35,6 @@ struct EffectObject {
 extern u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value);
 extern s32 GameFlag_IsConditionActive(s32 condition);
 extern struct EffectObject *ObjectTable_Get(s32 object);
-extern u8 gGameState;
 extern void *gEventWork;
 typedef s32 (*WorkEntryFn)(void);
 

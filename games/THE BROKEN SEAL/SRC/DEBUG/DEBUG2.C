@@ -1,4 +1,25 @@
 #include "TYPES.H"
+#include "GAME_STATE.H"
+#include "RAM_BUFFER.H"
+
+struct Vec {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+struct Object {
+    u8 pad0[6];
+    u16 angle;
+    struct Vec pos;
+    u8 pad1[14];
+    u8 kind;
+};
+
+void Vector_AddPolarOffset(s32, s32, struct Vec *);
+s32 Map_GetTerrainHeightFar(s32, s32, s32);
+struct Object *ObjectTable_Get(s32);
+s32 BattleFx_FindDescriptor(s32, s32);
 
 struct EntranceView {
     s16 entrance;                   /* 0x00; -1 ends the table */
@@ -15,17 +36,6 @@ struct EntranceView {
     s16 unknown_16;
 };
 
-struct ViewState {
-    u8 unknown_000[0x1c2];
-    s16 entrance;                   /* 0x1c2 */
-    u8 unknown_1c4[0x18];
-    s32 x;                          /* 0x1dc */
-    s32 y;                          /* 0x1e0 */
-    s32 z;                          /* 0x1e4 */
-    u32 heading;                    /* 0x1e8 */
-    u16 turn;                       /* 0x1ec */
-};
-
 struct ViewServices {
     u8 unknown_00[0x0c];
     struct EntranceView *(*entrance_views)(void);
@@ -40,10 +50,8 @@ struct MapScrollWork {
 };
 
 extern struct MapScrollWork *gMapWork;
-extern struct ViewState gGameState;
 extern struct ViewServices gOverlayArea;
 s32 GameFlag_TestFar(s32 flag);
-
 extern volatile u32 gKeysRepeat;
 extern volatile u32 Data_03001ae8;
 extern volatile u32 Data_03001e40;
@@ -76,6 +84,46 @@ struct ActionDescriptorTables {
 };
 
 extern struct ActionDescriptorTables *gEventWork;
+
+s32 Object_GetTriggerTileAheadOfCurrent(void)
+{
+    u8 *state;
+    u8 *map;
+    struct Object *obj;
+    struct Vec pos;
+    u8 *cell;
+    u8 *base;
+    s32 kind;
+    s32 height;
+    s32 result;
+
+    result = 0;
+    obj = ObjectTable_Get(gGameState.selected_actor);
+    state = *(u8 **)Ram_EventWork;
+    map = *(u8 **)Ram_MapWork;
+    if (obj != 0) {
+        pos.x = obj->pos.x;
+        pos.y = obj->pos.y;
+        pos.z = obj->pos.z;
+        Vector_AddPolarOffset(0x100000, obj->angle, &pos);
+        if (*(s16 *)(state + 0x19e) == 3) {
+            cell = Ram_MapBlocks + ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
+        } else {
+            base = *(u8 **)(map + 0x130);
+            cell = base + (((pos.x / 0x100000) + ((pos.z / 0x100000) << 7)) << 2);
+        }
+        kind = cell[2];
+        if ((u32)(kind - 242) <= 5) {
+            height = Map_GetTerrainHeightFar(obj->kind, pos.x, pos.z);
+            if (height >= obj->pos.y && height <= obj->pos.y + 0x400000) {
+                result = kind;
+            }
+        } else if (BattleFx_FindDescriptor(3, kind) != 0) {
+            result = kind;
+        }
+    }
+    return result;
+}
 
 /*
  * Places the battle view for the current entrance: finds the entrance's

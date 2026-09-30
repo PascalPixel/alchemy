@@ -234,6 +234,9 @@ Func_080d0a28:
 	.4byte 0x06002000
 	.2byte 0x0140
 	.2byte 0x8500
+	.global Func_080d0bec
+	.thumb_func
+Func_080d0bec:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -1589,6 +1592,9 @@ Func_080d0a28:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Func_080d1684
+	.thumb_func
+Func_080d1684:
 	push	{lr}
 	movs	r1, #168
 	lsls	r1, r1, #6

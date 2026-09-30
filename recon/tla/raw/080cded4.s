@@ -137,7 +137,7 @@ Func_080cded4:
 	ldrh	r0, [r0, #6]
 	mov	fp, r0
 	bl	.L_080cdf5c
-	bl	0x080cd91c
+	bl	Func_080cd91c
 	movs	r3, #128
 	lsls	r3, r3, #1
 	adds	r3, #255

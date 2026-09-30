@@ -129,7 +129,7 @@ Func_080ca6e8:
 	mov	r2, r8
 	movs	r1, #0
 	ldrsh	r0, [r2, r1]
-	bl	0x080ca6a4
+	bl	Func_080ca6a4
 	adds	r7, r0, #0
 	mov	r0, fp
 	bl	ObjectTable_Get

@@ -159,6 +159,9 @@ Func_080d5aa0:
 	.4byte 0xfff00000
 	.2byte 0x0000
 	.2byte 0xfff8
+	.global Func_080d5bec
+	.thumb_func
+Func_080d5bec:
 	.2byte 0xb560
 	adds	r5, r1, #0
 	bl	ObjectTable_Get
@@ -265,7 +268,7 @@ Func_080d5aa0:
 	lsls	r0, r0, #3
 	movs	r1, #16
 	adds	r0, #1
-	bl	0x080d0520
+	bl	Func_080d0520
 	movs	r3, #217
 	lsls	r3, r3, #1
 	adds	r2, r6, r3
@@ -308,7 +311,7 @@ Func_080d5aa0:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	movs	r1, #16
-	bl	0x080d0520
+	bl	Func_080d0520
 	movs	r3, #217
 	lsls	r3, r3, #1
 	adds	r2, r6, r3

@@ -268,6 +268,9 @@ Func_080d7024:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0xff80
+	.global Func_080d7240
+	.thumb_func
+Func_080d7240:
 	.2byte 0xb5e0
 	mov	r7, r8
 	push	{r7}

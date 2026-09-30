@@ -140,7 +140,7 @@ Func_080ce0ac:
 	cmp	r3, r0
 	bge.n	.L_080ce1de
 	bl	0x080cdf5c
-	bl	0x080cd91c
+	bl	Func_080cd91c
 	adds	r5, r0, #0
 	bl	Func_080d22a8
 	ldr	r0, [r6, #8]

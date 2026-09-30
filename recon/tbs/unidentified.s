@@ -841,7 +841,10 @@ Data_080c3620:
 	.incbin "baserom.gba", 0x000c3620, 0x00000008
 	.global Data_080c3628
 Data_080c3628:
-	.incbin "baserom.gba", 0x000c3628, 0x0000090c
+	.incbin "baserom.gba", 0x000c3628, 0x0000010c
+	.global BattlePres_AdvanceArrowTiles
+BattlePres_AdvanceArrowTiles:
+	.incbin "baserom.gba", 0x000c3734, 0x00000800
 	.global Data_080c3f34
 Data_080c3f34:
 	.incbin "baserom.gba", 0x000c3f34, 0x00001a04

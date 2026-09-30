@@ -404,7 +404,7 @@ Func_081281ec:
 	cmp	r0, #0
 	beq.n	.L_081284f4
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #676]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance
@@ -476,16 +476,16 @@ Func_081281ec:
 	add	r3, sl
 	ldrb	r0, [r3, #0]
 	movs	r1, #3
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r2, [sp, #0]
 	ldr	r3, [sp, #16]
 	movs	r1, #1
 	ldrh	r0, [r2, r3]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r2, sl
 	ldrb	r0, [r2, #15]
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #504]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance
@@ -531,15 +531,15 @@ Func_081281ec:
 	add	r3, sl
 	ldrb	r0, [r3, #0]
 	movs	r1, #3
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r1, #1
 	ldr	r0, [sp, #4]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r3, r9
 	ands	r5, r3
 	movs	r1, #4
 	adds	r0, r5, #0
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r0, #154
 	bl	Audio_PlayCue
 	ldr	r0, [pc, #388]
@@ -555,7 +555,7 @@ Func_081281ec:
 	cmp	r0, #0
 	beq.n	.L_0812863a
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #360]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance
@@ -566,7 +566,7 @@ Func_081281ec:
 	cmp	r0, #0
 	beq.n	.L_08128654
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #340]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance
@@ -577,7 +577,7 @@ Func_081281ec:
 	cmp	r0, #0
 	beq.n	.L_0812866e
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #316]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance
@@ -588,7 +588,7 @@ Func_081281ec:
 	cmp	r0, #0
 	beq.n	.L_08128688
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #296]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance
@@ -599,7 +599,7 @@ Func_081281ec:
 	cmp	r0, #0
 	beq.n	.L_081286a2
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #272]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance
@@ -610,7 +610,7 @@ Func_081281ec:
 	cmp	r0, #0
 	beq.n	.L_081286bc
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #252]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance
@@ -647,7 +647,7 @@ Func_081281ec:
 	cmp	r0, #0
 	beq.n	.L_08128712
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #180]
 	bl	0x080381c8
 	ldr	r3, [sp, #24]
@@ -689,7 +689,7 @@ Func_081281ec:
 	adds	r5, #12
 	ldrh	r0, [r3, r5]
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #104]
 	bl	0x080381c8
 	bl	BattlePresentation_WaitForAdvance

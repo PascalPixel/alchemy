@@ -1721,7 +1721,7 @@ Func_080e03c4:
 	bne.n	.L_080e11f0
 	movs	r0, #150
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #36]
 	movs	r1, #1
 	bl	0x08038040
@@ -1729,7 +1729,7 @@ Func_080e03c4:
 .L_080e11f0:
 	movs	r0, #236
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #20]
 	movs	r1, #1
 	bl	0x08038040

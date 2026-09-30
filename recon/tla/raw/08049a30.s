@@ -3751,7 +3751,7 @@ Func_08049a30:
 	ldr	r3, [r7, #72]
 	cmp	r3, #0
 	bne.n	.L_0804b772
-	bl	Func_080455b0
+	bl	Link_CreateCountdownLabelWindow
 	ldr	r6, [r7, #76]
 	str	r0, [r7, #68]
 .L_0804b772:

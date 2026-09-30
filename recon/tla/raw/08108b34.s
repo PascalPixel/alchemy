@@ -407,10 +407,10 @@ Func_08108b34:
 	bl	Audio_PlayCue
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldrh	r0, [r5, #0]
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r6, #0
 	bl	0x080ad1f0
 	cmp	r0, #15
@@ -440,7 +440,7 @@ Func_08108b34:
 	bne.n	.L_08108efc
 	movs	r1, #1
 	adds	r0, r6, #0
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #152]
 	bl	0x081084f4
 	movs	r0, #0

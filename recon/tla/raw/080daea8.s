@@ -775,28 +775,3 @@ Func_080db444:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0xfff0
-	.global Func_080db48c
-	.thumb_func
-Func_080db48c:
-	.2byte 0xb500
-	cmp	r0, #0
-	bne.n	.L_080db498
-	bl	Func_080db4b8
-	b.n	.L_080db4b4
-.L_080db498:
-	cmp	r0, #1
-	bne.n	.L_080db4a2
-	bl	0x080db670
-	b.n	.L_080db4b4
-.L_080db4a2:
-	cmp	r0, #2
-	bne.n	.L_080db4ac
-	bl	0x080db848
-	b.n	.L_080db4b4
-.L_080db4ac:
-	cmp	r0, #3
-	bne.n	.L_080db4b4
-	bl	0x080db884
-.L_080db4b4:
-	pop	{pc}
-	.2byte 0x0000

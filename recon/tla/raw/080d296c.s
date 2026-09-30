@@ -20,7 +20,7 @@ UiText_DrawQuantityPairWithCue:
 	bl	Func_080cf424
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r5, [pc, #104]
 	movs	r1, #1
 	adds	r0, r5, #0
@@ -83,10 +83,10 @@ Func_080d2a0c:
 	bl	Audio_PlayCue
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r6, #0
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #8]
 	movs	r1, #3
 	bl	0x08038040

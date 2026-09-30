@@ -23,7 +23,7 @@
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
 	overlay_veneer UiText_DrawNumberInWindowFar
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_08038140
 	overlay_veneer Func_08038340
 	overlay_veneer Func_08038380

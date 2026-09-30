@@ -26,7 +26,7 @@
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiWork_IsCompleteFar
 	overlay_veneer Func_080380f8
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_08038140
 	overlay_veneer Func_080382f8
 	overlay_veneer Func_08038318

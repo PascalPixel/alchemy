@@ -1824,7 +1824,7 @@ Func_08103218:
 	adds	r2, #2
 	ldrb	r0, [r2, r3]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #192]
 	ldr	r1, [sp, #84]
 	movs	r2, #128

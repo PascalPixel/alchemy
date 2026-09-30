@@ -47,7 +47,7 @@
 	overlay_veneer Func_08020228
 	overlay_veneer Func_08020230
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_08038248
 	overlay_veneer Func_08038348
 	overlay_veneer Item_Get

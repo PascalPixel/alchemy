@@ -41,7 +41,7 @@ Func_0810b04c:
 	movs	r1, #5
 	adds	r5, r0, #0
 	mov	r0, r8
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	movs	r2, #0

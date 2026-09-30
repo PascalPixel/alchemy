@@ -14,7 +14,7 @@
 	overlay_veneer Func_080201f0
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_080ad2f0
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018

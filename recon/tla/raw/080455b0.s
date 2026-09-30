@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080455b0
+	.global Link_CreateCountdownLabelWindow
 	.thumb_func
-Func_080455b0:
+Link_CreateCountdownLabelWindow:
 	push	{r5, lr}
 	sub	sp, #4
 	movs	r3, #6

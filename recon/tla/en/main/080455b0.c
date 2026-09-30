@@ -1,13 +1,13 @@
 /*
- * Draft: Link_CreateCountdownLabelWindow does not yet match; 2 halfwords differ from ☀️'s C, first at +0x2a (data).
- * Links as recon/tla/raw/080455b0.s.
+ * Draft: Link_CreateCountdownLabelWindow does not yet match; ported from its ☀️ twin.
+ * Differing ranges: identical
+ * Links as its recon/tla/raw listing.
  */
 #include "TYPES.H"
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 extern u8 Link_TimeLabelString[];
-
 s32 Link_CreateCountdownLabelWindow(void)
 {
     s32 handle = UiWindow_Create(0, 0, 6, 4, 6);

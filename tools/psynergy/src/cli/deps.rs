@@ -72,6 +72,7 @@ fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
             .unwrap_or_default();
         let image = similar::Image {
             build: name,
+            name: &stem,
             elf: &elf,
             map: &map,
         };

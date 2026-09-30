@@ -6,13 +6,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/SHOW_OFF.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/STONE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HELP_ADVICE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/RESTORE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/GROUP_CHOREOGRAPHY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/SCENES.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IMPORT.o"(.text)
         "*/resource_374_overlay.o"(.rodata)
     }

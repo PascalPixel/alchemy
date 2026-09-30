@@ -6,15 +6,9 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/SCENE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/MESSAGE_SCENE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/KI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/TRANSIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/PREPARE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/EFFECTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/GESTURE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/ORBIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/SPARKS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/COLOR.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/KI2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KORIMA/PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/IMPORT.o"(.text)
         "*/resource_395_overlay.o"(.rodata)

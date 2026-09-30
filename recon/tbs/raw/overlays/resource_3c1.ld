@@ -6,9 +6,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/TABLES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/TALK.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/ENTRY_CUE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/MURA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/IMPORT.o"(.text)
         "*/resource_3c1_overlay.o"(.rodata)
     }

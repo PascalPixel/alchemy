@@ -13,8 +13,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU2.o"(.text)
         "*/resource_3a5_overlay.o"(.text.x02008e2c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU3.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/ENTER_AREA.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/WALK_BACK.o"(.text)
         "*/resource_3a5_overlay.o"(.text.x020098a4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SAND_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/IMPORT.o"(.text)

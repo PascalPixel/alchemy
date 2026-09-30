@@ -42,7 +42,7 @@ Func_080fb6d4:
 	movs	r1, #0
 	bl	Func_080f8ce8
 	ldr	r0, [r5, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 .L_080fb730:
 	pop	{r5, pc}
 	movs	r0, r0
@@ -65,7 +65,7 @@ Func_080fb6d4:
 	movs	r1, #0
 	movs	r2, #0
 	adds	r0, r7, #0
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	bl	0x080f92ac
 	movs	r3, #182
 	lsls	r3, r3, #1

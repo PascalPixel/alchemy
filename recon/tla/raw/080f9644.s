@@ -79,7 +79,7 @@ Func_080f9644:
 	bl	Func_080facb4
 	mov	r3, r9
 	ldr	r0, [r3, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r1, r9
 	ldr	r0, [r1, #48]
 	bl	0x080f9374
@@ -98,7 +98,7 @@ Func_080f9644:
 .L_080f9708:
 	mov	r1, r9
 	ldr	r0, [r1, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	Func_080fa458
 	bl	.L_080fa276
 	movs	r3, #128
@@ -315,7 +315,7 @@ Func_080f9644:
 	bl	0x080fbddc
 	bl	0x080fbd9c
 	ldr	r0, [r5, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	0x080fc12c
 	ldr	r1, [r5, #0]
 	ldr	r0, [pc, #296]
@@ -409,7 +409,7 @@ Func_080f9644:
 	bl	0x080fbddc
 	bl	0x080fbd9c
 	ldr	r0, [r5, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	0x080fc12c
 	ldr	r1, [r5, #0]
 	movs	r3, #16
@@ -534,7 +534,7 @@ Func_080f9644:
 	mov	r3, r9
 	adds	r3, #240
 	ldr	r0, [r3, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r0, [sp, #20]
 	bl	0x080fc1ac
 	cmp	r0, #0
@@ -827,7 +827,7 @@ Func_080f9644:
 	mov	r3, r9
 	adds	r3, #240
 	ldr	r0, [r3, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	0x080fc12c
 	movs	r0, #0
 	bl	0x080fc2e0
@@ -1172,7 +1172,7 @@ Func_080f9644:
 	mov	r3, r9
 	adds	r3, #240
 	ldr	r0, [r3, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldrb	r3, [r7, #0]
 	strb	r3, [r5, #0]
 	movs	r5, #182
@@ -1423,7 +1423,7 @@ Func_080f9644:
 	bl	Func_080fb780
 	mov	r1, r9
 	ldr	r0, [r1, #40]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r3, #128
 	lsls	r3, r3, #2
 	adds	r3, #22

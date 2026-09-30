@@ -300,7 +300,7 @@ Func_081080a8:
 	movs	r1, #0
 	movs	r2, #2
 	str	r3, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	mov	r9, r0
 .L_08108344:
 	movs	r2, #128

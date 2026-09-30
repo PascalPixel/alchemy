@@ -678,7 +678,7 @@ Func_081b22b8:
 	movs	r2, #19
 	movs	r3, #4
 	movs	r0, #11
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	movs	r3, #0
 	str	r1, [r5, #0]
@@ -726,7 +726,7 @@ Func_081b22b8:
 	movs	r2, #14
 	movs	r3, #3
 	movs	r0, #16
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #300]
@@ -766,7 +766,7 @@ Func_081b22b8:
 	movs	r2, #7
 	movs	r3, #3
 	movs	r0, #23
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #224]
@@ -796,7 +796,7 @@ Func_081b22b8:
 	movs	r2, #7
 	movs	r3, #3
 	movs	r0, #23
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #164]
@@ -997,7 +997,7 @@ Func_081b22b8:
 	movs	r2, #12
 	movs	r3, #3
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r2, #153
 	lsls	r2, r2, #3
 	adds	r1, r0, #0
@@ -1285,7 +1285,7 @@ Func_081b22b8:
 	movs	r2, #24
 	movs	r3, #4
 	movs	r0, #3
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	ldr	r5, [pc, #68]
 	adds	r1, r0, #0
 	str	r1, [r6, #0]
@@ -1371,7 +1371,7 @@ Func_081b22b8:
 	movs	r2, #12
 	movs	r3, #4
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #128
 	ldr	r5, [pc, #804]
 	lsls	r3, r3, #3
@@ -2346,7 +2346,7 @@ Func_081b22b8:
 	movs	r2, #12
 	movs	r3, #4
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r6, #128
 	ldr	r5, [pc, #44]
 	lsls	r6, r6, #3
@@ -2987,7 +2987,7 @@ Func_081b22b8:
 	movs	r2, #26
 	movs	r3, #4
 	movs	r0, #2
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	ldr	r0, [sp, #36]
 	movs	r2, #153
@@ -3015,7 +3015,7 @@ Func_081b22b8:
 	movs	r2, #26
 	movs	r3, #4
 	movs	r0, #2
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	ldr	r3, [sp, #36]
 	ldr	r5, [pc, #616]
 	movs	r7, #153

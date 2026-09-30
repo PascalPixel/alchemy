@@ -29,7 +29,7 @@ Func_080fb780:
 	movs	r3, #10
 	mov	r9, r0
 	movs	r0, #0
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r7, r0, #0
 	ldr	r0, [pc, #232]
 	bl	Func_08014644
@@ -98,7 +98,7 @@ Func_080fb780:
 	negs	r6, r6
 .L_080fb840:
 	adds	r0, r7, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r7, #0
@@ -106,7 +106,7 @@ Func_080fb780:
 	bl	UiWork_FinalizeFar
 	mov	r3, r8
 	ldr	r0, [r3, #16]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r3, r8
 	ldr	r0, [r3, #16]
 	movs	r3, #3

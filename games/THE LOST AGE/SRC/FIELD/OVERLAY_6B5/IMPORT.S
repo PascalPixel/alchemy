@@ -33,7 +33,7 @@
 	overlay_veneer Func_08020198
 	overlay_veneer Func_080201a0
 	overlay_veneer Func_080201e8
-	overlay_veneer Func_08038010
+	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer Func_08038020
 	overlay_veneer Func_08038038

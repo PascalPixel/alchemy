@@ -24,7 +24,7 @@ Func_080fae2c:
 	adds	r3, r7, r2
 	strb	r0, [r3, #0]
 	ldr	r0, [r7, #36]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r0, r8
 	bl	0x080f8c94
 	adds	r0, r5, #0

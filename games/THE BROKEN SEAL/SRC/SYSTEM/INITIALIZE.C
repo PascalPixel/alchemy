@@ -24,6 +24,14 @@ void Runtime_InitializeHeap(void);
 void Game_ResetForNewGameFar(s32);
 void Audio_InitializeRuntimeDefaultsFar(void);
 
+/* The European editions halt on a Game Pak interrupt, when the cartridge
+   is pulled, through the halt loop start-up copied into the runtime. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define HALT_ON_GAMEPAK_IRQ 1
+void IwramHalt(void);
+#endif
+
 /* Stops DMA0, sets the wait states, clears IWRAM below the stack and
    brings up the heap, resources, display, interrupts and task table. */
 void System_Initialize(void)
@@ -52,6 +60,9 @@ void System_Initialize(void)
     Bg0_ClearTilemap();
     *(u16 *)0x04000000 = 0x140;
     Runtime_SetIrqHandler(0, 1, (void (*)(void))System_VBlankHandler);
+#if defined(HALT_ON_GAMEPAK_IRQ)
+    Runtime_SetIrqHandler(13, 1, IwramHalt);
+#endif
     do { u32 value = KEYCNT_SOFT_RESET; REG_KEYCNT = value; } while (0);
     Audio_InitializeRuntimeDefaultsFar();
     Resource_InitializeTable();

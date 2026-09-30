@@ -3,7 +3,10 @@
 	.section .unidentified.08000000,"a"
 	.global Rom_Start
 Rom_Start:
-	.incbin "baserom.gba", 0x00000000, 0x000000c0
+	.incbin "baserom.gba", 0x00000000, 0x000000af
+	.global Rom_LanguageCode
+Rom_LanguageCode:
+	.incbin "baserom.gba", 0x000000af, 0x00000011
 	.section .unidentified.08007320,"a"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:

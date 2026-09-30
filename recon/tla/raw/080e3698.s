@@ -104,7 +104,7 @@ Func_080e3698:
 	str	r3, [r2, #12]
 	ldr	r3, [r7, #16]
 	str	r3, [r2, #16]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	add	sl, r3
 	mov	r1, sl
@@ -134,7 +134,7 @@ Func_080e3698:
 	ldrb	r3, [r3, #0]
 	movs	r0, #1
 	strb	r3, [r1, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #1
 	ldr	r0, [sp, #20]
 	bl	0x080d4384
@@ -168,7 +168,7 @@ Func_080e3698:
 	mov	r0, r8
 	bl	Object_GetById
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	bl	0x080d2a3c
 	bl	Func_080d2a8c
 	movs	r0, #140
@@ -200,7 +200,7 @@ Func_080e3698:
 	str	r3, [r5, #28]
 	movs	r0, #1
 	subs	r6, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #0
 	bge.n	.L_080e383e
 	movs	r3, #192
@@ -228,13 +228,13 @@ Func_080e3698:
 	str	r3, [r7, #28]
 	movs	r0, #1
 	subs	r6, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #0
 	bge.n	.L_080e3882
 	mov	r0, r8
 	bl	Object_GetById
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #10
 	bl	Battle_WaitMode0
 	adds	r0, r5, #0
@@ -1134,11 +1134,11 @@ Func_080e3698:
 	bl	Audio_PlayCue
 	movs	r0, #45
 .L_080e3f96:
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	bl	0x080200c8
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080e4222
 .L_080e3fa8:
 	movs	r0, #207
@@ -1314,7 +1314,7 @@ Func_080e3698:
 	cmp	r7, #0
 	bge.n	.L_080e40ce
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #192
 	lsls	r2, r2, #5
 	adds	r2, #151
@@ -1329,7 +1329,7 @@ Func_080e3698:
 	mov	r9, r3
 .L_080e4132:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #192
 	lsls	r3, r3, #5
 	adds	r3, #150
@@ -1430,7 +1430,7 @@ Func_080e3698:
 	cmp	r7, #16
 	beq.n	.L_080e4210
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	add	r9, r2
 	mov	r3, r9

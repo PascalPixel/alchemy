@@ -682,7 +682,7 @@ Func_08144b14:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #48]
 	mov	r1, fp
 	adds	r0, #1

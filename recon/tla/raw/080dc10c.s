@@ -37,7 +37,7 @@ Func_080dc10c:
 	ands	r3, r2
 	strb	r3, [r1, #9]
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	Object_SetMode

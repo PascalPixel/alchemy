@@ -597,7 +597,7 @@ Func_08180c94:
 	add	r2, sl
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #8]
 	movs	r4, #1
 	add	fp, r4
@@ -1550,7 +1550,7 @@ Func_08180c94:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #48]
 	adds	r2, #1
 	str	r2, [sp, #48]
@@ -2230,7 +2230,7 @@ Func_08180c94:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r4, #1
 	add	r9, r4
 	mov	r1, r9

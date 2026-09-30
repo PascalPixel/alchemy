@@ -272,7 +272,7 @@ Func_080d5aa0:
 	movs	r3, #0
 	strh	r3, [r2, #0]
 	movs	r0, #16
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r7, #240
 	movs	r1, #240
 	movs	r5, #0
@@ -287,7 +287,7 @@ Func_080d5aa0:
 	strh	r3, [r2, #0]
 	movs	r0, #1
 	str	r1, [sp, #4]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [pc, #120]
 	ldr	r1, [sp, #4]
 	adds	r5, #1
@@ -315,7 +315,7 @@ Func_080d5aa0:
 	movs	r3, #0
 	strh	r3, [r2, #0]
 	movs	r0, #16
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r7, #240
 	movs	r2, #240
 	mov	r8, r5
@@ -331,7 +331,7 @@ Func_080d5aa0:
 	strh	r3, [r1, #0]
 	movs	r0, #1
 	str	r2, [sp, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #28]
 	ldr	r2, [sp, #0]
 	subs	r5, #1
@@ -395,7 +395,7 @@ Func_080d5aa0:
 	adds	r1, r6, #0
 	bl	Object_SetMode
 	movs	r0, #18
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, pc}
@@ -445,7 +445,7 @@ Func_080d5aa0:
 	mov	r1, r8
 	bl	Object_SetMode
 	movs	r0, #18
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, pc}

@@ -68,7 +68,7 @@ Func_0811c2b4:
 	.2byte 0xf800
 	.2byte 0x1c05
 	mov	r0, r8
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -97,7 +97,7 @@ Func_0811c2b4:
 .L_0811c37c:
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -108,7 +108,7 @@ Func_0811c2b4:
 	cmp	r3, #0
 	bne.n	.L_0811c3b6
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

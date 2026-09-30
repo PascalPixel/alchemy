@@ -234,7 +234,7 @@ Func_0803deac:
 	beq.n	.L_0803e0ae
 	movs	r0, #4
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0803e0a6
 	movs	r3, #128
@@ -418,7 +418,7 @@ Func_0803deac:
 .L_0803e1ca:
 	movs	r0, #4
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0803e1e2
 	ldrb	r3, [r5, #5]
@@ -567,7 +567,7 @@ Func_0803deac:
 .L_0803e2ee:
 	movs	r0, #4
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0803e33e
 	movs	r3, #128
@@ -717,7 +717,7 @@ Func_0803deac:
 	strh	r3, [r0, #6]
 	movs	r0, #4
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0803e464
 	movs	r3, #128
@@ -861,7 +861,7 @@ Func_0803deac:
 	movs	r0, #4
 	strh	r3, [r5, #8]
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0803e57a
 	movs	r1, #128

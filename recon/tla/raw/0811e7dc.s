@@ -18,7 +18,7 @@ Func_0811e7dc:
 	bl	0x0811bdb0
 	bl	Func_08020370
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [r5, #44]
 	bl	Func_08013164
 	movs	r3, #0

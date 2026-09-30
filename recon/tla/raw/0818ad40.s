@@ -1347,7 +1347,7 @@ Func_0818ad40:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #8]
 	ldr	r0, [sp, #16]
 	movs	r6, #1
@@ -1444,7 +1444,7 @@ Func_0818ad40:
 .L_0818b8d4:
 	bl	Func_08157530
 	movs	r0, #8
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #23
 	movs	r0, #104
 	bl	Func_081963ec
@@ -1824,7 +1824,7 @@ Func_0818ad40:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #48]
 	adds	r1, #1
 	str	r1, [sp, #48]

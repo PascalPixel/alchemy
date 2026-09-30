@@ -23,7 +23,7 @@ Func_08045794:
 	b.n	.L_080457c2
 .L_080457bc:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080457c2:
 	bl	0x0803a3b8
 	cmp	r0, #0

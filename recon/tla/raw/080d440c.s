@@ -106,7 +106,7 @@ Func_080d440c:
 	movs	r0, #1
 	str	r2, [r5, #12]
 	str	r7, [r5, #16]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #8]
 	movs	r1, #197
 	lsls	r1, r1, #1

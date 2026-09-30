@@ -194,7 +194,7 @@ Func_0804b8b8:
 	bl	0x080461c8
 .L_0804ba40:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0804ba46:
 	ldr	r1, [sp, #24]
 	ldr	r2, [sp, #0]
@@ -238,7 +238,7 @@ Func_0804b8b8:
 	bl	0x0804297c
 	bl	Func_08118118
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #12]
 .L_0804baa6:
 	add	sp, #48
@@ -279,7 +279,7 @@ Func_0804b8b8:
 	mov	r8, r0
 .L_0804baf4:
 	ldrh	r0, [r5, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #67
 	adds	r4, r4, r0
 	ldrb	r3, [r4, #0]

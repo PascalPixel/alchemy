@@ -70,7 +70,7 @@ Func_081192d0:
 .L_08119356:
 	movs	r0, #1
 	str	r4, [sp, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r6, #1
 	ldr	r4, [sp, #0]
 	cmp	r6, #29

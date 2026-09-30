@@ -200,7 +200,7 @@ Func_0803ef48:
 	ldr	r5, [r3, #0]
 .L_0803f0c0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #34
 	ldrsh	r6, [r5, r1]
 	cmp	r6, #0
@@ -311,7 +311,7 @@ Func_0803ef48:
 	lsls	r6, r6, #1
 .L_0803f19e:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #34
 	ldrsh	r3, [r5, r2]
 	cmp	r3, r6

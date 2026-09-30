@@ -65,7 +65,7 @@ Func_081281ec:
 	push	{r7}
 	adds	r5, r0, #0
 	mov	fp, r1
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r6, [r3, #36]
@@ -165,7 +165,7 @@ Func_081281ec:
 	movs	r0, #116
 	str	r3, [r7, #8]
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08128322
 	b.n	.L_081284b2
@@ -441,7 +441,7 @@ Func_081281ec:
 	ldrh	r3, [r3, r0]
 	adds	r0, r3, #0
 	str	r3, [sp, #4]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r2, [sp, #8]
 	ldr	r3, [sp, #20]
 	mov	sl, r0

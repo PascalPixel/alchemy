@@ -32,7 +32,7 @@ Func_081049c8:
 	add	r7, sl
 .L_081049fe:
 	ldrh	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r6, #0
 	movs	r4, #0
 	adds	r0, #248

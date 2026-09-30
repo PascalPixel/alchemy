@@ -64,7 +64,7 @@ Func_080cb6c8:
 	adds	r6, r0, #0
 .L_080cb744:
 	ldrb	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r3, r8
 	adds	r1, r5, #0
 	cmp	r3, #0
@@ -108,7 +108,7 @@ Func_080cb6c8:
 	adds	r5, r0, #0
 .L_080cb79e:
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #50
 	adds	r2, #255
 	adds	r3, r0, r2
@@ -231,7 +231,7 @@ Func_080cb6c8:
 	strb	r5, [r3, #0]
 	movs	r0, #2
 	strb	r6, [r1, #0]
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cb89c:
 	bl	Func_08020268
 .L_080cb8a0:

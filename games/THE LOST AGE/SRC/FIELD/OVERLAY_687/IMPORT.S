@@ -22,7 +22,7 @@
 	overlay_veneer Func_080200c8
 	overlay_veneer Object_SetPosition
 	overlay_veneer Func_08020178
-	overlay_veneer Func_08020218
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020220
 	overlay_veneer Func_08020228
 	overlay_veneer Func_08020230

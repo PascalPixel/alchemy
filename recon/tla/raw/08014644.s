@@ -182,6 +182,9 @@ Func_08014644:
 	.4byte 0x02003610
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Scheduler_DisableOverlayCallbacks
+	.thumb_func
+Scheduler_DisableOverlayCallbacks:
 	push	{r5, r6, lr}
 	ldr	r4, [pc, #48]
 	movs	r0, #1

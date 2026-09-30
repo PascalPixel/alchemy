@@ -382,7 +382,7 @@ Func_080dcf8c:
 	mov	r0, r9
 	bl	Object_SetMode
 	movs	r0, #15
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #204
 	mov	r3, sl
 	lsls	r0, r0, #6
@@ -458,7 +458,7 @@ Func_080dcf8c:
 	b.n	.L_080dd396
 .L_080dd34c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #0]
 	movs	r3, #0
 	ldrsb	r3, [r0, r3]

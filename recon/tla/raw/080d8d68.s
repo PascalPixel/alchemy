@@ -828,7 +828,7 @@ Func_080d8d68:
 	movs	r3, #0
 	str	r3, [r0, #24]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [pc, #136]
 	ldr	r0, [r2, #0]
 	bl	Math_Sine
@@ -874,7 +874,7 @@ Func_080d8d68:
 	adds	r3, r3, r0
 	str	r3, [r6, #0]
 	movs	r0, #6
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	movs	r1, #2
 	bl	Object_SetMode
@@ -1155,7 +1155,7 @@ Func_080d8d68:
 	b.n	.L_080d9572
 .L_080d96a0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #16]
 	ldr	r1, [sp, #56]
 	ldr	r2, [sp, #12]
@@ -1316,7 +1316,7 @@ Func_080d8d68:
 	str	r2, [r5, #24]
 	cmp	r0, #0
 	beq.n	.L_080d97ee
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080d97ee:
 	ldr	r2, [sp, #20]
 	cmp	r2, #0
@@ -1342,7 +1342,7 @@ Func_080d8d68:
 	movs	r1, #3
 	bl	Object_SetMode
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #20]
 	movs	r3, #0
 	str	r3, [sp, #16]
@@ -1487,7 +1487,7 @@ Func_080d8d68:
 	ble.n	.L_080d9846
 .L_080d9942:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #16]
 	ldr	r2, [sp, #20]
 	adds	r3, #1

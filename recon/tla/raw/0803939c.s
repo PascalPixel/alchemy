@@ -8,7 +8,7 @@ UiWork_Finalize:
 	adds	r7, r1, #0
 	cmp	r5, #0
 	beq.n	.L_080393fa
-	bl	.L_080393fc
+	bl	RenderOutput_PrepareForRedraw
 	ldrh	r3, [r5, #8]
 	ldrh	r0, [r5, #12]
 	ldrh	r1, [r5, #14]
@@ -51,17 +51,3 @@ UiWork_Finalize:
 	strh	r3, [r5, #26]
 .L_080393fa:
 	pop	{r5, r6, r7, pc}
-.L_080393fc:
-	push	{r5, lr}
-	adds	r5, r0, #0
-	ldrh	r2, [r5, #22]
-	movs	r3, #8
-	ands	r3, r2
-	cmp	r3, #0
-	bne.n	.L_08039414
-	bl	Func_08039418
-	adds	r0, r5, #0
-	bl	Func_08039430
-.L_08039414:
-	pop	{r5, pc}
-	.2byte 0x0000

@@ -1352,7 +1352,7 @@ Func_0818bc98:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [sp, #52]
 	ldr	r3, [pc, #72]
 	adds	r6, #1

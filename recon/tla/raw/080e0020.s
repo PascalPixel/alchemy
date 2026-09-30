@@ -239,26 +239,26 @@ Func_080e0020:
 	str	r0, [r6, #28]
 	adds	r7, #1
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #11
 	blt.n	.L_080e01a4
 	movs	r0, #5
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #1
 	adds	r0, r6, #0
 	bl	Object_SetMode
 	movs	r0, #108
 	bl	Audio_PlayCue
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #108
 	bl	Audio_PlayCue
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #108
 	bl	Audio_PlayCue
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #109
 	bl	Audio_PlayCue
 	add	r3, sp, #24
@@ -317,13 +317,13 @@ Func_080e0020:
 	movs	r0, #8
 	ldr	r3, [r6, #16]
 	str	r3, [r2, #8]
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	bl	0x080200c8
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080dc384
 .L_080e02dc:
 	add	sp, #36

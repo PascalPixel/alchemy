@@ -424,11 +424,11 @@
 	movs	r5, #184
 	lsls	r5, r5, #1
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0802a982
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_0802aa24
 .L_0802a982:
 	movs	r2, #128
@@ -1686,7 +1686,7 @@
 	bl	.L_0802b1a0
 	adds	r7, #10
 	adds	r0, r5, #0
-	bl	0x08013560
+	bl	WaitFrames
 	ldrh	r0, [r7, #0]
 	adds	r6, #10
 	mov	ip, r0

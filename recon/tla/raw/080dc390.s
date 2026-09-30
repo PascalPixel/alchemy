@@ -505,7 +505,7 @@ Func_080dc390:
 .L_080dc784:
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080dc7ac
 	mov	r2, sl
@@ -548,6 +548,6 @@ Func_080dc390:
 	ldr	r0, [r3, #16]
 	bl	0x080e1420
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 	.2byte 0x0000

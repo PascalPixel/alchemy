@@ -24,7 +24,7 @@ Func_0811c3bc:
 .L_0811c3e2:
 	adds	r0, r7, #0
 	adds	r7, #1
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	cmp	r7, #4
 	bne.n	.L_0811c3e2
 	movs	r7, #0
@@ -39,7 +39,7 @@ Func_0811c3bc:
 	adds	r0, r5, #0
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r3, r0, #0
 	adds	r3, #64
 	ldrh	r3, [r3, #0]
@@ -82,7 +82,7 @@ Func_0811c3bc:
 	movs	r2, #2
 	adds	r0, r5, #0
 	add	r8, r2
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strh	r5, [r6, #0]
 	adds	r5, r0, #0
 	adds	r5, #64

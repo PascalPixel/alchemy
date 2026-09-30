@@ -138,7 +138,7 @@ Func_0810b7b4:
 	lsls	r0, r0, #2
 	bl	Func_080f8058
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810b8d2:
 	ldr	r1, [sp, #12]
 	movs	r2, #0
@@ -151,7 +151,7 @@ Func_0810b7b4:
 	mov	r8, r2
 .L_0810b8e8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #204]
 	movs	r3, #1
 	ldr	r2, [r1, #4]
@@ -236,7 +236,7 @@ Func_0810b7b4:
 	ldr	r0, [r7, #36]
 	bl	0x08038018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x0810824c
 	adds	r0, r6, #0
 	add	sp, #16
@@ -265,7 +265,7 @@ Func_0810b7b4:
 	ldr	r3, [r3, #0]
 	movs	r5, #2
 	mov	r9, r3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #1
 	str	r0, [sp, #16]
 	movs	r2, #16
@@ -358,7 +358,7 @@ Func_0810b7b4:
 	bl	0x08109270
 .L_0810baa0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [pc, #492]
 	movs	r3, #1
 	ldr	r2, [r4, #4]
@@ -366,7 +366,7 @@ Func_0810b7b4:
 	cmp	r2, #0
 	beq.n	.L_0810bb30
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #160
 	lsls	r3, r3, #3
 	adds	r3, #11
@@ -418,7 +418,7 @@ Func_0810b7b4:
 	b.n	.L_0810bb22
 .L_0810bb1c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810bb22:
 	bl	0x08038048
 	cmp	r0, #0
@@ -476,7 +476,7 @@ Func_0810b7b4:
 	movs	r5, #4
 .L_0810bb96:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r6, #0]
 	ands	r3, r5
 	cmp	r3, #0
@@ -498,7 +498,7 @@ Func_0810b7b4:
 	ldr	r0, [r3, #0]
 	bl	0x08038060
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0810bc64
 .L_0810bbce:
 	ldr	r3, [r4, #12]
@@ -592,7 +592,7 @@ Func_0810b7b4:
 	ldr	r0, [sp, #20]
 	bl	0x08038018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	add	sp, #32
 	pop	{r3, r5, r6, r7}
@@ -624,7 +624,7 @@ Func_0810b7b4:
 	mov	r8, r2
 	sub	sp, #8
 	mov	fp, r3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r1, r8
 	lsls	r1, r1, #1
 	mov	r9, r1

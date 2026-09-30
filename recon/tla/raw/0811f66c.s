@@ -165,7 +165,7 @@ Func_0811f66c:
 	lsls	r3, r3, #2
 	ldr	r0, [r4, r3]
 	mov	r9, r3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	ldrb	r0, [r7, #3]
 	movs	r6, #0
@@ -750,7 +750,7 @@ Func_0811f66c:
 	b.n	.L_0811fe00
 .L_0811fc8e:
 	ldr	r0, [sp, #28]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #165
 	lsls	r4, r4, #1
 	adds	r3, r0, r4
@@ -808,13 +808,13 @@ Func_0811f66c:
 	ldr	r2, [sp, #16]
 	str	r1, [sp, #0]
 	ldr	r0, [r5, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r8, r0
 	ldr	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	ldr	r0, [sp, #28]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #165
 	lsls	r4, r4, #1
 	adds	r3, r0, r4
@@ -981,7 +981,7 @@ Func_0811f66c:
 	.2byte 0x0811
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #48
 	adds	r1, r0, #0
 	adds	r4, #255

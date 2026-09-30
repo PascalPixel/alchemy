@@ -797,7 +797,7 @@ Func_0816fca8:
 	add	r2, fp
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #48]
 	adds	r3, #1
 	str	r3, [sp, #48]
@@ -1039,7 +1039,7 @@ Func_0816fca8:
 	ldr	r0, [r3, #0]
 	bl	0x0814cc4c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #0
 	str	r1, [sp, #76]
 .L_0817052e:
@@ -2032,7 +2032,7 @@ Func_0816fca8:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #76]
 	adds	r0, #1
 	str	r0, [sp, #76]

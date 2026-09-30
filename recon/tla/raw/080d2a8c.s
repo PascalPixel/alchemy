@@ -11,6 +11,6 @@ Func_080d2a8c:
 	lsls	r2, r2, #1
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 	.2byte 0x0000

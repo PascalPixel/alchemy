@@ -85,12 +85,12 @@ Func_080f8ce8:
 	cmp	sl, r3
 	beq.n	.L_080f8dc8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #44]
 	movs	r7, #1
 .L_080f8d98:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r5, #4]
 	ands	r3, r7
 	cmp	r3, #0

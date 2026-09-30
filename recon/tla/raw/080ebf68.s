@@ -121,7 +121,7 @@ Func_080ebf68:
 	bl	Func_08013164
 	movs	r0, #142
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ec072
 	movs	r3, #132

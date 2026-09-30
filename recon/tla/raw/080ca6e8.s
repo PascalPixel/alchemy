@@ -322,7 +322,7 @@ Func_080ca6e8:
 	ands	r2, r3
 	strb	r2, [r1, #0]
 	movs	r0, #33
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ca982
 	movs	r1, #192
@@ -676,7 +676,7 @@ Func_080ca6e8:
 	strb	r2, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r1, #12
 	adds	r0, r5, #0
 	bl	Object_SetMode

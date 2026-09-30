@@ -58,7 +58,7 @@ Func_0802c8a0:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #96]
 	mov	r2, r8
 	ldr	r3, [r3, #0]

@@ -39,6 +39,6 @@ struct OwnerValueState {
     u8 values[4];
 };
 
-void *OwnerState_Get(s32 owner);
+void *Owner_GetState(s32 owner);
 
 #endif

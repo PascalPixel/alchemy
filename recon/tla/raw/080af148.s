@@ -1,13 +1,13 @@
 .syntax unified
 	.thumb
-	.global Func_080af148
+	.global Inventory_Remove
 	.thumb_func
-Func_080af148:
+Inventory_Remove:
 .L_080af148:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
 	adds	r7, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsls	r5, r5, #1
 	adds	r5, #216
 	ldrh	r3, [r0, r5]
@@ -69,29 +69,6 @@ Func_080af148:
 	movs	r6, #2
 .L_080af1be:
 	adds	r0, r7, #0
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	adds	r0, r6, #0
 	pop	{r5, r6, r7, pc}
-	push	{r5, r6, r7, lr}
-	adds	r5, r0, #0
-	adds	r6, r1, #0
-	bl	OwnerState_Get
-	lsls	r3, r6, #1
-	adds	r3, #216
-	ldrh	r7, [r0, r3]
-	adds	r1, r6, #0
-	adds	r0, r5, #0
-	bl	.L_080af148
-	movs	r3, #1
-	adds	r5, r0, #0
-	negs	r3, r3
-	cmp	r5, r3
-	beq.n	.L_080af1f6
-	movs	r1, #1
-	adds	r0, r7, #0
-	bl	0x080af378
-	bl	0x080c85d0
-.L_080af1f6:
-	adds	r0, r5, #0
-	pop	{r5, r6, r7, pc}
-	.2byte 0x0000

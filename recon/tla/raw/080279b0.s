@@ -100,7 +100,7 @@ Func_080279b0:
 .L_08027a66:
 	movs	r0, #100
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08027a74
 	b.n	.L_08027bb2

@@ -213,7 +213,7 @@ Func_080ea14c:
 	cmp	r2, #0
 	bge.n	.L_080ea2d4
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #139
 	bl	Audio_PlayCue
 	movs	r1, #2
@@ -760,7 +760,7 @@ Func_080ea14c:
 	movs	r1, #0
 	movs	r0, #1
 	str	r1, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #186
 	ldr	r3, [sp, #36]
 	lsls	r1, r1, #2
@@ -858,19 +858,19 @@ Func_080ea14c:
 	movs	r1, #0
 	adds	r0, r7, #0
 	lsls	r6, r6, #16
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	lsrs	r6, r6, #16
 	movs	r3, #255
 	strb	r3, [r5, #2]
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ea856
 	adds	r0, r7, #0
 	movs	r1, #0
 	bl	Object_SetMode
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080ea85e
 .L_080ea856:
 	adds	r0, r7, #0

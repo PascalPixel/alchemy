@@ -72,10 +72,10 @@ Func_08120454:
 	bl	0x080ad078
 	str	r0, [sp, #84]
 	ldr	r0, [sp, #76]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #80]
 	mov	r0, sl
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #166
 	mov	r8, r0
 	ldr	r3, [pc, #720]
@@ -883,13 +883,13 @@ Func_08120454:
 .L_08120b1a:
 	ldr	r2, [sp, #92]
 	ldrb	r0, [r2, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrh	r5, [r0, #60]
 	cmp	fp, r6
 	bne.n	.L_08120b36
 	ldr	r3, [sp, #92]
 	ldrb	r0, [r3, #2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrh	r3, [r0, #60]
 	lsrs	r3, r3, #2
 	adds	r5, r5, r3
@@ -1002,7 +1002,7 @@ Func_08120454:
 .L_08120c0a:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08120c28
 	ldr	r1, [sp, #4]
@@ -1752,7 +1752,7 @@ Func_08120454:
 	beq.n	.L_081211ce
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_081211d4
 	ldr	r4, [sp, #4]

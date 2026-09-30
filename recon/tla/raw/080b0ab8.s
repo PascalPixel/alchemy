@@ -27,7 +27,7 @@ Func_080b0ab8:
 	mov	r0, fp
 	mov	r9, r2
 	mov	r8, r3
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080b0af2
 	movs	r0, #1
@@ -44,7 +44,7 @@ Func_080b0ab8:
 	adds	r5, r0, #0
 .L_080b0b04:
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #140
 	lsls	r2, r2, #1
 	adds	r3, r7, r2

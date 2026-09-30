@@ -6,7 +6,7 @@ Func_080aebd0:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
 	adds	r7, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	movs	r1, #58
 	ldrsh	r3, [r6, r1]
@@ -23,7 +23,7 @@ Func_080aebd0:
 .L_080aebf4:
 	adds	r0, r7, #0
 	strh	r1, [r6, #58]
-	bl	0x080aea30
+	bl	Owner_RecalculateRatios
 	movs	r2, #58
 	ldrsh	r0, [r6, r2]
 	pop	{r5, r6, r7, pc}

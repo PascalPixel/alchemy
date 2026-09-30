@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08039430
+	.global RenderOutput_ClearList
 	.thumb_func
-Func_08039430:
+RenderOutput_ClearList:
 	push	{r5, lr}
 	adds	r3, r0, #0
 	movs	r5, #0

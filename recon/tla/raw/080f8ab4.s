@@ -125,7 +125,7 @@ Func_080f8ab4:
 	beq.n	.L_080f8bae
 	movs	r0, #1
 	str	r4, [sp, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #0]
 	b.n	.L_080f8b52
 .L_080f8bae:

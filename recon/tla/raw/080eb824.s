@@ -138,7 +138,7 @@ Func_080eb824:
 	ldr	r0, [pc, #32]
 	bl	Func_08014644
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #180
 	bl	Runtime_ReleaseSlot
 	movs	r0, #96
@@ -245,7 +245,7 @@ Func_080eb824:
 	str	r3, [r1, #28]
 	mov	r0, r8
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #0
 	movs	r2, #1
 	str	r2, [sp, #16]
@@ -462,7 +462,7 @@ Func_080eb824:
 	strh	r1, [r2, #6]
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 .L_080ebbe2:
 	mov	r2, fp
 	cmp	r2, #10
@@ -479,7 +479,7 @@ Func_080eb824:
 	str	r2, [sp, #28]
 .L_080ebbfa:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #186
 	ldr	r1, [sp, #28]
 	lsls	r2, r2, #2

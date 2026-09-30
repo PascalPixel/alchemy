@@ -327,7 +327,7 @@ Func_0817b66c:
 	add	r2, sl
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	add	r9, r3
 	mov	r1, r9

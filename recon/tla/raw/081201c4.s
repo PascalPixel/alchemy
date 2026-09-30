@@ -230,7 +230,7 @@ BattleFx_CanAffectDefeatedUnit:
 	.thumb_func
 BattleUnit_KeepsOneHp:
 	push	{lr}
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

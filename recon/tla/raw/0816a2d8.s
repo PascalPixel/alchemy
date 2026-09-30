@@ -230,11 +230,11 @@ Func_0816a2d8:
 	cmp	r1, #4
 	bne.n	.L_0816a4b4
 	movs	r0, #8
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0816a4ba
 .L_0816a4b4:
 	movs	r0, #16
-	bl	0x08013560
+	bl	WaitFrames
 .L_0816a4ba:
 	ldr	r2, [sp, #16]
 	ldr	r3, [r2, #4]
@@ -469,7 +469,7 @@ Func_0816a2d8:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	add	sl, r2
 	mov	r3, sl
@@ -861,7 +861,7 @@ Func_0816a2d8:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #8]
 	movs	r2, #1
 	add	r9, r2
@@ -1350,7 +1350,7 @@ Func_0816a2d8:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #28]
 	adds	r2, #1
 	str	r2, [sp, #28]

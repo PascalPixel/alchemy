@@ -1,18 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080f80a8
-	.thumb_func
-Func_080f80a8:
-	push	{lr}
-	bl	0x0801479c
-	bl	0x080202e0
-	movs	r0, #179
-	lsls	r0, r0, #1
-	bl	0x08016d18
-	movs	r0, #169
-	lsls	r0, r0, #1
-	bl	0x08016d18
-	pop	{pc}
 	push	{lr}
 	movs	r0, #169
 	lsls	r0, r0, #1
@@ -116,7 +103,7 @@ Func_080f80a8:
 	mov	fp, r1
 	mov	r0, fp
 	mov	r9, r3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r3, [sp, #24]
 	mov	sl, r0
 	lsls	r3, r3, #1
@@ -156,7 +143,7 @@ Func_080f80a8:
 	cmp	r5, #0
 	bne.n	.L_080f8200
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r9
 	movs	r3, #32
 	ldr	r0, [r2, #40]
@@ -241,7 +228,7 @@ Func_080f80a8:
 	cmp	r5, #0
 	bne.n	.L_080f82b2
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r9
 	movs	r3, #80
 	ldr	r0, [r2, #40]

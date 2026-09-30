@@ -59,7 +59,7 @@ Func_08023510:
 	ldr	r1, [pc, #72]
 	b.n	.L_080235b0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #68]
 	b.n	.L_080235b0
 	ldr	r1, [pc, #68]

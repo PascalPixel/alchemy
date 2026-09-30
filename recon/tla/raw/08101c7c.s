@@ -147,7 +147,7 @@ Func_08101c7c:
 	ldr	r0, [r3, #52]
 	bl	0x08038268
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #24]
 	adds	r2, #240
 	str	r2, [sp, #8]
@@ -325,7 +325,7 @@ Func_08101c7c:
 	negs	r0, r0
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [r7, #12]
 	movs	r3, #144
 	ands	r2, r3
@@ -385,7 +385,7 @@ Func_08101c7c:
 	ldr	r0, [sp, #32]
 	bl	0x08038268
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #1
 	ldr	r0, [sp, #28]
 	bl	0x08038018
@@ -949,7 +949,7 @@ Func_08101c7c:
 	adds	r3, r3, r4
 	ldrh	r0, [r1, r3]
 	ldr	r6, [r1, #16]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r7, #42
 	adds	r5, r0, #0
 	adds	r0, r6, #0
@@ -1058,7 +1058,7 @@ Func_08101c7c:
 	bl	0x08038080
 .L_081024e0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #84]
 	cmp	r2, #1
 	bne.n	.L_08102572
@@ -1125,7 +1125,7 @@ Func_08101c7c:
 	bl	0x08038080
 .L_08102572:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #72]
 	bl	0x08038268
 	ldr	r4, [sp, #60]
@@ -1162,7 +1162,7 @@ Func_08101c7c:
 	str	r3, [sp, #68]
 .L_081025c0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #652]
 	movs	r2, #128
 	ldr	r3, [r1, #0]
@@ -1259,7 +1259,7 @@ Func_08101c7c:
 	movs	r1, #26
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r6, #4]
 	ands	r3, r5
 	cmp	r3, #0
@@ -1293,7 +1293,7 @@ Func_08101c7c:
 	b.n	.L_081026fa
 .L_081026f4:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_081026fa:
 	bl	0x08038048
 	cmp	r0, #0
@@ -1304,7 +1304,7 @@ Func_08101c7c:
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	Func_08100e5c
 	movs	r2, #9
 	movs	r3, #1
@@ -1321,7 +1321,7 @@ Func_08101c7c:
 	b.n	.L_0810273c
 .L_08102736:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810273c:
 	bl	0x08038048
 	cmp	r0, #0
@@ -1378,7 +1378,7 @@ Func_08101c7c:
 .L_081027b8:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 .L_081027c0:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
@@ -1480,7 +1480,7 @@ Func_08101c7c:
 .L_08102892:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810289a:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
@@ -1575,7 +1575,7 @@ Func_08101c7c:
 .L_08102952:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810295a:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
@@ -1597,7 +1597,7 @@ Func_08101c7c:
 	str	r4, [sp, #8]
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r7, #4]
 	ldr	r4, [sp, #8]
 	ands	r3, r6
@@ -1611,7 +1611,7 @@ Func_08101c7c:
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	Func_08100e5c
 	movs	r1, #9
 	movs	r2, #9
@@ -1623,7 +1623,7 @@ Func_08101c7c:
 .L_081029bc:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 .L_081029c4:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
@@ -1645,7 +1645,7 @@ Func_08101c7c:
 	str	r4, [sp, #8]
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r7, #4]
 	ldr	r4, [sp, #8]
 	ands	r3, r6
@@ -1659,7 +1659,7 @@ Func_08101c7c:
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	Func_08100e5c
 	movs	r1, #9
 	movs	r2, #9
@@ -1671,7 +1671,7 @@ Func_08101c7c:
 .L_08102a26:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 .L_08102a2e:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
@@ -1693,7 +1693,7 @@ Func_08101c7c:
 	str	r4, [sp, #8]
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r7, #4]
 	ldr	r4, [sp, #8]
 	ands	r3, r6
@@ -1707,7 +1707,7 @@ Func_08101c7c:
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #132
 	lsls	r2, r2, #6
 	adds	r2, #40

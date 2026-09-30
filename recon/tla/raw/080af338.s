@@ -1,86 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080af298
-	.thumb_func
-Func_080af298:
-	push	{r5, r6, lr}
-	adds	r6, r0, #0
-	bl	PartyInventory_FindOwner
-	movs	r3, #1
-	adds	r5, r0, #0
-	negs	r3, r3
-	movs	r0, #0
-	cmp	r5, r3
-	beq.n	.L_080af2be
-	adds	r1, r6, #0
-	adds	r0, r5, #0
-	bl	Inventory_Find
-	adds	r1, r0, #0
-	adds	r0, r5, #0
-	bl	Func_080af148
-	movs	r0, #0
-.L_080af2be:
-	pop	{r5, r6, pc}
-	push	{r5, r6, lr}
-	adds	r6, r0, #0
-	bl	PartyInventory_FindOwner
-	movs	r3, #1
-	adds	r5, r0, #0
-	negs	r3, r3
-	movs	r0, #0
-	cmp	r5, r3
-	beq.n	.L_080af2e6
-	adds	r1, r6, #0
-	adds	r0, r5, #0
-	bl	Inventory_Find
-	adds	r1, r0, #0
-	adds	r0, r5, #0
-	bl	0x080af1c8
-	movs	r0, #0
-.L_080af2e6:
-	pop	{r5, r6, pc}
-	push	{r5, lr}
-	adds	r5, r1, #0
-	bl	OwnerState_Get
-	lsls	r5, r5, #1
-	adds	r5, #216
-	ldrh	r2, [r0, r5]
-	adds	r3, r2, #0
-	cmp	r3, #0
-	bne.n	.L_080af302
-	movs	r0, #1
-	negs	r0, r0
-	b.n	.L_080af30a
-.L_080af302:
-	ldr	r3, [pc, #8]
-	orrs	r3, r2
-	strh	r3, [r0, r5]
-	movs	r0, #0
-.L_080af30a:
-	pop	{r5, pc}
-	.2byte 0x0400
-	.2byte 0x0000
-	push	{r5, lr}
-	adds	r5, r1, #0
-	bl	OwnerState_Get
-	lsls	r5, r5, #1
-	adds	r5, #216
-	ldrh	r2, [r0, r5]
-	adds	r3, r2, #0
-	cmp	r3, #0
-	bne.n	.L_080af32a
-	movs	r0, #1
-	negs	r0, r0
-	b.n	.L_080af336
-.L_080af32a:
-	movs	r3, #251
-	lsls	r3, r3, #8
-	adds	r3, #255
-	ands	r3, r2
-	strh	r3, [r0, r5]
-	movs	r0, #0
-.L_080af336:
-	pop	{r5, pc}
 	push	{lr}
 	bl	Item_GetDirect
 	ldrh	r0, [r0, #40]
@@ -116,6 +35,9 @@ Func_080af298:
 	pop	{pc}
 	.2byte 0x208c
 	.2byte 0x0200
+	.global Item_AdjustCounter
+	.thumb_func
+Item_AdjustCounter:
 	push	{lr}
 	movs	r3, #128
 	lsls	r3, r3, #1
@@ -136,13 +58,16 @@ Func_080af298:
 	movs	r0, r0
 	.2byte 0x1f40
 	.2byte 0x080b
+	.global Inventory_CountItem
+	.thumb_func
+Inventory_CountItem:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
 	push	{r6, r7}
 	adds	r6, r1, #0
 	sub	sp, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #128
 	lsls	r3, r3, #1
 	adds	r3, #255

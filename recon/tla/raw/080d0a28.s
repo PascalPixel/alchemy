@@ -271,7 +271,7 @@ Func_080d0a28:
 	ldr	r0, [pc, #20]
 	bl	0x080145a8
 	movs	r0, #120
-	bl	0x08013560
+	bl	WaitFrames
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3
@@ -331,7 +331,7 @@ Func_080d0a28:
 	lsls	r1, r1, #5
 	lsls	r0, r0, #1
 	adds	r5, r6, r1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080d0cbe
 	b.n	.L_080d0e0c

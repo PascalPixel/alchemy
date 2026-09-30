@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgBiribinoNotTrueWitnesses[];
 extern u8 MsgBiribinoOhItS[];
 extern u8 MsgBiribinoUnderArrest[];
@@ -35,41 +36,6 @@ void Engine_EventWaitForScreen();
 void Engine_EventRequestExit();
 void Engine_EventEnd();
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 /* McCoy's Palace garden: the party walks in and actors 11 and 12 talk it
  * over until the choice is made, then the scene
  * plays out by flag 0x84a and leaves. */
@@ -83,8 +49,8 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_TaskWait(1);
     Call3(Engine_ActorSetPosition, 0, 0x1400000, 0x1740000);
     Engine_EventOpenScreen();
-    Call2(Engine_CameraSetSpeed, 0x3333, 0x666);
-    Call4(Engine_CameraMoveTo, 0x1400000, -1, 0x1220000, 1);
+    Engine_CameraSetSpeed(0x3333, 0x666);
+    Engine_CameraMoveTo(0x1400000, -1, 0x1220000, 1);
     Call3(Engine_ActorSetSpeed, 0, 0x9999, 0x4ccc);
     Call3(Engine_ActorWalkToAndWait, 0, 0x140, 0x136);
     Call3(Engine_ActorFaceDirection, 11, 0x3000, 10);
@@ -105,9 +71,9 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_ActorRunRepeatedMotion(12, 1);
     Value2(Engine_EventOpenMessage, 12, 0);
     Call3(Engine_ActorFaceDirection, 0, 0xe000, 0);
-    while (Value2(Engine_EventChooseYesNo, 0, 0) != 0) {
-        Call3(Engine_ActorShowEmote, 12, 0x100, 60);
-        Call1(Engine_EventSetMessage, (s32)MsgBiribinoNotTrueWitnesses);
+    while (Engine_EventChooseYesNo(0, 0) != 0) {
+        Engine_ActorShowEmote(12, 0x100, 60);
+        Engine_EventSetMessage((s32)MsgBiribinoNotTrueWitnesses);
         Engine_EventShowMessageAndWait(12, 0, 10);
         Engine_ActorStartRepeatedMotion(12, 2);
         Engine_EventOpenMessage(12, 0);
@@ -119,7 +85,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_ActorSetAnimationAndWait(12, 3);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(11, 1);
-    Call1(Engine_EventSetMessage, (s32)MsgBiribinoUnderArrest);
+    Engine_EventSetMessage((s32)MsgBiribinoUnderArrest);
     Engine_EventShowMessageAndWait(11, 0, 10);
     Call3(Engine_ActorSetSpeed, 11, 0x10000, 0x8000);
     Call3(Engine_ActorWalkToAndWait, 11, 0x13a, 0x118);
@@ -127,10 +93,10 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_EventShowMessageAndWait(11, 0, 40);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
     Engine_EventWait(60);
-    if (Value1(Engine_GameFlagIsSet, 0x84a) == 0) {
-        Call3(Engine_ActorSetSpeed, 12, 0x10000, 0x8000);
+    if (Engine_GameFlagIsSet(0x84a) == 0) {
+        Engine_ActorSetSpeed(12, 0x10000, 0x8000);
         Engine_ActorGet(12)[90] &= 254;
-        Call3(Engine_ActorWalkToAndWait, 12, 0x15a, 0x107);
+        Engine_ActorWalkToAndWait(12, 0x15a, 0x107);
         Engine_EventWait(1);
         {
             u8 *record = Engine_ActorGet(12);

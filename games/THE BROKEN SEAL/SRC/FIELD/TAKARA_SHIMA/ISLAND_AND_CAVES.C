@@ -343,10 +343,6 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested);
 
 /* Outbound leg of the slot-16 transition beat. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 void FieldScene_RunScene3b2_02001494(void)

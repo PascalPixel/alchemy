@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void SceneState_ApplyFiveRectsAtColumn78(void);
 void DialogueLayout_ConfigureTwoRegions(void);
@@ -31,11 +32,6 @@ extern s32 FuneKanpan_LayerScroll[];
 extern s32 FuneKanpan_LayerSpeed[];
 extern u8 *gMapWork;
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 /* Ship deck entry: record the arrival, set the deck by the voyage flags, then run the entrance's scene or place the deck crew. */
 void FuneKanpan_ApplyEntryState(void)
 {
@@ -59,12 +55,12 @@ void FuneKanpan_ApplyEntryState(void)
         Value2(Engine_TaskAddCallback, (s32)SceneState_ConfigureEntries8Through19, 0xc80);
         FuneKanpan_LayerScroll[1] = 0x200000;
         FuneKanpan_LayerSpeed[1] = 0x13333;
-        Value2(Engine_TaskAddCallback, (s32)FuneKanpan_RockDeck, 0xc80);
+        Engine_TaskAddCallback((s32)FuneKanpan_RockDeck, 0xc80);
     } else if (Engine_GameFlagIsSet(0x928) != 0) {
         SceneState_ApplyFiveRectsAtColumn78();
         FuneKanpan_LayerScroll[1] = flag;
         FuneKanpan_LayerSpeed[1] = flag;
-        Value2(Engine_TaskAddCallback, (s32)FuneKanpan_RockDeck, 0xc80);
+        Engine_TaskAddCallback((s32)FuneKanpan_RockDeck, 0xc80);
     }
     if (Engine_GameFlagIsSet(0x927) == 0) {
         SceneState_InitActorSlots8To19();

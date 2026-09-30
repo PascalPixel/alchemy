@@ -3,11 +3,6 @@
 
 void PositionSceneActorPair(s32 actor, s32 x, s32 z);
 
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 /* Crossbone Isle push block, westward: by the column actor 19 stopped in and where actors 17, 18 and 9 stand, slide its pair back to the matching offset, then move the block's cell attributes. */
 void TakaraShima_SettlePushedBlockWest(void)
 {
@@ -74,6 +69,6 @@ void TakaraShima_SettlePushedBlockWest(void)
         }
     }
     Engine_TaskWait(2);
-    Call6(Engine_MapCopyCellAttributes, cell_x, cell_z - 1, 1, 3, Engine_ActorGet(19)->x.fixed >> 20, cell_z - 1);
-    Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 3, cell_x, cell_z - 1);
+    Engine_MapCopyCellAttributes(cell_x, cell_z - 1, 1, 3, Engine_ActorGet(19)->x.fixed >> 20, cell_z - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
 }

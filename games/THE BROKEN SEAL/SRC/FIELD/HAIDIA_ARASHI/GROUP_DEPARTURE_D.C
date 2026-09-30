@@ -43,7 +43,7 @@ void FieldScene_RunScene372SequenceA(void)
     Actor_RunRepeatedMotion(20, 2);
     Event_SetMessage((base + 4));
     Event_ShowMessageAndWait(20, 0, 20);
-    Call2(Object_SetActionCallbackAndRefreshById, 20, (s32)HaidiaArashi_ActorTwentyScript);
+    Object_SetActionCallbackAndRefreshById(20, (s32)HaidiaArashi_ActorTwentyScript);
     GameFlag_Set(0x835);
     Event_End();
 }

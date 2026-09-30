@@ -24,28 +24,6 @@ void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-/* FAKEMATCH: calls spelled through these value wrappers keep the
- * reference's argument and reload order. */
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
 static __inline__ void bump_halfword(s32 off, s32 amount)
 {
     u8 *work = (u8 *)gEventWork;
@@ -175,7 +153,7 @@ void RunDialoguePromptScene(void)
     SceneActor_SetModeZeroAndValue(9, 20);
     Actor_EnableActionCallback(14, KuupuappuHeya_VaultScriptC);
     Event_Wait(50);
-    Value2((s32 (*)())Engine_ActorEnableActionCallback, 9, (s32)KuupuappuHeya_VaultScriptD);
+    ((s32 (*)())Engine_ActorEnableActionCallback)(9, (s32)KuupuappuHeya_VaultScriptD);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 0x1c8);
@@ -364,7 +342,7 @@ void RunDialoguePromptScene(void)
     Actor_FaceDirection(ACTOR_IVAN, 0xd000, 0);
     Object_RefreshSelectorById(9);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-    rec8 = Value1(((s32 (*)())Engine_ActorGet), 14);
+    rec8 = (((s32 (*)())Engine_ActorGet))(14);
     {
         u8 *target = rec8 + 91;
         /* FAKEMATCH: the flag goes through a word-sized local and a
@@ -457,7 +435,7 @@ void RunDialoguePromptScene(void)
     Actor_FaceDirection(ACTOR_IVAN, 0, 0);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    rec8 = Value3(BattleFx_PlayCueAndStartEmitterOnTarget, 2, 17, 65);
+    rec8 = BattleFx_PlayCueAndStartEmitterOnTarget(2, 17, 65);
     Event_Wait(60);
     rod = (s32)MsgKuupuappuIvanGotShamansRod;
     Message_ShowCentered(rod, 1);
@@ -482,7 +460,7 @@ void RunDialoguePromptScene(void)
         u16 *slot = (u16 *)(p7 + 0x1d8);
         s32 saved = *(s16 *)slot;
 
-        if (Value0(OverlayObject_GetObjectTwoByte118)!= 0) {
+        if (OverlayObject_GetObjectTwoByte118()!= 0) {
             Event_SetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
             Event_ShowMessage(ACTOR_IVAN, 0);
             OverlayObject_RunObjectTwoWhenFlagged();
@@ -502,7 +480,7 @@ void RunDialoguePromptScene(void)
     SceneActor_SetModeZeroAndValue(1, 20);
     SceneEffect_ApplyThreeValuesAndFinish(0, 3, 20);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1(((s32 (*)())Engine_ActorGet), 0);
+    record = (((s32 (*)())Engine_ActorGet))(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

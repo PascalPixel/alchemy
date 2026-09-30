@@ -34,7 +34,7 @@ void FieldScene_RunScene395_02000158(void)
             KorimaKi_PlayGesture(10, 1);
             Event_SetMessage((s32)MsgKorimaSilence2);
             Event_ShowMessage(8, 0);
-            Value2(KorimaKi_PlayGesture, 10, 0);
+            KorimaKi_PlayGesture(10, 0);
             record = PartyInventory_FindOwner(184);
             if (record == -1) {
                 goto L_02000220;
@@ -106,13 +106,13 @@ void RunEventScript01(void)
     s32 rec8;
 
     rec8 = Actor_Get(ACTOR_PARTY_LEADER);
-    Value3(Engine_ActorFaceDirection, 0, 0xc000, 0);
+    Engine_ActorFaceDirection(0, 0xc000, 0);
     ColorBuffer_ApplyTarget(0x406218, 1);
     ColorBuffer_Interpolate(20);
     Task_Wait(40);
     Audio_PlayCue(17);
     gKorimaKiSparkSound = 1;
-    Call2(Engine_TaskAddCallback, (s32)PaletteScene_SpawnEffect, 0xc80);
+    Engine_TaskAddCallback((s32)PaletteScene_SpawnEffect, 0xc80);
     Task_Wait(30);
     gKorimaKiSparkSound = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
@@ -134,7 +134,7 @@ void RunEventScript01(void)
     Audio_PlayCue(161);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
     Event_Wait(120);
-    Call1(Engine_TaskRemoveCallback, (s32)PaletteScene_SpawnEffect);
+    Engine_TaskRemoveCallback((s32)PaletteScene_SpawnEffect);
     Task_Wait(40);
     *(s32 *)(rec8 + 68) = 0x4000;
     {
@@ -212,7 +212,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Task_Wait(40);
     transitionState = &gKorimaKiTransitionStep;
     *transitionState = 0;
-    Value2(Engine_TaskAddCallback, (s32)PaletteScene_AdvanceTransition, 0xc80);
+    Engine_TaskAddCallback((s32)PaletteScene_AdvanceTransition, 0xc80);
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
     Camera_SetSpeed(0x33333, 0x6666);
@@ -235,7 +235,7 @@ void PaletteScene_RunActorTransitionSequence(void)
             Task_Wait(1);
         } while (*transitionState != 24);
     }
-    Value1(Engine_TaskRemoveCallback, (s32)PaletteScene_AdvanceTransition);
+    Engine_TaskRemoveCallback((s32)PaletteScene_AdvanceTransition);
     Task_Wait(10);
     cycle = 0;
     do {
@@ -349,7 +349,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     gKorimaKiSparkOrigin[1] = 0x300000;
     effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
     gKorimaKiSparkOrigin[2] = 0xcd0000;
-    Value2(Engine_TaskAddCallback, effectCallback, 0xc80);
+    Engine_TaskAddCallback(effectCallback, 0xc80);
     Event_Wait(100);
     Engine_TaskRemoveCallback(effectCallback);
     ColorBuffer_ApplyTarget(0x7fff, 0);
@@ -450,7 +450,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     gKorimaKiSparkOrigin[1] = 0x140000;
     effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
     gKorimaKiSparkOrigin[2] = 0x1020000;
-    Value2(Engine_TaskAddCallback, effectCallback, 0xc80);
+    Engine_TaskAddCallback(effectCallback, 0xc80);
     Event_Wait(100);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
@@ -529,7 +529,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     if (actorThreeEnabled != 0) {
         Actor_EnableActionCallback(ACTOR_MIA, finalActions);
     }
-    Call2(Object_SetActionCallbackAndRefreshById, 2, (s32)finalActions);
+    Object_SetActionCallbackAndRefreshById(2, (s32)finalActions);
     KorimaKi_PlayGesture(10, 4);
     KorimaKi_PlayGesture(10, 4);
     Event_Wait(20);

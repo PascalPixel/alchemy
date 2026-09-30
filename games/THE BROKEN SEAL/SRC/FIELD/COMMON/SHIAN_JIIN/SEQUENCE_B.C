@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
+#include "CALL.H"
 extern u8 MsgShianDoNotWorryWillPermitted[];
 extern u8 MsgShianEnjoyReadingMindsOthersDo[];
 extern u8 MsgShianFlexibilityJumpingVeryImportantIn[];
@@ -24,11 +25,11 @@ void Scene_RunActorNineTransition(void)
     Event_SetMessage((s32)MsgShianYoungMasterDidCompleteTest);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
-    Scene_Call3(Engine_ActorFaceDirection, 0, 32768, 20);
+    Call3(Engine_ActorFaceDirection, 0, 32768, 20);
     Event_AskYesNo(9, 0);
     Event_Wait(10);
-    Scene_Call3(Engine_ActorShowEmote, 9, 256, 80);
-    Scene_Call3(Engine_ActorFaceDirection, 9, 53248, 20);
+    Call3(Engine_ActorShowEmote, 9, 256, 80);
+    Call3(Engine_ActorFaceDirection, 9, 53248, 20);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
     Event_ShowMessageAndWait(9, 0, 20);
@@ -36,7 +37,7 @@ void Scene_RunActorNineTransition(void)
     Actor_SetAnimationAndWait(9, 3);
     Event_Wait(20);
     Event_ShowMessageAndWait(9, 0, 20);
-    Scene_Call6(Engine_MapCopyCellAttributes, 10, 26, 1, 1, 10, 24);
+    Call6(Engine_MapCopyCellAttributes, 10, 26, 1, 1, 10, 24);
     Event_End();
 }
 
@@ -62,7 +63,7 @@ void Scene_RunScene39eSequenceB(void)
     } else {
         Event_SetMessage((s32)MsgShianMmmmWhoWhoSpeaksMy);
         FieldScene_SetFlag140AndFinishSequence(0, 8);
-        Call1((void (*)())Engine_EventWait, 30);
+        ((void (*)())Engine_EventWait)(30);
         Event_ShowMessage(8, 0);
         FieldScene_FinishSequence();
         Event_Wait(20);

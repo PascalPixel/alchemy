@@ -35,7 +35,7 @@ void RunScene59Sequence(void)
     Actor_FaceDirection(ACTOR_MIA, 0xC000, 0);
     Actor_SetPosition(0x16, PIXELS(0x150), PIXELS(0xB0));
     Actor_SetAnimation(0x16, 9);
-    Value2(SetOverlayObjectMode, ((s32)Engine_ActorGet(0x16)), 0);
+    SetOverlayObjectMode(((s32)Engine_ActorGet(0x16)), 0);
     Camera_MoveTo(PIXELS(0x150), -1, PIXELS(0xD0), 0);
     Task_Wait(1);
     Map_Redraw();
@@ -48,7 +48,7 @@ void RunScene59Sequence(void)
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GERALD, 0, 20);
-    Call1(Event_SetValue1d8Far, (s32)MsgMakyuriGot);
+    Event_SetValue1d8Far((s32)MsgMakyuriGot);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -70,7 +70,7 @@ void RunScene59Sequence(void)
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 30);
     Audio_PlayCue(0x1D);
     Camera_SetSpeed(0x0000cccc, 0x00001999);
-    FIELD(Value0(Battle_GetWorkObject1e0Far), s8 *, 0x55) = 0;
+    FIELD(Battle_GetWorkObject1e0Far(), s8 *, 0x55) = 0;
     Camera_MoveTo(PIXELS(0x150), -1, PIXELS(0xA8), 1);
     Event_Wait(20);
     Actor_SetSpeed(0x18, 0x0000cccc, 0x00006666);
@@ -131,7 +131,7 @@ void RunScene59Sequence(void)
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_GERALD, 0, 20);
-    Value2(UiText_OpenMessageAtObjectFar, 1, 0);
+    UiText_OpenMessageAtObjectFar(1, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
@@ -200,7 +200,7 @@ void RunScene59Sequence(void)
     Actor_SetAnimation(0x16, 8);
     Event_Wait(45);
     Actor_SetAnimation(0x16, 1);
-    Value2(SetOverlayObjectMode, ((s32)Engine_ActorGet(0x16)), 1);
+    SetOverlayObjectMode(((s32)Engine_ActorGet(0x16)), 1);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_IVAN, 0x102, 60);
     Event_ShowMessage(2, 0);
@@ -219,7 +219,7 @@ void RunScene59Sequence(void)
     Event_Wait(30);
     Event_ShowMessage(3, 0);
     Event_Wait(10);
-    Call3(Object_LinkPairFar, 0x18, 0x16, 0);
+    Object_LinkPairFar(0x18, 0x16, 0);
     Event_Wait(35);
     Actor_SetAnimationAndWait(0x16, 3);
     Event_Wait(30);
@@ -235,7 +235,7 @@ void RunScene59Sequence(void)
     Event_ShowMessage(1, 0);
     Event_Wait(10);
     Actor_ShowEmote(0x18, 0x00000101, 60);
-    Value2(UiText_OpenMessageAtObjectFar, 0x18, 0);
+    UiText_OpenMessageAtObjectFar(0x18, 0);
     Event_Wait(30);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
@@ -268,7 +268,7 @@ void RunScene59Sequence(void)
     Actor_RunRepeatedMotion(0x16, 1);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x16, 0, 20);
-    Call0(MakyuriChojo_SinkActorPair);
+    MakyuriChojo_SinkActorPair();
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
@@ -282,7 +282,7 @@ void RunScene59Sequence(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xA000, 5);
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 5);
     Actor_FaceDirection(ACTOR_MIA, 0, 5);
-    FIELD(Value0(Battle_GetWorkObject1e0Far), s8 *, 0x55) = 0;
+    FIELD(Battle_GetWorkObject1e0Far(), s8 *, 0x55) = 0;
     Camera_MoveTo(PIXELS(0x118), -1, PIXELS(0xE8), 1);
     Camera_WaitForMove();
     Actor_SetChildValue(0x16, 0xF);
@@ -291,7 +291,7 @@ void RunScene59Sequence(void)
     Actor_SetPosition(0x18, PIXELS(0xE8), PIXELS(0xD0));
     Actor_FaceDirection(0x16, 0x5000, 0);
     Actor_FaceDirection(0x18, 0x3000, 0);
-    Call0(MakyuriChojo_RiseActorPair);
+    MakyuriChojo_RiseActorPair();
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 10);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 15);
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
@@ -336,7 +336,7 @@ void RunScene59Sequence(void)
         Map_CopyCellsTo(0x1D, 0x4A, 4, 0x4A, 5, 4);
         Actor_SetSpritePriority(0x11, 0);
         Actor_SetSpritePriority(0x12, 0);
-        Call0(MakyuriChojo_RaiseCollectedActors);
+        MakyuriChojo_RaiseCollectedActors();
         Actor_SetSpritePriority(0x11, 1);
         Actor_SetSpritePriority(0x12, 1);
         Camera_WaitForMove();
@@ -356,7 +356,7 @@ void RunScene59Sequence(void)
         Event_Wait(20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
         Actor_ShowEmote(0x18, 0x00000101, 60);
-        Value2(UiText_OpenMessageAtObjectFar, 0x18, 0);
+        UiText_OpenMessageAtObjectFar(0x18, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_Wait(20);
             Actor_RunRepeatedMotion(0x16, 2);
@@ -378,7 +378,7 @@ void RunScene59Sequence(void)
     Actor_ShowEmote(ACTOR_GERALD, 0x00000101, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x00000101, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x00000101, 60);
-    Value2(UiText_OpenMessageAtObjectFar, 0x18, 0);
+    UiText_OpenMessageAtObjectFar(0x18, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
         Actor_RunRepeatedMotion(0x18, 2);
@@ -395,7 +395,7 @@ void RunScene59Sequence(void)
         Event_ShowMessageAndWait(0x18, 0, 20);
     }
     Event_Wait(20);
-    Call0(MakyuriChojo_SinkActorPair);
+    MakyuriChojo_SinkActorPair();
     Event_Wait(20);
     Camera_MoveTo(PIXELS(0x80), -1, PIXELS(0xC8), 1);
     Camera_WaitForMove();
@@ -407,10 +407,10 @@ void RunScene59Sequence(void)
     Actor_SetPosition(0x18, PIXELS(0x70), PIXELS(0xA0));
     Actor_FaceDirection(0x16, 0x5000, 0);
     Actor_FaceDirection(0x18, 0x3000, 0);
-    Call0(MakyuriChojo_RiseActorPair);
+    MakyuriChojo_RiseActorPair();
     Event_Wait(30);
     Actor_FaceDirection(0x18, 0, 20);
-    Value2(UiText_OpenMessageAtObjectFar, 0x18, 0);
+    UiText_OpenMessageAtObjectFar(0x18, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Actor_SetAnimationAndWait(0x18, 3);
         Event_Wait(20);
@@ -433,7 +433,7 @@ void RunScene59Sequence(void)
     Actor_FaceDirection(0x18, 0, 20);
     Actor_SetSpritePriority(0x11, 0);
     Actor_SetSpritePriority(0x12, 0);
-    Call0(MakyuriChojo_LowerCollectedActors);
+    MakyuriChojo_LowerCollectedActors();
     Actor_SetSpritePriority(0x11, 1);
     Actor_SetSpritePriority(0x12, 1);
     Audio_PlayCue(0x11);
@@ -441,7 +441,7 @@ void RunScene59Sequence(void)
     Camera_WaitForMove();
     Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
     Event_Wait(20);
-    Call0(Audio_PlayCueFromEventWorkFar);
+    Audio_PlayCueFromEventWorkFar();
     Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x3000, 22);
@@ -462,7 +462,7 @@ void RunScene59Sequence(void)
     Actor_FaceDirection(ACTOR_IVAN, 0xA000, 20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
     Event_Wait(20);
-    Value2(UiText_OpenMessageAtObjectFar, 2, 0);
+    UiText_OpenMessageAtObjectFar(2, 0);
     Actor_SetAnimation(ACTOR_MIA, 1);
     FIELD(Actor_Get(ACTOR_MIA), s32 *, 0x18) = 0x10000;
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);

@@ -1,5 +1,6 @@
 #include "MAKYURI.H"
 #include "MAKYURI_HEYA.H"
+#include "CALL.H"
 
 void SetEffectRecordMode();
 s32 OverlayObject_PrepareSpawnedObject();
@@ -7,41 +8,6 @@ void MakyuriHeya_FadePaletteToWhite();
 void MakyuriHeya_CastPsynergyAtActor11(void);
 void SceneEffect_RotatePaletteEntries40To47(void);
 extern const u16 MakyuriHeya_ColumnCells[];
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* When actor 10 stands in tile column 51, plays the scripted actor
  * choreography; each of its two query branches advances the scene step counter
@@ -51,22 +17,22 @@ void FieldScene_RunColumnChoreography(void)
     s32 record;
     s32 pos;
 
-    record = Value1(Object_GetById, 10);
+    record = Object_GetById(10);
     pos = *(s32 *)(record + 8);
     if (pos < 0) pos += 0xfffff;
     pos >>= 20;
     Engine_EventBegin();
     if (pos != 51) {
     } else {
-        Call3(ObjectMotion_SetSpeedParameters, 3, 0xcccc, 0x6666);
+        ObjectMotion_SetSpeedParameters(3, 0xcccc, 0x6666);
         Battle_WaitMode0(20);
         Engine_ActorRunRepeatedMotion(3, 2);
         Battle_WaitMode0(20);
         Call3(Engine_ActorFaceDirection, 3, 0xd000, 0);
-        Call3(Engine_ActorFaceDirection, 0, 0x5000, 10);
-        Call1(Engine_EventSetMessage, 0x157f);
-        Value2(Engine_EventOpenMessage, 3, 0);
-        if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+        Engine_ActorFaceDirection(0, 0x5000, 10);
+        Engine_EventSetMessage(0x157f);
+        Engine_EventOpenMessage(3, 0);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(3, 3);
@@ -77,7 +43,7 @@ void FieldScene_RunColumnChoreography(void)
             Event_ShowMessageAndWait(3, 0, 20);
             *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
         }
-        Call3(Engine_ActorShowEmote, 0, 0x100, 60);
+        Engine_ActorShowEmote(0, 0x100, 60);
         record = Object_GetById(1);
         SetEffectRecordMode(record, 1);
         record = Object_GetById(2);
@@ -107,11 +73,11 @@ void FieldScene_RunColumnChoreography(void)
         Actor_SetAnimationAndWait(3, 3);
         Battle_WaitMode0(20);
         Engine_EventShowMessageAndWait(3, 0, 20);
-        Call3(Engine_ActorWalkTo, 3, 0x348, 0x290);
+        Engine_ActorWalkTo(3, 0x348, 0x290);
         Event_Wait(5);
-        Call3(Engine_ActorFaceDirection, 2, 0x5000, 0);
+        Engine_ActorFaceDirection(2, 0x5000, 0);
         Battle_WaitMode0(10);
-        Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
+        Engine_ActorFaceDirection(0, 0x4000, 0);
         ((void (*)())ObjectMotion_CommitCurrentPositionAndActivate)(3);
         Battle_WaitMode0(10);
         Engine_EventShowMessageAndWait(3, 0, 20);
@@ -120,7 +86,7 @@ void FieldScene_RunColumnChoreography(void)
         Actor_RunRepeatedMotion(1, 1);
         Battle_WaitMode0(20);
         Actor_FaceDirection(1, 0xc000, 20);
-        Value2(Engine_EventOpenMessage, 1, 0);
+        Engine_EventOpenMessage(1, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(1, 3);
@@ -151,14 +117,14 @@ void FieldScene_RunColumnChoreography(void)
         Task_Wait(1);
         Audio_PlayCue(220);
         WaitFrames(40);
-        Call2(Engine_ColorBufferApplyTarget, 0x10000, 0);
+        Engine_ColorBufferApplyTarget(0x10000, 0);
         ((void (*)())Engine_ColorBufferInterpolate)(60);
         WaitFrames(60);
         Audio_PlayCue(209);
         MakyuriHeya_FadePaletteToWhite();
         Call6(Engine_MapCopyCellsTo, 126, 35, 116, 35, 1, 2);
-        Call3(Engine_MapAnimateCells, (s32)MakyuriHeya_ColumnCells, 116, 35);
-        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_RotatePaletteEntries40To47);
+        Engine_MapAnimateCells((s32)MakyuriHeya_ColumnCells, 116, 35);
+        Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries40To47);
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(3, 3);
         Battle_WaitMode0(20);
@@ -167,26 +133,26 @@ void FieldScene_RunColumnChoreography(void)
         Call3(Engine_ActorWalkTo, 3, 0x348, 0x258);
         ObjectMotion_CommitCurrentPositionAndActivate(3);
         Call6(Map_CopyCellAttributeRect, 116, 36, 3, 4, 52, 36);
-        Value4(OverlayObject_PrepareSpawnedObject, 0x3480000, 0x380000, 0x2600000, 223);
+        OverlayObject_PrepareSpawnedObject(0x3480000, 0x380000, 0x2600000, 223);
         Call3(ObjectMotion_SetSpeedParameters, 3, 0xcccc, 0x6666);
         Call3(Engine_ActorWalkToAndWait, 3, 0x348, 0x230);
         Engine_ActorSetPosition(3, 0, 0);
         Battle_WaitMode0(20);
         Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
         Call3(Engine_ActorFaceDirection, 1, 0x8000, 0);
-        Call3(Engine_ActorFaceDirection, 2, 0xb000, 0);
+        Engine_ActorFaceDirection(2, 0xb000, 0);
         Battle_WaitMode0(10);
         Object_SetModeById(0, 3);
         Object_SetModeById(1, 3);
         Engine_ActorSetAnimationAndWait(2, 3);
         Battle_WaitMode0(20);
         Actor_SetAnimation(1, 2);
-        record = Value1(Object_GetById, 0);
+        record = Object_GetById(0);
         if (record != 0) {
             Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Object_SetModeById(2, 2);
-        record = Value1(Object_GetById, 0);
+        record = Object_GetById(0);
         if (record != 0) {
             Actor_SetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -194,7 +160,7 @@ void FieldScene_RunColumnChoreography(void)
         Engine_ActorSetPosition(1, 0, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(2);
         Engine_ActorSetPosition(2, 0, 0);
-        Call1(Engine_GameFlagSet, 0x871);
+        Engine_GameFlagSet(0x871);
     }
     Engine_EventEnd();
 }

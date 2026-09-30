@@ -8,43 +8,11 @@ extern u8 *Data_03001ebc;
 
 void ShindenHeya_SpawnOwnerEffect();
 
-/* The sibling actor-update script passes repeated large constants through
- * these inline call forms, keeping each call's argument evaluation local. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3_scene_primary_script(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
-}
-
 static __inline__ void bump_step(void)
 {
     u8 *work = Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + 1);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 #include "TYPES.H"
@@ -117,39 +85,7 @@ extern s16 Data_02000240[];
  * repository are provisional.
  */
 
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers, while a direct call precomputes a costly
- * constant into a local that later uses in the block share. A call that
- * returns a value sets r0 last of its arguments; the Value wrappers spell
- * those sites, and the result is sometimes unused.
- */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
-static __inline__ void Call2_scene_primary_script(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    return f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    return f(a0, a1, a2, a3);
-}
 
 /*
  * Runs actor nine's flag-branched dialogue. The 112-byte owner includes its
@@ -197,7 +133,6 @@ extern u8 MsgShindenWasAfterEerieNightWhen[];
 extern u8 MsgShindenWasHandFateReturnedGold[];
 extern u8 MsgShindenWeWillHelpAnytimeAs[];
 extern u8 MsgShindenWieldersPsynergyCalledAdeptsAdepts[];
-
 
 void FieldScene_RunSupplementalSequenceOne(void);
 

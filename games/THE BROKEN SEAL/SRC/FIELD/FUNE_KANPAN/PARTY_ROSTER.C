@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "KANPAN.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 MsgFuneDontRowAnymore[];
 extern u8 MsgFuneMadeFinallyLucky[];
 extern u8 MsgFuneMakeOldMan[];
@@ -131,16 +132,16 @@ void FieldScene_RunPartyRosterScene(void)
 scene:
     /* Phase 3 -- open the scene. */
     Engine_EventBegin();
-    Call2(Engine_ActorSetChildValue, 0, 15);
+    Engine_ActorSetChildValue(0, 15);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(0), 0);
     record = Engine_ActorGet(0);
     if (record != 0) {
-        Call3(Engine_ActorSetPosition, 32, record->x.fixed, record->z.fixed);
+        Engine_ActorSetPosition(32, record->x.fixed, record->z.fixed);
     }
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
-    Call2(Engine_CameraFollowActor, 32, 1);
+    Engine_CameraFollowActor(32, 1);
 
     FieldScene_RunScene3af_02000bb8();
 
@@ -157,37 +158,37 @@ scene:
         }
         Call3(Engine_ActorWalkToAndWait, actor, 216, 150 << 2);
         Call3(Engine_ActorWalkToAndWait, actor, 192, 0x26a);
-        Call3(Engine_ActorWalkToAndWait, actor, 192, 164 << 2);
+        Engine_ActorWalkToAndWait(actor, 192, 164 << 2);
 
         switch (category[index]) {
         case 0:
-            Call3(Engine_ActorShowEmote, actor, 129 << 1, 60);
+            Engine_ActorShowEmote(actor, 129 << 1, 60);
             Engine_EventSetMessage((s32)MsgFuneMadeFinallyLucky);
             break;
         case 1:
             FieldScene_CallPairWith10(actor, 208 << 8);
-            Call3(Engine_ActorShowEmote, actor, 129 << 1, 60);
+            Engine_ActorShowEmote(actor, 129 << 1, 60);
             Engine_EventSetMessage((s32)MsgFuneOtherPassengersAlready);
             break;
         case 2:
-            Call3(Engine_ActorShowEmote, actor, 0x105, 60);
+            Engine_ActorShowEmote(actor, 0x105, 60);
             Engine_EventSetMessage((s32)MsgFuneDontRowAnymore);
             break;
         case 3:
-            Call2(Engine_ActorRunRepeatedMotion, actor, 1);
+            Engine_ActorRunRepeatedMotion(actor, 1);
             Engine_EventSetMessage((s32)MsgFuneOhhhHaventWorkout);
             break;
         case 10:
-            Call2(Engine_ActorSetAnimationAndWait, actor, 3);
+            Engine_ActorSetAnimationAndWait(actor, 3);
             Engine_EventSetMessage((s32)MsgFuneRowingShipMore);
             break;
         case 11:
-            Call2(Engine_ActorSetAnimation, actor, 4);
+            Engine_ActorSetAnimation(actor, 4);
             Engine_EventSetMessage((s32)MsgFuneTotallyLostOcean);
             break;
         case 20:
-            Call2(Engine_ActorSetAnimationAndWait, actor, 4);
-            Call3(Engine_ActorShowEmote, actor, 0x107, 40);
+            Engine_ActorSetAnimationAndWait(actor, 4);
+            Engine_ActorShowEmote(actor, 0x107, 40);
             Engine_EventSetMessage((s32)MsgFuneMakeOldMan);
             break;
         default:
@@ -195,22 +196,22 @@ scene:
         }
 
         FieldScene_RunStepThen10(actor);
-        Call2(Engine_ActorEnableActionCallback, actor, FuneKanpan_RosterActions);
+        Engine_ActorEnableActionCallback(actor, FuneKanpan_RosterActions);
     }
 
     /* Phase 5 -- teardown. */
     Engine_ActorStartAction(actor);
     Engine_EventWait(40);
-    Call3(Engine_ActorSetPosition, 0, 216 << 16, 146 << 18);
+    Engine_ActorSetPosition(0, 216 << 16, 146 << 18);
     Engine_TaskWait(1);
-    Call2(Engine_ActorSetChildValue, 0, 0);
+    Engine_ActorSetChildValue(0, 0);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(0), 1);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3(Engine_ActorWalkToAndWait, 0, 216, 150 << 2);
     Call3(Engine_ActorWalkToAndWait, 0, 190, 153 << 2);
     Engine_EventSetMessage((s32)MsgFuneThanksHardWork);
     FieldScene_RunStepThen10(20);
-    Call3(Engine_ActorFaceDirection, 0, 192 << 8, 0);
+    Engine_ActorFaceDirection(0, 192 << 8, 0);
 
     Engine_ActorGet(32)->motion_flags = 0;
     Call3(Engine_ActorSetSpeed, 32, 128 << 10, 128 << 9);
@@ -219,19 +220,19 @@ scene:
     Call3(Engine_ActorSetSpeed, 20, 0xcccc, 0x6666);
     Call3(Engine_ActorWalkToAndWait, 20, 182, 0x22b);
     Call3(Engine_ActorFaceDirection, 20, 192 << 6, 20);
-    Call2(Engine_ActorRunRepeatedMotion, 20, 1);
+    Engine_ActorRunRepeatedMotion(20, 1);
     FieldScene_RunStepThen10(20);
-    Call2(Engine_ActorSetAnimationAndWait, 20, 3);
+    Engine_ActorSetAnimationAndWait(20, 3);
     FieldScene_RunStepThen10(20);
-    Call3(Engine_ActorFaceDirection, 20, 128 << 8, 40);
+    Engine_ActorFaceDirection(20, 128 << 8, 40);
     FieldScene_RunStepThen10(20);
     FieldScene_CallPairWith10(20, 192 << 6);
     FieldScene_RunStepThen10(20);
-    Call2(Engine_ActorSetAnimationAndWait, 20, 3);
-    Call2(Engine_CameraFollowActor, 0, 1);
+    Engine_ActorSetAnimationAndWait(20, 3);
+    Engine_CameraFollowActor(0, 1);
     Call3(Engine_ActorWalkToAndWait, 20, 188, 128 << 2);
-    Call3(Engine_ActorFaceDirection, 20, 192 << 6, 0);
-    Call3(Engine_ActorSetPosition, 32, 0, 0);
+    Engine_ActorFaceDirection(20, 192 << 6, 0);
+    Engine_ActorSetPosition(32, 0, 0);
 
     Engine_GameFlagClear(0x12f);
     Engine_EventEnd();

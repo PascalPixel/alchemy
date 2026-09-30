@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 struct DoorCells {
     const u16 *steps;
@@ -8,11 +9,6 @@ struct DoorCells {
 };
 
 extern struct DoorCells KareiMachi_DoorCells[];
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Kalay door exit: freeze the area's actors, open the touched door with its cell animation, walk the leader out and leave through that exit. */
 void KareiMachi_RunExitDoor(void)
@@ -40,7 +36,7 @@ void KareiMachi_RunExitDoor(void)
 
         Engine_MapAnimateCells(KareiMachi_DoorCells[door].steps, x, y);
     }
-    Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
+    Engine_ActorSetSpeed(0, 0x8000, 0x4000);
     Engine_ActorGet(0)->motion_flags = 0;
     Engine_ActorSetAnimation(0, 2);
     Call3(Engine_ActorCenterAndWalk, 0, 2, -8);

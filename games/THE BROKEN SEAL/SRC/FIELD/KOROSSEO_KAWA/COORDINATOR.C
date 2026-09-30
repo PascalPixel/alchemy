@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+#include "CALL.H"
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 struct FieldActor *Object_GetById();
 
@@ -119,10 +120,6 @@ Rec *Owner_GetState(s32);
  * it by one, and specific values select which sub-sequence runs this call.
  * Reaching 0 restarts the countdown at 120 after running its own branch. */
 
-/* FAKEMATCH: Calls through these inline helpers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
@@ -130,46 +127,6 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
 
 static inline void InitializeActorZero(void)
 {
@@ -179,11 +136,6 @@ static inline void InitializeActorZero(void)
 static inline void InitializeSelectedActor(s32 actorId)
 {
     Actor_SetSpeed(actorId, 0x10000, 0x8000);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
 }
 
 /* Selects a later line in the current dialogue. */
@@ -224,24 +176,24 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
     switch ((u32)KorosseoKawa_Countdown) {
     case 66:
-        Call6(Map_UpdateCellRect, 92, 31, 2, 2, 50, 38); /* main:080091c8 */
-        Call6(Map_UpdateCellRect, 92, 31, 2, 2, 54, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 31, 2, 2, 50, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 31, 2, 2, 54, 38); /* main:080091c8 */
         Actor_SetAnimation(16, 10); /* object 16, action 10 */
         break;
     case 60:
-        Call6(Map_UpdateCellRect, 92, 33, 2, 2, 50, 38); /* main:080091c8 */
-        Call6(Map_UpdateCellRect, 92, 33, 2, 2, 54, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 33, 2, 2, 50, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 33, 2, 2, 54, 38); /* main:080091c8 */
         Map_CopyCellAttributes(50, 25, 6, 1, 50, 12); /* main:080091c0 */
         Actor_SetAnimation(16, 11); /* object 16, action 11 */
         break;
     case 6:
-        Call6(Map_UpdateCellRect, 92, 31, 2, 2, 50, 38); /* main:080091c8 */
-        Call6(Map_UpdateCellRect, 92, 31, 2, 2, 54, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 31, 2, 2, 50, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 31, 2, 2, 54, 38); /* main:080091c8 */
         Actor_SetAnimation(16, 10); /* object 16, action 10 */
         break;
     case 0:
-        Call6(Map_UpdateCellRect, 92, 29, 2, 2, 50, 38); /* main:080091c8 */
-        Call6(Map_UpdateCellRect, 92, 29, 2, 2, 54, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 29, 2, 2, 50, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 29, 2, 2, 54, 38); /* main:080091c8 */
         Actor_SetAnimation(16, 12); /* object 16, action 12 */
         Map_CopyCellAttributes(50, 24, 6, 1, 50, 12); /* main:080091c0 */
         KorosseoKawa_Countdown = 120;
@@ -360,7 +312,7 @@ void FieldScene_RunScene3ba_02000270(void)
     s32 none;
 
     GameFlag_Set(0x301);
-    rec7 = Value1(Object_GetById, 13);
+    rec7 = Object_GetById(13);
     Event_Begin();
     Camera_SetSpeed(0x20000, 0x4000);
     Camera_MoveTo(0x2580000, -1, 0xc80000, 1);
@@ -375,7 +327,7 @@ void FieldScene_RunScene3ba_02000270(void)
     rec7[85] = none;
     *(s32 *)((s32)rec7 + 52) = 0x6666;
     *(s32 *)((s32)rec7 + 48) = 0xcccc;
-    Call4(Object_SetMoveTarget, (s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
+    Object_SetMoveTarget((s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
     Script_WaitForEventTimeout((s32)rec7);
     Event_Wait(45);
     Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);

@@ -1,17 +1,8 @@
 #include "TYPES.H"
 #include "MAKYURI.H"
+#include "CALL.H"
 
 extern u16 MakyuriHeya_FloorSwitchCells[];
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
 
 /* Once, when the leader stands in the cell block at x 164-171 and z
  * 372-379, lifts him by two pixels, opens the passage and animates it. */

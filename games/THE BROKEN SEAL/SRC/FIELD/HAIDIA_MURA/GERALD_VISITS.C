@@ -25,7 +25,7 @@ void FieldScene_RunSecondaryActorSequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1a4, 0x260);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Actor_FaceDirection(8, 0x3000, 0);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         /* Copy the record's fields at +8 and +16 onto actor 1. */
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
@@ -71,7 +71,7 @@ void FieldScene_RunSecondaryActorSequence(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(8, 3);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         /* Copy the record's fields at +10 and +18 onto actor 1. */
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
@@ -90,7 +90,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     Camera_MoveTo(0x1650000, -1, 0x2e20000, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x16f, 0x2e9);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         /* Copy the s32 coordinate pair at +8/+16 of the looked-up record. */
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
@@ -150,7 +150,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         /* Copy the s16 coordinate pair at +10/+18 of the looked-up record. */
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));

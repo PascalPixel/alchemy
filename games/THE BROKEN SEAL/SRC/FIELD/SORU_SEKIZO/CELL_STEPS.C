@@ -5,7 +5,7 @@ void FieldScene_RunScene37bSequenceA(void)
     u32 i;
     s32 record;
 
-    record = Value1(Engine_ActorGet, 17);
+    record = Engine_ActorGet(17);
     if (record != 0) {
         if ((*(s32 *)(record + 16) >> 20) == 8) {
             Event_Begin();

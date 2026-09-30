@@ -1,4 +1,5 @@
 #include "IMIRU.H"
+#include "CALL.H"
 
 void ActorPresentation_ApplyTableA5ecToActorNine(void)
 {
@@ -59,7 +60,7 @@ void FieldScene_RunScene399SequenceA(void)
     union FieldObject *object;
 
     frame = &Data_03001e40;
-    if (Value2_02001794(Engine_MathModulo, *frame, 60) == 0) {
+    if (Engine_MathModulo(*frame, 60) == 0) {
         object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1cf0000, 0, 0x1240000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
@@ -68,7 +69,7 @@ void FieldScene_RunScene399SequenceA(void)
             Object_SetAnimation(object, 5);
         }
     }
-    if (Value2_02001794(Engine_MathModulo, *frame + 30, 60) == 0) {
+    if (Engine_MathModulo(*frame + 30, 60) == 0) {
         object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1400000, 0x200000, 0x1640000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
@@ -77,7 +78,7 @@ void FieldScene_RunScene399SequenceA(void)
             Object_SetAnimation(object, 5);
         }
     }
-    if (Value2_02001794(Engine_MathModulo, *frame + 10, 60) == 0) {
+    if (Engine_MathModulo(*frame + 10, 60) == 0) {
         object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x760000, 0, 0x460000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
@@ -86,7 +87,7 @@ void FieldScene_RunScene399SequenceA(void)
             Object_SetAnimation(object, 5);
         }
     }
-    if (Value2_02001794(Engine_MathModulo, *frame + 50, 60) == 0) {
+    if (Engine_MathModulo(*frame + 50, 60) == 0) {
         object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1560000, 0, 0x7c0000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
@@ -95,7 +96,7 @@ void FieldScene_RunScene399SequenceA(void)
             Object_SetAnimation(object, 5);
         }
     }
-    if (Value2_02001794(Engine_MathModulo, *frame + 80, 60) == 0) {
+    if (Engine_MathModulo(*frame + 80, 60) == 0) {
         object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1af0000, 0, 0xab0000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
@@ -208,10 +209,10 @@ void FieldScene_RunThreeActorChoreography(void)
     Event_Begin();
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
-    Value3(Engine_ActorWalkTo, 0, 0x2b2, 200);
+    Engine_ActorWalkTo(0, 0x2b2, 200);
     /* Clear the byte at offset 85 of the returned record. */
     *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
-    Value2(Engine_CameraSetSpeed, 0xcccc, 0x1999);
+    Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
     work = *(struct EventWork **)Data_03001ebc;
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -220,7 +221,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
-    leader = (struct FieldActor *)Value1(Engine_ActorGet, 0);
+    leader = (struct FieldActor *)Engine_ActorGet(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }

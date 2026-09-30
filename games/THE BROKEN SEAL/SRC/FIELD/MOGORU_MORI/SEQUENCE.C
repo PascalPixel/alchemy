@@ -88,25 +88,25 @@ void FieldScene_RunSupplementalSequenceOne(void)
     u8 *record;
 
     Event_Begin();
-    record = Value1(Engine_ActorGet, 14);
+    record = Engine_ActorGet(14);
     x = *(s32 *)(record + 8);
-    record = Value1(Engine_ActorGet, 14);
+    record = Engine_ActorGet(14);
     y = *(s32 *)(record + 16);
     x >>= 20;
     y >>= 20;
     StagedActor_FillGridAttributeRectangle(2, x, y, 1, 1, 255);
-    Call6(StagedActor_FillGridAttributeRectangle, 2, x + 1, y, 1, 1, 0);
-    Call6(StagedActor_FillGridAttributeRectangle, 2, x - 1, y, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x + 1, y, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x - 1, y, 1, 1, 0);
     StagedActor_FillGridAttributeRectangle(2, x, y + 1, 1, 1, 0);
     StagedActor_FillGridAttributeRectangle(2, x, y - 1, 1, 1, 0);
-    record = Value1(Engine_ActorGet, 14);
+    record = Engine_ActorGet(14);
     if ((*(s32 *)(record + 16) >> 20) == 27) {
-        record = Value1(Engine_ActorGet, 14);
+        record = Engine_ActorGet(14);
         record[85] = 0;
         *(s32 *)(record + 20) = -0x20000;
         *(s32 *)(record + 12) = -0x20000;
         GameFlag_Set(0x214);
-        Call6(StagedActor_FillGridAttributeRectangle, 2, 43, 23, 1, 1, 255);
+        StagedActor_FillGridAttributeRectangle(2, 43, 23, 1, 1, 255);
     }
     Event_End();
 }

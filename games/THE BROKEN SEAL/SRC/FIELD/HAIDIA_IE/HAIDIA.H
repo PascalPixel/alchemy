@@ -186,11 +186,6 @@ void Object_LinkObjectAndSetCallback();
 void ObjectMotion_Launch();
 void Owner_RefreshActiveRatios();
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* Exact complete owner [020017c8,020022c8): 2816 bytes, pools included.
  * 2026-09-27 Sol H1: FieldActor lookup results own x/z, priority_flags and
  * motion_flags. The nullable lookup has a separate actor lifetime from the
@@ -207,111 +202,11 @@ void Owner_RefreshActiveRatios();
  * The compiler's cross-call target pseudo, not pointer qualifiers alone,
  * changes the saved-register interference. Inline scopes are ruled out. */
 
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
     gEventWork->message += amount;
 }
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value1_02000940(s32 (*f)(), s32 a0)
-{
-    extern u8 Data_02000240[];
-    extern u8 Data_0200ac00[];
-    void HaidiaIe_RunScene015B4();
-    void SceneState_SetValues352_365_2116_2117_40();
-    void Scene_RunExtendedActorSequence();
-
-    return f(a0);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    extern u8 Data_0200ac00[];
-
-    f(a0, a1, a2, a3);
-}
-
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_020015b4(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-/* Call forms shared with the independently reconstructed scene scripts. */
-static __inline__ void Call1_020017c8(void (*f)(), s32 a0)
-{
-    extern const u8 Data_0200ac00[];
-
-    f(a0);
-}
-
-static __inline__ struct FieldActor *Pointer1(struct FieldActor *(*f)(s32), s32 a0)
-{
-    extern const u8 Data_0200ac00[];
-
-    return f(a0);
-}
-
-/* FAKEMATCH: separate inline argument scopes preserve per-call target loads. */
-static __inline__ void Callback3(void (*f)(s32, s32, const u8 *), s32 actor, s32 target, const u8 *table)
-{
-    extern const u8 Data_0200ac00[];
-
-    f(actor, target, table);
-}
-
 
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 

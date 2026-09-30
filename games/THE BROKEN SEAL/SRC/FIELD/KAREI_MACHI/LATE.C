@@ -8,6 +8,7 @@
 #define SCENE_FIELD_1C0 (*(s32 *)(*(u8 **)Data_03001ebc + 0x1c0))
 
 #include "RESOURCE_3A8_EFFECT.H"
+#include "CALL.H"
 extern u8 MsgKareiLordHammetsPalaceLordAway[];
 extern u8 MsgKareiWeveArrivedHammet[];
 
@@ -142,34 +143,6 @@ void Object_Destroy(void);
 /* Two early long branches share the scene-skip tail. Four polling loops
  * wait on signed actor fields; calls bind at loader runtime addresses. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-/* Verified scene siblings use these call forms for independently evaluated
- * large constants in repeated actor operations. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_0200164c(s32 amount)
 {
@@ -178,21 +151,6 @@ static __inline__ void bump_step_0200164c(s32 amount)
     u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
 }
 
 void SceneState_LinkRecordZeroWhenFlag200Clear(void);
@@ -264,7 +222,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Event_ShowMessageAndWait(9, 0, 10);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Event_Wait(60);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -363,7 +321,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Call3((void (*)())Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
-    Call3((void (*)())Engine_ActorSetSpeed, 9, 0xcccc, 0x6666);
+    ((void (*)())Engine_ActorSetSpeed)(9, 0xcccc, 0x6666);
     record = Actor_Get(8);
     {
         /* Field at +6 of the record: a visibility/state word. */
@@ -688,7 +646,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     exitActions = KareiMachi_Data03;
     Actor_EnableActionCallback(ACTOR_GERALD, exitActions);
     Actor_EnableActionCallback(ACTOR_IVAN, (s32)exitActions);
-    Call2(Object_SetActionCallbackAndRefreshById, 3, (s32)exitActions);
+    Object_SetActionCallbackAndRefreshById(3, (s32)exitActions);
     Camera_MoveTo(0x19a0000, -1, 0x12c0000, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1a0, 0x138);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b7, 0x138);
@@ -744,13 +702,11 @@ void FieldScene_RunLateSequence(void)
     s32 zero;
     s32 k;
 
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     idx = (s32)((u32)*(u16 *)(record + 6) >> 12);
     a = *(s16 *)(record + 10);
     w = KareiMachi_Data01[idx];
-    rec = Value2(SceneActor_FindAtTileXZ,
-                 (a + (w >> 16)) >> 4,
-                 (*(s16 *)(record + 18) + (s32)(s16)w) >> 4);
+    rec = SceneActor_FindAtTileXZ((a + (w >> 16)) >> 4, (*(s16 *)(record + 18) + (s32)(s16)w) >> 4);
     if (rec != 0) {
         zero = 0;
         *(u8 *)(rec + 34) = 2;
@@ -759,7 +715,7 @@ void FieldScene_RunLateSequence(void)
         dst[0] = *(s32 *)(rec + 8) + (w2 & -0x10000);
         dst[1] = *(s32 *)(rec + 12);
         dst[2] = *(s32 *)(rec + 16) + (w2 << 16);
-        if (Value2(Object_CheckMovementCollision, rec, (s32)dst) <= 0) {
+        if (Object_CheckMovementCollision(rec, (s32)dst) <= 0) {
             Object_SetAnimation(record, 8);
             k = 0x3333;
             Task_Wait(15);
@@ -793,13 +749,13 @@ void FieldScene_RunScene3a8SequenceB(void)
     s32 v6;
     s32 v7;
 
-    rec8 = Value1(Engine_ActorGet, 8);
-    rec4 = Value1(Engine_ActorGet, 9);
+    rec8 = Engine_ActorGet(8);
+    rec4 = Engine_ActorGet(9);
     rec7 = GameFlag_IsSet(0x302);
     if (rec7 != 0) {
     } else if ((*(s32 *)(rec8 + 8) >> 19) > 29) {
     } else {
-        rec2 = Value1(Engine_ActorGet, 11);
+        rec2 = Engine_ActorGet(11);
         Event_Begin();
         Map_CopyCellAttributes(7, 44, 1, 1, rec7, 1);
         i = 67;
@@ -819,7 +775,7 @@ void FieldScene_RunScene3a8SequenceB(void)
         *(s32 *)(rec2 + 24) = 0x1999;
         *(s32 *)(rec2 + 28) = 0x1999;
         Actor_SetPosition(11, 0x960000, 0x2d80000);
-        Value2(Engine_ActorEnableActionCallback, 11, (s32)KareiMachi_ActionScript01);
+        Engine_ActorEnableActionCallback(11, (s32)KareiMachi_ActionScript01);
         v6 = 1;
         Map_CopyCellsTo(67, 64, 71, 44, v6, v5);
         Map_CopyCellsTo(67, 64, 72, 44, v6, v5);
@@ -942,13 +898,13 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     u8 *rp;
     u8 *p4;
 
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec7 = Engine_ActorGet(8);
     rec8 = Actor_Get(9);
     if ((u32)(*(s16 *)(rec7 + 10) + -0x17d) <= 12) {
         if (*(s16 *)(rec7 + 18) <= 0x309) {
             goto L_020037ae;
         }
-        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
         p4 = (u8 *)*(s32 *)(rec7 + 80);
         rp = (u8 *)*(s32 *)(record + 80);
         c12 = 12 & rp[9];
@@ -962,7 +918,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
             if (*(s16 *)(rec7 + 10) <= 245) {
                 if ((*(volatile s32 *)&gFrameCount & 1) == 0) {
                     if (GameFlag_IsSet(0x202) == 0) {
-                        Call1(BattleFx_SetQueuedSoundAndPlay, -1);
+                        BattleFx_SetQueuedSoundAndPlay(-1);
                         Audio_PlayCue(230);
                         GameFlag_Set(0x202);
                     }
@@ -975,7 +931,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
         if (*(s16 *)(rec8 + 10) <= 0x2c5) {
             if ((*(volatile s32 *)&gFrameCount & 1) == 0) {
                 if (GameFlag_IsSet(0x203) == 0) {
-                    Call1(BattleFx_SetQueuedSoundAndPlay, -1);
+                    BattleFx_SetQueuedSoundAndPlay(-1);
                     Audio_PlayCue(230);
                     GameFlag_Set(0x203);
                 }
@@ -994,8 +950,8 @@ void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
     u8 *link;
 
     p8 = a2;
-    value = Value0(Engine_RandomNext);
-    rec7 = (u8 *)Value4(Object_CreateFar, 222, (a0 + -0x80000), (((((u32)(value << 3) >> 16) << 16) + a1) + 0x100000), p8);
+    value = Engine_RandomNext();
+    rec7 = (u8 *)Object_CreateFar(222, (a0 + -0x80000), (((((u32)(value << 3) >> 16) << 16) + a1) + 0x100000), p8);
     if ((s32)rec7 != 0) {
         rec7[85] = (mask = 0);
         link = (u8 *)*(s32 *)((s32)rec7 + 80);

@@ -12,11 +12,6 @@ void FieldScene_DrawTilesByActor8Row(void);
 /* One cell step per facing sixteenth: x in the high half, z in the low. */
 extern s32 BiribinoMura_FacingCellSteps[];
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 /* Pushes the block the leader faces one cell ahead when nothing is in the
  * way, walking the leader along with it. */
 void BiribinoMura_PushFacedBlock(void)
@@ -42,7 +37,7 @@ void BiribinoMura_PushFacedBlock(void)
         p[0].fixed = block->x.fixed + (step & -0x10000);
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
-        if (Value2((s32 (*)())Object_CheckMovementCollision, (s32)block, (s32)p) <= 0) {
+        if (((s32 (*)())Object_CheckMovementCollision)((s32)block, (s32)p) <= 0) {
             Engine_ObjectSetAnimation(leader, 8);
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);

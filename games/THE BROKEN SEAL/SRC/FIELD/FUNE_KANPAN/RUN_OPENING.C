@@ -34,7 +34,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Actor_RunRepeatedMotion(21, 2);
             Event_SetMessage((s32)MsgFuneSomebodyStopThem);
             Event_ShowMessage(21, 0);
-            rec7 = Value1(Object_GetById, 21);
+            rec7 = Object_GetById(21);
             record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
             *(u16 *)(rec7 + 100) = shown;
@@ -64,7 +64,7 @@ void FieldScene_RunScene3afSequenceA(void)
             Actor_RunRepeatedMotion(24, 2);
             Event_SetMessage((s32)MsgFuneTheyCantPlanningMutiny);
             Event_ShowMessage(24, 0);
-            rec7 = Value1(Object_GetById, 24);
+            rec7 = Object_GetById(24);
             record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
             *(u16 *)(rec7 + 100) = shown;

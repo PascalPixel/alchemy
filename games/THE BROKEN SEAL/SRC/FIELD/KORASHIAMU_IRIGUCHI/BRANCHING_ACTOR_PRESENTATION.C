@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgKorashiamuHeyYouRe[];
 extern struct EventWork *gEventWork;
 extern u8 KorashiamuIriguchi_ActionTable1[];
@@ -46,41 +47,6 @@ void Engine_EventRequestExit();
 void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
 
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 /* Runs only while flag 0x962 is set: resets the battle runtime, stages
  * presentation actors 17 to 20, places party actors 0 to 3 (taking optional
  * party record positions), then plays one of three closing sequences chosen by
@@ -92,7 +58,7 @@ void Scene_RunBranchingActorPresentation(void)
     s32 value;
     u8 *slot;
 
-    if (Value1(Engine_GameFlagIsSet, 0x962) == 0) {
+    if (Engine_GameFlagIsSet(0x962) == 0) {
         return;
     }
 
@@ -103,15 +69,15 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_ActorFaceDirection(17, 0, 60);
     Call3(Engine_ActorShowEmote, 17, 0x100, 40);
     SceneState_ForwardMaskedHalfwordWith10(17, (value << 6));
-    Call1(Engine_EventSetMessage, (s32)MsgKorashiamuHeyYouRe);
+    Engine_EventSetMessage((s32)MsgKorashiamuHeyYouRe);
     Engine_ActorStartRepeatedMotion(17, 2);
     FieldScene_CallPairWith10(17);
     Engine_ActorFaceDirection(18, (value << 6), 0);
     Engine_ActorFaceDirection(19, (value << 6), 0);
-    Value3(Engine_ActorFaceDirection, 20, (value << 6), 0);
+    Engine_ActorFaceDirection(20, (value << 6), 0);
     slot = Engine_EventGetViewCenter();
     *(u8 *)(slot + 85) = 0;
-    Call2(Engine_CameraSetSpeed, 0x19999, 0x3333);
+    Engine_CameraSetSpeed(0x19999, 0x3333);
     Call4(Engine_CameraMoveTo, 0x1000000, -1, 0xac0000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
@@ -157,15 +123,15 @@ void Scene_RunBranchingActorPresentation(void)
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3(Engine_ActorWalkToAndWait, 0, 0x106, 188);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -191,19 +157,19 @@ void Scene_RunBranchingActorPresentation(void)
     Call3(Engine_ActorFaceDirection, 1, 0xe000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xa000, 0);
 
-    if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(17, 3);
         FieldScene_CallPairWith10(17);
         Engine_ActorEnableActionCallback(1, (s32)KorashiamuIriguchi_ActionTable1);
-        Value2(Engine_ActorEnableActionCallback, 2, (s32)KorashiamuIriguchi_ActionTable1);
-        Value2(Object_SetActionCallbackAndRefreshById, 3, (s32)KorashiamuIriguchi_ActionTable1);
-        Call2(Engine_CameraSetSpeed, 0x6666, 0xccc);
-        Call4(Engine_CameraMoveTo, 0x1000000, -1, 0x640000, 1);
+        Engine_ActorEnableActionCallback(2, (s32)KorashiamuIriguchi_ActionTable1);
+        Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable1);
+        Engine_CameraSetSpeed(0x6666, 0xccc);
+        Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
         Call3(Engine_ActorSetSpeed, 17, 0x10000, 0x8000);
         Engine_ActorEnableActionCallback(17, (s32)KorashiamuIriguchi_ActionTable4);
         Engine_EventWait(10);
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-        Value2(Engine_ActorEnableActionCallback, 0, (s32)KorashiamuIriguchi_ActionTable4);
+        Engine_ActorEnableActionCallback(0, (s32)KorashiamuIriguchi_ActionTable4);
         Engine_EventWait(80);
         SCENE_FIELD_1C8 = 40;
         Engine_EventCloseScreen();
@@ -242,20 +208,20 @@ void Scene_RunBranchingActorPresentation(void)
         Engine_EventWait(20);
         Value2(Engine_EventOpenMessage, 1, 0);
 
-        record = Value2(Engine_EventChooseYesNo, 0, 0);
+        record = Engine_EventChooseYesNo(0, 0);
         if (record == 0) {
             Engine_ActorSetAnimationAndWait(17, 3);
             FieldScene_CallPairWith10(17);
             Engine_ActorEnableActionCallback(1, (s32)KorashiamuIriguchi_ActionTable1);
-            Value2(Engine_ActorEnableActionCallback, 2, (s32)KorashiamuIriguchi_ActionTable1);
-            Value2(Object_SetActionCallbackAndRefreshById, 3, (s32)KorashiamuIriguchi_ActionTable1);
-            Call2(Engine_CameraSetSpeed, 0x6666, 0xccc);
-            Call4(Engine_CameraMoveTo, 0x1000000, -1, 0x640000, 1);
+            Engine_ActorEnableActionCallback(2, (s32)KorashiamuIriguchi_ActionTable1);
+            Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable1);
+            Engine_CameraSetSpeed(0x6666, 0xccc);
+            Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
             Call3(Engine_ActorSetSpeed, 17, 0x10000, 0x8000);
             Engine_ActorEnableActionCallback(17, (s32)KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(10);
             Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-            Value2(Engine_ActorEnableActionCallback, 0, (s32)KorashiamuIriguchi_ActionTable4);
+            Engine_ActorEnableActionCallback(0, (s32)KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(80);
             SCENE_FIELD_1C8 = 40;
             Engine_EventCloseScreen();
@@ -265,26 +231,26 @@ void Scene_RunBranchingActorPresentation(void)
             Engine_EventWait(20);
             Engine_ActorStartRepeatedMotion(1, 2);
             Engine_EventShowMessageAndWait(1, 0, 20);
-            Call3(Engine_ActorShowEmote, 2, 0x102, 60);
+            Engine_ActorShowEmote(2, 0x102, 60);
             FieldScene_CallPairWith10(2);
             SceneState_ForwardMaskedHalfwordWith10(3, 0x8000);
             Engine_ActorSetAnimation(3, 3);
             FieldScene_CallPairWith10(3);
             Engine_ActorEnableActionCallback(2, (s32)KorashiamuIriguchi_ActionTable2);
-            Value2(Object_SetActionCallbackAndRefreshById, 3, (s32)KorashiamuIriguchi_ActionTable2);
+            Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable2);
             Engine_EventWait(20);
-            Value2(Object_SetActionCallbackAndRefreshById, 0, (s32)KorashiamuIriguchi_ActionTable2);
+            Object_SetActionCallbackAndRefreshById(0, (s32)KorashiamuIriguchi_ActionTable2);
             Call3(Engine_ActorWalkToAndWait, 1, 0x106, 188);
-            Value2(SceneState_ForwardMaskedHalfwordWith10, 1, 0xc000);
+            SceneState_ForwardMaskedHalfwordWith10(1, 0xc000);
             Engine_ActorSetAnimationAndWait(1, 3);
             FieldScene_CallPairWith10(1);
-            Call2(Engine_CameraSetSpeed, 0x6666, 0xccc);
-            Call4(Engine_CameraMoveTo, 0x1000000, -1, 0x640000, 1);
+            Engine_CameraSetSpeed(0x6666, 0xccc);
+            Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
             Call3(Engine_ActorSetSpeed, 17, 0x10000, 0x8000);
             Engine_ActorEnableActionCallback(17, (s32)KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(10);
             Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
-            Value2(Engine_ActorEnableActionCallback, 1, (s32)KorashiamuIriguchi_ActionTable4);
+            Engine_ActorEnableActionCallback(1, (s32)KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(80);
             SCENE_FIELD_1C8 = 40;
             Engine_EventCloseScreen();
@@ -293,6 +259,6 @@ void Scene_RunBranchingActorPresentation(void)
     }
 
     Engine_EventRequestExit(2);
-    Call1(Engine_GameFlagSet, 0x93f);
+    Engine_GameFlagSet(0x93f);
     Engine_EventEnd();
 }

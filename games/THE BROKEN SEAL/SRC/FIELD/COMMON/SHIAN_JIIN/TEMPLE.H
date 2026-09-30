@@ -2,16 +2,10 @@
 #define SHIAN_JIIN_TEMPLE_H
 extern struct EventWork *gEventWork;
 
-
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define Scene_GetRecord_2(a0) Value1(Engine_ActorGet, a0)
-#define Scene_GetRecord_3(a0) Value1(Engine_ActorGet, a0)
-#define Scene_GetRecord_4(a0) Value1(Engine_ActorGet, a0)
-#define Object_SetModeById_1(a0, a1) Value2(Engine_ActorSetAnimation, a0, a1)
 #define ObjectMotion_CallThenWaitForAnimationChange_9(args...) ((void (*)())Engine_ActorSetAnimationAndWait)(args)
-#define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define ACTOR_FIELD_108(rec) (*(s32 *)((rec) + 108))
 
 struct EffectRec {
@@ -130,12 +124,6 @@ void UiText_DrawQuantityPairWithCueFar();
  * so the emitted call word -- depends only on the alias, never on where the
  * call lands in the candidate.
  *
- * Two call forms in the branch tail carry meaning beyond their arguments. The
- * three sites spelled through Value2 keep the callee's result register live
- * across the argument setup, which orders the r0 write after r1; the sites
- * spelled through Call2 discard it and order r0 first. Both forms appear in
- * the sibling beat at 0x02001dbc.
- *
  * The set of bit 0 in byte +90 reads the byte into its own local before the
  * or, as the staged-actor scene at resource_373:02003fb0 does at the same
  * offset; the paired clear needs no local because an and against 0xfe already
@@ -165,25 +153,6 @@ static __inline__ void SetPosition(s32 actor, s32 horizontal, s32 vertical)
 
 /* Field cleared to 0 on each actor record below. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
@@ -194,48 +163,12 @@ static __inline__ void bump_step(s32 amount)
  * through an unresolved veneer island until its own source was read; the
  * per-site macro keeps the site's original calling form. */
 
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ u8 *Record1(u8 *(*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 /* The scene step counter at +472 of the shared scene work record. */
 static __inline__ void Scene_BumpStep(s32 amount)
 {
     u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + amount);
-}
-
-static __inline__ void Scene_Call3(void (*func)(s32, s32, s32), s32 a0, s32 a1, s32 a2)
-{
-    func(a0, a1, a2);
-}
-
-static __inline__ void Scene_Call6(void (*func)(s32, s32, s32, s32, s32, s32),
-                                  s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    func(a0, a1, a2, a3, a4, a5);
 }
 
 void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6,

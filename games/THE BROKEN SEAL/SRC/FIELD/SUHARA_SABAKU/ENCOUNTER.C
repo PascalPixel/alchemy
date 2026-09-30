@@ -1,6 +1,7 @@
 /* The second desert area's encounter: actor 14 and map object 100 stand
  * aside while the encounter palette pulses. */
 #include "SABAKU.H"
+#include "CALL.H"
 
 s32 FieldScene_RunOpeningAuxiliarySequence(void)
 {

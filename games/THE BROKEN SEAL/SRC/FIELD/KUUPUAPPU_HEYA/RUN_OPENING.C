@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 extern u8 MsgKuupuappuWant[];
 /* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
@@ -13,7 +14,6 @@ enum {
     /* Message 0x182 + 231. */
     ITEM_BONE = 231
 };
-
 
 #define RATIO_HI 52428
 #define RATIO_LO 26214
@@ -83,23 +83,9 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 /* Pair of ratio-like arguments shared by three setup calls below (each
  * applied to a different index: 0, 1, 2). */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
@@ -107,62 +93,9 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call0(void (*f)())
-{
-    f();
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value0_02001a4c(s32 (*f)())
-{
-
-    return f();
-}
-
-static __inline__ void Call1_02001a4c(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 /* The "shown" half word at +100 of an actor record. */
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
-
-static __inline__ void Call6_02001ba0(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_020036f8(s32 off, s32 amount)
@@ -174,11 +107,6 @@ static __inline__ void bump_step_020036f8(s32 off, s32 amount)
     s32 next = *slot + amount;
 
     *slot = next;
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
 }
 
 /* Third scene step: sets up actors 24 and 25 (fetching each one's record),
@@ -202,25 +130,25 @@ void FieldScene_RunOpeningSequenceThird(void)
     Actor_ShowEmote(25, 256, 0);
     Actor_ShowEmote(24, 256, 0);
     Event_Wait(60);
-    Call3(FieldScene_RunSplitTripleSteps, 25, 0, 10);
+    FieldScene_RunSplitTripleSteps(25, 0, 10);
     Actor_RunRepeatedMotion(24, 2);
     Event_Wait(20);
-    Value1(Engine_EventSetMessage, (s32)MsgKuupuappuWant);
-    Call2(SceneActor_SetModeZeroAndValue, 24, 20);
+    Engine_EventSetMessage((s32)MsgKuupuappuWant);
+    SceneActor_SetModeZeroAndValue(24, 20);
     Actor_SetAttachedEffect(25, 258); /* main:0808a1f0 */
     Event_Wait(60);
-    Call2(SceneActor_SetModeZeroAndValue, 25, 20);
+    SceneActor_SetModeZeroAndValue(25, 20);
     Actor_RunRepeatedMotion(24, 1);
-    Call2(SceneActor_SetModeZeroAndValue, 24, 30);
+    SceneActor_SetModeZeroAndValue(24, 30);
     Actor_SetSpeed(24, 262144, 131072);
     Actor_SetSpeed(25, 229376, 114688);
-    Value2(Engine_ActorEnableActionCallback, 25, (s32)KuupuappuHeya_PairScriptO);
-    Value2(Engine_ActorEnableActionCallback, 24, (s32)KuupuappuHeya_PairScriptB);
-    Call1(Object_RefreshSelectorById, 24);
+    Engine_ActorEnableActionCallback(25, (s32)KuupuappuHeya_PairScriptO);
+    Engine_ActorEnableActionCallback(24, (s32)KuupuappuHeya_PairScriptB);
+    Object_RefreshSelectorById(24);
     Map_CopyCellAttributes(14, 45, 3, 1, 14, 44); /* main:080091c0 */
     GameFlag_Set(2130);
     GameFlag_Set(768);
-    Call2(Scheduler_AddOrUpdateCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
+    Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
     /* Starting movement steps for the two thieves. */
     ((struct FieldActor *)actor24)->unknown_64 = 1;
     ((struct FieldActor *)actor25)->unknown_64 = 3;

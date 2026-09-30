@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgKorimaWho[];
 extern u8 MsgKorimaForestKolimaAlive[];
 extern u8 MsgKorimaLeaveBeforeForest[];
@@ -13,21 +14,6 @@ void Engine_EventWait();
 void Engine_ActorSetAnimationAndWait();
 void Engine_GameFlagSet();
 void Engine_EventEnd();
-
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
 
 void KorimaKi_RunMessageScene(void)
 {
@@ -54,7 +40,7 @@ void KorimaKi_RunMessageScene(void)
         Engine_EventShowMessageAndWait(9, 0, 20);
         KorimaKi_PlayGesture(11, 1);
         Engine_EventShowMessageAndWait(9, 0, 20);
-        Call1(Engine_GameFlagSet, 0x84c);
+        Engine_GameFlagSet(0x84c);
     }
     KorimaKi_PlayGesture(11, 0);
     Engine_EventEnd();

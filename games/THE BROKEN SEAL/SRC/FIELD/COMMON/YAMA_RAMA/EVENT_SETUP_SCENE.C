@@ -13,8 +13,6 @@ extern u8 MsgYamaRobinDidLiftBoulder[];
 extern u8 MsgYamaYahhSilkRoadBouldersBlock[];
 extern u8 MsgYamaYoungWarriorsDoComeFrom[];
 
-
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 struct EventActor {
@@ -60,11 +58,6 @@ s32 OverlayObject_SetFacingTowardObject10(void *self);
 
 /* Value-returning: the reference sets r1 before r0 at this site. */
 
-/* Call sites spelled through these wrappers pass their constants straight into
- * the argument registers; a direct call instead precomputes a costly constant
- * into a pseudo shared with later uses in the block. A value-returning call
- * sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /*
@@ -77,35 +70,9 @@ s32 OverlayObject_SetFacingTowardObject10(void *self);
 
 /* Two sites reach this one symbol with different arities; old-style so both
  * calls are legal. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ void bump_step(s32 amount)
 {
     gEventWork->message += amount;
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    void Event_ShowMessageAndWait();
-
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    void Event_ShowMessageAndWait();
-
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    void Event_ShowMessageAndWait();
-
-    return f(a0, a1);
 }
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
@@ -113,21 +80,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     void Actor_SetPosition(s32, s32, s32);
 
     Actor_SetPosition(actor, x, y);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
 }
 
 static __inline__ void Scene_AdvanceStep(s32 amount)
@@ -429,7 +381,7 @@ void Scene_RunEventTransition(void)
         Event_Wait(20);
         record = Object_GetById(0);
         *(s32 *)((s32)record + 108) = (s32)OverlayObject_SetFacingTowardObject10;
-        record = Value1(Object_GetById, 0);
+        record = Object_GetById(0);
         if ((*(s32 *)((s32)record + 16) >> 20) == 13) {
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
         }
@@ -450,7 +402,7 @@ void Scene_RunEventTransition(void)
         Actor_SetAttachedEffect(10, 0x102);
         Event_Wait(60);
         Event_ShowMessageAndWait(10, 0, 20);
-        Value2(Engine_ActorEnableActionCallback, 10, (s32)YamaRama_HsuAction);
+        Engine_ActorEnableActionCallback(10, (s32)YamaRama_HsuAction);
         Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
         GameFlag_Set(0x8b0);
         Object_RefreshSelectorById(10);

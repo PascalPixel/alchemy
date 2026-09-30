@@ -1,5 +1,6 @@
 /* The leader's hops and the Dragon's Eye: placing it and taking it. */
 #include "IMIRU_FUCHIN.H"
+#include "CALL.H"
 
 void FieldScene_ApplyOffset0Neg32(void)
 {
@@ -18,7 +19,7 @@ void ImiruFuchin_HopBy(s32 a0, s32 a1)
 
     Event_Begin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
-    Value3(Engine_ActorSetDestinationOffset, 0, a0, a1);
+    Engine_ActorSetDestinationOffset(0, a0, a1);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 7);
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
@@ -44,7 +45,7 @@ void ImiruFuchin_PlaceDragonsEye(void)
         p6[9] &= 15;
         rec[85] = record;
         rec[92] = 1;
-        rec7 = Value2(Engine_HeapAllocate, 17, 0x608);
+        rec7 = Engine_HeapAllocate(17, 0x608);
         Item_LoadIcon(ITEM_DRAGONS_EYE);
         Vram_Load(p6[28], 128, (rec7 + 0x400));
         Heap_Release(17);

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 void ToretoHeya_AdvanceEffectMotion();
 
 void Engine_EventBegin(void);
@@ -18,23 +19,6 @@ void Engine_ActorSetAnimation(s32 actor, s32 anim);
 void Engine_WorkSetValuesIfNonNegative();
 void Engine_MapWaitWorkValuesBelow256(void);
 void Engine_EventEnd(void);
-
-/* Passing constants through these wrappers loads them straight into the
- * argument registers. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 struct Vec {
     s32 x;

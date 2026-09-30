@@ -29,7 +29,7 @@ void RunEventScript01(void)
     Actor_SetPosition(8, 0x16f80000, 0x4b80000);
     Event_Wait(60);
     Actor_SetAnimation(12, 2);
-    record = Value1(Engine_ActorGet, 8);
+    record = Engine_ActorGet(8);
     if (record != 0) {
         Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -37,7 +37,7 @@ void RunEventScript01(void)
     Actor_SetPosition(12, 0, 0);
     ((void (*)())Engine_EventWait)(60);
     Actor_SetAnimation(11, 2);
-    record = Value1(Engine_ActorGet, 8);
+    record = Engine_ActorGet(8);
     if (record != 0) {
         Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -45,7 +45,7 @@ void RunEventScript01(void)
     Actor_SetPosition(11, 0, 0);
     ((void (*)())Engine_EventWait)(60);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    record = Value1(Engine_ActorGet, 8);
+    record = Engine_ActorGet(8);
     if (record != 0) {
         Actor_SetDestination(ACTOR_PARTY_LEADER, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -71,9 +71,9 @@ void FieldScene_RunActorTransferSequence(void)
     s32 scale;
     s32 action;
 
-    actor = Pointer1(Engine_ActorGet, 15);
+    actor = Engine_ActorGet(15);
     Event_Begin();
-    Call2(BattleFx_ScheduleRatioTransition, 0x14000, 1);
+    BattleFx_ScheduleRatioTransition(0x14000, 1);
     Task_Wait(4);
     Event_OpenScreen();
     Event_WaitForScreen();
@@ -100,9 +100,9 @@ void FieldScene_RunActorTransferSequence(void)
     Event_Wait(20);
     Actor_EnableActionCallback(12, gTransferArrive12);
     Event_Wait(20);
-    Call2(Object_SetActionCallbackAndRefreshById, 13, (s32)gTransferArrive13);
+    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferArrive13);
     Audio_PlayCue(0x121);
-    record = Pointer1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -130,7 +130,7 @@ void FieldScene_RunActorTransferSequence(void)
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 10);
-    Call2(Object_SetActionCallbackAndRefreshById, 13, (s32)gTransferDepart13);
+    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferDepart13);
     Audio_PlayCue(0x121);
     Event_Wait(20);
     Battle_ClearObjectFlag5bWhenMode3();
@@ -227,7 +227,7 @@ void FieldScene_RunActorTransferSequence(void)
     Task_Wait(1);
     record = Actor_Get(15);
     Actor_SetSpriteFlags(record, 0);
-    Call2(Engine_TaskAddCallback, (s32)FieldScene_RunScene371_020017a4, 0xc80);
+    Engine_TaskAddCallback((s32)FieldScene_RunScene371_020017a4, 0xc80);
     do {
         Task_Wait(1);
     } while (*(s16 *)(actor + 100) == 0);
@@ -239,7 +239,7 @@ void FieldScene_RunActorTransferSequence(void)
     scale = 192;
     record = Actor_Get(9);
     *(s32 *)(record + 40) = (scale << 11);
-    record = Pointer1(Engine_ActorGet, 8);
+    record = Engine_ActorGet(8);
     *(s32 *)(record + 40) = (scale << 11);
     Audio_PlayCue(145);
     Camera_SetSpeed(0x40000, 0x40000);
@@ -253,7 +253,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetAttachedEffect(9, 0x102);
     Actor_SetAttachedEffect(8, 0x102);
     Event_Wait(60);
-    Call1(Engine_TaskRemoveCallback, (s32)FieldScene_RunScene371_020017a4);
+    Engine_TaskRemoveCallback((s32)FieldScene_RunScene371_020017a4);
     Task_Wait(1);
     Actor_SetPosition(14, 0, 0);
     Actor_SetPosition(15, 0, 0);
@@ -287,7 +287,7 @@ void FieldScene_RunActorTransferSequence(void)
     Event_Wait(40);
     Actor_EnableActionCallback(12, gTransferReturn12);
     Event_Wait(40);
-    Call2(Object_SetActionCallbackAndRefreshById, 13, (s32)gTransferReturn13);
+    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferReturn13);
     Battle_ClearObjectFlag5bWhenMode3();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x170c0000, 0x6280000);
     Actor_SetPosition(ACTOR_GERALD, 0x17140000, 0x6400000);
@@ -320,7 +320,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Pointer1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -408,8 +408,8 @@ void FieldScene_RunScene371_020017a4(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 15);
-    record = Value1(Engine_ActorGet, 14);
+    rec7 = Engine_ActorGet(15);
+    record = Engine_ActorGet(14);
     *(s32 *)(rec7 + 8) = *(s32 *)(record + 8);
     *(s32 *)(rec7 + 16) = *(s32 *)(record + 16);
     if (*(s32 *)(rec7 + 12) < 0xa0000) {
@@ -435,7 +435,7 @@ void FieldScene_RunScene371_020017fc(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec7 = Engine_ActorGet(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -460,7 +460,7 @@ void FieldScene_RunScene371_02001888(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec7 = Engine_ActorGet(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -495,7 +495,7 @@ void FieldScene_RunScene371_02001938(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec7 = Engine_ActorGet(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -530,7 +530,7 @@ void FieldScene_RunScene371_020019e8(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec7 = Engine_ActorGet(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -565,7 +565,7 @@ void FieldScene_RunScene371_02001a98(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec7 = Engine_ActorGet(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -582,7 +582,7 @@ void FieldScene_RunScene371_02001a98(void)
 
         *(u16 *)(rec7 + 100) = shown;
     }
-    if (Value0(StoryScene_ComputeOpposingSlotDelta) == 11) {
+    if (StoryScene_ComputeOpposingSlotDelta() == 11) {
         Engine_ActorEnableActionCallback(8, gTransferLeaderTurn);
     } else {
         Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
@@ -604,7 +604,7 @@ void FieldScene_RunScene371_02001b5c(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec7 = Engine_ActorGet(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -632,7 +632,7 @@ void FieldScene_RunScene371_02001c08(void)
     s32 record;
 
     Battle_ClearObjectFlag5bWhenMode3();
-    Call2(BattleFx_ScheduleRatioTransition, 0x10000, 6);
+    BattleFx_ScheduleRatioTransition(0x10000, 6);
     Event_WaitForDisplayField358Clear();
     Battle_SetObjectFlag5bWhenMode3();
     Actor_RunRepeatedMotion(8, 2);

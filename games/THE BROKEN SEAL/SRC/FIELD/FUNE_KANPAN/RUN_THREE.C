@@ -34,15 +34,15 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     /* For each of actors 1, 2, and 3: fetch a source record, and if one
      * exists, copy its fields at +8 and +16 into the actor. */
-    record = Value1(Object_GetById, 0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Object_GetById, 0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Object_GetById, 0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -57,11 +57,11 @@ void FieldScene_RunThreeActorEncounter(void)
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
-    Value2(FieldScene_CallPairWith10, 3, 0x8000);
+    FieldScene_CallPairWith10(3, 0x8000);
     FieldScene_CallPairWith10(22, 0);
     Event_SetMessage((s32)MsgFuneRobinTalkedPassengersDidntTour);
-    Call1(FieldScene_RunStepThen10, 22);
-    Value2(FieldScene_CallPairWith10, 21, 0xd000);
+    FieldScene_RunStepThen10(22);
+    FieldScene_CallPairWith10(21, 0xd000);
     Event_ShowMessageAndWait(21, 0, 40);
     Actor_ShowEmote(22, 0x100, 20);
     Actor_RunRepeatedMotion(22, 1);
@@ -71,10 +71,10 @@ void FieldScene_RunThreeActorEncounter(void)
     if (Event_ChooseYesNo(0, 0) == 1) {
         Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
         FieldScene_RunStepThen10(2);
-        Value2(FieldScene_CallPairWith10, 3, 0xa000);
+        FieldScene_CallPairWith10(3, 0xa000);
         Actor_SetAnimation(ACTOR_MIA, 3);
         FieldScene_RunStepThen10(3);
-        Value2(FieldScene_CallPairWith10, 1, 0x6000);
+        FieldScene_CallPairWith10(1, 0x6000);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
         Event_OpenMessage(ACTOR_GERALD, 0);
         L_02003dfa:;
@@ -104,7 +104,7 @@ void FieldScene_RunThreeActorEncounter(void)
         record[ACTOR_FLAGS_OFFSET] = value | bits;
     }
     /* Clear the low bit of the flag byte on actor 21. */
-    *(u8 *)(Value1(Object_GetById, 21) + ACTOR_FLAGS_OFFSET) &= 254;
+    *(u8 *)(Object_GetById(21) + ACTOR_FLAGS_OFFSET) &= 254;
     Actor_WalkToAndWait(21, 162, 0x2a4);
     Event_Wait(1);
     {
@@ -115,7 +115,7 @@ void FieldScene_RunThreeActorEncounter(void)
         record[ACTOR_FLAGS_OFFSET] = bits;
     }
     Actor_FaceDirection(22, 0x3000, 0);
-    Call2(FieldScene_CallPairWith10, 21, 0xd000);
+    FieldScene_CallPairWith10(21, 0xd000);
     FieldScene_RunStepThen10(22);
     /* Finish actors 1, 2, and 3 with the same target values used earlier. */
     Actor_WalkTo(ACTOR_GERALD, 180, 0x28e);

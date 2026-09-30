@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "HEYA.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 MsgFuneBack[];
 extern u8 MsgFuneBackBroughtOarsman[];
 
@@ -39,19 +40,19 @@ void Scene_RunConditionalActorPresentation(s32 a0)
     Engine_ActorRunRepeatedMotion(27, 1);
     Engine_EventWait(20);
     Engine_ActorFaceEachOther(27, 0, 10);
-    if (Value1(Engine_GameFlagIsSet, 0x300) == 0) {
+    if (Engine_GameFlagIsSet(0x300) == 0) {
     } else {
         rec7 = FuneHeya_FindFirstSetFlag(a0, 0);
         Engine_ActorRunRepeatedMotion(27, 1);
         Engine_EventWait(20);
         Engine_ActorFaceEachOther(27, 0, 10);
-        Call1(Engine_EventSetMessage, (s32)MsgFuneBackBroughtOarsman);
-        Call1(FieldScene_RunStepThen10, CabinSpeakerRequest);
+        Engine_EventSetMessage((s32)MsgFuneBackBroughtOarsman);
+        FieldScene_RunStepThen10(CabinSpeakerRequest);
         Engine_ActorSetAnimationAndWait(0, 3);
         v7 = 0;
         Call3(Engine_ActorSetSpeed, 0, 0x10000, v6);
         ((void (*)())Engine_ActorWalkToAndWait)(0, x, 168);
-        Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
+        Engine_ActorFaceDirection(0, 0xc000, 0);
         record = Engine_ActorGet(0);
         if (record != 0) {
             Engine_ActorSetPosition(rec7, record->x.fixed, record->z.fixed);
@@ -67,19 +68,19 @@ void Scene_RunConditionalActorPresentation(s32 a0)
         Engine_ActorSetAnimation(27, 3);
         FieldScene_RunStepThen10(27);
         Engine_ActorSetAnimationAndWait(rec7, 3);
-        if (Value1(Engine_GameFlagIsSet, 0x92b) != 0) {
+        if (Engine_GameFlagIsSet(0x92b) != 0) {
             Call3(Engine_ActorFaceDirection, 0, 0x2000, 0);
             Call3(Engine_ActorFaceDirection, 27, 0x3000, 0);
             Call3(Engine_ActorWalkToAndWait, rec7, 0x1d6, 204);
             FieldScene_CallPairWith10(rec7, 0xb000);
-        } else if (Value1(Engine_GameFlagIsSet, 0x92a) != 0) {
+        } else if (Engine_GameFlagIsSet(0x92a) != 0) {
             Call3(Engine_ActorWalkToAndWait, 0, 0x1a6, 154);
             Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
             Call3(Engine_ActorFaceDirection, 27, 0x5000, 0);
             Call3(Engine_ActorWalkToAndWait, rec7, 0x19a, 204);
             v7 = 1;
             FieldScene_CallPairWith10(rec7, 0xd000);
-        } else if (Value1(Engine_GameFlagIsSet, 0x929) != 0) {
+        } else if (Engine_GameFlagIsSet(0x929) != 0) {
             Call3(Engine_ActorFaceDirection, 0, 0x2000, 0);
             Call3(Engine_ActorFaceDirection, 27, 0x3000, 0);
             Call3(Engine_ActorWalkToAndWait, rec7, 0x1d6, 172);
@@ -93,7 +94,7 @@ void Scene_RunConditionalActorPresentation(s32 a0)
             FieldScene_CallPairWith10(rec7, 0xd000);
         }
         Engine_ActorFaceEachOther(27, 0, 20);
-        Call1(FieldScene_RunStepThen10, 0x201b);
+        FieldScene_RunStepThen10(0x201b);
         Engine_ActorSetAnimationAndWait(0, 3);
         Engine_ActorSetAnimationAndWait(27, 3);
         Call3(Engine_ActorSetSpeed, 27, 0x10000, 0x8000);
@@ -102,24 +103,24 @@ void Scene_RunConditionalActorPresentation(s32 a0)
             Call3(Engine_ActorWalkToAndWait, 27, 0x198, 164);
         }
         Call3(Engine_ActorWalkToAndWait, 27, 0x198, 134);
-        Call3(Engine_ActorWalkTo, 27, 0x1b8, 134);
+        Engine_ActorWalkTo(27, 0x1b8, 134);
         Engine_EventWait(40);
         FieldScene_RunSceneStep(9, 10, 0);
         goto L_02004592;
     }
-    Call1(Engine_EventSetMessage, (s32)MsgFuneBack);
+    Engine_EventSetMessage((s32)MsgFuneBack);
     Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
-    Call3(Engine_ActorShowEmote, 27, 0x101, 60);
+    Engine_ActorShowEmote(27, 0x101, 60);
     /* FAKEMATCH: start the saved speaker at repeated dialogue; the initial
      * call must retain its independent load from the same literal word. */
     base5_a01b = CabinSpeakerRequest;
     FieldScene_RunStepThen10(base5_a01b);
-    Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
+    Engine_ActorSetAttachedEffect(0, 0x102);
     Engine_EventWait(60);
     Call3(Engine_ActorShowEmote, 27, 0x103, 40);
     Engine_ActorStartRepeatedMotion(27, 2);
     FieldScene_RunStepThen10(base5_a01b);
-    Call3(Engine_ActorShowEmote, 27, 0x105, 40);
+    Engine_ActorShowEmote(27, 0x105, 40);
     FieldScene_RunStepThen10(base5_a01b);
     Engine_ActorSetAnimationAndWait(27, 4);
     FieldScene_RunStepThen10(base5_a01b);

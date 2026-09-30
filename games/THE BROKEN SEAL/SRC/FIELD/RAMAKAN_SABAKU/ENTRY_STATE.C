@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 
 void Engine_GameFlagClear();
 void Engine_MapCopyCells();
@@ -11,26 +12,6 @@ s32 Engine_DisplayScrollStartHBlankDma();
 
 extern s16 gGameState[][1];
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value7(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6)
-{
-    return f(a0, a1, a2, a3, a4, a5, a6);
-}
-
 /* Lamakan Desert entry: clear flag 0x201, lay out the map cells for the
  * entrance taken, park the scene actors and, outside the fourth area
  * (SceneId_RamakanSabaku4), start the heat-shimmer scroll. */
@@ -40,12 +21,12 @@ s32 RamakanSabaku_ApplyEntryState(void)
     s32 record;
     s32 v5;
 
-    Call1(Engine_GameFlagClear, 0x201);
+    Engine_GameFlagClear(0x201);
     if (gGameState[224][0] == (s32)&SceneId_RamakanSabaku1) {
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 22, 7);
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 8, 10);
-        Call6(Engine_MapCopyCells, 70, 68, 4, 2, 23, 21);
-        Call6(Engine_MapCopyCellAttributes, 70, 68, 4, 1, 23, 23);
+        Engine_MapCopyCells(70, 68, 4, 2, 23, 21);
+        Engine_MapCopyCellAttributes(70, 68, 4, 1, 23, 23);
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 16, 42);
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 36, 44);
         Call6(Engine_MapCopyCells, 70, 68, 4, 2, 14, 55);
@@ -53,38 +34,38 @@ s32 RamakanSabaku_ApplyEntryState(void)
         if (gGameState[224][0] != (s32)&SceneId_RamakanSabaku2) {
         } else {
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 42, 5);
-            Call6(Engine_MapCopyCells, 70, 68, 4, 2, 20, 11);
-            Call6(Engine_MapCopyCellAttributes, 70, 68, 4, 1, 20, 13);
+            Engine_MapCopyCells(70, 68, 4, 2, 20, 11);
+            Engine_MapCopyCellAttributes(70, 68, 4, 1, 20, 13);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 14, 12);
-            Call6(Engine_MapCopyCells, 70, 68, 4, 2, 56, 18);
-            Call6(Engine_MapCopyCells, 70, 68, 4, 2, 7, 22);
-            Call6(Engine_MapCopyCellAttributes, 70, 68, 4, 1, 7, 24);
-            Call6(Engine_MapCopyCells, 70, 68, 4, 2, 44, 23);
-            Call6(Engine_MapCopyCellAttributes, 70, 68, 4, 1, 44, 25);
-            Call6(Engine_MapCopyCells, 70, 68, 4, 2, 38, 24);
+            Engine_MapCopyCells(70, 68, 4, 2, 56, 18);
+            Engine_MapCopyCells(70, 68, 4, 2, 7, 22);
+            Engine_MapCopyCellAttributes(70, 68, 4, 1, 7, 24);
+            Engine_MapCopyCells(70, 68, 4, 2, 44, 23);
+            Engine_MapCopyCellAttributes(70, 68, 4, 1, 44, 25);
+            Engine_MapCopyCells(70, 68, 4, 2, 38, 24);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 26, 28);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 17, 35);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 50, 36);
-            Call6(Engine_MapCopyCells, 70, 68, 4, 2, 34, 43);
-            Call6(Engine_MapCopyCellAttributes, 70, 68, 4, 1, 34, 45);
+            Engine_MapCopyCells(70, 68, 4, 2, 34, 43);
+            Engine_MapCopyCellAttributes(70, 68, 4, 1, 34, 45);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 6, 46);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 27, 55);
-            Call6(Engine_MapCopyCells, 70, 68, 4, 2, 43, 56);
+            Engine_MapCopyCells(70, 68, 4, 2, 43, 56);
             goto clear_actors;
         }
         if (gGameState[224][0] == (s32)&SceneId_RamakanSabaku3) {
-            Call6(Engine_MapCopyCellsLayered, 69, 99, 4, 2, 8, 16);
-            Call6(Engine_MapCopyCellsLayered, 69, 99, 4, 2, 6, 20);
-            Call6(Engine_MapCopyCellsLayered, 69, 99, 4, 2, 10, 23);
-            Call6(Engine_MapCopyCellAttributes, 69, 99, 4, 2, 8, 14);
+            Engine_MapCopyCellsLayered(69, 99, 4, 2, 8, 16);
+            Engine_MapCopyCellsLayered(69, 99, 4, 2, 6, 20);
+            Engine_MapCopyCellsLayered(69, 99, 4, 2, 10, 23);
+            Engine_MapCopyCellAttributes(69, 99, 4, 2, 8, 14);
             Call6(Engine_MapCopyCellAttributes, 69, 99, 4, 2, 6, 18);
-            Call6(Engine_MapCopyCellAttributes, 69, 99, 4, 1, 6, 20);
-            Call6(Engine_MapCopyCellAttributes, 69, 99, 4, 2, 10, 21);
+            Engine_MapCopyCellAttributes(69, 99, 4, 1, 6, 20);
+            Engine_MapCopyCellAttributes(69, 99, 4, 2, 10, 21);
             Call6(Engine_MapCopyCells, 0, 121, 5, 7, 8, 32);
-            Call6(Engine_MapCopyCells, 0, 121, 5, 7, 43, 32);
-            Call6(Engine_MapCopyCells, 6, 120, 3, 1, 9, 5);
-            Call6(Engine_MapCopyCells, 9, 120, 3, 1, 44, 5);
-            Call6(Engine_MapCopyCellAttributes, 9, 0, 3, 3, 9, 6);
+            Engine_MapCopyCells(0, 121, 5, 7, 43, 32);
+            Engine_MapCopyCells(6, 120, 3, 1, 9, 5);
+            Engine_MapCopyCells(9, 120, 3, 1, 44, 5);
+            Engine_MapCopyCellAttributes(9, 0, 3, 3, 9, 6);
         }
     }
     clear_actors:;

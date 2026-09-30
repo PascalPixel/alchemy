@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgKorosseoMainThingStage[];
 extern u8 MsgKorosseoStageDubbedMini[];
 
@@ -23,43 +24,7 @@ void KorosseoKabe_ShowFollowUpPrompt();
 s32 FieldScene_RunMiddleSequence();
 void Engine_EventEnd();
 
-
 extern s16 gCell[];
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 /* Colosso wall stage: unless the stage is already cleared, walk the player
  * along the wall, show the introduction and hand over to the stage. */
@@ -72,26 +37,26 @@ void KorosseoKabe_RunStageIntro(s32 a0)
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
-        rec = Value2(KorosseoKabe_RunStateInteraction, a0, 1);
+        rec = KorosseoKabe_RunStateInteraction(a0, 1);
         if (rec == 0) {
-            Call1(Engine_EventSetMessage, (s32)MsgKorosseoStageDubbedMini);
-            Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
-            Call4(Engine_CameraMoveTo, 0x4c80000, -1, 0xb80000, 1);
+            Engine_EventSetMessage((s32)MsgKorosseoStageDubbedMini);
+            Engine_CameraSetSpeed(0x30000, 0x6000);
+            Engine_CameraMoveTo(0x4c80000, -1, 0xb80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
-            Value3(Korosseo_FadeInCompetitor, 0, 0x4f8, 168);
+            Korosseo_FadeInCompetitor(0, 0x4f8, 168);
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
             SceneActor_PlaceWithScale14000(0, 0x508, 184);
             SceneActor_PlaceWithScale14000(0, 0x508, 216);
             SceneActor_PlaceWithScale14000(0, 0x4c8, 216);
             Engine_EventShowMessage(a0, 0);
             SceneActor_PlaceWithScale14000(0, 0x4c8, 248);
-            Call3(SceneActor_PlaceWithScale14000, 0, 0x4a8, 248);
+            SceneActor_PlaceWithScale14000(0, 0x4a8, 248);
             Engine_EventWait(3);
             record = Engine_ActorGet(0);
             *(s32 *)(record + 40) = 0x40000;
             Engine_ActorSetAnimation(0, 28);
-            Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
+            Engine_ActorSetAttachedEffect(0, 0x102);
             Engine_EventWait(30);
             Engine_EventShowMessage(a0, 0);
             Korosseo_RestoreCompetitor(0);
@@ -99,11 +64,11 @@ void KorosseoKabe_RunStageIntro(s32 a0)
             KorosseoKabe_ShowFollowUpPrompt(a0, 1);
         } else {
             if (rec == 1) {
-                Call1(Engine_EventSetMessage, (s32)MsgKorosseoMainThingStage);
+                Engine_EventSetMessage((s32)MsgKorosseoMainThingStage);
                 Engine_EventShowMessage(a0, 0);
             }
         }
-        Value3(FieldScene_RunMiddleSequence, rec, a0, 1);
+        FieldScene_RunMiddleSequence(rec, a0, 1);
         Engine_EventEnd();
     }
 }

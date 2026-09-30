@@ -1,4 +1,5 @@
 #include "TIMED_EVENTS.H"
+#include "CALL.H"
 extern u8 MsgHaidiaAWiseManFleesWhen[];
 extern u8 MsgHaidiaGoodArmorDrawsOutStrength[];
 extern u8 MsgHaidiaGoodWeaponsDrawOutStrength[];
@@ -232,7 +233,7 @@ void FieldScene_RunLongPresentationSequence(void)
     *((u8 *)Engine_ActorGet(24) + 85) = v6;
     *((u8 *)Engine_ActorGet(25) + 85) = v6;
     base7_20090c1 = (s32)Scene_UpdateTimedActor;
-    Call2((void (*)())Engine_TaskAddCallback, base7_20090c1, 0xc80);
+    ((void (*)())Engine_TaskAddCallback)(base7_20090c1, 0xc80);
     Task_Wait(1);
     gEventWork->transition_frames = 32;
     Event_OpenScreen();
@@ -261,7 +262,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Call3(Object_SetTargetAndCallback, 0, 0x1000a, base5_20092fc);
     Call3(Object_SetTargetAndCallback, 1, 0x1000a, base5_20092fc);
     Call3(Object_SetTargetAndCallback, 2, 0x1000a, base5_20092fc);
-    Call3(Object_SetTargetAndCallback, 3, 0x1000a, base5_20092fc);
+    Object_SetTargetAndCallback(3, 0x1000a, base5_20092fc);
     Event_Wait(0x12c);
     *(u8 *)(Battle_GetWorkObject1e0() + 85) = v6;
     Camera_SetSpeed(0x1999, 0x333);
@@ -476,9 +477,9 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     base5_2009400 = (s32)gValePartyScript;
     Actor_EnableActionCallback(ACTOR_GERALD, base5_2009400);
-    Value2(Engine_ActorEnableActionCallback, 2, base5_2009400);
-    Value2(Object_SetActionCallbackAndRefreshById, 3, base5_2009400);
-    Value2(Engine_ActorEnableActionCallback, 10, (s32)gValeActor10Script);
+    Engine_ActorEnableActionCallback(2, base5_2009400);
+    Object_SetActionCallbackAndRefreshById(3, base5_2009400);
+    Engine_ActorEnableActionCallback(10, (s32)gValeActor10Script);
     Actor_WalkToAndWait(11, 0x345, 0x178);
     Actor_FaceDirection(11, 0xd000, 20);
     GameFlag_Set(0x81d);

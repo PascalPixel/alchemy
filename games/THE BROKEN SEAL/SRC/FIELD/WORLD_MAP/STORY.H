@@ -6,7 +6,6 @@
 #include "FIELD_SCENE.H"
 #include "MAP_RENDER_WORK.H"
 
-
 #define SCENE_PHASE (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
 #define ACTOR 8
 
@@ -170,7 +169,6 @@ void StoryScene_UpdateTransitionEffect(void);
 void FieldScene_RunScene371_020017a4(void);
 extern u8 gOpeningLeaderRise[];
 
-
 /*
  * Story-progress triggers -- resource_371.  Each fires one event once the
  * progress word has reached nine tenths of the level word; each seventy-two
@@ -179,67 +177,10 @@ extern u8 gOpeningLeaderRise[];
 
 /* Actor callbacks for the story transfer scene. */
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 s32 StoryScene_ComputeOpposingSlotDelta(void);
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-
-    return f();
-}
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 
 /* The actor index every call in this scene step operates on. */
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-
-    return f(a0, a1);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
-}
-
-static __inline__ u8 *Pointer1(u8 *(*f)(), s32 a0)
-{
-    return f(a0);
-}
 
 #endif

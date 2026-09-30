@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "TBS_EDITION.H"
 
 extern u8 gMenuWork[];
 
@@ -91,7 +92,7 @@ s32 CharacterSelector_RunRearrange(void)
             page = Math_Mod(page + 3, 3);
             Menu_CreateWindowAndEntryObjects(work->owners[cursor], page);
             PsynergyMenu_CallIconRoutineWithValue(work, work->owners[cursor]);
-            for (i = 7; i >= 0; i--)
+            for (i = MENU_ROW_COUNT - 1; i >= 0; i--)
                 work->frames[i] = 30;
             work->frames[cursor] = 26;
         }
@@ -113,7 +114,7 @@ s32 CharacterSelector_RunRearrange(void)
                 cursor++;
                 Menu_ReleaseEntryObjects();
                 PsynergyMenu_InitializeEntryObjects(work->object, 2, 2, 8, 0);
-                for (i = 7; i >= 0; i--)
+                for (i = MENU_ROW_COUNT - 1; i >= 0; i--)
                     work->frames[i] = 30;
                 work->frames[cursor] = 26;
             } else {
@@ -126,7 +127,7 @@ s32 CharacterSelector_RunRearrange(void)
                 cursor--;
                 Menu_ReleaseEntryObjects();
                 PsynergyMenu_InitializeEntryObjects(work->object, 2, 2, 8, 0);
-                for (i = 7; i >= 0; i--)
+                for (i = MENU_ROW_COUNT - 1; i >= 0; i--)
                     work->frames[i] = 30;
                 work->frames[cursor] = 26;
             } else {

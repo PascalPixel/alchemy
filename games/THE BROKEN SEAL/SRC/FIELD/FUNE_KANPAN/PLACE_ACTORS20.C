@@ -19,9 +19,6 @@ extern u8 LinkedMessage_TheresNothingWeCanDo[];
 s32 BuildMotionCountdown(s32, s16);
 void Event_CallWithLastActiveObjectId();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 void SceneActor_PlaceActors20To27(void)
 {
     s32 m = 0xA0;

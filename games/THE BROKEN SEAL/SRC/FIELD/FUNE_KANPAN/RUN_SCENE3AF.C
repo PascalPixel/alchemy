@@ -12,9 +12,6 @@ extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 BuildMotionCountdown(s32, s16);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 void FieldScene_RunScene3af_02000bb8(void)
 {
     u32 i;

@@ -13,9 +13,6 @@ extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 BuildMotionCountdown(s32, s16);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 s32 SceneData_SelectTableEntryByFlagGroup(u32 sel)
 {
     s32 base = 0;

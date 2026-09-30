@@ -15,9 +15,6 @@ extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 BuildMotionCountdown(s32, s16);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Contiguous unnamed leaf-owner run for resource_3af. */
 u8 *SceneData_GetTablec994(void)
 {

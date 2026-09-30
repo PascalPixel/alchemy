@@ -108,13 +108,6 @@ void FieldScene_SetupActor11Effect181(void)
 
 u8 *SceneData_GetExtraTable(void) { return KorimaHiroba_Extras; }
 
-/*
- * The overlay's entry driver: the loader enters here through the header
- * veneer, and no call inside the image reaches it. Sets the workspace +448
- * word to 516, sets up records 8, 9 and 10, and runs two steps for slot 11
- * that each act only while their flag is clear. The 84-byte owner includes
- * its three pool words.
- */
 s32 FieldScene_SetupEntryActors8To11(void)
 {
     void SceneEffect_AdjustPaletteWindow(s32 id);

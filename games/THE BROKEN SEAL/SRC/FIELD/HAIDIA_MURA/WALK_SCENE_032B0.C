@@ -8,8 +8,6 @@ void Engine_ActorSetAnimation();
 void Engine_ActorMoveToAndWait();
 void Engine_EventWait();
 
-
-
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.

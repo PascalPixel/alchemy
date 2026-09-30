@@ -1,9 +1,5 @@
 #include "STAGED_MOTION.H"
 
-/*
- * The owner extends through its one literal pool word. The run length is
- * unsigned and the selector advances once per iteration.
- */
 void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
 {
     s32 selector = first;

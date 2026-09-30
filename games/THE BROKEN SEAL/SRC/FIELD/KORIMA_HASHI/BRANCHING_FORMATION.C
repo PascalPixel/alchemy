@@ -128,11 +128,6 @@ s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
     return 1;
 }
 
-/*
- * The clamp store takes its zero from a local.  Written as a literal it is
- * materialised from the literal pool, which changes the store's source
- * register and costs a pool word.
- */
 s32 SceneActor_UpdateRandomCounterMode(u8 *object)
 {
     u16 *counter = (u16 *)(object + 100);
@@ -271,7 +266,6 @@ s32 Scene_Initialize(void)
     }
     return 0;
 }
-
 
 void Object_RefreshSelectorById(s32 id);
 void SceneActor_SetPairZeroAndValue(s32 actor, s32 facing, s32 frames);

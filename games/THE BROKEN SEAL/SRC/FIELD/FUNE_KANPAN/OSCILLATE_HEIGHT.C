@@ -12,9 +12,6 @@ extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 BuildMotionCountdown(s32, s16);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {
     s16 *flag = (s16 *)&actor->unknown_66;

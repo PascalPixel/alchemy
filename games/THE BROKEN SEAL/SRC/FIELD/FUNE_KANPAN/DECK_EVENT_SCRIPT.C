@@ -4,12 +4,6 @@ extern u8 MsgFuneArrgh[];
 extern u8 MsgFuneNoUseLate[];
 extern struct EventWork *gEventWork;
 
-/* Audited 49-call script for the complete 0x02001db0 owner.
- * Recovered from the bounded canonical owner.
- *
- * Exact 2026-09-23 (480 bytes), with one tagged fake match for the walk
- * after the local call. The three actors' action table is FuneKanpan_DeckEventActions. */
-
 void FieldScene_RunScene3af_02000bb8();
 void FieldScene_RunStepThen10();
 void WaitFrames();

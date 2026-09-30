@@ -20,8 +20,6 @@ void FieldScene_CallPairWith10();
 void Event_CallWithLastActiveObjectId(s32);
 s32 Object_GetById(s32);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 void FieldScene_RunScene3af_02000bb8(void);
 
 void FieldScene_RunScene3af_02001a98(void)

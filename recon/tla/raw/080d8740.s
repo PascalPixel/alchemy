@@ -289,7 +289,7 @@ Func_080d8740:
 	adds	r2, r6, #0
 	mov	r1, r8
 	ldr	r0, [r5, #8]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #36]

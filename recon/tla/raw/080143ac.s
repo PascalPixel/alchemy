@@ -31,13 +31,3 @@ Resource_FindFreeEntry:
 	pop	{pc}
 	.2byte 0x36e0
 	.2byte 0x0200
-	push	{r5, r6, lr}
-	adds	r6, r0, #0
-	bl	Resource_FindFreeEntry
-	adds	r1, r6, #0
-	movs	r2, #0
-	adds	r5, r0, #0
-	bl	0x080142d4
-	adds	r0, r5, #0
-	pop	{r5, r6, pc}
-	.2byte 0x0000

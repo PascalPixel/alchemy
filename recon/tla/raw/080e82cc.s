@@ -140,7 +140,7 @@ Func_080e82cc:
 	lsls	r1, r1, #1
 	ldr	r2, [sp, #48]
 	str	r0, [sp, #28]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r2, [sp, #48]
 	movs	r3, #208
 	movs	r4, #128
@@ -465,7 +465,7 @@ Func_080e82cc:
 	lsls	r1, r1, #2
 	ldr	r2, [sp, #48]
 	adds	r5, r0, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r4, [sp, #48]
 	mov	r9, r0
 	movs	r1, #164
@@ -689,7 +689,7 @@ Func_080e82cc:
 	lsls	r1, r1, #1
 	mov	r2, sl
 	str	r0, [sp, #4]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r6, #208
 	movs	r7, #128
 	lsls	r6, r6, #5

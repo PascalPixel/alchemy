@@ -41,7 +41,7 @@ Func_080dba5c:
 	.2byte 0x1c29
 	adds	r2, r6, #0
 	mov	r8, r0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r2, #254
 	lsls	r2, r2, #3
 	adds	r3, r7, r2

@@ -51,7 +51,7 @@ Func_080e9aec:
 	lsls	r1, r1, #4
 	mov	r2, r8
 	adds	r5, r0, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r3, #128
 	lsls	r3, r3, #5
 	adds	r3, #44

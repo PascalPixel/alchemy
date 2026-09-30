@@ -99,7 +99,7 @@ Func_080ebf68:
 	movs	r1, #128
 	adds	r2, r6, #0
 	ldrh	r0, [r7, #0]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r3, #128
 	lsls	r3, r3, #3
 	orrs	r0, r3

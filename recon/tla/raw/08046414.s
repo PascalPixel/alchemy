@@ -81,7 +81,7 @@ Func_08046414:
 	orrs	r3, r0
 	strh	r3, [r7, #8]
 	ldr	r0, [r5, #0]
-	bl	Func_08039500
+	bl	RenderOutput_AppendToList
 	b.n	.L_080464cc
 	movs	r0, r0
 	.4byte 0x000003ff

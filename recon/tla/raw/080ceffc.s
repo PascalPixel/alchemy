@@ -333,7 +333,7 @@ Func_080ceffc:
 	movs	r1, #128
 	adds	r2, r5, #0
 	ldrb	r0, [r6, #16]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #52]
 	ldrh	r2, [r6, #8]
 	ands	r0, r3

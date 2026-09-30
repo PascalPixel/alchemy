@@ -827,7 +827,7 @@ Func_080e03c4:
 	adds	r1, r5, #0
 	mov	r2, sl
 	str	r0, [sp, #8]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r3, #132
 	lsls	r3, r3, #6
 	mov	fp, r0
@@ -843,7 +843,7 @@ Func_080e03c4:
 	adds	r1, r5, #0
 	mov	r2, sl
 	str	r0, [sp, #4]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r3, #132
 	lsls	r3, r3, #6
 	adds	r3, #14
@@ -1775,7 +1775,7 @@ Func_080e03c4:
 	lsls	r1, r1, #1
 	ldr	r2, [pc, #276]
 	asrs	r0, r0, #16
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r5, [pc, #272]
 	movs	r3, #153
 	lsls	r3, r3, #2
@@ -2243,7 +2243,7 @@ Func_080e03c4:
 	lsls	r1, r1, #1
 	ldr	r2, [pc, #44]
 	asrs	r0, r0, #16
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	adds	r3, r6, #0
 	movs	r2, #186
 	movs	r5, #0

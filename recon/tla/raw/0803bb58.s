@@ -659,7 +659,7 @@ Func_0803bb58:
 	mov	r3, sl
 	strb	r3, [r5, #14]
 	adds	r1, r5, #0
-	bl	Func_08039500
+	bl	RenderOutput_AppendToList
 	b.n	.L_0803c058
 	.2byte 0x4000
 	.2byte 0x0000
@@ -782,7 +782,7 @@ Func_0803bb58:
 	movs	r3, #0
 	strb	r2, [r7, #14]
 	str	r3, [r7, #0]
-	bl	Func_08039500
+	bl	RenderOutput_AppendToList
 	mov	r0, sl
 	b.n	.L_0803c160
 	movs	r0, r0

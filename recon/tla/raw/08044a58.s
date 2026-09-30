@@ -594,7 +594,7 @@ Func_08044a58:
 	lsls	r1, r1, #2
 	adds	r0, r7, #0
 	adds	r2, r6, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r0, #56
 	bl	Runtime_ReleaseSlot
 .L_08044f80:

@@ -79,7 +79,7 @@ Func_0803d9bc:
 	ldr	r0, [r1, #0]
 	adds	r2, r5, r3
 	movs	r1, #128
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	mov	r1, r9
 	str	r0, [r1, #0]
 	movs	r0, #68
@@ -170,7 +170,7 @@ Func_0803d9bc:
 	adds	r2, r6, r3
 	ldr	r0, [r7, #0]
 	lsls	r1, r1, #2
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	mov	r1, r8
 	str	r0, [r1, #0]
 	movs	r0, #68

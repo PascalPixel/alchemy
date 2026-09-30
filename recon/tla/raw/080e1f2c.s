@@ -49,7 +49,7 @@ Func_080e1f2c:
 	str	r0, [sp, #8]
 	adds	r1, r5, #0
 	ldr	r2, [r6, #0]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r1, #133
 	lsls	r1, r1, #3
 	movs	r2, #249
@@ -133,7 +133,7 @@ Func_080e1f2c:
 	movs	r1, #128
 	lsls	r1, r1, #1
 	ldr	r2, [r6, #0]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r1, #232
 	lsls	r1, r1, #2
 	adds	r7, r6, r1

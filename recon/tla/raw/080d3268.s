@@ -1,19 +1,6 @@
 .syntax unified
 	.thumb
-	.global Object_SetActionById
-	.global Func_080d3254
-	.thumb_func
-Object_SetActionById:
-Func_080d3254:
-	push	{r5, lr}
-	adds	r5, r1, #0
-	bl	ObjectTable_Get
-	cmp	r0, #0
-	beq.n	.L_080d3266
-	adds	r1, r5, #0
-	bl	0x08020098
-.L_080d3266:
-	pop	{r5, pc}
+	.balign 4
 	.global ObjectMotion_WaitForAnimationChange
 	.thumb_func
 ObjectMotion_WaitForAnimationChange:

@@ -137,7 +137,7 @@ Func_080e3698:
 	bl	WaitFrames
 	movs	r1, #1
 	ldr	r0, [sp, #20]
-	bl	0x080d4384
+	bl	Func_080d4384
 	add	sp, #36
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

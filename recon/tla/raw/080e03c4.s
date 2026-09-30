@@ -1256,7 +1256,7 @@ Func_080e03c4:
 	movs	r3, #24
 	ldrsh	r0, [r6, r3]
 	lsls	r1, r1, #7
-	bl	0x080d3838
+	bl	Func_080d3838
 	movs	r0, #30
 	bl	WaitFrames
 	ldr	r3, [pc, #120]

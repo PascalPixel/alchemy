@@ -243,7 +243,7 @@ Func_080e4730:
 	movs	r1, #1
 	movs	r5, #24
 	ldrsh	r0, [r6, r5]
-	bl	0x080d4384
+	bl	Func_080d4384
 	movs	r0, #142
 	lsls	r0, r0, #1
 	adds	r0, #255
@@ -649,7 +649,7 @@ Func_080e4730:
 	movs	r1, #1
 	movs	r2, #24
 	ldrsh	r0, [r3, r2]
-	bl	0x080d4384
+	bl	Func_080d4384
 	ldr	r6, [sp, #24]
 	add	r0, sp, #20
 	str	r6, [r5, #12]

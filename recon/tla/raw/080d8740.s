@@ -178,7 +178,7 @@ Func_080d8740:
 	movs	r2, #0
 	lsls	r1, r1, #7
 	ldr	r0, [r5, #0]
-	bl	0x080d3838
+	bl	Func_080d3838
 	movs	r0, #20
 	bl	WaitFrames
 	ldr	r0, [r5, #0]

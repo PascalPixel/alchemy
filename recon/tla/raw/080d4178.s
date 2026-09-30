@@ -4,8 +4,11 @@
 	.thumb_func
 Func_080d4178:
 	push	{lr}
-	bl	.L_080d4180
+	bl	Func_080d4180
 	pop	{pc}
+	.global Func_080d4180
+	.thumb_func
+Func_080d4180:
 .L_080d4180:
 	push	{r5, r6, lr}
 	adds	r0, r2, #0

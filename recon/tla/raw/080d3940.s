@@ -345,6 +345,9 @@ Func_080d3940:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.global Func_080d3be8
+	.thumb_func
+Func_080d3be8:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]

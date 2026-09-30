@@ -376,7 +376,7 @@ Func_080e306c:
 	movs	r1, #24
 	ldrsh	r0, [r2, r1]
 	movs	r1, #1
-	bl	0x080d3888
+	bl	Func_080d3888
 	mov	r2, sl
 	adds	r2, #85
 	movs	r3, #0

@@ -421,6 +421,9 @@ Func_080d3c88:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Func_080d3fb0
+	.thumb_func
+Func_080d3fb0:
 .L_080d3fb0:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -501,7 +504,7 @@ Func_080d3c88:
 .L_080d4050:
 	movs	r0, #128
 	lsls	r0, r0, #24
-	bl	0x080d4330
+	bl	Func_080d4330
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{r3, r5, r6}
@@ -511,15 +514,24 @@ Func_080d3c88:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_080d406c
+	.thumb_func
+Func_080d406c:
 	push	{r5, lr}
 	adds	r5, r2, #0
-	bl	.L_080d3fb0
+	bl	Func_080d3fb0
 	adds	r0, r5, #0
 	bl	Battle_WaitMode0
 	pop	{r5, pc}
+	.global Func_080d407c
+	.thumb_func
+Func_080d407c:
 	push	{lr}
-	bl	.L_080d3fb0
+	bl	Func_080d3fb0
 	pop	{pc}
+	.global Func_080d4084
+	.thumb_func
+Func_080d4084:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r5, r0, #0
@@ -532,7 +544,7 @@ Func_080d3c88:
 	bne.n	.L_080d40ba
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	.L_080d3fb0
+	bl	Func_080d3fb0
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #108]
@@ -555,9 +567,12 @@ Func_080d3c88:
 	adds	r3, #1
 	strh	r3, [r2, #0]
 	adds	r1, r6, #0
-	bl	.L_080d3fb0
+	bl	Func_080d3fb0
 .L_080d40d4:
 	adds	r0, r7, #0
 	pop	{r5, r6, r7, pc}
+	.global Func_080d40d8
+	.thumb_func
+Func_080d40d8:
 	bx	lr
 	.2byte 0x0000

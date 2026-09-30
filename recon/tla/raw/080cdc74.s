@@ -270,10 +270,10 @@ Func_080cdc74:
 	adds	r6, r0, #0
 	bl	Func_080d22a8
 	adds	r0, r5, #0
-	bl	0x080d3be8
+	bl	Func_080d3be8
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	0x080d407c
+	bl	Func_080d407c
 	bl	Func_080d2350
 	pop	{r5, r6, pc}
 	.2byte 0x0000

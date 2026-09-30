@@ -462,7 +462,7 @@ Func_080ea14c:
 	lsls	r1, r1, #7
 	ldr	r0, [sp, #48]
 	movs	r2, #0
-	bl	0x080d3838
+	bl	Func_080d3838
 	b.n	.L_080ea6c4
 .L_080ea50e:
 	ldr	r1, [sp, #44]

@@ -65,7 +65,7 @@ Func_080d3460:
 	lsls	r1, r1, #7
 	mov	r0, sl
 	movs	r2, #0
-	bl	0x080d3838
+	bl	Func_080d3838
 	strb	r5, [r7, #0]
 .L_080d34f2:
 	ldr	r3, [r6, #12]
@@ -148,6 +148,9 @@ Func_080d3460:
 	.4byte 0xfff00000
 	.2byte 0x0000
 	.2byte 0xfffe
+	.global Func_080d359c
+	.thumb_func
+Func_080d359c:
 	.2byte 0xb5e0
 	adds	r5, r1, #0
 	adds	r7, r2, #0

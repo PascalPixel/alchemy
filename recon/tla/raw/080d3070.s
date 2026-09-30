@@ -29,7 +29,7 @@ Func_080d3070:
 	adds	r3, r3, r0
 	ldr	r1, [r3, #0]
 	adds	r0, r6, #0
-	bl	0x080d3214
+	bl	Func_080d3214
 	ldr	r3, [r5, #16]
 	ldr	r0, [pc, #68]
 	ldr	r1, [r5, #8]

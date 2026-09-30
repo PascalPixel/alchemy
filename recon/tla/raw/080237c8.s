@@ -21,6 +21,9 @@ Func_080237c8:
 	movs	r0, #0
 .L_080237e6:
 	pop	{pc}
+	.global Func_080237e8
+	.thumb_func
+Func_080237e8:
 	push	{lr}
 	cmp	r0, #0
 	beq.n	.L_080237f4

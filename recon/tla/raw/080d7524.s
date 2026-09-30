@@ -29,7 +29,7 @@ Func_080d7524:
 	lsls	r3, r3, #8
 	ands	r1, r3
 	str	r1, [sp, #8]
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r0, #10
 	bl	WaitFrames
 	movs	r0, #173
@@ -51,7 +51,7 @@ Func_080d7524:
 	adds	r1, r5, #0
 	movs	r2, #0
 	mov	r0, r9
-	bl	0x080d3838
+	bl	Func_080d3838
 	movs	r0, #10
 	bl	WaitFrames
 	movs	r1, #4
@@ -59,7 +59,7 @@ Func_080d7524:
 	movs	r2, #50
 	strh	r5, [r7, #6]
 	mov	r0, r9
-	bl	0x080d47b4
+	bl	Func_080d47b4
 	mov	r0, r9
 	bl	Object_GetById
 	adds	r0, #90
@@ -187,7 +187,7 @@ Func_080d7524:
 	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r0, [r5, #80]
 	ldr	r1, [sp, #12]
-	bl	0x080dc0d8
+	bl	Func_080dc0d8
 	mov	r1, sl
 	str	r0, [sp, #12]
 	str	r1, [r5, #104]
@@ -267,7 +267,7 @@ Func_080d7524:
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r7, #72]
-	bl	0x080d2350
+	bl	Func_080d2350
 	add	sp, #52
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -282,6 +282,9 @@ Func_080d7524:
 	.4byte 0x080d74f1
 	.2byte 0xffff
 	.2byte 0x0013
+	.global Func_080d7788
+	.thumb_func
+Func_080d7788:
 .L_080d7788:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -326,7 +329,7 @@ Func_080d7524:
 .L_080d77da:
 	cmp	r7, #0
 	blt.n	.L_080d783e
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r8, r3
@@ -354,7 +357,7 @@ Func_080d7524:
 	mov	r0, r8
 	bl	0x080d7c04
 .L_080d7818:
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	adds	r1, r5, #0
 	adds	r2, r6, #0
 	adds	r0, r7, #0
@@ -368,7 +371,7 @@ Func_080d7524:
 	adds	r3, #20
 	movs	r2, #0
 	str	r2, [r1, r3]
-	bl	0x080d2350
+	bl	Func_080d2350
 .L_080d783e:
 	pop	{r3}
 	mov	r8, r3
@@ -617,7 +620,7 @@ Func_080d7524:
 	mov	r1, r8
 	adds	r0, r5, #0
 	adds	r2, r7, #0
-	bl	.L_080d7788
+	bl	Func_080d7788
 .L_080d7a3c:
 	ldr	r1, [pc, #16]
 .L_080d7a3e:
@@ -650,6 +653,9 @@ Func_080d7524:
 	cmp	r6, #0
 	bge.n	.L_080d7a68
 	pop	{r5, r6, pc}
+	.global Func_080d7a78
+	.thumb_func
+Func_080d7a78:
 	push	{lr}
 	movs	r1, #224
 	lsls	r1, r1, #3
@@ -670,13 +676,16 @@ Func_080d7524:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #12]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{pc}
 	movs	r0, r0
 	.4byte 0x850001fd
 	.2byte 0x7a59
 	.2byte 0x080d
+	.global Func_080d7ab4
+	.thumb_func
+Func_080d7ab4:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -702,7 +711,7 @@ Func_080d7524:
 	cmp	r7, #0
 	bge.n	.L_080d7acc
 	movs	r0, #224
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{r5, r6, r7, pc}

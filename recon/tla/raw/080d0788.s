@@ -32,7 +32,7 @@ Func_080d0788:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r0, #1
-	bl	0x08013438
+	bl	Func_08013438
 	movs	r1, #151
 	lsls	r1, r1, #4
 	adds	r2, r7, r1
@@ -138,7 +138,7 @@ Func_080d0788:
 	movs	r0, #1
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08013438
+	bl	Func_08013438
 	b.n	.L_080d0950
 .L_080d089e:
 	movs	r2, #160

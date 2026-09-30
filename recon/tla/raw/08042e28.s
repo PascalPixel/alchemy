@@ -16,11 +16,11 @@ Func_08042e28:
 	adds	r6, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #1
-	bl	0x08014dac
+	bl	Func_08014dac
 	adds	r7, r0, #0
 	adds	r1, r7, #0
 	ldr	r0, [pc, #132]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	movs	r2, #132
 	lsls	r3, r3, #19
@@ -312,6 +312,9 @@ Func_08042e28:
 	.4byte 0x04000200
 	.2byte 0x2dc5
 	.2byte 0x0804
+	.global Func_080430c4
+	.thumb_func
+Func_080430c4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

@@ -74,7 +74,7 @@ Func_080ebeb4:
 	strb	r2, [r3, #0]
 	adds	r3, #1
 	strb	r2, [r3, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #0
 	adds	r3, #70
 	adds	r2, r5, #0

@@ -36,13 +36,13 @@ Func_0811cd7c:
 	bl	Func_08014de4
 	adds	r0, r5, #0
 	adds	r0, #12
-	bl	0x08015128
+	bl	Func_08015128
 	movs	r3, #54
 	ldrsh	r0, [r5, r3]
-	bl	0x08015068
+	bl	Func_08015068
 	movs	r2, #52
 	ldrsh	r0, [r5, r2]
-	bl	0x08015024
+	bl	Func_08015024
 	add	r0, sp, #4
 	str	r6, [r0, #0]
 	str	r6, [r0, #4]
@@ -171,7 +171,7 @@ Func_0811cd7c:
 	mov	sl, r3
 	mov	r1, sl
 	mov	r9, r2
-	bl	0x0811a188
+	bl	Func_0811a188
 	ldr	r2, [sp, #4]
 	mov	r8, r0
 	cmp	r2, r8
@@ -200,7 +200,7 @@ Func_0811cd7c:
 	mov	r1, sl
 	add	r9, r0
 	movs	r0, #2
-	bl	0x0811a188
+	bl	Func_0811a188
 	movs	r6, #0
 	mov	r8, r0
 	cmp	r6, r8
@@ -230,7 +230,7 @@ Func_0811cd7c:
 	mov	r9, r3
 	cmp	r3, #0
 	ble.n	.L_0811cf72
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #156
 	lsls	r3, r3, #6
 	adds	r3, #16
@@ -271,7 +271,7 @@ Func_0811cd7c:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r0, #17
-	bl	0x08014dac
+	bl	Func_08014dac
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	adds	r0, r5, #0

@@ -100,7 +100,7 @@ Func_080fe894:
 	adds	r5, r7, #0
 	adds	r5, #240
 	ldr	r0, [r5, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r6, [pc, #496]
 	ldr	r1, [r5, #0]
 	adds	r0, r6, #0
@@ -373,7 +373,7 @@ Func_080fe894:
 	ldrh	r0, [r7, r2]
 	bl	Owner_GetState
 	ldr	r0, [r6, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r5, [pc, #332]
 	ldr	r1, [r6, #0]
 	adds	r0, r5, #0
@@ -726,7 +726,7 @@ Func_080fe894:
 	movs	r1, #0
 	movs	r2, #5
 	movs	r3, #30
-	bl	0x080f811c
+	bl	UiWindow_UpdateOrCreate
 	ldr	r5, [r5, #0]
 .L_080fee70:
 	cmp	r0, #0
@@ -796,7 +796,7 @@ Func_080fe894:
 	movs	r3, #30
 	mov	r8, r0
 	adds	r0, r5, #0
-	bl	0x080f811c
+	bl	UiWindow_UpdateOrCreate
 	movs	r0, #1
 	negs	r0, r0
 	ldr	r5, [r5, #0]
@@ -904,7 +904,7 @@ Func_080fe894:
 	mov	r8, r2
 	mov	r0, fp
 	mov	sl, r4
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r1, r8
 	cmp	r1, #0
 	bne.n	.L_080ff00c
@@ -1147,7 +1147,7 @@ Func_080fe894:
 	ldr	r0, [r3, #48]
 	bl	0x08038060
 	ldr	r0, [sp, #12]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r1, #128
 	ldr	r4, [sp, #36]
 	lsls	r1, r1, #2

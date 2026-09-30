@@ -21,7 +21,7 @@ Func_080f94a4:
 	mov	sl, r1
 	adds	r5, r0, #0
 	mov	r0, sl
-	bl	0x08014dac
+	bl	Func_08014dac
 	movs	r7, #192
 	ldr	r3, [pc, #60]
 	lsls	r7, r7, #18
@@ -69,7 +69,7 @@ Func_080f94a4:
 	movs	r2, #17
 	movs	r3, #3
 	movs	r0, #13
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r3, r5, #0
 	adds	r3, #240
 	str	r0, [r3, #0]
@@ -130,7 +130,7 @@ Func_080f94a4:
 	bl	Func_080383e8
 	bl	0x08104aa4
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r2, [r7, #24]
 	movs	r3, #0
 	strh	r3, [r2, #4]

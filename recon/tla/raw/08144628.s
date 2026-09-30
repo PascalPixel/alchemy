@@ -106,19 +106,19 @@ Func_08144628:
 	adds	r7, #1
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r3, r8
 	ands	r0, r3
 	subs	r0, #128
 	lsls	r0, r0, #10
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r1, r8
 	ands	r0, r1
 	subs	r0, #128
 	lsls	r0, r0, #10
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r2, r8
 	ands	r0, r2
 	subs	r0, #128
@@ -144,7 +144,7 @@ Func_08144628:
 	lsls	r5, r5, #4
 	adds	r1, r5, #0
 	ldr	r0, [pc, #620]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r3, [sp, #64]
 	movs	r0, #239
 	lsls	r0, r0, #7
@@ -160,7 +160,7 @@ Func_08144628:
 	str	r3, [r2, #0]
 	adds	r1, r5, #0
 	ldr	r0, [pc, #588]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #146
 	bl	Audio_PlayCue
 	ldr	r1, [sp, #68]
@@ -205,7 +205,7 @@ Func_08144628:
 	bl	Func_08014de4
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #32]
-	bl	0x080156e8
+	bl	Func_080156e8
 	ldr	r1, [sp, #64]
 	mov	r3, fp
 	movs	r2, #225
@@ -549,9 +549,9 @@ Func_08144628:
 	ldr	r0, [pc, #44]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #32]
 	bl	Func_08014644
 	bl	Func_08143bb8

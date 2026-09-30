@@ -67,7 +67,7 @@ Func_080dfb0c:
 	mov	r6, r8
 	push	{r6, r7}
 	adds	r7, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	ldrh	r6, [r7, #6]
 	movs	r1, #128
 	lsls	r1, r1, #10
@@ -116,12 +116,12 @@ Func_080dfb0c:
 	strh	r3, [r7, #6]
 	b.n	.L_080dfc10
 .L_080dfbf8:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #5
 	lsrs	r0, r0, #16
 	cmp	r0, #0
 	bne.n	.L_080dfc10
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #4
 	lsrs	r0, r0, #16
 	adds	r0, #8
@@ -210,7 +210,7 @@ Func_080dfb0c:
 	movs	r3, #192
 	lsls	r3, r3, #10
 	str	r3, [r7, #40]
-	bl	0x08014878
+	bl	Func_08014878
 	strh	r0, [r7, #6]
 .L_080dfcc2:
 	pop	{r3, r5, r6}

@@ -216,7 +216,7 @@ BattlePres_SetActorModes:
 	lsls	r0, r0, #19
 	adds	r0, #80
 	movs	r1, #0
-	bl	0x08013ba4
+	bl	Func_08013ba4
 .L_08126d40:
 	cmp	r5, #0
 	beq.n	.L_08126dee
@@ -298,11 +298,11 @@ BattlePres_SetActorModes:
 	lsls	r0, r0, #19
 	adds	r0, #80
 	movs	r1, #0
-	bl	0x08013ba4
+	bl	Func_08013ba4
 	movs	r1, #200
 	ldr	r0, [pc, #20]
 	lsls	r1, r1, #4
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_08126dee:
 	add	sp, #28
 	pop	{r3, r5, r6, r7}
@@ -359,7 +359,7 @@ BattlePres_SetActorModes:
 	muls	r2, r3
 	adds	r3, r2, #0
 	adds	r0, r0, r3
-	bl	0x080149e0
+	bl	Func_080149e0
 	movs	r3, #240
 	lsls	r3, r3, #4
 	adds	r3, #255
@@ -416,9 +416,9 @@ BattlePres_SetActorModes:
 	ldr	r3, [r3, #0]
 	cmp	r3, #24
 	bgt.n	.L_08126f4c
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r3, r3, r0
@@ -455,7 +455,7 @@ BattlePres_SetActorModes:
 	negs	r3, r2
 	str	r3, [r7, #4]
 .L_08126f18:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r2, #128
 	lsls	r2, r2, #8
 	adds	r0, r0, r2
@@ -644,7 +644,7 @@ BattlePres_SetActorModes:
 	str	r3, [r2, #8]
 	adds	r1, #208
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	mov	r9, r0
 	lsls	r1, r1, #7
@@ -658,9 +658,9 @@ BattlePres_SetActorModes:
 	add	r7, r9
 	mov	sl, r2
 .L_081270ac:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r3, r3, r0
@@ -698,7 +698,7 @@ BattlePres_SetActorModes:
 	negs	r3, r2
 	str	r3, [r7, #4]
 .L_08127100:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r2, #128
 	lsls	r2, r2, #8
 	adds	r0, r0, r2
@@ -815,7 +815,7 @@ BattlePres_SetActorModes:
 	.2byte 0xf800
 	.2byte 0x4649
 	adds	r0, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r1, [sp, #4]
 	cmp	r1, #1
 	beq.n	.L_08127214
@@ -879,10 +879,10 @@ BattlePres_SetActorModes:
 	bl	0x08138048
 	adds	r1, r5, #0
 	ldr	r0, [pc, #56]
-	bl	0x080145a8
+	bl	Func_080145a8
 	adds	r1, r5, #0
 	ldr	r0, [pc, #52]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -909,13 +909,13 @@ BattlePres_SetActorModes:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [pc, #20]
 	movs	r2, #128
 	lsls	r2, r2, #19

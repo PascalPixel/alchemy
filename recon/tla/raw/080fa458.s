@@ -27,7 +27,7 @@ Func_080fa458:
 	lsls	r3, r3, #18
 	adds	r3, #220
 	ldr	r5, [r3, #0]
-	bl	0x0810508c
+	bl	Func_0810508c
 	bl	.L_080fa458
 	movs	r0, #1
 	bl	WaitFrames
@@ -145,7 +145,7 @@ Func_080fa458:
 	adds	r3, #20
 	mov	r8, r0
 	ldr	r0, [r7, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r0, #1
 	bl	WaitFrames
 	mov	r0, r8
@@ -193,7 +193,7 @@ Func_080fa458:
 	movs	r1, #13
 	movs	r2, #3
 	movs	r3, #17
-	bl	0x080f811c
+	bl	UiWindow_UpdateOrCreate
 	cmp	r0, #0
 	beq.n	.L_080fa604
 	ldr	r1, [r5, #0]
@@ -211,7 +211,7 @@ Func_080fa458:
 	movs	r1, #13
 	movs	r2, #13
 	movs	r3, #17
-	bl	0x080f811c
+	bl	UiWindow_UpdateOrCreate
 	cmp	r0, #0
 	beq.n	.L_080fa640
 	ldr	r1, [sp, #12]
@@ -493,10 +493,10 @@ Func_080fa458:
 	adds	r6, r0, #0
 	bl	Func_08100700
 	ldr	r0, [r5, #36]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r0, [r5, #36]
 	adds	r1, r6, #0
 	movs	r2, #0
-	bl	0x081004b8
+	bl	Func_081004b8
 	pop	{r5, r6, pc}
 	.2byte 0x0000

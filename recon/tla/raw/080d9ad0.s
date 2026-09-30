@@ -21,7 +21,7 @@ Func_080d9ad0:
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r7, #0
-	bl	0x080d9104
+	bl	Func_080d9104
 	b.n	.L_080d9b06
 .L_080d9afc:
 	adds	r0, r5, #0
@@ -30,13 +30,16 @@ Func_080d9ad0:
 	bl	Func_080d8d68
 .L_080d9b06:
 	pop	{r5, r6, r7, pc}
+	.global Func_080d9b08
+	.thumb_func
+Func_080d9b08:
 	push	{r5, r6, lr}
 	movs	r1, #128
 	lsls	r1, r1, #5
 	adds	r1, #236
 	movs	r0, #160
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r5, r0, #0
 	movs	r0, #144
 	lsls	r0, r0, #4
@@ -56,7 +59,7 @@ Func_080d9ad0:
 	adds	r1, r6, #0
 	str	r0, [r5, #8]
 	ldr	r0, [pc, #48]
-	bl	0x0801587c
+	bl	Func_0801587c
 	adds	r2, r6, #0
 	ldr	r0, [r5, #8]
 	movs	r1, #64
@@ -64,12 +67,12 @@ Func_080d9ad0:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #32]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r1, #228
 	lsls	r1, r1, #2
 	adds	r1, #255
 	ldr	r0, [pc, #24]
-	bl	0x080145a8
+	bl	Func_080145a8
 	adds	r0, r6, #0
 	bl	Func_08013164
 	add	sp, #4
@@ -153,7 +156,7 @@ Func_080d9ad0:
 	orrs	r3, r2
 	ldr	r0, [sp, #8]
 	str	r3, [sp, #40]
-	bl	0x0801401c
+	bl	Func_0801401c
 	movs	r6, #1
 	str	r0, [sp, #12]
 	b.n	.L_080d9c20
@@ -260,7 +263,7 @@ Func_080d9ad0:
 	strb	r3, [r5, #27]
 	adds	r0, #20
 	str	r4, [sp, #0]
-	bl	0x080140d8
+	bl	Func_080140d8
 	ldr	r4, [sp, #0]
 .L_080d9cea:
 	str	r4, [sp, #32]
@@ -335,7 +338,7 @@ Func_080d9ad0:
 	adds	r1, #2
 	adds	r3, r2, r1
 	ldr	r0, [r3, #0]
-	bl	0x080cd91c
+	bl	Func_080cd91c
 	movs	r2, #1
 	adds	r5, r6, #0
 	negs	r2, r2
@@ -480,6 +483,9 @@ Func_080d9ad0:
 	movs	r0, #0
 .L_080d9e96:
 	pop	{pc}
+	.global Func_080d9e98
+	.thumb_func
+Func_080d9e98:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

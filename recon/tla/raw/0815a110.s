@@ -230,7 +230,7 @@ BattlePres_RunBurstScene:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #596]
 	adds	r1, r5, #0
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r3, [sp, #40]
 	ldr	r2, [pc, #548]
 	adds	r3, #7
@@ -239,7 +239,7 @@ BattlePres_RunBurstScene:
 	bne.n	.L_0815a2f0
 	ldr	r0, [pc, #580]
 	adds	r1, r5, #0
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_0815a2f0:
 	ldr	r3, [sp, #68]
 	movs	r5, #0
@@ -260,16 +260,16 @@ BattlePres_RunBurstScene:
 	str	r3, [r5, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	lsls	r0, r0, #12
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #127
 	lsls	r0, r0, #12
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [r5, #0]
 	ands	r0, r7
 	subs	r0, #127
@@ -308,12 +308,12 @@ BattlePres_RunBurstScene:
 	movs	r3, #176
 	lsls	r3, r3, #15
 	str	r3, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	subs	r0, #128
 	lsls	r0, r0, #9
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r1, sl
 	ands	r0, r6
 	movs	r2, #1
@@ -697,7 +697,7 @@ BattlePres_RunBurstScene:
 	adds	r5, r3, r0
 .L_0815a69a:
 	str	r2, [sp, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	adds	r0, #15
 	str	r0, [r5, #0]
@@ -757,13 +757,13 @@ BattlePres_RunBurstScene:
 	b.n	.L_0815a480
 .L_0815a710:
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08014de4
 	ldr	r0, [sp, #44]
 	ldr	r1, [sp, #20]
-	bl	0x080156e8
+	bl	Func_080156e8
 	movs	r1, #3
 	movs	r0, #104
 	bl	Func_081963ec
@@ -851,9 +851,9 @@ BattlePres_RunBurstScene:
 	cmp	sl, r2
 	bne.n	.L_0815a754
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [sp, #52]
 	cmp	r3, #3
 	bgt.n	.L_0815a7ea
@@ -882,14 +882,14 @@ BattlePres_RunBurstScene:
 	ands	r7, r0
 	mov	fp, r5
 .L_0815a818:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	adds	r2, r0, #0
 	ands	r2, r3
 	str	r2, [sp, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r2, [sp, #12]
 	movs	r5, #31
 	ands	r5, r0
@@ -924,7 +924,7 @@ BattlePres_RunBurstScene:
 	str	r4, [sp, #8]
 	lsrs	r3, r3, #1
 	subs	r5, r5, r3
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [pc, #336]
 	mov	r1, r9
 	ands	r0, r1
@@ -936,7 +936,7 @@ BattlePres_RunBurstScene:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #188
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r2, [pc, #316]
 	lsls	r3, r7, #1
 	ldrh	r1, [r2, r3]
@@ -961,7 +961,7 @@ BattlePres_RunBurstScene:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #1
 	add	sl, r3
 	mov	r5, sl
@@ -1028,7 +1028,7 @@ BattlePres_RunBurstScene:
 	cmp	r2, #16
 	bne.n	.L_0815a8f2
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0815a94a:
 	movs	r0, #8
 	movs	r1, #8
@@ -1430,7 +1430,7 @@ BattlePres_RunBurstScene:
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #36]
 	str	r5, [sp, #36]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r1, [sp, #48]
 	b.n	.L_0815aca4
 	.4byte 0x00003f46
@@ -1449,13 +1449,13 @@ BattlePres_RunBurstScene:
 	movs	r7, #15
 	adds	r5, r1, r2
 .L_0815acae:
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	movs	r3, #128
 	adds	r0, #88
 	str	r3, [r5, #4]
 	str	r0, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #1
 	str	r3, [r5, #16]
 	movs	r3, #128
@@ -1491,25 +1491,25 @@ BattlePres_RunBurstScene:
 	movs	r6, #0
 	movs	r7, #63
 .L_0815ad02:
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r1, [sp, #24]
 	ands	r0, r7
 	adds	r0, r0, r1
 	adds	r0, #32
 	lsls	r0, r0, #16
 	str	r0, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #7
 	ands	r3, r0
 	adds	r3, #96
 	lsls	r3, r3, #16
 	str	r3, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	adds	r0, #32
 	lsls	r0, r0, #13
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #31
 	movs	r2, #128
 	ands	r3, r0
@@ -2012,7 +2012,7 @@ BattlePres_RunBurstScene:
 	ldr	r3, [sp, #40]
 	cmp	r3, #87
 	ble.n	.L_0815b15a
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #7
 	ands	r3, r0
 	adds	r3, #8
@@ -2021,7 +2021,7 @@ BattlePres_RunBurstScene:
 	ldr	r3, [r4, #24]
 	cmp	r3, #0
 	bne.n	.L_0815b118
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #96
 	bl	0x0800206c
 	adds	r0, #42
@@ -2029,7 +2029,7 @@ BattlePres_RunBurstScene:
 .L_0815b118:
 	cmp	r3, #1
 	bne.n	.L_0815b14c
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #112
 	bl	0x0800206c
 	adds	r0, #34
@@ -2045,7 +2045,7 @@ BattlePres_RunBurstScene:
 	.2byte 0x6e44
 	.2byte 0x0819
 .L_0815b14c:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #160
 	bl	0x0800206c
 	adds	r0, #10
@@ -2148,9 +2148,9 @@ BattlePres_RunBurstScene:
 	ldr	r0, [pc, #60]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #238
 	ldr	r7, [sp, #48]
 	lsls	r0, r0, #7

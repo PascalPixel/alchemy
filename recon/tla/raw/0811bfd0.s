@@ -39,6 +39,9 @@ Func_0811bfd0:
 	movs	r2, #0
 	bl	Object_SetPosition
 	pop	{r5, r6, pc}
+	.global Func_0811c01c
+	.thumb_func
+Func_0811c01c:
 	push	{r5, r6, lr}
 	bl	0x0811be3c
 	adds	r6, r0, #0
@@ -79,6 +82,9 @@ Func_0811bfd0:
 	pop	{r5, r6, pc}
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_0811c074
+	.thumb_func
+Func_0811c074:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -159,6 +165,9 @@ Func_0811bfd0:
 	.4byte 0x0812cc00
 	.2byte 0xcc28
 	.2byte 0x0812
+	.global Func_0811c120
+	.thumb_func
+Func_0811c120:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

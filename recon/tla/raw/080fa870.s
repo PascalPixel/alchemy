@@ -38,7 +38,7 @@ Func_080fa870:
 	mov	r0, r8
 	bl	0x080f93a4
 	ldr	r0, [r6, #36]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r3, #28
 	ldrsb	r3, [r6, r3]
 	movs	r1, #129
@@ -50,7 +50,7 @@ Func_080fa870:
 	movs	r1, #144
 	ldr	r0, [pc, #16]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r2, #128
 	lsls	r2, r2, #1
 	adds	r2, #255
@@ -210,7 +210,7 @@ Func_080fa870:
 	adds	r3, r3, r2
 	ldrh	r3, [r6, r3]
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 .L_080faa20:
 	mov	r3, sl
 	cmp	r3, #0
@@ -261,7 +261,7 @@ Func_080fa870:
 	cmp	r3, #0
 	bne.n	.L_080faaaa
 	ldr	r0, [r6, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r1, #182
 	lsls	r1, r1, #1
 	adds	r3, r6, r1
@@ -358,7 +358,7 @@ Func_080fa870:
 	ldr	r5, [r6, #24]
 	movs	r7, #13
 	adds	r0, r5, #0
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	strb	r7, [r5, #5]
 	bl	Func_080fac58
 	movs	r0, #1

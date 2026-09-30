@@ -129,7 +129,7 @@ Func_08023d80:
 	asrs	r0, r0, #16
 	subs	r1, r1, r3
 	asrs	r1, r1, #16
-	bl	0x080148e8
+	bl	Func_080148e8
 	lsls	r0, r0, #16
 	asrs	r7, r0, #16
 	movs	r3, #0
@@ -149,13 +149,13 @@ Func_08023d80:
 	.2byte 0xf800
 	.2byte 0x1c28
 	adds	r1, r6, #0
-	bl	0x080156f8
+	bl	Func_080156f8
 	b.n	.L_08023eb2
 .L_08023ea6:
 	bl	0x08014e1c
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	0x080156e8
+	bl	Func_080156e8
 .L_08023eb2:
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -177,7 +177,7 @@ Func_08023d80:
 	cmp	r6, #0
 	bge.n	.L_08023ec0
 	movs	r0, #80
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #12
 	pop	{r3}
 	mov	r8, r3

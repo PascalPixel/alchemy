@@ -11,9 +11,12 @@ Func_081963ec:
 	str	r1, [sp, #0]
 	movs	r2, #7
 	movs	r1, #7
-	bl	.L_08196404
+	bl	Func_08196404
 	add	sp, #4
 	pop	{pc}
+	.global Func_08196404
+	.thumb_func
+Func_08196404:
 .L_08196404:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -9,7 +9,7 @@ Func_080d4580:
 	adds	r6, r0, #0
 	lsls	r1, r1, #4
 	movs	r0, #108
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #230
 	lsls	r3, r3, #1
 	adds	r0, r0, r3
@@ -30,6 +30,9 @@ Func_080d4580:
 	str	r3, [r5, #16]
 .L_080d45b6:
 	pop	{r5, r6, r7, pc}
+	.global Func_080d45b8
+	.thumb_func
+Func_080d45b8:
 	movs	r4, #192
 	lsls	r4, r4, #18
 	ldr	r4, [r4, #32]

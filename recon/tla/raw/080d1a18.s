@@ -8,7 +8,7 @@ Func_080d1a18:
 	movs	r1, #28
 	movs	r0, #144
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	adds	r7, r0, #0
 	lsls	r1, r1, #3
@@ -34,11 +34,11 @@ Func_080d1a18:
 	movs	r0, #94
 	bl	VramBlock_LoadCached
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #84]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r2, #252
 	movs	r3, #128
 	lsls	r2, r2, #6
@@ -82,16 +82,22 @@ Func_080d1a18:
 	.4byte 0x080d1841
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d1ac4
+	.thumb_func
+Func_080d1ac4:
 	push	{lr}
 	ldr	r0, [pc, #8]
-	bl	0x08014694
+	bl	Func_08014694
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x1841
 	.2byte 0x080d
+	.global Func_080d1ad4
+	.thumb_func
+Func_080d1ad4:
 	push	{lr}
 	ldr	r0, [pc, #8]
-	bl	0x0801475c
+	bl	Func_0801475c
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x1841
@@ -238,7 +244,7 @@ Func_080d1a18:
 	movs	r3, #12
 	adds	r3, r3, r0
 	mov	sl, r3
-	bl	0x080140d8
+	bl	Func_080140d8
 	ldr	r4, [sp, #0]
 .L_080d1c02:
 	mov	r3, r8
@@ -329,7 +335,7 @@ Func_080d1a18:
 	adds	r3, #240
 	strb	r3, [r0, #4]
 	movs	r1, #1
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080d1cb2:
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
@@ -338,12 +344,15 @@ Func_080d1a18:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Func_080d1cc0
+	.thumb_func
+Func_080d1cc0:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r1, #28
 	movs	r0, #144
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	adds	r6, r0, #0
 	lsls	r1, r1, #3
@@ -370,9 +379,9 @@ Func_080d1a18:
 	movs	r1, #144
 	ldr	r0, [pc, #40]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	cmp	r5, #0
 	bne.n	.L_080d1d24
 	ldr	r3, [pc, #24]
@@ -390,20 +399,29 @@ Func_080d1a18:
 	.4byte 0x080d1ae5
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d1d34
+	.thumb_func
+Func_080d1d34:
 	push	{lr}
 	ldr	r0, [pc, #8]
-	bl	0x08014694
+	bl	Func_08014694
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x1ae5
 	.2byte 0x080d
+	.global Func_080d1d44
+	.thumb_func
+Func_080d1d44:
 	push	{lr}
 	ldr	r0, [pc, #8]
-	bl	0x0801475c
+	bl	Func_0801475c
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x1ae5
 	.2byte 0x080d
+	.global Func_080d1d54
+	.thumb_func
+Func_080d1d54:
 	push	{r5, lr}
 	movs	r1, #128
 	adds	r5, r0, #0
@@ -441,12 +459,15 @@ Func_080d1a18:
 	movs	r0, #94
 	bl	VramBlock_LoadCached
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #4
 	pop	{r5, pc}
 	movs	r0, r0
 	.2byte 0x0101
 	.2byte 0x0101
+	.global Func_080d1dac
+	.thumb_func
+Func_080d1dac:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	ldr	r0, [pc, #56]
@@ -458,7 +479,7 @@ Func_080d1a18:
 	lsrs	r0, r0, #5
 	str	r0, [sp, #0]
 	adds	r0, r5, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	movs	r3, #0
 	strh	r3, [r5, #30]
 	ldrb	r3, [r5, #9]
@@ -480,6 +501,9 @@ Func_080d1a18:
 	movs	r0, r0
 	.2byte 0x36e0
 	.2byte 0x0200
+	.global Func_080d1df0
+	.thumb_func
+Func_080d1df0:
 	push	{r5, r6, lr}
 	sub	sp, #12
 	mov	r5, sp
@@ -494,7 +518,7 @@ Func_080d1a18:
 	str	r3, [r6, #12]
 	ldr	r3, [r5, #8]
 	str	r3, [r6, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	add	sp, #12
 	pop	{r5, r6, pc}
 	.2byte 0x0000

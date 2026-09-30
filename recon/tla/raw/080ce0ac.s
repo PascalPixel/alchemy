@@ -139,16 +139,16 @@ Func_080ce0ac:
 	lsls	r0, r0, #9
 	cmp	r3, r0
 	bge.n	.L_080ce1de
-	bl	0x080cdf5c
-	bl	0x080cd91c
+	bl	Func_080cdf5c
+	bl	Func_080cd91c
 	adds	r5, r0, #0
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	ldr	r0, [r6, #8]
-	bl	0x080d3be8
+	bl	Func_080d3be8
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x080d407c
-	bl	0x080d2350
+	bl	Func_080d407c
+	bl	Func_080d2350
 	b.n	0x080ce1e8
 .L_080ce1de:
 	mov	r0, fp
@@ -195,7 +195,7 @@ Func_080ce0ac:
 	ldr	r0, [pc, #216]
 	bl	0x08038040
 	movs	r0, #1
-	bl	0x080d295c
+	bl	Func_080d295c
 	adds	r6, r0, #0
 	bl	0x08038140
 	movs	r0, #0
@@ -239,7 +239,7 @@ Func_080ce0ac:
 	adds	r6, #182
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x080dc410
+	bl	Func_080dc410
 	add	r6, r8
 	movs	r2, #0
 	movs	r5, #1
@@ -275,7 +275,7 @@ Func_080ce0ac:
 	beq.n	.L_080ce2fc
 	mov	r0, sl
 	ldr	r1, [sp, #4]
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 .L_080ce2fc:
 	ldr	r0, [sp, #0]
 .L_080ce2fe:
@@ -304,7 +304,7 @@ Func_080ce0ac:
 	sub	sp, #20
 	ldr	r5, [r3, #16]
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldrh	r0, [r0, #6]
 	str	r0, [sp, #16]
@@ -390,7 +390,7 @@ Func_080ce0ac:
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_080ce410
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	adds	r2, r7, #0
 	adds	r1, r0, #0
 	mov	r0, r9

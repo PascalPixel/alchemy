@@ -85,7 +85,7 @@ Func_080279b0:
 	movs	r0, #128
 	lsls	r0, r0, #12
 	ldr	r2, [sp, #0]
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [pc, #720]
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
@@ -120,7 +120,7 @@ Func_080279b0:
 	add	r1, r8
 	lsls	r0, r0, #12
 	mov	r2, fp
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r7, #8]
 	add	r2, sp, #64
 	str	r3, [r2, #0]
@@ -133,18 +133,18 @@ Func_080279b0:
 	add	r1, r8
 	lsls	r0, r0, #12
 	mov	r9, r2
-	bl	0x0801489c
+	bl	Func_0801489c
 	adds	r0, r7, #0
 	ldr	r1, [sp, #0]
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, fp
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, r9
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	orrs	r5, r6
 	orrs	r5, r0
 	cmp	r5, #0
@@ -198,7 +198,7 @@ Func_080279b0:
 	lsls	r0, r0, #12
 	mov	r9, r2
 	adds	r2, r3, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r7, #8]
 	mov	r0, fp
 	str	r3, [r0, #0]
@@ -213,7 +213,7 @@ Func_080279b0:
 	adds	r1, r5, r2
 	lsls	r0, r0, #12
 	mov	r2, fp
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r7, #8]
 	mov	r0, r8
 	str	r3, [r0, #0]
@@ -227,19 +227,19 @@ Func_080279b0:
 	adds	r1, r5, #0
 	lsls	r0, r0, #12
 	mov	r2, r8
-	bl	0x0801489c
+	bl	Func_0801489c
 	add	r2, sp, #88
 	adds	r1, r2, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, fp
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, r8
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	orrs	r5, r6
 	orrs	r5, r0
 	cmp	r5, #0
@@ -346,7 +346,7 @@ Func_080279b0:
 	ldr	r1, [r3, #0]
 	adds	r0, r7, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r1, [r7, #36]
 	ldr	r6, [pc, #216]
 	adds	r0, r1, #0
@@ -359,7 +359,7 @@ Func_080279b0:
 	.2byte 0xf800
 	.2byte 0x182d
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 	ldr	r1, [sp, #16]
 	str	r1, [r7, #36]
 	str	r1, [r7, #44]
@@ -368,7 +368,7 @@ Func_080279b0:
 	adds	r2, r7, #0
 	adds	r2, #36
 	lsrs	r1, r1, #16
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r3, #100
 	adds	r3, r3, r7
 	mov	r8, r3
@@ -432,7 +432,7 @@ Func_080279b0:
 	adds	r0, r7, #0
 	adds	r0, #8
 	ldr	r5, [r7, #80]
-	bl	0x0802dac0
+	bl	Func_0802dac0
 	cmp	r0, #9
 	bne.n	.L_08027d44
 	ldr	r3, [r5, #44]

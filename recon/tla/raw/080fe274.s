@@ -18,11 +18,11 @@ Func_080fe274:
 	bl	Func_08014cc0
 	adds	r6, r0, #0
 	movs	r0, #64
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	r8, r0
 	movs	r0, #160
 	lsls	r0, r0, #6
-	bl	0x08014dac
+	bl	Func_08014dac
 	movs	r2, #1
 	negs	r2, r2
 	str	r2, [sp, #8]
@@ -133,7 +133,7 @@ Func_080fe274:
 	movs	r3, #5
 	movs	r1, #0
 	movs	r2, #17
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r3, r6, #0
 	adds	r3, #240
 	str	r0, [r3, #0]
@@ -156,7 +156,7 @@ Func_080fe274:
 	bl	0x08105468
 	ldr	r0, [r6, #40]
 	bl	0x08038268
-	bl	0x0810526c
+	bl	Func_0810526c
 	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r3, #20
 	movs	r1, #0
@@ -205,7 +205,7 @@ Func_080fe274:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r2, fp
 	ldr	r3, [r2, #24]
 	ldr	r2, [pc, #28]
@@ -278,7 +278,7 @@ Func_080fe274:
 	strh	r7, [r3, #0]
 	lsls	r1, r1, #3
 	mov	r0, r8
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #1
 	bl	Func_081054cc
 	movs	r0, #0
@@ -378,7 +378,7 @@ Func_080fe274:
 	sub	sp, #4
 	mov	r8, r2
 	ldrsb	r7, [r5, r2]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #185
 	lsls	r0, r0, #1
 	bl	GameFlag_TestFar
@@ -433,7 +433,7 @@ Func_080fe274:
 	mov	r3, sl
 	adds	r3, #20
 	ldr	r0, [r5, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r6, #0

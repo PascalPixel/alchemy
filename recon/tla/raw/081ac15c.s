@@ -23,22 +23,22 @@
 	str	r0, [sp, #116]
 	adds	r1, #124
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	str	r0, [sp, #112]
 	adds	r1, #20
 	movs	r0, #180
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #76
 	str	r0, [sp, #108]
 	movs	r0, #48
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #104]
 	ldr	r0, [pc, #308]
-	bl	0x080132fc
+	bl	Func_080132fc
 	bl	Func_081ac028
-	bl	0x080144c0
+	bl	Func_080144c0
 	ldr	r2, [pc, #300]
 	movs	r3, #0
 	strb	r3, [r2, #0]
@@ -90,7 +90,7 @@
 	adds	r4, r4, r0
 	adds	r0, r4, #0
 	ldr	r1, [pc, #212]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -123,7 +123,7 @@
 	adds	r4, r4, r1
 	adds	r0, r4, #0
 	ldr	r1, [pc, #144]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -235,31 +235,31 @@
 	movs	r6, #127
 	movs	r7, #31
 .L_081ac36c:
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	subs	r0, #64
 	lsls	r0, r0, #16
 	str	r0, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	lsls	r0, r0, #16
 	str	r0, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	subs	r0, #64
 	lsls	r0, r0, #16
 	str	r0, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	subs	r0, #64
 	lsls	r0, r0, #14
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	adds	r0, #32
 	lsls	r0, r0, #12
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	subs	r0, #64
 	lsls	r0, r0, #14
@@ -288,7 +288,7 @@
 	str	r5, [sp, #56]
 	str	r2, [r5, #4]
 	str	r2, [sp, #144]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #6
 	bl	0x0800206c
 	mov	r6, sp
@@ -296,7 +296,7 @@
 	str	r0, [sp, #136]
 	str	r6, [sp, #48]
 .L_081ac3f4:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #6
 	bl	0x0800206c
 	ldr	r7, [sp, #48]
@@ -325,7 +325,7 @@
 	movs	r1, #0
 	movs	r3, #3
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #128
 	ldr	r2, [sp, #108]
 	ldr	r5, [pc, #732]
@@ -351,7 +351,7 @@
 	movs	r3, #4
 	movs	r0, #22
 	str	r4, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	ldr	r7, [sp, #108]
 	movs	r0, #128
@@ -399,7 +399,7 @@
 	bl	Func_08014de4
 	ldr	r0, [sp, #104]
 	ldr	r1, [sp, #40]
-	bl	0x080156e8
+	bl	Func_080156e8
 	ldr	r3, [pc, #588]
 	ldr	r5, [sp, #108]
 	movs	r2, #196
@@ -627,7 +627,7 @@
 	adds	r2, #13
 	movs	r1, #16
 	movs	r3, #3
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	ldr	r6, [sp, #108]
 	movs	r7, #153
 	lsls	r7, r7, #3
@@ -751,14 +751,14 @@
 	adds	r3, r4, r5
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #16
 	movs	r2, #8
 	movs	r3, #4
 	movs	r0, #22
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	ldr	r7, [sp, #108]
 	movs	r0, #128
@@ -885,7 +885,7 @@
 .L_081ac8aa:
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	.L_081ad2d2
 .L_081ac8b6:
 	ldr	r3, [r6, #12]
@@ -903,7 +903,7 @@
 	adds	r3, r2, r4
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r6, #1
 	str	r6, [sp, #96]
 	bl	0x080ad290
@@ -945,19 +945,19 @@
 	lsls	r3, r3, #15
 	str	r3, [r6, #4]
 .L_081ac92c:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #127
 	ands	r3, r0
 	subs	r3, #64
 	lsls	r3, r3, #12
 	str	r3, [r6, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #48
 	lsls	r3, r3, #13
 	str	r3, [r6, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r5, #63
 	movs	r1, #6
 	ands	r5, r0
@@ -967,7 +967,7 @@
 	lsls	r5, r5, #12
 	adds	r5, r5, r0
 	str	r5, [r6, #20]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #144
 	lsls	r1, r1, #7
 	bl	0x0800206c
@@ -998,12 +998,12 @@
 	str	r2, [r4, #8]
 	str	r3, [r4, #28]
 	str	r2, [r4, #36]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #6
 	bl	0x0800206c
 	str	r0, [sp, #136]
 .L_081ac9ac:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #6
 	bl	0x0800206c
 	ldr	r5, [sp, #48]
@@ -1627,7 +1627,7 @@
 .L_081ace7c:
 	.2byte 0x1193
 	str	r3, [r7, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #3
 	ands	r0, r3
 	cmp	r0, #0
@@ -1653,7 +1653,7 @@
 	adds	r3, #63
 .L_081aceb2:
 	asrs	r6, r3, #6
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -2018,7 +2018,7 @@
 	movs	r5, #0
 	str	r5, [sp, #0]
 	bl	0x080380b0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #1
 	ldr	r6, [sp, #56]
 	ands	r3, r0
@@ -2050,7 +2050,7 @@
 	movs	r5, #0
 	str	r5, [sp, #0]
 	bl	0x080380b0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #1
 	ldr	r6, [sp, #56]
 	ands	r3, r0
@@ -2220,15 +2220,15 @@
 	cmp	r7, #17
 	bne.n	.L_081ad2da
 	movs	r0, #48
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #180
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #192
 	lsls	r3, r3, #2
 	add	sp, r3

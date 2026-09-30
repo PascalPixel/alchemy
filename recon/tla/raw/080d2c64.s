@@ -28,5 +28,8 @@ Func_080d2c64:
 	adds	r0, r5, #0
 	bl	Audio_PlayCue
 	pop	{r5, pc}
+	.global Func_080d2c98
+	.thumb_func
+Func_080d2c98:
 	bx	lr
 	.2byte 0x0000

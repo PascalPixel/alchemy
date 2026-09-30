@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_080d41fc
+	.thumb_func
+Func_080d41fc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -141,6 +144,9 @@
 	pop	{r5, r6, r7, pc}
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_080d4330
+	.thumb_func
+Func_080d4330:
 	push	{r5, lr}
 	movs	r3, #192
 	movs	r1, #128
@@ -182,6 +188,9 @@
 	.4byte 0x02000240
 	.2byte 0x330c
 	.2byte 0x080f
+	.global Func_080d4384
+	.thumb_func
+Func_080d4384:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -231,13 +240,16 @@
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
+	.global Func_080d43ec
+	.thumb_func
+Func_080d43ec:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0
 	movs	r1, #213
 	adds	r5, r0, #0
 	lsls	r1, r1, #4
 	movs	r0, #108
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #230
 	lsls	r3, r3, #1
 	adds	r0, r0, r3

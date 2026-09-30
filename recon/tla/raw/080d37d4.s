@@ -37,6 +37,9 @@ Func_080d37d4:
 	.4byte 0xfffff000
 	.2byte 0xf800
 	.2byte 0xffff
+	.global Func_080d3814
+	.thumb_func
+Func_080d3814:
 	push	{r5, lr}
 	bl	ObjectTable_Get
 	adds	r5, r0, #0
@@ -53,6 +56,9 @@ Func_080d37d4:
 	bl	Object_SetMode
 .L_080d3836:
 	pop	{r5, pc}
+	.global Func_080d3838
+	.thumb_func
+Func_080d3838:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
 	adds	r6, r2, #0
@@ -71,6 +77,9 @@ Func_080d37d4:
 	movs	r0, r0
 	.2byte 0x3300
 	.2byte 0x080f
+	.global Func_080d3860
+	.thumb_func
+Func_080d3860:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	adds	r5, r1, #0
@@ -89,6 +98,9 @@ Func_080d37d4:
 	movs	r0, r0
 	.2byte 0x3300
 	.2byte 0x080f
+	.global Func_080d3888
+	.thumb_func
+Func_080d3888:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
 	bl	ObjectTable_Get

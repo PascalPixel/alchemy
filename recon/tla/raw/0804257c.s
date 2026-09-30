@@ -10,6 +10,9 @@ Func_0804257c:
 	strb	r3, [r0, #15]
 .L_08042586:
 	pop	{pc}
+	.global Func_08042588
+	.thumb_func
+Func_08042588:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -67,6 +70,9 @@ Func_0804257c:
 	.4byte 0x00000218
 	.2byte 0x88fc
 	.2byte 0x0803
+	.global Func_080425fc
+	.thumb_func
+Func_080425fc:
 	push	{r5, r6, lr}
 	adds	r5, r3, #0
 	movs	r4, #0

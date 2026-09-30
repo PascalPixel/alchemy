@@ -38,6 +38,9 @@ Func_08014cc0:
 	movs	r0, r0
 	.2byte 0x6fbf
 	.2byte 0x0300
+	.global Runtime_AllocateBlock
+	.thumb_func
+Runtime_AllocateBlock:
 	push	{r5, lr}
 	movs	r4, #192
 	adds	r5, r0, #0

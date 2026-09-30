@@ -113,17 +113,17 @@ Func_0814ea58:
 	str	r3, [r5, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #128
 	lsls	r0, r0, #10
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #128
 	lsls	r0, r0, #10
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #128
 	lsls	r3, r0, #10
@@ -247,7 +247,7 @@ Func_0814ea58:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #556]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #142
 	bl	Audio_PlayCue
 	movs	r2, #0
@@ -288,7 +288,7 @@ Func_0814ea58:
 	bl	Func_08014de4
 	ldr	r0, [sp, #28]
 	ldr	r1, [sp, #20]
-	bl	0x080156e8
+	bl	Func_080156e8
 	ldr	r4, [sp, #44]
 	cmp	r4, #40
 	bne.n	.L_0814ecc2
@@ -511,7 +511,7 @@ Func_0814ea58:
 	ldr	r0, [pc, #32]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 	add	sp, #72
 	pop	{r3, r5, r6, r7}

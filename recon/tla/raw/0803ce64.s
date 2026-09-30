@@ -20,7 +20,7 @@ Func_0803ce64:
 	str	r3, [sp, #20]
 	str	r3, [sp, #16]
 	adds	r7, r0, #0
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	movs	r2, #244
 	lsls	r2, r2, #4
 	lsls	r3, r0, #1
@@ -37,7 +37,7 @@ Func_0803ce64:
 	add	r3, sp, #12
 	str	r0, [sp, #0]
 	adds	r0, r7, #0
-	bl	0x0803b880
+	bl	Func_0803b880
 	ldr	r2, [sp, #12]
 	movs	r3, #30
 	ldr	r4, [sp, #8]

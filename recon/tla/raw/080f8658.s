@@ -225,6 +225,9 @@ Func_080f8658:
 	.4byte 0x0000104c
 	.2byte 0x104f
 	.2byte 0x0000
+	.global Func_080f8840
+	.thumb_func
+Func_080f8840:
 .L_080f8840:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -260,6 +263,9 @@ Func_080f8658:
 	movs	r0, r0
 	.2byte 0x01fa
 	.2byte 0x0000
+	.global UiIcon_PrepareObject
+	.thumb_func
+UiIcon_PrepareObject:
 	push	{lr}
 	cmp	r0, #0
 	beq.n	.L_080f88be
@@ -313,7 +319,7 @@ Func_080f8658:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #13
-	bl	0x080f811c
+	bl	UiWindow_UpdateOrCreate
 	ldr	r5, [r5, #0]
 	movs	r3, #3
 	str	r3, [sp, #0]
@@ -326,7 +332,7 @@ Func_080f8658:
 	negs	r1, r1
 	movs	r2, #11
 	adds	r0, r5, #0
-	bl	.L_080f8840
+	bl	Func_080f8840
 	movs	r2, #13
 	mov	r8, r2
 	mov	r3, r8

@@ -32,7 +32,7 @@ Func_08024fe0:
 	ldrb	r0, [r3, #0]
 	ldr	r2, [r6, #16]
 	ldr	r1, [r6, #8]
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	ldr	r3, [r6, #12]
 	ldr	r2, [r6, #20]
 	str	r0, [r6, #20]

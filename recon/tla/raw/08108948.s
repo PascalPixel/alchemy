@@ -80,6 +80,9 @@ Func_08108948:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.global Func_081089e4
+	.thumb_func
+Func_081089e4:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	ldr	r4, [r5, #0]
@@ -176,6 +179,9 @@ Func_08108948:
 	pop	{r5, pc}
 	.2byte 0xfe00
 	.2byte 0xffff
+	.global Func_08108a88
+	.thumb_func
+Func_08108a88:
 	push	{r5, r6, lr}
 	ldr	r5, [r0, #0]
 	ldr	r6, [pc, #16]

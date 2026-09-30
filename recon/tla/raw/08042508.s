@@ -11,7 +11,7 @@ Func_08042508:
 	adds	r7, r2, #0
 	sub	sp, #16
 	ldr	r6, [r3, #60]
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r2, #1
 	negs	r2, r2
 	cmp	r0, r2

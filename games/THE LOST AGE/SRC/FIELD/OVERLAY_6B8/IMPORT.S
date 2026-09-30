@@ -21,7 +21,7 @@
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020278
 	overlay_veneer Func_08020300
-	overlay_veneer Func_08038018
+	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer Func_08038038
 	overlay_veneer Func_08038040
 	overlay_veneer Func_08038048

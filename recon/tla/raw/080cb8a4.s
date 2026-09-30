@@ -7,7 +7,7 @@ Func_080cb8a4:
 	movs	r1, #213
 	lsls	r1, r1, #4
 	movs	r0, #108
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r1, r0, #0
 	movs	r0, #197
 	lsls	r0, r0, #1

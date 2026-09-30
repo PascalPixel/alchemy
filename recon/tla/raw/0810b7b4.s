@@ -35,14 +35,14 @@ Func_0810b7b4:
 	movs	r3, #8
 	movs	r0, #16
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r1, #14
 	str	r0, [r7, #36]
 	movs	r2, #13
 	movs	r3, #3
 	movs	r0, #0
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	mov	sl, r0
 	movs	r0, #192
 	lsls	r0, r0, #4
@@ -55,7 +55,7 @@ Func_0810b7b4:
 	movs	r3, #1
 	movs	r0, #30
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #236
@@ -228,13 +228,13 @@ Func_0810b7b4:
 	bl	0x080f8068
 	mov	r0, fp
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #2
 	ldr	r0, [r7, #36]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	bl	0x0810824c
@@ -275,14 +275,14 @@ Func_0810b7b4:
 	movs	r0, #14
 	movs	r1, #8
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r2, #30
 	str	r0, [sp, #20]
 	movs	r3, #3
 	movs	r0, #0
 	movs	r1, #5
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #128
 	str	r0, [sp, #24]
 	lsls	r3, r3, #3
@@ -457,7 +457,7 @@ Func_0810b7b4:
 	movs	r1, #9
 	movs	r2, #16
 	movs	r0, #0
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r5, #0
 	mov	sl, r0
 	bl	0x080f8038
@@ -490,7 +490,7 @@ Func_0810b7b4:
 	strb	r3, [r2, #0]
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #192
 	lsls	r3, r3, #4
 	adds	r3, #232
@@ -587,10 +587,10 @@ Func_0810b7b4:
 .L_0810bc6a:
 	ldr	r0, [sp, #24]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #2
 	ldr	r0, [sp, #20]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r5, #0
@@ -643,7 +643,7 @@ Func_0810b7b4:
 	cmp	r7, #0
 	beq.n	.L_0810bd92
 	adds	r0, r7, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r0, [pc, #176]
 	movs	r3, #0
 	adds	r0, r5, r0
@@ -799,7 +799,7 @@ Func_0810b7b4:
 	strb	r2, [r3, #0]
 	adds	r1, #138
 	ldr	r0, [pc, #12]
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_0810be38
 	movs	r0, r0
 	.4byte 0x00000060

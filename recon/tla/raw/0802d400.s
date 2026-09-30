@@ -55,6 +55,9 @@ Func_0802d400:
 .L_0802d458:
 	lsls	r0, r0, #19
 	pop	{pc}
+	.global Func_0802d45c
+	.thumb_func
+Func_0802d45c:
 .L_0802d45c:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
@@ -119,6 +122,9 @@ Func_0802d400:
 	.4byte 0x0802efc4
 	.2byte 0xc001
 	.2byte 0x0202
+	.global Func_0802d4d8
+	.thumb_func
+Func_0802d4d8:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -166,6 +172,9 @@ Func_0802d400:
 	.4byte 0x02024000
 	.2byte 0xc000
 	.2byte 0x0202
+	.global Func_0802d530
+	.thumb_func
+Func_0802d530:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -228,14 +237,14 @@ Func_0802d400:
 	adds	r6, r2, #0
 	adds	r7, r0, #0
 	mov	sl, r3
-	bl	.L_0802d45c
+	bl	Func_0802d45c
 	mov	r2, r8
 	mov	r3, sl
 	adds	r5, r0, #0
 	subs	r1, r2, r3
 	adds	r0, r7, #0
 	adds	r2, r6, #0
-	bl	.L_0802d45c
+	bl	Func_0802d45c
 	cmp	r5, r0
 	bge.n	.L_0802d5be
 	adds	r5, r0, #0
@@ -244,7 +253,7 @@ Func_0802d400:
 	add	r1, sl
 	adds	r0, r7, #0
 	adds	r2, r6, #0
-	bl	.L_0802d45c
+	bl	Func_0802d45c
 	cmp	r5, r0
 	bge.n	.L_0802d5d0
 	adds	r5, r0, #0
@@ -253,7 +262,7 @@ Func_0802d400:
 	subs	r2, r6, r3
 	adds	r0, r7, #0
 	mov	r1, r8
-	bl	.L_0802d45c
+	bl	Func_0802d45c
 	cmp	r5, r0
 	bge.n	.L_0802d5e2
 	adds	r5, r0, #0
@@ -262,7 +271,7 @@ Func_0802d400:
 	adds	r2, r6, r3
 	adds	r0, r7, #0
 	mov	r1, r8
-	bl	.L_0802d45c
+	bl	Func_0802d45c
 	cmp	r5, r0
 	bge.n	.L_0802d5f4
 	adds	r5, r0, #0

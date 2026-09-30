@@ -38,7 +38,7 @@ Func_081a6030:
 	.2byte 0x0000
 	.2byte 0x0201
 .L_081a6078:
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	movs	r1, #192
@@ -61,7 +61,7 @@ Func_081a6030:
 .L_081a60a0:
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [r7, #4]
 	movs	r0, #1
 	cmp	r3, #0
@@ -767,7 +767,7 @@ Func_081a6030:
 	bl	.L_081a6094
 	cmp	r0, #0
 	beq.n	.L_081a6624
-	bl	0x08013fdc
+	bl	Func_08013fdc
 	b.n	.L_081a6562
 .L_081a6624:
 	movs	r0, #1
@@ -1541,7 +1541,7 @@ Func_081a6030:
 	ldr	r0, [pc, #92]
 	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -1833,7 +1833,7 @@ Func_081a6030:
 .L_081a6e68:
 	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -1891,7 +1891,7 @@ Func_081a6030:
 	adds	r6, #32
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r3, #128
 	b.n	.L_081a6f04
 	movs	r0, r0
@@ -1934,7 +1934,7 @@ Func_081a6030:
 	adds	r6, r6, r0
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	movs	r1, #192
@@ -2134,7 +2134,7 @@ Func_081a6030:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #188]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #160
 	strh	r3, [r5, #2]
 	movs	r3, #255
@@ -2202,7 +2202,7 @@ Func_081a6030:
 	ldr	r0, [pc, #40]
 	bl	Func_08014644
 	movs	r0, #172
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #1
@@ -2229,11 +2229,11 @@ Func_081a6030:
 	mov	r6, sp
 	adds	r6, #3
 	strb	r3, [r6, #0]
-	bl	0x08014b70
-	bl	0x08014368
+	bl	Func_08014b70
+	bl	Func_08014368
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x080144c0
+	bl	Func_080144c0
 	ldr	r2, [pc, #164]
 	movs	r3, #0
 	strb	r3, [r2, #0]
@@ -2294,8 +2294,8 @@ Func_081a6030:
 	movs	r2, #128
 	lsls	r2, r2, #19
 	strh	r3, [r2, #0]
-	bl	0x08014bac
-	bl	0x08014b70
+	bl	Func_08014bac
+	bl	Func_08014b70
 	bl	0x081a814c
 	ldr	r2, [pc, #16]
 	ldrb	r3, [r6, #0]

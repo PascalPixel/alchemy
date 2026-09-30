@@ -15,7 +15,7 @@ Func_080420a8:
 	mov	r8, r2
 	mov	sl, r3
 	adds	r7, r1, #0
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldrb	r3, [r5, #0]
 	adds	r6, r0, #0
 	adds	r2, r6, #0
@@ -36,7 +36,7 @@ Func_080420a8:
 	adds	r1, r7, #0
 	mov	r2, r8
 	mov	r3, sl
-	bl	0x0803aae4
+	bl	Func_0803aae4
 	adds	r0, r6, #0
 	bl	Func_08013164
 	b.n	.L_080420f4

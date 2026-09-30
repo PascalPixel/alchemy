@@ -25,8 +25,8 @@
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
-	overlay_veneer Func_08038010
-	overlay_veneer Func_08038018
+	overlay_veneer UiWindow_CreateFar
+	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer Func_08038040
 	overlay_veneer Func_08038060
 	overlay_veneer Func_08038070
@@ -38,7 +38,7 @@
 	overlay_veneer Func_080381f0
 	overlay_veneer Func_080381f8
 	overlay_veneer Func_08038210
-	overlay_veneer Func_08038260
+	overlay_veneer RenderOutput_RedrawSavedRectFar
 	overlay_veneer UiWindow_SetTilemapEntryFar
 	overlay_veneer Func_080382c0
 	overlay_veneer Func_080382c8

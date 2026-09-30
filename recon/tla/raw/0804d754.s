@@ -83,6 +83,9 @@ Func_0804d754:
 	.4byte 0x00001173
 	.2byte 0x1176
 	.2byte 0x0000
+	.global Func_0804d7fc
+	.thumb_func
+Func_0804d7fc:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -125,7 +128,7 @@ Func_0804d754:
 	lsls	r1, r1, #3
 	adds	r1, #118
 	ldr	r0, [pc, #252]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #255
 	adds	r2, r7, #0
 	lsls	r3, r3, #8
@@ -174,7 +177,7 @@ Func_0804d754:
 	lsls	r1, r1, #3
 	adds	r1, #118
 	ldr	r0, [pc, #152]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #255
 	adds	r2, r7, #0
 	lsls	r3, r3, #8
@@ -242,6 +245,9 @@ Func_0804d754:
 	.4byte 0x0804d755
 	.2byte 0x1178
 	.2byte 0x0000
+	.global Func_0804d968
+	.thumb_func
+Func_0804d968:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	bl	AffineEffect_InitializeWork

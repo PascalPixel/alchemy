@@ -226,7 +226,7 @@ Func_0817e698:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #416]
 	lsls	r1, r1, #4
-	bl	0x080145a8
+	bl	Func_080145a8
 	mov	r2, r9
 	cmp	r2, #2
 	bne.n	.L_0817e870
@@ -330,7 +330,7 @@ Func_0817e698:
 	cmp	r2, #27
 	bgt.n	.L_0817e99e
 	movs	r0, #32
-	bl	0x08014dac
+	bl	Func_08014dac
 	adds	r6, r0, #0
 	movs	r0, #1
 	bl	0x081969f8
@@ -417,7 +417,7 @@ Func_0817e698:
 	ldr	r0, [pc, #28]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 	add	sp, #32
 	pop	{r3, r5, r6, r7}

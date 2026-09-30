@@ -254,7 +254,7 @@ Func_081a133c:
 	strb	r2, [r3, #0]
 	ldr	r3, [pc, #100]
 	strb	r2, [r3, #0]
-	bl	0x080144c0
+	bl	Func_080144c0
 	ldr	r3, [pc, #96]
 	movs	r2, #0
 	str	r2, [r3, #0]
@@ -274,7 +274,7 @@ Func_081a133c:
 	strh	r2, [r3, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #88]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #64
 	movs	r5, #128
 	lsls	r5, r5, #19
@@ -611,7 +611,7 @@ Func_081a133c:
 	movs	r1, #0
 	subs	r6, #1
 	adds	r5, #12
-	bl	0x080140d8
+	bl	Func_080140d8
 	cmp	r6, #0
 	bge.n	.L_081a1818
 	pop	{r5, r6, pc}
@@ -625,7 +625,7 @@ Func_081a133c:
 	adds	r5, r0, #0
 	movs	r0, #144
 	lsls	r0, r0, #1
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldr	r6, [pc, #152]
 	movs	r1, #128
 	str	r0, [r6, #0]
@@ -701,7 +701,7 @@ Func_081a133c:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #32]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{r5, r6, r7, pc}
 	.4byte 0x0200752c

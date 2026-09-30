@@ -290,11 +290,11 @@ Func_080b075c:
 	ble.n	.L_080b0a3e
 	ldr	r1, [sp, #0]
 	adds	r0, r5, #0
-	bl	0x080b0028
+	bl	Func_080b0028
 	adds	r5, r0, #0
 	ldr	r1, [sp, #0]
 	mov	r0, fp
-	bl	0x080b0028
+	bl	Func_080b0028
 	mov	r4, sl
 	ldrb	r3, [r4, #0]
 	subs	r5, r5, r0

@@ -20,7 +20,7 @@ Func_080231c8:
 	b.n	.L_08023202
 .L_080231e6:
 	ldr	r0, [r7, #80]
-	bl	0x08022e90
+	bl	Func_08022e90
 	b.n	.L_08023202
 .L_080231ee:
 	ldr	r5, [r7, #80]
@@ -29,7 +29,7 @@ Func_080231c8:
 	ldmia	r5!, {r0}
 	cmp	r0, #0
 	beq.n	.L_080231fc
-	bl	0x08022e90
+	bl	Func_08022e90
 .L_080231fc:
 	subs	r6, #1
 	cmp	r6, #0

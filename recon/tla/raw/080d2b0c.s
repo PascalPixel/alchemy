@@ -9,7 +9,7 @@ Func_080d2b0c:
 	ldr	r5, [r3, #108]
 	adds	r6, r0, #0
 	adds	r7, r1, #0
-	bl	0x080ca18c
+	bl	Func_080ca18c
 	movs	r2, #178
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
@@ -21,7 +21,7 @@ Func_080d2b0c:
 	asrs	r3, r3, #24
 	cmp	r3, #3
 	bne.n	.L_080d2b40
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	adds	r0, #8
 	bl	0x080c9f2c

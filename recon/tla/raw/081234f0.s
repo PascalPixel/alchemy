@@ -71,6 +71,9 @@ Func_081234f0:
 	lsrs	r0, r0, #31
 	add	sp, #16
 	pop	{r5, r6, pc}
+	.global Func_08123574
+	.thumb_func
+Func_08123574:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

@@ -72,12 +72,12 @@ Func_0810b04c:
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #24]
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r0, #0
 	movs	r0, #160
 	lsls	r0, r0, #14
 	adds	r2, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #8]
 	adds	r0, r6, #0
@@ -86,12 +86,12 @@ Func_0810b04c:
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #24]
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r5, #0
 	lsls	r0, r0, #11
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r5, #0]
 	mov	r2, r8
 	str	r3, [r6, #12]

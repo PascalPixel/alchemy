@@ -103,7 +103,7 @@ Func_0803c40c:
 	ldr	r3, [r0, #4]
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	0x0801401c
+	bl	Func_0801401c
 	movs	r3, #31
 	ldrb	r2, [r5, #7]
 	ands	r0, r3
@@ -312,9 +312,9 @@ Func_0803c40c:
 	bne.n	.L_0803c688
 	b.n	.L_0803c922
 .L_0803c688:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -333,9 +333,9 @@ Func_0803c40c:
 	ands	r3, r2
 	orrs	r3, r1
 	strh	r3, [r7, #6]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -375,7 +375,7 @@ Func_0803c40c:
 	ldr	r3, [r0, #4]
 	ands	r3, r1
 	str	r3, [r0, #4]
-	bl	0x0801401c
+	bl	Func_0801401c
 	ldrb	r2, [r7, #7]
 	movs	r3, #31
 	ands	r0, r3
@@ -449,7 +449,7 @@ Func_0803c40c:
 	strh	r3, [r6, #12]
 	strh	r3, [r5, #4]
 	adds	r0, r5, #0
-	bl	0x0801401c
+	bl	Func_0801401c
 	ldrb	r2, [r7, #7]
 	movs	r3, #31
 	ands	r0, r3
@@ -699,13 +699,19 @@ Func_0803c40c:
 	movs	r0, r0
 	.2byte 0x1100
 	.2byte 0x0300
+	.global Func_0803c9ac
+	.thumb_func
+Func_0803c9ac:
 	push	{lr}
 	ldr	r2, [pc, #8]
-	bl	.L_0803ca20
+	bl	Func_0803ca20
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x7fff
+	.global Func_0803c9bc
+	.thumb_func
+Func_0803c9bc:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -719,7 +725,7 @@ Func_0803c40c:
 	adds	r7, r1, #0
 	strh	r3, [r2, #0]
 	movs	r1, #1
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	subs	r5, #1
 	movs	r0, #0
 	cmp	r0, r5
@@ -759,6 +765,9 @@ Func_0803c40c:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0x0000
+	.global Func_0803ca20
+	.thumb_func
+Func_0803ca20:
 .L_0803ca20:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -868,7 +877,7 @@ Func_0803c40c:
 	cmp	r3, #0
 	bne.n	.L_0803caee
 	movs	r0, #200
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0803caee:
 	ldr	r3, [pc, #16]
 	add	sp, #12

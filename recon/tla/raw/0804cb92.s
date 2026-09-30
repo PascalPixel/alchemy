@@ -14,7 +14,7 @@ Func_0804cb92:
 	ldrh	r6, [r5, #0]
 	cmp	r6, #0
 	beq.n	.L_0804cbb6
-	bl	0x08014878
+	bl	Func_08014878
 	ldrh	r3, [r5, #0]
 	muls	r3, r0
 	lsrs	r3, r3, #20
@@ -105,9 +105,9 @@ Func_0804cb92:
 	bl	UiWork_Finalize
 .L_0804cc58:
 	ldr	r0, [sp, #48]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r0, [sp, #52]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r0, [pc, #28]
 	bl	Func_08014644
 	ldr	r3, [sp, #36]
@@ -249,7 +249,7 @@ Func_0804cb92:
 	movs	r0, #0
 	bl	0x081180d0
 	movs	r0, #228
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r1, [sp, #80]
 	cmp	r1, #0
 	blt.n	.L_0804cd90
@@ -322,7 +322,7 @@ Func_0804cb92:
 	movs	r5, #0
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	0x0801401c
+	bl	Func_0801401c
 	movs	r2, #142
 	add	r2, r8
 	mov	fp, r0
@@ -703,7 +703,7 @@ AffineEffect_InitializeWork:
 	movs	r1, #152
 	movs	r0, #232
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	adds	r5, r0, #0
 	mov	r0, sp
@@ -721,7 +721,7 @@ AffineEffect_InitializeWork:
 	lsls	r1, r1, #3
 	adds	r1, #118
 	ldr	r0, [pc, #8]
-	bl	0x080145a8
+	bl	Func_080145a8
 	adds	r0, r5, #0
 	add	sp, #4
 	pop	{r5, pc}
@@ -754,7 +754,7 @@ Menu_EndResourceSelection:
 	adds	r5, #18
 .L_0804d146:
 	ldrh	r0, [r5, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r2, #0
 	ldrsh	r3, [r7, r2]
 	adds	r6, #1
@@ -763,7 +763,7 @@ Menu_EndResourceSelection:
 	blt.n	.L_0804d146
 .L_0804d158:
 	movs	r0, #232
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{r5, r6, r7, pc}
@@ -1029,7 +1029,7 @@ Menu_RunResourceSelectionLoop:
 	ldrh	r3, [r5, r0]
 	adds	r1, r6, #0
 	adds	r0, r0, r3
-	bl	0x0801591c
+	bl	Func_0801591c
 	mov	r0, sl
 	mov	r1, r8
 	adds	r2, r6, #0

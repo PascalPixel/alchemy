@@ -131,7 +131,7 @@ Func_080d1840:
 	subs	r3, r3, r6
 	adds	r3, #16
 	strb	r3, [r5, #4]
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080d1950:
 	movs	r2, #128
 	lsls	r2, r2, #13
@@ -218,7 +218,7 @@ Func_080d1840:
 	subs	r3, r3, r6
 	adds	r3, #16
 	strb	r3, [r5, #4]
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080d1a08:
 	add	sp, #16
 	pop	{r3, r5, r6, r7}

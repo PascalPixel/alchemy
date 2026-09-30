@@ -156,11 +156,14 @@ Func_0803e5a8:
 	.4byte 0x0000006e
 	.2byte 0x006d
 	.2byte 0x0000
+	.global Func_0803e6d8
+	.thumb_func
+Func_0803e6d8:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r6, [r3, #72]
-	bl	0x0803df14
+	bl	Func_0803df14
 	movs	r2, #212
 	lsls	r2, r2, #2
 	adds	r3, r6, r2
@@ -181,7 +184,7 @@ Func_0803e5a8:
 	cmp	r3, #0
 	beq.n	.L_0803e714
 	ldrh	r0, [r5, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	strh	r7, [r5, #10]
 .L_0803e714:
 	ldr	r5, [r5, #4]
@@ -200,7 +203,7 @@ Func_0803e5a8:
 	cmp	r3, #0
 	beq.n	.L_0803e736
 	ldrh	r0, [r5, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	strh	r7, [r5, #10]
 .L_0803e736:
 	ldr	r5, [r5, #4]
@@ -213,7 +216,7 @@ Func_0803e5a8:
 	cmp	r3, #0
 	beq.n	.L_0803e760
 	ldrh	r0, [r6, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r2, #18
 	ldrsh	r3, [r6, r2]
 	cmp	r3, #0
@@ -221,16 +224,19 @@ Func_0803e5a8:
 	adds	r3, r6, #0
 	adds	r3, #64
 	ldrh	r0, [r3, #0]
-	bl	0x08014274
+	bl	Func_08014274
 .L_0803e760:
 	movs	r2, #185
 	lsls	r2, r2, #2
 	adds	r3, r6, r2
 	ldrh	r0, [r3, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #72
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, r6, r7, pc}
+	.global Func_0803e774
+	.thumb_func
+Func_0803e774:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

@@ -68,6 +68,9 @@ Func_080452bc:
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x0fff
+	.global Func_08045330
+	.thumb_func
+Func_08045330:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #56]
 	adds	r7, r0, #0
@@ -143,6 +146,9 @@ Func_080452bc:
 	.4byte 0x06000400
 	.2byte 0xf730
 	.2byte 0x0805
+	.global Func_080453d0
+	.thumb_func
+Func_080453d0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -220,29 +226,3 @@ Func_080452bc:
 	.4byte 0x06000600
 	.2byte 0xf770
 	.2byte 0x0805
-	push	{r5, r6, lr}
-	mov	r6, r8
-	push	{r6}
-	mov	r8, r1
-	movs	r1, #193
-	adds	r6, r0, #0
-	lsls	r1, r1, #3
-	movs	r0, #68
-	bl	0x08014d00
-	adds	r5, r0, #0
-	adds	r0, r6, #0
-	bl	0x0803da78
-	movs	r3, #128
-	lsls	r3, r3, #3
-	adds	r5, r5, r3
-	adds	r1, r5, #0
-	mov	r0, r8
-	bl	Func_080143f8
-	adds	r5, r0, #0
-	movs	r0, #68
-	bl	Runtime_ReleaseSlot
-	adds	r0, r5, #0
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, pc}
-	.2byte 0x0000

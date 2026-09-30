@@ -37,10 +37,10 @@ Func_080cdc74:
 	movs	r0, #128
 	str	r3, [r2, #8]
 	lsls	r0, r0, #13
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x080eaf28
+	bl	Func_080eaf28
 	adds	r7, r0, #0
 	movs	r0, #0
 	cmp	r7, #0
@@ -72,10 +72,10 @@ Func_080cdc74:
 	lsls	r0, r0, #13
 	adds	r1, r5, #0
 	str	r3, [r2, #8]
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x080eaf28
+	bl	Func_080eaf28
 	cmp	r0, #0
 	beq.n	.L_080cdd24
 	adds	r3, r0, #0
@@ -98,7 +98,7 @@ Func_080cdc74:
 	ldr	r3, [r7, #16]
 	movs	r1, #1
 	str	r3, [r0, #8]
-	bl	0x080eaf28
+	bl	Func_080eaf28
 	cmp	r0, #0
 	beq.n	.L_080cdd52
 	adds	r3, r0, #0
@@ -134,6 +134,9 @@ Func_080cdc74:
 	.4byte 0x02000240
 	.2byte 0x0000
 	.2byte 0xfff8
+	.global Func_080cdd80
+	.thumb_func
+Func_080cdd80:
 	.2byte 0xb5e0
 	mov	r7, sl
 	mov	r6, r9
@@ -171,10 +174,10 @@ Func_080cdc74:
 	lsls	r3, r3, #13
 	mov	r8, r3
 	mov	r0, r8
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r1, #1
 	adds	r0, r7, #0
-	bl	0x080eaf28
+	bl	Func_080eaf28
 	ldr	r3, [r0, #8]
 	mov	sl, r0
 	str	r3, [r7, #0]
@@ -187,7 +190,7 @@ Func_080cdc74:
 	adds	r6, #34
 	mov	r0, r8
 	str	r3, [r7, #8]
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldrb	r0, [r6, #0]
 	movs	r3, #2
 	mov	r8, r0
@@ -234,7 +237,7 @@ Func_080cdc74:
 	bl	Object_CommitPosition
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x080d2c98
+	bl	Func_080d2c98
 	mov	r0, sl
 	ldr	r1, [r7, #0]
 	ldr	r2, [r7, #4]
@@ -268,12 +271,12 @@ Func_080cdc74:
 	.2byte 0xb560
 	adds	r5, r1, #0
 	adds	r6, r0, #0
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	adds	r0, r5, #0
-	bl	0x080d3be8
+	bl	Func_080d3be8
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	0x080d407c
-	bl	0x080d2350
+	bl	Func_080d407c
+	bl	Func_080d2350
 	pop	{r5, r6, pc}
 	.2byte 0x0000

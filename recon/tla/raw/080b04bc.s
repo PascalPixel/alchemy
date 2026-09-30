@@ -32,7 +32,7 @@ Func_080b04bc:
 	lsls	r0, r0, #16
 	bl	Math_Div
 	adds	r5, r0, #0
-	bl	0x080b0378
+	bl	Func_080b0378
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -224,7 +224,7 @@ Func_080b04bc:
 	adds	r1, #33
 	adds	r3, r2, r1
 	ldrh	r0, [r3, #0]
-	bl	0x080ad3a8
+	bl	Func_080ad3a8
 	movs	r2, #0
 	adds	r0, #62
 .L_080b0708:

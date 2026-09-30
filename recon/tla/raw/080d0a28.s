@@ -234,6 +234,9 @@ Func_080d0a28:
 	.4byte 0x06002000
 	.2byte 0x0140
 	.2byte 0x8500
+	.global Func_080d0bec
+	.thumb_func
+Func_080d0bec:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -242,7 +245,7 @@ Func_080d0a28:
 	lsls	r1, r1, #3
 	movs	r0, #124
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #128
 	adds	r5, r0, #0
 	movs	r6, #0
@@ -269,7 +272,7 @@ Func_080d0a28:
 	lsls	r1, r1, #3
 	strh	r6, [r5, #0]
 	ldr	r0, [pc, #20]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #120
 	bl	WaitFrames
 	add	sp, #4
@@ -279,6 +282,9 @@ Func_080d0a28:
 	.4byte 0x85000150
 	.2byte 0x0a29
 	.2byte 0x080d
+	.global Func_080d0c50
+	.thumb_func
+Func_080d0c50:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -1589,13 +1595,16 @@ Func_080d0a28:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Func_080d1684
+	.thumb_func
+Func_080d1684:
 	push	{lr}
 	movs	r1, #168
 	lsls	r1, r1, #6
 	adds	r1, #4
 	movs	r0, #128
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	adds	r4, r0, #0
 	mov	r0, sp
@@ -1635,21 +1644,27 @@ Func_080d0a28:
 	lsls	r1, r1, #2
 	adds	r1, #255
 	ldr	r0, [pc, #16]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{pc}
 	.4byte 0x85000a81
 	.4byte 0x05000200
 	.2byte 0x0ca1
 	.2byte 0x080d
+	.global Func_080d16f8
+	.thumb_func
+Func_080d16f8:
 	push	{lr}
 	ldr	r0, [pc, #12]
 	bl	Func_08014644
 	movs	r0, #128
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	.2byte 0x0ca1
 	.2byte 0x080d
+	.global Func_080d170c
+	.thumb_func
+Func_080d170c:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

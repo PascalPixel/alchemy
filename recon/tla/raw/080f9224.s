@@ -79,6 +79,9 @@ Func_080f9224:
 	movs	r0, r0
 	.2byte 0xefff
 	.2byte 0xffff
+	.global Func_080f92ac
+	.thumb_func
+Func_080f92ac:
 	movs	r3, #128
 	movs	r2, #128
 	lsls	r3, r3, #19
@@ -154,7 +157,7 @@ Func_080f9224:
 	strh	r7, [r5, #8]
 	adds	r0, r5, #0
 	str	r2, [sp, #0]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	adds	r6, #1
 	movs	r3, #1
 	strb	r3, [r5, #5]

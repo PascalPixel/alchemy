@@ -11,7 +11,7 @@ Func_080d7304:
 	adds	r1, #136
 	movs	r0, #120
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #128
@@ -51,7 +51,7 @@ Func_080d7304:
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	movs	r3, #12
-	bl	0x080d0c50
+	bl	Func_080d0c50
 	movs	r3, #224
 	lsls	r3, r3, #4
 	add	r8, r3
@@ -75,7 +75,7 @@ Func_080d7304:
 	strh	r3, [r5, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #16]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3
@@ -84,12 +84,15 @@ Func_080d7304:
 	.4byte 0x850007e2
 	.2byte 0x67e9
 	.2byte 0x080d
+	.global Func_080d73b4
+	.thumb_func
+Func_080d73b4:
 	push	{lr}
 	movs	r1, #248
 	lsls	r1, r1, #5
 	adds	r1, #136
 	movs	r0, #120
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #252
 	lsls	r3, r3, #5
 	adds	r2, r0, r3

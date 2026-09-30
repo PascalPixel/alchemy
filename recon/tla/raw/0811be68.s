@@ -44,7 +44,7 @@ Actor_ResetMotionAtAnchor:
 .L_0811beb4:
 	ldr	r1, [r6, #12]
 	asrs	r0, r0, #3
-	bl	0x080148e8
+	bl	Func_080148e8
 	movs	r3, #128
 	lsls	r3, r3, #8
 	adds	r0, r0, r3

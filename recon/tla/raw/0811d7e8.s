@@ -20,7 +20,7 @@ Func_0811d7e8:
 .L_0811d802:
 	mov	sl, sp
 	mov	r1, sl
-	bl	0x0811a39c
+	bl	Func_0811a39c
 	ldr	r3, [pc, #140]
 	mov	r8, r0
 	movs	r1, #104
@@ -110,7 +110,7 @@ Func_0811d7e8:
 .L_0811d8b2:
 	mov	r8, sp
 	mov	r1, r8
-	bl	0x0811a39c
+	bl	Func_0811a39c
 	mov	sl, r0
 	cmp	r0, #0
 	ble.n	.L_0811d8fa
@@ -169,11 +169,11 @@ Func_0811d7e8:
 	bhi.n	.L_0811d93a
 	mov	r7, sp
 	adds	r0, r7, #0
-	bl	0x0811a038
+	bl	Func_0811a038
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r7, r0
-	bl	0x0811a0b0
+	bl	Func_0811a0b0
 	adds	r5, r5, r0
 	b.n	.L_0811d946
 .L_0811d93a:
@@ -321,7 +321,7 @@ Func_0811d7e8:
 	adds	r1, r5, #0
 	adds	r1, #12
 	adds	r0, r5, #0
-	bl	0x080156e8
+	bl	Func_080156e8
 	movs	r0, #255
 	movs	r1, #192
 	lsls	r1, r1, #8
@@ -627,12 +627,12 @@ Func_0811d7e8:
 	bl	.L_0811df70
 	movs	r0, #1
 	movs	r1, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	beq.n	.L_0811dd70
 	movs	r0, #2
 	movs	r1, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	beq.n	.L_0811dd70
 	adds	r0, r5, #0
@@ -702,7 +702,7 @@ Func_0811d7e8:
 	ldrh	r1, [r3, #0]
 	movs	r0, #2
 	movs	r2, #0
-	bl	0x0812628c
+	bl	Func_0812628c
 	movs	r0, #195
 	lsls	r0, r0, #1
 	bl	Audio_PlayCue
@@ -851,7 +851,7 @@ Func_0811d7e8:
 	add	r7, sp, #4
 	movs	r0, #1
 	adds	r1, r7, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	movs	r3, #1
 	subs	r6, r0, #1
 	negs	r3, r3
@@ -889,7 +889,7 @@ Func_0811d7e8:
 	mov	sl, r1
 	b.n	.L_0811df5a
 .L_0811df1e:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsls	r3, r3, #1
@@ -1202,7 +1202,7 @@ Func_0811d7e8:
 	strh	r3, [r1, r2]
 	ldr	r0, [sp, #4]
 	movs	r1, #0
-	bl	0x0811b9d4
+	bl	Func_0811b9d4
 	mov	r2, sl
 	movs	r3, #1
 	ldrsb	r3, [r2, r3]
@@ -1245,7 +1245,7 @@ Func_0811d7e8:
 	bl	0x0811be3c
 	movs	r1, #0
 	ldr	r0, [r0, #0]
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	ldrb	r3, [r0, #27]
 	movs	r1, #0
 	subs	r3, #1
@@ -1317,7 +1317,7 @@ Func_0811d7e8:
 	movs	r1, #144
 	ldr	r0, [pc, #44]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	mov	r2, sl
 	ldr	r0, [r2, #88]
 	movs	r3, #128
@@ -1440,7 +1440,7 @@ Func_0811d7e8:
 	movs	r2, #0
 	movs	r3, #100
 	movs	r0, #0
-	bl	0x08126804
+	bl	Func_08126804
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #0

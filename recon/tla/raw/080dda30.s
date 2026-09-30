@@ -67,18 +67,18 @@ Func_080dda30:
 	str	r3, [r6, #0]
 	ldr	r3, [r7, #12]
 	str	r3, [r6, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r3, #128
 	lsls	r3, r3, #11
 	lsls	r5, r5, #1
 	adds	r5, r5, r3
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r2, [r7, #8]
 	movs	r0, #26
 	str	r2, [r6, #4]
@@ -96,7 +96,7 @@ Func_080dda30:
 	movs	r3, #2
 	strb	r3, [r2, #0]
 .L_080ddafa:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #1
 	lsrs	r0, r0, #16
 	adds	r0, #2
@@ -110,7 +110,7 @@ Func_080dda30:
 	movs	r3, #26
 	ldrsh	r0, [r7, r3]
 	movs	r1, #1
-	bl	0x080daecc
+	bl	Func_080daecc
 	b.n	.L_080ddb2c
 .L_080ddb20:
 	movs	r0, #10
@@ -145,18 +145,18 @@ Func_080dda30:
 	str	r3, [r6, #0]
 	ldr	r3, [r7, #12]
 	str	r3, [r6, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r3, #128
 	lsls	r3, r3, #11
 	lsls	r5, r5, #1
 	adds	r5, r5, r3
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r2, [r7, #8]
 	movs	r0, #26
 	ldr	r1, [r6, #0]
@@ -174,7 +174,7 @@ Func_080dda30:
 	movs	r3, #2
 	strb	r3, [r2, #0]
 .L_080ddba6:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #1
 	lsrs	r0, r0, #16
 	adds	r0, #2
@@ -270,7 +270,7 @@ Func_080dda30:
 	str	r3, [r2, #8]
 	mov	r3, r9
 	ldrh	r1, [r3, #0]
-	bl	0x0801489c
+	bl	Func_0801489c
 .L_080ddc6a:
 	mov	r0, fp
 	ldr	r1, [r0, #0]
@@ -374,20 +374,20 @@ Func_080dda30:
 	ldrh	r1, [r3, #0]
 	lsls	r0, r0, #12
 	mov	r2, sl
-	bl	0x0801489c
+	bl	Func_0801489c
 .L_080ddd42:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #11
 	lsls	r5, r5, #1
 	adds	r5, r5, r0
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r2, sl
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r2, sl
 	mov	r0, sl
 	ldr	r1, [r2, #0]
@@ -635,7 +635,7 @@ Func_080dda30:
 	beq.n	.L_080ddfa0
 	ldr	r1, [pc, #100]
 	bl	Object_SetCallback
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r3, r9
 	adds	r2, r6, #0
 	adds	r2, #85
@@ -644,14 +644,14 @@ Func_080dda30:
 	movs	r3, #0
 	str	r0, [r6, #48]
 	strb	r3, [r2, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r0
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0

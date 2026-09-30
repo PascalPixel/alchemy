@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_080af2c0
+	.thumb_func
+Func_080af2c0:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	bl	PartyInventory_FindOwner

@@ -6,7 +6,7 @@ Func_0802dc48:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0
-	bl	0x0802dac0
+	bl	Func_0802dac0
 	ldr	r3, [r5, #0]
 	adds	r7, r0, #0
 	movs	r4, #0
@@ -65,6 +65,9 @@ Func_0802dc48:
 	.4byte 0x02020000
 	.2byte 0xf004
 	.2byte 0x0802
+	.global Func_0802dcbc
+	.thumb_func
+Func_0802dcbc:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -82,6 +85,9 @@ Func_0802dc48:
 	str	r2, [r3, #12]
 .L_0802dcd6:
 	pop	{pc}
+	.global Func_0802dcd8
+	.thumb_func
+Func_0802dcd8:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

@@ -190,6 +190,9 @@ Func_081185c4:
 	.4byte 0x0200ff6c
 	.2byte 0xa16c
 	.2byte 0x0812
+	.global Func_08118738
+	.thumb_func
+Func_08118738:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -372,7 +375,7 @@ Func_081185c4:
 	mov	r0, r8
 	movs	r1, #0
 	subs	r7, #1
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	cmp	r7, #0
 	bge.n	.L_081188aa
 	ldr	r3, [sp, #12]

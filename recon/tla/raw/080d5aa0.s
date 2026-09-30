@@ -61,7 +61,7 @@ Func_080d5aa0:
 	ldr	r3, [r5, #16]
 	adds	r2, r6, #0
 	str	r3, [r6, #8]
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r2, [pc, #204]
 	ldr	r3, [r5, #12]
 	adds	r3, r3, r2
@@ -159,6 +159,9 @@ Func_080d5aa0:
 	.4byte 0xfff00000
 	.2byte 0x0000
 	.2byte 0xfff8
+	.global Func_080d5bec
+	.thumb_func
+Func_080d5bec:
 	.2byte 0xb560
 	adds	r5, r1, #0
 	bl	ObjectTable_Get
@@ -265,7 +268,7 @@ Func_080d5aa0:
 	lsls	r0, r0, #3
 	movs	r1, #16
 	adds	r0, #1
-	bl	0x080d0520
+	bl	Func_080d0520
 	movs	r3, #217
 	lsls	r3, r3, #1
 	adds	r2, r6, r3
@@ -308,7 +311,7 @@ Func_080d5aa0:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	movs	r1, #16
-	bl	0x080d0520
+	bl	Func_080d0520
 	movs	r3, #217
 	lsls	r3, r3, #1
 	adds	r2, r6, r3
@@ -349,6 +352,9 @@ Func_080d5aa0:
 	.4byte 0x050001e6
 	.2byte 0xf800
 	.2byte 0xffff
+	.global Func_080d5d70
+	.thumb_func
+Func_080d5d70:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -453,6 +459,9 @@ Func_080d5aa0:
 	.4byte 0x02000240
 	.2byte 0x0000
 	.2byte 0xfff0
+	.global Func_080d5e50
+	.thumb_func
+Func_080d5e50:
 	.2byte 0xb500
 	movs	r0, #26
 	bl	.L_080d5de0

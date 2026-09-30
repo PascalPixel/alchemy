@@ -20,6 +20,9 @@ Func_081197d0:
 	.4byte 0x00003007
 	.2byte 0x2fd2
 	.2byte 0x0000
+	.global Func_081197f0
+	.thumb_func
+Func_081197f0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -31,7 +34,7 @@ Func_081197d0:
 	str	r0, [sp, #40]
 	movs	r1, #76
 	movs	r0, #48
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	mov	sl, r0
 	movs	r0, #128
 	lsls	r0, r0, #4
@@ -39,23 +42,23 @@ Func_081197d0:
 	mov	r8, r0
 	mov	r1, r8
 	movs	r0, #36
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r5, #249
 	lsls	r5, r5, #3
 	adds	r1, r5, #0
 	mov	r9, r0
 	movs	r0, #216
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #32
 	movs	r0, #176
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r6, #192
 	movs	r1, #160
 	str	r0, [sp, #36]
 	lsls	r1, r1, #2
 	lsls	r6, r6, #18
 	movs	r0, #44
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r3, r6, #0
 	adds	r3, #216
 	adds	r1, r5, #0
@@ -104,7 +107,7 @@ Func_081197d0:
 	movs	r1, #12
 	str	r3, [r2, #0]
 	movs	r0, #148
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r6, #148
 	ldr	r0, [r6, #0]
 	movs	r1, #12
@@ -120,11 +123,11 @@ Func_081197d0:
 	strh	r0, [r3, #0]
 	lsls	r1, r1, #4
 	movs	r0, #16
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	movs	r0, #12
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r0, #4
 	bl	0x08020088
 	movs	r0, #183
@@ -234,7 +237,7 @@ Func_081197d0:
 	lsls	r1, r1, #2
 	adds	r1, #255
 	ldr	r0, [pc, #276]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r5, #128
 	ldr	r3, [pc, #248]
 	lsls	r5, r5, #2
@@ -253,7 +256,7 @@ Func_081197d0:
 	movs	r0, #55
 	bl	Audio_PlayCue
 	movs	r0, #4
-	bl	0x08013b30
+	bl	Func_08013b30
 	b.n	.L_081199f0
 .L_081199ea:
 	movs	r0, #50
@@ -314,7 +317,7 @@ Func_081197d0:
 	movs	r2, #0
 	movs	r3, #190
 	movs	r0, #0
-	bl	0x08126804
+	bl	Func_08126804
 	movs	r0, #1
 	bl	Func_08118d6c
 	ldr	r5, [pc, #48]
@@ -396,13 +399,13 @@ Func_081197d0:
 	strb	r2, [r3, #0]
 	ldr	r0, [pc, #424]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r5, #1
 	str	r5, [sp, #32]
 .L_08119b32:
 	movs	r0, #1
 	movs	r1, #0
-	bl	.L_0811a39c
+	bl	Func_0811a39c
 	cmp	r0, #0
 	bne.n	.L_08119b42
 	bl	0x081195ec
@@ -443,7 +446,7 @@ Func_081197d0:
 	.2byte 0xf800
 	.2byte 0x4649
 	ldr	r0, [r1, #84]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #181
 	lsls	r0, r0, #1
 	bl	GameFlag_TestFar
@@ -564,14 +567,14 @@ Func_081197d0:
 .L_08119c7c:
 	movs	r0, #1
 	movs	r1, #0
-	bl	.L_0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	bne.n	.L_08119c8a
 	b.n	.L_08119dde
 .L_08119c8a:
 	movs	r0, #2
 	movs	r1, #0
-	bl	.L_0811a188
+	bl	Func_0811a188
 	ldr	r4, [sp, #4]
 	cmp	r0, #0
 	bne.n	.L_08119cd8
@@ -813,7 +816,7 @@ Func_081197d0:
 	beq.n	.L_08119e6c
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	bl	.L_081197d0
@@ -825,10 +828,10 @@ Func_081197d0:
 	movs	r1, #24
 	adds	r5, r0, #0
 	movs	r0, #44
-	bl	0x08120060
+	bl	Func_08120060
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 .L_08119eb0:
@@ -894,8 +897,8 @@ Func_081197d0:
 	bl	Audio_PlayCue
 .L_08119f34:
 	movs	r0, #30
-	bl	0x08013e70
-	bl	0x08013fdc
+	bl	Func_08013e70
+	bl	Func_08013fdc
 	movs	r3, #171
 	lsls	r3, r3, #3
 	add	r3, r9
@@ -907,7 +910,7 @@ Func_081197d0:
 .L_08119f4c:
 	bl	Func_081195d4
 	movs	r0, #0
-	bl	0x08014694
+	bl	Func_08014694
 	ldr	r3, [pc, #24]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -941,7 +944,7 @@ Func_081197d0:
 	bl	Audio_PlayCue
 	bl	0x08038118
 	movs	r0, #0
-	bl	.L_0811a038
+	bl	Func_0811a038
 	cmp	r0, #1
 	bne.n	.L_08119fb0
 	ldr	r0, [pc, #124]
@@ -958,16 +961,16 @@ Func_081197d0:
 .L_08119fc0:
 	movs	r0, #30
 	movs	r7, #1
-	bl	0x08013e70
+	bl	Func_08013e70
 	negs	r7, r7
-	bl	0x08013fdc
+	bl	Func_08013fdc
 	b.n	.L_08119fea
 .L_08119fd0:
 	movs	r0, #78
 	bl	Audio_PlayCue
 	movs	r0, #30
-	bl	0x08013e70
-	bl	0x08013fdc
+	bl	Func_08013e70
+	bl	Func_08013fdc
 	ldr	r5, [sp, #40]
 	movs	r7, #186
 	lsls	r7, r7, #2
@@ -1005,6 +1008,9 @@ Func_081197d0:
 	.4byte 0x02000240
 	.2byte 0xb9fd
 	.2byte 0x0811
+	.global Func_0811a038
+	.thumb_func
+Func_0811a038:
 .L_0811a038:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -1069,6 +1075,9 @@ Func_081197d0:
 	.4byte 0x000000ff
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_0811a0b0
+	.thumb_func
+Func_0811a0b0:
 .L_0811a0b0:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -1188,6 +1197,9 @@ BattleParty_ListPresentEnemies:
 	movs	r0, r0
 	.2byte 0x00ff
 	.2byte 0x0000
+	.global Func_0811a188
+	.thumb_func
+Func_0811a188:
 .L_0811a188:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -1216,7 +1228,7 @@ BattleParty_ListPresentEnemies:
 	beq.n	.L_0811a1f2
 	add	r5, sp, #4
 	adds	r0, r5, #0
-	bl	.L_0811a038
+	bl	Func_0811a038
 	cmp	r8, r0
 	bge.n	.L_0811a1f2
 	adds	r2, r5, #0
@@ -1321,11 +1333,11 @@ BattleParty_ListPresentEnemies:
 	beq.n	.L_0811a2c0
 	add	r6, sp, #4
 	adds	r0, r6, #0
-	bl	.L_0811a038
+	bl	Func_0811a038
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r6, r0
-	bl	.L_0811a0b0
+	bl	Func_0811a0b0
 	adds	r5, r5, r0
 	cmp	r8, r5
 	bge.n	.L_0811a2c0
@@ -1480,6 +1492,9 @@ BattleParty_ListActorIds:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x00ff
 	.2byte 0x0000
+	.global Func_0811a39c
+	.thumb_func
+Func_0811a39c:
 .L_0811a39c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -1588,7 +1603,7 @@ BattleActor_CommitPlacement:
 	bl	.L_0811a31c
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x0811b9d4
+	bl	Func_0811b9d4
 	add	sp, #28
 	pop	{r5, pc}
 	.2byte 0x0000

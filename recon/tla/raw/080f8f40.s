@@ -178,7 +178,7 @@ Func_080f8f40:
 	ble.n	.L_080f908e
 	str	r1, [r6, #0]
 .L_080f908e:
-	bl	0x080138a8
+	bl	Func_080138a8
 	movs	r0, #1
 	b.n	.L_080f90f6
 .L_080f9096:

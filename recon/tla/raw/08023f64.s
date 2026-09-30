@@ -598,7 +598,7 @@ Object_IsTargetUnset:
 	ldrb	r0, [r3, #0]
 	mov	r1, sl
 	mov	r2, r9
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	str	r0, [sp, #12]
 .L_080243d6:
 	ldr	r3, [r7, #20]

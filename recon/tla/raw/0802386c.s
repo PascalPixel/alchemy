@@ -194,7 +194,7 @@ Func_0802386c:
 	adds	r1, r6, #0
 	mov	r2, r8
 	mov	fp, r3
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	mov	r4, r9
 	ldr	r3, [r4, #20]
 	cmp	r0, r3
@@ -216,14 +216,14 @@ Func_0802386c:
 	adds	r2, r7, r3
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	movs	r4, #136
 	lsls	r4, r4, #14
 	asrs	r5, r0, #16
 	adds	r2, r7, r4
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	asrs	r0, r0, #16
 	subs	r0, #16
 	cmp	r0, r5
@@ -250,7 +250,7 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	mov	r2, r8
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	mov	r4, r9
 	ldr	r3, [r4, #20]
 	cmp	r0, r3
@@ -270,14 +270,14 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	str	r3, [sp, #20]
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	movs	r2, #128
 	lsls	r2, r2, #14
 	asrs	r5, r0, #16
 	add	r2, r8
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	asrs	r0, r0, #16
 	subs	r0, #16
 	cmp	r0, r5
@@ -313,14 +313,14 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	lsrs	r7, r3, #30
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	movs	r2, #128
 	lsls	r2, r2, #14
 	asrs	r5, r0, #16
 	add	r2, r8
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	asrs	r0, r0, #16
 	subs	r0, #16
 	cmp	r0, r5
@@ -344,7 +344,7 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	mov	r2, r8
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	mov	r4, r9
 	ldr	r3, [r4, #20]
 	cmp	r3, r0
@@ -373,7 +373,7 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	mov	r2, r8
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	mov	r4, r9
 	ldr	r3, [r4, #20]
 	cmp	r3, r0

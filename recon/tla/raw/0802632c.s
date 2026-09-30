@@ -559,7 +559,7 @@ Func_0802632c:
 	ldrb	r0, [r3, #0]
 	ldr	r1, [r6, #8]
 	ldr	r2, [r6, #16]
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	ldrh	r3, [r6, #4]
 	str	r0, [r6, #20]
 	adds	r3, #1

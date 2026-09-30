@@ -1485,6 +1485,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SOUND/WAIT_FOR_COMPLETION.o"(.text)
         "*/recon/tla/raw/081c1000.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c1014.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SOUND/UPDATE_TOGGLE_MASK.o"(.text)
+        "*/recon/tla/raw/081c117c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c11ac.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c11ec.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SOUND/UMUL_HIGH.o"(.text .rodata .data .padding)

@@ -11,7 +11,6 @@ union Slot {
 extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 BuildMotionCountdown(s32, s16);
-s32 Object_GetById();
 
 void FieldScene_RunScene3af_02004218(void)
 {
@@ -20,7 +19,7 @@ void FieldScene_RunScene3af_02004218(void)
     Camera_MoveTo(0xe80000, -1, 0x2a40000, 0);
     Map_Redraw();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x2a40000);
-    record = Object_GetById(0);
+    record = (s32)Object_GetById(0);
     {
         s32 shown = 0x4000;
 

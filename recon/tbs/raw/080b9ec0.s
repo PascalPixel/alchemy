@@ -127,7 +127,7 @@ Func_080b9ec0:
 .L_080b9fb2:
 	mov	r0, fp
 	movs	r1, #3
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 .L_080b9fba:
 	adds	r6, #1
 	adds	r5, #2

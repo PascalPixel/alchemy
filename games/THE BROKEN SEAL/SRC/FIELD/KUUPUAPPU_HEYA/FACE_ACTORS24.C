@@ -4,8 +4,6 @@
 extern u8 MsgKuupuappuTheseKidsNothingWorryAbout[];
 /* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-s32 Object_GetById();
 
 enum {
     /* Message 0x182 + 189. */
@@ -134,14 +132,14 @@ void FieldScene_RunLateSequence(void)
     Actor_SetAnimation(ACTOR_GERALD, 19);
     Actor_SetAnimation(ACTOR_IVAN, 19);
     v5 = 2;
-    *(u8 *)(Object_GetById(0) + 35) = v5;
-    *(u8 *)(Object_GetById(1) + 35) = v5;
-    *(u8 *)(Object_GetById(2) + 35) = v5;
-    record = Object_GetById(0);
+    *(u8 *)((s32)Object_GetById(0) + 35) = v5;
+    *(u8 *)((s32)Object_GetById(1) + 35) = v5;
+    *(u8 *)((s32)Object_GetById(2) + 35) = v5;
+    record = (s32)Object_GetById(0);
     Actor_SetSpriteFlags(record, 0);
-    record = Object_GetById(2);
+    record = (s32)Object_GetById(2);
     Actor_SetSpriteFlags(record, 0);
-    record = Object_GetById(1);
+    record = (s32)Object_GetById(1);
     Actor_SetSpriteFlags(record, 0);
     Actor_FaceDirection(8, 0xb000, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

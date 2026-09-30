@@ -223,7 +223,7 @@ void FieldScene_RunScene3ae_020002dc(void)
     u32 i;
     s32 record;
 
-    ((void)Engine_ActorGet(0));
+    ((void)Object_GetById(0));
     Event_Begin();
     if (GameFlag_IsSet(0x8a7) != 0) {
         if (GameFlag_IsSet(0x8a9) != 0) {
@@ -530,14 +530,14 @@ void FieldScene_ConfigureFlaggedActors(void)
         Call3(Engine_ActorFaceDirection, 10, 0x4000, 0);
         Call3(Engine_ActorSetPosition, 11, 0xf00000, 0x1380000);
         Call3(Engine_ActorFaceDirection, 11, 0xc000, 0);
-        actor = Engine_ActorGet(10);
+        actor = Object_GetById(10);
         actor->collision_flags = 0;
         actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         ((u8 *)actor->sprite)[9] |= 12;
         ((u8 *)actor->sprite)[38] = 0;
         zero = 0;
         ((struct SpriteBytes *)actor->sprite)->rotation = 0xc000;
-        actor = Engine_ActorGet(11);
+        actor = Object_GetById(11);
         actor->priority_flags = zero;
         ((u8 *)actor->sprite)[9] |= 12;
         ((u8 *)actor->sprite)[21] |= 12;
@@ -562,8 +562,8 @@ void FieldScene_PlaceSlots14And15(void)
     s32 pos14;
     s32 pos15;
 
-    pos14 = ((s32 *)Engine_ActorGet(14))[2] >> 20;   /* [r0,#8], asrs #20 */
-    pos15 = ((s32 *)Engine_ActorGet(15))[2] >> 20;
+    pos14 = ((s32 *)Object_GetById(14))[2] >> 20;   /* [r0,#8], asrs #20 */
+    pos15 = ((s32 *)Object_GetById(15))[2] >> 20;
 
     Map_CopyCellAttributes(5, 12, 5, 1, 5, 11);
     Map_CopyCellAttributes(1, 0, 1, 1, pos15, 11);
@@ -575,10 +575,10 @@ void FieldScene_PlaceSlots14And15(void)
 
 void SceneActor_SetMode3AndFlagBit1(s32 no)
 {
-    u8 *p = ((u8 *)Engine_ActorGet(no));
+    u8 *p = ((u8 *)Object_GetById(no));
     u8 *flag;
 
-    Actor_SetSpriteFlags(((u8 *)Engine_ActorGet(no)), 0);
+    Actor_SetSpriteFlags(((u8 *)Object_GetById(no)), 0);
     Actor_SetSpritePriority(no, 3);
     flag = p + 85;
     *flag = 0;
@@ -599,7 +599,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Battle_ResetEffectCounter();
     Actor_SetPosition(8, 0x1480000, 0x5900000);
     /* Set the flag byte at +91 of record 8. */
-    *(u8 *)(((s32)Engine_ActorGet(8)) + 91) = 1;
+    *(u8 *)(((s32)Object_GetById(8)) + 91) = 1;
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
@@ -658,7 +658,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Actor_SetAnimation(ACTOR_GERALD, 2);
     /* If a record is returned, pass its s16 fields at +10 and +18 back in as
      * arguments. */
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -666,9 +666,9 @@ void FieldScene_RunScene3aeSequenceA(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     ((void (*)())Engine_EventWait)(20);
     /* Clear the flag byte at +91 of record 8. */
-    *(u8 *)(((s32)Engine_ActorGet(8)) + 91) = 0;
+    *(u8 *)(((s32)Object_GetById(8)) + 91) = 0;
     Engine_ActorEnableActionCallback(8, 2);
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     /* Store the integer part of the 16.16 fixed-point fields at +8 and +16
      * into the halfwords at +100 and +102. */
     {
@@ -696,7 +696,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Event_Begin();
     Battle_ResetEffectCounter();
     Event_SetMessage((s32)MsgKareiReturnedTicketCost);
-    record = ((u8 *)Engine_ActorGet(11));
+    record = ((u8 *)Object_GetById(11));
     none = 0;
     record[35] = none;
     *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
@@ -730,7 +730,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_Jump(10, 7, 0);
     v5 = 254;
     Actor_WalkByAndWait(10, 24, 0);
-    *(u8 *)(((s32)Engine_ActorGet(10)) + 90) &= v5;
+    *(u8 *)(((s32)Object_GetById(10)) + 90) &= v5;
     Actor_WalkBy(10, -16, 0);
     Audio_PlayCue(153);
     Actor_SetSpeed(13, 0x26666, 0x13333);
@@ -738,7 +738,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Event_Wait(10);
     v6 = 1;
     Actor_SetAnimation(10, 1);
-    *(u8 *)(((s32)Engine_ActorGet(10)) + 90) |= v6;
+    *(u8 *)(((s32)Object_GetById(10)) + 90) |= v6;
     Actor_SetAttachedEffect(13, 0x102);
     Actor_StartRepeatedMotion(13, 2);
     Audio_PlayCue(155);
@@ -805,10 +805,10 @@ void FieldScene_RunScene3aeSequenceB(void)
     Event_ShowMessage(16, 0);
     Event_Wait(10);
     Actor_ShowEmote(10, 0x102, 50);
-    *(u8 *)(((s32)Engine_ActorGet(10)) + 90) &= v5;
+    *(u8 *)(((s32)Object_GetById(10)) + 90) &= v5;
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_WalkByAndWait(10, -8, 0);
-    *(u8 *)(((s32)Engine_ActorGet(10)) + 90) |= v6;
+    *(u8 *)(((s32)Object_GetById(10)) + 90) |= v6;
     Event_Wait(20);
     Actor_RunRepeatedMotion(10, 2);
     Event_Wait(20);
@@ -818,10 +818,10 @@ void FieldScene_RunScene3aeSequenceB(void)
     Event_Wait(20);
     Event_ShowMessage(16, 0);
     Event_Wait(10);
-    *(u8 *)(((s32)Engine_ActorGet(10)) + 90) &= v5;
+    *(u8 *)(((s32)Object_GetById(10)) + 90) &= v5;
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_WalkByAndWait(10, -16, 0);
-    *(u8 *)(((s32)Engine_ActorGet(10)) + 90) |= v6;
+    *(u8 *)(((s32)Object_GetById(10)) + 90) |= v6;
     Actor_FaceDirection(10, 0, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(10, 4);
@@ -833,10 +833,10 @@ void FieldScene_RunScene3aeSequenceB(void)
     Audio_PlayCue(133);
     Actor_Jump(16, 6, 0);
     Actor_EnableActionCallback(16, KareiTorebi_ActorSixteenScript);
-    *(u8 *)(((s32)Engine_ActorGet(10)) + 90) &= v5;
+    *(u8 *)(((s32)Object_GetById(10)) + 90) &= v5;
     Actor_Jump(10, 6, 0);
     Actor_WalkByAndWait(10, -12, 4);
-    record = Value1(Engine_ActorGet, 10);
+    record = Value1(Object_GetById, 10);
     record[89] = none;
     record[35] = 2;
     *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
@@ -850,7 +850,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_WalkByAndWait(10, -12, 4);
     Actor_FaceDirection(10, 0x4000, 0);
     {
-        u8 *flags = ((u8 *)Engine_ActorGet(10)) + 90;
+        u8 *flags = ((u8 *)Object_GetById(10)) + 90;
         u8 value = *flags | v6;
 
         *flags = value;

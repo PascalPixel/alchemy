@@ -29,7 +29,7 @@ void RamakanSabaku_UpdateTravelDust(void)
     s32 phase;
     union GameStateRows *rows = (union GameStateRows *)&gGameState;
 
-    actor = Engine_ActorGet(rows->words[125]);
+    actor = Object_GetById(rows->words[125]);
     event = gEventWork;
     if (actor->target_x == (s32)0x80000000) {
         return;

@@ -973,7 +973,7 @@ BattleCommand_BuildPlan:
 	bl	GetBattleObjectSlot
 	movs	r1, #3
 	ldr	r0, [r0, #0]
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	mov	r4, sl
 	ldr	r3, [r4, #0]
 	movs	r1, #0

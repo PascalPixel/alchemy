@@ -5,8 +5,6 @@ extern u8 MsgKuupuappuSeeThatsHappened[];
 extern u8 MsgKuupuappuTheyTheyGotUs[];
 /* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-s32 Object_GetById();
 
 enum {
     /* Message 0x182 + 189. */
@@ -118,23 +116,23 @@ void RunEventScript01(void)
     s32 base5_200d17c;
     u8 *actor12_record;
 
-    record = Object_GetById(12);
+    record = (s32)Object_GetById(12);
     actor12_record = *(u8 **)(record + 80);
     Event_Begin();
     Actor_SetPosition(10, 0x3180000, 0x1a00000);
     Actor_SetPosition(11, 0x3200000, 0x1900000);
     Actor_SetPosition(12, 0x3080000, 0x1880000);
-    record = Object_GetById(10);
+    record = (s32)Object_GetById(10);
     Actor_SetSpriteFlags(record, 0);
-    record = Object_GetById(11);
+    record = (s32)Object_GetById(11);
     Actor_SetSpriteFlags(record, 0);
-    record = Object_GetById(12);
+    record = (s32)Object_GetById(12);
     Actor_SetSpriteFlags(record, 0);
     Actor_SetAnimation(10, 9);
     Actor_SetAnimation(11, 9);
     Actor_SetAnimation(12, 9);
     /* Clear the low bit of the flag byte at +35. */
-    *(u8 *)(Object_GetById(12) + 35) &= 254;
+    *(u8 *)((s32)Object_GetById(12) + 35) &= 254;
     /* Set flag bits 0x0c of the byte at +9. */
     actor12_record[9] |= 12;
     base5_200d17c = (s32)KuupuappuHeya_ActionTable;

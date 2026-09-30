@@ -3,7 +3,6 @@
 
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *, const void *);
 void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetMode(struct ObjectRuntime *, s32);
 void Battle_WaitMode0(s32);
 extern const u8 ObjectMotion_StepAngleScript[];
 

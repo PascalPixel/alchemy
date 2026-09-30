@@ -14,7 +14,7 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     result = 0;
     if (obj->unknown_5b == 1) {
         if (obj->rise_counter == 0) {
-            Engine_ObjectSetAnimation(obj, 1);
+            Object_SetMode(obj, 1);
             return 1;
         }
     }
@@ -28,17 +28,17 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
         if (angle == dir || right == dir || left == dir || force != 0) {
             /* FAKEMATCH: plain-byte publication avoids synthetic QI masks. */
             *(u8 *)&obj->unknown_5b = 1;
-            Engine_ObjectSetAnimation(obj, 1);
+            Object_SetMode(obj, 1);
             result = 1;
             *(u8 *)&obj->rise_counter = result;
         } else {
             *(u8 *)&obj->unknown_5b = 0;
-            Engine_ObjectSetAnimation(obj, 2);
+            Object_SetMode(obj, 2);
             *(u8 *)&obj->rise_counter = 0;
         }
     } else {
         *(u8 *)&obj->unknown_5b = 0;
-        Engine_ObjectSetAnimation(obj, 2);
+        Object_SetMode(obj, 2);
         *(u8 *)&obj->rise_counter = 0;
     }
     return result;

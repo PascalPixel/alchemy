@@ -40,7 +40,7 @@ void Engine_ActorStop();
 void Engine_TaskWait();
 void Engine_ActorEnableActionCallback();
 void Object_SetActionCallbackAndRefreshById();
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_EventRequestExit();
 void Engine_EventShowMessage();
 void Engine_EventEnd();
@@ -130,18 +130,18 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_ActorRunRepeatedMotion(8, 2);
             FieldScene_CallPairWith10(8);
             Engine_ActorSetSpeed(8, 0x10000, 0x8000);
-            *(u8 *)(Engine_ActorGet(8) + 90) &= 254;
+            *(u8 *)(Object_GetById(8) + 90) &= 254;
             Engine_ActorWalkToAndWait(8, 0x318, 72);
             Engine_EventWait(1);
             {
-                u8 *record = Engine_ActorGet(8);
+                u8 *record = Object_GetById(8);
                 u8 value = *(volatile u8 *)&record[90];
             
                 record[90] = (u8)(value | 1);
             }
             SceneState_ForwardMaskedHalfwordWith10(8, 0);
             Engine_ActorStop(13);
-            record = Engine_ActorGet(13);
+            record = Object_GetById(13);
             *(s32 *)((s32)record + 108) = rec;
             ((struct ActorMotion *)record)->step[0] = rec;
             ((struct ActorMotion *)record)->step[1] = rec;

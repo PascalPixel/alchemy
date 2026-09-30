@@ -249,7 +249,7 @@ void FieldScene_RunEarlySequence(void)
     p7 = *(u8 **)&gEventWork;
     Event_Begin();
     for (i = 8; i < 66; i++) {
-        record = (u8 *)Engine_ActorGet(i);
+        record = (u8 *)Object_GetById(i);
         if (record != 0) {
             record[85] = 0;
         }
@@ -268,7 +268,7 @@ void FieldScene_RunEarlySequence(void)
     tbl2 = (u8 *)Mura_DoorCellSteps;
     Engine_MapAnimateCells(*(s32 *)(tbl2 + off), a1, a2);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    *((u8 *)Engine_ActorGet(0) + 85) = 0;
+    *((u8 *)Object_GetById(0) + 85) = 0;
     *(s32 *)((*(u8 **)&gEventWork + 0x1c0)) = 0x100;
     if (v5 == 6) {
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -291,8 +291,8 @@ void FieldScene_RunScene38bSequenceC(void)
     struct FieldActor *rec;
     struct FieldActor *rec7;
 
-    rec = (struct FieldActor *)Engine_ActorGet(ACTOR_PARTY_LEADER);
-    rec7 = (struct FieldActor *)Engine_ActorGet(11);
+    rec = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
+    rec7 = (struct FieldActor *)Object_GetById(11);
     if ((rec7->x.fixed >> 20) == 6) {
         Event_Begin();
         Actor_SetSpritePriority(11, 1);
@@ -349,7 +349,7 @@ void FieldScene_RunScene38b_02000584(void)
     struct FieldActor *record;
     s32 villager_actions;
 
-    rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec7 = Object_GetById(ACTOR_PARTY_LEADER);
     if (GameFlag_IsSet(0x845) == 0) {
     } else {
         if (GameFlag_IsSet(0x848) == 0) {
@@ -396,10 +396,10 @@ void FieldScene_RunScene38b_02000584(void)
             Event_Wait(20);
             Event_ShowMessage(14, 0);
             Actor_SetSpeed(14, 0x9999, 0x4ccc);
-            *((u8 *)Engine_ActorGet(14) + 90) &= 254;
+            *((u8 *)Object_GetById(14) + 90) &= 254;
             Actor_WalkToAndWait(14, 0x10a, 172);
             Event_Wait(1);
-            *((u8 *)Engine_ActorGet(14) + 90) |= 1;
+            *((u8 *)Object_GetById(14) + 90) |= 1;
             Event_Wait(10);
             Actor_SetAnimationAndWait(14, 3);
             Event_ShowMessageAndWait(14, 0, 10);
@@ -411,7 +411,7 @@ void FieldScene_RunScene38b_02000584(void)
             Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
             Actor_SetSpeed(14, 0x10000, 0x8000);
-            *((u8 *)Engine_ActorGet(14) + 90) &= 254;
+            *((u8 *)Object_GetById(14) + 90) &= 254;
             Actor_WalkToAndWait(14, 0x106, 156);
             Event_Wait(1);
             {
@@ -510,8 +510,8 @@ void Scene_UpdatePuzzleActors(void)
     s32 p6;
     s32 row;
 
-    rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
-    record = Engine_ActorGet(20);
+    rec7 = Object_GetById(ACTOR_PARTY_LEADER);
+    record = Object_GetById(20);
     row = *(s32 *)(record + 16) >> 20;
     p9 = (*(s32 *)(rec7 + 8) >> 20);
     p10 = (*(s32 *)(rec7 + 16) >> 20);
@@ -553,8 +553,8 @@ void FieldScene_RunScene38bSequenceA(void)
     struct FieldActor *rec8;
     s32 record;
 
-    rec8 = Engine_ActorGet(10);
-    rec = Engine_ActorGet(11);
+    rec8 = Object_GetById(10);
+    rec = Object_GetById(11);
     record = Actor_Get(8);
     Actor_SetSpriteFlags(record, 0);
     rec7 = GameFlag_IsSet(0x845);
@@ -585,9 +585,9 @@ void FieldScene_RunScene38bSequenceA(void)
         rec8->motion_flags = rec7;
         record = GameFlag_IsSet(0x881);
         if (record != 0) {
-            *((u8 *)Engine_ActorGet(9) + 89) |= 16;
-            *((u8 *)Engine_ActorGet(16) + 89) |= 16;
-            *((u8 *)Engine_ActorGet(11) + 89) |= 16;
+            *((u8 *)Object_GetById(9) + 89) |= 16;
+            *((u8 *)Object_GetById(16) + 89) |= 16;
+            *((u8 *)Object_GetById(11) + 89) |= 16;
             Actor_SetPosition(16, 0x8e0000, 0x9c0000);
             record = Actor_Get(16);
             Actor_SetSpriteFlags(record, 0);
@@ -617,7 +617,7 @@ void FieldScene_RunScene38bSequenceA(void)
  */
 
 /*
- * Slot accessor: Engine_ActorGet(slot) returns the actor record, or NULL.
+ * Slot accessor: Object_GetById(slot) returns the actor record, or NULL.
  * Typed as a byte pointer so the +0x08 and +0x10 field reads are explicit.
  */
 
@@ -681,7 +681,7 @@ void FieldScene_RunScene38b_02000d10(void)
     record = ReadU16Elem((u16 *)&gGameState, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {
         if (GameFlag_IsSet(0x109) == 0) {
-            rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            rec7 = Object_GetById(ACTOR_PARTY_LEADER);
             Event_Begin();
             arg0 = *(s32 *)(rec7 + 8);
             *(s32 *)(rec7 + 12) = 0x100000;
@@ -721,7 +721,7 @@ void BiribinoMura_PushFacedBlock(void)
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
 
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     dir = leader->facing >> 12;
     block = (struct FieldActor *)SceneActor_FindAtTileXZ(
         (leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
@@ -735,7 +735,7 @@ void BiribinoMura_PushFacedBlock(void)
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
         if (((s32 (*)())Object_CheckMovementCollision)((s32)block, (s32)p) <= 0) {
-            Engine_ObjectSetAnimation(leader, 8);
+            Object_SetMode(leader, 8);
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);
             block->speed = 0x3333;
@@ -749,7 +749,7 @@ void BiribinoMura_PushFacedBlock(void)
             block->z.fixed = p[2].fixed;
             block->velocity_x = zero;
             block->velocity_z = zero;
-            Engine_ObjectSetAnimation(leader, 1);
+            Object_SetMode(leader, 1);
             if (gGameState.scene == (s32)&SceneId_BiribinoMura3)
                 ActorPresentation_RepaintTenCellsAndActorEightCell();
             else if (gGameState.scene == (s32)&SceneId_BiribinoMura1)
@@ -766,7 +766,7 @@ void BiribinoMura_UpdateCornerSpawn(void)
 {
     struct FieldActor *actor;
 
-    actor = Engine_ActorGet(gGameState.selected_actor);
+    actor = Object_GetById(gGameState.selected_actor);
     if (actor->x.fixed < 0x8e0000) {
         if (actor->y.fixed < 0x80000) {
             if (gCornerSpawnCounter.frames == 0)

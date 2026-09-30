@@ -36,7 +36,7 @@ void FuneHeya_ApplyFlaggedLayout(void)
         return;
     }
     if (((s32 (*)())Engine_GameFlagIsSet)(0x8a0)) {
-        actor = Engine_ActorGet(9);
+        actor = Object_GetById(9);
         FieldScene_RunSceneStep(13, 0, 0);
         OverlayObject_SetPositionAndHeading(8, 0x1c8, 0x28c, 0);
         x = 0x1e0;
@@ -47,7 +47,7 @@ void FuneHeya_ApplyFlaggedLayout(void)
         actor->rise_enabled = zero.v;
         actor->collision_flags |= 128;
         actor->update = (void (*)(union FieldObject *))&FuneHeya_RunWalkerStep;
-        other = Engine_ActorGet(8);
+        other = Object_GetById(8);
         other->rise_counter = zero.v;
         other->update = (void (*)(union FieldObject *))&UpdateActorNineEffectMode;
         if (((s32 (*)())Engine_GameFlagIsSet)(0x109)) {
@@ -63,8 +63,8 @@ void FuneHeya_ApplyFlaggedLayout(void)
         heading = 0xb000;
         OverlayObject_SetPositionAndHeading(8, 0x1db, 0x256, 0x8000);
         OverlayObject_SetPositionAndHeading(9, 0x1ce, 0x26a, heading);
-        Engine_ActorGet(12)->facing = 0x3000;
-        Engine_ActorGet(11)->facing = heading;
+        Object_GetById(12)->facing = 0x3000;
+        Object_GetById(11)->facing = heading;
         OverlayObject_SetPositionAndHeading(13, 0x1b6, 0x293, 0xd000);
         OverlayObject_SetPositionAndHeading(10, 0x1e8, 0x2b0, heading);
     }

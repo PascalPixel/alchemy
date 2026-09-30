@@ -269,7 +269,7 @@ s32 Shop_SelSell(s32 unit_id)
     shop = gMenuWork;
     unit = Owner_GetStateFar(unit_id);
     item_count = 1;
-    list_window = UiWindow_CreateFar(15, 8, 15, 4, 2);
+    list_window = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
     selection = 0;
 
     for (;;) {
@@ -379,7 +379,11 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
     if (window != 0) {
         UiWindow_Clear(window);
         if (Inventory_CountFar(unit_id) == 0) {
+#if defined(TBS_EDITION_IT)
+            UiText_DrawMessageAt((s32)&MsgNoItems, window, 20, 12);
+#else
             UiText_DrawMessageAt((s32)&MsgNoItems, window, 8, 20);
+#endif
         } else {
             slot = 0;
             item_offset = 216;

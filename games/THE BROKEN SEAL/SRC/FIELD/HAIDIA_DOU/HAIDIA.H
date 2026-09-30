@@ -91,7 +91,6 @@ s32 ArcTan2(s32 dz, s32 dx);
 void HaidiaDou_SinkPillarColumn27();
 s32 Object_CheckMovementCollision();
 void SceneActor_WaitActorDescent();
-s32 Object_GetById();
 void SceneActor_PositionPair();
 void SceneActor_PlaceAtTile(s32 width, s32 top, s32 bottom);
 

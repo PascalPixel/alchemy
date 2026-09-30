@@ -45,7 +45,7 @@ void Scene_RepaintBoardRecords(void)
             u8 *piece = *(u8 **)(record + 4);
 
             if (*gKorimaMagariLayout == 1) {
-                Engine_ObjectSetAnimation((struct FieldActor *)piece, 4);
+                Object_SetMode((struct FieldActor *)piece, 4);
                 piece[35] = 3;
                 piece[85] = zero;
                 *(s32 *)(piece + 12) = 0x1a0000;
@@ -60,7 +60,7 @@ void Scene_RepaintBoardRecords(void)
                     Engine_MapCopyCells(70, 40, 4, 1, col + 32, row);
                 }
             } else {
-                Engine_ObjectSetAnimation((struct FieldActor *)piece, 1);
+                Object_SetMode((struct FieldActor *)piece, 1);
                 piece[35] = 1;
                 piece[85] = 2;
                 *(s32 *)(piece + 12) = zero;

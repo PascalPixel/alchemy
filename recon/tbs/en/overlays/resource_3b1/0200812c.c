@@ -37,7 +37,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
     struct Walker *walker;
 
     walker = (struct Walker *)obj;
-    leader = Engine_ActorGet(8);
+    leader = Object_GetById(8);
     switch (walker->step) {
     case 0:
         obj->facing = 0xb000;
@@ -46,14 +46,14 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         obj->facing = 0;
         goto advance;
     case 4:
-        Engine_ObjectSetAnimation(obj, 2);
+        Object_SetMode(obj, 2);
         Call4(Engine_ObjectSetPosition, (s32)obj, 0x1d40000, 0x200000, 0x2780000);
         walker->countdown = 60;
         walker->step++;
         break;
     case 5:
         if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0) {
-            Engine_ObjectSetAnimation(obj, 1);
+            Object_SetMode(obj, 1);
             obj->rise_counter = 0;
             if (leader->unknown_5b == 0) {
                 obj->rise_enabled = 1;
@@ -63,7 +63,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         break;
     case 7:
         if (leader->unknown_5b == 0) {
-            Engine_ObjectSetAnimation(obj, 3);
+            Object_SetMode(obj, 3);
             obj->rise_enabled = 2;
         }
     advance:
@@ -71,7 +71,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         obj->rise_counter = 0;
         break;
     case 9:
-        Engine_ObjectSetAnimation(obj, 2);
+        Object_SetMode(obj, 2);
         Call4(Engine_ObjectSetPosition, (s32)obj, 0x1e00000, 0x200000, 0x2580000);
         walker->countdown = 60;
         walker->step++;
@@ -81,7 +81,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         break;
     case 10:
         if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0) {
-            Engine_ObjectSetAnimation(obj, 1);
+            Object_SetMode(obj, 1);
             obj->rise_counter = 0;
             walker->step++;
         }

@@ -16,7 +16,7 @@ extern u16 BabiFune_PaletteStep;
 extern const u16 BabiFune_PaletteFrames[];
 
 s32 Engine_RandomNext();
-void Engine_ObjectSetAnimation();
+void Object_SetMode();
 void Engine_ObjectSetScript();
 extern const s32 BabiFune_DriftScript[];
 
@@ -122,7 +122,7 @@ void BabiFune_UpdateDriftingObject(u8 *obj)
         *(s32 *)(obj + 12) += 0xcccc;
     } else if (*(s16 *)(obj + 102) != 0) {
         *(s16 *)(obj + 102) = 0;
-        Engine_ObjectSetAnimation(obj, 1);
+        Object_SetMode(obj, 1);
         {
             u16 *p = (u16 *)(obj + 94);
             s32 delay = 20;

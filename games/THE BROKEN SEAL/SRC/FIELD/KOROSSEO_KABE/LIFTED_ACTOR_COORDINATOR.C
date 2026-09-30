@@ -63,7 +63,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Call4(Engine_CameraMoveTo, 35127296, -1, 10485760, 1);
         Call3(Engine_ActorSetSpeed, 0, 32768, 16384);
         Engine_ActorSetAnimation(0, 10);
-        actor = Engine_ActorGet(0);
+        actor = Object_GetById(0);
         Engine_ObjectSetPosition(actor, *(s32 *)((u8 *)actor + 8),
             *(s32 *)((u8 *)actor + 12) + 4194304,
             *(s32 *)((u8 *)actor + 16));

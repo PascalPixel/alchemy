@@ -4,7 +4,7 @@ extern s32 KareiMachi_DanceStep;
 extern u8 KareiMachi_DanceScriptA[];
 extern u8 KareiMachi_DanceScriptB[];
 
-u8 * Engine_ActorGet();
+u8 * Object_GetById();
 void Engine_ActorEnableActionCallback();
 
 /* Each clear builds its own zero; a shared zero variable would live in r5
@@ -20,33 +20,33 @@ void KareiMachi_AlternateDance(void)
 {
     switch (KareiMachi_DanceStep) {
     case 0:
-        ClearStep(Engine_ActorGet(21));
+        ClearStep(Object_GetById(21));
         Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptA);
         KareiMachi_DanceStep++;
         break;
     case 1:
-        if (*(s16 *)(Engine_ActorGet(21) + 100) != 0) {
-            ClearStep(Engine_ActorGet(20));
+        if (*(s16 *)(Object_GetById(21) + 100) != 0) {
+            ClearStep(Object_GetById(20));
             Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 2:
-        if (*(s16 *)(Engine_ActorGet(20) + 100) != 0) {
-            ClearStep(Engine_ActorGet(20));
+        if (*(s16 *)(Object_GetById(20) + 100) != 0) {
+            ClearStep(Object_GetById(20));
             Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptA);
             KareiMachi_DanceStep++;
         }
         break;
     case 3:
-        if (*(s16 *)(Engine_ActorGet(20) + 100) != 0) {
-            ClearStep(Engine_ActorGet(21));
+        if (*(s16 *)(Object_GetById(20) + 100) != 0) {
+            ClearStep(Object_GetById(21));
             Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 4:
-        if (*(s16 *)(Engine_ActorGet(21) + 100) != 0) {
+        if (*(s16 *)(Object_GetById(21) + 100) != 0) {
             KareiMachi_DanceStep = 0;
         }
         break;

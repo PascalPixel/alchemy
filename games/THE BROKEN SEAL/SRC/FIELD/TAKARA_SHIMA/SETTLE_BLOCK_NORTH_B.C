@@ -14,11 +14,11 @@ void TakaraShima_SettleSecondBlockNorth(void)
     s32 x14;
     s32 x16;
 
-    cell_x = Engine_ActorGet(9)->x.fixed >> 20;
-    cell_z = Engine_ActorGet(9)->z.fixed >> 20;
-    x19 = Engine_ActorGet(19)->x.fixed >> 20;
-    x14 = Engine_ActorGet(14)->x.fixed >> 20;
-    x16 = Engine_ActorGet(16)->x.fixed >> 20;
+    cell_x = Object_GetById(9)->x.fixed >> 20;
+    cell_z = Object_GetById(9)->z.fixed >> 20;
+    x19 = Object_GetById(19)->x.fixed >> 20;
+    x14 = Object_GetById(14)->x.fixed >> 20;
+    x16 = Object_GetById(16)->x.fixed >> 20;
     if (cell_z == 19) {
         if (IN_COLUMNS(x19)) {
             PositionSceneActorPair(9, 0, -16);
@@ -74,6 +74,6 @@ void TakaraShima_SettleSecondBlockNorth(void)
         return;
     }
     Engine_TaskWait(2);
-    Engine_MapCopyCellAttributes(cell_x - 1, cell_z, 3, 1, cell_x - 1, Engine_ActorGet(9)->z.fixed >> 20);
+    Engine_MapCopyCellAttributes(cell_x - 1, cell_z, 3, 1, cell_x - 1, Object_GetById(9)->z.fixed >> 20);
     Engine_MapCopyCellAttributes(0, 0, 3, 1, cell_x - 1, cell_z);
 }

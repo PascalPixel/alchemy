@@ -31,6 +31,7 @@ struct MoteWork {
 struct Blend { u16 cnt; u16 alpha; u16 y; };
 
 extern s32 **gMapWork;
+extern const u8 FieldFx_MoteTiles[];
 
 void FieldMotes_Start(void)
 {
@@ -47,7 +48,7 @@ void FieldMotes_Start(void)
     zero = z; }
     Dma_Set((void *)&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
     tiles = Runtime_AllocateBlock(14, 0x400);
-    Resource_DecodeByteLz((void *)0x080a001e, tiles);
+    Resource_DecodeByteLz(FieldFx_MoteTiles, tiles);
     work->resource = Resource_FindFreeEntry();
     work->vram = VramBlock_LoadCached(work->resource, 0x300, tiles);
     Runtime_ReleaseHeapBlock(14);

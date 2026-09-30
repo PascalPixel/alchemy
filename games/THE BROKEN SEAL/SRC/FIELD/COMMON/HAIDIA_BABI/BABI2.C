@@ -182,7 +182,7 @@ void FieldScene_RunPaletteRampSequence(void)
     u32 i1;
     volatile u16 *alpha;
 
-    p1 = Engine_ActorGet(10);
+    p1 = Object_GetById(10);
     sprite = p1->sprite;
     Engine_EventBegin();
     Engine_ActorSetPosition(11, 0, 0);
@@ -193,7 +193,7 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_ActorSetPosition(16, 0, 0);
     Call3(Engine_ActorSetPosition, 8, 28246016, 25624576);
     Engine_ActorSetPosition(10, 30343168, 26476544);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
     p1->priority_flags &= 0xfe;
     p1->motion_flags = 0;
     sprite->priority = 1;
@@ -323,7 +323,7 @@ void HaidiaBabi_RunInnkeeperTalk(void)
     u32 i;
     s32 record;
 
-    record = (s32)Engine_ActorGet(0);
+    record = (s32)Object_GetById(0);
     if ((u32)(*(u16 *)(record + 6) + -0x2000) > 0x9000) {
         Inn_Open(0, 13);
     } else {
@@ -455,7 +455,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventShowMessageAndWait(8, 0, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(40);
-    record = (u8 *)Engine_ActorGet(0);
+    record = (u8 *)Object_GetById(0);
     {
         /* FAKEMATCH: the facing is parked in a word-sized local before its
          * halfword store, so its constant is a word; the direct store makes
@@ -465,7 +465,7 @@ void HaidiaBabi_RunSickbedVisit(void)
         *(u16 *)(record + 6) = shown;
     }
     Engine_TaskWait(1);
-    ((u8 *)Engine_ActorGet(0))[90] &= 254;
+    ((u8 *)Object_GetById(0))[90] &= 254;
     Call3(Engine_ActorSetDestination, 0, 0x22e, 0x184);
     Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
     Engine_ActorSetAnimation(8, 14);
@@ -474,7 +474,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Call3(Engine_ActorWalkToAndWait, 8, 0x244, 0x17e);
     Call3(Engine_ActorFaceDirection, 8, 0x8000, 40);
     {
-        u8 *record = (u8 *)Engine_ActorGet(0);
+        u8 *record = (u8 *)Object_GetById(0);
         /* FAKEMATCH: a result temporary, not a compound or-assign: the
          * reference merges the byte into the mask's register, which the
          * two-address ORR does only when the result is its own object. */
@@ -739,12 +739,12 @@ void FieldScene_RunSingleStep(void)
 
 void FieldScene_RunActor8TwoStep(void)
 {
-    OverlayObject_UpdateOnFrameParity(Engine_ActorGet(8));
+    OverlayObject_UpdateOnFrameParity(Object_GetById(8));
 }
 
 void FieldScene_RunStep17(void)
 {
-    OverlayObject_ApplyRandomSlotOnOddFrames(Engine_ActorGet(17));
+    OverlayObject_ApplyRandomSlotOnOddFrames(Object_GetById(17));
 }
 
 void FieldScene_RunSixStepSequence17e4(void)

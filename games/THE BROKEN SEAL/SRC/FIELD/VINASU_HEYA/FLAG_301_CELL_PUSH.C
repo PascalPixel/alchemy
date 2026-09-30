@@ -3,7 +3,7 @@
 extern u8 gVinasuPushScript[];
 extern u8 gVinasuPushCells[];
 
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_EventBegin();
 void Engine_MapCopyCellAttributes();
 s32 Engine_GameFlagIsSet();
@@ -38,8 +38,8 @@ void VinasuHeya_RunCellPushScene(void)
     s32 slot8;
 
     slot8 = 0;
-    rec8 = Engine_ActorGet(9);
-    rec5 = Engine_ActorGet(0);
+    rec8 = Object_GetById(9);
+    rec5 = Object_GetById(0);
     v5 = 45;
     Engine_EventBegin();
     Engine_MapCopyCellAttributes(109, 43, 7, 5, v5, 43);
@@ -63,7 +63,7 @@ void VinasuHeya_RunCellPushScene(void)
                     slot8 = (s32)record;
                     Engine_ActorSetSpritePriority(0, 3);
                 }
-                record = Engine_ActorGet(9);
+                record = Object_GetById(9);
                 Engine_ActorSetSpriteFlags((s32)record, 0);
                 rec8[34] = rec;
                 rec8[85] = 3;
@@ -78,7 +78,7 @@ void VinasuHeya_RunCellPushScene(void)
                 { s32 two = 2; *p10 = two; } /* FAKEMATCH: a block-local word temporary keeps the 2 from being shared with the later |= 2 */
                 Engine_MapCopyCellAttributes(45, 45, 1, 1, p9, p8);
                 {
-                    u8 *record = Engine_ActorGet(0);
+                    u8 *record = Object_GetById(0);
                     u8 value = *(volatile u8 *)&record[35];
                 
                     record[35] = (u8)(value | 1);
@@ -86,9 +86,9 @@ void VinasuHeya_RunCellPushScene(void)
                 Engine_ObjectDispatchRelease(slot8);
                 rec8[89] = rec;
                 *p10 |= 2;
-                *(u8 *)(Engine_ActorGet(10) + 89) = rec;
+                *(u8 *)(Object_GetById(10) + 89) = rec;
                 {
-                    u8 *record = Engine_ActorGet(10);
+                    u8 *record = Object_GetById(10);
                     u8 value = *(volatile u8 *)&record[35];
                 
                     record[35] = (u8)(value | 2);

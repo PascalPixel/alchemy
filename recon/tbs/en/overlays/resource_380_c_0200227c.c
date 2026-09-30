@@ -28,7 +28,7 @@
  * retain the original baseline's evaluation and register lifetime choices. */
 #include "TYPES.H"
 
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_EventBegin();
 void Engine_ActorEnableActionCallback();
 void Engine_ActorSetPosition();
@@ -66,7 +66,7 @@ void Local_0200227c(void)
     u8 *record;
     s32 none;
 
-    rec4 = Value1(Engine_ActorGet, 0);
+    rec4 = Value1(Object_GetById, 0);
     Engine_EventBegin();
     Engine_ActorEnableActionCallback(5, 1);
     Engine_ActorEnableActionCallback(9, 1);
@@ -80,32 +80,32 @@ void Local_0200227c(void)
     Call3(Engine_ActorSetPosition, 10, 0x1fb0000, 0x15c0000);
     Call3(Engine_ActorSetPosition, 14, 0x1cc0000, 0x1680000);
     Call3(Engine_ActorSetPosition, 13, 0x1d70000, 0x1320000);
-    record = Engine_ActorGet(5);
+    record = Object_GetById(5);
     *(s32 *)((s32)record + 104) = rec4;
     record[90] |= 1;
     none = 0;
     Engine_ObjectSetScript((s32)record, 0x200cbd0);
-    record = Engine_ActorGet(9);
+    record = Object_GetById(9);
     *(s32 *)((s32)record + 104) = rec4;
     record[90] |= 1;
     Engine_ObjectSetScript((s32)record, 0x200cbd0);
-    record = Engine_ActorGet(11);
+    record = Object_GetById(11);
     *(s32 *)((s32)record + 104) = rec4;
     record[90] |= 1;
     Engine_ObjectSetScript((s32)record, 0x200cbd0);
-    record = Engine_ActorGet(10);
+    record = Object_GetById(10);
     *(s32 *)((s32)record + 104) = rec4;
     record[90] |= 1;
     Engine_ObjectSetScript((s32)record, 0x200cbd0);
-    rec7 = Engine_ActorGet(14);
+    rec7 = Object_GetById(14);
     *(s32 *)((s32)rec7 + 104) = rec4;
     rec7[90] |= 1;
     *(s32 *)((s32)rec7 + 24) = 0x10000;
     *(s32 *)((s32)rec7 + 28) = 0x10000;
-    rec7[85] = *(u8 *)(Engine_ActorGet(11) + 85);
+    rec7[85] = *(u8 *)(Object_GetById(11) + 85);
     *(s32 *)((s32)rec7 + 12) = none;
     Engine_ObjectSetScript((s32)rec7, 0x200cbd0);
-    record = Engine_ActorGet(13);
+    record = Object_GetById(13);
     *(s32 *)((s32)record + 104) = rec4;
     {
         u8 value = *(volatile u8 *)&record[90];

@@ -104,7 +104,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Event_End();
         } else {
             Event_Begin();
-            actor9_record = Engine_ActorGet(9);
+            actor9_record = Object_GetById(9);
             ((struct SceneRecord *)actor9_record)->field_0x64 = 10;
             Engine_ActorEnableActionCallback(9, (s32)ImiruMura_ActorScriptA);
             Engine_EventSetMessage(5428);
@@ -126,7 +126,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Actor_FaceDirection(8, 12288, 20);
             Actor_StartRepeatedMotion(8, 2);
             Engine_EventShowMessage(8, 0);
-            actor8_record = Engine_ActorGet(8);
+            actor8_record = Object_GetById(8);
             *(u8 *)((u8 *)(actor8_record) + ACTOR_FLAGS_OFFSET) ^= 0x2;
             GameFlag_Set(0x82c);
             Event_End();

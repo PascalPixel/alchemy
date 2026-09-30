@@ -29,8 +29,8 @@ void FieldScene_RunScene383SequenceB(void)
     s32 actor25;
     s32 base;
 
-    actor24 = ((s32 (*)())Engine_ActorGet)(24);
-    actor25 = ((s32 (*)())Engine_ActorGet)(25);
+    actor24 = ((s32 (*)())Object_GetById)(24);
+    actor25 = ((s32 (*)())Object_GetById)(25);
     Event_Begin();
     Scheduler_RemoveCallback((s32)SceneActor_FaceActors24And25TowardActorZero);
     GameFlag_Clear(0x300);

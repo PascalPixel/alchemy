@@ -32,7 +32,7 @@ void FieldScene_RunActor11FlagDialogue(void)
         Event_SetMessage((s32)MsgFuneYouFinallyPickedSomeoneDidnt);
         FieldScene_RunStepThen10(11);
         Actor_SetAnimation(actor, 2);
-        leader = (u8 *)Engine_ActorGet(0);
+        leader = (u8 *)Object_GetById(0);
         if (leader != 0) {
             Actor_SetDestination(actor, *(s16 *)(leader + 10), *(s16 *)(leader + 18));
         }

@@ -2,11 +2,12 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
+ * this file's code made before it shared the header's declaration. */
+
 /* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
 
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-s32 Object_GetById();
 
 /* The scene's tables, in the overlay's read-only data. */
 extern u8 KuupuappuHeya_Scripts[];
@@ -299,7 +300,7 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
  * talks otherwise. */
 void FieldScene_RunActorNineteenAngleDialogue(void)
 {
-    s32 v = *(u16 *)((u8 *)Engine_ActorGet(0) + 6);
+    s32 v = *(u16 *)((u8 *)Object_GetById(0) + 6);
 
     Event_Begin();
     if (v >= 0xa001 && v <= 0xdfff) {
@@ -461,7 +462,7 @@ void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 
 void SceneState_RunGuardedActorStep(s32 x)
 {
-    u8 *flag = (u8 *)Object_GetById() + 91;
+    u8 *flag = (u8 *)((s32 (*)())Object_GetById)() + 91;
     s32 zero = 0;
 
     *flag = 1;

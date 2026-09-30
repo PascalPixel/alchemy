@@ -80,11 +80,11 @@ void FieldScene_BuildActorPresentationGroup(void)
     Actor_SetAnimation(16, 0);
     Actor_SetAnimation(17, 0);
     Actor_SetAnimation(18, 0);
-    rec2 = Engine_ActorGet(21);
+    rec2 = Object_GetById(21);
     Actor_SetSpriteFlags(rec2, 0);
-    rec2 = Engine_ActorGet(19);
+    rec2 = Object_GetById(19);
     rec2->scale_x = -0x10000;
-    rec2 = Engine_ActorGet(20);
+    rec2 = Object_GetById(20);
     rec2->scale_x = -0x10000;
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -134,7 +134,7 @@ void FieldScene_BuildActorPresentationGroup(void)
     shift = 0x3000;
     SceneState_ForwardMaskedHalfwordWith10(18, shift);
     Actor_Stop(16);
-    rec2 = Engine_ActorGet(16);
+    rec2 = Object_GetById(16);
     rec2->facing = 0xd000;
     rec2->scale_x = 0x10000;
     rec2->scale_y = 0x10000;
@@ -220,11 +220,11 @@ void FieldScene_RunMiddleSequence(void)
     Actor_SetPosition(16, 0, 0);
     Actor_SetAnimation(17, 0);
     Actor_SetAnimation(18, 0);
-    rec2 = Engine_ActorGet(21);
+    rec2 = Object_GetById(21);
     Actor_SetSpriteFlags(rec2, 0);
-    rec2 = Engine_ActorGet(19);
+    rec2 = Object_GetById(19);
     rec2->scale_x = -0x10000;
-    rec2 = Engine_ActorGet(20);
+    rec2 = Object_GetById(20);
     rec2->scale_x = -0x10000;
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -273,7 +273,7 @@ void FieldScene_RunMiddleSequence(void)
     Actor_SetAttachedEffect(17, 0x101);
     /* Clear the motion flags, then step the height up and back down
      * 20 times, waiting between each step. */
-    rec = Engine_ActorGet(21);
+    rec = Object_GetById(21);
     rec->motion_flags = 0;
     for (counter = 0; counter < 20; counter++) {
         rec->y.fixed += 0x9999;
@@ -287,7 +287,7 @@ void FieldScene_RunMiddleSequence(void)
     Actor_SetAttachedEffect(17, 0x100);
     Actor_Stop(17);
     Actor_SetAnimation(17, 1);
-    rec2 = Engine_ActorGet(17);
+    rec2 = Object_GetById(17);
     rec2->facing = 0xd000;
     rec->motion_flags = 3;
     rec->scale_x = 0x10000;

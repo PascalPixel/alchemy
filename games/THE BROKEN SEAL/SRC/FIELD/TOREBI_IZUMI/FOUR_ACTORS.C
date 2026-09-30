@@ -48,8 +48,8 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     *(s32 *)(work + 76) = 0;
 
     /* r0 carries each lookup's result straight into the retag call. */
-    Object_SetAnimation(Engine_ActorGet(20), 2);
-    Object_SetAnimation(Engine_ActorGet(21), 2);
+    Object_SetAnimation(Object_GetById(20), 2);
+    Object_SetAnimation(Object_GetById(21), 2);
 
     /* The locals keep the task and its rate built rather than folded. */
     {

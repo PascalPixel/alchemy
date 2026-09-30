@@ -3,8 +3,7 @@
 Golden Sun: **The Broken Seal (TBS)** ☀️ and **The Lost Age (TLA)** ⚓️,
 rebuilt byte for byte from readable C, assembly and editable assets. Japanese
 releases are the source editions; localizations are measured differences.
-Build IDs are `tbs` and `tla`. Every ☀️ edition builds its code from C; of
-the ⚓️ editions, only English does so far.
+Build IDs are `tbs` and `tla`. All twelve editions build their code from C.
 
 This file is the only place Alchemy's rules live. `README.md` is for fans.
 Every rule has an ID; a rule a tool can enforce names its check, and every
@@ -135,11 +134,13 @@ never a file or a function.
   `-O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4`, plus
   `-mthumb-interwork` for ☀️ and K2's two options for ⚓️. `-fcall-used-r4` is a
   stock GCC option: 265 of 266 ☀️ and 1,648 of 2,302 ⚓️ functions that save lr
-  start saving at r5. Library code keeps the compiler and flags pret uses for
-  it, file by file as pret names its library files: pret's agbcc for
-  MusicPlayer2000 (`-O2`) and the flash library (`-O`), and agbcc_arm for
-  RAM-executed ARM code (`-fomit-frame-pointer`). No other routing: never a
-  per-file or per-function compiler, option or flag for game code.
+  start saving at r5. Nintendo's library code is not Camelot's and keeps
+  the compiler and flags its own bytes show, one setting per whole library
+  file, as pret names its library files: pret's agbcc for MusicPlayer2000
+  (`-O2`) and the flash library (`-O`, except two helper files whose bytes
+  show `-O2`), and agbcc_arm for RAM-executed ARM code
+  (`-fomit-frame-pointer`). No other routing: never a per-file or
+  per-function compiler, option or flag for game code.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
   GCC's Thumb backend between the games, rebuilt as options in GCC's own

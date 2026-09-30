@@ -552,7 +552,7 @@ s32 WorldMap_EnterScene(void)
                 if (Engine_GameFlagIsSet(0x85d) == 0 && Engine_GameFlagIsSet(0x234) != 0) {
                     gWorldMapTriggerActor = 55;
                     Call3(Engine_ActorSetPosition, 55, 0x17940000, 0xd480000);
-                    Engine_ActorGet(gWorldMapTriggerActor)->facing = 0x3000;
+                    Object_GetById(gWorldMapTriggerActor)->facing = 0x3000;
                     WorldMap_ActivateSite138(gWorldMapTriggerActor);
                 }
             } else if (Engine_GameFlagIsSet(0x85d) == 0 && Engine_GameFlagIsSet(0x9b8) == 0) {
@@ -613,8 +613,8 @@ s32 WorldMap_EnterScene(void)
             FieldScene_RunActorPresentationSequence();
             break;
         default:
-            Engine_ActorGet(53)->scale_x = 0x14000;
-            Engine_ActorGet(53)->scale_y = 0x14000;
+            Object_GetById(53)->scale_x = 0x14000;
+            Object_GetById(53)->scale_y = 0x14000;
             break;
         }
     }
@@ -647,7 +647,7 @@ void RunEventScript01(void)
     Actor_SetPosition(8, 0x16f80000, 0x4b80000);
     Event_Wait(60);
     Actor_SetAnimation(12, 2);
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     if (record != 0) {
         Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -655,7 +655,7 @@ void RunEventScript01(void)
     Actor_SetPosition(12, 0, 0);
     ((void (*)())Engine_EventWait)(60);
     Actor_SetAnimation(11, 2);
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     if (record != 0) {
         Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -663,7 +663,7 @@ void RunEventScript01(void)
     Actor_SetPosition(11, 0, 0);
     ((void (*)())Engine_EventWait)(60);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     if (record != 0) {
         Actor_SetDestination(ACTOR_PARTY_LEADER, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -689,7 +689,7 @@ void FieldScene_RunActorTransferSequence(void)
     s32 scale;
     s32 action;
 
-    actor = Engine_ActorGet(15);
+    actor = Object_GetById(15);
     Event_Begin();
     BattleFx_ScheduleRatioTransition(0x14000, 1);
     Task_Wait(4);
@@ -720,7 +720,7 @@ void FieldScene_RunActorTransferSequence(void)
     Event_Wait(20);
     Object_SetActionCallbackAndRefreshById(13, (s32)gTransferArrive13);
     Audio_PlayCue(0x121);
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -857,7 +857,7 @@ void FieldScene_RunActorTransferSequence(void)
     scale = 192;
     record = Actor_Get(9);
     *(s32 *)(record + 40) = (scale << 11);
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     *(s32 *)(record + 40) = (scale << 11);
     Audio_PlayCue(145);
     Camera_SetSpeed(0x40000, 0x40000);
@@ -938,7 +938,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -1026,8 +1026,8 @@ void FieldScene_RunScene371_020017a4(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(15);
-    record = Engine_ActorGet(14);
+    rec7 = Object_GetById(15);
+    record = Object_GetById(14);
     *(s32 *)(rec7 + 8) = *(s32 *)(record + 8);
     *(s32 *)(rec7 + 16) = *(s32 *)(record + 16);
     if (*(s32 *)(rec7 + 12) < 0xa0000) {
@@ -1053,7 +1053,7 @@ void FieldScene_RunScene371_020017fc(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(8);
+    rec7 = Object_GetById(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -1078,7 +1078,7 @@ void FieldScene_RunScene371_02001888(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(8);
+    rec7 = Object_GetById(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -1113,7 +1113,7 @@ void FieldScene_RunScene371_02001938(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(8);
+    rec7 = Object_GetById(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -1148,7 +1148,7 @@ void FieldScene_RunScene371_020019e8(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(8);
+    rec7 = Object_GetById(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -1183,7 +1183,7 @@ void FieldScene_RunScene371_02001a98(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(8);
+    rec7 = Object_GetById(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -1222,7 +1222,7 @@ void FieldScene_RunScene371_02001b5c(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(8);
+    rec7 = Object_GetById(8);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);

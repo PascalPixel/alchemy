@@ -16,8 +16,8 @@ s32 FieldScene_RunEntrySetup(void)
 {
     *(s32 *)((*(u8 **)&gEventWork) + 448) = 516;
     *(s32 *)((*(u8 **)&gEventWork) + 456) = 24;
-    *(s32 *)(Engine_ActorGet(11) + 28) = 0x19999;
-    *(s32 *)(Engine_ActorGet(11) + 24) = 0x19999;
+    *(s32 *)(Object_GetById(11) + 28) = 0x19999;
+    *(s32 *)(Object_GetById(11) + 24) = 0x19999;
     Engine_ActorSetAnimation(13, 5);
     Engine_ActorSetAnimation(14, 2);
     return 0;

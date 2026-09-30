@@ -69,7 +69,11 @@ s32 PsynergyMenu_SelectOwner(void)
             frame = Math_Mod(frame + 3, 3);
             Menu_CreateWindowAndEntryObjects(menu->character_ids[selection], frame);
             PsynergyMenu_CallIconRoutineWithValue(menu, menu->character_ids[selection]);
+#if defined(TBS_EDITION_JA)
+            for (i = 0; i < 4; i++)
+#else
             for (i = 0; i < 8; i++)
+#endif
                 menu->row_positions[i] = 30;
             menu->row_positions[selection] = 26;
             menu->entry_count = PsynergyMenu_CollectActions(Owner_GetStateFar(menu->character_ids[selection]), menu->entries, 0);

@@ -215,9 +215,9 @@ keep_facing:
         dest = KuupuappuHeya_SnapToNearestStop(entry, (s16 *)pos);
         if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
             SceneActor_ApplyScaledBytePairPosition(actor, dest);
-            Engine_ObjectSetAnimation(actor, 2);
+            Object_SetMode(actor, 2);
         } else {
-            Engine_ObjectSetAnimation(actor, 1);
+            Object_SetMode(actor, 1);
         }
     }
 
@@ -235,12 +235,12 @@ keep_facing:
                 Engine_ActorSetAttachedEffect(24, 2);
                 goto move_first;
             }
-            Engine_ObjectSetAnimation(actor, 4);
+            Object_SetMode(actor, 4);
             blocked = 1;
         } else {
 move_first:
             SceneActor_ApplyScaledBytePairPosition(actor, dest);
-            Engine_ObjectSetAnimation(actor, 2);
+            Object_SetMode(actor, 2);
         }
     }
 
@@ -258,12 +258,12 @@ move_first:
                 Engine_ActorSetAttachedEffect(25, 2);
                 goto move_second;
             }
-            Engine_ObjectSetAnimation(actor, 4);
+            Object_SetMode(actor, 4);
             blocked += 2;
         } else {
 move_second:
             SceneActor_ApplyScaledBytePairPosition(actor, dest);
-            Engine_ObjectSetAnimation(actor, 2);
+            Object_SetMode(actor, 2);
         }
     }
     if (blocked != 0) {

@@ -4,7 +4,7 @@
 
 s32 SceneActor_CheckBucketOffsetPoint();
 void FieldScene_CallPairWith10();
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_ActorSetSpeed();
 void Engine_ActorSetPosition();
 void Engine_ActorSetDestinationOffset();
@@ -23,11 +23,11 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
     s32 v8;
     s32 v6;
 
-    rec4 = Engine_ActorGet(0);
+    rec4 = Object_GetById(0);
     v8 = 1;
     ObjectMotion_SetActionVariant(a0, 2);
     {
-        u8 *record = (u8 *)Engine_ActorGet(a0);
+        u8 *record = (u8 *)Object_GetById(a0);
         /* FAKEMATCH: the flag byte is read through a volatile access. */
         u8 value = *(volatile u8 *)&record[35];
     
@@ -48,7 +48,7 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
             v6 = (((*(u16 *)(rec4 + 6) + 0x8000) & 0xf000) >> 12);
         }
     }
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if ((s32)record != 0) {
         Engine_ActorSetPosition(a0, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
     }

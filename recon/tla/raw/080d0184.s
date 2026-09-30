@@ -686,6 +686,9 @@ Func_080d0520:
 	.4byte 0x080d0955
 	.2byte 0x085d
 	.2byte 0x080d
+	.global Func_080d072c
+	.thumb_func
+Func_080d072c:
 	ldr	r3, [pc, #16]
 	movs	r0, #1
 	ldr	r2, [r3, #4]

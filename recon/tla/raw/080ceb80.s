@@ -324,7 +324,7 @@ Func_080ceb80:
 	mov	r0, r9
 	adds	r0, #64
 	ldr	r1, [sp, #0]
-	bl	0x080d3b28
+	bl	Func_080d3b28
 .L_080cee00:
 	cmp	r7, #133
 	bne.n	.L_080cee08

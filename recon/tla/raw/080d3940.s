@@ -257,6 +257,9 @@ Func_080d3a10:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0xfff8
+	.global Func_080d3b28
+	.thumb_func
+Func_080d3b28:
 	.2byte 0xb5e0
 	mov	r7, sl
 	mov	r6, r9

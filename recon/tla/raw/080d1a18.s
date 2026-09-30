@@ -419,6 +419,9 @@ Func_080d1d44:
 	movs	r0, r0
 	.2byte 0x1ae5
 	.2byte 0x080d
+	.global Func_080d1d54
+	.thumb_func
+Func_080d1d54:
 	push	{r5, lr}
 	movs	r1, #128
 	adds	r5, r0, #0
@@ -462,6 +465,9 @@ Func_080d1d44:
 	movs	r0, r0
 	.2byte 0x0101
 	.2byte 0x0101
+	.global Func_080d1dac
+	.thumb_func
+Func_080d1dac:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	ldr	r0, [pc, #56]
@@ -495,6 +501,9 @@ Func_080d1d44:
 	movs	r0, r0
 	.2byte 0x36e0
 	.2byte 0x0200
+	.global Func_080d1df0
+	.thumb_func
+Func_080d1df0:
 	push	{r5, r6, lr}
 	sub	sp, #12
 	mov	r5, sp

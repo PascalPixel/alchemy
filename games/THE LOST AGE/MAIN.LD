@@ -1452,7 +1452,7 @@ SECTIONS
         "*/recon/tla/raw/081a8278.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081a8288)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/RESOURCE_D.o"(.text)
-        "*/recon/tla/raw/081ac008.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/BLANK_DISPLAY_AND_RUN.o"(.text)
         "*/recon/tla/raw/081ac028.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/LIB/FIXED_8.o"(.text)
         "*/games/THE LOST AGE/SRC/LIB/FIXED_8_2.o"(.text)

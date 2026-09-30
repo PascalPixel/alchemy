@@ -39,7 +39,7 @@ BattlePresentation_ConfigurePaletteFadeFar:
 	.global BattleBackground_LoadFar
 	.thumb_func
 BattleBackground_LoadFar:
-	overlay_veneer Func_080c08ec
+	overlay_veneer BattleBackground_Load
 	.global Func_080b5048
 	.thumb_func
 Func_080b5048:

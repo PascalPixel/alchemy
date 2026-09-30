@@ -307,7 +307,7 @@ Battle_RunEncounter:
 	ldrh	r1, [r3, #0]
 	movs	r0, #1
 	movs	r2, #0
-	bl	Func_080c08ec
+	bl	BattleBackground_Load
 	movs	r3, #128
 	lsls	r3, r3, #10
 	movs	r0, #160

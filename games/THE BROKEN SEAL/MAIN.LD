@@ -519,7 +519,6 @@ SECTIONS
         "*/recon/tbs/raw/08020bd6.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08020bd8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/PARTY/TALK_CHOICE.o"(.text)
-        "*/recon/tbs/raw/08021228.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/LOOKUP_CHARACTER_VALUE_BY_FLAG32.o"(.text)
         "*/recon/tbs/raw/08021390.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08021488.o"(.text .rodata .data .padding)

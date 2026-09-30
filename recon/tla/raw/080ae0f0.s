@@ -20,6 +20,9 @@ Func_080ae0f0:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ae118
+	.thumb_func
+Func_080ae118:
 	push	{r5, r6, lr}
 	movs	r6, #10
 .L_080ae11c:
@@ -59,6 +62,9 @@ Func_080ae0f0:
 	pop	{r5, r6, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ae16c
+	.thumb_func
+Func_080ae16c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -152,6 +158,9 @@ Func_080ae0f0:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ae220
+	.thumb_func
+Func_080ae220:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

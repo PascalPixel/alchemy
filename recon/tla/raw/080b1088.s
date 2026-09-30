@@ -168,7 +168,7 @@ Func_080b1088:
 	adds	r0, #255
 	bl	GameFlag_SetBitFar
 	movs	r0, #1
-	bl	0x080ae16c
+	bl	Func_080ae16c
 	movs	r6, #229
 	lsls	r6, r6, #4
 .L_080b11d4:

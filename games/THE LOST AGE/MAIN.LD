@@ -521,7 +521,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_22.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OWNER.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/ITEM.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080ad200.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_23.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad248.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad2b8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad2e8.o"(.text .rodata .data .padding)

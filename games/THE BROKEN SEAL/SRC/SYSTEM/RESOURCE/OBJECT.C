@@ -1,5 +1,16 @@
+#include "DMA.H"
 #include "TYPES.H"
 #include "VRAM_BLOCK.H"
+
+void ResourceMetadata_ClearRecord(void *destination)
+{
+    if (destination != 0) {
+        volatile u32 clear_value;
+
+        clear_value = 0;
+        Dma_Set(&clear_value, destination, 0x85000006, (volatile u32 *)0x040000d4);
+    }
+}
 
 /* system/resource/create_object.c */
 
@@ -88,4 +99,22 @@ struct ResourceObject *ResourceObject_Create(s32 id)
     if (ResourceMetadata_Register(entry, id) == -1)
         found->active = found->active;
     return found;
+}
+
+struct Work { u8 unknown[28]; u8 resource, flags; u8 unknown_1e[10]; void *children[4]; };
+void Resource_ResetEntry(s32);
+void ResourceMetadata_ClearRecord(void *);
+void ResourceObject_Release(struct Work *work)
+{
+    volatile u32 zero;
+    s32 count;
+    void **child;
+    if (work) {
+        if (!(work->flags & 1)) Resource_ResetEntry(work->resource);
+        child = work->children;
+        count = 3;
+        do { ResourceMetadata_ClearRecord(*child++); } while (--count >= 0);
+        zero = 0;
+        Dma_Set(&zero, work, 0x8500000e, (volatile u32 *)0x040000d4);
+    }
 }

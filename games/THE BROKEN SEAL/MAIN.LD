@@ -713,7 +713,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ABILITY_EVENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/COMMAND_EXECUTE_SELECTED_ACTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_STATE.o"(.text)
-        "*/recon/tbs/raw/0808e9c0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SLOTS.o"(.text)
         "*/recon/tbs/raw/0808ee0c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RANDOM_PARTICLE_EMIT.o"(.text)

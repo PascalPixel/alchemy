@@ -611,7 +611,7 @@ Func_0802386c:
 	cmp	r3, #0
 	bne.n	.L_08023d44
 	ldrb	r0, [r0, #16]
-	bl	Func_080142ac
+	bl	Resource_ActivateEntry
 	ldr	r1, [sp, #48]
 	strb	r5, [r1, #25]
 	b.n	.L_08023d44
@@ -634,7 +634,7 @@ Func_0802386c:
 	bne.n	.L_08023d44
 .L_08023d3c:
 	ldrb	r0, [r5, #16]
-	bl	Func_080142ac
+	bl	Resource_ActivateEntry
 	strb	r6, [r5, #25]
 .L_08023d44:
 	ldr	r4, [sp, #80]

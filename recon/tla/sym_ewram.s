@@ -10,7 +10,10 @@ gPartyState:
 	.space 0x00002dd0
 	.global gOamBuckets
 gOamBuckets:
-	.space 0x000024c0
+	.space 0x000006d0
+	.global ResourceTableEntries
+ResourceTableEntries:
+	.space 0x00001df0
 	.global gObjAffineMatrices
 gObjAffineMatrices:
 	.space 0x00000380

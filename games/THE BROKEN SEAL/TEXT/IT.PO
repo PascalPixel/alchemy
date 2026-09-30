@@ -10811,7 +10811,7 @@ msgctxt "message"
 msgid "02700"
 msgstr "disfartene?"
 
-msgctxt "message"
+msgctxt "MsgEquipThisItem"
 msgid "02701"
 msgstr "Attivare strumento?"
 
@@ -11143,7 +11143,7 @@ msgctxt "MsgYes"
 msgid "02783"
 msgstr "Sì"
 
-msgctxt "message"
+msgctxt "MsgNo"
 msgid "02784"
 msgstr "No"
 

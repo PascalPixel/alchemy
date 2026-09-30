@@ -12699,7 +12699,7 @@ msgctxt "message"
 msgid "03172"
 msgstr "すててもよろしいですか?"
 
-msgctxt "message"
+msgctxt "MsgEquipThisItem"
 msgid "03173"
 msgstr "そうびしますか?"
 
@@ -13027,7 +13027,7 @@ msgctxt "MsgYes"
 msgid "03254"
 msgstr "はい"
 
-msgctxt "message"
+msgctxt "MsgNo"
 msgid "03255"
 msgstr "いいえ"
 

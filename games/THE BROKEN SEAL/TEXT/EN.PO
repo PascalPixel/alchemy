@@ -11103,7 +11103,7 @@ msgctxt "message"
 msgid "02773"
 msgstr "want to drop it?"
 
-msgctxt "message"
+msgctxt "MsgEquipThisItem"
 msgid "02774"
 msgstr "Equip this item?"
 
@@ -11451,7 +11451,7 @@ msgctxt "MsgYes"
 msgid "02860"
 msgstr "Yes"
 
-msgctxt "message"
+msgctxt "MsgNo"
 msgid "02861"
 msgstr "No"
 

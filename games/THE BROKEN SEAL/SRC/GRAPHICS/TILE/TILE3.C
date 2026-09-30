@@ -1,12 +1,4 @@
 #include "DMA.H"
-/* Load character set `resource` into the background (or, when alternate, the
-   second) character block and its palette into the matching bank; resource
-   0 clears them instead. The packed decoder is copied from ROM into heap
-   block 49 and run there; the palette load is queued for the next frame.
-
-   FAKEMATCH: the queued palette load is QueueIoWriteDelay-style inline code
-   with the odd constructs of SYSTEM/IO_WRITE_QUEUE.C (a one-pass loop around
-   the IME read, and the count stored through an explicit u16 pointer). */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
@@ -56,6 +48,14 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alternate)
     Dma_Set((const void *)&fill, (void *)palette, 0x85000040, (volatile u32 *)0x040000d4);
 }
 
+/* Load character set `resource` into the background (or, when alternate, the
+   second) character block and its palette into the matching bank; resource
+   0 clears them instead. The packed decoder is copied from ROM into heap
+   block 49 and run there; the palette load is queued for the next frame.
+
+   FAKEMATCH: the queued palette load is QueueIoWriteDelay-style inline code
+   with the odd constructs of SYSTEM/IO_WRITE_QUEUE.C (a one-pass loop around
+   the IME read, and the count stored through an explicit u16 pointer). */
 void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
 {
     u8 *data;

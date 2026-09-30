@@ -1,7 +1,6 @@
 /* The link lobby: the attendant's call into the circle. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-/* The link lobby: the scene teardown that clears the lobby flags. */
 #include "LOBBY.H"
 #include "SERIAL_RUNTIME.H"
 #include "CALL.H"
@@ -52,7 +51,8 @@ s32 LinkLobby_CallIntoCircle(void)
 }
 
 /*
- * Scene teardown: reset one workspace field, clear three flags, play cue
+ * The link lobby's scene teardown, which clears the lobby flags: reset one
+ * workspace field, clear three flags, play cue
  * 0x2927 and return the last call's result -- the epilogue pops the return
  * address into r1, so r0 survives and is the result. The 88-byte owner
  * includes its alignment bytes and four pool words, one of which is

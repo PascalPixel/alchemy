@@ -3,9 +3,6 @@
 #include "LEVEL.H"
 #include "CALL.H"
 #include "PARTY_STATE.H"
-/* The item and level debug room's item browser: pick an item number, see its
- * name and details, and A adds it to the party's bag. Stepping skips the
- * numbers with no item icon. */
 #include "TYPES.H"
 #include "INVENTORY.H"
 #include "DMA.H"
@@ -171,8 +168,9 @@ void FieldScene_RunCountAdjustPanel(void)
     }
 }
 
-/* The item and level debug room: its entry setup, the glyph caption window
- * and the far debug browsers. */
+/* The item and level debug room's item browser: pick an item number, see its
+ * name and details, and A adds it to the party's bag. Stepping skips the
+ * numbers with no item icon. */
 void ItemLevel_SelectItem(void)
 {
     struct TextRenderWork *window;
@@ -398,6 +396,8 @@ done:
     UiWork_Finalize(details, 1);
 }
 
+/* The item and level debug room: its entry setup, the glyph caption window
+ * and the far debug browsers. */
 void SceneState_SetWorkWords1c0And1c8(void)
 {
     *(s32 *)((*(u8 **)&gEventWork) + 0x1c0) = 0x201;

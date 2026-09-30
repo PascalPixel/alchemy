@@ -140,7 +140,7 @@ Func_080d1f18:
 	movs	r1, #0
 	bl	Func_080d170c
 	movs	r0, #24
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	ldrh	r3, [r5, #0]
 	ldr	r2, [pc, #12]
 	movs	r7, #120
@@ -253,7 +253,7 @@ Func_080d1f18:
 	sub	sp, #8
 	bl	Func_080d170c
 	movs	r0, #24
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	ldr	r2, [pc, #96]
 	movs	r1, #9
 	negs	r1, r1

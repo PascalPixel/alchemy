@@ -1651,6 +1651,9 @@ Func_080d1684:
 	.4byte 0x05000200
 	.2byte 0x0ca1
 	.2byte 0x080d
+	.global Func_080d16f8
+	.thumb_func
+Func_080d16f8:
 	push	{lr}
 	ldr	r0, [pc, #12]
 	bl	Func_08014644

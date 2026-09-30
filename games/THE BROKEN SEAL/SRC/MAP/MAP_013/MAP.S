@@ -17,7 +17,7 @@ Field_Map013:
 	.incbin "MAP/MAP_013/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map013_SHAPES:
-	.incbin "MAP/MAP_001/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_001/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map013_GRID:
 	.incbin "MAP/MAP_013/GRID.parts.lz"

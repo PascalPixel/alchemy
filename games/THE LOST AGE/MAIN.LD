@@ -478,6 +478,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/BUFFER.o"(.text)
         "*/recon/tla/raw/08045526.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08045528.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/GET_TABLE_WORD_ZERO.o"(.text)
+        "*/recon/tla/raw/08045564.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/SYSTEM/LINK/CREATE_COUNTDOWN_LABEL_WINDOW.o"(.text)
         "*/recon/tla/raw/080455dc.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/SET_BG1_PRIORITY3.o"(.text)

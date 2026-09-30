@@ -74,7 +74,10 @@ StatusMenu_LevelLetterString:
 Link_TimeLabelString:
 	.incbin "baserom.gba", 0x0005f7b0, 0x00000164
 	.section .unidentified.080aa0dc,"a"
-	.incbin "baserom.gba", 0x000aa0dc, 0x00002f24
+	.incbin "baserom.gba", 0x000aa0dc, 0x00000300
+	.global Ui_FixedTileBlocks
+Ui_FixedTileBlocks:
+	.incbin "baserom.gba", 0x000aa3dc, 0x00002c24
 	.section .unidentified.080b127c,"a"
 	.incbin "baserom.gba", 0x000b127c, 0x00000cac
 	.section .unidentified.080b1f2c,"a"

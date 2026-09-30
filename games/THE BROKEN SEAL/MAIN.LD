@@ -560,7 +560,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/MERGE_SHIFTED_TILE_ROWS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/BUFFER.o"(.text)
         "*/recon/tbs/raw/08021bc6.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/GET_TABLE_WORD_ZERO.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/GET_TABLE_WORD_ZERO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUN_COPIED_ROUTINE.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/LINK/CREATE_COUNTDOWN_LABEL_WINDOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/LOAD_INDEXED_INTO_BUFFER.o"(.text)

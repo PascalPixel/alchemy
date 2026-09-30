@@ -188,6 +188,8 @@ void RaisingSwitch_Flip(void)
     }
 }
 
+/* Bunza and Hammet meet again at the cave mouth once Hammet is free. */
+
 /*
  * Once Hammet is free, Bunza steps out from where he hid, Hammet and the
  * party gather around him, and the two recognize each other.
@@ -642,6 +644,7 @@ check_nothing_left:
                 goto ride;
             }
         }
+/* Bunza will not wait for the party any longer. */
         if (Bunza_CannotWait()) {
             goto stay;
         }
@@ -748,6 +751,8 @@ u8 Gerald_AsksAboutThingsToDo(void)
     Event_OpenMessage(ACTOR_GERALD, 0);
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
+
+/* The party either stays behind in the cave or rides the wagon out. */
 
 /*
  * Hammet and Bunza say goodbye and leave for the wagon; the party watches

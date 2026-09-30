@@ -111,6 +111,7 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gSuharaSabakuEntrancesOther;
 }
 
+/* The Suhara desert: the empty table slot and the exits. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -138,6 +139,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gSuharaSabakuPlacementsOther;
 }
 
+/* The Suhara desert: the selected actor's progress and the middle steps. */
 void SuharaSabaku_SyncSelectedActorProgress(void)
 {
     struct Actor_02000400 *actor;
@@ -209,6 +211,8 @@ void FieldScene_RunActor11Step(void) { FieldScene_RunMiddleAuxiliarySequence(11)
 
 void FieldScene_RunActor12Step(void) { FieldScene_RunMiddleAuxiliarySequence(12); }
 
+/* FAKEMATCH: one-pass IME wrappers and a signed queue limit preserve the
+ * queued write order, as in VISIT_BLEND.C. */
 void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 {
     s32 i;
@@ -322,6 +326,7 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     Engine_EventEnd();
 }
 
+/* The Suhara desert: the late steps and actor 13's restoration. */
 void FieldScene_RunLateActor8Step(void) { SuharaSabaku_RestoreActorScaleAndBlend(8); }
 
 void FieldScene_RunLateActor9Step(void) { SuharaSabaku_RestoreActorScaleAndBlend(9); }
@@ -439,6 +444,7 @@ s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
     return 1;
 }
 
+/* The Suhara desert: actor 12's place and the effect state byte. */
 void PlaceActorTwelveWhenFlagClear(void)
 {
     if (GameFlag_IsSet(2487) == 0) {
@@ -454,6 +460,7 @@ void SceneState_SetStateByte52(void)
     state[52] = 1;
 }
 
+/* The Suhara desert: meeting one of the stranded actors 8 to 12. */
 void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 {
     register s32 a1 asm("r6") = actor; /* FAKEMATCH: pins the actor id to r6 */
@@ -496,6 +503,10 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
     Object_GetById(state->words[125])->motion_flags = 3;
 }
 
+/* The sand swallows the leader and the actor flag byte 0x218 names: cue 219,
+ * both sink for sixty frames, the screen closes, flag 0x122 is set and the
+ * party leaves for the world map, at entrance 77 from the second area when
+ * the flag byte names actor 11 and at entrance 27 otherwise. */
 void SuharaSabaku_DropAndLeave(void)
 {
     s32 other;
@@ -531,6 +542,7 @@ void SuharaSabaku_DropAndLeave(void)
     }
 }
 
+/* The Suhara desert: the encounter palette's pulse. */
 void EncounterPalette_Pulse(void)
 {
     u16 phase = gFrameCount & 63;
@@ -543,6 +555,8 @@ void EncounterPalette_Pulse(void)
     EncounterPalette = ((u32)level << 16) >> 16;
 }
 
+/* The second desert area's encounter: actor 14 and map object 100 stand
+ * aside while the encounter palette pulses. */
 s32 FieldScene_RunOpeningAuxiliarySequence(void)
 {
     s32 record;
@@ -593,6 +607,10 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gSuharaSabakuEventsOther;
 }
 
+/* The desert's scene script: it opens the screen, starts the leader's
+ * progress task when flag byte 0x210 is set, keeps the encounter palette's
+ * level in the first two areas and blends the visit or altar flags there;
+ * the third area plays cue 0x120. */
 s32 SuharaSabaku_RunSceneScript(void)
 {
     u8 *map;

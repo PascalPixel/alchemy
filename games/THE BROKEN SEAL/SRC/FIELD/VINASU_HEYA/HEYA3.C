@@ -139,6 +139,8 @@ void SceneState_ApplyStepToSlots15To18(void)
     } while (i <= 18);
 }
 
+/* The Vinasu rooms' entry setup: per room and entrance, which actors,
+ * cells and effects are placed before the scene starts. */
 s32 Scene_RunEntrySetup(void)
 {
     struct FieldActor *actor;

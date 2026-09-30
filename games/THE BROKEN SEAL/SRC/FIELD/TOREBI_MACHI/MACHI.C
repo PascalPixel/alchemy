@@ -38,6 +38,8 @@ void SceneState_SetValues31_2_4(void)
     BattleFx_RunPageEffectForSlot(0x1F, 2, 4);
 }
 
+/* Tolbi town: the distance between two actor positions, through the
+ * resident square root. */
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
@@ -50,6 +52,7 @@ s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
     return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
+/* Tolbi town: actor proximity, the scene tables and the first dialogue steps. */
 s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
                                     struct SceneActor *target,
                                     s32 range, s32 force)
@@ -280,6 +283,7 @@ void FieldScene_RunSiblingsTalk(void)
     Engine_EventEnd();
 }
 
+/* Tolbi town: the event table by story progress and two actor lines. */
 u8 *TorebiMachi_SelectEvents(void)
 {
     if (Engine_GameFlagIsSet(0x950) != 0) {
@@ -318,6 +322,7 @@ void FieldScene_RunPatientTalk(void)
     Engine_EventEnd();
 }
 
+/* Tolbi town: actor lines, the entry setup and the first sequence. */
 void FieldScene_RunScene3b5_02000568(void)
 {
     u32 i;
@@ -601,6 +606,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventEnd();
 }
 
+/* Tolbi town: actor 9's reset and its map tiles. */
 void FieldScene_ResetActor9AndDrawTiles(void)
 {
     struct Actor *actor = Object_GetById(9);

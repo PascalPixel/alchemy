@@ -308,6 +308,8 @@ void SceneDialogue_ShowLine1CB0ForActor13(void)
     ActorPresentation_RunActorModeOneThenZero(13);
 }
 
+/* Actor 14's first talk: "Hey, it's that warrior guy!", with its opening
+ * lines only until flag 0x300 is set. It sets flag 0x307. */
 void SceneDialogue_RunActorFourteenFlagDialogue(void)
 {
     struct SceneActor *actor = Actor_Get(14);
@@ -413,6 +415,8 @@ void ActorPresentation_RunActor13AcceptanceDialogue(void)
     ((struct Actor_020007d4 *)Actor_Get(13))->accepted = 0;
 }
 
+/* Talking to actor 14: the first talk until flag 0x307 is set, then the line
+ * about feeling brave. */
 void KuupuappuMuraSai_RunActor14Talk(void)
 {
     ((struct SceneActor *)Actor_Get(14))->state_flags |= 2;

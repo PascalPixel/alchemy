@@ -587,6 +587,9 @@ void SceneState_SetEntries16To21Byte35(void)
     } while (remaining >= 0);
 }
 
+/* The cave rumbles: the map shakes for 480 frames, drifting its scroll by
+   a random amount each frame, then the second layer fades out, the opened
+   passage is copied into the map and the chime plays. */
 void KuupuappuDou_RunRumble(void)
 {
     struct MapShake *shake = (struct MapShake *)(gMapWork + 0x164);

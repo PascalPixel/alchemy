@@ -640,6 +640,9 @@ void PaletteScene_RunActorTransitionSequence(void)
     PaletteScene_SetRecordValue(184, 185);
 }
 
+/* Korima's tree: the overlay's first entry stages the tree actors and sets
+ * Retreat to return the party to the Korima bridge. */
+
 /* Stage the tree actors: sizes, sprite flags and priorities, heights and collision. */
 s32 KorimaKi_PrepareActors(void)
 {

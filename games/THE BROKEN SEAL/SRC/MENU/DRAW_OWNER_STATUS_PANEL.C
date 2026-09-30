@@ -58,6 +58,7 @@ s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s3
 void WaitFrames(s32 frames);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
+void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
 void CharacterMenu_BuildAvailability(u8 *out, s32 kind, s32 owner);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
@@ -123,7 +124,11 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         }
         if (cnt < 2) {
             value = unit->level;
+#if defined(TBS_EDITION_JA)
+            UiText_DrawStringInWindowFar(Data_080af20c, window, 40, 16);
+#else
             UiText_DrawStringAtOffsetFar(Data_080af20c, window, 40, 16);
+#endif
             UiText_DrawNumberInWindowFar(value, 4, window, 56, 16);
         }
     }

@@ -1172,6 +1172,8 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Event_End();
 }
 
+/* Actor 8 asks whether the party forgot the order of the rock colours; each
+ * answer is a line after the question, yes first. */
 void ArutamiraDou_AskAboutRockOrder(void)
 {
     s32 question;
@@ -1244,6 +1246,9 @@ void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor)
         actor->sprite->priority = Object_GetById(0)->sprite->priority;
     }
 }
+
+/* A pointer to the words the entry clears when the party arrives by entrance
+   52 of the cave's last area. */
 
 /* Altmiller Cave entry: number the entrance by area, then per area restore the lifts, the cells and the row of five actors from the story flags; open with the blend or the plain transition. */
 s32 ArutamiraDou_ApplyEntryState(void)

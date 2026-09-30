@@ -1,16 +1,14 @@
-/* Draft, not exact (2026-09-24): 55 differing halfwords, 236 of 236 bytes.
-   Residual: register allocation (cycle pointer r6 vs r5, source pointer
-   r1 vs r4) and the count mask order; the start<<16 copy is missing.
-   2026-09-29: the work is gPaletteWork (0x03001ec0 had only its address
-   name). alchemy permute took the score from 1105 to 625 (8 register-only,
-   3 operand, 2 reordered, 1 inserted, 3 deleted) over 35,753 candidates:
-   the wrap test assigns pos inside its condition after the DMA and
-   compares against a u16 copy of len (the permuter's temporary; 740
-   without it), and a second run of 29,088 found nothing lower. Remaining:
-   the flags mask order, the start<<16 copy made through r1, and len
-   extracted once into r4 for both the DMA count and the wrap compare,
-   where this build compares the shifted halfwords directly. */
-
+/* 2026-09-30 (Mercury): 30 differing halfwords, 236 of 236 bytes, no
+   FAKEMATCH (was 65). The position steps in 16.16: pos = start << 16 before
+   the second copy loop, next = pos + 0x10000, next = 0 when it reaches len
+   << 16, and the store takes next >> 16 after the join, as the reference
+   does (movs r1, #0 then lsrs r3, r1, #16). Comparing (next >> 16) >= len
+   instead lets gcse PRE reuse the compare's shift at the join (59). Left:
+   the reference turns the test into lsrs r3, r1, #16; cmp r3, r4 (len)
+   where this build shifts len left; it forms start << 16 first (lsls r1,
+   r7, #16; adds r7, r1, #0) and takes the second loop's start from it,
+   where this build zero-extends start and shifts it back; and the colour
+   pointer and the buffer base swap r1/r4. */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -41,18 +39,19 @@ void Func_08011bf4(void)
             void *dest = cycle->dest;
             u16 *src = cycle->colors;
             u8 j;
-            u16 pos;
-            u16 tmp;
+            u32 pos;
+            u32 next;
 
             for (j = len - start; j < len; j++)
                 buf[j] = *src++;
+            pos = start << 16;
             for (j = 0; j < len - start; j++)
-                do { buf[j] = *src++; } while (0);
+                buf[j] = *src++;
             Dma_Set(buf, dest, 0x80000000 | len, (volatile u32 *)0x040000d4);
-            tmp = len; /* FAKEMATCH: a halfword copy of len reallocates the wrap test. */
-            if ((pos = start + 1) >= tmp)
-                pos = 0;
-            cycle->pos = pos;
+            next = pos + 0x10000;
+            if (next >= len << 16)
+                next = 0;
+            cycle->pos = next >> 16;
             cycle->timer = cycle->delay;
         } else {
             cycle->timer--;

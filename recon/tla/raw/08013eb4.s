@@ -3,32 +3,38 @@
 	.global Func_08013eb4
 	.thumb_func
 Func_08013eb4:
-	ldr	r3, [pc, #36]
-	movs	r4, #0
-	strb	r4, [r3, #0]
-	ldr	r2, [pc, #36]
-	ldr	r3, [pc, #24]
-	ldr	r1, [pc, #36]
-	strh	r3, [r2, #0]
-	ldr	r2, [pc, #36]
-	ldrb	r3, [r2, #0]
-	strb	r3, [r1, #0]
-	ldr	r3, [pc, #32]
-	strb	r4, [r2, #0]
-	strb	r0, [r3, #0]
-	ldr	r2, [pc, #32]
-	ldrb	r3, [r3, #0]
-	strb	r3, [r2, #0]
-	b.n	.L_08013ef4
-	movs	r0, r0
+	ldr r3, .L_08013edc
+	movs r4, #0
+	strb r4, [r3]
+	ldr r2, .L_08013ee0
+	ldr r3, .L_08013ed8
+	ldr r1, .L_08013ee4
+	strh r3, [r2]
+	ldr r2, .L_08013ee8
+	ldrb r3, [r2]
+	strb r3, [r1]
+	ldr r3, .L_08013eec
+	strb r4, [r2]
+	strb r0, [r3]
+	ldr r2, .L_08013ef0
+	ldrb r3, [r3]
+	strb r3, [r2]
+	b .L_08013ef4
+	.2byte 0x0000
+.L_08013ed8:
 	.4byte 0x0000003e
-	.4byte 0x030011dc
-	.4byte 0x030011f4
-	.4byte 0x0300113c
-	.4byte 0x030011b0
-	.4byte 0x03001178
-	.2byte 0x110c
-	.2byte 0x0300
+.L_08013edc:
+	.4byte Data_030011dc
+.L_08013ee0:
+	.4byte Data_030011f4
+.L_08013ee4:
+	.4byte Data_0300113c
+.L_08013ee8:
+	.4byte Data_030011b0
+.L_08013eec:
+	.4byte Data_03001178
+.L_08013ef0:
+	.4byte Data_0300110c
 .L_08013ef4:
-	bx	lr
+	bx lr
 	.2byte 0x0000

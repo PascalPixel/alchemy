@@ -75,7 +75,7 @@ compiler-source-check:
 	@set -e; for repo in agbcc agscc; do \
 	  case "$$repo" in \
 	    agbcc) approved=da598c1d918402c42c0c0d7128ba14567f3175e9;; \
-	    agscc) approved=9c59c136cf8d6d6d22349fdb04faca7602e7e35e;; \
+	    agscc) approved=c7a493c13e16734a73d15a1162f1aadd18beae0a;; \
 	  esac; \
 	  test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
 	  test "$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \

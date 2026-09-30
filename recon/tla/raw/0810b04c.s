@@ -3,136 +3,56 @@
 	.global Func_0810b04c
 	.thumb_func
 Func_0810b04c:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	adds	r3, #220
-	ldr	r3, [r3, #0]
-	movs	r2, #129
-	lsls	r2, r2, #3
-	adds	r2, #255
-	adds	r3, r3, r2
-	movs	r5, #0
-	ldrsb	r5, [r3, r5]
-	adds	r7, r1, #0
-	adds	r6, r0, #0
-	adds	r1, r5, #0
-	adds	r0, r7, #0
-	bl	Shop_ServicePrice
-	mov	r8, r0
-	cmp	r6, #0
-	beq.n	.L_0810b0ac
-	adds	r0, r6, #0
-	bl	0x08038060
-	adds	r0, r7, #0
-	adds	r1, r5, #0
-	bl	0x0810a898
-	cmp	r0, #0
-	beq.n	.L_0810b08e
-	ldr	r5, [pc, #40]
-	b.n	.L_0810b090
+	push {r5, r6, r7, lr}
+	mov r7, r8
+	push {r7}
+	movs r3, #192
+	lsls r3, r3, #18
+	adds r3, #220
+	ldr r3, [r3]
+	movs r2, #129
+	lsls r2, r2, #3
+	adds r2, #255
+	adds r3, r3, r2
+	movs r5, #0
+	ldrsb r5, [r3, r5]
+	adds r7, r1, #0
+	adds r6, r0, #0
+	adds r1, r5, #0
+	adds r0, r7, #0
+	bl Shop_ServicePrice
+	mov r8, r0
+	cmp r6, #0
+	beq .L_0810b0ac
+	adds r0, r6, #0
+	bl RenderOutput_PrepareForRedrawFar
+	adds r0, r7, #0
+	adds r1, r5, #0
+	bl Shop_CanServe
+	cmp r0, #0
+	beq .L_0810b08e
+	ldr r5, .L_0810b0b4
+	b .L_0810b090
 .L_0810b08e:
-	ldr	r5, [pc, #40]
+	ldr r5, .L_0810b0b8
 .L_0810b090:
-	adds	r0, r5, #0
-	bl	Func_0810a960
-	movs	r1, #5
-	adds	r5, r0, #0
-	mov	r0, r8
-	bl	UiText_DrawQuantity
-	adds	r0, r5, #0
-	adds	r1, r6, #0
-	movs	r2, #0
-	movs	r3, #0
-	bl	0x08038078
+	adds r0, r5, #0
+	bl Func_0810a960
+	movs r1, #5
+	adds r5, r0, #0
+	mov r0, r8
+	bl UiText_DrawQuantity
+	adds r0, r5, #0
+	adds r1, r6, #0
+	movs r2, #0
+	movs r3, #0
+	bl UiText_DrawResourceFar
 .L_0810b0ac:
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
-	movs	r0, r0
+	pop {r3}
+	mov r8, r3
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_0810b0b4:
 	.4byte 0x000012dd
-	.2byte 0x12de
-	.2byte 0x0000
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	adds	r6, r0, #0
-	movs	r2, #64
-	adds	r2, r2, r6
-	movs	r7, #0
-	ldrsb	r7, [r2, r7]
-	sub	sp, #12
-	mov	r8, r2
-	cmp	r7, #0
-	bne.n	.L_0810b136
-	ldr	r3, [r6, #20]
-	mov	r5, sp
-	str	r3, [r5, #0]
-	ldr	r3, [r6, #24]
-	str	r3, [r5, #8]
-	bl	Random16
-	adds	r1, r0, #0
-	movs	r0, #160
-	lsls	r0, r0, #14
-	adds	r2, r5, #0
-	bl	Func_0801489c
-	ldr	r1, [r5, #0]
-	ldr	r2, [r5, #8]
-	adds	r0, r6, #0
-	bl	0x080c8598
-	ldr	r3, [r6, #20]
-	str	r3, [r5, #0]
-	ldr	r3, [r6, #24]
-	str	r3, [r5, #8]
-	bl	Random16
-	adds	r1, r0, #0
-	movs	r0, #128
-	adds	r2, r5, #0
-	lsls	r0, r0, #11
-	bl	Func_0801489c
-	ldr	r3, [r5, #0]
-	mov	r2, r8
-	str	r3, [r6, #12]
-	ldr	r3, [r5, #8]
-	str	r3, [r6, #16]
-	movs	r3, #128
-	lsls	r3, r3, #10
-	str	r3, [r6, #32]
-	movs	r3, #204
-	lsls	r3, r3, #7
-	adds	r3, #102
-	str	r3, [r6, #36]
-	adds	r3, r6, #0
-	adds	r3, #66
-	strb	r7, [r3, #0]
-	ldrb	r3, [r2, #0]
-	adds	r3, #1
-	strb	r3, [r2, #0]
-	b.n	.L_0810b15e
-.L_0810b136:
-	cmp	r7, #1
-	bne.n	.L_0810b14a
-	adds	r0, r6, #0
-	bl	0x080c8590
-	cmp	r0, #0
-	bne.n	.L_0810b15e
-	mov	r3, r8
-	strb	r0, [r3, #0]
-	b.n	.L_0810b15e
-.L_0810b14a:
-	cmp	r7, #2
-	bne.n	.L_0810b15e
-	adds	r0, r6, #0
-	bl	0x080c8590
-	cmp	r0, #0
-	bne.n	.L_0810b15e
-	adds	r0, r6, #0
-	bl	0x080c85b8
-.L_0810b15e:
-	add	sp, #12
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
-	.2byte 0x0000
+.L_0810b0b8:
+	.4byte 0x000012de

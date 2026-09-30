@@ -169,7 +169,17 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
     let mut regions: Vec<Region> = relist::placed_sections(map)
         .into_iter()
         .filter_map(|placed| {
-            let stem = stem(&placed.object)?;
+            // Objects from outside the build tree, such as the compiler's
+            // library members, take bytes too.
+            let Some(stem) = stem(&placed.object) else {
+                return Some(Region {
+                    start: placed.address,
+                    end: placed.address + placed.size,
+                    kind: RegionKind::Other,
+                    object: placed.object.clone(),
+                    section: placed.section,
+                });
+            };
             let path = Path::new(stem);
             let listing = path.parent() == Some(Path::new(&options.listings));
             let leaf = path.file_name()?.to_string_lossy().into_owned();
@@ -229,6 +239,18 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
         });
     }
     regions.sort_by_key(|region| (region.start, region.end));
+    // A listing placed after an object that ends off a word boundary was
+    // aligned by the linker; it takes the padding as its own bytes.
+    for index in 1..regions.len() {
+        let before = regions[index - 1].end;
+        let region = &mut regions[index];
+        if region.kind == (RegionKind::Listing { regenerate: true })
+            && before < region.start
+            && region.start - before < 4
+        {
+            region.start = before;
+        }
+    }
     regions
 }
 
@@ -236,6 +258,20 @@ fn hex(field: &str) -> Option<u32> {
     u64::from_str_radix(field.strip_prefix("0x")?, 16)
         .ok()
         .and_then(|value| u32::try_from(value).ok())
+}
+
+fn maps_in(directory: &Path, found: &mut Vec<PathBuf>) {
+    let Ok(entries) = fs::read_dir(directory) else {
+        return;
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            maps_in(&path, found);
+        } else if path.extension().is_some_and(|extension| extension == "map") {
+            found.push(path);
+        }
+    }
 }
 
 fn objects_in(directory: &Path, found: &mut Vec<PathBuf>) {
@@ -259,8 +295,27 @@ fn external(options: &Options, regenerated: &BTreeSet<String>) -> Result<BTreeSe
     for directory in &options.objects {
         objects_in(directory, &mut objects);
     }
+    // Only objects a link placed count: a build tree keeps stale ones.
+    let mut maps = vec![options.map.clone()];
+    for directory in &options.objects {
+        maps_in(directory, &mut maps);
+    }
+    let mut linked = BTreeSet::new();
+    for map in &maps {
+        let text = read_text(map)?;
+        linked.extend(
+            relist::placed_sections(&text)
+                .into_iter()
+                .map(|placed| placed.object),
+        );
+    }
     let mut names = BTreeSet::new();
     for object in objects {
+        let absolute =
+            fs::canonicalize(&object).map_err(|error| format!("{}: {error}", object.display()))?;
+        if !linked.contains(absolute.to_string_lossy().as_ref()) {
+            continue;
+        }
         let text = object.to_string_lossy();
         let listing = stem(&text).is_some_and(|stem| {
             Path::new(stem).parent() == Some(Path::new(&options.listings))

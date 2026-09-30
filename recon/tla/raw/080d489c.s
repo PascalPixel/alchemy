@@ -3,122 +3,124 @@
 	.global Func_080d489c
 	.thumb_func
 Func_080d489c:
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	mov	sl, r0
-	mov	r8, r1
-	bl	ObjectTable_Get
-	adds	r7, r0, #0
-	movs	r5, #0
-	movs	r6, #0
-	cmp	r7, #0
-	beq.n	.L_080d4984
-	movs	r3, #3
-	mov	r1, r8
-	ands	r3, r1
-	cmp	r3, #0
-	beq.n	.L_080d48e0
-	cmp	r3, #2
-	beq.n	.L_080d48ce
-	ldr	r0, [r7, #104]
-	bl	0x080d4868
-	cmp	r0, #0
-	beq.n	.L_080d48f0
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	mov r10, r0
+	mov r8, r1
+	bl ObjectTable_Get
+	adds r7, r0, #0
+	movs r5, #0
+	movs r6, #0
+	cmp r7, #0
+	beq .L_080d4984
+	movs r3, #3
+	mov r1, r8
+	ands r3, r1
+	cmp r3, #0
+	beq .L_080d48e0
+	cmp r3, #2
+	beq .L_080d48ce
+	ldr r0, [r7, #104]
+	bl Func_080d4868
+	cmp r0, #0
+	beq .L_080d48f0
 .L_080d48ce:
-	movs	r0, #132
-	lsls	r0, r0, #1
-	ldr	r1, [r7, #8]
-	ldr	r2, [r7, #12]
-	ldr	r3, [r7, #16]
-	bl	Func_080200c0
-	adds	r5, r0, #0
-	b.n	.L_080d48f0
+	movs r0, #132
+	lsls r0, r0, #1
+	ldr r1, [r7, #8]
+	ldr r2, [r7, #12]
+	ldr r3, [r7, #16]
+	bl Func_080200c0
+	adds r5, r0, #0
+	b .L_080d48f0
 .L_080d48e0:
-	ldr	r5, [r7, #104]
-	cmp	r5, #0
-	beq.n	.L_080d4984
-	adds	r0, r5, #0
-	bl	0x080200c8
-	str	r6, [r7, #104]
-	b.n	.L_080d4984
+	ldr r5, [r7, #104]
+	cmp r5, #0
+	beq .L_080d4984
+	adds r0, r5, #0
+	bl Func_080200c8
+	str r6, [r7, #104]
+	b .L_080d4984
 .L_080d48f0:
-	cmp	r5, #0
-	beq.n	.L_080d4984
-	movs	r6, #3
-	mov	r2, r8
-	ands	r6, r2
-	cmp	r6, #1
-	beq.n	.L_080d4904
-	cmp	r6, #2
-	beq.n	.L_080d4916
-	b.n	.L_080d492e
+	cmp r5, #0
+	beq .L_080d4984
+	movs r6, #3
+	mov r2, r8
+	ands r6, r2
+	cmp r6, #1
+	beq .L_080d4904
+	cmp r6, #2
+	beq .L_080d4916
+	b .L_080d492e
 .L_080d4904:
-	adds	r0, r5, #0
-	movs	r1, #1
-	bl	Object_SetMode
-	adds	r3, r5, #0
-	adds	r3, #100
-	str	r5, [r7, #104]
-	strh	r6, [r3, #0]
-	b.n	.L_080d492e
+	adds r0, r5, #0
+	movs r1, #1
+	bl Object_SetMode
+	adds r3, r5, #0
+	adds r3, #100
+	str r5, [r7, #104]
+	strh r6, [r3]
+	b .L_080d492e
 .L_080d4916:
-	adds	r0, r5, #0
-	movs	r1, #2
-	bl	Object_SetMode
-	ldr	r1, [pc, #72]
-	adds	r0, r5, #0
-	bl	Object_SetCallback
-	adds	r2, r5, #0
-	adds	r2, #100
-	movs	r3, #1
-	strh	r3, [r2, #0]
+	adds r0, r5, #0
+	movs r1, #2
+	bl Object_SetMode
+	ldr r1, .L_080d4968
+	adds r0, r5, #0
+	bl Object_SetCallback
+	adds r2, r5, #0
+	adds r2, #100
+	movs r3, #1
+	strh r3, [r2]
 .L_080d492e:
-	ldr	r2, [pc, #52]
-	adds	r3, r5, #0
-	adds	r3, #102
-	mov	r1, sl
-	strh	r1, [r3, #0]
-	subs	r3, #17
-	strb	r2, [r3, #0]
-	ldr	r3, [pc, #44]
-	ldr	r6, [r5, #80]
-	str	r3, [r5, #108]
-	movs	r3, #128
-	strb	r2, [r6, #26]
-	lsls	r3, r3, #1
-	mov	r2, r8
-	ands	r3, r2
-	str	r7, [r5, #104]
-	cmp	r3, #0
-	beq.n	.L_080d4970
-	ldrb	r3, [r6, #9]
-	movs	r2, #13
-	negs	r2, r2
-	ands	r2, r3
-	movs	r3, #4
-	orrs	r2, r3
-	strb	r2, [r6, #9]
-	b.n	.L_080d4984
-	movs	r0, r0
+	ldr r2, .L_080d4964
+	adds r3, r5, #0
+	adds r3, #102
+	mov r1, r10
+	strh r1, [r3]
+	subs r3, #17
+	strb r2, [r3]
+	ldr r3, .L_080d496c
+	ldr r6, [r5, #80]
+	str r3, [r5, #108]
+	movs r3, #128
+	strb r2, [r6, #26]
+	lsls r3, r3, #1
+	mov r2, r8
+	ands r3, r2
+	str r7, [r5, #104]
+	cmp r3, #0
+	beq .L_080d4970
+	ldrb r3, [r6, #9]
+	movs r2, #13
+	negs r2, r2
+	ands r2, r3
+	movs r3, #4
+	orrs r2, r3
+	strb r2, [r6, #9]
+	b .L_080d4984
+	.2byte 0x0000
+.L_080d4964:
 	.4byte 0x00000000
-	.4byte 0x080f341c
-	.2byte 0x476d
-	.2byte 0x080d
+.L_080d4968:
+	.4byte Data_080f341c
+.L_080d496c:
+	.4byte Func_080d476c
 .L_080d4970:
-	ldr	r3, [r7, #80]
-	ldrb	r1, [r6, #9]
-	ldrb	r3, [r3, #9]
-	movs	r2, #12
-	ands	r2, r3
-	movs	r3, #13
-	negs	r3, r3
-	ands	r3, r1
-	orrs	r3, r2
-	strb	r3, [r6, #9]
+	ldr r3, [r7, #80]
+	ldrb r1, [r6, #9]
+	ldrb r3, [r3, #9]
+	movs r2, #12
+	ands r2, r3
+	movs r3, #13
+	negs r3, r3
+	ands r3, r1
+	orrs r3, r2
+	strb r3, [r6, #9]
 .L_080d4984:
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7, pc}
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7, pc}

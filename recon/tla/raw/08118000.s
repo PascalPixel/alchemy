@@ -2,7 +2,10 @@
 	.thumb
 	.global Resource_FarCall009
 Resource_FarCall009:
-	.4byte 0x47204c00
-	.4byte 0x08118959
-	.4byte 0x47204c00
-	.4byte 0x08125aa1
+	.global Func_08118000
+	.thumb_func
+Func_08118000:
+	ldr r4, .L_08118004
+	bx r4
+.L_08118004:
+	.4byte Func_08118958

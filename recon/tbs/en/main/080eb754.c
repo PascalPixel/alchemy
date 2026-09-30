@@ -160,7 +160,7 @@ void Unnamed_080eb754(s32 arg0) {
     M2C_FIELD((void *)0x05000000, s16 *, 2) = (s16) (s32) &Value_00000000;
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    Unnamed_080cd104(1, 0);
+    BattleEffect_WipeCanvas(1, 0);
     BattleFx_SpawnObjects(9, 0x175, 1);
     gProjection[4] = 0xF0;
     BattleFx_SelectLivingTargets(work->effect);
@@ -168,7 +168,7 @@ void Unnamed_080eb754(s32 arg0) {
     *(u16 *)0x04000038 = (u16) (s32) &Value_000000ca;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32) &Value_0000003a, 0);
-    Unnamed_080cd104(1, 1);
+    BattleEffect_WipeCanvas(1, 1);
     Resource_LoadAndDecompress((s32) &Value_00000073, sheet, 0, 0);
     Resource_LoadAndDecompress((s32) &Value_00000095, work, 1, 1);
     M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;

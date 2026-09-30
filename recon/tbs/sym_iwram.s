@@ -189,6 +189,8 @@ Data_03001e44:
 	.global Data_03001e50
 Data_03001e50:
 	.global gWorkSlot
+	.type gWorkSlot, %object
+	.size gWorkSlot, 0x100 @ Runtime_InitializeHeap clears 0x40 words
 gWorkSlot:
 	.space 0x0000000c
 	.global gAnimationObjects

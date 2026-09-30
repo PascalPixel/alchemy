@@ -10,7 +10,7 @@
  * prologue (work = heap[0], draw destination = heap[1], effect state
  * republished at work + 0x7828), the `Value_XXXXXXXX` pooled resource-id
  * idiom, the BattleEffect_LoadWork(46/47, ...) blit-routine publication into
- * gWorkSlot[] and the Data_080edebe/eca/ed0 decoration tables are all
+ * gWorkSlot[] and the BattleFx_GlintCell{Offsets,Widths,Heights} decoration tables are all
  * reused from those owners unchanged.
  *
  * Behaviour: the second argument selects one of eight scene variants.  The
@@ -85,9 +85,9 @@ typedef s32 (*IntegerSqrtFn)(s32 value);
    published for that display kind. */
 extern void *gWorkSlot[];
 
-extern const u16 Data_080edebe[];
-extern const u8 Data_080edeca[];
-extern const u8 Data_080eded0[];
+extern const u16 BattleFx_GlintCellOffsets[];
+extern const u8 BattleFx_GlintCellWidths[];
+extern const u8 BattleFx_GlintCellHeights[];
 extern const u8 Data_080ee2ae[];
 
 /* Value_ symbols carry a resource number the reference loads from its pool
@@ -319,16 +319,16 @@ void BattleFx_RenderMode(void *object, u32 kind)
                         radius = (s32)(Random16() & 31) + 4;
                         x = ((base[0] / 2)
                                 + ((radius * Trig_Sin(seed)) >> 17))
-                            - (Data_080edeca[frame & 3] >> 1);
+                            - (BattleFx_GlintCellWidths[frame & 3] >> 1);
                         y = (base[1] - ((radius * Trig_Cos(seed)) >> 16))
-                            - (Data_080eded0[frame & 3] >> 1);
+                            - (BattleFx_GlintCellHeights[frame & 3] >> 1);
                         BattleEffect_LoadWork(47, 7, 7,
                             3 | Data_080ee2ae[Random16() & 3], 2);
                         ((DrawRectangleFn)gWorkSlot[47])(destination,
-                            ((s8 *)work + Data_080edebe[frame & 3])
+                            ((s8 *)work + BattleFx_GlintCellOffsets[frame & 3])
                                 + (150 << 6),
-                            x, y + 16, Data_080edeca[frame & 3],
-                            Data_080eded0[frame & 3]);
+                            x, y + 16, BattleFx_GlintCellWidths[frame & 3],
+                            BattleFx_GlintCellHeights[frame & 3]);
                         Runtime_ReleaseHeapBlock(47);
                         j++;
                     } while (j != 2);

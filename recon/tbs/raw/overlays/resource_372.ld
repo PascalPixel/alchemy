@@ -7,8 +7,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ARASHI.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_K.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ARASHI2.o"(.text)
         "*/resource_372_overlay.o"(.text.x0200b1ac)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_F.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/PULSING_GLOW.o"(.text)
@@ -20,7 +18,7 @@ SECTIONS
     }
     .bss (NOLOAD) :
     {
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_K.o"(.bss COMMON)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ARASHI.o"(.bss COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -1,13 +1,21 @@
 // Whole-file compiler-family decisions. Every file uses its family's one
 // flag set from routing.rs; these declarations contain no function addresses.
 
-// The shared MusicPlayer2000 C library uses agbcc -O2 in both games.
-// This directory contains only that library's reconstructed C modules.
-pub static AGBCC_DIRECTORIES: &[&str] = &["games/COMMON/SRC/SOUND"];
-
-// Edition-specific MusicPlayer2000 modules and the two agbcc -O2 flash helpers.
-// Their neighbouring game-owned SOUND and SAVE files keep the Game family.
+// The MusicPlayer2000 library's modules, shared and edition-specific, and the
+// two agbcc -O2 flash helpers. Their neighbouring game-owned SOUND and SAVE
+// files keep the Game family.
 pub static AGBCC_SOURCES: &[&str] = &[
+    "games/COMMON/SRC/SOUND/SOUND.C",
+    "games/COMMON/SRC/SOUND/SOUND2.C",
+    "games/COMMON/SRC/SOUND/SOUND3.C",
+    "games/COMMON/SRC/SOUND/SOUND4.C",
+    "games/COMMON/SRC/SOUND/SOUND5.C",
+    "games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C",
+    "games/COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C",
+    "games/COMMON/SRC/SOUND/MUSIC_TRACK_READ_VOICE_TARGET.C",
+    "games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_DECAY.C",
+    "games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_SUSTAIN.C",
+    "games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_RELEASE.C",
     "games/THE BROKEN SEAL/SRC/SOUND/COMMAND_INVOKE_SLOT34.C",
     "games/THE BROKEN SEAL/SRC/SOUND/COMMAND_INVOKE_SLOT35.C",
     "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C",

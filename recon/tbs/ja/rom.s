@@ -863,12 +863,6 @@ Func_08097644:
 	.thumb_func
 FunctionHead_08097c3c:
 	.incbin "baserom.gba", 0x0008ec24, 0x00000344
-	.section .rom.0008f388, "ax"
-	.global RunBattleEffect08
-	.type RunBattleEffect08, %function
-	.thumb_func
-RunBattleEffect08:
-	.incbin "baserom.gba", 0x0008f388, 0x0000012c
 	.section .rom.000909e2, "ax"
 	.incbin "baserom.gba", 0x000909e2, 0x00000002
 	.section .rom.000909e4, "ax"

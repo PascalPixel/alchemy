@@ -329,12 +329,6 @@ Func_08018cac:
 	.thumb_func
 UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x000190e0, 0x00000480
-	.section .rom.000195d8, "ax"
-	.global UiText_DecodeMessage
-	.type UiText_DecodeMessage, %function
-	.thumb_func
-UiText_DecodeMessage:
-	.incbin "baserom.gba", 0x000195d8, 0x00000148
 	.section .rom.00019b68, "ax"
 	.incbin "baserom.gba", 0x00019b68, 0x00000110
 	.section .rom.00019ff4, "ax"
@@ -391,54 +385,6 @@ Menu_CreateWorkspaceWindows:
 	.thumb_func
 UiText_RenderStringTiles:
 	.incbin "baserom.gba", 0x0001ddf8, 0x00000410
-	.section .rom.0001e6f4, "ax"
-	.global UiText_DrawResource
-	.type UiText_DrawResource, %function
-	.thumb_func
-UiText_DrawResource:
-	.incbin "baserom.gba", 0x0001e6f4, 0x00000074
-	.section .rom.0001e768, "ax"
-	.global UiText_DrawCharacterAtOffset
-	.type UiText_DrawCharacterAtOffset, %function
-	.thumb_func
-UiText_DrawCharacterAtOffset:
-	.incbin "baserom.gba", 0x0001e768, 0x00000098
-	.section .rom.0001e800, "ax"
-	.global UiText_DrawString
-	.type UiText_DrawString, %function
-	.thumb_func
-UiText_DrawString:
-	.incbin "baserom.gba", 0x0001e800, 0x00000058
-	.section .rom.0001e858, "ax"
-	.global UiText_DrawStringAtOffset
-	.type UiText_DrawStringAtOffset, %function
-	.thumb_func
-UiText_DrawStringAtOffset:
-	.incbin "baserom.gba", 0x0001e858, 0x00000090
-	.section .rom.0001e8e8, "ax"
-	.global UiText_DrawStringInWindow
-	.type UiText_DrawStringInWindow, %function
-	.thumb_func
-UiText_DrawStringInWindow:
-	.incbin "baserom.gba", 0x0001e8e8, 0x00000060
-	.section .rom.0001e948, "ax"
-	.global UiText_DrawNumber
-	.type UiText_DrawNumber, %function
-	.thumb_func
-UiText_DrawNumber:
-	.incbin "baserom.gba", 0x0001e948, 0x00000034
-	.section .rom.0001e97c, "ax"
-	.global UiText_DrawNumberAtOffset
-	.type UiText_DrawNumberAtOffset, %function
-	.thumb_func
-UiText_DrawNumberAtOffset:
-	.incbin "baserom.gba", 0x0001e97c, 0x00000034
-	.section .rom.0001e9b0, "ax"
-	.global UiText_DrawNumberInWindow
-	.type UiText_DrawNumberInWindow, %function
-	.thumb_func
-UiText_DrawNumberInWindow:
-	.incbin "baserom.gba", 0x0001e9b0, 0x000000d4
 	.section .rom.0001ef10, "ax"
 	.incbin "baserom.gba", 0x0001ef10, 0x00000298
 	.section .rom.0001f1a8, "ax"
@@ -831,12 +777,6 @@ Func_08097644:
 	.thumb_func
 FunctionHead_08097c3c:
 	.incbin "baserom.gba", 0x00097cc8, 0x00000344
-	.section .rom.0009842c, "ax"
-	.global RunBattleEffect08
-	.type RunBattleEffect08, %function
-	.thumb_func
-RunBattleEffect08:
-	.incbin "baserom.gba", 0x0009842c, 0x0000012c
 	.section .rom.00099a86, "ax"
 	.incbin "baserom.gba", 0x00099a86, 0x00000002
 	.section .rom.00099a88, "ax"

@@ -335,12 +335,6 @@ Func_08018cac:
 	.thumb_func
 UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x00017de8, 0x00000480
-	.section .rom.000182e0, "ax"
-	.global UiText_DecodeMessage
-	.type UiText_DecodeMessage, %function
-	.thumb_func
-UiText_DecodeMessage:
-	.incbin "baserom.gba", 0x000182e0, 0x00000148
 	.section .rom.00018870, "ax"
 	.incbin "baserom.gba", 0x00018870, 0x00000110
 	.section .rom.00018cfc, "ax"
@@ -789,12 +783,6 @@ Func_08097644:
 	.thumb_func
 FunctionHead_08097c3c:
 	.incbin "baserom.gba", 0x0009b2d8, 0x00000344
-	.section .rom.0009ba3c, "ax"
-	.global RunBattleEffect08
-	.type RunBattleEffect08, %function
-	.thumb_func
-RunBattleEffect08:
-	.incbin "baserom.gba", 0x0009ba3c, 0x0000012c
 	.section .rom.0009d096, "ax"
 	.incbin "baserom.gba", 0x0009d096, 0x00000002
 	.section .rom.0009d098, "ax"

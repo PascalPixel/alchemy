@@ -114,6 +114,9 @@ Func_0802b71c:
 	.4byte 0x0202e002
 	.2byte 0xe000
 	.2byte 0x0202
+	.global Func_0802b7e0
+	.thumb_func
+Func_0802b7e0:
 	push	{r5, lr}
 	lsls	r3, r0, #1
 	ldr	r2, [pc, #56]

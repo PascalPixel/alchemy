@@ -42,7 +42,7 @@ Func_08044558:
 	adds	r3, r3, r1
 	ldrb	r0, [r2, #0]
 	ldrb	r1, [r3, #0]
-	bl	0x0803f9c0
+	bl	Func_0803f9c0
 	movs	r5, #2
 	movs	r1, #6
 	movs	r2, #24

@@ -205,6 +205,9 @@ Func_0803f968:
 	lsls	r0, r4, #16
 	lsrs	r0, r0, #16
 	pop	{r5, pc}
+	.global Func_0803f9c0
+	.thumb_func
+Func_0803f9c0:
 .L_0803f9c0:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -1054,6 +1057,9 @@ Func_0803f968:
 	.4byte 0x0805ea7f
 	.2byte 0xea81
 	.2byte 0x0805
+	.global Func_080400e8
+	.thumb_func
+Func_080400e8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1364,7 +1370,7 @@ Func_0803f968:
 	ldrsb	r0, [r1, r0]
 	movs	r1, #0
 	ldrsb	r1, [r2, r1]
-	bl	.L_0803f9c0
+	bl	Func_0803f9c0
 	mov	r1, r8
 	movs	r0, #12
 	ldrsh	r3, [r1, r0]
@@ -1620,7 +1626,7 @@ Func_0803f968:
 	ldrb	r0, [r3, #0]
 	adds	r3, r5, r2
 	ldrb	r1, [r3, #0]
-	bl	.L_0803f9c0
+	bl	Func_0803f9c0
 .L_0804058e:
 	bl	.L_0803fd14
 	movs	r0, #1

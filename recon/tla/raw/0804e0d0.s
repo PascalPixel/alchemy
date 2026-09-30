@@ -51,7 +51,7 @@ Func_0804e0d0:
 .L_0804e12c:
 	cmp	r5, #2
 	bne.n	.L_0804e138
-	bl	0x080400e8
+	bl	Func_080400e8
 	cmp	r0, r6
 	beq.n	.L_0804e0d4
 .L_0804e138:

@@ -115,6 +115,9 @@
 	movs	r0, r0
 	.2byte 0x1f40
 	.2byte 0x080b
+	.global Inventory_CountItem
+	.thumb_func
+Inventory_CountItem:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

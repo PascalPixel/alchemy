@@ -868,7 +868,7 @@ Func_0803c40c:
 	cmp	r3, #0
 	bne.n	.L_0803caee
 	movs	r0, #200
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0803caee:
 	ldr	r3, [pc, #16]
 	add	sp, #12

@@ -18,7 +18,7 @@ Func_080d0184:
 	lsls	r1, r1, #3
 	movs	r0, #124
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	adds	r4, r0, #0
 	mov	r0, sp

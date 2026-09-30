@@ -581,7 +581,7 @@ Func_08044a58:
 	adds	r5, r0, #0
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	ldr	r3, [pc, #36]
 	lsls	r5, r5, #2
 	adds	r6, r0, #0
@@ -596,7 +596,7 @@ Func_08044a58:
 	adds	r2, r6, #0
 	bl	VramBlock_LoadCached
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_08044f80:
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0

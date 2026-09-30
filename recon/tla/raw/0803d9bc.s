@@ -83,7 +83,7 @@ Func_0803d9bc:
 	mov	r1, r9
 	str	r0, [r1, #0]
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5
@@ -92,6 +92,9 @@ Func_0803d9bc:
 	.4byte 0x0804e684
 	.2byte 0x4a14
 	.2byte 0x0805
+	.global Ui_PrepareTransferFromTableEntry
+	.thumb_func
+Ui_PrepareTransferFromTableEntry:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -174,7 +177,7 @@ Func_0803d9bc:
 	mov	r1, r8
 	str	r0, [r1, #0]
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r1, [sp, #20]
 	ldr	r2, [pc, #32]
 	lsls	r1, r1, #5

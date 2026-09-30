@@ -757,9 +757,9 @@ BattlePres_RunBurstScene:
 	b.n	.L_0815a480
 .L_0815a710:
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08014de4
 	ldr	r0, [sp, #44]
 	ldr	r1, [sp, #20]
@@ -851,9 +851,9 @@ BattlePres_RunBurstScene:
 	cmp	sl, r2
 	bne.n	.L_0815a754
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [sp, #52]
 	cmp	r3, #3
 	bgt.n	.L_0815a7ea
@@ -961,7 +961,7 @@ BattlePres_RunBurstScene:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #1
 	add	sl, r3
 	mov	r5, sl
@@ -1028,7 +1028,7 @@ BattlePres_RunBurstScene:
 	cmp	r2, #16
 	bne.n	.L_0815a8f2
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0815a94a:
 	movs	r0, #8
 	movs	r1, #8
@@ -2148,9 +2148,9 @@ BattlePres_RunBurstScene:
 	ldr	r0, [pc, #60]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #238
 	ldr	r7, [sp, #48]
 	lsls	r0, r0, #7

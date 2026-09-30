@@ -311,7 +311,7 @@ Func_0802b700:
 	bls.n	.L_0802b948
 .L_0802b970:
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 .L_0802b978:
 	pop	{r3, r5, r6, r7}
@@ -468,7 +468,7 @@ Func_0802b700:
 	str	r2, [r3, #0]
 	movs	r0, #48
 	movs	r1, #76
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #208
 	lsls	r1, r1, #6
 	mov	sl, r0

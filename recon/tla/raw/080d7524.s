@@ -702,7 +702,7 @@ Func_080d7524:
 	cmp	r7, #0
 	bge.n	.L_080d7acc
 	movs	r0, #224
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{r5, r6, r7, pc}

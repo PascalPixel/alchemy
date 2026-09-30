@@ -1414,7 +1414,7 @@ Func_0803acd4:
 	adds	r2, r0, r1
 	strh	r3, [r2, #0]
 	movs	r0, #200
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r5, #152
 	ldr	r2, [sp, #44]
 	add	r0, sp, #32

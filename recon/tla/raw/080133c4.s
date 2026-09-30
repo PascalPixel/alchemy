@@ -417,7 +417,7 @@ WaitFrames:
 	strh	r3, [r2, #0]
 	bl	.L_080134b0
 	movs	r0, #80
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	0x08013ffc
 	ldr	r2, [pc, #208]
 	ldr	r3, [r2, #0]

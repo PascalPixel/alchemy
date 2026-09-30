@@ -515,9 +515,9 @@ Func_0816342a:
 	ldr	r0, [pc, #172]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [sp, #124]
 	cmp	r0, #51
 	beq.n	.L_08163840
@@ -578,9 +578,9 @@ Func_0816342a:
 	ldr	r0, [pc, #48]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 .L_081638ac:
 	add	sp, #264

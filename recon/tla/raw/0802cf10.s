@@ -63,7 +63,7 @@ Func_0802cf10:
 	ldr	r0, [pc, #12]
 	bl	Func_08014644
 	movs	r0, #112
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	.2byte 0xcfa5
 	.2byte 0x0802

@@ -66,7 +66,7 @@ UiTextResource_Release:
 	strh	r0, [r5, #14]
 	strh	r3, [r5, #38]
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0803f74c:
 	pop	{r3}
 	mov	r8, r3

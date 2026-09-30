@@ -237,7 +237,7 @@
 	adds	r5, r0, #0
 	lsls	r1, r1, #4
 	movs	r0, #108
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #230
 	lsls	r3, r3, #1
 	adds	r0, r0, r3

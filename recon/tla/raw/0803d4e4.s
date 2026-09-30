@@ -74,7 +74,7 @@ Ui_BuildPairedPatternsToSlot:
 	ldr	r2, [sp, #0]
 	str	r0, [r2, #0]
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #4
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

@@ -1109,9 +1109,9 @@ Func_08191c20:
 	ldr	r0, [pc, #120]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r5, #238
 	ldr	r1, [sp, #20]
 	movs	r0, #5

@@ -83,7 +83,7 @@ Func_0803d5c4:
 	mov	r1, r9
 	str	r0, [r1, #0]
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5
@@ -92,6 +92,9 @@ Func_0803d5c4:
 	.4byte 0x0804e684
 	.2byte 0xeb58
 	.2byte 0x0804
+	.global ItemIcon_Compose
+	.thumb_func
+ItemIcon_Compose:
 .L_0803d680:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -384,7 +387,7 @@ UiIcon_CopyResourceToSlot:
 	mov	r1, r8
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	.L_0803d680
+	bl	ItemIcon_Compose
 	movs	r3, #128
 	lsls	r3, r3, #3
 	adds	r5, r5, r3
@@ -393,7 +396,7 @@ UiIcon_CopyResourceToSlot:
 	mov	r0, sl
 	bl	VramBlock_LoadCached
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 	pop	{r3, r5}
 	mov	r8, r3

@@ -7,7 +7,7 @@ Func_08014de4:
 	movs	r1, #48
 	movs	r0, #8
 	ldr	r5, [pc, #36]
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	ldr	r2, [pc, #32]
 	movs	r3, #0
 	str	r3, [r2, #0]

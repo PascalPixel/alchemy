@@ -11,7 +11,7 @@ Func_080d6b90:
 	adds	r1, #20
 	movs	r0, #116
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #128
 	adds	r5, r0, #0
 	adds	r7, r5, #0
@@ -28,7 +28,7 @@ Func_080d6b90:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #132]
@@ -41,7 +41,7 @@ Func_080d6b90:
 	bl	VramBlock_LoadCached
 	str	r0, [r5, #4]
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r6, #0
 	mov	r8, r6
 .L_080d6bee:
@@ -358,7 +358,7 @@ Func_080d6b90:
 	adds	r1, #20
 	movs	r0, #116
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #128
 	adds	r5, r0, #0
 	adds	r7, r5, #0
@@ -375,7 +375,7 @@ Func_080d6b90:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #136]
@@ -388,7 +388,7 @@ Func_080d6b90:
 	bl	VramBlock_LoadCached
 	str	r0, [r5, #4]
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	movs	r5, #0
@@ -460,7 +460,7 @@ Func_080d6b90:
 	adds	r1, #20
 	movs	r0, #116
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #128
 	adds	r5, r0, #0
 	adds	r7, r5, #0
@@ -477,7 +477,7 @@ Func_080d6b90:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #136]
@@ -490,7 +490,7 @@ Func_080d6b90:
 	bl	VramBlock_LoadCached
 	str	r0, [r5, #4]
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	movs	r5, #0

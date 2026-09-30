@@ -1152,7 +1152,7 @@ Func_081a7870:
 	adds	r1, #4
 	movs	r0, #128
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	adds	r4, r0, #0
 	mov	r0, sp
@@ -1203,6 +1203,6 @@ Func_081a7870:
 	ldr	r0, [pc, #12]
 	bl	Func_08014644
 	movs	r0, #128
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	.4byte 0x081a78c1

@@ -666,7 +666,7 @@ Func_08125c94:
 	lsls	r2, r2, #19
 	strh	r3, [r2, #0]
 	movs	r0, #168
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #156
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -897,7 +897,7 @@ Func_08125c94:
 	lsls	r5, r5, #2
 	adds	r1, r5, #0
 	movs	r0, #40
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #176
@@ -915,6 +915,6 @@ Func_08125c94:
 	.2byte 0x0300
 	push	{lr}
 	movs	r0, #40
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	.2byte 0x0000

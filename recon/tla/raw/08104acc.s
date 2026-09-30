@@ -12,7 +12,7 @@ Func_08104acc:
 	lsls	r1, r1, #3
 	movs	r0, #68
 	sub	sp, #12
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #1
 	add	r2, sp, #8
 	add	r3, sp, #4
@@ -27,10 +27,10 @@ Func_08104acc:
 	adds	r5, r5, r3
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	adds	r5, r0, #0
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	adds	r0, r5, #0
 	add	sp, #12
 	pop	{r3}

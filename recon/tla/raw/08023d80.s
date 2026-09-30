@@ -177,7 +177,7 @@ Func_08023d80:
 	cmp	r6, #0
 	bge.n	.L_08023ec0
 	movs	r0, #80
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #12
 	pop	{r3}
 	mov	r8, r3

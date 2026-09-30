@@ -342,7 +342,7 @@ Func_080ceffc:
 	orrs	r3, r0
 	strh	r3, [r6, #8]
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [pc, #56]
 	str	r3, [r7, #108]
 	movs	r3, #192

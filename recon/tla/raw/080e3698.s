@@ -1446,7 +1446,7 @@ Func_080e3698:
 .L_080e4222:
 	bl	0x080dc384
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #32
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -1717,7 +1717,7 @@ Func_080e3698:
 	cmp	r3, #0
 	bne.n	.L_080e444c
 	movs	r0, #80
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_080e444c:
 	pop	{r3, r5, r6}
 	mov	r8, r3

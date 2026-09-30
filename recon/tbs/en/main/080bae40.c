@@ -1,3 +1,24 @@
+/* 2026-09-30 (Mercury): 1864 of 1864 bytes, 4 differing halfwords (was 195
+   at 1868 bytes): the plain three-statement swap and a separate this_unit
+   for the sort fix the size and every sort register; left are two ldrsh
+   scratch registers in CHECK_EFFECT_TARGET's damage-class switch (case 9 r0
+   for r1, case 0 r1 for r3), reload's round-robin choice, which the ROM's
+   picks match only for a case order that its layout contradicts. */
+/* 2026-09-30: 4 of 1864 bytes differ (1864 vs 1864). The sort reads its
+ * two units into their own locals (this_unit, next_unit): the ROM keeps the
+ * filter loop's unit in r5 but the sort's first unit in r8, so they are
+ * different variables. The swap is the plain three-statement swap, which
+ * gives the ROM's pointer walk of unit_ids[inner + 1] and the size.
+ * Remaining: the damage-class switch's ldrsh scratch registers. Reload
+ * hands scratches out round-robin over its spill registers; here case 9
+ * gets r0 and case 0 r1 where the ROM has r1 and r3 (case 2/3 r4, case 0's
+ * second load r4 and case 1/4/5/7/8 r0 agree). The ROM's picks are exactly
+ * what reload gives when it meets the cases in the order 2/3, 1/4/5/7/8,
+ * 9, 0, but that source order lays the cases out in that order too (all 24
+ * case orders tried). Also tried: pp > 0, if ((unit)->pp), hp > 0,
+ * max_hp > hp, !(applies), & 15, split hp == 0 test, u32/u8 damage_class,
+ * switch on the expression, u32 applies, every declaration slot for
+ * this_unit: none moves the scratch. */
 /* 2026-09-29: the anonymous struct type of the mark local is now named
  * TargetMark at file scope, because the permuter's reprint dropped the
  * inline struct body. Eight minutes of permutation: 2688 -> 2064; with the
@@ -234,6 +255,7 @@ s32 BattleTarget_SelectForAction(
     struct BattleSession *turn_order;
     struct BattleUnit *unit;
     struct BattleUnit *next_unit;
+    struct BattleUnit *this_unit;
     s32 candidate_count;
     s32 target_index;
     s32 target_count;
@@ -331,22 +353,19 @@ scan_complete:
             for (inner_index = target_index;
                  inner_index < target_count - 1;
                  inner_index++) {
-                unit = Owner_GetStateFar(unit_ids[inner_index]);
+                this_unit = Owner_GetStateFar(unit_ids[inner_index]);
                 next_unit = Owner_GetStateFar(unit_ids[inner_index + 1]);
                 if (Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
                         ->target_strategy == 0) {
-                    value = unit->hp;
+                    value = this_unit->hp;
                     next_value = next_unit->hp;
                 } else {
-                    value = unit->max_hp;
+                    value = this_unit->max_hp;
                     next_value = next_unit->max_hp;
                 }
                 if (value < next_value) {
-                    s32 next_id;
-
-                    next_id = *(unit_ids + inner_index + 1);
                     temp = unit_ids[inner_index];
-                    unit_ids[inner_index] = next_id;
+                    unit_ids[inner_index] = unit_ids[inner_index + 1];
                     unit_ids[inner_index + 1] = temp;
                     temp = target_positions[inner_index];
                     target_positions[inner_index] =

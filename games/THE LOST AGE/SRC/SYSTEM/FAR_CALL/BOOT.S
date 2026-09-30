@@ -57,7 +57,7 @@ Func_08000130:
 	.global Func_08000140
 	.thumb_func
 Func_08000140:
-	overlay_veneer Func_08014cc0
+	overlay_veneer Runtime_AllocateHeapBlock
 	.global Runtime_AllocateBlockFar
 	.thumb_func
 Runtime_AllocateBlockFar:
@@ -100,7 +100,7 @@ Func_080001b8:
 	.global Func_080001c0
 	.thumb_func
 Func_080001c0:
-	overlay_veneer Func_080142ac
+	overlay_veneer Resource_ActivateEntry
 	.global VramBlock_LoadCachedFar
 	.thumb_func
 VramBlock_LoadCachedFar:

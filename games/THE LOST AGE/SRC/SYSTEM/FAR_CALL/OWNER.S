@@ -82,7 +82,7 @@ Trade_AddOfferFar:
 	overlay_veneer Trade_AddOffer
 	overlay_veneer Djinn_Transfer
 	overlay_veneer Func_080aff28
-	overlay_veneer Func_080aff7c
+	overlay_veneer SummonDefinition_GetNear
 	overlay_veneer Djinn_GetDefinitionHeader
 	.global Party_AdvanceOwnerCountToTargetFar
 	.thumb_func

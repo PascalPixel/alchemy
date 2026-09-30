@@ -700,7 +700,7 @@ Func_0810b7b4:
 	adds	r3, #216
 	mov	r2, sl
 	ldrh	r0, [r2, r3]
-	bl	0x08109a98
+	bl	Shop_GetSellPrice
 	ldr	r5, [pc, #72]
 	ldr	r3, [sp, #4]
 	adds	r1, r7, #0

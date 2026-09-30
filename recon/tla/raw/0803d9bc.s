@@ -15,7 +15,7 @@ Func_0803d9bc:
 	movs	r0, #68
 	mov	sl, r2
 	mov	r9, r3
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #0
 	adds	r5, r0, #0
 	mov	r8, r1
@@ -131,7 +131,7 @@ Ui_PrepareTransferFromTableEntry:
 	movs	r0, #68
 	mov	r8, r3
 	adds	r7, r2, #0
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r6, r0, #0
 	ldr	r0, [pc, #124]
 	bl	Resource_GetTableEntry

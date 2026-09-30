@@ -119,7 +119,7 @@ Func_080cf424:
 	adds	r7, r0, #0
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r2, [r7, #12]
 	movs	r3, #144
 	lsls	r3, r3, #14

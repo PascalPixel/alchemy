@@ -121,7 +121,7 @@ Func_0810b1b4:
 	adds	r5, #72
 	cmp	r7, #17
 	ble.n	.L_0810b25e
-	bl	Func_081084e0
+	bl	AudioCommand_WaitForStateByteClear
 	movs	r2, #160
 	lsls	r2, r2, #3
 	adds	r2, #76
@@ -466,7 +466,7 @@ Func_0810b520:
 	bl	0x080c83b8
 	movs	r0, #86
 	bl	Audio_PlayCue
-	bl	Func_081084e0
+	bl	AudioCommand_WaitForStateByteClear
 	movs	r0, #10
 	bl	WaitFrames
 	bl	Func_080c83a8

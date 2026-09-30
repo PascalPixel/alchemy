@@ -35,7 +35,7 @@ Func_08196404:
 	str	r2, [sp, #12]
 	mov	r8, r3
 	ldr	r7, [pc, #804]
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r6, r0, #0
 	adds	r0, r7, #0
 	adds	r1, r6, #0

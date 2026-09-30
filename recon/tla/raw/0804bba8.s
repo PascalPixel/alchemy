@@ -266,7 +266,7 @@ Func_0804bba8:
 	movs	r1, #144
 	ldr	r0, [pc, #524]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_0804bdc2:
 	ldr	r2, [sp, #88]
 	ldr	r3, [sp, #80]
@@ -1121,7 +1121,7 @@ Func_0804bba8:
 	adds	r3, #37
 	strb	r5, [r3, #0]
 	mov	r0, sl
-	bl	0x08014274
+	bl	Func_08014274
 	mov	r0, fp
 	movs	r1, #1
 	bl	UiWork_Finalize
@@ -1395,7 +1395,7 @@ Func_0804bba8:
 	adds	r3, #37
 	strb	r2, [r3, #0]
 	ldr	r0, [sp, #40]
-	bl	0x08014274
+	bl	Func_08014274
 	mov	r0, fp
 	movs	r1, #1
 	bl	UiWork_Finalize
@@ -1941,7 +1941,7 @@ Func_0804bba8:
 	mov	r0, r9
 	adds	r3, #37
 	strb	r1, [r3, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	mov	r0, fp
 	movs	r1, #1
 	bl	UiWork_Finalize

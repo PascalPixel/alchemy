@@ -200,7 +200,7 @@ Func_081281ec:
 	movs	r5, #0
 	b.n	.L_08128370
 .L_0812835e:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsls	r3, r3, #1
@@ -243,7 +243,7 @@ Func_081281ec:
 	movs	r5, #0
 	b.n	.L_081283c0
 .L_081283b2:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #2
 	lsrs	r0, r0, #16
 	adds	r0, r6, r0
@@ -422,7 +422,7 @@ Func_081281ec:
 	str	r0, [sp, #12]
 	movs	r0, #166
 	lsls	r0, r0, #1
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	fp, r0
 	ldr	r0, [sp, #12]
 	movs	r3, #0

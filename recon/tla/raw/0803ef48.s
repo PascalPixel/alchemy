@@ -211,7 +211,7 @@ Func_0803ef48:
 	ldr	r2, [r5, #4]
 	str	r2, [r3, #0]
 	ldrh	r0, [r5, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	strh	r6, [r5, #10]
 	ldr	r5, [r5, #4]
 	str	r6, [r5, #0]
@@ -327,7 +327,7 @@ Func_0803ef48:
 	bne.n	.L_0803f1b2
 .L_0803f1bc:
 	ldrh	r0, [r5, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r3, [r5, #0]
 	movs	r2, #0
 	strh	r2, [r5, #10]

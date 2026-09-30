@@ -156,7 +156,7 @@ Func_08173588:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #76]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r3, [pc, #44]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -211,24 +211,24 @@ Func_08173588:
 	movs	r6, #0
 	mov	r5, fp
 .L_08173738:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #31
 	ands	r3, r0
 	subs	r3, #16
 	lsls	r3, r3, #16
 	str	r3, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #63
 	ands	r3, r0
 	subs	r3, #16
 	lsls	r3, r3, #16
 	str	r3, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #127
 	ands	r3, r0
 	adds	r3, #128
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r2, #1
 	add	r8, r2
 	mov	r3, r8
@@ -314,7 +314,7 @@ Func_08173588:
 	movs	r3, #104
 	str	r3, [r2, #16]
 	movs	r0, #32
-	bl	0x08014dac
+	bl	Func_08014dac
 	str	r0, [sp, #16]
 	movs	r0, #1
 	bl	0x081969f8
@@ -388,7 +388,7 @@ Func_08173588:
 .L_08173896:
 	bl	Func_08014de4
 	ldr	r0, [pc, #324]
-	bl	0x08015024
+	bl	Func_08015024
 	mov	r2, r9
 	cmp	r2, #31
 	bgt.n	.L_081738c0
@@ -396,14 +396,14 @@ Func_08173588:
 	cmp	r3, #0
 	bne.n	.L_081738b4
 	lsls	r0, r6, #9
-	bl	0x08015068
+	bl	Func_08015068
 	b.n	.L_081738c0
 .L_081738b4:
 	ldr	r1, [pc, #296]
 	mov	r4, r9
 	lsls	r0, r4, #9
 	adds	r0, r0, r1
-	bl	0x08015068
+	bl	Func_08015068
 .L_081738c0:
 	asrs	r2, r5, #1
 	adds	r0, r2, #0
@@ -463,12 +463,12 @@ Func_08173588:
 	asrs	r5, r6, #8
 	lsls	r0, r0, #7
 	lsrs	r6, r6, #31
-	bl	0x08015024
+	bl	Func_08015024
 	adds	r5, r5, r6
 	mov	r1, r9
 	lsls	r0, r1, #9
 	asrs	r5, r5, #1
-	bl	0x08015068
+	bl	Func_08015068
 	adds	r0, r5, #0
 	adds	r1, r5, #0
 	adds	r2, r5, #0

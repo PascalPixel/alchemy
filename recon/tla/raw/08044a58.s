@@ -121,7 +121,7 @@ Func_08044a58:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #16]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08044b60:
 	add	sp, #32
 	pop	{r3, r5, r6, r7}
@@ -242,7 +242,7 @@ Func_08044a58:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #12]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08044c6a:
 	add	sp, #28
 	pop	{r3, r5}
@@ -380,9 +380,9 @@ Func_08044a58:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #20]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r0, [sp, #12]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08044daa:
 	add	sp, #48
 	pop	{r3, r5, r6, r7}
@@ -558,7 +558,7 @@ Func_08044a58:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #4]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08044f28:
 	add	sp, #52
 	pop	{r3, r5, r6, r7}
@@ -589,7 +589,7 @@ Func_08044a58:
 	cmp	r7, #95
 	bgt.n	.L_08044f80
 	adds	r1, r6, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r1, #128
 	lsls	r1, r1, #2
 	adds	r0, r7, #0

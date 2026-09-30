@@ -58,7 +58,7 @@ Func_0810b1b4:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #320]
-	bl	0x080145a8
+	bl	Func_080145a8
 	mov	r3, sl
 	movs	r0, #140
 	lsls	r2, r3, #1
@@ -96,7 +96,7 @@ Func_0810b1b4:
 	movs	r1, #7
 	adds	r0, r5, #0
 	bl	0x080c85a0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r1, r0, #3
 	subs	r1, r1, r0
 	lsrs	r1, r1, #16

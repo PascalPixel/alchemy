@@ -348,7 +348,7 @@ Func_08101c7c:
 	cmp	r3, #99
 	beq.n	.L_08101f4a
 	adds	r0, r3, #0
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r3, #99
 	strh	r3, [r5, #0]
 .L_08101f4a:
@@ -417,7 +417,7 @@ Func_08101c7c:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #36]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r0, [sp, #16]
 	add	sp, #36
 	pop	{r3, r5, r6, r7}

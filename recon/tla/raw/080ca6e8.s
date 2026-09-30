@@ -197,7 +197,7 @@ Func_080ca6e8:
 	ldrb	r0, [r7, #16]
 	orrs	r3, r1
 	strb	r3, [r7, #17]
-	bl	0x08014274
+	bl	Func_08014274
 	strb	r5, [r7, #16]
 	b.n	.L_080ca892
 .L_080ca870:
@@ -244,7 +244,7 @@ Func_080ca6e8:
 	beq.n	.L_080ca8d6
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r3, r3, #15

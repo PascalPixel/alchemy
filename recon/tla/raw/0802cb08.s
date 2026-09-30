@@ -25,10 +25,10 @@ Func_0802cb08:
 	ldr	r0, [pc, #36]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #36]
-	bl	0x0801587c
+	bl	Func_0801587c
 	bl	0x0802c4d8
 	ldr	r0, [pc, #28]
-	bl	0x0801475c
+	bl	Func_0801475c
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{pc}

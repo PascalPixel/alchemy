@@ -91,7 +91,7 @@ Func_0811c3bc:
 	strh	r3, [r6, #4]
 	cmp	r3, #0
 	beq.n	.L_0811c482
-	bl	0x08014878
+	bl	Func_08014878
 	ldrh	r3, [r5, #0]
 	adds	r2, r3, #0
 	muls	r2, r0
@@ -104,7 +104,7 @@ Func_0811c3bc:
 	mov	r1, fp
 	strh	r3, [r6, #6]
 	strh	r1, [r6, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r2, [sp, #8]
 	subs	r7, #1
 	adds	r3, r2, #0

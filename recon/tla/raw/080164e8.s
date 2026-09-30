@@ -368,6 +368,9 @@ Func_080164e8:
 .L_080167a8:
 	add	sp, #8
 	pop	{r5, r6, r7, pc}
+	.global Func_080167ac
+	.thumb_func
+Func_080167ac:
 	push	{lr}
 	ldr	r2, [pc, #32]
 	ldr	r3, [pc, #24]
@@ -375,11 +378,11 @@ Func_080164e8:
 	strh	r3, [r2, #0]
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08013438
+	bl	Func_08013438
 	movs	r0, #6
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08013438
+	bl	Func_08013438
 	b.n	.L_080167d4
 	movs	r0, r0
 	.4byte 0x00000000

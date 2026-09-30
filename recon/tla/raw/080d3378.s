@@ -19,7 +19,7 @@ Func_080d3378:
 	beq.n	.L_080d3458
 	ldr	r2, [r6, #80]
 	mov	r8, r2
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #1
 	ands	r0, r3
 	cmp	r0, #1
@@ -51,14 +51,14 @@ Func_080d3378:
 	adds	r3, #85
 	movs	r5, #0
 	strb	r5, [r3, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #10
 	bl	0x0800206c
 	ldr	r3, [pc, #100]
 	adds	r0, #5
 	muls	r3, r0
 	str	r3, [r6, #52]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #15
 	bl	0x0800206c
 	movs	r3, #200

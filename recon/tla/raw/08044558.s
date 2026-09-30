@@ -30,7 +30,7 @@ Func_08044558:
 	str	r3, [sp, #20]
 	str	r2, [sp, #16]
 	mov	fp, r2
-	bl	0x08014bac
+	bl	Func_08014bac
 	ldr	r3, [pc, #348]
 	movs	r0, #147
 	movs	r1, #128

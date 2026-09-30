@@ -38,7 +38,7 @@ Func_0811e3ac:
 	orrs	r2, r3
 	lsrs	r2, r2, #31
 	str	r2, [sp, #4]
-	bl	0x08014dac
+	bl	Func_08014dac
 	add	r2, sp, #4
 	mov	r9, r0
 	ldrb	r2, [r2, #0]
@@ -225,7 +225,7 @@ Func_0811e3ac:
 	movs	r1, #253
 	lsls	r1, r1, #6
 	adds	r0, #80
-	bl	0x08013ba4
+	bl	Func_08013ba4
 	movs	r0, #154
 	bl	Audio_PlayCue
 	movs	r0, #10
@@ -348,7 +348,7 @@ Func_0811e3ac:
 	beq.n	.L_0811e6bc
 	movs	r0, #128
 	lsls	r0, r0, #8
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	r3, r9
 	str	r0, [r3, #44]
 	b.n	.L_0811e6c2

@@ -149,7 +149,7 @@ Func_080d45d8:
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #12]
 	adds	r1, #148
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_080d470a:
 	pop	{r5, r6, r7, pc}
 	.4byte 0x03000230

@@ -596,7 +596,7 @@ Func_080db4b8:
 	str	r3, [r5, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #4]
 	ldr	r3, [r5, #8]

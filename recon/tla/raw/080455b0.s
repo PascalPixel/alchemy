@@ -45,7 +45,7 @@ Func_080455b0:
 	adds	r1, r6, #0
 	adds	r0, r0, r3
 	str	r0, [r2, #0]
-	bl	0x0801591c
+	bl	Func_0801591c
 	adds	r1, r6, #0
 	mov	r0, r8
 	bl	Resource_GetBuffer
@@ -83,7 +83,7 @@ Func_080455b0:
 	adds	r1, r6, #0
 	adds	r0, r0, r3
 	str	r0, [r2, #0]
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r0, #128
 	lsls	r0, r0, #3
 	bl	Func_08014d78

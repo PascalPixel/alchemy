@@ -203,7 +203,7 @@ Func_08122514:
 	lsls	r3, r2, #31
 	cmp	r3, #0
 	bne.n	.L_081226b0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r2, r0, #1
 	adds	r2, r2, r0
 	mov	r0, r8

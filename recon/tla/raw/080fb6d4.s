@@ -20,7 +20,7 @@ Func_080fb6d4:
 	ldrb	r3, [r0, #12]
 	cmp	r3, #2
 	bne.n	.L_080fb730
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #128
 	lsls	r3, r3, #6
 	cmp	r0, r3

@@ -85,7 +85,7 @@ Func_081051a8:
 	strb	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #20]
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_08105264
 	.4byte 0x00000010
 	.4byte 0x000000c8

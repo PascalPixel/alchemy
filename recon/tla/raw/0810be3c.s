@@ -19,7 +19,7 @@ Func_0810be3c:
 	cmp	r3, #96
 	beq.n	.L_0810be60
 	adds	r0, r3, #0
-	bl	0x08014274
+	bl	Func_08014274
 .L_0810be60:
 	subs	r7, #1
 	adds	r5, #2

@@ -40,7 +40,7 @@ Func_08038f40:
 	.2byte 0x21c8
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #24]
-	bl	0x080145a8
+	bl	Func_080145a8
 	bl	Func_0803a448
 	pop	{r5, r6, pc}
 	movs	r0, r0
@@ -136,7 +136,7 @@ Func_08038f40:
 	.2byte 0x21c8
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #92]
-	bl	0x080145a8
+	bl	Func_080145a8
 	mov	r0, r8
 	bl	0x0803a4b0
 	movs	r0, #240

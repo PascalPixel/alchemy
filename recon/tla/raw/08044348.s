@@ -14,11 +14,11 @@ Func_08044348:
 	lsls	r0, r0, #2
 	ldr	r5, [r3, #60]
 	mov	r8, r1
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	sl, r0
 	mov	r1, sl
 	mov	r0, r8
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r1, #14
 	ldrsh	r3, [r6, r1]
 	movs	r1, #12

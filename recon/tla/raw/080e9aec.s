@@ -45,7 +45,7 @@ Func_080e9aec:
 	ldr	r0, [pc, #612]
 	bl	Resource_GetTableEntry
 	mov	r1, r8
-	bl	0x0801587c
+	bl	Func_0801587c
 	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #4
@@ -121,7 +121,7 @@ Func_080e9aec:
 	strh	r6, [r3, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #440]
-	bl	0x080145a8
+	bl	Func_080145a8
 	adds	r3, r7, #0
 	movs	r1, #0
 	adds	r3, #34
@@ -240,7 +240,7 @@ Func_080e9aec:
 	add	r3, r8
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #92
 	bl	Runtime_ReleaseHeapBlock
 	b.n	.L_080e9d9a
@@ -433,7 +433,7 @@ Func_080e9aec:
 	adds	r3, r7, r2
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #92
 	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, r6, r7, pc}

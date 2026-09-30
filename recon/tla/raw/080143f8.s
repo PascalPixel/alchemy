@@ -99,6 +99,9 @@ Resource_GetBuffer:
 	.4byte 0x020054d0
 	.2byte 0x0528
 	.2byte 0x0300
+	.global Func_080144c0
+	.thumb_func
+Func_080144c0:
 	push	{lr}
 	ldr	r3, [pc, #48]
 	movs	r2, #0

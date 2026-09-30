@@ -28,7 +28,7 @@ Func_080ebf68:
 	push	{r5, r6, r7, lr}
 	movs	r0, #32
 	sub	sp, #20
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldr	r7, [pc, #392]
 	adds	r6, r0, #0
 	adds	r1, r7, #0
@@ -237,9 +237,9 @@ Func_080ebf68:
 	push	{r5, lr}
 	ldr	r5, [pc, #24]
 	ldrh	r0, [r5, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	ldrh	r0, [r5, #2]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r0, [r5, #28]
 	movs	r1, #2
 	bl	UiWork_FinalizeFar

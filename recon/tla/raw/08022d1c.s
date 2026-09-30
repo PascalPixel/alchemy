@@ -206,7 +206,7 @@ Func_08022d1c:
 	cmp	r3, #0
 	bne.n	.L_08022eaa
 	ldrb	r0, [r7, #16]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08022eaa:
 	adds	r5, r7, #0
 	adds	r5, #40

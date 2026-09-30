@@ -75,7 +75,7 @@ Func_080d7304:
 	strh	r3, [r5, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #16]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3

@@ -297,13 +297,13 @@ Func_080c9e48:
 	mov	sl, r3
 	cmp	r5, #0
 	bne.n	.L_080ca0b2
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r8, r0
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r6, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r2, r8
 	subs	r5, r5, r2
 	adds	r5, r5, r6
@@ -362,7 +362,7 @@ Func_080c9e48:
 	movs	r0, #0
 	cmp	r5, #0
 	beq.n	.L_080ca146
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	mov	r0, r9

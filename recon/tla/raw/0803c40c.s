@@ -103,7 +103,7 @@ Func_0803c40c:
 	ldr	r3, [r0, #4]
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	0x0801401c
+	bl	Func_0801401c
 	movs	r3, #31
 	ldrb	r2, [r5, #7]
 	ands	r0, r3
@@ -312,9 +312,9 @@ Func_0803c40c:
 	bne.n	.L_0803c688
 	b.n	.L_0803c922
 .L_0803c688:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -333,9 +333,9 @@ Func_0803c40c:
 	ands	r3, r2
 	orrs	r3, r1
 	strh	r3, [r7, #6]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -375,7 +375,7 @@ Func_0803c40c:
 	ldr	r3, [r0, #4]
 	ands	r3, r1
 	str	r3, [r0, #4]
-	bl	0x0801401c
+	bl	Func_0801401c
 	ldrb	r2, [r7, #7]
 	movs	r3, #31
 	ands	r0, r3
@@ -449,7 +449,7 @@ Func_0803c40c:
 	strh	r3, [r6, #12]
 	strh	r3, [r5, #4]
 	adds	r0, r5, #0
-	bl	0x0801401c
+	bl	Func_0801401c
 	ldrb	r2, [r7, #7]
 	movs	r3, #31
 	ands	r0, r3

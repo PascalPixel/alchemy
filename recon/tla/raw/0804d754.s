@@ -125,7 +125,7 @@ Func_0804d754:
 	lsls	r1, r1, #3
 	adds	r1, #118
 	ldr	r0, [pc, #252]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #255
 	adds	r2, r7, #0
 	lsls	r3, r3, #8
@@ -174,7 +174,7 @@ Func_0804d754:
 	lsls	r1, r1, #3
 	adds	r1, #118
 	ldr	r0, [pc, #152]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #255
 	adds	r2, r7, #0
 	lsls	r3, r3, #8

@@ -328,7 +328,7 @@ Func_080432a4:
 	movs	r2, #0
 	lsls	r0, r0, #6
 	mov	sl, r2
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldr	r3, [pc, #152]
 	adds	r7, r0, #0
 	movs	r2, #0
@@ -839,7 +839,7 @@ Func_080432a4:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x3979

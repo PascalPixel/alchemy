@@ -44,13 +44,13 @@ Func_081b8000:
 	bl	Func_08014de4
 	adds	r0, r5, #0
 	adds	r0, #12
-	bl	0x08015128
+	bl	Func_08015128
 	movs	r3, #54
 	ldrsh	r0, [r5, r3]
-	bl	0x08015068
+	bl	Func_08015068
 	movs	r3, #52
 	ldrsh	r0, [r5, r3]
-	bl	0x08015024
+	bl	Func_08015024
 	mov	r0, sp
 	str	r6, [r0, #0]
 	str	r6, [r0, #4]

@@ -564,7 +564,7 @@ Func_0803975c:
 	strh	r2, [r6, #24]
 	bl	Func_0803972c
 	ldrh	r0, [r5, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r3, #99
 	strh	r3, [r5, #0]
 	b.n	.L_08039cf0

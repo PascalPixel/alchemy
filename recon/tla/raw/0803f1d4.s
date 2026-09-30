@@ -358,7 +358,7 @@ Resource_LoadByMode:
 	cmp	r7, r6
 	beq.n	.L_0803f4a8
 	ldrh	r0, [r7, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	mov	r3, r8
 	strh	r3, [r7, #10]
 .L_0803f4a8:

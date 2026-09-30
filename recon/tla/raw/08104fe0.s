@@ -82,7 +82,7 @@ Func_08104fe0:
 	strb	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #12]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5

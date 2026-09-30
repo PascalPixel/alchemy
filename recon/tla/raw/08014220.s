@@ -53,6 +53,9 @@ Func_08014220:
 	pop	{r5, pc}
 	.2byte 0x3410
 	.2byte 0x0200
+	.global Func_08014274
+	.thumb_func
+Func_08014274:
 .L_08014274:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #48]
@@ -84,6 +87,9 @@ Func_08014220:
 	movs	r0, r0
 	.2byte 0x36e0
 	.2byte 0x0200
+	.global Func_080142ac
+	.thumb_func
+Func_080142ac:
 	push	{r5, lr}
 	ldr	r3, [pc, #32]
 	lsls	r2, r0, #2
@@ -131,7 +137,7 @@ VramBlock_LoadCached:
 	cmp	r3, r6
 	beq.n	.L_08014306
 	adds	r0, r5, #0
-	bl	.L_08014274
+	bl	Func_08014274
 	b.n	.L_0801430a
 .L_08014306:
 	ldrh	r5, [r7, #2]
@@ -186,6 +192,9 @@ VramBlock_LoadCached:
 	.4byte 0x06010000
 	.2byte 0x0258
 	.2byte 0x0300
+	.global Func_08014368
+	.thumb_func
+Func_08014368:
 	push	{lr}
 	movs	r0, #128
 	ldr	r3, [pc, #32]

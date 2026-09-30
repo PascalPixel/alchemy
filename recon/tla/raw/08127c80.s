@@ -39,7 +39,7 @@ BattleFormation_SelectRandomAvailableMember:
 	adds	r0, #2
 	cmp	r1, #0
 	bge.n	.L_08127ca4
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -192,7 +192,7 @@ BattleFormation_SelectRandomAvailableMember:
 	bge.n	.L_08127de8
 	adds	r5, r0, #0
 .L_08127de8:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #1
 	muls	r3, r0
 	mov	r2, r8
@@ -291,10 +291,10 @@ BattleFormation_SelectRandomAvailableMember:
 	movs	r7, #0
 	mov	r6, r8
 .L_08127ea0:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r0, #2
 	adds	r5, r5, r0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r5, r5, #16
@@ -372,7 +372,7 @@ BattleFormation_SelectRandomAvailableMember:
 	cmp	r5, #0
 	beq.n	.L_08127fa2
 	str	r4, [sp, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16

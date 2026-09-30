@@ -460,7 +460,7 @@ Func_080ae410:
 	beq.n	.L_080ae7d4
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r1, [sp, #4]
 	ldr	r2, [sp, #0]
 	adds	r3, r1, #0

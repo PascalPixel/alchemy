@@ -95,7 +95,7 @@ Func_080dc978:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #12]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3
@@ -157,7 +157,7 @@ Func_080dc978:
 	strh	r2, [r3, #0]
 	adds	r1, #108
 	ldr	r0, [pc, #12]
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_080dcad8
 	.4byte 0x0000739c
 	.4byte 0x050001e2

@@ -249,7 +249,7 @@ Func_0813eb70:
 .L_0813ed74:
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #408]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r1, #35
 	movs	r0, #104
 	bl	Func_081963ec
@@ -1028,19 +1028,19 @@ Func_0813eb70:
 	mov	r8, r4
 	movs	r7, #0
 .L_0813f368:
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r1, r8
 	ands	r0, r1
 	adds	r0, #32
 	lsls	r0, r0, #16
 	str	r0, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r2, r8
 	ands	r0, r2
 	adds	r0, #80
 	lsls	r0, r0, #16
 	str	r0, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #128
 	lsls	r3, r3, #1
 	ldr	r4, [pc, #8]
@@ -1357,13 +1357,13 @@ Func_0813eb70:
 	movs	r3, #128
 	lsls	r3, r3, #16
 	str	r3, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	ands	r3, r0
 	str	r3, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #128
 	lsls	r3, r3, #1
 	adds	r3, #255
@@ -1381,13 +1381,13 @@ Func_0813eb70:
 	movs	r7, #0
 	mov	r5, fp
 .L_0813f648:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	ands	r3, r0
 	str	r3, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #16
@@ -1414,7 +1414,7 @@ Func_0813eb70:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #144]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r1, #7
 	movs	r0, #104
 	bl	Func_081963ec
@@ -1710,7 +1710,7 @@ Func_0813eb70:
 	movs	r1, #0
 	mov	sl, r1
 .L_0813f904:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #15
 	ands	r0, r3
 	adds	r3, r0, #0
@@ -1718,11 +1718,11 @@ Func_0813eb70:
 	adds	r0, #40
 	str	r3, [r5, #0]
 	str	r0, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r2, #1
 	movs	r3, #128
 	add	sl, r2
@@ -1756,13 +1756,13 @@ Func_0813eb70:
 	bl	Func_08014de4
 	mov	r3, r8
 	ldr	r0, [r3, #20]
-	bl	0x080150e4
+	bl	Func_080150e4
 	mov	r1, r8
 	ldr	r0, [r1, #12]
-	bl	0x08015024
+	bl	Func_08015024
 	mov	r2, r8
 	ldr	r0, [r2, #16]
-	bl	0x08015068
+	bl	Func_08015068
 	mov	r1, r8
 	ldr	r3, [r1, #0]
 	add	r4, sp, #24

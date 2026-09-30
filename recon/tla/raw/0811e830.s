@@ -29,7 +29,7 @@ Func_0811e830:
 	lsls	r0, r0, #19
 	adds	r0, #80
 	lsls	r1, r1, #6
-	bl	0x08013ba4
+	bl	Func_08013ba4
 	movs	r1, #1
 	ldr	r0, [sp, #8]
 	bl	0x08126ae4
@@ -259,7 +259,7 @@ Func_0811e830:
 	ldr	r1, [r0, #16]
 	adds	r0, r2, #0
 	str	r1, [r3, #16]
-	bl	0x080148e8
+	bl	Func_080148e8
 	ldr	r1, [pc, #404]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
@@ -602,7 +602,7 @@ Func_0811e830:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #148]
-	bl	0x080145a8
+	bl	Func_080145a8
 	mov	r1, r8
 	ldr	r3, [r1, #0]
 	cmp	r3, #0
@@ -776,7 +776,7 @@ Func_0811e830:
 	movs	r1, #144
 	ldr	r0, [pc, #428]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r3, [r5, #0]
 	cmp	r3, #0
 	beq.n	.L_0811eeee

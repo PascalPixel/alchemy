@@ -21,13 +21,13 @@ Func_0811bd10:
 	.2byte 0x1c29
 	adds	r1, #12
 	adds	r0, r5, #0
-	bl	0x080156f8
+	bl	Func_080156f8
 	b.n	.L_0811bd46
 .L_0811bd3c:
 	adds	r1, r5, #0
 	adds	r1, #12
 	adds	r0, r5, #0
-	bl	0x080156e8
+	bl	Func_080156e8
 .L_0811bd46:
 	pop	{r5, pc}
 	.4byte 0x08128868
@@ -129,13 +129,13 @@ Func_0811bd10:
 	bl	Func_08014de4
 	adds	r0, r5, #0
 	adds	r0, #12
-	bl	0x08015128
+	bl	Func_08015128
 	movs	r3, #54
 	ldrsh	r0, [r5, r3]
-	bl	0x08015068
+	bl	Func_08015068
 	movs	r3, #52
 	ldrsh	r0, [r5, r3]
-	bl	0x08015024
+	bl	Func_08015024
 	mov	r0, sp
 	str	r6, [r0, #0]
 	str	r6, [r0, #4]

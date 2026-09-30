@@ -27,7 +27,7 @@ Func_08163d88:
 	adds	r2, #7
 	cmp	r0, r2
 	beq.n	.L_08163df6
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #128
 	lsls	r3, r3, #12
 	str	r3, [r6, #52]

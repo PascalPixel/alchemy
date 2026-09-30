@@ -102,10 +102,10 @@ Func_080ae834:
 	mov	r9, r2
 	mov	sl, r6
 .L_080ae8fc:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #2
 	lsrs	r5, r0, #16
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #3
 	subs	r3, r3, r0
 	lsls	r0, r5, #2
@@ -159,7 +159,7 @@ Func_080ae834:
 	subs	r3, r3, r2
 	cmp	r3, #1
 	bgt.n	.L_080ae99e
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #100
 	adds	r2, r0, #0
 	muls	r2, r3

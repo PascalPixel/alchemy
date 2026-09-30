@@ -10,14 +10,14 @@ Func_08119054:
 	movs	r0, #170
 	lsls	r0, r0, #1
 	sub	sp, #32
-	bl	0x08014dac
+	bl	Func_08014dac
 	movs	r2, #0
 	mov	r8, r0
 	mov	sl, r2
 	movs	r7, #0
 	b.n	.L_081190ea
 .L_08119070:
-	bl	0x080168cc
+	bl	Func_080168cc
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r6, r2
@@ -89,7 +89,7 @@ Func_08119054:
 	adds	r0, #128
 	bl	Owner_GetState
 	adds	r6, r0, #0
-	bl	0x08016854
+	bl	Func_08016854
 	movs	r2, #1
 	negs	r2, r2
 	cmp	r0, r2
@@ -99,16 +99,16 @@ Func_08119054:
 	bl	Func_08013164
 	movs	r0, #170
 	lsls	r0, r0, #1
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	r8, r0
 	movs	r0, #1
 	bl	Trade_GetOfferStateFar
-	bl	0x08016854
+	bl	Func_08016854
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r0, r3
 	beq.n	.L_08119130
-	bl	0x080168cc
+	bl	Func_080168cc
 	movs	r0, #2
 	bl	WaitFrames
 .L_08119130:
@@ -134,7 +134,7 @@ Func_08119054:
 	lsls	r5, r5, #1
 	adds	r0, r5, #0
 	sub	sp, #16
-	bl	0x08014dac
+	bl	Func_08014dac
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #36]
@@ -186,12 +186,12 @@ Func_08119054:
 	lsls	r1, r1, #1
 	strb	r2, [r4, r3]
 	adds	r0, r6, #0
-	bl	0x0801680c
+	bl	Func_0801680c
 	movs	r1, #1
 	negs	r1, r1
 	cmp	r0, r1
 	beq.n	.L_081191e6
-	bl	0x080168a0
+	bl	Func_080168a0
 	adds	r5, #1
 	movs	r0, #2
 	bl	WaitFrames
@@ -206,7 +206,7 @@ Func_08119054:
 	mov	r8, r3
 	b.n	.L_081191fe
 .L_081191f2:
-	bl	0x080168a0
+	bl	Func_080168a0
 	movs	r0, #2
 	bl	WaitFrames
 	adds	r5, #1
@@ -218,7 +218,7 @@ Func_08119054:
 	lsls	r1, r1, #1
 	strb	r4, [r7, #0]
 	adds	r0, r6, #0
-	bl	0x0801680c
+	bl	Func_0801680c
 	movs	r1, #1
 	negs	r1, r1
 	cmp	r0, r1
@@ -229,7 +229,7 @@ Func_08119054:
 	lsls	r5, r5, #1
 	bl	Func_08013164
 	adds	r0, r5, #0
-	bl	0x08014dac
+	bl	Func_08014dac
 	adds	r6, r0, #0
 	movs	r0, #0
 	bl	Trade_GetOfferStateFar
@@ -265,12 +265,12 @@ Func_08119054:
 	movs	r1, #170
 	lsls	r1, r1, #1
 	adds	r0, r6, #0
-	bl	0x0801680c
+	bl	Func_0801680c
 	movs	r1, #1
 	negs	r1, r1
 	cmp	r0, r1
 	beq.n	.L_08119288
-	bl	0x080168a0
+	bl	Func_080168a0
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #2

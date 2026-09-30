@@ -7,7 +7,7 @@ Func_0811c66c:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #28
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #4
 	lsrs	r0, r0, #16
 	cmp	r0, #0
@@ -131,7 +131,7 @@ Func_0811c66c:
 	str	r3, [r2, #4]
 	movs	r0, #10
 	bl	WaitFrames
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r0, [sp, #8]
 	bl	0x0811be3c
 	ldr	r2, [sp, #4]
@@ -438,7 +438,7 @@ Func_0811c66c:
 	movs	r3, #36
 	ldrsh	r0, [r5, r3]
 	bl	Owner_GetState
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #1
 	ldr	r0, [r5, #8]
 	bl	0x08038120
@@ -856,7 +856,7 @@ Func_0811c66c:
 	lsls	r0, r0, #1
 	b.n	.L_0811cd76
 .L_0811cd68:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16

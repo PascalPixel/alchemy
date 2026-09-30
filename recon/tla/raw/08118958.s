@@ -20,11 +20,11 @@ Func_08118958:
 .L_08118976:
 	movs	r5, #181
 	lsls	r5, r5, #1
-	bl	0x08014bac
-	bl	0x08014b70
-	bl	0x080144c0
-	bl	0x08014c6c
-	bl	0x08014368
+	bl	Func_08014bac
+	bl	Func_08014b70
+	bl	Func_080144c0
+	bl	Func_08014c6c
+	bl	Func_08014368
 	adds	r0, r5, #0
 	movs	r6, #69
 	bl	GameFlag_SetBitFar
@@ -167,11 +167,11 @@ Func_08118958:
 	ldr	r3, [pc, #56]
 	mov	r2, sl
 	strb	r2, [r3, #0]
-	bl	0x08014bac
-	bl	0x08014b70
-	bl	0x080144c0
-	bl	0x08014c6c
-	bl	0x08014368
+	bl	Func_08014bac
+	bl	Func_08014b70
+	bl	Func_080144c0
+	bl	Func_08014c6c
+	bl	Func_08014368
 	b.n	.L_081189ae
 .L_08118ab8:
 	movs	r0, #177
@@ -274,7 +274,7 @@ Func_08118958:
 	bl	0x080150ac
 	movs	r2, #52
 	ldrsh	r0, [r5, r2]
-	bl	0x08015024
+	bl	Func_08015024
 	adds	r0, r6, #0
 	bl	0x08015198
 	movs	r3, #0

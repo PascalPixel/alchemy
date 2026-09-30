@@ -120,7 +120,7 @@ Func_080fb780:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #40]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #184
 	lsls	r3, r3, #1
 	add	r3, r8

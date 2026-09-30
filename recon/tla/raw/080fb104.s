@@ -192,7 +192,7 @@
 	movs	r1, #144
 	ldr	r0, [pc, #372]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_080fb2d2
 .L_080fb296:
 	mov	r3, r8

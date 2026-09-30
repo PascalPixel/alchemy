@@ -50,7 +50,7 @@ Func_08045018:
 	ldrh	r0, [r3, r2]
 	adds	r1, r5, #0
 	adds	r0, r2, r0
-	bl	0x0801591c
+	bl	Func_0801591c
 	mov	r3, r8
 	cmp	r3, #0
 	beq.n	.L_0804508e
@@ -146,7 +146,7 @@ Func_08045018:
 	ldr	r3, [r0, #4]
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	0x0801401c
+	bl	Func_0801401c
 	ldrb	r2, [r5, #23]
 	movs	r3, #31
 	ands	r0, r3

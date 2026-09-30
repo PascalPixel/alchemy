@@ -235,17 +235,34 @@ void Menu_DrawModeIndicator(void)
         *shown = (u16)*current;
         RenderOutput_PrepareForRedraw(*(void **)(state + 124));
         if (*current == 0) {
+#if defined(TBS_EDITION_DE)
+            UiText_DrawResource((s32)&MsgPasswordTransferHelp,
+                *(void **)(state + 124), 32, 8);
+            UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1,
+                *(void **)(state + 124), 32, 24);
+#else
             UiText_DrawResource((s32)&MsgPasswordTransferHelp,
                 *(void **)(state + 124), 16, 4);
             UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1,
                 *(void **)(state + 124), 16, 16);
+#endif
         } else {
+#if defined(TBS_EDITION_DE)
+            UiText_DrawResource((s32)&MsgCableTransferHelp,
+                *(void **)(state + 124), 0, 0);
+#else
             UiText_DrawResource((s32)&MsgCableTransferHelp,
                 *(void **)(state + 124), 0, 4);
+#endif
             UiText_DrawResource((s32)&MsgCableTransferHelp + 1,
                 *(void **)(state + 124), 0, 16);
+#if defined(TBS_EDITION_DE)
+            UiText_DrawResource((s32)&MsgCableTransferHelp + 2,
+                *(void **)(state + 124), 0, 32);
+#else
             UiText_DrawResource((s32)&MsgCableTransferHelp + 2,
                 *(void **)(state + 124), 0, 28);
+#endif
         }
     }
 }

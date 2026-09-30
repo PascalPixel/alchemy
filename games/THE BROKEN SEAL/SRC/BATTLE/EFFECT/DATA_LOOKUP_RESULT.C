@@ -36,9 +36,6 @@ s32 BattleFx_LookupResult(void *arg0)
     return result;
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct EncounterZone {
     u16 rate;
     u16 level;
@@ -139,4 +136,3 @@ encounter:
     BattleFx_SelectBattleCue(zone);
     return sum;
 }
-#endif

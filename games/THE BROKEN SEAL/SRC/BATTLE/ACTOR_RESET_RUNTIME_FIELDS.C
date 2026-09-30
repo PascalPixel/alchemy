@@ -57,9 +57,6 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     return BattleUnit_BuildStatusFlags(actor, GetBattleObjectSlot(actor));
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /* The arrow sprite queued each frame: the list link, then the three OAM
    attribute halfwords and the unused fourth. */
 struct AdvanceSprite {
@@ -154,4 +151,3 @@ loop:
     Resource_ResetEntry(slot);
     WaitFrames(1);
 }
-#endif

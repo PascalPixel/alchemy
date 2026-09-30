@@ -156,6 +156,9 @@ Func_0802d6e8:
 	strb	r6, [r2, #2]
 .L_0802d71a:
 	pop	{r5, r6, pc}
+	.global Func_0802d71c
+	.thumb_func
+Func_0802d71c:
 	push	{r5, r6, r7, lr}
 	adds	r7, r3, #0
 	movs	r3, #192
@@ -232,6 +235,9 @@ Func_0802d6e8:
 	.4byte 0x0802efc4
 	.2byte 0xc001
 	.2byte 0x0202
+	.global Func_0802d7b0
+	.thumb_func
+Func_0802d7b0:
 	push	{r5, r6, r7, lr}
 	adds	r7, r3, #0
 	movs	r3, #192
@@ -731,6 +737,9 @@ Func_0802da24:
 	.4byte 0x06004000
 	.2byte 0xc000
 	.2byte 0x0202
+	.global Func_0802db64
+	.thumb_func
+Func_0802db64:
 	push	{r5, lr}
 	adds	r5, r1, #0
 	adds	r0, r5, #0
@@ -749,6 +758,9 @@ Func_0802da24:
 	negs	r0, r0
 .L_0802db86:
 	pop	{r5, pc}
+	.global Func_0802db88
+	.thumb_func
+Func_0802db88:
 	push	{r5, lr}
 	adds	r5, r1, #0
 	adds	r0, r5, #0

@@ -136,15 +136,15 @@ Func_080279b0:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	ldr	r1, [sp, #0]
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, fp
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, r9
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	orrs	r5, r6
 	orrs	r5, r0
 	cmp	r5, #0
@@ -231,15 +231,15 @@ Func_080279b0:
 	add	r2, sp, #88
 	adds	r1, r2, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, fp
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, r8
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	orrs	r5, r6
 	orrs	r5, r0
 	cmp	r5, #0

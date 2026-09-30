@@ -63,6 +63,9 @@ Func_081c0c1c:
 .L_081c0cac:
 	movs	r0, #3
 	bx	lr
+	.global Func_081c0cb0
+	.thumb_func
+Func_081c0cb0:
 	push	{r5, r6, r7, lr}
 	adds	r6, r0, #0
 	bl	Func_081c11ac

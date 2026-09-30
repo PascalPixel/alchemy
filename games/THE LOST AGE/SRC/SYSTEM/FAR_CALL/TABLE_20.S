@@ -8,6 +8,6 @@
 	.global Func_080383d0
 	.thumb_func
 Func_080383d0:
-	overlay_veneer Func_08045550
+	overlay_veneer Ui_GetTableWordZero
 	overlay_veneer Func_0803a60c
 	overlay_veneer Func_0804325c

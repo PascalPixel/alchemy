@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080431b0
+	.global Text_FormatPlayTime
 	.thumb_func
-Func_080431b0:
+Text_FormatPlayTime:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

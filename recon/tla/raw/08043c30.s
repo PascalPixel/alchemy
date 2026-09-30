@@ -1,6 +1,8 @@
 .syntax unified
 	.thumb
-.L_08043c30:
+	.global StatusMenu_DrawCharacterSummary
+	.thumb_func
+StatusMenu_DrawCharacterSummary:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	sub	sp, #20
@@ -47,7 +49,7 @@
 	bl	UiText_DrawCharacterAtOffset
 	ldr	r0, [r7, #32]
 	add	r1, sp, #4
-	bl	Func_080431b0
+	bl	Text_FormatPlayTime
 	adds	r1, r5, #0
 	movs	r2, #48
 	movs	r3, #40
@@ -517,7 +519,7 @@
 	adds	r6, r3, r2
 	ldr	r0, [sp, #32]
 	adds	r1, r6, #0
-	bl	.L_08043c30
+	bl	StatusMenu_DrawCharacterSummary
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r3, [sp, #28]

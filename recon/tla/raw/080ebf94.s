@@ -156,7 +156,7 @@ Func_080ebf94:
 	ldr r3, [r7, #8]
 	adds r2, #4
 	str r3, [r2]
-	bl Func_08038390 + 0x8
+	bl Func_08038398
 	strh r0, [r7, #2]
 	ldr r2, .L_080ec140
 	ldrh r3, [r7, #2]

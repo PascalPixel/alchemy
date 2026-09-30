@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08022f64
+	.global Map_RenderAnimatedTileFrame
 	.thumb_func
-Func_08022f64:
+Map_RenderAnimatedTileFrame:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -74,4 +74,4 @@ Func_08022f64:
 .L_08022fe0:
 	.4byte 0x06010000
 .L_08022fe4:
-	.4byte Data_0802eb4c
+	.4byte Map_TileDissolveOrder

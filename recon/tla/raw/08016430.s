@@ -73,7 +73,7 @@ Func_08016430:
 .L_080164b0:
 	.4byte 0x000000c0
 .L_080164b4:
-	.4byte Data_02005360
+	.4byte gSerialRuntime
 .L_080164b8:
 	.4byte 0x04000128
 .L_080164bc:

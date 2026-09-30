@@ -307,11 +307,11 @@ Func_0811d9cc:
 	cmp r2, r3
 	bne .L_0811dc5a
 	ldr r0, .L_0811ddcc
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_0811dc60
 .L_0811dc5a:
 	ldr r0, .L_0811ddd0
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_0811dc60:
 	movs r3, #217
 	lsls r3, r3, #3
@@ -358,7 +358,7 @@ Func_0811d9cc:
 	movs r3, #0
 	str r3, [r5]
 	adds r0, r6, #0
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 	movs r3, #176
 	lsls r3, r3, #3
 	adds r3, #255
@@ -374,7 +374,7 @@ Func_0811d9cc:
 	cmp r5, #0
 	bne .L_0811dce0
 	adds r0, r6, #1
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_0811dce0:
 	cmp r5, #1
 	bgt .L_0811dd70
@@ -390,12 +390,12 @@ Func_0811d9cc:
 	bl Func_0811df70
 	movs r0, #1
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	cmp r0, #0
 	beq .L_0811dd70
 	movs r0, #2
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	cmp r0, #0
 	beq .L_0811dd70
 	adds r0, r5, #0

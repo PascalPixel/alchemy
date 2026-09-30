@@ -114,7 +114,7 @@ Func_080cd91c:
 	adds r0, r0, r5
 	lsls r0, r0, #1
 	movs r1, #13
-	bl __divsi3
+	bl Math_Div
 	adds r5, r0, #0
 .L_080cd9f6:
 	cmp r5, r11

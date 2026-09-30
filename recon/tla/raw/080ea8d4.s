@@ -132,7 +132,7 @@ Func_080ea8d4:
 	ldr r1, [r5, #16]
 	ldrb r2, [r6]
 	ldr r3, [r5, #20]
-	bl Func_08020308 + 0x8
+	bl Func_08020310
 	cmp r0, #0
 	beq .L_080eaa00
 	ldrb r0, [r6]

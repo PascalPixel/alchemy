@@ -34,7 +34,7 @@ Func_0811c594:
 	movs r3, #60
 	str r1, [r2]
 	str r3, [r2, #4]
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	movs r2, #6
 	ldrsh r3, [r7, r2]
 	cmp r3, #2
@@ -52,7 +52,7 @@ Func_0811c594:
 	cmp r3, #99
 	bne .L_0811c624
 	ldr r0, .L_0811c64c
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 	adds r0, r7, #0
 	bl Func_0811c66c
 	cmp r0, #0
@@ -86,7 +86,7 @@ Func_0811c594:
 	adds r0, r7, #0
 	bl Func_0811c710
 .L_0811c640:
-	bl Func_08038218 + 0x8
+	bl Func_08038220
 	movs r0, #0
 .L_0811c646:
 	pop {r5, r6, r7, pc}

@@ -27,7 +27,7 @@ Func_08182aa8:
 	mov r10, r3
 	bl Func_0813ba50
 	movs r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	bl Func_08179e6c
 	ldr r3, [sp, #72]
 	movs r4, #239
@@ -38,7 +38,7 @@ Func_08182aa8:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08182c28
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #128
 	ldr r1, [sp, #72]
 	movs r2, #240
@@ -109,7 +109,7 @@ Func_08182aa8:
 	movs r1, #15
 	adds r0, r5, #0
 	str r4, [sp, #12]
-	bl __divsi3
+	bl Math_Div
 	mov r1, r10
 	subs r0, r1, r0
 	adds r7, r0, #0
@@ -127,7 +127,7 @@ Func_08182aa8:
 	adds r0, r5, #0
 	adds r6, r3, #0
 	str r4, [sp, #12]
-	bl __divsi3
+	bl Math_Div
 	mov r3, r10
 	adds r6, #16
 	subs r1, r3, r0
@@ -180,7 +180,7 @@ Func_08182aa8:
 	lsls r1, r1, #4
 	adds r1, #254
 	ldr r0, .L_08182c30
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #32
 	movs r3, #0
 	ldr r0, .L_08182c34
@@ -709,7 +709,7 @@ Func_08182aa8:
 	adds r0, r6, #0
 	movs r1, #15
 	str r4, [sp, #12]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #12]
 	adds r3, r6, #0
 	subs r0, r4, r0
@@ -725,7 +725,7 @@ Func_08182aa8:
 	adds r0, r6, #0
 	adds r5, r3, #0
 	str r4, [sp, #12]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #12]
 	adds r5, #16
 	subs r1, r4, r0
@@ -1102,14 +1102,14 @@ Func_08182aa8:
 .L_081832de:
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [sp, #56]
 	lsls r0, r0, #21
 	adds r0, r0, r3
 	str r0, [r6]
 	movs r1, #3
 	mov r0, r8
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #60]
 	lsls r0, r0, #21
 	adds r0, r0, r4
@@ -1224,7 +1224,7 @@ Func_08182aa8:
 .L_081833e0:
 	movs r1, #9
 	mov r0, r10
-	bl Math_Mod
+	bl __modsi3
 	lsls r3, r0, #3
 	subs r3, r3, r0
 	add r3, r8
@@ -1422,7 +1422,7 @@ Func_08182aa8:
 	bl Func_08015068
 	movs r0, #128
 	lsls r0, r0, #8
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	b .L_081835f4
 .L_08183580:
 	.4byte 0xfffffedc
@@ -1479,7 +1479,7 @@ Func_08182aa8:
 	adds r0, r5, #0
 	bl Trig_Sin
 	asrs r0, r0, #3
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 .L_081835f4:
 	movs r0, #216
 	movs r1, #177
@@ -1609,7 +1609,7 @@ Func_08182aa8:
 	adds r0, r0, r3
 	str r3, [r6, #8]
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r2, .L_081837a8
 	ldr r3, [r7, #24]
 	ldrb r3, [r2, r3]
@@ -1795,7 +1795,7 @@ Func_08182aa8:
 	movs r1, #7
 	mov r0, r8
 	subs r7, r3, r2
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r11
 	lsls r0, r0, #3
 	subs r0, r1, r0
@@ -2044,7 +2044,7 @@ Func_08182aa8:
 	bl Func_080150e4
 .L_08183a40:
 	mov r0, r8
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r0, [sp, #16]
 	bl Func_08015068
 	ldr r0, .L_08183b60
@@ -2136,7 +2136,7 @@ Func_08182aa8:
 	bl Func_0801521c
 	movs r0, #250
 	lsls r0, r0, #4
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r0, [sp, #16]
 	bl Func_08015068
 	ldr r0, .L_08183b60
@@ -2241,7 +2241,7 @@ Func_08182aa8:
 .L_08183bd0:
 	movs r0, #128
 	lsls r0, r0, #7
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r3, r11
 	lsls r0, r3, #9
 	bl Func_08015068
@@ -2324,7 +2324,7 @@ Func_08182aa8:
 	adds r0, r0, r2
 	bl Func_080150e4
 	ldr r0, .L_08183ec4
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r3, r11
 	lsls r0, r3, #9
 	bl Func_08015068
@@ -2407,7 +2407,7 @@ Func_08182aa8:
 	bl Func_080151e4
 	movs r0, #128
 	lsls r0, r0, #7
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r2, r11
 	lsls r0, r2, #11
 	bl Func_08015068
@@ -2697,7 +2697,7 @@ Func_08182aa8:
 	mov r4, r10
 	adds r0, r0, r2
 	str r5, [r4, #20]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r3, r11
 	negs r0, r3
 	lsls r0, r0, #10
@@ -2801,7 +2801,7 @@ Func_08182aa8:
 	adds r5, r1, r2
 .L_08184040:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	movs r3, #1
 	add r8, r3
 	mov r4, r8
@@ -2836,7 +2836,7 @@ Func_08182aa8:
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, .L_08184274
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r2, .L_08184278
 	movs r3, #120
 	str r3, [r2, #16]
@@ -3044,7 +3044,7 @@ Func_08182aa8:
 	str r6, [sp, #0]
 	bl Func_0814cd48
 	movs r0, #126
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r0, #126
 	bl Audio_PlayCue
 	ldr r3, [sp, #80]
@@ -3187,7 +3187,7 @@ Func_08182aa8:
 	adds r0, r0, r2
 	bl Func_080150e4
 	ldr r0, .L_081843ec
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r3, r11
 	lsls r0, r3, #10
 	bl Func_08015068
@@ -3233,7 +3233,7 @@ Func_08182aa8:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_081843f8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #164
 	pop {r3, r5, r6, r7}

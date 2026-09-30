@@ -23,14 +23,14 @@ Func_080b04bc:
 	cmp r3, #0
 	beq .L_080b0512
 	adds r0, r5, #0
-	bl Func_080b0460
+	bl Equipment_GetUnleashRateBonus
 	ldrb r2, [r6, #11]
 	movs r1, #100
 	lsls r3, r2, #2
 	adds r3, r3, r2
 	adds r0, r0, r3
 	lsls r0, r0, #16
-	bl __divsi3
+	bl Math_Div
 	adds r5, r0, #0
 	bl Func_080b0378
 	movs r3, #255

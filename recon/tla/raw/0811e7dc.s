@@ -34,7 +34,7 @@ Func_0811e7dc:
 	adds r0, r6, #0
 	bl GetMotionRecord
 	movs r1, #0
-	bl ResourceMetadata_RegisterFar + 0x10
+	bl Func_08020068
 .L_0811e82c:
 	pop {r5, r6, pc}
 	.2byte 0x0000

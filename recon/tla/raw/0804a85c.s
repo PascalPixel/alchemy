@@ -376,7 +376,7 @@ Func_0804a85c:
 	adds r0, r3, #0
 	adds r1, r2, #0
 	str r3, [sp, #68]
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #68]
 .L_0804ab1c:
 	ldr r3, [sp, #68]
@@ -409,7 +409,7 @@ Func_0804a85c:
 	add r5, sp, #200
 	mov r0, r10
 	adds r1, r5, #0
-	bl Func_08118088 + 0x30
+	bl Func_081180b8
 	ldr r4, [sp, #28]
 	movs r3, #8
 	strb r3, [r4, #2]
@@ -450,7 +450,7 @@ Func_0804a85c:
 	ldr r2, [sp, #20]
 	mov r1, r11
 	ldrh r0, [r2, r3]
-	bl Func_08118088 + 0x30
+	bl Func_081180b8
 	ldr r3, .L_0804abfc
 	ldr r4, [sp, #24]
 	str r3, [r4, #4]
@@ -590,7 +590,7 @@ Func_0804a85c:
 	subs r3, #16
 	strb r3, [r5, #4]
 	ldr r0, [sp, #24]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r7, [sp, #84]
 	cmp r7, #255
 	bne .L_0804acec
@@ -636,7 +636,7 @@ Func_0804a85c:
 	ands r2, r3
 	str r2, [r0, #4]
 	ldr r0, [sp, #36]
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	ldr r1, [sp, #56]
 	movs r3, #1
 	ands r3, r1
@@ -792,7 +792,7 @@ Func_0804a85c:
 	strh r3, [r6, r2]
 	mov r0, r10
 	movs r1, #1
-	bl Func_08118088 + 0x58
+	bl BattlePres_SetActorModesFar
 	movs r3, #192
 	ldr r1, [sp, #20]
 	ldr r2, [sp, #16]
@@ -828,7 +828,7 @@ Func_0804a85c:
 	adds r6, r0, #0
 	mov r1, r11
 	ldrh r0, [r5, r7]
-	bl Func_08118088 + 0x30
+	bl Func_081180b8
 	mov r0, r9
 	cmp r0, #0
 	beq .L_0804ae8a
@@ -1400,7 +1400,7 @@ Func_0804a85c:
 	mov r8, r0
 	adds r1, r5, #0
 	ldrh r0, [r2, r3]
-	bl Func_08118088 + 0x30
+	bl Func_081180b8
 	ldr r3, .L_0804b35c
 	ldr r0, [r3]
 	lsls r0, r0, #12
@@ -1486,7 +1486,7 @@ Func_0804a85c:
 	strh r3, [r6, r2]
 .L_0804b36a:
 	adds r0, r6, #0
-	bl Func_0803aaa4
+	bl UiText_GetWideStringWidth
 	ldr r3, [r5]
 	lsrs r2, r0, #31
 	adds r2, r0, r2
@@ -1516,7 +1516,7 @@ Func_0804a85c:
 	adds r0, r6, #0
 	ldr r1, [sp, #72]
 	movs r3, #4
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 .L_0804b3ac:
 	ldr r5, [sp, #56]
 	movs r3, #2
@@ -1561,7 +1561,7 @@ Func_0804a85c:
 	ldrh r0, [r2, r3]
 	adds r1, r4, #0
 	str r4, [sp, #8]
-	bl Func_08118088 + 0x30
+	bl Func_081180b8
 	ldr r3, .L_0804b4bc
 	ldr r0, [r3]
 	lsls r0, r0, #12
@@ -1683,7 +1683,7 @@ Func_0804a85c:
 	adds r0, r5, #0
 	movs r1, #240
 	str r4, [sp, #8]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r0, [sp, #12]
 	ldr r1, [sp, #64]
 	adds r0, #2
@@ -1807,7 +1807,7 @@ Func_0804a85c:
 	str r1, [sp, #68]
 	adds r0, r1, #0
 	ldr r1, [sp, #60]
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #68]
 	ldr r4, [sp, #20]
 	lsls r2, r0, #1
@@ -1832,7 +1832,7 @@ Func_0804a85c:
 	subs r3, #1
 	adds r0, r3, #0
 	str r3, [sp, #68]
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #68]
 	ldr r2, [sp, #20]
 	lsls r3, r0, #1
@@ -1874,7 +1874,7 @@ Func_0804a85c:
 	bl WaitFrames
 	mov r7, r9
 	ldr r0, [sp, #52]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	cmp r7, #0
 	beq .L_0804b66a
 	mov r0, r9
@@ -1886,7 +1886,7 @@ Func_0804a85c:
 	bl UiWork_Finalize
 	movs r1, #0
 	ldr r0, [sp, #20]
-	bl Func_08118088 + 0x58
+	bl BattlePres_SetActorModesFar
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #228

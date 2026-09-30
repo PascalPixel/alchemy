@@ -215,9 +215,9 @@ extern const u8 Data_08199340[];
 extern const u8 Data_08199364[];
 extern u8 Data_08143001[];
 
-void Func_081435e0(s32);
+void BattleFx_BeginCanvasLayer(s32);
 void Func_0813ba50(void);
-void Func_080145a8(void *, s32);
+void Scheduler_AddOrUpdateCallback(void *, s32);
 void Func_08163c2c(s32, s32);
 void Func_08118010(struct Local264 *, s32);
 void Func_08013560(s32);
@@ -237,13 +237,13 @@ void Func_08020010(struct SpriteObject *, s32 *, s32 *, s32);
 s32 Func_08002096(s32);
 s32 Func_08002090(s32);
 s32 Math_Div(s32, s32);
-void Func_08020048(struct SpriteObject *);
+void ResourceObject_ReleaseFar(struct SpriteObject *);
 void *Runtime_BumpAllocateAlternatePool(s32);
 struct Model *Func_081969f8(s32);
 void Func_08014de4(void);
 void Func_080151e4(s32, s32, s32);
 void Func_08015160(s32, s32, s32);
-void Func_08015024(s32);
+void SceneTransform_ApplyPitch(s32);
 void Func_080150e4(s32);
 void Func_08015068(s32);
 void Func_0801521c(s32);
@@ -264,7 +264,7 @@ void Func_08138086(struct Particle *, s32, s32);
 void Func_0815e20c(s32, struct Particle *);
 void Func_08158d68(s32);
 void Func_081434f8(void);
-void Func_08014644(void *);
+void Scheduler_RemoveCallback(void *);
 void Func_08143bb8(void);
 
 void Func_08175f74(struct BattleEffectArgument *arg)
@@ -317,13 +317,13 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     saved_width = DISPLAY_1120->unk_4;
     glyphs = SYSTEM_WORK->glyphs;
     scene = SYSTEM_WORK->scene;
-    Func_081435e0(0);
+    BattleFx_BeginCanvasLayer(0);
     Func_0813ba50();
     REG_BG2CNT = 0x784;
     PLTT[0] = (u32)&Value_00000000;
     PLTT[1] = (u32)&Value_00000000;
     work->transfer_mode = 0;
-    Func_080145a8(Data_08143001, 0xc80);
+    Scheduler_AddOrUpdateCallback(Data_08143001, 0xc80);
     Func_08163c2c(1, 0);
     DISPLAY_11E0->width = 240;
     DISPLAY_1120->unk_4 = 0;
@@ -653,7 +653,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
         }
         if (frame >= 132 && frame < 860) {
             if (frame == 132) {
-                Func_08020048(work->objects[0]);
+                ResourceObject_ReleaseFar(work->objects[0]);
                 source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009b);
                 CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
                 source += 0x180;
@@ -767,7 +767,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     Func_08014de4();
                     Func_080151e4(scale * 2, scale * 2, scale * 2);
                     Func_08015160(-0x100000, -0x80000, 0);
-                    Func_08015024(0xe000);
+                    SceneTransform_ApplyPitch(0xe000);
                     Func_080150e4(0x4000 - t * 256);
                     Func_08015068(-t << 10);
                     Func_08196958(Data_08199210, texture, 4);
@@ -794,7 +794,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     Func_08014de4();
                     Func_08015160(-0x80000, -0x80000, 0);
                     Func_080151e4(scale, scale, scale);
-                    Func_08015024(0xc000);
+                    SceneTransform_ApplyPitch(0xc000);
                     Func_08015068(-t << 10);
                     Func_08196958(Data_08199210, texture, 4);
                     Func_08196a7c(model);
@@ -932,7 +932,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                             } else {
                                 Func_080150e4(0xe000);
                             }
-                            Func_08015024(0x800);
+                            SceneTransform_ApplyPitch(0x800);
                             Func_08196958(Data_08199210, texture, 4);
                             Func_08196a7c(model);
                         }
@@ -1180,7 +1180,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 Func_08014de4();
                 Func_08015160(0x40000, 0, 0);
                 Func_080151e4(scale112, scale112, scale112);
-                Func_08015024(0x2000);
+                SceneTransform_ApplyPitch(0x2000);
                 if (frame > 55) {
                     Func_08015068(frame << 10);
                 } else {
@@ -1197,7 +1197,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 Func_08014de4();
                 Func_08015160(0x40000, -0x100000, 0);
                 Func_0801521c(-0xa710);
-                Func_08015024(0x2000);
+                SceneTransform_ApplyPitch(0x2000);
                 Func_08015068(-frame << 9);
                 Func_08196958(Data_08199210, texture, 4);
                 Func_08196a7c(model);
@@ -1213,7 +1213,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 Func_08014de4();
                 Func_08015160(0x20000, -0x200000, 0);
                 Func_0801521c(0x58f0);
-                Func_08015024(0x2000);
+                SceneTransform_ApplyPitch(0x2000);
                 Func_08015068(frame << 10);
                 Func_08196958(Data_08199210, texture, 4);
                 Func_08196a7c(model);
@@ -1221,7 +1221,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     Func_08014de4();
                     Func_08015160(0x20000, -0x300000, 0);
                     Func_0801521c(-0x31e0);
-                    Func_08015024(0x2000);
+                    SceneTransform_ApplyPitch(0x2000);
                     Func_08015068(-frame << 10);
                     Func_08196958(Data_08199210, texture, 4);
                     Func_08196a7c(model);
@@ -1238,14 +1238,14 @@ void Func_08175f74(struct BattleEffectArgument *arg)
 
     Func_081c0010(162);
     if (frame < 132) {
-        Func_08020048(work->objects[0]);
+        ResourceObject_ReleaseFar(work->objects[0]);
     } else {
         for (i = 0; i != 14; i++) {
-            Func_08020048(work->objects[i]);
+            ResourceObject_ReleaseFar(work->objects[i]);
         }
     }
     for (i = 0; i != 48; i++) {
-        Func_08020048(SPRITES[i]);
+        ResourceObject_ReleaseFar(SPRITES[i]);
     }
     Func_0801314c(188);
     Func_0801314c(104);
@@ -1632,7 +1632,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     Func_08014de4();
                     Func_08015160((member->x / 2 - 56) << 16, (member->y - 56) << 16, 0);
                     Func_080151e4(size / 3, size, size);
-                    Func_08015024(0xc000);
+                    SceneTransform_ApplyPitch(0xc000);
                     Func_08196958(Data_08199210, texture, 4);
                     Func_08196a7c(model);
                 }
@@ -1649,6 +1649,6 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     for (i = 0; i != arg->count; i++) {
     }
     Func_0801314c(188);
-    Func_08014644(Data_08143001);
+    Scheduler_RemoveCallback(Data_08143001);
     Func_08143bb8();
 }

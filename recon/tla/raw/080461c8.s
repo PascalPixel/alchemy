@@ -13,7 +13,7 @@ Func_080461c8:
 	movs r0, #1
 	sub sp, #4
 	ldr r7, [r3, #36]
-	bl Func_08118088 + 0x8
+	bl BattleParty_ListActorIdsFar
 	mov r8, r0
 	lsls r3, r0, #1
 	add r3, r8

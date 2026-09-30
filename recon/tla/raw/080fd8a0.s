@@ -72,7 +72,7 @@ Func_080fd8a0:
 	movs r1, #1
 	adds r2, r5, #0
 	str r3, [sp, #4]
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	b .L_080fd948
 .L_080fd934:
 	mov r3, r10
@@ -83,7 +83,7 @@ Func_080fd8a0:
 	movs r1, #1
 	adds r2, r5, #0
 	movs r3, #14
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 .L_080fd948:
 	adds r6, #1
 	adds r5, #2

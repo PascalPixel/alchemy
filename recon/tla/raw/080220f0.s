@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080220f0
+	.global Render_ApplyProjectedPlacement
 	.thumb_func
-Func_080220f0:
+Render_ApplyProjectedPlacement:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -85,7 +85,7 @@ Func_080220f0:
 	orrs r2, r3
 	str r2, [sp, #32]
 .L_08022190:
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	str r0, [sp, #28]
 .L_08022196:
 	movs r3, #128

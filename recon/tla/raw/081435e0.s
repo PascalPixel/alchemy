@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081435e0
+	.global BattleFx_BeginCanvasLayer
 	.thumb_func
-Func_081435e0:
+BattleFx_BeginCanvasLayer:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -83,7 +83,7 @@ Func_081435e0:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	movs r3, #238
 	lsls r3, r3, #7
 	adds r3, #180
@@ -98,7 +98,7 @@ Func_081435e0:
 	str r2, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_08143700
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]

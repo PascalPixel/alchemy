@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dc390
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_080dc390:
+Camera_WorldToScreen:
 	push {r5, r6, lr}
 	movs r2, #192
 	lsls r2, r2, #18

@@ -9,6 +9,9 @@
 	.thumb_func
 Func_080381e0:
 	overlay_veneer Func_0803d2f0
+	.global Func_080381e8
+	.thumb_func
+Func_080381e8:
 	overlay_veneer Func_0803f778
 	.global Menu_SelectSaveSlotActionFar
 	.thumb_func

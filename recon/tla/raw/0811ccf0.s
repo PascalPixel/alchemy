@@ -25,8 +25,8 @@ Func_0811ccf0:
 	movs r0, #4
 	bl WaitFrames
 	adds r0, r5, #0
-	bl Object_SetPositionAndResetMotionFar + 0x10
+	bl Map_RenderAnimatedTileFramesForObjectFar
 	adds r0, r6, #0
-	bl Func_0811bc64
+	bl ActivateBattleObjectSlot
 .L_0811cd2e:
 	pop {r5, r6, pc}

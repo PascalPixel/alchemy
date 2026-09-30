@@ -131,7 +131,7 @@ Func_0803e488:
 .L_0803e57a:
 	movs r1, #238
 	adds r0, r5, #0
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	movs r3, #52
 	mov r2, r8
 	muls r2, r3

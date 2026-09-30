@@ -19,6 +19,6 @@ Func_08101c18:
 	adds r1, #1
 	adds r2, r6, #0
 	str r5, [sp, #0]
-	bl Func_08038390 + 0x18
+	bl Func_080383a8
 	add sp, #4
 	pop {r5, r6, r7, pc}

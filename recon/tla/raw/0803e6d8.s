@@ -7,7 +7,7 @@ Func_0803e6d8:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r6, [r3, #72]
-	bl Func_0803df14
+	bl Resource_ScheduleOwnerReset
 	movs r2, #212
 	lsls r2, r2, #2
 	adds r3, r6, r2
@@ -28,7 +28,7 @@ Func_0803e6d8:
 	cmp r3, #0
 	beq .L_0803e714
 	ldrh r0, [r5, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	strh r7, [r5, #10]
 .L_0803e714:
 	ldr r5, [r5, #4]
@@ -47,20 +47,20 @@ Func_0803e6d8:
 	cmp r3, #0
 	beq .L_0803e736
 	ldrh r0, [r5, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	strh r7, [r5, #10]
 .L_0803e736:
 	ldr r5, [r5, #4]
 	cmp r5, #0
 	bne .L_0803e728
 .L_0803e73c:
-	bl Func_0803f758
+	bl Resource_ResetPendingTransfer
 	movs r2, #18
 	ldrsh r3, [r6, r2]
 	cmp r3, #0
 	beq .L_0803e760
 	ldrh r0, [r6, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r2, #18
 	ldrsh r3, [r6, r2]
 	cmp r3, #0
@@ -68,13 +68,13 @@ Func_0803e6d8:
 	adds r3, r6, #0
 	adds r3, #64
 	ldrh r0, [r3]
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_0803e760:
 	movs r2, #185
 	lsls r2, r2, #2
 	adds r3, r6, r2
 	ldrh r0, [r3]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #72
 	bl Runtime_ReleaseHeapBlock
 	pop {r5, r6, r7, pc}

@@ -20,7 +20,7 @@ Func_080450ac:
 	adds r0, r6, #0
 	adds r1, r5, #0
 	adds r2, r7, #0
-	bl Func_08045048
+	bl RenderResource_LoadFrame
 	ldr r3, [sp, #28]
 	movs r1, #128
 	str r3, [sp, #0]

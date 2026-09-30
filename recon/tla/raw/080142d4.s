@@ -25,7 +25,7 @@ VramBlock_LoadCached:
 	cmp r3, r6
 	beq .L_08014306
 	adds r0, r5, #0
-	bl Func_08014274
+	bl Resource_ResetEntry
 	b .L_0801430a
 .L_08014306:
 	ldrh r5, [r7, #2]

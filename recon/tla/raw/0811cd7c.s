@@ -36,13 +36,13 @@ Camera_ConfigureScene:
 	bl Func_08014de4
 	adds r0, r5, #0
 	adds r0, #12
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	movs r3, #54
 	ldrsh r0, [r5, r3]
 	bl Func_08015068
 	movs r2, #52
 	ldrsh r0, [r5, r2]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	add r0, sp, #4
 	str r6, [r0]
 	str r6, [r0, #4]
@@ -81,7 +81,7 @@ Camera_ConfigureScene:
 	lsls r1, r1, #16
 	lsls r3, r3, #4
 	movs r2, #0
-	bl Func_08126548
+	bl BattleCamera_SetRange
 	mov r3, r8
 	str r5, [r3, #20]
 	str r6, [r3, #16]

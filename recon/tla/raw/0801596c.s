@@ -114,7 +114,7 @@ Func_0801596c:
 	mov r0, r10
 	ldr r1, .L_08015acc
 	movs r2, #7
-	bl Func_08015ffc
+	bl SaveState_CompareBytes
 	cmp r0, #0
 	bne .L_08015aa6
 	mov r1, r10

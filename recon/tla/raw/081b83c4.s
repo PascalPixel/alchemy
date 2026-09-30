@@ -756,7 +756,7 @@ Func_081b83c4:
 	bl UiText_DrawNumberInWindowFar
 	ldr r1, [sp, #92]
 	negs r0, r1
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	movs r4, #128
 	ldr r2, [sp, #120]
 	lsls r4, r4, #3
@@ -956,7 +956,7 @@ Func_081b83c4:
 	bl UiText_DrawNumberInWindowFar
 	ldr r2, [sp, #92]
 	negs r0, r2
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	ldr r0, [r5, #16]
 	ldr r4, [sp, #120]
 	movs r5, #128
@@ -1199,21 +1199,21 @@ Func_081b83c4:
 	adds r5, r0, #0
 	adds r1, r5, #0
 	lsls r0, r6, #15
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r7, #12]
 	ldr r4, [sp, #12]
 	adds r3, r3, r0
 	adds r1, r5, #0
 	str r3, [r7, #12]
 	lsls r0, r4, #15
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r7, #16]
 	adds r1, r5, #0
 	adds r3, r3, r0
 	str r3, [r7, #16]
 	mov r3, r8
 	lsls r0, r3, #15
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r7, #20]
 	ldr r1, [r7]
 	adds r3, r3, r0
@@ -1388,7 +1388,7 @@ Func_081b83c4:
 .L_081b8eec:
 	asrs r0, r0, #10
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #1
 	bne .L_081b8f02
 	movs r2, #128
@@ -1494,7 +1494,7 @@ Func_081b83c4:
 	ldr r0, [r7, #24]
 	lsls r1, r1, #4
 	add r5, sp, #180
-	bl __divsi3
+	bl Math_Div
 	str r0, [r5, r6]
 	ldr r5, [sp, #44]
 	adds r5, #1
@@ -1961,7 +1961,7 @@ Func_081b83c4:
 	movs r0, #105
 	bl Audio_PlayCue
 	ldr r0, [sp, #76]
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	ldr r3, .L_081b9510
 	ldr r1, [sp, #120]
 	movs r2, #128
@@ -1990,7 +1990,7 @@ Func_081b83c4:
 	bl Audio_PlayCue
 .L_081b9388:
 	movs r0, #1
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	ldr r3, .L_081b9510
 	ldr r6, [sp, #120]
 	movs r1, #128
@@ -3580,7 +3580,7 @@ Func_081b83c4:
 	adds r1, r6, #0
 	lsls r0, r0, #4
 	str r4, [sp, #12]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #12]
 	adds r1, r6, #0
 	ldr r3, [r4]
@@ -3589,7 +3589,7 @@ Func_081b83c4:
 	movs r0, #128
 	lsls r0, r0, #4
 	str r2, [sp, #16]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #12]
 	movs r1, #16
 	ldr r3, [r4, #4]
@@ -3717,13 +3717,13 @@ Func_081b83c4:
 	adds r5, #128
 	adds r1, r5, #0
 	lsls r0, r0, #5
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r6]
 	adds r1, r5, #0
 	subs r7, r3, r0
 	movs r0, #192
 	lsls r0, r0, #4
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r6, #4]
 	movs r2, #16
 	subs r1, r3, r0

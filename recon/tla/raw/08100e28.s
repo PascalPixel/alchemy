@@ -5,6 +5,6 @@
 Func_08100e28:
 	push {lr}
 	adds r0, r0, r1
-	bl Math_Mod
+	bl __modsi3
 	pop {pc}
 	.2byte 0x0000

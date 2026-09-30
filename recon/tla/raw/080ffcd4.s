@@ -82,7 +82,7 @@ Func_080ffcd4:
 	movs r1, #0
 	adds r0, r6, #0
 	bl Func_080ff7b4
-	bl Func_080fa458
+	bl ItemMenu_HideAllIcons
 	mov r0, r9
 	bl Func_080fd6b0
 	movs r3, #1
@@ -211,7 +211,7 @@ Func_080ffcd4:
 	adds r3, r7, r4
 	ldrb r1, [r3]
 	adds r0, r0, r1
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #129
 	lsls r2, r0, #1
 	lsls r3, r3, #2

@@ -13,4 +13,4 @@ Func_080162dc:
 .L_080162ea:
 	pop {pc}
 .L_080162ec:
-	.4byte Data_02005360
+	.4byte gSerialRuntime

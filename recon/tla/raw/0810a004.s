@@ -15,7 +15,7 @@ Func_0810a004:
 	adds r3, r6, #0
 	bl Func_0810bf98
 	adds r0, r6, #0
-	bl Item_AdjustCounterFar + 0x8
+	bl Inventory_CountFar
 	cmp r0, #0
 	bne .L_0810a034
 	ldr r0, .L_0810a038

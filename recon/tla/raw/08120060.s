@@ -96,7 +96,7 @@ Func_08120060:
 	adds r0, #248
 	strb r0, [r5, #4]
 	adds r0, r5, #0
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r3, .L_08120154
 	movs r2, #129
 	ldr r3, [r3, #4]
@@ -110,7 +110,7 @@ Func_08120060:
 	b .L_081200a0
 .L_0812013c:
 	adds r0, r6, #0
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #1

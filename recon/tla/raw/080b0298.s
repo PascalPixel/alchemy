@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080b0298
+	.global Owner_RefreshDerivedData
 	.thumb_func
-Func_080b0298:
+Owner_RefreshDerivedData:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	bl Owner_GetState

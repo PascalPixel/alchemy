@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08013e70
+	.global Blend_SetDarkenTarget16
 	.thumb_func
-Func_08013e70:
+Blend_SetDarkenTarget16:
 	ldr r2, .L_08013e98
 	movs r3, #0
 	strb r3, [r2]
@@ -24,17 +24,17 @@ Func_08013e70:
 .L_08013e94:
 	.4byte 0x0000003e
 .L_08013e98:
-	.4byte Data_030011dc
+	.4byte gBlendBrighten
 .L_08013e9c:
-	.4byte Data_030011f4
+	.4byte gBlendLayers
 .L_08013ea0:
-	.4byte Data_0300113c
+	.4byte gBlendStartLevel
 .L_08013ea4:
-	.4byte Data_030011b0
+	.4byte gBlendTargetLevel
 .L_08013ea8:
-	.4byte Data_03001178
+	.4byte gBlendDuration
 .L_08013eac:
-	.4byte Data_0300110c
+	.4byte gBlendFramesLeft
 .L_08013eb0:
 	bx lr
 	.2byte 0x0000

@@ -32,6 +32,6 @@ Scheduler_DisableOverlayCallbacks:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_080147d0:
-	.4byte Data_02003610
+	.4byte gSchedulerTaskTable
 .L_080147d4:
 	.4byte 0x04000208

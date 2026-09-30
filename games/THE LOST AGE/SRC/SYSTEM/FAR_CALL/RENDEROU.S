@@ -9,8 +9,23 @@
 	.thumb_func
 RenderOutput_CreateFar:
 	overlay_veneer RenderOutput_Create
+	.global RenderOutput_CreateFromResourceFar
+	.thumb_func
+RenderOutput_CreateFromResourceFar:
 	overlay_veneer RenderOutput_CreateFromResource
+	.global Func_080380d8
+	.thumb_func
+Func_080380d8:
 	overlay_veneer Func_08042450
+	.global Func_080380e0
+	.thumb_func
+Func_080380e0:
 	overlay_veneer Func_08042508
+	.global UiWork_SetByte5AndResetHalfwordCFar
+	.thumb_func
+UiWork_SetByte5AndResetHalfwordCFar:
 	overlay_veneer UiWork_SetByte5AndResetHalfwordC
+	.global Func_080380f0
+	.thumb_func
+Func_080380f0:
 	overlay_veneer Func_0804257c

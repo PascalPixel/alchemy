@@ -13,7 +13,7 @@ ItemMenu_ArrangeCategoryItemIcons:
 	adds r5, r0, #0
 	adds r7, r6, #0
 	sub sp, #4
-	bl Func_08100700
+	bl ItemMenu_PosCategory
 	movs r3, #14
 	movs r1, #216
 	adds r7, #76

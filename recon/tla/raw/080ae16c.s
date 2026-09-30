@@ -27,7 +27,7 @@ Func_080ae16c:
 	lsls r1, r1, #16
 	asrs r1, r1, #16
 	lsls r0, r1, #14
-	bl __divsi3
+	bl Math_Div
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -53,7 +53,7 @@ Func_080ae16c:
 	movs r2, #54
 	ldrsh r1, [r5, r2]
 	lsls r0, r0, #14
-	bl __divsi3
+	bl Math_Div
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3

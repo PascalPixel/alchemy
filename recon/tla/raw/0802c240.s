@@ -230,7 +230,7 @@ Func_0802c240:
 	bl Camera_StoreSceneParameters
 	bl Func_08014de4
 	mov r0, r9
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	movs r1, #143
 	lsls r1, r1, #1
 	adds r3, r7, r1
@@ -240,7 +240,7 @@ Func_0802c240:
 	lsls r2, r2, #1
 	adds r6, r7, r2
 	ldrh r0, [r6]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r1, #144
 	lsls r1, r1, #4
 	adds r1, #118

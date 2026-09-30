@@ -30,7 +30,7 @@ Func_0811b75c:
 	bgt .L_0811b790
 	mov r0, r11
 .L_0811b790:
-	bl Func_0811b724
+	bl ReleaseBattleObjectRecords
 .L_0811b794:
 	movs r3, #1
 	add r11, r3
@@ -79,7 +79,7 @@ Func_0811b75c:
 .L_0811b7e4:
 	ldr r0, [sp, #8]
 	adds r1, r7, #0
-	bl Func_0811b4d8
+	bl BattleUnit_BuildStatusFlags
 	ldr r3, [r7]
 	mov r8, r3
 	cmp r3, #0
@@ -119,7 +119,7 @@ Func_0811b75c:
 .L_0811b830:
 	.4byte 0x00000fff
 .L_0811b834:
-	.4byte Data_03001108
+	.4byte gSchedulerStatus
 .L_0811b838:
 	adds r2, #2
 	cmp r3, r2

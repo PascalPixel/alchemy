@@ -25,4 +25,7 @@ Func_08038340:
 	.thumb_func
 Func_08038348:
 	overlay_veneer Func_0803f9c0
+	.global Func_08038350
+	.thumb_func
+Func_08038350:
 	overlay_veneer Func_080400e8

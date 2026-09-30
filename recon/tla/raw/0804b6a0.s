@@ -20,7 +20,7 @@ Func_0804b6a0:
 	subs r6, r0, r5
 	adds r0, r6, #0
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	cmp r0, #0
 	bne .L_0804b6d0
 	subs r0, #1
@@ -30,7 +30,7 @@ Func_0804b6a0:
 .L_0804b6d0:
 	adds r0, r5, r0
 	str r0, [r7, #44]
-	bl Func_08118088 + 0x48
+	bl Camera_ConfigureSceneFar
 .L_0804b6d8:
 	adds r5, r7, #0
 	adds r6, r7, #0
@@ -44,7 +44,7 @@ Func_0804b6a0:
 	adds r0, r6, #0
 	movs r1, #240
 	str r2, [sp, #4]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r2, [sp, #4]
 .L_0804b6f4:
 	subs r2, #1
@@ -124,7 +124,7 @@ Func_0804b6a0:
 	adds r0, r6, #0
 	adds r0, #59
 	movs r1, #60
-	bl __divsi3
+	bl Math_Div
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0804b7a0

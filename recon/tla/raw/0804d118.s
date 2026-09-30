@@ -9,7 +9,7 @@ Menu_EndResourceSelection:
 	adds r3, #232
 	ldr r5, [r3]
 	ldr r0, .L_0804d168
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, [r5, #120]
 	cmp r0, #0
 	beq .L_0804d134
@@ -27,7 +27,7 @@ Menu_EndResourceSelection:
 	adds r5, #18
 .L_0804d146:
 	ldrh r0, [r5]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r2, #0
 	ldrsh r3, [r7, r2]
 	adds r6, #1

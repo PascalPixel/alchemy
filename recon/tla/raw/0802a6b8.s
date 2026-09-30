@@ -293,7 +293,7 @@ Func_0802a6b8:
 .L_0802a904:
 	.4byte Data_02010001
 .L_0802a908:
-	.4byte Data_0202c000
+	.4byte gMapCollision
 .L_0802a90c:
 	.4byte 0x85000800
 .L_0802a910:
@@ -438,7 +438,7 @@ Func_0802a6b8:
 	movs r1, #128
 	lsls r1, r1, #3
 	adds r1, #133
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #2
 	add sp, #8
 	pop {r3, r5, r6, r7}

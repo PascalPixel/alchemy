@@ -29,7 +29,7 @@ Func_081b3ed8:
 	mov r2, r10
 	ands r0, r3
 	adds r5, r2, r6
-	bl Func_081b3eb0
+	bl AudioTrack_RemoveSlotNode
 	ldr r3, .L_081b3fac
 	movs r0, #136
 	ldr r1, [r3]
@@ -69,7 +69,7 @@ Func_081b3ed8:
 	adds r3, r3, r2
 	str r4, [r1, r3]
 	adds r6, #1
-	bl Func_081b3e70
+	bl AudioTrack_InsertSlotNode
 	adds r7, #1
 	cmp r6, r8
 	blt .L_081b3f00
@@ -91,7 +91,7 @@ Func_081b3ed8:
 	mov r3, r11
 	ands r5, r3
 	adds r0, r5, #0
-	bl Func_081b3eb0
+	bl AudioTrack_RemoveSlotNode
 	mov r0, r9
 	movs r2, #208
 	ldr r3, [r0]

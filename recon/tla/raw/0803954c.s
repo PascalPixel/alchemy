@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803954c
+	.global UiText_QueueRenderEntries
 	.thumb_func
-Func_0803954c:
+UiText_QueueRenderEntries:
 	push {r5, r6, r7, lr}
 	mov r12, r3
 	movs r3, #192

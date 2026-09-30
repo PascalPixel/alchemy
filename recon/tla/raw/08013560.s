@@ -145,7 +145,7 @@ WaitFrames:
 .L_08013664:
 	.4byte Data_03001218
 .L_08013668:
-	.4byte Data_03001108
+	.4byte gSchedulerStatus
 .L_0801366c:
 	.4byte Data_0300120c
 .L_08013670:
@@ -341,7 +341,7 @@ WaitFrames:
 .L_080137f0:
 	.4byte Data_030011b8
 .L_080137f4:
-	.4byte Data_02005360
+	.4byte gSerialRuntime
 .L_080137f8:
 	.4byte Data_030011d0
 .L_080137fc:

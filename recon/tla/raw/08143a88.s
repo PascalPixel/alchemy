@@ -8,7 +8,7 @@ Func_08143a88:
 	mov r6, r8
 	push {r6, r7}
 	adds r5, r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, .L_08143ac0
 	movs r2, #128
 	orrs r5, r3

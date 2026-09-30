@@ -301,7 +301,7 @@ Func_08044558:
 	ldr r0, [sp, #12]
 	bl Func_08108030
 	mov r0, r9
-	bl Func_08108030 + 0x8
+	bl Func_08108038
 	ldr r3, .L_08044818
 	mov r1, r9
 	ldr r0, [r3]

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d3888
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_080d3888:
+ObjectMotion_SetActionVariant:
 	push {r5, r6, lr}
 	adds r5, r1, #0
 	bl ObjectTable_Get

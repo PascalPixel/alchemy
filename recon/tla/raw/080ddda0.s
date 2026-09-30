@@ -57,7 +57,7 @@ Func_080ddda0:
 	movs r1, #224
 	ldrh r2, [r0, #6]
 	lsls r1, r1, #12
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 .L_080dde18:
 	subs r5, #1
 	cmp r5, #0
@@ -128,4 +128,4 @@ Func_080ddda0:
 .L_080ddea0:
 	.4byte 0xffe00000
 .L_080ddea4:
-	.4byte Func_080db91c
+	.4byte ObjectGroup_ApplyRandomChildValues

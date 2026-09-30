@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0804d344
+	.global Menu_LoadResourceSlot
 	.thumb_func
-Func_0804d344:
+Menu_LoadResourceSlot:
 	push {r5, r6, lr}
 	mov r6, r10
 	mov r5, r8

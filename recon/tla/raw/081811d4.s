@@ -171,7 +171,7 @@ Func_081811d4:
 	lsls r1, r1, #4
 	ldr r0, .L_081813a8
 	str r5, [sp, #44]
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #172
 	lsls r2, r2, #15
 	ldr r1, [sp, #52]
@@ -408,7 +408,7 @@ Func_081811d4:
 	ble .L_081814e2
 	subs r0, #22
 	movs r1, #12
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #3
 	ble .L_081814e2
 	movs r1, #1
@@ -594,7 +594,7 @@ Func_081811d4:
 	movs r1, #4
 	bl Func_08118088
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_0818165c
 .L_08181634:
 	mov r4, r10
@@ -949,7 +949,7 @@ Func_081811d4:
 	adds r3, #2
 	strh r2, [r3]
 	ldr r0, .L_08181900
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

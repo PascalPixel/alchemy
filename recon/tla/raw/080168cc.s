@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080168cc
+	.global SerialRuntime_WaitForTransferB
 	.thumb_func
-Func_080168cc:
+SerialRuntime_WaitForTransferB:
 	push {r5, r6, lr}
 	ldr r2, .L_080168f0
 	movs r5, #0

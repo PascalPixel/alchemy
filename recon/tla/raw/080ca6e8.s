@@ -81,11 +81,11 @@ Func_080ca6e8:
 	bhi .L_080ca7d4
 	movs r1, #20
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	movs r1, #20
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #19
 	bne .L_080ca7b6
 	movs r0, #200
@@ -196,7 +196,7 @@ Func_080ca6e8:
 	ldrb r0, [r7, #16]
 	orrs r3, r1
 	strb r3, [r7, #17]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	strb r5, [r7, #16]
 	b .L_080ca892
 .L_080ca870:

@@ -50,7 +50,7 @@ Func_080dbed0:
 	adds r0, r7, #0
 	muls r0, r3
 	movs r1, #10
-	bl __divsi3
+	bl Math_Div
 	adds r5, r5, r0
 	str r5, [r6, #8]
 	mov r2, r8
@@ -60,7 +60,7 @@ Func_080dbed0:
 	adds r0, r7, #0
 	muls r0, r3
 	movs r1, #10
-	bl __divsi3
+	bl Math_Div
 	adds r5, r5, r0
 	str r5, [r6, #12]
 	mov r2, r8
@@ -70,12 +70,12 @@ Func_080dbed0:
 	adds r0, r7, #0
 	muls r0, r3
 	movs r1, #10
-	bl __divsi3
+	bl Math_Div
 	movs r1, #10
 	adds r5, r5, r0
 	mov r0, r10
 	str r5, [r6, #16]
-	bl __divsi3
+	bl Math_Div
 	movs r2, #128
 	lsls r2, r2, #7
 	adds r0, r0, r2

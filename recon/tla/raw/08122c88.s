@@ -33,7 +33,7 @@ Func_08122c88:
 	strb r4, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_08122ccc
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	pop {pc}
 	.2byte 0x0000
 .L_08122ccc:

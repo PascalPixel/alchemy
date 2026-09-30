@@ -9,7 +9,7 @@ Func_080fb554:
 	adds r5, r0, #0
 	movs r0, #15
 	adds r6, r1, #0
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	movs r2, #1
 	movs r3, #0
 	ldrsb r3, [r5, r3]
@@ -18,7 +18,7 @@ Func_080fb554:
 	cmp r3, r8
 	bne .L_080fb578
 	movs r0, #14
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_080fb578:
 	ldr r7, .L_080fb634
 	movs r3, #24
@@ -27,13 +27,13 @@ Func_080fb554:
 	movs r2, #0
 	bl UiText_DrawCharacterAtOffsetFar
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	movs r3, #1
 	ldrsb r3, [r5, r3]
 	cmp r3, r8
 	bne .L_080fb59a
 	movs r0, #14
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_080fb59a:
 	movs r3, #24
 	adds r0, r7, #1
@@ -41,13 +41,13 @@ Func_080fb554:
 	movs r2, #40
 	bl UiText_DrawCharacterAtOffsetFar
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	movs r3, #3
 	ldrsb r3, [r5, r3]
 	cmp r3, r8
 	bne .L_080fb5ba
 	movs r0, #14
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_080fb5ba:
 	movs r3, #32
 	adds r0, r7, #2
@@ -55,13 +55,13 @@ Func_080fb554:
 	movs r2, #0
 	bl UiText_DrawCharacterAtOffsetFar
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	movs r3, #5
 	ldrsb r3, [r5, r3]
 	cmp r3, r8
 	bne .L_080fb5da
 	movs r0, #14
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_080fb5da:
 	movs r3, #32
 	adds r0, r7, #3
@@ -69,13 +69,13 @@ Func_080fb554:
 	movs r2, #80
 	bl UiText_DrawCharacterAtOffsetFar
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	movs r3, #2
 	ldrsb r3, [r5, r3]
 	cmp r3, r8
 	bne .L_080fb5fa
 	movs r0, #14
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_080fb5fa:
 	movs r3, #24
 	adds r0, r7, #4
@@ -83,13 +83,13 @@ Func_080fb554:
 	movs r2, #80
 	bl UiText_DrawCharacterAtOffsetFar
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	movs r3, #4
 	ldrsb r3, [r5, r3]
 	cmp r3, r8
 	bne .L_080fb61a
 	movs r0, #14
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_080fb61a:
 	adds r0, r7, #5
 	adds r1, r6, #0
@@ -97,7 +97,7 @@ Func_080fb554:
 	movs r3, #32
 	bl UiText_DrawCharacterAtOffsetFar
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}

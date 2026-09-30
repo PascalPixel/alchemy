@@ -115,7 +115,7 @@ Func_080e1f2c:
 	lsls r0, r0, #12
 	ldrh r1, [r2, #2]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	ldr r0, .L_080e2258
 	str r3, [r7]
@@ -189,7 +189,7 @@ Func_080e1f2c:
 	lsls r0, r0, #13
 	ldrh r1, [r2, #2]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	movs r0, #96
 	str r3, [r7]
@@ -267,7 +267,7 @@ Func_080e1f2c:
 	mov r3, r11
 	lsls r0, r0, #15
 	ldrh r1, [r3, #2]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r4, .L_080e225c
 	movs r0, #128
 	movs r1, #0
@@ -319,7 +319,7 @@ Func_080e1f2c:
 	ldr r0, .L_080e2260
 	strh r2, [r3]
 	adds r1, #90
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #0
 	ldrsh r3, [r5, r2]
 	movs r2, #186
@@ -337,7 +337,7 @@ Func_080e1f2c:
 	bne .L_080e21e8
 .L_080e21f6:
 	ldr r0, .L_080e2260
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r1, #128
 	lsls r1, r1, #3
 	adds r1, #50
@@ -364,9 +364,9 @@ Func_080e1f2c:
 	strb r2, [r3]
 .L_080e222c:
 	ldr r0, [sp, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, [sp, #8]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	bl BattleFx_PrepareBufferInterpolation
 	bl Func_080eb930
 	movs r0, #92

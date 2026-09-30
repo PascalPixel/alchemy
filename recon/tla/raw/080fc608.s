@@ -42,7 +42,7 @@ Func_080fc608:
 	movs r0, #5
 	adds r1, r7, #0
 	movs r3, #116
-	bl Func_080f92dc
+	bl Menu_SetPageIcons
 	movs r2, #15
 	ldr r3, [r5, #8]
 	ldr r1, [r5, #20]

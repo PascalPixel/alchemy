@@ -25,7 +25,7 @@ Ui_PrepareTransferFromTableEntry:
 	strh r2, [r3]
 	adds r0, r1, #0
 	movs r1, #0
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	pop {pc}
 	.2byte 0x0000
 .L_0803daac:

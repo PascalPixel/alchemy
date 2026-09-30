@@ -56,7 +56,7 @@ Func_080da22c:
 	mov lr, r3
 	.2byte 0xf800
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	mov r2, r9
 	lsls r3, r2, #3
 	subs r3, r3, r2

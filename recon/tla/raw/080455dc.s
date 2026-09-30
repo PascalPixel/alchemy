@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080455dc
+	.global Resource_LoadIndexedIntoBuffer
 	.thumb_func
-Func_080455dc:
+Resource_LoadIndexedIntoBuffer:
 	push {r5, r6, lr}
 	mov r6, r8
 	push {r6}

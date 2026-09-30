@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803db54
+	.global UiGlyph_DecodeWithHeapRoutines
 	.thumb_func
-Func_0803db54:
+UiGlyph_DecodeWithHeapRoutines:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

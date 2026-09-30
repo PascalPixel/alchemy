@@ -70,7 +70,7 @@ Func_080e1024:
 	mov r2, r8
 	strb r2, [r5, #26]
 	ldrb r0, [r5, #16]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r3, #226
 	lsls r3, r3, #3
 	add r3, r10

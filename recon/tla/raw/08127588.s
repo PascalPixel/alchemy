@@ -54,7 +54,7 @@ Func_08127588:
 	str r4, [sp, #0]
 	adds r0, r5, #0
 	adds r0, #8
-	bl Battle_CalcRestore + 0x8
+	bl Func_080ad140
 	adds r6, r0, #0
 	ldr r4, [sp, #0]
 	cmp r6, #0
@@ -95,7 +95,7 @@ Func_08127588:
 .L_08127632:
 	mov r0, r9
 	mov r1, r10
-	bl __divsi3
+	bl Math_Div
 .L_0812763a:
 	add sp, #32
 	pop {r3, r5, r6}

@@ -24,7 +24,7 @@ Func_0814ef44:
 	ldr r3, [r3, #100]
 	str r2, [sp, #48]
 	str r3, [sp, #56]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	cmp r7, #13
 	bne .L_0814ef84
 	ldr r3, [sp, #72]
@@ -697,7 +697,7 @@ Func_0814ef44:
 	str r3, [r2]
 	ldr r0, .L_0814f680
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, [sp, #64]
 	movs r2, #0
 	mov r11, r2
@@ -718,7 +718,7 @@ Func_0814ef44:
 	cmp r0, #40
 	bne .L_0814f4ba
 	movs r0, #0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0814f4ba:
 	cmp r7, #7
 	bne .L_0814f4ce
@@ -882,7 +882,7 @@ Func_0814ef44:
 	ldr r5, [sp, #76]
 	ldr r2, [sp, #12]
 	ldrsh r0, [r2, r5]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
 	ldr r0, [sp, #60]
 	lsls r0, r0, #3
@@ -900,7 +900,7 @@ Func_0814ef44:
 	ldr r3, [r5, #16]
 	str r3, [r1, #8]
 	ldr r0, [sp, #28]
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	mov r3, r9
 	adds r3, #20
 	cmp r11, r3
@@ -1005,7 +1005,7 @@ Func_0814ef44:
 	mov r2, r11
 	lsls r5, r2, #9
 	adds r0, r5, #0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r5, #0
 	bl Func_080150e4
 	b .L_0814f732
@@ -1035,7 +1035,7 @@ Func_0814ef44:
 	ldr r0, [sp, #16]
 	bl Func_08015068
 	ldr r0, [sp, #16]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 .L_0814f732:
 	ldr r1, [sp, #52]
 	movs r0, #0
@@ -1206,7 +1206,7 @@ Func_0814ef44:
 .L_0814f858:
 	add r0, r11
 	movs r1, #9
-	bl Math_Mod
+	bl __modsi3
 	adds r4, r0, #0
 .L_0814f862:
 	cmp r7, #0
@@ -1314,19 +1314,19 @@ Func_0814ef44:
 	ldr r5, [r6]
 	mov r1, r8
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	mov r1, r8
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	mov r1, r8
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r6, #8]
 .L_0814f94e:
@@ -1392,7 +1392,7 @@ Func_0814ef44:
 	b .L_0814f4a6
 .L_0814f9c4:
 	ldr r0, .L_0814fa04
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

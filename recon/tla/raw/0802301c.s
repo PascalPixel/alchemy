@@ -29,17 +29,17 @@ Func_0802301c:
 .L_08023048:
 	ldr r0, [r5]
 	adds r1, r7, #0
-	bl Func_08022f64
+	bl Map_RenderAnimatedTileFrame
 	ldr r0, [r5]
 	mov r1, r9
-	bl Func_08022f64
+	bl Map_RenderAnimatedTileFrame
 	ldr r0, [r5]
 	mov r1, r10
-	bl Func_08022f64
+	bl Map_RenderAnimatedTileFrame
 	subs r6, #1
 	ldmia r5!, {r0}
 	mov r1, r8
-	bl Func_08022f64
+	bl Map_RenderAnimatedTileFrame
 	cmp r6, #0
 	bne .L_08023048
 .L_0802306e:

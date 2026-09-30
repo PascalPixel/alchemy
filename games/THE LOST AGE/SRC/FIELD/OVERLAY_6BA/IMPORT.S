@@ -28,7 +28,7 @@
 	overlay_veneer UiText_DrawNumberInWindowFar
 	overlay_veneer Func_080380f8
 	overlay_veneer UiText_DrawQuantity
-	overlay_veneer Func_08038140
+	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer RenderOutput_RedrawSavedRectFar
 	overlay_veneer Func_080382f8
 	overlay_veneer Func_08038318
@@ -46,7 +46,7 @@
 	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Djinn_ActivateFar
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
-	overlay_veneer Func_080ad1d8
+	overlay_veneer Party_AdjustSixDigitCounterAFar
 	overlay_veneer PartyInventory_HasSpaceFar
 	overlay_veneer Func_080ad240
 	overlay_veneer Djinn_AddToLeastLoadedOwnerFar

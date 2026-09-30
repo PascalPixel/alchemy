@@ -45,7 +45,7 @@ Func_08100738:
 	mov r2, r9
 	adds r1, r7, #0
 	movs r3, #1
-	bl Func_081007f8
+	bl BattleEffect_ApplyToTargets
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2
@@ -67,7 +67,7 @@ Func_08100738:
 	adds r1, r2, r3
 	adds r0, r5, #0
 	movs r2, #0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	ldr r1, [sp, #0]
 	movs r2, #133
 	lsls r2, r2, #2

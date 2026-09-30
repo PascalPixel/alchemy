@@ -184,7 +184,9 @@ impl Layout {
     }
 
     /// The part of this section in `[from, to)`, named for its start.
+    /// A label at the section's own end stays with its last slice.
     pub fn slice(&self, from: u32, to: u32, name: String) -> Layout {
+        let last = if to == self.end { to + 1 } else { to };
         Layout {
             name,
             flags: self.flags.clone(),
@@ -192,7 +194,7 @@ impl Layout {
             end: to,
             labels: self
                 .labels
-                .range(from..to)
+                .range(from..last)
                 .map(|(address, names)| (*address, names.clone()))
                 .collect(),
             bytes: self
@@ -325,6 +327,21 @@ mod tests {
                 size: 0x10
             }]
         );
+    }
+
+    #[test]
+    fn a_label_at_the_end_of_a_section_stays_with_it() {
+        let space =
+            parse("\t.section .sym,\"aw\",%nobits\n\t.space 0x00000010\n\t.global gEnd\ngEnd:\n")
+                .unwrap();
+        let layout = Layout::new(&space.sections[0], 0x0200_0000);
+        let whole = layout.slice(0x0200_0000, 0x0200_0010, ".sym".into());
+        assert_eq!(
+            whole.section().items,
+            vec![Item::Space(16), Item::Label("gEnd".into())]
+        );
+        let head = layout.slice(0x0200_0000, 0x0200_0008, ".sym".into());
+        assert_eq!(head.section().items, vec![Item::Space(8)]);
     }
 
     #[test]

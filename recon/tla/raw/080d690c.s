@@ -107,7 +107,7 @@ Func_080d690c:
 .L_080d69e4:
 	.4byte Func_080d64f0
 .L_080d69e8:
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #8
 	pop {r3}
 	mov r8, r3

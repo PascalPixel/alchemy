@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811b4d8
+	.global BattleUnit_BuildStatusFlags
 	.thumb_func
-Func_0811b4d8:
+BattleUnit_BuildStatusFlags:
 	push {r5, r6, lr}
 	adds r6, r1, #0
 	adds r3, r6, #0

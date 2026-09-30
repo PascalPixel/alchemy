@@ -34,7 +34,7 @@ Func_0803b8cc:
 	str r3, [sp, #8]
 	adds r2, r7, #0
 	mov r3, r8
-	bl Func_0803b794
+	bl UiWindow_FitOnScreen
 	movs r0, #1
 .L_0803b910:
 	add sp, #12

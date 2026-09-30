@@ -385,6 +385,9 @@ Func_0802b590:
 	.4byte 0x02010000
 	.2byte 0x4000
 	.2byte 0x0202
+	.global Func_0802b620
+	.thumb_func
+Func_0802b620:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r4, [r3, #32]

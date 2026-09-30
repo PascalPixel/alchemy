@@ -1,26 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_0815a0ec
-	.thumb_func
-Func_0815a0ec:
-	push	{lr}
-	ldr	r3, [r0, #24]
-	cmp	r3, #0
-	bne.n	.L_0815a0fc
-	movs	r1, #6
-	bl	BattlePres_RunBurstScene
-	b.n	.L_0815a10e
-.L_0815a0fc:
-	cmp	r3, #1
-	bne.n	.L_0815a108
-	movs	r1, #7
-	bl	BattlePres_RunBurstScene
-	b.n	.L_0815a10e
-.L_0815a108:
-	movs	r1, #8
-	bl	BattlePres_RunBurstScene
-.L_0815a10e:
-	pop	{pc}
 	.global BattlePres_RunBurstScene
 	.thumb_func
 BattlePres_RunBurstScene:

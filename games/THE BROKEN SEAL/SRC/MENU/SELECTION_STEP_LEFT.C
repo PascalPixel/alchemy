@@ -1,3 +1,4 @@
+/* Selection lists: move the cursor up one entry, scrolling or wrapping the list to its end. */
 #include "TYPES.H"
 
 /* main:0801b810 Menu_StepLeft - hand-written draft, 174 of 204 halfwords
@@ -74,7 +75,7 @@ void Menu_StepLeft(struct StepMenu *state)
 {
     struct StepNode *node;
     u16 *ids;
-    s32 y;
+    register s32 y asm("r1"); /* FAKEMATCH: keeps the row offset in r1 */
     s32 i;
 
     Menu_ReloadNodeResource(state, state->cursor);
@@ -95,7 +96,8 @@ void Menu_StepLeft(struct StepMenu *state)
         } else {
             node = state->nodes;
             y = 64;
-            state->more_below = i = 0;
+            { register s32 z asm("r0") = 0; /* FAKEMATCH: the zero goes through r0 */
+            state->more_below = i = z; }
             while (node->next != NULL) {
                 node->target_y = node->y + y;
                 node->speed = 12;
@@ -112,7 +114,8 @@ void Menu_StepLeft(struct StepMenu *state)
             state->top = i;
             state->cursor = 4;
             if (node != NULL) {
-                ids = &state->entry_ids[i];
+                /* FAKEMATCH: the index is scaled and added to the base before the field offset */
+                ids = (u16 *)((i * 2 + (s32)state) + (s32)((struct StepMenu *)0)->entry_ids);
                 do {
                     MenuSelection_SetupEntry(ids[0], ids[16], node, 1);
                     node = node->next;

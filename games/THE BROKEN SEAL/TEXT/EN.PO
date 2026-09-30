@@ -11143,7 +11143,7 @@ msgctxt "message"
 msgid "02783"
 msgstr "Psynergy"
 
-msgctxt "message"
+msgctxt "MsgShortcutLabel"
 msgid "02784"
 msgstr "Shortcut"
 
@@ -11259,11 +11259,11 @@ msgctxt "message"
 msgid "02812"
 msgstr "PP recovery / turn"
 
-msgctxt "message"
+msgctxt "MsgDjinnLabel"
 msgid "02813"
 msgstr "Djinn"
 
-msgctxt "message"
+msgctxt "MsgPowerLabel"
 msgid "02814"
 msgstr "Power"
 
@@ -12119,11 +12119,11 @@ msgctxt "message"
 msgid "03027"
 msgstr "Djinni is on standby.{line_break}{argument_actor_name:1} is now {argument_class_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNormalLabel"
 msgid "03028"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgDownLabel"
 msgid "03029"
 msgstr "Down"
 

@@ -44,7 +44,8 @@
  * register/lifetime axes without a new fact beyond the recorded RTL.
  */
 
-extern u8 Value_00000afe[];
+extern u8 MsgPowerLabel[];
+extern u8 MsgNormalLabel, MsgDownLabel, MsgPoisonLabel, MsgVenomLabel, MsgCurseLabel, MsgHauntLabel, MsgDjinnLabel;
 
 struct StatusCursor {
     u8 unknown_00[5];
@@ -125,27 +126,27 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiWindow_ClearInteriorTilesFar(window, 0, 40, 96, 96);
     count = 0;
     if (ailments[0]) {
-        UiText_DrawCharacterAtOffsetFar(0xbd5, window, 16, 40);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgDownLabel, window, 16, 40);
         count = 1;
     }
     if (ailments[1]) {
-        UiText_DrawCharacterAtOffsetFar(0xbd6, window, 16, count * 16 + 40);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgPoisonLabel, window, 16, count * 16 + 40);
         count += 1;
     }
     if (ailments[2] != 0) {
-        UiText_DrawCharacterAtOffsetFar(0xbd7, window, 16, count * 16 + 40);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgVenomLabel, window, 16, count * 16 + 40);
         count++;
     }
     if (ailments[3] != 0) {
-        UiText_DrawCharacterAtOffsetFar(0xbd8, window, 16, count * 16 + 40);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgCurseLabel, window, 16, count * 16 + 40);
         count++;
     }
     if (ailments[4] != 0) {
-        UiText_DrawCharacterAtOffsetFar(0xbd9, window, 16, count * 16 + 40);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgHauntLabel, window, 16, count * 16 + 40);
         count += 1;
     }
     if (count == 0)
-        UiText_DrawCharacterAtOffsetFar(0xbd4, window, 0, 40);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgNormalLabel, window, 0, 40);
     CharacterMenu_UpdateSelectionIcons(ailments);
     ItemMenu_ApplyFlags(ailments);
     if (state->mode == 3)
@@ -164,13 +165,13 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiWindow_SetTilemapEntryFar(window, 4, 27, row, 4);
     }
     if (has_djinn)
-        UiText_DrawCharacterAtOffsetFar(0xafd, window, 64, row * 8 + 8);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnLabel, window, 64, row * 8 + 8);
     if (1 == mode) {
         if (!(0 != has_djinn))
             row--;
         y = row * 8;
         UiText_DrawStringAtOffsetFar(Menu_LvString, window, 64, y + 16);
-        text = (s32)Value_00000afe;
+        text = (s32)MsgPowerLabel;
         UiText_DrawCharacterAtOffsetFar(text, window, 64, y + 24);
         UiText_DrawCharacterAtOffsetFar(text + 1, window, 64, y + 32);
     }

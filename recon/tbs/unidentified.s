@@ -2638,7 +2638,7 @@ Resource_Data36D:
 Resource_Data36E:
 	.incbin "baserom.gba", 0x00779048, 0x00000140
 	.section .unidentified.087fd4b9,"a"
-	.incbin "baserom.gba", 0x007fd4b9, 0x00002b47
+	.incbin "baserom.gba", 0x007fd4b9, 0x00000003
 	.section .unidentified.084baaa3,"a"
 	.incbin "baserom.gba", 0x004baaa3, 0x00000001
 	.section .unidentified.084c03cf,"a"

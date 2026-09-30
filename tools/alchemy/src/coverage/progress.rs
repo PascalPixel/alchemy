@@ -113,6 +113,26 @@ fn done_line(mark: &str, game: &str, status: Result<Measurement, String>) -> Str
     }
 }
 
+/// One game's data and name coverage, as pret's calcrom reports beside code.
+fn data_line(mark: &str, game: &str, status: &Result<Measurement, String>) -> Option<String> {
+    let m = status.as_ref().ok()?;
+    let data = m.data_source + m.data_scaffold;
+    let n = m.names;
+    let share = |part: i64, whole: i64| {
+        if whole == 0 {
+            0.0
+        } else {
+            100.0 * part as f64 / whole as f64
+        }
+    };
+    Some(format!(
+        "{mark} {game} data: {} / {} bytes from source ({:.2}%), scaffold {}; names: {} of {} documented ({:.2}%), {} address-only, {} with an address",
+        commas(m.data_source), commas(data), share(m.data_source, data), commas(m.data_scaffold),
+        commas(n.documented()), commas(n.total), share(n.documented(), n.total),
+        commas(n.undocumented), commas(n.partial)
+    ))
+}
+
 fn display(report: &GameDone) -> String {
     format!(
         "DONE: {} / {} executable bytes ({:.2}%)\nExact C: {:.2}%",
@@ -171,11 +191,17 @@ fn run(argv: &[String]) -> Result<String, String> {
         return crate::verify::verified_subject(&root);
     }
     if action.is_empty() {
-        return Ok(format!(
-            "{}\n{}",
-            done_line("☀️", "The Broken Seal", status(&root, "tbs-en")?),
-            done_line("⚓️", "The Lost Age", status(&root, "tla-en")?)
-        ));
+        let mut lines = Vec::new();
+        for (mark, game, target) in [
+            ("☀️", "The Broken Seal", "tbs-en"),
+            ("⚓️", "The Lost Age", "tla-en"),
+        ] {
+            let state = status(&root, target)?;
+            let data = data_line(mark, game, &state);
+            lines.push(done_line(mark, game, state));
+            lines.extend(data);
+        }
+        return Ok(lines.join("\n"));
     }
     let report = match status(&root, &target)? {
         Ok(measurement) => Ok(measurement.done),

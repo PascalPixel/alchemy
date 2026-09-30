@@ -210,7 +210,6 @@ SECTIONS
         "*/recon/tbs/raw/0800aa0c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_SPRITE_PART_PAIR.o"(.text)
         "*/recon/tbs/raw/0800b166.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0800b168.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_PROJECTED_SPRITE.o"(.text)
         "*/recon/tbs/raw/0800b682.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/GROUP_SET_CHILD_VALUE_UNLESS_FIFTEEN.o"(.text)

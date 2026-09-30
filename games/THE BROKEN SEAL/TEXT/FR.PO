@@ -10295,7 +10295,7 @@ msgctxt "message"
 msgid "02571"
 msgstr "Le groupe de {protagonist_name} a{line_break}été anéanti...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgActorUsesItem"
 msgid "02572"
 msgstr "{argument_actor_name:1} utilise:{line_break}{argument_item_name:1}.{end_wait}"
 
@@ -10319,7 +10319,7 @@ msgctxt "MsgDoesNotWorkHere"
 msgid "02577"
 msgstr "{argument_ability_name}...{page_break}Ne marche pas ici.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "02578"
 msgstr "Les monstres vont attaquer{line_break}moins souvent maintenant.{end_wait}"
 
@@ -10327,7 +10327,7 @@ msgctxt "MsgAbilityWoreOff"
 msgid "02579"
 msgstr "{argument_ability_name} ne fait plus effet.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseItemQuestion"
 msgid "02580"
 msgstr "Utiliser {argument_item_name:1}?{end_now}"
 

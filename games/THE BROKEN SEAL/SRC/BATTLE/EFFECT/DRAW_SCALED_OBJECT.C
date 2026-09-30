@@ -44,9 +44,6 @@ void BattleFx_DrawScaledObject(struct EffectObject *object)
         Object_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 u16 ArcTan2(s32 x, s32 y);
 s32 FixedSqrt(s32 value);
 
@@ -105,4 +102,3 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect)
     effect->x += Iwram_MulQ16(Trig_Cos(angle), speed);
     effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
 }
-#endif

@@ -4,6 +4,9 @@
 #include "OBJECT_LOOKUP.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "ITEM.H"
+extern char MsgNothingHappens;
+extern char MsgActorUsesItem;
+extern char MsgUseItemQuestion;
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
 void Battle_ResetEffectCounter(void)
@@ -22,9 +25,6 @@ void Battle_ResetEffectCounter(void)
     BattleFx_ExecutePackedAbilityEffect(0x2090);
   }
 }
-
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
 
 void *ObjectTable_Get(u32);
 s32 BattleEffect_SelectNearbyObject(u32 object_id);
@@ -86,10 +86,6 @@ s32 Event_FindFacingTrigger(s32 source)
     }
     return 0;
 }
-#endif
-
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
 
 extern struct BattleWork gGameState;
 extern struct BattleRuntime *gEventWork;
@@ -206,7 +202,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         }
 
         if (best == 0) {
-            UiText_ShowPositionedMessageAndWaitFar(0x927, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
             return -1;
         }
     }
@@ -218,7 +214,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         if (!(event->metadata & 0x400)) {
             UiWork_PushValueSlotFar(actor, 1);
             UiWork_PushValueSlotFar(item_id, 2);
-            UiText_ShowPositionedMessageAndWaitFar(0x91c, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
         }
         if (event->effect.id < 0x10000) {
             s32 objref = BattleEffect_SelectNearbyObject(gGameState.object_id);
@@ -246,7 +242,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
             if (action_id == 149 && !GameFlag_TestFar(0x144)) {
                 UiWork_PushValueSlotFar(item_id, 2);
-                UiText_ShowPositionedMessageAndWaitFar(0x924, 13);
+                UiText_ShowPositionedMessageAndWaitFar((s32)&MsgUseItemQuestion, 13);
                 /* FAKEMATCH: the owner index doubles as the declined flag, which
                    ranks it above best in global allocation (r6, best r7). */
                 i = Object_CallSpawnRoutineAtOrigin(1);
@@ -267,7 +263,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
             UiWork_PushValueSlotFar(actor, 1);
             UiWork_PushValueSlotFar(item_id, 2);
-            UiText_ShowPositionedMessageAndWaitFar(0x91c, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
             BattleFx_LoadActionEffectResources(action_id, 0);
             runtime->resolving_action = 1;
             BattleFx_Run();
@@ -280,9 +276,8 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     }
 
     if (GameFlag_TestFar(0x142))
-        UiText_ShowPositionedMessageAndWaitFar(0x927, 1);
+        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
     if (GameFlag_TestFar(0x143))
         Inventory_RemoveFar(actor, slot);
     return result;
 }
-#endif

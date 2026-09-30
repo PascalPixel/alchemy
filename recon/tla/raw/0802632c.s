@@ -362,7 +362,7 @@ Func_0802632c:
 	adds	r0, #8
 	subs	r3, #2
 	mov	r2, r8
-	bl	.L_08026f80
+	bl	Func_08026f80
 	cmp	r0, #0
 	blt.n	.L_08026622
 	ldr	r0, [sp, #12]
@@ -1068,7 +1068,7 @@ Func_0802632c:
 	adds	r0, r6, #0
 	subs	r3, #2
 	mov	r2, fp
-	bl	.L_08026f80
+	bl	Func_08026f80
 	cmp	r0, #0
 	blt.n	.L_08026ca0
 	ldr	r3, [r6, #80]
@@ -1572,6 +1572,9 @@ Func_0802632c:
 	.4byte 0x02000240
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_08026f80
+	.thumb_func
+Func_08026f80:
 .L_08026f80:
 	push	{r5, r6, lr}
 	ldmia	r0!, {r4}
@@ -2295,7 +2298,7 @@ Func_0802632c:
 	adds	r0, r6, #0
 	subs	r3, #2
 	mov	r2, r9
-	bl	.L_08026f80
+	bl	Func_08026f80
 	cmp	r0, #0
 	blt.n	.L_0802763a
 	ldr	r3, [r6, #80]

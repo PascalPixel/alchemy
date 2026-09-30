@@ -434,7 +434,7 @@ Func_0816dc50:
 	bl Func_08014de4
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #16]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r0, [sp, #36]
 	ldr r1, [sp, #24]
 	ldr r3, [r0, #8]
@@ -445,7 +445,7 @@ Func_0816dc50:
 	str r3, [r1, #8]
 	ldr r0, [sp, #24]
 	ldr r1, [sp, #20]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [sp, #20]
 	ldr r2, [r3]
 	cmp r2, #63
@@ -565,7 +565,7 @@ Func_0816dc50:
 	adds r1, r7, #0
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl Func_08015778
+	bl Render_ProjectPoint
 	movs r2, #128
 	adds r0, r6, #0
 	movs r1, #60
@@ -619,7 +619,7 @@ Func_0816dc50:
 	str r3, [r6, #8]
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Func_08015778
+	bl Render_ProjectPoint
 	movs r1, #40
 	ldr r2, [r5]
 	ldr r3, [r5, #4]

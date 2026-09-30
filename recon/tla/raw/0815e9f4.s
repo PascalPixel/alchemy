@@ -477,7 +477,7 @@ Func_0815e9f4:
 	ldr r6, [r0]
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_08118070
+	bl Battle_GetObjectTableValueFar
 	movs r5, #0
 	lsrs r3, r0, #31
 	adds r0, r0, r3
@@ -617,7 +617,7 @@ Func_0815e9f4:
 	bl Func_08014de4
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #8]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	mov r3, r9
 	subs r3, #4
 	cmp r3, #27

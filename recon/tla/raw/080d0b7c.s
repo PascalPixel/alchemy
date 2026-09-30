@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d0b7c
+	.global DisplayTransition_FillTilemapAndSolidTile
 	.thumb_func
-Func_080d0b7c:
+DisplayTransition_FillTilemapAndSolidTile:
 	push {r5, lr}
 	movs r3, #192
 	lsls r3, r3, #18

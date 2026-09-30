@@ -428,7 +428,7 @@ Func_0816b6ec:
 	bl Func_08014de4
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #20]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	movs r0, #1
 	bl Func_081969f8
 	adds r5, r0, #0

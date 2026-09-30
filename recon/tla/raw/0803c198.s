@@ -28,7 +28,7 @@ Func_0803c198:
 	sub sp, #128
 	adds r6, r0, #0
 	mov r8, r3
-	bl Func_08038eb0
+	bl RenderOutput_AcquireFree
 	adds r7, r0, #0
 	movs r0, #0
 	cmp r7, #0

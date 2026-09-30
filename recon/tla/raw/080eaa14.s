@@ -92,7 +92,7 @@ Func_080eaa14:
 	ldrb r0, [r3]
 	ldr r1, [r6, #8]
 	ldr r2, [r6, #16]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	movs r2, #192
 	ldr r1, [sp, #8]
 	lsls r2, r2, #4

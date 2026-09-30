@@ -29,4 +29,4 @@ Ui_PrepareTransferFromTableEntry:
 	pop {pc}
 	.2byte 0x0000
 .L_0803daac:
-	.4byte Data_08058ff4
+	.4byte UiIcon_MiscIconPointers

@@ -329,7 +329,7 @@ Func_08170dac:
 	bl Func_08014de4
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #16]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, [sp, #76]
 	ldr r0, [r3, #8]
 	bl GetBattleObjectSlotFar

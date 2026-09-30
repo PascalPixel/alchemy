@@ -289,12 +289,21 @@ fn jump_table(
     cases
 }
 
+/// What a part of an area holds: a listing of code, a listing of data words,
+/// or included data.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Part {
+    Code,
+    Words,
+    Included,
+}
+
 /// One stretch of an area: a function, or bytes no flow reaches, which
-/// keep the form they came in (listing rows or included data).
+/// keep the form of the part they are in.
 #[derive(Clone, Debug)]
 pub enum Segment {
     Function(Function),
-    Data { start: u32, end: u32, listing: bool },
+    Data { start: u32, end: u32, part: Part },
 }
 
 impl Segment {
@@ -313,58 +322,60 @@ impl Segment {
 }
 
 /// A contiguous stretch of listings and included data, in placement order:
-/// each part's end and whether it is a listing.
+/// each part's end and what it holds.
 #[derive(Clone, Debug)]
 pub struct Area {
     pub start: u32,
-    pub parts: Vec<(u32, bool)>,
+    pub parts: Vec<(u32, Part)>,
 }
 
 impl Area {
     pub fn end(&self) -> u32 {
         self.parts.last().map_or(self.start, |part| part.0)
     }
-    /// Where its first function begins, when it opens with a listing: its
-    /// first byte, or after the zero halfword that aligns a listing that
-    /// opens off a word boundary.
+    /// Where its first function begins, when it opens with a listing of
+    /// code: its first byte, or after the zero halfword that aligns a
+    /// listing that opens off a word boundary.
     pub fn opening(&self, image: Image) -> Option<u32> {
-        self.parts.first().filter(|part| part.1)?;
+        self.parts.first().filter(|part| part.1 == Part::Code)?;
         let padded = self.start % 4 == 2 && image.half(self.start) == 0;
         Some(self.start + if padded { 2 } else { 0 })
     }
-    /// The part holding `address`: its start, end and whether it is a listing.
-    pub fn part(&self, address: u32) -> (u32, u32, bool) {
+    /// The part holding `address`: its start, end and what it holds.
+    pub fn part(&self, address: u32) -> (u32, u32, Part) {
         let mut from = self.start;
-        for &(end, listing) in &self.parts {
+        for &(end, part) in &self.parts {
             if address < end {
-                return (from, end, listing);
+                return (from, end, part);
             }
             from = end;
         }
-        (self.end(), self.end(), false)
+        (self.end(), self.end(), Part::Included)
     }
 }
 
 /// Split an area into functions and data. Each known entry begins a
 /// function, which may run on through later parts; after each function,
 /// zero halfwords up to the next word boundary are its alignment padding.
-/// In a listing, whatever follows begins another function when its flow is
-/// complete and returns, or data up to the next entry or part; included data
-/// begins a function only at a known entry.
+/// In a listing of code, whatever follows begins another function when its
+/// flow is complete and returns, or data up to the next entry or part;
+/// included data begins a function only at a known entry, and a listing of
+/// data words never does.
 pub fn partition(image: Image, area: &Area, entries: &Entries) -> Vec<Segment> {
     let end = area.end();
     let opening = area.opening(image);
     let mut segments: Vec<Segment> = Vec::new();
     let mut cursor = area.start;
     while cursor < end {
-        let (_, part_end, listing) = area.part(cursor);
+        let (_, part_end, part) = area.part(cursor);
+        let code = part == Part::Code;
         // A zero halfword off a word boundary aligns what follows; GCC
         // begins every function on a word boundary.
-        if listing && cursor % 4 == 2 && cursor + 2 <= part_end && image.half(cursor) == 0 {
+        if code && cursor % 4 == 2 && cursor + 2 <= part_end && image.half(cursor) == 0 {
             segments.push(Segment::Data {
                 start: cursor,
                 end: cursor + 2,
-                listing,
+                part,
             });
             cursor += 2;
             continue;
@@ -376,12 +387,12 @@ pub fn partition(image: Image, area: &Area, entries: &Entries) -> Vec<Segment> {
             .next()
             .copied()
             .unwrap_or(end);
-        let function = (cursor % 2 == 0)
+        let function = (cursor % 2 == 0 && part != Part::Words)
             .then(|| walk(image, cursor, end, entries))
             .flatten()
             .filter(|function| {
                 function.end <= next
-                    && if listing {
+                    && if code {
                         known || unnamed_function(image, function)
                     } else {
                         known && unnamed_function(image, function)
@@ -399,11 +410,11 @@ pub fn partition(image: Image, area: &Area, entries: &Entries) -> Vec<Segment> {
             }
             continue;
         }
-        // Unreached bytes run to the next entry or part, or in a listing to
-        // the next word boundary where a function can begin.
+        // Unreached bytes run to the next entry or part, or in a listing of
+        // code to the next word boundary where a function can begin.
         let limit = next.min(part_end);
         let mut stop = (cursor + 2).min(limit);
-        if listing && cursor % 2 == 0 {
+        if code && cursor % 2 == 0 {
             while stop < limit
                 && !(stop % 4 == 0
                     && walk(image, stop, end, entries).is_some_and(|function| {
@@ -418,10 +429,10 @@ pub fn partition(image: Image, area: &Area, entries: &Entries) -> Vec<Segment> {
         match segments.last_mut() {
             Some(Segment::Data {
                 end: last,
-                listing: same,
+                part: same,
                 ..
             }) if *last == cursor
-                && *same == listing
+                && *same == part
                 && area.part(cursor - 1).0 == area.part(cursor).0 =>
             {
                 *last = stop
@@ -429,7 +440,7 @@ pub fn partition(image: Image, area: &Area, entries: &Entries) -> Vec<Segment> {
             _ => segments.push(Segment::Data {
                 start: cursor,
                 end: stop,
-                listing,
+                part,
             }),
         }
         cursor = stop;
@@ -460,7 +471,7 @@ pub(crate) mod tests {
     fn listing(start: u32, end: u32) -> Area {
         Area {
             start,
-            parts: vec![(end, true)],
+            parts: vec![(end, Part::Code)],
         }
     }
 
@@ -565,13 +576,13 @@ pub(crate) mod tests {
         };
         let area = Area {
             start: base,
-            parts: vec![(base + 2, true), (base + 12, false)],
+            parts: vec![(base + 2, Part::Code), (base + 12, Part::Included)],
         };
         let segments = partition(image, &area, &Entries::default());
         assert!(matches!(&segments[0], Segment::Function(f) if f.end == base + 8));
         assert!(matches!(
             segments[1],
-            Segment::Data { start, end, listing: false } if start == base + 8 && end == base + 12
+            Segment::Data { start, end, part: Part::Included } if start == base + 8 && end == base + 12
         ));
         let entries = Entries {
             starts: BTreeSet::from([base + 8]),

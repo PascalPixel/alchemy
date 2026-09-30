@@ -40,7 +40,7 @@ Func_08044c80:
 	strb r3, [r2, #3]
 	mov r0, r11
 	bl Func_08044b80
-	bl Func_0803d2f0
+	bl Localization_LookupEntryId
 	movs r3, #14
 	add r5, sp, #16
 	add r2, sp, #20
@@ -61,7 +61,7 @@ Func_08044c80:
 	str r3, [sp, #32]
 	add r7, sp, #36
 	bl Func_08044b80
-	bl Func_0803d2f0
+	bl Localization_LookupEntryId
 	movs r3, #15
 	add r2, sp, #12
 	str r3, [sp, #0]

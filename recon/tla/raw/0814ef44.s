@@ -890,7 +890,7 @@ Func_0814ef44:
 	bl Func_08014de4
 	ldr r0, [sp, #36]
 	ldr r1, [sp, #20]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, [r5, #8]
 	ldr r1, [sp, #28]
 	str r3, [r1]

@@ -178,7 +178,7 @@ Func_080cb91c:
 .L_080cba90:
 	.4byte Data_02001000
 .L_080cba94:
-	.4byte Data_02008000
+	.4byte gOverlayArea
 .L_080cba98:
 	.4byte gPartyState
 .L_080cba9c:
@@ -574,7 +574,7 @@ Func_080cb91c:
 	strh r3, [r0]
 	b .L_080cc47e
 .L_080cbddc:
-	.4byte Data_02008000
+	.4byte gOverlayArea
 .L_080cbde0:
 	.4byte gPartyState
 .L_080cbde4:

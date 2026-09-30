@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0810a960
+	.global Shop_MsgByMode
 	.thumb_func
-Func_0810a960:
+Shop_MsgByMode:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

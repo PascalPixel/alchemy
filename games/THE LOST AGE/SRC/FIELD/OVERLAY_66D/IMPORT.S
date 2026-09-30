@@ -6,30 +6,111 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Func_02000524
+	.thumb_func
+Func_02000524:
 	overlay_veneer Func_080003c8
+	.global Func_0200052c
+	.thumb_func
+Func_0200052c:
 	overlay_veneer Func_080003d0
+	.global Func_02000534
+	.thumb_func
+Func_02000534:
 	overlay_veneer Func_08020170
+	.global ObjectDispatch_SetSingleChildField26
+	.thumb_func
+ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
+	.global Func_0200054c
+	.thumb_func
+Func_0200054c:
 	overlay_veneer Func_080c8018
+	.global Func_02000554
+	.thumb_func
+Func_02000554:
 	overlay_veneer Func_080c8020
+	.global Inventory_PromptAndSetObjectMode
+	.thumb_func
+Inventory_PromptAndSetObjectMode:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetSpeedParameters
+	.thumb_func
+ObjectMotion_SetSpeedParameters:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Func_02000574
+	.thumb_func
+Func_02000574:
 	overlay_veneer Func_080c80f8
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global Func_02000584
+	.thumb_func
+Func_02000584:
 	overlay_veneer Func_080c8180
+	.global Func_0200058c
+	.thumb_func
+Func_0200058c:
 	overlay_veneer Func_080c8188
+	.global Func_02000594
+	.thumb_func
+Func_02000594:
 	overlay_veneer Func_080c81a0
+	.global Func_0200059c
+	.thumb_func
+Func_0200059c:
 	overlay_veneer Func_080c8208
+	.global Func_020005a4
+	.thumb_func
+Func_020005a4:
 	overlay_veneer Func_080c8278
+	.global Event_ClearStatus1c6
+	.thumb_func
+Event_ClearStatus1c6:
 	overlay_veneer Event_ClearStatus1c6Far
+	.global Event_WaitValue1c8Frames
+	.thumb_func
+Event_WaitValue1c8Frames:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Func_020005bc
+	.thumb_func
+Func_020005bc:
 	overlay_veneer Func_080c8408
+	.global Func_020005c4
+	.thumb_func
+Func_020005c4:
 	overlay_veneer Func_080c84e0
+	.global Func_020005cc
+	.thumb_func
+Func_020005cc:
 	overlay_veneer Func_080c86a8
+	.global Func_020005d4
+	.thumb_func
+Func_020005d4:
 	overlay_veneer Func_080c86e8
+	.global Func_020005dc
+	.thumb_func
+Func_020005dc:
 	overlay_veneer Func_080c8778
+	.global Func_020005e4
+	.thumb_func
+Func_020005e4:
 	overlay_veneer Func_08108008
+	.global Func_020005ec
+	.thumb_func
+Func_020005ec:
 	overlay_veneer Func_08108010
+	.global Func_020005f4
+	.thumb_func
+Func_020005f4:
 	overlay_veneer Audio_PlayCue

@@ -18,7 +18,7 @@ Func_0803d3c0:
 	mov r10, r0
 	mov r11, r1
 	adds r6, r2, #0
-	bl Func_0803d2f0
+	bl Localization_LookupEntryId
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d0a28
+	.global DisplayTransition_UpdateFrame
 	.thumb_func
-Func_080d0a28:
+DisplayTransition_UpdateFrame:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -171,7 +171,7 @@ Func_080d0a28:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d0b68:
-	.4byte Func_080d0a28
+	.4byte DisplayTransition_UpdateFrame
 .L_080d0b6c:
 	.4byte IwramSignedDivide
 .L_080d0b70:

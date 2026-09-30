@@ -189,4 +189,4 @@ Func_080c9c38:
 .L_080c9dc0:
 	.4byte gPartyState
 .L_080c9dc4:
-	.4byte Data_080f17a8
+	.4byte Field_SceneTable

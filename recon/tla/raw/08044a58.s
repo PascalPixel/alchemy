@@ -45,7 +45,7 @@ Func_08044a58:
 	movs r3, #1
 	strb r3, [r5, #3]
 	adds r0, r7, #0
-	bl Func_0803d2f0
+	bl Localization_LookupEntryId
 	movs r1, #14
 	add r2, sp, #16
 	add r3, sp, #12

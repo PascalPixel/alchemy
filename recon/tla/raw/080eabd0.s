@@ -42,7 +42,7 @@ Func_080eabd0:
 	ldr r2, [r6, #16]
 	mov r9, r0
 	ldrb r0, [r7]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	adds r4, r0, #0
 	asrs r4, r4, #19
 	adds r0, r6, #0
@@ -117,7 +117,7 @@ Func_080eabd0:
 	ldrb r0, [r3]
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #16]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	ldr r3, [r5, #12]
 	cmp r3, r0
 	bge .L_080eaccc

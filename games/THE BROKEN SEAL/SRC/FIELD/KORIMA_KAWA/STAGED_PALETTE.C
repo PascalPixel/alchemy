@@ -81,11 +81,11 @@ void FieldScene_RunActorTenPlacementScene(void)
 {
     void Object_SetModeById(s32, s32); u8 *Object_GetById(s32);
 
-    StagedActorMovementRequest result;
+    struct StagedActorProbe result;
     Battle_Reset();
-    if (StagedActor_FindClearPosition((struct StagedActorProbe *)&result)) {
+    if (StagedActor_FindClearPosition(&result)) {
         SceneActor_MoveAndRedraw(result);
-        if (result.actor_id == 10 && (result.target_x >> 20) == 12) {
+        if (result.actor_slot == 10 && (result.position_x >> 20) == 12) {
             u8 *actor;
             s32 zero;
             Object_SetModeById(10, 3);

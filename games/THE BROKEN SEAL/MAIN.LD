@@ -530,7 +530,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE9.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/ATTACH_WORK_TARGET_TO_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT29.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT30.o"(.text)
         "*/recon/tbs/raw/08093872.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT17.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD6.o"(.text)

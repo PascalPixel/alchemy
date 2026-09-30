@@ -170,7 +170,7 @@ Func_080f94a4:
 	ldr	r3, [r7, #60]
 	mov	r1, fp
 	strb	r1, [r3, #6]
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	mov	r0, r8
 	add	sp, #16
 	pop	{r3, r5, r6, r7}

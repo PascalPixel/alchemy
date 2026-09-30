@@ -534,6 +534,8 @@ SECTIONS
         "*/recon/tla/raw/080af094.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080af0e4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080af148.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION.o"(.text)
+        "*/recon/tla/raw/080af1fa.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080af1fc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080af244.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION_2.o"(.text)

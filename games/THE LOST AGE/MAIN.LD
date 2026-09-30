@@ -962,6 +962,8 @@ SECTIONS
         "*/recon/tla/raw/0811ff08.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.o"(.text)
         "*/recon/tla/raw/081201c4.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/BATTLE/EFFECT/CAN_AFFECT_DEFEATED_UNIT.o"(.text)
+        "*/recon/tla/raw/081203a8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081203c8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08120454.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081224c0.o"(.text .rodata .data .padding)

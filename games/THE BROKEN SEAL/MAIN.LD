@@ -1319,7 +1319,7 @@ SECTIONS
         "*/recon/tbs/raw/080bb65c.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080bb7c0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_QUEUE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CAN_AFFECT_DEFEATED_UNIT.o"(.text)
+        "*/games/COMMON/SRC/BATTLE/EFFECT/CAN_AFFECT_DEFEATED_UNIT.o"(.text)
         "*/recon/tbs/raw/080bbb0a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/CHECK_STATUS_OR_SPECIAL_ID.o"(.text)

@@ -1,7 +1,8 @@
 #ifndef GUARD_TBS_EDITION_H
 #define GUARD_TBS_EDITION_H
 
-/* The Japanese render work carries 0x90 more bytes before these flags. */
+/* The Japanese render work carries 0x90 more bytes before these flags:
+   four more 0x24-byte window records, twelve against eight. */
 #if defined(TBS_EDITION_JA)
 #define RENDER_DIRTY_OFS 0xF33
 #define RENDER_MODE_OFS  0xF34
@@ -22,6 +23,7 @@
 #define RENDER_ENTRY_COUNT_OFS 0x1142
 #define RENDER_RESULT_OFS      0x1184
 #define RENDER_ENTRY_MASK      0xFF
+#define WINDOW_COUNT          12
 #define SELECT_MENU_WIDTH    5
 #define TYPE_MENU_WIDTH      4
 #define MENU_TEXT_X          100
@@ -47,6 +49,7 @@
 #define RENDER_ENTRY_COUNT_OFS 0x12B2
 #define RENDER_RESULT_OFS      0x12F4
 #define RENDER_ENTRY_MASK      0x1FF
+#define WINDOW_COUNT          8
 #define SELECT_MENU_WIDTH    7
 #define TYPE_MENU_WIDTH      7
 #define MENU_TEXT_X          74

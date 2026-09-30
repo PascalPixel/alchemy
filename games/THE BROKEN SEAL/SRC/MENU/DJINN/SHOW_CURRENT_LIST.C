@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
 
 struct DjinnListCursor {
     u8 unknown_00[5];
@@ -81,7 +82,7 @@ s32 DjinnMenu_ShowCurrentList(void)
             }
         }
     }
-    gWindowWork[0xea3] = 1;
+    gWindowWork[RENDER_DIRTY_OFS] = 1;
     for (;;) {
         if (GameFlag_TestFar(0x150))
             break;

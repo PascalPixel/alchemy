@@ -13,6 +13,8 @@
 .syntax unified
 	.arm
 	.thumb
+	.global IwramDecompress
+IwramDecompress:
 AlchemyUncredited_08000c4c:
 	bx	pc
 	.2byte	0x0200

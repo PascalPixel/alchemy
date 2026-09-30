@@ -15,6 +15,8 @@
 @ credit: handwritten — TLA IWRAM runtime vector and matrix transforms
 .syntax unified
 	.thumb
+	.global IwramTransformVector
+IwramTransformVector:
 AlchemyUncredited_0800090c:
 	bx	pc
 	.2byte	0x0200
@@ -49,6 +51,8 @@ AlchemyUncreditedEnd_0800090c:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
 	.thumb
+	.global IwramTransformMatrix
+IwramTransformMatrix:
 AlchemyUncredited_08000980:
 	bx	pc
 	.2byte	0x0200

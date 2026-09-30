@@ -11,6 +11,8 @@
 @ credit: library — TBS/TLA common IWRAM runtime fill, square root and bit-run helpers
 .syntax unified
 	.thumb
+	.global IwramClearWords
+IwramClearWords:
 AlchemyUncredited_08000810:
 	bx	pc
 	.2byte	0x0200

@@ -1,8 +1,8 @@
 /* Mercury Lighthouse: the leader hops one cell toward the held direction
  * over the water pillars. The same function sits in the entrance and the
  * rooms overlays. */
-#define FIELD_STAGED_ACTOR_IMPORTS
 #include "TYPES.H"
+#include "MAKYURI.H"
 #include "FIELD_EFFECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
@@ -48,6 +48,27 @@ static __inline__ s32 CheckMove(struct FieldActor *actor, union FieldCoordinate 
 {
     return Object_CheckMovementCollision(actor, pos);
 }
+
+struct SpawnPoint;
+
+struct EventSpawns {
+    u8 unknown_00[20];
+    struct SpawnPoint *points[1];
+};
+
+struct SceneTimer {
+    u8 unknown_00[8];
+    s32 count;
+};
+
+/* The IWRAM event globals: the event work, and at +0x20 the scene work. */
+struct EventGlobals {
+    struct EventSpawns *event;
+    u8 unknown_04[0x1c];
+    struct SceneTimer **scene;
+};
+
+extern struct EventGlobals gWork;
 
 void Makyuri_RunActorMove(void)
 {
@@ -161,4 +182,26 @@ void Makyuri_RunActorMove(void)
     state->active = 0;
     Engine_EventEnd();
     *(s32 *)(work + 0x1b4) += Iwram_MulQ16(*(s32 *)(work + 0x1b0), 0x200000);
+}
+
+/* Mercury Lighthouse spawn timer: count the scene timer down, and when it runs out spawn an object at the current spawn point and restart it at 10 to 39 frames. */
+void Makyuri_TickSpawnTimer(void)
+{
+    struct SceneTimer *timer;
+    struct SpawnPoint *point;
+
+    /* FAKEMATCH: the event work is reached back from the scene field's
+     * address, so the pool holds the +0x20 address and the base is derived. */
+    {
+        struct SceneTimer ***scene = &gWork.scene;
+
+        timer = **scene;
+        point = ((struct EventGlobals *)((u8 *)scene - 0x20))->event->points[gGameState.selected_actor];
+    }
+    if (timer->count != 0) {
+        timer->count--;
+    } else {
+        OverlayObject_SpawnKind24AtObject(point);
+        timer->count = ((u32)(Engine_RandomNext() * 30) >> 16) + 10;
+    }
 }

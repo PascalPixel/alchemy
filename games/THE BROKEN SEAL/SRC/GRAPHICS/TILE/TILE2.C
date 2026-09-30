@@ -2,21 +2,41 @@
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
+
 extern u8 gMapCellBuffer[];
 
 extern const u8 Func_0800a37c[];
-
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
-
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void *Runtime_BumpAllocate(u32 size);
 void Runtime_BumpFree(void *allocation);
-
 extern u8 Tile_ConvertMapCodeSize[];
 
 static __inline__ void CopyWords(void *dst, const void *src, s32 size)
 {
     Iwram_CopyWords(dst, src, size);
+}
+
+void Graphics_RenumberFillerEntries(void)
+{
+    u32 *p = (u32 *)gMapCellBuffer;
+    u32 cnt = 128 << 7;
+    u32 mask = 0xfff;
+    s32 no = -1;
+
+    do {
+        u32 value = *p++;
+        u32 idx = value & mask;
+
+        if (idx == mask) {
+            if (no != (s32)idx) {
+                no++;
+            }
+            value = value + no - idx;
+            p[-1] = value;
+        }
+        cnt--;
+    } while (cnt != 0);
 }
 
 /* Converts the map at 0x02010000 into 0x02018000 with the ARM routine at

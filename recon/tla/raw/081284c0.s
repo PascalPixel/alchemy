@@ -32,7 +32,7 @@ Func_081284c0:
 	adds r1, r2, #0
 	movs r0, #1
 	str r2, [sp, #16]
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	str r0, [sp, #20]
 	ldr r1, [sp, #16]
 	movs r0, #1

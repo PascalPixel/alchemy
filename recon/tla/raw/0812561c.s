@@ -75,12 +75,12 @@ Func_0812561c:
 .L_081256a4:
 	movs r0, #1
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	cmp r0, #0
 	beq .L_081256c0
 	movs r0, #2
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	cmp r0, #0
 	beq .L_081256c0
 	movs r1, #1

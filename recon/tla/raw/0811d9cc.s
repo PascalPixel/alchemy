@@ -390,12 +390,12 @@ Func_0811d9cc:
 	bl Func_0811df70
 	movs r0, #1
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	cmp r0, #0
 	beq .L_0811dd70
 	movs r0, #2
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	cmp r0, #0
 	beq .L_0811dd70
 	adds r0, r5, #0

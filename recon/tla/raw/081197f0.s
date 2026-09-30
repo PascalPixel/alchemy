@@ -553,14 +553,14 @@ Func_081197f0:
 .L_08119c7c:
 	movs r0, #1
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	cmp r0, #0
 	bne .L_08119c8a
 	b .L_08119dde
 .L_08119c8a:
 	movs r0, #2
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	ldr r4, [sp, #4]
 	cmp r0, #0
 	bne .L_08119cd8
@@ -935,7 +935,7 @@ Func_081197f0:
 	bl Audio_PlayCue
 	bl Func_08038118
 	movs r0, #0
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	cmp r0, #1
 	bne .L_08119fb0
 	ldr r0, .L_0811a028

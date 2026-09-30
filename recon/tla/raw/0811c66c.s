@@ -15,7 +15,7 @@ Func_0811c66c:
 	mov r5, sp
 	movs r0, #1
 	adds r1, r5, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	adds r6, r0, #0
 	movs r7, #0
 	cmp r6, #0

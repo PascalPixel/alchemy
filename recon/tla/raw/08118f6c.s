@@ -15,7 +15,7 @@ Func_08118f6c:
 	adds r1, #8
 	adds r0, r1, #0
 	str r1, [sp, #4]
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	mov r11, r0
 	movs r0, #0
 	bl Resource_FarCall005

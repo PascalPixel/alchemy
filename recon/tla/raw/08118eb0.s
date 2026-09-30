@@ -11,7 +11,7 @@ Func_08118eb0:
 	sub sp, #20
 	mov r5, sp
 	adds r0, r5, #0
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	movs r2, #0
 	mov r10, r0
 	mov r8, r2

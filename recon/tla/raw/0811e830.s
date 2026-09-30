@@ -373,7 +373,7 @@ Func_0811e830:
 	lsls	r2, r2, #1
 	adds	r3, r6, r2
 	ldrh	r0, [r3, #0]
-	bl	0x0812814c
+	bl	Func_0812814c
 	mov	r4, r8
 	adds	r3, r0, #0
 	movs	r2, #36
@@ -420,7 +420,7 @@ Func_0811e830:
 	lsls	r4, r4, #1
 	adds	r3, r0, r4
 	ldrh	r0, [r3, #0]
-	bl	0x0812814c
+	bl	Func_0812814c
 	ldr	r1, [sp, #16]
 	adds	r3, r0, #0
 	mov	r4, r8

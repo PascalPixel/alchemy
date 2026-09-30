@@ -131,7 +131,7 @@ BattleFormation_SelectRandomAvailableMember:
 	beq.n	.L_08127d86
 	ldrh	r0, [r6, #0]
 	adds	r0, #8
-	bl	.L_081280fc
+	bl	Func_081280fc
 	negs	r3, r0
 	orrs	r3, r0
 	movs	r2, #2
@@ -180,7 +180,7 @@ BattleFormation_SelectRandomAvailableMember:
 	ldr	r1, [sp, #8]
 	ldrh	r0, [r1, #0]
 	adds	r0, #8
-	bl	.L_081280fc
+	bl	Func_081280fc
 	negs	r1, r0
 	orrs	r1, r0
 	lsrs	r1, r1, #31
@@ -230,7 +230,7 @@ BattleFormation_SelectRandomAvailableMember:
 	beq.n	.L_08127e66
 	str	r1, [sp, #4]
 	str	r4, [sp, #0]
-	bl	.L_081280fc
+	bl	Func_081280fc
 	negs	r3, r0
 	orrs	r3, r0
 	lsrs	r3, r3, #31
@@ -602,6 +602,9 @@ BattleFormation_SelectRandomAvailableMember:
 	movs	r0, r0
 	.2byte 0x0d0c
 	.2byte 0x0813
+	.global Func_081280fc
+	.thumb_func
+Func_081280fc:
 .L_081280fc:
 	push	{lr}
 	movs	r3, #193
@@ -648,6 +651,9 @@ BattleFormation_SelectRandomAvailableMember:
 	pop	{pc}
 	.2byte 0x0d0c
 	.2byte 0x0813
+	.global Func_0812814c
+	.thumb_func
+Func_0812814c:
 	push	{lr}
 	movs	r3, #193
 	lsls	r3, r3, #1
@@ -670,6 +676,9 @@ BattleFormation_SelectRandomAvailableMember:
 	movs	r0, r0
 	.2byte 0x0d0c
 	.2byte 0x0813
+	.global Func_08128174
+	.thumb_func
+Func_08128174:
 	push	{lr}
 	movs	r3, #193
 	lsls	r3, r3, #1

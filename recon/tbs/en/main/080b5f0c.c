@@ -1,6 +1,20 @@
 /* 2026-09-30 (Mercury's helper, stopped at the wind-down): 5 differing
    halfwords, 352 of 352 bytes, plain C (the previous draft was 165 at 348).
-   The remaining difference was not yet analysed. */
+   2026-10-01 (☀️ matcher 1): the one remaining difference is sched2's, in
+   the block after the offer copy: the reference emits the list pointer's
+   copy (adds r4, r6, #0) first and its +8 after the count load; here the
+   copy follows the load. After reload both drafts have the same insns
+   (copy, +8, j = 0, the 264 constant, the count address, its load, the
+   exit test); the scheduler's priorities are 6 for the constant chain and
+   2 for the copy, so the constant goes first. The reference's order needs
+   the copy at priority 6 or a scheduling barrier between the copy and the
+   +8, which one C statement assigning list does not give. Tried without
+   change: list declared first, a u32 j, a (u8 *) + 8 list, a while loop,
+   j = 0 before list, a u8 temporary for the id, do {} while (0) barriers;
+   worse: no list pointer (40), a walking entry pointer (60), a table
+   pointer for the whole offer (52), an entry temporary (66). Two permuter
+   runs (60 s focused, 300 s from seed 100, 169,000 candidates) found
+   nothing below 60. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"

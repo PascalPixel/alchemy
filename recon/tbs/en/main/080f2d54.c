@@ -1,6 +1,18 @@
 /* 2026-09-30 (Mercury's helper, stopped at the wind-down): 23 differing
    halfwords, 356 of 356 bytes (the previous draft compiled to 164 at 360).
-   The remaining difference was not yet analysed. */
+   2026-10-01 (☀️ matcher 1): the remaining difference is global register
+   allocation. The reference copies the decoded buffer's address (r5, the
+   constant loaded before the two resource calls) into r6 for the buffer
+   pointer and gives the loop counter i r5; here buffer stays in r5 and i
+   takes r6, which also swaps the final loop's add to adds r0, r5, r0 (the
+   reference has adds r0, r0, r6). The greg dump allocates i before buffer;
+   i avoids r5 because buffer prefers it through its copy from the local
+   constant register. Unchanged: buffer declared before i, the offset added
+   before buffer, an index expression, return 0, gBgScroll[2].y = 0;
+   worse: buffer assigned before the decode (24 lines), two loop counters
+   (20), an s32 i (20), a separate frames pointer (47). A 300 s permuter
+   run (134,586 candidates) found nothing below 165; the listing labels
+   this function Func_080f2d54 (pass --symbol). */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "DMA.H"

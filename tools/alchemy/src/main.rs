@@ -26,6 +26,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   coverage              publish README progress and both figures from verified builds\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
   permute DRAFT         search equivalent C for a draft function against its listing\n\
+  drafts [DRAFT...]     compile and score every draft against its listing\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames";
 
@@ -44,6 +45,7 @@ fn main() -> ExitCode {
         "coverage" => make_target(command, rest),
         "raw" => result(raw::run(rest)),
         "permute" => result(permute::run(rest)),
+        "drafts" => result(permute::drafts::run(rest)),
         "check" => check::entry(rest),
         "format" => result(format::run(rest)),
         "extract" | "inspect" => recovery_command(command, rest),

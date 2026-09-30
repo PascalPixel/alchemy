@@ -1,18 +1,4 @@
-/* 2026-09-30 (Venus, tagged asm): the constant 1 and the changed test take
-  r3 instead of r2. An r2 register variable for the constant or the test, an
-  asm "=r"/"0" copy in r2 and an r3 clobber all move changed out of r8 into
-  sl or reshuffle the frame (30 to 45 lines). */
-/* 2026-09-29: the two confirmation messages are now named in the PO files
-   (MsgConfirmDrop and MsgYes, in every edition), and the callees and key
-   words carry their build names: 60 on the permuter scorer before a
-   rebuild names the messages, which leaves only the flag register (r3
-   where the reference takes r2 for the first changed = 1 and the test).
-   Four minutes of permutation from here found nothing lower. */
-/* NONMATCHING: 316 bytes, candidate 316, 4 differing halfwords, 4 halfword
- * edits (2026-09-25). The changed flag uses r3 where the reference uses r2.
- * Narrowing the flag leaves the output unchanged; an increment or a scoped
- * assignment regresses.
- * WALL: Temporary register choice for the changed flag's assignment and test. */
+/* Item menu: ask whether to drop the item and return the chosen row (1 when cancelled). */
 #include "TYPES.H"
 
 extern volatile s32 gKeysRepeat;
@@ -32,14 +18,14 @@ void UiMenu_PositionCursor(s32, s32);
 void UiMenu_SlideCursor(s32, s32);
 void Audio_PlayCue(s32 cue);
 
-s32 Func_080a524c(s32 a0)
+s32 ItemMenu_ConfirmDrop(s32 a0)
 {
     volatile s32 *pad;
     s32 win;
     s32 slot;
     s32 text;
     s32 label;
-    s32 sel;
+    register s32 sel asm("r6"); /* FAKEMATCH: keeps the row in r6 */
     s32 changed;
 
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
@@ -61,10 +47,13 @@ s32 Func_080a524c(s32 a0)
         if (GameFlag_IsSet(0x150) != 0) {
             break;
         }
-        if (changed) {
+        {
+        register s32 c asm("r2"); /* FAKEMATCH: tests the flag through r2 */
+        asm("mov %0, %1" : "=l"(c) : "h"(changed)); /* FAKEMATCH: tests the flag through r2 */
+        if (c) {
             changed = 0;
             sel = Math_Mod(sel + 2, 2);
-        }
+        }}
         if (gKeyState & 1) {
             Audio_PlayCue(112);
             break;
@@ -77,9 +66,13 @@ s32 Func_080a524c(s32 a0)
         UiMenu_PositionCursor(104, (sel << 4) + 70);
         pad = &gKeysRepeat;
         if (*pad & 64) {
+            {
+            register s32 one asm("r2") = 1; /* FAKEMATCH: sets the flag through r2 */
+            register s32 cue asm("r0") = 111; /* FAKEMATCH: loads the cue before the step */
             sel -= 1;
-            changed = 1;
-            Audio_PlayCue(111);
+            asm volatile("mov %0, %1" : "=h"(changed) : "l"(one)); /* FAKEMATCH: sets the flag through r2 */
+            Audio_PlayCue(cue);
+            }
         }
         if (*pad & 128) {
             sel += 1;

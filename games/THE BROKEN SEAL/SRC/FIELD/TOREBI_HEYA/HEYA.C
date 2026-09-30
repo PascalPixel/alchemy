@@ -245,6 +245,9 @@ s32 Scene_InitFacingActors(void)
     return 0;
 }
 
+/* The facing prompts: a shop when the leader faces the counter, otherwise a
+ * line chosen by the story flags. The yes-or-no lines load their first
+ * message once and add to it for the two answers. */
 void SceneDialogue_RunFacingPrompt(s32 no)
 {
     u8 *actor = Object_GetById(0);
@@ -300,6 +303,7 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
     }
 }
 
+/* The facing action line. */
 void SceneDialogue_RunFacingAction(s32 no)
 {
     u8 *actor = Object_GetById(0);
@@ -319,6 +323,7 @@ void SceneDialogue_RunFacingAction(s32 no)
     }
 }
 
+/* Asks whether the party was watching Colosso. */
 void SceneDialogue_AskWatchingColosso(s32 subject)
 {
     s32 message;
@@ -339,6 +344,7 @@ void SceneDialogue_AskWatchingColosso(s32 subject)
     Event_End();
 }
 
+/* The chef's line. */
 void SceneDialogue_RunActorLine23a1(s32 no)
 {
     Event_Begin();
@@ -347,6 +353,7 @@ void SceneDialogue_RunActorLine23a1(s32 no)
     Event_End();
 }
 
+/* The offer to stay, and the excited girl's lines. */
 void SceneDialogue_AskStay(s32 subject)
 {
     s32 msg;
@@ -398,6 +405,7 @@ void SceneDialogue_RunExcitedLines(s32 a0)
     Event_End();
 }
 
+/* Flagged lines. */
 void SceneDialogue_RunActor25FlaggedLine(void)
 {
     void Event_Begin(void);
@@ -424,6 +432,7 @@ void FieldScene_RunScene3b6_02000898(s32 a0)
     Event_End();
 }
 
+/* Asks whether the would-be warrior remembers the speaker. */
 void SceneDialogue_AskRememberWarrior(s32 subject)
 {
     s32 message;
@@ -444,6 +453,7 @@ void SceneDialogue_AskRememberWarrior(s32 subject)
     Event_End();
 }
 
+/* The facing message. */
 void SceneDialogue_RunFacingMessage(s32 no)
 {
     s32 GameFlag_IsSet(s32 flag);

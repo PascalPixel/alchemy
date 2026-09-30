@@ -9,7 +9,7 @@ Func_0803f778:
 	ldr r6, [r3, #108]
 	movs r5, #0
 .L_0803f782:
-	bl Func_0803f800
+	bl UiWindow_OpenMode1AndWaitFrame
 	adds r0, r5, #0
 	bl Menu_SelectTopEntry
 	adds r5, r0, #0
@@ -28,7 +28,7 @@ Func_0803f778:
 	.4byte .L_0803f7e0
 	.4byte .L_0803f7ee
 .L_0803f7b4:
-	bl Func_080c82b0
+	bl Object_GetTriggerTileAheadOfCurrentFar
 	cmp r0, #0
 	bne .L_0803f7be
 	movs r0, #255
@@ -39,14 +39,14 @@ Func_0803f778:
 	strh r0, [r3]
 	b .L_0803f7fa
 .L_0803f7c8:
-	bl Func_080f8008
+	bl Menu_OpenConfirmPromptFar
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3
 	bne .L_0803f7fa
 	b .L_0803f782
 .L_0803f7d6:
-	bl Func_080f8030
+	bl ItemMenu_Open
 	cmp r0, #0
 	beq .L_0803f7fa
 	b .L_0803f782

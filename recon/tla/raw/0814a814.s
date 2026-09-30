@@ -497,7 +497,7 @@ Func_0814a814:
 	bl Func_08014de4
 	ldr r0, [sp, #48]
 	ldr r1, [sp, #24]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r2, [sp, #44]
 	ldr r4, [sp, #36]
 	ldr r3, [r2, #8]

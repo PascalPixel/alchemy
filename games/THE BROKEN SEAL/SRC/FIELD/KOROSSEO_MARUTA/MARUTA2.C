@@ -62,6 +62,9 @@ void ColossoLogRollingStage_ClearSavedActorPositions(void)
     GameFlag_SetByte(936, 0);
 }
 
+/* The finals' stage announcer: the line naming this match depends on which
+ * of the three Colosso stages the party is on, and the first time a stage's
+ * flag is met the announcer offers to describe it. */
 s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
 {
     s32 scene;
@@ -117,6 +120,7 @@ void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags)
     Event_ShowMessage(actor, 0);
 }
 
+/* Choosing a friend to cheer, and equipping a prize item. */
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
     extern s32 GetPartyMemberCount();

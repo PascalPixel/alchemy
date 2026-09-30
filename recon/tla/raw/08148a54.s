@@ -48,7 +48,7 @@ Func_08148a54:
 	mov r1, r8
 	ldr r6, [r0]
 	ldr r0, [r1, #8]
-	bl Func_08118070
+	bl Battle_GetObjectTableValueFar
 	ldr r3, [r6, #12]
 	movs r2, #0
 	adds r3, r3, r0
@@ -216,7 +216,7 @@ Func_08148a54:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	movs r1, #0
 	mov r2, r8
 	mov r10, r1

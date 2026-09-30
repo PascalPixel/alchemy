@@ -131,6 +131,7 @@ void SceneActor_StartLament(s32 actor)
     Engine_ActorEnableActionCallback(actor, RariberoMachi_LamentActions);
 }
 
+/* Asks whether the party is leaving Lalivero, with a line for each answer. */
 void RariberoMachi_AskLeaving(s32 obj)
 {
     s32 msg = (s32)MsgRariberoLeavingLalivero;

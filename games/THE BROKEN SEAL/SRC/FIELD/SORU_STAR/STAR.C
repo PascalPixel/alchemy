@@ -316,6 +316,7 @@ void Scene_BagMercuryStar(void)
     Event_End();
 }
 
+/* Handing over the stars, the Jupiter star and the paired actors. */
 void Scene_HandOverStars(void)
 {
     Event_Begin();
@@ -628,6 +629,7 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_ActorRunRepeatedMotion(9, 2);
 }
 
+/* Offering the guarantee. */
 void Scene_OfferGuarantee(void)
 {
     u32 i;

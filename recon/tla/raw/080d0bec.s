@@ -24,7 +24,7 @@ Func_080d0bec:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #0
-	bl Func_080d0b7c
+	bl DisplayTransition_FillTilemapAndSolidTile
 	movs r2, #165
 	lsls r2, r2, #3
 	adds r3, r5, r2
@@ -48,4 +48,4 @@ Func_080d0bec:
 .L_080d0c48:
 	.4byte 0x85000150
 .L_080d0c4c:
-	.4byte Func_080d0a28
+	.4byte DisplayTransition_UpdateFrame

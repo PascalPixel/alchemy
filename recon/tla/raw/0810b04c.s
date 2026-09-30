@@ -37,7 +37,7 @@ Func_0810b04c:
 	ldr r5, .L_0810b0b8
 .L_0810b090:
 	adds r0, r5, #0
-	bl Func_0810a960
+	bl Shop_MsgByMode
 	movs r1, #5
 	adds r5, r0, #0
 	mov r0, r8

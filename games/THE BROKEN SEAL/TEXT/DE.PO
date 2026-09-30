@@ -10295,7 +10295,7 @@ msgctxt "message"
 msgid "02571"
 msgstr "{protagonist_name}{possessive_suffix} Team wurde{line_break}ausgelöscht...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgActorUsesItem"
 msgid "02572"
 msgstr "{argument_actor_name:1} benutzt{line_break}{argument_item_name:1}.{end_wait}"
 
@@ -10319,7 +10319,7 @@ msgctxt "MsgDoesNotWorkHere"
 msgid "02577"
 msgstr "{argument_ability_name}...{page_break}Funktioniert hier nicht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "02578"
 msgstr "Monster greifen{line_break}nicht mehr so oft an.{end_wait}"
 
@@ -10327,7 +10327,7 @@ msgctxt "MsgAbilityWoreOff"
 msgid "02579"
 msgstr "{argument_ability_name} lässt nach.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseItemQuestion"
 msgid "02580"
 msgstr "{argument_item_name:1} einsetzen?{end_now}"
 

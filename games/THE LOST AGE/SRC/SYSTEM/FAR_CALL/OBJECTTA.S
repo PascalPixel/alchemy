@@ -88,7 +88,7 @@ Func_080c8440:
 	.global Func_080c8448
 	.thumb_func
 Func_080c8448:
-	overlay_veneer Func_080ca6e8
+	overlay_veneer Event_SpawnObjectTable
 	.global Func_080c8450
 	.thumb_func
 Func_080c8450:

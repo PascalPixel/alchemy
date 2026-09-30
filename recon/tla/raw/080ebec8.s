@@ -25,7 +25,7 @@ Func_080ebec8:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r4, #0
-	bl Func_08020040
+	bl GetBattleEffectObject
 	str r0, [r5]
 	cmp r0, #0
 	beq .L_080ebf08

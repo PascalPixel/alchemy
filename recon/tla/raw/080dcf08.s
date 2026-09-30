@@ -20,4 +20,4 @@ Func_080dcf08:
 .L_080dcf26:
 	pop {pc}
 .L_080dcf28:
-	.4byte Data_080f3974
+	.4byte BattleFx_UntargetedObjectScript

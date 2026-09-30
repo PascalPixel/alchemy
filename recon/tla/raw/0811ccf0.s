@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811ccf0
+	.global BattleMotion_SetMode5AndActivateSlot
 	.thumb_func
-Func_0811ccf0:
+BattleMotion_SetMode5AndActivateSlot:
 	push {r5, r6, lr}
 	adds r6, r0, #0
 	bl Owner_GetState

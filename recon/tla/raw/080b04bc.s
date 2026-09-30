@@ -32,7 +32,7 @@ Func_080b04bc:
 	lsls r0, r0, #16
 	bl Math_Div
 	adds r5, r0, #0
-	bl Func_080b0378
+	bl BattleRandom16
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255

@@ -153,7 +153,7 @@ Func_0804297c:
 	ldrh r1, [r5, #6]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl Func_0803911c
+	bl UiWindow_EraseBorderRect
 	b .L_08042d94
 .L_08042a9e:
 	ldr r2, [sp, #28]
@@ -173,7 +173,7 @@ Func_0804297c:
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
 	ldrh r0, [r5, #4]
-	bl Func_0803911c
+	bl UiWindow_EraseBorderRect
 	mov r0, r10
 	bl Func_08042630
 	ldrh r3, [r5, #8]

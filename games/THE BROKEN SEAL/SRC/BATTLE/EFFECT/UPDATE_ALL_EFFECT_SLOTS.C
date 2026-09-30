@@ -19,9 +19,6 @@ void BattleFx_UpdateAllEffectSlots(void)
     } while (cnt >= 0);
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /* Battle effect: prepare the shared effect work for a battle action. The
    work block is cleared when the battle has not set it up already, the action
    and its animation class are recorded, and on the first run the effect
@@ -128,4 +125,3 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
     VramBlock_LoadCached((s16)work->tile_slot, 256, Data_0809c410);
     Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
-#endif

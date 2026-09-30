@@ -1,0 +1,683 @@
+#include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+#include "CALL.H"
+
+extern u8 MsgHaidiaAsStubbornAsYourFather[];
+extern u8 MsgHaidiaDevastatedWhenKyle[];
+extern u8 MsgHaidiaGoodJob[];
+extern u8 MsgHaidiaWorkingYourselvesBone[];
+
+enum HouseActor {
+    /* Robin's mother; the villagers call her Dora. */
+    ACTOR_DORA = 21,
+    ACTOR_BOARD = 23,
+    ACTOR_LAST_BOARD = 24
+};
+
+enum {
+    ANIM_HAMMER = 11
+};
+
+extern const u8 gLeaderHammerAction[];
+extern const u8 gGeraldAction[];
+extern const u8 gJasmineAction[];
+void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
+
+/*
+ * An actor climbs between the yard and the ledge in front of the house at
+ * x 392, playing one animation for each half of the climb.
+ */
+void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_RunWalkScene03380(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+
+void PaletteGlow_Update(s32 a, s32 b);
+void FieldScene_RunLargeStagingSequence(void);
+void InitializeStagedActorSceneOrbitingEffect(s32 actor);
+void HaidiaMura_OpenVillagerLane(void);
+void Scene_RepairTheHouse(void);
+void SceneState_Send210AndApplyRectAt40x84(void);
+void BattleFx_SetQueuedSoundAndPlay(s32 value);
+void SceneActor_SetFlagByteBySlotZeroPosition(void);
+void FieldScene_RunScene373SequenceB(void);
+s32 SceneActor_RunStep18WhenTargetSet();
+extern u8 gHaidiaMuraActor22Actions[];
+
+/*
+ * Outside Robin's house in Vale. He boards up three holes in the wall
+ * while his mother Dora watches, then she talks with him about his father
+ * until Gerald and Jasmine arrive to fetch him for the trip to Mt. Aleph with
+ * Sukureta.
+ */
+void HouseScene_RunRepairMorning(void)
+{
+    struct FieldActor *leader;
+    struct FieldActor *actor;
+    u8 leader_motion_flags;
+    u8 *leader_motion;
+    s32 i;
+
+    Event_Begin();
+    Camera_MoveTo(-1, -1, -1, 0);
+    actor = Event_GetViewCenter();
+    actor->motion_flags = 0;
+    Camera_MoveTo(PIXELS(383), PIXELS(160), PIXELS(877), 0);
+    Event_Wait(1);
+    Map_Redraw();
+    Map_CopyCellAttributes(49, 41, 7, 3, 20, 50);
+    Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
+    Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
+    Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader_motion = &leader->motion_flags;
+    leader_motion_flags = *leader_motion;
+    *leader_motion = 0;
+    Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(407), PIXELS(690));
+    Actor_SetPosition(ACTOR_DORA, PIXELS(392), PIXELS(896));
+    Actor_SetPosition(ACTOR_GERALD, PIXELS(298), PIXELS(736));
+    Actor_SetPosition(ACTOR_JASMINE, PIXELS(298), PIXELS(760));
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+    SceneActor_ResetActorRun(ACTOR_BOARD, 2, 1);
+    gEventWork->start_transition = 0;
+    gEventWork->transition_frames = 32;
+    Event_OpenScreen();
+    Actor_SetSpeed(ACTOR_JASMINE, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
+    Actor_EnableActionCallback(ACTOR_JASMINE, gJasmineAction);
+    Actor_EnableActionCallback(ACTOR_GERALD, gGeraldAction);
+
+    /* The first hole. */
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
+    leader->scale_x = 0x10000;
+    leader->scale_y = 0x10000;
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 40);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(10);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 404, 843);
+    Event_Wait(10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+    Event_Wait(20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Event_Wait(20);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 2);
+    Actor_SetChildValue(ACTOR_BOARD, 2);
+    Actor_SetSpeed(ACTOR_BOARD, 0x4ccc, 0x2666);
+    Actor_MoveToAndWait(ACTOR_BOARD, 390, 832);
+    Event_Wait(80);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_MoveToAndWait(ACTOR_BOARD, 402, 828);
+    Event_Wait(80);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
+    Actor_SetChildValue(ACTOR_BOARD, 0);
+    Actor_SetPosition(ACTOR_BOARD, PIXELS(390), PIXELS(842));
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+    Event_Wait(200);
+    Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
+
+    /* The second hole. */
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
+    leader->scale_x = 0x10000;
+    leader->scale_y = 0x10000;
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Event_Wait(30);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(20);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 377, 843);
+    Event_Wait(10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 2);
+    Actor_SetChildValue(ACTOR_BOARD, 2);
+    Actor_SetSpeed(ACTOR_BOARD, 0x4ccc, 0x2666);
+    Actor_MoveToAndWait(ACTOR_BOARD, 390, 832);
+    Event_Wait(80);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_MoveToAndWait(ACTOR_BOARD, 377, 828);
+    Event_Wait(80);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
+    Actor_SetChildValue(ACTOR_BOARD, 0);
+    Actor_SetPosition(ACTOR_BOARD, 0, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+    Event_Wait(200);
+    Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
+
+    /* The third hole. */
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
+    leader->scale_x = 0x10000;
+    leader->scale_y = 0x10000;
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Event_Wait(30);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(20);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 855);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 2);
+    Actor_SetChildValue(ACTOR_LAST_BOARD, 2);
+    Actor_SetSpeed(ACTOR_LAST_BOARD, 0x4ccc, 0x2666);
+    Actor_MoveToAndWait(ACTOR_LAST_BOARD, 390, 832);
+    Event_Wait(80);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_MoveToAndWait(ACTOR_LAST_BOARD, 360, 842);
+    Event_Wait(80);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
+    Actor_SetChildValue(ACTOR_LAST_BOARD, 0);
+    Actor_SetPosition(ACTOR_LAST_BOARD, 0, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+    Event_Wait(200);
+    Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
+    leader->scale_x = 0x10000;
+    leader->scale_y = 0x10000;
+
+    /* His mother praises the work and talks about his father. */
+    Event_SetMessage((s32)MsgHaidiaGoodJob);
+    Actor_Jump(ACTOR_DORA, 2, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
+    HaidiaMura_RunWalkScene032B0(ACTOR_DORA, 5, 6, 0);
+    Actor_SetSpeed(ACTOR_DORA, 0x4ccc, 0x2666);
+    Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
+    Event_Wait(20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(10);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
+    Event_Wait(20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 40);
+    Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(10);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(10);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Event_Wait(40);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+    Event_Wait(20);
+    Event_OpenMessage(ACTOR_DORA, 0);
+    if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+        gEventWork->message++;
+    }
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Event_SetMessage((s32)MsgHaidiaWorkingYourselvesBone);
+    Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
+    Event_Wait(10);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Event_OpenMessage(ACTOR_DORA, 0);
+    if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
+        gEventWork->message++;
+    }
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+    Event_Wait(20);
+    Event_SetMessage((s32)MsgHaidiaDevastatedWhenKyle);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
+    Event_Wait(10);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+    Event_Wait(60);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 10);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Event_Wait(20);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(30);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
+
+    /* Gerald and Jasmine arrive. */
+    Camera_SetSpeed(0x6666, 0xccc);
+    Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_WalkTo(ACTOR_GERALD, 369, 904);
+    Actor_WalkToAndWait(ACTOR_JASMINE, 392, 904);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
+    HaidiaMura_RunWalkScene032B0(ACTOR_JASMINE, 10, 11, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 0);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+    Event_Wait(10);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 30);
+    Actor_Jump(ACTOR_JASMINE, 4, 0);
+    Actor_WalkToAndWait(ACTOR_JASMINE, 392, 843);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    HaidiaMura_RunWalkScene032B0(ACTOR_GERALD, 10, 11, 0);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
+    Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
+    Actor_WalkTo(ACTOR_GERALD, 392, 843);
+    Actor_Get(ACTOR_JASMINE)->unknown_5a &= 0xfe;
+    Actor_WalkToAndWait(ACTOR_JASMINE, 408, 843);
+    Event_Wait(1);
+    Actor_Get(ACTOR_JASMINE)->unknown_5a |= 1;
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 0);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 30);
+    Actor_Jump(ACTOR_DORA, 4, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
+    Event_Wait(30);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+    Actor_Jump(ACTOR_PARTY_LEADER, 2, 30);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+    Event_Wait(60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 80);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
+    Event_Wait(100);
+    Actor_FaceEachOther(ACTOR_JASMINE, ACTOR_GERALD, 30);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Event_Wait(10);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 60);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 30);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Event_Wait(30);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Actor_StartRepeatedMotion(ACTOR_DORA, 2);
+    Event_Wait(30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
+    Event_Wait(30);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
+    Event_Wait(10);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+    Event_Wait(30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Camera_SetSpeed(0x9999, 0x1333);
+    Camera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
+    Actor_WalkToAndWait(ACTOR_DORA, 364, 816);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 40);
+    Actor_FaceEachOther(ACTOR_JASMINE, ACTOR_GERALD, 30);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Event_Wait(30);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 30);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+    Event_Wait(10);
+    Event_OpenMessage(ACTOR_DORA, 0);
+    if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
+        gEventWork->message++;
+    }
+    Event_Wait(40);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+
+    /* She slips from the step; Gerald catches her. */
+    Event_SetMessage((s32)MsgHaidiaAsStubbornAsYourFather);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 3);
+    Event_Wait(30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_Jump(ACTOR_DORA, 4, 0);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 3);
+    Actor_SetAnimation(ACTOR_DORA, 7);
+    Event_Wait(5);
+    Event_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, ACTOR_GERALD, 10, 14, 4, 14, 0);
+    actor = Actor_Get(ACTOR_DORA);
+    actor->sprite->flags = 0;
+    actor->unknown_5a &= 0xfe;
+    Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
+    Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
+    Event_Wait(4);
+    for (i = 0; i != 4; i++) {
+        actor->z.fixed += 0x18000;
+        actor->scale_y -= 0x1999;
+        Event_Wait(1);
+    }
+    Actor_SetPosition(ACTOR_DORA, 0, 0);
+    Actor_SetSpeed(ACTOR_GERALD, 0x30000, 0x18000);
+    Actor_Jump(ACTOR_GERALD, 6, 0);
+    Actor_WalkToAndWait(ACTOR_GERALD, 374, 827);
+    Event_ShowMessage(ACTOR_JASMINE, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, EMOTE_IN_FRONT | 0, 0);
+    Actor_StartRepeatedMotion(ACTOR_JASMINE, 2);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 0, 10);
+    Actor_SetAnimation(ACTOR_GERALD, 13);
+    Actor_Jump(ACTOR_GERALD, 2, 5);
+    MapRender_SetValues(0, 0x40000, 0x10000);
+    Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_GERALD), 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 10);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 3);
+    MapRender_SetValues(-1, -1, 0xe666);
+    MapRender_WaitForValues();
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 80);
+    Actor_SetAnimation(ACTOR_DORA, 8);
+    actor->scale_y = 0x8000;
+    Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
+    for (i = 0; i != 5; i++) {
+        actor->scale_y += 0x1999;
+        Event_Wait(1);
+    }
+    Event_Wait(60);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 30);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Event_Wait(60);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Camera_SetSpeed(0x4ccc, 0x999);
+    Camera_MoveTo(PIXELS(372), PIXELS(160), PIXELS(859), 1);
+    Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
+    Actor_Jump(ACTOR_DORA, 6, 0);
+    Actor_WalkToAndWait(ACTOR_DORA, 359, 835);
+    Event_Wait(30);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 30);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+    Event_Wait(30);
+    actor = Actor_Get(ACTOR_DORA);
+    actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 80);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 80);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 3);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAttachedEffect(ACTOR_DORA, EMOTE_IN_FRONT | 2);
+    Event_Wait(80);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 30);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 80);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 30);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_GERALD), 1);
+    Actor_Jump(ACTOR_GERALD, 6, 0);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
+    Actor_SetSpeed(ACTOR_GERALD, 0x40000, 0x20000);
+    actor = Actor_Get(ACTOR_GERALD);
+    actor->unknown_5a &= 0xfe;
+    Actor_SetDestination(ACTOR_GERALD, 403, 827);
+    Actor_SetAttachedEffect(ACTOR_JASMINE, EMOTE_IN_FRONT | 2);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTH, 20);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 1);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 20);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 0, 0);
+    Actor_SetAnimation(ACTOR_GERALD, 13);
+    Actor_Jump(ACTOR_GERALD, 2, 5);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_GERALD), 0);
+    Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
+    MapRender_SetValues(0, 0x40000, 0x10000);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
+    MapRender_SetValues(-1, -1, 0xe666);
+    MapRender_WaitForValues();
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 30);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
+    Actor_WalkToAndWait(ACTOR_JASMINE, 408, 855);
+    Event_Wait(60);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 60);
+    Actor_StartRepeatedMotion(ACTOR_JASMINE, 3);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
+    Event_Wait(80);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 30);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
+    Event_Wait(10);
+    Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_SHAKE_HEAD);
+    Event_Wait(80);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(10);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+    Event_Wait(60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 80);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 80);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 1, 60);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+    Event_Wait(30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 70);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Event_Wait(20);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
+    Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
+    Event_Wait(10);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 30);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
+    Event_Wait(20);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
+    Event_Wait(10);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 0);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 3);
+    Event_Wait(30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_GERALD), 0);
+    Actor_Jump(ACTOR_GERALD, 4, 0);
+    Actor_WalkToAndWait(ACTOR_GERALD, 398, 828);
+    Event_Wait(60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 60);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(60);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Event_Wait(60);
+
+    /* The three set off together. */
+    actor = Actor_Get(ACTOR_GERALD);
+    actor->unknown_5a |= 1;
+    actor = Actor_Get(ACTOR_JASMINE);
+    actor->unknown_5a |= 1;
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_WalkTo(ACTOR_JASMINE, actor->x.part.pixel + 16, actor->z.part.pixel);
+    Actor_WalkToAndWait(ACTOR_GERALD, actor->x.part.pixel + 16, actor->z.part.pixel - 16);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 30);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_JASMINE, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(40);
+    Actor_WalkToAndWait(ACTOR_JASMINE, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+    Actor_WalkToAndWait(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
+    Party_AddMembers(ACTOR_GERALD, ACTOR_JASMINE);
+    Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
+    HaidiaMura_RunWalkScene03380(ACTOR_PARTY_LEADER, 13, 10, 0);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_Get(ACTOR_DORA)->unknown_5a |= 1;
+    HaidiaMura_RunWalkScene03380(ACTOR_DORA, 6, 5, 0);
+    Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
+    Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(20);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
+    Camera_WaitForMove();
+    Event_Wait(100);
+    GameFlag_Set(0x202);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+    *leader_motion = leader_motion_flags;
+    Event_End();
+}
+
+/* Vale entry: from entrance 16 run the staging scene; otherwise place the story actors and cells for the flags, start the village tasks and redraw. */
+s32 HaidiaMura_ApplyEntryState(void)
+{
+    struct FieldActor *actor;
+    s32 set;
+
+    if (gGameState.entrance == 16) {
+        PaletteGlow_Update(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
+        FieldScene_RunLargeStagingSequence();
+    } else {
+        if (!Engine_GameFlagIsSet(0xfd0)) {
+            if (!Engine_GameFlagIsSet(0x87a)) {
+                InitializeStagedActorSceneOrbitingEffect(26);
+            } else {
+                InitializeStagedActorSceneOrbitingEffect(20);
+            }
+        }
+        Engine_MapCopyCellsTo(2, 102, 84, 41, 2, 1);
+        Engine_MapCopyCellsTo(1, 102, 83, 41, 1, 1);
+        actor = Object_GetById((Engine_GameFlagIsSet(0x87a) != 0) + 20);
+        Engine_ActorSetSpriteFlags(actor, 0);
+        if (Engine_GameFlagIsSet(0x314)) {
+            actor->x.fixed = 181 << 17;
+        } else if (Engine_GameFlagIsSet(0x316)) {
+            actor->x.fixed = 197 << 17;
+        } else {
+            actor->x.fixed = 189 << 17;
+        }
+        actor->z.fixed = 0x2480000;
+        actor->y.fixed = 0xc00000;
+        HaidiaMura_OpenVillagerLane();
+        actor->unknown_22 = 3;
+        actor->motion_flags = 0;
+        Engine_TaskAddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
+        if (!Engine_GameFlagIsSet(0x87a)) {
+            if (Value1(Engine_GameFlagIsSet, 0x815)) {
+                actor = Object_GetById(21);
+                Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
+                actor->scale_x = 0x28f;
+                actor->scale_y = 0x28f;
+            }
+            if (Engine_GameFlagIsSet(0x808)) {
+                Engine_ActorSetPosition(15, 0, 0);
+                Engine_ActorSetPosition(16, 0, 0);
+                Engine_ActorSetPosition(17, 0, 0);
+            }
+            set = Engine_GameFlagIsSet(0x815);
+            if (set == 0) {
+                if (!Engine_GameFlagIsSet(0x109)) {
+                    if (Engine_GameFlagIsSet(0x823)) {
+                        Call3(Engine_ActorSetPosition, 22, 0x1000000, 0x1c80000);
+                        Object_GetById(22)->update = (void *)SceneActor_RunStep18WhenTargetSet;
+                        Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
+                    }
+                } else {
+                    Object_GetById(22)->unknown_5b = set;
+                    Engine_GameFlagClear(0x241);
+                }
+                if (gGameState.entrance != 16 && !Engine_GameFlagIsSet(0x87a)) {
+                    Engine_TaskAddCallback(FieldScene_RunScene373SequenceB, 0xc80);
+                }
+            }
+            if (!Value1(Engine_GameFlagIsSet, 0x308) && gGameState.entrance == 17) {
+                Scene_RepairTheHouse();
+                Engine_GameFlagSet(0x308);
+            }
+        }
+        if (Engine_GameFlagIsSet(0x109)) {
+            if (Engine_GameFlagIsSet(0x204)) {
+                Call6(Engine_MapCopyCellAttributes, 49, 53, 8, 4, 20, 50);
+            }
+            if (Engine_GameFlagIsSet(0x210)) {
+                SceneState_Send210AndApplyRectAt40x84();
+            }
+        }
+        BattleFx_SetQueuedSoundAndPlay(170);
+        Engine_MapRedraw();
+        Engine_TaskWait(1);
+    }
+    return 0;
+}

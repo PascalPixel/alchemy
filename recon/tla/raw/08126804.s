@@ -77,11 +77,11 @@ BattlePres_SetupTransitionScene:
 	bl Func_08014de4
 	mov r0, r8
 	mov r1, r10
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	add r6, sp, #16
 	adds r1, r6, #0
 	mov r0, r9
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [r6, #4]
 	ldr r2, [r6]
 	movs r1, #240

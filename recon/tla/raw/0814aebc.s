@@ -162,7 +162,7 @@ Func_0814aebc:
 	bl Func_08014de4
 	mov r0, r10
 	mov r1, r9
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, [r5, #8]
 	adds r0, r6, #0
 	str r3, [r6]

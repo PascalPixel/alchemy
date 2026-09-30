@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08038edc
+	.global RenderOutput_ReleaseFree
 	.thumb_func
-Func_08038edc:
+RenderOutput_ReleaseFree:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

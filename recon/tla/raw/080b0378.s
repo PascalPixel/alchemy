@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080b0378
+	.global BattleRandom16
 	.thumb_func
-Func_080b0378:
+BattleRandom16:
 	ldr r1, .L_080b0394
 	ldr r3, .L_080b0398
 	ldr r2, [r1]

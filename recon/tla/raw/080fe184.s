@@ -20,11 +20,11 @@ Func_080fe184:
 	movs r0, #0
 	movs r3, #20
 	movs r2, #30
-	bl Func_080383e8
+	bl UiWindow_DrawFrameFar
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #0
-	bl Func_080f80e0
+	bl UiWindow_InitializeWork
 	movs r2, #129
 	lsls r2, r2, #2
 	adds r0, r7, r2

@@ -8,13 +8,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/TABLES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/GET_PLACEMENTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/QUESTIONS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/WALK_TO_SPRING.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/RULES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/GET_EVENTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/OPEN_SCENE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI.o"(.text)
         "*/resource_3b7_overlay.o"(.text.x020084bc)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI2.o"(.text)
         "*/resource_3b7_overlay.o"(.text.x02008ac8)

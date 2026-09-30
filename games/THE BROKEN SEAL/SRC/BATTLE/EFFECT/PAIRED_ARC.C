@@ -45,9 +45,6 @@ write_value:
     }
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 void BattleFx_SpawnDescendingArcParticles(void *);
 
 /* Spawns the descending arc particles every seventh frame in the Clear
@@ -71,4 +68,3 @@ void BattleFx_UpdatePairedArcSpawner(void *object)
     if (field64 == 1)
         *(u16 *)((u8 *)object + 6) += 0xC00;
 }
-#endif

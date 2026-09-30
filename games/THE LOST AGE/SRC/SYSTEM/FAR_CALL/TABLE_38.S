@@ -11,9 +11,9 @@ Resource_FarCall007:
 	.thumb_func
 Func_080f8000:
 	overlay_veneer Func_080f94a4
-	.global Func_080f8008
+	.global Menu_OpenConfirmPromptFar
 	.thumb_func
-Func_080f8008:
+Menu_OpenConfirmPromptFar:
 	overlay_veneer Func_080fcab8
 	.global Func_080f8010
 	.thumb_func

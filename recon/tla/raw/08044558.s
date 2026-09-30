@@ -115,7 +115,7 @@ Func_08044558:
 	bgt.n	.L_08044680
 	ldr	r2, [pc, #180]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23
@@ -151,7 +151,7 @@ Func_08044558:
 	bgt.n	.L_08044704
 	ldr	r2, [pc, #108]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23

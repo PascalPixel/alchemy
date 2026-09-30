@@ -1123,7 +1123,7 @@ Graphics_AdjustPaletteBank:
 	bgt.n	.L_081017b2
 	ldr	r2, [pc, #148]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 	movs	r3, #128
 	lsls	r3, r3, #23
 	mov	r9, r3

@@ -293,11 +293,29 @@ pub fn functions(
     classify: &dyn Fn(&str) -> (Origin, String),
     wanted: &dyn Fn(Origin) -> bool,
 ) -> Vec<Function> {
+    decoded(image, classify, wanted)
+        .into_iter()
+        .map(|(mut f, ins)| {
+            f.tokens = ins.iter().map(|i| interner.id(normalise(i))).collect();
+            f
+        })
+        .collect()
+}
+
+/// As `functions`, with each function's decoded instructions; its `tokens`
+/// are left empty.
+pub fn decoded(
+    image: &Image,
+    classify: &dyn Fn(&str) -> (Origin, String),
+    wanted: &dyn Fn(Origin) -> bool,
+) -> Vec<(Function, Vec<Ins>)> {
     let mut names: BTreeMap<u32, Vec<&str>> = BTreeMap::new();
     let mut thumb: BTreeSet<u32> = BTreeSet::new();
     let mut named: BTreeSet<u32> = BTreeSet::new();
     for symbol in &image.elf.symbols {
+        // Absolute symbols (the linker's `*ABS*` markers, ids) name no code.
         if symbol.section == 0
+            || symbol.section == 0xfff1
             || symbol.name.is_empty()
             || symbol.name.starts_with('$')
             || symbol.name.starts_with('.')
@@ -346,10 +364,7 @@ pub fn functions(
             let (from, to) = (pair[0], pair[1]);
             let first = ins.partition_point(|i| i.addr < from);
             let last = ins.partition_point(|i| i.addr < to);
-            let body: Vec<u32> = ins[first..last]
-                .iter()
-                .map(|i| interner.id(normalise(i)))
-                .collect();
+            let body = &ins[first..last];
             if body.is_empty() {
                 continue;
             }
@@ -357,15 +372,18 @@ pub fn functions(
                 .get(&from)
                 .map(|n| preferred(n))
                 .unwrap_or_else(|| format!("sub_{from:08x}"));
-            out.push(Function {
-                build: image.build.to_string(),
-                name,
-                address: from,
-                bytes: to - from,
-                origin,
-                source: source.clone(),
-                tokens: body,
-            });
+            out.push((
+                Function {
+                    build: image.build.to_string(),
+                    name,
+                    address: from,
+                    bytes: to - from,
+                    origin,
+                    source: source.clone(),
+                    tokens: Vec::new(),
+                },
+                body.to_vec(),
+            ));
         }
     }
     out

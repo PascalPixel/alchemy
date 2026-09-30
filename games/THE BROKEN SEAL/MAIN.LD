@@ -707,7 +707,6 @@ SECTIONS
         "*/recon/tbs/raw/0808e0ae.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/APPLY_CHILD_PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/RUNTIME_RESET_EFFECT_COUNTER.o"(.text)
-        "*/recon/tbs/raw/0808e23c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ABILITY_EVENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/COMMAND_EXECUTE_SELECTED_ACTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_STATE.o"(.text)

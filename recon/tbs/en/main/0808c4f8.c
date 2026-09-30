@@ -107,7 +107,7 @@ void BattleFx_ApplyColorToTargetBuffer();
 void Battle_InitializeRenderObject();
 s32 Party_CheckMemberValueTotal();
 void PartyInventory_GiveItem();
-void Func_080941e0();
+void Scene_FadeColorFromWhite();
 s32 ObjectEffect_RunPendingFlagEvent();
 void FieldObject_PlaceSceneActors();
 void Djinn_ResolvePendingEvent();
@@ -361,7 +361,7 @@ s32 Func_0808c4f8(void)
                 FIELD_AT_OFFSET(g, u16 *, 0x1C0) = 510;
                 Data_02000402 = FIELD_AT_OFFSET(work, u16 *, 0x17C);
                 FIELD_AT_OFFSET(work, u16 *, 0x170) = 999;
-                Func_080941e0(FIELD_AT_OFFSET(work, s16 *, 0x17C));
+                Scene_FadeColorFromWhite(FIELD_AT_OFFSET(work, s16 *, 0x17C));
                 FIELD_AT_OFFSET(work, s32 *, 0x1A8) = 0;
                 FIELD_AT_OFFSET(work, u16 *, 0x17C) = 0;
                 Data_02000478 = 0;

@@ -1183,12 +1183,12 @@ Battle_ApplyActionExtras:
 .L_081256a4:
 	movs	r0, #1
 	movs	r1, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	beq.n	.L_081256c0
 	movs	r0, #2
 	movs	r1, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	beq.n	.L_081256c0
 	movs	r1, #1

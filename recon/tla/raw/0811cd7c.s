@@ -171,7 +171,7 @@ Func_0811cd7c:
 	mov	sl, r3
 	mov	r1, sl
 	mov	r9, r2
-	bl	0x0811a188
+	bl	Func_0811a188
 	ldr	r2, [sp, #4]
 	mov	r8, r0
 	cmp	r2, r8
@@ -200,7 +200,7 @@ Func_0811cd7c:
 	mov	r1, sl
 	add	r9, r0
 	movs	r0, #2
-	bl	0x0811a188
+	bl	Func_0811a188
 	movs	r6, #0
 	mov	r8, r0
 	cmp	r6, r8

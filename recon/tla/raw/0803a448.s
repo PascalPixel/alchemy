@@ -233,6 +233,9 @@ Func_0803a5e0:
 	cmp	r0, #0
 	beq.n	.L_0803a5fc
 	pop	{r5, pc}
+	.global Func_0803a60c
+	.thumb_func
+Func_0803a60c:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

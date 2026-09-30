@@ -447,6 +447,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/GRAPHICS/RENDER/OUTPUT.o"(.text)
         "*/recon/tla/raw/08042450.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08042508.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BYTE5_AND_RESET_HALFWORD_C.o"(.text)
+        "*/recon/tla/raw/0804257a.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804257c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08042690.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08042e28.o"(.text .rodata .data .padding)

@@ -20,7 +20,7 @@ Func_080dcf8c:
 	cmp	r0, #0
 	beq.n	.L_080dcfce
 .L_080dcfac:
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldrh	r3, [r5, #6]
 	movs	r2, #128
 	subs	r0, r0, r3

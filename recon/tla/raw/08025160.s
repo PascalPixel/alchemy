@@ -1203,7 +1203,7 @@
 	mov	sl, r1
 	mov	r0, r9
 	mov	r1, fp
-	bl	Func_080148e8
+	bl	ArcTan2
 	movs	r2, #128
 	lsls	r2, r2, #8
 	adds	r0, r0, r2

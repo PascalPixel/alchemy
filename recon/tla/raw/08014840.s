@@ -91,9 +91,9 @@ Func_0801489c:
 	movs	r0, r0
 	.2byte 0x021c
 	.2byte 0x0300
-	.global Func_080148e8
+	.global ArcTan2
 	.thumb_func
-Func_080148e8:
+ArcTan2:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	adds	r5, r1, #0

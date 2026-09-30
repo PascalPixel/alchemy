@@ -129,7 +129,7 @@ Func_08023d80:
 	asrs	r0, r0, #16
 	subs	r1, r1, r3
 	asrs	r1, r1, #16
-	bl	Func_080148e8
+	bl	ArcTan2
 	lsls	r0, r0, #16
 	asrs	r7, r0, #16
 	movs	r3, #0

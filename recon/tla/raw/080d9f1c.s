@@ -77,7 +77,7 @@ Func_080d9f1c:
 	mov	r0, sl
 	str	r2, [sp, #0]
 	mov	r8, r3
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldr	r2, [sp, #20]
 	movs	r3, #0
 	lsls	r0, r0, #16

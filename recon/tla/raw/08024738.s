@@ -650,7 +650,7 @@ Object_SetMoveTarget:
 .L_08024bf8:
 	mov	r0, r9
 	mov	r1, fp
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldrh	r3, [r6, #6]
 	movs	r2, #128
 	subs	r0, r0, r3

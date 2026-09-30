@@ -24,7 +24,7 @@ Func_0803ebdc:
 	movs	r3, #33
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldrh	r3, [r5, #0]
 	movs	r0, #229
 	adds	r3, #1
@@ -99,7 +99,7 @@ Func_0803ebdc:
 	beq.n	.L_0803eca8
 .L_0803ec96:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #24
 	ldrsh	r2, [r5, r1]
 	movs	r0, #16
@@ -214,7 +214,7 @@ Func_0803ebdc:
 	adds	r0, r7, #0
 	bl	0x0803ef8c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #210
 	lsls	r1, r1, #2
 	adds	r3, r7, r1
@@ -223,7 +223,7 @@ Func_0803ebdc:
 	ldrh	r0, [r3, #10]
 	bl	Func_0803e5a8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

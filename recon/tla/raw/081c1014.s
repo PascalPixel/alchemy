@@ -160,7 +160,7 @@ Func_081c1014:
 	bl	0x081c0cb0
 .L_081c113c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_081c104a
 	.4byte 0x081c3430
 	.4byte 0x03007804

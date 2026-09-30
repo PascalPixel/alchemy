@@ -28,13 +28,13 @@ Func_0811c66c:
 	bl	Func_0811bec8
 	adds	r7, #1
 	movs	r0, #8
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r5, #2
 	cmp	r7, r6
 	bne.n	.L_0811c696
 .L_0811c6ac:
 	movs	r0, #22
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	b.n	.L_0811c6be
 .L_0811c6b6:
@@ -130,7 +130,7 @@ Func_0811c66c:
 	str	r1, [r2, #0]
 	str	r3, [r2, #4]
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x08014878
 	ldr	r0, [sp, #8]
 	bl	0x0811be3c
@@ -175,7 +175,7 @@ Func_0811c66c:
 	bne.n	.L_0811c7b4
 .L_0811c7cc:
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #128
 	ldr	r3, [pc, #44]
 	lsls	r2, r2, #19
@@ -213,7 +213,7 @@ Func_0811c66c:
 	strh	r3, [r1, #0]
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #16
 	bne.n	.L_0811c810
 	movs	r0, #9
@@ -326,7 +326,7 @@ Func_0811c66c:
 	str	r3, [r0, #4]
 	bl	0x08138010
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x0811a44c
 	ldr	r3, [pc, #44]
 	movs	r2, #128
@@ -361,7 +361,7 @@ Func_0811c66c:
 	strh	r3, [r7, #0]
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #16
 	bne.n	.L_0811c938
 	mov	r2, fp
@@ -383,7 +383,7 @@ Func_0811c66c:
 	movs	r3, #100
 	bl	0x08126804
 	movs	r0, #3
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 .L_0811c976:
 	add	sp, #132
@@ -407,12 +407,12 @@ Func_0811c66c:
 	bne.n	.L_0811c9a6
 	str	r1, [r2, #0]
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0811c9ae
 .L_0811c9a6:
 	str	r1, [r2, #0]
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811c9ae:
 	movs	r3, #0
 	ldrsh	r0, [r6, r3]
@@ -472,7 +472,7 @@ Func_0811c66c:
 	movs	r3, #0
 	movs	r0, #4
 	str	r3, [r5, #28]
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	bl	0x08138008
 	movs	r3, #36
@@ -511,14 +511,14 @@ Func_0811c66c:
 	movs	r3, #40
 	str	r3, [r2, #4]
 	movs	r0, #40
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0811ca94
 .L_0811ca88:
 	movs	r3, #40
 	str	r1, [r2, #0]
 	str	r3, [r2, #4]
 	movs	r0, #40
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811ca94:
 	movs	r2, #8
 	ldrsh	r3, [r5, r2]
@@ -820,7 +820,7 @@ Func_0811c66c:
 	movs	r3, #255
 	strb	r3, [r2, #22]
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	bl	0x080200f8
 	adds	r0, r6, #0

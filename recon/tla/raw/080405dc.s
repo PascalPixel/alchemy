@@ -243,7 +243,7 @@ Func_080405dc:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	mov	sl, r3
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08040628
 	movs	r3, #16
 	str	r0, [sp, #16]
@@ -358,7 +358,7 @@ Func_080405dc:
 	ldr	r0, [sp, #8]
 	bl	Func_08045018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #200]
 	movs	r3, #1
 	ldr	r2, [r1, #4]
@@ -441,7 +441,7 @@ Func_080405dc:
 	bl	UiWork_Finalize
 	bl	.L_08040614
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	blt.n	.L_0804096e
 	ldr	r1, [sp, #4]

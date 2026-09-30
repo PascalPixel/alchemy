@@ -366,7 +366,7 @@ Func_0811cfd0:
 .L_0811d276:
 	movs	r0, #1
 	subs	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	blt.n	.L_0811d2da
 	ldr	r3, [pc, #112]
@@ -401,7 +401,7 @@ Func_0811cfd0:
 .L_0811d2bc:
 	movs	r0, #1
 	subs	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	blt.n	.L_0811d2da
 	ldr	r3, [pc, #40]
@@ -461,7 +461,7 @@ Func_0811cfd0:
 	bhi.n	.L_0811d3f8
 	movs	r0, #1
 	subs	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	blt.n	.L_0811d3f8
 	ldr	r3, [pc, #212]
@@ -526,7 +526,7 @@ Func_0811cfd0:
 	bhi.n	.L_0811d3f8
 	movs	r0, #1
 	subs	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	blt.n	.L_0811d3f8
 	ldr	r3, [pc, #80]

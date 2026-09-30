@@ -228,7 +228,7 @@ Func_0811e3ac:
 	movs	r0, #154
 	bl	Audio_PlayCue
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #4]
 	cmp	r1, #0
 	beq.n	.L_0811e5d8
@@ -283,7 +283,7 @@ Func_0811e3ac:
 	strh	r3, [r7, #0]
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #16
 	bne.n	.L_0811e618
 	mov	r3, r8
@@ -470,7 +470,7 @@ Func_0811e3ac:
 .L_0811e7ac:
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #29
 	ble.n	.L_0811e780
 	mov	r3, r8

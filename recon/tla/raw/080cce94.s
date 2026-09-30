@@ -428,7 +428,7 @@ Func_080cce94:
 	bl	0x080cf17c
 	adds	r6, r0, #0
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r3, r8
 	cmp	r3, #128
 	bne.n	.L_080cd238
@@ -499,7 +499,7 @@ Func_080cce94:
 	bl	0x080cf17c
 	adds	r6, r0, #0
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cd2c8:
 	adds	r0, r7, #0
 	bl	0x080ad028

@@ -548,6 +548,6 @@ Func_080dc390:
 	ldr	r0, [r3, #16]
 	bl	0x080e1420
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 	.2byte 0x0000

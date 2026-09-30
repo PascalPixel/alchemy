@@ -1332,7 +1332,7 @@ Func_08123648:
 	ldr	r0, [pc, #664]
 	bl	0x080381c8
 	movs	r0, #60
-	bl	0x08013560
+	bl	WaitFrames
 .L_081241aa:
 	movs	r0, #1
 	negs	r0, r0

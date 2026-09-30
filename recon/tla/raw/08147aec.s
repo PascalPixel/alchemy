@@ -230,7 +230,7 @@ Func_08147aec:
 	ldr	r0, [r3, #0]
 	bl	0x0814cc4c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #196
 	lsls	r1, r1, #1
 	adds	r1, #255
@@ -1126,7 +1126,7 @@ Func_08147aec:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #48]
 	adds	r0, #1
 	str	r0, [sp, #48]
@@ -1337,7 +1337,7 @@ Func_08147aec:
 	ldr	r0, [r3, #0]
 	bl	0x0814cc4c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #197
 	lsls	r1, r1, #1
 	adds	r1, #255
@@ -1901,7 +1901,7 @@ Func_08147aec:
 	movs	r0, #1
 	str	r3, [r2, #0]
 	add	r9, r7
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, r9
 	cmp	r0, #124
 	beq.n	.L_081489f6
@@ -2442,7 +2442,7 @@ Func_08147aec:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, r8
 	ldr	r3, [r1, #24]
 	ldr	r2, [pc, #72]
@@ -2569,7 +2569,7 @@ Func_08147aec:
 	adds	r2, #82
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #141
 	bl	Audio_PlayCue
 	movs	r1, #0
@@ -2921,7 +2921,7 @@ Func_08147aec:
 	movs	r1, #1
 	str	r1, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	add	fp, r2
 	mov	r3, fp
@@ -3462,7 +3462,7 @@ Func_08147aec:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #20]
 	ldr	r1, [pc, #64]
 	adds	r0, #1
@@ -4069,7 +4069,7 @@ Func_08147aec:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r7, [sp, #8]
 	ldr	r0, [sp, #20]
 	movs	r5, #1

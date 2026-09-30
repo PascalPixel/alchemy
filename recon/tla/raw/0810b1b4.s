@@ -54,7 +54,7 @@ Func_0810b1b4:
 	movs	r1, #0
 	bl	0x080202c8
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #320]
@@ -108,7 +108,7 @@ Func_0810b1b4:
 	str	r3, [r5, #44]
 	str	r3, [r5, #40]
 	movs	r0, #3
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #5
 	bne.n	.L_0810b2aa
 	movs	r3, #161
@@ -140,7 +140,7 @@ Func_0810b1b4:
 	cmp	r7, #0
 	bge.n	.L_0810b2c2
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #126
 	bl	Audio_PlayCue
 	movs	r2, #161
@@ -155,7 +155,7 @@ Func_0810b1b4:
 	movs	r1, #0
 	bl	0x08020280
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r6, #160
 	movs	r5, #160
 	lsls	r6, r6, #3
@@ -188,7 +188,7 @@ Func_0810b1b4:
 	bl	0x080202c8
 	bl	0x08108928
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #128
 	lsls	r3, r3, #3
 	adds	r3, #220
@@ -458,18 +458,18 @@ Func_0810b1b4:
 	movs	r3, #60
 	str	r3, [r1, r5]
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080c83b0
 	bl	0x080c83b8
 	movs	r0, #86
 	bl	Audio_PlayCue
 	bl	0x081084e0
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	bl	Func_080c83a8
 	bl	0x080c83b8
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [r6, #108]
 	movs	r3, #16
 	str	r3, [r2, r5]

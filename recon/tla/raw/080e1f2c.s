@@ -287,7 +287,7 @@ Func_080e1f2c:
 	movs	r0, #130
 	bl	Audio_PlayCue
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #128
 	lsls	r0, r0, #3
 	movs	r1, #128
@@ -330,7 +330,7 @@ Func_080e1f2c:
 	mov	r8, r2
 .L_080e21e8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	ldrsh	r3, [r5, r0]
 	cmp	r3, r8

@@ -34,7 +34,7 @@ Func_080d3460:
 	str	r3, [sp, #0]
 	bl	Object_SetMode
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	movs	r1, #1
 	bl	Object_SetMode
@@ -57,7 +57,7 @@ Func_080d3460:
 	adds	r0, r6, #0
 	bl	Object_SetPosition
 	movs	r0, #6
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #217
 	bl	Audio_PlayCue
 	movs	r1, #160
@@ -74,7 +74,7 @@ Func_080d3460:
 	adds	r3, r3, r2
 	str	r3, [r6, #12]
 	str	r3, [r6, #60]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r8, r3
@@ -111,7 +111,7 @@ Func_080d3460:
 	cmp	r3, #0
 	beq.n	.L_080d3554
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080d3584
 .L_080d3554:
 	ldr	r2, [r6, #12]
@@ -122,7 +122,7 @@ Func_080d3460:
 .L_080d355e:
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #179
 	bhi.n	.L_080d3572
 	ldr	r2, [r6, #12]
@@ -134,7 +134,7 @@ Func_080d3460:
 	ldr	r1, [sp, #0]
 	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080d2c98
 .L_080d3584:
 	add	sp, #4

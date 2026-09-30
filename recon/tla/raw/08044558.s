@@ -190,7 +190,7 @@ Func_08044558:
 	ldr	r1, [sp, #24]
 	bl	Func_080444e8
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08044a0c
 	movs	r0, r0
 	.4byte 0x02000240
@@ -249,7 +249,7 @@ Func_08044558:
 	mov	r0, sl
 	bl	0x080443d8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	movs	r3, #15
 	str	r2, [sp, #0]
@@ -607,7 +607,7 @@ Func_08044558:
 	ldr	r0, [sp, #48]
 	bl	0x0803d450
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [pc, #36]
 	ldr	r3, [r2, #0]
 	cmp	r3, #0
@@ -615,7 +615,7 @@ Func_08044558:
 	adds	r5, r2, #0
 .L_08044a32:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r5, #0]
 	cmp	r3, #0
 	bne.n	.L_08044a32

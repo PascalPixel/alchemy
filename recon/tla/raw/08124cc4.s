@@ -1724,7 +1724,7 @@ Battle_ApplyActionExtras:
 	strh	r3, [r6, #0]
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #15
 	ble.n	.L_08125b0c
 	ldr	r3, [pc, #8]
@@ -1738,7 +1738,7 @@ Battle_ApplyActionExtras:
 	lsls	r2, r2, #19
 	strh	r3, [r2, #0]
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, r9
 	ldrh	r3, [r1, #0]
 	movs	r2, #128

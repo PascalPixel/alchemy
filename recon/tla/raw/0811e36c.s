@@ -30,6 +30,6 @@ Func_0811e36c:
 	blt.n	.L_0811e38c
 .L_0811e3a2:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r5, r6, pc}
 	.2byte 0x0000

@@ -844,7 +844,7 @@ Func_08049a30:
 	str	r3, [sp, #16]
 .L_0804a0d8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08049b78
 .L_0804a0e0:
 	ldr	r0, [sp, #52]
@@ -854,7 +854,7 @@ Func_08049a30:
 	mov	r0, fp
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #56]
 	bl	0x08014274
 	ldr	r5, [sp, #24]
@@ -866,7 +866,7 @@ Func_08049a30:
 	cmp	r7, #0
 	bge.n	.L_0804a100
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, sl
 	add	sp, #304
 	pop	{r3, r5, r6, r7}
@@ -1750,7 +1750,7 @@ Func_08049a30:
 	str	r2, [sp, #8]
 .L_0804a80e:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0804a27e
 .L_0804a816:
 	ldr	r0, [sp, #44]
@@ -1760,7 +1760,7 @@ Func_08049a30:
 	movs	r1, #1
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #16]
 	movs	r7, #4
 .L_0804a830:
@@ -1772,7 +1772,7 @@ Func_08049a30:
 	ldr	r0, [sp, #52]
 	bl	0x08014274
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #300
 	pop	{r3, r5, r6, r7}
@@ -3604,14 +3604,14 @@ Func_08049a30:
 	b.n	.L_0804b650
 .L_0804b640:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [sp, #56]
 	cmp	r6, #0
 	beq.n	.L_0804b650
 	bl	.L_0804ab98
 .L_0804b650:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r7, r9
 	ldr	r0, [sp, #52]
 	bl	0x08014274
@@ -3634,7 +3634,7 @@ Func_08049a30:
 	movs	r3, #0
 	str	r3, [r2, #40]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #68]
 	add	sp, #324
 	pop	{r3, r5, r6, r7}
@@ -3862,7 +3862,7 @@ Func_08049a30:
 	adds	r5, #228
 .L_0804b846:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r7, #4]
 	ands	r3, r6
 	cmp	r3, #0

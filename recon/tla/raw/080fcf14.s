@@ -112,7 +112,7 @@ Func_080fcf14:
 	ldr	r0, [r7, r3]
 	bl	0x080f8888
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	pop	{r3}
 	mov	r8, r3
@@ -247,7 +247,7 @@ Func_080fcf14:
 	lsls	r0, r0, #2
 	bl	Func_08104ef8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fd114:
 	ldr	r0, [r7, #16]
 	ldr	r1, [sp, #20]
@@ -291,7 +291,7 @@ Func_080fcf14:
 	subs	r0, #10
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, r9
 	ldr	r3, [r1, #4]
 	movs	r2, #1
@@ -592,7 +592,7 @@ Func_080fcf14:
 	lsls	r0, r0, #2
 	bl	Func_08104ef8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fd3dc:
 	ldr	r0, [r6, #16]
 	ldr	r1, [sp, #0]
@@ -648,7 +648,7 @@ Func_080fcf14:
 	subs	r0, #10
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #208]
 	movs	r2, #1
 	ldr	r3, [r1, #4]
@@ -697,7 +697,7 @@ Func_080fcf14:
 	bl	0x080f8888
 	strb	r7, [r5, #5]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #0]
 	movs	r2, #129
 	strb	r3, [r6, #29]
@@ -1218,7 +1218,7 @@ Func_080fcf14:
 	ldr	r0, [r7, #48]
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r8
 	ldr	r3, [r2, #24]
 	movs	r1, #226
@@ -1280,7 +1280,7 @@ Func_080fcf14:
 	cmp	r6, #4
 	ble.n	.L_080fd918
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sp, #8
 	pop	{r3, r5}
@@ -1655,7 +1655,7 @@ Func_080fcf14:
 	str	r0, [sp, #40]
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #8]
 	mov	r0, r8
 	adds	r2, r4, #0
@@ -1727,7 +1727,7 @@ Func_080fcf14:
 .L_080fdce4:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #8]
 	mov	r1, sl
 	ldr	r0, [r4, #24]
@@ -2087,7 +2087,7 @@ Func_080fcf14:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	strb	r2, [r3, #5]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [r7, #40]
 	ldrh	r1, [r7, r5]
 	movs	r2, #0
@@ -2282,7 +2282,7 @@ Func_080fcf14:
 	str	r1, [sp, #44]
 .L_080fe14e:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #44]
 	add	sp, #104
 	pop	{r3, r5, r6, r7}
@@ -2328,7 +2328,7 @@ Func_080fcf14:
 	movs	r2, #30
 	bl	Func_080383e8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	bl	0x080f80e0
 	movs	r2, #129
@@ -2386,7 +2386,7 @@ Func_080fcf14:
 	movs	r5, #0
 	strh	r5, [r3, #4]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #220
 	bl	Runtime_ReleaseSlot
 	adds	r0, r6, #0

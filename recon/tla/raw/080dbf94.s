@@ -72,7 +72,7 @@ Func_080dbf94:
 	str	r0, [r5, #24]
 	str	r0, [r5, #28]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [pc, #20]
 	adds	r6, #1
 	add	fp, r0

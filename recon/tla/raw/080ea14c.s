@@ -213,7 +213,7 @@ Func_080ea14c:
 	cmp	r2, #0
 	bge.n	.L_080ea2d4
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #139
 	bl	Audio_PlayCue
 	movs	r1, #2
@@ -760,7 +760,7 @@ Func_080ea14c:
 	movs	r1, #0
 	movs	r0, #1
 	str	r1, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #186
 	ldr	r3, [sp, #36]
 	lsls	r1, r1, #2

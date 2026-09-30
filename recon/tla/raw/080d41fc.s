@@ -48,7 +48,7 @@
 	b.n	.L_080d4268
 .L_080d4262:
 	adds	r0, r7, #0
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d4268:
 	bl	0x08038048
 	cmp	r0, #0
@@ -78,13 +78,13 @@
 	b.n	.L_080d42a8
 .L_080d42a2:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d42a8:
 	bl	0x08038048
 	cmp	r0, #0
 	beq.n	.L_080d42a2
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #116]
 	movs	r2, #129
 	ldr	r3, [r1, #4]
@@ -97,25 +97,25 @@
 	adds	r5, r2, #0
 .L_080d42ca:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r6, #4]
 	ands	r3, r5
 	cmp	r3, #0
 	beq.n	.L_080d42ca
 .L_080d42d8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, fp
 	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	mov	r0, r9
 	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	bl	0x08038140
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080d42fc
 .L_080d42f6:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d42fc:
 	mov	r0, r8
 	bl	0x08038050
@@ -124,14 +124,14 @@
 	b.n	.L_080d430e
 .L_080d4308:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d430e:
 	adds	r0, r7, #0
 	bl	0x08038050
 	cmp	r0, #0
 	beq.n	.L_080d4308
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	add	sp, #4
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -216,7 +216,7 @@
 	str	r3, [r6, #12]
 	ldr	r3, [r5, #16]
 	str	r3, [r6, #16]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #197
 	lsls	r3, r3, #1
 	add	r3, r8

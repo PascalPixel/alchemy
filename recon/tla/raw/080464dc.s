@@ -4190,7 +4190,7 @@ Func_080464dc:
 	bl	Audio_PlayCue
 .L_080485f8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08046ca8
 .L_08048602:
 	add	r5, sp, #420
@@ -4214,7 +4214,7 @@ Func_080464dc:
 	ldr	r0, [sp, #120]
 	bl	0x08014274
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	Func_08041b68
 	movs	r1, #1
 	ldr	r0, [sp, #136]
@@ -4236,7 +4236,7 @@ Func_080464dc:
 	bl	0x08118120
 	bl	Func_08118118
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #84]
 	bl	Func_08013164
 	movs	r3, #185
@@ -5556,7 +5556,7 @@ Func_080464dc:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x2001
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08048808
 .L_080490c2:
 	movs	r3, #192
@@ -5597,7 +5597,7 @@ Func_080464dc:
 	ldr	r0, [sp, #56]
 	bl	Func_08013164
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #224
 	pop	{r3, r5, r6, r7}
@@ -6665,11 +6665,11 @@ Func_080464dc:
 	str	r1, [sp, #16]
 .L_08049952:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08049302
 .L_0804995a:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r4, #3
 	add	r5, sp, #96
 .L_08049964:
@@ -6693,7 +6693,7 @@ Func_080464dc:
 	ldr	r0, [sp, #76]
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #372
 	pop	{r3, r5, r6, r7}

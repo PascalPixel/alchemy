@@ -542,7 +542,7 @@ Func_081548d0:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #28]
 	movs	r1, #1
 	add	fp, r1
@@ -819,7 +819,7 @@ Func_081548d0:
 	str	r3, [r2, #0]
 	movs	r0, #1
 	adds	r7, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #70
 	bne.n	.L_08154e6c
 	ldr	r0, [pc, #40]
@@ -1316,7 +1316,7 @@ Func_081548d0:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #44]
 	ldr	r2, [sp, #32]
 	adds	r1, #1
@@ -1912,7 +1912,7 @@ Func_081548d0:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #36]
 	mov	r1, fp
 	adds	r0, #1
@@ -2825,7 +2825,7 @@ Func_081548d0:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #24]
 	movs	r4, #1
 	add	r9, r4

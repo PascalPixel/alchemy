@@ -33,7 +33,7 @@ Func_080cf350:
 	adds	r0, r6, #0
 	bl	0x08020290
 	movs	r0, #3
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	movs	r1, #28
 	bl	Object_SetMode
@@ -78,7 +78,7 @@ Func_080cf350:
 	cmp	r6, #3
 	bne.n	.L_080cf3fa
 	movs	r0, #60
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cf3fa:
 	movs	r3, #2
 	ands	r3, r6
@@ -90,7 +90,7 @@ Func_080cf350:
 	cmp	r6, #3
 	bne.n	.L_080cf412
 	movs	r0, #80
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cf412:
 	adds	r0, r7, #0
 	movs	r1, #1
@@ -171,7 +171,7 @@ Func_080cf350:
 	bl	.L_080cf350
 .L_080cf4bc:
 	movs	r0, #80
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	movs	r1, #1
 	bl	Object_SetMode

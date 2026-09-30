@@ -83,7 +83,7 @@ Func_08016bdc:
 	b.n	.L_08016c10
 .L_08016c7a:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08016c18
 	movs	r0, r0
 	.4byte 0x06002426

@@ -217,33 +217,11 @@ UiWindow_Create:
 	strh	r0, [r5, #26]
 	strh	r3, [r5, #24]
 	adds	r0, r5, #0
-	bl	.L_08039374
+	bl	UiWork_WaitUntilField1aClear
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0803936c:
 	adds	r0, r5, #0
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
-.L_08039374:
-	push	{r5, lr}
-	adds	r5, r0, #0
-	ldrh	r2, [r5, #22]
-	movs	r3, #2
-	ands	r3, r2
-	cmp	r3, #0
-	bne.n	.L_08039398
-	movs	r2, #26
-	ldrsh	r3, [r5, r2]
-	cmp	r3, #0
-	beq.n	.L_08039398
-.L_0803938a:
-	movs	r0, #1
-	bl	0x08013560
-	movs	r2, #26
-	ldrsh	r3, [r5, r2]
-	cmp	r3, #0
-	bne.n	.L_0803938a
-.L_08039398:
-	pop	{r5, pc}
-	.2byte 0x0000

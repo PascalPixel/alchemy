@@ -158,7 +158,7 @@ Func_080ff850:
 	sub	sp, #8
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, fp
 	ldr	r3, [r1, #24]
 	movs	r2, #226
@@ -376,7 +376,7 @@ Func_080ff850:
 	cmp	r2, #4
 	ble.n	.L_080ffa58
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
@@ -652,7 +652,7 @@ Func_080ff850:
 	movs	r3, #1
 	movs	r0, #1
 	mov	fp, r3
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080ffd98
 .L_080ffd96:
 	add	r6, sp, #20
@@ -675,7 +675,7 @@ Func_080ff850:
 	mov	r8, r3
 .L_080ffdba:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	add	r3, sp, #28
 	ldr	r1, [r6, #20]
 	movs	r0, #0
@@ -848,7 +848,7 @@ Func_080ff850:
 	sub	sp, #8
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, sl
 	ldr	r3, [r1, #24]
 	movs	r2, #226
@@ -1064,7 +1064,7 @@ Func_080ff850:
 	bl	Func_080f9224
 .L_081000c6:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
@@ -1349,7 +1349,7 @@ Func_080ff850:
 	movs	r1, #1
 	movs	r0, #1
 	str	r1, [sp, #12]
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08100334
 .L_08100330:
 	add	r2, sp, #52
@@ -1386,7 +1386,7 @@ Func_080ff850:
 	mov	sl, r1
 .L_08100374:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r8
 	add	r3, sp, #60
 	ldr	r1, [r2, #20]
@@ -1591,7 +1591,7 @@ Func_080ff850:
 	cmp	r3, #0
 	bne.n	.L_08100532
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	0x080fadd0

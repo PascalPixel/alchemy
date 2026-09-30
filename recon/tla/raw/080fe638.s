@@ -82,7 +82,7 @@ Func_080fe638:
 	cmp	r2, #0
 	bge.n	.L_080fe6ca
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080fe826
 	.4byte 0x00000038
 	.4byte 0x0000001a
@@ -98,7 +98,7 @@ Func_080fe638:
 	mov	r0, r8
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #11
 	str	r3, [sp, #0]
 	mov	r0, r8
@@ -195,7 +195,7 @@ Func_080fe638:
 	ldr	r0, [pc, #56]
 	bl	0x080383f8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #48]
 	movs	r2, #7
 	ldr	r3, [r1, #4]

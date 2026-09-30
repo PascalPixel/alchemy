@@ -333,7 +333,7 @@ Func_080d3c88:
 	cmp	r3, #0
 	beq.n	.L_080d3f28
 	movs	r0, #8
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #20]
 	cmp	r2, #0
 	beq.n	.L_080d3f1e
@@ -388,7 +388,7 @@ Func_080d3c88:
 	b.n	.L_080d3f72
 .L_080d3f6c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d3f72:
 	bl	0x08038048
 	cmp	r0, #0
@@ -435,7 +435,7 @@ Func_080d3c88:
 	bl	.L_080d3c88
 	mov	sl, r0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	bl	ObjectTable_ReadActiveValue
 	movs	r5, #0
@@ -463,7 +463,7 @@ Func_080d3c88:
 	b.n	.L_080d4046
 .L_080d4006:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #150
 	adds	r5, #1
 	lsls	r3, r3, #2
@@ -503,7 +503,7 @@ Func_080d3c88:
 	lsls	r0, r0, #24
 	bl	0x080d4330
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5

@@ -520,7 +520,7 @@ Func_08145df8:
 	ldr	r2, [sp, #60]
 	movs	r0, #1
 	str	r2, [r3, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #64]
 	ldr	r1, [sp, #76]
 	adds	r3, #1

@@ -41,7 +41,7 @@ Func_080fb780:
 	strb	r5, [r3, #5]
 	bl	0x080f92ac
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080fb7fe
 .L_080fb7d8:
 	ldr	r3, [r1, #12]
@@ -63,7 +63,7 @@ Func_080fb780:
 	mov	sl, r3
 .L_080fb7f8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fb7fe:
 	movs	r0, #168
 	lsls	r0, r0, #1
@@ -100,7 +100,7 @@ Func_080fb780:
 	adds	r0, r7, #0
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	movs	r1, #1
 	bl	0x08038018

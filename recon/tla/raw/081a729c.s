@@ -28,7 +28,7 @@ Func_081a729c:
 	bl	0x08014b70
 	bl	0x08014368
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #48]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -271,7 +271,7 @@ Func_081a729c:
 	bl	0x08014878
 	adds	r7, #1
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, sl
 	bcc.n	.L_081a7446
 .L_081a74e4:
@@ -285,7 +285,7 @@ Func_081a729c:
 	adds	r3, #2
 	strh	r2, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #4]
 	add	sp, #8
 	b.n	.L_081a7508

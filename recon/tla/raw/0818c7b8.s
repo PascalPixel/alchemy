@@ -329,7 +329,7 @@ Func_0818c7b8:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	add	r9, r2
 	mov	r3, r9
@@ -1642,7 +1642,7 @@ Func_0818c7b8:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #1
 	add	fp, r1
 	mov	r2, fp

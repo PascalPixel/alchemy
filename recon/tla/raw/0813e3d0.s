@@ -469,7 +469,7 @@ Func_0813e3d0:
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	add	sl, r3
 	mov	r4, sl
@@ -813,7 +813,7 @@ Func_0813e3d0:
 	add	r3, sl
 	str	r6, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r5, #1
 .L_0813ea80:
 	movs	r2, #250
@@ -869,7 +869,7 @@ Func_0813e3d0:
 	movs	r0, #2
 	bl	0x08118038
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #112]
 	ldr	r0, [pc, #116]
 	ldrh	r3, [r0, #0]

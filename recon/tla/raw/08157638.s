@@ -412,7 +412,7 @@ Func_08157638:
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #24]
 	adds	r3, #1
 	str	r3, [sp, #24]
@@ -792,7 +792,7 @@ Func_08157638:
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r7, [pc, #72]
 	ldr	r3, [sp, #16]
 	ldr	r0, [sp, #28]
@@ -1217,7 +1217,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [pc, #72]
 	ldr	r1, [sp, #16]
 	ldr	r3, [sp, #36]
@@ -1666,7 +1666,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #1
 	add	r8, r1
 	movs	r0, #8
@@ -2133,7 +2133,7 @@ Func_08157638:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sl, r0
 	mov	r1, sl
@@ -2755,7 +2755,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #44]
 	adds	r2, #1
 	str	r2, [sp, #44]
@@ -3776,7 +3776,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [sp, #24]
 	ldr	r0, [sp, #20]
 	ldr	r1, [sp, #16]
@@ -4694,7 +4694,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #100]
 	adds	r2, #1
 	str	r2, [sp, #100]
@@ -5157,7 +5157,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #72]
 	ldr	r2, [sp, #12]
 	movs	r6, #1

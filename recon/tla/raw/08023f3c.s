@@ -9,7 +9,7 @@ Func_08023f3c:
 	b.n	.L_08023f4c
 .L_08023f44:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r5, #1
 .L_08023f4c:
 	movs	r3, #172

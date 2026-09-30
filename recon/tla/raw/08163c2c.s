@@ -99,7 +99,7 @@ Func_08163c2c:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #128
 	lsls	r1, r1, #1
 	cmp	r8, r1
@@ -178,7 +178,7 @@ Func_08163c2c:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, r8
 	cmp	r1, #191
 	ble.n	.L_08163cfa

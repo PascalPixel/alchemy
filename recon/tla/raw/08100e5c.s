@@ -52,7 +52,7 @@ Func_08100e5c:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	bl	0x080f80e0
 	movs	r0, #132
@@ -166,7 +166,7 @@ Func_08100e5c:
 	bl	0x0810526c
 	bl	0x08104aa4
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080fa478
 	movs	r1, #0
 	b.n	.L_08100fd8
@@ -204,7 +204,7 @@ Func_08100e5c:
 	mov	lr, r5
 	.2byte 0xf800
 	.2byte 0x2001
-	bl	0x08013560
+	bl	WaitFrames
 	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r1, #0
 	movs	r0, #0
@@ -259,7 +259,7 @@ Func_08100e5c:
 	str	r4, [sp, #0]
 	bl	.L_08101638
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #0]
 	movs	r5, #2
 .L_081010a0:
@@ -1012,7 +1012,7 @@ Func_08100e5c:
 	movs	r3, #30
 	bl	0x080f811c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #324]
 	mov	r0, r8
 	movs	r2, #128

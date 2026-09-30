@@ -344,7 +344,7 @@ Func_0810aa80:
 	lsls	r0, r0, #2
 	bl	Func_080f8058
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810ad54:
 	ldr	r1, [sp, #12]
 	mov	r0, fp
@@ -362,7 +362,7 @@ Func_0810aa80:
 	cmp	r2, #0
 	beq.n	.L_0810ae3a
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, sl
 	mov	r0, r8
 	bl	Shop_ServicePrice
@@ -463,7 +463,7 @@ Func_0810aa80:
 	bl	Func_08108690
 	mov	r9, r0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0810acac
 .L_0810ae6a:
 	bl	0x080f8068
@@ -474,7 +474,7 @@ Func_0810aa80:
 	movs	r1, #2
 	bl	0x08038018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	add	sp, #16
 	pop	{r3, r5, r6, r7}

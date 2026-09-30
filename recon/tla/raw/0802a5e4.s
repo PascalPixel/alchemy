@@ -1686,7 +1686,7 @@
 	bl	.L_0802b1a0
 	adds	r7, #10
 	adds	r0, r5, #0
-	bl	0x08013560
+	bl	WaitFrames
 	ldrh	r0, [r7, #0]
 	adds	r6, #10
 	mov	ip, r0

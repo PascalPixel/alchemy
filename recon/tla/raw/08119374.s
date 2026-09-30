@@ -43,7 +43,7 @@ Func_08119374:
 	strh	r3, [r6, #8]
 	ldr	r3, [pc, #20]
 	strh	r3, [r6, #10]
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_081193e6
 	movs	r0, r0
 	.4byte 0x00000065
@@ -55,7 +55,7 @@ Func_08119374:
 	.2byte 0x0200
 .L_081193e0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_081193e6:
 	ldr	r3, [pc, #116]
 	ldrh	r2, [r3, #0]
@@ -104,7 +104,7 @@ Func_08119374:
 	b.n	.L_08119440
 .L_0811943a:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08119440:
 	ldr	r3, [pc, #24]
 	ldrh	r2, [r3, #0]
@@ -152,7 +152,7 @@ Func_08119374:
 	b.n	.L_0811949c
 .L_08119496:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811949c:
 	ldr	r3, [pc, #28]
 	ldrh	r2, [r3, #0]
@@ -202,7 +202,7 @@ Func_08119374:
 	b.n	.L_08119502
 .L_081194fc:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08119502:
 	ldr	r3, [pc, #28]
 	ldrh	r2, [r3, #0]
@@ -252,7 +252,7 @@ Func_08119374:
 	b.n	.L_08119566
 .L_08119560:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08119566:
 	ldr	r3, [pc, #32]
 	ldrh	r2, [r3, #0]

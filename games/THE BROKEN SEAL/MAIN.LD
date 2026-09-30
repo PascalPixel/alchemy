@@ -1243,8 +1243,6 @@ SECTIONS
         "*/recon/tbs/raw/080bac6c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/INITIALIZE_ACTOR_RECORDS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/TARGET_SELECT_RANDOM_POSITION.o"(.text)
-        "*/recon/tbs/raw/080bae3e.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080bae40.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTOR_RESET_RUNTIME_FIELDS.o"(.text)
         "*/recon/tbs/raw/080bb7c0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_QUEUE.o"(.text)

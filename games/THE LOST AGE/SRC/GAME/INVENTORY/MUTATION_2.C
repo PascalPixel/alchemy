@@ -1,0 +1,11 @@
+#include "INVENTORY.H"
+
+s32 PartyInventory_Remove(s32 item_id)
+{
+    s32 owner = PartyInventory_FindOwner(item_id);
+
+    if (owner == -1)
+        return 0;
+    Inventory_Remove(owner, Inventory_Find(owner, item_id));
+    return 0;
+}

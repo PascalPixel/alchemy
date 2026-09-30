@@ -1,11 +1,7 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "PARTY_STATE.H"
-
-struct EventWork {
-    u8 unknown_000[0x158];
-    s16 countdown;
-};
+#include "FIELD_EVENT.H"
 
 /* Sets the scene and entrance the party travels to next, and sets the
    event work's countdown to 999. */

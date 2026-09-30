@@ -9,36 +9,6 @@ Func_02000038:
 	bl ObjectDispatch_SetSingleChildField26
 	movs r0, #0
 	pop {pc}
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_02005084
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	movs r0, #0
-	bx lr
-	.section .text.x02008050,"ax",%progbits
-	.global Func_02000050
-	.thumb_func
-Func_02000050:
-	ldr r0, .L_02008054
-	bx lr
-.L_02008054:
-	.4byte Data_020050b4
-	.section .text.x02008058,"ax",%progbits
-	.global Func_02000058
-	.thumb_func
-Func_02000058:
-	ldr r0, .L_0200805c
-	bx lr
-.L_0200805c:
-	.4byte Data_020050e0
 	.section .text.x02008060,"ax",%progbits
 	.global Func_02000060
 	.thumb_func
@@ -1091,14 +1061,6 @@ Func_020008c8:
 	.2byte 0x0000
 .L_02008964:
 	.4byte gPartyState
-	.section .text.x02008968,"ax",%progbits
-	.global Func_02000968
-	.thumb_func
-Func_02000968:
-	ldr r0, .L_0200896c
-	bx lr
-.L_0200896c:
-	.4byte Data_020053c8
 	.section .text.x02008970,"ax",%progbits
 	.global Func_02000970
 	.thumb_func
@@ -8472,8 +8434,8 @@ Data_02004ee2:
 	.4byte 0x0000002e
 	.4byte Func_02000038
 	.4byte 0x00000011
-	.global Data_02005084
-Data_02005084:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -8486,8 +8448,8 @@ Data_02005084:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020050b4
-Data_020050b4:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x00000107
 	.4byte 0x00101100
 	.4byte 0x00303100
@@ -8499,8 +8461,8 @@ Data_020050b4:
 	.4byte 0x00909101
 	.4byte 0x00a0a101
 	.4byte 0x000001ff
-	.global Data_020050e0
-Data_020050e0:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0175
 	.4byte 0x00000001
 	.4byte 0x00180000
@@ -8687,8 +8649,8 @@ Data_020050e0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020053c8
-Data_020053c8:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

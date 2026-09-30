@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_02002104
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_02002134
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_02002154
 	.section .text.x02008054,"ax",%progbits
 	.global Func_02000054
 	.thumb_func
@@ -248,14 +218,6 @@ Func_020001f4:
 	bl Func_02000178
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x02008204,"ax",%progbits
-	.global Func_02000204
-	.thumb_func
-Func_02000204:
-	ldr r0, .L_02008208
-	bx lr
-.L_02008208:
-	.4byte Data_020021b4
 	.section .text.x0200820c,"ax",%progbits
 	.global Func_0200020c
 	.thumb_func
@@ -3642,8 +3604,8 @@ Data_02001f6e:
 	.4byte 0x00000001
 	.4byte 0x00000026
 	.4byte 0x00000011
-	.global Data_02002104
-Data_02002104:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -3656,8 +3618,8 @@ Data_02002104:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02002134
-Data_02002134:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000000fe
 	.4byte 0x001010ff
 	.4byte 0x002020fb
@@ -3666,8 +3628,8 @@ Data_02002134:
 	.4byte 0x005040fe
 	.4byte 0x006060fc
 	.4byte 0x000001ff
-	.global Data_02002154
-Data_02002154:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0155
 	.4byte 0x00000001
 	.4byte 0x00c80000
@@ -3692,8 +3654,8 @@ Data_02002154:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020021b4
-Data_020021b4:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

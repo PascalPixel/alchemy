@@ -9,36 +9,6 @@ Func_02000038:
 	bl ObjectDispatch_SetSingleChildField26
 	movs r0, #0
 	pop {pc}
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_02004a18
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	movs r0, #0
-	bx lr
-	.section .text.x02008050,"ax",%progbits
-	.global Func_02000050
-	.thumb_func
-Func_02000050:
-	ldr r0, .L_02008054
-	bx lr
-.L_02008054:
-	.4byte Data_02004a48
-	.section .text.x02008058,"ax",%progbits
-	.global Func_02000058
-	.thumb_func
-Func_02000058:
-	ldr r0, .L_0200805c
-	bx lr
-.L_0200805c:
-	.4byte Data_02004a70
 	.section .text.x02008060,"ax",%progbits
 	.global Func_02000060
 	.thumb_func
@@ -346,14 +316,6 @@ Func_0200024c:
 .L_020082c8:
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x020082cc,"ax",%progbits
-	.global Func_020002cc
-	.thumb_func
-Func_020002cc:
-	ldr r0, .L_020082d0
-	bx lr
-.L_020082d0:
-	.4byte Data_02004bc0
 	.section .text.x020082d4,"ax",%progbits
 	.global Func_020002d4
 	.thumb_func
@@ -8539,8 +8501,8 @@ Data_020049dc:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
-	.global Data_02004a18
-Data_02004a18:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000c0
 	.4byte 0x800000c0
@@ -8553,8 +8515,8 @@ Data_02004a18:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02004a48
-Data_02004a48:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x0000011e
 	.4byte 0x0010211e
 	.4byte 0x0020111e
@@ -8565,8 +8527,8 @@ Data_02004a48:
 	.4byte 0x0070711d
 	.4byte 0x0080811c
 	.4byte 0x000001ff
-	.global Data_02004a70
-Data_02004a70:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff01a2
 	.4byte .L_0200c910
 	.4byte 0x02c80000
@@ -8651,8 +8613,8 @@ Data_02004a70:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02004bc0
-Data_02004bc0:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

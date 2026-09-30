@@ -1,27 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_02001218
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_02001248
 	.section .text.x0200804c,"ax",%progbits
 	.global Func_0200004c
 	.thumb_func
@@ -395,14 +373,6 @@ Func_0200032c:
 	strb r3, [r5]
 	movs r0, #0
 	pop {r5, pc}
-	.section .text.x02008350,"ax",%progbits
-	.global Func_02000350
-	.thumb_func
-Func_02000350:
-	ldr r0, .L_02008354
-	bx lr
-.L_02008354:
-	.4byte Data_020012c8
 	.section .text.x02008358,"ax",%progbits
 	.global Func_02000358
 	.thumb_func
@@ -445,14 +415,6 @@ Func_02000384:
 	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x02008394,"ax",%progbits
-	.global Func_02000394
-	.thumb_func
-Func_02000394:
-	ldr r0, .L_02008398
-	bx lr
-.L_02008398:
-	.4byte Data_02001460
 	.section .text.x0200839c,"ax",%progbits
 	.global Func_0200039c
 	.thumb_func
@@ -1845,8 +1807,8 @@ Func_02001038:
 	bl Func_020011c0
 	pop {pc}
 	.section .rodata.x02009218,"a",%progbits
-	.global Data_02001218
-Data_02001218:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1859,8 +1821,8 @@ Data_02001218:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02001248
-Data_02001248:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000000f0
 	.4byte 0x10138002
 	.4byte 0xffffffff
@@ -1895,8 +1857,8 @@ Data_02001248:
 	.4byte 0x0000001a
 	.4byte 0x00000000
 	.4byte 0x00000011
-	.global Data_020012c8
-Data_020012c8:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0133
 	.4byte .L_020092a0
 	.4byte 0x00280000
@@ -1999,8 +1961,8 @@ Data_020012c8:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02001460
-Data_02001460:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

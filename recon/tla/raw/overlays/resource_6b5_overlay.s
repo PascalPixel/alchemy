@@ -1,19 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_02001bc4
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
 	.section .text.x02008044,"ax",%progbits
 	.global Func_02000044
 	.thumb_func
@@ -28,22 +14,6 @@ Func_02000044:
 	pop {r5, r6, pc}
 .L_02008058:
 	.4byte 0x04000208
-	.section .text.x0200805c,"ax",%progbits
-	.global Func_0200005c
-	.thumb_func
-Func_0200005c:
-	ldr r0, .L_02008060
-	bx lr
-.L_02008060:
-	.4byte Data_02001c6c
-	.section .text.x02008064,"ax",%progbits
-	.global Func_02000064
-	.thumb_func
-Func_02000064:
-	ldr r0, .L_02008068
-	bx lr
-.L_02008068:
-	.4byte Data_02001c70
 	.section .text.x0200806c,"ax",%progbits
 	.global Func_0200006c
 	.thumb_func
@@ -2468,14 +2438,6 @@ Func_02001388:
 	.4byte 0x00001474
 .L_020093e0:
 	.4byte 0x00001475
-	.section .text.x020093e4,"ax",%progbits
-	.global Func_020013e4
-	.thumb_func
-Func_020013e4:
-	ldr r0, .L_020093e8
-	bx lr
-.L_020093e8:
-	.4byte Data_02002150
 	.section .text.x020093ec,"ax",%progbits
 	.global Func_020013ec
 	.thumb_func
@@ -3110,8 +3072,8 @@ Data_02001b02:
 	.4byte 0x02ee02e7
 	.4byte 0x02f002ef
 	.4byte 0x02f202f1
-	.global Data_02001bc4
-Data_02001bc4:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff000a
 	.4byte 0x00000150
 	.4byte 0xc00000a4
@@ -3154,11 +3116,11 @@ Data_02001bc4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02001c6c
-Data_02001c6c:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000001ff
-	.global Data_02001c70
-Data_02001c70:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff00be
 	.4byte 0x00000001
 	.4byte 0x00980000
@@ -3471,8 +3433,8 @@ Data_02001c70:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02002150
-Data_02002150:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000000
 	.4byte 0xffff0000
 	.4byte Func_02001130

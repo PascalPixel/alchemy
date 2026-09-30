@@ -23,36 +23,6 @@ Func_02000050:
 	bl ObjectDispatch_SetSingleChildField26
 	movs r0, #0
 	pop {pc}
-	.section .text.x0200805c,"ax",%progbits
-	.global Func_0200005c
-	.thumb_func
-Func_0200005c:
-	ldr r0, .L_02008060
-	bx lr
-.L_02008060:
-	.4byte Data_020064d0
-	.section .text.x02008064,"ax",%progbits
-	.global Func_02000064
-	.thumb_func
-Func_02000064:
-	movs r0, #0
-	bx lr
-	.section .text.x02008068,"ax",%progbits
-	.global Func_02000068
-	.thumb_func
-Func_02000068:
-	ldr r0, .L_0200806c
-	bx lr
-.L_0200806c:
-	.4byte Data_02006500
-	.section .text.x02008070,"ax",%progbits
-	.global Func_02000070
-	.thumb_func
-Func_02000070:
-	ldr r0, .L_02008074
-	bx lr
-.L_02008074:
-	.4byte Data_02006520
 	.section .text.x02008090,"ax",%progbits
 	.global Func_02000090
 	.thumb_func
@@ -6184,14 +6154,6 @@ Func_02002ae4:
 	.4byte Data_02005ff8
 .L_0200ba1c:
 	.4byte Data_02006088
-	.section .text.x0200ba20,"ax",%progbits
-	.global Func_02003a20
-	.thumb_func
-Func_02003a20:
-	ldr r0, .L_0200ba24
-	bx lr
-.L_0200ba24:
-	.4byte Data_02006970
 	.section .text.x0200ba28,"ax",%progbits
 	.global Func_02003a28
 	.thumb_func
@@ -10551,8 +10513,8 @@ Data_02006470:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000026
-	.global Data_020064d0
-Data_020064d0:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -10565,8 +10527,8 @@ Data_020064d0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02006500
-Data_02006500:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x00000109
 	.4byte 0x001050fb
 	.4byte 0x00248002
@@ -10575,8 +10537,8 @@ Data_02006500:
 	.4byte 0x00d03103
 	.4byte 0x00e04106
 	.4byte 0x000001ff
-	.global Data_02006520
-Data_02006520:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0000
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -10855,8 +10817,8 @@ Data_020068b0:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
-	.global Data_02006970
-Data_02006970:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x0000000b

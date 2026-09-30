@@ -372,28 +372,6 @@ Func_0200033c:
 	bl ObjectDispatch_SetSingleChildField26
 	movs r0, #0
 	pop {pc}
-	.section .text.x02008348,"ax",%progbits
-	.global Func_02000348
-	.thumb_func
-Func_02000348:
-	ldr r0, .L_0200834c
-	bx lr
-.L_0200834c:
-	.4byte Data_0200197c
-	.section .text.x02008350,"ax",%progbits
-	.global Func_02000350
-	.thumb_func
-Func_02000350:
-	movs r0, #0
-	bx lr
-	.section .text.x02008354,"ax",%progbits
-	.global Func_02000354
-	.thumb_func
-Func_02000354:
-	ldr r0, .L_02008358
-	bx lr
-.L_02008358:
-	.4byte Data_020019ac
 	.section .text.x0200835c,"ax",%progbits
 	.global Func_0200035c
 	.thumb_func
@@ -2278,8 +2256,8 @@ Data_02001964:
 	.4byte 0x0000002e
 	.4byte Func_0200033c
 	.4byte 0x00000011
-	.global Data_0200197c
-Data_0200197c:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -2292,8 +2270,8 @@ Data_0200197c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020019ac
-Data_020019ac:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x00000134
 	.4byte 0x101170ef
 	.4byte 0xffffffff

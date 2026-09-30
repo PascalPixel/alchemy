@@ -14,28 +14,6 @@ Func_02000038:
 	bl GameFlag_ClearBit
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x02008050,"ax",%progbits
-	.global Func_02000050
-	.thumb_func
-Func_02000050:
-	ldr r0, .L_02008054
-	bx lr
-.L_02008054:
-	.4byte Data_02001130
-	.section .text.x02008058,"ax",%progbits
-	.global Func_02000058
-	.thumb_func
-Func_02000058:
-	movs r0, #0
-	bx lr
-	.section .text.x0200805c,"ax",%progbits
-	.global Func_0200005c
-	.thumb_func
-Func_0200005c:
-	ldr r0, .L_02008060
-	bx lr
-.L_02008060:
-	.4byte Data_02001160
 	.section .text.x02008064,"ax",%progbits
 	.global Func_02000064
 	.thumb_func
@@ -1864,8 +1842,8 @@ Func_02000ed0:
 .L_02008fc4:
 	.4byte Func_02000bf0
 	.section .rodata.x02009130,"a",%progbits
-	.global Data_02001130
-Data_02001130:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000048
 	.4byte 0x00000127
@@ -1878,8 +1856,8 @@ Data_02001130:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02001160
-Data_02001160:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000000ea
 	.4byte 0x00101028
 	.4byte 0x002010eb

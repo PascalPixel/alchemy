@@ -6,9 +6,7 @@ SECTIONS
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_66F/ENTRY.o"(.text)
         "*/resource_66f_overlay.o"(.text.x02008038)
-        "*/resource_66f_overlay.o"(.text.x02008044)
-        "*/resource_66f_overlay.o"(.text.x0200804c)
-        "*/resource_66f_overlay.o"(.text.x02008050)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_66F/SCENE_TABLES.o"(.text)
         "*/resource_66f_overlay.o"(.text.x02008058)
         "*/resource_66f_overlay.o"(.text.x020080ac)
         "*/resource_66f_overlay.o"(.text.x020080ec)

@@ -12747,11 +12747,11 @@ msgctxt "MsgShortcutHelp"
 msgid "03184"
 msgstr "LR:ショートカットにセット"
 
-msgctxt "message"
+msgctxt "MsgShortcutSetL"
 msgid "03185"
 msgstr "Lボタンにセットしました"
 
-msgctxt "message"
+msgctxt "MsgShortcutSetR"
 msgid "03186"
 msgstr "Rボタンにセットしました"
 
@@ -12767,15 +12767,15 @@ msgctxt "message"
 msgid "03189"
 msgstr "Rボタンにせってい"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseOwner"
 msgid "03190"
 msgstr "だれのエナジー?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseAbility"
 msgid "03191"
 msgstr "どのエナジーをつかいますか?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseTarget"
 msgid "03192"
 msgstr "だれにつかいますか?"
 
@@ -12795,11 +12795,11 @@ msgctxt "MsgNoPsynergy"
 msgid "03196"
 msgstr "エナジーをおぼえていません"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForR"
 msgid "03197"
 msgstr "Rボタン: どのエナジー?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForL"
 msgid "03198"
 msgstr "Lボタン: どのエナジー?"
 

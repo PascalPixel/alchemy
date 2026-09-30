@@ -1,6 +1,6 @@
 /* NONMATCHING, 2026-09-30 (helper hL): 800/800 bytes with the padding; 6
- * differing halfwords once the seven Value_ messages carry Msg names (20
- * with them unnamed: their pool words). An r2 clobber before the mode
+ * differing halfwords. Its seven messages now carry names in all six
+ * catalogs (MsgPsynergyChooseOwner and the rest). An r2 clobber before the mode
  * switch (FAKEMATCH below) stops reload_cse_move2add turning the 0x268
  * constant into adds r2, #80, which fixed the 6-byte shift. Left: (1) the
  * 0x174 clear allocates address r3 / zero r2 where the ROM has r2 / r3:
@@ -79,13 +79,13 @@ struct MenuActionWork {
 
 extern struct MenuActionWork *gMenuWork;
 
-extern char Value_00000ae2;
-extern char Value_00000ae3;
-extern char Value_00000ae9;
-extern char Value_00000aea;
-extern char Value_00000aeb;
-extern char Value_00000af0;
-extern char Value_00000af1;
+extern char MsgShortcutSetL;
+extern char MsgShortcutSetR;
+extern char MsgPsynergyChooseOwner;
+extern char MsgPsynergyChooseAbility;
+extern char MsgPsynergyChooseTarget;
+extern char MsgPsynergyChooseForR;
+extern char MsgPsynergyChooseForL;
 extern char MsgItemUseResult;
 
 void WaitFrames(s32 frames);
@@ -134,7 +134,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
         switch (state) {
         case 0:
             work->field_174 = 0;
-            ItemMenu_DrawMsg(0, (s32)&Value_00000ae9);
+            ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseOwner);
             if (PsynergyMenu_SelectPartySlot(0) == -1) {
                 done = 1;
                 result = -1;
@@ -152,13 +152,13 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
                 asm("" : : : "r2");
                 switch (work->mode) {
                 case 0:
-                    ItemMenu_DrawMsg(0, (s32)&Value_00000aea);
+                    ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseAbility);
                     break;
                 case 1:
-                    ItemMenu_DrawMsg(0, (s32)&Value_00000af1);
+                    ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseForL);
                     break;
                 case 2:
-                    ItemMenu_DrawMsg(0, (s32)&Value_00000af0);
+                    ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseForR);
                     break;
                 }
                 ItemMenu_PosCategory();
@@ -173,13 +173,13 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
                                 work->item_owner, selection, 0);
                             RenderOutput_ClearListFar(work->info_window);
                             InventoryMenu_ShowModalMessage(
-                                (s32)&Value_00000ae2, -1, -1);
+                                (s32)&MsgShortcutSetL, -1, -1);
                         } else {
                             PsynergyMenu_SetShortcut(
                                 work->item_owner, selection, 1);
                             RenderOutput_ClearListFar(work->info_window);
                             InventoryMenu_ShowModalMessage(
-                                (s32)&Value_00000ae3, -1, -1);
+                                (s32)&MsgShortcutSetR, -1, -1);
                         }
                         state = 0;
                     }
@@ -188,7 +188,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
             break;
 
         case 3:
-            ItemMenu_DrawMsg(0, (s32)&Value_00000aeb);
+            ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseTarget);
             self_flag = PsynergyMenu_SelectTarget(0);
             state = 4;
             if (self_flag == -1) {

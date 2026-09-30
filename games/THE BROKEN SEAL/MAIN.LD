@@ -808,8 +808,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECTS_UPDATE_SHRINKING_ORBIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPARK_EMITTER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CALL_EFFECT_03_AND_STOP.o"(.text)
-        "*/recon/tbs/raw/080994ce.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080994d0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/EVENTS_CHECK_OBJECT_TILE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SCHEDULE_CALLBACK_WHEN_VALUE24C_SET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLASHING_CALLBACK_SEQUENCE.o"(.text)

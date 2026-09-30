@@ -90,7 +90,7 @@ Func_080b0ab8:
 	mov	r0, r9
 	bl	Trade_AddOffer
 	mov	r0, fp
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	mov	r0, r9
 .L_080b0b66:
 	pop	{r3, r5, r6, r7}

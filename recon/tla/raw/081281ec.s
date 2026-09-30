@@ -182,7 +182,7 @@ Func_081281ec:
 	adds	r0, r3, #0
 	lsls	r1, r1, #3
 	adds	r0, r0, r1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_0812833e:
 	ldrh	r0, [r5, #0]
 	bl	0x080ad140

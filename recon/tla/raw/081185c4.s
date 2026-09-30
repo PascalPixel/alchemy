@@ -340,7 +340,7 @@ Func_081185c4:
 	adds	r1, r7, #0
 	adds	r2, r0, #0
 	mov	r0, r8
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	ldr	r0, [r6, r5]
 	movs	r1, #18
 	adds	r0, #7

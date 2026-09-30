@@ -46,7 +46,7 @@ Func_080ec1d0:
 	cmp	r6, r2
 	bgt.n	.L_080ec238
 	adds	r0, r7, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r3, #224
 	lsls	r3, r3, #3
 	adds	r3, #174
@@ -2679,7 +2679,7 @@ Func_080ec1d0:
 	movs	r0, #10
 	strh	r2, [r3, #0]
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_080ed778
 	movs	r0, r0
 	.4byte 0x06003000

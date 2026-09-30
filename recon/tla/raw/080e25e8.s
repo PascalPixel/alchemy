@@ -406,7 +406,7 @@ Func_080e25e8:
 	b.n	.L_080e2a5a
 .L_080e2912:
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #178
 	lsls	r3, r3, #7
 	adds	r3, #153

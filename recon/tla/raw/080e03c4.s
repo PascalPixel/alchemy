@@ -1286,7 +1286,7 @@ Func_080e03c4:
 	bl	0x08013560
 	adds	r0, r7, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r5, [pc, #44]
 	adds	r3, r7, #0
 	adds	r3, #85

@@ -62,7 +62,7 @@ Func_080cf350:
 	beq.n	.L_080cf3f0
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r1, [pc, #64]
 	adds	r0, r5, #0
 	bl	Object_SetCallback
@@ -399,7 +399,7 @@ Func_080cf350:
 	bl	Object_SetCallback
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	Object_SetMode

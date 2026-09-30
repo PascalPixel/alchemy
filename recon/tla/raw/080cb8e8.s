@@ -344,7 +344,7 @@ Func_080cb8e8:
 	bl	0x080cdf5c
 	bl	Object_GetById
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 .L_080cbbc8:
 	bl	Func_080cb05c
 	movs	r0, #2

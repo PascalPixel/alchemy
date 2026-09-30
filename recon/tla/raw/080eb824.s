@@ -245,7 +245,7 @@ Func_080eb824:
 	str	r3, [r1, #28]
 	mov	r0, r8
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #0
 	movs	r2, #1
 	str	r2, [sp, #16]
@@ -462,7 +462,7 @@ Func_080eb824:
 	strh	r1, [r2, #6]
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 .L_080ebbe2:
 	mov	r2, fp
 	cmp	r2, #10

@@ -858,7 +858,7 @@ Func_080ea14c:
 	movs	r1, #0
 	adds	r0, r7, #0
 	lsls	r6, r6, #16
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	lsrs	r6, r6, #16
 	movs	r3, #255
 	strb	r3, [r5, #2]

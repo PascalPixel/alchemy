@@ -880,7 +880,7 @@ Func_080debd8:
 	adds	r0, r7, #0
 	strb	r3, [r1, #0]
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r2, [sp, #20]
 	cmp	r2, #0
 	beq.n	.L_080df35c

@@ -306,7 +306,7 @@ Func_080d4d08:
 	movs	r1, #254
 	ands	r1, r2
 	adds	r0, r6, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r3, [pc, #260]
 	movs	r5, #133
 	lsls	r5, r5, #2
@@ -322,7 +322,7 @@ Func_080d4d08:
 	bl	Object_SetMode
 	adds	r0, r6, #0
 	ldr	r1, [sp, #0]
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r0, [r3, #32]
@@ -761,7 +761,7 @@ Func_080d4d08:
 	str	r0, [sp, #8]
 	ldr	r1, [sp, #8]
 	adds	r0, r7, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	adds	r0, r7, #0
 	movs	r1, #13
 	bl	Object_SetMode
@@ -815,7 +815,7 @@ Func_080d4d08:
 	orrs	r2, r6
 	adds	r1, r2, #0
 	str	r2, [sp, #8]
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #6
 	bl	Battle_WaitMode0
 	movs	r5, #0

@@ -239,7 +239,7 @@ Func_080e4730:
 	bl	Object_GetById
 	mov	r6, fp
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r1, #1
 	movs	r5, #24
 	ldrsh	r0, [r6, r5]
@@ -644,7 +644,7 @@ Func_080e4730:
 	ldrsh	r0, [r1, r6]
 	bl	Object_GetById
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r3, [sp, #44]
 	movs	r1, #1
 	movs	r2, #24

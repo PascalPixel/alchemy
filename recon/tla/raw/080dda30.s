@@ -39,7 +39,7 @@ Func_080dda30:
 	bl	Object_SetMode
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	adds	r3, r5, #0
 	adds	r3, #89
 	strb	r6, [r3, #0]
@@ -355,7 +355,7 @@ Func_080dda30:
 	bl	Object_SetCallback
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r2, r9
 	ldr	r3, [r2, #4]
 	mov	r0, sl

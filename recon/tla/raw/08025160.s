@@ -785,7 +785,7 @@
 	bne.n	.L_080256da
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	cmp	r0, #0
 	bne.n	.L_080256da
 	ldr	r3, [r6, #8]
@@ -816,7 +816,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	cmp	r0, #0
 	bne.n	.L_080256da
 	ldr	r3, [r6, #8]
@@ -832,7 +832,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	cmp	r0, #0
 	bne.n	.L_080256da
 	ldr	r3, [r7, #0]
@@ -1046,7 +1046,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_080258ca
@@ -1066,7 +1066,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_080258ca
@@ -1084,7 +1084,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_080258ca
@@ -1101,7 +1101,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_080259ce
@@ -1121,7 +1121,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_080259f8
@@ -1140,7 +1140,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	cmp	r0, #0
 	beq.n	.L_08025a1e
 	b.n	.L_080258ca
@@ -1265,7 +1265,7 @@
 	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x0802d87c
+	bl	Func_0802d87c
 	cmp	r0, #0
 	bne.n	.L_08025a9c
 	adds	r1, r6, #0

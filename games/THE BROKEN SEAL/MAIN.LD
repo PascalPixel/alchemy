@@ -1242,7 +1242,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/CLASS_IS_VALID.o"(.text)
         "*/recon/tbs/raw/080b6d30.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/RELEASE_OBJECT_SLOT_BY_VALUE.o"(.text)
-        "*/recon/tbs/raw/080b6e7c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/FIND_FREE_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/LOOKUP_WEAPON_VALUE_BY_CLASS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/SPAWN_ACTOR_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/GET_STEP_PAIR.o"(.text)

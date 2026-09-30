@@ -342,7 +342,7 @@ Func_0800aa0c:
 .L_0800ad30:
 	.4byte 0x000002c4
 .L_0800ad34:
-	.4byte 0x08009d9c
+	.4byte Render_DecodeFrameBuffer
 .L_0800ad38:
 	.4byte Render_DecodeFrame
 .L_0800ad3c:

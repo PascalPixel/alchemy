@@ -14,6 +14,8 @@
 	.4byte 0x080091d8	@ an even address into the field far-call stubs; nothing reads it
 	.4byte 0x080091b8
 @ 転送先で置換表として更新する初期化領域。
+	.global Render_DecodeFrameBuffer
+Render_DecodeFrameBuffer:
 	.space 224, 0
 	.global Render_DecodeFrameEnd
 Render_DecodeFrameEnd:

@@ -22,6 +22,9 @@ Func_08045528:
 	ldr	r0, [sp, #8]
 	add	sp, #16
 	pop	{pc}
+	.global Func_08045550
+	.thumb_func
+Func_08045550:
 	push	{lr}
 	cmp	r0, #0
 	beq.n	.L_08045558

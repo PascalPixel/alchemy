@@ -1,7 +1,12 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "IO_REG.H"
 #include "RENDER_INPUT.H"
 #include "WORKSPACE_OPTIONS.H"
+
+/* The object palette the slider graphics use. */
+#define SLIDER_PALETTE 14
+#define RESOURCE_SLOTS 96
 
 extern const u8 Resource_FixedBlockBTiles[];
 extern const u8 WorkspaceOptions_SliderTiles[];
@@ -56,7 +61,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     UiText_DrawCharacterAtOffset((s32)MsgAutoSleepLabel, win, 8, 88);
 
     x = Resource_FindFreeEntry();
-    if (x < 96) {
+    if (x < RESOURCE_SLOTS) {
         VramBlock_LoadCached(x, 128, (const void *)Resource_FixedBlockBTiles);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         work->cursor.output = out;
@@ -66,8 +71,8 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     }
 
     x = Resource_FindFreeEntry();
-    if (x < 96) {
-        Dma_Set(WorkspaceOptions_SliderPalette, (void *)0x050003c0, 0x80000020, (volatile u32 *)0x040000d4);
+    if (x < RESOURCE_SLOTS) {
+        Dma_Set(WorkspaceOptions_SliderPalette, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), 0x80000020, REG_DMA3);
         VramBlock_LoadCached(x, 256, WorkspaceOptions_SliderTiles);
         y = 0;
         out = RenderOutput_Create(x, 0x40004000, win, 134, y);
@@ -84,7 +89,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     }
 
     x = Resource_FindFreeEntry();
-    if (x < 96) {
+    if (x < RESOURCE_SLOTS) {
         VramBlock_LoadCached(x, 256, 0);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         ((u8 *)&out->packed)[1] |= 32;
@@ -96,7 +101,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     }
 
     x = Resource_FindFreeEntry();
-    if (x < 96) {
+    if (x < RESOURCE_SLOTS) {
         VramBlock_LoadCached(x, 256, 0);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         ((u8 *)&out->packed)[1] |= 32;

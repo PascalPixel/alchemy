@@ -10,7 +10,7 @@ Func_08127ba0:
 	adds	r3, r6, #0
 	adds	r3, #64
 	ldrb	r5, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #42
 	mov	ip, r0
 	adds	r3, #255
@@ -88,7 +88,7 @@ Summon_ResetCharge:
 .L_08127c34:
 	adds	r0, r5, #0
 	adds	r0, #128
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r2, r0, #0
 	movs	r0, #149
 	lsls	r0, r0, #1

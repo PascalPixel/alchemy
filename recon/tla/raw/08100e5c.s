@@ -6,7 +6,7 @@ Func_08100e5c:
 	push	{lr}
 	movs	r0, #118
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08100e6e
 	ldr	r0, [pc, #8]
@@ -52,7 +52,7 @@ Func_08100e5c:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	bl	0x080f80e0
 	movs	r0, #132
@@ -77,17 +77,17 @@ Func_08100e5c:
 	str	r5, [r3, #0]
 	lsls	r0, r0, #1
 	str	r5, [r6, #0]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08100f3c
 	movs	r0, #112
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08100f22
 	movs	r0, #114
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08100f1e
 	mov	r3, sl
@@ -98,7 +98,7 @@ Func_08100e5c:
 .L_08100f22:
 	movs	r0, #114
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08100f38
 	movs	r3, #27
@@ -166,7 +166,7 @@ Func_08100e5c:
 	bl	0x0810526c
 	bl	0x08104aa4
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080fa478
 	movs	r1, #0
 	b.n	.L_08100fd8
@@ -204,8 +204,8 @@ Func_08100e5c:
 	mov	lr, r5
 	.2byte 0xf800
 	.2byte 0x2001
-	bl	0x08013560
-	bl	Func_080f80a8
+	bl	WaitFrames
+	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r1, #0
 	movs	r0, #0
 	movs	r2, #30
@@ -218,7 +218,7 @@ Func_08100e5c:
 	bl	Func_08013164
 	movs	r0, #220
 	bl	Runtime_ReleaseSlot
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	ldr	r3, [pc, #32]
 	movs	r2, #139
 	lsls	r2, r2, #2
@@ -259,7 +259,7 @@ Func_08100e5c:
 	str	r4, [sp, #0]
 	bl	.L_08101638
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #0]
 	movs	r5, #2
 .L_081010a0:
@@ -1012,7 +1012,7 @@ Func_08100e5c:
 	movs	r3, #30
 	bl	0x080f811c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #324]
 	mov	r0, r8
 	movs	r2, #128

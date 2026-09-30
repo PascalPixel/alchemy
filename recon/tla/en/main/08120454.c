@@ -92,8 +92,8 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     copy = (struct BattleUnit *)Runtime_BumpAllocate(size);
     { actor_id = (((action_id) == 0x138 || (action_id) == 0x13c) ? (plan)->actor_id2 : (plan)->actor_id); target_id = ((plan)->target_ids[(slot)]); action_id = plan->action_id; range = plan->range_index; adjust = ((plan)->target_adjustments[(slot)]); modifier = ((plan)->target_modifiers[(slot)]); };
     action = BattleAction_Get(action_id);
-    actor = OwnerState_Get(actor_id);
-    target = OwnerState_Get(target_id);
+    actor = Owner_GetState(actor_id);
+    target = Owner_GetState(target_id);
     ((void (*)(void *, const void *, s32))0x03000730)( (copy), (target), (size));
     { s32 state = *(u16 *)((u8 *)target + 0x14a); switch (state) { case 0xdd: if (((plan)->command) == 1 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgDissipated); goto done; } break; case 0x65: case 0x66: case 0x67: if (action_id != 0x23d && ((u8 *)work)[0x868] != 0 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgFieldProtects); goto done; } break; } if (target->guard_level == 4 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgNoEffect); goto done; } };
     if (action->range != 255) {
@@ -206,7 +206,7 @@ after_power:
                             * apwr,
                         10);
                 else {
-                    { kind = actor->attack; if (action_id == 0x138 || action_id == 0x13c) { kind = ((struct BattleUnit *)OwnerState_Get(((u8 *)plan)[0]))->attack; if (action_id == 0x138) kind += ((struct BattleUnit *)OwnerState_Get(((u8 *)plan)[2]))->attack; } };
+                    { kind = actor->attack; if (action_id == 0x138 || action_id == 0x13c) { kind = ((struct BattleUnit *)Owner_GetState(((u8 *)plan)[0]))->attack; if (action_id == 0x138) kind += ((struct BattleUnit *)Owner_GetState(((u8 *)plan)[2]))->attack; } };
                     dmg = Battle_CalcAttack(kind, scale, apwr,
                                             bonus);
                 }

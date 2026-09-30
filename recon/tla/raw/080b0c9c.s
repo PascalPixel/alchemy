@@ -12,7 +12,7 @@ Func_080b0c9c:
 	adds	r7, r0, #0
 	adds	r6, r1, #0
 	mov	r8, r2
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r1, r6, #0
 	adds	r5, r0, #0
 	mov	r2, r8

@@ -50,7 +50,7 @@ Func_080d4178:
 	b.n	.L_080d41ce
 .L_080d41c8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d41ce:
 	adds	r0, r5, #0
 	bl	0x08038050

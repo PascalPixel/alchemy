@@ -160,7 +160,7 @@ Func_080d1f18:
 	strh	r3, [r6, #0]
 	movs	r0, #1
 	str	r2, [sp, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r5, #1
 	ldr	r2, [sp, #0]
 	cmp	r5, #23
@@ -180,7 +180,7 @@ Func_080d1f18:
 	cmp	r5, #119
 	bhi.n	.L_080d209e
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r6, #4]
 	cmp	r3, #0
 	beq.n	.L_080d208c
@@ -296,7 +296,7 @@ Func_080d1f18:
 	bge.n	.L_080d213c
 .L_080d216a:
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r9
 	mov	r0, r8
 	ldrsh	r3, [r2, r0]
@@ -414,7 +414,7 @@ Battle_WaitMode0:
 	bne.n	.L_080d225c
 	cmp	r0, #0
 	beq.n	.L_080d225c
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d225c:
 	pop	{pc}
 	.2byte 0x0000

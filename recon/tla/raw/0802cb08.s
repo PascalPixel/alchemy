@@ -21,7 +21,7 @@ Func_0802cb08:
 	adds	r2, r1, r3
 	movs	r3, #159
 	strh	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [pc, #36]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #36]
@@ -30,7 +30,7 @@ Func_0802cb08:
 	ldr	r0, [pc, #28]
 	bl	0x0801475c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 	movs	r0, r0
 	.4byte 0x030011f8

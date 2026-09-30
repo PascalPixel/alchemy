@@ -241,7 +241,7 @@ Func_0804bba8:
 	b.n	.L_0804bdb6
 .L_0804bd8e:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0804bd94:
 	ldrb	r2, [r7, #0]
 	movs	r3, #1
@@ -300,7 +300,7 @@ Func_0804bba8:
 	movs	r0, #183
 	str	r1, [r3, #0]
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0804be1e
 	ldr	r3, [sp, #36]
@@ -451,7 +451,7 @@ Func_0804bba8:
 	adds	r5, r5, r0
 .L_0804bf2e:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldrh	r2, [r7, #0]
 	adds	r0, r7, #0
 	adds	r1, r5, #0
@@ -552,7 +552,7 @@ Func_0804bba8:
 	ldrh	r2, [r2, r3]
 	adds	r0, r2, #0
 	str	r2, [sp, #64]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #192
 	str	r0, [sp, #72]
 	lsls	r3, r3, #18
@@ -635,13 +635,13 @@ Func_0804bba8:
 	ldr	r0, [sp, #32]
 	bl	0x080461c8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #0
 	movs	r0, #1
 	bl	Func_080457d0
 	adds	r6, r0, #0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #2
 	negs	r2, r2
 	cmp	r6, r2
@@ -664,7 +664,7 @@ Func_0804bba8:
 	adds	r3, #38
 	strb	r0, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r1, r6, #0
 	ldr	r2, [sp, #64]
 	adds	r0, r5, #0
@@ -1187,7 +1187,7 @@ Func_0804bba8:
 	str	r0, [sp, #60]
 	movs	r0, #1
 	str	r6, [sp, #56]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #36]
 	adds	r0, r6, #0
 	ldr	r3, [r1, #0]
@@ -1565,7 +1565,7 @@ Func_0804bba8:
 	ldr	r1, [sp, #76]
 	movs	r0, #1
 	strh	r6, [r1, #12]
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0804c864
 	.4byte 0x00000040
 	.2byte 0x06d3
@@ -1596,9 +1596,9 @@ Func_0804bba8:
 	b.n	.L_0804c8a2
 .L_0804c89c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0804c8a2:
-	bl	0x0803a3b8
+	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_0804c89c
 	movs	r1, #1
@@ -1676,7 +1676,7 @@ Func_0804bba8:
 	movs	r3, #1
 	strh	r3, [r4, #12]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #112
 	bl	Audio_PlayCue
 	movs	r1, #4
@@ -1738,7 +1738,7 @@ Func_0804bba8:
 	adds	r0, r5, #0
 	str	r3, [sp, #8]
 	str	r4, [sp, #4]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r1, r5, #0
 	ldr	r0, [sp, #64]
 	bl	0x080499b4
@@ -1778,7 +1778,7 @@ Func_0804bba8:
 	adds	r0, r5, #0
 	str	r2, [sp, #12]
 	str	r4, [sp, #4]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r1, r5, #0
 	ldr	r0, [sp, #64]
 	bl	0x080499b4
@@ -1829,7 +1829,7 @@ Func_0804bba8:
 	lsls	r6, r6, #1
 	adds	r6, #216
 	ldrh	r0, [r3, r6]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrh	r0, [r0, #40]
 	bl	0x080ad078
 	ldrb	r4, [r0, #8]

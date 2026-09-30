@@ -60,7 +60,7 @@ Menu_DrawFlagBitTable:
 	adds	r6, #15
 .L_0804df14:
 	adds	r0, r7, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	negs	r3, r0
 	orrs	r3, r0
 	lsrs	r3, r3, #31
@@ -116,15 +116,15 @@ Menu_HandleFlagGridInput:
 	lsls	r3, r3, #4
 	adds	r5, r3, r2
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0804df96
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_0804e092
 .L_0804df96:
 	adds	r0, r5, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_0804e092
 .L_0804df9e:
 	ldr	r3, [r6, #4]

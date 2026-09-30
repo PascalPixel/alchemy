@@ -46,9 +46,9 @@ Func_080ad0f0:
 	bx	r4
 	.2byte 0xfdbd
 	.2byte 0x080a
-	.global Func_080ad0f8
+	.global Party_AddActiveOwnerFar
 	.thumb_func
-Func_080ad0f8:
+Party_AddActiveOwnerFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xfdd9
@@ -114,9 +114,9 @@ BattleRandom16Far:
 	bx	r4
 	.2byte 0x0379
 	.2byte 0x080b
-	.global Func_080ad150
+	.global Djinn_AddToOwnerFar
 	.thumb_func
-Func_080ad150:
+Djinn_AddToOwnerFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x0b79

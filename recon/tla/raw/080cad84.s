@@ -183,7 +183,7 @@ ObjectTable_Get:
 	ldr	r3, [sp, #0]
 	adds	r0, r6, #0
 	ldrb	r1, [r3, #0]
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r2, fp
 	ldrb	r1, [r2, #0]
 	movs	r3, #3

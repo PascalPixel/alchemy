@@ -178,7 +178,7 @@ Func_080da22c:
 	mov	r2, r8
 	str	r3, [r2, #0]
 	movs	r0, #6
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	movs	r1, #2
 	bl	Object_SetMode
@@ -478,7 +478,7 @@ Func_080da22c:
 	b.n	.L_080da4ba
 .L_080da5f8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #8]
 	ldr	r3, [sp, #56]
 	ldr	r1, [sp, #4]
@@ -688,7 +688,7 @@ Func_080da22c:
 	movs	r1, #3
 	bl	Object_SetMode
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #24]
 	movs	r2, #0
 	str	r2, [sp, #20]
@@ -838,7 +838,7 @@ Func_080da22c:
 	b.n	.L_080da7d4
 .L_080da8d6:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #20]
 	ldr	r2, [sp, #24]
 	adds	r1, #1

@@ -72,7 +72,7 @@ BattleFormation_SelectRandomAvailableMember:
 	strb	r2, [r3, #0]
 	adds	r0, #255
 	str	r1, [sp, #28]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08127d10
 	add	r0, sp, #32
@@ -448,7 +448,7 @@ BattleFormation_SelectRandomAvailableMember:
 	.2byte 0x0300
 .L_08127fc8:
 	adds	r0, r7, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #166
 	lsls	r1, r1, #1
 	adds	r7, #1
@@ -489,7 +489,7 @@ BattleFormation_SelectRandomAvailableMember:
 	adds	r0, r6, #0
 	bl	0x080ad0e8
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r1, [sp, #32]
 	mov	r8, r0
 	cmp	r1, #0
@@ -500,11 +500,11 @@ BattleFormation_SelectRandomAvailableMember:
 .L_08128034:
 	movs	r0, #116
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08128050
 	movs	r0, #46
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08128050
 	adds	r0, r6, #0
@@ -527,7 +527,7 @@ BattleFormation_SelectRandomAvailableMember:
 	blt.n	.L_0812807e
 	movs	r0, #116
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_0812807e
 	movs	r3, #1
@@ -704,35 +704,3 @@ BattleFormation_SelectRandomAvailableMember:
 	pop	{pc}
 	.2byte 0x0d0c
 	.2byte 0x0813
-	push	{r5, r6, lr}
-	movs	r3, #128
-	lsls	r3, r3, #1
-	adds	r6, r0, #0
-	adds	r3, #255
-	ands	r6, r3
-	movs	r5, #0
-	movs	r0, #0
-	cmp	r6, #0
-	beq.n	.L_081281e8
-	adds	r0, r6, #0
-	bl	0x080ad010
-	ldrb	r2, [r0, #3]
-	movs	r3, #8
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_081281d6
-	movs	r5, #1
-.L_081281d6:
-	movs	r3, #4
-	ands	r3, r2
-	lsls	r5, r5, #1
-	cmp	r3, #0
-	beq.n	.L_081281e2
-	adds	r5, #1
-.L_081281e2:
-	lsls	r5, r5, #9
-	adds	r5, r5, r6
-	adds	r0, r5, #0
-.L_081281e8:
-	pop	{r5, r6, pc}
-	.2byte 0x0000

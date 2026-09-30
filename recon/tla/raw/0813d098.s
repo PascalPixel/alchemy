@@ -538,13 +538,13 @@ Func_0813d098:
 	adds	r1, r5, #0
 	bl	Math_Div
 	movs	r1, #6
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r5, #1
 	adds	r1, r1, r5
 	adds	r6, r0, #0
 	lsls	r1, r1, #1
 	ldr	r0, [sp, #68]
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	bne.n	.L_0813d55c
 	ldr	r3, [sp, #80]
@@ -674,7 +674,7 @@ Func_0813d098:
 	adds	r1, r1, r5
 	lsls	r1, r1, #1
 	str	r4, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r5, r5, #2
 	subs	r5, #4
 	ldr	r4, [sp, #8]
@@ -700,7 +700,7 @@ Func_0813d098:
 	lsls	r1, r5, #1
 	adds	r1, r1, r5
 	lsls	r1, r1, #1
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r5, r5, #2
 	ldr	r4, [sp, #8]
 	cmp	r0, r5
@@ -1115,7 +1115,7 @@ Func_0813d098:
 	ldr	r0, [sp, #68]
 	str	r4, [sp, #8]
 	mov	r8, r2
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r3, r5, #1
 	adds	r3, r3, r5
 	ldr	r4, [sp, #8]
@@ -2003,7 +2003,7 @@ Func_0813d098:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #68]
 	ldr	r2, [sp, #28]
 	ldr	r5, [sp, #80]
@@ -2365,7 +2365,7 @@ Func_0813d098:
 	str	r3, [r2, #0]
 	movs	r0, #1
 	adds	r7, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #120
 	beq.n	.L_0813e3a8
 	b.n	.L_0813e24c

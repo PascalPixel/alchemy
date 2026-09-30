@@ -133,7 +133,7 @@ Func_080daea8:
 	adds	r3, r3, r1
 	str	r3, [r7, #12]
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r2, #240
 	mov	r7, sl
 	lsls	r2, r2, #12
@@ -239,7 +239,7 @@ Func_080daea8:
 .L_080db060:
 	movs	r0, #1
 	str	r4, [sp, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #128
 	lsls	r0, r0, #9
 	adds	r5, #1
@@ -340,7 +340,7 @@ Func_080daea8:
 	str	r5, [r7, #4]
 	movs	r0, #1
 	subs	r5, #64
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	bge.n	.L_080db128
 .L_080db136:
@@ -359,7 +359,7 @@ Func_080daea8:
 	str	r5, [r7, #4]
 	str	r6, [r7, #16]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #192
 	adds	r5, #64
 	lsls	r1, r1, #3
@@ -388,7 +388,7 @@ Func_080daea8:
 	mov	r3, sl
 	str	r3, [r7, #4]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r7, #16]
 	ands	r3, r6
 	cmp	r3, r5
@@ -543,7 +543,7 @@ Func_080daea8:
 	mov	r0, r8
 	bl	Object_SetMode
 	movs	r0, #6
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #152
 	bl	Audio_PlayCue
 	mov	r0, r8
@@ -567,9 +567,9 @@ Func_080daea8:
 	strb	r3, [r4, #0]
 	movs	r1, #0
 	mov	r0, r8
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #5
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, r8
 	movs	r1, #16
 	bl	Object_SetMode
@@ -590,7 +590,7 @@ Func_080daea8:
 	b.n	.L_080db3ae
 .L_080db314:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080db1c4
 	.4byte 0x00000000
 	.4byte 0x0300122c
@@ -658,7 +658,7 @@ Func_080daea8:
 	ldr	r0, [sp, #4]
 	strh	r6, [r0, #18]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080db3ae:
 	ldr	r3, [r7, #16]
 	ldr	r1, [sp, #0]
@@ -694,7 +694,7 @@ Func_080daea8:
 	adds	r3, r3, r4
 	str	r3, [r7, #8]
 	subs	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	bge.n	.L_080db3e6
 	movs	r3, #224
@@ -708,13 +708,13 @@ Func_080daea8:
 	bl	Object_SetMode
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	add	r1, sp, #8
 	ldrb	r1, [r1, #0]
 	mov	r2, fp
 	strb	r1, [r2, #0]
 	movs	r0, #6
-	bl	0x08013560
+	bl	WaitFrames
 .L_080db424:
 	movs	r3, #1
 	str	r3, [r7, #20]

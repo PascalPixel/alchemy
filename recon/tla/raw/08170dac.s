@@ -355,7 +355,7 @@ Func_08170dac:
 .L_0817107e:
 	adds	r0, r6, #4
 	movs	r1, #6
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #1
 	mov	r1, r8
 	adds	r3, r0, #1
@@ -414,7 +414,7 @@ Func_08170dac:
 	ldr	r0, [sp, #32]
 	movs	r1, #6
 	str	r4, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	lsls	r5, r5, #2
@@ -795,7 +795,7 @@ Func_08170dac:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #12]
 	ldr	r5, [sp, #64]
 	adds	r4, #8
@@ -1692,7 +1692,7 @@ Func_08170dac:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #56]
 	adds	r0, #1
 	str	r0, [sp, #56]

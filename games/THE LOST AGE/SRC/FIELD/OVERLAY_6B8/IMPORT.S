@@ -18,7 +18,7 @@
 	overlay_veneer Func_080003d8
 	overlay_veneer Func_080200c0
 	overlay_veneer Func_080201e0
-	overlay_veneer Func_08020218
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020278
 	overlay_veneer Func_08020300
 	overlay_veneer Func_08038018
@@ -34,7 +34,7 @@
 	overlay_veneer Func_080ad020
 	overlay_veneer Func_080ad0c0
 	overlay_veneer Func_080ad0c8
-	overlay_veneer Func_080ad150
+	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Djinn_ActivateFar
 	overlay_veneer Func_080ad198
 	overlay_veneer Func_080ad1e8

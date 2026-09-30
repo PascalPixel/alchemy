@@ -23,7 +23,7 @@ Func_08024c70:
 	b.n	.L_08024c9e
 .L_08024c94:
 	adds	r0, r5, #0
-	bl	Func_08023f64
+	bl	Object_IsTargetUnset
 	cmp	r0, #0
 	beq.n	.L_08024ca8
 .L_08024c9e:

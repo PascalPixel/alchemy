@@ -26,7 +26,7 @@ Func_08171bb0:
 	str	r3, [sp, #60]
 	movs	r3, #36
 	ldrsh	r0, [r4, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #52]
 	movs	r0, #0
 	bl	Func_081435e0
@@ -1852,7 +1852,7 @@ Func_08171bb0:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #20]
 	ldr	r4, [sp, #68]
 	movs	r3, #60

@@ -40,7 +40,7 @@ Func_080fe274:
 	movs	r3, #20
 	bl	Func_080383e8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #160
 	lsls	r2, r2, #3
 	adds	r2, #54
@@ -157,14 +157,14 @@ Func_080fe274:
 	ldr	r0, [r6, #40]
 	bl	0x08038268
 	bl	0x0810526c
-	bl	Func_080f80a8
+	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r3, #20
 	movs	r1, #0
 	movs	r2, #30
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x08038290
 	movs	r0, #0
 	b.n	.L_080fe40c
@@ -214,7 +214,7 @@ Func_080fe274:
 	add	r3, sp, #4
 	ldrh	r3, [r3, #0]
 	strh	r3, [r5, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #30
@@ -335,13 +335,13 @@ Func_080fe274:
 	bne.n	.L_080fe562
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fe4ba
 .L_080fe562:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fe572
 	movs	r6, #1
@@ -381,7 +381,7 @@ Func_080fe274:
 	bl	0x08038260
 	movs	r0, #185
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fe5ce
 	movs	r3, #3
@@ -435,7 +435,7 @@ Func_080fe274:
 	ldr	r0, [r5, r3]
 	bl	0x080f8888
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #4
 	pop	{r3, r5}

@@ -39,7 +39,7 @@ ObjectMotion_WaitForAnimationChange:
 	cmp	r7, #89
 	bgt.n	.L_080d32b2
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldrb	r2, [r5, #24]
 	ldr	r3, [r6, #0]
 	cmp	r3, r2

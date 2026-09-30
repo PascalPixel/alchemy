@@ -414,7 +414,7 @@ Func_0802dd08:
 	bl	0x080145a8
 .L_0802e062:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [pc, #540]
 	mov	r9, sl
 .L_0802e06c:
@@ -932,7 +932,7 @@ Func_0802dd08:
 .L_0802e426:
 	movs	r0, #1
 	str	r4, [sp, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #0]
 	b.n	.L_0802e06c
 	movs	r0, r0

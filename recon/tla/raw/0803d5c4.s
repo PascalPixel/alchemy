@@ -111,7 +111,7 @@ Func_0803d5c4:
 	movs	r1, #0
 	str	r1, [sp, #4]
 	mov	sl, r1
-	bl	0x080ad010
+	bl	Item_Get
 	str	r0, [sp, #0]
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -307,7 +307,7 @@ Func_0803d5c4:
 	bgt.n	.L_0803d888
 	movs	r1, #10
 	mov	r0, sl
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [pc, #120]
 	lsls	r0, r0, #2
 	movs	r2, #192

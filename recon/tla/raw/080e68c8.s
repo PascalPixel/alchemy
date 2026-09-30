@@ -217,12 +217,12 @@ Func_080e68c8:
 	mov	r0, fp
 	bl	Func_080dbed0
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, fp
 	movs	r1, #1
 	bl	Object_SetMode
 	movs	r0, #15
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r4, #9
 	mov	r8, r4
 .L_080e6a8a:
@@ -232,7 +232,7 @@ Func_080e68c8:
 	adds	r3, r3, r1
 	str	r3, [r0, #12]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	negs	r2, r2
 	add	r8, r2
@@ -336,7 +336,7 @@ Func_080e68c8:
 	cmp	r0, #0
 	beq.n	.L_080e6b96
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #15
 	mov	r8, r1
 .L_080e6b70:
@@ -354,7 +354,7 @@ Func_080e68c8:
 	movs	r0, #114
 	bl	Audio_PlayCue
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080e70ce
 .L_080e6b96:
 	mov	r3, sl
@@ -826,7 +826,7 @@ Func_080e68c8:
 	bne.n	.L_080e6fa8
 .L_080e6f74:
 	movs	r0, #6
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #200
 	lsls	r3, r3, #5
 	adds	r3, #52
@@ -836,7 +836,7 @@ Func_080e68c8:
 	lsls	r3, r3, #9
 	str	r3, [r2, #24]
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080e6fae
 	movs	r0, r0
 	.4byte 0x000001e1
@@ -847,7 +847,7 @@ Func_080e68c8:
 	.2byte 0x0000
 .L_080e6fa8:
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 .L_080e6fae:
 	movs	r5, #200
 	movs	r3, #200
@@ -891,7 +891,7 @@ Func_080e68c8:
 	bl	.L_080e716c
 .L_080e7000:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #0
 	ldrsh	r3, [r5, r1]
 	adds	r6, #1
@@ -928,7 +928,7 @@ Func_080e68c8:
 .L_080e704a:
 	movs	r0, #1
 	movs	r5, #0
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #30
 	bne.n	.L_080e7058
 	movs	r5, #1
@@ -1056,7 +1056,7 @@ Func_080e68c8:
 	adds	r3, #10
 	str	r3, [r1, #72]
 	movs	r0, #50
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #12]
 	movs	r1, #176
 	lsls	r1, r1, #1
@@ -1086,7 +1086,7 @@ Func_080e68c8:
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	movs	r0, #79
 	bl	Object_GetById
@@ -1238,14 +1238,14 @@ Func_080e68c8:
 	movs	r0, #200
 	bl	Audio_PlayCue
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #0
 	mov	r1, r8
 	str	r3, [r1, #24]
 	str	r3, [r1, #28]
 	mov	r0, r8
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #0
 	movs	r2, #2
 	str	r2, [sp, #4]
@@ -1297,7 +1297,7 @@ Func_080e68c8:
 	movs	r1, #100
 	str	r5, [r6, #12]
 	str	r7, [r6, #20]
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #1
 	negs	r3, r3
 	add	sl, r3
@@ -1440,7 +1440,7 @@ Func_080e68c8:
 	strh	r3, [r1, #6]
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r2, #3
 	str	r2, [sp, #4]
 .L_080e7476:
@@ -1465,7 +1465,7 @@ Func_080e68c8:
 	str	r2, [sp, #12]
 .L_080e7498:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #186
 	ldr	r1, [sp, #12]
 	lsls	r2, r2, #2
@@ -1513,7 +1513,7 @@ Func_080e68c8:
 	bl	ObjectTable_Get
 	adds	r7, r0, #0
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080dc294
 	ldr	r0, [pc, #192]
 	bl	Resource_GetTableEntry
@@ -1572,14 +1572,14 @@ Func_080e68c8:
 	cmp	r3, #99
 	ble.n	.L_080e7540
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #128
 	movs	r2, #0
 	lsls	r1, r1, #7
 	mov	r0, r9
 	bl	0x080d3838
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #28
 	adds	r0, r7, #0
 	bl	Object_SetMode
@@ -1588,7 +1588,7 @@ Func_080e68c8:
 	str	r3, [r7, #108]
 	bl	Audio_PlayCue
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #220
 	bl	Audio_PlayCue
 	ldr	r6, [pc, #16]
@@ -1609,7 +1609,7 @@ Func_080e68c8:
 	adds	r3, r3, r5
 	adds	r3, r3, r6
 	strh	r3, [r7, #6]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	negs	r2, r2
 	add	r9, r2
@@ -1702,7 +1702,7 @@ Func_080e68c8:
 	add	fp, r1
 	mov	r0, fp
 	movs	r1, #100
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r2, #1
 	negs	r2, r2
 	add	sl, r2
@@ -1833,7 +1833,7 @@ Func_080e68c8:
 	movs	r1, #0
 	str	r3, [r7, #28]
 	adds	r0, r7, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r1, r9
 	cmp	r1, #30
 	bne.n	.L_080e77c8
@@ -1855,7 +1855,7 @@ Func_080e68c8:
 	str	r3, [sp, #16]
 .L_080e77c8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #186
 	ldr	r2, [sp, #16]
 	lsls	r3, r3, #2
@@ -1885,6 +1885,6 @@ Func_080e68c8:
 	bl	.L_080e74d8
 	bl	0x080dc384
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 	.2byte 0x0000

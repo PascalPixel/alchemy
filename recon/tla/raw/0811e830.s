@@ -62,7 +62,7 @@ Func_0811e830:
 .L_0811e8a0:
 	movs	r0, #1
 	adds	r6, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #16
 	bne.n	.L_0811e874
 	ldr	r0, [sp, #8]
@@ -190,7 +190,7 @@ Func_0811e830:
 	orrs	r3, r6
 	strh	r3, [r7, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #80]
 	adds	r6, #1
 	adds	r5, r5, r3
@@ -288,13 +288,13 @@ Func_0811e830:
 	bne.n	.L_0811ea7e
 	str	r2, [r4, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0811ea88
 .L_0811ea7e:
 	ldr	r1, [sp, #8]
 	movs	r0, #1
 	str	r2, [r1, #0]
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811ea88:
 	movs	r0, #0
 	movs	r1, #0
@@ -324,12 +324,12 @@ Func_0811e830:
 	str	r0, [sp, #4]
 	mov	r1, r8
 	ldr	r0, [r1, #8]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r3, r8
 	adds	r6, r0, #0
 	movs	r2, #36
 	ldrsh	r0, [r3, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r3, [sp, #16]
 	ldr	r1, [sp, #16]
 	adds	r3, #45
@@ -415,7 +415,7 @@ Func_0811e830:
 	ldr	r3, [sp, #16]
 	mov	fp, r0
 	ldrb	r0, [r3, #2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #165
 	lsls	r4, r4, #1
 	adds	r3, r0, r4
@@ -494,17 +494,17 @@ Func_0811e830:
 	cmp	r1, #0
 	beq.n	.L_0811ec78
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r3, r8
 	movs	r2, #36
 	ldrsh	r0, [r3, r2]
 	bl	0x0811bfd0
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #16]
 	movs	r0, #0
 	ldrb	r1, [r4, #3]
@@ -591,7 +591,7 @@ Func_0811e830:
 	bl	0x08126904
 .L_0811ed00:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r4, #1
 	movs	r3, #30
 	add	r9, r4
@@ -809,7 +809,7 @@ Func_0811e830:
 	bl	ColorBuffer_Scale
 .L_0811eebc:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #68
@@ -833,7 +833,7 @@ Func_0811e830:
 	b.n	.L_0811eef4
 .L_0811eeee:
 	movs	r0, #60
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811eef4:
 	bl	Func_081234f0
 	adds	r6, r5, #0
@@ -860,7 +860,7 @@ Func_0811e830:
 	mov	r3, r8
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r1, r8
 	movs	r7, #8
 	ldrsh	r3, [r1, r7]
@@ -869,7 +869,7 @@ Func_0811e830:
 	adds	r3, #216
 	ldrh	r5, [r6, r3]
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #12]
 	adds	r3, r2, #0
 	cmp	r3, #1

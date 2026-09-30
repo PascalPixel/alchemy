@@ -7,7 +7,7 @@ Inventory_Find:
 Func_080aee98:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #128
 	lsls	r4, r4, #1
 	movs	r1, #0

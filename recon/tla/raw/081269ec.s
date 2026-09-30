@@ -114,7 +114,7 @@ Func_081269ec:
 	b.n	.L_08126abe
 .L_08126ab6:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08126a06
 .L_08126abe:
 	ldr	r3, [r5, #0]

@@ -174,7 +174,7 @@ Func_08041204:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	mov	r9, r3
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_0804128c
 	movs	r6, #1
 	negs	r6, r6
@@ -185,12 +185,12 @@ Func_08041204:
 	beq.n	.L_080413e0
 	adds	r0, r7, #4
 	movs	r1, #4
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r7, r0, #0
 	mov	r0, r8
 	movs	r1, #9
 	adds	r0, #9
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r3, sl
 	movs	r1, #12
 	ldrsh	r2, [r3, r1]
@@ -230,7 +230,7 @@ Func_08041204:
 	movs	r6, #0
 .L_080413e0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #428]
 	movs	r2, #2
 	ldr	r3, [r5, #4]
@@ -305,7 +305,7 @@ Func_08041204:
 	bl	UiWork_Finalize
 	bl	.L_08041254
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	negs	r2, r2
 	mov	r9, r2
@@ -410,30 +410,30 @@ Func_08041204:
 	strh	r0, [r3, #0]
 .L_08041542:
 	movs	r0, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r5, #250
 	lsls	r5, r5, #1
 	strh	r5, [r0, #58]
 	movs	r0, #5
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strh	r5, [r0, #58]
 	movs	r0, #6
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strh	r5, [r0, #58]
 	movs	r0, #7
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strh	r5, [r0, #58]
 	movs	r0, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strh	r5, [r0, #54]
 	movs	r0, #5
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strh	r5, [r0, #54]
 	movs	r0, #6
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strh	r5, [r0, #54]
 	movs	r0, #7
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strh	r5, [r0, #54]
 .L_08041586:
 	adds	r0, r6, #0

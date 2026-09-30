@@ -648,7 +648,7 @@ Func_0817e0c0:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #32]
 	adds	r5, #1
 	str	r5, [sp, #32]

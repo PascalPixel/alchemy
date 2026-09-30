@@ -143,6 +143,9 @@ Func_0803a2b0:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global UiWork_IsComplete
+	.thumb_func
+UiWork_IsComplete:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

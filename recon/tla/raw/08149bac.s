@@ -814,7 +814,7 @@ Func_08149bac:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #36]
 	mov	r1, sl
 	adds	r5, #1
@@ -1111,7 +1111,7 @@ Func_08149bac:
 	adds	r3, r3, r7
 	adds	r0, r0, r3
 	movs	r1, #104
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r5, [sp, #32]
 	mov	r8, r0
 	mov	r3, fp
@@ -1488,7 +1488,7 @@ Func_08149bac:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #36]
 	adds	r5, #1
 	str	r5, [sp, #36]

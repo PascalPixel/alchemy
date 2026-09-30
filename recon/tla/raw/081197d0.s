@@ -7,7 +7,7 @@ Func_081197d0:
 	push	{lr}
 	movs	r0, #118
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_081197e2
 	ldr	r0, [pc, #8]
@@ -80,10 +80,10 @@ Func_081197d0:
 	str	r7, [r1, #28]
 	strh	r2, [r3, #0]
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #106
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	bl	Func_08014de4
 	ldr	r5, [pc, #560]
 	movs	r1, #76
@@ -129,7 +129,7 @@ Func_081197d0:
 	bl	0x08020088
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_081198f2
 	movs	r0, #1
@@ -146,7 +146,7 @@ Func_081197d0:
 	adds	r6, r0, #0
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0811992a
 	adds	r5, #68
@@ -190,7 +190,7 @@ Func_081197d0:
 	beq.n	.L_0811996a
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #24
 	ble.n	.L_0811994e
 	mov	r2, sl
@@ -247,7 +247,7 @@ Func_081197d0:
 	bl	Audio_PlayCue
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_081199f0
 	movs	r0, #55
@@ -332,7 +332,7 @@ Func_081197d0:
 	str	r1, [sp, #24]
 	lsls	r0, r0, #1
 	strb	r5, [r1, #0]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08119ad0
 	ldr	r2, [sp, #24]
@@ -446,7 +446,7 @@ Func_081197d0:
 	bl	0x08014274
 	movs	r0, #181
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08119bb4
 	adds	r0, r5, #0
@@ -512,7 +512,7 @@ Func_081197d0:
 	movs	r0, #181
 	lsls	r0, r0, #1
 	str	r4, [sp, #4]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r4, [sp, #4]
 	cmp	r0, #0
 	bne.n	.L_08119c46
@@ -789,11 +789,11 @@ Func_081197d0:
 	b.n	.L_08119f4c
 .L_08119e46:
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 .L_08119e4c:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08119eb0
 	bl	.L_081197d0
@@ -806,7 +806,7 @@ Func_081197d0:
 	b.n	.L_08119e72
 .L_08119e6c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08119e72:
 	bl	0x08038048
 	cmp	r0, #0
@@ -815,7 +815,7 @@ Func_081197d0:
 	adds	r0, r5, #0
 	bl	0x08038018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_081197d0
 	movs	r2, #4
 	movs	r3, #1
@@ -830,7 +830,7 @@ Func_081197d0:
 	movs	r1, #1
 	bl	0x08038018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08119eb0:
 	ldr	r1, [sp, #32]
 	adds	r1, #1
@@ -848,7 +848,7 @@ Func_081197d0:
 	beq.n	.L_08119f2e
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08119f2e
 	ldr	r0, [sp, #16]
@@ -918,7 +918,7 @@ Func_081197d0:
 	add	r3, r9
 	lsls	r0, r0, #2
 	ldr	r7, [r3, #0]
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_08119fea
 	.4byte 0x00000001
 	.2byte 0x0c84
@@ -1045,7 +1045,7 @@ Func_081197d0:
 	adds	r5, #2
 .L_0811a07e:
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #149
 	lsls	r1, r1, #1
 	adds	r3, r0, r1
@@ -1111,7 +1111,7 @@ Func_081197d0:
 	adds	r6, #2
 .L_0811a0f8:
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #149
 	lsls	r1, r1, #1
 	adds	r3, r0, r1
@@ -1151,7 +1151,7 @@ BattleParty_ListPresentEnemies:
 	beq.n	.L_0811a17c
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0811a14e
 	movs	r7, #3
@@ -1162,7 +1162,7 @@ BattleParty_ListPresentEnemies:
 	bge.n	.L_0811a176
 .L_0811a156:
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -1203,7 +1203,7 @@ BattleParty_ListPresentEnemies:
 	sub	sp, #20
 	mov	r8, r1
 	mov	r9, r2
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0811a1b0
 	movs	r3, #3
@@ -1226,7 +1226,7 @@ BattleParty_ListPresentEnemies:
 	adds	r2, #2
 	adds	r0, r7, #0
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]
@@ -1256,7 +1256,7 @@ BattleParty_ListPresentEnemies:
 	bge.n	.L_0811a232
 .L_0811a206:
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -1308,7 +1308,7 @@ BattleParty_ListPresentEnemies:
 	sub	sp, #24
 	mov	r8, r1
 	mov	r9, r2
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0811a274
 	movs	r3, #3
@@ -1335,7 +1335,7 @@ BattleParty_ListPresentEnemies:
 	adds	r2, #2
 	adds	r0, r6, #0
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]
@@ -1365,7 +1365,7 @@ BattleParty_ListPresentEnemies:
 	bge.n	.L_0811a300
 .L_0811a2d4:
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -1507,7 +1507,7 @@ BattleParty_ListActorIds:
 	cmp	r0, #254
 	beq.n	.L_0811a3e8
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]
@@ -1544,7 +1544,7 @@ BattleParty_ListActorIds:
 	cmp	r0, #254
 	beq.n	.L_0811a42c
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]

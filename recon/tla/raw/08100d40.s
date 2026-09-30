@@ -4,7 +4,7 @@
 	.thumb_func
 Func_08100d40:
 	push	{lr}
-	bl	0x080ad010
+	bl	Item_Get
 	ldrh	r3, [r0, #40]
 	movs	r0, #252
 	lsls	r0, r0, #6

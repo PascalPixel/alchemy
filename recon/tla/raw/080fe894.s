@@ -35,7 +35,7 @@ Func_080fe894:
 	lsls	r3, r3, #2
 	adds	r2, r2, r3
 	ldrh	r0, [r7, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #140
 	ldr	r0, [pc, #52]
 	lsls	r1, r1, #2
@@ -108,7 +108,7 @@ Func_080fe894:
 	movs	r3, #0
 	bl	0x08038080
 	movs	r0, #55
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fe97e
 	ldr	r1, [r5, #0]
@@ -125,16 +125,16 @@ Func_080fe894:
 	ldr	r0, [sp, #4]
 	mov	r1, r8
 	add	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #4]
 	lsls	r0, r0, #1
 	add	r0, fp
 	ldrh	r0, [r7, r0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r0, sl
 	movs	r1, #3
 	adds	r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [sp, #4]
 	mov	sl, r0
 	lsls	r3, r3, #1
@@ -160,7 +160,7 @@ Func_080fe894:
 	lsls	r0, r0, #2
 	bl	Func_08104ef8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fe9e4:
 	mov	r2, r8
 	ldr	r0, [r7, #16]
@@ -185,7 +185,7 @@ Func_080fe894:
 	subs	r0, #10
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #316]
 	movs	r3, #1
 	ldr	r2, [r1, #4]
@@ -264,7 +264,7 @@ Func_080fe894:
 	bl	Audio_PlayCue
 .L_080feab6:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080feae8
 .L_080feabe:
 	ldr	r3, [r1, #4]
@@ -273,7 +273,7 @@ Func_080fe894:
 	cmp	r3, #0
 	beq.n	.L_080feadc
 	movs	r0, #55
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080feadc
 	bl	Func_080fe638
@@ -289,7 +289,7 @@ Func_080fe894:
 .L_080feae8:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080feaf6
 	b.n	.L_080fe94a
@@ -371,7 +371,7 @@ Func_080fe894:
 	add	r2, r8
 	adds	r6, #240
 	ldrh	r0, [r7, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r0, [r6, #0]
 	bl	0x08038260
 	ldr	r5, [pc, #332]
@@ -397,16 +397,16 @@ Func_080fe894:
 	ldr	r0, [sp, #0]
 	mov	r1, sl
 	add	r0, sl
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #0]
 	lsls	r0, r0, #1
 	adds	r0, r0, r6
 	ldrh	r0, [r7, r0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r0, r9
 	movs	r1, #3
 	adds	r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [sp, #0]
 	mov	r9, r0
 	lsls	r3, r3, #1
@@ -424,7 +424,7 @@ Func_080fe894:
 	lsls	r3, r3, #1
 	adds	r3, r3, r6
 	ldrh	r0, [r7, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	0x080fd6f0
@@ -452,7 +452,7 @@ Func_080fe894:
 	lsls	r0, r0, #2
 	bl	Func_08104ef8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fec5a:
 	ldr	r0, [r7, #16]
 	ldr	r1, [sp, #0]
@@ -475,7 +475,7 @@ Func_080fe894:
 	subs	r0, #10
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #108]
 	movs	r2, #1
 	ldr	r3, [r1, #4]
@@ -653,7 +653,7 @@ Func_080fe894:
 	adds	r5, r7, #0
 .L_080fedd4:
 	ldmia	r5!, {r0}
-	bl	0x080ad0f8
+	bl	Party_AddActiveOwnerFar
 	mov	r2, sl
 	ldrb	r3, [r2, #0]
 	adds	r6, #1
@@ -839,7 +839,7 @@ Func_080fe894:
 .L_080fef4c:
 	ldr	r4, [sp, #8]
 	ldrb	r0, [r4, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r0, [sp, #8]
 	movs	r2, #1
 	ldrb	r1, [r0, #0]
@@ -910,7 +910,7 @@ Func_080fe894:
 	bne.n	.L_080ff00c
 	adds	r0, r7, r5
 	adds	r1, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [sp, #24]
 	adds	r7, r0, #0
 	cmp	r2, #0
@@ -948,7 +948,7 @@ Func_080fe894:
 .L_080ff028:
 	adds	r0, r7, #7
 	movs	r1, #7
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r7, r0, #0
 .L_080ff032:
 	adds	r1, r7, #0
@@ -959,7 +959,7 @@ Func_080fe894:
 	mov	r0, fp
 	bl	0x08038268
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r4, r8
 	cmp	r4, #0
 	bne.n	.L_080ff05c
@@ -998,7 +998,7 @@ Func_080fe894:
 	bl	Func_080f8a44
 .L_080ff094:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #244]
 	movs	r3, #240
 	ldr	r2, [r5, #12]
@@ -1105,7 +1105,7 @@ Func_080fe894:
 	adds	r3, r2, r4
 	ldrb	r1, [r3, #0]
 	adds	r0, r0, r1
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #129
 	ldr	r4, [sp, #36]
 	lsls	r2, r0, #1
@@ -1128,7 +1128,7 @@ Func_080fe894:
 .L_080ff194:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ff1a2
 	b.n	.L_080fefb0
@@ -1138,7 +1138,7 @@ Func_080fe894:
 	bne.n	.L_080ff1b6
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ff1b6
 	b.n	.L_080fef4c

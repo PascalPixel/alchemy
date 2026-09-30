@@ -37,19 +37,19 @@ Func_0804d5ac:
 .L_0804d5e0:
 	movs	r5, #1
 .L_0804d5e2:
-	bl	0x0804d0dc
+	bl	AffineEffect_InitializeWork
 	cmp	r6, #0
 	beq.n	.L_0804d5ee
 	cmp	r6, #3
 	bne.n	.L_0804d5f4
 .L_0804d5ee:
 	movs	r0, #21
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 .L_0804d5f4:
 	cmp	r6, #1
 	bhi.n	.L_0804d5fe
 	movs	r0, #22
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 .L_0804d5fe:
 	cmp	r6, #0
 	beq.n	.L_0804d606
@@ -57,17 +57,17 @@ Func_0804d5ac:
 	bne.n	.L_0804d60c
 .L_0804d606:
 	movs	r0, #23
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 .L_0804d60c:
 	movs	r0, #24
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	ldr	r7, [pc, #88]
 	movs	r2, #0
 	ldrsh	r3, [r7, r2]
 	cmp	r3, #0
 	beq.n	.L_0804d622
 	movs	r0, #29
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 .L_0804d622:
 	ldr	r3, [pc, #76]
 	movs	r2, #0
@@ -75,16 +75,16 @@ Func_0804d5ac:
 	cmp	r3, #0
 	beq.n	.L_0804d632
 	movs	r0, #31
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 .L_0804d632:
 	movs	r0, #17
 	movs	r1, #7
 	movs	r2, #0
-	bl	0x0804d3e8
+	bl	Menu_CenterResourceEntries
 	adds	r0, r5, #0
-	bl	0x0804d16c
+	bl	Menu_RunResourceSelectionLoop
 	adds	r5, r0, #0
-	bl	0x0804d118
+	bl	Menu_EndResourceSelection
 	cmp	r5, #0
 	blt.n	.L_0804d658
 	lsls	r3, r6, #1

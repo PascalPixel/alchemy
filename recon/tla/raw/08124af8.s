@@ -9,7 +9,7 @@ sub_08124af8:
 	mov	r5, r8
 	push	{r5, r6, r7}
 	mov	sl, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r7, #159
 	mov	r8, r0
 	lsls	r7, r7, #1

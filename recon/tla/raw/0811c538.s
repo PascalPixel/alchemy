@@ -54,7 +54,7 @@ Func_0811c538:
 	adds	r7, r0, #0
 	movs	r1, #0
 	ldrsh	r0, [r7, r1]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #56
 	ldrsh	r3, [r0, r2]
 	cmp	r3, #0
@@ -108,13 +108,13 @@ Func_0811c538:
 	b.n	.L_0811c646
 .L_0811c608:
 	movs	r0, #45
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	bl	0x0811c6cc
 	b.n	.L_0811c640
 .L_0811c616:
 	movs	r0, #45
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	bl	0x0811ca54
 	b.n	.L_0811c640

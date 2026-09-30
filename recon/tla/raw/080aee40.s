@@ -29,7 +29,7 @@ Func_080aee40:
 	cmp	r1, #0
 	blt.n	.L_080aee7e
 	adds	r0, r5, #0
-	bl	Func_080af148
+	bl	Inventory_Remove
 	adds	r0, r5, #0
 	b.n	.L_080aee8a
 .L_080aee7e:

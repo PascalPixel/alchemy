@@ -11,7 +11,7 @@ Func_080aef34:
 	adds	r5, r1, #0
 	mov	r8, r0
 	sub	sp, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsls	r5, r5, #1
 	mov	r9, r5
 	mov	r3, r9
@@ -20,7 +20,7 @@ Func_080aef34:
 	ldrh	r5, [r7, r3]
 	mov	r0, r8
 	adds	r1, r5, #0
-	bl	0x080aec1c
+	bl	Item_CanOwnerEquipDirect
 	cmp	r0, #0
 	bne.n	.L_080aef66
 	movs	r0, #1
@@ -96,7 +96,7 @@ Func_080aef34:
 	strh	r2, [r7, r3]
 	bl	0x080b02d4
 	mov	r0, r8
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	movs	r0, #0
 	b.n	.L_080aeffc
 	movs	r0, r0

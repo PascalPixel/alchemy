@@ -46,7 +46,7 @@ Func_080fa870:
 	lsls	r3, r3, #1
 	adds	r3, r3, r1
 	ldrh	r0, [r6, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #144
 	ldr	r0, [pc, #16]
 	lsls	r1, r1, #3
@@ -74,7 +74,7 @@ Func_080fa870:
 	lsls	r3, r3, #1
 	adds	r3, r3, r1
 	ldrh	r0, [r6, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r3, [r6, #16]
 	ldr	r4, [sp, #12]
 	ldrh	r2, [r3, #12]
@@ -110,7 +110,7 @@ Func_080fa870:
 	lsls	r0, r0, #2
 	bl	Func_08104ef8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fa952:
 	ldr	r1, [sp, #12]
 	ldr	r0, [r6, #16]
@@ -254,7 +254,7 @@ Func_080fa870:
 .L_080faa72:
 	movs	r0, #82
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080faaaa
 	ldr	r3, [sp, #4]
@@ -280,7 +280,7 @@ Func_080fa870:
 .L_080faaaa:
 	movs	r0, #82
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080faab2:
 	movs	r5, #0
 .L_080faab4:
@@ -300,7 +300,7 @@ Func_080fa870:
 	subs	r0, #10
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #256]
 	movs	r2, #1
 	ldr	r3, [r1, #4]
@@ -350,7 +350,7 @@ Func_080fa870:
 .L_080fab36:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fab44
 	b.n	.L_080fa8e8
@@ -362,7 +362,7 @@ Func_080fa870:
 	strb	r7, [r5, #5]
 	bl	Func_080fac58
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #12]
 	movs	r2, #129
 	strb	r3, [r6, #29]

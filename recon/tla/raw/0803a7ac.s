@@ -84,16 +84,16 @@ Func_0803a7ac:
 	ldr	r2, [sp, #20]
 	mov	r0, sl
 	adds	r3, r7, #0
-	bl	0x0803a69c
+	bl	UiText_OpenMessageWindow
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0803a898
 	b.n	.L_0803a85c
 .L_0803a856:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0803a85c:
-	bl	0x0803a3b8
+	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_0803a856
 	movs	r3, #32
@@ -116,7 +116,7 @@ Func_0803a7ac:
 	b.n	.L_0803a88e
 .L_0803a888:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0803a88e:
 	adds	r0, r5, #0
 	bl	Func_0803a3e4
@@ -140,7 +140,7 @@ Func_0803a7ac:
 	add	r3, r8
 	strh	r2, [r3, #0]
 	movs	r0, #3
-	bl	0x08013560
+	bl	WaitFrames
 	add	sp, #28
 	pop	{r3, r5}
 	mov	r8, r3

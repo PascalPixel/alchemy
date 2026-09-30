@@ -28,7 +28,7 @@ Func_08119054:
 	add	sl, r3
 .L_08119084:
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r5, sp
 	ldr	r0, [pc, #180]
 	adds	r1, r5, #0
@@ -87,7 +87,7 @@ Func_08119054:
 	bgt.n	.L_08119104
 	adds	r0, r7, #0
 	adds	r0, #128
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	bl	0x08016854
 	movs	r2, #1
@@ -110,7 +110,7 @@ Func_08119054:
 	beq.n	.L_08119130
 	bl	0x080168cc
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 .L_08119130:
 	mov	r0, r8
 	bl	Func_08013164
@@ -165,7 +165,7 @@ Func_08119054:
 .L_08119198:
 	mov	r2, sl
 	ldrh	r0, [r7, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #170
 	adds	r1, r0, #0
 	lsls	r2, r2, #1
@@ -194,7 +194,7 @@ Func_08119054:
 	bl	0x080168a0
 	adds	r5, #1
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r7, #2
 	cmp	r5, r8
 	blt.n	.L_08119198
@@ -208,7 +208,7 @@ Func_08119054:
 .L_081191f2:
 	bl	0x080168a0
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r5, #1
 .L_081191fe:
 	cmp	r5, #2
@@ -272,9 +272,9 @@ Func_08119054:
 	beq.n	.L_08119288
 	bl	0x080168a0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 .L_08119288:
 	adds	r0, r6, #0
 	bl	Func_08013164

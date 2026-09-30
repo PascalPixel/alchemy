@@ -83,7 +83,7 @@ Func_08016bdc:
 	b.n	.L_08016c10
 .L_08016c7a:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08016c18
 	movs	r0, r0
 	.4byte 0x06002426
@@ -95,9 +95,9 @@ Func_08016bdc:
 	.4byte 0x020055d0
 	.2byte 0x1000
 	.2byte 0x0600
-	.global OwnerState_Get
+	.global Owner_GetState
 	.thumb_func
-OwnerState_Get:
+Owner_GetState:
 	push	{lr}
 	cmp	r0, #7
 	bhi.n	.L_08016cb6
@@ -147,6 +147,9 @@ GameFlag_TestFar:
 	bx	lr
 	.2byte 0x0040
 	.2byte 0x0200
+	.global GameFlag_SetBitFar
+	.thumb_func
+GameFlag_SetBitFar:
 	movs	r3, #7
 	ands	r3, r0
 	ldr	r1, [pc, #16]
@@ -161,6 +164,9 @@ GameFlag_TestFar:
 	movs	r0, r0
 	.2byte 0x0040
 	.2byte 0x0200
+	.global GameFlag_ClearBitFar
+	.thumb_func
+GameFlag_ClearBitFar:
 	movs	r3, #7
 	ands	r3, r0
 	ldr	r1, [pc, #16]

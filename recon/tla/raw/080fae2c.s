@@ -12,7 +12,7 @@ Func_080fae2c:
 	ldr	r7, [r3, #0]
 	mov	r8, r1
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #226
 	lsls	r2, r2, #1
 	adds	r5, r7, r2
@@ -64,7 +64,7 @@ Func_080fae2c:
 	ldr	r7, [r3, #0]
 	mov	sl, r1
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r2, r9
 	str	r0, [sp, #0]
 	lsls	r3, r2, #1
@@ -75,7 +75,7 @@ Func_080fae2c:
 	adds	r0, #255
 	ands	r0, r3
 	mov	r8, r3
-	bl	0x080ad010
+	bl	Item_Get
 	mov	r3, fp
 	cmp	r3, #1
 	bne.n	.L_080faed8
@@ -111,7 +111,7 @@ Func_080fae2c:
 	b.n	.L_080faffe
 .L_080faf20:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #0]
 	movs	r0, #166
 	lsls	r0, r0, #1
@@ -152,7 +152,7 @@ Func_080fae2c:
 	b.n	.L_080faffe
 .L_080faf78:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #0]
 	movs	r0, #166
 	lsls	r0, r0, #1
@@ -227,7 +227,7 @@ Func_080fae2c:
 	b.n	.L_080fb08a
 .L_080fb012:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #0]
 	movs	r0, #166
 	lsls	r0, r0, #1
@@ -298,7 +298,7 @@ Func_080fae2c:
 .L_080fb0a4:
 	push	{r5, r6, r7, lr}
 	adds	r7, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #216
 	ldrh	r3, [r0, r3]
 	movs	r1, #0
@@ -472,7 +472,7 @@ Func_080fae2c:
 .L_080fb1f6:
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #24
 	asrs	r7, r0, #24
 	movs	r1, #3
@@ -503,7 +503,7 @@ Func_080fae2c:
 	adds	r0, r7, #3
 	movs	r1, #3
 	mov	r9, r2
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, sl
 	adds	r2, #2
 	lsrs	r3, r2, #31
@@ -585,7 +585,7 @@ Func_080fae2c:
 	adds	r1, #30
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #284]
 	movs	r3, #1
 	ldr	r2, [r5, #4]
@@ -705,7 +705,7 @@ Func_080fae2c:
 .L_080fb3d4:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_080fb3e4
@@ -747,7 +747,7 @@ Func_080fae2c:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	mov	r8, r0
 	cmp	r3, #0

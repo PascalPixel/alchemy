@@ -52,7 +52,7 @@ Func_080cb8e8:
 	.2byte 0xf800
 	.2byte 0x2004
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r5, [pc, #116]
 	movs	r0, #240
 	lsls	r0, r0, #1
@@ -134,7 +134,7 @@ Func_080cb8e8:
 	movs	r0, #10
 	strb	r7, [r3, #0]
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080cba0e
 	ldr	r3, [pc, #140]
@@ -167,7 +167,7 @@ Func_080cb8e8:
 	.2byte 0xf8fb
 	.2byte 0x200a
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cba4e
 	bl	0x080cae5c
@@ -217,7 +217,7 @@ Func_080cb8e8:
 .L_080cbaaa:
 	.2byte 0x2020
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	0x080d1684
 	movs	r0, #128
 	lsls	r0, r0, #9
@@ -263,7 +263,7 @@ Func_080cb8e8:
 	movs	r0, #162
 	str	r7, [r2, #0]
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080cbb14:
 	movs	r3, #212
 	ldr	r2, [pc, #84]
@@ -272,7 +272,7 @@ Func_080cb8e8:
 	movs	r0, #10
 	str	r2, [r3, #0]
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080cbb70
 	bl	0x080ca2fc
@@ -344,11 +344,11 @@ Func_080cb8e8:
 	bl	0x080cdf5c
 	bl	Object_GetById
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 .L_080cbbc8:
 	bl	Func_080cb05c
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #520]
 	ldr	r0, [r3, #4]
 	mov	lr, r0
@@ -366,7 +366,7 @@ Func_080cb8e8:
 .L_080cbbf0:
 	movs	r0, #10
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	Func_080cafc4
 	cmp	r0, #0
 	beq.n	.L_080cbc02
@@ -386,7 +386,7 @@ Func_080cb8e8:
 	movs	r0, #92
 	bl	Func_08014cc0
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #92
 	bl	Runtime_ReleaseSlot
 .L_080cbc2a:
@@ -408,7 +408,7 @@ Func_080cb8e8:
 	movs	r0, #92
 	bl	Func_08014cc0
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #92
 	bl	Runtime_ReleaseSlot
 .L_080cbc5c:
@@ -424,7 +424,7 @@ Func_080cb8e8:
 	lsrs	r3, r0, #31
 	adds	r0, r0, r3
 	asrs	r0, r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cbc7a:
 	ldr	r7, [pc, #356]
 	movs	r3, #128
@@ -507,11 +507,11 @@ Func_080cb8e8:
 	movs	r5, #48
 	adds	r5, #255
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cbd38
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r3, [pc, #180]
 	movs	r4, #240
 	lsls	r4, r4, #1
@@ -563,7 +563,7 @@ Func_080cb8e8:
 .L_080cbd8c:
 	movs	r0, #130
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	bl	.L_080cb8e8
 	mov	r9, r0
 	bl	Object_ResetMotion
@@ -707,7 +707,7 @@ Func_080cb8e8:
 	bl	0x08038040
 	ldr	r3, [pc, #52]
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r4, [pc, #36]
 	adds	r6, r0, #0
 	strh	r4, [r6, #56]
@@ -1154,7 +1154,7 @@ Func_080cb8e8:
 	bl	0x080cb82c
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r3, [pc, #168]
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
@@ -1175,7 +1175,7 @@ Func_080cb8e8:
 .L_080cc280:
 	movs	r0, #8
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cc298
 	movs	r2, #181
@@ -1198,7 +1198,7 @@ Func_080cb8e8:
 	bl	Func_080cb8a4
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	Func_080ad2b8
 	mov	r4, sl
 	mov	r0, fp
@@ -1254,7 +1254,7 @@ Func_080cb8e8:
 	bne.n	.L_080cc33a
 	bl	0x080cb82c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cc33a:
 	movs	r1, #0
 	ldrsh	r0, [r5, r1]
@@ -1303,7 +1303,7 @@ Func_080cb8e8:
 	bl	0x080cb82c
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r1, [pc, #172]
 	ldrb	r3, [r1, #0]
 	cmp	r3, #0
@@ -1332,7 +1332,7 @@ Func_080cb8e8:
 .L_080cc3d8:
 	movs	r0, #8
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cc3f0
 	movs	r2, #181
@@ -1353,7 +1353,7 @@ Func_080cb8e8:
 	strh	r0, [r3, #0]
 	movs	r0, #191
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080cc460
 	movs	r3, #192
@@ -1380,7 +1380,7 @@ Func_080cb8e8:
 	ldr	r3, [pc, #20]
 	movs	r0, #1
 	strh	r3, [r5, #4]
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cc444:
 	movs	r0, #0
 	bl	Func_08038358
@@ -1400,7 +1400,7 @@ Func_080cb8e8:
 	bl	Func_080cb8a4
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r3, #175
 .L_080cc476:
 	lsls	r3, r3, #1
@@ -1415,7 +1415,7 @@ Func_080cb8e8:
 .L_080cc488:
 	movs	r0, #130
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	bl	.L_080cb8e8
 	cmp	r0, #0
 	beq.n	.L_080cc49c
@@ -1424,7 +1424,7 @@ Func_080cb8e8:
 	ldr	r5, [pc, #164]
 .L_080cc49e:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_080cb8e8
 	ldr	r3, [pc, #156]
 	mov	r9, r0
@@ -1433,7 +1433,7 @@ Func_080cb8e8:
 	beq.n	.L_080cc4be
 	movs	r0, #100
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080cc4f0
 .L_080cc4be:
@@ -1486,10 +1486,10 @@ Func_080cb8e8:
 	movs	r3, #0
 	strh	r3, [r7, #0]
 	ldr	r0, [r5, #0]
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cc524:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #108
 	bl	Runtime_ReleaseSlot
 	adds	r0, r6, #0

@@ -40,7 +40,7 @@
 	overlay_veneer Func_080201e0
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_080201f0
-	overlay_veneer Func_08020218
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020228
 	overlay_veneer Func_08020230
 	overlay_veneer Func_08020278
@@ -53,7 +53,7 @@
 	overlay_veneer Func_080ad048
 	overlay_veneer Func_080ad0c0
 	overlay_veneer Func_080ad0c8
-	overlay_veneer Func_080ad0f8
+	overlay_veneer Party_AddActiveOwnerFar
 	overlay_veneer Func_080ad110
 	overlay_veneer Func_080c8010
 	overlay_veneer Func_080c8018
@@ -105,7 +105,7 @@
 	overlay_veneer Func_080c83b8
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c85c0
-	overlay_veneer Func_080c85d0
+	overlay_veneer Event_ClearInvalidPackedValuesFar
 	overlay_veneer Func_080c85e8
 	overlay_veneer Func_080c85f0
 	overlay_veneer Func_080c85f8

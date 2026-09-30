@@ -369,7 +369,7 @@ Func_080dcb44:
 	asrs	r2, r0, #16
 	lsls	r1, r1, #1
 	adds	r0, r2, r1
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #16
 	asrs	r2, r0, #16
 	movs	r5, #0

@@ -15,7 +15,7 @@ Func_08122514:
 	adds	r7, r0, #0
 	movs	r1, #0
 	ldrsh	r0, [r7, r1]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #24]
 	movs	r2, #1
 	movs	r3, #0
@@ -401,7 +401,7 @@ Func_08122514:
 	cmp	r6, #0
 	beq.n	.L_08122840
 	ldrh	r0, [r1, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r5, r0, #0
 	ldrb	r3, [r5, #12]
 	cmp	r3, #1
@@ -871,7 +871,7 @@ Func_08122514:
 	lsrs	r0, r0, #30
 	movs	r1, #3
 	adds	r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, r8
 	movs	r3, #3
 	ldrb	r2, [r1, #0]

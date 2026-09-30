@@ -186,7 +186,7 @@ Func_080d45d8:
 	adds	r6, r6, r3
 .L_080d4750:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #44
 	adds	r5, #1
 	adds	r2, #255

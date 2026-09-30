@@ -276,7 +276,7 @@ Func_0811d7e8:
 	movs	r0, #0
 	b.n	.L_0811ddb2
 .L_0811d9f8:
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0
@@ -340,7 +340,7 @@ Func_0811d7e8:
 	lsls	r3, r3, #6
 	str	r3, [r6, #0]
 	adds	r0, r7, #0
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811da82:
 	mov	r2, fp
 	movs	r1, #6
@@ -519,7 +519,7 @@ Func_0811d7e8:
 	strb	r3, [r7, #0]
 	strb	r4, [r5, #0]
 	ldrb	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #165
 	lsls	r1, r1, #1
 	adds	r3, r0, r1
@@ -674,7 +674,7 @@ Func_0811d7e8:
 	bne.n	.L_0811dd68
 	bl	BattlePresentation_WaitForAdvance
 	movs	r0, #3
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811dd68:
 	movs	r0, #0
 	movs	r1, #0
@@ -762,7 +762,7 @@ Func_0811d7e8:
 	cmp	r0, #0
 	beq.n	.L_0811de4c
 	ldrb	r0, [r5, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #56
 	ldrsh	r3, [r0, r2]
 	ldr	r1, [sp, #0]
@@ -860,7 +860,7 @@ Func_0811d7e8:
 	lsls	r5, r6, #1
 .L_0811dee2:
 	ldrsh	r0, [r7, r5]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #60
 	adds	r2, r0, #0
 	adds	r1, #255
@@ -876,7 +876,7 @@ Func_0811d7e8:
 	ldrsh	r0, [r5, r7]
 	bl	Func_0811bec8
 	movs	r0, #8
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811df0c:
 	movs	r3, #1
 	subs	r6, #1
@@ -903,7 +903,7 @@ Func_0811d7e8:
 	strh	r3, [r2, #2]
 	bl	Func_0811bec8
 	movs	r0, #8
-	bl	0x08013560
+	bl	WaitFrames
 	ldrb	r0, [r6, #0]
 	bl	0x0811f3b8
 	ldrb	r0, [r6, #0]
@@ -1121,7 +1121,7 @@ Func_0811d7e8:
 	strh	r3, [r1, #0]
 	movs	r0, #1
 	adds	r6, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #16
 	bne.n	.L_0811e0e0
 	mov	r2, sl
@@ -1417,7 +1417,7 @@ Func_0811d7e8:
 	strh	r3, [r1, #0]
 	movs	r0, #1
 	adds	r6, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #16
 	bne.n	.L_0811e316
 	movs	r6, #0
@@ -1442,7 +1442,7 @@ Func_0811d7e8:
 	movs	r0, #0
 	bl	0x08126804
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	add	sp, #136
 	pop	{r3, r5, r6, r7}

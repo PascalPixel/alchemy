@@ -374,7 +374,7 @@ Func_081638d0:
 	add	r8, r5
 	bl	0x081434f8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #2
 	mov	r0, r8
 	add	r9, r3

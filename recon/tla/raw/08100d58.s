@@ -77,6 +77,6 @@ Func_08100d58:
 	.2byte 0x0810
 	push	{lr}
 	adds	r0, r0, r1
-	bl	0x08002064
+	bl	Math_Mod
 	pop	{pc}
 	.2byte 0x0000

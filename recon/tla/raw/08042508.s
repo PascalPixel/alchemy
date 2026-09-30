@@ -53,12 +53,3 @@ Func_08042508:
 .L_08042568:
 	add	sp, #16
 	pop	{r5, r6, r7, pc}
-	push	{lr}
-	cmp	r0, #0
-	beq.n	.L_08042578
-	movs	r3, #0
-	strb	r1, [r0, #5]
-	strh	r3, [r0, #12]
-.L_08042578:
-	pop	{pc}
-	.2byte 0x0000

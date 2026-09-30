@@ -19,7 +19,7 @@ Func_080464dc:
 	mov	sl, r4
 	mov	r8, r2
 	str	r3, [sp, #60]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #56]
 	mov	r1, sl
 	ldr	r0, [r1, #0]
@@ -1530,7 +1530,7 @@ Func_080464dc:
 	blt.n	.L_0804715a
 	adds	r0, r6, #0
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r6, r0, #0
 	b.n	.L_08047152
 	movs	r0, r0
@@ -1561,7 +1561,7 @@ Func_080464dc:
 	adds	r5, r5, r0
 	movs	r1, #3
 	adds	r0, r6, #3
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r6, r5, r0
 .L_08047152:
 	ldr	r3, [sp, #456]
@@ -1736,7 +1736,7 @@ Func_080464dc:
 	ldrsb	r6, [r3, r6]
 	movs	r1, #3
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r5, r0, #0
 	lsls	r5, r5, #24
 	asrs	r5, r5, #23
@@ -1968,7 +1968,7 @@ Func_080464dc:
 	bl	.L_0804846e
 .L_0804746c:
 	ldr	r0, [sp, #144]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #64]
 	ldr	r0, [sp, #92]
 	cmp	r0, #0
@@ -2002,7 +2002,7 @@ Func_080464dc:
 .L_080474ac:
 	adds	r0, r5, #0
 	str	r2, [sp, #8]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r1, r5, #0
 	ldr	r0, [sp, #144]
 	bl	.L_080499b4
@@ -2037,7 +2037,7 @@ Func_080464dc:
 .L_080474f0:
 	adds	r0, r5, #0
 	str	r2, [sp, #8]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r1, r5, #0
 	ldr	r0, [sp, #144]
 	bl	.L_080499b4
@@ -2127,7 +2127,7 @@ Func_080464dc:
 	bl	0x0803c9bc
 .L_080475a0:
 	ldr	r0, [sp, #136]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r2, [sp, #128]
 	ldr	r4, [sp, #128]
 	movs	r1, #12
@@ -2170,7 +2170,7 @@ Func_080464dc:
 	mov	fp, r2
 .L_080475fc:
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r0, #15
 	bl	0x08041f70
 	adds	r1, r5, #0
@@ -2372,7 +2372,7 @@ Func_080464dc:
 	ldr	r0, [sp, #136]
 	mov	r8, r1
 	str	r3, [sp, #60]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r2, [sp, #64]
 	movs	r3, #88
 	ldrh	r3, [r2, r3]
@@ -2487,7 +2487,7 @@ Func_080464dc:
 	bl	0x0803c9bc
 .L_0804787a:
 	ldr	r0, [sp, #136]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r2, [sp, #128]
 	ldr	r4, [sp, #128]
 	movs	r1, #12
@@ -2801,7 +2801,7 @@ Func_080464dc:
 	mov	sl, r1
 	mov	fp, r2
 	mov	r9, r1
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r4, [sp, #128]
 	movs	r2, #14
 	ldrsh	r1, [r4, r2]
@@ -3108,7 +3108,7 @@ Func_080464dc:
 	subs	r6, r3, r0
 	movs	r1, #3
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #128
 	lsls	r0, r0, #1
 	adds	r5, r0, #0
@@ -3132,7 +3132,7 @@ Func_080464dc:
 	cmp	r1, #0
 	bne.n	.L_08047db2
 	ldr	r0, [sp, #136]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r3, [sp, #128]
 	movs	r4, #14
 	ldrsh	r1, [r3, r4]
@@ -4190,7 +4190,7 @@ Func_080464dc:
 	bl	Audio_PlayCue
 .L_080485f8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08046ca8
 .L_08048602:
 	add	r5, sp, #420
@@ -4214,7 +4214,7 @@ Func_080464dc:
 	ldr	r0, [sp, #120]
 	bl	0x08014274
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	Func_08041b68
 	movs	r1, #1
 	ldr	r0, [sp, #136]
@@ -4236,7 +4236,7 @@ Func_080464dc:
 	bl	0x08118120
 	bl	Func_08118118
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #84]
 	bl	Func_08013164
 	movs	r3, #185
@@ -4314,7 +4314,7 @@ Func_080464dc:
 	mov	sl, r2
 	str	r3, [sp, #36]
 	ldr	r0, [sp, #76]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r0, #248
 	movs	r7, #0
 	mov	r8, r0
@@ -4689,7 +4689,7 @@ Func_080464dc:
 	bne.n	.L_08048aba
 .L_080489fa:
 	mov	r0, r9
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r1, [sp, #56]
 	mov	r0, fp
 	lsls	r3, r0, #2
@@ -5249,7 +5249,7 @@ Func_080464dc:
 	cmp	r2, #0
 	beq.n	.L_08048e5c
 	adds	r0, r2, #0
-	bl	Func_08039430
+	bl	RenderOutput_ClearList
 .L_08048e5c:
 	movs	r3, #1
 	str	r3, [sp, #32]
@@ -5313,7 +5313,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_08048ed0
 	adds	r0, r3, #0
-	bl	Func_08039430
+	bl	RenderOutput_ClearList
 .L_08048ed0:
 	movs	r1, #1
 	movs	r0, #0
@@ -5556,7 +5556,7 @@ Func_080464dc:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x2001
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08048808
 .L_080490c2:
 	movs	r3, #192
@@ -5597,7 +5597,7 @@ Func_080464dc:
 	ldr	r0, [sp, #56]
 	bl	Func_08013164
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #224
 	pop	{r3, r5, r6, r7}
@@ -5905,7 +5905,7 @@ Func_080464dc:
 	b.n	.L_08049546
 .L_08049390:
 	ldr	r0, [sp, #76]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	movs	r7, #0
 	ldr	r5, [sp, #84]
 	movs	r0, #0
@@ -6665,11 +6665,11 @@ Func_080464dc:
 	str	r1, [sp, #16]
 .L_08049952:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08049302
 .L_0804995a:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r4, #3
 	add	r5, sp, #96
 .L_08049964:
@@ -6693,7 +6693,7 @@ Func_080464dc:
 	ldr	r0, [sp, #76]
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #372
 	pop	{r3, r5, r6, r7}
@@ -6714,7 +6714,7 @@ Func_080464dc:
 	cmp	r6, #0
 	beq.n	.L_08049a00
 	adds	r0, r6, #0
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r5, r0, #0
 	ldrb	r3, [r5, #12]
 	movs	r0, #1

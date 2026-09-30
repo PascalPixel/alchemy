@@ -156,23 +156,3 @@ RenderOutput_Create:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x36e0
 	.2byte 0x0200
-	push	{r5, r6, lr}
-	sub	sp, #4
-	adds	r5, r2, #0
-	adds	r6, r3, #0
-	bl	Func_0803f1d4
-	cmp	r0, #0
-	bge.n	.L_080423b0
-	movs	r0, #0
-	b.n	.L_080423c0
-.L_080423b0:
-	ldr	r3, [sp, #16]
-	movs	r1, #128
-	str	r3, [sp, #0]
-	lsls	r1, r1, #23
-	adds	r2, r5, #0
-	adds	r3, r6, #0
-	bl	RenderOutput_Create
-.L_080423c0:
-	add	sp, #4
-	pop	{r5, r6, pc}

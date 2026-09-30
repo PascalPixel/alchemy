@@ -31,7 +31,7 @@ Func_080d7524:
 	str	r1, [sp, #8]
 	bl	0x080d22a8
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #173
 	bl	Audio_PlayCue
 	movs	r1, #1
@@ -43,7 +43,7 @@ Func_080d7524:
 	mov	r0, r9
 	bl	Motion_SetVarCbAndRefresh
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #8]
 	movs	r3, #128
 	lsls	r3, r3, #8
@@ -53,7 +53,7 @@ Func_080d7524:
 	mov	r0, r9
 	bl	0x080d3838
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #4
 	adds	r1, #255
 	movs	r2, #50
@@ -83,7 +83,7 @@ Func_080d7524:
 	lsls	r3, r3, #11
 	str	r3, [r7, #40]
 	movs	r0, #33
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [r7, #80]
 	movs	r3, #13
 	ldrb	r2, [r1, #9]
@@ -95,13 +95,13 @@ Func_080d7524:
 	ldr	r3, [pc, #384]
 	movs	r0, #35
 	str	r3, [r7, #40]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #152
 	bl	Audio_PlayCue
 	ldr	r3, [pc, #372]
 	movs	r0, #38
 	str	r3, [r7, #40]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r7, #80]
 	movs	r6, #0
 	ldr	r3, [r3, #40]
@@ -184,7 +184,7 @@ Func_080d7524:
 	bl	Object_SetMode
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r0, [r5, #80]
 	ldr	r1, [sp, #12]
 	bl	0x080dc0d8
@@ -216,12 +216,12 @@ Func_080d7524:
 	movs	r2, #5
 	bl	ObjectMotion_Launch
 	movs	r0, #24
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r6, #0
 	b.n	.L_080d770a
 .L_080d7702:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r6, #1
 .L_080d770a:
 	cmp	r6, #119
@@ -303,7 +303,7 @@ Func_080d7524:
 .L_080d77aa:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080d77d0
 	lsls	r0, r5, #2
@@ -316,7 +316,7 @@ Func_080d7524:
 	adds	r3, r3, r2
 	adds	r0, #48
 	ldr	r7, [r3, #0]
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_080d77da
 .L_080d77d0:
 	adds	r0, r5, #0
@@ -400,7 +400,7 @@ Func_080d7524:
 	mov	sl, r0
 	movs	r0, #10
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080d7926
 	cmp	r7, #0
@@ -538,7 +538,7 @@ Func_080d7524:
 .L_080d7992:
 	adds	r0, r6, #0
 	subs	r0, #172
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	strh	r5, [r7, #0]
 	b.n	.L_080d7a48
 .L_080d799e:
@@ -561,7 +561,7 @@ Func_080d7524:
 	beq.n	.L_080d7a3e
 	adds	r0, r6, #0
 	str	r1, [sp, #0]
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r1, [sp, #0]
 	b.n	.L_080d7a3e
 .L_080d79cc:
@@ -592,7 +592,7 @@ Func_080d7524:
 	movs	r1, #20
 	mov	r8, r0
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r5, #8
 	adds	r7, r0, #0
 	b.n	.L_080d7a10
@@ -613,7 +613,7 @@ Func_080d7524:
 	cmp	r3, r2
 	bne.n	.L_080d7a0e
 	movs	r0, #40
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, r8
 	adds	r0, r5, #0
 	adds	r2, r7, #0
@@ -704,7 +704,7 @@ Func_080d7524:
 	movs	r0, #224
 	bl	Runtime_ReleaseSlot
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.2byte 0x7a59

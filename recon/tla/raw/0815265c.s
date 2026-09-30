@@ -1177,7 +1177,7 @@ Func_0815265c:
 	ldr	r0, [sp, #84]
 	ldr	r1, [r0, #20]
 	ldr	r0, [sp, #72]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r1, [sp, #72]
 	ldr	r2, [sp, #40]
 	mov	sl, r0
@@ -1343,7 +1343,7 @@ Func_0815265c:
 	movs	r1, #3
 	bl	Math_Div
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #3
 	ldr	r3, [sp, #60]
 	ldr	r6, [sp, #76]
@@ -1367,7 +1367,7 @@ Func_0815265c:
 	movs	r1, #3
 	bl	Math_Div
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #3
 	adds	r1, r1, r0
 	ldr	r0, [sp, #60]
@@ -1676,7 +1676,7 @@ Func_0815265c:
 	add	r0, r9
 	asrs	r0, r0, #1
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #1
 	mov	r2, r9
 	ands	r3, r2
@@ -1716,12 +1716,12 @@ Func_0815265c:
 	bne.n	.L_081533cc
 	movs	r1, #5
 	mov	r0, r9
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r5, r0, #1
 	movs	r1, #3
 	adds	r5, r5, r0
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [pc, #828]
 	adds	r5, r5, r0
 	ldrb	r4, [r3, r5]
@@ -2455,7 +2455,7 @@ Func_0815265c:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [sp, #24]
 	ldr	r0, [sp, #72]
 	ldr	r1, [sp, #64]
@@ -2792,7 +2792,7 @@ Func_0815265c:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	add	sl, r3
 	mov	r2, sl
@@ -2891,7 +2891,7 @@ Func_0815265c:
 	mov	r0, sl
 	movs	r1, #6
 	ands	r6, r3
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #5
 	bne.n	.L_08153cde
 	mov	r2, r8
@@ -3100,7 +3100,7 @@ Func_0815265c:
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #36]
 	adds	r3, #1
 	str	r3, [sp, #36]

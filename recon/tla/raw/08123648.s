@@ -165,7 +165,7 @@ Func_08123648:
 	bne.n	.L_08123786
 	adds	r0, r5, #0
 	str	r4, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #56
 	ldrsh	r3, [r0, r2]
 	ldr	r4, [sp, #0]
@@ -270,7 +270,7 @@ Func_08123648:
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
 	mov	sl, r2
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r1, sp
 	mov	r2, sp
 	adds	r1, #20
@@ -320,7 +320,7 @@ Func_08123648:
 	beq.n	.L_08123918
 	movs	r0, #110
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08123918
 	ldr	r1, [pc, #820]
@@ -856,7 +856,7 @@ Func_08123648:
 	ldr	r3, [r4, #0]
 	adds	r2, #216
 	ldrh	r0, [r3, r2]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r5, r0, #0
 	ldrh	r7, [r5, #40]
 	cmp	r7, #0
@@ -1332,7 +1332,7 @@ Func_08123648:
 	ldr	r0, [pc, #664]
 	bl	0x080381c8
 	movs	r0, #60
-	bl	0x08013560
+	bl	WaitFrames
 .L_081241aa:
 	movs	r0, #1
 	negs	r0, r0
@@ -1568,7 +1568,7 @@ Func_08123648:
 	mov	r2, fp
 	ldr	r3, [r2, #0]
 	ldrb	r0, [r3, #3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r3, fp
 	ldr	r2, [r3, #0]
 	mov	r4, sl
@@ -1692,7 +1692,7 @@ Func_08123648:
 .L_08124484:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08124498
 	mov	r1, fp

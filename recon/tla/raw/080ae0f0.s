@@ -26,7 +26,7 @@ Func_080ae0f0:
 	adds	r0, r6, #0
 	subs	r5, r6, #1
 	adds	r0, #67
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r1, #1
 	adds	r2, r5, #0
 	movs	r0, #7
@@ -52,7 +52,7 @@ Func_080ae0f0:
 	ldrb	r0, [r5, #0]
 	subs	r6, #1
 	adds	r5, #1
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	cmp	r6, #0
 	bne.n	.L_080ae158
 .L_080ae166:
@@ -74,7 +74,7 @@ Func_080ae0f0:
 	lsls	r1, r1, #2
 	adds	r3, r6, r1
 	ldrb	r0, [r2, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	ldrh	r1, [r5, #52]
 	ldrh	r3, [r5, #54]
@@ -173,7 +173,7 @@ Func_080ae0f0:
 	bne.n	.L_080ae258
 	movs	r0, #136
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ae270
 	movs	r0, #137
@@ -182,13 +182,13 @@ Func_080ae0f0:
 .L_080ae258:
 	movs	r0, #18
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ae270
 	movs	r0, #20
 	adds	r0, #255
 .L_080ae268:
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ae272
 .L_080ae270:
@@ -197,7 +197,7 @@ Func_080ae0f0:
 	cmp	r5, #0
 	beq.n	.L_080ae2e6
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	ldrh	r3, [r5, #54]
 	strh	r3, [r5, #58]
@@ -271,7 +271,7 @@ Func_080ae0f0:
 	push	{r6, r7}
 	mov	r8, r1
 	mov	sl, r2
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r6, #1
 	adds	r7, r0, #0
 	negs	r6, r6
@@ -344,7 +344,7 @@ Func_080ae0f0:
 	ldrb	r5, [r7, #0]
 	str	r4, [sp, #0]
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #140
 	ldr	r4, [sp, #0]
 	lsls	r3, r3, #1

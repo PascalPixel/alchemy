@@ -60,7 +60,7 @@ Func_081a6030:
 	ldr	r7, [pc, #28]
 .L_081a60a0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x08014878
 	ldr	r3, [r7, #4]
 	movs	r0, #1
@@ -1794,7 +1794,7 @@ Func_081a6030:
 	strh	r0, [r6, #4]
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #16
 	cmp	r0, #0
 	bne.n	.L_081a6e38
@@ -1909,7 +1909,7 @@ Func_081a6030:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [pc, #92]
 	bl	Resource_GetTableEntry
 	movs	r3, #128
@@ -1928,7 +1928,7 @@ Func_081a6030:
 	lsls	r2, r2, #19
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #128
 	lsls	r0, r0, #2
 	adds	r6, r6, r0
@@ -1945,7 +1945,7 @@ Func_081a6030:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r7, [pc, #20]
 	b.n	.L_081a6f84
 	.4byte 0x00007fff
@@ -2031,7 +2031,7 @@ Func_081a6030:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #128
 	lsls	r0, r0, #9
 	movs	r1, #0
@@ -2186,7 +2186,7 @@ Func_081a6030:
 	movs	r0, #10
 	bl	Func_081a8228
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 .L_081a7172:
 	movs	r3, #0
 	mov	r0, fp
@@ -2204,7 +2204,7 @@ Func_081a6030:
 	movs	r0, #172
 	bl	Runtime_ReleaseSlot
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sp, #36
 	pop	{r3, r5, r6, r7}
@@ -2232,7 +2232,7 @@ Func_081a6030:
 	bl	0x08014b70
 	bl	0x08014368
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080144c0
 	ldr	r2, [pc, #164]
 	movs	r3, #0
@@ -2269,7 +2269,7 @@ Func_081a6030:
 	movs	r0, #10
 	bl	Func_081a8228
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	beq.n	.L_081a7248
 .L_081a7244:
@@ -2279,7 +2279,7 @@ Func_081a6030:
 	movs	r3, #1
 	strb	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #60]
 	movs	r2, #0
 	movs	r5, #3

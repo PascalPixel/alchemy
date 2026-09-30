@@ -47,7 +47,7 @@ Func_080ce0ac:
 	adds	r5, r3, r2
 .L_080ce102:
 	ldrb	r0, [r5, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #0
 	adds	r0, #216
 	movs	r1, #14
@@ -76,7 +76,7 @@ Func_080ce0ac:
 	b.n	.L_080ce15a
 .L_080ce136:
 	mov	r0, sl
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #128
 	lsls	r4, r4, #1
 	adds	r4, #255
@@ -114,10 +114,10 @@ Func_080ce0ac:
 	beq.n	.L_080ce1ee
 	movs	r0, #68
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #161
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldrh	r2, [r6, #4]
 	movs	r3, #128
 	lsls	r3, r3, #3
@@ -164,11 +164,11 @@ Func_080ce0ac:
 	movs	r7, #161
 	adds	r0, #255
 	lsls	r7, r7, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	adds	r0, r7, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	mov	r0, fp
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]
@@ -178,14 +178,14 @@ Func_080ce0ac:
 	beq.n	.L_080ce2d4
 	movs	r0, #70
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	adds	r0, r7, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	cmp	r5, #149
 	bne.n	.L_080ce282
 	movs	r0, #162
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ce282
 	mov	r0, fp
@@ -250,18 +250,18 @@ Func_080ce0ac:
 	strb	r3, [r6, #0]
 	bl	Func_080dc7e8
 	mov	r0, fp
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #12]
 	ands	r5, r3
 	cmp	r5, #0
 	beq.n	.L_080ce2d4
 	movs	r0, #68
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080ce2d4:
 	movs	r0, #161
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ce2e8
 	ldr	r0, [pc, #44]
@@ -270,7 +270,7 @@ Func_080ce0ac:
 .L_080ce2e8:
 	movs	r0, #68
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ce2fc
 	mov	r0, sl
@@ -356,7 +356,7 @@ Func_080ce0ac:
 .L_080ce3a0:
 	movs	r2, #6
 	ldrsh	r0, [r5, r2]
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	beq.n	.L_080ce426
 	mov	r3, r8

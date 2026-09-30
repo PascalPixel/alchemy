@@ -20,7 +20,7 @@ Func_081185c4:
 	ldr	r5, [pc, #340]
 	str	r4, [sp, #0]
 	ldrb	r0, [r5, r4]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r4, [sp, #0]
 	adds	r6, r0, #0
 	ldrb	r0, [r5, r4]
@@ -253,14 +253,14 @@ Func_081185c4:
 	b.n	.L_081188ea
 .L_081187be:
 	mov	r0, r8
-	bl	0x080ad0f8
+	bl	Party_AddActiveOwnerFar
 	ldr	r1, [pc, #104]
 	mov	r0, r8
 	adds	r3, r5, r1
 	ldrb	r1, [r3, #1]
 	bl	0x080ad198
 	mov	r0, r8
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r5, #140
 	adds	r1, r0, #0
 	adds	r2, r1, #0
@@ -336,15 +336,15 @@ Func_081185c4:
 	movs	r1, #18
 	adds	r0, #7
 	str	r4, [sp, #0]
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r7, #0
 	adds	r2, r0, #0
 	mov	r0, r8
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	ldr	r0, [r6, r5]
 	movs	r1, #18
 	adds	r0, #7
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r7, #0
 	adds	r2, r0, #0
 	mov	r0, r8

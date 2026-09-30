@@ -10,7 +10,7 @@ Func_080cb05c:
 	lsls	r3, r3, #18
 	adds	r0, #255
 	ldr	r5, [r3, #108]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cb08c
 	movs	r0, #153

@@ -18,7 +18,7 @@ Func_080ec1d0:
 	ldr	r5, [r3, #108]
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r2, #197
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
@@ -46,7 +46,7 @@ Func_080ec1d0:
 	cmp	r6, r2
 	bgt.n	.L_080ec238
 	adds	r0, r7, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r3, #224
 	lsls	r3, r3, #3
 	adds	r3, #174
@@ -188,7 +188,7 @@ Func_080ec1d0:
 	cmp	r0, #15
 	beq.n	.L_080ec396
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_080ec396
@@ -308,7 +308,7 @@ Func_080ec1d0:
 	cmp	r0, #15
 	beq.n	.L_080ec424
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r2, [sp, #4]
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
@@ -716,7 +716,7 @@ Func_080ec1d0:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #222
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ec730
 	b.n	.L_080ec950
@@ -794,7 +794,7 @@ Func_080ec1d0:
 	.2byte 0xffff
 .L_080ec7dc:
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ec7e8
 	b.n	.L_080ec950
@@ -1700,7 +1700,7 @@ Func_080ec1d0:
 	lsls	r1, r1, #2
 	adds	r0, #128
 	str	r2, [sp, #0]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [sp, #0]
 	movs	r1, #128
 	lsls	r3, r2, #2
@@ -1794,7 +1794,7 @@ Func_080ec1d0:
 	movs	r1, #192
 	lsls	r1, r1, #2
 	adds	r0, #128
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #128
 	lsls	r3, r3, #1
 	mov	r2, sl
@@ -1880,7 +1880,7 @@ Func_080ec1d0:
 	mov	r1, sl
 	adds	r0, #128
 	str	r4, [sp, #0]
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r5, r5, #6
 	ldr	r2, [pc, #48]
 	adds	r5, r7, r5
@@ -2256,7 +2256,7 @@ Func_080ec1d0:
 	movs	r3, #1
 	strh	r3, [r1, #4]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r4, #144
 	ldr	r2, [sp, #20]
 	ldr	r5, [pc, #24]
@@ -2302,7 +2302,7 @@ Func_080ec1d0:
 	ldr	r2, [sp, #12]
 	movs	r0, #1
 	strh	r5, [r2, #4]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #82
@@ -2385,7 +2385,7 @@ Func_080ec1d0:
 	strh	r6, [r3, #0]
 	bl	.L_080ece20
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #134
 	movs	r3, #128
 	lsls	r2, r2, #8
@@ -2399,12 +2399,12 @@ Func_080ec1d0:
 	strh	r2, [r3, #0]
 	movs	r0, #142
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ed47a
 	movs	r0, #143
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ed48c
 .L_080ed47a:
@@ -2428,7 +2428,7 @@ Func_080ec1d0:
 	mov	r5, sl
 	bl	.L_080ec4d4
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [r5, #12]
 	movs	r3, #8
 	ands	r2, r3
@@ -2679,7 +2679,7 @@ Func_080ec1d0:
 	movs	r0, #10
 	strh	r2, [r3, #0]
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_080ed778
 	movs	r0, r0
 	.4byte 0x06003000
@@ -2814,7 +2814,7 @@ Func_080ec1d0:
 	adds	r5, r2, #0
 .L_080ed7c2:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r6, #0]
 	ands	r3, r5
 	cmp	r3, #0

@@ -142,6 +142,6 @@ Func_0803cd5c:
 	cmp	r6, #3
 	bne.n	.L_0803ce2c
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r5, r6, pc}
 	.2byte 0x0000

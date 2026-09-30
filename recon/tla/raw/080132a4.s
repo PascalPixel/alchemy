@@ -8,7 +8,7 @@ Func_080132a4:
 .L_080132a8:
 	movs	r0, #1
 	ldr	r3, [r5, #4]
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080132a8
 	movs	r0, r0
 	.2byte 0x1150

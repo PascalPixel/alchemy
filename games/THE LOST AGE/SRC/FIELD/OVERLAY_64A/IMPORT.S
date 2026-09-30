@@ -39,7 +39,7 @@
 	overlay_veneer Func_080381f8
 	overlay_veneer Func_08038210
 	overlay_veneer Func_08038260
-	overlay_veneer Func_08038270
+	overlay_veneer UiWindow_SetTilemapEntryFar
 	overlay_veneer Func_080382c0
 	overlay_veneer Func_080382c8
 	overlay_veneer Func_080382d0
@@ -57,7 +57,7 @@
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Func_080ad028
 	overlay_veneer Func_080ad090
-	overlay_veneer Func_080ad0f8
+	overlay_veneer Party_AddActiveOwnerFar
 	overlay_veneer Func_080ad110
 	overlay_veneer Func_080ad200
 	overlay_veneer Func_080ad238

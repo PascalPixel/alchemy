@@ -19,10 +19,13 @@ Item_GetDirect:
 	bx	lr
 	.2byte 0x2364
 	.2byte 0x080b
+	.global Item_CanOwnerEquipDirect
+	.thumb_func
+Item_CanOwnerEquipDirect:
 .L_080aec1c:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	bl	.L_080aec04
@@ -42,19 +45,3 @@ Item_GetDirect:
 	ands	r0, r3
 .L_080aec46:
 	pop	{r5, r6, pc}
-	push	{r5, r6, lr}
-	adds	r5, r1, #0
-	adds	r6, r0, #0
-	adds	r0, r5, #0
-	bl	Func_080aec68
-	cmp	r0, #0
-	bne.n	.L_080aec5c
-	movs	r0, #1
-	b.n	.L_080aec64
-.L_080aec5c:
-	adds	r0, r6, #0
-	adds	r1, r5, #0
-	bl	.L_080aec1c
-.L_080aec64:
-	pop	{r5, r6, pc}
-	.2byte 0x0000

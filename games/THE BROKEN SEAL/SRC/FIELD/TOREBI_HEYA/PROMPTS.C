@@ -16,16 +16,16 @@ void SceneDialogue_RunFacingPrompt(s32 no)
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0x8000) {
         Shop_Open(28, no);
     } else if (GameFlag_IsSet(0x950) != 0) {
-        Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiRightOneWell);
+        Engine_EventSetMessage((s32)MsgTorebiRightOneWell);
         Event_ShowMessage(no, 0);
     } else if (GameFlag_IsSet(0x962) != 0) {
-        Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiRequireLotHealing);
+        Engine_EventSetMessage((s32)MsgTorebiRequireLotHealing);
         Event_ShowMessage(no, 0);
     } else {
         msg = (s32)MsgTorebiFirstTimeTolbi;
         Event_SetMessage(msg);
-        Scene_Value2(Engine_EventOpenMessage, no, 0);
-        if (Scene_Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+        Engine_EventOpenMessage(no, 0);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             Event_Wait(10);
             Event_SetMessage(msg + 1);
         } else {
@@ -44,8 +44,8 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
     } else if (GameFlag_IsSet(0x950) != 0) {
         msg = (s32)MsgTorebiComeWayKalay;
         Event_SetMessage(msg);
-        Scene_Value2(Engine_EventOpenMessage, no, 0);
-        if (Scene_Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+        Engine_EventOpenMessage(no, 0);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             Event_Wait(10);
             Event_SetMessage(msg + 1);
         } else {
@@ -53,12 +53,12 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
         }
         Event_ShowMessage(no, 0);
     } else if (GameFlag_IsSet(0x962) != 0) {
-        Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiColossoFinalsFinally);
+        Engine_EventSetMessage((s32)MsgTorebiColossoFinalsFinally);
         Event_ShowMessage(no, 0);
     } else {
-        Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiLookStrongGo);
+        Engine_EventSetMessage((s32)MsgTorebiLookStrongGo);
         Event_ShowMessage(no, 0);
-        Scene_Call3(Engine_ActorShowEmote, no, 0x106, 0);
+        Engine_ActorShowEmote(no, 0x106, 0);
         Event_Wait(40);
         Event_ShowMessage(no, 0);
     }

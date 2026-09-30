@@ -3,11 +3,6 @@
 
 void PositionSceneActorPair(s32 actor, s32 x, s32 z);
 
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 #define IN_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
 /* Crossbone Isle push block (actor 9), northward: by the row it stopped in and whether actors 19, 14 and 16 stand in columns 9 to 11, slide its pair back to the matching offset, then move the block's cell attributes. */
@@ -79,6 +74,6 @@ void TakaraShima_SettleSecondBlockNorth(void)
         return;
     }
     Engine_TaskWait(2);
-    Call6(Engine_MapCopyCellAttributes, cell_x - 1, cell_z, 3, 1, cell_x - 1, Engine_ActorGet(9)->z.fixed >> 20);
-    Call6(Engine_MapCopyCellAttributes, 0, 0, 3, 1, cell_x - 1, cell_z);
+    Engine_MapCopyCellAttributes(cell_x - 1, cell_z, 3, 1, cell_x - 1, Engine_ActorGet(9)->z.fixed >> 20);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, cell_x - 1, cell_z);
 }

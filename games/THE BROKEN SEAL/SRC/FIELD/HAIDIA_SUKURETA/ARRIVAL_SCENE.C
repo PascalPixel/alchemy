@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgHaidiaWho[];
 
 s32 Engine_GameFlagIsSet();
@@ -26,31 +27,6 @@ void Engine_ActorWaitForMove();
 void Engine_GameFlagSet();
 void Engine_EventEnd();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 void HaidiaSukureta_RunArrivalScene(void)
 {
     u32 i;
@@ -60,7 +36,7 @@ void HaidiaSukureta_RunArrivalScene(void)
     } else {
         Engine_EventBegin();
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-        Call1(Engine_EventSetMessage, (s32)MsgHaidiaWho);
+        Engine_EventSetMessage((s32)MsgHaidiaWho);
         Engine_EventShowMessage(13, 0);
         record = Engine_ActorGet(0);
         {
@@ -80,7 +56,7 @@ void HaidiaSukureta_RunArrivalScene(void)
         Call3(Engine_ActorFaceDirection, 5, 0xb000, 0);
         Call3(Engine_ActorFaceDirection, 1, 0xb000, 0);
         Call3(Engine_ActorFaceDirection, 0, 0xb000, 0);
-        Call4(Engine_CameraMoveTo, 0xe80000, -1, 0xf00000, 1);
+        Engine_CameraMoveTo(0xe80000, -1, 0xf00000, 1);
         Engine_CameraWaitForMove();
         Call3(Engine_ActorFaceDirection, 13, 0x8000, 20);
         Engine_ActorRunRepeatedMotion(13, 2);
@@ -114,20 +90,20 @@ void HaidiaSukureta_RunArrivalScene(void)
         Engine_CameraFollowActor(0, 1);
         Engine_CameraWaitForMove();
         Engine_ActorSetAnimation(1, 2);
-        record = Value1(Engine_ActorGet, 0);
+        record = Engine_ActorGet(0);
         if (record != 0) {
             Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(1);
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetAnimation(5, 2);
-        record = Value1(Engine_ActorGet, 0);
+        record = Engine_ActorGet(0);
         if (record != 0) {
             Engine_ActorSetDestination(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(5);
         Engine_ActorSetPosition(5, 0, 0);
-        Call1(Engine_GameFlagSet, 0x800);
+        Engine_GameFlagSet(0x800);
         Engine_EventEnd();
     }
 }

@@ -13,7 +13,6 @@ enum InnerSanctumActor {
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED + 8
 };
 
-
 enum InnerSanctumFlag {
     FLAG_INNER_SANCTUM_ENTERED = 0x80a,
     /* The four statue lights. */
@@ -27,7 +26,6 @@ enum InnerSanctumFlag {
     FLAG_ROBIN_SEARCHING_FOR_SUKURETA = 0x896
 };
 
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 void SetSolShindenActorStep();
@@ -36,21 +34,6 @@ void SetSolShindenActorStep();
 s32 CheckAllStatueLights(void);
 
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
-
-/* FAKEMATCH: call sites spelled through these wrappers, and the three
- * further groups below, pass their constants straight into the argument
- * registers; a direct call precomputes a costly constant into a pseudo that
- * the compiler then shares with later uses in the block. A value-returning
- * call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /*
  * Withdrawn on 2026-09-10 as not reproducible, and reinstated the same night
@@ -134,27 +117,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 /* The sixteen colliding sites reach these main-image services directly. */
 
-/* FAKEMATCH: call wrappers, for the reason given with the first group. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 /* Ordinary C field access retained from the reviewed disassembly dataflow. */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 void FieldScene_RunScene37aSequenceA();  /* FieldScene_RunScene37aSequenceA (0x02000054) */
@@ -215,12 +177,6 @@ void SetSolShindenActorStep();
 void SetSolShindenActorStep();
 void SetSolShindenActorStep();
 
-/* FAKEMATCH: call wrapper, for the reason given with the first group. */
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /*
@@ -264,7 +220,6 @@ extern u16 SoruNichigetsu_Light2Timer;
 extern u16 SoruNichigetsu_Light3Timer;
 extern u16 SoruNichigetsu_Light4Timer;
 
-
 #include "TYPES.H"
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -279,12 +234,6 @@ void UpdateStatueLight1(void);
 void UpdateStatueLight2(void);
 void UpdateStatueLight3(void);
 void UpdateStatueLight4(void);
-
-/* FAKEMATCH: call wrapper, for the reason given with the first group. */
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 

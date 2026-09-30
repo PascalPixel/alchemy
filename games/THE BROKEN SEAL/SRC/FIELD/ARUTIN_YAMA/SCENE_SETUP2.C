@@ -23,7 +23,7 @@ void FieldScene_RunScene3a4_02002934(void)
     flag = gGameState.entrance;
     if (flag == 1 || flag == 98) {
         if (GameFlag_IsSet(0x109) == 0) {
-            rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
             Event_Begin();
             *(s32 *)(rec7 + 12) = 0x100000;
             Event_End();

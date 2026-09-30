@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
@@ -15,16 +16,6 @@ void OverlayObject_UpdateThreeStateMotion();
 
 /* The overlay object records (72 bytes each), from +88. */
 extern u8 *gEffectWork;
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Releases 24 objects (type 284) one per frame from a point by the cave
  * wall, each with a random frame and speed, opens the wall's cells, then

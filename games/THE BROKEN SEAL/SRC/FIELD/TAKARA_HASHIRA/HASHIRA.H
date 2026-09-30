@@ -72,8 +72,6 @@ typedef struct {
 extern u8 gCell[][2];
 extern s32 TakaraHashira_ShakeChance;
 
-
-
 s32 FieldScene_QueryActorFootprint();
 void Vector_AddPolarOffset();
 void Vector_AddPolarOffset();
@@ -118,69 +116,7 @@ void battle_owner_69();
 /* Flag/id value passed to the query call and to the two closing calls, and
  * written into the flag byte at +85 when the query call returned zero. */
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin);
 
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    s32 FieldScene_RunScene3b3SequenceD();
-
-    return f();
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    s32 FieldScene_RunScene3b3SequenceD();
-
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    s32 FieldScene_RunScene3b3SequenceD();
-
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7)
-{
-    s32 FieldScene_RunScene3b3SequenceD();
-
-    f(a0, a1, a2, a3, a4, a5, a6, a7);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6)
-{
-    f(a0, a1, a2, a3, a4, a5, a6);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 

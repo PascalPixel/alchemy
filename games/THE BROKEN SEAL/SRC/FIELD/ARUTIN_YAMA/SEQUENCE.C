@@ -1,4 +1,5 @@
 #include "YAMA.H"
+#include "CALL.H"
 
 void SceneEffect_SpawnObject222(void)
 {
@@ -51,11 +52,11 @@ void FieldScene_RunScene3a4SequenceG(void)
     s32 base6_3001e40;
 
     base6_3001e40 = (u32)&gFrameCount;
-    if (Value2(IwramUnsignedRemainderEntry, *(volatile s32 *)base6_3001e40, 3) == 0) {
-        value = Value0(Engine_RandomNext);
+    if (IwramUnsignedRemainderEntry(*(volatile s32 *)base6_3001e40, 3) == 0) {
+        value = Engine_RandomNext();
         rec7 = Value4(Engine_ObjectCreate, 200, ((((u32)(((value << 1) + value) << 4) >> 16) << 16) + 0x2fd0000), -0x400000, 0x2600000);
         if ((s32)rec7 != 0) {
-            if (Value2(IwramUnsignedRemainderEntry, *(volatile s32 *)base6_3001e40, 9) == 0) {
+            if (IwramUnsignedRemainderEntry(*(volatile s32 *)base6_3001e40, 9) == 0) {
                 {
                     s32 v2 = Random_Next();
                     if (((u32)(v2 << 1) >> 16) != 0) {
@@ -83,10 +84,10 @@ void FieldScene_RunScene3a4SequenceG(void)
             }
             Object_SetAnimation((s32)rec7, 1);
             Object_SetScript((s32)rec7, ArutinYama_SparkScript);
-            value = Value0(Engine_RandomNext);
+            value = Engine_RandomNext();
             *(s32 *)(rec7 + 36) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
             *(s32 *)(rec7 + 40) = 0x80000;
-            value = Value0(Engine_RandomNext);
+            value = Engine_RandomNext();
             *(s32 *)(rec7 + 44) = (((u32)(((value << 1) + value) << 9) >> 16) + -0x300);
         }
     }
@@ -128,7 +129,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
     Event_Begin();
     Actor_SetPosition(10, 0, 0);
     Actor_SetPosition(8, 0, 0);
@@ -146,7 +147,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     FieldScene_RunEarlySequence();
     Camera_MoveTo(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16), 1);
     Camera_WaitForMove();
-    Call1(Event_LoadAreaScript, ArutinYama_OpenedAreaScript);
+    Event_LoadAreaScript(ArutinYama_OpenedAreaScript);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Event_End();
 }

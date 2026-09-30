@@ -56,7 +56,7 @@ void FieldScene_RunPrimarySequence(void)
         p5 = *(s32 *)(rec + 16) + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
         v3 = Random_Next();
         record = Math_Divide((((u32)((v3 << 2) + v3) >> 16) << 16) + 0x30000, 10);
-        Call8(Effect_Spawn, p6, *(s32 *)(rec + 12), p5, 0, record, flag, 0x90001, (s32)base);
+        Effect_Spawn(p6, *(s32 *)(rec + 12), p5, 0, record, flag, 0x90001, (s32)base);
     }
 }
 
@@ -82,21 +82,21 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
     p[1] = *(s32 *)(rec + 12);
     p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
-    Call3(Vector_AddPolarOffset, 0x100000, mode, (s32)p);
-    if (Value2(Object_CheckMovementCollision, (s32)rec, (s32)p) == 1) {
+    Vector_AddPolarOffset(0x100000, mode, (s32)p);
+    if (Object_CheckMovementCollision((s32)rec, (s32)p) == 1) {
         goto reject;
     }
-    if (Value2(StagedActor_FindAtTile, (s32)p, (s32)rec) != 0) {
+    if (StagedActor_FindAtTile((s32)p, (s32)rec) != 0) {
         goto reject;
     }
     p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
     p[1] = *(s32 *)(rec + 12);
     p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
-    Call3(Vector_AddPolarOffset, 0x200000, mode, (s32)p);
-    if (Value2(StagedActor_FindAtTile, (s32)p, (s32)rec) != 0) {
+    Vector_AddPolarOffset(0x200000, mode, (s32)p);
+    if (StagedActor_FindAtTile((s32)p, (s32)rec) != 0) {
         goto reject;
     }
-    if (Value2(Object_CheckMovementCollision, (s32)rec, (s32)p) != 0) {
+    if (Object_CheckMovementCollision((s32)rec, (s32)p) != 0) {
         goto reject;
     }
     Event_Begin();

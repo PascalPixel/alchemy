@@ -23,11 +23,4 @@ void SceneState_SetRuntimeWord448To516(void);
 void FieldScene_RunScene398SequenceC(void);
 void Resource398_ImportBankNoOp();
 
-/* A value-returning call spelled through this wrapper sets r0 last of its
- * arguments. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 #endif

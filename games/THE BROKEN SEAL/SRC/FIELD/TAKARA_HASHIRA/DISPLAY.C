@@ -55,7 +55,7 @@ void FieldScene_RunScene3b3SequenceA(void)
     Stage_Wait(1);
     Runtime_SetIrqHandler(1, 0, 0);
     Stage_Wait(1);
-    Call1(Engine_TaskRemoveCallback, (s32)CopyAndOffsetCoordinatePreset);
+    Engine_TaskRemoveCallback((s32)CopyAndOffsetCoordinatePreset);
     Map_Redraw();
     Stage_Wait(30);
 }

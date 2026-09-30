@@ -4,6 +4,7 @@
 
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
+#include "CALL.H"
 s32 SceneActor_FaceTowardActorZero();
 void SceneActor_PublishMarkerBySlotZeroHeight(void);
 void ActorPresentation_PlaceActorFourteenOnActorNine(void);
@@ -66,39 +67,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Actor_SetPosition(actor, x, y);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 void FieldScene_RunScene3b4_02000fdc(s32 a0);
 
 s32 *Engine_GetTriggerActor(s32 slot);
@@ -169,17 +137,17 @@ void FieldScene_RunScene3b4_02002290(void)
     *(u8 *)(Object_GetById(11) + 89) = 1;
     record = Engine_GetTriggerActor(8);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1(Engine_GetTriggerActor, 9);
+    record = Engine_GetTriggerActor(9);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1(Engine_GetTriggerActor, 10);
+    record = Engine_GetTriggerActor(10);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1(Engine_GetTriggerActor, 11);
+    record = Engine_GetTriggerActor(11);
     *(s32 *)(record + 24) = 0xb333;
     record = Engine_GetTriggerActor(12);
     *(s32 *)(record + 24) = 0xb333;
     Call2(Scheduler_AddOrUpdateCallback, (s32)SceneState_TriggerColumnNineteen, 0xc80);
     Value2(Scheduler_AddOrUpdateCallback, (s32)SceneState_TriggerColumnTen, 0xc80);
-    Value2(Scheduler_AddOrUpdateCallback, (s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
     {
         u16 t;
         t = 0x3f42;
@@ -195,7 +163,7 @@ void FieldScene_RunScene3b4_02002334(void)
 
     *(u8 *)(Object_GetById(14) + 85) = 0;
     Call2(Scheduler_AddOrUpdateCallback, (s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
-    Value2(Scheduler_AddOrUpdateCallback, (s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
     MapObject_SetPosition(107, 0, 0);
     if (GameFlag_IsSet(0xed9) != 0) {
         Actor_SetAnimation(14, 2);
@@ -220,7 +188,7 @@ void FieldScene_RunScene3b4_02002334(void)
             *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
         } else if (GameFlag_IsSet(0x9c9) != 0) {
             Actor_SetPosition(15, 0x3780000, 0x2980000);
-            record = Value1(Engine_GetTriggerActor, 15);
+            record = Engine_GetTriggerActor(15);
             *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
             ObjectDispatch_ApplyValueToChildren(record, 16);
         } else if (GameFlag_IsSet(0x9c8) != 0) {

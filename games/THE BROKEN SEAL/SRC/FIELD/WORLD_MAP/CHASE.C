@@ -4,7 +4,7 @@ void FieldScene_RunScene371_02002274(void)
 {
     struct FieldActor *actor;
 
-    actor = (struct FieldActor *)Value1(Engine_ActorGet, 10);
+    actor = (struct FieldActor *)Engine_ActorGet(10);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);

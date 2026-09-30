@@ -1,5 +1,6 @@
 /* Scene tables, layouts and supplemental sequences. */
 #include "BABI.H"
+#include "CALL.H"
 s32 SceneActor_CopyActor8PositionWhenAtRow10();
 
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
@@ -98,7 +99,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     u8 *frame;
 
     Event_Begin();
-    actor = (struct FieldActor *)Value1(Object_GetById, 18);
+    actor = (struct FieldActor *)Object_GetById(18);
     if ((actor->x.fixed >> 20) == 46) {
         Event_Wait(30);
         rec2 = OverlayObject_CreateAndInitialize(0x2e80000, 0, 0xb80000, 253);
@@ -113,7 +114,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
             Actor_Get(18)->y.fixed -= 0x10000;
             rec7 = Value0(Engine_RandomNext);
             rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
-            value = Value0(Engine_RandomNext);
+            value = Engine_RandomNext();
             ((void (*)())Effect_Spawn)(rec7, 0, ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0, 0, 0x90000, frame);
         }
         Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
@@ -178,7 +179,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     u8 *slot;
 
     Engine_EventBegin();
-    actor = (struct FieldActor *)Value1(Object_GetById, 19);
+    actor = (struct FieldActor *)Object_GetById(19);
     if ((actor->x.fixed >> 20) == 48) {
         if (GameFlag_IsSet(0x202) != 0) {
             Event_Wait(30);
@@ -192,9 +193,9 @@ void FieldScene_RunSupplementalSequenceOne(void)
             for (i = 0; i < 16; i++) {
                 Task_Wait(3);
                 Actor_Get(19)->y.fixed -= 0x10000;
-                rec7 = Value0(Engine_RandomNext);
+                rec7 = Engine_RandomNext();
                 arg0 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x3000000);
-                value = Value0(Engine_RandomNext);
+                value = Engine_RandomNext();
                 arg2 = ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0xe00000);
                 ((void (*)())Effect_Spawn)(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
             }

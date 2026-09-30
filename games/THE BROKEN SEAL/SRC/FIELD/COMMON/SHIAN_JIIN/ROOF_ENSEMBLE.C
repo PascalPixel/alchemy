@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
+#include "CALL.H"
 extern u8 MsgShianMasterHamaMeditatingPleaseExtremely[];
 
 /* Long scripted sequence: sets up and steps a series of actors (indices 0-3,

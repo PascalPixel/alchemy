@@ -1,21 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 MsgSoruFloatingEyeThing[];
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 void InitializeSceneRecordBuffer(void);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
@@ -42,7 +28,7 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Call2((void (*)())Engine_ColorBufferApplySource, 0x7fff, 0);
-    Call2((void (*)())Engine_ColorBufferApplyTarget, 0x7fff, 0);
+    ((void (*)())Engine_ColorBufferApplyTarget)(0x7fff, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(1);
     Call3((void (*)())Engine_ActorSetPosition, 1, 0x1180000, 0x860000);
@@ -55,7 +41,7 @@ void SoruNichigetsu_RunLightScene(void)
     }
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Call2((void (*)())Engine_ColorBufferApplyTarget, 0x2051cc, 1);
+    ((void (*)())Engine_ColorBufferApplyTarget)(0x2051cc, 1);
     Engine_ColorBufferInterpolate(120);
     Engine_TaskWait(120);
     Engine_GameFlagSet(0x201);
@@ -65,7 +51,7 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(100);
     Call2((void (*)())Engine_ActorSetAttachedEffect, 0, 0x102);
-    Call2((void (*)())Engine_ActorSetAttachedEffect, 1, 0x102);
+    ((void (*)())Engine_ActorSetAttachedEffect)(1, 0x102);
     Engine_EventWait(60);
     Call3((void (*)())Engine_ActorFaceDirection, 0, 0x2000, 20);
     Call3((void (*)())Engine_ActorFaceDirection, 1, 0xe000, 40);
@@ -91,10 +77,10 @@ void SoruNichigetsu_RunLightScene(void)
     InitializeSceneRecordBuffer();
     Engine_ActorGet(0)->unknown_5a &= ~1;
     Engine_ActorGet(1)->unknown_5a &= ~1;
-    Call3((void (*)())Engine_ActorJump, 0, 4, 0);
-    Call3((void (*)())Engine_ActorJump, 1, 4, 0);
+    ((void (*)())Engine_ActorJump)(0, 4, 0);
+    ((void (*)())Engine_ActorJump)(1, 4, 0);
     Call3((void (*)())Engine_ActorSetDestination, 0, 0x12c, 0x82);
-    Call3((void (*)())Engine_ActorSetDestination, 1, 0x10a, 0x90);
+    ((void (*)())Engine_ActorSetDestination)(1, 0x10a, 0x90);
     Engine_ActorWaitForMove(1);
     Engine_EventWait(40);
     Engine_ActorGet(0)->unknown_5a |= 1;
@@ -109,10 +95,10 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_ActorSetAnimation(1, 2);
     leader = Engine_ActorGet(0);
     if (leader != NULL) {
-        Call3((void (*)())Engine_ActorSetDestination, 1, leader->x.part.pixel, leader->z.part.pixel);
+        ((void (*)())Engine_ActorSetDestination)(1, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(1);
-    Call3((void (*)())Engine_ActorSetPosition, 1, 0, 0);
+    ((void (*)())Engine_ActorSetPosition)(1, 0, 0);
     field = Data_03001ebc.field;
     *(u16 *)(field + 0xe00) = 0;
     *(u16 *)(field + 0xe02) = 0;

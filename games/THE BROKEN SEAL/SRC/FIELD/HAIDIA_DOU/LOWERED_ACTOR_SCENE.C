@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 struct Probe {
     s32 word[6];
@@ -20,31 +21,6 @@ void ObjectMotion_OffsetPositionAndResetMotion();
 void Engine_EventEnd();
 void Audio_PlayCue();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 /* Haidia Cave: move the probed actor, lower actor 11 and fill the cleared
  * rectangle; at column 20 set flag 0x205, otherwise set 0x204 and copy the
  * opened cells. */
@@ -58,7 +34,7 @@ void HaidiaDou_RunLoweredActorScene(void)
         SceneActor_MoveAndRedraw(probe);
         Object_SetModeById(11, 3);
         Call3(ObjectMotion_SetSpeedParameters, 11, 0x4000, 0x8000);
-        Call3(ObjectMotion_OffsetPositionAndResetMotion, 11, 0, -16);
+        ObjectMotion_OffsetPositionAndResetMotion(11, 0, -16);
         Battle_WaitMode0(45);
         Audio_PlayCue(240);
         Object_SetModeById(11, 8);
@@ -71,9 +47,9 @@ void HaidiaDou_RunLoweredActorScene(void)
             StagedActor_FillGridAttributeRectangle(0, 13, (probe.word[4] >> 20) - 1, 4, two, zero);
         }
         if ((probe.word[4] >> 20) == 20) {
-            Call1(Engine_GameFlagSet, 0x205);
+            Engine_GameFlagSet(0x205);
         } else {
-            Call1((void (*)())Engine_GameFlagSet, 0x204);
+            ((void (*)())Engine_GameFlagSet)(0x204);
             {
                 s32 column = 14;
 

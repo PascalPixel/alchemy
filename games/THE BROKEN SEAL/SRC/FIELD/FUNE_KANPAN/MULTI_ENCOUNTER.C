@@ -130,7 +130,7 @@ void FieldScene_RunScene3af_020012f0(void)
     Actor_StartRepeatedMotion(20, 2);
     Event_SetMessage((s32)MsgFuneDidntDoAnything);
     Event_ShowMessageAndWait(20, 0, 20);
-    Value3(Engine_ActorShowEmote, 20, 0x102, 0);
+    Engine_ActorShowEmote(20, 0x102, 0);
     GameFlag_Set(0x923);
 }
 void FieldScene_RunStepThen10(s32 a);

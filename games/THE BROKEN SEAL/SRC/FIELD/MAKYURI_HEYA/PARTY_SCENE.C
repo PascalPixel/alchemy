@@ -12,13 +12,6 @@ s32 Djinn_AddToOwner();
 void Djinn_Activate();
 void Owner_RecalculateStats();
 
-/* FAKEMATCH: a call spelled through this value wrapper sets r0 last of its
- * arguments, as the game does at those sites. */
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 void MakyuriHeya_RunPartyScene(void)
 {
     s32 base;
@@ -59,7 +52,7 @@ void MakyuriHeya_RunPartyScene(void)
         Engine_EventOpenMessage(3, 0);
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             Event_Wait(20);
-            Value2((s32 (*)())Engine_ActorSetAnimationAndWait, 3, 4);
+            ((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
             Event_Wait(20);
             event = base + 5;
             for (;;) {
@@ -69,7 +62,7 @@ void MakyuriHeya_RunPartyScene(void)
                     break;
                 }
                 Battle_WaitMode0(20);
-                Value2((s32 (*)())Engine_ActorSetAnimationAndWait, 3, 4);
+                ((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
                 Battle_WaitMode0(20);
                 event = (s32)MsgMakyuriDontHideTruth;
             }

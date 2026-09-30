@@ -1,18 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 /* The item object once it has been placed. */
 extern struct FieldActor *FuneHeya_AnchorObject;
-
-static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(s32 (*f)(s32), s32 a0)
-{
-    f(a0);
-}
 
 /* Places the Anchor Charm (item 232) as object 22, drawing its item icon
  * into the object's VRAM block, the first time only (flag 0x200); returns
@@ -38,7 +29,7 @@ struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
     Engine_ItemLoadIcon(232);
     Engine_VramLoad(sprite->vram_block, 128, buffer + 0x400);
     Engine_HeapRelease(17);
-    Call1(Engine_GameFlagSet, 0x200);
+    Engine_GameFlagSet(0x200);
     FuneHeya_AnchorObject = object;
     return object;
 }

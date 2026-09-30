@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgShianHooWhaaaHachaaa[];
 extern u8 MsgShianKungFuStrong[];
 
@@ -28,43 +29,6 @@ void Engine_EventShowMessageAndWait();
 void Engine_GameFlagSet();
 void BattleFx_PlayQueuedSound();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7);
-}
-
 struct SpawnParams {
     s32 count;
     u8 unknown_04[20];
@@ -90,16 +54,16 @@ void ShianMura_RunNpcMeetScene(void)
     struct SpawnParams params;
 
     Engine_EventBegin();
-    flag = Value1(Engine_GameFlagIsSet, 0x202);
+    flag = Engine_GameFlagIsSet(0x202);
     if (flag != 0) {
         Engine_ActorFaceActor(14, 0, 0);
         Engine_EventWait(10);
-        Call1(Engine_EventSetMessage, (s32)MsgShianKungFuStrong);
+        Engine_EventSetMessage((s32)MsgShianKungFuStrong);
         Engine_EventShowMessage(14, 0);
         Engine_ActorFaceDirection(14, 0, 10);
         Engine_EventEnd();
     } else {
-        Call1(Engine_EventSetMessage, (s32)MsgShianHooWhaaaHachaaa);
+        Engine_EventSetMessage((s32)MsgShianHooWhaaaHachaaa);
         Engine_EventShowMessage(14, 0);
         Engine_ActorRunRepeatedMotion(0, 2);
         *(u8 *)(Engine_ActorGet(0) + 90) &= 254;
@@ -113,7 +77,7 @@ void ShianMura_RunNpcMeetScene(void)
         Engine_ActorWaitForMove(0);
         *(u8 *)(Engine_ActorGet(0) + 90) |= 1;
         Engine_EventWait(30);
-        Call2((void (*)())Engine_ActorRunRepeatedMotion, 14, 2);
+        ((void (*)())Engine_ActorRunRepeatedMotion)(14, 2);
         params.count = 1;
         Effect_Spawn(0xc00000, 0, 0x1380000, 0x1999, 0x3333, 0, 0x20001, 0);
         Effect_Spawn(0xc00000, 0, 0x1380000, 0x3333, 0x1999, 0, 0x20001, 0);
@@ -127,8 +91,8 @@ void ShianMura_RunNpcMeetScene(void)
         Call3(Engine_ActorSetDestination, 14, 168, 0x138);
         Engine_ActorWaitForMove(14);
         Engine_AudioPlayCue(134);
-        Value2(Engine_ActorEnableActionCallback, 19, (s32)ShianMura_Actor19Motion);
-        Value2(Engine_TaskAddCallback, (s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
+        Engine_ActorEnableActionCallback(19, (s32)ShianMura_Actor19Motion);
+        Engine_TaskAddCallback((s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
         {
             s32 sprite = 0x11b;
 
@@ -149,16 +113,16 @@ void ShianMura_RunNpcMeetScene(void)
         Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0, 0, 0, 0x20001, 0);
         Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0x3333, 0, 0, 0x20001, 0);
         Effect_Spawn(0xa80000, 0x80000, 0x1380000, -0x3333, 0, 0, 0x20001, 0);
-        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_AdvanceRotatingSprite);
+        Engine_TaskRemoveCallback((s32)SceneEffect_AdvanceRotatingSprite);
         *(u16 *)(*(s32 *)(Engine_ActorGet(19) + 80) + 30) = back;
         *(s32 *)(Engine_ActorGet(14) + 68) = 0x4000;
         *(s32 *)(Engine_ActorGet(14) + 72) = 0x10000;
-        Call1((void (*)())Engine_EventWait, 30);
+        ((void (*)())Engine_EventWait)(30);
         Engine_ActorFaceDirection(14, 0, 20);
         Engine_ActorRunRepeatedMotion(14, 2);
         Engine_EventWait(20);
         Engine_EventShowMessageAndWait(14, 0, 20);
-        Call1(Engine_GameFlagSet, 0x202);
+        Engine_GameFlagSet(0x202);
         BattleFx_PlayQueuedSound();
         Engine_EventEnd();
     }

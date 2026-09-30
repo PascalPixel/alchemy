@@ -1,13 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void SceneState_ApplyTwoRects(void);
 void FieldScene_RunScriptedSceneSequence(void);
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Sanctum entry: record the arrival, fade in, then restore the room or run the entrance's scene. */
 s32 ShindenHeya_ApplyEntryState(void)

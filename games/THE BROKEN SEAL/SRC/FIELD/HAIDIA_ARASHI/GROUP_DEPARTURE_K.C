@@ -1,4 +1,5 @@
 #include "GROUP_DEPARTURE.H"
+#include "CALL.H"
 extern u8 MsgHaidiaCantGetAroundThisRock[];
 extern u8 MsgHaidiaNorthLeadsToMtAleph[];
 extern u8 MsgHaidiaTheBoulderIsFalling[];
@@ -34,7 +35,7 @@ void FieldScene_RunScene372SequenceD(void)
     Actor_FaceDirection(22, 0x4000, 0);
     Event_ShowMessage(22, 0);
     Actor_SetAnimation(22, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -87,7 +88,7 @@ void Scene_BoulderFalls(void)
 
     if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0) {
         Event_Begin();
-        Call1(Event_CallWithLastActiveObjectId, (s32)HaidiaArashi_LastObjectCall);
+        Event_CallWithLastActiveObjectId((s32)HaidiaArashi_LastObjectCall);
         SceneState_SetValue140Mode0();
         Task_Wait(1);
         Audio_PlayCue(141);
@@ -102,8 +103,8 @@ void Scene_BoulderFalls(void)
         }
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
         Actor_SetSpeed(22, 0x20000, 0x10000);
-        Value2(Engine_ActorEnableActionCallback, 0, (s32)HaidiaArashi_LeaderScript);
-        Call2(Object_SetActionCallbackAndRefreshById, 22, (s32)HaidiaArashi_ActorTwentyTwoScript);
+        Engine_ActorEnableActionCallback(0, (s32)HaidiaArashi_LeaderScript);
+        Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScript);
         Object_RefreshSelectorById(0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
         Actor_ShowEmote(22, 0x100, 30);
@@ -145,7 +146,7 @@ void Scene_BoulderFalls(void)
         *phase = 0;
         Value2(Scheduler_AddOrUpdateCallback, steps, 0xc80);
         callback = (s32)SceneState_SetValue19ThenCall;
-        Call2(Scheduler_AddOrUpdateCallback, callback, 0xc80);
+        Scheduler_AddOrUpdateCallback(callback, 0xc80);
         Event_Wait(40);
         *phase = 1;
         Event_Wait(30);
@@ -230,7 +231,7 @@ void Scene_BoulderFalls(void)
         Actor_SetAnimationAndWait(22, 3);
         Event_Wait(20);
         Actor_SetAnimation(22, 2);
-        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }

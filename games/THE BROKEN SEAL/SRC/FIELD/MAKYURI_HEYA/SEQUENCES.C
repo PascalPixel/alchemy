@@ -1,4 +1,5 @@
 #include "PROBE.H"
+#include "CALL.H"
 
 void MakyuriHeya_WalkLeaderIn(void)
 {
@@ -6,7 +7,7 @@ void MakyuriHeya_WalkLeaderIn(void)
 
     work = (u8 *)gEventWork;
     Event_Begin();
-    Value2(Engine_TaskAddCallback, (s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
+    Engine_TaskAddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
     Actor_SetSpeed(0, 0x28000, 0x14000);
     Actor_SetAnimation(0, 1);
     Object_GetById(0)->unknown_5a &= 254;
@@ -24,7 +25,7 @@ void MakyuriHeya_WalkLeaderIn(void)
     }
     Actor_WaitForMove(0);
     SetFlagBits(&Object_GetById(0)->unknown_5a, 1);
-    Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_SpawnParticleEveryFourthFrame);
+    Engine_TaskRemoveCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame);
     Event_End();
 }
 
@@ -73,14 +74,14 @@ void MakyuriHeya_TriggerSmallFloorSwitch(void)
         z = Object_GetById(0)->z.part.pixel;
         if ((u32)(x - 84) <= 7 && z > 211 && z <= 219) {
             Event_Begin();
-            Call1(Engine_GameFlagSet, 0x256);
+            Engine_GameFlagSet(0x256);
             Event_Wait(5);
             Object_GetById(0)->y.fixed += -0x20000;
             actor = Object_GetById(0);
             FIELD_AT_OFFSET(actor, s32, 0x3c) = Object_GetById(0)->y.fixed;
             Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
             Audio_PlayCue(217);
-            Call3(Engine_MapAnimateCells, (s32)MakyuriHeya_GateCells, 9, 7);
+            Engine_MapAnimateCells((s32)MakyuriHeya_GateCells, 9, 7);
             Event_End();
         }
     }
@@ -223,7 +224,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Event_Wait(a0);
     FieldScene_RunOpeningAuxiliarySequence(0, next, (next + 1));
     Audio_PlayCue(211);
-    Value2(Engine_TaskAddCallback, (s32)MakyuriHeya_SprayAtFountain, 0xc80);
+    Engine_TaskAddCallback((s32)MakyuriHeya_SprayAtFountain, 0xc80);
     Engine_MapRenderWaitForValues();
 }
 
@@ -249,7 +250,7 @@ void MakyuriHeya_RunSequenceF(void)
         inner = 1;
         do {
             if ((inner & 1) != 0) {
-                raw = Value0(Engine_RandomNext);
+                raw = Engine_RandomNext();
                 shown = ((0x248 - (s32)((u32)((raw << 2) + raw) >> 16)) & 0xffff) << 16;
                 pos = (base - (outer << 19)) + 0x2d80000;
                 Effect_Spawn(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
@@ -261,7 +262,7 @@ void MakyuriHeya_RunSequenceF(void)
         Map_CopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
         outer = outer + 1;
     } while ((u32)outer <= 2);
-    Call1(Engine_TaskRemoveCallback, (s32)MakyuriHeya_SprayAtFountain);
+    Engine_TaskRemoveCallback((s32)MakyuriHeya_SprayAtFountain);
 }
 
 void MakyuriHeya_RunSequenceE(void)

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 MsgShianWhaWhaHappened[];
 
 void Effect_Spawn();
@@ -8,29 +9,14 @@ void BattleFx_PlayQueuedSound();
 void SceneEffect_AdvanceRotatingSprite();
 extern const s32 ShianMura_Actor19Motion[];
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 void Scene_RunActorNineteenScript(void)
 {
     s32 cb;
 
     Engine_EventBegin();
-    Value2((s32 (*)())Engine_ActorEnableActionCallback, 19, (s32)ShianMura_Actor19Motion);
+    ((s32 (*)())Engine_ActorEnableActionCallback)(19, (s32)ShianMura_Actor19Motion);
     cb = (s32)SceneEffect_AdvanceRotatingSprite;
-    Value2((s32 (*)())Engine_TaskAddCallback, cb, 0xc80);
+    ((s32 (*)())Engine_TaskAddCallback)(cb, 0xc80);
     Object_RefreshSelectorById(19);
     Engine_AudioPlayCue(124);
     Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0, 0, 0, 0x20001, 0);
@@ -48,7 +34,7 @@ void Scene_RunActorNineteenScript(void)
         gEventWork->message++;
     }
     Engine_EventShowMessage(14, 0);
-    Call1((void (*)())Engine_GameFlagSet, 0x203);
+    ((void (*)())Engine_GameFlagSet)(0x203);
     BattleFx_PlayQueuedSound();
     Engine_EventEnd();
 }

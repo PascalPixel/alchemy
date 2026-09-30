@@ -35,11 +35,6 @@ extern u8 GomaIriguchi_SceneTableB[];
 extern u8 GomaIriguchi_SceneTableC[];
 extern u8 GomaIriguchi_SceneTableD[];
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 /*
  * The owner exists for the argument shuffle: the frame count is saved before
  * the first call clobbers its register, so it survives to reach the second.
@@ -78,7 +73,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 record;
     s32 v3;
 
-    record = Value1(Engine_ActorGet, 9);
+    record = Engine_ActorGet(9);
     v3 = *(s32 *)(record + 8) / 0x100000;
     GameFlag_Clear(0x861);
     GameFlag_Clear(0x862);
@@ -98,7 +93,7 @@ void FieldScene_RunScene387SequenceC(void)
     struct FieldActor *actor;
     s32 tile_x;
 
-    actor = (struct FieldActor *)Value1(Engine_ActorGet, 10);
+    actor = (struct FieldActor *)Engine_ActorGet(10);
     tile_x = actor->x.fixed / 0x100000;
     if (tile_x == 23) {
         Event_Wait(10);

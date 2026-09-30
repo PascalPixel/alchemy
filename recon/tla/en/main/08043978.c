@@ -1,3 +1,7 @@
+/*
+ * Draft: PaletteGlow_UpdateSine does not yet match; 2 halfwords differ from ☀️'s C, first at +0x46 (data).
+ * Links as recon/tla/raw/080432a4.s.
+ */
 #include "TYPES.H"
 
 extern u8 gFrameTick[];

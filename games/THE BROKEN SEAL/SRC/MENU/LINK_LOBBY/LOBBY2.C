@@ -1,19 +1,12 @@
 /* The link lobby: the attendant's call into the circle. */
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 /* The link lobby: the scene teardown that clears the lobby flags. */
 #include "LOBBY.H"
 #include "SERIAL_RUNTIME.H"
 #include "CALL.H"
 
 extern u8 MsgLobbyWantParticipatePlease[];
-s32 Engine_GameFlagIsSet(s32 flag);
-void Engine_GameFlagSet(s32 flag);
-void Engine_GameFlagClear(s32 flag);
-void Engine_EventBegin(void);
-void Engine_EventSetMessage(s32 message);
-s32 Engine_EventOpenMessage(s32 actor, s32 mode);
-void Engine_TaskWait(s32 frames);
-s32 Engine_EventEnd(void);
 
 /* Frames since the attendant last called out; it follows the overlay's
  * image, after the peers' wait. */
@@ -55,7 +48,7 @@ s32 LinkLobby_CallIntoCircle(void)
     Engine_EventOpenMessage(8, 0);
     Engine_TaskWait(5);
     Engine_GameFlagSet(0x200);
-    return Engine_EventEnd();
+    Engine_EventEnd();
 }
 
 /*
@@ -91,7 +84,7 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
     Engine_EventSetMessage((s32)MsgLobbyLinkDisconnected);
     Engine_EventOpenMessage(8, 0);
     Engine_GameFlagClear(0x205);
-    return Engine_EventEnd();
+    Engine_EventEnd();
 }
 
 /* Receives the linked player's three party records (0x154-byte transfers)
@@ -217,7 +210,7 @@ s32 SceneData_CopyUpToThreeEntries(u16 *dest)
     s32 cnt = Party_CountActiveOwners();
     if (cnt > 3) cnt = 3;
     if (cnt > 0) {
-        s16 *p = gGameState;
+        s16 *p = (s16 *)&gGameState;
         const u8 *src;
         s32 n;
         p += 252;

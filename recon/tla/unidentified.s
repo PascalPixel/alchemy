@@ -81,7 +81,10 @@ Ui_FixedTileBlocks:
 	.section .unidentified.080b127c,"a"
 	.incbin "baserom.gba", 0x000b127c, 0x00000cac
 	.section .unidentified.080b1f2c,"a"
-	.incbin "baserom.gba", 0x000b1f2c, 0x0000f5e0
+	.incbin "baserom.gba", 0x000b1f2c, 0x00000438
+	.global Item_DefinitionTable
+Item_DefinitionTable:
+	.incbin "baserom.gba", 0x000b2364, 0x0000f1a8
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000c150c, 0x000000e8

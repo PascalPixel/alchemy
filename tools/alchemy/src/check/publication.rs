@@ -703,6 +703,46 @@ fn placement_reason(text: &str) -> Option<&'static str> {
 /// byte-for-byte build, so it may be grey (Pascal, 2026-09-29), as pret keeps
 /// grey images whose palettes the game stores.
 fn palette_built(path: &str) -> bool {
+    own_palette_built(path) || part_palette_built(path)
+}
+
+/// Whether this PNG is a later part of a part list whose first part's palette
+/// the build writes: the parts share that one palette (Pascal, 2026-09-30).
+fn part_palette_built(path: &str) -> bool {
+    let file = Path::new(path);
+    let (Some(directory), Some(stem)) = (file.parent(), file.file_stem().and_then(|s| s.to_str()))
+    else {
+        return false;
+    };
+    let Ok(entries) = std::fs::read_dir(directory) else {
+        return false;
+    };
+    entries.flatten().any(|entry| {
+        let list = entry.path();
+        if !list
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("tsv"))
+        {
+            return false;
+        }
+        let Ok(text) = std::fs::read_to_string(&list) else {
+            return false;
+        };
+        let parts: Vec<&str> = text
+            .lines()
+            .filter_map(|line| line.split('\t').next())
+            .filter(|part| !part.is_empty())
+            .collect();
+        match parts.split_first() {
+            Some((first, rest)) if rest.contains(&stem) => {
+                own_palette_built(&directory.join(format!("{first}.PNG")).to_string_lossy())
+            }
+            _ => false,
+        }
+    })
+}
+
+fn own_palette_built(path: &str) -> bool {
     let file = Path::new(path);
     let (Some(directory), Some(stem)) = (file.parent(), file.file_stem().and_then(|s| s.to_str()))
     else {
@@ -3593,6 +3633,19 @@ mod tests {
         std::os::unix::fs::symlink("AGENTS.md", root.join("CLAUDE.md")).unwrap();
         assert!(check_documents(root).unwrap_err().contains("CLAUDE.md"));
     }
+    #[test]
+    fn later_parts_share_the_first_parts_built_palette() {
+        let temp = tempfile::tempdir().unwrap();
+        let directory = temp.path().join("games/X/SRC/GRAPHICS");
+        std::fs::create_dir_all(&directory).unwrap();
+        let second = directory.join("W_2.PNG").to_string_lossy().into_owned();
+        std::fs::write(directory.join("W.TSV"), "W_1\t4bpp\nW_2\t4bpp16x32\n").unwrap();
+        assert!(!palette_built(&second));
+        std::fs::write(directory.join("W.S"), "\t.incbin \"GRAPHICS/W_1.gbapal\"\n").unwrap();
+        assert!(palette_built(&second));
+        assert!(palette_built(&directory.join("W_1.PNG").to_string_lossy()));
+    }
+
     #[test]
     fn a_grey_palette_passes_only_when_the_build_writes_it() {
         let temp = tempfile::tempdir().unwrap();

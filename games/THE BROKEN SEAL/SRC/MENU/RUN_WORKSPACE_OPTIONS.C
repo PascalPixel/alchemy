@@ -117,7 +117,11 @@ s32 Menu_RunWorkspaceOptions(void)
             Shop_SetCursorFar(&work->marker[1], x, y, 1);
 
             x = work->option[2] + (s32)&MsgMessageSpeedSetting;
-            UiWindow_ClearInteriorTiles(icon, 160, 40, 200, 48);
+        #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+    UiWindow_ClearInteriorTiles(icon, 160, 40, 208, 48);
+#else
+    UiWindow_ClearInteriorTiles(icon, 160, 40, 200, 48);
+#endif
             UiText_DrawCharacterAtOffset(x, icon, 160, 40);
             x = work->option[3] + (s32)&MsgSpeechSetting;
             UiWindow_ClearInteriorTiles(icon, 160, 64, 184, 72);

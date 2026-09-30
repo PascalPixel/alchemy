@@ -11,9 +11,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "DMA.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /* main:080b8574 BattlePresentation_BuildSortedUnitEntries - exact (376 of
    376 bytes, 2026-09-30 helper hF). Builds one entry per living party unit
    (agility, priority 0x80) and per living enemy (half agility plus a random
@@ -95,7 +92,6 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     }
     return count;
 }
-#endif
 void UiWork_ClearValueNameTablesFar(void);
 extern u8 gCameraWork[];
 extern u8 Data_03001ae8[];

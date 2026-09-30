@@ -81,7 +81,11 @@ s32 UiMessage_ShowChoice(s32 arg0)
     u8 **slot = (u8 **)(*(u8 **)((u32)&Data_03001f2c) + 0x380);
     u8 saved = (*slot)[5];
     UiIcon_PrepareObjectFar(*slot);
+#if defined(TBS_EDITION_DE)
+    arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
+#else
     arg0 = Menu_RunConfirmSelectionAtFar(7, 5, arg0);
+#endif
     (*slot)[5] = saved;
     return arg0;
 }

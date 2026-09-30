@@ -43,7 +43,11 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
     Menu_SetPageIcons(5, p8, a0, 119, 52);
     Menu_DrawPageIndicator(a0, *(s32 *)(a2 + 20), 5, *(s32 *)(a2 + 8), 28);
     if (*(u8 *)((0x218 + p9)) == 0) {
+#if defined(TBS_EDITION_DE)
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, a0, 112, 8);
+#else
         UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, a0, 120, 8);
+#endif
         v6 = r10;
     } else {
         v6 = 0;

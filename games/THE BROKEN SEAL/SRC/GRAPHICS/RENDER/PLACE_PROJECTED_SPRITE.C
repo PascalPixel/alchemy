@@ -54,9 +54,6 @@ s32 AffineMatrix_BuildForEffect(struct ProjectedEffect *source);
 void Runtime_PushSlotEntry(void *entry, s32 slot);
 s32 Resource_ActivateEntry(u32 resource_index);
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /* Places a sprite and its optional shadow from a four-word screen position
    (x, shadow height, depth, ground) and a two-word scale. */
 void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s32 *scale, s32 mode)
@@ -134,7 +131,6 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
         Runtime_PushSlotEntry(part, slot);
     }
 }
-#endif
 
 void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
 {

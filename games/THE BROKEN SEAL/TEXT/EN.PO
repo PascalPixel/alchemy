@@ -9335,7 +9335,7 @@ msgctxt "message"
 msgid "02331"
 msgstr "{protagonist_name}'s party has{line_break}been annihilated...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgActorUsesItem"
 msgid "02332"
 msgstr "{argument_actor_name:1} uses{line_break}{argument_item_name:1}.{end_wait}"
 
@@ -9359,7 +9359,7 @@ msgctxt "MsgDoesNotWorkHere"
 msgid "02337"
 msgstr "{argument_ability_name}...{page_break}It doesn't work here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "02338"
 msgstr "Monsters won't attack{line_break}so often now.{end_wait}"
 
@@ -9367,7 +9367,7 @@ msgctxt "MsgAbilityWoreOff"
 msgid "02339"
 msgstr "{argument_ability_name}'s effects wore off.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseItemQuestion"
 msgid "02340"
 msgstr "Use {argument_item_name:1}?{end_now}"
 

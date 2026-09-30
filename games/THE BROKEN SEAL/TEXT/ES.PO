@@ -10295,7 +10295,7 @@ msgctxt "message"
 msgid "02571"
 msgstr "El equipo de {protagonist_name}{line_break}ha sido aniquilado...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgActorUsesItem"
 msgid "02572"
 msgstr "{argument_actor_name:1} usa{line_break}{argument_item_name:2}.{end_wait}"
 
@@ -10319,7 +10319,7 @@ msgctxt "MsgDoesNotWorkHere"
 msgid "02577"
 msgstr "{argument_ability_name}...{page_break}Aquí no funciona.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "02578"
 msgstr "Los monstruos atacarán{line_break}con menos frecuencia.{end_wait}"
 
@@ -10327,7 +10327,7 @@ msgctxt "MsgAbilityWoreOff"
 msgid "02579"
 msgstr "Cesó el efecto de {argument_ability_name}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseItemQuestion"
 msgid "02580"
 msgstr "¿Usar {argument_item_name:2}?{end_now}"
 

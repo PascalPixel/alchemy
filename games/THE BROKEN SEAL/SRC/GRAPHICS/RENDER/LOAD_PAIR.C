@@ -2,9 +2,7 @@
 #include "SCENE.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
-
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
+#include "TBS_EDITION.H"
 
 struct MessageWindow;
 
@@ -51,7 +49,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
     if (window != NULL) {
         UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
 
-        work[0xea3] = 1;
+        work[RENDER_DIRTY_OFS] = 1;
 
         UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)), 0, &handle1, &palette, 14, zero);
         p = entry1;
@@ -66,8 +64,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
         *p++ = 0x802c000c;
         *p = palette | 0xf000;
 
-        *(u16 *)(work + 0x12f4) = zero;
-        *(u16 *)(work + 0x12f6) = zero;
+        *(u16 *)(work + RENDER_RESULT_OFS) = zero;
+        *(u16 *)(work + RENDER_RESULT_OFS + 2) = zero;
 
         UiWork_PushValueSlot(first, 1);
         UiWork_PushValueSlot(second, 1);
@@ -88,7 +86,6 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
         Resource_ResetEntry(handle2);
     }
 }
-#endif
 u32 Resource_DecodeByteLz(const void *, void *);
 void Runtime_ReleaseHeapBlock(s32);
 

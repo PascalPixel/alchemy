@@ -10,6 +10,8 @@
 @ credit: handwritten — TLA IWRAM runtime Q14 ratio multiply
 .syntax unified
 	.thumb
+	.global IwramRatioMulQ14
+IwramRatioMulQ14:
 AlchemyUncredited_080007e8:
 	bx	pc
 	.2byte	0x0200

@@ -6,6 +6,8 @@
 @ credit: library — TBS/TLA common IWRAM runtime 16.16 multiply
 .syntax unified
 	.thumb
+	.global IwramMulQ16
+IwramMulQ16:
 AlchemyUncredited_080007d4:
 	bx	pc
 	.2byte	0x0200

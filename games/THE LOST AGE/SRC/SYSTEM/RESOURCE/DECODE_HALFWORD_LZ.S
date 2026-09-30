@@ -11,6 +11,8 @@
 @ credit: library — TBS/TLA common ARM halfword-LZ decoder copied to the stack
 .syntax unified
 	.thumb
+	.global Resource_DecodeHalfwordLzCode
+Resource_DecodeHalfwordLzCode:
 	.global Resource_DecodeHalfwordLz
 	.thumb_func
 Resource_DecodeHalfwordLz:

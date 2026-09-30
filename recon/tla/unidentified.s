@@ -46,8 +46,8 @@ ObjectDispatch_Table4:
 	.global ObjectDispatch_Table6
 ObjectDispatch_Table6:
 	.incbin "baserom.gba", 0x0002f200, 0x000000dc
-	.global Data_0802f2dc
-Data_0802f2dc:
+	.global Script_OperandHandlerTable
+Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f2dc, 0x00001034
 	.section .unidentified.08030320,"a"
 	.incbin "baserom.gba", 0x00030320, 0x00007ce0

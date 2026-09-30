@@ -170,7 +170,7 @@ after_power:
         if (chance > (BattleRandom16Far() & 0xffff))
             BattleEv_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
     }
-    { if (action_id == 0x2ae || action_id == 0x165) Func_08125390(target_id, 0, 0); if ((u32)(action_id - 0x2d0) <= 1) Func_08125390(target_id, 1, 0); if (action_id == 0x2d8) Func_08125390(target_id, 1, 1); };
+    { if (action_id == 0x2ae || action_id == 0x165) Battle_ApplyActionExtras(target_id, 0, 0); if ((u32)(action_id - 0x2d0) <= 1) Battle_ApplyActionExtras(target_id, 1, 0); if (action_id == 0x2d8) Battle_ApplyActionExtras(target_id, 1, 1); };
     nibble = action->target_flags & 15;
     {
         s32 first;
@@ -264,7 +264,7 @@ after_power:
                     text = (s32)&MsgDmgEmphE + affinity;
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
             }
-            if (hp0 <= 0 && (Func_081203a8(target_id) != 0))
+            if (hp0 <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
                 hp0 = 1;
             if (hp0 <= 0) {
                 { u16 state; cur = 0; BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id); state = *(u16 *)((u8 *)target + 0x14a); if (state != 0x171 && state != 0x175) { BattleEvent_Push(BATTLE_EVENT_UNIT, target_id); if ((u32)target_id <= 7) BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_GOES_DOWN); else BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_FELLED); } };
@@ -423,7 +423,7 @@ after_power:
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
-            if (cur <= 0 && (Func_081203a8(target_id) != 0))
+            if (cur <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
                 cur = 1;
             if (gGameState.battle_rule_24b == 6) (cur) = 0;
             if (cur <= 0) {
@@ -500,7 +500,7 @@ pp_store:
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
-            if (cur <= 0 && (Func_081203a8(target_id) != 0))
+            if (cur <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
                 cur = 1;
             if (cur <= 0) {
                 { u16 state; cur = 0; BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id); state = *(u16 *)((u8 *)target + 0x14a); if (state != 0x171 && state != 0x175) { BattleEvent_Push(BATTLE_EVENT_UNIT, target_id); if ((u32)target_id <= 7) BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_GOES_DOWN); else BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_FELLED); } };
@@ -792,7 +792,7 @@ dealt = target->hp - cur;
         target->psy_seal |= 16;
         break;
     case EFX_INSTANT_DOWN:
-        if ((Func_081203a8(target_id) != 0))
+        if ((BattleUnit_KeepsOneHp(target_id) != 0))
             break;
         BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
         if (target->status_12a == 2)

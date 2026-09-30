@@ -204,7 +204,7 @@ extern const u8 Data_08199268[];
 extern const u8 Data_08199340[];
 extern const u8 Data_08199364[];
 
-s32 Func_08002054(s32, s32);
+s32 Math_Div(s32, s32);
 s32 Func_08002064(s32, s32);
 s32 Func_08002090(s32);
 s32 Func_08002096(s32);
@@ -677,9 +677,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         }
     }
     object2 = *Func_08118098(action->actor);
-    center[0] = Func_08002054(object2->x - origin[0], 6);
-    center[1] = Func_08002054(object2->y - origin[1] + 0x1e0000, 6);
-    center[2] = Func_08002054(object2->z - origin[2], 6);
+    center[0] = Math_Div(object2->x - origin[0], 6);
+    center[1] = Math_Div(object2->y - origin[1] + 0x1e0000, 6);
+    center[2] = Math_Div(object2->z - origin[2], 6);
     for (i = 0; i != 64; i++)
         work->particle[i].life = 0;
     if (kind != 44) {
@@ -911,7 +911,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     for (i = 0; i != 64; i++) {
                         p = &work->particle[i / 2];
                         if (p->life > 0) {
-                            n = Func_08002054(p->life, 20) + 2;
+                            n = Math_Div(p->life, 20) + 2;
                             Func_0815e1ec(p, point);
                             point[0] = point[0] / 2;
                             drawFuncs.draw[(i / 2) & 1](screen, (u8 *)tiles + Data_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
@@ -1323,7 +1323,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 drawFuncs.draw[0](screen, EWRAM_BUF, 35, 17, 60, 95);
             if (frame == 5)
                 ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
-            if (frame >= 0 && (m = Func_08002054(frame, 3)) < 7) {
+            if (frame >= 0 && (m = Math_Div(frame, 3)) < 7) {
                 if (action->side == 0)
                     drawFuncs.draw[0](screen, EWRAM_BUF + Data_081988ee[m], Data_08198918[m], Data_08198926[m] - 16,
                                       Data_081988fc[m], Data_0819890a[m]);
@@ -1334,7 +1334,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             for (i = 0; i != 3; i++) {
                 t = frame - 8 - i * 2;
                 if (t >= 0 && t <= 8) {
-                    m = Func_08002054(t, 3);
+                    m = Math_Div(t, 3);
                     if (action->side == 0)
                         drawFuncs.draw[0](screen, EWRAM_BUF + Data_08198934[m], Data_08198940[i][0] - Data_0819893a[m] / 2,
                                           Data_08198940[i][1] - Data_0819893d[m] / 2 - 16, Data_0819893a[m], Data_0819893d[m]);
@@ -1467,7 +1467,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (frame < 12)
                     Func_08138086(SPARKS, 64, 0);
                 else if (frame == 12)
-                    p->vy = Func_08002054(-p->vy, 3);
+                    p->vy = Math_Div(-p->vy, 3);
                 else if (frame < 13 || frame > 18)
                     Func_08138086(SPARKS, 64, 0x4000);
             }
@@ -1513,7 +1513,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 }
             } else {
                 for (; i != 16; i++, p++) {
-                    m = Func_08002064(i, 5) * 3 + Func_08002064(Func_08002054(p->life, 96), 3);
+                    m = Func_08002064(i, 5) * 3 + Func_08002064(Math_Div(p->life, 96), 3);
                     drawFuncs.draw[i <= 2](screen, EWRAM_BUF + 0x800 + Data_08197834[m], (p->x >> 16) - Data_0819781a[m] / 2,
                                           (p->y >> 16) - Data_08197826[m] / 2, Data_0819781a[m], Data_08197826[m]);
                     Func_08138086(p, 64, 0x2000);
@@ -1557,7 +1557,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 REG_BG2X = (64 - x) << 8;
             } else {
                 for (; i != 32; i++, p++) {
-                    m = Func_08002064(i, 5) * 3 + Func_08002064(Func_08002054(p->z, 96), 3);
+                    m = Func_08002064(i, 5) * 3 + Func_08002064(Math_Div(p->z, 96), 3);
                     drawFuncs.draw[0](screen, EWRAM_BUF + 0x83c + Data_081974bc[m], (p->x >> 16) - Data_0819749e[m] / 2,
                                       (p->y >> 16) - Data_081974ad[m] / 2, Data_0819749e[m], Data_081974ad[m]);
                     Func_08138086(p, 63, 0x8000);
@@ -1939,7 +1939,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (frame >= i / 2 + 4 && p->life <= 23) {
                     m = 0;
                     if (p->life > 11)
-                        m = Func_08002054(p->life - 12, 3);
+                        m = Math_Div(p->life - 12, 3);
                     Func_0815e1ec(p, point);
                     point[0] = point[0] / 2;
                     drawFuncs.draw[0](screen, EWRAM_BUF + m * 0x800, point[0] - 16, point[1] - 32, 32, 64);

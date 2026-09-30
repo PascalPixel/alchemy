@@ -433,7 +433,13 @@ SaveMenu_SelectSlot:
 	.type Resource_LoadFixedBlockBIntoFreeSlot, %function
 	.thumb_func
 Resource_LoadFixedBlockBIntoFreeSlot:
-	.incbin "baserom.gba", 0x00020928, 0x000001a0
+	.incbin "baserom.gba", 0x00020928, 0x00000114
+	.section .rom.00020a3c, "ax"
+	.global UiWindow_SetTileAttributeRect
+	.type UiWindow_SetTileAttributeRect, %function
+	.thumb_func
+UiWindow_SetTileAttributeRect:
+	.incbin "baserom.gba", 0x00020a3c, 0x0000008c
 	.section .rom.00020ac8, "ax"
 	.global Resource_CopyFixedBlockB
 	.type Resource_CopyFixedBlockB, %function
@@ -452,12 +458,6 @@ Resource_CopyFixedBlockA:
 	.thumb_func
 NameEntry_EditOwnerName:
 	.incbin "baserom.gba", 0x00020af0, 0x000005e0
-	.section .rom.000210d0, "ax"
-	.global PartyTalkMenu_Choose
-	.type PartyTalkMenu_Choose, %function
-	.thumb_func
-PartyTalkMenu_Choose:
-	.incbin "baserom.gba", 0x000210d0, 0x000001bc
 	.section .rom.000213f4, "ax"
 	.global Party_ShowJoinedMessage
 	.type Party_ShowJoinedMessage, %function
@@ -554,7 +554,10 @@ UiIcon_PsynergyIconPointersEnd:
 	.incbin "baserom.gba", 0x0002e154, 0x00002798
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
-	.incbin "baserom.gba", 0x000308ec, 0x00000fc4
+	.incbin "baserom.gba", 0x000308ec, 0x00000804
+	.global Resource_FixedBlockBTiles
+Resource_FixedBlockBTiles:
+	.incbin "baserom.gba", 0x000310f0, 0x000007c0
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x000318b0, 0x00000bc0

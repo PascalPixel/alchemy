@@ -404,7 +404,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/COPY_TILEMAP_REGION.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.0001fbf2)
     "*/recon/tbs/es/rom.o"(.rom.0001fbf4)
-    "*/recon/tbs/es/rom.o"(.rom.000200a8)
+    "*/games/THE BROKEN SEAL/SRC/MENU/PARTY/TALK_CHOICE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/LOOKUP_CHARACTER_VALUE_BY_FLAG32.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000203cc)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)

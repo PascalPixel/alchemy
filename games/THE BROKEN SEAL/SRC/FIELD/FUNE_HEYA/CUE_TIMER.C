@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "HEYA.H"
 
 /*
  * Fune room: a one-shot cue timer. While the timer word is nonzero it counts
@@ -13,10 +14,6 @@ extern void Engine_AudioPlayCue();
 extern s32 FuneHeya_CueTimer;
 
 /* Same argument forwarding used by the byte-exact timer sibling. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {

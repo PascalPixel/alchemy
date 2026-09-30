@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "HEYA.H"
 extern u8 FuneHeya_StepScriptF[];
 extern u8 FuneHeya_StepScriptG[];
 extern u8 FuneHeya_StepScriptE[];
@@ -8,25 +9,11 @@ extern u8 FuneHeya_StepScriptC[];
 extern u8 FuneHeya_StepScriptB[];
 extern u8 FuneHeya_StepScriptA[];
 
-
 s32 Engine_GameFlagIsSet();
-
 
 extern u8 Data_02000240[];
 extern s16 gGameState[][1];
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-/* Ship cabin: the event script for the story step at +0x1c2 of the game
- * state, patching the chosen script's actor bytes for the later steps. */
 s32 FuneHeya_GetStepScript(void)
 {
     u8 *script;

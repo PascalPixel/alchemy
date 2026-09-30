@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
 extern u8 MsgFuneGivesMeChillsThinkCould[];
@@ -18,7 +19,6 @@ extern u8 MsgFuneYouveBeenChosenAsOarsman[];
 
 /* Message ids. */
 
-
 struct SceneActor {
     u8 pad00[99];
     u8 mode;
@@ -35,24 +35,6 @@ struct EffectRecord {
 void FuneHeya_TurnActorToOpenSide();
 s32 SceneState_ApplyLevelFromFlags();
 s32 Object_GetByIdFar();
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-
 
 void FieldScene_RunScene3b1SequenceA(void)
 {
@@ -253,14 +235,6 @@ void FieldScene_RunActor15FlagDialogue(void)
     }
 }
 
-/*
- * With story flag 0x300 set, opens a scripted sequence, creates a local
- * object, shows MsgFuneHoHoPersonGoingGet, configures it as slot 2, moves it onto actor
- * 0's signed halfword coordinates when actor 0 exists, then releases and
- * closes the sequence.  Otherwise flags 0x92b, 0x92a and 0x929 select the
- * setup call's third argument.  The 204-byte owner includes an alignment
- * halfword and its nine pool words.
- */
 void FieldScene_RunActor16FlagDialogue(void)
 {
     s32 obj;

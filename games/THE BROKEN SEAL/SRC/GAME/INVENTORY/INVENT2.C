@@ -1,4 +1,16 @@
 #include "INVENTORY.H"
+#include "BATTLE_RUNTIME.H"
+#include "ITEM.H"
+#include "SCENE.H"
+
+void Owner_RefreshClassActions(s32 owner);
+void Owner_RecalculateStats(s32 owner);
+void Event_ClearInvalidPackedValuesFar(s32);
+
+extern u8 gItemCounters[128];
+extern u8 Item_ArtifactSlotTable[];
+
+extern const u8 BattleAction_DefinitionTable[];
 
 s32 Inventory_GetQuantity(s32 owner, s32 slot)
 {
@@ -176,9 +188,6 @@ s32 PartyInventory_FindOwner(s32 item_id)
     return -1;
 }
 
-void Owner_RefreshClassActions(s32 owner);
-void Owner_RecalculateStats(s32 owner);
-
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
     struct OwnerInventoryState *inv = Owner_GetState(owner);
@@ -279,9 +288,6 @@ s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type)
     }
     return 0;
 }
-
-void Event_ClearInvalidPackedValuesFar(s32);
-void Owner_RecalculateStats(s32 owner);
 
 /* Takes one item from an owner's slot: a stacked item loses one from its
    count, a single item is removed and the list is compacted so the empty
@@ -386,5 +392,121 @@ s32 Inventory_Repair(s32 owner, s32 slot)
         return -1;
     }
     inv->inventory[slot] &= ~0x400;
+    return 0;
+}
+
+u8 Item_GetTargetMode(s32 item_id)
+{
+    return BattleAction_GetDirect(
+        Item_GetDirect(item_id)->action_id)->target_mode;
+}
+
+s32 ItemCounter_Adjust(s32 index, s32 delta)
+{
+    s32 counter_slot = index;
+    u8 *data = gItemCounters;
+
+    index = 0;
+    if (counter_slot <= 127) {
+        s32 value = data[counter_slot];
+
+        value += delta;
+
+        if (value < 0) {
+            value = 0;
+        } else if (value > 99) {
+            value = 99;
+            index = 99;
+        } else {
+            index = value;
+        }
+        data[counter_slot] = value;
+    }
+    return index;
+}
+
+s32 Item_AdjustCounter(s32 item_id, s32 delta)
+{
+    s32 item_id_mask = 0x1ff;
+    u8 counter;
+    s32 result = 0;
+
+    counter = Item_ArtifactSlotTable[item_id & item_id_mask];
+    if (counter != 0) {
+        result = ItemCounter_Adjust(counter - 1, delta);
+    }
+    return result;
+}
+
+s32 Inventory_CountItem(s32 owner, s32 item_id)
+{
+    u8 *base = Owner_GetState(owner);
+    s32 count = 0;
+    s32 target = item_id & 0x1ff;
+    s32 index = 0;
+    s32 offset = 216;
+
+    do {
+        if ((*(u16 *)((u8 *)offset + (s32)base) & 0x1FF) == target) {
+            struct ItemDefinition *item = Item_GetDirect(target);
+
+            if (item->flags & 0x10) {
+                count = (*(u16 *)((u8 *)offset + (s32)base) >> 11) + 1;
+                break;
+            }
+            count++;
+        }
+        index++;
+        offset += 2;
+    } while (index <= 14);
+    return count;
+}
+
+s32 PartyInventory_CountItem(s32 item_id)
+{
+    u16 owners[16];
+    s32 item_count = 0;
+    s32 owner_count = Party_ListActiveOwners(owners);
+
+    if (item_count < owner_count) {
+        u16 *owner_cursor = owners;
+        s32 n = owner_count;
+
+        do {
+            item_count += Inventory_CountItem(*owner_cursor++, item_id);
+            n--;
+        } while (n != 0);
+    }
+    return item_count;
+}
+
+struct BattleAction *BattleAction_GetDirect(s32 action_id) {
+    u32 entry_index;
+
+    entry_index = action_id & 0x3fff;
+    if (entry_index >= 0x208U) {
+        entry_index = 0;
+    }
+    return (struct BattleAction *)(BattleAction_DefinitionTable + entry_index * 0x10);
+}
+
+/* inventory/has_equipment_value.c */
+s32 Equipment_HasValue(s32 owner, s32 value)
+{
+    u8 *entry = Owner_GetState(owner);
+    s32 mask = 0x3fff;
+    s32 index = 0;
+
+    entry += 88;
+    do {
+        s32 current = *(u16 *)entry;
+
+        current &= mask;
+        entry += 4;
+        if (current == value) {
+            return 1;
+        }
+        index++;
+    } while (index <= 31);
     return 0;
 }

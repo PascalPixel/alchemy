@@ -16,7 +16,6 @@ struct EnemyRecord *Owner_GetRecordFar(s32);
 s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
 u32 Random16(void);
-u32 BattleRandom16Far(void);
 s32 Item_EncodeBankedId(s32);
 
 static __inline__ s32 BattleEnemy_CalculateCoinReward(

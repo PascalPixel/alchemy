@@ -28,6 +28,10 @@
  * z locals, a y local, register variables, Object_Create and asm pins on
  * the halved kind (with or without x/z inputs, or volatile in a statement
  * expression) all move the y temporary to r4 or the kind to the front.
+ * 2026-09-30 (Jupiter): a tagged `lsl %0, %0, #1` asm on kind = 142 taking x
+ * and z as inputs keeps the loads first but puts y's temporary in r4 (9
+ * halfwords in the draft scorer, baseline 3); computing y as a statement
+ * reroutes the rise through r0 (74), and pinning rise to r2 gives 8.
  */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/CHOJO.H"
 

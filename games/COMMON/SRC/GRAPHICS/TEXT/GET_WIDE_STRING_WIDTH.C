@@ -4,12 +4,23 @@ extern const u8 UiText_Glyphs[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
+/* The European editions give every single-byte character the full ten
+   pixels and count nothing for the rest. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#define WIDE_WIDTH_FIXED 1
+#endif
+
 s32 UiText_GetWideStringWidth(u16 *text)
 {
     s32 width;
     u16 *p;
     u32 c;
+#if !defined(WIDE_WIDTH_FIXED)
     u32 idx;
+#endif
 
     c = *text;
     width = 0;
@@ -19,12 +30,16 @@ s32 UiText_GetWideStringWidth(u16 *text)
             if (c == 0x20) {
                 width += 4;
             } else if (c <= 0xFFU) {
+#if defined(WIDE_WIDTH_FIXED)
+                width += 0xA;
+#else
                 idx = c - 0xDE;
                 if (idx > 1U) {
                     width += FIELD_AT_OFFSET(((idx + 0xBE) << 5), u16, (s32)UiText_Glyphs);
                 }
             } else {
                 width += 0xA;
+#endif
             }
             c = *p;
             p += 1;

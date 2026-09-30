@@ -6,12 +6,8 @@ Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
-	.section .rom.00002e20, "ax"
-	.global System_Initialize
-	.type System_Initialize, %function
-	.thumb_func
-System_Initialize:
-	.incbin "baserom.gba", 0x00002e20, 0x00000138
+	.section .rom.00002f14, "ax"
+	.incbin "baserom.gba", 0x00002f14, 0x00000044
 	.section .rom.00002f58, "ax"
 	.global RuntimeDispatch_ReservedNoOpA
 	.type RuntimeDispatch_ReservedNoOpA, %function
@@ -346,16 +342,12 @@ UiWindow_ClearInteriorTiles:
 	.thumb_func
 UiWork_StepChannelScript:
 	.incbin "baserom.gba", 0x000158d0, 0x0000062c
-	.section .rom.00016a34, "ax"
-	.incbin "baserom.gba", 0x00016a34, 0x00000028
 	.section .rom.00016a5c, "ax"
 	.global UiText_RenderWideStringAtOffset
 	.type UiText_RenderWideStringAtOffset, %function
 	.thumb_func
 UiText_RenderWideStringAtOffset:
 	.incbin "baserom.gba", 0x00016a5c, 0x00000190
-	.section .rom.00016c5a, "ax"
-	.incbin "baserom.gba", 0x00016c5a, 0x0000012e
 	.section .rom.00016e3c, "ax"
 	.incbin "baserom.gba", 0x00016e3c, 0x000001a4
 	.section .rom.00016fe0, "ax"
@@ -366,18 +358,18 @@ UiText_BuildRenderEntries:
 	.global Func_08018038
 Func_08018038:
 	.incbin "baserom.gba", 0x00016fe0, 0x00000660
-	.section .rom.00017640, "ax"
-	.global UiWindow_FitOnScreen
-	.type UiWindow_FitOnScreen, %function
-	.thumb_func
-UiWindow_FitOnScreen:
-	.incbin "baserom.gba", 0x00017640, 0x000000d8
 	.section .rom.000177d8, "ax"
 	.global UiText_MeasureEntryDimensions
 	.type UiText_MeasureEntryDimensions, %function
 	.thumb_func
 UiText_MeasureEntryDimensions:
-	.incbin "baserom.gba", 0x000177d8, 0x000006ac
+	.incbin "baserom.gba", 0x000177d8, 0x000001f8
+	.section .rom.000179d0, "ax"
+	.global UiText_MeasureStringVariant
+	.type UiText_MeasureStringVariant, %function
+	.thumb_func
+UiText_MeasureStringVariant:
+	.incbin "baserom.gba", 0x000179d0, 0x000004b4
 	.section .rom.00018014, "ax"
 	.incbin "baserom.gba", 0x00018014, 0x00000140
 	.section .rom.00018154, "ax"
@@ -1566,14 +1558,12 @@ RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x000a96fc, 0x000002c8
 	.section .rom.000a9b7c, "ax"
 	.incbin "baserom.gba", 0x000a9b7c, 0x000001ac
-	.section .rom.000aa386, "ax"
-	.incbin "baserom.gba", 0x000aa386, 0x00000002
-	.section .rom.000aa388, "ax"
-	.global Menu_OpenConfirmPrompt
-	.type Menu_OpenConfirmPrompt, %function
+	.section .rom.000aa530, "ax"
+	.global Menu_ResolveSelectedAction
+	.type Menu_ResolveSelectedAction, %function
 	.thumb_func
-Menu_OpenConfirmPrompt:
-	.incbin "baserom.gba", 0x000aa388, 0x000004c8
+Menu_ResolveSelectedAction:
+	.incbin "baserom.gba", 0x000aa530, 0x00000320
 	.section .rom.000aa944, "ax"
 	.global PsynergyMenu_SetupActionIcons
 	.type PsynergyMenu_SetupActionIcons, %function

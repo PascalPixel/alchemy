@@ -610,7 +610,7 @@ SECTIONS
         "*/recon/tbs/raw/08028eda.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/SCHEDULE_CALLBACK_C_AFTER_FRAMES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_DRAW_SELECTION_ROW.o"(.text)
-        "*/recon/tbs/raw/08029094.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION_ROW_INPUT.o"(.text)
         "*/games/COMMON/SRC/MENU/RUN_SELECTION_WITH_CURSOR_OBJECT.o"(.text)
         "*/recon/tbs/raw/08029272.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GRAPHICS/TEXT/FORMAT_HEX.o"(.text)

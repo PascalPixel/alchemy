@@ -94,6 +94,9 @@
 	.4byte 0x0802f380
 	.2byte 0x026c
 	.2byte 0x0000
+	.global Func_0802a6b8
+	.thumb_func
+Func_0802a6b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -701,7 +704,7 @@
 	mov	r5, r8
 	subs	r1, r3, r5
 	mov	r0, lr
-	bl	.L_0802af9c
+	bl	Func_0802af9c
 	bl	.L_0802ad84
 	add	sp, #4
 	pop	{r3, r5}
@@ -1218,6 +1221,9 @@
 	.4byte 0xfff00000
 	.2byte 0x1120
 	.2byte 0x0300
+	.global Func_0802af9c
+	.thumb_func
+Func_0802af9c:
 .L_0802af9c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

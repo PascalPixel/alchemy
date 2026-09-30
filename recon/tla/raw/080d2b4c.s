@@ -90,6 +90,9 @@ Func_080d2b4c:
 	.4byte 0x02001000
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2c04
+	.thumb_func
+Func_080d2c04:
 	ldr	r3, [pc, #16]
 	movs	r4, #247
 	lsls	r4, r4, #1
@@ -102,6 +105,9 @@ Func_080d2b4c:
 	bx	lr
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2c1c
+	.thumb_func
+Func_080d2c1c:
 	ldr	r3, [pc, #16]
 	movs	r4, #249
 	lsls	r4, r4, #1
@@ -114,6 +120,9 @@ Func_080d2b4c:
 	bx	lr
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2c34
+	.thumb_func
+Func_080d2c34:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #108]

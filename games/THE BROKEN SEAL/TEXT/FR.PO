@@ -10811,7 +10811,7 @@ msgctxt "message"
 msgid "02700"
 msgstr "jeter cela?"
 
-msgctxt "message"
+msgctxt "MsgEquipThisItem"
 msgid "02701"
 msgstr "Equiper cet objet?"
 
@@ -11143,7 +11143,7 @@ msgctxt "MsgYes"
 msgid "02783"
 msgstr "Oui"
 
-msgctxt "message"
+msgctxt "MsgNo"
 msgid "02784"
 msgstr "Non"
 

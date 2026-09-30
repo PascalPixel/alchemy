@@ -54,6 +54,9 @@ FAKEMATCH-steered code as their own number. ☀️ has the priority; the target 
 
 The reference ROM judges the build and never feeds it. Any path by which the
 expected answer steers the build or the count is cheating, whatever its form.
+Reconstructing Camelot's compiler from habits that run through a whole game is
+allowed (K3); fitting a compiler, an option or a routing to particular files
+or functions is exactly this cheating.
 
 - **O1** ROM bytes reach the build only through pret's
   `.incbin "baserom.gba", OFFSET, SIZE` scaffold in `recon/<game>`, which never
@@ -86,7 +89,9 @@ expected answer steers the build or the count is cheating, whatever its form.
   100%, and is then removed as the final step, as pret's was. Until then
   compiler-steering C (wrappers, volatile, forced temporaries, dead code),
   inline assembly and fixed-register variables are allowed when each carries a
-  `FAKEMATCH` tag with a reason. `/* CAMELOT_ASM: proof */` marks assembly
+  `FAKEMATCH` tag with a reason. A fake match stays in the source, tagged; it is
+  never replaced by a compiler option or routing that fits only those
+  functions (K1, K3). `/* CAMELOT_ASM: proof */` marks assembly
   Camelot very likely wrote in C; the reviewed `Dma_Set` and `Iwram_*` macros
   stay. Never patch compiler output. _Check: no-asm (in lint-staged)._
 - **S3** Write it the way Camelot would have in 2001: `games/<GAME>/SRC`,
@@ -118,15 +123,54 @@ expected answer steers the build or the count is cheating, whatever its form.
 
 ### Compilers
 
-- **K1** Game code uses the approved agscc (GCC 2.96); library code uses
-  pret's agbcc with pret's flags (`-O` for flash, `-O2` for MusicPlayer2000);
-  RAM-executed ARM code uses pret's agbcc_arm with `-fomit-frame-pointer`.
-  Families and flags apply to whole files, with the reason in compiler routing;
-  never tune a single function. _Check: routing tests._
-- **K2** ⚓️ game code adds `-mthumb-split-constants` and `-mthumb-call-via-lr`,
-  Camelot's constant and call-through-register rules found across ⚓️. A compiler change needs Pascal's approval and evidence
-  across many functions; every compiler binary's digest is recorded.
-  _Check: compiler-source-check, bundle validation._
+Camelot built each game with one compiler and one set of options, as one
+Makefile would. Alchemy rebuilds that compiler: GCC 2.96 as Camelot's
+engineers used it and, where the whole game shows it, as they modified it.
+The line between that and bending a compiler to fit is K3: a compiler, an
+option or a change counts only when it explains a game's code as a whole,
+never a file or a function.
+
+- **K1** Game code compiles with agscc (GCC 2.96, the 2000-07-31 snapshot) and
+  one option set per game, the same for every game C file:
+  `-O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4`, plus
+  `-mthumb-interwork` for ☀️ and K2's two options for ⚓️. `-fcall-used-r4` is a
+  stock GCC option: 265 of 266 ☀️ and 1,648 of 2,302 ⚓️ functions that save lr
+  start saving at r5. Library code keeps the compiler and flags pret uses for
+  it, file by file as pret names its library files: pret's agbcc for
+  MusicPlayer2000 (`-O2`) and the flash library (`-O`), and agbcc_arm for
+  RAM-executed ARM code (`-fomit-frame-pointer`). No other routing: never a
+  per-file or per-function compiler, option or flag for game code.
+  _Check: routing tests._
+- **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
+  GCC's Thumb backend between the games, rebuilt as options in GCC's own
+  style and turned on for all of ⚓️'s game code:
+  - `-mthumb-split-constants` builds a constant that no single Thumb
+    immediate holds inline, from a shifted byte and an add, instead of loading
+    it from the literal pool. 13,907 of the 14,101 constant-building sequences
+    in ⚓️'s code follow the rule exactly; ☀️ has 18.
+  - `-mthumb-call-via-lr` calls through a register by moving the target into
+    lr and branching with the second half of a BL, instead of calling a
+    `_call_via_rX` stub. ⚓️ makes 2,549 such calls and 3 stub calls, all in the
+    separately compiled sound library; ☀️ makes 596 stub calls.
+
+  Why a person at Camelot made them: each habit runs through the whole game,
+  so it belongs to the compiler, not to some functions; neither is in ☀️,
+  built a year earlier with the same compiler family; no public GCC from
+  2000-2002 has either (the study in agscc's README read all 417 ARM backend
+  changes and 28 snapshots and releases); and each is a small, local change a
+  toolchain engineer makes for speed: the first skips a slow cartridge-ROM
+  load for the constant, the second skips a stub on every indirect call. The
+  second only works because ⚓️'s game code no longer interworks with ARM code,
+  one coherent change to one compiler. Without them, 37 credited ⚓️ functions
+  no longer match. _Check: compiler-source-check, bundle validation._
+- **K3** A compiler, option or change is admitted only when one option set
+  explains the great majority of a game's C and assembly, counted across the
+  whole game rather than listed by function; no public compiler of the time
+  already explains it; and it is written as a plausible change by a Camelot
+  engineer, in GCC's own style, with its evidence and reason recorded here and
+  in agscc's README. Pascal approves each. Every compiler binary is built
+  reproducibly from pinned source and its digest recorded.
+  _Check: compiler-source-check, bundle validation, routing tests._
 
 ### Work
 

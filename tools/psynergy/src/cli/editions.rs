@@ -41,8 +41,13 @@ fn target(build: &Path, root: &Path, image: Option<&str>, query: &str) -> Result
         let map_path = elf_path.with_extension("map");
         let map =
             fs::read_to_string(&map_path).map_err(|e| format!("{}: {e}", map_path.display()))?;
+        let stem = elf_path
+            .file_stem()
+            .map(|s| s.to_string_lossy().into_owned())
+            .unwrap_or_default();
         let image = similar::Image {
             build: "",
+            name: &stem,
             elf: &elf,
             map: &map,
         };

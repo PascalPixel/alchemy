@@ -395,6 +395,29 @@ mod target_tests {
             assert!(flags.iter().any(|flag| flag == "-mthumb"));
         }
     }
+    /// Game code has one option set per game (K1): only Nintendo's library
+    /// files, named one by one as pret names them, leave the game compiler,
+    /// and they live in the sound and save library folders. Routing a game
+    /// file elsewhere to fit its bytes would be fitting the compiler (K3).
+    #[test]
+    fn only_library_files_leave_the_game_compiler() {
+        for source in AGBCC_SOURCES
+            .iter()
+            .chain(AGBCC_FLASH_SOURCES)
+            .chain(AGBCC_ARM_SOURCES)
+        {
+            assert!(
+                source.contains("/SRC/SOUND/") || source.contains("/SRC/SYSTEM/SAVE/"),
+                "{source} is not a library file"
+            );
+        }
+        for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+            assert_eq!(
+                cflags_for_target_source(target, "GAME/FLAGS/GET_BYTE.C"),
+                cflags_for_target_source(target, "BATTLE/EFFECT/ANY_FILE.C")
+            );
+        }
+    }
     /// Only TLA's game family splits Thumb constants; its inherited library
     /// files and all of TBS keep stock constant loading.
     #[test]

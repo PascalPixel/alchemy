@@ -181,13 +181,13 @@ Func_08042e28:
 	ldr	r3, [r2, #0]
 	strh	r3, [r5, #0]
 	ldr	r0, [pc, #64]
-	bl	0x08016150
+	bl	SerialRuntime_QueueCommand
 	mov	r1, fp
 	adds	r0, r6, #0
 	bl	Func_08015ca4
 	adds	r6, r0, #0
 	movs	r0, #0
-	bl	0x08016150
+	bl	SerialRuntime_QueueCommand
 	ldrh	r2, [r5, #0]
 	mov	r3, sl
 	str	r2, [r3, #0]
@@ -286,12 +286,12 @@ Func_08042e28:
 	ldr	r3, [r2, #0]
 	strh	r3, [r5, #0]
 	ldr	r0, [pc, #56]
-	bl	0x08016150
+	bl	SerialRuntime_QueueCommand
 	adds	r0, r6, #0
 	bl	0x08015e8c
 	adds	r6, r0, #0
 	movs	r0, #0
-	bl	0x08016150
+	bl	SerialRuntime_QueueCommand
 	ldrh	r2, [r5, #0]
 	mov	r3, sl
 	str	r2, [r3, #0]

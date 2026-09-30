@@ -5,6 +5,7 @@
 #include "BATTLE_COMMAND.H"
 #include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
+#include "BATTLE_MSG.H"
 s32 ResourceMetadata_SumCommandLengthsFar(s32 battle_value, s32 second, s32 third);
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 id);
@@ -73,9 +74,6 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattleEventRuntime_WaitForReady(void);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void BattleEvent_Playback(void);
-
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
 
 /* Play an actor's action against its first target: turn to face it, walk
    up, run the action's effect and walk back. */
@@ -160,7 +158,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan)
         WaitFrames(4);
         WaitFrames(10);
         BattleEv_Push(0, plan->target_ids[0]);
-        BattleEv_Push(4, 0x853);
+        BattleEv_Push(4, (s32)&MsgNimblyDodgesBlow);
         BattleEv_DispatchQueued();
         Actor_ResetMotionAtAnchor(work.members[0]);
     } else {
@@ -217,7 +215,6 @@ s32 RunBattlePresentation(struct BattlePlan *plan)
     Actor_ResetMotionAtAnchor(work.primary_id);
     return 0;
 }
-#endif
 
 s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
 {

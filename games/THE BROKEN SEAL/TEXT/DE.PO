@@ -9519,7 +9519,7 @@ msgctxt "message"
 msgid "02377"
 msgstr "{argument_actor_name:1} schützt sich!"
 
-msgctxt "message"
+msgctxt "MsgNimblyDodgesBlow"
 msgid "02378"
 msgstr "{argument_actor_name:1} weicht dem Schlag aus!"
 
@@ -10611,7 +10611,7 @@ msgctxt "MsgKorosseoRobinGotItem"
 msgid "02650"
 msgstr "{protagonist_name} erhält{line_break}{argument_item_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGaveItemToMember"
 msgid "02651"
 msgstr "{protagonist_name} gab {argument_item_name:1}{line_break}an {argument_actor_name:1}.{end_wait}"
 
@@ -10659,11 +10659,11 @@ msgctxt "message"
 msgid "02662"
 msgstr "kann aber nichts finden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryAnyMore"
 msgid "02663"
 msgstr "Aber du kannst nichts{line_break}mehr tragen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWillYouDrop"
 msgid "02664"
 msgstr "Was willst du wegwerfen?{end_wait}"
 
@@ -10711,7 +10711,7 @@ msgctxt "message"
 msgid "02675"
 msgstr "Der Jupiter-Dschinn{line_break}{text_color:10}{argument_ability_name}{text_color:16} folgt {argument_actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "02676"
 msgstr "Derzeitige Position"
 
@@ -12595,7 +12595,7 @@ msgctxt "message"
 msgid "03146"
 msgstr "Menü-Test"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoPrompt"
 msgid "03147"
 msgstr "Wähle die Items"
 
@@ -12603,7 +12603,7 @@ msgctxt "message"
 msgid "03148"
 msgstr "{button_icon:6}:Dschinn-Auswahl"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoTopic"
 msgid "03149"
 msgstr "Dschinn"
 
@@ -12631,7 +12631,7 @@ msgctxt "message"
 msgid "03155"
 msgstr "Psynergy"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoText"
 msgid "03156"
 msgstr "Die vier Elemente sind{line_break}die Grundbausteine jeg-{line_break}licher Materie.{page_break}Die elementaren Geister{line_break}nennt man Dschinns. {line_break}Die vier Elemente sind{page_break}Venus für Erde, {line_break}Merkur für Wasser, {line_break}Mars für Feuer und{page_break}Jupiter für Wind. {line_break}Jedes Element verfügt{line_break}über mehrere Dschinns. "
 

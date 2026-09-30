@@ -809,7 +809,7 @@
     "*/recon/tbs/ja/rom.o"(.rom.000d8040)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_SHAKE.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000d85e8)
-    "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
+    "*/games/COMMON/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000d9972)
     "*/recon/tbs/ja/rom.o"(.rom.000d9974)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT3.o"(.text)

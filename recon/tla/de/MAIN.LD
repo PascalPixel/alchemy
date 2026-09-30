@@ -1220,7 +1220,7 @@
     "*/recon/tla/de/rom.o"(.rom.00152470)
     "*/games/COMMON/SRC/GRAPHICS/TILE/TRANSPOSE_COPY.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00157636)
-    "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
+    "*/games/COMMON/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0015a0bc)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES_2.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0015a110)

@@ -627,13 +627,13 @@ Func_081b34a8:
 	ldr r0, [sp, #24]
 	movs r2, #0
 	adds r3, r5, #0
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	movs r1, #160
 	movs r2, #0
 	adds r3, r5, #0
 	lsls r1, r1, #19
 	ldr r0, [sp, #28]
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	ldr r3, .L_081b39d0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -737,13 +737,13 @@ Func_081b34a8:
 	adds r2, r5, #0
 	adds r3, r6, #0
 	ldr r0, [sp, #24]
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	movs r1, #160
 	ldr r0, [sp, #28]
 	lsls r1, r1, #19
 	adds r2, r5, #0
 	adds r3, r6, #0
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 .L_081b3a80:
 	ldr r1, [sp, #20]
 	ldr r3, [r1]
@@ -1170,13 +1170,13 @@ Func_081b34a8:
 	ldr r1, .L_081b3e24
 	adds r2, r5, #0
 	adds r3, r6, #0
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	movs r1, #160
 	lsls r1, r1, #19
 	ldr r0, [sp, #28]
 	adds r2, r5, #0
 	adds r3, r6, #0
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #1

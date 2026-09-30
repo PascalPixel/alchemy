@@ -3992,7 +3992,7 @@ Data_02002118:
 	.4byte 0x02c00000
 	.4byte 0x03800000
 	.4byte 0x01400000
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00c00000
 	.4byte 0x01400000
 	.4byte 0x01a00000
@@ -4167,40 +4167,40 @@ Data_020022d0:
 	.4byte 0xffff002c
 	.4byte Func_02000ef0
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x2d
+	.4byte 0x0200002d
 	.4byte Func_02000818
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x2e
+	.4byte 0x0200002e
 	.4byte Func_02000818
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x2f
+	.4byte 0x0200002f
 	.4byte Func_02000818
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte Func_02000818
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x32
+	.4byte 0x02000032
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x33
+	.4byte 0x02000033
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x34
+	.4byte 0x02000034
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x35
+	.4byte 0x02000035
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x36
+	.4byte 0x02000036
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x37
+	.4byte 0x02000037
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x38
+	.4byte 0x02000038
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x39
+	.4byte 0x02000039
 	.4byte Func_02000a80
 	.4byte 0x00000006
 	.4byte 0xffff00c8

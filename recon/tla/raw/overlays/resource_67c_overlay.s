@@ -7748,7 +7748,7 @@ Data_0200414c:
 	.4byte 0x817c78f8
 	.4byte 0x3841f1a7
 	.4byte 0x2f931f03
-	.4byte Data_020038e0 + 0x10
+	.4byte 0x020038f0
 	.4byte 0x702f971f
 	.4byte 0x33af8d0b
 	.4byte 0x02f971f0
@@ -8359,7 +8359,7 @@ Data_02004b98:
 	.4byte 0x00000064
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0007
 	.4byte 0x00000007
 	.4byte 0x00000000
@@ -8838,10 +8838,10 @@ Data_020052f8:
 	.global Data_0200534c
 Data_0200534c:
 	.4byte 0x08000808
-	.4byte Runtime_ReciprocalTable + 0xe057
+	.4byte 0x080108ff
 	.4byte 0xff080008
-	.4byte Text_MessageContexts + 0x1fbd1
+	.4byte 0x08080801
 	.4byte 0x01000808
-	.4byte Text_MessageContexts + 0x2f2d8
-	.4byte Text_MessageContexts + 0x1f3d8
+	.4byte 0x0808ff08
+	.4byte 0x08080008
 	.4byte 0x08ff0108

@@ -8286,7 +8286,7 @@ Data_02004ae0:
 	.4byte 0x00000011
 	.global Data_02004b58
 Data_02004b58:
-	.4byte Data_02001000
+	.4byte 0x02001000
 	.4byte 0x20000001
 	.4byte 0x00010000
 	.4byte 0x01001000
@@ -8719,7 +8719,7 @@ Data_02005158:
 	.global Data_0200515a
 Data_0200515a:
 	.2byte 0x4000
-	.4byte Runtime_ReciprocalTable + 0xd69c
+	.4byte 0x0800ff44
 	.4byte 0x01001000
 	.4byte 0x20000001
 	.4byte 0x00010010
@@ -8920,43 +8920,43 @@ Data_02005428:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0131
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0131
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0131
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0131
 	.4byte 0x00000001
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0131
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff017e
 	.4byte 0x00000001
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0029
 	.4byte 0x00000001
 	.4byte 0x00e00000
@@ -9365,7 +9365,7 @@ Data_02005aac:
 	.4byte 0x09e0000a
 	.4byte Func_02001380
 	.4byte 0x00000002
-	.4byte Data_02010002 + 0x8
+	.4byte 0x0201000a
 	.4byte Func_02001764
 	.4byte 0x00000002
 	.4byte 0xffff000a
@@ -9448,7 +9448,7 @@ Data_02005bc0:
 	.4byte 0xffff000a
 	.4byte Func_02000d48
 	.4byte 0x00000002
-	.4byte Data_02030000 + 0xb
+	.4byte 0x0203000b
 	.4byte Func_02002808
 	.4byte 0x0000c400
 	.4byte 0xffff0011

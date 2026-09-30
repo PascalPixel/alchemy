@@ -2174,7 +2174,7 @@ Data_0200154c:
 	.4byte 0xffd80000
 	.4byte 0x00000001
 	.4byte 0x00000030
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x012f0000
 	.4byte 0x00000001
 	.4byte 0x00000027
@@ -2725,7 +2725,7 @@ Data_02001aec:
 	.4byte 0xffff0013
 	.4byte Func_02000038
 	.4byte 0x50008805
-	.4byte gHeapSlots + 0x65
+	.4byte 0x03000065
 	.4byte Func_02000c54
 	.4byte 0x50008805
 	.4byte 0x03010066
@@ -2734,7 +2734,7 @@ Data_02001aec:
 	.4byte 0x03020067
 	.4byte Func_02000c74
 	.4byte 0x00008f15
-	.4byte Data_02010002 + 0x14
+	.4byte 0x02010016
 	.4byte Func_02000c84
 	.4byte 0xffffffff
 	.4byte 0x00000000

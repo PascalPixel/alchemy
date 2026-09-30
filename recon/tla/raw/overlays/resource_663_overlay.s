@@ -7147,7 +7147,7 @@ Data_02003dfc:
 	.4byte 0x00000026
 	.global Data_02003e4c
 Data_02003e4c:
-	.4byte Data_02000000 + 0xe
+	.4byte 0x0200000e
 	.4byte 0x0000ffff
 	.global gSceneEntrances
 gSceneEntrances:
@@ -7376,55 +7376,55 @@ Data_02004194:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0122
 	.4byte 0x00000001
 	.4byte 0x00000008
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000009
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x0000000a
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0179
 	.4byte 0x00000007
 	.4byte 0x02180000
@@ -7460,7 +7460,7 @@ Data_02004194:
 	.4byte 0x0000000b
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -7526,13 +7526,13 @@ Data_020043d4:
 	.4byte 0xffff0014
 	.4byte Func_02000548
 	.4byte 0x80004e15
-	.4byte Resource_Data012 + 0x280008
+	.4byte 0x08580008
 	.4byte Func_02000824
 	.4byte 0x10004e15
-	.4byte Resource_Data012 + 0x280008
+	.4byte 0x08580008
 	.4byte Func_02000830
 	.4byte 0x00004e15
-	.4byte Resource_Data012 + 0x280008
+	.4byte 0x08580008
 	.4byte Func_02001010
 	.4byte 0x80004e15
 	.4byte 0xffff0009
@@ -7597,37 +7597,37 @@ Data_020044d0:
 	.4byte 0xffff0000
 	.4byte Func_02001cc8
 	.4byte 0x10008c15
-	.4byte Resource_Data012 + 0x2f000c
+	.4byte 0x085f000c
 	.4byte Func_02001ca4
 	.4byte 0x00008c15
-	.4byte Resource_Data012 + 0x2f000c
+	.4byte 0x085f000c
 	.4byte Func_02001cc8
 	.4byte 0x10008c15
-	.4byte Resource_Data012 + 0x30000d
+	.4byte 0x0860000d
 	.4byte Func_02001ca4
 	.4byte 0x00008c15
-	.4byte Resource_Data012 + 0x30000d
+	.4byte 0x0860000d
 	.4byte Func_02001cc8
 	.4byte 0x10008c15
-	.4byte Resource_Data012 + 0x31000f
+	.4byte 0x0861000f
 	.4byte Func_02001ca4
 	.4byte 0x00008c15
-	.4byte Resource_Data012 + 0x31000f
+	.4byte 0x0861000f
 	.4byte Func_02001cc8
 	.4byte 0x10008c15
-	.4byte Resource_Data012 + 0x320010
+	.4byte 0x08620010
 	.4byte Func_02001ca4
 	.4byte 0x00008c15
-	.4byte Resource_Data012 + 0x320010
+	.4byte 0x08620010
 	.4byte Func_02001cc8
 	.4byte 0x00001815
-	.4byte Data_02000000 + 0xe
+	.4byte 0x0200000e
 	.4byte Func_02001da8
 	.4byte 0x10008c15
-	.4byte Summon_BellMaidenTiles + 0x105a
+	.4byte 0x08870016
 	.4byte Func_02001ca4
 	.4byte 0x00008c15
-	.4byte Summon_BellMaidenTiles + 0x105a
+	.4byte 0x08870016
 	.4byte Func_02001cc8
 	.4byte 0x00000006
 	.4byte 0xffff00c8
@@ -7665,25 +7665,25 @@ Data_0200459c:
 	.4byte 0xffff000b
 	.4byte Func_02000620
 	.4byte 0x00008c15
-	.4byte Battle_MistyHillsBackdrop + 0x2291
+	.4byte 0x0879000d
 	.4byte Func_020006d4
 	.4byte 0x80004e15
-	.4byte Battle_BlueRuinsBackdrop + 0x103c
+	.4byte 0x087a000c
 	.4byte Func_02000824
 	.4byte 0x10004e15
-	.4byte Battle_BlueRuinsBackdrop + 0x103c
+	.4byte 0x087a000c
 	.4byte Func_02000830
 	.4byte 0x00004e15
-	.4byte Battle_BlueRuinsBackdrop + 0x103c
+	.4byte 0x087a000c
 	.4byte Func_020026b8
 	.4byte 0x80004e15
-	.4byte Battle_ArrowBeachBackdrop + 0xc36
+	.4byte 0x087b000e
 	.4byte Func_02000824
 	.4byte 0x10004e15
-	.4byte Battle_ArrowBeachBackdrop + 0xc36
+	.4byte 0x087b000e
 	.4byte Func_02000830
 	.4byte 0x00004e15
-	.4byte Battle_ArrowBeachBackdrop + 0xc36
+	.4byte 0x087b000e
 	.4byte Func_02001f7c
 	.4byte 0x00000006
 	.4byte 0xffff00c8

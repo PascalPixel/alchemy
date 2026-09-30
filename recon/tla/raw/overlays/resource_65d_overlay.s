@@ -1503,7 +1503,7 @@ Data_020012ac:
 	.4byte 0xffff0022
 	.4byte Func_020005d4
 	.4byte 0x50008a05
-	.4byte Data_02000000 + 0x3c
+	.4byte 0x0200003c
 	.4byte Func_02000218
 	.4byte 0xffffffff
 	.4byte 0x00000000

@@ -6674,19 +6674,19 @@ Data_02003b68:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff01b0
 	.4byte .L_0200b8fc
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0110
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6700,43 +6700,43 @@ Data_02003bc8:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0149
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0110
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0110
 	.4byte 0x00000007
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0110
 	.4byte 0x00000007
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0110
 	.4byte 0x00000007
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff01e9
 	.4byte 0x00000007
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6750,19 +6750,19 @@ Data_02003c88:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0110
 	.4byte 0x00000007
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0110
 	.4byte 0x00000007
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6776,25 +6776,25 @@ Data_02003ce8:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff01af
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff01af
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff01b0
 	.4byte .L_0200b8fc
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff01ad
 	.4byte .L_0200b8fc
 	.4byte 0x02480000
@@ -6842,16 +6842,16 @@ Data_02003dcc:
 	.4byte 0xffff0036
 	.4byte Func_02001090
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x32
+	.4byte 0x02000032
 	.4byte Func_02000ac8
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x33
+	.4byte 0x02000033
 	.4byte Func_02000ac8
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x34
+	.4byte 0x02000034
 	.4byte Func_02000ac8
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x35
+	.4byte 0x02000035
 	.4byte Func_02000ac8
 	.4byte 0x00009c05
 	.4byte 0xffff001e
@@ -6913,16 +6913,16 @@ Data_02003e38:
 	.4byte 0x1207000b
 	.4byte Func_02001518
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x32
+	.4byte 0x02000032
 	.4byte Func_02001398
 	.4byte 0x00000002
-	.4byte Data_02010020 + 0x13
+	.4byte 0x02010033
 	.4byte Func_02001398
 	.4byte 0x00000002
-	.4byte Data_02020004 + 0x30
+	.4byte 0x02020034
 	.4byte Func_02001398
 	.4byte 0x00000002
-	.4byte Data_02030000 + 0x35
+	.4byte 0x02030035
 	.4byte Func_02001398
 	.4byte 0x00000002
 	.4byte 0x02040036
@@ -7014,7 +7014,7 @@ Data_02003fac:
 	.4byte 0xffff0000
 	.4byte Func_02001644
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x32
+	.4byte 0x02000032
 	.4byte Func_02001660
 	.4byte 0x00000002
 	.4byte 0x12000033
@@ -7097,16 +7097,16 @@ Data_02004150:
 	.4byte 0x1207000b
 	.4byte Func_02001518
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x32
+	.4byte 0x02000032
 	.4byte Func_02001398
 	.4byte 0x00000002
-	.4byte Data_02010020 + 0x13
+	.4byte 0x02010033
 	.4byte Func_02001398
 	.4byte 0x00000002
-	.4byte Data_02020004 + 0x30
+	.4byte 0x02020034
 	.4byte Func_02001398
 	.4byte 0x00000002
-	.4byte Data_02030000 + 0x35
+	.4byte 0x02030035
 	.4byte Func_02001398
 	.4byte 0x00000002
 	.4byte 0x02040036
@@ -7192,13 +7192,13 @@ Data_020042c4:
 	.4byte 0xffff000b
 	.4byte 0x0000000b
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x32
+	.4byte 0x02000032
 	.4byte Func_02001938
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x33
+	.4byte 0x02000033
 	.4byte Func_02001938
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x34
+	.4byte 0x02000034
 	.4byte Func_02001938
 	.4byte 0x00000002
 	.4byte 0x0a8c001e

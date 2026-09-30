@@ -4385,8 +4385,8 @@ Data_0200247c:
 	.global Data_02002490
 Data_02002490:
 	.4byte 0x09510941
-	.4byte Field_Map165 + 0x1193
-	.4byte Resource_DirectoryTable + 0x81e
+	.4byte 0x08d108b3
+	.4byte 0x0868081e
 	.global gSceneEntrances
 gSceneEntrances:
 	.4byte 0xffff0000
@@ -4507,7 +4507,7 @@ Data_02002500:
 	.4byte 0xd6b475ab
 	.4byte 0xe027d5fe
 	.4byte 0x1da27e1f
-	.4byte Resource_Data012 + 0xc79ce
+	.4byte 0x083c79ce
 	.4byte 0xf8707e1c
 	.4byte 0x870fe1c2
 	.4byte 0x5e072c4f
@@ -4579,8 +4579,8 @@ Data_020026f0:
 	.global Data_02002700
 Data_02002700:
 	.4byte 0x09510941
-	.4byte Field_Map165 + 0x1193
-	.4byte Resource_DirectoryTable + 0x81e
+	.4byte 0x08d108b3
+	.4byte 0x0868081e
 	.global Data_0200270c
 Data_0200270c:
 	.4byte 0x00c900c8

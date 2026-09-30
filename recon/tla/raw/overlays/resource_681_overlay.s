@@ -10053,7 +10053,7 @@ Data_02005728:
 	.4byte 0x0000000f
 	.4byte 0x00020000
 	.4byte 0x00000004
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00000000
 	.4byte 0x01800000
 	.4byte 0x00000016
@@ -10579,7 +10579,7 @@ Data_02005ee8:
 	.4byte 0xffff0004
 	.4byte Func_0200485c
 	.4byte 0x00000c15
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000af8
 	.4byte 0xffffffff
 	.4byte 0x00000000

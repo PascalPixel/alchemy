@@ -8908,7 +8908,7 @@ Data_02005588:
 	.4byte 0xffff0012
 	.4byte Func_02000884
 	.4byte 0x50008805
-	.4byte gHeapSlots + 0x64
+	.4byte 0x03000064
 	.4byte Func_02000588
 	.4byte 0x00008f15
 	.4byte 0xffff0013

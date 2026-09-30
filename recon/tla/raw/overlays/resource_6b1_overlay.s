@@ -1578,15 +1578,15 @@ Data_02000ef2:
 	.4byte 0x0901667b
 	.4byte 0x78000104
 	.4byte 0x3b3f0e28
-	.4byte Func_080e4d9c + 0x868
-	.4byte Runtime_ReciprocalTable + 0x36c7
+	.4byte 0x080e5605
+	.4byte 0x08005f6f
 	.4byte 0x66010810
-	.4byte Runtime_ReciprocalTable + 0x785f
+	.4byte 0x0800a107
 	.4byte 0x1768001d
 	.4byte 0x15bb0807
 	.4byte 0x00166600
 	.4byte 0x70000e02
-	.4byte Func_080d64f0 + 0x126
+	.4byte 0x080d6617
 	.4byte 0x10df3b02
 	.4byte 0x80100200
 	.4byte 0x7a016612
@@ -1831,7 +1831,7 @@ Data_02001054:
 	.4byte 0x2121ef9c
 	.4byte 0x1113df1e
 	.4byte 0xe3d38839
-	.4byte Resource_Data012 + 0x207bef
+	.4byte 0x08507bef
 	.4byte 0x80e0e3e4
 	.4byte 0xbe720408
 	.4byte 0x92162447
@@ -1926,7 +1926,7 @@ Data_02001054:
 	.4byte 0x870bc67e
 	.4byte 0xf7cc6804
 	.4byte 0xc8858910
-	.4byte Tileset_Set109TilesD + 0x593
+	.4byte 0x08e608f7
 	.4byte 0x13ea70fa
 	.4byte 0x1807c114
 	.4byte 0x10069167
@@ -2406,7 +2406,7 @@ Data_020019f4:
 	.4byte .L_02009970
 	.4byte 0x01a80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00018000
 	.4byte 0xffff01ad
 	.4byte .L_02009970
@@ -2418,7 +2418,7 @@ Data_020019f4:
 	.4byte .L_02009970
 	.4byte 0x01f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00010000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -2455,22 +2455,22 @@ Data_02001c28:
 	.4byte 0xffff004d
 	.4byte Func_02000534
 	.4byte 0x00008c15
-	.4byte Data_02000000 + 0x9
+	.4byte 0x02000009
 	.4byte Func_020004e4
 	.4byte 0x00008c15
-	.4byte Data_02000000 + 0xa
+	.4byte 0x0200000a
 	.4byte Func_020004e4
 	.4byte 0x00008c15
-	.4byte Data_02000000 + 0xb
+	.4byte 0x0200000b
 	.4byte Func_020004e4
 	.4byte 0x00008c15
-	.4byte Data_02000000 + 0xc
+	.4byte 0x0200000c
 	.4byte Func_020004e4
 	.4byte 0x00008c15
-	.4byte Data_02000000 + 0xd
+	.4byte 0x0200000d
 	.4byte Func_020004e4
 	.4byte 0x00008c15
-	.4byte Data_02000000 + 0xe
+	.4byte 0x0200000e
 	.4byte Func_020004e4
 	.4byte 0x00009985
 	.4byte 0x1200004d

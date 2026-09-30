@@ -839,7 +839,7 @@ Data_02000874:
 	.4byte 0x0000318c
 	.4byte 0x01400180
 	.4byte 0x00c00100
-	.4byte GameFlagBytes + 0x180
+	.4byte 0x020001c0
 	.4byte 0x294a0240
 	.4byte 0x001f5294
 	.4byte 0x7c0003ff

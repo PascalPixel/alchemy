@@ -3064,11 +3064,11 @@ Data_02001968:
 	.4byte 0x014b014c
 	.global Data_02001974
 Data_02001974:
-	.4byte Sound_Wave29 + 0x134c
+	.4byte 0x0820f8e0
 	.4byte 0x2008e0f8
 	.4byte 0x0020f0e0
 	.4byte 0x2008e0f8
-	.4byte Sound_Wave29 + 0x134c
+	.4byte 0x0820f8e0
 	.4byte 0x2008e0f8
 	.global Data_0200198c
 Data_0200198c:
@@ -3356,7 +3356,7 @@ Data_02001d28:
 	.4byte 0xffff002a
 	.4byte Func_02000d84
 	.4byte 0x50009705
-	.4byte gHeapSlots + 0x21
+	.4byte 0x03000021
 	.4byte Func_02000e14
 	.4byte 0x00009c05
 	.4byte 0xffff001e

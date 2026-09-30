@@ -9558,7 +9558,7 @@ Data_02005c48:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00000000
 	.4byte 0x01480000
 	.4byte 0x00000001
@@ -10178,7 +10178,7 @@ Data_0200644c:
 	.4byte 0x01024000
 	.4byte 0xffff00b6
 	.4byte 0x00000007
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00000000
 	.4byte 0x00ec0000
 	.4byte 0x00024000
@@ -10535,7 +10535,7 @@ gSceneEvents:
 	.4byte 0xffff0015
 	.4byte Func_02004c2c
 	.4byte 0x00000002
-	.4byte Data_02020004 + 0x12
+	.4byte 0x02020016
 	.4byte Func_02004c94
 	.4byte 0x00000002
 	.4byte 0x12020017

@@ -10096,7 +10096,7 @@ Data_02005394:
 Data_020053d8:
 	.4byte 0x00070008
 	.4byte 0x00090200
-	.4byte Data_02010002 + 0x5
+	.4byte 0x02010007
 	.2byte 0xffff
 	.global Data_020053e6
 Data_020053e6:
@@ -10112,7 +10112,7 @@ Data_020053f8:
 	.global Data_020053fe
 Data_020053fe:
 	.2byte 0x0010
-	.4byte Data_02020004 + 0x3
+	.4byte 0x02020007
 	.4byte 0x00070011
 	.4byte 0xffff0203
 	.global Data_0200540c
@@ -11094,10 +11094,10 @@ Data_0200613c:
 	.4byte 0xffff000b
 	.4byte Func_02000044
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_0200040c
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_0200040c
 	.4byte 0x00009815
 	.4byte 0x0a3e000a
@@ -11162,10 +11162,10 @@ Data_02006250:
 	.4byte 0xffff0058
 	.4byte Func_0200263c
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0xc
+	.4byte 0x02020010
 	.4byte Func_0200040c
 	.4byte 0x50008615
-	.4byte Data_02030000 + 0x11
+	.4byte 0x02030011
 	.4byte Func_0200040c
 	.4byte 0x00009c05
 	.4byte 0xffff0011

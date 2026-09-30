@@ -11149,7 +11149,7 @@ Data_02005fa0:
 	.4byte 0x17a9ad75
 	.4byte 0x586f8f25
 	.4byte 0x75fcd4d3
-	.4byte Text_MessageContexts + 0x7d28
+	.4byte 0x08068958
 	.4byte 0x9c9a2b93
 	.4byte 0xfbcfa216
 	.4byte 0x7e458240

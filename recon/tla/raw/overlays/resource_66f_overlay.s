@@ -2627,16 +2627,16 @@ Data_02001ae4:
 	.4byte 0xffff000e
 	.4byte Func_020001a0
 	.4byte 0x10008c15
-	.4byte Data_02000000 + 0xf
+	.4byte 0x0200000f
 	.4byte Func_02000190
 	.4byte 0x00008c15
-	.4byte Data_02000000 + 0xf
+	.4byte 0x0200000f
 	.4byte Func_020001a0
 	.4byte 0x00008715
-	.4byte Data_0202c800 + 0x10
+	.4byte 0x0202c810
 	.4byte Func_0200036c
 	.4byte 0x00008715
-	.4byte Data_02020202 + 0x60e
+	.4byte 0x02020810
 	.4byte Func_0200036c
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -2668,7 +2668,7 @@ Data_02001c58:
 	.4byte 0x08ff0021
 	.4byte Func_02000f4c
 	.4byte 0x00000002
-	.4byte Battle_DuskCloudsBackdrop + 0x1402
+	.4byte 0x08800022
 	.4byte Func_02000960
 	.4byte 0x00000002
 	.4byte 0x08ff0023
@@ -2701,7 +2701,7 @@ Data_02001c58:
 	.4byte 0xffff000d
 	.4byte Func_0200051c
 	.4byte 0x00008c15
-	.4byte Field_Map267 + 0xa44
+	.4byte 0x08e70014
 	.4byte Func_0200051c
 	.4byte 0x10008c15
 	.4byte 0xffff000e

@@ -7525,7 +7525,7 @@ Data_02004664:
 	.4byte 0xffff0003
 	.4byte 0x00000003
 	.4byte 0x00008515
-	.4byte Data_02030000 + 0xa
+	.4byte 0x0203000a
 	.4byte Func_02001d24
 	.4byte 0x00008b85
 	.4byte 0xffff0000
@@ -7534,7 +7534,7 @@ Data_02004664:
 	.4byte 0xffff0000
 	.4byte Func_02002ea8
 	.4byte 0x00000002
-	.4byte Battle_ArutinYamaBackdrop + 0x2dda
+	.4byte 0x0872000a
 	.4byte Func_02001a3c
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -7571,10 +7571,10 @@ Data_020046f4:
 	.4byte 0xffff0005
 	.4byte 0x00000005
 	.4byte 0x10008c15
-	.4byte Resource_Data012 + 0x1c0008
+	.4byte 0x084c0008
 	.4byte Func_02000fa8
 	.4byte 0x00008c15
-	.4byte Resource_Data012 + 0x1c0008
+	.4byte 0x084c0008
 	.4byte Func_02000fec
 	.4byte 0x00000002
 	.4byte 0x020a000a
@@ -7586,10 +7586,10 @@ Data_020046f4:
 	.4byte 0x0230000f
 	.4byte Func_02001474
 	.4byte 0x00000002
-	.4byte Battle_SoruShindenBackdrop + 0x278b
+	.4byte 0x0874000b
 	.4byte Func_02002384
 	.4byte 0x00000002
-	.4byte Battle_RockyBeachBackdrop + 0x2d94
+	.4byte 0x0875000c
 	.4byte Func_02002430
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -7626,13 +7626,13 @@ Data_020047cc:
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x00001815
-	.4byte Data_02000000 + 0xa
+	.4byte 0x0200000a
 	.4byte Func_02000f34
 	.4byte 0x00001815
-	.4byte Data_02010002 + 0x9
+	.4byte 0x0201000b
 	.4byte Func_02000f58
 	.4byte 0x00001815
-	.4byte Data_02020004 + 0x8
+	.4byte 0x0202000c
 	.4byte Func_02000f80
 	.4byte 0x00000008
 	.4byte 0xffff0000
@@ -7647,13 +7647,13 @@ Data_020047cc:
 	.4byte 0xffff0008
 	.4byte Func_02000fb8
 	.4byte 0x00000002
-	.4byte Battle_StoneTownBackdrop + 0x2376
+	.4byte 0x0877000a
 	.4byte Func_020024e4
 	.4byte 0x00000002
-	.4byte Battle_StoneTownBackdrop + 0x2377
+	.4byte 0x0877000b
 	.4byte Func_020025fc
 	.4byte 0x00000002
-	.4byte Battle_StormyLighthouseBackdrop + 0x1230
+	.4byte 0x087c000c
 	.4byte Func_020026f8
 	.4byte 0x00000002
 	.4byte 0x0205000d
@@ -7711,7 +7711,7 @@ Data_02004928:
 	.4byte 0xffff0002
 	.4byte 0x00000002
 	.4byte 0x00008515
-	.4byte Data_02030000 + 0x11
+	.4byte 0x02030011
 	.4byte 0x00000000
 	.4byte 0x00008515
 	.4byte 0x02040013

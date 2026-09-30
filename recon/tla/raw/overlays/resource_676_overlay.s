@@ -929,652 +929,329 @@ Func_020006bc:
 	.2byte 0x0000
 .L_02008744:
 	.4byte .L_02008c54
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8c66
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8c78
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8c8a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8c9c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8cae
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8cc0
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8cd2
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8ce4
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8cf6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8d08
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8d1a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8d2c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8d3e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8d50
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8d62
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8d74
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8d86
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8daa
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8dbc
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8dce
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8de0
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8dfc
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e0e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e20
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e32
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e44
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e56
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e68
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e7a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e8a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8e9a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8eaa
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8eba
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8eca
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8eda
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8eea
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8efa
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f0a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f1a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f2a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f3a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f4a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f5a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f6a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f7a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f8a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8f9a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8faa
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8fba
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8fca
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8fda
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8fea
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x8ffa
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x900a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x901a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x902a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x903a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x904a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x905a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x906a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x907a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x908a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x909a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x90aa
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x90ba
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x90ca
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x90da
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x90ea
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x90fa
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x910a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x911a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x912a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x913a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x914a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x915a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x916a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9180
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9190
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x919e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x91ac
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x91ba
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x91c8
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x91d6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x91e6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x91f6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9206
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9214
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9222
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9230
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x923e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x924c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x925c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x926c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x927c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x928a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9298
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x92a6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x92b4
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x92c2
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x92d2
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x92e2
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x92f2
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9300
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x930e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x931c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x932a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9338
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9346
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9354
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9362
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9370
-	.2byte 0x0200
-	.2byte 0x93e6
-	.2byte 0x0200
-	.2byte 0x93f6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x937e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x938e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x939e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x93ae
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x93bc
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x93ca
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x93d8
-	.2byte 0x0200
-	.2byte 0x93e6
-	.2byte 0x0200
-	.2byte 0x93f6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x940e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x941e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x942e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x943e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x944c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x945a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9468
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9488
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9496
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x94ae
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x94bc
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x94ca
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x94d8
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x94e6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x94f4
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9502
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9510
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x951e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x952c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x953a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9548
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9556
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9564
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9572
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9580
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x958e
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x959c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x95aa
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x95b8
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x95c6
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x95d4
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x95e2
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x95f0
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x95fe
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x960c
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x961a
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9628
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9636
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9644
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9652
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
-	.2byte 0x9660
-	.2byte 0x0200
-	.2byte 0x966e
-	.2byte 0x0200
+	.4byte .L_0200966e
+	.4byte .L_02008c66
+	.4byte .L_0200966e
+	.4byte .L_02008c78
+	.4byte .L_0200966e
+	.4byte .L_02008c8a
+	.4byte .L_0200966e
+	.4byte .L_02008c9c
+	.4byte .L_0200966e
+	.4byte .L_02008cae
+	.4byte .L_0200966e
+	.4byte .L_02008cc0
+	.4byte .L_0200966e
+	.4byte .L_02008cd2
+	.4byte .L_0200966e
+	.4byte .L_02008ce4
+	.4byte .L_0200966e
+	.4byte .L_02008cf6
+	.4byte .L_0200966e
+	.4byte .L_02008d08
+	.4byte .L_0200966e
+	.4byte .L_02008d1a
+	.4byte .L_0200966e
+	.4byte .L_02008d2c
+	.4byte .L_0200966e
+	.4byte .L_02008d3e
+	.4byte .L_0200966e
+	.4byte .L_02008d50
+	.4byte .L_0200966e
+	.4byte .L_02008d62
+	.4byte .L_0200966e
+	.4byte .L_02008d74
+	.4byte .L_0200966e
+	.4byte .L_02008d86
+	.4byte .L_0200966e
+	.4byte .L_02008daa
+	.4byte .L_0200966e
+	.4byte .L_02008dbc
+	.4byte .L_0200966e
+	.4byte .L_02008dce
+	.4byte .L_0200966e
+	.4byte .L_02008de0
+	.4byte .L_0200966e
+	.4byte .L_02008dfc
+	.4byte .L_0200966e
+	.4byte .L_02008e0e
+	.4byte .L_0200966e
+	.4byte .L_02008e20
+	.4byte .L_0200966e
+	.4byte .L_02008e32
+	.4byte .L_0200966e
+	.4byte .L_02008e44
+	.4byte .L_0200966e
+	.4byte .L_02008e56
+	.4byte .L_0200966e
+	.4byte .L_02008e68
+	.4byte .L_0200966e
+	.4byte .L_02008e7a
+	.4byte .L_0200966e
+	.4byte .L_02008e8a
+	.4byte .L_0200966e
+	.4byte .L_02008e9a
+	.4byte .L_0200966e
+	.4byte .L_02008eaa
+	.4byte .L_0200966e
+	.4byte .L_02008eba
+	.4byte .L_0200966e
+	.4byte .L_02008eca
+	.4byte .L_0200966e
+	.4byte .L_02008eda
+	.4byte .L_0200966e
+	.4byte .L_02008eea
+	.4byte .L_0200966e
+	.4byte .L_02008efa
+	.4byte .L_0200966e
+	.4byte .L_02008f0a
+	.4byte .L_0200966e
+	.4byte .L_02008f1a
+	.4byte .L_0200966e
+	.4byte .L_02008f2a
+	.4byte .L_0200966e
+	.4byte .L_02008f3a
+	.4byte .L_0200966e
+	.4byte .L_02008f4a
+	.4byte .L_0200966e
+	.4byte .L_02008f5a
+	.4byte .L_0200966e
+	.4byte .L_02008f6a
+	.4byte .L_0200966e
+	.4byte .L_02008f7a
+	.4byte .L_0200966e
+	.4byte .L_02008f8a
+	.4byte .L_0200966e
+	.4byte .L_02008f9a
+	.4byte .L_0200966e
+	.4byte .L_02008faa
+	.4byte .L_0200966e
+	.4byte .L_02008fba
+	.4byte .L_0200966e
+	.4byte .L_02008fca
+	.4byte .L_0200966e
+	.4byte .L_02008fda
+	.4byte .L_0200966e
+	.4byte .L_02008fea
+	.4byte .L_0200966e
+	.4byte .L_02008ffa
+	.4byte .L_0200966e
+	.4byte .L_0200900a
+	.4byte .L_0200966e
+	.4byte .L_0200901a
+	.4byte .L_0200966e
+	.4byte .L_0200902a
+	.4byte .L_0200966e
+	.4byte .L_0200903a
+	.4byte .L_0200966e
+	.4byte .L_0200904a
+	.4byte .L_0200966e
+	.4byte .L_0200905a
+	.4byte .L_0200966e
+	.4byte .L_0200906a
+	.4byte .L_0200966e
+	.4byte .L_0200907a
+	.4byte .L_0200966e
+	.4byte .L_0200908a
+	.4byte .L_0200966e
+	.4byte .L_0200909a
+	.4byte .L_0200966e
+	.4byte .L_020090aa
+	.4byte .L_0200966e
+	.4byte .L_020090ba
+	.4byte .L_0200966e
+	.4byte .L_020090ca
+	.4byte .L_0200966e
+	.4byte .L_020090da
+	.4byte .L_0200966e
+	.4byte .L_020090ea
+	.4byte .L_0200966e
+	.4byte .L_020090fa
+	.4byte .L_0200966e
+	.4byte .L_0200910a
+	.4byte .L_0200966e
+	.4byte .L_0200911a
+	.4byte .L_0200966e
+	.4byte .L_0200912a
+	.4byte .L_0200966e
+	.4byte .L_0200913a
+	.4byte .L_0200966e
+	.4byte .L_0200914a
+	.4byte .L_0200966e
+	.4byte .L_0200915a
+	.4byte .L_0200966e
+	.4byte .L_0200916a
+	.4byte .L_0200966e
+	.4byte .L_02009180
+	.4byte .L_0200966e
+	.4byte .L_02009190
+	.4byte .L_0200966e
+	.4byte .L_0200919e
+	.4byte .L_0200966e
+	.4byte .L_020091ac
+	.4byte .L_0200966e
+	.4byte .L_020091ba
+	.4byte .L_0200966e
+	.4byte .L_020091c8
+	.4byte .L_0200966e
+	.4byte .L_020091d6
+	.4byte .L_0200966e
+	.4byte .L_020091e6
+	.4byte .L_0200966e
+	.4byte .L_020091f6
+	.4byte .L_0200966e
+	.4byte .L_02009206
+	.4byte .L_0200966e
+	.4byte .L_02009214
+	.4byte .L_0200966e
+	.4byte .L_02009222
+	.4byte .L_0200966e
+	.4byte .L_02009230
+	.4byte .L_0200966e
+	.4byte .L_0200923e
+	.4byte .L_0200966e
+	.4byte .L_0200924c
+	.4byte .L_0200966e
+	.4byte .L_0200925c
+	.4byte .L_0200966e
+	.4byte .L_0200926c
+	.4byte .L_0200966e
+	.4byte .L_0200927c
+	.4byte .L_0200966e
+	.4byte .L_0200928a
+	.4byte .L_0200966e
+	.4byte .L_02009298
+	.4byte .L_0200966e
+	.4byte .L_020092a6
+	.4byte .L_0200966e
+	.4byte .L_020092b4
+	.4byte .L_0200966e
+	.4byte .L_020092c2
+	.4byte .L_0200966e
+	.4byte .L_020092d2
+	.4byte .L_0200966e
+	.4byte .L_020092e2
+	.4byte .L_0200966e
+	.4byte .L_020092f2
+	.4byte .L_0200966e
+	.4byte .L_02009300
+	.4byte .L_0200966e
+	.4byte .L_0200930e
+	.4byte .L_0200966e
+	.4byte .L_0200931c
+	.4byte .L_0200966e
+	.4byte .L_0200932a
+	.4byte .L_0200966e
+	.4byte .L_02009338
+	.4byte .L_0200966e
+	.4byte .L_02009346
+	.4byte .L_0200966e
+	.4byte .L_02009354
+	.4byte .L_0200966e
+	.4byte .L_02009362
+	.4byte .L_0200966e
+	.4byte .L_02009370
+	.4byte .L_020093e6
+	.4byte .L_020093f6
+	.4byte .L_0200966e
+	.4byte .L_0200937e
+	.4byte .L_0200966e
+	.4byte .L_0200938e
+	.4byte .L_0200966e
+	.4byte .L_0200939e
+	.4byte .L_0200966e
+	.4byte .L_020093ae
+	.4byte .L_0200966e
+	.4byte .L_020093bc
+	.4byte .L_0200966e
+	.4byte .L_020093ca
+	.4byte .L_0200966e
+	.4byte .L_020093d8
+	.4byte .L_020093e6
+	.4byte .L_020093f6
+	.4byte .L_0200966e
+	.4byte .L_0200940e
+	.4byte .L_0200966e
+	.4byte .L_0200941e
+	.4byte .L_0200966e
+	.4byte .L_0200942e
+	.4byte .L_0200966e
+	.4byte .L_0200943e
+	.4byte .L_0200966e
+	.4byte .L_0200944c
+	.4byte .L_0200966e
+	.4byte .L_0200945a
+	.4byte .L_0200966e
+	.4byte .L_02009468
+	.4byte .L_0200966e
+	.4byte .L_02009488
+	.4byte .L_0200966e
+	.4byte .L_02009496
+	.4byte .L_0200966e
+	.4byte .L_020094ae
+	.4byte .L_0200966e
+	.4byte .L_020094bc
+	.4byte .L_0200966e
+	.4byte .L_020094ca
+	.4byte .L_0200966e
+	.4byte .L_020094d8
+	.4byte .L_0200966e
+	.4byte .L_020094e6
+	.4byte .L_0200966e
+	.4byte .L_020094f4
+	.4byte .L_0200966e
+	.4byte .L_02009502
+	.4byte .L_0200966e
+	.4byte .L_02009510
+	.4byte .L_0200966e
+	.4byte .L_0200951e
+	.4byte .L_0200966e
+	.4byte .L_0200952c
+	.4byte .L_0200966e
+	.4byte .L_0200953a
+	.4byte .L_0200966e
+	.4byte .L_02009548
+	.4byte .L_0200966e
+	.4byte .L_02009556
+	.4byte .L_0200966e
+	.4byte .L_02009564
+	.4byte .L_0200966e
+	.4byte .L_02009572
+	.4byte .L_0200966e
+	.4byte .L_02009580
+	.4byte .L_0200966e
+	.4byte .L_0200958e
+	.4byte .L_0200966e
+	.4byte .L_0200959c
+	.4byte .L_0200966e
+	.4byte .L_020095aa
+	.4byte .L_0200966e
+	.4byte .L_020095b8
+	.4byte .L_0200966e
+	.4byte .L_020095c6
+	.4byte .L_0200966e
+	.4byte .L_020095d4
+	.4byte .L_0200966e
+	.4byte .L_020095e2
+	.4byte .L_0200966e
+	.4byte .L_020095f0
+	.4byte .L_0200966e
+	.4byte .L_020095fe
+	.4byte .L_0200966e
+	.4byte .L_0200960c
+	.4byte .L_0200966e
+	.4byte .L_0200961a
+	.4byte .L_0200966e
+	.4byte .L_02009628
+	.4byte .L_0200966e
+	.4byte .L_02009636
+	.4byte .L_0200966e
+	.4byte .L_02009644
+	.4byte .L_0200966e
+	.4byte .L_02009652
+	.4byte .L_0200966e
+	.4byte .L_02009660
+	.4byte .L_0200966e
 .L_02008c54:
 	movs r1, #172
 	movs r2, #206
@@ -1583,1295 +1260,1263 @@ Func_020006bc:
 	lsls r2, r2, #2
 	bl ObjectMotion_ResetAndSetPosition
 	bl .L_02009678
-	.2byte 0x21a2
-	.2byte 0x22cd
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfc2a
-	.2byte 0xf000
-	.2byte 0xfd00
-	.2byte 0x21a0
-	.2byte 0x22ca
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfc21
-	.2byte 0xf000
-	.2byte 0xfcf7
-	.2byte 0x21a2
-	.2byte 0x22c7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfc18
-	.2byte 0xf000
-	.2byte 0xfcee
-	.2byte 0x21ac
-	.2byte 0x22c6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfc0f
-	.2byte 0xf000
-	.2byte 0xfce5
-	.2byte 0x21b6
-	.2byte 0x22c7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfc06
-	.2byte 0xf000
-	.2byte 0xfcdc
-	.2byte 0x21b8
-	.2byte 0x22ca
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbfd
-	.2byte 0xf000
-	.2byte 0xfcd3
-	.2byte 0x21b6
-	.2byte 0x22cd
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbf4
-	.2byte 0xf000
-	.2byte 0xfcca
-	.2byte 0x21ac
-	.2byte 0x22ce
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbeb
-	.2byte 0xf000
-	.2byte 0xfcc1
-	.2byte 0x21a2
-	.2byte 0x22cd
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbe2
-	.2byte 0xf000
-	.2byte 0xfcb8
-	.2byte 0x21a0
-	.2byte 0x22ca
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbd9
-	.2byte 0xf000
-	.2byte 0xfcaf
-	.2byte 0x21a2
-	.2byte 0x22c7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbd0
-	.2byte 0xf000
-	.2byte 0xfca6
-	.2byte 0x21ac
-	.2byte 0x22c6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbc7
-	.2byte 0xf000
-	.2byte 0xfc9d
-	.2byte 0x21b6
-	.2byte 0x22c7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbbe
-	.2byte 0xf000
-	.2byte 0xfc94
-	.2byte 0x21b8
-	.2byte 0x22ca
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbb5
-	.2byte 0xf000
-	.2byte 0xfc8b
-	.2byte 0x21b6
-	.2byte 0x22cd
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfbac
-	.2byte 0xf000
-	.2byte 0xfc82
-	.2byte 0x21ac
-	.2byte 0x22ce
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfba3
-	.2byte 0xf000
-	.2byte 0xfc79
-	.2byte 0x21e6
-	.2byte 0x22e6
-	.2byte 0x0249
-	.2byte 0x0252
-	.2byte 0x1c30
-	.2byte 0x31cc
-	.2byte 0x32cc
-	.2byte 0xf001
-	.2byte 0xfb88
-	.2byte 0x21b6
-	.2byte 0x22cd
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb91
-	.2byte 0xf000
-	.2byte 0xfc67
-	.2byte 0x21b8
-	.2byte 0x22ca
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb88
-	.2byte 0xf000
-	.2byte 0xfc5e
-	.2byte 0x21c4
-	.2byte 0x22ca
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb7f
-	.2byte 0xf000
-	.2byte 0xfc55
-	.2byte 0x21c4
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb76
-	.2byte 0xf000
-	.2byte 0xfc4c
-	.2byte 0x1c30
-	.2byte 0x49e6
-	.2byte 0x4ae5
-	.2byte 0xf001
-	.2byte 0xfb5f
-	.2byte 0x21ba
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb68
-	.2byte 0xf000
-	.2byte 0xfc3e
-	.2byte 0x21b8
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb5f
-	.2byte 0xf000
-	.2byte 0xfc35
-	.2byte 0x21ba
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb56
-	.2byte 0xf000
-	.2byte 0xfc2c
-	.2byte 0x21c4
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb4d
-	.2byte 0xf000
-	.2byte 0xfc23
-	.2byte 0x21ce
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb44
-	.2byte 0xf000
-	.2byte 0xfc1a
-	.2byte 0x21d0
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb3b
-	.2byte 0xf000
-	.2byte 0xfc11
-	.2byte 0x21ce
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb32
-	.2byte 0xf000
-	.2byte 0xfc08
-	.2byte 0x21c4
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb29
-	.2byte 0xf000
-	.2byte 0xfbff
-	.2byte 0x21ba
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb20
-	.2byte 0xe3f6
-	.2byte 0x21b8
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb18
-	.2byte 0xe3ee
-	.2byte 0x21ba
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb10
-	.2byte 0xe3e6
-	.2byte 0x21c4
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb08
-	.2byte 0xe3de
-	.2byte 0x21ce
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfb00
-	.2byte 0xe3d6
-	.2byte 0x21d0
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfaf8
-	.2byte 0xe3ce
-	.2byte 0x21ce
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfaf0
-	.2byte 0xe3c6
-	.2byte 0x21c4
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfae8
-	.2byte 0xe3be
-	.2byte 0x21ba
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfae0
-	.2byte 0xe3b6
-	.2byte 0x21b8
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfad8
-	.2byte 0xe3ae
-	.2byte 0x21ba
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfad0
-	.2byte 0xe3a6
-	.2byte 0x21c4
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfac8
-	.2byte 0xe39e
-	.2byte 0x21ce
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfac0
-	.2byte 0xe396
-	.2byte 0x21d0
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfab8
-	.2byte 0xe38e
-	.2byte 0x21ce
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfab0
-	.2byte 0xe386
-	.2byte 0x21c4
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfaa8
-	.2byte 0xe37e
-	.2byte 0x21ba
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfaa0
-	.2byte 0xe376
-	.2byte 0x21b8
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa98
-	.2byte 0xe36e
-	.2byte 0x21ba
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa90
-	.2byte 0xe366
-	.2byte 0x21c4
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa88
-	.2byte 0xe35e
-	.2byte 0x21c4
-	.2byte 0x22ae
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa80
-	.2byte 0xe356
-	.2byte 0x21ce
-	.2byte 0x22ad
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa78
-	.2byte 0xe34e
-	.2byte 0x21d0
-	.2byte 0x22aa
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa70
-	.2byte 0xe346
-	.2byte 0x21ce
-	.2byte 0x22a7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa68
-	.2byte 0xe33e
-	.2byte 0x21c4
-	.2byte 0x22a6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa60
-	.2byte 0xe336
-	.2byte 0x21ba
-	.2byte 0x22a7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa58
-	.2byte 0xe32e
-	.2byte 0x21b8
-	.2byte 0x22aa
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa50
-	.2byte 0xe326
-	.2byte 0x21a0
-	.2byte 0x22aa
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa48
-	.2byte 0xe31e
-	.2byte 0x219e
-	.2byte 0x22ad
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa40
-	.2byte 0xe316
-	.2byte 0x2194
-	.2byte 0x22ae
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa38
-	.2byte 0xe30e
-	.2byte 0x218a
-	.2byte 0x22ad
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa30
-	.2byte 0xe306
-	.2byte 0x2188
-	.2byte 0x22aa
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa28
-	.2byte 0xe2fe
-	.2byte 0x218a
-	.2byte 0x22a7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa20
-	.2byte 0xe2f6
-	.2byte 0x2194
-	.2byte 0x22a6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa18
-	.2byte 0xe2ee
-	.2byte 0x219e
-	.2byte 0x22a7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa10
-	.2byte 0xe2e6
-	.2byte 0x21a0
-	.2byte 0x22aa
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa08
-	.2byte 0xe2de
-	.2byte 0x219e
-	.2byte 0x22ad
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xfa00
-	.2byte 0xe2d6
-	.2byte 0x2194
-	.2byte 0x22ae
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9f8
-	.2byte 0xe2ce
-	.2byte 0x218a
-	.2byte 0x22ad
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9f0
-	.2byte 0xe2c6
-	.2byte 0x2188
-	.2byte 0x22aa
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9e8
-	.2byte 0xe2be
-	.2byte 0x218a
-	.2byte 0x22a7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9e0
-	.2byte 0xe2b6
-	.2byte 0x2194
-	.2byte 0x22a6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9d8
-	.2byte 0xe2ae
-	.2byte 0x219e
-	.2byte 0x22a7
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9d0
-	.2byte 0xe2a6
-	.2byte 0x21a0
-	.2byte 0x22aa
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9c8
-	.2byte 0xe29e
-	.2byte 0x219e
-	.2byte 0x22ad
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9c0
-	.2byte 0xe296
-	.2byte 0x2194
-	.2byte 0x22ae
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9b8
-	.2byte 0xe28e
-	.2byte 0x2194
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9b0
-	.2byte 0xe286
-	.2byte 0x2188
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf9a8
-	.2byte 0xe27e
+.L_02008c66:
+	movs r1, #162
+	movs r2, #205
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008c78:
+	movs r1, #160
+	movs r2, #202
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008c8a:
+	movs r1, #162
+	movs r2, #199
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008c9c:
+	movs r1, #172
+	movs r2, #198
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008cae:
+	movs r1, #182
+	movs r2, #199
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008cc0:
+	movs r1, #184
+	movs r2, #202
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008cd2:
+	movs r1, #182
+	movs r2, #205
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008ce4:
+	movs r1, #172
+	movs r2, #206
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008cf6:
+	movs r1, #162
+	movs r2, #205
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008d08:
+	movs r1, #160
+	movs r2, #202
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008d1a:
+	movs r1, #162
+	movs r2, #199
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008d2c:
+	movs r1, #172
+	movs r2, #198
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008d3e:
+	movs r1, #182
+	movs r2, #199
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008d50:
+	movs r1, #184
+	movs r2, #202
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008d62:
+	movs r1, #182
+	movs r2, #205
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008d74:
+	movs r1, #172
+	movs r2, #206
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008d86:
+	movs r1, #230
+	movs r2, #230
+	lsls r1, r1, #9
+	lsls r2, r2, #9
+	adds r0, r6, #0
+	adds r1, #204
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #182
+	movs r2, #205
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008daa:
+	movs r1, #184
+	movs r2, #202
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008dbc:
+	movs r1, #196
+	movs r2, #202
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008dce:
+	movs r1, #196
+	movs r2, #186
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008de0:
+	adds r0, r6, #0
+	ldr r1, .L_0200917c
+	ldr r2, .L_0200917c
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #186
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008dfc:
+	movs r1, #184
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008e0e:
+	movs r1, #186
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008e20:
+	movs r1, #196
+	movs r2, #178
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008e32:
+	movs r1, #206
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008e44:
+	movs r1, #208
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008e56:
+	movs r1, #206
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008e68:
+	movs r1, #196
+	movs r2, #186
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	bl .L_02009678
+.L_02008e7a:
+	movs r1, #186
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008e8a:
+	movs r1, #184
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008e9a:
+	movs r1, #186
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008eaa:
+	movs r1, #196
+	movs r2, #178
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008eba:
+	movs r1, #206
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008eca:
+	movs r1, #208
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008eda:
+	movs r1, #206
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008eea:
+	movs r1, #196
+	movs r2, #186
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008efa:
+	movs r1, #186
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f0a:
+	movs r1, #184
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f1a:
+	movs r1, #186
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f2a:
+	movs r1, #196
+	movs r2, #178
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f3a:
+	movs r1, #206
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f4a:
+	movs r1, #208
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f5a:
+	movs r1, #206
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f6a:
+	movs r1, #196
+	movs r2, #186
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f7a:
+	movs r1, #186
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f8a:
+	movs r1, #184
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008f9a:
+	movs r1, #186
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008faa:
+	movs r1, #196
+	movs r2, #178
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008fba:
+	movs r1, #196
+	movs r2, #174
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008fca:
+	movs r1, #206
+	movs r2, #173
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008fda:
+	movs r1, #208
+	movs r2, #170
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008fea:
+	movs r1, #206
+	movs r2, #167
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02008ffa:
+	movs r1, #196
+	movs r2, #166
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200900a:
+	movs r1, #186
+	movs r2, #167
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200901a:
+	movs r1, #184
+	movs r2, #170
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200902a:
+	movs r1, #160
+	movs r2, #170
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200903a:
+	movs r1, #158
+	movs r2, #173
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200904a:
+	movs r1, #148
+	movs r2, #174
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200905a:
+	movs r1, #138
+	movs r2, #173
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200906a:
+	movs r1, #136
+	movs r2, #170
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200907a:
+	movs r1, #138
+	movs r2, #167
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200908a:
+	movs r1, #148
+	movs r2, #166
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200909a:
+	movs r1, #158
+	movs r2, #167
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020090aa:
+	movs r1, #160
+	movs r2, #170
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020090ba:
+	movs r1, #158
+	movs r2, #173
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020090ca:
+	movs r1, #148
+	movs r2, #174
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020090da:
+	movs r1, #138
+	movs r2, #173
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020090ea:
+	movs r1, #136
+	movs r2, #170
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020090fa:
+	movs r1, #138
+	movs r2, #167
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200910a:
+	movs r1, #148
+	movs r2, #166
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200911a:
+	movs r1, #158
+	movs r2, #167
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200912a:
+	movs r1, #160
+	movs r2, #170
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200913a:
+	movs r1, #158
+	movs r2, #173
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200914a:
+	movs r1, #148
+	movs r2, #174
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200915a:
+	movs r1, #148
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200916a:
+	movs r1, #136
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
 	.2byte 0x0000
-	.2byte 0x3333
-	.2byte 0x0001
-	.2byte 0x2186
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf99d
-	.2byte 0xe273
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf996
-	.2byte 0xe26c
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf98f
-	.2byte 0xe265
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf988
-	.2byte 0xe25e
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf981
-	.2byte 0xe257
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf97a
-	.2byte 0xe250
-	.2byte 0x2186
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf972
-	.2byte 0xe248
-	.2byte 0x2188
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf96a
-	.2byte 0xe240
-	.2byte 0x2186
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf962
-	.2byte 0xe238
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf95b
-	.2byte 0xe231
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf954
-	.2byte 0xe22a
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf94d
-	.2byte 0xe223
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf946
-	.2byte 0xe21c
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf93f
-	.2byte 0xe215
-	.2byte 0x2186
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf937
-	.2byte 0xe20d
-	.2byte 0x2188
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf92f
-	.2byte 0xe205
-	.2byte 0x2186
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf927
-	.2byte 0xe1fd
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf920
-	.2byte 0xe1f6
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf919
-	.2byte 0xe1ef
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf912
-	.2byte 0xe1e8
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf90b
-	.2byte 0xe1e1
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf904
-	.2byte 0xe1da
-	.2byte 0x2186
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8fc
-	.2byte 0xe1d2
-	.2byte 0x2188
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8f4
-	.2byte 0xe1ca
-	.2byte 0x2186
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8ec
-	.2byte 0xe1c2
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8e5
-	.2byte 0xe1bb
-	.2byte 0x22be
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8de
-	.2byte 0xe1b4
-	.2byte 0x22bf
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8d7
-	.2byte 0xe1ad
-	.2byte 0x22c2
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8d0
-	.2byte 0xe1a6
-	.2byte 0x22c5
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8c9
-	.2byte 0xe19f
-	.2byte 0x22c6
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8c2
-	.2byte 0xe198
-	.2byte 0x22d2
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8bb
-	.2byte 0xe191
-	.2byte 0x22d3
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8b4
-	.2byte 0xe18a
-	.2byte 0x22d6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8ad
-	.2byte 0xe183
-	.2byte 0x22d9
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf8a6
-	.2byte 0xe17c
-	.2byte 0x2186
-	.2byte 0x22d9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf89e
-	.2byte 0xe174
-	.2byte 0x2188
-	.2byte 0x22d6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf896
-	.2byte 0xe16c
-	.2byte 0x2186
-	.2byte 0x22d3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf88e
-	.2byte 0xe164
-	.2byte 0x22d2
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf887
-	.2byte 0xe15d
-	.2byte 0x22d3
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf880
-	.2byte 0xe156
-	.2byte 0x22d6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf879
-	.2byte 0xe14f
-	.2byte 0x22d9
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf872
-	.2byte 0xe148
-	.2byte 0x1c28
-	.2byte 0xf7ff
-	.2byte 0xf95c
-	.2byte 0x2800
-	.2byte 0xd002
-	.2byte 0x883b
-	.2byte 0x3301
-	.2byte 0x803b
-	.2byte 0x22da
-	.2byte 0x0092
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0xf001
-	.2byte 0xf863
-	.2byte 0x1c2a
-	.2byte 0x3264
-	.2byte 0x8813
-	.2byte 0x3301
-	.2byte 0x8013
-	.2byte 0xe137
-	.2byte 0x2186
-	.2byte 0x22d9
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf856
-	.2byte 0xe12c
-	.2byte 0x2188
-	.2byte 0x22d6
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf84e
-	.2byte 0xe124
-	.2byte 0x2186
-	.2byte 0x22d3
-	.2byte 0x1c30
-	.2byte 0x0049
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf846
-	.2byte 0xe11c
-	.2byte 0x22d2
-	.2byte 0x1c30
-	.2byte 0x21f8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf83f
-	.2byte 0xe115
-	.2byte 0x22d3
-	.2byte 0x1c30
-	.2byte 0x21e4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf838
-	.2byte 0xe10e
-	.2byte 0x22d6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf831
-	.2byte 0xe107
-	.2byte 0x21e6
-	.2byte 0x22e6
-	.2byte 0x0249
-	.2byte 0x0252
-	.2byte 0x1c30
-	.2byte 0x31cc
-	.2byte 0x32cc
-	.2byte 0xf001
-	.2byte 0xf817
-	.2byte 0x22d6
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf821
-	.2byte 0xe0f7
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf81a
-	.2byte 0xe0f0
-	.2byte 0x1c30
-	.2byte 0x497a
-	.2byte 0x4a7a
-	.2byte 0xf001
-	.2byte 0xf804
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21b4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf80e
-	.2byte 0xe0e4
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21b0
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf807
-	.2byte 0xe0dd
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21b4
-	.2byte 0x0092
-	.2byte 0xf001
-	.2byte 0xf800
-	.2byte 0xe0d6
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xfff9
-	.2byte 0xe0cf
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21dc
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xfff2
-	.2byte 0xe0c8
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffeb
-	.2byte 0xe0c1
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21dc
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffe4
-	.2byte 0xe0ba
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffdd
-	.2byte 0xe0b3
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21b4
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffd6
-	.2byte 0xe0ac
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21b0
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffcf
-	.2byte 0xe0a5
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21b4
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffc8
-	.2byte 0xe09e
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffc1
-	.2byte 0xe097
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21dc
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffba
-	.2byte 0xe090
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffb3
-	.2byte 0xe089
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21dc
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffac
-	.2byte 0xe082
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xffa5
-	.2byte 0xe07b
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21b4
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff9e
-	.2byte 0xe074
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21b0
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff97
-	.2byte 0xe06d
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21b4
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff90
-	.2byte 0xe066
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff89
-	.2byte 0xe05f
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21dc
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff82
-	.2byte 0xe058
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21e0
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff7b
-	.2byte 0xe051
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21dc
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff74
-	.2byte 0xe04a
-	.2byte 0x22ba
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff6d
-	.2byte 0xe043
-	.2byte 0x22b9
-	.2byte 0x1c30
-	.2byte 0x21b4
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff66
-	.2byte 0xe03c
-	.2byte 0x22b6
-	.2byte 0x1c30
-	.2byte 0x21b0
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff5f
-	.2byte 0xe035
-	.2byte 0x22b3
-	.2byte 0x1c30
-	.2byte 0x21b4
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff58
-	.2byte 0xe02e
-	.2byte 0x22b2
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff51
-	.2byte 0xe027
-	.2byte 0x22aa
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff4a
-	.2byte 0xe020
-	.2byte 0x22a9
-	.2byte 0x1c30
-	.2byte 0x21d4
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff43
-	.2byte 0xe019
-	.2byte 0x22a6
-	.2byte 0x1c30
-	.2byte 0x21d8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff3c
-	.2byte 0xe012
-	.2byte 0x22a3
-	.2byte 0x1c30
-	.2byte 0x21d4
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff35
-	.2byte 0xe00b
-	.2byte 0x22a2
-	.2byte 0x1c30
-	.2byte 0x21c8
-	.2byte 0x0092
-	.2byte 0xf000
-	.2byte 0xff2e
-	.2byte 0xe004
-	.2byte 0x1c28
-	.2byte 0xf7ff
-	.2byte 0xf818
-	.2byte 0x2800
-	.2byte 0xd002
+.L_0200917c:
+	.4byte 0x00013333
+.L_02009180:
+	movs r1, #134
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009190:
+	movs r2, #186
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200919e:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020091ac:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020091ba:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020091c8:
+	movs r2, #178
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020091d6:
+	movs r1, #134
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020091e6:
+	movs r1, #136
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020091f6:
+	movs r1, #134
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009206:
+	movs r2, #186
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009214:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009222:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009230:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200923e:
+	movs r2, #178
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200924c:
+	movs r1, #134
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200925c:
+	movs r1, #136
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200926c:
+	movs r1, #134
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200927c:
+	movs r2, #186
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200928a:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009298:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020092a6:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020092b4:
+	movs r2, #178
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020092c2:
+	movs r1, #134
+	movs r2, #179
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020092d2:
+	movs r1, #136
+	movs r2, #182
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020092e2:
+	movs r1, #134
+	movs r2, #185
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020092f2:
+	movs r2, #186
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009300:
+	movs r2, #190
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200930e:
+	movs r2, #191
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200931c:
+	movs r2, #194
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200932a:
+	movs r2, #197
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009338:
+	movs r2, #198
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009346:
+	movs r2, #210
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009354:
+	movs r2, #211
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009362:
+	movs r2, #214
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009370:
+	movs r2, #217
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200937e:
+	movs r1, #134
+	movs r2, #217
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200938e:
+	movs r1, #136
+	movs r2, #214
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200939e:
+	movs r1, #134
+	movs r2, #211
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020093ae:
+	movs r2, #210
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020093bc:
+	movs r2, #211
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020093ca:
+	movs r2, #214
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020093d8:
+	movs r2, #217
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020093e6:
+	adds r0, r5, #0
+	bl Func_020006a4
+	cmp r0, #0
+	beq .L_020093f6
+	ldrh r3, [r7]
+	adds r3, #1
+	strh r3, [r7]
+.L_020093f6:
+	movs r2, #218
+	lsls r2, r2, #2
+	adds r0, r6, #0
+	movs r1, #248
+	bl ObjectMotion_ResetAndSetPosition
+	adds r2, r5, #0
+	adds r2, #100
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	b .L_0200967e
+.L_0200940e:
+	movs r1, #134
+	movs r2, #217
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200941e:
+	movs r1, #136
+	movs r2, #214
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200942e:
+	movs r1, #134
+	movs r2, #211
+	adds r0, r6, #0
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200943e:
+	movs r2, #210
+	adds r0, r6, #0
+	movs r1, #248
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200944c:
+	movs r2, #211
+	adds r0, r6, #0
+	movs r1, #228
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200945a:
+	movs r2, #214
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009468:
+	movs r1, #230
+	movs r2, #230
+	lsls r1, r1, #9
+	lsls r2, r2, #9
+	adds r0, r6, #0
+	adds r1, #204
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #214
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009488:
+	movs r2, #186
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009496:
+	adds r0, r6, #0
+	ldr r1, .L_02009684
+	ldr r2, .L_02009684
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #180
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020094ae:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #176
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020094bc:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #180
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020094ca:
+	movs r2, #178
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020094d8:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #220
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020094e6:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020094f4:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #220
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009502:
+	movs r2, #186
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009510:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #180
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200951e:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #176
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200952c:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #180
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200953a:
+	movs r2, #178
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009548:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #220
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009556:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009564:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #220
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009572:
+	movs r2, #186
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009580:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #180
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200958e:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #176
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200959c:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #180
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020095aa:
+	movs r2, #178
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020095b8:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #220
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020095c6:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #224
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020095d4:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #220
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020095e2:
+	movs r2, #186
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020095f0:
+	movs r2, #185
+	adds r0, r6, #0
+	movs r1, #180
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_020095fe:
+	movs r2, #182
+	adds r0, r6, #0
+	movs r1, #176
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200960c:
+	movs r2, #179
+	adds r0, r6, #0
+	movs r1, #180
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200961a:
+	movs r2, #178
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009628:
+	movs r2, #170
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009636:
+	movs r2, #169
+	adds r0, r6, #0
+	movs r1, #212
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009644:
+	movs r2, #166
+	adds r0, r6, #0
+	movs r1, #216
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009652:
+	movs r2, #163
+	adds r0, r6, #0
+	movs r1, #212
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_02009660:
+	movs r2, #162
+	adds r0, r6, #0
+	movs r1, #200
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPosition
+	b .L_02009678
+.L_0200966e:
+	adds r0, r5, #0
+	bl Func_020006a4
+	cmp r0, #0
+	beq .L_0200967e
 .L_02009678:
 	ldrh r3, [r7]
 	adds r3, #1
@@ -2880,6 +2525,7 @@ Func_020006bc:
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
+.L_02009684:
 	.4byte 0x00013333
 	.section .text.x02009688,"ax",%progbits
 	.global Func_02001688
@@ -5070,10 +4716,10 @@ Data_02002d24:
 	.4byte 0xffff0012
 	.4byte 0x00002208
 	.4byte 0x10008e15
-	.4byte gHeapSlots + 0x8
+	.4byte 0x03000008
 	.4byte Data_020022f4 + 0x1
 	.4byte 0x00008e15
-	.4byte gHeapSlots + 0x8
+	.4byte 0x03000008
 	.4byte Func_020022f8
 	.4byte 0xffffffff
 	.4byte 0x00000000

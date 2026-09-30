@@ -8286,7 +8286,7 @@ Data_020045b8:
 	.4byte 0x00000000
 	.4byte 0x00000002
 	.4byte 0x00000004
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00160000
 	.4byte 0x00d80000
 	.4byte 0x00000001

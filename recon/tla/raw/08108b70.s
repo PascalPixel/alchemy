@@ -491,7 +491,7 @@ Func_08108b70:
 .L_08108f84:
 	movs r0, #0
 	bl Func_0810bea8
-	bl Func_080f8068
+	bl Menu_ReleaseEntryObjectsFar
 	mov r0, r8
 	movs r1, #2
 	bl UiWork_FinalizeFar

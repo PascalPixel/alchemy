@@ -18,10 +18,10 @@ Engine_MathRemainder:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_020012b8
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_020012b8:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -34,14 +34,14 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Func_020012d8
+	.global GameFlag_Test
 	.thumb_func
-Func_020012d8:
-	overlay_veneer Func_080003c8
-	.global Func_020012e0
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020012e0:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_020012e8
 	.thumb_func
 Func_020012e8:
@@ -86,10 +86,10 @@ UiWork_FinalizePendingCore:
 	.thumb_func
 Func_02001338:
 	overlay_veneer Func_08038340
-	.global Func_02001340
+	.global Menu_SelectEntry20To21
 	.thumb_func
-Func_02001340:
-	overlay_veneer Func_08038380
+Menu_SelectEntry20To21:
+	overlay_veneer Menu_SelectEntry20To21Far
 	.global PartyInventory_Remove
 	.thumb_func
 PartyInventory_Remove:
@@ -158,18 +158,18 @@ Object_SetModeById:
 	.thumb_func
 Func_020013c8:
 	overlay_veneer Func_080c8180
-	.global Func_020013d0
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_020013d0:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_020013d8
 	.thumb_func
 Func_020013d8:
 	overlay_veneer Func_080c81a0
-	.global Func_020013e0
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_020013e0:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:

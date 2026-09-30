@@ -109,7 +109,7 @@ Func_080fcab8:
 	movs r1, #0
 	movs r2, #30
 	movs r3, #20
-	bl Func_080383f0
+	bl UiWindow_EraseBorderRectFar
 	mov r3, r8
 	ldr r2, [r3, #60]
 	ldr r3, .L_080fcbc0

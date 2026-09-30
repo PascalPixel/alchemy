@@ -46,7 +46,7 @@ Func_0814cc4c:
 	strh r3, [r1, r2]
 	adds r0, r1, #0
 	movs r1, #0
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	add sp, #40
 	pop {r5, r6, r7, pc}
 .L_0814cca4:

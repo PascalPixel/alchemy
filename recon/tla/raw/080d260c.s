@@ -128,7 +128,7 @@ PartyInventory_GiveItem:
 	bne .L_080d2712
 .L_080d2720:
 	ldr r0, [sp, #8]
-	bl Func_080ad288
+	bl Owner_RefreshClassActionsFar
 	ldr r0, [sp, #8]
 	bl Owner_RecalculateStatsFar
 	adds r0, r6, #0

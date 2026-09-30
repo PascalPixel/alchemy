@@ -18,10 +18,10 @@ Engine_MathRemainder:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_020030b8
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_020030b8:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -42,30 +42,30 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Func_020030e8
+	.global Resource_ResetEntry
 	.thumb_func
-Func_020030e8:
-	overlay_veneer Func_080001b8
+Resource_ResetEntry:
+	overlay_veneer Resource_ResetEntryFar
 	.global Owner_GetState
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_020030f8
+	.global GameFlag_Test
 	.thumb_func
-Func_020030f8:
-	overlay_veneer Func_080003c8
-	.global Func_02003100
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02003100:
-	overlay_veneer Func_080003d0
-	.global Func_02003108
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02003108:
-	overlay_veneer Func_080003d8
-	.global Func_02003110
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
+	.global ResourceMetadata_ClearRecord
 	.thumb_func
-Func_02003110:
-	overlay_veneer Func_08020070
+ResourceMetadata_ClearRecord:
+	overlay_veneer ResourceMetadata_ClearRecordFar
 	.global Func_02003118
 	.thumb_func
 Func_02003118:
@@ -186,10 +186,10 @@ Func_020031f8:
 	.thumb_func
 Func_02003200:
 	overlay_veneer Func_080c8150
-	.global Func_02003208
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02003208:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02003210
 	.thumb_func
 Func_02003210:
@@ -198,10 +198,10 @@ Func_02003210:
 	.thumb_func
 Func_02003218:
 	overlay_veneer Func_080c8230
-	.global Func_02003220
+	.global Motion_CamBounds
 	.thumb_func
-Func_02003220:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02003228
 	.thumb_func
 Func_02003228:
@@ -278,7 +278,7 @@ Func_020032b0:
 	.thumb_func
 Func_020032b8:
 	overlay_veneer Audio_PlayCue
-	.global Func_020032c0
+	.global AudioCommand_WaitForCompletion
 	.thumb_func
-Func_020032c0:
-	overlay_veneer Func_081c0078
+AudioCommand_WaitForCompletion:
+	overlay_veneer AudioCommand_WaitForCompletionFar

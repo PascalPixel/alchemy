@@ -14,10 +14,10 @@ Engine_MathDivide:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02003b48
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02003b48:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -46,18 +46,18 @@ Runtime_ReleaseHeapBlock:
 	.thumb_func
 VramBlock_LoadCached:
 	overlay_veneer VramBlock_LoadCachedFar
-	.global Func_02003b88
+	.global GameFlag_Test
 	.thumb_func
-Func_02003b88:
-	overlay_veneer Func_080003c8
-	.global Func_02003b90
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02003b90:
-	overlay_veneer Func_080003d0
-	.global Func_02003b98
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02003b98:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02003ba0
 	.thumb_func
 Func_02003ba0:
@@ -182,26 +182,26 @@ ObjectMotion_Launch:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_02003c98
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02003c98:
-	overlay_veneer Func_080c8158
-	.global Func_02003ca0
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02003ca0:
-	overlay_veneer Func_080c8170
-	.global Func_02003ca8
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02003ca8:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02003cb0
 	.thumb_func
 Func_02003cb0:
 	overlay_veneer Func_080c81d8
-	.global Func_02003cb8
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02003cb8:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02003cc0
 	.thumb_func
 Func_02003cc0:
@@ -214,18 +214,18 @@ Func_02003cc8:
 	.thumb_func
 Func_02003cd0:
 	overlay_veneer Func_080c8218
-	.global Func_02003cd8
+	.global ObjectVisual_CopyAttributes
 	.thumb_func
-Func_02003cd8:
-	overlay_veneer Func_080c8220
+ObjectVisual_CopyAttributes:
+	overlay_veneer ObjectVisual_CopyAttributesFar
 	.global Func_02003ce0
 	.thumb_func
 Func_02003ce0:
 	overlay_veneer Func_080c8230
-	.global Func_02003ce8
+	.global Motion_CamBounds
 	.thumb_func
-Func_02003ce8:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02003cf0
 	.thumb_func
 Func_02003cf0:
@@ -270,10 +270,10 @@ Event_WaitValue1c8Frames:
 	.thumb_func
 Func_02003d40:
 	overlay_veneer Func_080c83d8
-	.global Func_02003d48
+	.global Field_DispatchTypeHandler
 	.thumb_func
-Func_02003d48:
-	overlay_veneer Func_080c8498
+Field_DispatchTypeHandler:
+	overlay_veneer Field_DispatchTypeHandlerFar
 	.global Func_02003d50
 	.thumb_func
 Func_02003d50:

@@ -101,12 +101,12 @@ Func_020000b8:
 	push {lr}
 	movs r0, #136
 	lsls r0, r0, #2
-	bl Func_02000588
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020080d6
 	movs r0, #136
 	lsls r0, r0, #2
-	bl Func_02000590
+	bl GameFlag_SetBit
 	movs r0, #14
 	movs r1, #0
 	bl Func_020005d8
@@ -433,7 +433,7 @@ Func_0200029c:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_02008354
-	bl Func_02000530
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {r3, r5}
 	mov r8, r3
@@ -460,7 +460,7 @@ Func_02000358:
 	adds r5, r5, r3
 	movs r3, #0
 	ldrsh r0, [r5, r3]
-	bl Func_02000568
+	bl Resource_ResetEntry
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock
 	pop {r5, pc}

@@ -34,10 +34,10 @@ Runtime_ReleaseHeapBlock:
 	.thumb_func
 Runtime_BumpAllocate:
 	overlay_veneer Runtime_BumpAllocateFar
-	.global Func_020009e0
+	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
-Func_020009e0:
-	overlay_veneer Func_08000170
+Runtime_BumpAllocateAlternatePool:
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
@@ -46,10 +46,10 @@ Sys_Free:
 	.thumb_func
 Func_020009f0:
 	overlay_veneer Func_080001a8
-	.global Func_020009f8
+	.global Resource_ResetEntry
 	.thumb_func
-Func_020009f8:
-	overlay_veneer Func_080001b8
+Resource_ResetEntry:
+	overlay_veneer Resource_ResetEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -66,14 +66,14 @@ Func_02000a10:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_02000a20
+	.global GameFlag_Test
 	.thumb_func
-Func_02000a20:
-	overlay_veneer Func_080003c8
-	.global Func_02000a28
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000a28:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02000a30
 	.thumb_func
 Func_02000a30:
@@ -150,10 +150,10 @@ Object_SetModeById:
 	.thumb_func
 Func_02000ac0:
 	overlay_veneer Func_080c8180
-	.global Func_02000ac8
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02000ac8:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02000ad0
 	.thumb_func
 Func_02000ad0:
@@ -162,14 +162,14 @@ Func_02000ad0:
 	.thumb_func
 Func_02000ad8:
 	overlay_veneer Func_080c81d8
-	.global Func_02000ae0
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02000ae0:
-	overlay_veneer Func_080c8228
-	.global Func_02000ae8
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02000ae8:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02000af0
 	.thumb_func
 Func_02000af0:

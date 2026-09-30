@@ -10,18 +10,18 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02000528
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02000528:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Func_02000538
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000538:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02000540
 	.thumb_func
 Func_02000540:
@@ -62,10 +62,10 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
-	.global Func_02000590
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02000590:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02000598
 	.thumb_func
 Func_02000598:
@@ -74,18 +74,18 @@ Func_02000598:
 	.thumb_func
 Func_020005a0:
 	overlay_veneer Func_080c81a0
-	.global Func_020005a8
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_020005a8:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_020005b0
 	.thumb_func
 Func_020005b0:
 	overlay_veneer Func_080c81d8
-	.global Func_020005b8
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_020005b8:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_020005c0
 	.thumb_func
 Func_020005c0:

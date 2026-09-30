@@ -50,7 +50,7 @@ Func_08046b08:
 	str r3, [sp, #96]
 	movs r3, #255
 	strh r3, [r0, #2]
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	movs r0, #128
 	lsls r0, r0, #2
 	bl Resource_LoadIntoFreeSlot
@@ -1043,7 +1043,7 @@ Func_08046b08:
 	strh r2, [r5]
 	strh r3, [r5, #2]
 	ldr r0, [sp, #96]
-	bl Func_08118120
+	bl ReleaseBattleObjectRecordsFar
 	ldr r3, [sp, #144]
 	adds r0, r5, #0
 	movs r1, #1
@@ -3231,7 +3231,7 @@ Func_08046b08:
 	adds r1, r3, #0
 	adds r1, #1
 	ldr r0, [sp, #144]
-	bl Func_080ad200
+	bl Owner_GetLevelThresholdFar
 	ldr r4, [sp, #64]
 	movs r1, #146
 	lsls r1, r1, #1
@@ -3529,7 +3529,7 @@ Func_08046b08:
 	movs r3, #0
 	str r3, [r2, #72]
 	ldr r0, [sp, #96]
-	bl Func_08118120
+	bl ReleaseBattleObjectRecordsFar
 	bl BattleActor_CommitPlacementFar
 	movs r0, #1
 	bl WaitFrames

@@ -10,14 +10,14 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02000960
+	.global GameFlag_Test
 	.thumb_func
-Func_02000960:
-	overlay_veneer Func_080003c8
-	.global Func_02000968
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000968:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02000970
 	.thumb_func
 Func_02000970:
@@ -86,10 +86,10 @@ ObjectMotion_Launch:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_020009f8
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_020009f8:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Func_02000a00
 	.thumb_func
 Func_02000a00:
@@ -98,22 +98,22 @@ Func_02000a00:
 	.thumb_func
 Func_02000a08:
 	overlay_veneer Func_080c8198
-	.global Func_02000a10
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02000a10:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02000a18
 	.thumb_func
 Func_02000a18:
 	overlay_veneer Func_080c8210
-	.global Func_02000a20
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02000a20:
-	overlay_veneer Func_080c8228
-	.global Func_02000a28
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02000a28:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02000a30
 	.thumb_func
 Func_02000a30:
@@ -130,14 +130,14 @@ Func_02000a40:
 	.thumb_func
 Func_02000a48:
 	overlay_veneer Func_080c8288
-	.global Func_02000a50
+	.global Party_SetFields1eeAnd1f0
 	.thumb_func
-Func_02000a50:
-	overlay_veneer Func_080c8290
-	.global Func_02000a58
+Party_SetFields1eeAnd1f0:
+	overlay_veneer Party_SetFields1eeAnd1f0Far
+	.global Party_SetFields1f2And1f4
 	.thumb_func
-Func_02000a58:
-	overlay_veneer Func_080c8298
+Party_SetFields1f2And1f4:
+	overlay_veneer Party_SetFields1f2And1f4Far
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:

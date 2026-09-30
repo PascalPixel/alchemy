@@ -61,7 +61,7 @@ Func_080ebc94:
 	adds r0, r7, #0
 	adds r2, r4, #0
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_080ebd0a:
 	add sp, #24
 	pop {r3}

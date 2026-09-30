@@ -100,7 +100,7 @@ Func_081082c4:
 	.4byte 0x0000124c
 .L_08108390:
 	mov r0, r10
-	bl Func_08038368
+	bl Menu_SelectEntry11To14Far
 	movs r1, #129
 	lsls r1, r1, #3
 	mov r10, r0

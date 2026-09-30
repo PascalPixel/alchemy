@@ -431,7 +431,7 @@ Func_0818cb74:
 	movs r3, #0
 	ldmia r6!, {r0}
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r2, #1
 	movs r1, #128
 	add r9, r2

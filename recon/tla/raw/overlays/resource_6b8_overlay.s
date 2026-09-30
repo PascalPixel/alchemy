@@ -410,7 +410,7 @@ Func_020002f4:
 	adds r0, r0, r7
 	adds r0, #48
 	mov r8, r3
-	bl Func_02000d94
+	bl GameFlag_SetBit
 	adds r0, r5, #0
 	adds r1, r6, #0
 	adds r2, r7, #0
@@ -589,7 +589,7 @@ Func_02000464:
 	bl Battle_WaitMode0
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000d8c
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020084ca
 	ldr r0, .L_02008500
@@ -606,10 +606,10 @@ Func_02000464:
 	adds r0, r5, #0
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02000ea4
+	bl ObjectMotion_ArmCallback
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000d94
+	bl GameFlag_SetBit
 	b .L_020084f8
 .L_020084ca:
 	ldr r0, .L_02008504
@@ -626,10 +626,10 @@ Func_02000464:
 	adds r0, r5, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02000ea4
+	bl ObjectMotion_ArmCallback
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000d9c
+	bl GameFlag_ClearBit
 .L_020084f8:
 	movs r0, #20
 	bl Battle_WaitMode0
@@ -647,7 +647,7 @@ Func_02000508:
 	adds r0, r5, #0
 	movs r1, #4
 	movs r2, #0
-	bl Func_02000e8c
+	bl ObjectMotion_SetAngleToward
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #4
@@ -684,7 +684,7 @@ Func_0200055c:
 	adds r0, r5, #0
 	movs r1, #4
 	movs r2, #0
-	bl Func_02000e8c
+	bl ObjectMotion_SetAngleToward
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #4
@@ -843,7 +843,7 @@ Func_02000688:
 	movs r0, #192
 	lsls r0, r0, #2
 	sub sp, #12
-	bl Func_02000d94
+	bl GameFlag_SetBit
 	movs r3, #1
 	str r3, [sp, #0]
 	movs r3, #10
@@ -865,7 +865,7 @@ Func_020006b0:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #1
-	bl Func_02000d94
+	bl GameFlag_SetBit
 	adds r0, r5, #0
 	movs r1, #18
 	movs r2, #184
@@ -881,7 +881,7 @@ Func_020006cc:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #2
-	bl Func_02000d94
+	bl GameFlag_SetBit
 	adds r0, r5, #0
 	movs r1, #19
 	movs r2, #200
@@ -898,7 +898,7 @@ Func_020006e8:
 	lsls r0, r0, #2
 	adds r0, #255
 	sub sp, #4
-	bl Func_02000d94
+	bl GameFlag_SetBit
 	movs r3, #0
 	str r3, [sp, #0]
 	adds r0, r5, #0
@@ -1079,7 +1079,7 @@ Func_0200079c:
 	bl Func_02000ed4
 	movs r0, #192
 	lsls r0, r0, #2
-	bl Func_02000d8c
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200888e
 	movs r3, #10
@@ -1094,7 +1094,7 @@ Func_0200079c:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #1
-	bl Func_02000d8c
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020088aa
 	movs r1, #184
@@ -1107,12 +1107,12 @@ Func_0200079c:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #2
-	bl Func_02000d8c
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020088d2
 	movs r0, #196
 	lsls r0, r0, #2
-	bl Func_02000d8c
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020088d2
 	movs r1, #200
@@ -1480,7 +1480,7 @@ Func_02000ad0:
 	adds r3, #164
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_02000d6c
+	bl Resource_ResetEntry
 	movs r3, #0
 	str r3, [r7, #108]
 	b .L_02008c38

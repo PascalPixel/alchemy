@@ -20,7 +20,7 @@ Func_02000080:
 	bl ObjectDispatch_SetSingleChildField26
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	pop {r5, r6, pc}
 	.section .text.x020080a4,"ax",%progbits
 	.global Func_020000a4
@@ -227,7 +227,7 @@ Func_02000150:
 	beq .L_0200822c
 	ldr r1, [r7, #4]
 	adds r0, r6, #0
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 .L_0200822c:
 	movs r3, #128
 	lsls r3, r3, #10
@@ -677,11 +677,11 @@ Func_02000570:
 	cmp r3, #0
 	bne .L_02008586
 	movs r1, #7
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	b .L_0200858c
 .L_02008586:
 	movs r1, #0
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 .L_0200858c:
 	ldr r3, .L_020085a4
 	movs r2, #7
@@ -812,7 +812,7 @@ Func_02000664:
 	ldrh r3, [r3]
 	movs r1, #15
 	ands r1, r3
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #0
 	pop {pc}
 	.section .text.x02008678,"ax",%progbits
@@ -870,7 +870,7 @@ Func_020006ac:
 	adds r0, r5, #0
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r1, #128
 	lsls r1, r1, #11
 	movs r2, #128
@@ -919,7 +919,7 @@ Func_020006ac:
 	bl Engine_EventWait
 	adds r0, r6, #0
 	movs r1, #0
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	ldr r3, .L_02008788
 	movs r1, #129
 	str r3, [r6, #108]
@@ -933,7 +933,7 @@ Func_020006ac:
 	adds r0, r5, #0
 	bl Engine_ActorGet
 	movs r1, #0
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	adds r0, r5, #0
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -992,7 +992,7 @@ Func_0200078c:
 	movs r0, #129
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02001b24
+	bl GameFlag_ClearBit
 	adds r0, r5, #0
 	adds r0, #85
 	ldrb r1, [r0]
@@ -1007,7 +1007,7 @@ Func_0200078c:
 	movs r0, #129
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02001b14
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008868
 	bl Engine_EventBegin
@@ -1090,7 +1090,7 @@ Func_02000a18:
 	movs r0, #10
 	bl Engine_EventWait
 	movs r0, #1
-	bl Func_02001c74
+	bl Field_DispatchTypeHandler
 	bl Func_02001c8c
 	bl Func_02001c94
 	pop {pc}
@@ -1138,43 +1138,43 @@ Func_02000a54:
 	movs r0, #10
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #17
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #18
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #19
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #20
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #21
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #22
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #23
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #24
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 	movs r0, #25
 	bl Engine_ActorGet
 	movs r1, #6
-	bl Func_02001c14
+	bl Object_SetPartAttribute
 .L_02008b1a:
 	movs r0, #0
 	pop {pc}
@@ -1216,17 +1216,17 @@ Func_02000b2c:
 	movs r0, #4
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #5
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #8
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r2, #128
 	movs r0, #4
@@ -1258,7 +1258,7 @@ Func_02000b2c:
 	negs r1, r1
 	lsls r2, r2, #18
 	movs r3, #0
-	bl Func_02001c44
+	bl Motion_CamBounds
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r1, [r3, #108]
@@ -1298,7 +1298,7 @@ Func_02000b2c:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #4
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Engine_EventWait
 	movs r1, #178
@@ -1311,7 +1311,7 @@ Func_02000b2c:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	bl Func_02000a18
@@ -1328,12 +1328,12 @@ Func_02000b2c:
 	movs r0, #8
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #5
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #178
 	movs r2, #204
 	movs r0, #4
@@ -1344,7 +1344,7 @@ Func_02000b2c:
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #4
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #3
@@ -1390,12 +1390,12 @@ Func_02000b2c:
 	movs r0, #5
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #8
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #4
 	movs r1, #0
 	movs r2, #0
@@ -1412,7 +1412,7 @@ Func_02000d30:
 	bl Func_02001c1c
 	movs r1, #1
 	movs r0, #8
-	bl Func_02001c3c
+	bl Object_AttachWorkTargetToObject
 	bl Func_02001c4c
 	movs r0, #30
 	bl Engine_EventWait
@@ -1425,7 +1425,7 @@ Func_02000d30:
 	movs r0, #5
 	movs r1, #0
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #174
 	movs r2, #210
 	lsls r2, r2, #2
@@ -1469,7 +1469,7 @@ Func_02000d30:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #174
@@ -1481,12 +1481,12 @@ Func_02000d30:
 	movs r0, #5
 	movs r1, #0
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r0, #174
@@ -1496,7 +1496,7 @@ Func_02000d30:
 	lsls r2, r2, #18
 	negs r1, r1
 	lsls r0, r0, #18
-	bl Func_02001c44
+	bl Motion_CamBounds
 	bl Func_02001c4c
 	movs r0, #20
 	bl Engine_EventWait
@@ -1551,7 +1551,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -1593,26 +1593,26 @@ Func_02000d30:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #9
 	bl Func_02001cd4
 	movs r1, #176
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #128
 	movs r0, #5
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Engine_EventWait
 	movs r0, #20
@@ -1651,12 +1651,12 @@ Func_02000d30:
 	movs r0, #5
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	lsls r1, r1, #7
 	movs r2, #0
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #129
@@ -1681,21 +1681,21 @@ Func_02000d30:
 	movs r1, #0
 	movs r2, #0
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #128
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #192
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -1754,7 +1754,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r0, #128
@@ -1773,7 +1773,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -1822,7 +1822,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -1844,14 +1844,14 @@ Func_02000d30:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #192
 	movs r2, #0
 	lsls r1, r1, #6
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -1903,7 +1903,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #6
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Engine_EventWait
 	movs r1, #0
@@ -1940,7 +1940,7 @@ Func_02000d30:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #129
@@ -1959,7 +1959,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #5
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r0, #5
@@ -1974,7 +1974,7 @@ Func_02000d30:
 	lsls r1, r1, #7
 	movs r2, #0
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r0, #5
@@ -1985,7 +1985,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #6
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Engine_EventWait
 	movs r1, #0
@@ -2041,7 +2041,7 @@ Func_02000d30:
 	movs r2, #0
 	movs r1, #0
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #3
@@ -2063,7 +2063,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #6
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #3
@@ -2086,7 +2086,7 @@ Func_02000d30:
 	movs r2, #0
 	movs r1, #0
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #0
@@ -2160,7 +2160,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #3
@@ -2189,7 +2189,7 @@ Func_02000d30:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r2, #16
@@ -2203,7 +2203,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #3
@@ -2220,31 +2220,31 @@ Func_02000d30:
 	movs r0, #9
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	lsls r1, r1, #7
 	movs r2, #0
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #50
 	bl Engine_EventWait
 	movs r1, #144
 	movs r0, #8
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r1, #208
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #5
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -2256,7 +2256,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r0, #9
@@ -2276,7 +2276,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #6
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #0
@@ -2304,7 +2304,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #25
 	bl Engine_EventWait
 	movs r1, #0
@@ -2316,7 +2316,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #3
@@ -2355,7 +2355,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #3
@@ -2376,7 +2376,7 @@ Func_02000d30:
 	lsls r1, r1, #7
 	movs r2, #0
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #132
@@ -2405,7 +2405,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r0, #128
@@ -2424,7 +2424,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #0
@@ -2441,7 +2441,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #0
@@ -2458,7 +2458,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -2480,7 +2480,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Engine_EventWait
 	movs r1, #0
@@ -2504,7 +2504,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #9
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #0
@@ -2549,7 +2549,7 @@ Func_02000d30:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #8
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
 	movs r0, #128
@@ -2568,7 +2568,7 @@ Func_02000d30:
 	lsls r1, r1, #5
 	movs r2, #0
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #6
@@ -2664,13 +2664,13 @@ Func_02000d30:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #50
 	bl Engine_EventWait
 	movs r1, #0
 	movs r2, #0
 	movs r0, #5
-	bl Func_02001c2c
+	bl ObjectMotion_ArmCallback
 	movs r0, #15
 	bl Engine_EventWait
 	movs r1, #182
@@ -2719,7 +2719,7 @@ Func_02000d30:
 	movs r0, #129
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02001b24
+	bl GameFlag_ClearBit
 	movs r1, #166
 	movs r2, #198
 	movs r0, #10
@@ -2733,7 +2733,7 @@ Func_02000d30:
 	negs r0, r0
 	negs r2, r2
 	movs r3, #0
-	bl Func_02001c44
+	bl Motion_CamBounds
 	ldr r3, .L_02009af8
 	movs r2, #133
 	lsls r2, r2, #2

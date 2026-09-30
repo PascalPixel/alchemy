@@ -21,7 +21,7 @@ Func_02000044:
 	push {lr}
 	movs r0, #150
 	lsls r0, r0, #4
-	bl Func_02000444
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008056
 	ldr r0, .L_0200805c
@@ -172,7 +172,7 @@ Func_02000158:
 	ldr r1, [r3]
 	movs r0, #8
 	movs r2, #0
-	bl Func_020004d4
+	bl ObjectMotion_SetAngleToward
 	movs r1, #128
 	movs r0, #8
 	lsls r1, r1, #1
@@ -183,7 +183,7 @@ Func_02000158:
 	bl Func_020004dc
 	movs r1, #0
 	movs r0, #8
-	bl Func_020004e4
+	bl UiText_OpenMessageAtObject
 	bl Func_0200053c
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -432,19 +432,19 @@ Func_02000360:
 	strb r3, [r0]
 	lsls r1, r1, #3
 	ldr r0, .L_020083c8
-	bl Func_0200043c
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #48
 	adds r0, #255
-	bl Func_0200044c
+	bl GameFlag_ClearBit
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #10
-	bl Func_02000444
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020083b4
 	movs r0, #9
 	movs r1, #1
-	bl Func_020004fc
+	bl ObjectMotion_SetActionVariant
 	b .L_020083be
 .L_020083b4:
 	movs r0, #9
@@ -468,7 +468,7 @@ Func_020003cc:
 	lsls r0, r0, #3
 	adds r0, #255
 	sub sp, #8
-	bl Func_02000444
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008436
 	movs r3, #1

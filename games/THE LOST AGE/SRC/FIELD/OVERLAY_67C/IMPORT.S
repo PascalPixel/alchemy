@@ -14,10 +14,10 @@ Engine_MathDivide:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02003c3c
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02003c3c:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -62,18 +62,18 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_02003c94:
 	overlay_veneer Func_080001e8
-	.global Func_02003c9c
+	.global GameFlag_Test
 	.thumb_func
-Func_02003c9c:
-	overlay_veneer Func_080003c8
-	.global Func_02003ca4
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02003ca4:
-	overlay_veneer Func_080003d0
-	.global Func_02003cac
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02003cac:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -246,10 +246,10 @@ Object_LinkPair:
 	.thumb_func
 Func_02003e04:
 	overlay_veneer Func_080c8168
-	.global Func_02003e0c
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02003e0c:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02003e14
 	.thumb_func
 Func_02003e14:
@@ -258,14 +258,14 @@ Func_02003e14:
 	.thumb_func
 Func_02003e1c:
 	overlay_veneer Func_080c81a0
-	.global Func_02003e24
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02003e24:
-	overlay_veneer Func_080c81d0
-	.global Func_02003e2c
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02003e2c:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02003e34
 	.thumb_func
 Func_02003e34:
@@ -278,10 +278,10 @@ Func_02003e3c:
 	.thumb_func
 Func_02003e44:
 	overlay_veneer Func_080c8230
-	.global Func_02003e4c
+	.global Motion_CamBounds
 	.thumb_func
-Func_02003e4c:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02003e54
 	.thumb_func
 Func_02003e54:
@@ -366,7 +366,7 @@ Func_02003eec:
 	.thumb_func
 Func_02003ef4:
 	overlay_veneer Audio_PlayCue
-	.global Func_02003efc
+	.global AudioCommand_WaitForCompletion
 	.thumb_func
-Func_02003efc:
-	overlay_veneer Func_081c0078
+AudioCommand_WaitForCompletion:
+	overlay_veneer AudioCommand_WaitForCompletionFar

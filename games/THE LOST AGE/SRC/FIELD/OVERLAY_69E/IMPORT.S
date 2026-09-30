@@ -22,10 +22,10 @@ Engine_MathModulo:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02002770
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02002770:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -62,10 +62,10 @@ Sys_Free:
 	.thumb_func
 Func_020027b8:
 	overlay_veneer Func_080001a8
-	.global Func_020027c0
+	.global Resource_ResetEntry
 	.thumb_func
-Func_020027c0:
-	overlay_veneer Func_080001b8
+Resource_ResetEntry:
+	overlay_veneer Resource_ResetEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -82,18 +82,18 @@ Func_020027d8:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_020027e8
+	.global GameFlag_Test
 	.thumb_func
-Func_020027e8:
-	overlay_veneer Func_080003c8
-	.global Func_020027f0
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020027f0:
-	overlay_veneer Func_080003d0
-	.global Func_020027f8
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_020027f8:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -238,18 +238,18 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 Func_02002918:
 	overlay_veneer Func_080c8168
-	.global Func_02002920
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02002920:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02002928
 	.thumb_func
 Func_02002928:
 	overlay_veneer Func_080c8180
-	.global Func_02002930
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02002930:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02002938
 	.thumb_func
 Func_02002938:
@@ -258,10 +258,10 @@ Func_02002938:
 	.thumb_func
 Func_02002940:
 	overlay_veneer Func_080c81d8
-	.global Func_02002948
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02002948:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02002950
 	.thumb_func
 Func_02002950:
@@ -270,14 +270,14 @@ Func_02002950:
 	.thumb_func
 Func_02002958:
 	overlay_veneer Func_080c8218
-	.global Func_02002960
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02002960:
-	overlay_veneer Func_080c8228
-	.global Func_02002968
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02002968:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02002970
 	.thumb_func
 Func_02002970:
@@ -378,10 +378,10 @@ Func_02002a28:
 	.thumb_func
 Func_02002a30:
 	overlay_veneer Func_080c8848
-	.global Func_02002a38
+	.global AudioCommand_WaitForStateByteClear
 	.thumb_func
-Func_02002a38:
-	overlay_veneer Func_08108078
+AudioCommand_WaitForStateByteClear:
+	overlay_veneer AudioCommand_WaitForStateByteClearFar
 	.global Func_02002a40
 	.thumb_func
 Func_02002a40:

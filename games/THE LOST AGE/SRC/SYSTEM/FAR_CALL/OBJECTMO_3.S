@@ -33,9 +33,9 @@ Func_080c88f0:
 	.thumb_func
 ObjectMotion_ResetTargetsAndVelocityFar:
 	overlay_veneer ObjectMotion_ResetTargetsAndVelocity
-	.global Func_080c8900
+	.global ObjectEffect_BeginContextEffect26Far
 	.thumb_func
-Func_080c8900:
+ObjectEffect_BeginContextEffect26Far:
 	overlay_veneer ObjectEffect_BeginContextEffect26
 	.global Func_080c8908
 	.thumb_func

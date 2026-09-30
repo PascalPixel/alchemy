@@ -149,7 +149,7 @@ Func_080e3d04:
 	ldr r3, [r3, #40]
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_08020000
+	bl Resource_GetMetadataRecordFarFar
 	movs r2, #192
 	movs r3, #8
 	ldrsb r3, [r0, r3]
@@ -221,7 +221,7 @@ Func_080e3d04:
 	ldr r3, [r3, #40]
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_08020000
+	bl Resource_GetMetadataRecordFarFar
 	movs r3, #8
 	ldrsb r3, [r0, r3]
 	lsls r1, r3, #16

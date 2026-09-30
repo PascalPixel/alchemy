@@ -30,18 +30,18 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Func_0200105c
+	.global GameFlag_Test
 	.thumb_func
-Func_0200105c:
-	overlay_veneer Func_080003c8
-	.global Func_02001064
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02001064:
-	overlay_veneer Func_080003d0
-	.global Func_0200106c
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_0200106c:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02001074
 	.thumb_func
 Func_02001074:
@@ -126,18 +126,18 @@ Func_0200110c:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
-	.global Func_0200111c
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_0200111c:
-	overlay_veneer Func_080c8170
-	.global Func_02001124
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02001124:
-	overlay_veneer Func_080c81d0
-	.global Func_0200112c
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_0200112c:
-	overlay_veneer Func_080c8228
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
 	.global Func_02001134
 	.thumb_func
 Func_02001134:

@@ -55,7 +55,7 @@ Func_02000060:
 	movs r0, #150
 	strh r3, [r2]
 	lsls r0, r0, #4
-	bl Func_02000514
+	bl GameFlag_ClearBit
 	movs r0, #123
 	bl Func_020005dc
 	movs r2, #133
@@ -94,7 +94,7 @@ Func_020000b0:
 	movs r0, #150
 	strh r3, [r2]
 	lsls r0, r0, #4
-	bl Func_0200050c
+	bl GameFlag_SetBit
 	movs r0, #123
 	bl Func_020005dc
 	movs r2, #133
@@ -126,7 +126,7 @@ Func_02000100:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #9
-	bl Func_0200050c
+	bl GameFlag_SetBit
 	movs r0, #19
 	movs r1, #0
 	movs r2, #0
@@ -147,7 +147,7 @@ Func_02000120:
 	push {lr}
 	movs r0, #128
 	lsls r0, r0, #4
-	bl Func_02000504
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008168
 	bl Func_0200055c
@@ -231,15 +231,15 @@ Func_02000190:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #7
-	bl Func_0200050c
+	bl GameFlag_SetBit
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #180
-	bl Func_02000514
+	bl GameFlag_ClearBit
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #9
-	bl Func_02000504
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020081fc
 	movs r0, #19
@@ -343,13 +343,13 @@ Func_02000190:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #107
-	bl Func_02000504
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020082fa
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #107
-	bl Func_02000514
+	bl GameFlag_ClearBit
 	bl Func_020003cc
 .L_020082fa:
 	movs r0, #0
@@ -407,7 +407,7 @@ Func_02000310:
 	add r3, sp, #8
 	add r1, sp, #16
 	str r4, [sp, #0]
-	bl Func_02000544
+	bl UiText_GetResourceDimensions
 	ldr r3, [sp, #16]
 	ldr r2, [sp, #8]
 	adds r3, r3, r2

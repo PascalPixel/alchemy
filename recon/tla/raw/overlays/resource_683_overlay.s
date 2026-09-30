@@ -108,7 +108,7 @@ Func_020000a4:
 	movs r0, #136
 	lsls r0, r0, #4
 	adds r0, #255
-	bl Func_02000168
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020080e2
 	ldr r0, .L_020080f4
@@ -191,7 +191,7 @@ Func_0200014c:
 	adds r2, #93
 	str r2, [r3]
 	adds r0, #255
-	bl Func_02000170
+	bl GameFlag_ClearBit
 	pop {pc}
 	.section .rodata.x02008188,"a",%progbits
 	.global Data_02000188

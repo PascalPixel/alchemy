@@ -6,18 +6,18 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_02000a74
+	.global GameFlag_Test
 	.thumb_func
-Func_02000a74:
-	overlay_veneer Func_080003c8
-	.global Func_02000a7c
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000a7c:
-	overlay_veneer Func_080003d0
-	.global Func_02000a84
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02000a84:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -98,10 +98,10 @@ Object_LinkPair:
 	.thumb_func
 Func_02000b24:
 	overlay_veneer Func_080c8180
-	.global Func_02000b2c
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02000b2c:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02000b34
 	.thumb_func
 Func_02000b34:
@@ -110,18 +110,18 @@ Func_02000b34:
 	.thumb_func
 Func_02000b3c:
 	overlay_veneer Func_080c81a0
-	.global Func_02000b44
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02000b44:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02000b4c
 	.thumb_func
 Func_02000b4c:
 	overlay_veneer Func_080c81d8
-	.global Func_02000b54
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02000b54:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02000b5c
 	.thumb_func
 Func_02000b5c:
@@ -130,14 +130,14 @@ Func_02000b5c:
 	.thumb_func
 Func_02000b64:
 	overlay_veneer Func_080c8218
-	.global Func_02000b6c
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02000b6c:
-	overlay_veneer Func_080c8228
-	.global Func_02000b74
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02000b74:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02000b7c
 	.thumb_func
 Func_02000b7c:

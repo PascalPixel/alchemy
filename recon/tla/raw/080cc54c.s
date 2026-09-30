@@ -139,7 +139,7 @@ Func_080cc54c:
 	cmp r3, #0
 	beq .L_080cc65e
 	adds r0, r5, #0
-	bl Func_08020358
+	bl GetWorldMapCollisionFar
 	cmp r0, #3
 	bne .L_080cc65e
 	movs r2, #99

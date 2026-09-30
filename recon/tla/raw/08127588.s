@@ -54,7 +54,7 @@ Func_08127588:
 	str r4, [sp, #0]
 	adds r0, r5, #0
 	adds r0, #8
-	bl Func_080ad140
+	bl Owner_GetRecordFar
 	adds r6, r0, #0
 	ldr r4, [sp, #0]
 	cmp r6, #0

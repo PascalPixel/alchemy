@@ -876,7 +876,7 @@ Func_0814bee0:
 	mov r2, r8
 	movs r3, #0
 	str r4, [sp, #12]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	adds r7, #1
 	adds r6, #4
 	ldr r4, [sp, #12]
@@ -912,7 +912,7 @@ Func_0814bee0:
 	mov r2, r8
 	movs r3, #0
 	str r4, [sp, #12]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r4, [sp, #12]
 	adds r7, #1
 	adds r4, #4

@@ -13,11 +13,11 @@ Func_02000038:
 	cmp r3, #0
 	beq .L_02008050
 	movs r1, #15
-	bl Func_02000590
+	bl Object_SetPartAttribute
 	b .L_02008056
 .L_02008050:
 	movs r1, #7
-	bl Func_02000590
+	bl Object_SetPartAttribute
 .L_02008056:
 	movs r0, #0
 	pop {pc}
@@ -136,10 +136,10 @@ Func_020000f4:
 	push {r5, r6, r7, lr}
 	movs r0, #8
 	movs r1, #3
-	bl Func_020005b8
+	bl ObjectMotion_SetActionVariant
 	movs r1, #3
 	movs r0, #9
-	bl Func_020005b8
+	bl ObjectMotion_SetActionVariant
 	ldr r3, .L_020081a0
 	movs r2, #133
 	lsls r2, r2, #2
@@ -237,7 +237,7 @@ Func_020001b0:
 	ldr r0, [r3]
 	bl Object_GetById
 	movs r1, #15
-	bl Func_02000590
+	bl Object_SetPartAttribute
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, .L_020084b4
@@ -246,13 +246,13 @@ Func_020001b0:
 	str r6, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_020084b8
-	bl Func_02000528
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #8
 	movs r1, #2
-	bl Func_020005b8
+	bl ObjectMotion_SetActionVariant
 	movs r0, #9
 	movs r1, #2
-	bl Func_020005b8
+	bl ObjectMotion_SetActionVariant
 	movs r2, #192
 	lsls r2, r2, #18
 	movs r3, #218
@@ -290,7 +290,7 @@ Func_020001b0:
 	movs r0, #8
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_020005a8
+	bl ObjectMotion_ArmCallback
 	movs r2, #10
 	movs r0, #8
 	movs r1, #4
@@ -314,12 +314,12 @@ Func_020001b0:
 	movs r0, #11
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_020005a8
+	bl ObjectMotion_ArmCallback
 	movs r1, #176
 	movs r2, #0
 	movs r0, #12
 	lsls r1, r1, #8
-	bl Func_020005a8
+	bl ObjectMotion_ArmCallback
 	movs r0, #13
 	movs r1, #14
 	bl Func_02000600
@@ -519,7 +519,7 @@ Func_020001b0:
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #60
-	bl Func_02000538
+	bl GameFlag_SetBit
 	movs r0, #3
 	bl Func_020005c8
 	pop {r3, r5}

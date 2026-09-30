@@ -75,7 +75,7 @@ Func_0816442c:
 	str r3, [sp, #4]
 	adds r2, r7, #0
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	cmp r5, #9
 	bne .L_0816449a
 	b .L_08164632
@@ -106,7 +106,7 @@ Func_0816442c:
 	adds r2, r7, #0
 	movs r3, #0
 	str r4, [sp, #0]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	adds r5, #1
 	ldr r4, [sp, #0]
 	cmp r5, #12
@@ -139,7 +139,7 @@ Func_0816442c:
 	adds r2, r7, #0
 	movs r3, #0
 	str r4, [sp, #0]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	adds r5, #1
 	ldr r4, [sp, #0]
 	cmp r5, #12
@@ -171,7 +171,7 @@ Func_0816442c:
 	adds r2, r7, #0
 	movs r3, #0
 	str r4, [sp, #0]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	adds r5, #1
 	ldr r4, [sp, #0]
 	cmp r5, #8
@@ -200,7 +200,7 @@ Func_0816442c:
 	add r3, r8
 	str r3, [r6, #8]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	adds r5, #1
 	ldr r4, [sp, #0]
 	cmp r5, #8
@@ -231,7 +231,7 @@ Func_0816442c:
 	add r3, r8
 	str r3, [r6, #8]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	cmp r5, #8
 	bne .L_081645d4
 	b .L_08164632
@@ -258,7 +258,7 @@ Func_0816442c:
 	add r3, r8
 	str r3, [r6, #8]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	adds r5, #1
 	ldr r4, [sp, #0]
 	cmp r5, #11

@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080383d0
+	.global Ui_GetTableWordZeroFar
 	.thumb_func
-Func_080383d0:
+Ui_GetTableWordZeroFar:
 	overlay_veneer Ui_GetTableWordZero
 	.global Func_080383d8
 	.thumb_func

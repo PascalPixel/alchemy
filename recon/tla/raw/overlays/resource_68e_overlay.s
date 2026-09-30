@@ -108,12 +108,12 @@ Func_020000d0:
 	adds r3, r3, r2
 	lsls r0, r0, #2
 	ldr r5, [r3]
-	bl Func_020012d8
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020080f4
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_020012e0
+	bl GameFlag_SetBit
 	bl Func_02000070
 .L_020080f4:
 	bl Func_02001380
@@ -127,7 +127,7 @@ Func_020000d0:
 	lsls r1, r1, #7
 	movs r2, #0
 	adds r0, r5, #0
-	bl Func_020013e0
+	bl ObjectMotion_ArmCallback
 	bl Func_020001e4
 	bl Func_02001388
 	pop {r5, pc}
@@ -212,7 +212,7 @@ Func_0200012c:
 	bl Func_020010f4
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_020012d8
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020081d2
 	mov r3, r10
@@ -263,7 +263,7 @@ Func_020001e4:
 	movs r0, #1
 	movs r1, #0
 	negs r0, r0
-	bl Func_020013d0
+	bl UiText_OpenMessageAtObject
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0
@@ -298,7 +298,7 @@ Func_020001e4:
 	mov r0, r10
 	bl UiText_DrawNumberInWindow
 	adds r0, r7, #0
-	bl Func_02001340
+	bl Menu_SelectEntry20To21
 	movs r1, #2
 	adds r7, r0, #0
 	adds r0, r6, #0
@@ -350,7 +350,7 @@ Func_020001e4:
 	movs r0, #1
 	movs r1, #0
 	negs r0, r0
-	bl Func_020013d0
+	bl UiText_OpenMessageAtObject
 	movs r0, #0
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -459,13 +459,13 @@ Func_020001e4:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #11
-	bl Func_020012d8
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020083e8
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #11
-	bl Func_020012e0
+	bl GameFlag_SetBit
 	movs r0, #1
 	negs r0, r0
 	bl Func_0200049c
@@ -584,7 +584,7 @@ Func_0200049c:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #0
-	bl Func_020013e0
+	bl ObjectMotion_ArmCallback
 	movs r0, #40
 	bl Battle_WaitMode0
 	movs r5, #3
@@ -2125,7 +2125,7 @@ Func_020010f4:
 	lsls r1, r1, #2
 	adds r1, #255
 	ldr r0, .L_02009180
-	bl Func_020012b8
+	bl Scheduler_AddOrUpdateCallback
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009168:

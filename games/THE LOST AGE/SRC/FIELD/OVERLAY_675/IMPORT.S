@@ -10,10 +10,10 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_020011e4
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_020011e4:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -22,18 +22,18 @@ Scheduler_RemoveCallbackFar:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Func_020011fc
+	.global GameFlag_Test
 	.thumb_func
-Func_020011fc:
-	overlay_veneer Func_080003c8
-	.global Func_02001204
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02001204:
-	overlay_veneer Func_080003d0
-	.global Func_0200120c
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_0200120c:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02001214
 	.thumb_func
 Func_02001214:
@@ -122,10 +122,10 @@ Object_LinkPair:
 	.thumb_func
 Func_020012bc:
 	overlay_veneer Func_080c8168
-	.global Func_020012c4
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_020012c4:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_020012cc
 	.thumb_func
 Func_020012cc:
@@ -138,10 +138,10 @@ Func_020012d4:
 	.thumb_func
 Func_020012dc:
 	overlay_veneer Func_080c8288
-	.global Func_020012e4
+	.global Party_SetFields1eeAnd1f0
 	.thumb_func
-Func_020012e4:
-	overlay_veneer Func_080c8290
+Party_SetFields1eeAnd1f0:
+	overlay_veneer Party_SetFields1eeAnd1f0Far
 	.global Func_020012ec
 	.thumb_func
 Func_020012ec:

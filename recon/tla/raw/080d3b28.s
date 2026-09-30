@@ -64,7 +64,7 @@ Func_080d3b28:
 	mov r2, r9
 	strb r2, [r3]
 	ldr r0, [r7, #40]
-	bl Func_08020070
+	bl ResourceMetadata_ClearRecordFar
 	mov r3, r10
 	ldrb r2, [r7, #5]
 	str r3, [r7, #40]

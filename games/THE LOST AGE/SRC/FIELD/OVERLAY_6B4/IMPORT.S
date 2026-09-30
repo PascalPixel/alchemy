@@ -14,10 +14,10 @@ Engine_MathDivide:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_0200141c
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_0200141c:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -34,10 +34,10 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Func_02001444
+	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
-Func_02001444:
-	overlay_veneer Func_08000170
+Runtime_BumpAllocateAlternatePool:
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
@@ -110,10 +110,10 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Func_020014d4:
 	overlay_veneer Func_080c8168
-	.global Func_020014dc
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_020014dc:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_020014e4
 	.thumb_func
 Func_020014e4:
@@ -126,14 +126,14 @@ Func_020014ec:
 	.thumb_func
 Func_020014f4:
 	overlay_veneer Func_080c81a0
-	.global Func_020014fc
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_020014fc:
-	overlay_veneer Func_080c81d0
-	.global Func_02001504
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02001504:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_0200150c
 	.thumb_func
 Func_0200150c:
@@ -146,10 +146,10 @@ Func_02001514:
 	.thumb_func
 Func_0200151c:
 	overlay_veneer Func_080c8230
-	.global Func_02001524
+	.global Motion_CamBounds
 	.thumb_func
-Func_02001524:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_0200152c
 	.thumb_func
 Func_0200152c:

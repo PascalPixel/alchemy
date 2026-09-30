@@ -22,7 +22,7 @@ Func_080dbcd8:
 	str r2, [r0]
 	str r3, [r0, #4]
 	str r1, [r0, #8]
-	bl Func_08020358
+	bl GetWorldMapCollisionFar
 	subs r0, #5
 	movs r2, #0
 	cmp r0, #1

@@ -96,8 +96,8 @@ Func_0200005c:
 	movs r0, #78
 	bl Func_02000644
 	movs r0, #60
-	bl Func_020005c4
-	bl Func_020005cc
+	bl Blend_SetDarkenTarget16
+	bl Blend_WaitForTransition
 	movs r0, #240
 	bl Battle_WaitMode0
 	movs r0, #0
@@ -134,8 +134,8 @@ Func_0200005c:
 	movs r0, #78
 	bl Func_02000644
 	movs r0, #30
-	bl Func_020005c4
-	bl Func_020005cc
+	bl Blend_SetDarkenTarget16
+	bl Blend_WaitForTransition
 	movs r5, #0
 	b .L_02008144
 .L_02008142:
@@ -201,8 +201,8 @@ Func_0200005c:
 	movs r0, #78
 	bl Func_02000644
 	movs r0, #30
-	bl Func_020005c4
-	bl Func_020005cc
+	bl Blend_SetDarkenTarget16
+	bl Blend_WaitForTransition
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #0
@@ -238,7 +238,7 @@ Func_02000208:
 	push {r5, r6, lr}
 	movs r0, #164
 	lsls r0, r0, #3
-	bl Func_02000584
+	bl Runtime_BumpAllocateAlternatePool
 	ldr r6, .L_0200826c
 	adds r5, r0, #0
 	movs r2, #0
@@ -392,7 +392,7 @@ Func_0200031c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008358
-	bl Func_0200057c
+	bl Scheduler_AddOrUpdateCallback
 	ldr r0, .L_0200835c
 	ldr r1, .L_02008360
 	ldrh r3, [r1]
@@ -572,7 +572,7 @@ Func_02000490:
 	push {r5, r6, lr}
 	movs r0, #0
 	ldr r5, .L_020084d8
-	bl Func_020005c4
+	bl Blend_SetDarkenTarget16
 	ldr r3, .L_020084d4
 	movs r2, #128
 	lsls r2, r2, #19

@@ -233,7 +233,7 @@ UiText_OpenMessageAtObject:
 	subs r6, r3, #2
 .L_080d3e44:
 	ldr r0, [sp, #24]
-	bl Func_080381e0
+	bl Localization_LookupEntryIdFar
 	movs r3, #1
 	negs r3, r3
 	adds r7, r0, #0
@@ -288,7 +288,7 @@ UiText_OpenMessageAtObject:
 	mov r2, r11
 	ldr r5, [sp, #36]
 	str r7, [sp, #0]
-	bl Func_08038108
+	bl UiText_GetResourceDimensionsFar
 	ldr r3, [sp, #36]
 	movs r1, #1
 	subs r5, r5, r3
@@ -307,7 +307,7 @@ UiText_OpenMessageAtObject:
 	mov r0, r8
 	add r2, sp, #44
 	ldr r5, [sp, #36]
-	bl Func_08038108
+	bl UiText_GetResourceDimensionsFar
 	ldr r3, [sp, #36]
 	mov r8, r7
 	subs r5, r5, r3

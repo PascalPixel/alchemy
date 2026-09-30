@@ -14,10 +14,10 @@ Engine_MathDivide:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02001f0c
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02001f0c:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -34,18 +34,18 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Func_02001f34
+	.global GameFlag_Test
 	.thumb_func
-Func_02001f34:
-	overlay_veneer Func_080003c8
-	.global Func_02001f3c
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02001f3c:
-	overlay_veneer Func_080003d0
-	.global Func_02001f44
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02001f44:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02001f4c
 	.thumb_func
 Func_02001f4c:
@@ -122,18 +122,18 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.thumb_func
 Func_02001fdc:
 	overlay_veneer Func_080c80f8
-	.global Func_02001fe4
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02001fe4:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02001fec
 	.thumb_func
 Func_02001fec:
 	overlay_veneer Func_080c8230
-	.global Func_02001ff4
+	.global Motion_CamBounds
 	.thumb_func
-Func_02001ff4:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02001ffc
 	.thumb_func
 Func_02001ffc:
@@ -146,10 +146,10 @@ Func_02002004:
 	.thumb_func
 Func_0200200c:
 	overlay_veneer Func_080c8280
-	.global Func_02002014
+	.global Party_SetFields1eeAnd1f0
 	.thumb_func
-Func_02002014:
-	overlay_veneer Func_080c8290
+Party_SetFields1eeAnd1f0:
+	overlay_veneer Party_SetFields1eeAnd1f0Far
 	.global Func_0200201c
 	.thumb_func
 Func_0200201c:

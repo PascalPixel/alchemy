@@ -9,9 +9,9 @@
 	.thumb_func
 BattleActor_CommitPlacementFar:
 	overlay_veneer BattleActor_CommitPlacement
-	.global Func_08118120
+	.global ReleaseBattleObjectRecordsFar
 	.thumb_func
-Func_08118120:
+ReleaseBattleObjectRecordsFar:
 	overlay_veneer ReleaseBattleObjectRecords
 	.global Func_08118128
 	.thumb_func

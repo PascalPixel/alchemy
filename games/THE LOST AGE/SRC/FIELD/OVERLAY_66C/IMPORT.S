@@ -6,14 +6,14 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_0200019c
+	.global GameFlag_Test
 	.thumb_func
-Func_0200019c:
-	overlay_veneer Func_080003c8
-	.global Func_020001a4
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020001a4:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -38,10 +38,10 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
-	.global Func_020001dc
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_020001dc:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Func_020001e4
 	.thumb_func
 Func_020001e4:
@@ -54,10 +54,10 @@ Func_020001ec:
 	.thumb_func
 Func_020001f4:
 	overlay_veneer Func_080c8218
-	.global Func_020001fc
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_020001fc:
-	overlay_veneer Func_080c8228
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
 	.global Func_02000204
 	.thumb_func
 Func_02000204:

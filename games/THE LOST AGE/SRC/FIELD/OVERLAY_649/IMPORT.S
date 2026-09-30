@@ -10,14 +10,14 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_0200057c
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_0200057c:
-	overlay_veneer Func_080000d0
-	.global Func_02000584
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
-Func_02000584:
-	overlay_veneer Func_08000170
+Runtime_BumpAllocateAlternatePool:
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
@@ -46,14 +46,14 @@ Resource_GetTableEntry:
 	.thumb_func
 Func_020005bc:
 	overlay_veneer Func_08000298
-	.global Func_020005c4
+	.global Blend_SetDarkenTarget16
 	.thumb_func
-Func_020005c4:
-	overlay_veneer Func_080002a8
-	.global Func_020005cc
+Blend_SetDarkenTarget16:
+	overlay_veneer Blend_SetDarkenTarget16Far
+	.global Blend_WaitForTransition
 	.thumb_func
-Func_020005cc:
-	overlay_veneer Func_080002d0
+Blend_WaitForTransition:
+	overlay_veneer Blend_WaitForTransitionFar
 	.global Func_020005d4
 	.thumb_func
 Func_020005d4:

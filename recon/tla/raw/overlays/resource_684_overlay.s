@@ -60,7 +60,7 @@ Func_02000064:
 	str r2, [r3]
 	movs r1, #2
 	movs r0, #8
-	bl Func_020000b0
+	bl ObjectMotion_SetActionVariant
 	movs r0, #8
 	bl Object_GetById
 	adds r0, #89

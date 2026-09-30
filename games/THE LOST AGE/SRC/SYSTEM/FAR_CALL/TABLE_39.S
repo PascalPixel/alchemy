@@ -13,9 +13,9 @@ Func_080f8058:
 	.thumb_func
 Func_080f8060:
 	overlay_veneer Func_08104fe0
-	.global Func_080f8068
+	.global Menu_ReleaseEntryObjectsFar
 	.thumb_func
-Func_080f8068:
+Menu_ReleaseEntryObjectsFar:
 	overlay_veneer Menu_ReleaseEntryObjects
 	.global Func_080f8070
 	.thumb_func

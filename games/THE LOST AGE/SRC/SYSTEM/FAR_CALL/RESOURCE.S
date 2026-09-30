@@ -7,9 +7,9 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.global Resource_FarCall003
 Resource_FarCall003:
-	.global Func_08020000
+	.global Resource_GetMetadataRecordFarFar
 	.thumb_func
-Func_08020000:
+Resource_GetMetadataRecordFarFar:
 	overlay_veneer Resource_GetMetadataRecordFar
 	.global Func_08020008
 	.thumb_func

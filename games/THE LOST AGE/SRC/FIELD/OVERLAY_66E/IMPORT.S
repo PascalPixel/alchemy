@@ -26,10 +26,10 @@ Runtime_ReleaseHeapBlock:
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_02001090
+	.global GameFlag_Test
 	.thumb_func
-Func_02001090:
-	overlay_veneer Func_080003c8
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -106,26 +106,26 @@ ObjectMotion_WaitForAnimationChange:
 	.thumb_func
 ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
-	.global Func_02001130
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02001130:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02001138
 	.thumb_func
 Func_02001138:
 	overlay_veneer Func_080c8180
-	.global Func_02001140
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02001140:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02001148
 	.thumb_func
 Func_02001148:
 	overlay_veneer Func_080c81a0
-	.global Func_02001150
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02001150:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02001158
 	.thumb_func
 Func_02001158:

@@ -17,11 +17,11 @@ Func_08020060:
 	.thumb_func
 Func_08020068:
 	overlay_veneer Func_08022a84
-	.global Func_08020070
+	.global ResourceMetadata_ClearRecordFar
 	.thumb_func
-Func_08020070:
+ResourceMetadata_ClearRecordFar:
 	overlay_veneer ResourceMetadata_ClearRecord
-	.global Func_08020078
+	.global Animation_InitWorkFromMetadataFar
 	.thumb_func
-Func_08020078:
+Animation_InitWorkFromMetadataFar:
 	overlay_veneer Animation_InitWorkFromMetadata

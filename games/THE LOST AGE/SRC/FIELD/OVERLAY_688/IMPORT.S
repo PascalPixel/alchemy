@@ -10,8 +10,17 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
+	.global Func_02000504
+	.thumb_func
+Func_02000504:
 	overlay_veneer Func_080003c8
+	.global Func_0200050c
+	.thumb_func
+Func_0200050c:
 	overlay_veneer Func_080003d0
+	.global Func_02000514
+	.thumb_func
+Func_02000514:
 	overlay_veneer Func_080003d8
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
@@ -29,7 +38,13 @@ UiText_OpenMessageWindow:
 	.thumb_func
 UiWork_IsComplete:
 	overlay_veneer UiWork_IsCompleteFar
+	.global Func_0200053c
+	.thumb_func
+Func_0200053c:
 	overlay_veneer Func_080380f8
+	.global Func_02000544
+	.thumb_func
+Func_02000544:
 	overlay_veneer Func_08038108
 	.global UiWork_FinalizePendingCore
 	.thumb_func
@@ -39,7 +54,13 @@ UiWork_FinalizePendingCore:
 	.thumb_func
 Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
+	.global Func_0200055c
+	.thumb_func
+Func_0200055c:
 	overlay_veneer Func_080c8018
+	.global Func_02000564
+	.thumb_func
+Func_02000564:
 	overlay_veneer Func_080c8020
 	.global Object_GetById
 	.thumb_func
@@ -57,13 +78,25 @@ ObjectMotion_EnableActionAndSetCallback:
 	.thumb_func
 Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
+	.global Func_0200058c
+	.thumb_func
+Func_0200058c:
 	overlay_veneer Func_080c80f8
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global Func_0200059c
+	.thumb_func
+Func_0200059c:
 	overlay_veneer Func_080c8180
+	.global Func_020005a4
+	.thumb_func
+Func_020005a4:
 	overlay_veneer Func_080c8268
+	.global Func_020005ac
+	.thumb_func
+Func_020005ac:
 	overlay_veneer Func_080c8278
 	.global Event_SetStatus1c6
 	.thumb_func
@@ -77,9 +110,15 @@ Event_ClearStatus1c6:
 	.thumb_func
 Event_WaitValue1c8Frames:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Func_020005cc
+	.thumb_func
+Func_020005cc:
 	overlay_veneer Func_080c84e0
 	.global BattleFx_GetResourceId
 	.thumb_func
 BattleFx_GetResourceId:
 	overlay_veneer BattleFx_GetResourceIdFar
+	.global Func_020005dc
+	.thumb_func
+Func_020005dc:
 	overlay_veneer Audio_PlayCue

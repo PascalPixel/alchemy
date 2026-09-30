@@ -50,6 +50,9 @@ UiText_DrawNumberAtOffset:
 	.thumb_func
 UiText_DrawNumberInWindow:
 	overlay_veneer UiText_DrawNumberInWindowFar
+	.global Func_0200068c
+	.thumb_func
+Func_0200068c:
 	overlay_veneer UiText_DrawQuantity
 	.global RenderOutput_RedrawSavedRect
 	.thumb_func
@@ -59,12 +62,21 @@ RenderOutput_RedrawSavedRect:
 	.thumb_func
 RenderOutput_ClearList:
 	overlay_veneer RenderOutput_ClearListFar
+	.global Func_020006a4
+	.thumb_func
+Func_020006a4:
 	overlay_veneer Func_08038318
+	.global Func_020006ac
+	.thumb_func
+Func_020006ac:
 	overlay_veneer Func_08038320
 	.global Owner_RecalculateStats
 	.thumb_func
 Owner_RecalculateStats:
 	overlay_veneer Owner_RecalculateStatsFar
+	.global Func_020006bc
+	.thumb_func
+Func_020006bc:
 	overlay_veneer Item_Get
 	.global PartyInventory_Add
 	.thumb_func
@@ -82,12 +94,21 @@ Party_AdvanceOwnerCountToTarget:
 	.thumb_func
 PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
+	.global Func_020006e4
+	.thumb_func
+Func_020006e4:
 	overlay_veneer Func_080c8018
+	.global Func_020006ec
+	.thumb_func
+Func_020006ec:
 	overlay_veneer Func_080c8020
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global Func_020006fc
+	.thumb_func
+Func_020006fc:
 	overlay_veneer Func_080c80f8
 	.global Object_SetModeById
 	.thumb_func
@@ -97,9 +118,27 @@ Object_SetModeById:
 	.thumb_func
 ObjectMotion_WaitForAnimationChange:
 	overlay_veneer ObjectMotion_WaitForAnimationChangeFar
+	.global Func_02000714
+	.thumb_func
+Func_02000714:
 	overlay_veneer Func_080c8180
+	.global Func_0200071c
+	.thumb_func
+Func_0200071c:
 	overlay_veneer Func_080c81a0
+	.global Func_02000724
+	.thumb_func
+Func_02000724:
 	overlay_veneer Func_080c8278
+	.global Func_0200072c
+	.thumb_func
+Func_0200072c:
 	overlay_veneer Func_080c84e0
+	.global Func_02000734
+	.thumb_func
+Func_02000734:
 	overlay_veneer Func_080f8038
+	.global Func_0200073c
+	.thumb_func
+Func_0200073c:
 	overlay_veneer Audio_PlayCue

@@ -6,16 +6,37 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Func_0200043c
+	.thumb_func
+Func_0200043c:
 	overlay_veneer Func_080000d0
+	.global Func_02000444
+	.thumb_func
+Func_02000444:
 	overlay_veneer Func_080003c8
+	.global Func_0200044c
+	.thumb_func
+Func_0200044c:
 	overlay_veneer Func_080003d8
+	.global Func_02000454
+	.thumb_func
+Func_02000454:
 	overlay_veneer Func_08020170
+	.global Func_0200045c
+	.thumb_func
+Func_0200045c:
 	overlay_veneer Func_08020178
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
+	.global Func_0200046c
+	.thumb_func
+Func_0200046c:
 	overlay_veneer Func_080c8018
+	.global Func_02000474
+	.thumb_func
+Func_02000474:
 	overlay_veneer Func_080c8020
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
@@ -49,6 +70,9 @@ ObjectMotion_OffsetPositionAndResetMotion:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Func_020004bc
+	.thumb_func
+Func_020004bc:
 	overlay_veneer Func_080c80f8
 	.global Object_SetModeById
 	.thumb_func
@@ -58,13 +82,37 @@ Object_SetModeById:
 	.thumb_func
 ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
+	.global Func_020004d4
+	.thumb_func
+Func_020004d4:
 	overlay_veneer Func_080c8158
+	.global Func_020004dc
+	.thumb_func
+Func_020004dc:
 	overlay_veneer Func_080c8180
+	.global Func_020004e4
+	.thumb_func
+Func_020004e4:
 	overlay_veneer Func_080c8188
+	.global Func_020004ec
+	.thumb_func
+Func_020004ec:
 	overlay_veneer Func_080c81a0
+	.global Func_020004f4
+	.thumb_func
+Func_020004f4:
 	overlay_veneer Func_080c81d8
+	.global Func_020004fc
+	.thumb_func
+Func_020004fc:
 	overlay_veneer Func_080c8200
+	.global Func_02000504
+	.thumb_func
+Func_02000504:
 	overlay_veneer Func_080c8210
+	.global Func_0200050c
+	.thumb_func
+Func_0200050c:
 	overlay_veneer Func_080c8278
 	.global Event_ClearStatus1c6
 	.thumb_func
@@ -74,11 +122,23 @@ Event_ClearStatus1c6:
 	.thumb_func
 Event_WaitValue1c8Frames:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Func_02000524
+	.thumb_func
+Func_02000524:
 	overlay_veneer Func_080c84e0
+	.global Func_0200052c
+	.thumb_func
+Func_0200052c:
 	overlay_veneer Func_080c85e8
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	.global Func_0200053c
+	.thumb_func
+Func_0200053c:
 	overlay_veneer Func_080c8778
+	.global Func_02000544
+	.thumb_func
+Func_02000544:
 	overlay_veneer Audio_PlayCue

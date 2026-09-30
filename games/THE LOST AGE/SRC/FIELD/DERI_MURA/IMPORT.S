@@ -14,6 +14,9 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer Func_080003d0
+	.global Func_02000c48
+	.thumb_func
+Func_02000c48:
 	overlay_veneer Func_080201e8
 	.global Engine_EventWait
 	.thumb_func
@@ -59,6 +62,9 @@ Engine_ActorCenterAndWalk:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Func_02000ca8
+	.thumb_func
+Func_02000ca8:
 	overlay_veneer Func_080c80f8
 	.global Engine_ActorSetAnimation
 	.thumb_func
@@ -76,6 +82,9 @@ ObjectMotion_SetVariantCallback:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
+	.global Func_02000cd0
+	.thumb_func
+Func_02000cd0:
 	overlay_veneer Func_080c8158
 	.global Object_LinkPair
 	.thumb_func
@@ -93,16 +102,25 @@ Engine_EventOpenMessage:
 	.thumb_func
 Engine_EventShowMessage:
 	overlay_veneer Func_080c81a0
+	.global Func_02000cf8
+	.thumb_func
+Func_02000cf8:
 	overlay_veneer Func_080c81d0
 	.global Engine_ActorSetSpritePriority
 	.thumb_func
 Engine_ActorSetSpritePriority:
 	overlay_veneer Func_080c8200
+	.global Func_02000d08
+	.thumb_func
+Func_02000d08:
 	overlay_veneer Func_080c8210
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Func_080c8278
+	.global Func_02000d18
+	.thumb_func
+Func_02000d18:
 	overlay_veneer Func_080c82e0
 	.global Engine_EventCloseScreen
 	.thumb_func
@@ -112,6 +130,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Func_02000d30
+	.thumb_func
+Func_02000d30:
 	overlay_veneer Func_080c8420
 	.global Engine_ActorReturnHome
 	.thumb_func
@@ -121,13 +142,25 @@ Engine_ActorReturnHome:
 	.thumb_func
 Engine_EventPrepareSpeakers:
 	overlay_veneer Func_080c84e0
+	.global Func_02000d48
+	.thumb_func
+Func_02000d48:
 	overlay_veneer Func_080c85e8
+	.global Func_02000d50
+	.thumb_func
+Func_02000d50:
 	overlay_veneer Func_080c86f8
+	.global Func_02000d58
+	.thumb_func
+Func_02000d58:
 	overlay_veneer Func_080c8708
 	.global Engine_PartyGetLeaderActor
 	.thumb_func
 Engine_PartyGetLeaderActor:
 	overlay_veneer Func_080c8778
+	.global Func_02000d68
+	.thumb_func
+Func_02000d68:
 	overlay_veneer Func_080c87b0
 	.global Engine_ShopOpen
 	.thumb_func

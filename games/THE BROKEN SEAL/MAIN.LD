@@ -1098,8 +1098,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/CURSOR_ADVANCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/CURSOR_MOVE_TOWARD_TARGET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/CURSOR_SET.o"(.text)
-        "*/recon/tbs/raw/080b0a1e.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080b0a20.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/CURSOR_PLACE.o"(.text)
         "*/recon/tbs/raw/080b0aac.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_STOCK_PAGE.o"(.text)

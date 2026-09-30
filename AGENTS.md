@@ -3,19 +3,24 @@
 Golden Sun: **The Broken Seal (TBS)** ☀️ and **The Lost Age (TLA)** ⚓️,
 rebuilt byte for byte from readable C, assembly and editable assets. Japanese
 releases are the source editions; localizations are measured differences.
-Build IDs are `tbs` and `tla`.
+Build IDs are `tbs` and `tla`. Today only the English editions build their
+code from C.
 
 This file is the only place Alchemy's rules live. `README.md` is for fans.
 Every rule has an ID; a rule a tool can enforce names its check, and every
-check in `make verify` names the rule it enforces. Only Pascal changes a rule;
-git history records when.
+check in `make verify` names the rule it enforces. Pascal decides rule
+wording, compilers, what counts as DONE, and deleting anything that cannot be
+restored; git history records when. Everything else goes ahead without
+asking him, including fixing a check that wrongly blocks honest work, as long
+as it still refuses everything it refused before.
 
 ## Goal
 
 **DONE = matching C + proven library, handwritten or veneer assembly**, over
-each game's executable bytes. `make progress` prints the exact counts. ☀️ has
-the priority; the target is ☀️ 100% and ⚓️ 100%, sharing as much code between
-the games as possible.
+each game's executable bytes. `make progress` prints the exact counts, shows
+⚓️ in its parts (C, assembly and 8-byte stubs) and shows the bytes of
+FAKEMATCH-steered code as their own number. ☀️ has the priority; the target is
+☀️ 100% and ⚓️ 100%, sharing as much code between the games as possible.
 
 ## Rules
 
@@ -32,13 +37,16 @@ the games as possible.
 ### Counting
 
 - **C1** A function counts only when its complete extent, literal pool
-  included, compiles exactly and every edition stays byte-identical.
+  included, compiles exactly and every edition stays byte-identical. Until the
+  other ten editions build their code from C, their byte-identical builds
+  prove pictures, sound and text only.
   _Check: compare, compare-tla, compare-other-editions._
 - **C2** DONE is pret's calcrom over the linker maps of byte-identical builds:
   the code the linker places from `games/`. Uncredited disassembly is
   `not-yet-c` in `recon/<game>/raw`; only proven library, handwritten and veneer
   assembly counts as assembly. Whole aligned 8-byte far-call stubs count as
-  veneers. _Check: coverage-check._
+  veneers. Padding a source marks as carrying no credit does not count.
+  _Check: coverage-check._
 - **C3** Main commits carry the verified percentage, README and both progress
   figures, written by `make land`. _Check: commit-msg hook, coverage-check._
 
@@ -65,13 +73,17 @@ expected answer steers the build or the count is cheating, whatever its form.
   _Check: publication._
 - **O4** A mismatch is fixed in source, or the code stays disassembly or a
   draft. Before announcing a milestone, run an independent audit for leaks.
+- **O5** Old git history, deleted files, backups and unreachable git objects
+  are never evidence. Re-derive an answer from our ROMs and the current tree,
+  or ask Pascal.
 
 ### Source
 
 - **S1** `games/` holds only real source: C from an approved compiler, or
   proven assembly written as instructions, never copied bytes. Drafts and
   scaffolding live under `recon/` and shrink toward zero. _Check: publication._
-- **S2** Tagged `/* FAKEMATCH: reason */` code counts. Until ☀️ is 100%,
+- **S2** Tagged `/* FAKEMATCH: reason */` code counts until both games reach
+  100%, and is then removed as the final step, as pret's was. Until then
   compiler-steering C (wrappers, volatile, forced temporaries, dead code),
   inline assembly and fixed-register variables are allowed when each carries a
   `FAKEMATCH` tag with a reason. `/* CAMELOT_ASM: proof */` marks assembly

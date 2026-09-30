@@ -28,6 +28,61 @@ pub(crate) struct Measurement {
     pub data_scaffold: i64,
     /// The main image's symbol names, as pret's calcrom counts them.
     pub names: Names,
+    /// Text of C objects whose source carries a FAKEMATCH tag: counted in
+    /// DONE until both games are done (AGENTS.md S2), shown on its own.
+    pub steered: i64,
+    /// Padding a source marks as carrying no credit, between its
+    /// `AlchemyUncredited_X` and `AlchemyUncreditedEnd_X` labels: placed,
+    /// but not counted in DONE (C2).
+    pub uncredited: i64,
+}
+
+/// What a `games/` source says about its object's bytes.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) struct Mark {
+    /// C steered by a FAKEMATCH workaround.
+    pub steered: bool,
+    /// Assembly credited as whole 8-byte stubs (`@ credit: reconstructed_veneer`).
+    pub veneer: bool,
+}
+
+/// Read the marks of the maintained source a `games/` object was built from.
+fn source_mark(root: &Path, stem: &str) -> Mark {
+    ["C", "c", "S", "s"]
+        .iter()
+        .find_map(|extension| {
+            std::fs::read_to_string(root.join(format!("{stem}.{extension}"))).ok()
+        })
+        .map_or_else(Mark::default, |text| Mark {
+            steered: text.contains("FAKEMATCH"),
+            veneer: text.contains("@ credit: reconstructed_veneer"),
+        })
+}
+
+/// The bytes between each `AlchemyUncredited_X` label and its
+/// `AlchemyUncreditedEnd_X` in one image's `nm` output.
+pub(crate) fn uncredited_bytes(nm: &str) -> i64 {
+    let mut starts = std::collections::HashMap::new();
+    let mut ends = std::collections::HashMap::new();
+    for line in nm.lines() {
+        let mut fields = line.split_whitespace();
+        let (Some(address), Some(_), Some(name)) = (fields.next(), fields.next(), fields.next())
+        else {
+            continue;
+        };
+        let Ok(address) = i64::from_str_radix(address, 16) else {
+            continue;
+        };
+        if let Some(key) = name.strip_prefix("AlchemyUncreditedEnd_") {
+            ends.insert(key.to_string(), address);
+        } else if let Some(key) = name.strip_prefix("AlchemyUncredited_") {
+            starts.insert(key.to_string(), address);
+        }
+    }
+    starts
+        .iter()
+        .filter_map(|(key, start)| ends.get(key).map(|end| (end - start).max(0)))
+        .sum()
 }
 
 /// Symbol names by how much they say, after pret's calcrom: a placeholder
@@ -155,6 +210,24 @@ fn placement(text: &str) -> Option<(i64, &str)> {
     Some((hex(size)?, object))
 }
 
+/// An object's path under its build directory's `obj/` (or, in an overlay
+/// map, under `overlays/`), and whether it sits in the overlay directory.
+fn relative_object<'a>(object: &'a str, output: &str, overlay: bool) -> Option<(&'a str, bool)> {
+    let relative = |marker: &str| {
+        let marker = format!("{output}/{marker}/");
+        object
+            .rfind(&marker)
+            .map(|index| &object[index + marker.len()..])
+    };
+    match relative("obj") {
+        Some(path) => Some((path, false)),
+        None if overlay => {
+            relative("overlays").map(|path| (path.strip_prefix("obj/").unwrap_or(path), true))
+        }
+        None => None,
+    }
+}
+
 /// Classify one object by its path alone. `output` is the build directory,
 /// such as `out/tbs-en`; `source` finds the language of a `games/` object.
 fn origin(
@@ -166,19 +239,8 @@ fn origin(
     if object.contains("libgcc.a(") {
         return Ok(Origin::Library);
     }
-    let relative = |marker: &str| {
-        let marker = format!("{output}/{marker}/");
-        object
-            .rfind(&marker)
-            .map(|index| &object[index + marker.len()..])
-    };
-    let (relative, listing_directory) = match relative("obj") {
-        Some(path) => (path, false),
-        None if overlay => match relative("overlays") {
-            Some(path) => (path.strip_prefix("obj/").unwrap_or(path), true),
-            None => return Ok(Origin::Other),
-        },
-        None => return Ok(Origin::Other),
+    let Some((relative, listing_directory)) = relative_object(object, output, overlay) else {
+        return Ok(Origin::Other);
     };
     if relative.starts_with("games/") {
         let stem = relative
@@ -221,6 +283,7 @@ fn tally(
     output: &str,
     overlay: bool,
     source: &dyn Fn(&str) -> Option<Language>,
+    mark: &dyn Fn(&str) -> Mark,
 ) -> Result<(), String> {
     for (name, size, object) in sections(map) {
         if size > 0 && is_data(name) {
@@ -235,14 +298,34 @@ fn tally(
         if size <= 0 || !name.contains("text") {
             continue;
         }
-        let done = &mut measurement.done;
+        let marked = || {
+            relative_object(object, output, overlay)
+                .and_then(|(path, _)| path.strip_suffix(".o"))
+                .map_or_else(Mark::default, mark)
+        };
         match origin(object, output, overlay, source)? {
-            Origin::CommonC => done.common_c += size,
-            Origin::CommonAsm => done.common_asm += size,
-            Origin::GameC => done.game_c += size,
-            Origin::GameAsm => done.game_asm += size,
+            origin @ (Origin::CommonC | Origin::GameC) => {
+                if origin == Origin::CommonC {
+                    measurement.done.common_c += size;
+                } else {
+                    measurement.done.game_c += size;
+                }
+                if marked().steered {
+                    measurement.steered += size;
+                }
+            }
+            origin @ (Origin::CommonAsm | Origin::GameAsm) => {
+                if origin == Origin::CommonAsm {
+                    measurement.done.common_asm += size;
+                } else {
+                    measurement.done.game_asm += size;
+                }
+                if marked().veneer {
+                    measurement.done.veneers += size;
+                }
+            }
             Origin::Library => {
-                done.game_asm += size;
+                measurement.done.game_asm += size;
                 measurement.library += size;
             }
             Origin::Raw => measurement.raw += size,
@@ -256,7 +339,7 @@ fn tally(
                 None => measurement.other.push((object.to_owned(), size)),
             },
         }
-        done.executable += size;
+        measurement.done.executable += size;
     }
     Ok(())
 }
@@ -340,8 +423,19 @@ pub(crate) fn measure(
         maps.extend(names.into_iter().map(|name| (overlays.join(name), true)));
     }
     let source = |stem: &str| maintained_source(root, stem);
+    let marks = std::cell::RefCell::new(std::collections::HashMap::new());
+    let mark = |stem: &str| {
+        *marks
+            .borrow_mut()
+            .entry(stem.to_string())
+            .or_insert_with(|| source_mark(root, stem))
+    };
     let mut measurement = Measurement::default();
+    let mut images = vec![root.join(format!("{output}/{}.elf", target.id))];
     for (path, overlay) in maps {
+        if overlay {
+            images.push(path.with_extension("elf"));
+        }
         // A link that failed after writing its map leaves an older image.
         if written(&path)? > linked {
             return Ok(Err(format!(
@@ -351,17 +445,27 @@ pub(crate) fn measure(
         }
         let text = std::fs::read_to_string(&path)
             .map_err(|error| format!("{}: {error}", path.display()))?;
-        tally(&mut measurement, &text, output, overlay, &source)?;
+        tally(&mut measurement, &text, output, overlay, &source, &mark)?;
     }
-    let elf = root.join(format!("{output}/{}.elf", target.id));
-    if let Ok(nm) = std::process::Command::new("arm-none-eabi-nm")
-        .arg(&elf)
-        .output()
-    {
-        if nm.status.success() {
-            measurement.names = names(&String::from_utf8_lossy(&nm.stdout));
+    // The main image names its symbols; every image may place padding its
+    // source marks as uncredited, which leaves DONE (C2).
+    for (index, image) in images.iter().enumerate() {
+        let Ok(nm) = std::process::Command::new("arm-none-eabi-nm")
+            .arg(image)
+            .output()
+        else {
+            continue;
+        };
+        if !nm.status.success() {
+            continue;
         }
+        let listed = String::from_utf8_lossy(&nm.stdout);
+        if index == 0 {
+            measurement.names = names(&listed);
+        }
+        measurement.uncredited += uncredited_bytes(&listed);
     }
+    measurement.done.game_asm -= measurement.uncredited.min(measurement.done.game_asm);
     for (object, bytes) in &measurement.other {
         eprintln!(
             "{}: {bytes} text bytes from unclassified {object}",
@@ -436,8 +540,28 @@ Linker script and memory map
     #[test]
     fn placed_text_is_counted_by_its_object_and_nothing_else() {
         let mut measurement = Measurement::default();
-        tally(&mut measurement, MAIN, "out/tbs-en", false, &language).unwrap();
-        tally(&mut measurement, OVERLAY, "out/tbs-en", true, &language).unwrap();
+        let mark = |stem: &str| Mark {
+            steered: stem == "games/G/SRC/A",
+            veneer: stem == "games/COMMON/SRC/D",
+        };
+        tally(
+            &mut measurement,
+            MAIN,
+            "out/tbs-en",
+            false,
+            &language,
+            &mark,
+        )
+        .unwrap();
+        tally(
+            &mut measurement,
+            OVERLAY,
+            "out/tbs-en",
+            true,
+            &language,
+            &mark,
+        )
+        .unwrap();
         assert_eq!(
             measurement,
             Measurement {
@@ -457,6 +581,7 @@ Linker script and memory map
                         + 0x600
                         + 0x30
                         + 0x22,
+                    veneers: 0x8,
                 },
                 library: 0x3c + 0x22,
                 raw: 0x240,
@@ -467,8 +592,24 @@ Linker script and memory map
                 data_source: 0x80 + 0x10,
                 data_scaffold: 0x100,
                 names: Names::default(),
+                steered: 0x100,
+                uncredited: 0,
             }
         );
+    }
+
+    #[test]
+    fn uncredited_padding_is_the_span_between_its_two_labels() {
+        let nm = "\
+080f0100 t AlchemyUncredited_080f0100
+080f0104 t AlchemyUncreditedEnd_080f0100
+08009bd4 t AlchemyUncredited_08009bd4
+08009bda t AlchemyUncreditedEnd_08009bd4
+08001000 t AlchemyUncredited_08001000
+08000000 T Battle_Start
+";
+        // Two closed spans of 4 and 6 bytes; a start with no end counts nothing.
+        assert_eq!(uncredited_bytes(nm), 10);
     }
 
     #[test]

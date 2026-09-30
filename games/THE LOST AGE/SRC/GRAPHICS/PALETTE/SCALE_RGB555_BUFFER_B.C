@@ -1,6 +1,7 @@
 #include "TYPES.H"
 
-s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 count)
+/* The camera bank's own copy of Graphics_ScaleRgb555Buffer. */
+s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale, s32 count)
 {
     s32 remaining;
     u32 mask_red;

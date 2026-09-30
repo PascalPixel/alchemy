@@ -3725,7 +3725,7 @@ Func_0814cb60:
 BattleFx_RunNoEffect:
 	.incbin "baserom.gba", 0x00152470, 0x0000517c
 	.section .rom.00157636, "ax"
-	.incbin "baserom.gba", 0x00157636, 0x00002a62
+	.incbin "baserom.gba", 0x00157636, 0x00002a0e
 	.section .rom.0015a0bc, "ax"
 	.incbin "baserom.gba", 0x0015a0bc, 0x00000030
 	.section .rom.0015a110, "ax"

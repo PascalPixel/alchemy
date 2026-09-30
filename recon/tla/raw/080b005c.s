@@ -8,7 +8,7 @@ Func_080b005c:
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
 	ldrh	r0, [r3, #0]
-	bl	0x080ad3a8
+	bl	Func_080ad3a8
 	adds	r0, #42
 	ldrb	r1, [r0, #0]
 	cmp	r1, #47
@@ -40,7 +40,7 @@ Func_080b005c:
 	adds	r1, #33
 	adds	r3, r2, r1
 	ldrh	r0, [r3, #0]
-	bl	0x080ad3a8
+	bl	Func_080ad3a8
 	adds	r0, #42
 	ldrb	r0, [r0, #0]
 	cmp	r0, #47

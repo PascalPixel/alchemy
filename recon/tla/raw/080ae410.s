@@ -398,13 +398,13 @@ Func_080ae410:
 	movs	r0, #222
 	bl	PartyInventory_Remove
 	movs	r0, #0
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	movs	r0, #1
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	movs	r0, #2
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	movs	r0, #3
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	movs	r0, #0
 	bl	0x080ae358
 	bl	Func_080b1004

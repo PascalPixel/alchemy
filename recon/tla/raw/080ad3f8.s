@@ -1043,7 +1043,7 @@ Owner_RecalculateStats:
 	adds	r0, #255
 	sub	sp, #8
 	bl	GameFlag_ClearBitFar
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	mov	sl, r0
 	movs	r0, #0
 	mov	r8, r0
@@ -1122,7 +1122,7 @@ Owner_RecalculateStats:
 	movs	r2, #0
 	mov	r8, r2
 	movs	r6, #0
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	cmp	r0, #0
 	bne.n	.L_080adca8
 	movs	r0, #0
@@ -1171,7 +1171,7 @@ Owner_RecalculateStats:
 	negs	r2, r2
 	movs	r7, #0
 	mov	r8, r2
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	cmp	r0, #0
 	bne.n	.L_080add06
 	movs	r0, #0
@@ -1423,9 +1423,9 @@ Func_080addf0:
 	strh	r2, [r3, #0]
 	adds	r3, r7, r1
 	str	r0, [r3, #0]
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	movs	r0, #5
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	movs	r1, #149
 	movs	r0, #4
 	bl	Func_080af6f4

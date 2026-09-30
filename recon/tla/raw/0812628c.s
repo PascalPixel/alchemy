@@ -160,7 +160,7 @@ Func_0812628c:
 	bne .L_08126352
 .L_081263ae:
 	ldr r0, .L_081263bc
-	bl Func_08125b78
+	bl Graphics_BuildSequentialTileTable
 	ldr r0, .L_081263c0
 	bl Func_08125bb8
 	pop {r5, r6, r7, pc}

@@ -1351,7 +1351,6 @@ SECTIONS
         "*/recon/tla/raw/080d23cc.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PACKED_ID.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/CLEAR_PACKED_EVENTS.o"(.text)
-        "*/recon/tla/raw/080d2488.o"(.text)
         "*/recon/tla/raw/080d25c8.o"(.text)
         "*/recon/tla/raw/080d260c.o"(.text)
         "*/games/COMMON/SRC/GAME/INVENTORY/TRY_ADD_AND_RETURN_OWNER.o"(.text)

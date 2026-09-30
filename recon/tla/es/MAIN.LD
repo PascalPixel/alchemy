@@ -767,7 +767,6 @@
     "*/recon/tla/es/rom.o"(.rom.000db260)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PACKED_ID.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/CLEAR_PACKED_EVENTS.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000db488)
     "*/recon/tla/es/rom.o"(.rom.000db5c8)
     "*/games/COMMON/SRC/GAME/INVENTORY/TRY_ADD_AND_RETURN_OWNER.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000db7fe)

@@ -1,39 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08126b64
+	.balign 4
+	.global Func_08126ba0
 	.thumb_func
-Func_08126b64:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	sub	sp, #28
-	mov	r5, sp
-	adds	r7, r0, #0
-	adds	r1, r5, #0
-	movs	r0, #3
-	bl	0x0811a31c
-	cmp	r0, #0
-	ble.n	.L_08126b98
-	mov	r8, r5
-	movs	r6, #0
-	adds	r5, r0, #0
-.L_08126b82:
-	mov	r2, r8
-	ldrsh	r0, [r6, r2]
-	cmp	r0, r7
-	beq.n	.L_08126b90
-	movs	r1, #1
-	bl	0x08126ae4
-.L_08126b90:
-	subs	r5, #1
-	adds	r6, #2
-	cmp	r5, #0
-	bne.n	.L_08126b82
-.L_08126b98:
-	add	sp, #28
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
+Func_08126ba0:
 .L_08126ba0:
 	push	{r5, r6, r7, lr}
 	sub	sp, #28

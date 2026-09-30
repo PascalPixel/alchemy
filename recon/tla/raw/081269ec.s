@@ -138,6 +138,9 @@ Func_081269ec:
 	movs	r0, r0
 	.2byte 0x1150
 	.2byte 0x0300
+	.global BattlePres_SetActorRecordMode
+	.thumb_func
+BattlePres_SetActorRecordMode:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
 	bl	0x0811be3c

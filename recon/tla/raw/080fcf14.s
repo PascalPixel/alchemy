@@ -110,7 +110,7 @@ Func_080fcf14:
 	adds	r3, #20
 	adds	r5, r0, #0
 	ldr	r0, [r7, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r5, #0
@@ -694,7 +694,7 @@ Func_080fcf14:
 	ldr	r5, [r6, #24]
 	movs	r7, #13
 	adds	r0, r5, #0
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	strb	r7, [r5, #5]
 	movs	r0, #1
 	bl	WaitFrames
@@ -1645,7 +1645,7 @@ Func_080fcf14:
 	lsls	r3, r1, #2
 	adds	r3, #76
 	ldr	r0, [r7, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	ldr	r4, [sp, #8]
 .L_080fdc4a:
 	ldr	r3, [sp, #40]
@@ -2246,7 +2246,7 @@ Func_080fcf14:
 	strh	r3, [r1, #0]
 	ldr	r0, [r7, #72]
 	str	r4, [sp, #8]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	ldr	r1, [sp, #12]
 	ldr	r4, [sp, #8]
 	movs	r3, #180

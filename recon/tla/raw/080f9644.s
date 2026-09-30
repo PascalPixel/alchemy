@@ -522,7 +522,7 @@ Func_080f9644:
 	ldr	r2, [r5, #0]
 	strh	r3, [r2, #8]
 	ldr	r0, [r5, #0]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	mov	r3, r9
 	ldr	r0, [r3, #56]
 	movs	r3, #96

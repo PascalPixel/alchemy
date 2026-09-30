@@ -1,11 +1,12 @@
 #include "TYPES.H"
 #include "SCENE.H"
-s32 BattleUnit_BuildStatusFlags(s32, s32);
+#include "OWNER_STATE.H"
 
-u8 *Owner_GetStateFar(s32);
+s32 BattleUnit_BuildStatusFlags(s32, s32);
 void Owner_RecalculateStatsFar(s32);
 s32 GetBattleObjectSlot(s32);
 
+/* ☀️'s, but ⚓️ reaches the owner's state with a direct call. */
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
     u8 *state;
@@ -13,9 +14,9 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     s32 count;
     u8 zero;
 
-    state = Owner_GetStateFar(actor);
-    count = 3;
+    state = Owner_GetState(actor);
     zero = 0;
+    count = 3;
     cursor = state + 0x12f;
     do {
         count--;

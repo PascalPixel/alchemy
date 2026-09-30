@@ -1,3 +1,5 @@
+/* Near miss: score 200: one ble and three reordered instructions (str r5,
+   [sp, #0]; ldr r2, [r6]; adds r3, r1, #0). */
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
@@ -13,7 +15,7 @@
 
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
 {
-    struct OwnerDjinnState *state = Owner_GetStateFar(owner);
+    struct OwnerDjinnState *state = Owner_GetState(owner);
     s32 count = 0;
     s32 row;
     s32 bit;

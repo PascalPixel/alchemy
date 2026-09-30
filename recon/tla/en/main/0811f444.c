@@ -1,3 +1,6 @@
+/* Near miss: score 80. ⚓️ loads the record's child pointer (ldr r2, [r0,
+   #40]) before scaling the index for items[] in the second loop, and one
+   bne differs. 45 s of permuting found nothing. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 

@@ -1,9 +1,13 @@
+/* Near miss: score 60 beyond the listing's trailing pad. ⚓️ schedules sub
+   sp, #28 before copying the target id into r0 for Owner_GetState; this
+   draft copies first. 40 s of permuting found nothing. */
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TARGET.H"
 #include "SYSTEM.H"
+#include "OWNER_STATE.H"
 
 s32 BattleTarget_ReplaceDefeated(const u8 *action)
 {
@@ -12,7 +16,7 @@ s32 BattleTarget_ReplaceDefeated(const u8 *action)
     s32 living_count;
 
     target_id = ((const s16 *)action)[5];
-    if (Owner_GetStateFar(target_id)->hp != 0) {
+    if (((struct BattleUnit *)Owner_GetState(target_id))->hp != 0) {
         return target_id;
     }
 

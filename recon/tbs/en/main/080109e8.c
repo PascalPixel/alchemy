@@ -1,26 +1,17 @@
-/* NONMATCHING: complete 864-byte extent; 34 differing halfwords.
- * Value-returning transform calls recover the first argument pair order,
- * but swap the second call's pair and retain an early routine literal.
- * Residual scheduling starts at +006c, +00d4, +00e0, +010c, +014c,
- * +01a6, +01fe and +027c. In sched2, the frame store and resource load
- * tie at priority 520; the independent load wins over the store dependency.
- * Typed vector/camera arguments and the registered allocator/transfer
- * prototypes preserve the draft bytes. Aggregate affine-register writes
- * instead grow the extent to 920 bytes (952 with volatile); not adopted.
- *
- * 2026-09-27 bounded re-audit: live inventory confirms the whole owner
- * [080109e8, 08010d48), 864 bytes including its pool. Fresh byte-mode
- * baseline remains 34 differing halfwords / 27 aligned edits; all pool
- * words and stack offsets match. Read the complete listing and diff,
- * WorldMap_UpdateView, Camera_ResetSceneDefaults and Camera_ConfigureScene.
- * Those exact neighbours use the same three-word transfer and 03000250
- * call already covered by the rejected typed-vector/return-type axes.
- * Fresh sched2 still puts independent resource literal load 117 before
- * frame store 114; the store depends on the preceding work-field stores.
- * Other residuals are independent affine-I/O, turn/camera-store, transform
- * call, pitch-cache and display-publication scheduling sites. No new
- * ownership dependency was established by this audit: retain the model,
- * do not repeat those axes or blanket-wrap the initialisation sequence.
+/* 2026-09-30 (Mercury): EXACT, 864 of 864 bytes with stock agscc and four
+   tagged loop-note FAKEMATCHes. It precedes
+   FIELD/COMMON/MAP/SET_WINDOW_CELL_TILE, so its module is Mars's to choose;
+   compile it under #if defined(TBS_EDITION_EN) until the other editions
+   adopt theirs. */
+/* Exact (2026-09-30): complete 864-byte extent, 0 differing halfwords.
+ * The ROM keeps several statement groups in source order where sched2
+ * would otherwise hoist constants and argument loads: GCC 2.96 treats a
+ * loop note as a scheduling barrier, so four do-while(0) groups (the
+ * BG2 PA..PC writes, the rest of the affine block, the vertex-routine DMA
+ * and the DISPCNT write) reproduce those barriers. The 0x10 slot is a
+ * pointer (its alias set frees the store from the int-field stores), the
+ * turn address is taken before the camera stores, and the pitch cache is
+ * read through work->pitch so its load depends on the preceding store.
  */
 #include "TYPES.H"
 #include "DMA.H"
@@ -32,7 +23,7 @@
 
 struct PerspectiveWork {
     u8 unknown_000[0x10];
-    s32 frame;                      /* 0x010 */
+    void *unknown_010;              /* 0x010 */
     u16 fade;                       /* 0x014 */
     u8 fade_step;                   /* 0x016 */
     u8 unknown_017[0xe4 - 0x17];
@@ -138,6 +129,7 @@ s32 Map_InitializePerspectiveScene(void)
     s32 *distance;
     u16 *yaw;
     u16 *pitch;
+    u16 *turn;
     volatile u32 fill;
     struct PerspectiveVector vector;
     s32 far_plane;
@@ -155,7 +147,7 @@ s32 Map_InitializePerspectiveScene(void)
     work->scale_y = 0x400000;
     work->limit_x = 0x1fe00000;
     work->limit_y = 0x1fe00000;
-    work->frame = 0;
+    work->unknown_010 = 0;
     work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), (void *)0x0202d000);
     MapAnimation_StartChannels((void *)0x0202d000);
@@ -169,18 +161,24 @@ s32 Map_InitializePerspectiveScene(void)
     Io_Set16(0xa80a, (u16 *)0x0400000e);
     Io_Set16(0xaa0e, (u16 *)0x0400000c);
     Io_Set16(0x0501, (u16 *)0x0400000a);
-    Io_Put16((u16 *)0x04000020, 0x100);
-    *(u16 *)0x04000022 = 0;
-    *(u16 *)0x04000024 = 0;
-    Io_Put16((u16 *)0x04000026, 0x100);
-    *(s32 *)0x04000028 = 0;
-    *(s32 *)0x0400002c = 0;
-    Io_Put16((u16 *)0x04000030, 0x100);
-    *(u16 *)0x04000032 = 0;
-    *(u16 *)0x04000034 = 0;
-    Io_Put16((u16 *)0x04000036, 0x100);
-    *(s32 *)0x04000038 = 0;
-    *(s32 *)0x0400003c = 0;
+    /* FAKEMATCH: loop note keeps BG2PA's constant after its address */
+    do {
+        Io_Put16((u16 *)0x04000020, 0x100);
+        *(u16 *)0x04000022 = 0;
+        *(u16 *)0x04000024 = 0;
+    } while (0);
+    /* FAKEMATCH: loop notes keep BG2PD's constant late and r0 first below */
+    do {
+        Io_Put16((u16 *)0x04000026, 0x100);
+        *(s32 *)0x04000028 = 0;
+        *(s32 *)0x0400002c = 0;
+        Io_Put16((u16 *)0x04000030, 0x100);
+        *(u16 *)0x04000032 = 0;
+        *(u16 *)0x04000034 = 0;
+        Io_Put16((u16 *)0x04000036, 0x100);
+        *(s32 *)0x04000038 = 0;
+        *(s32 *)0x0400003c = 0;
+    } while (0);
 
     camera = Runtime_AllocateBlock(12, sizeof(struct PerspectiveCamera));
     tiles = (void *)Runtime_AllocateHeapBlock(7, 0x3484);
@@ -191,9 +189,10 @@ s32 Map_InitializePerspectiveScene(void)
     distance = &work->distance;
     *distance = far_plane;
     work->zoom = 0x10000;
-    work->turn = 0;
+    turn = &work->turn;
     camera->unknown_18 = 0;
     camera->unknown_1c = 0;
+    *turn = 0;
     gProjection[3] = 120;
     gProjection[4] = 96;
     Camera_StoreSceneParameters(far_plane, far_plane >> 1, far_plane << 1);
@@ -213,13 +212,16 @@ s32 Map_InitializePerspectiveScene(void)
               (s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
-    size = (s32)&Transform_UpdateVerticesSize;
-    Dma_Set((void *)Transform_UpdateVertices, (void *)Runtime_AllocateHeapBlock(46, size),
-            0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    /* FAKEMATCH: loop note orders the transform call's r1, routine, r0 */
+    do {
+        size = (s32)&Transform_UpdateVerticesSize;
+        Dma_Set((void *)Transform_UpdateVertices, (void *)Runtime_AllocateHeapBlock(46, size),
+                0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    } while (0);
     WorldMap_BuildScanlineTable(((RatioFn)0x0300013c)(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles);
     Data_03001f60 = 0;
-    Data_03001af4 = *pitch;
+    Data_03001af4 = work->pitch;
     ((PlaneFn)gWorkSlot[46])(camera, position, tiles,
                                  lines + (gFrameCount & 1) * 0x1400);
     position[0] = 0;
@@ -238,7 +240,10 @@ s32 Map_InitializePerspectiveScene(void)
     Transform(&vector, camera,
               (s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
     *(volatile u16 *)0x0400004c = 0;
-    Io_Put16((u16 *)0x04000000, 0x42);
+    /* FAKEMATCH: loop notes keep the display writes in source order */
+    do {
+        Io_Put16((u16 *)0x04000000, 0x42);
+    } while (0);
     gBgScroll[2] = 0;
     gBgScroll[3] = 0;
     gBgScroll[4] = 0;

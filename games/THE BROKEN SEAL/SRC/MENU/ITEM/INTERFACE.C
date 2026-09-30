@@ -87,6 +87,9 @@ void ItemMenu_HideAllIcons(void)
     }
 }
 
+#if !defined(TBS_EDITION_JA)
+/* Only the localised item menus hide the first icon of each page; the
+   Japanese edition has no such routine. */
 void ItemMenu_HidePageIcons(void)
 {
     struct InventoryMenuState *menu = gMenuWork;
@@ -103,6 +106,7 @@ void ItemMenu_HidePageIcons(void)
         slot++;
     } while (slot <= 31);
 }
+#endif
 
 void UiWindow_CloseIfOpen(void *, s32);
 void Menu_ReleaseEntryObjects(void);

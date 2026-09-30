@@ -14,9 +14,12 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
     return slot;
 }
 
+#if !defined(TBS_EDITION_JA)
 /* A routine that only reports success, after the fixed resource block
-   loader; nothing in the image calls it by name. */
+   loader; nothing in the image calls it by name. The Japanese edition has
+   other code here. */
 s32 Resource_ReturnTrue(void)
 {
     return 1;
 }
+#endif

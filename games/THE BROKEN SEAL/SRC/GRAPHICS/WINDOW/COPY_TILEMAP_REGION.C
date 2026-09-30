@@ -105,6 +105,8 @@ void Resource_CopyFixedBlockA(s32 arg0)
     VramBlock_LoadCached(arg0, 0x80, (s32)RomBytes_080317e4);
 }
 
+/* The Japanese edition has neither of the two text helpers that follow. */
+#if !defined(TBS_EDITION_JA)
 /* ui/text/text_set_render_string.c */
 /* ui/text/misc/set_render_string.c */
 s32 UiText_SetRenderString(const u8 *str)
@@ -161,3 +163,4 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input)
     text[length] = 0;
     UiText_DrawString(text, output, 0, -2);
 }
+#endif

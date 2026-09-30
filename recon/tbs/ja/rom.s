@@ -428,30 +428,8 @@ UiWindow_DrawPartyStatusContents:
 	.thumb_func
 SaveMenu_SelectSlot:
 	.incbin "baserom.gba", 0x00020144, 0x000005f8
-	.section .rom.00020928, "ax"
-	.global Resource_LoadFixedBlockBIntoFreeSlot
-	.type Resource_LoadFixedBlockBIntoFreeSlot, %function
-	.thumb_func
-Resource_LoadFixedBlockBIntoFreeSlot:
-	.incbin "baserom.gba", 0x00020928, 0x00000114
-	.section .rom.00020a3c, "ax"
-	.global UiWindow_SetTileAttributeRect
-	.type UiWindow_SetTileAttributeRect, %function
-	.thumb_func
-UiWindow_SetTileAttributeRect:
-	.incbin "baserom.gba", 0x00020a3c, 0x0000008c
-	.section .rom.00020ac8, "ax"
-	.global Resource_CopyFixedBlockB
-	.type Resource_CopyFixedBlockB, %function
-	.thumb_func
-Resource_CopyFixedBlockB:
-	.incbin "baserom.gba", 0x00020ac8, 0x00000014
-	.section .rom.00020adc, "ax"
-	.global Resource_CopyFixedBlockA
-	.type Resource_CopyFixedBlockA, %function
-	.thumb_func
-Resource_CopyFixedBlockA:
-	.incbin "baserom.gba", 0x00020adc, 0x00000014
+	.section .rom.00020944, "ax"
+	.incbin "baserom.gba", 0x00020944, 0x00000068
 	.section .rom.00020af0, "ax"
 	.global NameEntry_EditOwnerName
 	.type NameEntry_EditOwnerName, %function
@@ -527,7 +505,12 @@ UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x000308ec, 0x00000804
 	.global Resource_FixedBlockBTiles
 Resource_FixedBlockBTiles:
-	.incbin "baserom.gba", 0x000310f0, 0x000007c0
+	.global RomBytes_080310a4
+RomBytes_080310a4:
+	.incbin "baserom.gba", 0x000310f0, 0x00000740
+	.global RomBytes_080317e4
+RomBytes_080317e4:
+	.incbin "baserom.gba", 0x00031830, 0x00000080
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x000318b0, 0x00000bc0
@@ -1023,30 +1006,6 @@ InventoryMenu_ShowModalMessage:
 	.thumb_func
 RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x00099454, 0x00000d74
-	.section .rom.0009a26c, "ax"
-	.global ItemMenu_Init
-	.type ItemMenu_Init, %function
-	.thumb_func
-ItemMenu_Init:
-	.incbin "baserom.gba", 0x0009a26c, 0x00000080
-	.section .rom.0009a2ec, "ax"
-	.global Menu_SpawnIconEntries
-	.type Menu_SpawnIconEntries, %function
-	.thumb_func
-Menu_SpawnIconEntries:
-	.incbin "baserom.gba", 0x0009a2ec, 0x00000088
-	.section .rom.0009a374, "ax"
-	.global ItemMenu_HideAllIcons
-	.type ItemMenu_HideAllIcons, %function
-	.thumb_func
-ItemMenu_HideAllIcons:
-	.incbin "baserom.gba", 0x0009a374, 0x00000024
-	.section .rom.0009a398, "ax"
-	.global ItemMenu_Close
-	.type ItemMenu_Close, %function
-	.thumb_func
-ItemMenu_Close:
-	.incbin "baserom.gba", 0x0009a398, 0x0000009c
 	.section .rom.0009a4d0, "ax"
 	.global ItemMenu_RunOwnerSelection
 	.type ItemMenu_RunOwnerSelection, %function

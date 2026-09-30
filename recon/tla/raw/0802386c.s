@@ -577,14 +577,14 @@ Func_0802386c:
 	ldr	r0, [sp, #48]
 	str	r2, [sp, #0]
 	adds	r2, r6, #0
-	bl	0x08022318
+	bl	Func_08022318
 	b.n	.L_08023d44
 .L_08023cd4:
 	mov	r2, r9
 	ldrh	r3, [r2, #6]
 	ldr	r0, [sp, #48]
 	adds	r2, r6, #0
-	bl	0x080220f0
+	bl	Func_080220f0
 	b.n	.L_08023d44
 .L_08023ce2:
 	ldr	r3, [sp, #4]

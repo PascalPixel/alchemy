@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Task_Wait
+	.thumb_func
+Task_Wait:
 	overlay_veneer Func_080000c0
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_08000118

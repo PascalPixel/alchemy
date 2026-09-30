@@ -3,527 +3,551 @@
 	.global Func_080d41a4
 	.thumb_func
 Func_080d41a4:
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	ldr	r5, [pc, #96]
-	adds	r3, r5, #0
-	ldmia	r3!, {r1}
-	sub	sp, #52
-	str	r1, [sp, #40]
-	ldr	r3, [r3, #0]
-	str	r3, [sp, #36]
-	ldr	r3, [pc, #84]
-	ldr	r2, [r5, #8]
-	adds	r6, r1, r3
-	str	r2, [sp, #28]
-	str	r0, [r6, #0]
-	movs	r0, #1
-	bl	BattleFx_BeginCanvasLayer
-	ldr	r2, [pc, #72]
-	ldr	r3, [pc, #60]
-	movs	r1, #7
-	strh	r3, [r2, #0]
-	movs	r0, #46
-	movs	r3, #3
-	movs	r2, #7
-	str	r3, [sp, #0]
-	bl	Unnamed_080ed408
-	ldr	r3, [r5, #28]
-	str	r3, [sp, #44]
-	movs	r3, #2
-	str	r3, [sp, #0]
-	movs	r1, #7
-	movs	r2, #7
-	movs	r3, #7
-	movs	r0, #47
-	bl	Unnamed_080ed408
-	ldr	r3, [r5, #32]
-	mov	r5, sp
-	adds	r5, #44
-	str	r5, [sp, #12]
-	str	r3, [r5, #4]
-	ldr	r1, [sp, #40]
-	ldr	r0, [pc, #24]
-	movs	r2, #1
-	movs	r3, #1
-	bl	Resource_LoadAndDecompress
-	b.n	.L_080d4224
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	ldr r5, .L_080d4214
+	adds r3, r5, #0
+	ldmia r3!, {r1}
+	sub sp, #52
+	str r1, [sp, #40]
+	ldr r3, [r3]
+	str r3, [sp, #36]
+	ldr r3, .L_080d4218
+	ldr r2, [r5, #8]
+	adds r6, r1, r3
+	str r2, [sp, #28]
+	str r0, [r6]
+	movs r0, #1
+	bl BattleFx_BeginCanvasLayer
+	ldr r2, .L_080d421c
+	ldr r3, .L_080d4210
+	movs r1, #7
+	strh r3, [r2]
+	movs r0, #46
+	movs r3, #3
+	movs r2, #7
+	str r3, [sp, #0]
+	bl Unnamed_080ed408
+	ldr r3, [r5, #28]
+	str r3, [sp, #44]
+	movs r3, #2
+	str r3, [sp, #0]
+	movs r1, #7
+	movs r2, #7
+	movs r3, #7
+	movs r0, #47
+	bl Unnamed_080ed408
+	ldr r3, [r5, #32]
+	mov r5, sp
+	adds r5, #44
+	str r5, [sp, #12]
+	str r3, [r5, #4]
+	ldr r1, [sp, #40]
+	ldr r0, .L_080d4220
+	movs r2, #1
+	movs r3, #1
+	bl Resource_LoadAndDecompress
+	b .L_080d4224
+.L_080d4210:
 	.4byte 0x00001010
-	.4byte 0x03001eec
+.L_080d4214:
+	.4byte gBattleFxWork
+.L_080d4218:
 	.4byte 0x00007828
+.L_080d421c:
 	.4byte 0x04000052
-	.2byte 0x00d1
-	.2byte 0x0000
+.L_080d4220:
+	.4byte 0x000000d1
 .L_080d4224:
-	movs	r3, #0
-	ldr	r0, [pc, #700]
-	ldr	r1, [sp, #28]
-	movs	r2, #0
-	bl	Resource_LoadAndDecompress
-	ldr	r3, [r6, #0]
-	ldr	r3, [r3, #24]
-	cmp	r3, #2
-	beq.n	.L_080d424c
-	ldr	r0, [pc, #684]
-	bl	Resource_GetTableEntry
-	adds	r1, r0, #0
-	movs	r0, #160
-	ldr	r3, [pc, #680]
-	lsls	r0, r0, #19
-	movs	r2, #128
-	bl	_call_via_r3
+	movs r3, #0
+	ldr r0, .L_080d44e4
+	ldr r1, [sp, #28]
+	movs r2, #0
+	bl Resource_LoadAndDecompress
+	ldr r3, [r6]
+	ldr r3, [r3, #24]
+	cmp r3, #2
+	beq .L_080d424c
+	ldr r0, .L_080d44e8
+	bl Resource_GetTableEntry
+	adds r1, r0, #0
+	movs r0, #160
+	ldr r3, .L_080d44ec
+	lsls r0, r0, #19
+	movs r2, #128
+	bl _call_via_r3
 .L_080d424c:
-	movs	r7, #0
-	movs	r2, #128
-	ldr	r3, [pc, #668]
-	mov	r8, r7
-	movs	r1, #0
-	lsls	r2, r2, #3
+	movs r7, #0
+	movs r2, #128
+	ldr r3, .L_080d44f0
+	mov r8, r7
+	movs r1, #0
+	lsls r2, r2, #3
 .L_080d4258:
-	movs	r0, #1
-	add	r8, r0
-	str	r1, [r3, #0]
-	adds	r3, #28
-	cmp	r8, r2
-	bne.n	.L_080d4258
-	ldr	r1, [sp, #40]
-	movs	r3, #239
-	lsls	r3, r3, #7
-	ldr	r5, [pc, #648]
-	adds	r2, r1, r3
-	movs	r3, #2
-	str	r3, [r2, #0]
-	adds	r2, r1, r5
-	movs	r3, #50
-	movs	r1, #144
-	str	r3, [r2, #0]
-	lsls	r1, r1, #3
-	ldr	r0, [pc, #632]
-	bl	Scheduler_AddOrUpdateCallback
-	ldr	r0, [pc, #632]
-	ldr	r7, [sp, #40]
-	adds	r3, r7, r0
-	ldr	r3, [r3, #0]
-	ldr	r2, [pc, #628]
-	ldr	r3, [r3, #24]
-	ldrb	r2, [r2, r3]
-	str	r2, [sp, #24]
-	ldr	r5, [sp, #24]
-	lsls	r2, r2, #3
-	movs	r7, #48
-	movs	r1, #0
-	subs	r3, r2, r5
-	negs	r7, r7
-	mov	fp, r1
-	str	r2, [sp, #8]
-	cmp	r3, r7
-	bne.n	.L_080d42a8
-	b.n	.L_080d45b6
+	movs r0, #1
+	add r8, r0
+	str r1, [r3]
+	adds r3, #28
+	cmp r8, r2
+	bne .L_080d4258
+	ldr r1, [sp, #40]
+	movs r3, #239
+	lsls r3, r3, #7
+	ldr r5, .L_080d44f4
+	adds r2, r1, r3
+	movs r3, #2
+	str r3, [r2]
+	adds r2, r1, r5
+	movs r3, #50
+	movs r1, #144
+	str r3, [r2]
+	lsls r1, r1, #3
+	ldr r0, .L_080d44f8
+	bl Scheduler_AddOrUpdateCallback
+	ldr r0, .L_080d44fc
+	ldr r7, [sp, #40]
+	adds r3, r7, r0
+	ldr r3, [r3]
+	ldr r2, .L_080d4500
+	ldr r3, [r3, #24]
+	ldrb r2, [r2, r3]
+	str r2, [sp, #24]
+	ldr r5, [sp, #24]
+	lsls r2, r2, #3
+	movs r7, #48
+	movs r1, #0
+	subs r3, r2, r5
+	negs r7, r7
+	mov r11, r1
+	str r2, [sp, #8]
+	cmp r3, r7
+	bne .L_080d42a8
+	b .L_080d45b6
 .L_080d42a8:
-	ldr	r1, [pc, #592]
-	ldr	r0, [sp, #40]
-	adds	r1, r0, r1
-	str	r1, [sp, #20]
+	ldr r1, .L_080d44fc
+	ldr r0, [sp, #40]
+	adds r1, r0, r1
+	str r1, [sp, #20]
 .L_080d42b0:
-	ldr	r2, [sp, #20]
-	ldr	r3, [r2, #0]
-	ldr	r3, [r3, #24]
-	cmp	r3, #2
-	bne.n	.L_080d42ee
-	mov	r3, fp
-	cmp	r3, #63
-	bgt.n	.L_080d42ee
-	ldr	r3, [pc, #576]
-	movs	r2, #128
-	mov	r5, fp
-	ldr	r1, [r3, #0]
-	lsls	r2, r2, #1
-	cmp	r5, #55
-	ble.n	.L_080d42d8
-	mov	r7, fp
-	movs	r3, #176
-	lsls	r2, r7, #3
-	lsls	r3, r3, #2
-	subs	r2, r3, r2
+	ldr r2, [sp, #20]
+	ldr r3, [r2]
+	ldr r3, [r3, #24]
+	cmp r3, #2
+	bne .L_080d42ee
+	mov r3, r11
+	cmp r3, #63
+	bgt .L_080d42ee
+	ldr r3, .L_080d4504
+	movs r2, #128
+	mov r5, r11
+	ldr r1, [r3]
+	lsls r2, r2, #1
+	cmp r5, #55
+	ble .L_080d42d8
+	mov r7, r11
+	movs r3, #176
+	lsls r2, r7, #3
+	lsls r3, r3, #2
+	subs r2, r3, r2
 .L_080d42d8:
-	ldr	r0, [sp, #20]
-	ldr	r3, [r0, #0]
-	ldr	r3, [r3, #4]
-	cmp	r3, #1
-	bne.n	.L_080d42e8
-	ldrh	r3, [r1, #54]
-	subs	r3, r3, r2
-	b.n	.L_080d42ec
+	ldr r0, [sp, #20]
+	ldr r3, [r0]
+	ldr r3, [r3, #4]
+	cmp r3, #1
+	bne .L_080d42e8
+	ldrh r3, [r1, #54]
+	subs r3, r3, r2
+	b .L_080d42ec
 .L_080d42e8:
-	ldrh	r3, [r1, #54]
-	adds	r3, r3, r2
+	ldrh r3, [r1, #54]
+	adds r3, r3, r2
 .L_080d42ec:
-	strh	r3, [r1, #54]
+	strh r3, [r1, #54]
 .L_080d42ee:
-	mov	r1, fp
-	cmp	r1, #32
-	bne.n	.L_080d42fa
-	movs	r0, #134
-	bl	BattleEventRuntime_BeginPhaseFar
+	mov r1, r11
+	cmp r1, #32
+	bne .L_080d42fa
+	movs r0, #134
+	bl BattleEventRuntime_BeginPhaseFar
 .L_080d42fa:
-	ldr	r3, [sp, #24]
-	movs	r2, #0
-	str	r2, [sp, #32]
-	cmp	r3, #0
-	bne.n	.L_080d4306
-	b.n	.L_080d44b0
+	ldr r3, [sp, #24]
+	movs r2, #0
+	str r2, [sp, #32]
+	cmp r3, #0
+	bne .L_080d4306
+	b .L_080d44b0
 .L_080d4306:
-	ldr	r7, [sp, #32]
-	lsls	r5, r7, #3
-	cmp	fp, r5
-	bne.n	.L_080d4322
-	movs	r0, #134
-	bl	Audio_PlayCue
-	movs	r1, #128
-	ldr	r3, [pc, #496]
-	ldr	r0, [sp, #36]
-	lsls	r1, r1, #7
-	ldr	r2, [pc, #492]
-	bl	_call_via_r3
+	ldr r7, [sp, #32]
+	lsls r5, r7, #3
+	cmp r11, r5
+	bne .L_080d4322
+	movs r0, #134
+	bl Func_080f9010
+	movs r1, #128
+	ldr r3, .L_080d4508
+	ldr r0, [sp, #36]
+	lsls r1, r1, #7
+	ldr r2, .L_080d450c
+	bl _call_via_r3
 .L_080d4322:
-	adds	r0, r5, #4
-	mov	sl, r0
-	cmp	fp, r5
-	bge.n	.L_080d432c
-	b.n	.L_080d445e
+	adds r0, r5, #4
+	mov r10, r0
+	cmp r11, r5
+	bge .L_080d432c
+	b .L_080d445e
 .L_080d432c:
-	adds	r3, r5, #0
-	adds	r3, #9
-	cmp	fp, r3
-	blt.n	.L_080d4336
-	b.n	.L_080d445e
+	adds r3, r5, #0
+	adds r3, #9
+	cmp r11, r3
+	blt .L_080d4336
+	b .L_080d445e
 .L_080d4336:
-	adds	r3, r5, #1
-	adds	r6, r5, #2
-	cmp	fp, r3
-	blt.n	.L_080d436a
-	cmp	fp, r6
-	bge.n	.L_080d4372
-	ldr	r2, [sp, #20]
-	ldr	r3, [r2, #0]
-	ldr	r2, [r3, #4]
-	ldr	r7, [sp, #32]
-	lsls	r3, r2, #3
-	subs	r3, r3, r2
-	ldr	r0, [pc, #448]
-	adds	r3, r7, r3
-	ldrb	r2, [r0, r3]
-	movs	r3, #48
-	str	r3, [sp, #0]
-	movs	r3, #112
-	str	r3, [sp, #4]
-	subs	r2, #24
-	ldr	r4, [sp, #44]
-	ldr	r0, [sp, #36]
-	ldr	r1, [sp, #40]
-	movs	r3, #0
-	bl	_call_via_r4
+	adds r3, r5, #1
+	adds r6, r5, #2
+	cmp r11, r3
+	blt .L_080d436a
+	cmp r11, r6
+	bge .L_080d4372
+	ldr r2, [sp, #20]
+	ldr r3, [r2]
+	ldr r2, [r3, #4]
+	ldr r7, [sp, #32]
+	lsls r3, r2, #3
+	subs r3, r3, r2
+	ldr r0, .L_080d4510
+	adds r3, r7, r3
+	ldrb r2, [r0, r3]
+	movs r3, #48
+	str r3, [sp, #0]
+	movs r3, #112
+	str r3, [sp, #4]
+	subs r2, #24
+	ldr r4, [sp, #44]
+	ldr r0, [sp, #36]
+	ldr r1, [sp, #40]
+	movs r3, #0
+	bl _call_via_r4
 .L_080d436a:
-	adds	r1, r5, #4
-	mov	sl, r1
-	cmp	fp, r6
-	blt.n	.L_080d445e
+	adds r1, r5, #4
+	mov r10, r1
+	cmp r11, r6
+	blt .L_080d445e
 .L_080d4372:
-	adds	r5, #4
-	mov	sl, r5
-	cmp	fp, sl
-	bge.n	.L_080d43a8
-	ldr	r2, [sp, #20]
-	ldr	r3, [r2, #0]
-	ldr	r2, [r3, #4]
-	ldr	r5, [sp, #32]
-	lsls	r3, r2, #3
-	subs	r3, r3, r2
-	ldr	r7, [pc, #392]
-	adds	r3, r5, r3
-	ldrb	r2, [r7, r3]
-	movs	r3, #48
-	str	r3, [sp, #0]
-	movs	r3, #112
-	str	r3, [sp, #4]
-	movs	r5, #168
-	ldr	r3, [sp, #40]
-	lsls	r5, r5, #5
-	adds	r1, r3, r5
-	subs	r2, #24
-	ldr	r4, [sp, #44]
-	ldr	r0, [sp, #36]
-	movs	r3, #0
-	bl	_call_via_r4
+	adds r5, #4
+	mov r10, r5
+	cmp r11, r10
+	bge .L_080d43a8
+	ldr r2, [sp, #20]
+	ldr r3, [r2]
+	ldr r2, [r3, #4]
+	ldr r5, [sp, #32]
+	lsls r3, r2, #3
+	subs r3, r3, r2
+	ldr r7, .L_080d4510
+	adds r3, r5, r3
+	ldrb r2, [r7, r3]
+	movs r3, #48
+	str r3, [sp, #0]
+	movs r3, #112
+	str r3, [sp, #4]
+	movs r5, #168
+	ldr r3, [sp, #40]
+	lsls r5, r5, #5
+	adds r1, r3, r5
+	subs r2, #24
+	ldr r4, [sp, #44]
+	ldr r0, [sp, #36]
+	movs r3, #0
+	bl _call_via_r4
 .L_080d43a8:
-	cmp	fp, r6
-	bne.n	.L_080d445e
-	ldr	r1, [sp, #40]
-	ldr	r2, [pc, #332]
-	movs	r7, #0
-	str	r7, [sp, #16]
-	movs	r0, #0
-	adds	r1, r1, r2
-	ldr	r7, [pc, #344]
-	mov	r8, r0
-	mov	r9, r1
+	cmp r11, r6
+	bne .L_080d445e
+	ldr r1, [sp, #40]
+	ldr r2, .L_080d44fc
+	movs r7, #0
+	str r7, [sp, #16]
+	movs r0, #0
+	adds r1, r1, r2
+	ldr r7, .L_080d4514
+	mov r8, r0
+	mov r9, r1
 .L_080d43be:
-	ldr	r3, [r7, #24]
-	cmp	r3, #0
-	bne.n	.L_080d443a
-	bl	Random16
-	ldr	r6, [pc, #332]
-	ands	r6, r0
-	bl	Random16
-	ldr	r5, [pc, #328]
-	ldr	r3, [pc, #332]
-	ands	r5, r0
-	mov	r0, r9
-	adds	r5, r5, r3
-	ldr	r3, [r0, #0]
-	ldr	r2, [r3, #4]
-	ldr	r1, [sp, #32]
-	lsls	r3, r2, #3
-	subs	r3, r3, r2
-	ldr	r2, [pc, #296]
-	adds	r3, r1, r3
-	ldrb	r3, [r2, r3]
-	lsls	r3, r3, #16
-	str	r3, [r7, #0]
-	movs	r3, #208
-	lsls	r3, r3, #15
-	str	r3, [r7, #4]
-	adds	r0, r5, #0
-	bl	Trig_Sin
-	adds	r6, #32
-	adds	r3, r6, #0
-	muls	r3, r0
-	asrs	r3, r3, #7
-	str	r3, [r7, #12]
-	adds	r0, r5, #0
-	bl	Trig_Cos
-	adds	r3, r6, #0
-	muls	r3, r0
-	lsls	r3, r3, #1
-	negs	r3, r3
-	asrs	r3, r3, #7
-	str	r3, [r7, #16]
-	bl	Random16
-	movs	r3, #7
-	ands	r3, r0
-	adds	r3, #32
-	str	r3, [r7, #24]
-	ldr	r3, [sp, #16]
-	adds	r3, #1
-	str	r3, [sp, #16]
-	mov	r5, r9
-	ldr	r3, [r5, #0]
-	ldr	r3, [r3, #24]
-	ldr	r1, [pc, #244]
-	lsls	r3, r3, #2
-	ldrh	r3, [r1, r3]
-	ldr	r0, [sp, #16]
-	cmp	r0, r3
-	beq.n	.L_080d444a
+	ldr r3, [r7, #24]
+	cmp r3, #0
+	bne .L_080d443a
+	bl Random16
+	ldr r6, .L_080d4518
+	ands r6, r0
+	bl Random16
+	ldr r5, .L_080d451c
+	ldr r3, .L_080d4520
+	ands r5, r0
+	mov r0, r9
+	adds r5, r5, r3
+	ldr r3, [r0]
+	ldr r2, [r3, #4]
+	ldr r1, [sp, #32]
+	lsls r3, r2, #3
+	subs r3, r3, r2
+	ldr r2, .L_080d4510
+	adds r3, r1, r3
+	ldrb r3, [r2, r3]
+	lsls r3, r3, #16
+	str r3, [r7]
+	movs r3, #208
+	lsls r3, r3, #15
+	str r3, [r7, #4]
+	adds r0, r5, #0
+	bl Trig_Sin
+	adds r6, #32
+	adds r3, r6, #0
+	muls r3, r0
+	asrs r3, r3, #7
+	str r3, [r7, #12]
+	adds r0, r5, #0
+	bl Func_0800231c
+	adds r3, r6, #0
+	muls r3, r0
+	lsls r3, r3, #1
+	negs r3, r3
+	asrs r3, r3, #7
+	str r3, [r7, #16]
+	bl Random16
+	movs r3, #7
+	ands r3, r0
+	adds r3, #32
+	str r3, [r7, #24]
+	ldr r3, [sp, #16]
+	adds r3, #1
+	str r3, [sp, #16]
+	mov r5, r9
+	ldr r3, [r5]
+	ldr r3, [r3, #24]
+	ldr r1, .L_080d4524
+	lsls r3, r3, #2
+	ldrh r3, [r1, r3]
+	ldr r0, [sp, #16]
+	cmp r0, r3
+	beq .L_080d444a
 .L_080d443a:
-	movs	r1, #1
-	movs	r2, #128
-	add	r8, r1
-	lsls	r2, r2, #3
-	adds	r7, #28
-	cmp	r8, r2
-	bne.n	.L_080d43be
-	ldr	r1, [pc, #216]
+	movs r1, #1
+	movs r2, #128
+	add r8, r1
+	lsls r2, r2, #3
+	adds r7, #28
+	cmp r8, r2
+	bne .L_080d43be
+	ldr r1, .L_080d4524
 .L_080d444a:
-	ldr	r3, [sp, #40]
-	ldr	r7, [sp, #20]
-	ldr	r5, [pc, #216]
-	adds	r2, r3, r5
-	ldr	r3, [r7, #0]
-	ldr	r3, [r3, #24]
-	lsls	r3, r3, #2
-	adds	r3, #2
-	ldrh	r3, [r1, r3]
-	str	r3, [r2, #0]
+	ldr r3, [sp, #40]
+	ldr r7, [sp, #20]
+	ldr r5, .L_080d4528
+	adds r2, r3, r5
+	ldr r3, [r7]
+	ldr r3, [r3, #24]
+	lsls r3, r3, #2
+	adds r3, #2
+	ldrh r3, [r1, r3]
+	str r3, [r2]
 .L_080d445e:
-	cmp	fp, sl
-	bne.n	.L_080d44a2
-	ldr	r3, [pc, #152]
-	ldr	r1, [sp, #40]
-	ldr	r3, [r1, r3]
-	ldr	r3, [r3, #20]
-	movs	r0, #0
-	mov	r8, r0
-	cmp	r3, #0
-	beq.n	.L_080d44a2
-	ldr	r2, [pc, #136]
-	movs	r6, #36
-	adds	r5, r1, r2
+	cmp r11, r10
+	bne .L_080d44a2
+	ldr r3, .L_080d44fc
+	ldr r1, [sp, #40]
+	ldr r3, [r1, r3]
+	ldr r3, [r3, #20]
+	movs r0, #0
+	mov r8, r0
+	cmp r3, #0
+	beq .L_080d44a2
+	ldr r2, .L_080d44fc
+	movs r6, #36
+	adds r5, r1, r2
 .L_080d4478:
-	ldr	r3, [r5, #0]
-	movs	r1, #1
-	ldrsh	r0, [r3, r6]
-	bl	BattleMotion_ApplyVariantMotionFar
-	ldr	r3, [r5, #0]
-	ldrsh	r0, [r3, r6]
-	movs	r3, #8
-	str	r3, [sp, #0]
-	movs	r2, #5
-	mov	r3, r8
-	movs	r1, #7
-	bl	ObjectGroup_UpdateMembers
-	ldr	r3, [r5, #0]
-	movs	r2, #1
-	ldr	r3, [r3, #20]
-	add	r8, r2
-	adds	r6, #2
-	cmp	r8, r3
-	bne.n	.L_080d4478
+	ldr r3, [r5]
+	movs r1, #1
+	ldrsh r0, [r3, r6]
+	bl BattleMotion_ApplyVariantMotionFar
+	ldr r3, [r5]
+	ldrsh r0, [r3, r6]
+	movs r3, #8
+	str r3, [sp, #0]
+	movs r2, #5
+	mov r3, r8
+	movs r1, #7
+	bl ObjectGroup_UpdateMembers
+	ldr r3, [r5]
+	movs r2, #1
+	ldr r3, [r3, #20]
+	add r8, r2
+	adds r6, #2
+	cmp r8, r3
+	bne .L_080d4478
 .L_080d44a2:
-	ldr	r3, [sp, #32]
-	ldr	r5, [sp, #24]
-	adds	r3, #1
-	str	r3, [sp, #32]
-	cmp	r3, r5
-	beq.n	.L_080d44b0
-	b.n	.L_080d4306
+	ldr r3, [sp, #32]
+	ldr r5, [sp, #24]
+	adds r3, #1
+	str r3, [sp, #32]
+	cmp r3, r5
+	beq .L_080d44b0
+	b .L_080d4306
 .L_080d44b0:
-	movs	r7, #0
-	ldr	r6, [pc, #96]
-	mov	r8, r7
+	movs r7, #0
+	ldr r6, .L_080d4514
+	mov r8, r7
 .L_080d44b6:
-	ldr	r3, [r6, #24]
-	cmp	r3, #0
-	ble.n	.L_080d457a
-	subs	r3, #1
-	movs	r2, #128
-	adds	r0, r6, #0
-	lsls	r2, r2, #5
-	str	r3, [r6, #24]
-	movs	r1, #60
-	bl	EffectStep_AdvanceWithGravity2D
-	movs	r0, #208
-	ldr	r2, [r6, #4]
-	lsls	r0, r0, #15
-	cmp	r2, r0
-	ble.n	.L_080d452c
-	ldr	r3, [r6, #16]
-	negs	r3, r3
-	lsrs	r2, r3, #31
-	adds	r3, r3, r2
-	asrs	r3, r3, #1
-	str	r3, [r6, #16]
-	b.n	.L_080d457a
+	ldr r3, [r6, #24]
+	cmp r3, #0
+	ble .L_080d457a
+	subs r3, #1
+	movs r2, #128
+	adds r0, r6, #0
+	lsls r2, r2, #5
+	str r3, [r6, #24]
+	movs r1, #60
+	bl EffectStep_AdvanceWithGravity2D
+	movs r0, #208
+	ldr r2, [r6, #4]
+	lsls r0, r0, #15
+	cmp r2, r0
+	ble .L_080d452c
+	ldr r3, [r6, #16]
+	negs r3, r3
+	lsrs r2, r3, #31
+	adds r3, r3, r2
+	asrs r3, r3, #1
+	str r3, [r6, #16]
+	b .L_080d457a
+.L_080d44e4:
 	.4byte 0x00000073
+.L_080d44e8:
 	.4byte 0x00000060
-	.4byte 0x03001388
-	.4byte 0x02010018
+.L_080d44ec:
+	.4byte IwramCopyWords
+.L_080d44f0:
+	.4byte Data_02010018
+.L_080d44f4:
 	.4byte 0x00007784
-	.4byte 0x080cd261
+.L_080d44f8:
+	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
+.L_080d44fc:
 	.4byte 0x00007828
-	.4byte 0x080ee25e
-	.4byte 0x03001e80
-	.4byte 0x03000168
+.L_080d4500:
+	.4byte Data_080ee25e
+.L_080d4504:
+	.4byte gCameraWork
+.L_080d4508:
+	.4byte IwramFillWords
+.L_080d450c:
 	.4byte 0x10101010
-	.4byte 0x080ee250
-	.4byte 0x02010000
+.L_080d4510:
+	.4byte Data_080ee250
+.L_080d4514:
+	.4byte gMapCellBuffer
+.L_080d4518:
 	.4byte 0x000003ff
+.L_080d451c:
 	.4byte 0x00007fff
+.L_080d4520:
 	.4byte 0xffffc000
-	.4byte 0x080ee244
-	.2byte 0x77a8
-	.2byte 0x0000
+.L_080d4524:
+	.4byte Data_080ee244
+.L_080d4528:
+	.4byte 0x000077a8
 .L_080d452c:
-	ldr	r3, [r6, #0]
-	asrs	r7, r3, #16
-	cmp	r3, #0
-	blt.n	.L_080d457a
-	cmp	r7, #119
-	bgt.n	.L_080d457a
-	cmp	r2, #0
-	blt.n	.L_080d457a
-	ldr	r0, [r6, #24]
-	asrs	r2, r2, #16
-	mov	ip, r2
-	cmp	r0, #0
-	bge.n	.L_080d4548
-	adds	r0, #7
+	ldr r3, [r6]
+	asrs r7, r3, #16
+	cmp r3, #0
+	blt .L_080d457a
+	cmp r7, #119
+	bgt .L_080d457a
+	cmp r2, #0
+	blt .L_080d457a
+	ldr r0, [r6, #24]
+	asrs r2, r2, #16
+	mov r12, r2
+	cmp r0, #0
+	bge .L_080d4548
+	adds r0, #7
 .L_080d4548:
-	asrs	r0, r0, #3
-	adds	r0, #1
-	lsls	r5, r0, #1
-	ldr	r2, [pc, #144]
-	mov	r1, r8
-	subs	r3, r5, #2
-	movs	r4, #1
-	ands	r4, r1
-	ldrh	r1, [r2, r3]
-	ldr	r2, [sp, #28]
-	adds	r1, r2, r1
-	lsrs	r2, r0, #31
-	adds	r2, r0, r2
-	asrs	r2, r2, #1
-	subs	r2, r7, r2
-	mov	r7, ip
-	str	r0, [sp, #0]
-	subs	r3, r7, r0
-	str	r5, [sp, #4]
-	ldr	r0, [sp, #12]
-	lsls	r4, r4, #2
-	ldr	r4, [r4, r0]
-	ldr	r0, [sp, #36]
-	bl	_call_via_r4
+	asrs r0, r0, #3
+	adds r0, #1
+	lsls r5, r0, #1
+	ldr r2, .L_080d45e0
+	mov r1, r8
+	subs r3, r5, #2
+	movs r4, #1
+	ands r4, r1
+	ldrh r1, [r2, r3]
+	ldr r2, [sp, #28]
+	adds r1, r2, r1
+	lsrs r2, r0, #31
+	adds r2, r0, r2
+	asrs r2, r2, #1
+	subs r2, r7, r2
+	mov r7, r12
+	str r0, [sp, #0]
+	subs r3, r7, r0
+	str r5, [sp, #4]
+	ldr r0, [sp, #12]
+	lsls r4, r4, #2
+	ldr r4, [r4, r0]
+	ldr r0, [sp, #36]
+	bl _call_via_r4
 .L_080d457a:
-	movs	r1, #1
-	movs	r2, #128
-	add	r8, r1
-	lsls	r2, r2, #3
-	adds	r6, #28
-	cmp	r8, r2
-	bne.n	.L_080d44b6
-	movs	r1, #16
-	movs	r0, #8
-	bl	Camera_ApplyShake
-	bl	ObjectGroup_TickMemberTimers
-	ldr	r5, [pc, #76]
-	ldr	r3, [sp, #40]
-	adds	r2, r3, r5
-	movs	r3, #1
-	str	r3, [r2, #0]
-	movs	r0, #1
-	bl	WaitFrames
-	ldr	r0, [sp, #8]
-	ldr	r1, [sp, #24]
-	movs	r7, #1
-	subs	r3, r0, r1
-	add	fp, r7
-	adds	r3, #48
-	cmp	fp, r3
-	beq.n	.L_080d45b6
-	b.n	.L_080d42b0
+	movs r1, #1
+	movs r2, #128
+	add r8, r1
+	lsls r2, r2, #3
+	adds r6, #28
+	cmp r8, r2
+	bne .L_080d44b6
+	movs r1, #16
+	movs r0, #8
+	bl Camera_ApplyShake
+	bl ObjectGroup_TickMemberTimers
+	ldr r5, .L_080d45e4
+	ldr r3, [sp, #40]
+	adds r2, r3, r5
+	movs r3, #1
+	str r3, [r2]
+	movs r0, #1
+	bl WaitFrames
+	ldr r0, [sp, #8]
+	ldr r1, [sp, #24]
+	movs r7, #1
+	subs r3, r0, r1
+	add r11, r7
+	adds r3, #48
+	cmp r11, r3
+	beq .L_080d45b6
+	b .L_080d42b0
 .L_080d45b6:
-	ldr	r0, [pc, #48]
-	bl	Scheduler_RemoveCallback
-	movs	r0, #47
-	bl	Runtime_ReleaseHeapBlock
-	movs	r0, #46
-	bl	Runtime_ReleaseHeapBlock
-	bl	BattleFx_EndCanvasLayer
-	add	sp, #52
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	movs	r0, r0
-	.4byte 0x080ede48
+	ldr r0, .L_080d45e8
+	bl Scheduler_RemoveCallback
+	movs r0, #47
+	bl Runtime_ReleaseHeapBlock
+	movs r0, #46
+	bl Runtime_ReleaseHeapBlock
+	bl BattleFx_EndCanvasLayer
+	add sp, #52
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+	.2byte 0x0000
+.L_080d45e0:
+	.4byte ParticleStreams_CellOffsets
+.L_080d45e4:
 	.4byte 0x00007824
-	.4byte 0x080cd261
+.L_080d45e8:
+	.4byte BattlePresentation_ProcessPendingGraphicsTransfer

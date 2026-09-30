@@ -2,188 +2,190 @@
 #include "SCENE.H"
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
-extern u8 Data_03001e98[];
-extern u8 Data_03001b04[];
-extern u8 Data_03001c94[];
+#include "LAYOUT_GUARD.H"
 
-/* menu/selection/loop.c */
-extern u8 *gResQueueWork;
+#define KEY_A 0x0001
+#define KEY_B 0x0002
+#define KEY_RIGHT 0x0010
+#define KEY_LEFT 0x0020
+
+/* A selection that cannot be moved, only confirmed or cancelled. */
+#define SELECTION_FIXED 999
+
+/* The node window status while it scrolls, and once it has settled. */
+#define NODE_STATUS_SCROLLING 33
+#define NODE_STATUS_SHOWN 1
+
+/* The node kind whose first entry confirms and whose others cancel. */
+#define NODE_KIND_YES_NO 6
+
+/* Rows visible in the selection list. */
+#define SELECTION_ROWS 4
+#define ARROW_SCROLL_FRAMES 8
+
+struct SelectionNode {
+    u8 pad0[10];
+    u16 kind;
+};
+
+struct SelectionScreen {
+    u8 pad0[8];
+    u16 upScroll;
+    u16 upArrow;
+    u8 pad1[0x3c - 0xc];
+    u16 downScroll;
+    u16 downArrow;
+    u8 pad2[0x348 - 0x40];
+    struct SelectionNode *node;
+    u8 pad3[0x394 - 0x34c];
+    u16 count;
+    u8 pad4[0x39c - 0x396];
+    u16 top;
+    u16 cursor;
+    u16 busy;
+    u16 status;
+};
+
+LAYOUT_OFFSET_GUARD(SelectionScreen_DownArrow, struct SelectionScreen, downArrow, 0x3e);
+LAYOUT_OFFSET_GUARD(SelectionScreen_Node, struct SelectionScreen, node, 0x348);
+LAYOUT_OFFSET_GUARD(SelectionScreen_Status, struct SelectionScreen, status, 0x3a2);
+
+extern struct SelectionScreen *gResQueueWork;
 extern u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);
-void Menu_LoadSelectionNodeResource(void *state, u32 index);
-void Menu_StepRight(void *state);
-void Menu_StepLeft(void *state);
-s32 Menu_ConfirmSelection(void *state);
-void Menu_StepRight(void *state);
-void Menu_StepLeft(void *state);
-void Menu_ReloadNodeResource(void *state, u32 index);
-void Menu_ScrollSelectionList(void *state, u32 mode);
-void Menu_LoadSelectionNodeResource(void *state, u32 index);
+void Menu_LoadSelectionNodeResource(struct SelectionScreen *screen, u32 index);
+void Menu_StepRight(struct SelectionScreen *screen);
+void Menu_StepLeft(struct SelectionScreen *screen);
+s32 Menu_ConfirmSelection(struct SelectionScreen *screen);
+void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
+void Menu_ScrollSelectionList(struct SelectionScreen *screen, u32 down);
 void Menu_OpenSelectionWindow(u16 type, u32 value);
 
+/* Runs the selection until it is confirmed, or cancelled when mode allows. */
 s32 Menu_SelectionLoop(s32 mode)
 {
-    u8 *state = gResQueueWork;
+    struct SelectionScreen *screen = gResQueueWork;
 
-    Menu_LoadSelectionNodeResource(state, 0);
+    Menu_LoadSelectionNodeResource(screen, 0);
     for (;;) {
         WaitFrames(1);
-        if (*(u16 *)(state + 0x3a0) != 0) {
+        if (screen->busy != 0) {
             continue;
         }
-        if (mode != 0x3e7) {
-            if (gKeysRepeat & 0x10) {
-                Menu_StepRight(state);
-            } else if (gKeysRepeat & 0x20) {
-                Menu_StepLeft(state);
-            } else if (gKeyState & 1) {
-                return Menu_ConfirmSelection(state);
+        if (mode != SELECTION_FIXED) {
+            if (gKeysRepeat & KEY_RIGHT) {
+                Menu_StepRight(screen);
+            } else if (gKeysRepeat & KEY_LEFT) {
+                Menu_StepLeft(screen);
+            } else if (gKeyState & KEY_A) {
+                return Menu_ConfirmSelection(screen);
             }
         }
-        if (mode != 0 && (gKeyState & 2)) {
+        if (mode != 0 && (gKeyState & KEY_B)) {
             return -1;
         }
     }
 }
 
-/* menu/selection/wait_for_input.c */
-u32 Menu_WaitForSelectionInput(u32 value)
+/* As Menu_SelectionLoop, with sound cues, returning the chosen row. */
+u32 Menu_WaitForSelectionInput(u32 mode)
 {
-    u8 *state = *(u8 **)((u32)&Data_03001e98);
-    volatile u32 *input;
+    struct SelectionScreen *screen = gResQueueWork;
     u32 result;
 
-again:
-    WaitFrames(1);
-    if (*(u16 *)(state + 0x3a0) != 0)
-        goto again;
-
-    if (value != 999) {
-        input = (u32 *)((u32)&Data_03001b04);
-        if (*input & 0x10) {
-            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-            Menu_StepRight(state);
-        } else if (*input & 0x20) {
-            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-            Menu_StepLeft(state);
+    for (;;) {
+        WaitFrames(1);
+        if (screen->busy != 0) {
+            continue;
         }
 
-        if (*(u32 *)((u32)&Data_03001c94) & 1) {
-            result = *(u16 *)(state + 0x39c)
-                   + *(u16 *)(state + 0x39e);
-            if (*(u16 *)(*(u8 **)(state + 0x348) + 10) == 6) {
-                if (result == 0)
+        if (mode != SELECTION_FIXED) {
+            if (gKeysRepeat & KEY_RIGHT) {
+                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                Menu_StepRight(screen);
+            } else if (gKeysRepeat & KEY_LEFT) {
+                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                Menu_StepLeft(screen);
+            }
+
+            if (gKeyState & KEY_A) {
+                result = screen->top + screen->cursor;
+                if (screen->node->kind == NODE_KIND_YES_NO) {
+                    if (result == 0)
+                        Audio_PlayCue(SOUND_MENU_CONFIRM);
+                    else
+                        Audio_PlayCue(SOUND_MENU_CANCEL);
+                } else {
                     Audio_PlayCue(SOUND_MENU_CONFIRM);
-                else
-                    Audio_PlayCue(SOUND_MENU_CANCEL);
-            } else {
-                Audio_PlayCue(SOUND_MENU_CONFIRM);
-            }
-            return result;
-        }
-    }
-
-    if (value != 0 && (*(u32 *)((u32)&Data_03001c94) & 2)) {
-        Audio_PlayCue(SOUND_MENU_CANCEL);
-        return -1;
-    }
-    goto again;
-}
-
-/* menu/selection/move_forward.c */
-void Menu_MoveSelectionForward(u8 *state)
-{
-    u16 *selection = (u16 *)(state + 0x39c);
-    u16 *index = (u16 *)(state + 0x39e);
-    u16 *count;
-    u32 end = *selection + *index + 1;
-
-    count = (u16 *)(state + 0x394);
-    if (end != *count) {
-        Menu_ReloadNodeResource(state, *index);
-        {
-            u16 *status = (u16 *)(state + 0x3a2);
-            u32 value = 33;
-
-            *status = value;
-        }
-        WaitFrames(1);
-        *index += 1;
-        if (*index == 4 && end + 1 < *count) {
-            *index += 0xffff;
-            {
-                u32 value = 8;
-
-                *(u16 *)(state + 60) = value;
-            }
-            *selection += 1;
-            Menu_ScrollSelectionList(state, 1);
-            if (*selection + *index + 2 == *count) {
-                u32 value = 0;
-
-                *(u16 *)(state + 62) = value;
-            }
-            {
-                u32 value = 1;
-
-                *(u16 *)(state + 10) = value;
+                }
+                return result;
             }
         }
-        {
-            u16 *status = (u16 *)(state + 0x3a2);
-            u32 value = 1;
 
-            *status = value;
-            Menu_LoadSelectionNodeResource(state, *(u16 *)(state + 0x39e));
+        if (mode != 0 && (gKeyState & KEY_B)) {
+            Audio_PlayCue(SOUND_MENU_CANCEL);
+            return -1;
         }
-        WaitFrames(1);
-        Menu_OpenSelectionWindow(*(u16 *)(*(u8 **)(state + 0x348) + 10), 0);
-        WaitFrames(1);
     }
 }
 
-/* menu/selection/move_backward.c */
-void Menu_MoveSelectionBackward(u8 *state)
+/* Moves the cursor down one row, scrolling the list at the bottom row. */
+void Menu_MoveSelectionForward(struct SelectionScreen *screen)
 {
-    u32 *selection = (u32 *)(state + 0x39c);
+    u32 end = screen->top + screen->cursor + 1;
 
-    if (*selection != 0) {
-        u32 no;
-
-        Menu_ReloadNodeResource(state, *(u16 *)(state + 0x39e));
-        {
-            u16 *status = (u16 *)(state + 0x3a2);
-            u32 value = 33;
-
-            *status = value;
-        }
-        WaitFrames(1);
-        no = *(u16 *)(state + 0x39e);
-        if (no == 1 && *(u16 *)selection != 0) {
-            {
-                u32 value = 8;
-
-                *(u16 *)(state + 8) = value;
-            }
-            *(u16 *)selection += 0xffff;
-            Menu_ScrollSelectionList(state, 0);
-            if (*(u16 *)selection == 0) {
-                *(u16 *)(state + 10) = 0;
-            }
-            *(u16 *)(state + 62) = no;
-        } else {
-            *(u16 *)(state + 0x39e) += 0xffff;
-        }
-        {
-            u16 *status = (u16 *)(state + 0x3a2);
-            u32 value = 1;
-
-            *status = value;
-            Menu_LoadSelectionNodeResource(state, *(u16 *)(state + 0x39e));
-        }
-        WaitFrames(1);
-        Menu_OpenSelectionWindow(*(u16 *)(*(u8 **)(state + 0x348) + 10), 0);
-        WaitFrames(1);
+    if (end == screen->count) {
+        return;
     }
+    Menu_ReloadNodeResource(screen, screen->cursor);
+    screen->status = NODE_STATUS_SCROLLING;
+    WaitFrames(1);
+    screen->cursor++;
+    if (screen->cursor == SELECTION_ROWS && end + 1 < screen->count) {
+        screen->cursor--;
+        screen->downScroll = ARROW_SCROLL_FRAMES;
+        screen->top++;
+        Menu_ScrollSelectionList(screen, TRUE);
+        if (screen->top + screen->cursor + 2 == screen->count) {
+            screen->downArrow = FALSE;
+        }
+        screen->upArrow = TRUE;
+    }
+    screen->status = NODE_STATUS_SHOWN;
+    Menu_LoadSelectionNodeResource(screen, screen->cursor);
+    WaitFrames(1);
+    Menu_OpenSelectionWindow(screen->node->kind, 0);
+    WaitFrames(1);
+}
+
+/* Moves the cursor up one row, scrolling the list at the top row. */
+void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
+{
+    u32 cursor;
+
+    /* FAKEMATCH: top and cursor are tested together as one word. */
+    if (*(u32 *)&screen->top == 0) {
+        return;
+    }
+    Menu_ReloadNodeResource(screen, screen->cursor);
+    screen->status = NODE_STATUS_SCROLLING;
+    WaitFrames(1);
+    cursor = screen->cursor;
+    if (cursor == 1 && screen->top != 0) {
+        screen->upScroll = ARROW_SCROLL_FRAMES;
+        screen->top--;
+        Menu_ScrollSelectionList(screen, FALSE);
+        if (screen->top == 0) {
+            screen->upArrow = FALSE;
+        }
+        screen->downArrow = cursor;
+    } else {
+        screen->cursor--;
+    }
+    screen->status = NODE_STATUS_SHOWN;
+    Menu_LoadSelectionNodeResource(screen, screen->cursor);
+    WaitFrames(1);
+    Menu_OpenSelectionWindow(screen->node->kind, 0);
+    WaitFrames(1);
 }

@@ -1202,7 +1202,7 @@ Func_0811d7e8:
 	strh	r3, [r1, r2]
 	ldr	r0, [sp, #4]
 	movs	r1, #0
-	bl	Func_0811b9d4
+	bl	BattleActor_SpawnObjectsForList
 	mov	r2, sl
 	movs	r3, #1
 	ldrsb	r3, [r2, r3]

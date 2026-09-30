@@ -990,7 +990,7 @@ SECTIONS
         "*/recon/tla/raw/08119374.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081195d4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081197d0.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/0811a468.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/BATTLE/PARTY/LIST_ALL_UNITS_AND_SUBMIT.o"(.text)
         "*/recon/tla/raw/0811a484.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/CLASS_IS_VALID.o"(.text)
         "*/recon/tla/raw/0811a4e0.o"(.text .rodata .data .padding)

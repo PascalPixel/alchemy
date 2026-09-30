@@ -205,7 +205,7 @@ Func_080d8740:
 	ldr	r3, [r5, #8]
 	adds	r0, r6, #0
 	adds	r1, #255
-	bl	0x080ebec8
+	bl	Func_080ebec8
 	adds	r0, r6, #0
 	ldr	r1, [pc, #104]
 	bl	Func_080ebeb4

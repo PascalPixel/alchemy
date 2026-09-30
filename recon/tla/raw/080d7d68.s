@@ -156,7 +156,7 @@ Func_080d7d68:
 	cmp	r6, #2
 	bne.n	.L_080d7ed6
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080d7f6a
 	ldr	r3, [r7, #4]
@@ -237,7 +237,7 @@ Func_080d7d68:
 	bne.n	.L_080d7f56
 .L_080d7f42:
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080d7f6a
 	mov	r1, sl
@@ -249,7 +249,7 @@ Func_080d7d68:
 	cmp	r6, #5
 	bne.n	.L_080d7f6a
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080d7f6a
 	adds	r0, r7, #0
@@ -351,7 +351,7 @@ Func_080d7d68:
 	ldr	r3, [r7, #8]
 	adds	r0, r5, #0
 	lsls	r1, r1, #2
-	bl	0x080ebec8
+	bl	Func_080ebec8
 	adds	r0, r5, #0
 	ldr	r1, [pc, #236]
 	bl	Func_080ebeb4
@@ -624,7 +624,7 @@ Func_080d7d68:
 	cmp	r3, #1
 	bne.n	.L_080d82b8
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080d82ce
 	mov	r2, sl
@@ -637,7 +637,7 @@ Func_080d7d68:
 	cmp	r3, #2
 	bne.n	.L_080d82ce
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080d82ce
 	adds	r0, r7, #0
@@ -761,7 +761,7 @@ Func_080d7d68:
 	ldr	r3, [r6, #8]
 	adds	r0, r5, #0
 	lsls	r1, r1, #2
-	bl	0x080ebec8
+	bl	Func_080ebec8
 	adds	r0, r5, #0
 	ldr	r1, [pc, #140]
 	bl	Func_080ebeb4
@@ -1057,7 +1057,7 @@ Func_080d7d68:
 	cmp	r3, r2
 	bhi.n	.L_080d86ea
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_080d86f6

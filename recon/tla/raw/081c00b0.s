@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_081c0080
-	.thumb_func
-Func_081c0080:
-	ldr	r4, [pc, #0]
-	bx	r4
-	.2byte 0x1001
-	.2byte 0x081c
-	ldr	r4, [pc, #0]
-	bx	r4
-	.2byte 0x0e31
-	.2byte 0x081c
-	.global Func_081c0090
-	.thumb_func
-Func_081c0090:
-	ldr	r4, [pc, #0]
-	bx	r4
-	.2byte 0x1189
-	.2byte 0x081c
-	ldr	r4, [pc, #0]
-	bx	r4
-	.2byte 0x11ad
-	.2byte 0x081c
-	ldr	r4, [pc, #0]
-	bx	r4
-	.2byte 0x11cd
-	.2byte 0x081c
-	ldr	r4, [pc, #0]
-	bx	r4
-	.2byte 0x0c19
-	.2byte 0x081c
 	mov	r3, sl
 	mov	r4, fp
 	subs	r6, #1

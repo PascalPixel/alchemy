@@ -13,6 +13,9 @@ Func_080ebeb4:
 	bx	lr
 	.2byte 0x0000
 	.2byte 0x0000
+	.global Func_080ebec8
+	.thumb_func
+Func_080ebec8:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

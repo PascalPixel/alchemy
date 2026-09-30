@@ -1614,6 +1614,9 @@ Func_08026f80:
 	negs	r0, r0
 .L_08026fc6:
 	pop	{r5, r6, pc}
+	.global Func_08026fc8
+	.thumb_func
+Func_08026fc8:
 .L_08026fc8:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -2689,7 +2692,7 @@ Func_08026f80:
 	ldrb	r1, [r4, #23]
 	lsls	r1, r1, #28
 	lsrs	r1, r1, #30
-	bl	.L_08026fc8
+	bl	Func_08026fc8
 	ldr	r0, [sp, #16]
 	cmp	r0, #5
 	bne.n	.L_0802785e

@@ -804,7 +804,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_ACTION_THEN_WAIT_MODE_ZERO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_RUNTIME_PROCESS_ACTION.o"(.text)
         "*/recon/tbs/raw/080930ba.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080930bc.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SPEAKER_MESSAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/TABLE_CALL_REFRESH_HOOK.o"(.text)
         "*/recon/tbs/raw/08093166.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENT/SHOW_VALUE_1D8_AT_POSITION.o"(.text)

@@ -394,9 +394,10 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     .expect("base ROM range pattern");
     let overlay = regex::Regex::new(r#"^\s*\.incbin\s+"overlays/resource_[0-9a-f]+\.lz"\s*$"#)
         .expect("built overlay pattern");
-    let built_sound =
-        regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
-            .expect("built sound pattern");
+    let built_sound = regex::Regex::new(
+        r#"^\s*\.incbin\s+"(?:COMMON/)?SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#,
+    )
+    .expect("built sound pattern");
     // A graphics or map file the build makes: an uppercase path whose name
     // is a recipe the ags encoder builds, so the encoder alone decides which
     // forms and codecs exist.
@@ -1469,7 +1470,8 @@ fn asset_game(path: &str) -> Option<&str> {
 /// The shared root holds only what every game builds byte-exact from the
 /// same text: nested C source, interface headers, asset sources with the
 /// PNG, TSV and BIN inputs they are built from, and sequences, as MIDI or
-/// assembly, under SOUND/SEQUENCE as in each game.
+/// assembly, under SOUND/SEQUENCE and samples, WAV or PCM4, under
+/// SOUND/SAMPLE, as in each game.
 fn shared_root_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, root, rest @ ..] = components.as_slice() else {
@@ -1483,9 +1485,11 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
     let interface = matches!(rest, ["INCLUDE", _, .., leaf] if extension(leaf) == "H");
     let sequence = matches!(rest, ["SOUND", "SEQUENCE", leaf]
         if listed(extension(leaf), &["MID", "S"]));
-    (!(source || interface || sequence)).then_some(
+    let sample = matches!(rest, ["SOUND", "SAMPLE", leaf]
+        if listed(extension(leaf), &["WAV", "PCM4"]));
+    (!(source || interface || sequence || sample)).then_some(
         "games/COMMON holds only shared SRC/<module>/ sources and inputs, INCLUDE/<module>/*.H \
-         and SOUND/SEQUENCE/ sequences",
+         and SOUND/ sequences and samples",
     )
 }
 const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD, C drafts under an edition and metrics/history.tsv";
@@ -3181,13 +3185,19 @@ mod tests {
     fn sound_data_sources_may_incbin_only_the_sound_files_the_build_makes() {
         let sample = b"Sound_Wave00:\n\t.incbin \"SOUND/SAMPLE/WAVE_00.PCM8.bin\"\n";
         let wave = b"\t.incbin \"SOUND/SAMPLE/CGB_WAVE_0.bin\"\n";
+        let shared = b"\t.incbin \"COMMON/SOUND/SAMPLE/WAVE_20.PCM8.bin\"\n";
         for path in [
             "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
             "games/THE LOST AGE/SOUND/CGB_WAVES.S",
         ] {
             assert!(!super::incbin(path, sample), "{path}");
             assert!(!super::incbin(path, wave), "{path}");
+            assert!(!super::incbin(path, shared), "{path}");
         }
+        assert!(super::incbin(
+            "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+            b"\t.incbin \"COMMON/SAMPLE/WAVE_20.PCM8.bin\"\n"
+        ));
         // Only a game's sound sources, and only built files under SOUND.
         for (path, line) in [
             ("games/THE BROKEN SEAL/SRC/SOUND/DATA.S", sample.as_slice()),

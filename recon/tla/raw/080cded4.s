@@ -119,6 +119,9 @@ Func_080cded4:
 	movs	r0, #0
 .L_080cdfae:
 	pop	{pc}
+	.global Event_FindFacingTrigger
+	.thumb_func
+Event_FindFacingTrigger:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

@@ -23,7 +23,7 @@ Func_080e25e8:
 	ldr	r7, [sp, #68]
 	mov	fp, r3
 	ldr	r5, [r6, #108]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	ldr	r3, [r0, #20]
 	movs	r2, #204
@@ -222,7 +222,7 @@ Func_080e25e8:
 	lsls	r5, r5, #18
 	asrs	r6, r2, #16
 	ldr	r7, [r5, #108]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	ldr	r3, [r5, #32]
 	movs	r2, #132
@@ -387,7 +387,7 @@ Func_080e25e8:
 	adds	r6, r1, #0
 	sub	sp, #24
 	adds	r5, r0, #0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	mov	r9, r0
 	bl	Object_GetById
 	mov	sl, r0
@@ -699,7 +699,7 @@ Func_080e25e8:
 	movs	r1, #4
 	movs	r2, #4
 	movs	r3, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r1, [r7, #9]
 	movs	r0, #13
 	movs	r3, #250
@@ -845,7 +845,7 @@ Func_080e25e8:
 	.2byte 0xffff
 .L_080e2cbc:
 	str	r3, [r7, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldr	r3, [r5, #12]
 	ldr	r1, [r5, #20]
 	ldr	r2, [r5, #16]

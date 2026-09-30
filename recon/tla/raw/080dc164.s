@@ -41,6 +41,9 @@ Func_080dc164:
 	movs	r0, r0
 	.2byte 0x04aa
 	.2byte 0x0200
+	.global Func_080dc1b0
+	.thumb_func
+Func_080dc1b0:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

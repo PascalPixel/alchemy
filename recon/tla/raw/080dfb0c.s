@@ -566,7 +566,7 @@ Func_080dfb0c:
 	mov	r3, sl
 	movs	r1, #0
 	ldr	r0, [r3, #16]
-	bl	0x080e1420
+	bl	Func_080e1420
 	bl	0x080dc384
 	adds	r2, r7, #0
 	adds	r2, #100
@@ -577,7 +577,7 @@ Func_080dfb0c:
 	str	r3, [r7, #108]
 	movs	r1, #26
 	ldrsh	r0, [r2, r1]
-	bl	0x080db0b0
+	bl	Func_080db0b0
 	adds	r0, r7, #0
 	bl	Func_08020340
 	adds	r0, r7, #0

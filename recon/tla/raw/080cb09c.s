@@ -300,7 +300,7 @@ Func_080cb09c:
 	mov	r8, r1
 	mov	r9, r0
 	str	r3, [sp, #20]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	str	r0, [sp, #16]
 	bl	Func_080cb8e8
 	movs	r1, #0

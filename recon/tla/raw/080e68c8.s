@@ -449,7 +449,7 @@ Func_080e68c8:
 	movs	r2, #8
 	lsls	r3, r3, #23
 	adds	r6, r0, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r6, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -459,7 +459,7 @@ Func_080e68c8:
 	ands	r3, r2
 	strb	r3, [r6, #9]
 	ldr	r0, [sp, #24]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	movs	r3, #3
 	ands	r0, r3
 	movs	r4, #13
@@ -569,7 +569,7 @@ Func_080e68c8:
 	adds	r0, r6, #0
 	movs	r2, #8
 	lsls	r3, r3, #23
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r6, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -579,7 +579,7 @@ Func_080e68c8:
 	ands	r3, r2
 	strb	r3, [r6, #9]
 	ldr	r0, [sp, #24]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	movs	r3, #3
 	ands	r0, r3
 	movs	r1, #13
@@ -676,7 +676,7 @@ Func_080e68c8:
 	adds	r0, r6, #0
 	movs	r2, #4
 	movs	r3, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r6, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -686,7 +686,7 @@ Func_080e68c8:
 	ands	r3, r2
 	strb	r3, [r6, #9]
 	mov	r0, fp
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	movs	r3, #3
 	ands	r0, r3
 	movs	r1, #13
@@ -773,14 +773,14 @@ Func_080e68c8:
 	movs	r2, #0
 	adds	r0, r6, #0
 	movs	r1, #16
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	mov	r1, sl
 	ldr	r0, [r1, #16]
 	bl	Func_080db9cc
 	mov	r2, sl
 	strh	r0, [r6, #30]
 	ldr	r0, [r2, #16]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	ldrb	r2, [r6, #9]
 	movs	r3, #3
 	ands	r0, r3
@@ -1178,7 +1178,7 @@ Func_080e68c8:
 	sub	sp, #32
 	bl	Func_08014cc0
 	str	r0, [sp, #16]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	mov	r8, r0
 	ldr	r0, [pc, #620]
@@ -1211,7 +1211,7 @@ Func_080e68c8:
 	movs	r1, #4
 	movs	r2, #4
 	movs	r3, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r5, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -1339,7 +1339,7 @@ Func_080e68c8:
 	str	r3, [r7, #12]
 	ldr	r3, [r5, #8]
 	str	r3, [r7, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldr	r3, [r6, #12]
 	movs	r1, #128
 	lsls	r1, r1, #4
@@ -1507,9 +1507,9 @@ Func_080e68c8:
 	sub	sp, #24
 	bl	Func_08014cc0
 	str	r0, [sp, #20]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	adds	r7, r0, #0
 	movs	r0, #20
@@ -1546,7 +1546,7 @@ Func_080e68c8:
 	movs	r2, #4
 	movs	r3, #0
 	str	r4, [sp, #4]
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r6, #5]
 	movs	r2, #32
 	ldr	r4, [sp, #4]

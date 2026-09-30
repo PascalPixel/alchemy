@@ -34,7 +34,7 @@ Func_080ebf68:
 	adds	r1, r7, #0
 	adds	r1, #32
 	str	r1, [sp, #4]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	movs	r5, #0
 	str	r5, [sp, #12]
@@ -252,7 +252,7 @@ Func_080ebf68:
 	push	{r7}
 	adds	r7, r1, #0
 	adds	r5, r0, #0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #32]

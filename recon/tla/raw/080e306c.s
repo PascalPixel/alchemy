@@ -46,7 +46,7 @@ Func_080e306c:
 	movs	r6, #0
 	ldr	r0, [r1, #16]
 	movs	r1, #0
-	bl	0x080e1420
+	bl	Func_080e1420
 	ldr	r3, [pc, #860]
 	mov	r2, sl
 	str	r3, [r2, #108]
@@ -124,7 +124,7 @@ Func_080e306c:
 	mov	r0, r8
 	movs	r1, #32
 	movs	r2, #32
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	mov	r0, r8
 	ldrb	r3, [r0, #5]
 	movs	r2, #32

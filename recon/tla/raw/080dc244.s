@@ -165,7 +165,7 @@ BattleEffect_InitializeSharedScene:
 	lsls	r2, r5, #2
 	ldr	r1, [r3, r2]
 	movs	r0, #8
-	bl	0x080dc1b0
+	bl	Func_080dc1b0
 	pop	{r5, pc}
 	movs	r0, r0
 	.4byte 0x0300122c

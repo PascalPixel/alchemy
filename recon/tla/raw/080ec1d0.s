@@ -10,7 +10,7 @@ Func_080ec1d0:
 	push	{r6, r7}
 	mov	sl, r1
 	mov	r8, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	movs	r7, #143
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -138,7 +138,7 @@ Func_080ec1d0:
 	str	r1, [sp, #16]
 	str	r2, [sp, #12]
 	str	r0, [sp, #20]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Func_080ed804
 	mov	fp, r0
 	movs	r0, #128
@@ -416,7 +416,7 @@ Func_080ec1d0:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #84
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	ldr	r0, [pc, #680]
 	ldr	r1, [pc, #680]
 	adds	r0, #32

@@ -1377,7 +1377,7 @@ Func_080de060:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r5, [r3, #108]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r1, [r0, #16]

@@ -63,7 +63,7 @@ Func_080e1f2c:
 	adds	r0, r7, #0
 	movs	r1, #16
 	movs	r2, #16
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r7, #5]
 	ldrb	r2, [r7, #9]
 	movs	r1, #15
@@ -76,7 +76,7 @@ Func_080e1f2c:
 	mov	r2, fp
 	strb	r3, [r7, #9]
 	ldr	r0, [r2, #16]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	movs	r1, #13
 	ldrb	r2, [r7, #9]
 	negs	r1, r1
@@ -143,7 +143,7 @@ Func_080e1f2c:
 	adds	r0, r7, #0
 	movs	r1, #12
 	movs	r2, #8
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r7, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -155,7 +155,7 @@ Func_080e1f2c:
 	strb	r0, [r7, #9]
 	mov	r8, r0
 	ldr	r0, [r1, #16]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	ldrb	r3, [r7, #9]
 	movs	r2, #3
 	mov	r1, r9
@@ -205,7 +205,7 @@ Func_080e1f2c:
 	adds	r3, #240
 	ldr	r0, [r1, #16]
 	ldr	r5, [r3, #0]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	adds	r3, r5, #0
 	adds	r3, #191
 	mov	r2, fp

@@ -17,7 +17,7 @@ Func_080ea14c:
 	sub	sp, #64
 	bl	Func_08014cc0
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	str	r0, [sp, #48]
 	bl	ObjectTable_Get
 	str	r0, [sp, #44]
@@ -35,7 +35,7 @@ Func_080ea14c:
 	lsls	r3, r3, #2
 	ldr	r1, [r1, r3]
 	movs	r0, #8
-	bl	0x080dc1b0
+	bl	Func_080dc1b0
 	ldr	r2, [sp, #44]
 	add	r5, sp, #52
 	ldr	r3, [r2, #8]
@@ -109,7 +109,7 @@ Func_080ea14c:
 	movs	r2, #4
 	movs	r3, #0
 	adds	r0, r5, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r5, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -191,7 +191,7 @@ Func_080ea14c:
 	movs	r2, #8
 	lsls	r3, r3, #23
 	str	r6, [sp, #0]
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r5, #5]
 	movs	r2, #32
 	orrs	r3, r2

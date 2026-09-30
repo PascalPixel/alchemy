@@ -5,7 +5,7 @@
 Func_080d2260:
 .L_080d2260:
 	push	{lr}
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r3, #128
 	lsls	r3, r3, #9

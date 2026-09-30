@@ -4,6 +4,46 @@
 
 extern const u8 BattleFx_ParticleScript[];
 
+/* The European editions pause the random particles while the field's top
+   menu is open: the menu sets the event work's menu-open byte and clears the
+   particles already flying, and no new ones spawn until it closes. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define PARTICLES_PAUSE_FOR_MENU 1
+#endif
+
+#if defined(PARTICLES_PAUSE_FOR_MENU)
+#define BATTLE_ACTIVE_OFS 0xcb8
+#define MENU_OPEN_OFS     0xcca
+
+struct ParticleSlot {
+    s32 script;
+    u8 pad[0x6c];
+};
+
+extern u8 *gEventWork;
+extern void Object_Destroy(struct ParticleSlot *);
+
+#define ParticlePool (*(struct ParticleSlot **)((u8 *)&gEventWork - 88))
+
+void BattleFx_ClearRandomParticles(void)
+{
+    if (*(s16 *)(gEventWork + BATTLE_ACTIVE_OFS) != 0) {
+        struct ParticleSlot *ent = ParticlePool;
+        s32 n = 63;
+
+        do {
+            if (ent->script != 0) {
+                if (ent->script == (s32)BattleFx_ParticleScript)
+                    Object_Destroy(ent);
+            }
+            n--;
+            ent++;
+        } while (n >= 0);
+    }
+}
+#endif
+
 struct Values_0808f28c {
     u32 first;
     u32 second;
@@ -36,6 +76,10 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
     struct Object_0808f28c *object;
     u32 rnd;
 
+#if defined(PARTICLES_PAUSE_FOR_MENU)
+    if (*(s8 *)(gEventWork + MENU_OPEN_OFS) != 0)
+        return;
+#endif
     if ((100 * Random16() >> 16) > 9)
         return;
 

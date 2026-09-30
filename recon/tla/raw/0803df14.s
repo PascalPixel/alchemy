@@ -1,11 +1,11 @@
 .syntax unified
 	.thumb
-	.global Func_0803df14
+	.global Resource_ScheduleOwnerReset
 	.thumb_func
-Func_0803df14:
+Resource_ScheduleOwnerReset:
 	push {lr}
 	ldr r0, .L_0803df20
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	pop {pc}
 	.2byte 0x0000
 .L_0803df20:

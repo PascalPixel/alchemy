@@ -213,7 +213,7 @@ Func_080fc6bc:
 	ldrh r3, [r7, r3]
 	adds r1, r6, #0
 	ands r1, r3
-	bl Djinn_IsActiveFar + 0x10
+	bl Item_CanOwnerEquip
 	cmp r0, #0
 	beq .L_080fc876
 	lsls r3, r5, #2
@@ -345,7 +345,7 @@ Func_080fc6bc:
 .L_080fc95c:
 	mov r1, r9
 	adds r0, r5, r1
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #129
 	adds r5, r0, #0
 	lsls r3, r3, #2
@@ -364,7 +364,7 @@ Func_080fc6bc:
 	lsls r2, r2, #1
 	adds r1, r7, r2
 	movs r2, #0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r3, #133
 	lsls r3, r3, #2
 	strb r0, [r7, r3]
@@ -426,7 +426,7 @@ Func_080fc6bc:
 	adds r1, r5, #0
 	movs r2, #0
 	mov r9, r0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r1, #0
 	strb r0, [r7, r6]
 	adds r0, r5, #0
@@ -457,7 +457,7 @@ Func_080fc6bc:
 	movs r1, #0
 	movs r2, #88
 	movs r3, #120
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	ldr r0, [r7, #72]
 	bl UiIcon_PrepareObject
 	ldr r4, [sp, #8]

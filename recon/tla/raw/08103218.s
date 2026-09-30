@@ -246,7 +246,7 @@ Func_08103218:
 	ldr r1, [sp, #40]
 	ldr r0, [sp, #52]
 	ldr r2, [sp, #36]
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	b .L_0810346e
 .L_08103416:
 	ldr r1, [sp, #32]
@@ -258,7 +258,7 @@ Func_08103218:
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #40]
 	str r2, [sp, #36]
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 .L_0810342c:
 	ldr r3, [sp, #24]
 	movs r5, #31
@@ -292,7 +292,7 @@ Func_08103218:
 	bl Djinn_ActivateFar
 .L_0810346e:
 	ldr r0, [sp, #52]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r0, [sp, #52]
 	bl Owner_GetState
 	ldr r3, [sp, #212]
@@ -797,7 +797,7 @@ Func_08103218:
 	cmp r3, #0
 	beq .L_0810388a
 	movs r0, #4
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	b .L_081038aa
 .L_0810388a:
 	ldr r3, .L_081038a0
@@ -805,7 +805,7 @@ Func_08103218:
 	cmp r3, #0
 	beq .L_081038a4
 	movs r0, #2
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	b .L_081038aa
 	.2byte 0x0000
 .L_0810389c:
@@ -814,7 +814,7 @@ Func_08103218:
 	.4byte 0x00004000
 .L_081038a4:
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_081038aa:
 	mov r0, r8
 	ldr r1, [sp, #56]
@@ -872,7 +872,7 @@ Func_08103218:
 	lsls r7, r1, #3
 .L_0810391a:
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	ldr r3, [sp, #56]
 	adds r2, r7, #0
 	lsls r6, r3, #3
@@ -889,7 +889,7 @@ Func_08103218:
 	cmp r3, #0
 	beq .L_08103956
 	movs r0, #4
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	adds r3, r6, #0
 	ldr r0, .L_081039ec
 	adds r3, #88
@@ -902,7 +902,7 @@ Func_08103218:
 	cmp r3, #0
 	beq .L_08103976
 	movs r0, #2
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	ldr r1, [sp, #56]
 	ldr r0, .L_081039f0
 	adds r3, r1, r5
@@ -923,7 +923,7 @@ Func_08103218:
 	bl UiText_DrawCharacterAtOffsetFar
 .L_08103988:
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	movs r3, #11
 	str r3, [sp, #0]
 	mov r0, r9
@@ -947,7 +947,7 @@ Func_08103218:
 	movs r1, #0
 	ldr r2, [sp, #216]
 	mov r3, r9
-	bl RenderOutput_CreateFar + 0x10
+	bl Func_080380d8
 .L_081039be:
 	movs r2, #166
 	ldr r1, [sp, #44]

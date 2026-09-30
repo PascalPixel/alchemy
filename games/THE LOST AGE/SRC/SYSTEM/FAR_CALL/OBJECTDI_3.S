@@ -13,4 +13,7 @@ Func_080200c0:
 	.thumb_func
 Func_080200c8:
 	overlay_veneer Func_080231c8
+	.global ObjectDispatch_SetChildField12Far
+	.thumb_func
+ObjectDispatch_SetChildField12Far:
 	overlay_veneer ObjectDispatch_SetChildField12

@@ -30,7 +30,7 @@ Func_0811a24c:
 	beq .L_0811a2c0
 	add r6, sp, #4
 	adds r0, r6, #0
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	adds r5, r0, #0
 	lsls r0, r5, #1
 	adds r0, r6, r0

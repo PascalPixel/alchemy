@@ -41,7 +41,7 @@ Func_0804bc08:
 	ldr r0, [sp, #52]
 	movs r1, #0
 	str r6, [sp, #92]
-	bl Func_080455dc
+	bl Resource_LoadIndexedIntoBuffer
 	ldr r0, .L_0804bd08
 	bl Func_080453d0
 	ldr r0, .L_0804bd0c
@@ -226,7 +226,7 @@ Func_0804bc08:
 	movs r1, #144
 	ldr r0, .L_0804bfc8
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_0804bdc2:
 	ldr r2, [sp, #88]
 	ldr r3, [sp, #80]
@@ -344,7 +344,7 @@ Func_0804bc08:
 	adds r3, r3, r0
 	negs r2, r2
 	str r2, [r3]
-	bl BattleActor_CommitPlacementFar + 0x40
+	bl Func_08118158
 	ldr r2, [r5]
 	movs r3, #1
 	str r3, [r2, #60]
@@ -371,7 +371,7 @@ Func_0804bc08:
 	adds r6, r0, #0
 	cmp r6, r5
 	beq .L_0804bebe
-	bl BattleActor_CommitPlacementFar + 0x40
+	bl Func_08118158
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #228
@@ -401,13 +401,13 @@ Func_0804bc08:
 .L_0804bf16:
 	adds r0, r6, #0
 	adds r1, r7, #0
-	bl Func_08118088 + 0x8
+	bl BattleParty_ListActorIdsFar
 	adds r5, r0, #0
 	cmp r6, #1
 	bne .L_0804bf2e
 	lsls r0, r5, #1
 	adds r0, r7, r0
-	bl BattleActor_CommitPlacementFar + 0x20
+	bl Func_08118138
 	adds r5, r5, r0
 .L_0804bf2e:
 	movs r0, #1
@@ -478,10 +478,10 @@ Func_0804bc08:
 	movs r0, #0
 	ldr r1, [r2]
 	adds r1, #84
-	bl BattleActor_CommitPlacementFar + 0x18
+	bl Func_08118130
 	b .L_0804bff2
 .L_0804bfc0:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_0804bfc4:
 	.4byte Data_02003874
 .L_0804bfc8:
@@ -599,7 +599,7 @@ Func_0804bc08:
 	ldr r0, [sp, #32]
 	movs r1, #1
 	mov r8, r4
-	bl Func_08118088 + 0x58
+	bl BattlePres_SetActorModesFar
 	ldr r0, [sp, #32]
 	bl Func_080461c8
 	movs r0, #1
@@ -624,7 +624,7 @@ Func_0804bc08:
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r0, #1
-	bl Func_08118088 + 0x8
+	bl BattleParty_ListActorIdsFar
 	ldr r4, [sp, #36]
 	adds r6, r0, #0
 	ldr r3, [r4]
@@ -648,7 +648,7 @@ Func_0804bc08:
 .L_0804c11a:
 	ldr r0, [sp, #32]
 	movs r1, #0
-	bl Func_08118088 + 0x58
+	bl BattlePres_SetActorModesFar
 	movs r2, #1
 	negs r2, r2
 	cmp r6, r2
@@ -679,7 +679,7 @@ Func_0804bc08:
 	str r3, [r5, #4]
 	ldr r0, [sp, #52]
 	adds r1, r6, #0
-	bl Func_080455dc
+	bl Resource_LoadIndexedIntoBuffer
 	ldr r3, .L_0804c17c
 	ldrh r2, [r5, #8]
 	ands r0, r3
@@ -1044,7 +1044,7 @@ Func_0804bc08:
 	movs r2, #11
 	movs r3, #0
 	str r5, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r1, #240
 	lsls r1, r1, #8
 	movs r3, #0
@@ -1052,7 +1052,7 @@ Func_0804bc08:
 	mov r0, r11
 	movs r2, #12
 	str r5, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrb r3, [r6, #2]
 	cmp r3, #4
 	beq .L_0804c48e
@@ -1065,7 +1065,7 @@ Func_0804bc08:
 	movs r2, #15
 	movs r3, #0
 	str r5, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 .L_0804c48e:
 	ldr r1, [sp, #76]
 	mov r0, r8
@@ -1086,7 +1086,7 @@ Func_0804bc08:
 	adds r3, #37
 	strb r5, [r3]
 	mov r0, r10
-	bl Func_08014274
+	bl Resource_ResetEntry
 	mov r0, r11
 	movs r1, #1
 	bl UiWork_Finalize
@@ -1162,7 +1162,7 @@ Func_0804bc08:
 	movs r7, #0
 	adds r3, #12
 	mov r8, r3
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	mov r9, r0
 	ldrh r0, [r0]
 	bl BattleAction_Get
@@ -1284,7 +1284,7 @@ Func_0804bc08:
 .L_0804c648:
 	adds r0, r6, #0
 	str r4, [sp, #4]
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	ldr r3, .L_0804c660
 	ldrh r0, [r0]
 	b .L_0804c664
@@ -1324,7 +1324,7 @@ Func_0804bc08:
 	mov r0, r11
 	movs r3, #0
 	str r4, [sp, #4]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrb r1, [r6]
 	mov r3, r8
 	adds r2, r5, #1
@@ -1368,7 +1368,7 @@ Func_0804bc08:
 	adds r3, #37
 	strb r2, [r3]
 	ldr r0, [sp, #40]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	mov r0, r11
 	movs r1, #1
 	bl UiWork_Finalize
@@ -1496,7 +1496,7 @@ Func_0804bc08:
 	beq .L_0804c8da
 	adds r1, r4, #0
 	adds r0, r7, #0
-	bl Trade_AddOfferFar + 0x20
+	bl Djinn_GetDefinitionHeaderFar
 	bl BattleAction_Get
 	movs r3, #6
 	adds r5, r0, #0
@@ -1525,7 +1525,7 @@ Func_0804bc08:
 	mov r0, r11
 	movs r2, #0
 	movs r3, #0
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	lsls r0, r7, #2
 	ldr r4, [sp, #4]
 	ldr r3, .L_0804c860
@@ -1629,7 +1629,7 @@ Func_0804bc08:
 	movs r2, #0
 	movs r3, #0
 	str r5, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	lsls r0, r7, #2
 	ldr r4, [sp, #4]
 	ldr r3, .L_0804c93c
@@ -1720,7 +1720,7 @@ Func_0804bc08:
 	bl Item_Get
 	adds r1, r5, #0
 	ldr r0, [sp, #64]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	ldr r3, [sp, #8]
 	ldr r4, [sp, #4]
 	cmp r0, #0
@@ -1760,7 +1760,7 @@ Func_0804bc08:
 	bl Item_Get
 	adds r1, r5, #0
 	ldr r0, [sp, #64]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	ldr r2, [sp, #12]
 	ldr r4, [sp, #4]
 	cmp r0, #0
@@ -1925,7 +1925,7 @@ Func_0804bc08:
 	mov r0, r9
 	adds r3, #37
 	strb r1, [r3]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	mov r0, r11
 	movs r1, #1
 	bl UiWork_Finalize
@@ -2042,11 +2042,11 @@ Func_0804bc08:
 	bl UiWork_Finalize
 .L_0804cc58:
 	ldr r0, [sp, #48]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, [sp, #52]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, .L_0804cc84
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r3, [sp, #36]
 	ldr r2, [r3]
 	b .L_0804cc88
@@ -2088,7 +2088,7 @@ Func_0804bc08:
 	ldr r4, [sp, #36]
 	ldr r3, [r4]
 	str r0, [r3, #68]
-	bl Func_080396bc
+	bl Ui_FillVramBlockPattern
 	add r0, sp, #108
 	mov r9, r0
 	bl Func_0804bbd0
@@ -2189,7 +2189,7 @@ Func_0804bc08:
 	bl UiWork_Finalize
 .L_0804cd78:
 	movs r0, #0
-	bl Func_08118088 + 0x48
+	bl Camera_ConfigureSceneFar
 	movs r0, #228
 	bl Runtime_ReleaseHeapBlock
 	ldr r1, [sp, #80]
@@ -2210,4 +2210,4 @@ Func_0804bc08:
 .L_0804cda0:
 	.4byte Data_02003874
 .L_0804cda4:
-	.4byte Data_0300124c
+	.4byte gLinkStatus

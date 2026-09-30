@@ -59,22 +59,22 @@ Func_0801440c:
 	bl Trig_Cos
 	mov r1, r8
 	adds r6, r0, #0
-	bl __divsi3
+	bl Math_Div
 	mov r1, r8
 	strh r0, [r7]
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	adds r7, #2
 	negs r5, r5
 	strh r0, [r7]
 	mov r1, r10
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	adds r7, #2
 	strh r0, [r7]
 	mov r1, r10
 	adds r0, r6, #0
-	bl __divsi3
+	bl Math_Div
 	adds r7, #2
 	strh r0, [r7]
 .L_080144a6:
@@ -91,4 +91,4 @@ Func_0801440c:
 .L_080144b8:
 	.4byte gObjAffineMatrices
 .L_080144bc:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide

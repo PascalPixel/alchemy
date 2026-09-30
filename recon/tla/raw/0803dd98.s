@@ -39,7 +39,7 @@ Func_0803dd98:
 	adds r0, r7, #0
 	mov r1, r8
 	str r4, [sp, #0]
-	bl Func_0803f2e4
+	bl MenuSelection_SetupEntry
 	movs r3, #210
 	lsls r3, r3, #2
 	add r3, r9
@@ -135,7 +135,7 @@ Func_0803dd98:
 	cmp r6, #0
 	bne .L_0803de68
 .L_0803de94:
-	bl Func_0803f6c8
+	bl Menu_LoadSelectedResource
 	add sp, #8
 	pop {r3, r5, r6, r7}
 	mov r8, r3

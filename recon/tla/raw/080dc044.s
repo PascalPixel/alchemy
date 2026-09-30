@@ -12,7 +12,7 @@ Func_080dc044:
 	adds r0, #255
 	adds r1, r4, #0
 	adds r2, r5, #0
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080dc0b0
@@ -48,7 +48,7 @@ Func_080dc044:
 	adds r1, r5, #0
 	adds r2, r0, #0
 	adds r0, r6, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 .L_080dc0b0:
 	adds r0, r6, #0
 	pop {r5, r6, pc}

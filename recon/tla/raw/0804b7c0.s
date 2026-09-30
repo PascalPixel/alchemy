@@ -54,7 +54,7 @@ Func_0804b7c0:
 	movs r0, #0
 	bl UiWindow_Create
 	mov r10, r0
-	bl Func_080396bc
+	bl Ui_FillVramBlockPattern
 	add r5, sp, #4
 	adds r1, r5, #0
 	movs r2, #52
@@ -64,7 +64,7 @@ Func_0804b7c0:
 	mov r1, r10
 	movs r2, #0
 	movs r3, #4
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	movs r5, #192
 	ldr r7, .L_0804b878
 	lsls r5, r5, #18

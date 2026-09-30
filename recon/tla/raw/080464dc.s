@@ -90,7 +90,7 @@ Func_080464dc:
 	adds r0, r7, #0
 	adds r1, r5, #0
 	adds r2, r6, #0
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	b .L_080465a2
 .L_08046598:
 	adds r0, r7, #0
@@ -99,7 +99,7 @@ Func_080464dc:
 	bl Djinn_ActivateFar
 .L_080465a2:
 	adds r0, r7, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #56]
 	add r2, sp, #64
@@ -112,7 +112,7 @@ Func_080464dc:
 	movs r1, #5
 	str r0, [sp, #20]
 	subs r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #108]
 	adds r0, #1
 	str r0, [r3]
@@ -174,7 +174,7 @@ Func_080464dc:
 	ldrsh r3, [r3, r4]
 	adds r1, r3, #0
 	str r3, [sp, #44]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	ldr r5, [sp, #48]
 	mov r4, r10
 	adds r5, #14
@@ -182,36 +182,36 @@ Func_080464dc:
 	movs r2, #5
 	movs r3, #1
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r1, [sp, #52]
 	ldr r0, [sp, #48]
 	movs r2, #58
 	ldrsh r1, [r1, r2]
 	str r1, [sp, #40]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r2, r10
 	ldr r1, [r2]
 	adds r0, r5, #0
 	movs r2, #5
 	movs r3, #2
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r3, [sp, #52]
 	ldr r0, [sp, #48]
 	ldrh r3, [r3, #60]
 	adds r1, r3, #0
 	str r3, [sp, #36]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r4, r10
 	ldr r1, [r4]
 	movs r2, #5
 	movs r3, #3
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r1, [sp, #52]
 	ldr r0, [sp, #48]
 	ldrh r1, [r1, #62]
 	str r1, [sp, #32]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	ldr r5, [sp, #48]
 	mov r2, r10
 	adds r5, #16
@@ -219,31 +219,31 @@ Func_080464dc:
 	movs r3, #4
 	movs r2, #6
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r3, [sp, #52]
 	ldr r0, [sp, #48]
 	adds r3, #64
 	ldrh r3, [r3]
 	adds r1, r3, #0
 	str r3, [sp, #28]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r3, r10
 	ldr r1, [r3]
 	movs r2, #6
 	movs r3, #5
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r3, [sp, #52]
 	ldr r0, [sp, #48]
 	adds r3, #66
 	ldrb r1, [r3]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r4, r10
 	ldr r1, [r4]
 	movs r2, #6
 	movs r3, #6
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	mov r1, r10
 	movs r3, #8
 	ldr r0, [r1]
@@ -332,7 +332,7 @@ Func_080464dc:
 	str r3, [sp, #0]
 	movs r2, #15
 	mov r3, r9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 .L_0804679a:
 	ldrb r3, [r5, #8]
 	cmp r3, #255
@@ -347,7 +347,7 @@ Func_080464dc:
 	movs r1, #16
 	mov r2, r9
 	str r4, [sp, #0]
-	bl Func_0804524c
+	bl UiWindow_DrawThreeTileColumn
 	ldrh r3, [r6]
 	movs r1, #252
 	lsls r1, r1, #6
@@ -407,7 +407,7 @@ Func_080464dc:
 	str r2, [sp, #0]
 	adds r1, #31
 	movs r2, #11
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r1, #240
 	movs r3, #0
 	lsls r1, r1, #8
@@ -416,7 +416,7 @@ Func_080464dc:
 	str r3, [sp, #0]
 	movs r2, #12
 	mov r3, r9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrh r0, [r6]
 	bl BattleAction_Get
 	mov r4, r11
@@ -542,7 +542,7 @@ Func_080464dc:
 	str r2, [sp, #0]
 	movs r3, #0
 	movs r2, #9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	b .L_08046968
 .L_08046952:
 	movs r1, #247
@@ -554,13 +554,13 @@ Func_080464dc:
 	movs r2, #9
 	movs r3, #0
 	str r4, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 .L_08046968:
 	ldr r3, [sp, #56]
 	ldr r0, [sp, #48]
 	movs r2, #56
 	ldrsh r1, [r3, r2]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	ldr r6, [sp, #48]
 	mov r4, r10
 	adds r6, #14
@@ -568,7 +568,7 @@ Func_080464dc:
 	movs r2, #11
 	movs r3, #1
 	adds r0, r6, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r2, [sp, #56]
 	ldr r4, [sp, #44]
 	movs r1, #56
@@ -590,13 +590,13 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	movs r2, #58
 	ldrsh r1, [r3, r2]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r4, r10
 	ldr r1, [r4]
 	movs r2, #11
 	movs r3, #2
 	adds r0, r6, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r2, [sp, #56]
 	ldr r4, [sp, #40]
 	movs r1, #58
@@ -617,13 +617,13 @@ Func_080464dc:
 	ldr r2, [sp, #56]
 	ldr r0, [sp, #48]
 	ldrh r1, [r2, #60]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r3, r10
 	ldr r1, [r3]
 	adds r0, r6, #0
 	movs r3, #3
 	movs r2, #11
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r4, [sp, #56]
 	ldr r1, [sp, #36]
 	ldrh r3, [r4, #60]
@@ -643,13 +643,13 @@ Func_080464dc:
 	ldr r4, [sp, #56]
 	ldr r0, [sp, #48]
 	ldrh r1, [r4, #62]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r2, r10
 	ldr r1, [r2]
 	movs r3, #4
 	adds r0, r6, #0
 	movs r2, #11
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r4, [sp, #56]
 	ldr r1, [sp, #32]
 	ldrh r3, [r4, #62]
@@ -670,13 +670,13 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	adds r5, #64
 	ldrh r1, [r5]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r4, r10
 	ldr r1, [r4]
 	movs r3, #5
 	adds r0, r6, #0
 	movs r2, #11
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldrh r3, [r5]
 	ldr r1, [sp, #28]
 	cmp r3, r1
@@ -696,14 +696,14 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	adds r5, #66
 	ldrb r1, [r5]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	ldr r0, [sp, #48]
 	mov r4, r10
 	ldr r1, [r4]
 	movs r3, #6
 	adds r0, #16
 	movs r2, #12
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r3, [sp, #52]
 	ldrb r1, [r5]
 	adds r3, #66

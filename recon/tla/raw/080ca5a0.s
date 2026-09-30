@@ -5,7 +5,7 @@
 Func_080ca5a0:
 	push {r5, lr}
 	adds r5, r0, #0
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r0, #4
 	ble .L_080ca5ae
 	movs r0, #4

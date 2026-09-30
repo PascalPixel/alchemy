@@ -9,7 +9,19 @@
 	.thumb_func
 Func_080383e8:
 	overlay_veneer Func_0803a084
+	.global Func_080383f0
+	.thumb_func
+Func_080383f0:
 	overlay_veneer Func_0803911c
+	.global Link_DrawShiftedTilePairFar
+	.thumb_func
+Link_DrawShiftedTilePairFar:
 	overlay_veneer Func_08045330
+	.global Func_08038400
+	.thumb_func
+Func_08038400:
 	overlay_veneer Func_080430c4
+	.global Func_08038408
+	.thumb_func
+Func_08038408:
 	overlay_veneer Func_080435fc

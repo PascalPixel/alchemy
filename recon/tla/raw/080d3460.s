@@ -65,7 +65,7 @@ Func_080d3460:
 	lsls r1, r1, #7
 	mov r0, r10
 	movs r2, #0
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	strb r5, [r7]
 .L_080d34f2:
 	ldr r3, [r6, #12]

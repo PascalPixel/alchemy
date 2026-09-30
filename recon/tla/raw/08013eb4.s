@@ -24,17 +24,17 @@ Func_08013eb4:
 .L_08013ed8:
 	.4byte 0x0000003e
 .L_08013edc:
-	.4byte Data_030011dc
+	.4byte gBlendBrighten
 .L_08013ee0:
-	.4byte Data_030011f4
+	.4byte gBlendLayers
 .L_08013ee4:
-	.4byte Data_0300113c
+	.4byte gBlendStartLevel
 .L_08013ee8:
-	.4byte Data_030011b0
+	.4byte gBlendTargetLevel
 .L_08013eec:
-	.4byte Data_03001178
+	.4byte gBlendDuration
 .L_08013ef0:
-	.4byte Data_0300110c
+	.4byte gBlendFramesLeft
 .L_08013ef4:
 	bx lr
 	.2byte 0x0000

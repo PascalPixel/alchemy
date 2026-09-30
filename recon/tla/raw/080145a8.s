@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080145a8
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_080145a8:
+Scheduler_AddOrUpdateCallback:
 	push {r5, r6, lr}
 	ldr r3, .L_08014600
 	ldr r4, .L_08014604
@@ -50,9 +50,9 @@ Func_080145a8:
 .L_080145fc:
 	.4byte 0x00000000
 .L_08014600:
-	.4byte Data_03001108
+	.4byte gSchedulerStatus
 .L_08014604:
-	.4byte Data_02003610
+	.4byte gSchedulerTaskTable
 .L_08014608:
 	.4byte 0x04000208
 .L_0801460c:

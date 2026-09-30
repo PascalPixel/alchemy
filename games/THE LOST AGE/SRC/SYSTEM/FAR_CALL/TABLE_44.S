@@ -9,8 +9,23 @@
 	.thumb_func
 Func_08118028:
 	overlay_veneer BattlePres_SetupTransitionScene
+	.global BattlePres_SetupTransitionAtPairMidpointFar
+	.thumb_func
+BattlePres_SetupTransitionAtPairMidpointFar:
 	overlay_veneer BattlePres_SetupTransitionAtPairMidpoint
+	.global Func_08118038
+	.thumb_func
+Func_08118038:
 	overlay_veneer Func_0812628c
+	.global Func_08118040
+	.thumb_func
+Func_08118040:
 	overlay_veneer Func_081263fc
+	.global Func_08118048
+	.thumb_func
+Func_08118048:
 	overlay_veneer Func_08126218
+	.global Func_08118050
+	.thumb_func
+Func_08118050:
 	overlay_veneer Func_08128194

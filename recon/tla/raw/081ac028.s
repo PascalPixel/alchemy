@@ -27,13 +27,13 @@ Func_081ac028:
 	bl Func_08014de4
 	adds r0, r5, #0
 	adds r0, #12
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	movs r3, #54
 	ldrsh r0, [r5, r3]
 	bl Func_08015068
 	movs r3, #52
 	ldrsh r0, [r5, r3]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r0, sp
 	str r6, [r0]
 	str r6, [r0, #4]

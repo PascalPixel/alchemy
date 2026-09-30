@@ -15,7 +15,7 @@ Func_0804b8b8:
 	mov r0, sp
 	adds r0, #36
 	str r0, [sp, #24]
-	bl BattleActor_CommitPlacementFar + 0x20
+	bl Func_08118138
 	movs r1, #0
 	movs r2, #1
 	str r1, [sp, #20]
@@ -64,7 +64,7 @@ Func_0804b8b8:
 	bne .L_0804b984
 	movs r0, #1
 	movs r1, #0
-	bl BattleActor_CommitPlacementFar + 0x28
+	bl Func_08118140
 	cmp r0, #0
 	bne .L_0804b942
 	movs r0, #114
@@ -116,7 +116,7 @@ Func_0804b8b8:
 	mov r1, r11
 	add r0, r11
 	subs r0, #1
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #20]
 	movs r0, #112
 	bl Audio_PlayCue
@@ -135,7 +135,7 @@ Func_0804b8b8:
 	ldr r0, [sp, #20]
 	mov r1, r11
 	adds r0, #1
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #20]
 	movs r0, #112
 	bl Audio_PlayCue
@@ -160,10 +160,10 @@ Func_0804b8b8:
 	lsls r3, r3, #16
 	mov r0, r10
 	asrs r7, r3, #16
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r3, [r5, #12]
 	ldr r4, [r5]
 	str r3, [r0, #12]
@@ -189,7 +189,7 @@ Func_0804b8b8:
 	mov r0, r8
 	strh r3, [r2, #2]
 	movs r1, #2
-	bl Func_08118088 + 0x58
+	bl BattlePres_SetActorModesFar
 	mov r0, r8
 	bl Func_080461c8
 .L_0804ba40:
@@ -227,7 +227,7 @@ Func_0804b8b8:
 	strh r3, [r1]
 	mov r0, r8
 	movs r1, #0
-	bl Func_08118088 + 0x58
+	bl BattlePres_SetActorModesFar
 	mov r0, r8
 	bl Func_080461c8
 	movs r3, #192

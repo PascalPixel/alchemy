@@ -25,6 +25,15 @@ Equipment_HasValueFar:
 	.thumb_func
 Func_080ad090:
 	overlay_veneer Func_080addf0
+	.global Func_080ad098
+	.thumb_func
+Func_080ad098:
 	overlay_veneer Func_080af794
+	.global Func_080ad0a0
+	.thumb_func
+Func_080ad0a0:
 	overlay_veneer Func_080af7ac
+	.global Func_080ad0a8
+	.thumb_func
+Func_080ad0a8:
 	overlay_veneer Func_080af8cc

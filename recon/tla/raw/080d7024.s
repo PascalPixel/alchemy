@@ -5,7 +5,7 @@
 Func_080d7024:
 	push {lr}
 	ldr r0, .L_080d7030
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	pop {pc}
 	.2byte 0x0000
 .L_080d7030:

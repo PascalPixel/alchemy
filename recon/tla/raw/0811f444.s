@@ -62,12 +62,12 @@ Func_0811f444:
 	movs r0, #4
 	bl WaitFrames
 	adds r0, r6, #0
-	bl Func_0811f3b8
+	bl BattleActor_RemoveFromLists
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Object_SetPositionAndResetMotionFar + 0x18
+	bl Map_RenderAllAnimatedTileFramesFar
 	adds r0, r6, #0
-	bl Func_0811bc64
+	bl ActivateBattleObjectSlot
 .L_0811f4d0:
 	add sp, #16
 	pop {r5, r6, r7, pc}

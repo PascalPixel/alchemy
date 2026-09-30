@@ -9,11 +9,29 @@
 	.thumb_func
 Func_080c8648:
 	overlay_veneer Func_080ca280
+	.global Func_080c8650
+	.thumb_func
+Func_080c8650:
 	overlay_veneer Func_080d1ee8
+	.global Func_080c8658
+	.thumb_func
+Func_080c8658:
 	overlay_veneer Func_080d1f0c
+	.global Func_080c8660
+	.thumb_func
+Func_080c8660:
 	overlay_veneer Func_080d1f18
+	.global Func_080c8668
+	.thumb_func
+Func_080c8668:
 	overlay_veneer Func_080d1f20
+	.global Func_080c8670
+	.thumb_func
+Func_080c8670:
 	overlay_veneer Func_080d2084
+	.global Func_080c8678
+	.thumb_func
+Func_080c8678:
 	overlay_veneer Func_080d20fc
 	.global Object_SetActionCallbackFar
 	.thumb_func

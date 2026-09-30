@@ -38,7 +38,7 @@ UiWork_InitializeWithResourceCounters:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_08038fa4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	bl Func_0803a448
 	pop {r5, r6, pc}
 	.2byte 0x0000

@@ -23,7 +23,7 @@ Func_0817d174:
 	str r1, [sp, #44]
 	ldr r3, [r3, #100]
 	str r3, [sp, #36]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, .L_0817d1cc
 	movs r2, #128
 	lsls r2, r2, #19
@@ -162,7 +162,7 @@ Func_0817d174:
 	str r3, [r2]
 	ldr r0, .L_0817d60c
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #0
 	str r2, [sp, #40]
 .L_0817d2c0:
@@ -182,7 +182,7 @@ Func_0817d174:
 .L_0817d2da:
 	ldr r1, [sp, #52]
 	ldr r0, [r1, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r2, [sp, #52]
 	ldr r5, [r0]
 	ldr r0, [r2, #8]
@@ -273,7 +273,7 @@ Func_0817d174:
 	ldr r2, [sp, #52]
 	mov r0, r9
 	ldr r1, [r2, #20]
-	bl Math_Mod
+	bl __modsi3
 	lsls r3, r0, #1
 	str r3, [sp, #28]
 	ldr r7, [sp, #52]
@@ -281,7 +281,7 @@ Func_0817d174:
 	adds r5, r3, #0
 	adds r5, #36
 	ldrsh r0, [r7, r5]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r2, [sp, #52]
 	ldr r7, [r0]
 	ldrsh r0, [r2, r5]
@@ -464,7 +464,7 @@ Func_0817d174:
 	cmp r1, #32
 	bne .L_0817d4c2
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r0, #145
 	bl Audio_PlayCue
 	ldr r5, [sp, #28]
@@ -654,7 +654,7 @@ Func_0817d174:
 	b .L_0817d2c0
 .L_0817d69c:
 	ldr r0, .L_0817d6c0
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

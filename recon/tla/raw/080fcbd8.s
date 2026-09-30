@@ -107,7 +107,7 @@ Func_080fcbd8:
 	movs r0, #0
 	bl Func_080facb4
 .L_080fcca6:
-	bl Func_08100700
+	bl ItemMenu_PosCategory
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #22
@@ -264,7 +264,7 @@ Func_080fcbd8:
 	movs r3, #0
 	ldrb r1, [r5]
 	ldrb r2, [r6]
-	bl Func_081007f8
+	bl BattleEffect_ApplyToTargets
 	ldrb r3, [r6]
 	mov r11, r0
 	cmp r3, #9
@@ -290,10 +290,10 @@ Func_080fcbd8:
 	ldrb r1, [r0, #9]
 	adds r0, r3, #0
 	negs r1, r1
-	bl Owner_AdjustSecondValueFar
+	bl Func_080ad0c8
 .L_080fce20:
 	ldrb r0, [r5]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	cmp r11, r9
 	beq .L_080fce66
 	ldrb r1, [r6]

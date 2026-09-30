@@ -19,13 +19,13 @@ Func_080dbb40:
 	movs r3, #0
 	strh r3, [r2]
 	ldr r0, .L_080dbb74
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r2, #254
 	lsls r2, r2, #3
 	adds r3, r5, r2
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_080dbb72:
 	pop {r5, pc}
 .L_080dbb74:

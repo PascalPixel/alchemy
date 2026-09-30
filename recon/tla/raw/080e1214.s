@@ -110,7 +110,7 @@ Func_080e1214:
 .L_080e12f4:
 	adds r0, r5, #0
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	bne .L_080e1308
 	mov r2, r8
@@ -153,7 +153,7 @@ Func_080e1214:
 	adds r3, r1, r2
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, .L_080e1378
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar

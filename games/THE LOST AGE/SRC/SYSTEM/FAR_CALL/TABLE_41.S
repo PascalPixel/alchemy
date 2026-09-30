@@ -9,6 +9,9 @@
 	.thumb_func
 Func_08108030:
 	overlay_veneer Func_08108948
+	.global Func_08108038
+	.thumb_func
+Func_08108038:
 	overlay_veneer Func_081089e4
 	.global Func_08108040
 	.thumb_func
@@ -18,8 +21,17 @@ Func_08108040:
 	.thumb_func
 Func_08108048:
 	overlay_veneer Func_08108aa8
+	.global Func_08108050
+	.thumb_func
+Func_08108050:
 	overlay_veneer Func_0810875c
+	.global Unnamed_080b0840Far
+	.thumb_func
+Unnamed_080b0840Far:
 	overlay_veneer Func_081088d8
+	.global Func_08108060
+	.thumb_func
+Func_08108060:
 	overlay_veneer Func_08108928
 	.global Func_08108068
 	.thumb_func

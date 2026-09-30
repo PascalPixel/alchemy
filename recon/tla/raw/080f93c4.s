@@ -41,7 +41,7 @@ Func_080f93c4:
 	lsls r0, r0, #1
 	bl GameFlag_SetBit
 	ldr r0, .L_080f9444
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_080f9414:
 	movs r3, #192
 	lsls r3, r3, #18

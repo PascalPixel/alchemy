@@ -89,4 +89,4 @@ Func_080dfb88:
 .L_080dfc34:
 	.4byte IwramMulQ16
 .L_080dfc38:
-	.4byte Data_080f0e54
+	.4byte BattleFx_CommonParticleScript

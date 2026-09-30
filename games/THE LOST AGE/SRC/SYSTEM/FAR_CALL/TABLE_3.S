@@ -9,7 +9,13 @@
 	.thumb_func
 Func_08020180:
 	overlay_veneer Func_0802b63c
+	.global Func_08020188
+	.thumb_func
+Func_08020188:
 	overlay_veneer Func_0802b700
+	.global Func_08020190
+	.thumb_func
+Func_08020190:
 	overlay_veneer Func_0802b71c
 	.global Func_08020198
 	.thumb_func

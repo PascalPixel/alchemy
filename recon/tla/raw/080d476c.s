@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d476c
+	.global BattleFx_CopyLinkedObjectPosition
 	.thumb_func
-Func_080d476c:
+BattleFx_CopyLinkedObjectPosition:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	ldr r6, [r5, #104]
@@ -18,7 +18,7 @@ Func_080d476c:
 	adds r3, #102
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_080cccb8
+	bl BattleAction_FindDescriptor
 	movs r3, #0
 	ldrsh r0, [r0, r3]
 	bl Func_08020000

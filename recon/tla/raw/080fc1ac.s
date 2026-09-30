@@ -101,7 +101,7 @@ Func_080fc1ac:
 	adds r0, r6, #2
 	movs r1, #2
 	mov r8, r3
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r0, #0
 .L_080fc288:
 	ldr r5, .L_080fc2dc

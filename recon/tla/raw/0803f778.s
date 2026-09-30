@@ -28,7 +28,7 @@ Func_0803f778:
 	.4byte .L_0803f7e0
 	.4byte .L_0803f7ee
 .L_0803f7b4:
-	bl Func_080c82a8 + 0x8
+	bl Func_080c82b0
 	cmp r0, #0
 	bne .L_0803f7be
 	movs r0, #255
@@ -39,7 +39,7 @@ Func_0803f778:
 	strh r0, [r3]
 	b .L_0803f7fa
 .L_0803f7c8:
-	bl Resource_FarCall007 + 0x8
+	bl Func_080f8008
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3
@@ -51,7 +51,7 @@ Func_0803f778:
 	beq .L_0803f7fa
 	b .L_0803f782
 .L_0803f7e0:
-	bl Resource_FarCall007
+	bl Func_080f8000
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2

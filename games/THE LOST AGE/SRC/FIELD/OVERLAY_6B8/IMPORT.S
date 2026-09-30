@@ -27,7 +27,7 @@
 	overlay_veneer UiWork_IsCompleteFar
 	overlay_veneer Func_080380f8
 	overlay_veneer UiText_DrawQuantity
-	overlay_veneer Func_08038140
+	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Func_080382f8
 	overlay_veneer Func_08038318
 	overlay_veneer Owner_RecalculateStatsFar

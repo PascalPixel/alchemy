@@ -22,14 +22,14 @@ Func_080f8f9c:
 	b .L_080f90f6
 .L_080f8fbe:
 	ldr r0, .L_080f9100
-	bl Func_080383e8 + 0x10
+	bl Link_DrawShiftedTilePairFar
 	adds r1, r7, #0
 	mov r0, r8
-	bl __divsi3
+	bl Math_Div
 	adds r1, r7, #0
 	mov r9, r0
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	beq .L_080f8fde
 	movs r3, #1
@@ -128,7 +128,7 @@ Func_080f8f9c:
 	ble .L_080f908e
 	str r1, [r6]
 .L_080f908e:
-	bl Func_080138a8
+	bl Runtime_SetMainState19
 	movs r0, #1
 	b .L_080f90f6
 .L_080f9096:

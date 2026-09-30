@@ -127,7 +127,7 @@ BattlePresentation_WaitForAdvance:
 	adds r3, #6
 	strb r3, [r7, #4]
 	adds r0, r7, #0
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r1, .L_0812005c
 	movs r2, #2
 	ldr r3, [r1]
@@ -158,7 +158,7 @@ BattlePresentation_WaitForAdvance:
 	movs r0, #111
 	bl Audio_PlayCue
 	mov r0, r11
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #1
 	bl WaitFrames
 	add sp, #16

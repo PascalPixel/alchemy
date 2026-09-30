@@ -16,7 +16,7 @@ Func_080eb298:
 	str r3, [r5, #4]
 	ldr r3, [r1, #8]
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [r5]
 	adds r0, r6, #0
 	str r3, [r6, #12]

@@ -111,7 +111,7 @@ Func_0811b598:
 	cmp r3, #0
 	beq .L_0811b65c
 	adds r0, r7, #0
-	bl ResourceMetadata_RegisterFar + 0x8
+	bl Func_08020060
 	movs r3, #0
 	str r3, [r5, #32]
 .L_0811b65c:

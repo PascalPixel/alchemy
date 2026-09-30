@@ -4,5 +4,5 @@
 	.thumb_func
 UiTextResource_Release:
 	push {lr}
-	bl Func_08014274
+	bl Resource_ResetEntry
 	pop {pc}

@@ -14,7 +14,7 @@ Func_080cda84:
 	ldr r1, [r5, #8]
 	ldr r0, [r5]
 	ldr r3, [r6, #20]
-	bl Func_08020308 + 0x8
+	bl Func_08020310
 	adds r2, r0, #0
 	cmp r0, #0
 	bge .L_080cdaa8

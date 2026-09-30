@@ -44,7 +44,7 @@ Ui_BuildPairedPatternsToSlot:
 	mov r2, r8
 	strh r5, [r2]
 	movs r1, #0
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	ldr r3, .L_0803d590
 	lsls r6, r6, #2
 	ldr r3, [r3, r6]
@@ -56,7 +56,7 @@ Ui_BuildPairedPatternsToSlot:
 	adds r0, r7, #0
 	strh r5, [r2]
 	movs r1, #1
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	ldr r3, [sp, #36]
 	cmp r3, #0
 	bne .L_0803d564
@@ -85,4 +85,4 @@ Ui_BuildPairedPatternsToSlot:
 .L_0803d58c:
 	.4byte Data_0804e684
 .L_0803d590:
-	.4byte Data_0804ea74
+	.4byte UiIcon_OverlayPointerTable

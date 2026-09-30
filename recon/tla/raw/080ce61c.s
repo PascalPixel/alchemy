@@ -186,7 +186,7 @@ Func_080ce61c:
 	movs r0, #1
 	bl Func_080d295c
 	adds r5, r0, #0
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	movs r0, #0
 	cmp r5, #0
 	beq .L_080ce7b8
@@ -361,7 +361,7 @@ Func_080ce61c:
 .L_080ce918:
 	negs r1, r1
 	adds r0, r7, #0
-	bl Owner_AdjustSecondValueFar
+	bl Func_080ad0c8
 .L_080ce920:
 	ldr r2, [sp, #4]
 	cmp r2, #23

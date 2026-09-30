@@ -19,7 +19,7 @@ Func_080fb638:
 	adds r5, r0, #0
 	adds r0, r6, #0
 	negs r7, r7
-	bl Func_080c8508 + 0x8
+	bl BattleFx_HasTriggerFar
 	cmp r0, #0
 	beq .L_080fb666
 	movs r0, #0
@@ -43,7 +43,7 @@ Func_080fb638:
 	beq .L_080fb696
 	mov r0, r10
 	adds r1, r6, #0
-	bl Djinn_IsActiveFar + 0x10
+	bl Item_CanOwnerEquip
 	cmp r0, #0
 	beq .L_080fb696
 .L_080fb694:

@@ -63,7 +63,7 @@
 	overlay_veneer Inventory_AddItemFar
 	overlay_veneer PartyInventory_RemoveFar
 	overlay_veneer Func_080ad048
-	overlay_veneer Func_080ad0f0
+	overlay_veneer Party_CountActiveOwnersFar
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
@@ -105,9 +105,9 @@
 	overlay_veneer Func_080c8378
 	overlay_veneer Func_080c8380
 	overlay_veneer Func_080c8390
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer ObjectTable_GetFar
 	overlay_veneer Func_080c8480
 	overlay_veneer Func_080c84d8

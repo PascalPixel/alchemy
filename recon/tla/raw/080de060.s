@@ -35,7 +35,7 @@ Func_080de060:
 	lsrs r1, r1, #16
 	lsls r0, r0, #13
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	mov r1, r8
 	str r3, [r7, #12]
@@ -53,7 +53,7 @@ Func_080de060:
 	cmp r6, #1
 	bne .L_080de0d6
 	adds r0, r7, #0
-	bl Func_080ebe70
+	bl BattleFx_HasReachedTarget
 	cmp r0, #0
 	bne .L_080de14a
 	mov r2, r8
@@ -81,15 +81,15 @@ Func_080de060:
 	str r3, [r5, #8]
 	ldrh r1, [r2]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r5, #0
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	bl Random16
 	adds r1, r0, #0
 	movs r0, #128
 	adds r2, r5, #0
 	lsls r0, r0, #11
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	adds r2, r7, #0
 	str r3, [r7, #12]
@@ -111,11 +111,11 @@ Func_080de060:
 	cmp r6, #3
 	bne .L_080de14a
 	adds r0, r7, #0
-	bl Func_080ebe70
+	bl BattleFx_HasReachedTarget
 	cmp r0, #0
 	bne .L_080de14a
 	adds r0, r7, #0
-	bl Func_080ebf68
+	bl BattleFx_ClearOwnedSlot
 .L_080de14a:
 	add sp, #12
 	pop {r3, r5}

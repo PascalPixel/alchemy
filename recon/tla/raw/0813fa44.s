@@ -30,7 +30,7 @@ Func_0813fa44:
 	subs r2, r2, r3
 	adds r1, #192
 	movs r3, #128
-	bl Func_08118088 + 0x68
+	bl ColorBuffer_ScaleFar
 	ldr r3, [r5, #8]
 	subs r3, #1
 	str r3, [r5, #8]

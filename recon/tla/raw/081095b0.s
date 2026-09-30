@@ -18,7 +18,7 @@ Func_081095b0:
 	bl RenderOutput_PrepareForRedrawFar
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl PartyInventory_AddFar + 0x8
+	bl Inventory_FindFar
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2

@@ -25,7 +25,7 @@ Func_08040d70:
 	beq .L_08040de8
 	adds r0, r5, #5
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r8
 	adds r5, r0, #0
 	movs r0, #12

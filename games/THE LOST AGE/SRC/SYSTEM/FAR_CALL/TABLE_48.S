@@ -13,7 +13,19 @@ Func_081c0040:
 	.thumb_func
 Audio_Check:
 	overlay_veneer Func_081c0fd0
+	.global Func_081c0050
+	.thumb_func
+Func_081c0050:
 	overlay_veneer Func_081c1014
+	.global Func_081c0058
+	.thumb_func
+Func_081c0058:
 	overlay_veneer Func_081c0fc0
+	.global Func_081c0060
+	.thumb_func
+Func_081c0060:
 	overlay_veneer Func_081c0fc8
+	.global AudioCommand_UpdateToggleMaskFar
+	.thumb_func
+AudioCommand_UpdateToggleMaskFar:
 	overlay_veneer AudioCommand_UpdateToggleMask

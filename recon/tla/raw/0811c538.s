@@ -43,7 +43,7 @@ Func_0811c538:
 	adds r0, r1, #0
 	movs r2, #0
 	movs r3, #0
-	bl Func_08126548
+	bl BattleCamera_SetRange
 .L_0811c588:
 	add sp, #4
 	pop {pc}

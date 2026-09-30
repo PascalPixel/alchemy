@@ -573,7 +573,7 @@ Func_081b34a8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #104
-	bl Resource_FarCall00C
+	bl Func_08138000
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
@@ -584,7 +584,7 @@ Func_081b34a8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #188
-	bl Resource_FarCall00C
+	bl Func_08138000
 	adds r5, #188
 	ldr r3, [r5]
 	mov r7, sp
@@ -712,13 +712,13 @@ Func_081b34a8:
 	lsls r1, r1, #3
 	lsls r5, r5, #4
 	ldr r0, .L_081b3c6c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	adds r1, r5, #0
 	ldr r0, .L_081b3c70
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r0, .L_081b3c74
 	adds r1, r5, #0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r7, [sp, #20]
 	movs r2, #0
 	ldr r3, [r7]
@@ -753,7 +753,7 @@ Func_081b34a8:
 .L_081b3a8a:
 	mov r0, r11
 	movs r1, #80
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #15
 	bgt .L_081b3a9e
 	ldr r0, .L_081b3c7c
@@ -887,7 +887,7 @@ Func_081b34a8:
 	blt .L_081b3bd6
 	movs r1, #12
 	asrs r5, r3, #16
-	bl __divsi3
+	bl Math_Div
 	adds r0, #1
 	ldr r1, .L_081b3c9c
 	lsls r4, r0, #1
@@ -1189,11 +1189,11 @@ Func_081b34a8:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_081b3e28
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081b3e2c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081b3e30
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #180
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #96

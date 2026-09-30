@@ -18,7 +18,7 @@ Func_0811c3bc:
 	mov r9, r1
 	movs r0, #1
 	mov r1, r10
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	movs r7, #0
 	mov r8, r0
 .L_0811c3e2:
@@ -60,7 +60,7 @@ Func_0811c3bc:
 .L_0811c42a:
 	mov r1, r10
 	movs r0, #2
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	ldr r2, [sp, #12]
 	mov r1, r8
 	lsls r3, r1, #4
@@ -68,7 +68,7 @@ Func_0811c3bc:
 	movs r1, #0
 	movs r0, #1
 	adds r6, r2, r3
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	str r0, [sp, #8]
 	cmp r5, #0
 	ble .L_0811c4a4

@@ -125,7 +125,7 @@ Func_080e2ec0:
 	ldr r1, [r1]
 	adds r2, r5, #0
 	str r4, [sp, #0]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	ldr r4, [sp, #0]
 	str r3, [r4, #8]

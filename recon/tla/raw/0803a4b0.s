@@ -54,13 +54,13 @@ Func_0803a4b0:
 	movs r1, #144
 	ldr r0, .L_0803a528
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_0803a526
 .L_0803a51c:
 	movs r1, #144
 	ldr r0, .L_0803a52c
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_0803a526:
 	pop {r5, r6, pc}
 .L_0803a528:

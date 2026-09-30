@@ -1,15 +1,15 @@
 .syntax unified
 	.thumb
-	.global Func_080ebf68
+	.global BattleFx_ClearOwnedSlot
 	.thumb_func
-Func_080ebf68:
+BattleFx_ClearOwnedSlot:
 	push {r5, lr}
 	adds r5, r0, #0
 	ldr r0, [r5]
 	sub sp, #4
 	cmp r0, #0
 	beq .L_080ebf78
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 .L_080ebf78:
 	mov r0, sp
 	movs r3, #0

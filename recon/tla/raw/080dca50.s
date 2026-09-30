@@ -9,7 +9,7 @@ Func_080dca50:
 	ldr r5, [r3, #88]
 	bl Func_080dcadc
 	ldr r0, .L_080dca80
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r3, #164
 	lsls r3, r3, #2
 	adds r5, r5, r3

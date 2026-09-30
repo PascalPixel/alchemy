@@ -11,7 +11,7 @@ Func_080e9db4:
 	bl Object_GetById
 	adds r5, r0, #0
 	ldr r0, .L_080e9e84
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #16]
@@ -96,7 +96,7 @@ Func_080e9db4:
 	adds r3, r7, r2
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	pop {r5, r6, r7, pc}

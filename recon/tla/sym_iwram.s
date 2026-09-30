@@ -10,11 +10,11 @@ gHeapSlots:
 	.global gFrameTick
 gFrameTick:
 	.space 0x00000008
-	.global Data_03001108
-Data_03001108:
+	.global gSchedulerStatus
+gSchedulerStatus:
 	.space 0x00000004
-	.global Data_0300110c
-Data_0300110c:
+	.global gBlendFramesLeft
+gBlendFramesLeft:
 	.space 0x00000004
 	.global Data_03001110
 Data_03001110:
@@ -25,8 +25,8 @@ Data_03001120:
 	.global Data_03001138
 Data_03001138:
 	.space 0x00000004
-	.global Data_0300113c
-Data_0300113c:
+	.global gBlendStartLevel
+gBlendStartLevel:
 	.space 0x00000004
 	.global Data_03001140
 Data_03001140:
@@ -40,8 +40,8 @@ gInput:
 	.global gDecodeFillByte
 gDecodeFillByte:
 	.space 0x00000004
-	.global Data_03001178
-Data_03001178:
+	.global gBlendDuration
+gBlendDuration:
 	.space 0x00000004
 	.global Data_0300117c
 Data_0300117c:
@@ -55,8 +55,8 @@ Data_03001184:
 	.global gOamBucketMasks
 gOamBucketMasks:
 	.space 0x00000020
-	.global Data_030011b0
-Data_030011b0:
+	.global gBlendTargetLevel
+gBlendTargetLevel:
 	.space 0x00000008
 	.global Data_030011b8
 Data_030011b8:
@@ -82,8 +82,8 @@ Data_030011d4:
 	.global Data_030011d8
 Data_030011d8:
 	.space 0x00000004
-	.global Data_030011dc
-Data_030011dc:
+	.global gBlendBrighten
+gBlendBrighten:
 	.space 0x00000004
 	.global gCameraSceneParameters
 gCameraSceneParameters:
@@ -94,8 +94,8 @@ Data_030011ec:
 	.global Data_030011f0
 Data_030011f0:
 	.space 0x00000004
-	.global Data_030011f4
-Data_030011f4:
+	.global gBlendLayers
+gBlendLayers:
 	.space 0x00000004
 	.global Data_030011f8
 Data_030011f8:
@@ -121,8 +121,8 @@ Data_0300121c:
 	.global Data_03001220
 Data_03001220:
 	.space 0x00000008
-	.global Data_03001228
-Data_03001228:
+	.global gSchedulerTaskCount
+gSchedulerTaskCount:
 	.space 0x00000004
 	.global Data_0300122c
 Data_0300122c:
@@ -142,11 +142,11 @@ Data_03001244:
 	.global gOamUsage
 gOamUsage:
 	.space 0x00000004
-	.global Data_0300124c
-Data_0300124c:
+	.global gLinkStatus
+gLinkStatus:
 	.space 0x00000004
-	.global Data_03001250
-Data_03001250:
+	.global gNumberTextBuffer
+gNumberTextBuffer:
 	.space 0x00000008
 	.global Data_03001258
 Data_03001258:

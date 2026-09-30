@@ -8,8 +8,8 @@ Func_080fa478:
 	lsls r3, r3, #18
 	adds r3, #220
 	ldr r5, [r3]
-	bl Func_0810508c
-	bl Func_080fa458
+	bl Menu_ReleaseEntryObjects
+	bl ItemMenu_HideAllIcons
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #184

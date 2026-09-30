@@ -98,12 +98,12 @@ Func_0804e1d8:
 	movs r1, #12
 	adds r0, #12
 	str r2, [sp, #4]
-	bl Math_Mod
+	bl __modsi3
 	mov r11, r0
 	mov r0, r9
 	movs r1, #3
 	adds r0, #3
-	bl Math_Mod
+	bl __modsi3
 	movs r1, #2
 	mov r9, r0
 	mov r0, r10

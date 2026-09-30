@@ -45,7 +45,7 @@ Func_0804d7fc:
 	lsls r1, r1, #3
 	adds r1, #118
 	ldr r0, .L_0804d958
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #255
 	adds r2, r7, #0
 	lsls r3, r3, #8
@@ -94,7 +94,7 @@ Func_0804d7fc:
 	lsls r1, r1, #3
 	adds r1, #118
 	ldr r0, .L_0804d960
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #255
 	adds r2, r7, #0
 	lsls r3, r3, #8
@@ -131,11 +131,11 @@ Func_0804d7fc:
 	cmp r3, #0
 	beq .L_0804d91e
 	ldr r0, .L_0804d958
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	b .L_0804d924
 .L_0804d91e:
 	ldr r0, .L_0804d960
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_0804d924:
 	ldr r0, [r6]
 	bl RenderOutput_PrepareForRedraw

@@ -854,7 +854,7 @@ Func_080e781c:
 	lsls	r0, r0, #7
 	adds	r0, #255
 	movs	r1, #0
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r0, #100
 	bl	0x080d17ac
 .L_080e7ed6:

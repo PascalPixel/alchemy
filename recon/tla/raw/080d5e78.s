@@ -1298,7 +1298,7 @@ Func_080d5e78:
 .L_080d68b2:
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r2, #168
 	lsls	r2, r2, #5
 	adds	r0, r6, r2
@@ -1321,7 +1321,7 @@ Func_080d5e78:
 	lsls	r3, r3, #4
 	adds	r0, r6, r3
 	movs	r1, #1
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r1, #168
 	lsls	r1, r1, #6
 	adds	r1, #1

@@ -51,7 +51,7 @@ Func_080d7304:
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	movs	r3, #12
-	bl	0x080d0c50
+	bl	Func_080d0c50
 	movs	r3, #224
 	lsls	r3, r3, #4
 	add	r8, r3

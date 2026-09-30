@@ -479,7 +479,7 @@ Func_080d0520:
 	movs	r0, #128
 	lsls	r0, r0, #8
 	movs	r1, #0
-	bl	0x080d170c
+	bl	Func_080d170c
 	mov	r0, sl
 	bl	0x080d17ac
 	b.n	.L_080d0718

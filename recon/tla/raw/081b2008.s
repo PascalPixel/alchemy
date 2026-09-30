@@ -1,14 +1,8 @@
 .syntax unified
 	.thumb
-	.global Resource_FarCall00E
-Resource_FarCall00E:
-	.global Func_081b2000
+	.global Func_081b2008
 	.thumb_func
-Func_081b2000:
-	ldr	r4, [pc, #0]
-	bx	r4
-	.2byte 0x2009
-	.2byte 0x081b
+Func_081b2008:
 	push	{lr}
 	ldr	r3, [pc, #32]
 	movs	r2, #128

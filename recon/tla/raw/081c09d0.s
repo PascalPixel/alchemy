@@ -326,5 +326,8 @@ Func_081c09d0:
 	.4byte 0x03007ff0
 	.2byte 0x6d53
 	.2byte 0x6873
+	.global Func_081c0c18
+	.thumb_func
+Func_081c0c18:
 	bx	lr
 	.2byte 0x0000

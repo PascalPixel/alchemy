@@ -200,6 +200,9 @@ Func_081c117c:
 	movs	r0, r0
 	.2byte 0x5830
 	.2byte 0x0200
+	.global Func_081c1188
+	.thumb_func
+Func_081c1188:
 	movs	r3, #7
 	ands	r3, r0
 	movs	r2, #1

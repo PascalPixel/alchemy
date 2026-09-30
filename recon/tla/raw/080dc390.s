@@ -63,7 +63,7 @@ Func_080dc390:
 .L_080dc400:
 	adds	r0, r5, #0
 	subs	r6, #1
-	bl	0x080ebc30
+	bl	Func_080ebc30
 	adds	r5, #72
 	cmp	r6, #0
 	bge.n	.L_080dc400

@@ -506,6 +506,9 @@ Func_080eb960:
 	pop	{r5, r6, r7, pc}
 	.2byte 0xf000
 	.2byte 0xffff
+	.global Func_080ebc30
+	.thumb_func
+Func_080ebc30:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	adds	r6, r5, #0
@@ -800,6 +803,9 @@ Func_080eb960:
 	.4byte 0x030002d4
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_080ebe70
+	.thumb_func
+Func_080ebe70:
 	push	{lr}
 	adds	r3, r0, #0
 	adds	r3, #65

@@ -1204,7 +1204,7 @@ Func_080e03c4:
 	cmp	r3, #1
 	bne.n	.L_080e0dae
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080e0dc4
 	mov	r2, sl
@@ -1217,7 +1217,7 @@ Func_080e03c4:
 	cmp	r3, #2
 	bne.n	.L_080e0dc4
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080e0dc4
 	adds	r0, r7, #0
@@ -1321,7 +1321,7 @@ Func_080e03c4:
 	ldr	r3, [r5, #8]
 	adds	r0, r6, #0
 	lsls	r1, r1, #2
-	bl	0x080ebec8
+	bl	Func_080ebec8
 	adds	r0, r6, #0
 	ldr	r1, [pc, #132]
 	bl	Func_080ebeb4

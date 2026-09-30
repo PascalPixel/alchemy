@@ -18,6 +18,8 @@
 @ credit: handwritten — relocated self-modifying ARM kernel 8 of the battle-effect bank
 .syntax unified
 	.thumb
+	.global Data_0813a924
+Data_0813a924:
 	.global Func_0813a924
 	.thumb_func
 Func_0813a924:

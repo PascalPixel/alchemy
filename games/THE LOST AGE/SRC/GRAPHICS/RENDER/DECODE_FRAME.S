@@ -17,6 +17,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, text decoder (instance 1)
 .syntax unified
 	.thumb
+	.global Render_DecodeFrameCode
+Render_DecodeFrameCode:
 	.global Render_DecodeFrame
 	.thumb_func
 Render_DecodeFrame:

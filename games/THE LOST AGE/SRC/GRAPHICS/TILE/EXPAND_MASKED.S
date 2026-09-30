@@ -9,6 +9,8 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, masked tile expander
 .syntax unified
 	.thumb
+	.global Tile_ExpandMaskedCode
+Tile_ExpandMaskedCode:
 	.global Tile_ExpandMasked
 	.thumb_func
 Tile_ExpandMasked:

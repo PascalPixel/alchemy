@@ -9,6 +9,8 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, opaque tile expander
 .syntax unified
 	.thumb
+	.global Tile_ExpandOpaqueCode
+Tile_ExpandOpaqueCode:
 	.global Tile_ExpandOpaque
 	.thumb_func
 Tile_ExpandOpaque:

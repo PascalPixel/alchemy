@@ -2,7 +2,6 @@
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 
-#if defined(TBS_EDITION_EN)
 /* main:0800c62c ObjectSystem_UpdateCamera - exact (592 of 592 bytes,
    2026-09-30 helper hF).
 
@@ -221,7 +220,6 @@ void ObjectSystem_UpdateCamera(void)
     }
     Runtime_ReleaseHeapBlock(52);
 }
-#endif /* TBS_EDITION_EN */
 
 extern const s32 Camera_FixedViewMatrix[];
 

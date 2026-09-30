@@ -1,9 +1,6 @@
 #include "TYPES.H"
 #include "VRAM_BLOCK.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 extern u8 ResourceBlockOwners[512];
 
 /* Finds the first run of SIZE / 64 free VRAM blocks, marks them as owned by
@@ -51,7 +48,6 @@ found:
 done:
     return result;
 }
-#endif
 
 extern u8 ResourceBlockOwners[];
 

@@ -6,6 +6,8 @@ extern void *gMenuWork;
 extern u8 MsgItemPlainName;
 
 void RenderOutput_RedrawSavedRectFar(s32);
+void RenderOutput_ClearListFar(s32);
+void UiText_DrawMessageAt(s32, s32, s32, s32);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
@@ -22,14 +24,22 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     combined += *(s32 *)(state + 16);
     *(s32 *)(state + 24) = combined;
 
+#if defined(TBS_EDITION_JA)
+    RenderOutput_ClearListFar(*(s32 *)(menu + 44));
+#else
     RenderOutput_RedrawSavedRectFar(*(s32 *)(menu + 44));
+#endif
     WaitFrames(1);
 
     combined = *(s32 *)(state + 24);
     off = combined * 2 + 456;
     if (*(u16 *)((char *)menu + off) != 0) {
         s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&MsgItemPlainName;
+#if defined(TBS_EDITION_JA)
+        UiText_DrawMessageAt(masked, *(s32 *)(menu + 44), 0, 0);
+#else
         UiText_DrawCharacterAtOffsetFar(masked, *(s32 *)(menu + 44), 0, 0);
+#endif
     }
 
     row = 0;

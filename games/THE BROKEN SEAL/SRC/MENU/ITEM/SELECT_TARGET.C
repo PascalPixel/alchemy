@@ -66,6 +66,7 @@ extern char MsgNoneInStock;
 
 void UiWindow_SetBounds(s32 window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_ClearListFar(s32 window);
 void *Owner_GetStateFar(s32 owner);
 s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
@@ -77,6 +78,7 @@ void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 he
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 s32 ItemMenu_Count(s32 owner);
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target);
 s32 ItemMenu_IsSpecial(s32 item);
@@ -152,8 +154,16 @@ s8 ItemMenu_SelectTarget(s32 mode)
                 else
                     Menu_DrawOwnerStatusPanel(menu->status_window, menu->owner_ids[selection], menu->selected_slot, 0);
                 if (!GameFlag_TestFar(0x151) && !shown) {
+#if defined(TBS_EDITION_JA)
+                    RenderOutput_ClearListFar(menu->info_window);
+#else
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
+#endif
+#if defined(TBS_EDITION_JA)
+                    UiText_DrawMessageAt((menu->selected_item & 0x1ff) + (s32)&MsgItemPlainName, menu->info_window, 0, 0);
+#else
                     UiText_DrawCharacterAtOffsetFar((menu->selected_item & 0x1ff) + (s32)&MsgItemPlainName, menu->info_window, 0, 0);
+#endif
                     shown = 1;
                 } else {
                     GameFlag_ClearBitFar(0x151);

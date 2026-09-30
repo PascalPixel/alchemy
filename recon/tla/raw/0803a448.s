@@ -130,6 +130,9 @@ Func_0803a448:
 	str	r3, [r5, #0]
 .L_0803a54a:
 	pop	{r5, pc}
+	.global Func_0803a54c
+	.thumb_func
+Func_0803a54c:
 .L_0803a54c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -203,6 +206,9 @@ Func_0803a448:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
+	.global Func_0803a5e0
+	.thumb_func
+Func_0803a5e0:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	b.n	.L_0803a5ec
@@ -214,7 +220,7 @@ Func_0803a448:
 	cmp	r0, #0
 	beq.n	.L_0803a5e6
 	adds	r0, r5, #0
-	bl	.L_0803a54c
+	bl	Func_0803a54c
 	b.n	.L_0803a602
 .L_0803a5fc:
 	movs	r0, #1

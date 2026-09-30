@@ -100,7 +100,7 @@ Func_080e4730:
 	ldr	r1, [r3, #8]
 	mov	r0, r8
 	ldr	r3, [r3, #16]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	ldr	r6, [pc, #528]
 	movs	r0, #133
 	lsls	r0, r0, #2
@@ -484,7 +484,7 @@ Func_080e4730:
 	ldr	r2, [r5, #12]
 	ldr	r3, [r5, #16]
 	mov	r0, r8
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	ldr	r6, [sp, #16]
 	movs	r3, #0
 	movs	r0, #2

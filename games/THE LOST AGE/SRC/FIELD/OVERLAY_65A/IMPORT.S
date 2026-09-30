@@ -10,7 +10,7 @@
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
-	overlay_veneer Func_080200e8
+	overlay_veneer Object_SetPositionAndResetMotionFar
 	overlay_veneer Object_SetPosition
 	overlay_veneer Object_CommitPosition
 	overlay_veneer Func_08020178

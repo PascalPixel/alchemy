@@ -20,7 +20,7 @@ Func_080d3164:
 	adds	r3, r7, #0
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	mov	r3, r8
 	strh	r3, [r5, #6]
 	adds	r3, r5, #0
@@ -61,7 +61,7 @@ Func_080d3164:
 	mov	r3, r8
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	adds	r3, r5, #0
 	adds	r3, #85
 	ldrb	r2, [r3, #0]
@@ -100,7 +100,7 @@ Func_080d3164:
 	ldr	r1, [r5, #8]
 	ldr	r2, [r5, #12]
 	adds	r0, r6, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	ldr	r3, [r5, #20]
 	str	r3, [r6, #20]
 .L_080d323e:

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080200e8
+	.global Object_SetPositionAndResetMotionFar
 	.thumb_func
-Func_080200e8:
+Object_SetPositionAndResetMotionFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x471d

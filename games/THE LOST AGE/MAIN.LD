@@ -807,6 +807,8 @@ SECTIONS
         "*/recon/tla/raw/080debd8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080df8e0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080dfb0c.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SHRINK_OBJECT_SCALE_UNTIL_HALF.o"(.text)
+        "*/recon/tla/raw/080dfcf8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080e0020.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080e03c4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080e1f2c.o"(.text .rodata .data .padding)

@@ -12,7 +12,7 @@
 	overlay_veneer Object_SetMode
 	overlay_veneer Object_SetCallback
 	overlay_veneer Func_080200c0
-	overlay_veneer Func_080200e8
+	overlay_veneer Object_SetPositionAndResetMotionFar
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_080c8010
 	overlay_veneer Func_080c8018

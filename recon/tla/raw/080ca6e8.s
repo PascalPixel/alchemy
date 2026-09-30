@@ -217,7 +217,7 @@ Func_080ca6e8:
 	ldr	r2, [r0, #12]
 	ldr	r3, [r0, #16]
 	adds	r0, r6, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 .L_080ca892:
 	cmp	r6, #0
 	beq.n	.L_080ca98a

@@ -990,7 +990,7 @@ SECTIONS
         "*/recon/tla/raw/081197d0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811a468.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811a484.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/0811a490.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/CLASS_IS_VALID.o"(.text)
         "*/recon/tla/raw/0811a4e0.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/PARTY/GET_STEP_PAIR.o"(.text)
         "*/recon/tla/raw/0811b180.o"(.text .rodata .data .padding)

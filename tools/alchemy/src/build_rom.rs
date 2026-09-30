@@ -812,7 +812,7 @@ fn build_graphics_files(
         let png = fs::read(root.join(&image))
             .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
         let encoded = ags::resource::build_file_with(&built, &png, &|name| {
-            let path = root.join(sibling_path(&image, name)?);
+            let path = root.join(ags::resource::sibling_path(&image, name)?);
             fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
         })?;
         let path = output.join(&built);
@@ -824,27 +824,6 @@ fn build_graphics_files(
         fs::write(&path, encoded).map_err(|error| error.to_string())?;
     }
     Ok(())
-}
-
-/// Where a recipe's second input `name` lies: beside its first input
-/// `image`, or for `COMMON/NAME` in games/COMMON's folder of the same path
-/// under SRC, where a picture both games draw alike lives once.
-fn sibling_path(image: &Path, name: &str) -> Result<PathBuf, String> {
-    let Some(shared) = name.strip_prefix("COMMON/") else {
-        return Ok(image.with_file_name(name));
-    };
-    let folder = image
-        .parent()
-        .and_then(|folder| {
-            let text = folder.to_str()?;
-            let at = text.find("/SRC/")?;
-            Some(Path::new("games/COMMON").join(&text[at + 1..]))
-        })
-        .ok_or_else(|| format!("{} lies under no SRC", image.display()))?;
-    if shared.is_empty() || shared.contains('/') || shared == ".." {
-        return Err(format!("{name} names no file in COMMON"));
-    }
-    Ok(folder.join(shared))
 }
 
 /// The code overlays an assembly source reads with
@@ -1200,21 +1179,6 @@ mod tests {
             block[at - 4..at - 2].copy_from_slice(&(high as u16).to_le_bytes());
             block[at - 2..at].copy_from_slice(&(low as u16).to_le_bytes());
         }
-    }
-
-    #[test]
-    fn a_common_sibling_lies_in_commons_folder_of_the_same_path() {
-        let image = Path::new("games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPRITES.TSV");
-        assert_eq!(
-            sibling_path(image, "SPR_001.PNG").unwrap(),
-            Path::new("games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPR_001.PNG")
-        );
-        assert_eq!(
-            sibling_path(image, "COMMON/SPR_020.PNG").unwrap(),
-            Path::new("games/COMMON/SRC/GRAPHICS/SPRITE/SPR_020.PNG")
-        );
-        assert!(sibling_path(image, "COMMON/../X.PNG").is_err());
-        assert!(sibling_path(image, "COMMON/..").is_err());
     }
 
     #[test]

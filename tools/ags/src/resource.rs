@@ -172,6 +172,30 @@ pub fn input_name(built: &str) -> Result<String, String> {
     })
 }
 
+/// Where a recipe's further input `name` lies: beside its first input
+/// `input`, or for `COMMON/NAME` in games/COMMON's folder of the same path
+/// under `SRC`, where a picture both games draw alike lives once.
+pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::PathBuf, String> {
+    let Some(shared) = name.strip_prefix("COMMON/") else {
+        return Ok(input.with_file_name(name));
+    };
+    if shared.is_empty() || shared.contains(['/', '\\']) || shared == ".." {
+        return Err(format!("{name} names no file in COMMON"));
+    }
+    let folder = input
+        .parent()
+        .and_then(|folder| {
+            let text = folder.to_str()?;
+            let at = text
+                .find("/SRC/")
+                .or_else(|| text.ends_with("/SRC").then(|| text.len() - 4))?;
+            let games = std::path::Path::new(&text[..at]).parent()?;
+            Some(games.join("COMMON").join(&text[at + 1..]))
+        })
+        .ok_or_else(|| format!("{} lies under no game's SRC", input.display()))?;
+    Ok(folder.join(shared))
+}
+
 /// Build the file `built` names from the bytes of its input.
 pub fn build_file(built: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     build_file_with(built, input, &|name| Err(format!("{built} needs {name}")))
@@ -730,6 +754,28 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
 mod tests {
     use super::*;
     use psynergy::assets::image::{png_from_bitmap, png_from_gba_tiles};
+
+    #[test]
+    fn a_common_sibling_lies_in_commons_folder_of_the_same_path() {
+        use std::path::Path;
+        let input = Path::new("games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPRITES.TSV");
+        assert_eq!(
+            sibling_path(input, "SPR_001.PNG").unwrap(),
+            Path::new("games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPR_001.PNG")
+        );
+        assert_eq!(
+            sibling_path(input, "COMMON/SPR_020.PNG").unwrap(),
+            Path::new("games/COMMON/SRC/GRAPHICS/SPRITE/SPR_020.PNG")
+        );
+        let absolute = Path::new("/w/games/THE BROKEN SEAL/SRC/GRAPHICS/SPRITE/SPRITES.TSV");
+        assert_eq!(
+            sibling_path(absolute, "COMMON/SPR_020.PNG").unwrap(),
+            Path::new("/w/games/COMMON/SRC/GRAPHICS/SPRITE/SPR_020.PNG")
+        );
+        assert!(sibling_path(input, "COMMON/../X.PNG").is_err());
+        assert!(sibling_path(input, "COMMON/..").is_err());
+        assert!(sibling_path(Path::new("X/Y.TSV"), "COMMON/Z.PNG").is_err());
+    }
 
     #[test]
     fn an_icon4_is_its_pixels_in_the_icon_coder_without_a_palette() {

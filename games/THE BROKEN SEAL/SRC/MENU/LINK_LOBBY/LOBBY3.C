@@ -25,6 +25,7 @@ void LinkLobby_WriteSlotValue(s32 slot)
     dst[LinkLobby_SlotColumns[slot]] = *src;
 }
 
+/* The link lobby: poll whether the peers stand ready in the circle. */
 s32 LinkLobby_PollPeerReady(void)
 {
     struct EventWork *work;

@@ -428,6 +428,7 @@ void HaidiaMura_RunCameraRiseScene(void)
     }
 }
 
+/* Until flag 0x808 is set, the two puppies bark and the leader walks on. */
 void FieldScene_RunPuppyBarks(void)
 {
     s32 msg;

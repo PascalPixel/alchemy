@@ -159,6 +159,11 @@ void Shop_InitEffect(void)
     BattleFx_StartBufferInterpolationFar(0x10);
 }
 
+/* ShopCursor_Advance: step the cursor sprite one frame of a linear tween
+   from its position toward its target over kind frames, refreshing the
+   sprite's position and OAM coordinates, and stop when the tween ends.
+   FAKEMATCH: the zero that ends the tween is a one-halfword struct, which
+   keeps it a pool constant loaded before the second division as in the ROM. */
 void ShopCursor_Advance(struct ShopCursor *cursor)
 {
     struct ShopCursorSprite *sprite;

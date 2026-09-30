@@ -84,6 +84,9 @@ fail:
     return result;
 }
 
+/* The link lobby's connection: wait for the other console to answer (or
+   give up), walk the leader into the battle room, exchange the party
+   records and copy what arrived into the map cell buffer's second half. */
 s32 LinkLobby_RunConnectionSequence(void)
 {
     struct EventWork *work;
@@ -217,6 +220,8 @@ done:
     /* FAKEMATCH: the scene returns whatever the event end leaves in r0. */
     return ((s32 (*)(void))Engine_EventEnd)();
 }
+
+/* Handle battle applications and reopen the lobby attendant's dialogue. */
 
 /* FAKEMATCH: The unused callback result keeps the last callee's r0 at return. */
 s32 LinkLobby_RunBattleApplication(void)

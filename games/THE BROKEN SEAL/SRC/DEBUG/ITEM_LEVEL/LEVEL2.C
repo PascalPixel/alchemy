@@ -153,6 +153,10 @@ done:
     UiWork_Finalize(details, 1);
 }
 
+/* The item and level debug room's Psynergy browser: pick an ability number
+ * and see its name and description. Stepping skips the numbers whose
+ * ability has no target range. It closes a details window it never opened,
+ * as the item browser it was copied from does open one. */
 void ItemLevel_SelectAbility(void)
 {
     struct TextRenderWork *window;

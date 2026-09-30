@@ -231,6 +231,7 @@ void SoruFunka_StepEmbers(void)
     }
 }
 
+/* The random timer level. */
 void SceneState_UpdateRandomTimerLevel(void)
 {
     u32 v;
@@ -264,6 +265,8 @@ void SceneState_UpdateRandomTimerLevel(void)
         break;
     }
 }
+
+/* The star chamber's collapse and escape (Scene_RunExtendedEffectPresentation). */
 
 /*
  * The Elemental Star chamber collapses around the party leader and Gerald.
@@ -900,6 +903,8 @@ void Scene_RunExtendedEffectPresentation(void)
     GameFlag_Set(0x100);
 }
 
+/* Scene steps, regions and arcing effects. */
+/* The IWRAM remainder, reached through an import veneer. */
 void SceneActor_MoveTo232_125AndFace4000(s32 no)
 {
     Ent_02002820 *rec;
@@ -1265,6 +1270,7 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
     }
 }
 
+/* Small scene steps. */
 void SceneState_SetValue140Mode0(void)
 {
     Psynergy_Begin(140, 0);

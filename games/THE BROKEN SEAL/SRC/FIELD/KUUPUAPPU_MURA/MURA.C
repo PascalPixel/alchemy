@@ -435,6 +435,7 @@ void ActorPresentation_RunActorFifteenDialogue(void)
     actor->presentation_flags &= 1;
 }
 
+/* The villager who cannot find the man meant to be fixing the roof. */
 void Villager_LookForRoofer(void)
 {
     Event_Begin();

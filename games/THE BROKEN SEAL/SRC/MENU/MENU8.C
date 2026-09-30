@@ -213,6 +213,11 @@ void Menu_CreateWindowAndEntryObjects(s32 resource)
     CharacterMenu_DrawStatusAilments(handle, resource, 0);
 }
 
+/*
+ * The character menu's command selection: shows the selected character's
+ * status and available commands across two panes, switches characters on
+ * request, and returns 1 when a command is confirmed or -1 when cancelled.
+ */
 s32 CharacterMenu_SelectCommand(void)
 {
     struct CharacterCommandMenu *menu;

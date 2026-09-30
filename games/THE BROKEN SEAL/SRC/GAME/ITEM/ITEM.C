@@ -375,6 +375,7 @@ void Item_PlayUseAnimation(void)
     ((s32 (*)(s32))Ability_PlayUseAnimation)(0x3fff & *(u16 *)((u8 *)((void * (*)())Item_Get)() + 0x28));
 }
 
+/* menu/entry/set_first_object_row_coordinates.c */
 void Ability_PlayUseAnimation(void)
 {
     s32 animation_type;

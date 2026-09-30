@@ -96,6 +96,7 @@ s16 Menu_RunSelection(void)
     }
 }
 
+/* Menu rows: step the value or its sub-value with the direction and shoulder keys, returning -1 on A and -2 on B. */
 s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode_arg)
 {
     register s16 *mode asm("r0") = mode_arg; /* FAKEMATCH: keeps the mode pointer in r0 */

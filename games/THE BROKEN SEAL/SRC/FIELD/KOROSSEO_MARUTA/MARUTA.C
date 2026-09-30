@@ -587,6 +587,7 @@ void ColossoLogRollingStage_WaitForSceneEventTask(void)
     Engine_TaskRemoveCallback(ColossoLogRollingStage_SceneTask);
 }
 
+/* Offsetting the active actor, clamped or not. */
 void ColossoLogRollingStage_OffsetActiveActor(void)
 {
     extern void Object_SetPosition(StageObstacleActor *, s32, s32, s32);
@@ -640,6 +641,9 @@ void ColossoLogRollingStage_NoopSceneEventHook(void)
 {
 }
 
+/* A competitor's question at entrance 2. Each competitor has three lines, the
+ * question and its two answers, counted from MsgKorosseoDidntThinkBattles; a
+ * yes closes the screen and selects that competitor. */
 void KorosseoMaruta_RunCompetitorTalk(s32 a0)
 {
     u8 *work;
@@ -679,6 +683,9 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
     }
 }
 
+/* The log-rolling stage's start: the leader and the competitor walk out onto
+ * the logs, face each other and take their places, the result is weighted
+ * by the leader's place, and the stage records where the party returns. */
 void KorosseoMaruta_RunStageStart(void)
 {
     s32 place;
@@ -723,6 +730,7 @@ void KorosseoMaruta_RunStageStart(void)
     Engine_GameFlagSet(0x11a);
 }
 
+/* The scene event's state hooks. */
 void ColossoLogRollingStage_RunSceneEventIfReady(void)
 {
     if (ColossoLogRollingStage_FindActorAhead() == 0) {
@@ -743,6 +751,10 @@ s32 ColossoLogRollingStage_GetSceneEventState(void)
 {
     return (s32)gKorosseoMarutaEvents;
 }
+
+/* Cell holding the shared scene-work pointer; +448 is the scene phase word. */
+/* Shared cross-overlay scene-record block: +450 is the scene sub-state, read as
+ * a signed halfword, and +498 is a byte this owner clears on the way in. */
 
 /* Builds the log-rolling stage, then runs the beat named by the scene
  * sub-state.  Returns 0 on every path. */
@@ -986,6 +998,7 @@ s32 StageSetup_BuildAndDispatch(void)
     return 0;
 }
 
+/* The periodic particles and the multi-phase actor sequence. */
 s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle)
 {
     particle->x += particle->velocity_x << 8;
@@ -1258,6 +1271,9 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_End();
 }
 
+/* The third finals' greeting: the site announcement the other trial
+   overlays share, with this stage's line. */
+
 /* Colosso: line the other competitors up around actor a0, show its message
  * and walk it back to its place while the others gather on actor 0. */
 /* Colosso: the competitors are greeted before a trial. The same scene sits
@@ -1402,6 +1418,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
     Engine_EventEnd();
 }
 
+/* The second competitor's arrival. */
 void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
     extern void Korosseo_FinishSoloRound();

@@ -136,6 +136,7 @@ void BabiChika_UpdateTrackedActor(void)
     }
 }
 
+/* Depth flags and slot ranks. */
 s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
 {
     struct Actor_02000ec8 *ref;
@@ -196,6 +197,7 @@ s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
     return 0;
 }
 
+/* Waits and effect motion. */
 s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 {
     Record *ref = Actor_Get(ACTOR_PARTY_LEADER);

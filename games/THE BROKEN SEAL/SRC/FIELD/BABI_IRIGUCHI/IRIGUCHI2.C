@@ -64,6 +64,9 @@ void SceneActor_PushObjectAheadIfLevel(void)
     StagedActor_AdvancePair();
 }
 
+/* The facing check reads the game state as rows of bytes, not through the
+ * field event header's structure. */
+
 /* With the party leader facing north or south and either the byte at 498 of
  * the game state set or no actor ahead, runs the grid placement for that
  * facing; unless that placement reports zero, pushes the object ahead when

@@ -336,6 +336,7 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
     }
 }
 
+/* Three years later: the opening of the repair morning. */
 void FieldScene_RunLargeStagingSequence(void)
 {
     u32 i;

@@ -170,6 +170,8 @@ void UiGlyph_DecodeWithHeapRoutines(u8 *glyph, s32 outlined)
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);
 }
 
+/* Complete 268-byte glyph-work initializer, including its literal pool.
+ * The cursor subrecord is shared by the paired row resets. */
 void UiGlyph_ResetWorkState(void)
 {
     struct GlyphWork *work;

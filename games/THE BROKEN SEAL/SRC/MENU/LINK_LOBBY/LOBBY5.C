@@ -105,6 +105,8 @@ s32 LinkLobby_TalkByProgress(s32 actor)
     return Engine_EventEnd();
 }
 
+/* Leave the link lobby for the exchange: stop the serial interrupts, load
+ * the sound preset and go to scene row 1's first entrance. */
 s32 LinkLobby_StartExchange(void)
 {
     SerialRuntime_RemoveIrqHandlers();
@@ -114,6 +116,10 @@ s32 LinkLobby_StartExchange(void)
         return Event_SetPairWork1c0((s32)&SceneId_Clear, 1);
     } while (0);
 }
+
+/* FAKEMATCH: Engine_EventEnd is declared returning s32 so each handler
+ * returns the last callee's r0, as the battle application does, and
+ * the game state is read through a word view for the selected actor. */
 
 /* The three lobby regulars face the leader and speak a line that moves on
  * with the lobby's progress flags. */
@@ -185,8 +191,11 @@ s32 LinkLobby_ShowCountMessage(s32 id)
     return Engine_EventEnd();
 }
 
+/* The link lobby: its event table. */
 u8 *LinkLobby_GetEvents(void) { return gLinkLobbyEvents; }
 
+/* Saving the battle results between two message windows, and the
+   three-digit counter drawn into the map. */
 s32 LinkLobby_SaveBattleResults(void)
 {
     s32 window;

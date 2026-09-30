@@ -121,6 +121,10 @@ void ObjectDispatch_Release(struct DispatchObject *work)
     }
 }
 
+/* The engine's object constructor, reached from far code through
+   Object_CreateFar: takes a free object slot, attaches the sprite or the
+   two-sprite list the descriptor id names (its top nibble is the kind), and
+   resets position, scale, speed and script to their defaults. */
 struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 {
     struct FieldObject *object;

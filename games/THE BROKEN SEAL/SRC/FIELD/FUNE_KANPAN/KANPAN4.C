@@ -143,6 +143,8 @@ void FieldScene_CallPairWith10(s32 a, s32 b)
     Actor_FaceDirection(a, b, 10);
 }
 
+/* The ship reaches Tolbi: the crew gathers on deck, the captain announces
+   the landing and the party walks down the gangway. */
 void FuneKanpan_ArriveAtTolbi(void)
 {
     Event_Begin();
@@ -317,6 +319,8 @@ void FieldScene_RunThreeActorEncounter(void)
     Event_End();
 }
 
+/* On deck a sailor asks how the party found the ship; when Isaac does not
+   want to talk, the captain and the crew gather and the scene closes. */
 void FuneKanpan_RunRobinTalk(void)
 {
     Event_Begin();

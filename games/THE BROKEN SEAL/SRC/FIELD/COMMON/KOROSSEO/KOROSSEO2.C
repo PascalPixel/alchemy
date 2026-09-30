@@ -122,6 +122,8 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     Engine_EventWait(20);
 }
 
+/* The game state, read here as bytes: the byte at 498 is the retry flag. */
+
 /* Colosso: put the competitor back at its stored start position and facing
  * after a round, replaying the fall animation unless the retry flag is set.
  * The same function sits in each of the three Colosso trial overlays. */

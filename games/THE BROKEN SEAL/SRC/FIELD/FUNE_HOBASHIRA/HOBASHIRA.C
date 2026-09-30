@@ -234,6 +234,9 @@ void FieldScene_RunActor232SceneWhenFlag923Or922(void)
     }
 }
 
+/* The mast on arrival: record the visit, start the deck's sway while the
+ * voyage flags allow it, stand actor 8 by the rail, then run the scene the
+ * entrance names. */
 s32 FuneHobashira_ApplyEntryState(void)
 {
     struct FieldActor *leader;
@@ -692,6 +695,9 @@ void FieldScene_RunPrimarySequence(void)
     Event_End();
 }
 
+/* Land ho: the ensemble's seven actors drift in, then each walks its way
+ * ashore while the lookout cheers, and the party leaves the mast for the
+ * ship's cabin; the exit depends on which way the voyage went. */
 void FieldScene_RunSevenActorEnsemble(void)
 {
     Event_Begin();

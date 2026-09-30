@@ -1858,6 +1858,7 @@ void FieldScene_RunFlagBranchedSetupCascade(void)
     }
 }
 
+/* Actor 8 hears of monsters aboard the ship. */
 void FuneHeya_AskAboutMonsters(void)
 {
     Event_Begin();
@@ -1923,6 +1924,7 @@ void FieldScene_RunActors24And25Setup(void)
     Event_End();
 }
 
+/* Cabin dialogue and actor movement vary with the passenger story flags. */
 void Scene_RunConditionalActorPresentation(s32 a0)
 {
     u32 i;
@@ -2574,6 +2576,8 @@ void FieldScene_RunScene3b1_02005068(void)
     FieldScene_RunPositionTransferPresentation();
     Event_End();
 }
+
+/* The party comes aboard and hears there are monsters belowdecks. */
 
 /* The leader walks in and the three companions take their places beside
  * him; the shout about monsters comes up, actor 8 answers it and the

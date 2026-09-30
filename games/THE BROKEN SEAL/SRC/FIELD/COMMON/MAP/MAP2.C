@@ -128,6 +128,7 @@ void Map_LoadAreaGraphics(void)
     WaitFrames(1);
 }
 
+/* map/shared/load_default_cells_and_update_block.c */
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
     struct MapInitWork *work = *(struct MapInitWork **)((u32)&gCam);

@@ -65,6 +65,9 @@ void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *sr
     }
 }
 
+/* Steps the actor's column row by row until the terrain rises above its own
+ * level, then prepares object 223 or 253 at that step and waits for the actor
+ * to fall to it. */
 s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
 {
     struct FieldActor *actor = Object_GetById(id);

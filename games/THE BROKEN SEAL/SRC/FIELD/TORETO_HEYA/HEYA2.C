@@ -245,6 +245,8 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gToretoHeyaEvents;
 }
 
+/* The party sits down at the table: the host hums, the four take their
+ * places and gesture along, and the scene returns to the room afterwards. */
 void ToretoHeya_RunTableScene(void)
 {
     u32 i;
@@ -861,6 +863,8 @@ void ToretoHeya_SpawnSwirlSparks(void)
         *counter = 0;
     }
 }
+
+/* Exact 96-byte owner, resource_396:020017ec..0200184c, including pool. */
 
 /* Copy the one-cell patch of each enabled entry whose flag is set. */
 void ToretoHeya_ApplyFlaggedMapPatches(void)

@@ -498,6 +498,9 @@ done:
     return;
 }
 
+/* The pillar rooms' setup: redraw the pillars' footprints, restore the map
+ * the switches changed, and in the fourth room raise the pillars and watch
+ * the actors near them. */
 s32 TakaraHashira_SetupArea(void)
 {
     u32 i;

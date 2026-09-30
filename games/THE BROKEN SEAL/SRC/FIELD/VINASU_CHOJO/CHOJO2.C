@@ -743,6 +743,8 @@ void VinasuChojo_RunActorTransition(void)
     Engine_EventWaitForScreen();
 }
 
+/* Restaging the party. */
+
 /*
  * Restages the aerie after the pair's defeat: both of the pair are removed,
  * map cells are copied, the camera and actors are refreshed, and actors 0 to
@@ -1188,6 +1190,8 @@ void Scene_RunExtendedActorTransition(void)
     Event_Wait(80);
 }
 
+/* Parking an actor record. */
+
 /*
  * Park a record: stamp the sentinel 0x80000000 into the three mirror fields at
  * +56, +60 and +64, zero the three at +36, +40 and +44, and clear the u16
@@ -1330,6 +1334,7 @@ void VinasuChojo_RunTransitionStep(void)
     SceneEffect_AdvanceGatedRiseCounter((u8 *)Actor_Get(6));
 }
 
+/* The gated rise counter. */
 void SceneEffect_AdvanceGatedRiseCounter(u8 *obj)
 {
     if (*(u8 *)(obj + 99) != 0) {
@@ -1406,6 +1411,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     sprite->priority = center->sprite->priority;
 }
 
+/* The closing scene step. */
 void FieldScene_RunScene3c9_02005b90(union FieldObject *object)
 {
     struct FieldEffect *anchor;

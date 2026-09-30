@@ -29,6 +29,13 @@ void Runtime_BumpFree(void *buffer);
 /* The message id base is a link-time symbol, loaded from the literal pool. */
 extern u8 MsgProgressHelp;
 
+/* The characters of the help line: the Japanese line is shorter. */
+#if defined(TBS_EDITION_JA)
+#define PROGRESS_TEXT_MAX 0x40
+#else
+#define PROGRESS_TEXT_MAX 0x80
+#endif
+
 
 void StatusMenu_ShowOwnerProgressMessage(
     void *destination,
@@ -48,14 +55,19 @@ void StatusMenu_ShowOwnerProgressMessage(
         if (owner->level == 99) {
             message_variant = 8;
         } else {
+#if defined(TBS_EDITION_JA)
+            u32 remaining = Owner_GetLevelThresholdFar(menu->owner_id, owner->level + 1) -
+                owner->experience;
+#else
             u64 remaining = Owner_GetLevelThresholdFar(menu->owner_id, owner->level + 1) -
                 owner->experience;
+#endif
             UiWork_PushValueSlotFar(remaining, 5);
         }
     }
 
-    buffer = Runtime_BumpAllocate(0x100);
-    UiText_CopyMessageStringFar(message_variant + (s32)&MsgProgressHelp, buffer, 0x80);
+    buffer = Runtime_BumpAllocate(PROGRESS_TEXT_MAX * 2);
+    UiText_CopyMessageStringFar(message_variant + (s32)&MsgProgressHelp, buffer, PROGRESS_TEXT_MAX);
     UiText_RenderWideStringAtOffsetFar(buffer, destination, 0, -1);
     Runtime_BumpFree(buffer);
 }

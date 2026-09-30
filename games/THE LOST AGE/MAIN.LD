@@ -783,6 +783,7 @@ SECTIONS
         "*/recon/tla/raw/080d5670.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d57e4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d5aa0.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BEGIN_CONTEXT_EFFECT_26.o"(.text)
         "*/recon/tla/raw/080d5e64.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d5e78.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d6b90.o"(.text .rodata .data .padding)

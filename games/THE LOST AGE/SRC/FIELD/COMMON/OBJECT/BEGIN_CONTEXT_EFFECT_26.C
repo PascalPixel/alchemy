@@ -43,13 +43,13 @@ void Object_SetMode(void *, s32);
 
 void ObjectEffect_PrepareContextEffect(s32 value);
 
-s32 GameFlag_SetBitFar(s32);
+s32 GameFlag_SetBit(s32);
 void ObjectEffect_PrepareContextEffect(s32);
 
 void ObjectEffect_BeginContextEffect26(void)
 {
     ObjectEffect_PrepareContextEffect(0x1A);
-    GameFlag_SetBitFar(0x120);
+    GameFlag_SetBit(0x120);
 }
 
 void ObjectEffect_BeginContextEffect25(void);

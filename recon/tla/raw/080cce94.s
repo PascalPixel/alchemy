@@ -710,7 +710,7 @@ Func_080cce94:
 	ldr	r1, [r5, #0]
 	mov	r0, fp
 	movs	r2, #0
-	bl	Func_080d35d4
+	bl	Object_LinkPair
 .L_080cd482:
 	ldr	r3, [r6, #8]
 .L_080cd484:

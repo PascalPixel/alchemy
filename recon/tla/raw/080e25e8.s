@@ -450,7 +450,7 @@ Func_080e25e8:
 	bl	Object_SetMode
 	mov	r1, sl
 	adds	r0, r7, #0
-	bl	Func_080d3600
+	bl	FacingObject_TurnPairToFaceEachOther
 	mov	r3, sl
 	ldrh	r2, [r3, #6]
 	adds	r3, #100

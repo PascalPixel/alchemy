@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d3600
+	.global FacingObject_TurnPairToFaceEachOther
 	.thumb_func
-Func_080d3600:
+FacingObject_TurnPairToFaceEachOther:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

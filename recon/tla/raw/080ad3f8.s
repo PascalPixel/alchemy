@@ -1215,7 +1215,7 @@ Owner_RecalculateStats:
 	cmp	r8, r1
 	beq.n	.L_080add52
 	mov	r0, r8
-	bl	Func_080aebd0
+	bl	Owner_AdjustSecondValue
 .L_080add52:
 	pop	{r3}
 	mov	r8, r3

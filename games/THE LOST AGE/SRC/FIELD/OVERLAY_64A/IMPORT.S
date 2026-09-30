@@ -27,9 +27,9 @@
 	overlay_veneer Func_080003d8
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
-	overlay_veneer Func_08038040
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer RenderOutput_PrepareForRedrawFar
-	overlay_veneer Func_08038070
+	overlay_veneer UiWindow_DrawDividerLineFar
 	overlay_veneer UiText_DrawResourceFar
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
 	overlay_veneer UiText_DrawStringInWindowFar

@@ -106,7 +106,7 @@ Func_080405dc:
 	movs	r3, #19
 	subs	r5, #1
 	str	r6, [sp, #0]
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	adds	r6, #3
 	cmp	r5, #0
 	bne.n	.L_0804069e

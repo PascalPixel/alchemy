@@ -30,7 +30,7 @@ Engine_EventEnd:
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:
-	overlay_veneer Func_080c8070
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:

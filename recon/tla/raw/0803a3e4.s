@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803a3e4
+	.global UiWork_IsIdle
 	.thumb_func
-Func_0803a3e4:
+UiWork_IsIdle:
 	push	{lr}
 	cmp	r0, #0
 	bne.n	.L_0803a3ee

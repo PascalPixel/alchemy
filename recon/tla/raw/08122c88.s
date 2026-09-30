@@ -361,7 +361,7 @@ Func_08122c88:
 	bl	0x0811be3c
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_08122f52
 	movs	r1, #149
@@ -871,7 +871,7 @@ Func_08122c88:
 	bl	0x0811be3c
 	adds	r1, r6, #0
 	ldr	r0, [r0, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_08123360
 	b.n	.L_08123468
@@ -908,7 +908,7 @@ Func_08122c88:
 	adds	r1, r2, #0
 	ldr	r0, [r6, #0]
 	str	r2, [sp, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	ldr	r2, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_081233c0

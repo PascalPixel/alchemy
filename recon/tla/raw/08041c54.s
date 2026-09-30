@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08041c54
+	.global UiWindow_DrawDividerLine
 	.thumb_func
-Func_08041c54:
+UiWindow_DrawDividerLine:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

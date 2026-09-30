@@ -30,7 +30,7 @@ Func_0811f444:
 	bl	0x0811be3c
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_0811f454
 	movs	r2, #149
@@ -56,7 +56,7 @@ Func_0811f444:
 	bl	0x0811be3c
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_0811f494
 	movs	r0, #4

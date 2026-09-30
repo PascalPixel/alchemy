@@ -32,7 +32,7 @@ Func_0804e0d0:
 	ldr	r0, [pc, #56]
 .L_0804e108:
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	b.n	.L_0804e0d4
 .L_0804e110:
 	bl	Func_08043690
@@ -44,7 +44,7 @@ Func_0804e0d0:
 	bne.n	.L_0804e12c
 	ldr	r0, [pc, #36]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	ldr	r3, [pc, #32]
 	strb	r5, [r3, #0]
 	b.n	.L_0804e138

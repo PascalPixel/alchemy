@@ -190,9 +190,9 @@ Func_081185c4:
 	.4byte 0x0200ff6c
 	.2byte 0xa16c
 	.2byte 0x0812
-	.global Func_08118738
+	.global DebugParty_LoadPreset
 	.thumb_func
-Func_08118738:
+DebugParty_LoadPreset:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

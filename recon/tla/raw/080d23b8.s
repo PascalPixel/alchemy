@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d23b8
+	.global Event_CallWithLastActiveObjectId
 	.thumb_func
-Func_080d23b8:
+Event_CallWithLastActiveObjectId:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	bl	0x080cacc0
@@ -11,9 +11,9 @@ Func_080d23b8:
 	bl	Func_080ca6e8
 	pop	{r5, pc}
 	movs	r0, r0
-	.global Func_080d23cc
+	.global Event_SetWorkWord10
 	.thumb_func
-Func_080d23cc:
+Event_SetWorkWord10:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]

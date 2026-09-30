@@ -2298,7 +2298,7 @@ Func_080ec1d0:
 	bl	Func_080d2a64
 	bl	Func_080d2a8c
 	bl	Func_080144c0
-	bl	Func_08038000
+	bl	UiWork_InitializeWithResourceCountersFar
 	ldr	r2, [sp, #12]
 	movs	r0, #1
 	strh	r5, [r2, #4]

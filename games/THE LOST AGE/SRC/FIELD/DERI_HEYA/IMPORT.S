@@ -15,7 +15,7 @@
 	overlay_veneer Func_080201e0
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020300
-	overlay_veneer Func_08038040
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer Func_08038120
 	overlay_veneer Func_08038140
 	overlay_veneer Owner_RecalculateStatsFar
@@ -35,7 +35,7 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8070
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8

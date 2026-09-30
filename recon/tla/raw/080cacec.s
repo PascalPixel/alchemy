@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080cacec
+	.global Scene_AssignViewFlags
 	.thumb_func
-Func_080cacec:
+Scene_AssignViewFlags:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	movs	r3, #192

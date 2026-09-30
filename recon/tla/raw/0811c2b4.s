@@ -14,7 +14,7 @@ Func_0811c2b4:
 	ldr	r5, [r0, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	adds	r5, #8
 	adds	r6, r0, #0
 	bl	Func_0811bd10
@@ -58,7 +58,7 @@ Func_0811c314:
 	ldr	r5, [r0, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	adds	r5, #8
 	adds	r6, r0, #0
 	bl	Func_0811bd10

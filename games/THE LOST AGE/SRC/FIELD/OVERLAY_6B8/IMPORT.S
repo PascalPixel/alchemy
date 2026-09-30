@@ -23,7 +23,7 @@
 	overlay_veneer Func_08020300
 	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer UiText_OpenMessageWindowFar
-	overlay_veneer Func_08038040
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiWork_IsCompleteFar
 	overlay_veneer Func_080380f8
 	overlay_veneer Func_08038120
@@ -39,7 +39,7 @@
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
 	overlay_veneer Item_AdjustCounterFar
 	overlay_veneer Battle_WaitMode0Far
-	overlay_veneer Func_080c8078
+	overlay_veneer UiText_DrawQuantityPairWithCueFar
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8

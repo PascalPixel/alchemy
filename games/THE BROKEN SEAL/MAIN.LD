@@ -1372,7 +1372,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/DEFINITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/ENCODE_BANKED_ID.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/CLEAR_WORK_FIELDS.o"(.text)
-        "*/recon/tbs/raw/080c24f0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/AWARD_SPOILS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/RUNTIME_RESERVED_NO_OP_A.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.080c2a0a)

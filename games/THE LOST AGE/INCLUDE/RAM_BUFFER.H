@@ -19,9 +19,12 @@
  * GCC reaches a slot from the constant base with the slot's offset in the
  * load, as it does for a field of a structure at a constant address. */
 struct BattleSession;
+struct MapWork;
 
 struct HeapSlots {
-    void *unknown_00[9];
+    void *unknown_00[8];
+    /* The field map's work block. */
+    struct MapWork *map_work;
     /* The battle session, which The Broken Seal keeps in its own cell. */
     struct BattleSession *battle_work;
     void *unknown_28[17];

@@ -85,7 +85,7 @@ s32 FindNearestF2Actor(void)
     u32 actor_id;
 
     min_dist = 640;
-    origin = (Actor *)Engine_ActorGet(0);
+    origin = (Actor *)Object_GetById(0);
     actor_id = 8;
     actor_slot = (Actor **)(work + 0x34);
     do {
@@ -117,7 +117,7 @@ void SceneActor_InitializeMotion(void)
     s32 position[3];
     s32 angle;
     u8 flags;
-    actor = (struct SceneActor *)Engine_ActorGet(0);
+    actor = (struct SceneActor *)Object_GetById(0);
     angle = (actor->angle + 0x1000) & 0xe000;
     flags = actor->flags55;
     position[0] = (actor->x & 0xfff00000) + 0x80000;
@@ -127,17 +127,17 @@ void SceneActor_InitializeMotion(void)
     if (Object_CheckMovementCollision(actor,position) == 0) {
         GameFlag_ClearBitFar(592);
         SceneActor_SetMode55OnSevenRecords();
-        Engine_ObjectSetAnimation(actor,6);
+        Object_SetMode(actor,6);
         Engine_TaskWait(6);
         Engine_AudioPlayCue(152);
-        Engine_ObjectSetAnimation(actor,7);
+        Object_SetMode(actor,7);
         actor->motion30 = 0x30000;
         actor->motion34 = 0x20000;
         actor->motion28 = 0x40000;
         actor->flags55 &= 0x7e;
         SetOverlayObjectMode(actor,0);
         ObjectMotion_SetPositionAndCommitFar(0,(s16)(position[0] >> 16),(s16)(position[2] >> 16));
-        Engine_ObjectSetAnimation(actor,6);
+        Object_SetMode(actor,6);
         SetOverlayObjectMode(actor,1);
         actor->flags55 = flags;
     }
@@ -186,13 +186,13 @@ void FieldScene_RunScene39d_020009fc(void)
 
 void SceneActor_SetMode55OnSevenRecords(void)
 {
-    ((struct Record *)Engine_ActorGet(0))->mode55 = 3;
-    ((struct Record *)Engine_ActorGet(14))->mode55 = 4;
-    ((struct Record *)Engine_ActorGet(15))->mode55 = 4;
-    ((struct Record *)Engine_ActorGet(16))->mode55 = 4;
-    ((struct Record *)Engine_ActorGet(17))->mode55 = 4;
-    ((struct Record *)Engine_ActorGet(18))->mode55 = 4;
-    ((struct Record *)Engine_ActorGet(19))->mode55 = 4;
+    ((struct Record *)Object_GetById(0))->mode55 = 3;
+    ((struct Record *)Object_GetById(14))->mode55 = 4;
+    ((struct Record *)Object_GetById(15))->mode55 = 4;
+    ((struct Record *)Object_GetById(16))->mode55 = 4;
+    ((struct Record *)Object_GetById(17))->mode55 = 4;
+    ((struct Record *)Object_GetById(18))->mode55 = 4;
+    ((struct Record *)Object_GetById(19))->mode55 = 4;
 }
 
 void RunScene58Sequence(void)
@@ -533,7 +533,7 @@ void RunScene58Sequence(void)
     Actor_WaitForMove(5);
     Actor_FaceDirection(ACTOR_JASMINE, 0, 20);
     Actor_FaceDirection(0x15, 0x3000, 20);
-    temp_r0_7 = ((s32)Engine_ActorGet(0x15));
+    temp_r0_7 = ((s32)Object_GetById(0x15));
     FIELD(temp_r0_7, u8 *, 0x5A) = (u8)(0xFE & FIELD(temp_r0_7, u8 *, 0x5A));
     Actor_WalkToAndWait(0x15, 0x58, 0x98);
     temp_r0_8 = Actor_Get(0x15);
@@ -548,10 +548,10 @@ void RunScene58Sequence(void)
     Audio_PlayCue(0x98);
     temp_r0_9 = Actor_Get(0x17);
     FIELD(temp_r0_9, u8 *, 0x55) = (u8)(0x7E & FIELD(temp_r0_9, u8 *, 0x55));
-    SetOverlayObjectMode(((s32)Engine_ActorGet(0x17)), 0);
-    FIELD(((s32)Engine_ActorGet(0x11)), s8 *, 0x55) = 4;
+    SetOverlayObjectMode(((s32)Object_GetById(0x17)), 0);
+    FIELD(((s32)Object_GetById(0x11)), s8 *, 0x55) = 4;
     ObjectMotion_SetPositionAndCommitFar(0x17, 0x68, 0xA8);
-    SetOverlayObjectMode(((s32)Engine_ActorGet(0x17)), 1);
+    SetOverlayObjectMode(((s32)Object_GetById(0x17)), 1);
     FIELD(Actor_Get(0x17), s8 *, 0x55) = 3;
     Actor_FaceDirection(0x17, 0, 30);
     Actor_FaceDirection(0x15, 0, 10);
@@ -643,7 +643,7 @@ void RunScene58Sequence(void)
     FIELD(temp_r0_12, u8 *, 0x5A) = (u8)(0xFE & FIELD(temp_r0_12, u8 *, 0x5A));
     Actor_WalkToAndWait(0x16, 0x150, 0xD0);
     Event_Wait(1);
-    temp_r0_13 = ((s32)Engine_ActorGet(0x16));
+    temp_r0_13 = ((s32)Object_GetById(0x16));
     flag2 = 1;
     flag2 |= FIELD(temp_r0_13, u8 *, 0x5A);
     FIELD(temp_r0_13, u8 *, 0x5A) = flag2;
@@ -695,7 +695,7 @@ void RunScene59Sequence(void)
     Actor_FaceDirection(ACTOR_MIA, 0xC000, 0);
     Actor_SetPosition(0x16, PIXELS(0x150), PIXELS(0xB0));
     Actor_SetAnimation(0x16, 9);
-    SetOverlayObjectMode(((s32)Engine_ActorGet(0x16)), 0);
+    SetOverlayObjectMode(((s32)Object_GetById(0x16)), 0);
     Camera_MoveTo(PIXELS(0x150), -1, PIXELS(0xD0), 0);
     Task_Wait(1);
     Map_Redraw();
@@ -860,7 +860,7 @@ void RunScene59Sequence(void)
     Actor_SetAnimation(0x16, 8);
     Event_Wait(45);
     Actor_SetAnimation(0x16, 1);
-    SetOverlayObjectMode(((s32)Engine_ActorGet(0x16)), 1);
+    SetOverlayObjectMode(((s32)Object_GetById(0x16)), 1);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_IVAN, 0x102, 60);
     Event_ShowMessage(2, 0);
@@ -992,7 +992,7 @@ void RunScene59Sequence(void)
         Actor_SetPosition(9, PIXELS(0x68), PIXELS(0x108));
         actor9_fixed_y = 0xffe00000;
         FIELD(Actor_Get(9), s32 *, 0xC) = actor9_fixed_y;
-        FIELD(((s32)Engine_ActorGet(9)), s32 *, 0x3C) = actor9_fixed_y;
+        FIELD(((s32)Object_GetById(9)), s32 *, 0x3C) = actor9_fixed_y;
         Map_CopyCellsTo(0x1D, 0x4A, 4, 0x4A, 5, 4);
         Actor_SetSpritePriority(0x11, 0);
         Actor_SetSpritePriority(0x12, 0);
@@ -1246,9 +1246,9 @@ void FieldScene_RunScene39d_02002ddc(void)
     *(s32 *)(work + 12) = 0x3800000;
     Map_Redraw();
     Task_Wait(1);
-    *(u8 *)(((s32)Engine_ActorGet(9)) + 85) = 0;
+    *(u8 *)(((s32)Object_GetById(9)) + 85) = 0;
     Actor_SetPosition(9, PIXELS(0x68), PIXELS(0x108));
-    record = ((s32)Engine_ActorGet(9));
+    record = ((s32)Object_GetById(9));
     *(s32 *)(record + 12) = -0x200000;
     record = Actor_Get(9);
     *(s32 *)(record + 60) = -0x200000;
@@ -1297,13 +1297,13 @@ void MakyuriChojo_SinkActorPair(void)
     s32 y;
     s32 r;
 
-    left = (struct Actor *)Engine_ActorGet(22);
-    right = (struct Actor *)Engine_ActorGet(24);
+    left = (struct Actor *)Object_GetById(22);
+    right = (struct Actor *)Object_GetById(24);
     Engine_AudioPlayCue(190);
     Call2(Engine_ActorSetChildValue, 22, 0x100);
     Engine_ActorSetChildValue(24, 0x100);
-    SetOverlayObjectMode((struct Actor *)Engine_ActorGet(22), 0);
-    SetOverlayObjectMode((struct Actor *)Engine_ActorGet(24), 0);
+    SetOverlayObjectMode((struct Actor *)Object_GetById(22), 0);
+    SetOverlayObjectMode((struct Actor *)Object_GetById(24), 0);
     p = &params;
     p->count = 1;
     p->kind = 5;
@@ -1342,11 +1342,11 @@ void MakyuriChojo_RiseActorPair(void)
     s32 y;
     s32 r;
 
-    left = (struct Actor *)Engine_ActorGet(22);
-    right = (struct Actor *)Engine_ActorGet(24);
+    left = (struct Actor *)Object_GetById(22);
+    right = (struct Actor *)Object_GetById(24);
     Engine_AudioPlayCue(190);
-    SetOverlayObjectMode((struct Actor *)Engine_ActorGet(22), 0);
-    SetOverlayObjectMode((struct Actor *)Engine_ActorGet(24), 0);
+    SetOverlayObjectMode((struct Actor *)Object_GetById(22), 0);
+    SetOverlayObjectMode((struct Actor *)Object_GetById(24), 0);
     p = &params;
     p->count = 1;
     p->kind = 5;
@@ -1375,8 +1375,8 @@ void MakyuriChojo_RiseActorPair(void)
     }
     Engine_ActorSetChildValue(22, 0);
     Engine_ActorSetChildValue(24, 0);
-    SetOverlayObjectMode((struct Actor *)Engine_ActorGet(22), 1);
-    SetOverlayObjectMode((struct Actor *)Engine_ActorGet(24), 1);
+    SetOverlayObjectMode((struct Actor *)Object_GetById(22), 1);
+    SetOverlayObjectMode((struct Actor *)Object_GetById(24), 1);
 }
 
 /* Append to out the slot of every record inside the band below the caller's
@@ -1420,16 +1420,16 @@ void MakyuriChojo_LowerCollectedActors(void)
     for (i = 0; i <= 4; i++) {
         if (ids[i] == 66)
             break;
-        ((struct Flags85 *)Engine_ActorGet(ids[i]))->flags = 0;
+        ((struct Flags85 *)Object_GetById(ids[i]))->flags = 0;
         n++;
     }
     Engine_AudioPlayCue(223);
     for (i = 0; i <= 227; i++) {
         *(s32 *)(work + 12) -= speed;
         for (j = 0; j < n; j++) {
-            *(s32 *)((u8 *)Engine_ActorGet(ids[j]) + 16) += speed;
-            actor = (u8 *)Engine_ActorGet(ids[j]);
-            *(s32 *)(actor + 64) = *(s32 *)((u8 *)Engine_ActorGet(ids[j]) + 16);
+            *(s32 *)((u8 *)Object_GetById(ids[j]) + 16) += speed;
+            actor = (u8 *)Object_GetById(ids[j]);
+            *(s32 *)(actor + 64) = *(s32 *)((u8 *)Object_GetById(ids[j]) + 16);
         }
         if ((i & 3) == 3)
             speed += 0x1999;
@@ -1438,7 +1438,7 @@ void MakyuriChojo_LowerCollectedActors(void)
         Engine_TaskWait(1);
     }
     for (i = 0; i < n; i++)
-        ((struct Flags85 *)Engine_ActorGet(ids[i]))->flags = 0;
+        ((struct Flags85 *)Object_GetById(ids[i]))->flags = 0;
 }
 
 /* Slide the work position up while lowering the collected actors, easing
@@ -1462,16 +1462,16 @@ void MakyuriChojo_RaiseCollectedActors(void)
     for (i = 0; i <= 4; i++) {
         if (ids[i] == 66)
             break;
-        ((struct Flags85 *)Engine_ActorGet(ids[i]))->flags = 0;
+        ((struct Flags85 *)Object_GetById(ids[i]))->flags = 0;
         n++;
     }
     Engine_AudioPlayCue(223);
     for (i = 0; i <= 85; i++) {
         *(s32 *)(work + 12) += speed;
         for (j = 0; j < n; j++) {
-            *(s32 *)((u8 *)Engine_ActorGet(ids[j]) + 16) -= speed;
-            actor = (u8 *)Engine_ActorGet(ids[j]);
-            *(s32 *)(actor + 64) = *(s32 *)((u8 *)Engine_ActorGet(ids[j]) + 16);
+            *(s32 *)((u8 *)Object_GetById(ids[j]) + 16) -= speed;
+            actor = (u8 *)Object_GetById(ids[j]);
+            *(s32 *)(actor + 64) = *(s32 *)((u8 *)Object_GetById(ids[j]) + 16);
         }
         if ((i & 3) == 3 && i > 75)
             speed += -0x3333;

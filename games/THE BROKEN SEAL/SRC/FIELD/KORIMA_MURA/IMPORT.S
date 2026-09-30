@@ -26,9 +26,9 @@ Engine_RandomNext:
 	.thumb_func
 ArcTan2:
 	overlay_veneer ArcTan2Far
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_ObjectSetScript
 	.thumb_func
@@ -98,9 +98,9 @@ Event_CallWithLastActiveObjectId:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func

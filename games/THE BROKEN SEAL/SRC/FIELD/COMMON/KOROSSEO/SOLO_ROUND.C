@@ -4,7 +4,7 @@ extern u8 MsgKorosseoCheering[];
 extern u8 MsgKorosseoCheeringChoices[];
 extern struct EventWork *gEventWork;
 
-u8 *Engine_ActorGet();
+u8 *Object_GetById();
 void Engine_EventBegin();
 void Engine_EventSetMessage();
 void Engine_EventOpenMessage();
@@ -38,10 +38,10 @@ void Korosseo_FinishSoloRound(s32 id)
     work = (s32)gEventWork;
     /* FAKEMATCH: the reference looks the speaker up twice here and drops
      * both results; no use of them is recovered. */
-    Engine_ActorGet(id);
-    Engine_ActorGet(id);
+    Object_GetById(id);
+    Object_GetById(id);
     slot = gGameState[125];
-    obj = Engine_ActorGet(slot);
+    obj = Object_GetById(slot);
     Engine_EventBegin();
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);

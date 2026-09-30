@@ -177,7 +177,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 record;
     s32 v3;
 
-    record = Engine_ActorGet(9);
+    record = Object_GetById(9);
     v3 = *(s32 *)(record + 8) / 0x100000;
     GameFlag_Clear(0x861);
     GameFlag_Clear(0x862);
@@ -197,7 +197,7 @@ void FieldScene_RunScene387SequenceC(void)
     struct FieldActor *actor;
     s32 tile_x;
 
-    actor = (struct FieldActor *)Engine_ActorGet(10);
+    actor = (struct FieldActor *)Object_GetById(10);
     tile_x = actor->x.fixed / 0x100000;
     if (tile_x == 23) {
         Event_Wait(10);
@@ -263,15 +263,15 @@ s32 GomaIriguchi_RestoreEntryState(void)
     Engine_EventWait(10);
     BattleFx_SetQueuedSoundAndPlay(170);
     Engine_ActorSetAnimation(11, 2);
-    ((struct Flags35 *)Engine_ActorGet(11))->flags = 2;
+    ((struct Flags35 *)Object_GetById(11))->flags = 2;
     {
-        u8 *record = (s32)Engine_ActorGet(8);
+        u8 *record = (s32)Object_GetById(8);
         u8 value = *(volatile u8 *)&record[89];
     
         record[89] = (u8)(value | 16);
     }
     {
-        u8 *record = (s32)Engine_ActorGet(15);
+        u8 *record = (s32)Object_GetById(15);
         u8 value = *(volatile u8 *)&record[89];
     
         record[89] = (u8)(value | 8);
@@ -281,7 +281,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
     }
     if (Engine_GameFlagIsSet(0x860) != 0) {
         Engine_ActorSetPosition(8, 0x880000, 0xc40000);
-        *(u8 *)((s32)Engine_ActorGet(8) + 35) |= 2;
+        *(u8 *)((s32)Object_GetById(8) + 35) |= 2;
         v5 = 12;
         Engine_ActorSetAnimation(8, 2);
         Engine_MapCopyCellAttributes(39, 12, 3, 1, 8, v5);
@@ -298,10 +298,10 @@ s32 GomaIriguchi_RestoreEntryState(void)
     }
     if (Engine_GameFlagIsSet(0x863) != 0) {
         Engine_ActorSetPosition(10, 0x1780000, 0x1180000);
-        ((struct Flags35 *)Engine_ActorGet(10))->flags = 2;
+        ((struct Flags35 *)Object_GetById(10))->flags = 2;
         v5 = 0;
-        *(u8 *)((s32)Engine_ActorGet(10) + 85) = v5;
-        record = (s32)Engine_ActorGet(10);
+        *(u8 *)((s32)Object_GetById(10) + 85) = v5;
+        record = (s32)Object_GetById(10);
         Engine_ActorSetSpriteFlags((s32)record, 0);
         Call6(Engine_MapCopyCellAttributes, 54, 17, 1, 1, 23, 17);
     }
@@ -320,7 +320,7 @@ void FieldScene_RunScene387SequenceA(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -334,7 +334,7 @@ void FieldScene_RunScene387SequenceA(void)
     Event_Wait(20);
     if (GameFlag_IsSet(0x855) == 0) {
         Actor_SetAnimation(ACTOR_GERALD, 2);
-        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -514,7 +514,7 @@ void Overlay387_ConfigureActorEightAtDepth(void)
     struct OverlayActorState *state;
 
     Event_Begin();
-    depth = ((struct OverlayActorPosition *)Engine_ActorGet(8))->depth_fixed >> 20;
+    depth = ((struct OverlayActorPosition *)Object_GetById(8))->depth_fixed >> 20;
     if (depth == 11) {
         GomaIriguchi_RunSpinningLeap(8);
         state = Actor_Get(8);
@@ -581,7 +581,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     s32 z;
     s32 zero;
 
-    actor = (struct Actor *)Engine_ActorGet(id);
+    actor = (struct Actor *)Object_GetById(id);
     actor->layer = 0;
     for (i = 0; i <= 17; i++) {
         Engine_TaskWait(1);

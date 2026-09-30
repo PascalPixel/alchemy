@@ -43,22 +43,22 @@ void MakyuriChojo_SpawnLampSpark(void)
      * producer and keeps the short-reach pool at the original boundary. */
     struct Half zero;
 
-    lamp = Engine_ActorGet(8);
+    lamp = Object_GetById(8);
     work = (struct LampWork *)(gCam + 0xe8);
     height = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
     if (work->height <= 129) {
         if (gFrameCount & 1) {
             Engine_ActorSetPosition(8, 0x1300000, 0x900000);
-            actor = Engine_ActorGet(8);
+            actor = Object_GetById(8);
             /* FAKEMATCH: keep the scale load after the actor lookup. */
             do { scale = 0x10000; } while (0);
         } else {
             Engine_ActorSetPosition(8, 0x1300000, 0x970000);
-            actor = Engine_ActorGet(8);
+            actor = Object_GetById(8);
             scale = 0x14ccc;
         }
         actor->scale_x = scale;
-        Engine_ActorGet(8)->scale_y = scale;
+        Object_GetById(8)->scale_y = scale;
     } else {
         Call3(Engine_ActorSetPosition, 8, 0x80000, 0x80000);
     }

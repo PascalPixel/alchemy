@@ -28,9 +28,9 @@ void TakaraHashira_SortPillarActors(void)
     s32 slot[3];
 
     for (i = 0; i <= 2; i++) {
-        a = Engine_ActorGet(i + 8);
+        a = Object_GetById(i + 8);
         for (j = i; j <= 3; j++) {
-            b = Engine_ActorGet(j + 8);
+            b = Object_GetById(j + 8);
             if (a->y.fixed <= b->y.fixed && a->z.fixed < b->z.fixed) {
                 continue;
             }

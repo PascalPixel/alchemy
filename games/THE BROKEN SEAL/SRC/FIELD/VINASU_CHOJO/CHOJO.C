@@ -345,14 +345,14 @@ void SceneActor_SetByte55ForActorZeroAnd12To17(void)
 {
     s32 val;
 
-    *((u8 *)Engine_ActorGet(0) + 0x55) = 3;
+    *((u8 *)Object_GetById(0) + 0x55) = 3;
     val = 4;
-    *((u8 *)Engine_ActorGet(12) + 0x55) = val;
-    *((u8 *)Engine_ActorGet(13) + 0x55) = val;
-    *((u8 *)Engine_ActorGet(14) + 0x55) = val;
-    *((u8 *)Engine_ActorGet(15) + 0x55) = val;
-    *((u8 *)Engine_ActorGet(16) + 0x55) = val;
-    *((u8 *)Engine_ActorGet(17) + 0x55) = val;
+    *((u8 *)Object_GetById(12) + 0x55) = val;
+    *((u8 *)Object_GetById(13) + 0x55) = val;
+    *((u8 *)Object_GetById(14) + 0x55) = val;
+    *((u8 *)Object_GetById(15) + 0x55) = val;
+    *((u8 *)Object_GetById(16) + 0x55) = val;
+    *((u8 *)Object_GetById(17) + 0x55) = val;
 }
 
 s32 SceneData_GetTableE6ec(void)
@@ -376,8 +376,8 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
     Actor_SetSpriteFlags(Actor_Get(10), 0);
     Actor_SetSpriteFlags(Actor_Get(11), 0);
     v = (s32)0xffff0000;
-    Engine_ActorGet(10)->scale_x = v;
-    Engine_ActorGet(11)->scale_x = v;
+    Object_GetById(10)->scale_x = v;
+    Object_GetById(11)->scale_x = v;
     i = 12;
     z = 0;
     do {
@@ -429,7 +429,7 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
         s32 slot = SceneActor_FindNearestSlotOfKindF2();
 
         if (slot != 0) {
-            Spr_0200071c *p = (Spr_0200071c *)Engine_ActorGet(slot);
+            Spr_0200071c *p = (Spr_0200071c *)Object_GetById(slot);
             if (p != 0) {
                 p->unk55 = 0;
             }
@@ -467,7 +467,7 @@ void Scene_RunScriptedActorPresentation(void)
     s32 base5_8001;
     s32 pairScript;
 
-    rec7 = (u8 *)Engine_ActorGet(18);
+    rec7 = (u8 *)Object_GetById(18);
     Engine_EventBegin();
     FieldScene_RunScene3c9_02001280(1, 0);
     FieldScene_RunScene3c9_02001280(2, 0);
@@ -482,11 +482,11 @@ void Scene_RunScriptedActorPresentation(void)
     
         rec7[35] = (u8)(value | 2);
     }
-    record = (u8 *)Engine_ActorGet(18);
+    record = (u8 *)Object_GetById(18);
     Engine_ActorSetSpriteFlags((s32)record, 0);
     Engine_ActorSetSpritePriority(18, 1);
     Engine_ActorSetPosition(18, 0x2440000, 0x1520000);
-    rec8 = (u8 *)Engine_ActorGet(0);
+    rec8 = (u8 *)Object_GetById(0);
     rec8[85] = none;
     Engine_ActorSetSpritePriority(0, 1);
     Engine_ActorSetPosition(0, 0x2450000, 0x1200000);
@@ -496,14 +496,14 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(20);
     Call3(Engine_ActorSetSpeed, 18, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-    *(u8 *)((u8 *)Engine_ActorGet(0) + 90) &= 254;
+    *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
     Call3(Engine_ActorSetDestination, 18, 0x244, 221);
     Call3(Engine_ActorMoveToAndWait, 0, 0x245, 171);
     Call3(Engine_ActorSetDestination, 18, 0x212, 211);
     Call3(Engine_ActorMoveToAndWait, 0, 0x213, 161);
     Call3(Engine_ActorSetDestination, 18, 0x208, 191);
     Engine_ActorMoveToAndWait(0, 0x209, 141);
-    record = (u8 *)Engine_ActorGet(18);
+    record = (u8 *)Object_GetById(18);
     Engine_ActorSetSpriteFlags((s32)record, 1);
     Call3(Engine_ActorSetDestination, 18, 0x203, 171);
     Engine_ActorMoveToAndWait(0, 0x204, 121);
@@ -524,12 +524,12 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_AudioPlayCue(152);
     *(s32 *)((s32)rec8 + 40) = 0x40000;
     Engine_AudioPlayCue(152);
-    record = (u8 *)Engine_ActorGet(0);
+    record = (u8 *)Object_GetById(0);
     Engine_ActorSetSpriteFlags((s32)record, 1);
     Engine_ActorMoveToAndWait(0, 0x1f8, 148);
     v5 = 1;
     Engine_EventWait(10);
-    *(u8 *)((u8 *)Engine_ActorGet(0) + 90) |= v5;
+    *(u8 *)((u8 *)Object_GetById(0) + 90) |= v5;
     {
         s32 shown = 0x4000;
 
@@ -539,13 +539,13 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(20);
     Engine_AudioPlayCue(0x134);
     Engine_ActorMoveToAndWait(18, 0x20c, 191);
-    record = (u8 *)Engine_ActorGet(18);
+    record = (u8 *)Object_GetById(18);
     Engine_ActorSetSpriteFlags((s32)record, 0);
     Call3(Engine_ActorMoveToAndWait, 18, 0x212, 211);
     Call3(Engine_ActorMoveToAndWait, 18, 0x244, 221);
     Engine_ActorSetDestination(18, 0x244, 0x152);
     {
-        u8 *record = (u8 *)Engine_ActorGet(0);
+        u8 *record = (u8 *)Object_GetById(0);
         /* FAKEMATCH: the volatile read keeps the flag byte's load in place. */
         u8 value = *(volatile u8 *)&record[35];
     
@@ -824,15 +824,15 @@ void Scene_RunActorEntrySequence(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_MIA, 0x16666, 0xb333);
-    object = Engine_ActorGet(0);
+    object = Object_GetById(0);
     if (object != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
     }
-    object = Engine_ActorGet(0);
+    object = Object_GetById(0);
     if (object != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
     }
-    object = Engine_ActorGet(0);
+    object = Object_GetById(0);
     if (object != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
     }
@@ -905,7 +905,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_WalkToAndWait(6, 0x104, 186);
     Engine_ActorFaceDirection(21, 0x3000, 0);
     Actor_WalkToAndWait(6, 0x114, 192);
-    object = Engine_ActorGet(19);
+    object = Object_GetById(19);
     {
         s32 shown = 0x5000;
 
@@ -928,7 +928,7 @@ void Scene_RunActorEntrySequence(void)
     Task_Wait(1);
     frame = 0;
     do {
-        object = Engine_ActorGet(6);
+        object = Object_GetById(6);
         SceneEffect_UpdateObjectByFrameParity((s32)object);
         frame = (frame + 1);
         Task_Wait(1);
@@ -962,12 +962,12 @@ void Scene_RunActorEntrySequence(void)
     VinasuChojo_ShowMessage(0x2014);
     disableMask = 254;
     Actor_RunRepeatedMotion(6, 2);
-    *(u8 *)((u8 *)Engine_ActorGet(6) + 90) &= disableMask;
+    *(u8 *)((u8 *)Object_GetById(6) + 90) &= disableMask;
     Actor_WalkToAndWait(6, 250, 176);
     enableMask = 1;
     Event_Wait(1);
     {
-        u8 *actor = Engine_ActorGet(6);
+        u8 *actor = Object_GetById(6);
         s32 flags = actor[90];
         flags |= enableMask;
         actor[90] = flags;
@@ -980,11 +980,11 @@ void Scene_RunActorEntrySequence(void)
     Actor_RunRepeatedMotion(6, 2);
     Event_Wait(40);
     Actor_SetSpeed(6, 0x9999, 0x4ccc);
-    *(u8 *)((u8 *)Engine_ActorGet(6) + 90) &= disableMask;
+    *(u8 *)((u8 *)Object_GetById(6) + 90) &= disableMask;
     Actor_WalkToAndWait(6, 248, 172);
     Event_Wait(1);
     {
-        u8 *object = Engine_ActorGet(6);
+        u8 *object = Object_GetById(6);
         enableMask |= object[90];
         object[90] = enableMask;
     }
@@ -1116,7 +1116,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_WalkToAndWait(6, 0x114, 192);
     Audio_PlayCue(19);
     facing = 160;
-    object = Engine_ActorGet(19);
+    object = Object_GetById(19);
     *(u16 *)((s32)object + 6) = (facing << 7);
     Task_Wait(1);
     Actor_RunRepeatedMotion(19, 1);
@@ -1202,15 +1202,15 @@ void Scene_RunActorEntrySequence(void)
     GameFlag_Set(itemOwner + 0x345);
     finalMask = 254;
     PartyInventory_Remove(65);
-    *(u8 *)((u8 *)Engine_ActorGet(0) + 90) &= finalMask;
-    *(u8 *)((u8 *)Engine_ActorGet(1) + 90) &= finalMask;
-    *(u8 *)((u8 *)Engine_ActorGet(2) + 90) &= finalMask;
-    *(u8 *)((u8 *)Engine_ActorGet(3) + 90) &= finalMask;
-    *(u8 *)((u8 *)Engine_ActorGet(19) + 90) &= finalMask;
-    *(u8 *)((u8 *)Engine_ActorGet(20) + 90) &= finalMask;
-    *(u8 *)((u8 *)Engine_ActorGet(21) + 90) &= finalMask;
+    *(u8 *)((u8 *)Object_GetById(0) + 90) &= finalMask;
+    *(u8 *)((u8 *)Object_GetById(1) + 90) &= finalMask;
+    *(u8 *)((u8 *)Object_GetById(2) + 90) &= finalMask;
+    *(u8 *)((u8 *)Object_GetById(3) + 90) &= finalMask;
+    *(u8 *)((u8 *)Object_GetById(19) + 90) &= finalMask;
+    *(u8 *)((u8 *)Object_GetById(20) + 90) &= finalMask;
+    *(u8 *)((u8 *)Object_GetById(21) + 90) &= finalMask;
     {
-        u8 *actor = Engine_ActorGet(6);
+        u8 *actor = Object_GetById(6);
         actor += 90;
         groupActions = SceneAction_EntryGroup;
         finalMask &= *actor;

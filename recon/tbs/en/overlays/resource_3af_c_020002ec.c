@@ -118,10 +118,10 @@ s32 Func_020002ec(struct FieldActor *obj)
                     Call3(Engine_ActorFaceDirection, 22, 0xb000, 0);
                 }
                 if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
-                    Engine_ActorGet(22)->velocity_y = 0x20000;
+                    Object_GetById(22)->velocity_y = 0x20000;
                 } else {
                     Call3(Engine_ActorShowEmote, 22, 0x103, 0);
-                    Engine_ActorGet(22)->velocity_y = 0x60000;
+                    Object_GetById(22)->velocity_y = 0x60000;
                 }
             }
             break;

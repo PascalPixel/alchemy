@@ -119,13 +119,13 @@ void ArutinYama_ApplyEntryState(void)
     if (Engine_GameFlagIsSet(0x8fd) == 0) {
         Engine_ActorSetPosition(8, 0, 0);
     } else {
-        record = Engine_ActorGet(8);
+        record = Object_GetById(8);
         if ((s32)record != 0) {
             record[35] = 2;
             Engine_ActorSetSpriteFlags((s32)record, 0);
         }
     }
-    record = Engine_ActorGet(9);
+    record = Object_GetById(9);
     if ((s32)record != 0) {
         record[35] = 2;
         Engine_ActorSetSpriteFlags((s32)record, 0);
@@ -136,14 +136,14 @@ void ArutinYama_ApplyEntryState(void)
         rec8 = Engine_GameFlagIsSet(0x905);
         if (rec8 != 0) {
             Engine_ActorSetAnimation(9, 0);
-            record = ((u8 *)Engine_ActorGet(9));
+            record = ((u8 *)Object_GetById(9));
             *(s32 *)((s32)record + 108) = (s32)SceneState_ForwardByRuntimeSelector;
-            *(u8 *)((u8 *)Engine_ActorGet(9) + 85) = rec7;
-            record = ((u8 *)Engine_ActorGet(9));
+            *(u8 *)((u8 *)Object_GetById(9) + 85) = rec7;
+            record = ((u8 *)Object_GetById(9));
             *(s32 *)((s32)record + 12) = 0x200000;
             Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
             ((void (*)())Engine_ActorSetPosition)(10, 0x780000, 0xd70000);
-            record = ((u8 *)Engine_ActorGet(10));
+            record = ((u8 *)Object_GetById(10));
             *(u16 *)((s32)record + 6) = rec7;
             Engine_ActorSetAnimation(10, 3);
             SceneState_StoreParamsAndInstallTask(0x820000, 0, 0xa80000, 0);
@@ -153,10 +153,10 @@ void ArutinYama_ApplyEntryState(void)
             goto L_020022de;
         }
         Engine_ActorSetAnimation(9, 0);
-        record = ((u8 *)Engine_ActorGet(9));
+        record = ((u8 *)Object_GetById(9));
         *(s32 *)((s32)record + 108) = (s32)SceneState_ForwardByRuntimeSelector;
-        *(u8 *)((u8 *)Engine_ActorGet(9) + 85) = rec8;
-        record = ((u8 *)Engine_ActorGet(9));
+        *(u8 *)((u8 *)Object_GetById(9) + 85) = rec8;
+        record = ((u8 *)Object_GetById(9));
         *(s32 *)((s32)record + 12) = 0x200000;
         Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
         Call3(Engine_ActorSetPosition, 10, 0x1040000, 0xd70000);
@@ -174,7 +174,7 @@ void ArutinYama_ApplyEntryState(void)
         if (Engine_GameFlagIsSet(0x200) != 0) {
             Engine_ActorSetAnimation(8, 5);
             Call6(Engine_MapCopyCellAttributes, 7, 13, 1, 1, 9, 13);
-            record = ((u8 *)Engine_ActorGet(8));
+            record = ((u8 *)Object_GetById(8));
             *(s32 *)((s32)record + 12) = 0;
             {
                 u8 value = *(volatile u8 *)&record[35];
@@ -186,7 +186,7 @@ void ArutinYama_ApplyEntryState(void)
         if (Engine_GameFlagIsSet(0x201) != 0) {
             Engine_ActorSetAnimation(9, 5);
             Call6(Engine_MapCopyCellAttributes, 29, 1, 3, 1, 17, 13);
-            record = ((u8 *)Engine_ActorGet(9));
+            record = ((u8 *)Object_GetById(9));
             *(s32 *)((s32)record + 12) = 0x200000;
             {
                 u8 value = *(volatile u8 *)&record[35];
@@ -383,16 +383,16 @@ void ArutinYama_PlaceFlaggedActors(void)
 {
     struct FieldActor *actor;
 
-    actor = Engine_ActorGet(10);
+    actor = Object_GetById(10);
     Engine_ActorSetPosition(8, 0, 0);
     Engine_ActorSetPosition(9, 0, 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
     actor->motion_flags = 0;
     actor->scale_x = 0xe666;
     actor->scale_y = 0x9999;
     actor->sprite->rotation = 0x8000;
-    Engine_ActorGet(12)->motion_flags = 0;
-    Engine_ActorGet(12)->y.fixed = -0x1c0000;
+    Object_GetById(12)->motion_flags = 0;
+    Object_GetById(12)->y.fixed = -0x1c0000;
     if (Value1(Engine_GameFlagIsSet, 0x908)) {
         actor->x.fixed += 0xe0000;
         actor->y.fixed += -0x80000;
@@ -406,7 +406,7 @@ void ArutinYama_PlaceFlaggedActors(void)
     }
     if (gGameState.entrance == 6 && !Engine_GameFlagIsSet(0x109)) {
         Engine_EventBegin();
-        Engine_ActorGet(0)->y.fixed = -0x580000;
+        Object_GetById(0)->y.fixed = -0x580000;
         Engine_CameraMoveTo(0x3180000, -0x580000, 0x2410000, 0);
         Engine_MapRedraw();
         Engine_TaskWait(1);
@@ -432,12 +432,12 @@ void FieldScene_RunScene3a4_02002934(void)
         Actor_SetSpritePriority(9, 3);
         record = Actor_Get(9);
         Actor_SetSpriteFlags(record, 0);
-        *(u8 *)((u8 *)Engine_ActorGet(9) + 89) = rec7;
+        *(u8 *)((u8 *)Object_GetById(9) + 89) = rec7;
     }
     flag = gGameState.entrance;
     if (flag == 1 || flag == 98) {
         if (GameFlag_IsSet(0x109) == 0) {
-            rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            rec7 = Object_GetById(ACTOR_PARTY_LEADER);
             Event_Begin();
             *(s32 *)(rec7 + 12) = 0x100000;
             Event_End();
@@ -661,7 +661,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec7 = Object_GetById(ACTOR_PARTY_LEADER);
     Event_Begin();
     Actor_SetPosition(10, 0, 0);
     Actor_SetPosition(8, 0, 0);
@@ -795,7 +795,7 @@ void SceneActor_SetActor8ModeByCounterBit(void)
     }
 }
 
-/* Record returned by Engine_ActorGet/26/3a: a pair of s32 fields at +8 and
+/* Record returned by Object_GetById/26/3a: a pair of s32 fields at +8 and
  * +16 that get forwarded straight into the matching setup call. */
 void RunEventScript01(void)
 {
@@ -816,15 +816,15 @@ void RunEventScript01(void)
     Event_OpenScreen();
     Event_WaitForScreen(); /* main:0808a370 */
     Event_Wait(20);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -938,9 +938,9 @@ void SceneActor_SetActor12ModeByActorZeroHeight(void)
 {
     extern u32 Data_03001e40;
 
-    if (*(s32 *)((u8 *)Engine_ActorGet(0) + 12) > 0x00300000) {
+    if (*(s32 *)((u8 *)Object_GetById(0) + 12) > 0x00300000) {
         {
-            u8 *flag = (u8 *)Engine_ActorGet(11) + 35;
+            u8 *flag = (u8 *)Object_GetById(11) + 35;
             s32 bit = 2;
 
             bit |= *flag;
@@ -988,9 +988,9 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     object->z.fixed = center_z;
     object->velocity_x = 0;
     object->velocity_z = 0;
-    Engine_ObjectSetAnimation(object, 2);
+    Object_SetMode(object, 2);
     Engine_TaskWait(15);
-    Engine_ObjectSetAnimation(object, 1);
+    Object_SetMode(object, 1);
     Engine_TaskWait(30);
     sprite = object->sprite;
     sprite->part_count = 1;
@@ -1004,7 +1004,7 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     *(s32 *)((u8 *)leader + 72) = 0x10000;
     leader->z.fixed = center_z;
     ((struct FieldSprite *)*(s32 *)((u8 *)(leader) + 0x50))->priority = 0;
-    Engine_ObjectSetAnimation(leader, 7);
+    Object_SetMode(leader, 7);
     Engine_ObjectSetPosition(leader, x, leader->y.fixed, z + 0x180000);
     leader->facing = 0x4000;
     Engine_TaskWait(20);
@@ -1037,7 +1037,7 @@ void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
     x = (p[0].fixed + 0x80000) & 0xfff00000;
     z = (p[2].fixed + 0x80000) & 0xfff00000;
     angle += 0x8000;
-    Engine_ObjectSetAnimation(object, 5);
+    Object_SetMode(object, 5);
     n = 0;
     Engine_AudioPlayCue(184);
     while (n < 16) {
@@ -1073,7 +1073,7 @@ void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
     x = (p[0].fixed + 0x80000) & 0xfff00000;
     z = (p[2].fixed + 0x80000) & 0xfff00000;
     angle += 0x8000;
-    Engine_ObjectSetAnimation(object, 6);
+    Object_SetMode(object, 6);
     n = 0;
     Engine_AudioPlayCue(184);
     while (n < 16) {
@@ -1143,11 +1143,11 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
     behind = Map_GetTerrainHeight(2, p[0].fixed, p[2].fixed);
     if (*timer <= 20) {
         if (ahead == behind) {
-            Engine_ObjectSetAnimation(object, 2);
+            Object_SetMode(object, 2);
         } else if (ahead > behind) {
-            Engine_ObjectSetAnimation(object, 3);
+            Object_SetMode(object, 3);
         } else {
-            Engine_ObjectSetAnimation(object, 4);
+            Object_SetMode(object, 4);
         }
     }
 }
@@ -1157,7 +1157,7 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
  * until tile 99. */
 void ArutinYama_RunRollingObject(s32 id, s32 heading)
 {
-    struct FieldActor *object = Engine_ActorGet(id);
+    struct FieldActor *object = Object_GetById(id);
     struct FieldActor *leader = ObjectTable_Get(gGameState.selected_actor);
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;

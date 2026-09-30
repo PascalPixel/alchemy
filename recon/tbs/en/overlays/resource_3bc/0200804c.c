@@ -18,7 +18,7 @@ void ColossoLogRollingStage_SceneTask(void)
 {
     u8 *work = *(u8 **)&gEventWork;
     s16 *table = (s16 *)&gGameState;
-    u8 *actor = (u8 *)Engine_ActorGet(*(s32 *)&table[250]);
+    u8 *actor = (u8 *)Object_GetById(*(s32 *)&table[250]);
     s32 row = *(s32 *)(actor + 16) >> 20;
     s32 i;
     s32 kind;

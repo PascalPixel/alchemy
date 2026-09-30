@@ -10,9 +10,9 @@ void HaidiaMura_OpenVillagerLane(void)
 
     Call6((void (*)())Engine_MapCopyCellAttributes, 17, 0, 3, 1, 22, 36);
     if (Engine_GameFlagIsSet(0x87a))
-        actor = Engine_ActorGet(21);
+        actor = Object_GetById(21);
     else
-        actor = Engine_ActorGet(20);
+        actor = Object_GetById(20);
     if (actor == NULL)
         return;
     Call1((void (*)())Engine_GameFlagClear, 0x314);

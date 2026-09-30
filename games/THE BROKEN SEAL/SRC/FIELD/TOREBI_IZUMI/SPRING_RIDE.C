@@ -62,14 +62,14 @@ s32 TorebiIzumi_RunSpringRide(s32 side)
             ride->z = 0x980000;
             ride->frames = 300;
             if (TorebiIzumi_RideSide == 1) {
-                Engine_ObjectSetAnimation(Engine_ActorGet(16), 3);
-                Engine_ObjectSetAnimation(Engine_ActorGet(17), 0);
+                Object_SetMode(Object_GetById(16), 3);
+                Object_SetMode(Object_GetById(17), 0);
                 OverlayObject_SetField54(15, 1);
                 OverlayObject_SetField54(14, 1);
                 OverlayObject_SetField54(13, 1);
             } else {
-                Engine_ObjectSetAnimation(Engine_ActorGet(11), 3);
-                Engine_ObjectSetAnimation(Engine_ActorGet(12), 0);
+                Object_SetMode(Object_GetById(11), 3);
+                Object_SetMode(Object_GetById(12), 0);
                 OverlayObject_SetField54(10, 1);
                 OverlayObject_SetField54(9, 1);
                 OverlayObject_SetField54(8, 1);

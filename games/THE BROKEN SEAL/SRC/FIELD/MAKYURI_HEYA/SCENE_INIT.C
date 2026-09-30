@@ -71,7 +71,7 @@ s32 Scene_Initialize(void)
             BattleFx_SetQueuedSoundAndPlay(170);
             break;
         case 15:
-            SetEffectRecordMode(Engine_ActorGet(0), 1);
+            SetEffectRecordMode(Object_GetById(0), 1);
         case 4:
             if (Engine_GameFlagIsSet(0x876)) {
                 WaitFrames(1);
@@ -84,13 +84,13 @@ s32 Scene_Initialize(void)
                 Engine_GameFlagClear(0x312);
                 Engine_GameFlagClear(0x313);
             }
-            SetEffectRecordMode(Engine_ActorGet(9), 1);
-            SetEffectRecordMode(Engine_ActorGet(10), 1);
-            SetEffectRecordMode(Engine_ActorGet(11), 1);
+            SetEffectRecordMode(Object_GetById(9), 1);
+            SetEffectRecordMode(Object_GetById(10), 1);
+            SetEffectRecordMode(Object_GetById(11), 1);
             FieldScene_RedrawActorFootprint(9);
             FieldScene_RedrawActorFootprint(10);
             FieldScene_RedrawActorFootprint(11);
-            SetEffectRecordMode(Engine_ActorGet(12), 1);
+            SetEffectRecordMode(Object_GetById(12), 1);
             if (Engine_GameFlagIsSet(0x310)) {
                 ((void (*)())Engine_MapCopyCellsTo)(119, 9, 109, 11, 1, 1);
                 if (Engine_GameFlagIsSet(0x311))
@@ -115,8 +115,8 @@ s32 Scene_Initialize(void)
         switch (gGameState.entrance) {
         case 1:
         case 2:
-            SetEffectRecordMode(Engine_ActorGet(8), 1);
-            SetEffectRecordMode(Engine_ActorGet(9), 1);
+            SetEffectRecordMode(Object_GetById(8), 1);
+            SetEffectRecordMode(Object_GetById(9), 1);
             if (Engine_GameFlagIsSet(0x302)) {
                 WaitFrames(1);
                 Audio_PlayCue(211);
@@ -143,8 +143,8 @@ s32 Scene_Initialize(void)
             }
             if (Engine_GameFlagIsSet(0x874)) {
                 ((void (*)())Engine_ActorSetPosition)(11, 176 << 15, 216 << 16);
-                Engine_ActorGet(11)->y.fixed += -0x20000;
-                Engine_ActorGet(11)->target_y = Engine_ActorGet(11)->y.fixed;
+                Object_GetById(11)->y.fixed += -0x20000;
+                Object_GetById(11)->target_y = Object_GetById(11)->y.fixed;
                 ((void (*)())Engine_MapCopyCellsTo)(9, 1, 9, 7, 1, 2);
                 ((void (*)())Engine_MapCopyCellsTo)(5, 2, 5, 11, 1, 1);
                 Call6((void (*)())Map_CopyCellAttributeRect, 9, 5, 1, 1, 9, 10);
@@ -153,7 +153,7 @@ s32 Scene_Initialize(void)
         case 7:
         case 8:
         case 9:
-            SetEffectRecordMode(Engine_ActorGet(10), 1);
+            SetEffectRecordMode(Object_GetById(10), 1);
             if (Engine_GameFlagIsSet(0x306)) {
                 FieldScene_RunSupplementalSequenceOne(0);
                 ((void (*)())Map_CopyCellAttributeRect)(42, 41, 4, 1, 42, 39);
@@ -168,12 +168,12 @@ s32 Scene_Initialize(void)
         case 4:
         case 5:
         case 6:
-            SetEffectRecordMode(Engine_ActorGet(15), 1);
-            SetEffectRecordMode(Engine_ActorGet(16), 1);
-            SetEffectRecordMode(Engine_ActorGet(17), 1);
-            SetEffectRecordMode(Engine_ActorGet(18), 1);
-            SetEffectRecordMode(Engine_ActorGet(19), 1);
-            SetEffectRecordMode(Engine_ActorGet(0), 1);
+            SetEffectRecordMode(Object_GetById(15), 1);
+            SetEffectRecordMode(Object_GetById(16), 1);
+            SetEffectRecordMode(Object_GetById(17), 1);
+            SetEffectRecordMode(Object_GetById(18), 1);
+            SetEffectRecordMode(Object_GetById(19), 1);
+            SetEffectRecordMode(Object_GetById(0), 1);
             i = 0;
             x = 158 << 18;
             flag = 0x330;
@@ -212,15 +212,15 @@ s32 Scene_Initialize(void)
         case 8:
         case 9:
             if (Engine_GameFlagIsSet(0x109) && Engine_GameFlagIsSet(0x256)) {
-                Engine_ActorGet(0)->y.fixed = -0x20000;
-                Engine_ActorGet(0)->target_y = Engine_ActorGet(0)->y.fixed;
+                Object_GetById(0)->y.fixed = -0x20000;
+                Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
                 ((void (*)())Engine_MapCopyCellsTo)(6, 29, 10, 23, 1, 1);
                 ((void (*)())Engine_MapCopyCellsTo)(10, 28, 10, 18, 1, 2);
             }
             if (Engine_GameFlagIsSet(0x878)) {
                 ((void (*)())Engine_ActorSetPosition)(8, 168 << 16, 188 << 17);
-                Engine_ActorGet(8)->y.fixed += -0x20000;
-                Engine_ActorGet(8)->target_y = Engine_ActorGet(8)->y.fixed;
+                Object_GetById(8)->y.fixed += -0x20000;
+                Object_GetById(8)->target_y = Object_GetById(8)->y.fixed;
                 ((void (*)())Engine_MapCopyCellsTo)(6, 29, 10, 23, 1, 1);
                 ((void (*)())Engine_MapCopyCellsTo)(10, 28, 10, 18, 1, 2);
                 Call6((void (*)())Map_CopyCellAttributeRect, 10, 16, 1, 1, 10, 19);
@@ -231,19 +231,19 @@ s32 Scene_Initialize(void)
             WaitFrames(1);
             Call3((void (*)())Engine_ActorSetPosition, 10, 204 << 18, 152 << 18);
             ((void (*)())Engine_ActorSetPosition)(11, 194 << 18, 144 << 18);
-            SetEffectRecordMode(Engine_ActorGet(0), 1);
+            SetEffectRecordMode(Object_GetById(0), 1);
             SceneEffect_SpawnParticleRowsByMode(0);
             FieldScene_RunPrimarySequence(1);
         case 14:
             if (gGameState.entrance == 14)
                 Audio_PlayCue(211);
-            SetEffectRecordMode(Engine_ActorGet(9), 1);
+            SetEffectRecordMode(Object_GetById(9), 1);
             ((void (*)())Engine_ActorSetSpritePriority)(10, 2);
-            Engine_ActorGet(10)->unknown_22 = 2;
-            SetEffectRecordMode(Engine_ActorGet(11), 1);
-            SetEffectRecordMode(Engine_ActorGet(12), 1);
-            SetEffectRecordMode(Engine_ActorGet(13), 1);
-            SetEffectRecordMode(Engine_ActorGet(14), 1);
+            Object_GetById(10)->unknown_22 = 2;
+            SetEffectRecordMode(Object_GetById(11), 1);
+            SetEffectRecordMode(Object_GetById(12), 1);
+            SetEffectRecordMode(Object_GetById(13), 1);
+            SetEffectRecordMode(Object_GetById(14), 1);
             FieldScene_RedrawActorFootprint(10);
             FieldScene_RedrawActorFootprint(11);
             if (gGameState.entrance != 14)
@@ -258,7 +258,7 @@ s32 Scene_Initialize(void)
             SceneEffect_SpawnParticleRowsByMode(0);
             if (Engine_GameFlagIsSet(0x319)) {
                 FieldScene_RunPrimarySequence(2);
-                if (Engine_ActorGet(9)->z.fixed >> 20 == 44)
+                if (Object_GetById(9)->z.fixed >> 20 == 44)
                     ((void (*)())Engine_TaskAddCallback)(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
             } else if (Engine_GameFlagIsSet(0x31a)) {
                 FieldScene_RunPrimarySequence(1);
@@ -268,21 +268,21 @@ s32 Scene_Initialize(void)
             break;
         case 15:
             Engine_EventBegin();
-            SetEffectRecordMode(Engine_ActorGet(8), 1);
+            SetEffectRecordMode(Object_GetById(8), 1);
             ((void (*)())Engine_ActorSetChildValue)(0, 15);
-            ((void (*)())Engine_ActorSetSpriteFlags)(Engine_ActorGet(0), 0);
-            Engine_ActorGet(8)->y.fixed = 144 << 16;
-            Engine_ActorGet(8)->motion_flags = 0;
-            *(s32 *)&Engine_ActorGet(8)->unknown_44[0] = 0;
-            *(s32 *)&Engine_ActorGet(8)->unknown_44[4] = 0x4ccc;
+            ((void (*)())Engine_ActorSetSpriteFlags)(Object_GetById(0), 0);
+            Object_GetById(8)->y.fixed = 144 << 16;
+            Object_GetById(8)->motion_flags = 0;
+            *(s32 *)&Object_GetById(8)->unknown_44[0] = 0;
+            *(s32 *)&Object_GetById(8)->unknown_44[4] = 0x4ccc;
             gEventWork->start_transition = 0x100;
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
-            Engine_ActorGet(8)->motion_flags = 3;
+            Object_GetById(8)->motion_flags = 3;
             Audio_PlayCue(189);
             Battle_WaitMode0(32);
             Audio_PlayCue(188);
-            SetEffectRecordMode(Engine_ActorGet(8), 2);
+            SetEffectRecordMode(Object_GetById(8), 2);
             Call3((void (*)())Engine_WorkSetValuesIfNonNegative, 192 << 10, 192 << 10, 128 << 9);
             Call3((void (*)())Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
             Engine_MapRenderWaitForValues();
@@ -315,7 +315,7 @@ s32 Scene_Initialize(void)
             DisplayBlend_EnableRunScript();
             /* FAKEMATCH: the do/while keeps this zero from being shared, as a pool halfword, with the later zero stores. */
             do { s32 z = 0; *(volatile u16 *)0x04000050 = z; } while (0);
-            Engine_ActorGet(9)->scale_x = -0x10000;
+            Object_GetById(9)->scale_x = -0x10000;
             ((void (*)())Engine_ActorSetSpritePriority)(14, 1);
             ((void (*)())Engine_ActorSetSpritePriority)(15, 1);
             ((void (*)())Engine_ActorSetSpritePriority)(16, 1);
@@ -327,8 +327,8 @@ s32 Scene_Initialize(void)
             }
             Call3((void (*)())Engine_ActorSetPosition, 10, 206 << 18, 150 << 18);
             Call6((void (*)())Map_CopyCellAttributeRect, 116, 36, 3, 4, 52, 36);
-            Engine_ActorGet(10)->motion_flags = set;
-            SetEffectRecordMode(Engine_ActorGet(10), 1);
+            Object_GetById(10)->motion_flags = set;
+            SetEffectRecordMode(Object_GetById(10), 1);
             Engine_EventBegin();
             Call4((void (*)())Engine_CameraMoveTo, -1, -1, -1, 0);
             Engine_EventGetViewCenter()->motion_flags = set;
@@ -340,7 +340,7 @@ s32 Scene_Initialize(void)
             break;
         case 12:
             Battle_WaitMode0(1);
-            SetEffectRecordMode(Engine_ActorGet(0), 1);
+            SetEffectRecordMode(Object_GetById(0), 1);
         case 11:
             Call6((void (*)())Map_CopyCellAttributeRect, 104, 34, 5, 4, 40, 34);
             ((void (*)())Engine_MapCopyCellsTo)(45, 91, 40, 91, 5, 4);
@@ -354,7 +354,7 @@ s32 Scene_Initialize(void)
                 ((void (*)())Engine_ActorSetSpritePriority)(15, 1);
                 ((void (*)())Engine_ActorSetSpritePriority)(16, 1);
             }
-            Engine_ActorGet(9)->scale_x = -0x10000;
+            Object_GetById(9)->scale_x = -0x10000;
             if (!Engine_GameFlagIsSet(0x82b)) {
                 ((void (*)())Engine_ActorSetPosition)(3, 0, 0);
                 Call3((void (*)())Engine_ActorSetPosition, 10, 206 << 18, 150 << 18);
@@ -372,18 +372,18 @@ s32 Scene_Initialize(void)
                     Call3((void (*)())Engine_ActorSetPosition, 3, 210 << 18, 158 << 18);
                     Call3((void (*)())Engine_ActorFaceDirection, 3, 192 << 8, 0);
                 }
-                SetEffectRecordMode(Engine_ActorGet(3), 1);
+                SetEffectRecordMode(Object_GetById(3), 1);
                 Call6((void (*)())Engine_MapCopyCellsTo, 126, 35, 116, 35, 1, 2);
                 ((void (*)())Engine_TaskAddCallback)(SceneEffect_RotatePaletteEntries40To47, 0xc80);
             } else {
                 ((void (*)())Engine_ActorSetPosition)(3, 0, 0);
                 Call3((void (*)())Engine_ActorSetPosition, 10, 206 << 18, 150 << 18);
                 Call6((void (*)())Map_CopyCellAttributeRect, 116, 36, 3, 4, 52, 36);
-                Engine_ActorGet(10)->collision_flags = 254;
+                Object_GetById(10)->collision_flags = 254;
                 Battle_WaitMode0(1);
             }
-            Engine_ActorGet(10)->motion_flags = 0;
-            SetEffectRecordMode(Engine_ActorGet(10), 1);
+            Object_GetById(10)->motion_flags = 0;
+            SetEffectRecordMode(Object_GetById(10), 1);
             break;
         }
     }

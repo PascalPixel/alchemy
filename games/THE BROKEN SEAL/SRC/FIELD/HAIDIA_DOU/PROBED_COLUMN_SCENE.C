@@ -9,7 +9,6 @@ s32 StagedActor_FindClearPosition(struct Probe *probe);
 void SceneActor_MoveAndRedraw(struct Probe probe);
 void SceneActor_WaitActorDescent();
 void Engine_EventBegin();
-s32 Object_GetById();
 void Object_SetModeById();
 void ObjectMotion_OffsetPositionAndResetMotion();
 void ObjectMotion_CommitCurrentPositionAndActivate();
@@ -35,14 +34,14 @@ void HaidiaDou_RunProbedColumnScene(void)
         if ((probe.word[2] >> 20) == 17) {
             Object_SetModeById(probe.word[1], 3);
             v6 = 0;
-            *(u8 *)(Object_GetById(probe.word[1]) + 85) = v6;
-            record = Object_GetById(probe.word[1]);
+            *(u8 *)((s32)Object_GetById(probe.word[1]) + 85) = v6;
+            record = (s32)Object_GetById(probe.word[1]);
             *(s32 *)(record + 68) = v6;
             ObjectMotion_OffsetPositionAndResetMotion(probe.word[1], -12, 0);
             ObjectMotion_CommitCurrentPositionAndActivate(probe.word[1]);
             Object_SetModeById(probe.word[1], 3);
             Engine_ActorSetSpritePriority(10, 3);
-            *(u8 *)(Object_GetById(probe.word[1]) + 85) = 3;
+            *(u8 *)((s32)Object_GetById(probe.word[1]) + 85) = 3;
             ObjectMotion_OffsetPositionAndResetMotion(probe.word[1], -6, 0);
             Object_GetById(probe.word[1]);
             SceneActor_WaitActorDescent();

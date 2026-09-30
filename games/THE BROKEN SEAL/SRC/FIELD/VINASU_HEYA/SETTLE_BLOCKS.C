@@ -30,7 +30,7 @@ extern u16 gVinasuSettleCells[];
 void VinasuHeya_SettlePushedBlocks(void)
 {
     struct FieldActor *marker = 0;
-    struct FieldActor *leader = Engine_ActorGet(0);
+    struct FieldActor *leader = Object_GetById(0);
     struct FieldActor *block;
     struct FieldActor *other;
     struct SwitchEffect *first;
@@ -44,7 +44,7 @@ void VinasuHeya_SettlePushedBlocks(void)
     Engine_EventBegin();
     Call6((void (*)())Engine_MapCopyCellAttributes, 108, 39, 13, 7, 44, 39);
     for (id = 9; id <= 11; id++) {
-        block = Engine_ActorGet(id);
+        block = Object_GetById(id);
         flags = &block->priority_flags;
         if (*flags != 2) {
             Call6((void (*)())Engine_MapCopyCellAttributes, 47, 39, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
@@ -63,7 +63,7 @@ void VinasuHeya_SettlePushedBlocks(void)
             continue;
         }
         for (i = 9; i <= 11; i++) {
-            other = Engine_ActorGet(i);
+            other = Object_GetById(i);
             if (id != i && block->x.fixed >> 20 == other->x.fixed >> 20
                 && block->z.fixed >> 20 == other->z.fixed >> 20) {
                 slot = 5;
@@ -79,7 +79,7 @@ void VinasuHeya_SettlePushedBlocks(void)
                                                               block->z.fixed - 0x40000, 20);
             Engine_ActorSetSpritePriority(0, 3);
         }
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(id), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(id), 0);
         block->unknown_22 = 0;
         block->motion_flags = 3;
         *(s32 *)&block->unknown_44[0] = 0;
@@ -98,7 +98,7 @@ void VinasuHeya_SettlePushedBlocks(void)
         }
         Call6((void (*)())Engine_MapCopyCellAttributes, 46, 39, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
         Engine_ActorSetSpritePriority(0, priority);
-        Engine_ActorGet(0)->priority_flags |= 1;
+        Object_GetById(0)->priority_flags |= 1;
         if (marker != 0) {
             Engine_ObjectDispatchRelease(marker);
         }
@@ -106,8 +106,8 @@ void VinasuHeya_SettlePushedBlocks(void)
             Engine_EventEnd();
             return;
         }
-        if ((Engine_ActorGet(9)->priority_flags & Engine_ActorGet(10)->priority_flags
-             & Engine_ActorGet(11)->priority_flags & 2) == 0) {
+        if ((Object_GetById(9)->priority_flags & Object_GetById(10)->priority_flags
+             & Object_GetById(11)->priority_flags & 2) == 0) {
             continue;
         }
         first = SceneEffect_SpawnEffect284AtCell(888, 680, gVinasuSettleScriptA);
@@ -118,8 +118,8 @@ void VinasuHeya_SettlePushedBlocks(void)
                 Engine_AudioPlayCue(158);
                 Engine_MapAnimateCells(gVinasuSettleCells, 109, 37);
                 Call6((void (*)())Engine_MapCopyCellAttributes, 45, 37, 1, 1, 45, 38);
-                if (Engine_ActorGet(9)->x.fixed >> 20 == gVinasuSwitchCells[0].x
-                    && Engine_ActorGet(9)->z.fixed >> 20 == gVinasuSwitchCells[0].z) {
+                if (Object_GetById(9)->x.fixed >> 20 == gVinasuSwitchCells[0].x
+                    && Object_GetById(9)->z.fixed >> 20 == gVinasuSwitchCells[0].z) {
                     Engine_GameFlagSet(0x302);
                 } else {
                     Engine_GameFlagSet(0x303);

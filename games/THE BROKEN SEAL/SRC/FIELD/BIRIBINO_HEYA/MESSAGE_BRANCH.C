@@ -77,7 +77,7 @@ void FieldScene_RunActor16MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)((u8 *)Engine_ActorGet(0) + 6);
+    dir = *(u16 *)((u8 *)Object_GetById(0) + 6);
     Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -99,7 +99,7 @@ void FieldScene_RunActor18MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)((u8 *)Engine_ActorGet(0) + 6);
+    dir = *(u16 *)((u8 *)Object_GetById(0) + 6);
     Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -125,7 +125,7 @@ void FieldScene_RunActor17MessageBranch(void)
 {
     u32 dir;
 
-    dir = *(u16 *)(Value1(Engine_ActorGet, 0) + 6);
+    dir = *(u16 *)(Value1(Object_GetById, 0) + 6);
     Event_Begin();
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Shop_Open(8, 17);
@@ -215,7 +215,7 @@ void FieldScene_RunActor19MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)((u8 *)Engine_ActorGet(0) + 6);
+    dir = *(u16 *)((u8 *)Object_GetById(0) + 6);
     Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -317,7 +317,7 @@ s32 FieldScene_SetupActor27OnEntry(void)
     s32 bits;
 
     *(s32 *)((u8 *)gEventWork + 448) = 521;
-    actor = (u8 *)Engine_ActorGet(27);
+    actor = (u8 *)Object_GetById(27);
     /*
      * The stored zero is also the mask's starting value: -13 is built by
      * subtracting from the register the strb already set to zero, not by

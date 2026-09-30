@@ -14,7 +14,6 @@ void Engine_EventBegin();
 void Battle_WaitMode0();
 void ObjectMotion_SetSpeedParameters();
 void Map_CopyCellAttributeRect();
-s32 Object_GetById();
 void Engine_GameFlagSet();
 void Func_020032f6();
 void ObjectMotion_OffsetPositionAndResetMotion();

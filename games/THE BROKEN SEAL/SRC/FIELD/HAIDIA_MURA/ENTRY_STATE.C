@@ -33,7 +33,7 @@ s32 HaidiaMura_ApplyEntryState(void)
         }
         Engine_MapCopyCellsTo(2, 102, 84, 41, 2, 1);
         Engine_MapCopyCellsTo(1, 102, 83, 41, 1, 1);
-        actor = Engine_ActorGet((Engine_GameFlagIsSet(0x87a) != 0) + 20);
+        actor = Object_GetById((Engine_GameFlagIsSet(0x87a) != 0) + 20);
         Engine_ActorSetSpriteFlags(actor, 0);
         if (Engine_GameFlagIsSet(0x314)) {
             actor->x.fixed = 181 << 17;
@@ -50,8 +50,8 @@ s32 HaidiaMura_ApplyEntryState(void)
         Engine_TaskAddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
         if (!Engine_GameFlagIsSet(0x87a)) {
             if (Value1(Engine_GameFlagIsSet, 0x815)) {
-                actor = Engine_ActorGet(21);
-                Engine_ActorSetSpriteFlags(Engine_ActorGet(21), 0);
+                actor = Object_GetById(21);
+                Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
                 actor->scale_x = 0x28f;
                 actor->scale_y = 0x28f;
             }
@@ -65,11 +65,11 @@ s32 HaidiaMura_ApplyEntryState(void)
                 if (!Engine_GameFlagIsSet(0x109)) {
                     if (Engine_GameFlagIsSet(0x823)) {
                         Call3(Engine_ActorSetPosition, 22, 0x1000000, 0x1c80000);
-                        Engine_ActorGet(22)->update = (void *)SceneActor_RunStep18WhenTargetSet;
+                        Object_GetById(22)->update = (void *)SceneActor_RunStep18WhenTargetSet;
                         Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
                     }
                 } else {
-                    Engine_ActorGet(22)->unknown_5b = set;
+                    Object_GetById(22)->unknown_5b = set;
                     Engine_GameFlagClear(0x241);
                 }
                 if (gGameState.entrance != 16 && !Engine_GameFlagIsSet(0x87a)) {

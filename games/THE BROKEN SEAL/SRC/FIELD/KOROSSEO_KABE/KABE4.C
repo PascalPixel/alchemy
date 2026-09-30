@@ -79,7 +79,7 @@ void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a)
 
 s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a)
 {
-    RaisedEffect *o = (RaisedEffect *)Engine_ActorGet(a->f64);
+    RaisedEffect *o = (RaisedEffect *)Object_GetById(a->f64);
 
     Engine_ObjectSetPosition(o, a->f08, a->f0c + 0x240000, a->f10);
     o->f55 = 0;
@@ -103,7 +103,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
     flag = GameFlag_IsSet(0x211);
 
     shared = (u8 *)gCell;
-    record = (u8 *)Engine_ActorGet(*(s32 *)(shared + 500));
+    record = (u8 *)Object_GetById(*(s32 *)(shared + 500));
 
     if (*(s32 *)(workspace + 232) < *(s32 *)(record + 8)) {
         x = *(s32 *)(workspace + 232) + 0xc0000;

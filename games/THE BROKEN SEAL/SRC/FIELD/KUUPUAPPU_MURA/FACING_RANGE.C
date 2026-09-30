@@ -23,7 +23,7 @@ struct SceneActor {
 };
 
 extern s32 ArcTan2(s32, s32);
-extern void Engine_ObjectSetAnimation(struct SceneActor *, s32);
+extern void Object_SetMode(struct SceneActor *, s32);
 
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
 {
@@ -52,12 +52,12 @@ s32 SceneActor_CheckFacingAndRange(struct SceneActor *actor, struct SceneActor *
         u32 facing = actor->facing & 0xf000;
         if (forward == facing || right == facing || left == facing || force != 0) {
             actor->active = 1;
-            Engine_ObjectSetAnimation(actor, 1);
+            Object_SetMode(actor, 1);
             result = 1;
         }
     } else {
         actor->active = 0;
-        Engine_ObjectSetAnimation(actor, 2);
+        Object_SetMode(actor, 2);
     }
     return result;
 }

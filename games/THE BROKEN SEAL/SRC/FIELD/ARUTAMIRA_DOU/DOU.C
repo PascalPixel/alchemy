@@ -281,7 +281,7 @@ void ArutamiraDou_RespawnActorObject(void)
  * attributes to (32, 20) and sets flag 0x212. */
 void ArutamiraDou_SettleActorOnCell(void)
 {
-    struct FieldActor *actor = Engine_ActorGet(12);
+    struct FieldActor *actor = Object_GetById(12);
 
     if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
         actor->motion_flags = 2;
@@ -302,7 +302,7 @@ void FieldScene_RunTwoCallSequence(void)
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)gEffectWork;
-    Ent_02000d58 *p = (Ent_02000d58 *)Engine_ActorGet(11);
+    Ent_02000d58 *p = (Ent_02000d58 *)Object_GetById(11);
     Vec v;
 
     v.x = p->unk8;
@@ -317,7 +317,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
 void FieldScene_RunActorElevenCellSetup(void)
 {
     u8 *obj = *(u8 **)gEffectWork;
-    u8 *p = (u8 *)Engine_ActorGet(11);
+    u8 *p = (u8 *)Object_GetById(11);
     s32 t;
 
     obj += 0x35;
@@ -340,7 +340,7 @@ void FieldScene_RunActorElevenCellSetup(void)
  * the facing's sixteenth, unless something blocks the landing cell. */
 void ArutamiraDou_HopSelectedActor(void)
 {
-    struct FieldActor *actor = Engine_ActorGet(gGameState.selected_actor);
+    struct FieldActor *actor = Object_GetById(gGameState.selected_actor);
     s32 flags = actor->motion_flags;
     union FieldCoordinate pos[3];
     union FieldCoordinate *p = pos;
@@ -355,17 +355,17 @@ void ArutamiraDou_HopSelectedActor(void)
     }
     if (Object_CheckMovementCollision(actor, p) == 0) {
         Engine_EventBegin();
-        Engine_ObjectSetAnimation(actor, 6);
+        Object_SetMode(actor, 6);
         Engine_TaskWait(6);
         Engine_AudioPlayCue(152);
-        Engine_ObjectSetAnimation(actor, 7);
+        Object_SetMode(actor, 7);
         actor->speed = 0x30000;
         actor->acceleration = 0x20000;
         actor->velocity_y = 0x40000;
         actor->motion_flags &= 126;
         Engine_ActorSetSpriteFlags(actor, 0);
         Engine_ObjectMotionSetPositionAndCommit(0, p[0].part.pixel, p[2].part.pixel);
-        Engine_ObjectSetAnimation(actor, 6);
+        Object_SetMode(actor, 6);
         Engine_ActorSetSpriteFlags(actor, 1);
         actor->motion_flags = flags;
         Engine_EventEnd();
@@ -398,7 +398,7 @@ void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
     s32 k1 = 0x1f80000;
     s32 k2 = 0x180000;
     s32 k3 = 0x900000;
-    u8 *obj = (u8 *)Engine_ActorGet(a);
+    u8 *obj = (u8 *)Object_GetById(a);
     s32 buf[3];
     s32 *bp = buf;
 
@@ -464,7 +464,7 @@ void ArutamiraDou_SpinActorWheel(void)
                 p[0] = k;
                 p[4] = z;
             }
-            o = (u8 *)Engine_ActorGet(v + 11);
+            o = (u8 *)Object_GetById(v + 11);
             *(s32 *)(o + 0x6c) = (s32)ArutamiraDou_UpdateScalePulse;
         }
     } else if (state == 0x63) {

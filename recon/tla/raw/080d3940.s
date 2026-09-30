@@ -353,6 +353,9 @@ Func_080d3940:
 	adds	r3, r3, r2
 	strh	r0, [r3, #0]
 	bx	lr
+	.global ObjectTable_ReadActiveValue
+	.thumb_func
+ObjectTable_ReadActiveValue:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

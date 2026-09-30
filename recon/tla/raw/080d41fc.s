@@ -1,17 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080d41e8
-	.thumb_func
-Func_080d41e8:
-	push	{lr}
-	bl	0x080d3bf8
-	movs	r3, #1
-	negs	r3, r3
-	cmp	r0, r3
-	beq.n	.L_080d41fa
-	bl	0x08038100
-.L_080d41fa:
-	pop	{pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -29,10 +17,10 @@ Func_080d41e8:
 	ldr	r5, [sp, #40]
 	ldr	r7, [sp, #60]
 	mov	sl, r3
-	bl	0x080d3bf8
+	bl	ObjectTable_ReadActiveValue
 	mov	fp, r0
 	adds	r0, r5, #0
-	bl	0x080d3bf8
+	bl	ObjectTable_ReadActiveValue
 	mov	r9, r0
 	mov	r0, fp
 	bl	Func_080d1eac
@@ -118,9 +106,9 @@ Func_080d41e8:
 	movs	r0, #1
 	bl	0x08013560
 	mov	r0, fp
-	bl	0x08038100
+	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	mov	r0, r9
-	bl	0x08038100
+	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	bl	0x08038140
 	movs	r0, #1
 	bl	0x08013560
@@ -172,7 +160,7 @@ Func_080d41e8:
 	strh	r2, [r3, #0]
 	b.n	.L_080d4376
 .L_080d4354:
-	bl	0x080d3bf8
+	bl	ObjectTable_ReadActiveValue
 	bl	Func_080d1eac
 	ldr	r3, [pc, #28]
 	movs	r1, #139

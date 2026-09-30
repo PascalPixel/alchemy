@@ -22,7 +22,7 @@
 	overlay_veneer Func_08038038
 	overlay_veneer Func_08038048
 	overlay_veneer Func_080380f8
-	overlay_veneer Func_08038100
+	overlay_veneer UiWork_FinalizeEntityMatchingLocalizedIdFar
 	overlay_veneer Func_080c8010
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020

@@ -255,7 +255,7 @@ Func_0811e3ac:
 	movs r1, #253
 	lsls r1, r1, #6
 	adds r0, #80
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r0, #154
 	bl Audio_PlayCue
 	movs r0, #10
@@ -330,7 +330,7 @@ Func_0811e3ac:
 	beq .L_0811e64a
 	mov r3, r8
 	ldrb r0, [r3]
-	bl Func_0811b724
+	bl ReleaseBattleObjectRecords
 	b .L_0811e67a
 .L_0811e64a:
 	mov r1, r8
@@ -348,7 +348,7 @@ Func_0811e3ac:
 	adds r5, r0, #0
 .L_0811e666:
 	ldrh r0, [r6, r7]
-	bl Func_0811b724
+	bl ReleaseBattleObjectRecords
 	subs r5, #1
 	ldrh r0, [r6, r7]
 	bl Func_0811a5fc
@@ -401,7 +401,7 @@ Func_0811e3ac:
 	ldr r1, [r2, #44]
 	movs r0, #7
 	adds r2, r5, #0
-	bl ResourceMetadata_SumCommandLengthsFar + 0x10
+	bl ResourceSlot_LoadFar
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0811e714

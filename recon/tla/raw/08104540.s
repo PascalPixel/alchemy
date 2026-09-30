@@ -85,7 +85,7 @@ Func_08104540:
 	ldr r0, [sp, #72]
 	movs r1, #6
 	subs r0, #1
-	bl __divsi3
+	bl Math_Div
 	adds r0, #1
 	str r0, [sp, #72]
 	cmp r0, #0
@@ -96,7 +96,7 @@ Func_08104540:
 	movs r1, #6
 	ldr r0, [r2, #4]
 	subs r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #28]
 	adds r0, #1
 	str r0, [r3, #4]
@@ -304,7 +304,7 @@ Func_08104540:
 	str r1, [sp, #56]
 	adds r0, r1, #0
 	movs r1, #60
-	bl Math_Mod
+	bl __modsi3
 	subs r0, #5
 	movs r2, #200
 	movs r0, #0
@@ -380,7 +380,7 @@ Func_08104540:
 	str r0, [r1]
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Func_080138a8
+	bl Runtime_SetMainState19
 	movs r2, #1
 	str r2, [sp, #60]
 	b .L_08104880
@@ -401,7 +401,7 @@ Func_08104540:
 	str r0, [r3]
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Func_080138a8
+	bl Runtime_SetMainState19
 	movs r0, #1
 	str r0, [sp, #60]
 .L_08104880:
@@ -412,7 +412,7 @@ Func_08104540:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_08104924
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r2, [r5, #60]
@@ -478,4 +478,4 @@ Func_08104540:
 .L_08104920:
 	.4byte 0x44444444
 .L_08104924:
-	.4byte Func_08104da8
+	.4byte Menu_UpdateEntryObjectTransforms

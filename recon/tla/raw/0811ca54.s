@@ -49,7 +49,7 @@ Func_0811ca54:
 	ldrsh r3, [r5, r1]
 	str r0, [r6, #8]
 	str r3, [r6, #12]
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	bge .L_0811cabc
 	movs r0, #1
@@ -67,7 +67,7 @@ Func_0811ca54:
 	movs r0, #1
 .L_0811cacc:
 	adds r1, r7, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	str r0, [r6, #20]
 	movs r3, #192
 	lsls r3, r3, #18
@@ -95,7 +95,7 @@ Func_0811ca54:
 	str r2, [r6, #4]
 	movs r0, #1
 	adds r1, r7, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	mov r3, r8
 	b .L_0811cb26
 .L_0811cb18:
@@ -103,7 +103,7 @@ Func_0811ca54:
 	str r3, [r6, #4]
 	movs r0, #2
 	adds r1, r7, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	movs r3, #1
 .L_0811cb26:
 	str r3, [r6, #20]
@@ -151,22 +151,22 @@ Func_0811ca54:
 	adds r0, r6, #0
 	str r7, [r6]
 	str r7, [r6, #24]
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	movs r3, #1
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	movs r3, #2
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	movs r3, #3
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	adds r0, r6, #0
 	str r7, [r6]
-	bl Resource_FarCall00C + 0x18
+	bl Func_08138018
 	mov r0, r10
 	movs r1, #1
 	bl Object_SetMode

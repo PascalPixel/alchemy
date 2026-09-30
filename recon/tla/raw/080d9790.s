@@ -181,7 +181,7 @@ Func_080d9790:
 	lsls r0, r3, #1
 	adds r0, r0, r3
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #12]
 	adds r1, r5, #0
 	adds r0, r3, r0
@@ -193,7 +193,7 @@ Func_080d9790:
 	lsls r0, r3, #1
 	adds r0, r0, r3
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #8]
 	mov r2, r9
 	adds r0, r3, r0
@@ -205,7 +205,7 @@ Func_080d9790:
 	lsls r0, r3, #1
 	adds r0, r0, r3
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	movs r3, #2
 	add r0, r9
 	str r0, [r7, #12]

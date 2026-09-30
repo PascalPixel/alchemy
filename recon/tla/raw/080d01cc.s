@@ -34,7 +34,7 @@ Func_080d01cc:
 	.4byte .L_080d0408
 .L_080d020c:
 	movs r0, #0
-	bl Func_08013e70
+	bl Blend_SetDarkenTarget16
 	mov r0, r10
 	bl Func_08013eb4
 	movs r0, #1
@@ -128,12 +128,12 @@ Func_080d01cc:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_080d0300
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #192
 	lsls r1, r1, #4
 	adds r1, #118
 	ldr r0, .L_080d0304
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_080d0308
@@ -225,7 +225,7 @@ Func_080d01cc:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d03fc
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r1, .L_080d0400
 	ldr r4, .L_080d0404
 	ldrh r3, [r4]
@@ -304,7 +304,7 @@ Func_080d01cc:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d0450
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r2, .L_080d0454
 	movs r0, #1
 	movs r1, #0
@@ -348,7 +348,7 @@ Func_080d01cc:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d0510
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r2, .L_080d0514
 	movs r0, #1
 	movs r1, #0

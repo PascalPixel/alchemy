@@ -77,7 +77,7 @@ Func_0813f8d4:
 	bl Func_080150e4
 	mov r1, r8
 	ldr r0, [r1, #12]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r2, r8
 	ldr r0, [r2, #16]
 	bl Func_08015068

@@ -52,12 +52,12 @@ Func_080d00f8:
 	strh r3, [r4]
 	subs r1, #182
 	ldr r0, .L_080d0178
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #192
 	lsls r1, r1, #4
 	adds r1, #118
 	ldr r0, .L_080d017c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	b .L_080d0180
 .L_080d0170:

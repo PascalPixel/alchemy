@@ -28,7 +28,7 @@ Func_080e0dd4:
 	movs r3, #24
 	ldrsh r0, [r6, r3]
 	lsls r1, r1, #7
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl WaitFrames
 	ldr r3, .L_080e0e94
@@ -78,14 +78,14 @@ Func_080e0dd4:
 	ldr r3, [r7, #16]
 	mov r10, r6
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	movs r3, #0
 	mov r8, r3
 	b .L_080e0ea0
 .L_080e0e90:
 	.4byte 0x00000000
 .L_080e0e94:
-	.4byte Func_080db91c
+	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080e0e98:
 	.4byte Func_080e0c84
 .L_080e0e9c:

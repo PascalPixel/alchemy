@@ -24,7 +24,7 @@ Func_0802d2e0:
 	adds r0, r1, #0
 	muls r0, r3
 	movs r1, #15
-	bl __divsi3
+	bl Math_Div
 	adds r0, r6, r0
 	b .L_0802d322
 .L_0802d312:
@@ -33,7 +33,7 @@ Func_0802d2e0:
 	adds r0, r1, #0
 	muls r0, r3
 	movs r1, #15
-	bl __divsi3
+	bl Math_Div
 	adds r0, r5, r0
 .L_0802d322:
 	pop {r5, r6, pc}

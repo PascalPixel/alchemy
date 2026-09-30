@@ -12,7 +12,7 @@
 	overlay_veneer Func_080003d8
 	overlay_veneer Func_080201e8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_08038140
+	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
@@ -55,9 +55,9 @@
 	overlay_veneer Func_080c8290
 	overlay_veneer Func_080c8298
 	overlay_veneer Func_080c82e0
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c8558
 	overlay_veneer Func_080c85e8

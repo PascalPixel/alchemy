@@ -548,7 +548,7 @@ Func_080ed2a4:
 .L_080ed6d8:
 	.4byte Data_02000500
 .L_080ed6dc:
-	bl Func_08020268 + 0x8
+	bl Func_08020270
 	ldr r1, .L_080ed76c
 	ldr r0, .L_080ed770
 	ldrh r3, [r0]

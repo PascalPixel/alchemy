@@ -109,7 +109,7 @@ Func_081263fc:
 	strh r2, [r3]
 .L_081264d2:
 	ldr r0, .L_08126534
-	bl Func_08125b78
+	bl Graphics_BuildSequentialTileTable
 	ldr r0, .L_08126538
 	bl Func_08125bb8
 	ldr r3, .L_0812653c
@@ -125,7 +125,7 @@ Func_081263fc:
 	lsls r1, r1, #4
 	ldr r0, .L_08126544
 	adds r1, #255
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_081264fc:
 	mov r3, r11
 	mov r2, r9

@@ -12,7 +12,7 @@ Func_080ccec8:
 	push {r7}
 	sub sp, #36
 	mov r11, r0
-	bl Func_080cccb8
+	bl BattleAction_FindDescriptor
 	movs r1, #1
 	negs r1, r1
 	movs r3, #128
@@ -208,10 +208,10 @@ Func_080ccec8:
 	adds r0, #255
 	bl Func_080cb6c8
 	movs r0, #1
-	bl UiText_DrawQuantity + 0x8
+	bl Func_08038128
 	movs r0, #126
 	bl Audio_PlayCue
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r0, #1
 	bne .L_080cd086
 	adds r0, r6, #6
@@ -223,7 +223,7 @@ Func_080ccec8:
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
 .L_080cd08e:
-	bl UiWindow_DrawPartyStatusContentsFar + 0x8
+	bl Func_08038138
 	movs r3, #0
 	str r3, [r5, #108]
 	movs r1, #2
@@ -410,7 +410,7 @@ Func_080ccec8:
 .L_080cd21c:
 	movs r1, #0
 	mov r0, r10
-	bl Func_080cf17c
+	bl BattleFx_StartRandomParticleEmitter
 	adds r6, r0, #0
 	movs r0, #30
 	bl WaitFrames
@@ -435,7 +435,7 @@ Func_080ccec8:
 	ldr r0, .L_080cd4b0
 	bl UiText_ShowPositionedMessageAndWaitFar
 	adds r0, r7, #0
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	movs r1, #1
 	negs r1, r1
 	cmp r9, r1
@@ -481,7 +481,7 @@ Func_080ccec8:
 .L_080cd2b8:
 	mov r0, r10
 	adds r1, r7, #0
-	bl Func_080cf17c
+	bl BattleFx_StartRandomParticleEmitter
 	adds r6, r0, #0
 	movs r0, #30
 	bl WaitFrames
@@ -629,7 +629,7 @@ Func_080ccec8:
 	cmp r3, r2
 	blt .L_080cd420
 	mov r0, r11
-	bl Func_080d1ed8
+	bl BattleFx_GetFlags
 	adds r5, r0, #0
 	bl Random16
 	ldr r3, .L_080cd4c4
@@ -704,7 +704,7 @@ Func_080ccec8:
 	cmp r3, r1
 	bge .L_080cd4c8
 	ldr r0, [sp, #12]
-	bl UiWork_IsCompleteFar + 0x10
+	bl UiWork_SetBusyFlagsFar
 	ldr r1, [r6, #8]
 	mov r0, r11
 	bl Func_080cdea8

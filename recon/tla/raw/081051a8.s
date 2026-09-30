@@ -22,7 +22,7 @@ Func_081051a8:
 	cmp r0, #0
 	beq .L_081051d6
 	str r4, [sp, #0]
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	mov r2, r8
 	str r6, [r5, r2]
 	ldr r4, [sp, #0]
@@ -85,7 +85,7 @@ Func_081051a8:
 	strb r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_08105260
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_08105264
 .L_08105250:
 	.4byte 0x00000010

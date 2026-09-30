@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08015128
+	.global SceneTransform_ApplyPosition
 	.thumb_func
-Func_08015128:
+SceneTransform_ApplyPosition:
 	push {r5, r6, lr}
 	sub sp, #48
 	adds r6, r0, #0

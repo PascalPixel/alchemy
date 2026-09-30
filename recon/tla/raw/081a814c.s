@@ -48,7 +48,7 @@ Func_081a814c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_081a81bc
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {pc}
 	.2byte 0x0000

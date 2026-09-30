@@ -29,12 +29,21 @@ Func_080c8540:
 	.thumb_func
 Func_080c8548:
 	overlay_veneer Func_080cb6f4
+	.global Func_080c8550
+	.thumb_func
+Func_080c8550:
 	overlay_veneer Func_080dc0b8
 	.global Func_080c8558
 	.thumb_func
 Func_080c8558:
 	overlay_veneer Func_080d295c
+	.global Func_080c8560
+	.thumb_func
+Func_080c8560:
 	overlay_veneer Func_080ca18c
+	.global Func_080c8568
+	.thumb_func
+Func_080c8568:
 	overlay_veneer Func_080ca1a4
 	.global Func_080c8570
 	.thumb_func

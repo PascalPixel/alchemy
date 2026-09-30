@@ -17,7 +17,7 @@ Func_08119054:
 	movs r7, #0
 	b .L_081190ea
 .L_08119070:
-	bl Func_080168cc
+	bl SerialRuntime_WaitForTransferB
 	movs r2, #149
 	lsls r2, r2, #1
 	adds r3, r6, r2
@@ -89,7 +89,7 @@ Func_08119054:
 	adds r0, #128
 	bl Owner_GetState
 	adds r6, r0, #0
-	bl Func_08016854
+	bl Party_Check
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2
@@ -103,12 +103,12 @@ Func_08119054:
 	mov r8, r0
 	movs r0, #1
 	bl Resource_FarCall005
-	bl Func_08016854
+	bl Party_Check
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3
 	beq .L_08119130
-	bl Func_080168cc
+	bl SerialRuntime_WaitForTransferB
 	movs r0, #2
 	bl WaitFrames
 .L_08119130:

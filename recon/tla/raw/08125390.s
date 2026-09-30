@@ -75,7 +75,7 @@ Battle_ApplyActionExtras:
 	mov r0, r9
 	mov r1, r10
 	mov r2, r8
-	bl Djinn_IsActiveFar + 0x8
+	bl Trade_CanOfferDjinnFar
 	cmp r0, #0
 	beq .L_08125430
 	mov r3, r10
@@ -122,7 +122,7 @@ Battle_ApplyActionExtras:
 	mov r0, r9
 	mov r1, r10
 	mov r2, r8
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	ldr r3, [sp, #4]
 	cmp r3, #0
 	beq .L_081254ae

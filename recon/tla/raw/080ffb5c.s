@@ -46,7 +46,7 @@ PsynergyMenu_DrawListPage:
 	adds r1, r6, #0
 	mov r2, r8
 	movs r3, #80
-	bl Func_080f92dc
+	bl Menu_SetPageIcons
 	movs r2, #28
 	ldr r1, [r5, #20]
 	ldr r3, [r5, #8]

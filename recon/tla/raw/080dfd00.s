@@ -80,7 +80,7 @@ Func_080dfd00:
 	movs r2, #0
 	str r3, [r5, #8]
 	movs r3, #0
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r7, r0, #0
 	cmp r7, #0
 	bne .L_080dfda0
@@ -102,7 +102,7 @@ Func_080dfd00:
 	subs r3, r3, r5
 	adds r0, r6, #0
 	muls r0, r3
-	bl __divsi3
+	bl Math_Div
 	adds r5, r5, r0
 	str r5, [r7, #8]
 	mov r2, r8
@@ -113,7 +113,7 @@ Func_080dfd00:
 	subs r3, r3, r5
 	adds r0, r6, #0
 	muls r0, r3
-	bl __divsi3
+	bl Math_Div
 	adds r5, r5, r0
 	str r5, [r7, #12]
 	mov r2, r8
@@ -124,7 +124,7 @@ Func_080dfd00:
 	subs r3, r3, r5
 	adds r0, r6, #0
 	muls r0, r3
-	bl __divsi3
+	bl Math_Div
 	movs r3, #134
 	lsls r3, r3, #9
 	adds r3, #204
@@ -133,7 +133,7 @@ Func_080dfd00:
 	adds r0, r6, #0
 	muls r0, r3
 	str r5, [r7, #16]
-	bl __divsi3
+	bl Math_Div
 	movs r2, #128
 	lsls r2, r2, #7
 	adds r0, r0, r2
@@ -195,13 +195,13 @@ Func_080dfd00:
 	adds r2, r6, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r0, #154
 	ldr r1, [r6]
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
 	lsls r0, r0, #1
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080dfeba
@@ -286,13 +286,13 @@ Func_080dfd00:
 	adds r1, r0, #0
 	adds r2, r6, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r0, #154
 	ldr r1, [r6]
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
 	lsls r0, r0, #1
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080dff92

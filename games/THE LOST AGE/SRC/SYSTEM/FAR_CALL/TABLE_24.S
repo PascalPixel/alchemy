@@ -17,6 +17,9 @@ Func_080ad2f0:
 	.thumb_func
 Func_080ad2f8:
 	overlay_veneer Func_080aff94
+	.global Func_080ad300
+	.thumb_func
+Func_080ad300:
 	overlay_veneer Func_080b1004
 	.global Func_080ad308
 	.thumb_func

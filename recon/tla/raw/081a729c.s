@@ -167,7 +167,7 @@ Func_081a729c:
 .L_081a73f2:
 	movs r0, #30
 	bl Func_08013f3c
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	ldr r3, .L_081a7420
 	movs r2, #128
 	lsls r2, r2, #19

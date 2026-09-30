@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dc10c
+	.global Object_Spawn
 	.thumb_func
-Func_080dc10c:
+Object_Spawn:
 	push {r5, r6, lr}
 	movs r4, #192
 	lsls r4, r4, #18

@@ -37,7 +37,7 @@ Func_080d8174:
 	lsls r1, r1, #11
 	adds r1, r1, r3
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	ldr r2, [r7, #12]
 	str r3, [r7, #8]

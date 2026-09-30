@@ -50,7 +50,7 @@ Func_080fa870:
 	movs r1, #144
 	ldr r0, .L_080fa8e4
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #128
 	lsls r2, r2, #1
 	adds r2, #255
@@ -141,7 +141,7 @@ Func_080fa870:
 	movs r3, #120
 	mov r0, r8
 	movs r1, #0
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	movs r3, #28
 	ldrsb r3, [r6, r3]
 	ldr r2, [sp, #12]

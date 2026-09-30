@@ -72,7 +72,7 @@ Func_0802c58c:
 	mov r0, r10
 	mov r2, r8
 	adds r3, r4, #0
-	bl Func_0802b878
+	bl Map_WriteLayerCellTile
 	cmp r0, #0
 	beq .L_0802c618
 	b .L_0802c80c
@@ -121,7 +121,7 @@ Func_0802c58c:
 	movs r1, #10
 	lsls r3, r3, #2
 	lsrs r0, r3, #26
-	bl __divsi3
+	bl Math_Div
 	movs r2, #3
 	cmp r0, #3
 	beq .L_0802c68c
@@ -335,7 +335,7 @@ Func_0802c58c:
 .L_0802c830:
 	.4byte Data_0202d000
 .L_0802c834:
-	.4byte Data_0202c000
+	.4byte gMapCollision
 .L_0802c838:
 	.4byte Data_02038000
 .L_0802c83c:

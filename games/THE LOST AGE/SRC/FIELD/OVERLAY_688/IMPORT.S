@@ -16,7 +16,7 @@
 	overlay_veneer UiWork_IsCompleteFar
 	overlay_veneer Func_080380f8
 	overlay_veneer Func_08038108
-	overlay_veneer Func_08038140
+	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
@@ -29,9 +29,9 @@
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8268
 	overlay_veneer Func_080c8278
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c85c8
 	overlay_veneer Audio_PlayCue

@@ -22,7 +22,7 @@ Func_08144628:
 	str r1, [sp, #60]
 	ldr r3, [r3, #48]
 	str r3, [sp, #52]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r2, [sp, #64]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -89,7 +89,7 @@ Func_08144628:
 .L_081446cc:
 	mov r3, r9
 	ldr r0, [r3, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	mov r1, r9
 	ldr r6, [r0]
 	ldr r0, [r1, #8]
@@ -144,7 +144,7 @@ Func_08144628:
 	lsls r5, r5, #4
 	adds r1, r5, #0
 	ldr r0, .L_081449b0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, [sp, #64]
 	movs r0, #239
 	lsls r0, r0, #7
@@ -160,7 +160,7 @@ Func_08144628:
 	str r3, [r2]
 	adds r1, r5, #0
 	ldr r0, .L_081449b4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #146
 	bl Audio_PlayCue
 	ldr r1, [sp, #68]
@@ -196,11 +196,11 @@ Func_08144628:
 	bne .L_081447b2
 .L_081447aa:
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_081447b8
 .L_081447b2:
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_081447b8:
 	bl Func_08014de4
 	ldr r0, [sp, #52]
@@ -223,7 +223,7 @@ Func_08144628:
 	adds r3, r3, r2
 	lsls r3, r3, #2
 	adds r1, r1, r3
-	bl __divsi3
+	bl Math_Div
 	bl Trig_Sin
 	ldr r3, .L_081449bc
 	lsls r0, r0, #4
@@ -276,7 +276,7 @@ Func_08144628:
 	ldr r1, [sp, #28]
 	mov r3, r9
 	ldrsh r0, [r1, r3]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r1, [sp, #28]
 	mov r3, r9
@@ -364,7 +364,7 @@ Func_08144628:
 	asrs r5, r5, #1
 	str r5, [r1]
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [sp, #64]
 	lsls r1, r0, #2
 	adds r1, r1, r0
@@ -557,13 +557,13 @@ Func_08144628:
 	b .L_08144798
 .L_08144a74:
 	ldr r0, .L_08144aa4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08144aa8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #92
 	pop {r3, r5, r6, r7}

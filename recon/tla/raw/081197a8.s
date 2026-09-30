@@ -18,7 +18,7 @@ Func_081197a8:
 	str r2, [r0, #4]
 	str r2, [r0]
 	str r2, [r0, #24]
-	bl Resource_FarCall00C + 0x50
+	bl Func_08138050
 	add sp, #88
 	pop {pc}
 	.2byte 0x0000

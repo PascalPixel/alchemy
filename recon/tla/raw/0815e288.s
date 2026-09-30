@@ -14,11 +14,11 @@ Func_0815e288:
 	ldr r6, [r3, #48]
 	mov r8, r1
 	mov r9, r0
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_08118088 + 0x50
+	bl GetMotionRecordFar
 	mov r10, r0
 	bl Func_08014de4
 	adds r1, r6, #0

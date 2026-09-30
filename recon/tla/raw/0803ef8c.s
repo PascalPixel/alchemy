@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803ef8c
+	.global Menu_LoadSelectionNodeResource
 	.thumb_func
-Func_0803ef8c:
+Menu_LoadSelectionNodeResource:
 	push {lr}
 	movs r3, #210
 	lsls r3, r3, #2
@@ -34,7 +34,7 @@ Func_0803ef8c:
 	add r3, sp, #4
 	movs r1, #0
 	bl Ui_BuildPairedPatternsToSlot
-	bl Func_0803f6c8
+	bl Menu_LoadSelectedResource
 .L_0803efca:
 	add sp, #12
 	pop {pc}

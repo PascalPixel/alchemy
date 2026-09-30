@@ -121,7 +121,7 @@ Func_0810928c:
 	str r3, [r7, r2]
 	adds r0, r5, #0
 	ldr r1, [sp, #16]
-	bl Djinn_IsActiveFar + 0x18
+	bl Item_IsCompatibleWithOwnerFar
 	cmp r0, #0
 	bne .L_08109388
 	movs r3, #204

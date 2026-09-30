@@ -34,9 +34,9 @@ Func_0818fefc:
 	ldr r1, [r0, #8]
 	lsls r3, r3, #11
 	adds r0, r1, #0
-	bl Func_08118070 + 0x8
+	bl BattleMotion_ApproachTargetFar
 	movs r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, .L_0818ff84
 	movs r2, #128
 	lsls r2, r2, #19
@@ -62,7 +62,7 @@ Func_0818fefc:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0818ff8c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #19
 	movs r0, #104
 	b .L_0818ff90
@@ -90,7 +90,7 @@ Func_0818fefc:
 	str r2, [sp, #48]
 	str r5, [sp, #72]
 	ldr r0, [r3, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	movs r4, #0
 	str r0, [sp, #40]
@@ -373,7 +373,7 @@ Func_0818fefc:
 	movs r0, #1
 	ldr r1, .L_08190388
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	bl Func_0817d6c4
 	movs r0, #8
 	movs r1, #2
@@ -648,7 +648,7 @@ Func_0818fefc:
 	ldr r4, [sp, #96]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r3, [r0]
 	movs r0, #0
 	str r0, [r3, #8]
@@ -884,7 +884,7 @@ Func_0818fefc:
 	lsrs r0, r2, #31
 	adds r0, r2, r0
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [sp, #92]
 	lsls r0, r0, #10
 	movs r4, #184
@@ -985,7 +985,7 @@ Func_0818fefc:
 	ldr r0, .L_081907c8
 	adds r5, #20
 	add r0, r10
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	bl Func_08015068
 	ldr r1, .L_081907a4
@@ -1168,7 +1168,7 @@ Func_0818fefc:
 	adds r0, r0, r6
 	lsls r0, r0, #7
 	adds r0, r0, r2
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r7, .L_08190b30
 	ldr r5, [sp, #92]
 	movs r3, #0
@@ -1294,7 +1294,7 @@ Func_0818fefc:
 	bl Func_080151e4
 	ldr r3, .L_08190b48
 	ldrsh r0, [r3, r6]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r3, .L_08190b4c
 	ldrsh r0, [r3, r6]
 	bl Func_08015068
@@ -1443,7 +1443,7 @@ Func_0818fefc:
 .L_08190a4a:
 	ldr r3, .L_08190b64
 	ldrsh r0, [r3, r6]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r3, .L_08190b68
 	ldrsh r0, [r3, r6]
 	bl Func_08015068
@@ -1512,7 +1512,7 @@ Func_0818fefc:
 	adds r2, #220
 	adds r3, r1, r2
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	ldr r3, [sp, #44]
 	ldr r4, [sp, #40]
 	movs r5, #0
@@ -1529,9 +1529,9 @@ Func_0818fefc:
 	ldrh r1, [r3]
 	movs r2, #24
 	movs r0, #1
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r0, .L_08190b70
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl Func_08143bb8

@@ -55,10 +55,10 @@ Func_080e807c:
 	lsls r0, r0, #10
 	negs r1, r1
 	adds r2, r7, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 .L_080e80ea:
 	adds r0, r7, #0
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	movs r3, #2
 	ldrsh r0, [r7, r3]
 	ldr r3, .L_080e812c
@@ -181,7 +181,7 @@ Func_080e807c:
 	adds r1, r1, r0
 	movs r0, #216
 	lsls r0, r0, #14
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r7]
 	movs r2, #128
 	str r3, [r6]

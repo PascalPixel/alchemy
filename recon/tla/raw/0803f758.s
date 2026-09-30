@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f758
+	.global Resource_ResetPendingTransfer
 	.thumb_func
-Func_0803f758:
+Resource_ResetPendingTransfer:
 	push {r5, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -14,7 +14,7 @@ Func_0803f758:
 	cmp r3, #0
 	beq .L_0803f776
 	ldrh r0, [r5, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r3, #0
 	strh r3, [r5, #10]
 .L_0803f776:

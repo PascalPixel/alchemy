@@ -50,7 +50,7 @@ Func_080e150c:
 	str r3, [r7, #4]
 	ldr r3, [r1, #16]
 	str r3, [r7, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [r7, #8]
 	ldr r1, [sp, #4]
 	mov r9, r3

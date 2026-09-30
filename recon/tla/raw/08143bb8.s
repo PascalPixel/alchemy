@@ -42,7 +42,7 @@ Func_08143bb8:
 	mov lr, r3
 	.2byte 0xf800
 	ldr r0, .L_08143c38
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r1, .L_08143c3c
 	movs r3, #32
 	strh r3, [r6, #6]
@@ -104,7 +104,7 @@ Func_08143bb8:
 	ldrh r1, [r3]
 	movs r2, #7
 	movs r0, #2
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #206
@@ -122,7 +122,7 @@ Func_08143bb8:
 	mov r3, r8
 	subs r1, r3, r5
 	ldrh r0, [r7]
-	bl Func_08118028 + 0x20
+	bl Func_08118048
 	adds r6, #1
 	movs r0, #1
 	bl WaitFrames

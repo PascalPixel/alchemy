@@ -39,13 +39,13 @@ Func_0810993c:
 	bne .L_08109a24
 	mov r0, r8
 	adds r1, r6, #0
-	bl Djinn_IsActiveFar + 0x10
+	bl Item_CanOwnerEquip
 	cmp r0, #0
 	beq .L_081099d0
 	mov r3, r10
 	ldrb r1, [r3, #2]
 	mov r0, r8
-	bl Djinn_IsActiveFar + 0x20
+	bl Inventory_FindEquippedFar
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3
@@ -92,7 +92,7 @@ Func_0810993c:
 	beq .L_08109a1c
 	movs r0, #103
 	bl Audio_PlayCue
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	movs r1, #8
 	movs r2, #4
 	movs r3, #2

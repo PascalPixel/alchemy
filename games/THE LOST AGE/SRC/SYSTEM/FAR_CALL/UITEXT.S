@@ -11,6 +11,9 @@ Resource_FarCall004:
 	.thumb_func
 UiWork_InitializeWithResourceCountersFar:
 	overlay_veneer UiWork_InitializeWithResourceCounters
+	.global UiWork_InitializeFar
+	.thumb_func
+UiWork_InitializeFar:
 	overlay_veneer UiWork_Initialize
 	.global UiWindow_CreateFar
 	.thumb_func
@@ -24,7 +27,13 @@ UiWork_FinalizeFar:
 	.thumb_func
 Ui_AdjustValueWithoutLimitFar:
 	overlay_veneer Ui_AdjustValueWithoutLimit
+	.global UiText_DecodeMessageFar
+	.thumb_func
+UiText_DecodeMessageFar:
 	overlay_veneer UiText_DecodeMessage
+	.global UiText_CopyMessageStringFar
+	.thumb_func
+UiText_CopyMessageStringFar:
 	overlay_veneer UiText_CopyMessageString
 	.global UiText_OpenMessageWindowFar
 	.thumb_func
@@ -38,12 +47,21 @@ UiText_ShowPositionedMessageAndWaitFar:
 	.thumb_func
 UiWork_IsCompleteFar:
 	overlay_veneer UiWork_IsComplete
+	.global UiWork_IsIdleFar
+	.thumb_func
+UiWork_IsIdleFar:
 	overlay_veneer UiWork_IsIdle
+	.global UiWork_SetBusyFlagsFar
+	.thumb_func
+UiWork_SetBusyFlagsFar:
 	overlay_veneer UiWork_SetBusyFlags
 	.global RenderOutput_PrepareForRedrawFar
 	.thumb_func
 RenderOutput_PrepareForRedrawFar:
 	overlay_veneer RenderOutput_PrepareForRedraw
+	.global UiWindow_ClearInteriorTilesFar
+	.thumb_func
+UiWindow_ClearInteriorTilesFar:
 	overlay_veneer UiWindow_ClearInteriorTiles
 	.global UiWindow_DrawDividerLineFar
 	.thumb_func
@@ -57,4 +75,7 @@ UiText_DrawResourceFar:
 	.thumb_func
 UiText_DrawCharacterAtOffsetFar:
 	overlay_veneer UiText_DrawCharacterAtOffset
+	.global UiText_DrawStringFar
+	.thumb_func
+UiText_DrawStringFar:
 	overlay_veneer UiText_DrawString

@@ -40,14 +40,14 @@ Func_080fe49c:
 	strh r7, [r3]
 	lsls r1, r1, #3
 	mov r0, r8
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #1
 	bl Func_081054cc
 	movs r0, #0
 	bl Func_080fe580
 	adds r5, r0, #0
 	mov r0, r8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r3, #1
 	negs r3, r3
 	cmp r5, r3
@@ -115,4 +115,4 @@ Func_080fe49c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_080fe57c:
-	.4byte Func_08104da8
+	.4byte Menu_UpdateEntryObjectTransforms

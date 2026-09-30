@@ -31,7 +31,7 @@ Text_FormatPlayTime:
 	adds r6, r0, #0
 	movs r2, #3
 	mov r0, r8
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	ldrb r3, [r0]
 	adds r0, #1
 	strb r3, [r7]
@@ -48,7 +48,7 @@ Text_FormatPlayTime:
 	strb r3, [r5]
 	mov r0, r8
 	movs r2, #2
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	ldrb r3, [r0]
 	adds r5, #1
 	strb r3, [r5]

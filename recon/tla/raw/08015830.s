@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08015830
+	.global Resource_DecompressHalfwords
 	.thumb_func
-Func_08015830:
+Resource_DecompressHalfwords:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

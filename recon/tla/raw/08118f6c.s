@@ -15,7 +15,7 @@ Func_08118f6c:
 	adds r1, #8
 	adds r0, r1, #0
 	str r1, [sp, #4]
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	mov r11, r0
 	movs r0, #0
 	bl Resource_FarCall005
@@ -69,7 +69,7 @@ Func_08118f6c:
 	mov r8, r2
 .L_08118fec:
 	mov r0, r8
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	cmp r0, #0
 	beq .L_08119028
 	mov r3, r10

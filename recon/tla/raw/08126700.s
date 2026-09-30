@@ -23,7 +23,7 @@ Func_08126700:
 	movs r1, #100
 	sub sp, #40
 	mov r10, r2
-	bl __divsi3
+	bl Math_Div
 	mov r3, r10
 	mov r2, r9
 	str r2, [r3, #4]
@@ -52,7 +52,7 @@ Func_08126700:
 	bl Camera_StoreSceneParameters
 	bl Func_08014de4
 	mov r0, r10
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	mov r2, r8
 	movs r3, #54
 	ldrsh r0, [r2, r3]
@@ -60,7 +60,7 @@ Func_08126700:
 	mov r2, r8
 	movs r3, #52
 	ldrsh r0, [r2, r3]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	add r0, sp, #28
 	str r5, [r0]
 	str r5, [r0, #4]
@@ -97,7 +97,7 @@ Func_08126700:
 	subs r5, r5, r7
 	str r7, [sp, #0]
 	lsls r6, r5, #1
-	bl Func_08126548
+	bl BattleCamera_SetRange
 	movs r1, #192
 	adds r0, r6, #0
 	lsls r1, r1, #8

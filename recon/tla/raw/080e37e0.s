@@ -30,7 +30,7 @@ Func_080e37e0:
 	ldr r1, [r7, #8]
 	ldr r2, [r7, #12]
 	lsls r0, r0, #1
-	bl Func_080dc10c
+	bl Object_Spawn
 	movs r1, #2
 	adds r5, r0, #0
 	bl Object_SetMode

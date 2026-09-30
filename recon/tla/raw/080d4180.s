@@ -49,7 +49,7 @@ Func_080d4180:
 	bl WaitFrames
 .L_080d41ce:
 	adds r0, r5, #0
-	bl UiWork_IsCompleteFar + 0x8
+	bl UiWork_IsIdleFar
 	cmp r0, #0
 	beq .L_080d41c8
 	movs r0, #226

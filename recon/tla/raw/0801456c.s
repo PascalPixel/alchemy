@@ -32,6 +32,6 @@ Func_0801456c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080145a0:
-	.4byte Data_02003610
+	.4byte gSchedulerTaskTable
 .L_080145a4:
 	.4byte 0x04000208

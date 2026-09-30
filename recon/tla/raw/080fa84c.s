@@ -9,7 +9,7 @@ Func_080fa84c:
 	adds r3, #220
 	ldr r5, [r3]
 	adds r6, r0, #0
-	bl Func_08100700
+	bl ItemMenu_PosCategory
 	ldr r0, [r5, #36]
 	bl RenderOutput_RedrawSavedRectFar
 	ldr r0, [r5, #36]

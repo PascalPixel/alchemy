@@ -32,7 +32,7 @@ Func_0815e9f4:
 	movs r2, #130
 	ldr r0, [r1, #8]
 	ldr r1, [r1, #12]
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	bl Func_08143d80
@@ -77,7 +77,7 @@ Func_0815e9f4:
 	ldr r0, [r2, #8]
 	ldr r1, [r2, #12]
 	movs r2, #130
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, [sp, #56]
@@ -92,7 +92,7 @@ Func_0815e9f4:
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, .L_0815ed68
@@ -122,7 +122,7 @@ Func_0815e9f4:
 	mov r3, r11
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #0
@@ -134,7 +134,7 @@ Func_0815e9f4:
 	ldr r0, [r1, #8]
 	movs r2, #130
 	ldr r1, [r1, #12]
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, [sp, #56]
@@ -151,14 +151,14 @@ Func_0815e9f4:
 	str r3, [r2]
 	ldr r0, .L_0815ed78
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	cmp r5, #1
 	beq .L_0815eb44
 	b .L_0815ed04
 .L_0815eb44:
 	mov r2, r11
 	ldr r0, [r2, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	movs r6, #255
 	ldr r5, [sp, #56]
@@ -250,7 +250,7 @@ Func_0815e9f4:
 	movs r1, #144
 	str r5, [r3]
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #212
 	bl Audio_PlayCue
 .L_0815ec16:
@@ -258,7 +258,7 @@ Func_0815e9f4:
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	ldr r6, [sp, #56]
 	movs r5, #0
 	mov r10, r5
@@ -282,7 +282,7 @@ Func_0815e9f4:
 	ldr r0, [r6, #20]
 	bl Func_080150e4
 	ldr r0, [r6, #12]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r0, [r6, #16]
 	bl Func_08015068
 	add r5, sp, #80
@@ -353,7 +353,7 @@ Func_0815e9f4:
 	cmp r1, #32
 	bne .L_0815ec16
 	ldr r0, .L_0815ed7c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r1, #16
 	mov r0, r8
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -472,7 +472,7 @@ Func_0815e9f4:
 	strh r3, [r2, #6]
 	movs r5, #36
 	ldrsh r0, [r1, r5]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	mov r3, r11
 	ldr r6, [r0]
 	movs r2, #36
@@ -533,7 +533,7 @@ Func_0815e9f4:
 	cmp r1, #5
 	bne .L_0815ee4a
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0815ee4a:
 	mov r2, r9
 	cmp r2, #4
@@ -703,7 +703,7 @@ Func_0815e9f4:
 	b .L_0815ee3e
 .L_0815ef90:
 	ldr r0, .L_0815effc
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -724,7 +724,7 @@ Func_0815e9f4:
 	mov r3, r9
 	subs r1, r6, r3
 	ldrh r0, [r5]
-	bl Func_08118028 + 0x20
+	bl Func_08118048
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1

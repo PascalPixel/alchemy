@@ -12,7 +12,7 @@ Func_081a76f8:
 	ldr r6, .L_081a7764
 	bl Func_080144c0
 	movs r0, #1
-	bl Func_08013e70
+	bl Blend_SetDarkenTarget16
 	bl Func_08014b70
 	movs r0, #1
 	bl WaitFrames
@@ -111,7 +111,7 @@ Func_081a76f8:
 	bl Func_08014b70
 	movs r0, #1
 	bl Func_08013f3c
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	ldr r3, .L_081a7804
 	movs r2, #128
 	lsls r2, r2, #19

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811f3b8
+	.global BattleActor_RemoveFromLists
 	.thumb_func
-Func_0811f3b8:
+BattleActor_RemoveFromLists:
 	push {r5, r6, lr}
 	movs r3, #192
 	lsls r3, r3, #18

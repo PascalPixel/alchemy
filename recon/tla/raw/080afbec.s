@@ -90,7 +90,7 @@ Func_080afbec:
 	adds r2, #33
 	strb r3, [r2]
 	movs r2, #15
-	bl Ui_AdjustValueWithoutLimitFar + 0x8
+	bl UiText_DecodeMessageFar
 	ldrh r3, [r6, r7]
 	ldr r4, [sp, #0]
 	cmp r3, #0

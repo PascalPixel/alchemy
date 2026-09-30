@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d36f4
+	.global ObjectGroup_ApplyIndexedChildValue
 	.thumb_func
-Func_080d36f4:
+ObjectGroup_ApplyIndexedChildValue:
 	push {r5, r6, lr}
 	adds r3, r0, #0
 	adds r3, #84

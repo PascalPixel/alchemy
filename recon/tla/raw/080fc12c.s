@@ -22,7 +22,7 @@ Func_080fc12c:
 	movs r0, #2
 	ldrb r2, [r3, #14]
 	movs r3, #0
-	bl UiWindow_SetTilemapEntryFar + 0x18
+	bl Func_08038288
 	ldr r2, [r5]
 	movs r3, #1
 	strb r3, [r2, #5]

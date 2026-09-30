@@ -32,7 +32,7 @@ Func_080cb2b8:
 	bne .L_080cb2f4
 	b .L_080cb6b8
 .L_080cb2f4:
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	movs r6, #0
 	str r0, [sp, #4]
 	cmp r6, r0
@@ -258,7 +258,7 @@ Func_080cb2b8:
 	adds r0, r1, #0
 	movs r1, #0
 	bl Func_080cb6c8
-	bl Func_08118088 + 0x70
+	bl BattlePlacement_UpdateTimedEntriesFar
 	cmp r0, #0
 	beq .L_080cb4a8
 	movs r0, #139

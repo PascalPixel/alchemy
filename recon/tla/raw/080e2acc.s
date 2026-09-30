@@ -124,7 +124,7 @@ Func_080e2acc:
 	adds r2, r6, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r0, [sp, #4]
 	str r0, [r6, #12]
 	bl Random16
@@ -162,7 +162,7 @@ Func_080e2acc:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080e2c34
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #8
 	pop {r3, r5, r6, r7}
 	mov r8, r3

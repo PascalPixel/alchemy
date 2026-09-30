@@ -19,7 +19,7 @@ Inventory_PromptAndSetObjectMode:
 	adds r3, r6, r0
 	ldr r0, [r3]
 	mov r10, r1
-	bl Func_080cccb8
+	bl BattleAction_FindDescriptor
 	movs r3, #0
 	ldrsh r2, [r0, r3]
 	movs r0, #242
@@ -98,7 +98,7 @@ Inventory_PromptAndSetObjectMode:
 	bl Object_SetModeById
 	mov r0, r9
 	bl UiWork_FinalizeEntityMatchingLocalizedIdFar
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	ldr r3, .L_080d2958
 	movs r2, #139
 	lsls r2, r2, #2
@@ -116,7 +116,7 @@ Inventory_PromptAndSetObjectMode:
 	bl Object_SetModeById
 	mov r0, r9
 	bl UiWork_FinalizeEntityMatchingLocalizedIdFar
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	ldr r3, .L_080d2958
 	movs r0, #139
 	lsls r0, r0, #2

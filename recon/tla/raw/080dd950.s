@@ -25,7 +25,7 @@ Func_080dd950:
 	movs r0, #167
 	bl Audio_PlayCue
 	ldr r0, .L_080dda24
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r1, #192
 	lsls r1, r1, #4
 	movs r2, #0

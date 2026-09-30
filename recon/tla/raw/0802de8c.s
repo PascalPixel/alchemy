@@ -225,7 +225,7 @@ Func_0802de8c:
 	movs r1, #144
 	ldr r0, .L_0802e284
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_0802e062:
 	movs r0, #1
 	bl WaitFrames

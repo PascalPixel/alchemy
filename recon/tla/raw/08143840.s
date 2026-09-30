@@ -82,7 +82,7 @@ Func_08143840:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #128
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #180
@@ -98,7 +98,7 @@ Func_08143840:
 	str r2, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_08143960
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]

@@ -13,6 +13,9 @@ Func_08020120:
 	.thumb_func
 Func_08020128:
 	overlay_veneer Func_0802c4d8
+	.global Func_08020130
+	.thumb_func
+Func_08020130:
 	overlay_veneer Func_0802be4c
 	.global Object_ResetMotion
 	.thumb_func
@@ -30,8 +33,17 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeout
+	.global Func_08020158
+	.thumb_func
+Func_08020158:
 	overlay_veneer Func_08023088
+	.global Func_08020160
+	.thumb_func
+Func_08020160:
 	overlay_veneer Func_0802c240
+	.global Func_08020168
+	.thumb_func
+Func_08020168:
 	overlay_veneer Func_0802cb08
 	.global Func_08020170
 	.thumb_func

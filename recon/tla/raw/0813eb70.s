@@ -56,7 +56,7 @@ Func_0813eb70:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	ldr r3, .L_0813ec20
 	movs r2, #128
 	lsls r2, r2, #19
@@ -263,7 +263,7 @@ Func_0813eb70:
 .L_0813ed74:
 	lsls r1, r1, #4
 	ldr r0, .L_0813ef10
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #35
 	movs r0, #104
 	bl Func_081963ec
@@ -441,7 +441,7 @@ Func_0813eb70:
 	ldrh r1, [r3]
 	movs r0, #1
 	negs r2, r2
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 .L_0813eee6:
 	ldr r2, [sp, #40]
 	cmp r2, #7
@@ -1196,7 +1196,7 @@ Func_0813eb70:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0813f508
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r2, [sp, #52]
 	movs r3, #1
 	movs r1, #36
@@ -1223,7 +1223,7 @@ Func_0813eb70:
 	ldrh r1, [r3]
 	movs r2, #0
 	movs r0, #2
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_0813f510

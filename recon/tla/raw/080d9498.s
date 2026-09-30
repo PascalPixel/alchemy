@@ -128,7 +128,7 @@ Func_080d9498:
 	ldr r1, [sp, #48]
 	lsls r0, r1, #14
 	mov r1, r8
-	bl __divsi3
+	bl Math_Div
 	bl Trig_Sin
 	movs r1, #128
 	lsls r1, r1, #12
@@ -144,7 +144,7 @@ Func_080d9498:
 	adds r0, r2, r0
 	mov r1, r8
 	asrs r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #80]
 	adds r0, r3, r0
 	adds r0, r0, r5
@@ -160,7 +160,7 @@ Func_080d9498:
 	adds r0, r1, r0
 	asrs r0, r0, #1
 	mov r1, r8
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #76]
 	mov r1, r8
 	adds r0, r2, r0
@@ -171,7 +171,7 @@ Func_080d9498:
 	lsrs r0, r3, #31
 	adds r0, r3, r0
 	asrs r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r1, [sp, #72]
 	adds r0, r1, r0
 	str r0, [r7, #12]
@@ -223,7 +223,7 @@ Func_080d9498:
 	lsls r0, r3, #1
 	adds r0, r0, r3
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #36]
 	adds r1, r6, #0
 	adds r0, r3, r0
@@ -235,7 +235,7 @@ Func_080d9498:
 	lsls r0, r3, #1
 	adds r0, r0, r3
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r7, #12]
 	mov r1, r10
 	subs r3, r3, r1
@@ -246,7 +246,7 @@ Func_080d9498:
 	adds r0, r0, r3
 	lsls r0, r0, #1
 	adds r1, r6, #0
-	bl __divsi3
+	bl Math_Div
 	movs r3, #1
 	add r0, r10
 	str r0, [r7, #12]

@@ -40,7 +40,7 @@ UiText_ShowPositionedMessageAndWait:
 	str r0, [sp, #0]
 	add r1, sp, #24
 	mov r0, r10
-	bl Func_0803b880
+	bl UiText_GetResourceDimensions
 	ldr r2, [sp, #16]
 	movs r3, #30
 	subs r3, r3, r2

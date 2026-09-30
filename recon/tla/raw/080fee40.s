@@ -36,7 +36,7 @@ Func_080fee40:
 	adds r3, r5, #0
 	adds r0, r7, #0
 	movs r1, #0
-	bl RenderOutput_CreateFar + 0x10
+	bl Func_080380d8
 	movs r2, #184
 	lsls r2, r2, #1
 	adds r3, r6, r2

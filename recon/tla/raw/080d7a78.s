@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d7a78
+	.global BattleFx_InitializeSlots
 	.thumb_func
-Func_080d7a78:
+BattleFx_InitializeSlots:
 	push {lr}
 	movs r1, #224
 	lsls r1, r1, #3
@@ -23,7 +23,7 @@ Func_080d7a78:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d7ab0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {pc}
 	.2byte 0x0000

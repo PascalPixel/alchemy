@@ -26,7 +26,7 @@ Menu_AppendResourceEntry:
 	mov r1, r10
 	adds r6, r0, #0
 	lsls r5, r7, #2
-	bl Func_0804d344
+	bl Menu_LoadResourceSlot
 	lsls r3, r7, #1
 	adds r5, r5, r7
 	adds r3, r3, r7

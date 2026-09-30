@@ -18,7 +18,7 @@ Func_08016348:
 	beq .L_080163ce
 	b .L_080163f4
 .L_08016364:
-	.4byte Data_02005360
+	.4byte gSerialRuntime
 .L_08016368:
 	.4byte 0x04000128
 .L_0801636c:
@@ -89,7 +89,7 @@ Func_08016348:
 .L_080163ec:
 	.4byte 0x04000202
 .L_080163f0:
-	.4byte Data_02005360
+	.4byte gSerialRuntime
 .L_080163f4:
 	ldrb r3, [r7, #11]
 	ldrb r2, [r7, #3]

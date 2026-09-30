@@ -25,7 +25,7 @@ Func_0814a814:
 	add r6, r11
 	str r3, [sp, #68]
 	str r1, [sp, #52]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r2, #1
 	ldr r0, .L_0814aa34
 	adds r1, r6, #0
@@ -211,7 +211,7 @@ Func_0814a814:
 	movs r1, #200
 	ldr r0, .L_0814aa64
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_0814a9ae:
 	movs r2, #239
 	lsls r2, r2, #7
@@ -227,7 +227,7 @@ Func_0814a814:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814aa68
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #142
 	bl Audio_PlayCue
 	ldr r3, [sp, #60]
@@ -258,14 +258,14 @@ Func_0814a814:
 	movs r2, #36
 	ldrsh r1, [r1, r2]
 	movs r2, #16
-	bl Func_08118070 + 0x8
+	bl BattleMotion_ApproachTargetFar
 .L_0814aa0c:
 	ldr r3, [sp, #64]
 	ldr r4, [sp, #32]
 	cmp r3, r4
 	bne .L_0814aa7a
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r2, [sp, #72]
 	movs r1, #36
 	ldrsh r0, [r2, r1]
@@ -312,7 +312,7 @@ Func_0814a814:
 	cmp r3, r4
 	bne .L_0814aa7a
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0814aa7a:
 	ldr r1, [sp, #64]
 	movs r6, #225
@@ -363,7 +363,7 @@ Func_0814a814:
 	ldr r2, [sp, #20]
 	ldr r4, [sp, #72]
 	ldrsh r0, [r2, r4]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	mov r1, r10
 	str r0, [sp, #44]
@@ -508,7 +508,7 @@ Func_0814a814:
 	ldr r3, [r2, #16]
 	str r3, [r4, #8]
 	ldr r0, [sp, #36]
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	ldr r0, [sp, #64]
 	ldr r1, [sp, #16]
 	cmp r0, r1
@@ -525,7 +525,7 @@ Func_0814a814:
 	bne .L_0814ac36
 .L_0814ac30:
 	adds r0, r5, #0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 .L_0814ac36:
 	ldr r4, [sp, #52]
 	movs r3, #0
@@ -696,19 +696,19 @@ Func_0814a814:
 	ldr r5, [r7]
 	mov r1, r8
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r7]
 	ldr r5, [r7, #4]
 	mov r1, r8
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r7, #4]
 	ldr r5, [r7, #8]
 	mov r1, r8
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r7, #8]
 	b .L_0814ada0
@@ -825,14 +825,14 @@ Func_0814a814:
 	b .L_0814a9e4
 .L_0814ae74:
 	ldr r0, .L_0814aeb4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	mov r3, r10
 	cmp r3, #1
 	bls .L_0814ae8a
 	cmp r3, #3
 	beq .L_0814ae8a
 	ldr r0, .L_0814aeb8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_0814ae8a:
 	bl Func_08143bb8
 	add sp, #120

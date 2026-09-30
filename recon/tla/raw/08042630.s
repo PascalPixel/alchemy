@@ -14,11 +14,11 @@ Func_08042630:
 	cmp r3, #0
 	beq .L_0804264e
 	movs r0, #0
-	bl Func_08118088 + 0x40
+	bl BattleParty_PrepareActiveOwnersFar
 	movs r7, #3
 	b .L_08042658
 .L_0804264e:
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r0, #4
 	bls .L_08042658
 	movs r0, #4

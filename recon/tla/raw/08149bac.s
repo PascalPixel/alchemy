@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08149bac
+	.global BattleFx_RunSparkGroups
 	.thumb_func
-Func_08149bac:
+BattleFx_RunSparkGroups:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -25,7 +25,7 @@ Func_08149bac:
 	cmp r3, #0
 	bne .L_08149be6
 	movs r0, #1
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r5, #48
 	movs r4, #60
 	str r4, [sp, #28]
@@ -36,7 +36,7 @@ Func_08149bac:
 	cmp r1, #1
 	bne .L_08149c16
 	movs r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r5, #238
 	ldr r4, [sp, #48]
 	lsls r5, r5, #7
@@ -57,7 +57,7 @@ Func_08149bac:
 	b .L_08149c38
 .L_08149c16:
 	movs r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	mov r2, r10
 	add r5, sp, #64
 	ldr r0, [r2, #8]
@@ -328,7 +328,7 @@ Func_08149bac:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814a000
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r4, #0
 	str r4, [sp, #36]
 	mov r5, r10
@@ -398,7 +398,7 @@ Func_08149bac:
 	movs r0, #145
 	bl Audio_PlayCue
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_08149ee0
 .L_08149ec8:
 	ldr r1, [sp, #36]
@@ -411,7 +411,7 @@ Func_08149bac:
 	cmp r2, #24
 	bne .L_08149ee0
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08149ee0:
 	movs r3, #0
 	str r3, [sp, #40]
@@ -597,7 +597,7 @@ Func_08149bac:
 	cmp r0, #17
 	bhi .L_0814a06c
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	ldr r2, .L_0814a248
 	ldr r3, [sp, #48]
 	ldrb r1, [r2, r0]
@@ -712,7 +712,7 @@ Func_08149bac:
 	movs r1, #5
 	adds r0, r3, #0
 	mov r8, r2
-	bl __divsi3
+	bl Math_Div
 	adds r0, #1
 	ldr r2, .L_0814a25c
 	mov r5, r9
@@ -848,7 +848,7 @@ Func_08149bac:
 	b .L_08149e64
 .L_0814a222:
 	ldr r0, .L_0814a260
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

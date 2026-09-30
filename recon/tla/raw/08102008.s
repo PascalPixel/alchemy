@@ -718,7 +718,7 @@ Func_08102008:
 	movs r1, #0
 	movs r2, #96
 	movs r3, #224
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
 	lsls r0, r1, #2
@@ -918,19 +918,19 @@ Func_08102008:
 	movs r3, #0
 	add r2, r10
 	str r3, [r2]
-	bl Func_08118088 + 0x70
-	bl Func_08118088 + 0x70
-	bl Func_08118088 + 0x70
+	bl BattlePlacement_UpdateTimedEntriesFar
+	bl BattlePlacement_UpdateTimedEntriesFar
+	bl BattlePlacement_UpdateTimedEntriesFar
 	movs r1, #0
 	movs r2, #7
 	movs r0, #4
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	movs r1, #0
 	movs r2, #7
 	movs r0, #4
 	bl Trade_AddOfferFar
 	movs r0, #4
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	movs r7, #2
 	b .L_08102b02
 .L_08102788:
@@ -1429,7 +1429,7 @@ Func_08102008:
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
 	ldr r0, [sp, #32]
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
@@ -1438,7 +1438,7 @@ Func_08102008:
 	ldr r4, [sp, #8]
 	ldr r0, [sp, #32]
 	str r4, [sp, #8]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r1, r11
 	ldr r4, [sp, #8]
 	cmp r1, #0
@@ -1503,7 +1503,7 @@ Func_08102008:
 	movs r1, #0
 	movs r2, #96
 	movs r3, #224
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	ldr r0, .L_08102f1c
 	ldr r1, [sp, #72]
 	movs r2, #0
@@ -1665,14 +1665,14 @@ Func_08102008:
 	adds r2, r7, #0
 	adds r0, r6, #0
 	str r4, [sp, #8]
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	adds r1, r5, #0
 	adds r2, r7, #0
 	adds r0, r6, #0
 	bl Trade_AddOfferFar
 .L_08102d58:
 	adds r0, r6, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r4, [sp, #8]
 .L_08102d60:
 	ldr r7, [sp, #64]

@@ -2,8 +2,6 @@
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 
-extern u8 Data_03001cb4[];
-
 s32 Math_IntegerSqrt(s32 value)
 {
     s32 trial;

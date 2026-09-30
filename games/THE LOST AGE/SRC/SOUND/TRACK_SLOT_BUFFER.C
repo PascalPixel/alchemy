@@ -10,8 +10,6 @@ struct AudioTrackSlotWork {
     u32 input_limit;
 };
 
-extern struct AudioTrackSlotWork *Data_02004c00;
-
 void AudioTrack_RemoveSlotNode(s32 slot)
 {
     s32 next_node;

@@ -311,9 +311,7 @@ s32 LinkLobby_SaveBattleResults(void)
     while (UiWork_IsComplete() == 0)
         Engine_TaskWait(1);
     SaveState_ProcessSelectedSlot();
-    /* FAKEMATCH: closing the first window through a void call sets the
-     * window argument before the flags, as the game does. */
-    ((void (*)(s32, s32))UiWork_Finalize)(window, 1);
+    UiWork_Finalize(window, 1);
     Engine_TaskWait(1);
     window = UiText_OpenMessageWindow((s32)MsgLobbyBattleResultsSaved, 5, 4, 1);
     while (UiWork_IsComplete() == 0)
@@ -330,8 +328,7 @@ s32 LinkLobby_SaveMonsterBattleResults(void)
     while (UiWork_IsComplete() == 0)
         Engine_TaskWait(1);
     SaveState_ProcessSelectedSlot();
-    /* FAKEMATCH: as above. */
-    ((void (*)(s32, s32))UiWork_Finalize)(window, 1);
+    UiWork_Finalize(window, 1);
     Engine_TaskWait(1);
     window = UiText_OpenMessageWindow((s32)MsgLobbyMonsterBattleResults, 5, 4, 1);
     while (UiWork_IsComplete() == 0)

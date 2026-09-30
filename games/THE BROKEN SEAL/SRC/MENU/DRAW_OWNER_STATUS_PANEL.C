@@ -188,6 +188,16 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
                 break;
             }
         }
+#if defined(TBS_EDITION_ES)
+        /* The Spanish verdict sits above the Psynergy's name. */
+        if (found) {
+            UiText_DrawCharacterAtOffsetFar(id + (s32)MsgAbilityName, window, 0, 56);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgLearned, window, 0, 48);
+        } else {
+            UiText_DrawCharacterAtOffsetFar(id + (s32)MsgAbilityName, window, 0, 56);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgWillLearn, window, 0, 48);
+        }
+#else
         if (found) {
             UiText_DrawCharacterAtOffsetFar(id + (s32)MsgAbilityName, window, 0, 48);
             UiText_DrawCharacterAtOffsetFar((s32)MsgLearned, window, 0, 56);
@@ -195,6 +205,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
             UiText_DrawCharacterAtOffsetFar(id + (s32)MsgAbilityName, window, 0, 48);
             UiText_DrawCharacterAtOffsetFar((s32)MsgWillLearn, window, 0, 56);
         }
+#endif
         break;
     }
     case 8: {

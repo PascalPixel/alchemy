@@ -93,7 +93,7 @@ Func_0804d754:
 	ands	r2, r3
 	mov	r8, r2
 	sub	sp, #4
-	bl	0x0804d0dc
+	bl	AffineEffect_InitializeWork
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #232
@@ -102,22 +102,22 @@ Func_0804d754:
 	cmp	r3, #0
 	bne.n	.L_0804d830
 	movs	r0, #44
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r0, #45
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	b.n	.L_0804d842
 .L_0804d830:
 	movs	r0, #46
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r0, #47
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r0, #48
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 .L_0804d842:
 	movs	r2, #0
 	movs	r0, #17
 	movs	r1, #7
-	bl	0x0804d3e8
+	bl	Menu_CenterResourceEntries
 	mov	r2, r8
 	cmp	r2, #0
 	beq.n	.L_0804d8be
@@ -205,7 +205,7 @@ Func_0804d754:
 	str	r0, [r7, #124]
 .L_0804d908:
 	movs	r0, #0
-	bl	0x0804d16c
+	bl	Menu_RunResourceSelectionLoop
 	mov	r3, r8
 	adds	r5, r0, #0
 	cmp	r3, #0
@@ -229,7 +229,7 @@ Func_0804d754:
 	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
-	bl	0x0804d118
+	bl	Menu_EndResourceSelection
 	adds	r0, r5, #0
 	add	sp, #4
 	pop	{r3, r5}
@@ -244,23 +244,23 @@ Func_0804d754:
 	.2byte 0x0000
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	0x0804d0dc
+	bl	AffineEffect_InitializeWork
 	movs	r0, #17
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r0, #18
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r0, #19
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r0, #20
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r1, #7
 	movs	r2, #0
 	movs	r0, #17
-	bl	0x0804d3e8
+	bl	Menu_CenterResourceEntries
 	adds	r0, r5, #0
-	bl	0x0804d16c
+	bl	Menu_RunResourceSelectionLoop
 	adds	r5, r0, #0
-	bl	0x0804d118
+	bl	Menu_EndResourceSelection
 	adds	r0, r5, #0
 	pop	{r5, pc}
 	.2byte 0x0000

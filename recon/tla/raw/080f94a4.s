@@ -130,7 +130,7 @@ Func_080f94a4:
 	bl	Func_080383e8
 	bl	0x08104aa4
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r2, [r7, #24]
 	movs	r3, #0
 	strh	r3, [r2, #4]

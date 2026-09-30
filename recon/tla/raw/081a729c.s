@@ -20,7 +20,7 @@ Func_081a729c:
 	mov	r8, r0
 	movs	r1, #112
 	movs	r0, #172
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	mov	fp, r0
 	bl	0x080144c0
 	movs	r0, #1
@@ -134,7 +134,7 @@ Func_081a729c:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #120]
@@ -160,7 +160,7 @@ Func_081a729c:
 	cmp	r7, #4
 	bls.n	.L_081a73c8
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_081a73f2:
 	movs	r0, #30
 	bl	Func_08013f3c
@@ -276,7 +276,7 @@ Func_081a729c:
 	bcc.n	.L_081a7446
 .L_081a74e4:
 	movs	r0, #172
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r2, [pc, #24]
 	movs	r3, #128
 	lsls	r3, r3, #19

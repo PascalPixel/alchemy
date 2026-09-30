@@ -276,7 +276,7 @@ Func_08040a48:
 	lsls	r1, r1, #3
 	movs	r0, #208
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	adds	r1, r0, #0
 	mov	r0, sp
@@ -301,7 +301,7 @@ Func_08040a48:
 	ldr	r0, [pc, #12]
 	bl	Func_08014644
 	movs	r0, #208
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	.2byte 0x0c61
 	.2byte 0x0804

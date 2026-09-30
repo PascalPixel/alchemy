@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080143f8
+	.global Resource_GetBuffer
 	.thumb_func
-Func_080143f8:
+Resource_GetBuffer:
 	push	{lr}
 	adds	r2, r1, #0
 	ldr	r1, [pc, #8]

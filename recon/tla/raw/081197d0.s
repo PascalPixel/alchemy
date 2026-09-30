@@ -31,7 +31,7 @@ Func_081197d0:
 	str	r0, [sp, #40]
 	movs	r1, #76
 	movs	r0, #48
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	mov	sl, r0
 	movs	r0, #128
 	lsls	r0, r0, #4
@@ -39,23 +39,23 @@ Func_081197d0:
 	mov	r8, r0
 	mov	r1, r8
 	movs	r0, #36
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r5, #249
 	lsls	r5, r5, #3
 	adds	r1, r5, #0
 	mov	r9, r0
 	movs	r0, #216
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #32
 	movs	r0, #176
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r6, #192
 	movs	r1, #160
 	str	r0, [sp, #36]
 	lsls	r1, r1, #2
 	lsls	r6, r6, #18
 	movs	r0, #44
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r3, r6, #0
 	adds	r3, #216
 	adds	r1, r5, #0
@@ -104,7 +104,7 @@ Func_081197d0:
 	movs	r1, #12
 	str	r3, [r2, #0]
 	movs	r0, #148
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r6, #148
 	ldr	r0, [r6, #0]
 	movs	r1, #12
@@ -120,11 +120,11 @@ Func_081197d0:
 	strh	r0, [r3, #0]
 	lsls	r1, r1, #4
 	movs	r0, #16
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	movs	r0, #12
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r0, #4
 	bl	0x08020088
 	movs	r0, #183
@@ -813,7 +813,7 @@ Func_081197d0:
 	beq.n	.L_08119e6c
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	bl	.L_081197d0
@@ -828,7 +828,7 @@ Func_081197d0:
 	bl	0x08120060
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 .L_08119eb0:

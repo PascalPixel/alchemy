@@ -147,7 +147,7 @@ Func_081195d4:
 	push	{lr}
 	movs	r1, #76
 	movs	r0, #48
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	adds	r3, r0, #0
 	adds	r3, #12

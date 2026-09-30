@@ -144,7 +144,7 @@ Func_0803a448:
 	strb	r3, [r5, #5]
 	movs	r1, #1
 	sub	sp, #4
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	movs	r2, #1
 	mov	sl, r2
 	mov	r3, sl
@@ -241,7 +241,7 @@ Func_0803a448:
 	adds	r0, r1, #0
 	movs	r1, #1
 	sub	sp, #16
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	movs	r2, #244
 	adds	r1, r0, #0
 	lsls	r3, r1, #1

@@ -237,7 +237,7 @@ Func_081080a8:
 	ldrh	r0, [r5, #0]
 	bl	0x08014274
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, pc}
 	movs	r0, r0
 	.2byte 0x8131
@@ -412,7 +412,7 @@ Func_081080a8:
 	bl	.L_081084f4
 	mov	r0, r9
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	.L_0810824c
 	movs	r0, #0
 	add	sp, #4

@@ -47,7 +47,7 @@ Resource_LoadByMode:
 	add	r3, sp, #4
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x0803d98c
+	bl	Ability_LoadGlyph
 .L_0803f22e:
 	ldr	r0, [sp, #8]
 .L_0803f230:
@@ -114,7 +114,7 @@ Resource_LoadByMode:
 	add	r3, sp, #4
 	adds	r0, r5, #0
 	mov	r1, r8
-	bl	0x0803d98c
+	bl	Ability_LoadGlyph
 	b.n	.L_0803f2d2
 	adds	r2, r4, #0
 	adds	r0, r5, #0
@@ -189,7 +189,7 @@ Resource_LoadByMode:
 	add	r2, sp, #8
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x0803d98c
+	bl	Ability_LoadGlyph
 	ldr	r3, [pc, #108]
 .L_0803f352:
 	adds	r3, r6, r3

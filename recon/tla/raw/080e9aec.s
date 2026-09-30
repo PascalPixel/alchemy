@@ -242,7 +242,7 @@ Func_080e9aec:
 	ldrsh	r0, [r3, r4]
 	bl	0x08014274
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	b.n	.L_080e9d9a
 .L_080e9cf4:
 	movs	r0, #85
@@ -435,7 +435,7 @@ Func_080e9aec:
 	ldrsh	r0, [r3, r1]
 	bl	0x08014274
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.4byte 0x080e9941

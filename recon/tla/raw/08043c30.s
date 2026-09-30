@@ -866,7 +866,7 @@
 	bl	UiWork_Finalize
 	bl	0x080439d8
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [pc, #44]
 	movs	r1, #147
 	lsls	r1, r1, #1

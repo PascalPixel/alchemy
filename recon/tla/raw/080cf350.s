@@ -153,7 +153,7 @@ Func_080cf350:
 	ldrb	r0, [r5, #16]
 	bl	VramBlock_LoadCached
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #1
 	mov	r2, sl
 	ands	r3, r2

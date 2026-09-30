@@ -110,7 +110,7 @@ Func_080fcf14:
 	adds	r3, #20
 	adds	r5, r0, #0
 	ldr	r0, [r7, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r5, #0
@@ -161,7 +161,7 @@ Func_080fcf14:
 	movs	r2, #3
 	movs	r3, #17
 	str	r6, [sp, #4]
-	bl	0x080f811c
+	bl	Func_080f811c
 	cmp	r0, #0
 	beq.n	.L_080fd068
 	ldr	r1, [r5, #0]
@@ -177,7 +177,7 @@ Func_080fcf14:
 	movs	r2, #13
 	movs	r3, #17
 	str	r6, [sp, #4]
-	bl	0x080f811c
+	bl	Func_080f811c
 	cmp	r0, #0
 	beq.n	.L_080fd09e
 	ldr	r3, [sp, #12]
@@ -694,7 +694,7 @@ Func_080fcf14:
 	ldr	r5, [r6, #24]
 	movs	r7, #13
 	adds	r0, r5, #0
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	strb	r7, [r5, #5]
 	movs	r0, #1
 	bl	WaitFrames
@@ -1497,7 +1497,7 @@ Func_080fcf14:
 	movs	r1, #13
 	movs	r2, #3
 	movs	r3, #17
-	bl	0x080f811c
+	bl	Func_080f811c
 	ldr	r5, [r5, #0]
 	movs	r2, #0
 	mov	r8, r5
@@ -1645,7 +1645,7 @@ Func_080fcf14:
 	lsls	r3, r1, #2
 	adds	r3, #76
 	ldr	r0, [r7, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	ldr	r4, [sp, #8]
 .L_080fdc4a:
 	ldr	r3, [sp, #40]
@@ -2246,7 +2246,7 @@ Func_080fcf14:
 	strh	r3, [r1, #0]
 	ldr	r0, [r7, #72]
 	str	r4, [sp, #8]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	ldr	r1, [sp, #12]
 	ldr	r4, [sp, #8]
 	movs	r3, #180
@@ -2388,7 +2388,7 @@ Func_080fcf14:
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	adds	r0, r6, #0
 	add	sp, #4
 	pop	{r5, r6, r7, pc}

@@ -263,7 +263,7 @@ Func_080d8740:
 	adds	r1, #12
 	movs	r0, #156
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #128
 	lsls	r3, r3, #1
 	mov	r8, r3

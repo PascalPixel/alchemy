@@ -16,7 +16,7 @@ Func_080d7430:
 	adds	r1, #136
 	movs	r0, #120
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #128

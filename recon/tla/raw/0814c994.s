@@ -164,11 +164,11 @@ Func_0814c994:
 	bl	0x0818df5c
 .L_0814cb46:
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, pc}
 	movs	r0, r0
 	.2byte 0xc9ec
@@ -212,11 +212,11 @@ Func_0814c994:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x2060
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, pc}
 	movs	r0, r0
 	.2byte 0x7aa0

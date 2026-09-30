@@ -14,6 +14,9 @@ Func_080ad048:
 	bx	r4
 	.2byte 0xef35
 	.2byte 0x080a
+	.global Inventory_RemoveFar
+	.thumb_func
+Inventory_RemoveFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xf149

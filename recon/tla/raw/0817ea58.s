@@ -750,7 +750,7 @@ Func_0817ea58:
 	b.n	.L_0817eace
 .L_0817f04e:
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #240
 	ldr	r0, [sp, #144]
 	ldr	r5, [pc, #84]
@@ -4284,9 +4284,9 @@ Func_0817ea58:
 	ldr	r0, [pc, #44]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 	add	sp, #268
 	pop	{r3, r5, r6, r7}

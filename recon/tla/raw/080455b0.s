@@ -48,10 +48,10 @@ Func_080455b0:
 	bl	0x0801591c
 	adds	r1, r6, #0
 	mov	r0, r8
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	adds	r5, r0, #0
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	adds	r0, r5, #0
 	pop	{r3}
 	mov	r8, r3
@@ -146,7 +146,7 @@ Func_080455b0:
 	mov	r0, lr
 	bl	Func_08013164
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

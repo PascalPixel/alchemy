@@ -90,17 +90,17 @@ Func_081b834c:
 	str	r0, [sp, #128]
 	adds	r1, #124
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	str	r0, [sp, #124]
 	adds	r1, #20
 	movs	r0, #180
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #76
 	str	r0, [sp, #120]
 	movs	r0, #48
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #116]
 	ldr	r0, [pc, #516]
 	bl	0x080132fc
@@ -692,7 +692,7 @@ Func_081b834c:
 	adds	r3, r2, r4
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	.L_081ba282
 .L_081b8932:
 	ldr	r3, [r1, #12]
@@ -713,7 +713,7 @@ Func_081b834c:
 	adds	r3, r6, r0
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r0, r5, #0
 	bl	Audio_PlayCue
 	ldr	r6, [pc, #664]
@@ -917,7 +917,7 @@ Func_081b834c:
 	adds	r6, r4, r5
 	ldr	r0, [r6, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #16
@@ -959,7 +959,7 @@ Func_081b834c:
 	adds	r4, #204
 	adds	r3, r2, r4
 	ldr	r0, [r3, #0]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	ldr	r5, [sp, #88]
 	cmp	r5, #0
 	beq.n	.L_081b8b72
@@ -1922,7 +1922,7 @@ Func_081b834c:
 	adds	r6, r4, r5
 	movs	r1, #1
 	ldr	r0, [r6, #0]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	Audio_PlayCue
 	movs	r0, #112
@@ -2067,7 +2067,7 @@ Func_081b834c:
 	adds	r5, r2, r3
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	ldr	r4, [sp, #68]
 	cmp	r4, #0
 	bne.n	.L_081b9472
@@ -3906,7 +3906,7 @@ Func_081b834c:
 	adds	r3, r0, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 .L_081ba282:
 	movs	r2, #0
 	movs	r6, #128
@@ -3937,15 +3937,15 @@ Func_081b834c:
 	cmp	r0, #17
 	bne.n	.L_081ba28a
 	movs	r0, #48
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #180
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #189
 	lsls	r3, r3, #2
 	add	sp, r3

@@ -275,7 +275,7 @@ Func_080ce0ac:
 	beq.n	.L_080ce2fc
 	mov	r0, sl
 	ldr	r1, [sp, #4]
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 .L_080ce2fc:
 	ldr	r0, [sp, #0]
 .L_080ce2fe:

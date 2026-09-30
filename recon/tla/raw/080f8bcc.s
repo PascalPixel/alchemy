@@ -67,7 +67,7 @@ Func_080f8bcc:
 	add	r0, r8
 	strh	r0, [r5, #6]
 	adds	r0, r5, #0
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
@@ -98,7 +98,7 @@ Func_080f8bcc:
 	add	r3, r8
 	strh	r3, [r5, #6]
 	adds	r0, r5, #0
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}

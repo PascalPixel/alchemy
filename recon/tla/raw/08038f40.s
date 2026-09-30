@@ -9,7 +9,7 @@ Func_08038f40:
 	adds	r6, #144
 	adds	r1, r6, #0
 	movs	r0, #60
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r1, r6, #0
 	ldr	r3, [pc, #68]
 	adds	r5, r0, #0
@@ -106,7 +106,7 @@ Func_08038f40:
 	mov	r8, r0
 	adds	r1, r6, #0
 	movs	r0, #60
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	ldr	r3, [pc, #136]
 	adds	r1, r6, #0
 	adds	r5, r0, #0

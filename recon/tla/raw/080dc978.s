@@ -12,7 +12,7 @@ Func_080dc978:
 	lsls	r1, r1, #2
 	movs	r0, #88
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	adds	r5, r0, #0
 	mov	r0, sp
@@ -119,7 +119,7 @@ Func_080dc978:
 	bl	0x080dcf2c
 	bl	0x080dc384
 	movs	r0, #88
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, pc}
 	.2byte 0xcb45
 	.2byte 0x080d

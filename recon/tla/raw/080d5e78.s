@@ -730,7 +730,7 @@ Func_080d5e78:
 	sub	sp, #4
 	mov	r8, r2
 	adds	r7, r3, #0
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	adds	r4, r0, #0
 	mov	r0, sp
@@ -1348,7 +1348,7 @@ Func_080d5e78:
 	adds	r1, #20
 	movs	r0, #116
 	sub	sp, #8
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #32]
@@ -1372,7 +1372,7 @@ Func_080d5e78:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #128]
@@ -1385,7 +1385,7 @@ Func_080d5e78:
 	bl	VramBlock_LoadCached
 	str	r0, [r5, #4]
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r5, #0
 .L_080d6978:
 	movs	r4, #0

@@ -123,7 +123,7 @@ Func_08016054:
 	movs	r2, #0
 	bl	0x08013438
 	movs	r0, #204
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	push	{lr}
 	movs	r3, #192

@@ -15,7 +15,7 @@ Func_080e82cc:
 	adds	r1, #140
 	movs	r0, #92
 	sub	sp, #64
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r2, #192
 	str	r0, [sp, #48]
 	lsls	r2, r2, #18
@@ -98,10 +98,10 @@ Func_080e82cc:
 	.2byte 0x2060
 	movs	r5, #128
 	lsls	r5, r5, #6
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	adds	r1, r5, #0
 	movs	r0, #96
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	mov	r9, r0
 	adds	r1, r5, #0
 	movs	r2, #0
@@ -846,7 +846,7 @@ Func_080e82cc:
 	bl	0x08014274
 	bl	0x080eb930
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_080e89d6:
 	add	sp, #8
 	pop	{r3, r5, r6, r7}

@@ -22,7 +22,7 @@ Func_080fa3d4:
 	movs r0, #2
 	adds r2, r7, #0
 	movs r3, #248
-	bl RenderOutput_CreateFar + 0x8
+	bl RenderOutput_CreateFromResourceFar
 	adds r5, #1
 	stmia r6!, {r0}
 	cmp r5, #7
@@ -40,7 +40,7 @@ Func_080fa3d4:
 	movs r0, #2
 	adds r2, r7, #0
 	lsls r3, r3, #1
-	bl RenderOutput_CreateFar + 0x8
+	bl RenderOutput_CreateFromResourceFar
 	adds r5, #1
 	stmia r6!, {r0}
 	cmp r5, #15
@@ -58,7 +58,7 @@ Func_080fa3d4:
 	movs r0, #2
 	adds r2, r7, #0
 	lsls r3, r3, #1
-	bl RenderOutput_CreateFar + 0x8
+	bl RenderOutput_CreateFromResourceFar
 	adds r5, #1
 	stmia r6!, {r0}
 	cmp r5, #31

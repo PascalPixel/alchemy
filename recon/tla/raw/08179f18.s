@@ -34,7 +34,7 @@ Func_08179f18:
 	ldr r2, [r2, #100]
 	mov r9, r3
 	str r2, [sp, #148]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	bl Func_0813ba50
 	bl Func_08179e6c
 	ldr r4, [sp, #172]
@@ -44,7 +44,7 @@ Func_08179f18:
 	str r3, [r2]
 	ldr r0, .L_0817a0f0
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #0
 	str r6, [sp, #144]
 	str r0, [sp, #160]
@@ -67,7 +67,7 @@ Func_08179f18:
 	movs r0, #1
 	ldr r1, .L_0817a0f8
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r6, #238
 	ldr r5, [sp, #172]
 	lsls r6, r6, #7
@@ -96,7 +96,7 @@ Func_08179f18:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0817a0fc
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r6, [sp, #152]
 	movs r5, #1
 	str r5, [r6, #16]
@@ -869,7 +869,7 @@ Func_08179f18:
 	bgt .L_0817a65e
 	adds r0, r4, #0
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #1
 	bne .L_0817a5ea
 	movs r7, #1
@@ -970,7 +970,7 @@ Func_08179f18:
 .L_0817a68c:
 	mov r0, r10
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [sp, #140]
 	lsls r0, r0, #5
 	adds r0, r0, r7
@@ -979,7 +979,7 @@ Func_08179f18:
 	str r0, [r5]
 	movs r1, #3
 	mov r0, r10
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #136]
 	lsls r0, r0, #5
 	add r0, r8
@@ -1759,7 +1759,7 @@ Func_08179f18:
 	ldrh r0, [r4, r5]
 	lsls r1, r1, #4
 	adds r0, #32
-	bl Math_Mod
+	bl __modsi3
 	ldr r6, .L_0817ac7c
 	adds r1, r5, #0
 	strh r0, [r6, r1]
@@ -1775,7 +1775,7 @@ Func_08179f18:
 	ldrh r0, [r2, r3]
 	lsls r1, r1, #4
 	adds r0, #128
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, .L_0817acf4
 	ldr r5, [sp, #40]
 	strh r0, [r4, r5]
@@ -1955,7 +1955,7 @@ Func_08179f18:
 	bl Func_080150e4
 	ldr r3, .L_0817b020
 	ldrsh r0, [r3, r5]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r7, #0
 	bl Func_0801521c
 	ldr r5, [sp, #160]
@@ -1980,7 +1980,7 @@ Func_08179f18:
 	bl Func_08014de4
 	movs r0, #148
 	lsls r0, r0, #8
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r0, #208
 	lsls r0, r0, #7
 	bl Func_08015068
@@ -2085,7 +2085,7 @@ Func_08179f18:
 	movs r1, #30
 	str r4, [sp, #112]
 	str r6, [sp, #108]
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #116]
 	ldr r5, [sp, #160]
 	adds r7, r2, r0
@@ -2266,7 +2266,7 @@ Func_08179f18:
 	cmp r2, #221
 	bgt .L_0817b070
 	lsls r0, r5, #10
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 .L_0817b070:
 	cmp r6, #0
 	bge .L_0817b076
@@ -2552,7 +2552,7 @@ Func_08179f18:
 	bl .L_0817a332
 .L_0817b2a6:
 	ldr r0, .L_0817b37c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	add r0, sp, #156
 	ldr r3, .L_0817b380
 	ldrh r0, [r0]
@@ -2572,7 +2572,7 @@ Func_08179f18:
 	movs r6, #1
 	ldmia r5!, {r0}
 	add r10, r6
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	mov r0, r10
 	cmp r0, #44
 	bne .L_0817b2cc
@@ -2818,7 +2818,7 @@ Func_08179f18:
 .L_0817b4b6:
 	movs r1, #15
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, [sp, #172]
 	adds r1, r0, #0
 	movs r0, #2
@@ -2860,7 +2860,7 @@ Func_08179f18:
 	cmp r3, #56
 	bne .L_0817b514
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0817b514:
 	ldr r3, [sp, #160]
 	subs r3, #57
@@ -2935,7 +2935,7 @@ Func_08179f18:
 	b .L_0817b420
 .L_0817b5a8:
 	ldr r0, .L_0817b5d0
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl Func_08143bb8

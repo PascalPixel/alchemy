@@ -39,6 +39,6 @@ Func_080e035c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080e03a4:
-	.4byte Func_080e02ec
+	.4byte BattleEffect_SetRandomTableValueOnObject
 .L_080e03a8:
 	.4byte gPartyState

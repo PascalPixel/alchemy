@@ -478,7 +478,7 @@ UiText_BuildRenderEntries:
 	add r5, sp, #68
 	adds r0, r5, #0
 	movs r2, #0
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	subs r4, r0, r5
 	cmp r4, #16
 	bne .L_0803b3fc

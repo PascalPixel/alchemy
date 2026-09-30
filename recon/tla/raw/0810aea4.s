@@ -60,7 +60,7 @@ Func_0810aea4:
 	eors r3, r2
 	strh r3, [r5]
 	adds r0, r7, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 .L_0810af16:
 	subs r6, #1
 	adds r5, #2

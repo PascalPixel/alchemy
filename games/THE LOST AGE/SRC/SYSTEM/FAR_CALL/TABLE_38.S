@@ -11,10 +11,19 @@ Resource_FarCall007:
 	.thumb_func
 Func_080f8000:
 	overlay_veneer Func_080f94a4
+	.global Func_080f8008
+	.thumb_func
+Func_080f8008:
 	overlay_veneer Func_080fcab8
 	.global Func_080f8010
 	.thumb_func
 Func_080f8010:
 	overlay_veneer Func_080fe274
+	.global Func_080f8018
+	.thumb_func
+Func_080f8018:
 	overlay_veneer Func_080fe184
+	.global UiIcon_CreateWithResourceVariantFar
+	.thumb_func
+UiIcon_CreateWithResourceVariantFar:
 	overlay_veneer UiIcon_CreateWithResourceVariant

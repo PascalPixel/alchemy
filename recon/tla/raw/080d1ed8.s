@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d1ed8
+	.global BattleFx_GetFlags
 	.thumb_func
-Func_080d1ed8:
+BattleFx_GetFlags:
 	push {lr}
 	bl Func_080d1e84
 	bl Func_080d1e60

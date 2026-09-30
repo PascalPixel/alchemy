@@ -138,7 +138,7 @@ Func_08118958:
 	bl GameFlag_SetBit
 .L_08118a62:
 	movs r0, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r3, .L_08118acc
 	ldr r2, .L_08118ad0
 	ldr r7, .L_08118ad4

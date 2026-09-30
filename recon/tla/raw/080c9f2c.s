@@ -25,7 +25,7 @@ Func_080c9f2c:
 	ldr r5, .L_080c9fd0
 .L_080c9f52:
 	mov r1, sp
-	bl ResourceMetadata_SumCommandLengthsFar + 0x8
+	bl Func_080202b0
 	movs r1, #20
 	adds r6, r0, #0
 	ldr r0, [sp, #0]

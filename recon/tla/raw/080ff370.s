@@ -21,7 +21,7 @@ Func_080ff370:
 	movs r0, #1
 	negs r0, r0
 	mov r8, r3
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	negs r3, r0
 	orrs r3, r0
 	lsrs r3, r3, #31
@@ -65,7 +65,7 @@ Func_080ff370:
 	movs r1, #0
 	movs r2, #40
 	str r3, [sp, #0]
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 .L_080ff3f6:
 	adds r3, r6, #0
 	adds r0, r7, #0
@@ -90,10 +90,10 @@ Func_080ff370:
 	movs r1, #64
 	movs r2, #56
 	movs r3, #224
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 .L_080ff42a:
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	ldr r3, [sp, #24]
 	cmp r3, #1
 	beq .L_080ff43c
@@ -230,7 +230,7 @@ Func_080ff370:
 .L_080ff540:
 	ldr r1, [sp, #16]
 	ldr r0, [sp, #28]
-	bl Party_AdvanceOwnerCountToTargetFar + 0x8
+	bl Func_080ad1a0
 	adds r2, r6, #0
 	adds r2, #16
 	mov r3, r10

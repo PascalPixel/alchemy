@@ -35,7 +35,7 @@ Func_080adcec:
 	movs r2, #58
 	ldrsh r0, [r3, r2]
 	lsls r0, r0, #16
-	bl __divsi3
+	bl Math_Div
 .L_080add30:
 	cmp r0, r7
 	ble .L_080add3a

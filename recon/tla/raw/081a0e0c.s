@@ -168,11 +168,11 @@ Func_081a0e0c:
 	lsls r1, r1, #4
 	strh r2, [r3]
 	ldr r0, .L_081a0f94
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #144
 	ldr r0, .L_081a0f98
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r7, .L_081a0f60
 	movs r6, #0
 	movs r5, #0

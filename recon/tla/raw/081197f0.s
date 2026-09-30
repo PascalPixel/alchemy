@@ -107,18 +107,18 @@ Func_081197f0:
 	movs r0, #12
 	bl Runtime_AllocateBlock
 	movs r0, #4
-	bl Func_08020080 + 0x8
+	bl Func_08020088
 	movs r0, #183
 	lsls r0, r0, #1
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_081198f2
 	movs r0, #1
-	bl Resource_FarCall004 + 0x8
+	bl UiWork_InitializeFar
 	b .L_081198f8
 .L_081198f2:
 	movs r0, #0
-	bl Resource_FarCall004 + 0x8
+	bl UiWork_InitializeFar
 .L_081198f8:
 	mov r5, r9
 	bl Func_081196fc
@@ -215,7 +215,7 @@ Func_081197f0:
 	lsls r1, r1, #2
 	adds r1, #255
 	ldr r0, .L_08119acc
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r5, #128
 	ldr r3, .L_08119ab8
 	lsls r5, r5, #2
@@ -234,7 +234,7 @@ Func_081197f0:
 	movs r0, #55
 	bl Audio_PlayCue
 	movs r0, #4
-	bl Func_08013b30
+	bl Sound_LoadPresetParameters
 	b .L_081199f0
 .L_081199ea:
 	movs r0, #50
@@ -270,7 +270,7 @@ Func_081197f0:
 	bl Func_081185c4
 .L_08119a30:
 	movs r0, #9
-	bl UiText_DrawQuantity + 0x8
+	bl Func_08038128
 	bl Func_0811bddc
 	bl BattleActor_CommitPlacement
 	bl Func_081263c4
@@ -290,7 +290,7 @@ Func_081197f0:
 	lsls r1, r1, #15
 	movs r2, #0
 	movs r3, #0
-	bl Func_08126548
+	bl BattleCamera_SetRange
 	movs r1, #0
 	movs r2, #0
 	movs r3, #190
@@ -331,7 +331,7 @@ Func_081197f0:
 .L_08119abc:
 	.4byte Data_020054c8
 .L_08119ac0:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_08119ac4:
 	.4byte 0x04000128
 .L_08119ac8:
@@ -385,7 +385,7 @@ Func_081197f0:
 	strb r2, [r3]
 	ldr r0, .L_08119cd0
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r5, #1
 	str r5, [sp, #32]
 .L_08119b32:
@@ -432,7 +432,7 @@ Func_081197f0:
 	.2byte 0xf800
 	mov r1, r9
 	ldr r0, [r1, #84]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #181
 	lsls r0, r0, #1
 	bl GameFlag_Test
@@ -553,14 +553,14 @@ Func_081197f0:
 .L_08119c7c:
 	movs r0, #1
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	cmp r0, #0
 	bne .L_08119c8a
 	b .L_08119dde
 .L_08119c8a:
 	movs r0, #2
 	movs r1, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	ldr r4, [sp, #4]
 	cmp r0, #0
 	bne .L_08119cd8
@@ -870,7 +870,7 @@ Func_081197f0:
 	ldrh r1, [r1, r3]
 	movs r0, #128
 	bl BattleUnit_AssignFar
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	movs r0, #128
 	movs r1, #1
 	bl UiText_DrawQuantity
@@ -878,7 +878,7 @@ Func_081197f0:
 	ldrh r0, [r2, #62]
 	ldr r3, .L_08119f74
 	adds r0, r0, r3
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_08119f2a:
 	bl Func_081284c0
@@ -887,8 +887,8 @@ Func_081197f0:
 	bl Audio_PlayCue
 .L_08119f34:
 	movs r0, #30
-	bl Func_08013e70
-	bl Func_08013fdc
+	bl Blend_SetDarkenTarget16
+	bl Blend_WaitForTransition
 	movs r3, #171
 	lsls r3, r3, #3
 	add r3, r9
@@ -933,17 +933,17 @@ Func_081197f0:
 	beq .L_08119fba
 	movs r0, #59
 	bl Audio_PlayCue
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	movs r0, #0
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	cmp r0, #1
 	bne .L_08119fb0
 	ldr r0, .L_0811a028
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_08119fb6
 .L_08119fb0:
 	ldr r0, .L_0811a02c
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_08119fb6:
 	bl BattlePresentation_WaitForAdvance
 .L_08119fba:
@@ -952,16 +952,16 @@ Func_081197f0:
 .L_08119fc0:
 	movs r0, #30
 	movs r7, #1
-	bl Func_08013e70
+	bl Blend_SetDarkenTarget16
 	negs r7, r7
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	b .L_08119fea
 .L_08119fd0:
 	movs r0, #78
 	bl Audio_PlayCue
 	movs r0, #30
-	bl Func_08013e70
-	bl Func_08013fdc
+	bl Blend_SetDarkenTarget16
+	bl Blend_WaitForTransition
 	ldr r5, [sp, #40]
 	movs r7, #186
 	lsls r7, r7, #2
@@ -983,7 +983,7 @@ Func_081197f0:
 	movs r2, #0
 	strb r2, [r3]
 	ldr r0, .L_0811a034
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_081263f0
 	adds r0, r7, #0
 	add sp, #44

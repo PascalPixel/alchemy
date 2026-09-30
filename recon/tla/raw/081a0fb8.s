@@ -17,9 +17,9 @@ Func_081a0fb8:
 	cmp r5, #0
 	bge .L_081a0fc0
 	ldr r0, .L_081a100c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081a1010
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r3, .L_081a1014
 	movs r2, #128
 	ldr r3, [r3]

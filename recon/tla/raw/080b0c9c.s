@@ -47,7 +47,7 @@ Djinn_Activate:
 	adds r0, r7, #0
 	adds r3, #1
 	strb r3, [r5, r2]
-	bl Func_080b0298
+	bl Owner_RefreshDerivedData
 .L_080b0cf8:
 	mov r0, r10
 .L_080b0cfa:

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0802296c
+	.global Animation_InitWorkFromMetadata
 	.thumb_func
-Func_0802296c:
+Animation_InitWorkFromMetadata:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	cmp r5, #0

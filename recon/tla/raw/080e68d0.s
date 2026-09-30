@@ -61,7 +61,7 @@ Func_080e68d0:
 	ldrh r1, [r2]
 	lsls r0, r0, #13
 	adds r2, r7, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 .L_080e694a:
 	bl BattleEffect_InitializeSharedScene
 	movs r0, #98
@@ -69,7 +69,7 @@ Func_080e68d0:
 	adds r0, #255
 	movs r1, #0
 	movs r2, #0
-	bl Func_080dc10c
+	bl Object_Spawn
 	movs r3, #200
 	lsls r3, r3, #5
 	adds r3, #48
@@ -165,7 +165,7 @@ Func_080e68d0:
 	ldr r2, [r2, #8]
 	ldr r3, [r4, #12]
 .L_080e6a10:
-	bl Func_080dc10c
+	bl Object_Spawn
 	str r0, [sp, #24]
 	movs r3, #200
 	lsls r3, r3, #5
@@ -255,7 +255,7 @@ Func_080e68d0:
 	cmp r3, #0
 	beq .L_080e6b10
 	adds r0, r5, #0
-	bl Func_08020328 + 0x8
+	bl Func_08020330
 	movs r1, #203
 	lsls r1, r1, #1
 	cmp r0, r1
@@ -488,7 +488,7 @@ Func_080e68d0:
 	movs r0, #128
 	adds r2, r7, #0
 	lsls r0, r0, #10
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r1, #0
 	str r1, [r7, #12]
 	str r1, [r7, #16]
@@ -498,7 +498,7 @@ Func_080e68d0:
 	adds r1, r0, #0
 	adds r2, #12
 	ldr r0, .L_080e6f98
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r2, r8
 	negs r3, r2
 	lsls r3, r3, #1
@@ -603,7 +603,7 @@ Func_080e68d0:
 	movs r0, #128
 	adds r2, r7, #0
 	lsls r0, r0, #10
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r3, #0
 	str r3, [r7, #12]
 	str r3, [r7, #16]
@@ -614,7 +614,7 @@ Func_080e68d0:
 	movs r0, #128
 	adds r2, #12
 	lsls r0, r0, #9
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r1, #1
 	mov r4, r8
 	add r8, r1
@@ -718,7 +718,7 @@ Func_080e68d0:
 	adds r2, r7, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r1, r8
 	negs r2, r1
 	lsls r3, r2, #1
@@ -805,7 +805,7 @@ Func_080e68d0:
 	adds r0, r5, #0
 	ldr r3, [r4, #16]
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [r5]
 	str r3, [r6, #12]
 	ldr r3, [r5, #8]
@@ -864,7 +864,7 @@ Func_080e68d0:
 	lsls r1, r1, #3
 	strh r2, [r3]
 	ldr r0, .L_080e70f4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #200
 	lsls r3, r3, #5
 	adds r3, #56
@@ -970,7 +970,7 @@ Func_080e68d0:
 	bl Func_080ceafc
 .L_080e709c:
 	ldr r0, .L_080e70f4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #114
 	bl Audio_PlayCue
 	mov r2, r11
@@ -983,13 +983,13 @@ Func_080e68d0:
 	ldr r0, [sp, #20]
 	cmp r0, #96
 	beq .L_080e70c2
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_080e70c2:
 	ldr r1, [sp, #12]
 	cmp r1, #96
 	beq .L_080e70ce
 	adds r0, r1, #0
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_080e70ce:
 	mov r0, r11
 	bl Func_080200c8

@@ -32,7 +32,7 @@ Func_0811d160:
 	movs r1, #255
 	ands r0, r3
 	ands r1, r2
-	bl Trade_AddOfferFar + 0x20
+	bl Djinn_GetDefinitionHeaderFar
 	bl BattleAction_Get
 	ldrb r3, [r0, #3]
 	cmp r3, #72

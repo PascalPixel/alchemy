@@ -117,12 +117,12 @@ Func_080eb824:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080eb928
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #192
 	lsls r1, r1, #4
 	adds r1, #108
 	ldr r0, .L_080eb92c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5

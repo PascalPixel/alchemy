@@ -65,7 +65,7 @@ Func_080decb8:
 	lsls r1, r1, #3
 	adds r0, r5, #0
 	strb r6, [r7, #25]
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, .L_080ded80
 	movs r2, #183
 	lsls r2, r2, #1

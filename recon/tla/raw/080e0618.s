@@ -75,7 +75,7 @@ Func_080e0618:
 	adds r2, r7, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r2, #0
 	str r2, [r7, #12]
 	bl Random16
@@ -99,7 +99,7 @@ Func_080e0618:
 	adds r1, r0, #0
 	adds r2, r6, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r3, #0
 	str r3, [r7, #24]
 	mov r0, r11

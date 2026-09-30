@@ -28,4 +28,4 @@ Func_080deda8:
 .L_080dedd8:
 	.4byte 0xffffb334
 .L_080deddc:
-	.4byte Data_080f0e54
+	.4byte BattleFx_CommonParticleScript

@@ -40,7 +40,7 @@ Func_080d85b8:
 	adds r0, r6, #0
 	ldr r3, [r5, #16]
 	str r3, [r6, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	bl Random16
 	lsls r5, r0, #1
 	adds r5, r5, r0
@@ -52,7 +52,7 @@ Func_080d85b8:
 	adds r2, r6, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r2, [r6]
 	ldr r1, .L_080d8704
 	str r2, [r7, #12]
@@ -94,7 +94,7 @@ Func_080d85b8:
 	cmp r3, r2
 	bhi .L_080d86ea
 	adds r0, r7, #0
-	bl Func_080ebe70
+	bl BattleFx_HasReachedTarget
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080d86f6
@@ -108,7 +108,7 @@ Func_080d85b8:
 	movs r0, #192
 	adds r2, r5, #0
 	lsls r0, r0, #12
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	str r3, [r7, #12]
 	ldr r3, [r5, #8]
@@ -152,7 +152,7 @@ Func_080d85b8:
 	cmp r3, #3
 	bne .L_080d86f6
 	adds r0, r7, #0
-	bl Func_080ebf68
+	bl BattleFx_ClearOwnedSlot
 .L_080d86f6:
 	add sp, #12
 	pop {r3, r5}

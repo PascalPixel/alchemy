@@ -79,7 +79,7 @@ Func_08143eb4:
 	bge .L_08143f3a
 	subs r1, r5, r6
 .L_08143f3a:
-	bl __divsi3
+	bl Math_Div
 	adds r4, r0, #0
 	lsls r4, r4, #23
 	mov r1, r10
@@ -166,7 +166,7 @@ Func_08143eb4:
 	mov r6, r9
 	subs r1, r3, r6
 .L_08143fd4:
-	bl __divsi3
+	bl Math_Div
 	adds r4, r0, #0
 	mov r0, r8
 	lsls r4, r4, #23

@@ -95,7 +95,7 @@ Func_08108b70:
 	movs r1, #7
 	adds r6, r0, #0
 	ldr r0, [sp, #36]
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	lsls r1, r1, #5
 	ldr r0, [sp, #28]
@@ -168,7 +168,7 @@ Func_08108b70:
 	adds r2, r5, #0
 	mov r1, r8
 	adds r6, r0, #0
-	bl Func_080f8038 + 0x8
+	bl Func_080f8040
 	ldr r3, [r7]
 	mov r2, r11
 	ands r3, r2
@@ -266,7 +266,7 @@ Func_08108b70:
 	movs r1, #2
 	movs r2, #0
 	adds r7, r0, #0
-	bl Func_080f8058 + 0x8
+	bl Func_080f8060
 	movs r3, #9
 	movs r0, #16
 	movs r1, #11
@@ -343,7 +343,7 @@ Func_08108b70:
 	ldrh r2, [r5]
 	bl Func_0810928c
 	ldrh r0, [r5]
-	bl Func_080ad1d8 + 0x8
+	bl Item_GetEquipmentGroupFar
 	cmp r0, #0
 	bne .L_08108e58
 	ldrh r2, [r5]
@@ -386,7 +386,7 @@ Func_08108b70:
 	movs r1, #2
 	bl UiText_DrawQuantity
 	adds r0, r6, #0
-	bl Item_AdjustCounterFar + 0x8
+	bl Inventory_CountFar
 	cmp r0, #15
 	bne .L_08108eb6
 	ldr r0, .L_08108f74
@@ -409,7 +409,7 @@ Func_08108b70:
 .L_08108ed2:
 	ldrh r1, [r5]
 	adds r0, r6, #0
-	bl Djinn_IsActiveFar + 0x18
+	bl Item_IsCompatibleWithOwnerFar
 	cmp r0, #0
 	bne .L_08108efc
 	movs r1, #1
@@ -491,7 +491,7 @@ Func_08108b70:
 .L_08108f84:
 	movs r0, #0
 	bl Func_0810bea8
-	bl Func_080f8058 + 0x10
+	bl Func_080f8068
 	mov r0, r8
 	movs r1, #2
 	bl UiWork_FinalizeFar

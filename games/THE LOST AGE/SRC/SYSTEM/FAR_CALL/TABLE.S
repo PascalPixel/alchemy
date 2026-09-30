@@ -8,7 +8,16 @@
 	.global Func_08020010
 	.thumb_func
 Func_08020010:
-	overlay_veneer Func_080220f0
+	overlay_veneer Render_ApplyProjectedPlacement
+	.global Func_08020018
+	.thumb_func
+Func_08020018:
 	overlay_veneer Func_08022318
+	.global Func_08020020
+	.thumb_func
+Func_08020020:
 	overlay_veneer Func_0802254c
+	.global InitializeAnimationObjectsFar
+	.thumb_func
+InitializeAnimationObjectsFar:
 	overlay_veneer InitializeAnimationObjects

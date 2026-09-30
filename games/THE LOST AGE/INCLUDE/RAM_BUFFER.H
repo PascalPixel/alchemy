@@ -9,6 +9,7 @@
  * beside it. Everywhere else the label serves. */
 
 #define Ram_MapCellBuffer ((u8 *)0x02010000) /* gMapCellBuffer */
+#define Ram_MapCollision ((u8 *)0x0202c000) /* gMapCollision */
 
 /* The IWRAM copy of the sound mixer, which the sound set-up fills from ROM.
  * Its label is a Thumb routine, so only a constant gives the even address

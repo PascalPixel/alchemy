@@ -58,7 +58,7 @@ Func_080df6f4:
 	ldrh r2, [r6, #6]
 	adds r0, r6, #0
 	lsls r1, r1, #13
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 .L_080df76c:
 	movs r3, #1
 	negs r3, r3
@@ -90,7 +90,7 @@ Func_080df6f4:
 	lsls r0, r0, #1
 	str r3, [r7, #8]
 	adds r0, #255
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080df7ec
@@ -116,7 +116,7 @@ Func_080df6f4:
 	adds r1, r5, #0
 	adds r2, r0, #0
 	adds r0, r6, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 .L_080df7ec:
 	movs r3, #1
 	negs r3, r3

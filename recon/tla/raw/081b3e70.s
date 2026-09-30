@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081b3e70
+	.global AudioTrack_InsertSlotNode
 	.thumb_func
-Func_081b3e70:
+AudioTrack_InsertSlotNode:
 	push {r5, lr}
 	ldr r3, .L_081b3eac
 	lsls r1, r0, #1

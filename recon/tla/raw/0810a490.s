@@ -144,7 +144,7 @@ Func_0810a490:
 	movs r1, #2
 	bl UiText_DrawQuantity
 	mov r0, r8
-	bl Item_AdjustCounterFar + 0x8
+	bl Inventory_CountFar
 	cmp r0, #15
 	bne .L_0810a5c8
 	ldr r0, .L_0810a65c
@@ -166,9 +166,9 @@ Func_0810a490:
 	bl Inventory_AddItemFar
 	mov r1, r11
 	negs r0, r1
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x10
+	bl Party_AdjustSixDigitCounterBFar
 	movs r0, #1
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x18
+	bl Party_AdjustCounterCappedAt28Far
 	b .L_0810a630
 .L_0810a5fa:
 	ldr r3, [r1, #4]

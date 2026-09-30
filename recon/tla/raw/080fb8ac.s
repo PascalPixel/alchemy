@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080fb8ac
+	.global ItemMenu_DrawItemDetails
 	.thumb_func
-Func_080fb8ac:
+ItemMenu_DrawItemDetails:
 	push {lr}
 	movs r2, #1
 	negs r2, r2

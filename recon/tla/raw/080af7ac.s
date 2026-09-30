@@ -111,7 +111,7 @@ Func_080af7ac:
 	bls .L_080af860
 	mov r3, r8
 	ldr r0, [r3]
-	bl Func_080b0298
+	bl Owner_RefreshDerivedData
 	movs r3, #128
 	lsls r3, r3, #7
 	strh r3, [r7, #22]
@@ -124,7 +124,7 @@ Func_080af7ac:
 	bl Party_AdvanceOwnerCountToTarget
 	mov r2, r8
 	ldr r0, [r2]
-	bl Func_080b0298
+	bl Owner_RefreshDerivedData
 	mov r3, r8
 	ldr r0, [r3]
 	bl Owner_RecalculateStats

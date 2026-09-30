@@ -12,13 +12,13 @@ Func_080d7c04:
 	bne .L_080d7c16
 	b .L_080d7d32
 .L_080d7c16:
-	bl Func_080d7a78
+	bl BattleFx_InitializeSlots
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #224
 	ldr r0, .L_080d7d38
 	ldr r5, [r3]
-	bl Func_08108048 + 0x10
+	bl Unnamed_080b0840Far
 	movs r0, #173
 	bl Audio_PlayCue
 	adds r0, r6, #0
@@ -57,7 +57,7 @@ Func_080d7c04:
 	ldr r3, [r7, #16]
 	adds r5, #80
 	str r3, [r6, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	adds r0, r7, #0
 	bl Func_080200c8
 	movs r0, #164
@@ -106,7 +106,7 @@ Func_080d7c04:
 	movs r2, #0
 	lsls r1, r1, #7
 	ldr r0, [r5]
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl WaitFrames
 	ldr r0, [r5]
@@ -119,7 +119,7 @@ Func_080d7c04:
 	bl Audio_PlayCue
 	movs r0, #100
 	bl WaitFrames
-	bl Func_08108048 + 0x18
+	bl Func_08108060
 	bl Func_080d7ab4
 .L_080d7d32:
 	add sp, #12
@@ -128,7 +128,7 @@ Func_080d7c04:
 .L_080d7d38:
 	.4byte 0x0020118c
 .L_080d7d3c:
-	.4byte Func_080d7af8
+	.4byte BattleFx_AdvanceSpinAngle
 .L_080d7d40:
 	.4byte Func_080d7b04
 .L_080d7d44:

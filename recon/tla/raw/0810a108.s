@@ -158,9 +158,9 @@ Func_0810a108:
 	mov r0, r8
 	bl Func_080ad288
 	mov r0, r8
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r0, r10
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	bl Func_08109188
 	ldr r2, [sp, #12]
 	mov r1, r8

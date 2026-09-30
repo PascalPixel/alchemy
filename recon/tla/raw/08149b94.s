@@ -5,6 +5,6 @@
 Func_08149b94:
 	push {lr}
 	movs r1, #0
-	bl Func_08149bac
+	bl BattleFx_RunSparkGroups
 	pop {pc}
 	.2byte 0x0000

@@ -34,6 +34,9 @@ Inventory_AddItemFar:
 	.thumb_func
 PartyInventory_AddFar:
 	overlay_veneer PartyInventory_Add
+	.global Inventory_FindFar
+	.thumb_func
+Inventory_FindFar:
 	overlay_veneer Inventory_Find
 	.global PartyInventory_FindOwnerFar
 	.thumb_func

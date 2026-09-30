@@ -20,7 +20,7 @@ Func_080b0084:
 	adds r1, #33
 	adds r3, r2, r1
 	ldrh r0, [r3]
-	bl Func_080ad3a8
+	bl Owner_GetRecord
 	adds r0, #42
 	ldrb r0, [r0]
 	cmp r0, #47
@@ -52,7 +52,7 @@ Func_080b0084:
 	ldrh r0, [r3]
 	adds r2, r5, #0
 	adds r1, #248
-	bl Func_080affac
+	bl Owner_GetDigitValues
 	ldr r7, .L_080b013c
 	mov r8, r5
 	movs r6, #3

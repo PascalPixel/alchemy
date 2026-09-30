@@ -51,7 +51,7 @@ Func_080d46a4:
 	strh r2, [r3]
 	ldr r0, .L_080d4710
 	adds r1, #148
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_080d470a:
 	pop {r5, r6, r7, pc}
 .L_080d470c:

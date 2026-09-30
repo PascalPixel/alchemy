@@ -13,7 +13,7 @@
 	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Item_Get
 	overlay_veneer PartyInventory_FindOwnerFar
-	overlay_veneer Func_080ad1d8
+	overlay_veneer Party_AdjustSixDigitCounterAFar
 	overlay_veneer Func_080ad2f0
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018

@@ -44,7 +44,7 @@ Func_080430c4:
 	adds r1, r0, #0
 	movs r2, #3
 	mov r0, r10
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	ldrb r3, [r0]
 	adds r0, #1
 	strb r3, [r7]
@@ -62,7 +62,7 @@ Func_080430c4:
 	mov r0, r10
 	movs r2, #2
 	mov r8, r3
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	ldrb r3, [r0]
 	adds r5, #1
 	strb r3, [r5]
@@ -77,7 +77,7 @@ Func_080430c4:
 	add r9, r3
 	mov r1, r9
 	mov r0, r10
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	ldrb r3, [r0]
 	adds r5, #1
 	strb r3, [r5]
@@ -92,7 +92,7 @@ Func_080430c4:
 	add r11, r3
 	mov r0, r10
 	mov r1, r11
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	ldrb r3, [r0]
 	adds r5, #1
 	strb r3, [r5]

@@ -40,21 +40,21 @@ Func_08127308:
 	lsls r1, r1, #6
 	lsls r0, r0, #19
 	adds r1, #65
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r0, #128
 	movs r1, #224
 	lsls r0, r0, #19
 	lsls r1, r1, #3
 	adds r0, #12
 	adds r1, #132
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r0, #128
 	movs r1, #252
 	lsls r0, r0, #19
 	lsls r1, r1, #6
 	adds r1, #68
 	adds r0, #80
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #240
@@ -81,7 +81,7 @@ Func_08127308:
 	lsls r1, r1, #5
 	adds r1, #14
 	adds r0, #82
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	mov r0, r11
 	bl Func_08127068
 	movs r3, #192
@@ -190,7 +190,7 @@ Func_08127308:
 	cmp r5, #1
 	bne .L_08127508
 	mov r0, r11
-	bl Resource_FarCall00C + 0x38
+	bl Func_08138038
 	ldr r0, .L_08127568
 	movs r2, #8
 	ldr r5, .L_08127564
@@ -247,7 +247,7 @@ Func_08127308:
 	bl WaitFrames
 	cmp r7, #0
 	bge .L_081274a6
-	bl Resource_FarCall00C + 0x40
+	bl Func_08138040
 	b .L_0812754e
 .L_08127508:
 	cmp r5, #2
@@ -266,7 +266,7 @@ Func_08127308:
 	str r1, [r0, #12]
 	str r3, [r0, #20]
 	str r3, [r0, #16]
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	b .L_0812754e
 .L_0812752e:
 	add r0, sp, #16
@@ -283,7 +283,7 @@ Func_08127308:
 	str r2, [r0, #12]
 	str r3, [r0, #20]
 	str r3, [r0, #16]
-	bl Resource_FarCall00C + 0x30
+	bl Func_08138030
 .L_0812754e:
 	add sp, #216
 	pop {r3, r5, r6, r7}

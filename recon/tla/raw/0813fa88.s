@@ -84,7 +84,7 @@ Func_0813fa88:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]
@@ -301,18 +301,18 @@ Func_0813fa88:
 	str r5, [r2, #12]
 	adds r1, r6, #0
 	ldr r0, .L_0813fd34
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r3, r9
 	movs r1, #200
 	str r5, [r3, #4]
 	lsls r1, r1, #4
 	ldr r0, .L_0813fd38
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r2, r9
 	str r5, [r2]
 	adds r1, r6, #0
 	ldr r0, .L_0813fd3c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #8
 	pop {r3, r5, r6, r7}
 	mov r8, r3

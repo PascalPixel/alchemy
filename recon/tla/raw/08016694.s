@@ -74,7 +74,7 @@ Func_08016694:
 .L_08016714:
 	.4byte 0x04000128
 .L_08016718:
-	.4byte Data_02005360
+	.4byte gSerialRuntime
 .L_0801671c:
 	lsls r2, r6, #2
 	mov r12, r2
@@ -145,7 +145,7 @@ Func_08016694:
 .L_08016798:
 	.4byte 0x000000c0
 .L_0801679c:
-	.4byte Data_02005360
+	.4byte gSerialRuntime
 .L_080167a0:
 	.4byte 0x0400010e
 .L_080167a4:

@@ -9,19 +9,37 @@
 	.thumb_func
 Djinn_IsActiveFar:
 	overlay_veneer Djinn_IsActive
-	overlay_veneer Trade_CanOfferDjinn
-	overlay_veneer Item_CanOwnerEquipDirect
-	overlay_veneer Item_IsCompatibleWithOwner
-	overlay_veneer Inventory_FindEquipped
-	.global Func_080ad1d8
+	.global Trade_CanOfferDjinnFar
 	.thumb_func
-Func_080ad1d8:
+Trade_CanOfferDjinnFar:
+	overlay_veneer Trade_CanOfferDjinn
+	.global Item_CanOwnerEquip
+	.thumb_func
+Item_CanOwnerEquip:
+	overlay_veneer Item_CanOwnerEquipDirect
+	.global Item_IsCompatibleWithOwnerFar
+	.thumb_func
+Item_IsCompatibleWithOwnerFar:
+	overlay_veneer Item_IsCompatibleWithOwner
+	.global Inventory_FindEquippedFar
+	.thumb_func
+Inventory_FindEquippedFar:
+	overlay_veneer Inventory_FindEquipped
+	.global Party_AdjustSixDigitCounterAFar
+	.thumb_func
+Party_AdjustSixDigitCounterAFar:
 	overlay_veneer Func_080afeb0
+	.global Item_GetEquipmentGroupFar
+	.thumb_func
+Item_GetEquipmentGroupFar:
 	overlay_veneer Item_GetEquipmentGroup
 	.global Item_AdjustCounterFar
 	.thumb_func
 Item_AdjustCounterFar:
 	overlay_veneer Item_AdjustCounter
+	.global Inventory_CountFar
+	.thumb_func
+Inventory_CountFar:
 	overlay_veneer Inventory_Count
 	.global PartyInventory_HasSpaceFar
 	.thumb_func

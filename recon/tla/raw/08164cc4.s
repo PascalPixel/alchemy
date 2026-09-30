@@ -24,7 +24,7 @@ Func_08164cc4:
 	ldr r3, [r3, #92]
 	lsls r0, r0, #6
 	str r3, [r1]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r2, #128
 	ldr r3, .L_08164d04
 	lsls r2, r2, #19
@@ -38,7 +38,7 @@ Func_08164cc4:
 	.4byte 0x00000100
 .L_08164d08:
 	ldr r0, [r6, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r2, [r0]
 	movs r3, #160
 	lsls r3, r3, #12
@@ -88,12 +88,12 @@ Func_08164cc4:
 	str r2, [r3]
 	lsls r1, r1, #4
 	adds r0, r5, #0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #0
 	movs r1, #0
 	bl Func_08163c2c
 	adds r0, r5, #0
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r3, [sp, #76]
 	b .L_08164d90
 .L_08164d88:
@@ -364,11 +364,11 @@ Func_08164cc4:
 	lsls r1, r1, #4
 	adds r1, #255
 	ldr r0, .L_081650b0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #200
 	ldr r0, .L_081650b4
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add r2, sp, #152
 	mov r10, r2
 	add r3, sp, #280
@@ -531,7 +531,7 @@ Func_08164cc4:
 	str r2, [r3]
 	ldr r0, .L_08165218
 	adds r1, #254
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r4, [sp, #60]
 	movs r2, #0
 	ldr r3, [r4]
@@ -875,7 +875,7 @@ Func_08164cc4:
 	str r3, [r5, #8]
 	bl Func_08014de4
 	adds r0, r5, #0
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	movs r0, #128
 	lsls r0, r0, #4
 	bl Func_080150e4
@@ -1111,11 +1111,11 @@ Func_08164cc4:
 	movs r5, #0
 	str r5, [r2, #16]
 	ldr r0, .L_081655c4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081655c8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081655cc
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	add r4, sp, #56
 	add r0, sp, #52
 	ldrh r4, [r4]
@@ -1281,7 +1281,7 @@ Func_08164cc4:
 	str r3, [r2]
 	ldr r0, .L_08165970
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, [sp, #60]
 	mov r4, sp
 	movs r0, #232
@@ -1331,7 +1331,7 @@ Func_08164cc4:
 	adds r2, #220
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	ldr r4, [sp, #32]
 	movs r0, #238
 	ldr r3, [r4]
@@ -1339,11 +1339,11 @@ Func_08164cc4:
 	adds r0, #224
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	bl BattleActor_CommitPlacementFar
 .L_08165734:
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0816573a:
 	bl Func_08014de4
 	adds r1, r5, #0
@@ -1528,7 +1528,7 @@ Func_08164cc4:
 .L_081658a2:
 	movs r1, #3
 	mov r0, r8
-	bl __divsi3
+	bl Math_Div
 	ldr r1, [sp, #36]
 	cmp r0, r1
 	bge .L_08165940
@@ -1760,7 +1760,7 @@ Func_08164cc4:
 	b .L_081656ce
 .L_08165a78:
 	ldr r0, .L_08165ab0
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r1, [sp, #76]
@@ -1773,7 +1773,7 @@ Func_08164cc4:
 	adds r4, #220
 	adds r3, r3, r4
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 .L_08165a9c:
 	bl Func_08143bb8
 	add sp, #280

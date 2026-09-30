@@ -60,7 +60,7 @@ Func_0811b180:
 	adds r5, r0, #0
 	adds r3, r5, r2
 	ldrh r0, [r3]
-	bl Func_081280fc
+	bl Summon_IsEntryFlagged
 	movs r2, #27
 	cmp r0, #0
 	bne .L_0811b1fc
@@ -121,7 +121,7 @@ Func_0811b180:
 	lsls r2, r2, #1
 	adds r3, r0, r2
 	ldrh r0, [r3]
-	bl Func_081280fc
+	bl Summon_IsEntryFlagged
 	movs r2, #27
 	cmp r0, #0
 	bne .L_0811b274

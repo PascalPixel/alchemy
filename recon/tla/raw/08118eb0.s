@@ -11,7 +11,7 @@ Func_08118eb0:
 	sub sp, #20
 	mov r5, sp
 	adds r0, r5, #0
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	movs r2, #0
 	mov r10, r0
 	mov r8, r2
@@ -28,7 +28,7 @@ Func_08118eb0:
 	adds r0, r7, #0
 	adds r1, r6, #0
 	adds r2, r5, #0
-	bl Djinn_IsActiveFar + 0x8
+	bl Trade_CanOfferDjinnFar
 	cmp r0, #0
 	beq .L_08118f46
 	movs r0, #0

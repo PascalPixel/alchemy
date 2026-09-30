@@ -130,7 +130,7 @@ Func_0803d020:
 	adds r5, #2
 	b .L_0803d15e
 .L_0803d140:
-	bl Func_0803a404
+	bl UiWork_ResetCounters
 	b .L_0803d15e
 .L_0803d146:
 	movs r2, #15

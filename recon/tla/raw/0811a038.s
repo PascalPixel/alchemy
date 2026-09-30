@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811a038
+	.global BattleParty_PrepareActiveOwners
 	.thumb_func
-Func_0811a038:
+BattleParty_PrepareActiveOwners:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -18,7 +18,7 @@ Func_0811a038:
 	beq .L_0811a054
 	movs r6, #3
 .L_0811a054:
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	adds r7, r0, #0
 	cmp r7, r6
 	ble .L_0811a060

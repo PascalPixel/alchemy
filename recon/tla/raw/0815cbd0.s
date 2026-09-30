@@ -19,7 +19,7 @@ Func_0815cbd0:
 	sub sp, #20
 	mov r10, r3
 	mov r11, r2
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, .L_0815cc30
 	movs r2, #128
 	lsls r2, r2, #19
@@ -68,7 +68,7 @@ Func_0815cbd0:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0815cc98
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #143
 	bl Audio_PlayCue
 	movs r3, #32
@@ -183,7 +183,7 @@ Func_0815cbd0:
 	cmp r7, #32
 	bne .L_0815cd4e
 	movs r0, #143
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0815cd4e:
 	mov r2, r9
 	ldr r3, [r2, #20]
@@ -226,7 +226,7 @@ Func_0815cbd0:
 	b .L_0815cc66
 .L_0815cd9c:
 	ldr r0, .L_0815cdd8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r1, #240
 	ldr r5, .L_0815cddc
 	lsls r1, r1, #6
@@ -242,7 +242,7 @@ Func_0815cbd0:
 	mov r2, r9
 	str r3, [r2, #28]
 	ldr r0, .L_0815cde4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	mov r0, r9
 	bl Func_081504c0
 	add sp, #20

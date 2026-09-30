@@ -89,7 +89,7 @@ Func_08022318:
 	orrs r2, r3
 	str r2, [sp, #32]
 .L_080223c0:
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	str r0, [sp, #28]
 .L_080223c6:
 	movs r3, #128
@@ -145,7 +145,7 @@ Func_08022318:
 	orrs r3, r2
 	strh r3, [r0, #6]
 	ldr r1, [sp, #96]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	b .L_08022440
 	.2byte 0x0000
 .L_08022434:
@@ -282,7 +282,7 @@ Func_08022318:
 .L_08022534:
 	.4byte 0xfffffe00
 .L_08022538:
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 .L_0802253c:
 	add sp, #64
 	pop {r3, r5, r6, r7}

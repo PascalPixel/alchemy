@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811ce94
+	.global BattleEscape_CheckSuccess
 	.thumb_func
-Func_0811ce94:
+BattleEscape_CheckSuccess:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -43,7 +43,7 @@ Func_0811ce94:
 	mov r10, r3
 	mov r1, r10
 	mov r9, r2
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	ldr r2, [sp, #4]
 	mov r8, r0
 	cmp r2, r8
@@ -68,11 +68,11 @@ Func_0811ce94:
 	adds r0, r0, r6
 	mov r1, r8
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	mov r1, r10
 	add r9, r0
 	movs r0, #2
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	movs r6, #0
 	mov r8, r0
 	cmp r6, r8
@@ -96,7 +96,7 @@ Func_0811ce94:
 	adds r0, r0, r6
 	lsls r0, r0, #2
 	mov r1, r8
-	bl __divsi3
+	bl Math_Div
 	mov r3, r9
 	subs r3, r3, r0
 	mov r9, r3

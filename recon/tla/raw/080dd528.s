@@ -26,7 +26,7 @@ BattleFx_StartItemBreak:
 	lsls r0, r0, #1
 	adds r2, r2, r6
 	ldr r3, [r4, #16]
-	bl Func_080dc10c
+	bl Object_Spawn
 	mov r10, r0
 	cmp r0, #0
 	bne .L_080dd564
@@ -53,7 +53,7 @@ BattleFx_StartItemBreak:
 	adds r2, r5, #0
 	mov r0, r10
 	adds r1, r6, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 	movs r2, #7
 	mov r9, r2
 .L_080dd596:
@@ -67,7 +67,7 @@ BattleFx_StartItemBreak:
 	adds r2, r2, r4
 	ldr r3, [r3, #16]
 	adds r0, #255
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r7, r0, #0
 	cmp r7, #0
 	beq .L_080dd614
@@ -110,7 +110,7 @@ BattleFx_StartItemBreak:
 	adds r0, r7, #0
 	adds r1, r6, #0
 	adds r2, r5, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 .L_080dd614:
 	movs r3, #1
 	negs r3, r3

@@ -780,7 +780,7 @@ Func_0811f66c:
 	lsls r4, r4, #1
 	adds r3, r0, r4
 	ldrh r0, [r3]
-	bl Battle_CalcRestore + 0x8
+	bl Func_080ad140
 	adds r0, #43
 	movs r3, #0
 	ldrsb r3, [r0, r3]
@@ -844,7 +844,7 @@ Func_0811f66c:
 	lsls r4, r4, #1
 	adds r3, r0, r4
 	ldrh r0, [r3]
-	bl Battle_CalcRestore + 0x8
+	bl Func_080ad140
 	adds r0, #43
 	movs r3, #0
 	ldrsb r3, [r0, r3]

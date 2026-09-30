@@ -83,11 +83,11 @@ Engine_EventRequestExit:
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Func_080c83b0
+	overlay_veneer Event_ClearStatus1c6Far
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c8420
 	.global Engine_ActorReturnHome
 	.thumb_func

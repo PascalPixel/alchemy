@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080f92ac
+	.global Palette_CopyObjectBankToBackground14
 	.thumb_func
-Func_080f92ac:
+Palette_CopyObjectBankToBackground14:
 	movs r3, #128
 	movs r2, #128
 	lsls r3, r3, #19

@@ -67,7 +67,7 @@ Func_0810aa80:
 	movs r1, #0
 	movs r2, #0
 	mov r3, r8
-	bl RenderOutput_CreateFar + 0x10
+	bl Func_080380d8
 .L_0810ab0e:
 	movs r2, #128
 	lsls r2, r2, #3
@@ -138,7 +138,7 @@ Func_0810aa80:
 	bl Func_0810a9ac
 .L_0810aba4:
 	mov r0, r10
-	bl Func_08038368 + 0x8
+	bl Menu_SelectEntry19To1cFar
 	movs r1, #1
 	mov r10, r0
 	mov r3, r10

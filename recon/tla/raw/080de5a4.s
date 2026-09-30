@@ -32,7 +32,7 @@ Func_080de5a4:
 	lsls r3, r2, #11
 	adds r1, r1, r3
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	str r3, [r6, #8]
 	ldr r3, [r5, #4]
@@ -47,4 +47,4 @@ Func_080de5a4:
 	add sp, #12
 	pop {r5, r6, pc}
 .L_080de5f8:
-	.4byte Func_080de578
+	.4byte BattleFx_UpdateOrbitingParticleFade

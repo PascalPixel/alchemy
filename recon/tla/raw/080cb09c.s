@@ -25,7 +25,7 @@ Func_080cb09c:
 	str r3, [r5, #8]
 	ldrh r1, [r2, #6]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r0, #197
 	lsls r0, r0, #1
 	adds r3, r6, r0

@@ -22,21 +22,21 @@ Func_0811d61c:
 	adds r3, #16
 	cmp r2, #19
 	bls .L_0811d634
-	bl Func_0811ce50
+	bl BattleUnit_ClearField12bForGroup
 	movs r0, #8
-	bl Func_0811d5a0
+	bl Palette_CopyBanksWithBrightnessOffset
 	movs r0, #108
 	adds r0, #255
 	bl GameFlag_SetBit
 	adds r5, #69
 	movs r0, #0
 	bl Camera_ConfigureScene
-	bl Func_08038218
+	bl UiWork_FinalizeSharedSlotFar
 	ldrb r3, [r5]
 	cmp r3, #2
 	beq .L_0811d68a
 	adds r0, r7, #0
-	bl Func_0811cfa4
+	bl BattlePres_BuildUnitEntries
 	adds r6, r0, #0
 	cmp r6, #0
 	blt .L_0811d702
@@ -46,7 +46,7 @@ Func_0811d61c:
 	ldrsh r3, [r7, r1]
 	cmp r3, #99
 	bne .L_0811d68c
-	bl Func_0811ce94
+	bl BattleEscape_CheckSuccess
 	cmp r0, #0
 	bne .L_0811d68c
 	movs r3, #2

@@ -30,7 +30,7 @@ Func_0810bdf4:
 	strb r2, [r3]
 	adds r1, #138
 	ldr r0, .L_0810be34
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_0810be38
 	.2byte 0x0000
 .L_0810be30:

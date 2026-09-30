@@ -104,7 +104,7 @@ Func_080e4d9c:
 	str r3, [r5, #4]
 	ldr r3, [r2, #12]
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	movs r3, #168
 	add r3, r11
 	mov r9, r3
@@ -213,7 +213,7 @@ Func_080e4d9c:
 	adds r2, r6, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	ldrh r3, [r0]
 	mov r1, r8

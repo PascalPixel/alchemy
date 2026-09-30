@@ -17,7 +17,13 @@ Func_080c8778:
 	.thumb_func
 Func_080c8780:
 	overlay_veneer Func_080db444
+	.global Func_080c8788
+	.thumb_func
+Func_080c8788:
 	overlay_veneer Func_080daecc
+	.global Func_080c8790
+	.thumb_func
+Func_080c8790:
 	overlay_veneer Func_080db0b0
 	.global Func_080c8798
 	.thumb_func
@@ -51,6 +57,9 @@ Func_080c87c8:
 	.thumb_func
 Func_080c87d0:
 	overlay_veneer Func_080eb298
+	.global Func_080c87d8
+	.thumb_func
+Func_080c87d8:
 	overlay_veneer Func_080eb2c8
 	.global Func_080c87e0
 	.thumb_func

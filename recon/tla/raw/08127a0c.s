@@ -35,7 +35,7 @@ Func_08127a0c:
 	movs r1, #10
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl __divsi3
+	bl Math_Div
 	cmp r5, r0
 	bge .L_08127a5a
 	adds r5, r0, #0
@@ -61,7 +61,7 @@ Func_08127a0c:
 	movs r1, #10
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl __divsi3
+	bl Math_Div
 	cmp r5, r0
 	bge .L_08127a8a
 	adds r5, r0, #0
@@ -87,7 +87,7 @@ Func_08127a0c:
 	movs r1, #10
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl __divsi3
+	bl Math_Div
 	cmp r5, r0
 	bge .L_08127aba
 	adds r5, r0, #0
@@ -98,7 +98,7 @@ Func_08127a0c:
 .L_08127ac0:
 	mov r0, r10
 	strh r5, [r7, #26]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r0, r8
 	bl Sys_Free
 	pop {r3, r5}

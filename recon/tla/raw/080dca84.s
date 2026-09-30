@@ -36,7 +36,7 @@ Func_080dca84:
 	strh r2, [r3]
 	adds r1, #108
 	ldr r0, .L_080dcad4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_080dcad8
 .L_080dcacc:
 	.4byte 0x0000739c

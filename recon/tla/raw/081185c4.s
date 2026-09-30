@@ -24,7 +24,7 @@ Func_081185c4:
 	ldr r4, [sp, #0]
 	adds r6, r0, #0
 	ldrb r0, [r5, r4]
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	bne .L_081185fa
@@ -163,12 +163,12 @@ Func_081185c4:
 	ldrh r1, [r2, r3]
 	adds r0, r6, #0
 	str r4, [sp, #0]
-	bl Owner_RecalculateRatiosFar + 0x8
+	bl Owner_UpdateRatioPairFar
 	ldr r3, .L_0811872c
 	adds r0, r6, #0
 	add r3, r8
 	ldrh r1, [r3, #2]
-	bl Owner_RecalculateRatiosFar + 0x10
+	bl Owner_UpdateSecondInputAndRatiosFar
 	ldr r4, [sp, #0]
 .L_08118710:
 	movs r1, #4

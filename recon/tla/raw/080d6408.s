@@ -73,11 +73,11 @@ Func_080d6408:
 	ldr r3, [sp, #28]
 	ldr r0, .L_080d64b0
 	str r3, [r2]
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_080d64b4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {r3}
 	mov r8, r3

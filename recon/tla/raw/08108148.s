@@ -38,7 +38,7 @@ Func_08108148:
 	adds r2, #4
 	adds r3, r5, r2
 	strb r0, [r3]
-	bl Func_080f8038 + 0x10
+	bl Func_080f8048
 	bl Resource_FindFreeEntry
 	movs r2, #128
 	lsls r2, r2, #3
@@ -95,7 +95,7 @@ Func_08108148:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_08108248
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	bl Func_0810bdf4
 	add sp, #4
 	pop {r5, pc}

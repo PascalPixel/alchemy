@@ -40,8 +40,8 @@ Data_02000498:
 	.global Data_0200049c
 Data_0200049c:
 	.space 0x0000000e
-	.global Data_020004aa
-Data_020004aa:
+	.global gPlayerObjectId
+gPlayerObjectId:
 	.space 0x00000002
 	.global Data_020004ac
 Data_020004ac:
@@ -85,8 +85,8 @@ gOamBuckets:
 	.global Data_02003410
 Data_02003410:
 	.space 0x00000200
-	.global Data_02003610
-Data_02003610:
+	.global gSchedulerTaskTable
+gSchedulerTaskTable:
 	.space 0x000000c0
 	.global Data_020036d0
 Data_020036d0:
@@ -130,8 +130,8 @@ Data_02005350:
 	.global Data_02005354
 Data_02005354:
 	.space 0x0000000c
-	.global Data_02005360
-Data_02005360:
+	.global gSerialRuntime
+gSerialRuntime:
 	.space 0x00000004
 	.global Data_02005364
 Data_02005364:
@@ -763,8 +763,8 @@ Data_0202a654:
 	.global Data_0202a656
 Data_0202a656:
 	.space 0x000019aa
-	.global Data_0202c000
-Data_0202c000:
+	.global gMapCollision
+gMapCollision:
 	.space 0x00000001
 	.global Data_0202c001
 Data_0202c001:

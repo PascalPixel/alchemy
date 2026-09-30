@@ -73,7 +73,7 @@ Func_0802c4d8:
 	str r3, [sp, #0]
 	mov r2, r8
 	adds r3, r4, #0
-	bl Func_0802b878
+	bl Map_WriteLayerCellTile
 	cmp r5, #1
 	bls .L_0802c536
 	movs r3, #1

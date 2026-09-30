@@ -20,7 +20,7 @@ Func_08143d80:
 	ldrh r1, [r5]
 	movs r0, #2
 	movs r2, #0
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	ldr r2, .L_08143df0
 	movs r1, #0
 	movs r3, #32

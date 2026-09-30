@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0801401c
+	.global AffineMatrix_BuildForEffect
 	.thumb_func
-Func_0801401c:
+AffineMatrix_BuildForEffect:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -63,22 +63,22 @@ Func_0801401c:
 	bl Trig_Cos
 	mov r1, r8
 	adds r6, r0, #0
-	bl __divsi3
+	bl Math_Div
 	mov r1, r8
 	strh r0, [r7]
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	adds r7, #2
 	negs r5, r5
 	strh r0, [r7]
 	mov r1, r10
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	adds r7, #2
 	strh r0, [r7]
 	mov r1, r10
 	adds r0, r6, #0
-	bl __divsi3
+	bl Math_Div
 	adds r7, #2
 	strh r0, [r7]
 .L_080140be:
@@ -95,4 +95,4 @@ Func_0801401c:
 .L_080140d0:
 	.4byte gObjAffineMatrices
 .L_080140d4:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide

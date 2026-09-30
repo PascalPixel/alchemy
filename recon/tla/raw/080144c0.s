@@ -31,11 +31,11 @@ Func_080144c0:
 .L_080144f0:
 	.4byte 0x0000ffff
 .L_080144f4:
-	.4byte Data_03001228
+	.4byte gSchedulerTaskCount
 .L_080144f8:
-	.4byte Data_03001108
+	.4byte gSchedulerStatus
 .L_080144fc:
-	.4byte Data_02003610
+	.4byte gSchedulerTaskTable
 .L_08014500:
 	pop {pc}
 	.2byte 0x0000

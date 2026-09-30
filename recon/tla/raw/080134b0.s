@@ -60,7 +60,7 @@ Func_080134b0:
 	strb r3, [r1, #1]
 	ldr r3, .L_08013550
 	strh r4, [r3]
-	bl Func_081c0080 + 0x8
+	bl Func_081c0088
 	bl SoundDriver_EnterFrameUpdate
 	cmp r0, #0
 	bne .L_0801352e

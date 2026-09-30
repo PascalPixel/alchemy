@@ -201,7 +201,7 @@ Func_080ae410:
 .L_080ae594:
 	adds	r0, r7, #0
 	adds	r1, r6, #0
-	bl	Func_080af148
+	bl	Inventory_Remove
 	cmp	r0, #1
 	beq.n	.L_080ae594
 .L_080ae5a0:
@@ -396,7 +396,7 @@ Func_080ae410:
 	cmp	r2, #3
 	ble.n	.L_080ae6f2
 	movs	r0, #222
-	bl	Func_080af298
+	bl	PartyInventory_Remove
 	movs	r0, #0
 	bl	0x080afdd8
 	movs	r0, #1

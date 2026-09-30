@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080af148
+	.global Inventory_Remove
 	.thumb_func
-Func_080af148:
+Inventory_Remove:
 .L_080af148:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
@@ -81,7 +81,7 @@ Func_080af148:
 	ldrh	r7, [r0, r3]
 	adds	r1, r6, #0
 	adds	r0, r5, #0
-	bl	.L_080af148
+	bl	Inventory_Remove
 	movs	r3, #1
 	adds	r5, r0, #0
 	negs	r3, r3

@@ -36,7 +36,7 @@ Func_081b83c4:
 	ldr r0, .L_081b8610
 	bl Func_080132fc
 	bl Func_081b8020
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081b8614
 	movs r3, #0
 	strb r3, [r2]

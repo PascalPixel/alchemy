@@ -14,7 +14,7 @@ Func_081a71c8:
 	bl Func_08014368
 	movs r0, #1
 	bl WaitFrames
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081a7290
 	movs r3, #0
 	strb r3, [r2]

@@ -69,7 +69,7 @@ Func_0801319c:
 	strh r2, [r3]
 	bl Func_081c0008
 	bl Func_08014368
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r3, .L_08013268
 	ldr r2, .L_0801326c
 	str r5, [r3]

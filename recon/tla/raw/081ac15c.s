@@ -41,7 +41,7 @@ LuckyDice_Run:
 	ldr r0, .L_081ac2e4
 	bl Func_080132fc
 	bl Func_081ac028
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081ac2e8
 	movs r3, #0
 	strb r3, [r2]

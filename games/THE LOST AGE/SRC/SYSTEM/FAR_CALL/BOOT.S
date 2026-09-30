@@ -12,7 +12,7 @@ WaitFramesFar:
 	.global Func_080000c8
 	.thumb_func
 Func_080000c8:
-	overlay_veneer Func_080144c0
+	overlay_veneer Scheduler_ResetTaskTable
 	.global Scheduler_AddOrUpdateCallbackFar
 	.thumb_func
 Scheduler_AddOrUpdateCallbackFar:

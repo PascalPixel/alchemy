@@ -126,7 +126,7 @@ Func_080ed2a4:
 	str r3, [r2]
 	bl Func_080d2a64
 	bl Func_080d2a8c
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	bl Resource_FarCall004
 	ldr r2, [sp, #12]
 	movs r0, #1

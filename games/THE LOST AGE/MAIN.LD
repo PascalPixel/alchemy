@@ -131,7 +131,6 @@ SECTIONS
         "*/recon/tla/raw/080143f6.o"(.text)
         "*/recon/tla/raw/080143f8.o"(.text)
         "*/recon/tla/raw/0801440c.o"(.text)
-        "*/recon/tla/raw/080144c0.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/CALLBACK_SCHEDULER.o"(.text)
         "*/recon/tla/raw/0801451a.o"(.text)
         "*/recon/tla/raw/0801451c.o"(.text)

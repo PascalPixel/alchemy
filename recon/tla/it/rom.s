@@ -238,12 +238,6 @@ Resource_FindFreeEntry:
 	.thumb_func
 Resource_GetBuffer:
 	.incbin "baserom.gba", 0x00014424, 0x000000c8
-	.section .rom.000144ec, "ax"
-	.global Func_080144c0
-	.type Func_080144c0, %function
-	.thumb_func
-Func_080144c0:
-	.incbin "baserom.gba", 0x000144ec, 0x00000044
 	.section .rom.00014546, "ax"
 	.incbin "baserom.gba", 0x00014546, 0x00000052
 	.section .rom.00014598, "ax"

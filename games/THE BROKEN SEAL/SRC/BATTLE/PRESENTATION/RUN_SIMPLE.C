@@ -74,6 +74,9 @@ void BattleEventRuntime_WaitForReady(void);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void BattleEvent_Playback(void);
 
+#if !defined(TBS_EDITION_JA)
+/* The Japanese edition keeps its code here in its scaffold for now. */
+
 /* Play an actor's action against its first target: turn to face it, walk
    up, run the action's effect and walk back. */
 s32 RunBattlePresentation(struct BattlePlan *plan)
@@ -214,6 +217,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan)
     Actor_ResetMotionAtAnchor(work.primary_id);
     return 0;
 }
+#endif
 
 s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
 {

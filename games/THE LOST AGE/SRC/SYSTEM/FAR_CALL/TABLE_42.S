@@ -5,10 +5,10 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08108088
+	.global VramBlock_LoadResourceFar
 	.thumb_func
-Func_08108088:
-	overlay_veneer Func_08108b34
+VramBlock_LoadResourceFar:
+	overlay_veneer VramBlock_LoadResource
 	overlay_veneer Func_0810a804
 	.global Func_08108098
 	.thumb_func

@@ -1,34 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_08108b34
-	.thumb_func
-Func_08108b34:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	adds	r7, r0, #0
-	mov	r8, r1
-	adds	r0, r2, #0
-	cmp	r7, #95
-	bgt.n	.L_08108b6a
-	bl	Resource_GetTableEntry
-	adds	r6, r0, #0
-	mov	r0, r8
-	bl	Func_08014d78
-	adds	r5, r0, #0
-	adds	r1, r5, #0
-	adds	r0, r6, #0
-	bl	Func_0801591c
-	adds	r0, r7, #0
-	mov	r1, r8
-	adds	r2, r5, #0
-	bl	VramBlock_LoadCached
-	adds	r0, r5, #0
-	bl	Func_08013164
-.L_08108b6a:
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
+	.balign 4
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

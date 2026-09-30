@@ -97,7 +97,7 @@ Func_081049c8:
 	beq.n	.L_08104a80
 	ldr	r2, [pc, #32]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 .L_08104a80:
 	bl	Resource_FindFreeEntry
 	movs	r2, #158
@@ -108,7 +108,7 @@ Func_081049c8:
 	beq.n	.L_08104a98
 	ldr	r2, [pc, #12]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 .L_08104a98:
 	pop	{r5, r6, pc}
 	movs	r0, r0

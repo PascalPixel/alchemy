@@ -14,15 +14,14 @@ SECTIONS
         "*/resource_3b7_overlay.o"(.text.x02008ac8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI3.o"(.text)
         "*/resource_3b7_overlay.o"(.text.x02008e5c)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/FOUR_ACTORS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/SPRING_RIDE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3b7_overlay.o"(.rodata.part1)
     }
     .bss ALIGN(16) (NOLOAD) :
     {
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/SPRING_RIDE.o"(.data .bss COMMON)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI4.o"(.data .bss COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

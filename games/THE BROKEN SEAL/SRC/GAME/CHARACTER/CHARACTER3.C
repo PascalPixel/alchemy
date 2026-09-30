@@ -1,8 +1,28 @@
+#include "GAME_FLAGS.H"
+#include "PARTY_STATE.H"
 #include "TYPES.H"
+#include "GLOBAL_PROGRESS.H"
+#include "BATTLE_SUMMON.H"
 #include "RUNTIME_INTERFACES.H"
 #include "PRESET_TABLE.H"
 #include "FIXED_MATH.H"
 #include "OWNER_STATE.H"
+
+s32 GameFlag_SetBit(s32);
+void GameFlag_ClearBit(s32);
+
+struct PartyCounterWork {
+    u8 unknown_00[0x10];
+    s32 value;
+};
+
+struct State_0807977c {
+    u32 flags;
+};
+
+extern u8 Summon_OrderList[16];
+struct State_0807977c *Trade_GetOfferState(s32);
+extern const struct SummonDefinition Summon_DefinitionTable[];
 
 extern s32 Data_08088db8[];
 extern struct PresetValues Enemy_ElementPresetTable[];
@@ -71,10 +91,152 @@ struct OwnerDerivedState {
 };
 
 s32 Owner_RefreshClassActions(s32);
-
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2]);
 s32 Owner_DetermineClass(s32 character, const u8 *djinn);
+
+s32 Party_CountActiveOwners(void)
+{
+    s32 owner;
+    s32 count;
+
+    count = 0;
+    owner = 0;
+    do {
+        if (GameFlag_Test(owner) != 0)
+            count++;
+        owner++;
+    } while (owner <= 7);
+    return count;
+}
+
+s32 Party_AddActiveOwner(s32 value)
+{
+    s32 count = Party_CountActiveOwners();
+    s32 index;
+
+    GameFlag_SetBit(value);
+    index = 0;
+    while (index < count) {
+        if (gGameState.active_owners[index] == value)
+            return count;
+        index++;
+    }
+    gGameState.active_owners[index] = value;
+    return count + 1;
+}
+
+s32 Party_RemoveActiveOwner(s32 value)
+{
+    s32 count = Party_CountActiveOwners();
+    s32 i;
+    s32 j;
+
+    GameFlag_ClearBit(value);
+    for (i = 0; i < count; i++) {
+        if (gGameState.active_owners[i] == value)
+            break;
+    }
+    for (j = i; j < count - 1; j++)
+        gGameState.active_owners[j] = gGameState.active_owners[j + 1];
+    return Party_CountActiveOwners();
+}
+
+s32 Party_ListActiveOwners(s16 *owners)
+{
+    s32 count = 0;
+
+    if (owners != NULL) {
+        s32 index;
+
+        count = Party_CountActiveOwners();
+        index = 0;
+        if (count != 0) {
+            do {
+                *owners++ = gGameState.active_owners[index];
+                index++;
+            } while (index != count);
+        }
+        *owners = 0xff;
+    }
+    return count;
+}
+
+s32 Party_AdjustSixDigitCounterA(s32 amount)
+{
+    s32 value;
+    struct PartyCounterWork *work;
+    struct PartyCounterWork *store;
+
+    work = (struct PartyCounterWork *)&gGameState;
+    value = work->value;
+    value = (s32)((u32)value + (u32)amount);
+    store = work;
+    if (value > 0xF423F) {
+        value = 0xF423F;
+    }
+    if (value < 0) {
+        value = 0;
+    }
+    work = store;
+    work->value = value;
+    return value;
+}
+
+s32 Party_AdjustSixDigitCounterB(s32 amount)
+{
+    s32 value;
+
+    struct GlobalProgressPartialView *progress = GlobalProgress_Get();
+
+    value = progress->value_118;
+    value += amount;
+    if (value > 0xf423f)
+        value = 0xf423f;
+    if (value < 0)
+        value = 0;
+    progress->value_118 = value;
+    return value;
+}
+
+s32 Party_AdjustCounterCappedAt28(s32 amount)
+{
+    s32 value;
+
+    struct GlobalProgressPartialView *progress = GlobalProgress_Get();
+
+    value = progress->value_11c;
+    value += amount;
+    if (value > 28)
+        value = 28;
+    if (value < 0)
+        value = 0;
+    progress->value_11c = (s8)value;
+    return value;
+}
+
+s32 Trade_ListFlaggedEntries(u8 *output)
+{
+    u8 *source = Summon_OrderList;
+    u8 *end = Summon_OrderList + 15;
+    s32 count = 0;
+
+    do {
+        u8 value = *source++;
+        if ((Trade_GetOfferState(0)->flags & (1 << value)) != 0) {
+            *output++ = value;
+            count++;
+        }
+    } while (source <= end);
+    *output = 32;
+    return count;
+}
+
+const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
+{
+    if (summon_id > 15)
+        return NULL;
+    return &Summon_DefinitionTable[summon_id];
+}
 
 s32 Owner_LookupFourColumnTable(s32 row, s32 column)
 {

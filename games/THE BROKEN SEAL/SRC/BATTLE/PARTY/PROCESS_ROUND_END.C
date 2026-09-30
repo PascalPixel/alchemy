@@ -35,7 +35,7 @@ struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void BattlePresentation_WaitForAdvance(void);
 void BattleEventRuntime_SchedulePhase(s32 phase);
 u32 BattleEventRuntime_Reset(void);
-void BattleEventRuntime_WaitForReady(void);
+s32 BattleEventRuntime_WaitForReady(void);
 s32 BattleUnit_TickCounter132(s32 unit_id);
 s32 BattleUnit_TickCounter134(s32 unit_id);
 s32 BattleUnit_TickCounter136(s32 unit_id);

@@ -1,11 +1,85 @@
 #include "TYPES.H"
+#include "DMA.H"
+#include "TBS_EDITION.H"
+#include "SYSTEM.H"
 #include "GLOBAL_CELLS.H"
 #include "A8_STATE.H"
-#include "SYSTEM.H"
 #include "UI.H"
-#include "TBS_EDITION.H"
 
 extern u8 gMenuWork[];
+
+/* menu/character_selector_run_rearrange.c */
+struct CharacterSelectWork {
+    u8 padding0[8];
+    u32 owner;
+    u8 padding0c[4];
+    s32 object;
+    u8 padding14[8];
+    s8 cursor;
+    u8 padding1d;
+    s8 count;
+    u8 padding1f[0x10c - 0x1f];
+    void *window;
+    u8 padding110[0x144 - 0x110];
+    u16 frames[8];
+    u8 padding154[0x208 - 0x154];
+    u16 owners[9];
+    u8 choice;
+    u8 padding21b[0x220 - 0x21b];
+    u16 page;
+    u8 padding222[0x234 - 0x222];
+    u16 slot_x[4];
+    u16 slot_y[4];
+};
+
+/* The help lines: Rearrange, the Djinn list and Details. The code loads the
+ * Rearrange line from the literal pool and reaches Details, three messages
+ * before it, by subtracting. */
+extern u8 MsgRearrangeHelp[], MsgDjinnListHelp[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
+void Palette_LightenBankHighlight(s32 bank);
+s32 GameFlag_TestFar(s32 flag);
+s32 Math_Mod(s32 value, s32 divisor);
+void Menu_CreateWindowAndEntryObjects(s32 owner, s32 frame);
+void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
+void UiMenu_PositionCursor(s32 x, s32 y);
+void WaitFrames(s32 frames);
+void Audio_PlayCue(s32 cue);
+s32 CharacterSelector_MoveEntry(s32 cursor, s32 forward);
+void Menu_ReleaseEntryObjects(void);
+s32 PsynergyMenu_InitializeEntryObjects(s32, s32, s32, s32, s32);
+void DjinnMenu_ShowCurrentList(void);
+
+struct PsynergyOwnerMenu {
+    u8 padding000[8];
+    s32 selected_owner;
+    u8 padding00c[0x10];
+    s8 selection;
+    u8 padding01d;
+    s8 count;
+    u8 padding01f[0xed];
+    s32 selector_window;
+    u8 padding110[0x34];
+    u16 row_positions[8];
+    u8 padding154[0x74];
+    u8 entries[0x40];
+    u16 character_ids[8];
+    u8 entry_count;
+    u8 padding219;
+    u8 item_owner;
+    u8 padding21b[5];
+    u16 frame;
+};
+
+extern u8 MsgChooseCharacter;
+void *Owner_GetStateFar(s32 owner);
+void RenderOutput_RedrawSavedRectFar(s32 window);
+s32 Math_Mod(s32 numerator, s32 denominator);
+s32 PsynergyMenu_CollectActions(void *owner, void *entries, s32 mode);
+void PsynergyMenu_DrawPsynergyIcons(void *entries);
+void Menu_PlaceEntryObjectsInGrid(s32 x, s32 y, s32 columns);
+void Menu_HideEmptyEntryIcons(void *entries);
 
 struct CharacterSelectorState {
     u8 padding000[0x24];
@@ -25,7 +99,6 @@ struct CharacterSelectorState {
 s32 Party_AddActiveOwnerFar(s32 character_id);
 s32 Party_ListActiveOwnersFar(const u16 *character_ids);
 s32 Party_RemoveActiveOwnerFar(s32 character_id);
-
 extern u8 Data_03001f2c[];
 
 struct State080a8034 {
@@ -42,8 +115,6 @@ struct State080a8034 {
 };
 
 s32 UiMenu_CreateCursor(void *);
-s32 PsynergyMenu_InitializeEntryObjects(s32, s32, s32, s32, s32);
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 typedef struct {
@@ -80,8 +151,6 @@ struct CharacterCommandMenu {
     s16 slot_y[4];
 };
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 extern u8 MsgSwitchCharacterHelp;
 s32 Party_SumDjinnCountsFar(s32 side);
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
@@ -89,13 +158,8 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Menu_UpdateEntryObjectTransforms(void);
 void UiMenu_SlideCursor(s32 x, s32 y);
-void UiMenu_PositionCursor(s32 x, s32 y);
-void *Owner_GetStateFar(s32 owner);
 void CharacterMenu_DrawStatusAilments(s32 window, s32 owner, s32 mode);
 s32 CharacterMenu_BuildAvailability(u8 *entries, s32 flags, s32 owner);
-s32 Math_Mod(s32 value, s32 divisor);
-s32 GameFlag_TestFar(s32 flag);
-void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
@@ -103,7 +167,6 @@ void ItemMenu_ResetCategory(void);
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries, s32 invert);
 void CharacterMenu_DrawSelectionLabels(s32 window, s32 selected, const u8 *entries);
 void StatusMenu_ShowOwnerProgressMessage(s32 window, s32 selected, s32 has_djinn);
-void Audio_PlayCue(s32 cue);
 
 struct State_080a847c {
     u8 padding[36];
@@ -112,10 +175,188 @@ struct State_080a847c {
 
 extern u8 CharacterMenu_CursorWidths[];
 void Render_SetTilemapFlagRect(const u8 *, s32, s32, s32, s32, u32);
-
 void UiText_DrawMessageAt(s32, s32, s32, s32);
 extern u8 MsgStatusAdvice[][2];
 extern u8 MsgStatusNormal[];
+
+/* Pick a party member, rearranging the order with L and R; returns 1 when
+ * one was chosen, -1 when cancelled. */
+s32 CharacterSelector_RunRearrange(void)
+{
+    struct CharacterSelectWork *work;
+    s32 cursor;
+    s32 count;
+    s32 page;
+    s32 redraw;
+    s32 result;
+    s32 i;
+
+    work = *(struct CharacterSelectWork **)gMenuWork;
+    cursor = work->cursor;
+    count = work->count;
+    redraw = 1;
+    result = 0;
+    page = work->page;
+    Owner_GetStateFar(work->owners[cursor]);
+    for (i = 0; i < 4; i++) {
+        work->slot_x[i] = 130 + i * 32;
+        work->slot_y[i] = 0x80;
+    }
+    Palette_LightenBankHighlight(14);
+    Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, (volatile u32 *)0x040000d4);
+    while (!GameFlag_TestFar(0x150)) {
+        if (redraw) {
+            redraw = 0;
+            RenderOutput_RedrawSavedRectFar(work->window);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgRearrangeHelp, work->window, 0, 0);
+            if (GameFlag_TestFar(48))
+                UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnListHelp, work->window, 0, 16);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgRearrangeHelp - 3, work->window, 0, 8);
+            cursor = Math_Mod(cursor + count, count);
+            Owner_GetStateFar(work->owners[cursor]);
+            page = Math_Mod(page + 3, 3);
+            Menu_CreateWindowAndEntryObjects(work->owners[cursor], page);
+            PsynergyMenu_CallIconRoutineWithValue(work, work->owners[cursor]);
+            for (i = MENU_ROW_COUNT - 1; i >= 0; i--)
+                work->frames[i] = 30;
+            work->frames[cursor] = 26;
+        }
+        UiMenu_PositionCursor(cursor * 24 - 10, 16);
+        WaitFrames(1);
+        if (gKeyState & 1) {
+            Audio_PlayCue(0x70);
+            result = 1;
+            break;
+        }
+        if (gKeyState & 2) {
+            Audio_PlayCue(0x71);
+            result = -1;
+            break;
+        }
+        if (gKeysRepeat & 0x100) {
+            if (CharacterSelector_MoveEntry(cursor, 1)) {
+                Audio_PlayCue(0x70);
+                cursor++;
+                Menu_ReleaseEntryObjects();
+                PsynergyMenu_InitializeEntryObjects(work->object, 2, 2, 8, 0);
+                for (i = MENU_ROW_COUNT - 1; i >= 0; i--)
+                    work->frames[i] = 30;
+                work->frames[cursor] = 26;
+            } else {
+                Audio_PlayCue(0x72);
+            }
+            WaitFrames(1);
+        } else if (gKeysRepeat & 0x200) {
+            if (CharacterSelector_MoveEntry(cursor, 0)) {
+                Audio_PlayCue(0x70);
+                cursor--;
+                Menu_ReleaseEntryObjects();
+                PsynergyMenu_InitializeEntryObjects(work->object, 2, 2, 8, 0);
+                for (i = MENU_ROW_COUNT - 1; i >= 0; i--)
+                    work->frames[i] = 30;
+                work->frames[cursor] = 26;
+            } else {
+                Audio_PlayCue(0x72);
+            }
+            WaitFrames(1);
+        } else if ((gKeyState & 4) && GameFlag_TestFar(48)) {
+            DjinnMenu_ShowCurrentList();
+            redraw = 1;
+        } else {
+            if (gKeysRepeat & 0x20) {
+                Audio_PlayCue(0x6f);
+                if (count > 1) {
+                    cursor--;
+                    redraw = 1;
+                }
+            }
+            if (gKeysRepeat & 0x10) {
+                Audio_PlayCue(0x6f);
+                if (count > 1) {
+                    redraw = 1;
+                    cursor++;
+                }
+            }
+        }
+    }
+    work->cursor = cursor;
+    work->owner = work->owners[cursor];
+    work->choice = work->owners[cursor];
+    return result;
+}
+
+/* Choose whose Psynergy to list: left and right step through the party,
+   redrawing that member's Psynergy page; A returns 1 and B -1, and the
+   chosen member is stored as the selected owner. */
+s32 PsynergyMenu_SelectOwner(void)
+{
+    struct PsynergyOwnerMenu *menu = *(struct PsynergyOwnerMenu **)gMenuWork;
+    s32 selection = menu->selection;
+    s32 count = menu->count;
+    s32 pending = 1;
+    s32 frame = menu->frame;
+    s32 result;
+    s32 i;
+
+    Owner_GetStateFar(menu->character_ids[selection]);
+    RenderOutput_RedrawSavedRectFar(menu->selector_window);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgChooseCharacter, menu->selector_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgChooseCharacter + 1, menu->selector_window, 0, 16);
+    for (;;) {
+        if (pending) {
+            pending = 0;
+            selection = Math_Mod(selection + count, count);
+            Owner_GetStateFar(menu->character_ids[selection]);
+            frame = Math_Mod(frame + 3, 3);
+            Menu_CreateWindowAndEntryObjects(menu->character_ids[selection], frame);
+            PsynergyMenu_CallIconRoutineWithValue(menu, menu->character_ids[selection]);
+            for (i = 0; i < MENU_ROW_COUNT; i++)
+                menu->row_positions[i] = 30;
+            menu->row_positions[selection] = 26;
+            menu->entry_count = PsynergyMenu_CollectActions(Owner_GetStateFar(menu->character_ids[selection]), menu->entries, 0);
+            PsynergyMenu_DrawPsynergyIcons(menu->entries);
+            Menu_PlaceEntryObjectsInGrid(96, 96, 8);
+            Menu_HideEmptyEntryIcons(menu->entries);
+        }
+        UiMenu_PositionCursor(selection * 24 - 10, 16);
+        WaitFrames(1);
+        if (gKeyState & 1) {
+            Audio_PlayCue(112);
+            result = 1;
+            break;
+        }
+        if (gKeyState & 2) {
+            Audio_PlayCue(113);
+            result = -1;
+            break;
+        }
+        {
+            volatile u32 *repeat = &gKeysRepeat;
+
+            if (*repeat & 32) {
+                Audio_PlayCue(111);
+                if (count > 1) {
+                    selection--;
+                    pending = 1;
+                }
+            }
+            if (*repeat & 16) {
+                Audio_PlayCue(111);
+                if (count > 1) {
+                    selection++;
+                    pending = 1;
+                }
+            }
+        }
+    }
+    menu->selection = selection;
+    menu->selected_owner = menu->character_ids[selection];
+    menu->item_owner = menu->character_ids[selection];
+    return result;
+}
 
 s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
 {
@@ -186,7 +427,7 @@ void Menu_InitSelectorCursorAndEntries(void)
     state->field_113 = 2;
 }
 
-void Menu_CreateWindowAndEntryObjects(s32 resource)
+void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame)
 {
     s32 created;
     s32 handle;

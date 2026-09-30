@@ -1,13 +1,28 @@
 #include "TYPES.H"
+#include "SCENE.H"
+#include "LAYOUT_GUARD.H"
+#include "GLOBAL_CELLS.H"
 #include "ITEM_MENU.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 #include "UI.H"
 #include "INVENTORY_MENU.H"
-#include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "BATTLE_TYPES.H"
 #include "MENU_RESULT.H"
+
+struct State_080a5534 {
+    u8 padding[0x392];
+    s16 values[2];
+};
+
+LAYOUT_OFFSET_GUARD(
+    State_080a5534_values_offset, struct State_080a5534, values, 0x392);
+LAYOUT_SIZE_GUARD(State_080a5534_size, struct State_080a5534, 0x398);
+extern u8 Data_080aebcc[];
+extern u8 Data_080aeb4c[];
+s32 Resource_FindFreeEntry(void);
+void VramBlock_LoadCached(s32, s32, const u8 *);
 
 extern u8 Data_03001f2c[];
 
@@ -30,14 +45,12 @@ void RenderOutput_RedrawSavedRectFar(s32);
 void RenderOutput_ClearListFar(s32);
 void UiText_DrawMessageAt(s32, s32, s32, s32);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
-
 extern u8 MsgItemName;
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
-
 s32 GameFlag_IsSet(s32 message);
 void Object_InitializeMode(s32 object, s32 mode);
 extern volatile u32 gKeyState;
@@ -110,9 +123,20 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 pane);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 #define ITEM_ID_MASK 0x1ff
 #define LIST_PAGE_SIZE 5
-
 s32 ItemMenu_DrawNamePage( s32 window, s32 unused, const struct MenuResult *state);
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state);
+
+void Resource_LoadPairedBlocks(void)
+{
+    struct State_080a5534 *state = *(struct State_080a5534 **)Data_03001f2c_a;
+    s32 value = Resource_FindFreeEntry();
+
+    state->values[0] = value;
+    VramBlock_LoadCached(value, 128, Data_080aebcc);
+    value = Resource_FindFreeEntry();
+    state->values[1] = value;
+    VramBlock_LoadCached(value, 128, Data_080aeb4c);
+}
 
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
 {

@@ -1,76 +1,69 @@
 #include "TYPES.H"
-#include "SCENE.H"
-#include "GLOBAL_CELLS.H"
-#include "RESOURCE.H"
+#include "IWRAM_CALL.H"
+#include "DMA.H"
+#include "RAM_BUFFER.H"
 
-extern u8 RomBytes_080308a0[];
+extern u8 gMapCellBuffer[];
 
-/* ui/icon/build_ability_icon_tiles.c */
-typedef struct {
-    u8 pad0[0x400];
-    u8 f400;
-    u8 pad401[0x600 - 0x401];
-    s16 f600;
-    s16 f602;
-    s32 f604;
-} FontTransfer;
+extern const u8 Func_0800a37c[];
+typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Runtime_BumpAllocate(u32 size);
+void Runtime_BumpFree(void *allocation);
+extern u8 Tile_ConvertMapCodeSize[];
 
-extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
-extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
-extern s32 VramBlock_LoadCached(s32 index, s32 size, u8 *destination);
-extern s32 RomBytes_08029a10[];
-extern s32 UiIcon_PsynergyIconPointers[];
-
-struct State_0801a4c0 {
-    u8 filler0[0x600];
-    u16 first;
-    u16 second;
-    u32 value;
-};
-
-extern struct State_0801a4c0 *gGlyphWork;
-extern u32 UiIcon_MiscIconPointers[];
-
-/* ui/icon/build_ability_icon_tiles.c */
-/* ui/icon/icon_build_ability_icon_tiles.c */
-void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
-                   s32 *dst, s32 reuse)
+static __inline__ void CopyWords(void *dst, const void *src, s32 size)
 {
-    FontTransfer *work;
-    s32 slot;
-
-    work = Runtime_AllocateHeapBlock(0x11, 0x608);
-    slot = 0;
-
-    if (glyph >= Ui_CountSecondTableEntries())
-        glyph = 0;
-
-    if (with_base != 0) {
-        work->f604 = RomBytes_08029a10[2];
-        work->f600 = 2;
-        work->f602 = 2;
-        UiGlyph_DecodeWithHeapRoutines(work, 0);
-        slot = 1;
-    }
-
-    work->f604 = UiIcon_PsynergyIconPointers[glyph];
-    work->f600 = 2;
-    work->f602 = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, slot);
-
-    if (reuse == 0)
-        *src = Resource_FindFreeEntry();
-
-    *dst = VramBlock_LoadCached(*src, 0x80, &work->f400);
-    Runtime_ReleaseHeapBlock(0x11);
+    Iwram_CopyWords(dst, src, size);
 }
 
-void Ui_PrepareTransferFromTableEntry(u32 index)
+void Graphics_RenumberFillerEntries(void)
 {
-    struct State_0801a4c0 *state = gGlyphWork;
+    u32 *p = (u32 *)gMapCellBuffer;
+    u32 cnt = 128 << 7;
+    u32 mask = 0xfff;
+    s32 no = -1;
 
-    state->value = UiIcon_MiscIconPointers[index];
-    state->first = 2;
-    state->second = 2;
-    UiGlyph_DecodeWithHeapRoutines(state, 0);
+    do {
+        u32 value = *p++;
+        u32 idx = value & mask;
+
+        if (idx == mask) {
+            if (no != (s32)idx) {
+                no++;
+            }
+            value = value + no - idx;
+            p[-1] = value;
+        }
+        cnt--;
+    } while (cnt != 0);
+}
+
+/* Converts the map at 0x02010000 into 0x02018000 with the ARM routine at
+   0x0800a37c, run from a heap copy, against a saved copy of the source. */
+void Tilemap_ConvertBuffer(void)
+{
+    u8 *saved;
+    ConvertFn routine;
+    u32 size;
+
+    size = 0x8000;
+    /* FAKEMATCH: the two do-while blocks keep each allocation next to the
+       transfer that uses it */
+    do {
+        saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+        CopyWords(saved, Ram_MapCellBuffer, size);
+    } while (0);
+    {
+        u32 code_size = (u32)Tile_ConvertMapCodeSize;
+
+        do {
+            routine = (ConvertFn)Runtime_BumpAllocate(code_size);
+            Dma_Set((void *)Func_0800a37c, routine, 0x84000000 | (code_size >> 2),
+                    (volatile u32 *)0x040000d4);
+        } while (0);
+    }
+    routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
+    Runtime_BumpFree(routine);
+    Runtime_BumpFree(saved);
 }

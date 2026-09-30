@@ -1,3 +1,4 @@
+#include "NODE_CHAIN.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
@@ -120,11 +121,21 @@ extern u8 MsgCommandName;
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 void Menu_LoadSelectedResource(void);
 void BattlePres_SetActorModesFar(u16 *, s32);
-
 void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index);
 void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index);
 void Menu_StepRight(struct StepMenu *state);
 void Menu_StepLeft(struct StepMenu *state);
+
+struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *state)
+{
+    struct NodeChainNode *node = state->node;
+    s32 index;
+
+    for (index = 0; index != state->count; ++index) {
+        node = node->next;
+    }
+    return node;
+}
 
 /* Runs the selection until it is confirmed, or cancelled when mode allows. */
 s32 Menu_SelectionLoop(s32 mode)

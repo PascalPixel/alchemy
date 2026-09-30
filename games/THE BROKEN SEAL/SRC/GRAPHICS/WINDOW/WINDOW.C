@@ -1,11 +1,12 @@
+#include "DMA.H"
 #include "TBS_EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 
 extern u8 *gWindowWork;
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
+void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 extern u8 Data_03001e8c[];
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 s32 UiWindow_MapTextCanvasTiles(s32, s32, s32, s32, s32);
@@ -56,10 +57,34 @@ void RenderOutput_RedrawSavedRect(void *work);
 void RenderOutput_ClearList(void *work);
 void RenderOutput_Release(void *node);
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
-
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void UiWork_DrawByAttributes(void *arg0);
 void UiWork_WaitUntilField1aClear(void *work);
+
+void UiWork_UploadDirtyBlocks(void)
+{
+    u8 *work = gWindowWork;
+    u32 flags;
+    u8 *src;
+    u8 *dst;
+    if (!work[RENDER_MENU_BUSY_OFS]) {
+        flags = work[RENDER_DIRTY_OFS];
+        if (flags) {
+            dst = (u8 *)0x06002000;
+            src = work;
+            if (flags & 1) flags = 63;
+            flags &= 63;
+            flags >>= 1;
+            do {
+                if (flags & 1) Dma_Set(src, dst, 0x84000040, (volatile u32 *)0x040000d4);
+                flags >>= 1;
+                src += 256;
+                dst += 256;
+            } while (flags);
+            work[RENDER_DIRTY_OFS] = flags;
+        }
+    }
+}
 
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 {

@@ -31,7 +31,7 @@ Func_08119148:
 	bge .L_08119172
 	mov r7, sp
 	adds r0, r7, #0
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	movs r5, #0
 	mov r8, r0
 	cmp r5, r8

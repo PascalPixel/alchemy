@@ -5,6 +5,6 @@
 Func_080f9498:
 	push {lr}
 	movs r0, #4
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	pop {pc}
 	.2byte 0x0000

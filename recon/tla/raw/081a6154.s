@@ -615,7 +615,7 @@ Func_081a6154:
 	bl Func_081a6094
 	cmp r0, #0
 	beq .L_081a6624
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	b .L_081a6562
 .L_081a6624:
 	movs r0, #1

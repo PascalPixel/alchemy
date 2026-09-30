@@ -170,7 +170,7 @@ Func_08192a4c:
 	str r3, [r7, #4]
 	str r0, [r7, #8]
 	adds r0, r7, #0
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	mov r1, r9
 	ldr r5, [sp, #12]
 	ldr r3, [r1]

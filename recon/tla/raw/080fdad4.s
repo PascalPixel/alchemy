@@ -366,7 +366,7 @@ Func_080fdad4:
 	movs r1, #0
 	movs r2, #88
 	movs r3, #120
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	mov r1, r8
 	ldr r0, .L_080fddc4
 	movs r2, #0
@@ -408,7 +408,7 @@ Func_080fdad4:
 	movs r2, #88
 	movs r3, #120
 	str r4, [sp, #8]
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	mov r1, r8
 	ldr r0, .L_080fde18
 	movs r2, #0
@@ -578,7 +578,7 @@ Func_080fdad4:
 	adds r0, r6, r2
 	mov r1, r11
 	str r4, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r0, #0
 	movs r0, #129
 	lsls r3, r6, #1

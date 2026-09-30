@@ -2,6 +2,13 @@
    window, one row per item type 1 to 4. The name message is the item id
    plus 0x182; its pool constant is hoisted into a register for the loop. */
 #include "TYPES.H"
+
+/* Where the equipped names start: the Japanese edition indents them. */
+#if defined(TBS_EDITION_JA)
+#define NAME_X 16
+#else
+#define NAME_X 8
+#endif
 #include "ITEM.H"
 
 extern u8 MsgItemName;
@@ -18,16 +25,16 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items)
             item = items[i] & 0x1ff;
             switch (Item_Get(item)->type) {
             case 1:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 8, 8);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 8);
                 break;
             case 2:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 8, 56);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 56);
                 break;
             case 3:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 8, 40);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 40);
                 break;
             case 4:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 8, 24);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 24);
                 break;
             }
         }

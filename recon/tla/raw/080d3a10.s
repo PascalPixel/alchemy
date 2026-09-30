@@ -49,7 +49,7 @@ Func_080d3a10:
 	lsls r0, r0, #13
 	mov r1, r8
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r2, r10
 	ldrb r0, [r2]
 	movs r3, #255

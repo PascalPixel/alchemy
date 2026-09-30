@@ -49,11 +49,11 @@
 	overlay_veneer Func_08020358
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiText_DrawQuantity
-	overlay_veneer Func_08038140
+	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Func_08038348
 	overlay_veneer Menu_AnimateSelectionToEntryFar
 	overlay_veneer Owner_AdjustSecondValueFar
-	overlay_veneer Func_080ad0f0
+	overlay_veneer Party_CountActiveOwnersFar
 	overlay_veneer Party_AddActiveOwnerFar
 	overlay_veneer Func_080ad110
 	overlay_veneer Djinn_AddToOwnerFar
@@ -109,9 +109,9 @@
 	overlay_veneer Func_080c8378
 	overlay_veneer Func_080c8380
 	overlay_veneer Func_080c8390
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c8430
 	overlay_veneer Func_080c8438
 	overlay_veneer Func_080c84e0

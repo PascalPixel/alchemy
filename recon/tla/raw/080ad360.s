@@ -32,7 +32,7 @@ Func_080ad360:
 .L_080ad396:
 	adds r0, r6, #0
 	adds r1, r7, #0
-	bl __divsi3
+	bl Math_Div
 	adds r6, r0, #0
 .L_080ad3a0:
 	add sp, #4

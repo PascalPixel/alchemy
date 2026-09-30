@@ -59,6 +59,6 @@ Func_08016544:
 .L_080165a8:
 	.4byte 0x000000c0
 .L_080165ac:
-	.4byte Data_02005360
+	.4byte gSerialRuntime
 .L_080165b0:
 	.4byte 0x0400010e

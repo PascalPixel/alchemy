@@ -45,7 +45,7 @@ Func_080e09c0:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
-	bl Func_080dc10c
+	bl Object_Spawn
 	mov r8, r0
 	cmp r0, #0
 	bne .L_080e0a22
@@ -158,7 +158,7 @@ Func_080e09c0:
 	movs r0, #192
 	adds r2, r6, #0
 	lsls r0, r0, #12
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r3, #1
 	negs r3, r3
 	str r3, [r6, #24]
@@ -250,7 +250,7 @@ Func_080e09c0:
 	strh r6, [r3]
 	ldr r0, .L_080e0c80
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #186
 	movs r0, #0
 	ldrsh r3, [r5, r0]
@@ -310,12 +310,12 @@ Func_080e09c0:
 	bne .L_080e0be2
 .L_080e0c48:
 	ldr r0, .L_080e0c80
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_080e0c4e:
 	ldr r0, [sp, #8]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, [sp, #4]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	mov r0, r8
 	bl Func_080200c8
 .L_080e0c60:

@@ -102,7 +102,7 @@ Func_0803c40c:
 	ldr r3, [r0, #4]
 	ands r3, r4
 	str r3, [r0, #4]
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	movs r3, #31
 	ldrb r2, [r5, #7]
 	ands r0, r3

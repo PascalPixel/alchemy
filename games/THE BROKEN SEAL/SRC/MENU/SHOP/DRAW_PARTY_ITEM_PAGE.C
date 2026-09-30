@@ -13,16 +13,6 @@ s32 Owner_GetStateFar();
 void Menu_DrawPageIndicator();
 void Menu_SetPageIcons();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
 {
     u32 i;
@@ -53,7 +43,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
     Menu_SetPageIcons(5, p8, a0, 119, 52);
     Menu_DrawPageIndicator(a0, *(s32 *)(a2 + 20), 5, *(s32 *)(a2 + 8), 28);
     if (*(u8 *)((0x218 + p9)) == 0) {
-        Call4(UiText_DrawCharacterAtOffsetFar, (s32)&MsgItemMenuEmpty, a0, 120, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, a0, 120, 8);
         v6 = r10;
     } else {
         v6 = 0;

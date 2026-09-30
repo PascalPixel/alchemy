@@ -37,7 +37,7 @@ Func_0803ce64:
 	add r3, sp, #12
 	str r0, [sp, #0]
 	adds r0, r7, #0
-	bl Func_0803b880
+	bl UiText_GetResourceDimensions
 	ldr r2, [sp, #12]
 	movs r3, #30
 	ldr r4, [sp, #8]
@@ -73,7 +73,7 @@ Func_0803ce64:
 	movs r2, #0
 	str r3, [sp, #0]
 	str r3, [sp, #4]
-	bl Func_0803954c
+	bl UiText_QueueRenderEntries
 	cmp r0, #0
 	bne .L_0803cf0c
 	adds r0, r5, #0

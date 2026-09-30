@@ -6,9 +6,9 @@ Func_080ec14c:
 	push {r5, lr}
 	ldr r5, .L_080ec168
 	ldrh r0, [r5]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldrh r0, [r5, #2]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, [r5, #28]
 	movs r1, #2
 	bl UiWork_FinalizeFar

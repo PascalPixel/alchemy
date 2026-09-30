@@ -50,13 +50,13 @@ Func_080d49bc:
 	blt .L_080d4a40
 	lsls r0, r5, #20
 	adds r1, r7, #0
-	bl __divsi3
+	bl Math_Div
 	ldr r5, [r6, #8]
 	mov r3, r8
 	adds r5, r5, r0
 	adds r1, r7, #0
 	lsls r0, r3, #20
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r6, #16]
 	adds r1, r5, #0
 	adds r3, r3, r0

@@ -62,7 +62,7 @@ Func_080d8ff8:
 	mov r2, r10
 	lsls r0, r2, #15
 	adds r1, r7, #0
-	bl __divsi3
+	bl Math_Div
 	bl Trig_Sin
 	ldr r3, .L_080d9100
 	ldr r1, [sp, #80]
@@ -76,7 +76,7 @@ Func_080d8ff8:
 	adds r1, r7, #0
 	adds r5, r0, #0
 	mov r0, r9
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #32]
 	mov r2, r8
 	adds r0, r3, r0
@@ -90,7 +90,7 @@ Func_080d8ff8:
 	adds r1, r7, #0
 	adds r5, r0, #0
 	mov r0, r11
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #28]
 	mov r3, r8
 	adds r0, r2, r0
@@ -98,7 +98,7 @@ Func_080d8ff8:
 	str r0, [r3, #8]
 	ldr r0, [sp, #0]
 	adds r1, r7, #0
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #24]
 	mov r3, r8
 	adds r0, r2, r0

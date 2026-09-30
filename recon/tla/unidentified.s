@@ -84,8 +84,8 @@ Data_0802eb04:
 	.global Data_0802eb44
 Data_0802eb44:
 	.incbin "baserom.gba", 0x0002eb44, 0x00000008
-	.global Data_0802eb4c
-Data_0802eb4c:
+	.global Map_TileDissolveOrder
+Map_TileDissolveOrder:
 	.incbin "baserom.gba", 0x0002eb4c, 0x00000044
 	.global Data_0802eb90
 Data_0802eb90:
@@ -141,8 +141,8 @@ Data_0802f054:
 	.global Data_0802f064
 Data_0802f064:
 	.incbin "baserom.gba", 0x0002f064, 0x0000002c
-	.global Data_0802f090
-Data_0802f090:
+	.global Battle_FormationPlacementScale
+Battle_FormationPlacementScale:
 	.incbin "baserom.gba", 0x0002f090, 0x00000008
 	.global Data_0802f098
 Data_0802f098:
@@ -216,8 +216,8 @@ Data_0804e740:
 	.global Data_0804e7dc
 Data_0804e7dc:
 	.incbin "baserom.gba", 0x0004e7dc, 0x00000298
-	.global Data_0804ea74
-Data_0804ea74:
+	.global UiIcon_OverlayPointerTable
+UiIcon_OverlayPointerTable:
 	.incbin "baserom.gba", 0x0004ea74, 0x000000e4
 	.global Data_0804eb58
 Data_0804eb58:
@@ -243,8 +243,8 @@ Data_08059878:
 	.global Data_080598f8
 Data_080598f8:
 	.incbin "baserom.gba", 0x000598f8, 0x00000080
-	.global Data_08059978
-Data_08059978:
+	.global RenderResource_PairSourceTable
+RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00059978, 0x00000768
 	.global Data_0805a0e0
 Data_0805a0e0:
@@ -368,8 +368,8 @@ Data_0805f700:
 	.global Data_0805f730
 Data_0805f730:
 	.incbin "baserom.gba", 0x0005f730, 0x00000040
-	.global Data_0805f770
-Data_0805f770:
+	.global Graphics_ExpandNibbleTable
+Graphics_ExpandNibbleTable:
 	.incbin "baserom.gba", 0x0005f770, 0x00000040
 	.global Link_TimeLabelString
 Link_TimeLabelString:
@@ -416,11 +416,11 @@ Data_0805f8b3:
 	.global Data_0805f8bf
 Data_0805f8bf:
 	.incbin "baserom.gba", 0x0005f8bf, 0x00000019
-	.global Data_0805f8d8
-Data_0805f8d8:
+	.global Menu_ColonString
+Menu_ColonString:
 	.incbin "baserom.gba", 0x0005f8d8, 0x00000004
-	.global Data_0805f8dc
-Data_0805f8dc:
+	.global Menu_HexDigitsString
+Menu_HexDigitsString:
 	.incbin "baserom.gba", 0x0005f8dc, 0x00000014
 	.global Data_0805f8f0
 Data_0805f8f0:
@@ -503,8 +503,8 @@ Data_080b9e7c:
 	.global Data_080c0f4c
 Data_080c0f4c:
 	.incbin "baserom.gba", 0x000c0f4c, 0x000005a0
-	.global Data_080c14ec
-Data_080c14ec:
+	.global Summon_OrderList
+Summon_OrderList:
 	.incbin "baserom.gba", 0x000c14ec, 0x00000020
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
@@ -567,8 +567,8 @@ Data_080ef094:
 Data_080ef4a4:
 	.incbin "baserom.gba", 0x000ef4a4, 0x00000378
 	.section .unidentified.080ef824,"a"
-	.global Data_080ef824
-Data_080ef824:
+	.global Party_PairResolveRules
+Party_PairResolveRules:
 	.incbin "baserom.gba", 0x000ef824, 0x00000160
 	.global Data_080ef984
 Data_080ef984:
@@ -576,8 +576,8 @@ Data_080ef984:
 	.global Data_080efd1c
 Data_080efd1c:
 	.incbin "baserom.gba", 0x000efd1c, 0x00000054
-	.global Data_080efd70
-Data_080efd70:
+	.global Debug_PaletteSwatchTiles
+Debug_PaletteSwatchTiles:
 	.incbin "baserom.gba", 0x000efd70, 0x000001b2
 	.global Data_080eff22
 Data_080eff22:
@@ -591,8 +591,8 @@ Data_080effd8:
 	.global Data_080f0074
 Data_080f0074:
 	.incbin "baserom.gba", 0x000f0074, 0x00000120
-	.global Data_080f0194
-Data_080f0194:
+	.global BattleFx_ParticleScript
+BattleFx_ParticleScript:
 	.incbin "baserom.gba", 0x000f0194, 0x00000024
 	.global Data_080f01b8
 Data_080f01b8:
@@ -672,8 +672,8 @@ Data_080f0dbb:
 	.global Data_080f0e00
 Data_080f0e00:
 	.incbin "baserom.gba", 0x000f0e00, 0x00000054
-	.global Data_080f0e54
-Data_080f0e54:
+	.global BattleFx_CommonParticleScript
+BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x000f0e54, 0x00000004
 	.global Data_080f0e58
 Data_080f0e58:
@@ -702,8 +702,8 @@ Data_080f0ee8:
 	.global Data_080f0ef8
 Data_080f0ef8:
 	.incbin "baserom.gba", 0x000f0ef8, 0x00000034
-	.global Data_080f0f2c
-Data_080f0f2c:
+	.global BattleFx_RandomChildValues
+BattleFx_RandomChildValues:
 	.incbin "baserom.gba", 0x000f0f2c, 0x00000008
 	.global Data_080f0f34
 Data_080f0f34:
@@ -875,14 +875,14 @@ Data_08105838:
 	.global Data_08105938
 Data_08105938:
 	.incbin "baserom.gba", 0x00105938, 0x00000004
-	.global Data_0810593c
-Data_0810593c:
+	.global Ui_HpString
+Ui_HpString:
 	.incbin "baserom.gba", 0x0010593c, 0x00000004
-	.global Data_08105940
-Data_08105940:
+	.global Ui_SlashString
+Ui_SlashString:
 	.incbin "baserom.gba", 0x00105940, 0x00000004
-	.global Data_08105944
-Data_08105944:
+	.global Ui_PpString
+Ui_PpString:
 	.incbin "baserom.gba", 0x00105944, 0x00000004
 	.global Data_08105948
 Data_08105948:
@@ -890,11 +890,11 @@ Data_08105948:
 	.global Data_08105968
 Data_08105968:
 	.incbin "baserom.gba", 0x00105968, 0x00000004
-	.global Data_0810596c
-Data_0810596c:
+	.global Menu_PlusSignString
+Menu_PlusSignString:
 	.incbin "baserom.gba", 0x0010596c, 0x00000004
-	.global Data_08105970
-Data_08105970:
+	.global Menu_MinusSignString
+Menu_MinusSignString:
 	.incbin "baserom.gba", 0x00105970, 0x00000004
 	.global Data_08105974
 Data_08105974:
@@ -938,8 +938,8 @@ Menu_ListOrderMode1:
 	.global Menu_ListOrderMode0
 Menu_ListOrderMode0:
 	.incbin "baserom.gba", 0x00105a20, 0x00000018
-	.global Data_08105a38
-Data_08105a38:
+	.global CharacterMenu_CursorWidths
+CharacterMenu_CursorWidths:
 	.incbin "baserom.gba", 0x00105a38, 0x00000008
 	.global Data_08105a40
 Data_08105a40:
@@ -1123,8 +1123,8 @@ Data_0812ce94:
 	.global Data_08130c5c
 Data_08130c5c:
 	.incbin "baserom.gba", 0x00130c5c, 0x000000b0
-	.global Data_08130d0c
-Data_08130d0c:
+	.global Summon_EntryTable
+Summon_EntryTable:
 	.incbin "baserom.gba", 0x00130d0c, 0x000072f4
 	.section .unidentified.08196dd8,"a"
 	.global Data_08196dd8

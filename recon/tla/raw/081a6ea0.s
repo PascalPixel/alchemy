@@ -293,7 +293,7 @@ Func_081a6ea0:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_081a71b4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #160
 	strh r3, [r5, #2]
 	movs r3, #255
@@ -359,7 +359,7 @@ Func_081a6ea0:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	ldr r0, .L_081a71b4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #172
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #1

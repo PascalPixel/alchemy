@@ -91,7 +91,7 @@ Func_0802bd08:
 	adds r2, r5, #0
 	adds r3, r7, #0
 	movs r0, #0
-	bl Func_0802b878
+	bl Map_WriteLayerCellTile
 	movs r2, #128
 	lsls r2, r2, #3
 	adds r3, r7, r2
@@ -100,7 +100,7 @@ Func_0802bd08:
 	movs r0, #1
 	adds r1, r6, #0
 	adds r2, r5, #0
-	bl Func_0802b878
+	bl Map_WriteLayerCellTile
 .L_0802bdc6:
 	add sp, #4
 	pop {r3}

@@ -24,11 +24,11 @@
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
 	overlay_veneer UiText_DrawNumberInWindowFar
 	overlay_veneer UiText_DrawQuantity
-	overlay_veneer Func_08038140
+	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Func_08038340
 	overlay_veneer Func_08038380
 	overlay_veneer PartyInventory_RemoveFar
-	overlay_veneer Func_080ad1d8
+	overlay_veneer Party_AdjustSixDigitCounterAFar
 	overlay_veneer Func_080ad208
 	overlay_veneer PartyInventory_CountItemFar
 	overlay_veneer PartyInventory_CountFreeSlotsFar
@@ -47,7 +47,7 @@
 	overlay_veneer Func_080c8188
 	overlay_veneer Func_080c81a0
 	overlay_veneer Func_080c81d0
-	overlay_veneer Func_080c83a8
+	overlay_veneer Event_SetStatus1c6Far
 	overlay_veneer Func_080c83e0
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c8928

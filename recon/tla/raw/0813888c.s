@@ -878,7 +878,7 @@ Func_0813888c:
 	.4byte 0xb1a07003
 	.4byte 0xe58d0088
 	.4byte 0xeaffff65
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 	.4byte 0xe59d1038
 	.4byte 0xe58d1098
 	.4byte 0xe5912000

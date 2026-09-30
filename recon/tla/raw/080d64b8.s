@@ -5,9 +5,9 @@
 Func_080d64b8:
 	push {lr}
 	ldr r0, .L_080d64e8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_080d64ec
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r2, #128
 	lsls r2, r2, #19
 	adds r2, #176

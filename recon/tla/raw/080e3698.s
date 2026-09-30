@@ -37,7 +37,7 @@ Func_080e3698:
 	ldr r1, [r7, #8]
 	ldr r3, [r7, #16]
 	lsls r0, r0, #1
-	bl Func_080dc10c
+	bl Object_Spawn
 	movs r1, #2
 	mov r8, r0
 	bl Object_SetMode
@@ -82,7 +82,7 @@ Func_080e3698:
 	adds r2, r6, #0
 	ldr r1, [sp, #0]
 	lsls r0, r0, #5
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r2, [r6]
 	movs r1, #128
 	str r2, [r7, #8]

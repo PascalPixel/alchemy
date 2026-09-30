@@ -8,7 +8,7 @@ Menu_SelectTopEntry:
 	movs r0, #1
 	negs r0, r0
 	movs r6, #0
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	cmp r0, #0
 	bne .L_0804d50c
 	movs r6, #1

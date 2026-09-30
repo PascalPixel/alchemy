@@ -30,8 +30,8 @@
 	overlay_veneer Func_080c81a0
 	overlay_veneer Func_080c81d0
 	overlay_veneer Func_080c8278
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c8580
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar

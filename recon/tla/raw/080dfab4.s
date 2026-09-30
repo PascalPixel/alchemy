@@ -19,7 +19,7 @@ Func_080dfab4:
 	adds r3, r3, r7
 	movs r1, #18
 	str r3, [r6, #16]
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r6, #68]
 	adds r3, r7, #0

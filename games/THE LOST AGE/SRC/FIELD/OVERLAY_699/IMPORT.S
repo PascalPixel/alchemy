@@ -39,7 +39,7 @@
 	overlay_veneer Func_08020228
 	overlay_veneer Func_08020230
 	overlay_veneer Animation_ApplyChildValuesFar
-	overlay_veneer Func_080202d8
+	overlay_veneer Map_EnableUpdateCallbackFar
 	overlay_veneer Map_DisableUpdateCallbackFar
 	overlay_veneer Func_08020360
 	overlay_veneer Battle_WaitMode0Far
@@ -57,9 +57,9 @@
 	overlay_veneer Func_080c8258
 	overlay_veneer Func_080c8278
 	overlay_veneer Func_080c8280
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c85c0
 	overlay_veneer Func_080c8760

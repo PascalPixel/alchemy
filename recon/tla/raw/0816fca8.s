@@ -22,7 +22,7 @@ Func_0816fca8:
 	ldr r3, [r3, #100]
 	movs r0, #1
 	str r3, [sp, #36]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r2, [sp, #56]
 	cmp r2, #0
 	bne .L_0816fce4
@@ -167,7 +167,7 @@ Func_0816fca8:
 	movs r1, #200
 	ldr r0, .L_08170004
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, [sp, #56]
 	cmp r3, #0
 	bne .L_0816fdfa
@@ -242,7 +242,7 @@ Func_0816fca8:
 	lsls r0, r0, #16
 	subs r0, r0, r3
 .L_0816fe78:
-	bl __divsi3
+	bl Math_Div
 	str r0, [r7, #12]
 	ldr r0, [r6, #4]
 	mov r1, r11
@@ -251,7 +251,7 @@ Func_0816fca8:
 	lsls r0, r0, #16
 	subs r0, r0, r3
 	ldr r1, [sp, #28]
-	bl __divsi3
+	bl Math_Div
 	mov r2, r11
 	str r0, [r2, #16]
 	movs r0, #221
@@ -378,12 +378,12 @@ Func_0816fca8:
 	cmp r2, #0
 	bne .L_0816ffa2
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_0816ffb0
 .L_0816ffa2:
 	movs r0, #1
 	negs r0, r0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r0, #145
 	bl Audio_PlayCue
 .L_0816ffb0:
@@ -819,7 +819,7 @@ Func_0816fca8:
 	b .L_0816fe02
 .L_0817030c:
 	ldr r0, .L_08170360
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl Func_08143bb8

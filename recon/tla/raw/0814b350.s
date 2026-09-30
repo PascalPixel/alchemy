@@ -22,7 +22,7 @@ Func_0814b350:
 	str r1, [sp, #64]
 	ldr r3, [r3, #100]
 	str r3, [sp, #56]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r2, [sp, #68]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -46,12 +46,12 @@ Func_0814b350:
 	str r6, [sp, #52]
 	bl Func_08144aac
 	ldr r0, [r5, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	mov r9, r0
 	movs r1, #36
 	ldrsh r0, [r5, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	movs r2, #0
 	str r0, [sp, #48]
@@ -115,7 +115,7 @@ Func_0814b350:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814b5a0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r5, r9
 	ldr r3, [r5, #8]
 	add r2, sp, #156
@@ -145,21 +145,21 @@ Func_0814b350:
 	ldr r3, [r1]
 	movs r1, #40
 	subs r0, r0, r3
-	bl __divsi3
+	bl Math_Div
 	str r0, [r6]
 	mov r2, r11
 	ldr r3, [r2, #4]
 	ldr r0, [r5, #4]
 	movs r1, #40
 	subs r0, r0, r3
-	bl __divsi3
+	bl Math_Div
 	str r0, [r6, #4]
 	movs r1, #40
 	ldr r0, [r5, #8]
 	mov r5, r11
 	ldr r3, [r5, #8]
 	subs r0, r0, r3
-	bl __divsi3
+	bl Math_Div
 	str r0, [r6, #8]
 	movs r6, #0
 	mov r9, r6
@@ -205,7 +205,7 @@ Func_0814b350:
 	str r3, [r6, #8]
 .L_0814b4fe:
 	mov r0, r11
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	mov r0, r9
 	cmp r0, #0
 	bne .L_0814b520
@@ -273,7 +273,7 @@ Func_0814b350:
 	b .L_0814b5b0
 .L_0814b584:
 	adds r0, r7, #0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	b .L_0814b5b0
 .L_0814b58c:
 	adds r0, r7, #0
@@ -289,7 +289,7 @@ Func_0814b350:
 	.4byte Func_08143000
 .L_0814b5a4:
 	adds r0, r7, #0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r7, #0
 	bl Func_080150e4
 .L_0814b5b0:
@@ -568,7 +568,7 @@ Func_0814b350:
 	ldr r3, [sp, #12]
 	ldr r6, [sp, #72]
 	ldrsh r0, [r3, r6]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
 	ldr r0, [sp, #60]
 	lsls r0, r0, #3
@@ -586,7 +586,7 @@ Func_0814b350:
 	mov r0, r11
 	ldr r3, [r5, #16]
 	str r3, [r1, #8]
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	mov r3, r8
 	adds r3, #30
 	cmp r9, r3
@@ -694,7 +694,7 @@ Func_0814b350:
 	lsls r0, r3, #2
 	movs r1, #9
 	add r0, r9
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0814b9ac
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -718,19 +718,19 @@ Func_0814b350:
 	ldr r5, [r6]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	str r5, [r6, #8]
 .L_0814b930:
@@ -778,7 +778,7 @@ Func_0814b350:
 	b .L_0814b73a
 .L_0814b982:
 	ldr r0, .L_0814b9b4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

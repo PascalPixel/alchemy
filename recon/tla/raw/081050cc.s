@@ -97,7 +97,7 @@ Func_081050cc:
 	ldrh r3, [r6, #32]
 	str r2, [sp, #0]
 	adds r2, r4, #0
-	bl Func_08020010 + 0x8
+	bl Func_08020018
 .L_08105184:
 	movs r1, #1
 	movs r2, #4

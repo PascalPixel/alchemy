@@ -19,7 +19,7 @@ Func_0803f93c:
 	movs r1, #2
 	bl UiWork_Finalize
 	ldr r0, .L_0803f964
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_0803f962:
 	pop {pc}
 .L_0803f964:

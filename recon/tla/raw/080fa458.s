@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080fa458
+	.global ItemMenu_HideAllIcons
 	.thumb_func
-Func_080fa458:
+ItemMenu_HideAllIcons:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

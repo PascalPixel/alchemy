@@ -1,7 +1,14 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+/* The Japanese edition tests the held keys where the others read the key state. */
+#if defined(TBS_EDITION_JA)
+extern u8 gKeysHeld[];
+#define ASSIGNED_KEYS gKeysHeld
+#else
 extern u8 Data_03001c94[];
+#define ASSIGNED_KEYS Data_03001c94
+#endif
 
 /* field/store_assigned_key_value.c */
 extern u8 *gWork;
@@ -21,9 +28,9 @@ u32 Field_StoreAssignedKeyValue(u32 value)
     if (GameFlag_TestFar(0x107) != 0) {
         StoreHalfword(state + 0x182, 0xFA);
     } else if (*(s16 *)(state + 0x19E) == 3) {
-        if (*(volatile u32 *)((u32)&Data_03001c94) & 0x100) {
+        if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x100) {
             StoreHalfword(state + 0x182, 0xFC88);
-        } else if (*(volatile u32 *)((u32)&Data_03001c94) & 0x200) {
+        } else if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x200) {
             StoreHalfword(state + 0x182, 0xFC87);
         }
     } else {

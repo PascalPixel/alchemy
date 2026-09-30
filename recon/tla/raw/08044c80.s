@@ -100,16 +100,16 @@ Func_08044c80:
 	movs r3, #2
 	mov r0, r9
 	str r6, [sp, #0]
-	bl Func_0803954c
+	bl UiText_QueueRenderEntries
 	movs r0, #81
 	bl Audio_PlayCue
 .L_08044d62:
 	movs r1, #250
 	mov r0, r10
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	movs r1, #250
 	adds r0, r7, #0
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	movs r0, #1
 	bl WaitFrames
 	bl Audio_Check
@@ -130,9 +130,9 @@ Func_08044c80:
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [sp, #20]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, [sp, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_08044daa:
 	add sp, #48
 	pop {r3, r5, r6, r7}

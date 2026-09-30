@@ -9,11 +9,23 @@
 	.thumb_func
 Func_081c0080:
 	overlay_veneer Func_081c1000
+	.global Func_081c0088
+	.thumb_func
+Func_081c0088:
 	overlay_veneer Func_081c0e30
 	.global Func_081c0090
 	.thumb_func
 Func_081c0090:
 	overlay_veneer Func_081c1188
+	.global Func_081c0098
+	.thumb_func
+Func_081c0098:
 	overlay_veneer Func_081c11ac
+	.global Func_081c00a0
+	.thumb_func
+Func_081c00a0:
 	overlay_veneer Func_081c11cc
+	.global Func_081c00a8
+	.thumb_func
+Func_081c00a8:
 	overlay_veneer Func_081c0c18

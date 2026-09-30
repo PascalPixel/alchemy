@@ -114,7 +114,7 @@ Func_081096f8:
 	adds r0, r7, r2
 	mov r1, r9
 	str r3, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19

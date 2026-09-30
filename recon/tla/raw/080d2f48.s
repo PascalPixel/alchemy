@@ -48,7 +48,7 @@ ObjectMotion_SnapHeadingAndOffset:
 	bl Object_CommitPosition
 	adds r0, r7, #0
 	mov r1, r8
-	bl Func_080d3888
+	bl ObjectMotion_SetActionVariant
 	mov r3, r10
 	lsls r0, r3, #16
 	ldr r3, [r6, #16]

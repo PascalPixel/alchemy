@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08014644
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Func_08014644:
+Scheduler_RemoveCallback:
 	push {r5, lr}
 	ldr r4, .L_0801468c
 	movs r5, #1
@@ -42,6 +42,6 @@ Func_08014644:
 	adds r0, r5, #0
 	pop {r5, pc}
 .L_0801468c:
-	.4byte Data_02003610
+	.4byte gSchedulerTaskTable
 .L_08014690:
 	.4byte 0x04000208

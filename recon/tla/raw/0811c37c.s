@@ -21,7 +21,7 @@ Func_0811c37c:
 	lsls r2, r2, #1
 	adds r3, r0, r2
 	ldrh r0, [r3]
-	bl Func_081280fc
+	bl Summon_IsEntryFlagged
 	movs r3, #192
 	lsls r3, r3, #13
 	cmp r0, #0

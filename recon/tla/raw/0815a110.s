@@ -24,7 +24,7 @@ BattlePres_RunBurstScene:
 	str r2, [sp, #48]
 	ldr r3, [r3, #48]
 	str r3, [sp, #44]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, .L_0815a178
 	movs r2, #128
 	lsls r2, r2, #19
@@ -191,7 +191,7 @@ BattlePres_RunBurstScene:
 	ldrsh r1, [r5, r2]
 	lsls r3, r3, #11
 	movs r2, #8
-	bl Func_08118070 + 0x8
+	bl BattleMotion_ApproachTargetFar
 	movs r0, #7
 	bl WaitFrames
 	b .L_0815a2a0
@@ -202,7 +202,7 @@ BattlePres_RunBurstScene:
 	movs r5, #36
 	ldrsh r1, [r3, r5]
 	movs r3, #0
-	bl Func_08118070 + 0x8
+	bl BattleMotion_ApproachTargetFar
 .L_0815a2a0:
 	movs r0, #1
 	bl WaitFrames
@@ -230,7 +230,7 @@ BattlePres_RunBurstScene:
 	str r3, [r2]
 	ldr r0, .L_0815a52c
 	adds r1, r5, #0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, [sp, #40]
 	ldr r2, .L_0815a504
 	adds r3, #7
@@ -239,13 +239,13 @@ BattlePres_RunBurstScene:
 	bne .L_0815a2f0
 	ldr r0, .L_0815a530
 	adds r1, r5, #0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_0815a2f0:
 	ldr r3, [sp, #68]
 	movs r5, #0
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	mov r10, r5
 	ldr r6, [r0]
 	ldr r5, .L_0815a534
@@ -672,7 +672,7 @@ BattlePres_RunBurstScene:
 	movs r3, #8
 	str r3, [r2]
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_0815a684
 	.2byte 0x0000
 .L_0815a64c:
@@ -1081,10 +1081,10 @@ BattlePres_RunBurstScene:
 	cmp r3, #2
 	bne .L_0815a98e
 	ldr r0, .L_0815a9dc
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_0815a98e:
 	ldr r0, .L_0815a9e0
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #152
 	pop {r3, r5, r6, r7}

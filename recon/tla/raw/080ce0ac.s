@@ -26,7 +26,7 @@ Func_080ce0ac:
 	mov r11, r2
 	mov r10, r0
 	str r1, [sp, #4]
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	mov r2, r10
 	movs r7, #0
 	mov r8, r0
@@ -198,7 +198,7 @@ Func_080ce0ac:
 	movs r0, #1
 	bl Func_080d295c
 	adds r6, r0, #0
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	movs r0, #0
 	cmp r6, #0
 	bne .L_080ce2fe

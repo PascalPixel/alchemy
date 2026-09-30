@@ -40,11 +40,11 @@
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer RenderOutput_PrepareForRedrawFar
 	overlay_veneer UiText_DrawNumberFar
-	overlay_veneer Func_08038118
+	overlay_veneer UiWork_ClearValueNameTablesFar
 	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_080382e0
 	overlay_veneer Trade_GetOfferStateFar
-	overlay_veneer Func_080ad0f0
+	overlay_veneer Party_CountActiveOwnersFar
 	overlay_veneer Func_080ad208
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
@@ -65,8 +65,8 @@
 	overlay_veneer Func_080c8280
 	overlay_veneer Func_080c8290
 	overlay_veneer Func_080c8298
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_08108010
 	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimesFar

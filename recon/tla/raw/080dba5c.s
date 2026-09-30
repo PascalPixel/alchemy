@@ -91,7 +91,7 @@ Func_080dba5c:
 	ldr r3, [r2, #16]
 	adds r0, r5, #0
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [r5]
 	movs r1, #144
 	str r3, [r6, #12]
@@ -99,7 +99,7 @@ Func_080dba5c:
 	ldr r3, [r5, #8]
 	lsls r1, r1, #3
 	str r3, [r6, #16]
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_080dbb2c:
 	add sp, #16
 	pop {r3, r5, r6}

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080391c4
+	.global UiWork_DrawByAttributes
 	.thumb_func
-Func_080391c4:
+UiWork_DrawByAttributes:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

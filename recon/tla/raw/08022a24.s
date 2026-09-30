@@ -11,7 +11,7 @@ Func_08022a24:
 	cmp r5, #0
 	beq .L_08022a82
 	adds r0, r5, #0
-	bl Func_08022d1c
+	bl ResourceMetadata_ClearRecord
 	ldr r3, [r6, #40]
 	movs r0, #0
 	cmp r5, r3

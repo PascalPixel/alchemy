@@ -39,7 +39,7 @@
 	overlay_veneer Func_080201c0
 	overlay_veneer Func_080201e8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_080202d8
+	overlay_veneer Map_EnableUpdateCallbackFar
 	overlay_veneer Map_DisableUpdateCallbackFar
 	overlay_veneer Func_080202f0
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
@@ -80,9 +80,9 @@
 	overlay_veneer Func_080c8280
 	overlay_veneer Func_080c8288
 	overlay_veneer Func_080c8290
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c8420
 	overlay_veneer Func_080c8428
 	overlay_veneer Func_080c8480

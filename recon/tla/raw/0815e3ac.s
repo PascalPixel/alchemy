@@ -204,7 +204,7 @@ Func_0815e3ac:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0815e5b4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, .L_0815e588
 	movs r2, #128
 	lsls r2, r2, #19
@@ -285,7 +285,7 @@ Func_0815e3ac:
 	movs r7, #255
 	movs r1, #36
 	ldrsh r0, [r2, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r5, [sp, #52]
 	ldr r6, [r0]
 	movs r3, #36
@@ -360,11 +360,11 @@ Func_0815e3ac:
 	cmp r0, #0
 	beq .L_0815e69e
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_0815e6a4
 .L_0815e69e:
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0815e6a4:
 	mov r3, r9
 	cmp r3, #4
@@ -568,7 +568,7 @@ Func_0815e3ac:
 	bgt .L_0815e8ca
 	mov r0, r9
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #52]
 	adds r6, r0, #0
 	ldr r3, [r2, #4]
@@ -761,7 +761,7 @@ Func_0815e3ac:
 	b .L_0815e67e
 .L_0815e9a6:
 	ldr r0, .L_0815e9ec
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

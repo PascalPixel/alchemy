@@ -5,7 +5,7 @@
 Func_080cb6c8:
 	push {r5, r6, r7, lr}
 	adds r7, r0, #0
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r0, #0
 	ble .L_080cb6ee
 	ldr r3, .L_080cb6f0
@@ -18,7 +18,7 @@ Func_080cb6c8:
 	adds r1, r7, #0
 	subs r5, #1
 	adds r6, #1
-	bl Owner_AdjustSecondValueFar
+	bl Func_080ad0c8
 	cmp r5, #0
 	bne .L_080cb6de
 .L_080cb6ee:

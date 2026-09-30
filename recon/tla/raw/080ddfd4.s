@@ -17,7 +17,7 @@ Func_080ddfd4:
 	lsls r0, r0, #1
 	adds r2, r6, #0
 	mov r3, r8
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080de056

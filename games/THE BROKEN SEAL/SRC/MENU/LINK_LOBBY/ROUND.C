@@ -4,6 +4,7 @@
  * dialogue, and restart the peer poll. */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
+#include "CALL.H"
 extern u8 MsgLobbyNotBadNextMonster[];
 extern u8 MsgLobbyNoteCantUse[];
 extern u8 MsgLobbyWonNumberBattle[];
@@ -66,23 +67,6 @@ union GameStateRows {
 
 void LinkLobby_PollPeerReady(void);
 
-/* FAKEMATCH: calls through these inline wrappers keep the constant
-   arguments out of the registers GCC would otherwise share. */
-static __inline__ s32 Value1(s32 (*fn)(), s32 value)
-{
-    return fn(value);
-}
-
-static __inline__ void Call1(void (*fn)(), s32 value)
-{
-    fn(value);
-}
-
-static __inline__ void Call2(void (*fn)(), s32 left, s32 right)
-{
-    fn(left, right);
-}
-
 s32 LinkLobby_RunRoundResult(void)
 {
     s32 i;
@@ -132,14 +116,14 @@ s32 LinkLobby_RunRoundResult(void)
             state->halves[338][0]++;
             state->halves[341][0]++;
         }
-        wins = (s8)Value1(GameFlag_GetByte, 0x3f8);
+        wins = (s8)GameFlag_GetByte(0x3f8);
         msg = wins * 2 + 2;
         if (msg > 14) {
             msg = 14;
         }
         v = Value1(GameFlag_GetByte, 1000);
         if (v == 2) {
-            Call2(GameFlag_SetByte, 1000, 0);
+            GameFlag_SetByte(1000, 0);
             wins++;
             msg++;
         } else {
@@ -149,20 +133,20 @@ s32 LinkLobby_RunRoundResult(void)
         union GameStateRows *state = (union GameStateRows *)gGameState;
 
         Engine_ActorFaceActor(8, state->words[125], 0);
-        Call1(Engine_EventSetMessage, (s32)MsgLobbyNotBadNextMonster + msg);
+        Engine_EventSetMessage((s32)MsgLobbyNotBadNextMonster + msg);
         Engine_EventOpenMessage(8, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             if (wins > 90) {
                 wins = 90;
             }
-            Call2(GameFlag_SetByte, 0x3f8, wins);
+            GameFlag_SetByte(0x3f8, wins);
         } else {
 
             Engine_GameFlagClear(0x173);
-            Call2(GameFlag_SetByte, 0x3f8, -1);
+            GameFlag_SetByte(0x3f8, -1);
             /* FAKEMATCH: one scalar holds the row address, then its score. */
             score = (u32)state->halves[341];
-            Call2(UiText_DrawQuantity, *(u16 *)score, 5);
+            UiText_DrawQuantity(*(u16 *)score, 5);
             score = *(u16 *)score;
             if (state->halves[340][0] < score) {
                 state->halves[340][0] = score;
@@ -187,7 +171,7 @@ s32 LinkLobby_RunRoundResult(void)
         Engine_ActorFaceActor(8, *(s32 *)gGameState[250], 0);
         /* FAKEMATCH: one scalar holds the row address, then its score. */
         score = (u32)&ROW(341);
-        Call2(UiText_DrawQuantity, *(u16 *)score, 5);
+        UiText_DrawQuantity(*(u16 *)score, 5);
         score = *(u16 *)score;
         if (ROW(340) < score) {
             ROW(340) = score;
@@ -200,7 +184,7 @@ s32 LinkLobby_RunRoundResult(void)
         }
         ROW(341) = 0;
         Engine_GameFlagClear(0x173);
-        Call2(GameFlag_SetByte, 0x3f8, -1);
+        GameFlag_SetByte(0x3f8, -1);
         LinkLobby_WriteSlotValue(0);
         Engine_EventEnd();
     } else if ((s16)ROW(225) == 10) {
@@ -213,7 +197,7 @@ s32 LinkLobby_RunRoundResult(void)
         LinkLobby_WriteSlotValue(4);
         if (Value1(Engine_GameFlagIsSet, 1000)) {
             ew = gEventWork;
-            Call1(Engine_GameFlagClear, 1000);
+            Engine_GameFlagClear(1000);
             ew->raised_trigger = 2;
             Engine_GameFlagClear(0x304);
             Engine_TaskWait(20);
@@ -254,7 +238,7 @@ s32 LinkLobby_RunRoundResult(void)
     } else {
         SerialRuntime_Initialize();
         Engine_GameFlagClear(0x172);
-        Call2(GameFlag_SetByte, 0x3f8, -1);
+        GameFlag_SetByte(0x3f8, -1);
         if (*(u8 *)gGameState[277] != 0) {
             Engine_EventBegin();
             Engine_EventOpenScreen();

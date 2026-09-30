@@ -32,14 +32,14 @@ Func_080fb780:
 	bl UiWindow_CreateFar
 	adds r7, r0, #0
 	ldr r0, .L_080fb8a4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r3, #184
 	lsls r3, r3, #1
 	add r3, r8
 	ldr r3, [r3]
 	movs r6, #0
 	strb r5, [r3, #5]
-	bl Func_080f92ac
+	bl Palette_CopyObjectBankToBackground14
 	movs r0, #1
 	bl WaitFrames
 	b .L_080fb7fe
@@ -77,11 +77,11 @@ Func_080fb780:
 	adds r0, r6, #5
 	movs r1, #5
 	mov r10, r3
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r9
 	adds r6, r0, #0
 	adds r0, r7, #0
-	bl Func_080fb8ac
+	bl ItemMenu_DrawItemDetails
 .L_080fb826:
 	ldr r1, .L_080fb8a8
 	movs r2, #1
@@ -120,7 +120,7 @@ Func_080fb780:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080fb8a4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #184
 	lsls r3, r3, #1
 	add r3, r8
@@ -140,6 +140,6 @@ Func_080fb780:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_080fb8a4:
-	.4byte Func_08104da8
+	.4byte Menu_UpdateEntryObjectTransforms
 .L_080fb8a8:
 	.4byte gInput

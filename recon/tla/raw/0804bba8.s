@@ -16,7 +16,7 @@ Func_0804bba8:
 	bl Func_080461c8
 	adds r0, r5, #0
 	movs r1, #1
-	bl Func_08118088 + 0x58
+	bl BattlePres_SetActorModesFar
 	add sp, #8
 	pop {r3}
 	mov r9, r3

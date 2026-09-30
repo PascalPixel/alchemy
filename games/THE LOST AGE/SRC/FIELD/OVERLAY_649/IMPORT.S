@@ -25,8 +25,8 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c8268
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_081a0000
 	overlay_veneer Func_081a6000
 	overlay_veneer Func_081a6018

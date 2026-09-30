@@ -31,7 +31,7 @@ Func_081234f0:
 	bne .L_08123516
 .L_08123522:
 	ldr r0, .L_08123530
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_081234a4
 	pop {r5, pc}
 	.2byte 0x0000

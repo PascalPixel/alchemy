@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080cf17c
+	.global BattleFx_StartRandomParticleEmitter
 	.thumb_func
-Func_080cf17c:
+BattleFx_StartRandomParticleEmitter:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -37,7 +37,7 @@ Func_080cf17c:
 	ldrh r1, [r7, #6]
 	mov r2, r8
 	lsls r0, r0, #13
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r2, r8
 	ldr r3, [r2]
 	ldr r1, .L_080cf2e4
@@ -183,7 +183,7 @@ Func_080cf17c:
 .L_080cf2e8:
 	.4byte Func_080cf4e0
 .L_080cf2ec:
-	.4byte Data_080f0194
+	.4byte BattleFx_ParticleScript
 .L_080cf2f0:
 	.4byte Data_080effd8
 .L_080cf2f4:

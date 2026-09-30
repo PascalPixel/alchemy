@@ -141,14 +141,6 @@ Object_UpdateAllThumb:
 	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000dd70, "ax"
 	.incbin "baserom.gba", 0x0000dd70, 0x000004b0
-	.section .rom.0000ea60, "ax"
-	.incbin "baserom.gba", 0x0000ea60, 0x00000098
-	.section .rom.0000eaf8, "ax"
-	.global Field_CheckConfiguredKeys
-	.type Field_CheckConfiguredKeys, %function
-	.thumb_func
-Field_CheckConfiguredKeys:
-	.incbin "baserom.gba", 0x0000eaf8, 0x000000a8
 	.section .rom.0000ebec, "ax"
 	.incbin "baserom.gba", 0x0000ebec, 0x00000b50
 	.section .rom.0000f752, "ax"
@@ -584,8 +576,6 @@ BattleLayout_HighlightPartyPanels:
 	.incbin "baserom.gba", 0x00022ae2, 0x000026fa
 	.section .rom.0002525c, "ax"
 	.incbin "baserom.gba", 0x0002525c, 0x00001c80
-	.section .rom.00027004, "ax"
-	.incbin "baserom.gba", 0x00027004, 0x000000c4
 	.section .rom.00027134, "ax"
 	.incbin "baserom.gba", 0x00027134, 0x0000003c
 	.section .rom.00027170, "ax"
@@ -1240,8 +1230,6 @@ ItemMenu_Close:
 	.thumb_func
 ItemMenu_RunOwnerSelection:
 	.incbin "baserom.gba", 0x0009a4d0, 0x000002d0
-	.section .rom.0009a7c8, "ax"
-	.incbin "baserom.gba", 0x0009a7c8, 0x00000338
 	.section .rom.0009ade6, "ax"
 	.incbin "baserom.gba", 0x0009ade6, 0x00000002
 	.section .rom.0009ade8, "ax"
@@ -1266,12 +1254,6 @@ ItemMenu_DrawItemDetails:
 	.incbin "baserom.gba", 0x0009bdc0, 0x000002e8
 	.section .rom.0009c260, "ax"
 	.incbin "baserom.gba", 0x0009c260, 0x000001a8
-	.section .rom.0009c4e8, "ax"
-	.global ItemMenu_DrawItemDetailPage
-	.type ItemMenu_DrawItemDetailPage, %function
-	.thumb_func
-ItemMenu_DrawItemDetailPage:
-	.incbin "baserom.gba", 0x0009c4e8, 0x000000b4
 	.section .rom.0009cb94, "ax"
 	.global Menu_ResolveSelectedAction
 	.type Menu_ResolveSelectedAction, %function
@@ -1284,8 +1266,6 @@ Menu_ResolveSelectedAction:
 	.thumb_func
 PsynergyMenu_SetupActionIcons:
 	.incbin "baserom.gba", 0x0009cfb4, 0x000002a8
-	.section .rom.0009d2ba, "ax"
-	.incbin "baserom.gba", 0x0009d2ba, 0x00000202
 	.section .rom.0009d4ec, "ax"
 	.incbin "baserom.gba", 0x0009d4ec, 0x000001ec
 	.section .rom.0009d9dc, "ax"
@@ -1294,12 +1274,6 @@ PsynergyMenu_SetupActionIcons:
 	.thumb_func
 PsynergyMenu_DrawDetailPage:
 	.incbin "baserom.gba", 0x0009d9dc, 0x000000cc
-	.section .rom.0009daa8, "ax"
-	.global PsynergyMenu_DrawActionPage
-	.type PsynergyMenu_DrawActionPage, %function
-	.thumb_func
-PsynergyMenu_DrawActionPage:
-	.incbin "baserom.gba", 0x0009daa8, 0x00000168
 	.section .rom.0009e3bc, "ax"
 	.global ActionMenu_Open
 	.type ActionMenu_Open, %function
@@ -1316,8 +1290,6 @@ Func_080a77a4:
 	.thumb_func
 CharacterMenu_SelectOwner:
 	.incbin "baserom.gba", 0x0009e6bc, 0x000000ac
-	.section .rom.0009e94a, "ax"
-	.incbin "baserom.gba", 0x0009e94a, 0x00000336
 	.section .rom.0009f490, "ax"
 	.global StatusMenu_ShowOwnerProgressMessage
 	.type StatusMenu_ShowOwnerProgressMessage, %function
@@ -1331,13 +1303,19 @@ StatusMenu_ShowOwnerProgressMessage:
 CharacterMenu_DrawStatusAilments:
 	.incbin "baserom.gba", 0x0009f51c, 0x000004fc
 	.section .rom.0009fbc8, "ax"
-	.incbin "baserom.gba", 0x0009fbc8, 0x000003f0
-	.section .rom.0009ffb8, "ax"
-	.global PsynergyMenu_SelectAction
-	.type PsynergyMenu_SelectAction, %function
+	.incbin "baserom.gba", 0x0009fbc8, 0x00000070
+	.section .rom.0009fc38, "ax"
+	.global PsynergyMenu_DrawRangePage
+	.type PsynergyMenu_DrawRangePage, %function
 	.thumb_func
-PsynergyMenu_SelectAction:
-	.incbin "baserom.gba", 0x0009ffb8, 0x000002b4
+PsynergyMenu_DrawRangePage:
+	.incbin "baserom.gba", 0x0009fc38, 0x00000204
+	.section .rom.0009fe3c, "ax"
+	.global PsynergyMenu_DrawListPage
+	.type PsynergyMenu_DrawListPage, %function
+	.thumb_func
+PsynergyMenu_DrawListPage:
+	.incbin "baserom.gba", 0x0009fe3c, 0x0000017c
 	.section .rom.000a029e, "ax"
 	.incbin "baserom.gba", 0x000a029e, 0x00000002
 	.section .rom.000a02a0, "ax"
@@ -1352,12 +1330,6 @@ ItemMenu_DrawEquipPage:
 	.thumb_func
 Shop_DrawItemPage:
 	.incbin "baserom.gba", 0x000a0498, 0x0000013c
-	.section .rom.000a09e8, "ax"
-	.global ItemMenu_DrawEquippedItemNames
-	.type ItemMenu_DrawEquippedItemNames, %function
-	.thumb_func
-ItemMenu_DrawEquippedItemNames:
-	.incbin "baserom.gba", 0x000a09e8, 0x000000a8
 	.section .rom.000a1664, "ax"
 	.global Func_080aa768
 Func_080aa768:
@@ -1456,12 +1428,6 @@ Shop_SelBuy:
 	.thumb_func
 Shop_DrawMoney:
 	.incbin "baserom.gba", 0x000a80cc, 0x00000050
-	.section .rom.000a811c, "ax"
-	.global Shop_DrawItemPrice
-	.type Shop_DrawItemPrice, %function
-	.thumb_func
-Shop_DrawItemPrice:
-	.incbin "baserom.gba", 0x000a811c, 0x00000098
 	.section .rom.000a81b4, "ax"
 	.global Shop_DrawMsg
 	.type Shop_DrawMsg, %function
@@ -1762,7 +1728,9 @@ BattleFx_RunParticlePool:
 	.type BattleFx_RunTwelveMode, %function
 	.thumb_func
 BattleFx_RunTwelveMode:
-	.incbin "baserom.gba", 0x000c160c, 0x000011ec
+	.incbin "baserom.gba", 0x000c160c, 0x00000b98
+	.section .rom.000c24ec, "ax"
+	.incbin "baserom.gba", 0x000c24ec, 0x0000030c
 	.section .rom.000c27f8, "ax"
 	.global Unnamed_080cb7f8
 	.type Unnamed_080cb7f8, %function

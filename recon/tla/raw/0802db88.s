@@ -10,7 +10,7 @@ Func_0802db88:
 	cmp r0, #255
 	beq .L_0802dbca
 	adds r0, r5, #0
-	bl Func_0802dac0
+	bl GetWorldMapCollision
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]

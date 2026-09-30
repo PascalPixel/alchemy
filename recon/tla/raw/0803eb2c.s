@@ -16,7 +16,7 @@ Func_0803eb2c:
 	adds r2, #158
 	adds r5, r6, r2
 	ldrh r1, [r5]
-	bl Func_0803ef48
+	bl Menu_ReloadNodeResource
 	movs r3, #192
 	lsls r3, r3, #2
 	adds r3, #162
@@ -41,7 +41,7 @@ Func_0803eb2c:
 	strh r3, [r7]
 	adds r0, r6, #0
 	movs r1, #0
-	bl Func_0803f004
+	bl Menu_ScrollSelectionList
 	ldrh r3, [r7]
 	cmp r3, #0
 	bne .L_0803eb88
@@ -73,7 +73,7 @@ Func_0803eb2c:
 	adds r3, r6, r1
 	ldrh r1, [r3]
 	adds r0, r6, #0
-	bl Func_0803ef8c
+	bl Menu_LoadSelectionNodeResource
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #210

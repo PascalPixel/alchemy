@@ -19,20 +19,20 @@ BattlePres_SetActorModes:
 	cmp r1, #0
 	bne .L_08126d40
 	ldr r0, .L_08126dfc
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #84
 	mov r1, r10
 	strh r1, [r3]
-	bl Func_08126ba0
+	bl BattlePres_ClearAllActorRecordModes
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #128
 	lsls r0, r0, #19
 	adds r0, #80
 	movs r1, #0
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 .L_08126d40:
 	cmp r5, #0
 	beq .L_08126dee
@@ -114,11 +114,11 @@ BattlePres_SetActorModes:
 	lsls r0, r0, #19
 	adds r0, #80
 	movs r1, #0
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r1, #200
 	ldr r0, .L_08126dfc
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_08126dee:
 	add sp, #28
 	pop {r3, r5, r6, r7}
@@ -128,4 +128,4 @@ BattlePres_SetActorModes:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_08126dfc:
-	.4byte Func_08126bcc
+	.4byte Graphics_AdvancePaletteCycle

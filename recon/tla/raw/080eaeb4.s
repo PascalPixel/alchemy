@@ -29,7 +29,7 @@ Func_080eaeb4:
 	adds r1, r7, #0
 	adds r2, r5, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r5, #0
 	movs r1, #1
 	bl Func_080eaf28
@@ -45,7 +45,7 @@ Func_080eaeb4:
 	adds r2, r5, #0
 	ldr r3, [r6, #16]
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r5, #0
 	movs r1, #1
 	bl Func_080eaf28

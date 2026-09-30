@@ -199,7 +199,7 @@ Func_0802b998:
 	str r2, [r6, #8]
 	bl Func_08014de4
 	adds r0, r6, #0
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	movs r3, #143
 	lsls r3, r3, #1
 	adds r3, r7, r3
@@ -211,7 +211,7 @@ Func_0802b998:
 	adds r1, r1, r7
 	ldrh r0, [r1]
 	mov r8, r1
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	add r2, sp, #20
 	mov r3, r9
 	mov r11, r2
@@ -294,13 +294,13 @@ Func_0802b998:
 	strh r5, [r2]
 	bl Func_08014de4
 	adds r0, r6, #0
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	ldr r3, [sp, #4]
 	ldrh r0, [r3]
 	bl Func_08015068
 	mov r1, r8
 	ldrh r0, [r1]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r2, #144
 	lsls r2, r2, #4
 	adds r2, #118
@@ -356,11 +356,11 @@ Func_0802b998:
 	movs r3, #159
 	strh r3, [r2]
 	adds r1, #133
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0802bd04
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #192
 	movs r1, #164
 	lsls r2, r2, #2

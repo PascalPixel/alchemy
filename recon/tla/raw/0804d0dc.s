@@ -25,7 +25,7 @@ AffineEffect_InitializeWork:
 	lsls r1, r1, #3
 	adds r1, #118
 	ldr r0, .L_0804d114
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	adds r0, r5, #0
 	add sp, #4
 	pop {r5, pc}

@@ -58,7 +58,7 @@ Func_0810b1b4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0810b36c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r3, r10
 	movs r0, #140
 	lsls r2, r3, #1
@@ -89,13 +89,13 @@ Func_0810b1b4:
 	ldr r2, [r6]
 	adds r0, r5, #0
 	lsls r1, r1, #2
-	bl Func_080c8588 + 0x28
+	bl Func_080c85b0
 	adds r0, r5, #0
 	ldr r1, .L_0810b374
-	bl Func_080c8588 + 0x20
+	bl Func_080c85a8
 	movs r1, #7
 	adds r0, r5, #0
-	bl Func_080c8588 + 0x18
+	bl Func_080c85a0
 	bl Random16
 	lsls r1, r0, #3
 	subs r1, r1, r0
@@ -172,14 +172,14 @@ Func_0810b1b4:
 	cmp r3, #0
 	beq .L_0810b320
 	adds r0, r5, #0
-	bl Func_080c8588 + 0x30
+	bl BattleFx_ClearOwnedSlotFar
 .L_0810b320:
 	subs r7, #1
 	adds r5, #72
 	cmp r7, #0
 	bge .L_0810b310
 	ldr r0, .L_0810b36c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	mov r3, r9
 	adds r3, #248
 	mov r2, r8

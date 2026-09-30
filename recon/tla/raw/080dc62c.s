@@ -86,6 +86,6 @@ Func_080dc62c:
 	ldrh r1, [r6]
 	str r3, [r6, #8]
 	adds r2, r6, #4
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 .L_080dc6d6:
 	pop {r5, r6, r7, pc}

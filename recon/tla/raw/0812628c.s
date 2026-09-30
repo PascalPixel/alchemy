@@ -17,7 +17,7 @@ Func_0812628c:
 	lsls r1, r1, #4
 	ldr r0, .L_08126370
 	adds r1, #255
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_081262ac:
 	str r7, [r6, #8]
 	cmp r7, #1
@@ -160,7 +160,7 @@ Func_0812628c:
 	bne .L_08126352
 .L_081263ae:
 	ldr r0, .L_081263bc
-	bl Func_08125b78
+	bl Graphics_BuildSequentialTileTable
 	ldr r0, .L_081263c0
 	bl Func_08125bb8
 	pop {r5, r6, r7, pc}

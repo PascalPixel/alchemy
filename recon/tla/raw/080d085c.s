@@ -28,7 +28,7 @@ Func_080d085c:
 	movs r3, #0
 	strb r3, [r4]
 	ldr r0, .L_080d0930
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
@@ -113,7 +113,7 @@ Func_080d085c:
 .L_080d0930:
 	.4byte Func_080d085c
 .L_080d0934:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 .L_080d0938:
 	.4byte Data_0300122c
 .L_080d093c:

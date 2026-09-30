@@ -41,7 +41,7 @@ Func_0802d600:
 	adds	r0, r2, #0
 	adds	r1, r3, #0
 	adds	r2, r4, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	asrs	r0, r0, #19
 	pop	{pc}
 	push	{r5, lr}
@@ -91,6 +91,9 @@ Func_0802d600:
 	.4byte 0x02024000
 	.2byte 0xc000
 	.2byte 0x0202
+	.global Func_0802d6b0
+	.thumb_func
+Func_0802d6b0:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

@@ -2551,7 +2551,7 @@ Func_08027e20:
 	ldr	r3, [pc, #200]
 	ldr	r1, [r6, #0]
 	adds	r2, r2, r3
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	ldr	r3, [r7, #12]
 	subs	r3, r0, r3
 	movs	r0, #128
@@ -2569,7 +2569,7 @@ Func_08027e20:
 	ldrb	r0, [r2, #0]
 	ldr	r1, [r6, #0]
 	ldr	r2, [r6, #8]
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	ldr	r3, [r7, #12]
 	subs	r3, r0, r3
 	ldr	r0, [pc, #156]
@@ -3437,14 +3437,14 @@ Func_08027e20:
 	ldrb	r0, [r4, #0]
 	adds	r1, r6, #0
 	mov	r8, r2
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	ldr	r1, [sp, #12]
 	str	r0, [sp, #24]
 	add	r5, r8
 	ldrb	r0, [r1, #0]
 	adds	r2, r5, #0
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	adds	r2, r7, #0
 	adds	r2, #100
 	str	r0, [sp, #16]
@@ -4190,7 +4190,7 @@ Func_08027e20:
 	ldrb	r0, [r2, #0]
 	adds	r1, r6, #0
 	mov	r2, r8
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	ldr	r3, [sp, #20]
 	cmp	r0, r3
 	bge.n	.L_08029f68

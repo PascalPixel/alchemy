@@ -28,7 +28,7 @@ Func_0802b344:
 	mov	r3, fp
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	.L_0802b38c
+	bl	Func_0802b38c
 	add	sp, #8
 	pop	{r3, r5, r6}
 	mov	r8, r3
@@ -37,6 +37,9 @@ Func_0802b344:
 	pop	{r3}
 	mov	fp, r3
 	pop	{r5, r6, pc}
+	.global Func_0802b38c
+	.thumb_func
+Func_0802b38c:
 .L_0802b38c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

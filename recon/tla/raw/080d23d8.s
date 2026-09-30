@@ -6,7 +6,7 @@ Func_080d23d8:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r0, r5, #0
 	bl	0x080ad0f8
 	cmp	r6, #0

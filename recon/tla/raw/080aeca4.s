@@ -7,7 +7,7 @@ Inventory_GetQuantity:
 Func_080aeca4:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsls	r5, r5, #1
 	adds	r5, #216
 	ldrh	r0, [r0, r5]

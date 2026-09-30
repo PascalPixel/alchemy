@@ -552,7 +552,7 @@ Func_0804bba8:
 	ldrh	r2, [r2, r3]
 	adds	r0, r2, #0
 	str	r2, [sp, #64]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #192
 	str	r0, [sp, #72]
 	lsls	r3, r3, #18

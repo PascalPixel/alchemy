@@ -114,7 +114,7 @@ Func_0811cd7c:
 	adds	r5, r0, #0
 .L_0811ce6e:
 	ldrh	r0, [r6, r7]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #44
 	adds	r2, #255
 	adds	r3, r0, r2
@@ -182,7 +182,7 @@ Func_0811cd7c:
 .L_0811cef4:
 	mov	r3, fp
 	ldrsh	r0, [r7, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r3, [r0, #15]
 	subs	r5, #1
 	adds	r6, r6, r3
@@ -210,7 +210,7 @@ Func_0811cd7c:
 .L_0811cf2e:
 	mov	r3, sl
 	ldrsh	r0, [r7, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r3, [r0, #15]
 	subs	r5, #1
 	adds	r6, r6, r3

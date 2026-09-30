@@ -1045,7 +1045,7 @@ Func_081197d0:
 	adds	r5, #2
 .L_0811a07e:
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #149
 	lsls	r1, r1, #1
 	adds	r3, r0, r1
@@ -1111,7 +1111,7 @@ Func_081197d0:
 	adds	r6, #2
 .L_0811a0f8:
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #149
 	lsls	r1, r1, #1
 	adds	r3, r0, r1
@@ -1162,7 +1162,7 @@ BattleParty_ListPresentEnemies:
 	bge.n	.L_0811a176
 .L_0811a156:
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -1226,7 +1226,7 @@ BattleParty_ListPresentEnemies:
 	adds	r2, #2
 	adds	r0, r7, #0
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]
@@ -1256,7 +1256,7 @@ BattleParty_ListPresentEnemies:
 	bge.n	.L_0811a232
 .L_0811a206:
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -1335,7 +1335,7 @@ BattleParty_ListPresentEnemies:
 	adds	r2, #2
 	adds	r0, r6, #0
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]
@@ -1365,7 +1365,7 @@ BattleParty_ListPresentEnemies:
 	bge.n	.L_0811a300
 .L_0811a2d4:
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -1504,7 +1504,7 @@ BattleParty_ListPresentEnemies:
 	cmp	r0, #254
 	beq.n	.L_0811a3e8
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]
@@ -1541,7 +1541,7 @@ BattleParty_ListPresentEnemies:
 	cmp	r0, #254
 	beq.n	.L_0811a42c
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]

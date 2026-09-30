@@ -87,7 +87,7 @@ Func_08119054:
 	bgt.n	.L_08119104
 	adds	r0, r7, #0
 	adds	r0, #128
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	bl	0x08016854
 	movs	r2, #1
@@ -165,7 +165,7 @@ Func_08119054:
 .L_08119198:
 	mov	r2, sl
 	ldrh	r0, [r7, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #170
 	adds	r1, r0, #0
 	lsls	r2, r2, #1

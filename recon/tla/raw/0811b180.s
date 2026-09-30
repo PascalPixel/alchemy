@@ -55,7 +55,7 @@ Func_0811b180:
 	cmp	r3, r1
 	bls.n	.L_0811b23a
 	ldrh	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r5, r0, #0
@@ -117,7 +117,7 @@ Func_0811b180:
 	cmp	r3, r1
 	bls.n	.L_0811b274
 	ldrh	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -159,7 +159,7 @@ Summon_FindSlot:
 	adds	r6, r5, #0
 	adds	r6, #128
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

@@ -7,7 +7,7 @@ Func_08124854:
 	mov	r7, r8
 	push	{r7}
 	mov	r8, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #153
 	lsls	r2, r2, #1
 	adds	r1, r0, #0
@@ -56,7 +56,7 @@ Func_08124854:
 	mov	r7, r8
 	push	{r7}
 	mov	r8, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #154
 	lsls	r2, r2, #1
 	adds	r1, r0, #0
@@ -105,7 +105,7 @@ Func_08124854:
 	mov	r7, r8
 	push	{r7}
 	mov	r8, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #155
 	lsls	r2, r2, #1
 	adds	r1, r0, #0
@@ -152,7 +152,7 @@ Func_08124854:
 	pop	{r5, r6, r7, pc}
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #156
 	lsls	r3, r3, #1
 	adds	r5, r0, r3
@@ -182,7 +182,7 @@ Func_08124854:
 	pop	{r5, r6, pc}
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #58
 	adds	r3, #255
 	adds	r5, r0, r3
@@ -212,7 +212,7 @@ Func_08124854:
 	pop	{r5, r6, pc}
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #157
 	lsls	r3, r3, #1
 	adds	r5, r0, r3
@@ -242,7 +242,7 @@ Func_08124854:
 	pop	{r5, r6, pc}
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #60
 	adds	r3, #255
 	adds	r5, r0, r3
@@ -272,7 +272,7 @@ Func_08124854:
 	pop	{r5, r6, pc}
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #158
 	lsls	r3, r3, #1
 	adds	r5, r0, r3
@@ -302,7 +302,7 @@ Func_08124854:
 	pop	{r5, r6, pc}
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #62
 	adds	r3, #255
 	adds	r5, r0, r3
@@ -352,7 +352,7 @@ Func_08124854:
 	mov	r5, r8
 	push	{r5, r6, r7}
 	mov	sl, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r7, #159
 	mov	r8, r0
 	lsls	r7, r7, #1
@@ -431,7 +431,7 @@ Func_08124854:
 	.2byte 0x0c69
 	.2byte 0x0000
 	push	{lr}
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #64
 	adds	r3, #255
 	adds	r1, r0, r3
@@ -450,7 +450,7 @@ Func_08124854:
 .L_08124bca:
 	pop	{pc}
 	push	{lr}
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #163
 	lsls	r3, r3, #1
 	adds	r1, r0, r3
@@ -499,7 +499,7 @@ Func_08124854:
 	ble.n	.L_08124c42
 	ldrb	r0, [r5, #2]
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r2, [sp, #0]

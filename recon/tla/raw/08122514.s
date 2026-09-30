@@ -15,7 +15,7 @@ Func_08122514:
 	adds	r7, r0, #0
 	movs	r1, #0
 	ldrsh	r0, [r7, r1]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #24]
 	movs	r2, #1
 	movs	r3, #0

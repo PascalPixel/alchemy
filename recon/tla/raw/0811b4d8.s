@@ -11,7 +11,7 @@ Func_0811b4d8:
 	movs	r5, #0
 	cmp	r3, #0
 	bne.n	.L_0811b596
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #50
 	adds	r2, r0, #0
 	adds	r1, #255

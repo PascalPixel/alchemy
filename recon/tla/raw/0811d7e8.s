@@ -276,7 +276,7 @@ Func_0811d7e8:
 	movs	r0, #0
 	b.n	.L_0811ddb2
 .L_0811d9f8:
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0
@@ -519,7 +519,7 @@ Func_0811d7e8:
 	strb	r3, [r7, #0]
 	strb	r4, [r5, #0]
 	ldrb	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #165
 	lsls	r1, r1, #1
 	adds	r3, r0, r1
@@ -762,7 +762,7 @@ Func_0811d7e8:
 	cmp	r0, #0
 	beq.n	.L_0811de4c
 	ldrb	r0, [r5, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #56
 	ldrsh	r3, [r0, r2]
 	ldr	r1, [sp, #0]
@@ -860,7 +860,7 @@ Func_0811d7e8:
 	lsls	r5, r6, #1
 .L_0811dee2:
 	ldrsh	r0, [r7, r5]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #60
 	adds	r2, r0, #0
 	adds	r1, #255

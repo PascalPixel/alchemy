@@ -165,7 +165,7 @@ Func_08123648:
 	bne.n	.L_08123786
 	adds	r0, r5, #0
 	str	r4, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #56
 	ldrsh	r3, [r0, r2]
 	ldr	r4, [sp, #0]
@@ -270,7 +270,7 @@ Func_08123648:
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
 	mov	sl, r2
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r1, sp
 	mov	r2, sp
 	adds	r1, #20
@@ -1568,7 +1568,7 @@ Func_08123648:
 	mov	r2, fp
 	ldr	r3, [r2, #0]
 	ldrb	r0, [r3, #3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r3, fp
 	ldr	r2, [r3, #0]
 	mov	r4, sl

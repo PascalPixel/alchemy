@@ -43,7 +43,7 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 {
     s32 value =
-        ((struct OwnerLearnedState *)OwnerState_Get(owner))->learned[index] &
+        ((struct OwnerLearnedState *)Owner_GetState(owner))->learned[index] &
         (1 << bit);
 
     return (u32)(-value | value) >> 31;

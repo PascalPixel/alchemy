@@ -90,7 +90,7 @@ Func_0811cfd0:
 	movs	r6, #0
 	mov	r9, r3
 	mov	r0, r9
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	adds	r2, r7, #0
 	adds	r2, #67
@@ -239,7 +239,7 @@ Func_0811cfd0:
 	bne.n	.L_0811d1d8
 	movs	r2, #0
 	ldrsh	r0, [r5, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrh	r2, [r5, #8]
 	ldr	r3, [pc, #40]
 	lsls	r0, r2, #16
@@ -937,7 +937,7 @@ Func_0811cfd0:
 .L_0811d6de:
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #6
 	ldrsh	r3, [r5, r4]
 	movs	r2, #1

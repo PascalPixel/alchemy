@@ -6,7 +6,7 @@ Func_080af8d0:
 .L_080af8d0:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #42
 	adds	r2, r0, #0
 	adds	r1, #255
@@ -52,7 +52,7 @@ Func_080af8d0:
 	push	{r7}
 	adds	r6, r1, #0
 	mov	fp, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	sl, r0
 	movs	r0, #44
 	bl	0x08014dac

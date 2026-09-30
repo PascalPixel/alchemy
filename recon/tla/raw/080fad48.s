@@ -5,7 +5,7 @@
 Func_080fad48:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r7, #128
 	lsls	r7, r7, #1
 	movs	r4, #248

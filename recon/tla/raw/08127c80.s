@@ -448,7 +448,7 @@ BattleFormation_SelectRandomAvailableMember:
 	.2byte 0x0300
 .L_08127fc8:
 	adds	r0, r7, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #166
 	lsls	r1, r1, #1
 	adds	r7, #1
@@ -489,7 +489,7 @@ BattleFormation_SelectRandomAvailableMember:
 	adds	r0, r6, #0
 	bl	0x080ad0e8
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r1, [sp, #32]
 	mov	r8, r0
 	cmp	r1, #0

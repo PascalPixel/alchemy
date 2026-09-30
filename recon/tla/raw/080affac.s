@@ -73,7 +73,7 @@ Func_080affac:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0
 	sub	sp, #16
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r1, r0, #0
 	movs	r0, #0
 	cmp	r6, #3

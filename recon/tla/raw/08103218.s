@@ -19,7 +19,7 @@ Func_08103218:
 	str	r1, [sp, #60]
 	str	r2, [sp, #56]
 	str	r3, [sp, #52]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #192
 	str	r0, [sp, #48]
 	lsls	r3, r3, #18
@@ -295,7 +295,7 @@ Func_08103218:
 	ldr	r0, [sp, #52]
 	bl	0x080ad008
 	ldr	r0, [sp, #52]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r3, [sp, #212]
 	str	r0, [sp, #48]
 	cmp	r3, #0
@@ -1127,7 +1127,7 @@ Func_08103218:
 	mov	r8, r0
 	adds	r0, r6, #0
 	str	r3, [sp, #64]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	ldr	r3, [pc, #780]
 	adds	r1, r7, #0
@@ -1207,7 +1207,7 @@ Func_08103218:
 	add	r3, sl
 	ldrb	r6, [r3, #0]
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #166
 	adds	r7, r0, #0
 	adds	r1, r7, #0
@@ -1296,7 +1296,7 @@ Func_08103218:
 	adds	r0, r6, #0
 	mov	r8, r1
 	orrs	r5, r3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsrs	r5, r5, #31
 	subs	r5, r7, r5
 	movs	r2, #166
@@ -2398,7 +2398,7 @@ Func_08103218:
 	add	r3, sl
 	adds	r6, r0, #0
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r1, r0, #0
 	add	r2, sp, #64
 	adds	r1, #88

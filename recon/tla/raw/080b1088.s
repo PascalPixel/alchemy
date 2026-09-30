@@ -43,7 +43,7 @@ Func_080b1088:
 	mov	sl, r1
 .L_080b10d2:
 	mov	r0, sl
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	adds	r2, r7, #0
 	adds	r2, #216
@@ -202,7 +202,7 @@ Func_080b1088:
 	movs	r6, #4
 .L_080b120e:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #14
 	adds	r0, #216
 .L_080b1218:

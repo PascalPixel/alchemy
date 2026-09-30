@@ -103,7 +103,7 @@
 	mov	fp, r1
 	mov	r0, fp
 	mov	r9, r3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r3, [sp, #24]
 	mov	sl, r0
 	lsls	r3, r3, #1

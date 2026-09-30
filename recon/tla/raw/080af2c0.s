@@ -20,7 +20,7 @@
 	pop	{r5, r6, pc}
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsls	r5, r5, #1
 	adds	r5, #216
 	ldrh	r2, [r0, r5]
@@ -41,7 +41,7 @@
 	.2byte 0x0000
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsls	r5, r5, #1
 	adds	r5, #216
 	ldrh	r2, [r0, r5]
@@ -124,7 +124,7 @@ Inventory_CountItem:
 	push	{r6, r7}
 	adds	r6, r1, #0
 	sub	sp, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #128
 	lsls	r3, r3, #1
 	adds	r3, #255

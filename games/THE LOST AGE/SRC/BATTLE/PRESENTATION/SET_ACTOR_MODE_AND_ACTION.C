@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-u8 *OwnerState_Get(s32);
+u8 *Owner_GetState(s32);
 s32 *GetBattleObjectSlot(s32);
 void Object_SetMode(s32, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
@@ -10,7 +10,7 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
     u8 *state;
     s32 value;
 
-    state = OwnerState_Get(id);
+    state = Owner_GetState(id);
     value = 1;
     if (*(s16 *)(state + 56) != 0) {
         if (state[316] != 0 || state[315] != 0 || state[325] != 0)

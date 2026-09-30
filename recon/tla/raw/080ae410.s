@@ -149,7 +149,7 @@ Func_080ae410:
 	mov	fp, r3
 .L_080ae530:
 	adds	r0, r7, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r2, r9
 	mov	r3, r8
 	adds	r5, r0, #0
@@ -301,7 +301,7 @@ Func_080ae410:
 	movs	r5, #0
 .L_080ae66e:
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #166
 	lsls	r3, r3, #1
 	adds	r1, r5, #0

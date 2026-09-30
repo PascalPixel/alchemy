@@ -46,7 +46,7 @@ Func_080fa870:
 	lsls	r3, r3, #1
 	adds	r3, r3, r1
 	ldrh	r0, [r6, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #144
 	ldr	r0, [pc, #16]
 	lsls	r1, r1, #3
@@ -74,7 +74,7 @@ Func_080fa870:
 	lsls	r3, r3, #1
 	adds	r3, r3, r1
 	ldrh	r0, [r6, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r3, [r6, #16]
 	ldr	r4, [sp, #12]
 	ldrh	r2, [r3, #12]

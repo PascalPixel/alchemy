@@ -27,7 +27,7 @@ Func_0815e3ac:
 	ldr	r3, [r3, #0]
 	str	r3, [sp, #28]
 	ldr	r0, [r5, #8]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #24]
 	movs	r0, #1
 	bl	0x08013560
@@ -1517,7 +1517,7 @@ Func_0815e3ac:
 	adds	r7, r0, #0
 	adds	r0, r5, #0
 	ldr	r6, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

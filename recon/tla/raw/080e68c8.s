@@ -1086,7 +1086,7 @@ Func_080e68c8:
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	movs	r0, #79
 	bl	Object_GetById

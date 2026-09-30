@@ -218,7 +218,7 @@ Func_080fbe6c:
 	adds	r3, #22
 	add	r3, r9
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #16
 	adds	r1, r7, #0
 	movs	r3, #16
@@ -231,7 +231,7 @@ Func_080fbe6c:
 	adds	r3, #255
 	add	r3, r9
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r1, r7, #0
 	movs	r2, #80
 	movs	r3, #16
@@ -364,7 +364,7 @@ Func_080fbe6c:
 	adds	r3, r6, r2
 	ldrb	r0, [r3, #0]
 	adds	r6, #240
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r1, [r6, #0]
 	movs	r2, #16
 	movs	r3, #0
@@ -549,7 +549,7 @@ Func_080fbe6c:
 	adds	r6, #255
 	add	r6, r9
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #181
 	str	r0, [sp, #4]
 	lsls	r3, r3, #1
@@ -772,7 +772,7 @@ Func_080fbe6c:
 	bl	Func_080fad1c
 	adds	r7, r0, #0
 	ldrb	r0, [r6, r5]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r3, [r6, r5]
 	movs	r2, #153
 	lsls	r2, r2, #2
@@ -1350,7 +1350,7 @@ Func_080fbe6c:
 	ldr	r1, [sp, #16]
 	strb	r5, [r7, r1]
 	ldrb	r0, [r6, r4]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #226
 	lsls	r2, r2, #1
 	adds	r1, r7, r2
@@ -1410,7 +1410,7 @@ Func_080fbe6c:
 	lsls	r6, r6, #2
 	adds	r3, r4, r6
 	ldrb	r0, [r1, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #226
 	lsls	r2, r2, #1
 	adds	r5, r7, r2
@@ -1684,7 +1684,7 @@ Func_080fbe6c:
 	adds	r2, #22
 	adds	r3, r7, r2
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #133
 	lsls	r2, r2, #2
 	adds	r3, r7, r2

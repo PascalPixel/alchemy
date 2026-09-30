@@ -36,6 +36,7 @@ extern const s32 gHaidiaBabiRampFinalAction[];
 extern const s32 gHaidiaBabiRampActor10Action[];
 extern const s32 gHaidiaBabiRampActor10ActionB[];
 
+/* FAKEMATCH: the CallN inline wrappers set up each call's arguments as the reference does. */
 static __inline__ void Call1(void (*f)(),s32 a0){f(a0);}
 static __inline__ void Call2(void (*f)(),s32 a0,s32 a1){f(a0,a1);}
 static __inline__ void Call3(void (*f)(),s32 a0,s32 a1,s32 a2){f(a0,a1,a2);}

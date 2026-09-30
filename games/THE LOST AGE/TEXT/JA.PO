@@ -12867,7 +12867,7 @@ msgctxt "message"
 msgid "03214"
 msgstr "{argument_actor_name:234} じぶんをこうげき!"
 
-msgctxt "message"
+msgctxt "MsgAllResting"
 msgid "03215"
 msgstr "だれもが たたかいのてをやすめた!"
 
@@ -12959,11 +12959,11 @@ msgctxt "MsgSuffocate"
 msgid "03237"
 msgstr "{argument_actor_name:233} いきのねをとめた"
 
-msgctxt "message"
+msgctxt "MsgBlownAway"
 msgid "03238"
 msgstr "{argument_actor_name:234} せんとうふのうになった!"
 
-msgctxt "message"
+msgctxt "MsgFieldBroken"
 msgid "03239"
 msgstr "{argument_actor_name:234} ちっそくした!"
 
@@ -13015,11 +13015,11 @@ msgctxt "message"
 msgid "03251"
 msgstr "{argument_actor_name:233} こうげきは はずれた!"
 
-msgctxt "message"
+msgctxt "MsgFieldProtects"
 msgid "03252"
 msgstr "{argument_actor_name:233} {argument_ability_name}はリカバリー中だった!"
 
-msgctxt "message"
+msgctxt "MsgDissipated"
 msgid "03253"
 msgstr "しかし こうかがなかった!"
 
@@ -13039,11 +13039,11 @@ msgctxt "MsgLeechTake"
 msgid "03257"
 msgstr "さらに HPを{argument_signed_number}すいとられた!"
 
-msgctxt "message"
+msgctxt "MsgMorePpLossE"
 msgid "03258"
 msgstr "さらに EPを{argument_signed_number}うばった!"
 
-msgctxt "message"
+msgctxt "MsgMorePpLossP"
 msgid "03259"
 msgstr "さらに EPを{argument_signed_number}すいとられた!"
 
@@ -13187,11 +13187,11 @@ msgctxt "MsgAura2"
 msgid "03294"
 msgstr "{argument_actor_name:234} みうごきが とれない!"
 
-msgctxt "message"
+msgctxt "MsgVanished"
 msgid "03295"
 msgstr "{argument_actor_name:234} まもりのオーラにつつまれた!"
 
-msgctxt "message"
+msgctxt "MsgCounterReady"
 msgid "03296"
 msgstr "{argument_actor_name:234} まもりのオーラにつつまれた!"
 
@@ -13655,19 +13655,19 @@ msgctxt "message"
 msgid "03411"
 msgstr "{argument_actor_name:234}{argument_ability_name}をつかった!"
 
-msgctxt "message"
+msgctxt "MsgSplitOff"
 msgid "03412"
 msgstr "{argument_actor_name:234}{argument_ability_name}をはき出した!"
 
-msgctxt "message"
+msgctxt "MsgSplitFailed"
 msgid "03413"
 msgstr "{argument_actor_name:234} ちょうおんぱを はっした!"
 
-msgctxt "message"
+msgctxt "MsgAppears"
 msgid "03414"
 msgstr "{argument_actor_name:230} ぶんれつした!"
 
-msgctxt "message"
+msgctxt "MsgNoOneCame"
 msgid "03415"
 msgstr "ぞうしょくは しっぱいした!"
 
@@ -13719,7 +13719,7 @@ msgctxt "message"
 msgid "03427"
 msgstr "{argument_actor_name:234} ぞうしょくうんどうをした!"
 
-msgctxt "message"
+msgctxt "MsgUpToFight"
 msgid "03428"
 msgstr "{argument_actor_name:234} なかまをさがした!"
 

@@ -60,5 +60,19 @@ extern char MsgCureSpirit;
 extern char MsgCureCurse;
 extern char MsgBuffsReset;
 extern char MsgHpRegen; /* "recovered HP!", where The Broken Seal says Refrain blocks */
+extern char MsgAllResting;
+extern char MsgBlownAway;
+extern char MsgFieldBroken;
+extern char MsgFieldProtects;
+extern char MsgDissipated;
+extern char MsgMorePpLossE;
+extern char MsgMorePpLossP;
+extern char MsgVanished;
+extern char MsgCounterReady;
+extern char MsgSplitOff;
+extern char MsgSplitFailed;
+extern char MsgAppears;
+extern char MsgNoOneCame;
+extern char MsgUpToFight;
 
 #endif

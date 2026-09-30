@@ -834,7 +834,7 @@ Func_080ea7c0:
 	adds	r7, r0, #0
 	movs	r2, #2
 	ldrsh	r6, [r3, r2]
-	bl	0x080eab70
+	bl	Func_080eab70
 	adds	r3, r7, #0
 	adds	r3, #34
 	ldrb	r2, [r3, #0]

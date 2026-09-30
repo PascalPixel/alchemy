@@ -206,7 +206,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_7.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_8.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_9.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/08020358.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_10.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08020370.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08020380.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080203a0.o"(.text .rodata .data .padding)

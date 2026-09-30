@@ -234,7 +234,7 @@ Func_080cdc74:
 	bl	Object_CommitPosition
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x080d2c98
+	bl	Func_080d2c98
 	mov	r0, sl
 	ldr	r1, [r7, #0]
 	ldr	r2, [r7, #4]

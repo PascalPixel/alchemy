@@ -626,7 +626,7 @@ SECTIONS
         "*/recon/tla/raw/080c8588.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OBJECTMO_2.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_31.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080c8648.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OBJECT_2.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c8698.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c8710.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c8730.o"(.text .rodata .data .padding)

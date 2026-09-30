@@ -381,7 +381,7 @@ Func_0811e830:
 	lsls	r3, r3, #16
 	ldr	r0, [r4, #8]
 	mov	r2, fp
-	bl	0x0811c120
+	bl	Func_0811c120
 .L_0811eb46:
 	movs	r3, #32
 	ands	r3, r7
@@ -429,7 +429,7 @@ Func_0811e830:
 	movs	r2, #36
 	ldrsh	r1, [r4, r2]
 	mov	r2, fp
-	bl	0x0811c120
+	bl	Func_0811c120
 	ldr	r0, [r5, #0]
 	movs	r1, #16
 	bl	0x08020098

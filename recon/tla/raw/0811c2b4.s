@@ -27,7 +27,7 @@ Func_0811c2b4:
 	.2byte 0xf800
 	.2byte 0x1c05
 	mov	r0, sl
-	bl	.L_0811c37c
+	bl	Func_0811c37c
 	adds	r1, r0, #0
 	asrs	r1, r1, #16
 	adds	r0, r5, #0
@@ -94,6 +94,9 @@ Func_0811c2b4:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_0811c37c
+	.thumb_func
+Func_0811c37c:
 .L_0811c37c:
 	push	{r5, lr}
 	adds	r5, r0, #0

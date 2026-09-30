@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+#include "TBS_EDITION.H"
 extern u8 Data_03001e8c[];
 
 struct Work {
@@ -23,7 +24,7 @@ void UiWork_FinalizePendingCore(void)
     struct FinalizeWorkSlot *slot;
     struct Work *work;
 
-    slot = (struct FinalizeWorkSlot *)(*(u8 **)((u32)&Data_03001e8c) + 0x620);
+    slot = (struct FinalizeWorkSlot *)(*(u8 **)((u32)&Data_03001e8c) + RENDER_CHANNEL_OFS);
     slot_index = 0;
     do {
         work = slot->work;

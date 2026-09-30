@@ -863,7 +863,7 @@ Func_080ea14c:
 	movs	r3, #255
 	strb	r3, [r5, #2]
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ea856
 	adds	r0, r7, #0

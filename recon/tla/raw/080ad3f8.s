@@ -718,16 +718,16 @@ Owner_RecalculateStats:
 	movs	r0, #136
 .L_080ad9c2:
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	b.n	.L_080ad9dc
 	movs	r0, #20
 .L_080ad9cc:
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	b.n	.L_080ad9dc
 	movs	r0, #18
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 .L_080ad9dc:
 	cmp	r0, #0
 	beq.n	.L_080ad9e6

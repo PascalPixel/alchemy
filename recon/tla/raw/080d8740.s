@@ -587,7 +587,7 @@ Func_080d8740:
 	mov	r8, r1
 	ldr	r6, [r3, #0]
 	movs	r7, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080d8cd2
 	movs	r3, #194

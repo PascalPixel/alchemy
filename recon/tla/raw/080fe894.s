@@ -108,7 +108,7 @@ Func_080fe894:
 	movs	r3, #0
 	bl	0x08038080
 	movs	r0, #55
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fe97e
 	ldr	r1, [r5, #0]
@@ -273,7 +273,7 @@ Func_080fe894:
 	cmp	r3, #0
 	beq.n	.L_080feadc
 	movs	r0, #55
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080feadc
 	bl	Func_080fe638
@@ -289,7 +289,7 @@ Func_080fe894:
 .L_080feae8:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080feaf6
 	b.n	.L_080fe94a
@@ -653,7 +653,7 @@ Func_080fe894:
 	adds	r5, r7, #0
 .L_080fedd4:
 	ldmia	r5!, {r0}
-	bl	0x080ad0f8
+	bl	Party_AddActiveOwnerFar
 	mov	r2, sl
 	ldrb	r3, [r2, #0]
 	adds	r6, #1
@@ -1128,7 +1128,7 @@ Func_080fe894:
 .L_080ff194:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ff1a2
 	b.n	.L_080fefb0
@@ -1138,7 +1138,7 @@ Func_080fe894:
 	bne.n	.L_080ff1b6
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ff1b6
 	b.n	.L_080fef4c

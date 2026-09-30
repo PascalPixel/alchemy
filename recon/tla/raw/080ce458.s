@@ -281,7 +281,7 @@ Func_080ce458:
 .L_080ce684:
 	movs	r0, #191
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ce6aa
 	adds	r0, r7, #0
@@ -336,7 +336,7 @@ Func_080ce458:
 	movs	r0, #252
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ce71c
 	movs	r0, #72
@@ -389,7 +389,7 @@ Func_080ce458:
 	bne.n	.L_080ce7ee
 	movs	r0, #162
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ce794
 	adds	r0, r7, #0
@@ -735,12 +735,12 @@ Func_080ce458:
 	bl	.L_080ceafc
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cea78
 	movs	r0, #66
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cea74
 	bl	0x080db670
@@ -781,7 +781,7 @@ Func_080ce458:
 	lsls	r5, r5, #1
 	bl	.L_080ceafc
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ceacc
 	bl	0x080db848
@@ -837,7 +837,7 @@ Func_080ce458:
 	.2byte 0xf800
 	.2byte 0x20a1
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ceb50
 	bl	0x080d22a8

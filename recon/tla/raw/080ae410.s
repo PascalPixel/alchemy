@@ -89,7 +89,7 @@ Func_080ae410:
 	lsls	r5, r5, #4
 	adds	r5, #34
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ae4ca
 	adds	r0, r5, #0
@@ -377,7 +377,7 @@ Func_080ae410:
 .L_080ae704:
 	adds	r0, r5, #0
 	str	r2, [sp, #0]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r2, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_080ae71a
@@ -443,7 +443,7 @@ Func_080ae410:
 	adds	r0, r6, #0
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r1, [sp, #4]
 	ldr	r2, [sp, #0]
 	cmp	r0, #0

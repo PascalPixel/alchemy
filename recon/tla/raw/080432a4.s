@@ -241,7 +241,7 @@ Func_080432a4:
 	adds	r6, r3, #0
 .L_08043482:
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08043492
 	ldrb	r3, [r6, #0]
@@ -252,7 +252,7 @@ Func_080432a4:
 	cmp	r5, #127
 	ble.n	.L_08043482
 	movs	r0, #34
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	negs	r3, r0
 	orrs	r3, r0
 	adds	r2, r7, #0

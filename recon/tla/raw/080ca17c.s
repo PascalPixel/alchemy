@@ -103,7 +103,7 @@ Func_080ca17c:
 	ldrsh	r0, [r5, r2]
 	cmp	r0, r8
 	beq.n	.L_080ca248
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ca252
 .L_080ca248:
@@ -269,7 +269,7 @@ Func_080ca17c:
 	adds	r0, #222
 	adds	r6, r1, #0
 	ldr	r5, [pc, #108]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ca3e2
 	ldr	r1, [pc, #104]
@@ -340,7 +340,7 @@ Func_080ca17c:
 	adds	r0, #222
 	adds	r6, r1, #0
 	ldr	r5, [pc, #128]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ca482
 	ldr	r1, [pc, #124]
@@ -459,7 +459,7 @@ Func_080ca17c:
 	bne.n	.L_080ca4f8
 	movs	r0, #163
 	lsls	r0, r0, #4
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ca4f6
 	ldr	r5, [pc, #24]
@@ -571,7 +571,7 @@ Func_080ca17c:
 	movs	r0, #182
 	lsls	r0, r0, #1
 	ldr	r5, [pc, #180]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ca5f4
 	movs	r6, #79
@@ -628,7 +628,7 @@ Func_080ca17c:
 	movs	r0, #252
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	movs	r6, #56
 	cmp	r0, #0
 	beq.n	.L_080ca68c
@@ -686,7 +686,7 @@ Func_080ca17c:
 	movs	r0, #252
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ca6d6
 	adds	r5, #1

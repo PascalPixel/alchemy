@@ -418,7 +418,7 @@ Func_0810a2c8:
 	lsls	r3, r3, #3
 	adds	r6, r5, r3
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_0810a6b2
 	adds	r0, r6, #0

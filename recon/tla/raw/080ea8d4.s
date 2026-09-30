@@ -97,7 +97,7 @@ Func_080ea8d4:
 	ldr	r3, [r7, #20]
 	bl	0x080ea8a8
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ea9b4
 	adds	r0, r7, #0
@@ -194,7 +194,7 @@ Func_080ea8d4:
 	lsls	r3, r3, #16
 	lsrs	r0, r3, #16
 	mov	fp, r3
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080eaa74
 	cmp	r5, #0
@@ -253,7 +253,7 @@ Func_080ea8d4:
 	lsrs	r5, r3, #16
 	asrs	r7, r0, #19
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080eaaf0
 	adds	r0, r5, #0
@@ -283,7 +283,7 @@ Func_080ea8d4:
 	mov	r1, fp
 	strb	r0, [r3, #0]
 	lsrs	r0, r1, #16
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080eab34
 	movs	r3, #0

@@ -72,7 +72,7 @@ BattleFormation_SelectRandomAvailableMember:
 	strb	r2, [r3, #0]
 	adds	r0, #255
 	str	r1, [sp, #28]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08127d10
 	add	r0, sp, #32
@@ -500,11 +500,11 @@ BattleFormation_SelectRandomAvailableMember:
 .L_08128034:
 	movs	r0, #116
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08128050
 	movs	r0, #46
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08128050
 	adds	r0, r6, #0
@@ -527,7 +527,7 @@ BattleFormation_SelectRandomAvailableMember:
 	blt.n	.L_0812807e
 	movs	r0, #116
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_0812807e
 	movs	r3, #1

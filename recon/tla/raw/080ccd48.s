@@ -16,10 +16,10 @@ Func_080ccd48:
 	ands	r3, r0
 	cmp	r3, #0
 	beq.n	.L_080ccd66
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	b.n	.L_080ccd74
 .L_080ccd66:
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	negs	r3, r0
 	orrs	r3, r0
 	lsrs	r3, r3, #31

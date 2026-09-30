@@ -279,7 +279,7 @@ Func_080cd680:
 	.2byte 0xf800
 	.2byte 0x20a1
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cd8f0
 	ldr	r0, [pc, #68]

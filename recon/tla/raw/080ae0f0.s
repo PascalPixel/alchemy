@@ -173,7 +173,7 @@ Func_080ae0f0:
 	bne.n	.L_080ae258
 	movs	r0, #136
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ae270
 	movs	r0, #137
@@ -182,13 +182,13 @@ Func_080ae0f0:
 .L_080ae258:
 	movs	r0, #18
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ae270
 	movs	r0, #20
 	adds	r0, #255
 .L_080ae268:
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ae272
 .L_080ae270:

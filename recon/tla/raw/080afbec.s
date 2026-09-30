@@ -245,7 +245,7 @@
 	movs	r5, #0
 .L_080afdc2:
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080afdce
 	adds	r6, #1

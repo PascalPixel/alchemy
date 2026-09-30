@@ -1785,7 +1785,7 @@ Func_080e03c4:
 	movs	r0, #70
 	str	r3, [r2, #0]
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	movs	r1, #154
 	lsls	r1, r1, #2
 	adds	r3, r5, r1

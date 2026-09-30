@@ -1002,7 +1002,7 @@ Func_08120454:
 .L_08120c0a:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08120c28
 	ldr	r1, [sp, #4]
@@ -1752,7 +1752,7 @@ Func_08120454:
 	beq.n	.L_081211ce
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_081211d4
 	ldr	r4, [sp, #4]

@@ -519,6 +519,9 @@ Func_080aff7c:
 	movs	r0, r0
 	.2byte 0x150c
 	.2byte 0x080c
+	.global Func_080aff94
+	.thumb_func
+Func_080aff94:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	movs	r0, #0

@@ -3694,7 +3694,7 @@ Func_08049a30:
 	cmp	r2, #0
 	bge.n	.L_0804b6e0
 	ldr	r0, [pc, #184]
-	bl	0x08045330
+	bl	Func_08045330
 	ldr	r3, [r7, #80]
 	cmp	r3, #0
 	beq.n	.L_0804b7b4

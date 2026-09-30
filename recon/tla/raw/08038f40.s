@@ -235,6 +235,9 @@ Func_08039004:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x2000
 	.2byte 0x0600
+	.global Func_0803911c
+	.thumb_func
+Func_0803911c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

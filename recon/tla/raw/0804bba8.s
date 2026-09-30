@@ -93,7 +93,7 @@ Func_0804bc08:
 	ldr	r0, [pc, #168]
 	bl	Func_080453d0
 	ldr	r0, [pc, #164]
-	bl	0x08045330
+	bl	Func_08045330
 	bl	0x080451bc
 	ldr	r2, [sp, #36]
 	movs	r4, #130

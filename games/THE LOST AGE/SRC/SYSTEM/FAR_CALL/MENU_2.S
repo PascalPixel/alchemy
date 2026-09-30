@@ -17,5 +17,5 @@ Menu_RunConfirmSelectionFar:
 	.global Func_08038380
 	.thumb_func
 Func_08038380:
-	overlay_veneer Func_0804da8c
+	overlay_veneer Menu_SelectEntry20To21
 	overlay_veneer Func_08044a54

@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_REG.H"
+#include "GLOBAL_CELLS.H"
 
 typedef void (*InterruptHandler)(void);
 extern InterruptHandler Data_030000e0[];
 void RuntimeDispatch_ReservedNoOp03008(void);
-
 void Runtime_InvokeCallbacksByKey(s32 key);
 u8 *Runtime_AllocateHeapBlock(s32, s32);
 void Runtime_CopyAndCallRoutine(void *argument);
@@ -75,6 +75,8 @@ struct DmaChannel {
             __asm__ volatile("swi 2");                                         \
         } while (!(Data_03001d28 & 1));                                        \
     }
+
+extern u8 Data_03001b00[];
 
 /* Installs or removes the handler for one interrupt with IME off: sets
    the IE bit, the DISPSTAT enable (and the VCOUNT target for IRQ 2), and
@@ -274,4 +276,9 @@ void WaitFrames(s32 frames)
             ;
         gSavedStackSize = 0;
     }
+}
+
+void Runtime_SetMainState19(void)
+{
+    *(s32 *)((u32)&Data_03001b00) = 0x13;
 }

@@ -12,7 +12,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN3.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_POSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.o"(.text)
         "*/resource_3af_overlay.o"(.rodata)

@@ -3,17 +3,61 @@
 #include "FIELD_EVENT.H"
 #include "GLOBAL_CELLS.H"
 
+s32 WaitFrames(s32);
+s32 UiGlyph_ResetWorkState();
+void Resource_ClearOwnerListAndCounters(void);
+
+struct State_0801c304 {
+    u8 filler0[0x39e];
+    u16 value;
+    u8 filler3a0[0x18];
+    u16 active;
+};
+
+extern struct State_0801c304 *gResQueueWork;
+void MenuSelection_BuildEntries(u32);
+void Menu_SetupSelectionBothSides(void);
+void Menu_OpenSelectionWindow(u32, u32);
+void Resource_ScheduleOwnerResetDelayed(void);
+u32 Menu_WaitForSelectionInput(u32);
+void Resource_ResetOwnerEntries(void);
+
 s32 BattleFx_FindConditionResourceFar(s16 scene, s16 entrance);
 s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *height);
 s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 void UiTimedNotice_Tick(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-
 extern u8 Data_03001ebc[];
 s32 Scheduler_RemoveCallback(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+
+s32 PartyInventory_RemoveFar(s32);
+
+void Ui_ClearWorkStateAndWaitFrame(void)
+{
+    UiGlyph_ResetWorkState();
+    Resource_ClearOwnerListAndCounters();
+    WaitFrames(1);
+}
+
+u32 Menu_RunSelectionForValue(u32 value)
+{
+    struct State_0801c304 *state = gResQueueWork;
+    u32 result;
+
+    /* 値、使用中フラグの順に設定する。 */
+    state->value = value;
+    state->active = 1;
+    MenuSelection_BuildEntries(value);
+    Menu_SetupSelectionBothSides();
+    Menu_OpenSelectionWindow(0, 5);
+    Resource_ScheduleOwnerResetDelayed();
+    result = Menu_WaitForSelectionInput(1);
+    Resource_ResetOwnerEntries();
+    return result;
+}
 
 /* Show the text the party's scene and entrance select, centred in a
    window, and let UiTimedNotice_Tick close it after 90 frames. The window
@@ -73,4 +117,17 @@ void UiTimedNotice_CloseIfActive(void)
         UiWork_Finalize(work, 2);
         Scheduler_RemoveCallback((s32)UiTimedNotice_Tick);
     }
+}
+
+s32 Item_CallHandler48(s32 arg0, s32 arg1)
+{
+    PartyInventory_RemoveFar(arg1);
+    return 0;
+}
+
+/* A routine that only reports success; the window far-call table reaches
+   it through its stub. */
+s32 Item_ReturnTrue(void)
+{
+    return 1;
 }

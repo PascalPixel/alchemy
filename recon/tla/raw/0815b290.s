@@ -39,7 +39,7 @@ Func_0815b290:
 	adds	r0, r5, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	mov	r2, r8
 	strb	r5, [r2, #16]
 	ldr	r5, [pc, #60]
@@ -120,7 +120,7 @@ Func_0815b290:
 	adds	r1, r5, #0
 	ldrb	r0, [r6, #16]
 	movs	r2, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldrh	r3, [r7, #0]
 	ldrh	r1, [r6, #8]
 	adds	r3, r3, r5

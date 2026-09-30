@@ -8,7 +8,7 @@ Func_080143f8:
 	ldr	r1, [pc, #8]
 	lsls	r3, r0, #2
 	ldrh	r1, [r1, r3]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	pop	{pc}
 	.2byte 0x36e0
 	.2byte 0x0200

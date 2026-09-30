@@ -11,7 +11,7 @@ Func_0803a448:
 	movs	r2, #0
 	movs	r0, #95
 	ldr	r5, [r3, #60]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r2, #152
 	lsls	r2, r2, #5
 	adds	r2, #72
@@ -64,7 +64,7 @@ Func_0803a448:
 	movs	r2, #0
 	lsls	r1, r1, #6
 	movs	r0, #95
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r2, #152
 	lsls	r2, r2, #5
 	adds	r2, #72

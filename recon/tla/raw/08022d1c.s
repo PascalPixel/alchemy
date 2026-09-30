@@ -66,7 +66,7 @@ Func_08022d1c:
 	adds	r0, r6, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	mov	ip, r0
 	cmp	r0, #0
 	bne.n	.L_08022da0

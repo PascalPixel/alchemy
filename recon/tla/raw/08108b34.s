@@ -22,7 +22,7 @@ Func_08108b34:
 	adds	r0, r7, #0
 	mov	r1, r8
 	adds	r2, r5, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	adds	r0, r5, #0
 	bl	Func_08013164
 .L_08108b6a:

@@ -177,7 +177,7 @@ Func_0803db54:
 	adds	r2, r6, #0
 	ldrh	r0, [r3, #0]
 	lsls	r1, r1, #1
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r2, #128
 	lsls	r2, r2, #2
 	adds	r2, #230

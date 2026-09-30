@@ -106,6 +106,9 @@ Func_08014220:
 	pop	{r5, pc}
 	.2byte 0x36e0
 	.2byte 0x0200
+	.global VramBlock_LoadCached
+	.thumb_func
+VramBlock_LoadCached:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

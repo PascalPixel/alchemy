@@ -1204,7 +1204,7 @@ Func_080e3698:
 	adds	r1, r5, #0
 	mov	r2, r8
 	str	r0, [sp, #8]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r3, #192
 	lsls	r3, r3, #5
 	mov	r9, r0
@@ -1264,7 +1264,7 @@ Func_080e3698:
 	lsls	r1, r1, #4
 	mov	r2, r8
 	mov	fp, r0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r3, #192
 	lsls	r3, r3, #5
 	mov	r9, r0

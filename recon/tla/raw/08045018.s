@@ -62,7 +62,7 @@ Func_08045018:
 	adds	r0, r7, #0
 	mov	r1, sl
 	adds	r2, r5, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r0, #56
 	bl	Runtime_ReleaseSlot
 .L_0804509e:

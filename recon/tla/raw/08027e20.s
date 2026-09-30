@@ -803,7 +803,7 @@ Func_08027e20:
 	ldr	r2, [r3, #4]
 	mov	r0, r8
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	mov	r2, r8
 	ldr	r1, [r2, #36]
 	ldr	r6, [pc, #180]
@@ -1396,7 +1396,7 @@ Func_08027e20:
 	ldr	r1, [r3, #0]
 	adds	r0, r7, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r1, [r7, #36]
 	ldr	r6, [pc, #232]
 	adds	r0, r1, #0
@@ -2096,7 +2096,7 @@ Func_08027e20:
 	ldr	r1, [r3, #0]
 	adds	r0, r7, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r1, [r7, #36]
 	ldr	r6, [pc, #256]
 	adds	r0, r1, #0
@@ -2633,7 +2633,7 @@ Func_08027e20:
 	ldr	r2, [r3, #4]
 	adds	r0, r7, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 .L_080292ce:
 	ldrh	r3, [r7, #4]
 	movs	r0, #1
@@ -2955,7 +2955,7 @@ Func_08027e20:
 	ldr	r2, [r3, #4]
 	mov	r0, sl
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 .L_0802954a:
 	mov	r0, sl
 	ldrh	r3, [r0, #4]
@@ -3276,7 +3276,7 @@ Func_08027e20:
 	ldr	r3, [r0, #8]
 	ldr	r1, [r1, #0]
 	adds	r0, r4, #0
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r4, [sp, #0]
 	mov	r1, r9
 	ldr	r2, [r4, #8]
@@ -3500,7 +3500,7 @@ Func_08027e20:
 	adds	r3, r5, #0
 	ldr	r1, [r7, #8]
 	ldr	r2, [sp, #16]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r4, [sp, #8]
 	movs	r3, #1
 	strh	r3, [r4, #0]
@@ -3722,7 +3722,7 @@ Func_08027e20:
 	ldr	r1, [r3, #0]
 	adds	r0, r7, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r1, [r7, #36]
 	ldr	r6, [pc, #300]
 	adds	r0, r1, #0
@@ -4210,7 +4210,7 @@ Func_08027e20:
 	adds	r0, r7, #0
 	mov	r3, r8
 	adds	r2, r4, r6
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r0, [sp, #8]
 	movs	r3, #1
 	strh	r3, [r0, #0]
@@ -4314,7 +4314,7 @@ Func_08027e20:
 	ldr	r1, [r3, #0]
 	adds	r0, r7, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r1, [r7, #36]
 	ldr	r6, [pc, #240]
 	adds	r0, r1, #0
@@ -4765,7 +4765,7 @@ Func_08027e20:
 	ldr	r1, [r3, #0]
 	adds	r0, r7, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r1, [r7, #36]
 	ldr	r6, [pc, #200]
 	adds	r0, r1, #0

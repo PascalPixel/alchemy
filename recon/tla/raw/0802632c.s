@@ -482,7 +482,7 @@ Func_0802632c:
 	ldr	r2, [r3, #4]
 	adds	r0, r6, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	adds	r2, r6, #0
 	adds	r2, #100
 	movs	r0, #0
@@ -1311,7 +1311,7 @@ Func_0802632c:
 	ldr	r2, [r3, #4]
 	mov	r0, r8
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	mov	r2, r8
 	adds	r2, #100
 	movs	r0, #0
@@ -2559,7 +2559,7 @@ Func_0802632c:
 	ldr	r1, [r3, #0]
 	mov	r0, r8
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	mov	r0, r8
 	ldr	r1, [r0, #36]
 	ldr	r6, [pc, #316]

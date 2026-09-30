@@ -346,7 +346,7 @@ Func_080279b0:
 	ldr	r1, [r3, #0]
 	adds	r0, r7, #0
 	ldr	r3, [r3, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldr	r1, [r7, #36]
 	ldr	r6, [pc, #216]
 	adds	r0, r1, #0

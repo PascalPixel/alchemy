@@ -45,7 +45,7 @@ Func_08025038:
 	ldmia	r3!, {r1}
 	ldmia	r3!, {r2}
 	ldr	r3, [r3, #0]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #4
@@ -62,7 +62,7 @@ Func_08025038:
 	ldmia	r3!, {r1}
 	ldr	r2, [r5, #12]
 	ldr	r3, [r3, #0]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #3
@@ -86,7 +86,7 @@ Func_08025038:
 	adds	r2, r2, r0
 	adds	r3, r3, r4
 	adds	r0, r5, #0
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #4

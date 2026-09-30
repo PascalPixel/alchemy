@@ -9,9 +9,9 @@
 	.thumb_func
 UiIcon_PrepareObjectFar:
 	overlay_veneer UiIcon_PrepareObject
-	.global Func_080f8030
+	.global ItemMenu_Open
 	.thumb_func
-Func_080f8030:
+ItemMenu_Open:
 	overlay_veneer Func_08100e7c
 	.global Func_080f8038
 	.thumb_func

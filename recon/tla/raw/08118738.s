@@ -15,21 +15,21 @@ DebugParty_LoadPreset:
 	str r0, [sp, #20]
 	movs r0, #0
 	str r1, [sp, #16]
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	movs r0, #1
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	movs r0, #2
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	movs r0, #3
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	movs r0, #5
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	movs r0, #4
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	movs r0, #6
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	movs r0, #7
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	movs r0, #0
 	bl Resource_FarCall005
 	movs r2, #148

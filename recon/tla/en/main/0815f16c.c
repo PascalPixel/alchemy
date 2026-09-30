@@ -223,10 +223,10 @@ void Func_080150e4(s32);
 void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
-void Func_080156e8(void *, void *);
+void Graphics_PrepareTransferInIwramWork(void *, void *);
 void Func_08020090(struct BattleObject *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct BattleObject *, s32);
-s32 Func_08118070(s32);
+s32 Battle_GetObjectTableValueFar(s32);
 void Func_08118088(s32, s32);
 struct BattleObject **Func_08118098(s32);
 void Func_081180e8(s32);
@@ -575,7 +575,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         }
         if (kind <= 37 && count < 64) {
             Func_08014de4();
-            Func_080156e8(bg, (u8 *)bg + 12);
+            Graphics_PrepareTransferInIwramWork(bg, (u8 *)bg + 12);
             Func_0815e1ec(origin, pos);
             pos[0] = pos[0] / 2;
             drawFuncs.draw[0](screen, EWRAM_BUF + 0x3c56, pos[0] - 10, pos[1] - 4, 20, 40);
@@ -683,7 +683,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     for (i = 0; i != 64; i++)
         work->particle[i].life = 0;
     if (kind != 44) {
-        half = Func_08118070(action->actor) / 2;
+        half = Battle_GetObjectTableValueFar(action->actor) / 2;
         p = work->particle;
         for (i = 0; i != 32; i++, p++) {
             p->x = object2->x;
@@ -891,7 +891,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 drawFuncs.draw[1](screen, work->frames + 0x5100 + ((frame - 4) / 2) * 0x3c0, target[0] / 2 - 8,
                                   base[1] - 24, 20, 48);
             Func_08014de4();
-            Func_080156e8(bg, (u8 *)bg + 12);
+            Graphics_PrepareTransferInIwramWork(bg, (u8 *)bg + 12);
             if (frame > 3) {
                 if (kind == 79) {
                     p = work->particle;
@@ -954,7 +954,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (frame >= start) {
                 p = SPARKS;
                 object3 = *Func_08118098(action->target);
-                half = Func_08118070(action->target) / 2;
+                half = Battle_GetObjectTableValueFar(action->target) / 2;
                 for (i = 0; i != 32; i++, p++) {
                     if (p->life >= 0) {
                         n = (i & 1) + 6;
@@ -2020,7 +2020,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (frame > 19)
                 origin[1] += 0x40000;
             if (frame == 23) {
-                half = Func_08118070(action->actor) / 2 + 0x1e0000;
+                half = Battle_GetObjectTableValueFar(action->actor) / 2 + 0x1e0000;
                 p = work->particle;
                 for (i = 0; i != 64; i++, p++) {
                     p->x = object2->x;

@@ -5,9 +5,23 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_669/ENTRY.o"(.text)
-        "*/resource_669_overlay.o"(.text)
+        "*/resource_669_overlay.o"(.text.x02008038)
+        "*/resource_669_overlay.o"(.text.x02008040)
+        "*/resource_669_overlay.o"(.text.x02008044)
+        "*/resource_669_overlay.o"(.text.x0200804c)
+        "*/resource_669_overlay.o"(.text.x02008058)
+        "*/resource_669_overlay.o"(.text.x0200808c)
+        "*/resource_669_overlay.o"(.text.x02008128)
+        "*/resource_669_overlay.o"(.text.x0200813c)
+        "*/resource_669_overlay.o"(.text.x02008248)
+        "*/resource_669_overlay.o"(.text.x02008250)
+        "*/resource_669_overlay.o"(.text.x020083e4)
+        "*/resource_669_overlay.o"(.text.x020083e8)
+        "*/resource_669_overlay.o"(.text.x02008438)
+        "*/resource_669_overlay.o"(.text.x020084f4)
+        "*/resource_669_overlay.o"(.text.x02008c5c)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_669/IMPORT.o"(.text)
-        "*/resource_669_overlay.o"(.rodata)
+        "*/resource_669_overlay.o"(.rodata.x0200b2b0)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

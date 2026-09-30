@@ -75,7 +75,7 @@ Func_08023e18:
 	bl Func_08014e1c
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 .L_08023eb2:
 	movs r3, #192
 	lsls r3, r3, #18

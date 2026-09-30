@@ -128,7 +128,7 @@ Func_0816f594:
 	ldr r0, [sp, #16]
 	adds r1, r0, #0
 	adds r1, #12
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	movs r1, #36
 	movs r4, #0
 	add r1, sp

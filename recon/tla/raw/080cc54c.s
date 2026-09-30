@@ -98,7 +98,7 @@ Func_080cc54c:
 	ldr r2, [r5, #8]
 	ldrb r0, [r3]
 	ldr r1, [r5]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	adds r2, r0, #0
 	ldr r0, [r7, #12]
 	cmp r2, r0

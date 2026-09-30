@@ -3,18 +3,26 @@
 //! every word that points into ROM or RAM written as a symbol.
 
 use psynergy::elf::Elf;
-use psynergy::relist::{self, scaffold, Entry, Image, Input, Name, Region, RegionKind, Segment};
+use psynergy::relist::{
+    self, scaffold, Entry, Image, Input, Name, Part, Pieces, Region, RegionKind, Segment,
+};
 use std::collections::BTreeSet;
 use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
 
 pub const USAGE: &str = "usage: psynergy relist --image FILE --elf FILE --map FILE --listings DIR --script FILE [options]\n\
-Reads a linked image (its bytes from 0x08000000, its ELF symbols and link map)\n\
-and regenerates, in place, every listing the map places from DIR (DIR/NAME.s;\n\
-NAME.S listings are kept as written) so that each function is its own labelled\n\
-piece, splitting the linker script's entries and the scaffolds to match.\n\
-  --root DIR       where DIR, the script and the scaffolds are (default .)\n\
+Reads a linked image (its bytes, its ELF symbols and link map) and regenerates,\n\
+in place, every listing the map places from DIR (DIR/NAME.s; NAME.S listings\n\
+are kept as written) so that each function is its own labelled piece,\n\
+splitting the linker script's entries and the scaffolds to match.\n\
+  --object NAME    regenerate only DIR/NAME.s, one section per piece: its\n\
+                   .text sections are code, its .rodata sections data words\n\
+  --base ADDR      where the image's first byte runs (default 0x08000000)\n\
+  --spell ADDR     what a new placeholder spells for that byte (default ADDR)\n\
+  --rom FILE       the cartridge image whose extent is ROM (default --image)\n\
+  --foreign-map FILE  the link map of the image whose names are absolute here\n\
+  --root DIR      where DIR, the script and the scaffolds are (default .)\n\
   --incbin FILE    an .incbin scaffold of data that may hold code (repeatable)\n\
   --space FILE     a .space RAM scaffold that may take labels (repeatable)\n\
   --objects DIR    object files whose references keep names (repeatable)\n\
@@ -31,8 +39,18 @@ struct Options {
     incbin: Vec<String>,
     space: Vec<String>,
     objects: Vec<PathBuf>,
+    object: Option<String>,
+    base: u32,
+    spell: Option<u32>,
+    rom: Option<PathBuf>,
+    foreign: Option<PathBuf>,
     report: bool,
     explain: Option<u32>,
+}
+
+fn address(flag: &str, value: &str) -> Result<u32, String> {
+    u32::from_str_radix(value.trim_start_matches("0x"), 16)
+        .map_err(|_| format!("{flag} wants a hexadecimal address: {value}"))
 }
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
@@ -46,6 +64,11 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         incbin: Vec::new(),
         space: Vec::new(),
         objects: Vec::new(),
+        object: None,
+        base: 0x0800_0000,
+        spell: None,
+        rom: None,
+        foreign: None,
         report: false,
         explain: None,
     };
@@ -71,12 +94,12 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
             "--incbin" => options.incbin.push(value),
             "--space" => options.space.push(value),
             "--objects" => options.objects.push(PathBuf::from(value)),
-            "--explain" => {
-                options.explain = Some(
-                    u32::from_str_radix(value.trim_start_matches("0x"), 16)
-                        .map_err(|_| format!("--explain wants a hexadecimal address: {value}"))?,
-                )
-            }
+            "--object" => options.object = Some(value),
+            "--base" => options.base = address(flag, &value)?,
+            "--spell" => options.spell = Some(address(flag, &value)?),
+            "--rom" => options.rom = Some(PathBuf::from(value)),
+            "--foreign-map" => options.foreign = Some(PathBuf::from(value)),
+            "--explain" => options.explain = Some(address(flag, &value)?),
             _ => return Err(format!("unknown option {flag}\n{USAGE}")),
         }
         i += 2;
@@ -129,8 +152,7 @@ pub fn names(elf: &Elf) -> Vec<Name> {
         })
         .map(|symbol| {
             let absolute = symbol.section == ABSOLUTE;
-            let thumb =
-                !absolute && ((symbol.kind == 2 && symbol.value & 1 == 1) || symbol.kind == 13);
+            let thumb = (symbol.kind == 2 && symbol.value & 1 == 1) || symbol.kind == 13;
             Name {
                 name: symbol.name.clone(),
                 address: if thumb {
@@ -169,6 +191,28 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
     let mut regions: Vec<Region> = relist::placed_sections(map)
         .into_iter()
         .filter_map(|placed| {
+            // The one listing object whose sections are pieces.
+            if let Some(object) = &options.object {
+                if Path::new(&placed.object)
+                    .file_name()
+                    .is_some_and(|leaf| leaf.to_string_lossy() == format!("{object}.o"))
+                {
+                    let kind = if placed.section.starts_with(".text") {
+                        RegionKind::Listing { regenerate: true }
+                    } else if placed.section.starts_with(".rodata") {
+                        RegionKind::Words
+                    } else {
+                        RegionKind::Other
+                    };
+                    return Some(Region {
+                        start: placed.address,
+                        end: placed.address + placed.size,
+                        kind,
+                        object: object.clone(),
+                        section: placed.section,
+                    });
+                }
+            }
             // Objects from outside the build tree, such as the compiler's
             // library members, take bytes too.
             let Some(stem) = stem(&placed.object) else {
@@ -181,10 +225,18 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
                 });
             };
             let path = Path::new(stem);
-            let listing = path.parent() == Some(Path::new(&options.listings));
+            let listing =
+                options.object.is_none() && path.parent() == Some(Path::new(&options.listings));
             let leaf = path.file_name()?.to_string_lossy().into_owned();
             let position =
                 |files: &[String]| files.iter().position(|file| scaffold_stem(file) == stem);
+            // C is maintained code; so is the assembly beside a listing
+            // linked alone, its veneers, whose pointers are its entries.
+            let sources: &[&str] = if options.object.is_some() {
+                &["C", "c", "S"]
+            } else {
+                &["C", "c"]
+            };
             let kind = if listing {
                 RegionKind::Listing {
                     regenerate: listing_files.contains(&format!("{leaf}.s"))
@@ -195,7 +247,7 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
             } else if let Some(scaffold) = position(&options.space) {
                 RegionKind::Space { scaffold }
             } else if placed.section.starts_with(".text")
-                && ["C", "c"]
+                && sources
                     .iter()
                     .any(|extension| root.join(format!("{stem}.{extension}")).is_file())
             {
@@ -244,12 +296,34 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
     for index in 1..regions.len() {
         let before = regions[index - 1].end;
         let region = &mut regions[index];
-        if region.kind == (RegionKind::Listing { regenerate: true })
-            && before < region.start
+        if matches!(
+            region.kind,
+            RegionKind::Listing { regenerate: true } | RegionKind::Words
+        ) && before < region.start
             && region.start - before < 4
         {
             region.start = before;
         }
+    }
+    regions
+}
+
+/// Another image's placed sections, in address order, none overlapping.
+fn foreign(map: &str) -> Vec<Region> {
+    let mut placed = relist::placed_sections(map);
+    placed.sort_by_key(|placed| (placed.address, placed.size));
+    let mut regions: Vec<Region> = Vec::new();
+    for placed in placed {
+        if regions.last().is_some_and(|last| placed.address < last.end) {
+            continue;
+        }
+        regions.push(Region {
+            start: placed.address,
+            end: placed.address + placed.size,
+            kind: RegionKind::Other,
+            object: placed.object,
+            section: placed.section,
+        });
     }
     regions
 }
@@ -288,9 +362,45 @@ fn objects_in(directory: &Path, found: &mut Vec<PathBuf>) {
     }
 }
 
+/// The names an object refers to without defining.
+fn undefined(object: &Path) -> Result<Vec<String>, String> {
+    let bytes = read(object)?;
+    let Ok(elf) = Elf::parse(&bytes) else {
+        return Ok(Vec::new());
+    };
+    Ok(elf
+        .symbols
+        .iter()
+        .filter(|symbol| symbol.section == 0 && symbol.binding != 0 && !symbol.name.is_empty())
+        .map(|symbol| symbol.name.clone())
+        .collect())
+}
+
 /// The names that objects refer to without defining, skipping the objects
-/// of listings being regenerated.
-fn external(options: &Options, regenerated: &BTreeSet<String>) -> Result<BTreeSet<String>, String> {
+/// of listings being regenerated. One listing object is linked alone: only
+/// the other objects its map places refer to it.
+fn external(
+    options: &Options,
+    map: &str,
+    regenerated: &BTreeSet<String>,
+) -> Result<BTreeSet<String>, String> {
+    if let Some(object) = &options.object {
+        let mut names = BTreeSet::new();
+        let placed: BTreeSet<String> = relist::placed_sections(map)
+            .into_iter()
+            .map(|placed| placed.object)
+            .collect();
+        for path in placed.iter().map(Path::new) {
+            let own = path
+                .file_name()
+                .is_some_and(|leaf| leaf.to_string_lossy() == format!("{object}.o"));
+            if own || !path.is_file() {
+                continue;
+            }
+            names.extend(undefined(path)?);
+        }
+        return Ok(names);
+    }
     let mut objects = Vec::new();
     for directory in &options.objects {
         objects_in(directory, &mut objects);
@@ -326,18 +436,7 @@ fn external(options: &Options, regenerated: &BTreeSet<String>) -> Result<BTreeSe
         if listing {
             continue;
         }
-        let bytes = read(&object)?;
-        let Ok(elf) = Elf::parse(&bytes) else {
-            continue;
-        };
-        names.extend(
-            elf.symbols
-                .iter()
-                .filter(|symbol| {
-                    symbol.section == 0 && symbol.binding != 0 && !symbol.name.is_empty()
-                })
-                .map(|symbol| symbol.name.clone()),
-        );
+        names.extend(undefined(&object)?);
     }
     Ok(names)
 }
@@ -349,7 +448,10 @@ fn patch_script(
     replacements: &[(Vec<Entry>, Vec<Entry>)],
 ) -> Result<String, String> {
     let needle = |entry: &Entry| match entry {
-        Entry::Listing(stem) => format!("\"*/{}/{stem}.o\"(", options.listings),
+        Entry::Listing { object, section } => match &options.object {
+            Some(_) => format!("\"*/{object}.o\"({section})"),
+            None => format!("\"*/{}/{object}.o\"(", options.listings),
+        },
         Entry::Incbin { scaffold, section } => format!(
             "\"*/{}.o\"({section})",
             scaffold_stem(&options.incbin[*scaffold])
@@ -379,11 +481,11 @@ fn patch_script(
             .collect();
         let fresh: Vec<String> = new
             .iter()
-            .map(|entry| match entry {
-                Entry::Listing(stem) => {
-                    format!("{indent}\"*/{}/{stem}.o\"(.text)", options.listings)
+            .map(|entry| match (entry, &options.object) {
+                (Entry::Listing { object, .. }, None) => {
+                    format!("{indent}\"*/{}/{object}.o\"(.text)", options.listings)
                 }
-                Entry::Incbin { .. } => format!("{indent}{}", needle(entry)),
+                _ => format!("{indent}{}", needle(entry)),
             })
             .collect();
         lines.splice(at..at + old.len(), fresh);
@@ -400,7 +502,13 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
     let map = read_text(&options.map)?;
     let image = Image {
         bytes: &bytes,
-        base: 0x0800_0000,
+        base: options.base,
+    };
+    let rom_size = match &options.rom {
+        Some(rom) => fs::metadata(rom)
+            .map_err(|error| format!("{}: {error}", rom.display()))?
+            .len() as u32,
+        None => bytes.len() as u32,
     };
     let regions = regions(&options, &map);
     let regenerated: BTreeSet<String> = regions
@@ -421,10 +529,22 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
     let input = Input {
         image,
         names: names(&elf),
-        external: external(&options, &regenerated)?,
+        external: external(&options, &map, &regenerated)?,
         incbin: load(&options.incbin)?,
         space: load(&options.space)?,
         regions,
+        rom_end: 0x0800_0000 + rom_size,
+        foreign: match &options.foreign {
+            Some(path) => foreign(&read_text(path)?),
+            None => Vec::new(),
+        },
+        spell: options.spell.unwrap_or(options.base),
+        pieces: match &options.object {
+            Some(object) => Pieces::Sections {
+                object: object.clone(),
+            },
+            None => Pieces::Files,
+        },
     };
     let mut text = String::new();
     if let Some(address) = options.explain {
@@ -476,16 +596,14 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
                 Segment::Data {
                     start,
                     end,
-                    listing: true,
+                    part: Part::Code | Part::Words,
                 } => listing_data += end - start,
                 Segment::Function(function) => {
                     let mut at = function.start;
                     while at < function.end {
-                        if planned.area.part(at).2 {
-                            at += 2;
-                            continue;
+                        if planned.area.part(at).2 == Part::Included {
+                            carved += 2;
                         }
-                        carved += 2;
                         at += 2;
                     }
                 }
@@ -513,7 +631,7 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
                     Segment::Data {
                         start,
                         end,
-                        listing: true,
+                        part: Part::Code | Part::Words,
                     } => ("listing-data", *start, *end),
                     Segment::Data { start, end, .. } => ("data", *start, *end),
                 };
@@ -526,13 +644,31 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
     }
     // Write: the new pieces replace every regenerated listing.
     let directory = options.root.join(&options.listings);
-    for stem in &regenerated {
-        let path = directory.join(format!("{stem}.s"));
-        fs::remove_file(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    }
-    for (start, source) in &output.pieces {
-        let path = directory.join(format!("{start:08x}.s"));
+    if let Some(object) = &options.object {
+        // One listing object: each piece is its own section of it.
+        const HEADER: &str = ".syntax unified\n\t.thumb\n";
+        let mut source = String::from(HEADER);
+        for (start, text) in &output.pieces {
+            let words = output.words.contains(start);
+            let flags = if words { "a" } else { "ax" };
+            let _ = writeln!(
+                source,
+                "\t.section {},\"{flags}\",%progbits",
+                relist::section(*start, words)
+            );
+            source.push_str(text.strip_prefix(HEADER).unwrap_or(text));
+        }
+        let path = directory.join(format!("{object}.s"));
         fs::write(&path, source).map_err(|error| format!("{}: {error}", path.display()))?;
+    } else {
+        for stem in &regenerated {
+            let path = directory.join(format!("{stem}.s"));
+            fs::remove_file(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        }
+        for (start, source) in &output.pieces {
+            let path = directory.join(format!("{start:08x}.s"));
+            fs::write(&path, source).map_err(|error| format!("{}: {error}", path.display()))?;
+        }
     }
     for (file, scaffold) in options.incbin.iter().zip(&output.incbin) {
         let path = options.root.join(file);

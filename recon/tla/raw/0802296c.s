@@ -19,7 +19,7 @@ Animation_InitWorkFromMetadata:
 	bne .L_08022992
 	movs r3, #0
 	ldrsh r0, [r5, r3]
-	bl Func_080228bc
+	bl Animation_LookupValueByKey
 .L_08022992:
 	ldrb r3, [r6, #4]
 	movs r2, #0

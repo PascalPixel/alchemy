@@ -14,11 +14,11 @@ Func_0810a9ac:
 	adds r3, r3, r2
 	adds r6, r0, #0
 	ldrh r0, [r3]
-	bl Func_080c85c8
+	bl BattleFx_GetResourceIdFar
 	adds r5, r0, #0
 	bl UiWork_FinalizePendingCoreFar
 	adds r0, r6, #0
-	bl Func_0810a960
+	bl Shop_MsgByMode
 	lsls r5, r5, #16
 	movs r3, #34
 	orrs r5, r3

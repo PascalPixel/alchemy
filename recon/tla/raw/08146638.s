@@ -198,7 +198,7 @@ Func_08146638:
 	ldr r0, [sp, #48]
 	adds r1, r0, #0
 	adds r1, #12
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r0, [sp, #20]
 	bl SceneTransform_ApplyPosition
 	movs r2, #0

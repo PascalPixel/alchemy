@@ -1179,7 +1179,7 @@ Func_0818fefc:
 .L_08190838:
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldrh r1, [r7]
 	ldr r0, [sp, #68]
 	mov r4, r10

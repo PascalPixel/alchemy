@@ -144,7 +144,7 @@ Func_080d0520:
 	movs r3, #32
 	strh r3, [r2]
 	movs r0, #0
-	bl Func_080d0b7c
+	bl DisplayTransition_FillTilemapAndSolidTile
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #144
@@ -168,7 +168,7 @@ Func_080d0520:
 .L_080d0678:
 	.4byte 0x00000020
 .L_080d067c:
-	.4byte Func_080d0a28
+	.4byte DisplayTransition_UpdateFrame
 .L_080d0680:
 	adds r0, #2
 	movs r3, #64

@@ -154,7 +154,7 @@ Func_08153c30:
 	bl Func_08014de4
 	ldr r0, [sp, #20]
 	ldr r1, [sp, #16]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, [r5, #8]
 	mov r4, r8
 	str r3, [r4]

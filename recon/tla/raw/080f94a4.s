@@ -34,11 +34,11 @@ Func_080f94a4:
 	movs r2, #30
 	movs r3, #20
 	movs r0, #0
-	bl Func_080383e8
+	bl UiWindow_DrawFrameFar
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #0
-	bl Func_080f80e0
+	bl UiWindow_InitializeWork
 	movs r1, #129
 	lsls r1, r1, #2
 	adds r0, r5, r1
@@ -127,7 +127,7 @@ Func_080f94a4:
 	movs r2, #30
 	movs r3, #20
 	movs r0, #0
-	bl Func_080383e8
+	bl UiWindow_DrawFrameFar
 	bl Func_08104aa4
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock

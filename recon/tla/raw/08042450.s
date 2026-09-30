@@ -15,7 +15,7 @@ Func_08042450:
 	sub sp, #16
 	adds r5, r2, #0
 	ldr r6, [r3, #60]
-	bl Func_0803d2f0
+	bl Localization_LookupEntryId
 	movs r1, #1
 	adds r7, r0, #0
 	negs r1, r1

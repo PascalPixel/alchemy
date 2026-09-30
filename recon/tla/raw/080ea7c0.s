@@ -99,7 +99,7 @@ Func_080ea7c0:
 	ldrb r0, [r3]
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #16]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	ldr r3, [r5, #12]
 	cmp r3, r0
 	bge .L_080ea898

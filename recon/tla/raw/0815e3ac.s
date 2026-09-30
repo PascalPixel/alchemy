@@ -290,7 +290,7 @@ Func_0815e3ac:
 	ldr r6, [r0]
 	movs r3, #36
 	ldrsh r0, [r5, r3]
-	bl Func_08118070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
@@ -679,7 +679,7 @@ Func_0815e3ac:
 	bl Func_08014de4
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #8]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	cmp r5, #27
 	bhi .L_0815e986
 	movs r1, #64
@@ -702,7 +702,7 @@ Func_0815e3ac:
 	ble .L_0815e97c
 	mov r1, r8
 	adds r0, r7, #0
-	bl Func_08015778
+	bl Render_ProjectPoint
 	mov r0, r8
 	ldr r2, [r0]
 	ldr r1, [sp, #40]

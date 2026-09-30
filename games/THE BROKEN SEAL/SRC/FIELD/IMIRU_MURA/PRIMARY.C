@@ -1,4 +1,5 @@
 #include "IMIRU.H"
+#include "CALL.H"
 
 void FieldScene_RunPrimaryScriptChoreography(void)
 {
@@ -23,11 +24,11 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x6666, 0x3333);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
-    leader = (struct FieldActor *)Value1_02000f90(Engine_ActorGet, 0);
+    leader = (struct FieldActor *)Engine_ActorGet(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
     }
-    leader = (struct FieldActor *)Value1_02000f90(Engine_ActorGet, 0);
+    leader = (struct FieldActor *)Engine_ActorGet(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
@@ -35,9 +36,9 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_WalkToAndWait(ACTOR_IVAN, 134, 234);
     Actor_SetAnimation(ACTOR_GERALD, 1);
     tbl = (s32)ImiruMura_PrimaryScript;
-    Call3_02000f90(Engine_ObjectSetTargetAndCallback, 0, 0x10003, tbl);
-    Call3_02000f90(Engine_ObjectSetTargetAndCallback, 1, 0x10003, tbl);
-    Call3_02000f90(Engine_ObjectSetTargetAndCallback, 2, 0x10003, tbl);
+    Call3(Engine_ObjectSetTargetAndCallback, 0, 0x10003, tbl);
+    Call3(Engine_ObjectSetTargetAndCallback, 1, 0x10003, tbl);
+    Call3(Engine_ObjectSetTargetAndCallback, 2, 0x10003, tbl);
     Camera_WaitForMove();
     tbl = (s32)ImiruMura_TurnScript;
     Actor_EnableActionCallback(9, tbl);
@@ -47,7 +48,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Event_SetMessage(MSG_HOW_FEELING);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
-    Value2_02000f90(Engine_ActorEnableActionCallback, 9, tbl);
+    Engine_ActorEnableActionCallback(9, tbl);
     Event_ShowMessageAndWait(9, 0, 20);
     Actor_FaceDirection(ACTOR_MIA, 0x8000, 20);
     Actor_FaceDirection(8, 0, 10);
@@ -58,7 +59,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_FaceDirection(ACTOR_MIA, 0x4000, 0);
     Actor_FaceDirection(8, 0x3000, 20);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 10);
-    Value2_02000f90(Engine_ActorEnableActionCallback, 9, tbl);
+    Engine_ActorEnableActionCallback(9, tbl);
     /* SceneState_StoreTable96adToWork at 0x020016c8. */
     SceneState_StoreTable96adToWork();
     Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
@@ -103,7 +104,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Event_Wait(10);
     Event_ShowMessage(ACTOR_MIA, 0);
     Audio_PlayCue(131);
-    Call2_02000f90(Engine_ColorBufferApplySource, 0x10000, 0);
+    Call2(Engine_ColorBufferApplySource, 0x10000, 0);
     ColorBuffer_ApplyTarget(0x207e9f, 0);
     Engine_ColorBufferInterpolate(10);
     Task_Wait(1);
@@ -164,7 +165,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     work = *(struct EventWork **)Data_03001ebc;
     work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     work->transition_frames = 24;
-    Call1_02000f90(Engine_GameFlagSet, 0x82b);
+    Engine_GameFlagSet(0x82b);
     Event_End();
 }
 

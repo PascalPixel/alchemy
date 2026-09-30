@@ -1,4 +1,5 @@
 #include "HEYA.H"
+#include "CALL.H"
 
 void Event_SetPairWork1c0(s32 scene, s32 entrance);
 

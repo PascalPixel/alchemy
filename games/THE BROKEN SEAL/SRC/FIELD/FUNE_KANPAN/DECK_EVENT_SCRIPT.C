@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "KANPAN.H"
+#include "CALL.H"
 extern u8 MsgFuneArrgh[];
 extern u8 MsgFuneNoUseLate[];
 extern struct EventWork *gEventWork;
@@ -46,9 +47,9 @@ void FieldScene_RunShipDeckEventScript(void)
     s32 v;
 
     Battle_Reset();
-    Call1(Event_CallWithLastActiveObjectId, (s32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScript);
     WaitFrames(1);
-    Call1(Event_CallWithLastActiveObjectId, (s32)FuneKanpan_CrewScriptB);
+    Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScriptB);
     WaitFrames(1);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 21, 16252928, 47710208);
     ObjectGroup_ConfigureChildValue(0, 15);
@@ -61,8 +62,8 @@ void FieldScene_RunShipDeckEventScript(void)
     Call3(ObjectMotion_SetPositionAndReset, 21, 196, 678);
     Call3(ObjectMotion_SetPositionAndReset, 21, 182, 654);
     Motion_SetVarCbAndRefresh(21, 2);
-    Call1(Event_SetValue1d8, (s32)MsgFuneNoUseLate);
-    Call1(FieldScene_RunStepThen10, 40981);
+    Event_SetValue1d8((s32)MsgFuneNoUseLate);
+    FieldScene_RunStepThen10(40981);
     Call3(ObjectMotion_SetSpeedParameters, 0, 157286, 78643);
     Call3(ObjectMotion_ResetAndSetPosition, 0, 154, 609);
     AudioCommand_Play(146);
@@ -102,7 +103,7 @@ void FieldScene_RunShipDeckEventScript(void)
     Battle_WaitMode0(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
-    Call3(UiText_ShowCenteredMessage, (s32)MsgFuneArrgh, 1, 0);
+    UiText_ShowCenteredMessage((s32)MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Event_SetValue170(12);
 }

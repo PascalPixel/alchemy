@@ -36,8 +36,8 @@ void FieldScene_RunScene3a6_020014ac(void)
     Object_SetModeById(9, 8);
     Actor_SetSpritePriority(9, 3);
     *(u8 *)(Object_GetById(9) + 35) = 2;
-    Value6(StagedActor_FillGridAttributeRectangle, 0, 12, 16, 1, 4, 0);
-    Call6(StagedActor_FillGridAttributeRectangle, 0, 13, 16, 1, 4, 0);
+    StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
+    StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
     GameFlag_Set(0x202);
     Audio_PlayCue(240);
     Event_End();

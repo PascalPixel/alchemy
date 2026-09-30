@@ -2,12 +2,11 @@
  * soldiers, the room keeper offers the four beds or a free rest, and the
  * last host asks about Colosso. Each question loads its first message once
  * and adds to it for the answers. */
-/* FAKEMATCH: KYUDEN.H's inline call and value wrappers keep the game's
- * argument order and constant sharing at the calls that use them. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
+#include "CALL.H"
 extern u8 MsgTorebiTiredFeelFreeRest[];
 extern u8 MsgTorebiCameRestBefore[];
 extern u8 MsgTorebiPlanningEnterColosso[];
@@ -40,8 +39,8 @@ void RunOpeningAuxiliarySequence(s32 a)
     v = (*(u16 *)(ret + 6) + 0x2000) & 0xc000;
     Event_Begin();
     Battle_ResetEffectCounterFar();
-    if (Value1_scene_effect_sequence_head(Engine_GameFlagIsSet, 512) == 0) {
-        Call1_scene_effect_sequence_head(Engine_GameFlagSet, 512);
+    if (Value1(Engine_GameFlagIsSet, 512) == 0) {
+        Engine_GameFlagSet(512);
         GameFlag_Clear(0x969);
         Event_SetMessage((s32)MsgTorebiWeHaveJustEnoughExtra);
         Event_ShowMessage(a, 0);
@@ -52,14 +51,14 @@ void RunOpeningAuxiliarySequence(s32 a)
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 104);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
         }
-        Call3_scene_effect_sequence_head(Engine_ActorSetSpeed, a, 0x10000, 0x8000);
-        Call3_scene_effect_sequence_head(Engine_ActorWalkByAndWait, a, 0, -48);
+        Call3(Engine_ActorSetSpeed, a, 0x10000, 0x8000);
+        Call3(Engine_ActorWalkByAndWait, a, 0, -48);
         Actor_WalkByAndWait(a, 64, 0);
         Actor_FaceDirection(a, c, 0);
     } else {
-        Call1_scene_effect_sequence_head(Engine_GameFlagClear, 512);
+        Engine_GameFlagClear(512);
         GameFlag_Set(0x969);
-        Call3_scene_effect_sequence_head(Engine_ActorFaceDirection, a, 0x4000, 0);
+        Call3(Engine_ActorFaceDirection, a, 0x4000, 0);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         Event_Wait(20);
@@ -76,7 +75,7 @@ void RunOpeningAuxiliarySequence(s32 a)
         Event_Wait(10);
         Actor_SetAnimationAndWait(a, 3);
         Event_Wait(20);
-        Call3_scene_effect_sequence_head(Engine_ActorWalkByAndWait, a, -64, 0);
+        Call3(Engine_ActorWalkByAndWait, a, -64, 0);
         Actor_WalkByAndWait(a, 0, 48);
     }
     Event_End();
@@ -114,7 +113,7 @@ void FieldScene_RunScene3b8_02000264(s32 a0)
         Actor_WalkByAndWait(a0, -64, 0);
         Engine_ActorWalkByAndWait(a0, 0, 48);
     } else {
-        Call1(Engine_EventSetMessage, (s32)MsgTorebiTiredFeelFreeRest);
+        Engine_EventSetMessage((s32)MsgTorebiTiredFeelFreeRest);
         Event_OpenMessage(a0, 0);
     }
     Event_End();

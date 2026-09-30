@@ -57,11 +57,11 @@ void FieldScene_RunScene3b1_02004198(void)
     SceneActor_SetFlagBit3ForActors28To35();
     FieldScene_RunSceneStep(19, 11, 12);
     Actor_SetAnimation(10, 6);
-    Value2(Engine_ActorEnableActionCallback, 12, (s32)FuneHeya_ActionScriptE);
+    Engine_ActorEnableActionCallback(12, (s32)FuneHeya_ActionScriptE);
     base5_200e8e4 = (s32)FuneHeya_EntryActionScript;
     Actor_EnableActionCallback(36, base5_200e8e4);
-    Value2(Engine_ActorEnableActionCallback, 37, base5_200e8e4);
-    Value2(Engine_ActorEnableActionCallback, 38, base5_200e8e4);
+    Engine_ActorEnableActionCallback(37, base5_200e8e4);
+    Engine_ActorEnableActionCallback(38, base5_200e8e4);
     Actor_SetChildValue(36, 3);
     Actor_SetChildValue(37, 3);
     Actor_SetChildValue(38, 3);

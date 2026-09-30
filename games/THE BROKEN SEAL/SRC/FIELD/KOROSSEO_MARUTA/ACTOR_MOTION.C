@@ -1,5 +1,6 @@
 /* The four-step actor motion, actor placement and the opening sequence. */
 #include "LOG_ROLLING.H"
+#include "CALL.H"
 extern u8 MsgKorosseoAnotherLogRollingArea[];
 extern u8 MsgKorosseoCalledMovingSidewalkStage[];
 extern u8 MsgKorosseoClearStageMustAbleChange[];
@@ -28,7 +29,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
         Korosseo_FinishSoloRound();
     } else {
         Event_Begin();
-        result = Value2(ColossoLogRollingStage_RunStateInteraction, a0, 4);
+        result = ColossoLogRollingStage_RunStateInteraction(a0, 4);
         if (result == 0) {
             Event_SetMessage((s32)MsgKorosseoPlaceNormallyCalledFreeClimb);
             Camera_SetSpeed(0x30000, 0x6000);
@@ -37,14 +38,14 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Event_Wait(30);
             Event_ShowMessage(a0, 0);
             Event_ShowMessage(a0, 0);
-            Value3(Korosseo_FadeInCompetitor, 0, 0x330, 200);
+            Korosseo_FadeInCompetitor(0, 0x330, 200);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
             Value3(Engine_ActorFaceDirection, 0, 0xc000, 20);
             battle_owner_69();
             Camera_MoveTo(-1, -1, -1, 0);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-            actor = Value1(Engine_ActorGet, 0);
+            actor = Engine_ActorGet(0);
             y = *(s32 *)(actor + 12);
             x = *(s32 *)(actor + 8);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -71,7 +72,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Event_SetMessage((s32)MsgKorosseoClearStageMustAbleChange);
             Event_ShowMessage(a0, 0);
         }
-        Value3(FieldScene_RunMiddleSequence, result, a0, 4);
+        FieldScene_RunMiddleSequence(result, a0, 4);
         Event_End();
     }
 }
@@ -127,7 +128,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         Korosseo_FinishSoloRound();
     } else {
         Event_Begin();
-        rec2 = Value2(ColossoLogRollingStage_RunStateInteraction, a0, 5);
+        rec2 = ColossoLogRollingStage_RunStateInteraction(a0, 5);
         if (rec2 != 0) {
         } else {
             Event_SetMessage((s32)MsgKorosseoCalledMovingSidewalkStage);
@@ -137,11 +138,11 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Event_Wait(30);
             Event_ShowMessage(a0, 0);
             Event_ShowMessage(a0, 0);
-            Value3(Korosseo_FadeInCompetitor, 0, 0x3d8, 184);
+            Korosseo_FadeInCompetitor(0, 0x3d8, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             ColossoLogRollingStage_PositionAndActivateActor(0, 0x3e0, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
-            Call3(ColossoLogRollingStage_PositionActor, 0, 0x460, 184);
+            ColossoLogRollingStage_PositionActor(0, 0x460, 184);
             Event_Wait(120);
             Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
             Event_Wait(120);
@@ -157,7 +158,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
                 Task_Wait(1);
             }
             Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x103, 60);
-            Value3(ColossoLogRollingStage_PositionActor, 0, 0x460, 184);
+            ColossoLogRollingStage_PositionActor(0, 0x460, 184);
             Event_ShowMessage(a0, 0);
             ColossoLogRollingStage_ResetActorMotion(0);
             {
@@ -175,7 +176,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Event_ShowMessage(a0, 0);
         }
         L_02002494:;
-        Value3(FieldScene_RunMiddleSequence, rec2, a0, 5);
+        FieldScene_RunMiddleSequence(rec2, a0, 5);
         Event_End();
     }
 }

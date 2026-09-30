@@ -6,6 +6,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 extern u8 MsgFieldPeeredWell[];
 extern u8 MsgKuupuappuCanHearWaterRumblingDown[];
 extern u8 MsgKuupuappuRuffRrruff2[];
@@ -144,55 +145,6 @@ void PartyInventory_Discard();
 s32 UpdateActorProximity(u8 *actor);
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 
-static __inline__ s32 Scene_QueryFlag(s32 (*func)(s32), s32 flag)
-{
-    return func(flag);
-}
-
-static __inline__ void Scene_SetFlag(void (*func)(s32), s32 flag)
-{
-    func(flag);
-}
-
-static __inline__ void Scene_Call3(void (*func)(s32, s32, s32), s32 a, s32 b, s32 c)
-{
-    func(a, b, c);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call0(void (*f)())
-{
-    f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
@@ -202,26 +154,6 @@ static __inline__ void bump_step(s32 amount)
 static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
 {
     Actor_SetSpeed(actor, horizontal, vertical);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void PlaceActor(void (*place)(s32, s32, s32),
-                                 s32 actor, s32 x, s32 z)
-{
-
-    place(actor, x, z);
-}
-
-static __inline__ void UpdateRect(void (*update)(s32, s32, s32, s32, s32, s32),
-                                 s32 x, s32 z, s32 width, s32 height,
-                                 s32 sourceX, s32 sourceZ)
-{
-
-    update(x, z, width, height, sourceX, sourceZ);
 }
 
 void ActorPresentation_SetupActorZeroForSceneTwelve(void)
@@ -352,7 +284,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     s32 mode;
 
     if (GameFlag_IsSet(0x200))
-        UpdateRect(Engine_MapCopyCellAttributes, 55, 26, 4, 2, 23, 26);
+        Call6(Engine_MapCopyCellAttributes, 55, 26, 4, 2, 23, 26);
     OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
     Engine_MapCopyCells(45, 41, 8, 45, 3, 3);
     Engine_TaskWait(1);
@@ -368,11 +300,11 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
     *(u16 *)((u8 *)Engine_ActorGet(15) + 100) = mode;
     if (GameFlag_IsSet(0x858))
-        PlaceActor(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
+        Call3(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
     if (gGameState.entrance <= 2 && !GameFlag_IsSet(52) && !GameFlag_IsSet(0x109))
         GameFlag_Clear(0x867);
     if (GameFlag_IsSet(0x867) && !GameFlag_IsSet(52))
-        PlaceActor(Engine_ActorSetPosition, 21, 0x1980000, 0x780000);
+        Call3(Engine_ActorSetPosition, 21, 0x1980000, 0x780000);
     scene = (s16 *)&gGameState;
     if (scene[225] == 11)
         GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

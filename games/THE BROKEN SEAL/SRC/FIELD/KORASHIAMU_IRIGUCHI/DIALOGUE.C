@@ -107,7 +107,7 @@ void FieldScene_RunScene3b9_02000468(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 13);
+    rec7 = Engine_ActorGet(13);
     Event_Begin();
     Actor_Stop(13);
     Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 20);
@@ -180,7 +180,7 @@ void FieldScene_RunScene3b9_0200055c(void)
         FieldScene_CallPairWith10(17);
         Actor_ShowEmote(17, 0x105, 40);
         FieldScene_CallPairWith10(17);
-        Call2(SceneState_ForwardMaskedHalfwordWith10, 17, 0x5000);
+        SceneState_ForwardMaskedHalfwordWith10(17, 0x5000);
         GameFlag_Set(0x3c1);
     }
     Event_End();
@@ -217,7 +217,7 @@ void FieldScene_RunScene3b9_02000648(void)
     FieldScene_CallPairWith10(18);
     Actor_SetAnimationAndWait(18, 3);
     FieldScene_CallPairWith10(18);
-    Value2(SceneState_ForwardMaskedHalfwordWith10, 18, 0x5000);
+    SceneState_ForwardMaskedHalfwordWith10(18, 0x5000);
     Event_End();
 }
 

@@ -34,20 +34,20 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     base = (u8 *)((s16 *)&gGameState);
     p6 = *(u8 **)(base + 500);
     p10 = a0;
-    rec7 = Value1(Engine_ActorGet, (s32)p6);
+    rec7 = Engine_ActorGet((s32)p6);
     Actor_Get(p10);
     rec2 = GameFlag_IsSet(0x20f);
     if (rec2 == 0) {
         Event_Begin();
         Actor_SetAttachedEffect((s32)p6, 0x101);
         Actor_SetAnimation((s32)p6, 9);
-        record = Value1(Engine_ActorGet, p10);
+        record = Engine_ActorGet(p10);
         if (record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Actor_WaitForMove((s32)p6);
         Audio_PlayCue(244);
-        Value2(Engine_TaskAddCallback, (s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
+        Engine_TaskAddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
         rec7[85] = rec2;
         Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12) + 0x200000, *(s32 *)(rec7 + 16));
         Actor_WaitForMove((s32)p6);
@@ -55,8 +55,8 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         rec7[85] = 4;
         *(u8 *)(base + 498) = 2;
         GameFlag_Set(0x20f);
-        Call2(GameFlag_SetByte, 0x218, p10);
-        Call2(GameFlag_SetByte, 0x210, 180);
+        GameFlag_SetByte(0x218, p10);
+        GameFlag_SetByte(0x210, 180);
         Event_End();
         *(u16 *)(*(u8 **)((u8 *)&gEventWork) + 0x17c) = rec2;
     }

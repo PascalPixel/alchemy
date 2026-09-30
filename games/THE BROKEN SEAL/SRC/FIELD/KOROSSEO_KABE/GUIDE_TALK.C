@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 MsgKorosseoFocusRollingLogs[];
 extern u8 MsgKorosseoPlaceCalledBoard[];
 
@@ -11,21 +12,6 @@ void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row);
 void Korosseo_RestoreCompetitor(s32 actor);
 void KorosseoKabe_ShowFollowUpPrompt(s32 speaker, s32 base);
 s32 FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 /* The Colosso guide at the Board Walk: on the first visit pans the camera
  * over the course and walks the competitor through pushing a block while
@@ -45,14 +31,14 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         s32 z;
 
         Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledBoard);
-        Call2((void (*)())Engine_CameraSetSpeed, 0x20000, 0x4000);
+        ((void (*)())Engine_CameraSetSpeed)(0x20000, 0x4000);
         Call4((void (*)())Engine_CameraMoveTo, 0x1480000, -1, 0x1080000, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
         Call2((void (*)())Engine_CameraSetSpeed, 0x18000, 0x3000);
         x = 408;
         z = 264;
-        Call4((void (*)())Engine_CameraMoveTo, 0x1380000, -1, 0xb00000, 1);
+        ((void (*)())Engine_CameraMoveTo)(0x1380000, -1, 0xb00000, 1);
         Engine_CameraWaitForMove();
         Engine_EventShowMessage(speaker, 0);
         Korosseo_FadeInCompetitor(0, x, z);

@@ -24,8 +24,6 @@ enum CollapseActor {
 
 #include "FACING_OBJECT.H"
 
-
-
 typedef struct {
     u8 filler0[6];
     u16 unk6;
@@ -135,86 +133,6 @@ void BattleEffect_CleanupSceneObjects(void);
  * actors through the shared exit sequence. Retained pending an exact build. */
 
 void SceneEffect_AdvanceTenEntryTimers(void);
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    void Actor_ShowEmote();
-    void ColorBuffer_ApplyTarget();
-    void ColorBuffer_Interpolate();
-    void Audio_PlayCue();
-
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    void Actor_ShowEmote();
-    void ColorBuffer_ApplyTarget();
-    void ColorBuffer_Interpolate();
-    void Audio_PlayCue();
-
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    void Actor_ShowEmote();
-    void ColorBuffer_ApplyTarget();
-    void ColorBuffer_Interpolate();
-    void Audio_PlayCue();
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    void Actor_ShowEmote();
-    void ColorBuffer_ApplyTarget();
-    void ColorBuffer_Interpolate();
-    void Audio_PlayCue();
-
-    return f(a0, a1);
-}
-
-static __inline__ s32 InstallTask(s32 (*f)(void (*)(), s32), void (*callback)(), s32 key)
-{
-    void Actor_ShowEmote();
-    void ColorBuffer_ApplyTarget();
-    void ColorBuffer_Interpolate();
-    void Audio_PlayCue();
-
-    return f(callback, key);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call3_020029a4(void (*f)(s32, s32, s32), s32 a, s32 b, s32 c)
-{
-    void Actor_ShowEmote(s32, s32, s32);
-    void ColorBuffer_ApplyTarget(s32, s32);
-    void ColorBuffer_Interpolate(s32);
-    void Audio_PlayCue(s32);
-
-    f(a, b, c);
-}
 
 /* The scene's tables, laid out after the code. */
 extern u8 Placement_Scripts[];

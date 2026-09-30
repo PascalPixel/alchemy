@@ -18,31 +18,6 @@ void Engine_EventShowMessageAndWait();
 /* Actor 8's departure, in the overlay's read-only data. */
 extern s32 gHaidiaBabiActor8Departure[];
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* When flag 0x203 is set, actor 8 walks off and MsgHaidiaDontWorryBest plays;
  * otherwise it turns, shows MsgHaidiaUnnOhhKyle and then 0x1c7a. */
 void HaidiaBabi_RunActorEightMessageScene(void)
@@ -51,10 +26,10 @@ void HaidiaBabi_RunActorEightMessageScene(void)
     s32 dream;
 
     Engine_EventBegin();
-    if (Value1(Engine_GameFlagIsSet, 0x203) != 0) {
-        Call3(Object_SetTargetAndCallback, 8, 0x10000, (s32)gHaidiaBabiActor8Departure);
+    if (Engine_GameFlagIsSet(0x203) != 0) {
+        Object_SetTargetAndCallback(8, 0x10000, (s32)gHaidiaBabiActor8Departure);
         Engine_EventWait(20);
-        Call1(Engine_EventSetMessage, (s32)MsgHaidiaDontWorryBest);
+        Engine_EventSetMessage((s32)MsgHaidiaDontWorryBest);
         Engine_EventShowMessage(8, 0);
     } else {
         Engine_ActorRunRepeatedMotion(8, 2);

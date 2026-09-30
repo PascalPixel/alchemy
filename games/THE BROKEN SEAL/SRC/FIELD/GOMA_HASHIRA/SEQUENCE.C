@@ -65,46 +65,8 @@ static __inline__ void ConfigureThird(s32 actor, s32 value)
     BattleFx_SetPhaseRequest(actor, value);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6)
-{
-    f(a0, a1, a2, a3, a4, a5, a6);
-}
-
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgGomaGotWowThatsPrettyImpressive[];
 
 /* Sets bits in an actor's flag byte. */
@@ -115,7 +77,7 @@ static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 
 void FieldScene_RunActor13Departure(void)
 {
-    Call1(Engine_TaskRemoveCallback, (s32)GomaHashira_DriveActor13Idle);
+    Engine_TaskRemoveCallback((s32)GomaHashira_DriveActor13Idle);
     Event_Begin();
     Actor_ShowEmote(13, 0x100, 30);
     Actor_RunRepeatedMotion(13, 2);
@@ -160,7 +122,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
             goto L_0200131c;
         }
         *(u8 *)(Object_GetById(10) + 34) = 2;
-        record = Value1(Object_GetById, 10);
+        record = Object_GetById(10);
         *(s32 *)((s32)record + 12) = *(s32 *)((s32)record + 12) - 1;
         {
             u8 bits = 2;
@@ -178,7 +140,7 @@ L_0200131c:
         Goma_Wait(60);
         *(u8 *)(Object_GetById(9) + 34) = 2;
         Actor_MoveToAndWait(9, 0x198, 192);
-        Call1((void (*)())Battle_WaitMode0, 60);
+        ((void (*)())Battle_WaitMode0)(60);
         FieldScene_RunPillarSequence();
     }
     if (Data_02000240[282] != 0) {

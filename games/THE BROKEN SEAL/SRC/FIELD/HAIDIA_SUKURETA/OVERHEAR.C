@@ -1,4 +1,5 @@
 #include "SUKURETA.H"
+#include "CALL.H"
 
 extern u8 Sukureta_StrangerActions[];
 void Object_SetTargetAndCallback();

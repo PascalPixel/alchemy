@@ -84,7 +84,7 @@ void FieldScene_BuildActorPresentationGroup(void)
     Actor_SetSpriteFlags(rec2, 0);
     rec2 = Engine_ActorGet(19);
     rec2->scale_x = -0x10000;
-    rec2 = Value1(Engine_ActorGet, 20);
+    rec2 = Engine_ActorGet(20);
     rec2->scale_x = -0x10000;
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -132,7 +132,7 @@ void FieldScene_BuildActorPresentationGroup(void)
     Actor_FaceDirection(15, 0x3000, 0);
     Actor_FaceDirection(17, 0x3000, 0);
     shift = 0x3000;
-    Value2(SceneState_ForwardMaskedHalfwordWith10, 18, shift);
+    SceneState_ForwardMaskedHalfwordWith10(18, shift);
     Actor_Stop(16);
     rec2 = Engine_ActorGet(16);
     rec2->facing = 0xd000;
@@ -210,7 +210,7 @@ void FieldScene_RunMiddleSequence(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Audio_PlayCue(247);
     Actor_SetAnimation(8, 2);
-    Call2((void (*)())Engine_ActorSetAnimation, 9, 2);
+    ((void (*)())Engine_ActorSetAnimation)(9, 2);
     Actor_SetAnimation(10, 2);
     Actor_SetAnimation(11, 2);
     Actor_SetAnimation(12, 2);
@@ -224,7 +224,7 @@ void FieldScene_RunMiddleSequence(void)
     Actor_SetSpriteFlags(rec2, 0);
     rec2 = Engine_ActorGet(19);
     rec2->scale_x = -0x10000;
-    rec2 = Value1(Engine_ActorGet, 20);
+    rec2 = Engine_ActorGet(20);
     rec2->scale_x = -0x10000;
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -269,11 +269,11 @@ void FieldScene_RunMiddleSequence(void)
     Event_Wait(60);
     Actor_FaceDirection(14, 0x3000, 0);
     Actor_FaceDirection(15, 0x3000, 0);
-    Value2(SceneState_ForwardMaskedHalfwordWith10, 18, 0x3000);
+    SceneState_ForwardMaskedHalfwordWith10(18, 0x3000);
     Actor_SetAttachedEffect(17, 0x101);
     /* Clear the motion flags, then step the height up and back down
      * 20 times, waiting between each step. */
-    rec = Value1(Engine_ActorGet, 21);
+    rec = Engine_ActorGet(21);
     rec->motion_flags = 0;
     for (counter = 0; counter < 20; counter++) {
         rec->y.fixed += 0x9999;

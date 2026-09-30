@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -12,11 +13,6 @@ void ArutinYama_TurnRollingObjectA(struct FieldActor *object);
 void ArutinYama_TurnRollingObjectB(struct FieldActor *object);
 void ArutinYama_SettleAndMountLeader(struct FieldActor *object);
 void ArutinYama_AdvanceRollingObject(struct FieldActor *object);
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
 
 struct Byte {
     u8 v;

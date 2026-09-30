@@ -93,10 +93,6 @@ void Inventory_EquipFar(s32, s32);
  * it by one, and specific values select which sub-sequence runs this call.
  * Reaching 0 restarts the countdown at 120 after running its own branch. */
 
-/* FAKEMATCH: Calls through these inline helpers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
@@ -104,46 +100,6 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
 
 static inline void InitializeActorZero(void)
 {
@@ -153,11 +109,6 @@ static inline void InitializeActorZero(void)
 static inline void InitializeSelectedActor(s32 actorId)
 {
     Actor_SetSpeed(actorId, 0x10000, 0x8000);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
 }
 
 /* Selects a later line in the current dialogue. */
@@ -185,11 +136,11 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     s32 i;
     u8 buf[8];
 
-    rec = Value1(Object_GetById, owner);
+    rec = Object_GetById(owner);
     p9 = rec->x.part.pixel;
     p11 = rec->z.part.pixel;
     if (mode != 3) {
-        count = Value0(Party_CountActiveOwnersFar);
+        count = Party_CountActiveOwnersFar();
         for (i = 0; i < count; i++) {
             buf[i] = Data_02000240[504 + i];
         }
@@ -222,7 +173,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
                     Party_AddActiveOwner((s32)(s8)buf[i]);
                 }
             }
-            obj = Value0(Menu_OpenCharacterSelector);
+            obj = Menu_OpenCharacterSelector();
             for (i = 0; i < count; i++) {
                 Party_RemoveActiveOwner((s32)(s8)buf[i]);
             }
@@ -244,7 +195,7 @@ L_main:
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);
     Actor_SetSpeed(owner, 0x10000, 0x8000);
-    record = Value1(Object_GetById, 0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(obj, record->x.fixed, record->z.fixed);
     }
@@ -267,7 +218,7 @@ L_main:
     Actor_WalkToAndWait(owner, p9, p11);
     Party_RemoveActiveOwner(obj);
     ((void (*)())Engine_GameFlagSet)(base + 512);
-    rec = Value1(Object_GetById, obj);
+    rec = Object_GetById(obj);
     sx = rec->x.fixed >> 20;
     GameFlag_SetByte((obj << 4) + 880, sx);
     sy = rec->z.fixed >> 20;

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 
 u8 *Engine_ActorGet();
 void Engine_EventBegin();
@@ -27,36 +28,6 @@ void Engine_EventEnd();
 
 extern struct GameState gGameState;
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6)
-{
-    f(a0, a1, a2, a3, a4, a5, a6);
-}
-
 struct Vec {
     s32 x;
     s32 y;
@@ -75,12 +46,12 @@ void MogoruMori_RunClosingChoreography(void)
     s32 zero;
     s32 game;
 
-    actor = (u8 *)Value1(Engine_ActorGet, 18);
+    actor = (u8 *)Engine_ActorGet(18);
     Engine_EventBegin();
     Engine_ActorSetChildValue(18, 15);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(18), 0);
     Call3(Engine_ActorSetPosition, 18, 0x880000, 0x1680000);
-    Call2(Engine_CameraSetSpeed, 0x8000, 0x1000);
+    Engine_CameraSetSpeed(0x8000, 0x1000);
     Call4(Engine_CameraMoveTo, 0x880000, -1, 0x1880000, 1);
     Engine_CameraWaitForMove();
     Battle_WaitMode0(60);
@@ -89,7 +60,7 @@ void MogoruMori_RunClosingChoreography(void)
     Engine_ActorStartRepeatedMotion(0, 2);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
-    Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
+    Engine_ActorFaceDirection(0, 0xc000, 20);
     Battle_WaitMode0(40);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
     MogoruMori_SpawnPuffRing(18);

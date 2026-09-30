@@ -11,14 +11,14 @@ void FieldScene_RunFallingRocksWarning(void)
 
     Event_Begin();
     msg = (s32)MsgArutinWatchFallingRocks;
-    Value2(Engine_MessageShowCentered, msg, 1);
+    Engine_MessageShowCentered(msg, 1);
     if (GameFlag_IsSet(0x908) == 0 && GameFlag_IsSet(0xf14) == 0) {
         GameFlag_Set(0x205);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x316, 140);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x30c, 140);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }

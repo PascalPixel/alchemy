@@ -25,17 +25,17 @@ void FuneHeya_RunFlagBranchSequence(void)
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
     /* FAKEMATCH: the do/while orders the flag store before this call. */
     do {
-        Call1(Engine_GameFlagClear, 0x8f0);
+        Engine_GameFlagClear(0x8f0);
     } while (0);
-    if (Value1(Engine_GameFlagIsSet, 0x928) == 0) {
+    if (Engine_GameFlagIsSet(0x928) == 0) {
         Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
         BattleFx_SetWeightedResult(62, 0);
     } else {
-        if (Value1(Engine_GameFlagIsSet, 0x929) == 0) {
+        if (Engine_GameFlagIsSet(0x929) == 0) {
             Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 18);
             BattleFx_SetWeightedResult(62, 1);
         } else {
-            if (Value1(Engine_GameFlagIsSet, 0x92a) == 0) {
+            if (Engine_GameFlagIsSet(0x92a) == 0) {
                 Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 20);
                 BattleFx_SetWeightedResult(62, 2);
             }

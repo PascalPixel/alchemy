@@ -1,4 +1,5 @@
 #include "MACHI.H"
+#include "CALL.H"
 extern u8 MsgTorebiSeenAnyoneWho[];
 
 void FieldScene_RunPrimarySequence(void)
@@ -8,7 +9,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Call3(Engine_ActorSetSpeed, 29, 0x10000, 0x8000);
-    Call3(Engine_ActorSetSpeed, 30, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(30, 0x10000, 0x8000);
     base = (s32)MsgTorebiSeenAnyoneWho;
     Engine_EventSetMessage(base);
     Call3(Engine_ActorSetPosition, 29, 0x480000, 0xd00000);
@@ -34,10 +35,10 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventWait(20);
     Event_OpenMessage(29, 0);
     Engine_EventWait(25);
-    Value4(UiWindow_CreateWithSideObject, 52, 0, 12, 7);
+    UiWindow_CreateWithSideObject(52, 0, 12, 7);
     UiText_OpenMessageWindow((base + 3), 11, 12, 2);
     SCENE_OBJECT_ID = 32;
-    if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) { /* object_id 0, force 0 */
+    if (Engine_EventChooseYesNo(0, 0) == 0) { /* object_id 0, force 0 */
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(30, 2);
         Engine_EventWait(30);
@@ -51,7 +52,7 @@ void FieldScene_RunPrimarySequence(void)
         Engine_EventShowMessage(29, 0);
         Engine_EventWait(20);
         Call3(Engine_ActorFaceDirection, 29, 0x4000, 0);
-        Call3(Engine_ActorFaceDirection, 30, 0x4000, 0);
+        Engine_ActorFaceDirection(30, 0x4000, 0);
         Engine_EventWait(30);
         Engine_ActorSetAnimation(29, 3);
         Engine_ActorSetAnimationAndWait(30, 3);
@@ -92,6 +93,6 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorSetPosition(29, 0, 0);
     Engine_ActorSetPosition(30, 0, 0);
     Engine_ActorSetPosition(32, 0, 0);
-    Call1(Engine_GameFlagSet, 0x8c0);
+    Engine_GameFlagSet(0x8c0);
     Engine_EventEnd();
 }

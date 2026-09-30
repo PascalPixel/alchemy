@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 
 void InitializeSceneRecordBuffer();
 void BattleFx_SetQueuedSoundAndPlay();
@@ -8,21 +9,6 @@ s32 Scene_RunActorFormation();
 void Scene_RunTransitionCue();
 void Scene_EnterSolSanctum();
 void Scene_SukuretaSuspectsHiddenPassage();
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Opens the scene with the window transition, playing sound 141 when flag
  * 0x814 is set, then prepares the entrance the party arrived by. Entrances 1
@@ -37,7 +23,7 @@ void FieldScene_RunSceneEntryHook(void)
 {
     s32 entrance;
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    if (Value1(Engine_GameFlagIsSet, 0x814) != 0) {
+    if (Engine_GameFlagIsSet(0x814) != 0) {
         BattleFx_SetQueuedSoundAndPlay(141);
         Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
         InitializeSceneRecordBuffer();
@@ -47,11 +33,11 @@ void FieldScene_RunSceneEntryHook(void)
     switch (entrance) {
     case 1:
     case 2:
-        if (Value1(Engine_GameFlagIsSet, 0x81a) != 0) {
-            Call6(Engine_MapCopyCellsTo, 1, 109, 4, 81, 1, 1);
-            Call6(Engine_MapCopyCellsTo, 0, 70, 30, 42, 1, 1);
-            Call6(Engine_MapCopyCellsTo, 0, 29, 3, 1, 3, 2);
-            Call6(Engine_MapCopyCellAttributes, 0, 29, 3, 2, 3, 1);
+        if (Engine_GameFlagIsSet(0x81a) != 0) {
+            Engine_MapCopyCellsTo(1, 109, 4, 81, 1, 1);
+            Engine_MapCopyCellsTo(0, 70, 30, 42, 1, 1);
+            Engine_MapCopyCellsTo(0, 29, 3, 1, 3, 2);
+            Engine_MapCopyCellAttributes(0, 29, 3, 2, 3, 1);
             Engine_MapRedraw();
         }
         break;
@@ -81,15 +67,15 @@ void FieldScene_RunSceneEntryHook(void)
         Engine_ActorSetSpriteFlags(Engine_ActorGet(17), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(18), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(19), 0);
-        if (Value1(Engine_GameFlagIsSet, 0x804) == 0)
+        if (Engine_GameFlagIsSet(0x804) == 0)
             Scene_SukuretaSuspectsHiddenPassage();
-        if (Value1(Engine_GameFlagIsSet, 0x303) != 0)
+        if (Engine_GameFlagIsSet(0x303) != 0)
             Call3(Engine_ActorSetPosition, 9, 0x5d80000, 0x880000);
         else if (GameFlag_IsSet(0x302) != 0)
             Actor_SetPosition(9, 0x5f80000, 0x880000);
-        if (Value1(Engine_GameFlagIsSet, 0x301) != 0)
+        if (Engine_GameFlagIsSet(0x301) != 0)
             Call3(Engine_ActorSetPosition, 10, 0x7180000, 0x880000);
-        else if (Value1(Engine_GameFlagIsSet, 0x300) != 0)
+        else if (Engine_GameFlagIsSet(0x300) != 0)
             Call3(Engine_ActorSetPosition, 10, 0x7380000, 0x880000);
         break;
 
@@ -102,12 +88,12 @@ void FieldScene_RunSceneEntryHook(void)
         Engine_ActorSetSpriteFlags(Engine_ActorGet(12), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(13), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 0);
-        if (Value1(Engine_GameFlagIsSet, 0x825) == 0)
+        if (Engine_GameFlagIsSet(0x825) == 0)
             Scene_RunTransitionCue();
         Scene_RunActorFormation(1);
         Engine_GameFlagSet(0x234);
         if (GameFlag_IsSet(0x821) != 0) {
-            Call6(Engine_MapCopyCellsTo, 0, 71, 100, 71, 1, 1);
+            Engine_MapCopyCellsTo(0, 71, 100, 71, 1, 1);
             Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
             Call6(Engine_MapCopyCellAttributes, 122, 20, 1, 2, 120, 30);
             Map_Redraw();

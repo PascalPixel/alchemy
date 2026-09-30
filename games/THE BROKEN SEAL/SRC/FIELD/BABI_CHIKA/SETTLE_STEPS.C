@@ -1,14 +1,10 @@
 #include "TYPES.H"
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 /* The floor height of each step, by the actor's step index. */
 extern s32 Data_0200b350[];
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Moves steps 10 and 11 to the floor heights their step indices name, then
  * marks the cell under each of actors 10 to 14 that has sunk below the

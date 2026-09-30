@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 struct Actor *Engine_ActorGet(s32 actor);
 void Engine_AudioPlayCue(s32 cue);
@@ -8,13 +9,6 @@ void Engine_EventWait(s32 frames);
 u32 Engine_RandomNext(void);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 void Engine_ActorSetPosition(s32 actor, s32 x, s32 y);
-
-/* Passing the constant through a wrapper loads it straight into the argument
- * register. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
 
 struct Actor {
     u8 pad[8];
@@ -50,7 +44,7 @@ void MakyuriChojo_SinkActorPair(void)
     right = Engine_ActorGet(24);
     Engine_AudioPlayCue(190);
     Call2(Engine_ActorSetChildValue, 22, 0x100);
-    Call2(Engine_ActorSetChildValue, 24, 0x100);
+    Engine_ActorSetChildValue(24, 0x100);
     SetOverlayObjectMode(Engine_ActorGet(22), 0);
     SetOverlayObjectMode(Engine_ActorGet(24), 0);
     p = &params;

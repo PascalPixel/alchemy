@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "KANPAN.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 

@@ -1,16 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
+#include "CALL.H"
 
 /* Parks actors 8 and 9, poses actors 10 and 12, and moves them further along when flag 0x908 is set. */
 void ArutinYama_PlaceFlaggedActors(void)
@@ -32,7 +22,7 @@ void ArutinYama_PlaceFlaggedActors(void)
         actor->y.fixed += -0x80000;
         actor->sprite->rotation = 0xc000;
     }
-    if (Value1(Engine_GameFlagIsSet, 0x908)) {
+    if (Engine_GameFlagIsSet(0x908)) {
         Call6(Engine_MapCopyCellsTo, 25, 36, 43, 36, 11, 9);
         Call6(Engine_MapCopyCellAttributes, 25, 35, 10, 5, 43, 35);
         Engine_MapRedraw();

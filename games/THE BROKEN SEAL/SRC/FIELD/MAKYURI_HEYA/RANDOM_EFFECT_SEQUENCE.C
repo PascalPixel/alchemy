@@ -1,51 +1,12 @@
 #include "MAKYURI.H"
 #include "MAKYURI_HEYA.H"
+#include "CALL.H"
 
 void MakyuriHeya_FadePaletteToBlack();
 void SceneEffect_RotatePaletteEntries97To103(void);
 extern const u8 MakyuriHeya_SparkBurstScript[];
 void BattleFx_PlayQueuedSound();
 void MakyuriHeya_SinkActorWithSparks();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, void *a7)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7);
-}
 
 /* Raises three randomized particle fields, then stages the actors according
  * to whether the lighthouse event flag has already been set. */
@@ -64,7 +25,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
     Event_Begin();
     Event_Wait(20);
     MakyuriHeya_FadePaletteToBlack();
-    Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_RotatePaletteEntries97To103);
+    Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
     Call6(Engine_MapCopyCellsTo, 45, 77, 45, 73, 9, 4);
     Event_Wait(30);
     effect = &options;
@@ -91,7 +52,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         z <<= 16;
         z += 0x880000;
         Effect_Spawn(x, 0, z, 0, 0, 0, 0x330001, effect);
-        Call1((void (*)())Battle_WaitMode0, 2);
+        ((void (*)())Battle_WaitMode0)(2);
         phase = (phase + 1);
     } while ((u32)phase <= 15);
     Event_Wait(40);
@@ -114,7 +75,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         z >>= 16;
         z <<= 16;
         z += 0x980000;
-        value = Value0(Engine_RandomNext);
+        value = Engine_RandomNext();
         speed = -((value * 10 >> 16) * 0x3333) - 0x3333;
         Effect_Spawn(x, 0, z, 0, 0, speed, 0x330001, effect);
         Event_Wait(2);
@@ -138,7 +99,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         particle = 0;
         row_offset = (phase << 4);
         do {
-            value = Value0(Engine_RandomNext);
+            value = Engine_RandomNext();
             x = ((((u32)(((value << 1) + value) << 4) >> 16) << 16) + 0x3000000);
             velocity_x = (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
             speed = 0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16);
@@ -148,7 +109,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         } while ((u32)particle <= 31);
         phase = (phase + 1);
     } while ((u32)phase <= 3);
-    Call1(Audio_PlayCue, 0x121);
+    Audio_PlayCue(0x121);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     MapRender_WaitForValues();
     BattleFx_PlayQueuedSound();
@@ -165,7 +126,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Actor_SetAnimation(0, 18);
         MakyuriHeya_SinkActorWithSparks(0);
         Event_Wait(60);
-        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_RotatePaletteEntries97To103);
+        Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
         ColorBuffer_ApplySource(0x10000, 0);
         ColorBuffer_ApplyTarget(0x10005, 0);
         ColorBuffer_Interpolate(120);
@@ -247,7 +208,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Event_Wait(30);
         MakyuriHeya_SinkActorWithSparks(2);
         ColorBuffer_ApplySource(0x10000, 0);
-        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_RotatePaletteEntries97To103);
+        Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
         ColorBuffer_ApplyTarget(0x10005, 0);
         ColorBuffer_Interpolate(120);
         Event_Wait(120);

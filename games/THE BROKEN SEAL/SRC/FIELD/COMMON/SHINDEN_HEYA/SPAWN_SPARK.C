@@ -6,23 +6,6 @@ s32 IwramUnsignedRemainder();
 s32 Engine_ObjectCreate();
 void ShindenHeya_UpdateRisingSpark();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
 struct Sprite378 {
     u8 pad[9];
     u8 lo : 2;

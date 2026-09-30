@@ -2,6 +2,7 @@
 #include "SCENE_IDS.H"
 #include "DMA.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void ArutamiraDou_MatchLeaderPriority(union FieldObject *object);
 
@@ -11,21 +12,6 @@ extern void *ArutamiraDou_ClearTarget;
 void SceneActor_PlaceFiveActorsInRow(s32 spacing);
 void SceneEffect_SetupBlendByFlag201(void);
 void FieldScene_RedrawActorFootprint(s32 actor);
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Altmiller Cave entry: number the entrance by area, then per area restore the lifts, the cells and the row of five actors from the story flags; open with the blend or the plain transition. */
 s32 ArutamiraDou_ApplyEntryState(void)
@@ -59,13 +45,13 @@ s32 ArutamiraDou_ApplyEntryState(void)
             if (!Engine_GameFlagIsSet(0x109)) {
                 *(u8 *)((u32)gSceneState + 4) = 0;
             }
-            Call1(Engine_GameFlagSet, 0x201);
+            Engine_GameFlagSet(0x201);
         }
         if (gGameState.entrance == 2) {
             if (!Engine_GameFlagIsSet(0x109)) {
                 *(u8 *)((u32)gSceneState + 4) = 5;
             }
-            Call1(Engine_GameFlagSet, 0x201);
+            Engine_GameFlagSet(0x201);
         }
     }
     if (gGameState.scene == (s32)&SceneId_ArutamiraDou2) {

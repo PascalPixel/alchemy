@@ -31,11 +31,11 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     s32 i;
     u8 buf[8];
 
-    rec = Value1(Engine_ActorGet, owner);
+    rec = Engine_ActorGet(owner);
     p9 = *(s16 *)(rec + 10);
     p11 = *(s16 *)(rec + 18);
     if (mode != 3) {
-        count = Value0(GetPartyMemberCount);
+        count = GetPartyMemberCount();
         for (i = 0; i < count; i++) {
             s32 at = 504 + i;
 
@@ -57,7 +57,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
         } else {
             Event_SetMessage((s32)MsgKorosseoWouldLikeFriendCheerFor);
             Event_OpenMessage(owner, 0);
-            state = Value2(Engine_EventChooseYesNo, 0, 0);
+            state = Engine_EventChooseYesNo(0, 0);
         }
         if (state == 0) {
             if (state < count) {
@@ -70,7 +70,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
                     Party_AddActiveOwner((s32)(s8)buf[i]);
                 }
             }
-            obj = Value0(Menu_OpenCharacterSelector);
+            obj = Menu_OpenCharacterSelector();
             for (i = 0; i < count; i++) {
                 Party_RemoveActiveOwner((s32)(s8)buf[i]);
             }
@@ -87,25 +87,25 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     return;
 L_main:
     ((void (*)())UiText_DrawQuantity)(obj, 1);
-    Call1(Engine_EventSetMessage, (s32)MsgKorosseoRobinWillCheerForWay);
+    Engine_EventSetMessage((s32)MsgKorosseoRobinWillCheerForWay);
     Event_ShowMessage(owner, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);
     Actor_SetSpeed(owner, 0x10000, 0x8000);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetPosition(obj, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     hi = p11 + 16;
     Actor_WalkToAndWait(obj, p9, hi);
     lo = p9 + 16;
-    Value3(Engine_ActorWalkToAndWait, 0, lo, hi);
+    Engine_ActorWalkToAndWait(0, lo, hi);
     Actor_FaceEachOther(obj, ACTOR_PARTY_LEADER, 30);
     Actor_SetAnimation(obj, 3);
     tail = hi - 32;
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Actor_WalkToAndWait(owner, p9, tail);
-    Value3(Engine_ActorWalkTo, owner, lo, tail);
+    Engine_ActorWalkTo(owner, lo, tail);
     Object_LinkObjectAndSetCallback(0, obj);
     Actor_WalkToAndWait(obj, p9, tail);
     Actor_SetAnimation(owner, 1);
@@ -115,7 +115,7 @@ L_main:
     Actor_WalkToAndWait(owner, p9, p11);
     Party_RemoveActiveOwner(obj);
     GameFlag_Set(base + 512);
-    rec = Value1(Engine_ActorGet, obj);
+    rec = Engine_ActorGet(obj);
     sx = *(s32 *)(rec + 8) >> 20;
     GameFlag_SetByte((obj << 4) + 880, sx);
     sy = *(s32 *)(rec + 16) >> 20;

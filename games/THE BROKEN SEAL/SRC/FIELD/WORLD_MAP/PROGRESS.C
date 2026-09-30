@@ -5,10 +5,10 @@ void FieldScene_RunScene371_0200357c(void)
     struct FieldActor *actor;
     s32 record;
 
-    actor = (struct FieldActor *)Value1(Engine_ActorGet, 8);
+    actor = (struct FieldActor *)Engine_ActorGet(8);
     Event_Wait(60);
     Event_Begin();
-    Call2(BattleFx_ScheduleRatioTransition, 0x9999, 1);
+    BattleFx_ScheduleRatioTransition(0x9999, 1);
     actor->scale_x = 0x13333;
     actor->scale_y = 0x13333;
     Camera_FollowActor(8, 1);
@@ -20,14 +20,14 @@ void FieldScene_RunScene371_0200357c(void)
     Actor_SetSpriteFlags(record, 0);
     Actor_SetSpeed(8, 0x6666, 0x3333);
     actor->unknown_64 = 0;
-    Value2(Engine_ActorEnableActionCallback, 8, (s32)gOpeningLeaderRise);
-    Value2(Engine_TaskAddCallback, (s32)WorldMap_SpawnActorEightPuff, 0xc80);
+    Engine_ActorEnableActionCallback(8, (s32)gOpeningLeaderRise);
+    Engine_TaskAddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplyTarget(0x10003, 1);
     gEventWork->transition_frames = 32;
     Event_OpenScreen();
     Event_Wait(120);
-    Call2(BattleFx_ScheduleRatioTransition, 0x16666, 0x12c);
+    BattleFx_ScheduleRatioTransition(0x16666, 0x12c);
     Event_Wait(0x10e);
     gEventWork->transition_frames = 16;
     *(u16 *)0x05000000 = 0x7fff;
@@ -68,19 +68,19 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 
     base = (u8 *)&gGameState;
     p6 = *(s32 *)(base + 500);
-    actor = (struct FieldActor *)Value1(Engine_ActorGet, (s32)p6);
+    actor = (struct FieldActor *)Engine_ActorGet((s32)p6);
     rec2 = GameFlag_IsSet(0x2f0);
     if (rec2 == 0) {
         Event_Begin();
         Actor_SetAttachedEffect((s32)p6, 0x101);
         Actor_SetAnimation((s32)p6, 9);
-        record = Value1(Engine_ActorGet, a0);
+        record = Engine_ActorGet(a0);
         if (record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Actor_WaitForMove((s32)p6);
         Audio_PlayCue(244);
-        Value2(Engine_TaskAddCallback, (s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
+        Engine_TaskAddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
         actor->motion_flags = rec2;
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000, actor->z.fixed);
         Actor_WaitForMove((s32)p6);
@@ -88,7 +88,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         actor->motion_flags = 4;
         *(u8 *)(base + 498) = 2;
         GameFlag_Set(0x2f0);
-        Call2(GameFlag_SetByte, 0x2f8, 180);
+        GameFlag_SetByte(0x2f8, 180);
         Event_End();
         *(u16 *)((u8 *)gEventWork + 0x17c) = rec2;
     }

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 extern u8 *gWork;
 
@@ -14,13 +15,6 @@ void Engine_EventRequestExit();
 void Engine_EventEnd();
 void Engine_MapAnimateCells();
 void FieldScene_ConfigureActor0ThenRun();
-
-/* Call sites spelled through this wrapper pass their constants straight
- * into the argument registers. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Animate the map cells for the chosen switch, or leave the area. */
 void KorimaMura_AnimateSwitchOrExit(void)

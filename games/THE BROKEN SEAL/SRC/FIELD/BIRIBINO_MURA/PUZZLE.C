@@ -54,8 +54,8 @@ void Scene_UpdatePuzzleActors(void)
     s32 p6;
     s32 row;
 
-    rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    record = Value1(Engine_ActorGet, 20);
+    rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(20);
     row = *(s32 *)(record + 16) >> 20;
     p9 = (*(s32 *)(rec7 + 8) >> 20);
     p10 = (*(s32 *)(rec7 + 16) >> 20);
@@ -97,8 +97,8 @@ void FieldScene_RunScene38bSequenceA(void)
     struct FieldActor *rec8;
     s32 record;
 
-    rec8 = Value1(Engine_ActorGet, 10);
-    rec = Value1(Engine_ActorGet, 11);
+    rec8 = Engine_ActorGet(10);
+    rec = Engine_ActorGet(11);
     record = Actor_Get(8);
     Actor_SetSpriteFlags(record, 0);
     rec7 = GameFlag_IsSet(0x845);
@@ -225,7 +225,7 @@ void FieldScene_RunScene38b_02000d10(void)
     record = ReadU16Elem((u16 *)&gGameState, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {
         if (GameFlag_IsSet(0x109) == 0) {
-            rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
             Event_Begin();
             arg0 = *(s32 *)(rec7 + 8);
             *(s32 *)(rec7 + 12) = 0x100000;

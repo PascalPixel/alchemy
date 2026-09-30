@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 void Engine_TaskWait();
 void Engine_ObjectSetPosition();
@@ -10,31 +11,6 @@ void Engine_EventWait();
 void Engine_ActorSetAnimation();
 void Engine_AudioPlayCue();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 void KorosseoKabe_SpinActorAway(void)
 {
     s32 rec2;
@@ -44,7 +20,7 @@ void KorosseoKabe_SpinActorAway(void)
     s32 spin2;
     u8 *p6;
 
-    rec2 = Value1(Engine_ActorGet, 30);
+    rec2 = Engine_ActorGet(30);
     p6 = *(s32 *)(rec2 + 80);
     Call1(Engine_GameFlagSet, 0x330);
     *(s32 *)(rec2 + 52) = 0x1999;

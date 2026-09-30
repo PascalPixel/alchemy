@@ -25,8 +25,8 @@ void FieldScene_RunScene372_02003e48(void)
     s32 rec8;
     s32 record;
 
-    rec8 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    rec7 = Value1(Engine_ActorGet, 8);
+    rec8 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec7 = Engine_ActorGet(8);
     Event_Begin();
     if (GameFlag_IsSet(0x305) != 0) {
         Actor_Stop(8);
@@ -42,7 +42,7 @@ void FieldScene_RunScene372_02003e48(void)
         Event_Wait(20);
         Event_SetMessage((s32)MsgHaidiaICantMoveGetHelp);
         Event_ShowMessage(8, 0);
-        Value2(Engine_ActorEnableActionCallback, 8, (s32)HaidiaArashi_ActorEightScript);
+        Engine_ActorEnableActionCallback(8, (s32)HaidiaArashi_ActorEightScript);
         Actor_SetAnimation(8, 6);
     } else {
         Actor_Stop(8);
@@ -73,7 +73,7 @@ void FieldScene_RunScene372_02003e48(void)
         Actor_RunRepeatedMotion(8, 2);
         Event_Wait(20);
         Event_ShowMessage(8, 0);
-        Value2(Engine_ActorEnableActionCallback, 8, (s32)HaidiaArashi_ActorEightScript);
+        Engine_ActorEnableActionCallback(8, (s32)HaidiaArashi_ActorEightScript);
         Actor_SetAnimation(8, 6);
         GameFlag_Set(0x305);
     }
@@ -88,7 +88,7 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Actor_Stop(ACTOR_ID);
-    Call1(Scheduler_RemoveCallback, (s32)OverlayObject_CopyRecordField1ToSlots22And8);
+    Scheduler_RemoveCallback((s32)OverlayObject_CopyRecordField1ToSlots22And8);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_FaceDirection(ACTOR_ID, 0x3000, 20);

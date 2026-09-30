@@ -4,7 +4,6 @@
 
 #include "TYPES.H"
 
-
 extern s16 Data_02000240[];
 extern volatile s32 Data_03001ae8;
 /* The shops' welcome lines open their blocks of messages; the menu steps
@@ -73,11 +72,6 @@ s32 Shop_ConfirmAct(void);
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
-/* Call sites spelled through these wrappers pass their constants straight into
- * the argument registers; a direct call instead precomputes a costly constant
- * into a pseudo shared with later uses in the block. A value-returning call
- * sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /* Each symbol here is the per-site call word the overlay image holds -- one
@@ -87,16 +81,6 @@ s32 Shop_ConfirmAct(void);
 /* Runs one setup call, then a long table of two-argument calls each passing
  * a slot index (0-3) and an associated code value, and finishes with a few
  * index-only calls. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 static __inline__ void bump_step(s32 amount)
 {
     u8 *work = *(u8 **)Data_03001ebc;

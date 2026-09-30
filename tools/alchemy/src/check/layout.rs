@@ -100,10 +100,18 @@ fn recipes_in(
         let Some(form) = form_of(built) else {
             continue;
         };
+        // A COMMON/ recipe reads its input from games/COMMON's SRC.
+        let (root, built) = match built.strip_prefix("COMMON/") {
+            Some(shared) => match source_root.parent().and_then(Path::parent) {
+                Some(games) => (games.join("COMMON/SRC"), shared),
+                None => continue,
+            },
+            None => (source_root.to_path_buf(), built),
+        };
         let Ok(input) = ags::resource::input_name(built) else {
             continue;
         };
-        let input = source_root.join(input);
+        let input = root.join(input);
         if judged_form(form) {
             found.insert(Recipe {
                 png: input,
@@ -113,9 +121,9 @@ fn recipes_in(
             let Ok(list) = std::fs::read_to_string(&input) else {
                 continue;
             };
-            let directory = input.parent().unwrap_or(source_root);
             let sibling = |name: &str| {
-                std::fs::read(directory.join(name)).map_err(|error| format!("{name}: {error}"))
+                let path = ags::resource::sibling_path(&input, name)?;
+                std::fs::read(path).map_err(|error| format!("{name}: {error}"))
             };
             problems.extend(
                 tilemap_problems(&list, &sibling)
@@ -125,9 +133,10 @@ fn recipes_in(
             for line in list.lines() {
                 let fields: Vec<&str> = line.split('\t').map(str::trim).collect();
                 if let [part, form] = fields.as_slice() {
-                    if judged_form(form) {
+                    let png = ags::resource::sibling_path(&input, &format!("{part}.PNG"));
+                    if let (true, Ok(png)) = (judged_form(form), png) {
                         found.insert(Recipe {
-                            png: directory.join(format!("{part}.PNG")),
+                            png,
                             form: (*form).to_owned(),
                         });
                     }
@@ -574,6 +583,27 @@ mod tests {
         assert_eq!(tile_form("frames"), None);
         assert_eq!(tile_form("bitmap"), None);
         assert!(judged_form("bitmap") && judged_form("8bpp32x16") && !judged_form("frames"));
+    }
+
+    #[test]
+    fn a_common_recipe_reads_its_input_from_common() {
+        let directory = tempfile::tempdir().unwrap();
+        let source_root = directory.path().join("games/GAME/SRC");
+        let mut found = BTreeSet::new();
+        let mut problems = Vec::new();
+        recipes_in(
+            &source_root,
+            "\t.incbin \"COMMON/GRAPHICS/SET/TILES.4bpp.mtf\"\n",
+            &mut found,
+            &mut problems,
+        );
+        let found: Vec<_> = found.into_iter().map(|recipe| recipe.png).collect();
+        assert_eq!(
+            found,
+            [directory
+                .path()
+                .join("games/COMMON/SRC/GRAPHICS/SET/TILES.PNG")]
+        );
     }
 
     #[test]

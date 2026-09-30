@@ -27,10 +27,10 @@ Field_Map206:
 	.incbin "MAP/MAP_206/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map206_ANIMATION:
-	.incbin "MAP/MAP_206/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_052/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map206_BLEND:
-	.incbin "MAP/MAP_010/BLEND.script.lz"
+	.incbin "COMMON/MAP/MAP_018/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map206_SCENE:
 	.incbin "MAP/MAP_206/SCENE.parts.lz"

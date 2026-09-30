@@ -401,9 +401,10 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     // A graphics or map file the build makes: an uppercase path whose name
     // is a recipe the ags encoder builds, so the encoder alone decides which
     // forms and codecs exist.
-    let built_graphics =
-        regex::Regex::new(r#"^\s*\.incbin\s+"((?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#)
-            .expect("built graphics pattern");
+    let built_graphics = regex::Regex::new(
+        r#"^\s*\.incbin\s+"((?:COMMON/)?(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
+    )
+    .expect("built graphics pattern");
     let is_built_graphics = |line: &str| {
         built_graphics
             .captures(line)

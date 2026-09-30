@@ -778,14 +778,16 @@ const OVERLAY_MACHINE: LzMachine = ags::resource::PACKER;
 
 /// The resource files an assembly source reads with
 /// `.incbin "GRAPHICS/..."`, or as assembler source with `.include`, each
-/// named by its recipe.
+/// named by its recipe. `COMMON/GRAPHICS/...` names a file built from the
+/// input of that path in games/COMMON, one both games share.
 fn graphics_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern =
-        regex::Regex::new(r#"(?m)^\s*\.(?:incbin|include)\s+"((?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)""#)
-            .expect("static pattern");
+    let pattern = regex::Regex::new(
+        r#"(?m)^\s*\.(?:incbin|include)\s+"((?:COMMON/)?(?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)""#,
+    )
+    .expect("static pattern");
     pattern
         .captures_iter(&text)
         .map(|capture| capture[1].to_owned())
@@ -808,16 +810,17 @@ fn build_graphics_files(
                 source.display()
             ));
         }
-        // Inputs sit under the SRC of the game, or COMMON, whose source reads them.
-        let game = if source.starts_with("games/COMMON") {
-            Path::new("games/COMMON")
-        } else {
-            Path::new(target.game_dir())
+        // Inputs sit under the SRC of the game, or COMMON, whose source reads
+        // them, or of COMMON when the name says so.
+        let (game, recipe) = match built.strip_prefix("COMMON/") {
+            Some(shared) => (Path::new("games/COMMON"), shared),
+            None if source.starts_with("games/COMMON") => (Path::new("games/COMMON"), &*built),
+            None => (Path::new(target.game_dir()), &*built),
         };
-        let image = game.join("SRC").join(ags::resource::input_name(&built)?);
+        let image = game.join("SRC").join(ags::resource::input_name(recipe)?);
         let png = fs::read(root.join(&image))
             .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
-        let encoded = ags::resource::build_file_with(&built, &png, &|name| {
+        let encoded = ags::resource::build_file_with(recipe, &png, &|name| {
             let path = root.join(ags::resource::sibling_path(&image, name)?);
             fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
         })?;

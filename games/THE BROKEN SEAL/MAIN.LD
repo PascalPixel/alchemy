@@ -450,7 +450,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/NODE_CHAIN_GET_NODE_AT_COUNT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION_LOOP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION_STEP_RIGHT.o"(.text)
-        "*/recon/tbs/raw/0801b810.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION_STEP_LEFT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION_RESOURCE.o"(.text)
         "*/recon/tbs/raw/0801ba68.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/LOAD_BY_MODE.o"(.text)

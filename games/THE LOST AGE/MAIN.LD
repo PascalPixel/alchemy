@@ -532,7 +532,7 @@ SECTIONS
         "*/recon/tla/raw/0802ce4c.o"(.text)
         "*/recon/tla/raw/0802cea0.o"(.text)
         "*/recon/tla/raw/0802ceb0.o"(.text)
-        "*/recon/tla/raw/0802cec0.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/ALLOCATE_AND_CLEAR_QUEUE.o"(.text)
         "*/recon/tla/raw/0802cf10.o"(.text)
         "*/recon/tla/raw/0802cf7c.o"(.text)
         "*/recon/tla/raw/0802cf90.o"(.text)

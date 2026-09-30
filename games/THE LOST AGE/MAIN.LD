@@ -671,7 +671,7 @@ SECTIONS
         "*/recon/tla/raw/0803a8c8.o"(.text)
         "*/recon/tla/raw/0803a8d8.o"(.text)
         "*/recon/tla/raw/0803a8fc.o"(.text)
-        "*/recon/tla/raw/0803aaa4.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/TEXT/GET_WIDE_STRING_WIDTH.o"(.text)
         "*/recon/tla/raw/0803aae4.o"(.text)
         "*/recon/tla/raw/0803ac60.o"(.text)
         "*/recon/tla/raw/0803acd4.o"(.text)

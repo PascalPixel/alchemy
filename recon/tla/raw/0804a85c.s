@@ -1486,7 +1486,7 @@ Func_0804a85c:
 	strh r3, [r6, r2]
 .L_0804b36a:
 	adds r0, r6, #0
-	bl Func_0803aaa4
+	bl UiText_GetWideStringWidth
 	ldr r3, [r5]
 	lsrs r2, r0, #31
 	adds r2, r0, r2

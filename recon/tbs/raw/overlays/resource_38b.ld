@@ -7,14 +7,12 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/MURA.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/CORNER.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/TILES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/IMPORT.o"(.text)
         "*/resource_38b_overlay.o"(.rodata)
     }
     .bss (NOLOAD) :
     {
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/CORNER.o"(.bss COMMON)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/MURA.o"(.bss COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

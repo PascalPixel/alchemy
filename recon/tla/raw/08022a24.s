@@ -98,6 +98,9 @@ Func_08022a84:
 	strb	r7, [r5, #27]
 .L_08022aca:
 	pop	{r5, r6, r7, pc}
+	.global Func_08022acc
+	.thumb_func
+Func_08022acc:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	ldr	r3, [r5, #12]

@@ -38,7 +38,7 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8060
+	overlay_veneer PartyInventory_GiveItemFar
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar

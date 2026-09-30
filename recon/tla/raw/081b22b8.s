@@ -2798,7 +2798,7 @@ Func_081b22b8:
 	ldr	r2, [pc, #148]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	Func_08038000
+	bl	UiWork_InitializeWithResourceCountersFar
 	bl	.L_081b336c
 	movs	r7, #0
 	mov	sl, r7

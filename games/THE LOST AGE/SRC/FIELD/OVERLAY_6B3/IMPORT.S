@@ -17,7 +17,7 @@
 	overlay_veneer Func_080001f0
 	overlay_veneer Resource_GetTableEntryFar
 	overlay_veneer Func_080003d8
-	overlay_veneer Func_08038000
+	overlay_veneer UiWork_InitializeWithResourceCountersFar
 	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer UiText_OpenMessageWindowFar
 	overlay_veneer UiWork_IsCompleteFar

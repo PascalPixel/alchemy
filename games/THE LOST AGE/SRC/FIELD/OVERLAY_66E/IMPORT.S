@@ -14,7 +14,7 @@
 	overlay_veneer Func_080003c8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020300
-	overlay_veneer Func_08038040
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer Func_08038120
 	overlay_veneer Item_Get
 	overlay_veneer PartyInventory_FindOwnerFar
@@ -23,7 +23,7 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8070
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	overlay_veneer Func_080c80f8

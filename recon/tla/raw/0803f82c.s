@@ -647,28 +647,28 @@ Func_0803f9c0:
 	movs	r3, #26
 	str	r5, [sp, #0]
 	mov	fp, r0
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #4
 	str	r3, [sp, #0]
 	mov	r0, fp
 	movs	r1, #0
 	movs	r2, #4
 	movs	r3, #26
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #7
 	str	r3, [sp, #0]
 	mov	r0, fp
 	movs	r1, #0
 	movs	r2, #7
 	movs	r3, #26
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #10
 	str	r3, [sp, #0]
 	mov	r0, fp
 	movs	r1, #0
 	movs	r2, #10
 	movs	r3, #26
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	ldr	r5, [pc, #804]
 	mov	r1, fp
 	adds	r0, r5, #0
@@ -1321,7 +1321,7 @@ Func_080400e8:
 	movs	r1, #160
 	movs	r2, #40
 	movs	r3, #200
-	bl	Func_08039454
+	bl	UiWindow_ClearInteriorTiles
 	adds	r0, r5, #0
 	mov	r1, r8
 	movs	r2, #160
@@ -1341,7 +1341,7 @@ Func_080400e8:
 	movs	r1, #160
 	movs	r2, #64
 	movs	r3, #184
-	bl	Func_08039454
+	bl	UiWindow_ClearInteriorTiles
 	adds	r0, r5, #0
 	mov	r1, r8
 	movs	r2, #160
@@ -1358,7 +1358,7 @@ Func_080400e8:
 	movs	r1, #160
 	movs	r2, #88
 	movs	r3, #184
-	bl	Func_08039454
+	bl	UiWindow_ClearInteriorTiles
 	adds	r0, r5, #0
 	movs	r3, #88
 	mov	r1, r8
@@ -1547,7 +1547,7 @@ Func_080400e8:
 	bne.n	.L_080404dc
 	ldr	r0, [pc, #148]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 .L_080404dc:
 	cmp	r6, #0
 	bne.n	.L_08040576

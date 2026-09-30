@@ -41,8 +41,8 @@
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
 	overlay_veneer Event_PrepareObjectAndApplyValueFar
-	overlay_veneer Func_080c8058
-	overlay_veneer Func_080c8070
+	overlay_veneer Party_RemoveOwnerRestoredFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar

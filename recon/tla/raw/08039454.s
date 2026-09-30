@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08039454
+	.global UiWindow_ClearInteriorTiles
 	.thumb_func
-Func_08039454:
+UiWindow_ClearInteriorTiles:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

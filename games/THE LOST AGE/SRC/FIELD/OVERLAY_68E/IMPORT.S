@@ -20,7 +20,7 @@
 	overlay_veneer Func_08020178
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
-	overlay_veneer Func_08038040
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
 	overlay_veneer UiText_DrawNumberInWindowFar
 	overlay_veneer Func_08038120
@@ -36,8 +36,8 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8060
-	overlay_veneer Func_080c8070
+	overlay_veneer PartyInventory_GiveItemFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8

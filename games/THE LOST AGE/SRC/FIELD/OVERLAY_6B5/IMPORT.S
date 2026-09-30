@@ -35,9 +35,9 @@
 	overlay_veneer Func_080201e8
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
-	overlay_veneer Func_08038020
+	overlay_veneer Ui_AdjustValueWithoutLimitFar
 	overlay_veneer UiText_OpenMessageWindowFar
-	overlay_veneer Func_08038040
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer RenderOutput_PrepareForRedrawFar
 	overlay_veneer UiText_DrawNumberFar
 	overlay_veneer Func_08038118
@@ -49,7 +49,7 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8070
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
@@ -70,6 +70,6 @@
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_08108010
 	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimesFar
-	overlay_veneer Func_08118110
+	overlay_veneer DebugParty_LoadPresetFar
 	overlay_veneer Audio_PlayCue
 	overlay_veneer Func_081c0090

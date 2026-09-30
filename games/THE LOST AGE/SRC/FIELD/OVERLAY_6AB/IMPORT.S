@@ -57,7 +57,7 @@
 	overlay_veneer Func_080202f8
 	overlay_veneer Func_08020348
 	overlay_veneer Func_08020390
-	overlay_veneer Func_08038040
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer Func_08038210
 	overlay_veneer Func_08038248
 	overlay_veneer Inventory_AddFar
@@ -67,7 +67,7 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8070
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar

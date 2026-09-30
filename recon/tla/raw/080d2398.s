@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d2398
+	.global Event_RunObjectHookAndWait
 	.thumb_func
-Func_080d2398:
+Event_RunObjectHookAndWait:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	bl	Func_080d2394

@@ -55,7 +55,7 @@
 	overlay_veneer Func_08020348
 	overlay_veneer Func_08020360
 	overlay_veneer Func_08020390
-	overlay_veneer Func_08038040
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer Func_080ad0f0
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018

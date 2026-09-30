@@ -101,7 +101,7 @@ Func_0801319c:
 	movs	r0, #10
 	bl	WaitFrames
 	movs	r0, #0
-	bl	Func_080c8008
+	bl	Game_ResetForNewGameFar
 	add	sp, #4
 	b.n	.L_080132a0
 	movs	r0, r0

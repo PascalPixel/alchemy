@@ -21,7 +21,7 @@ Func_0811b724:
 .L_0811b744:
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_0811b73e
 	adds	r3, r5, #0

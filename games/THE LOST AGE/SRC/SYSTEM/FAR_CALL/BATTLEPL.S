@@ -17,8 +17,8 @@ Func_08118088:
 	overlay_veneer Func_0811c314
 	overlay_veneer Func_0811a188
 	overlay_veneer Func_0811a038
-	overlay_veneer Func_0811cd7c
-	overlay_veneer Func_0811bdb0
+	overlay_veneer Camera_ConfigureScene
+	overlay_veneer GetMotionRecord
 	overlay_veneer BattlePres_SetActorModes
 	overlay_veneer Func_08122c4c
 	overlay_veneer ColorBuffer_Scale
@@ -28,7 +28,7 @@ Func_08118088:
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesTwentyTimesFar:
 	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimes
-	.global Func_08118110
+	.global DebugParty_LoadPresetFar
 	.thumb_func
-Func_08118110:
-	overlay_veneer Func_08118738
+DebugParty_LoadPresetFar:
+	overlay_veneer DebugParty_LoadPreset

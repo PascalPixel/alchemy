@@ -169,7 +169,17 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
     let mut regions: Vec<Region> = relist::placed_sections(map)
         .into_iter()
         .filter_map(|placed| {
-            let stem = stem(&placed.object)?;
+            // Objects from outside the build tree, such as the compiler's
+            // library members, take bytes too.
+            let Some(stem) = stem(&placed.object) else {
+                return Some(Region {
+                    start: placed.address,
+                    end: placed.address + placed.size,
+                    kind: RegionKind::Other,
+                    object: placed.object.clone(),
+                    section: placed.section,
+                });
+            };
             let path = Path::new(stem);
             let listing = path.parent() == Some(Path::new(&options.listings));
             let leaf = path.file_name()?.to_string_lossy().into_owned();
@@ -229,6 +239,18 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
         });
     }
     regions.sort_by_key(|region| (region.start, region.end));
+    // A listing placed after an object that ends off a word boundary was
+    // aligned by the linker; it takes the padding as its own bytes.
+    for index in 1..regions.len() {
+        let before = regions[index - 1].end;
+        let region = &mut regions[index];
+        if region.kind == (RegionKind::Listing { regenerate: true })
+            && before < region.start
+            && region.start - before < 4
+        {
+            region.start = before;
+        }
+    }
     regions
 }
 

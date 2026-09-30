@@ -126,7 +126,7 @@ Func_080a414c:
 	b .L_080a427a
 .L_080a4248:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #1
 	negs r3, r3
 	ldr r1, .L_080a4474
@@ -135,7 +135,7 @@ Func_080a414c:
 .L_080a4258:
 	movs r1, #3
 	adds r0, r5, #0
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r0, r0, #24
 	asrs r7, r0, #24
 	movs r1, #3
@@ -168,7 +168,7 @@ Func_080a414c:
 	adds r0, r7, #3
 	mov r9, r1
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	mov r2, r8
 	adds r2, #2
 	lsrs r3, r2, #31
@@ -261,7 +261,7 @@ Func_080a414c:
 	cmp r3, r1
 	bne .L_080a4372
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a43c8
 .L_080a4372:
 	mov r2, r10
@@ -280,23 +280,23 @@ Func_080a414c:
 	.4byte .L_080a43a8
 .L_080a4398:
 	movs r0, #174
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a43be
 .L_080a43a0:
 	movs r0, #175
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a43be
 .L_080a43a8:
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a43be
 .L_080a43b0:
 	movs r0, #117
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a43be
 .L_080a43b8:
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080a43be:
 	ldr r1, .L_080a4474
 .L_080a43c0:
@@ -323,7 +323,7 @@ Func_080a414c:
 	movs r0, #111
 	add r8, r3
 	mov r9, r1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a4436
 .L_080a43f0:
 	ldr r2, [r1]
@@ -335,7 +335,7 @@ Func_080a414c:
 	movs r0, #111
 	add r8, r2
 	mov r9, r2
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a4436
 .L_080a4408:
 	ldr r2, [r1]
@@ -347,7 +347,7 @@ Func_080a414c:
 	movs r0, #111
 	adds r7, #1
 	mov r9, r3
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a4436
 .L_080a4420:
 	ldr r3, [r1]
@@ -359,11 +359,11 @@ Func_080a414c:
 	movs r0, #111
 	subs r7, #1
 	mov r9, r1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080a4436:
 	movs r0, #168
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_080a4446
@@ -386,7 +386,7 @@ Func_080a414c:
 	pop {r1}
 	bx r1
 .L_080a4468:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080a446c:
 	.4byte 0x000001ff
 .L_080a4470:

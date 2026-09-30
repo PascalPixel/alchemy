@@ -234,7 +234,7 @@ BattleFx_InitializeMode12:
 .L_080e17bc:
 	.4byte 0x04000020
 .L_080e17c0:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e17c4:
 	ldr r5, [sp, #128]
 	ldr r0, .L_080e1834
@@ -618,7 +618,7 @@ BattleFx_InitializeMode12:
 .L_080e1ab0:
 	.4byte 0xfffff000
 .L_080e1ab4:
-	.4byte Data_080eda98
+	.4byte Data_080eda88 + 0x10
 .L_080e1ab8:
 	.4byte 0xffffff00
 .L_080e1abc:
@@ -628,7 +628,7 @@ BattleFx_InitializeMode12:
 .L_080e1ac4:
 	.4byte ParticleStreams_CellOffsets
 .L_080e1ac8:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080e1acc:
 	movs r3, #2
 	str r3, [sp, #0]
@@ -679,7 +679,7 @@ BattleFx_InitializeMode12:
 	lsls r3, r3, #5
 	str r3, [r2]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	lsls r3, r3, #5
@@ -889,19 +889,19 @@ BattleFx_InitializeMode12:
 	cmp r2, #16
 	bne .L_080e1cda
 	movs r0, #140
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e1cda:
 	ldr r5, [sp, #116]
 	cmp r5, #132
 	bne .L_080e1ce6
 	movs r0, #131
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e1ce6:
 	ldr r0, [sp, #116]
 	cmp r0, #151
 	bne .L_080e1cf2
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e1cf2:
 	ldr r3, .L_080e1dc0
 	ldr r3, [r3]
@@ -991,7 +991,7 @@ BattleFx_InitializeMode12:
 .L_080e1dac:
 	.4byte 0x00001010
 .L_080e1db0:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080e1db4:
 	.4byte ParticleStreams_CellOffsets
 .L_080e1db8:
@@ -1025,7 +1025,7 @@ BattleFx_InitializeMode12:
 .L_080e1df0:
 	.4byte 0x0000038e
 .L_080e1df4:
-	.4byte Data_02010c70
+	.4byte gMapCellBuffer + 0xc70
 .L_080e1df8:
 	bl Random16
 	movs r3, #31
@@ -1058,7 +1058,7 @@ BattleFx_InitializeMode12:
 	movs r3, #50
 	movs r0, #145
 	str r3, [r2]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #192
 	ldr r0, [sp, #128]
 	lsls r1, r1, #7
@@ -1087,7 +1087,7 @@ BattleFx_InitializeMode12:
 	cmp r3, #0
 	bne .L_080e1e7a
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e1e7a:
 	ldr r5, [sp, #116]
 	cmp r5, #140
@@ -1185,7 +1185,7 @@ BattleFx_InitializeMode12:
 	asrs r3, r3, #7
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -1316,7 +1316,7 @@ BattleFx_InitializeMode12:
 	bl Unnamed_080ed408
 	movs r1, #3
 	mov r0, r9
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r1, r0, #2
 	adds r1, r1, r0
 	movs r3, #72
@@ -1370,7 +1370,7 @@ BattleFx_InitializeMode12:
 	asrs r3, r3, #7
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -1461,7 +1461,7 @@ BattleFx_InitializeMode12:
 	adds r0, r5, #0
 	adds r4, #72
 	str r4, [sp, #60]
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	movs r2, #32
@@ -1498,7 +1498,7 @@ BattleFx_InitializeMode12:
 .L_080e21b4:
 	.4byte 0x00000062
 .L_080e21b8:
-	.4byte Data_02010c58
+	.4byte gMapCellBuffer + 0xc58
 .L_080e21bc:
 	.4byte 0x000003ff
 .L_080e21c0:
@@ -1516,11 +1516,11 @@ BattleFx_InitializeMode12:
 .L_080e21d8:
 	.4byte 0x10101010
 .L_080e21dc:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080e21e0:
 	.4byte 0x0000ffff
 .L_080e21e4:
-	.4byte Data_080eecaa
+	.4byte ParticleReveal_CellSourceOffsets + 0x42
 .L_080e21e8:
 	bl _call_via_r4
 	movs r0, #47
@@ -1608,7 +1608,7 @@ BattleFx_InitializeMode12:
 	asrs r3, r3, #7
 	str r3, [r7, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -1789,7 +1789,7 @@ BattleFx_InitializeMode12:
 	adds r0, r5, #0
 	add r6, r11
 	subs r6, r6, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r4, [sp, #8]
 	mov r1, r8
 	lsls r5, r0, #2
@@ -1898,9 +1898,9 @@ BattleFx_InitializeMode12:
 	bx r0
 	.2byte 0x0000
 .L_080e24fc:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080e2500:
-	.4byte Data_02010c58
+	.4byte gMapCellBuffer + 0xc58
 .L_080e2504:
 	.4byte 0x0000ffff
 .L_080e2508:
@@ -1916,7 +1916,7 @@ BattleFx_InitializeMode12:
 .L_080e251c:
 	.4byte BattleFx_GlintCellHeights
 .L_080e2520:
-	.4byte Data_080eecae
+	.4byte ParticleReveal_CellSourceOffsets + 0x46
 .L_080e2524:
 	.4byte BattleFx_GlintCellOffsets
 .L_080e2528:

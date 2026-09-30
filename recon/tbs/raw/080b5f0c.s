@@ -44,7 +44,7 @@ Func_080b5f0c:
 .L_080b5f5a:
 	mov r2, r10
 	ldrh r0, [r7, r2]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r2, #170
 	adds r1, r0, #0
 	lsls r2, r2, #1
@@ -110,7 +110,7 @@ Func_080b5f0c:
 	bl Runtime_BumpAllocateAlternatePool
 	adds r6, r0, #0
 	movs r0, #0
-	bl Func_08077000
+	bl Trade_GetOfferStateFar
 	ldr r3, .L_080b6068
 	adds r1, r0, #0
 	adds r2, r5, #0
@@ -166,6 +166,6 @@ Func_080b5f0c:
 	bx r1
 	.2byte 0x0000
 .L_080b6064:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080b6068:
 	.4byte IwramCopyWords

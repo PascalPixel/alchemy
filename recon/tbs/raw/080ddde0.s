@@ -90,7 +90,7 @@ Region_080ddde0:
 	ldr r0, .L_080de0b0
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #138
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #0
 	ldr r3, .L_080de090
 	str r0, [sp, #40]
@@ -322,7 +322,7 @@ Region_080ddde0:
 	asrs r3, r3, #5
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	negs r3, r3
@@ -358,7 +358,7 @@ Region_080ddde0:
 .L_080de0a0:
 	.4byte 0x00000073
 .L_080de0a4:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080de0a8:
 	.4byte 0x00007098
 .L_080de0ac:
@@ -638,7 +638,7 @@ Region_080ddde0:
 .L_080de2dc:
 	.4byte BattleFx_GlintCellOffsets
 .L_080de2e0:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080de2e4:
 	.4byte gMapCellBuffer
 .L_080de2e8:

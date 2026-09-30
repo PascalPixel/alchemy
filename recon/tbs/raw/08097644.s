@@ -175,7 +175,7 @@ Func_08097644:
 	mov r4, r8
 	ldr r0, .L_08097830
 	ldr r1, [r4]
-	bl Func_080090c8
+	bl Object_CreateFar
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_08097806
@@ -246,7 +246,7 @@ Func_08097644:
 	.4byte BattleFx_SetCallbackWhenTargetUnset
 .L_0809783c:
 	movs r0, #130
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldrb r2, [r5]
 .L_08097844:
 	adds r3, r2, #1

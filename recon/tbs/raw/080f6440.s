@@ -93,7 +93,7 @@ Unnamed_080f6440:
 .L_080f64e8:
 	.4byte 0x0000000c
 .L_080f64ec:
-	.4byte Data_03001f04
+	.4byte gTransitionWork + 0x4
 .L_080f64f0:
 	.4byte 0x040000b0
 .L_080f64f4:
@@ -105,7 +105,7 @@ Unnamed_080f6440:
 .L_080f6500:
 	.4byte 0xa2600001
 .L_080f6504:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_080f6508:
 	.4byte 0x0000ffff
 .L_080f650c:
@@ -196,11 +196,11 @@ Unnamed_080f6440:
 	adds r3, #1
 	str r3, [r4]
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080f65ca
 .L_080f65c4:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080f65ca:
 	ldrh r2, [r6]
 	movs r3, #128
@@ -214,17 +214,17 @@ Unnamed_080f6440:
 	subs r3, #1
 	str r3, [r0]
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080f65fa
 .L_080f65e8:
 	.4byte gDebugPaused
 .L_080f65ec:
 	.4byte 0x000004cc
 .L_080f65f0:
-	.4byte Data_0200024c
+	.4byte gCell + 0xc
 .L_080f65f4:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080f65fa:
 	ldr r2, .L_080f663c
 	ldr r3, .L_080f6634
@@ -269,7 +269,7 @@ Unnamed_080f6440:
 	beq .L_080f665a
 .L_080f664a:
 	movs r0, #228
-	bl Func_08077048
+	bl PartyInventory_RemoveFar
 	mov r2, r8
 	ldr r3, [r2]
 	adds r5, #1
@@ -283,7 +283,7 @@ Unnamed_080f6440:
 	bl UiWork_FinalizeFar
 	movs r0, #152
 	lsls r0, r0, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080f6dd2
 .L_080f6670:
 	cmp r5, #5
@@ -365,7 +365,7 @@ Unnamed_080f6440:
 	cmp r3, #4
 	bgt .L_080f671a
 	ldr r0, .L_080f6978
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, [r5]
 	lsls r3, r2, #3
 	subs r3, r3, r2
@@ -383,7 +383,7 @@ Unnamed_080f6440:
 	bne .L_080f6752
 	movs r0, #152
 	lsls r0, r0, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r0, [sp, #24]
 	mov r1, r9
 	movs r3, #1
@@ -408,7 +408,7 @@ Unnamed_080f6440:
 	b .L_080f67ac
 .L_080f6752:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080f67ac
 .L_080f675a:
 	mov r3, r8
@@ -422,10 +422,10 @@ Unnamed_080f6440:
 	ldr r0, [r5]
 	movs r1, #6
 	adds r0, #1
-	bl Func_080022fc
+	bl Math_Mod
 	str r0, [r5]
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r4, r8
 	ldrh r2, [r4]
 .L_080f6780:
@@ -438,10 +438,10 @@ Unnamed_080f6440:
 	ldr r0, [r5]
 	movs r1, #6
 	adds r0, #5
-	bl Func_080022fc
+	bl Math_Mod
 	str r0, [r5]
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #148
 	adds r0, r0, r7
 	mov r8, r0
@@ -651,7 +651,7 @@ Unnamed_080f6440:
 	str r3, [r2]
 	movs r0, #93
 	str r4, [sp, #8]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, [sp, #28]
 	ldr r4, [sp, #8]
 	ldr r2, .L_080f6990
@@ -716,7 +716,7 @@ Unnamed_080f6440:
 	movs r3, #10
 	str r3, [r0]
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080f6dfe
 .L_080f69c4:
 	cmp r5, #11
@@ -751,7 +751,7 @@ Unnamed_080f6440:
 	str r3, [r0]
 	str r1, [r5]
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #153
 	lsls r2, r2, #3
 	adds r3, r7, r2
@@ -786,7 +786,7 @@ Unnamed_080f6440:
 	adds r0, #4
 	strb r0, [r5, #2]
 	ldr r0, .L_080f6d34
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080f6adc
 .L_080f6a4e:
 	cmp r5, #10
@@ -824,7 +824,7 @@ Unnamed_080f6440:
 	movs r0, #153
 	lsls r0, r0, #1
 	str r4, [sp, #8]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r4, [sp, #8]
 	ldr r3, [r4]
 .L_080f6a9c:
@@ -977,7 +977,7 @@ Unnamed_080f6440:
 .L_080f6b9e:
 	movs r1, #21
 	str r4, [sp, #8]
-	bl Func_080022fc
+	bl Math_Mod
 	adds r0, r0, r5
 	adds r0, #4
 	ldrb r3, [r7, r0]
@@ -1042,7 +1042,7 @@ Unnamed_080f6440:
 	movs r3, #2
 	str r3, [r1]
 	movs r0, #171
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r4, #239
 	ldr r3, [sp, #36]
 	lsls r4, r4, #7
@@ -1185,7 +1185,7 @@ Unnamed_080f6440:
 .L_080f6d40:
 	.4byte Data_080f870c
 .L_080f6d44:
-	.4byte Data_0200024c
+	.4byte gCell + 0xc
 .L_080f6d48:
 	.4byte 0x00007784
 .L_080f6d4c:
@@ -1789,7 +1789,7 @@ Unnamed_080f6440:
 	adds r0, #21
 	movs r1, #21
 	str r4, [sp, #8]
-	bl Func_080022fc
+	bl Math_Mod
 	adds r0, #4
 	ldrb r3, [r5, r0]
 	movs r2, #128

@@ -153,7 +153,7 @@ BattleUnit_RefreshPlacement:
 	pop {r0}
 	bx r0
 .L_080b7700:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080b7704:
 	.4byte 0x000002e9
 .L_080b7708:

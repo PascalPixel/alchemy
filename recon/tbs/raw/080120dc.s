@@ -102,6 +102,6 @@ Func_080120dc:
 .L_08012190:
 	.4byte Func_080134fc
 .L_08012194:
-	.4byte Data_0202c001
+	.4byte gMapCollision + 0x1
 .L_08012198:
 	.4byte 0xfff40000

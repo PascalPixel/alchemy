@@ -187,7 +187,7 @@ Func_080d41a4:
 	cmp r11, r5
 	bne .L_080d4322
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #128
 	ldr r3, .L_080d4508
 	ldr r0, [sp, #36]
@@ -310,7 +310,7 @@ Func_080d41a4:
 	asrs r3, r3, #7
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -430,7 +430,7 @@ Func_080d41a4:
 .L_080d44ec:
 	.4byte IwramCopyWords
 .L_080d44f0:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080d44f4:
 	.4byte 0x00007784
 .L_080d44f8:

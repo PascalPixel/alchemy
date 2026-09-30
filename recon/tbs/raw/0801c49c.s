@@ -213,7 +213,7 @@ Debug_SelectAbilityPair:
 	lsls r3, r3, #2
 	adds r3, r3, r7
 	ldrh r0, [r3, #2]
-	bl Func_08077080
+	bl Ability_GetData
 	ldr r3, [sp, #12]
 	b .L_0801c684
 .L_0801c676:
@@ -221,7 +221,7 @@ Debug_SelectAbilityPair:
 	lsls r3, r3, #2
 	adds r3, r3, r7
 	ldrh r0, [r3, #2]
-	bl Func_08077080
+	bl Ability_GetData
 	ldr r3, [sp, #16]
 .L_0801c684:
 	lsls r3, r3, #2
@@ -250,7 +250,7 @@ Debug_SelectAbilityPair:
 	cmp r3, #0
 	beq .L_0801c6da
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r3, r8
 	cmp r3, #0
 	beq .L_0801c6ce
@@ -273,7 +273,7 @@ Debug_SelectAbilityPair:
 	cmp r3, #0
 	beq .L_0801c704
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r1, r8
 	cmp r1, #0
 	beq .L_0801c6f8
@@ -296,7 +296,7 @@ Debug_SelectAbilityPair:
 	cmp r3, #0
 	beq .L_0801c71e
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #1
 	negs r0, r0
 	movs r1, #1
@@ -309,7 +309,7 @@ Debug_SelectAbilityPair:
 	cmp r3, #0
 	beq .L_0801c734
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #1
 	add r8, r3
 	mov r11, r3
@@ -321,7 +321,7 @@ Debug_SelectAbilityPair:
 	cmp r3, #0
 	beq .L_0801c748
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_0801c76c
 .L_0801c748:
 	ldr r3, [r1]
@@ -330,7 +330,7 @@ Debug_SelectAbilityPair:
 	cmp r3, #0
 	beq .L_0801c75a
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_0801c76c
 .L_0801c75a:
 	ldr r3, [r1]
@@ -341,7 +341,7 @@ Debug_SelectAbilityPair:
 	b .L_0801c57c
 .L_0801c766:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_0801c76c:
 	ldr r3, [sp, #16]
 	lsls r3, r3, #2

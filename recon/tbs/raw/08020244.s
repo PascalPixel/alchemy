@@ -196,7 +196,7 @@ SaveMenu_SelectSlot:
 .L_080203a4:
 	movs r0, #113
 	movs r5, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	negs r5, r5
 	b .L_0802074a
 .L_080203b0:
@@ -507,7 +507,7 @@ SaveMenu_SelectSlot:
 	cmp r2, #0
 	beq .L_080206aa
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #1
 	str r1, [sp, #12]
 	b .L_08020696
@@ -561,7 +561,7 @@ SaveMenu_SelectSlot:
 	mov r0, r8
 	adds r0, #2
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	mov r2, r9
 	mov r8, r0
 	cmp r2, #0
@@ -574,7 +574,7 @@ SaveMenu_SelectSlot:
 	cmp r2, #0
 	beq .L_08020728
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #1
 	str r3, [sp, #12]
 	b .L_08020714
@@ -628,7 +628,7 @@ SaveMenu_SelectSlot:
 	mov r0, r8
 	adds r0, #4
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	mov r2, r9
 	mov r8, r0
 	cmp r2, #0
@@ -651,7 +651,7 @@ SaveMenu_SelectSlot:
 	b .L_08020494
 .L_08020742:
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r5, r8
 .L_0802074a:
 	bl Menu_ClearSecondObjectRowAndScheduleUpdate

@@ -135,7 +135,7 @@ BattleFx_RunParticlePool:
 	lsls r3, r3, #9
 	str r3, [r7, #16]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -353,7 +353,7 @@ BattleFx_RunParticlePool:
 	cmp r11, r6
 	bne .L_080ca4da
 	movs r0, #126
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r0, r10
 	bl BattleEventRuntime_BeginPhaseFar
 	ldr r3, [r5]
@@ -411,7 +411,7 @@ BattleFx_RunParticlePool:
 .L_080ca538:
 	.4byte 0x00007828
 .L_080ca53c:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080ca540:
 	.4byte 0x00000073
 .L_080ca544:

@@ -11,7 +11,7 @@ Unnamed_080b5534:
 	movs r0, #0
 	sub sp, #128
 	mov r10, r2
-	bl Func_08077008
+	bl Owner_GetStateFar
 	mov r5, sp
 	adds r6, r0, #0
 	adds r1, r5, #0
@@ -40,9 +40,9 @@ Unnamed_080b5534:
 .L_080b557a:
 	movs r3, #0
 	strb r3, [r6, #14]
-	bl Func_08015000
+	bl FarCall_WindowTable
 	movs r0, #71
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r5, #0
 	ldr r2, .L_080b56b8
 	movs r3, #128
@@ -58,19 +58,19 @@ Unnamed_080b5534:
 	bl UiWork_ClearValueNameTablesFar
 	ldr r0, .L_080b56c0
 	movs r1, #5
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r0, #0
 	movs r1, #3
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r0, #1
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r0, #1
 	movs r1, #2
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r0, #2
 	movs r1, #4
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	mov r3, r10
 	cmp r3, #0
 	bne .L_080b55da
@@ -217,6 +217,6 @@ Unnamed_080b5534:
 .L_080b56d4:
 	.4byte 0x000003f2
 .L_080b56d8:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080b56dc:
 	.4byte 0x000012f8

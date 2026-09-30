@@ -124,7 +124,7 @@ BattleEffect_RunImpactBurst:
 	asrs r3, r3, #7
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	asrs r3, r3, #6
@@ -157,7 +157,7 @@ BattleEffect_RunImpactBurst:
 	asrs r0, r0, #6
 	str r0, [r5, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	lsls r0, r0, #5
 	asrs r0, r0, #5
 	negs r0, r0
@@ -193,7 +193,7 @@ BattleEffect_RunImpactBurst:
 	asrs r3, r3, #6
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	asrs r3, r3, #5
@@ -215,12 +215,12 @@ BattleEffect_RunImpactBurst:
 	cmp r7, #4
 	bne .L_080e7072
 	movs r0, #154
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e7072:
 	cmp r7, #32
 	bne .L_080e707c
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e707c:
 	cmp r7, #47
 	bgt .L_080e70be
@@ -462,11 +462,11 @@ BattleEffect_RunImpactBurst:
 .L_080e725c:
 	.4byte gMapCellBuffer
 .L_080e7260:
-	.4byte Data_080eee66
+	.4byte Data_080eee4e + 0x18
 .L_080e7264:
-	.4byte Data_080eee56
+	.4byte Data_080eee4e + 0x8
 .L_080e7268:
-	.4byte Data_080eee5e
+	.4byte Data_080eee4e + 0x10
 .L_080e726c:
 	.4byte ParticleStreams_CellOffsets
 .L_080e7270:

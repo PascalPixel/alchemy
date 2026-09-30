@@ -45,7 +45,7 @@ Unnamed_08094bbc:
 	asrs r3, r3, #16
 	lsls r0, r0, #1
 	mov r10, r3
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_08094c20
 	ldrh r3, [r7, #28]
@@ -220,7 +220,7 @@ Unnamed_08094bbc:
 	asrs r1, r4, #16
 	str r4, [r7, #12]
 	movs r0, #0
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	movs r3, #120
 	lsls r0, r0, #16
 	mov r1, r8

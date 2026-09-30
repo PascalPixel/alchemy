@@ -210,7 +210,7 @@ RunParticleFieldEffect:
 	cmp r0, #2
 	bne .L_080db888
 	movs r0, #144
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080db888:
 	ldr r1, [sp, #12]
 	ldr r2, [sp, #24]
@@ -445,7 +445,7 @@ RunParticleFieldEffect:
 .L_080dba4c:
 	.4byte gMapCellBuffer
 .L_080dba50:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080dba54:
 	.4byte 0x00007784
 .L_080dba58:

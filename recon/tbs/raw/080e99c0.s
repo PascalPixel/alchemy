@@ -123,7 +123,7 @@ Unnamed_080e99c0:
 	muls r3, r0
 	adds r0, r5, #0
 	str r3, [r7]
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	mov r1, r8
@@ -181,7 +181,7 @@ Unnamed_080e99c0:
 	asrs r3, r3, #5
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	negs r3, r3
@@ -245,19 +245,19 @@ Unnamed_080e99c0:
 	cmp r1, #4
 	bne .L_080e9bba
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e9bba:
 	mov r2, r11
 	cmp r2, #32
 	bne .L_080e9bc6
 	movs r0, #164
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e9bc6:
 	mov r3, r11
 	cmp r3, #60
 	bne .L_080e9bd8
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #134
 	bl BattleEventRuntime_BeginPhaseFar
 .L_080e9bd8:
@@ -326,9 +326,9 @@ Unnamed_080e99c0:
 .L_080e9c54:
 	.4byte 0x0000ffff
 .L_080e9c58:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080e9c5c:
-	.4byte Data_02014ad0
+	.4byte gMapCellBuffer + 0x4ad0
 .L_080e9c60:
 	.4byte 0x000001ff
 .L_080e9c64:
@@ -382,7 +382,7 @@ Unnamed_080e99c0:
 	adds r3, r3, r1
 	str r3, [r7]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	movs r2, #192
@@ -448,7 +448,7 @@ Unnamed_080e99c0:
 	adds r3, r3, r0
 	str r3, [r7]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	movs r1, #192
@@ -499,7 +499,7 @@ Unnamed_080e99c0:
 	mov r10, r3
 	mov r8, r4
 	ldr r5, [sp, #24]
-	bl Func_080022fc
+	bl Math_Mod
 	mov r9, r5
 	mov r2, r8
 	adds r5, r0, #0
@@ -534,7 +534,7 @@ Unnamed_080e99c0:
 	blt .L_080e9eda
 	mov r0, r8
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r3, [r5, #16]
 	adds r4, r0, #2
 	cmp r3, #0
@@ -763,7 +763,7 @@ Unnamed_080e99c0:
 .L_080e9fa8:
 	.4byte 0x00004e20
 .L_080e9fac:
-	.4byte Data_02014ad0
+	.4byte gMapCellBuffer + 0x4ad0
 .L_080e9fb0:
 	ldr r5, [r7]
 	ldr r2, .L_080ea0bc

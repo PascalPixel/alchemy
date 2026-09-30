@@ -25,7 +25,7 @@ BattleMenu_RunActionSelection:
 	bl Resource_LoadIntoFreeSlot
 	str r0, [sp, #52]
 	adds r0, r6, #0
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r3, #42
 	str r0, [sp, #48]
 	str r3, [sp, #0]
@@ -99,7 +99,7 @@ BattleMenu_RunActionSelection:
 .L_080259ec:
 	.4byte 0x000001ff
 .L_080259f0:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080259f4:
 	.4byte 0xfffffe00
 .L_080259f8:
@@ -251,7 +251,7 @@ BattleMenu_RunActionSelection:
 	str r2, [sp, #16]
 .L_08025b24:
 	adds r0, r5, #0
-	bl Func_08077080
+	bl Ability_GetData
 	mov r8, r0
 	movs r0, #0
 	str r0, [sp, #0]
@@ -685,7 +685,7 @@ BattleMenu_RunActionSelection:
 	add r6, r10
 	lsls r3, r6, #1
 	ldrh r0, [r3, r2]
-	bl Func_08077080
+	bl Ability_GetData
 	ldrb r2, [r0, #1]
 	movs r3, #128
 	ands r3, r2
@@ -710,7 +710,7 @@ BattleMenu_RunActionSelection:
 .L_08025eba:
 	movs r0, #113
 	movs r6, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	negs r6, r6
 	b .L_0802602a
 .L_08025ec6:
@@ -726,7 +726,7 @@ BattleMenu_RunActionSelection:
 	cmp r3, #0
 	beq .L_08025f04
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #1
 	add r10, r0
 	mov r1, r10
@@ -754,7 +754,7 @@ BattleMenu_RunActionSelection:
 	cmp r3, #0
 	beq .L_08025f4e
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #1
 	negs r2, r2
 	add r10, r2
@@ -792,7 +792,7 @@ BattleMenu_RunActionSelection:
 	cmp r3, #0
 	beq .L_08025fae
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	ldr r3, [sp, #60]
 	ldr r1, [sp, #68]
@@ -839,7 +839,7 @@ BattleMenu_RunActionSelection:
 	cmp r3, #0
 	beq .L_08026022
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	ldr r0, [sp, #60]
 	cmp r0, #0

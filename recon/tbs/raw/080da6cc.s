@@ -86,7 +86,7 @@ Unnamed_080da6cc:
 	ldr r0, [r0]
 	mov r8, r0
 	ldr r0, [r3, #8]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	mov r5, r8
 	ldr r3, [r5, #12]
 	adds r3, r3, r0
@@ -104,7 +104,7 @@ Unnamed_080da6cc:
 .L_080da79c:
 	.4byte 0x00000073
 .L_080da7a0:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080da7a4:
 	.4byte 0x00007828
 .L_080da7a8:
@@ -133,7 +133,7 @@ Unnamed_080da6cc:
 	asrs r0, r0, #6
 	str r0, [r7, #16]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	asrs r3, r3, #6
@@ -352,7 +352,7 @@ Unnamed_080da6cc:
 	ldr r5, [r3]
 	mov r0, r10
 	ldr r1, [r5, #20]
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r0, r0, #1
 	adds r0, #36
 	ldrsh r0, [r5, r0]
@@ -423,12 +423,12 @@ Unnamed_080da6cc:
 	ldr r3, [r2, #4]
 	movs r0, #136
 	str r3, [r6, #4]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r3, r11
 	ldr r5, [r3]
 	mov r0, r10
 	ldr r1, [r5, #20]
-	bl Func_080022fc
+	bl Math_Mod
 	adds r3, r0, #0
 	lsls r2, r3, #1
 	adds r2, #36

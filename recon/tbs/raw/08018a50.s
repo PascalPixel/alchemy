@@ -256,7 +256,7 @@ UiText_MeasureStringVariant:
 .L_08018c50:
 	.4byte 0x00000000
 .L_08018c54:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08018c58:
 	.4byte 0x000001ff
 .L_08018c5c:

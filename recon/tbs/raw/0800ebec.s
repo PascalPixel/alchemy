@@ -21,7 +21,7 @@ FieldObject_UpdatePlayerControl:
 	beq .L_0800ec40
 	movs r0, #175
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0800ec40
 	movs r2, #128
@@ -43,7 +43,7 @@ FieldObject_UpdatePlayerControl:
 	cmp r3, #0
 	bge .L_0800ec3e
 	movs r0, #135
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_0800ec3e:
 	ldr r5, .L_0800edf0
 .L_0800ec40:
@@ -110,7 +110,7 @@ FieldObject_UpdatePlayerControl:
 	str r3, [sp, #8]
 .L_0800ecac:
 	ldr r0, .L_0800ee00
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0800ecd4
 	ldr r5, .L_0800edf8
@@ -269,7 +269,7 @@ FieldObject_UpdatePlayerControl:
 .L_0800edf4:
 	.4byte ResourceBlockOwners
 .L_0800edf8:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_0800edfc:
 	.4byte gCell
 .L_0800ee00:
@@ -654,7 +654,7 @@ FieldObject_UpdatePlayerControl:
 	lsls r0, r0, #1
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	movs r5, #9
@@ -729,7 +729,7 @@ FieldObject_UpdatePlayerControl:
 .L_0800f198:
 	.4byte 0xff000200
 .L_0800f19c:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0800f1a0:
 	.4byte gCell
 .L_0800f1a4:

@@ -348,7 +348,7 @@ BattleFx_RunCastingImpact:
 .L_080e4b0c:
 	.4byte 0x000000c4
 .L_080e4b10:
-	.4byte Data_02010c56
+	.4byte gMapCellBuffer + 0xc56
 .L_080e4b14:
 	.4byte 0x00000079
 .L_080e4b18:
@@ -374,7 +374,7 @@ BattleFx_RunCastingImpact:
 .L_080e4b40:
 	.4byte 0x00000090
 .L_080e4b44:
-	.4byte Data_02013c56
+	.4byte gMapCellBuffer + 0x3c56
 .L_080e4b48:
 	.4byte 0x00007784
 .L_080e4b4c:
@@ -503,7 +503,7 @@ BattleFx_RunCastingImpact:
 	asrs r3, r3, #1
 	str r3, [r1]
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #0
 	add r3, sp, #124
 	str r2, [sp, #84]
@@ -715,7 +715,7 @@ BattleFx_RunCastingImpact:
 .L_080e4df8:
 	.4byte ParticleStreams_CellOffsets
 .L_080e4dfc:
-	.4byte Data_02013c56
+	.4byte gMapCellBuffer + 0x3c56
 .L_080e4e00:
 	.4byte 0x00007824
 .L_080e4e04:
@@ -888,7 +888,7 @@ BattleFx_RunCastingImpact:
 	bl Runtime_ReleaseHeapBlock
 	adds r0, r7, #0
 	movs r1, #3
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r3, [sp, #96]
 	cmp r3, #15
 	bne .L_080e4f64
@@ -1022,7 +1022,7 @@ BattleFx_RunCastingImpact:
 	ldr r3, [r3]
 	movs r5, #36
 	ldrsh r0, [r3, r5]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	ldr r1, [sp, #92]
@@ -1549,7 +1549,7 @@ BattleFx_RunCastingImpact:
 	bl BattleFx_StepPaletteToResource
 	b .L_080e551a
 .L_080e54cc:
-	.4byte Data_02014000
+	.4byte gMapCellBuffer + 0x4000
 .L_080e54d0:
 	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_080e54d4:
@@ -1803,7 +1803,7 @@ BattleFx_RunCastingImpact:
 	ldr r0, [r0]
 	mov r8, r0
 	ldr r0, [r3, #8]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	movs r3, #112
@@ -1910,7 +1910,7 @@ BattleFx_RunCastingImpact:
 .L_080e57a4:
 	.4byte 0x00007828
 .L_080e57a8:
-	.4byte Data_02014000
+	.4byte gMapCellBuffer + 0x4000
 .L_080e57ac:
 	.4byte 0x00000fff
 .L_080e57b0:
@@ -2007,7 +2007,7 @@ BattleFx_RunCastingImpact:
 	adds r0, r5, #0
 	lsrs r3, r3, #1
 	subs r6, r6, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r2, r9
 	adds r5, r0, #0
 	mov r0, r8
@@ -2296,7 +2296,7 @@ BattleFx_RunCastingImpact:
 	bl .L_080e640e
 	.2byte 0x0000
 .L_080e5acc:
-	.4byte Data_02010c56
+	.4byte gMapCellBuffer + 0xc56
 .L_080e5ad0:
 	.4byte BattleFx_GlintCellWidths
 .L_080e5ad4:
@@ -2310,13 +2310,13 @@ BattleFx_RunCastingImpact:
 .L_080e5ae4:
 	.4byte gMapCellBuffer
 .L_080e5ae8:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080e5aec:
 	.4byte 0x00007828
 .L_080e5af0:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e5af4:
-	.4byte Data_020106e8
+	.4byte gMapCellBuffer + 0x6e8
 .L_080e5af8:
 	.4byte 0x000077a8
 .L_080e5afc:
@@ -2348,7 +2348,7 @@ BattleFx_RunCastingImpact:
 	movs r1, #3
 	asrs r0, r0, #1
 	adds r6, r6, r3
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r5, r0, #2
 	adds r5, r5, r0
 	lsls r3, r5, #9
@@ -2365,7 +2365,7 @@ BattleFx_RunCastingImpact:
 .L_080e5b50:
 	.4byte 0x04000052
 .L_080e5b54:
-	.4byte Data_02010c56
+	.4byte gMapCellBuffer + 0xc56
 .L_080e5b58:
 	movs r0, #40
 	movs r2, #32
@@ -2487,7 +2487,7 @@ BattleFx_RunCastingImpact:
 	adds r0, r5, #0
 	bl Trig_Sin
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r2, [sp, #60]
 	lsls r0, r0, #2
 	movs r1, #6
@@ -2696,11 +2696,11 @@ BattleFx_RunCastingImpact:
 	b .L_080e640e
 	.2byte 0x0000
 .L_080e5df0:
-	.4byte Data_02012a56
+	.4byte gMapCellBuffer + 0x2a56
 .L_080e5df4:
-	.4byte Data_02011156
+	.4byte gMapCellBuffer + 0x1156
 .L_080e5df8:
-	.4byte Data_02014000
+	.4byte gMapCellBuffer + 0x4000
 .L_080e5dfc:
 	.4byte gMapCellBuffer
 .L_080e5e00:
@@ -2718,11 +2718,11 @@ BattleFx_RunCastingImpact:
 .L_080e5e18:
 	.4byte 0x00003081
 .L_080e5e1c:
-	.4byte Data_02012d80
+	.4byte gMapCellBuffer + 0x2d80
 .L_080e5e20:
-	.4byte Data_02014b00
+	.4byte gMapCellBuffer + 0x4b00
 .L_080e5e24:
-	.4byte Data_020158d2
+	.4byte gMapCellBuffer + 0x58d2
 .L_080e5e28:
 	ldr r1, [sp, #96]
 	cmp r1, #32
@@ -3182,7 +3182,7 @@ BattleFx_RunCastingImpact:
 	bne .L_080e61c6
 .L_080e61a6:
 	movs r0, #133
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r5, .L_080e6254
 	ldr r2, [sp, #92]
 	adds r3, r2, r5
@@ -3278,11 +3278,11 @@ BattleFx_RunCastingImpact:
 .L_080e6258:
 	.4byte gMapCellBuffer
 .L_080e625c:
-	.4byte Data_02012d80
+	.4byte gMapCellBuffer + 0x2d80
 .L_080e6260:
-	.4byte Data_02014b00
+	.4byte gMapCellBuffer + 0x4b00
 .L_080e6264:
-	.4byte Data_02015980
+	.4byte gMapCellBuffer + 0x5980
 .L_080e6268:
 	.4byte PuffArc_CellWidths
 .L_080e626c:
@@ -3294,9 +3294,9 @@ BattleFx_RunCastingImpact:
 .L_080e6278:
 	.4byte 0x0000ffff
 .L_080e627c:
-	.4byte Data_02014000
+	.4byte gMapCellBuffer + 0x4000
 .L_080e6280:
-	.4byte Data_020146e4
+	.4byte gMapCellBuffer + 0x46e4
 .L_080e6284:
 	.4byte CastingImpact_OrbitCells
 .L_080e6288:
@@ -3365,11 +3365,11 @@ BattleFx_RunCastingImpact:
 .L_080e6300:
 	.4byte 0x04000052
 .L_080e6304:
-	.4byte Data_02014000
+	.4byte gMapCellBuffer + 0x4000
 .L_080e6308:
 	mov r0, r10
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	adds r1, r6, #0
 	adds r5, r0, #0
 	adds r0, r7, #0
@@ -3550,7 +3550,7 @@ BattleFx_RunCastingImpact:
 	cmp r3, #4
 	bne .L_080e647e
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e647e:
 	ldr r5, [sp, #84]
 	cmp r5, #6
@@ -3748,9 +3748,9 @@ BattleFx_RunCastingImpact:
 .L_080e660c:
 	.4byte gMapCellBuffer
 .L_080e6610:
-	.4byte Data_02014000
+	.4byte gMapCellBuffer + 0x4000
 .L_080e6614:
-	.4byte Data_02013c56
+	.4byte gMapCellBuffer + 0x3c56
 .L_080e6618:
 	.4byte 0x00007828
 .L_080e661c:

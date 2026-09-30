@@ -46,7 +46,7 @@ BattlePresentation_RunUnitTransition:
 	b .L_080b9f32
 	.2byte 0x0000
 .L_080b9f14:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080b9f18:
 	adds r3, r5, #0
 	adds r3, #140
@@ -97,7 +97,7 @@ BattlePresentation_RunUnitTransition:
 .L_080b9f78:
 	.4byte 0xffffe000
 .L_080b9f7c:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080b9f80:
 	.4byte 0x04000050
 .L_080b9f84:
@@ -128,7 +128,7 @@ BattlePresentation_RunUnitTransition:
 .L_080b9fb2:
 	mov r0, r11
 	movs r1, #3
-	bl Func_08009080
+	bl Object_SetMode
 .L_080b9fba:
 	adds r6, #1
 	adds r5, #2
@@ -136,7 +136,7 @@ BattlePresentation_RunUnitTransition:
 	bne .L_080b9f84
 .L_080b9fc2:
 	movs r0, #154
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r2, r9
 	ldr r1, [r2, #80]
 	movs r3, #0

@@ -254,7 +254,7 @@ DisplayScroll_BuildAndSwapHBlankPage:
 .L_08094720:
 	.4byte IwramMulQ16ReturnIp
 .L_08094724:
-	.4byte Data_0809ed84
+	.4byte ObjectGroup_BlinkChildValues + 0x4
 .L_08094728:
 	.4byte 0x00000f14
 .L_0809472c:

@@ -264,7 +264,7 @@ Unnamed_080e40a4:
 	ldr r0, .L_080e445c
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r9, r5
 .L_080e42de:
 	ldr r3, .L_080e4428
@@ -425,7 +425,7 @@ Unnamed_080e40a4:
 .L_080e4420:
 	.4byte 0x00001f81
 .L_080e4424:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e4428:
 	.4byte 0x00007828
 .L_080e442c:
@@ -503,7 +503,7 @@ Unnamed_080e40a4:
 	ldr r6, [r0]
 	movs r5, #36
 	ldrsh r0, [r3, r5]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
@@ -768,7 +768,7 @@ Unnamed_080e40a4:
 .L_080e46d4:
 	.4byte gMapCellBuffer
 .L_080e46d8:
-	.4byte Data_02013840
+	.4byte gMapCellBuffer + 0x3840
 .L_080e46dc:
 	.4byte BattleFx6_FlareCells
 .L_080e46e0:
@@ -778,4 +778,4 @@ Unnamed_080e40a4:
 .L_080e46e8:
 	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
 .L_080e46ec:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork

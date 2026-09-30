@@ -65,7 +65,7 @@ Unnamed_080ea0d8:
 .L_080ea154:
 	.4byte 0x00000000
 .L_080ea158:
-	.4byte Data_03001ef0
+	.4byte gBattleFxWork + 0x4
 .L_080ea15c:
 	.4byte 0x00007828
 .L_080ea160:
@@ -255,7 +255,7 @@ Unnamed_080ea0d8:
 	asrs r3, r3, #2
 	str r3, [r6]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r3, r10
 	muls r3, r0
 	asrs r3, r3, #2
@@ -338,13 +338,13 @@ Unnamed_080ea0d8:
 .L_080ea390:
 	.4byte gMapCellBuffer
 .L_080ea394:
-	.4byte Data_02010e00
+	.4byte gMapCellBuffer + 0xe00
 .L_080ea398:
 	.4byte 0x00007784
 .L_080ea39c:
 	.4byte 0x0400000c
 .L_080ea3a0:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080ea3a4:
 	.4byte 0xfffffa70
 .L_080ea3a8:
@@ -352,13 +352,13 @@ Unnamed_080ea0d8:
 .L_080ea3ac:
 	.4byte 0x2a2a2a2a
 .L_080ea3b0:
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ea3b4:
 	ldr r5, [sp, #84]
 	cmp r5, #80
 	bne .L_080ea3c0
 	movs r0, #142
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ea3c0:
 	ldr r6, [sp, #84]
 	cmp r6, #0
@@ -453,7 +453,7 @@ Unnamed_080ea0d8:
 	adds r3, r3, r2
 	str r3, [r6, #12]
 	ldr r0, [r6, #24]
-	bl Func_0800231c
+	bl Trig_Cos
 	lsls r2, r0, #8
 	ldr r3, [r6, #16]
 	subs r2, r2, r0
@@ -818,7 +818,7 @@ Unnamed_080ea0d8:
 	subs r5, r5, r3
 	b .L_080ea794
 .L_080ea758:
-	.4byte Data_02010e00
+	.4byte gMapCellBuffer + 0xe00
 .L_080ea75c:
 	.4byte 0xfffffc00
 .L_080ea760:
@@ -830,7 +830,7 @@ Unnamed_080ea0d8:
 .L_080ea76c:
 	.4byte gMapCellBuffer
 .L_080ea770:
-	.4byte Data_080edad0
+	.4byte Data_080edac8 + 0x8
 .L_080ea774:
 	.4byte 0x000077d8
 .L_080ea778:
@@ -838,17 +838,17 @@ Unnamed_080ea0d8:
 .L_080ea77c:
 	.4byte 0xfff80000
 .L_080ea780:
-	.4byte Data_080eef28
+	.4byte Data_080eef18 + 0x10
 .L_080ea784:
-	.4byte Data_080eef30
+	.4byte Data_080eef18 + 0x18
 .L_080ea788:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080ea78c:
-	.4byte Data_080eef4a
+	.4byte Data_080eef18 + 0x32
 .L_080ea790:
 	.4byte 0x0000ffff
 .L_080ea794:
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r2, .L_080ea9a8
 	ldr r4, [sp, #8]
 	adds r3, r0, #0
@@ -969,7 +969,7 @@ Unnamed_080ea0d8:
 	adds r0, r6, #0
 	asrs r5, r5, #16
 	subs r5, r5, r4
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r3, r8
 	muls r3, r0
 	adds r5, #60
@@ -1052,7 +1052,7 @@ Unnamed_080ea0d8:
 	strb r3, [r2]
 	movs r1, #3
 	adds r0, r7, #0
-	bl Func_080022fc
+	bl Math_Mod
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Object_InitializeMode
@@ -1102,9 +1102,9 @@ Unnamed_080ea0d8:
 	b .L_080ea9e2
 	.2byte 0x0000
 .L_080ea9a8:
-	.4byte Data_080eef50
+	.4byte Data_080eef18 + 0x38
 .L_080ea9ac:
-	.4byte Data_080eef3e
+	.4byte Data_080eef18 + 0x26
 .L_080ea9b0:
 	.4byte 0xfffff720
 .L_080ea9b4:
@@ -1122,7 +1122,7 @@ Unnamed_080ea0d8:
 .L_080ea9cc:
 	.4byte 0x000077d8
 .L_080ea9d0:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080ea9d4:
 	.4byte 0x00000064
 .L_080ea9d8:
@@ -1223,21 +1223,21 @@ Unnamed_080ea0d8:
 	cmp r4, #66
 	bne .L_080eaaa0
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #141
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080eaaa0:
 	ldr r5, [sp, #84]
 	cmp r5, #155
 	bne .L_080eaaac
 	movs r0, #162
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080eaaac:
 	ldr r6, [sp, #84]
 	cmp r6, #217
 	bne .L_080eaab8
 	movs r0, #156
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080eaab8:
 	movs r1, #140
 	ldr r0, [sp, #84]
@@ -1245,7 +1245,7 @@ Unnamed_080ea0d8:
 	cmp r0, r1
 	bne .L_080eaac8
 	movs r0, #157
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080eaac8:
 	movs r3, #150
 	ldr r2, [sp, #84]
@@ -2083,7 +2083,7 @@ Unnamed_080ea0d8:
 	adds r0, r6, #0
 	asrs r5, r5, #16
 	subs r5, r5, r4
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r3, r8
 	muls r3, r0
 	mov r2, r10
@@ -2144,7 +2144,7 @@ Unnamed_080ea0d8:
 .L_080eb1c8:
 	.4byte 0x00004240
 .L_080eb1cc:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080eb1d0:
 	.4byte 0x00006110
 .L_080eb1d4:
@@ -2391,7 +2391,7 @@ Unnamed_080ea0d8:
 	muls r3, r0
 	adds r0, r6, #0
 	asrs r5, r3, #16
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r3, r9
 	muls r3, r0
 	mov r1, r10
@@ -2721,7 +2721,7 @@ Unnamed_080ea0d8:
 .L_080eb60c:
 	.4byte 0xffffc000
 .L_080eb610:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080eb614:
 	.4byte 0x00000117
 .L_080eb618:

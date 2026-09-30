@@ -108,7 +108,7 @@ DebugMenu_BrowseIcons:
 	movs r1, #3
 	adds r0, #3
 	mov r11, r2
-	bl Func_080022fc
+	bl Math_Mod
 	movs r1, #2
 	mov r9, r0
 	mov r0, r10

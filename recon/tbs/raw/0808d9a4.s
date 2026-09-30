@@ -99,7 +99,7 @@ Func_0808d9a4:
 .L_0808da68:
 	movs r0, #161
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808da76
 	b .L_0808dd6a
@@ -176,10 +176,10 @@ Func_0808d9a4:
 	adds r6, r0, #0
 	bl EffectRuntime_PrepareRisingObject
 	movs r0, #83
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldrh r0, [r7, #8]
 	movs r1, #5
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r5, .L_0808db90
 	movs r1, #3
 	adds r0, r5, #0
@@ -190,16 +190,16 @@ Func_0808d9a4:
 	movs r0, #1
 	bl UiWindow_CreateWithLayoutBoundsFar
 	movs r0, #126
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	adds r0, r5, #1
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
 	bl UiWork_FinalizeAndReleaseBlock16Far
 	movs r1, #2
 	adds r0, r6, #0
-	bl Func_08009080
+	bl Object_SetMode
 	movs r0, #246
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	adds r5, #2
 	movs r0, #30
 	bl Battle_WaitMode0
@@ -221,7 +221,7 @@ Func_0808d9a4:
 .L_0808db74:
 	.4byte gCell
 .L_0808db78:
-	.4byte Data_0809e680
+	.4byte Debug_PaletteSwatchTiles + 0x1b2
 .L_0808db7c:
 	.4byte 0x00000928
 .L_0808db80:
@@ -287,7 +287,7 @@ Func_0808d9a4:
 .L_0808dbf8:
 	.4byte 0x00001000
 .L_0808dbfc:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0808dc00:
 	.4byte gCell
 .L_0808dc04:
@@ -297,7 +297,7 @@ Func_0808d9a4:
 	adds r3, r5, r0
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r0, .L_0808dd84
 	b .L_0808dd3e
 .L_0808dc18:
@@ -326,10 +326,10 @@ Func_0808d9a4:
 	adds r0, r5, #0
 	bl EffectRuntime_PrepareRisingObject
 	movs r0, #83
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldrh r0, [r7, #8]
 	movs r1, #5
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_0808dd8c
 	movs r1, #3
 	bl UiText_ShowPositionedMessageAndWaitFar
@@ -355,7 +355,7 @@ Func_0808d9a4:
 	movs r0, #30
 	bl WaitFrames
 	ldrh r0, [r7, #8]
-	bl Func_08077030
+	bl PartyInventory_AddFar
 	movs r3, #1
 	adds r6, r0, #0
 	negs r3, r3
@@ -366,7 +366,7 @@ Func_0808d9a4:
 	ldr r1, .L_0808dd94
 	ands r0, r1
 	movs r1, #2
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r5, .L_0808dd9c
 	movs r1, #1
 	adds r0, r5, #0
@@ -397,11 +397,11 @@ Func_0808d9a4:
 	mov r0, r9
 	bl EffectRuntime_PrepareRisingObject
 	movs r0, #83
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r0, [r7, #8]
 	movs r1, #2
 	ands r0, r5
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r1, .L_0808dd90
 	ldr r3, [r1]
 	cmp r6, r3
@@ -413,7 +413,7 @@ Func_0808d9a4:
 .L_0808dd16:
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_0808dda4
 	movs r1, #3
 	bl UiText_ShowPositionedMessageAndWaitFar
@@ -471,7 +471,7 @@ Func_0808d9a4:
 .L_0808dd8c:
 	.4byte 0x00000969
 .L_0808dd90:
-	.4byte Data_02000434
+	.4byte gItemCounters + 0xb4
 .L_0808dd94:
 	.4byte 0x00000fff
 .L_0808dd98:

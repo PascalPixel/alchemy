@@ -117,7 +117,7 @@ Ui_RunSelectionScreen:
 	b .L_0802260c
 .L_08021f48:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #1
 	negs r0, r0
 	mov r10, r0
@@ -131,7 +131,7 @@ Ui_RunSelectionScreen:
 	mov r10, r3
 	b .L_0802260c
 .L_08021f64:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08021f68:
 	.4byte gLinkCountdownWork
 .L_08021f6c:
@@ -151,7 +151,7 @@ Ui_RunSelectionScreen:
 	movs r5, #1
 	str r5, [r1, r3]
 	movs r0, #0
-	bl Func_08077000
+	bl Trade_GetOfferStateFar
 	ldr r3, [r0]
 	movs r5, #2
 	cmp r3, #0
@@ -976,13 +976,13 @@ Ui_RunSelectionScreen:
 	cmp r3, #0
 	beq .L_080225c2
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r4, [sp, #24]
 	ldr r5, [sp, #16]
 	ldr r0, [r4]
 	ldr r1, [r5]
 	adds r0, #1
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r6, [sp, #24]
 	str r0, [r6]
 	b .L_080225f0
@@ -992,14 +992,14 @@ Ui_RunSelectionScreen:
 	cmp r3, #0
 	beq .L_080225e4
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r7, [sp, #24]
 	ldr r2, [sp, #16]
 	ldr r0, [r7]
 	ldr r1, [r2]
 	adds r0, r0, r1
 	subs r0, #1
-	bl Func_080022fc
+	bl Math_Mod
 	str r0, [r7]
 	b .L_080225f0
 .L_080225e4:

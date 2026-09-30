@@ -131,7 +131,7 @@ BattleEvent_Playback:
 	lsls r3, r6, #2
 	adds r3, #64
 	ldr r0, [r7, r3]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080bdb3e
 .L_080bd9a8:
 	lsls r3, r6, #2
@@ -145,14 +145,14 @@ BattleEvent_Playback:
 	adds r3, #64
 	ldr r0, [r7, r3]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	b .L_080bdb3e
 .L_080bd9c4:
 	lsls r3, r6, #2
 	adds r3, #64
 	ldr r0, [r7, r3]
 	movs r1, #5
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	b .L_080bdb3e
 .L_080bd9d2:
 	lsls r3, r6, #2
@@ -169,7 +169,7 @@ BattleEvent_Playback:
 	movs r1, #4
 .L_080bd9e8:
 	ands r0, r3
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	b .L_080bdb3e
 .L_080bd9f0:
 	ldr r3, .L_080bdbd4
@@ -222,7 +222,7 @@ BattleEvent_Playback:
 	ldr r0, [r3]
 	cmp r0, #0
 	ble .L_080bda52
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080bda52:
 	movs r3, #178
 	lsls r3, r3, #1
@@ -234,7 +234,7 @@ BattleEvent_Playback:
 	bl GetBattleObjectSlot
 	movs r1, #5
 	ldr r0, [r0]
-	bl Func_08009080
+	bl Object_SetMode
 	movs r4, #164
 	lsls r4, r4, #1
 	movs r1, #168
@@ -263,7 +263,7 @@ BattleEvent_Playback:
 	ldr r0, [r5]
 	bl BattleActor_ResetRuntimeFields
 	ldr r0, [r5]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r5, #0
 	adds r6, r0, #0
 	b .L_080bdaca
@@ -404,7 +404,7 @@ BattleEvent_Playback:
 	b .L_080bd8c2
 	.2byte 0x0000
 .L_080bdbbc:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080bdbc0:
 	.4byte 0x00000655
 .L_080bdbc4:
@@ -570,7 +570,7 @@ BattleEvent_Playback:
 	beq .L_080bdd22
 .L_080bdd06:
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #164
 	lsls r1, r1, #1
 	adds r2, r7, r1
@@ -637,7 +637,7 @@ BattleEvent_Playback:
 	bl BattleMotion_SetRecordChildValues
 .L_080bdd90:
 	mov r0, r9
-	bl Func_080152b8
+	bl BattleLayout_HighlightPartyPanelsFar
 .L_080bdd96:
 	movs r2, #168
 	lsls r2, r2, #1
@@ -687,7 +687,7 @@ BattleEvent_Playback:
 	lsls r2, r2, #1
 	adds r3, r7, r2
 	ldr r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r3, #148
 	lsls r3, r3, #1
 	adds r0, r0, r3
@@ -701,7 +701,7 @@ BattleEvent_Playback:
 	movs r0, #0
 .L_080bde0a:
 	adds r0, #146
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080bde10:
 	movs r4, #168
 	lsls r4, r4, #1
@@ -726,7 +726,7 @@ BattleEvent_Playback:
 	lsls r1, r1, #1
 	adds r3, r7, r1
 	ldr r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r2, #148
 	lsls r2, r2, #1
 	adds r0, r0, r2
@@ -735,7 +735,7 @@ BattleEvent_Playback:
 	cmp r0, #0
 	blt .L_080bde54
 	adds r0, #146
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080bde54:
 	movs r4, #168
 	lsls r4, r4, #1
@@ -754,7 +754,7 @@ BattleEvent_Playback:
 .L_080bde70:
 	asrs r0, r0, #3
 	movs r1, #5
-	bl Func_080022fc
+	bl Math_Mod
 	adds r0, #1
 	mov r10, r0
 .L_080bde7c:
@@ -932,7 +932,7 @@ BattleEvent_Playback:
 .L_080bdfcc:
 	.4byte 0x00007fff
 .L_080bdfd0:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_080bdfd4:
 	.4byte gKeysPressedLatch
 .L_080bdfd8:

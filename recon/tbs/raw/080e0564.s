@@ -120,7 +120,7 @@ Func_080e0564:
 	cmp r10, r2
 	bne .L_080e064a
 	movs r0, #141
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #128
 	movs r7, #0
 	lsls r0, r0, #8
@@ -135,7 +135,7 @@ Func_080e0564:
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	ldr r0, [sp, #16]
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [sp, #32]
 	lsls r2, r3, #1
 	movs r3, #64
@@ -226,7 +226,7 @@ Func_080e0564:
 	asrs r3, r3, #7
 	str r3, [r7, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	asrs r3, r3, #6
@@ -247,7 +247,7 @@ Func_080e0564:
 	cmp r3, #0
 	beq .L_080e0766
 	movs r0, #133
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e0766:
 	ldr r2, .L_080e08ac
 	movs r3, #4
@@ -402,7 +402,7 @@ Func_080e0564:
 .L_080e0898:
 	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
 .L_080e089c:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080e08a0:
 	.4byte gMapCellBuffer
 .L_080e08a4:

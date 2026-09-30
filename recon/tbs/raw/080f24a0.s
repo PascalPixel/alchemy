@@ -36,7 +36,7 @@ Unnamed_080f24a0:
 .L_080f24e0:
 	.4byte 0x00000000
 .L_080f24e4:
-	.4byte Data_03001efc
+	.4byte gDisp + 0x4
 .L_080f24e8:
 	.4byte 0x00000015
 .L_080f24ec:
@@ -221,11 +221,11 @@ Unnamed_080f24a0:
 .L_080f2644:
 	.4byte 0x84000080
 .L_080f2648:
-	.4byte Data_02012940
+	.4byte gMapCellBuffer + 0x2940
 .L_080f264c:
 	.4byte 0x80002760
 .L_080f2650:
-	.4byte Data_0201a140
+	.4byte gActorSpriteSlots + 0x2140
 .L_080f2654:
 	.4byte 0x06004ec0
 .L_080f2658:

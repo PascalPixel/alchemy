@@ -68,7 +68,7 @@ Party_ShowJoinedMessage:
 	str r6, [sp, #0]
 	bl UiText_QueueRenderEntries
 	movs r0, #81
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r5, .L_08021480
 	ldr r6, .L_08021484
 .L_0802142a:
@@ -102,7 +102,7 @@ Party_ShowJoinedMessage:
 	bx r0
 	.2byte 0x0000
 .L_0802146c:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08021470:
 	.4byte 0x00000ea3
 .L_08021474:

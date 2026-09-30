@@ -179,7 +179,7 @@ UiWindow_DrawStatusBarTiles:
 	pop {r1}
 	bx r1
 .L_0801f1cc:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_0801f1d0:
 	.4byte 0x00000ea5
 .L_0801f1d4:

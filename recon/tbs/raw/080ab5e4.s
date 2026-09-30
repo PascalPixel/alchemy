@@ -268,7 +268,7 @@ DjinnMenu_SelectDjinn:
 .L_080ab7e4:
 	.4byte 0x00008000
 .L_080ab7e8:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080ab7ec:
 	.4byte 0x00000219
 .L_080ab7f0:
@@ -336,7 +336,7 @@ DjinnMenu_SelectDjinn:
 	adds r3, r3, r2
 	ldr r6, [r0, #16]
 	ldrh r0, [r0, r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r7, .L_080abb50
 	adds r5, r0, #0
 	adds r0, r6, #0
@@ -345,7 +345,7 @@ DjinnMenu_SelectDjinn:
 	adds r1, r6, #0
 	movs r2, #0
 	movs r3, #0
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	adds r3, r5, r7
 	ldrb r0, [r3]
 	ldr r3, .L_080abb54
@@ -358,7 +358,7 @@ DjinnMenu_SelectDjinn:
 	adds r1, r6, #0
 	movs r2, #48
 	movs r3, #0
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	ldr r1, [sp, #72]
 	ldrb r0, [r5, #15]
 	adds r2, r6, #0
@@ -406,7 +406,7 @@ DjinnMenu_SelectDjinn:
 	adds r3, r0, r1
 	ldrb r0, [r3]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r4, .L_080abb64
 	mov r2, r8
 	adds r0, r4, #0
@@ -434,7 +434,7 @@ DjinnMenu_SelectDjinn:
 	lsls r1, r1, #1
 	adds r0, r0, r1
 	movs r1, #4
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldrh r3, [r6]
 	ands r5, r3
 	ldr r3, .L_080abb68
@@ -1043,13 +1043,13 @@ DjinnMenu_SelectDjinn:
 	movs r3, #0
 	add r2, r9
 	str r3, [r2]
-	bl Func_080b50f8
-	bl Func_080b50f8
-	bl Func_080b50f8
+	bl BattlePlacement_UpdateTimedEntriesFar
+	bl BattlePlacement_UpdateTimedEntriesFar
+	bl BattlePlacement_UpdateTimedEntriesFar
 	movs r1, #0
 	movs r2, #0
 	movs r0, #0
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 	movs r1, #0
 	movs r2, #0
 	movs r0, #0
@@ -1225,11 +1225,11 @@ DjinnMenu_SelectDjinn:
 .L_080abfbc:
 	.4byte 0x00000666
 .L_080abfc0:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080abfc4:
 	.4byte 0x00000ea3
 .L_080abfc8:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_080abfcc:
 	.4byte gKeysPressedLatch
 .L_080abfd0:
@@ -1532,7 +1532,7 @@ DjinnMenu_SelectDjinn:
 	cmp r3, #0
 	bne .L_080ac25a
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r5, [sp, #76]
 	ldr r0, [r5, #48]
 	bl RenderOutput_ClearListFar
@@ -1558,7 +1558,7 @@ DjinnMenu_SelectDjinn:
 	beq .L_080ac298
 	movs r0, #175
 	str r4, [sp, #8]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r5, #240
 	ldr r1, [sp, #40]
 	lsls r5, r5, #4
@@ -1573,7 +1573,7 @@ DjinnMenu_SelectDjinn:
 	adds r1, r6, #0
 	adds r0, r5, #0
 	str r3, [sp, #12]
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 	ldr r3, [sp, #12]
 	adds r0, r5, #0
 	adds r1, r6, #0
@@ -1583,7 +1583,7 @@ DjinnMenu_SelectDjinn:
 .L_080ac298:
 	movs r0, #139
 	str r4, [sp, #8]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r5, #240
 	ldr r2, [sp, #40]
 	lsls r5, r5, #4
@@ -1629,7 +1629,7 @@ DjinnMenu_SelectDjinn:
 	beq .L_080ac304
 	movs r0, #112
 	movs r5, #7
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080ac86a
 .L_080ac304:
 	movs r3, #1
@@ -1664,7 +1664,7 @@ DjinnMenu_SelectDjinn:
 	bne .L_080ac36c
 .L_080ac33c:
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl .L_080ab834
 	.2byte 0x0000
 .L_080ac348:
@@ -1718,7 +1718,7 @@ DjinnMenu_SelectDjinn:
 	cmp r5, #0
 	bne .L_080ac3d8
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r7, [sp, #76]
 	ldr r0, [r7, #48]
 	bl RenderOutput_ClearListFar
@@ -1771,7 +1771,7 @@ DjinnMenu_SelectDjinn:
 	movs r5, #1
 .L_080ac416:
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080ac86a
 .L_080ac41e:
 	movs r3, #8
@@ -1789,7 +1789,7 @@ DjinnMenu_SelectDjinn:
 	movs r0, #113
 	movs r5, #1
 .L_080ac438:
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	negs r5, r5
 	b .L_080ac86a
 .L_080ac440:
@@ -1816,11 +1816,11 @@ DjinnMenu_SelectDjinn:
 	cmp r5, #0
 	beq .L_080ac46e
 	movs r0, #139
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080ac474
 .L_080ac46e:
 	movs r0, #175
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ac474:
 	movs r7, #0
 	ldr r0, [sp, #76]
@@ -1937,7 +1937,7 @@ DjinnMenu_SelectDjinn:
 	adds r1, r6, #0
 	adds r0, r5, #0
 	str r3, [sp, #12]
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 	ldr r3, [sp, #12]
 	adds r0, r5, #0
 	adds r1, r6, #0
@@ -1994,7 +1994,7 @@ DjinnMenu_SelectDjinn:
 	bl Menu_DrawAtWindowOffset
 	movs r0, #112
 	movs r5, #10
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080ac86a
 .L_080ac5d2:
 	movs r3, #64
@@ -2003,7 +2003,7 @@ DjinnMenu_SelectDjinn:
 	cmp r3, #0
 	beq .L_080ac682
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r7, [sp, #28]
 	ldr r0, [sp, #56]
 	movs r5, #4
@@ -2090,7 +2090,7 @@ DjinnMenu_SelectDjinn:
 	cmp r3, #0
 	beq .L_080ac738
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r7, [sp, #28]
 	ldr r0, [sp, #56]
 	movs r5, #4
@@ -2181,7 +2181,7 @@ DjinnMenu_SelectDjinn:
 	cmp r3, #0
 	beq .L_080ac7bc
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, [sp, #28]
 	ldr r5, [sp, #56]
 	ldrb r2, [r3, r5]
@@ -2249,7 +2249,7 @@ DjinnMenu_SelectDjinn:
 	bl .L_080ab834
 .L_080ac7ca:
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, [sp, #28]
 	ldr r5, [sp, #56]
 	ldrb r2, [r3, r5]

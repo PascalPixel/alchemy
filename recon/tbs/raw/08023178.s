@@ -43,7 +43,7 @@ Ui_RunOwnerStatusScreen:
 	str r2, [r5, #68]
 .L_080231ca:
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r6, #4
 	movs r2, #0
 	add r3, sp, #100
@@ -193,7 +193,7 @@ Ui_RunOwnerStatusScreen:
 .L_080232f4:
 	.4byte 0x00000008
 .L_080232f8:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080232fc:
 	.4byte gKeysRepeat
 .L_08023300:
@@ -290,7 +290,7 @@ Ui_RunOwnerStatusScreen:
 	movs r2, #0
 	movs r0, #111
 	str r2, [sp, #40]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, [r6, #20]
 	adds r5, #1
 	cmp r5, r3
@@ -308,7 +308,7 @@ Ui_RunOwnerStatusScreen:
 	movs r0, #111
 	subs r5, #1
 	str r1, [sp, #40]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	cmp r5, #0
 	bge .L_080234c8
 	ldr r3, [r6, #20]
@@ -330,7 +330,7 @@ Ui_RunOwnerStatusScreen:
 	movs r3, #0
 	movs r0, #111
 	str r3, [sp, #40]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, [r6, #16]
 	movs r3, #2
 	eors r1, r3
@@ -399,7 +399,7 @@ Ui_RunOwnerStatusScreen:
 	ldrsb r5, [r6, r5]
 .L_080234a6:
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080234c8
 .L_080234ae:
 	ldr r4, [sp, #40]
@@ -413,7 +413,7 @@ Ui_RunOwnerStatusScreen:
 	str r1, [r6, #16]
 	movs r5, #0
 	ldrsb r5, [r6, r5]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080234c8:
 	add r2, sp, #96
 	ldr r3, [r2, #16]
@@ -620,7 +620,7 @@ Ui_RunOwnerStatusScreen:
 	b .L_08023cfa
 .L_08023656:
 	ldr r0, [sp, #84]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	mov r9, r0
 	bl UiWindow_MarkVisibleTileAttributes
 	bl Ui_FillVramBlockPattern
@@ -1561,7 +1561,7 @@ Ui_RunOwnerStatusScreen:
 	movs r0, #111
 	str r3, [sp, #84]
 	mov r10, r2
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_08023df6
 .L_08023dc6:
 	movs r3, #128
@@ -1587,7 +1587,7 @@ Ui_RunOwnerStatusScreen:
 	movs r0, #111
 	str r3, [sp, #84]
 	mov r10, r2
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_08023df6:
 	movs r0, #1
 	bl WaitFrames
@@ -1640,4 +1640,4 @@ Ui_RunOwnerStatusScreen:
 .L_08023e68:
 	.4byte gKeyState
 .L_08023e6c:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork

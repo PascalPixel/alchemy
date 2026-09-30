@@ -73,7 +73,7 @@ Game_ResetForNewGame:
 	mov r9, r3
 .L_0808a96e:
 	ldr r0, .L_0808a9a4
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0808a9a8
 	ldr r0, .L_0808a9a4
@@ -102,7 +102,7 @@ Game_ResetForNewGame:
 .L_0808a9a8:
 	movs r0, #144
 	lsls r0, r0, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_0808a9b0:
 	ldr r7, .L_0808aa10
 	movs r4, #224
@@ -191,7 +191,7 @@ Game_ResetForNewGame:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r6, #0
-	bl Func_080f4000
+	bl FarCall_BlankRunTable
 	b .L_0808aa88
 .L_0808aa6e:
 	movs r0, #64
@@ -204,7 +204,7 @@ Game_ResetForNewGame:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r6, #0
-	bl Func_080f6000
+	bl FarCall_BlankLoadTable
 .L_0808aa88:
 	ldr r3, .L_0808ab30
 	adds r6, r0, #0
@@ -225,7 +225,7 @@ Game_ResetForNewGame:
 .L_0808aaa8:
 	ldr r5, .L_0808ab38
 	adds r0, r5, #0
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	mov r3, r8
 	adds r1, r0, #0
 	movs r2, #0
@@ -233,16 +233,16 @@ Game_ResetForNewGame:
 	bl Scene_ResetFlagsOnEnter
 	bl Scene_ResolveInteractionResult
 	adds r0, r5, #0
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808aaf0
 	movs r0, #141
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808aae6
 	ldr r0, .L_0808ab3c
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808aae6
 	bl Audio_PlayCueFromEventWork
@@ -261,7 +261,7 @@ Game_ResetForNewGame:
 	negs r2, r2
 	cmp r0, r2
 	beq .L_0808ab06
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_0808ab0a
 .L_0808ab06:
 	bl Audio_PlayCueFromEventWork

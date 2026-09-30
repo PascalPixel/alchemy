@@ -189,7 +189,7 @@ Func_080e1040:
 	adds r0, r0, r3
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [sp, #52]
 	lsls r0, r0, #1
 	asrs r0, r0, #16
@@ -428,7 +428,7 @@ Func_080e1040:
 	adds r5, #48
 	b .L_080e13e0
 .L_080e13a0:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e13a4:
 	.4byte 0x000000a7
 .L_080e13a8:
@@ -442,19 +442,19 @@ Func_080e1040:
 .L_080e13b8:
 	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
 .L_080e13bc:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080e13c0:
-	.4byte Data_080eec70
+	.4byte ParticleReveal_CellSourceOffsets + 0x8
 .L_080e13c4:
-	.4byte Data_080eec86
+	.4byte ParticleReveal_CellSourceOffsets + 0x1e
 .L_080e13c8:
-	.4byte Data_080eeca1
+	.4byte ParticleReveal_CellSourceOffsets + 0x39
 .L_080e13cc:
-	.4byte Data_080eec98
+	.4byte ParticleReveal_CellSourceOffsets + 0x30
 .L_080e13d0:
-	.4byte Data_080eec74
+	.4byte ParticleReveal_CellSourceOffsets + 0xc
 .L_080e13d4:
-	.4byte Data_080eec7d
+	.4byte ParticleReveal_CellSourceOffsets + 0x15
 .L_080e13d8:
 	ldr r1, .L_080e153c
 	ldrb r3, [r1, r0]
@@ -569,7 +569,7 @@ Func_080e1040:
 	movs r3, #0
 	str r3, [r6, #24]
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r5, .L_080e1550
 	add r5, r9
 	ldr r3, [r5]
@@ -633,11 +633,11 @@ Func_080e1040:
 	pop {r0}
 	bx r0
 .L_080e153c:
-	.4byte Data_080eeca1
+	.4byte ParticleReveal_CellSourceOffsets + 0x39
 .L_080e1540:
-	.4byte Data_080eec86
+	.4byte ParticleReveal_CellSourceOffsets + 0x1e
 .L_080e1544:
-	.4byte Data_080eec7d
+	.4byte ParticleReveal_CellSourceOffsets + 0x15
 .L_080e1548:
 	.4byte 0x0013ffff
 .L_080e154c:

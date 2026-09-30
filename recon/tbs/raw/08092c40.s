@@ -388,7 +388,7 @@ UiText_OpenMessageAtObject:
 	movs r1, #0
 	adds r2, r6, #0
 	ldr r3, [sp, #16]
-	bl Func_080150f8
+	bl UiWindow_CreateWithSideObjectFar
 	mov r9, r0
 	b .L_08092f34
 .L_08092f2e:
@@ -428,7 +428,7 @@ UiText_OpenMessageAtObject:
 	pop {r1}
 	bx r1
 .L_08092f74:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08092f78:
 	.4byte 0x00000fff
 .L_08092f7c:

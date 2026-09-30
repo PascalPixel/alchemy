@@ -378,7 +378,7 @@ UiText_RenderStringTiles:
 	b .L_0801e194
 	.2byte 0x0000
 .L_0801e148:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_0801e14c:
 	.4byte 0x00000013
 .L_0801e150:
@@ -388,7 +388,7 @@ UiText_RenderStringTiles:
 .L_0801e158:
 	.4byte 0x00000eae
 .L_0801e15c:
-	.4byte Data_080371b4
+	.4byte Data_080368d4 + 0x8e0
 .L_0801e160:
 	.4byte IwramFillWords
 .L_0801e164:
@@ -398,7 +398,7 @@ UiText_RenderStringTiles:
 .L_0801e16c:
 	.4byte .L_0801df14
 .L_0801e170:
-	.4byte Data_080370d4
+	.4byte Data_080368d4 + 0x800
 .L_0801e174:
 	.4byte 0x0000f01d
 .L_0801e178:

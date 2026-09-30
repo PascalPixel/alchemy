@@ -88,7 +88,7 @@ BattleEffect_RunSparkTravel:
 	mov r3, r8
 	str r3, [r7, #16]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	movs r0, #1
@@ -172,13 +172,13 @@ BattleEffect_RunSparkTravel:
 	cmp r0, #8
 	bne .L_080d5fc0
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d5fc0:
 	mov r1, r9
 	cmp r1, #80
 	bne .L_080d5fcc
 	movs r0, #142
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d5fcc:
 	bl Render_ResetTransformState
 	adds r1, r5, #0
@@ -611,7 +611,7 @@ BattleEffect_RunSparkTravel:
 	cmp r9, r3
 	bne .L_080d633c
 	movs r0, #126
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d633c:
 	mov r3, r8
 	adds r3, #40
@@ -711,7 +711,7 @@ BattleEffect_RunSparkTravel:
 	lsls r0, r3, #2
 	movs r1, #9
 	add r0, r9
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r2, .L_080d64c4
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]

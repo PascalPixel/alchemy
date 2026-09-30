@@ -246,7 +246,7 @@ BattleEffect_RunDualParticleStream:
 .L_080e8bce:
 	str r3, [r5]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	lsls r0, r0, #4
 	asrs r0, r0, #16
 	adds r0, #40
@@ -283,13 +283,13 @@ BattleEffect_RunDualParticleStream:
 	cmp r0, #0
 	bne .L_080e8c22
 	movs r0, #136
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e8c22:
 	ldr r1, [sp, #40]
 	cmp r1, #50
 	bne .L_080e8c2e
 	movs r0, #136
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e8c2e:
 	ldr r2, [sp, #12]
 	ldr r3, [r2]

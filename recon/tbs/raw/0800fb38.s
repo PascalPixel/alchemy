@@ -255,15 +255,15 @@ Map_LoadLayeredScene:
 .L_0800fd38:
 	.4byte 0x00000128
 .L_0800fd3c:
-	.4byte Data_02010001
+	.4byte gMapCellBuffer + 0x1
 .L_0800fd40:
 	.4byte gMapCollision
 .L_0800fd44:
 	.4byte gMapCellBuffer
 .L_0800fd48:
-	.4byte Data_0202d000
+	.4byte gMapCollision + 0x1000
 .L_0800fd4c:
-	.4byte Data_0202de00
+	.4byte gMapCollision + 0x1e00
 .L_0800fd50:
 	.4byte 0x00000101
 .L_0800fd54:
@@ -293,7 +293,7 @@ Map_LoadLayeredScene:
 	movs r5, #184
 	lsls r5, r5, #1
 	adds r0, r5, #0
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0800fd98
 	adds r0, r5, #0

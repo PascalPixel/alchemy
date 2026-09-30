@@ -56,7 +56,7 @@ BattleEffect_RunCirclingFallingScene:
 .L_080e82ac:
 	.4byte 0x00000000
 .L_080e82b0:
-	.4byte Data_03001ef0
+	.4byte gBattleFxWork + 0x4
 .L_080e82b4:
 	.4byte 0x00007828
 .L_080e82b8:
@@ -84,7 +84,7 @@ BattleEffect_RunCirclingFallingScene:
 	strb r3, [r2]
 	movs r1, #3
 	mov r0, r8
-	bl Func_080022fc
+	bl Math_Mod
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Object_InitializeMode
@@ -162,7 +162,7 @@ BattleEffect_RunCirclingFallingScene:
 .L_080e838c:
 	.4byte 0x000077fc
 .L_080e8390:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e8394:
 	.4byte 0x04000048
 .L_080e8398:
@@ -301,19 +301,19 @@ BattleEffect_RunCirclingFallingScene:
 	cmp r6, #94
 	bne .L_080e84a2
 	movs r0, #156
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e84a2:
 	ldr r7, [sp, #40]
 	cmp r7, #136
 	bne .L_080e84ae
 	movs r0, #156
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e84ae:
 	ldr r0, [sp, #40]
 	cmp r0, #178
 	bne .L_080e84ba
 	movs r0, #156
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e84ba:
 	movs r2, #130
 	ldr r1, [sp, #40]
@@ -321,7 +321,7 @@ BattleEffect_RunCirclingFallingScene:
 	cmp r1, r2
 	bne .L_080e84ca
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e84ca:
 	ldr r3, .L_080e874c
 	ldr r4, [r3, #4]
@@ -396,7 +396,7 @@ BattleEffect_RunCirclingFallingScene:
 	adds r7, r0, r7
 	adds r0, r5, #0
 	str r7, [sp, #20]
-	bl Func_0800231c
+	bl Trig_Cos
 	movs r1, #184
 	lsls r0, r0, #4
 	lsls r1, r1, #15
@@ -643,7 +643,7 @@ BattleEffect_RunCirclingFallingScene:
 .L_080e8738:
 	.4byte 0x00007140
 .L_080e873c:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080e8740:
 	.4byte 0x000077b4
 .L_080e8744:
@@ -820,7 +820,7 @@ BattleEffect_RunCirclingFallingScene:
 	asrs r3, r3, #7
 	str r3, [r7, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	lsls r3, r3, #1

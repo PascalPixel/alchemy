@@ -567,7 +567,7 @@ BattlePres_RunBurstScene:
 .L_080e2dd4:
 	.4byte 0x000000b6
 .L_080e2dd8:
-	.4byte Data_02015e00
+	.4byte gMapCellBuffer + 0x5e00
 .L_080e2ddc:
 	.4byte 0x0000006b
 .L_080e2de0:
@@ -587,9 +587,9 @@ BattlePres_RunBurstScene:
 .L_080e2dfc:
 	.4byte gMapCellBuffer
 .L_080e2e00:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e2e04:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080e2e08:
 	.4byte IwramFillWords
 .L_080e2e0c:
@@ -613,7 +613,7 @@ BattlePres_RunBurstScene:
 	adds r3, r4, r5
 	str r6, [r3]
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e2e38:
 	ldr r0, .L_080e3008
 	ldr r1, [sp, #32]
@@ -840,9 +840,9 @@ BattlePres_RunBurstScene:
 .L_080e3008:
 	.4byte Data_080eed3e
 .L_080e300c:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080e3010:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080e3014:
 	.4byte gMapCellBuffer
 .L_080e3018:

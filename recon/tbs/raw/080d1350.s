@@ -235,7 +235,7 @@ Unnamed_080d1350:
 	lsls r3, r3, #11
 	subs r6, r6, r3
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r2, r8
 	ldrb r3, [r2, r5]
 	adds r2, r3, #0
@@ -267,7 +267,7 @@ Unnamed_080d1350:
 	mov r0, r9
 	movs r1, #10
 	mov r10, r2
-	bl Func_080022fc
+	bl Math_Mod
 	add r0, r11
 	lsls r3, r0, #3
 	subs r3, r3, r0
@@ -348,7 +348,7 @@ Unnamed_080d1350:
 	movs r3, #4
 	str r3, [r2]
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, .L_080d16d8
 	ldr r5, [sp, #48]
 	ldr r3, [r5, r3]

@@ -346,7 +346,7 @@ BattleFx_RunSevenMode:
 .L_080cfb86:
 	str r3, [sp, #40]
 	movs r0, #103
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, [sp, #40]
 	movs r0, #0
 	str r0, [sp, #48]
@@ -458,15 +458,15 @@ BattleFx_RunSevenMode:
 .L_080cfc64:
 	.4byte IwramCopyWords
 .L_080cfc68:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080cfc6c:
 	.4byte 0x00007828
 .L_080cfc70:
 	.4byte gMapCellBuffer
 .L_080cfc74:
-	.4byte Data_02011c18
+	.4byte gMapCellBuffer + 0x1c18
 .L_080cfc78:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080cfc7c:
 	.4byte Data_080ee0b6
 .L_080cfc80:
@@ -769,7 +769,7 @@ BattleFx_RunSevenMode:
 .L_080cfed4:
 	.4byte Data_080ee0b6
 .L_080cfed8:
-	.4byte Data_02011c00
+	.4byte gMapCellBuffer + 0x1c00
 .L_080cfedc:
 	.4byte 0x00007828
 .L_080cfee0:

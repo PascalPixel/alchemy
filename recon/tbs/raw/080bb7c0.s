@@ -14,7 +14,7 @@ Unnamed_080bb7c0:
 	movs r0, #0
 	sub sp, #20
 	adds r6, r1, #0
-	bl Func_080153f0
+	bl Ui_GetTableWordZeroFar
 	mov r11, r0
 	str r5, [sp, #0]
 	str r6, [sp, #4]

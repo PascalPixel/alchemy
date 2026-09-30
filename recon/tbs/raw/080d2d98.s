@@ -56,7 +56,7 @@ BattleEffect_RunEmberColumns:
 .L_080d2e08:
 	.4byte 0x00001010
 .L_080d2e0c:
-	.4byte Data_03001ef0
+	.4byte gBattleFxWork + 0x4
 .L_080d2e10:
 	.4byte 0x00007828
 .L_080d2e14:
@@ -275,7 +275,7 @@ BattleEffect_RunEmberColumns:
 	adds r3, r3, r2
 	str r3, [r7]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	movs r0, #192
@@ -342,7 +342,7 @@ BattleEffect_RunEmberColumns:
 	adds r3, r3, r2
 	str r3, [r7]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	movs r0, #192
@@ -383,19 +383,19 @@ BattleEffect_RunEmberColumns:
 	cmp r3, #0
 	bne .L_080d30ae
 	movs r0, #164
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d30ae:
 	mov r7, r9
 	cmp r7, #32
 	bne .L_080d30ba
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d30ba:
 	mov r0, r9
 	cmp r0, #80
 	bne .L_080d30c6
 	movs r0, #144
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d30c6:
 	ldr r1, [sp, #12]
 	cmp r1, #47
@@ -416,7 +416,7 @@ BattleEffect_RunEmberColumns:
 .L_080d30e6:
 	adds r0, r7, #0
 	movs r1, #104
-	bl Func_080022fc
+	bl Math_Mod
 	ldrb r3, [r6, #1]
 	ldrb r2, [r6]
 	adds r5, r0, #0
@@ -495,7 +495,7 @@ BattleEffect_RunEmberColumns:
 .L_080d3180:
 	mov r0, r8
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r3, [r5, #16]
 	adds r4, r0, #2
 	cmp r3, #0
@@ -531,7 +531,7 @@ BattleEffect_RunEmberColumns:
 .L_080d31c4:
 	.4byte 0x00007320
 .L_080d31c8:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080d31cc:
 	.4byte 0x00007828
 .L_080d31d0:
@@ -680,7 +680,7 @@ BattleEffect_RunEmberColumns:
 	ble .L_080d332e
 	movs r1, #12
 	str r4, [sp, #8]
-	bl Func_080022fc
+	bl Math_Mod
 	adds r6, r0, #0
 	ldr r4, [sp, #8]
 	cmp r6, #0

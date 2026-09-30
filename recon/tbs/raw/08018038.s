@@ -172,7 +172,7 @@ Func_08018038:
 	b .L_08018614
 	.2byte 0x0000
 .L_08018170:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08018174:
 	.4byte 0x000012b2
 .L_08018178:
@@ -569,7 +569,7 @@ Func_08018038:
 	movs r0, #6
 	bl UiRender_LookupNamedValue
 	movs r1, #1
-	bl Func_0808a5d0
+	bl BattleFx_FindConditionResourceFar
 	ldr r3, .L_08018580
 	ldr r1, [sp, #12]
 	adds r0, r0, r3
@@ -600,7 +600,7 @@ Func_08018038:
 	lsls r0, r0, #1
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	add r1, sp, #84
 	adds r2, r1, #0
 	movs r4, #0
@@ -620,7 +620,7 @@ Func_08018038:
 	subs r5, r0, #1
 	movs r0, #1
 	bl UiRender_LookupNamedValue
-	bl Func_08077008
+	bl Owner_GetStateFar
 	add r1, sp, #84
 	adds r2, r1, #0
 	movs r4, #0
@@ -646,7 +646,7 @@ Func_08018038:
 	bl _call_via_r9
 	subs r2, r0, #1
 	adds r0, r2, #0
-	bl Func_08077008
+	bl Owner_GetStateFar
 	add r1, sp, #84
 	adds r2, r1, #0
 	movs r4, #0

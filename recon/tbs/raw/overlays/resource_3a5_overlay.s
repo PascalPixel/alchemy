@@ -262,7 +262,7 @@ Func_02000e2c:
 .L_0200904c:
 	.4byte 0x00000cba
 .L_02009050:
-	.4byte Data_0200046b + 0x7
+	.4byte gItemCounters + 0xf2
 	.section .text.x020098a2,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020098a4,"ax",%progbits

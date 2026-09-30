@@ -173,7 +173,7 @@ Unnamed_080cb4ec:
 	cmp r2, #64
 	bne .L_080cb5b2
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #0
 	mov r10, r3
 .L_080cb642:
@@ -345,7 +345,7 @@ Unnamed_080cb4ec:
 	cmp r3, #0
 	bne .L_080cb78c
 	movs r0, #133
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080cb78c:
 	movs r0, #8
 	movs r1, #8

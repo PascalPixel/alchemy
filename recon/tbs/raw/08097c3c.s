@@ -33,7 +33,7 @@ FunctionHead_08097c3c:
 	str r6, [r2, #104]
 	ldr r0, [sp, #20]
 	ldr r1, .L_08097f54
-	bl Engine_ObjectSetScript
+	bl ObjectDispatch_InitializeFar
 	ldr r0, [sp, #20]
 	bl BattleFx_StartItemBreak
 	mov r10, r0
@@ -124,7 +124,7 @@ FunctionHead_08097c3c:
 	bl Object_SetMoveTargetFar
 	mov r0, r10
 	movs r1, #1
-	bl Func_08009080
+	bl Object_SetMode
 	mov r0, r10
 	str r5, [r0, #36]
 	str r5, [r0, #40]
@@ -228,7 +228,7 @@ FunctionHead_08097c3c:
 .L_08097e16:
 	mov r0, r10
 	movs r1, #4
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r3, .L_08097f70
 	ldr r3, [r3]
 	movs r2, #15
@@ -236,14 +236,14 @@ FunctionHead_08097c3c:
 	cmp r3, #0
 	bne .L_08097ee4
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_08097ee4
 .L_08097e32:
 	movs r1, #1
 	str r1, [sp, #4]
 .L_08097e36:
 	movs r0, #175
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, [r7]
 	str r2, [sp, #16]
 	ldr r0, [sp, #8]
@@ -256,7 +256,7 @@ FunctionHead_08097c3c:
 	lsrs r3, r3, #30
 	ldrb r1, [r2, r3]
 	mov r0, r10
-	bl Func_08009080
+	bl Object_SetMode
 	movs r0, #15
 	bl WaitFrames
 	adds r3, r6, #0
@@ -340,7 +340,7 @@ FunctionHead_08097c3c:
 	ldr r0, [sp, #24]
 	ldr r1, [r0, #60]
 	adds r0, r6, #0
-	bl Engine_ObjectSetScript
+	bl ObjectDispatch_InitializeFar
 	ldr r1, [sp, #24]
 	ldr r3, [r1, #56]
 	str r3, [r6, #108]
@@ -373,7 +373,7 @@ FunctionHead_08097c3c:
 	bx r0
 	.2byte 0x0000
 .L_08097f50:
-	.4byte Data_03001f30
+	.4byte gEffectWork
 .L_08097f54:
 	.4byte Data_0809f0bc
 .L_08097f58:
@@ -383,7 +383,7 @@ FunctionHead_08097c3c:
 .L_08097f60:
 	.4byte 0x00003333
 .L_08097f64:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_08097f68:
 	.4byte 0x0000ffff
 .L_08097f6c:

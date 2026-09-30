@@ -37,7 +37,7 @@ Func_080ba6ac:
 	ldr r0, [r0]
 	movs r1, #3
 	mov r9, r0
-	bl Func_08009080
+	bl Object_SetMode
 	movs r1, #16
 	mov r0, r9
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -148,7 +148,7 @@ Func_080ba6ac:
 	adds r6, r5, #0
 	mov r0, r9
 	movs r1, #1
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r3, [r6, #20]
 	movs r7, #0
 	cmp r3, #0
@@ -169,7 +169,7 @@ Func_080ba6ac:
 	mov r3, r8
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	mov r1, r8
 	movs r7, #8
 	ldrsh r3, [r1, r7]
@@ -241,7 +241,7 @@ Func_080ba6ac:
 	lsrs r3, r3, #24
 	cmp r3, #2
 	bne .L_080ba8c0
-	bl Func_080771a0
+	bl BattleRandom16Far
 	movs r3, #7
 	ands r0, r3
 	cmp r0, #0
@@ -297,7 +297,7 @@ Func_080ba6ac:
 .L_080ba8f4:
 	.4byte BattleEvent_Playback
 .L_080ba8f8:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080ba8fc:
 	.4byte 0x00000544
 .L_080ba900:

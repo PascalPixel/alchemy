@@ -230,7 +230,7 @@ Func_080f2028:
 	b .L_080f2396
 	.2byte 0x0000
 .L_080f21d4:
-	.4byte Data_03001efc
+	.4byte gDisp + 0x4
 .L_080f21d8:
 	.4byte gDebugPaused
 .L_080f21dc:

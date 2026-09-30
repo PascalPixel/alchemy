@@ -90,7 +90,7 @@ BattleEffect_RunTileAndPaletteAnimation:
 .L_080cbcc0:
 	.4byte 0x00000302
 .L_080cbcc4:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080cbcc8:
 	.4byte 0x00007828
 .L_080cbccc:
@@ -367,7 +367,7 @@ BattleEffect_RunTileAndPaletteAnimation:
 	ldr r2, .L_080cbff4
 	bl _call_via_r5
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r5, .L_080cbff8
 	ldr r4, [sp, #40]
 	adds r3, r4, r5
@@ -387,13 +387,13 @@ BattleEffect_RunTileAndPaletteAnimation:
 	cmp r1, #2
 	bne .L_080cbf22
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080cbf22:
 	ldr r2, [sp, #32]
 	cmp r2, #3
 	bne .L_080cbf2e
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080cbf2e:
 	ldr r3, [sp, #32]
 	cmp r3, #28
@@ -416,13 +416,13 @@ BattleEffect_RunTileAndPaletteAnimation:
 	cmp r0, #32
 	bne .L_080cbf5c
 	movs r0, #149
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080cbf5c:
 	ldr r1, [sp, #32]
 	cmp r1, #5
 	bne .L_080cbf88
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r4, [sp, #40]
 	ldr r5, .L_080cbfd8
 	adds r3, r4, r5
@@ -458,11 +458,11 @@ BattleEffect_RunTileAndPaletteAnimation:
 .L_080cbfa8:
 	.4byte 0x0000001f
 .L_080cbfac:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080cbfb0:
-	.4byte Data_080ee037
+	.4byte Data_080edf88 + 0xaf
 .L_080cbfb4:
-	.4byte Data_080ee016
+	.4byte Data_080edf88 + 0x8e
 .L_080cbfb8:
 	.4byte 0xffe00000
 .L_080cbfbc:
@@ -1044,7 +1044,7 @@ BattleEffect_RunTileAndPaletteAnimation:
 .L_080cc3e8:
 	.4byte 0x06008000
 .L_080cc3ec:
-	.4byte Data_02020202
+	.4byte gMapBlocks + 0x202
 .L_080cc3f0:
 	.4byte 0x05000004
 .L_080cc3f4:
@@ -1054,11 +1054,11 @@ BattleEffect_RunTileAndPaletteAnimation:
 .L_080cc3fc:
 	.4byte IwramCopyWords
 .L_080cc400:
-	.4byte Data_080edfd2
+	.4byte Data_080edf88 + 0x4a
 .L_080cc404:
-	.4byte Data_080edf90
+	.4byte Data_080edf88 + 0x8
 .L_080cc408:
-	.4byte Data_080edfb1
+	.4byte Data_080edf88 + 0x29
 .L_080cc40c:
 	.4byte 0x05000002
 .L_080cc410:

@@ -272,14 +272,14 @@ Unnamed_080d3c80:
 .L_080d3e8a:
 	movs r1, #5
 	mov r0, r10
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
 	bl FixedPoint_Ratio
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	movs r2, #4
 	mov r3, r10
 	adds r6, r7, #0
@@ -459,7 +459,7 @@ Unnamed_080d3c80:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #144
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #0
 	mov r10, r3
 	ldr r3, .L_080d40dc

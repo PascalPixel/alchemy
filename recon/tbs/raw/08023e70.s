@@ -64,7 +64,7 @@ Battle_SelectAbility:
 	mov r10, r2
 	str r3, [sp, #36]
 	ldr r0, [sp, #76]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r0, #248
 	movs r7, #0
 	mov r8, r0
@@ -101,7 +101,7 @@ Battle_SelectAbility:
 	bls .L_08023f38
 	movs r0, #1
 .L_08023f38:
-	bl Func_08077000
+	bl Trade_GetOfferStateFar
 	movs r2, #132
 	adds r3, r0, #0
 	lsls r2, r2, #1
@@ -396,7 +396,7 @@ Battle_SelectAbility:
 	b .L_080241ac
 	.2byte 0x0000
 .L_08024184:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08024188:
 	.4byte 0x00000ea3
 .L_0802418c:
@@ -761,7 +761,7 @@ Battle_SelectAbility:
 .L_0802445a:
 	movs r0, #113
 	movs r6, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	negs r6, r6
 	b .L_080248a0
 .L_08024466:
@@ -815,7 +815,7 @@ Battle_SelectAbility:
 	bl UiText_RenderWideStringAtOffset
 .L_080244ce:
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_0802451c
 .L_080244d6:
 	movs r6, #1
@@ -834,7 +834,7 @@ Battle_SelectAbility:
 .L_080244f0:
 	.4byte 0x0000f30b
 .L_080244f4:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_080244f8:
 	.4byte gFrameCount
 .L_080244fc:
@@ -864,7 +864,7 @@ Battle_SelectAbility:
 	cmp r3, #0
 	beq .L_08024550
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #1
 	add r10, r1
 	mov r2, r10
@@ -888,7 +888,7 @@ Battle_SelectAbility:
 	cmp r3, #0
 	beq .L_08024590
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #1
 	negs r1, r1
 	add r10, r1
@@ -1025,7 +1025,7 @@ Battle_SelectAbility:
 	cmp r3, #0
 	beq .L_08024672
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, [sp, #32]
 	ldr r3, [sp, #80]
 	adds r1, #1
@@ -1040,7 +1040,7 @@ Battle_SelectAbility:
 	cmp r3, #0
 	beq .L_08024766
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, [sp, #32]
 	subs r1, #1
 	str r1, [sp, #32]
@@ -1074,7 +1074,7 @@ Battle_SelectAbility:
 	cmp r3, #0
 	beq .L_08024708
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	mov r3, r11
 	ldr r2, [sp, #52]
@@ -1117,7 +1117,7 @@ Battle_SelectAbility:
 	cmp r3, #0
 	beq .L_08024766
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	mov r1, r11
 	cmp r1, #0

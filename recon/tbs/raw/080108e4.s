@@ -135,4 +135,4 @@ Map_WriteLayerCellTile:
 .L_080109e0:
 	.4byte gMapCellBuffer
 .L_080109e4:
-	.4byte Data_02010002
+	.4byte gMapCellBuffer + 0x2

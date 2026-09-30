@@ -90,7 +90,7 @@ BattlePresentation_AppendLinkedActions:
 	ldr r2, [r3]
 	ldr r3, [r7]
 	str r3, [r2]
-	bl Func_080771a0
+	bl BattleRandom16Far
 	mov r1, r10
 	ldr r3, [r1]
 	str r0, [r3, #4]
@@ -138,7 +138,7 @@ BattlePresentation_AppendLinkedActions:
 	bl Func_080b9554
 	cmp r0, #0
 	blt .L_080b9890
-	bl Func_080771a0
+	bl BattleRandom16Far
 	mov r2, r10
 	ldr r1, [r2]
 	ldr r3, [r1, #4]
@@ -178,7 +178,7 @@ BattlePresentation_AppendLinkedActions:
 .L_080b987c:
 	.4byte 0x00000080
 .L_080b9880:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080b9884:
 	.4byte 0x04000208
 .L_080b9888:

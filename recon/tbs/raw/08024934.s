@@ -103,7 +103,7 @@ Func_08024934:
 .L_080249fc:
 	.4byte 0x000001ff
 .L_08024a00:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08024a04:
 	.4byte 0xfffffe00
 .L_08024a08:
@@ -853,7 +853,7 @@ Func_08024934:
 .L_08024faa:
 	movs r0, #113
 	movs r6, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	negs r6, r6
 	b .L_08025106
 .L_08024fb6:
@@ -862,7 +862,7 @@ Func_08024934:
 	cmp r3, #0
 	beq .L_08024fe6
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #1
 	add r10, r1
 	mov r2, r10
@@ -888,7 +888,7 @@ Func_08024934:
 	cmp r3, #0
 	beq .L_0802502c
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #1
 	negs r0, r0
 	add r10, r0
@@ -926,7 +926,7 @@ Func_08024934:
 	cmp r3, #0
 	beq .L_0802508a
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	mov r3, r11
 	ldr r0, [sp, #80]
@@ -974,7 +974,7 @@ Func_08024934:
 	cmp r3, #0
 	beq .L_080250fe
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	mov r3, r11
 	cmp r3, #0

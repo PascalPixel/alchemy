@@ -52,14 +52,14 @@ Object_EffectSpawnCallback:
 	adds r1, r7, #0
 	mov r0, r8
 	mov r9, r3
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	movs r2, #128
 	lsls r2, r2, #14
 	asrs r6, r0, #16
 	add r2, r10
 	mov r0, r8
 	adds r1, r7, #0
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	asrs r0, r0, #16
 	subs r0, #16
 	cmp r0, r6
@@ -146,14 +146,14 @@ Object_EffectSpawnCallback:
 	adds r1, r7, #0
 	add r2, r10
 	mov r0, r8
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	movs r2, #128
 	lsls r2, r2, #14
 	asrs r6, r0, #16
 	add r2, r10
 	mov r0, r8
 	adds r1, r7, #0
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	asrs r0, r0, #16
 	mov r5, r11
 	subs r0, #16

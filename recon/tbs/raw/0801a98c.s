@@ -79,7 +79,7 @@ MenuSelection_DrawFrame:
 .L_0801aa1c:
 	.4byte 0xfffffe00
 .L_0801aa20:
-	.4byte Data_03001e98
+	.4byte gResQueueWork
 .L_0801aa24:
 	movs r1, #16
 	ldrsh r2, [r7, r1]
@@ -170,7 +170,7 @@ MenuSelection_DrawFrame:
 	cmp r3, #0
 	beq .L_0801ab10
 	ldr r0, .L_0801ad54
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0801ab08
 	ldr r3, .L_0801ad58
@@ -341,7 +341,7 @@ MenuSelection_DrawFrame:
 	strh r3, [r1, #34]
 .L_0801ac18:
 	ldr r0, .L_0801ad54
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0801ac2e
 	ldrb r3, [r5, #5]
@@ -483,7 +483,7 @@ MenuSelection_DrawFrame:
 	strb r3, [r6, #7]
 .L_0801ad2e:
 	ldr r0, .L_0801ad54
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0801ad9a
 	ldr r3, .L_0801ad58
@@ -653,7 +653,7 @@ MenuSelection_DrawFrame:
 	orrs r3, r2
 	strh r3, [r0, #6]
 	ldr r0, .L_0801ae9c
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0801aec4
 	ldr r3, .L_0801aea0

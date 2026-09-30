@@ -251,13 +251,13 @@ Func_080e6638:
 .L_080e6810:
 	.4byte IwramSqrt
 .L_080e6814:
-	.4byte Data_02010002
+	.4byte gMapCellBuffer + 0x2
 .L_080e6818:
 	.4byte 0x00007824
 .L_080e681c:
 	.4byte BattleFx_ArmBg2AffineHBlankDma
 .L_080e6820:
-	.4byte Data_0201007e
+	.4byte gMapCellBuffer + 0x7e
 .L_080e6824:
 	.4byte 0x04000208
 .L_080e6828:
@@ -388,7 +388,7 @@ Func_080e6638:
 .L_080e6920:
 	.4byte gMapCellBuffer
 .L_080e6924:
-	.4byte Data_0201007c
+	.4byte gMapCellBuffer + 0x7c
 .L_080e6928:
 	.4byte 0x040000d4
 .L_080e692c:
@@ -396,7 +396,7 @@ Func_080e6638:
 .L_080e6930:
 	.4byte gIoWriteQueue
 .L_080e6934:
-	.4byte Data_02010002
+	.4byte gMapCellBuffer + 0x2
 .L_080e6938:
 	.4byte 0x05000002
 .L_080e693c:

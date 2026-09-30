@@ -105,7 +105,7 @@ Func_080dfe2c:
 	cmp r10, r2
 	bne .L_080dfef6
 	movs r0, #162
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #0
 	str r0, [sp, #20]
 .L_080dff0c:
@@ -152,7 +152,7 @@ Func_080dfe2c:
 	cmp r3, #5
 	bne .L_080dffce
 	movs r0, #133
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, .L_080e01cc
 	movs r3, #4
 	add r2, r9
@@ -186,7 +186,7 @@ Func_080dfe2c:
 	asrs r3, r3, #8
 	str r3, [r7, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	asrs r3, r3, #7
@@ -231,7 +231,7 @@ Func_080dfe2c:
 	adds r0, r0, r7
 	mov r8, r0
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	movs r1, #60
@@ -451,7 +451,7 @@ Func_080dfe2c:
 .L_080e01c4:
 	.4byte 0x00007098
 .L_080e01c8:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080e01cc:
 	.4byte 0x000077a8
 .L_080e01d0:

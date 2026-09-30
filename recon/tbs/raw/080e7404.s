@@ -60,7 +60,7 @@ BattleEffect_RunParticleStreams:
 .L_080e7474:
 	.4byte 0x00000100
 .L_080e7478:
-	.4byte Data_03001ef0
+	.4byte gBattleFxWork + 0x4
 .L_080e747c:
 	.4byte 0x00007828
 .L_080e7480:
@@ -74,7 +74,7 @@ BattleEffect_RunParticleStreams:
 	adds r3, r5, #0
 	bl ObjectGroup_UpdateMembers
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, [sp, #60]
 	ldr r2, .L_080e74b4
 	ldr r3, [r1]
@@ -640,7 +640,7 @@ BattleEffect_RunParticleStreams:
 	bne .L_080e790a
 	movs r0, #141
 	str r4, [sp, #8]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r4, [sp, #8]
 .L_080e790a:
 	movs r3, #0
@@ -720,7 +720,7 @@ BattleEffect_RunParticleStreams:
 .L_080e798c:
 	.4byte 0x00007784
 .L_080e7990:
-	.4byte Data_02020202
+	.4byte gMapBlocks + 0x202
 .L_080e7994:
 	.4byte 0x000004fe
 .L_080e7998:
@@ -866,7 +866,7 @@ BattleEffect_RunParticleStreams:
 	adds r3, r2, r3
 	str r3, [r5]
 	adds r0, r1, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	lsls r3, r0, #4
 	subs r3, r3, r0
 	mov r1, r10
@@ -1025,11 +1025,11 @@ BattleEffect_RunParticleStreams:
 .L_080e7be8:
 	.4byte 0x0000ffff
 .L_080e7bec:
-	.4byte Data_080eee76
+	.4byte Data_080eee4e + 0x28
 .L_080e7bf0:
 	.4byte gMapCellBuffer
 .L_080e7bf4:
-	.4byte Data_080eeea0
+	.4byte Data_080eee4e + 0x52
 .L_080e7bf8:
 	cmp r3, #95
 	bgt .L_080e7c10
@@ -1208,7 +1208,7 @@ BattleEffect_RunParticleStreams:
 .L_080e7d60:
 	.4byte 0xfffff000
 .L_080e7d64:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e7d68:
 	.4byte 0x000000c0
 .L_080e7d6c:
@@ -1342,13 +1342,13 @@ BattleEffect_RunParticleStreams:
 	cmp r2, #0
 	bne .L_080e7e80
 	movs r0, #156
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e7e80:
 	mov r3, r11
 	cmp r3, #40
 	bne .L_080e7e8c
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e7e8c:
 	mov r4, r11
 	cmp r4, #48
@@ -1368,7 +1368,7 @@ BattleEffect_RunParticleStreams:
 	adds r3, r3, r0
 	ldr r0, [r3]
 	bl ResourceObject_ReleaseFar
-	bl Func_080b5118
+	bl BattleActor_CommitPlacementFar
 .L_080e7eb8:
 	movs r0, #134
 	bl BattleEventRuntime_BeginPhaseFar
@@ -1643,7 +1643,7 @@ BattleEffect_RunParticleStreams:
 .L_080e80dc:
 	.4byte gMapCellBuffer
 .L_080e80e0:
-	.4byte Data_02010e00
+	.4byte gMapCellBuffer + 0xe00
 .L_080e80e4:
 	.4byte 0x00007784
 .L_080e80e8:
@@ -1663,9 +1663,9 @@ BattleEffect_RunParticleStreams:
 .L_080e8104:
 	.4byte 0xffffe000
 .L_080e8108:
-	.4byte Data_080eeebc
+	.4byte Data_080eee4e + 0x6e
 .L_080e810c:
-	.4byte Data_080eeeca
+	.4byte Data_080eee4e + 0x7c
 .L_080e8110:
 	mov r0, r11
 	lsrs r3, r0, #31

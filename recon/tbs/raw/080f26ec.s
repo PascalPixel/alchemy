@@ -107,7 +107,7 @@ Func_080f26ec:
 	ldr r5, [r1, #12]
 	movs r1, #3
 	adds r0, r5, #0
-	bl Func_080022fc
+	bl Math_Mod
 	cmp r0, #0
 	bne .L_080f280a
 	mov r0, r10
@@ -192,7 +192,7 @@ Func_080f26ec:
 .L_080f286c:
 	.4byte 0x0000ffff
 .L_080f2870:
-	.4byte Data_02012580
+	.4byte gMapCellBuffer + 0x2580
 .L_080f2874:
 	.4byte 0x06004b00
 .L_080f2878:
@@ -202,7 +202,7 @@ Func_080f26ec:
 .L_080f2880:
 	.4byte 0x0600e4c0
 .L_080f2884:
-	.4byte Data_020199c0
+	.4byte gActorSpriteSlots + 0x19c0
 .L_080f2888:
 	.4byte 0x800003c0
 .L_080f288c:
@@ -211,7 +211,7 @@ Func_080f26ec:
 	strh r2, [r3]
 	subs r0, r0, r1
 	movs r1, #160
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r1, r0, #4
 	subs r1, r1, r0
 	ldr r2, .L_080f28d4

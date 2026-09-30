@@ -741,7 +741,7 @@ Func_0800aa0c:
 .L_0800b048:
 	.4byte 0x06010000
 .L_0800b04c:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_0800b050:
 	.4byte 0xfffffc00
 .L_0800b054:

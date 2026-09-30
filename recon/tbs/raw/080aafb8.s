@@ -127,7 +127,7 @@ DjinnMenu_DrawElementList:
 .L_080ab0a0:
 	.4byte 0x00008000
 .L_080ab0a4:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080ab0a8:
 	.4byte 0x00000ea6
 .L_080ab0ac:
@@ -290,7 +290,7 @@ DjinnMenu_DrawElementList:
 .L_080ab1e4:
 	.4byte 0x00000219
 .L_080ab1e8:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080ab1ec:
 	.4byte 0x00000ea3
 .L_080ab1f0:

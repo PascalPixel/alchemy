@@ -20,7 +20,7 @@ BattlePresentation_DispatchAction:
 	movs r0, #0
 	b .L_080b9d02
 .L_080b9b50:
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	cmp r3, #0
@@ -248,4 +248,4 @@ BattlePresentation_DispatchAction:
 .L_080b9d2c:
 	.4byte .L_080b9c04
 .L_080b9d30:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork

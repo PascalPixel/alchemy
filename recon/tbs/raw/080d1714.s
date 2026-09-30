@@ -224,7 +224,7 @@ Unnamed_080d1714:
 	cmp r4, #16
 	bne .L_080d18e6
 	movs r0, #141
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d18e6:
 	movs r7, #128
 	ldr r5, [sp, #80]
@@ -232,7 +232,7 @@ Unnamed_080d1714:
 	cmp r5, r7
 	bne .L_080d18f6
 	movs r0, #140
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d18f6:
 	movs r1, #167
 	ldr r0, [sp, #80]
@@ -240,21 +240,21 @@ Unnamed_080d1714:
 	cmp r0, r1
 	bne .L_080d1906
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d1906:
 	ldr r2, [sp, #80]
 	ldr r3, .L_080d19ec
 	cmp r2, r3
 	bne .L_080d1914
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d1914:
 	ldr r4, [sp, #80]
 	ldr r5, .L_080d19f0
 	cmp r4, r5
 	bne .L_080d1922
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d1922:
 	movs r0, #186
 	ldr r7, [sp, #80]
@@ -262,7 +262,7 @@ Unnamed_080d1714:
 	cmp r7, r0
 	bne .L_080d1932
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d1932:
 	ldr r2, .L_080d19c8
 	ldr r4, [sp, #92]
@@ -308,7 +308,7 @@ Unnamed_080d1714:
 	str r3, [r5, #8]
 	ldr r0, [r6, r4]
 	mov r8, r1
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r4, [sp, #8]
 	mov r2, r8
 	ldr r3, [r2, r4]
@@ -339,7 +339,7 @@ Unnamed_080d1714:
 	b .L_080d19fc
 	.2byte 0x0000
 .L_080d19c4:
-	.4byte Data_03001ef0
+	.4byte gBattleFxWork + 0x4
 .L_080d19c8:
 	.4byte 0x00007828
 .L_080d19cc:
@@ -483,7 +483,7 @@ Unnamed_080d1714:
 .L_080d1aca:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Func_080022fc
+	bl Math_Mod
 	movs r3, #48
 	subs r2, r3, r5
 	lsls r1, r0, #1
@@ -524,7 +524,7 @@ Unnamed_080d1714:
 .L_080d1b1a:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Func_080022fc
+	bl Math_Mod
 	movs r3, #64
 	subs r3, r3, r5
 	lsls r1, r0, #1
@@ -556,7 +556,7 @@ Unnamed_080d1714:
 .L_080d1b5a:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	ldr r7, [sp, #92]
@@ -609,7 +609,7 @@ Unnamed_080d1714:
 	ldr r3, [r6, #4]
 	str r3, [r5, #4]
 	ldr r0, [r6, #16]
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [r6, #8]
 	muls r3, r0
 	add r7, sp, #140
@@ -819,7 +819,7 @@ Unnamed_080d1714:
 	muls r3, r0
 	adds r0, r5, #0
 	str r3, [r7]
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	str r3, [r7, #4]
@@ -1100,7 +1100,7 @@ Unnamed_080d1714:
 .L_080d1fac:
 	.4byte IwramCopyWords
 .L_080d1fb0:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080d1fb4:
 	.4byte gProjection
 .L_080d1fb8:
@@ -1197,7 +1197,7 @@ Unnamed_080d1714:
 	asrs r3, r3, #6
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	negs r3, r3
@@ -1447,7 +1447,7 @@ Unnamed_080d1714:
 	movs r3, #0
 	str r3, [r1]
 	ldr r0, [sp, #32]
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [r5, #24]
 	muls r3, r0
 	mov r2, r8

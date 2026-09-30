@@ -21,7 +21,7 @@ BattleCommand_BuildPlan:
 	movs r4, #0
 	ldrsh r0, [r3, r4]
 	mov r10, r2
-	bl Func_08077008
+	bl Owner_GetStateFar
 	mov r1, sp
 	adds r1, #28
 	str r1, [sp, #12]
@@ -64,7 +64,7 @@ BattleCommand_BuildPlan:
 	cmp r3, #0
 	beq .L_080be46a
 	ldr r0, .L_080be740
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_080be46a
 	ldr r1, .L_080be744
@@ -91,7 +91,7 @@ BattleCommand_BuildPlan:
 	movs r1, #192
 	adds r0, r5, #0
 	lsls r1, r1, #24
-	bl Func_08077118
+	bl Owner_AdjustFirstValueFar
 	cmp r0, #0
 	bne .L_080be446
 	adds r1, r5, #0
@@ -136,7 +136,7 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080be74c
 	bl UiText_ShowMessageAndWaitCoreFar
 	bl .L_080bec8a
@@ -152,7 +152,7 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080be750
 	bl UiText_ShowMessageAndWaitCoreFar
 	bl .L_080bec8a
@@ -167,7 +167,7 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080be758
 	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_080bec8a
@@ -186,7 +186,7 @@ BattleCommand_BuildPlan:
 	ldrsh r3, [r3, r1]
 	cmp r3, #3
 	beq .L_080be51a
-	bl Func_080771a0
+	bl BattleRandom16Far
 	movs r3, #3
 	ands r0, r3
 	cmp r0, #0
@@ -196,7 +196,7 @@ BattleCommand_BuildPlan:
 	movs r1, #1
 	movs r4, #0
 	ldrsh r0, [r3, r4]
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080be75c
 	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_080bec8a
@@ -363,7 +363,7 @@ BattleCommand_BuildPlan:
 .L_080be718:
 	asrs r0, r0, #16
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080be768
 	bl UiText_ShowMessageAndWaitCoreFar
 .L_080be726:
@@ -375,13 +375,13 @@ BattleCommand_BuildPlan:
 	bl .L_080bf1d4
 	.2byte 0x0000
 .L_080be738:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080be73c:
 	.4byte gDebugMode
 .L_080be740:
 	.4byte 0x0000016d
 .L_080be744:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_080be748:
 	.4byte 0x00000145
 .L_080be74c:
@@ -425,13 +425,13 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r2, [sp, #12]
 	movs r1, #1
 	ldr r0, [r2]
 	bl Inventory_GetEquippedItemFar
 	movs r1, #2
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r5, .L_080bea9c
 	adds r0, r5, #0
 	bl UiText_ShowMessageAndWaitCoreFar
@@ -439,7 +439,7 @@ BattleCommand_BuildPlan:
 	bl BattleEv_SetRuntimeField8
 	mov r0, r11
 	movs r1, #4
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	adds r0, r5, #0
 .L_080be7ca:
 	bl UiText_ShowMessageAndWaitCoreFar
@@ -450,7 +450,7 @@ BattleCommand_BuildPlan:
 	movs r1, #8
 	ldrsh r0, [r3, r1]
 	mov r11, r0
-	bl Func_08077080
+	bl Ability_GetData
 	add r2, sp, #48
 	adds r6, r0, #0
 	mov r9, r2
@@ -468,10 +468,10 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r1, #4
 	mov r0, r11
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080beaa0
 	bl UiText_ShowMessageAndWaitCoreFar
 	ldr r2, [sp, #12]
@@ -546,7 +546,7 @@ BattleCommand_BuildPlan:
 	movs r2, #0
 	ldrsh r0, [r3, r2]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080beaa8
 	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_080bec8a
@@ -584,7 +584,7 @@ BattleCommand_BuildPlan:
 	movs r2, #0
 	ldrsh r0, [r1, r2]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080beaac
 	bl UiText_ShowMessageAndWaitCoreFar
 	ldr r4, [sp, #12]
@@ -616,7 +616,7 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r3, [sp, #12]
 	mov r4, r10
 	ldr r2, [r3]
@@ -627,7 +627,7 @@ BattleCommand_BuildPlan:
 	adds r3, #216
 	ldrh r0, [r2, r3]
 	movs r1, #2
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldrb r3, [r5, #12]
 	cmp r3, #2
 	beq .L_080be94e
@@ -659,7 +659,7 @@ BattleCommand_BuildPlan:
 	movs r1, #1
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080beaac
 	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_080bec8a
@@ -683,12 +683,12 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	mov r0, r11
 	movs r1, #4
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	mov r0, r11
-	bl Func_08077080
+	bl Ability_GetData
 	ldrb r2, [r0, #1]
 	movs r3, #15
 	ands r3, r2
@@ -888,7 +888,7 @@ BattleCommand_BuildPlan:
 	adds r1, r5, #0
 	ands r1, r3
 	ands r0, r6
-	bl Func_080771e8
+	bl Djinn_GetDefinitionHeaderFar
 	mov r4, r10
 	ldr r3, [r4]
 	mov r11, r0
@@ -926,7 +926,7 @@ BattleCommand_BuildPlan:
 	b .L_080bec62
 .L_080beb66:
 	mov r0, r11
-	bl Func_08077080
+	bl Ability_GetData
 	movs r1, #0
 	movs r0, #0
 	bl BattlePres_SetActorModes
@@ -999,7 +999,7 @@ BattleCommand_BuildPlan:
 	movs r0, #11
 	bl BattleEv_Push
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r1, r10
 	ldr r3, [r1]
 	movs r2, #0
@@ -1007,7 +1007,7 @@ BattleCommand_BuildPlan:
 	bl GetBattleObjectSlot
 	movs r1, #3
 	ldr r0, [r0]
-	bl Func_08009080
+	bl Object_SetMode
 	mov r4, r10
 	ldr r3, [r4]
 	movs r1, #0
@@ -1038,12 +1038,12 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r1, #4
 	mov r0, r11
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r0, .L_080bef5c
 	bl UiText_ShowMessageAndWaitCoreFar
 	movs r0, #60
@@ -1075,17 +1075,17 @@ BattleCommand_BuildPlan:
 	ands r1, r6
 	bl Trade_AddOfferFar
 	mov r0, r11
-	bl Func_08077080
+	bl Ability_GetData
 	mov r2, r10
 	ldr r3, [r2]
 	adds r5, r0, #0
 	movs r1, #1
 	movs r4, #0
 	ldrsh r0, [r3, r4]
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	mov r0, r11
 	movs r1, #4
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080bef60
 	bl UiText_ShowMessageAndWaitCoreFar
 	ldr r0, [sp, #8]
@@ -1117,7 +1117,7 @@ BattleCommand_BuildPlan:
 	bls .L_080bed1a
 	movs r0, #1
 .L_080bed1a:
-	bl Func_08077000
+	bl Trade_GetOfferStateFar
 	adds r0, #8
 	str r0, [sp, #4]
 	mov r1, r9
@@ -1168,10 +1168,10 @@ BattleCommand_BuildPlan:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	mov r0, r11
 	movs r1, #4
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080bef64
 	bl UiText_ShowMessageAndWaitCoreFar
 	adds r0, r5, #0
@@ -1182,10 +1182,10 @@ BattleCommand_BuildPlan:
 	movs r1, #1
 	movs r4, #0
 	ldrsh r0, [r3, r4]
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r1, #4
 	mov r0, r11
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080bef68
 	bl UiText_ShowMessageAndWaitCoreFar
 	movs r1, #128
@@ -1238,7 +1238,7 @@ BattleCommand_BuildPlan:
 	ldr r4, [sp, #8]
 	ldr r3, [r4]
 	ldrb r0, [r3, #2]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r6, r0, #0
 	ldr r0, [sp, #8]
 	ldr r2, [r0]
@@ -1319,7 +1319,7 @@ BattleCommand_BuildPlan:
 	movs r1, #1
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080bef7c
 	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_080beef4
@@ -1332,7 +1332,7 @@ BattleCommand_BuildPlan:
 	ldrb r3, [r3]
 	cmp r3, #0
 	beq .L_080beee0
-	bl Func_080771a0
+	bl BattleRandom16Far
 	movs r3, #255
 	ands r0, r3
 	cmp r0, #152
@@ -1341,7 +1341,7 @@ BattleCommand_BuildPlan:
 	ldr r3, [r1]
 	strb r5, [r3, #30]
 .L_080beee0:
-	bl Func_080771a0
+	bl BattleRandom16Far
 	movs r3, #31
 	ands r0, r3
 	cmp r0, #0
@@ -1380,7 +1380,7 @@ BattleCommand_BuildPlan:
 .L_080bef28:
 	movs r0, #183
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_080bef3c
 	ldr r0, [sp, #8]
@@ -1394,7 +1394,7 @@ BattleCommand_BuildPlan:
 	bne .L_080bef46
 	b .L_080bf1a8
 .L_080bef46:
-	bl Func_080771a0
+	bl BattleRandom16Far
 	movs r3, #31
 	ands r0, r3
 	cmp r0, #0
@@ -1434,7 +1434,7 @@ BattleCommand_BuildPlan:
 	lsls r0, r0, #16
 	bl FixedPoint_Ratio
 	adds r5, r0, #0
-	bl Func_080771a0
+	bl BattleRandom16Far
 	ldr r3, .L_080bf1e8
 	ands r0, r3
 	cmp r5, r0
@@ -1450,7 +1450,7 @@ BattleCommand_BuildPlan:
 	b .L_080bf1a8
 .L_080befb4:
 	mov r0, r11
-	bl Func_08077080
+	bl Ability_GetData
 	adds r7, r0, #0
 	ldr r0, [sp, #8]
 	ldrb r2, [r7, #2]
@@ -1502,7 +1502,7 @@ BattleCommand_BuildPlan:
 .L_080bf010:
 	movs r6, #1
 .L_080bf012:
-	bl Func_080771a0
+	bl BattleRandom16Far
 	movs r3, #255
 	ands r0, r3
 	cmp r0, r5
@@ -1563,7 +1563,7 @@ BattleCommand_BuildPlan:
 .L_080bf084:
 	movs r5, #3
 .L_080bf086:
-	bl Func_080771a0
+	bl BattleRandom16Far
 	ands r0, r5
 	cmp r0, #0
 	bne .L_080bf0f8
@@ -1687,7 +1687,7 @@ BattleCommand_BuildPlan:
 .L_080bf16c:
 	str r3, [r2, #84]
 	ldrb r0, [r7, #3]
-	bl Func_080772b8
+	bl BattleFx_IsReviveFar
 	cmp r0, #0
 	beq .L_080bf186
 	ldr r1, [sp, #8]

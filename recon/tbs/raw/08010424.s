@@ -166,6 +166,6 @@ Map_CopyMetatileIndicesRect:
 .L_08010554:
 	.4byte gMapBlocks
 .L_08010558:
-	.4byte Data_02020004
+	.4byte gMapBlocks + 0x4
 .L_0801055c:
 	.4byte 0x06002840

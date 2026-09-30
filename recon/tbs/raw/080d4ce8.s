@@ -263,7 +263,7 @@ Region_080d4ce8:
 	cmp r0, r3
 	bne .L_080d4efa
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldrb r3, [r7]
 .L_080d4efa:
 	ldr r1, [sp, #36]
@@ -278,7 +278,7 @@ Region_080d4ce8:
 	lsls r0, r1, #4
 	adds r0, r0, r3
 	movs r1, #104
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r5, [sp, #32]
 	movs r3, #1
 	ands r5, r3
@@ -407,7 +407,7 @@ Region_080d4ce8:
 	asrs r3, r3, #15
 	str r3, [r7, #8]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -436,9 +436,9 @@ Region_080d4ce8:
 .L_080d5058:
 	.4byte IwramCopyWords
 .L_080d505c:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080d5060:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080d5064:
 	.4byte 0x00007828
 .L_080d5068:

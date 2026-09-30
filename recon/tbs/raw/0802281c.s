@@ -85,4 +85,4 @@ BattleLayout_HighlightPartyPanels:
 	bx r1
 	.2byte 0x0000
 .L_080228b8:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork

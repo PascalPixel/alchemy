@@ -84,7 +84,7 @@ battle_owner_69:
 	str r3, [r0, #4]
 	ldr r3, [r7, #16]
 	str r3, [r0, #8]
-	bl Func_08009220
+	bl CheckMapPositionCellOccupiedFar
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_08094138
@@ -98,12 +98,12 @@ battle_owner_69:
 	bl ObjectMotion_SetPositionAndCommit
 	movs r1, #6
 	adds r0, r7, #0
-	bl Func_08009080
+	bl Object_SetMode
 	movs r0, #4
 	bl WaitFrames
 	movs r1, #7
 	adds r0, r7, #0
-	bl Func_08009080
+	bl Object_SetMode
 	movs r3, #128
 	lsls r3, r3, #11
 	str r3, [r7, #40]
@@ -118,14 +118,14 @@ battle_owner_69:
 	mov r11, r2
 	adds r0, r7, #0
 	mov r1, r11
-	bl Func_080091e0
+	bl ObjectDispatch_SetSingleChildField26Far
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r7, #48]
 	adds r0, r7, #0
 	movs r1, #12
 	str r5, [r7, #40]
-	bl Func_08009080
+	bl Object_SetMode
 	movs r0, #4
 	bl WaitFrames
 	movs r3, #1
@@ -142,7 +142,7 @@ battle_owner_69:
 	strb r6, [r5]
 	adds r0, r7, #0
 	movs r1, #11
-	bl Func_08009080
+	bl Object_SetMode
 	mov r2, r8
 	lsls r1, r2, #16
 	movs r3, #128
@@ -168,7 +168,7 @@ battle_owner_69:
 	str r3, [r7, #20]
 	adds r0, r7, #0
 	mov r1, r11
-	bl Func_080091e0
+	bl ObjectDispatch_SetSingleChildField26Far
 	movs r0, #4
 	bl Battle_WaitMode0
 	mov r3, r9
@@ -184,7 +184,7 @@ battle_owner_69:
 .L_0809411c:
 	.4byte 0x00000001
 .L_08094120:
-	.4byte Data_02000434
+	.4byte gItemCounters + 0xb4
 .L_08094124:
 	.4byte gCell
 .L_08094128:
@@ -192,7 +192,7 @@ battle_owner_69:
 .L_0809412c:
 	.4byte gMapCellBuffer
 .L_08094130:
-	.4byte Data_0200fe00
+	.4byte gOverlayArea + 0x7e00
 .L_08094134:
 	.4byte 0xfff00000
 .L_08094138:

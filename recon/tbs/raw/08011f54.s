@@ -70,4 +70,4 @@ Func_08011f54:
 .L_08011fd0:
 	.4byte Func_080134fc
 .L_08011fd4:
-	.4byte Data_0202c001
+	.4byte gMapCollision + 0x1

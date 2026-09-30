@@ -20,7 +20,7 @@ NameEntry_EditOwnerName:
 	add r6, sp, #80
 	str r2, [sp, #24]
 	str r0, [sp, #44]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r3, .L_08020d54
 	str r0, [sp, #20]
 	ldr r3, [r3]
@@ -123,7 +123,7 @@ NameEntry_EditOwnerName:
 	adds r1, #140
 	adds r2, #52
 	mov r0, r11
-	bl Func_080b0038
+	bl ShopCursor_SetPositionImmediateFar
 	b .L_08020ce6
 .L_08020ce2:
 	add r1, sp, #64
@@ -161,7 +161,7 @@ NameEntry_EditOwnerName:
 	adds r1, #70
 	mov r0, r10
 	movs r2, #22
-	bl Func_080b0038
+	bl ShopCursor_SetPositionImmediateFar
 	b .L_08020d6c
 .L_08020d34:
 	mov r3, r10
@@ -178,9 +178,9 @@ NameEntry_EditOwnerName:
 	b .L_08021034
 	.2byte 0x0000
 .L_08020d54:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08020d58:
-	.4byte Data_08073864
+	.4byte Menu_PartySpriteResourceIds + 0x10
 .L_08020d5c:
 	.4byte 0x00000ea3
 .L_08020d60:
@@ -328,7 +328,7 @@ NameEntry_EditOwnerName:
 	.4byte gKeysRepeat
 .L_08020e80:
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #1
 	mov r9, r2
 	subs r7, #1
@@ -355,7 +355,7 @@ NameEntry_EditOwnerName:
 	cmp r2, #0
 	beq .L_08020ed8
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #1
 	mov r9, r1
 	adds r7, #1
@@ -379,7 +379,7 @@ NameEntry_EditOwnerName:
 	cmp r2, #0
 	beq .L_08020f12
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #1
 	movs r2, #1
 	subs r6, #1
@@ -410,7 +410,7 @@ NameEntry_EditOwnerName:
 	cmp r2, #0
 	beq .L_08020f4a
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	adds r6, #1
 	movs r1, #1
 	mov r9, r1
@@ -442,7 +442,7 @@ NameEntry_EditOwnerName:
 	cmp r2, #0
 	beq .L_08020f64
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #1
 	mov r9, r2
 	movs r6, #18
@@ -455,7 +455,7 @@ NameEntry_EditOwnerName:
 	cmp r5, #0
 	beq .L_08020fa6
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_08020f76:
 	ldr r3, [sp, #28]
 	cmp r3, #0
@@ -489,7 +489,7 @@ NameEntry_EditOwnerName:
 	b .L_08020d86
 .L_08020fb2:
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	cmp r6, #18
 	bne .L_08020fe6
 	cmp r7, #5

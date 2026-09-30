@@ -381,7 +381,7 @@ Unnamed_080e302c:
 .L_080e3300:
 	.4byte 0x000077d8
 .L_080e3304:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e3308:
 	.4byte 0x04000050
 .L_080e330c:
@@ -478,13 +478,13 @@ Unnamed_080e302c:
 	cmp r1, #0
 	bne .L_080e33d0
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e33d0:
 	mov r2, r11
 	cmp r2, #40
 	bne .L_080e33f8
 	movs r0, #141
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080e33f8
 	.2byte 0x0000
 .L_080e33e0:
@@ -504,7 +504,7 @@ Unnamed_080e302c:
 	cmp r3, #96
 	bne .L_080e3404
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e3404:
 	mov r4, r11
 	cmp r4, #120
@@ -892,7 +892,7 @@ Unnamed_080e302c:
 	str r3, [r6, #4]
 	add r0, r8
 	movs r1, #11
-	bl Func_080022fc
+	bl Math_Mod
 	movs r4, #1
 	negs r4, r4
 	cmp r0, r4
@@ -1027,7 +1027,7 @@ Unnamed_080e302c:
 	cmp r0, #85
 	ble .L_080e3826
 	movs r1, #12
-	bl Func_080022fc
+	bl Math_Mod
 	cmp r0, #0
 	bne .L_080e3816
 	ldr r3, [r5]

@@ -108,7 +108,7 @@ Unnamed_080ce4e8:
 	cmp r4, r1
 	bne .L_080ce59c
 	movs r0, #142
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #0
 	ldr r3, .L_080ce82c
 	str r2, [sp, #40]
@@ -297,7 +297,7 @@ Unnamed_080ce4e8:
 	adds r0, r4, #0
 	str r5, [r2]
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	mov r2, r8
 	lsls r1, r0, #3
 	ldr r3, [r2, #4]

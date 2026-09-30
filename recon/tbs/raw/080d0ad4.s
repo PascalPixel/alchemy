@@ -104,7 +104,7 @@ Unnamed_080d0ad4:
 	lsls r3, r3, #8
 	str r3, [r2]
 	movs r0, #142
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r4, #0
 	str r4, [sp, #60]
 	ldr r3, [r5]
@@ -316,7 +316,7 @@ Unnamed_080d0ad4:
 	movs r1, #3
 	str r3, [sp, #32]
 	str r7, [sp, #24]
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r2, [sp, #28]
 	adds r0, r0, r2
 	lsls r3, r0, #3
@@ -488,13 +488,13 @@ Unnamed_080d0ad4:
 .L_080d0ec0:
 	.4byte 0x00005555
 .L_080d0ec4:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080d0ec8:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080d0ecc:
 	.4byte 0x01010101
 .L_080d0ed0:
-	.4byte Data_080ee134
+	.4byte Data_080ee128 + 0xc
 .L_080d0ed4:
 	.4byte BattleFx6_FlareCells
 .L_080d0ed8:

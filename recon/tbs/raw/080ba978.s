@@ -145,12 +145,12 @@ Func_080ba978:
 	ldr r0, [r0]
 	movs r1, #3
 	mov r8, r0
-	bl Func_08009080
+	bl Object_SetMode
 	movs r1, #16
 	mov r0, r8
 	bl ObjectDispatch_ApplyValueToChildrenFar
 	movs r0, #154
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #2
 	mov r1, r10
 	ands r3, r1
@@ -272,7 +272,7 @@ Func_080ba978:
 	adds r6, r5, #0
 	mov r0, r8
 	movs r1, #1
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r3, [r6, #20]
 	movs r4, #0
 	cmp r3, #0
@@ -308,7 +308,7 @@ Func_080ba978:
 .L_080babc8:
 	.4byte 0xffffdc00
 .L_080babcc:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080babd0:
 	.4byte 0x00000856
 .L_080babd4:

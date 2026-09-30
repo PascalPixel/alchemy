@@ -185,7 +185,7 @@ Unnamed_080cb7f8:
 	str r3, [r2, #24]
 .L_080cb966:
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, .L_080cb9fc
 	ldr r1, [sp, #20]
 	mov r4, sp
@@ -257,7 +257,7 @@ Unnamed_080cb7f8:
 .L_080cb9f4:
 	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
 .L_080cb9f8:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080cb9fc:
 	.4byte 0x00007828
 .L_080cba00:
@@ -314,7 +314,7 @@ Unnamed_080cb7f8:
 .L_080cba66:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Func_080022fc
+	bl Math_Mod
 	adds r7, r0, #0
 	lsls r5, r7, #7
 	ldr r2, [sp, #8]
@@ -401,7 +401,7 @@ Unnamed_080cb7f8:
 	asrs r3, r3, #4
 	str r3, [r7]
 	ldr r0, [r5]
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [r5, #8]
 	muls r3, r0
 	asrs r3, r3, #4
@@ -496,7 +496,7 @@ Unnamed_080cb7f8:
 	pop {r0}
 	bx r0
 .L_080cbbf8:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080cbbfc:
 	.4byte gMapCellBuffer
 .L_080cbc00:

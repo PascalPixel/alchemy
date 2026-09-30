@@ -57,7 +57,7 @@ Unnamed_080ccebc:
 .L_080ccf28:
 	.4byte 0x00001000
 .L_080ccf2c:
-	.4byte Data_03001ef0
+	.4byte gBattleFxWork + 0x4
 .L_080ccf30:
 	.4byte 0x00007828
 .L_080ccf34:
@@ -91,7 +91,7 @@ Unnamed_080ccebc:
 	ldr r0, .L_080ccfc0
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #143
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #0
 	movs r3, #1
 	movs r1, #32
@@ -273,7 +273,7 @@ Unnamed_080ccebc:
 	pop {r0}
 	bx r0
 .L_080cd0f4:
-	.4byte Data_03001f08
+	.4byte gTransitionWork + 0x8
 .L_080cd0f8:
 	.4byte 0x00007828
 .L_080cd0fc:

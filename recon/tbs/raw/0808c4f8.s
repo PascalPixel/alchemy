@@ -89,7 +89,7 @@ Func_0808c4f8:
 	strh r6, [r3]
 	adds r0, r6, #0
 	bl ObjectSystem_InitializeFar
-	bl Func_08015000
+	bl FarCall_WindowTable
 	bl BattleFx_ResetCounters
 	ldr r5, .L_0808c80c
 	ldr r0, [r5, #36]
@@ -101,7 +101,7 @@ Func_0808c4f8:
 	bl _call_via_r0
 	bl ObjectTable_ResetForObject
 	ldr r0, .L_0808c810
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0808c5e2
 	bl ObjectTable_Restore
@@ -130,7 +130,7 @@ Func_0808c4f8:
 	bl WorldMap_LoadGraphicsFar
 	b .L_0808c618
 .L_0808c614:
-	bl Func_08009128
+	bl Map_ApplyWorkOriginAndSpanFar
 .L_0808c618:
 	bl Battle_PlaceMapMarkers
 	bl BattleEffect_InitializeBuffers
@@ -185,7 +185,7 @@ Func_0808c4f8:
 	mov r9, r1
 	str r2, [r3]
 	mov r0, r9
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808c6bc
 	bl Party_ResolveTablePair
@@ -265,7 +265,7 @@ Func_0808c4f8:
 .L_0808c72e:
 	ldr r5, .L_0808c82c
 	adds r0, r5, #0
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0808c750
 	adds r0, r5, #0
@@ -388,9 +388,9 @@ Func_0808c4f8:
 .L_0808c82c:
 	.4byte 0x0000012f
 .L_0808c830:
-	.4byte Data_02000434
+	.4byte gItemCounters + 0xb4
 .L_0808c834:
-	.4byte Data_0200042c
+	.4byte gItemCounters + 0xac
 .L_0808c838:
 	movs r1, #184
 	lsls r1, r1, #1
@@ -442,11 +442,11 @@ Func_0808c4f8:
 .L_0808c894:
 	mov r0, r10
 	movs r1, #22
-	bl Func_08009080
+	bl Object_SetMode
 	mov r1, r8
 	ldrsh r0, [r5, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_0808c8f8
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
@@ -474,36 +474,36 @@ Func_0808c4f8:
 	cmp r3, #0
 	bne .L_0808c900
 	movs r0, #32
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0808c8ec
 	mov r0, r10
 	movs r1, #21
-	bl Func_08009080
+	bl Object_SetMode
 	b .L_0808c908
 .L_0808c8ec:
 	mov r0, r10
 	movs r1, #37
-	bl Func_08009080
+	bl Object_SetMode
 	b .L_0808c908
 	.2byte 0x0000
 .L_0808c8f8:
 	.4byte 0x0000091a
 .L_0808c8fc:
-	.4byte Data_02000434
+	.4byte gItemCounters + 0xb4
 .L_0808c900:
 	mov r0, r10
 	movs r1, #19
-	bl Func_08009080
+	bl Object_SetMode
 .L_0808c908:
 	movs r0, #59
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #1
 	ldr r0, .L_0808c948
 	bl UiText_ShowPositionedMessageAndWaitFar
 	ldr r3, .L_0808c94c
 	ldr r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r4, .L_0808c944
 	adds r6, r0, #0
 	strh r4, [r6, #56]
@@ -527,7 +527,7 @@ Func_0808c4f8:
 .L_0808c948:
 	.4byte 0x0000091b
 .L_0808c94c:
-	.4byte Data_02000434
+	.4byte gItemCounters + 0xb4
 .L_0808c950:
 	lsls r3, r5, #16
 	strh r5, [r6, #20]
@@ -593,7 +593,7 @@ Func_0808c4f8:
 .L_0808c9c8:
 	.4byte 0x00000001
 .L_0808c9cc:
-	.4byte Data_02000402
+	.4byte gItemCounters + 0x82
 .L_0808c9d0:
 	.4byte 0x000003e7
 .L_0808c9d4:
@@ -708,11 +708,11 @@ Func_0808c4f8:
 .L_0808cab4:
 	.4byte 0x0000ffff
 .L_0808cab8:
-	.4byte Data_02000402
+	.4byte gItemCounters + 0x82
 .L_0808cabc:
 	.4byte 0x000003e7
 .L_0808cac0:
-	.4byte Data_02000478
+	.4byte gItemCounters + 0xf8
 .L_0808cac4:
 	movs r3, #186
 	lsls r3, r3, #1
@@ -756,7 +756,7 @@ Func_0808c4f8:
 .L_0808cb14:
 	.4byte 0x00001000
 .L_0808cb18:
-	.4byte Data_02000434
+	.4byte gItemCounters + 0xb4
 .L_0808cb1c:
 	bl Object_GetTriggerTileAheadOfCurrent
 	adds r6, r0, #0
@@ -794,7 +794,7 @@ Func_0808c4f8:
 	bl UiTimedNotice_CloseIfActiveFar
 	bl Battle_InitializeRenderObject
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Battle_SetObjectFlag5bWhenMode3
 	movs r0, #131
 	lsls r0, r0, #1
@@ -818,7 +818,7 @@ Func_0808c4f8:
 	b .L_0808cbbe
 .L_0808cb98:
 	ldr r0, .L_0808cbe0
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0808cbae
 	movs r2, #193
@@ -849,7 +849,7 @@ Func_0808c4f8:
 .L_0808cbd8:
 	.4byte gDebugMode
 .L_0808cbdc:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_0808cbe0:
 	.4byte 0x00000107
 .L_0808cbe4:
@@ -929,7 +929,7 @@ Func_0808c4f8:
 	cmp r3, #0
 	beq .L_0808cd76
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Battle_InitializeRenderObject
 	bl Battle_SetObjectFlag5bWhenMode3
 	movs r0, #131
@@ -962,7 +962,7 @@ Func_0808c4f8:
 	b .L_0808cd60
 .L_0808ccce:
 	ldr r0, .L_0808cd48
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0808cce4
 	movs r2, #193
@@ -980,7 +980,7 @@ Func_0808c4f8:
 	strh r0, [r3]
 	movs r0, #191
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808cd58
 	ldr r3, .L_0808cd50
@@ -1018,7 +1018,7 @@ Func_0808c4f8:
 .L_0808cd40:
 	.4byte gDebugMode
 .L_0808cd44:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_0808cd48:
 	.4byte 0x00000107
 .L_0808cd4c:
@@ -1106,7 +1106,7 @@ Func_0808c4f8:
 	cmp r3, #0
 	beq .L_0808cdfe
 	ldr r0, .L_0808ce70
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808ce12
 .L_0808cdfe:
@@ -1160,7 +1160,7 @@ Func_0808c4f8:
 .L_0808ce60:
 	.4byte 0x00000c2f
 .L_0808ce64:
-	.4byte Data_02000434
+	.4byte gItemCounters + 0xb4
 .L_0808ce68:
 	.4byte gCell
 .L_0808ce6c:

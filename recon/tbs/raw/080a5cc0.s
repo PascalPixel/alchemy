@@ -64,7 +64,7 @@ Menu_ResolveSelectedAction:
 	ldr r2, .L_080a5e50
 	adds r3, r7, r2
 	ldrb r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r2, #134
 	lsls r2, r2, #2
 	adds r3, r7, r2
@@ -196,7 +196,7 @@ Menu_ResolveSelectedAction:
 .L_080a5e40:
 	.4byte 0x00000001
 .L_080a5e44:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080a5e48:
 	.4byte .L_080a5cf0
 .L_080a5e4c:
@@ -269,7 +269,7 @@ Menu_ResolveSelectedAction:
 	ldrh r3, [r2]
 	ldr r0, .L_080a5f8c
 	ands r0, r3
-	bl Func_08077080
+	bl Ability_GetData
 	ldrb r3, [r5]
 	ldrb r1, [r0, #9]
 	adds r0, r3, #0
@@ -304,7 +304,7 @@ Menu_ResolveSelectedAction:
 	b .L_080a5f42
 .L_080a5f22:
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r0, [r7, #44]
 	bl RenderOutput_ClearListFar
 	ldr r2, .L_080a5f94
@@ -376,14 +376,14 @@ Menu_ResolveSelectedAction:
 	bne .L_080a5fb8
 	movs r0, #168
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_080a5fb8
 	b .L_080a5ce0
 .L_080a5fb8:
 	movs r0, #168
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_080a5fca
 	movs r2, #1

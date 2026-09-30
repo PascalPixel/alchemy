@@ -77,7 +77,7 @@ Unnamed_080f7460:
 .L_080f74f4:
 	.4byte 0x0000000c
 .L_080f74f8:
-	.4byte Data_0200024c
+	.4byte gCell + 0xc
 .L_080f74fc:
 	.4byte gOamCopyEnabled
 .L_080f7500:
@@ -437,7 +437,7 @@ Unnamed_080f7460:
 	ldr r2, .L_080f7850
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_08015000
+	bl FarCall_WindowTable
 	bl ReelGame_InitTitle
 	movs r7, #0
 	mov r10, r7
@@ -640,7 +640,7 @@ Unnamed_080f7460:
 .L_080f795c:
 	.4byte 0x00003740
 .L_080f7960:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080f7964:
 	.4byte IwramFillWords
 .L_080f7968:
@@ -730,7 +730,7 @@ Unnamed_080f7460:
 .L_080f7a14:
 	mov r0, r11
 	movs r1, #80
-	bl Func_080022fc
+	bl Math_Mod
 	cmp r0, #15
 	bgt .L_080f7a28
 	ldr r0, .L_080f7c00
@@ -822,7 +822,7 @@ Unnamed_080f7460:
 	asrs r3, r3, #6
 	str r3, [r7, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	negs r3, r3

@@ -69,7 +69,7 @@ OwnerAction_RunCompareLoop:
 .L_080ad750:
 	.4byte 0x00000020
 .L_080ad754:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080ad758:
 	adds r3, r3, r0
 	mov r2, r9
@@ -160,7 +160,7 @@ OwnerAction_RunCompareLoop:
 	mov r8, r0
 	adds r0, r6, #0
 	str r3, [sp, #68]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r7, r0, #0
 	ldr r3, .L_080adb88
 	adds r1, r7, #0
@@ -170,7 +170,7 @@ OwnerAction_RunCompareLoop:
 	adds r0, r6, #0
 	ldr r1, [sp, #80]
 	mov r2, r8
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 	mov r1, r11
 	cmp r1, #0
 	bne .L_080ad870
@@ -232,7 +232,7 @@ OwnerAction_RunCompareLoop:
 	add r3, r9
 	ldrb r6, [r3]
 	adds r0, r6, #0
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r2, #166
 	adds r7, r0, #0
 	adds r1, r7, #0
@@ -245,7 +245,7 @@ OwnerAction_RunCompareLoop:
 	adds r0, r6, #0
 	ldr r1, [sp, #76]
 	ldr r2, [sp, #72]
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 .L_080ad8d2:
 	mov r2, r8
 	adds r0, r6, #0
@@ -315,7 +315,7 @@ OwnerAction_RunCompareLoop:
 	adds r0, r6, #0
 	mov r8, r1
 	orrs r5, r3
-	bl Func_08077008
+	bl Owner_GetStateFar
 	lsrs r5, r5, #31
 	subs r5, r7, r5
 	movs r2, #166
@@ -328,7 +328,7 @@ OwnerAction_RunCompareLoop:
 	adds r0, r6, #0
 	ldr r1, [sp, #48]
 	mov r2, r8
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 	cmp r5, #0
 	beq .L_080ad998
 	adds r0, r6, #0
@@ -912,7 +912,7 @@ OwnerAction_RunCompareLoop:
 	adds r2, #2
 	ldrb r0, [r2, r3]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r3, #134
 	lsls r3, r3, #1
 	add r3, r9
@@ -1011,7 +1011,7 @@ OwnerAction_RunCompareLoop:
 .L_080adf24:
 	.4byte 0x0000f296
 .L_080adf28:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080adf2c:
 	.4byte gKeyState
 .L_080adf30:
@@ -1167,7 +1167,7 @@ OwnerAction_RunCompareLoop:
 	str r1, [sp, #92]
 	adds r0, r1, #0
 	movs r1, #60
-	bl Func_080022fc
+	bl Math_Mod
 	subs r6, r0, #5
 	cmp r6, #0
 	bge .L_080ae066
@@ -1189,7 +1189,7 @@ OwnerAction_RunCompareLoop:
 	bhi .L_080ae0ec
 	movs r1, #30
 	adds r0, r6, #0
-	bl Func_080022fc
+	bl Math_Mod
 	adds r3, r0, #0
 	lsls r0, r3, #4
 	adds r0, r0, r3
@@ -1216,7 +1216,7 @@ OwnerAction_RunCompareLoop:
 .L_080ae0ba:
 	adds r0, r6, #0
 	movs r1, #35
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r6, r0, #1
 	adds r1, r6, #0
 	adds r2, r5, #0
@@ -1295,7 +1295,7 @@ OwnerAction_RunCompareLoop:
 	movs r0, #113
 	movs r7, #1
 .L_080ae15e:
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	negs r7, r7
 	b .L_080ae216
 .L_080ae166:
@@ -1321,12 +1321,12 @@ OwnerAction_RunCompareLoop:
 	ldr r0, [sp, #88]
 	movs r1, #3
 	adds r0, #1
-	bl Func_080022fc
+	bl Math_Mod
 	movs r3, #2
 	str r0, [sp, #88]
 	movs r0, #111
 	str r3, [sp, #96]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080ae20e
 .L_080ae1a2:
 	ldr r4, [sp, #32]
@@ -1348,7 +1348,7 @@ OwnerAction_RunCompareLoop:
 	bl Menu_GetModuloOfSum
 	str r0, [r5]
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	movs r3, #1
 	str r3, [sp, #96]
@@ -1363,7 +1363,7 @@ OwnerAction_RunCompareLoop:
 	cmp r0, #1
 	bgt .L_080ae20e
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	ldr r1, [sp, #88]
 	ldr r2, [sp, #24]
@@ -1481,4 +1481,4 @@ OwnerAction_RunCompareLoop:
 .L_080ae2ec:
 	.4byte Menu_UpdateEntryObjectTransforms
 .L_080ae2f0:
-	.4byte Data_03001e8c
+	.4byte gWindowWork

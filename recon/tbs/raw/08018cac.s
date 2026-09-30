@@ -90,7 +90,7 @@ UiText_DrawGlyph:
 	bne .L_08018d5a
 	b .L_08018ecc
 .L_08018d5a:
-	bl Tile_ExpandOpaqueEnd
+	bl RenderOutput_AcquireFree
 	adds r5, r0, #0
 	movs r0, #0
 	cmp r5, #0
@@ -201,7 +201,7 @@ UiText_DrawGlyph:
 .L_08018e20:
 	.4byte 0x000001ff
 .L_08018e24:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08018e28:
 	.4byte 0x000012b0
 .L_08018e2c:

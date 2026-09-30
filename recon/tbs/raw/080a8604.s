@@ -25,7 +25,7 @@ CharacterMenu_DrawStatusAilments:
 	lsrs r3, r3, #31
 	ldr r0, [sp, #28]
 	str r3, [sp, #12]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r2, [sp, #24]
 	movs r3, #255
 	ands r3, r2
@@ -229,7 +229,7 @@ CharacterMenu_DrawStatusAilments:
 	adds r3, #16
 	adds r1, r7, #0
 	movs r2, #64
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	ldr r5, .L_080a88fc
 	adds r3, r6, #0
 	adds r0, r5, #0
@@ -355,7 +355,7 @@ CharacterMenu_DrawStatusAilments:
 	pop {r0}
 	bx r0
 .L_080a88d8:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080a88dc:
 	.4byte 0x00000bd5
 .L_080a88e0:

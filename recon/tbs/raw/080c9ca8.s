@@ -383,7 +383,7 @@ BattleFx_RunFiveMode:
 	lsls r5, r5, #3
 	asrs r0, r0, #1
 	adds r5, r5, r2
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r2, r0, #2
 	adds r2, r2, r0
 	lsls r3, r2, #4
@@ -543,7 +543,7 @@ BattleFx_RunFiveMode:
 	cmp r10, r3
 	bne .L_080ca106
 	movs r0, #133
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, [sp, #56]
 	cmp r2, #0
 	bne .L_080ca0f0
@@ -658,9 +658,9 @@ BattleFx_RunFiveMode:
 	pop {r0}
 	bx r0
 .L_080ca1cc:
-	.4byte Data_080edee8
+	.4byte Data_080ededc + 0xc
 .L_080ca1d0:
-	.4byte Data_080edefc
+	.4byte Data_080ededc + 0x20
 .L_080ca1d4:
 	.4byte 0xffff8000
 .L_080ca1d8:

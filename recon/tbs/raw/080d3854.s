@@ -120,7 +120,7 @@ Unnamed_080d3854:
 	strh r3, [r2]
 	bl WaitFrames
 	movs r0, #141
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, .L_080d398c
 	ldr r1, [sp, #40]
 	adds r2, r1, r2
@@ -185,7 +185,7 @@ Unnamed_080d3854:
 .L_080d39cc:
 	.4byte IwramFillWords
 .L_080d39d0:
-	.4byte Data_08080808
+	.4byte BattleAction_DefinitionTable + 0x19b0
 .L_080d39d4:
 	ldr r3, [sp, #32]
 	ldr r0, .L_080d3a1c
@@ -231,7 +231,7 @@ Unnamed_080d3854:
 .L_080d3a20:
 	.4byte 0x04000052
 .L_080d3a24:
-	.4byte Data_080ee1ca
+	.4byte Data_080ee1b4 + 0x16
 .L_080d3a28:
 	cmp r3, #0
 	bne .L_080d3a2e
@@ -263,7 +263,7 @@ Unnamed_080d3854:
 	ldr r0, [sp, #16]
 	adds r3, #40
 	mov r10, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r1, [sp, #20]
 	lsls r0, r0, #1
 	asrs r7, r0, #16
@@ -271,7 +271,7 @@ Unnamed_080d3854:
 	add r0, r11
 	movs r1, #3
 	asrs r0, r0, #1
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r5, r0, #2
 	ldr r2, [sp, #40]
 	adds r5, r5, r0
@@ -505,7 +505,7 @@ Unnamed_080d3854:
 	pop {r0}
 	bx r0
 .L_080d3c54:
-	.4byte Data_080ee1ca
+	.4byte Data_080ee1b4 + 0x16
 .L_080d3c58:
 	.4byte 0x00000c56
 .L_080d3c5c:

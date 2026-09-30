@@ -18,7 +18,7 @@ DjinnMenu_DrawStatPreview:
 	str r1, [sp, #64]
 	str r2, [sp, #60]
 	str r3, [sp, #56]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r3, .L_080ace18
 	str r0, [sp, #52]
 	movs r1, #149
@@ -129,12 +129,12 @@ DjinnMenu_DrawStatPreview:
 	mov r1, r9
 	adds r2, r6, #0
 	mov r3, r10
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	adds r0, r5, #0
 	mov r1, r9
 	adds r2, r6, #0
 	mov r3, r8
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	b .L_080acc0c
 .L_080acbd2:
 	ldr r3, [sp, #52]
@@ -243,7 +243,7 @@ DjinnMenu_DrawStatPreview:
 	ldr r1, [sp, #44]
 	ldr r0, [sp, #56]
 	ldr r2, [sp, #40]
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 	b .L_080acd0a
 .L_080accb2:
 	ldr r1, [sp, #36]
@@ -255,7 +255,7 @@ DjinnMenu_DrawStatPreview:
 	ldr r0, [sp, #56]
 	ldr r1, [sp, #44]
 	str r2, [sp, #40]
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 .L_080accc8:
 	ldr r3, [sp, #28]
 	movs r5, #31
@@ -291,7 +291,7 @@ DjinnMenu_DrawStatPreview:
 	ldr r0, [sp, #56]
 	bl Owner_RecalculateStatsFar
 	ldr r0, [sp, #56]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r3, [sp, #216]
 	str r0, [sp, #52]
 	cmp r3, #0
@@ -309,12 +309,12 @@ DjinnMenu_DrawStatPreview:
 	mov r1, r9
 	adds r2, r6, #0
 	adds r3, r7, #0
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	adds r3, r5, #0
 	ldr r0, .L_080ace24
 	mov r1, r9
 	adds r2, r6, #0
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	ldr r2, [sp, #52]
 	mov r3, r11
 	ldrb r0, [r2, #15]
@@ -412,11 +412,11 @@ DjinnMenu_DrawStatPreview:
 	b .L_080ace3e
 	.2byte 0x0000
 .L_080ace18:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080ace1c:
 	.4byte IwramCopyWords
 .L_080ace20:
-	.4byte Data_080af290
+	.4byte Data_080af28c + 0x4
 .L_080ace24:
 	.4byte Data_080af28c
 .L_080ace28:
@@ -809,14 +809,14 @@ DjinnMenu_DrawStatPreview:
 	adds r3, r5, #0
 	bl UiText_DrawCharacterAtOffsetFar
 	ldrh r0, [r7]
-	bl Func_08077080
+	bl Ability_GetData
 	ldr r3, [sp, #20]
 	ldrb r0, [r0, #9]
 	movs r1, #2
 	mov r2, r9
 	adds r3, #88
 	str r5, [sp, #0]
-	bl Func_080150a8
+	bl UiText_DrawNumberAtOffsetFar
 	movs r1, #128
 	ldr r0, [sp, #12]
 	lsls r1, r1, #17
@@ -953,7 +953,7 @@ DjinnMenu_DrawStatPreview:
 .L_080ad264:
 	.4byte 0x00000ba8
 .L_080ad268:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080ad26c:
 	.4byte 0x00000ea3
 .L_080ad270:

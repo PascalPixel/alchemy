@@ -64,7 +64,7 @@ Unnamed_08094ac8:
 	asrs r1, r1, #16
 	asrs r2, r2, #16
 	str r4, [sp, #0]
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	ldr r2, .L_08094b8c
 	adds r3, r5, #0
 	ands r3, r2

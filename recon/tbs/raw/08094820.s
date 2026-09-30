@@ -41,7 +41,7 @@ Unnamed_08094820:
 .L_08094864:
 	movs r0, #179
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_08094876
 	ldrh r3, [r7, #28]
@@ -178,7 +178,7 @@ Unnamed_08094820:
 	asrs r2, r0, #16
 	asrs r1, r1, #16
 	movs r0, #0
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	movs r3, #16
 	lsls r0, r0, #16
 	str r0, [r7, #16]

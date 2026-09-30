@@ -42,7 +42,7 @@ Unnamed_080e94b8:
 	bl BattleFx_FetchRectangleBlitters
 	movs r1, #2
 	ldr r0, [sp, #28]
-	bl Func_08009080
+	bl Object_SetMode
 	movs r1, #48
 	ldr r0, [sp, #28]
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -101,7 +101,7 @@ Unnamed_080e94b8:
 	muls r3, r0
 	adds r0, r5, #0
 	str r3, [r7]
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	mov r1, r10
@@ -157,7 +157,7 @@ Unnamed_080e94b8:
 	asrs r3, r3, #6
 	str r3, [r7, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -205,7 +205,7 @@ Unnamed_080e94b8:
 	cmp r3, #4
 	bne .L_080e9668
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e9668:
 	mov r0, r9
 	cmp r0, #8
@@ -218,7 +218,7 @@ Unnamed_080e94b8:
 	cmp r1, #18
 	bne .L_080e9680
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e9680:
 	mov r2, r9
 	cmp r2, #40
@@ -482,7 +482,7 @@ Unnamed_080e94b8:
 .L_080e986c:
 	.4byte 0x00007828
 .L_080e9870:
-	.4byte Data_080eef06
+	.4byte Data_080eeef8 + 0xe
 .L_080e9874:
 	.4byte 0x00007784
 .L_080e9878:
@@ -492,7 +492,7 @@ Unnamed_080e94b8:
 .L_080e9880:
 	.4byte 0x000000c0
 .L_080e9884:
-	.4byte Data_080eef0c
+	.4byte Data_080eeef8 + 0x14
 .L_080e9888:
 	ldr r0, [r6]
 	ldr r2, .L_080e99ac

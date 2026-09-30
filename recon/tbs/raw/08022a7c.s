@@ -17,7 +17,7 @@ DjinnMenu_DrawStatArrow:
 	mov r8, r0
 	mov r10, r1
 	mov r11, r2
-	bl Tile_ExpandOpaqueEnd
+	bl RenderOutput_AcquireFree
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_08022b30

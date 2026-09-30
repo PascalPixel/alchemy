@@ -193,7 +193,7 @@ Func_080da2ac:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #141
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r6, #0
 	ldr r3, .L_080da69c
 	str r6, [sp, #68]
@@ -515,7 +515,7 @@ Func_080da2ac:
 .L_080da6a4:
 	.4byte 0x04000028
 .L_080da6a8:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080da6ac:
 	.4byte 0x00007098
 .L_080da6b0:

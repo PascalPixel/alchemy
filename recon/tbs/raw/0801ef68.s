@@ -79,7 +79,7 @@ UiWindow_DrawColumnBorders:
 	strh r3, [r1]
 	b .L_0801f008
 .L_0801eff4:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_0801eff8:
 	.4byte Data_080371c4
 .L_0801effc:

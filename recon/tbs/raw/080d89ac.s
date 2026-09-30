@@ -306,7 +306,7 @@ BattleEffectA:
 	ldr r3, .L_080d8df8
 	adds r0, r6, #0
 	str r3, [r7, #4]
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	str r3, [r7, #8]
@@ -485,7 +485,7 @@ BattleEffectA:
 	subs r3, #20
 	ldr r0, [sp, #12]
 	mov r8, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	lsls r0, r0, #2
 	ldr r3, [sp, #84]
 	asrs r0, r0, #16
@@ -576,7 +576,7 @@ BattleEffectA:
 	subs r2, #10
 	ldr r0, [sp, #12]
 	mov r9, r2
-	bl Func_0800231c
+	bl Trig_Cos
 	lsls r0, r0, #2
 	ldr r3, [sp, #84]
 	asrs r0, r0, #16
@@ -673,7 +673,7 @@ BattleEffectA:
 	cmp r11, r3
 	bne .L_080d8ef2
 	movs r0, #126
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d8ef2:
 	mov r3, r9
 	adds r3, #36
@@ -850,7 +850,7 @@ BattleEffectA:
 	lsls r0, r2, #2
 	add r0, r11
 	movs r1, #9
-	bl Func_080022fc
+	bl Math_Mod
 	adds r4, r0, #0
 	b .L_080d9052
 .L_080d9044:

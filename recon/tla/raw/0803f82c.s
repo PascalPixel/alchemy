@@ -152,6 +152,9 @@ Func_0803f93c:
 	pop	{pc}
 	.2byte 0xf901
 	.2byte 0x0803
+	.global Func_0803f968
+	.thumb_func
+Func_0803f968:
 	push	{lr}
 	adds	r0, r1, #0
 	bl	Func_080ad040

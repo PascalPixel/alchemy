@@ -216,7 +216,7 @@
     "*/recon/tbs/ja/rom.o"(.rom.0000eaf8)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CHECK_RADIUS_OVERLAP.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.0000ebec)
-    "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CHECK_CONFIGURED_KEYS_AND_COUNT.o"(.text)
+    "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KEYMOVE.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.0000f752)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/REMAP_BYTES_BY_TABLE.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)

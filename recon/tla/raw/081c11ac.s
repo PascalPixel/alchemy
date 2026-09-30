@@ -19,6 +19,9 @@ Func_081c11ac:
 	bx	lr
 	.2byte 0x2f20
 	.2byte 0x0200
+	.global Func_081c11cc
+	.thumb_func
+Func_081c11cc:
 	movs	r3, #7
 	ands	r3, r0
 	movs	r2, #1

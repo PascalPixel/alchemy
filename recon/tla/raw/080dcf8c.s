@@ -615,7 +615,7 @@ Func_080dd054:
 	cmp	r7, #1
 	bne.n	.L_080dd4a6
 	adds	r0, r6, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080dd4de
 	mov	r2, r8
@@ -647,7 +647,7 @@ Func_080dd054:
 	cmp	r7, #3
 	bne.n	.L_080dd4de
 	adds	r0, r6, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080dd4de
 	adds	r0, r6, #0

@@ -971,7 +971,7 @@ SECTIONS
         "*/recon/tla/raw/08123648.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/PARTY/ROLL_COUNTER_EARLY_END.o"(.text)
         "*/recon/tla/raw/08124af8.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/08124cac.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/BATTLE/PARTY/TIMED_ENTRIES.o"(.text)
         "*/recon/tla/raw/08124cc0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08124cc4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08125c94.o"(.text .rodata .data .padding)

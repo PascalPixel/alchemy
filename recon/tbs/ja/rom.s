@@ -1742,7 +1742,9 @@ BattleFx_RunParticlePool:
 	.type BattleFx_RunTwelveMode, %function
 	.thumb_func
 BattleFx_RunTwelveMode:
-	.incbin "baserom.gba", 0x000c160c, 0x000011ec
+	.incbin "baserom.gba", 0x000c160c, 0x00000b98
+	.section .rom.000c24ec, "ax"
+	.incbin "baserom.gba", 0x000c24ec, 0x0000030c
 	.section .rom.000c27f8, "ax"
 	.global Unnamed_080cb7f8
 	.type Unnamed_080cb7f8, %function

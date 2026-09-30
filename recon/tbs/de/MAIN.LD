@@ -1158,6 +1158,8 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000cbffc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TWELVE_MODE.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000cc40c)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLIPPING_BURST.o"(.text)
+    "*/recon/tbs/de/rom.o"(.rom.000cd2ec)
     "*/recon/tbs/de/rom.o"(.rom.000cd5f8)
     "*/recon/tbs/de/rom.o"(.rom.000cda0c)
     "*/recon/tbs/de/rom.o"(.rom.000ce3d8)

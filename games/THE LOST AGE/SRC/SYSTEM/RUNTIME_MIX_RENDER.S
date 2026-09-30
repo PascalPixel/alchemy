@@ -14,6 +14,8 @@
 @ credit: handwritten — TLA IWRAM runtime frame renderer
 .syntax unified
 	.thumb
+	.global IwramSoundRenderFrame
+IwramSoundRenderFrame:
 AlchemyUncredited_080012f8:
 	bx	pc
 	.2byte	0x0200
@@ -134,6 +136,8 @@ AlchemyUncreditedEnd_0800141c:
 	and	lr, r8, r8, lsl #7
 	str	lr, [pc]
 	b	.L_03000dcc
+	.global Data_03000ee4
+Data_03000ee4:
 AlchemyUncredited_0800149c:
 	.4byte	0
 AlchemyUncreditedEnd_0800149c:

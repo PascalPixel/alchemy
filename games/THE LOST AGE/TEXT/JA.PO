@@ -235,7 +235,7 @@ msgctxt "message"
 msgid "00056"
 msgstr "の{line_break}スタンバイジンが ひつようです{end_now}"
 
-msgctxt "message"
+msgctxt "MsgAbilityLearned"
 msgid "00057"
 msgstr "{argument_actor_name:234} {argument_ability_name}をおぼえた{end_wait}"
 

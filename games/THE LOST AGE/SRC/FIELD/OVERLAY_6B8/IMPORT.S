@@ -39,7 +39,7 @@
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
 	overlay_veneer Item_AdjustCounterFar
 	overlay_veneer Battle_WaitMode0Far
-	overlay_veneer UiText_DrawQuantityPairWithCueFar
+	overlay_veneer Func_080c8078
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8

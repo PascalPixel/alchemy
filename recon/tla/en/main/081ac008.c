@@ -1,7 +1,6 @@
 /*
- * Draft: Runtime_BlankDisplayAndRun does not yet match; ported from its ☀️ twin.
- * Differing ranges: 0x81ac012..0x81ac013 (1 bytes)
- * Links as its recon/tla/raw listing.
+ * Draft: Runtime_BlankDisplayAndRun does not yet match; 3 halfwords differ from ☀️'s C, first at +0xa (movs r0, #2).
+ * Links as recon/tla/raw/081ac000.s.
  */
 #include "TYPES.H"
 

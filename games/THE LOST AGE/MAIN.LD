@@ -712,6 +712,8 @@ SECTIONS
         "*/recon/tla/raw/080d2454.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d2810.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d296c.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_DRAW_QUANTITY_PAIR_WITH_CUE.o"(.text)
+        "*/recon/tla/raw/080d2a3c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d2a64.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d2a8c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d2aa4.o"(.text .rodata .data .padding)

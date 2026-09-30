@@ -235,7 +235,7 @@ msgctxt "message"
 msgid "00056"
 msgstr "{line_break}Standby Djinn are needed.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgAbilityLearned"
 msgid "00057"
 msgstr "{argument_actor_name:1} learned{line_break}{argument_ability_name}.{end_wait}"
 

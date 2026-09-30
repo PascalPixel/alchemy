@@ -563,7 +563,6 @@ SECTIONS
         "*/recon/tbs/raw/08028194.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INITIALIZE_WORK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/END_RESOURCE_SELECTION.o"(.text)
-        "*/recon/tbs/raw/08028574.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/RESOURCE_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CENTER_RESOURCE_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION.o"(.text)

@@ -1,31 +1,6 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Func_080aff00
-	.thumb_func
-Func_080aff00:
-	push	{lr}
-	ldr	r3, [pc, #32]
-	movs	r2, #158
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	movs	r2, #0
-	ldrsb	r2, [r3, r2]
-	adds	r2, r2, r0
-	cmp	r2, #28
-	ble.n	.L_080aff16
-	movs	r2, #28
-.L_080aff16:
-	cmp	r2, #0
-	bge.n	.L_080aff1c
-	movs	r2, #0
-.L_080aff1c:
-	strb	r2, [r3, #0]
-	adds	r0, r2, #0
-	pop	{pc}
-	movs	r0, r0
-	.2byte 0x0240
-	.2byte 0x0200
 	.global Func_080aff28
 	.thumb_func
 Func_080aff28:

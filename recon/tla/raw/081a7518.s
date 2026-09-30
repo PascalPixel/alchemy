@@ -131,7 +131,7 @@ Func_081a7518:
 	bne .L_081a766e
 	movs r0, #1
 	bl Func_08013eb4
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	ldr r3, .L_081a764c
 	movs r2, #9
 	ldr r3, [r3, #4]
@@ -199,7 +199,7 @@ Func_081a7518:
 	movs r0, #60
 	bl Func_08013eb4
 .L_081a76a6:
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	cmp r6, #0
 	bne .L_081a76d8
 	ldr r3, .L_081a76f4
@@ -233,7 +233,7 @@ Func_081a7518:
 	movs r0, #60
 	bl Blend_SetDarkenTarget16
 .L_081a76e6:
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 .L_081a76ea:
 	adds r0, r6, #0
 	pop {r3}

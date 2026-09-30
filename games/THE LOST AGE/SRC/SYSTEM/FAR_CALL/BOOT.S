@@ -272,7 +272,7 @@ Func_080002c8:
 	.global Func_080002d0
 	.thumb_func
 Func_080002d0:
-	overlay_veneer Func_08013fdc
+	overlay_veneer Blend_WaitForTransition
 	.global Func_080002d8
 	.thumb_func
 Func_080002d8:

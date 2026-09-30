@@ -174,7 +174,7 @@ Func_080464dc:
 	ldrsh r3, [r3, r4]
 	adds r1, r3, #0
 	str r3, [sp, #44]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	ldr r5, [sp, #48]
 	mov r4, r10
 	adds r5, #14
@@ -188,7 +188,7 @@ Func_080464dc:
 	movs r2, #58
 	ldrsh r1, [r1, r2]
 	str r1, [sp, #40]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r2, r10
 	ldr r1, [r2]
 	adds r0, r5, #0
@@ -200,7 +200,7 @@ Func_080464dc:
 	ldrh r3, [r3, #60]
 	adds r1, r3, #0
 	str r3, [sp, #36]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r4, r10
 	ldr r1, [r4]
 	movs r2, #5
@@ -211,7 +211,7 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	ldrh r1, [r1, #62]
 	str r1, [sp, #32]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	ldr r5, [sp, #48]
 	mov r2, r10
 	adds r5, #16
@@ -226,7 +226,7 @@ Func_080464dc:
 	ldrh r3, [r3]
 	adds r1, r3, #0
 	str r3, [sp, #28]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r3, r10
 	ldr r1, [r3]
 	movs r2, #6
@@ -237,7 +237,7 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	adds r3, #66
 	ldrb r1, [r3]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r4, r10
 	ldr r1, [r4]
 	movs r2, #6
@@ -560,7 +560,7 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	movs r2, #56
 	ldrsh r1, [r3, r2]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	ldr r6, [sp, #48]
 	mov r4, r10
 	adds r6, #14
@@ -590,7 +590,7 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	movs r2, #58
 	ldrsh r1, [r3, r2]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r4, r10
 	ldr r1, [r4]
 	movs r2, #11
@@ -617,7 +617,7 @@ Func_080464dc:
 	ldr r2, [sp, #56]
 	ldr r0, [sp, #48]
 	ldrh r1, [r2, #60]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r3, r10
 	ldr r1, [r3]
 	adds r0, r6, #0
@@ -643,7 +643,7 @@ Func_080464dc:
 	ldr r4, [sp, #56]
 	ldr r0, [sp, #48]
 	ldrh r1, [r4, #62]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r2, r10
 	ldr r1, [r2]
 	movs r3, #4
@@ -670,7 +670,7 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	adds r5, #64
 	ldrh r1, [r5]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	mov r4, r10
 	ldr r1, [r4]
 	movs r3, #5
@@ -696,7 +696,7 @@ Func_080464dc:
 	ldr r0, [sp, #48]
 	adds r5, #66
 	ldrb r1, [r5]
-	bl Func_08046260
+	bl UiText_FormatNumberToHalfwords
 	ldr r0, [sp, #48]
 	mov r4, r10
 	ldr r1, [r4]

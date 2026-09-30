@@ -15,6 +15,9 @@ Func_080af794:
 	movs	r0, r0
 	.2byte 0x0f4c
 	.2byte 0x080c
+	.global Func_080af7ac
+	.thumb_func
+Func_080af7ac:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -155,5 +158,8 @@ Func_080af794:
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
+	.global Func_080af8cc
+	.thumb_func
+Func_080af8cc:
 	bx	lr
 	.2byte 0x0000

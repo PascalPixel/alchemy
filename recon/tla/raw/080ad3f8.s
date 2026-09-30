@@ -1294,6 +1294,9 @@ Owner_RecalculateStats:
 	.4byte 0x03001238
 	.2byte 0x8000
 	.2byte 0xffff
+	.global Func_080addf0
+	.thumb_func
+Func_080addf0:
 	.2byte 0xb5e0
 	mov	r7, fp
 	mov	r6, sl
@@ -1357,7 +1360,7 @@ Owner_RecalculateStats:
 	ldr	r2, [pc, #100]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	0x080af7ac
+	bl	Func_080af7ac
 	ldr	r7, [pc, #68]
 	ldr	r3, [pc, #60]
 	movs	r1, #140
@@ -1425,31 +1428,31 @@ Owner_RecalculateStats:
 	bl	0x080afdd8
 	movs	r1, #149
 	movs	r0, #4
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #140
 	movs	r0, #4
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #141
 	movs	r0, #6
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #33
 	movs	r0, #7
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #149
 	movs	r0, #0
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #140
 	movs	r0, #0
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #140
 	movs	r0, #1
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #141
 	movs	r0, #2
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #144
 	movs	r0, #2
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r2, #163
 	movs	r3, #200
 	lsls	r2, r2, #2

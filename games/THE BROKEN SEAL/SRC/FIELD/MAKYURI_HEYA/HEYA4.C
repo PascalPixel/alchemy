@@ -380,7 +380,7 @@ void FieldScene_RunActorThreeBranchSequence(void)
     Actor_SetAnimationAndWait(3, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(3, 0, 20);
-    ((void (*)())Engine_GameFlagSet)(0x870);
+    Engine_GameFlagSet(0x870);
     Event_End();
 }
 
@@ -497,7 +497,7 @@ void FieldScene_RunColumnChoreography(void)
         Engine_ActorFaceDirection(2, 0x5000, 0);
         Battle_WaitMode0(10);
         Engine_ActorFaceDirection(0, 0x4000, 0);
-        ((void (*)())ObjectMotion_CommitCurrentPositionAndActivate)(3);
+        ObjectMotion_CommitCurrentPositionAndActivate(3);
         Battle_WaitMode0(10);
         Engine_EventShowMessageAndWait(3, 0, 20);
         Call3(Engine_ActorFaceDirection, 3, 0xd000, 20);
@@ -537,7 +537,7 @@ void FieldScene_RunColumnChoreography(void)
         Audio_PlayCue(220);
         WaitFrames(40);
         Engine_ColorBufferApplyTarget(0x10000, 0);
-        ((void (*)())Engine_ColorBufferInterpolate)(60);
+        Engine_ColorBufferInterpolate(60);
         WaitFrames(60);
         Audio_PlayCue(209);
         MakyuriHeya_FadePaletteToWhite();
@@ -720,7 +720,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         z <<= 16;
         z += 0x880000;
         Effect_Spawn(x, 0, z, 0, 0, 0, 0x330001, effect);
-        ((void (*)())Battle_WaitMode0)(2);
+        Battle_WaitMode0(2);
         phase = (phase + 1);
     } while ((u32)phase <= 15);
     Event_Wait(40);

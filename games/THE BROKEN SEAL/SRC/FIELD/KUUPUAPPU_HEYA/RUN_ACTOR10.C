@@ -4,7 +4,6 @@
 extern u8 MsgKuupuappuDidThoseThievesComeFrom[];
 extern u8 MsgKuupuappuHeardDefeatedThoseThieves[];
 extern u8 MsgKuupuappuMyFatherWorriedAboutThose[];
-/* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
 
 enum {

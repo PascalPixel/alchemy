@@ -465,10 +465,10 @@ void FieldScene_RunScene385SequenceA(void)
         Event_Begin();
         *((u8 *)Actor_Get(16) + 91) = 1;
         Actor_SetAnimation(16, 1);
-        ((void (*)())Engine_ActorRunRepeatedMotion)(16, 1);
+        Engine_ActorRunRepeatedMotion(16, 1);
         Event_Wait(20);
         Event_SetMessage((s32)MsgKuupuappuGuysCheckJail);
-        ((void (*)())Engine_ActorFaceEachOther)(16, 0, 2);
+        Engine_ActorFaceEachOther(16, 0, 2);
         Event_OpenMessage(16, 0);
         if (Event_ChooseYesNo(0, 0) != 0) {
             bump_step(1);

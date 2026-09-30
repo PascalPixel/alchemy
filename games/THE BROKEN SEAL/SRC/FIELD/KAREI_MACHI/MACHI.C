@@ -1684,7 +1684,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Call3((void (*)())Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
-    ((void (*)())Engine_ActorSetSpeed)(9, 0xcccc, 0x6666);
+    Engine_ActorSetSpeed(9, 0xcccc, 0x6666);
     record = Actor_Get(8);
     {
         /* Field at +6 of the record: a visibility/state word. */
@@ -2000,7 +2000,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
     Actor_SetAnimation(ACTOR_GERALD, 3);
     Actor_SetAnimation(ACTOR_IVAN, 3);
-    ((void (*)())Engine_ActorSetAnimationAndWait)(3, 3);
+    Engine_ActorSetAnimationAndWait(3, 3);
     Actor_WalkToAndWait(11, 0x1a4, 0x11a);
     Actor_WalkToAndWait(11, 0x1a4, 0x138);
     Actor_WalkToAndWait(11, 0x1b7, 0x138);

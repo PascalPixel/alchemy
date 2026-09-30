@@ -218,7 +218,7 @@ void Scene_RunScene3c3SequenceA(void)
     Actor_FaceDirection(11, 0xb000, 10);
     Actor_StartRepeatedMotion(11, 2);
     Event_ShowMessageAndWait(11, 0, 40);
-    ((void (*)())Actor_RunRepeatedMotion)(8, 2);
+    Actor_RunRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 40);
     Actor_ShowEmote(9, 0x100, 20);
     Actor_RunRepeatedMotion(9, 2);
@@ -253,7 +253,7 @@ void Scene_RunScene3c3SequenceA(void)
     Actor_SetAttachedEffect(11, 0x102);
     Actor_RunRepeatedMotion(11, 1);
     Event_Wait(20);
-    ((void (*)())Event_ShowMessageAndWait)(11, 0, 20);
+    Event_ShowMessageAndWait(11, 0, 20);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
     Actor_FaceDirection(0, 0xe000, 10);

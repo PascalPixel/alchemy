@@ -195,7 +195,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     Event_ShowMessage(owner, 0);
     return;
 L_main:
-    ((void (*)())UiWork_PushValueSlot)(obj, 1);
+    UiWork_PushValueSlot(obj, 1);
     Event_SetMessage((s32)MsgKorosseoRobinWillCheerForWay);
     Event_ShowMessage(owner, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);

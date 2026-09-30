@@ -5,7 +5,6 @@
 extern u8 MsgKuupuappuSeeThatsHappened[];
 extern u8 MsgKuupuappuTheyTheyGotUs[];
 
-/* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
 
 enum {
@@ -347,7 +346,7 @@ void RunEventScript01(void)
         SceneState_SetValue2ThenFinish();
         Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
-        ((void (*)())Engine_EventWait)(20);
+        Engine_EventWait(20);
         SceneActor_SetModeZeroAndValue(1, 20);
     } else {
         bump_step(1);

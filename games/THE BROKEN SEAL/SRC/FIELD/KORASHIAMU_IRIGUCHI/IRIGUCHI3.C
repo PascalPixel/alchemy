@@ -218,7 +218,7 @@ void FieldScene_RunMiddleSequence(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Audio_PlayCue(247);
     Actor_SetAnimation(8, 2);
-    ((void (*)())Engine_ActorSetAnimation)(9, 2);
+    Engine_ActorSetAnimation(9, 2);
     Actor_SetAnimation(10, 2);
     Actor_SetAnimation(11, 2);
     Actor_SetAnimation(12, 2);

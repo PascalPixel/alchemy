@@ -63,7 +63,7 @@ static __inline__ void StartCallback(void (*callback)(void), s32 priority)
 {
     /* FAKEMATCH: a single-pass call keeps the callback before its priority. */
     do {
-        ((void (*)(void (*)(void), s32))Engine_TaskAddCallback)(callback, priority);
+        Engine_TaskAddCallback(callback, priority);
     } while (0);
 }
 

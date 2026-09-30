@@ -248,7 +248,7 @@ s32 Scene_RunSupplementalSequenceOne(void)
         Actor_SetPosition(13, 0, 0);
         Actor_SetPosition(14, 0, 0);
         Actor_SetPosition(15, 0, 0);
-        ((void (*)())Engine_ActorSetPosition)(16, 0, 0);
+        Engine_ActorSetPosition(16, 0, 0);
         Actor_SetPosition(17, 0, 0);
         Actor_SetPosition(18, 0, 0);
         Actor_SetPosition(19, 0, 0);
@@ -321,7 +321,7 @@ void FieldScene_RunScene376_0200055c(void)
     if ((u32)(actor->facing - 0xa001) <= 0x3ffe) {
         Shop_Open(2, 22);
     } else {
-        ((void (*)())Engine_EventBegin)();
+        Engine_EventBegin();
         if (GameFlag_IsSet(0x87a) != 0) {
             Event_SetMessage((s32)MsgHaidiaTheRumorWasTrue);
         } else {
@@ -543,7 +543,7 @@ void FieldScene_RunLongPresentationSequence(void)
         bump_step(1);
     }
     Camera_MoveTo(0x3090000, 0, 0x1ac0000, 1);
-    ((void (*)())Engine_EventWait)(20);
+    Engine_EventWait(20);
     Actor_RunRepeatedMotion(10, 2);
     Event_ShowMessage(10, 0);
     Actor_SetAnimationAndWait(11, 4);

@@ -191,7 +191,7 @@ s32 Scene_Initialize(void)
     Makyuri_SpawnLightObjects(21, (s32)gSceneState);
     BattleFx_StartFadeOverlay(0);
     if (Engine_GameFlagIsSet(0x875))
-        ((void (*)())Engine_TaskAddCallback)(Makyuri_CyclePalette, 0xc80);
+        Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
     else
         Makyuri_ClearPalette();
     if (gGameState.scene == (s32)&SceneId_MakyuriHeya1) {
@@ -228,9 +228,9 @@ s32 Scene_Initialize(void)
             FieldScene_RedrawActorFootprint(11);
             SetEffectRecordMode(Object_GetById(12), 1);
             if (Engine_GameFlagIsSet(0x310)) {
-                ((void (*)())Engine_MapCopyCellsTo)(119, 9, 109, 11, 1, 1);
+                Engine_MapCopyCellsTo(119, 9, 109, 11, 1, 1);
                 if (Engine_GameFlagIsSet(0x311))
-                    ((void (*)())Engine_MapCopyCellsTo)(118, 9, 104, 13, 1, 1);
+                    Engine_MapCopyCellsTo(118, 9, 104, 13, 1, 1);
                 Engine_MapRedraw();
                 WaitFrames(1);
             }
@@ -239,7 +239,7 @@ s32 Scene_Initialize(void)
         case 10:
             if (!Engine_GameFlagIsSet(0x873)) {
                 Call3((void (*)())Engine_ActorSetPosition, 3, 174 << 18, 158 << 18);
-                ((void (*)())Engine_ActorFaceDirection)(3, 0, 0);
+                Engine_ActorFaceDirection(3, 0, 0);
             } else {
                 Call3((void (*)())Engine_ActorSetPosition, 8, 194 << 18, 158 << 18);
                 Call6((void (*)())Map_CopyCellAttributeRect, 110, 39, 5, 1, 46, 39);
@@ -257,16 +257,16 @@ s32 Scene_Initialize(void)
                 WaitFrames(1);
                 Audio_PlayCue(211);
                 Call3((void (*)())Engine_ActorSetPosition, 8, 184 << 16, 132 << 18);
-                ((void (*)())Map_CopyCellAttributeRect)(11, 31, 1, 4, 9, 31);
-                ((void (*)())Map_CopyCellAttributeRect)(7, 30, 1, 4, 11, 31);
-                ((void (*)())Engine_MapCopyCellsTo)(74, 58, 70, 32, 1, 2);
-                ((void (*)())Engine_MapCopyCellsTo)(74, 59, 70, 34, 1, 1);
-                ((void (*)())Engine_MapCopyCellsTo)(76, 60, 74, 38, 3, 1);
-                ((void (*)())Engine_MapCopyCellsTo)(77, 60, 76, 38, 2, 1);
-                ((void (*)())Engine_MapCopyCellsTo)(75, 58, 86, 41, 1, 3);
-                ((void (*)())Engine_MapCopyCellsTo)(75, 59, 86, 43, 1, 2);
-                ((void (*)())Engine_MapCopyCellsTo)(76, 59, 80, 49, 2, 1);
-                ((void (*)())Engine_MapCopyCellsTo)(77, 59, 82, 49, 2, 1);
+                Map_CopyCellAttributeRect(11, 31, 1, 4, 9, 31);
+                Map_CopyCellAttributeRect(7, 30, 1, 4, 11, 31);
+                Engine_MapCopyCellsTo(74, 58, 70, 32, 1, 2);
+                Engine_MapCopyCellsTo(74, 59, 70, 34, 1, 1);
+                Engine_MapCopyCellsTo(76, 60, 74, 38, 3, 1);
+                Engine_MapCopyCellsTo(77, 60, 76, 38, 2, 1);
+                Engine_MapCopyCellsTo(75, 58, 86, 41, 1, 3);
+                Engine_MapCopyCellsTo(75, 59, 86, 43, 1, 2);
+                Engine_MapCopyCellsTo(76, 59, 80, 49, 2, 1);
+                Engine_MapCopyCellsTo(77, 59, 82, 49, 2, 1);
             }
             break;
         case 3:
@@ -274,15 +274,15 @@ s32 Scene_Initialize(void)
             Engine_MapRedraw();
             WaitFrames(1);
             if (Engine_GameFlagIsSet(0x109) && Engine_GameFlagIsSet(0x256)) {
-                ((void (*)())Engine_MapCopyCellsTo)(5, 2, 5, 11, 1, 1);
-                ((void (*)())Engine_MapCopyCellsTo)(9, 1, 9, 7, 1, 2);
+                Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
+                Engine_MapCopyCellsTo(9, 1, 9, 7, 1, 2);
             }
             if (Engine_GameFlagIsSet(0x874)) {
-                ((void (*)())Engine_ActorSetPosition)(11, 176 << 15, 216 << 16);
+                Engine_ActorSetPosition(11, 176 << 15, 216 << 16);
                 Object_GetById(11)->y.fixed += -0x20000;
                 Object_GetById(11)->target_y = Object_GetById(11)->y.fixed;
-                ((void (*)())Engine_MapCopyCellsTo)(9, 1, 9, 7, 1, 2);
-                ((void (*)())Engine_MapCopyCellsTo)(5, 2, 5, 11, 1, 1);
+                Engine_MapCopyCellsTo(9, 1, 9, 7, 1, 2);
+                Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
                 Call6((void (*)())Map_CopyCellAttributeRect, 9, 5, 1, 1, 9, 10);
             }
             break;
@@ -292,8 +292,8 @@ s32 Scene_Initialize(void)
             SetEffectRecordMode(Object_GetById(10), 1);
             if (Engine_GameFlagIsSet(0x306)) {
                 FieldScene_RunSupplementalSequenceOne(0);
-                ((void (*)())Map_CopyCellAttributeRect)(42, 41, 4, 1, 42, 39);
-                ((void (*)())Map_CopyCellAttributeRect)(42, 40, 4, 1, 42, 41);
+                Map_CopyCellAttributeRect(42, 41, 4, 1, 42, 39);
+                Map_CopyCellAttributeRect(42, 40, 4, 1, 42, 41);
                 Call3((void (*)())Engine_ActorSetPosition, 10, 176 << 18, 160 << 18);
             }
             break;
@@ -315,9 +315,9 @@ s32 Scene_Initialize(void)
             flag = 0x330;
             for (; i <= 3; i++) {
                 if (Engine_GameFlagIsSet(flag))
-                    ((void (*)())Engine_ActorSetPosition)(i + 15, x, 176 << 15);
+                    Engine_ActorSetPosition(i + 15, x, 176 << 15);
                 else if (Engine_GameFlagIsSet(flag + 1))
-                    ((void (*)())Engine_ActorSetPosition)(i + 15, x + (128 << 14), 176 << 15);
+                    Engine_ActorSetPosition(i + 15, x + (128 << 14), 176 << 15);
                 x += 128 << 15;
                 flag += 2;
             }
@@ -350,15 +350,15 @@ s32 Scene_Initialize(void)
             if (Engine_GameFlagIsSet(0x109) && Engine_GameFlagIsSet(0x256)) {
                 Object_GetById(0)->y.fixed = -0x20000;
                 Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
-                ((void (*)())Engine_MapCopyCellsTo)(6, 29, 10, 23, 1, 1);
-                ((void (*)())Engine_MapCopyCellsTo)(10, 28, 10, 18, 1, 2);
+                Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
+                Engine_MapCopyCellsTo(10, 28, 10, 18, 1, 2);
             }
             if (Engine_GameFlagIsSet(0x878)) {
-                ((void (*)())Engine_ActorSetPosition)(8, 168 << 16, 188 << 17);
+                Engine_ActorSetPosition(8, 168 << 16, 188 << 17);
                 Object_GetById(8)->y.fixed += -0x20000;
                 Object_GetById(8)->target_y = Object_GetById(8)->y.fixed;
-                ((void (*)())Engine_MapCopyCellsTo)(6, 29, 10, 23, 1, 1);
-                ((void (*)())Engine_MapCopyCellsTo)(10, 28, 10, 18, 1, 2);
+                Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
+                Engine_MapCopyCellsTo(10, 28, 10, 18, 1, 2);
                 Call6((void (*)())Map_CopyCellAttributeRect, 10, 16, 1, 1, 10, 19);
                 Engine_MapRedraw();
             }
@@ -366,7 +366,7 @@ s32 Scene_Initialize(void)
         case 16:
             WaitFrames(1);
             Call3((void (*)())Engine_ActorSetPosition, 10, 204 << 18, 152 << 18);
-            ((void (*)())Engine_ActorSetPosition)(11, 194 << 18, 144 << 18);
+            Engine_ActorSetPosition(11, 194 << 18, 144 << 18);
             SetEffectRecordMode(Object_GetById(0), 1);
             SceneEffect_SpawnParticleRowsByMode(0);
             FieldScene_RunPrimarySequence(1);
@@ -374,7 +374,7 @@ s32 Scene_Initialize(void)
             if (gGameState.entrance == 14)
                 Audio_PlayCue(211);
             SetEffectRecordMode(Object_GetById(9), 1);
-            ((void (*)())Engine_ActorSetSpritePriority)(10, 2);
+            Engine_ActorSetSpritePriority(10, 2);
             Object_GetById(10)->unknown_22 = 2;
             SetEffectRecordMode(Object_GetById(11), 1);
             SetEffectRecordMode(Object_GetById(12), 1);
@@ -395,7 +395,7 @@ s32 Scene_Initialize(void)
             if (Engine_GameFlagIsSet(0x319)) {
                 FieldScene_RunPrimarySequence(2);
                 if (Object_GetById(9)->z.fixed >> 20 == 44)
-                    ((void (*)())Engine_TaskAddCallback)(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
+                    Engine_TaskAddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
             } else if (Engine_GameFlagIsSet(0x31a)) {
                 FieldScene_RunPrimarySequence(1);
             } else if (!Engine_GameFlagIsSet(0x31b)) {
@@ -405,8 +405,8 @@ s32 Scene_Initialize(void)
         case 15:
             Engine_EventBegin();
             SetEffectRecordMode(Object_GetById(8), 1);
-            ((void (*)())Engine_ActorSetChildValue)(0, 15);
-            ((void (*)())Engine_ActorSetSpriteFlags)(Object_GetById(0), 0);
+            Engine_ActorSetChildValue(0, 15);
+            Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
             Object_GetById(8)->y.fixed = 144 << 16;
             Object_GetById(8)->motion_flags = 0;
             *(s32 *)&Object_GetById(8)->unknown_44[0] = 0;
@@ -431,30 +431,30 @@ s32 Scene_Initialize(void)
     if (gGameState.scene == (s32)&SceneId_MakyuriHeya4) {
         switch (gGameState.entrance) {
         case 10:
-            ((void (*)())Engine_TaskAddCallback)(SceneEffect_RotatePaletteEntries97To103, 0xc80);
+            Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries97To103, 0xc80);
             if (Engine_GameFlagIsSet(0x109))
                 break;
             MakyuriHeya_ArriveWithSparks();
             BattleFx_SetQueuedSoundAndPlay(170);
             Call2((void (*)())Engine_ColorBufferApplySource, 128 << 9, 0);
-            ((void (*)())Engine_ColorBufferApplyTarget)(0x10003, 1);
+            Engine_ColorBufferApplyTarget(0x10003, 1);
             Engine_ColorBufferInterpolate(30);
             Engine_EventWaitForScreen();
-            ((void (*)())Object_SetModeById)(0, 1);
+            Object_SetModeById(0, 1);
             Battle_WaitMode0(30);
-            ((void (*)())UiText_ShowCenteredMessage)((s32)MsgMakyuriHonorsGoddessRainbows, 0, 0);
-            ((void (*)())Engine_ColorBufferApplyTarget)(128 << 9, 0);
+            UiText_ShowCenteredMessage((s32)MsgMakyuriHonorsGoddessRainbows, 0, 0);
+            Engine_ColorBufferApplyTarget(128 << 9, 0);
             Engine_ColorBufferInterpolate(30);
             break;
         case 15:
-            ((void (*)())Engine_ActorSetPosition)(3, 0, 0);
+            Engine_ActorSetPosition(3, 0, 0);
             DisplayBlend_EnableRunScript();
             /* FAKEMATCH: the do/while keeps this zero from being shared, as a pool halfword, with the later zero stores. */
             do { s32 z = 0; *(volatile u16 *)0x04000050 = z; } while (0);
             Object_GetById(9)->scale_x = -0x10000;
-            ((void (*)())Engine_ActorSetSpritePriority)(14, 1);
-            ((void (*)())Engine_ActorSetSpritePriority)(15, 1);
-            ((void (*)())Engine_ActorSetSpritePriority)(16, 1);
+            Engine_ActorSetSpritePriority(14, 1);
+            Engine_ActorSetSpritePriority(15, 1);
+            Engine_ActorSetSpritePriority(16, 1);
             set = Engine_GameFlagIsSet(0x109);
             if (set) {
                 Call6((void (*)())Map_CopyCellAttributeRect, 104, 34, 5, 4, 40, 34);
@@ -468,8 +468,8 @@ s32 Scene_Initialize(void)
             Engine_EventBegin();
             Call4((void (*)())Engine_CameraMoveTo, -1, -1, -1, 0);
             Engine_EventGetViewCenter()->motion_flags = set;
-            ((void (*)())Engine_ActorSetSpritePriority)(0, 1);
-            ((void (*)())Engine_ActorSetSpritePriority)(13, 1);
+            Engine_ActorSetSpritePriority(0, 1);
+            Engine_ActorSetSpritePriority(13, 1);
             MakyuriHeya_RideLift();
             DisplayBlend_DisableRunScript();
             Engine_EventEnd();
@@ -479,40 +479,40 @@ s32 Scene_Initialize(void)
             SetEffectRecordMode(Object_GetById(0), 1);
         case 11:
             Call6((void (*)())Map_CopyCellAttributeRect, 104, 34, 5, 4, 40, 34);
-            ((void (*)())Engine_MapCopyCellsTo)(45, 91, 40, 91, 5, 4);
+            Engine_MapCopyCellsTo(45, 91, 40, 91, 5, 4);
             if (!Engine_GameFlagIsSet(0x881)) {
-                ((void (*)())Engine_MapCopyCellsTo)(30, 45, 50, 45, 5, 6);
-                ((void (*)())Engine_MapCopyCellsTo)(50, 105, 50, 109, 5, 3);
+                Engine_MapCopyCellsTo(30, 45, 50, 45, 5, 6);
+                Engine_MapCopyCellsTo(50, 105, 50, 109, 5, 3);
                 Engine_MapRedraw();
                 WaitFrames(1);
             } else {
-                ((void (*)())Engine_ActorSetSpritePriority)(14, 1);
-                ((void (*)())Engine_ActorSetSpritePriority)(15, 1);
-                ((void (*)())Engine_ActorSetSpritePriority)(16, 1);
+                Engine_ActorSetSpritePriority(14, 1);
+                Engine_ActorSetSpritePriority(15, 1);
+                Engine_ActorSetSpritePriority(16, 1);
             }
             Object_GetById(9)->scale_x = -0x10000;
             if (!Engine_GameFlagIsSet(0x82b)) {
-                ((void (*)())Engine_ActorSetPosition)(3, 0, 0);
+                Engine_ActorSetPosition(3, 0, 0);
                 Call3((void (*)())Engine_ActorSetPosition, 10, 206 << 18, 150 << 18);
-                ((void (*)())Engine_ActorSetSpritePriority)(10, 1);
+                Engine_ActorSetSpritePriority(10, 1);
                 Call6((void (*)())Map_CopyCellAttributeRect, 116, 37, 3, 3, 52, 37);
                 Call6((void (*)())Engine_MapCopyCellsTo, 126, 35, 116, 35, 1, 2);
-                ((void (*)())Engine_TaskAddCallback)(SceneEffect_RotatePaletteEntries40To47, 0xc80);
+                Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries40To47, 0xc80);
                 break;
             }
             if (!Engine_GameFlagIsSet(0x871)) {
                 if (!Engine_GameFlagIsSet(0x870)) {
-                    ((void (*)())Engine_ActorFaceDirection)(3, 0, 0);
-                    ((void (*)())Object_SetModeById)(3, 16);
+                    Engine_ActorFaceDirection(3, 0, 0);
+                    Object_SetModeById(3, 16);
                 } else {
                     Call3((void (*)())Engine_ActorSetPosition, 3, 210 << 18, 158 << 18);
                     Call3((void (*)())Engine_ActorFaceDirection, 3, 192 << 8, 0);
                 }
                 SetEffectRecordMode(Object_GetById(3), 1);
                 Call6((void (*)())Engine_MapCopyCellsTo, 126, 35, 116, 35, 1, 2);
-                ((void (*)())Engine_TaskAddCallback)(SceneEffect_RotatePaletteEntries40To47, 0xc80);
+                Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries40To47, 0xc80);
             } else {
-                ((void (*)())Engine_ActorSetPosition)(3, 0, 0);
+                Engine_ActorSetPosition(3, 0, 0);
                 Call3((void (*)())Engine_ActorSetPosition, 10, 206 << 18, 150 << 18);
                 Call6((void (*)())Map_CopyCellAttributeRect, 116, 36, 3, 4, 52, 36);
                 Object_GetById(10)->collision_flags = 254;

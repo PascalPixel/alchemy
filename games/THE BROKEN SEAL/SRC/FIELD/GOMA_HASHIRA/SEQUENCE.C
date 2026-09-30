@@ -139,7 +139,7 @@ L_0200131c:
         Goma_Wait(60);
         *(u8 *)((u8 *)Object_GetById(9) + 34) = 2;
         Actor_MoveToAndWait(9, 0x198, 192);
-        ((void (*)())Battle_WaitMode0)(60);
+        Battle_WaitMode0(60);
         FieldScene_RunPillarSequence();
     }
     if (Data_02000240[282] != 0) {

@@ -882,7 +882,7 @@ Func_08101c7c:
 	ldr	r0, [sp, #84]
 	movs	r1, #0
 	movs	r2, #200
-	bl	0x08105300
+	bl	Func_08105300
 	b.n	.L_081023de
 .L_08102372:
 	ldr	r3, [sp, #20]
@@ -923,7 +923,7 @@ Func_08101c7c:
 	movs	r2, #54
 .L_081023b4:
 	ldr	r0, [sp, #84]
-	bl	0x08105300
+	bl	Func_08105300
 	adds	r1, r6, #0
 	ldr	r0, [sp, #84]
 	bl	Func_0810532c
@@ -934,7 +934,7 @@ Func_08101c7c:
 	beq.n	.L_081023d4
 	ldr	r0, [sp, #84]
 	movs	r1, #0
-	bl	0x08105350
+	bl	Func_08105350
 .L_081023d4:
 	ldr	r0, [sp, #84]
 	ldr	r1, [sp, #28]

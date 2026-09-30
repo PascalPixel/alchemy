@@ -22,6 +22,9 @@ Func_0810532c:
 	strh	r1, [r2, r3]
 .L_0810534e:
 	pop	{pc}
+	.global Func_08105350
+	.thumb_func
+Func_08105350:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

@@ -1864,7 +1864,6 @@ SECTIONS
         "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
         "*/recon/tla/raw/080f8656.o"(.text)
         "*/recon/tla/raw/080f8658.o"(.text)
-        "*/recon/tla/raw/080f8708.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_RESOURCE_VARIANT.o"(.text)
         "*/recon/tla/raw/080f8888.o"(.text)
         "*/recon/tla/raw/080f88c4.o"(.text)

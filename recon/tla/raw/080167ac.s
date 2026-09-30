@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080167ac
+	.global SerialRuntime_RemoveIrqHandlers
 	.thumb_func
-Func_080167ac:
+SerialRuntime_RemoveIrqHandlers:
 	push {lr}
 	ldr r2, .L_080167d0
 	ldr r3, .L_080167cc

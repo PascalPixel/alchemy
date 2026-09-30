@@ -33,4 +33,4 @@ Func_080c8298:
 	.global Func_080c82a0
 	.thumb_func
 Func_080c82a0:
-	overlay_veneer Func_080d2c34
+	overlay_veneer Field_SetDestination

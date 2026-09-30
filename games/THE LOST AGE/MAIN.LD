@@ -741,7 +741,7 @@ SECTIONS
         "*/recon/tla/raw/080d2b0c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d2b4c.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/PARTY/SET_FIELD_PAIRS.o"(.text)
-        "*/recon/tla/raw/080d2c34.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/SET_DESTINATION.o"(.text)
         "*/recon/tla/raw/080d2c64.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d2c9c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d2cc4.o"(.text .rodata .data .padding)

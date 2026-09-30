@@ -354,7 +354,7 @@ Func_080d7524:
 	mov	r0, r8
 	bl	0x080d7c04
 .L_080d7818:
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	adds	r1, r5, #0
 	adds	r2, r6, #0
 	adds	r0, r7, #0

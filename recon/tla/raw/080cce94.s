@@ -205,13 +205,13 @@ Func_080ccec8:
 	b.n	.L_080cd022
 .L_080cd01c:
 	mov	r0, sl
-	bl	0x080cefb4
+	bl	Func_080cefb4
 .L_080cd022:
 	mov	r1, r8
 	cmp	r1, #129
 	bne.n	.L_080cd02e
 	mov	r0, sl
-	bl	0x080cefb4
+	bl	Func_080cefb4
 .L_080cd02e:
 	mov	r2, r8
 	cmp	r2, #130
@@ -266,7 +266,7 @@ Func_080ccec8:
 	movs	r1, #1
 	bl	0x08038040
 	mov	r0, sl
-	bl	0x080cf004
+	bl	Func_080cf004
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r9, r3
@@ -290,7 +290,7 @@ Func_080ccec8:
 	adds	r0, r7, #0
 	bl	0x080ad2f8
 	mov	r0, sl
-	bl	0x080cf004
+	bl	Func_080cf004
 	movs	r2, #1
 	negs	r2, r2
 	cmp	r9, r2
@@ -593,7 +593,7 @@ Func_080ccec8:
 	cmp	r1, #133
 	bne.n	.L_080cd38e
 	mov	r0, sl
-	bl	0x080cf004
+	bl	Func_080cf004
 .L_080cd38e:
 	movs	r2, #0
 	str	r2, [sp, #28]

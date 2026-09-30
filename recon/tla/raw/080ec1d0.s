@@ -2756,7 +2756,7 @@ Func_080ec1d0:
 	adds	r4, #114
 	adds	r3, r2, r4
 	strb	r5, [r3, #0]
-	bl	0x080d2a3c
+	bl	Func_080d2a3c
 	bl	Func_080d2a8c
 	ldr	r6, [sp, #16]
 	ldr	r2, [sp, #24]

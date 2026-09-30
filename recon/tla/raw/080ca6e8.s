@@ -149,7 +149,7 @@ Func_080ca6e8:
 	mov	r1, r8
 	ldr	r0, [r1, #8]
 	adds	r1, r5, #0
-	bl	.L_080ca9cc
+	bl	Func_080ca9cc
 	ldr	r1, [r5, #0]
 	ldr	r3, [r5, #8]
 	adds	r0, r7, #0
@@ -382,6 +382,9 @@ Func_080ca6e8:
 	.4byte 0x02000240
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_080ca9cc
+	.thumb_func
+Func_080ca9cc:
 .L_080ca9cc:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #88]
@@ -433,6 +436,9 @@ Func_080ca6e8:
 	movs	r0, r0
 	.2byte 0xe008
 	.2byte 0x0202
+	.global Func_080caa2c
+	.thumb_func
+Func_080caa2c:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -448,6 +454,9 @@ Func_080ca6e8:
 	str	r2, [r6, r3]
 .L_080caa4a:
 	pop	{r5, r6, pc}
+	.global Func_080caa4c
+	.thumb_func
+Func_080caa4c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

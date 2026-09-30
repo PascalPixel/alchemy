@@ -59,7 +59,7 @@ Func_080e3698:
 	bl	Func_080d22a8
 	movs	r0, #0
 	bl	Func_080cded4
-	bl	0x080d2a3c
+	bl	Func_080d2a3c
 	movs	r1, #0
 	mov	sl, r1
 	add	r6, sp, #24
@@ -169,7 +169,7 @@ Func_080e3698:
 	bl	Object_GetById
 	movs	r1, #0
 	bl	ObjectDispatch_SetSingleChildField26Far
-	bl	0x080d2a3c
+	bl	Func_080d2a3c
 	bl	Func_080d2a8c
 	movs	r0, #140
 	ldr	r3, [r7, #16]

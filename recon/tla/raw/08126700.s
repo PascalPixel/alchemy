@@ -120,9 +120,9 @@ Func_08126700:
 	.4byte 0x03000354
 	.2byte 0x11e0
 	.2byte 0x0300
-	.global Func_08126804
+	.global BattlePres_SetupTransitionScene
 	.thumb_func
-Func_08126804:
+BattlePres_SetupTransitionScene:
 .L_08126804:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -239,35 +239,3 @@ Func_08126804:
 	.4byte 0x03000354
 	.2byte 0x11e0
 	.2byte 0x0300
-	.global Func_08126904
-	.thumb_func
-Func_08126904:
-	push	{r5, r6, lr}
-	mov	r6, r8
-	push	{r6}
-	adds	r6, r1, #0
-	mov	r8, r2
-	bl	0x0811be3c
-	ldr	r5, [r0, #0]
-	adds	r0, r6, #0
-	bl	0x0811be3c
-	ldr	r3, [r0, #0]
-	ldr	r1, [r5, #8]
-	ldr	r0, [r3, #8]
-	ldr	r4, [r5, #16]
-	ldr	r2, [r3, #16]
-	adds	r0, r0, r1
-	adds	r2, r2, r4
-	lsrs	r3, r0, #31
-	adds	r0, r0, r3
-	lsrs	r3, r2, #31
-	adds	r2, r2, r3
-	asrs	r0, r0, #1
-	asrs	r2, r2, #1
-	movs	r1, #0
-	mov	r3, r8
-	bl	Func_08126804
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, pc}
-	.2byte 0x0000

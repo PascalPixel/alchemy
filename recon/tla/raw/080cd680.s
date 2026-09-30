@@ -449,7 +449,7 @@ Func_080cd91c:
 	subs	r0, r0, r3
 	ldr	r3, [r7, #8]
 	subs	r1, r1, r3
-	bl	Func_080148e8
+	bl	ArcTan2
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	cmp	r5, #11
@@ -683,7 +683,7 @@ Func_080cd91c:
 	subs	r0, r0, r3
 	ldr	r3, [r7, #8]
 	subs	r1, r1, r3
-	bl	Func_080148e8
+	bl	ArcTan2
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	subs	r0, r0, r5

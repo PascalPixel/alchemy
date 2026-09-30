@@ -1,7 +1,7 @@
 .syntax unified
 	.thumb
-	.global Func_08152470
+	.global BattleFx_RunNoEffect
 	.thumb_func
-Func_08152470:
+BattleFx_RunNoEffect:
 	bx	lr
 	.2byte 0x0000

@@ -1516,7 +1516,7 @@ Func_0814627c:
 	str	r3, [r4, r0]
 	ldr	r1, [r5, #16]
 	ldr	r0, [r5, #8]
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldr	r4, [sp, #8]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16

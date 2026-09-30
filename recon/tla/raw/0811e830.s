@@ -167,7 +167,7 @@ Func_0811e830:
 	bne.n	.L_0811e970
 .L_0811e980:
 	ldr	r0, [sp, #8]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	mov	r2, sl
 	ldr	r3, [r2, #56]
 	movs	r7, #128
@@ -259,7 +259,7 @@ Func_0811e830:
 	ldr	r1, [r0, #16]
 	adds	r0, r2, #0
 	str	r1, [r3, #16]
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldr	r1, [pc, #404]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
@@ -516,7 +516,7 @@ Func_0811e830:
 	mov	r2, r8
 	movs	r1, #36
 	ldrsh	r0, [r2, r1]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	b.n	.L_0811ed88
 .L_0811ec78:
 	movs	r3, #0
@@ -557,7 +557,7 @@ Func_0811e830:
 	strh	r3, [r0, #2]
 	movs	r3, #255
 	strh	r3, [r0, #4]
-	bl	Func_0811b9d4
+	bl	BattleActor_SpawnObjectsForList
 .L_0811ecc4:
 	movs	r1, #8
 	negs	r1, r1
@@ -588,7 +588,7 @@ Func_0811e830:
 	adds	r2, #100
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	Func_08126904
+	bl	BattlePres_SetupTransitionAtPairMidpoint
 .L_0811ed00:
 	movs	r0, #1
 	bl	WaitFrames
@@ -642,24 +642,24 @@ Func_0811e830:
 	ldr	r4, [sp, #8]
 	movs	r3, #0
 	str	r3, [r4, #20]
-	bl	Func_0811a468
+	bl	BattleParty_ListAllUnitsAndSubmit
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #100
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 .L_0811ed7e:
 	mov	r2, r8
 	movs	r1, #36
 	ldrsh	r0, [r2, r1]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 .L_0811ed88:
 	ldr	r3, [sp, #4]
 	cmp	r3, #0
 	bne.n	.L_0811ed96
 	mov	r4, r8
 	ldr	r0, [r4, #8]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 .L_0811ed96:
 	movs	r0, #0
 	add	sp, #116
@@ -848,7 +848,7 @@ Func_0811e830:
 .L_0811ef0c:
 	ldrsh	r0, [r6, r2]
 	str	r2, [sp, #0]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	adds	r5, r6, #0
 	ldr	r2, [sp, #0]
 	ldr	r3, [r5, #20]

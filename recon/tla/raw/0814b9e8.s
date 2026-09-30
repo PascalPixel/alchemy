@@ -1938,16 +1938,3 @@ Func_0814b9e8:
 	str	r3, [r0, #0]
 .L_0814c97a:
 	pop	{pc}
-	push	{r5, r6, lr}
-	adds	r5, r0, #0
-	movs	r6, #0
-	cmp	r5, #0
-	beq.n	.L_0814c990
-.L_0814c986:
-	adds	r6, #1
-	bl	Func_08152470
-	cmp	r6, r5
-	bne.n	.L_0814c986
-.L_0814c990:
-	pop	{r5, r6, pc}
-	.2byte 0x0000

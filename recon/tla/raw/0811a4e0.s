@@ -331,7 +331,7 @@ Func_0811a4e0:
 	movs	r1, #0
 	strb	r3, [r2, #0]
 	movs	r0, #0
-	bl	Func_080148e8
+	bl	ArcTan2
 	movs	r3, #128
 	lsls	r3, r3, #8
 	adds	r2, r6, #0
@@ -1566,7 +1566,7 @@ BattlePresentation_SpawnActorObject:
 .L_0811b116:
 	asrs	r0, r3, #3
 	ldr	r1, [sp, #16]
-	bl	Func_080148e8
+	bl	ArcTan2
 	movs	r3, #128
 	lsls	r3, r3, #8
 	adds	r0, r0, r3

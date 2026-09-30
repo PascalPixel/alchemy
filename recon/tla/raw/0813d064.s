@@ -12,7 +12,7 @@ Func_0813d064:
 	movs	r2, #4
 	bl	Func_08157530
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r5, #24]
 	cmp	r3, #0
 	bne.n	.L_0813d08c

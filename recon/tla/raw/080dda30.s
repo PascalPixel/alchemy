@@ -39,7 +39,7 @@ Func_080dda30:
 	bl	Object_SetMode
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	adds	r3, r5, #0
 	adds	r3, #89
 	strb	r6, [r3, #0]
@@ -50,11 +50,11 @@ Func_080dda30:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #126
 	bl	Audio_PlayCue
 	movs	r0, #40
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080ddb2c
 .L_080ddaa6:
 	cmp	r6, #1
@@ -100,7 +100,7 @@ Func_080dda30:
 	lsls	r0, r0, #1
 	lsrs	r0, r0, #16
 	adds	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	negs	r3, r3
 	add	r8, r3
@@ -114,7 +114,7 @@ Func_080dda30:
 	b.n	.L_080ddb2c
 .L_080ddb20:
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #126
 	bl	Audio_PlayCue
 .L_080ddb2c:
@@ -178,7 +178,7 @@ Func_080dda30:
 	lsls	r0, r0, #1
 	lsrs	r0, r0, #16
 	adds	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	negs	r3, r3
 	add	r8, r3
@@ -186,7 +186,7 @@ Func_080dda30:
 	cmp	r3, #0
 	bge.n	.L_080ddb5c
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080dc384
 	add	sp, #12
 	pop	{r3}
@@ -355,7 +355,7 @@ Func_080dda30:
 	bl	Object_SetCallback
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r2, r9
 	ldr	r3, [r2, #4]
 	mov	r0, sl
@@ -399,7 +399,7 @@ Func_080dda30:
 	movs	r0, #131
 	bl	Audio_PlayCue
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #0]
 	subs	r2, #1
 	str	r2, [sp, #0]
@@ -408,7 +408,7 @@ Func_080dda30:
 	b.n	.L_080ddc06
 .L_080ddd88:
 	movs	r0, #8
-	bl	0x08013560
+	bl	WaitFrames
 	add	sp, #16
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -462,7 +462,7 @@ Func_080dda30:
 	str	r0, [sp, #4]
 	movs	r0, #15
 	mov	r8, sp
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r6, r8
 	movs	r5, #1
 .L_080dde08:
@@ -518,7 +518,7 @@ Func_080dda30:
 	ldr	r3, [r7, #12]
 	adds	r3, r3, r1
 	str	r3, [r7, #12]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #128
 	lsls	r3, r3, #14
 	adds	r2, r5, r3
@@ -585,7 +585,7 @@ Func_080dda30:
 	str	r0, [sp, #4]
 	movs	r0, #15
 	mov	fp, sp
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	mov	r7, fp
 	mov	r8, r0
@@ -730,7 +730,7 @@ Func_080dda30:
 	movs	r0, #1
 	adds	r3, r3, r6
 	strh	r3, [r5, #6]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #255
 	ldr	r3, [r5, #24]
 	lsls	r2, r2, #8

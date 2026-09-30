@@ -271,7 +271,7 @@ Func_080ceffc:
 	bge.n	.L_080cf1f4
 .L_080cf21e:
 	movs	r0, #3
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r8
 	ldr	r1, [r2, #0]
 	ldr	r2, [r2, #4]

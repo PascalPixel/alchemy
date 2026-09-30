@@ -406,7 +406,7 @@ Func_080e25e8:
 	b.n	.L_080e2a5a
 .L_080e2912:
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #178
 	lsls	r3, r3, #7
 	adds	r3, #153
@@ -425,7 +425,7 @@ Func_080e25e8:
 	.2byte 0x0000
 .L_080e2938:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [r7, #24]
 	movs	r3, #182
 	lsls	r3, r3, #2
@@ -450,7 +450,7 @@ Func_080e25e8:
 	bl	Object_SetMode
 	mov	r1, sl
 	adds	r0, r7, #0
-	bl	Func_080d3600
+	bl	FacingObject_TurnPairToFaceEachOther
 	mov	r3, sl
 	ldrh	r2, [r3, #6]
 	adds	r3, #100
@@ -547,7 +547,7 @@ Func_080e25e8:
 	adds	r5, r5, r0
 	str	r5, [r7, #16]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	add	r8, r3
 	cmp	r8, fp
@@ -810,7 +810,7 @@ Func_080e25e8:
 	bhi.n	.L_080e2ce2
 	movs	r1, #6
 	asrs	r0, r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r3, r9
 	ldrh	r1, [r3, #0]
 	ldr	r3, [pc, #56]

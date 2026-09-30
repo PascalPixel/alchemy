@@ -7,7 +7,7 @@ Owner_SumDjinnCounts:
 Func_080b0f5c:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #1
 	negs	r1, r1
 	adds	r2, r0, #0

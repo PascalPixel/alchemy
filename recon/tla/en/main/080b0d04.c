@@ -50,7 +50,7 @@ void Owner_RefreshDerivedData(s32 owner);
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
     struct OwnerDjinnState *state =
-        (struct OwnerDjinnState *)OwnerState_Get(owner);
+        (struct OwnerDjinnState *)Owner_GetState(owner);
     u32 present = Djinn_IsActive(owner, index, bit);
 
     if (present != 0) {

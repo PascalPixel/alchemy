@@ -381,7 +381,7 @@ Func_080dfb0c:
 	str	r0, [r7, #28]
 	adds	r6, #1
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #11
 	blt.n	.L_080dfdb2
 	ldr	r3, [pc, #452]
@@ -399,7 +399,7 @@ Func_080dfb0c:
 	cmp	r1, #1
 	bne.n	.L_080dfef8
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #0]
 	cmp	r2, #0
 	beq.n	.L_080dfe4e
@@ -458,22 +458,22 @@ Func_080dfb0c:
 	strh	r0, [r5, #6]
 .L_080dfeba:
 	movs	r0, #6
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	add	r8, r3
 	mov	r1, r8
 	cmp	r1, #15
 	ble.n	.L_080dfe54
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #120
-	bl	0x08013560
+	bl	WaitFrames
 .L_080dfed6:
 	movs	r1, #1
 	adds	r0, r7, #0
 	bl	Object_SetMode
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #136
 	bl	Audio_PlayCue
 	adds	r0, r7, #0
@@ -487,7 +487,7 @@ Func_080dfb0c:
 	cmp	r3, #1
 	bhi.n	.L_080dffd2
 	movs	r0, #5
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	movs	r1, #1
 	bl	Object_SetMode

@@ -410,7 +410,7 @@ Func_0802632c:
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	movs	r5, #9
@@ -1246,7 +1246,7 @@ Func_0802632c:
 	lsls	r0, r0, #2
 	adds	r3, r3, r0
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	movs	r5, #9
@@ -1353,7 +1353,7 @@ Func_0802632c:
 	lsls	r3, r3, #18
 	adds	r0, #255
 	ldr	r5, [r3, #108]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08026dfa
 	movs	r3, #181
@@ -2481,7 +2481,7 @@ Func_0802632c:
 	lsls	r4, r4, #2
 	adds	r3, r3, r4
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	movs	r5, #9

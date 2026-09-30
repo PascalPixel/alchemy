@@ -19,9 +19,9 @@ BattleUnit_Recalculate:
 	bx	r4
 	.2byte 0xd3f9
 	.2byte 0x080a
-	.global Func_080ad010
+	.global Item_Get
 	.thumb_func
-Func_080ad010:
+Item_Get:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xec05

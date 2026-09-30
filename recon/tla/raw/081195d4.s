@@ -51,7 +51,7 @@ Func_081195d4:
 	movs	r1, #4
 	bl	0x08126cfc
 	movs	r0, #32
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r3, r8
 	cmp	r3, #0
 	ble.n	.L_081196a6
@@ -133,7 +133,7 @@ Func_081195d4:
 	ldr	r0, [sp, #0]
 	bl	0x08126cfc
 	movs	r0, #32
-	bl	0x08013560
+	bl	WaitFrames
 .L_081196ea:
 	add	sp, #40
 	pop	{r3, r5, r6, r7}

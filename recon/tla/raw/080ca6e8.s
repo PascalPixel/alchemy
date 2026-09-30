@@ -71,7 +71,7 @@ Func_080ca6e8:
 	movs	r2, #2
 	ldrsh	r7, [r3, r2]
 	adds	r0, r7, #0
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_080ca76e
 	b.n	.L_080ca994
@@ -86,7 +86,7 @@ Func_080ca6e8:
 	movs	r1, #20
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #19
 	bne.n	.L_080ca7b6
 	movs	r0, #200
@@ -106,7 +106,7 @@ Func_080ca6e8:
 	adds	r7, r3, #0
 	adds	r7, #47
 	adds	r0, r7, #0
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_080ca7b6
 	b.n	.L_080ca994
@@ -121,7 +121,7 @@ Func_080ca6e8:
 	beq.n	.L_080ca7d4
 	adds	r0, r7, #0
 	adds	r0, #80
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_080ca7d4
 	b.n	.L_080ca994
@@ -322,7 +322,7 @@ Func_080ca6e8:
 	ands	r2, r3
 	strb	r2, [r1, #0]
 	movs	r0, #33
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ca982
 	movs	r1, #192
@@ -676,7 +676,7 @@ Func_080ca6e8:
 	strb	r2, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r1, #12
 	adds	r0, r5, #0
 	bl	Object_SetMode

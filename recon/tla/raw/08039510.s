@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08039510
+	.global RenderOutput_Release
 	.thumb_func
-Func_08039510:
+RenderOutput_Release:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	bl	0x08038edc

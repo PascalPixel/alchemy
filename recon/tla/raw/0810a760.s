@@ -69,7 +69,7 @@ Func_0810a760:
 	adds	r0, r7, #0
 	pop	{r5, r6, r7, pc}
 	push	{r5, r6, lr}
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	movs	r6, #0
 	adds	r5, #216

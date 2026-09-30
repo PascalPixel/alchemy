@@ -14,7 +14,7 @@ BattlePresentation_WaitForAdvance:
 	b.n	.L_0811ff20
 .L_0811ff1a:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811ff20:
 	bl	0x08038048
 	cmp	r0, #0
@@ -145,7 +145,7 @@ BattlePresentation_WaitForAdvance:
 	bne.n	.L_0812003c
 .L_08120030:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #0]
 	adds	r0, #1
 	b.n	.L_0811ff34
@@ -155,7 +155,7 @@ BattlePresentation_WaitForAdvance:
 	mov	r0, fp
 	bl	0x08014274
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	add	sp, #16
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -180,7 +180,7 @@ BattlePresentation_WaitForAdvance:
 	b.n	.L_08120082
 .L_0812007c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08120082:
 	bl	0x08038048
 	cmp	r0, #0
@@ -264,13 +264,13 @@ BattlePresentation_WaitForAdvance:
 	cmp	r3, #0
 	bne.n	.L_0812013c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_081200a0
 .L_0812013c:
 	adds	r0, r6, #0
 	bl	0x08014274
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sp, #20
 	pop	{r3, r5}
@@ -283,7 +283,7 @@ BattlePresentation_WaitForAdvance:
 	b.n	.L_08120162
 .L_0812015c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08120162:
 	bl	0x08038048
 	cmp	r0, #0
@@ -297,7 +297,7 @@ BattlePresentation_WaitForAdvance:
 	pop	{pc}
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

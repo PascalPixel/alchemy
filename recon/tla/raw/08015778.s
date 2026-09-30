@@ -277,7 +277,7 @@ Func_08015778:
 	b.n	.L_080159b6
 .L_080159ac:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #1
 	add	r8, r1
 .L_080159b6:

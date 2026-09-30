@@ -33,7 +33,7 @@ Engine_ObjectCreate:
 Engine_MapCopyCellsTo:
 	overlay_veneer Func_08020178
 	overlay_veneer Func_080201e8
-	overlay_veneer Func_08020218
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08038040
 	overlay_veneer Func_080ad208
 	overlay_veneer Func_080c8010

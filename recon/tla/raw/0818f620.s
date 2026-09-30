@@ -946,7 +946,7 @@ Func_0818f620:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #44]
 	ldr	r5, [sp, #24]
 	adds	r4, #1
@@ -1068,7 +1068,7 @@ Func_0818f620:
 	adds	r2, #80
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #206
 	lsls	r0, r0, #3
 	adds	r3, r7, r0
@@ -1107,7 +1107,7 @@ Func_0818f620:
 .L_0818fee6:
 	strh	r1, [r5, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0818feee:
 	add	sp, #88
 	pop	{r3, r5, r6, r7}
@@ -1974,7 +1974,7 @@ Func_0818f620:
 	lsrs	r0, r2, #31
 	adds	r0, r2, r0
 	asrs	r0, r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [sp, #92]
 	lsls	r0, r0, #10
 	movs	r4, #184
@@ -2567,7 +2567,7 @@ Func_0818f620:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #84]
 	adds	r0, #1
 	str	r0, [sp, #84]
@@ -3759,7 +3759,7 @@ Func_0818f620:
 	movs	r0, #1
 	str	r3, [r2, #0]
 	add	fp, r7
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, fp
 	cmp	r0, #114
 	beq.n	.L_081914b2
@@ -3942,7 +3942,7 @@ Func_0818f620:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	bl	Func_08014644
 	movs	r0, #104
@@ -4009,7 +4009,7 @@ Func_0818f620:
 	add	r3, sl
 	str	r4, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [pc, #600]
 	movs	r0, #0
 	mov	fp, r0
@@ -4259,7 +4259,7 @@ Func_0818f620:
 	strh	r0, [r4, #0]
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #8]
 	movs	r1, #1
 	add	fp, r1

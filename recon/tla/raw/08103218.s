@@ -19,7 +19,7 @@ Func_08103218:
 	str	r1, [sp, #60]
 	str	r2, [sp, #56]
 	str	r3, [sp, #52]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #192
 	str	r0, [sp, #48]
 	lsls	r3, r3, #18
@@ -233,7 +233,7 @@ Func_08103218:
 	ldr	r1, [sp, #28]
 	adds	r2, r5, #0
 	ldr	r0, [sp, #52]
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	adds	r2, r5, #0
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #28]
@@ -267,7 +267,7 @@ Func_08103218:
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #28]
 	adds	r2, r5, #0
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	ldr	r0, [sp, #20]
 	cmp	r0, #0
 	beq.n	.L_0810346e
@@ -283,7 +283,7 @@ Func_08103218:
 	adds	r2, r5, #0
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #28]
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	ldr	r2, [sp, #20]
 	cmp	r2, #0
 	beq.n	.L_0810346e
@@ -295,7 +295,7 @@ Func_08103218:
 	ldr	r0, [sp, #52]
 	bl	0x080ad008
 	ldr	r0, [sp, #52]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r3, [sp, #212]
 	str	r0, [sp, #48]
 	cmp	r3, #0
@@ -414,7 +414,7 @@ Func_08103218:
 	adds	r1, #150
 	movs	r3, #5
 	mov	r0, r9
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldrb	r2, [r6, #0]
 	ldrb	r3, [r5, #0]
 .L_08103580:
@@ -443,7 +443,7 @@ Func_08103218:
 	adds	r2, r5, #0
 	mov	r0, r9
 	adds	r3, r7, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	movs	r0, #142
 	ldr	r2, [sp, #48]
 	lsls	r0, r0, #1
@@ -459,7 +459,7 @@ Func_08103218:
 	adds	r2, r5, #0
 	mov	r0, r9
 	adds	r3, r7, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	adds	r6, #1
 	movs	r1, #192
 	lsls	r6, r6, #24
@@ -1061,7 +1061,7 @@ Func_08103218:
 	ldr	r0, [r2, #52]
 	bl	0x08038268
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #1
 	ldr	r0, [sp, #80]
 	bl	0x080f815c
@@ -1127,7 +1127,7 @@ Func_08103218:
 	mov	r8, r0
 	adds	r0, r6, #0
 	str	r3, [sp, #64]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	ldr	r3, [pc, #780]
 	adds	r1, r7, #0
@@ -1167,7 +1167,7 @@ Func_08103218:
 	lsrs	r5, r5, #16
 	adds	r0, r6, #0
 	ldr	r1, [sp, #72]
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	cmp	r5, #0
 	beq.n	.L_08103ba6
 	adds	r0, r6, #0
@@ -1207,7 +1207,7 @@ Func_08103218:
 	add	r3, sl
 	ldrb	r6, [r3, #0]
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #166
 	adds	r7, r0, #0
 	adds	r1, r7, #0
@@ -1226,7 +1226,7 @@ Func_08103218:
 	adds	r0, r6, #0
 	mov	r1, fp
 	mov	r2, r8
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	ldr	r0, [sp, #64]
 	cmp	r0, #0
 	beq.n	.L_08103c26
@@ -1296,7 +1296,7 @@ Func_08103218:
 	adds	r0, r6, #0
 	mov	r8, r1
 	orrs	r5, r3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsrs	r5, r5, #31
 	subs	r5, r7, r5
 	movs	r2, #166
@@ -1531,7 +1531,7 @@ Func_08103218:
 	ldr	r0, [sp, #84]
 	movs	r2, #7
 	movs	r3, #1
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 .L_08103e9e:
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -1663,7 +1663,7 @@ Func_08103218:
 	b.n	.L_08103fc6
 .L_08103fc0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08103fc6:
 	bl	0x08038048
 	cmp	r0, #0
@@ -1739,7 +1739,7 @@ Func_08103218:
 	b.n	.L_08104064
 .L_0810405e:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08104064:
 	bl	0x08038048
 	cmp	r0, #0
@@ -1760,7 +1760,7 @@ Func_08103218:
 	movs	r3, #1
 	strb	r3, [r2, #3]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #132
 	lsls	r0, r0, #6
 	movs	r1, #132
@@ -1845,7 +1845,7 @@ Func_08103218:
 	cmp	r3, #0
 	beq.n	.L_08104140
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08104140:
 	ldr	r1, [sp, #104]
 	cmp	r1, #3
@@ -2008,7 +2008,7 @@ Func_08103218:
 	subs	r2, #2
 	subs	r3, #1
 	str	r4, [sp, #20]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r3, [r6, #0]
 	adds	r5, #1
 	ldr	r4, [sp, #20]
@@ -2029,7 +2029,7 @@ Func_08103218:
 	adds	r1, #40
 	subs	r2, #3
 	str	r5, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldrh	r2, [r7, #8]
 	movs	r1, #241
 	lsls	r1, r1, #8
@@ -2038,7 +2038,7 @@ Func_08103218:
 	adds	r0, r7, #0
 	adds	r3, r6, #0
 	str	r5, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldrh	r3, [r7, #14]
 	movs	r2, #2
 	lsls	r3, r3, #16
@@ -2054,7 +2054,7 @@ Func_08103218:
 	adds	r2, #1
 	adds	r0, r2, #0
 	str	r2, [sp, #92]
-	bl	0x08002064
+	bl	Math_Mod
 	subs	r6, r0, #5
 	cmp	r6, #0
 	bge.n	.L_081042e8
@@ -2076,7 +2076,7 @@ Func_08103218:
 	bhi.n	.L_08104368
 	movs	r1, #30
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r3, r0, #0
 	lsls	r0, r3, #4
 	adds	r0, r0, r3
@@ -2102,7 +2102,7 @@ Func_08103218:
 .L_0810433a:
 	adds	r0, r6, #0
 	movs	r1, #35
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r6, r0, #1
 	adds	r1, r6, #0
 	adds	r2, r5, #0
@@ -2205,7 +2205,7 @@ Func_08103218:
 	ldr	r0, [sp, #88]
 	movs	r1, #3
 	adds	r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r2, #2
 	str	r0, [sp, #88]
 	movs	r0, #111
@@ -2264,7 +2264,7 @@ Func_08103218:
 	str	r0, [r5, #0]
 .L_08104488:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08103e9e
 .L_08104490:
 	movs	r0, #0
@@ -2286,7 +2286,7 @@ Func_08103218:
 	movs	r1, #1
 	bl	0x080f815c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #5
 	str	r3, [sp, #0]
 	movs	r3, #2
@@ -2315,7 +2315,7 @@ Func_08103218:
 	movs	r6, #0
 	strb	r6, [r3, #6]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	add	sp, #168
 	pop	{r3, r5, r6, r7}
@@ -2379,7 +2379,7 @@ Func_08103218:
 	ldr	r0, [r3, #52]
 	bl	0x08038268
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, sp
 	adds	r0, #72
 	movs	r7, #1
@@ -2398,7 +2398,7 @@ Func_08103218:
 	add	r3, sl
 	adds	r6, r0, #0
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r1, r0, #0
 	add	r2, sp, #64
 	adds	r1, #88
@@ -2589,7 +2589,7 @@ Func_08103218:
 	negs	r3, r3
 	subs	r2, #2
 	adds	r0, r6, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r3, [r7, #0]
 	adds	r5, #1
 	cmp	r5, r3
@@ -2610,7 +2610,7 @@ Func_08103218:
 	adds	r3, r5, #0
 	subs	r2, #3
 	adds	r1, #40
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldrh	r2, [r6, #8]
 	movs	r1, #241
 	mov	r3, r9
@@ -2620,7 +2620,7 @@ Func_08103218:
 	adds	r0, r6, #0
 	adds	r1, #41
 	adds	r3, r5, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldrh	r3, [r6, #14]
 	movs	r2, #2
 	lsls	r3, r3, #16
@@ -2636,7 +2636,7 @@ Func_08103218:
 	str	r1, [sp, #56]
 	adds	r0, r1, #0
 	movs	r1, #60
-	bl	0x08002064
+	bl	Math_Mod
 	subs	r0, #5
 	movs	r2, #200
 	movs	r0, #0
@@ -2737,7 +2737,7 @@ Func_08103218:
 	str	r0, [sp, #60]
 .L_08104880:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08104690
 .L_08104888:
 	movs	r1, #144
@@ -2753,7 +2753,7 @@ Func_08103218:
 	movs	r1, #1
 	bl	0x080f815c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #5
 	str	r3, [sp, #0]
 	movs	r3, #2
@@ -2782,7 +2782,7 @@ Func_08103218:
 	movs	r6, #0
 	strb	r6, [r3, #6]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	add	sp, #88
 	pop	{r3, r5, r6, r7}

@@ -168,7 +168,7 @@ Func_0803e5a8:
 	movs	r1, #2
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #210
 	lsls	r2, r2, #2
 	adds	r3, r6, r2

@@ -10,7 +10,7 @@ Trade_GetOfferState:
 	cmp	r0, #0
 	beq.n	.L_080ad356
 	movs	r0, #131
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	b.n	.L_080ad358
 .L_080ad356:
 	ldr	r0, [pc, #4]
@@ -38,7 +38,7 @@ Trade_GetOfferState:
 	ldrb	r0, [r2, #0]
 	adds	r2, #1
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r3, [r0, #15]
 	subs	r5, #1
 	adds	r6, r6, r3
@@ -70,33 +70,3 @@ Trade_GetOfferState:
 	pop	{pc}
 	.2byte 0x9e7c
 	.2byte 0x080b
-	push	{lr}
-	cmp	r3, #0
-	beq.n	.L_080ad3e0
-	movs	r4, #0
-	cmp	r4, r2
-	bge.n	.L_080ad3f4
-.L_080ad3d0:
-	ldrb	r3, [r0, #0]
-	adds	r4, #1
-	strb	r3, [r1, #0]
-	adds	r0, #1
-	adds	r1, #1
-	cmp	r4, r2
-	blt.n	.L_080ad3d0
-	b.n	.L_080ad3f4
-.L_080ad3e0:
-	cmp	r2, #0
-	ble.n	.L_080ad3f4
-	adds	r4, r2, #0
-.L_080ad3e6:
-	ldrb	r3, [r1, #0]
-	subs	r4, #1
-	strb	r3, [r0, #0]
-	adds	r1, #1
-	adds	r0, #1
-	cmp	r4, #0
-	bne.n	.L_080ad3e6
-.L_080ad3f4:
-	pop	{pc}
-	.2byte 0x0000

@@ -23,7 +23,7 @@ Func_080d2810:
 	cmp	r5, #89
 	bgt.n	.L_080d283e
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldrb	r3, [r6, #24]
 	cmp	r7, r3
 	beq.n	.L_080d282c
@@ -62,7 +62,7 @@ Func_080d2810:
 	b.n	.L_080d2886
 .L_080d2880:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d2886:
 	bl	0x08038048
 	cmp	r0, #0
@@ -76,7 +76,7 @@ Func_080d2810:
 	subs	r3, r3, r2
 	lsls	r0, r3, #1
 	adds	r0, r0, r3
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, sl
 	cmp	r2, #0
 	bne.n	.L_080d28cc
@@ -123,7 +123,7 @@ Func_080d2810:
 	mov	r0, r8
 	bl	Object_SetModeById
 	mov	r0, r9
-	bl	0x08038100
+	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	bl	0x08038140
 	ldr	r3, [pc, #76]
 	movs	r2, #139
@@ -141,7 +141,7 @@ Func_080d2810:
 	mov	r0, r8
 	bl	Object_SetModeById
 	mov	r0, r9
-	bl	0x08038100
+	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
 	bl	0x08038140
 	ldr	r3, [pc, #36]
 	movs	r0, #139

@@ -11,7 +11,7 @@ Func_080af4e4:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r5, #42
 	mov	r9, r0
 	adds	r5, #255
@@ -296,7 +296,7 @@ Func_080af4e4:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r7, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #252
 	lsls	r3, r3, #6
 	adds	r3, #255

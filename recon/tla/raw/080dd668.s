@@ -31,7 +31,7 @@ UpdateRisingParticleBurst:
 	ldr	r3, [r7, #28]
 	adds	r3, r3, r5
 	str	r3, [r7, #28]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	negs	r3, r3
 	add	r8, r3
@@ -269,7 +269,7 @@ UpdateRisingParticleBurst:
 	movs	r3, #0
 	strb	r3, [r5, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #8
 	bl	0x080ce31c
 	adds	r2, r0, #0
@@ -338,7 +338,7 @@ UpdateRisingParticleBurst:
 	add	r6, r8
 .L_080dd91c:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	strh	r5, [r6, #0]
 	adds	r5, #1
 	cmp	r5, #18
@@ -410,7 +410,7 @@ UpdateRisingParticleBurst:
 	movs	r0, #30
 	bl	0x080d17ac
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #8
 	bl	0x080ce31c
 	adds	r2, r0, #0
@@ -452,7 +452,7 @@ UpdateRisingParticleBurst:
 	add	r3, r8
 	strb	r2, [r3, #0]
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080dda28
 	.4byte 0x00000000
 	.2byte 0xd755

@@ -26,26 +26,26 @@ Func_0804d4f8:
 	bge.n	.L_0804d520
 	movs	r5, #0
 .L_0804d520:
-	bl	0x0804d0dc
+	bl	AffineEffect_InitializeWork
 	movs	r0, #1
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	cmp	r6, #0
 	bne.n	.L_0804d534
 	movs	r0, #15
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 .L_0804d534:
 	movs	r0, #2
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r0, #7
-	bl	0x0804d38c
+	bl	Menu_AppendResourceEntry
 	movs	r0, #17
 	movs	r1, #7
 	movs	r2, #0
-	bl	0x0804d3e8
+	bl	Menu_CenterResourceEntries
 	adds	r0, r5, #0
-	bl	0x0804d16c
+	bl	Menu_RunResourceSelectionLoop
 	adds	r5, r0, #0
-	bl	0x0804d118
+	bl	Menu_EndResourceSelection
 	cmp	r5, #0
 	blt.n	.L_0804d562
 	ldr	r2, [pc, #16]

@@ -21,7 +21,7 @@ BattleFx_RunItemBreakSequence:
 	movs	r1, #4
 	bl	Object_SetMode
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 .L_080dd518:
 	bl	0x080dc384
 	adds	r0, r5, #0

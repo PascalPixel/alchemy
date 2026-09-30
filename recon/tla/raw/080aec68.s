@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080aec68
+	.global Item_GetEquipmentGroup
 	.thumb_func
-Func_080aec68:
+Item_GetEquipmentGroup:
 	push	{lr}
 	bl	Item_GetDirect
 	ldrb	r1, [r0, #2]

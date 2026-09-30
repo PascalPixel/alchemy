@@ -7,9 +7,9 @@ Func_080c85c8:
 	bx	r4
 	.2byte 0x1ead
 	.2byte 0x080d
-	.global Func_080c85d0
+	.global Event_ClearInvalidPackedValuesFar
 	.thumb_func
-Func_080c85d0:
+Event_ClearInvalidPackedValuesFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x2455

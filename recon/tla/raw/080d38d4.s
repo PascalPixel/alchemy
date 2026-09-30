@@ -38,6 +38,6 @@ Func_080d38d4:
 	adds	r2, #4
 	strb	r3, [r2, #0]
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	pop	{pc}
 	.2byte 0x0000

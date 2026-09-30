@@ -25,7 +25,7 @@ Func_08108690:
 	beq.n	.L_081086c2
 	subs	r6, #1
 	adds	r0, r6, r1
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r6, r0, #0
 .L_081086c2:
 	ldr	r3, [r5, #12]
@@ -37,7 +37,7 @@ Func_08108690:
 	mov	r3, r8
 	adds	r0, r6, r3
 	mov	r1, r8
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r6, r0, #0
 .L_081086da:
 	ldr	r3, [r5, #12]
@@ -205,7 +205,7 @@ Func_08108690:
 	subs	r3, #12
 	adds	r0, r5, #0
 	movs	r1, #10
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r6, #0
 	movs	r2, #0
 	bl	.L_08108788
@@ -216,7 +216,7 @@ Func_08108690:
 	cmp	r5, #0
 	beq.n	.L_08108896
 	movs	r1, #10
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r6, #0
 	movs	r2, #1
 	bl	.L_08108788
@@ -227,7 +227,7 @@ Func_08108690:
 	cmp	r5, #0
 	beq.n	.L_08108896
 	movs	r1, #10
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r6, #0
 	movs	r2, #2
 	bl	.L_08108788
@@ -238,7 +238,7 @@ Func_08108690:
 	cmp	r5, #0
 	beq.n	.L_08108896
 	movs	r1, #10
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r6, #0
 	movs	r2, #3
 	bl	.L_08108788
@@ -248,7 +248,7 @@ Func_08108690:
 	cmp	r0, #0
 	beq.n	.L_08108896
 	movs	r1, #10
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r6, #0
 	movs	r2, #4
 	bl	.L_08108788

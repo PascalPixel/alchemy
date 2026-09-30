@@ -10,7 +10,7 @@ Func_0802b700:
 	adds	r5, r0, #0
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	adds	r0, r5, #0
 	movs	r1, #0
 	bl	.L_0802b738
@@ -22,7 +22,7 @@ Func_0802b700:
 	adds	r5, r0, #0
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	.L_0802b738

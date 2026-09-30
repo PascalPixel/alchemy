@@ -98,12 +98,12 @@ Func_080c9934:
 .L_080c99ea:
 	movs	r0, #2
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080c9a20
 	movs	r0, #2
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080c9a28
 	.4byte 0x03001238
 	.4byte 0x080f17a8
@@ -284,7 +284,7 @@ Func_080c9934:
 	movs	r5, #10
 	adds	r5, #255
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	mov	r2, r8
 	adds	r1, r0, #0
 	movs	r3, #0
@@ -292,17 +292,17 @@ Func_080c9934:
 	bl	.L_080c9c38
 	bl	0x080ca1bc
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080c9bce
 	movs	r0, #141
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080c9bc4
 	movs	r0, #28
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080c9bc4
 	bl	.L_080c9dc8
@@ -310,7 +310,7 @@ Func_080c9934:
 .L_080c9bc4:
 	movs	r0, #141
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080c9bec
 .L_080c9bce:
 	movs	r0, #128
@@ -382,7 +382,7 @@ Func_080c9934:
 	lsls	r5, r5, #2
 .L_080c9c5a:
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r3, #128
 	lsls	r3, r3, #2
 	adds	r5, #1
@@ -401,7 +401,7 @@ Func_080c9934:
 	lsls	r5, r5, #2
 .L_080c9c80:
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r3, #192
 	lsls	r3, r3, #2
 	adds	r5, #1
@@ -410,7 +410,7 @@ Func_080c9934:
 	ble.n	.L_080c9c80
 	movs	r0, #48
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r5, [pc, #292]
 	movs	r1, #150
 	lsls	r1, r1, #2
@@ -422,16 +422,16 @@ Func_080c9934:
 	adds	r3, r5, r1
 	strh	r2, [r3, #0]
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #18
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #137
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #20
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r2, #240
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
@@ -452,36 +452,36 @@ Func_080c9934:
 .L_080c9cec:
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	cmp	r5, #223
 	ble.n	.L_080c9cec
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #162
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #98
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #36
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #142
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #163
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #190
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #126
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #191
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	ldr	r3, [pc, #124]
 	movs	r2, #128
 	lsls	r2, r2, #2
@@ -493,12 +493,12 @@ Func_080c9934:
 	beq.n	.L_080c9d5c
 	movs	r0, #187
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_080c9d64
 .L_080c9d5c:
 	movs	r0, #187
 	lsls	r0, r0, #1
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080c9d64:
 	ldr	r1, [pc, #88]
 	movs	r3, #128
@@ -541,7 +541,7 @@ Func_080c9934:
 	bne.n	.L_080c9dba
 	movs	r0, #36
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080c9dba:
 	bl	Func_080ad2b8
 	pop	{r5, r6, r7, pc}
@@ -589,7 +589,7 @@ Func_080c9934:
 	movs	r3, #192
 	lsls	r3, r3, #1
 	adds	r0, r0, r3
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080c9e18:
 	pop	{r5, r6, pc}
 	.2byte 0x0000

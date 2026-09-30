@@ -1144,7 +1144,7 @@ Func_0813eb70:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #40]
 	adds	r0, #1
 	str	r0, [sp, #40]
@@ -1186,7 +1186,7 @@ Func_0813eb70:
 	movs	r0, #2
 	bl	0x08118038
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #96]
 	ldr	r0, [pc, #96]
 	ldrh	r3, [r0, #0]
@@ -1511,7 +1511,7 @@ Func_0813eb70:
 	movs	r1, #3
 	bl	Math_Div
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #10
 	add	r0, fp
 	movs	r7, #0
@@ -1626,7 +1626,7 @@ Func_0813eb70:
 	movs	r0, #1
 	str	r3, [r2, #0]
 	add	sl, r5
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, sl
 	cmp	r0, #56
 	beq.n	.L_0813f856

@@ -206,7 +206,7 @@ Func_0803f82c:
 	adds	r0, #12
 	movs	r1, #24
 	sub	sp, #8
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r5, r0, #0
 	ldr	r2, [pc, #336]
 	lsls	r5, r5, #18
@@ -214,7 +214,7 @@ Func_0803f82c:
 	adds	r0, r5, #0
 	movs	r1, #96
 	mov	r8, r2
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #16
 	mov	r2, r8
 	asrs	r0, r0, #16
@@ -229,7 +229,7 @@ Func_0803f82c:
 	movs	r1, #96
 	adds	r0, #32
 	mov	sl, r3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, r8
 	ldrb	r3, [r2, r0]
 	adds	r5, #64
@@ -238,7 +238,7 @@ Func_0803f82c:
 	adds	r0, r5, #0
 	movs	r1, #96
 	asrs	r7, r3, #16
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, r8
 	ldrb	r3, [r2, r0]
 	mov	r2, sl
@@ -1080,7 +1080,7 @@ Func_0803f82c:
 	bl	0x08044f88
 	str	r0, [sp, #12]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #160
 	movs	r3, #160
 	lsls	r2, r2, #3
@@ -1102,7 +1102,7 @@ Func_0803f82c:
 	mov	fp, r1
 	adds	r0, #5
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r5, #160
 	lsls	r5, r5, #3
 	movs	r2, #179
@@ -1115,7 +1115,7 @@ Func_0803f82c:
 	ldrsb	r1, [r3, r2]
 	ldrsb	r0, [r7, r5]
 	adds	r0, r0, r1
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r2, #160
 	lsls	r2, r2, #3
 	adds	r2, #116
@@ -1380,7 +1380,7 @@ Func_0803f82c:
 	adds	r1, r5, #0
 	bl	0x08108040
 	ldr	r0, [sp, #16]
-	bl	Func_08039430
+	bl	RenderOutput_ClearList
 	ldr	r0, [pc, #428]
 	ldr	r1, [sp, #16]
 	add	r0, r9
@@ -1391,7 +1391,7 @@ Func_0803f82c:
 	ldr	r0, [sp, #12]
 	bl	Func_08045018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #404]
 	movs	r3, #4
 	ldr	r2, [r5, #4]
@@ -1615,7 +1615,7 @@ Func_0803f82c:
 .L_0804058e:
 	bl	.L_0803fd14
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #20
 	pop	{r3, r5, r6, r7}

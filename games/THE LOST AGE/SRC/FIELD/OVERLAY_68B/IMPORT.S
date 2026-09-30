@@ -16,7 +16,7 @@
 	overlay_veneer Object_SetMode
 	overlay_veneer Func_08020170
 	overlay_veneer Func_080201f0
-	overlay_veneer Func_08020218
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020238
 	overlay_veneer Func_08020290
 	overlay_veneer Func_08038040

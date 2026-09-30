@@ -154,7 +154,7 @@ Func_0802cfa4:
 	movs	r0, #254
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_0802d0d2
 	movs	r0, #144
@@ -174,7 +174,7 @@ Func_0802cfa4:
 .L_0802d0de:
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0802d0ec
 	b.n	.L_0802d22e

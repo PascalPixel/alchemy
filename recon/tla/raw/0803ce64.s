@@ -82,9 +82,9 @@ Func_0803ce64:
 	b.n	.L_0803cf52
 .L_0803cf06:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0803cf0c:
-	bl	0x0803a3b8
+	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_0803cf06
 	cmp	r6, #0
@@ -95,7 +95,7 @@ Func_0803ce64:
 	b.n	.L_0803cf28
 .L_0803cf22:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0803cf28:
 	adds	r0, r5, #0
 	bl	Func_0803a3e4

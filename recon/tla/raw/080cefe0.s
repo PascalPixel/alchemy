@@ -10,6 +10,6 @@ Func_080cefe0:
 	movs	r0, #124
 	bl	Audio_PlayCue
 	movs	r0, #12
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 	.2byte 0x0000

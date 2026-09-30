@@ -75,7 +75,7 @@ Func_0813ba50:
 .L_0813bae2:
 	strh	r4, [r0, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 	push	{r5, lr}
 	movs	r3, #192

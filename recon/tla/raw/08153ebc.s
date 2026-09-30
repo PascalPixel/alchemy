@@ -181,7 +181,7 @@ Func_08153ebc:
 	movs	r3, #240
 	str	r3, [r2, #16]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #184]
 	movs	r0, #1
 	movs	r2, #0
@@ -841,7 +841,7 @@ Func_08153ebc:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #44]
 	adds	r0, #1
 	str	r0, [sp, #44]
@@ -933,7 +933,7 @@ Func_08153ebc:
 .L_08154660:
 	ldr	r0, [sp, #48]
 	movs	r1, #6
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [sp, #64]
 	ldr	r3, [r2, #20]
 	cmp	r0, r3
@@ -1154,7 +1154,7 @@ Func_08153ebc:
 	bl	Audio_PlayCue
 	movs	r1, #6
 	ldr	r0, [sp, #48]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r1, [sp, #64]
 	adds	r4, r0, #0
 	ldr	r3, [r1, #20]
@@ -1193,7 +1193,7 @@ Func_08153ebc:
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #44]
 	adds	r3, #1
 	str	r3, [sp, #44]

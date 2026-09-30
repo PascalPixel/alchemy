@@ -85,12 +85,12 @@ Func_080f8ce8:
 	cmp	sl, r3
 	beq.n	.L_080f8dc8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #44]
 	movs	r7, #1
 .L_080f8d98:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r5, #4]
 	ands	r3, r7
 	cmp	r3, #0
@@ -115,7 +115,7 @@ Func_080f8ce8:
 .L_080f8dc8:
 	movs	r0, #82
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080f8dd0:
 	movs	r2, #128
 	lsls	r2, r2, #2
@@ -227,7 +227,7 @@ Func_080f8ce8:
 	beq.n	.L_080f8eda
 	adds	r0, r3, #0
 	str	r4, [sp, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r1, [r7, #0]
 	ldrb	r3, [r0, #2]
 	movs	r2, #127

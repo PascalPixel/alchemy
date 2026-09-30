@@ -256,7 +256,7 @@ Func_08191c20:
 	str	r4, [sp, #24]
 	bl	0x0814cc4c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #128
 	lsls	r1, r1, #2
 	movs	r0, #12
@@ -1099,7 +1099,7 @@ Func_08191c20:
 	movs	r0, #1
 	str	r3, [r2, #0]
 	add	r9, r4
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #148
 	lsls	r0, r0, #1
 	cmp	r9, r0

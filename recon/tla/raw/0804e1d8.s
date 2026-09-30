@@ -24,7 +24,7 @@ Func_0804e1d8:
 	ldrh	r2, [r2, #0]
 	movs	r0, #1
 	strh	r2, [r3, #4]
-	bl	0x08013560
+	bl	WaitFrames
 .L_0804e206:
 	ldr	r2, [pc, #468]
 	ldr	r3, [r2, #12]
@@ -98,12 +98,12 @@ Func_0804e1d8:
 	movs	r1, #12
 	adds	r0, #12
 	str	r2, [sp, #4]
-	bl	0x08002064
+	bl	Math_Mod
 	mov	fp, r0
 	mov	r0, r9
 	movs	r1, #3
 	adds	r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #2
 	mov	r9, r0
 	mov	r0, sl
@@ -242,7 +242,7 @@ Func_0804e1d8:
 	ble.n	.L_0804e32e
 .L_0804e3b2:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0804e206
 .L_0804e3ba:
 	mov	r0, sl
@@ -393,7 +393,7 @@ Func_0804e1d8:
 	mov	r1, sl
 	str	r0, [sp, #8]
 	adds	r0, r5, r1
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r5, r0, #0
 	adds	r0, r7, #0
 	bl	0x080393fc
@@ -442,7 +442,7 @@ Func_0804e1d8:
 	bl	UiText_DrawCharacterAtOffset
 .L_0804e544:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0804e47a
 .L_0804e54c:
 	adds	r0, r7, #0
@@ -452,7 +452,7 @@ Func_0804e1d8:
 	ldr	r0, [sp, #12]
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	add	sp, #24
 	pop	{r3, r5, r6, r7}

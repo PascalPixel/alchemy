@@ -4,7 +4,7 @@
 	.thumb_func
 Func_080b0434:
 	push	{lr}
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #42
 	adds	r2, #255
 	adds	r3, r0, r2

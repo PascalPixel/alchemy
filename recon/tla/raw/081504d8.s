@@ -384,7 +384,7 @@ Func_081504d8:
 .L_081507bc:
 	movs	r1, #7
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #4
 	subs	r1, r1, r0
 	ldr	r0, [sp, #52]
@@ -430,7 +430,7 @@ Func_081504d8:
 .L_0815082a:
 	movs	r1, #6
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #1
 	adds	r1, r1, r0
 	lsls	r1, r1, #3
@@ -509,7 +509,7 @@ Func_081504d8:
 .L_081508c0:
 	movs	r1, #3
 	asrs	r0, r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, fp
 	adds	r5, r0, #0
 	adds	r0, r7, #0
@@ -586,7 +586,7 @@ Func_081504d8:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #44]
 	ldr	r0, [sp, #60]
 	adds	r5, #1
@@ -894,7 +894,7 @@ Func_081504d8:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #12]
 	adds	r1, #1
 	str	r1, [sp, #12]

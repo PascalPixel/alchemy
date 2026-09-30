@@ -406,7 +406,7 @@ Func_0817e698:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	r8, r0
 	mov	r2, r8

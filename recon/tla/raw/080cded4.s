@@ -109,7 +109,7 @@ Func_080cded4:
 	cmp	r0, r3
 	bne.n	.L_080cdfac
 	adds	r0, r1, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	movs	r0, #1
 	subs	r3, #1
@@ -172,7 +172,7 @@ Func_080cded4:
 	movs	r2, #6
 	ldrsh	r0, [r6, r2]
 	str	r4, [sp, #0]
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_080ce08c

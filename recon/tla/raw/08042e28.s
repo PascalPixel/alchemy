@@ -77,7 +77,7 @@ Func_08042e28:
 	lsls	r0, r0, #1
 	bl	Audio_PlayCue
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	bl	Func_08013164
 	adds	r0, r6, #0
@@ -93,7 +93,7 @@ Func_08042e28:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	bl	Func_080c8698
 	movs	r0, #128
 	lsls	r0, r0, #1

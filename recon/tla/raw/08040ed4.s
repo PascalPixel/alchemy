@@ -7,15 +7,15 @@ Func_08040ed4:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #171
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #245
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #170
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r3, [pc, #20]
 	movs	r2, #128
 	lsls	r2, r2, #2
@@ -43,7 +43,7 @@ Func_08040ed4:
 	movs	r0, #136
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r3, [pc, #20]
 	movs	r2, #128
 	lsls	r2, r2, #2
@@ -62,19 +62,19 @@ Func_08040ed4:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #254
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #76
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #225
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #133
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r0, [pc, #8]
 	movs	r1, #30
 	bl	Func_080c8268
@@ -85,29 +85,29 @@ Func_08040ed4:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #36
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #190
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #197
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #160
 	lsls	r0, r0, #4
 	adds	r0, #61
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #156
 	lsls	r0, r0, #4
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #193
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #194
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r0, [pc, #8]
 	movs	r1, #1
 	bl	Func_080c8268
@@ -257,7 +257,7 @@ Func_08040ed4:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	mov	sl, r3
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08041068
 	movs	r7, #1
 	negs	r7, r7
@@ -268,7 +268,7 @@ Func_08040ed4:
 	adds	r0, r5, #0
 	movs	r1, #9
 	adds	r0, #9
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, r8
 	adds	r5, r0, #0
 	movs	r0, #12
@@ -304,7 +304,7 @@ Func_08040ed4:
 	movs	r7, #0
 .L_08041170:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [pc, #132]
 	movs	r2, #2
 	ldr	r3, [r6, #4]
@@ -352,7 +352,7 @@ Func_08040ed4:
 	bl	UiWork_Finalize
 	bl	.L_08041054
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	negs	r0, r0
 	cmp	r5, r0

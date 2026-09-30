@@ -117,7 +117,7 @@ Func_080e82cc:
 	.2byte 0x2000
 	.2byte 0x0600
 .L_080e83c0:
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #128
 	lsls	r3, r3, #19
 	movs	r1, #192
@@ -234,7 +234,7 @@ Func_080e82cc:
 	ldr	r0, [pc, #44]
 	bl	0x080145a8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	strb	r6, [r5, #0]
 	movs	r2, #0
 	mov	fp, r2
@@ -433,7 +433,7 @@ Func_080e82cc:
 	mov	fp, r0
 .L_080e8646:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #186
 	lsls	r2, r2, #2
 	movs	r1, #1
@@ -654,7 +654,7 @@ Func_080e82cc:
 	ldr	r0, [pc, #348]
 	bl	Func_08014644
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #167
 	bl	Audio_PlayCue
 	ldr	r3, [pc, #336]
@@ -679,7 +679,7 @@ Func_080e82cc:
 	movs	r3, #1
 	strb	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [pc, #308]
 	bl	Resource_GetTableEntry
 	mov	r1, sl
@@ -772,7 +772,7 @@ Func_080e82cc:
 	cmp	r3, #63
 	ble.n	.L_080e8886
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r7, #0
 .L_080e8928:
 	movs	r6, #208
@@ -833,7 +833,7 @@ Func_080e82cc:
 	bge.n	.L_080e8938
 	movs	r0, #1
 	adds	r7, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #39
 	ble.n	.L_080e8928
 	ldr	r0, [sp, #4]

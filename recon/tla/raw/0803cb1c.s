@@ -60,7 +60,7 @@ Func_0803cb1c:
 	cmp	r1, #0
 	bne.n	.L_0803cb9c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0803cb52
 .L_0803cb8a:
 	ldrh	r3, [r7, #22]

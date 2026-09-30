@@ -33,7 +33,7 @@ Func_08040a48:
 	bl	0x080409f0
 	adds	r7, r0, #0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08040a8c:
 	mov	r2, r9
 	cmp	r2, #0
@@ -43,17 +43,17 @@ Func_08040a48:
 	movs	r1, #4
 	adds	r0, #4
 	mov	r9, r3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r4, sl
 	mov	r8, r0
 	ldr	r0, [r4, #12]
 	movs	r1, #5
 	adds	r0, #5
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, sl
 	str	r0, [r1, #12]
 	adds	r0, r7, #0
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	movs	r6, #2
 	movs	r5, #2
 .L_08040abc:
@@ -120,7 +120,7 @@ Func_08040a48:
 	bl	0x08108040
 .L_08040b42:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #272]
 	movs	r2, #2
 	ldr	r3, [r5, #4]
@@ -243,7 +243,7 @@ Func_08040a48:
 	bl	UiWork_Finalize
 	bl	0x080409dc
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	add	sp, #24
 	pop	{r3, r5, r6, r7}
@@ -396,7 +396,7 @@ Func_08040a48:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	mov	sl, r3
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08040cc4
 	movs	r7, #1
 	negs	r7, r7
@@ -406,7 +406,7 @@ Func_08040a48:
 	beq.n	.L_08040de8
 	adds	r0, r5, #5
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, r8
 	adds	r5, r0, #0
 	movs	r0, #12
@@ -443,7 +443,7 @@ Func_08040a48:
 	movs	r7, #0
 .L_08040de8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [pc, #112]
 	movs	r2, #2
 	ldr	r3, [r6, #4]
@@ -491,7 +491,7 @@ Func_08040a48:
 	bl	UiWork_Finalize
 	bl	.L_08040cb0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	pop	{r3, r5}
 	mov	r8, r3
@@ -517,15 +517,15 @@ Func_08040a48:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #171
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #245
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #170
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r1, #202
 	adds	r1, #255
 	movs	r0, #4

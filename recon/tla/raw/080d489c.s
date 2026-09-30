@@ -122,25 +122,3 @@ Func_080d489c:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
-	push	{r5, lr}
-	movs	r1, #0
-	adds	r5, r0, #0
-	bl	0x08020218
-	adds	r5, #89
-	movs	r3, #0
-	strb	r3, [r5, #0]
-	movs	r0, #0
-	pop	{r5, pc}
-	push	{lr}
-	movs	r1, #0
-	bl	0x08020218
-	movs	r0, #0
-	pop	{pc}
-	adds	r0, #35
-	ldrb	r2, [r0, #0]
-	movs	r3, #32
-	orrs	r3, r2
-	strb	r3, [r0, #0]
-	movs	r0, #0
-	bx	lr
-	.2byte 0x0000

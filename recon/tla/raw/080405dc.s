@@ -56,7 +56,7 @@ Func_080405dc:
 	sub	sp, #12
 	mov	fp, r3
 	mov	sl, r2
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	movs	r3, #0
 	mov	r9, r0
 	str	r3, [sp, #8]
@@ -232,7 +232,7 @@ Func_080405dc:
 	lsls	r0, r0, #1
 	str	r1, [sp, #12]
 	mov	fp, r2
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	movs	r3, #0
 	str	r3, [sp, #4]
 	adds	r5, r0, #0
@@ -243,7 +243,7 @@ Func_080405dc:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	mov	sl, r3
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08040628
 	movs	r3, #16
 	str	r0, [sp, #16]
@@ -273,7 +273,7 @@ Func_080405dc:
 	mov	r0, r8
 	add	r0, fp
 	mov	r1, fp
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #160
 	lsls	r3, r3, #3
 	mov	r8, r0
@@ -358,7 +358,7 @@ Func_080405dc:
 	ldr	r0, [sp, #8]
 	bl	Func_08045018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #200]
 	movs	r3, #1
 	ldr	r2, [r1, #4]
@@ -441,7 +441,7 @@ Func_080405dc:
 	bl	UiWork_Finalize
 	bl	.L_08040614
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #0
 	blt.n	.L_0804096e
 	ldr	r1, [sp, #4]

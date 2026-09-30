@@ -302,7 +302,7 @@ Func_0814c994:
 	str	r1, [sp, #8]
 	str	r2, [sp, #4]
 	str	r4, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #56
 	ldrsh	r0, [r0, r3]
 	ldr	r1, [sp, #8]
@@ -377,7 +377,7 @@ Func_0814c994:
 	.2byte 0x4000
 	.2byte 0x0600
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #36]
 	movs	r2, #128
 	lsls	r2, r2, #19

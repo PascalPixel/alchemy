@@ -178,7 +178,7 @@ Func_0814512c:
 	mov	r8, r2
 .L_0814527e:
 	ldr	r0, [sp, #28]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #52]
 	lsls	r0, r0, #1
 	adds	r0, #36
@@ -372,7 +372,7 @@ Func_0814512c:
 	ldr	r3, [sp, #52]
 	adds	r0, r4, #0
 	ldr	r1, [r3, #20]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #52]
 	lsls	r0, r0, #1
 	movs	r3, #16
@@ -743,7 +743,7 @@ Func_0814512c:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #36]
 	ldr	r1, [sp, #24]
 	adds	r0, #1
@@ -1372,7 +1372,7 @@ Func_0814512c:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #1
 	add	r8, r2
 	mov	r3, r8
@@ -1568,7 +1568,7 @@ Func_0814512c:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x2001
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r3, r8
 	cmp	r3, #248
 	bgt.n	.L_08145d96
@@ -1613,7 +1613,7 @@ Func_0814512c:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x2001
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5

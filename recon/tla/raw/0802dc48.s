@@ -90,7 +90,7 @@ Func_0802dc48:
 	b.n	.L_0802dcf4
 .L_0802dce4:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #150
 	adds	r6, #1
 	lsls	r3, r3, #1

@@ -47,7 +47,7 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
     struct OwnerTradeState *state =
-        (struct OwnerTradeState *)OwnerState_Get(owner);
+        (struct OwnerTradeState *)Owner_GetState(owner);
     struct TradeOfferTable *table;
     s32 i;
     s32 status;

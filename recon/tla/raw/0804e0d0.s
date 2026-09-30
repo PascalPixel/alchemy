@@ -18,7 +18,7 @@ Func_0804e0d0:
 	bne.n	.L_0804e11a
 	movs	r0, #190
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0804e0fa
 	ldr	r0, [pc, #68]
@@ -26,7 +26,7 @@ Func_0804e0d0:
 .L_0804e0fa:
 	movs	r0, #126
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0804e110
 	ldr	r0, [pc, #56]

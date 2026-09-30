@@ -45,7 +45,7 @@ Func_080c9694:
 	negs	r1, r1
 	cmp	r0, r1
 	beq.n	.L_080c96ea
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080c96f0
 .L_080c96ea:
@@ -143,7 +143,7 @@ Func_080c9694:
 	lsls	r4, r4, #2
 	adds	r3, r1, r4
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	movs	r5, #56
 	ldrsh	r3, [r6, r5]
@@ -340,7 +340,7 @@ Func_080c9694:
 	adds	r2, r1, r0
 	strh	r3, [r2, #0]
 	subs	r0, #217
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080c9918:
 	pop	{r5, r6, pc}
 	movs	r0, r0

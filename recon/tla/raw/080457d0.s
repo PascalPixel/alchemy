@@ -1037,7 +1037,7 @@ Func_080457d0:
 	ldr	r0, [r5, #0]
 	ldr	r1, [r6, #0]
 	adds	r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [r5, #0]
 	b.n	.L_08045fdc
 .L_08045faa:
@@ -1053,7 +1053,7 @@ Func_080457d0:
 	ldr	r1, [r2, #0]
 	adds	r0, r0, r1
 	subs	r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [r7, #0]
 	b.n	.L_08045fdc
 .L_08045fcc:
@@ -1076,7 +1076,7 @@ Func_080457d0:
 	movs	r3, #0
 	strb	r3, [r5, #6]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08045a92
 .L_08045ff8:
 	ldr	r6, [sp, #52]
@@ -1182,7 +1182,7 @@ Func_080457d0:
 	ldr	r5, [sp, #48]
 	movs	r3, #1
 	strb	r3, [r5, #3]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [pc, #100]
 	bl	Func_08014644
 	movs	r0, #2
@@ -1222,7 +1222,7 @@ Func_080457d0:
 	movs	r3, #0
 	strb	r3, [r6, #6]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, sl
 	add	sp, #60
 	pop	{r3, r5, r6, r7}

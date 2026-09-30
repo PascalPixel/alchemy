@@ -11,7 +11,7 @@ Func_0810bf98:
 	adds	r0, r3, #0
 	mov	r8, r2
 	adds	r6, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #12
 	ldrsh	r3, [r5, r2]
 	adds	r0, #216
@@ -32,7 +32,7 @@ Func_0810bf98:
 .L_0810bfd0:
 	adds	r0, r6, #0
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #5
 	adds	r5, r0, #0
 	adds	r0, r6, #0

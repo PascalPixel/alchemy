@@ -6,7 +6,7 @@ Func_0811f444:
 	push	{r5, r6, r7, lr}
 	sub	sp, #16
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r5, #0
 	adds	r7, r0, #0
 	b.n	.L_0811f470
@@ -60,7 +60,7 @@ Func_0811f444:
 	cmp	r0, #0
 	bne.n	.L_0811f494
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	bl	0x0811f3b8
 	adds	r0, r7, #0
@@ -96,7 +96,7 @@ Func_0811f444:
 	ldrsh	r0, [r5, r2]
 	cmp	r0, #254
 	beq.n	.L_0811f51e
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0
@@ -137,7 +137,7 @@ Func_0811f444:
 	ldrsh	r0, [r2, r6]
 	cmp	r0, #254
 	beq.n	.L_0811f56c
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0

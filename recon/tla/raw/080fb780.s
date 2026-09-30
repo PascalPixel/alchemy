@@ -41,7 +41,7 @@ Func_080fb780:
 	strb	r5, [r3, #5]
 	bl	0x080f92ac
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080fb7fe
 .L_080fb7d8:
 	ldr	r3, [r1, #12]
@@ -63,11 +63,11 @@ Func_080fb780:
 	mov	sl, r3
 .L_080fb7f8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fb7fe:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fb840
 	mov	r3, sl
@@ -77,7 +77,7 @@ Func_080fb780:
 	adds	r0, r6, #5
 	movs	r1, #5
 	mov	sl, r3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, r9
 	adds	r6, r0, #0
 	adds	r0, r7, #0
@@ -100,7 +100,7 @@ Func_080fb780:
 	adds	r0, r7, #0
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	movs	r1, #1
 	bl	0x08038018
@@ -165,7 +165,7 @@ Func_080fb780:
 	ands	r0, r1
 	mov	fp, r1
 	str	r5, [sp, #8]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	mov	sl, r0
 	cmp	r3, #0
@@ -348,7 +348,7 @@ Func_080fb780:
 	mov	r0, r8
 	movs	r2, #0
 	str	r4, [sp, #4]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r4, [sp, #4]
 	mov	r1, sl
 	ldrb	r0, [r1, r4]

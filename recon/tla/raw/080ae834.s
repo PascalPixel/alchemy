@@ -22,7 +22,7 @@ Func_080ae834:
 	mov	r2, r8
 	bl	Trade_AddOffer
 	adds	r0, r5, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5
@@ -37,7 +37,7 @@ Func_080ae834:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	sub	sp, #12
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ae886
 	b.n	.L_080aea18
@@ -115,7 +115,7 @@ Func_080ae834:
 	lsls	r0, r0, #2
 	add	r0, r8
 	adds	r0, #48
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ae99e
 	mov	r0, sl
@@ -201,14 +201,14 @@ Func_080ae834:
 	add	r7, sl
 .L_080ae9c0:
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ae9d0
 	adds	r0, r7, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080ae9d0:
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r0, #1
 	add	r8, r0
 	mov	r1, r8
@@ -254,8 +254,11 @@ Func_080ae834:
 	.4byte 0x02000240
 	.2byte 0x1290
 	.2byte 0x080b
+	.global Owner_RecalculateRatios
+	.thumb_func
+Owner_RecalculateRatios:
 	push	{r5, lr}
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	movs	r2, #56
 	ldrsh	r0, [r5, r2]

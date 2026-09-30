@@ -364,7 +364,7 @@ Func_08144628:
 	asrs	r5, r5, #1
 	str	r5, [r1, #0]
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [sp, #64]
 	lsls	r1, r0, #2
 	adds	r1, r1, r0
@@ -529,7 +529,7 @@ Func_08144628:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #36]
 	ldr	r2, [pc, #68]
 	adds	r3, #1

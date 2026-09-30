@@ -106,7 +106,7 @@ Func_08044a58:
 	mov	r0, r8
 	bl	0x08014128
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x081c0048
 	cmp	r0, #0
 	beq.n	.L_08044b4c
@@ -119,7 +119,7 @@ Func_08044a58:
 	movs	r1, #2
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #16]
 	bl	0x08014274
 .L_08044b60:
@@ -227,7 +227,7 @@ Func_08044a58:
 	adds	r0, r7, #0
 	bl	0x08014128
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x081c0048
 	cmp	r0, #0
 	beq.n	.L_08044c56
@@ -240,7 +240,7 @@ Func_08044a58:
 	movs	r1, #2
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #12]
 	bl	0x08014274
 .L_08044c6a:
@@ -361,7 +361,7 @@ Func_08044a58:
 	adds	r0, r7, #0
 	bl	0x08014128
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x081c0048
 	cmp	r0, #0
 	beq.n	.L_08044d90
@@ -378,7 +378,7 @@ Func_08044a58:
 	mov	r0, r9
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #20]
 	bl	0x08014274
 	ldr	r0, [sp, #12]
@@ -455,7 +455,7 @@ Func_08044a58:
 	adds	r5, #255
 .L_08044e42:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x081c0048
 	cmp	r0, #0
 	beq.n	.L_08044e58
@@ -468,7 +468,7 @@ Func_08044a58:
 	movs	r1, #2
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #0
 	str	r3, [sp, #0]
 	movs	r0, #3
@@ -547,7 +547,7 @@ Func_08044a58:
 	adds	r5, #255
 .L_08044f06:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r6, #4]
 	ands	r3, r5
 	cmp	r3, #0
@@ -556,7 +556,7 @@ Func_08044a58:
 	movs	r1, #2
 	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #4]
 	bl	0x08014274
 .L_08044f28:

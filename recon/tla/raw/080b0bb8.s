@@ -9,7 +9,7 @@ Func_080b0bb8:
 	adds	r5, r1, #0
 	adds	r6, r2, #0
 	adds	r7, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #140
 	lsls	r2, r2, #1
 	adds	r3, r5, r2

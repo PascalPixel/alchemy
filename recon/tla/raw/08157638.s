@@ -412,7 +412,7 @@ Func_08157638:
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #24]
 	adds	r3, #1
 	str	r3, [sp, #24]
@@ -792,7 +792,7 @@ Func_08157638:
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r7, [pc, #72]
 	ldr	r3, [sp, #16]
 	ldr	r0, [sp, #28]
@@ -1217,7 +1217,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [pc, #72]
 	ldr	r1, [sp, #16]
 	ldr	r3, [sp, #36]
@@ -1666,7 +1666,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #1
 	add	r8, r1
 	movs	r0, #8
@@ -2133,7 +2133,7 @@ Func_08157638:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sl, r0
 	mov	r1, sl
@@ -2755,7 +2755,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #44]
 	adds	r2, #1
 	str	r2, [sp, #44]
@@ -3776,7 +3776,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [sp, #24]
 	ldr	r0, [sp, #20]
 	ldr	r1, [sp, #16]
@@ -4225,7 +4225,7 @@ Func_08157638:
 	bl	Func_081963ec
 	movs	r1, #3
 	mov	r0, r9
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #2
 	adds	r1, r1, r0
 	ldr	r3, [sp, #112]
@@ -4694,7 +4694,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #100]
 	adds	r2, #1
 	str	r2, [sp, #100]
@@ -4993,14 +4993,14 @@ Func_08157638:
 	adds	r7, r2, r1
 	mov	r0, r8
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r1, #96
 	ldr	r0, [r7, #24]
 	bl	Math_Div
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #384]
 	adds	r5, r5, r0
 	lsls	r3, r5, #1
@@ -5157,7 +5157,7 @@ Func_08157638:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #72]
 	ldr	r2, [sp, #12]
 	movs	r6, #1
@@ -5197,21 +5197,21 @@ Func_08157638:
 	cmp	r3, #0
 	bne.n	.L_0815a054
 	movs	r1, #6
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 	b.n	.L_0815a066
 .L_0815a054:
 	cmp	r3, #1
 	bne.n	.L_0815a060
 	movs	r1, #7
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 	b.n	.L_0815a066
 .L_0815a060:
 	movs	r1, #8
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 .L_0815a066:
 	pop	{pc}
 	push	{lr}
 	movs	r1, #0
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 	pop	{pc}
 	.2byte 0x0000

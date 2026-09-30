@@ -18,7 +18,7 @@ Func_081a7518:
 	bl	0x08013e70
 	bl	0x08014b70
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #52]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -145,7 +145,7 @@ Func_081a7518:
 .L_081a7650:
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #119
 	bhi.n	.L_081a76ea
 	ldr	r3, [pc, #148]
@@ -167,7 +167,7 @@ Func_081a7518:
 .L_081a7678:
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #59
 	bhi.n	.L_081a7694
 	ldr	r3, [pc, #108]
@@ -200,7 +200,7 @@ Func_081a7518:
 .L_081a76b8:
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #179
 	bhi.n	.L_081a76d4
 	ldr	r3, [pc, #44]
@@ -244,7 +244,7 @@ Func_081a7518:
 	bl	0x08013e70
 	bl	0x08014b70
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #60]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -364,7 +364,7 @@ Func_081a7518:
 .L_081a7820:
 	movs	r0, #1
 	adds	r5, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r5, #119
 	bhi.n	.L_081a7858
 	ldr	r3, [pc, #48]

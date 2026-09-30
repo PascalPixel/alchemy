@@ -50,7 +50,7 @@ void Owner_RefreshDerivedData(s32 owner);
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
     struct OwnerDjinnState *state =
-        (struct OwnerDjinnState *)OwnerState_Get(owner);
+        (struct OwnerDjinnState *)Owner_GetState(owner);
     s32 result = Trade_CanOfferDjinn(owner, index, bit);
 
     if (result != 0) {

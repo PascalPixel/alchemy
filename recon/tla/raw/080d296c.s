@@ -63,7 +63,7 @@ Func_080d296c:
 	cmp	r7, r3
 	beq.n	.L_080d29fe
 	adds	r0, r7, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080d29fe:
 	movs	r0, #0
 .L_080d2a00:

@@ -24603,11 +24603,11 @@ msgctxt "message"
 msgid "06148"
 msgstr "Nicht hier entlang, {actor_name:6}!{line_break}Dieser Weg hier führt zum{line_break}Treffpunkt.{page_break}Wir müssen hier nach unten{line_break}klettern und die Höhle{line_break}durchqueren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoReliefWords"
 msgid "06149"
 msgstr "Hier sind Worte in den{line_break}Stein gemeißelt...{page_break}Willst du den Venus-Leucht-{line_break}turm erklimmen, suche zuerst{line_break}die Kraft im Inneren.{page_break}Um diese Kraft zu erlangen,{line_break}schaue durch die Augen der{line_break}Wahrheit.{page_break}Erst dann wird der Weg sich{line_break}öffnen.{page_break}Doch der Pfad, den ich weise,{line_break}ist nicht der Anfang.{page_break}Zum wahren Anfang führen{line_break}alte Pfade auf fremder{line_break}Erde.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoTrueHeart"
 msgid "06150"
 msgstr "Der wahre Weg wird sich{line_break}nur jenem offenbaren, der{line_break}reinen Herzens ist.{end_wait}"
 

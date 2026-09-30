@@ -105,6 +105,7 @@ s32 Engine_GameFlagIsSet(s32 flag);
 void Engine_GameFlagSet(s32 flag);
 void Engine_ShopOpen(s32 shop, s32 keeper);
 void Engine_AudioPlayCue(s32 cue);
+void Engine_MessageShowCentered(s32 message, s32 flags);
 void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
 void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 struct FieldActor *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);

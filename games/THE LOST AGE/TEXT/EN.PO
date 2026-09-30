@@ -22627,11 +22627,11 @@ msgctxt "message"
 msgid "05654"
 msgstr "Not that way, {actor_name:6}!{line_break}The meeting spot{line_break}is down this way.{page_break}We must climb down here{line_break}and go into that cave.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoReliefWords"
 msgid "05655"
 msgstr "There are words carved{line_break}into the relief...{page_break}If ye seek to climb{line_break}Venus Lighthouse, first{line_break}seek the power within.{page_break}To obtain this power, see{line_break}with the eyes of truth.{line_break}Then the way shall open.{page_break}But the path I reveal is{line_break}not the beginning.{page_break}The true beginning lies{line_break}down ancient pathways{line_break}on distant soils.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoTrueHeart"
 msgid "05656"
 msgstr "The true road can only{line_break}be known by he who bears{line_break}a true heart.{end_wait}"
 

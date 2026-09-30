@@ -21,7 +21,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/PARTY_INTRO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/SAY.o"(.text)
-        "*/resource_380_overlay.o"(.text.x0200c25e)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/PRESENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/MYTHRIL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RISE_SPARKS.o"(.text)
         "*/resource_380_overlay.o"(.text.x0200c49c)

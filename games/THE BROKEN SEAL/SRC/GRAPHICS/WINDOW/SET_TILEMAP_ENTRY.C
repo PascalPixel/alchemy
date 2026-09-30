@@ -1,62 +1,83 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-extern u8 Data_03001e8c[];
+
+/* A window's frame on the 32-tile-wide text tilemap. */
+struct UiWindowFrame {
+    u8 unknown_00[8];
+    u16 width;
+    u16 height;
+    u16 left;
+    u16 top;
+};
+
+enum {
+    TILEMAP_ENTRY_PLAIN,
+    TILEMAP_ENTRY_NONE,
+    TILEMAP_ENTRY_PALETTE_14,
+    TILEMAP_ENTRY_PALETTE_15,
+    TILEMAP_ENTRY_PALETTE_1
+};
+
+#define TILEMAP_WIDTH 32
+#define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
+
+extern u16 *Data_03001e8c;
 
 /* Writes one tile into a window's tilemap; modes 2-4 add palette bits. */
 void UiWindow_SetTilemapEntry(
-    u8 *window, s32 value, s32 x, s32 y, u32 mode)
+    struct UiWindowFrame *window, s32 value, s32 x, s32 y, u32 mode)
 {
-    u16 *map = *(u16 **)((u32)&Data_03001e8c);
-    s32 mask;
+    u16 *map = Data_03001e8c;
+    s32 palette;
     s32 index;
 
     y += 1;
     x += 1;
-    if ((u32)y > (u32)(*(u16 *)(window + 10) - 1))
+    if ((u32)y > (u32)(window->height - 1))
         return;
-
-    if ((u32)x > (u32)(*(u16 *)(window + 8) - 1))
+    if ((u32)x > (u32)(window->width - 1))
         return;
 
     switch (mode) {
-    case 3:
-        mask = 0xf000;
+    case TILEMAP_ENTRY_PALETTE_15:
+        palette = 0xf000;
         break;
-    case 2:
-        mask = 0xe000;
+    case TILEMAP_ENTRY_PALETTE_14:
+        palette = 0xe000;
         break;
-    case 4:
-        mask = 0x1000;
+    case TILEMAP_ENTRY_PALETTE_1:
+        palette = 0x1000;
         break;
     default:
-        mask = 0;
+        palette = 0;
         break;
     }
 
+    /* FAKEMATCH: the plain write is a separate tail reached by goto so the
+       palette and plain stores keep their own copies of the bounds check,
+       and the byte-offset store keeps map as the strh offset register. */
     switch (mode) {
-    case 0:
+    case TILEMAP_ENTRY_PLAIN:
         goto plain;
-    case 1:
+    case TILEMAP_ENTRY_NONE:
         return;
-    case 2:
-    case 3:
-    case 4:
+    case TILEMAP_ENTRY_PALETTE_14:
+    case TILEMAP_ENTRY_PALETTE_15:
+    case TILEMAP_ENTRY_PALETTE_1:
         break;
     default:
         goto plain;
     }
 
-    index = ((*(u16 *)(window + 14) + y) << 5)
-        + (*(u16 *)(window + 12) + x);
-    if ((u32)index >= 640)
+    index = (window->top + y) * TILEMAP_WIDTH + (window->left + x);
+    if ((u32)index >= TILEMAP_ENTRIES)
         return;
-    *(u16 *)((u8 *)map + (index << 1)) = (u16)(mask | value);
+    *(u16 *)((u8 *)map + (index << 1)) = palette | value;
     return;
 
 plain:
-    index = ((*(u16 *)(window + 14) + y) << 5)
-        + (*(u16 *)(window + 12) + x);
-    if ((u32)index >= 640)
+    index = (window->top + y) * TILEMAP_WIDTH + (window->left + x);
+    if ((u32)index >= TILEMAP_ENTRIES)
         return;
-    *(u16 *)((u8 *)map + (index << 1)) = (u16)value;
+    *(u16 *)((u8 *)map + (index << 1)) = value;
 }

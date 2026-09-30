@@ -1,85 +1,19 @@
-/* 2026-09-30 (Jupiter): register allocation follows RTL order for the first
- * BLDCNT store. Whichever of zero and address is set second gets r3, and
- * sched2 keeps the order. Zero first gives movs r2; ldr r3 (2 edits,
- * swapped); address first gives ldr r2; movs r3 (2 edits, order). Nested
- * do/while barriers around the zero, address or store, an outer z, z|z,
- * z+z, u8/u16 zeros and an address loaded before the call (r5) all fail.
- * Asm idea, if admitted: a tagged `movs r3, #0` asm output feeding the store.
- */
-/* 2026-09-28 inline store-boundary trial: a value-first helper emits the
- * reference's zero-before-address order, but uses r2 for zero and r3 for
- * the address (3 differing halfwords). Reversing the helper arguments
- * reproduces the two-halfword baseline. Neither recovers the required
- * r3-zero/r2-address allocation; keep the original one-pass store. */
-/* 2026-09-27 outer-z lifetime trial: reusing the function-scope z for the
- * first BLDCNT zero keeps 3964 bytes but raises the complete difference to
- * nine halfwords. The first three instructions become movs r4; ldr r3;
- * strh r4, [r3], and later uses move as well. Restore the shadow local;
- * this lifetime is not the reference's r3-zero/r2-address pair. */
-/* Astra 2026-09-27 paired-store transfer: spelling the first BLDCNT write
- * like the later do/while s16 store, with a volatile halfword destination,
- * emits 3964/3964 but moves an earlier pool and grows the full difference
- * to 529 halfwords / 195 aligned edits. The nonvolatile form does the same.
- * Neither retains the first block and pool, so restore the two-edit owner.
- * No new DONE or alignment credit; close the paired-store axis.
- * NONMATCHING: 3964 of 3964 bytes, 2 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 2 halfwords: in case 7/8 of area 0xb8 the REG_BLDCNT zero store still loads the address (r2) before the zero (r3). Spelling the zero as a u32 local inside the do/while puts the zero first but swaps the registers (3 edits). The area 0xba loop counter is unsigned (bls), and the second BLDCNT zero is a do/while around an s16 store (FAKEMATCH). Every other instruction, pool and jump table matches. The b9 opening-auxiliary call is spelled through a value-returning cast so cross-jumping keeps the two identical blocks apart (tag FAKEMATCH when closed). Why: sched2 keeps RTL order for the two independent insns, and local-alloc hands r3 (first in the thumb allocation order) to the higher-priority pseudo; the reference therefore needs the zero first in RTL and the address as the shorter-lived pseudo or a reload. A function-scope volatile u16 *bldcnt used here still comes out address-first (4). Measured 2026-09-24 in agscc source: sched2 (rank_for_schedule) breaks the tie after the Main_080091a0 call by priority, then class against the call (both anti/output, class 2), then dependent count (equal: strh and the next call), then RTL order; local-alloc (QTY_CMP_PRI = floor_log2(refs) * refs * size / life) gives r3 to the shorter-lived pseudo, so the zero set first in RTL loses r3 to the address. A do/while puts loop notes on its first insn, which becomes a sched2 barrier; a bare block (no do/while) scores 4. Untried: making the address pseudo global (live across a block boundary, allocated after local-alloc) with the zero lacking a REG_EQUIV note, or giving the zero four references before combine. */
-/* Recovered and re-scored 2026-09-26 through retained-scene-entry-setup-3c8:
- * 3964 / 3964, 2 differing halfwords, 2 aligned edits. This is the retained
- * baseline; scene_entry_setup.c is preserved but scores 3952 / 1277 / 399.
- * New structural trial: share the BLDCNT address across both area branches
- * and initialize the first zero before its store. The pointer became a
- * function-wide r6 value loaded in the prologue: 3952 / 1529 / 351, with
- * shifted pools and jump tables. Rejected; original two-halfword body kept.
- * No further lifetime hypothesis justified here. Still not-yet-c. */
-/* 2026-09-27: reduced ordinary-C witnesses tested the required sequence
- * independently: movs r3, #0; ldr r2, BLDCNT; strh r3, [r2]. A volatile
- * three-u16 display-register struct adds an unwanted ldrh before the write.
- * Its nonvolatile counterpart removes that read but still loads the address
- * before zero. Neither admits the reference sequence; the typed-MMIO axis
- * is closed. Full baseline rechecked: 3964 bytes, two differing halfwords,
- * only the same instruction-order hunk; body and credit unchanged.
- * A separate reduced witness transferred the exact serial-reset repeated
- * local/block lifetime: zero = 0; then control = BLDCNT and zero = 0 in a
- * second one-pass block. It still emits address before zero. That lifetime
- * transfer is rejected too; no full-function spelling sweep followed. */
-/* 2026-09-27 doorway lifetime audit: complete exact CROSS_DOORWAY (572 B)
- * writer and both full compiler dumps compared, not just its zero spelling.
- * Doorway SI33 is initialized before a real loop, flows through the byte
- * read-mask-OR writer, crosses calls/blocks, and is globally assigned sl.
- * Here initial RTL SI481 feeds only a HI conversion and volatile halfword
- * store; after combine/local allocation it has REG_EQUIV zero and dies at
- * that store, together with address SI480. There is no loop-carried writer
- * or shared consumer. The underlying zero ancestry differs. Reject this
- * transfer without a source trial or added stores; retain the full 3964 B
- * baseline with only address/zero order at the first BLDCNT write differing.
- * The old four-reference/address-cross-block idea remains unsupported by
- * this witness. No new function bytes, alignment bytes or DONE. */
-/* 2026-09-27 zero-before-loop lifetime trial: moving the s32 zero outside
- * the one-pass block emits zero before address, but local allocation assigns
- * zero=r2 and address=r3: 3964 bytes, three differing halfwords. The loop
- * does not create the needed cross-block lifetime. Restore the two-edit body. */
-/* 2026-09-27 declaration/assignment split: declaring pointer SI480 before
- * zero SI481, then assigning zero before pointer, still emits zero=r2 and
- * address=r3: 3964 bytes, three halfword edits. RTL confirms pseudo numbers
- * stayed 480/481, so declaration order alone cannot overcome the longer
- * zero live range at local allocation. Restore the two-edit body. */
-/* Astra 2026-09-27: use Value_04000050 for the first blend-register
- * address, transferring the established link-constant method. Full output
- * remains 3964 bytes / 2 halfwords. Initializing zero before that symbolic
- * address gives 3 edits: the order is correct but r2/r3 remain exchanged.
- * A separate one-halfword { value } record initialized to zero forces a
- * pool-loaded zero and an earlier pool, 3964 bytes / 529 halfwords / 196
- * aligned edits. All complete diffs checked; neither producer admits the
- * reference sequence. Keep the original two-halfword draft unchanged. */
+/* The Vinasu rooms' entry setup: per room and entrance, which actors,
+ * cells and effects are placed before the scene starts. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "IO_REG.H"
+#include "SCENE_IDS.H"
 
-void Main_0808a408(s32 value);
-void Main_0808a5e0(s32 value);
-void Main_080091a0(void);
-void Main_080091b8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void BattleFx_StartFadeOverlay(s32 mode);
+void BattleFx_SetQueuedSoundAndPlay(s32 cue);
+void DisplayBlend_EnableRunScript(void);
+void SceneActor_SetFlagBitByRelativeDepth(union FieldObject *object);
+void SceneEffect_SpawnRandomizedParticleEveryFourFrames(union FieldObject *object);
+void SceneState_CallWith432And32(void);
+void FieldScene_CallWith560And44(void);
+void SceneState_ApplyStepToSlots15To18(void);
+
 void SceneActor_ApplySlotsMatchingKind212(void);
 void SceneActor_ClearActorModeAndSetState5(s32 actor);
 void SceneActor_ApplyPositionsOfActors11And12(void);
@@ -91,8 +25,9 @@ void FieldScene_PlaceAndPinSlots8To10(void);
 void FieldScene_RunOpeningAuxiliarySequence(void);
 void VinasuHeya_RunCellPushScene(void);
 void Scene_RunParticleWaveSequence(void);
-void FieldScene_RunScene3c8_02004a2c(void);
+void FieldScene_RunLeaderDropSequence(void);
 void Scene_RunScene3c8SequenceA(void);
+/* FAKEMATCH: the CallN inline wrappers order each call's argument setup as the reference does. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -123,32 +58,12 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Local_020042bc(void);
+void Scene_RunPairedParticleWaveSequence(void);
 void Scene_RunEastParticleWaveSequence(void);
 void VinasuHeya_SettlePushedBlocks(void);
 void VinasuHeya_LowerFloatingBlocks(s32 mode);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    u16 counts[512];
-    s32 words[256];
-};
 
-extern union GameStateRows Data_02000240_t;
-extern u8 SceneId_VinasuHeya1[];
-extern u8 SceneId_VinasuHeya2[];
-extern u8 SceneId_VinasuHeya3[];
-extern u8 SceneId_VinasuHeya4[];
-extern u8 SceneId_VinasuHeya5[];
-extern u8 SceneId_VinasuHeya6[];
-
-#define UPDATE_8C9 ((void (*)(union FieldObject *))0x20088c9)
-#define UPDATE_B99 ((void (*)(union FieldObject *))0x2008b99)
-#define TASK_5F1 ((void (*)(void))0x200c5f1)
-#define TASK_601 ((void (*)(void))0x200c601)
-#define TASK_051 ((void (*)(void))0x200b051)
-#define REG_BLDCNT (*(volatile u16 *)0x4000050)
 
 s32 Scene_RunEntrySetup(void)
 {
@@ -163,8 +78,8 @@ s32 Scene_RunEntrySetup(void)
         SceneActor_ApplySlotsMatchingKind212();
     Engine_GameFlagSet(0x110);
     gEventWork->start_transition = 0x204;
-    area = Data_02000240_t.halves[224][0];
-    if (area == (s32)SceneId_VinasuHeya1) {
+    area = gGameState.scene;
+    if (area == (s32)&SceneId_VinasuHeya1) {
         gEventWork->start_transition = 0x100;
         if (!Engine_GameFlagIsSet(0x981))
             SceneActor_ClearActorModeAndSetState5(8);
@@ -180,8 +95,8 @@ s32 Scene_RunEntrySetup(void)
         SceneActor_ClearActorModeAndSetState5(14);
         goto end;
     }
-    if (area == (s32)SceneId_VinasuHeya2) {
-        switch (Data_02000240_t.halves[225][0]) {
+    if (area == (s32)&SceneId_VinasuHeya2) {
+        switch (gGameState.entrance) {
         case 1:
         case 2:
             SceneActor_ClearActorModeAndSetState5(8);
@@ -246,16 +161,16 @@ s32 Scene_RunEntrySetup(void)
             }
             break;
         }
-    } else if (area == (s32)SceneId_VinasuHeya3) {
-        switch (Data_02000240_t.halves[225][0]) {
+    } else if (area == (s32)&SceneId_VinasuHeya3) {
+        switch (gGameState.entrance) {
         case 16:
             Engine_GameFlagClear(0x12f);
             break;
         case 21:
-            Local_020042bc();
+            Scene_RunPairedParticleWaveSequence();
             break;
         case 20:
-            Main_0808a5e0(170);
+            BattleFx_SetQueuedSoundAndPlay(170);
             if (!Engine_GameFlagIsSet(0x109))
                 FieldScene_RunSupplementalSequenceOne();
             break;
@@ -273,17 +188,17 @@ s32 Scene_RunEntrySetup(void)
             break;
         case 7:
         case 8:
-            Main_0808a408(0);
+            BattleFx_StartFadeOverlay(0);
             Engine_TaskWait(2);
             actor = Engine_ActorGet(8);
             actor->motion_flags = 0;
-            actor->update = UPDATE_8C9;
+            actor->update = SceneActor_SetFlagBitByRelativeDepth;
             actor = Engine_ActorGet(9);
             actor->motion_flags = 0;
-            actor->update = UPDATE_8C9;
+            actor->update = SceneActor_SetFlagBitByRelativeDepth;
             actor = Engine_ActorGet(10);
             actor->motion_flags = 0;
-            actor->update = UPDATE_8C9;
+            actor->update = SceneActor_SetFlagBitByRelativeDepth;
             FieldScene_PlaceAndPinSlots8To10();
             break;
         case 11:
@@ -291,16 +206,16 @@ s32 Scene_RunEntrySetup(void)
         case 13:
         case 14:
         case 15:
-            Main_0808a5e0(170);
-            Main_0808a408(0);
+            BattleFx_SetQueuedSoundAndPlay(170);
+            BattleFx_StartFadeOverlay(0);
             Engine_TaskWait(2);
             if (Engine_GameFlagIsSet(0x300)) {
                 Call6((void (*)())Engine_MapCopyCellsTo, 111, 5, 117, 5, 5, 2);
                 Call6((void (*)())Engine_MapCopyCellsTo, 111, 10, 117, 10, 5, 2);
                 Call6((void (*)())Engine_MapCopyCellsTo, 111, 7, 111, 5, 5, 2);
                 Call6((void (*)())Engine_MapCopyCellsTo, 111, 7, 111, 10, 5, 2);
-                Call6((void (*)())Main_080091b8, 48, 3, 3, 10, 54, 3);
-                Call6((void (*)())Main_080091b8, 55, 26, 3, 10, 48, 3);
+                Call6((void (*)())Engine_MapCopyCells, 48, 3, 3, 10, 54, 3);
+                Call6((void (*)())Engine_MapCopyCells, 55, 26, 3, 10, 48, 3);
             }
             break;
         case 1:
@@ -310,14 +225,14 @@ s32 Scene_RunEntrySetup(void)
         case 19:
             goto cue;
         }
-    } else if (area == (s32)SceneId_VinasuHeya4) {
-        switch (Data_02000240_t.halves[225][0]) {
+    } else if (area == (s32)&SceneId_VinasuHeya4) {
+        switch (gGameState.entrance) {
         case 2:
             FieldScene_RunOpeningAuxiliarySequence();
             goto cue;
         case 4:
         case 6:
-            Main_0808a408(0);
+            BattleFx_StartFadeOverlay(0);
             break;
         case 9:
         case 10:
@@ -343,7 +258,7 @@ s32 Scene_RunEntrySetup(void)
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Call3((void (*)())Engine_ActorSetPosition, 10, 0x2e70000, 174 << 18);
-                actor->update = UPDATE_B99;
+                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
             }
             VinasuHeya_RunCellPushScene();
             break;
@@ -352,9 +267,14 @@ s32 Scene_RunEntrySetup(void)
             Engine_ActorGet(0)->y.fixed = -0x20000;
         case 7:
         case 8:
-            Main_0808a5e0(170);
-            Main_080091a0();
-            do { volatile u16 *reg = (volatile u16 *)0x4000050; s32 z = 0; *reg = z; } while (0);
+            BattleFx_SetQueuedSoundAndPlay(170);
+            DisplayBlend_EnableRunScript();
+            {
+                register s32 zero asm("r3"); /* FAKEMATCH: pins the zero to r3 */
+                asm("mov %0, #0" : "=l"(zero)); /* FAKEMATCH: zero before the address load */
+                REG_BLDCNT = zero;
+                asm volatile(""); /* FAKEMATCH: keeps the store before the next call setup */
+            }
             if (Engine_GameFlagIsSet(0x300)) {
                 Call6((void (*)())Engine_MapCopyCellsTo, 15, 96, 9, 96, 3, 3);
                 Call6((void (*)())Engine_MapCopyCellsTo, 12, 96, 15, 96, 3, 3);
@@ -363,7 +283,7 @@ s32 Scene_RunEntrySetup(void)
                 Call6((void (*)())Engine_MapCopyCellAttributes, 15, 32, 3, 1, 9, 32);
                 Call6((void (*)())Engine_MapCopyCellAttributes, 12, 32, 3, 1, 15, 32);
             }
-            if (Data_02000240_t.halves[225][0] != 11)
+            if (gGameState.entrance != 11)
                 break;
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
@@ -372,8 +292,8 @@ s32 Scene_RunEntrySetup(void)
         case 1:
             goto cue;
         }
-    } else if (area == (s32)SceneId_VinasuHeya5) {
-        switch (Data_02000240_t.halves[225][0]) {
+    } else if (area == (s32)&SceneId_VinasuHeya5) {
+        switch (gGameState.entrance) {
         case 19:
             Scene_RunParticleWaveSequence();
             break;
@@ -384,29 +304,29 @@ s32 Scene_RunEntrySetup(void)
         case 13:
         case 14:
         case 20:
-            Main_0808a5e0(170);
+            BattleFx_SetQueuedSoundAndPlay(170);
             if (Engine_GameFlagIsSet(0x306)) {
-                Call6((void (*)())Main_080091b8, 53, 12, 3, 13, 26, 12);
+                Call6((void (*)())Engine_MapCopyCells, 53, 12, 3, 13, 26, 12);
                 Call6((void (*)())Engine_MapCopyCellsTo, 81, 41, 89, 14, 9, 2);
                 Engine_TaskWait(1);
-                Call2((void (*)())Engine_TaskAddCallback, TASK_5F1, 0xc80);
+                Call2((void (*)())Engine_TaskAddCallback, SceneState_CallWith432And32, 0xc80);
             }
             if (Engine_GameFlagIsSet(0x307)) {
-                Call6((void (*)())Main_080091b8, 58, 12, 3, 13, 34, 12);
+                Call6((void (*)())Engine_MapCopyCells, 58, 12, 3, 13, 34, 12);
                 Call6((void (*)())Engine_MapCopyCellsTo, 81, 41, 97, 14, 5, 2);
                 Engine_TaskWait(1);
-                Call2((void (*)())Engine_TaskAddCallback, TASK_601, 0xc80);
+                Call2((void (*)())Engine_TaskAddCallback, FieldScene_CallWith560And44, 0xc80);
             }
-            if (Data_02000240_t.halves[225][0] == 11)
+            if (gGameState.entrance == 11)
                 FieldScene_RunOpeningAuxiliarySequence();
-            else if (Data_02000240_t.halves[225][0] == 20)
+            else if (gGameState.entrance == 20)
                 Scene_RunEastParticleWaveSequence();
             break;
         case 4:
         case 5:
             /* FAKEMATCH: value-returning cast prevents cross-jumping these blocks. */
             ((s32 (*)(void))FieldScene_RunOpeningAuxiliarySequence)();
-            Main_0808a5e0(170);
+            BattleFx_SetQueuedSoundAndPlay(170);
             break;
         case 15:
         case 16:
@@ -448,15 +368,15 @@ s32 Scene_RunEntrySetup(void)
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Call3((void (*)())Engine_ActorSetPosition, 12, 0x2d70000, 158 << 18);
-                actor->update = UPDATE_B99;
+                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
             }
             VinasuHeya_SettlePushedBlocks();
             break;
         case 6:
             goto cue;
         }
-    } else if (area == (s32)SceneId_VinasuHeya6) {
-        switch (Data_02000240_t.halves[225][0]) {
+    } else if (area == (s32)&SceneId_VinasuHeya6) {
+        switch (gGameState.entrance) {
         case 1:
         case 2:
             if (Engine_GameFlagIsSet(0x109)) {
@@ -507,7 +427,7 @@ s32 Scene_RunEntrySetup(void)
         case 13:
         case 14:
         cue:
-            Main_0808a5e0(170);
+            BattleFx_SetQueuedSoundAndPlay(170);
             break;
         case 18:
         case 19:
@@ -527,10 +447,10 @@ s32 Scene_RunEntrySetup(void)
             Engine_ActorGet(20)->motion_flags = 4;
             Engine_ActorGet(20)->priority_flags |= 2;
             Engine_ActorGet(20)->y.fixed = -0x108000;
-            Main_080091a0();
-            do { *(s16 *)0x04000050 = 0; } while (0); /* FAKEMATCH: the do/while keeps the zero ahead of the register address */
+            DisplayBlend_EnableRunScript();
+            do { *(s16 *)&REG_BLDCNT = 0; } while (0); /* FAKEMATCH: the do/while keeps the zero ahead of the register address */
             if (Engine_GameFlagIsSet(0x306)) {
-                Main_0808a5e0(170);
+                BattleFx_SetQueuedSoundAndPlay(170);
                 Call6((void (*)())Engine_MapCopyCellsTo, 36, 81, 32, 81, 3, 2);
                 Call6((void (*)())Engine_MapCopyCellsTo, 36, 83, 36, 81, 3, 2);
                 Call6((void (*)())Engine_MapCopyCellAttributes, 36, 17, 3, 1, 32, 17);
@@ -546,13 +466,13 @@ s32 Scene_RunEntrySetup(void)
                 Call6((void (*)())Engine_MapCopyCellsTo, 63, 29, 49, 20, 1, 1);
                 Call6((void (*)())Engine_MapCopyCellsTo, 41, 56, 44, 17, 3, 4);
             }
-            if ((u16)((s16)Data_02000240_t.counts[225] - 18) <= 1) {
+            if ((u16)(gGameState.entrance - 18) <= 1) {
                 Engine_EventOpenScreen();
                 Engine_EventWaitForScreen();
                 gEventWork->start_transition = 0x204;
             }
-            if ((s16)Data_02000240_t.counts[225] == 20)
-                FieldScene_RunScene3c8_02004a2c();
+            if (gGameState.entrance == 20)
+                FieldScene_RunLeaderDropSequence();
             break;
         found:
             actor->priority_flags |= 2;
@@ -563,7 +483,7 @@ s32 Scene_RunEntrySetup(void)
         case 15:
         case 16:
             Engine_TaskWait(1);
-            Call2((void (*)())Engine_TaskAddCallback, TASK_051, 0xc80);
+            Call2((void (*)())Engine_TaskAddCallback, SceneState_ApplyStepToSlots15To18, 0xc80);
             actor = Engine_ActorGet(14);
             actor->motion_flags = 0;
             actor->y.fixed = 0;
@@ -602,7 +522,7 @@ s32 Scene_RunEntrySetup(void)
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Call3((void (*)())Engine_ActorSetPosition, 19, 215 << 16, 150 << 18);
-                actor->update = UPDATE_B99;
+                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
             }
             Scene_RunScene3c8SequenceA();
             break;

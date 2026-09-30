@@ -66,14 +66,6 @@ struct EffectRecord {
  * resource_3b1 helper: set bit 3 of the flags byte of actors 28 through 35.
  */
 
-/*
- * The owner at 0x020037b4 is 36 bytes: 34 bytes of code and one alignment
- * halfword; it needs no literal pool.  The index, bit and zero are held in
- * locals initialised in that order.  The zero is an OR identity that folds
- * away unless it has its own local, and initialising the index in a for-init
- * emits it last.  Object_GetByIdFar names the in-overlay entry point, not its
- * veneer.
- */
 static __inline__ void SetDirection(s32 actor, s32 direction, s32 duration)
 {
     Actor_FaceDirection(actor, direction, duration);

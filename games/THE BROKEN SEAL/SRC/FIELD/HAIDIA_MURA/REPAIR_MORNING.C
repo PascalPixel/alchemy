@@ -13,7 +13,6 @@ extern u8 MsgHaidiaWorkingYourselvesBone[];
  * Sukureta.
  */
 
-
 enum HouseActor {
     /* Robin's mother; the villagers call her Dora. */
     ACTOR_DORA = 21,

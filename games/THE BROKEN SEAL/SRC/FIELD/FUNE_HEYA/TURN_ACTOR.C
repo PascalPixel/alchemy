@@ -1,5 +1,5 @@
 #include "TYPES.H"
-
+#include "HEYA.H"
 
 s32 SceneActor_CheckBucketOffsetPoint();
 void FieldScene_CallPairWith10();
@@ -10,21 +10,6 @@ void Engine_ActorSetDestinationOffset();
 void Engine_ActorSetAnimation();
 void ObjectMotion_SetActionVariant();
 void Engine_ActorWaitForMove();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 extern s32 FuneHeya_TurnSteps[];
 

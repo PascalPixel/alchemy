@@ -396,6 +396,311 @@ pub fn zero_skip_bank(label: &str, frames: &[Vec<u8>]) -> Result<Data, String> {
     Ok(data)
 }
 
+/// A run of BG tiles drawn as the tilemap that shows them: tiles `first`
+/// to `first + count`, in the box of map cells that show any of them.
+/// A picture is that box once; its tiles the map never shows are blank.
+/// Animation frames are that box stacked, each frame the run again, the
+/// tiles its map never shows laid row by row in the rows beneath the box.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct MapDrawing {
+    /// Cell column and row of the box's top left, and its size in cells.
+    pub left: usize,
+    pub top: usize,
+    pub wide: usize,
+    pub high: usize,
+    /// Each box cell, row by row: the run tile it shows and its flips.
+    pub cells: Vec<Option<(usize, bool, bool)>>,
+    /// The run tiles no cell shows, in order.
+    pub hidden: Vec<usize>,
+    /// The run's length in tiles.
+    pub count: usize,
+}
+
+impl MapDrawing {
+    /// Lay out tiles `first..first + count` as `entries`, 16-bit tilemap
+    /// entries `map_wide` cells a row, show them.
+    pub fn new(
+        entries: &[u16],
+        map_wide: usize,
+        first: usize,
+        count: usize,
+    ) -> Result<Self, String> {
+        if map_wide == 0 || count == 0 || entries.len() % map_wide != 0 {
+            return Err("a tilemap drawing needs whole map rows and tiles".into());
+        }
+        let shows = |entry: u16| {
+            usize::from(entry & 0x3ff)
+                .checked_sub(first)
+                .filter(|tile| *tile < count)
+        };
+        let showing: Vec<usize> = (0..entries.len())
+            .filter(|cell| shows(entries[*cell]).is_some())
+            .collect();
+        let Some(&last) = showing.last() else {
+            return Err(format!(
+                "the tilemap shows none of tiles {first}..{}",
+                first + count
+            ));
+        };
+        let top = showing[0] / map_wide;
+        let left = showing
+            .iter()
+            .map(|cell| cell % map_wide)
+            .min()
+            .unwrap_or(0);
+        let right = showing
+            .iter()
+            .map(|cell| cell % map_wide)
+            .max()
+            .unwrap_or(0);
+        let (wide, high) = (right + 1 - left, last / map_wide + 1 - top);
+        let mut cells = Vec::with_capacity(wide * high);
+        let mut shown = vec![false; count];
+        for row in top..top + high {
+            for column in left..left + wide {
+                let entry = entries[row * map_wide + column];
+                cells.push(shows(entry).map(|tile| {
+                    shown[tile] = true;
+                    (tile, entry & 0x400 != 0, entry & 0x800 != 0)
+                }));
+            }
+        }
+        let hidden = (0..count).filter(|tile| !shown[*tile]).collect();
+        Ok(Self {
+            left,
+            top,
+            wide,
+            high,
+            cells,
+            hidden,
+            count,
+        })
+    }
+
+    /// Cell rows a frame takes: the box, then its hidden tiles' rows.
+    pub fn frame_rows(&self) -> usize {
+        self.high + self.hidden.len().div_ceil(self.wide)
+    }
+
+    /// Pack the tiles a drawing `width` by `height` pixels holds: one
+    /// picture, or with `frames` as many frames as it stacks. A cell that
+    /// shows a tile twice must agree, and a cell showing no run tile, like
+    /// a picture's hidden tile, is blank.
+    pub fn tiles(
+        &self,
+        pixels: &[u8],
+        width: usize,
+        height: usize,
+        bpp: GbaBpp,
+        frames: bool,
+    ) -> Result<Vec<u8>, String> {
+        let rows = if frames { self.frame_rows() } else { self.high };
+        if width != self.wide * 8
+            || pixels.len() != width * height
+            || height == 0
+            || height % (rows * 8) != 0
+            || (!frames && height != rows * 8)
+        {
+            return Err(format!(
+                "a tilemap {} is {}x{} pixels{}",
+                if frames { "frame" } else { "picture" },
+                self.wide * 8,
+                rows * 8,
+                if frames { ", stacked" } else { "" }
+            ));
+        }
+        let count = self.count;
+        let cell = |frame: usize, index: usize| -> Vec<u8> {
+            let (x, y) = (
+                index % self.wide * 8,
+                (frame * rows + index / self.wide) * 8,
+            );
+            (0..64)
+                .map(|i| pixels[(y + i / 8) * width + x + i % 8])
+                .collect()
+        };
+        let mut output = Vec::new();
+        for frame in 0..height / (rows * 8) {
+            let mut run: Vec<Option<Vec<u8>>> = vec![None; count];
+            for (index, shown) in self.cells.iter().enumerate() {
+                let drawn = cell(frame, index);
+                let Some((tile, hflip, vflip)) = *shown else {
+                    if drawn.iter().any(|pixel| *pixel != 0) {
+                        return Err(format!(
+                            "cell {index} of the box shows no tile of the run but is inked"
+                        ));
+                    }
+                    continue;
+                };
+                let canonical = flip_tile(&drawn, hflip, vflip);
+                if run[tile]
+                    .as_ref()
+                    .is_some_and(|previous| *previous != canonical)
+                {
+                    return Err(format!("tile {tile} is drawn two ways"));
+                }
+                run[tile] = Some(canonical);
+            }
+            for (slot, tile) in self.hidden.iter().enumerate() {
+                if frames {
+                    run[*tile] = Some(cell(frame, self.wide * self.high + slot));
+                }
+            }
+            if frames {
+                for slot in self.hidden.len()..(rows - self.high) * self.wide {
+                    if cell(frame, self.wide * self.high + slot)
+                        .iter()
+                        .any(|pixel| *pixel != 0)
+                    {
+                        return Err("a frame is inked past its hidden tiles".into());
+                    }
+                }
+            }
+            for tile in run {
+                let tile = tile.unwrap_or_else(|| vec![0; 64]);
+                output.extend(tiles(&tile, 8, 8, bpp, None)?);
+            }
+        }
+        Ok(output)
+    }
+
+    /// Draw packed tiles, whole runs of this drawing, as its picture
+    /// (one run) or its stacked frames: pixels and their height.
+    pub fn draw(
+        &self,
+        packed: &[u8],
+        bpp: GbaBpp,
+        frames: bool,
+    ) -> Result<(Vec<u8>, usize), String> {
+        let size = tile_bytes(bpp);
+        let count = self.count;
+        if packed.is_empty()
+            || packed.len() % (size * count) != 0
+            || (!frames && packed.len() != size * count)
+        {
+            return Err(format!(
+                "a tilemap drawing takes whole runs of {count} tiles"
+            ));
+        }
+        let rows = if frames { self.frame_rows() } else { self.high };
+        let runs = packed.len() / (size * count);
+        let width = self.wide * 8;
+        let height = runs * rows * 8;
+        let mut pixels = vec![0u8; width * height];
+        let unpack = |tile: &[u8]| -> Vec<u8> {
+            match bpp {
+                GbaBpp::Bpp4 => tile
+                    .iter()
+                    .flat_map(|byte| [byte & 15, byte >> 4])
+                    .collect(),
+                GbaBpp::Bpp8 => tile.to_vec(),
+            }
+        };
+        for frame in 0..runs {
+            let run = &packed[frame * size * count..][..size * count];
+            let mut put = |index: usize, tile: Vec<u8>| {
+                let (x, y) = (
+                    index % self.wide * 8,
+                    (frame * rows + index / self.wide) * 8,
+                );
+                for i in 0..64 {
+                    pixels[(y + i / 8) * width + x + i % 8] = tile[i];
+                }
+            };
+            for (index, shown) in self.cells.iter().enumerate() {
+                if let Some((tile, hflip, vflip)) = *shown {
+                    put(
+                        index,
+                        flip_tile(&unpack(&run[tile * size..][..size]), hflip, vflip),
+                    );
+                }
+            }
+            for (slot, tile) in self.hidden.iter().enumerate() {
+                let pixels = unpack(&run[tile * size..][..size]);
+                if !frames && pixels.iter().any(|pixel| *pixel != 0) {
+                    return Err(format!(
+                        "tile {tile} is inked but the tilemap never shows it"
+                    ));
+                }
+                if frames {
+                    put(self.wide * self.high + slot, pixels);
+                }
+            }
+        }
+        Ok((pixels, height))
+    }
+}
+
+#[cfg(test)]
+mod map_drawing_tests {
+    use super::*;
+
+    /// A 3x2 map: row 0 shows tile 0, tile 1 and tile 2 flipped
+    /// horizontally; row 1 shows tile 1 again and two cells of tile 9.
+    const MAP: [u16; 6] = [0, 1, 2 | 0x400, 1, 9, 9];
+
+    fn tile(value: u8) -> Vec<u8> {
+        // A tile with one inked pixel at its left edge, so flips show.
+        (0..64).map(|i| if i == 8 { value } else { 0 }).collect()
+    }
+
+    #[test]
+    fn a_picture_holds_the_tiles_its_map_shows_and_blanks_the_rest() {
+        let drawing = MapDrawing::new(&MAP, 3, 0, 4).unwrap();
+        assert_eq!(
+            (drawing.left, drawing.top, drawing.wide, drawing.high),
+            (0, 0, 3, 2)
+        );
+        assert_eq!(drawing.hidden, [3]);
+        let packed: Vec<u8> = [tile(5), tile(6), tile(7), vec![0; 64]].concat();
+        let (pixels, height) = drawing.draw(&packed, GbaBpp::Bpp8, false).unwrap();
+        assert_eq!(height, 16);
+        // Tile 2 is drawn flipped: its ink at the right edge.
+        assert_eq!(pixels[8 * 3 + 16 + 7], 7);
+        assert_eq!(
+            drawing.tiles(&pixels, 24, 16, GbaBpp::Bpp8, false).unwrap(),
+            packed
+        );
+        // A hidden tile that is inked has no place in a picture.
+        let inked: Vec<u8> = [tile(5), tile(6), tile(7), tile(8)].concat();
+        assert!(drawing.draw(&inked, GbaBpp::Bpp8, false).is_err());
+        // A tile drawn two ways is refused.
+        let mut wrong = pixels.clone();
+        wrong[24 * 8 + 8 + 8] = 3;
+        assert!(drawing.tiles(&wrong, 24, 16, GbaBpp::Bpp8, false).is_err());
+    }
+
+    #[test]
+    fn frames_stack_the_run_with_its_hidden_tiles_beneath() {
+        let drawing = MapDrawing::new(&MAP, 3, 1, 3).unwrap();
+        assert_eq!(
+            (drawing.left, drawing.top, drawing.wide, drawing.high),
+            (0, 0, 3, 2)
+        );
+        assert_eq!(drawing.hidden, [2]);
+        assert_eq!(drawing.frame_rows(), 3);
+        let packed: Vec<u8> = [tile(1), tile(2), tile(3), tile(4), tile(5), tile(6)]
+            .concat()
+            .iter()
+            .map(|pixel| pixel & 15)
+            .collect::<Vec<u8>>()
+            .chunks(2)
+            .map(|pair| pair[0] | pair[1] << 4)
+            .collect();
+        let (pixels, height) = drawing.draw(&packed, GbaBpp::Bpp4, true).unwrap();
+        assert_eq!(height, 48);
+        assert_eq!(
+            drawing.tiles(&pixels, 24, 48, GbaBpp::Bpp4, true).unwrap(),
+            packed
+        );
+        // Cells that show a tile outside the run must stay blank.
+        let mut stray = pixels.clone();
+        stray[24 * 8 + 8] = 1;
+        assert!(drawing.tiles(&stray, 24, 48, GbaBpp::Bpp4, true).is_err());
+        assert!(MapDrawing::new(&MAP, 3, 20, 4).is_err());
+    }
+}
+
 #[cfg(test)]
 mod metatile_tests {
     use super::*;

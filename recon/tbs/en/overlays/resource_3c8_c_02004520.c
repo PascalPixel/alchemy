@@ -1,7 +1,10 @@
-/* 2026-09-30 (Jupiter): five more spellings (unnamed options, a copied x,
- * split spin draw, x << 16 << 3) keep 31 differing lines. Asm idea, if
- * admitted: pin x to r7 and options to r8 with tagged register variables.
- */
+/* 2026-09-30 (Jupiter): tagged register pins (options r8, x r7, z sl,
+ * phase r6, coin r5) reach the full 208 bytes and 46 differing halfwords
+ * (from 99). Remaining: the reference sets the scale pair through r2 = &options
+ * before mov r8, r2 and loads the pool constant before sub sp; the first
+ * spawn builds x + draw in r5 (reusing the draw register) and reads z from
+ * sl before the divide; the second branch computes r * 17 through r3.
+ * Pinning fewer registers (no options, no phase/coin) scores 76-77. */
 /* 2026-09-27 sol-venus-room bounded revalidation: full normalized diff and
  * allocator-order dump read, with the complete three-word pool accounted.
  * Retained H1 is 204/208 bytes, 99 differing halfwords / 35 aligned edits.
@@ -43,12 +46,14 @@
 #include "FIELD_EFFECT.H"
 
 
-void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
+void VinasuHeya_SpawnRandomParticles(s32 x_arg, s32 z_arg)
 {
     struct EffectOptions options;
-    struct EffectOptions *opts = &options;
-    s32 phase;
-    u32 coin;
+    register struct EffectOptions *opts asm("r8") = &options; /* FAKEMATCH: pins the options pointer to r8 */
+    register s32 x asm("r7") = x_arg; /* FAKEMATCH: pins x to r7 */
+    register s32 z asm("r10") = z_arg; /* FAKEMATCH: pins z to sl */
+    register s32 phase asm("r6"); /* FAKEMATCH: pins the phase to r6 */
+    register u32 coin asm("r5"); /* FAKEMATCH: pins the coin to r5 */
 
     opts->start_scale_x = 0xb333;
     opts->start_scale_y = 0xb333;

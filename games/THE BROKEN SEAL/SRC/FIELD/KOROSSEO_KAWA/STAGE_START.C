@@ -51,20 +51,20 @@ void KorosseoKawa_RunStageStart(void)
         Object_RefreshSelectorById(8);
         n = n - 1;
     } while (n >= 0);
-    Call3(Engine_ActorSetSpeed, 8, 0x10000, 0x8000);
-    Call3(Engine_ActorWalkTo, 8, 0x528, 192);
-    Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-    Call3(Engine_ActorWalkToAndWait, 0, 0x508, 192);
+    Actor_SetSpeed(8, 0x10000, 0x8000);
+    Actor_WalkTo(8, 0x528, 192);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x508, 192);
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorFaceEachOther(0, 8, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(8, 3);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(20);
-    Call3(Engine_ActorSetSpeed, 0, 0x20000, 0x10000);
-    Call3(Engine_ActorSetSpeed, 8, 0x20000, 0x10000);
-    Call3(Engine_ActorWalkTo, 0, 0x510, 192);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x520, 192);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+    Actor_SetSpeed(8, 0x20000, 0x10000);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x510, 192);
+    Actor_WalkToAndWait(8, 0x520, 192);
     Engine_ActorSetAnimation(0, 16);
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
@@ -79,5 +79,5 @@ void KorosseoKawa_RunStageStart(void)
     } while (0);
     Value2(Party_SetFields1ceAnd1d0, (s32)&SceneId_KorosseoKawa, 4);
     Event_SetPair1d4((s32)&SceneId_KorosseoKawa, 5);
-    Call1(Engine_GameFlagSet, 0x11a);
+    GameFlag_Set(0x11a);
 }

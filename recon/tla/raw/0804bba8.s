@@ -1738,7 +1738,7 @@ Func_0804bba8:
 	adds	r0, r5, #0
 	str	r3, [sp, #8]
 	str	r4, [sp, #4]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r1, r5, #0
 	ldr	r0, [sp, #64]
 	bl	0x080499b4
@@ -1778,7 +1778,7 @@ Func_0804bba8:
 	adds	r0, r5, #0
 	str	r2, [sp, #12]
 	str	r4, [sp, #4]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r1, r5, #0
 	ldr	r0, [sp, #64]
 	bl	0x080499b4
@@ -1829,7 +1829,7 @@ Func_0804bba8:
 	lsls	r6, r6, #1
 	adds	r6, #216
 	ldrh	r0, [r3, r6]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrh	r0, [r0, #40]
 	bl	0x080ad078
 	ldrb	r4, [r0, #8]

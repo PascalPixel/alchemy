@@ -898,7 +898,7 @@ Func_080ff850:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldr	r0, [r0, #20]
 	cmp	r0, #4
 	beq.n	.L_080fffa0
@@ -929,7 +929,7 @@ Func_080ff850:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldr	r0, [r0, #20]
 	cmp	r0, #4
 	beq.n	.L_080ffff0
@@ -1004,7 +1004,7 @@ Func_080ff850:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r2
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r1, [r0, #2]
 	cmp	r1, #2
 	beq.n	.L_081000b0
@@ -1627,7 +1627,7 @@ Func_080ff850:
 	adds	r5, r3, #0
 	ands	r5, r0
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	cmp	r3, #2
 	beq.n	.L_081005a2
@@ -1783,7 +1783,7 @@ Func_080ff850:
 	ldr	r0, [pc, #28]
 	str	r1, [sp, #0]
 	ands	r0, r2
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	ldr	r1, [sp, #0]
 	cmp	r3, #2

@@ -35,7 +35,7 @@ Func_08100738:
 	ands	r1, r3
 	mov	sl, r1
 	mov	r0, sl
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r6, r0, #0
 	ldrh	r3, [r6, #40]
 	movs	r0, #252
@@ -52,7 +52,7 @@ Func_08100738:
 	beq.n	.L_081007ea
 	mov	r3, r8
 	ldrh	r0, [r5, r3]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r6, r0, #0
 	ldrb	r2, [r6, #12]
 	adds	r3, r2, #0

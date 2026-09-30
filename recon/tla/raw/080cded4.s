@@ -109,7 +109,7 @@ Func_080cded4:
 	cmp	r0, r3
 	bne.n	.L_080cdfac
 	adds	r0, r1, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	movs	r0, #1
 	subs	r3, #1

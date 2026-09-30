@@ -401,7 +401,7 @@ Func_08122514:
 	cmp	r6, #0
 	beq.n	.L_08122840
 	ldrh	r0, [r1, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r5, r0, #0
 	ldrb	r3, [r5, #12]
 	cmp	r3, #1

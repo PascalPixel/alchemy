@@ -1016,6 +1016,8 @@ SECTIONS
         "*/recon/tla/raw/08127588.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08127ba0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08127c80.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GAME/ITEM/ENCODE_BANKED_ID.o"(.text)
+        "*/recon/tla/raw/081281ea.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081281ec.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081287c4)
         "*/recon/tla/raw/0812ce74.o"(.text .rodata .data .padding)

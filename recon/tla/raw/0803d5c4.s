@@ -111,7 +111,7 @@ Func_0803d5c4:
 	movs	r1, #0
 	str	r1, [sp, #4]
 	mov	sl, r1
-	bl	0x080ad010
+	bl	Item_Get
 	str	r0, [sp, #0]
 	movs	r3, #192
 	lsls	r3, r3, #18

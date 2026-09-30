@@ -17,7 +17,7 @@ Func_080dda30:
 	beq .L_080ddb30
 	bl Func_080ddbd8
 	adds r0, r5, #0
-	bl Func_08020328 + 0x8
+	bl Func_08020330
 	movs r3, #186
 	lsls r3, r3, #1
 	cmp r0, r3
@@ -25,7 +25,7 @@ Func_080dda30:
 	movs r6, #1
 .L_080dda5c:
 	adds r0, r5, #0
-	bl Func_08020328 + 0x8
+	bl Func_08020330
 	movs r3, #197
 	lsls r3, r3, #1
 	cmp r0, r3

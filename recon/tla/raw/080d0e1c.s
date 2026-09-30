@@ -341,7 +341,7 @@ Func_080d0e1c:
 	movs r1, #3
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #0]
 	subs r7, r7, r0
 	adds r4, #10
@@ -480,7 +480,7 @@ Func_080d0e1c:
 .L_080d11b0:
 	.4byte .L_080d0ee0
 .L_080d11b4:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 .L_080d11b8:
 	.4byte Data_080f0286
 .L_080d11bc:
@@ -513,7 +513,7 @@ Func_080d0e1c:
 	add r9, r1
 	movs r1, #3
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	bl Graphics_ClampRgb555Channel
 	ldr r4, [sp, #0]
 	asrs r3, r4, #1
@@ -586,11 +586,11 @@ Func_080d0e1c:
 	adds r4, r0, #0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	movs r1, #3
 	subs r7, r7, r0
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	ldr r2, .L_080d13f8
 	subs r5, r5, r0
 	lsls r3, r5, #1
@@ -641,7 +641,7 @@ Func_080d0e1c:
 	adds r0, r7, #0
 	movs r1, #3
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #0]
 	subs r7, r7, r0
 	adds r4, #6
@@ -710,17 +710,17 @@ Func_080d0e1c:
 	adds r0, r4, #0
 	movs r1, #5
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #0]
 	movs r1, #5
 	subs r4, r4, r0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	movs r1, #5
 	subs r7, r7, r0
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #0]
 	subs r5, r5, r0
 .L_080d13a2:
@@ -1021,7 +1021,7 @@ Func_080d0e1c:
 	b .L_080d1676
 	.2byte 0x0000
 .L_080d15f0:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 .L_080d15f4:
 	.4byte IwramMulQ16
 .L_080d15f8:

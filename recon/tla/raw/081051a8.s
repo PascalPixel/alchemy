@@ -22,7 +22,7 @@ Func_081051a8:
 	cmp r0, #0
 	beq .L_081051d6
 	str r4, [sp, #0]
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	mov r2, r8
 	str r6, [r5, r2]
 	ldr r4, [sp, #0]

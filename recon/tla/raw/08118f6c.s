@@ -69,7 +69,7 @@ Func_08118f6c:
 	mov r8, r2
 .L_08118fec:
 	mov r0, r8
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	cmp r0, #0
 	beq .L_08119028
 	mov r3, r10

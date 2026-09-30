@@ -373,7 +373,7 @@ Func_08179994:
 	b .L_08179d98
 .L_08179c6c:
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	mov r1, r11
 	ldr r3, [r1, #20]
 	movs r0, #0

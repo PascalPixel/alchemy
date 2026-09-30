@@ -27,7 +27,7 @@ Func_0811c6cc:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_0811c70c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	movs r0, #0
 .L_0811c708:
 	pop {r5, r6, pc}

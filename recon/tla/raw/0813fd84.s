@@ -68,7 +68,7 @@ Func_0813fd84:
 	str r3, [sp, #100]
 	str r3, [sp, #96]
 	ldr r0, [r4, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r6, [r0]
 	ldr r5, [sp, #96]
 	str r5, [r6, #72]
@@ -171,7 +171,7 @@ Func_0813fd84:
 	ldr r1, .L_0813ff48
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r4, [sp, #108]
 	mov r3, r10
 	str r3, [r4, #16]
@@ -732,7 +732,7 @@ Func_0813fd84:
 	adds r0, r2, #0
 	subs r0, #68
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	adds r6, r6, r0
 .L_08140332:
 	movs r5, #224
@@ -946,7 +946,7 @@ Func_0813fd84:
 	bl Func_08015160
 	movs r1, #3
 	adds r0, r7, #0
-	bl __divsi3
+	bl Math_Div
 	adds r1, r0, #0
 	asrs r0, r7, #1
 	mov r10, r0
@@ -1430,7 +1430,7 @@ Func_0813fd84:
 	ldr r1, .L_08140918
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r0, #31
 	movs r1, #31
 	movs r2, #31
@@ -2503,7 +2503,7 @@ Func_0813fd84:
 	movs r0, #1
 	ldrh r1, [r3]
 	movs r2, #24
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r0, #1
 	bl WaitFrames
 	ldr r2, .L_081411e4
@@ -2520,7 +2520,7 @@ Func_0813fd84:
 	add r5, r11
 .L_0814113e:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	movs r2, #1
 	add r10, r2
 	mov r3, r10
@@ -2685,7 +2685,7 @@ Func_0813fd84:
 	cmp r5, #127
 	bne .L_0814128a
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0814128a:
 	ldr r0, [sp, #116]
 	cmp r0, #107
@@ -2797,7 +2797,7 @@ Func_0813fd84:
 	adds r0, r1, #0
 	lsls r2, r2, #8
 	movs r3, #224
-	bl Func_08118088 + 0x68
+	bl ColorBuffer_ScaleFar
 .L_0814135e:
 	ldr r0, [sp, #116]
 	cmp r0, #47

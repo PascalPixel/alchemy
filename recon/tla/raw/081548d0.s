@@ -130,7 +130,7 @@ Func_081548d0:
 	str r5, [r6, #16]
 	mov r0, r10
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldrb r3, [r7, r0]
 	cmp r3, r5
 	bge .L_081549de
@@ -183,7 +183,7 @@ Func_081548d0:
 	cmp r11, r6
 	bne .L_08154a3e
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08154a3e:
 	ldr r0, [sp, #20]
 	cmp r11, r0
@@ -266,7 +266,7 @@ Func_081548d0:
 	ble .L_08154b6c
 	movs r1, #3
 	mov r0, r10
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r11
 	mov r2, r9
 	subs r3, r1, r2

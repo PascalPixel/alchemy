@@ -406,7 +406,7 @@ Func_0811df70:
 	cmp r3, #0
 	beq .L_0811e27a
 	mov r0, r8
-	bl Resource_FarCall00C + 0x10
+	bl Func_08138010
 	b .L_0811e296
 .L_0811e27a:
 	movs r3, #128
@@ -415,13 +415,13 @@ Func_0811df70:
 	cmp r3, #0
 	beq .L_0811e290
 	mov r0, r8
-	bl Resource_FarCall00C + 0x8
+	bl Func_08138008
 	b .L_0811e296
 .L_0811e28c:
 	.4byte Func_08122d10
 .L_0811e290:
 	mov r0, r8
-	bl Resource_FarCall00C + 0x18
+	bl Func_08138018
 .L_0811e296:
 	bl Func_081234f0
 .L_0811e29a:

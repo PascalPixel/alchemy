@@ -32,7 +32,7 @@ Func_080fabe0:
 	ldrh r3, [r3]
 	ldr r1, .L_080fac30
 	ands r1, r3
-	bl Djinn_IsActiveFar + 0x10
+	bl Item_CanOwnerEquip
 	cmp r0, #0
 	beq .L_080fac38
 	lsls r3, r5, #2

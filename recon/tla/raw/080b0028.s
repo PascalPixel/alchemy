@@ -22,7 +22,7 @@ Func_080b0028:
 	lsls r3, r6, #2
 	ldr r0, [r5, r3]
 	movs r1, #10
-	bl __divsi3
+	bl Math_Div
 .L_080b0056:
 	add sp, #16
 	pop {r5, r6, pc}

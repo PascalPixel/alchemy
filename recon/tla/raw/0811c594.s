@@ -52,7 +52,7 @@ Func_0811c594:
 	cmp r3, #99
 	bne .L_0811c624
 	ldr r0, .L_0811c64c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	adds r0, r7, #0
 	bl Func_0811c66c
 	cmp r0, #0
@@ -86,7 +86,7 @@ Func_0811c594:
 	adds r0, r7, #0
 	bl Func_0811c710
 .L_0811c640:
-	bl Func_08038218 + 0x8
+	bl Func_08038220
 	movs r0, #0
 .L_0811c646:
 	pop {r5, r6, r7, pc}

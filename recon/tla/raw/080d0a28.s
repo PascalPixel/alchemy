@@ -173,7 +173,7 @@ Func_080d0a28:
 .L_080d0b68:
 	.4byte Func_080d0a28
 .L_080d0b6c:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 .L_080d0b70:
 	.4byte Data_080f0206
 .L_080d0b74:

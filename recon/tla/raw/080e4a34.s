@@ -256,7 +256,7 @@ Func_080e4a34:
 	mov r1, r8
 	ldr r0, [r1, #80]
 	movs r1, #15
-	bl Animation_ApplyChildValuesToRecordFar + 0x8
+	bl Func_08020288
 .L_080e4c50:
 	mov r2, r10
 	cmp r2, #45
@@ -310,7 +310,7 @@ Func_080e4a34:
 	mov r2, r8
 	ldr r0, [r2, #80]
 	movs r1, #0
-	bl Animation_ApplyChildValuesToRecordFar + 0x8
+	bl Func_08020288
 .L_080e4cc4:
 	movs r5, #1
 	movs r0, #1

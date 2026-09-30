@@ -9,9 +9,27 @@
 	.thumb_func
 Object_SetPositionAndResetMotionFar:
 	overlay_veneer Object_SetPositionAndResetMotion
+	.global Func_080200f0
+	.thumb_func
+Func_080200f0:
 	overlay_veneer Func_08022f64
+	.global Func_080200f8
+	.thumb_func
+Func_080200f8:
 	overlay_veneer Func_08022fe8
+	.global Func_08020100
+	.thumb_func
+Func_08020100:
 	overlay_veneer Func_0802301c
+	.global Func_08020108
+	.thumb_func
+Func_08020108:
 	overlay_veneer Func_0802a6b8
+	.global Func_08020110
+	.thumb_func
+Func_08020110:
 	overlay_veneer Func_0802b998
+	.global Func_08020118
+	.thumb_func
+Func_08020118:
 	overlay_veneer Func_0802af9c

@@ -47,7 +47,7 @@ Func_0817b66c:
 	mov r2, r11
 	movs r1, #36
 	ldrsh r0, [r2, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	mov r1, r11
 	add r5, sp, #20
 	movs r3, #36
@@ -187,7 +187,7 @@ Func_0817b66c:
 	add r2, r10
 	str r3, [r2]
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	mov r1, r11
 	movs r3, #36
 	ldrsh r0, [r1, r3]

@@ -83,7 +83,7 @@ Func_08101d5c:
 	str r5, [sp, #0]
 	bl UiWindow_CreateFar
 	str r0, [sp, #28]
-	bl UiWindow_SetTilemapEntryFar + 0x20
+	bl Func_08038290
 	ldr r7, .L_08101ff8
 	movs r5, #0
 .L_08101e18:
@@ -112,7 +112,7 @@ Func_08101d5c:
 	ldr r1, .L_08102000
 	ldr r0, [sp, #32]
 	adds r1, r6, r1
-	bl Func_080383d0 + 0x8
+	bl Func_080383d8
 	mov r2, r11
 	movs r3, #15
 	str r2, [sp, #0]
@@ -273,7 +273,7 @@ Func_08101d5c:
 	movs r1, #1
 	ldr r0, [sp, #32]
 	bl UiWork_FinalizeFar
-	bl UiWindow_SetTilemapEntryFar + 0x20
+	bl Func_08038290
 	ldr r2, [sp, #16]
 	movs r3, #2
 	negs r3, r3

@@ -55,7 +55,7 @@ Func_080fcab8:
 	movs r0, #14
 	bl Func_080f9108
 	ldr r0, .L_080fcbc4
-	bl Func_080383e8 + 0x10
+	bl Func_080383f8
 	bl Func_080f9448
 	add r0, sp, #12
 	add r1, sp, #8
@@ -109,7 +109,7 @@ Func_080fcab8:
 	movs r1, #0
 	movs r2, #30
 	movs r3, #20
-	bl Func_080383e8 + 0x8
+	bl Func_080383f0
 	mov r3, r8
 	ldr r2, [r3, #60]
 	ldr r3, .L_080fcbc0

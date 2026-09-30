@@ -92,11 +92,11 @@ Func_081587e4:
 	ldr r5, [sp, #56]
 	movs r7, #0
 	ldr r0, [r5, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r6, [r0]
 	movs r1, #36
 	ldrsh r0, [r5, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	movs r2, #0
 	str r0, [sp, #24]

@@ -80,7 +80,7 @@ Func_080fc2e0:
 	movs r1, #16
 	movs r2, #16
 	movs r3, #96
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	adds r1, r7, #0
 	ldr r0, .L_080fc478
 	movs r2, #0
@@ -136,7 +136,7 @@ Func_080fc2e0:
 	adds r0, #2
 	movs r1, #2
 	str r3, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	mov r8, r0
 .L_080fc402:
 	ldr r5, .L_080fc47c
@@ -184,7 +184,7 @@ Func_080fc2e0:
 	ldrb r0, [r5]
 	bl Func_080ad288
 	ldrb r0, [r5]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r0, r8
 	add sp, #12
 	pop {r3, r5, r6, r7}

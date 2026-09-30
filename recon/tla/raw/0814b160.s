@@ -110,7 +110,7 @@ Func_0814b160:
 	cmp r1, #32
 	bne .L_0814b240
 	movs r0, #0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	mov r3, r10
 	ldr r2, [r3, #20]
 .L_0814b240:
@@ -179,9 +179,9 @@ Func_0814b160:
 	subs r0, r4, r6
 	adds r0, r0, r3
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	movs r1, #9
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #1
 	ldr r2, [sp, #20]
 	adds r1, r1, r0

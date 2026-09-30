@@ -27,7 +27,7 @@ Func_0804297c:
 	cmp r3, #0
 	beq .L_080429fa
 	movs r0, #0
-	bl Func_08118088 + 0x40
+	bl BattleParty_PrepareActiveOwnersFar
 	movs r2, #1
 	negs r2, r2
 	movs r7, #0
@@ -136,7 +136,7 @@ Func_0804297c:
 	beq .L_08042a80
 	movs r0, #0
 	movs r1, #0
-	bl BattleActor_CommitPlacementFar + 0x18
+	bl Func_08118130
 	cmp r0, #0
 	bne .L_08042a8a
 .L_08042a80:
@@ -289,7 +289,7 @@ Func_0804297c:
 	lsls r0, r5, #2
 	adds r0, r0, r5
 	lsls r0, r0, #3
-	bl __divsi3
+	bl Math_Div
 	adds r3, r0, #0
 	cmp r3, #0
 	bne .L_08042bbe
@@ -334,7 +334,7 @@ Func_0804297c:
 	lsls r0, r5, #2
 	adds r0, r0, r5
 	lsls r0, r0, #3
-	bl __divsi3
+	bl Math_Div
 	adds r3, r0, #0
 	cmp r3, #0
 	bne .L_08042c18
@@ -387,7 +387,7 @@ Func_0804297c:
 	add r5, sp, #32
 	adds r1, r5, #0
 	movs r0, #0
-	bl BattleActor_CommitPlacementFar + 0x18
+	bl Func_08118130
 	movs r1, #160
 	lsls r1, r1, #7
 	adds r1, #1

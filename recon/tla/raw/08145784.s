@@ -570,7 +570,7 @@ Func_08145784:
 	movs r3, #8
 	str r3, [r2]
 	movs r0, #144
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08145bd4:
 	movs r0, #8
 	movs r1, #8
@@ -605,7 +605,7 @@ Func_08145784:
 	ldrh r1, [r3]
 	movs r2, #24
 	movs r0, #1
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

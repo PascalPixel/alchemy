@@ -144,7 +144,7 @@ Func_080d3c88:
 	str r0, [sp, #0]
 	mov r0, r8
 	str r4, [sp, #4]
-	bl Func_08038108 + 0x8
+	bl Func_08038110
 	ldr r3, [sp, #40]
 	ldr r4, [sp, #4]
 	lsrs r2, r3, #31
@@ -252,7 +252,7 @@ Func_080d3c88:
 	mov r11, r2
 	str r3, [sp, #8]
 	str r7, [sp, #0]
-	bl Func_08038108 + 0x8
+	bl Func_08038110
 	ldr r2, [sp, #44]
 	mov r8, r10
 	subs r1, r2, #5

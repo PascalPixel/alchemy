@@ -181,7 +181,7 @@ Func_08148458:
 	cmp r6, #120
 	bne .L_081485cc
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_081485cc:
 	mov r7, r9
 	cmp r7, #15
@@ -413,7 +413,7 @@ Func_08148458:
 .L_08148798:
 	adds r0, r7, #0
 	movs r1, #104
-	bl Math_Mod
+	bl __modsi3
 	ldrb r3, [r6, #1]
 	ldrb r2, [r6]
 	adds r5, r0, #0
@@ -500,7 +500,7 @@ Func_08148458:
 .L_0814883c:
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [r5, #16]
 	adds r4, r0, #2
 	cmp r3, #0
@@ -669,13 +669,13 @@ Func_08148458:
 	cmp r0, #29
 	ble .L_081489cc
 	movs r1, #12
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_081489ac
 	movs r1, #0
 	ldrsh r0, [r7, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	movs r3, #1
 	ldr r5, [r0]
 	negs r3, r3
@@ -754,7 +754,7 @@ Func_08148458:
 	add r8, r6
 	ldmia r5!, {r0}
 	mov r7, r8
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	cmp r7, #12
 	bne .L_08148a20
 	bl Func_08143bb8

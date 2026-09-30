@@ -13,7 +13,13 @@ Func_080c85c8:
 	.thumb_func
 Event_ClearInvalidPackedValuesFar:
 	overlay_veneer Event_ClearValidPackedIds
+	.global Func_080c85d8
+	.thumb_func
+Func_080c85d8:
 	overlay_veneer Func_080d7a78
+	.global Func_080c85e0
+	.thumb_func
+Func_080c85e0:
 	overlay_veneer Func_080d7ab4
 	.global Func_080c85e8
 	.thumb_func
@@ -31,8 +37,17 @@ ObjectMotion_CommitPositionAndActivateFar:
 	.thumb_func
 Object_LinkObjectAndSetCallbackFar:
 	overlay_veneer Object_LinkObjectAndSetCallback
+	.global Func_080c8608
+	.thumb_func
+Func_080c8608:
 	overlay_veneer Func_080e0308
+	.global Func_080c8610
+	.thumb_func
+Func_080c8610:
 	overlay_veneer Func_080e035c
+	.global Func_080c8618
+	.thumb_func
+Func_080c8618:
 	overlay_veneer Func_080d3c2c
 	.global ObjectTable_ReadActiveValueFar
 	.thumb_func

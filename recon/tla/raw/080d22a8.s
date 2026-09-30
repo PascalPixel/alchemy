@@ -7,7 +7,7 @@ Func_080d22a8:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r6, [r3, #108]
-	bl Func_08038200 + 0x8
+	bl Func_08038208
 	bl Func_080d2260
 	movs r1, #192
 	lsls r1, r1, #4

@@ -21,7 +21,13 @@ Func_080c83b8:
 	.thumb_func
 Func_080c83c0:
 	overlay_veneer Func_080d6408
+	.global Func_080c83c8
+	.thumb_func
+Func_080c83c8:
 	overlay_veneer Func_080d64b8
+	.global Func_080c83d0
+	.thumb_func
+Func_080c83d0:
 	overlay_veneer Func_080cdc40
 	.global Func_080c83d8
 	.thumb_func
@@ -31,15 +37,33 @@ Func_080c83d8:
 	.thumb_func
 Func_080c83e0:
 	overlay_veneer Func_080cf424
+	.global Func_080c83e8
+	.thumb_func
+Func_080c83e8:
 	overlay_veneer Func_080ceffc
+	.global Func_080c83f0
+	.thumb_func
+Func_080c83f0:
 	overlay_veneer Func_080cefb4
+	.global Func_080c83f8
+	.thumb_func
+Func_080c83f8:
 	overlay_veneer Func_080cef68
+	.global Func_080c8400
+	.thumb_func
+Func_080c8400:
 	overlay_veneer Func_080cefd0
 	.global Func_080c8408
 	.thumb_func
 Func_080c8408:
 	overlay_veneer Func_080cf00c
+	.global Func_080c8410
+	.thumb_func
+Func_080c8410:
 	overlay_veneer Func_080cf004
+	.global Func_080c8418
+	.thumb_func
+Func_080c8418:
 	overlay_veneer Func_080cf050
 	.global Func_080c8420
 	.thumb_func
@@ -57,22 +81,49 @@ Func_080c8430:
 	.thumb_func
 Func_080c8438:
 	overlay_veneer Func_080cb8a4
+	.global Func_080c8440
+	.thumb_func
+Func_080c8440:
 	overlay_veneer Func_080caa4c
+	.global Func_080c8448
+	.thumb_func
+Func_080c8448:
 	overlay_veneer Func_080ca6e8
+	.global Func_080c8450
+	.thumb_func
+Func_080c8450:
 	overlay_veneer Func_080caa2c
 	.global ObjectTable_GetFar
 	.thumb_func
 ObjectTable_GetFar:
 	overlay_veneer ObjectTable_Get
+	.global Func_080c8460
+	.thumb_func
+Func_080c8460:
 	overlay_veneer Func_080ca9cc
+	.global Func_080c8468
+	.thumb_func
+Func_080c8468:
 	overlay_veneer Func_080d1a18
+	.global Func_080c8470
+	.thumb_func
+Func_080c8470:
 	overlay_veneer Func_080d1ac4
+	.global Func_080c8478
+	.thumb_func
+Func_080c8478:
 	overlay_veneer Func_080d1ad4
 	.global Func_080c8480
 	.thumb_func
 Func_080c8480:
 	overlay_veneer Func_080d1cc0
+	.global Func_080c8488
+	.thumb_func
+Func_080c8488:
 	overlay_veneer Func_080d1d34
+	.global Func_080c8490
+	.thumb_func
+Func_080c8490:
 	overlay_veneer Func_080d1d44
 	.global Func_080c8498
 	.thumb_func
@@ -98,6 +149,9 @@ Func_080c84b8:
 	.thumb_func
 Func_080c84c0:
 	overlay_veneer Func_080dc6d8
+	.global BattleEffect_InitializeSharedSceneFar
+	.thumb_func
+BattleEffect_InitializeSharedSceneFar:
 	overlay_veneer BattleEffect_InitializeSharedScene
 	.global BattleFx_PrepareBufferInterpolationFar
 	.thumb_func

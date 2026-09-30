@@ -250,11 +250,11 @@ Func_08127068:
 	movs r0, #104
 	movs r1, #3
 	movs r5, #144
-	bl Resource_FarCall00C + 0x48
+	bl Func_08138048
 	lsls r5, r5, #3
 	movs r1, #19
 	movs r0, #188
-	bl Resource_FarCall00C + 0x48
+	bl Func_08138048
 	adds r1, r5, #0
 	ldr r0, .L_081272a8
 	bl Func_080145a8

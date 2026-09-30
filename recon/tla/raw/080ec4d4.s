@@ -524,7 +524,7 @@ Func_080ec4d4:
 	subs r0, r0, r3
 	lsls r1, r1, #2
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	ldr r3, .L_080ec8f4
 	ldr r1, [sp, #52]
 	subs r0, #1
@@ -543,7 +543,7 @@ Func_080ec4d4:
 	subs r0, r0, r3
 	lsls r0, r0, #2
 	lsls r1, r1, #2
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #52]
 	subs r0, #1
 	strb r0, [r3, #4]
@@ -755,7 +755,7 @@ Func_080ec4d4:
 	lsls r5, r5, #2
 	adds r1, r5, #0
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	ldr r3, .L_080ecac4
 	ldr r1, [sp, #52]
 	subs r0, #2
@@ -773,7 +773,7 @@ Func_080ec4d4:
 	lsls r0, r3, #4
 	subs r0, r0, r3
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	ldr r5, [sp, #52]
 	subs r0, #2
 	strb r0, [r5, #4]
@@ -840,7 +840,7 @@ Func_080ec4d4:
 	lsls r5, r5, #2
 	adds r1, r5, #0
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	ldr r3, .L_080ecb68
 	subs r0, #17
 	ands r0, r3
@@ -858,7 +858,7 @@ Func_080ec4d4:
 	lsls r0, r3, #4
 	subs r0, r0, r3
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	ldr r1, [sp, #52]
 	adds r0, #1
 	strb r0, [r1, #4]
@@ -943,7 +943,7 @@ Func_080ec4d4:
 	add r1, sp, #60
 	add r2, sp, #56
 	ldr r0, [sp, #20]
-	bl Func_08038390 + 0x10
+	bl UiText_MeasureResourceEntriesFar
 	ldr r3, .L_080ece04
 	movs r4, #0
 	ldrsh r3, [r3, r4]
@@ -971,7 +971,7 @@ Func_080ec4d4:
 	lsls r5, r5, #2
 	adds r1, r5, #0
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	subs r0, #1
 	mov r10, r0
 	ldr r0, [sp, #28]
@@ -981,7 +981,7 @@ Func_080ec4d4:
 	lsls r0, r3, #4
 	subs r0, r0, r3
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	subs r0, #11
 .L_080ecc44:
 	mov r8, r0
@@ -1064,7 +1064,7 @@ Func_080ec4d4:
 	lsls r5, r5, #2
 	adds r1, r5, #0
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	ldr r1, [sp, #28]
 	subs r0, #1
 	lsls r3, r1, #2
@@ -1074,7 +1074,7 @@ Func_080ec4d4:
 	subs r0, r0, r3
 	lsls r0, r0, #2
 	adds r1, r5, #0
-	bl __divsi3
+	bl Math_Div
 	subs r0, #11
 	mov r8, r0
 .L_080eccfc:

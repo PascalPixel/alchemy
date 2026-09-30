@@ -332,7 +332,7 @@ Func_08170dac:
 	bl Func_080156e8
 	ldr r3, [sp, #76]
 	ldr r0, [r3, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	str r0, [sp, #40]
 	ldr r3, [r0, #8]
@@ -369,7 +369,7 @@ Func_08170dac:
 .L_0817107e:
 	adds r0, r6, #4
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	lsls r0, r0, #1
 	mov r1, r8
 	adds r3, r0, #1
@@ -428,7 +428,7 @@ Func_08170dac:
 	ldr r0, [sp, #32]
 	movs r1, #6
 	str r4, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	lsls r5, r5, #2
@@ -639,7 +639,7 @@ Func_08170dac:
 	movs r5, #8
 	str r5, [r3]
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r2, [sp, #76]
 	movs r1, #36
 	ldrsh r0, [r2, r1]

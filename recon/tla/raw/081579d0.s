@@ -122,7 +122,7 @@ Func_081579d0:
 	cmp r2, #56
 	bne .L_08157acc
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08157acc:
 	ldr r3, [sp, #28]
 	cmp r3, #95

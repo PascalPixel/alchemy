@@ -328,11 +328,11 @@ Func_08166b10:
 	cmp r1, #1
 	bne .L_08166dae
 	movs r0, #144
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_08166db4
 .L_08166dae:
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08166db4:
 	ldr r2, [sp, #32]
 	cmp r2, #55
@@ -353,7 +353,7 @@ Func_08166b10:
 	cmp r0, #17
 	bhi .L_08166e08
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	mov r2, r10
 	ldrb r1, [r2, r0]
 	ldr r3, [sp, #40]
@@ -563,7 +563,7 @@ Func_08166b10:
 	mov r10, r4
 	mov r8, r3
 	ldr r6, [sp, #16]
-	bl Math_Mod
+	bl __modsi3
 	subs r6, #17
 	adds r5, r0, #0
 	mov r9, r6
@@ -600,7 +600,7 @@ Func_08166b10:
 	blt .L_081670a2
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [r5, #16]
 	adds r4, r0, #2
 	cmp r3, #0
@@ -838,7 +838,7 @@ Func_08166b10:
 	cmp r6, #0
 	blt .L_081671b2
 	movs r1, #5
-	bl __divsi3
+	bl Math_Div
 	ldr r2, .L_0816728c
 	adds r0, #1
 	lsls r4, r0, #1

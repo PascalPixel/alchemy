@@ -1245,7 +1245,7 @@ Func_0818bc98:
 	movs r0, #134
 	bl Audio_PlayCue
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0818c62c:
 	mov r1, r11
 	ldr r0, [r1, #20]
@@ -1362,7 +1362,7 @@ Func_0818bc98:
 	movs r2, #8
 	str r2, [r3]
 	movs r0, #144
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r1, #128
 	ldr r3, .L_0818c794
 	ldr r0, [sp, #56]

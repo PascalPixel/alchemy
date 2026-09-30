@@ -350,13 +350,13 @@ Func_0810106c:
 	adds r5, r7, r3
 	ldrb r3, [r5]
 	ldrb r0, [r6]
-	bl Trade_AddOfferFar + 0x8
+	bl Djinn_TransferFar
 	adds r4, r0, #0
 	ldrb r0, [r6]
 	str r4, [sp, #0]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldrb r0, [r5]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r2, [r7, #20]
 	movs r3, #13
 	strb r3, [r2, #5]
@@ -465,7 +465,7 @@ Func_0810106c:
 	ldrb r2, [r5]
 	ldrb r0, [r6]
 	str r3, [sp, #4]
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	ldr r3, [sp, #4]
 	ldrb r2, [r5]
 	ldrb r1, [r3]
@@ -519,7 +519,7 @@ Func_0810106c:
 	adds r5, r7, r3
 	ldrb r3, [r5]
 	ldrb r0, [r6]
-	bl Trade_AddOfferFar + 0x8
+	bl Djinn_TransferFar
 	movs r1, #174
 	lsls r1, r1, #1
 	movs r2, #173
@@ -532,13 +532,13 @@ Func_0810106c:
 	ldrb r2, [r3]
 	ldrb r0, [r5]
 	ldrb r3, [r6]
-	bl Trade_AddOfferFar + 0x8
+	bl Djinn_TransferFar
 	adds r4, r0, #0
 	ldrb r0, [r6]
 	str r4, [sp, #0]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldrb r0, [r5]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	movs r1, #192
 	lsls r1, r1, #1
 	adds r3, r7, r1
@@ -650,7 +650,7 @@ Func_0810106c:
 	adds r4, r0, #0
 	ldrb r0, [r6]
 	str r4, [sp, #0]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r2, [r7, #20]
 	movs r3, #13
 	strb r3, [r2, #5]

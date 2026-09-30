@@ -13,5 +13,11 @@ UiText_DrawNumberAtOffsetFar:
 	.thumb_func
 UiText_DrawNumberInWindowFar:
 	overlay_veneer UiText_DrawNumberInWindow
+	.global Func_080380b8
+	.thumb_func
+Func_080380b8:
 	overlay_veneer Func_08041f70
+	.global Func_080380c0
+	.thumb_func
+Func_080380c0:
 	overlay_veneer Func_08041f90

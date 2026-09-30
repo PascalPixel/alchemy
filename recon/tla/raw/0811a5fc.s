@@ -23,7 +23,7 @@ Func_0811a5fc:
 	adds r0, r6, #0
 	movs r1, #0
 	movs r2, #0
-	bl ResourceMetadata_SumCommandLengthsFar + 0x10
+	bl Func_080202b8
 	mov r3, r10
 	strh r3, [r5, r7]
 	b .L_0811a630

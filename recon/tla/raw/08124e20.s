@@ -148,7 +148,7 @@ Func_08124e20:
 	adds r0, r5, #0
 	bl Trade_RemoveOfferFar
 	adds r0, r5, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	adds r0, r5, #0
 	bl BattleParty_IsUnitListed
 	cmp r0, #0
@@ -317,11 +317,11 @@ Func_08124e20:
 	cmp r2, r3
 	bne .L_081250b0
 	ldr r0, .L_08125114
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_081250b6
 .L_081250b0:
 	ldr r0, .L_08125118
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 .L_081250b6:
 	movs r0, #175
 	bl Audio_PlayCue
@@ -346,7 +346,7 @@ Func_08124e20:
 .L_081250e0:
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Owner_AdjustSecondValueFar
+	bl Func_080ad0c8
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity
@@ -360,7 +360,7 @@ Func_08124e20:
 	cmp r2, r3
 	bne .L_08125120
 	ldr r0, .L_0812511c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_08125126
 .L_0812510c:
 	.4byte 0x00000cf7
@@ -374,7 +374,7 @@ Func_08124e20:
 	.4byte 0x00000c6d
 .L_08125120:
 	ldr r0, .L_0812535c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 .L_08125126:
 	movs r0, #175
 	bl Audio_PlayCue
@@ -393,7 +393,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08125360
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_0812515a:
 	adds r0, r6, #0
@@ -409,7 +409,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08125364
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_08125184:
 	adds r0, r6, #0
@@ -425,7 +425,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08125368
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_081251ae:
 	adds r0, r6, #0
@@ -441,7 +441,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_0812536c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_081251d8:
 	adds r0, r6, #0
@@ -457,7 +457,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08125370
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_08125202:
 	adds r0, r6, #0
@@ -473,7 +473,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08125374
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_0812522c:
 	adds r0, r6, #0
@@ -489,7 +489,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08125378
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_08125256:
 	adds r0, r6, #0
@@ -507,7 +507,7 @@ Func_08124e20:
 	adds r0, r6, #0
 	bl BattlePres_SetActorModeAndAction
 	ldr r0, .L_0812537c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_08125286:
 	adds r0, r6, #0
@@ -525,7 +525,7 @@ Func_08124e20:
 	adds r0, r6, #0
 	bl BattlePres_SetActorModeAndAction
 	ldr r0, .L_08125380
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_081252b6:
 	adds r0, r6, #0
@@ -541,7 +541,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08125384
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_081252e0:
 	adds r0, r6, #0
@@ -557,7 +557,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08125388
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_0812530a:
 	adds r0, r6, #0
@@ -573,7 +573,7 @@ Func_08124e20:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_0812538c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_08125334:
 	movs r2, #1

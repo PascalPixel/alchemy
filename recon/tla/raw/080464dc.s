@@ -90,7 +90,7 @@ Func_080464dc:
 	adds r0, r7, #0
 	adds r1, r5, #0
 	adds r2, r6, #0
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	b .L_080465a2
 .L_08046598:
 	adds r0, r7, #0
@@ -99,7 +99,7 @@ Func_080464dc:
 	bl Djinn_ActivateFar
 .L_080465a2:
 	adds r0, r7, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #56]
 	add r2, sp, #64
@@ -112,7 +112,7 @@ Func_080464dc:
 	movs r1, #5
 	str r0, [sp, #20]
 	subs r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #108]
 	adds r0, #1
 	str r0, [r3]

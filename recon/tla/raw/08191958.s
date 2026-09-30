@@ -152,7 +152,7 @@ Func_08191958:
 	negs r1, r1
 .L_08191a76:
 	movs r0, #192
-	bl __divsi3
+	bl Math_Div
 	adds r6, r0, #1
 	asrs r0, r0, #1
 	mov r9, r0

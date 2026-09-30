@@ -94,7 +94,7 @@ Func_0811fe3c:
 	adds r2, r1, r4
 	strb r3, [r2]
 	adds r0, r5, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	adds r0, r5, #0
 	bl GetBattleObjectSlot
 	adds r1, r0, #0

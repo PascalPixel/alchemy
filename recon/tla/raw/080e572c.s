@@ -168,7 +168,7 @@ Func_080e572c:
 	str r0, [r1, #4]
 	movs r1, #12
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	movs r2, #128
 	lsls r2, r2, #8
 	adds r6, r6, r2

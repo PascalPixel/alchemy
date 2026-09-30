@@ -289,7 +289,7 @@ Func_08180c94:
 	cmp r0, #17
 	bhi .L_08180f18
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	adds r1, r0, #0
 	lsls r1, r1, #11
 	movs r0, #224
@@ -633,7 +633,7 @@ Func_08180c94:
 	adds r3, #220
 	add r3, r10
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	bl Func_08143bb8
 	add sp, #68
 	pop {r3, r5, r6, r7}

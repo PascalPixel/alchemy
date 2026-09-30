@@ -342,7 +342,7 @@ Func_080b075c:
 .L_080b0a68:
 	adds r0, r7, #0
 	movs r1, #100
-	bl __divsi3
+	bl Math_Div
 	adds r5, r0, #0
 	bl Func_080b039c
 	cmp r5, r0

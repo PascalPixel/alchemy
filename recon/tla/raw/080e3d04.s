@@ -31,7 +31,7 @@ Func_080e3d04:
 	ldr r5, [r3, #20]
 	mov r11, r1
 	adds r0, r5, #0
-	bl Func_08020328 + 0x8
+	bl Func_08020330
 	movs r2, #209
 	lsls r2, r2, #1
 	cmp r0, r2

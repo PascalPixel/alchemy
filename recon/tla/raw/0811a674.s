@@ -9,7 +9,7 @@ Func_0811a674:
 	movs r1, #1
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Djinn_IsActiveFar + 0x20
+	bl Inventory_FindEquippedFar
 	movs r5, #0
 	cmp r0, #0
 	blt .L_0811a6f6

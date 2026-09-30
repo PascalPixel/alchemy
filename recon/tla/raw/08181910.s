@@ -427,7 +427,7 @@ Func_08181910:
 	cmp r1, #0
 	bne .L_08181c78
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #168

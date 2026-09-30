@@ -208,7 +208,7 @@ Func_0816a2d8:
 	adds r0, r1, #0
 .L_0816a46c:
 	movs r2, #16
-	bl Func_08118070 + 0x8
+	bl Func_08118078
 	b .L_0816a4a6
 .L_0816a474:
 	ldr r3, [sp, #12]
@@ -216,7 +216,7 @@ Func_0816a2d8:
 	bne .L_0816a496
 	ldr r1, [sp, #16]
 	ldr r0, [r1, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
 	movs r1, #2
 	adds r0, r5, #0
@@ -232,7 +232,7 @@ Func_0816a2d8:
 	ldr r0, [r2, #8]
 	movs r3, #0
 	movs r2, #16
-	bl Func_08118070 + 0x8
+	bl Func_08118078
 .L_0816a4a6:
 	ldr r1, [sp, #12]
 	cmp r1, #4
@@ -449,7 +449,7 @@ Func_0816a2d8:
 	cmp r1, #18
 	bne .L_0816a642
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0816a642:
 	mov r2, r10
 	cmp r2, #20
@@ -518,7 +518,7 @@ Func_0816a2d8:
 	bne .L_0816a6e0
 	ldr r3, [sp, #16]
 	ldr r0, [r3, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	movs r1, #16
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar

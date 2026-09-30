@@ -34,7 +34,7 @@ Func_08104ef8:
 	cmp r5, #0
 	beq .L_08104f42
 	adds r0, r5, #0
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	mov r3, r11
 	mov r2, r8
 	mov r1, r10
@@ -77,7 +77,7 @@ Func_08104ef8:
 	ldrh r3, [r6, r1]
 	ldrh r0, [r6, r1]
 	strh r3, [r7]
-	bl Func_080c82a8 + 0x10
+	bl Func_080c82b8
 	bl Func_08020040
 	adds r5, r0, #0
 	adds r7, #2

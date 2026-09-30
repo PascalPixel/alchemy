@@ -151,7 +151,7 @@ Func_08181ed4:
 	movs r2, #8
 	movs r0, #134
 	str r2, [r3]
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r1, [sp, #36]
 	movs r7, #36
 	ldrsh r0, [r1, r7]

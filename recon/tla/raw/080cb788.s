@@ -32,7 +32,7 @@ Func_080cb788:
 	ldrsh r0, [r0, r3]
 	movs r1, #20
 	adds r0, #10
-	bl __divsi3
+	bl Math_Div
 	negs r1, r0
 	cmp r1, #0
 	bne .L_080cb7d0
@@ -48,7 +48,7 @@ Func_080cb788:
 	ldrsh r0, [r0, r2]
 	movs r1, #10
 	adds r0, #5
-	bl __divsi3
+	bl Math_Div
 	negs r1, r0
 	cmp r1, #0
 	bne .L_080cb7ee

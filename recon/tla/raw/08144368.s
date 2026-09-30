@@ -172,7 +172,7 @@ Func_08144368:
 	ldr r1, [sp, #12]
 	mov r3, r9
 	ldrsh r0, [r1, r3]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r1, [sp, #24]
 	ldr r5, [r0]
 	lsls r2, r1, #4

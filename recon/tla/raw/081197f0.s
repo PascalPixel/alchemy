@@ -107,18 +107,18 @@ Func_081197f0:
 	movs r0, #12
 	bl Runtime_AllocateBlock
 	movs r0, #4
-	bl Func_08020080 + 0x8
+	bl Func_08020088
 	movs r0, #183
 	lsls r0, r0, #1
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_081198f2
 	movs r0, #1
-	bl Resource_FarCall004 + 0x8
+	bl UiWork_InitializeFar
 	b .L_081198f8
 .L_081198f2:
 	movs r0, #0
-	bl Resource_FarCall004 + 0x8
+	bl UiWork_InitializeFar
 .L_081198f8:
 	mov r5, r9
 	bl Func_081196fc
@@ -270,7 +270,7 @@ Func_081197f0:
 	bl Func_081185c4
 .L_08119a30:
 	movs r0, #9
-	bl UiText_DrawQuantity + 0x8
+	bl Func_08038128
 	bl Func_0811bddc
 	bl BattleActor_CommitPlacement
 	bl Func_081263c4
@@ -878,7 +878,7 @@ Func_081197f0:
 	ldrh r0, [r2, #62]
 	ldr r3, .L_08119f74
 	adds r0, r0, r3
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_08119f2a:
 	bl Func_081284c0
@@ -939,11 +939,11 @@ Func_081197f0:
 	cmp r0, #1
 	bne .L_08119fb0
 	ldr r0, .L_0811a028
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_08119fb6
 .L_08119fb0:
 	ldr r0, .L_0811a02c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 .L_08119fb6:
 	bl BattlePresentation_WaitForAdvance
 .L_08119fba:

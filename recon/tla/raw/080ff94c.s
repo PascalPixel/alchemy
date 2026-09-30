@@ -70,7 +70,7 @@ PsynergyMenu_DrawRangePage:
 	movs r3, #224
 	movs r1, #0
 	movs r2, #96
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	movs r3, #0
 	mov r10, r3
 	ldrb r3, [r5, #6]

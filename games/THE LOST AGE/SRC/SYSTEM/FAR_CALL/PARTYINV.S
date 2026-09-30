@@ -9,6 +9,9 @@
 	.thumb_func
 Func_080ad2b8:
 	overlay_veneer Func_080adbec
+	.global Equipment_GetUnleashRateBonusFar
+	.thumb_func
+Equipment_GetUnleashRateBonusFar:
 	overlay_veneer Equipment_GetUnleashRateBonus
 	.global Func_080ad2c8
 	.thumb_func

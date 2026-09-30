@@ -148,7 +148,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123bec
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl .L_081241aa
 .L_08123950:
 	movs r1, #158
@@ -162,7 +162,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123bf0
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl .L_081241aa
 .L_08123970:
 	movs r1, #60
@@ -176,7 +176,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123bf4
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl .L_081241aa
 .L_08123990:
 	movs r0, #152
@@ -201,7 +201,7 @@ Func_0812381c:
 	ldrsh r0, [r3, r2]
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123bf8
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl .L_081241aa
 .L_081239c8:
 	mov r4, r10
@@ -360,14 +360,14 @@ Func_0812381c:
 	cmp r0, r3
 	bhi .L_08123bc4
 	ldr r0, .L_08123c00
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_08123bd2
 .L_08123bc4:
 	asrs r0, r0, #16
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123c04
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 .L_08123bd2:
 	bl BattlePresentation_WaitForAdvance
 	mov r4, r11
@@ -397,7 +397,7 @@ Func_0812381c:
 .L_08123c08:
 	ldr r1, [sp, #12]
 	ldr r0, [r1]
-	bl Party_ListActiveOwnersFar + 0x8
+	bl Func_080ad108
 	add r2, sp, #40
 	mov r9, r2
 	adds r7, r0, #0
@@ -426,7 +426,7 @@ Func_0812381c:
 	bl UiText_DrawQuantity
 	ldr r5, .L_08123f60
 	adds r0, r5, #0
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	adds r5, #1
 	bl Func_08120158
 	adds r0, r7, #0
@@ -434,7 +434,7 @@ Func_0812381c:
 	bl UiText_DrawQuantity
 	adds r0, r5, #0
 .L_08123c62:
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_08124376
 .L_08123c68:
 	ldr r4, [sp, #12]
@@ -518,15 +518,15 @@ Func_0812381c:
 	cmp r7, r0
 	blt .L_08123d1a
 	ldr r0, .L_08123f64
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_08123d20
 .L_08123d12:
 	ldr r0, .L_08123f68
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_08123d20
 .L_08123d1a:
 	ldr r0, .L_08123f6c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 .L_08123d20:
 	ldr r2, [sp, #12]
 	ldr r1, [r2]
@@ -603,7 +603,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123f70
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_081241aa
 .L_08123db4:
 	ldr r4, [sp, #12]
@@ -640,7 +640,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123f74
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	ldr r4, [sp, #12]
 	movs r0, #44
 	ldr r3, [r4]
@@ -715,7 +715,7 @@ Func_0812381c:
 	ldrsh r0, [r3, r2]
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123f74
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_081241aa
 .L_08123e90:
 	mov r4, r10
@@ -954,7 +954,7 @@ Func_0812381c:
 	adds r1, r5, #0
 	ands r1, r3
 	ands r0, r6
-	bl Trade_AddOfferFar + 0x20
+	bl Djinn_GetDefinitionHeaderFar
 	mov r1, r10
 	ldr r3, [r1]
 	adds r7, r0, #0
@@ -986,7 +986,7 @@ Func_0812381c:
 	asrs r1, r1, #24
 	ands r1, r6
 	ands r2, r3
-	bl Djinn_IsActiveFar + 0x8
+	bl Trade_CanOfferDjinnFar
 	cmp r0, #0
 	bne .L_08124086
 	b .L_08124182
@@ -1022,7 +1022,7 @@ Func_0812381c:
 	ldr r3, [r2]
 	movs r4, #0
 	ldrsh r0, [r3, r4]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	bl Func_081234a4
 	movs r0, #30
 	bl Func_08122c88
@@ -1111,7 +1111,7 @@ Func_0812381c:
 	movs r0, #114
 	bl Audio_PlayCue
 	ldr r0, .L_08124438
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	movs r0, #60
 	bl WaitFrames
 .L_081241aa:
@@ -1153,7 +1153,7 @@ Func_0812381c:
 	movs r1, #4
 	bl UiText_DrawQuantity
 	ldr r0, .L_0812443c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	mov r3, r11
 	ldr r2, [r3]
 	ldrb r3, [r5, #2]
@@ -1164,7 +1164,7 @@ Func_0812381c:
 	ldr r3, [r4]
 	movs r1, #8
 	ldrsh r0, [r3, r1]
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
@@ -1250,7 +1250,7 @@ Func_0812381c:
 	movs r1, #4
 	bl UiText_DrawQuantity
 	ldr r0, .L_08124440
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	adds r0, r5, #0
 	b .L_081247ec
 .L_081242c6:
@@ -1264,7 +1264,7 @@ Func_0812381c:
 	adds r0, r7, #0
 	bl UiText_DrawQuantity
 	ldr r0, .L_08124444
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	ldr r0, [sp, #4]
 	movs r1, #144
 	lsls r1, r1, #1
@@ -1360,7 +1360,7 @@ Func_0812381c:
 	adds r6, r0, #0
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_080ad110 + 0x8
+	bl Func_080ad118
 	mov r2, r11
 	ldr r1, [r2]
 	movs r3, #2
@@ -1405,7 +1405,7 @@ Func_0812381c:
 	ldrsh r0, [r3, r4]
 	bl UiText_DrawQuantity
 	ldr r0, .L_08124448
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_0812444c
 .L_081243fc:
 	ldr r0, [sp, #12]
@@ -1504,10 +1504,10 @@ Func_0812381c:
 .L_081244b4:
 	ldr r1, [sp, #12]
 	ldr r0, [r1]
-	bl Func_080ad2b8 + 0x8
+	bl Equipment_GetUnleashRateBonusFar
 	movs r1, #200
 	lsls r0, r0, #16
-	bl __divsi3
+	bl Math_Div
 	adds r5, r0, #0
 	bl BattleRandom16Far
 	movs r3, #255

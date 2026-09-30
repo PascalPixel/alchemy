@@ -130,7 +130,7 @@ Func_08124cc4:
 	adds r0, r5, #0
 	bl Trade_RemoveOfferFar
 	adds r0, r5, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	adds r0, r5, #0
 	bl BattleParty_IsUnitListed
 	cmp r0, #0

@@ -53,7 +53,7 @@ Func_0811c984:
 	ldr r0, [r5, #8]
 	bl UiText_DrawQuantity
 	ldr r0, .L_0811ca50
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	movs r2, #13
 	movs r3, #36
 	ldrsh r1, [r5, r3]
@@ -84,7 +84,7 @@ Func_0811c984:
 	str r3, [r5, #28]
 	bl WaitFrames
 	adds r0, r5, #0
-	bl Resource_FarCall00C + 0x8
+	bl Func_08138008
 	movs r3, #36
 	ldrsh r0, [r5, r3]
 	bl Actor_ResetMotionAtAnchor

@@ -133,7 +133,7 @@ Func_081509b4:
 	cmp r1, #24
 	bne .L_08150abc
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08150abc:
 	movs r2, #0
 	mov r8, r2

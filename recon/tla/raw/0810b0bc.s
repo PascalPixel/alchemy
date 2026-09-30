@@ -29,7 +29,7 @@ Func_0810b0bc:
 	ldr r1, [r5]
 	ldr r2, [r5, #8]
 	adds r0, r6, #0
-	bl Func_080c8588 + 0x10
+	bl EffectSlot_SetPositionFar
 	ldr r3, [r6, #20]
 	str r3, [r5]
 	ldr r3, [r6, #24]
@@ -63,7 +63,7 @@ Func_0810b0bc:
 	cmp r7, #1
 	bne .L_0810b14a
 	adds r0, r6, #0
-	bl Func_080c8588 + 0x8
+	bl Func_080c8590
 	cmp r0, #0
 	bne .L_0810b15e
 	mov r3, r8
@@ -73,11 +73,11 @@ Func_0810b0bc:
 	cmp r7, #2
 	bne .L_0810b15e
 	adds r0, r6, #0
-	bl Func_080c8588 + 0x8
+	bl Func_080c8590
 	cmp r0, #0
 	bne .L_0810b15e
 	adds r0, r6, #0
-	bl Func_080c8588 + 0x30
+	bl Func_080c85b8
 .L_0810b15e:
 	add sp, #12
 	pop {r3}

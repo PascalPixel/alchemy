@@ -224,7 +224,7 @@ Func_08189b14:
 	cmp r9, r3
 	bne .L_08189cf4
 	movs r0, #144
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_08189cfa
 .L_08189cd4:
 	.4byte 0x000000ec

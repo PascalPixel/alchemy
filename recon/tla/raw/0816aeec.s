@@ -333,7 +333,7 @@ Func_0816aeec:
 	cmp r2, #17
 	bne .L_0816b260
 	movs r0, #144
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r5, [sp, #96]
 	movs r1, #1
 	movs r3, #36
@@ -405,7 +405,7 @@ Func_0816aeec:
 	cmp r7, #46
 	bne .L_0816b260
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r0, [sp, #96]
 	movs r4, #0
 	ldr r3, [r0, #20]

@@ -209,7 +209,7 @@ Func_08123648:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123818
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	mov r3, r11
 	subs r3, #20
 	ldr r3, [r3]

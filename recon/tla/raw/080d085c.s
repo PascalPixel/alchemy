@@ -113,7 +113,7 @@ Func_080d085c:
 .L_080d0930:
 	.4byte Func_080d085c
 .L_080d0934:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 .L_080d0938:
 	.4byte Data_0300122c
 .L_080d093c:

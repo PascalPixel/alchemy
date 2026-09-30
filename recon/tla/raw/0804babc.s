@@ -22,7 +22,7 @@ Func_0804babc:
 	movs r0, #1
 	adds r1, r5, #0
 	mov r11, r2
-	bl Func_08118088 + 0x38
+	bl BattleParty_ListLivingUnitsFar
 	movs r3, #0
 	mov r10, r3
 	movs r7, #0

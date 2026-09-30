@@ -179,7 +179,7 @@ Func_0816ec58:
 	cmp r2, #32
 	bne .L_0816edca
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0816edca:
 	mov r3, r11
 	cmp r3, #0
@@ -242,7 +242,7 @@ Func_0816ec58:
 	mov r2, r10
 	ldr r1, [r2, #20]
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	adds r3, r0, #0
 	lsls r5, r3, #1
 	mov r4, r10
@@ -451,7 +451,7 @@ Func_0816ec58:
 	cmp r0, #28
 	bgt .L_0816f014
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	movs r1, #2
 	ldrsh r4, [r5, r1]
 	movs r2, #6

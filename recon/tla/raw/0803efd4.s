@@ -23,7 +23,7 @@ Func_0803efd4:
 	lsls r2, r2, #1
 	strh r3, [r0, r2]
 	movs r1, #0
-	bl Func_08118088 + 0x58
+	bl BattlePres_SetActorModesFar
 	add sp, #12
 	pop {pc}
 .L_0803f000:

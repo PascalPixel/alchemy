@@ -110,4 +110,4 @@ Func_080d0788:
 .L_080d0854:
 	.4byte Func_080d0788
 .L_080d0858:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide

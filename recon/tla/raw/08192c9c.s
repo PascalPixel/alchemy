@@ -349,7 +349,7 @@ Func_08192c9c:
 	ldr r2, [sp, #64]
 	ldr r3, [r2]
 	ldr r0, [r3, r5]
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	movs r3, #1
 	add r10, r3
 	mov r4, r10
@@ -738,7 +738,7 @@ Func_08192c9c:
 	str r2, [r5, #4]
 	movs r1, #3
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r5, #8]
 	movs r1, #3
 	adds r3, r3, r0
@@ -1034,7 +1034,7 @@ Func_08192c9c:
 	ldr r1, .L_08193648
 	movs r2, #0
 	movs r0, #1
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r0, .L_0819364c
 	bl Resource_GetTableEntry
 	movs r3, #128
@@ -1665,7 +1665,7 @@ Func_08192c9c:
 	ldr r0, [sp, #64]
 	ldr r3, [r0]
 	ldr r0, [r3, r5]
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	movs r1, #1
 	add r10, r1
 	mov r2, r10
@@ -2391,7 +2391,7 @@ Func_08192c9c:
 	mov r8, r1
 	mov r0, r8
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	lsls r3, r3, #7
@@ -2707,7 +2707,7 @@ Func_08192c9c:
 	mov r8, r5
 	mov r0, r8
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	lsls r0, r0, #3
 	cmp r0, #64
 	bne .L_0819418c
@@ -3006,7 +3006,7 @@ Func_08192c9c:
 	subs r5, r5, r2
 	ldrb r1, [r3, r4]
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	ldr r3, .L_081944e8
 	mov r2, r11
 	ldrb r1, [r3, r2]
@@ -3258,7 +3258,7 @@ Func_08192c9c:
 .L_081945ae:
 	movs r1, #19
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	adds r1, r0, #0
 	lsls r3, r1, #2
 	ldr r0, [r6, r3]
@@ -3292,7 +3292,7 @@ Func_08192c9c:
 .L_081945f2:
 	movs r1, #21
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	adds r1, r0, #0
 	lsls r3, r1, #2
 	lsls r1, r1, #1
@@ -3515,7 +3515,7 @@ Func_08192c9c:
 	movs r0, #1
 	ldr r1, .L_081947c0
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r4, #0
 	movs r7, #192
 	movs r0, #160
@@ -4954,7 +4954,7 @@ Func_08192c9c:
 	movs r1, #6
 	adds r0, r5, #0
 	ldrh r6, [r3, #10]
-	bl __divsi3
+	bl Math_Div
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	lsls r3, r3, #7
@@ -5511,7 +5511,7 @@ Func_08192c9c:
 	add r10, r5
 	ldr r0, [r3, r2]
 	mov r6, r10
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	cmp r6, #36
 	bne .L_08195718
 	ldr r0, .L_08195748

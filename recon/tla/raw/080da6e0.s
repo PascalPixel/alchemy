@@ -58,7 +58,7 @@ Func_080da6e0:
 	mov lr, r3
 	.2byte 0xf800
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	mov r2, r10
 	lsls r5, r2, #3
 	subs r5, r5, r2
@@ -213,7 +213,7 @@ Func_080da6e0:
 	adds r0, r0, r3
 	adds r1, r5, #0
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #16]
 	adds r0, r2, r0
 	str r0, [r7, #4]
@@ -225,7 +225,7 @@ Func_080da6e0:
 	adds r0, r0, r3
 	adds r1, r5, #0
 	lsls r0, r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #12]
 	mov r1, r11
 	adds r0, r2, r0
@@ -237,7 +237,7 @@ Func_080da6e0:
 	adds r0, r0, r3
 	lsls r0, r0, #1
 	adds r1, r5, #0
-	bl __divsi3
+	bl Math_Div
 	movs r3, #2
 	add r0, r11
 	str r0, [r7, #12]

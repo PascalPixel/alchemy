@@ -111,7 +111,7 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r3]
 	cmp r0, #0
 	blt .L_081202b6
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 .L_081202b6:
 	bl BattlePresentation_WaitForAdvance
 .L_081202ba:
@@ -123,7 +123,7 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r3]
 	cmp r0, #0
 	blt .L_081202ba
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	b .L_081202ba
 .L_081202d0:
 	movs r2, #180

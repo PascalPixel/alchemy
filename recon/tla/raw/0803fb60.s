@@ -22,12 +22,12 @@ Func_0803fb60:
 	lsls r3, r3, #3
 	adds r3, #180
 	adds r0, r5, r3
-	bl Func_08108030 + 0x8
+	bl Func_08108038
 	movs r1, #160
 	lsls r1, r1, #3
 	adds r1, #196
 	adds r0, r5, r1
-	bl Func_08108030 + 0x8
+	bl Func_08108038
 	cmp r6, #0
 	bne .L_0803fbb0
 	movs r2, #160

@@ -9,6 +9,9 @@
 	.thumb_func
 VramBlock_LoadResourceFar:
 	overlay_veneer VramBlock_LoadResource
+	.global Func_08108090
+	.thumb_func
+Func_08108090:
 	overlay_veneer Func_0810a804
 	.global Func_08108098
 	.thumb_func

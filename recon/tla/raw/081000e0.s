@@ -31,7 +31,7 @@ Func_081000e0:
 	mov r11, r0
 	movs r1, #128
 	adds r0, r7, #0
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	ldr r2, [r5, #8]
 	lsls r3, r2, #2
 	adds r3, r3, r2

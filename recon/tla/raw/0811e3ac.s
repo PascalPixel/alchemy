@@ -401,7 +401,7 @@ Func_0811e3ac:
 	ldr r1, [r2, #44]
 	movs r0, #7
 	adds r2, r5, #0
-	bl ResourceMetadata_SumCommandLengthsFar + 0x10
+	bl Func_080202b8
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0811e714

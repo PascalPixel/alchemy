@@ -331,7 +331,7 @@ Func_08178ee4:
 	cmp r0, #11
 	bhi .L_081791d4
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	ldr r1, [sp, #12]
 	adds r6, r0, #0
 	ldr r5, [r1, #4]
@@ -428,7 +428,7 @@ Func_08178ee4:
 	mov r0, r9
 	subs r0, #56
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	adds r4, r0, #0
 	cmp r4, #0
 	bge .L_08179232
@@ -494,7 +494,7 @@ Func_08178ee4:
 	movs r3, #6
 	str r3, [r2]
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r2, [sp, #12]
 	movs r3, #16
 	movs r1, #36
@@ -563,7 +563,7 @@ Func_08178ee4:
 	ldrh r1, [r3]
 	movs r2, #24
 	movs r0, #1
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

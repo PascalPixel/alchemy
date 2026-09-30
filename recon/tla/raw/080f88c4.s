@@ -6,5 +6,5 @@ Func_080f88c4:
 	push {lr}
 	movs r0, #0
 	movs r2, #0
-	bl RenderOutput_CreateFar + 0x18
+	bl Func_080380e0
 	pop {pc}

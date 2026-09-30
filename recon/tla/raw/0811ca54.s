@@ -151,22 +151,22 @@ Func_0811ca54:
 	adds r0, r6, #0
 	str r7, [r6]
 	str r7, [r6, #24]
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	movs r3, #1
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	movs r3, #2
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	movs r3, #3
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Resource_FarCall00C + 0x20
+	bl Func_08138020
 	adds r0, r6, #0
 	str r7, [r6]
-	bl Resource_FarCall00C + 0x18
+	bl Func_08138018
 	mov r0, r10
 	movs r1, #1
 	bl Object_SetMode

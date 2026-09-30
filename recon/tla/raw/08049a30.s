@@ -351,7 +351,7 @@ Func_08049a30:
 	mov r0, r9
 	movs r1, #5
 	adds r6, r7, r2
-	bl __divsi3
+	bl Math_Div
 	cmp r7, r0
 	bne .L_08049d08
 	movs r3, #243
@@ -374,7 +374,7 @@ Func_08049a30:
 .L_08049d22:
 	mov r0, r10
 	movs r1, #5
-	bl __divsi3
+	bl Math_Div
 	adds r5, r0, #0
 	cmp r7, r5
 	blt .L_08049cec
@@ -421,7 +421,7 @@ Func_08049a30:
 	bhi .L_08049d92
 	mov r0, r9
 	movs r1, #5
-	bl __divsi3
+	bl Math_Div
 	cmp r7, r0
 	bne .L_08049d92
 	movs r2, #243
@@ -433,7 +433,7 @@ Func_08049a30:
 	movs r1, #5
 	mov r0, r10
 	ldrh r5, [r3, #8]
-	bl __divsi3
+	bl Math_Div
 	subs r5, r5, r0
 	adds r5, r5, r7
 	movs r1, #0
@@ -449,7 +449,7 @@ Func_08049a30:
 .L_08049db8:
 	mov r0, r10
 	movs r1, #5
-	bl __divsi3
+	bl Math_Div
 	cmp r7, r0
 	blt .L_08049d6a
 	mov r3, r11
@@ -729,7 +729,7 @@ Func_08049a30:
 	ldr r0, [sp, #72]
 	movs r1, #5
 	subs r0, #1
-	bl __divsi3
+	bl Math_Div
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	cmp r9, r3
@@ -781,7 +781,7 @@ Func_08049a30:
 	subs r0, #1
 	movs r1, #5
 	mov r9, r3
-	bl __divsi3
+	bl Math_Div
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	cmp r9, r3
@@ -821,7 +821,7 @@ Func_08049a30:
 	ldr r0, [sp, #72]
 	movs r1, #5
 	subs r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #44]
 	lsls r3, r0, #2
 	adds r3, r3, r0

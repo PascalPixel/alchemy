@@ -241,7 +241,7 @@ Func_08125d74:
 	adds r3, #65
 	ldrb r0, [r3]
 	lsls r5, r5, #19
-	bl UiText_DrawQuantity + 0x8
+	bl Func_08038128
 	adds r5, #8
 	movs r0, #20
 	bl WaitFrames
@@ -402,7 +402,7 @@ Func_08125d74:
 	adds r0, r6, #0
 	bl BattleActor_SpawnObjectsForList
 	adds r0, r5, #0
-	bl Resource_FarCall00C + 0x28
+	bl Func_08138028
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
@@ -439,7 +439,7 @@ Func_08125d74:
 	lsls r5, r5, #19
 	ldrb r0, [r3]
 	adds r5, #8
-	bl UiText_DrawQuantity + 0x8
+	bl Func_08038128
 	adds r0, r5, #0
 	movs r1, #2
 	bl Func_08013d0c

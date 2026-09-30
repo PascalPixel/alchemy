@@ -40,7 +40,7 @@ Func_0811de78:
 	cmp r2, #0
 	bne .L_0811decc
 	ldr r0, .L_0811df6c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 	b .L_0811df5a
 .L_0811decc:
@@ -107,7 +107,7 @@ Func_0811de78:
 	b .L_0811df5a
 .L_0811df50:
 	ldr r0, .L_0811df6c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_0811df5a:
 	movs r3, #0

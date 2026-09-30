@@ -24,7 +24,7 @@ Func_080fd6b0:
 	movs r0, #4
 	ldrb r2, [r3, #14]
 	movs r3, #0
-	bl UiWindow_SetTilemapEntryFar + 0x18
+	bl Func_08038288
 .L_080fd6dc:
 	subs r7, #1
 	adds r6, #4

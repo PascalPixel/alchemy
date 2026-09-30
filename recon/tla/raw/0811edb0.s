@@ -155,11 +155,11 @@ Func_0811edb0:
 	cmp r3, #0
 	beq .L_0811eee6
 	adds r0, r5, #0
-	bl Resource_FarCall00C + 0x8
+	bl Func_08138008
 	b .L_0811eef4
 .L_0811eee6:
 	adds r0, r5, #0
-	bl Resource_FarCall00C + 0x18
+	bl Func_08138018
 	b .L_0811eef4
 .L_0811eeee:
 	movs r0, #60

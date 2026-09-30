@@ -38,7 +38,7 @@ Func_08164cc4:
 	.4byte 0x00000100
 .L_08164d08:
 	ldr r0, [r6, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r2, [r0]
 	movs r3, #160
 	lsls r3, r3, #12
@@ -1331,7 +1331,7 @@ Func_08164cc4:
 	adds r2, #220
 	adds r3, r3, r2
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	ldr r4, [sp, #32]
 	movs r0, #238
 	ldr r3, [r4]
@@ -1339,11 +1339,11 @@ Func_08164cc4:
 	adds r0, #224
 	adds r3, r3, r0
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	bl BattleActor_CommitPlacementFar
 .L_08165734:
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0816573a:
 	bl Func_08014de4
 	adds r1, r5, #0
@@ -1528,7 +1528,7 @@ Func_08164cc4:
 .L_081658a2:
 	movs r1, #3
 	mov r0, r8
-	bl __divsi3
+	bl Math_Div
 	ldr r1, [sp, #36]
 	cmp r0, r1
 	bge .L_08165940
@@ -1773,7 +1773,7 @@ Func_08164cc4:
 	adds r4, #220
 	adds r3, r3, r4
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 .L_08165a9c:
 	bl Func_08143bb8
 	add sp, #280

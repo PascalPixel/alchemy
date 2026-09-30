@@ -39,7 +39,7 @@ Func_0812764c:
 .L_08127692:
 	adds r1, r7, #0
 	mov r0, r8
-	bl __divsi3
+	bl Math_Div
 	mov r8, r0
 	movs r0, #254
 	lsls r0, r0, #2

@@ -9,7 +9,7 @@ Func_080ebf68:
 	sub sp, #4
 	cmp r0, #0
 	beq .L_080ebf78
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 .L_080ebf78:
 	mov r0, sp
 	movs r3, #0

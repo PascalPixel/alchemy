@@ -208,7 +208,7 @@ Func_080457d0:
 	add r5, sp, #56
 	movs r0, #0
 	adds r1, r5, #0
-	bl BattleActor_CommitPlacementFar + 0x18
+	bl Func_08118130
 	mov r2, sp
 	adds r2, #59
 .L_0804596a:
@@ -983,7 +983,7 @@ Func_080457d0:
 	ands r3, r2
 	strb r3, [r1, #5]
 	movs r1, #155
-	bl BattleActor_CommitPlacementFar + 0x10
+	bl Func_08118128
 	movs r1, #1
 	ldr r0, [sp, #20]
 	bl UiWork_Finalize
@@ -1047,7 +1047,7 @@ Func_080457d0:
 	ldr r0, [r5]
 	ldr r1, [r6]
 	adds r0, #1
-	bl Math_Mod
+	bl __modsi3
 	str r0, [r5]
 	b .L_08045fdc
 .L_08045faa:
@@ -1063,7 +1063,7 @@ Func_080457d0:
 	ldr r1, [r2]
 	adds r0, r0, r1
 	subs r0, #1
-	bl Math_Mod
+	bl __modsi3
 	str r0, [r7]
 	b .L_08045fdc
 .L_08045fcc:

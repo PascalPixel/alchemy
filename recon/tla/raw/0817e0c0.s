@@ -159,13 +159,13 @@ Func_0817e0c0:
 	movs r2, #10
 	bl Func_08157530
 	ldr r0, [r5, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	movs r1, #48
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
 	movs r3, #36
 	ldrsh r0, [r5, r3]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	mov r2, sp
 	adds r2, #84
@@ -498,7 +498,7 @@ Func_0817e0c0:
 	cmp r1, #5
 	bne .L_0817e510
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_0817e516
 .L_0817e4c8:
 	.4byte 0x0000013e
@@ -538,7 +538,7 @@ Func_0817e0c0:
 	.4byte Data_08199364
 .L_0817e510:
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0817e516:
 	movs r2, #238
 	lsls r2, r2, #7

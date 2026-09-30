@@ -279,7 +279,7 @@ Func_081638d0:
 	cmp r3, #48
 	bne .L_08163b04
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r3, #238
 	lsls r3, r3, #7
 	adds r3, #168

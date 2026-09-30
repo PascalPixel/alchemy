@@ -201,7 +201,7 @@ Func_08149268:
 	bne .L_081493fc
 	movs r0, #134
 	mov r5, r9
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r1, [r5, #24]
 .L_081493fc:
 	lsls r3, r1, #1
@@ -265,14 +265,14 @@ Func_08149268:
 .L_08149468:
 	movs r1, #5
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
-	bl __divsi3
+	bl Math_Div
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	movs r2, #4
 	mov r3, r8
 	adds r6, r7, #0

@@ -304,10 +304,10 @@ Func_08191d60:
 	lsls r0, r0, #15
 	subs r0, r0, r3
 	mov r1, r8
-	bl __divsi3
+	bl Math_Div
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	lsls r6, r6, #14
 	str r0, [r7, #12]
 	b .L_08191fde
@@ -376,7 +376,7 @@ Func_08191d60:
 	asrs r0, r0, #5
 	bl Trig_Sin
 	movs r1, #5
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [r7, #12]
 	ldr r3, [r7]
 	adds r2, r2, r0
@@ -888,7 +888,7 @@ Func_08191d60:
 	cmp r9, r1
 	bne .L_0819245e
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -968,7 +968,7 @@ Func_08191d60:
 	add r5, r11
 .L_081924e6:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	movs r2, #1
 	add r10, r2
 	mov r3, r10

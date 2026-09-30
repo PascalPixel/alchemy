@@ -27,7 +27,7 @@ Func_08046b08:
 	str r1, [sp, #132]
 	str r2, [sp, #124]
 	str r3, [sp, #104]
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	str r0, [sp, #100]
 	movs r0, #168
 	movs r4, #0
@@ -775,7 +775,7 @@ Func_08046b08:
 	blt .L_0804715a
 	adds r0, r6, #0
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r0, #0
 	b .L_08047152
 	.2byte 0x0000
@@ -801,12 +801,12 @@ Func_08046b08:
 	mov r2, r8
 	ldr r0, [r2, #20]
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #3
 	adds r0, r6, #3
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r5, r0
 .L_08047152:
 	ldr r3, [sp, #456]
@@ -983,7 +983,7 @@ Func_08046b08:
 	ldrsb r6, [r3, r6]
 	movs r1, #3
 	adds r0, r6, #0
-	bl Math_Mod
+	bl __modsi3
 	adds r5, r0, #0
 	lsls r5, r5, #24
 	asrs r5, r5, #23
@@ -992,7 +992,7 @@ Func_08046b08:
 	movs r1, #3
 	str r5, [r4, #28]
 	adds r0, r6, #0
-	bl __divsi3
+	bl Math_Div
 	lsls r0, r0, #24
 	asrs r0, r0, #24
 	lsls r3, r0, #3
@@ -1043,18 +1043,18 @@ Func_08046b08:
 	strh r2, [r5]
 	strh r3, [r5, #2]
 	ldr r0, [sp, #96]
-	bl BattleActor_CommitPlacementFar + 0x8
+	bl Func_08118120
 	ldr r3, [sp, #144]
 	adds r0, r5, #0
 	movs r1, #1
 	movs r2, #0
 	str r3, [sp, #96]
-	bl BattleActor_CommitPlacementFar + 0x30
+	bl Func_08118148
 	movs r4, #0
 	str r4, [sp, #88]
 .L_08047326:
 	ldr r0, [sp, #144]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r3, [r0]
 	ldr r0, [sp, #28]
 	ldr r2, [r3, #80]
@@ -2371,12 +2371,12 @@ Func_08046b08:
 	adds r1, r2, #0
 	str r1, [sp, #20]
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	lsls r3, r0, #3
 	subs r6, r3, r0
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #128
 	lsls r0, r0, #1
 	adds r5, r0, #0
@@ -2672,7 +2672,7 @@ Func_08046b08:
 .L_08047fdc:
 	ldr r0, [sp, #144]
 	mov r1, r8
-	bl Party_AdvanceOwnerCountToTargetFar + 0x8
+	bl Func_080ad1a0
 	movs r3, #80
 	ldr r2, [sp, #136]
 	str r3, [sp, #0]
@@ -3127,7 +3127,7 @@ Func_08046b08:
 	adds r3, r2, r1
 	strb r7, [r3]
 	ldr r0, [sp, #144]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r2, [sp, #64]
 	mov r4, r10
 	ldrh r3, [r2, #60]
@@ -3529,7 +3529,7 @@ Func_08046b08:
 	movs r3, #0
 	str r3, [r2, #72]
 	ldr r0, [sp, #96]
-	bl BattleActor_CommitPlacementFar + 0x8
+	bl Func_08118120
 	bl BattleActor_CommitPlacementFar
 	movs r0, #1
 	bl WaitFrames

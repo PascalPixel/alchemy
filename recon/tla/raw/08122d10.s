@@ -199,7 +199,7 @@ Func_08122d10:
 	ldr r0, [r7, r3]
 	cmp r0, #0
 	blt .L_08122ea6
-	bl Func_080381c0 + 0x10
+	bl Func_080381d0
 .L_08122ea6:
 	movs r3, #164
 	lsls r3, r3, #1
@@ -216,7 +216,7 @@ Func_08122d10:
 	ldr r0, [r7, r3]
 	cmp r0, #0
 	blt .L_08122ec6
-	bl Func_080381c0 + 0x10
+	bl Func_080381d0
 .L_08122ec6:
 	movs r4, #164
 	lsls r4, r4, #1
@@ -788,7 +788,7 @@ Func_08122d10:
 .L_08123332:
 	asrs r0, r0, #3
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	adds r0, #1
 	mov r10, r0
 .L_0812333e:
@@ -928,17 +928,17 @@ Func_08122d10:
 .L_08123442:
 	ldr r0, [r5]
 	mov r1, r8
-	bl Object_SetPositionAndResetMotionFar + 0x8
+	bl Func_080200f0
 	ldr r0, [r5]
 	mov r1, r11
-	bl Object_SetPositionAndResetMotionFar + 0x8
+	bl Func_080200f0
 	ldr r0, [r5]
 	mov r1, r9
-	bl Object_SetPositionAndResetMotionFar + 0x8
+	bl Func_080200f0
 	subs r6, #1
 	ldmia r5!, {r0}
 	mov r1, r10
-	bl Object_SetPositionAndResetMotionFar + 0x8
+	bl Func_080200f0
 	cmp r6, #0
 	bne .L_08123442
 .L_08123468:

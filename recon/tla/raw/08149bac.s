@@ -161,12 +161,12 @@ Func_08149bac:
 	adds	r5, r0, #0
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r6, #0
 	muls	r3, r0
 	adds	r0, r5, #0
 	str	r3, [r7, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r6, #0
 	muls	r3, r0
 	mov	r5, r9
@@ -261,13 +261,13 @@ Func_08149bac:
 	mov	r3, fp
 	str	r3, [r5, #4]
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r3, r8
 	muls	r3, r0
 	asrs	r3, r3, #6
 	str	r3, [r5, #12]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r3, r8
 	muls	r3, r0
 	lsls	r3, r3, #1
@@ -1258,14 +1258,14 @@ Func_08149bac:
 	adds	r3, r3, r0
 	str	r3, [r7, #4]
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r6, #32
 	adds	r3, r6, #0
 	muls	r3, r0
 	asrs	r3, r3, #15
 	str	r3, [r7, #8]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r6, #0
 	muls	r3, r0
 	lsls	r3, r3, #1

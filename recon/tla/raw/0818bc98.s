@@ -88,7 +88,7 @@ Func_0818bc98:
 	cmp	r3, #0
 	bne.n	.L_0818bd56
 	lsls	r0, r6, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r0, r0, #7
 	asrs	r0, r0, #16
 	mov	r2, r8
@@ -97,7 +97,7 @@ Func_0818bc98:
 	b.n	.L_0818bd66
 .L_0818bd56:
 	lsls	r0, r6, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r3, r0, #6
 	subs	r3, r3, r0
 	asrs	r3, r3, #16
@@ -581,7 +581,7 @@ Func_0818bc98:
 	cmp	r3, #0
 	blt.n	0x0818c180
 	ldr	r0, [r6, #0]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [r6, #4]
 	muls	r3, r0
 	ldr	r0, [sp, #32]
@@ -589,7 +589,7 @@ Func_0818bc98:
 	adds	r0, r0, r3
 	mov	r8, r0
 	ldr	r0, [r6, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r2, [r6, #4]
 	ldr	r1, [sp, #28]
 	adds	r3, r2, #0

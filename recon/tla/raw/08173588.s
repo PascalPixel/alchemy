@@ -289,7 +289,7 @@ Func_08173588:
 .L_081737d4:
 	mov	r1, r9
 	lsls	r0, r1, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r4, [sp, #8]
 	movs	r1, #40
 	ldr	r3, [r4, #4]
@@ -450,7 +450,7 @@ Func_08173588:
 	cmp	r0, #15
 	bhi.n	.L_08173966
 	lsls	r0, r0, #11
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [r7, #8]
 	adds	r6, r3, #0
 	muls	r6, r0

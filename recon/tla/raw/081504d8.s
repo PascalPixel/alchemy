@@ -238,7 +238,7 @@ Func_081504d8:
 .L_0815068c:
 	str	r3, [r5, #12]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r7, #0
 	muls	r3, r0
 	movs	r1, #128
@@ -247,7 +247,7 @@ Func_081504d8:
 	adds	r3, r3, r1
 	str	r3, [r5, #16]
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r7, #0
 	muls	r3, r0
 	asrs	r3, r3, #6
@@ -687,7 +687,7 @@ Func_081504d8:
 	mov	r5, sl
 .L_08150a3a:
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r0, r0, #5
 	asrs	r0, r0, #16
 	mov	r3, r9
@@ -696,7 +696,7 @@ Func_081504d8:
 	adds	r3, #20
 	str	r3, [r5, #0]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	lsls	r0, r0, #4
 	asrs	r0, r0, #16
 	adds	r0, #40

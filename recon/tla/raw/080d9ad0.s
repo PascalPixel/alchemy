@@ -418,7 +418,7 @@ Func_080d9b08:
 	cmp	r3, #0
 	beq.n	.L_080d9e5c
 	ldr	r0, [r5, #16]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r1, [r5, #8]
 	mov	lr, r8
 	.2byte 0xf800

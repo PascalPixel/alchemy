@@ -1086,15 +1086,15 @@ Func_080e82cc:
 	bne.n	.L_080e8bc8
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	blt.n	.L_080e8bb2
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_080e8bba
 .L_080e8bb2:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 .L_080e8bba:
 	ldr	r3, [pc, #220]
@@ -1109,16 +1109,16 @@ Func_080e82cc:
 	bne.n	.L_080e8bf6
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	blt.n	.L_080e8be2
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 	b.n	.L_080e8be8
 .L_080e8be2:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 .L_080e8be8:
 	ldr	r3, [pc, #172]
 	mov	r1, sl
@@ -1130,15 +1130,15 @@ Func_080e82cc:
 .L_080e8bf6:
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	blt.n	.L_080e8c0a
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_080e8c12
 .L_080e8c0a:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 .L_080e8c12:
 	ldr	r3, [pc, #132]
@@ -1167,24 +1167,24 @@ Func_080e82cc:
 	bne.n	.L_080e8c52
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_080e8c66
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_080e8c6e
 .L_080e8c52:
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	blt.n	.L_080e8c66
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_080e8c6e
 .L_080e8c66:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 .L_080e8c6e:
 	ldr	r3, [pc, #40]

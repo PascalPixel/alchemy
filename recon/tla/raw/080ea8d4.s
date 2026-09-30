@@ -1128,10 +1128,10 @@ Func_080eb01c:
 	.2byte 0xffff
 .L_080eb164:
 	.2byte 0x8bb8
-	bl	Math_Sine
+	bl	Trig_Sin
 	str	r0, [sp, #8]
 	ldrh	r0, [r7, #28]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	str	r0, [sp, #4]
 	ldr	r2, [sp, #20]
 	ldrh	r3, [r7, #32]

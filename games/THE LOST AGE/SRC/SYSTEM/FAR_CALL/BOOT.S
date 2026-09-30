@@ -40,11 +40,11 @@ Func_08000100:
 	.global Math_SineFar
 	.thumb_func
 Math_SineFar:
-	overlay_veneer Math_Sine
+	overlay_veneer Trig_Sin
 	.global Math_CosineFar
 	.thumb_func
 Math_CosineFar:
-	overlay_veneer Math_Cosine
+	overlay_veneer Trig_Cos
 	.global Func_08000128
 	.thumb_func
 Func_08000128:

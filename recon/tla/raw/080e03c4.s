@@ -2141,7 +2141,7 @@ Func_080e1420:
 	movs	r3, #0
 	ldrsh	r0, [r6, r3]
 	lsls	r0, r0, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #0
 	ldrsh	r3, [r6, r1]
 	mov	r8, r0
@@ -3250,13 +3250,13 @@ Func_080e1650:
 	lsls	r3, r3, #13
 	str	r3, [r7, #4]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r6, #0
 	muls	r3, r0
 	asrs	r3, r3, #6
 	str	r3, [r7, #12]
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r6, #0
 	muls	r3, r0
 	asrs	r3, r3, #6

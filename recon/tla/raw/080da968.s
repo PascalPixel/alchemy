@@ -517,7 +517,7 @@ Func_080da968:
 	ldr	r3, [sp, #0]
 	mov	sl, r2
 	subs	r0, r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsrs	r1, r6, #31
 	adds	r1, r6, r1
 	asrs	r1, r1, #1
@@ -526,7 +526,7 @@ Func_080da968:
 	mov	lr, r2
 	.2byte 0xf800
 	.2byte 0x1c05
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #152]
 	mov	r1, sl
 	mov	lr, r3
@@ -536,7 +536,7 @@ Func_080da968:
 	subs	r0, r1, r0
 	str	r0, [r7, #4]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r1, sl
 	ldr	r2, [pc, #128]
 	mov	lr, r2

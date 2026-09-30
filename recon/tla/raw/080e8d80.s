@@ -215,7 +215,7 @@ Func_080e8d80:
 	mov	r1, fp
 	lsls	r0, r1, #11
 	str	r4, [sp, #4]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r1, [pc, #324]
 	ldr	r4, [sp, #4]
 	add	r1, r8
@@ -479,7 +479,7 @@ Func_080e8d80:
 	ldr	r3, [sp, #12]
 	str	r2, [sp, #0]
 	lsls	r0, r3, #11
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #192
 	adds	r5, r0, #0
 	lsls	r1, r1, #1

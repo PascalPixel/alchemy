@@ -580,11 +580,11 @@ Func_0802b998:
 	subs	r3, #12
 	mov	r3, r8
 	ldrh	r0, [r3, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r1, r8
 	adds	r5, r0, #0
 	ldrh	r0, [r1, #0]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #320]
 	adds	r1, r0, #0
 	adds	r0, r5, #0

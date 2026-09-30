@@ -74,7 +74,7 @@ Func_080da22c:
 	b.n	.L_080da300
 .L_080da2b8:
 	adds	r0, r7, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r1, r6, #0
 	mov	lr, r8
 	.2byte 0xf800
@@ -84,7 +84,7 @@ Func_080da22c:
 	ldr	r2, [sp, #8]
 	adds	r0, r7, #0
 	str	r2, [r5, #8]
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r6, #0
 	mov	lr, r8
 	.2byte 0xf800
@@ -153,7 +153,7 @@ Func_080da22c:
 	movs	r5, #128
 	ldr	r0, [r2, #0]
 	mov	r8, r2
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r4, [r6, #8]
 	ldr	r1, [r7, #8]
 	ldr	r2, [r7, #12]
@@ -292,10 +292,10 @@ Func_080da22c:
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	str	r0, [sp, #40]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r3, [sp, #52]
 	movs	r2, #1
 	lsls	r3, r3, #1
@@ -337,7 +337,7 @@ Func_080da22c:
 	mov	r1, r8
 	lsls	r0, r2, #14
 	bl	Math_Div
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #128
 	ldr	r3, [pc, #376]
 	lsls	r1, r1, #12
@@ -553,7 +553,7 @@ Func_080da22c:
 	ldr	r0, [r2, #0]
 	str	r6, [r5, #4]
 	mov	r8, r2
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r4, [r6, #8]
 	movs	r3, #128
 	lsls	r3, r3, #12
@@ -721,7 +721,7 @@ Func_080da22c:
 	cmp	r8, r2
 	bgt.n	.L_080da82e
 	mov	r0, sl
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r1, r5, #0
 	mov	lr, r9
 	.2byte 0xf800
@@ -733,7 +733,7 @@ Func_080da22c:
 	str	r1, [r7, #8]
 	mov	r0, sl
 	str	r1, [sp, #12]
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r5, #0
 	mov	lr, r9
 	.2byte 0xf800

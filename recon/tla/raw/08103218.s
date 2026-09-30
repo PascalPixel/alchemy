@@ -2083,7 +2083,7 @@ Func_08103218:
 	lsls	r0, r0, #4
 	adds	r0, r0, r3
 	lsls	r0, r0, #2
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #516]
 	adds	r1, r0, #0
 	movs	r0, #16

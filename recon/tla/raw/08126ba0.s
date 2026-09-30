@@ -425,14 +425,14 @@ BattlePres_SetActorModes:
 	lsrs	r6, r3, #1
 	adds	r0, r5, #0
 	mov	r8, r3
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r2, [pc, #324]
 	adds	r1, r6, #0
 	mov	lr, r2
 	.2byte 0xf800
 	.2byte 0x6038
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r6, #0
 	ldr	r3, [pc, #308]
 	mov	lr, r3
@@ -667,14 +667,14 @@ BattlePres_SetActorModes:
 	lsrs	r6, r3, #1
 	adds	r0, r5, #0
 	mov	r8, r3
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r2, [pc, #452]
 	adds	r1, r6, #0
 	mov	lr, r2
 	.2byte 0xf800
 	.2byte 0x6038
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r6, #0
 	ldr	r3, [pc, #432]
 	mov	lr, r3
@@ -741,26 +741,26 @@ BattlePres_SetActorModes:
 	mov	sl, r2
 .L_08127154:
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r1, r8
 	mov	lr, r7
 	.2byte 0xf800
 	.2byte 0x6028
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r1, r8
 	mov	lr, r7
 	.2byte 0xf800
 	.2byte 0x6068
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	movs	r1, #128
 	lsls	r1, r1, #2
 	mov	lr, r7
 	.2byte 0xf800
 	.2byte 0x60a8
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #128
 	lsls	r1, r1, #2
 	mov	lr, r7

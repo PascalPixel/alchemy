@@ -69,7 +69,7 @@ Func_080e3698:
 	mov	r2, r9
 	adds	r0, r5, #0
 	str	r2, [r6, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsls	r3, r3, #5
@@ -78,7 +78,7 @@ Func_080e3698:
 	ldr	r1, [sp, #4]
 	adds	r0, r5, #0
 	str	r1, [r6, #8]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r2, r6, #0
 	ldr	r1, [sp, #0]
 	lsls	r0, r0, #5
@@ -1760,7 +1760,7 @@ Func_080e4244:
 	.2byte 0x2600
 .L_080e4496:
 	lsls	r0, r6, #13
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r3, #128
 	lsls	r0, r0, #3
 	lsls	r3, r3, #12

@@ -25,7 +25,7 @@ Func_080dfb0c:
 .L_080dfb32:
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsrs	r2, r3, #31
@@ -35,7 +35,7 @@ Func_080dfb0c:
 	adds	r0, r5, #0
 	movs	r3, #0
 	str	r3, [r6, #4]
-	bl	Math_Sine
+	bl	Trig_Sin
 	str	r0, [r6, #8]
 	mov	r2, sl
 	ldr	r5, [r2, #8]
@@ -74,7 +74,7 @@ Func_080dfb0c:
 	adds	r5, r0, #0
 	adds	r0, r6, #0
 	adds	r5, r5, r1
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r2, [pc, #140]
 	adds	r1, r0, #0
 	mov	r8, r2
@@ -83,7 +83,7 @@ Func_080dfb0c:
 	.2byte 0xf800
 	.2byte 0x4682
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r0, #0
 	adds	r0, r5, #0
 	mov	lr, r8
@@ -161,7 +161,7 @@ Func_080dfb0c:
 	mov	r9, r0
 	adds	r0, r5, #0
 	mov	r8, r2
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r6, [pc, #112]
 	adds	r1, r0, #0
 	mov	r0, r8
@@ -169,7 +169,7 @@ Func_080dfb0c:
 	.2byte 0xf800
 	.2byte 0x4682
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r0, #0
 	mov	r0, r8
 	mov	lr, r6

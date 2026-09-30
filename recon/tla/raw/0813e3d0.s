@@ -395,13 +395,13 @@ Func_0813e3d0:
 	cmp	r3, #0
 	blt.n	.L_0813e770
 	ldr	r0, [r5, #0]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [r5, #8]
 	muls	r3, r0
 	asrs	r3, r3, #4
 	str	r3, [r7, #0]
 	ldr	r0, [r5, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r3, [r5, #8]
 	movs	r2, #128
 	muls	r3, r0

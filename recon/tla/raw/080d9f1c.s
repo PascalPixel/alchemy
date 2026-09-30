@@ -279,7 +279,7 @@ Func_080d9f1c:
 	lsls	r0, r2, #15
 	adds	r1, r7, #0
 	bl	Math_Div
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #92]
 	ldr	r1, [sp, #68]
 	mov	lr, r3

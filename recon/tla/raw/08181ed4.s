@@ -287,21 +287,21 @@ Func_08181ed4:
 	cmp	r3, #2
 	bne.n	.L_08182114
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r7, #0
 	muls	r3, r0
 	asrs	r3, r3, #8
 	b.n	.L_08182120
 .L_08182114:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r7, #0
 	muls	r3, r0
 	asrs	r3, r3, #6
 .L_08182120:
 	str	r3, [r6, #12]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r7, #0
 	muls	r3, r0
 	lsls	r3, r3, #1
@@ -459,7 +459,7 @@ Func_08181ed4:
 	cmp	r2, #15
 	bgt.n	.L_0818226a
 	lsls	r0, r2, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_08182280
 .L_0818226a:
 	movs	r0, #128
@@ -471,7 +471,7 @@ Func_08181ed4:
 	mov	r1, sl
 	lsls	r0, r1, #10
 	adds	r0, r0, r2
-	bl	Math_Sine
+	bl	Trig_Sin
 .L_08182280:
 	movs	r2, #32
 	negs	r2, r2

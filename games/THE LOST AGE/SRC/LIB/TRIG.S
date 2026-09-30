@@ -9,15 +9,15 @@
 @ credit: handwritten — deliberate math primitive, cosine and sine
 .syntax unified
 	.thumb
-	.global Math_Cosine
+	.global Trig_Cos
 	.thumb_func
-Math_Cosine:
+Trig_Cos:
 	movs	r1, #64
 	lsls	r1, r1, #8
 	adds	r0, r0, r1
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	adds	r0, #32
 	lsls	r1, r0, #16
 	lsrs	r1, r1, #22

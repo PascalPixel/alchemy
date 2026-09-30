@@ -758,7 +758,7 @@ Func_08179f18:
 	movs	r5, #205
 	lsls	r5, r5, #8
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	movs	r0, #152
@@ -767,7 +767,7 @@ Func_08179f18:
 	adds	r0, r3, r0
 	str	r0, [sp, #140]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	movs	r1, #176
@@ -785,7 +785,7 @@ Func_08179f18:
 	lsls	r5, r5, #8
 	adds	r5, r5, r3
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	movs	r4, #152
@@ -794,7 +794,7 @@ Func_08179f18:
 	adds	r4, r3, r4
 	adds	r0, r5, #0
 	str	r4, [sp, #140]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	movs	r5, #176
@@ -1597,7 +1597,7 @@ Func_08179f18:
 	mov	r1, r8
 	str	r0, [r1, #0]
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r6, #0
 	muls	r3, r0
 	cmp	r3, #0
@@ -1609,7 +1609,7 @@ Func_08179f18:
 	mov	r2, r9
 	str	r3, [r2, r4]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r5, [sp, #20]
 	adds	r3, r6, #0
 	muls	r3, r0
@@ -2080,14 +2080,14 @@ Func_08179f18:
 	movs	r6, #0
 	adds	r5, r1, r2
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r7, #0
 	muls	r3, r0
 	ldr	r4, [sp, #104]
 	asrs	r3, r3, #16
 	str	r3, [r4, #0]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r7, #0
 	muls	r3, r0
 	ldr	r5, [sp, #104]
@@ -2223,7 +2223,7 @@ Func_08179f18:
 	mov	r0, sl
 	lsls	r5, r0, #9
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r1, [sp, #96]
 	mov	r2, fp
 	adds	r3, r1, #0
@@ -2231,7 +2231,7 @@ Func_08179f18:
 	asrs	r3, r3, #16
 	str	r3, [r2, #0]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r4, [sp, #96]
 	mov	r5, fp
 	adds	r3, r4, #0
@@ -2351,7 +2351,7 @@ Func_08179f18:
 	mov	r4, sl
 	lsls	r5, r4, #9
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r6, [sp, #96]
 	adds	r3, r6, #0
 	muls	r3, r0
@@ -2359,7 +2359,7 @@ Func_08179f18:
 	asrs	r3, r3, #16
 	str	r3, [r0, #0]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r6, #0
 	muls	r3, r0
 	ldr	r1, [sp, #72]

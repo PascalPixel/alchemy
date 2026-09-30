@@ -465,6 +465,8 @@ SECTIONS
         "*/recon/tla/raw/08043230.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804325c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080432a4.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/PALETTE/GLOW_UPDATE_SINE.o"(.text)
+        "*/recon/tla/raw/080439c4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08043a64.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_FOUR_NUMBERS_IN_ROW.o"(.text)
         "*/games/COMMON/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)

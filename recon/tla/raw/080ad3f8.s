@@ -10,7 +10,7 @@ Owner_RecalculateStats:
 	adds	r5, r0, #0
 	movs	r0, #96
 	sub	sp, #4
-	bl	0x08014dac
+	bl	Func_08014dac
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	bl	Owner_GetState
@@ -1032,6 +1032,9 @@ Owner_RecalculateStats:
 	pop	{r5, r6, r7, pc}
 	.2byte 0xd994
 	.2byte 0x080a
+	.global Func_080adbec
+	.thumb_func
+Func_080adbec:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1043,7 +1046,7 @@ Owner_RecalculateStats:
 	adds	r0, #255
 	sub	sp, #8
 	bl	GameFlag_ClearBitFar
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	mov	sl, r0
 	movs	r0, #0
 	mov	r8, r0
@@ -1115,6 +1118,9 @@ Owner_RecalculateStats:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080adc90
+	.thumb_func
+Func_080adc90:
 .L_080adc90:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -1122,7 +1128,7 @@ Owner_RecalculateStats:
 	movs	r2, #0
 	mov	r8, r2
 	movs	r6, #0
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	cmp	r0, #0
 	bne.n	.L_080adca8
 	movs	r0, #0
@@ -1171,7 +1177,7 @@ Owner_RecalculateStats:
 	negs	r2, r2
 	movs	r7, #0
 	mov	r8, r2
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	cmp	r0, #0
 	bne.n	.L_080add06
 	movs	r0, #0
@@ -1222,6 +1228,9 @@ Owner_RecalculateStats:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080add5c
+	.thumb_func
+Func_080add5c:
 	push	{r5, lr}
 	cmp	r0, #0
 	ble.n	.L_080add6e
@@ -1232,8 +1241,11 @@ Owner_RecalculateStats:
 	cmp	r5, #0
 	bne.n	.L_080add64
 .L_080add6e:
-	bl	.L_080adc90
+	bl	Func_080adc90
 	pop	{r5, pc}
+	.global Func_080add74
+	.thumb_func
+Func_080add74:
 .L_080add74:
 	push	{r5, lr}
 	ldr	r0, [pc, #104]
@@ -1294,6 +1306,9 @@ Owner_RecalculateStats:
 	.4byte 0x03001238
 	.2byte 0x8000
 	.2byte 0xffff
+	.global Func_080addf0
+	.thumb_func
+Func_080addf0:
 	.2byte 0xb5e0
 	mov	r7, fp
 	mov	r6, sl
@@ -1357,7 +1372,7 @@ Owner_RecalculateStats:
 	ldr	r2, [pc, #100]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	0x080af7ac
+	bl	Func_080af7ac
 	ldr	r7, [pc, #68]
 	ldr	r3, [pc, #60]
 	movs	r1, #140
@@ -1420,36 +1435,36 @@ Owner_RecalculateStats:
 	strh	r2, [r3, #0]
 	adds	r3, r7, r1
 	str	r0, [r3, #0]
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	movs	r0, #5
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	movs	r1, #149
 	movs	r0, #4
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #140
 	movs	r0, #4
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #141
 	movs	r0, #6
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #33
 	movs	r0, #7
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #149
 	movs	r0, #0
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #140
 	movs	r0, #0
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #140
 	movs	r0, #1
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #141
 	movs	r0, #2
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r1, #144
 	movs	r0, #2
-	bl	0x080af6f4
+	bl	Func_080af6f4
 	movs	r2, #163
 	movs	r3, #200
 	lsls	r2, r2, #2
@@ -1487,7 +1502,7 @@ Owner_RecalculateStats:
 	mov	r2, fp
 	strb	r6, [r3, #0]
 	str	r2, [r7, #0]
-	bl	.L_080add74
+	bl	Func_080add74
 	movs	r1, #182
 	lsls	r1, r1, #2
 	adds	r3, r7, r1
@@ -1598,7 +1613,7 @@ Owner_RecalculateStats:
 	adds	r5, r3, r2
 	movs	r6, #7
 .L_080ae078:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r3, r3, #16
@@ -1648,6 +1663,9 @@ Owner_RecalculateStats:
 	.4byte 0x02001000
 	.2byte 0x1f2c
 	.2byte 0x080b
+	.global Func_080ae0dc
+	.thumb_func
+Func_080ae0dc:
 	ldr	r3, [pc, #12]
 	movs	r2, #133
 	lsls	r2, r2, #2

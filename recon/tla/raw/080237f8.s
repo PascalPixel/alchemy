@@ -5,9 +5,9 @@
 Func_080237f8:
 	push	{lr}
 	ldr	r0, [pc, #60]
-	bl	0x08014694
+	bl	Func_08014694
 	ldr	r0, [pc, #56]
-	bl	0x08014694
+	bl	Func_08014694
 	movs	r0, #128
 	movs	r1, #1
 	lsls	r0, r0, #9
@@ -32,11 +32,14 @@ Func_080237f8:
 	.4byte 0x0802386d
 	.2byte 0x3e19
 	.2byte 0x0802
+	.global Func_08023840
+	.thumb_func
+Func_08023840:
 	push	{lr}
 	ldr	r0, [pc, #28]
-	bl	0x0801475c
+	bl	Func_0801475c
 	ldr	r0, [pc, #24]
-	bl	0x0801475c
+	bl	Func_0801475c
 	movs	r1, #128
 	lsls	r1, r1, #19
 	ldrh	r2, [r1, #0]

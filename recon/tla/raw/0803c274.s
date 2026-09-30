@@ -132,6 +132,9 @@ Func_0803c274:
 	pop	{r5, r6, r7, pc}
 	.2byte 0xf000
 	.2byte 0x0000
+	.global Func_0803c378
+	.thumb_func
+Func_0803c378:
 	push	{r5, r6, r7, lr}
 	adds	r4, r3, #0
 	movs	r3, #192

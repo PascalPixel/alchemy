@@ -23,6 +23,9 @@ Func_08022d1c:
 .L_08022d3c:
 	add	sp, #4
 	pop	{pc}
+	.global Func_08022d40
+	.thumb_func
+Func_08022d40:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -195,6 +198,9 @@ Func_08022d1c:
 	.4byte 0xc0004000
 	.2byte 0x36e0
 	.2byte 0x0200
+	.global Func_08022e90
+	.thumb_func
+Func_08022e90:
 	push	{r5, r6, r7, lr}
 	adds	r7, r0, #0
 	sub	sp, #4
@@ -206,7 +212,7 @@ Func_08022d1c:
 	cmp	r3, #0
 	bne.n	.L_08022eaa
 	ldrb	r0, [r7, #16]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08022eaa:
 	adds	r5, r7, #0
 	adds	r5, #40

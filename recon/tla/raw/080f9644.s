@@ -79,7 +79,7 @@ Func_080f9644:
 	bl	Func_080facb4
 	mov	r3, r9
 	ldr	r0, [r3, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r1, r9
 	ldr	r0, [r1, #48]
 	bl	0x080f9374
@@ -98,7 +98,7 @@ Func_080f9644:
 .L_080f9708:
 	mov	r1, r9
 	ldr	r0, [r1, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	Func_080fa458
 	bl	.L_080fa276
 	movs	r3, #128
@@ -315,7 +315,7 @@ Func_080f9644:
 	bl	0x080fbddc
 	bl	0x080fbd9c
 	ldr	r0, [r5, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	0x080fc12c
 	ldr	r1, [r5, #0]
 	ldr	r0, [pc, #296]
@@ -409,7 +409,7 @@ Func_080f9644:
 	bl	0x080fbddc
 	bl	0x080fbd9c
 	ldr	r0, [r5, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	0x080fc12c
 	ldr	r1, [r5, #0]
 	movs	r3, #16
@@ -437,7 +437,7 @@ Func_080f9644:
 	ldrh	r1, [r2, #0]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 .L_080f99f6:
 	movs	r2, #9
 	mov	r8, r2
@@ -522,7 +522,7 @@ Func_080f9644:
 	ldr	r2, [r5, #0]
 	strh	r3, [r2, #8]
 	ldr	r0, [r5, #0]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	mov	r3, r9
 	ldr	r0, [r3, #56]
 	movs	r3, #96
@@ -534,7 +534,7 @@ Func_080f9644:
 	mov	r3, r9
 	adds	r3, #240
 	ldr	r0, [r3, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r0, [sp, #20]
 	bl	0x080fc1ac
 	cmp	r0, #0
@@ -557,7 +557,7 @@ Func_080f9644:
 	add	r3, r9
 	ldrh	r1, [r3, #0]
 	adds	r0, r7, #0
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	movs	r3, #182
 	lsls	r3, r3, #1
 	add	r3, r9
@@ -734,7 +734,7 @@ Func_080f9644:
 	lsls	r3, r3, #1
 	add	r3, r9
 	ldrh	r1, [r3, #0]
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	movs	r3, #181
 	lsls	r3, r3, #1
 	add	r3, r9
@@ -786,7 +786,7 @@ Func_080f9644:
 	lsls	r3, r3, #1
 	add	r3, r9
 	ldrh	r1, [r3, #0]
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	adds	r6, r0, #0
 	cmp	r6, r5
 	bne.n	.L_080f9cdc
@@ -827,7 +827,7 @@ Func_080f9644:
 	mov	r3, r9
 	adds	r3, #240
 	ldr	r0, [r3, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	0x080fc12c
 	movs	r0, #0
 	bl	0x080fc2e0
@@ -877,7 +877,7 @@ Func_080f9644:
 	adds	r0, r3, #0
 	ldrh	r1, [r2, #0]
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	ldr	r5, [pc, #200]
 	movs	r2, #14
 	adds	r0, r5, #0
@@ -984,7 +984,7 @@ Func_080f9644:
 	add	r3, r9
 	ldrb	r0, [r5, #0]
 	ldrh	r1, [r3, #0]
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	adds	r6, r0, #0
 	cmp	r6, #2
 	beq.n	.L_080f9e9a
@@ -1033,7 +1033,7 @@ Func_080f9644:
 	lsls	r3, r3, #1
 	add	r3, r9
 	ldrh	r1, [r3, #0]
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	adds	r6, r0, #0
 	cmp	r6, #2
 	beq.n	.L_080f9f04
@@ -1172,7 +1172,7 @@ Func_080f9644:
 	mov	r3, r9
 	adds	r3, #240
 	ldr	r0, [r3, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldrb	r3, [r7, #0]
 	strb	r3, [r5, #0]
 	movs	r5, #182
@@ -1209,7 +1209,7 @@ Func_080f9644:
 	adds	r0, r3, #0
 	ldrh	r1, [r2, #0]
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	ldr	r6, [pc, #612]
 	movs	r2, #14
 	adds	r0, r6, #0
@@ -1313,7 +1313,7 @@ Func_080f9644:
 	ldrh	r1, [r2, #0]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	mov	r3, r9
 	ldr	r0, [r3, #48]
 	bl	0x08038268
@@ -1400,7 +1400,7 @@ Func_080f9644:
 	ldrh	r1, [r2, #0]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	mov	r3, sl
 	strb	r3, [r5, #0]
 	mov	r1, r9
@@ -1423,7 +1423,7 @@ Func_080f9644:
 	bl	Func_080fb780
 	mov	r1, r9
 	ldr	r0, [r1, #40]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r3, #128
 	lsls	r3, r3, #2
 	adds	r3, #22
@@ -1435,7 +1435,7 @@ Func_080f9644:
 	ldrh	r1, [r2, #0]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	mov	r3, r9
 	ldr	r2, [r3, #20]
 	movs	r1, #9

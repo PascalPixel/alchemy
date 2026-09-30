@@ -29,6 +29,9 @@ Func_080d38d4:
 	movs	r0, r0
 	.2byte 0xfc00
 	.2byte 0xffff
+	.global Func_080d390c
+	.thumb_func
+Func_080d390c:
 	push	{lr}
 	bl	Object_GetById
 	adds	r2, r0, #0

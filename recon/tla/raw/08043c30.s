@@ -497,7 +497,7 @@
 	ldrb	r0, [r7, r3]
 	adds	r3, r7, r3
 	ldrb	r1, [r3, #1]
-	bl	0x0803f9c0
+	bl	Func_0803f9c0
 	ldr	r3, [sp, #32]
 	cmp	r3, #0
 	bne.n	.L_0804401c
@@ -599,7 +599,7 @@
 	adds	r3, #38
 	adds	r2, r2, r3
 	ldrb	r1, [r2, #0]
-	bl	0x0803f9c0
+	bl	Func_0803f9c0
 	movs	r0, #0
 	bl	0x080f8080
 	bl	0x08043b34
@@ -866,7 +866,7 @@
 	bl	UiWork_Finalize
 	bl	0x080439d8
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [pc, #44]
 	movs	r1, #147
 	lsls	r1, r1, #1
@@ -878,7 +878,7 @@
 	adds	r2, #38
 	adds	r3, r3, r2
 	ldrb	r1, [r3, #0]
-	bl	0x0803f9c0
+	bl	Func_0803f9c0
 	movs	r0, #1
 	bl	WaitFrames
 .L_08044330:

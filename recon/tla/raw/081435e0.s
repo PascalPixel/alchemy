@@ -96,7 +96,7 @@ Func_081435e0:
 	str	r2, [r3, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #92]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldrh	r3, [r5, #0]
 	adds	r1, r3, #0
 	strh	r5, [r5, #0]
@@ -391,7 +391,7 @@ Func_081435e0:
 	str	r2, [r3, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #92]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldrh	r3, [r5, #0]
 	adds	r1, r3, #0
 	strh	r5, [r5, #0]

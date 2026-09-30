@@ -23,7 +23,7 @@ Func_080facd8:
 	bne.n	.L_080fad0a
 	ldr	r0, [r6, r7]
 	str	r2, [sp, #0]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	ldr	r3, [r6, r7]
 	mov	r1, r8
 	strb	r1, [r3, #5]

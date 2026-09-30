@@ -9,8 +9,8 @@
 	overlay_veneer IwramSignedRemainder
 	overlay_veneer Func_080000c0
 	overlay_veneer Func_080003c0
-	overlay_veneer Func_08038010
-	overlay_veneer Func_08038018
+	overlay_veneer UiWindow_CreateFar
+	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer Func_08038078
 	overlay_veneer Func_08038080
 	overlay_veneer Func_08038090
@@ -18,7 +18,7 @@
 	overlay_veneer UiText_DrawNumberAtOffsetFar
 	overlay_veneer Func_080380b0
 	overlay_veneer Func_08038120
-	overlay_veneer Func_08038260
+	overlay_veneer RenderOutput_RedrawSavedRectFar
 	overlay_veneer Func_08038268
 	overlay_veneer Func_08038318
 	overlay_veneer Func_08038320

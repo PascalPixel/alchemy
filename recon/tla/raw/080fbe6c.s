@@ -22,7 +22,7 @@ Func_080fbe6c:
 	mov	fp, r0
 	movs	r0, #56
 	mov	r9, r3
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r2, #1
 	movs	r3, #0
 	str	r2, [sp, #12]
@@ -33,7 +33,7 @@ Func_080fbe6c:
 	mov	sl, r0
 	bl	Func_080fbe24
 	adds	r0, r7, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r2, [sp, #20]
 	mov	r8, fp
 	cmp	r2, #0
@@ -125,7 +125,7 @@ Func_080fbe6c:
 	bl	Math_Mod
 	mov	r8, r0
 	adds	r0, r7, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r1, r7, #0
 	ldr	r0, [pc, #160]
 	movs	r2, #32
@@ -296,11 +296,11 @@ Func_080fbe6c:
 	b.n	.L_080fbf58
 .L_080fc0e6:
 	adds	r0, r7, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r0, r7, #0
 	bl	0x08038268
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #134
 	lsls	r3, r3, #2
 	add	r3, r9
@@ -357,7 +357,7 @@ Func_080fbe6c:
 	ldr	r2, [r5, #0]
 	strh	r3, [r2, #8]
 	ldr	r0, [r5, #0]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r2, #128
 	lsls	r2, r2, #2
 	adds	r2, #22
@@ -397,7 +397,7 @@ Func_080fbe6c:
 	adds	r5, r0, #0
 	movs	r3, #10
 	movs	r0, #13
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #128
 	lsls	r3, r3, #1
 	adds	r3, #255
@@ -515,7 +515,7 @@ Func_080fbe6c:
 .L_080fc2bc:
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r0, r6, #0
 	add	sp, #4
 	pop	{r3}
@@ -561,7 +561,7 @@ Func_080fbe6c:
 	adds	r0, r3, #0
 	movs	r2, #0
 	lsls	r5, r5, #1
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	adds	r0, r5, #0
 	bl	Func_08014d78
 	ldr	r3, [pc, #316]
@@ -840,7 +840,7 @@ Func_080fbe6c:
 	adds	r3, r3, r2
 	str	r3, [r1, #24]
 	sub	sp, #8
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #1
 	bl	WaitFrames
 	mov	r2, r8
@@ -921,7 +921,7 @@ Func_080fbe6c:
 	sub	sp, #4
 	adds	r6, r0, #0
 	mov	sl, r3
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r3, #11
 	str	r3, [sp, #0]
 	movs	r2, #11
@@ -1028,7 +1028,7 @@ Func_080fbe6c:
 	adds	r0, r5, #0
 	movs	r2, #3
 	movs	r3, #17
-	bl	0x080f811c
+	bl	UiWindow_UpdateOrCreate
 	ldr	r5, [r5, #0]
 	movs	r1, #0
 	str	r5, [sp, #36]
@@ -1085,7 +1085,7 @@ Func_080fbe6c:
 	lsls	r3, r1, #2
 	adds	r3, #76
 	ldr	r0, [r7, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 .L_080fc774:
 	ldr	r3, [sp, #28]
 	cmp	r3, #0
@@ -1132,7 +1132,7 @@ Func_080fbe6c:
 	ldr	r1, [r1, #24]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	0x080fae8c
+	bl	Func_080fae8c
 	mov	r3, r8
 	ldr	r2, [r3, #24]
 	lsls	r3, r2, #1
@@ -1450,7 +1450,7 @@ Func_080fbe6c:
 	movs	r3, #120
 	bl	0x08038068
 	ldr	r0, [r7, #72]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	ldr	r4, [sp, #8]
 	movs	r1, #180
 	lsls	r1, r1, #1
@@ -1496,6 +1496,9 @@ Func_080fbe6c:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_080fcab8
+	.thumb_func
+Func_080fcab8:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -1541,7 +1544,7 @@ Func_080fbe6c:
 	movs	r2, #17
 	movs	r3, #3
 	movs	r0, #13
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r3, r6, #0
 	adds	r3, #240
 	str	r0, [r3, #0]
@@ -1591,7 +1594,7 @@ Func_080fbe6c:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r1, r8
 	ldr	r2, [r1, #24]
 	movs	r3, #0
@@ -1674,7 +1677,7 @@ Func_080fbe6c:
 	mov	fp, r3
 .L_080fcc46:
 	ldr	r0, [r7, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r5, #1
 	b.n	.L_080fcedc
 	movs	r0, #1
@@ -1765,7 +1768,7 @@ Func_080fbe6c:
 	mov	r2, r8
 	bl	Func_080f8ce8
 	ldr	r0, [r7, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	b.n	.L_080fcd26
 .L_080fcd08:
 	movs	r2, #1
@@ -1778,7 +1781,7 @@ Func_080fbe6c:
 	mov	r2, r8
 	bl	Func_080f8ce8
 	ldr	r0, [r7, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 .L_080fcd26:
 	movs	r5, #0
 	b.n	.L_080fcedc

@@ -84,7 +84,7 @@ Func_080d4d08:
 	adds	r3, r3, r2
 	str	r3, [r7, #8]
 	adds	r2, r7, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r7, #0
 	bl	Func_08020210
@@ -110,7 +110,7 @@ Func_080d4d08:
 	adds	r3, r3, r2
 	str	r3, [r7, #8]
 	adds	r2, r7, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r3, #0
 	adds	r0, r6, #0
 	adds	r1, r7, #0
@@ -277,7 +277,7 @@ Func_080d4d08:
 	ldrb	r3, [r3, #26]
 	str	r3, [sp, #0]
 .L_080d4f16:
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r1, #6
 	adds	r0, r6, #0
 	bl	Object_SetMode
@@ -447,7 +447,7 @@ Func_080d4d08:
 	ldrb	r5, [r5, #0]
 	mov	r2, r9
 	strb	r5, [r2, #0]
-	bl	0x080d2350
+	bl	Func_080d2350
 	mov	r2, fp
 	cmp	r2, #0
 	beq.n	.L_080d50ae
@@ -505,6 +505,9 @@ Func_080d4d08:
 	movs	r0, r0
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_080d50f8
+	.thumb_func
+Func_080d50f8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -549,7 +552,7 @@ Func_080d4d08:
 	movs	r2, #8
 	add	r2, r8
 	mov	r9, r2
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	adds	r3, r7, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]
@@ -744,7 +747,7 @@ Func_080d4d08:
 	lsls	r1, r1, #8
 	movs	r2, #0
 	ldr	r0, [r5, #0]
-	bl	0x080d3838
+	bl	Func_080d3838
 	ldr	r0, [r5, #0]
 	bl	Object_RefreshSelectorById
 	adds	r1, r7, #0
@@ -837,11 +840,11 @@ Func_080d4d08:
 	.2byte 0x0001
 	.2byte 0x0000
 .L_080d5398:
-	bl	0x080d2350
+	bl	Func_080d2350
 	movs	r0, #0
 	b.n	.L_080d53a8
 .L_080d53a0:
-	bl	0x080d2350
+	bl	Func_080d2350
 	movs	r0, #1
 	negs	r0, r0
 .L_080d53a8:

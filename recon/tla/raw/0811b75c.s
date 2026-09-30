@@ -31,7 +31,7 @@ Func_0811b75c:
 	bgt.n	.L_0811b790
 	mov	r0, fp
 .L_0811b790:
-	bl	0x0811b724
+	bl	Func_0811b724
 .L_0811b794:
 	movs	r3, #1
 	add	fp, r3
@@ -329,6 +329,9 @@ Func_0811b75c:
 	.4byte 0x03000258
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_0811b9d4
+	.thumb_func
+Func_0811b9d4:
 	push	{lr}
 	movs	r2, #1
 	bl	.L_0811b75c

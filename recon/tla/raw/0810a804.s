@@ -29,6 +29,9 @@ Func_0810a804:
 .L_0810a830:
 	add	sp, #32
 	pop	{r5, r6, r7, pc}
+	.global Func_0810a834
+	.thumb_func
+Func_0810a834:
 	ldr	r2, [pc, #12]
 	ldr	r3, [pc, #16]
 	ands	r0, r2
@@ -40,6 +43,9 @@ Func_0810a804:
 	.4byte 0x000001ff
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_0810a84c
+	.thumb_func
+Func_0810a84c:
 	ldr	r3, [pc, #16]
 	movs	r2, #175
 	lsls	r2, r2, #2

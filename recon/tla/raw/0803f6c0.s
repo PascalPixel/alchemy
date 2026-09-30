@@ -4,7 +4,7 @@
 	.thumb_func
 UiTextResource_Release:
 	push	{lr}
-	bl	0x08014274
+	bl	Func_08014274
 	pop	{pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -43,7 +43,7 @@ UiTextResource_Release:
 	ldrh	r3, [r3, r0]
 	adds	r0, r0, r3
 	str	r0, [r2, #0]
-	bl	0x0801591c
+	bl	Func_0801591c
 	ldrh	r3, [r5, #10]
 	cmp	r3, #0
 	bne.n	.L_0803f726
@@ -66,7 +66,7 @@ UiTextResource_Release:
 	strh	r0, [r5, #14]
 	strh	r3, [r5, #38]
 	movs	r0, #68
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0803f74c:
 	pop	{r3}
 	mov	r8, r3
@@ -85,11 +85,14 @@ UiTextResource_Release:
 	cmp	r3, #0
 	beq.n	.L_0803f776
 	ldrh	r0, [r5, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r3, #0
 	strh	r3, [r5, #10]
 .L_0803f776:
 	pop	{r5, pc}
+	.global Func_0803f778
+	.thumb_func
+Func_0803f778:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -158,11 +161,11 @@ UiTextResource_Release:
 	pop	{pc}
 .L_0803f810:
 	push	{lr}
-	bl	0x08042dac
+	bl	Func_08042dac
 	pop	{pc}
 	push	{lr}
-	bl	0x0803dc1c
-	bl	0x0803dd24
+	bl	Func_0803dc1c
+	bl	Func_0803dd24
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{pc}

@@ -40,7 +40,7 @@ Func_0810bea8:
 	beq.n	.L_0810bf00
 	adds	r0, r3, #0
 	str	r4, [sp, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	strh	r6, [r5, #0]
 	ldr	r4, [sp, #0]
 	b.n	.L_0810bf00

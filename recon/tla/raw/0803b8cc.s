@@ -14,7 +14,7 @@ Func_0803b8cc:
 	ldr	r5, [r3, #60]
 	adds	r7, r2, #0
 	sub	sp, #12
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	movs	r2, #244
 	lsls	r3, r0, #1
 	lsls	r2, r2, #4
@@ -41,6 +41,9 @@ Func_0803b8cc:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global UiText_MeasureEntryDimensions
+	.thumb_func
+UiText_MeasureEntryDimensions:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

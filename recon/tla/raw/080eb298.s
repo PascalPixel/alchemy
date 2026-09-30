@@ -22,13 +22,19 @@ Func_080eb298:
 	str	r3, [r6, #12]
 	ldr	r3, [r5, #8]
 	str	r3, [r6, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 .L_080eb2c4:
 	add	sp, #12
 	pop	{r5, r6, pc}
+	.global Func_080eb2c8
+	.thumb_func
+Func_080eb2c8:
 	push	{lr}
 	bl	BattleFx_IntegrateVector2
 	pop	{pc}
+	.global Func_080eb2d0
+	.thumb_func
+Func_080eb2d0:
 	push	{lr}
 	bl	BattleFx_IntegrateVector3
 	pop	{pc}

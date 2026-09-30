@@ -29,7 +29,7 @@ Func_080fb780:
 	movs	r3, #10
 	mov	r9, r0
 	movs	r0, #0
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r7, r0, #0
 	ldr	r0, [pc, #232]
 	bl	Func_08014644
@@ -39,7 +39,7 @@ Func_080fb780:
 	ldr	r3, [r3, #0]
 	movs	r6, #0
 	strb	r5, [r3, #5]
-	bl	0x080f92ac
+	bl	Func_080f92ac
 	movs	r0, #1
 	bl	WaitFrames
 	b.n	.L_080fb7fe
@@ -81,7 +81,7 @@ Func_080fb780:
 	mov	r1, r9
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	.L_080fb8ac
+	bl	Func_080fb8ac
 .L_080fb826:
 	ldr	r1, [pc, #128]
 	movs	r2, #1
@@ -98,15 +98,15 @@ Func_080fb780:
 	negs	r6, r6
 .L_080fb840:
 	adds	r0, r7, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r3, r8
 	ldr	r0, [r3, #16]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r3, r8
 	ldr	r0, [r3, #16]
 	movs	r3, #3
@@ -120,7 +120,7 @@ Func_080fb780:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #40]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #184
 	lsls	r3, r3, #1
 	add	r3, r8
@@ -142,12 +142,18 @@ Func_080fb780:
 	.4byte 0x08104da9
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_080fb8ac
+	.thumb_func
+Func_080fb8ac:
 .L_080fb8ac:
 	push	{lr}
 	movs	r2, #1
 	negs	r2, r2
-	bl	.L_080fb8b8
+	bl	Func_080fb8b8
 	pop	{pc}
+	.global Func_080fb8b8
+	.thumb_func
+Func_080fb8b8:
 .L_080fb8b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -488,6 +488,9 @@ Func_0803acd4:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.global UiText_BuildRenderEntries
+	.thumb_func
+UiText_BuildRenderEntries:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1011,7 +1014,7 @@ Func_0803acd4:
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	0x0803ca20
+	bl	Func_0803ca20
 	ldr	r3, [sp, #24]
 	adds	r2, r6, #0
 	str	r3, [sp, #4]
@@ -1039,7 +1042,7 @@ Func_0803acd4:
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	0x0803ca20
+	bl	Func_0803ca20
 	ldr	r1, [sp, #24]
 	add	r3, sp, #52
 	str	r1, [sp, #4]
@@ -1059,7 +1062,7 @@ Func_0803acd4:
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	0x0803ca20
+	bl	Func_0803ca20
 	ldr	r1, [sp, #12]
 	adds	r0, r6, #0
 	ldrh	r2, [r1, #0]
@@ -1091,7 +1094,7 @@ Func_0803acd4:
 	ldr	r1, [sp, #12]
 	adds	r0, r0, r3
 	movs	r2, #24
-	bl	0x0803ca20
+	bl	Func_0803ca20
 	ldr	r1, [sp, #12]
 	adds	r0, r6, #0
 	ldrh	r2, [r1, #0]
@@ -1414,7 +1417,7 @@ Func_0803acd4:
 	adds	r2, r0, r1
 	strh	r3, [r2, #0]
 	movs	r0, #200
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r5, #152
 	ldr	r2, [sp, #44]
 	add	r0, sp, #32
@@ -1430,7 +1433,7 @@ Func_0803acd4:
 	mov	r1, fp
 	cmp	r1, #0
 	beq.n	.L_0803b782
-	bl	0x0803cca8
+	bl	Func_0803cca8
 .L_0803b782:
 	ldr	r0, [sp, #32]
 	add	sp, #132

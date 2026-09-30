@@ -975,7 +975,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/ENABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
         "*/recon/tbs/raw/080a108e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/INITIALIZE_WORK.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_OWNER_STATUS_PANEL.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
         "*/recon/tbs/raw/080a153a.o"(.text .rodata .data .padding)

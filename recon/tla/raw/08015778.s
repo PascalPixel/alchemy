@@ -134,6 +134,9 @@ Func_08015778:
 	.4byte 0x00000057
 	.2byte 0x1ffc
 	.2byte 0x0800
+	.global Func_0801587c
+	.thumb_func
+Func_0801587c:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r8
@@ -208,6 +211,9 @@ Func_08015778:
 	.4byte 0x000004f0
 	.2byte 0x2b70
 	.2byte 0x0801
+	.global Func_0801591c
+	.thumb_func
+Func_0801591c:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r8
@@ -257,7 +263,7 @@ Func_08015778:
 	adds	r1, #68
 	movs	r0, #204
 	sub	sp, #36
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #0
 	mov	fp, r0
 	add	r0, sp, #16
@@ -459,7 +465,7 @@ Func_08015778:
 	movs	r5, #15
 	b.n	.L_08015b1e
 .L_08015b0c:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r6, #0
 	bl	0x0800206c
 	adds	r5, r0, #0

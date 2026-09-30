@@ -32,6 +32,9 @@ Func_08014840:
 	.4byte 0x03001228
 	.2byte 0x3610
 	.2byte 0x0200
+	.global Func_08014878
+	.thumb_func
+Func_08014878:
 	ldr	r1, [pc, #24]
 	ldr	r3, [pc, #28]
 	ldr	r2, [r1, #0]
@@ -49,6 +52,9 @@ Func_08014840:
 	.4byte 0x030011bc
 	.2byte 0x4e6d
 	.2byte 0x41c6
+	.global Func_0801489c
+	.thumb_func
+Func_0801489c:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r8
@@ -85,6 +91,9 @@ Func_08014840:
 	movs	r0, r0
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_080148e8
+	.thumb_func
+Func_080148e8:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	adds	r5, r1, #0
@@ -198,6 +207,9 @@ Func_08014840:
 	.4byte 0x03000534
 	.2byte 0x79ea
 	.2byte 0x0801
+	.global Func_080149b4
+	.thumb_func
+Func_080149b4:
 	push	{r5, r6, lr}
 	movs	r5, #0
 	movs	r4, #15
@@ -222,6 +234,9 @@ Func_08014840:
 	bge.n	.L_080149bc
 	adds	r0, r5, #0
 	pop	{r5, r6, pc}
+	.global Func_080149e0
+	.thumb_func
+Func_080149e0:
 	push	{lr}
 	ldr	r3, [pc, #8]
 	mov	lr, r3
@@ -327,6 +342,9 @@ Func_08014840:
 	.4byte 0x03001250
 	.2byte 0x999a
 	.2byte 0x1999
+	.global Func_08014aa8
+	.thumb_func
+Func_08014aa8:
 	push	{lr}
 	ldr	r3, [pc, #40]
 	ldr	r1, [pc, #40]

@@ -46,14 +46,14 @@ Func_08125c94:
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08126804
+	bl	Func_08126804
 	b.n	.L_08125cf6
 .L_08125cea:
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #100
-	bl	0x08126804
+	bl	Func_08126804
 .L_08125cf6:
 	pop	{pc}
 	.2byte 0x1120
@@ -309,7 +309,7 @@ Func_08125c94:
 	strh	r3, [r2, #0]
 	lsls	r0, r0, #19
 	adds	r1, #65
-	bl	0x08013ba4
+	bl	Func_08013ba4
 	b.n	.L_08125f10
 	movs	r0, r0
 	.4byte 0x000000f0
@@ -323,22 +323,22 @@ Func_08125c94:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #180
-	bl	0x08126804
+	bl	Func_08126804
 	ldr	r3, [sp, #4]
 	mov	r2, r8
 	movs	r1, #144
 	str	r2, [r3, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #136]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #128]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r2, [pc, #128]
 	movs	r1, #32
 	movs	r0, #2
-	bl	0x08013438
+	bl	Func_08013438
 	strh	r6, [r5, #2]
 	movs	r0, #1
 	bl	WaitFrames
@@ -355,10 +355,10 @@ Func_08125c94:
 	bl	WaitFrames
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	0x08013d0c
+	bl	Func_08013d0c
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08013c58
+	bl	Func_08013c58
 	adds	r3, r7, #0
 	subs	r3, #74
 	cmp	r3, #2
@@ -386,7 +386,7 @@ Func_08125c94:
 	movs	r0, #2
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08013438
+	bl	Func_08013438
 	b.n	.L_081261b8
 	.4byte 0x08125c95
 	.4byte 0x08125cfd
@@ -402,11 +402,11 @@ Func_08125c94:
 	movs	r3, #0
 	str	r3, [r6, #16]
 	adds	r0, r5, #0
-	bl	0x0811a038
+	bl	Func_0811a038
 	mov	r8, r0
 	lsls	r0, r0, #1
 	adds	r0, r5, r0
-	bl	0x0811a0b0
+	bl	Func_0811a0b0
 	add	r8, r0
 	mov	r1, r8
 	movs	r6, #0
@@ -505,21 +505,21 @@ Func_08125c94:
 	strh	r2, [r5, r0]
 	movs	r1, #0
 	adds	r0, r6, #0
-	bl	0x0811b9d4
+	bl	Func_0811b9d4
 	adds	r0, r5, #0
 	bl	0x08138028
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #100
-	bl	0x08126804
+	bl	Func_08126804
 	ldr	r0, [sp, #4]
 	mov	r3, r8
 	ldr	r2, [pc, #28]
 	str	r3, [r0, #0]
 	movs	r1, #32
 	movs	r0, #2
-	bl	0x08013438
+	bl	Func_08013438
 	movs	r0, #1
 	b.n	.L_081260e0
 	.4byte 0x000000ff
@@ -543,10 +543,10 @@ Func_08125c94:
 	bl	0x08038128
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	0x08013d0c
+	bl	Func_08013d0c
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08013c58
+	bl	Func_08013c58
 	ldr	r3, [pc, #56]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -563,7 +563,7 @@ Func_08125c94:
 	strh	r0, [r2, r3]
 	movs	r1, #0
 	mov	r0, r8
-	bl	0x0811b9d4
+	bl	Func_0811b9d4
 	movs	r0, #1
 	mov	r1, r8
 	bl	0x0811a31c
@@ -628,7 +628,7 @@ Func_08125c94:
 	movs	r0, #2
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08013438
+	bl	Func_08013438
 .L_081261b8:
 	ldr	r5, [pc, #56]
 	movs	r6, #128
@@ -637,7 +637,7 @@ Func_08125c94:
 	movs	r2, #0
 	adds	r6, #10
 	movs	r0, #2
-	bl	0x08013438
+	bl	Func_08013438
 	strh	r5, [r6, #0]
 	movs	r0, #1
 	bl	WaitFrames
@@ -666,7 +666,7 @@ Func_08125c94:
 	lsls	r2, r2, #19
 	strh	r3, [r2, #0]
 	movs	r0, #168
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #156
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -674,6 +674,9 @@ Func_08125c94:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Func_08126218
+	.thumb_func
+Func_08126218:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -733,6 +736,9 @@ Func_08125c94:
 	movs	r0, r0
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Func_0812628c
+	.thumb_func
+Func_0812628c:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -747,7 +753,7 @@ Func_08125c94:
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #200]
 	adds	r1, #255
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_081262ac:
 	str	r7, [r6, #8]
 	cmp	r7, #1
@@ -897,7 +903,7 @@ Func_08125c94:
 	lsls	r5, r5, #2
 	adds	r1, r5, #0
 	movs	r0, #40
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #176
@@ -915,6 +921,6 @@ Func_08125c94:
 	.2byte 0x0300
 	push	{lr}
 	movs	r0, #40
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	.2byte 0x0000

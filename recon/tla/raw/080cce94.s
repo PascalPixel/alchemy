@@ -29,6 +29,9 @@ Func_080cce94:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ccec8
+	.thumb_func
+Func_080ccec8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -149,7 +152,7 @@ Func_080cce94:
 	bne.n	.L_080ccfae
 	movs	r5, #32
 .L_080ccfae:
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	ldr	r2, [sp, #24]
 	movs	r3, #1
 	adds	r2, #91
@@ -202,13 +205,13 @@ Func_080cce94:
 	b.n	.L_080cd022
 .L_080cd01c:
 	mov	r0, sl
-	bl	0x080cefb4
+	bl	Func_080cefb4
 .L_080cd022:
 	mov	r1, r8
 	cmp	r1, #129
 	bne.n	.L_080cd02e
 	mov	r0, sl
-	bl	0x080cefb4
+	bl	Func_080cefb4
 .L_080cd02e:
 	mov	r2, r8
 	cmp	r2, #130
@@ -263,7 +266,7 @@ Func_080cce94:
 	movs	r1, #1
 	bl	0x08038040
 	mov	r0, sl
-	bl	0x080cf004
+	bl	Func_080cf004
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r9, r3
@@ -277,7 +280,7 @@ Func_080cce94:
 	mov	r1, r8
 	cmp	r1, #132
 	bne.n	.L_080cd106
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r0, #0
 	bl	Func_080cded4
 	mov	r0, sl
@@ -287,7 +290,7 @@ Func_080cce94:
 	adds	r0, r7, #0
 	bl	0x080ad2f8
 	mov	r0, sl
-	bl	0x080cf004
+	bl	Func_080cf004
 	movs	r2, #1
 	negs	r2, r2
 	cmp	r9, r2
@@ -295,7 +298,7 @@ Func_080cce94:
 	mov	r0, r9
 	bl	GameFlag_SetBitFar
 .L_080cd100:
-	bl	0x080d2350
+	bl	Func_080d2350
 	b.n	.L_080cd39e
 .L_080cd106:
 	mov	r3, r8
@@ -326,7 +329,7 @@ Func_080cce94:
 	adds	r1, r7, #0
 	subs	r1, #8
 	movs	r0, #105
-	bl	0x080ca18c
+	bl	Func_080ca18c
 	movs	r1, #178
 	lsls	r1, r1, #1
 	adds	r3, r5, r1
@@ -348,7 +351,7 @@ Func_080cce94:
 .L_080cd17c:
 	movs	r0, #104
 	adds	r1, r7, #0
-	bl	0x080ca18c
+	bl	Func_080ca18c
 	movs	r2, #178
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
@@ -590,7 +593,7 @@ Func_080cce94:
 	cmp	r1, #133
 	bne.n	.L_080cd38e
 	mov	r0, sl
-	bl	0x080cf004
+	bl	Func_080cf004
 .L_080cd38e:
 	movs	r2, #0
 	str	r2, [sp, #28]
@@ -604,7 +607,7 @@ Func_080cce94:
 	ldr	r1, [sp, #0]
 	movs	r3, #0
 	strb	r3, [r1, #0]
-	bl	0x080d2350
+	bl	Func_080d2350
 	ldr	r2, [sp, #28]
 	adds	r0, r2, #0
 	cmp	r2, #0
@@ -646,7 +649,7 @@ Func_080cce94:
 	mov	r0, fp
 	bl	0x080d1ed8
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [pc, #192]
 	lsls	r0, r0, #1
 	lsrs	r0, r0, #16
@@ -809,7 +812,7 @@ Func_080cce94:
 	adds	r5, r5, r1
 	movs	r2, #0
 	ldrsh	r0, [r5, r2]
-	bl	0x080e035c
+	bl	Func_080e035c
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255

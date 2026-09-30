@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_080afbec
+	.thumb_func
+Func_080afbec:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -239,6 +242,9 @@
 	.4byte 0x0000042c
 	.2byte 0xfe8f
 	.2byte 0xffff
+	.global Func_080afdbc
+	.thumb_func
+Func_080afdbc:
 .L_080afdbc:
 	push	{r5, r6, lr}
 	movs	r6, #0
@@ -255,9 +261,12 @@
 	ble.n	.L_080afdc2
 	adds	r0, r6, #0
 	pop	{r5, r6, pc}
+	.global Func_080afdd8
+	.thumb_func
+Func_080afdd8:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	.L_080afdbc
+	bl	Func_080afdbc
 	adds	r5, r0, #0
 	adds	r0, r6, #0
 	bl	GameFlag_SetBitFar
@@ -292,9 +301,12 @@
 	pop	{r5, r6, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080afe1c
+	.thumb_func
+Func_080afe1c:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
-	bl	.L_080afdbc
+	bl	Func_080afdbc
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	bl	GameFlag_ClearBitFar
@@ -334,7 +346,7 @@
 	cmp	r1, #0
 	bne.n	.L_080afe60
 .L_080afe6c:
-	bl	.L_080afdbc
+	bl	Func_080afdbc
 	pop	{r5, r6, pc}
 	movs	r0, r0
 	.2byte 0x0240
@@ -347,7 +359,7 @@ Party_ListActiveOwners:
 	movs	r0, #0
 	cmp	r5, #0
 	beq.n	.L_080afea6
-	bl	.L_080afdbc
+	bl	Func_080afdbc
 	movs	r1, #0
 	cmp	r0, #0
 	beq.n	.L_080afea2
@@ -371,6 +383,9 @@ Party_ListActiveOwners:
 	.4byte 0x000000ff
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080afeb0
+	.thumb_func
+Func_080afeb0:
 	push	{lr}
 	ldr	r1, [pc, #24]
 	ldr	r2, [pc, #24]
@@ -390,6 +405,9 @@ Party_ListActiveOwners:
 	.4byte 0x02000240
 	.2byte 0x423f
 	.2byte 0x000f
+	.global Func_080afed4
+	.thumb_func
+Func_080afed4:
 	push	{lr}
 	ldr	r3, [pc, #32]
 	movs	r2, #156
@@ -413,6 +431,9 @@ Party_ListActiveOwners:
 	.4byte 0x02000240
 	.2byte 0x423f
 	.2byte 0x000f
+	.global Func_080aff00
+	.thumb_func
+Func_080aff00:
 	push	{lr}
 	ldr	r3, [pc, #32]
 	movs	r2, #158
@@ -435,6 +456,9 @@ Party_ListActiveOwners:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080aff28
+	.thumb_func
+Func_080aff28:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -478,6 +502,9 @@ Party_ListActiveOwners:
 	movs	r0, r0
 	.2byte 0x14ec
 	.2byte 0x080c
+	.global Func_080aff7c
+	.thumb_func
+Func_080aff7c:
 	push	{lr}
 	cmp	r0, #28
 	bls.n	.L_080aff86
@@ -492,6 +519,9 @@ Party_ListActiveOwners:
 	movs	r0, r0
 	.2byte 0x150c
 	.2byte 0x080c
+	.global Func_080aff94
+	.thumb_func
+Func_080aff94:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	movs	r0, #0

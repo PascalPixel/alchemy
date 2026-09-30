@@ -39,7 +39,7 @@ Func_08045018:
 	movs	r0, #56
 	mov	r1, sl
 	mov	r8, r2
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r5, r0, #0
 	ldr	r0, [pc, #64]
 	bl	Resource_GetTableEntry
@@ -50,7 +50,7 @@ Func_08045018:
 	ldrh	r0, [r3, r2]
 	adds	r1, r5, #0
 	adds	r0, r2, r0
-	bl	0x0801591c
+	bl	Func_0801591c
 	mov	r3, r8
 	cmp	r3, #0
 	beq.n	.L_0804508e
@@ -64,7 +64,7 @@ Func_08045018:
 	adds	r2, r5, #0
 	bl	VramBlock_LoadCached
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0804509e:
 	pop	{r3, r5}
 	mov	r8, r3
@@ -146,7 +146,7 @@ Func_08045018:
 	ldr	r3, [r0, #4]
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	0x0801401c
+	bl	Func_0801401c
 	ldrb	r2, [r5, #23]
 	movs	r3, #31
 	ands	r0, r3
@@ -303,7 +303,7 @@ Func_08045018:
 	mov	r3, r9
 	str	r6, [sp, #0]
 	mov	sl, r0
-	bl	0x0803c378
+	bl	Func_0803c378
 	movs	r3, #243
 	lsls	r3, r3, #8
 	adds	r3, #20
@@ -314,7 +314,7 @@ Func_08045018:
 	mov	r3, r9
 	adds	r2, #1
 	str	r6, [sp, #0]
-	bl	0x0803c378
+	bl	Func_0803c378
 	movs	r3, #2
 	add	r8, r3
 	mov	r0, sl
@@ -322,7 +322,7 @@ Func_08045018:
 	mov	r2, r8
 	mov	r3, r9
 	str	r6, [sp, #0]
-	bl	0x0803c378
+	bl	Func_0803c378
 	add	sp, #4
 	pop	{r3, r5, r6}
 	mov	r8, r3

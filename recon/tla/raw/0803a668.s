@@ -65,7 +65,7 @@ UiText_OpenMessageWindow:
 	adds	r3, #255
 	movs	r1, #1
 	ands	r5, r3
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	lsls	r3, r0, #1
 	mov	sl, r0
 	movs	r0, #244

@@ -18,7 +18,7 @@ Func_080d8740:
 	bne.n	.L_080d875e
 	b.n	.L_080d8960
 .L_080d875e:
-	bl	0x080d7a78
+	bl	Func_080d7a78
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #224
@@ -122,7 +122,7 @@ Func_080d8740:
 	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r1, sl
 	ldr	r0, [r5, #80]
-	bl	0x080dc0d8
+	bl	Func_080dc0d8
 	mov	r1, r8
 	str	r1, [r5, #104]
 	mov	sl, r0
@@ -166,7 +166,7 @@ Func_080d8740:
 	cmp	r2, #96
 	beq.n	.L_080d88b2
 	mov	r0, r8
-	bl	0x08014274
+	bl	Func_08014274
 .L_080d88b2:
 	movs	r0, #10
 	bl	WaitFrames
@@ -178,7 +178,7 @@ Func_080d8740:
 	movs	r2, #0
 	lsls	r1, r1, #7
 	ldr	r0, [r5, #0]
-	bl	0x080d3838
+	bl	Func_080d3838
 	movs	r0, #20
 	bl	WaitFrames
 	ldr	r0, [r5, #0]
@@ -241,7 +241,7 @@ Func_080d8740:
 	movs	r0, #50
 	bl	WaitFrames
 	bl	0x08108060
-	bl	0x080d7ab4
+	bl	Func_080d7ab4
 .L_080d8960:
 	add	sp, #52
 	pop	{r3, r5, r6, r7}
@@ -255,6 +255,9 @@ Func_080d8740:
 	.4byte 0x02000240
 	.2byte 0x85b9
 	.2byte 0x080d
+	.global Func_080d897c
+	.thumb_func
+Func_080d897c:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -263,7 +266,7 @@ Func_080d8740:
 	adds	r1, #12
 	movs	r0, #156
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #128
 	lsls	r3, r3, #1
 	mov	r8, r3
@@ -285,7 +288,7 @@ Func_080d8740:
 	adds	r1, r6, #0
 	str	r0, [r5, #8]
 	ldr	r0, [pc, #52]
-	bl	0x0801587c
+	bl	Func_0801587c
 	adds	r2, r6, #0
 	mov	r1, r8
 	ldr	r0, [r5, #8]
@@ -293,12 +296,12 @@ Func_080d8740:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #36]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r1, #228
 	lsls	r1, r1, #2
 	adds	r1, #255
 	ldr	r0, [pc, #28]
-	bl	0x080145a8
+	bl	Func_080145a8
 	adds	r0, r6, #0
 	bl	Func_08013164
 	add	sp, #4
@@ -390,7 +393,7 @@ Func_080d8740:
 	mov	r2, r8
 	subs	r3, r2, r6
 	adds	r1, r1, r3
-	bl	0x080148e8
+	bl	Func_080148e8
 	movs	r3, #128
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
@@ -498,7 +501,7 @@ Func_080d8740:
 	strb	r3, [r5, #25]
 	ldr	r0, [sp, #4]
 	str	r4, [sp, #0]
-	bl	0x0801401c
+	bl	Func_0801401c
 	movs	r3, #31
 	ands	r0, r3
 	movs	r1, #63
@@ -525,7 +528,7 @@ Func_080d8740:
 	strh	r7, [r5, #16]
 	adds	r0, r4, #0
 	mov	r1, r8
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080d8bac:
 	mov	r1, r9
 	str	r1, [sp, #24]
@@ -608,7 +611,7 @@ Func_080d8740:
 	adds	r1, #2
 	adds	r3, r2, r1
 	ldr	r0, [r3, #0]
-	bl	0x080cd91c
+	bl	Func_080cd91c
 	movs	r2, #1
 	adds	r5, r6, #0
 	negs	r2, r2

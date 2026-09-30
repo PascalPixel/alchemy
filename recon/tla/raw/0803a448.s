@@ -48,7 +48,7 @@ Func_0803a448:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{r5, pc}
 	movs	r0, r0
 	.2byte 0xa8c9
@@ -104,18 +104,21 @@ Func_0803a448:
 	movs	r1, #144
 	ldr	r0, [pc, #20]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_0803a526
 .L_0803a51c:
 	movs	r1, #144
 	ldr	r0, [pc, #12]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_0803a526:
 	pop	{r5, r6, pc}
 	.4byte 0x0803a8c9
 	.2byte 0xa8d9
 	.2byte 0x0803
+	.global Func_0803a530
+	.thumb_func
+Func_0803a530:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -130,6 +133,9 @@ Func_0803a448:
 	str	r3, [r5, #0]
 .L_0803a54a:
 	pop	{r5, pc}
+	.global Func_0803a54c
+	.thumb_func
+Func_0803a54c:
 .L_0803a54c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -144,7 +150,7 @@ Func_0803a448:
 	strb	r3, [r5, #5]
 	movs	r1, #1
 	sub	sp, #4
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	movs	r2, #1
 	mov	sl, r2
 	mov	r3, sl
@@ -203,6 +209,9 @@ Func_0803a448:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
+	.global Func_0803a5e0
+	.thumb_func
+Func_0803a5e0:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	b.n	.L_0803a5ec
@@ -214,7 +223,7 @@ Func_0803a448:
 	cmp	r0, #0
 	beq.n	.L_0803a5e6
 	adds	r0, r5, #0
-	bl	.L_0803a54c
+	bl	Func_0803a54c
 	b.n	.L_0803a602
 .L_0803a5fc:
 	movs	r0, #1
@@ -224,6 +233,9 @@ Func_0803a448:
 	cmp	r0, #0
 	beq.n	.L_0803a5fc
 	pop	{r5, pc}
+	.global Func_0803a60c
+	.thumb_func
+Func_0803a60c:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -241,7 +253,7 @@ Func_0803a448:
 	adds	r0, r1, #0
 	movs	r1, #1
 	sub	sp, #16
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	movs	r2, #244
 	adds	r1, r0, #0
 	lsls	r3, r1, #1

@@ -60,6 +60,9 @@ Func_080dbcd8:
 	adds	r0, r2, #0
 	add	sp, #12
 	pop	{r5, pc}
+	.global Func_080dbd48
+	.thumb_func
+Func_080dbd48:
 	push	{lr}
 	bl	0x080dbb78
 	ldrb	r3, [r0, #3]

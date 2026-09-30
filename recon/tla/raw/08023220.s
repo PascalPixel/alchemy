@@ -43,7 +43,7 @@ Func_08023220:
 	b.n	.L_0802330a
 .L_0802326a:
 	adds	r0, r7, #0
-	bl	0x08022d40
+	bl	Func_08022d40
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0802328e
@@ -98,7 +98,7 @@ Func_08023220:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r7, #0
-	bl	0x08022d40
+	bl	Func_08022d40
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_080232fa
@@ -114,7 +114,7 @@ Func_08023220:
 	mov	r8, r2
 .L_080232fa:
 	adds	r0, r7, #1
-	bl	0x08022d40
+	bl	Func_08022d40
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0802330a

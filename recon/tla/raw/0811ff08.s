@@ -48,10 +48,10 @@ BattlePresentation_WaitForAdvance:
 	lsls	r5, r5, #7
 	adds	r5, r5, r2
 	mov	r9, r3
-	bl	0x08013d0c
+	bl	Func_08013d0c
 	adds	r0, r6, #0
 	movs	r1, #16
-	bl	0x08013c58
+	bl	Func_08013c58
 	movs	r2, #16
 	movs	r3, #128
 	lsls	r3, r3, #19
@@ -64,7 +64,7 @@ BattlePresentation_WaitForAdvance:
 	str	r3, [r7, #8]
 	adds	r1, r5, #0
 	mov	r0, fp
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #48]
 	ldr	r2, [pc, #48]
 	ands	r0, r3
@@ -153,7 +153,7 @@ BattlePresentation_WaitForAdvance:
 	movs	r0, #111
 	bl	Audio_PlayCue
 	mov	r0, fp
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #1
 	bl	WaitFrames
 	add	sp, #16
@@ -165,6 +165,9 @@ BattlePresentation_WaitForAdvance:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_08120060
+	.thumb_func
+Func_08120060:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -198,10 +201,10 @@ BattlePresentation_WaitForAdvance:
 .L_081200a0:
 	adds	r0, r7, #0
 	movs	r1, #4
-	bl	0x08013d0c
+	bl	Func_08013d0c
 	adds	r0, r7, #0
 	movs	r1, #16
-	bl	0x08013c58
+	bl	Func_08013c58
 	movs	r2, #16
 	movs	r3, #128
 	lsls	r3, r3, #19
@@ -214,7 +217,7 @@ BattlePresentation_WaitForAdvance:
 	str	r3, [r5, #8]
 	mov	r1, sl
 	adds	r0, r6, #0
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #48]
 	ldr	r2, [pc, #52]
 	ands	r0, r3
@@ -268,7 +271,7 @@ BattlePresentation_WaitForAdvance:
 	b.n	.L_081200a0
 .L_0812013c:
 	adds	r0, r6, #0
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #1

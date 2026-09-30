@@ -11,7 +11,7 @@ Func_080facb4:
 	adds	r6, r1, #0
 	adds	r5, #240
 	ldr	r0, [r5, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r1, [r5, #0]
 	adds	r0, r6, #0
 	movs	r2, #0

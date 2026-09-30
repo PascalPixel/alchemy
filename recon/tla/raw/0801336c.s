@@ -10,7 +10,7 @@ Func_0801336c:
 	mov	r8, r1
 	bl	Resource_GetTableEntry
 	mov	r1, r8
-	bl	0x0801587c
+	bl	Func_0801587c
 	mov	sl, r0
 	ldr	r5, [pc, #52]
 	adds	r0, r5, #0

@@ -12,7 +12,7 @@ Func_08045794:
 	ldr	r2, [pc, #8]
 	movs	r0, #2
 	movs	r1, #136
-	bl	0x08013438
+	bl	Func_08013438
 	pop	{pc}
 	.2byte 0x5781
 	.2byte 0x0804

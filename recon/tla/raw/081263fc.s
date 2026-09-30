@@ -125,7 +125,7 @@ Func_081263fc:
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #76]
 	adds	r1, #255
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_081264fc:
 	mov	r3, fp
 	mov	r2, r9

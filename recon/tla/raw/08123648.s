@@ -1401,7 +1401,7 @@ Func_08123648:
 .L_08124232:
 	add	r1, sp, #16
 	mov	r8, r1
-	bl	0x08123574
+	bl	Func_08123574
 	mov	r2, sl
 	ldr	r3, [r2, #0]
 	movs	r0, #0

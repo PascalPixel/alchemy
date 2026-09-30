@@ -46,6 +46,9 @@ Func_08014ae0:
 	.4byte 0x06002500
 	.2byte 0x2000
 	.2byte 0x0600
+	.global Func_08014b30
+	.thumb_func
+Func_08014b30:
 	push	{r5, lr}
 	adds	r5, r1, #0
 	subs	r3, r5, #1
@@ -61,6 +64,9 @@ Func_08014ae0:
 	movs	r0, r0
 	.2byte 0x1258
 	.2byte 0x0300
+	.global Func_08014b50
+	.thumb_func
+Func_08014b50:
 	push	{r5, lr}
 	adds	r5, r1, #0
 	subs	r3, r5, #1
@@ -76,6 +82,9 @@ Func_08014ae0:
 	movs	r0, r0
 	.2byte 0x125a
 	.2byte 0x0300
+	.global Func_08014b70
+	.thumb_func
+Func_08014b70:
 	ldr	r3, [pc, #40]
 	sub	sp, #4
 	mov	r0, sp
@@ -103,6 +112,9 @@ Func_08014ae0:
 	.4byte 0x85000140
 	.2byte 0x11c4
 	.2byte 0x0300
+	.global Func_08014bac
+	.thumb_func
+Func_08014bac:
 	push	{lr}
 	ldr	r0, [pc, #132]
 	bl	Resource_GetTableEntry
@@ -177,6 +189,9 @@ Func_08014ae0:
 	.4byte 0x050001e8
 	.2byte 0x7b10
 	.2byte 0x0801
+	.global Func_08014c4c
+	.thumb_func
+Func_08014c4c:
 	movs	r3, #128
 	movs	r2, #128
 	lsls	r3, r3, #19
@@ -192,6 +207,9 @@ Func_08014ae0:
 	.4byte 0x08017b10
 	.2byte 0x0200
 	.2byte 0x0500
+	.global Func_08014c6c
+	.thumb_func
+Func_08014c6c:
 	sub	sp, #4
 	mov	r0, sp
 	movs	r3, #0
@@ -217,6 +235,9 @@ Func_08014ae0:
 	.4byte 0x03001300
 	.2byte 0x0000
 	.2byte 0x0203
+	.global Func_08014ca0
+	.thumb_func
+Func_08014ca0:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #4]
@@ -225,6 +246,9 @@ Func_08014ae0:
 	bx	lr
 	.2byte 0x6fc0
 	.2byte 0x0300
+	.global Func_08014cb0
+	.thumb_func
+Func_08014cb0:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #0]

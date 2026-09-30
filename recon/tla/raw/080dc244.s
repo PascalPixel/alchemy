@@ -17,7 +17,7 @@ Func_080dc244:
 	adds	r7, r0, #0
 	movs	r1, #2
 	adds	r0, r6, #0
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r3, #192
 	lsls	r3, r3, #4
 	adds	r3, #164
@@ -30,18 +30,18 @@ Func_080dc244:
 	lsls	r0, r0, #9
 	adds	r0, #1
 	movs	r1, #1
-	bl	0x080d170c
+	bl	Func_080d170c
 	b.n	.L_080dc284
 .L_080dc27c:
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x080d170c
+	bl	Func_080d170c
 .L_080dc284:
 	movs	r0, #132
 	lsls	r0, r0, #1
 	bl	GameFlag_ClearBitFar
 	adds	r0, r7, #0
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	pop	{r5, r6, r7, pc}
 	.global BattleEffect_InitializeSharedScene
 	.thumb_func
@@ -165,7 +165,7 @@ BattleEffect_InitializeSharedScene:
 	lsls	r2, r5, #2
 	ldr	r1, [r3, r2]
 	movs	r0, #8
-	bl	0x080dc1b0
+	bl	Func_080dc1b0
 	pop	{r5, pc}
 	movs	r0, r0
 	.4byte 0x0300122c

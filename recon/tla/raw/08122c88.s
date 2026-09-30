@@ -33,7 +33,7 @@ Func_08122c88:
 	strb	r4, [r3, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x2d11
@@ -361,7 +361,7 @@ Func_08122c88:
 	bl	0x0811be3c
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	cmp	r0, #0
 	bne.n	.L_08122f52
 	movs	r1, #149
@@ -527,10 +527,10 @@ Func_08122c88:
 	bl	0x08038118
 	adds	r0, r5, #0
 	movs	r1, #4
-	bl	0x08013d0c
+	bl	Func_08013d0c
 	adds	r0, r5, #0
 	movs	r1, #16
-	bl	0x08013c58
+	bl	Func_08013c58
 	movs	r3, #160
 	mov	r1, r9
 	lsls	r3, r3, #8
@@ -539,7 +539,7 @@ Func_08122c88:
 	str	r2, [r1, #8]
 	mov	r1, sl
 	ldr	r0, [r6, #0]
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #52]
 	mov	r4, r9
 	ands	r0, r3
@@ -871,7 +871,7 @@ Func_08122c88:
 	bl	0x0811be3c
 	adds	r1, r6, #0
 	ldr	r0, [r0, #0]
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	cmp	r0, #0
 	bne.n	.L_08123360
 	b.n	.L_08123468
@@ -908,7 +908,7 @@ Func_08122c88:
 	adds	r1, r2, #0
 	ldr	r0, [r6, #0]
 	str	r2, [sp, #0]
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	ldr	r2, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_081233c0

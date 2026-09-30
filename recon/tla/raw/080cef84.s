@@ -23,6 +23,9 @@ Func_080cef84:
 	bl	ObjectDispatch_SetSingleChildField26Far
 .L_080cefb2:
 	pop	{r5, pc}
+	.global Func_080cefb4
+	.thumb_func
+Func_080cefb4:
 	push	{lr}
 	bl	ObjectTable_Get
 	movs	r1, #4

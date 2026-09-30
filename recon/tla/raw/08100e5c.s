@@ -19,6 +19,9 @@ Func_08100e5c:
 	.4byte 0x00003007
 	.2byte 0x2fd2
 	.2byte 0x0000
+	.global Func_08100e7c
+	.thumb_func
+Func_08100e7c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -58,7 +61,7 @@ Func_08100e5c:
 	movs	r0, #132
 	lsls	r0, r0, #6
 	adds	r0, #48
-	bl	0x08014dac
+	bl	Func_08014dac
 	movs	r2, #192
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
@@ -141,7 +144,7 @@ Func_08100e5c:
 	movs	r2, #17
 	movs	r3, #5
 	movs	r0, #13
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r3, r7, #0
 	adds	r3, #240
 	str	r0, [r3, #0]
@@ -163,7 +166,7 @@ Func_08100e5c:
 	strh	r5, [r3, #0]
 	bl	Func_081051a8
 	bl	.L_0810106c
-	bl	0x0810526c
+	bl	Func_0810526c
 	bl	0x08104aa4
 	movs	r0, #1
 	bl	WaitFrames
@@ -217,7 +220,7 @@ Func_08100e5c:
 	ldr	r0, [r3, #0]
 	bl	Func_08013164
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Event_ClearInvalidPackedValuesFar
 	ldr	r3, [pc, #32]
 	movs	r2, #139
@@ -304,7 +307,7 @@ Func_08100e5c:
 	movs	r0, #1
 	movs	r1, #0
 	movs	r2, #200
-	bl	0x08105300
+	bl	Func_08105300
 	movs	r0, #0
 	bl	0x08102008
 	adds	r4, r0, #0
@@ -412,7 +415,7 @@ Func_08100e5c:
 	subs	r1, r1, r3
 	lsls	r1, r1, #3
 	adds	r1, #48
-	bl	0x08105300
+	bl	Func_08105300
 	movs	r0, #1
 	bl	0x08102008
 	movs	r2, #139
@@ -1010,7 +1013,7 @@ Func_08100e5c:
 	ldr	r0, [sp, #8]
 	movs	r2, #5
 	movs	r3, #30
-	bl	0x080f811c
+	bl	UiWindow_UpdateOrCreate
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r3, [pc, #324]
@@ -1102,7 +1105,7 @@ Func_08100e5c:
 	negs	r1, r1
 	movs	r2, #11
 	adds	r0, r6, #0
-	bl	0x080f8840
+	bl	Func_080f8840
 	movs	r3, #0
 	mov	fp, r3
 	movs	r3, #13

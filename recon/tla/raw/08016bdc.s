@@ -7,7 +7,7 @@ Func_08016bdc:
 	movs	r0, #3
 	sub	sp, #4
 	bl	Audio_PlayCue
-	bl	0x08016180
+	bl	Func_08016180
 	ldr	r2, [pc, #152]
 	ldr	r3, [pc, #152]
 	movs	r1, #19
@@ -28,7 +28,7 @@ Func_08016bdc:
 	bl	Func_080167d8
 .L_08016c10:
 	ldr	r0, [pc, #120]
-	bl	0x08016854
+	bl	Func_08016854
 	ldr	r6, [pc, #124]
 .L_08016c18:
 	ldr	r3, [r6, #0]
@@ -40,7 +40,7 @@ Func_08016bdc:
 	movs	r1, #160
 	lsls	r0, r0, #20
 	lsls	r1, r1, #2
-	bl	0x0801680c
+	bl	Func_0801680c
 .L_08016c2e:
 	ldr	r3, [r6, #0]
 	movs	r2, #2
@@ -50,7 +50,7 @@ Func_08016bdc:
 	movs	r1, #160
 	ldr	r0, [pc, #92]
 	lsls	r1, r1, #2
-	bl	0x0801680c
+	bl	Func_0801680c
 .L_08016c42:
 	ldr	r3, [r6, #0]
 	movs	r2, #8
@@ -181,6 +181,9 @@ GameFlag_ClearBitFar:
 	movs	r0, r0
 	.2byte 0x0040
 	.2byte 0x0200
+	.global Func_08016d34
+	.thumb_func
+Func_08016d34:
 	adds	r4, r0, #0
 	movs	r3, #7
 	ldr	r2, [pc, #28]

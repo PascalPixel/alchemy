@@ -89,7 +89,7 @@ Func_08142944:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #356]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r4, #238
 	ldr	r3, [sp, #48]
 	lsls	r4, r4, #7
@@ -315,7 +315,7 @@ Func_08142944:
 	subs	r3, #48
 	cmp	r3, #7
 	bhi.n	.L_08142c62
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [sp, #68]
 	movs	r2, #63
 	lsrs	r1, r3, #31
@@ -326,7 +326,7 @@ Func_08142944:
 	subs	r2, #32
 	lsls	r2, r2, #16
 	str	r2, [sp, #28]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r2, [sp, #72]
 	movs	r3, #31
 	ands	r3, r0
@@ -344,12 +344,12 @@ Func_08142944:
 	mov	sl, r2
 	adds	r7, r3, r0
 .L_08142c02:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r5, #31
 	ands	r5, r0
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r6, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r1, sl
 	ands	r0, r1
 	ldr	r2, [sp, #28]
@@ -357,7 +357,7 @@ Func_08142944:
 	lsls	r0, r0, #16
 	adds	r0, r2, r0
 	str	r0, [r7, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r3, sl
 	ldr	r4, [sp, #24]
 	ands	r0, r3
@@ -472,18 +472,18 @@ Func_08142944:
 	movs	r7, #0
 	movs	r6, #0
 .L_08142d06:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	ands	r3, r0
 	str	r3, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	ands	r3, r0
 	adds	r3, #128
 	str	r3, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #1
 	ands	r0, r3
 	cmp	r0, #0
@@ -502,7 +502,7 @@ Func_08142944:
 	movs	r5, #128
 	lsls	r5, r5, #2
 	adds	r0, r5, #0
-	bl	0x08014dac
+	bl	Func_08014dac
 	str	r0, [sp, #12]
 	movs	r0, #1
 	bl	0x081969f8
@@ -572,7 +572,7 @@ Func_08142944:
 	lsls	r0, r0, #8
 	bl	0x080151e4
 	ldr	r0, [r5, #0]
-	bl	0x080150e4
+	bl	Func_080150e4
 	ldr	r2, [r5, #24]
 	movs	r3, #128
 	lsls	r3, r3, #2
@@ -688,7 +688,7 @@ Func_08142944:
 	bl	0x080151e4
 	movs	r0, #250
 	lsls	r0, r0, #2
-	bl	0x08015024
+	bl	Func_08015024
 	movs	r3, #1
 	ands	r3, r7
 	cmp	r3, #0
@@ -696,7 +696,7 @@ Func_08142944:
 	lsls	r0, r7, #3
 	add	r0, r9
 	lsls	r0, r0, #10
-	bl	0x08015068
+	bl	Func_08015068
 	b.n	.L_08142f2c
 	.4byte 0x02014018
 	.4byte 0x03000260
@@ -720,7 +720,7 @@ Func_08142944:
 	mov	r3, r9
 	subs	r0, r0, r3
 	lsls	r0, r0, #10
-	bl	0x08015068
+	bl	Func_08015068
 .L_08142f2c:
 	ldr	r0, [pc, #188]
 	ldr	r1, [sp, #12]
@@ -767,7 +767,7 @@ Func_08142944:
 	ldr	r0, [pc, #104]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [sp, #52]
 	cmp	r0, #80
 	bne.n	.L_08142fcc
@@ -799,9 +799,9 @@ Func_08142944:
 	bl	Func_08143bb8
 .L_08142fd0:
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #80
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

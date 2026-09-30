@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_0804da3c
+	.thumb_func
+Func_0804da3c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -35,6 +38,9 @@
 	movs	r0, r0
 	.2byte 0x003f
 	.2byte 0x0000
+	.global Func_0804da8c
+	.thumb_func
+Func_0804da8c:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	bl	AffineEffect_InitializeWork

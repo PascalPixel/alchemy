@@ -42,6 +42,9 @@ Func_0803cfd0:
 	movs	r0, r0
 	.2byte 0xa4e0
 	.2byte 0x0805
+	.global Func_0803d020
+	.thumb_func
+Func_0803d020:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -59,12 +62,12 @@ Func_0803cfd0:
 	movs	r1, #0
 	sub	sp, #8
 	mov	r8, r1
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	movs	r3, #0
 	adds	r5, r0, #0
 	add	r1, sp, #4
 	mov	r2, sp
-	bl	0x0803b918
+	bl	UiText_MeasureEntryDimensions
 	lsls	r5, r5, #1
 	movs	r3, #244
 	lsls	r3, r3, #4

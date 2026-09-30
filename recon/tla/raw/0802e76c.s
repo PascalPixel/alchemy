@@ -24,7 +24,7 @@ Func_0802e76c:
 	ldr	r0, [r6, r3]
 	subs	r5, #1
 	strh	r7, [r0, #0]
-	bl	0x0802296c
+	bl	Func_0802296c
 	adds	r6, #56
 	cmp	r5, #0
 	bge.n	.L_0802e78e

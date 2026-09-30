@@ -46,6 +46,9 @@ Func_080d3164:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global Func_080d31c0
+	.thumb_func
+Func_080d31c0:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -85,6 +88,9 @@ Func_080d3164:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global Func_080d3214
+	.thumb_func
+Func_080d3214:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
 	bl	ObjectTable_Get

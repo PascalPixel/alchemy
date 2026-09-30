@@ -129,13 +129,13 @@ Func_0813e3d0:
 .L_0813e4ce:
 	movs	r3, #0
 	str	r3, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	ands	r3, r0
 	str	r3, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #128
 	lsls	r3, r3, #1
 	mov	r4, r8
@@ -166,7 +166,7 @@ Func_0813e3d0:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #172]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #104
 	movs	r1, #3
 	bl	Func_081963ec
@@ -320,7 +320,7 @@ Func_0813e3d0:
 	mov	lr, r7
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #23
 	movs	r0, #188
 	bl	Func_081963ec
@@ -379,12 +379,12 @@ Func_0813e3d0:
 	mov	lr, r7
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0813e6da:
 	bl	Func_08014de4
 	ldr	r1, [sp, #8]
 	ldr	r0, [sp, #12]
-	bl	0x080156e8
+	bl	Func_080156e8
 	ldr	r5, [pc, #236]
 	movs	r1, #0
 	mov	r8, r1
@@ -478,16 +478,16 @@ Func_0813e3d0:
 	b.n	.L_0813e566
 .L_0813e7a2:
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #48]
 	bl	Func_08014644
 	bl	Func_08143bb8
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #72
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -725,7 +725,7 @@ Func_0813e3d0:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #44]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r1, #35
 	movs	r0, #104
 	bl	Func_081963ec
@@ -836,9 +836,9 @@ Func_0813e3d0:
 	beq.n	.L_0813ea56
 .L_0813eaa2:
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #180]
 	bl	Func_08014644
 	mov	r1, fp
@@ -898,11 +898,11 @@ Func_0813e3d0:
 .L_0813eb26:
 	strh	r4, [r0, #0]
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #16
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

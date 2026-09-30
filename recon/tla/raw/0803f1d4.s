@@ -47,12 +47,15 @@ Resource_LoadByMode:
 	add	r3, sp, #4
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x0803d98c
+	bl	Ability_LoadGlyph
 .L_0803f22e:
 	ldr	r0, [sp, #8]
 .L_0803f230:
 	add	sp, #12
 	pop	{r5, r6, pc}
+	.global Func_0803f234
+	.thumb_func
+Func_0803f234:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -114,7 +117,7 @@ Resource_LoadByMode:
 	add	r3, sp, #4
 	adds	r0, r5, #0
 	mov	r1, r8
-	bl	0x0803d98c
+	bl	Ability_LoadGlyph
 	b.n	.L_0803f2d2
 	adds	r2, r4, #0
 	adds	r0, r5, #0
@@ -189,7 +192,7 @@ Resource_LoadByMode:
 	add	r2, sp, #8
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x0803d98c
+	bl	Ability_LoadGlyph
 	ldr	r3, [pc, #108]
 .L_0803f352:
 	adds	r3, r6, r3
@@ -358,7 +361,7 @@ Resource_LoadByMode:
 	cmp	r7, r6
 	beq.n	.L_0803f4a8
 	ldrh	r0, [r7, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	mov	r3, r8
 	strh	r3, [r7, #10]
 .L_0803f4a8:
@@ -548,13 +551,22 @@ Resource_LoadByMode:
 	.2byte 0xffff
 	bx	lr
 	movs	r0, r0
+	.global Func_0803f610
+	.thumb_func
+Func_0803f610:
+	bx	lr
+	movs	r0, r0
+	.global Func_0803f614
+	.thumb_func
+Func_0803f614:
 	bx	lr
 	movs	r0, r0
 	bx	lr
 	movs	r0, r0
 	bx	lr
 	movs	r0, r0
-	bx	lr
-	movs	r0, r0
+	.global Func_0803f620
+	.thumb_func
+Func_0803f620:
 	bx	lr
 	.2byte 0x0000

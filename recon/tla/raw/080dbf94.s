@@ -102,7 +102,7 @@ Func_080dbf94:
 	beq.n	.L_080dc0b0
 	ldr	r1, [pc, #80]
 	bl	Object_SetCallback
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r2, r6, #0
@@ -116,19 +116,19 @@ Func_080dbf94:
 	lsls	r3, r3, #4
 	adds	r3, #61
 	str	r3, [r6, #72]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	subs	r5, r5, r0
 	str	r5, [r6, #40]
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r3, #128
 	lsls	r3, r3, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r3
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0
@@ -138,6 +138,9 @@ Func_080dbf94:
 	pop	{r5, r6, pc}
 	.2byte 0x0e78
 	.2byte 0x080f
+	.global Func_080dc0b8
+	.thumb_func
+Func_080dc0b8:
 	push	{lr}
 	ldr	r1, [pc, #24]
 	movs	r2, #128
@@ -156,6 +159,9 @@ Func_080dbf94:
 	pop	{pc}
 	.2byte 0x3410
 	.2byte 0x0200
+	.global Func_080dc0d8
+	.thumb_func
+Func_080dc0d8:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0
@@ -171,7 +177,7 @@ Func_080dbf94:
 	b.n	.L_080dc106
 .L_080dc0f2:
 	ldrb	r0, [r5, #16]
-	bl	0x08014274
+	bl	Func_08014274
 	ldrb	r3, [r6, #16]
 	movs	r2, #1
 	strb	r3, [r5, #16]

@@ -9,7 +9,7 @@ Func_080affac:
 	adds	r6, r2, #0
 	cmp	r5, #7
 	ble.n	.L_080affe8
-	bl	0x080ad3a8
+	bl	Func_080ad3a8
 	adds	r0, #42
 	ldrb	r1, [r0, #0]
 	cmp	r1, #47
@@ -70,6 +70,9 @@ Func_080affac:
 	pop	{r5, r6, pc}
 	.2byte 0x6684
 	.2byte 0x080c
+	.global Func_080b0028
+	.thumb_func
+Func_080b0028:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0
 	sub	sp, #16

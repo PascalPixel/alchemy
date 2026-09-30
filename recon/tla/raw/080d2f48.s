@@ -50,7 +50,7 @@ Func_080d2f48:
 	bl	Object_CommitPosition
 	adds	r0, r7, #0
 	mov	r1, r8
-	bl	0x080d3888
+	bl	Func_080d3888
 	mov	r3, sl
 	lsls	r0, r3, #16
 	ldr	r3, [r6, #16]

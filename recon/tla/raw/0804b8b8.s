@@ -180,7 +180,7 @@ Func_0804b8b8:
 	ldr	r3, [r3, #36]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
-	bl	0x0804297c
+	bl	Func_0804297c
 	bl	Func_08118118
 	mov	r1, r8
 	movs	r3, #255
@@ -191,7 +191,7 @@ Func_0804b8b8:
 	movs	r1, #2
 	bl	0x081180e0
 	mov	r0, r8
-	bl	0x080461c8
+	bl	Func_080461c8
 .L_0804ba40:
 	movs	r0, #1
 	bl	WaitFrames
@@ -229,13 +229,13 @@ Func_0804b8b8:
 	movs	r1, #0
 	bl	0x081180e0
 	mov	r0, r8
-	bl	0x080461c8
+	bl	Func_080461c8
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #36]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
-	bl	0x0804297c
+	bl	Func_0804297c
 	bl	Func_08118118
 	movs	r0, #1
 	bl	WaitFrames
@@ -263,7 +263,7 @@ Func_0804b8b8:
 	movs	r0, #9
 	str	r1, [sp, #12]
 	str	r2, [sp, #8]
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldr	r2, [sp, #12]
 	adds	r5, r0, #0
 	ldr	r2, [r2, #0]

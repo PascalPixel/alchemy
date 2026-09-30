@@ -40,22 +40,28 @@ Func_0802ce4c:
 	movs	r1, #144
 	ldr	r0, [pc, #8]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_0802ce98:
 	add	sp, #4
 	pop	{r5, r6, pc}
 	.2byte 0xcd95
 	.2byte 0x0802
+	.global Func_0802cea0
+	.thumb_func
+Func_0802cea0:
 	push	{lr}
 	ldr	r0, [pc, #8]
-	bl	0x08014694
+	bl	Func_08014694
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0xcd95
 	.2byte 0x0802
+	.global Func_0802ceb0
+	.thumb_func
+Func_0802ceb0:
 	push	{lr}
 	ldr	r0, [pc, #8]
-	bl	0x0801475c
+	bl	Func_0801475c
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0xcd95
@@ -63,7 +69,7 @@ Func_0802ce4c:
 	push	{r5, r6, lr}
 	movs	r1, #180
 	movs	r0, #112
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r5, r0, #0
 	adds	r1, r5, #0
 	movs	r0, #0

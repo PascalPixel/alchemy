@@ -188,7 +188,7 @@ Func_08101c7c:
 	movs	r3, #10
 	movs	r0, #0
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r5, #2
 	movs	r1, #12
 	movs	r2, #22
@@ -196,14 +196,14 @@ Func_08101c7c:
 	mov	r8, r0
 	movs	r0, #8
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r1, #9
 	str	r0, [sp, #32]
 	movs	r2, #22
 	movs	r3, #3
 	movs	r0, #8
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	str	r0, [sp, #28]
 	bl	0x08038290
 	ldr	r7, [pc, #480]
@@ -348,7 +348,7 @@ Func_08101c7c:
 	cmp	r3, #99
 	beq.n	.L_08101f4a
 	adds	r0, r3, #0
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r3, #99
 	strh	r3, [r5, #0]
 .L_08101f4a:
@@ -388,13 +388,13 @@ Func_08101c7c:
 	bl	WaitFrames
 	movs	r1, #1
 	ldr	r0, [sp, #28]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #1
 	ldr	r0, [sp, #32]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	0x08038290
 	ldr	r2, [sp, #16]
 	movs	r3, #2
@@ -417,7 +417,7 @@ Func_08101c7c:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #36]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r0, [sp, #16]
 	add	sp, #36
 	pop	{r3, r5, r6, r7}
@@ -882,7 +882,7 @@ Func_08101c7c:
 	ldr	r0, [sp, #84]
 	movs	r1, #0
 	movs	r2, #200
-	bl	0x08105300
+	bl	Func_08105300
 	b.n	.L_081023de
 .L_08102372:
 	ldr	r3, [sp, #20]
@@ -923,7 +923,7 @@ Func_08101c7c:
 	movs	r2, #54
 .L_081023b4:
 	ldr	r0, [sp, #84]
-	bl	0x08105300
+	bl	Func_08105300
 	adds	r1, r6, #0
 	ldr	r0, [sp, #84]
 	bl	Func_0810532c
@@ -934,12 +934,12 @@ Func_08101c7c:
 	beq.n	.L_081023d4
 	ldr	r0, [sp, #84]
 	movs	r1, #0
-	bl	0x08105350
+	bl	Func_08105350
 .L_081023d4:
 	ldr	r0, [sp, #84]
 	ldr	r1, [sp, #28]
 	adds	r2, r5, #0
-	bl	0x081052ac
+	bl	Func_081052ac
 .L_081023de:
 	ldr	r1, [sp, #80]
 	mov	r2, fp
@@ -953,7 +953,7 @@ Func_08101c7c:
 	movs	r7, #42
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r7, #255
 	adds	r0, r5, #0
 	adds	r1, r6, #0
@@ -990,7 +990,7 @@ Func_08101c7c:
 	bl	0x08038080
 .L_0810244a:
 	ldr	r0, [sp, #76]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r1, [sp, #84]
 	cmp	r1, #0
 	bne.n	.L_081024e0
@@ -1300,7 +1300,7 @@ Func_08101c7c:
 	beq.n	.L_081026f4
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
@@ -1328,7 +1328,7 @@ Func_08101c7c:
 	beq.n	.L_08102736
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r2, #132
@@ -1388,7 +1388,7 @@ Func_08101c7c:
 	beq.n	.L_081027b8
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r2, #132
@@ -1490,7 +1490,7 @@ Func_08101c7c:
 	beq.n	.L_08102892
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r2, #132
@@ -1607,7 +1607,7 @@ Func_08101c7c:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
@@ -1655,7 +1655,7 @@ Func_08101c7c:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
@@ -1703,7 +1703,7 @@ Func_08101c7c:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1

@@ -10,7 +10,7 @@ Func_08045528:
 	bls.n	.L_08045534
 	movs	r0, #0
 .L_08045534:
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r1, #14
 	str	r1, [sp, #0]
 	movs	r1, #1
@@ -22,6 +22,9 @@ Func_08045528:
 	ldr	r0, [sp, #8]
 	add	sp, #16
 	pop	{pc}
+	.global Func_08045550
+	.thumb_func
+Func_08045550:
 	push	{lr}
 	cmp	r0, #0
 	beq.n	.L_08045558

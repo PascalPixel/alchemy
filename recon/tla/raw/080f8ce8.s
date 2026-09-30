@@ -42,7 +42,7 @@ Func_080f8ce8:
 	adds	r0, r5, #0
 	mov	r1, sl
 	mov	r2, r9
-	bl	0x080f811c
+	bl	UiWindow_UpdateOrCreate
 	cmp	r0, #0
 	bne.n	.L_080f8d50
 	ldr	r2, [sp, #8]
@@ -60,7 +60,7 @@ Func_080f8ce8:
 	ldr	r6, [r3, #48]
 .L_080f8d58:
 	adds	r0, r6, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r0, r6, #0
 	bl	0x08038268
 	movs	r2, #1

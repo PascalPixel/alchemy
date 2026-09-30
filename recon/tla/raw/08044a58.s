@@ -45,7 +45,7 @@ Func_08044a58:
 	movs	r3, #1
 	strb	r3, [r5, #3]
 	adds	r0, r7, #0
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r1, #14
 	add	r2, sp, #16
 	add	r3, sp, #12
@@ -121,7 +121,7 @@ Func_08044a58:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #16]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08044b60:
 	add	sp, #32
 	pop	{r3, r5, r6, r7}
@@ -151,6 +151,9 @@ Func_08044a58:
 	movs	r0, r0
 	.2byte 0xf666
 	.2byte 0x0805
+	.global Func_08044b98
+	.thumb_func
+Func_08044b98:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -181,7 +184,7 @@ Func_08044a58:
 	strb	r3, [r5, #3]
 	mov	r0, sl
 	bl	.L_08044b80
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r1, #14
 	add	r2, sp, #12
 	add	r3, sp, #8
@@ -242,7 +245,7 @@ Func_08044a58:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #12]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08044c6a:
 	add	sp, #28
 	pop	{r3, r5}
@@ -253,6 +256,9 @@ Func_08044a58:
 	.4byte 0x0000002b
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_08044c80
+	.thumb_func
+Func_08044c80:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -290,7 +296,7 @@ Func_08044a58:
 	strb	r3, [r2, #3]
 	mov	r0, fp
 	bl	.L_08044b80
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r3, #14
 	add	r5, sp, #16
 	add	r2, sp, #20
@@ -311,7 +317,7 @@ Func_08044a58:
 	str	r3, [sp, #32]
 	add	r7, sp, #36
 	bl	.L_08044b80
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r3, #15
 	add	r2, sp, #12
 	str	r3, [sp, #0]
@@ -380,9 +386,9 @@ Func_08044a58:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #20]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r0, [sp, #12]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08044daa:
 	add	sp, #48
 	pop	{r3, r5, r6, r7}
@@ -396,6 +402,9 @@ Func_08044a58:
 	.4byte 0x0000002d
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_08044dc8
+	.thumb_func
+Func_08044dc8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -558,7 +567,7 @@ Func_08044a58:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #4]
-	bl	0x08014274
+	bl	Func_08014274
 .L_08044f28:
 	add	sp, #52
 	pop	{r3, r5, r6, r7}
@@ -581,7 +590,7 @@ Func_08044a58:
 	adds	r5, r0, #0
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	ldr	r3, [pc, #36]
 	lsls	r5, r5, #2
 	adds	r6, r0, #0
@@ -589,14 +598,14 @@ Func_08044a58:
 	cmp	r7, #95
 	bgt.n	.L_08044f80
 	adds	r1, r6, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r1, #128
 	lsls	r1, r1, #2
 	adds	r0, r7, #0
 	adds	r2, r6, #0
 	bl	VramBlock_LoadCached
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_08044f80:
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0

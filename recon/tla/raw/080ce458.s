@@ -19,7 +19,7 @@ Func_080ce458:
 	adds	r6, r2, #0
 	ldr	r5, [r3, #16]
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldrh	r0, [r0, #6]
 	movs	r3, #1
@@ -208,16 +208,16 @@ Func_080ce458:
 .L_080ce5de:
 	mov	r0, r8
 	movs	r1, #0
-	bl	0x080dc410
-	bl	0x080cdf5c
+	bl	Func_080dc410
+	bl	Func_080cdf5c
 	adds	r1, r5, #0
-	bl	0x080dc62c
+	bl	Func_080dc62c
 	adds	r1, r7, #0
 	adds	r2, r5, #0
 	mov	r0, sl
 	bl	.L_080ceafc
 	bl	0x080db884
-	bl	0x080dc7cc
+	bl	Func_080dc7cc
 	adds	r1, r7, #0
 	adds	r2, r5, #0
 	mov	r0, r9
@@ -410,7 +410,7 @@ Func_080ce458:
 	ldr	r0, [pc, #364]
 	bl	0x08038040
 	movs	r0, #1
-	bl	0x080d295c
+	bl	Func_080d295c
 	adds	r5, r0, #0
 	bl	0x08038140
 	movs	r0, #0
@@ -587,7 +587,7 @@ Func_080ce458:
 	ldr	r2, [sp, #4]
 	cmp	r2, #23
 	bne.n	.L_080ce948
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r1, [r0, #16]
@@ -657,7 +657,7 @@ Func_080ce458:
 .L_080ce9b6:
 	mov	r0, r9
 	movs	r1, #0
-	bl	0x080dc410
+	bl	Func_080dc410
 	movs	r1, #192
 	ldr	r0, [sp, #12]
 	lsls	r1, r1, #4
@@ -725,10 +725,10 @@ Func_080ce458:
 	strb	r2, [r1, #0]
 	strb	r2, [r3, #0]
 .L_080cea3e:
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	mov	r1, sl
-	bl	0x080dc62c
-	bl	0x080dc6d8
+	bl	Func_080dc62c
+	bl	Func_080dc6d8
 	adds	r1, r7, #0
 	ldr	r0, [sp, #8]
 	mov	r2, sl
@@ -748,7 +748,7 @@ Func_080ce458:
 .L_080cea74:
 	bl	Func_080db4b8
 .L_080cea78:
-	bl	0x080dc7cc
+	bl	Func_080dc7cc
 	ldr	r1, [sp, #12]
 	movs	r2, #211
 	lsls	r2, r2, #4
@@ -823,13 +823,13 @@ Func_080ce458:
 	lsls	r2, r2, #9
 	cmp	r3, r2
 	bge.n	.L_080ceb2e
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	ldr	r0, [r5, #8]
-	bl	0x080d3be8
+	bl	Func_080d3be8
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	0x080d407c
-	bl	0x080d2350
+	bl	Func_080d407c
+	bl	Func_080d2350
 	b.n	0x080ceb34
 .L_080ceb2e:
 	adds	r1, r6, #0
@@ -840,16 +840,19 @@ Func_080ce458:
 	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ceb50
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	ldr	r0, [pc, #12]
 	movs	r1, #1
 	bl	0x08038040
-	bl	0x080d2350
+	bl	Func_080d2350
 .L_080ceb50:
 	movs	r0, #0
 	pop	{r5, r6, pc}
 	.2byte 0x0dc3
 	.2byte 0x0000
+	.global Func_080ceb58
+	.thumb_func
+Func_080ceb58:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	lsls	r5, r5, #16

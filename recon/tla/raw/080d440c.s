@@ -19,7 +19,7 @@ Func_080d440c:
 	movs	r0, #108
 	str	r3, [sp, #12]
 	adds	r7, r2, #0
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #230
 	str	r0, [sp, #8]
 	lsls	r1, r1, #1
@@ -135,6 +135,9 @@ Func_080d440c:
 	.4byte 0xff880000
 	.2byte 0x0000
 	.2byte 0xffc0
+	.global Func_080d450c
+	.thumb_func
+Func_080d450c:
 	.2byte 0xb520
 	adds	r5, r1, #0
 	bl	ObjectTable_Get

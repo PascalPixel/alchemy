@@ -241,7 +241,7 @@ Func_081b22b8:
 	str	r2, [r1, #0]
 	mov	fp, r1
 	mov	r8, r2
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [pc, #96]
 	adds	r5, r7, #0
 	ldr	r4, [r3, #0]
@@ -366,7 +366,7 @@ Func_081b22b8:
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #148
 	adds	r3, r3, r7
 	mov	sl, r3
@@ -447,7 +447,7 @@ Func_081b22b8:
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r2, r8
 	ldr	r3, [r2, #0]
 	movs	r5, #0
@@ -468,7 +468,7 @@ Func_081b22b8:
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #152
 	lsls	r0, r0, #1
 	bl	Audio_PlayCue
@@ -671,14 +671,14 @@ Func_081b22b8:
 	adds	r5, r7, r2
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r2, #19
 	movs	r3, #4
 	movs	r0, #11
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	movs	r3, #0
 	str	r1, [r5, #0]
@@ -719,14 +719,14 @@ Func_081b22b8:
 	adds	r5, r7, r0
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r2, #14
 	movs	r3, #3
 	movs	r0, #16
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #300]
@@ -759,14 +759,14 @@ Func_081b22b8:
 	adds	r5, r7, r3
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r2, #7
 	movs	r3, #3
 	movs	r0, #23
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #224]
@@ -789,14 +789,14 @@ Func_081b22b8:
 	adds	r5, r7, r2
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r2, #7
 	movs	r3, #3
 	movs	r0, #23
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #164]
@@ -817,7 +817,7 @@ Func_081b22b8:
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r2, r7, #0
 	adds	r2, #152
 	str	r2, [sp, #12]
@@ -942,7 +942,7 @@ Func_081b22b8:
 	adds	r3, r7, r0
 	movs	r1, #1
 	ldr	r0, [r3, #0]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 .L_081b29ee:
 	adds	r1, r7, #0
 	movs	r2, #148
@@ -970,7 +970,7 @@ Func_081b22b8:
 	str	r3, [r1, #0]
 	b.n	.L_081b2df2
 .L_081b2a1c:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #3
 	ands	r0, r3
 	adds	r0, #4
@@ -997,7 +997,7 @@ Func_081b22b8:
 	movs	r2, #12
 	movs	r3, #3
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r2, #153
 	lsls	r2, r2, #3
 	adds	r1, r0, #0
@@ -1254,7 +1254,7 @@ Func_081b22b8:
 	adds	r3, r7, r0
 	movs	r1, #1
 	ldr	r0, [r3, #0]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #148
 	b.n	.L_081b2d56
 .L_081b2c38:
@@ -1271,7 +1271,7 @@ Func_081b22b8:
 	str	r1, [r3, #0]
 	ldr	r0, [r6, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #148
 	adds	r3, r3, r7
 	mov	sl, r3
@@ -1285,7 +1285,7 @@ Func_081b22b8:
 	movs	r2, #24
 	movs	r3, #4
 	movs	r0, #3
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	ldr	r5, [pc, #68]
 	adds	r1, r0, #0
 	str	r1, [r6, #0]
@@ -1371,7 +1371,7 @@ Func_081b22b8:
 	movs	r2, #12
 	movs	r3, #4
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #128
 	ldr	r5, [pc, #804]
 	lsls	r3, r3, #3
@@ -2346,7 +2346,7 @@ Func_081b22b8:
 	movs	r2, #12
 	movs	r3, #4
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r6, #128
 	ldr	r5, [pc, #44]
 	lsls	r6, r6, #3
@@ -2395,17 +2395,17 @@ Func_081b22b8:
 	str	r0, [sp, #44]
 	adds	r1, #124
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	str	r0, [sp, #40]
 	adds	r1, #28
 	movs	r0, #180
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #36]
 	ldr	r0, [pc, #76]
 	ldr	r5, [pc, #76]
-	bl	0x080132fc
+	bl	Func_080132fc
 	movs	r0, #160
 	lsls	r0, r0, #1
 	adds	r5, r5, r0
@@ -2420,7 +2420,7 @@ Func_081b22b8:
 	adds	r1, #152
 	str	r1, [sp, #32]
 	str	r3, [r1, #0]
-	bl	0x080144c0
+	bl	Func_080144c0
 	ldr	r5, [pc, #24]
 	ldr	r3, [pc, #40]
 	ldr	r1, [pc, #44]
@@ -2484,7 +2484,7 @@ Func_081b22b8:
 	ldr	r0, [pc, #188]
 	bl	Resource_GetTableEntry
 	ldr	r1, [sp, #48]
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r0, [pc, #180]
 	bl	Resource_GetTableEntry
 	movs	r3, #128
@@ -2500,7 +2500,7 @@ Func_081b22b8:
 	adds	r4, #32
 	adds	r0, r4, #0
 	ldr	r1, [pc, #160]
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r0, [pc, #152]
 	ldr	r7, [pc, #156]
 	movs	r3, #0
@@ -2765,7 +2765,7 @@ Func_081b22b8:
 	.2byte 0x0000
 	.2byte 0x0201
 .L_081b37e0:
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -2789,7 +2789,7 @@ Func_081b22b8:
 	adds	r4, #32
 	adds	r0, r4, #0
 	ldr	r1, [pc, #140]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -2813,7 +2813,7 @@ Func_081b22b8:
 	movs	r6, #0
 	adds	r5, r7, #4
 .L_081b3846:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #5
 	bl	0x0800206c
 	adds	r6, #1
@@ -2839,7 +2839,7 @@ Func_081b22b8:
 	movs	r5, #0
 .L_081b3878:
 	str	r4, [sp, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #21
 	bl	0x0800206c
 	mov	r1, r8
@@ -2987,7 +2987,7 @@ Func_081b22b8:
 	movs	r2, #26
 	movs	r3, #4
 	movs	r0, #2
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	ldr	r0, [sp, #36]
 	movs	r2, #153
@@ -3015,7 +3015,7 @@ Func_081b22b8:
 	movs	r2, #26
 	movs	r3, #4
 	movs	r0, #2
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	ldr	r3, [sp, #36]
 	ldr	r5, [pc, #616]
 	movs	r7, #153
@@ -3046,13 +3046,13 @@ Func_081b22b8:
 	lsls	r1, r1, #3
 	lsls	r5, r5, #4
 	ldr	r0, [pc, #564]
-	bl	0x080145a8
+	bl	Func_080145a8
 	adds	r1, r5, #0
 	ldr	r0, [pc, #560]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r0, [pc, #556]
 	adds	r1, r5, #0
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r7, [sp, #20]
 	movs	r2, #0
 	ldr	r3, [r7, #0]
@@ -3130,11 +3130,11 @@ Func_081b22b8:
 	ands	r3, r0
 	cmp	r3, #0
 	bne.n	.L_081b3b7a
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #127
 	ands	r3, r0
 	adds	r5, r3, #0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #31
 	ands	r3, r0
 	adds	r1, r3, #0
@@ -3160,10 +3160,10 @@ Func_081b22b8:
 	mov	r9, r5
 	mov	sl, r1
 .L_081b3b22:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r5, #255
 	ands	r5, r0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -3187,7 +3187,7 @@ Func_081b22b8:
 	negs	r3, r3
 	asrs	r3, r3, #6
 	str	r3, [r7, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #16
@@ -3506,9 +3506,9 @@ Func_081b22b8:
 	cmp	r1, #17
 	bne.n	.L_081b3daa
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #60]
 	bl	Func_08014644
 	ldr	r0, [pc, #56]
@@ -3516,13 +3516,13 @@ Func_081b22b8:
 	ldr	r0, [pc, #56]
 	bl	Func_08014644
 	movs	r0, #180
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #120
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

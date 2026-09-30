@@ -90,22 +90,22 @@ Func_081b834c:
 	str	r0, [sp, #128]
 	adds	r1, #124
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	str	r0, [sp, #124]
 	adds	r1, #20
 	movs	r0, #180
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #76
 	str	r0, [sp, #120]
 	movs	r0, #48
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #116]
 	ldr	r0, [pc, #516]
-	bl	0x080132fc
+	bl	Func_080132fc
 	bl	0x081b8020
-	bl	0x080144c0
+	bl	Func_080144c0
 	ldr	r2, [pc, #508]
 	movs	r3, #0
 	strb	r3, [r2, #0]
@@ -158,7 +158,7 @@ Func_081b834c:
 	adds	r0, r3, #0
 	ldr	r1, [pc, #420]
 	str	r3, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -184,7 +184,7 @@ Func_081b834c:
 	adds	r5, #128
 	adds	r0, r5, #0
 	str	r5, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -211,7 +211,7 @@ Func_081b834c:
 	adds	r6, #32
 	adds	r0, r6, #0
 	str	r6, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	movs	r2, #132
 	lsls	r3, r3, #19
@@ -239,7 +239,7 @@ Func_081b834c:
 	ldr	r1, [pc, #248]
 	adds	r0, #32
 	str	r0, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -268,7 +268,7 @@ Func_081b834c:
 	adds	r5, #32
 	adds	r0, r5, #0
 	str	r5, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -297,7 +297,7 @@ Func_081b834c:
 	adds	r3, #32
 	adds	r0, r3, #0
 	str	r3, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	movs	r2, #132
 	lsls	r3, r3, #19
@@ -401,7 +401,7 @@ Func_081b834c:
 	adds	r6, #32
 	adds	r0, r6, #0
 	str	r6, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -514,14 +514,14 @@ Func_081b834c:
 	mov	r8, r0
 	mov	sl, r4
 .L_081b879c:
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #64
 	lsls	r0, r0, #16
 	mov	r5, r8
 	str	r5, [r6, #4]
 	str	r0, [r6, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #64
 	lsls	r0, r0, #16
@@ -540,23 +540,23 @@ Func_081b834c:
 	mov	r3, sl
 	muls	r3, r0
 	str	r3, [r6, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #64
 	lsls	r0, r0, #14
 	str	r0, [r6, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #32
 	lsls	r3, r3, #12
 	str	r3, [r6, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #64
 	lsls	r0, r0, #14
 	str	r0, [r6, #20]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #6
 	bl	0x0800206c
 	lsls	r3, r0, #1
@@ -586,7 +586,7 @@ Func_081b834c:
 	movs	r1, #0
 	movs	r3, #3
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #128
 	ldr	r2, [sp, #120]
 	ldr	r5, [pc, #928]
@@ -613,7 +613,7 @@ Func_081b834c:
 	movs	r3, #3
 	movs	r0, #18
 	str	r6, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	ldr	r0, [sp, #120]
 	movs	r2, #153
@@ -630,7 +630,7 @@ Func_081b834c:
 	movs	r3, #4
 	movs	r0, #22
 	str	r6, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r4, #128
 	ldr	r3, [sp, #120]
 	ldr	r5, [pc, #840]
@@ -692,7 +692,7 @@ Func_081b834c:
 	adds	r3, r2, r4
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	.L_081ba282
 .L_081b8932:
 	ldr	r3, [r1, #12]
@@ -713,7 +713,7 @@ Func_081b834c:
 	adds	r3, r6, r0
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r0, r5, #0
 	bl	Audio_PlayCue
 	ldr	r6, [pc, #664]
@@ -729,23 +729,23 @@ Func_081b834c:
 	str	r3, [r5, #4]
 	str	r6, [r5, #0]
 	mov	r8, r2
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #64
 	lsls	r0, r0, #12
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #48
 	lsls	r3, r3, #13
 	str	r3, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	adds	r0, #64
 	lsls	r0, r0, #13
 	str	r0, [r5, #20]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #144
 	lsls	r1, r1, #7
 	bl	0x0800206c
@@ -857,23 +857,23 @@ Func_081b834c:
 	lsls	r3, r3, #15
 	str	r3, [r5, #4]
 	str	r6, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #64
 	lsls	r0, r0, #12
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #48
 	lsls	r3, r3, #13
 	str	r3, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	adds	r0, #64
 	lsls	r0, r0, #13
 	str	r0, [r5, #20]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #144
 	lsls	r1, r1, #7
 	bl	0x0800206c
@@ -917,14 +917,14 @@ Func_081b834c:
 	adds	r6, r4, r5
 	ldr	r0, [r6, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #16
 	movs	r2, #8
 	movs	r3, #4
 	movs	r0, #22
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	ldr	r5, [pc, #212]
 	adds	r1, r0, #0
 	str	r1, [r6, #0]
@@ -959,7 +959,7 @@ Func_081b834c:
 	adds	r4, #204
 	adds	r3, r2, r4
 	ldr	r0, [r3, #0]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	ldr	r5, [sp, #88]
 	cmp	r5, #0
 	beq.n	.L_081b8b72
@@ -1322,7 +1322,7 @@ Func_081b834c:
 .L_081b8e34:
 	asrs	r3, r2, #6
 	str	r3, [r7, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #3
 	ands	r0, r3
 	cmp	r0, #0
@@ -1348,7 +1348,7 @@ Func_081b834c:
 	adds	r3, #63
 .L_081b8e6a:
 	asrs	r6, r3, #6
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -1756,7 +1756,7 @@ Func_081b834c:
 	str	r5, [sp, #96]
 	str	r5, [sp, #56]
 	str	r6, [sp, #68]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r2, #128
 	adds	r1, r0, #0
 	ldr	r0, [sp, #120]
@@ -1804,7 +1804,7 @@ Func_081b834c:
 	movs	r3, #4
 	movs	r0, #22
 	str	r5, [sp, #96]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #128
 	ldr	r2, [sp, #120]
 	ldr	r5, [pc, #52]
@@ -1876,7 +1876,7 @@ Func_081b834c:
 	adds	r2, #12
 	movs	r1, #16
 	movs	r3, #3
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r2, #128
 	adds	r1, r0, #0
 	ldr	r0, [sp, #120]
@@ -1922,7 +1922,7 @@ Func_081b834c:
 	adds	r6, r4, r5
 	movs	r1, #1
 	ldr	r0, [r6, #0]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	Audio_PlayCue
 	movs	r0, #112
@@ -1935,7 +1935,7 @@ Func_081b834c:
 	movs	r2, #8
 	movs	r3, #4
 	movs	r0, #22
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	ldr	r5, [pc, #532]
 	adds	r1, r0, #0
 	str	r1, [r6, #0]
@@ -2067,7 +2067,7 @@ Func_081b834c:
 	adds	r5, r2, r3
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	ldr	r4, [sp, #68]
 	cmp	r4, #0
 	bne.n	.L_081b9472
@@ -2084,7 +2084,7 @@ Func_081b834c:
 	movs	r0, #4
 	movs	r3, #4
 	str	r6, [sp, #64]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r2, [sp, #104]
@@ -2262,7 +2262,7 @@ Func_081b834c:
 	ldr	r1, [pc, #168]
 	adds	r0, #32
 	str	r0, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -2297,7 +2297,7 @@ Func_081b834c:
 	adds	r3, #32
 	adds	r0, r3, #0
 	str	r3, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -2436,7 +2436,7 @@ Func_081b834c:
 	adds	r5, #32
 	adds	r0, r5, #0
 	str	r5, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -2462,7 +2462,7 @@ Func_081b834c:
 	adds	r6, #32
 	adds	r0, r6, #0
 	str	r6, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -2501,7 +2501,7 @@ Func_081b834c:
 	adds	r5, #32
 	adds	r0, r5, #0
 	str	r5, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -2537,7 +2537,7 @@ Func_081b834c:
 	adds	r3, #32
 	adds	r0, r3, #0
 	str	r3, [sp, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -3878,7 +3878,7 @@ Func_081b834c:
 	bl	Func_08014de4
 	ldr	r0, [sp, #116]
 	ldr	r1, [sp, #36]
-	bl	0x080156e8
+	bl	Func_080156e8
 	ldr	r5, [sp, #96]
 	cmp	r5, #0
 	beq.n	.L_081ba250
@@ -3906,7 +3906,7 @@ Func_081b834c:
 	adds	r3, r0, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 .L_081ba282:
 	movs	r2, #0
 	movs	r6, #128
@@ -3937,15 +3937,15 @@ Func_081b834c:
 	cmp	r0, #17
 	bne.n	.L_081ba28a
 	movs	r0, #48
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #180
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #189
 	lsls	r3, r3, #2
 	add	sp, r3

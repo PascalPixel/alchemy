@@ -71,6 +71,9 @@ Func_080cded4:
 	pop	{r5, r6, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080cdf5c
+	.thumb_func
+Func_080cdf5c:
 .L_080cdf5c:
 	push	{lr}
 	ldr	r2, [pc, #28]
@@ -135,12 +138,12 @@ Event_FindFacingTrigger:
 	sub	sp, #4
 	ldr	r6, [r3, #16]
 	mov	r8, r0
-	bl	.L_080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldrh	r0, [r0, #6]
 	mov	fp, r0
-	bl	.L_080cdf5c
-	bl	0x080cd91c
+	bl	Func_080cdf5c
+	bl	Func_080cd91c
 	movs	r3, #128
 	lsls	r3, r3, #1
 	adds	r3, #255

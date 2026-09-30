@@ -14,7 +14,7 @@ Func_080d1e18:
 	lsrs	r0, r0, #5
 	str	r0, [sp, #0]
 	adds	r0, r5, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	movs	r3, #0
 	strh	r3, [r5, #30]
 	movs	r0, #13

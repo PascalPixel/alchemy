@@ -73,6 +73,12 @@ struct EventWork {
     u8 unknown_000[0x154];
     /* The exit the current event leaves by. */
     s16 exit;
+    u8 unknown_156[2];
+    /* Set to 999 when a destination is chosen. */
+    s16 countdown;
+    u8 unknown_15a[0xb5e];
+    /* -1 when the sound test's cue pair is played. */
+    s16 cue_state;
 };
 
 /*

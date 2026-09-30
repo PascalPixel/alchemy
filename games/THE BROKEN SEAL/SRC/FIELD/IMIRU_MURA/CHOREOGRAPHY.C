@@ -155,7 +155,6 @@ rest:
     return;
 }
 
-
 void SceneState_UpdateActor11WithFlag203(void)
 {
     s32 a;
@@ -377,15 +376,6 @@ void SceneActor_TurnTowardTableAngle(s32 z)
     ObjectDispatch_ApplyValueToChildren(o, 0x30);
 }
 
-/*
- * The overlay's pathing step for resource_399.  The six pool words after the
- * return belong to this owner.
- *
- * Frame map: the goal marker, then the heading, then the three-word probe
- * position that the stepping imports are handed by address.  The order of the x
- * and z assignments, together with the inline stepping wrapper, is what leaves
- * a single high-register copy before the arithmetic that follows it.
- */
 void StagedActor_RunHeadingProbeStep(void)
 {
     extern struct SharedData_02000240 Data_02000240;

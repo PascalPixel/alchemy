@@ -56,7 +56,6 @@ int SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The 36-byte owner includes its three pool words. */
 void *SceneData_SelectTable9568ByFlag(void)
 {
     if (GameFlag_IsSet(0x834) != 0)
@@ -79,7 +78,6 @@ void *SceneData_SelectFlaggedTable(void)
     return tbl;
 }
 
-/* The 80-byte owner includes its seven pool words. */
 void *SceneData_SelectTable9c00ByFlags(void)
 {
     if (GameFlag_IsSet(0x834) != 0)

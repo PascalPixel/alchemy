@@ -69,11 +69,6 @@ void OverlayObject_SetPositionAndHeading();
 void FieldScene_RunSceneStep();
 void Scene_RunConditionalActorPresentation();
 
-/*
- * A four-way gated cascade. Each gate either runs its own setter sequence
- * and returns or falls through to the next, and all four share one exit.
- * The 336-byte owner at 0x0200351c includes its eight trailing pool words.
- */
 void SceneState_RunFlagGatedSetupCascade(void)
 {
     if (GameFlag_IsSet(0x93e) != 0) {

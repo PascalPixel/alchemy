@@ -22,7 +22,7 @@ Func_0803cf6c:
 	ands	r3, r1
 	strh	r3, [r2, #0]
 	movs	r1, #1
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	b.n	.L_0803cf9c
 	.2byte 0x01ff
 	.2byte 0x0000

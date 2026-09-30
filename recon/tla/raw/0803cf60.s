@@ -5,6 +5,6 @@
 Func_0803cf60:
 	push	{lr}
 	movs	r1, #1
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	pop	{pc}
 	.2byte 0x0000

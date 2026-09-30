@@ -488,6 +488,9 @@ Func_0803acd4:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.global UiText_BuildRenderEntries
+	.thumb_func
+UiText_BuildRenderEntries:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

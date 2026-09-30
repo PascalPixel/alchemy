@@ -719,7 +719,7 @@ Func_0803c40c:
 	adds	r7, r1, #0
 	strh	r3, [r2, #0]
 	movs	r1, #1
-	bl	0x0803b094
+	bl	UiText_BuildRenderEntries
 	subs	r5, #1
 	movs	r0, #0
 	cmp	r0, r5

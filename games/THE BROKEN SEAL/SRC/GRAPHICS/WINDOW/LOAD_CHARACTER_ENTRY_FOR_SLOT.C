@@ -8,15 +8,9 @@ void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 
 /* ui/load_character_entry_for_slot.c */
 /* ui/load_character_entry_for_slot.c */
-#if defined(TBS_EDITION_JA)
-#define SLOT1_ID_OFS 0x117E
-#define SLOT0_ID_OFS 0x117C
-#define SLOT_VALUE_OFS 0x1180
-#else
-#define SLOT1_ID_OFS 0x12EE
-#define SLOT0_ID_OFS 0x12EC
-#define SLOT_VALUE_OFS 0x12F0
-#endif
+#define SLOT1_ID_OFS (RENDER_SLOT_ID_OFS + 2)
+#define SLOT0_ID_OFS RENDER_SLOT_ID_OFS
+#define SLOT_VALUE_OFS RENDER_SLOT_VALUE_OFS
 
 s32 GameFlag_TestFar(s32);
 s32 Localization_LookupEntryId(s32);

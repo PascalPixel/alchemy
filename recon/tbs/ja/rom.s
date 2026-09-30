@@ -305,7 +305,7 @@ UiWindow_ClearInteriorTiles:
 UiWork_StepChannelScript:
 	.incbin "baserom.gba", 0x000168a0, 0x000005dc
 	.section .rom.000177fa, "ax"
-	.incbin "baserom.gba", 0x000177fa, 0x00000202
+	.incbin "baserom.gba", 0x000177fa, 0x000001be
 	.section .rom.000179fc, "ax"
 	.global UiText_RenderWideStringAtOffset
 	.type UiText_RenderWideStringAtOffset, %function
@@ -348,12 +348,6 @@ UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x000191c8, 0x00000480
 	.section .rom.00019bf8, "ax"
 	.incbin "baserom.gba", 0x00019bf8, 0x00000110
-	.section .rom.00019e44, "ax"
-	.global UiWork_FinalizeEntityMatchingLocalizedId
-	.type UiWork_FinalizeEntityMatchingLocalizedId, %function
-	.thumb_func
-UiWork_FinalizeEntityMatchingLocalizedId:
-	.incbin "baserom.gba", 0x00019e44, 0x00000070
 	.section .rom.0001a080, "ax"
 	.global ItemIcon_Compose
 	.type ItemIcon_Compose, %function
@@ -448,8 +442,6 @@ BattleLayout_HighlightPartyPanels:
 	.incbin "baserom.gba", 0x00022ae2, 0x000026fa
 	.section .rom.0002525c, "ax"
 	.incbin "baserom.gba", 0x0002525c, 0x00001c80
-	.section .rom.00027134, "ax"
-	.incbin "baserom.gba", 0x00027134, 0x0000003c
 	.section .rom.00027170, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function
@@ -1169,12 +1161,6 @@ Shop_SelBuy:
 	.thumb_func
 Shop_DrawMoney:
 	.incbin "baserom.gba", 0x000a80cc, 0x00000050
-	.section .rom.000a81b4, "ax"
-	.global Shop_DrawMsg
-	.type Shop_DrawMsg, %function
-	.thumb_func
-Shop_DrawMsg:
-	.incbin "baserom.gba", 0x000a81b4, 0x00000028
 	.section .rom.000a8278, "ax"
 	.incbin "baserom.gba", 0x000a8278, 0x00000210
 	.section .rom.000a862c, "ax"
@@ -1320,8 +1306,6 @@ BattleEvent_Playback:
 	.thumb_func
 BattleBackground_Load:
 	.incbin "baserom.gba", 0x000b78ec, 0x00000138
-	.section .rom.000b7eea, "ax"
-	.incbin "baserom.gba", 0x000b7eea, 0x000000ae
 	.section .rom.000b8470, "ax"
 	.incbin "baserom.gba", 0x000b8470, 0x00000260
 	.section .rom.000b8796, "ax"

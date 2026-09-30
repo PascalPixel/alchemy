@@ -40,7 +40,7 @@ Func_080cdc74:
 	bl	Func_0801489c
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x080eaf28
+	bl	Func_080eaf28
 	adds	r7, r0, #0
 	movs	r0, #0
 	cmp	r7, #0
@@ -75,7 +75,7 @@ Func_080cdc74:
 	bl	Func_0801489c
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x080eaf28
+	bl	Func_080eaf28
 	cmp	r0, #0
 	beq.n	.L_080cdd24
 	adds	r3, r0, #0
@@ -98,7 +98,7 @@ Func_080cdc74:
 	ldr	r3, [r7, #16]
 	movs	r1, #1
 	str	r3, [r0, #8]
-	bl	0x080eaf28
+	bl	Func_080eaf28
 	cmp	r0, #0
 	beq.n	.L_080cdd52
 	adds	r3, r0, #0
@@ -134,6 +134,9 @@ Func_080cdc74:
 	.4byte 0x02000240
 	.2byte 0x0000
 	.2byte 0xfff8
+	.global Func_080cdd80
+	.thumb_func
+Func_080cdd80:
 	.2byte 0xb5e0
 	mov	r7, sl
 	mov	r6, r9
@@ -174,7 +177,7 @@ Func_080cdc74:
 	bl	Func_0801489c
 	movs	r1, #1
 	adds	r0, r7, #0
-	bl	0x080eaf28
+	bl	Func_080eaf28
 	ldr	r3, [r0, #8]
 	mov	sl, r0
 	str	r3, [r7, #0]

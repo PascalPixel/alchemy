@@ -629,7 +629,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OBJECT_2.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_32.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_33.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080c8730.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_34.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c8770.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c8828.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c88c8.o"(.text .rodata .data .padding)

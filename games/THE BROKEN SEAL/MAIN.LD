@@ -994,8 +994,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM_LIST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GET_ITEM_QUANTITY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/OWNER_ITEMS.o"(.text)
-        "*/recon/tbs/raw/080a3eee.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080a3ef0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/REMOVE_FIRST_UNFLAGGED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GET_COMMAND_CURSOR_X.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GET_COMMAND_CURSOR_Y.o"(.text)

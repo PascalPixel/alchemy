@@ -16,7 +16,7 @@ Func_080b075c:
 	mov	r0, fp
 	mov	r8, r3
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r1, r8
 	adds	r6, r0, #0
 	movs	r0, #1

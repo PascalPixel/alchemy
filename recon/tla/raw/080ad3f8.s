@@ -13,7 +13,7 @@ Func_080ad3f8:
 	bl	0x08014dac
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	movs	r0, #16
 	ldrsh	r3, [r7, r0]
@@ -1060,7 +1060,7 @@ Func_080ad3f8:
 .L_080adc22:
 	mov	r2, r9
 	ldrb	r0, [r2, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #216
 	adds	r7, r0, #0
 	movs	r1, #14
@@ -1137,7 +1137,7 @@ Func_080ad3f8:
 	adds	r5, r0, #0
 .L_080adcb6:
 	ldrb	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #58
 	ldrsh	r3, [r0, r2]
 	subs	r5, #1
@@ -1186,7 +1186,7 @@ Func_080ad3f8:
 	adds	r5, r0, #0
 .L_080add14:
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r3, r0, #0
 	movs	r2, #54
 	ldrsh	r1, [r3, r2]

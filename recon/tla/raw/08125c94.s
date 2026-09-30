@@ -428,7 +428,7 @@ Func_08125c94:
 	bl	0x0811be3c
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

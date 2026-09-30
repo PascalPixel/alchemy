@@ -74,7 +74,7 @@ Func_080ae0f0:
 	lsls	r1, r1, #2
 	adds	r3, r6, r1
 	ldrb	r0, [r2, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	ldrh	r1, [r5, #52]
 	ldrh	r3, [r5, #54]
@@ -197,7 +197,7 @@ Func_080ae0f0:
 	cmp	r5, #0
 	beq.n	.L_080ae2e6
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	ldrh	r3, [r5, #54]
 	strh	r3, [r5, #58]
@@ -271,7 +271,7 @@ Func_080ae0f0:
 	push	{r6, r7}
 	mov	r8, r1
 	mov	sl, r2
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r6, #1
 	adds	r7, r0, #0
 	negs	r6, r6
@@ -344,7 +344,7 @@ Func_080ae0f0:
 	ldrb	r5, [r7, #0]
 	str	r4, [sp, #0]
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #140
 	ldr	r4, [sp, #0]
 	lsls	r3, r3, #1

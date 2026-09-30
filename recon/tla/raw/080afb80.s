@@ -6,7 +6,7 @@ Func_080afb80:
 	push	{r5, r6, r7, lr}
 	adds	r6, r0, #0
 	adds	r7, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r1, [r0, #15]
 	movs	r3, #146
 	lsls	r3, r3, #1
@@ -34,7 +34,7 @@ Func_080afb80:
 	sub	sp, #16
 	adds	r6, r0, #0
 	mov	r8, r1
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r5, [r0, #15]
 	cmp	r5, r8
 	bge.n	.L_080afbde
@@ -85,7 +85,7 @@ Func_080afb80:
 	b.n	.L_080afd9c
 .L_080afc20:
 	ldr	r0, [sp, #12]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #166
 	ldr	r3, [pc, #384]
 	lsls	r1, r1, #1

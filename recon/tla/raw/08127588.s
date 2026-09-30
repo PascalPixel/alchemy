@@ -133,7 +133,7 @@ Func_08127588:
 	adds	r5, r7, #0
 .L_08127680:
 	ldrh	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r3, [r0, #15]
 	subs	r5, #1
 	adds	r6, #2
@@ -385,7 +385,7 @@ Func_08127588:
 	bl	0x08014dac
 	mov	r9, r0
 	ldr	r0, [sp, #8]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	adds	r6, r7, #0
 	adds	r6, #16
@@ -586,7 +586,7 @@ Func_08127588:
 	bl	0x08014dac
 	mov	r8, r0
 	mov	r0, sl
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	adds	r6, r7, #0
 	adds	r6, #16

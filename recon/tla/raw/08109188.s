@@ -289,7 +289,7 @@ Func_08109188:
 	adds	r0, r1, #0
 	mov	r9, r2
 	str	r3, [sp, #16]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	mov	r0, r9
 	bl	0x080ad010
@@ -543,7 +543,7 @@ Func_08109188:
 	adds	r5, r0, #0
 	adds	r0, r7, #0
 	adds	r6, r2, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r8, r0
 	cmp	r5, #0
 	beq.n	.L_08109616
@@ -600,7 +600,7 @@ Func_08109188:
 	adds	r6, r1, #0
 	mov	sl, r3
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	adds	r0, r6, #0
 	bl	0x080ad010
@@ -975,7 +975,7 @@ Func_08109188:
 	mov	r9, r1
 	mov	fp, r3
 	mov	r8, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r3, r9
 	lsls	r5, r3, #1
 	adds	r7, r0, #0
@@ -1085,7 +1085,7 @@ Func_08109188:
 	push	{r7}
 	adds	r7, r0, #0
 	adds	r6, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #1
 	negs	r3, r3
 	mov	r8, r3
@@ -1393,7 +1393,7 @@ Func_08109188:
 	adds	r3, #220
 	ldr	r3, [r3, #0]
 	mov	fp, r3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #0
 	movs	r2, #1
 	movs	r3, #2
@@ -1835,7 +1835,7 @@ Func_08109188:
 	ldr	r7, [r3, #0]
 	mov	sl, r0
 	mov	r9, r1
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r1, r9
 	lsls	r5, r1, #1
 	adds	r6, r0, #0
@@ -1931,7 +1931,7 @@ Func_08109188:
 	adds	r7, r2, #0
 	str	r3, [sp, #12]
 	mov	r8, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r2, [sp, #16]
 	adds	r6, r0, #0
 	lsls	r2, r2, #1

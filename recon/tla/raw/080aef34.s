@@ -11,7 +11,7 @@ Func_080aef34:
 	adds	r5, r1, #0
 	mov	r8, r0
 	sub	sp, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsls	r5, r5, #1
 	mov	r9, r5
 	mov	r3, r9

@@ -302,7 +302,7 @@ Func_0814c994:
 	str	r1, [sp, #8]
 	str	r2, [sp, #4]
 	str	r4, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #56
 	ldrsh	r0, [r0, r3]
 	ldr	r1, [sp, #8]

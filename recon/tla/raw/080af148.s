@@ -7,7 +7,7 @@ Inventory_Remove:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
 	adds	r7, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsls	r5, r5, #1
 	adds	r5, #216
 	ldrh	r3, [r0, r5]
@@ -75,7 +75,7 @@ Inventory_Remove:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	lsls	r3, r6, #1
 	adds	r3, #216
 	ldrh	r7, [r0, r3]

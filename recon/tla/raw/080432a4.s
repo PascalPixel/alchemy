@@ -121,7 +121,7 @@ Func_080432a4:
 	lsls	r1, r1, #2
 	adds	r2, r2, r1
 	ldr	r0, [r2, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r5, #0
 	adds	r6, r0, #0
 	adds	r1, r5, #0

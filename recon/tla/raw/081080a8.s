@@ -458,16 +458,16 @@ Func_081080a8:
 	movs	r0, #2
 	bl	0x080ad020
 	movs	r0, #3
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r6, #50
 	movs	r5, #1
 	adds	r6, #255
 	strb	r5, [r0, r6]
 	movs	r0, #5
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	strb	r5, [r0, r6]
 	movs	r0, #2
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #160
 	lsls	r3, r3, #1
 	adds	r0, r0, r3

@@ -22,7 +22,7 @@ Func_0811843c:
 	mov	r3, r9
 	ldrb	r0, [r3, r7]
 	str	r4, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #0
 	adds	r5, r0, #0
 	mov	r0, r8

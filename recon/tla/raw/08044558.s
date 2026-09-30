@@ -21,7 +21,7 @@ Func_08044558:
 	ldr	r0, [sp, #48]
 	add	r6, sp, #84
 	str	r1, [sp, #28]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #24]
 	movs	r3, #192
 	lsls	r3, r3, #18

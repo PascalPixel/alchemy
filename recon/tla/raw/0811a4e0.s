@@ -16,7 +16,7 @@ Func_0811a4e0:
 	sub	sp, #4
 	ldr	r7, [r3, #36]
 	mov	fp, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r5, #165
 	mov	r9, r0
 	lsls	r5, r5, #1
@@ -218,7 +218,7 @@ Func_0811a4e0:
 .L_0811a674:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #1
 	adds	r6, r0, #0
 	adds	r0, r5, #0
@@ -382,7 +382,7 @@ BattlePresentation_SpawnActorObject:
 	bl	Func_080200c0
 	mov	r8, r0
 	mov	r0, r9
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	mov	sl, r0
 	mov	r0, r9

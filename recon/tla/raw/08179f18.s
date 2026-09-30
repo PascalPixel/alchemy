@@ -2873,7 +2873,7 @@ Func_08179f18:
 	adds	r7, r0, #0
 	adds	r0, r5, #0
 	ldr	r6, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

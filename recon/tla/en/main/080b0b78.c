@@ -46,7 +46,7 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerBitState *state = OwnerState_Get(owner);
+    struct OwnerBitState *state = Owner_GetState(owner);
 
     if (state->bit_counts[index] > 9)
         return -1;

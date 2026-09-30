@@ -949,7 +949,7 @@ Func_08101c7c:
 	adds	r3, r3, r4
 	ldrh	r0, [r1, r3]
 	ldr	r6, [r1, #16]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r7, #42
 	adds	r5, r0, #0
 	adds	r0, r6, #0

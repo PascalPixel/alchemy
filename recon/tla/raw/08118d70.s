@@ -28,7 +28,7 @@ Func_08118d70:
 .L_08118da0:
 	mov	r3, r8
 	ldrh	r0, [r6, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r2, r0, #0
 	movs	r0, #48
 	adds	r0, #255
@@ -144,7 +144,7 @@ Func_08118d70:
 	movs	r7, #0
 .L_08118e8e:
 	ldrh	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #44
 	adds	r2, r0, #0
 	adds	r1, #255

@@ -29,7 +29,7 @@ Func_080b005c:
 	push	{r6, r7}
 	mov	sl, r1
 	sub	sp, #16
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #42
 	adds	r2, r0, #0
 	adds	r1, #255

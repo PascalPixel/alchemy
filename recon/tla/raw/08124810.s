@@ -6,7 +6,7 @@ Func_08124810:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
 	adds	r6, r2, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	cmp	r5, #5
 	bgt.n	.L_0812484e
 	adds	r3, r0, #0

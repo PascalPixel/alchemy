@@ -324,12 +324,12 @@ Func_0811e830:
 	str	r0, [sp, #4]
 	mov	r1, r8
 	ldr	r0, [r1, #8]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r3, r8
 	adds	r6, r0, #0
 	movs	r2, #36
 	ldrsh	r0, [r3, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r3, [sp, #16]
 	ldr	r1, [sp, #16]
 	adds	r3, #45
@@ -415,7 +415,7 @@ Func_0811e830:
 	ldr	r3, [sp, #16]
 	mov	fp, r0
 	ldrb	r0, [r3, #2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #165
 	lsls	r4, r4, #1
 	adds	r3, r0, r4
@@ -860,7 +860,7 @@ Func_0811e830:
 	mov	r3, r8
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r1, r8
 	movs	r7, #8
 	ldrsh	r3, [r1, r7]

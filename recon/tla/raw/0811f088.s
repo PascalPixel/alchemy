@@ -351,7 +351,7 @@ Func_0811f088:
 	push	{r7}
 	adds	r7, r0, #0
 	sub	sp, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r0, r7, #0
 	bl	0x0811be3c
 	movs	r1, #5
@@ -407,7 +407,7 @@ Func_0811f088:
 	lsls	r3, r3, #18
 	ldr	r5, [r3, #36]
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #149
 	lsls	r3, r3, #1
 	adds	r2, r0, r3

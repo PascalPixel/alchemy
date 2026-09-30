@@ -254,8 +254,11 @@ Func_080ae834:
 	.4byte 0x02000240
 	.2byte 0x1290
 	.2byte 0x080b
+	.global Owner_RecalculateRatios
+	.thumb_func
+Owner_RecalculateRatios:
 	push	{r5, lr}
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r0, #0
 	movs	r2, #56
 	ldrsh	r0, [r5, r2]

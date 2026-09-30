@@ -707,7 +707,7 @@ Func_080cb8e8:
 	bl	0x08038040
 	ldr	r3, [pc, #52]
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r4, [pc, #36]
 	adds	r6, r0, #0
 	strh	r4, [r6, #56]

@@ -62,7 +62,7 @@ s32 Party_SumDjinnCounts(s32 index)
         s32 remaining = count;
 
         do {
-            struct OwnerValueState *state = OwnerState_Get(*owner++);
+            struct OwnerValueState *state = Owner_GetState(*owner++);
 
             if (index == -1) {
                 result += state->values[0];

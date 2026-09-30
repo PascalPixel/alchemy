@@ -323,7 +323,7 @@ Func_080cb09c:
 	adds	r7, r3, r4
 .L_080cb30a:
 	ldrb	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrh	r3, [r0, #56]
 	adds	r6, #1
 	strh	r3, [r5, #0]
@@ -761,7 +761,7 @@ Func_080cb09c:
 	adds	r5, r4, r3
 .L_080cb65e:
 	ldrb	r0, [r5, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #56
 	ldrsh	r3, [r0, r4]
 	cmp	r3, #0

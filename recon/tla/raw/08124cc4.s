@@ -34,7 +34,7 @@ Func_08124cc4:
 	cmp	r0, #0
 	beq.n	.L_08124d1a
 	ldrb	r0, [r5, #2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #56
 	ldrsh	r3, [r0, r2]
 	cmp	r3, #0
@@ -214,7 +214,7 @@ Func_08124cc4:
 	cmp	r0, #0
 	beq.n	.L_08124e98
 	ldrb	r0, [r5, #2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0
@@ -405,7 +405,7 @@ Func_08124cc4:
 	ldrh	r6, [r1, r3]
 	movs	r5, #162
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #68
 	adds	r7, r0, #0
 	adds	r3, #255
@@ -1124,7 +1124,7 @@ Battle_ApplyActionExtras:
 	ldrb	r0, [r0, #0]
 	str	r1, [sp, #4]
 	mov	r8, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r2, r8
 	str	r0, [sp, #8]
 	cmp	r2, #7

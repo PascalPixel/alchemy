@@ -5,7 +5,7 @@
 Func_0810a864:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r2, [r0, #15]
 	movs	r0, #0
 	cmp	r5, #0
@@ -35,7 +35,7 @@ Func_0810a864:
 .L_0810a898:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r2, r0, #0
 	movs	r0, #0
 	cmp	r5, #0

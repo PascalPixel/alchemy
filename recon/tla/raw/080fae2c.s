@@ -12,7 +12,7 @@ Func_080fae2c:
 	ldr	r7, [r3, #0]
 	mov	r8, r1
 	adds	r6, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #226
 	lsls	r2, r2, #1
 	adds	r5, r7, r2
@@ -64,7 +64,7 @@ Func_080fae2c:
 	ldr	r7, [r3, #0]
 	mov	sl, r1
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r2, r9
 	str	r0, [sp, #0]
 	lsls	r3, r2, #1
@@ -111,7 +111,7 @@ Func_080fae2c:
 	b.n	.L_080faffe
 .L_080faf20:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #0]
 	movs	r0, #166
 	lsls	r0, r0, #1
@@ -152,7 +152,7 @@ Func_080fae2c:
 	b.n	.L_080faffe
 .L_080faf78:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #0]
 	movs	r0, #166
 	lsls	r0, r0, #1
@@ -227,7 +227,7 @@ Func_080fae2c:
 	b.n	.L_080fb08a
 .L_080fb012:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #0]
 	movs	r0, #166
 	lsls	r0, r0, #1
@@ -298,7 +298,7 @@ Func_080fae2c:
 .L_080fb0a4:
 	push	{r5, r6, r7, lr}
 	adds	r7, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #216
 	ldrh	r3, [r0, r3]
 	movs	r1, #0

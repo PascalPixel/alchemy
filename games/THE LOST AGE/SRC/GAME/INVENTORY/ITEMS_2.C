@@ -4,7 +4,7 @@
    そうでなければ空き枠へ入れる。戻り値は枠番号、失敗は -1。 */
 s32 Inventory_Add(s32 owner_id, s32 item_id)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner_id);
+    struct OwnerInventoryState *inv = Owner_GetState(owner_id);
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 slot;
 

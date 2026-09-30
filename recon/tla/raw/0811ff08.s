@@ -297,7 +297,7 @@ Func_0811ff08:
 	pop	{pc}
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

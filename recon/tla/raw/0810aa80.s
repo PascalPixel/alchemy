@@ -494,7 +494,7 @@ Func_0810aa80:
 	push	{r7}
 	adds	r7, r0, #0
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r2, r0, #0
 	cmp	r5, #0
 	bne.n	.L_0810aec4

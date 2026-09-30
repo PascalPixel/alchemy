@@ -615,7 +615,7 @@ Func_08042690:
 	ldr	r1, [sp, #4]
 	ldr	r2, [sp, #12]
 	ldrh	r0, [r1, r2]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	movs	r3, #56
 	ldrsh	r5, [r6, r3]

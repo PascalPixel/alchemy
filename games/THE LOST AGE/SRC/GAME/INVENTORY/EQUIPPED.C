@@ -2,7 +2,7 @@
 
 s32 Inventory_FindEquipped(s32 owner, s32 type)
 {
-    u8 *base = OwnerState_Get(owner);
+    u8 *base = Owner_GetState(owner);
     s32 index;
     s32 offset;
     struct ItemDefinition *item;

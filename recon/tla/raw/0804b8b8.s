@@ -279,7 +279,7 @@ Func_0804b8b8:
 	mov	r8, r0
 .L_0804baf4:
 	ldrh	r0, [r5, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r4, #67
 	adds	r4, r4, r0
 	ldrb	r3, [r4, #0]

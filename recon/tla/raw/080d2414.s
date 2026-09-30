@@ -72,7 +72,7 @@ Func_080d2414:
 	bl	0x080ad110
 	bl	.L_080d2454
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	ldrh	r1, [r6, #52]
 	ldrh	r3, [r6, #54]
@@ -144,7 +144,7 @@ Func_080d2414:
 	adds	r5, r0, #0
 .L_080d2526:
 	ldrb	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	movs	r2, #56
 	ldrsh	r3, [r6, r2]
@@ -166,7 +166,7 @@ Func_080d2414:
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r5, #1
 	adds	r6, r0, #0
 	strh	r5, [r6, #56]
@@ -348,7 +348,7 @@ Func_080d2414:
 	b.n	.L_080d2772
 .L_080d26d8:
 	ldr	r0, [sp, #8]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r1, [sp, #4]
 	ldr	r0, [sp, #8]
 	bl	0x080ad018

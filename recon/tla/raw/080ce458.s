@@ -546,7 +546,7 @@ Func_080ce458:
 	bl	0x080ad078
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r1, [r5, #9]
 	movs	r2, #58
 	ldrsh	r3, [r0, r2]

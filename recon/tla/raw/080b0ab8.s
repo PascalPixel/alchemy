@@ -44,7 +44,7 @@ Func_080b0ab8:
 	adds	r5, r0, #0
 .L_080b0b04:
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #140
 	lsls	r2, r2, #1
 	adds	r3, r7, r2

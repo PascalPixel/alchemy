@@ -241,7 +241,7 @@ Func_080f9644:
 	strb	r3, [r2, #5]
 	ldrb	r0, [r1, #0]
 	add	r5, r9
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	Func_080fad88
@@ -386,7 +386,7 @@ Func_080f9644:
 	lsls	r5, r5, #1
 	ldrb	r0, [r3, #0]
 	add	r5, r9
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	Func_080fad88
@@ -545,7 +545,7 @@ Func_080f9644:
 	add	r3, r9
 	ldrb	r7, [r3, #0]
 	adds	r0, r7, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r0, r6, #1
 	cmp	r0, #0
 	ble.n	.L_080f9b1a
@@ -932,14 +932,14 @@ Func_080f9644:
 	adds	r3, #22
 	add	r3, r9
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #140
 	str	r0, [sp, #12]
 	lsls	r3, r3, #1
 	adds	r3, #255
 	add	r3, r9
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r5, #166
 	lsls	r5, r5, #1
 	str	r0, [sp, #8]
@@ -1295,7 +1295,7 @@ Func_080f9644:
 	strb	r3, [r2, #5]
 	add	r5, r9
 	ldrb	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	Func_080fad88
@@ -1349,7 +1349,7 @@ Func_080f9644:
 	adds	r6, #22
 	add	r6, r9
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #180
 	lsls	r3, r3, #1
 	add	r3, r9
@@ -1377,7 +1377,7 @@ Func_080f9644:
 	strb	r3, [r2, #5]
 	add	r5, r9
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	Func_080fad88

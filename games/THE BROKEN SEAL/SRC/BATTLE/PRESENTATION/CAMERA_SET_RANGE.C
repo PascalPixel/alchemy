@@ -28,7 +28,7 @@ struct BattleView {
 };
 
 extern u16 gBgScroll[];
-extern u8 Data_03001f00[];
+extern u8 gTransitionWork[];
 
 s32 GameFlag_TestFar(s32 flag);
 
@@ -46,9 +46,9 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 {
     /* FAKEMATCH: the work and camera pointers are addressed from the view
      * pointer's symbol, as the reference derives them from its pool entry. */
-    struct BattleView *view = *(struct BattleView **)Data_03001f00;
-    struct AffineHdma *work = *(struct AffineHdma **)(Data_03001f00 - 136);
-    struct BattleCamera *camera = *(struct BattleCamera **)(Data_03001f00 - 128);
+    struct BattleView *view = *(struct BattleView **)gTransitionWork;
+    struct AffineHdma *work = *(struct AffineHdma **)(gTransitionWork - 136);
+    struct BattleCamera *camera = *(struct BattleCamera **)(gTransitionWork - 128);
     u16 wrap;
     s32 horizon;
     u16 *line;

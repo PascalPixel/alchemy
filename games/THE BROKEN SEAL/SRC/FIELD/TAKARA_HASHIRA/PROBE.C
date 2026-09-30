@@ -8,13 +8,13 @@
 
 struct StagedActor *Engine_ActorGet(s32 actor);
 
-extern u8 *Data_03001e70;
+extern u8 *gCam;
 extern s32 StagedActor_FootprintKinds[];
 extern struct StagedActorFootprint StagedActor_FootprintBounds[];
 
 s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth, struct StagedActorProbe *probe, s32 *left, s32 *top)
 {
-    u8 *map = Data_03001e70;
+    u8 *map = gCam;
     struct StagedActor *actor = Engine_ActorGet(id);
     u32 i;
     s32 a;

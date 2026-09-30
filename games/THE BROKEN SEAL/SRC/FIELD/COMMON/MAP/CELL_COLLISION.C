@@ -1,7 +1,7 @@
 #include "MAP.H"
 #include "GLOBAL_CELLS.H"
 extern u8 gMapCellBuffer[];
-extern u8 Data_03001e70[];
+extern u8 gCam[];
 
 extern struct MapState *gMapWork;
 
@@ -11,7 +11,7 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
     s32 cell_address;
     s32 layer_offset;
 
-    state = *(struct MapState **)((u32)&Data_03001e70);
+    state = *(struct MapState **)((u32)&gCam);
     x >>= 20;
     y >>= 20;
     cell_address = (u32)gMapCellBuffer;

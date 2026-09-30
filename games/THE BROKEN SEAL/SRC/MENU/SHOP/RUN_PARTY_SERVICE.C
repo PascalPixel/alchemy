@@ -6,7 +6,7 @@
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
-extern u8 Data_03001b04[];
+extern u8 gKeysRepeat[];
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiWork_FinalizeFar(s32 window, s32 style);
@@ -134,12 +134,12 @@ s32 Sanctum_RunPartyService(void)
             Audio_PlayCue(SOUND_MENU_CANCEL);
             break;
         } else {
-            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x20) != 0) {
+            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
                 selection -= 1;
             }
-            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x10) != 0) {
+            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
                 selection += 1;

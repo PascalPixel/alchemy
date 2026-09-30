@@ -2,11 +2,11 @@
 #include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
 extern u8 gMapCellBuffer[];
-extern u8 Data_03001e70[];
+extern u8 gCam[];
 
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 {
-    u8 *state = *(u8 **)((u32)&Data_03001e70);
+    u8 *state = *(u8 **)((u32)&gCam);
     u8 *map;
     s32 off;
     s32 col;

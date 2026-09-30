@@ -2,7 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "LOW_RUNTIME.H"
-extern u8 Data_03001f70[];
+extern u8 gNumberTextBuffer[];
 
 /* ui/text/fmt/text_format_hex_to_work.c */
 /* ui/text/fmt/format_hex_to_work.c */
@@ -10,7 +10,7 @@ extern const u8 RomBytes_0800795c[];
 
 void Text_FormatHexToWork(u32 value)
 {
-    u8 *buffer = (u8 *)((u32)&Data_03001f70);
+    u8 *buffer = gNumberTextBuffer;
     const u8 *digits = RomBytes_0800795c;
     s32 index = 7;
 
@@ -21,7 +21,7 @@ void Text_FormatHexToWork(u32 value)
     } while (index >= 0);
 
     {
-        u8 *terminator = (u8 *)((u32)&Data_03001f70);
+        u8 *terminator = gNumberTextBuffer;
         terminator[8] = 0;
     }
 }
@@ -29,7 +29,6 @@ void Text_FormatHexToWork(u32 value)
 /* ui/text/format_signed_decimal_to_work.c */
 extern s32 Math_DivU(u32, s32);
 extern u8 Text_PowersOfTen[];
-extern u8 gNumberTextBuffer[];
 
 void Text_FormatSignedDecimalToWork(s32 arg0) {
     u32 *tbl;

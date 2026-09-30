@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
-extern struct BattleFormationRecord Data_080c5c38[];
+extern struct BattleFormationRecord BattleFormation_Records[];
 
 struct Object_080c1a34 {
     u8 padding_00[15];
@@ -22,7 +22,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 
     eligible_count = 0;
     level_sum = 0;
-    record = &Data_080c5c38[record_id];
+    record = &BattleFormation_Records[record_id];
     (void)scratch;
 
     member_index = 0;

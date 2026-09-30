@@ -29,7 +29,7 @@ struct WorkspaceWork {
     struct RenderOutput *frame[3][3];
 };
 
-extern struct WorkspaceWork *Data_03001ea0;
+extern struct WorkspaceWork *gSelectionWork;
 
 struct RenderInput *Menu_OpenWorkspaceOptions(void);
 

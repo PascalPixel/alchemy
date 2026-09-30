@@ -1,5 +1,5 @@
 #include "TYPES.H"
-extern u8 Data_03001ea8[];
+extern u8 gBattleBgFxWork[];
 
 /* battle/effects/scene_transition/finish_and_release_heap_block.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -16,7 +16,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 {
     void *work;
 
-    work = *(void **)((u32)&Data_03001ea8);
+    work = *(void **)((u32)&gBattleBgFxWork);
     Ui_SetBank15PaletteAndClearRenderMode();
     Scheduler_RemoveCallback((s32)&Func_08097644);
     Animation_ApplyChildPalette(Object_GetById(FIELD_AT_OFFSET(work, u16, 0x290)), 1);

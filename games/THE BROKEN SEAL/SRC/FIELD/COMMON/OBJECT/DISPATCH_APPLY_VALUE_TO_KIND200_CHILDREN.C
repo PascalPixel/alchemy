@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-extern u8 Data_03001e64[];
+extern u8 gObjectSlots[];
 
 void ObjectDispatch_ApplyValueToKind200Children(int arg0)
 {
@@ -10,7 +10,7 @@ void ObjectDispatch_ApplyValueToKind200Children(int arg0)
   void *child;
   void *rec;
   void *obj;
-  obj = *((void **)((u32)&Data_03001e64));
+  obj = *((void **)((u32)&gObjectSlots));
   cnt = 0x3F;
   do
   {

@@ -5,7 +5,7 @@
 /* Move a row or page using repeat keys. Returns -1 for no input, zero for
  * a row change and one for a page change. Keep result lifetimes local to
  * each decision and join row changes before the common result exit. */
-extern volatile u32 Data_03001b04;
+extern volatile u32 gKeysRepeat;
 
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Audio_PlayCue(s32 cue);
@@ -27,15 +27,15 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
     if (Math_Mod(count, per_page) != 0)
         pages++;
     if (horizontal) {
-        next = Data_03001b04 & 16;
-        previous = Data_03001b04 & 32;
-        horizontal = Data_03001b04 & 64;
-        page_forward = Data_03001b04 & 128;
+        next = gKeysRepeat & 16;
+        previous = gKeysRepeat & 32;
+        horizontal = gKeysRepeat & 64;
+        page_forward = gKeysRepeat & 128;
     } else {
-        next = Data_03001b04 & 128;
-        previous = Data_03001b04 & 64;
-        horizontal = Data_03001b04 & 32;
-        page_forward = Data_03001b04 & 16;
+        next = gKeysRepeat & 128;
+        previous = gKeysRepeat & 64;
+        horizontal = gKeysRepeat & 32;
+        page_forward = gKeysRepeat & 16;
     }
     if (horizontal) {
         Audio_PlayCue(111);

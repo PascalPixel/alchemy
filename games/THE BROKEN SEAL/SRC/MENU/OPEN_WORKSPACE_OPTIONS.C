@@ -43,7 +43,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     s32 y;
     s32 msg;
 
-    work = Data_03001ea0;
+    work = gSelectionWork;
     win = UiWindow_Create(1, 5, 28, 14, 2);
     UiWindow_DrawDividerLine(win, 0, 2, 27, 2);
     UiWindow_DrawDividerLine(win, 0, 4, 27, 4);

@@ -87,8 +87,8 @@ void Map_UpdateLayerScroll(void)
             else
                 Map_RenderMetatileRow(i, x, y);
         }
-        Data_03001ad0[3 - i].x = base_x >> 16;
-        Data_03001ad0[3 - i].y = base_y >> 16;
+        gBgScroll[3 - i].x = base_x >> 16;
+        gBgScroll[3 - i].y = base_y >> 16;
         layer->x = base_x;
         layer->y = base_y;
     }

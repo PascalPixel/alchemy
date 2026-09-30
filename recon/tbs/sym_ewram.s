@@ -159,13 +159,9 @@ Data_02004c00:
 	.global Flash_Handler3
 Flash_Handler3:
 	.space 0x00000004
-	.global Data_02004c04
-Data_02004c04:
 	.global Flash_Handler0
 Flash_Handler0:
 	.space 0x00000004
-	.global Data_02004c08
-Data_02004c08:
 	.global Flash_Layout
 Flash_Layout:
 	.global gFlash
@@ -182,8 +178,6 @@ Flash_Handler2:
 	.global gEraseFlashSector
 gEraseFlashSector:
 	.space 0x00000004
-	.global Data_02004c18
-Data_02004c18:
 	.global Flash_Handler4
 Flash_Handler4:
 	.space 0x00000004

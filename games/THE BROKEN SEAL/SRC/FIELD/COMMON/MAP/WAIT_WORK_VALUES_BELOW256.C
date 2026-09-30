@@ -2,7 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
-extern u8 Data_03001e70[];
+extern u8 gCam[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -11,7 +11,7 @@ void Map_WaitWorkValuesBelow256(void)
     s32 *work;
     s32 cnt;
 
-    work = *(s32 **)((u32)&Data_03001e70);
+    work = *(s32 **)((u32)&gCam);
     cnt = 0;
     if (work[1] > 255 || work[2] > 255) {
         goto body;

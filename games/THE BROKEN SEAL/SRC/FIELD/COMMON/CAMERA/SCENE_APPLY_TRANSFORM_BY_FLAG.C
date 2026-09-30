@@ -2,7 +2,7 @@
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern u8 Data_03001e80[];
+extern u8 gCameraWork[];
 void Render_ResetTransformState(void);
 s32 Graphics_PrepareTransferAndRun(void *, void *);
 s32 Graphics_PrepareTransferInIwramWork(void *, void *);
@@ -13,7 +13,7 @@ extern u8 Camera_FlagTransformWork[];
 
 s32 Camera_ApplyTransformByFlag(void)
 {
-    u8 *state = *(u8 **)((u32)&Data_03001e80);
+    u8 *state = *(u8 **)((u32)&gCameraWork);
     Render_ResetTransformState();
     if (GameFlag_TestFar(0x16B) != 0) {
         Iwram_TransformMatrix((s32 *)Camera_FlagTransformWork);

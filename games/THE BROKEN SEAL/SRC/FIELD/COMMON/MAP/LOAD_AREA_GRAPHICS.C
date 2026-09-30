@@ -15,7 +15,7 @@ void Scheduler_DisableCallbacks(void *keep);
 void Map_ShowBg1FromBuffer(void);
 void MapAnimation_Update(void);
 
-extern u8 *Data_03001e70;
+extern u8 *gCam;
 
 #define BG_PALETTE ((s16 *)0x05000000)
 
@@ -35,7 +35,7 @@ void Map_LoadAreaGraphics(void)
     u8 *buffer;
     s16 value;
 
-    state = Data_03001e70;
+    state = gCam;
     buffer = (u8 *)gMapCellBuffer;
     resources = *(u32 **)(state + 0x11c);
     value = BG_PALETTE[0];

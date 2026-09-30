@@ -4,19 +4,19 @@
 #include "IO_REG.H"
 
 extern u16 gSerialExchangeActive;    /* VBlank runs the link exchange */
-extern u16 Data_03001f64;            /* link exchange status */
+extern u16 gLinkStatus;            /* link exchange status */
 extern u8 Data_03001e44;             /* display registers pending */
 extern u8 gOamCopyEnabled;             /* OAM buffer pending */
 extern u8 *Data_03001e50[];
-extern u8 Data_03001ad0[];
+extern u8 gBgScroll[];
 extern void (*Data_03001cfc)(void);  /* one-shot VBlank hook */
 extern volatile u32 Data_03001ae8;   /* keys held */
 extern u32 Data_03001c94;            /* keys newly pressed */
 extern u32 gKeysPressedLatch;            /* presses since last read */
 extern s32 Data_03001b00;            /* key repeat delay */
-extern u32 Data_03001b04;            /* key repeat keys */
+extern u32 gKeysRepeat;            /* key repeat keys */
 extern u32 Data_03001d0c;            /* keys held last frame */
-extern s32 Data_03001800;            /* frame counter */
+extern s32 gFrameTick;            /* frame counter */
 extern u16 Data_03001ccc;
 extern u16 Data_03001d28;            /* VBlank seen */
 
@@ -45,7 +45,7 @@ void System_VBlankHandler(void)
         dma0[5];
     }
     if (gSerialExchangeActive != 0) {
-        u16 *status = &Data_03001f64;
+        u16 *status = &gLinkStatus;
         *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)gSerialPeerPayloads);
         SerialRuntime_StepBlockTransfer();
     }
@@ -54,7 +54,7 @@ void System_VBlankHandler(void)
     if (Data_03001e44 != 0) {
         if (gOamCopyEnabled != 0)
             Dma_Set(Data_03001e50[52], OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
-        Dma_Set(Data_03001ad0, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
+        Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
         IoWriteQueue_FlushPending();
         Data_03001e44 = 0;
     }
@@ -74,15 +74,15 @@ void System_VBlankHandler(void)
     Data_03001ae8 = keys;
     if (keys == 0) {
         Data_03001b00 = 19;
-        Data_03001b04 = keys;
+        gKeysRepeat = keys;
     } else if (Data_03001ae8 & (Data_03001d0c ^ 0xffff)) {
         Data_03001b00 = -1;
-        Data_03001b04 = keys;
+        gKeysRepeat = keys;
     } else if (Data_03001b00 > 0) {
         Data_03001b00--;
     }
     Data_03001d0c = keys;
-    Data_03001800++;
+    gFrameTick++;
     Data_03001ccc++;
     Data_03001d28 = 1;
     Func_080006fc();

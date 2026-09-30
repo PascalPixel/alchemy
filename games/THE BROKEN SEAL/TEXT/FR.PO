@@ -41527,7 +41527,7 @@ msgctxt "message"
 msgid "10379"
 msgstr "Nous avons donné notre{line_break}parole à Babi et nous{line_break}n'échouerons pas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotBlackOrb"
 msgid "10380"
 msgstr "{actor_name:1} a l'Orbe noir.{end_wait}"
 

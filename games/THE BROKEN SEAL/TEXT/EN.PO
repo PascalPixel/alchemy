@@ -41647,7 +41647,7 @@ msgctxt "message"
 msgid "10409"
 msgstr "We promised Babi we{line_break}would find Lemuria.{line_break}We will not fail him.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotBlackOrb"
 msgid "10410"
 msgstr "{actor_name:1} got the Black Orb.{end_wait}"
 

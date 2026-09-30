@@ -43219,7 +43219,7 @@ msgctxt "message"
 msgid "10802"
 msgstr "レムリアをさがすのは{line_break}バビ様との やくそくです{line_break}あんしんして下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotBlackOrb"
 msgid "10803"
 msgstr "ブラックオーブを{line_break}うけとった。{end_wait}"
 

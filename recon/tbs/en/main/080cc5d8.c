@@ -1,3 +1,8 @@
+/* 2026-09-30 (Mars): linked in place, 67 differing halfwords (from 70):
+   the projection read after EffectPosition_ApplyStepAndYOffset goes
+   through an r5 copy as in the reference. Left: the reference keeps
+   0x04000028 in r1 and adds 42 for the blend write (hiding the constant
+   grows the frame, 271), and the low temporaries after it. */
 /* 2026-09-24: 69 differing halfwords (from 70) after a do-while wrap and
    statement-swap sweep; the do-while wraps are search artefacts.
    2026-09-29 slice 4: alchemy permute cannot parse this draft, because
@@ -160,12 +165,15 @@ void Func_080cc5d8(void *object)
     Audio_PlayCue(140);
 
     for (frame = 0; frame != 56; frame++) {
-        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(object, s32 *, 8), screen);
-        display_base = (void *)0x04000028;
-        M2C_FIELD(display_base, s32 *, 0) = (64 - screen[0]) << 8;
-        if (frame > 49) {
-            M2C_FIELD(display_base, u16 *, 42) =
-                (112 - frame * 2) | 0x1000;
+        {
+            register s32 *pos asm("r5") = screen; /* FAKEMATCH: the reference reads the projection through r5 */
+            EffectPosition_ApplyStepAndYOffset(M2C_FIELD(object, s32 *, 8), screen);
+            display_base = (void *)0x04000028;
+            M2C_FIELD(display_base, s32 *, 0) = (64 - pos[0]) << 8;
+            if (frame > 49) {
+                M2C_FIELD(display_base, u16 *, 42) =
+                    (112 - frame * 2) | 0x1000;
+            }
         }
 
         if (frame == 26) {

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08024738
+	.global Object_SetMoveTarget
 	.thumb_func
-Func_08024738:
+Object_SetMoveTarget:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

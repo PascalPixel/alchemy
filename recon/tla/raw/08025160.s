@@ -1,29 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_08025134
-	.thumb_func
-Func_08025134:
-	push	{r5, lr}
-	sub	sp, #12
-	adds	r5, r0, #0
-	mov	r0, sp
-	ldr	r3, [r0, #0]
-	ldr	r1, [r5, #8]
-	ldr	r2, [r5, #12]
-	adds	r1, r1, r3
-	ldr	r3, [r0, #4]
-	ldr	r0, [r0, #8]
-	adds	r2, r2, r3
-	ldr	r3, [r5, #16]
-	adds	r3, r3, r0
-	adds	r0, r5, #0
-	bl	Func_08024738
-	ldrh	r3, [r5, #4]
-	movs	r0, #1
-	adds	r3, #3
-	strh	r3, [r5, #4]
-	add	sp, #12
-	pop	{r5, pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -711,7 +687,7 @@ Func_08025134:
 	adds	r3, r3, r0
 	ldr	r2, [r6, #12]
 	adds	r0, r6, #0
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	adds	r0, r6, #0
 	movs	r1, #2
 	bl	ObjectDispatch_ApplyArgumentToChildren
@@ -915,7 +891,7 @@ Func_08025134:
 	adds	r0, r6, #0
 	adds	r3, r4, #0
 	ldr	r2, [r7, #4]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	ldrh	r3, [r6, #4]
 	movs	r0, #1
 	adds	r3, #4
@@ -1220,7 +1196,7 @@ Func_08025134:
 	ldr	r2, [r7, #4]
 	adds	r0, r6, #0
 	adds	r3, r4, #0
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 	b.n	.L_08025b34
 .L_08025a84:
 	movs	r1, #0
@@ -1302,7 +1278,7 @@ Func_08025134:
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #4]
 	ldr	r3, [r5, #8]
-	bl	Func_08024738
+	bl	Object_SetMoveTarget
 .L_08025b34:
 	ldrh	r3, [r6, #4]
 	movs	r0, #1

@@ -372,7 +372,6 @@ SECTIONS
         "*/recon/tbs/raw/08017c8a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_WIDE_STRING_IN_WINDOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_NUMBER.o"(.text)
-        "*/recon/tbs/raw/08017e88.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08018038.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/FIT_ON_SCREEN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RESOURCE_MEASURE.o"(.text)

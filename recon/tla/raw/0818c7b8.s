@@ -123,7 +123,7 @@ Func_0818c7b8:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0818c8c8
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r2, [sp, #8]
 	movs r3, #36
 	ldrsh r1, [r2, r3]
@@ -131,7 +131,7 @@ Func_0818c7b8:
 	ldr r0, [r2, #8]
 	lsls r3, r3, #11
 	movs r2, #8
-	bl Func_08118078
+	bl BattleMotion_ApproachTargetFar
 	b .L_0818c8cc
 	.2byte 0x0000
 .L_0818c8c4:
@@ -353,7 +353,7 @@ Func_0818c7b8:
 	b .L_0818c8d0
 .L_0818ca6c:
 	ldr r0, .L_0818caa4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl Func_08143bb8

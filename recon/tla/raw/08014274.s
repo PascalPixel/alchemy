@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08014274
+	.global Resource_ResetEntry
 	.thumb_func
-Func_08014274:
+Resource_ResetEntry:
 	push {r5, r6, lr}
 	ldr r3, .L_080142a8
 	lsls r2, r0, #2

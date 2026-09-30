@@ -63,7 +63,7 @@ Func_0803bad8:
 	cmp r6, r11
 	bls .L_0803bafa
 .L_0803bb44:
-	bl Func_0803a404
+	bl UiWork_ResetCounters
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3

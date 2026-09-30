@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08014a24
+	.global Text_FormatSignedDecimalToWork
 	.thumb_func
-Func_08014a24:
+Text_FormatSignedDecimalToWork:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -72,6 +72,6 @@ Func_08014a24:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08014aa0:
-	.4byte Data_03001250
+	.4byte gNumberTextBuffer
 .L_08014aa4:
 	.4byte 0x1999999a

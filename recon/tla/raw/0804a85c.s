@@ -590,7 +590,7 @@ Func_0804a85c:
 	subs r3, #16
 	strb r3, [r5, #4]
 	ldr r0, [sp, #24]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r7, [sp, #84]
 	cmp r7, #255
 	bne .L_0804acec
@@ -636,7 +636,7 @@ Func_0804a85c:
 	ands r2, r3
 	str r2, [r0, #4]
 	ldr r0, [sp, #36]
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	ldr r1, [sp, #56]
 	movs r3, #1
 	ands r3, r1
@@ -1516,7 +1516,7 @@ Func_0804a85c:
 	adds r0, r6, #0
 	ldr r1, [sp, #72]
 	movs r3, #4
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 .L_0804b3ac:
 	ldr r5, [sp, #56]
 	movs r3, #2
@@ -1683,7 +1683,7 @@ Func_0804a85c:
 	adds r0, r5, #0
 	movs r1, #240
 	str r4, [sp, #8]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r0, [sp, #12]
 	ldr r1, [sp, #64]
 	adds r0, #2
@@ -1874,7 +1874,7 @@ Func_0804a85c:
 	bl WaitFrames
 	mov r7, r9
 	ldr r0, [sp, #52]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	cmp r7, #0
 	beq .L_0804b66a
 	mov r0, r9

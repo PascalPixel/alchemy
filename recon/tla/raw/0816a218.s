@@ -10,14 +10,14 @@ Func_0816a218:
 	ldr r0, [r5, #8]
 	ldr r3, .L_0816a240
 	movs r2, #24
-	bl Func_08118078
+	bl BattleMotion_ApproachTargetFar
 	movs r0, #29
 	bl WaitFrames
 	movs r3, #4
 	adds r0, r5, #0
 	movs r1, #2
 	str r3, [r5, #24]
-	bl Func_08149bac
+	bl BattleFx_RunSparkGroups
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0816a240:

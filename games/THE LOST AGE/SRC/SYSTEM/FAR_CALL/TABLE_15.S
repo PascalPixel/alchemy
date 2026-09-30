@@ -9,9 +9,9 @@
 	.thumb_func
 Func_080381c0:
 	overlay_veneer Func_0804bc08
-	.global Func_080381c8
+	.global UiText_ShowMessageAndWaitCoreFar
 	.thumb_func
-Func_080381c8:
+UiText_ShowMessageAndWaitCoreFar:
 	overlay_veneer Func_0803a5e0
 	.global Func_080381d0
 	.thumb_func

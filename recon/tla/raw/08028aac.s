@@ -124,7 +124,7 @@ Func_08028aac:
 	mov r0, r10
 	adds r1, r6, #0
 	ldr r2, [sp, #0]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, .L_08028e98
 	ldrb r3, [r3]
 	cmp r3, #0
@@ -155,7 +155,7 @@ Func_08028aac:
 	str r3, [r5, #8]
 	mov r0, r10
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802dbd0
@@ -172,7 +172,7 @@ Func_08028aac:
 	mov r0, r10
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802dbd0
@@ -190,7 +190,7 @@ Func_08028aac:
 	str r3, [r5, #8]
 	mov r0, r10
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802dbd0
@@ -207,7 +207,7 @@ Func_08028aac:
 	mov r0, r10
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802dbd0
@@ -271,7 +271,7 @@ Func_08028aac:
 	adds r1, r6, #0
 	mov r11, r2
 	mov r2, r8
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	mov r1, r8
 	bl Func_0802dbd0
@@ -290,7 +290,7 @@ Func_08028aac:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802dbd0
@@ -307,7 +307,7 @@ Func_08028aac:
 	str r3, [r5, #8]
 	ldr r3, .L_08028e9c
 	adds r1, r6, r3
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802dbd0
@@ -325,7 +325,7 @@ Func_08028aac:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802dbd0
@@ -342,7 +342,7 @@ Func_08028aac:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802dbd0
@@ -541,7 +541,7 @@ Func_08028aac:
 	lsls r3, r4, #16
 	lsrs r5, r3, #16
 	adds r1, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r0, #100
 	adds r0, r0, r7
 	movs r1, #0

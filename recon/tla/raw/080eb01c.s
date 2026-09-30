@@ -81,7 +81,7 @@ Func_080eb01c:
 	ands r3, r1
 	orrs r3, r2
 	str r3, [sp, #40]
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	movs r2, #1
 	str r0, [sp, #32]
 	str r2, [sp, #36]

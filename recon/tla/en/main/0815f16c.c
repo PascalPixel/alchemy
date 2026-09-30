@@ -212,12 +212,12 @@ void Func_0801314c(s32);
 void Func_08013164(void *);
 void *Func_08013300(s32);
 void Func_08013560(s32);
-void Func_080145a8(void *, s32);
-void Func_08014644(void *);
+void Scheduler_AddOrUpdateCallback(void *, s32);
+void Scheduler_RemoveCallback(void *);
 s32 Random16(void);
 void *Runtime_BumpAllocateAlternatePool(s32);
 void Func_08014de4(void);
-void Func_08015024(s32);
+void SceneTransform_ApplyPitch(s32);
 void Func_08015068(s32);
 void Func_080150e4(s32);
 void Func_08015160(s32, s32, s32);
@@ -235,11 +235,11 @@ void Func_08138086(struct Particle *, s32, s32);
 void Func_08143001(void);
 void Func_08143489(void);
 void Func_081434f8(void);
-void Func_081435e0(s32);
+void BattleFx_BeginCanvasLayer(s32);
 void Func_08143a88(s32);
 void Func_08143bb8(void);
 void Func_08144aac(s32, struct DrawFuncs *);
-void Func_08149bac(struct SummonAction *, s32);
+void BattleFx_RunSparkGroups(struct SummonAction *, s32);
 void Func_0814a7f0(struct SummonAction *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_081504b4(struct SummonAction *);
@@ -366,7 +366,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     if (kind == 41 || kind == 38 || kind == 62 || kind == 85 || kind == 86 || kind == 87 || kind == 88)
         Func_08143a88(0x2000);
     else
-        Func_081435e0(0);
+        BattleFx_BeginCanvasLayer(0);
 
     REG_BLDALPHA = 0x1010;
     Func_08157cf4((s32)&Value_00000134, tiles, 0, 0);
@@ -510,7 +510,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         work->unk7784 = 75;
     else
         work->unk7784 = 50;
-    Func_080145a8(Func_08143001, 3200);
+    Scheduler_AddOrUpdateCallback(Func_08143001, 3200);
     Func_0815e20c(action->actor, target);
     Func_0815e20c(action->target, base);
     Func_08144aac(action->side, &drawFuncs);
@@ -552,7 +552,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     n = 5;
                     Func_08014de4();
                     Func_080150e4(p->vz);
-                    Func_08015024(p->vx);
+                    SceneTransform_ApplyPitch(p->vx);
                     Func_08015068(p->vy);
                     Func_0815e1ec(p, pos);
                     pos[0] = pos[0] / 2 + base[0];
@@ -637,8 +637,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         CLEAR(BG_VRAM, 0x3c00);
         CLEAR(screen, 0x3c00);
         action->unk1c = 0;
-        Func_08014644(Func_08143489);
-        Func_08014644(Func_08143001);
+        Scheduler_RemoveCallback(Func_08143489);
+        Scheduler_RemoveCallback(Func_08143001);
         Func_0801314c(188);
         Func_0801314c(104);
         Func_08020090(object, 3);
@@ -660,12 +660,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         CLEAR(BG_VRAM, 0x3c00);
         CLEAR(screen, 0x3c00);
         action->unk1c = 0;
-        Func_08014644(Func_08143489);
-        Func_08014644(Func_08143001);
+        Scheduler_RemoveCallback(Func_08143489);
+        Scheduler_RemoveCallback(Func_08143001);
         Func_0801314c(188);
         Func_0801314c(104);
         action->unk18 = 3;
-        Func_08149bac(action, 2);
+        BattleFx_RunSparkGroups(action, 2);
         return;
     }
     CLEAR(screen, 0x3c00);
@@ -783,7 +783,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
 
     if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 || kind == 72 || kind == 59
         || kind == 58 || kind == 69 || kind == 89)
-        Func_080145a8(Func_08152475, 3200);
+        Scheduler_AddOrUpdateCallback(Func_08152475, 3200);
 
     if (kind == 4 || kind == 5 || kind == 6 || kind == 17 || kind == 53 || kind == 60 || kind == 57
         || kind == 14 || kind == 63 || kind == 64 || kind == 100 || kind == 83 || kind == 90 || kind == 91
@@ -1417,7 +1417,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (p->x >= 0 && frame >= i / 2) {
                     m = i & 3;
                     Func_08014de4();
-                    Func_08015024(p->vx);
+                    SceneTransform_ApplyPitch(p->vx);
                     Func_08015068(p->vy);
                     Func_0815e1ec(p, point);
                     point[0] = point[0] / 2 + target[0] / 2;
@@ -1653,11 +1653,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (fade >= -63) {
                 angle = frame << 12;
                 if (kind == 82) {
-                    Func_08015024(-0x800);
+                    SceneTransform_ApplyPitch(-0x800);
                     Func_08015068(-frame << 11);
-                    Func_08015024(-frame << 4);
+                    SceneTransform_ApplyPitch(-frame << 4);
                 } else {
-                    Func_08015024(-0x1000);
+                    SceneTransform_ApplyPitch(-0x1000);
                     Func_08015068(frame << 11);
                 }
                 Func_0801521c(angle);
@@ -1708,7 +1708,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                             Func_080151e4(0x8000, 0x10000, 0x8000);
                             Func_080150e4((i << 14) + 0x2000);
-                            Func_08015024(-0x1000);
+                            SceneTransform_ApplyPitch(-0x1000);
                             Func_0801521c(angle >> 1);
                             Func_08196958(Data_08199210, matrix, 4);
                             Func_08196a7c(model);
@@ -1727,7 +1727,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         Func_08014de4();
                         Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                         Func_080151e4(0x8000, 0x10000, 0x8000);
-                        Func_08015024(0x4000);
+                        SceneTransform_ApplyPitch(0x4000);
                         Func_0801521c(angle);
                         Func_08196958(Data_08199210, matrix, 4);
                         Func_08196a7c(model);
@@ -1746,7 +1746,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                             Func_080151e4(0x8000, 0x10000, 0x8000);
                             Func_080150e4((i << 14) + 0x2000);
-                            Func_08015024(-0x1000);
+                            SceneTransform_ApplyPitch(-0x1000);
                             Func_0801521c(t * 3 << 12);
                             Func_08196958(Data_08199210, matrix, 4);
                             Func_08196a7c(model);
@@ -1803,7 +1803,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     Func_08014de4();
                     Func_08015160((target[0] / 2 - 64) << 16, 0x280000, 0);
                     Func_080151e4(0x8000, 0x10000, 0x8000);
-                    Func_08015024(1000);
+                    SceneTransform_ApplyPitch(1000);
                     Func_0801521c(angle);
                     Func_08196958(Data_08199210, matrix, 4);
                     Func_08196a7c(model);
@@ -1825,7 +1825,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         Func_08014de4();
                         Func_08015160((target[0] / 2 - 60) << 16, Data_0819895a[i] << 16, 0);
                         Func_080151e4(scale * 2, scale * 4, scale / 4);
-                        Func_08015024(1000);
+                        SceneTransform_ApplyPitch(1000);
                         if (i & 1)
                             Func_08015068((i * 2 + frame) << 12);
                         else
@@ -1864,7 +1864,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         Func_08014de4();
                         Func_08015160((target[0] / 2 - 60) << 16, 0x280000, 0);
                         Func_080151e4(scale, Data_08198966[i] * scale * 2, scale / 4);
-                        Func_08015024(1000);
+                        SceneTransform_ApplyPitch(1000);
                         if (i & 1)
                             Func_08015068((i * 8 + frame) << 10);
                         else
@@ -2102,8 +2102,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         CLEAR(BG_VRAM, 0x3c00);
         CLEAR(screen, 0x3c00);
         action->unk1c = 0;
-        Func_08014644(Func_08143489);
-        Func_08014644(Func_08143001);
+        Scheduler_RemoveCallback(Func_08143489);
+        Scheduler_RemoveCallback(Func_08143001);
         Func_0801314c(188);
         Func_0801314c(104);
         if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
@@ -2116,8 +2116,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     }
     if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 || kind == 72 || kind == 58 || kind == 59
         || kind == 69 || kind == 89)
-        Func_08014644(Func_08152475);
-    Func_08014644(Func_08143001);
+        Scheduler_RemoveCallback(Func_08152475);
+    Scheduler_RemoveCallback(Func_08143001);
     Func_0801314c(188);
     Func_0801314c(104);
     Func_08143bb8();

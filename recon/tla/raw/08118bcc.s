@@ -13,7 +13,7 @@ Func_08118bcc:
 	sub sp, #16
 	adds r7, r0, #0
 	mov r10, r3
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	mov r6, sp
 	adds r0, r6, #0
 	bl BattleParty_ListPresentEnemies
@@ -30,34 +30,34 @@ Func_08118bcc:
 	cmp r5, r8
 	bne .L_08118c0c
 	ldr r0, .L_08118c58
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_08118c12
 .L_08118c0c:
 	ldr r0, .L_08118c5c
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_08118c12:
 	adds r5, #1
 	bl BattlePresentation_WaitForAdvance
 	cmp r5, r7
 	bne .L_08118bf6
 .L_08118c1c:
-	bl Func_08038218
+	bl UiWork_FinalizeSharedSlotFar
 	mov r3, r10
 	adds r3, #69
 	ldrb r3, [r3]
 	cmp r3, #1
 	bne .L_08118c3a
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	ldr r0, .L_08118c60
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 	b .L_08118c4c
 .L_08118c3a:
 	cmp r3, #2
 	bne .L_08118c4c
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	ldr r0, .L_08118c64
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_08118c4c:
 	add sp, #16

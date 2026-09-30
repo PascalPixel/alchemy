@@ -28,14 +28,14 @@ Func_0811c984:
 	ldrsh r0, [r6, r3]
 	mov r5, sp
 	str r0, [r5, #8]
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	blt .L_0811c9ce
 	ldrh r0, [r6, #10]
 	strh r0, [r5, #36]
 	lsls r0, r0, #16
 	asrs r0, r0, #16
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	bge .L_0811c9d4
 .L_0811c9ce:
@@ -53,7 +53,7 @@ Func_0811c984:
 	ldr r0, [r5, #8]
 	bl UiText_DrawQuantity
 	ldr r0, .L_0811ca50
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	movs r2, #13
 	movs r3, #36
 	ldrsh r1, [r5, r3]

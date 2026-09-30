@@ -92,7 +92,7 @@ Func_0810993c:
 	beq .L_08109a1c
 	movs r0, #103
 	bl Audio_PlayCue
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	movs r1, #8
 	movs r2, #4
 	movs r3, #2

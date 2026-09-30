@@ -113,7 +113,7 @@ Func_080d793c:
 	cmp r5, #79
 	bgt .L_080d7a3c
 	adds r0, r5, #0
-	bl Func_080cccb8
+	bl BattleAction_FindDescriptor
 	cmp r0, #0
 	beq .L_080d7a0e
 	movs r2, #2

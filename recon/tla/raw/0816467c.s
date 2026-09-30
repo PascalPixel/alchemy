@@ -98,7 +98,7 @@ Func_0816467c:
 	str r3, [r2]
 	ldr r0, .L_08164a2c
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #0
 	mov r8, r2
 	mov r7, r10
@@ -441,7 +441,7 @@ Func_0816467c:
 	b .L_08164848
 .L_081649f6:
 	ldr r0, .L_08164a2c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r1, #128
 	ldr r3, .L_08164a44
 	lsls r1, r1, #7

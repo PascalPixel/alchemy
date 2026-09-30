@@ -43,7 +43,7 @@ Func_080e5d5c:
 	str r3, [r1, #12]
 	ldr r0, [sp, #4]
 	ldrh r1, [r1]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	b .L_080e5dd6
 .L_080e5db4:
 	adds r3, r5, #0
@@ -143,7 +143,7 @@ Func_080e5d5c:
 	movs r3, #0
 	lsls r0, r0, #1
 	movs r2, #0
-	bl Func_080dc10c
+	bl Object_Spawn
 	mov r11, r0
 	ldr r4, [sp, #28]
 	movs r0, #192
@@ -254,7 +254,7 @@ Func_080e5d5c:
 	ldr r3, [r0, #12]
 	adds r0, r5, #0
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	movs r1, #2
 	ldrsh r3, [r5, r1]
 	adds r2, r7, #0
@@ -327,7 +327,7 @@ Func_080e5d5c:
 	str r3, [r5, #4]
 	ldr r3, [r1, #12]
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [r5]
 	ldr r0, .L_080e619c
 	str r3, [r6, #12]
@@ -386,10 +386,10 @@ Func_080e5d5c:
 	str r3, [sp, #40]
 	add r3, sp, #32
 	adds r2, r3, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	add r4, sp, #32
 	adds r0, r4, #0
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [sp, #32]
 	mov r0, r8
 	str r3, [r0]
@@ -503,7 +503,7 @@ Func_080e5d5c:
 	movs r1, #144
 	ldr r0, .L_080e61a4
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #186
 	movs r4, #0
 	ldrsh r3, [r6, r4]
@@ -539,7 +539,7 @@ Func_080e5d5c:
 	bne .L_080e61a8
 .L_080e61b6:
 	ldr r0, .L_080e62ec
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r3, #15
 	mov r10, r3
 .L_080e61c0:
@@ -576,7 +576,7 @@ Func_080e5d5c:
 	mov r8, r0
 	lsls r1, r1, #3
 	ldr r0, .L_080e62f0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #186
 	movs r4, #0
 	ldrsh r3, [r6, r4]
@@ -648,7 +648,7 @@ Func_080e5d5c:
 	bne .L_080e622a
 .L_080e629a:
 	ldr r0, .L_080e62f0
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #114
@@ -664,9 +664,9 @@ Func_080e5d5c:
 	mov r0, r11
 	bl Func_080200c8
 	ldr r0, [sp, #20]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, [sp, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	bl Func_080eb930
 .L_080e62d2:
 	bl BattleFx_PrepareBufferInterpolation

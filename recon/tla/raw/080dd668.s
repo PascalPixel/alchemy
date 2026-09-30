@@ -50,7 +50,7 @@ UpdateRisingParticleBurst:
 	ldr r2, [r7, #12]
 	ldr r3, [r7, #16]
 	adds r0, #255
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080dd71e
@@ -85,7 +85,7 @@ UpdateRisingParticleBurst:
 	adds r1, r5, #0
 	adds r2, r0, #0
 	adds r0, r6, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 .L_080dd71e:
 	movs r3, #1
 	negs r3, r3

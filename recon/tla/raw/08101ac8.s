@@ -26,7 +26,7 @@ Func_08101ac8:
 	mov r11, r0
 	ldr r0, [sp, #20]
 	bl RenderOutput_RedrawSavedRectFar
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	adds r5, r0, #0
 	movs r0, #1
 	negs r0, r0
@@ -102,15 +102,15 @@ Func_08101ac8:
 	b .L_08101ba2
 .L_08101b92:
 	movs r0, #2
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	b .L_08101ba8
 .L_08101b9a:
 	movs r0, #15
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	b .L_08101ba8
 .L_08101ba2:
 	movs r0, #4
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 .L_08101ba8:
 	mov r2, r9
 	ldrh r3, [r5]

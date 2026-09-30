@@ -16,11 +16,11 @@ Func_080000c8:
 	.global Func_080000d0
 	.thumb_func
 Func_080000d0:
-	overlay_veneer Func_080145a8
+	overlay_veneer Scheduler_AddOrUpdateCallback
 	.global Func_080000d8
 	.thumb_func
 Func_080000d8:
-	overlay_veneer Func_08014644
+	overlay_veneer Scheduler_RemoveCallback
 	.global Func_080000e0
 	.thumb_func
 Func_080000e0:
@@ -60,7 +60,7 @@ Math_CosineFar:
 	.global Func_08000128
 	.thumb_func
 Func_08000128:
-	overlay_veneer Func_0801489c
+	overlay_veneer Vector_AddPolarOffset
 	.global Func_08000130
 	.thumb_func
 Func_08000130:
@@ -132,7 +132,7 @@ Func_080001b0:
 	.global Func_080001b8
 	.thumb_func
 Func_080001b8:
-	overlay_veneer Func_08014274
+	overlay_veneer Resource_ResetEntry
 	.global Func_080001c0
 	.thumb_func
 Func_080001c0:
@@ -152,7 +152,7 @@ Func_080001d8:
 	.global Func_080001e0
 	.thumb_func
 Func_080001e0:
-	overlay_veneer Func_0801401c
+	overlay_veneer AffineMatrix_BuildForEffect
 	.global Func_080001e8
 	.thumb_func
 Func_080001e8:
@@ -188,7 +188,7 @@ Func_08000220:
 	.global Func_08000228
 	.thumb_func
 Func_08000228:
-	overlay_veneer Func_08015024
+	overlay_veneer SceneTransform_ApplyPitch
 	.global Func_08000230
 	.thumb_func
 Func_08000230:
@@ -200,7 +200,7 @@ Func_08000238:
 	.global Func_08000240
 	.thumb_func
 Func_08000240:
-	overlay_veneer Func_08015128
+	overlay_veneer SceneTransform_ApplyPosition
 	.global Func_08000248
 	.thumb_func
 Func_08000248:
@@ -252,7 +252,7 @@ Func_080002a0:
 	.global Func_080002a8
 	.thumb_func
 Func_080002a8:
-	overlay_veneer Func_08013e70
+	overlay_veneer Blend_SetDarkenTarget16
 	.global Func_080002b0
 	.thumb_func
 Func_080002b0:
@@ -308,7 +308,7 @@ Func_08000310:
 	.global Func_08000318
 	.thumb_func
 Func_08000318:
-	overlay_veneer Func_08013ba4
+	overlay_veneer QueueIoWriteDelay2
 	.global Func_08000320
 	.thumb_func
 Func_08000320:
@@ -340,7 +340,7 @@ Func_08000350:
 	.global Func_08000358
 	.thumb_func
 Func_08000358:
-	overlay_veneer Func_080138a8
+	overlay_veneer Runtime_SetMainState19
 	.global Func_08000360
 	.thumb_func
 Func_08000360:
@@ -356,7 +356,7 @@ Func_08000370:
 	.global Func_08000378
 	.thumb_func
 Func_08000378:
-	overlay_veneer Func_08013b30
+	overlay_veneer Sound_LoadPresetParameters
 	.global Func_08000380
 	.thumb_func
 Func_08000380:
@@ -364,7 +364,7 @@ Func_08000380:
 	.global Func_08000388
 	.thumb_func
 Func_08000388:
-	overlay_veneer Func_08016854
+	overlay_veneer Party_Check
 	.global Func_08000390
 	.thumb_func
 Func_08000390:
@@ -372,7 +372,7 @@ Func_08000390:
 	.global Func_08000398
 	.thumb_func
 Func_08000398:
-	overlay_veneer Func_080168cc
+	overlay_veneer SerialRuntime_WaitForTransferB
 	.global Func_080003a0
 	.thumb_func
 Func_080003a0:

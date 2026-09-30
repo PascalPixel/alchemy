@@ -16,7 +16,7 @@ Event_ClearInvalidPackedValuesFar:
 	.global Func_080c85d8
 	.thumb_func
 Func_080c85d8:
-	overlay_veneer Func_080d7a78
+	overlay_veneer BattleFx_InitializeSlots
 	.global Func_080c85e0
 	.thumb_func
 Func_080c85e0:

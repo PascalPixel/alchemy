@@ -16,7 +16,7 @@ Func_0810a9ac:
 	ldrh r0, [r3]
 	bl Func_080c85c8
 	adds r5, r0, #0
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	adds r0, r6, #0
 	bl Func_0810a960
 	lsls r5, r5, #16

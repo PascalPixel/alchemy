@@ -19,7 +19,7 @@ Func_0810526c:
 	ldr r0, [r5, r6]
 	cmp r0, #0
 	beq .L_08105292
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	mov r3, r8
 	str r3, [r5, r6]
 .L_08105292:
@@ -28,7 +28,7 @@ Func_0810526c:
 	cmp r7, #0
 	bge .L_08105284
 	ldr r0, .L_081052a8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}

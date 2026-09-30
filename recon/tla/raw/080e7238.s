@@ -129,7 +129,7 @@ Func_080e7238:
 	adds r1, r5, #0
 	lsls r0, r0, #3
 	adds r2, r6, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r2, #1
 	add r11, r2
 	mov r0, r11
@@ -170,9 +170,9 @@ Func_080e7238:
 	str r3, [r5, #4]
 	ldr r3, [r6, #8]
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r5, #0
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [r5]
 	adds r0, r7, #0
 	str r3, [r7, #12]
@@ -316,7 +316,7 @@ Func_080e7238:
 	b .L_080e72fc
 .L_080e74b0:
 	ldr r0, [sp, #8]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	bl Func_080dc954

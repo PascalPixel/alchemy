@@ -25,9 +25,9 @@ Func_08108048:
 	.thumb_func
 Func_08108050:
 	overlay_veneer Func_0810875c
-	.global Func_08108058
+	.global Unnamed_080b0840Far
 	.thumb_func
-Func_08108058:
+Unnamed_080b0840Far:
 	overlay_veneer Func_081088d8
 	.global Func_08108060
 	.thumb_func

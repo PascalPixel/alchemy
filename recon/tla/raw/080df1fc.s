@@ -122,7 +122,7 @@ Func_080df1fc:
 	str r3, [r7, #108]
 	lsls r1, r1, #3
 	ldr r0, .L_080df544
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #130
 	bl Audio_PlayCue
 	adds r1, r7, #0
@@ -253,7 +253,7 @@ Func_080df1fc:
 	adds r1, r6, #0
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r1, [r5]
 	ldr r0, [sp, #20]
 	add r1, r9
@@ -280,7 +280,7 @@ Func_080df1fc:
 	ldr r3, [r7, #16]
 	adds r2, r5, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_08020298
@@ -392,7 +392,7 @@ Func_080df1fc:
 .L_080df53c:
 	.4byte 0xfff00000
 .L_080df540:
-	.4byte Func_080db91c
+	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080df544:
 	.4byte Func_080df174
 .L_080df548:
@@ -419,7 +419,7 @@ Func_080df1fc:
 	movs r1, #4
 	bl Object_SetMode
 	ldr r0, .L_080df6ec
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #135
 	bl Audio_PlayCue
 	movs r0, #15
@@ -455,7 +455,7 @@ Func_080df1fc:
 	ldr r1, [r2]
 	adds r0, #255
 	ldr r2, [r2, #4]
-	bl Func_080dc10c
+	bl Object_Spawn
 	ldr r2, [sp, #4]
 	adds r6, r0, #0
 	stmia r2!, {r6}
@@ -485,7 +485,7 @@ Func_080df1fc:
 	adds r1, r5, #0
 	adds r2, r0, #0
 	adds r0, r6, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 .L_080df614:
 	movs r1, #1
 	negs r1, r1

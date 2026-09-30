@@ -35,7 +35,7 @@ Func_080fac58:
 	blt .L_080fac72
 .L_080fac94:
 	ldr r0, .L_080fac9c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	pop {r5, r6, pc}
 .L_080fac9c:
 	.4byte Func_080fabe0

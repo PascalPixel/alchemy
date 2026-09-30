@@ -23,9 +23,9 @@ Func_081272b0:
 	lsls r2, r2, #19
 	strh r3, [r2]
 	ldr r0, .L_081272f8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081272fc
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	b .L_08127300
 .L_081272ec:
 	.4byte 0x00001341

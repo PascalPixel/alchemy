@@ -44,19 +44,19 @@ Func_080230e0:
 	lsls r1, r1, #3
 	ldr r0, .L_08023188
 	adds r1, #138
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_08023156
 .L_0802313e:
 	movs r1, #227
 	lsls r1, r1, #2
 	adds r1, #255
 	ldr r0, .L_0802318c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #128
 	lsls r1, r1, #3
 	ldr r0, .L_08023190
 	adds r1, #138
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_08023156:
 	subs r3, r7, #3
 	cmp r3, #1
@@ -64,13 +64,13 @@ Func_080230e0:
 	movs r1, #144
 	ldr r0, .L_08023194
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_08023172
 .L_08023168:
 	movs r1, #144
 	ldr r0, .L_08023198
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_08023172:
 	mov r1, r8
 	movs r2, #0

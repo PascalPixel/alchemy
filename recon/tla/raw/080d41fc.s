@@ -112,7 +112,7 @@ Func_080d41fc:
 	bl UiWork_FinalizeEntityMatchingLocalizedIdFar
 	mov r0, r9
 	bl UiWork_FinalizeEntityMatchingLocalizedIdFar
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	movs r0, #1
 	bl WaitFrames
 	b .L_080d42fc

@@ -16,14 +16,14 @@ UiWork_FinalizeEntityMatchingLocalizedIdFar:
 	.global Func_08038108
 	.thumb_func
 Func_08038108:
-	overlay_veneer Func_0803b880
+	overlay_veneer UiText_GetResourceDimensions
 	.global Func_08038110
 	.thumb_func
 Func_08038110:
 	overlay_veneer Func_0803b8cc
-	.global Func_08038118
+	.global UiWork_ClearValueNameTablesFar
 	.thumb_func
-Func_08038118:
+UiWork_ClearValueNameTablesFar:
 	overlay_veneer Func_0803cca8
 	.global UiText_DrawQuantity
 	.thumb_func
@@ -41,9 +41,9 @@ UiWindow_DrawPartyStatusContentsFar:
 	.thumb_func
 Func_08038138:
 	overlay_veneer Func_08042dac
-	.global Func_08038140
+	.global UiWork_FinalizePendingCoreFar
 	.thumb_func
-Func_08038140:
+UiWork_FinalizePendingCoreFar:
 	overlay_veneer Func_0803ce1c
 	.global Func_08038148
 	.thumb_func
@@ -68,7 +68,7 @@ Func_08038168:
 	.global Func_08038170
 	.thumb_func
 Func_08038170:
-	overlay_veneer Func_0803df14
+	overlay_veneer Resource_ScheduleOwnerReset
 	.global Menu_OpenSelectionWindowFar
 	.thumb_func
 Menu_OpenSelectionWindowFar:

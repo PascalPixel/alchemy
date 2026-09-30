@@ -48,7 +48,7 @@ Func_080ad290:
 	.global Func_080ad298
 	.thumb_func
 Func_080ad298:
-	overlay_veneer Func_080b0298
+	overlay_veneer Owner_RefreshDerivedData
 	.global Inventory_CountItemFar
 	.thumb_func
 Inventory_CountItemFar:

@@ -30,7 +30,7 @@ Func_0810bebc:
 	beq .L_0810bf00
 	adds r0, r3, #0
 	str r4, [sp, #0]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	strh r6, [r5]
 	ldr r4, [sp, #0]
 	b .L_0810bf00

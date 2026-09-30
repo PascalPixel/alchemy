@@ -56,7 +56,7 @@ Func_08192c9c:
 	lsls r0, r0, #6
 	str r1, [sp, #192]
 	str r6, [r2]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_08192d48
 	movs r3, #160
@@ -80,7 +80,7 @@ Func_08192c9c:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_08192d5c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, .L_08192d4c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -349,7 +349,7 @@ Func_08192c9c:
 	ldr r2, [sp, #64]
 	ldr r3, [r2]
 	ldr r0, [r3, r5]
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	movs r3, #1
 	add r10, r3
 	mov r4, r10
@@ -1665,7 +1665,7 @@ Func_08192c9c:
 	ldr r0, [sp, #64]
 	ldr r3, [r0]
 	ldr r0, [r3, r5]
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	movs r1, #1
 	add r10, r1
 	mov r2, r10
@@ -5078,7 +5078,7 @@ Func_08192c9c:
 	str r3, [r0, #4]
 	str r1, [r0, #8]
 	mov r8, r1
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	movs r0, #152
 	lsls r0, r0, #8
 	bl Func_080150e4
@@ -5511,11 +5511,11 @@ Func_08192c9c:
 	add r10, r5
 	ldr r0, [r3, r2]
 	mov r6, r10
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	cmp r6, #36
 	bne .L_08195718
 	ldr r0, .L_08195748
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #420
 	pop {r3, r5, r6, r7}

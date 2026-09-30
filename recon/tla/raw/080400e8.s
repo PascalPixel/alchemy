@@ -124,7 +124,7 @@ Func_080400e8:
 	adds r6, #4
 	ldrsb r0, [r3, r5]
 	adds r5, #1
-	bl Func_08045048
+	bl RenderResource_LoadFrame
 	cmp r5, #2
 	ble .L_080401b4
 	movs r6, #191
@@ -153,7 +153,7 @@ Func_080400e8:
 	adds r6, #4
 	ldrsb r0, [r3, r5]
 	adds r5, #1
-	bl Func_08045048
+	bl RenderResource_LoadFrame
 	cmp r5, #1
 	ble .L_080401ee
 	movs r6, #192
@@ -183,7 +183,7 @@ Func_080400e8:
 	adds r6, #4
 	ldrsb r0, [r3, r5]
 	adds r5, #1
-	bl Func_08045048
+	bl RenderResource_LoadFrame
 	cmp r5, #1
 	ble .L_0804022a
 	mov r1, r8

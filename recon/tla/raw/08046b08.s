@@ -251,7 +251,7 @@ Func_08046b08:
 	movs r2, #224
 	orrs r3, r2
 	strb r3, [r5, #9]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r3, [sp, #444]
 	cmp r3, #24
 	bhi .L_08046d9c
@@ -1087,7 +1087,7 @@ Func_08046b08:
 	beq .L_08047370
 	ldr r0, [sp, #28]
 	movs r1, #240
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 .L_08047370:
 	movs r4, #1
 	str r4, [sp, #88]
@@ -1216,7 +1216,7 @@ Func_08046b08:
 .L_0804745a:
 	ldr r0, [sp, #32]
 	movs r1, #241
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r4, [sp, #132]
 	cmp r4, #0
 	bne .L_0804746c
@@ -1228,7 +1228,7 @@ Func_08046b08:
 	ldr r0, [sp, #92]
 	cmp r0, #0
 	bne .L_0804747e
-	bl Func_080396bc
+	bl Ui_FillVramBlockPattern
 .L_0804747e:
 	ldr r1, [sp, #92]
 	cmp r1, #3
@@ -1394,12 +1394,12 @@ Func_08046b08:
 	movs r4, #0
 	str r4, [sp, #0]
 	bl Func_0803a2b0
-	bl Func_080396bc
+	bl Ui_FillVramBlockPattern
 	movs r2, #0
 	add r0, sp, #284
 	ldr r1, [sp, #128]
 	movs r3, #20
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	cmp r10, r8
 	bne .L_080475d4
 	b .L_080476f0
@@ -1579,7 +1579,7 @@ Func_08046b08:
 	subs r2, #10
 	ldr r0, [sp, #136]
 	movs r3, #7
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r4, #1
 	add r8, r4
 .L_0804773a:
@@ -1603,7 +1603,7 @@ Func_08046b08:
 	adds r1, #54
 	movs r3, #7
 	str r5, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldr r3, [sp, #136]
 	movs r1, #243
 	ldrh r2, [r3, #8]
@@ -1613,7 +1613,7 @@ Func_08046b08:
 	subs r2, #10
 	movs r3, #7
 	str r5, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	b .L_08047d78
 .L_0804777c:
 	ldr r4, [sp, #92]
@@ -1722,7 +1722,7 @@ Func_08046b08:
 	ldr r1, [sp, #140]
 	movs r3, #1
 	strb r3, [r1, #6]
-	bl Func_080396bc
+	bl Ui_FillVramBlockPattern
 	ldr r2, [sp, #56]
 	cmp r2, #0
 	beq .L_08047870
@@ -1764,7 +1764,7 @@ Func_08046b08:
 	add r0, sp, #156
 	ldr r1, [sp, #128]
 	movs r3, #20
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	cmp r10, r8
 	bne .L_080478aa
 	b .L_08047a58
@@ -1803,7 +1803,7 @@ Func_08046b08:
 	ldr r0, [sp, #136]
 	movs r2, #11
 	mov r3, r9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r1, #0
 	str r1, [sp, #0]
 	movs r1, #240
@@ -1812,7 +1812,7 @@ Func_08046b08:
 	adds r1, #30
 	movs r2, #12
 	mov r3, r9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	mov r4, r8
 	add r2, sp, #420
 	lsls r3, r4, #2
@@ -1899,7 +1899,7 @@ Func_08046b08:
 	ldr r0, [sp, #136]
 	movs r2, #15
 	mov r3, r9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 .L_080479be:
 	ldrb r3, [r6, #8]
 	cmp r3, #255
@@ -2018,7 +2018,7 @@ Func_08046b08:
 	subs r2, #10
 	ldr r0, [sp, #136]
 	movs r3, #7
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r4, #1
 	add r8, r4
 .L_08047aa2:
@@ -2042,7 +2042,7 @@ Func_08046b08:
 	adds r1, #54
 	movs r3, #7
 	str r5, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldr r3, [sp, #136]
 	movs r1, #243
 	ldrh r2, [r3, #8]
@@ -2052,7 +2052,7 @@ Func_08046b08:
 	subs r2, #10
 	movs r3, #7
 	str r5, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	b .L_08047d6e
 .L_08047ae4:
 	ldr r0, [sp, #92]
@@ -2275,12 +2275,12 @@ Func_08046b08:
 	ldr r0, [sp, #140]
 	mov r4, r9
 	strb r4, [r0, #6]
-	bl Func_080396bc
+	bl Ui_FillVramBlockPattern
 	movs r2, #0
 	add r0, sp, #156
 	ldr r1, [sp, #128]
 	movs r3, #20
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	cmp r10, r11
 	beq .L_08047d6e
 	ldr r2, [sp, #84]
@@ -2302,7 +2302,7 @@ Func_08046b08:
 	ldr r0, [sp, #136]
 	adds r3, r5, #0
 	adds r2, r6, #0
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r3, #248
 	lsls r3, r3, #14
 	ands r3, r7
@@ -2645,7 +2645,7 @@ Func_08046b08:
 	adds r3, #8
 	ldr r0, [sp, #136]
 	mov r2, r9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldr r1, [sp, #100]
 	cmp r1, #0
 	beq .L_08047fdc
@@ -3270,7 +3270,7 @@ Func_08046b08:
 	ldr r1, [sp, #128]
 	movs r2, #0
 	movs r3, #4
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	ldr r0, [sp, #52]
 	bl Sys_Free
 .L_08048464:
@@ -3339,7 +3339,7 @@ Func_08046b08:
 	adds r0, r5, #0
 	movs r1, #240
 	str r4, [sp, #4]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r4, [sp, #4]
 .L_080484e6:
 	movs r2, #15
@@ -3408,7 +3408,7 @@ Func_08046b08:
 	adds r3, #68
 	strb r3, [r5, #4]
 	str r4, [sp, #4]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	adds r6, #1
 	adds r5, #12
 	adds r7, #2
@@ -3494,7 +3494,7 @@ Func_08046b08:
 .L_08048606:
 	ldmia r5!, {r0}
 	subs r6, #1
-	bl Func_08014274
+	bl Resource_ResetEntry
 	cmp r6, #0
 	bge .L_08048606
 	ldr r5, [sp, #36]
@@ -3502,13 +3502,13 @@ Func_08046b08:
 .L_08048616:
 	ldmia r5!, {r0}
 	subs r6, #1
-	bl Func_08014274
+	bl Resource_ResetEntry
 	cmp r6, #0
 	bge .L_08048616
 	ldr r0, [sp, #108]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, [sp, #120]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #1
 	bl WaitFrames
 	bl Func_08041b68

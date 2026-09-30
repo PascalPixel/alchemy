@@ -10,7 +10,7 @@ Func_08014b50:
 	bls .L_08014b5c
 	movs r5, #10
 .L_08014b5c:
-	bl Func_08014a24
+	bl Text_FormatSignedDecimalToWork
 	ldr r0, .L_08014b6c
 	subs r0, r0, r5
 	bl Func_08014ae0

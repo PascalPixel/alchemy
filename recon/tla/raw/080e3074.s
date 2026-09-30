@@ -86,7 +86,7 @@ Func_080e3074:
 	str r3, [r5, #4]
 	ldr r3, [r2, #16]
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	movs r1, #2
 	ldrsh r3, [r5, r1]
 	mov r2, r8
@@ -145,7 +145,7 @@ Func_080e3074:
 	adds r2, r2, r3
 	lsls r0, r0, #1
 	ldr r3, [r4, #16]
-	bl Func_080dc10c
+	bl Object_Spawn
 	movs r1, #2
 	mov r11, r0
 	bl Object_SetMode
@@ -372,7 +372,7 @@ Func_080e3074:
 	movs r1, #24
 	ldrsh r0, [r2, r1]
 	movs r1, #1
-	bl Func_080d3888
+	bl ObjectMotion_SetActionVariant
 	mov r2, r10
 	adds r2, #85
 	movs r3, #0
@@ -417,7 +417,7 @@ Func_080e3074:
 	str r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_080e3438
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #216
 	lsls r3, r3, #5
 	adds r3, #16
@@ -448,7 +448,7 @@ Func_080e3074:
 	bne .L_080e33f2
 .L_080e340a:
 	ldr r0, .L_080e3438
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r3, [sp, #36]
 	adds r3, #52
 	ldrb r3, [r3]
@@ -561,7 +561,7 @@ Func_080e3074:
 	str r3, [r2]
 	ldr r0, .L_080e3618
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #216
 	lsls r3, r3, #5
 	adds r3, #16
@@ -593,7 +593,7 @@ Func_080e3074:
 	bne .L_080e3518
 .L_080e3530:
 	ldr r0, .L_080e3618
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r7, #15
 .L_080e3538:
 	mov r2, r10

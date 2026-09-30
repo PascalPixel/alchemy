@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08016854
+	.global Party_Check
 	.thumb_func
-Func_08016854:
+Party_Check:
 	push {r5, r6, lr}
 	ldr r5, .L_0801688c
 	ldr r6, .L_08016890

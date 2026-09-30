@@ -15,7 +15,7 @@ Func_081a7518:
 	ldr r5, .L_081a7584
 	bl Func_080144c0
 	movs r0, #1
-	bl Func_08013e70
+	bl Blend_SetDarkenTarget16
 	bl Func_08014b70
 	movs r0, #1
 	bl WaitFrames
@@ -227,11 +227,11 @@ Func_081a7518:
 	beq .L_081a76e0
 .L_081a76d8:
 	movs r0, #8
-	bl Func_08013e70
+	bl Blend_SetDarkenTarget16
 	b .L_081a76e6
 .L_081a76e0:
 	movs r0, #60
-	bl Func_08013e70
+	bl Blend_SetDarkenTarget16
 .L_081a76e6:
 	bl Func_08013fdc
 .L_081a76ea:

@@ -99,7 +99,7 @@ Func_0802e7a8:
 	adds r1, r6, #0
 	mov r2, r11
 	str r4, [sp, #0]
-	bl Func_080220f0
+	bl Render_ApplyProjectedPlacement
 	movs r3, #56
 	mov r1, r9
 	add r8, r3
@@ -132,6 +132,6 @@ Func_0802e7a8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0802e894:
-	.4byte Data_0802f090
+	.4byte Battle_FormationPlacementScale
 .L_0802e898:
 	.4byte 0xffff8000

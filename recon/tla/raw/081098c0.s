@@ -32,7 +32,7 @@ Func_081098c0:
 	ldrh r0, [r6]
 	subs r5, #1
 	negs r0, r0
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	ldrh r0, [r6]
 	bl Party_AdjustSixDigitCounterBFar
 	bl Func_08109188

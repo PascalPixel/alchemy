@@ -31,11 +31,11 @@ Func_081843fc:
 	ldr r6, [r5, #36]
 	str r6, [sp, #140]
 	ldr r0, [r6, #84]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	bl Func_08020380
 	movs r0, #128
 	lsls r0, r0, #6
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r6, #128
 	ldr r3, .L_08184484
 	lsls r6, r6, #19
@@ -62,7 +62,7 @@ Func_081843fc:
 	str r5, [r3]
 	lsls r1, r1, #4
 	ldr r0, .L_08184490
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_08184494
 	.2byte 0x0000
 .L_08184484:

@@ -95,7 +95,7 @@ Func_080457d0:
 	ldr r3, [r3]
 	cmp r3, r1
 	bne .L_0804589c
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r0, #4
 	ble .L_0804589c
 	movs r2, #230
@@ -349,7 +349,7 @@ Func_080457d0:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_08045afc
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r2, .L_08045b00
 	movs r0, #2
 	movs r1, #136
@@ -760,7 +760,7 @@ Func_080457d0:
 	movs r0, #218
 	lsls r0, r0, #1
 	add r0, r9
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	movs r3, #222
 	lsls r3, r3, #1
 	add r3, r9
@@ -838,7 +838,7 @@ Func_080457d0:
 	strb r3, [r5, #4]
 	adds r0, r5, #0
 	movs r1, #241
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	b .L_08045e48
 .L_08045e20:
 	.4byte 0x000001ff
@@ -1081,7 +1081,7 @@ Func_080457d0:
 	lsls r1, r1, #5
 	lsls r0, r0, #19
 	adds r1, #65
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	ldr r5, [sp, #48]
 	movs r3, #0
 	strb r3, [r5, #6]
@@ -1129,7 +1129,7 @@ Func_080457d0:
 	add r5, r9
 .L_08046040:
 	ldrh r0, [r5]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r3, [r6]
 	movs r0, #1
 	add r8, r0
@@ -1194,7 +1194,7 @@ Func_080457d0:
 	strb r3, [r5, #3]
 	bl WaitFrames
 	ldr r0, .L_08046128
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0

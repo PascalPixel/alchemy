@@ -10,6 +10,6 @@ Func_080f80c4:
 	movs r0, #179
 	lsls r0, r0, #1
 	bl GameFlag_SetBit
-	bl Func_080202d8
-	bl Func_080146d4
+	bl Map_EnableUpdateCallbackFar
+	bl Scheduler_EnableUnmaskedOverlayCallbacks
 	pop {pc}

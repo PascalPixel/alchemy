@@ -66,7 +66,7 @@ Func_080fd968:
 	adds r1, r5, #0
 	mov r2, r8
 	movs r3, #112
-	bl Func_080f92dc
+	bl Menu_SetPageIcons
 	movs r2, #15
 	ldr r1, [r6, #20]
 	ldr r3, [r6, #8]
@@ -110,7 +110,7 @@ Func_080fd968:
 	cmp r2, r3
 	ble .L_080fda4e
 	movs r0, #2
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	b .L_080fda70
 .L_080fda4e:
 	mov r2, r10
@@ -123,11 +123,11 @@ Func_080fd968:
 	cmp r0, #0
 	beq .L_080fda6a
 	movs r0, #4
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	b .L_080fda70
 .L_080fda6a:
 	movs r0, #15
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 .L_080fda70:
 	mov r1, r10
 	ldrh r3, [r6, r1]
@@ -151,7 +151,7 @@ Func_080fd968:
 	str r5, [sp, #0]
 	bl UiText_DrawNumberAtOffsetFar
 	movs r0, #15
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	mov r3, r9
 	adds r3, #1
 	lsls r3, r3, #24

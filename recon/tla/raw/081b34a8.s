@@ -712,13 +712,13 @@ Func_081b34a8:
 	lsls r1, r1, #3
 	lsls r5, r5, #4
 	ldr r0, .L_081b3c6c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	adds r1, r5, #0
 	ldr r0, .L_081b3c70
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r0, .L_081b3c74
 	adds r1, r5, #0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r7, [sp, #20]
 	movs r2, #0
 	ldr r3, [r7]
@@ -1189,11 +1189,11 @@ Func_081b34a8:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_081b3e28
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081b3e2c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081b3e30
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #180
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #96

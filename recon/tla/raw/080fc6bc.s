@@ -364,7 +364,7 @@ Func_080fc6bc:
 	lsls r2, r2, #1
 	adds r1, r7, r2
 	movs r2, #0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r3, #133
 	lsls r3, r3, #2
 	strb r0, [r7, r3]
@@ -426,7 +426,7 @@ Func_080fc6bc:
 	adds r1, r5, #0
 	movs r2, #0
 	mov r9, r0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r1, #0
 	strb r0, [r7, r6]
 	adds r0, r5, #0

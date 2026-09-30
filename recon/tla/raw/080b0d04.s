@@ -36,7 +36,7 @@ Djinn_Deactivate:
 	adds r0, r7, #0
 	bics r3, r2
 	str r3, [r5, r1]
-	bl Func_080b0298
+	bl Owner_RefreshDerivedData
 .L_080b0d4e:
 	mov r0, r8
 	pop {r3, r5}

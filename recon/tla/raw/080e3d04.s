@@ -278,7 +278,7 @@ Func_080e3d04:
 	str r3, [r0, #8]
 	movs r0, #183
 	lsls r0, r0, #1
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_080e3f2a
@@ -321,7 +321,7 @@ Func_080e3d04:
 	str r3, [r0, #8]
 	movs r0, #112
 	adds r0, #255
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_080e3f82
@@ -529,7 +529,7 @@ Func_080e3d04:
 	strb r3, [r2]
 	ldr r0, .L_080e418c
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #0
 	mov r9, r3
 .L_080e4132:
@@ -646,11 +646,11 @@ Func_080e3d04:
 	ble .L_080e41da
 .L_080e4210:
 	ldr r0, .L_080e4240
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, [sp, #8]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	mov r0, r11
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_080e4222:
 	bl BattleFx_PrepareBufferInterpolation
 	movs r0, #92

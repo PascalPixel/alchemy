@@ -77,7 +77,7 @@ Func_080d9b80:
 	orrs r3, r2
 	ldr r0, [sp, #8]
 	str r3, [sp, #40]
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	movs r6, #1
 	str r0, [sp, #12]
 	b .L_080d9c20

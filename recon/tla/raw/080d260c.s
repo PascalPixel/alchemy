@@ -80,7 +80,7 @@ PartyInventory_GiveItem:
 	movs r0, #1
 	bl Func_080d295c
 	adds r5, r0, #0
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	cmp r5, #0
 	bne .L_080d2666
 	movs r1, #1

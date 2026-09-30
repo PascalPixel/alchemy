@@ -5,6 +5,6 @@
 Func_08022c78:
 	push {lr}
 	movs r0, #93
-	bl Func_08014274
+	bl Resource_ResetEntry
 	pop {pc}
 	.2byte 0x0000

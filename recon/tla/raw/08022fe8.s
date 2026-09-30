@@ -9,16 +9,16 @@ Func_08022fe8:
 .L_08022fee:
 	adds r1, r6, #0
 	adds r0, r5, #0
-	bl Func_08022f64
+	bl Map_RenderAnimatedTileFrame
 	adds r1, r6, #1
 	adds r0, r5, #0
-	bl Func_08022f64
+	bl Map_RenderAnimatedTileFrame
 	adds r1, r6, #2
 	adds r0, r5, #0
-	bl Func_08022f64
+	bl Map_RenderAnimatedTileFrame
 	adds r1, r6, #3
 	adds r0, r5, #0
-	bl Func_08022f64
+	bl Map_RenderAnimatedTileFrame
 	adds r6, #4
 	movs r0, #1
 	bl WaitFrames

@@ -6,7 +6,7 @@ Func_08046260:
 	push {r5, lr}
 	adds r5, r0, #0
 	adds r0, r1, #0
-	bl Func_08014a24
+	bl Text_FormatSignedDecimalToWork
 	ldr r1, .L_08046280
 	movs r2, #13
 .L_0804626e:
@@ -20,4 +20,4 @@ Func_08046260:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_08046280:
-	.4byte Data_03001250
+	.4byte gNumberTextBuffer

@@ -8,13 +8,13 @@ Func_080e2d40:
 	lsls r3, r3, #18
 	ldr r5, [r3, #92]
 	ldr r0, .L_080e2d60
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r3, #216
 	lsls r3, r3, #5
 	adds r5, r5, r3
 	movs r3, #0
 	ldrsh r0, [r5, r3]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080e2d60:

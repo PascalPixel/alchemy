@@ -15,7 +15,7 @@ UiText_DrawNumberAtOffset:
 	adds r6, r2, #0
 	mov r0, sp
 	adds r2, r5, #0
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	adds r1, r6, #0
 	mov r2, r8
 	adds r3, r7, #0

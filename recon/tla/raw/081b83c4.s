@@ -756,7 +756,7 @@ Func_081b83c4:
 	bl UiText_DrawNumberInWindowFar
 	ldr r1, [sp, #92]
 	negs r0, r1
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	movs r4, #128
 	ldr r2, [sp, #120]
 	lsls r4, r4, #3
@@ -956,7 +956,7 @@ Func_081b83c4:
 	bl UiText_DrawNumberInWindowFar
 	ldr r2, [sp, #92]
 	negs r0, r2
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	ldr r0, [r5, #16]
 	ldr r4, [sp, #120]
 	movs r5, #128
@@ -1961,7 +1961,7 @@ Func_081b83c4:
 	movs r0, #105
 	bl Audio_PlayCue
 	ldr r0, [sp, #76]
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	ldr r3, .L_081b9510
 	ldr r1, [sp, #120]
 	movs r2, #128
@@ -1990,7 +1990,7 @@ Func_081b83c4:
 	bl Audio_PlayCue
 .L_081b9388:
 	movs r0, #1
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	ldr r3, .L_081b9510
 	ldr r6, [sp, #120]
 	movs r1, #128

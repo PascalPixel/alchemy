@@ -55,9 +55,9 @@ Func_080e2c38:
 	ldr r3, [r5, #8]
 	str r3, [r6, #8]
 	ldr r1, [r5, #12]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [r6]
 	adds r0, r7, #0
 	str r3, [r7, #12]

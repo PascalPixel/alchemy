@@ -171,7 +171,7 @@ Func_081811d4:
 	lsls r1, r1, #4
 	ldr r0, .L_081813a8
 	str r5, [sp, #44]
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #172
 	lsls r2, r2, #15
 	ldr r1, [sp, #52]
@@ -949,7 +949,7 @@ Func_081811d4:
 	adds r3, #2
 	strh r2, [r3]
 	ldr r0, .L_08181900
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

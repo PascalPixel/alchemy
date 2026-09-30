@@ -376,16 +376,16 @@ Func_080e4a34:
 	movs r1, #144
 	ldr r0, .L_080e4d98
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_080e4d46:
 	movs r1, #0
 	movs r2, #16
 	mov r0, r8
 	bl Func_080dc164
 	ldr r0, [sp, #36]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, [sp, #32]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	bl BattleFx_PrepareBufferInterpolation
 .L_080e4d60:
 	movs r0, #92

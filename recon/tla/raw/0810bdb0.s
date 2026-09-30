@@ -31,7 +31,7 @@ Func_0810bdb0:
 	beq .L_0810bdea
 	adds r0, r6, #0
 	movs r1, #240
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 .L_0810bdea:
 	subs r7, #1
 	adds r6, #12

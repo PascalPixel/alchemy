@@ -11,7 +11,7 @@ Func_08043b34:
 	adds r3, #220
 	ldr r0, .L_08043b6c
 	ldr r7, [r3]
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r3, #0
 	mov r8, r3
 	movs r5, #248
@@ -20,7 +20,7 @@ Func_08043b34:
 	ldr r0, [r5, r7]
 	cmp r0, #0
 	beq .L_08043b5e
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	mov r3, r8
 	str r3, [r5, r7]
 .L_08043b5e:

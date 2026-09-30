@@ -98,7 +98,7 @@ Func_08143840:
 	str r2, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_08143960
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]

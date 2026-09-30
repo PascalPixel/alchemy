@@ -13,9 +13,9 @@ UiText_DrawNumberAtOffsetFar:
 	.thumb_func
 UiText_DrawNumberInWindowFar:
 	overlay_veneer UiText_DrawNumberInWindow
-	.global Func_080380b8
+	.global UiWork_SetParamNibbleFar
 	.thumb_func
-Func_080380b8:
+UiWork_SetParamNibbleFar:
 	overlay_veneer Func_08041f70
 	.global Func_080380c0
 	.thumb_func

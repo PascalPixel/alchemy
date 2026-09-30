@@ -18,7 +18,7 @@ BattleParty_PrepareActiveOwners:
 	beq .L_0811a054
 	movs r6, #3
 .L_0811a054:
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	adds r7, r0, #0
 	cmp r7, r6
 	ble .L_0811a060

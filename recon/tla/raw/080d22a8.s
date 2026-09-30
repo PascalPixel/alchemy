@@ -62,7 +62,7 @@ Func_080d22a8:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_080d2348
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #153
 	lsls r0, r0, #1
 	bl GameFlag_ClearBit

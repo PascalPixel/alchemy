@@ -35,7 +35,7 @@ Func_08175f74:
 	movs r5, #240
 	ldr r2, [r2, #36]
 	str r2, [sp, #68]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	bl Func_0813ba50
 	ldr r3, .L_08175ff8
 	movs r2, #128
@@ -58,7 +58,7 @@ Func_08175f74:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_08176008
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #1
 	movs r1, #0
 	bl Func_08163c2c
@@ -1291,7 +1291,7 @@ Func_08175f74:
 	adds r6, #220
 	adds r5, r4, r6
 	ldr r0, [r5]
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	ldr r0, .L_08176b8c
 	bl Resource_GetTableEntry
 	movs r1, #192
@@ -1810,7 +1810,7 @@ Func_08175f74:
 	bl Func_08015160
 	movs r0, #224
 	lsls r0, r0, #8
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r0, #128
 	lsls r3, r7, #8
 	lsls r0, r0, #7
@@ -1880,7 +1880,7 @@ Func_08175f74:
 	bl Func_080151e4
 	movs r0, #192
 	lsls r0, r0, #8
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	negs r0, r7
 	lsls r0, r0, #10
 	bl Func_08015068
@@ -2352,7 +2352,7 @@ Func_08175f74:
 .L_08177190:
 	movs r0, #128
 	lsls r0, r0, #4
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r0, .L_08177334
 	mov r1, r11
 	movs r2, #4
@@ -3173,7 +3173,7 @@ Func_08175f74:
 	bl Func_080151e4
 	movs r0, #128
 	lsls r0, r0, #6
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r6, [sp, #80]
 	cmp r6, #55
 	ble .L_081777ca
@@ -3218,7 +3218,7 @@ Func_08175f74:
 	bl Func_0801521c
 	movs r0, #128
 	lsls r0, r0, #6
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r5, [sp, #80]
 	negs r0, r5
 	lsls r0, r0, #9
@@ -3261,7 +3261,7 @@ Func_08175f74:
 	bl Func_0801521c
 	movs r0, #128
 	lsls r0, r0, #6
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r1, [sp, #80]
 	lsls r0, r1, #10
 	bl Func_08015068
@@ -3285,7 +3285,7 @@ Func_08175f74:
 	bl Func_0801521c
 	movs r0, #128
 	lsls r0, r0, #6
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r6, [sp, #80]
 	negs r0, r6
 	lsls r0, r0, #10
@@ -3353,7 +3353,7 @@ Func_08175f74:
 	adds r2, #220
 	adds r3, r1, r2
 	ldr r0, [r3]
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	b .L_081779aa
 .L_08177950:
 	.4byte 0x20202020
@@ -3397,7 +3397,7 @@ Func_08175f74:
 	movs r7, #1
 	ldmia r5!, {r0}
 	add r9, r7
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	mov r0, r9
 	cmp r0, #14
 	bne .L_0817799a
@@ -3407,7 +3407,7 @@ Func_08175f74:
 	mov r9, r1
 .L_081779b0:
 	ldmia r5!, {r0}
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	movs r2, #1
 	add r9, r2
 	mov r3, r9
@@ -4966,7 +4966,7 @@ Func_08175f74:
 	bl Func_080151e4
 	movs r0, #192
 	lsls r0, r0, #8
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r0, .L_08178678
 	mov r1, r8
 	movs r2, #4
@@ -5021,7 +5021,7 @@ Func_08175f74:
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0817867c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #324
 	pop {r3, r5, r6, r7}

@@ -88,7 +88,7 @@ Func_081053a8:
 	strb r3, [r2]
 	adds r1, #138
 	ldr r0, .L_08105464
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	pop {r3, r5, r6, r7}
 	mov r8, r3
 	mov r9, r5

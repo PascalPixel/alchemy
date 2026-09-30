@@ -2062,7 +2062,7 @@ Func_081848ec:
 	movs r0, #146
 	lsls r0, r0, #7
 	adds r0, #80
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r4, r11
 	negs r5, r4
 	lsls r5, r5, #10
@@ -2134,7 +2134,7 @@ Func_081848ec:
 	lsls r0, r0, #7
 .L_08185932:
 	negs r0, r0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 .L_08185938:
 	ldr r1, [sp, #112]
 	movs r2, #4
@@ -2466,7 +2466,7 @@ Func_08185b9c:
 	adds r5, r7, r0
 .L_08185bd6:
 	ldmia r5!, {r0}
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	movs r1, #1
 	add r9, r1
 	mov r2, r9
@@ -3103,7 +3103,7 @@ Func_08185b9c:
 	movs r0, #146
 	lsls r0, r0, #7
 	adds r0, #80
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r2, r11
 	lsls r5, r2, #9
 	adds r0, r5, #0
@@ -3168,7 +3168,7 @@ Func_08185b9c:
 	movs r0, #0
 .L_0818616a:
 	negs r0, r0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r2, #4
 	ldr r1, [sp, #76]
 	ldr r0, .L_08186228
@@ -4694,7 +4694,7 @@ Func_08185b9c:
 	movs r3, #0
 	str r3, [r7, #16]
 	ldr r0, .L_08186df8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl Func_08143bb8

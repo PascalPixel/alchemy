@@ -16,7 +16,7 @@ Func_080f8030:
 	.global Func_080f8038
 	.thumb_func
 Func_080f8038:
-	overlay_veneer Func_080fb8ac
+	overlay_veneer ItemMenu_DrawItemDetails
 	.global Func_080f8040
 	.thumb_func
 Func_080f8040:
@@ -24,8 +24,8 @@ Func_080f8040:
 	.global Func_080f8048
 	.thumb_func
 Func_080f8048:
-	overlay_veneer Func_080f92ac
+	overlay_veneer Palette_CopyObjectBankToBackground14
 	.global Func_080f8050
 	.thumb_func
 Func_080f8050:
-	overlay_veneer Func_08104da8
+	overlay_veneer Menu_UpdateEntryObjectTransforms

@@ -106,7 +106,7 @@ Func_0811edb0:
 	movs r1, #144
 	ldr r0, .L_0811f028
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, [r5]
 	cmp r3, #0
 	beq .L_0811eeee

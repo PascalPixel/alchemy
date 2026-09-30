@@ -10,7 +10,7 @@ Func_080f9464:
 	cmp r0, #0
 	bne .L_080f9478
 	ldr r0, .L_080f947c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_080f9478:
 	pop {pc}
 	.2byte 0x0000

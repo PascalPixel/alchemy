@@ -45,4 +45,4 @@ Func_080aff28:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080aff78:
-	.4byte Data_080c14ec
+	.4byte Summon_OrderList

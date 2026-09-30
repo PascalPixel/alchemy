@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0801489c
+	.global Vector_AddPolarOffset
 	.thumb_func
-Func_0801489c:
+Vector_AddPolarOffset:
 	push {r5, r6, lr}
 	mov r6, r10
 	mov r5, r8

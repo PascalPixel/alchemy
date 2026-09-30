@@ -37,7 +37,7 @@ Func_080e45a8:
 	adds r2, r6, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	b .L_080e4604
 .L_080e45f4:
 	bl Random16
@@ -45,7 +45,7 @@ Func_080e45a8:
 	movs r0, #128
 	lsls r0, r0, #11
 	adds r2, r6, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 .L_080e4604:
 	ldr r3, [r6]
 	mov r1, r8
@@ -66,7 +66,7 @@ Func_080e45a8:
 	lsls r0, r0, #6
 	adds r0, #51
 	adds r2, r6, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	b .L_080e4644
 .L_080e4632:
 	bl Random16
@@ -75,7 +75,7 @@ Func_080e45a8:
 	lsls r0, r0, #8
 	adds r0, #204
 	adds r2, r6, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 .L_080e4644:
 	ldr r3, [r6]
 	mov r1, r8

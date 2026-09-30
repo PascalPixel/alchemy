@@ -25,9 +25,9 @@ Item_IsCompatibleWithOwnerFar:
 	.thumb_func
 Inventory_FindEquippedFar:
 	overlay_veneer Inventory_FindEquipped
-	.global Func_080ad1d8
+	.global Party_AdjustSixDigitCounterAFar
 	.thumb_func
-Func_080ad1d8:
+Party_AdjustSixDigitCounterAFar:
 	overlay_veneer Func_080afeb0
 	.global Item_GetEquipmentGroupFar
 	.thumb_func

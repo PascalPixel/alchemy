@@ -397,7 +397,7 @@ Func_0811df70:
 	movs r1, #144
 	ldr r0, .L_0811e28c
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r2, r10
 	ldr r0, [r2, #88]
 	movs r3, #128
@@ -406,7 +406,7 @@ Func_0811df70:
 	cmp r3, #0
 	beq .L_0811e27a
 	mov r0, r8
-	bl Func_08138010
+	bl BattleFx_InitializeModeFar
 	b .L_0811e296
 .L_0811e27a:
 	movs r3, #128

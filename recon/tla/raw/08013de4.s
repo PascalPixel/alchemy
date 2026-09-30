@@ -20,11 +20,11 @@ Func_08013de4:
 .L_08013e00:
 	.4byte 0x00000080
 .L_08013e04:
-	.4byte Data_03001178
+	.4byte gBlendDuration
 .L_08013e08:
-	.4byte Data_030011dc
+	.4byte gBlendBrighten
 .L_08013e0c:
-	.4byte Data_030011f4
+	.4byte gBlendLayers
 .L_08013e10:
 	ldr r3, .L_08013e54
 	ldrh r2, [r3]
@@ -61,15 +61,15 @@ Func_08013de4:
 .L_08013e50:
 	.4byte 0x000000c0
 .L_08013e54:
-	.4byte Data_030011f4
+	.4byte gBlendLayers
 .L_08013e58:
-	.4byte Data_0300110c
+	.4byte gBlendFramesLeft
 .L_08013e5c:
-	.4byte Data_030011b0
+	.4byte gBlendTargetLevel
 .L_08013e60:
-	.4byte Data_0300113c
+	.4byte gBlendStartLevel
 .L_08013e64:
-	.4byte Data_03001178
+	.4byte gBlendDuration
 .L_08013e68:
 	cmp r3, #0
 	bne .L_08013e6e

@@ -125,7 +125,7 @@ Func_081263fc:
 	lsls r1, r1, #4
 	ldr r0, .L_08126544
 	adds r1, #255
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_081264fc:
 	mov r3, r11
 	mov r2, r9

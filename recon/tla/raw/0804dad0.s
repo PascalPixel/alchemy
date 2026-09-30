@@ -74,6 +74,6 @@ Func_0804dad0:
 .L_0804db68:
 	.4byte 0x00000e58
 .L_0804db6c:
-	.4byte Data_0805f8d8
+	.4byte Menu_ColonString
 .L_0804db70:
 	.4byte 0x00000eba

@@ -9,10 +9,10 @@
 	.thumb_func
 Func_080c8588:
 	overlay_veneer Func_080ebc30
-	.global Func_080c8590
+	.global BattleFx_HasReachedTargetFar
 	.thumb_func
-Func_080c8590:
-	overlay_veneer Func_080ebe70
+BattleFx_HasReachedTargetFar:
+	overlay_veneer BattleFx_HasReachedTarget
 	.global EffectSlot_SetPositionFar
 	.thumb_func
 EffectSlot_SetPositionFar:
@@ -29,7 +29,7 @@ Func_080c85a8:
 	.thumb_func
 Func_080c85b0:
 	overlay_veneer Func_080ebec8
-	.global Func_080c85b8
+	.global BattleFx_ClearOwnedSlotFar
 	.thumb_func
-Func_080c85b8:
-	overlay_veneer Func_080ebf68
+BattleFx_ClearOwnedSlotFar:
+	overlay_veneer BattleFx_ClearOwnedSlot

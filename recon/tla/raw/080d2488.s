@@ -72,7 +72,7 @@ Party_RemoveOwnerRestored:
 	movs r3, #0
 	strb r3, [r2]
 	mov r8, r3
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r8, r0
 	bge .L_080d2542
 	ldr r3, .L_080d25c4

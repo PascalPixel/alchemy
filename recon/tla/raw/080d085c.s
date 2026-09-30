@@ -28,7 +28,7 @@ Func_080d085c:
 	movs r3, #0
 	strb r3, [r4]
 	ldr r0, .L_080d0930
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0

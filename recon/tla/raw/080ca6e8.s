@@ -196,7 +196,7 @@ Func_080ca6e8:
 	ldrb r0, [r7, #16]
 	orrs r3, r1
 	strb r3, [r7, #17]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	strb r5, [r7, #16]
 	b .L_080ca892
 .L_080ca870:

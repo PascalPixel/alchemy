@@ -38,7 +38,7 @@ Func_0803a60c:
 	movs r2, #0
 	movs r3, #0
 	str r6, [sp, #0]
-	bl Func_0803954c
+	bl UiText_QueueRenderEntries
 	adds r6, r0, #0
 	movs r0, #0
 	cmp r6, #0

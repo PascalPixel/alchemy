@@ -176,7 +176,7 @@ Func_0810b9c0:
 	bl UiWork_IsCompleteFar
 	cmp r0, #0
 	beq .L_0810bb1c
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	b .L_0810ba26
 .L_0810bb30:
 	ldr r6, [r4, #4]

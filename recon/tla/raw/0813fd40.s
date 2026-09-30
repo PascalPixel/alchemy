@@ -5,11 +5,11 @@
 Func_0813fd40:
 	push {lr}
 	ldr r0, .L_0813fd70
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_0813fd74
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_0813fd78
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r1, #128
 	ldr r3, .L_0813fd7c
 	lsls r1, r1, #7

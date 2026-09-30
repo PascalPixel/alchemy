@@ -88,7 +88,7 @@ Func_080f9644:
 	mov r1, r9
 	ldr r0, [r1, #48]
 	bl RenderOutput_RedrawSavedRectFar
-	bl Func_080fa458
+	bl ItemMenu_HideAllIcons
 	bl .L_080fa276
 .L_080f9718:
 	movs r3, #128
@@ -235,7 +235,7 @@ Func_080f9644:
 	bl Owner_GetState
 	movs r2, #0
 	adds r1, r5, #0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r3, #133
 	lsls r3, r3, #2
 	add r3, r9
@@ -303,7 +303,7 @@ Func_080f9644:
 .L_080f98c8:
 	mov r5, r9
 	adds r5, #240
-	bl Func_080fa458
+	bl ItemMenu_HideAllIcons
 	bl Func_080fbddc
 	bl Func_080fbd9c
 	ldr r0, [r5]
@@ -381,7 +381,7 @@ Func_080f9644:
 	bl Owner_GetState
 	movs r2, #0
 	adds r1, r5, #0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r3, #133
 	lsls r3, r3, #2
 	add r3, r9
@@ -452,7 +452,7 @@ Func_080f9644:
 	movs r5, #182
 	lsls r5, r5, #1
 	add r5, r9
-	bl Func_080fa458
+	bl ItemMenu_HideAllIcons
 	ldrh r3, [r5]
 	movs r0, #128
 	lsls r0, r0, #1
@@ -1306,7 +1306,7 @@ Func_080f9644:
 	bl Owner_GetState
 	movs r2, #0
 	adds r1, r5, #0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r3, #133
 	lsls r3, r3, #2
 	add r3, r9
@@ -1389,7 +1389,7 @@ Func_080f9644:
 	bl Owner_GetState
 	movs r2, #0
 	adds r1, r5, #0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r3, #133
 	lsls r3, r3, #2
 	add r3, r9

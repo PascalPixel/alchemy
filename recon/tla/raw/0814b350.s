@@ -22,7 +22,7 @@ Func_0814b350:
 	str r1, [sp, #64]
 	ldr r3, [r3, #100]
 	str r3, [sp, #56]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r2, [sp, #68]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -115,7 +115,7 @@ Func_0814b350:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814b5a0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r5, r9
 	ldr r3, [r5, #8]
 	add r2, sp, #156
@@ -205,7 +205,7 @@ Func_0814b350:
 	str r3, [r6, #8]
 .L_0814b4fe:
 	mov r0, r11
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	mov r0, r9
 	cmp r0, #0
 	bne .L_0814b520
@@ -273,7 +273,7 @@ Func_0814b350:
 	b .L_0814b5b0
 .L_0814b584:
 	adds r0, r7, #0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	b .L_0814b5b0
 .L_0814b58c:
 	adds r0, r7, #0
@@ -289,7 +289,7 @@ Func_0814b350:
 	.4byte Func_08143000
 .L_0814b5a4:
 	adds r0, r7, #0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r7, #0
 	bl Func_080150e4
 .L_0814b5b0:
@@ -586,7 +586,7 @@ Func_0814b350:
 	mov r0, r11
 	ldr r3, [r5, #16]
 	str r3, [r1, #8]
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	mov r3, r8
 	adds r3, #30
 	cmp r9, r3
@@ -778,7 +778,7 @@ Func_0814b350:
 	b .L_0814b73a
 .L_0814b982:
 	ldr r0, .L_0814b9b4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

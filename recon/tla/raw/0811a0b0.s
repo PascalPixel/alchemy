@@ -8,7 +8,7 @@ Func_0811a0b0:
 	push {r7}
 	sub sp, #4
 	adds r6, r0, #0
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	adds r7, r0, #0
 	cmp r7, #4
 	ble .L_0811a0c8

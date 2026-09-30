@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08104da8
+	.global Menu_UpdateEntryObjectTransforms
 	.thumb_func
-Func_08104da8:
+Menu_UpdateEntryObjectTransforms:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

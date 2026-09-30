@@ -38,7 +38,7 @@
 	overlay_veneer Animation_SetStateFlagsFar
 	overlay_veneer Func_08020228
 	overlay_veneer Func_08020230
-	overlay_veneer Func_080202d8
+	overlay_veneer Map_EnableUpdateCallbackFar
 	overlay_veneer Map_DisableUpdateCallbackFar
 	overlay_veneer Func_080202f8
 	overlay_veneer Func_08020360
@@ -78,8 +78,8 @@
 	overlay_veneer Func_080c8378
 	overlay_veneer Func_080c8380
 	overlay_veneer Func_080c8390
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c8540
 	overlay_veneer Func_080c8570

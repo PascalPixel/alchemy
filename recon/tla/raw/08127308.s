@@ -40,21 +40,21 @@ Func_08127308:
 	lsls r1, r1, #6
 	lsls r0, r0, #19
 	adds r1, #65
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r0, #128
 	movs r1, #224
 	lsls r0, r0, #19
 	lsls r1, r1, #3
 	adds r0, #12
 	adds r1, #132
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r0, #128
 	movs r1, #252
 	lsls r0, r0, #19
 	lsls r1, r1, #6
 	adds r1, #68
 	adds r0, #80
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #240
@@ -81,7 +81,7 @@ Func_08127308:
 	lsls r1, r1, #5
 	adds r1, #14
 	adds r0, #82
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	mov r0, r11
 	bl Func_08127068
 	movs r3, #192

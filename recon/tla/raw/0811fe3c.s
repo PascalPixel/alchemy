@@ -99,6 +99,6 @@ Func_0811fe3c:
 	bl GetBattleObjectSlot
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0811b4d8
+	bl BattleUnit_BuildStatusFlags
 	pop {r5, pc}
 	.2byte 0x0000

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803c378
+	.global UiWindow_SetTilemapEntry
 	.thumb_func
-Func_0803c378:
+UiWindow_SetTilemapEntry:
 	push {r5, r6, r7, lr}
 	adds r4, r3, #0
 	movs r3, #192

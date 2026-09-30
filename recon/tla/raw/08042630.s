@@ -18,7 +18,7 @@ Func_08042630:
 	movs r7, #3
 	b .L_08042658
 .L_0804264e:
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r0, #4
 	bls .L_08042658
 	movs r0, #4

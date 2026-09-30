@@ -5,17 +5,17 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c83a8
+	.global Event_SetStatus1c6Far
 	.thumb_func
-Func_080c83a8:
+Event_SetStatus1c6Far:
 	overlay_veneer Func_080d2a3c
-	.global Func_080c83b0
+	.global Event_ClearStatus1c6Far
 	.thumb_func
-Func_080c83b0:
+Event_ClearStatus1c6Far:
 	overlay_veneer Func_080d2a64
-	.global Func_080c83b8
+	.global Event_WaitValue1c8FramesFar
 	.thumb_func
-Func_080c83b8:
+Event_WaitValue1c8FramesFar:
 	overlay_veneer Func_080d2a8c
 	.global Func_080c83c0
 	.thumb_func

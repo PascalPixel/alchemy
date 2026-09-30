@@ -81,7 +81,7 @@ Func_080e92b4:
 	str r3, [r2, #8]
 	ldr r2, [sp, #80]
 	adds r2, #4
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 .L_080e9356:
 	movs r1, #0
 	ldr r0, [sp, #76]
@@ -317,7 +317,7 @@ Func_080e92b4:
 	adds r0, r2, r0
 	adds r1, r7, #0
 	adds r2, r6, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	b .L_080e955a
 .L_080e9538:
 	.4byte 0x000001f1
@@ -334,7 +334,7 @@ Func_080e92b4:
 	subs r0, r3, r0
 	adds r1, r7, #0
 	adds r2, r6, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 .L_080e955a:
 	ldr r0, [sp, #44]
 	adds r0, #1
@@ -642,7 +642,7 @@ Func_080e92b4:
 	bl Func_080e8c9c
 	bl BattleFx_PrepareBufferInterpolation
 	ldr r0, [sp, #72]
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_080e97a6:
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock

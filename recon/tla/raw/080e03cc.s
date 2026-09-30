@@ -48,7 +48,7 @@ Func_080e03cc:
 	mov r9, r2
 	str r3, [r2, #8]
 	ldrh r1, [r5]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	b .L_080e0444
 .L_080e042c:
 	add r3, sp, #4
@@ -76,7 +76,7 @@ Func_080e03cc:
 	str r3, [r0, #8]
 	movs r0, #139
 	lsls r0, r0, #1
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080e0468

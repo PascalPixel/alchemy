@@ -49,7 +49,7 @@ Func_080d1684:
 	lsls r1, r1, #2
 	adds r1, #255
 	ldr r0, .L_080d16f4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {pc}
 .L_080d16ec:

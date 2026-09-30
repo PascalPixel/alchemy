@@ -25,7 +25,7 @@ Func_081661dc:
 	str r2, [sp, #28]
 	ldr r3, [r3, #48]
 	str r3, [sp, #24]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, [sp, #40]
 	movs r2, #224
 	lsls r2, r2, #3
@@ -50,7 +50,7 @@ Func_081661dc:
 	ldr r0, [r3, #8]
 	movs r2, #4
 	movs r3, #0
-	bl Func_08118078
+	bl BattleMotion_ApproachTargetFar
 	movs r0, #1
 	bl WaitFrames
 	mov r1, r9
@@ -115,7 +115,7 @@ Func_081661dc:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0816658c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r0, [sp, #40]
 	movs r1, #239
 	lsls r1, r1, #7
@@ -443,7 +443,7 @@ Func_081661dc:
 	b .L_08166300
 .L_08166562:
 	ldr r0, .L_0816658c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #88
 	pop {r3, r5, r6, r7}

@@ -14,8 +14,8 @@ Func_081004b8:
 	adds r6, r0, #0
 	mov r10, r2
 	mov r8, r3
-	bl Func_08100700
-	bl Func_080fa458
+	bl ItemMenu_PosCategory
+	bl ItemMenu_HideAllIcons
 	ldr r5, .L_0810053c
 	adds r1, r6, #0
 	adds r0, r5, #0

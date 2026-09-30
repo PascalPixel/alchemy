@@ -197,7 +197,7 @@ Func_08125d74:
 	strh r3, [r2]
 	lsls r0, r0, #19
 	adds r1, #65
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	b .L_08125f10
 	.2byte 0x0000
 .L_08125efc:
@@ -222,11 +222,11 @@ Func_08125d74:
 	str r2, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_08125fb0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_08125fb4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r2, .L_08125fb8
 	movs r1, #32
 	movs r0, #2
@@ -269,9 +269,9 @@ Func_08125d74:
 	bl Func_08118bcc
 .L_08125f92:
 	ldr r0, .L_08125fb0
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_08125fb4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r2, .L_08125fbc
 	movs r3, #0
 	strh r3, [r2, #2]

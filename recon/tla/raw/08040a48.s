@@ -137,7 +137,7 @@ Func_08040a48:
 	bne .L_08040b6e
 	mov r1, r11
 	ldr r0, [r1, #12]
-	bl Func_08013b30
+	bl Sound_LoadPresetParameters
 	b .L_08040b7a
 .L_08040b6e:
 	mov r2, r8

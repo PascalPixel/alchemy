@@ -77,9 +77,9 @@ Engine_ActorSetAnimation:
 	overlay_veneer Func_080c8238
 	overlay_veneer Func_080c8240
 	overlay_veneer Func_080c8278
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c8498
 	overlay_veneer Func_080c84a0
 	overlay_veneer Func_080c84a8

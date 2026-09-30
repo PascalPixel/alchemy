@@ -35,7 +35,7 @@ Func_08039ed0:
 	cmp r3, #0
 	beq .L_08039f82
 	adds r0, r5, #0
-	bl Func_080391c4
+	bl UiWork_DrawByAttributes
 	b .L_08039f82
 .L_08039f14:
 	movs r3, #26

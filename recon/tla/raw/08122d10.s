@@ -225,7 +225,7 @@ Func_08122d10:
 	str r3, [r2]
 	b .L_08122ff0
 .L_08122ed2:
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	b .L_08122ff0
 .L_08122ed8:
 	lsls r3, r6, #2
@@ -342,7 +342,7 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	adds r1, r0, #0
 	ldr r0, [r7, r5]
-	bl Func_0811b4d8
+	bl BattleUnit_BuildStatusFlags
 	ldr r0, [r7, r5]
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
@@ -358,7 +358,7 @@ Func_08122d10:
 	lsls r3, r6, #2
 	adds r3, #64
 	ldr r0, [r7, r3]
-	bl Func_0811f3b8
+	bl BattleActor_RemoveFromLists
 .L_08122ff0:
 	movs r0, #166
 	lsls r0, r0, #1
@@ -476,7 +476,7 @@ Func_08122d10:
 	movs r5, #128
 	lsls r5, r5, #19
 	adds r5, #74
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	adds r0, r5, #0
 	movs r1, #4
 	bl Func_08013d0c
@@ -604,7 +604,7 @@ Func_08122d10:
 .L_081231c6:
 	mov r0, r9
 	movs r1, #240
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	b .L_08123494
 .L_081231d0:
 	cmp r3, #10
@@ -839,7 +839,7 @@ Func_08122d10:
 	lsls r2, r2, #1
 	adds r3, r7, r2
 	ldr r0, [r3]
-	bl Func_0811f3b8
+	bl BattleActor_RemoveFromLists
 	ldr r3, [r5]
 	b .L_08123490
 .L_081233a0:
@@ -898,7 +898,7 @@ Func_08122d10:
 	lsls r4, r4, #1
 	adds r3, r7, r4
 	ldr r0, [r3]
-	bl Func_0811bc64
+	bl ActivateBattleObjectSlot
 	movs r0, #164
 	lsls r0, r0, #1
 	movs r1, #168

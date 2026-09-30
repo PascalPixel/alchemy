@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811c650
+	.global BattleObject_IsValidId
 	.thumb_func
-Func_0811c650:
+BattleObject_IsValidId:
 	push {lr}
 	cmp r0, #7
 	bhi .L_0811c65a

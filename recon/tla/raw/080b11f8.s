@@ -28,7 +28,7 @@ Func_080b11f8:
 	cmp r2, #0
 	bge .L_080b1218
 	adds r0, r6, #0
-	bl Func_080b0298
+	bl Owner_RefreshDerivedData
 	adds r0, r6, #0
 	adds r6, #1
 	bl Owner_RecalculateStats

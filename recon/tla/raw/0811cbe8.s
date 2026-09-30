@@ -38,14 +38,14 @@ Func_0811cbe8:
 	bl Object_SetMode
 	movs r0, #0
 	bl UiWindow_DrawPartyStatusContentsFar
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	cmp r5, #7
 	bhi .L_0811cc5e
 	mov r2, r8
 	cmp r2, #0
 	beq .L_0811cc46
 	ldr r0, .L_0811ccd8
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_0811cc46:
 	adds r0, r7, #0
 	movs r1, #5
@@ -54,14 +54,14 @@ Func_0811cbe8:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_0811ccdc
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_0811cc88
 .L_0811cc5e:
 	mov r3, r8
 	cmp r3, #0
 	beq .L_0811cc6a
 	ldr r0, .L_0811cce0
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_0811cc6a:
 	adds r0, r7, #0
 	movs r1, #5
@@ -70,7 +70,7 @@ Func_0811cbe8:
 	adds r0, r5, #0
 	bl UiText_DrawQuantity
 	ldr r0, .L_0811cce4
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	adds r0, r5, #0
 	movs r1, #1
 	bl UiText_DrawQuantity
@@ -87,7 +87,7 @@ Func_0811cbe8:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_0811cce8
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_0811ccc0
 .L_0811ccaa:
 	movs r2, #56
@@ -98,7 +98,7 @@ Func_0811cbe8:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_0811ccec
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_0811ccc0:
 	adds r0, r5, #0
 	bl GetBattleObjectSlot

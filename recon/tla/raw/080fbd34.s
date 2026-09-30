@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080fbd34
+	.global ItemMenu_DrawStat
 	.thumb_func
-Func_080fbd34:
+ItemMenu_DrawStat:
 	push {r5, r6, r7, lr}
 	sub sp, #4
 	adds r6, r3, #0
@@ -55,6 +55,6 @@ Func_080fbd34:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080fbd94:
-	.4byte Data_0810596c
+	.4byte Menu_PlusSignString
 .L_080fbd98:
-	.4byte Data_08105970
+	.4byte Menu_MinusSignString

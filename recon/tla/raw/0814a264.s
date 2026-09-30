@@ -21,7 +21,7 @@ Func_0814a264:
 	str r1, [sp, #40]
 	ldr r3, [r3, #100]
 	str r3, [sp, #28]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, .L_0814a2c8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -160,7 +160,7 @@ Func_0814a264:
 	lsls r1, r1, #4
 	str r3, [r2]
 	ldr r0, .L_0814a5e4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #0
 	str r1, [sp, #36]
 .L_0814a3ac:
@@ -661,7 +661,7 @@ Func_0814a264:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0814a7a4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #72
 	pop {r3, r5, r6, r7}

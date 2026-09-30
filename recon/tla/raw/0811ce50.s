@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811ce50
+	.global BattleUnit_ClearField12bForGroup
 	.thumb_func
-Func_0811ce50:
+BattleUnit_ClearField12bForGroup:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

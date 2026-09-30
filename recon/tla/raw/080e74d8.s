@@ -87,7 +87,7 @@ Func_080e74d8:
 	movs r2, #0
 	lsls r1, r1, #7
 	mov r0, r9
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl WaitFrames
 	movs r1, #28
@@ -114,7 +114,7 @@ Func_080e74d8:
 .L_080e75d4:
 	.4byte 0x000001ef
 .L_080e75d8:
-	.4byte Func_080db91c
+	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080e75dc:
 	ldrh r3, [r7, #6]
 	movs r0, #1
@@ -169,7 +169,7 @@ Func_080e74d8:
 	adds r2, r5, #0
 	lsls r0, r0, #3
 	mov r1, r8
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r2, #1
 	mov r3, r11
 	ands r2, r3
@@ -190,7 +190,7 @@ Func_080e74d8:
 	adds r0, r0, r2
 	mov r1, r8
 	adds r2, r6, r3
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	b .L_080e76a2
 .L_080e767e:
 	movs r3, #160
@@ -208,7 +208,7 @@ Func_080e74d8:
 	adds r0, r0, r1
 	adds r2, r6, r3
 	mov r1, r8
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 .L_080e76a2:
 	movs r1, #1
 	add r11, r1
@@ -379,7 +379,7 @@ Func_080e74d8:
 	b .L_080e7604
 .L_080e77e0:
 	ldr r0, [sp, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	add sp, #24

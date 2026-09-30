@@ -182,7 +182,7 @@ Func_080464dc:
 	movs r2, #5
 	movs r3, #1
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r1, [sp, #52]
 	ldr r0, [sp, #48]
 	movs r2, #58
@@ -194,7 +194,7 @@ Func_080464dc:
 	adds r0, r5, #0
 	movs r2, #5
 	movs r3, #2
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r3, [sp, #52]
 	ldr r0, [sp, #48]
 	ldrh r3, [r3, #60]
@@ -206,7 +206,7 @@ Func_080464dc:
 	movs r2, #5
 	movs r3, #3
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r1, [sp, #52]
 	ldr r0, [sp, #48]
 	ldrh r1, [r1, #62]
@@ -219,7 +219,7 @@ Func_080464dc:
 	movs r3, #4
 	movs r2, #6
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r3, [sp, #52]
 	ldr r0, [sp, #48]
 	adds r3, #64
@@ -232,7 +232,7 @@ Func_080464dc:
 	movs r2, #6
 	movs r3, #5
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r3, [sp, #52]
 	ldr r0, [sp, #48]
 	adds r3, #66
@@ -243,7 +243,7 @@ Func_080464dc:
 	movs r2, #6
 	movs r3, #6
 	adds r0, r5, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	mov r1, r10
 	movs r3, #8
 	ldr r0, [r1]
@@ -332,7 +332,7 @@ Func_080464dc:
 	str r3, [sp, #0]
 	movs r2, #15
 	mov r3, r9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 .L_0804679a:
 	ldrb r3, [r5, #8]
 	cmp r3, #255
@@ -407,7 +407,7 @@ Func_080464dc:
 	str r2, [sp, #0]
 	adds r1, #31
 	movs r2, #11
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r1, #240
 	movs r3, #0
 	lsls r1, r1, #8
@@ -416,7 +416,7 @@ Func_080464dc:
 	str r3, [sp, #0]
 	movs r2, #12
 	mov r3, r9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrh r0, [r6]
 	bl BattleAction_Get
 	mov r4, r11
@@ -542,7 +542,7 @@ Func_080464dc:
 	str r2, [sp, #0]
 	movs r3, #0
 	movs r2, #9
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	b .L_08046968
 .L_08046952:
 	movs r1, #247
@@ -554,7 +554,7 @@ Func_080464dc:
 	movs r2, #9
 	movs r3, #0
 	str r4, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 .L_08046968:
 	ldr r3, [sp, #56]
 	ldr r0, [sp, #48]
@@ -568,7 +568,7 @@ Func_080464dc:
 	movs r2, #11
 	movs r3, #1
 	adds r0, r6, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r2, [sp, #56]
 	ldr r4, [sp, #44]
 	movs r1, #56
@@ -596,7 +596,7 @@ Func_080464dc:
 	movs r2, #11
 	movs r3, #2
 	adds r0, r6, #0
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r2, [sp, #56]
 	ldr r4, [sp, #40]
 	movs r1, #58
@@ -623,7 +623,7 @@ Func_080464dc:
 	adds r0, r6, #0
 	movs r3, #3
 	movs r2, #11
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r4, [sp, #56]
 	ldr r1, [sp, #36]
 	ldrh r3, [r4, #60]
@@ -649,7 +649,7 @@ Func_080464dc:
 	movs r3, #4
 	adds r0, r6, #0
 	movs r2, #11
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r4, [sp, #56]
 	ldr r1, [sp, #32]
 	ldrh r3, [r4, #62]
@@ -676,7 +676,7 @@ Func_080464dc:
 	movs r3, #5
 	adds r0, r6, #0
 	movs r2, #11
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldrh r3, [r5]
 	ldr r1, [sp, #28]
 	cmp r3, r1
@@ -703,7 +703,7 @@ Func_080464dc:
 	movs r3, #6
 	adds r0, #16
 	movs r2, #12
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	ldr r3, [sp, #52]
 	ldrb r1, [r5]
 	adds r3, #66

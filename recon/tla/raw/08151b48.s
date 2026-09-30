@@ -206,7 +206,7 @@ Func_08151b48:
 	lsls r1, r1, #4
 	str r3, [r2]
 	ldr r0, .L_08151ed8
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #138
 	bl Audio_PlayCue
 	movs r1, #0
@@ -565,7 +565,7 @@ Func_08151b48:
 	b .L_08151cea
 .L_08151fa8:
 	ldr r0, .L_08151fd4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

@@ -55,7 +55,7 @@ Func_080fcab8:
 	movs r0, #14
 	bl Func_080f9108
 	ldr r0, .L_080fcbc4
-	bl Func_080383f8
+	bl Link_DrawShiftedTilePairFar
 	bl Func_080f9448
 	add r0, sp, #12
 	add r1, sp, #8

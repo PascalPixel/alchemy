@@ -25,7 +25,7 @@ Func_0810b0bc:
 	movs r0, #160
 	lsls r0, r0, #14
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r1, [r5]
 	ldr r2, [r5, #8]
 	adds r0, r6, #0
@@ -39,7 +39,7 @@ Func_0810b0bc:
 	movs r0, #128
 	adds r2, r5, #0
 	lsls r0, r0, #11
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	mov r2, r8
 	str r3, [r6, #12]
@@ -63,7 +63,7 @@ Func_0810b0bc:
 	cmp r7, #1
 	bne .L_0810b14a
 	adds r0, r6, #0
-	bl Func_080c8590
+	bl BattleFx_HasReachedTargetFar
 	cmp r0, #0
 	bne .L_0810b15e
 	mov r3, r8
@@ -73,11 +73,11 @@ Func_0810b0bc:
 	cmp r7, #2
 	bne .L_0810b15e
 	adds r0, r6, #0
-	bl Func_080c8590
+	bl BattleFx_HasReachedTargetFar
 	cmp r0, #0
 	bne .L_0810b15e
 	adds r0, r6, #0
-	bl Func_080c85b8
+	bl BattleFx_ClearOwnedSlotFar
 .L_0810b15e:
 	add sp, #12
 	pop {r3}

@@ -111,9 +111,9 @@ Func_0801399c:
 .L_08013a70:
 	.4byte Data_02003870
 .L_08013a74:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_08013a78:
-	.4byte Data_03001178
+	.4byte gBlendDuration
 .L_08013a7c:
 	.4byte Data_03001230
 .L_08013a80:

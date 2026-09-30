@@ -145,7 +145,7 @@ Func_080dcb44:
 	b .L_080dcd8c
 .L_080dcc64:
 	ldrh r0, [r5]
-	bl Func_080cccb8
+	bl BattleAction_FindDescriptor
 	movs r3, #0
 	ldrsh r0, [r0, r3]
 	ldr r3, [r6, #8]
@@ -169,7 +169,7 @@ Func_080dcb44:
 	mov r3, r8
 	ldr r3, [r3, #80]
 	mov r9, r3
-	bl Func_080cccb8
+	bl BattleAction_FindDescriptor
 	mov r1, r8
 	ldr r3, [r1, #8]
 	mov r6, sp

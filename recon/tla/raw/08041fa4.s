@@ -43,7 +43,7 @@ UiText_DrawResource:
 	mov r1, r10
 	mov r2, r9
 	mov r3, r11
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	b .L_08042000
 .L_08041ffc:
 	.4byte 0x000001ff

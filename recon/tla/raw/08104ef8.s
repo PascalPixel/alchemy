@@ -34,7 +34,7 @@ Func_08104ef8:
 	cmp r5, #0
 	beq .L_08104f42
 	adds r0, r5, #0
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	mov r3, r11
 	mov r2, r8
 	mov r1, r10

@@ -374,7 +374,7 @@ Func_0811ea0c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0811edac
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r1, r8
 	ldr r3, [r1]
 	cmp r3, #0

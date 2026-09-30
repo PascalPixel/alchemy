@@ -73,7 +73,7 @@ Func_080f94a4:
 	adds r3, r5, #0
 	adds r3, #240
 	str r0, [r3]
-	bl Func_080f80c4
+	bl Scheduler_EnableOverlayCallbacksWithFlags
 	ldr r3, .L_080f95f4
 	ldr r1, .L_080f95f8
 	mov r9, r3

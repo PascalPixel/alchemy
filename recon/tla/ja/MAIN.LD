@@ -823,7 +823,7 @@
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_39.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_40.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000f80c4)
+    "*/recon/tla/ja/rom.o"(.rom.000f80e0)
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000f8170)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_RESOURCE_VARIANT.o"(.text)

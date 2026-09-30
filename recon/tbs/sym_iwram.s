@@ -312,7 +312,10 @@ gTransitionWork:
 Data_03001f1c:
 	.global gSaveWorkspace
 gSaveWorkspace:
-	.space 0x00000010
+	.space 0x0000000c
+	.global gBattleOwnerStates
+gBattleOwnerStates:
+	.space 0x00000004
 	.global Data_03001f2c
 Data_03001f2c:
 	.global Data_03001f2c_a

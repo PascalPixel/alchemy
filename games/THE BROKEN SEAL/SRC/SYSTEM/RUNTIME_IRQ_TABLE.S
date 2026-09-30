@@ -30,7 +30,19 @@ IwramIrqDma0:
 	.4byte 0
 IwramIrqDma1:
 	.4byte 0
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	@ The European editions' ROM table carries a halt loop (svc 0x30000,
+	@ then a branch back to it) in the DMA2 and DMA3 words, and start-up
+	@ installs this copy as the Game Pak interrupt handler.
+	.global IwramHalt
+IwramHalt:
+	.else
 IwramIrqDma2:
+	.endif
+	.else
+IwramIrqDma2:
+	.endif
 	.4byte 0
 IwramIrqDma3:
 	.4byte 0

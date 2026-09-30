@@ -216,7 +216,7 @@ Game_ResetForNewGame:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r6, #0
-	bl Func_081ac000
+	bl Runtime_BlankDisplayAndRunFar
 	b .L_080c9b1e
 .L_080c9afc:
 	movs r0, #64

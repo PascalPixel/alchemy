@@ -6,10 +6,10 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_020000b4
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_020000b4:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_020000bc
 	.thumb_func
 Func_020000bc:

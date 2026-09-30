@@ -14,26 +14,26 @@ Engine_MathModulo:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_020018c4
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_020018c4:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
 	overlay_veneer Math_SineFar
-	.global Func_020018d4
+	.global GameFlag_Test
 	.thumb_func
-Func_020018d4:
-	overlay_veneer Func_080003c8
-	.global Func_020018dc
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020018dc:
-	overlay_veneer Func_080003d0
-	.global Func_020018e4
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_020018e4:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_020018ec
 	.thumb_func
 Func_020018ec:
@@ -122,26 +122,26 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Func_02001994:
 	overlay_veneer Func_080c8180
-	.global Func_0200199c
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_0200199c:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_020019a4
 	.thumb_func
 Func_020019a4:
 	overlay_veneer Func_080c8198
-	.global Func_020019ac
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_020019ac:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_020019b4
 	.thumb_func
 Func_020019b4:
 	overlay_veneer Func_080c81d8
-	.global Func_020019bc
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_020019bc:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_020019c4
 	.thumb_func
 Func_020019c4:
@@ -150,14 +150,14 @@ Func_020019c4:
 	.thumb_func
 Func_020019cc:
 	overlay_veneer Func_080c8218
-	.global Func_020019d4
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_020019d4:
-	overlay_veneer Func_080c8228
-	.global Func_020019dc
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_020019dc:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_020019e4
 	.thumb_func
 Func_020019e4:

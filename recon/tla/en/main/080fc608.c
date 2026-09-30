@@ -1,0 +1,63 @@
+extern u8 Data_03001f2c[];
+
+#if defined(TBS_EDITION_JA)
+#define PAGE_X  120
+#define ENTRY_X 32
+#else
+#define PAGE_X  116
+#define ENTRY_X 24
+#endif
+
+extern u8 MsgItemName;
+
+void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void RenderOutput_RedrawSavedRectFar(s32 window);
+void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
+void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
+
+s32 ItemMenu_DrawNamePage(
+    s32 window,
+    s32 unused,
+    const struct MenuResult *state)
+{
+    struct InventoryMenuState *menu =
+        *(struct InventoryMenuState **)((u32)&Data_03001f2c);
+    u32 page;
+    u32 first_entry;
+    u32 visible_count;
+    u8 row;
+    const u16 *item_id;
+
+    (void)unused;
+
+    RenderOutput_RedrawSavedRectFar(window);
+    UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
+
+    page = state->page;
+    first_entry = page * 5;
+    visible_count = (u8)(state->entry_count - first_entry);
+    if (visible_count > 5) {
+        visible_count = 5;
+    }
+
+    Menu_SetPageIcons(5, first_entry, window, PAGE_X, 34);
+    Menu_DrawPageIndicator(window, state->entry_count, 5, state->page, 15);
+
+    row = 0;
+    if (visible_count > row) {
+        item_id = &menu->items[first_entry];
+        do {
+            UiText_DrawCharacterAtOffsetFar(
+                (item_id[0] & 0x1ff) + (s32)&MsgItemName,
+                menu->item_window,
+                ENTRY_X,
+                row * 16 + 8
+            );
+            row++;
+            item_id++;
+        } while (visible_count > row);
+    }
+
+    return 1;
+}

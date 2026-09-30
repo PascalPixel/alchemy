@@ -1,0 +1,145 @@
+/* Selection lists: move the cursor up one entry, scrolling or wrapping the list to its end. */
+#include "TYPES.H"
+
+/* main:0801b810 Menu_StepLeft - hand-written draft, 174 of 204 halfwords
+   differ, almost all from one register choice: the ROM keeps the top row
+   in r1 and ORs it with the cursor into a scratch r3, then stores 0 from a
+   fresh r0; this C ORs into r1 and reuses that known zero, which shifts
+   every later instruction by four bytes and swaps r1/r2 in the row loops.
+   Baseline is 404 bytes / 34 aligned halfword edits (2026-09-26).
+   Explicit u32 cursor/top snapshots give 400 bytes / 40 edits, dropping
+   another required input copy. An inline OR-result boundary gives 404
+   bytes / 42 edits, reverses the input loads and moves the cursor pointer
+   to r5. Neither recovers the r1-to-r3 copy or the independent wrap zero;
+   keep the original control flow until their source ancestry is known.
+   Writing the test as two != 0 tests merges them into one word load,
+   which the ROM does not do. Otherwise the code is the ROM's, including
+   the count - 5 loop.
+   2026-09-29 (alchemy permute scorer): the draft scored 280 (16
+   register-only, 2 deleted). Storing the wrap's zero through the count
+   variable (more_below = i = 0) scores 65, 13 register-only rows: the OR
+   test, its r1-to-r3 copy and the fresh wrap zero now match. Remaining:
+   the zero takes r1 (i's register) where the ROM uses r0, and in both row
+   loops y and the hoisted 12/0xfff4 take r2/r1 where the ROM has r1/r2;
+   plus one commutative add order (state + offset). A separate zero
+   variable is constant-propagated back to the old code. Two 400-second
+   searches (256,000 candidates) found nothing below 65.
+
+   The mirror of Menu_StepRight: step the cursor left, wrap a long list to
+   its last page, or scroll one row up at the first slot. */
+
+struct StepNode {
+    u8 unk_00[4];
+    struct StepNode *next;
+    u8 unk_08[2];
+    u16 id;
+    u8 unk_0c[4];
+    s16 y;
+    u8 unk_12[2];
+    u16 speed;
+    u8 unk_16[2];
+    s16 target_y;
+    u16 target_z;
+};
+
+struct StepMenu {
+    u8 unk_000[8];
+    u16 scroll_up;
+    u16 more_above;
+    u8 unk_00c[0x30];
+    u16 scroll_down;
+    u16 more_below;
+    u8 unk_040[0x308];
+    struct StepNode *nodes;
+    u8 unk_34c[8];
+    u16 entry_ids[16];
+    u16 entry_kinds[16];
+    u16 count;
+    u16 base_y;
+    u16 base_z;
+    u8 unk_39a[2];
+    u16 top;
+    u16 cursor;
+    u8 unk_3a0[2];
+    u16 status;
+};
+
+void WaitFrames(s32 frames);
+void Menu_ReloadNodeResource(struct StepMenu *state, u32 index);
+void Menu_LoadSelectionNodeResource(struct StepMenu *state, u32 index);
+void Menu_ScrollSelectionList(struct StepMenu *state, u32 mode);
+void MenuSelection_SetupEntry(u32 id, u32 kind, struct StepNode *node, u32 flag);
+void Menu_OpenSelectionWindow(s32 type, u32 value);
+
+void Menu_StepLeft(struct StepMenu *state)
+{
+    struct StepNode *node;
+    u16 *ids;
+    register s32 y asm("r1"); /* FAKEMATCH: keeps the row offset in r1 */
+    s32 i;
+
+    Menu_ReloadNodeResource(state, state->cursor);
+    state->status = 33;
+    WaitFrames(1);
+    if (state->count > 5) {
+        if ((state->cursor | state->top) != 0) {
+            if (state->cursor == 1 && state->top != 0) {
+                state->scroll_up = 8;
+                state->top--;
+                Menu_ScrollSelectionList(state, 0);
+                if (state->top == 0)
+                    state->more_above = 0;
+                state->more_below = 1;
+            } else {
+                state->cursor--;
+            }
+        } else {
+            node = state->nodes;
+            y = 64;
+            { register s32 z asm("r0") = 0; /* FAKEMATCH: the zero goes through r0 */
+            state->more_below = i = z; }
+            while (node->next != NULL) {
+                node->target_y = node->y + y;
+                node->speed = 12;
+                node = node->next;
+                y -= 16;
+            }
+            node = state->nodes;
+            while (node->y != node->target_y)
+                WaitFrames(1);
+            i = 0;
+            while (i != state->count - 5)
+                i++;
+            node = state->nodes;
+            state->top = i;
+            state->cursor = 4;
+            if (node != NULL) {
+                /* FAKEMATCH: the index is scaled and added to the base before the field offset */
+                ids = (u16 *)((i * 2 + (s32)state) + (s32)((struct StepMenu *)0)->entry_ids);
+                do {
+                    MenuSelection_SetupEntry(ids[0], ids[16], node, 1);
+                    node = node->next;
+                    ids++;
+                } while (node != NULL);
+            }
+            node = state->nodes;
+            y = state->base_y;
+            while (node->next != NULL) {
+                node->target_y = y;
+                node->speed = 0xfff4;
+                node = node->next;
+                y += 16;
+            }
+            state->more_above = 1;
+        }
+    } else if (state->cursor != 0) {
+        state->cursor--;
+    } else {
+        state->cursor = state->count - 1;
+    }
+    state->status = 1;
+    Menu_LoadSelectionNodeResource(state, state->cursor);
+    WaitFrames(1);
+    Menu_OpenSelectionWindow(state->nodes->id, 0);
+    WaitFrames(1);
+}

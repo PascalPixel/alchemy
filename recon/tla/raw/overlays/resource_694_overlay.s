@@ -125,7 +125,7 @@ Func_020000f4:
 	lsls r1, r1, #3
 	strh r3, [r2]
 	ldr r0, .L_02008150
-	bl Func_02003f7c
+	bl Scheduler_AddOrUpdateCallback
 	b .L_02008154
 	.2byte 0x0000
 .L_02008128:
@@ -196,7 +196,7 @@ Func_02000178:
 	lsls r1, r1, #3
 	strh r3, [r2]
 	ldr r0, .L_020081cc
-	bl Func_02003f7c
+	bl Scheduler_AddOrUpdateCallback
 	b .L_020081d0
 .L_020081a8:
 	.4byte 0x00000000
@@ -469,46 +469,7 @@ Func_02000328:
 	.4byte 0x00202108
 .L_020083ac:
 	.4byte gPartyState
-	.section .text.x020083b0,"ax",%progbits
-	.global Func_020003b0
-	.thumb_func
-Func_020003b0:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r4, r1, #0
-	cmp r5, #0
-	beq .L_020083f4
-	adds r3, r5, #0
-	adds r3, #84
-	ldrb r2, [r3]
-	movs r3, #15
-	ands r3, r2
-	cmp r3, #0
-	beq .L_020083f4
-	ldr r1, [r5, #80]
-	movs r2, #13
-	ldrb r0, [r1, #9]
-	movs r3, #3
-	negs r2, r2
-	ands r4, r3
-	adds r3, r2, #0
-	lsls r4, r4, #2
-	ands r3, r0
-	orrs r3, r4
-	strb r3, [r1, #9]
-	adds r1, #37
-	ldrb r3, [r1]
-	ands r2, r3
-	orrs r2, r4
-	strb r2, [r1]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-.L_020083f4:
-	pop {r5, pc}
+	.section .text.x020083f6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020083f8,"ax",%progbits
 	.global Func_020003f8
@@ -631,7 +592,7 @@ Func_02000430:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_020003b0
+	bl Object_SetSpritePriority
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -653,7 +614,7 @@ Func_02000430:
 	beq .L_02008510
 	ldr r1, [r7, #4]
 	adds r0, r6, #0
-	bl Func_02004124
+	bl Object_SetPartAttribute
 .L_02008510:
 	movs r3, #128
 	lsls r3, r3, #10
@@ -669,7 +630,7 @@ Func_02000430:
 	strb r2, [r1]
 	ldr r1, [r7]
 	adds r0, r6, #0
-	bl Func_020003b0
+	bl Object_SetSpritePriority
 .L_02008530:
 	movs r2, #128
 	lsls r2, r2, #12
@@ -797,7 +758,7 @@ Func_02000608:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #230
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	pop {pc}
 	.section .text.x02008620,"ax",%progbits
 	.global Func_02000620
@@ -862,7 +823,7 @@ Func_02000658:
 	ldr r3, [r5]
 	movs r5, #128
 	subs r1, r1, r3
-	bl Func_02003f94
+	bl ArcTan2
 	lsls r0, r0, #16
 	lsrs r0, r0, #16
 	ldr r3, .L_020086cc
@@ -1014,28 +975,6 @@ Func_020007a4:
 	movs r0, #0
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x020087b8,"ax",%progbits
-	.global Func_020007b8
-	.thumb_func
-Func_020007b8:
-	ldr r0, .L_020087bc
-	bx lr
-.L_020087bc:
-	.4byte Data_02004bc0
-	.section .text.x020087c0,"ax",%progbits
-	.global Func_020007c0
-	.thumb_func
-Func_020007c0:
-	movs r0, #0
-	bx lr
-	.section .text.x020087c4,"ax",%progbits
-	.global Func_020007c4
-	.thumb_func
-Func_020007c4:
-	ldr r0, .L_020087c8
-	bx lr
-.L_020087c8:
-	.4byte Data_02004bf0
 	.section .text.x020087cc,"ax",%progbits
 	.global Func_020007cc
 	.thumb_func
@@ -1072,7 +1011,7 @@ Func_020007cc:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008814
 	ldr r0, .L_0200885c
@@ -1081,12 +1020,12 @@ Func_020007cc:
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #33
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008832
 	movs r0, #157
 	lsls r0, r0, #4
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008832
 	ldr r0, .L_02008860
@@ -1419,7 +1358,7 @@ Func_02000a80:
 	ldr r1, .L_02008aec
 	adds r2, #204
 	lsls r3, r3, #15
-	bl Func_02004234
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_02008ae4
@@ -1470,7 +1409,7 @@ Func_02000af4:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008b18
 	ldr r0, .L_02008ca8
@@ -1546,7 +1485,7 @@ Func_02000af4:
 	movs r1, #144
 	lsls r1, r1, #3
 	adds r0, r5, #0
-	bl Func_02003f7c
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #120
 	bl Battle_WaitMode0
 	adds r0, r5, #0
@@ -1590,7 +1529,7 @@ Func_02000af4:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008c2c
 	ldr r0, .L_02008cbc
@@ -1618,7 +1557,7 @@ Func_02000af4:
 	movs r2, #20
 	movs r0, #14
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #14
 	movs r1, #0
 	bl Func_02004144
@@ -1638,7 +1577,7 @@ Func_02000af4:
 	movs r2, #0
 	movs r0, #15
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #14
 	lsls r1, r1, #6
@@ -1707,7 +1646,7 @@ Func_02000cf4:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008d28
 	ldr r0, .L_02008d3c
@@ -1746,7 +1685,7 @@ Func_02000d44:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008d78
 	ldr r0, .L_02008d8c
@@ -1785,7 +1724,7 @@ Func_02000d94:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008dc8
 	ldr r0, .L_02008ddc
@@ -1824,7 +1763,7 @@ Func_02000de4:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e18
 	ldr r0, .L_02008e44
@@ -1834,7 +1773,7 @@ Func_02000de4:
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #33
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e2e
 	ldr r0, .L_02008e48
@@ -1875,7 +1814,7 @@ Func_02000e50:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e82
 	ldr r0, .L_02008eac
@@ -1885,7 +1824,7 @@ Func_02000e50:
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #33
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e98
 	ldr r0, .L_02008eb0
@@ -2155,11 +2094,11 @@ Func_02001094:
 	movs r0, #14
 	ldr r1, [r3]
 	movs r2, #0
-	bl Func_02004114
+	bl ObjectMotion_SetAngleToward
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020090f6
 	ldr r0, .L_02009174
@@ -2169,7 +2108,7 @@ Func_02001094:
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #33
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200910c
 	ldr r0, .L_02009178
@@ -2183,7 +2122,7 @@ Func_02001094:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200912a
 	ldr r0, .L_02009180
@@ -2193,7 +2132,7 @@ Func_02001094:
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #33
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02009140
 	ldr r0, .L_02009184
@@ -2274,11 +2213,11 @@ Func_0200118c:
 	movs r0, #15
 	ldr r1, [r3]
 	movs r2, #0
-	bl Func_02004114
+	bl ObjectMotion_SetAngleToward
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020091ee
 	ldr r0, .L_02009240
@@ -2292,7 +2231,7 @@ Func_0200118c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200920c
 	ldr r0, .L_02009248
@@ -2422,7 +2361,7 @@ Func_020012c4:
 	movs r0, #240
 	lsls r0, r0, #4
 	adds r0, #199
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200934c
 	movs r1, #140
@@ -2667,7 +2606,7 @@ Func_02001494:
 	bl Func_020041a4
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x020094b4,"ax",%progbits
@@ -2685,7 +2624,7 @@ Func_020014b4:
 	bl Func_020041a4
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02003fd4
+	bl GameFlag_ClearBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x020094d4,"ax",%progbits
@@ -2694,7 +2633,7 @@ Func_020014b4:
 Func_020014d4:
 	push {r5, lr}
 	movs r0, #62
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02009524
 	movs r3, #192
@@ -2718,7 +2657,7 @@ Func_020014d4:
 	ldr r1, [r3]
 	movs r2, #0
 	movs r0, #16
-	bl Func_02004114
+	bl ObjectMotion_SetAngleToward
 	movs r3, #181
 	lsls r3, r3, #1
 	adds r2, r5, r3
@@ -2880,7 +2819,7 @@ Func_020015ac:
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #0
-	bl Func_02004124
+	bl Object_SetPartAttribute
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #1
@@ -2951,7 +2890,7 @@ Func_020015ac:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #231
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	bl Func_02004074
 	add sp, #68
 	pop {r3, r5, r6}
@@ -3045,7 +2984,7 @@ Func_020017bc:
 	movs r1, #3
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Func_0200416c
+	bl ObjectMotion_SetActionVariant
 	adds r2, r6, #0
 	adds r2, #89
 	movs r3, #8
@@ -3218,7 +3157,7 @@ Func_02001938:
 	bl Func_0200403c
 	movs r1, #0
 	movs r0, #18
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	ldr r3, .L_02009a44
 	movs r2, #133
 	lsls r2, r2, #2
@@ -3236,7 +3175,7 @@ Func_02001938:
 	bl Func_0200412c
 	movs r0, #18
 	movs r1, #0
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	b .L_020099b6
 .L_020099a4:
 	cmp r5, #6
@@ -3245,7 +3184,7 @@ Func_02001938:
 	bl Func_0200412c
 	movs r0, #18
 	movs r1, #0
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 .L_020099b6:
 	cmp r5, #6
 	bgt .L_02009a04
@@ -3270,7 +3209,7 @@ Func_02001938:
 	bl Func_0200412c
 	movs r1, #0
 	movs r0, #18
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	movs r0, #0
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -3292,20 +3231,20 @@ Func_02001938:
 	bl Func_02004144
 	movs r0, #10
 	adds r0, #255
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #229
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #254
 	lsls r0, r0, #1
 	movs r1, #0
-	bl Func_020041c4
+	bl Field_SetDestination
 	ldr r0, .L_02009a5c
 	movs r1, #20
-	bl Func_020041bc
+	bl Party_SetFields1eeAnd1f0
 .L_02009a3c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -3394,7 +3333,7 @@ Func_02001abc:
 	bl Func_0200412c
 	movs r0, #14
 	movs r1, #0
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	b .L_02009b6e
 .L_02009aea:
 	ldr r0, .L_02009b78
@@ -3404,7 +3343,7 @@ Func_02001abc:
 	bl Func_0200403c
 	movs r1, #0
 	movs r0, #14
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	movs r2, #133
 	lsls r2, r2, #2
 	adds r3, r6, r2
@@ -3422,20 +3361,20 @@ Func_02001abc:
 	bl Func_02004144
 	movs r0, #10
 	adds r0, #255
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #229
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #254
 	adds r0, #255
 	movs r1, #0
-	bl Func_020041c4
+	bl Field_SetDestination
 	ldr r0, .L_02009b80
 	movs r1, #19
-	bl Func_020041bc
+	bl Party_SetFields1eeAnd1f0
 	b .L_02009b6a
 .L_02009b50:
 	movs r3, #192
@@ -3484,14 +3423,14 @@ Func_02001b84:
 	bl Func_0200412c
 	movs r0, #14
 	movs r1, #0
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	b .L_02009c2e
 .L_02009bb2:
 	ldr r0, .L_02009c38
 	bl Func_0200412c
 	movs r1, #0
 	movs r0, #8
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	movs r2, #133
 	lsls r2, r2, #2
 	adds r3, r6, r2
@@ -3509,20 +3448,20 @@ Func_02001b84:
 	bl Func_02004144
 	movs r0, #10
 	adds r0, #255
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #229
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #252
 	adds r0, #255
 	movs r1, #0
-	bl Func_020041c4
+	bl Field_SetDestination
 	ldr r0, .L_02009c40
 	movs r1, #18
-	bl Func_020041bc
+	bl Party_SetFields1eeAnd1f0
 	b .L_02009c2a
 .L_02009c10:
 	movs r3, #192
@@ -3742,7 +3681,7 @@ Func_02001d50:
 	movs r2, #0
 	ldr r0, [r5]
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	ldr r1, [r5]
 	movs r0, #5
 	bl Func_020040e4
@@ -3818,7 +3757,7 @@ Func_02001d50:
 	negs r2, r2
 	negs r1, r1
 	negs r0, r0
-	bl Func_02004194
+	bl Motion_CamBounds
 	movs r0, #43
 	bl Func_020042b4
 	movs r0, #20
@@ -3889,7 +3828,7 @@ Func_02001d50:
 	movs r2, #0
 	movs r0, #0
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #1
 	lsls r1, r1, #7
@@ -3908,7 +3847,7 @@ Func_02001d50:
 	lsls r0, r0, #16
 	negs r1, r1
 	lsls r2, r2, #17
-	bl Func_02004194
+	bl Motion_CamBounds
 	movs r2, #171
 	movs r0, #9
 	movs r1, #172
@@ -3918,32 +3857,32 @@ Func_02001d50:
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r0, #1
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r0, #3
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r0, #2
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	movs r0, #5
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	movs r0, #6
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r2, #171
 	lsls r2, r2, #1
 	movs r0, #9
@@ -3997,11 +3936,11 @@ Func_02001d50:
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #0
@@ -4027,7 +3966,7 @@ Func_02001d50:
 	movs r2, #0
 	movs r0, #0
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #1
 	lsls r1, r1, #7
@@ -4045,11 +3984,11 @@ Func_02001d50:
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #0
@@ -4090,7 +4029,7 @@ Func_02001d50:
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #0
 	movs r1, #0
 	movs r2, #40
@@ -4143,7 +4082,7 @@ Func_02001d50:
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r2, #20
 	lsls r1, r1, #1
@@ -4155,7 +4094,7 @@ Func_02001d50:
 	movs r0, #3
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #2
 	movs r2, #0
 	adds r1, #255
@@ -4182,27 +4121,27 @@ Func_02001d50:
 	bl Func_0200415c
 	movs r1, #0
 	movs r0, #3
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	movs r1, #128
 	movs r0, #1
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #5
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #7
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #9
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	ldr r0, [r5]
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -4264,26 +4203,26 @@ Func_02001d50:
 	ldr r0, [r5]
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	movs r0, #5
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #7
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #3
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r2, #0
 	movs r0, #0
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #1
 	lsls r1, r1, #7
@@ -4305,12 +4244,12 @@ Func_02001d50:
 	movs r0, #1
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r2, #20
 	movs r0, #0
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #0
 	movs r1, #0
 	bl Func_02004144
@@ -4327,15 +4266,15 @@ Func_02001d50:
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #0
@@ -4370,12 +4309,12 @@ Func_02001d50:
 	movs r0, #1
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #20
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #2
 	movs r2, #20
 	adds r1, #255
@@ -4388,12 +4327,12 @@ Func_02001d50:
 	movs r0, #1
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #10
 	movs r2, #40
 	adds r1, #255
@@ -4438,22 +4377,22 @@ Func_02001d50:
 	lsls r0, r0, #7
 	movs r1, #0
 	adds r0, #1
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	movs r1, #160
 	ldr r0, [r5]
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #5
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #9
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	ldr r0, [r5]
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -4510,11 +4449,11 @@ Func_02001d50:
 	movs r0, #5
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #10
 	movs r2, #20
 	adds r1, #255
@@ -4537,12 +4476,12 @@ Func_02001d50:
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r0, #1
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #6
 	adds r1, #255
 	movs r2, #0
@@ -4558,7 +4497,7 @@ Func_02001d50:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #15
-	bl Func_02004124
+	bl Object_SetPartAttribute
 	movs r2, #176
 	lsls r2, r2, #8
 	mov r8, r2
@@ -4605,7 +4544,7 @@ Func_02001d50:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl Func_02004124
+	bl Object_SetPartAttribute
 	movs r1, #152
 	lsls r1, r1, #7
 	ldr r0, .L_0200a9d4
@@ -4618,7 +4557,7 @@ Func_02001d50:
 	movs r3, #1
 	lsls r0, r0, #16
 	negs r1, r1
-	bl Func_02004194
+	bl Motion_CamBounds
 	bl Func_0200419c
 	movs r0, #204
 	movs r1, #200
@@ -4634,7 +4573,7 @@ Func_02001d50:
 	lsls r0, r0, #16
 	negs r1, r1
 	lsls r2, r2, #17
-	bl Func_02004194
+	bl Motion_CamBounds
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -4746,7 +4685,7 @@ Func_02001d50:
 	movs r0, #0
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #0
@@ -4848,7 +4787,7 @@ Func_02001d50:
 	movs r2, #0
 	movs r0, #2
 	movs r1, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #8
 	lsls r1, r1, #8
@@ -4875,36 +4814,36 @@ Func_02001d50:
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	movs r0, #1
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #3
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	ldr r0, [r6]
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #5
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #7
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r2, #40
 	movs r0, #6
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #208
 	movs r0, #8
 	lsls r1, r1, #8
@@ -4916,37 +4855,37 @@ Func_02001d50:
 	movs r0, #0
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #1
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #3
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	ldr r0, [r6]
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #5
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #7
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r2, #0
 	movs r0, #6
 	lsls r1, r1, #7
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #4
 	bl Object_SetModeById
@@ -5051,40 +4990,40 @@ Func_02001d50:
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #3
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r0, #2
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	ldr r0, [r6]
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #5
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #6
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #7
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r2, #10
 	movs r0, #9
 	movs r1, #4
@@ -5142,7 +5081,7 @@ Func_02001d50:
 	lsls r0, r0, #16
 	negs r1, r1
 	lsls r2, r2, #17
-	bl Func_02004194
+	bl Motion_CamBounds
 	movs r2, #233
 	movs r0, #8
 	movs r1, #160
@@ -5164,7 +5103,7 @@ Func_02001d50:
 	lsls r0, r0, #16
 	negs r1, r1
 	lsls r2, r2, #17
-	bl Func_02004194
+	bl Motion_CamBounds
 	bl Func_0200419c
 	bl Func_0200420c
 	movs r1, #10
@@ -5179,16 +5118,16 @@ Func_02001d50:
 	movs r0, #1
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #192
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #20
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r2, #0
 	movs r0, #1
 	movs r1, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #0
 	movs r1, #0
 	bl Func_0200415c
@@ -5227,7 +5166,7 @@ Func_02001d50:
 	movs r0, #5
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #132
 	movs r2, #20
 	lsls r1, r1, #1
@@ -5240,7 +5179,7 @@ Func_02001d50:
 	movs r2, #0
 	movs r0, #5
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #7
 	movs r1, #3
 	bl Object_SetModeById
@@ -5276,15 +5215,15 @@ Func_02001d50:
 	movs r2, #20
 	movs r0, #5
 	lsls r1, r1, #7
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #0
 	movs r0, #5
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	movs r1, #192
 	ldr r0, [r6]
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	ldr r0, [r6]
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -5344,11 +5283,11 @@ Func_02001d50:
 	movs r0, #9
 	lsls r1, r1, #8
 	movs r2, #40
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r2, #40
 	movs r0, #9
 	movs r1, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	movs r0, #9
 	lsls r1, r1, #7
@@ -5414,7 +5353,7 @@ Func_02001d50:
 	bl Func_02004044
 	movs r0, #157
 	lsls r0, r0, #4
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	bl Func_02004074
 	add sp, #28
 	pop {r3}
@@ -5434,7 +5373,7 @@ Func_02002e18:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200ae2c
 	bl .L_0200b68a
@@ -5456,7 +5395,7 @@ Func_02002e18:
 	lsls r0, r0, #16
 	negs r1, r1
 	lsls r2, r2, #17
-	bl Func_02004194
+	bl Motion_CamBounds
 	ldr r5, .L_0200b254
 	movs r2, #133
 	lsls r2, r2, #2
@@ -5478,7 +5417,7 @@ Func_02002e18:
 	movs r2, #0
 	movs r0, #8
 	lsls r1, r1, #7
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	ldr r1, [r5]
 	movs r0, #2
 	bl Func_020040e4
@@ -5537,7 +5476,7 @@ Func_02002e18:
 	movs r0, #2
 	lsls r1, r1, #8
 	movs r2, #40
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r2, #182
 	movs r1, #180
 	lsls r2, r2, #1
@@ -5582,7 +5521,7 @@ Func_02002e18:
 	movs r2, #40
 	movs r0, #2
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
 	bl Func_02004144
@@ -5656,7 +5595,7 @@ Func_02002e18:
 	movs r2, #0
 	movs r0, #8
 	lsls r1, r1, #6
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	ldr r1, [r5]
 	movs r0, #9
 	bl Func_020040e4
@@ -5708,7 +5647,7 @@ Func_02002e18:
 	movs r2, #0
 	movs r0, #8
 	movs r1, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #129
 	movs r0, #9
 	lsls r1, r1, #1
@@ -5768,16 +5707,16 @@ Func_02002e18:
 	movs r0, #2
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	ldr r0, [r5]
 	lsls r1, r1, #6
 	movs r2, #40
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r2, #0
 	ldr r0, [r5]
 	movs r1, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r0, #2
 	lsls r1, r1, #8
@@ -5796,7 +5735,7 @@ Func_02002e18:
 	movs r2, #20
 	movs r0, #8
 	lsls r1, r1, #7
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
 	bl Func_02004144
@@ -5804,17 +5743,17 @@ Func_02002e18:
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	movs r0, #9
 	lsls r1, r1, #7
 	movs r2, #40
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r2, #0
 	movs r0, #9
 	lsls r1, r1, #8
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	movs r0, #0
 	lsls r1, r1, #8
@@ -5869,7 +5808,7 @@ Func_02002e18:
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	b .L_0200b264
 .L_0200b254:
@@ -5884,17 +5823,17 @@ Func_02002e18:
 	movs r0, #9
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #160
 	movs r0, #2
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r2, #40
 	ldr r0, [r5]
 	lsls r1, r1, #6
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r0, #0
@@ -5911,17 +5850,17 @@ Func_02002e18:
 	ldr r0, [r5]
 	movs r1, #0
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	movs r0, #9
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #224
 	movs r0, #2
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #10
 	adds r1, #255
 	movs r2, #0
@@ -5931,7 +5870,7 @@ Func_02002e18:
 	movs r2, #0
 	movs r0, #8
 	lsls r1, r1, #6
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #128
 	lsls r0, r0, #5
 	adds r0, #8
@@ -5961,11 +5900,11 @@ Func_02002e18:
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
 	movs r2, #80
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r1, #6
 	adds r1, #255
 	movs r2, #40
@@ -6009,7 +5948,7 @@ Func_02002e18:
 	movs r2, #20
 	movs r0, #9
 	lsls r1, r1, #7
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	movs r0, #9
 	movs r1, #0
 	bl Func_02004144
@@ -6031,7 +5970,7 @@ Func_02002e18:
 	bl Motion_SetModeAndWaitAnimation
 	movs r1, #0
 	movs r0, #9
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	movs r1, #2
 	adds r1, #255
 	movs r2, #0
@@ -6041,7 +5980,7 @@ Func_02002e18:
 	movs r0, #2
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	ldr r0, [r5]
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -6101,7 +6040,7 @@ Func_02002e18:
 	bl Object_SetModeById
 	movs r1, #0
 	movs r0, #9
-	bl Func_02004134
+	bl UiText_OpenMessageAtObject
 	movs r1, #2
 	adds r1, #255
 	movs r2, #0
@@ -6111,7 +6050,7 @@ Func_02002e18:
 	movs r0, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02004154
+	bl ObjectMotion_ArmCallback
 	ldr r3, .L_0200b68c
 	movs r2, #133
 	lsls r2, r2, #2
@@ -6318,7 +6257,7 @@ Func_02002e18:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #209
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	bl Func_02004074
 .L_0200b68a:
 	pop {r5, pc}
@@ -6374,12 +6313,6 @@ Func_02003698:
 	.4byte 0x000000ed
 .L_0200b6e8:
 	.4byte 0x000000ee
-	.section .text.x0200b6ec,"ax",%progbits
-	.global Func_020036ec
-	.thumb_func
-Func_020036ec:
-	movs r0, #0
-	bx lr
 	.section .text.x0200b6f0,"ax",%progbits
 	.global Func_020036f0
 	.thumb_func
@@ -6400,7 +6333,7 @@ Func_020036f0:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_0200416c
+	bl ObjectMotion_SetActionVariant
 .L_0200b718:
 	pop {pc}
 	.2byte 0x0000
@@ -6417,7 +6350,7 @@ Func_02003720:
 	adds r5, r0, #0
 	lsls r1, r1, #3
 	ldr r0, .L_0200b864
-	bl Func_02003f7c
+	bl Scheduler_AddOrUpdateCallback
 	adds r1, r5, #0
 	movs r3, #1
 	adds r1, #98
@@ -6431,13 +6364,13 @@ Func_02003720:
 	lsls r0, r0, #4
 	str r3, [r5, #108]
 	adds r0, #33
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200b784
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200b784
 	movs r0, #15
@@ -6468,13 +6401,13 @@ Func_02003720:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #231
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200b7c8
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #230
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200b7c8
 	movs r1, #128
@@ -6488,7 +6421,7 @@ Func_02003720:
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #15
-	bl Func_02004124
+	bl Object_SetPartAttribute
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #0
@@ -6496,7 +6429,7 @@ Func_02003720:
 .L_0200b7e0:
 	movs r0, #10
 	adds r0, #255
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200b81c
 	ldr r3, .L_0200b86c
@@ -6511,7 +6444,7 @@ Func_02003720:
 	blt .L_0200b80a
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02003fcc
+	bl GameFlag_SetBit
 	b .L_0200b81c
 .L_0200b80a:
 	movs r1, #128
@@ -6525,7 +6458,7 @@ Func_02003720:
 .L_0200b81c:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200b854
 	movs r1, #128
@@ -6542,7 +6475,7 @@ Func_02003720:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	movs r1, #0
-	bl Func_02004184
+	bl Object_AttachWorkTargetToObject
 	bl Func_02003ffc
 	movs r0, #1
 	bl WaitFrames
@@ -6579,7 +6512,7 @@ Func_02003880:
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #33
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200b89a
 	b .L_0200b9cc
@@ -6676,7 +6609,7 @@ Func_02003880:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200b9b8
 	movs r0, #10
@@ -6737,12 +6670,12 @@ Func_020039d4:
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #33
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200ba80
 	movs r0, #157
 	lsls r0, r0, #4
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200ba80
 	bl Func_02001d50
@@ -6752,7 +6685,7 @@ Func_020039d4:
 	bne .L_0200ba22
 	movs r0, #48
 	adds r0, #255
-	bl Func_02003fd4
+	bl GameFlag_ClearBit
 	b .L_0200ba80
 .L_0200ba22:
 	movs r1, #2
@@ -6765,7 +6698,7 @@ Func_020039d4:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #178
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200ba4c
 	ldr r1, .L_0200ba88
@@ -6774,7 +6707,7 @@ Func_020039d4:
 .L_0200ba4c:
 	movs r0, #157
 	lsls r0, r0, #4
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200ba80
 	movs r0, #24
@@ -6828,23 +6761,23 @@ Func_02003a8c:
 	movs r0, #14
 	bl Object_GetById
 	movs r1, #1
-	bl Func_02004124
+	bl Object_SetPartAttribute
 	movs r0, #15
 	bl Object_GetById
 	movs r1, #2
-	bl Func_02004124
+	bl Object_SetPartAttribute
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl Func_02004124
+	bl Object_SetPartAttribute
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #3
-	bl Func_02004124
+	bl Object_SetPartAttribute
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #229
-	bl Func_02003fc4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200bb00
 	b .L_0200bcb2
@@ -6852,7 +6785,7 @@ Func_02003a8c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #229
-	bl Func_02003fd4
+	bl GameFlag_ClearBit
 	ldr r2, .L_0200bcb4
 	movs r1, #241
 	lsls r1, r1, #1
@@ -6930,7 +6863,7 @@ Func_02003a8c:
 	movs r0, #14
 	movs r1, #0
 	bl Func_02004144
-	bl Func_020042ac
+	bl AudioCommand_WaitForStateByteClear
 	b .L_0200bbd6
 .L_0200bbbc:
 	cmp r5, #0
@@ -7144,7 +7077,7 @@ Func_02003cd8:
 	adds r3, #164
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_02003fac
+	bl Resource_ResetEntry
 	movs r3, #0
 	str r3, [r7, #108]
 	b .L_0200be40
@@ -8008,8 +7941,8 @@ Data_02004b18:
 	.4byte 0x0000000d
 	.4byte 0x0000ffff
 	.4byte 0x00000000
-	.global Data_02004bc0
-Data_02004bc0:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x0000010f
 	.4byte 0x40000328
@@ -8022,8 +7955,8 @@ Data_02004bc0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02004bf0
-Data_02004bf0:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000000ec
 	.4byte 0x00136002
 	.4byte 0x002010ed

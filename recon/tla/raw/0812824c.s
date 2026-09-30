@@ -132,7 +132,7 @@ Func_0812824c:
 	bl GameFlag_SetBit
 .L_0812833e:
 	ldrh r0, [r5]
-	bl Func_080ad140
+	bl Owner_GetRecordFar
 	mov r2, r11
 	mov r8, r0
 	cmp r2, #0

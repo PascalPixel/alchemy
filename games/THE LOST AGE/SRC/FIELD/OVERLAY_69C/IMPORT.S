@@ -18,10 +18,10 @@ Engine_MathRemainder:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02002268
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02002268:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -62,14 +62,14 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_020022b8:
 	overlay_veneer Func_080001e8
-	.global Func_020022c0
+	.global GameFlag_Test
 	.thumb_func
-Func_020022c0:
-	overlay_veneer Func_080003c8
-	.global Func_020022c8
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020022c8:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -190,14 +190,14 @@ Func_020023b0:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
-	.global Func_020023c0
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_020023c0:
-	overlay_veneer Func_080c8170
-	.global Func_020023c8
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_020023c8:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_020023d0
 	.thumb_func
 Func_020023d0:
@@ -206,14 +206,14 @@ Func_020023d0:
 	.thumb_func
 Func_020023d8:
 	overlay_veneer Func_080c8218
-	.global Func_020023e0
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_020023e0:
-	overlay_veneer Func_080c8228
-	.global Func_020023e8
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_020023e8:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_020023f0
 	.thumb_func
 Func_020023f0:

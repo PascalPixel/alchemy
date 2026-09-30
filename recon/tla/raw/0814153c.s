@@ -57,7 +57,7 @@ Func_0814153c:
 	movs r3, #255
 	movs r1, #0
 	strh r3, [r0]
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	ldr r3, [sp, #68]
 	movs r7, #238
 	ldr r0, [r3, #84]
@@ -616,7 +616,7 @@ Func_0814153c:
 	adds r1, r7, #0
 	add r2, sp, #132
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_08141a04:
 	movs r1, #1
 	add r8, r1
@@ -1483,7 +1483,7 @@ Func_0814153c:
 	strh r2, [r4, r3]
 	adds r0, #36
 	movs r1, #0
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	movs r2, #253
 	lsls r2, r2, #6
 	adds r1, r7, r2

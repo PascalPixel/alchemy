@@ -34,7 +34,7 @@ the technical details in [AGENTS.md](AGENTS.md).
 
 ## Progress
 
-**☀️ 78.37% · ⚓️ 6.18% (C 1.27 + assembly 1.40 + stubs 3.50)**
+**☀️ 78.37% · ⚓️ 6.54% (C 1.63 + assembly 1.40 + stubs 3.50)**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 

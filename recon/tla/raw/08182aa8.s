@@ -206,7 +206,7 @@ Func_08182aa8:
 .L_08182c38:
 	.4byte Data_02014800
 .L_08182c3c:
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	ldr r0, .L_08182db0
 	bl Resource_GetTableEntry
 	movs r2, #128
@@ -1118,7 +1118,7 @@ Func_08182aa8:
 	ldmia r5!, {r0}
 	adds r2, r7, #0
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r0, #1
 	add r8, r0
 	mov r1, r8

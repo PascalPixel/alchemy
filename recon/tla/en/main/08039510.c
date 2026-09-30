@@ -1,0 +1,34 @@
+#include "TYPES.H"
+extern u8 Data_03001e8c[];
+
+struct RenderOutput {
+    struct RenderOutput *next;
+    u8 kind;
+    s8 active;
+    u8 unk06[8];
+    u8 index;
+    u8 unk0f[10];
+    u8 palette;
+};
+
+struct RenderOutputList {
+    struct RenderOutput *next;
+    struct RenderOutput *tail;
+};
+
+void RenderOutput_ReleaseFree(u32 arg0);
+s32 Resource_ResetEntry(u32 index);
+
+void RenderOutput_Release(struct RenderOutput *entry)
+{
+    RenderOutput_ReleaseFree((u32)entry);
+    if (entry->kind != 0) {
+        Resource_ResetEntry(entry->index);
+        if (entry->kind == 2) {
+            u8 *dst = (u8 *)(*(s32 *)((u32)&Data_03001e8c));
+            s32 idx = ((u32)entry->palette >> 4) * 2 + 0x12D0;
+            *(u16 *)(dst + idx) = 0x3E7;
+        }
+    }
+    entry->active = 0;
+}

@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_020011b0
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_020011e0
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_02001220
 	.section .text.x02008054,"ax",%progbits
 	.global Func_02000054
 	.thumb_func
@@ -76,7 +46,7 @@ Func_020000a4:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #255
-	bl Func_02001090
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020080b8
 	ldr r0, .L_020080bc
@@ -384,7 +354,7 @@ Func_02000304:
 	bl Func_02001138
 	movs r1, #0
 	movs r0, #10
-	bl Func_02001140
+	bl UiText_OpenMessageAtObject
 	bl Func_02001188
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -394,7 +364,7 @@ Func_02000304:
 	bl Func_02001138
 	movs r1, #0
 	movs r0, #10
-	bl Func_02001140
+	bl UiText_OpenMessageAtObject
 	bl Func_02001188
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -463,7 +433,7 @@ Func_02000390:
 	bl Func_02001138
 	movs r1, #0
 	movs r0, #10
-	bl Func_02001140
+	bl UiText_OpenMessageAtObject
 	bl Func_02001188
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -509,7 +479,7 @@ Func_02000390:
 	bl Func_02001138
 	movs r1, #0
 	movs r0, #10
-	bl Func_02001140
+	bl UiText_OpenMessageAtObject
 	bl Func_02001188
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -532,7 +502,7 @@ Func_02000390:
 	bl Func_02001138
 	movs r1, #0
 	movs r0, #10
-	bl Func_02001140
+	bl UiText_OpenMessageAtObject
 	bl Func_02001188
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -773,7 +743,7 @@ Func_02000390:
 	bl Func_02001148
 	movs r0, #148
 	lsls r0, r0, #4
-	bl Func_02001090
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020086ea
 	adds r0, r6, #0
@@ -1115,7 +1085,7 @@ Func_0200097c:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #255
-	bl Func_02001090
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008990
 	movs r0, #0
@@ -1123,7 +1093,7 @@ Func_0200097c:
 .L_02008990:
 	movs r0, #148
 	lsls r0, r0, #4
-	bl Func_02001090
+	bl GameFlag_Test
 	adds r3, r0, #0
 	negs r0, r3
 	orrs r0, r3
@@ -1185,7 +1155,7 @@ Func_020009f8:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #255
-	bl Func_02001090
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008a0c
 	movs r0, #0
@@ -1201,7 +1171,7 @@ Func_020009f8:
 	bne .L_02008a68
 	movs r0, #148
 	lsls r0, r0, #4
-	bl Func_02001090
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008a78
 	movs r0, #184
@@ -1226,7 +1196,7 @@ Func_020009f8:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #5
-	bl Func_02001090
+	bl GameFlag_Test
 	adds r3, r0, #0
 	negs r0, r3
 	orrs r0, r3
@@ -1236,7 +1206,7 @@ Func_020009f8:
 .L_02008a68:
 	movs r0, #148
 	lsls r0, r0, #4
-	bl Func_02001090
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008a78
 	movs r0, #12
@@ -1381,7 +1351,7 @@ Func_02000b60:
 	cmp r5, #10
 	beq .L_02008b92
 .L_02008b86:
-	bl Func_02001090
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008b92
 	adds r0, r5, #1
@@ -1432,7 +1402,7 @@ Func_02000ba0:
 	adds r6, r3, #0
 	adds r6, #48
 	adds r0, r6, #0
-	bl Func_02001090
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008bf0
 	ldr r3, [sp, #0]
@@ -1866,7 +1836,7 @@ Func_02000f28:
 	bl Func_02001158
 	movs r1, #2
 	movs r0, #10
-	bl Func_02001150
+	bl ObjectMotion_SetActionVariant
 	movs r0, #12
 	bl Object_GetById
 	adds r0, #89
@@ -1876,7 +1846,7 @@ Func_02000f28:
 	movs r1, #2
 	strb r3, [r0]
 	movs r0, #16
-	bl Func_02001150
+	bl ObjectMotion_SetActionVariant
 	movs r0, #16
 	bl Object_GetById
 	adds r0, #89
@@ -1901,7 +1871,7 @@ Func_02000f28:
 	orrs r3, r6
 	strb r3, [r0]
 	movs r0, #18
-	bl Func_02001150
+	bl ObjectMotion_SetActionVariant
 	movs r1, #0
 	movs r2, #0
 	movs r0, #18
@@ -1923,7 +1893,7 @@ Func_02000f28:
 	orrs r3, r6
 	strb r3, [r0]
 	movs r0, #19
-	bl Func_02001150
+	bl ObjectMotion_SetActionVariant
 	movs r1, #0
 	movs r2, #0
 	movs r0, #19
@@ -1944,7 +1914,7 @@ Func_02000f28:
 	orrs r6, r3
 	strb r6, [r0]
 	movs r0, #20
-	bl Func_02001150
+	bl ObjectMotion_SetActionVariant
 	movs r2, #0
 	movs r1, #0
 	movs r0, #20
@@ -1960,7 +1930,7 @@ Func_02000f28:
 	movs r0, #20
 	bl Object_GetById
 	movs r1, #4
-	bl Func_02001130
+	bl Object_SetPartAttribute
 	movs r0, #0
 	pop {r3}
 	mov r8, r3
@@ -1970,15 +1940,9 @@ Func_02000f28:
 	.4byte gPartyState
 .L_02009060:
 	.4byte 0xfffc0000
-	.section .text.x02009064,"ax",%progbits
-	.global Func_02001064
-	.thumb_func
-Func_02001064:
-	movs r0, #0
-	bx lr
 	.section .rodata.x020091b0,"a",%progbits
-	.global Data_020011b0
-Data_020011b0:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1991,8 +1955,8 @@ Data_020011b0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020011e0
-Data_020011e0:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x0000006a
 	.4byte 0x10101069
 	.4byte 0xffffffff
@@ -2009,8 +1973,8 @@ Data_020011e0:
 	.4byte 0x1070606a
 	.4byte 0xffffffff
 	.4byte 0x000001ff
-	.global Data_02001220
-Data_02001220:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0073
 	.4byte 0x00000002
 	.4byte 0x00780000

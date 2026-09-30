@@ -21,7 +21,7 @@ BattleFx_CopyLinkedObjectPosition:
 	bl BattleAction_FindDescriptor
 	movs r3, #0
 	ldrsh r0, [r0, r3]
-	bl Func_08020000
+	bl Resource_GetMetadataRecordFarFar
 	movs r2, #8
 	ldrsb r2, [r0, r2]
 	ldr r3, [r6, #12]

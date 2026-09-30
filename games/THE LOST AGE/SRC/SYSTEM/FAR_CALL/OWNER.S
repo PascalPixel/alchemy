@@ -73,9 +73,9 @@ Battle_CalcPower:
 	.thumb_func
 Battle_CalcRestore:
 	overlay_veneer Func_080b0408
-	.global Func_080ad140
+	.global Owner_GetRecordFar
 	.thumb_func
-Func_080ad140:
+Owner_GetRecordFar:
 	overlay_veneer Owner_GetRecord
 	.global BattleRandom16Far
 	.thumb_func

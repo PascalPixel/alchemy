@@ -9,11 +9,11 @@
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:
-	overlay_veneer Func_080003c8
+	overlay_veneer GameFlag_TestFar
 	.global Engine_GameFlagSet
 	.thumb_func
 Engine_GameFlagSet:
-	overlay_veneer Func_080003d0
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02000c48
 	.thumb_func
 Func_02000c48:
@@ -82,10 +82,10 @@ ObjectMotion_SetVariantCallback:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_02000cd0
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02000cd0:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:
@@ -97,19 +97,19 @@ Engine_EventSetMessage:
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
-	overlay_veneer Func_080c8188
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
 	overlay_veneer Func_080c81a0
-	.global Func_02000cf8
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02000cf8:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Engine_ActorSetSpritePriority
 	.thumb_func
 Engine_ActorSetSpritePriority:
-	overlay_veneer Func_080c8200
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02000d08
 	.thumb_func
 Func_02000d08:
@@ -130,10 +130,10 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
-	.global Func_02000d30
+	.global Object_SetWideSprite
 	.thumb_func
-Func_02000d30:
-	overlay_veneer Func_080c8420
+Object_SetWideSprite:
+	overlay_veneer Object_SetWideSpriteFar
 	.global Engine_ActorReturnHome
 	.thumb_func
 Engine_ActorReturnHome:

@@ -5,14 +5,15 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/ENTRY.o"(.text)
-        "*/resource_6a9_overlay.o"(.text.x02008038)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
+        "*/resource_6a9_overlay.o"(.text.x0200807e)
         "*/resource_6a9_overlay.o"(.text.x02008080)
         "*/resource_6a9_overlay.o"(.text.x020080d0)
         "*/resource_6a9_overlay.o"(.text.x02008124)
         "*/resource_6a9_overlay.o"(.text.x0200815c)
-        "*/resource_6a9_overlay.o"(.text.x0200833c)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/SCENE_TABLES.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x02008344)
-        "*/resource_6a9_overlay.o"(.text.x0200836c)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/SCENE_TABLES_2.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x02008374)
         "*/resource_6a9_overlay.o"(.text.x020083b4)
         "*/resource_6a9_overlay.o"(.text.x020083f0)

@@ -928,17 +928,17 @@ Func_08122d10:
 .L_08123442:
 	ldr r0, [r5]
 	mov r1, r8
-	bl Func_080200f0
+	bl Map_RenderAnimatedTileFrameFar
 	ldr r0, [r5]
 	mov r1, r11
-	bl Func_080200f0
+	bl Map_RenderAnimatedTileFrameFar
 	ldr r0, [r5]
 	mov r1, r9
-	bl Func_080200f0
+	bl Map_RenderAnimatedTileFrameFar
 	subs r6, #1
 	ldmia r5!, {r0}
 	mov r1, r10
-	bl Func_080200f0
+	bl Map_RenderAnimatedTileFrameFar
 	cmp r6, #0
 	bne .L_08123442
 .L_08123468:

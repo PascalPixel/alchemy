@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_02000ebc
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_02000f64
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_02000f70
 	.section .text.x02008054,"ax",%progbits
 	.global Func_02000054
 	.thumb_func
@@ -260,7 +230,7 @@ Func_020001d4:
 	adds r5, r0, #0
 	movs r0, #16
 	adds r0, #255
-	bl Func_02000c78
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200821a
 	ldr r6, .L_02008298
@@ -268,7 +238,7 @@ Func_020001d4:
 	bl Func_02000e08
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_02000e10
+	bl UiText_OpenMessageAtObject
 	bl Func_02000e30
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -287,7 +257,7 @@ Func_020001d4:
 .L_0200821a:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c78
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200822a
 	ldr r0, .L_0200829c
@@ -310,7 +280,7 @@ Func_020001d4:
 	bl Func_02000e08
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_02000e10
+	bl UiText_OpenMessageAtObject
 	bl Func_02000e30
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -328,7 +298,7 @@ Func_020001d4:
 	beq .L_02008294
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c80
+	bl GameFlag_SetBit
 	b .L_02008294
 .L_02008286:
 	adds r0, r6, #2
@@ -357,7 +327,7 @@ Func_020002a8:
 	adds r5, r0, #0
 	movs r0, #16
 	adds r0, #255
-	bl Func_02000c78
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020082c0
 	ldr r0, .L_02008380
@@ -365,7 +335,7 @@ Func_020002a8:
 .L_020082c0:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c78
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020082d0
 	ldr r0, .L_02008384
@@ -390,7 +360,7 @@ Func_020002a8:
 	bl Func_02000e08
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_02000e10
+	bl UiText_OpenMessageAtObject
 	bl Func_02000e30
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -746,7 +716,7 @@ Func_020005fc:
 	adds r0, r0, r7
 	adds r0, #48
 	mov r8, r3
-	bl Func_02000c80
+	bl GameFlag_SetBit
 	adds r0, r5, #0
 	adds r1, r6, #0
 	adds r2, r7, #0
@@ -803,14 +773,6 @@ Func_02000668:
 	movs r0, #22
 	bl Func_02000dd0
 	pop {pc}
-	.section .text.x02008680,"ax",%progbits
-	.global Func_02000680
-	.thumb_func
-Func_02000680:
-	ldr r0, .L_02008684
-	bx lr
-.L_02008684:
-	.4byte Data_020011f8
 	.section .text.x02008688,"ax",%progbits
 	.global Func_02000688
 	.thumb_func
@@ -867,12 +829,6 @@ Func_02000688:
 	pop {r5, pc}
 .L_020086fc:
 	.4byte gPartyState
-	.section .text.x02008700,"ax",%progbits
-	.global Func_02000700
-	.thumb_func
-Func_02000700:
-	movs r0, #0
-	bx lr
 	.section .text.x02008704,"ax",%progbits
 	.global Func_02000704
 	.thumb_func
@@ -1124,7 +1080,7 @@ Func_02000848:
 	bl UiText_DrawResource
 	mov r0, r9
 	adds r1, r6, #0
-	bl Func_02000e38
+	bl ItemMenu_DrawItemDetails
 	b .L_02008924
 .L_02008918:
 	ldr r0, .L_02008aa4
@@ -1588,8 +1544,8 @@ Data_02000ea8:
 	.4byte 0x2e2e2e4c
 	.4byte 0x2e2e2e2e
 	.4byte 0x0000002e
-	.global Data_02000ebc
-Data_02000ebc:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000198
 	.4byte 0xc0000138
@@ -1632,13 +1588,13 @@ Data_02000ebc:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02000f64
-Data_02000f64:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x00000142
 	.4byte 0x01402142
 	.4byte 0x000001ff
-	.global Data_02000f70
-Data_02000f70:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff00d1
 	.4byte 0x00000001
 	.4byte 0x01880000
@@ -1801,8 +1757,8 @@ Data_02000f70:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020011f8
-Data_020011f8:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_02000190

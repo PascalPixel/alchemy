@@ -369,7 +369,7 @@ Func_0818fefc:
 	strh r3, [r0]
 	movs r3, #255
 	strh r3, [r0, #2]
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	movs r0, #1
 	ldr r1, .L_08190388
 	movs r2, #0
@@ -640,7 +640,7 @@ Func_0818fefc:
 	strh r3, [r0]
 	movs r3, #255
 	strh r3, [r0, #2]
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	ldr r2, .L_0819077c
 	movs r3, #139
 	lsls r3, r3, #2
@@ -857,7 +857,7 @@ Func_0818fefc:
 	cmp r3, r4
 	bhi .L_081905a6
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_081905a6:
 	ldr r0, [sp, #84]
 	cmp r0, #1

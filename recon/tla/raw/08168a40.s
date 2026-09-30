@@ -348,7 +348,7 @@ Func_08168a40:
 	adds r2, r7, #0
 	ldmia r5!, {r0}
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r1, #1
 	add r8, r1
 	mov r2, r8
@@ -891,7 +891,7 @@ Func_08168a40:
 	movs r3, #0
 	adds r1, r6, #0
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r2, #1
 	add r8, r2
 	mov r3, r8

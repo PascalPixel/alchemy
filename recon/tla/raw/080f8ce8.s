@@ -30,7 +30,7 @@ Func_080f8ce8:
 	add r3, sp, #12
 	str r0, [sp, #0]
 	adds r0, r7, #0
-	bl Func_08038108
+	bl UiText_GetResourceDimensionsFar
 	ldr r2, [sp, #8]
 	mov r5, r8
 	str r2, [sp, #0]

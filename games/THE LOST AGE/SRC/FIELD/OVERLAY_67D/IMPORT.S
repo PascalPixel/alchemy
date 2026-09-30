@@ -6,18 +6,18 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_02002194
+	.global GameFlag_Test
 	.thumb_func
-Func_02002194:
-	overlay_veneer Func_080003c8
-	.global Func_0200219c
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_0200219c:
-	overlay_veneer Func_080003d0
-	.global Func_020021a4
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_020021a4:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global PartyInventory_FindOwner
 	.thumb_func
 PartyInventory_FindOwner:
@@ -86,10 +86,10 @@ ObjectMotion_Launch:
 	.thumb_func
 ObjectMotion_SetVariantCallback:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
-	.global Func_02002234
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02002234:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:
@@ -98,22 +98,22 @@ Object_LinkPair:
 	.thumb_func
 Func_02002244:
 	overlay_veneer Func_080c8180
-	.global Func_0200224c
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_0200224c:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02002254
 	.thumb_func
 Func_02002254:
 	overlay_veneer Func_080c81a0
-	.global Func_0200225c
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_0200225c:
-	overlay_veneer Func_080c81d0
-	.global Func_02002264
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02002264:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_0200226c
 	.thumb_func
 Func_0200226c:
@@ -122,18 +122,18 @@ Func_0200226c:
 	.thumb_func
 Func_02002274:
 	overlay_veneer Func_080c8218
-	.global Func_0200227c
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_0200227c:
-	overlay_veneer Func_080c8228
-	.global Func_02002284
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02002284:
-	overlay_veneer Func_080c8238
-	.global Func_0200228c
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
+	.global Field_DispatchTypeHandler
 	.thumb_func
-Func_0200228c:
-	overlay_veneer Func_080c8498
+Field_DispatchTypeHandler:
+	overlay_veneer Field_DispatchTypeHandlerFar
 	.global Func_02002294
 	.thumb_func
 Func_02002294:

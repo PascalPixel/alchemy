@@ -156,7 +156,7 @@ Func_0810a108:
 	bne .L_0810a22a
 .L_0810a238:
 	mov r0, r8
-	bl Func_080ad288
+	bl Owner_RefreshClassActionsFar
 	mov r0, r8
 	bl Owner_RecalculateStatsFar
 	mov r0, r10

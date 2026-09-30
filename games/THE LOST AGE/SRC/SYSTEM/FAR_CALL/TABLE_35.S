@@ -81,7 +81,7 @@ Func_080c88b0:
 	.thumb_func
 Func_080c88b8:
 	overlay_veneer Func_080d1e18
-	.global Func_080c88c0
+	.global ObjectGroup_ApplyRandomChildValuesFar
 	.thumb_func
-Func_080c88c0:
+ObjectGroup_ApplyRandomChildValuesFar:
 	overlay_veneer ObjectGroup_ApplyRandomChildValues

@@ -25,15 +25,15 @@ Func_080c8280:
 	.thumb_func
 Func_080c8288:
 	overlay_veneer Func_080d2b4c
-	.global Func_080c8290
+	.global Party_SetFields1eeAnd1f0Far
 	.thumb_func
-Func_080c8290:
+Party_SetFields1eeAnd1f0Far:
 	overlay_veneer Party_SetFields1eeAnd1f0
-	.global Func_080c8298
+	.global Party_SetFields1f2And1f4Far
 	.thumb_func
-Func_080c8298:
+Party_SetFields1f2And1f4Far:
 	overlay_veneer Party_SetFields1f2And1f4
-	.global Func_080c82a0
+	.global Field_SetDestinationFar
 	.thumb_func
-Func_080c82a0:
+Field_SetDestinationFar:
 	overlay_veneer Field_SetDestination

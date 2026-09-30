@@ -1,43 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_0200064c
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_0200067c
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_02000680
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	ldr r0, .L_02008058
-	bx lr
-.L_02008058:
-	.4byte Data_02000698
 	.section .text.x0200805c,"ax",%progbits
 	.global Func_0200005c
 	.thumb_func
@@ -96,8 +58,8 @@ Func_0200005c:
 	movs r0, #78
 	bl Func_02000644
 	movs r0, #60
-	bl Func_020005c4
-	bl Func_020005cc
+	bl Blend_SetDarkenTarget16
+	bl Blend_WaitForTransition
 	movs r0, #240
 	bl Battle_WaitMode0
 	movs r0, #0
@@ -134,8 +96,8 @@ Func_0200005c:
 	movs r0, #78
 	bl Func_02000644
 	movs r0, #30
-	bl Func_020005c4
-	bl Func_020005cc
+	bl Blend_SetDarkenTarget16
+	bl Blend_WaitForTransition
 	movs r5, #0
 	b .L_02008144
 .L_02008142:
@@ -201,8 +163,8 @@ Func_0200005c:
 	movs r0, #78
 	bl Func_02000644
 	movs r0, #30
-	bl Func_020005c4
-	bl Func_020005cc
+	bl Blend_SetDarkenTarget16
+	bl Blend_WaitForTransition
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #0
@@ -225,12 +187,6 @@ Func_0200005c:
 	.4byte 0x00000005
 .L_02008200:
 	.4byte 0x00000009
-	.section .text.x02008204,"ax",%progbits
-	.global Func_02000204
-	.thumb_func
-Func_02000204:
-	movs r0, #0
-	bx lr
 	.section .text.x02008208,"ax",%progbits
 	.global Func_02000208
 	.thumb_func
@@ -238,7 +194,7 @@ Func_02000208:
 	push {r5, r6, lr}
 	movs r0, #164
 	lsls r0, r0, #3
-	bl Func_02000584
+	bl Runtime_BumpAllocateAlternatePool
 	ldr r6, .L_0200826c
 	adds r5, r0, #0
 	movs r2, #0
@@ -392,7 +348,7 @@ Func_0200031c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008358
-	bl Func_0200057c
+	bl Scheduler_AddOrUpdateCallback
 	ldr r0, .L_0200835c
 	ldr r1, .L_02008360
 	ldrh r3, [r1]
@@ -572,7 +528,7 @@ Func_02000490:
 	push {r5, r6, lr}
 	movs r0, #0
 	ldr r5, .L_020084d8
-	bl Func_020005c4
+	bl Blend_SetDarkenTarget16
 	ldr r3, .L_020084d4
 	movs r2, #128
 	lsls r2, r2, #19
@@ -685,8 +641,8 @@ Func_02000490:
 .L_02008570:
 	.4byte Data_03001120
 	.section .rodata.x0200864c,"a",%progbits
-	.global Data_0200064c
-Data_0200064c:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000000
 	.4byte 0x40000000
@@ -699,19 +655,19 @@ Data_0200064c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200067c
-Data_0200067c:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000001ff
-	.global Data_02000680
-Data_02000680:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02000698
-Data_02000698:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

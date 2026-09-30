@@ -1,45 +1,6 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r4, r1, #0
-	cmp r5, #0
-	beq .L_0200807c
-	adds r3, r5, #0
-	adds r3, #84
-	ldrb r2, [r3]
-	movs r3, #15
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200807c
-	ldr r1, [r5, #80]
-	movs r2, #13
-	ldrb r0, [r1, #9]
-	movs r3, #3
-	negs r2, r2
-	ands r4, r3
-	adds r3, r2, #0
-	lsls r4, r4, #2
-	ands r3, r0
-	orrs r3, r4
-	strb r3, [r1, #9]
-	adds r1, #37
-	ldrb r3, [r1]
-	ands r2, r3
-	orrs r2, r4
-	strb r2, [r1]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-.L_0200807c:
-	pop {r5, pc}
+	.section .text.x0200807e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008080,"ax",%progbits
 	.global Func_02000080
@@ -58,7 +19,7 @@ Func_02000080:
 	cmp r5, #0
 	beq .L_020080ca
 	movs r1, #0
-	bl Func_02000038
+	bl Object_SetSpritePriority
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #0
@@ -71,7 +32,7 @@ Func_02000080:
 	bl ObjectDispatch_SetSingleChildField26
 	adds r0, r5, #0
 	movs r1, #14
-	bl Func_02001d3c
+	bl Object_SetPartAttribute
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -99,7 +60,7 @@ Func_020000d0:
 	cmp r5, #0
 	beq .L_0200811e
 	movs r1, #1
-	bl Func_02000038
+	bl Object_SetSpritePriority
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #0
@@ -112,7 +73,7 @@ Func_020000d0:
 	bl ObjectDispatch_SetSingleChildField26
 	adds r0, r5, #0
 	movs r1, #15
-	bl Func_02001d3c
+	bl Object_SetPartAttribute
 	adds r1, r5, #0
 	adds r1, #35
 	ldrb r2, [r1]
@@ -247,7 +208,7 @@ Func_0200015c:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_02000038
+	bl Object_SetSpritePriority
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -269,7 +230,7 @@ Func_0200015c:
 	beq .L_0200823c
 	ldr r1, [r7, #4]
 	adds r0, r6, #0
-	bl Func_02001d3c
+	bl Object_SetPartAttribute
 .L_0200823c:
 	movs r3, #128
 	lsls r3, r3, #10
@@ -297,7 +258,7 @@ Func_0200015c:
 	orrs r3, r2
 	strb r3, [r1, #9]
 	ldr r1, [r7]
-	bl Func_02000038
+	bl Object_SetSpritePriority
 .L_02008274:
 	movs r2, #128
 	lsls r2, r2, #12
@@ -413,28 +374,6 @@ Func_0200033c:
 	bl Func_02001dd4
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x0200834c,"ax",%progbits
-	.global Func_0200034c
-	.thumb_func
-Func_0200034c:
-	ldr r0, .L_02008350
-	bx lr
-.L_02008350:
-	.4byte Data_0200211c
-	.section .text.x02008354,"ax",%progbits
-	.global Func_02000354
-	.thumb_func
-Func_02000354:
-	movs r0, #0
-	bx lr
-	.section .text.x02008358,"ax",%progbits
-	.global Func_02000358
-	.thumb_func
-Func_02000358:
-	ldr r0, .L_0200835c
-	bx lr
-.L_0200835c:
-	.4byte Data_0200214c
 	.section .text.x02008360,"ax",%progbits
 	.global Func_02000360
 	.thumb_func
@@ -1148,7 +1087,7 @@ Func_020007a4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008970
-	bl Func_02001be4
+	bl Scheduler_AddOrUpdateCallback
 	bl Func_020017bc
 	movs r0, #33
 	movs r1, #0
@@ -1192,11 +1131,11 @@ Func_020007a4:
 	movs r0, #134
 	lsls r0, r0, #4
 	adds r0, #255
-	bl Func_02001c4c
+	bl GameFlag_SetBit
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #94
-	bl Func_02001c4c
+	bl GameFlag_SetBit
 	movs r0, #128
 	movs r1, #128
 	lsls r0, r0, #9
@@ -1209,7 +1148,7 @@ Func_020007a4:
 	lsls r0, r0, #17
 	negs r1, r1
 	lsls r2, r2, #17
-	bl Func_02001d84
+	bl Motion_CamBounds
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #20
@@ -1223,7 +1162,7 @@ Func_020007a4:
 	negs r1, r1
 	lsls r2, r2, #17
 	movs r3, #1
-	bl Func_02001d84
+	bl Motion_CamBounds
 	bl Func_02001d8c
 	movs r0, #236
 	movs r1, #1
@@ -1232,7 +1171,7 @@ Func_020007a4:
 	negs r1, r1
 	lsls r2, r2, #17
 	movs r3, #1
-	bl Func_02001d84
+	bl Motion_CamBounds
 	movs r0, #77
 	bl Func_02001d94
 	pop {r5, pc}
@@ -1268,13 +1207,13 @@ Func_02000974:
 	ldr r0, [r3]
 	movs r1, #16
 	movs r2, #0
-	bl Func_02001d34
+	bl ObjectMotion_SetAngleToward
 	bl Event_SetStatus1c6
 	bl Event_WaitValue1c8Frames
 	movs r2, #0
 	movs r0, #16
 	movs r1, #0
-	bl Func_02001d5c
+	bl ObjectMotion_ArmCallback
 	movs r0, #16
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -1282,7 +1221,7 @@ Func_02000974:
 	movs r2, #0
 	movs r0, #16
 	lsls r1, r1, #8
-	bl Func_02001d5c
+	bl ObjectMotion_ArmCallback
 	movs r0, #16
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -1290,7 +1229,7 @@ Func_02000974:
 	movs r2, #0
 	movs r0, #16
 	lsls r1, r1, #8
-	bl Func_02001d5c
+	bl ObjectMotion_ArmCallback
 	movs r0, #16
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -1325,7 +1264,7 @@ Func_02000974:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #94
-	bl Func_02001c54
+	bl GameFlag_ClearBit
 	pop {pc}
 	.2byte 0x0000
 .L_02008a3c:
@@ -1380,7 +1319,7 @@ Func_02000a68:
 	movs r0, #240
 	lsls r0, r0, #4
 	adds r0, #155
-	bl Func_02001c44
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008aee
 	movs r1, #188
@@ -1447,7 +1386,7 @@ Func_02000af8:
 	movs r0, #240
 	lsls r0, r0, #4
 	adds r0, #154
-	bl Func_02001c44
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008b7e
 	movs r1, #150
@@ -1533,7 +1472,7 @@ Func_02000ba8:
 	movs r0, #240
 	lsls r0, r0, #4
 	adds r0, #158
-	bl Func_02001c44
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008c2e
 	movs r1, #200
@@ -1596,7 +1535,7 @@ Func_02000c38:
 	bl ObjectMotion_SetSpeedParameters
 	movs r1, #2
 	ldr r0, [r5]
-	bl Func_02001d64
+	bl ObjectMotion_SetActionVariant
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r3, #0
@@ -1654,7 +1593,7 @@ Func_02000cb4:
 	movs r2, #0
 	ldr r1, [r6]
 	movs r0, #9
-	bl Func_02001d34
+	bl ObjectMotion_SetAngleToward
 	ldr r0, .L_02008d10
 	bl Func_02001d44
 	movs r0, #9
@@ -1673,7 +1612,7 @@ Func_02000cb4:
 .L_02008d10:
 	.4byte 0x00002280
 .L_02008d14:
-	bl Func_02001d5c
+	bl ObjectMotion_ArmCallback
 .L_02008d18:
 	bl Func_02001ccc
 	movs r0, #0
@@ -1845,7 +1784,7 @@ Func_02000e40:
 	bl Func_02001d44
 	movs r1, #0
 	adds r0, r6, #0
-	bl Func_02001d4c
+	bl UiText_OpenMessageAtObject
 	bl Func_02001e14
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -2018,7 +1957,7 @@ Func_02000f98:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_02008fb4
-	bl Func_02001be4
+	bl Scheduler_AddOrUpdateCallback
 	pop {pc}
 .L_02008fb0:
 	.4byte Func_02000ef8
@@ -2065,11 +2004,11 @@ Func_02000fb8:
 	movs r1, #144
 	ldr r0, .L_02009048
 	lsls r1, r1, #3
-	bl Func_02001be4
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #94
-	bl Func_02001c44
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02009038
 	bl Func_02000974
@@ -2102,12 +2041,6 @@ Func_02000fb8:
 	.4byte Func_02000540
 .L_0200904c:
 	.4byte 0x0000009c
-	.section .text.x02009050,"ax",%progbits
-	.global Func_02001050
-	.thumb_func
-Func_02001050:
-	movs r0, #0
-	bx lr
 	.section .text.x02009054,"ax",%progbits
 	.global Func_02001054
 	.thumb_func
@@ -2116,7 +2049,7 @@ Func_02001054:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020090ac
-	bl Func_02001be4
+	bl Scheduler_AddOrUpdateCallback
 	bl Func_02001dfc
 	movs r1, #128
 	movs r2, #8
@@ -2170,7 +2103,7 @@ Func_020010b4:
 	adds r2, #93
 	str r2, [r3]
 	adds r0, #255
-	bl Func_02001c54
+	bl GameFlag_ClearBit
 	pop {pc}
 	.section .text.x020090d0,"ax",%progbits
 	.global Func_020010d0
@@ -2501,7 +2434,7 @@ Func_02001338:
 	bl Func_02001dcc
 	ldr r0, [r5]
 	movs r1, #1
-	bl Func_02001d64
+	bl ObjectMotion_SetActionVariant
 	adds r2, r6, #0
 	adds r2, #85
 	movs r3, #0
@@ -2677,7 +2610,7 @@ Func_02001464:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #9
-	bl Func_02001d3c
+	bl Object_SetPartAttribute
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
@@ -2714,7 +2647,7 @@ Func_02001500:
 	adds r6, r0, #0
 	movs r0, #10
 	adds r0, #255
-	bl Func_02001c44
+	bl GameFlag_Test
 	adds r7, r0, #0
 	cmp r7, #0
 	bne .L_020095e6
@@ -2728,7 +2661,7 @@ Func_02001500:
 	negs r0, r0
 	negs r1, r1
 	movs r3, #0
-	bl Func_02001d84
+	bl Motion_CamBounds
 	movs r3, #85
 	adds r3, r3, r6
 	strb r7, [r3]
@@ -2746,7 +2679,7 @@ Func_02001500:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #9
-	bl Func_02001d3c
+	bl Object_SetPartAttribute
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
@@ -2771,7 +2704,7 @@ Func_02001500:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl Func_02001d3c
+	bl Object_SetPartAttribute
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #1
@@ -3062,7 +2995,7 @@ Func_020017bc:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020097f4
-	bl Func_02001be4
+	bl Scheduler_AddOrUpdateCallback
 	pop {r5, pc}
 .L_020097ec:
 	.4byte gOverlayArea + 0x2aa0
@@ -3283,7 +3216,7 @@ Func_02001940:
 .L_02009980:
 	movs r0, #179
 	lsls r0, r0, #1
-	bl Func_02001c44
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02009992
 	ldrh r3, [r5, #28]
@@ -3539,7 +3472,7 @@ Func_02001ad8:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02009b98
-	bl Func_02001be4
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #8
 	b .L_02009b9c
 .L_02009b88:
@@ -3780,8 +3713,8 @@ Data_02002038:
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
 	.4byte 0x00000011
-	.global Data_0200211c
-Data_0200211c:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -3794,8 +3727,8 @@ Data_0200211c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200214c
-Data_0200214c:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x0000009a
 	.4byte 0x10124002
 	.4byte 0xffffffff

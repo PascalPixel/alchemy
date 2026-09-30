@@ -6,14 +6,14 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_02000170
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02000170:
-	overlay_veneer Func_080000d0
-	.global Func_02000178
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000178:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

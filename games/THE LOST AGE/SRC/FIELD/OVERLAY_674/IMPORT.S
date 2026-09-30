@@ -14,10 +14,10 @@ Engine_MathRemainder:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02003da4
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02003da4:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -34,18 +34,18 @@ Vector_AddPolarOffsetFar:
 	.thumb_func
 Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
-	.global Func_02003dcc
+	.global GameFlag_Test
 	.thumb_func
-Func_02003dcc:
-	overlay_veneer Func_080003c8
-	.global Func_02003dd4
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02003dd4:
-	overlay_veneer Func_080003d0
-	.global Func_02003ddc
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02003ddc:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02003de4
 	.thumb_func
 Func_02003de4:
@@ -198,14 +198,14 @@ ObjectMotion_Launch:
 	.thumb_func
 Func_02003f0c:
 	overlay_veneer Func_080c8150
-	.global Func_02003f14
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02003f14:
-	overlay_veneer Func_080c8158
-	.global Func_02003f1c
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02003f1c:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02003f24
 	.thumb_func
 Func_02003f24:
@@ -214,18 +214,18 @@ Func_02003f24:
 	.thumb_func
 Func_02003f2c:
 	overlay_veneer Func_080c81a0
-	.global Func_02003f34
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02003f34:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02003f3c
 	.thumb_func
 Func_02003f3c:
 	overlay_veneer Func_080c81d8
-	.global Func_02003f44
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02003f44:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02003f4c
 	.thumb_func
 Func_02003f4c:
@@ -242,10 +242,10 @@ Func_02003f5c:
 	.thumb_func
 Func_02003f64:
 	overlay_veneer Func_080c8230
-	.global Func_02003f6c
+	.global Motion_CamBounds
 	.thumb_func
-Func_02003f6c:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02003f74
 	.thumb_func
 Func_02003f74:

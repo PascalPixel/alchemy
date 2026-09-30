@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_02000608
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_02000668
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_02000674
 	.section .text.x02008054,"ax",%progbits
 	.global Func_02000054
 	.thumb_func
@@ -101,12 +71,12 @@ Func_020000b8:
 	push {lr}
 	movs r0, #136
 	lsls r0, r0, #2
-	bl Func_02000588
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020080d6
 	movs r0, #136
 	lsls r0, r0, #2
-	bl Func_02000590
+	bl GameFlag_SetBit
 	movs r0, #14
 	movs r1, #0
 	bl Func_020005d8
@@ -129,14 +99,6 @@ Func_020000d8:
 	bl WaitFrames
 	bl Func_02000358
 	pop {r5, pc}
-	.section .text.x020080fc,"ax",%progbits
-	.global Func_020000fc
-	.thumb_func
-Func_020000fc:
-	ldr r0, .L_02008100
-	bx lr
-.L_02008100:
-	.4byte Data_020006ec
 	.section .text.x02008104,"ax",%progbits
 	.global Func_02000104
 	.thumb_func
@@ -180,12 +142,6 @@ Func_02000104:
 	.2byte 0x0000
 .L_02008154:
 	.4byte gPartyState
-	.section .text.x02008158,"ax",%progbits
-	.global Func_02000158
-	.thumb_func
-Func_02000158:
-	movs r0, #0
-	bx lr
 	.section .text.x0200815c,"ax",%progbits
 	.global Func_0200015c
 	.thumb_func
@@ -433,7 +389,7 @@ Func_0200029c:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_02008354
-	bl Func_02000530
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {r3, r5}
 	mov r8, r3
@@ -460,7 +416,7 @@ Func_02000358:
 	adds r5, r5, r3
 	movs r3, #0
 	ldrsh r0, [r5, r3]
-	bl Func_02000568
+	bl Resource_ResetEntry
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock
 	pop {r5, pc}
@@ -688,8 +644,8 @@ Func_02000468:
 .L_02008524:
 	.4byte gPartyState
 	.section .rodata.x02008608,"a",%progbits
-	.global Data_02000608
-Data_02000608:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000198
 	.4byte 0x40000058
@@ -714,13 +670,13 @@ Data_02000608:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02000668
-Data_02000668:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x00000142
 	.4byte 0x01402142
 	.4byte 0x000001ff
-	.global Data_02000674
-Data_02000674:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0132
 	.4byte 0x00000001
 	.4byte 0x01780000
@@ -751,8 +707,8 @@ Data_02000674:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020006ec
-Data_020006ec:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_020000d8

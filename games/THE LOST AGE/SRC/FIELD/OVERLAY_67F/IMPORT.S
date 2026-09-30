@@ -26,14 +26,14 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Func_02001418
+	.global GameFlag_Test
 	.thumb_func
-Func_02001418:
-	overlay_veneer Func_080003c8
-	.global Func_02001420
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02001420:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02001428
 	.thumb_func
 Func_02001428:
@@ -106,22 +106,22 @@ Func_020014a8:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
-	.global Func_020014b8
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_020014b8:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_020014c0
 	.thumb_func
 Func_020014c0:
 	overlay_veneer Func_080c8208
-	.global Func_020014c8
+	.global ObjectVisual_CopyAttributes
 	.thumb_func
-Func_020014c8:
-	overlay_veneer Func_080c8220
-	.global Func_020014d0
+ObjectVisual_CopyAttributes:
+	overlay_veneer ObjectVisual_CopyAttributesFar
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_020014d0:
-	overlay_veneer Func_080c8228
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
 	.global Func_020014d8
 	.thumb_func
 Func_020014d8:

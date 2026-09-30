@@ -13,9 +13,9 @@ BattleFx_GetResourceIdFar:
 	.thumb_func
 Event_ClearInvalidPackedValuesFar:
 	overlay_veneer Event_ClearValidPackedIds
-	.global Func_080c85d8
+	.global BattleFx_InitializeSlotsFar
 	.thumb_func
-Func_080c85d8:
+BattleFx_InitializeSlotsFar:
 	overlay_veneer BattleFx_InitializeSlots
 	.global Func_080c85e0
 	.thumb_func

@@ -351,7 +351,7 @@ Func_08165ab4:
 	adds r1, r5, #0
 	ldr r2, [sp, #24]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	adds r7, #1
 	ldr r4, [sp, #8]
 	cmp r7, #7
@@ -495,7 +495,7 @@ Func_08165ab4:
 	movs r3, #0
 	ldr r2, [sp, #24]
 	str r6, [sp, #80]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r6, [sp, #32]
 	movs r0, #128
 	lsls r0, r0, #14
@@ -510,7 +510,7 @@ Func_08165ab4:
 	adds r1, r2, #0
 	movs r3, #0
 	ldr r2, [sp, #24]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_08165eb2:
 	ldr r6, [sp, #20]
 	movs r3, #0
@@ -537,7 +537,7 @@ Func_08165ab4:
 	mov r1, r9
 	ldr r2, [sp, #24]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r3, [r5]
 	ldr r2, [r5, #12]
 	adds r3, r3, r2

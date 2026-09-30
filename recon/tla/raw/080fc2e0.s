@@ -182,7 +182,7 @@ Func_080fc2e0:
 	add r5, r9
 	bl Sys_Free
 	ldrb r0, [r5]
-	bl Func_080ad288
+	bl Owner_RefreshClassActionsFar
 	ldrb r0, [r5]
 	bl Owner_RecalculateStatsFar
 	mov r0, r8

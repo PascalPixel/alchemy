@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
+#include "IO_REG.H"
 
 extern u16 gSerialExchangeActive;    /* VBlank runs the link exchange */
 extern u16 Data_03001f64;            /* link exchange status */
@@ -36,10 +37,11 @@ void System_VBlankHandler(void)
     void (*hook)(void);
 
     {
-        volatile u16 *dma0 = (volatile u16 *)0x040000b0;
+        /* Stop the H-blank scroll DMA; the read waits for it to settle. */
+        volatile u16 *dma0 = REG_DMA0;
 
-        dma0[5] &= 0xc5ff;
-        dma0[5] &= 0x7fff;
+        dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+        dma0[5] &= ~DMA_ENABLE;
         dma0[5];
     }
     if (gSerialExchangeActive != 0) {
@@ -51,8 +53,8 @@ void System_VBlankHandler(void)
     BlendTransition_Update();
     if (Data_03001e44 != 0) {
         if (Data_03001d18 != 0)
-            Dma_Set(Data_03001e50[52], (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
-        Dma_Set(Data_03001ad0, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
+            Dma_Set(Data_03001e50[52], OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
+        Dma_Set(Data_03001ad0, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
         IoWriteQueue_FlushPending();
         Data_03001e44 = 0;
     }
@@ -62,7 +64,7 @@ void System_VBlankHandler(void)
         hook();
     }
     Runtime_InvokeCallbacksByKey(0x480);
-    keys = *(volatile u16 *)0x04000130 ^ 0x3ff;
+    keys = REG_KEYINPUT ^ KEYS_MASK;
     {
         u32 pressed = keys & ~Data_03001ae8;
 

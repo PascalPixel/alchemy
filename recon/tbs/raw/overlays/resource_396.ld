@@ -5,8 +5,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/OBJECT_SETUP.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/OBJECT_CONFIG.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/HEYA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TABLES.o"(.text)

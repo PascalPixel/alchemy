@@ -6,11 +6,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/GET_ENTRANCES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/SCENE_TABLES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/GET_PLACEMENTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/GET_EVENTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/MOTION_PARTICLE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/MURA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/IMPORT.o"(.text)
         "*/resource_3a3_overlay.o"(.rodata)
     }

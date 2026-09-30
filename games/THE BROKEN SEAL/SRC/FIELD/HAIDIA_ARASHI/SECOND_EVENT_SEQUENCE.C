@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 void FieldScene_DrawFiveTileBlocks();
 void SceneActor_RunActor22PlacementSequence();
 void Engine_TaskWait();

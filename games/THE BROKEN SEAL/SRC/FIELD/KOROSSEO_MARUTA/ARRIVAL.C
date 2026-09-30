@@ -61,19 +61,19 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
     Engine_EventBegin();
     state = Value2(ColossoLogRollingStage_RunStateInteraction, scene, 1);
     if (state == 0) {
-        Call1(Engine_EventSetMessage, (s32)MsgKorosseoStageCalledScales);
-        Call2(Engine_CameraSetSpeed, 196608, 24576);
-        Call4(Engine_CameraMoveTo, 9961472, -1, 13107200, 1);
+        Event_SetMessage((s32)MsgKorosseoStageCalledScales);
+        Camera_SetSpeed(196608, 24576);
+        Camera_MoveTo(9961472, -1, 13107200, 1);
         Engine_CameraWaitForMove();
-        Call1(Engine_EventWait, 30);
-        Call2(Engine_EventShowMessage, scene, 0);
+        Event_Wait(30);
+        Event_ShowMessage(scene, 0);
         Call3(ColossoLogRollingStage_StartPaletteTask, 104, 68, 0);
-        Call1(Engine_EventWait, 60);
+        Event_Wait(60);
         Call3(ColossoLogRollingStage_StartPaletteTaskFromState, 168, 96, 10);
-        Call1(Engine_EventWait, 70);
-        Call2(Engine_EventShowMessage, scene, 0);
+        Event_Wait(70);
+        Event_ShowMessage(scene, 0);
         ColossoLogRollingStage_StopPaletteTask();
-        Call1(Engine_TaskWait, 2);
+        Task_Wait(2);
         p17 = Pointer1(Engine_ActorGet, 10);
         *(u8 *)((u8 *)p17 + 85) = 0;
         *(s32 *)(p17 + 52) = 26214;
@@ -85,7 +85,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         *(s32 *)(p19 + 48) = 52428;
         Call4(Object_SetPosition, (s32)p19, *(s32 *)(p19 + 8), 2097152, *(s32 *)(p19 + 16));
         Call1(Object_CommitPosition, p19);
-        Call1(Engine_EventWait, 45);
+        Event_Wait(45);
         p23 = Pointer1(Engine_ActorGet, 10);
         *(u8 *)((u8 *)p23 + 85) = 0;
         *(s32 *)(p23 + 52) = 26214;
@@ -98,21 +98,21 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         Call4(Object_SetPosition, (s32)p25, *(s32 *)(p25 + 8), 262144, *(s32 *)(p25 + 16));
         Call1(Object_CommitPosition, p25);
         Call1((void (*)())Engine_EventWait, 15);
-        Call2(Engine_EventShowMessage, scene, 0);
+        Event_ShowMessage(scene, 0);
         Call3(ColossoLogRollingStage_StartPaletteTask, 104, 68, 0);
-        Call1(Engine_EventWait, 30);
+        Event_Wait(30);
         Call3(ColossoLogRollingStage_StartPaletteTaskFromState, 168, 96, 10);
-        Call1(Engine_EventWait, 40);
+        Event_Wait(40);
         Call3(ColossoLogRollingStage_StartPaletteTaskFromState, 104, 68, 10);
-        Call1(Engine_EventWait, 70);
-        Call2(Engine_EventShowMessage, scene, 0);
+        Event_Wait(70);
+        Event_ShowMessage(scene, 0);
         ColossoLogRollingStage_StopPaletteTask();
-        Call1(Engine_TaskWait, 2);
-        Call2(Engine_CameraFollowActor, 0, 0);
+        Task_Wait(2);
+        Camera_FollowActor(0, 0);
         Call2(ColossoLogRollingStage_InitializeStateInteraction, scene, 1);
     } else if (state == 1) {
-        Call1(Engine_EventSetMessage, (s32)MsgKorosseoObjectiveGetAcross);
-        Call2(Engine_EventShowMessage, scene, 0);
+        Event_SetMessage((s32)MsgKorosseoObjectiveGetAcross);
+        Event_ShowMessage(scene, 0);
     }
     Value3(FieldScene_RunMiddleSequence, state, scene, 1);
     Engine_EventEnd();

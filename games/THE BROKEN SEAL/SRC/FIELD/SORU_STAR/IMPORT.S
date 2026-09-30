@@ -29,12 +29,21 @@ CalculateAngleFromCoordinateDelta:
 	overlay_veneer ArcTan2Far
 	overlay_veneer Trig_SinFar
 	overlay_veneer Trig_CosFar
+	.global Engine_HeapAllocate
+	.thumb_func
+Engine_HeapAllocate:
 	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Engine_AllocateBlock
 	.thumb_func
 Engine_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
+	.global Engine_HeapRelease
+	.thumb_func
+Engine_HeapRelease:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global Engine_ObjectSetAnimation
 	.thumb_func
@@ -48,6 +57,9 @@ Engine_ObjectSetScript:
 	.thumb_func
 Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
+	.global Engine_ObjectDispatchRelease
+	.thumb_func
+Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -97,17 +109,29 @@ UiWork_PushValueSlotFar:
 	.thumb_func
 UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
+	.global Engine_ItemLoadIcon
+	.thumb_func
+Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
 	.global Owner_GetState
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
+	.global Inventory_AddItem
+	.thumb_func
+Inventory_AddItem:
 	overlay_veneer Inventory_AddItemFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
+	.global Inventory_Find
+	.thumb_func
+Inventory_Find:
 	overlay_veneer Inventory_FindFar
+	.global PartyInventory_FindOwner
+	.thumb_func
+PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -313,6 +337,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Engine_RunRisingObjectSequence
+	.thumb_func
+Engine_RunRisingObjectSequence:
 	overlay_veneer EffectRuntime_RunRisingObjectSequenceFar
 	.global Engine_ItemShowFound
 	.thumb_func

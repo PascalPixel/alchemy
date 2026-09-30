@@ -25,10 +25,10 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ u8 field_00[6];
-    /* 0x06 */ u16 field_06;
+    /* 0x06 */ u16 angle;
     /* 0x08 */ u8 field_08[16];
-    /* 0x18 */ s32 field_18;
-    /* 0x1c */ s32 field_1c;
+    /* 0x18 */ s32 scale_x;
+    /* 0x1c */ s32 scale_y;
     /* 0x20 */ u8 field_20[53];
     /* 0x55 */ u8 field_55;
     /* 0x56 */ u8 field_56[3];
@@ -56,7 +56,6 @@ void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
     Unit *unit_record;
     Object *object;
     s32 position;
-    s32 row;
     s32 anim;
     u8 class_id;
 
@@ -161,19 +160,16 @@ void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
         actor->anim = 0;
     }
 
-    row = y;
-    if (row < 0)
-        row += 7;
-    position = ArcTan2(row >> 3, x) + 0x8000;
-    object->field_06 = position;
+    position = ArcTan2(y / 8, x) + 0x8000;
+    object->angle = position;
     object->field_59 = 3;
     object->field_55 = 2;
     if (unit_record->kind == 0) {
-        object->field_18 = 0x14ccc;
-        object->field_1c = 0x14ccc;
+        object->scale_x = 0x14ccc;
+        object->scale_y = 0x14ccc;
     } else {
-        object->field_18 = 0x10000;
-        object->field_1c = 0x10000;
+        object->scale_x = 0x10000;
+        object->scale_y = 0x10000;
     }
     ObjectDispatch_InitializeFar(object, BattlePres_ActorObjectScript);
 }

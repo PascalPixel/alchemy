@@ -5,8 +5,6 @@ s32 Engine_TaskAddCallback();
 void KareiMachi_AlternateDance(void);
 extern s32 KareiMachi_DanceStep;
 
-
-
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.

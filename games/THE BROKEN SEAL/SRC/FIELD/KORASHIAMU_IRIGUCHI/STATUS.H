@@ -8,11 +8,6 @@
 #include "FIELD_SCENE.H"
 
 
-/* Fields of the engine's event work, read and written by word. */
-#define SCENE_WORK (*(u8 **)&gEventWork)
-#define SCENE_PHASE (*(s32 *)(SCENE_WORK + 0x1c0))
-#define SCENE_FIELD_1C8 (*(s32 *)(SCENE_WORK + 0x1c8))
-#define SCENE_STEP (*(u16 *)(SCENE_WORK + 0x1d8))
 #define RECORD_17 17
 
 /* The scene's action tables, in the overlay's read-only data. */

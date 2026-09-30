@@ -6,7 +6,6 @@ struct Probe {
 
 void Object_SetModeById(s32 id, s32 mode);
 
-
 s32 StagedActor_FillGridAttributeRectangle();
 s32 StagedActor_FindClearPosition(struct Probe *probe);
 void SceneActor_MoveAndRedraw(struct Probe probe);

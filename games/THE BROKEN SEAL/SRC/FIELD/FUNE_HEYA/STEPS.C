@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
 
@@ -92,40 +93,13 @@ u8 *Battle_GetWorkObject1e0();
  * fields the neighbouring scene sources touch; their meaning is not recovered.
  */
 
-/* Loader-relocated overlay calls: each Func_ symbol names the pre-relocation
- * call word the image holds.
- *
- * Three of those pre-relocation words repeat in this owner while reaching
- * different runtime helpers (0x0200af5a, 0x0200b0e8 and 0x0200b20c each cover
- * two distinct destinations), so one Func_ spelling cannot name both sites.
- * Those six sites are declared by their runtime address instead, which the
- * overlay symbol resolver binds directly. Registering this owner as a
- * translation unit with explicit absolute_symbols would let them go back to
- * suffixed Func_ spellings without changing a byte. */
-
-/* The scene work record pointer; +0x1c0 holds the scene request word. */
-
-/*
- * Actor slot search for resource_3b1.  The 48-byte owner at 0x02005038 has no
- * pool; the halfword at 0x02005066 is alignment before the next owner.
- */
-
 /*
  * Field scene beat for overlay resource_3b1.  Each callee is named for its own
  * call site: every call reaches its target through its own local veneer, even
  * where the same logical callee is used from more than one site.
  */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 void FieldScene_CallPairWith10(s32 a, u16 b);
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* The halfword field at +6 of a scene record is written from an int-sized
  * value; storing a plain constant through the cast would make the compiler
@@ -140,22 +114,6 @@ static __inline__ void SetPose(u8 *rec, s32 pose)
  * so each call site fixes its own arity.
  */
 
-/*
- * Resource 3b1 unindexed helper at 0x02004880 (16 bytes, 69 calls).
- *
- * Derived span: no inventory row (item 28). `push {lr}` at 0x02004880,
- * epilogue `pop {r0} / bx r0` at 0x0200488c-0x0200488e returns void.
- * Adjoins 0x0200486c below and 0x02004890 above with no pad or pool on
- * either side.
- *
- * The second argument is masked to 16 bits (`lsls`/`lsrs` #16) before the
- * call, so it is genuinely `u16`, not a truncated `s32`.
- */
-
-/*
- * Shared helper for resource_3b1.  The owner at 0x0200486c is 18 bytes; the
- * halfword before the next owner at 0x02004880 is alignment, not part of it.
- */
 void FieldScene_RunStepThen10(s32 a)
 {
     Event_ShowMessage(a, 0);
@@ -167,18 +125,6 @@ void FieldScene_CallPairWith10(s32 a, u16 b)
     Actor_FaceDirection(a, b, 10);
 }
 
-/*
- * Resource 3b1 unindexed helper at 0x02004890 (28 bytes, 55 calls).
- *
- * Derived span: no inventory row (item 28). `push {r5,r6,lr}` at
- * 0x02004890, epilogue `pop {r5,r6} / pop {r0} / bx r0` at
- * 0x020048a6-0x020048aa returns void. Adjoins 0x02004880 below and
- * 0x020048ac above with no pad or pool.
- *
- * `b` and `c` are shifted left 16 (16.16 fixed point) before the first
- * call but not masked, so they stay full `s32`. `Object_GetByIdFar` returns a
- * pointer whose halfword at offset 6 is then set to `d`.
- */
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
     ObjectMotion_SetHorizontalPositionWithTerrain(a, b << 16, c << 16, d);

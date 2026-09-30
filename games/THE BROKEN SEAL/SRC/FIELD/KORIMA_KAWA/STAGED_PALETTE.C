@@ -57,16 +57,7 @@ static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
     Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
 }
 
-/*
- * One symbol per call site, named at the site's own address.  All three
- * reach the same ARM-mode IWRAM helper that scales a channel by the
- * adjustment, and each still needs its own name.  The sites are 0x02000d14,
- * 0x02000d22 and 0x02000d30.
- */
-
 s32 IwramSignedDivide();
-
-
 
 u8 *MapStagedScene_SelectPrimaryData(void) { return Data_02008fc8; }
 
@@ -225,11 +216,6 @@ void SceneEffect_AdjustPaletteColors(s32 a)
     BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
 }
 
-/*
- * resource_393 owner at 0x02000cf4, 104 bytes: the asymmetric RGB555 colour
- * adjustment.  Red rises while green and blue fall, each through the same
- * per-channel scale.
- */
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {
 

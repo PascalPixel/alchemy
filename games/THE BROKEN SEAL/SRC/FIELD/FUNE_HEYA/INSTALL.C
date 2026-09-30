@@ -65,14 +65,6 @@ u8 *FuneHeya_FindFirstSetFlag();
 void FieldScene_RunSceneStep();
 u8 *Object_GetByIdFar();
 
-/*
- * Four "install or fallback" blocks, each gated by a flag check, then four
- * unconditional installs.  src is threaded through every block unmodified,
- * and blocks two and four store the 0xffff0000 sentinel into the installed
- * object's +24 field.  The owner includes the trailing pool words that hold
- * the flag addresses and the sentinel.  Callees are named by the address
- * their call site computes, not by a runtime address.
- */
 void FieldScene_InstallFlaggedActors10To17(u8 *src)
 {
     if (GameFlag_IsSet(0x928) != 0) {

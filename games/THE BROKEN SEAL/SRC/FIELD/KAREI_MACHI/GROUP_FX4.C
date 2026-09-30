@@ -20,7 +20,6 @@ enum {
     ITEM_NUT = 181
 };
 
-
 struct Obj {
     u8 filler00[6];
     u16 f06;

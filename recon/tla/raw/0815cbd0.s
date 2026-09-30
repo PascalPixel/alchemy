@@ -183,7 +183,7 @@ Func_0815cbd0:
 	cmp r7, #32
 	bne .L_0815cd4e
 	movs r0, #143
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0815cd4e:
 	mov r2, r9
 	ldr r3, [r2, #20]

@@ -7,7 +7,7 @@ Func_080ea8a8:
 	adds r5, r0, #0
 	adds r6, r1, #0
 	adds r7, r2, #0
-	bl Func_08020308 + 0x8
+	bl Func_08020310
 	cmp r0, #0
 	bne .L_080ea8d0
 	adds r1, r6, #0

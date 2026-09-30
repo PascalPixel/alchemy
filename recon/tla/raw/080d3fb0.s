@@ -76,7 +76,7 @@ Func_080d3fb0:
 	bl Func_08038140
 .L_080d4046:
 	mov r0, r10
-	bl UiWork_IsCompleteFar + 0x8
+	bl UiWork_IsIdleFar
 	cmp r0, #0
 	beq .L_080d4006
 .L_080d4050:

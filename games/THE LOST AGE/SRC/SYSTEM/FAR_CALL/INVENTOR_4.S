@@ -9,10 +9,25 @@
 	.thumb_func
 Djinn_AddToLeastLoadedOwnerFar:
 	overlay_veneer Djinn_AddToLeastLoadedOwner
+	.global Party_SumDjinnCountsFar
+	.thumb_func
+Party_SumDjinnCountsFar:
 	overlay_veneer Party_SumDjinnCounts
+	.global Party_AdjustSixDigitCounterBFar
+	.thumb_func
+Party_AdjustSixDigitCounterBFar:
 	overlay_veneer Party_AdjustSixDigitCounterB
+	.global Party_AdjustCounterCappedAt28Far
+	.thumb_func
+Party_AdjustCounterCappedAt28Far:
 	overlay_veneer Party_AdjustCounterCappedAt28
+	.global Func_080ad268
+	.thumb_func
+Func_080ad268:
 	overlay_veneer Func_080af244
+	.global Func_080ad270
+	.thumb_func
+Func_080ad270:
 	overlay_veneer Func_080af1fc
 	.global Inventory_DiscardFar
 	.thumb_func

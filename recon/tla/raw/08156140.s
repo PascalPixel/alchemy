@@ -531,7 +531,7 @@ Func_08156140:
 	bl Func_080145a8
 	ldr r2, [sp, #148]
 	ldr r0, [r2, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	mov r3, r9
 	lsls r3, r3, #2
 	ldr r7, [r0]
@@ -576,7 +576,7 @@ Func_08156140:
 	ldr r2, [sp, #20]
 	ldr r4, [sp, #148]
 	ldrsh r0, [r2, r4]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r5, [sp, #20]
 	ldr r1, [sp, #148]
@@ -736,13 +736,13 @@ Func_08156140:
 	ldr r0, [r2, #8]
 	mov r1, r10
 	subs r0, r0, r3
-	bl __divsi3
+	bl Math_Div
 	str r0, [r6, #12]
 	mov r3, r8
 	ldr r0, [r3, #16]
 	mov r1, r10
 	subs r0, r0, r5
-	bl __divsi3
+	bl Math_Div
 	mov r4, r9
 	str r0, [r6, #20]
 	cmp r4, #7
@@ -883,7 +883,7 @@ Func_08156140:
 	adds r0, r0, r1
 .L_081567fc:
 	mov r1, r10
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [r6, #12]
 	ldr r3, [r6]
 	lsls r2, r2, #1
@@ -951,7 +951,7 @@ Func_08156140:
 .L_0815687e:
 	subs r0, r0, r3
 .L_08156880:
-	bl __divsi3
+	bl Math_Div
 	str r0, [r6, #16]
 .L_08156886:
 	movs r3, #0
@@ -1131,7 +1131,7 @@ Func_08156140:
 	cmp r7, #32
 	bne .L_08156a12
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_08156a12
 .L_081569de:
 	mov r0, r9
@@ -1150,7 +1150,7 @@ Func_08156140:
 	bne .L_08156a12
 .L_081569f8:
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_08156a12
 .L_08156a00:
 	mov r4, r9
@@ -1160,7 +1160,7 @@ Func_08156140:
 	cmp r5, #16
 	bne .L_08156a12
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08156a12:
 	ldr r6, [sp, #148]
 	ldr r3, [r6, #28]
@@ -1271,7 +1271,7 @@ Func_08156140:
 	ldr r7, [sp, #36]
 	ldr r2, [sp, #148]
 	ldrsh r0, [r7, r2]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r4, [sp, #96]
 	movs r3, #0
@@ -1450,7 +1450,7 @@ Func_08156140:
 	bne .L_08156c46
 	movs r0, #134
 	str r2, [sp, #12]
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_08156c6a
 .L_08156c46:
 	mov r1, r9
@@ -1755,7 +1755,7 @@ Func_08156140:
 .L_08156e90:
 	movs r1, #6
 	ldr r0, [sp, #128]
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #1
 	ldr r2, [sp, #144]
 	adds r1, r1, r0
@@ -1811,7 +1811,7 @@ Func_08156140:
 	bne .L_08156f26
 	movs r1, #6
 	ldr r0, [sp, #132]
-	bl Math_Mod
+	bl __modsi3
 	ldr r7, [sp, #144]
 	adds r1, r0, #0
 	lsls r1, r1, #7
@@ -1899,7 +1899,7 @@ Func_08156140:
 	ldr r7, [sp, #64]
 	adds r0, r7, r1
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	lsls r3, r0, #1
 	adds r5, r3, r0
 	ldr r0, [sp, #128]
@@ -1909,7 +1909,7 @@ Func_08156140:
 .L_08156fb8:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0815702c
 	adds r0, r5, r0
 	lsls r3, r0, #2

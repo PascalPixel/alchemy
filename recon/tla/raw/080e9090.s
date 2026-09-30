@@ -93,7 +93,7 @@ Func_080e9090:
 	adds r5, r0, #0
 	lsls r1, r1, #1
 	mov r0, r9
-	bl __divsi3
+	bl Math_Div
 	ldr r3, .L_080e9244
 	adds r1, r0, #0
 	adds r0, r5, #0

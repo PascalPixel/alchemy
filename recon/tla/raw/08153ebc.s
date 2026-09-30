@@ -189,7 +189,7 @@ Func_08153ebc:
 	ldr r1, .L_08154100
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r3, #238
 	lsls r3, r3, #7
 	movs r2, #238
@@ -923,7 +923,7 @@ Func_08153ebc:
 	add r5, r9
 .L_081545fa:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	ldr r0, [sp, #48]
 	adds r0, #1
 	str r0, [sp, #48]
@@ -974,7 +974,7 @@ Func_08153ebc:
 .L_08154660:
 	ldr r0, [sp, #48]
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [sp, #64]
 	ldr r3, [r2, #20]
 	cmp r0, r3
@@ -1196,7 +1196,7 @@ Func_08153ebc:
 	bl Audio_PlayCue
 	movs r1, #6
 	ldr r0, [sp, #48]
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #64]
 	adds r4, r0, #0
 	ldr r3, [r1, #20]

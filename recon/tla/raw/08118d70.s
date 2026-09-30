@@ -111,7 +111,7 @@ Func_08118d70:
 	adds r3, r2, r0
 	strb r5, [r3]
 	ldrh r0, [r6, r1]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	movs r3, #1
 	add r10, r3
 	adds r6, #2

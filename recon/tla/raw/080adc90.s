@@ -42,7 +42,7 @@ Func_080adc90:
 	mov r3, r8
 	lsls r0, r3, #16
 	adds r1, r6, #0
-	bl __divsi3
+	bl Math_Div
 .L_080adce0:
 	pop {r3}
 	mov r8, r3

@@ -18,7 +18,7 @@ Func_080d7c04:
 	adds r3, #224
 	ldr r0, .L_080d7d38
 	ldr r5, [r3]
-	bl Func_08108048 + 0x10
+	bl Func_08108058
 	movs r0, #173
 	bl Audio_PlayCue
 	adds r0, r6, #0
@@ -119,7 +119,7 @@ Func_080d7c04:
 	bl Audio_PlayCue
 	movs r0, #100
 	bl WaitFrames
-	bl Func_08108048 + 0x18
+	bl Func_08108060
 	bl Func_080d7ab4
 .L_080d7d32:
 	add sp, #12

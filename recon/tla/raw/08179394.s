@@ -331,7 +331,7 @@ Func_08179394:
 	bne .L_081795c6
 .L_08179634:
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	mov r0, r11
 	ldr r3, [r0, #20]
 	movs r7, #0

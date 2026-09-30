@@ -69,7 +69,7 @@ Func_0814153c:
 	movs r0, #1
 	ldr r1, .L_08141798
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r4, [sp, #96]
 	lsls r7, r7, #7
 	movs r1, #238
@@ -1313,13 +1313,13 @@ Func_0814153c:
 	adds r5, r2, r3
 .L_08141f9a:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	movs r4, #1
 	add r8, r4
 	mov r7, r8
 	cmp r7, #32
 	bne .L_08141f9a
-	bl Func_08020380 + 0x8
+	bl Func_08020388
 	movs r0, #128
 	bl Resource_LoadIntoFreeSlot
 	ldr r1, [sp, #68]
@@ -1378,7 +1378,7 @@ Func_0814153c:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r5, .L_08142068
 	movs r1, #128
 	ldr r0, [sp, #100]
@@ -1792,7 +1792,7 @@ Func_0814153c:
 	str r5, [r4, #16]
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r1, #31
 	movs r0, #31
 	movs r2, #31
@@ -2431,7 +2431,7 @@ Func_0814153c:
 	ldrh r1, [r3]
 	movs r2, #24
 	movs r0, #1
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r0, #1
 	bl WaitFrames
 	ldr r7, [sp, #96]
@@ -2454,7 +2454,7 @@ Func_0814153c:
 	mov lr, r5
 	.2byte 0xf800
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r2, #0
 	movs r3, #240
 	lsls r3, r3, #7

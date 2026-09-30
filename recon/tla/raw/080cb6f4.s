@@ -52,7 +52,7 @@ Func_080cb6f4:
 	movs r1, #100
 	adds r0, r5, #0
 	muls r0, r3
-	bl __divsi3
+	bl Math_Div
 	adds r1, r0, #0
 	cmp r1, #0
 	bne .L_080cb76e

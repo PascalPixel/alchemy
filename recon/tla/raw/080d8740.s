@@ -27,7 +27,7 @@ Func_080d8740:
 	lsls r0, r0, #14
 	adds r0, #132
 	str r3, [sp, #4]
-	bl Func_08108048 + 0x10
+	bl Func_08108058
 	movs r0, #30
 	bl WaitFrames
 	adds r2, r6, #0
@@ -240,7 +240,7 @@ Func_080d8740:
 	bge .L_080d8940
 	movs r0, #50
 	bl WaitFrames
-	bl Func_08108048 + 0x18
+	bl Func_08108060
 	bl Func_080d7ab4
 .L_080d8960:
 	add sp, #52

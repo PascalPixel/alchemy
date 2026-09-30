@@ -200,7 +200,7 @@ Func_080e9f68:
 	cmp r0, #19
 	bhi .L_080ea130
 	movs r1, #5
-	bl __divsi3
+	bl Math_Div
 	ldrh r1, [r6]
 	movs r3, #7
 	ands r3, r0

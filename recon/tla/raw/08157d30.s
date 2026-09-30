@@ -156,7 +156,7 @@ Func_08157d30:
 	cmp r7, #56
 	bne .L_08157e72
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08157e72:
 	movs r0, #0
 	movs r1, #16

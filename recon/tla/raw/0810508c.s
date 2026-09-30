@@ -15,7 +15,7 @@ Func_0810508c:
 	ldmia r5!, {r0}
 	cmp r0, #0
 	beq .L_081050a6
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 .L_081050a6:
 	subs r6, #1
 	cmp r6, #0

@@ -86,7 +86,7 @@ Func_080cb91c:
 .L_080cb9c4:
 	.4byte 0x00000001
 .L_080cb9c8:
-	bl Object_SetPositionAndResetMotionFar + 0x28
+	bl Func_08020110
 	movs r3, #145
 	lsls r3, r3, #2
 	adds r2, r5, r3
@@ -97,7 +97,7 @@ Func_080cb91c:
 	bl Func_080c9e48
 	b .L_080cb9ec
 .L_080cb9e0:
-	bl Object_SetPositionAndResetMotionFar + 0x20
+	bl Func_08020108
 	movs r0, #1
 	movs r7, #2
 	bl Func_080c9e48
@@ -123,7 +123,7 @@ Func_080cb91c:
 .L_080cba12:
 	bl Resource_FarCall004
 	adds r0, r7, #0
-	bl Func_08020080 + 0x8
+	bl Func_08020088
 	bl BattleFx_ResetCounters
 	ldr r6, .L_080cba94
 	ldr r0, [r6, #36]
@@ -173,7 +173,7 @@ Func_080cb91c:
 	ldr r0, [r3]
 	adds r3, r5, r1
 	ldr r1, [r3]
-	bl Func_08020128 + 0x8
+	bl Func_08020130
 	b .L_080cbaaa
 .L_080cba90:
 	.4byte Data_02001000
@@ -695,7 +695,7 @@ Func_080cb91c:
 	movs r2, #52
 	ldrsh r1, [r6, r2]
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -728,7 +728,7 @@ Func_080cb91c:
 	movs r2, #54
 	ldrsh r1, [r6, r2]
 	lsls r0, r0, #14
-	bl __divsi3
+	bl Math_Div
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -1057,7 +1057,7 @@ Func_080cb91c:
 	ldrsh r3, [r3, r4]
 	cmp r3, #0
 	beq .L_080cc238
-	bl Func_08038200 + 0x8
+	bl Func_08038208
 	ldr r3, .L_080cc220
 	movs r0, #128
 	lsls r0, r0, #2
@@ -1142,7 +1142,7 @@ Func_080cb91c:
 	ldrsh r7, [r2, r1]
 	cmp r7, #0
 	beq .L_080cc2c6
-	bl Func_08038200 + 0x8
+	bl Func_08038208
 	bl Func_080d2260
 	movs r0, #111
 	bl Audio_PlayCue
@@ -1165,7 +1165,7 @@ Func_080cb91c:
 	ands r3, r2
 	cmp r3, #0
 	beq .L_080cc280
-	bl UiWindow_SetTilemapEntryFar + 0x10
+	bl Menu_RunSelectionWithCursorObjectFar
 	b .L_080cc2ae
 .L_080cc280:
 	movs r0, #8
@@ -1185,7 +1185,7 @@ Func_080cb91c:
 	adds r5, #165
 	add r5, r8
 	strb r0, [r5]
-	bl Func_080381e0 + 0x8
+	bl Func_080381e8
 	movs r3, #1
 	strb r3, [r5]
 	bl Func_080cb05c
@@ -1246,7 +1246,7 @@ Func_080cb91c:
 	ands r3, r2
 	lsls r3, r3, #16
 	asrs r6, r3, #16
-	bl Func_08038200 + 0x8
+	bl Func_08038208
 	cmp r6, #0
 	bne .L_080cc33a
 	bl Func_080cb82c
@@ -1311,7 +1311,7 @@ Func_080cb91c:
 	ands r3, r2
 	cmp r3, #0
 	beq .L_080cc3be
-	bl UiWindow_SetTilemapEntryFar + 0x8
+	bl Func_08038278
 	b .L_080cc468
 .L_080cc3be:
 	ldrb r3, [r1]
@@ -1340,7 +1340,7 @@ Func_080cb91c:
 	b .L_080cc468
 .L_080cc3f0:
 	bl Func_080cdec8
-	bl Func_08038200 + 0x8
+	bl Func_08038208
 	bl Func_081c0070
 	movs r2, #128
 	ldr r1, [sp, #8]

@@ -141,7 +141,7 @@ Func_0814aebc:
 	cmp r0, #80
 	bne .L_0814afe0
 	movs r0, #0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0814afe0:
 	ldr r2, [sp, #28]
 	movs r1, #0
@@ -157,7 +157,7 @@ Func_0814aebc:
 .L_0814aff6:
 	ldr r4, [sp, #28]
 	ldrsh r0, [r7, r4]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
 	bl Func_08014de4
 	mov r0, r10

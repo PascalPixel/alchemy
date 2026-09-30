@@ -220,13 +220,13 @@ Func_0816f928:
 	ldr r0, [r2, #8]
 	lsls r3, r3, #10
 	movs r2, #8
-	bl Func_08118070 + 0x8
+	bl Func_08118078
 .L_0816fada:
 	mov r4, r11
 	cmp r4, #46
 	bne .L_0816faf2
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	mov r3, r9
 	movs r2, #36
 	ldrsh r0, [r3, r2]

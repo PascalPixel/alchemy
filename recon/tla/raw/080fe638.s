@@ -139,7 +139,7 @@ Func_080fe638:
 	adds r0, r7, r0
 	movs r1, #18
 	adds r0, #7
-	bl Math_Mod
+	bl __modsi3
 	mov r3, r11
 	adds r6, r3, r0
 	adds r0, r6, #0
@@ -196,7 +196,7 @@ Func_080fe638:
 	movs r6, #0
 .L_080fe7c6:
 	ldr r0, .L_080fe800
-	bl Func_080383e8 + 0x10
+	bl Func_080383f8
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_080fe804
@@ -234,7 +234,7 @@ Func_080fe638:
 	ldr r0, [sp, #28]
 	movs r1, #2
 	adds r0, #2
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #28]
 	movs r0, #111
 	bl Audio_PlayCue

@@ -9,7 +9,13 @@
 	.thumb_func
 Func_08038248:
 	overlay_veneer Func_0803d92c
+	.global Func_08038250
+	.thumb_func
+Func_08038250:
 	overlay_veneer Func_0803aae4
+	.global Func_08038258
+	.thumb_func
+Func_08038258:
 	overlay_veneer Func_08042588
 	.global RenderOutput_RedrawSavedRectFar
 	.thumb_func
@@ -23,8 +29,23 @@ RenderOutput_ClearListFar:
 	.thumb_func
 UiWindow_SetTilemapEntryFar:
 	overlay_veneer Func_0803c378
+	.global Func_08038278
+	.thumb_func
+Func_08038278:
 	overlay_veneer Func_0804db74
+	.global Menu_RunSelectionWithCursorObjectFar
+	.thumb_func
+Menu_RunSelectionWithCursorObjectFar:
 	overlay_veneer Menu_RunSelectionWithCursorObject
+	.global Func_08038288
+	.thumb_func
+Func_08038288:
 	overlay_veneer Func_0803f234
+	.global Func_08038290
+	.thumb_func
+Func_08038290:
 	overlay_veneer Func_08041b68
+	.global ItemIcon_ComposeFar
+	.thumb_func
+ItemIcon_ComposeFar:
 	overlay_veneer ItemIcon_Compose

@@ -636,12 +636,12 @@ Func_0818f620:
 	beq .L_0818fb1a
 	movs r0, #133
 	movs r6, #0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	mov r8, r6
 	b .L_0818fb5c
 .L_0818fb1a:
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r0, [sp, #60]
 	movs r7, #0
 	ldr r3, [r0, #20]
@@ -745,7 +745,7 @@ Func_0818f620:
 	str r3, [r6, #16]
 	mov r0, r8
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	movs r1, #1
 	adds r0, #17
 	add r8, r1
@@ -814,7 +814,7 @@ Func_0818f620:
 .L_0818fc78:
 	mov r0, r8
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	movs r3, #1
 	add r8, r3
 	adds r0, #17
@@ -850,7 +850,7 @@ Func_0818f620:
 	cmp r0, #17
 	bhi .L_0818fcf0
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	mov r2, r10
 	ldrb r1, [r2, r0]
 	ldr r3, [sp, #52]
@@ -1094,7 +1094,7 @@ Func_0818f620:
 	ldrh r1, [r3]
 	movs r0, #2
 	movs r2, #0
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]

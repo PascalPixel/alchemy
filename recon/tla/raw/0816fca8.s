@@ -242,7 +242,7 @@ Func_0816fca8:
 	lsls r0, r0, #16
 	subs r0, r0, r3
 .L_0816fe78:
-	bl __divsi3
+	bl Math_Div
 	str r0, [r7, #12]
 	ldr r0, [r6, #4]
 	mov r1, r11
@@ -251,7 +251,7 @@ Func_0816fca8:
 	lsls r0, r0, #16
 	subs r0, r0, r3
 	ldr r1, [sp, #28]
-	bl __divsi3
+	bl Math_Div
 	mov r2, r11
 	str r0, [r2, #16]
 	movs r0, #221
@@ -378,12 +378,12 @@ Func_0816fca8:
 	cmp r2, #0
 	bne .L_0816ffa2
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_0816ffb0
 .L_0816ffa2:
 	movs r0, #1
 	negs r0, r0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r0, #145
 	bl Audio_PlayCue
 .L_0816ffb0:

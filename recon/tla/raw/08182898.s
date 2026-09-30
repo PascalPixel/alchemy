@@ -184,7 +184,7 @@ Func_08182898:
 	str r6, [sp, #0]
 	bl Func_0814cd48
 	movs r0, #126
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r0, #126
 	bl Audio_PlayCue
 	mov r4, r9

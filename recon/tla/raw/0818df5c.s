@@ -389,7 +389,7 @@ Func_0818df5c:
 .L_0818e280:
 	asrs r0, r0, #5
 	movs r1, #7
-	bl Math_Mod
+	bl __modsi3
 	mov r6, r10
 	str r0, [r6]
 	b .L_0818e2a2
@@ -926,7 +926,7 @@ Func_0818df5c:
 	bne .L_0818e6b4
 	movs r1, #30
 	adds r0, r7, #0
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [sp, #84]
 	mov r4, r8
 	adds r1, r0, #0
@@ -1360,7 +1360,7 @@ Func_0818df5c:
 	cmp r0, #34
 	bne .L_0818e9fc
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0818e9fc:
 	mov r1, r11
 	cmp r1, #16
@@ -1784,7 +1784,7 @@ Func_0818df5c:
 	adds r6, #220
 	adds r3, r4, r6
 	ldr r0, [r3]
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	bl Func_08143bb8
 	add sp, #208
 	pop {r3, r5, r6, r7}

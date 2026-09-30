@@ -94,7 +94,7 @@ Func_08172b00:
 	ldr r2, [sp, #96]
 	movs r1, #36
 	ldrsh r0, [r2, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r3, [sp, #72]
 	str r0, [sp, #56]
@@ -109,7 +109,7 @@ Func_08172b00:
 	ldr r4, [sp, #96]
 	str r3, [sp, #52]
 	ldr r0, [r4, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	movs r2, #217
 	str r0, [sp, #48]
@@ -556,7 +556,7 @@ Func_08172b00:
 	cmp r0, #72
 	bne .L_08172f58
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #168
@@ -701,7 +701,7 @@ Func_08172b00:
 	movs r5, #6
 	str r5, [r3]
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r2, [sp, #96]
 	movs r3, #0
 	movs r1, #36
@@ -1017,7 +1017,7 @@ Func_08172b00:
 	cmp r0, #0
 	blt .L_08173320
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	movs r5, #5
 	subs r5, r5, r0
 	adds r1, r7, #0

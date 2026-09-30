@@ -310,7 +310,7 @@ Func_0815cde8:
 	adds r0, r3, r4
 	adds r1, #192
 	movs r3, #128
-	bl Func_08118088 + 0x68
+	bl ColorBuffer_ScaleFar
 .L_0815d058:
 	ldr r6, [sp, #64]
 	cmp r6, #186
@@ -537,7 +537,7 @@ Func_0815cde8:
 .L_0815d206:
 	ldr r7, [sp, #84]
 	ldrsh r0, [r5, r7]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r3, [r0]
 	movs r2, #1
 	str r6, [r3, #12]
@@ -748,7 +748,7 @@ Func_0815cde8:
 	movs r1, #15
 	adds r0, r6, #0
 	str r4, [sp, #8]
-	bl __divsi3
+	bl Math_Div
 	mov r1, r10
 	negs r0, r0
 	subs r0, r0, r1
@@ -768,7 +768,7 @@ Func_0815cde8:
 	movs r1, #17
 	adds r5, r3, #0
 	str r4, [sp, #8]
-	bl __divsi3
+	bl Math_Div
 	mov r3, r10
 	negs r0, r0
 	subs r0, r0, r3
@@ -878,7 +878,7 @@ Func_0815cde8:
 .L_0815d48c:
 	ldr r7, [sp, #84]
 	ldrsh r0, [r6, r7]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	movs r3, #128
 	lsls r3, r3, #11
 	ldr r5, [r0]
@@ -1523,7 +1523,7 @@ Func_0815cde8:
 	mov r4, r10
 	movs r3, #0
 	ldrsh r0, [r4, r3]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	adds r5, r0, #0
 	ldr r6, [r5]
 	ldr r7, [sp, #64]
@@ -1533,7 +1533,7 @@ Func_0815cde8:
 	mov r2, r10
 	movs r1, #0
 	ldrsh r0, [r2, r1]
-	bl BattleActor_CommitPlacementFar + 0x8
+	bl Func_08118120
 .L_0815d978:
 	ldr r3, [sp, #64]
 	cmp r3, #10
@@ -1562,12 +1562,12 @@ Func_0815cde8:
 .L_0815d9a8:
 	ldr r1, [r5, #36]
 	adds r0, r6, #0
-	bl ResourceMetadata_RegisterFar + 0x8
+	bl Func_08020060
 	adds r7, #1
 .L_0815d9b2:
 	ldr r0, [r5]
 	adds r1, r7, #0
-	bl Func_08118088 + 0x50
+	bl GetMotionRecordFar
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_0815d9a8
@@ -1619,7 +1619,7 @@ Func_0815cde8:
 	adds r0, #36
 	movs r1, #0
 	movs r2, #0
-	bl BattleActor_CommitPlacementFar + 0x30
+	bl Func_08118148
 .L_0815da26:
 	ldr r6, [sp, #64]
 	cmp r6, #9
@@ -1637,7 +1637,7 @@ Func_0815cde8:
 .L_0815da40:
 	ldr r1, [sp, #84]
 	ldrsh r0, [r5, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r2, [r0, #40]
 	lsls r3, r2, #4
@@ -2005,7 +2005,7 @@ Func_0815cde8:
 .L_0815dd30:
 	adds r0, r6, #0
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #76]
 	adds r5, r0, #0
 	movs r2, #216
@@ -2344,7 +2344,7 @@ Func_0815cde8:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r1, #128
 	ldr r3, .L_0815e158
 	ldr r0, [sp, #80]
@@ -2425,7 +2425,7 @@ Func_0815cde8:
 	cmp r2, #214
 	bne .L_0815e09e
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0815e09e:
 	ldr r3, [sp, #64]
 	cmp r3, #185
@@ -2474,7 +2474,7 @@ Func_0815cde8:
 	adds r5, r6, r2
 .L_0815e100:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	movs r3, #1
 	add r8, r3
 	mov r4, r8

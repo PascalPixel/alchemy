@@ -57,12 +57,12 @@ Func_0810bca0:
 	bne .L_0810bd18
 	adds r0, r6, #0
 	mov r1, r8
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x20
+	bl Func_080ad268
 	b .L_0810bd20
 .L_0810bd18:
 	adds r0, r6, #0
 	mov r1, r8
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x28
+	bl Func_080ad270
 .L_0810bd20:
 	movs r3, #2
 	ands r3, r0

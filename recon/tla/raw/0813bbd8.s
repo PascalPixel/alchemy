@@ -298,7 +298,7 @@ Func_0813bbd8:
 	cmp r7, r3
 	bne .L_0813be1e
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	mov r1, r10
 	ldr r4, [r1, #24]
 .L_0813be1e:
@@ -439,7 +439,7 @@ Func_0813bbd8:
 .L_0813bf12:
 	movs r1, #3
 	str r2, [sp, #12]
-	bl __divsi3
+	bl Math_Div
 	adds r1, r0, #0
 	lsls r1, r1, #10
 	movs r3, #176

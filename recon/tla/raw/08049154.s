@@ -137,7 +137,7 @@ Func_08049154:
 	add r2, sp
 	mov r8, r2
 	mov r0, r8
-	bl Trade_AddOfferFar + 0x10
+	bl Func_080ad180
 	str r0, [sp, #80]
 	movs r7, #0
 	adds r3, r0, #0
@@ -153,7 +153,7 @@ Func_08049154:
 .L_08049282:
 	ldrb r6, [r5]
 	adds r0, r6, #0
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	ldr r1, [sp, #84]
 	adds r0, #4
 	ldrb r2, [r0]
@@ -254,7 +254,7 @@ Func_08049154:
 	mov r3, r11
 	add r3, r10
 	ldrb r0, [r1, r3]
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	adds r6, r0, #0
 	ldrh r0, [r6]
 	ldr r3, .L_080493c8
@@ -355,7 +355,7 @@ Func_08049154:
 .L_08049404:
 	adds r0, r6, #0
 	str r4, [sp, #4]
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	str r0, [sp, #36]
 	adds r1, r0, #0
 	ldr r0, [sp, #84]
@@ -426,7 +426,7 @@ Func_08049154:
 .L_08049490:
 	adds r0, r6, #0
 	str r4, [sp, #4]
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	ldr r3, .L_080494b8
 	ldr r4, [sp, #4]
 	ldrh r0, [r0]

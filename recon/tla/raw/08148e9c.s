@@ -111,7 +111,7 @@ Func_08148e9c:
 	cmp r3, #32
 	bne .L_08148f88
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08148f88:
 	ldr r6, .L_08148f98
 	movs r0, #0
@@ -241,7 +241,7 @@ Func_08148e9c:
 	add r0, r11
 	movs r1, #3
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [sp, #36]
 	lsls r5, r0, #2
 	adds r5, r5, r0

@@ -287,7 +287,7 @@ Func_08142944:
 	cmp r2, #62
 	bne .L_08142b84
 	ldr r0, [sp, #52]
-	bl BattleActor_CommitPlacementFar + 0x38
+	bl Func_08118150
 .L_08142b84:
 	mov r3, r9
 	cmp r3, #47
@@ -404,7 +404,7 @@ Func_08142944:
 	cmp r0, #17
 	bhi .L_08142cac
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #48]
 	adds r1, r0, #0
 	lsls r1, r1, #11

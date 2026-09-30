@@ -78,7 +78,7 @@ Func_080e9940:
 	lsls r0, r6, #15
 	movs r1, #112
 	adds r5, r7, r3
-	bl __divsi3
+	bl Math_Div
 	movs r2, #128
 	lsls r2, r2, #8
 	adds r0, r0, r2
@@ -108,7 +108,7 @@ Func_080e9940:
 	asrs r0, r0, #18
 	movs r1, #24
 	adds r0, r0, r3
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r5, #0
 	cmp r5, #15
 	bne .L_080e9a18

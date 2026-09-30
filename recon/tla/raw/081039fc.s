@@ -171,7 +171,7 @@ Func_081039fc:
 	mov r1, r11
 	adds r0, r6, #0
 	mov r2, r8
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	ldr r1, [sp, #104]
 	cmp r1, #0
 	bne .L_08103ba6
@@ -209,7 +209,7 @@ Func_081039fc:
 	bl Djinn_ActivateFar
 .L_08103ba6:
 	adds r0, r6, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r0, sp
 	mov r2, sp
 	adds r0, #120
@@ -254,7 +254,7 @@ Func_081039fc:
 	adds r0, r6, #0
 	ldr r1, [sp, #72]
 	ldr r2, [sp, #68]
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 .L_08103c0c:
 	adds r0, r6, #0
 	mov r1, r11
@@ -269,7 +269,7 @@ Func_081039fc:
 	bl Djinn_ActivateFar
 .L_08103c26:
 	adds r0, r6, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r2, [sp, #52]
 	adds r1, r7, #0
 	str r2, [sp, #0]
@@ -343,7 +343,7 @@ Func_081039fc:
 	adds r0, r6, #0
 	mov r1, r11
 	mov r2, r8
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 	cmp r5, #0
 	beq .L_08103cda
 	adds r0, r6, #0
@@ -352,7 +352,7 @@ Func_081039fc:
 	bl Djinn_ActivateFar
 .L_08103cda:
 	adds r0, r6, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r0, r9
 	add r2, sp, #108
 	adds r1, r7, #0
@@ -383,7 +383,7 @@ Func_081039fc:
 	ldr r0, [sp, #124]
 	movs r1, #5
 	subs r0, #1
-	bl __divsi3
+	bl Math_Div
 	adds r0, #1
 	str r0, [sp, #124]
 	cmp r0, #0
@@ -395,7 +395,7 @@ Func_081039fc:
 	movs r1, #5
 	ldr r0, [r2, #4]
 	subs r0, #1
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #28]
 	adds r0, #1
 	str r0, [r3, #4]
@@ -501,7 +501,7 @@ Func_081039fc:
 	cmp r5, #0
 	bne .L_08103e16
 	movs r0, #2
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl Func_080380b8
 .L_08103e16:
 	mov r3, r8
 	lsls r2, r3, #3
@@ -518,7 +518,7 @@ Func_081039fc:
 	cmp r3, #0
 	bne .L_08103e3a
 	movs r0, #2
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl Func_080380b8
 .L_08103e3a:
 	ldr r0, [sp, #84]
 	movs r1, #40
@@ -554,7 +554,7 @@ Func_081039fc:
 	cmp r5, #0
 	beq .L_08103e7e
 	movs r0, #2
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl Func_080380b8
 .L_08103e7e:
 	ldr r0, [sp, #84]
 	movs r1, #40
@@ -717,7 +717,7 @@ Func_081039fc:
 	mov r0, r8
 	mov lr, r3
 	.2byte 0xf800
-	bl UiWindow_SetTilemapEntryFar + 0x20
+	bl Func_08038290
 	movs r1, #132
 	lsls r1, r1, #6
 	movs r3, #1
@@ -792,7 +792,7 @@ Func_081039fc:
 	mov r0, r8
 	mov lr, r3
 	.2byte 0xf800
-	bl UiWindow_SetTilemapEntryFar + 0x20
+	bl Func_08038290
 	mov r2, r11
 	movs r3, #1
 	strb r3, [r2, #3]
@@ -837,7 +837,7 @@ Func_081039fc:
 	movs r3, #224
 	movs r1, #128
 	movs r2, #16
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	ldr r3, [sp, #88]
 	cmp r3, #1
 	bne .L_081040f2
@@ -1096,7 +1096,7 @@ Func_081039fc:
 	adds r2, #1
 	adds r0, r2, #0
 	str r2, [sp, #92]
-	bl Math_Mod
+	bl __modsi3
 	subs r6, r0, #5
 	cmp r6, #0
 	bge .L_081042e8
@@ -1118,7 +1118,7 @@ Func_081039fc:
 	bhi .L_08104368
 	movs r1, #30
 	adds r0, r6, #0
-	bl Math_Mod
+	bl __modsi3
 	adds r3, r0, #0
 	lsls r0, r3, #4
 	adds r0, r0, r3
@@ -1144,7 +1144,7 @@ Func_081039fc:
 .L_0810433a:
 	adds r0, r6, #0
 	movs r1, #35
-	bl Math_Mod
+	bl __modsi3
 	lsls r6, r0, #1
 	adds r1, r6, #0
 	adds r2, r5, #0
@@ -1248,7 +1248,7 @@ Func_081039fc:
 	ldr r0, [sp, #88]
 	movs r1, #3
 	adds r0, #1
-	bl Math_Mod
+	bl __modsi3
 	movs r2, #2
 	str r0, [sp, #88]
 	movs r0, #111

@@ -332,7 +332,7 @@ Func_0815842c:
 	add r3, r11
 	str r2, [r3]
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r4, [sp, #20]
 	movs r1, #7
 	movs r3, #36

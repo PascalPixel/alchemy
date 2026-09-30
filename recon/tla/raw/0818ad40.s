@@ -381,7 +381,7 @@ Func_0818ad40:
 	mov r0, r11
 	muls r0, r3
 	adds r5, r2, #0
-	bl __divsi3
+	bl Math_Div
 	subs r5, #64
 	adds r3, r5, r0
 	cmp r3, #0
@@ -679,7 +679,7 @@ Func_0818ad40:
 	cmp r2, #48
 	bne .L_0818b2ac
 	movs r0, #136
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r10
@@ -814,7 +814,7 @@ Func_0818ad40:
 	bne .L_0818b392
 	movs r0, #1
 	negs r0, r0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0818b392:
 	ldr r6, [sp, #8]
 	cmp r6, #31
@@ -914,7 +914,7 @@ Func_0818ad40:
 .L_0818b448:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #4
 	subs r1, r1, r0
 	ldr r2, [sp, #20]
@@ -942,7 +942,7 @@ Func_0818ad40:
 	negs r5, r5
 	bl Audio_PlayCue
 	adds r0, r5, #0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #168
@@ -1082,7 +1082,7 @@ Func_0818ad40:
 .L_0818b59a:
 	movs r1, #3
 	asrs r0, r0, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0818b834
 	adds r0, r5, r0
 	lsls r3, r0, #1
@@ -1141,7 +1141,7 @@ Func_0818ad40:
 	bl Audio_PlayCue
 	movs r0, #1
 	negs r0, r0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r1, [sp, #48]
 	movs r3, #110
 	movs r6, #36

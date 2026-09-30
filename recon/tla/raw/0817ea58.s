@@ -78,7 +78,7 @@ Func_0817ea58:
 	movs r0, #1
 	ldr r1, .L_0817eb1c
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r4, #160
 	lsls r4, r4, #19
 	movs r3, #0
@@ -1129,7 +1129,7 @@ Func_0817ea58:
 .L_0817f310:
 	mov r0, r8
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	movs r7, #176
 	lsls r0, r0, #18
 	lsls r7, r7, #16
@@ -1137,7 +1137,7 @@ Func_0817ea58:
 	str r0, [r5]
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	movs r1, #1
@@ -1163,7 +1163,7 @@ Func_0817ea58:
 .L_0817f356:
 	mov r0, r8
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	movs r4, #224
 	lsls r4, r4, #15
 	lsls r0, r0, #18
@@ -1171,7 +1171,7 @@ Func_0817ea58:
 	str r0, [r5]
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	movs r7, #164
@@ -1451,7 +1451,7 @@ Func_0817ea58:
 .L_0817f576:
 	movs r1, #12
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	ldrb r1, [r6, r0]
 	movs r2, #247
 	lsls r1, r1, #8
@@ -3743,7 +3743,7 @@ Func_0817ea58:
 	add r5, r11
 .L_08180714:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	movs r3, #1
 	add r8, r3
 	mov r4, r8
@@ -4341,7 +4341,7 @@ Func_0817ea58:
 	cmp r0, #17
 	bhi .L_08180c10
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	adds r1, r0, #0
 	lsls r1, r1, #11
 	movs r0, #224
@@ -4410,7 +4410,7 @@ Func_0817ea58:
 	movs r7, #1
 	ldmia r5!, {r0}
 	add r8, r7
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	mov r0, r8
 	cmp r0, #16
 	bne .L_08180c52

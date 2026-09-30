@@ -97,7 +97,7 @@ Func_08190b74:
 	ldr r3, [sp, #60]
 	movs r6, #0
 	ldr r0, [r3, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r3, .L_08190ce0
 	str r0, [sp, #44]
@@ -203,7 +203,7 @@ Func_08190b74:
 	movs r2, #0
 	movs r0, #1
 	ldr r1, .L_08191040
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	bl Func_0817d6c4
 	movs r4, #160
 	lsls r4, r4, #19
@@ -1173,7 +1173,7 @@ Func_08190b74:
 	ldrh r1, [r3]
 	movs r2, #24
 	movs r0, #1
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r0, .L_0819152c
 	bl Func_08014644
 	movs r0, #104

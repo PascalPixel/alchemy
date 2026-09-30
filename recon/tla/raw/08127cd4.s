@@ -84,7 +84,7 @@ Func_08127cd4:
 	beq .L_08127d86
 	ldrh r0, [r6]
 	adds r0, #8
-	bl Func_081280fc
+	bl Summon_IsEntryFlagged
 	negs r3, r0
 	orrs r3, r0
 	movs r2, #2
@@ -133,14 +133,14 @@ Func_08127cd4:
 	ldr r1, [sp, #8]
 	ldrh r0, [r1]
 	adds r0, #8
-	bl Func_081280fc
+	bl Summon_IsEntryFlagged
 	negs r1, r0
 	orrs r1, r0
 	lsrs r1, r1, #31
 	movs r3, #2
 	subs r1, r3, r1
 	ldr r0, [sp, #20]
-	bl __divsi3
+	bl Math_Div
 	cmp r0, r5
 	bge .L_08127de8
 	adds r5, r0, #0
@@ -183,7 +183,7 @@ Func_08127cd4:
 	beq .L_08127e66
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl Func_081280fc
+	bl Summon_IsEntryFlagged
 	negs r3, r0
 	orrs r3, r0
 	lsrs r3, r3, #31

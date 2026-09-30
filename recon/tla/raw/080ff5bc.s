@@ -38,7 +38,7 @@ Func_080ff5bc:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #128
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 .L_080ff608:
 	adds r0, r7, #0
 	adds r1, r6, #0
@@ -61,7 +61,7 @@ Func_080ff5bc:
 	ldr r0, .L_080ff7a0
 	bl UiText_DrawStringAtOffsetFar
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl Func_080380b8
 	movs r3, #0
 	ldrb r0, [r7, #15]
 	movs r1, #2
@@ -152,7 +152,7 @@ Func_080ff5bc:
 	movs r1, #144
 	movs r2, #0
 	movs r3, #224
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 .L_080ff70c:
 	adds r0, r5, #0
 	adds r1, r6, #0

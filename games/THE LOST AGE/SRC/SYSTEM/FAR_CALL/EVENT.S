@@ -21,14 +21,29 @@ Func_080c8018:
 	.thumb_func
 Func_080c8020:
 	overlay_veneer Func_080d2350
+	.global Event_RunObjectHookAndWaitFar
+	.thumb_func
+Event_RunObjectHookAndWaitFar:
 	overlay_veneer Event_RunObjectHookAndWait
+	.global Event_CallWithLastActiveObjectIdFar
+	.thumb_func
+Event_CallWithLastActiveObjectIdFar:
 	overlay_veneer Event_CallWithLastActiveObjectId
+	.global Scene_AssignViewFlagsFar
+	.thumb_func
+Scene_AssignViewFlagsFar:
 	overlay_veneer Scene_AssignViewFlags
+	.global Event_SetWorkWord10Far
+	.thumb_func
+Event_SetWorkWord10Far:
 	overlay_veneer Event_SetWorkWord10
 	.global Event_PrepareObjectAndApplyValueFar
 	.thumb_func
 Event_PrepareObjectAndApplyValueFar:
 	overlay_veneer Event_PrepareObjectAndApplyValue
+	.global Event_PrepareTwoObjectsAndApplyFar
+	.thumb_func
+Event_PrepareTwoObjectsAndApplyFar:
 	overlay_veneer Event_PrepareTwoObjectsAndApply
 	.global Party_RemoveOwnerRestoredFar
 	.thumb_func
@@ -38,6 +53,9 @@ Party_RemoveOwnerRestoredFar:
 	.thumb_func
 PartyInventory_GiveItemFar:
 	overlay_veneer PartyInventory_GiveItem
+	.global Inventory_TryAddAndReturnOwnerFar
+	.thumb_func
+Inventory_TryAddAndReturnOwnerFar:
 	overlay_veneer Inventory_TryAddAndReturnOwner
 	.global Inventory_PromptAndSetObjectModeFar
 	.thumb_func

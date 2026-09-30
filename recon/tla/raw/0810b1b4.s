@@ -89,13 +89,13 @@ Func_0810b1b4:
 	ldr r2, [r6]
 	adds r0, r5, #0
 	lsls r1, r1, #2
-	bl Func_080c8588 + 0x28
+	bl Func_080c85b0
 	adds r0, r5, #0
 	ldr r1, .L_0810b374
-	bl Func_080c8588 + 0x20
+	bl Func_080c85a8
 	movs r1, #7
 	adds r0, r5, #0
-	bl Func_080c8588 + 0x18
+	bl Func_080c85a0
 	bl Random16
 	lsls r1, r0, #3
 	subs r1, r1, r0
@@ -172,7 +172,7 @@ Func_0810b1b4:
 	cmp r3, #0
 	beq .L_0810b320
 	adds r0, r5, #0
-	bl Func_080c8588 + 0x30
+	bl Func_080c85b8
 .L_0810b320:
 	subs r7, #1
 	adds r5, #72

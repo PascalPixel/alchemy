@@ -60,7 +60,7 @@ Func_0817bd88:
 	ldr r2, [sp, #68]
 	movs r1, #36
 	ldrsh r0, [r2, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	movs r3, #0
 	ldr r1, [r0]
 	str r3, [sp, #48]
@@ -212,7 +212,7 @@ Func_0817bd88:
 	movs r0, #212
 	bl Audio_PlayCue
 	movs r0, #212
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r1, #238
 	ldr r0, [sp, #64]
 	lsls r1, r1, #7

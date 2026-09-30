@@ -493,7 +493,7 @@ Func_0815a9e4:
 	cmp r4, #120
 	bne .L_0815ada4
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0815ada4:
 	ldr r7, [sp, #40]
 	cmp r7, #81
@@ -563,7 +563,7 @@ Func_0815a9e4:
 	ldr r0, [sp, #40]
 	movs r1, #3
 	subs r0, #64
-	bl __divsi3
+	bl Math_Div
 	adds r5, r0, #0
 	cmp r5, #0
 	bge .L_0815ae32
@@ -637,7 +637,7 @@ Func_0815a9e4:
 	cmp r0, #23
 	bhi .L_0815af3a
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	movs r3, #7
 	subs r5, r3, r0
 	cmp r5, #0
@@ -897,7 +897,7 @@ Func_0815a9e4:
 	asrs r0, r0, #1
 	add r0, r8
 	movs r1, #11
-	bl Math_Mod
+	bl __modsi3
 	movs r4, #1
 	negs r4, r4
 	cmp r0, r4
@@ -1022,7 +1022,7 @@ Func_0815a9e4:
 	ble .L_0815b1c4
 	adds r0, r2, #0
 	movs r1, #12
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	bne .L_0815b1ac
 	ldr r3, [sp, #52]
@@ -1097,7 +1097,7 @@ Func_0815a9e4:
 .L_0815b228:
 	ldmia r5!, {r0}
 	adds r6, #1
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	cmp r6, #11
 	bne .L_0815b228
 	bl Func_08143bb8

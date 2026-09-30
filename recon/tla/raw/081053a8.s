@@ -40,7 +40,7 @@ Func_081053a8:
 	movs r0, #8
 	adds r2, r5, #0
 	movs r3, #0
-	bl UiWindow_SetTilemapEntryFar + 0x18
+	bl Func_08038288
 	movs r3, #128
 	adds r2, r6, #4
 	lsls r3, r3, #23

@@ -398,7 +398,7 @@ Func_08149bac:
 	movs r0, #145
 	bl Audio_PlayCue
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_08149ee0
 .L_08149ec8:
 	ldr r1, [sp, #36]
@@ -411,7 +411,7 @@ Func_08149bac:
 	cmp r2, #24
 	bne .L_08149ee0
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08149ee0:
 	movs r3, #0
 	str r3, [sp, #40]
@@ -597,7 +597,7 @@ Func_08149bac:
 	cmp r0, #17
 	bhi .L_0814a06c
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	ldr r2, .L_0814a248
 	ldr r3, [sp, #48]
 	ldrb r1, [r2, r0]
@@ -712,7 +712,7 @@ Func_08149bac:
 	movs r1, #5
 	adds r0, r3, #0
 	mov r8, r2
-	bl __divsi3
+	bl Math_Div
 	adds r0, #1
 	ldr r2, .L_0814a25c
 	mov r5, r9

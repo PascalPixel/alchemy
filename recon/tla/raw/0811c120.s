@@ -28,7 +28,7 @@ Func_0811c120:
 	mov r0, r8
 	muls r0, r3
 	mov r10, r2
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r6, #16]
 	ldr r6, [r7, #16]
 	adds r5, r0, #0
@@ -36,7 +36,7 @@ Func_0811c120:
 	mov r0, r8
 	muls r0, r3
 	movs r1, #100
-	bl __divsi3
+	bl Math_Div
 	mov r3, r10
 	adds r3, r3, r5
 	adds r6, r6, r0
@@ -60,7 +60,7 @@ Func_0811c120:
 .L_0811c192:
 	adds r0, r5, #0
 	mov r1, r11
-	bl __divsi3
+	bl Math_Div
 	adds r3, r7, #0
 	adds r5, r0, #0
 	adds r3, #88

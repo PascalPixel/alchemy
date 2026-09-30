@@ -527,7 +527,7 @@ Func_081007f8:
 	movs r1, #10
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl __divsi3
+	bl Math_Div
 	strh r0, [r5, #56]
 	mov r0, r10
 .L_08100c66:
@@ -620,7 +620,7 @@ Func_081007f8:
 	lsls r1, r1, #2
 	adds r3, r3, r1
 	ldrh r0, [r2, r3]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldr r3, [sp, #0]
 	adds r3, #1
 	lsls r3, r3, #24

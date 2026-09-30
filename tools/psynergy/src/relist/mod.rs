@@ -1046,12 +1046,8 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                 format!("{prefix}.{from:08x}")
             };
             let mut slice = layout.slice(from, to, name);
-            // Reserved RAM extended to a name ends at that name.
-            let last = if !is_incbin && to > region.end {
-                to + 1
-            } else {
-                to
-            };
+            // Reserved RAM ends at its last name, which may sit at its end.
+            let last = if is_incbin { to } else { to + 1 };
             for (&at, names) in registry.defined.range(from..last) {
                 let present = slice.labels.entry(at).or_default();
                 for (name, _) in names {

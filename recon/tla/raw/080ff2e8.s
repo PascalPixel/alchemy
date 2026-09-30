@@ -52,13 +52,13 @@ Func_080ff2e8:
 	adds r1, r5, #0
 	adds r0, r6, r0
 	movs r2, #64
-	bl Ui_AdjustValueWithoutLimitFar + 0x10
+	bl UiText_CopyMessageStringFar
 	movs r3, #1
 	adds r0, r5, #0
 	negs r3, r3
 	mov r1, r8
 	movs r2, #0
-	bl Func_08038248 + 0x8
+	bl Func_08038250
 	adds r0, r5, #0
 	bl Sys_Free
 	pop {r3}

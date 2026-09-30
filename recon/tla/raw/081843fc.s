@@ -90,7 +90,7 @@ Func_081843fc:
 	ldr r1, .L_08184510
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r2, #31
 	negs r2, r2
 	adds r1, r2, #0

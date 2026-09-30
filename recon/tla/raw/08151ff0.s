@@ -227,7 +227,7 @@ Func_08151ff0:
 	cmp r9, r3
 	bne .L_081521b8
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_081521b8:
 	ldrb r3, [r6, r5]
 	movs r4, #0
@@ -353,7 +353,7 @@ Func_08151ff0:
 	cmp r0, #20
 	bhi .L_081522d4
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	ldr r3, .L_08152360
 	lsls r0, r0, #1
 	ldrh r1, [r3, r0]

@@ -17,6 +17,9 @@ UiWork_FinalizeEntityMatchingLocalizedIdFar:
 	.thumb_func
 Func_08038108:
 	overlay_veneer Func_0803b880
+	.global Func_08038110
+	.thumb_func
+Func_08038110:
 	overlay_veneer Func_0803b8cc
 	.global Func_08038118
 	.thumb_func
@@ -26,28 +29,79 @@ Func_08038118:
 	.thumb_func
 UiText_DrawQuantity:
 	overlay_veneer Func_0803ccd0
+	.global Func_08038128
+	.thumb_func
+Func_08038128:
 	overlay_veneer Func_08042690
 	.global UiWindow_DrawPartyStatusContentsFar
 	.thumb_func
 UiWindow_DrawPartyStatusContentsFar:
 	overlay_veneer Func_0804297c
+	.global Func_08038138
+	.thumb_func
+Func_08038138:
 	overlay_veneer Func_08042dac
 	.global Func_08038140
 	.thumb_func
 Func_08038140:
 	overlay_veneer Func_0803ce1c
+	.global Func_08038148
+	.thumb_func
+Func_08038148:
 	overlay_veneer Func_0803cb1c
+	.global Func_08038150
+	.thumb_func
+Func_08038150:
 	overlay_veneer Func_0803dc1c
+	.global Func_08038158
+	.thumb_func
+Func_08038158:
 	overlay_veneer Func_0803dd24
+	.global Func_08038160
+	.thumb_func
+Func_08038160:
 	overlay_veneer Func_0803dd68
+	.global Func_08038168
+	.thumb_func
+Func_08038168:
 	overlay_veneer Func_0803df00
+	.global Func_08038170
+	.thumb_func
+Func_08038170:
 	overlay_veneer Func_0803df14
+	.global Menu_OpenSelectionWindowFar
+	.thumb_func
+Menu_OpenSelectionWindowFar:
 	overlay_veneer Menu_OpenSelectionWindow
+	.global Func_08038180
+	.thumb_func
+Func_08038180:
 	overlay_veneer Func_0803e6d8
+	.global Func_08038188
+	.thumb_func
+Func_08038188:
 	overlay_veneer Func_0803e7ac
+	.global Func_08038190
+	.thumb_func
+Func_08038190:
 	overlay_veneer Func_0803e918
+	.global Func_08038198
+	.thumb_func
+Func_08038198:
 	overlay_veneer Func_0803e998
+	.global Func_080381a0
+	.thumb_func
+Func_080381a0:
 	overlay_veneer Func_0803f610
+	.global Func_080381a8
+	.thumb_func
+Func_080381a8:
 	overlay_veneer Func_0803f614
+	.global Func_080381b0
+	.thumb_func
+Func_080381b0:
 	overlay_veneer Func_0803dd98
+	.global Func_080381b8
+	.thumb_func
+Func_080381b8:
 	overlay_veneer Func_0803dea8

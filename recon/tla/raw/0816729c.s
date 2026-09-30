@@ -79,7 +79,7 @@ Func_0816729c:
 	ldr r1, .L_08167424
 	movs r2, #0
 	movs r0, #1
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r0, .L_08167428
 	bl Resource_GetTableEntry
 	movs r2, #128
@@ -458,7 +458,7 @@ Func_0816729c:
 	adds r0, #60
 	str r0, [r5, #8]
 	movs r1, #20
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [r5]
 	ldr r3, [r5, #4]
 	adds r0, #2
@@ -795,7 +795,7 @@ Func_0816729c:
 	bhi .L_08167956
 	adds r0, r6, #0
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	adds r0, #16
 	mov r8, r0
 	cmp r0, #32
@@ -1133,7 +1133,7 @@ Func_0816729c:
 .L_08167b72:
 	ldmia r5!, {r0}
 	adds r7, #1
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	cmp r7, #16
 	bne .L_08167b72
 	movs r0, #1
@@ -1178,7 +1178,7 @@ Func_0816729c:
 	strb r3, [r5, #26]
 	movs r1, #3
 	adds r0, r7, #0
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Animation_ApplyChildArgumentFar
@@ -1273,7 +1273,7 @@ Func_0816729c:
 	str r2, [r3]
 	ldr r1, .L_08167ce0
 	movs r0, #1
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r3, .L_08167cd8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1401,7 +1401,7 @@ Func_0816729c:
 	bne .L_08167d6e
 .L_08167d92:
 	movs r0, #145
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08167d98:
 	ldr r3, .L_08167e40
 	movs r2, #3
@@ -1674,7 +1674,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680b0
 	movs r2, #7
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 .L_08167fa8:
 	ldr r0, [sp, #72]
 	cmp r0, #150
@@ -1709,7 +1709,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680bc
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 .L_08167fee:
 	ldr r5, [sp, #72]
 	cmp r5, #214
@@ -1734,7 +1734,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680c0
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r5, [sp, #88]
 	movs r7, #0
 .L_08168024:
@@ -3033,7 +3033,7 @@ Func_0816729c:
 .L_081689fc:
 	ldmia r5!, {r0}
 	adds r7, #1
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	cmp r7, #16
 	bne .L_081689fc
 	ldr r0, .L_08168a3c

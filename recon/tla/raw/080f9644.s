@@ -165,7 +165,7 @@ Func_080f9644:
 	adds r0, #255
 	ands r0, r3
 	mov r10, r2
-	bl Func_080c8508 + 0x8
+	bl BattleFx_HasTriggerFar
 	cmp r0, #0
 	beq .L_080f97ec
 	movs r3, #1
@@ -510,7 +510,7 @@ Func_080f9644:
 	movs r0, #2
 	ldrb r2, [r3, #14]
 	movs r3, #0
-	bl UiWindow_SetTilemapEntryFar + 0x18
+	bl Func_08038288
 	ldr r2, [r5]
 	movs r3, #1
 	strb r3, [r2, #5]
@@ -529,7 +529,7 @@ Func_080f9644:
 	movs r1, #0
 	movs r2, #72
 	movs r3, #120
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	mov r3, r9
 	adds r3, #240
 	ldr r0, [r3]
@@ -572,7 +572,7 @@ Func_080f9644:
 	adds r0, r7, #0
 	bl Func_080ad288
 	adds r0, r7, #0
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	bl Func_080fbdbc
 	movs r3, #128
 	lsls r3, r3, #2
@@ -615,7 +615,7 @@ Func_080f9644:
 	adds r3, #22
 	add r3, r9
 	ldrb r0, [r3]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	movs r3, #134
 	lsls r3, r3, #2
 	add r3, r9
@@ -806,9 +806,9 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Func_080ad288
 	ldrb r0, [r5]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldrb r0, [r7]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r2, r10
 	movs r6, #1
 	cmp r2, #0
@@ -1172,9 +1172,9 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Func_080ad288
 	ldrb r0, [r5]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldrb r0, [r7]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	bl Func_080fbddc
 	mov r3, r9
 	adds r3, #240
@@ -1294,7 +1294,7 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Func_080ad288
 	ldrb r0, [r7]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r3, r9
 	ldr r2, [r3, #20]
 	movs r5, #226
@@ -1375,7 +1375,7 @@ Func_080f9644:
 	ldrb r0, [r6]
 	bl Func_080ad288
 	ldrb r0, [r6]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	mov r1, r9
 	ldr r2, [r1, #20]
 	movs r3, #0

@@ -62,7 +62,7 @@ Func_0812561c:
 	ldrb r1, [r5]
 	ldrb r2, [r5, #1]
 	mov r0, r8
-	bl Djinn_ActivateFar + 0x8
+	bl Djinn_DeactivateFar
 .L_08125694:
 	movs r0, #144
 	lsls r0, r0, #1
@@ -259,7 +259,7 @@ Func_0812561c:
 	cmp r6, #3
 	ble .L_081257da
 	mov r0, r8
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	movs r6, #0
 	movs r7, #72
 .L_08125804:
@@ -400,7 +400,7 @@ Func_0812561c:
 	ldrsh r3, [r2, r1]
 	movs r1, #10
 	muls r0, r3
-	bl __divsi3
+	bl Math_Div
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r7, r0, #0
@@ -535,7 +535,7 @@ Func_0812561c:
 	cmp r3, #0
 	beq .L_08125a76
 	mov r0, r8
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 .L_08125a76:
 	add sp, #32
 	pop {r3, r5, r6, r7}

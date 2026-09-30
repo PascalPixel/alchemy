@@ -131,7 +131,7 @@ Func_0818c7b8:
 	ldr r0, [r2, #8]
 	lsls r3, r3, #11
 	movs r2, #8
-	bl Func_08118070 + 0x8
+	bl Func_08118078
 	b .L_0818c8cc
 	.2byte 0x0000
 .L_0818c8c4:
@@ -164,11 +164,11 @@ Func_0818c7b8:
 	cmp r2, #1
 	bne .L_0818c902
 	movs r0, #144
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_0818c908
 .L_0818c902:
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0818c908:
 	ldr r2, [sp, #8]
 	movs r1, #250
@@ -197,7 +197,7 @@ Func_0818c7b8:
 	mov r0, r9
 	subs r0, #8
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	mov r2, r11
 	negs r3, r2
 	orrs r3, r2

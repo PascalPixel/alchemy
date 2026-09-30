@@ -10,7 +10,7 @@ Func_0816a270:
 	ldr r0, [r5, #8]
 	ldr r3, .L_0816a298
 	movs r2, #24
-	bl Func_08118070 + 0x8
+	bl Func_08118078
 	movs r0, #12
 	bl WaitFrames
 	movs r3, #3

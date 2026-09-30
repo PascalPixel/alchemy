@@ -82,7 +82,7 @@ Func_08143840:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #128
-	bl Func_08118028 + 0x10
+	bl Func_08118038
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #180

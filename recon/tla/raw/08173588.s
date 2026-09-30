@@ -250,7 +250,7 @@ Func_08173588:
 	bne .L_08173784
 	movs r0, #1
 	negs r0, r0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08173784:
 	ldr r1, [sp, #32]
 	cmp r1, #0

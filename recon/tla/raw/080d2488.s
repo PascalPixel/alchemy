@@ -19,7 +19,7 @@ Party_RemoveOwnerRestored:
 	lsls r1, r1, #16
 	asrs r1, r1, #16
 	lsls r0, r1, #14
-	bl __divsi3
+	bl Math_Div
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -45,7 +45,7 @@ Party_RemoveOwnerRestored:
 	movs r2, #54
 	ldrsh r1, [r6, r2]
 	lsls r0, r0, #14
-	bl __divsi3
+	bl Math_Div
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -112,7 +112,7 @@ Party_RemoveOwnerRestored:
 	movs r3, #52
 	ldrsh r1, [r6, r3]
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	movs r2, #128
 	lsls r2, r2, #7
 	cmp r0, r2
@@ -138,7 +138,7 @@ Party_RemoveOwnerRestored:
 	movs r2, #54
 	ldrsh r1, [r6, r2]
 	lsls r0, r0, #14
-	bl __divsi3
+	bl Math_Div
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3

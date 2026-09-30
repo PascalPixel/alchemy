@@ -26,7 +26,7 @@ Func_081c11ec:
 	ldr r3, .L_081c1268
 	strh r2, [r3]
 	ldr r0, .L_081c126c
-	bl __divsi3
+	bl Math_Div
 	ldr r3, .L_081c1270
 	strh r0, [r3]
 	ldr r5, .L_081c1274

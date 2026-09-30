@@ -9,7 +9,13 @@
 	.thumb_func
 ResourceMetadata_SumCommandLengthsFar:
 	overlay_veneer ResourceMetadata_SumCommandLengths
+	.global Func_080202b0
+	.thumb_func
+Func_080202b0:
 	overlay_veneer Func_0802dc48
+	.global Func_080202b8
+	.thumb_func
+Func_080202b8:
 	overlay_veneer Func_080227e0
 	.global Func_080202c0
 	.thumb_func
@@ -19,6 +25,9 @@ Func_080202c0:
 	.thumb_func
 Animation_ApplyChildValueFar:
 	overlay_veneer Animation_ApplyChildValue
+	.global Func_080202d0
+	.thumb_func
+Func_080202d0:
 	overlay_veneer Func_0802a52c
 	.global Func_080202d8
 	.thumb_func
@@ -28,6 +37,9 @@ Func_080202d8:
 	.thumb_func
 Map_DisableUpdateCallbackFar:
 	overlay_veneer Func_0802cd70
+	.global Func_080202e8
+	.thumb_func
+Func_080202e8:
 	overlay_veneer Func_08024f80
 	.global Func_080202f0
 	.thumb_func

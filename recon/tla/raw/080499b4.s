@@ -24,7 +24,7 @@ Func_080499b4:
 	beq .L_080499ec
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl Djinn_IsActiveFar + 0x10
+	bl Item_CanOwnerEquip
 	cmp r0, #0
 	bne .L_080499ec
 	movs r0, #1

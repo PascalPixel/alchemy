@@ -55,7 +55,7 @@ Func_0816e65c:
 .L_0816e6c4:
 	.4byte Func_08143000
 .L_0816e6c8:
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r1, [sp, #48]
 	str r0, [sp, #28]
@@ -579,7 +579,7 @@ Func_0816e65c:
 	cmp r1, r3
 	bne .L_0816eb1a
 	movs r0, #144
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r3, [sp, #52]
 	movs r1, #4
 	movs r2, #36

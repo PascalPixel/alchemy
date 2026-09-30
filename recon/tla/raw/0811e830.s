@@ -93,7 +93,7 @@ Func_0811e830:
 	movs r0, #7
 	movs r1, #0
 	movs r2, #0
-	bl ResourceMetadata_SumCommandLengthsFar + 0x10
+	bl Func_080202b8
 	adds r5, #49
 	str r5, [sp, #0]
 	ldrb r3, [r5]

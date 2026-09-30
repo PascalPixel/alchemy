@@ -362,9 +362,9 @@ Func_0814ce30:
 	cmp r0, #48
 	bhi .L_0814d142
 	movs r1, #24
-	bl __divsi3
+	bl Math_Div
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	movs r4, #238
 	ldr r2, [sp, #64]
 	ldr r6, .L_0814d25c
@@ -413,7 +413,7 @@ Func_0814ce30:
 .L_0814d170:
 	movs r1, #5
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, .L_0814d264
 	lsls r1, r0, #1
 	ldrh r1, [r4, r1]
@@ -672,7 +672,7 @@ Func_0814ce30:
 	movs r1, #3
 	mov r0, r10
 	mov r8, r3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, .L_0814d4c0
 	adds r1, r0, #0
 	ldrb r4, [r3, r1]
@@ -731,7 +731,7 @@ Func_0814ce30:
 	blt .L_0814d464
 	movs r1, #5
 	mov r0, r10
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0814d4c8
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -835,7 +835,7 @@ Func_0814ce30:
 	adds r0, r0, r5
 	movs r1, #3
 	str r4, [sp, #8]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #8]
 	cmp r7, r0
 	ble .L_0814d4d4
@@ -906,7 +906,7 @@ Func_0814ce30:
 	ldr r1, [sp, #68]
 	mov r3, r11
 	ldrsh r0, [r3, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r2, [r0]
 	mov r1, r8
 	ldr r3, [r2, #8]
@@ -1134,7 +1134,7 @@ Func_0814ce30:
 	ble .L_0814d718
 	ldr r2, [sp, #68]
 	ldrsh r0, [r7, r2]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	adds r6, r0, #0
 	ldr r2, [r6]
 	movs r4, #128
@@ -1159,7 +1159,7 @@ Func_0814ce30:
 .L_0814d708:
 	ldr r0, [r6]
 	adds r1, r5, #0
-	bl Func_08118088 + 0x50
+	bl GetMotionRecordFar
 	cmp r0, #0
 	bne .L_0814d700
 	ldr r0, [sp, #68]
@@ -1197,7 +1197,7 @@ Func_0814ce30:
 	bne .L_0814d766
 	ldr r1, [sp, #68]
 	ldrsh r0, [r6, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r2, [r0]
 	movs r3, #192
 	lsls r3, r3, #15
@@ -1333,7 +1333,7 @@ Func_0814ce30:
 	ldr r4, [sp, #68]
 	mov r2, r9
 	ldrsh r0, [r2, r4]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r1, [sp, #64]
 	mov r8, r0
@@ -1437,7 +1437,7 @@ Func_0814ce30:
 	mov r3, r11
 	ldrsh r0, [r4, r2]
 	lsrs r6, r3, #31
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r2, [r0]
 	ldr r4, [sp, #28]
 	ldr r3, [r2, #8]
@@ -1623,7 +1623,7 @@ Func_0814ce30:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r1, #128
 	ldr r2, [sp, #52]
 	movs r0, #2
@@ -1638,7 +1638,7 @@ Func_0814ce30:
 	adds r5, r3, r4
 .L_0814dad2:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	movs r0, #1
 	add r10, r0
 	mov r1, r10

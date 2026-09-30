@@ -71,7 +71,7 @@ Func_080d5aa0:
 	ldrb r0, [r3]
 	ldr r1, [r6]
 	ldr r2, [r6, #8]
-	bl Func_080201c8 + 0x8
+	bl Func_080201d0
 	cmp r0, #0
 	bne .L_080d5b40
 	adds r0, r5, #0

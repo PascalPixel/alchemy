@@ -62,7 +62,7 @@ Func_08104da8:
 	movs r3, #128
 	adds r2, r4, #0
 	lsls r3, r3, #7
-	bl Func_08020010 + 0x8
+	bl Func_08020018
 	ldr r4, [sp, #4]
 .L_08104e22:
 	movs r2, #1

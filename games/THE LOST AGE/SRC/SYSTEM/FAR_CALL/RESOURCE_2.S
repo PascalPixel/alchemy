@@ -9,10 +9,19 @@
 	.thumb_func
 ResourceMetadata_RegisterFar:
 	overlay_veneer ResourceMetadata_Register
+	.global Func_08020060
+	.thumb_func
+Func_08020060:
 	overlay_veneer Func_08022a24
+	.global Func_08020068
+	.thumb_func
+Func_08020068:
 	overlay_veneer Func_08022a84
 	.global Func_08020070
 	.thumb_func
 Func_08020070:
 	overlay_veneer Func_08022d1c
+	.global Func_08020078
+	.thumb_func
+Func_08020078:
 	overlay_veneer Func_0802296c

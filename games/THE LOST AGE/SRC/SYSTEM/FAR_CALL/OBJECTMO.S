@@ -69,6 +69,9 @@ Func_080c80f8:
 	.thumb_func
 Func_080c8100:
 	overlay_veneer Func_080d3164
+	.global Func_080c8108
+	.thumb_func
+Func_080c8108:
 	overlay_veneer Func_080d31c0
 	.global Func_080c8110
 	.thumb_func
@@ -122,6 +125,9 @@ Func_080c8168:
 	.thumb_func
 Func_080c8170:
 	overlay_veneer Object_SetPartAttribute
+	.global Func_080c8178
+	.thumb_func
+Func_080c8178:
 	overlay_veneer Func_080d3780
 	.global Func_080c8180
 	.thumb_func
@@ -131,6 +137,9 @@ Func_080c8180:
 	.thumb_func
 Func_080c8188:
 	overlay_veneer Func_080d3c88
+	.global Func_080c8190
+	.thumb_func
+Func_080c8190:
 	overlay_veneer Func_080d3fb0
 	.global Func_080c8198
 	.thumb_func
@@ -144,9 +153,21 @@ Func_080c81a0:
 	.thumb_func
 Func_080c81a8:
 	overlay_veneer Func_080d4084
+	.global Func_080c81b0
+	.thumb_func
+Func_080c81b0:
 	overlay_veneer Func_080d40d8
+	.global Func_080c81b8
+	.thumb_func
+Func_080c81b8:
 	overlay_veneer Func_080d40dc
+	.global Func_080c81c0
+	.thumb_func
+Func_080c81c0:
 	overlay_veneer Func_080d4178
+	.global Func_080c81c8
+	.thumb_func
+Func_080c81c8:
 	overlay_veneer Func_080d4180
 	.global Func_080c81d0
 	.thumb_func
@@ -156,12 +177,21 @@ Func_080c81d0:
 	.thumb_func
 Func_080c81d8:
 	overlay_veneer Func_080d3860
+	.global Func_080c81e0
+	.thumb_func
+Func_080c81e0:
 	overlay_veneer Func_080d3814
+	.global ObjectTable_RunIfActiveFar
+	.thumb_func
+ObjectTable_RunIfActiveFar:
 	overlay_veneer ObjectTable_RunIfActive
 	.global Func_080c81f0
 	.thumb_func
 Func_080c81f0:
 	overlay_veneer Func_080d41fc
+	.global Func_080c81f8
+	.thumb_func
+Func_080c81f8:
 	overlay_veneer Func_080d4330
 	.global Func_080c8200
 	.thumb_func

@@ -55,7 +55,7 @@ Func_0810abf0:
 	mov r0, r11
 	movs r1, #2
 	movs r2, #0
-	bl Func_080f8058 + 0x8
+	bl Func_080f8060
 	movs r0, #1
 	movs r1, #16
 	movs r2, #23
@@ -301,7 +301,7 @@ Func_0810abf0:
 	bl WaitFrames
 	b .L_0810acac
 .L_0810ae6a:
-	bl Func_080f8058 + 0x10
+	bl Func_080f8068
 	movs r1, #2
 	ldr r0, [sp, #8]
 	bl UiWork_FinalizeFar

@@ -65,7 +65,7 @@ Func_0811f444:
 	bl Func_0811f3b8
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Object_SetPositionAndResetMotionFar + 0x18
+	bl Func_08020100
 	adds r0, r6, #0
 	bl Func_0811bc64
 .L_0811f4d0:

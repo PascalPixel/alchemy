@@ -23,7 +23,7 @@ Func_08126700:
 	movs r1, #100
 	sub sp, #40
 	mov r10, r2
-	bl __divsi3
+	bl Math_Div
 	mov r3, r10
 	mov r2, r9
 	str r2, [r3, #4]

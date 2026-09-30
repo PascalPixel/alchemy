@@ -132,7 +132,7 @@ Func_0812824c:
 	bl GameFlag_SetBit
 .L_0812833e:
 	ldrh r0, [r5]
-	bl Battle_CalcRestore + 0x8
+	bl Func_080ad140
 	mov r2, r11
 	mov r8, r0
 	cmp r2, #0
@@ -170,7 +170,7 @@ Func_0812824c:
 	movs r1, #10
 	lsls r0, r5, #1
 	adds r0, r0, r5
-	bl __divsi3
+	bl Math_Div
 	cmp r6, r0
 	bge .L_08128398
 	adds r6, r0, #0
@@ -211,7 +211,7 @@ Func_0812824c:
 	movs r1, #10
 	lsls r0, r5, #1
 	adds r0, r0, r5
-	bl __divsi3
+	bl Math_Div
 	cmp r6, r0
 	bge .L_081283e8
 	adds r6, r0, #0

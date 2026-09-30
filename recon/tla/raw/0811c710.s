@@ -249,7 +249,7 @@ Func_0811c710:
 	movs r3, #0
 .L_0811c8f2:
 	str r3, [r0, #4]
-	bl Resource_FarCall00C + 0x10
+	bl Func_08138010
 	movs r0, #10
 	bl WaitFrames
 	bl BattleActor_CommitPlacement

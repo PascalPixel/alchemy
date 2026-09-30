@@ -9,9 +9,27 @@
 	.thumb_func
 Func_080c8588:
 	overlay_veneer Func_080ebc30
+	.global Func_080c8590
+	.thumb_func
+Func_080c8590:
 	overlay_veneer Func_080ebe70
+	.global EffectSlot_SetPositionFar
+	.thumb_func
+EffectSlot_SetPositionFar:
 	overlay_veneer EffectSlot_SetPosition
+	.global Func_080c85a0
+	.thumb_func
+Func_080c85a0:
 	overlay_veneer Func_080ebea8
+	.global Func_080c85a8
+	.thumb_func
+Func_080c85a8:
 	overlay_veneer Func_080ebeb4
+	.global Func_080c85b0
+	.thumb_func
+Func_080c85b0:
 	overlay_veneer Func_080ebec8
+	.global Func_080c85b8
+	.thumb_func
+Func_080c85b8:
 	overlay_veneer Func_080ebf68

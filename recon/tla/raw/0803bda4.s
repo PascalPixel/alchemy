@@ -16,7 +16,7 @@ Func_0803bda4:
 	ldrh r1, [r5, r3]
 	lsls r0, r0, #8
 	subs r1, #1
-	bl __divsi3
+	bl Math_Div
 	mov r2, r8
 	strh r0, [r2]
 	movs r3, #2

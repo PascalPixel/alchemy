@@ -15,7 +15,7 @@ Func_0814cd48:
 	str r0, [sp, #16]
 	mov r10, r1
 	mov r11, r2
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #92]
@@ -69,7 +69,7 @@ Func_0814cd48:
 	ldr r0, [sp, #16]
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl Func_08118088 + 0x78
+	bl Func_08118100
 	strb r0, [r5, #5]
 	ldr r1, [sp, #4]
 	ldr r4, [sp, #0]
@@ -105,7 +105,7 @@ Func_0814cd48:
 	mov r1, r8
 	ldr r0, [r1]
 	ldr r1, [sp, #8]
-	bl Func_08118088 + 0x50
+	bl GetMotionRecordFar
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_0814cd74

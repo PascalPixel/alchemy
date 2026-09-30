@@ -30,12 +30,12 @@ Func_08101ac8:
 	adds r5, r0, #0
 	movs r0, #1
 	negs r0, r0
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	cmp r5, #0
 	beq .L_08101b32
 	subs r0, #1
 	adds r1, r5, #0
-	bl __divsi3
+	bl Math_Div
 	cmp r0, #6
 	bgt .L_08101b32
 	ldr r0, .L_08101c08
@@ -102,15 +102,15 @@ Func_08101ac8:
 	b .L_08101ba2
 .L_08101b92:
 	movs r0, #2
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl Func_080380b8
 	b .L_08101ba8
 .L_08101b9a:
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl Func_080380b8
 	b .L_08101ba8
 .L_08101ba2:
 	movs r0, #4
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl Func_080380b8
 .L_08101ba8:
 	mov r2, r9
 	ldrh r3, [r5]

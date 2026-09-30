@@ -16,7 +16,7 @@ Func_0811b724:
 	str r3, [r0, #36]
 	b .L_0811b744
 .L_0811b73e:
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	adds r6, #1
 .L_0811b744:
 	adds r0, r5, #0

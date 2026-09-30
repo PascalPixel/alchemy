@@ -25,7 +25,7 @@ Func_0811ccf0:
 	movs r0, #4
 	bl WaitFrames
 	adds r0, r5, #0
-	bl Object_SetPositionAndResetMotionFar + 0x10
+	bl Func_080200f8
 	adds r0, r6, #0
 	bl Func_0811bc64
 .L_0811cd2e:

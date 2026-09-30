@@ -44,7 +44,7 @@ Func_08122514:
 	adds r3, r3, r0
 	ldrh r0, [r5]
 	mov r8, r3
-	bl Battle_CalcRestore + 0x8
+	bl Func_080ad140
 	ldrh r3, [r5]
 	mov r10, r0
 	cmp r3, #101
@@ -225,7 +225,7 @@ Func_08122514:
 	lsls r2, r2, #1
 	ldrh r0, [r3, r2]
 .L_081226ba:
-	bl Battle_CalcRestore + 0x8
+	bl Func_080ad140
 	mov r10, r0
 .L_081226c0:
 	ldr r1, [sp, #28]
@@ -654,7 +654,7 @@ Func_08122514:
 	add r2, sp, #32
 	mov r9, r2
 	mov r0, r9
-	bl Trade_AddOfferFar + 0x10
+	bl Func_080ad180
 	adds r5, r0, #0
 	subs r5, #1
 	cmp r5, #0
@@ -663,7 +663,7 @@ Func_08122514:
 .L_08122a46:
 	mov r3, r9
 	ldrb r0, [r3, r5]
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	adds r0, #4
 	ldrb r2, [r0]
 	ldrb r3, [r6]
@@ -695,7 +695,7 @@ Func_08122514:
 	mov r1, r9
 	ldrb r0, [r1, r5]
 	strh r0, [r7, #8]
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	ldrh r0, [r0]
 	mov r9, r0
 	bl BattleAction_Get
@@ -886,7 +886,7 @@ Func_08122514:
 	lsrs r0, r0, #30
 	movs r1, #3
 	adds r0, #1
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r8
 	movs r3, #3
 	ldrb r2, [r1]

@@ -278,7 +278,7 @@ Func_0810021c:
 	adds r3, r7, r2
 	ldrb r1, [r3]
 	adds r0, r0, r1
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #129
 	lsls r2, r0, #1
 	lsls r3, r3, #2

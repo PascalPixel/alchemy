@@ -19,7 +19,7 @@ Func_0810526c:
 	ldr r0, [r5, r6]
 	cmp r0, #0
 	beq .L_08105292
-	bl Func_08020040 + 0x8
+	bl Func_08020048
 	mov r3, r8
 	str r3, [r5, r6]
 .L_08105292:

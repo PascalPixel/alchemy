@@ -130,7 +130,7 @@ PartyInventory_GiveItem:
 	ldr r0, [sp, #8]
 	bl Func_080ad288
 	ldr r0, [sp, #8]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	adds r0, r6, #0
 	bl PartyInventory_AddFar
 	mov r8, r0

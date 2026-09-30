@@ -46,7 +46,7 @@ Func_0803bad8:
 	lsls r0, r0, #8
 	subs r1, #1
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	movs r2, #192
 	lsls r2, r2, #4
 	ldr r4, [sp, #0]

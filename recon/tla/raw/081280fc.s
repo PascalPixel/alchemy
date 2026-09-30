@@ -1,11 +1,11 @@
 .syntax unified
 	.thumb
-	.global Func_081280fc
-	.thumb_func
-Func_081280fc:
 	.global Summon_IsEntryFlagged
 	.thumb_func
 Summon_IsEntryFlagged:
+	.global Func_081280fc
+	.thumb_func
+Func_081280fc:
 	push {lr}
 	movs r3, #193
 	lsls r3, r3, #1

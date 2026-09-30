@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.2byte 0x0000
 	.global Func_080b04bc
 	.thumb_func
 Func_080b04bc:
@@ -31,7 +30,7 @@ Func_080b04bc:
 	adds r3, r3, r2
 	adds r0, r0, r3
 	lsls r0, r0, #16
-	bl __divsi3
+	bl Math_Div
 	adds r5, r0, #0
 	bl Func_080b0378
 	movs r3, #255

@@ -33,7 +33,7 @@ Func_080e2c38:
 	bhi .L_080e2ce2
 	movs r1, #6
 	asrs r0, r0, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r3, r9
 	ldrh r1, [r3]
 	ldr r3, .L_080e2cb4

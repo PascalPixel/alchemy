@@ -288,11 +288,11 @@ Func_0811f088:
 	cmp r3, #0
 	beq .L_0811f2b6
 	adds r0, r6, #0
-	bl Resource_FarCall00C + 0x8
+	bl Func_08138008
 	b .L_0811f2c2
 .L_0811f2b6:
 	adds r0, r6, #0
-	bl Resource_FarCall00C + 0x18
+	bl Func_08138018
 	b .L_0811f2c2
 .L_0811f2be:
 	bl Func_0812756c

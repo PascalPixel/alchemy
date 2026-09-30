@@ -191,7 +191,7 @@ BattlePres_RunBurstScene:
 	ldrsh r1, [r5, r2]
 	lsls r3, r3, #11
 	movs r2, #8
-	bl Func_08118070 + 0x8
+	bl Func_08118078
 	movs r0, #7
 	bl WaitFrames
 	b .L_0815a2a0
@@ -202,7 +202,7 @@ BattlePres_RunBurstScene:
 	movs r5, #36
 	ldrsh r1, [r3, r5]
 	movs r3, #0
-	bl Func_08118070 + 0x8
+	bl Func_08118078
 .L_0815a2a0:
 	movs r0, #1
 	bl WaitFrames
@@ -245,7 +245,7 @@ BattlePres_RunBurstScene:
 	movs r5, #0
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	mov r10, r5
 	ldr r6, [r0]
 	ldr r5, .L_0815a534
@@ -672,7 +672,7 @@ BattlePres_RunBurstScene:
 	movs r3, #8
 	str r3, [r2]
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_0815a684
 	.2byte 0x0000
 .L_0815a64c:

@@ -143,7 +143,7 @@ Func_0803df24:
 	add r5, sp, #12
 	adds r1, r5, #0
 	ldrh r0, [r7, #8]
-	bl Func_08118088 + 0x28
+	bl Func_081180b0
 	movs r1, #1
 	negs r1, r1
 	cmp r0, r1

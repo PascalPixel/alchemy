@@ -151,7 +151,7 @@ Func_0816a730:
 	add r3, r10
 	str r4, [r3]
 	movs r0, #212
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r3, [sp, #20]
 	movs r1, #0
 	movs r2, #36
@@ -263,7 +263,7 @@ Func_0816a730:
 	cmp r0, #28
 	bgt .L_0816a988
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	movs r2, #2
 	ldrsh r4, [r5, r2]
 	movs r3, #6

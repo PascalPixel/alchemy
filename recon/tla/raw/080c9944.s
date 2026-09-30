@@ -198,7 +198,7 @@ Game_ResetForNewGame:
 	cmp r3, r2
 	bne .L_080c9b7a
 	adds r0, r6, #0
-	bl Func_08118088 + 0x18
+	bl Func_081180a0
 	adds r6, r0, #0
 	b .L_080c9b7a
 .L_080c9ad8:
@@ -216,7 +216,7 @@ Game_ResetForNewGame:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r6, #0
-	bl Resource_FarCall00D
+	bl Func_081ac000
 	b .L_080c9b1e
 .L_080c9afc:
 	movs r0, #64

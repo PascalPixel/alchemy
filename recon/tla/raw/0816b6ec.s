@@ -376,7 +376,7 @@ Func_0816b6ec:
 	movs r3, #6
 	str r3, [r2]
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	mov r2, r11
 	movs r3, #8
 	movs r1, #36
@@ -393,7 +393,7 @@ Func_0816b6ec:
 	bne .L_0816b9f0
 	movs r0, #1
 	negs r0, r0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0816b9f0:
 	mov r4, r11
 	ldr r3, [r4, #20]

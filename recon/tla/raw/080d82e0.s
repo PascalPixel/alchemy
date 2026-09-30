@@ -31,7 +31,7 @@ Func_080d82e0:
 	ldr r3, [r3]
 	ldr r0, .L_080d846c
 	mov r9, r3
-	bl Func_08108048 + 0x10
+	bl Func_08108058
 	movs r0, #30
 	bl WaitFrames
 	adds r2, r6, #0
@@ -213,7 +213,7 @@ Func_080d82e0:
 	movs r1, #24
 	strh r3, [r2]
 	lsls r0, r7, #16
-	bl __divsi3
+	bl Math_Div
 	adds r3, r6, #0
 	adds r3, #102
 	strh r0, [r3]
@@ -311,7 +311,7 @@ Func_080d82e0:
 .L_080d8594:
 	movs r0, #15
 	bl WaitFrames
-	bl Func_08108048 + 0x18
+	bl Func_08108060
 	bl Func_080d7ab4
 .L_080d85a2:
 	add sp, #12

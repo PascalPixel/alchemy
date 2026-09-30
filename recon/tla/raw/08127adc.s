@@ -58,7 +58,7 @@ Summon_TakeCharge:
 	movs r1, #9
 	adds r0, #1
 	str r4, [sp, #0]
-	bl Math_Mod
+	bl __modsi3
 	strb r0, [r5, r6]
 	adds r3, r7, #0
 	adds r3, #28

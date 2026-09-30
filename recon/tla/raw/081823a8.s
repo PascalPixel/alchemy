@@ -112,7 +112,7 @@ Func_081823a8:
 .L_0818247c:
 	ldr r1, [sp, #68]
 	ldrsh r0, [r6, r1]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	ldr r3, [r0, #8]
 	str r7, [r5, #4]
@@ -130,7 +130,7 @@ Func_081823a8:
 	ldr r0, [r0, #8]
 	movs r1, #40
 	negs r0, r0
-	bl __divsi3
+	bl Math_Div
 	movs r3, #192
 	lsls r3, r3, #10
 	str r0, [r5, #12]

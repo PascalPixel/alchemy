@@ -196,7 +196,7 @@ Func_08159cac:
 	cmp r11, r3
 	bne .L_08159e38
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08159e38:
 	ldr r0, [sp, #16]
 	movs r6, #0
@@ -217,7 +217,7 @@ Func_08159cac:
 	cmp r2, #0
 	bne .L_08159e60
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	b .L_08159e66
 .L_08159e60:
 	movs r0, #134
@@ -254,14 +254,14 @@ Func_08159cac:
 	adds r7, r2, r1
 	mov r0, r8
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
-	bl __divsi3
+	bl Math_Div
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0815a038
 	adds r5, r5, r0
 	lsls r3, r5, #1

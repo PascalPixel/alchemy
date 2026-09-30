@@ -82,7 +82,7 @@ Func_0818de3c:
 	mov r1, r9
 	adds r0, r7, #0
 	str r2, [sp, #4]
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r0, #0
 	mov r0, r8
 	adds r4, r6, r0
@@ -90,7 +90,7 @@ Func_0818de3c:
 	mov r1, r9
 	mov r0, r10
 	str r4, [sp, #0]
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r9
 	ldr r2, [sp, #4]
 	ldr r4, [sp, #0]

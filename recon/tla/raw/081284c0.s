@@ -24,7 +24,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_08128790
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_081284f4:
 	mov r2, sp
@@ -105,7 +105,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_08128794
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 	movs r3, #252
 	lsls r3, r3, #6
@@ -161,7 +161,7 @@ Func_081284c0:
 	movs r0, #154
 	bl Audio_PlayCue
 	ldr r0, .L_08128798
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_0812861a:
 	subs r7, #1
@@ -175,7 +175,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_0812879c
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_0812863a:
 	mov r3, r8
@@ -186,7 +186,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_081287a0
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_08128654:
 	mov r3, r8
@@ -197,7 +197,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_081287a4
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_0812866e:
 	mov r3, r8
@@ -208,7 +208,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_081287a8
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_08128688:
 	mov r3, r8
@@ -219,7 +219,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_081287ac
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_081286a2:
 	mov r3, r8
@@ -230,7 +230,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_081287b0
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 .L_081286bc:
 	movs r2, #166
@@ -267,7 +267,7 @@ Func_081284c0:
 	movs r1, #5
 	bl UiText_DrawQuantity
 	ldr r0, .L_081287b8
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	ldr r3, [sp, #24]
 	ldr r0, [r3]
 	bl Func_080ad1d8
@@ -309,7 +309,7 @@ Func_081284c0:
 	movs r1, #2
 	bl UiText_DrawQuantity
 	ldr r0, .L_081287c0
-	bl Func_080381c0 + 0x8
+	bl Func_080381c8
 	bl BattlePresentation_WaitForAdvance
 	ldr r2, [sp, #24]
 	ldrh r0, [r2, r5]

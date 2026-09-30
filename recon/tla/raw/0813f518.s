@@ -265,7 +265,7 @@ Func_0813f518:
 	cmp r0, #20
 	bhi .L_0813f756
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	lsls r1, r0, #3
 	adds r1, r1, r0
 	mov r4, r9
@@ -289,9 +289,9 @@ Func_0813f518:
 	cmp r0, #14
 	bhi .L_0813f7c0
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	lsls r0, r0, #10
 	add r0, r11
 	movs r7, #0

@@ -150,7 +150,7 @@ Func_0817c6ac:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #144
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r4, #238
 	ldr r3, [sp, #76]
 	lsls r4, r4, #7

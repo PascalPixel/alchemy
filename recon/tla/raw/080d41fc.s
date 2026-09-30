@@ -121,7 +121,7 @@ Func_080d41fc:
 	bl WaitFrames
 .L_080d42fc:
 	mov r0, r8
-	bl UiWork_IsCompleteFar + 0x8
+	bl UiWork_IsIdleFar
 	cmp r0, #0
 	beq .L_080d42f6
 	b .L_080d430e
@@ -130,7 +130,7 @@ Func_080d41fc:
 	bl WaitFrames
 .L_080d430e:
 	adds r0, r7, #0
-	bl UiWork_IsCompleteFar + 0x8
+	bl UiWork_IsIdleFar
 	cmp r0, #0
 	beq .L_080d4308
 	movs r0, #1

@@ -30,7 +30,7 @@ Func_081080a8:
 	cmp r5, #4
 	beq .L_081080e4
 	adds r0, r6, #0
-	bl Func_080ad1d8 + 0x8
+	bl Item_GetEquipmentGroupFar
 	cmp r5, r0
 	bne .L_081080f8
 .L_081080e4:

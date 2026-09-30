@@ -264,7 +264,7 @@ Func_0814b9e8:
 	bl Audio_PlayCue
 	movs r0, #1
 	negs r0, r0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r4, [sp, #40]
 	movs r2, #0
 	ldr r3, [r4, #20]

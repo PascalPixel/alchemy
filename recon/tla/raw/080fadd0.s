@@ -29,14 +29,14 @@ Func_080fadd0:
 	movs r0, #2
 	ldrb r2, [r3, #14]
 	movs r3, #0
-	bl UiWindow_SetTilemapEntryFar + 0x18
+	bl Func_08038288
 	b .L_080fae14
 .L_080fae08:
 	ldr r3, [r5]
 	movs r0, #7
 	ldrb r2, [r3, #14]
 	movs r3, #0
-	bl UiWindow_SetTilemapEntryFar + 0x18
+	bl Func_08038288
 .L_080fae14:
 	subs r7, #1
 	adds r5, #4

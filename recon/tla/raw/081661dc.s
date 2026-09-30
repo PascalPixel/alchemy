@@ -50,13 +50,13 @@ Func_081661dc:
 	ldr r0, [r3, #8]
 	movs r2, #4
 	movs r3, #0
-	bl Func_08118070 + 0x8
+	bl Func_08118078
 	movs r0, #1
 	bl WaitFrames
 	mov r1, r9
 	movs r3, #36
 	ldrsh r0, [r1, r3]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r6, [r0]
 	ldr r5, [sp, #40]
 	movs r2, #0
@@ -145,7 +145,7 @@ Func_081661dc:
 	cmp r1, #8
 	bne .L_0816630c
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0816630c:
 	mov r2, r9
 	ldr r3, [r2, #24]

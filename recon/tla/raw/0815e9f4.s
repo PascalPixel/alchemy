@@ -32,7 +32,7 @@ Func_0815e9f4:
 	movs r2, #130
 	ldr r0, [r1, #8]
 	ldr r1, [r1, #12]
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	bl Func_08143d80
@@ -77,7 +77,7 @@ Func_0815e9f4:
 	ldr r0, [r2, #8]
 	ldr r1, [r2, #12]
 	movs r2, #130
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, [sp, #56]
@@ -92,7 +92,7 @@ Func_0815e9f4:
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, .L_0815ed68
@@ -122,7 +122,7 @@ Func_0815e9f4:
 	mov r3, r11
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #0
@@ -134,7 +134,7 @@ Func_0815e9f4:
 	ldr r0, [r1, #8]
 	movs r2, #130
 	ldr r1, [r1, #12]
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, [sp, #56]
@@ -158,7 +158,7 @@ Func_0815e9f4:
 .L_0815eb44:
 	mov r2, r11
 	ldr r0, [r2, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r0, [r0]
 	movs r6, #255
 	ldr r5, [sp, #56]
@@ -258,7 +258,7 @@ Func_0815e9f4:
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
 	movs r2, #130
-	bl Func_08118028 + 0x8
+	bl BattlePres_SetupTransitionAtPairMidpointFar
 	ldr r6, [sp, #56]
 	movs r5, #0
 	mov r10, r5
@@ -472,7 +472,7 @@ Func_0815e9f4:
 	strh r3, [r2, #6]
 	movs r5, #36
 	ldrsh r0, [r1, r5]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	mov r3, r11
 	ldr r6, [r0]
 	movs r2, #36
@@ -533,7 +533,7 @@ Func_0815e9f4:
 	cmp r1, #5
 	bne .L_0815ee4a
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0815ee4a:
 	mov r2, r9
 	cmp r2, #4
@@ -724,7 +724,7 @@ Func_0815e9f4:
 	mov r3, r9
 	subs r1, r6, r3
 	ldrh r0, [r5]
-	bl Func_08118028 + 0x20
+	bl Func_08118048
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1

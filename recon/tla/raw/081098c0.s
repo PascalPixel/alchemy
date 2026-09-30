@@ -18,7 +18,7 @@ Func_081098c0:
 	ldrb r1, [r6, #2]
 	adds r0, r7, #0
 	mov r10, r3
-	bl Djinn_IsActiveFar + 0x20
+	bl Inventory_FindEquippedFar
 	mov r9, r0
 	movs r0, #101
 	bl Audio_PlayCue
@@ -34,7 +34,7 @@ Func_081098c0:
 	negs r0, r0
 	bl Func_080ad1d8
 	ldrh r0, [r6]
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x10
+	bl Party_AdjustSixDigitCounterBFar
 	bl Func_08109188
 	cmp r5, #0
 	bne .L_081098f0

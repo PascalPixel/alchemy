@@ -128,7 +128,7 @@ Func_080fe274:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl Func_080383b8 + 0x8
+	bl Func_080383c0
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r0, #13
@@ -140,13 +140,13 @@ Func_080fe274:
 	adds r3, #240
 	str r0, [r3]
 	ldr r0, [sp, #8]
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	cmp r0, #0
 	beq .L_080fe3a8
 	bl Func_081051a8
 .L_080fe3a8:
 	ldr r0, .L_080fe408
-	bl Func_080383e8 + 0x10
+	bl Func_080383f8
 	bl Func_081053a8
 	bl Func_080f9448
 	ldr r2, .L_080fe3f4
@@ -167,7 +167,7 @@ Func_080fe274:
 	bl Func_080383e8
 	movs r0, #1
 	bl WaitFrames
-	bl UiWindow_SetTilemapEntryFar + 0x20
+	bl Func_08038290
 	movs r0, #0
 	b .L_080fe40c
 	.2byte 0x0000
@@ -184,7 +184,7 @@ Func_080fe274:
 .L_080fe408:
 	.4byte 0x06002500
 .L_080fe40c:
-	bl Func_080383b8 + 0x8
+	bl Func_080383c0
 	movs r0, #160
 	mov r1, r8
 	movs r2, #64
@@ -234,7 +234,7 @@ Func_080fe274:
 .L_080fe478:
 	.4byte 0x06004000
 .L_080fe47c:
-	bl Func_080383e8 + 0x8
+	bl Func_080383f0
 	mov r3, r11
 	ldr r2, [r3, #60]
 	ldr r3, .L_080fe498

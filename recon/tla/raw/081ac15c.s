@@ -1001,7 +1001,7 @@ LuckyDice_Run:
 	movs r1, #6
 	ands r5, r0
 	ldr r0, [r6, #4]
-	bl __divsi3
+	bl Math_Div
 	adds r5, #140
 	lsls r5, r5, #12
 	adds r5, r5, r0
@@ -1207,7 +1207,7 @@ LuckyDice_Run:
 	adds r1, #128
 	lsls r0, r0, #4
 	str r4, [sp, #8]
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r6]
 	movs r1, #16
 	subs r2, r3, r0
@@ -1310,14 +1310,14 @@ LuckyDice_Run:
 	adds r6, #128
 	adds r1, r6, #0
 	lsls r0, r0, #4
-	bl __divsi3
+	bl Math_Div
 	mov r1, r9
 	ldr r5, [r1]
 	adds r1, r6, #0
 	subs r5, r5, r0
 	movs r0, #192
 	lsls r0, r0, #2
-	bl __divsi3
+	bl Math_Div
 	mov r3, r9
 	ldr r2, [r3, #4]
 	movs r4, #158
@@ -1538,21 +1538,21 @@ LuckyDice_Run:
 	adds r5, r0, #0
 	adds r1, r5, #0
 	lsls r0, r4, #15
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r7, #12]
 	adds r1, r5, #0
 	adds r3, r3, r0
 	str r3, [r7, #12]
 	mov r3, r8
 	lsls r0, r3, #15
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r7, #16]
 	mov r4, r10
 	adds r3, r3, r0
 	str r3, [r7, #16]
 	adds r1, r5, #0
 	lsls r0, r4, #15
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [r7, #20]
 	ldr r1, [r7]
 	adds r3, r3, r0
@@ -1776,7 +1776,7 @@ LuckyDice_Run:
 	asrs r0, r0, #10
 	movs r1, #3
 	str r4, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, [sp, #8]
 	cmp r0, #1
 	bne .L_081acf4e
@@ -1863,7 +1863,7 @@ LuckyDice_Run:
 	lsls r1, r1, #4
 	add r5, sp, #224
 	str r4, [sp, #8]
-	bl __divsi3
+	bl Math_Div
 	ldr r1, .L_081ad0c8
 	ldr r4, [sp, #8]
 	movs r6, #0

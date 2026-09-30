@@ -319,7 +319,7 @@ Func_0813c0b8:
 	bne .L_0813c320
 	movs r0, #133
 	mov r7, r10
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	ldr r1, [r7, #24]
 .L_0813c320:
 	lsls r3, r1, #2

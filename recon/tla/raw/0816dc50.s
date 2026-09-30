@@ -143,7 +143,7 @@ Func_0816dc50:
 	str r0, [sp, #40]
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	movs r2, #128
 	ldr r0, [r0]
 	lsls r2, r2, #19
@@ -561,7 +561,7 @@ Func_0816dc50:
 	cmp r0, #23
 	bhi .L_0816e0e6
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	adds r1, r7, #0
 	adds r5, r0, #0
 	adds r0, r6, #0
@@ -662,7 +662,7 @@ Func_0816dc50:
 	bl Audio_PlayCue
 	movs r0, #1
 	negs r0, r0
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0816e17c:
 	ldr r3, [sp, #52]
 	cmp r3, #30
@@ -726,12 +726,12 @@ Func_0816dc50:
 	bne .L_0816e292
 	ldr r1, [sp, #64]
 	ldr r0, [r1, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r3, [sp, #64]
 	ldr r6, [r0]
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r2, [r0]
 	ldr r4, [r6, #8]
 	ldr r3, [r2, #8]
@@ -742,7 +742,7 @@ Func_0816dc50:
 	lsls r0, r0, #4
 	mov r10, r4
 	str r2, [sp, #8]
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #8]
 	adds r5, r0, #0
 	ldr r3, [r2, #16]
@@ -753,7 +753,7 @@ Func_0816dc50:
 	lsls r0, r3, #2
 	adds r0, r0, r3
 	lsls r0, r0, #4
-	bl __divsi3
+	bl Math_Div
 	add r10, r5
 	add r8, r0
 	asrs r5, r5, #8
@@ -769,7 +769,7 @@ Func_0816dc50:
 	.2byte 0xf800
 	movs r1, #10
 	lsls r0, r0, #8
-	bl __divsi3
+	bl Math_Div
 	adds r3, r6, #0
 	movs r2, #1
 	adds r3, #88

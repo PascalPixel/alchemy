@@ -29,7 +29,7 @@ Func_08109068:
 	str r1, [sp, #4]
 	ldr r0, [sp, #8]
 	movs r1, #7
-	bl __divsi3
+	bl Math_Div
 	lsls r3, r0, #3
 	subs r6, r3, r0
 	mov r3, r9

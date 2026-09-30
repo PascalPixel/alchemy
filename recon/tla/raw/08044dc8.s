@@ -97,7 +97,7 @@ Func_08044dc8:
 	bl Func_0803cf60
 	mov r10, r0
 	adds r0, r7, #0
-	bl Trade_AddOfferFar + 0x18
+	bl SummonDefinition_Get
 	add r7, sp, #8
 	adds r2, r7, #0
 	adds r0, #4

@@ -339,7 +339,7 @@ Func_080de21c:
 	bne .L_080de4fa
 	ldr r0, [sp, #8]
 	mov r1, r10
-	bl Func_08020290 + 0x8
+	bl Func_08020298
 	cmp r0, #0
 	bne .L_080de4fa
 	ldr r4, [sp, #8]

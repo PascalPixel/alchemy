@@ -36,7 +36,7 @@ Func_0810a2d8:
 	adds r5, r0, #0
 	ldrb r1, [r5, #2]
 	adds r0, r7, #0
-	bl Djinn_IsActiveFar + 0x20
+	bl Inventory_FindEquippedFar
 	str r0, [sp, #0]
 	mov r3, r8
 	ldrh r0, [r3, r6]
@@ -148,7 +148,7 @@ Func_0810a2d8:
 	strh r6, [r2, r5]
 	ldr r1, [sp, #12]
 	adds r0, r7, #0
-	bl Inventory_BreakFar + 0x8
+	bl Inventory_RepairFar
 	mov r3, r9
 	negs r0, r3
 	bl Func_080ad1d8

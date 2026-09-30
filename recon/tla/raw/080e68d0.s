@@ -255,7 +255,7 @@ Func_080e68d0:
 	cmp r3, #0
 	beq .L_080e6b10
 	adds r0, r5, #0
-	bl Func_08020328 + 0x8
+	bl Func_08020330
 	movs r1, #203
 	lsls r1, r1, #1
 	cmp r0, r1

@@ -70,7 +70,7 @@ Func_080fa5a4:
 	str r1, [sp, #0]
 	movs r3, #0
 	movs r1, #0
-	bl RenderOutput_CreateFar + 0x8
+	bl RenderOutput_CreateFromResourceFar
 	movs r2, #134
 	lsls r2, r2, #2
 	adds r3, r7, r2

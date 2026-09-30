@@ -4,7 +4,7 @@
 	.thumb_func
 Func_081574e0:
 	push {r5, r6, lr}
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	adds r6, r0, #0
 	ldr r5, [r6]
 	movs r3, #128

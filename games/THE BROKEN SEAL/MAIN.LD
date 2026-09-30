@@ -1040,7 +1040,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/WINDOW.o"(.text)
         "*/recon/tbs/raw/080a4f08.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/DRAW_SELECTED_ITEM_HEADER.o"(.text)
-        "*/recon/tbs/raw/080a524c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/CONFIRM_DROP.o"(.text)
         "*/recon/tbs/raw/080a5388.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/LOAD_PAIRED_BLOCKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/PAGE_RESULT.o"(.text)

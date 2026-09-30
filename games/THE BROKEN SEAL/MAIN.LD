@@ -421,7 +421,6 @@ SECTIONS
         "*/recon/tbs/raw/0801dd28.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0801de5c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/CLEAR_TILE_ATTRIBUTES_IN_RECT.o"(.text)
-        "*/recon/tbs/raw/0801e318.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_SET_ALT_FLAG_AND_CLEAR_TABLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RESERVED_NO_OP.o"(.text)
         "*/recon/tbs/raw/0801e41a.o"(.text .rodata .data .padding)

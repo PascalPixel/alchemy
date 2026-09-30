@@ -1164,6 +1164,7 @@ SECTIONS
         "*/recon/tla/raw/0814b9d0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0814b9dc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0814b9e8.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/BATTLE/EFFECT/RUN_NO_EFFECT_FRAMES.o"(.text)
         "*/recon/tla/raw/0814c994.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0814cd48.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0814ce20.o"(.text .rodata .data .padding)

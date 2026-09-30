@@ -1102,7 +1102,7 @@ Func_08100e5c:
 	negs	r1, r1
 	movs	r2, #11
 	adds	r0, r6, #0
-	bl	0x080f8840
+	bl	Func_080f8840
 	movs	r3, #0
 	mov	fp, r3
 	movs	r3, #13

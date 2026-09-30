@@ -314,7 +314,7 @@ Func_081197d0:
 	movs	r2, #0
 	movs	r3, #190
 	movs	r0, #0
-	bl	0x08126804
+	bl	Func_08126804
 	movs	r0, #1
 	bl	Func_08118d6c
 	ldr	r5, [pc, #48]

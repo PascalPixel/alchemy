@@ -28,7 +28,7 @@ Func_08127308:
 	movs	r2, #0
 	ldrh	r1, [r3, #0]
 	movs	r0, #1
-	bl	0x0812628c
+	bl	Func_0812628c
 	movs	r1, #128
 	ldr	r3, [pc, #536]
 	lsls	r1, r1, #7
@@ -300,7 +300,7 @@ Func_08127308:
 	push	{lr}
 	movs	r0, #0
 	movs	r1, #0
-	bl	0x08126218
+	bl	Func_08126218
 	pop	{pc}
 	push	{lr}
 	movs	r0, #2

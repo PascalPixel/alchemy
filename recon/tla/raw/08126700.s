@@ -120,6 +120,9 @@ Func_08126700:
 	.4byte 0x03000354
 	.2byte 0x11e0
 	.2byte 0x0300
+	.global Func_08126804
+	.thumb_func
+Func_08126804:
 .L_08126804:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -236,6 +239,9 @@ Func_08126700:
 	.4byte 0x03000354
 	.2byte 0x11e0
 	.2byte 0x0300
+	.global Func_08126904
+	.thumb_func
+Func_08126904:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -260,7 +266,7 @@ Func_08126700:
 	asrs	r2, r2, #1
 	movs	r1, #0
 	mov	r3, r8
-	bl	.L_08126804
+	bl	Func_08126804
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, pc}

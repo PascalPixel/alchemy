@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080c08ec
+	.global BattleBackground_Load
 	.thumb_func
-Func_080c08ec:
+BattleBackground_Load:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

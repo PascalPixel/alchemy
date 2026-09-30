@@ -383,6 +383,9 @@ Party_ListActiveOwners:
 	.4byte 0x000000ff
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080afeb0
+	.thumb_func
+Func_080afeb0:
 	push	{lr}
 	ldr	r1, [pc, #24]
 	ldr	r2, [pc, #24]

@@ -220,7 +220,7 @@ Func_080cb09c:
 	movs	r2, #14
 	ldrsh	r1, [r5, r2]
 	str	r1, [sp, #4]
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	beq.n	.L_080cb28e
 	ldr	r2, [sp, #12]

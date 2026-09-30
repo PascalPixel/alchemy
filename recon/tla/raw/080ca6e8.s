@@ -71,7 +71,7 @@ Func_080ca6e8:
 	movs	r2, #2
 	ldrsh	r7, [r3, r2]
 	adds	r0, r7, #0
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_080ca76e
 	b.n	.L_080ca994
@@ -106,7 +106,7 @@ Func_080ca6e8:
 	adds	r7, r3, #0
 	adds	r7, #47
 	adds	r0, r7, #0
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_080ca7b6
 	b.n	.L_080ca994
@@ -121,7 +121,7 @@ Func_080ca6e8:
 	beq.n	.L_080ca7d4
 	adds	r0, r7, #0
 	adds	r0, #80
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_080ca7d4
 	b.n	.L_080ca994

@@ -1406,7 +1406,7 @@ Func_02000de4:
 	mov r1, r8
 	ldrh r0, [r1, r4]
 	str r4, [sp, #0]
-	bl Func_02001444
+	bl Item_Get
 	ldr r4, [sp, #0]
 	mov r2, r8
 	ldrh r1, [r2, r4]

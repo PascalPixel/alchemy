@@ -65,7 +65,7 @@ Func_0811e830:
 	cmp r6, #16
 	bne .L_0811e874
 	ldr r0, [sp, #8]
-	bl Func_0811b724
+	bl ReleaseBattleObjectRecords
 	ldr r3, [sp, #4]
 	ldrb r0, [r3]
 	bl GetBattleObjectSlot

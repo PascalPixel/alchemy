@@ -30,7 +30,7 @@ Func_0811b75c:
 	bgt .L_0811b790
 	mov r0, r11
 .L_0811b790:
-	bl Func_0811b724
+	bl ReleaseBattleObjectRecords
 .L_0811b794:
 	movs r3, #1
 	add r11, r3

@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.2byte 0x0000
 	.global Func_08049a04
 	.thumb_func
 Func_08049a04:

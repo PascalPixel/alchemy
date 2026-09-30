@@ -112,7 +112,7 @@ Func_080c8150:
 	.global Func_080c8158
 	.thumb_func
 Func_080c8158:
-	overlay_veneer Func_080d359c
+	overlay_veneer ObjectMotion_SetAngleToward
 	.global Object_LinkPairFar
 	.thumb_func
 Object_LinkPairFar:

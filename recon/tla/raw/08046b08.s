@@ -1916,7 +1916,7 @@ Func_08046b08:
 	movs r1, #16
 	ldr r0, [sp, #136]
 	str r4, [sp, #0]
-	bl Func_0804524c
+	bl UiWindow_DrawThreeTileColumn
 	ldr r0, [sp, #16]
 	movs r2, #1
 	add r8, r2

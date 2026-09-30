@@ -11,37 +11,29 @@
  * Remaining before it can compile for ⚓️: ⚓️ headers for the battle types
  * (BattlePlan with actor_id2, BattleUnit, BattleAction), and names at
  * their own places for every callee the listing still calls by address
- * (BattleEvent_Push 08120360, BattleFlag_Test 080ad008, BattleRandom
+ * (BattleEv_Push 08120360, GameFlag_TestFar 080ad008, BattleRandom
  * 080ad148, Func_081203a8 and the rest), and for the message ids. The
  * helper macros and hook bodies are expanded inline here; fold them back
  * into shared code once both games compile from one source. */
 #include "../../../../games/THE LOST AGE/INCLUDE/TYPES.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_ACTOR.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_CALC.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_EFX.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_EVENT.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_MSG.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_RUNTIME.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_SUMMON.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_TYPES.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_WORK.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/PARTY_STATE.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/OWNER_STATE.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/RAM_BUFFER.H"
+#include "../../../../games/THE LOST AGE/INCLUDE/RUNTIME_MEM.H"
 
-/* ⚓️'s plan: the same 0x64 bytes as ☀️'s, but the first target byte is a
-   second actor, so thirteen targets follow and the command moves to 0x4a. */
-struct BattlePlan {
-    u8 actor_id;                    /* 0x00 */
-    s8 target_count;                /* 0x01 */
-    u8 actor_id2;                   /* 0x02 */
-    u8 target_ids[13];              /* 0x03 */
-    s8 target_offset0;              /* 0x10 */
-    s8 target_offsets[13];          /* 0x11 */
-    s8 target_adjustment0;          /* 0x1e */
-    s8 target_adjustments[13];      /* 0x1f */
-    s8 target_modifier0;            /* 0x2c */
-    s8 target_modifiers[13];        /* 0x2d */
-    s8 target_result0;              /* 0x3a */
-    s8 target_results[13];          /* 0x3b */
-    u8 unknown_48[2];
-    s16 command;                    /* 0x4a */
-    s32 action_id;                  /* 0x4c */
-    s32 range_index;                /* 0x50 */
-    s32 outcome;                    /* 0x54 */
-    u32 presentation_flags;         /* 0x58 */
-    s32 failure;                    /* 0x5c */
-    u32 pending_amount_60;          /* 0x60 */
-};
-
+s32 BattleUnit_KeepsOneHp(s32 unit);
+void Battle_ApplyActionExtras(s32 unit, s32 a, s32 b);
+void BattleParty_InsertUnitCentered(s16 *units, s32 unit);
+s32 BattleFormation_SelectRandomAvailableMember(s32 record_id);
 void *GetBattleObjectSlot(s32 unit);
 void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
 void BattleActor_CommitPlacement(void);
@@ -59,7 +51,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 actor_id;
     s32 range;
     s32 bonus;
-    void *work;
+    struct BattleSession *work;
     s32 offset;
     s32 half;
     s32 adjust;
@@ -92,7 +84,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 tmp;
     s32 size;
     bonus = 0;
-    work = gBattleWork;
+    work = Ram_HeapSlots->battle_work;
     half = 0;
     dealt = 0;
     crush = 0;
@@ -102,10 +94,10 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     copy = (struct BattleUnit *)Runtime_BumpAllocate(size);
     { actor_id = (((action_id) == 0x138 || (action_id) == 0x13c) ? (plan)->actor_id2 : (plan)->actor_id); target_id = ((plan)->target_ids[(slot)]); action_id = plan->action_id; range = plan->range_index; adjust = ((plan)->target_adjustments[(slot)]); modifier = ((plan)->target_modifiers[(slot)]); };
     action = BattleAction_Get(action_id);
-    actor = Owner_GetStateFar(actor_id);
-    target = Owner_GetStateFar(target_id);
+    actor = OwnerState_Get(actor_id);
+    target = OwnerState_Get(target_id);
     ((void (*)(void *, const void *, s32))0x03000730)( (copy), (target), (size));
-    { s32 state = *(u16 *)((u8 *)target + 0x14a); switch (state) { case 0xdd: if (((plan)->command) == 1 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEvent_Push(11, target_id); BattleEvent_Push(0, target_id); BattleEvent_Push(4, 0xcb5); goto done; } break; case 0x65: case 0x66: case 0x67: if (action_id != 0x23d && ((u8 *)work)[0x868] != 0 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEvent_Push(11, target_id); BattleEvent_Push(0, target_id); BattleEvent_Push(4, 0xcb4); goto done; } break; } if (target->guard_level == 4 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEvent_Push(11, target_id); BattleEvent_Push(0, target_id); BattleEvent_Push(4, 0xcab); goto done; } };
+    { s32 state = *(u16 *)((u8 *)target + 0x14a); switch (state) { case 0xdd: if (((plan)->command) == 1 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, 0xcb5); goto done; } break; case 0x65: case 0x66: case 0x67: if (action_id != 0x23d && ((u8 *)work)[0x868] != 0 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, 0xcb4); goto done; } break; } if (target->guard_level == 4 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, 0xcab); goto done; } };
     if (action->range != 255) {
         offset = ((plan)->target_offsets[(slot)]);
         if (offset < 0)
@@ -170,7 +162,7 @@ after_power:
         if (chance > (BattleRandom16Far() & 0xffff))
             BattleEv_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
     }
-    { if (action_id == 0x2ae || action_id == 0x165) Func_08125390(target_id, 0, 0); if ((u32)(action_id - 0x2d0) <= 1) Func_08125390(target_id, 1, 0); if (action_id == 0x2d8) Func_08125390(target_id, 1, 1); };
+    { if (action_id == 0x2ae || action_id == 0x165) Battle_ApplyActionExtras(target_id, 0, 0); if ((u32)(action_id - 0x2d0) <= 1) Battle_ApplyActionExtras(target_id, 1, 0); if (action_id == 0x2d8) Battle_ApplyActionExtras(target_id, 1, 1); };
     nibble = action->target_flags & 15;
     {
         s32 first;
@@ -182,12 +174,12 @@ after_power:
         else
             hit = first;
     }
-    { if ((u8)(action->effect + 206) <= 1 || action->effect == 0x56 || action->effect == 0x57) { s32 st; s32 rec; s32 state_save; s32 cursor; s32 msg; u8 efx; state_save = (s32)((u8 *)actor + 0x14a); st = *(u16 *)state_save; affi = -1; rec = Summon_FindSlot(); efx = action->effect; if (efx == EFX_STANDBY_WORK) { st = Summon_ClassId(*(s32 *)work); } else if (efx == 0x56) { if (*(u16 *)state_save == 0xa4) st = (BattleRandom_Next() & 3) + 0x17a; else st = 0x51; } else if (efx == 0x57) { if (((s8 *)work)[0x56b] != 0) { s32 qi; s32 state_offset; s32 charge_offset; qi = ((s8 *)work)[0x56a]; state_offset = 0x564 + qi * 2; st = *(u16 *)((u8 *)work + state_offset); charge_offset = 0x568 + qi; affi = ((u8 *)work)[charge_offset]; } else hit = 0; } if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) { if (affi == -1) { affi = Summon_TakeCharge(st, 1); if (affi & 0x8000) Summon_ResetCharge(st); } BattleUnit_Assign(rec, st, affi & 0x7fff); if (action->effect == 0x57) { s32 qi; ((s8 *)work)[0x56b]--; qi = ((s8 *)work)[0x56a] + 1; ((s8 *)work)[0x56a] = qi - (((s32)(qi + ((u32)qi >> 31)) >> 1) * 2); } if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) { Func_081203c8((u8 *)work + 0x66, rec); } else { s16 *slots; slots = (s16 *)((u8 *)work + 2); { s32 off; s32 i; s32 j; off = 100; i = 0; state_save = 0; if (*(s16 *)((u8 *)slots + off) == 254) { *(s16 *)((u8 *)slots + off) = rec; } else { s32 woff; s32 next; j = 0; woff = 100; for (;;) { affi = (s32)slots; cursor = j + 100; n = *(s16 *)(cursor + affi); if (n == 255) { *(s16 *)(affi + cursor) = rec; next = state_save + 102; *(s16 *)((u8 *)affi + next) = n; break; } i++; next = j + 2; j = next; if (i > 5) break; state_save = next; woff = next + 100; if (*(s16 *)(woff + affi) == 254) { *(s16 *)(woff + affi) = rec; break; } } } } } Summon_Refresh(); { s32 x; s32 y; cursor = (s32)Actor_GetObject(rec); x = *(s32 *)(cursor + 12); if (x < 0) x += 0xffff; y = *(s32 *)(cursor + 16); x >>= 16; if (y < 0) y += 0xffff; y >>= 16; Actor_Place((void *)cursor, rec, x, y); } Actor_Commit(); { s32 listed; listed = Actor_ListSlots(saved); if (listed > 0) { u16 *q; q = (u16 *)saved; count = listed; do { Actor_ResetMotionAtAnchor(*q++); count--; } while (count != 0); } } BattleEvent_Push(BATTLE_EVENT_UNIT, rec); if (action->effect == 0x57) { msg = 0xd64; goto tla_summon_msg; } else if (action_id != 0x1f7) { BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd56); } else { BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd54); } } else if (action_id == 0x1f7) { msg = 0xd55; tla_summon_msg: BattleEvent_Push(BATTLE_EVENT_TEXT, msg); } else { BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd57); } } };
+    { if ((u8)(action->effect + 206) <= 1 || action->effect == 0x56 || action->effect == 0x57) { s32 st; s32 rec; s32 state_save; s32 cursor; s32 msg; u8 efx; state_save = (s32)((u8 *)actor + 0x14a); st = *(u16 *)state_save; affi = -1; rec = Summon_FindSlot(); efx = action->effect; if (efx == EFX_STANDBY_WORK) { st = BattleFormation_SelectRandomAvailableMember(work->enemy_group); } else if (efx == 0x56) { if (*(u16 *)state_save == 0xa4) st = (BattleRandom16Far() & 3) + 0x17a; else st = 0x51; } else if (efx == 0x57) { if (((s8 *)work)[0x56b] != 0) { s32 qi; s32 state_offset; s32 charge_offset; qi = ((s8 *)work)[0x56a]; state_offset = 0x564 + qi * 2; st = *(u16 *)((u8 *)work + state_offset); charge_offset = 0x568 + qi; affi = ((u8 *)work)[charge_offset]; } else hit = 0; } if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) { if (affi == -1) { affi = Summon_TakeCharge(st, 1); if (affi & 0x8000) Summon_ResetCharge(st); } BattleUnit_AssignFar(rec, st, affi & 0x7fff); if (action->effect == 0x57) { s32 qi; ((s8 *)work)[0x56b]--; qi = ((s8 *)work)[0x56a] + 1; ((s8 *)work)[0x56a] = qi - (((s32)(qi + ((u32)qi >> 31)) >> 1) * 2); } if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) { BattleParty_InsertUnitCentered(work->enemy_units, rec); } else { s16 *slots; slots = (s16 *)((u8 *)work + 2); { s32 off; s32 i; s32 j; off = 100; i = 0; state_save = 0; if (*(s16 *)((u8 *)slots + off) == 254) { *(s16 *)((u8 *)slots + off) = rec; } else { s32 woff; s32 next; j = 0; woff = 100; for (;;) { affi = (s32)slots; cursor = j + 100; n = *(s16 *)(cursor + affi); if (n == 255) { *(s16 *)(affi + cursor) = rec; next = state_save + 102; *(s16 *)((u8 *)affi + next) = n; break; } i++; next = j + 2; j = next; if (i > 5) break; state_save = next; woff = next + 100; if (*(s16 *)(woff + affi) == 254) { *(s16 *)(woff + affi) = rec; break; } } } } } Summon_Refresh(); { s32 x; s32 y; cursor = (s32)GetBattleObjectSlot(rec); x = *(s32 *)(cursor + 12); if (x < 0) x += 0xffff; y = *(s32 *)(cursor + 16); x >>= 16; if (y < 0) y += 0xffff; y >>= 16; BattlePresentation_SpawnActorObject((void *)cursor, rec, x, y); } BattleActor_CommitPlacement(); { s32 listed; listed = BattleParty_ListPresentEnemies(saved); if (listed > 0) { u16 *q; q = (u16 *)saved; count = listed; do { Actor_ResetMotionAtAnchor(*q++); count--; } while (count != 0); } } BattleEv_Push(BATTLE_EVENT_UNIT, rec); if (action->effect == 0x57) { msg = 0xd64; goto tla_summon_msg; } else if (action_id != 0x1f7) { BattleEv_Push(BATTLE_EVENT_TEXT, 0xd56); } else { BattleEv_Push(BATTLE_EVENT_TEXT, 0xd54); } } else if (action_id == 0x1f7) { msg = 0xd55; tla_summon_msg: BattleEv_Push(BATTLE_EVENT_TEXT, msg); } else { BattleEv_Push(BATTLE_EVENT_TEXT, 0xd57); } } };
     if (hit != 0) {
         s32 efx;
 ;
         efx = action->effect;
-        if (action->effect == EFX_IMMOBILIZE || action->effect == 0x53) { s32 hidx; hit = 0; hidx = 748; if (*(s16 *)(((u8 *)(work)) + hidx) == target_id) { hit = 1; } else { n = 0; tla_scan_next: n++; if ((u32)n <= 19) { s32 idx; idx = ((n << 1) << 3) + 748; if (*(s16 *)(((u8 *)(work)) + idx) == target_id) hit = 1; else goto tla_scan_next; } } } else if (action->effect == EFX_HALF_DEF) { half = 1; } else if (action->effect == EFX_LETHAL) { crush = 1; } else if (action->effect == EFX_INSTANT_DOWN) { skip = 1; } else if (action->effect == EFX_ACTOR_FLASH) { if (actor->hp != 0) BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id); } else if (action->effect == EFX_DRAIN_PP) { if (target->pp != 0) nibble = 10; else hit = 0; } else if (action->effect == 0x5a) { half = 2; } else if (action->effect == 0x5b) { half = 2; };
+        if (action->effect == EFX_IMMOBILIZE || action->effect == 0x53) { s32 hidx; hit = 0; hidx = 748; if (*(s16 *)(((u8 *)(work)) + hidx) == target_id) { hit = 1; } else { n = 0; tla_scan_next: n++; if ((u32)n <= 19) { s32 idx; idx = ((n << 1) << 3) + 748; if (*(s16 *)(((u8 *)(work)) + idx) == target_id) hit = 1; else goto tla_scan_next; } } } else if (action->effect == EFX_HALF_DEF) { half = 1; } else if (action->effect == EFX_LETHAL) { crush = 1; } else if (action->effect == EFX_INSTANT_DOWN) { skip = 1; } else if (action->effect == EFX_ACTOR_FLASH) { if (actor->hp != 0) BattleEv_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id); } else if (action->effect == EFX_DRAIN_PP) { if (target->pp != 0) nibble = 10; else hit = 0; } else if (action->effect == 0x5a) { half = 2; } else if (action->effect == 0x5b) { half = 2; };
     }
     if ((action->effect != 0x4b || slot == 0) && skip == 0
         && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
@@ -216,7 +208,7 @@ after_power:
                             * apwr,
                         10);
                 else {
-                    { kind = actor->attack; if (action_id == 0x138 || action_id == 0x13c) { kind = BattleUnit_Get(((u8 *)plan)[0])->attack; if (action_id == 0x138) kind += BattleUnit_Get(((u8 *)plan)[2])->attack; } };
+                    { kind = actor->attack; if (action_id == 0x138 || action_id == 0x13c) { kind = ((struct BattleUnit *)OwnerState_Get(((u8 *)plan)[0]))->attack; if (action_id == 0x138) kind += ((struct BattleUnit *)OwnerState_Get(((u8 *)plan)[2]))->attack; } };
                     dmg = Battle_CalcAttack(kind, scale, apwr,
                                             bonus);
                 }
@@ -255,7 +247,7 @@ after_power:
                 }
                 pass++;
             } while (pass <= 1);
-            { hp0 -= dmg; BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id); BattleEvent_Push(BATTLE_EVENT_UNIT, target_id); BattleEvent_Push(BATTLE_EVENT_VALUE, dmg); };
+            { hp0 -= dmg; BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_VALUE, dmg); };
             {
                 s32 text;
                 if ((u32)target_id <= 7)
@@ -264,10 +256,10 @@ after_power:
                     text = (s32)&MsgDmgEmphE + affinity;
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
             }
-            if (hp0 <= 0 && (Func_081203a8(target_id) != 0))
+            if (hp0 <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
                 hp0 = 1;
             if (hp0 <= 0) {
-                { u16 state; cur = 0; BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id); state = *(u16 *)((u8 *)target + 0x14a); if (state != 0x171 && state != 0x175) { BattleEvent_Push(BATTLE_EVENT_UNIT, target_id); if ((u32)target_id <= 7) BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_GOES_DOWN); else BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_FELLED); } };
+                { u16 state; cur = 0; BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id); state = *(u16 *)((u8 *)target + 0x14a); if (state != 0x171 && state != 0x175) { BattleEv_Push(BATTLE_EVENT_UNIT, target_id); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgGoesDown); else BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgFelled); } };
             } else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - hp0;
@@ -406,7 +398,7 @@ after_power:
                 }
                 dmg += BattleRandom16Far() & 3;
                 { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = Math_Div(dmg * 2, 5); else dmg = Math_Div(dmg, 10); }; };
-                if (((gGameState.battle_rule_24b == 6 || (BattleFlag_Test(366) != 0 && ((plan)->command) == 6)) && (cur) > (dmg))) {
+                if (((gPartyState.battle_rule_24b == 6 || (GameFlag_TestFar(366) != 0 && ((plan)->command) == 6)) && (cur) > (dmg))) {
                     dmg = cur;
                 }
                 round++;
@@ -423,9 +415,9 @@ after_power:
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
-            if (cur <= 0 && (Func_081203a8(target_id) != 0))
+            if (cur <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
                 cur = 1;
-            if (gGameState.battle_rule_24b == 6) (cur) = 0;
+            if (gPartyState.battle_rule_24b == 6) (cur) = 0;
             if (cur <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -500,10 +492,10 @@ pp_store:
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
-            if (cur <= 0 && (Func_081203a8(target_id) != 0))
+            if (cur <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
                 cur = 1;
             if (cur <= 0) {
-                { u16 state; cur = 0; BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id); state = *(u16 *)((u8 *)target + 0x14a); if (state != 0x171 && state != 0x175) { BattleEvent_Push(BATTLE_EVENT_UNIT, target_id); if ((u32)target_id <= 7) BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_GOES_DOWN); else BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_FELLED); } };
+                { u16 state; cur = 0; BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id); state = *(u16 *)((u8 *)target + 0x14a); if (state != 0x171 && state != 0x175) { BattleEv_Push(BATTLE_EVENT_UNIT, target_id); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgGoesDown); else BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgFelled); } };
             } else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
 dealt = target->hp - cur;
@@ -517,9 +509,9 @@ dealt = target->hp - cur;
             break;
         }
     }
-    { if (((u8 *)work)[0x868] != 0 && action_id == 0x23d) { BattleEvent_Push(BATTLE_EVENT_UNIT, target_id); BattleEvent_Push(BATTLE_EVENT_TEXT, 0xca7); ((u8 *)work)[0x868] = 0; } };
+    { if (((u8 *)work)[0x868] != 0 && action_id == 0x23d) { BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_TEXT, 0xca7); ((u8 *)work)[0x868] = 0; } };
     BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-    if (!((action->effect != 0x4b || slot != 0) && (BattleEffect_Classify(action->effect) != 0 || target->hp != 0 || BattleEffect_OnDead(action->effect) != 0) && hit != 0)) goto done;
+    if (!((action->effect != 0x4b || slot != 0) && (BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0 || BattleFx_CanAffectDefeatedUnit(action->effect) != 0) && hit != 0)) goto done;
     if ((u32)(action->effect - 3) > 88 - 3)
         goto done;
     switch (action->effect) {
@@ -535,7 +527,7 @@ dealt = target->hp - cur;
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureStun);
         }
-        { if (target->sleep != 0) { target->sleep = 0; BattleEvent_Push(BATTLE_EVENT_TEXT, 0xce3); BattleEvent_Push(BATTLE_EVENT_UNIT, target_id); } };
+        { if (target->sleep != 0) { target->sleep = 0; BattleEv_Push(BATTLE_EVENT_TEXT, 0xce3); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); } };
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureSeal);
@@ -570,7 +562,7 @@ dealt = target->hp - cur;
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureStun);
         }
-        { if (target->sleep != 0) { target->sleep = 0; BattleEvent_Push(BATTLE_EVENT_RESET, 0); BattleEvent_Push(BATTLE_EVENT_UNIT, target_id); BattleEvent_Push(BATTLE_EVENT_TEXT, 0xce3); } };
+        { if (target->sleep != 0) { target->sleep = 0; BattleEv_Push(BATTLE_EVENT_RESET, 0); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_TEXT, 0xce3); } };
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
             BattleEv_Push(BATTLE_EVENT_RESET, 0);
@@ -612,12 +604,12 @@ dealt = target->hp - cur;
     case EFX_PP_RESTORE_7:
     case 0x4d: case 0x4e:
     {
-        { s32 heal; s32 old; s32 maxu; s32 maxv; s32 effect; effect = action->effect; heal = target->pp; old = *(u16 *)&target->pp; if (effect == 0x4d) { maxv = *(s16 *)((u8 *)target + 54); maxu = *(u16 *)((u8 *)target + 54); heal += (s16)Math_Div(maxv, 10); } else if (effect == 0x4e) { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += Math_Div(maxv * 3, 10); } else { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += Math_Div(maxv * 7, 100); } if (heal > (s16)maxu) heal = (s16)maxu; tmp = heal - (s16)old; if (tmp == 0 && nibble != 11) break; if (heal == (s16)maxu) BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL); else { BattleEvent_Push(BATTLE_EVENT_VALUE, tmp); BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER); } target->pp = (s16)heal; BattleUnit_UpdateRatios(target_id); break; };
+        { s32 heal; s32 old; s32 maxu; s32 maxv; s32 effect; effect = action->effect; heal = target->pp; old = *(u16 *)&target->pp; if (effect == 0x4d) { maxv = *(s16 *)((u8 *)target + 54); maxu = *(u16 *)((u8 *)target + 54); heal += (s16)Math_Div(maxv, 10); } else if (effect == 0x4e) { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += Math_Div(maxv * 3, 10); } else { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += Math_Div(maxv * 7, 100); } if (heal > (s16)maxu) heal = (s16)maxu; tmp = heal - (s16)old; if (tmp == 0 && nibble != 11) break; if (heal == (s16)maxu) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpFull); else { BattleEv_Push(BATTLE_EVENT_VALUE, tmp); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpRecover); } target->pp = (s16)heal; Owner_RecalculateRatiosFar(target_id); break; };
     }
     case EFX_AGI_SET_UP8:
         (*(s8 *)&(target->agility_modifier)) = 8;
         target->agility_modifier_turns = 5;
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAgiUp);
         break;
@@ -629,14 +621,14 @@ dealt = target->hp - cur;
         *am = v;
     }
         target->agility_modifier_turns = 5;
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAgiDown);
         break;
     case EFX_ATK_DOWN1:
         target->attack_modifier += -1;
         { if ((target->attack_modifier) < -4) (target->attack_modifier) = -4; if ((target->attack_modifier) > 4) (target->attack_modifier) = 4; };
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAtkDown);
         target->attack_modifier_turns = 7;
@@ -644,7 +636,7 @@ dealt = target->hp - cur;
     case EFX_ATK_DOWN2:
         target->attack_modifier += -2;
         { if ((target->attack_modifier) < -4) (target->attack_modifier) = -4; if ((target->attack_modifier) > 4) (target->attack_modifier) = 4; };
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAtkDown);
         target->attack_modifier_turns = 7;
@@ -652,7 +644,7 @@ dealt = target->hp - cur;
     case EFX_ATK_UP1:
         target->attack_modifier += 1;
         { if ((target->attack_modifier) < -4) (target->attack_modifier) = -4; if ((target->attack_modifier) > 4) (target->attack_modifier) = 4; };
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAtkUp);
         target->attack_modifier_turns = 7;
@@ -660,7 +652,7 @@ dealt = target->hp - cur;
     case EFX_ATK_UP2:
         target->attack_modifier += 2;
         { if ((target->attack_modifier) < -4) (target->attack_modifier) = -4; if ((target->attack_modifier) > 4) (target->attack_modifier) = 4; };
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAtkUp);
         target->attack_modifier_turns = 7;
@@ -668,7 +660,7 @@ dealt = target->hp - cur;
     case EFX_DEF_DOWN1:
         target->defense_modifier += -1;
         { if ((target->defense_modifier) < -4) (target->defense_modifier) = -4; if ((target->defense_modifier) > 4) (target->defense_modifier) = 4; };
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDefDown);
         target->defense_modifier_turns = 7;
@@ -676,7 +668,7 @@ dealt = target->hp - cur;
     case EFX_DEF_DOWN2:
         target->defense_modifier += -2;
         { if ((target->defense_modifier) < -4) (target->defense_modifier) = -4; if ((target->defense_modifier) > 4) (target->defense_modifier) = 4; };
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDefDown);
         target->defense_modifier_turns = 7;
@@ -684,7 +676,7 @@ dealt = target->hp - cur;
     case EFX_DEF_UP1:
         target->defense_modifier += 1;
         { if ((target->defense_modifier) < -4) (target->defense_modifier) = -4; if ((target->defense_modifier) > 4) (target->defense_modifier) = 4; };
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDefUp);
         target->defense_modifier_turns = 7;
@@ -692,7 +684,7 @@ dealt = target->hp - cur;
     case EFX_DEF_UP2:
         target->defense_modifier += 2;
         { if ((target->defense_modifier) < -4) (target->defense_modifier) = -4; if ((target->defense_modifier) > 4) (target->defense_modifier) = 4; };
-        Owner_RecalculateStatsFar(target_id);
+        BattleUnit_Recalculate(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDefUp);
         target->defense_modifier_turns = 7;
@@ -718,7 +710,7 @@ dealt = target->hp - cur;
         target->hp = (s16)Math_Div(target->max_hp * 8, 10);
         Owner_RecalculateRatiosFar(target_id);
         break;
-    case 0x49: if (target->hp != 0) break; BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_REVIVED); target->hp = (s16)Math_Div(target->max_hp * 6, 10); BattleUnit_UpdateRatios(target_id); break;
+    case 0x49: if (target->hp != 0) break; BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived); target->hp = (s16)Math_Div(target->max_hp * 6, 10); Owner_RecalculateRatiosFar(target_id); break;
     case EFX_CURE_POISON:
         if (target->poison != 0)
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurePoison);
@@ -792,7 +784,7 @@ dealt = target->hp - cur;
         target->psy_seal |= 16;
         break;
     case EFX_INSTANT_DOWN:
-        if ((Func_081203a8(target_id) != 0))
+        if ((BattleUnit_KeepsOneHp(target_id) != 0))
             break;
         BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
         if (target->status_12a == 2)
@@ -805,7 +797,7 @@ dealt = target->hp - cur;
         Owner_RecalculateRatiosFar(target_id);
         break;
     case EFX_REFRAIN:
-        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgRefrain)); (target->refrain) = (5); };
+        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgHpRegen)); (target->refrain) = (5); };
         break;
     case EFX_REFLECT:
         { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgReflect)); (target->reflect) = (7); };
@@ -813,7 +805,7 @@ dealt = target->hp - cur;
     case EFX_DRAIN_HP:
     case EFX_DRAIN_HP_HALF:
     {
-        { s32 heal; s32 amt; heal = actor->hp; if (action->effect == EFX_DRAIN_HP_HALF) dealt /= 2; amt = dealt; dmg = amt; heal += amt; if (heal > actor->max_hp) { heal = actor->max_hp; amt = heal - actor->hp; } BattleEvent_Push(BATTLE_EVENT_RESET, 0); BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id); if (heal == actor->max_hp) BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL); else { BattleEvent_Push(BATTLE_EVENT_VALUE, amt); BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER); } actor->hp = (s16)heal; BattleUnit_UpdateRatios(actor_id); };
+        { s32 heal; s32 amt; heal = actor->hp; if (action->effect == EFX_DRAIN_HP_HALF) dealt /= 2; amt = dealt; dmg = amt; heal += amt; if (heal > actor->max_hp) { heal = actor->max_hp; amt = heal - actor->hp; } BattleEv_Push(BATTLE_EVENT_RESET, 0); BattleEv_Push(BATTLE_EVENT_UNIT, actor_id); if (heal == actor->max_hp) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgHpFull); else { BattleEv_Push(BATTLE_EVENT_VALUE, amt); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgHpRecover); } actor->hp = (s16)heal; Owner_RecalculateRatiosFar(actor_id); };
         break;
     }
     case EFX_DRAIN_PP:
@@ -851,7 +843,7 @@ dealt = target->hp - cur;
         { if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgLeechTake)); else BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgLeechGain)); };
         Owner_AdjustSecondValueFar(actor_id, dmg);
         break;
-    case 0x54: dmg = (s16)Math_Div(target->max_pp, 10); if (target->pp < dmg) dmg = target->pp; if (dmg == 0) break; BattleEvent_Push(BATTLE_EVENT_VALUE, dmg); if ((u32)target_id <= 7) BattleEvent_Push(BATTLE_EVENT_TEXT, 0xcbb); else BattleEvent_Push(BATTLE_EVENT_TEXT, 0xcba); BattleUnit_Drain(target_id, -dmg); break;
+    case 0x54: dmg = (s16)Math_Div(target->max_pp, 10); if (target->pp < dmg) dmg = target->pp; if (dmg == 0) break; BattleEv_Push(BATTLE_EVENT_VALUE, dmg); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, 0xcbb); else BattleEv_Push(BATTLE_EVENT_TEXT, 0xcba); Owner_AdjustSecondValueFar(target_id, -dmg); break;
     case EFX_BUFF_CLEAR:
         if (target->attack_modifier > 0) {
             target->attack_modifier = 0;
@@ -912,7 +904,7 @@ dealt = target->hp - cur;
         g1 = 1;
         (*(s8 *)&(target->guard_level)) = g1;
         break;
-    case 0x48: BattleEvent_Push(BATTLE_EVENT_TEXT, 0xcdd); if ((u32)target->guard_level > 1) break; target->guard_level = 2; break;
+    case 0x48: BattleEv_Push(BATTLE_EVENT_TEXT, 0xcdd); if ((u32)target->guard_level > 1) break; target->guard_level = 2; break;
     case EFX_GUARD2:
     case 0x58:
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura2);
@@ -920,11 +912,11 @@ dealt = target->hp - cur;
             break;
         (*(s8 *)&(target->guard_level)) = 3;
         break;
-    case 0x4f: BattleEvent_Push(BATTLE_EVENT_TEXT, 0xcdf); if ((u32)target->guard_level > 3) break; target->guard_level = 4; break;
+    case 0x4f: BattleEv_Push(BATTLE_EVENT_TEXT, 0xcdf); if ((u32)target->guard_level > 3) break; target->guard_level = 4; break;
     case EFX_TEXT_NONE:
         BattleEv_Push(BATTLE_EVENT_TEXT, (u32)-1);
         break;
-    case 0x51: BattleEvent_Push(BATTLE_EVENT_TEXT, 0xc8f); ((u8 *)work)[0x47] = 1; break; case 0x52: BattleEvent_Push(BATTLE_EVENT_TEXT, 0xca6); BattleEvent_Push(15, target_id); break; case 0x4a: BattleEvent_Push(BATTLE_EVENT_TEXT, 0xce0); ((u8 *)target)[0x143] = 1; break;
+    case 0x51: BattleEv_Push(BATTLE_EVENT_TEXT, 0xc8f); ((u8 *)work)[0x47] = 1; break; case 0x52: BattleEv_Push(BATTLE_EVENT_TEXT, 0xca6); BattleEv_Push(15, target_id); break; case 0x4a: BattleEv_Push(BATTLE_EVENT_TEXT, 0xce0); ((u8 *)target)[0x143] = 1; break;
     default:
         break;
     }
@@ -941,8 +933,8 @@ done:
         }
     }
     Sys_Free(copy);
-    Owner_RecalculateStatsFar(target_id);
-    UiWindow_DrawPartyStatusContentsFar(((u8 *)gBattleWork)[65]);
+    BattleUnit_Recalculate(target_id);
+    UiWindow_DrawPartyStatusContentsFar(Ram_HeapSlots->battle_work->party_status_mode);
     if (target->hp != 0)
         BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if ((action_id != 0x193 && actor->evil_spirit != 0)

@@ -226,6 +226,9 @@ BattleFx_CanAffectDefeatedUnit:
 	movs	r0, #0
 .L_081203a6:
 	pop	{pc}
+	.global BattleUnit_KeepsOneHp
+	.thumb_func
+BattleUnit_KeepsOneHp:
 	push	{lr}
 	bl	OwnerState_Get
 	movs	r2, #165

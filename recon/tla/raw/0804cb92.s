@@ -14,7 +14,7 @@ Func_0804cb92:
 	ldrh	r6, [r5, #0]
 	cmp	r6, #0
 	beq.n	.L_0804cbb6
-	bl	Func_08014878
+	bl	Random16
 	ldrh	r3, [r5, #0]
 	muls	r3, r0
 	lsrs	r3, r3, #20

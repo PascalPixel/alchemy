@@ -30,7 +30,7 @@ Func_080000e8:
 	.global Func_080000f8
 	.thumb_func
 Func_080000f8:
-	overlay_veneer Func_08014878
+	overlay_veneer Random16
 	.global Func_08000100
 	.thumb_func
 Func_08000100:
@@ -40,11 +40,11 @@ Func_08000100:
 	.global Math_SineFar
 	.thumb_func
 Math_SineFar:
-	overlay_veneer Math_Sine
+	overlay_veneer Trig_Sin
 	.global Math_CosineFar
 	.thumb_func
 Math_CosineFar:
-	overlay_veneer Math_Cosine
+	overlay_veneer Trig_Cos
 	.global Func_08000128
 	.thumb_func
 Func_08000128:
@@ -75,7 +75,7 @@ Runtime_BumpAllocateFar:
 	.global Func_08000170
 	.thumb_func
 Func_08000170:
-	overlay_veneer Func_08014dac
+	overlay_veneer Runtime_BumpAllocateAlternatePool
 	.global Sys_FreeFar
 	.thumb_func
 Sys_FreeFar:

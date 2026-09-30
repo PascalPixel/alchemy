@@ -625,7 +625,7 @@ Func_081a133c:
 	adds	r5, r0, #0
 	movs	r0, #144
 	lsls	r0, r0, #1
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	ldr	r6, [pc, #152]
 	movs	r1, #128
 	str	r0, [r6, #0]

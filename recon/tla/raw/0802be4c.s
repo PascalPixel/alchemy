@@ -542,9 +542,9 @@ Func_0802c240:
 	mov	sl, r5
 	cmp	r3, #0
 	beq.n	.L_0802c2de
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	subs	r5, r5, r0
 	ldr	r6, [pc, #492]
 	adds	r1, r5, #0
@@ -562,9 +562,9 @@ Func_0802c240:
 	ldr	r3, [r7, #8]
 	cmp	r3, #0
 	beq.n	.L_0802c308
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	subs	r5, r5, r0
 	ldr	r6, [pc, #448]
 	adds	r1, r5, #0
@@ -750,10 +750,10 @@ Func_0802c240:
 	ldr	r3, [r7, #0]
 	cmp	r3, r0
 	beq.n	.L_0802c484
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r5, r0, #0
 	ldrh	r0, [r6, #0]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #96]
 	adds	r1, r0, #0
 	adds	r0, r5, #0

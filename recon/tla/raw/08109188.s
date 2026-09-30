@@ -563,7 +563,7 @@ Func_08109188:
 	movs	r1, #5
 	lsrs	r0, r0, #11
 	adds	r0, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #40]
 	adds	r1, r5, #0
 	movs	r2, #0
@@ -1021,7 +1021,7 @@ Func_08109188:
 .L_081099b8:
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #108]
 	bl	0x081084f4
 	movs	r0, #0
@@ -1972,7 +1972,7 @@ Func_08109188:
 	bne.n	.L_0810a18a
 	mov	r0, r9
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #252]
 	bl	0x0810857c
 	b.n	.L_0810a270
@@ -1991,7 +1991,7 @@ Func_08109188:
 	beq.n	.L_0810a1b2
 	mov	r0, r9
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #216]
 	bl	0x0810857c
 	b.n	.L_0810a270
@@ -2028,10 +2028,10 @@ Func_08109188:
 .L_0810a1e4:
 	mov	r0, r9
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, sl
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 	bl	0x0810857c
 	movs	r0, #0

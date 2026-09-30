@@ -298,7 +298,7 @@ Func_081638d0:
 	negs	r5, r3
 .L_08163b10:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r3, r7, #18
 	lsls	r0, r0, #7
 	subs	r3, r3, r0

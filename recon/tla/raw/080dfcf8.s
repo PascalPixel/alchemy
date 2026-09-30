@@ -190,13 +190,13 @@ Func_080dfcf8:
 	str	r3, [r6, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #192
 	lsls	r5, r0, #2
 	lsls	r2, r2, #10
 	adds	r5, r5, r0
 	adds	r5, r5, r2
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
@@ -219,7 +219,7 @@ Func_080dfcf8:
 	strh	r2, [r3, #0]
 	adds	r3, #2
 	strh	r2, [r3, #0]
-	bl	Func_08014878
+	bl	Random16
 	strh	r0, [r5, #6]
 .L_080dfeba:
 	movs	r0, #6
@@ -283,10 +283,10 @@ Func_080dfcf8:
 	str	r3, [r6, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #2
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	add	r5, fp
 	adds	r1, r0, #0
 	adds	r2, r6, #0
@@ -316,7 +316,7 @@ Func_080dfcf8:
 	mov	r2, fp
 	str	r3, [r5, #72]
 	str	r2, [r5, #40]
-	bl	Func_08014878
+	bl	Random16
 	strh	r0, [r5, #6]
 .L_080dff92:
 	movs	r1, #1

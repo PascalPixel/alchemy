@@ -261,9 +261,9 @@ Func_080eb960:
 	beq.n	.L_080ebaba
 	mov	sl, r1
 .L_080eba48:
-	bl	Func_08014878
+	bl	Random16
 	adds	r6, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r2, #192
@@ -291,7 +291,7 @@ Func_080eb960:
 	str	r3, [r7, #4]
 	ldr	r3, [r2, #16]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r7, #0
 	adds	r1, r6, #0
 	bl	Func_0801489c
@@ -775,7 +775,7 @@ Func_080ebc30:
 	asrs	r5, r3, #16
 	str	r6, [r7, #28]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r2, [pc, #48]
 	adds	r1, r6, #0
 	mov	r8, r2
@@ -785,7 +785,7 @@ Func_080ebc30:
 	adds	r3, r3, r0
 	str	r3, [r7, #4]
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r6, #0
 	mov	lr, r8
 	.2byte 0xf800

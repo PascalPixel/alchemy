@@ -628,7 +628,7 @@ Func_080db0b0:
 	ldr	r0, [r7, #16]
 	ldr	r3, [pc, #220]
 	adds	r0, r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r1, [r7, #4]
 	ldr	r5, [pc, #216]
 	lsls	r3, r1, #2
@@ -640,7 +640,7 @@ Func_080db0b0:
 	mov	lr, r5
 	.2byte 0xf800
 	.2byte 0x1c06
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r1, sl
 	mov	lr, r5
 	.2byte 0xf800
@@ -649,7 +649,7 @@ Func_080db0b0:
 	subs	r0, r4, r0
 	str	r0, [r1, #8]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r1, sl
 	mov	lr, r5
 	.2byte 0xf800
@@ -775,28 +775,3 @@ Func_080db444:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0xfff0
-	.global Func_080db48c
-	.thumb_func
-Func_080db48c:
-	.2byte 0xb500
-	cmp	r0, #0
-	bne.n	.L_080db498
-	bl	Func_080db4b8
-	b.n	.L_080db4b4
-.L_080db498:
-	cmp	r0, #1
-	bne.n	.L_080db4a2
-	bl	0x080db670
-	b.n	.L_080db4b4
-.L_080db4a2:
-	cmp	r0, #2
-	bne.n	.L_080db4ac
-	bl	0x080db848
-	b.n	.L_080db4b4
-.L_080db4ac:
-	cmp	r0, #3
-	bne.n	.L_080db4b4
-	bl	0x080db884
-.L_080db4b4:
-	pop	{pc}
-	.2byte 0x0000

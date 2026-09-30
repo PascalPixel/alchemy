@@ -52,7 +52,7 @@ Func_080affac:
 	cmp	r5, #7
 	bgt.n	.L_080b0020
 	adds	r0, r5, #0
-	bl	0x080af79c
+	bl	Owner_GetRecordStride180
 	adds	r1, r6, #0
 	adds	r0, #146
 	movs	r4, #3

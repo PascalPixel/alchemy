@@ -28,7 +28,7 @@ Func_080ebf68:
 	push	{r5, r6, r7, lr}
 	movs	r0, #32
 	sub	sp, #20
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	ldr	r7, [pc, #392]
 	adds	r6, r0, #0
 	adds	r1, r7, #0

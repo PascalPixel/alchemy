@@ -14,7 +14,7 @@ Func_08044348:
 	lsls	r0, r0, #2
 	ldr	r5, [r3, #60]
 	mov	r8, r1
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	sl, r0
 	mov	r1, sl
 	mov	r0, r8

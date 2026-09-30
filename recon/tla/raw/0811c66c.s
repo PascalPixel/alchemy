@@ -7,7 +7,7 @@ Func_0811c66c:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #28
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #4
 	lsrs	r0, r0, #16
 	cmp	r0, #0
@@ -71,7 +71,7 @@ Func_0811c66c:
 	bl	0x08038118
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #8]
 	bl	0x080381c8
 	movs	r0, #0
@@ -131,7 +131,7 @@ Func_0811c66c:
 	str	r3, [r2, #4]
 	movs	r0, #10
 	bl	WaitFrames
-	bl	Func_08014878
+	bl	Random16
 	ldr	r0, [sp, #8]
 	bl	0x0811be3c
 	ldr	r2, [sp, #4]
@@ -438,10 +438,10 @@ Func_0811c66c:
 	movs	r3, #36
 	ldrsh	r0, [r5, r3]
 	bl	Owner_GetState
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #1
 	ldr	r0, [r5, #8]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #96]
 	bl	0x080381c8
 	movs	r2, #13
@@ -731,10 +731,10 @@ Func_0811c66c:
 .L_0811cc46:
 	adds	r0, r7, #0
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #132]
 	bl	0x080381c8
 	b.n	.L_0811cc88
@@ -747,15 +747,15 @@ Func_0811c66c:
 .L_0811cc6a:
 	adds	r0, r7, #0
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #104]
 	bl	0x080381c8
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 .L_0811cc88:
 	adds	r0, r5, #0
 	bl	.L_0811ccf0
@@ -767,7 +767,7 @@ Func_0811c66c:
 	bgt.n	.L_0811ccc0
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #68]
 	bl	0x080381c8
 	b.n	.L_0811ccc0
@@ -778,7 +778,7 @@ Func_0811c66c:
 	bgt.n	.L_0811ccc0
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #48]
 	bl	0x080381c8
 .L_0811ccc0:
@@ -856,7 +856,7 @@ Func_0811c66c:
 	lsls	r0, r0, #1
 	b.n	.L_0811cd76
 .L_0811cd68:
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16

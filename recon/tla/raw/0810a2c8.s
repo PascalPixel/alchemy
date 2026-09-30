@@ -53,7 +53,7 @@ Func_0810a2c8:
 	beq.n	.L_0810a344
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #312]
 	bl	0x0810857c
 	b.n	.L_0810a468
@@ -67,7 +67,7 @@ Func_0810a2c8:
 	bne.n	.L_0810a362
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #288]
 	bl	0x0810857c
 	b.n	.L_0810a468
@@ -83,7 +83,7 @@ Func_0810a2c8:
 	beq.n	.L_0810a384
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #256]
 	bl	0x0810857c
 	b.n	.L_0810a468
@@ -98,10 +98,10 @@ Func_0810a2c8:
 .L_0810a394:
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, r9
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r2, [pc, #228]
 	mov	fp, r2
 	mov	r0, fp
@@ -127,7 +127,7 @@ Func_0810a2c8:
 	bl	0x0810a004
 	movs	r1, #2
 	mov	r0, sl
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, fp
 	adds	r0, #2
 	bl	0x0810857c
@@ -165,7 +165,7 @@ Func_0810a2c8:
 	bl	0x0810a004
 	movs	r1, #2
 	mov	r0, sl
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, fp
 	adds	r0, #3
 	bl	0x0810857c
@@ -239,14 +239,14 @@ Func_0810a2c8:
 	strh	r3, [r7, #0]
 	movs	r1, #2
 	movs	r0, #228
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r5, [pc, #356]
 	adds	r0, r5, #0
 	bl	0x0810857c
 	adds	r5, #1
 	ldrh	r0, [r7, #0]
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 	bl	0x0810857c
 	movs	r7, #2
@@ -329,10 +329,10 @@ Func_0810a2c8:
 	bl	Audio_PlayCue
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldrh	r0, [r5, #0]
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, r8
 	bl	0x080ad1f0
 	cmp	r0, #15

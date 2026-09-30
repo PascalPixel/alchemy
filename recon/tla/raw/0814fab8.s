@@ -347,19 +347,19 @@ Func_0814fab8:
 	movs	r4, #0
 	mov	sl, r4
 .L_0814fd3c:
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #200
 	bl	0x0800206c
 	subs	r0, #100
 	lsls	r0, r0, #14
 	str	r0, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #200
 	bl	0x0800206c
 	subs	r0, #100
 	lsls	r0, r0, #15
 	str	r0, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #200
 	bl	0x0800206c
 	movs	r1, #1
@@ -499,7 +499,7 @@ Func_0814fab8:
 	mov	r2, r9
 	lsls	r6, r2, #11
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	add	r5, sp, #140
 	lsls	r3, r0, #2
 	ldr	r2, [r5, #0]
@@ -512,7 +512,7 @@ Func_0814fab8:
 	subs	r3, #20
 	adds	r0, r6, #0
 	mov	sl, r3
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r3, [r5, #4]
 	lsls	r0, r0, #2
 	asrs	r0, r0, #16

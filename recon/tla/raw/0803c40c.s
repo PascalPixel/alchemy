@@ -312,9 +312,9 @@ Func_0803c40c:
 	bne.n	.L_0803c688
 	b.n	.L_0803c922
 .L_0803c688:
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -333,9 +333,9 @@ Func_0803c40c:
 	ands	r3, r2
 	orrs	r3, r1
 	strh	r3, [r7, #6]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -470,7 +470,7 @@ Func_0803c40c:
 	lsls	r2, r2, #8
 	strb	r3, [r7, #5]
 	adds	r0, r0, r2
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldrh	r2, [r6, #6]
 	asrs	r0, r0, #14
 	ldr	r3, [pc, #40]
@@ -486,7 +486,7 @@ Func_0803c40c:
 	movs	r3, #208
 	lsls	r3, r3, #7
 	adds	r0, r0, r3
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldrb	r3, [r6, #8]
 	asrs	r0, r0, #14
 	subs	r3, r3, r0

@@ -47,7 +47,7 @@ Func_080dcf8c:
 	ldr	r3, [r5, #8]
 	mov	r6, sp
 	str	r3, [r6, #0]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r5, #12]
 	ldr	r2, [pc, #104]
 	lsls	r0, r0, #4
@@ -56,10 +56,10 @@ Func_080dcf8c:
 	str	r3, [r6, #4]
 	ldr	r3, [r5, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r5, #4
 	adds	r1, r0, #0
 	adds	r2, r6, #0
@@ -590,7 +590,7 @@ Func_080dd054:
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #24]
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	lsls	r1, r1, #16
 	movs	r0, #240

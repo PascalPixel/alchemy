@@ -53,14 +53,14 @@ Func_080d6b90:
 	movs	r3, #212
 	lsls	r3, r3, #8
 	str	r3, [r2, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #200
 	adds	r5, r0, #0
 	muls	r5, r3
 	movs	r3, #144
 	lsls	r3, r3, #17
 	adds	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	movs	r2, #160
@@ -147,9 +147,9 @@ Func_080d6b90:
 	subs	r3, #1
 	str	r3, [r7, #24]
 .L_080d6cc4:
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r1, [r7, #12]
 	movs	r3, #1
 	ands	r0, r3
@@ -306,13 +306,13 @@ Func_080d6b90:
 	ldr	r3, [sp, #8]
 	ldr	r5, [pc, #88]
 	ldr	r6, [r3, #0]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r6, #0]
 	lsls	r0, r0, #8
 	adds	r3, r3, r0
 	adds	r3, r3, r5
 	mov	r8, r3
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r6, #8]
 	lsls	r0, r0, #8
 	adds	r3, r3, r0

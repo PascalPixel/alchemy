@@ -689,7 +689,7 @@ Func_080d897c:
 	cmp	r3, #0
 	beq.n	.L_080d8d28
 	ldr	r0, [r5, #20]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r1, [r5, #12]
 	mov	lr, r8
 	.2byte 0xf800

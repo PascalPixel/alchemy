@@ -24,7 +24,7 @@ Func_080aee40:
 	ldrsh	r5, [r7, r2]
 	mov	r1, sl
 	adds	r0, r5, #0
-	bl	Inventory_Add
+	bl	Inventory_AddItem
 	adds	r1, r0, #0
 	cmp	r1, #0
 	blt.n	.L_080aee7e

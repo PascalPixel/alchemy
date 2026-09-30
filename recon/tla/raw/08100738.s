@@ -276,7 +276,7 @@ Func_08100738:
 	mov	r8, r0
 	movs	r7, #3
 	b.n	.L_08100a74
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #2
 	lsrs	r0, r0, #16
 	cmp	r0, #0
@@ -350,7 +350,7 @@ Func_08100738:
 	strh	r3, [r5, #24]
 	movs	r0, #3
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r2, #1
 	movs	r7, #20
 	mov	r9, r2
@@ -361,7 +361,7 @@ Func_08100738:
 	strh	r3, [r5, #26]
 	movs	r0, #4
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r3, #1
 	movs	r7, #21
 	mov	r9, r3

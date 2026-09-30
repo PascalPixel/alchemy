@@ -211,13 +211,13 @@ Func_080d7b04:
 	adds	r0, r5, #0
 	movs	r1, #7
 	bl	Func_080ebea8
-	bl	Func_08014878
+	bl	Random16
 	lsls	r1, r0, #3
 	subs	r1, r1, r0
 	lsrs	r1, r1, #16
 	ldr	r0, [r5, #0]
 	bl	0x08020280
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #3
 	bl	0x0800205c
 	movs	r3, #128

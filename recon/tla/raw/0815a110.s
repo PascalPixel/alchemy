@@ -260,16 +260,16 @@ BattlePres_RunBurstScene:
 	str	r3, [r5, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	lsls	r0, r0, #12
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	subs	r0, #127
 	lsls	r0, r0, #12
 	str	r0, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r5, #0]
 	ands	r0, r7
 	subs	r0, #127
@@ -308,12 +308,12 @@ BattlePres_RunBurstScene:
 	movs	r3, #176
 	lsls	r3, r3, #15
 	str	r3, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #128
 	lsls	r0, r0, #9
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, sl
 	ands	r0, r6
 	movs	r2, #1
@@ -360,7 +360,7 @@ BattlePres_RunBurstScene:
 	lsls	r5, r1, #11
 .L_0815a3dc:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsls	r3, r3, #1
@@ -697,7 +697,7 @@ BattlePres_RunBurstScene:
 	adds	r5, r3, r0
 .L_0815a69a:
 	str	r2, [sp, #12]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	adds	r0, #15
 	str	r0, [r5, #0]
@@ -882,19 +882,19 @@ BattlePres_RunBurstScene:
 	ands	r7, r0
 	mov	fp, r5
 .L_0815a818:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	adds	r2, r0, #0
 	ands	r2, r3
 	str	r2, [sp, #12]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r2, [sp, #12]
 	movs	r5, #31
 	ands	r5, r0
 	adds	r0, r2, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r1, fp
 	ldr	r6, [r1, #0]
 	adds	r5, #4
@@ -912,7 +912,7 @@ BattlePres_RunBurstScene:
 	adds	r0, r2, #0
 	lsrs	r3, r3, #1
 	subs	r6, r6, r3
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	mov	r0, fp
@@ -924,7 +924,7 @@ BattlePres_RunBurstScene:
 	str	r4, [sp, #8]
 	lsrs	r3, r3, #1
 	subs	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #336]
 	mov	r1, r9
 	ands	r0, r1
@@ -1449,13 +1449,13 @@ BattlePres_RunBurstScene:
 	movs	r7, #15
 	adds	r5, r1, r2
 .L_0815acae:
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	movs	r3, #128
 	adds	r0, #88
 	str	r3, [r5, #4]
 	str	r0, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #1
 	str	r3, [r5, #16]
 	movs	r3, #128
@@ -1491,25 +1491,25 @@ BattlePres_RunBurstScene:
 	movs	r6, #0
 	movs	r7, #63
 .L_0815ad02:
-	bl	Func_08014878
+	bl	Random16
 	ldr	r1, [sp, #24]
 	ands	r0, r7
 	adds	r0, r0, r1
 	adds	r0, #32
 	lsls	r0, r0, #16
 	str	r0, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #7
 	ands	r3, r0
 	adds	r3, #96
 	lsls	r3, r3, #16
 	str	r3, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	adds	r0, #32
 	lsls	r0, r0, #13
 	str	r0, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #31
 	movs	r2, #128
 	ands	r3, r0
@@ -2012,7 +2012,7 @@ BattlePres_RunBurstScene:
 	ldr	r3, [sp, #40]
 	cmp	r3, #87
 	ble.n	.L_0815b15a
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #7
 	ands	r3, r0
 	adds	r3, #8
@@ -2021,7 +2021,7 @@ BattlePres_RunBurstScene:
 	ldr	r3, [r4, #24]
 	cmp	r3, #0
 	bne.n	.L_0815b118
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #96
 	bl	0x0800206c
 	adds	r0, #42
@@ -2029,7 +2029,7 @@ BattlePres_RunBurstScene:
 .L_0815b118:
 	cmp	r3, #1
 	bne.n	.L_0815b14c
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #112
 	bl	0x0800206c
 	adds	r0, #34
@@ -2045,7 +2045,7 @@ BattlePres_RunBurstScene:
 	.2byte 0x6e44
 	.2byte 0x0819
 .L_0815b14c:
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #160
 	bl	0x0800206c
 	adds	r0, #10

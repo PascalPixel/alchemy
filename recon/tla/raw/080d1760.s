@@ -103,15 +103,3 @@ Func_080d17e8:
 	pop	{r5, pc}
 	.2byte 0x0730
 	.2byte 0x0300
-	push	{lr}
-	cmp	r0, #31
-	ble.n	.L_080d1826
-	movs	r0, #31
-	b.n	.L_080d182c
-.L_080d1826:
-	cmp	r0, #0
-	bge.n	.L_080d182c
-	movs	r0, #0
-.L_080d182c:
-	pop	{pc}
-	.2byte 0x0000

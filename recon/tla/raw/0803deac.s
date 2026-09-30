@@ -293,7 +293,7 @@ Func_0803df14:
 	b.n	.L_0803e1ea
 .L_0803e0c4:
 	mov	r0, sl
-	bl	0x0803e8ec
+	bl	NodeChain_GetNodeAtCount
 	mov	r5, r9
 	adds	r5, #40
 	ldrb	r3, [r5, #5]

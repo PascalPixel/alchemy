@@ -10,7 +10,7 @@ Func_08119054:
 	movs	r0, #170
 	lsls	r0, r0, #1
 	sub	sp, #32
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r2, #0
 	mov	r8, r0
 	mov	sl, r2
@@ -99,7 +99,7 @@ Func_08119054:
 	bl	Func_08013164
 	movs	r0, #170
 	lsls	r0, r0, #1
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	r8, r0
 	movs	r0, #1
 	bl	Trade_GetOfferStateFar
@@ -134,7 +134,7 @@ Func_08119054:
 	lsls	r5, r5, #1
 	adds	r0, r5, #0
 	sub	sp, #16
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #36]
@@ -229,7 +229,7 @@ Func_08119054:
 	lsls	r5, r5, #1
 	bl	Func_08013164
 	adds	r0, r5, #0
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r6, r0, #0
 	movs	r0, #0
 	bl	Trade_GetOfferStateFar

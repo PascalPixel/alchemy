@@ -10,7 +10,7 @@ Owner_RecalculateStats:
 	adds	r5, r0, #0
 	movs	r0, #96
 	sub	sp, #4
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	bl	Owner_GetState
@@ -1440,31 +1440,31 @@ Func_080addf0:
 	bl	Func_080afdd8
 	movs	r1, #149
 	movs	r0, #4
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r1, #140
 	movs	r0, #4
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r1, #141
 	movs	r0, #6
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r1, #33
 	movs	r0, #7
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r1, #149
 	movs	r0, #0
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r1, #140
 	movs	r0, #0
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r1, #140
 	movs	r0, #1
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r1, #141
 	movs	r0, #2
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r1, #144
 	movs	r0, #2
-	bl	Func_080af6f4
+	bl	OwnerAction_Add
 	movs	r2, #163
 	movs	r3, #200
 	lsls	r2, r2, #2
@@ -1613,7 +1613,7 @@ Func_080addf0:
 	adds	r5, r3, r2
 	movs	r6, #7
 .L_080ae078:
-	bl	Func_08014878
+	bl	Random16
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r3, r3, #16

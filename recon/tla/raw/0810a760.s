@@ -30,7 +30,7 @@ Func_0810a760:
 	cmp	r3, #0
 	bne.n	.L_0810a77e
 .L_0810a794:
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r6, #0
 	muls	r3, r0
 	lsrs	r1, r3, #16

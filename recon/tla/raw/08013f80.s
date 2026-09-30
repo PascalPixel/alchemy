@@ -135,10 +135,10 @@ Func_0801401c:
 	b.n	.L_080140be
 .L_08014080:
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r1, r8
 	adds	r6, r0, #0
 	bl	Math_Div

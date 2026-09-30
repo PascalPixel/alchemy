@@ -82,7 +82,7 @@ Func_080f9644:
 	bl	RenderOutput_RedrawSavedRectFar
 	mov	r1, r9
 	ldr	r0, [r1, #48]
-	bl	0x080f9374
+	bl	UiText_DrawWorkValueWithLabel
 	movs	r0, #0
 	bl	0x080fa50c
 	movs	r3, #1

@@ -323,10 +323,10 @@ Func_080e82cc:
 	lsls	r0, r0, #14
 	str	r3, [r6, #8]
 	bl	Func_0801489c
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r5, #1
 	adds	r1, r0, #0
 	adds	r2, r6, #0
@@ -499,7 +499,7 @@ Func_080e82cc:
 	mov	r8, r0
 	adds	r7, r1, r2
 .L_080e86d6:
-	bl	Func_08014878
+	bl	Random16
 	mov	r3, r9
 	str	r3, [sp, #0]
 	movs	r3, #128
@@ -699,7 +699,7 @@ Func_080e82cc:
 	add	r6, sl
 	add	r7, sl
 .L_080e8886:
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, r9
 	ldr	r3, [r1, #8]
 	movs	r2, #128
@@ -711,7 +711,7 @@ Func_080e82cc:
 	str	r3, [r6, #4]
 	ldr	r3, [r1, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #208
 	lsls	r3, r3, #14
 	lsls	r0, r0, #2
@@ -724,7 +724,7 @@ Func_080e82cc:
 	str	r2, [r6, #12]
 	str	r3, [r6, #16]
 	str	r2, [r6, #20]
-	bl	Func_08014878
+	bl	Random16
 	adds	r3, r0, #0
 	lsls	r0, r3, #1
 	movs	r1, #128
@@ -1086,15 +1086,15 @@ Func_080e82cc:
 	bne.n	.L_080e8bc8
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	blt.n	.L_080e8bb2
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_080e8bba
 .L_080e8bb2:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 .L_080e8bba:
 	ldr	r3, [pc, #220]
@@ -1109,16 +1109,16 @@ Func_080e82cc:
 	bne.n	.L_080e8bf6
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	blt.n	.L_080e8be2
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 	b.n	.L_080e8be8
 .L_080e8be2:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 .L_080e8be8:
 	ldr	r3, [pc, #172]
 	mov	r1, sl
@@ -1130,15 +1130,15 @@ Func_080e82cc:
 .L_080e8bf6:
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	blt.n	.L_080e8c0a
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_080e8c12
 .L_080e8c0a:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 .L_080e8c12:
 	ldr	r3, [pc, #132]
@@ -1167,24 +1167,24 @@ Func_080e82cc:
 	bne.n	.L_080e8c52
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_080e8c66
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_080e8c6e
 .L_080e8c52:
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	blt.n	.L_080e8c66
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_080e8c6e
 .L_080e8c66:
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 .L_080e8c6e:
 	ldr	r3, [pc, #40]

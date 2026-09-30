@@ -214,8 +214,8 @@ void *Func_08013300(s32);
 void Func_08013560(s32);
 void Func_080145a8(void *, s32);
 void Func_08014644(void *);
-s32 Func_08014878(void);
-void *Func_08014dac(s32);
+s32 Random16(void);
+void *Runtime_BumpAllocateAlternatePool(s32);
 void Func_08014de4(void);
 void Func_08015024(s32);
 void Func_08015068(s32);
@@ -518,12 +518,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     work->unk77b8 = 0;
     object = *Func_08118098(action->target);
     for (i = 0; i != 64; i++) {
-        work->particle[i].x = (Func_08014878() & 63) + 32;
+        work->particle[i].x = (Random16() & 63) + 32;
         work->particle[i].y = 0;
         work->particle[i].z = 0;
-        work->particle[i].vx = Func_08014878() & 0xffff;
-        work->particle[i].vy = Func_08014878() & 0xffff;
-        work->particle[i].vz = Func_08014878() & 0xffff;
+        work->particle[i].vx = Random16() & 0xffff;
+        work->particle[i].vy = Random16() & 0xffff;
+        work->particle[i].vz = Random16() & 0xffff;
     }
     ObjectDispatch_ApplyValueToChildrenFar(object, 0);
     origin[0] = object->x;
@@ -690,13 +690,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             p->y = half;
             p->z = object2->z;
             if (kind == 61) {
-                p->vx = ((Func_08014878() & 255) - 127) << 12;
-                p->vy = ((Func_08014878() & 255) - 64) << 10;
+                p->vx = ((Random16() & 255) - 127) << 12;
+                p->vy = ((Random16() & 255) - 64) << 10;
             } else {
-                p->vx = ((Func_08014878() & 255) - 127) << 12;
-                p->vy = ((Func_08014878() & 255) - 64) << 12;
+                p->vx = ((Random16() & 255) - 127) << 12;
+                p->vy = ((Random16() & 255) - 64) << 12;
             }
-            p->vz = ((Func_08014878() & 255) - 127) << 12;
+            p->vz = ((Random16() & 255) - 127) << 12;
             p->vx = p->vx / 2;
             p->vy = p->vy / 2;
             p->vz = p->vz / 2;
@@ -736,10 +736,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             p->y = 0x140000;
             p->z = object2->z;
             if (object2->x < 0)
-                p->vx = -((Func_08014878() & 255) + 128) << 11;
+                p->vx = -((Random16() & 255) + 128) << 11;
             else
-                p->vx = ((Func_08014878() & 255) + 128) << 11;
-            p->vy = ((Func_08014878() & 255) - 127) << 10;
+                p->vx = ((Random16() & 255) + 128) << 11;
+            p->vy = ((Random16() & 255) - 127) << 10;
             p->vz = 0;
             p->life = 0;
         }
@@ -753,26 +753,26 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             p->y = height;
             p->z = object2->z;
             if (kind == 5 || kind == 53) {
-                p->vx = ((Func_08014878() & 255) - 127) << 11;
-                p->vy = (Func_08014878() & 255) << 11;
-                p->vz = ((Func_08014878() & 255) - 127) << 11;
+                p->vx = ((Random16() & 255) - 127) << 11;
+                p->vy = (Random16() & 255) << 11;
+                p->vz = ((Random16() & 255) - 127) << 11;
             } else if (kind == 68 || kind == 69 || kind == 74 || kind == 75 || kind == 16 || kind == 97
                        || kind == 10) {
-                p->vx = ((Func_08014878() & 255) - 127) << 13;
-                p->vy = ((Func_08014878() & 255) - 127) << 12;
-                p->vz = ((Func_08014878() & 255) - 127) << 13;
+                p->vx = ((Random16() & 255) - 127) << 13;
+                p->vy = ((Random16() & 255) - 127) << 12;
+                p->vz = ((Random16() & 255) - 127) << 13;
             } else if (kind == 98) {
-                p->vx = ((Func_08014878() & 255) - 127) << 14;
-                p->vy = ((Func_08014878() & 255) - 127) << 13;
-                p->vz = ((Func_08014878() & 255) - 127) << 14;
+                p->vx = ((Random16() & 255) - 127) << 14;
+                p->vy = ((Random16() & 255) - 127) << 13;
+                p->vz = ((Random16() & 255) - 127) << 14;
             } else if (kind == 55) {
-                p->vx = ((Func_08014878() & 255) - 127) << 11;
-                p->vy = (Func_08014878() & 127) << 10;
-                p->vz = ((Func_08014878() & 255) - 127) << 11;
+                p->vx = ((Random16() & 255) - 127) << 11;
+                p->vy = (Random16() & 127) << 10;
+                p->vz = ((Random16() & 255) - 127) << 11;
             } else {
-                p->vx = ((Func_08014878() & 255) - 127) << 10;
-                p->vy = (Func_08014878() & 127) << 10;
-                p->vz = ((Func_08014878() & 255) - 127) << 10;
+                p->vx = ((Random16() & 255) - 127) << 10;
+                p->vy = (Random16() & 127) << 10;
+                p->vz = ((Random16() & 255) - 127) << 10;
             }
             p->vx = p->vx / 4;
             p->vy = p->vy / 4;
@@ -940,9 +940,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     p->x = object2->x;
                     p->y = 0x140000;
                     p->z = object2->z;
-                    p->vx = ((Func_08014878() & 255) - 128) << 10;
-                    p->vy = ((Func_08014878() & 255) - 128) << 10;
-                    p->vz = ((Func_08014878() & 255) - 128) << 10;
+                    p->vx = ((Random16() & 255) - 128) << 10;
+                    p->vy = ((Random16() & 255) - 128) << 10;
+                    p->vz = ((Random16() & 255) - 128) << 10;
                     if (kind == 78) {
                         p->vx <<= 1;
                         p->vy <<= 1;
@@ -1022,12 +1022,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 }
                 for (i = 0; i != 3; i++) {
                     m = i & 3;
-                    angle = Func_08014878() & 0xffff;
+                    angle = Random16() & 0xffff;
                     x = ((Func_08002096(angle) << 3) >> 16) + target[0] / 2 - Data_08197492[m] / 2;
                     y = ((amp * Func_08002090(angle)) >> 16) + off - Data_08197498[m] / 2;
                     Func_0801314c(188);
                     Func_0801314c(104);
-                    Func_08196404(188, 7, 7, Data_0819887e[Func_08014878() & 3] | 3, 0);
+                    Func_08196404(188, 7, 7, Data_0819887e[Random16() & 3] | 3, 0);
                     IWRAM_SLOT_BC(screen, EWRAM_BUF + Data_08197486[m], x, y + 56, Data_08197492[m], Data_08197498[m]);
                     Func_0801314c(188);
                     Func_08144aac(action->side, &drawFuncs);
@@ -1036,13 +1036,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         } else if (kind == 68) {
             if (frame >= 8 && frame < 24) {
                 for (i = 0; i != 3; i++) {
-                    angle = Func_08014878() & 0xffff;
+                    angle = Random16() & 0xffff;
                     m = i & 3;
                     x = ((Func_08002096(angle) << 4) >> 16) + target[0] / 2 - Data_08197492[m] / 2;
                     y = ((Func_08002090(angle) << 4) >> 16) - Data_08197498[m] / 2;
                     Func_0801314c(188);
                     Func_0801314c(104);
-                    Func_08196404(188, 7, 7, Data_08198882[Func_08014878() & 3] | 3, 1);
+                    Func_08196404(188, 7, 7, Data_08198882[Random16() & 3] | 3, 1);
                     IWRAM_SLOT_BC(screen, EWRAM_BUF + Data_08197486[m], x, y + 80, Data_08197492[m], Data_08197498[m]);
                     Func_0801314c(188);
                     Func_08144aac(action->side, &drawFuncs);
@@ -1090,9 +1090,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             p->x = object2->x;
                             p->y = 0x140000;
                             p->z = object2->z;
-                            p->vx = ((Func_08014878() & 255) - 127) << 12;
-                            p->vy = ((Func_08014878() & 255) - 64) << 10;
-                            p->vz = ((Func_08014878() & 255) - 127) << 12;
+                            p->vx = ((Random16() & 255) - 127) << 12;
+                            p->vy = ((Random16() & 255) - 64) << 10;
+                            p->vz = ((Random16() & 255) - 127) << 12;
                             p->life = i / 2 + 32;
                             if (count == 4)
                                 break;
@@ -1173,7 +1173,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             drawFuncs.draw[0] = IWRAM_SLOT_68;
             if (frame == 0) {
                 for (i = 0; i != 1104; i++)
-                    work->frames[i] = Func_08014878() & 31;
+                    work->frames[i] = Random16() & 31;
             }
             y = frame * 28 - 96;
             if (y > 16)
@@ -1403,12 +1403,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (frame == 0) {
                 p = SPARKS;
                 for (i = 0; i != 64; i++, p++) {
-                    p->x = (Func_08014878() & 127) + 32;
+                    p->x = (Random16() & 127) + 32;
                     p->y = 0;
                     p->z = 0;
-                    p->vx = Func_08014878() & 0xffff;
-                    p->vy = Func_08014878() & 0xffff;
-                    p->vz = Func_08014878() & 0xffff;
+                    p->vx = Random16() & 0xffff;
+                    p->vy = Random16() & 0xffff;
+                    p->vz = Random16() & 0xffff;
                 }
                 SPARKS[63].y = 159;
             }
@@ -1505,8 +1505,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     for (i = 0; i != 16; i++, p++) {
                         p->x = (*tbl++ + x - 40) << 16;
                         p->y = *tbl++ << 16;
-                        p->vx = ((Func_08014878() & 127) - 64) << 11;
-                        p->vy = -(Func_08014878() & 127) << 11;
+                        p->vx = ((Random16() & 127) - 64) << 11;
+                        p->vy = -(Random16() & 127) << 11;
                         p->z = 32;
                         p->life = 0;
                     }
@@ -1531,12 +1531,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 REG_BG2PA = 0x100;
                 p = work->particle;
                 for (i = 0; i != 32; i++, p++) {
-                    p->x = ((Func_08014878() & 31) + 48) << 16;
-                    p->y = ((Func_08014878() & 31) + 64) << 16;
-                    p->z = Func_08014878();
-                    p->vx = ((Func_08014878() & 63) - 32) << 12;
-                    p->vy = -((Func_08014878() & 127) + 16) << 12;
-                    p->vz = (Func_08014878() & 15) + 16;
+                    p->x = ((Random16() & 31) + 48) << 16;
+                    p->y = ((Random16() & 31) + 64) << 16;
+                    p->z = Random16();
+                    p->vx = ((Random16() & 63) - 32) << 12;
+                    p->vy = -((Random16() & 127) + 16) << 12;
+                    p->vz = (Random16() & 15) + 16;
                     p->life = 0;
                 }
             }
@@ -1570,11 +1570,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (frame == 0) {
                 p = RINGS;
                 for (i = 0; i != 32; i++, p++) {
-                    p->z = Func_08014878();
-                    p->vz = (Func_08014878() & 255) + 128;
-                    if (Func_08014878() & 1)
+                    p->z = Random16();
+                    p->vz = (Random16() & 255) + 128;
+                    if (Random16() & 1)
                         p->vz = -p->vz;
-                    p->life = Func_08014878() & 3;
+                    p->life = Random16() & 3;
                 }
             }
             if (frame == 4)
@@ -1585,20 +1585,20 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 Func_081c0010(390);
             if (frame >= 8 && frame < 24) {
                 for (i = 0; i != 3; i++) {
-                    angle = Func_08014878() & 0xffff;
+                    angle = Random16() & 0xffff;
                     m = i & 3;
                     x = ((Func_08002096(angle) << 4) >> 16) + target[0] / 2 - Data_08197492[m] / 2;
                     y = ((Func_08002090(angle) << 4) >> 16) - Data_08197498[m] / 2;
                     Func_0801314c(188);
                     Func_0801314c(104);
-                    Func_08196404(188, 7, 7, Data_0819894e[Func_08014878() & 3] | 3, 1);
+                    Func_08196404(188, 7, 7, Data_0819894e[Random16() & 3] | 3, 1);
                     IWRAM_SLOT_BC(screen, EWRAM_BUF + Data_08197486[m], x, y + 80, Data_08197492[m], Data_08197498[m]);
                     Func_0801314c(188);
                     Func_08144aac(action->side, &drawFuncs);
                 }
             }
             if (frame > 3) {
-                matrix = Func_08014dac(32);
+                matrix = Runtime_BumpAllocateAlternatePool(32);
                 model = Func_081969f8(1);
                 texture164.width = 5;
                 texture164.height = 7;
@@ -1630,7 +1630,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 Func_08013164(matrix);
             }
         } else if (kind == 71 || kind == 80 || kind == 82) {
-            matrix = Func_08014dac(0x200);
+            matrix = Runtime_BumpAllocateAlternatePool(0x200);
             model = Func_081969f8(1);
             fade = 0;
             if (frame > 39)
@@ -1685,7 +1685,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 }
             }
         } else if (kind == 81 || kind == 83 || kind == 92 || kind == 93) {
-            matrix = Func_08014dac(0x200);
+            matrix = Runtime_BumpAllocateAlternatePool(0x200);
             model = Func_081969f8(1);
             texture148.width = 7;
             texture148.height = 7;
@@ -1760,9 +1760,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (frame == 4) {
                     p = SPARKS;
                     for (i = 0; i != 64; i++, p++) {
-                        p->x = Func_08014878();
+                        p->x = Random16();
                         p->y = 0;
-                        p->vy = ((Func_08014878() & 3) + 3) << 17;
+                        p->vy = ((Random16() & 3) + 3) << 17;
                     }
                 }
                 if (frame > 4) {
@@ -1783,7 +1783,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 }
             }
         } else if (kind == 91) {
-            matrix = Func_08014dac(0x200);
+            matrix = Runtime_BumpAllocateAlternatePool(0x200);
             model = Func_081969f8(1);
             texture140.width = 7;
             texture140.height = 7;
@@ -1840,7 +1840,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (frame == 4)
                 work->unk77a8 = 8;
         } else if (kind == 90) {
-            matrix = Func_08014dac(0x200);
+            matrix = Runtime_BumpAllocateAlternatePool(0x200);
             model = Func_081969f8(1);
             texture132.width = 6;
             texture132.height = 6;
@@ -1883,9 +1883,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 p = SPARKS;
                 for (i = 0; i != 16; i++, p++) {
                     p->life = -i * 2;
-                    p->x = Func_08014878();
+                    p->x = Random16();
                     p->z = i * 2 + 80;
-                    p->vx = (Func_08014878() & 511) + 512;
+                    p->vx = (Random16() & 511) + 512;
                 }
             }
             for (i = 0; i != 0x400; i++) {
@@ -2026,9 +2026,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     p->x = object2->x;
                     p->y = half;
                     p->z = object2->z;
-                    p->vx = ((Func_08014878() & 255) - 127) << 11;
-                    p->vy = ((Func_08014878() & 255) - 64) << 11;
-                    p->vz = ((Func_08014878() & 255) - 127) << 11;
+                    p->vx = ((Random16() & 255) - 127) << 11;
+                    p->vy = ((Random16() & 255) - 64) << 11;
+                    p->vz = ((Random16() & 255) - 127) << 11;
                     p->life = i / 2 + 32;
                 }
             }

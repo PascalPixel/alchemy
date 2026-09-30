@@ -26,12 +26,12 @@
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiWork_IsCompleteFar
 	overlay_veneer Func_080380f8
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer Func_08038140
 	overlay_veneer Func_080382f8
 	overlay_veneer Func_08038318
 	overlay_veneer Owner_RecalculateStatsFar
-	overlay_veneer Inventory_AddFar
+	overlay_veneer Inventory_AddItemFar
 	overlay_veneer Owner_AdjustFirstValueFar
 	overlay_veneer Owner_AdjustSecondValueFar
 	overlay_veneer Djinn_AddToOwnerFar
@@ -39,7 +39,7 @@
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
 	overlay_veneer Item_AdjustCounterFar
 	overlay_veneer Battle_WaitMode0Far
-	overlay_veneer UiText_DrawQuantityPairWithCueFar
+	overlay_veneer Func_080c8078
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8

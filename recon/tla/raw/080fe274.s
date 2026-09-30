@@ -18,11 +18,11 @@ Func_080fe274:
 	bl	Func_08014cc0
 	adds	r6, r0, #0
 	movs	r0, #64
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	r8, r0
 	movs	r0, #160
 	lsls	r0, r0, #6
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r2, #1
 	negs	r2, r2
 	str	r2, [sp, #8]

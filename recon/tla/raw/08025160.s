@@ -757,7 +757,7 @@
 	str	r3, [r7, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, fp
 	ldr	r3, [pc, #300]
 	mov	lr, r3
@@ -765,9 +765,9 @@
 	.2byte 0x9b01
 	adds	r3, r3, r0
 	mov	r8, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldrh	r3, [r6, #6]
 	lsrs	r5, r5, #2
 	lsrs	r0, r0, #2
@@ -995,7 +995,7 @@
 	ble.n	.L_080258d6
 	b.n	.L_08025a84
 .L_080258d6:
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #624]
 	ldr	r1, [sp, #20]
 	mov	lr, r3
@@ -1003,9 +1003,9 @@
 	.2byte 0x9c06
 	adds	r4, r4, r0
 	mov	r8, r4
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r6, #8]
 	add	r7, sp, #40
 	ldr	r1, [sp, #12]
@@ -1216,17 +1216,17 @@
 	mov	r4, sl
 	cmp	r4, #7
 	bgt.n	.L_08025b34
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #160]
 	ldr	r1, [sp, #20]
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x9d06
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	mov	r8, r5
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r1, [sp, #12]
 	ldr	r3, [r6, #8]
 	lsls	r2, r1, #16

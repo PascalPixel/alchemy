@@ -883,7 +883,7 @@ Func_081197f0:
 	bl	0x08038118
 	movs	r0, #128
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r2, r9
 	ldrh	r0, [r2, #62]
 	ldr	r3, [pc, #84]

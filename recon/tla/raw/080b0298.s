@@ -29,9 +29,9 @@ Func_080b0298:
 	adds	r0, r5, #0
 	bl	0x080b0084
 	pop	{r5, r6, pc}
-	.global Func_080b02d4
+	.global Owner_RefreshClassActions
 	.thumb_func
-Func_080b02d4:
+Owner_RefreshClassActions:
 	push	{lr}
 	bl	.L_080b0298
 	pop	{pc}

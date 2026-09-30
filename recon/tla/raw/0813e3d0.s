@@ -129,13 +129,13 @@ Func_0813e3d0:
 .L_0813e4ce:
 	movs	r3, #0
 	str	r3, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	ands	r3, r0
 	str	r3, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #1
 	mov	r4, r8
@@ -395,13 +395,13 @@ Func_0813e3d0:
 	cmp	r3, #0
 	blt.n	.L_0813e770
 	ldr	r0, [r5, #0]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [r5, #8]
 	muls	r3, r0
 	asrs	r3, r3, #4
 	str	r3, [r7, #0]
 	ldr	r0, [r5, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r3, [r5, #8]
 	movs	r2, #128
 	muls	r3, r0

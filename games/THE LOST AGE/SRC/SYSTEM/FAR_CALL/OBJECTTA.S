@@ -77,7 +77,7 @@ Func_080c8480:
 	.global Func_080c8498
 	.thumb_func
 Func_080c8498:
-	overlay_veneer Func_080db48c
+	overlay_veneer Field_DispatchTypeHandler
 	.global Func_080c84a0
 	.thumb_func
 Func_080c84a0:

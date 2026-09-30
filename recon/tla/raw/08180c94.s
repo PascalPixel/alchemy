@@ -212,13 +212,13 @@ Func_08180c94:
 	subs	r3, #80
 	cmp	r3, #7
 	bhi.n	.L_08180ed0
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #63
 	ands	r3, r0
 	adds	r3, #28
 	lsls	r3, r3, #16
 	str	r3, [sp, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #31
 	ands	r3, r0
 	ldr	r4, [sp, #8]
@@ -235,12 +235,12 @@ Func_08180c94:
 	mov	r8, r2
 	adds	r7, r3, r0
 .L_08180e70:
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #31
 	ands	r5, r0
-	bl	Func_08014878
+	bl	Random16
 	adds	r6, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	mov	r2, r9
 	ldr	r3, [sp, #16]
 	ands	r0, r2
@@ -248,7 +248,7 @@ Func_08180c94:
 	lsls	r0, r0, #16
 	adds	r0, r3, r0
 	str	r0, [r7, #0]
-	bl	Func_08014878
+	bl	Random16
 	mov	r4, r9
 	ands	r0, r4
 	ldr	r2, [sp, #12]
@@ -257,14 +257,14 @@ Func_08180c94:
 	adds	r0, r2, r0
 	str	r0, [r7, #4]
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r5, #32
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #3
 	str	r3, [r7, #12]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #3
@@ -453,18 +453,18 @@ Func_08180c94:
 	movs	r7, #0
 	mov	r5, sl
 .L_08181038:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	ands	r3, r0
 	str	r3, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	ands	r3, r0
 	adds	r3, #128
 	str	r3, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #1
 	ands	r0, r3
 	cmp	r0, #0
@@ -488,7 +488,7 @@ Func_08180c94:
 	bl	0x08157cf4
 .L_08181080:
 	movs	r0, #32
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	r9, r0
 	movs	r0, #1
 	bl	0x081969f8
@@ -564,7 +564,7 @@ Func_08180c94:
 	adds	r3, #170
 	adds	r0, r2, #0
 	muls	r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #128
 	add	r0, r8
 	lsls	r1, r1, #10
@@ -919,7 +919,7 @@ Func_08180c94:
 	movs	r3, #1
 .L_081813fe:
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	ldr	r4, [pc, #112]
@@ -1972,7 +1972,7 @@ Func_08180c94:
 	cmp	r6, #1
 	bne.n	.L_08181b1c
 	movs	r0, #32
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	fp, r0
 	movs	r0, #1
 	bl	0x081969f8
@@ -2091,7 +2091,7 @@ Func_08180c94:
 	mov	r1, r8
 	ldr	r0, [r1, #20]
 	lsls	r0, r0, #11
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r2, [pc, #372]
 	asrs	r0, r0, #3
 	adds	r0, r0, r2
@@ -2114,7 +2114,7 @@ Func_08180c94:
 	ldr	r3, [pc, #340]
 	lsls	r0, r0, #11
 	str	r3, [r5, #4]
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r0, #0
 	movs	r0, #128
 	asrs	r3, r3, #3

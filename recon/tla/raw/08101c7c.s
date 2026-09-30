@@ -1069,7 +1069,7 @@ Func_08101c7c:
 	adds	r3, r4, r7
 	ldrb	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r4, [pc, #844]
 	ldr	r1, [sp, #76]
 	adds	r0, r4, #0
@@ -1096,7 +1096,7 @@ Func_08101c7c:
 	lsls	r2, r2, #1
 	adds	r0, r0, r2
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldrh	r3, [r6, #0]
 	ldr	r0, [sp, #76]
 	ands	r5, r3

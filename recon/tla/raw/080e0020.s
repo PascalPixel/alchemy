@@ -346,6 +346,9 @@ Func_080e0020:
 	pop	{r5, r6, pc}
 	.2byte 0x0f2c
 	.2byte 0x080f
+	.global Func_080e0308
+	.thumb_func
+Func_080e0308:
 	push	{lr}
 	bl	ObjectTable_Get
 	cmp	r0, #0
@@ -387,6 +390,9 @@ Func_080e0020:
 	.4byte 0x02000240
 	.2byte 0x02ed
 	.2byte 0x080e
+	.global Func_080e035c
+	.thumb_func
+Func_080e035c:
 	push	{r5, lr}
 	bl	ObjectTable_Get
 	adds	r5, r0, #0

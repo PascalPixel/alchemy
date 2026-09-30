@@ -386,6 +386,9 @@ ObjectTable_ReadActiveValue:
 .L_080d3c28:
 	adds	r0, r1, #0
 	pop	{pc}
+	.global Func_080d3c2c
+	.thumb_func
+Func_080d3c2c:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

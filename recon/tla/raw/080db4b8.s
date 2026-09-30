@@ -167,7 +167,7 @@ Func_080db4b8:
 	negs	r1, r1
 	cmp	r0, r1
 	beq.n	.L_080db60c
-	bl	0x080e035c
+	bl	Func_080e035c
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -189,7 +189,7 @@ Func_080db4b8:
 	adds	r0, r5, #0
 	bl	0x080e011c
 	adds	r0, r5, #0
-	bl	0x080e0308
+	bl	Func_080e0308
 	strh	r5, [r7, #0]
 	b.n	.L_080db668
 .L_080db63e:
@@ -438,14 +438,14 @@ Func_080db4b8:
 	negs	r3, r3
 	cmp	r0, r3
 	beq.n	.L_080db832
-	bl	0x080e035c
+	bl	Func_080e035c
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	strh	r3, [r6, #0]
 .L_080db832:
 	adds	r0, r5, #0
-	bl	0x080e0308
+	bl	Func_080e0308
 	strh	r5, [r6, #0]
 	adds	r0, r5, #0
 	bl	0x080e011c

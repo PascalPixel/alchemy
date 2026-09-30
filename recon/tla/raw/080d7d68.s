@@ -284,7 +284,7 @@ Func_080d7d68:
 	bne.n	.L_080d7fa8
 	b.n	.L_080d8126
 .L_080d7fa8:
-	bl	0x080d7a78
+	bl	Func_080d7a78
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #224
@@ -444,7 +444,7 @@ Func_080d7d68:
 	movs	r0, #30
 	bl	WaitFrames
 	bl	0x08108060
-	bl	0x080d7ab4
+	bl	Func_080d7ab4
 .L_080d8126:
 	add	sp, #12
 	pop	{r3, r5}
@@ -672,7 +672,7 @@ Func_080d7d68:
 	bne.n	.L_080d830c
 	b.n	.L_080d85a2
 .L_080d830c:
-	bl	0x080d7a78
+	bl	Func_080d7a78
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #224
@@ -954,7 +954,7 @@ Func_080d7d68:
 	movs	r0, #15
 	bl	WaitFrames
 	bl	0x08108060
-	bl	0x080d7ab4
+	bl	Func_080d7ab4
 .L_080d85a2:
 	add	sp, #12
 	pop	{r3, r5, r6}

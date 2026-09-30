@@ -812,7 +812,7 @@ Func_080ccec8:
 	adds	r5, r5, r1
 	movs	r2, #0
 	ldrsh	r0, [r5, r2]
-	bl	0x080e035c
+	bl	Func_080e035c
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255

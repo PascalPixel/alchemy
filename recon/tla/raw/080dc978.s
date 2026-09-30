@@ -91,7 +91,7 @@ Func_080dc978:
 	bl	Func_080d170c
 	movs	r0, #8
 	bl	Func_080d17ac
-	bl	.L_080dca84
+	bl	Func_080dca84
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #12]
@@ -103,6 +103,9 @@ Func_080dc978:
 	movs	r0, r0
 	.2byte 0xcb45
 	.2byte 0x080d
+	.global Func_080dca50
+	.thumb_func
+Func_080dca50:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -123,6 +126,9 @@ Func_080dc978:
 	pop	{r5, pc}
 	.2byte 0xcb45
 	.2byte 0x080d
+	.global Func_080dca84
+	.thumb_func
+Func_080dca84:
 .L_080dca84:
 	push	{lr}
 	movs	r3, #192

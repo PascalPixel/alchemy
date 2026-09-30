@@ -463,7 +463,7 @@ Func_080db4b8:
 	ldrsh	r3, [r5, r1]
 	cmp	r3, #2
 	bne.n	.L_080db87c
-	bl	0x080dca50
+	bl	Func_080dca50
 	ldr	r3, [pc, #32]
 	movs	r2, #128
 	lsls	r2, r2, #2

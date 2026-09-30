@@ -1,5 +1,6 @@
 /* The mode task and the scripted transitions between rounds. */
 #include "LOG_ROLLING.H"
+#include "CALL.H"
 
 void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
@@ -136,7 +137,7 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
         kind = 8;
     }
     Actor_ShowEmote(kind, 0x105, 0);
-    while (Value0(AudioCommand_GetStateByte)!= 0) {
+    while (AudioCommand_GetStateByte()!= 0) {
         Task_Wait(1);
     }
     Audio_PlayCue(19);

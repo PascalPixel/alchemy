@@ -1,4 +1,5 @@
 #include "YAMA.H"
+#include "CALL.H"
 extern u8 MsgArutinGuardianStatuesWereCreatedLong[];
 extern u8 MsgArutinWeDidRobinWeBeat[];
 
@@ -42,24 +43,24 @@ void RunEventScript01(void)
     Event_OpenScreen();
     Event_WaitForScreen(); /* main:0808a370 */
     Event_Wait(20);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
-    Value2(Engine_ActorEnableActionCallback, 1, ArutinYama_GeraldScript);
-    Value2(Engine_ActorEnableActionCallback, 2, ArutinYama_IvanScript);
-    Value2(Object_SetActionCallbackAndRefreshById, 3, ArutinYama_MiaScript);
+    Engine_ActorEnableActionCallback(1, ArutinYama_GeraldScript);
+    Engine_ActorEnableActionCallback(2, ArutinYama_IvanScript);
+    Object_SetActionCallbackAndRefreshById(3, ArutinYama_MiaScript);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 40);
@@ -137,7 +138,7 @@ void RunEventScript01(void)
     Event_Wait(20);
     addr_0200c12c = (s32)ArutinYama_PartyScript;
     Actor_EnableActionCallback(ACTOR_GERALD, addr_0200c12c);
-    Value2(Engine_ActorEnableActionCallback, 2, addr_0200c12c);
+    Engine_ActorEnableActionCallback(2, addr_0200c12c);
     Object_SetActionCallbackAndRefreshById(3, addr_0200c12c);
     Event_Wait(20);
     *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;

@@ -244,7 +244,7 @@ void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
     if (Event_ChooseYesNo(0, 0) == 0) {
         FieldScene_RunStepThen10(a0);
         Actor_SetAnimation(a0, 2);
-        record = Value1(Object_GetByIdFar, 0);
+        record = Object_GetByIdFar(0);
         if (record != 0) {
             Actor_SetDestination(a0, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }

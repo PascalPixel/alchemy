@@ -179,13 +179,13 @@ void FieldScene_RunScene3b1_020056dc(void)
     s32 base5_200e840;
     s32 base5_200e8e4;
 
-    rec8 = Value2(FuneHeya_FindFirstSetFlag, 0, 0);
-    rec2 = Value2(FuneHeya_FindFirstSetFlag, 1, 0);
+    rec8 = FuneHeya_FindFirstSetFlag(0, 0);
+    rec2 = FuneHeya_FindFirstSetFlag(1, 0);
     Event_Begin();
     FieldScene_RunSceneStep(24, 1, 0);
     FieldScene_RunSceneStep(25, 3, 0);
     SceneActor_SetFlagBit3ForActors28To35();
-    Value3(FieldScene_RunSceneStep, 19, rec8, rec2);
+    FieldScene_RunSceneStep(19, rec8, rec2);
     Actor_SetAnimation(10, 6);
     base5_200e840 = (s32)FuneHeya_ActionScriptE;
     Actor_EnableActionCallback(rec8, base5_200e840);
@@ -194,7 +194,7 @@ void FieldScene_RunScene3b1_020056dc(void)
     Actor_Destroy(12);
     base5_200e8e4 = (s32)FuneHeya_EntryActionScript;
     Actor_EnableActionCallback(36, base5_200e8e4);
-    Value2(Engine_ActorEnableActionCallback, 37, base5_200e8e4);
+    Engine_ActorEnableActionCallback(37, base5_200e8e4);
     Actor_SetChildValue(36, 3);
     Actor_SetChildValue(37, 3);
     FieldScene_RunPositionTransferPresentation();
@@ -226,9 +226,9 @@ void FieldScene_RunExtendedFormationPresentation(void)
     u8 *record;
     s32 action;
 
-    slot_a = Value2(FuneHeya_FindFirstSetFlag, 0, 0);
+    slot_a = FuneHeya_FindFirstSetFlag(0, 0);
     slot_b = FuneHeya_FindFirstSetFlag(1, 0);
-    slot_c = Value2(FuneHeya_FindFirstSetFlag, 2, 0);
+    slot_c = FuneHeya_FindFirstSetFlag(2, 0);
     Event_Begin();
     FieldScene_RunSceneStep(10, 0, 0);
     FieldScene_RunSceneStep(17, 0, 0);
@@ -334,7 +334,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
     Object_SetActionCallbackAndRefreshById(3, action);
     GameFlag_Set(0x302);
     FuneHeya_CueTimer = 0;
-    Value2(Scheduler_AddOrUpdateCallback, (s32)Scene_UpdateCueTimer, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Scene_UpdateCueTimer, 0xc80);
     FieldScene_RunSceneStep(23, 0, 0);
     Actor_Destroy(27);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

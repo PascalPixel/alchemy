@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "ARUTIN.H"
+#include "CALL.H"
 
 /*
  * Arutin mountain: a timed actor that bobs toward the ground. While a delay
@@ -14,13 +15,11 @@ extern void Engine_AudioPlayCue(s32);
 extern void Engine_WorkSetValuesIfNonNegative();
 extern void Engine_AudioPlayCue(s32);
 extern void Engine_ObjectSetAnimation(struct SceneMotion *, s32);
-static __inline__ void Call3(void (*f)(), s32 a, s32 b, s32 c)
-{ f(a,b,c); }
 void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 {
     if (work->delay != 0) {
         if (--work->delay == 1)
-            Call3(Engine_WorkSetValuesIfNonNegative,-1,-1,0xe666);
+            Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     }
     if (work->velocity == 0) {
         Engine_ObjectSetAnimation(work,1);
@@ -30,7 +29,7 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
                 Engine_AudioPlayCue(229);
                 work->active = 0;
                 work->delay = 4;
-                Call3(Engine_WorkSetValuesIfNonNegative,0x10000,0,0x10000);
+                Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0, 0x10000);
             }
             work->y = work->ground;
         }

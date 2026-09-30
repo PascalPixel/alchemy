@@ -1,16 +1,12 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 struct Pulse {
     u8 unknown_00[0x64];
     s16 timer;
     s16 beat;
 };
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Keep actor 27's glow on actor 19: step the screen work values as 19's timer runs down, and on odd frames pulse the glow's scale by 19's beat. */
 void HaidiaArashi_UpdatePulsingGlow(void)

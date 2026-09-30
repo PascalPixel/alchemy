@@ -11,7 +11,7 @@ void FieldScene_RunScene3a5_02000c6c(s32 a0)
 
     p8 = a0;
     for (i = 0; i <= 2; i++) {
-        value = Value0(Engine_RandomNext);
+        value = Engine_RandomNext();
         v6 = (u32)((value << 1) + value) >> 16;
         v5 = v6 + 0x303;
         record = GameFlag_IsSet(v5);

@@ -4,6 +4,7 @@
 #include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
+#include "CALL.H"
 
 enum ExtendedChoreographyMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,

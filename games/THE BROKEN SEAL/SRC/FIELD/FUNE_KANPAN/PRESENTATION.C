@@ -12,18 +12,6 @@ void FieldScene_RunScene3af_02000bf0(void);
 void FieldScene_RunStepThen10(s32 a);
 void FieldScene_CallPairWith10(s32 a, s32 b);
 
-/* FAKEMATCH: a value-returning call spelled through these wrappers sets r0
- * last of its arguments. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 /* Gated on scene condition 0x911; when set, configures actors 20, 22 and
  * 23 (position, pose, movement and sprite flags) and their attached
  * effects, then advances the shared scene phase. */
@@ -81,7 +69,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Event_ShowMessageAndWait(0x4016, 0, 20);
         Actor_ShowEmote(23, 0x102, 60);
         FieldScene_RunStepThen10(0x4017);
-        Value2((s32 (*)())FieldScene_CallPairWith10, 22, 0x8000);
+        ((s32 (*)())FieldScene_CallPairWith10)(22, 0x8000);
         Actor_SetAnimationAndWait(22, 3);
         Event_ShowMessageAndWait(0x4016, 0, 20);
         Actor_ShowEmote(20, 0x102, 40);
@@ -105,9 +93,9 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Camera_SetSpeed(0xcccc, 0x1999);
         Camera_MoveTo(0xb60000, -1, 0x2f80000, 1);
         Actor_SetSpeed(23, 0xcccc, 0x6666);
-        Value2((s32 (*)())Engine_ActorEnableActionCallback, 23, (s32)FuneKanpan_PresentationActionsA);
+        ((s32 (*)())Engine_ActorEnableActionCallback)(23, (s32)FuneKanpan_PresentationActionsA);
         Actor_SetSpeed(22, 0xcccc, 0x6666);
-        Value2((s32 (*)())Engine_ActorEnableActionCallback, 22, (s32)FuneKanpan_PresentationActionsB);
+        ((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)FuneKanpan_PresentationActionsB);
         Actor_SetSpeed(20, 0xcccc, 0x6666);
         Actor_WalkToAndWait(20, 182, 0x2f8);
         Actor_StartRepeatedMotion(20, 2);
@@ -143,7 +131,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         record = (u8 *)Engine_ActorGet(20);
         *(s32 *)(record + 24) = 0x10000;
         /* Set the fixed-point word at +28 of actor 20's record to 1.0. */
-        record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 20);
+        record = (u8 *)((s32 (*)())Engine_ActorGet)(20);
         *(s32 *)(record + 28) = 0x10000;
         GameFlag_Set(0x920);
         Event_End();

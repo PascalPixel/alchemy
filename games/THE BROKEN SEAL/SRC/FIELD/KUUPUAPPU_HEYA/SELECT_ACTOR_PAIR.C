@@ -6,7 +6,6 @@ extern u8 MsgKuupuappuImSurrounded[];
 extern u8 MsgKuupuappuNowIvan[];
 extern u8 MsgKuupuappuTheresNowhereRun[];
 
-
 extern struct EventRuntime *Data_03001ebc;
 
 void Scheduler_RemoveCallback();
@@ -18,28 +17,6 @@ void KuupuappuHeya_RunScene021C8();
 void Scheduler_AddOrUpdateCallback();
 void KuupuappuHeya_UpdateActorStops(void);
 void SceneActor_FaceActors24And25TowardActorZero(void);
-
-/* Constant-bearing scene calls use shared inline argument helpers. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 struct SceneObjectFlags {
     u8 unknown_000[9];
@@ -56,7 +33,7 @@ void FieldScene_SelectActorPair(void)
 
     work = (u8 *)Data_03001ebc;
     Event_Begin();
-    Call1(Scheduler_RemoveCallback, (s32)KuupuappuHeya_UpdateActorStops);
+    Scheduler_RemoveCallback((s32)KuupuappuHeya_UpdateActorStops);
     GameFlag_Clear(0x107);
     GameFlag_Clear(0x250);
     Actor_SetAnimation(24, 1);
@@ -143,7 +120,7 @@ void FieldScene_SelectActorPair(void)
 
         *(u16 *)((s32)record + 100) = shown;
     }
-    Call2(Scheduler_AddOrUpdateCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
     Data_03001ebc->value_1c0 = 0x209;
     Event_End();
 }

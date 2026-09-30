@@ -1,15 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-
-static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(s32 (*f)(s32), s32 a0)
-{
-    f(a0);
-}
+#include "CALL.H"
 
 /* Once the leader stands in cells x 21-23, z 10-11 while not cloaked (and the
  * game-state halfword at +0x24a is not 8), sets flag 0x220 and raises
@@ -24,7 +15,7 @@ void TakaraAshiba_RaiseTriggerOnStand(void)
     if (!Value1(Engine_GameFlagIsSet, 0x220) && gGameState.cloaked == 0
         && *(s16 *)((u8 *)&gGameState + 0x24a) != 8
         && (u32)(x - 21) <= 2 && z >= 10 && z <= 11) {
-        Call1(Engine_GameFlagSet, 0x220);
+        Engine_GameFlagSet(0x220);
         event->raised_trigger = 91;
     }
 }

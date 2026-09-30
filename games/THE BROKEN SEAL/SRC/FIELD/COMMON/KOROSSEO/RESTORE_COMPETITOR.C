@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 gMenuCtrlWork[];
 /* The game state, read here as bytes: the byte at 498 is the retry flag. */
 extern u8 gGameState[];
@@ -16,16 +17,6 @@ void Engine_TaskWait();
 extern s32 Korosseo_CompetitorStartX;
 extern s32 Korosseo_CompetitorStartZ;
 extern s32 Korosseo_CompetitorStartAngle;
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Colosso: put the competitor back at its stored start position and facing
  * after a round, replaying the fall animation unless the retry flag is set.

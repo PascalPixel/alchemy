@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 
 void InitializeEscapeSceneActors(void);
 void FieldScene_RunScene3b2_0200167c(void);
@@ -9,14 +10,6 @@ void InitializeSwayingSceneObject();
 void FieldScene_RunScene3b2SequenceA(void);
 void FieldScene_RunScene3b2_02001494(void);
 void SetMapCellCollision();
-
-/* FAKEMATCH: a call spelled through this wrapper passes its constants
- * straight into the argument registers, the layer first; a direct call
- * schedules the shifts before it. */
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 /* The island's scene start. The screen opens through a window. The escape
    scene places its actors; the fifth scene clears two rocks until flag

@@ -1,4 +1,5 @@
 #include "FUNE.H"
+#include "CALL.H"
 extern u8 MsgFuneMonsters2[];
 
 void FieldScene_RunActorNinePresentationCycles(void)
@@ -12,7 +13,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     record = (u8 *)Engine_ActorGet(0);
     Actor_SetSpriteFlags(record, 0);
     Task_Wait(1);
-    Call1((void (*)())Event_CallWithLastActiveObjectId, (s32)FuneHobashira_EnsembleObjects);
+    ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneHobashira_EnsembleObjects);
     Task_Wait(1);
     OverlayObject_InitWithRandomFields(9);
     OverlayObject_InitWithRandomFields(10);
@@ -77,7 +78,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Object_CommitPosition(rec9);
     Call4(Object_SetPosition, rec9, 0xcc0000, 0x7c0000, 0x1410000);
     Object_CommitPosition(rec9);
-    Call4(Object_SetPosition, rec9, 0x900000, 0, 0xa90000);
+    Object_SetPosition(rec9, 0x900000, 0, 0xa90000);
     Actor_Stop(8);
     Task_Wait(1);
     Actor_FaceDirection(8, 0x8000, 0);
@@ -136,9 +137,9 @@ void FieldScene_RunPrimarySequence(void)
     id0_state = (u8 *)Engine_ActorGet(0);
     Actor_SetSpriteFlags(id0_state, 0);
     Task_Wait(1);
-    Call1((void (*)())Event_CallWithLastActiveObjectId, (s32)FuneHobashira_EnsembleObjects);
+    ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneHobashira_EnsembleObjects);
     Task_Wait(1);
-    Call1((void (*)())Event_CallWithLastActiveObjectId, (s32)FuneHobashira_LandingObjects);
+    ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneHobashira_LandingObjects);
     Task_Wait(1);
     OverlayObject_InitWithRandomFields(9);
     OverlayObject_InitWithRandomFields(10);

@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+#include "CALL.H"
 extern u8 MsgKorosseoLogsKeyClearingStage[];
 extern u8 MsgKorosseoOperatorBridgeWillAlsoCheer[];
 extern u8 MsgKorosseoPlaceNormallyCalledLumberWater[];
@@ -90,10 +91,6 @@ Rec *Owner_GetState(s32);
  * it by one, and specific values select which sub-sequence runs this call.
  * Reaching 0 restarts the countdown at 120 after running its own branch. */
 
-/* FAKEMATCH: Calls through these inline helpers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
@@ -101,46 +98,6 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
 
 static inline void InitializeActorZero(void)
 {
@@ -150,11 +107,6 @@ static inline void InitializeActorZero(void)
 static inline void InitializeSelectedActor(s32 actorId)
 {
     Actor_SetSpeed(actorId, 0x10000, 0x8000);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
 }
 
 /* Selects a later line in the current dialogue. */
@@ -179,7 +131,7 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
         Korosseo_FinishSoloRound();
     } else {
         Event_Begin();
-        rec8 = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 3);
+        rec8 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 3);
         if (rec8 == 0) {
             Event_SetMessage((s32)MsgKorosseoTheyCallBrokenBridge);
             SceneState_ResetCounterAndStartTask();
@@ -190,7 +142,7 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             SceneState_SetMode66AndPassOpeningSequence();
             Event_Wait(60);
             Event_ShowMessage(a0, 0);
-            Value3(Korosseo_FadeInCompetitor, 0, 0x2e0, 200);
+            Korosseo_FadeInCompetitor(0, 0x2e0, 200);
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             SceneState_WaitUntilWordC41cIs22();
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -233,7 +185,7 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         Event_ShowMessage(scene, 0);
         SceneState_ReleaseTableAndResetC6a6();
         Event_Wait(15);
-        Value3(Korosseo_FadeInCompetitor, 0, 984, 200);
+        Korosseo_FadeInCompetitor(0, 984, 200);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 30);
@@ -241,7 +193,7 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
         OverlayObject_PlaceWithScale14000(0, 1000, 192);
         OverlayObject_PlaceWithScale14000(0, 1000, 176);
-        Call3(OverlayObject_PlaceWithScale14000, 0, 1016, 168);
+        OverlayObject_PlaceWithScale14000(0, 1016, 168);
         Event_Wait(15);
         Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
         Camera_MoveTo(71303168, -1, 11010048, 1);

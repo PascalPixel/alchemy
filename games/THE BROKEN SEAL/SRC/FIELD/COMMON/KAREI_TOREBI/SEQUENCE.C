@@ -1,4 +1,5 @@
 #include "KAREI.H"
+#include "CALL.H"
 
 extern u8 KareiTorebi_ActorSixteenScript[];
 
@@ -115,19 +116,17 @@ void FieldScene_RunScene3aeSequenceA(void)
     Actor_SetAnimation(ACTOR_GERALD, 2);
     /* If a record is returned, pass its s16 fields at +10 and +18 back in as
      * arguments. */
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    /* Same routine as above, called directly instead of through the Value
-     * wrapper. */
     ((void (*)())Engine_EventWait)(20);
     /* Clear the flag byte at +91 of record 8. */
     *(u8 *)(((s32)Engine_ActorGet(8)) + 91) = 0;
-    Value2(Engine_ActorEnableActionCallback, 8, 2);
-    record = Value1(Engine_ActorGet, 8);
+    Engine_ActorEnableActionCallback(8, 2);
+    record = Engine_ActorGet(8);
     /* Store the integer part of the 16.16 fixed-point fields at +8 and +16
      * into the halfwords at +100 and +102. */
     {
@@ -181,7 +180,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Event_Wait(10);
     Actor_SetAnimationAndWait(13, 4);
     Event_Wait(20);
-    Call2((void (*)())Engine_EventShowMessage, 13, 0);
+    ((void (*)())Engine_EventShowMessage)(13, 0);
     Event_Wait(10);
     Actor_ShowEmote(10, 0x103, 55);
     Actor_SetSpeed(10, 0x20000, 0x10000);
@@ -201,7 +200,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_SetAttachedEffect(13, 0x102);
     Actor_StartRepeatedMotion(13, 2);
     Audio_PlayCue(155);
-    Call1((void (*)())Engine_EventWait, 10);
+    ((void (*)())Engine_EventWait)(10);
     Audio_PlayCue(155);
     Event_Wait(10);
     Audio_PlayCue(155);

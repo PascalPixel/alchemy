@@ -1,4 +1,5 @@
 #include "SANCTUM.H"
+#include "CALL.H"
 extern u8 MsgSoruWayLeadsOutSanctum[];
 extern u8 MsgSoruThank[];
 extern u8 MsgSoruFound[];
@@ -13,12 +14,12 @@ void FieldScene_RunScene37aSequenceF(void)
 {
     u8 *rec;
 
-    if (Value1(Engine_GameFlagIsSet, 0x814) != 0) {
+    if (Engine_GameFlagIsSet(0x814) != 0) {
         FieldScene_RunScene37aSequenceA();
     }
-    if (Value1(Engine_GameFlagIsSet, 0x809) == 0) {
+    if (Engine_GameFlagIsSet(0x809) == 0) {
         Engine_EventBegin();
-        Call1(Engine_EventSetMessage, (s32)MsgSoruFound);
+        Engine_EventSetMessage((s32)MsgSoruFound);
         Engine_AudioPlayCue(17);
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Call3(Engine_ActorWalkToAndWait, 0, 0x120, 232);
@@ -26,7 +27,7 @@ void FieldScene_RunScene37aSequenceF(void)
         Engine_EventWait(20);
         Engine_AudioPlayCue(21);
         Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
-        rec = (u8 *)Value1(Engine_ActorGet, 0);
+        rec = (u8 *)Engine_ActorGet(0);
         if (rec != 0) {
             Engine_ActorSetPosition(16, FIELD(rec, s32 *, 8), FIELD(rec, s32 *, 16));
         }
@@ -36,11 +37,11 @@ void FieldScene_RunScene37aSequenceF(void)
         Call3(Engine_ActorShowEmote, 16, 0x100, 0);
         Engine_ActorJump(16, 4, 60);
         SetSolShindenActorStep(16, 20);
-        rec = (u8 *)Value1(Engine_ActorGet, 0);
+        rec = (u8 *)Engine_ActorGet(0);
         if (rec != 0) {
             Engine_ActorSetPosition(1, FIELD(rec, s32 *, 8), FIELD(rec, s32 *, 16));
         }
-        rec = (u8 *)Value1(Engine_ActorGet, 0);
+        rec = (u8 *)Engine_ActorGet(0);
         if (rec != 0) {
             Engine_ActorSetPosition(5, FIELD(rec, s32 *, 8), FIELD(rec, s32 *, 16));
         }
@@ -51,10 +52,10 @@ void FieldScene_RunScene37aSequenceF(void)
         Engine_ActorSetAnimation(1, 1);
         Call3(Engine_ActorFaceDirection, 1, 0xd000, 0);
         Call3(Engine_ActorFaceDirection, 5, 0xb000, 30);
-        Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
+        Engine_CameraSetSpeed(0x9999, 0x1333);
         Camera_MoveTo(0x1200000, -1, 0xd50000, 1);
         Call3(Engine_ActorSetSpeed, 16, 0x6666, 0x3333);
-        Call3(Engine_ActorWalkToAndWait, 16, 0x120, 176);
+        Engine_ActorWalkToAndWait(16, 0x120, 176);
         Engine_EventWait(40);
         Engine_ActorRunRepeatedMotion(16, 2);
         SetSolShindenActorStep(16, 6);
@@ -75,7 +76,7 @@ void FieldScene_RunScene37aSequenceF(void)
         Call2(Engine_ActorSetAttachedEffect, 5, 0x102);
         Engine_EventWait(40);
         Call3(Engine_ActorFaceDirection, 5, 0xa000, 10);
-        Call2(SetSolShindenActorStep, 0x2005, 10);
+        SetSolShindenActorStep(0x2005, 10);
         Engine_ActorRunRepeatedMotion(16, 2);
         Engine_EventWait(10);
         Call3(Engine_ActorFaceDirection, 16, 0xa000, 20);
@@ -114,11 +115,11 @@ void FieldScene_RunScene37aSequenceF(void)
         Call3(Engine_ActorFaceDirection, 16, 0x4000, 10);
         Engine_ActorRunRepeatedMotion(16, 3);
         Engine_EventWait(6);
-        Value2(Engine_EventOpenMessage, 16, 0);
-        if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+        Engine_EventOpenMessage(16, 0);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             Engine_EventSetMessage((s32)MsgSoruThank);
         } else {
-            Call1(Engine_EventSetMessage, (s32)MsgSoruGoBackVillage);
+            Engine_EventSetMessage((s32)MsgSoruGoBackVillage);
             Call3(Engine_ActorShowEmote, 16, 0x107, 20);
         }
         Engine_ActorJump(16, 4, 20);
@@ -126,10 +127,10 @@ void FieldScene_RunScene37aSequenceF(void)
         Call3(Engine_ActorFaceDirection, 1, 0xe000, 0);
         Call3(Engine_ActorFaceDirection, 5, 0xa000, 0);
         SetSolShindenActorStep(16, 6);
-        Call1(Engine_EventSetMessage, (s32)MsgSoruPutWayDont);
+        Engine_EventSetMessage((s32)MsgSoruPutWayDont);
         Engine_EventWait(30);
         Engine_ActorSetAnimationAndWait(5, 4);
-        Call2(SetSolShindenActorStep, 0x2005, 6);
+        SetSolShindenActorStep(0x2005, 6);
         Engine_ActorSetAnimationAndWait(1, 3);
         SetSolShindenActorStep(1, 20);
         Engine_ActorJump(16, 6, 20);
@@ -145,28 +146,28 @@ void FieldScene_RunScene37aSequenceF(void)
         Call3(Engine_ActorSetSpeed, 5, 0x10000, 0x8000);
         Call3(Engine_ActorSetSpeed, 16, 0x20000, 0x10000);
         Engine_ActorSetAnimation(16, 2);
-        rec = (u8 *)Value1(Engine_ActorGet, 0);
+        rec = (u8 *)Engine_ActorGet(0);
         if (rec != 0) {
             Actor_SetDestination(ACTOR_SUKURETA, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Engine_ActorWaitForMove(16);
         Engine_ActorSetPosition(16, 0, 0);
         Engine_ActorSetAnimation(1, 2);
-        rec = (u8 *)Value1(Engine_ActorGet, 0);
+        rec = (u8 *)Engine_ActorGet(0);
         if (rec != 0) {
             Actor_SetDestination(ACTOR_GERALD, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Engine_ActorWaitForMove(1);
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetAnimation(5, 2);
-        rec = (u8 *)Value1(Engine_ActorGet, 0);
+        rec = (u8 *)Engine_ActorGet(0);
         if (rec != 0) {
             Actor_SetDestination(ACTOR_JASMINE, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Engine_ActorWaitForMove(5);
         Engine_ActorSetPosition(5, 0, 0);
-        Call1(Engine_GameFlagSet, 0x144);
-        Call1(Engine_GameFlagSet, 0x809);
+        Engine_GameFlagSet(0x144);
+        Engine_GameFlagSet(0x809);
         Engine_EventEnd();
     }
 }
@@ -181,7 +182,7 @@ void Scene_EnterInnerSanctum(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e8, 176);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -195,7 +196,7 @@ void Scene_EnterInnerSanctum(void)
     Camera_MoveTo(0x23f0000, -1, 0xb50000, 1);
     Camera_WaitForMove();
     Event_Wait(120);
-    Call2(SetSolShindenActorStep, 0x1010, 80);
+    SetSolShindenActorStep(0x1010, 80);
     Camera_MoveTo(0x1ec0000, -1, 0xa80000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
@@ -226,7 +227,7 @@ void Scene_EnterInnerSanctum(void)
     } else {
         Event_SetMessage((request + 2));
     }
-    Call2(SetSolShindenActorStep, 0x4010, 4);
+    SetSolShindenActorStep(0x4010, 4);
     Camera_FollowActor(ACTOR_SUKURETA, 1);
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1e6, 131);
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 120);

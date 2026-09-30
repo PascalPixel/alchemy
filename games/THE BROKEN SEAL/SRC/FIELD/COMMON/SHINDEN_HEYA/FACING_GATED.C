@@ -18,43 +18,11 @@ u8 *Object_GetById();
 void ObjectMotion_WaitForAnimationChange();
 void AudioCommand_WaitForCompletion();
 
-/* The sibling actor-update script passes repeated large constants through
- * these inline call forms, keeping each call's argument evaluation local. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3_scene_primary_script(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
-}
-
 static __inline__ void bump_step(void)
 {
     u8 *work = Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + 1);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 #include "TYPES.H"
@@ -127,39 +95,7 @@ void ShindenHeya_SpawnActorSpark();
  * repository are provisional.
  */
 
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers, while a direct call precomputes a costly
- * constant into a local that later uses in the block share. A call that
- * returns a value sets r0 last of its arguments; the Value wrappers spell
- * those sites, and the result is sometimes unused.
- */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
-static __inline__ void Call2_scene_primary_script(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    return f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    return f(a0, a1, a2, a3);
-}
 
 /*
  * Runs actor nine's flag-branched dialogue. The 112-byte owner includes its
@@ -196,10 +132,10 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  */
 
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgShindenAcceptRobinCantMean[];
 extern u8 MsgShindenRobinWillAcceptResponsibilityFor[];
 extern u8 MsgShindenWeHadIdeaTrueSanctum[];
-
 
 void FieldScene_RunScriptedSceneSequence(void)
 {
@@ -732,16 +668,16 @@ void FieldScene_RunActorUpdateSequence(void)
     u32 i;
     u8 *record;
 
-    Call2_scene_primary_script(Engine_ActorSetAttachedEffect, 1, 0x102);
+    Call2(Engine_ActorSetAttachedEffect, 1, 0x102);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 11, 0xcccc, 0x6666);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 12, 0xcccc, 0x6666);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 9, 0xcccc, 0x6666);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 10, 0xcccc, 0x6666);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 11, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 12, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 9, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 10, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
     Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
     Camera_WaitForMove();
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
@@ -771,7 +707,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Actor_FaceActor(12, ACTOR_GERALD, 0);
     Actor_StartRepeatedMotion(12, 2);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x103, 0);
+    Engine_ActorShowEmote(12, 0x103, 0);
     Event_Wait(60);
     Event_ShowMessage(12, 0);
     Event_Wait(20);
@@ -786,23 +722,23 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 8, 0xd000, 0);
+    Engine_ActorFaceDirection(8, 0xd000, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(30);
     Event_ShowMessage(8, 0);
     Event_Wait(80);
     Audio_PlayCue(17);
-    Call2_scene_primary_script(Engine_ColorBufferApplyTarget, 0x10005, 1);
+    Engine_ColorBufferApplyTarget(0x10005, 1);
     ColorBuffer_Interpolate(60);
     Event_Wait(40);
-    Call2_scene_primary_script(Engine_CameraSetSpeed, 0x6666, 0xccc);
+    Call2(Engine_CameraSetSpeed, 0x6666, 0xccc);
     Camera_MoveTo(0xc00000, -1, 0x680000, 1);
     Event_Wait(120);
     Audio_PlayCue(21);
     Audio_PlayCue(0x134);
-    Call3_scene_primary_script(Engine_ActorSetPosition, 13, 0xc80000, 0x80000);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 13, 0x6666, 0x3333);
+    Call3(Engine_ActorSetPosition, 13, 0xc80000, 0x80000);
+    Call3(Engine_ActorSetSpeed, 13, 0x6666, 0x3333);
     Actor_MoveToAndWait(13, 200, 72);
     Audio_PlayCue(0x120);
     Event_Wait(30);
@@ -827,7 +763,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(40);
     Event_ShowMessage(13, 0);
     Event_Wait(60);
-    Call2_scene_primary_script(Engine_ActorSetChildValue, 13, 0x100);
+    Engine_ActorSetChildValue(13, 0x100);
     Audio_PlayCue(17);
     Audio_PlayCue(0x134);
     /*
@@ -848,7 +784,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(40);
     Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
     Camera_WaitForMove();
-    Call2_scene_primary_script(Engine_ColorBufferApplyTarget, 0x10000, 0);
+    Engine_ColorBufferApplyTarget(0x10000, 0);
     ColorBuffer_Interpolate(60);
     Event_Wait(120);
     SceneState_ResetObject14Word108();
@@ -891,14 +827,14 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(30);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 11, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 1, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 11, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 12, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 9, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 10, 0x102, 0);
     Event_Wait(30);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 8, 0x102, 0);
     Event_Wait(30);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
@@ -911,7 +847,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(180);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x105, 0);
+    Call3(Engine_ActorShowEmote, 12, 0x105, 0);
     Event_Wait(60);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Actor_FaceEachOther(9, 10, 0);
@@ -925,7 +861,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(30);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x101, 0);
+    Call3(Engine_ActorShowEmote, 8, 0x101, 0);
     Event_Wait(60);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
@@ -936,16 +872,16 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(30);
     Event_ShowMessage(11, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x101, 0);
+    Call3(Engine_ActorShowEmote, 8, 0x101, 0);
     Event_Wait(80);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 12, 0x102, 0);
     Event_Wait(60);
     Event_ShowMessage(12, 0);
     Event_Wait(30);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x105, 0);
+    Call3(Engine_ActorShowEmote, 8, 0x105, 0);
     Event_Wait(60);
     Actor_RunRepeatedMotion(8, 1);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x106, 0);
+    Engine_ActorShowEmote(8, 0x106, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
@@ -980,12 +916,12 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x105, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x105, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 11, 0x105, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x100, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x105, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x105, 0);
+    Call3(Engine_ActorShowEmote, 0, 0x105, 0);
+    Call3(Engine_ActorShowEmote, 1, 0x105, 0);
+    Call3(Engine_ActorShowEmote, 11, 0x105, 0);
+    Call3(Engine_ActorShowEmote, 12, 0x100, 0);
+    Call3(Engine_ActorShowEmote, 9, 0x105, 0);
+    Call3(Engine_ActorShowEmote, 10, 0x105, 0);
     Event_Wait(60);
     Actor_RunRepeatedMotion(12, 1);
     Event_ShowMessage(12, 0);
@@ -996,12 +932,12 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x100, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x100, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 11, 0x100, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x100, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x100, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x100, 0);
+    Call3(Engine_ActorShowEmote, 0, 0x100, 0);
+    Call3(Engine_ActorShowEmote, 1, 0x100, 0);
+    Call3(Engine_ActorShowEmote, 11, 0x100, 0);
+    Call3(Engine_ActorShowEmote, 12, 0x100, 0);
+    Call3(Engine_ActorShowEmote, 9, 0x100, 0);
+    Call3(Engine_ActorShowEmote, 10, 0x100, 0);
     Event_Wait(60);
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
@@ -1020,22 +956,22 @@ void FieldScene_RunActorUpdateSequence(void)
     Actor_FaceActor(ACTOR_GERALD, 8, 0);
     Actor_FaceActor(12, 8, 0);
     Actor_FaceDirection(11, 0, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 9, 0x8000, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 10, 0x8000, 0);
-    Call3_scene_primary_script(Engine_ActorWalkTo, 8, 200, 0x110);
+    Call3(Engine_ActorFaceDirection, 9, 0x8000, 0);
+    Call3(Engine_ActorFaceDirection, 10, 0x8000, 0);
+    Call3(Engine_ActorWalkTo, 8, 200, 0x110);
     Event_Wait(40);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 11, 0x3000, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 9, 0x5000, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 10, 0x5000, 0);
+    Call3(Engine_ActorFaceDirection, 11, 0x3000, 0);
+    Call3(Engine_ActorFaceDirection, 9, 0x5000, 0);
+    Call3(Engine_ActorFaceDirection, 10, 0x5000, 0);
     Actor_WaitForMove(8);
     Actor_SetPosition(8, 0, 0);
     Event_Wait(60);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 11, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 1, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 11, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 12, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 9, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 10, 0x102, 0);
     Event_Wait(60);
     Event_Wait(120);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
@@ -1043,24 +979,24 @@ void FieldScene_RunActorUpdateSequence(void)
     Actor_FaceActor(11, 9, 0);
     Actor_FaceActor(12, 9, 0);
     Event_Wait(120);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x105, 0);
+    Call3(Engine_ActorShowEmote, 9, 0x105, 0);
     Event_Wait(60);
     Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 9, 0x5000, 0);
+    Call3(Engine_ActorFaceDirection, 9, 0x5000, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 9, 0x102, 0);
     Event_Wait(80);
     Actor_FaceActor(9, 10, 0);
     Actor_RunRepeatedMotion(9, 1);
     Event_Wait(20);
     Event_ShowMessage(9, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 10, 0x5000, 0);
+    Call3(Engine_ActorFaceDirection, 10, 0x5000, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x101, 0);
+    Engine_ActorShowEmote(10, 0x101, 0);
     Event_Wait(60);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
@@ -1068,18 +1004,18 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(30);
     Actor_RunRepeatedMotion(10, 2);
     Event_Wait(30);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 10, 0x5000, 0);
+    Engine_ActorFaceDirection(10, 0x5000, 0);
     Event_Wait(20);
     Event_ShowMessage(10, 0);
     Event_Wait(20);
     Actor_SetAnimation(9, 3);
     Actor_SetAnimationAndWait(10, 3);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorWalkTo, 9, 200, 0x110);
-    Call3_scene_primary_script(Engine_ActorWalkToAndWait, 10, 200, 0x110);
+    Call3(Engine_ActorWalkTo, 9, 200, 0x110);
+    Call3(Engine_ActorWalkToAndWait, 10, 200, 0x110);
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(10, 0, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x105, 0);
+    Engine_ActorShowEmote(12, 0x105, 0);
     Event_Wait(60);
     Actor_WalkToAndWait(12, 200, 136);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
@@ -1105,8 +1041,8 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(11, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 1, 0x102, 0);
     Event_Wait(60);
     Actor_SetAnimationAndWait(12, 4);
     Event_Wait(20);
@@ -1119,17 +1055,17 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(11, 0);
     Event_Wait(20);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 1, 0x102, 0);
     Event_Wait(60);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x102, 0);
+    Engine_ActorShowEmote(12, 0x102, 0);
     Event_Wait(60);
     Event_ShowMessage(12, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x100, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x100, 0);
+    Call3(Engine_ActorShowEmote, 0, 0x100, 0);
+    Engine_ActorShowEmote(1, 0x100, 0);
     Event_Wait(60);
     Actor_SetAnimationAndWait(11, 3);
     Event_Wait(20);

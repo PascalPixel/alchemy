@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 s32 Engine_ObjectCreate();
 void ObjectDispatch_Initialize();
 s32 Runtime_AllocateHeapBlock();
@@ -11,26 +10,6 @@ void Ui_PrepareTransferForItem();
 /* The motion scripts that pop the icon in and delete it a second later. */
 extern const s32 ShindenHeya_ItemIconGrowScript[];
 extern const s32 ShindenHeya_ItemIconEndScript[];
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
 
 /* NONMATCHING: 172 of 172 bytes, 12 halfword edits (2026-09-24). Same shape
  * as 380:02004260. Remaining: the -33 mask is folded to 0xdf (a word mask
@@ -49,10 +28,10 @@ void ShindenHeya_RaiseItemIcon(s32 item)
     u8 *flag;
     u32 i;
 
-    obj = Value1(Engine_ObjectCreate, 22);
+    obj = Engine_ObjectCreate(22);
     zero = 0;
     if (obj != 0) {
-        Call2(ObjectDispatch_Initialize, (s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
+        ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
         spr = *(u8 **)(obj + 80);
         spr[38] = zero;
         spr[39] = zero;
@@ -60,7 +39,7 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         spr[9] &= 15;
         *(s32 *)(obj + 40) = 0x20000;
         *(s32 *)(obj + 72) = 0x4000;
-        buf = Value2(Runtime_AllocateHeapBlock, 17, 0x608);
+        buf = Runtime_AllocateHeapBlock(17, 0x608);
         Ui_PrepareTransferForItem(item);
         VramBlock_LoadCached(spr[28], 128, buf + 0x400);
         Runtime_ReleaseHeapBlock(17);

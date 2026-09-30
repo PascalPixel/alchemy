@@ -5,11 +5,6 @@
 
 extern u8 *gActorEffectWork;
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* Babi's tunnel: publish the player actor at +24 of the event work once it
  * has passed the row limit of the current area and story step. */
 void BabiChika_UpdateTrackedActor(void)

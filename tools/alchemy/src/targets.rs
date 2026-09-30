@@ -84,13 +84,17 @@ impl DecompTarget {
         }
         Ok(())
     }
-    /// The linker script that composes this edition: the game's `MAIN.LD`
-    /// for English, otherwise the edition's scaffold `recon/<game>/<lang>/MAIN.LD`,
-    /// as pret's early versions linked through `baserom.gba`.
+    /// The game's linker script, `MAIN.LD`, which composes every edition.
     pub fn script(&self) -> std::path::PathBuf {
+        std::path::Path::new(self.game_dir()).join("MAIN.LD")
+    }
+    /// The bodies another edition gives the game's output sections, beside
+    /// its scaffold in `recon/<game>/<lang>`, as pret's early versions linked
+    /// through `baserom.gba`; English has none.
+    pub fn edition_script(&self) -> Option<std::path::PathBuf> {
         match self.id.as_str().split_once('-') {
-            Some((_, "en")) | None => std::path::Path::new(self.game_dir()).join("MAIN.LD"),
-            Some((game, lang)) => ["recon", game, lang, "MAIN.LD"].iter().collect(),
+            Some((_, "en")) | None => None,
+            Some((game, lang)) => Some(["recon", game, lang, "MAIN.LD"].iter().collect()),
         }
     }
     /// The game's physical root, `games/THE BROKEN SEAL` or `games/THE LOST AGE`.
@@ -191,6 +195,21 @@ fn self_test() -> Result<String, String> {
 mod tests {
     use super::*;
 
+    #[test]
+    fn every_edition_links_through_its_games_script() {
+        for id in TARGET_IDS {
+            let target = target_for(id);
+            assert_eq!(
+                target.script(),
+                std::path::Path::new(target.game_dir()).join("MAIN.LD")
+            );
+            let (game, lang) = id.as_str().split_once('-').unwrap();
+            assert_eq!(
+                target.edition_script(),
+                (lang != "en").then(|| format!("recon/{game}/{lang}/MAIN.LD").into())
+            );
+        }
+    }
     #[test]
     fn games_name_their_roots_and_entry_veneers() {
         let tla = target_for(DecompTargetId::TlaEn);

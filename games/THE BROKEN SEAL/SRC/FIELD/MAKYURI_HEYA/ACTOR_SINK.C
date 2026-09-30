@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 u8 *Object_GetById(s32 actor);
 void Engine_ActorSetSpriteFlags(u8 *actor, s32 flags);
@@ -19,13 +20,6 @@ struct EffectParams {
     s32 script;
     u8 pad20[8];
 };
-
-/* Passing the constant through a wrapper loads it straight into the argument
- * register. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
 
 /* The actor sinks away in a burst of sparks over 48 frames. */
 void MakyuriHeya_SinkActorWithSparks(s32 actor)

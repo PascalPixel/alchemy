@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 s32 SceneEventRuntime_SelectInitialSceneByFlags(void);
 void SoruSekizo_RunSealOpenedSequence(void);
@@ -33,26 +34,6 @@ struct SealScene {
 /* The seal scene the guarded steps fill in; the first of the overlay's own work. */
 struct SealScene gSealScene;
 
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 #define COPY_CELLS(c) Call6(Engine_MapCopyCellsTo, (c).src_x, (c).src_y, (c).dest_x, (c).dest_y, (c).width, (c).height)
 
 /* Sol Sanctum seal: unless flag 0x80f is set, pan to the seal and pulse its cells twenty times, open it, then either walk the party onto the revealed stairs or, once the three statue flags are set, run the follow-up scene. */
@@ -64,7 +45,7 @@ void SoruSekizo_OpenSeal(void)
 
     result = 0;
     Engine_EventBegin();
-    if (!Value1(Engine_GameFlagIsSet, 0x80f)) {
+    if (!Engine_GameFlagIsSet(0x80f)) {
         Engine_CameraSetSpeed(0x20000, 0x4000);
         Engine_CameraMoveTo(0x2400000, -1, 0xac0000, 1);
         Engine_CameraWaitForMove();
@@ -101,7 +82,7 @@ void SoruSekizo_OpenSeal(void)
         } else if (result == 0 && Engine_GameFlagIsSet(0x818)) {
             if (Engine_GameFlagIsSet(0x80b) && Engine_GameFlagIsSet(0x80d) && Engine_GameFlagIsSet(0x80e)) {
                 if (!Value1(Engine_GameFlagIsSet, 0x80f)) {
-                    Call1(Engine_GameFlagSet, 0x80f);
+                    Engine_GameFlagSet(0x80f);
                     SoruSekizo_RunSealOpenedSequence();
                 }
             } else if (Engine_GameFlagIsSet(0x812)) {

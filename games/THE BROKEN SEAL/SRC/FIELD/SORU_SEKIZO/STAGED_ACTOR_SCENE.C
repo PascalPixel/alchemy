@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 extern u8 MsgSoruHmphWellTold[];
 extern u8 MsgSoruHonestlyDoubtUnderstand[];
 extern u8 MsgSoruTryFindSolution[];
@@ -10,46 +11,10 @@ extern u8 MsgSoruWait[];
  * again at the tail after the intervening calls. Runtime veneer bindings
  * belong to this module's translation-unit declaration. */
 
-
 void Event_SayThenWait();
 void ObjectMotion_ResetAndSetPositionInMode2();
 s32 Inventory_PromptAndSetObjectMode();
 s32 UiText_OpenMessageAtObject();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 void FieldScene_RunStagedActorScene(void)
 {
@@ -63,9 +28,9 @@ void FieldScene_RunStagedActorScene(void)
     Event_OpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
-    Call3(Engine_ActorSetPosition, 8, 0x2400000, 0x1280000);
+    Engine_ActorSetPosition(8, 0x2400000, 0x1280000);
     Engine_EventWait(1);
-    Call1(Engine_EventSetMessage, (s32)MsgSoruWait);
+    Engine_EventSetMessage((s32)MsgSoruWait);
     Event_SayThenWait(8, 6);
     Camera_SetSpeed(0xcccc, 0x1999);
     Call4(Engine_CameraMoveTo, 0x23e0000, -1, 0xb40000, 1);
@@ -77,9 +42,9 @@ void FieldScene_RunStagedActorScene(void)
     Event_SayThenWait(5, 6);
     Actor_RunRepeatedMotion(8, 2);
     Event_Wait(6);
-    Call3(Engine_ActorFaceDirection, 8, 0x9000, 0);
+    Engine_ActorFaceDirection(8, 0x9000, 0);
     Engine_EventWait(10);
-    Call2(Engine_CameraSetSpeed, 0x59999, 0xb333);
+    Engine_CameraSetSpeed(0x59999, 0xb333);
     Camera_MoveTo(0x11f0000, -1, 0xb00000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(60);
@@ -121,7 +86,7 @@ void FieldScene_RunStagedActorScene(void)
     Call3(Engine_ActorFaceDirection, 8, 0x8000, 0);
     Engine_EventWait(10);
     Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
-    Call3(ObjectMotion_ResetAndSetPositionInMode2, 8, 0x1b0, 200);
+    ObjectMotion_ResetAndSetPositionInMode2(8, 0x1b0, 200);
     Engine_EventWait(20);
     Camera_SetSpeed(0x26666, 0x4ccc);
     Call4(Engine_CameraMoveTo, 0x1200000, -1, 0xab0000, 1);
@@ -138,23 +103,23 @@ void FieldScene_RunStagedActorScene(void)
     Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
     Call3(Engine_ActorFaceDirection, 5, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
-    Call2(Engine_CameraSetSpeed, 0xcccc, 0x1999);
-    Call4(Engine_CameraMoveTo, 0x23e0000, -1, 0xab0000, 1);
+    Engine_CameraSetSpeed(0xcccc, 0x1999);
+    Engine_CameraMoveTo(0x23e0000, -1, 0xab0000, 1);
     Engine_ActorJump(8, 6, 0);
     Call3(Engine_ActorSetSpeed, 8, 0x30000, 0x20000);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x240, 184);
+    Engine_ActorWalkToAndWait(8, 0x240, 184);
     Engine_EventWait(80);
     Event_SayThenWait(8, 6);
     Engine_ActorSetAnimationAndWait(8, 4);
     Event_SayThenWait(8, 20);
-    Call3(Engine_ActorShowEmote, 5, 0x102, 0);
+    Engine_ActorShowEmote(5, 0x102, 0);
     Engine_EventWait(40);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_SayThenWait(5, 6);
     Actor_SetAnimationAndWait(8, 3);
-    Call3(Engine_ActorFaceDirection, 8, 0x8000, 0);
+    Engine_ActorFaceDirection(8, 0x8000, 0);
     Engine_EventWait(40);
-    Call3(Engine_ActorFaceDirection, 8, 0xc000, 0);
+    Engine_ActorFaceDirection(8, 0xc000, 0);
     Event_Wait(30);
     Event_SayThenWait(8, 6);
     Call3(Engine_ActorShowEmote, 0, 0x101, 0);
@@ -167,38 +132,38 @@ void FieldScene_RunStagedActorScene(void)
     Engine_EventWait(40);
     Actor_FaceEachOther(ACTOR_JASMINE, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(40);
-    Value2(UiText_OpenMessageAtObject, 8, 0);
+    UiText_OpenMessageAtObject(8, 0);
     Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
     Call3(Engine_ActorFaceDirection, 5, 0x4000, 0);
     Call3(Engine_ActorFaceDirection, 1, 0x4000, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, 0, 0) == 0) {
-        Call1(Engine_EventSetMessage, (s32)MsgSoruHonestlyDoubtUnderstand);
+    if (Inventory_PromptAndSetObjectMode(0, 0) == 0) {
+        Engine_EventSetMessage((s32)MsgSoruHonestlyDoubtUnderstand);
     } else {
-        Call1(Engine_EventSetMessage, (s32)MsgSoruHmphWellTold);
+        Engine_EventSetMessage((s32)MsgSoruHmphWellTold);
     }
     Event_SayThenWait(8, 6);
-    Call1(Engine_EventSetMessage, (s32)MsgSoruTryFindSolution);
+    Engine_EventSetMessage((s32)MsgSoruTryFindSolution);
     Engine_ActorRunRepeatedMotion(8, 2);
     Event_SayThenWait(8, 6);
-    Call3(Engine_ActorShowEmote, 1, 0x102, 0);
+    Engine_ActorShowEmote(1, 0x102, 0);
     Engine_EventWait(60);
     Event_SayThenWait(1, 6);
     Engine_ActorSetAnimationAndWait(8, 3);
     Event_SayThenWait(8, 6);
-    Call3(Engine_ActorFaceDirection, 8, 0x4000, 0);
+    Engine_ActorFaceDirection(8, 0x4000, 0);
     Engine_EventWait(20);
     Engine_ActorJump(8, 6, 0);
     Call3(Engine_ActorWalkToAndWait, 8, 0x240, 216);
     Engine_EventWait(40);
-    Call2(Engine_CameraSetSpeed, 0xcccc, 0x1999);
+    Engine_CameraSetSpeed(0xcccc, 0x1999);
     Call4(Engine_CameraMoveTo, 0x23e0000, -1, 0xbf0000, 1);
     Call3(Engine_ActorSetSpeed, 8, 0x10000, 0x8000);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x240, 232);
+    Engine_ActorWalkToAndWait(8, 0x240, 232);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(40);
     Event_SayThenWait(8, 6);
-    Call3(Engine_ActorFaceDirection, 8, 0xc000, 0);
+    Engine_ActorFaceDirection(8, 0xc000, 0);
     Engine_EventWait(30);
     Event_SayThenWait(8, 6);
     Engine_ActorSetAnimationAndWait(8, 3);
@@ -206,7 +171,7 @@ void FieldScene_RunStagedActorScene(void)
     Call3(Engine_ActorWalkToAndWait, 8, 0x23e, 0x143);
     Engine_ActorSetPosition(8, 0, 0);
     Camera_SetSpeed(0x39999, 0x7333);
-    Call4(Engine_CameraMoveTo, 0x2400000, -1, 0x880000, 1);
+    Engine_CameraMoveTo(0x2400000, -1, 0x880000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
     Engine_ActorFaceDirection(5, 0, 0);
@@ -217,14 +182,14 @@ void FieldScene_RunStagedActorScene(void)
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 5, 0x10000, 0x8000);
     Actor_SetAnimation(ACTOR_JASMINE, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Engine_ActorSetDestination(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(5);
     Engine_ActorSetPosition(5, 0, 0);
     Engine_ActorSetAnimation(1, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

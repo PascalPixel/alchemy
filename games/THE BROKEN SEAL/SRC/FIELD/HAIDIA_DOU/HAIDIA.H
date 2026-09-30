@@ -103,65 +103,6 @@ void SceneActor_PlaceAtTile(s32 width, s32 top, s32 bottom);
 /* Mirror the preceding transition on the negative grid axis, latch its event
  * flag, wait for the map update, and close on the paired sound cue. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call0(void (*f)())
-{
-
-    f();
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value6(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-
-    return f(a0, a1, a2, a3, a4, a5);
-}
-
 
 #endif

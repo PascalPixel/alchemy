@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "HEYA.H"
+#include "CALL.H"
 
 s32 SceneActor_CheckBucketOffsetPoint();
 void FieldScene_CallPairWith10();
@@ -33,13 +34,13 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
         record[35] = (u8)(value | 1);
     }
     v6 = (((*(u16 *)(rec4 + 6) + 0x4000) & 0xf000) >> 12);
-    if (Value1(SceneActor_CheckBucketOffsetPoint, (((*(u16 *)(rec4 + 6) + 0x4000) & 0xf000) >> 12)) != 0) {
+    if (SceneActor_CheckBucketOffsetPoint((((*(u16 *)(rec4 + 6) + 0x4000) & 0xf000) >> 12)) != 0) {
         none = 0;
         v8 = none;
     }
     if (v8 != 0) {
         v6 = (((*(u16 *)(rec4 + 6) + -0x4000) & 0xf000) >> 12);
-        if (Value1(SceneActor_CheckBucketOffsetPoint, (((*(u16 *)(rec4 + 6) + -0x4000) & 0xf000) >> 12)) != 0) {
+        if (SceneActor_CheckBucketOffsetPoint((((*(u16 *)(rec4 + 6) + -0x4000) & 0xf000) >> 12)) != 0) {
             none = 0;
             v8 = none;
         }
@@ -47,7 +48,7 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
             v6 = (((*(u16 *)(rec4 + 6) + 0x8000) & 0xf000) >> 12);
         }
     }
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if ((s32)record != 0) {
         Engine_ActorSetPosition(a0, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
     }

@@ -19,45 +19,12 @@ s32 Object_SetActionCallbackAndRefreshById();
 
 /* Signed halfword table in RAM; index 225 selects the scene. */
 
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers, while a direct call precomputes a costly
- * constant into a local that later uses in the block share. A call that
- * returns a value sets r0 last of its arguments.
- */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    void Map_ClearLayerEntryFlag();
-
-    f(a0, a1, a2);
-}
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
     void Map_ClearLayerEntryFlag();
 
     gEventWork->message += amount;
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
 }
 
 static __inline__ void ConfigureSecond(s32 channel, s32 value, s32 zero)
@@ -93,11 +60,6 @@ static __inline__ void ConfigureUniformThird(s32 channel, s32 value, s32 zero)
 static __inline__ void ConfigureUniformFourth(s32 channel, s32 value, s32 zero)
 {
     Actor_FaceDirection(channel, value, zero);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 static __inline__ void Scene_AdvanceStep(s32 amount)

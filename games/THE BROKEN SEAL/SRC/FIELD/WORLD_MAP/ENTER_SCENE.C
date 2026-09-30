@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 
 void Scene_RunScene371SequenceA(s32 direction);
 void Event_SetPairWork1c0(s32 a0, s32 a1);
@@ -27,29 +28,6 @@ void MapActor_UpdateContact(void);
 void StoryScene_UpdateSelectedActorProgress(void);
 
 extern s32 gWorldMapTriggerActor;
-
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants
-   straight into the argument registers, and a value-returning call sets r0
-   last of its arguments; a direct call builds the constants first. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 /* World map entry: record the arrival and start the map's camera and tasks, then run the scene the entrance or the story flags call for. */
 s32 WorldMap_EnterScene(void)
@@ -88,7 +66,7 @@ s32 WorldMap_EnterScene(void)
         switch (*entrance) {
         case 1:
             if (Value1(Engine_GameFlagIsSet, 0x815) == 0) {
-                Call1(Engine_GameFlagSet, 0x815);
+                Engine_GameFlagSet(0x815);
                 Engine_GameFlagSet(0x85c);
             }
             break;

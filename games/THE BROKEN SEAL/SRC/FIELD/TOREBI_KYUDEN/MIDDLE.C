@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
+#include "CALL.H"
 extern u8 MsgTorebiCantFightBecauseLittleIndigestion[];
 extern u8 MsgTorebiEvenIfEscapedBabiPalace[];
 
@@ -10,7 +11,7 @@ void RunMiddleAuxiliarySequence(s32 a)
     u8 *obj;
     u8 *q;
 
-    obj = (u8 *)Value0((s32 (*)())Engine_ActorGet);
+    obj = (u8 *)((s32 (*)())Engine_ActorGet)();
     Event_Begin();
     q = TorebiKyuden_MiddleActionScript;
     Actor_EnableActionCallback(a, q);
@@ -35,7 +36,7 @@ void RunMiddleAuxiliarySequence(s32 a)
     Event_Wait(30);
     Actor_EnableActionCallback(a, q);
     Event_ShowMessage(a, 0);
-    Call3_scene_effect_sequence_head(Engine_ActorFaceDirection, a, 0xe000, 0);
+    Call3(Engine_ActorFaceDirection, a, 0xe000, 0);
     Event_Wait(10);
     *(s32 *)(obj + 28) = 0x10000;
     *(s32 *)(obj + 24) = 0x10000;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 s32 Engine_GameFlagIsSet();
 void Engine_GameFlagSet();
@@ -21,38 +22,6 @@ void Engine_EventEnd();
 void SceneEffect_SpawnRandomizedParticle();
 void SceneEffect_SpawnRandomEffectEveryEightFrames();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 /* Crossbone Isle: the first time (flag 0x203 clear) set flag 0x202, pan the
  * camera and shift the cells at column 73 while a task runs; with flag
  * 0x201, actor 12 plays its part and the cells at (17, 13) are copied. */
@@ -62,12 +31,12 @@ void TakaraHashira_RunMapShiftScene(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_GameFlagIsSet, 0x203);
+    rec7 = Engine_GameFlagIsSet(0x203);
     if (rec7 == 0) {
-        Call1(Engine_GameFlagSet, 0x202);
+        Engine_GameFlagSet(0x202);
         Engine_EventBegin();
-        Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
-        Call4(Engine_CameraMoveTo, 0x1380000, -1, 0xb80000, 1);
+        Engine_CameraSetSpeed(0x9999, 0x1333);
+        Engine_CameraMoveTo(0x1380000, -1, 0xb80000, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(20);
         Call6(Engine_MapCopyCellsTo, 73, 10, 60, 10, 1, 2);
@@ -82,13 +51,13 @@ void TakaraHashira_RunMapShiftScene(void)
             record = Engine_ActorGet(12);
             *(s32 *)(record + 108) = rec7;
             Call6(Engine_MapCopyCellAttributes, 17, 13, 1, 1, 18, 13);
-            Call1(Engine_GameFlagClear, 0x201);
+            Engine_GameFlagClear(0x201);
             Engine_ActorSetChildValue(12, 0);
             Engine_ActorEnableActionCallback(12, 1);
         } else {
             Engine_EventWait(60);
         }
-        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_SpawnRandomizedParticle);
+        Engine_TaskRemoveCallback((s32)SceneEffect_SpawnRandomizedParticle);
         Engine_EventWait(20);
         Call6(Engine_MapCopyCellsTo, 72, 10, 60, 10, 1, 2);
         Engine_EventWait(20);

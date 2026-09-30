@@ -15,19 +15,6 @@ void SceneEffect_ApplyThreeValuesAndFinish();
 void SceneActor_SetPairZeroAndValue();
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-/* FAKEMATCH: calls spelled through these wrappers pass their constants
- * straight into the argument registers, and a value-returning call sets r0
- * last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
@@ -42,10 +29,10 @@ void FieldScene_RunScene383SequenceB(void)
     s32 actor25;
     s32 base;
 
-    actor24 = Value1((s32 (*)())Engine_ActorGet, 24);
-    actor25 = Value1((s32 (*)())Engine_ActorGet, 25);
+    actor24 = ((s32 (*)())Engine_ActorGet)(24);
+    actor25 = ((s32 (*)())Engine_ActorGet)(25);
     Event_Begin();
-    Call1(Scheduler_RemoveCallback, (s32)SceneActor_FaceActors24And25TowardActorZero);
+    Scheduler_RemoveCallback((s32)SceneActor_FaceActors24And25TowardActorZero);
     GameFlag_Clear(0x300);
     if (*(s16 *)(actor24 + 100) <= 3) {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptG);

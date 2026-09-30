@@ -1,4 +1,5 @@
 #include "IRIGUCHI.H"
+#include "CALL.H"
 extern u8 MsgBabiSeemsLocked[];
 extern u8 MsgBabiTheDoor[];
 extern u8 MsgBabiYoureSureTheyWentThrough[];
@@ -337,21 +338,21 @@ void FieldScene_RunBranchingActorSequence(void)
     Iriguchi_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Iriguchi_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Iriguchi_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Iriguchi_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Iriguchi_SetAnimation(ACTOR_IVAN, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Iriguchi_WaitForMove(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Iriguchi_SetAnimation(ACTOR_MIA, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -375,7 +376,7 @@ void FieldScene_RunActorEventSequence(void)
     Iriguchi_Wait(10);
     Motion_LaunchFromFocusedObject(1, 0, 16, 0);
     Call4(Motion_LaunchFromFocusedObject, 2, -16, -8, 0);
-    Call4(Motion_LaunchFromFocusedObject, 3, -16, 24, 0);
+    Motion_LaunchFromFocusedObject(3, -16, 24, 0);
     Iriguchi_WaitForMove(ACTOR_MIA);
     Iriguchi_Wait(20);
     Camera_SetSpeed(0x30000, 0x6000);
@@ -613,21 +614,21 @@ void FieldScene_RunActorEventSequence(void)
     Iriguchi_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Iriguchi_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Iriguchi_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Iriguchi_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Iriguchi_SetAnimation(ACTOR_IVAN, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Iriguchi_WaitForMove(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Iriguchi_SetAnimation(ACTOR_MIA, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

@@ -650,7 +650,7 @@ Func_0818df5c:
 .L_0818e470:
 	.4byte Func_08143000
 .L_0818e474:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0818e478:
 	.4byte 0x04000208
 .L_0818e47c:

@@ -82,7 +82,7 @@ Func_0801319c:
 .L_08013248:
 	.4byte 0x85001e00
 .L_0801324c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08013250:
 	.4byte Data_03001110
 .L_08013254:

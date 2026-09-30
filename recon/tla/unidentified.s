@@ -687,8 +687,8 @@ Data_080f0e78:
 	.global Data_080f0e9c
 Data_080f0e9c:
 	.incbin "baserom.gba", 0x000f0e9c, 0x00000008
-	.global Data_080f0ea4
-Data_080f0ea4:
+	.global BattleFx_CyclePatternWords
+BattleFx_CyclePatternWords:
 	.incbin "baserom.gba", 0x000f0ea4, 0x00000020
 	.global Data_080f0ec4
 Data_080f0ec4:

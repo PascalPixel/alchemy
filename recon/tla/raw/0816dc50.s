@@ -879,7 +879,7 @@ Func_0816dc50:
 .L_0816e334:
 	.4byte gCameraSceneParameters
 .L_0816e338:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0816e33c:
 	.4byte 0x04000208
 .L_0816e340:

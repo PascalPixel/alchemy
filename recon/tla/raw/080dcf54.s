@@ -16,4 +16,4 @@ Func_080dcf54:
 .L_080dcf68:
 	.4byte gInput
 .L_080dcf6c:
-	.4byte Data_080f0ea4
+	.4byte BattleFx_CyclePatternWords

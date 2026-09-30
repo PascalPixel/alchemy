@@ -4006,7 +4006,7 @@ Func_08175f74:
 .L_08177e60:
 	.4byte 0x00000134
 .L_08177e64:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08177e68:
 	.4byte 0x04000208
 .L_08177e6c:

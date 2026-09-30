@@ -202,7 +202,7 @@ Func_0815b764:
 .L_0815b8e8:
 	.4byte 0x00001f83
 .L_0815b8ec:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0815b8f0:
 	.4byte 0x04000208
 .L_0815b8f4:
@@ -2138,7 +2138,7 @@ Func_0815b764:
 .L_0815c810:
 	.4byte Func_08143488
 .L_0815c814:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0815c818:
 	.4byte 0x04000208
 .L_0815c81c:
@@ -2303,7 +2303,7 @@ Func_0815b764:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0815c94c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0815c950:
 	.4byte 0x04000208
 .L_0815c954:

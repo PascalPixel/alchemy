@@ -6409,7 +6409,7 @@ Func_020038e4:
 .L_0200b956:
 	pop {pc}
 .L_0200b958:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200b95c:
 	.4byte 0x04000208
 	.section .text.x0200b960,"ax",%progbits
@@ -7105,7 +7105,7 @@ Func_02003d44:
 .L_0200be90:
 	.4byte Data_02005058
 .L_0200be94:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200be98:
 	.4byte 0x04000208
 .L_0200be9c:
@@ -7883,7 +7883,7 @@ Func_020042e0:
 .L_0200c4d8:
 	.4byte Data_0200556e
 .L_0200c4dc:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200c4e0:
 	.4byte 0x04000208
 .L_0200c4e4:

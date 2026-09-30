@@ -57,7 +57,7 @@ Func_0813ba50:
 .L_0813bab4:
 	.4byte 0x00003f21
 .L_0813bab8:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0813babc:
 	.4byte 0x04000208
 .L_0813bac0:

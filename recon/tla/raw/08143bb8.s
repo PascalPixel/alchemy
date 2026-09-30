@@ -68,7 +68,7 @@ Func_08143bb8:
 .L_08143c38:
 	.4byte Func_08143488
 .L_08143c3c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08143c40:
 	.4byte 0x04000208
 .L_08143c44:
@@ -162,6 +162,6 @@ Func_08143bb8:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_08143cfc:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08143d00:
 	.4byte 0x04000208

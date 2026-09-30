@@ -255,7 +255,7 @@ Func_0813eb70:
 .L_0813ed64:
 	.4byte 0x06004000
 .L_0813ed68:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0813ed6c:
 	.4byte 0x04000208
 .L_0813ed70:
@@ -487,7 +487,7 @@ Func_0813eb70:
 .L_0813ef38:
 	.4byte Data_03001120
 .L_0813ef3c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0813ef40:
 	.4byte 0x04000208
 .L_0813ef44:
@@ -1274,6 +1274,6 @@ Func_0813eb70:
 .L_0813f50c:
 	.4byte Data_03001120
 .L_0813f510:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0813f514:
 	.4byte 0x04000208

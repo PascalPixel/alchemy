@@ -177,6 +177,6 @@ DisplayTransition_UpdateFrame:
 .L_080d0b70:
 	.4byte Data_080f0206
 .L_080d0b74:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080d0b78:
 	.4byte 0x04000208

@@ -991,7 +991,7 @@ Func_0815cde8:
 	movs r3, #0
 	ldmia r6!, {r0}
 	adds r1, r5, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r2, #1
 	add r8, r2
 	mov r3, r8
@@ -1079,7 +1079,7 @@ Func_0815cde8:
 	ldr r2, .L_0815d634
 	movs r3, #0
 	add r8, r7
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	mov r0, r8
 	cmp r0, #16
 	bne .L_0815d57c
@@ -1152,7 +1152,7 @@ Func_0815cde8:
 	ldr r2, .L_0815d74c
 	movs r3, #0
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r1, #1
 	add r8, r1
 	mov r2, r8
@@ -1228,7 +1228,7 @@ Func_0815cde8:
 	movs r3, #0
 	ldr r2, .L_0815d74c
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r3, #1
 	add r8, r3
 	mov r0, r8
@@ -1376,7 +1376,7 @@ Func_0815cde8:
 	adds r3, r3, r7
 	str r3, [r5, #8]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r2, #1
 	add r8, r2
 	mov r3, r8
@@ -1533,7 +1533,7 @@ Func_0815cde8:
 	mov r2, r10
 	movs r1, #0
 	ldrsh r0, [r2, r1]
-	bl Func_08118120
+	bl ReleaseBattleObjectRecordsFar
 .L_0815d978:
 	ldr r3, [sp, #64]
 	cmp r3, #10

@@ -26,18 +26,18 @@ Engine_MathModulo:
 	.thumb_func
 Task_Wait:
 	overlay_veneer WaitFramesFar
-	.global Func_02005730
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02005730:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Func_02005740
+	.global ArcTan2
 	.thumb_func
-Func_02005740:
-	overlay_veneer Func_08000100
+ArcTan2:
+	overlay_veneer ArcTan2Far
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
@@ -50,10 +50,10 @@ Math_Cosine:
 	.thumb_func
 Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
-	.global Func_02005760
+	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
-Func_02005760:
-	overlay_veneer Func_08000170
+Runtime_BumpAllocateAlternatePool:
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
@@ -62,10 +62,10 @@ Sys_Free:
 	.thumb_func
 Func_02005770:
 	overlay_veneer Func_080001a8
-	.global Func_02005778
+	.global Resource_ActivateEntry
 	.thumb_func
-Func_02005778:
-	overlay_veneer Func_080001c0
+Resource_ActivateEntry:
+	overlay_veneer Resource_ActivateEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -86,18 +86,18 @@ Resource_GetTableEntry:
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_020057a8
+	.global GameFlag_Test
 	.thumb_func
-Func_020057a8:
-	overlay_veneer Func_080003c8
-	.global Func_020057b0
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020057b0:
-	overlay_veneer Func_080003d0
-	.global Func_020057b8
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_020057b8:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -274,18 +274,18 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Func_02005918:
 	overlay_veneer Func_080c8150
-	.global Func_02005920
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02005920:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:
 	overlay_veneer Object_LinkPairFar
-	.global Func_02005930
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02005930:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02005938
 	.thumb_func
 Func_02005938:
@@ -294,10 +294,10 @@ Func_02005938:
 	.thumb_func
 Func_02005940:
 	overlay_veneer Func_080c81a0
-	.global Func_02005948
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02005948:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02005950
 	.thumb_func
 Func_02005950:
@@ -310,18 +310,18 @@ Func_02005958:
 	.thumb_func
 Func_02005960:
 	overlay_veneer Func_080c8210
-	.global Func_02005968
+	.global ObjectVisual_CopyAttributes
 	.thumb_func
-Func_02005968:
-	overlay_veneer Func_080c8220
+ObjectVisual_CopyAttributes:
+	overlay_veneer ObjectVisual_CopyAttributesFar
 	.global Func_02005970
 	.thumb_func
 Func_02005970:
 	overlay_veneer Func_080c8230
-	.global Func_02005978
+	.global Motion_CamBounds
 	.thumb_func
-Func_02005978:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02005980
 	.thumb_func
 Func_02005980:
@@ -342,14 +342,14 @@ Func_02005998:
 	.thumb_func
 Func_020059a0:
 	overlay_veneer Func_080c8288
-	.global Func_020059a8
+	.global Party_SetFields1eeAnd1f0
 	.thumb_func
-Func_020059a8:
-	overlay_veneer Func_080c8290
-	.global Func_020059b0
+Party_SetFields1eeAnd1f0:
+	overlay_veneer Party_SetFields1eeAnd1f0Far
+	.global Party_SetFields1f2And1f4
 	.thumb_func
-Func_020059b0:
-	overlay_veneer Func_080c8298
+Party_SetFields1f2And1f4:
+	overlay_veneer Party_SetFields1f2And1f4Far
 	.global Func_020059b8
 	.thumb_func
 Func_020059b8:
@@ -430,10 +430,10 @@ Func_02005a48:
 	.thumb_func
 Func_02005a50:
 	overlay_veneer Func_080c88d0
-	.global Func_02005a58
+	.global ObjectEffect_BeginContextEffect26
 	.thumb_func
-Func_02005a58:
-	overlay_veneer Func_080c8900
+ObjectEffect_BeginContextEffect26:
+	overlay_veneer ObjectEffect_BeginContextEffect26Far
 	.global Func_02005a60
 	.thumb_func
 Func_02005a60:

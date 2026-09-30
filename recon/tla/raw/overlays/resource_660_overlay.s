@@ -96,7 +96,7 @@ Func_0200009c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020080e4
 	movs r0, #10
@@ -111,7 +111,7 @@ Func_0200009c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020080fa
 	ldr r0, .L_0200810c
@@ -157,7 +157,7 @@ Func_02000114:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200815c
 	movs r0, #11
@@ -172,7 +172,7 @@ Func_02000114:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008172
 	ldr r0, .L_02008184
@@ -228,7 +228,7 @@ Func_0200018c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020081e6
 	ldr r0, .L_02008228
@@ -243,7 +243,7 @@ Func_0200018c:
 	bl Func_02000844
 	movs r1, #0
 	adds r0, r6, #0
-	bl Func_0200084c
+	bl UiText_OpenMessageAtObject
 	bl Func_0200088c
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -300,7 +300,7 @@ Func_02000230:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008284
 	ldr r0, .L_02008280
@@ -344,7 +344,7 @@ Func_02000298:
 	lsls r5, r5, #16
 	movs r0, #8
 	movs r2, #0
-	bl Func_0200083c
+	bl ObjectMotion_SetAngleToward
 	asrs r5, r5, #16
 	movs r3, #192
 	lsls r5, r5, #16
@@ -362,7 +362,7 @@ Func_02000298:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020082f2
 	ldr r0, .L_02008310
@@ -380,7 +380,7 @@ Func_02000298:
 	movs r0, #8
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02000864
+	bl ObjectMotion_ArmCallback
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008310:
@@ -401,7 +401,7 @@ Func_02000318:
 	bl Func_02000844
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_0200084c
+	bl UiText_OpenMessageAtObject
 	ldr r3, .L_02008398
 	movs r2, #133
 	lsls r2, r2, #2
@@ -415,7 +415,7 @@ Func_02000318:
 	bl Func_02000844
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_0200084c
+	bl UiText_OpenMessageAtObject
 	ldr r0, [r6]
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -461,7 +461,7 @@ Func_0200039c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020083be
 	ldr r0, .L_020083d4
@@ -492,7 +492,7 @@ Func_020003dc:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020083fe
 	ldr r0, .L_02008414
@@ -523,7 +523,7 @@ Func_0200041c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200843e
 	ldr r0, .L_02008454
@@ -554,7 +554,7 @@ Func_0200045c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200847e
 	ldr r0, .L_02008494
@@ -584,7 +584,7 @@ Func_0200049c:
 	bl Func_02000844
 	movs r1, #0
 	movs r0, #11
-	bl Func_0200084c
+	bl UiText_OpenMessageAtObject
 	bl Func_0200088c
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -607,7 +607,7 @@ Func_0200049c:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #26
-	bl Func_020007ac
+	bl GameFlag_SetBit
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020084ec:
@@ -620,7 +620,7 @@ Func_020004f0:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	ldr r1, .L_02008558
 	ldr r4, .L_0200855c
 	cmp r0, #0
@@ -734,7 +734,7 @@ Func_02000580:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020085e2
@@ -837,7 +837,7 @@ Func_02000580:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020086ce
 	bl Func_02000710
@@ -845,16 +845,16 @@ Func_02000580:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020086e4
 	movs r0, #196
 	lsls r0, r0, #2
-	bl Func_020007b4
+	bl GameFlag_ClearBit
 .L_020086e4:
 	movs r0, #196
 	lsls r0, r0, #2
-	bl Func_020007a4
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020086f8
 	movs r0, #160
@@ -885,7 +885,7 @@ Func_02000710:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #27
-	bl Func_020007ac
+	bl GameFlag_SetBit
 	bl Func_020007f4
 	movs r0, #0
 	bl Func_02000884

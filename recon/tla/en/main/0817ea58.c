@@ -137,14 +137,14 @@ void Func_08179e6c(void);
 s32 Func_081963ec(s32, s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Resource_ResetEntry(s32);
-void Func_08118010(void *, s32);
+void BattleActor_SpawnObjectsForListFar(void *, s32);
 void Func_08118040(s32, s32, s32);
 void Func_08157cf4(s32, void *, s32, s32);
 u32 Resource_GetTableEntry(u32);
 void Func_0801587c(const void *, void *);
 Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
-void Func_08020010(Sprite *, Vec3 *, Vec2 *, s32);
+void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
 void Func_08013560(s32);
 void Func_0801314c(s32);
 void Func_08144aac(s32, void **);
@@ -254,7 +254,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             Resource_ResetEntry(bank[21]);
             *(s32 *)0x030011f0 = 240;
             targets[0] = 255;
-            Func_08118010(targets, 0);
+            BattleActor_SpawnObjectsForListFar(targets, 0);
             Func_08118040(1, 0x45, 0);
             for (i = 0, pal = (u16 *)0x050000c0; i != 128; i++, pal++) {
                 color = *pal;
@@ -365,7 +365,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                     obj->tile = work->particles[row * 9 + v].timer;
                     if (pos.x > 0xffffff)
                         pos.x -= 0x1200000;
-                    Func_08020010(work->sprites[row * 9 + k], &pos, &scale, 0);
+                    Render_ApplyProjectedPlacementFar(work->sprites[row * 9 + k], &pos, &scale, 0);
                 }
                 z += 0x200000;
             }
@@ -607,7 +607,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 pos2.x = p->x + camera;
                 pos2.z = p->y;
                 if (p->timer != 0)
-                    Func_08020010(work->sprites[40 + i], &pos2, &scale2, 0);
+                    Render_ApplyProjectedPlacementFar(work->sprites[40 + i], &pos2, &scale2, 0);
             }
         }
         if (frame == 578) {
@@ -620,7 +620,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         for (i = 0; i != 2; i++) {
             pos2.x = v;
             pos2.z = (((i << 5) - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y + 0x640000;
-            Func_08020010(work->sprites[32 + i], &pos2, &scale2, 0);
+            Render_ApplyProjectedPlacementFar(work->sprites[32 + i], &pos2, &scale2, 0);
         }
         if (frame <= 316) {
             p = &work->particles[23];
@@ -635,19 +635,19 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
             pos2.x = p->x - sway_x + camera + 0x780000;
             pos2.z = ((99 - Ulysses_Shake[work->shake]) << 16) + sway_y + p->y;
-            Func_08020010(work->sprites[38], &pos2, &scale2, 0);
+            Render_ApplyProjectedPlacementFar(work->sprites[38], &pos2, &scale2, 0);
         }
         v = camera + bob_x;
         pos2.x = v + 0x8e0000;
         pos2.z = ((72 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
-        Func_08020010(work->sprites[18], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[18], &pos2, &scale2, 0);
         pos2.x = v + 0xae0000;
         pos2.z = ((72 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
-        Func_08020010(work->sprites[19], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[19], &pos2, &scale2, 0);
         v += 0x800000;
         pos2.x = v;
         pos2.z = ((104 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
-        Func_08020010(work->sprites[20], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[20], &pos2, &scale2, 0);
         if (frame > 602)
             Func_0815f0a0(0x148);
         p = &work->particles[22];
@@ -749,7 +749,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             pos2.x = p->x + camera;
             pos2.z = p->y;
         }
-        Func_08020010(work->sprites[39], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[39], &pos2, &scale2, 0);
         work->sprites[39]->unk_16 = 0;
         work->sprites[39]->unk_17 = 32;
         if (frame >= 568) {
@@ -815,25 +815,25 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         v = prev_camera + bob_x;
         pos2.x = v + 0xa00000;
         pos2.z = ((104 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
-        Func_08020010(work->sprites[21], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[21], &pos2, &scale2, 0);
         pos2.x = v + 0x800000;
         pos2.z = ((136 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
-        Func_08020010(work->sprites[22], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[22], &pos2, &scale2, 0);
         pos2.x = v + 0xa00000;
         pos2.z = ((136 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
-        Func_08020010(work->sprites[23], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[23], &pos2, &scale2, 0);
         pos2.x = v + 0xc00000;
         pos2.z = ((136 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
-        Func_08020010(work->sprites[24], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[24], &pos2, &scale2, 0);
         work->sprites[25]->priority = 2;
         pos2.x = v + 0x800000;
         pos2.z = ((104 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
-        Func_08020010(work->sprites[25], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[25], &pos2, &scale2, 0);
         for (i = 0; i != 5; i++) {
             pos2.x = (Ulysses_ShipParts[i][0] << 16) + sway_x + prev_camera + bob_x + 0xb00000;
             pos2.z = ((Ulysses_ShipParts[i][1] - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y + 0x540000;
             work->sprites[26 + i]->priority = 2;
-            Func_08020010(work->sprites[26 + i], &pos2, &scale2, 0);
+            Render_ApplyProjectedPlacementFar(work->sprites[26 + i], &pos2, &scale2, 0);
         }
         if (frame <= 489) {
             for (i = 0; i != 8; i++) {
@@ -841,7 +841,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 pos2.x = p->x + camera;
                 pos2.z = p->y;
                 if (p->timer != 0)
-                    Func_08020010(work->sprites[41 + i], &pos2, &scale2, 0);
+                    Render_ApplyProjectedPlacementFar(work->sprites[41 + i], &pos2, &scale2, 0);
             }
         }
         if (frame < 540) {
@@ -857,7 +857,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 pos2.x = ((i & 1) << 21) + p->x + camera + 0x800000;
                 pos2.z = ((((i / 2) << 5) - Ulysses_Shake[work->shake]) << 16) + sway_y + p->y + 0x680000;
                 work->sprites[34 + i]->priority = 1;
-                Func_08020010(work->sprites[34 + i], &pos2, &scale2, 0);
+                Render_ApplyProjectedPlacementFar(work->sprites[34 + i], &pos2, &scale2, 0);
             }
         }
         if (frame <= 316) {
@@ -874,7 +874,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             pos2.x = sway_x + p->x + camera + 0xb80000;
             pos2.z = ((92 - Ulysses_Shake[work->shake]) << 16) + sway_y + p->y;
             work->sprites[31]->priority = 1;
-            Func_08020010(work->sprites[31], &pos2, &scale2, 0);
+            Render_ApplyProjectedPlacementFar(work->sprites[31], &pos2, &scale2, 0);
         }
         for (row = 0; row != 2; row++) {
             for (k = 0; k != 9; k++) {
@@ -890,7 +890,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 obj->tile = work->particles[row * 9 + v].timer;
                 if (pos2.x > 0xffffff)
                     pos2.x -= 0x1200000;
-                Func_08020010(work->sprites[row * 9 + k], &pos2, &scale2, 0);
+                Render_ApplyProjectedPlacementFar(work->sprites[row * 9 + k], &pos2, &scale2, 0);
             }
         }
         for (i = 0; i != 4; i++) {
@@ -942,7 +942,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     *(vu16 *)0x0400000c = 0x784;
     *(vu16 *)0x04000052 = 0x1010;
     arg->actors[arg->count] = 0xff;
-    Func_08118010(arg->actors, 0);
+    BattleActor_SpawnObjectsForListFar(arg->actors, 0);
     Func_08152404(1, 663, 1);
     for (i = 0; i != 15; i++) {
         work->sprites[1 + i] = Func_0815b3b0(32, 16, 0x80006000, 0);
@@ -984,7 +984,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 pos3.x = p->x;
                 pos3.z = p->y;
                 if (p->y > 0 && p->y < 0x800000)
-                    Func_08020010(work->sprites[i], &pos3, &scale3, 0);
+                    Render_ApplyProjectedPlacementFar(work->sprites[i], &pos3, &scale3, 0);
                 if (p->y > 0x6fffff) {
                     p->timer = 1;
                     for (j = 0; j != 2; j++) {

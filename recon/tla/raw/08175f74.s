@@ -87,7 +87,7 @@ Func_08175f74:
 	movs r1, #0
 	str r6, [r2, #16]
 	strh r3, [r0]
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	ldr r3, .L_08176064
 	movs r2, #128
 	lsls r2, r2, #19
@@ -711,7 +711,7 @@ Func_08175f74:
 	adds r1, r5, #0
 	movs r3, #0
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r3, [r6, #24]
 	ldr r0, [r7]
 	ldr r4, [sp, #8]
@@ -845,7 +845,7 @@ Func_08175f74:
 	adds r3, r4, r5
 	ldr r0, [r3]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_08176614:
 	ldr r6, [sp, #80]
 	cmp r6, #131
@@ -1655,7 +1655,7 @@ Func_08175f74:
 	adds r1, r5, #0
 	adds r2, r7, #0
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r7, #4]
@@ -1689,7 +1689,7 @@ Func_08175f74:
 	movs r3, #0
 	ldmia r6!, {r0}
 	adds r1, r5, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r2, #1
 	add r9, r2
 	mov r3, r9
@@ -2005,7 +2005,7 @@ Func_08175f74:
 	adds r3, r4, r5
 	ldr r0, [r3]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r0, .L_08176f40
 	bl Resource_GetTableEntry
 	ldr r6, .L_08176f44
@@ -2446,7 +2446,7 @@ Func_08175f74:
 	adds r3, r6, r7
 	ldr r0, [r3]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_08177254:
 	ldr r0, [sp, #80]
 	movs r1, #92
@@ -3565,7 +3565,7 @@ Func_08175f74:
 	strh r2, [r6, r3]
 	adds r0, #36
 	movs r1, #0
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	ldr r7, [sp, #92]
 	movs r1, #224
 	movs r5, #128

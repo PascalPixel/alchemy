@@ -41,9 +41,9 @@ Func_08108068:
 	.thumb_func
 Func_08108070:
 	overlay_veneer Func_0810b79c
-	.global Func_08108078
+	.global AudioCommand_WaitForStateByteClearFar
 	.thumb_func
-Func_08108078:
+AudioCommand_WaitForStateByteClearFar:
 	overlay_veneer AudioCommand_WaitForStateByteClear
 	.global Func_08108080
 	.thumb_func

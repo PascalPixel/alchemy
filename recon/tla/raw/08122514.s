@@ -44,7 +44,7 @@ Func_08122514:
 	adds r3, r3, r0
 	ldrh r0, [r5]
 	mov r8, r3
-	bl Func_080ad140
+	bl Owner_GetRecordFar
 	ldrh r3, [r5]
 	mov r10, r0
 	cmp r3, #101
@@ -225,7 +225,7 @@ Func_08122514:
 	lsls r2, r2, #1
 	ldrh r0, [r3, r2]
 .L_081226ba:
-	bl Func_080ad140
+	bl Owner_GetRecordFar
 	mov r10, r0
 .L_081226c0:
 	ldr r1, [sp, #28]

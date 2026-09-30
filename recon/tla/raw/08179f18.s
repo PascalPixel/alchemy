@@ -990,7 +990,7 @@ Func_08179f18:
 	ldmia r6!, {r0}
 	ldr r2, [sp, #52]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r4, #1
 	add r10, r4
 	mov r0, r10
@@ -1865,7 +1865,7 @@ Func_08179f18:
 	ldr r2, [sp, #52]
 	movs r3, #0
 	str r4, [sp, #12]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r0, #1
 	add r10, r0
 	mov r1, r10

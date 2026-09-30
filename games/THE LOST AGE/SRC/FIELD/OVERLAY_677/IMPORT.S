@@ -6,18 +6,18 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_02000960
+	.global GameFlag_Test
 	.thumb_func
-Func_02000960:
-	overlay_veneer Func_080003c8
-	.global Func_02000968
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000968:
-	overlay_veneer Func_080003d0
-	.global Func_02000970
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02000970:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -94,30 +94,30 @@ Object_SetModeById:
 	.thumb_func
 ObjectMotion_SetVariantCallback:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
-	.global Func_02000a10
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02000a10:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Func_02000a18
 	.thumb_func
 Func_02000a18:
 	overlay_veneer Func_080c8180
-	.global Func_02000a20
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02000a20:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02000a28
 	.thumb_func
 Func_02000a28:
 	overlay_veneer Func_080c81a0
-	.global Func_02000a30
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02000a30:
-	overlay_veneer Func_080c81d0
-	.global Func_02000a38
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02000a38:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02000a40
 	.thumb_func
 Func_02000a40:

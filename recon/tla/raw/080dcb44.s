@@ -152,7 +152,7 @@ Func_080dcb44:
 	add r1, sp, #12
 	str r3, [r1]
 	mov r10, r1
-	bl Func_08020000
+	bl Resource_GetMetadataRecordFarFar
 	movs r2, #8
 	ldrsb r2, [r0, r2]
 	ldr r3, [r6, #12]
@@ -176,7 +176,7 @@ Func_080dcb44:
 	movs r2, #0
 	ldrsh r0, [r0, r2]
 	str r3, [r6]
-	bl Func_08020000
+	bl Resource_GetMetadataRecordFarFar
 	movs r3, #8
 	ldrsb r3, [r0, r3]
 	mov r0, r8

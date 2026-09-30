@@ -109,9 +109,9 @@ Motion_SetVarCbAndRefreshFar:
 	.thumb_func
 Func_080c8150:
 	overlay_veneer Func_080d3460
-	.global Func_080c8158
+	.global ObjectMotion_SetAngleTowardFar
 	.thumb_func
-Func_080c8158:
+ObjectMotion_SetAngleTowardFar:
 	overlay_veneer ObjectMotion_SetAngleToward
 	.global Object_LinkPairFar
 	.thumb_func
@@ -121,9 +121,9 @@ Object_LinkPairFar:
 	.thumb_func
 Func_080c8168:
 	overlay_veneer Func_080d36c8
-	.global Func_080c8170
+	.global Object_SetPartAttributeFar
 	.thumb_func
-Func_080c8170:
+Object_SetPartAttributeFar:
 	overlay_veneer Object_SetPartAttribute
 	.global Func_080c8178
 	.thumb_func
@@ -133,9 +133,9 @@ Func_080c8178:
 	.thumb_func
 Func_080c8180:
 	overlay_veneer Func_080d3be8
-	.global Func_080c8188
+	.global UiText_OpenMessageAtObjectFar
 	.thumb_func
-Func_080c8188:
+UiText_OpenMessageAtObjectFar:
 	overlay_veneer UiText_OpenMessageAtObject
 	.global Func_080c8190
 	.thumb_func
@@ -169,9 +169,9 @@ Func_080c81c0:
 	.thumb_func
 Func_080c81c8:
 	overlay_veneer Func_080d4180
-	.global Func_080c81d0
+	.global ObjectMotion_ArmCallbackFar
 	.thumb_func
-Func_080c81d0:
+ObjectMotion_ArmCallbackFar:
 	overlay_veneer ObjectMotion_ArmCallback
 	.global Func_080c81d8
 	.thumb_func
@@ -193,9 +193,9 @@ Func_080c81f0:
 	.thumb_func
 Func_080c81f8:
 	overlay_veneer Func_080d4330
-	.global Func_080c8200
+	.global ObjectMotion_SetActionVariantFar
 	.thumb_func
-Func_080c8200:
+ObjectMotion_SetActionVariantFar:
 	overlay_veneer ObjectMotion_SetActionVariant
 	.global Func_080c8208
 	.thumb_func
@@ -209,21 +209,21 @@ Func_080c8210:
 	.thumb_func
 Func_080c8218:
 	overlay_veneer Func_080d489c
-	.global Func_080c8220
+	.global ObjectVisual_CopyAttributesFar
 	.thumb_func
-Func_080c8220:
+ObjectVisual_CopyAttributesFar:
 	overlay_veneer ObjectVisual_CopyAttributes
-	.global Func_080c8228
+	.global Object_AttachWorkTargetToObjectFar
 	.thumb_func
-Func_080c8228:
+Object_AttachWorkTargetToObjectFar:
 	overlay_veneer Object_AttachWorkTargetToObject
 	.global Func_080c8230
 	.thumb_func
 Func_080c8230:
 	overlay_veneer Func_080d43ec
-	.global Func_080c8238
+	.global Motion_CamBoundsFar
 	.thumb_func
-Func_080c8238:
+Motion_CamBoundsFar:
 	overlay_veneer Motion_CamBounds
 	.global Func_080c8240
 	.thumb_func

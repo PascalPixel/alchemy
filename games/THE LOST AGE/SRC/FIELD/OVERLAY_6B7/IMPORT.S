@@ -134,10 +134,10 @@ Func_02000724:
 	.thumb_func
 Func_0200072c:
 	overlay_veneer Func_080c84e0
-	.global Func_02000734
+	.global ItemMenu_DrawItemDetails
 	.thumb_func
-Func_02000734:
-	overlay_veneer Func_080f8038
+ItemMenu_DrawItemDetails:
+	overlay_veneer ItemMenu_DrawItemDetailsFar
 	.global Func_0200073c
 	.thumb_func
 Func_0200073c:

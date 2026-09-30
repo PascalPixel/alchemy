@@ -10,18 +10,18 @@
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_02000c84
+	.global GameFlag_Test
 	.thumb_func
-Func_02000c84:
-	overlay_veneer Func_080003c8
-	.global Func_02000c8c
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000c8c:
-	overlay_veneer Func_080003d0
-	.global Func_02000c94
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02000c94:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02000c9c
 	.thumb_func
 Func_02000c9c:
@@ -74,10 +74,10 @@ PartyInventory_Add:
 	.thumb_func
 Inventory_Discard:
 	overlay_veneer Inventory_DiscardFar
-	.global Func_02000d04
+	.global Owner_RefreshClassActions
 	.thumb_func
-Func_02000d04:
-	overlay_veneer Func_080ad288
+Owner_RefreshClassActions:
+	overlay_veneer Owner_RefreshClassActionsFar
 	.global Inventory_CountItem
 	.thumb_func
 Inventory_CountItem:
@@ -122,30 +122,30 @@ Object_SetModeById:
 	.thumb_func
 ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
-	.global Func_02000d64
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02000d64:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Func_080c8180
-	.global Func_02000d74
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02000d74:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
 	overlay_veneer Func_080c81a0
-	.global Func_02000d84
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02000d84:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Engine_ActorSetSpritePriority
 	.thumb_func
 Engine_ActorSetSpritePriority:
-	overlay_veneer Func_080c8200
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02000d94
 	.thumb_func
 Func_02000d94:

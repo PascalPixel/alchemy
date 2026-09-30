@@ -212,7 +212,7 @@ DebugParty_LoadPreset:
 	cmp r7, #0
 	bge .L_081188c6
 	mov r0, r8
-	bl Func_080ad298
+	bl Owner_RefreshDerivedDataFar
 .L_081188ea:
 	ldr r1, [sp, #12]
 	adds r1, #1

@@ -199,7 +199,7 @@ Func_08190b74:
 	strh r3, [r0, #2]
 	movs r3, #255
 	strh r3, [r0, #4]
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	movs r2, #0
 	movs r0, #1
 	ldr r1, .L_08191040

@@ -139,7 +139,7 @@ Func_02000098:
 	strb r5, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_0200814c
-	bl Func_02000794
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	b .L_02008150
 .L_0200812c:
@@ -312,7 +312,7 @@ Func_02000244:
 	add r1, sp, #24
 	add r3, sp, #16
 	str r4, [sp, #0]
-	bl Func_0200080c
+	bl UiText_GetResourceDimensions
 	ldr r2, [sp, #16]
 	movs r7, #0
 	cmp r2, #24
@@ -845,7 +845,7 @@ Func_02000318:
 	movs r0, #190
 	strb r3, [r2]
 	lsls r0, r0, #1
-	bl Func_020007dc
+	bl GameFlag_ClearBit
 	ldr r0, .L_02008784
 	movs r1, #2
 	bl Func_02000824

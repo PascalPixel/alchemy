@@ -18,10 +18,10 @@ WaitFrames:
 	.thumb_func
 Math_Sine:
 	overlay_veneer Math_SineFar
-	.global Func_02000d6c
+	.global Resource_ResetEntry
 	.thumb_func
-Func_02000d6c:
-	overlay_veneer Func_080001b8
+Resource_ResetEntry:
+	overlay_veneer Resource_ResetEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -34,18 +34,18 @@ Resource_FindFreeEntry:
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_02000d8c
+	.global GameFlag_Test
 	.thumb_func
-Func_02000d8c:
-	overlay_veneer Func_080003c8
-	.global Func_02000d94
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000d94:
-	overlay_veneer Func_080003d0
-	.global Func_02000d9c
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02000d9c:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02000da4
 	.thumb_func
 Func_02000da4:
@@ -162,10 +162,10 @@ Object_SetModeById:
 	.thumb_func
 ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
-	.global Func_02000e8c
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02000e8c:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Func_02000e94
 	.thumb_func
 Func_02000e94:
@@ -174,10 +174,10 @@ Func_02000e94:
 	.thumb_func
 Func_02000e9c:
 	overlay_veneer Func_080c81a0
-	.global Func_02000ea4
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02000ea4:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02000eac
 	.thumb_func
 Func_02000eac:

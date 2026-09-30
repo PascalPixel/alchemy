@@ -37,17 +37,17 @@ Inventory_DiscardFar:
 	.thumb_func
 BattleFx_IsReviveFar:
 	overlay_veneer Func_080b0740
-	.global Func_080ad288
+	.global Owner_RefreshClassActionsFar
 	.thumb_func
-Func_080ad288:
+Owner_RefreshClassActionsFar:
 	overlay_veneer Owner_RefreshClassActions
 	.global Func_080ad290
 	.thumb_func
 Func_080ad290:
 	overlay_veneer Func_080ad360
-	.global Func_080ad298
+	.global Owner_RefreshDerivedDataFar
 	.thumb_func
-Func_080ad298:
+Owner_RefreshDerivedDataFar:
 	overlay_veneer Owner_RefreshDerivedData
 	.global Inventory_CountItemFar
 	.thumb_func

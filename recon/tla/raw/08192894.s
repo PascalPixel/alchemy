@@ -66,7 +66,7 @@ Func_08192894:
 	ldr r3, [r7]
 	ldr r0, [r5, r3]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	mov r2, r9
 	ldr r1, [r2]
 	movs r3, #232

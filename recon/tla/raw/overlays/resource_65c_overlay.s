@@ -42,7 +42,7 @@ Func_02000054:
 	movs r0, #130
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02000178
+	bl GameFlag_SetBit
 	pop {pc}
 	.section .text.x0200806c,"ax",%progbits
 	.global Func_0200006c
@@ -79,7 +79,7 @@ Func_02000074:
 	lsls r1, r1, #3
 	str r2, [r3]
 	ldr r0, .L_020080f4
-	bl Func_02000170
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, .L_020080f8
 	movs r2, #133
 	lsls r2, r2, #2

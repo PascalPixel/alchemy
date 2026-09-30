@@ -6,14 +6,14 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_02000298
+	.global GameFlag_Test
 	.thumb_func
-Func_02000298:
-	overlay_veneer Func_080003c8
-	.global Func_020002a0
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020002a0:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_020002a8
 	.thumb_func
 Func_020002a8:
@@ -62,10 +62,10 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Func_02000300:
 	overlay_veneer Func_080c8180
-	.global Func_02000308
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02000308:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02000310
 	.thumb_func
 Func_02000310:
@@ -74,18 +74,18 @@ Func_02000310:
 	.thumb_func
 Func_02000318:
 	overlay_veneer Func_080c81a0
-	.global Func_02000320
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02000320:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02000328
 	.thumb_func
 Func_02000328:
 	overlay_veneer Func_080c8230
-	.global Func_02000330
+	.global Motion_CamBounds
 	.thumb_func
-Func_02000330:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02000338
 	.thumb_func
 Func_02000338:

@@ -145,7 +145,7 @@ Func_020000b8:
 	beq .L_02008198
 	ldr r1, [r7, #4]
 	adds r0, r6, #0
-	bl Func_020014dc
+	bl Object_SetPartAttribute
 .L_02008198:
 	movs r3, #128
 	lsls r3, r3, #10
@@ -705,7 +705,7 @@ Func_02000564:
 	push {r5, r6, r7}
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02001444
+	bl Runtime_BumpAllocateAlternatePool
 	mov r9, r0
 	bl Func_02001454
 	ldr r5, .L_020085bc
@@ -752,7 +752,7 @@ Func_02000564:
 	movs r3, #0
 	lsls r0, r0, #17
 	negs r1, r1
-	bl Func_02001524
+	bl Motion_CamBounds
 	movs r0, #128
 	movs r1, #128
 	lsls r1, r1, #6
@@ -814,7 +814,7 @@ Func_02000564:
 	negs r1, r1
 	lsls r2, r2, #17
 	movs r3, #1
-	bl Func_02001524
+	bl Motion_CamBounds
 	b .L_02008674
 	.2byte 0x0000
 .L_0200866c:
@@ -830,7 +830,7 @@ Func_02000564:
 	negs r1, r1
 	lsls r2, r2, #17
 	movs r3, #1
-	bl Func_02001524
+	bl Motion_CamBounds
 	bl Func_0200152c
 .L_0200868e:
 	cmp r5, #3
@@ -849,7 +849,7 @@ Func_02000564:
 	negs r1, r1
 	lsls r2, r2, #17
 	movs r3, #1
-	bl Func_02001524
+	bl Motion_CamBounds
 .L_020086b4:
 	movs r0, #8
 	bl Object_GetById
@@ -977,7 +977,7 @@ Func_02000564:
 	negs r1, r1
 	lsls r2, r2, #16
 	movs r3, #1
-	bl Func_02001524
+	bl Motion_CamBounds
 	movs r0, #128
 	movs r1, #128
 	lsls r0, r0, #10
@@ -1034,7 +1034,7 @@ Func_02000564:
 	movs r3, #0
 	lsls r0, r0, #17
 	negs r1, r1
-	bl Func_02001524
+	bl Motion_CamBounds
 	movs r0, #128
 	movs r1, #128
 	lsls r0, r0, #9
@@ -1386,7 +1386,7 @@ Func_02000564:
 .L_02008af4:
 	movs r0, #8
 	movs r1, #3
-	bl Func_02001504
+	bl ObjectMotion_SetActionVariant
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -1405,7 +1405,7 @@ Func_02000564:
 	negs r1, r1
 	lsls r2, r2, #17
 	movs r3, #0
-	bl Func_02001524
+	bl Motion_CamBounds
 	ldr r1, .L_02008de4
 	ldr r4, .L_02008de8
 	ldrh r3, [r4]
@@ -1444,7 +1444,7 @@ Func_02000564:
 	movs r1, #144
 	ldr r0, .L_02008dec
 	lsls r1, r1, #3
-	bl Func_0200141c
+	bl Scheduler_AddOrUpdateCallback
 	movs r6, #0
 .L_02008b7c:
 	movs r0, #160
@@ -1459,7 +1459,7 @@ Func_02000564:
 	bne .L_02008b7c
 	movs r0, #8
 	movs r1, #1
-	bl Func_02001504
+	bl ObjectMotion_SetActionVariant
 	movs r0, #8
 	movs r1, #1
 	bl Object_SetModeById
@@ -1470,7 +1470,7 @@ Func_02000564:
 	lsls r2, r2, #16
 	lsls r0, r0, #17
 	negs r1, r1
-	bl Func_02001524
+	bl Motion_CamBounds
 	movs r0, #128
 	movs r1, #128
 	lsls r0, r0, #9
@@ -1510,7 +1510,7 @@ Func_02000564:
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #8
-	bl Func_020014fc
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Battle_WaitMode0
 	movs r0, #8
@@ -1543,35 +1543,35 @@ Func_02000564:
 	lsls r1, r1, #7
 	movs r2, #0
 	movs r0, #8
-	bl Func_020014fc
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #128
 	lsls r1, r1, #6
 	movs r2, #0
 	movs r0, #8
-	bl Func_020014fc
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #192
 	lsls r1, r1, #7
 	movs r2, #0
 	movs r0, #8
-	bl Func_020014fc
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #128
 	lsls r1, r1, #6
 	movs r2, #0
 	movs r0, #8
-	bl Func_020014fc
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #8
-	bl Func_020014fc
+	bl ObjectMotion_ArmCallback
 	movs r0, #50
 	bl Battle_WaitMode0
 	movs r1, #15
@@ -1604,7 +1604,7 @@ Func_02000564:
 	movs r0, #8
 	lsls r1, r1, #6
 	movs r2, #0
-	bl Func_020014fc
+	bl ObjectMotion_ArmCallback
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r2, #30
@@ -1633,7 +1633,7 @@ Func_02000564:
 	movs r0, #8
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_020014fc
+	bl ObjectMotion_ArmCallback
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #30

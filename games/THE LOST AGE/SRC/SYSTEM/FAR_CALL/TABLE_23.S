@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080ad200
+	.global Owner_GetLevelThresholdFar
 	.thumb_func
-Func_080ad200:
+Owner_GetLevelThresholdFar:
 	overlay_veneer Owner_GetLevelThreshold
 	.global Func_080ad208
 	.thumb_func

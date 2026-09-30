@@ -40,7 +40,7 @@ Func_02000054:
 	movs r2, #0
 	bl Func_020000bc
 	movs r0, #48
-	bl Func_020000b4
+	bl GameFlag_ClearBit
 	pop {pc}
 	.section .text.x02008068,"ax",%progbits
 	.global Func_02000068
@@ -52,7 +52,7 @@ Func_02000068:
 	movs r2, #0
 	bl Func_020000bc
 	movs r0, #68
-	bl Func_020000b4
+	bl GameFlag_ClearBit
 	pop {pc}
 	.section .text.x0200807c,"ax",%progbits
 	.global Func_0200007c
@@ -64,7 +64,7 @@ Func_0200007c:
 	movs r2, #0
 	bl Func_020000bc
 	movs r0, #88
-	bl Func_020000b4
+	bl GameFlag_ClearBit
 	pop {pc}
 	.section .text.x02008090,"ax",%progbits
 	.global Func_02000090
@@ -76,7 +76,7 @@ Func_02000090:
 	movs r2, #0
 	bl Func_020000bc
 	movs r0, #108
-	bl Func_020000b4
+	bl GameFlag_ClearBit
 	pop {pc}
 	.section .text.x020080a4,"ax",%progbits
 	.global Func_020000a4

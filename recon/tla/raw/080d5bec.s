@@ -60,7 +60,7 @@ Func_080d5bec:
 	ldr r3, [r3, #40]
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_08020000
+	bl Resource_GetMetadataRecordFarFar
 	ldr r3, [r5]
 	movs r2, #8
 	ldrsb r2, [r0, r2]

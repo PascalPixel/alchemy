@@ -260,7 +260,7 @@ Func_020001d4:
 	adds r5, r0, #0
 	movs r0, #16
 	adds r0, #255
-	bl Func_02000c78
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200821a
 	ldr r6, .L_02008298
@@ -268,7 +268,7 @@ Func_020001d4:
 	bl Func_02000e08
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_02000e10
+	bl UiText_OpenMessageAtObject
 	bl Func_02000e30
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -287,7 +287,7 @@ Func_020001d4:
 .L_0200821a:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c78
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200822a
 	ldr r0, .L_0200829c
@@ -310,7 +310,7 @@ Func_020001d4:
 	bl Func_02000e08
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_02000e10
+	bl UiText_OpenMessageAtObject
 	bl Func_02000e30
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -328,7 +328,7 @@ Func_020001d4:
 	beq .L_02008294
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c80
+	bl GameFlag_SetBit
 	b .L_02008294
 .L_02008286:
 	adds r0, r6, #2
@@ -357,7 +357,7 @@ Func_020002a8:
 	adds r5, r0, #0
 	movs r0, #16
 	adds r0, #255
-	bl Func_02000c78
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020082c0
 	ldr r0, .L_02008380
@@ -365,7 +365,7 @@ Func_020002a8:
 .L_020082c0:
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c78
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020082d0
 	ldr r0, .L_02008384
@@ -390,7 +390,7 @@ Func_020002a8:
 	bl Func_02000e08
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_02000e10
+	bl UiText_OpenMessageAtObject
 	bl Func_02000e30
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -746,7 +746,7 @@ Func_020005fc:
 	adds r0, r0, r7
 	adds r0, #48
 	mov r8, r3
-	bl Func_02000c80
+	bl GameFlag_SetBit
 	adds r0, r5, #0
 	adds r1, r6, #0
 	adds r2, r7, #0
@@ -1124,7 +1124,7 @@ Func_02000848:
 	bl UiText_DrawResource
 	mov r0, r9
 	adds r1, r6, #0
-	bl Func_02000e38
+	bl ItemMenu_DrawItemDetails
 	b .L_02008924
 .L_02008918:
 	ldr r0, .L_02008aa4

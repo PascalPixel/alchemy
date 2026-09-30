@@ -202,7 +202,7 @@ Func_02000188:
 	bl Func_02000698
 	movs r1, #0
 	movs r0, #9
-	bl Func_020006a0
+	bl UiText_OpenMessageAtObject
 	bl Func_020006e8
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -253,7 +253,7 @@ Func_020001e0:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #91
-	bl Func_02000608
+	bl GameFlag_SetBit
 	add sp, #8
 	pop {pc}
 	.section .text.x02008218,"ax",%progbits
@@ -266,7 +266,7 @@ Func_02000218:
 	movs r0, #128
 	lsls r0, r0, #2
 	sub sp, #8
-	bl Func_02000600
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020082ee
 	movs r0, #0
@@ -352,7 +352,7 @@ Func_02000218:
 	bl Func_02000628
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000608
+	bl GameFlag_SetBit
 .L_020082ee:
 	add sp, #8
 	pop {r3}
@@ -409,7 +409,7 @@ Func_0200030c:
 	bne .L_02008414
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000600
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008426
 	movs r0, #0
@@ -498,7 +498,7 @@ Func_0200030c:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #91
-	bl Func_02000600
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008426
 	bl Func_020001e0
@@ -538,7 +538,7 @@ Func_02000438:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #4
-	bl Func_020006b0
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r0, #4
@@ -646,7 +646,7 @@ Func_02000544:
 	movs r0, #4
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_020006b0
+	bl ObjectMotion_ArmCallback
 	bl Func_02000438
 	pop {pc}
 	.2byte 0x0000

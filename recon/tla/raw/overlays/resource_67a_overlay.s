@@ -40,7 +40,7 @@ Func_02000054:
 	adds r3, #225
 	adds r1, r1, r3
 	adds r0, r1, #0
-	bl Func_02000088
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x02008068,"ax",%progbits

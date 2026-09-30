@@ -463,7 +463,7 @@ Func_020002cc:
 	bl RenderOutput_RedrawSavedRect
 	mov r0, r11
 	adds r1, r6, #0
-	bl Func_02000734
+	bl ItemMenu_DrawItemDetails
 	b .L_020083d2
 .L_020083c6:
 	ldr r0, .L_02008568

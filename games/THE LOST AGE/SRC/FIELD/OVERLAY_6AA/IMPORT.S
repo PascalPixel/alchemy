@@ -18,10 +18,10 @@ Engine_MathRemainder:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02004b20
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02004b20:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -30,10 +30,10 @@ Scheduler_RemoveCallbackFar:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Func_02004b38
+	.global ArcTan2
 	.thumb_func
-Func_02004b38:
-	overlay_veneer Func_08000100
+ArcTan2:
+	overlay_veneer ArcTan2Far
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
@@ -54,10 +54,10 @@ Runtime_BumpAllocate:
 	.thumb_func
 Sys_Free:
 	overlay_veneer Sys_FreeFar
-	.global Func_02004b68
+	.global Resource_ResetEntry
 	.thumb_func
-Func_02004b68:
-	overlay_veneer Func_080001b8
+Resource_ResetEntry:
+	overlay_veneer Resource_ResetEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -74,18 +74,18 @@ Func_02004b80:
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_02004b90
+	.global GameFlag_Test
 	.thumb_func
-Func_02004b90:
-	overlay_veneer Func_080003c8
-	.global Func_02004b98
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02004b98:
-	overlay_veneer Func_080003d0
-	.global Func_02004ba0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02004ba0:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -94,10 +94,10 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global Func_02004bb8
+	.global ResourceMetadata_ClearRecord
 	.thumb_func
-Func_02004bb8:
-	overlay_veneer Func_08020070
+ResourceMetadata_ClearRecord:
+	overlay_veneer ResourceMetadata_ClearRecordFar
 	.global Func_02004bc0
 	.thumb_func
 Func_02004bc0:
@@ -250,14 +250,14 @@ Object_SetModeById:
 	.thumb_func
 Func_02004ce8:
 	overlay_veneer Func_080c8150
-	.global Func_02004cf0
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02004cf0:
-	overlay_veneer Func_080c8170
-	.global Func_02004cf8
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02004cf8:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02004d00
 	.thumb_func
 Func_02004d00:
@@ -270,10 +270,10 @@ Func_02004d08:
 	.thumb_func
 Func_02004d10:
 	overlay_veneer Func_080c8230
-	.global Func_02004d18
+	.global Motion_CamBounds
 	.thumb_func
-Func_02004d18:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02004d20
 	.thumb_func
 Func_02004d20:

@@ -219,7 +219,7 @@ void BattleFx_BeginCanvasLayer(s32);
 void Func_0813ba50(void);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Func_08163c2c(s32, s32);
-void Func_08118010(struct Local264 *, s32);
+void BattleActor_SpawnObjectsForListFar(struct Local264 *, s32);
 void Func_08013560(s32);
 void Func_08014c4c(void);
 void Func_08118040(s32, s32, s32);
@@ -233,7 +233,7 @@ void Func_08157cf4(s32, void *, s32, s32);
 void Func_081c0010(s32);
 u32 Random16(void);
 s32 Func_0800206c(s32, s32);
-void Func_08020010(struct SpriteObject *, s32 *, s32 *, s32);
+void Render_ApplyProjectedPlacementFar(struct SpriteObject *, s32 *, s32 *, s32);
 s32 Func_08002096(s32);
 s32 Func_08002090(s32);
 s32 Math_Div(s32, s32);
@@ -329,7 +329,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     DISPLAY_1120->unk_4 = 0;
     unit88->unk_10 = 1;
     local264.value = 255;
-    Func_08118010(&local264, 0);
+    BattleActor_SpawnObjectsForListFar(&local264, 0);
     REG_WININ = 0x2737;
     REG_WIN0H = 240;
     Func_08013560(1);
@@ -472,7 +472,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 pos248[1] = 0xff0000;
                 pos248[0] = PARTICLES[64 + i].x;
                 pos248[2] = PARTICLES[64 + i].y + 0x200000;
-                Func_08020010(SPRITES[i], pos248, scale168, 0);
+                Render_ApplyProjectedPlacementFar(SPRITES[i], pos248, scale168, 0);
                 SPRITES[i]->tile = tiles[PARTICLES[64 + i].timer / 16];
             }
             for (i = 0; i != 128; i++) {
@@ -496,7 +496,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
             pos232[1] = 0xff0000;
             pos232[0] = 114 << 16;
             pos232[2] = (t56 < 0 ? 100 : 78) << 16;
-            Func_08020010(work->objects[0], pos232, scale160, 0);
+            Render_ApplyProjectedPlacementFar(work->objects[0], pos232, scale160, 0);
         }
         if (frame == 131) {
             Func_08118040(1, (s32)&Value_00000075, 0);
@@ -725,13 +725,13 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 scale152[1] = scale152[0] = pos_z / 48 + 0x4000;
                 pos216[0] = pos_x + 0x400000;
                 pos216[2] = 144 << 16;
-                Func_08020010(work->objects[12], pos216, scale152, 0);
+                Render_ApplyProjectedPlacementFar(work->objects[12], pos216, scale152, 0);
                 scale152[1] = 0x10000;
                 scale152[0] = 0x10000;
                 for (i = 0; i != 12; i++) {
                     pos216[0] = pos_x + ((i % 4) << 21);
                     pos216[2] = pos_z + ((i / 4) << 21);
-                    Func_08020010(work->objects[i], pos216, scale152, 0);
+                    Render_ApplyProjectedPlacementFar(work->objects[i], pos216, scale152, 0);
                 }
             }
             if (frame == 200) {
@@ -822,7 +822,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 pos200[1] = 0xff0000;
                 pos200[0] = 184 << 15;
                 pos200[2] = 144 << 15;
-                Func_08020010(work->objects[13], pos200, scale136, 0);
+                Render_ApplyProjectedPlacementFar(work->objects[13], pos200, scale136, 0);
                 {
                     u16 *target = Resource_GetTableEntry((s32)&Value_0000009d);
                     u16 *color = PLTT + 0x1c0;
@@ -958,7 +958,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 pos184[1] = 0xff0000;
                 pos184[0] = (dx << 16) + (184 << 15);
                 pos184[2] = (dz << 16) + (144 << 15);
-                Func_08020010(work->objects[13], pos184, scale120, 0);
+                Render_ApplyProjectedPlacementFar(work->objects[13], pos184, scale120, 0);
             }
             if (frame == 347) {
                 work->transfer_mode = 1;
@@ -1286,7 +1286,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
         PLTT[i] = (b << 10) | (g << 5) | r;
     }
     arg->actors[arg->count] = (u32)&Value_000000ff;
-    Func_08118010((struct Local264 *)arg->actors, 0);
+    BattleActor_SpawnObjectsForListFar((struct Local264 *)arg->actors, 0);
     Func_0815b434(work->buffer, 56, 0x10000);
     Func_0815b434(work->buffer + 0x1000, 16, 0x10000);
     CpuFill(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);

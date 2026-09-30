@@ -749,7 +749,7 @@ Func_08164cc4:
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #44]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r0, [sp, #40]
 	movs r1, #238
 	ldr r3, [r0]
@@ -760,7 +760,7 @@ Func_08164cc4:
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #44]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	b .L_081652d8
 .L_0816529e:
 	ldr r3, [sp, #16]
@@ -790,7 +790,7 @@ Func_08164cc4:
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #44]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_081652d8:
 	movs r3, #0
 	mov r4, r10
@@ -1687,7 +1687,7 @@ Func_08164cc4:
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #28]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r0, [sp, #32]
 	movs r1, #238
 	ldr r3, [r0]
@@ -1698,7 +1698,7 @@ Func_08164cc4:
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #28]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	b .L_08165a34
 .L_08165a02:
 	ldr r3, [sp, #28]
@@ -1724,7 +1724,7 @@ Func_08164cc4:
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #28]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_08165a34:
 	ldr r0, [sp, #32]
 	movs r1, #238

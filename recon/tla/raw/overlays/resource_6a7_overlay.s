@@ -84,12 +84,12 @@ Func_020000a8:
 	push {lr}
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000a20
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008100
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000a28
+	bl GameFlag_SetBit
 	bl Func_02000a68
 	movs r0, #0
 	bl Func_02000b30
@@ -126,13 +126,13 @@ Func_02000108:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #12
-	bl Func_02000a20
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020081d2
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #12
-	bl Func_02000a28
+	bl GameFlag_SetBit
 	bl Func_02000a68
 	movs r0, #0
 	bl Func_02000b30
@@ -154,7 +154,7 @@ Func_02000108:
 	negs r1, r1
 	lsls r2, r2, #16
 	lsls r0, r0, #17
-	bl Func_02000ae8
+	bl Motion_CamBounds
 	bl Func_02000af0
 	movs r0, #5
 	bl Battle_WaitMode0
@@ -226,7 +226,7 @@ Func_020001d8:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #14
-	bl Func_02000a20
+	bl GameFlag_Test
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0200820c
@@ -305,13 +305,13 @@ Func_020001d8:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #13
-	bl Func_02000a20
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020082ea
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #13
-	bl Func_02000a28
+	bl GameFlag_SetBit
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #7
@@ -324,7 +324,7 @@ Func_020001d8:
 	bl Func_02000ac0
 	movs r1, #0
 	movs r0, #11
-	bl Func_02000ac8
+	bl UiText_OpenMessageAtObject
 	movs r0, #4
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -441,7 +441,7 @@ Func_020001d8:
 	lsls r2, r2, #16
 	movs r3, #1
 	lsls r0, r0, #17
-	bl Func_02000ae8
+	bl Motion_CamBounds
 	bl Func_02000af0
 	movs r0, #9
 	bl ObjectMotion_CommitCurrentPositionAndActivate
@@ -526,7 +526,7 @@ Func_020001d8:
 	bl ObjectMotion_SetPositionAndCommit
 	movs r0, #8
 	movs r1, #1
-	bl Func_02000ae0
+	bl Object_AttachWorkTargetToObject
 	movs r1, #232
 	movs r0, #8
 	lsls r1, r1, #1
@@ -629,7 +629,7 @@ Func_020001d8:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #14
-	bl Func_02000a28
+	bl GameFlag_SetBit
 	movs r0, #4
 	bl Func_02000b00
 .L_020085c6:
@@ -708,7 +708,7 @@ Func_02000618:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #10
-	bl Func_02000a28
+	bl GameFlag_SetBit
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #118
@@ -745,7 +745,7 @@ Func_02000680:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #14
-	bl Func_02000a20
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020086a8
 	bl Func_02000064
@@ -870,7 +870,7 @@ Func_020006b0:
 	ble .L_02008706
 	movs r0, #192
 	lsls r0, r0, #3
-	bl Func_020009e0
+	bl Runtime_BumpAllocateAlternatePool
 	movs r5, #128
 	lsls r5, r5, #5
 	mov r10, r0
@@ -1096,7 +1096,7 @@ Func_020006b0:
 	b .L_02008810
 .L_02008972:
 	mov r0, r11
-	bl Func_020009f8
+	bl Resource_ResetEntry
 	mov r0, r10
 	bl Sys_Free
 	movs r0, #40
@@ -1106,7 +1106,7 @@ Func_020006b0:
 	movs r0, #0
 	bl Func_02000a50
 	ldr r0, [sp, #16]
-	bl Func_020009f8
+	bl Resource_ResetEntry
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock
 	add sp, #28

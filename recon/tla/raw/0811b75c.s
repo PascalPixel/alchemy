@@ -161,7 +161,7 @@ Func_0811b75c:
 	.2byte 0xf800
 	str r0, [r6, #12]
 	adds r0, r5, #0
-	bl Func_08020000
+	bl Resource_GetMetadataRecordFarFar
 	ldrb r3, [r0, #9]
 	mov r2, r10
 	lsrs r3, r3, #1

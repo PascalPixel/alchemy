@@ -9,9 +9,9 @@
 	.thumb_func
 Object_SetPositionAndResetMotionFar:
 	overlay_veneer Object_SetPositionAndResetMotion
-	.global Func_080200f0
+	.global Map_RenderAnimatedTileFrameFar
 	.thumb_func
-Func_080200f0:
+Map_RenderAnimatedTileFrameFar:
 	overlay_veneer Map_RenderAnimatedTileFrame
 	.global Map_RenderAnimatedTileFramesForObjectFar
 	.thumb_func

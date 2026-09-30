@@ -45,7 +45,7 @@ Func_0200005c:
 	push {r5, r6, lr}
 	movs r0, #0
 	ldr r5, .L_020080a4
-	bl Func_02002218
+	bl Blend_SetDarkenTarget16
 	ldr r3, .L_020080a0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -385,7 +385,7 @@ Func_020002e0:
 	push {lr}
 	movs r0, #162
 	lsls r0, r0, #1
-	bl Func_02002240
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020082f2
 	movs r0, #0
@@ -433,7 +433,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020086a8
-	bl Func_020021d8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -541,7 +541,7 @@ Func_02000328:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_020086c8
-	bl Func_020021d8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
@@ -814,7 +814,7 @@ Func_02000328:
 	cmp r6, #0
 	bne .L_0200867e
 	movs r0, #46
-	bl Func_02002248
+	bl GameFlag_SetBit
 	ldr r3, .L_020086ac
 	movs r1, #196
 	lsls r1, r1, #1
@@ -900,7 +900,7 @@ Func_02000328:
 .L_02008714:
 	movs r0, #10
 	adds r0, #255
-	bl Func_02002248
+	bl GameFlag_SetBit
 	ldr r5, .L_02008a38
 	movs r1, #147
 	lsls r1, r1, #1
@@ -938,7 +938,7 @@ Func_02000328:
 	bl Func_020023e0
 	movs r0, #10
 	adds r0, #255
-	bl Func_02002250
+	bl GameFlag_ClearBit
 	b .L_02008846
 .L_02008772:
 	ldr r3, .L_02008a3c
@@ -975,10 +975,10 @@ Func_02000328:
 	bl Func_020023e0
 	movs r0, #10
 	adds r0, #255
-	bl Func_02002250
+	bl GameFlag_ClearBit
 	movs r0, #159
 	lsls r0, r0, #1
-	bl Func_02002248
+	bl GameFlag_SetBit
 	b .L_02008846
 .L_020087c6:
 	ldr r3, .L_02008a44
@@ -1034,14 +1034,14 @@ Func_02000328:
 	bl Func_020023e0
 	movs r0, #10
 	adds r0, #255
-	bl Func_02002250
+	bl GameFlag_ClearBit
 	movs r0, #64
 	adds r0, #255
-	bl Func_02002248
+	bl GameFlag_SetBit
 .L_02008846:
 	movs r0, #131
 	lsls r0, r0, #1
-	bl Func_02002250
+	bl GameFlag_ClearBit
 	b .L_020089fe
 .L_02008850:
 	cmp r5, #2
@@ -1074,7 +1074,7 @@ Func_02000328:
 	lsls r0, r0, #4
 	str r2, [r3]
 	adds r0, #255
-	bl Func_02002240
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008898
 	bl Func_02002390
@@ -1092,10 +1092,10 @@ Func_02000328:
 	bl Func_02002310
 	movs r0, #10
 	adds r0, #255
-	bl Func_02002250
+	bl GameFlag_ClearBit
 	movs r0, #131
 	lsls r0, r0, #1
-	bl Func_02002250
+	bl GameFlag_ClearBit
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #118
@@ -1253,7 +1253,7 @@ Func_02000328:
 .L_020089f6:
 	movs r0, #10
 	adds r0, #255
-	bl Func_02002248
+	bl GameFlag_SetBit
 .L_020089fe:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1539,7 +1539,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_02008d7c
-	bl Func_02002230
+	bl Party_Check
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3
@@ -1875,7 +1875,7 @@ Func_02000e44:
 	str r3, [sp, #60]
 	str r3, [sp, #52]
 	str r3, [sp, #48]
-	bl Func_020021e8
+	bl Runtime_BumpAllocateAlternatePool
 	movs r4, #0
 	str r0, [sp, #36]
 	ldr r0, .L_02008ed8
@@ -3058,7 +3058,7 @@ Func_02001804:
 	lsls r0, r0, #2
 	ldr r5, [r3, #60]
 	adds r6, r1, #0
-	bl Func_020021e8
+	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	mov r1, r8
 	adds r0, r6, #0
@@ -3119,7 +3119,7 @@ Func_0200187c:
 	lsls r3, r3, #18
 	lsls r0, r0, #2
 	ldr r5, [r3, #60]
-	bl Func_020021e8
+	bl Runtime_BumpAllocateAlternatePool
 	movs r1, #14
 	ldrsh r3, [r6, r1]
 	movs r1, #12
@@ -3324,7 +3324,7 @@ Func_020018e0:
 	cmp r2, #0
 	beq .L_02009a24
 	ldrh r0, [r3, r0]
-	bl Func_02002248
+	bl GameFlag_SetBit
 	b .L_02009a2a
 	.2byte 0x0000
 .L_02009a1c:
@@ -3333,7 +3333,7 @@ Func_020018e0:
 	.4byte Data_02002490
 .L_02009a24:
 	ldrh r0, [r3, r0]
-	bl Func_02002250
+	bl GameFlag_ClearBit
 .L_02009a2a:
 	adds r7, r5, #0
 	cmp r7, #6
@@ -3353,7 +3353,7 @@ Func_020018e0:
 	strb r3, [r5, #15]
 	adds r0, r7, #0
 	ldrb r1, [r5, #15]
-	bl Func_02002368
+	bl Owner_GetLevelThreshold
 	movs r1, #146
 	lsls r1, r1, #1
 	adds r5, r5, r1
@@ -3406,7 +3406,7 @@ Func_020018e0:
 	adds r0, r0, r3
 	adds r0, #48
 	adds r7, #1
-	bl Func_02002250
+	bl GameFlag_ClearBit
 	cmp r7, #28
 	bne .L_02009a9c
 	movs r7, #0
@@ -3617,7 +3617,7 @@ Func_020018e0:
 	ldr r6, .L_02009c70
 	lsls r5, r7, #2
 	ldr r0, [r6, r5]
-	bl Func_02002380
+	bl Owner_RefreshDerivedData
 	adds r7, #1
 	ldr r0, [r6, r5]
 	bl Owner_RecalculateStats
@@ -3712,7 +3712,7 @@ Func_02001c7c:
 	ldr r2, .L_02009e44
 	lsls r3, r6, #1
 	ldrh r0, [r2, r3]
-	bl Func_02002240
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02009d10
 	ldr r1, [sp, #8]

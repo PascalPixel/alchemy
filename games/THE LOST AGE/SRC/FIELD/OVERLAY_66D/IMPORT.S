@@ -6,14 +6,14 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_02000524
+	.global GameFlag_Test
 	.thumb_func
-Func_02000524:
-	overlay_veneer Func_080003c8
-	.global Func_0200052c
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_0200052c:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02000534
 	.thumb_func
 Func_02000534:
@@ -58,10 +58,10 @@ Object_SetModeById:
 	.thumb_func
 Func_02000584:
 	overlay_veneer Func_080c8180
-	.global Func_0200058c
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_0200058c:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02000594
 	.thumb_func
 Func_02000594:

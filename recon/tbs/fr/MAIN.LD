@@ -298,7 +298,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW13.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU4.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_FOUR_NUMBERS_IN_ROW.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.0001f104)
+    "*/games/COMMON/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.0001f1c8)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW14.o"(.text)

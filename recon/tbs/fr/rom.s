@@ -397,8 +397,6 @@ UiText_RenderStringTiles:
 	.thumb_func
 UiWindow_DrawPartyStatusContents:
 	.incbin "baserom.gba", 0x0001e16c, 0x000003d4
-	.section .rom.0001f104, "ax"
-	.incbin "baserom.gba", 0x0001f104, 0x000000c4
 	.section .rom.0001f1c8, "ax"
 	.global SaveMenu_SelectSlot
 	.type SaveMenu_SelectSlot, %function
@@ -574,7 +572,10 @@ SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x000358a4, 0x00000028
 	.global SideObject_ActorKindIdMap
 SideObject_ActorKindIdMap:
-	.incbin "baserom.gba", 0x000358cc, 0x000009f4
+	.incbin "baserom.gba", 0x000358cc, 0x000009cc
+	.global StatusMenu_LevelLetterString
+StatusMenu_LevelLetterString:
+	.incbin "baserom.gba", 0x00036298, 0x00000028
 	.global Data_080371fe
 Data_080371fe:
 	.incbin "baserom.gba", 0x000362c0, 0x00000008

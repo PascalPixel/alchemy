@@ -15,7 +15,7 @@ Func_080d3118:
 	adds	r3, r7, #0
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	adds	r3, r5, #0
 	adds	r3, #85
 	ldrb	r2, [r3, #0]

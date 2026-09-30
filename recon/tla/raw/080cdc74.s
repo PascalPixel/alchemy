@@ -239,7 +239,7 @@ Func_080cdc74:
 	ldr	r1, [r7, #0]
 	ldr	r2, [r7, #4]
 	ldr	r3, [r7, #8]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	movs	r0, #10
 	ldrsh	r1, [r5, r0]
 	movs	r0, #18
@@ -248,7 +248,7 @@ Func_080cdc74:
 	lsls	r1, r1, #16
 	lsls	r3, r3, #16
 	adds	r0, r5, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	Object_SetMode

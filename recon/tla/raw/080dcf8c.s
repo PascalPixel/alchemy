@@ -526,7 +526,7 @@ Func_080dcf8c:
 	ldr	r2, [r0, #12]
 	ldr	r1, [r0, #8]
 	ldr	r3, [r0, #16]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	ldr	r3, [sp, #40]
 	ldr	r0, [sp, #12]
 	movs	r2, #24

@@ -39,7 +39,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data017
 	resource , Resource_Data018
 	resource , Title_IntroLighthousePicture
-	resource , Resource_Data01A
+	resource , Title_IntroGullSprites
 	resource , Resource_Data01B
 	resource , Resource_Data01C
 	resource , Resource_Data01D

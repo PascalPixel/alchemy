@@ -6,6 +6,7 @@ pub mod assets;
 pub mod cache;
 pub mod compare;
 pub mod decode;
+pub mod deps;
 pub mod discovery;
 pub mod editions;
 pub mod elf;

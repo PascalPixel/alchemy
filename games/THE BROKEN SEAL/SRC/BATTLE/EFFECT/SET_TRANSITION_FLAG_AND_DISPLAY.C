@@ -11,8 +11,8 @@ void BattleFx_SetTransitionFlagAndDisplay(void)
   s32 transfer;
   s32 *flag;
 
-  flag = (s32 *)((u8 *)*Ram_TransitionWork + 0xC);
-  state = (u8 *)*Ram_BattleWork;
+  flag = (s32 *)((u8 *)Ram_WorkSlot[44] + 0xC);
+  state = (u8 *)Ram_WorkSlot[9];
   *flag = 1;
   transfer = 0x1541;
   QueueIoWriteDelay2(0x04000000, transfer);

@@ -8,6 +8,7 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "MAP_SCROLL.H"
+#include "TBS_EDITION.H"
 
 extern u8 MsgVinasuPairDefeated[];
 void SceneEffect_SpawnParticlesAboveActor(void);
@@ -1180,8 +1181,8 @@ void Scene_RunExtendedActorTransition(void)
     Event_WaitForScreen();
     Event_Wait(80);
     Graphics_EnableObjLayerAndCallbacks();
-    *(u16 *)((*(s32 *)cell + 0x12f4)) = none;
-    *(u16 *)((*(s32 *)cell + 0x12f6)) = none;
+    *(u16 *)((*(s32 *)cell + RENDER_RESULT_OFS)) = none;
+    *(u16 *)((*(s32 *)cell + RENDER_RESULT_OFS + 2)) = none;
     UiText_ShowCenteredMessage((s32)MsgVinasuDespiteLongTiring, 0, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Event_Wait(80);

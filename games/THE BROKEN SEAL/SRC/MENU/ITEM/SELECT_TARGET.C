@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "TBS_EDITION.H"
 
 struct TargetMarkerAttributes {
     u16 y : 8;
@@ -128,12 +129,20 @@ s8 ItemMenu_SelectTarget(s32 mode)
                     quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_item & 0x1ff);
                     if (quantity != 0) {
                         UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
+#if defined(TBS_EDITION_DE)
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, 32, 72);
+#else
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, 24, 72);
+#endif
                     } else {
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgNoneInStock, window, 16, 72);
                     }
                     if (ItemMenu_Count(menu->owner_ids[selection]) == 15 && quantity == 0)
+#if defined(TBS_EDITION_JA)
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 16, 72);
+#else
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 0, 72);
+#endif
                 }
                 ItemMenu_DrawEquipPreview(menu->item_owner, menu->selected_slot, 0, menu->owner_ids[selection]);
             }

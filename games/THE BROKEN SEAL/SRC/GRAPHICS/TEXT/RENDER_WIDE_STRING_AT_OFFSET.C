@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
 struct TextWindow {
     u8 unknown_00[22];
@@ -11,7 +12,7 @@ struct GlyphInfo {
 };
 
 struct TextWork {
-    u8 unknown_000[0xea8];
+    u8 unknown_000[RENDER_WORD2_OFS];
     u16 color_a;
     u16 unknown_eaa;
     u16 color_b;

@@ -111,8 +111,13 @@ s32 CharacterMenu_SelectCommand(void)
                     selected = Math_Mod(selected + limit, limit);
                     RenderOutput_RedrawSavedRectFar(menu->help_window);
                     if (has_ailments == 0) {
+#if defined(TBS_EDITION_JA)
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp,
+                            menu->window, 64, -24);
+#else
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp,
                             menu->window, 80, -24);
+#endif
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 1,
                             menu->window, 0, -24);
                     }

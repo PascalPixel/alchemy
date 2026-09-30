@@ -2,6 +2,8 @@
 
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 MsgAgilityLabel[];
+extern u8 MsgPanelStatLabel[];
+extern u8 MsgPanelDefenseLabel[];
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawNumberAtOffsetFar();
 void UiIcon_CreateStatChangeArrow();
@@ -25,7 +27,7 @@ void UiText_DrawStatComparison(s32 alt, s32 base, s32 work)
     s32 rec;
 
     p = alt;
-    Call4(UiText_DrawCharacterAtOffsetFar, 0xb1c, work, 0, 32);
+    Call4(UiText_DrawCharacterAtOffsetFar, (s32)MsgPanelStatLabel, work, 0, 32);
     UiText_DrawNumberAtOffsetFar(*(u16 *)(base + 60), 3, work, 16, 40);
     if (*(u16 *)(p + 60) != *(u16 *)(base + 60)) {
         UiText_DrawNumberAtOffsetFar(*(u16 *)(p + 60), 3, work, 64, 40);
@@ -35,7 +37,7 @@ void UiText_DrawStatComparison(s32 alt, s32 base, s32 work)
             UiIcon_CreateStatChangeArrow(work, 44, 36, 1);
         }
     }
-    Call4(UiText_DrawCharacterAtOffsetFar, 0xb1d, work, 0, 48);
+    Call4(UiText_DrawCharacterAtOffsetFar, (s32)MsgPanelDefenseLabel, work, 0, 48);
     UiText_DrawNumberAtOffsetFar(*(u16 *)(base + 62), 3, work, 16, 56);
     if (*(u16 *)(p + 62) != *(u16 *)(base + 62)) {
         UiText_DrawNumberAtOffsetFar(*(u16 *)(p + 62), 3, work, 64, 56);

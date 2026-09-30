@@ -7,7 +7,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
 /* Draws a window frame into the text canvas: corners, edges and a blank
-   interior. The alternate frame style (byte 0xea4) uses the flipped corner
+   interior. The alternate frame style (byte RENDER_MODE_OFS) uses the flipped corner
    tiles of the second border set. */
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 {
@@ -18,12 +18,12 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
     if (width <= 1 || height <= 1 || width > 30 || height > 30)
         return;
     UiWindow_ClearTileAttributesInRect(x, y, width, height);
-    if (base[0xea4] != 0)
+    if (base[RENDER_MODE_OFS] != 0)
         *cursor++ = 0xf01c;
     else
         *cursor++ = 0xf010;
     cursor = Memory_FillHalfwordsDma(cursor, 0xf011f011, width - 2);
-    if (base[0xea4] != 0)
+    if (base[RENDER_MODE_OFS] != 0)
         *cursor++ = 0xf41c;
     else
         *cursor++ = 0xf012;
@@ -35,12 +35,12 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
         *cursor++ = 0xf017;
         cursor += 32 - width;
     }
-    if (base[0xea4] != 0)
+    if (base[RENDER_MODE_OFS] != 0)
         *cursor++ = 0xf81c;
     else
         *cursor++ = 0xf013;
     cursor = Memory_FillHalfwordsDma(cursor, 0xf014f014, width - 2);
-    if (base[0xea4] != 0)
+    if (base[RENDER_MODE_OFS] != 0)
         *cursor = 0xfc1c;
     else
         *cursor = 0xf015;

@@ -41527,7 +41527,7 @@ msgctxt "message"
 msgid "10379"
 msgstr "Abbiamo promesso a Babi{line_break}che avremmo trovato Lemuria.{line_break}Non possiamo deluderlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotBlackOrb"
 msgid "10380"
 msgstr "{actor_name:1} riceve la Sfera nera.{end_wait}"
 

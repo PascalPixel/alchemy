@@ -779,12 +779,6 @@ BattleFx_BuildBuffer:
 	.thumb_func
 Object_EffectSpawnCallback:
 	.incbin "baserom.gba", 0x000882b8, 0x000001dc
-	.section .rom.00088a58, "ax"
-	.global PartyInventory_GiveItem
-	.type PartyInventory_GiveItem, %function
-	.thumb_func
-PartyInventory_GiveItem:
-	.incbin "baserom.gba", 0x00088a58, 0x000001e4
 	.section .rom.00089c60, "ax"
 	.global UiText_OpenMessageAtObject
 	.type UiText_OpenMessageAtObject, %function
@@ -1268,12 +1262,7 @@ Shop_DrawMsg:
 	.thumb_func
 Shop_SelectQuantity:
 	.incbin "baserom.gba", 0x000a862c, 0x000001dc
-	.section .rom.000aa468, "ax"
-	.global Shop_PickUnitItem
-	.type Shop_PickUnitItem, %function
-	.thumb_func
-Shop_PickUnitItem:
-	.incbin "baserom.gba", 0x000aa468, 0x000004fc
+	.section .rom.000aa964, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:
 	.incbin "baserom.gba", 0x000aa964, 0x00000080

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "ITEM_IDS.H"
 
 extern s32 gGameState[];
 extern u8 MsgCannotCarryMore;
@@ -40,9 +41,6 @@ s32 Party_CheckMemberValueTotal(s32 id)
     return 0;
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct ItemData {
     u8 unknown_00[3];
     u8 flags;
@@ -56,6 +54,8 @@ struct EventWork {
 extern struct EventWork *gEventWork;
 extern s32 gGameState[];
 extern u8 MsgKorosseoRobinGotItem;
+/* The German Black Orb has a line of its own, which names it. */
+extern u8 MsgGotBlackOrb;
 extern u8 MsgCannotCarryAnyMore;
 extern u8 MsgWhatWillYouDrop;
 extern u8 MsgGaveItemToMember;
@@ -88,8 +88,17 @@ s32 PartyInventory_GiveItem(s32 item)
     saved = work->message_position;
     owner = PartyInventory_AddFar(item);
     if (owner == -1) {
+#if defined(TBS_EDITION_DE)
+        if (item == ITEM_BLACK_ORB)
+            UiText_ShowPositionedMessageAndWaitFar(&MsgGotBlackOrb, 1);
+        else {
+            UiWork_PushValueSlotFar(item, 2);
+            UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 1);
+        }
+#else
         UiWork_PushValueSlotFar(item, 2);
         UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 1);
+#endif
         UiText_ShowPositionedMessageAndWaitFar(&MsgCannotCarryAnyMore, 1);
     retry:
         UiText_ShowPositionedMessageAndWaitFar(&MsgWhatWillYouDrop, 1);
@@ -119,13 +128,32 @@ s32 PartyInventory_GiveItem(s32 item)
 
                 count = Shop_GetSelectionState(member, s);
             }
+#if !defined(TBS_EDITION_EN)
+            /* The other editions turn away a member who already carries
+               thirty of the item, and ask again. */
+            if (Inventory_CountItemFar(member, item) > 29) {
+                UiWork_PushValueSlotFar(member, 1);
+                UiWork_PushValueSlotFar(item, 2);
+                UiText_ShowPositionedMessageAndWaitFar(&MsgWhatWillYouDrop + 7, 1);
+                goto retry;
+            }
+#endif
             for (i = 0; i < count; i++)
                 Inventory_DiscardFar(member, slot);
             owner = PartyInventory_AddFar(item);
             Audio_PlayCue(83);
             if (owner == gGameState[125]) {
+#if defined(TBS_EDITION_DE)
+                if (item == ITEM_BLACK_ORB)
+                    UiText_ShowPositionedMessageAndWaitFar(&MsgGotBlackOrb, 3);
+                else {
+                    UiWork_PushValueSlotFar(item, 2);
+                    UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 3);
+                }
+#else
                 UiWork_PushValueSlotFar(item, 2);
                 UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 3);
+#endif
             } else {
                 UiWork_PushValueSlotFar(item, 2);
                 UiWork_PushValueSlotFar(owner, 1);
@@ -136,15 +164,30 @@ s32 PartyInventory_GiveItem(s32 item)
         }
     } else {
         Audio_PlayCue(83);
+#if defined(TBS_EDITION_DE)
+        if (item == ITEM_BLACK_ORB)
+            UiText_ShowPositionedMessageAndWaitFar(&MsgGotBlackOrb, 3);
+        else {
+            UiWork_PushValueSlotFar(item, 2);
+            UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 3);
+        }
+#else
         UiWork_PushValueSlotFar(item, 2);
         UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 3);
+#endif
         if (owner != gGameState[125]) {
             UiWork_PushValueSlotFar(item, 2);
             UiWork_PushValueSlotFar(owner, 1);
+#if defined(TBS_EDITION_DE)
+            UiText_ShowPositionedMessageAndWaitFar(&MsgGaveItemToMember, 1);
+#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
+    defined(TBS_EDITION_IT)
+            UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem + 1, 1);
+#else
             UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem + 1, 3);
+#endif
         }
         work->message_position = saved;
     }
     return owner;
 }
-#endif

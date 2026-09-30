@@ -731,12 +731,6 @@ BattleFx_BuildBuffer:
 	.thumb_func
 Object_EffectSpawnCallback:
 	.incbin "baserom.gba", 0x00094924, 0x000001dc
-	.section .rom.000950c4, "ax"
-	.global PartyInventory_GiveItem
-	.type PartyInventory_GiveItem, %function
-	.thumb_func
-PartyInventory_GiveItem:
-	.incbin "baserom.gba", 0x000950c4, 0x000001f4
 	.section .rom.000962dc, "ax"
 	.global UiText_OpenMessageAtObject
 	.type UiText_OpenMessageAtObject, %function

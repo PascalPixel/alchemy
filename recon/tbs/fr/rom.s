@@ -938,6 +938,10 @@ Party_AdjustSixDigitCounterAFar:
 Item_GetEquipmentGroupFar:
 	.incbin "baserom.gba", 0x0007c238, 0x00000008
 	.section .rom.0007c240, "ax"
+	.global Item_AdjustCounterFar
+	.type Item_AdjustCounterFar, %function
+	.thumb_func
+Item_AdjustCounterFar:
 	.global Func_08077240
 	.type Func_08077240, %function
 	.thumb_func
@@ -994,6 +998,10 @@ Func_080772a0:
 Inventory_CheckDiscardFar:
 	.incbin "baserom.gba", 0x0007c2a8, 0x00000008
 	.section .rom.0007c2b0, "ax"
+	.global Inventory_DiscardFar
+	.type Inventory_DiscardFar, %function
+	.thumb_func
+Inventory_DiscardFar:
 	.global Func_080772b0
 	.type Func_080772b0, %function
 	.thumb_func
@@ -1163,12 +1171,6 @@ BattleFx_BuildBuffer:
 	.thumb_func
 Object_EffectSpawnCallback:
 	.incbin "baserom.gba", 0x00096324, 0x000001dc
-	.section .rom.00096ac4, "ax"
-	.global PartyInventory_GiveItem
-	.type PartyInventory_GiveItem, %function
-	.thumb_func
-PartyInventory_GiveItem:
-	.incbin "baserom.gba", 0x00096ac4, 0x000001e4
 	.section .rom.00097ccc, "ax"
 	.global UiText_OpenMessageAtObject
 	.type UiText_OpenMessageAtObject, %function

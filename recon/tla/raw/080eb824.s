@@ -261,9 +261,9 @@ Func_080eb960:
 	beq.n	.L_080ebaba
 	mov	sl, r1
 .L_080eba48:
-	bl	Func_08014878
+	bl	Random16
 	adds	r6, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r2, #192
@@ -291,7 +291,7 @@ Func_080eb960:
 	str	r3, [r7, #4]
 	ldr	r3, [r2, #16]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r7, #0
 	adds	r1, r6, #0
 	bl	Func_0801489c

@@ -889,7 +889,7 @@ Func_0811d7e8:
 	mov	sl, r1
 	b.n	.L_0811df5a
 .L_0811df1e:
-	bl	Func_08014878
+	bl	Random16
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsls	r3, r3, #1

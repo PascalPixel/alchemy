@@ -649,7 +649,7 @@ Func_080ccec8:
 	mov	r0, fp
 	bl	0x080d1ed8
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #192]
 	lsls	r0, r0, #1
 	lsrs	r0, r0, #16

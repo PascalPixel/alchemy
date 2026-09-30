@@ -157,7 +157,7 @@ Func_081504d8:
 	mov	r9, r1
 	movs	r7, #192
 .L_081505fe:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -252,7 +252,7 @@ Func_081504d8:
 	muls	r3, r0
 	asrs	r3, r3, #6
 	str	r3, [r5, #20]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	ands	r3, r0
 	str	r3, [r5, #24]

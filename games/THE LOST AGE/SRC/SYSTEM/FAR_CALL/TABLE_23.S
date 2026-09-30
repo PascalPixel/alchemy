@@ -8,7 +8,7 @@
 	.global Func_080ad200
 	.thumb_func
 Func_080ad200:
-	overlay_veneer Func_080af8d0
+	overlay_veneer Owner_GetLevelThreshold
 	.global Func_080ad208
 	.thumb_func
 Func_080ad208:

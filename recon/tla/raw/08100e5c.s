@@ -61,7 +61,7 @@ Func_08100e7c:
 	movs	r0, #132
 	lsls	r0, r0, #6
 	adds	r0, #48
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r2, #192
 	lsls	r2, r2, #1
 	adds	r3, r7, r2

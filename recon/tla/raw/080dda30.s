@@ -67,14 +67,14 @@ Func_080dda30:
 	str	r3, [r6, #0]
 	ldr	r3, [r7, #12]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r3, #128
 	lsls	r3, r3, #11
 	lsls	r5, r5, #1
 	adds	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
@@ -96,7 +96,7 @@ Func_080dda30:
 	movs	r3, #2
 	strb	r3, [r2, #0]
 .L_080ddafa:
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #1
 	lsrs	r0, r0, #16
 	adds	r0, #2
@@ -145,14 +145,14 @@ Func_080dda30:
 	str	r3, [r6, #0]
 	ldr	r3, [r7, #12]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r3, #128
 	lsls	r3, r3, #11
 	lsls	r5, r5, #1
 	adds	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
@@ -174,7 +174,7 @@ Func_080dda30:
 	movs	r3, #2
 	strb	r3, [r2, #0]
 .L_080ddba6:
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #1
 	lsrs	r0, r0, #16
 	adds	r0, #2
@@ -376,14 +376,14 @@ Func_080dda30:
 	mov	r2, sl
 	bl	Func_0801489c
 .L_080ddd42:
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #11
 	lsls	r5, r5, #1
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	mov	r2, sl
 	adds	r1, r0, #0
 	adds	r0, r5, #0
@@ -635,7 +635,7 @@ Func_080dda30:
 	beq.n	.L_080ddfa0
 	ldr	r1, [pc, #100]
 	bl	Object_SetCallback
-	bl	Func_08014878
+	bl	Random16
 	mov	r3, r9
 	adds	r2, r6, #0
 	adds	r2, #85
@@ -644,14 +644,14 @@ Func_080dda30:
 	movs	r3, #0
 	str	r0, [r6, #48]
 	strb	r3, [r2, #0]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0

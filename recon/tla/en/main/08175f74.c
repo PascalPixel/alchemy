@@ -231,14 +231,14 @@ struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
 struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32);
 void Func_08157cf4(s32, void *, s32, s32);
 void Func_081c0010(s32);
-u32 Func_08014878(void);
+u32 Random16(void);
 s32 Func_0800206c(s32, s32);
 void Func_08020010(struct SpriteObject *, s32 *, s32 *, s32);
 s32 Func_08002096(s32);
 s32 Func_08002090(s32);
 s32 Math_Div(s32, s32);
 void Func_08020048(struct SpriteObject *);
-void *Func_08014dac(s32);
+void *Runtime_BumpAllocateAlternatePool(s32);
 struct Model *Func_081969f8(s32);
 void Func_08014de4(void);
 void Func_080151e4(s32, s32, s32);
@@ -456,11 +456,11 @@ void Func_08175f74(struct BattleEffectArgument *arg)
             scale168[0] = 0x14000;
             if (frame == 132) {
                 for (i = 0; i != 128; i++) {
-                    PARTICLES[i].x = (Func_08014878() % 160 + 40) << 16;
-                    PARTICLES[i].y = ((Func_08014878() & 63) + 32) << 16;
-                    PARTICLES[i].timer = Func_08014878() & 255;
-                    PARTICLES[i].vx = ((Func_08014878() & 255) - 127) << 9;
-                    PARTICLES[i].vy = (-(Func_08014878() & 255) - 128) << 8;
+                    PARTICLES[i].x = (Random16() % 160 + 40) << 16;
+                    PARTICLES[i].y = ((Random16() & 63) + 32) << 16;
+                    PARTICLES[i].timer = Random16() & 255;
+                    PARTICLES[i].vx = ((Random16() & 255) - 127) << 9;
+                    PARTICLES[i].vy = (-(Random16() & 255) - 128) << 8;
                 }
             }
             for (i = 0; i != 48; i++) {
@@ -699,7 +699,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     REVEAL_BUFFER[0x1000 + i] = i;
                 }
                 for (i = 0; i != 32; i++) {
-                    u8 *other = &REVEAL_BUFFER[0x1000 + (Func_08014878() & 31)];
+                    u8 *other = &REVEAL_BUFFER[0x1000 + (Random16() & 31)];
                     u8 swap = REVEAL_BUFFER[0x1000 + i];
 
                     REVEAL_BUFFER[0x1000 + i] = *other;
@@ -739,7 +739,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 CpuCopy(PLTT, source, 128);
             }
             if (frame >= 200 && frame < 302) {
-                texture = Func_08014dac(32);
+                texture = Runtime_BumpAllocateAlternatePool(32);
                 model = Func_081969f8(1);
                 t = frame - 200;
                 depth = t * 4 - 64;
@@ -901,7 +901,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     s32 depth2;
                     s32 size;
 
-                    texture = Func_08014dac(32);
+                    texture = Runtime_BumpAllocateAlternatePool(32);
                     model = Func_081969f8(1);
                     desc128.a = 7;
                     desc128.b = 7;
@@ -1152,7 +1152,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
         if (frame < 132) {
             s32 scale112;
 
-            texture = Func_08014dac(32);
+            texture = Runtime_BumpAllocateAlternatePool(32);
             model = Func_081969f8(1);
             work->transfer_mode = 2;
             work->transfer_value = 50;
@@ -1371,8 +1371,8 @@ void Func_08175f74(struct BattleEffectArgument *arg)
         if (frame >= 140) {
             if (frame == 140) {
                 for (i = 0; i != 32; i++) {
-                    s32 speed = Func_08014878() & 511;
-                    s32 angle = Func_08014878();
+                    s32 speed = Random16() & 511;
+                    s32 angle = Random16();
 
                     PARTICLES[96 + i].x = 240 << 14;
                     PARTICLES[96 + i].y = 240 << 14;
@@ -1382,15 +1382,15 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     PARTICLES[96 + i].timer = 0;
                 }
                 for (i = 0; i != 128; i++) {
-                    s32 speed = Func_08014878() & 255;
-                    s32 angle = Func_08014878();
+                    s32 speed = Random16() & 255;
+                    s32 angle = Random16();
 
                     PARTICLES[128 + i].x = 240 << 14;
                     PARTICLES[128 + i].y = 240 << 14;
                     speed += 32;
                     PARTICLES[128 + i].vx = (Func_08002096(angle) * speed) >> 6;
                     PARTICLES[128 + i].vy = (Func_08002090(angle) * speed) >> 6;
-                    PARTICLES[128 + i].timer = (Func_08014878() & 15) + 16;
+                    PARTICLES[128 + i].timer = (Random16() & 15) + 16;
                 }
                 Func_08157cf4((s32)&Value_0000013e, SPRITE_BUFFER, 1, 0);
                 Func_081c0010(144);
@@ -1406,10 +1406,10 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     actor->z = work->homes[i].z;
                 }
                 for (i = 0; i != arg->count; i++) {
-                    s32 spin = Func_08014878();
+                    s32 spin = Random16();
 
                     Func_0815f000(arg->actors[i], 1, 0x40000, 0x80000, spin * 2 + 0x20000,
-                        (Func_08014878() & 31) + 120);
+                        (Random16() & 31) + 120);
                     Func_0814cd48(arg->actors[i], 7, 5, i, 32);
                 }
                 work->unk_77a8 = 3;
@@ -1527,8 +1527,8 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                         Func_0815e20c(arg->actors[i], member);
                         Func_081c0010(103);
                         for (j = 0; j != 16; j++) {
-                            s32 angle = Func_08014878() & 0x7fff;
-                            s32 speed = Func_08014878() & 255;
+                            s32 angle = Random16() & 0x7fff;
+                            s32 speed = Random16() & 255;
 
                             p = &PARTICLES[i * 16 + j];
                             p->x = member->x << 15;
@@ -1536,7 +1536,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                             speed += 256;
                             p->vx = -(Func_08002096(angle) * speed) >> 7;
                             p->vy = (Func_08002090(angle) * speed) >> 6;
-                            p->timer = (Func_08014878() & 15) + 16;
+                            p->timer = (Random16() & 15) + 16;
                         }
                     }
                 }
@@ -1576,9 +1576,9 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                         drop->timer = 0;
                     }
                     if (drop->timer == 0) {
-                        drop->x = (Func_08014878() % 24 + shake - i * 2) << 16;
+                        drop->x = (Random16() % 24 + shake - i * 2) << 16;
                         drop->y = (160 << 15) + i * (192 << 10);
-                        drop->vx = -(Func_08014878() & 0xffff) - 0x4000;
+                        drop->vx = -(Random16() & 0xffff) - 0x4000;
                         drop->vy = -0x10000;
                     }
                     if (drop->timer >= 0) {
@@ -1612,7 +1612,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 }
                 Func_0801314c(104);
             }
-            texture = Func_08014dac(32);
+            texture = Runtime_BumpAllocateAlternatePool(32);
             model = Func_081969f8(1);
             desc104.a = 6;
             desc104.b = 6;

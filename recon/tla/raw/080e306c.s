@@ -183,14 +183,14 @@ Func_080e306c:
 .L_080e31e4:
 	movs	r6, #0
 .L_080e31e6:
-	bl	Func_08014878
+	bl	Random16
 	ldr	r4, [sp, #28]
 	adds	r5, r0, #0
 	lsls	r5, r5, #2
 	lsls	r3, r6, #16
 	adds	r5, r4, r5
 	subs	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	asrs	r5, r5, #16
 	adds	r1, r0, #0
 	ldr	r2, [sp, #20]

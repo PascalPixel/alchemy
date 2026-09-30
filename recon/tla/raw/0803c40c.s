@@ -312,9 +312,9 @@ Func_0803c40c:
 	bne.n	.L_0803c688
 	b.n	.L_0803c922
 .L_0803c688:
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -333,9 +333,9 @@ Func_0803c40c:
 	ands	r3, r2
 	orrs	r3, r1
 	strh	r3, [r7, #6]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5

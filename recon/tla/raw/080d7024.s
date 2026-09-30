@@ -62,9 +62,9 @@ Func_080d7024:
 	lsrs	r3, r3, #1
 	lsls	r3, r3, #2
 	adds	r6, r3, r2
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r2, [r7, #12]
 	movs	r3, #1
 	ands	r0, r3
@@ -212,7 +212,7 @@ Func_080d7024:
 	.2byte 0x003e
 	.2byte 0x0000
 .L_080d71cc:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	ands	r0, r3
 	cmp	r0, #0
@@ -220,13 +220,13 @@ Func_080d7024:
 	ldr	r0, [sp, #12]
 	ldr	r5, [pc, #96]
 	ldr	r6, [r0, #0]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r6, #0]
 	lsls	r0, r0, #8
 	adds	r3, r3, r0
 	adds	r3, r3, r5
 	str	r3, [sp, #4]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r6, #8]
 	ldr	r1, [sp, #4]
 	lsls	r0, r0, #8

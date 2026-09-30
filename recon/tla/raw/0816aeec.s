@@ -497,7 +497,7 @@ Func_0816aeec:
 .L_0816b2cc:
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #52]
 	movs	r0, #1
 	bl	0x081969f8
@@ -747,7 +747,7 @@ Func_0816aeec:
 	movs	r6, #0
 .L_0816b4b8:
 	str	r4, [sp, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #6
 	bl	0x0800206c
 	ldr	r4, [sp, #16]

@@ -14,9 +14,9 @@ Func_080cef24:
 	movs	r7, #15
 	mov	r8, r3
 .L_080cef3a:
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldrh	r3, [r6, #6]
 	lsrs	r0, r0, #4
 	lsrs	r5, r5, #4

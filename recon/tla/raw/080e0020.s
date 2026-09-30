@@ -28,9 +28,9 @@ Func_080e0020:
 	str	r3, [sp, #0]
 	ldr	r3, [r7, #24]
 	str	r3, [sp, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r5, #16
 	adds	r3, r0, #0
 	lsls	r0, r3, #4
@@ -88,7 +88,7 @@ Func_080e0020:
 	ldr	r3, [r2, #12]
 	str	r3, [r5, #8]
 	bl	Func_080dc390
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r5, #0
@@ -280,7 +280,7 @@ Func_080e0020:
 	ldr	r3, [r6, #16]
 	str	r3, [r7, #8]
 	bl	Func_080dc390
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #11
@@ -337,7 +337,7 @@ Func_080e0020:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	ldr	r5, [pc, #16]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #3
 	lsrs	r0, r0, #16
 	ldrsb	r1, [r5, r0]

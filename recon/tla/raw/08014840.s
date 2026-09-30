@@ -32,9 +32,9 @@ Func_08014840:
 	.4byte 0x03001228
 	.2byte 0x3610
 	.2byte 0x0200
-	.global Func_08014878
+	.global Random16
 	.thumb_func
-Func_08014878:
+Random16:
 	ldr	r1, [pc, #24]
 	ldr	r3, [pc, #28]
 	ldr	r2, [r1, #0]

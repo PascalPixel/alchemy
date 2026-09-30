@@ -3331,9 +3331,9 @@ Func_08027e20:
 	lsls	r1, r1, #3
 	adds	r3, r3, r1
 	strh	r3, [r2, #18]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [r6, #8]
 	lsrs	r0, r0, #1
 	lsrs	r5, r5, #1
@@ -3760,7 +3760,7 @@ Func_08027e20:
 	mov	r8, r4
 	cmp	r4, #0
 	bne.n	.L_08029c0c
-	bl	Func_08014878
+	bl	Random16
 	ldr	r1, [r7, #8]
 	lsls	r3, r0, #1
 	adds	r3, r3, r0

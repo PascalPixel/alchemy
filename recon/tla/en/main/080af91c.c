@@ -1,7 +1,8 @@
 /*
- * Draft: Owner_LevelUp from the ☀️ source does not yet match ⚓️; four
- * scheduling differences remain (the work reload before band*2 in r8, the
- * luck divisor constant, the luck store and the zero for base_20/21).
+ * Draft: Owner_LevelUp does not yet match; ported from its ☀️ twin. Two
+ * scheduling differences remain: mov r8,r0 (band*2) and mov r3,r9 are
+ * swapped before the first growth load, and the store of res->luck sinks
+ * below the base-statistic updates instead of following base_pp.
  * Links as recon/tla/raw/080af8d0.s.
  */
 #include "TYPES.H"
@@ -56,7 +57,7 @@ struct LevelUpWork {
 };
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_BumpFree(void *buffer);
+void Sys_Free(void *buffer);
 struct OwnerLevelState *Owner_GetState(s32 owner);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 struct OwnerGrowth *Owner_GetRecordStride180(s32 owner);
@@ -125,7 +126,6 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         res->luck += Math_DivU((Random16() * 20 >> 16) + diff, 20);
         st->base_hp += res->hp;
         st->base_pp += res->pp;
-        asm volatile(""); /* FAKEMATCH: stores the luck gain before the PP total */
         st->base_attack += res->attack;
         st->base_defense += res->defense;
         st->base_agility += res->agility;
@@ -136,6 +136,6 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         Owner_RefreshClassActions(owner);
         Owner_RecalculateStats(owner);
     }
-    Runtime_BumpFree(work);
+    Sys_Free(work);
     return res;
 }

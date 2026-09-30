@@ -244,7 +244,7 @@ Func_080ca6e8:
 	beq.n	.L_080ca8d6
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r3, r3, #15

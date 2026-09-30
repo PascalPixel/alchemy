@@ -961,13 +961,13 @@ Func_0816b6ec:
 	lsls	r3, r3, #15
 	str	r3, [r5, #4]
 	str	r7, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	mov	r4, sl
 	ands	r0, r4
 	subs	r0, #64
 	lsls	r0, r0, #11
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, sl
 	movs	r3, #32
 	ands	r0, r1
@@ -1031,12 +1031,12 @@ Func_0816b6ec:
 	lsls	r3, r3, #15
 	str	r3, [r5, #4]
 	str	r7, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #64
 	lsls	r0, r0, #12
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	adds	r0, #64
 	movs	r2, #1
@@ -1147,7 +1147,7 @@ Func_0816b6ec:
 .L_0816c024:
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #8]
 	movs	r0, #1
 	bl	0x081969f8
@@ -1581,9 +1581,9 @@ Func_0816b6ec:
 	movs	r2, #0
 	mov	r8, r2
 .L_0816c3ea:
-	bl	Func_08014878
+	bl	Random16
 	adds	r6, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #63
 	ands	r5, r0
 	adds	r0, r6, #0
@@ -1605,9 +1605,9 @@ Func_0816b6ec:
 	muls	r3, r0
 	asrs	r3, r3, #1
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	str	r0, [r7, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -1616,7 +1616,7 @@ Func_0816b6ec:
 	lsls	r1, r1, #11
 	adds	r3, r3, r1
 	str	r3, [r7, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #7
 	ands	r3, r0
 	adds	r3, #4
@@ -1762,14 +1762,14 @@ Func_0816b6ec:
 	cmp	r3, #0
 	bne.n	.L_0816c58a
 	str	r2, [sp, #12]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r2, [sp, #12]
 	mov	r1, fp
 	ands	r0, r1
 	adds	r0, r2, r0
 	subs	r2, r0, #4
 	str	r2, [sp, #12]
-	bl	Func_08014878
+	bl	Random16
 	mov	r3, fp
 	ands	r0, r3
 	ldr	r2, [sp, #12]
@@ -1836,7 +1836,7 @@ Func_0816b6ec:
 	movs	r3, #104
 	str	r3, [r2, #16]
 	movs	r0, #32
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r7, r0, #0
 	movs	r0, #1
 	bl	0x081969f8
@@ -2968,7 +2968,7 @@ Func_0816b6ec:
 	ble.n	.L_0816d022
 	movs	r0, #128
 	lsls	r0, r0, #2
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	r8, r0
 	movs	r0, #1
 	bl	0x081969f8
@@ -3635,7 +3635,7 @@ Func_0816b6ec:
 	ldr	r3, [r1, #4]
 	cmp	r3, #0
 	bne.n	.L_0816d4da
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #40
 	bl	0x0800206c
 	adds	r0, #8
@@ -3643,7 +3643,7 @@ Func_0816b6ec:
 	str	r0, [r5, #0]
 	b.n	.L_0816d4ec
 .L_0816d4da:
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #40
 	bl	0x0800206c
 	movs	r3, #120
@@ -3651,18 +3651,18 @@ Func_0816b6ec:
 	lsls	r3, r3, #16
 	str	r3, [r5, #0]
 .L_0816d4ec:
-	bl	Func_08014878
+	bl	Random16
 	mov	r2, r8
 	str	r2, [r5, #4]
 	str	r6, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #127
 	ands	r3, r0
 	adds	r3, #32
 	negs	r3, r3
 	lsls	r3, r3, #11
 	str	r3, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #8
@@ -4047,13 +4047,13 @@ Func_0816b6ec:
 	mov	r8, r2
 	mov	r7, fp
 .L_0816d820:
-	bl	Func_08014878
+	bl	Random16
 	movs	r6, #255
 	movs	r3, #128
 	lsls	r3, r3, #1
 	ands	r6, r0
 	adds	r6, r6, r3
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #254
 	lsls	r5, r5, #7
 	adds	r5, #255
@@ -4065,7 +4065,7 @@ Func_0816b6ec:
 	lsls	r3, r3, #16
 	str	r3, [r7, #0]
 	adds	r5, r5, r4
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #31
 	ands	r2, r0
 	movs	r3, #96
@@ -4084,7 +4084,7 @@ Func_0816b6ec:
 	muls	r3, r0
 	asrs	r3, r3, #9
 	str	r3, [r7, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #7
 	movs	r2, #1
 	ands	r3, r0
@@ -4100,10 +4100,10 @@ Func_0816b6ec:
 	mov	r8, r4
 	add	r7, fp
 .L_0816d894:
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #127
 	ands	r5, r0
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #254
 	adds	r6, r0, #0
 	ldr	r0, [sp, #24]
@@ -4118,7 +4118,7 @@ Func_0816b6ec:
 	str	r3, [r7, #4]
 	ldr	r3, [r0, #16]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	ands	r3, r0
 	subs	r3, #128
@@ -4757,7 +4757,7 @@ Func_0816b6ec:
 	ldrsb	r2, [r3, r6]
 	b.n	.L_0816ddf6
 .L_0816ddd2:
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #380]
 	mov	r1, r9
 	ldrsb	r3, [r3, r1]
@@ -4765,7 +4765,7 @@ Func_0816b6ec:
 	ands	r0, r2
 	adds	r1, r3, r0
 	str	r1, [sp, #12]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #364]
 	mov	r4, r9
 	ldrsb	r3, [r3, r4]
@@ -4970,7 +4970,7 @@ Func_0816b6ec:
 .L_0816df80:
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	fp, r0
 	movs	r0, #1
 	bl	0x081969f8
@@ -5057,12 +5057,12 @@ Func_0816b6ec:
 	mov	r8, r5
 	mov	sl, r5
 .L_0816e034:
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #192
 	lsls	r5, r5, #2
 	adds	r5, #255
 	ands	r5, r0
-	bl	Func_08014878
+	bl	Random16
 	movs	r6, #128
 	lsls	r6, r6, #3
 	adds	r5, r5, r6
@@ -5388,7 +5388,7 @@ Func_0816b6ec:
 	ldr	r3, [r0, #8]
 	adds	r3, r3, r2
 	str	r3, [r6, #0]
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, sl
 	lsls	r3, r5, #2
 	ands	r0, r1
@@ -5409,7 +5409,7 @@ Func_0816b6ec:
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	mov	r5, sl
 	ands	r0, r5
 	movs	r1, #128
@@ -5417,7 +5417,7 @@ Func_0816b6ec:
 	lsls	r0, r0, #1
 	adds	r0, r0, r1
 	str	r0, [r6, #12]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r2, [pc, #40]
 	ands	r0, r5
 	adds	r0, r0, r2
@@ -5450,7 +5450,7 @@ Func_0816b6ec:
 	negs	r3, r3
 	str	r3, [r6, #12]
 .L_0816e36e:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #31
 	movs	r4, #1
 	ands	r3, r0

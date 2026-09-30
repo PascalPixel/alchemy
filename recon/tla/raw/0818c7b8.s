@@ -630,7 +630,7 @@ Func_0818c7b8:
 .L_0818ccee:
 	mov	r4, r9
 	lsls	r6, r4, #1
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -965,7 +965,7 @@ Func_0818c7b8:
 .L_0818cf98:
 	cmp	r3, #0
 	bne.n	.L_0818d020
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #254
 	lsls	r3, r3, #7
 	adds	r3, #255
@@ -975,7 +975,7 @@ Func_0818c7b8:
 	ands	r6, r3
 	adds	r2, r6, r4
 	str	r2, [sp, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #128
 	lsls	r5, r5, #1
 	ldr	r2, [sp, #16]
@@ -1019,7 +1019,7 @@ Func_0818c7b8:
 	muls	r3, r0
 	asrs	r3, r3, #8
 	str	r3, [r7, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r4, #7
 	ands	r0, r4
 	adds	r0, #4
@@ -1075,7 +1075,7 @@ Func_0818c7b8:
 .L_0818d080:
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #24]
 	movs	r0, #1
 	bl	0x081969f8
@@ -1336,9 +1336,9 @@ Func_0818c7b8:
 	mov	r9, r2
 	mov	r8, r3
 .L_0818d296:
-	bl	Func_08014878
+	bl	Random16
 	adds	r6, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #128
 	lsls	r5, r5, #1
 	adds	r5, #255
@@ -1389,7 +1389,7 @@ Func_0818c7b8:
 .L_0818d318:
 	mov	r2, r8
 	str	r2, [r7, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #104
 	bl	0x0800206c
 	mov	r4, r9
@@ -1413,7 +1413,7 @@ Func_0818c7b8:
 	movs	r2, #0
 	mov	r9, r2
 .L_0818d34a:
-	bl	Func_08014878
+	bl	Random16
 	movs	r6, #254
 	lsls	r6, r6, #7
 	adds	r6, #255
@@ -1421,7 +1421,7 @@ Func_0818c7b8:
 	lsls	r3, r3, #7
 	ands	r6, r0
 	adds	r6, r6, r3
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #128
 	lsls	r5, r5, #1
 	adds	r5, #255
@@ -1446,7 +1446,7 @@ Func_0818c7b8:
 	muls	r3, r0
 	asrs	r3, r3, #5
 	str	r3, [r7, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #15
 	movs	r1, #1
 	ands	r3, r0
@@ -1559,7 +1559,7 @@ Func_0818c7b8:
 	mov	r4, r9
 	ands	r4, r7
 	str	r4, [sp, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r6, r0, #0
 	bl	Math_Sine
 	ldr	r3, [pc, #260]
@@ -1586,7 +1586,7 @@ Func_0818c7b8:
 	adds	r6, r6, r0
 	mov	r8, r2
 	subs	r6, r6, r3
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #212]
 	ands	r0, r7
 	ldrb	r2, [r3, r0]

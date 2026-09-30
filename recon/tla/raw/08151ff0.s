@@ -95,17 +95,17 @@ Func_08151ff0:
 	str	r3, [r5, #0]
 	str	r7, [r5, #4]
 	str	r7, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #32
 	lsls	r0, r0, #13
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	adds	r0, #16
 	lsls	r0, r0, #12
 	str	r0, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #1
 	ands	r0, r6
 	subs	r0, #32
@@ -136,18 +136,18 @@ Func_08151ff0:
 	str	r3, [r5, #0]
 	str	r6, [r5, #4]
 	str	r6, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	subs	r0, #32
 	lsls	r0, r0, #13
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #8
 	lsls	r3, r3, #13
 	str	r3, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	subs	r0, #32
 	lsls	r0, r0, #13

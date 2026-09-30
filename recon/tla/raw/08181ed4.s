@@ -259,13 +259,13 @@ Func_08181ed4:
 	subs	r3, r3, r2
 	lsls	r3, r3, #2
 	adds	r6, r3, r0
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #192
 	lsls	r3, r3, #2
 	adds	r3, #255
 	ands	r3, r0
 	adds	r7, r3, #0
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #254
 	lsls	r3, r3, #7
 	ldr	r1, [pc, #484]
@@ -308,7 +308,7 @@ Func_08181ed4:
 	negs	r3, r3
 	asrs	r3, r3, #7
 	str	r3, [r6, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #7
 	ands	r3, r0
 	adds	r3, #48
@@ -409,7 +409,7 @@ Func_08181ed4:
 	b.n	.L_08182332
 .L_081821f4:
 	mov	r0, r8
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r6, r0, #0
 	movs	r0, #1
 	bl	0x081969f8

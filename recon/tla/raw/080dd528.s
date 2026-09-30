@@ -74,7 +74,7 @@ BattleFx_StartItemBreak:
 	beq.n	.L_080dd614
 	ldr	r1, [pc, #128]
 	bl	Object_SetCallback
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r2, r7, #0
@@ -88,21 +88,21 @@ BattleFx_StartItemBreak:
 	lsls	r3, r3, #3
 	adds	r3, #30
 	str	r3, [r7, #72]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	subs	r5, r5, r0
 	str	r5, [r7, #40]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r6, r0, #1
 	adds	r6, r6, r0
 	movs	r0, #128
 	lsls	r0, r0, #12
 	lsls	r6, r6, #3
 	adds	r6, r6, r0
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	mov	r2, r8
 	ldrh	r3, [r2, #6]
 	subs	r5, r5, r0

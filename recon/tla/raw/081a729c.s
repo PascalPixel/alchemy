@@ -268,7 +268,7 @@ Func_081a729c:
 	.2byte 0x1150
 	.2byte 0x0300
 .L_081a74d4:
-	bl	Func_08014878
+	bl	Random16
 	adds	r7, #1
 	movs	r0, #1
 	bl	WaitFrames

@@ -13,7 +13,7 @@ Func_080afb80:
 	adds	r5, r0, r3
 	adds	r1, #1
 	adds	r0, r6, #0
-	bl	Func_080af8d0
+	bl	Owner_GetLevelThreshold
 	ldr	r3, [r5, #0]
 	cmp	r3, r0
 	bcc.n	.L_080afbb0

@@ -179,11 +179,30 @@ pub(crate) fn link(
         ],
         root,
     )?;
+    pad_to_cartridge(&image)?;
     Ok(Linked {
         objects,
         map,
         image,
     })
+}
+
+/// Fill the image with zeros to the next power of two, the size of the ROM
+/// chip that holds it, as pret's `gbafix -p` pads a build to its cartridge
+/// (with 0xff there). The size follows from the image alone.
+fn pad_to_cartridge(image: &Path) -> Result<(), String> {
+    let mut bytes = fs::read(image).map_err(|error| format!("{}: {error}", image.display()))?;
+    let size = cartridge_size(bytes.len());
+    if size != bytes.len() {
+        bytes.resize(size, 0);
+        fs::write(image, bytes).map_err(|error| format!("{}: {error}", image.display()))?;
+    }
+    Ok(())
+}
+
+/// The smallest power-of-two cartridge that holds `length` bytes.
+fn cartridge_size(length: usize) -> usize {
+    length.next_power_of_two()
 }
 
 /// Whether the link places any code: a C source, or an object with a
@@ -1160,6 +1179,18 @@ mod tests {
             block[at - 4..at - 2].copy_from_slice(&(high as u16).to_le_bytes());
             block[at - 2..at].copy_from_slice(&(low as u16).to_le_bytes());
         }
+    }
+
+    #[test]
+    fn an_image_fills_the_smallest_power_of_two_cartridge_with_zeros() {
+        assert_eq!(cartridge_size(0x7f_d4bc), 0x80_0000);
+        assert_eq!(cartridge_size(0x80_0000), 0x80_0000);
+        assert_eq!(cartridge_size(0x80_0001), 0x100_0000);
+        let directory = tempfile::tempdir().unwrap();
+        let image = directory.path().join("a.gba");
+        fs::write(&image, [1u8, 2, 3]).unwrap();
+        pad_to_cartridge(&image).unwrap();
+        assert_eq!(fs::read(&image).unwrap(), [1, 2, 3, 0]);
     }
 
     #[test]

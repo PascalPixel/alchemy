@@ -842,7 +842,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_SCALED_ARCS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_FLICKER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_ALL_EFFECT_SLOTS.o"(.text)
-        "*/recon/tbs/raw/08096fb0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP_OBJECT_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/STOP_CURRENT_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CLEANUP_SCENE_OBJECTS.o"(.text)

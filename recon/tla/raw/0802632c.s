@@ -1353,7 +1353,7 @@ Func_0802632c:
 	lsls	r3, r3, #18
 	adds	r0, #255
 	ldr	r5, [r3, #108]
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08026dfa
 	movs	r3, #181

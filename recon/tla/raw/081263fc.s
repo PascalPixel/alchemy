@@ -301,7 +301,7 @@ Func_081263fc:
 	adds	r0, #255
 	adds	r7, #32
 	movs	r5, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_08126674
 	ldr	r3, [pc, #40]

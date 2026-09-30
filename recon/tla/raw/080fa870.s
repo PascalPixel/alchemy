@@ -254,7 +254,7 @@ Func_080fa870:
 .L_080faa72:
 	movs	r0, #82
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080faaaa
 	ldr	r3, [sp, #4]
@@ -280,7 +280,7 @@ Func_080fa870:
 .L_080faaaa:
 	movs	r0, #82
 	adds	r0, #255
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 .L_080faab2:
 	movs	r5, #0
 .L_080faab4:
@@ -350,7 +350,7 @@ Func_080fa870:
 .L_080fab36:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080fab44
 	b.n	.L_080fa8e8

@@ -27,7 +27,10 @@ struct HeapSlots {
     struct MapWork *map_work;
     /* The battle session, which The Broken Seal keeps in its own cell. */
     struct BattleSession *battle_work;
-    void *unknown_28[17];
+    void *unknown_28[5];
+    /* The window tilemap: a dirty flag at 3, then 32 x 32 cells from 8. */
+    u8 *window_tiles;
+    void *unknown_40[11];
     /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
 };

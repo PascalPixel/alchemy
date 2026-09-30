@@ -354,7 +354,7 @@
 .L_080fb3d4:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_080fb3e4

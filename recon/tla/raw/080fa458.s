@@ -442,7 +442,7 @@ Func_080fa458:
 .L_080fa7f4:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080fa802
 	b.n	.L_080fa668

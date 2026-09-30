@@ -39,7 +39,7 @@ Func_080dc244:
 .L_080dc284:
 	movs	r0, #132
 	lsls	r0, r0, #1
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	adds	r0, r7, #0
 	bl	Func_080d17ac
 	pop	{r5, r6, r7, pc}
@@ -107,56 +107,56 @@ BattleEffect_InitializeSharedScene:
 .L_080dc2f4:
 	movs	r0, #164
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc302
 	movs	r5, #0
 .L_080dc302:
 	movs	r0, #74
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc310
 	movs	r5, #1
 .L_080dc310:
 	movs	r0, #165
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc31e
 	movs	r5, #2
 .L_080dc31e:
 	movs	r0, #76
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc32c
 	movs	r5, #3
 .L_080dc32c:
 	movs	r0, #166
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc33a
 	movs	r5, #4
 .L_080dc33a:
 	movs	r0, #78
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc348
 	movs	r5, #5
 .L_080dc348:
 	movs	r0, #167
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc356
 	movs	r5, #6
 .L_080dc356:
 	movs	r0, #80
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc364
 	movs	r5, #7

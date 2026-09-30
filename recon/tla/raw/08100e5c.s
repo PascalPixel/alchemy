@@ -6,7 +6,7 @@ Func_08100e5c:
 	push	{lr}
 	movs	r0, #118
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08100e6e
 	ldr	r0, [pc, #8]
@@ -80,17 +80,17 @@ Func_08100e7c:
 	str	r5, [r3, #0]
 	lsls	r0, r0, #1
 	str	r5, [r6, #0]
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_08100f3c
 	movs	r0, #112
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_08100f22
 	movs	r0, #114
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_08100f1e
 	mov	r3, sl
@@ -101,7 +101,7 @@ Func_08100e7c:
 .L_08100f22:
 	movs	r0, #114
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_08100f38
 	movs	r3, #27

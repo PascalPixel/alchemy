@@ -806,7 +806,7 @@ PsynergyMenu_DrawListPage:
 .L_080ffeaa:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080ffeb8
 	b.n	.L_080ffd4c
@@ -1537,7 +1537,7 @@ Func_081000e0:
 .L_0810047e:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_0810048c
 	b.n	.L_0810029a

@@ -56,7 +56,7 @@ Func_080405dc:
 	sub	sp, #12
 	mov	fp, r3
 	mov	sl, r2
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	movs	r3, #0
 	mov	r9, r0
 	str	r3, [sp, #8]
@@ -232,7 +232,7 @@ Func_080405dc:
 	lsls	r0, r0, #1
 	str	r1, [sp, #12]
 	mov	fp, r2
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	movs	r3, #0
 	str	r3, [sp, #4]
 	adds	r5, r0, #0

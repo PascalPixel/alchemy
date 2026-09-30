@@ -251,7 +251,7 @@ Func_080afdbc:
 	movs	r5, #0
 .L_080afdc2:
 	adds	r0, r5, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080afdce
 	adds	r6, #1
@@ -269,7 +269,7 @@ Func_080afdd8:
 	bl	Func_080afdbc
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	movs	r2, #0
 	cmp	r2, r5
 	bge.n	.L_080afe0a
@@ -309,7 +309,7 @@ Func_080afe1c:
 	bl	Func_080afdbc
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	movs	r1, #0
 	cmp	r1, r6
 	bge.n	.L_080afe4e

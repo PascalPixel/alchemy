@@ -1,5 +1,12 @@
 #include "TYPES.H"
 
+/* Where the name and ailment labels start: the Japanese edition moves them right. */
+#if defined(TBS_EDITION_JA)
+#define STATUS_X 40
+#else
+#define STATUS_X 32
+#endif
+
 /* The status panel beside the item and ability lists: the owner's name,
    ailments or level, then a page chosen by the low byte of mode (class and
    stats, the stat change of equipping the selected item, whether its
@@ -95,23 +102,23 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
             WaitFrames(1);
             UiWindow_ClearInteriorTilesFar(state->window, 0, 0, 88, 32);
         }
-        UiText_DrawStringAtOffsetFar(unit, window, 32, 0);
+        UiText_DrawStringAtOffsetFar(unit, window, STATUS_X, 0);
         CharacterMenu_BuildAvailability(avail, 1, owner);
         cnt = 0;
         if (avail[1]) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgPoisonLabel, window, 32, cnt * 8 + 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPoisonLabel, window, STATUS_X, cnt * 8 + 8);
             cnt++;
         }
         if (avail[2]) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgVenomLabel, window, 32, cnt * 8 + 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgVenomLabel, window, STATUS_X, cnt * 8 + 8);
             cnt++;
         }
         if (avail[3]) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgCurseLabel, window, 32, cnt * 8 + 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCurseLabel, window, STATUS_X, cnt * 8 + 8);
             cnt++;
         }
         if (avail[4]) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgHauntLabel, window, 32, cnt * 8 + 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgHauntLabel, window, STATUS_X, cnt * 8 + 8);
             cnt++;
         }
         if (cnt < 2) {
@@ -146,7 +153,11 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         void *backup;
 
         if (!Item_CanOwnerEquip(owner, item)) {
+#if defined(TBS_EDITION_JA)
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotEquip, window, 16, 48);
+#else
             UiText_DrawCharacterAtOffsetFar((s32)MsgCannotEquip, window, 0, 48);
+#endif
             break;
         }
         backup = Runtime_BumpAllocate(0x14c);

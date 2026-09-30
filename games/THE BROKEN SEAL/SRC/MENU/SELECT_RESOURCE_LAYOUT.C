@@ -43,16 +43,28 @@ s32 Menu_SelectResourceLayout(s32 mode)
         Menu_AppendResourceEntry(47);
         Menu_AppendResourceEntry(48);
     }
+#if defined(TBS_EDITION_FR)
+    Menu_CenterResourceEntries(17, 9, 0);
+#else
     Menu_CenterResourceEntries(17, 7, 0);
+#endif
     if (mode != 0) {
         Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
         work->selection = 0xffff;
+#if defined(TBS_EDITION_FR)
+        window = UiWindow_Create(5, 0, 22, 4, 2);
+#else
         window = UiWindow_Create(7, 0, 17, 4, 2);
+#endif
         msg = (s32)MsgPasswordSelection;
         upper = &work->upper_window;
         *upper = window;
         UiText_DrawResource(msg, window, 0, 4);
+#if defined(TBS_EDITION_DE)
+        window = UiWindow_Create(1, 4, 28, 12, 2);
+#else
         window = UiWindow_Create(3, 4, 25, 12, 2);
+#endif
         work->lower_window = window;
         UiText_DrawResource(msg + 1, window, 8, 0);
         UiText_DrawResource(msg + 2, work->lower_window, 8, 11);
@@ -61,11 +73,19 @@ s32 Menu_SelectResourceLayout(s32 mode)
     } else {
         Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
         work->selection = 0xffff;
+#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        window = UiWindow_Create(5, 0, 20, 4, 2);
+#else
         window = UiWindow_Create(6, 0, 18, 4, 2);
+#endif
         upper = &work->upper_window;
         *upper = window;
         UiText_DrawResource((s32)MsgTransferMethod, window, 2, 4);
+#if defined(TBS_EDITION_DE)
+        work->lower_window = UiWindow_Create(0, 5, 30, 7, 2);
+#else
         work->lower_window = UiWindow_Create(1, 5, 28, 7, 2);
+#endif
     }
     result = Menu_RunResourceSelectionLoop(0);
     if (mode != 0)

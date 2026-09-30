@@ -1,4 +1,16 @@
 #include "DMA.H"
+
+/* The quantity, total and coins columns each edition's words leave room for. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#define QUANTITY_X 64
+#define COINS_X    128
+#elif defined(TBS_EDITION_ES)
+#define QUANTITY_X 72
+#define COINS_X    144
+#else
+#define QUANTITY_X 72
+#define COINS_X    136
+#endif
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
 #include "UI.H"
@@ -81,9 +93,9 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                     Shop_FillSelector(minimum, 2, buffer);
                     VramBlock_LoadCached(slot, 0x100, buffer);
                     result = count + 1;
-                    UiText_DrawNumberInWindowFar(result, 2, window, 72, 0);
-                    UiText_DrawNumberInWindowFar(price * result, 6, window, 88, 0);
-                    UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, 136, 0);
+                    UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);
+                    UiText_DrawNumberInWindowFar(price * result, 6, window, QUANTITY_X + 16, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, COINS_X, 0);
                 }
                 WaitFrames(1);
             }

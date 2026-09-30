@@ -162,7 +162,11 @@ s32 Shop_SelUse(s32 actor)
     count = 1;
     result = 0;
     redraw = 1;
+#if defined(TBS_EDITION_JA)
+    win1 = UiWindow_CreateFar(16, 8, 14, 4, 2);
+#else
     win1 = UiWindow_CreateFar(14, 8, 16, 4, 2);
+#endif
     win2 = UiWindow_CreateFar(0, 5, 30, 3, 2);
     shop->cursor.anchor->kind = 18;
     shop->mode = 12;
@@ -292,7 +296,11 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         if (result == -4) {
             UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 0, 8);
         } else if (result == -3) {
+#if defined(TBS_EDITION_JA)
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 8, 8);
+#else
             UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 0, 8);
+#endif
         } else {
             s32 qty;
             s32 total;
@@ -300,9 +308,29 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
             qty = Shop_SalePrice(*(u16 *)(unit + slot_offset));
             total = mult *qty;
 
+/* The price line: the Japanese edition counts the coins with the word
+   before the heading, the others name them with MsgCoins, five before. */
+#if defined(TBS_EDITION_JA)
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiNumber_DrawAt(total, 5, window, 40, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 1, window, 80, 8);
+#elif defined(TBS_EDITION_DE)
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 0, 8);
+            UiNumber_DrawAt(total, 5, window, 32, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 72, 8);
+#elif defined(TBS_EDITION_ES)
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiNumber_DrawAt(total, 5, window, 40, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 88, 8);
+#elif defined(TBS_EDITION_FR)
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiNumber_DrawAt(total, 5, window, 32, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 72, 8);
+#else
             UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
             UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 80, 8);
+#endif
         }
     }
 }

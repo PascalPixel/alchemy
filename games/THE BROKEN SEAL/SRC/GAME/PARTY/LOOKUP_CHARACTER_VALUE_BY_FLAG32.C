@@ -1,8 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "TBS_EDITION.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
+#if !defined(TBS_EDITION_IT)
+/* The Italian edition lays the joining message out its own way, which
+   stays in its scaffold for now. */
 
 struct MessageWindow;
 
@@ -51,7 +53,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
     if (window != NULL) {
         UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
 
-        work[0xea3] = 1;
+        work[RENDER_DIRTY_OFS] = 1;
 
         id = Localization_LookupEntryId(name);
         UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
@@ -61,8 +63,8 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
         *p++ = 0x8014000c;
         *p = palette | 0xe000;
 
-        *(u16 *)(work + 0x12f4) = zero;
-        *(u16 *)(work + 0x12f6) = zero;
+        *(u16 *)(work + RENDER_RESULT_OFS) = zero;
+        *(u16 *)(work + RENDER_RESULT_OFS + 2) = zero;
 
         UiWork_PushValueSlot(pc, 1);
         UiWork_PushValueSlot(element * 20 + djinn + 300, 4);

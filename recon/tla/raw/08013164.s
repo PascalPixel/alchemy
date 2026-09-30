@@ -3,6 +3,9 @@
 	.global Func_08013164
 	.thumb_func
 Func_08013164:
+	.global Sys_Free
+	.thumb_func
+Sys_Free:
 	movs	r4, #3
 	lsls	r4, r4, #24
 	movs	r1, #4

@@ -12715,11 +12715,11 @@ msgctxt "message"
 msgid "03176"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgHpRecover"
 msgid "03177"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPpRecover"
 msgid "03178"
 msgstr "?"
 
@@ -12727,15 +12727,15 @@ msgctxt "message"
 msgid "03179"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgHpFull"
 msgid "03180"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPpFull"
 msgid "03181"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCritical"
 msgid "03182"
 msgstr "?"
 
@@ -12743,19 +12743,19 @@ msgctxt "message"
 msgid "03183"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgFelled"
 msgid "03184"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgGoesDown"
 msgid "03185"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDmgE"
 msgid "03186"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDmgP"
 msgid "03187"
 msgstr "?"
 
@@ -12763,11 +12763,11 @@ msgctxt "message"
 msgid "03188"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPpLossE"
 msgid "03189"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPpLossP"
 msgid "03190"
 msgstr "?"
 
@@ -12795,7 +12795,7 @@ msgctxt "message"
 msgid "03196"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDmgEmphE"
 msgid "03197"
 msgstr "?"
 
@@ -12807,7 +12807,7 @@ msgctxt "message"
 msgid "03199"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDmgEmphP"
 msgid "03200"
 msgstr "?"
 
@@ -12939,7 +12939,7 @@ msgctxt "message"
 msgid "03232"
 msgstr "Jette une carte de flammes."
 
-msgctxt "message"
+msgctxt "MsgSpiritDrain"
 msgid "03233"
 msgstr "Jette une carte de tonnerres."
 
@@ -12951,11 +12951,11 @@ msgctxt "message"
 msgid "03235"
 msgstr "Jette une carte de glace."
 
-msgctxt "message"
+msgctxt "MsgKoDown"
 msgid "03236"
 msgstr "Enveloppe l'adversaire dans l'illusion."
 
-msgctxt "message"
+msgctxt "MsgSuffocate"
 msgid "03237"
 msgstr "Baisse l'attaque adverse."
 
@@ -12979,7 +12979,7 @@ msgctxt "message"
 msgid "03242"
 msgstr "Appelle un allié féroce à la rescousse."
 
-msgctxt "message"
+msgctxt "MsgNoEffect"
 msgid "03243"
 msgstr "Appelle un oiseau aux serres géantes."
 
@@ -13031,11 +13031,11 @@ msgctxt "message"
 msgid "03255"
 msgstr "Attaque avec une terrible rafale."
 
-msgctxt "message"
+msgctxt "MsgLeechGain"
 msgid "03256"
 msgstr "Attaque avec une vague de gel."
 
-msgctxt "message"
+msgctxt "MsgLeechTake"
 msgid "03257"
 msgstr "Implore les fées de rendre 120 PV."
 
@@ -13047,59 +13047,59 @@ msgctxt "message"
 msgid "03259"
 msgstr "Ressuscite avec les forces du mal."
 
-msgctxt "message"
+msgctxt "MsgAtkDown"
 msgid "03260"
 msgstr "Attaque avec la force de Satan."
 
-msgctxt "message"
+msgctxt "MsgAtkUp"
 msgid "03261"
 msgstr "Attaque avec une hache puissante."
 
-msgctxt "message"
+msgctxt "MsgDefDown"
 msgid "03262"
 msgstr "Attaque avec des javelines spectrales."
 
-msgctxt "message"
+msgctxt "MsgDefUp"
 msgid "03263"
 msgstr "Attaque avec une terrible rafale."
 
-msgctxt "message"
+msgctxt "MsgRevived"
 msgid "03264"
 msgstr "Attaque avec une terrible rafale."
 
-msgctxt "message"
+msgctxt "MsgResDown"
 msgid "03265"
 msgstr "Implore les lutins de rendre 125 PV."
 
-msgctxt "message"
+msgctxt "MsgResUp"
 msgid "03266"
 msgstr "Implore les fées de rendre 250 PV."
 
-msgctxt "message"
+msgctxt "MsgPoisoned"
 msgid "03267"
 msgstr "Rend 180 PV à tout le groupe."
 
-msgctxt "message"
+msgctxt "MsgDelusion"
 msgid "03268"
 msgstr "Rend 300 PV avec un feu purifiant."
 
-msgctxt "message"
+msgctxt "MsgConfused"
 msgid "03269"
 msgstr "Ressuscite avec les cendres du phénix."
 
-msgctxt "message"
+msgctxt "MsgCharmed"
 msgid "03270"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgStunned"
 msgid "03271"
 msgstr "Invoque un zombie pour attaquer."
 
-msgctxt "message"
+msgctxt "MsgAsleep"
 msgid "03272"
 msgstr "Attaque avec la furie du diable."
 
-msgctxt "message"
+msgctxt "MsgPsyBlock"
 msgid "03273"
 msgstr "Attaque avec la force de Dullahan."
 
@@ -13107,11 +13107,11 @@ msgctxt "message"
 msgid "03274"
 msgstr "Appelle les feux du puits."
 
-msgctxt "message"
+msgctxt "MsgHpRegen"
 msgid "03275"
 msgstr "Appelle les feux du puits."
 
-msgctxt "message"
+msgctxt "MsgReflect"
 msgid "03276"
 msgstr "Appelle les feux du puits."
 
@@ -13119,31 +13119,31 @@ msgctxt "message"
 msgid "03277"
 msgstr "Implore une rafale empoisonnée."
 
-msgctxt "message"
+msgctxt "MsgEvilSpirit"
 msgid "03278"
 msgstr "Paralyse l'adversaire de terreur."
 
-msgctxt "message"
+msgctxt "MsgDeathCurse"
 msgid "03279"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgVenom"
 msgid "03280"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDeathCount"
 msgid "03281"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPsySeal"
 msgid "03282"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgAgiUp"
 msgid "03283"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgAgiDown"
 msgid "03284"
 msgstr "?"
 
@@ -13163,15 +13163,15 @@ msgctxt "message"
 msgid "03288"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgReadies"
 msgid "03289"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgChallenge"
 msgid "03290"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgImmobile"
 msgid "03291"
 msgstr "?"
 
@@ -13179,11 +13179,11 @@ msgctxt "message"
 msgid "03292"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgAura"
 msgid "03293"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgAura2"
 msgid "03294"
 msgstr "?"
 
@@ -13203,11 +13203,11 @@ msgctxt "message"
 msgid "03298"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgWakes"
 msgid "03299"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCurePoison"
 msgid "03300"
 msgstr "?"
 
@@ -13235,15 +13235,15 @@ msgctxt "message"
 msgid "03306"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureDelusion"
 msgid "03307"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureSeal"
 msgid "03308"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureStun"
 msgid "03309"
 msgstr "?"
 
@@ -13251,7 +13251,7 @@ msgctxt "message"
 msgid "03310"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureSpirit"
 msgid "03311"
 msgstr "?"
 
@@ -13271,7 +13271,7 @@ msgctxt "message"
 msgid "03315"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureCurse"
 msgid "03316"
 msgstr "?"
 
@@ -13279,7 +13279,7 @@ msgctxt "message"
 msgid "03317"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgBuffsReset"
 msgid "03318"
 msgstr "?"
 

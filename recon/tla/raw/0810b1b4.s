@@ -679,7 +679,7 @@ Func_0810b520:
 	adds	r0, r6, #0
 	bl	Func_0810a760
 	adds	r6, r0, #0
-	bl	0x0810a834
+	bl	Func_0810a834
 	movs	r3, #0
 	mov	r8, r3
 .L_0810b774:

@@ -44,6 +44,9 @@ Func_0802d600:
 	bl	Func_0802d45c
 	asrs	r0, r0, #19
 	pop	{pc}
+	.global Func_0802d658
+	.thumb_func
+Func_0802d658:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -123,6 +126,9 @@ Func_0802d6b0:
 	pop	{r5, pc}
 	.2byte 0x0000
 	.2byte 0x0201
+	.global Func_0802d6e8
+	.thumb_func
+Func_0802d6e8:
 	push	{r5, r6, lr}
 	adds	r6, r3, #0
 	movs	r3, #192

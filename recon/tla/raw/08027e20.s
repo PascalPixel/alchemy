@@ -4948,6 +4948,9 @@ Func_08027e20:
 	.4byte 0xfffe0000
 	.2byte 0xece0
 	.2byte 0x0802
+	.global Func_0802a52c
+	.thumb_func
+Func_0802a52c:
 	push	{lr}
 	movs	r3, #1
 	subs	r1, #1

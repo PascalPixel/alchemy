@@ -960,7 +960,7 @@ SECTIONS
         "*/recon/tla/raw/0810bf98.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.0810c008)
         "*/recon/tla/raw/08118000.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/08118010.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_43.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08118028.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08118058.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08118070.o"(.text .rodata .data .padding)

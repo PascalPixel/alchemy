@@ -58,17 +58,24 @@ struct SoundNote {
 
 struct SoundTrack {
     u8 flags;                       /* 0x00 */
-    u8 unk01[0x0a];
+    u8 unk01[7];
+    u8 pitch_hi;                    /* 0x08 */
+    u8 pitch_lo;                    /* 0x09 */
+    s8 key_offset_a;                /* 0x0a */
     s8 key_offset_b;                /* 0x0b */
-    u8 unk0c;
+    s8 tune;                        /* 0x0c */
     u8 fine;                        /* 0x0d */
-    u8 unk0e;
+    s8 bend;                        /* 0x0e */
     u8 bend_range;                  /* 0x0f */
-    u8 unk10[3];
+    u8 out_volume_a;                /* 0x10 */
+    u8 out_volume_b;                /* 0x11 */
+    u8 volume;                      /* 0x12 */
     u8 volume_scale;                /* 0x13 */
-    u8 unk14;
+    s8 pan;                         /* 0x14 */
     s8 pan_offset;                  /* 0x15 */
-    u8 unk16[3];
+    s8 mod_amount;                  /* 0x16 */
+    u8 unk17;
+    u8 mod_target;                  /* 0x18 */
     u8 lfo_speed;                   /* 0x19 */
     u8 unk1a[4];
     u8 tail_level;                  /* 0x1e */

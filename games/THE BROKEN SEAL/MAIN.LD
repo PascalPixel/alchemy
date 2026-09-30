@@ -1301,7 +1301,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/LIST_TARGETS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_ENCOUNTER_OR_UNIT_TRIGGER.o"(.text)
         "*/recon/tbs/raw/080b9ec0.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_ENTRIES.o"(.text)
+        "*/games/COMMON/SRC/BATTLE/PRESENTATION/ACT_RUN_ENTRIES.o"(.text)
         "*/recon/tbs/raw/080ba2be.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080ba2c0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_SIMPLE.o"(.text)

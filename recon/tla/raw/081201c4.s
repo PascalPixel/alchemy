@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081201c4
+	.global BattleEv_DispatchQueued
 	.thumb_func
-Func_081201c4:
+BattleEv_DispatchQueued:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -105,7 +105,7 @@ Func_081201c4:
 	blt.n	.L_081202b6
 	bl	0x080381c8
 .L_081202b6:
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_081202ba:
 	bl	0x08038118
 	b.n	.L_08120346

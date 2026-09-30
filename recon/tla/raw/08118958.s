@@ -341,7 +341,7 @@ Func_08118958:
 	bl	0x080381c8
 .L_08118c12:
 	adds	r5, #1
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 	cmp	r5, r7
 	bne.n	.L_08118bf6
 .L_08118c1c:
@@ -354,7 +354,7 @@ Func_08118958:
 	bl	0x08038118
 	ldr	r0, [pc, #48]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 	b.n	.L_08118c4c
 .L_08118c3a:
 	cmp	r3, #2
@@ -362,7 +362,7 @@ Func_08118958:
 	bl	0x08038118
 	ldr	r0, [pc, #32]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_08118c4c:
 	add	sp, #16
 	pop	{r3, r5}

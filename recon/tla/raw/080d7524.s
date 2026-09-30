@@ -29,7 +29,7 @@ Func_080d7524:
 	lsls	r3, r3, #8
 	ands	r1, r3
 	str	r1, [sp, #8]
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r0, #10
 	bl	WaitFrames
 	movs	r0, #173
@@ -267,7 +267,7 @@ Func_080d7524:
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r7, #72]
-	bl	0x080d2350
+	bl	Func_080d2350
 	add	sp, #52
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -326,7 +326,7 @@ Func_080d7524:
 .L_080d77da:
 	cmp	r7, #0
 	blt.n	.L_080d783e
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r8, r3
@@ -368,7 +368,7 @@ Func_080d7524:
 	adds	r3, #20
 	movs	r2, #0
 	str	r2, [r1, r3]
-	bl	0x080d2350
+	bl	Func_080d2350
 .L_080d783e:
 	pop	{r3}
 	mov	r8, r3

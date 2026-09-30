@@ -526,7 +526,7 @@ Func_080d3c88:
 	bl	.L_080d3c88
 	bl	0x080cdf5c
 	movs	r1, #0
-	bl	0x080d2840
+	bl	Func_080d2840
 	adds	r7, r0, #0
 	cmp	r7, #0
 	bne.n	.L_080d40ba

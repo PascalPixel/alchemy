@@ -1241,7 +1241,7 @@ Func_080e03c4:
 	ldr	r6, [r3, #0]
 	sub	sp, #12
 	ldr	r7, [r6, #16]
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r2, #1
 	negs	r2, r2
 	movs	r3, #0

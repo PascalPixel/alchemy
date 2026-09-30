@@ -38,6 +38,9 @@ Func_080d2260:
 	pop	{pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d22a8
+	.thumb_func
+Func_080d22a8:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -117,6 +120,9 @@ Func_080d2260:
 	.4byte 0x080d21f5
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2350
+	.thumb_func
+Func_080d2350:
 	push	{lr}
 	ldr	r0, [pc, #52]
 	bl	Func_08014644

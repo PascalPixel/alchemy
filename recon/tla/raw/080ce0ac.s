@@ -142,13 +142,13 @@ Func_080ce0ac:
 	bl	0x080cdf5c
 	bl	0x080cd91c
 	adds	r5, r0, #0
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	ldr	r0, [r6, #8]
 	bl	0x080d3be8
 	adds	r0, r5, #0
 	movs	r1, #0
 	bl	0x080d407c
-	bl	0x080d2350
+	bl	Func_080d2350
 	b.n	0x080ce1e8
 .L_080ce1de:
 	mov	r0, fp

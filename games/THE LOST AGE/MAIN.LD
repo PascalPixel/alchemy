@@ -613,7 +613,7 @@ SECTIONS
         "*/recon/tla/raw/080b1f28.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.080b1f2c)
         "*/recon/tla/raw/080c8000.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080c8008.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/EVENT.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c8088.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c8268.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080c82a8.o"(.text .rodata .data .padding)

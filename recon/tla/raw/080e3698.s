@@ -56,7 +56,7 @@ Func_080e3698:
 	mov	fp, r1
 	str	r2, [sp, #4]
 	str	r3, [sp, #0]
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r0, #0
 	bl	Func_080cded4
 	bl	0x080d2a3c
@@ -162,7 +162,7 @@ Func_080e3698:
 	movs	r3, #0
 	str	r3, [r7, #24]
 	mov	sl, r2
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r0, #0
 	bl	Func_080cded4
 	mov	r0, r8

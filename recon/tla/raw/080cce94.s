@@ -149,7 +149,7 @@ Func_080cce94:
 	bne.n	.L_080ccfae
 	movs	r5, #32
 .L_080ccfae:
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	ldr	r2, [sp, #24]
 	movs	r3, #1
 	adds	r2, #91
@@ -277,7 +277,7 @@ Func_080cce94:
 	mov	r1, r8
 	cmp	r1, #132
 	bne.n	.L_080cd106
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r0, #0
 	bl	Func_080cded4
 	mov	r0, sl
@@ -295,7 +295,7 @@ Func_080cce94:
 	mov	r0, r9
 	bl	GameFlag_SetBitFar
 .L_080cd100:
-	bl	0x080d2350
+	bl	Func_080d2350
 	b.n	.L_080cd39e
 .L_080cd106:
 	mov	r3, r8
@@ -604,7 +604,7 @@ Func_080cce94:
 	ldr	r1, [sp, #0]
 	movs	r3, #0
 	strb	r3, [r1, #0]
-	bl	0x080d2350
+	bl	Func_080d2350
 	ldr	r2, [sp, #28]
 	adds	r0, r2, #0
 	cmp	r2, #0

@@ -304,12 +304,6 @@ UiWindow_ClearInteriorTiles:
 	.thumb_func
 UiWork_StepChannelScript:
 	.incbin "baserom.gba", 0x000158d0, 0x0000062c
-	.section .rom.00016a5c, "ax"
-	.global UiText_RenderWideStringAtOffset
-	.type UiText_RenderWideStringAtOffset, %function
-	.thumb_func
-UiText_RenderWideStringAtOffset:
-	.incbin "baserom.gba", 0x00016a5c, 0x00000190
 	.section .rom.00016fde, "ax"
 	.incbin "baserom.gba", 0x00016fde, 0x00000002
 	.section .rom.00016fe0, "ax"
@@ -331,7 +325,10 @@ UiText_MeasureEntryDimensions:
 	.type UiText_MeasureStringVariant, %function
 	.thumb_func
 UiText_MeasureStringVariant:
-	.incbin "baserom.gba", 0x000179d0, 0x000004b4
+	.incbin "baserom.gba", 0x000179d0, 0x00000264
+	.global Func_08018cac
+Func_08018cac:
+	.incbin "baserom.gba", 0x00017c34, 0x00000250
 	.section .rom.00018154, "ax"
 	.global UiWork_AnimateSpriteSlots
 	.type UiWork_AnimateSpriteSlots, %function
@@ -1389,12 +1386,6 @@ BattleFx_UntargetedObjectScript:
 	.global gEffectScripts
 gEffectScripts:
 	.incbin "baserom.gba", 0x000a5284, 0x0000057c
-	.section .rom.000a592c, "ax"
-	.global Menu_DrawOwnerStatusPanel
-	.type Menu_DrawOwnerStatusPanel, %function
-	.thumb_func
-Menu_DrawOwnerStatusPanel:
-	.incbin "baserom.gba", 0x000a592c, 0x000003b8
 	.section .rom.000a62b2, "ax"
 	.incbin "baserom.gba", 0x000a62b2, 0x00000002
 	.section .rom.000a62b4, "ax"
@@ -1484,7 +1475,10 @@ Data_080aed4c:
 	.incbin "baserom.gba", 0x000b35b8, 0x00000080
 	.global Data_080aedcc
 Data_080aedcc:
-	.incbin "baserom.gba", 0x000b3638, 0x00000444
+	.incbin "baserom.gba", 0x000b3638, 0x00000440
+	.global Data_080af20c
+Data_080af20c:
+	.incbin "baserom.gba", 0x000b3a78, 0x00000004
 	.global Ui_HpString
 Ui_HpString:
 	.incbin "baserom.gba", 0x000b3a7c, 0x00000004

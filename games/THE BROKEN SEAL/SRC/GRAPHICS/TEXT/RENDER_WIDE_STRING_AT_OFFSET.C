@@ -86,11 +86,28 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
         } else {
             if ((window->flags & 8) == 0) {
                 next = *text;
+#if defined(TBS_EDITION_ES)
+                /* Spanish pairs narrower glyphs in colour 1. */
+                if (c > 32 && next > 32) {
+                    s16 width = UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width;
+
+                    if (work->color_b == 1) {
+                        if ((u16)width <= 14) {
+                            c |= next << 8;
+                            text++;
+                        }
+                    } else if ((u16)width <= 15) {
+                        c |= next << 8;
+                        text++;
+                    }
+                }
+#else
                 if (c > 32 && next > 32
                     && (u16)(UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width) <= 15) {
                     c |= next << 8;
                     text++;
                 }
+#endif
             }
             x += Func_08018cac(window, c, x, y, 0);
         }

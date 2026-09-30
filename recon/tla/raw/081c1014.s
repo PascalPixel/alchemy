@@ -168,6 +168,9 @@ Func_081c1014:
 	.4byte 0x03000ee4
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_081c1158
+	.thumb_func
+Func_081c1158:
 	push	{lr}
 	movs	r3, #128
 	ands	r3, r0

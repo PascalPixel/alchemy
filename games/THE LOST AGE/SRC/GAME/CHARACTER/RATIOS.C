@@ -14,6 +14,45 @@ struct OwnerRatioState {
     s16 value_3a;
 };
 
+void Owner_RecalculateRatios(s32 owner_no)
+{
+    s32 first;
+    s32 second;
+    s32 first_value;
+    s32 second_value;
+    struct OwnerRatioState *owner;
+
+    owner = Owner_GetState(owner_no);
+    first = Math_Div(
+        (s32)((u32)(s32)owner->value_38 << 14), owner->divisor_34);
+    first_value = 0x4000;
+    if (first <= 0x4000) {
+        first_value = 0;
+        if (first >= 0) {
+            first_value = first;
+        }
+    }
+    owner->value_14 = first_value;
+    if ((((u32)first_value << 16) == 0) && (owner->value_38 != 0)) {
+        first_value = 1;
+        owner->value_14 = first_value;
+    }
+    second = Math_Div(
+        (s32)((u32)(s32)owner->value_3a << 14), owner->divisor_36);
+    second_value = 0x4000;
+    if (second <= 0x4000) {
+        second_value = 0;
+        if (second >= 0) {
+            second_value = second;
+        }
+    }
+    owner->value_16 = second_value;
+    if ((((u32)second_value << 16) == 0) && (owner->value_3a != 0)) {
+        second_value = 1;
+        owner->value_16 = second_value;
+    }
+}
+
 void Owner_UpdateRatioPair(struct OwnerRatioState *state, s32 input)
 {
     s32 value;

@@ -18,7 +18,7 @@ Ui_BuildPairedPatternsToSlot:
 	movs	r0, #68
 	str	r3, [sp, #0]
 	mov	fp, r2
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r3, [pc, #132]
 	lsls	r5, r5, #2
 	movs	r2, #192

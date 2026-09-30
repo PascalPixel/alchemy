@@ -1,10 +1,10 @@
 #include "TYPES.H"
 
 /* 0xff-terminated index orders for the list modes; mode 0 is the default. */
-extern u8 Data_080af2a6[];
-extern u8 Data_080af2d0[];
-extern u8 Data_080af2bc[];
-extern u8 Data_080af2b1[];
+extern u8 Menu_ListOrderDefault[];
+extern u8 Menu_ListOrderMode0[];
+extern u8 Menu_ListOrderMode1[];
+extern u8 Menu_ListOrderMode2[];
 
 /* Copies the index order for a list mode into order, terminator included,
    at most 32 entries. */
@@ -13,16 +13,16 @@ void Menu_CopyListOrder(s32 mode, u8 *order)
     u8 *src;
     s32 count;
 
-    src = Data_080af2a6;
+    src = Menu_ListOrderDefault;
     switch (mode) {
     case 0:
-        src = Data_080af2d0;
+        src = Menu_ListOrderMode0;
         break;
     case 1:
-        src = Data_080af2bc;
+        src = Menu_ListOrderMode1;
         break;
     case 2:
-        src = Data_080af2b1;
+        src = Menu_ListOrderMode2;
         break;
     }
     *order = *src;

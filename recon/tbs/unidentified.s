@@ -692,17 +692,17 @@ UiMenu_CursorBobX:
 	.global UiMenu_CursorBobY
 UiMenu_CursorBobY:
 	.incbin "baserom.gba", 0x000af29d, 0x00000009
-	.global Data_080af2a6
-Data_080af2a6:
+	.global Menu_ListOrderDefault
+Menu_ListOrderDefault:
 	.incbin "baserom.gba", 0x000af2a6, 0x0000000b
-	.global Data_080af2b1
-Data_080af2b1:
+	.global Menu_ListOrderMode2
+Menu_ListOrderMode2:
 	.incbin "baserom.gba", 0x000af2b1, 0x0000000b
-	.global Data_080af2bc
-Data_080af2bc:
+	.global Menu_ListOrderMode1
+Menu_ListOrderMode1:
 	.incbin "baserom.gba", 0x000af2bc, 0x00000014
-	.global Data_080af2d0
-Data_080af2d0:
+	.global Menu_ListOrderMode0
+Menu_ListOrderMode0:
 	.incbin "baserom.gba", 0x000af2d0, 0x00000014
 	.global ItemMenu_CommandColumnXTable
 ItemMenu_CommandColumnXTable:

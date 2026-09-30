@@ -650,7 +650,7 @@ BattlePres_SetActorModes:
 	lsls	r1, r1, #7
 	movs	r0, #96
 	movs	r7, #142
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	lsls	r7, r7, #5
 	movs	r1, #1
 	movs	r2, #15

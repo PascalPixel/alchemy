@@ -15,7 +15,7 @@ Func_080e1f2c:
 	adds	r1, #52
 	movs	r0, #92
 	sub	sp, #32
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	adds	r3, r2, #0
@@ -39,7 +39,7 @@ Func_080e1f2c:
 	lsls	r5, r5, #5
 	adds	r1, r5, #0
 	movs	r0, #96
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	str	r0, [r6, #0]
 	ldr	r0, [pc, #724]
 	bl	Resource_GetTableEntry

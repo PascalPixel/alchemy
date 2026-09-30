@@ -16,7 +16,7 @@ Func_080e4730:
 	adds	r1, #44
 	movs	r0, #92
 	sub	sp, #40
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	adds	r3, r2, #0
@@ -86,7 +86,7 @@ Func_080e4730:
 	adds	r0, r2, #0
 	adds	r1, r2, #0
 	movs	r3, #0
-	bl	Func_080d440c
+	bl	Motion_CamBounds
 	mov	r2, r8
 	adds	r2, #85
 	movs	r3, #0
@@ -243,7 +243,7 @@ Func_080e4730:
 	movs	r1, #1
 	movs	r5, #24
 	ldrsh	r0, [r6, r5]
-	bl	Func_080d4384
+	bl	Object_AttachWorkTargetToObject
 	movs	r0, #142
 	lsls	r0, r0, #1
 	adds	r0, #255
@@ -368,7 +368,7 @@ Func_080e4730:
 	adds	r1, #44
 	movs	r0, #92
 	sub	sp, #48
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	adds	r3, r2, #0
@@ -474,7 +474,7 @@ Func_080e4730:
 	adds	r0, r2, #0
 	adds	r1, r2, #0
 	movs	r3, #0
-	bl	Func_080d440c
+	bl	Motion_CamBounds
 	ldr	r3, [sp, #44]
 	mov	r5, r8
 	ldr	r0, [r3, #16]
@@ -649,7 +649,7 @@ Func_080e4730:
 	movs	r1, #1
 	movs	r2, #24
 	ldrsh	r0, [r3, r2]
-	bl	Func_080d4384
+	bl	Object_AttachWorkTargetToObject
 	ldr	r6, [sp, #24]
 	add	r0, sp, #20
 	str	r6, [r5, #12]
@@ -1926,7 +1926,7 @@ Func_080e4730:
 	adds	r1, #16
 	movs	r0, #92
 	sub	sp, #40
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r5, #192
 	lsls	r5, r5, #18
 	adds	r3, r5, #0
@@ -2682,7 +2682,7 @@ Func_080e4730:
 	adds	r1, #180
 	movs	r0, #92
 	sub	sp, #44
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	str	r0, [sp, #28]
 	movs	r2, #192
 	lsls	r2, r2, #18

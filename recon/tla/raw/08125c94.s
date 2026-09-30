@@ -140,7 +140,7 @@ Func_08125c94:
 	movs	r0, #168
 	movs	r1, #4
 	ldr	r6, [r3, #0]
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r3, r7, #0
 	subs	r3, #78
 	str	r0, [sp, #4]

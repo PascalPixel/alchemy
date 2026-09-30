@@ -228,7 +228,7 @@ Func_0804e1d8:
 	adds	r2, r0, #0
 	adds	r0, r5, #0
 	str	r2, [sp, #12]
-	bl	Func_0803d8f0
+	bl	Ui_BuildPatternToSlot
 	movs	r1, #128
 	ldr	r0, [sp, #12]
 	lsls	r1, r1, #23

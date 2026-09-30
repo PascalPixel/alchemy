@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ca6e8
+	.global Event_SpawnObjectTable
 	.thumb_func
-Func_080ca6e8:
+Event_SpawnObjectTable:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -336,7 +336,7 @@ Func_080ca6e8:
 	ldr r1, [r6, #8]
 	ldr r2, [r6, #16]
 	movs r0, #0
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	ldr r3, [r6, #12]
 	str r0, [r6, #20]
 	adds r3, r3, r0

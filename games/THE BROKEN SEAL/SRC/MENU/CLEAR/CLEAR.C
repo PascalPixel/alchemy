@@ -107,6 +107,10 @@ u8 *SceneData_GetEffectTable(void)
     return Clear_EffectTable;
 }
 
+/* The clear screen's background: the Golden Sun logo's palette, tiles and a
+ * 30 x 20 map counting up from tile 0x1a0, then cleared scroll registers.
+ * The cell buffer is the fixed RAM buffer, reloaded for each use. */
+
 /* Load the clear-screen background: palette, tiles and a 30 x 20 map counting up from
  * tile 0x1a0, then clear the scroll registers. */
 void Clear_LoadBackground(void)
@@ -187,6 +191,9 @@ void Clear_UpdateBlend(void)
         Engine_TaskRemoveCallback(Clear_UpdateBlend);
 }
 
+/* The clear screen's two button codes. Each new press must match the next
+ * entry of its sequence, a wrong press starts it over, and reaching the
+ * zero entry unlocks the code with a chime. A held press counts once. */
 void Clear_CheckButtonCodes(void)
 {
     if (Clear_CodeUnlocked == 0) {
@@ -262,6 +269,9 @@ void Clear_NameEntryCharacter(s32 cell, u8 *text)
         text[0] = '=';
 }
 
+/* The clear screen's mode mask: once flag 324 is set, every scene but the
+ * world map answers all bits, unless the game state's word at 0x23e is 2.
+ * The mask is the sign of the scene's difference from the world map. */
 s32 Scene_GetModeMask(void)
 {
     s32 mode;

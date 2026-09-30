@@ -84,6 +84,7 @@ const struct SceneRegion *Scene_GetRegions(void)
     return 0;
 }
 
+/* Scene tables. */
 u8 *SceneData_GetTableB85c(void) { return Data_0200b85c; }
 
 u8 *SceneData_SelectAndApplyTableBySceneId(void)
@@ -99,6 +100,8 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
     return tbl;
 }
 
+/* Copy the cell attributes at (73, 38) to (9, 38), advance the staged pair
+   and place and pin slots 8 and 9. */
 void SceneState_RunRect73x38Step(void)
 {
     Event_Begin();
@@ -108,6 +111,7 @@ void SceneState_RunRect73x38Step(void)
     Event_End();
 }
 
+/* The point left of actor zero. */
 void SceneActor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
@@ -119,6 +123,8 @@ void SceneActor_ApplyPointLeftOfActorZero(void)
     SceneActor_MoveActorZeroToTarget(point);
 }
 
+/* Copy the cell attributes at (93, 30) to (29, 30), advance the staged pair
+   and place and pin slots 10 and 11. */
 void FieldScene_RunLayoutAt93By30(void)
 {
     Event_Begin();
@@ -128,6 +134,7 @@ void FieldScene_RunLayoutAt93By30(void)
     Event_End();
 }
 
+/* A step and the point two right of actor zero. */
 void FieldScene_RunStepWith6(void)
 {
     BattleFx_RunRisingObjectSequence(0, 6, 0);
@@ -144,6 +151,8 @@ void SceneActor_PassPointTwoRightOfActorZero(void)
     SceneActor_MoveActorZeroToTarget(pos);
 }
 
+/* Copy two cell-attribute rectangles to column 25, advance the staged pair
+   and run the scene that follows. */
 void SceneState_ApplyTwoRectsAndRunThree(void)
 {
     Event_Begin();
@@ -154,6 +163,7 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
     Event_End();
 }
 
+/* Scene tables, layouts and supplemental sequences. */
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
     struct Actor02001424 *actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -533,6 +543,8 @@ void BabiChika_SettleSteps(s32 wait)
     }
     Battle_WaitMode0(wait);
 }
+
+/* Platform landing and the late sequences. */
 
 /*
  * Scan slots 10 to 14, skipping the subject, keep those whose whole-tile x

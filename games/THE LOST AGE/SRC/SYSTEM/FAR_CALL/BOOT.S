@@ -216,11 +216,11 @@ Func_08000258:
 	.global Func_08000260
 	.thumb_func
 Func_08000260:
-	overlay_veneer Func_080156e8
+	overlay_veneer Graphics_PrepareTransferInIwramWork
 	.global Func_08000268
 	.thumb_func
 Func_08000268:
-	overlay_veneer Func_08015778
+	overlay_veneer Render_ProjectPoint
 	.global Func_08000270
 	.thumb_func
 Func_08000270:
@@ -248,7 +248,7 @@ Func_08000298:
 	.global Func_080002a0
 	.thumb_func
 Func_080002a0:
-	overlay_veneer Func_0801336c
+	overlay_veneer Resource_LoadCode
 	.global Func_080002a8
 	.thumb_func
 Func_080002a8:

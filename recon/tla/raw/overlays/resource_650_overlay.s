@@ -1,4968 +1,5112 @@
 .syntax unified
 	.thumb
 	.section .text.x02008098,"ax",%progbits
-	push	{r5, r6, lr}
-	adds	r6, r0, #0
-	bl 0x0200b1d8
-	movs	r1, #1
-	adds	r5, r0, #0
-	adds	r0, r6, #0
-	bl 0x0200b240
-	adds	r0, r6, #0
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	ldr	r3, [r5, #8]
-	ldr	r2, [pc, #48]
-	movs	r0, #1
-	adds	r3, r3, r2
-	ldr	r2, [r5, #80]
-	str	r3, [r5, #8]
-	movs	r3, #0
-	strh	r3, [r2, #18]
-	bl 0x0200b138
-	adds	r0, r6, #0
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r3, #128
-	lsls	r3, r3, #11
-	str	r3, [r5, #40]
-	adds	r5, #85
-	movs	r3, #3
-	strb	r3, [r5, #0]
-	movs	r0, #40
-	bl 0x0200b138
-	pop	{r5, r6, pc}
+	.global Func_02000098
+	.thumb_func
+Func_02000098:
+	push {r5, r6, lr}
+	adds r6, r0, #0
+	bl Object_GetById
+	movs r1, #1
+	adds r5, r0, #0
+	adds r0, r6, #0
+	bl Engine_ActorSetAnimation
+	adds r0, r6, #0
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	ldr r3, [r5, #8]
+	ldr r2, .L_020080ec
+	movs r0, #1
+	adds r3, r3, r2
+	ldr r2, [r5, #80]
+	str r3, [r5, #8]
+	movs r3, #0
+	strh r3, [r2, #18]
+	bl Task_Wait
+	adds r0, r6, #0
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r3, #128
+	lsls r3, r3, #11
+	str r3, [r5, #40]
+	adds r5, #85
+	movs r3, #3
+	strb r3, [r5]
+	movs r0, #40
+	bl Task_Wait
+	pop {r5, r6, pc}
 	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0xfff4
-	.2byte 0xb560
-	sub	sp, #8
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	movs	r1, #1
-	movs	r0, #8
-	bl 0x0200b268
-	ldr	r6, [pc, #420]
-	adds	r0, r6, #0
-	bl 0x0200b288
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200b268
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r3, #25
-	movs	r2, #42
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #1
-	movs	r2, #2
-	movs	r1, #31
-	movs	r0, #38
-	bl 0x0200b190
-	movs	r0, #8
-	bl 0x0200b1d8
-	movs	r1, #1
-	adds	r5, r0, #0
-	movs	r0, #8
-	bl 0x0200b240
-	movs	r0, #8
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r0, #8
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r3, #128
-	lsls	r3, r3, #11
-	str	r3, [r5, #40]
-	movs	r3, #3
-	adds	r5, #85
-	strb	r3, [r5, #0]
-	movs	r0, #40
-	bl 0x0200b138
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r5, [pc, #300]
-	movs	r3, #133
-	lsls	r3, r3, #2
-	adds	r5, r5, r3
-	movs	r2, #0
-	ldr	r1, [r5, #0]
-	movs	r0, #8
-	bl 0x0200b270
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r0, #8
-	bl 0x0200b2c8
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200b298
-	movs	r1, #2
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #176
-	movs	r0, #8
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r0, #8
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #128
-	lsls	r1, r1, #1
-	movs	r2, #20
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #8
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #208
-	movs	r2, #170
-	lsls	r2, r2, #2
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x0200b218
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r2, #20
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r1, #129
-	lsls	r1, r1, #1
-	ldr	r0, [r5, #0]
-	bl 0x0200b2c8
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r1, [r5, #0]
-	movs	r2, #0
-	movs	r0, #8
-	bl 0x0200b270
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r2, #0
-	ldr	r0, [r5, #0]
-	movs	r1, #8
-	bl 0x0200b270
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200b240
-	ldr	r0, [r5, #0]
-	bl 0x0200b1d8
-	cmp	r0, #0
-	beq.n	.L_02000280
-	movs	r3, #10
-	ldrsh	r1, [r0, r3]
-	movs	r3, #18
-	ldrsh	r2, [r0, r3]
-	movs	r0, #8
-	bl 0x0200b208
-.L_02000280:
-	movs	r0, #8
-	bl 0x0200b220
-	movs	r2, #0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b228
-	adds	r0, r6, #0
-	movs	r1, #1
-	adds	r0, #8
-	bl 0x0200b1a0
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #99
-	bl 0x0200b158
-	bl 0x0200b1c0
-	add	sp, #8
-	pop	{r5, r6, pc}
+.L_020080ec:
+	.4byte 0xfff40000
+	.section .text.x020080f0,"ax",%progbits
+	.global Func_020000f0
+	.thumb_func
+Func_020000f0:
+	push {r5, r6, lr}
+	sub sp, #8
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	movs r1, #1
+	movs r0, #8
+	bl Motion_SetVarCbAndRefresh
+	ldr r6, .L_020082ac
+	adds r0, r6, #0
+	bl Func_02003288
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #2
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r3, #25
+	movs r2, #42
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r3, #1
+	movs r2, #2
+	movs r1, #31
+	movs r0, #38
+	bl Func_02003190
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #1
+	adds r5, r0, #0
+	movs r0, #8
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #1
+	bl Task_Wait
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r3, #128
+	lsls r3, r3, #11
+	str r3, [r5, #40]
+	movs r3, #3
+	adds r5, #85
+	strb r3, [r5]
+	movs r0, #40
+	bl Task_Wait
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	ldr r5, .L_020082b0
+	movs r3, #133
+	lsls r3, r3, #2
+	adds r5, r5, r3
+	movs r2, #0
+	ldr r1, [r5]
+	movs r0, #8
+	bl Func_02003270
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r0, #8
+	bl Func_020032c8
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r0, #8
+	movs r1, #0
+	movs r2, #20
+	bl Func_02003298
+	movs r1, #2
+	movs r2, #20
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #176
+	movs r0, #8
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #128
+	movs r0, #8
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #20
+	movs r0, #8
+	bl Func_020032c0
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #8
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #208
+	movs r2, #170
+	lsls r2, r2, #2
+	movs r0, #8
+	lsls r1, r1, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r2, #20
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r1, #129
+	lsls r1, r1, #1
+	ldr r0, [r5]
+	bl Func_020032c8
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	ldr r1, [r5]
+	movs r2, #0
+	movs r0, #8
+	bl Func_02003270
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r2, #0
+	ldr r0, [r5]
+	movs r1, #8
+	bl Func_02003270
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorSetAnimation
+	ldr r0, [r5]
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_02008280
+	movs r3, #10
+	ldrsh r1, [r0, r3]
+	movs r3, #18
+	ldrsh r2, [r0, r3]
+	movs r0, #8
+	bl ObjectMotion_ResetAndSetPosition
+.L_02008280:
+	movs r0, #8
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r2, #0
+	movs r0, #8
+	movs r1, #0
+	bl Func_02003228
+	adds r0, r6, #0
+	movs r1, #1
+	adds r0, #8
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #99
+	bl Func_02003158
+	bl Func_020031c0
+	add sp, #8
+	pop {r5, r6, pc}
+.L_020082ac:
 	.4byte 0x000016a2
-	.2byte 0x0240
-	.2byte 0x0200
-	push	{r5, lr}
-	sub	sp, #8
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	movs	r1, #1
-	movs	r0, #5
-	bl 0x0200b268
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r1, #2
-	movs	r0, #5
-	bl 0x0200b268
-	movs	r0, #20
-	bl 0x0200b1b0
-	ldr	r0, [pc, #432]
-	bl 0x0200b288
-	movs	r0, #5
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b298
-	movs	r1, #2
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r3, #17
-	movs	r2, #46
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #1
-	movs	r2, #2
-	movs	r1, #31
-	movs	r0, #38
-	bl 0x0200b190
-	movs	r0, #5
-	bl 0x0200b1d8
-	movs	r1, #1
-	adds	r5, r0, #0
-	movs	r0, #5
-	bl 0x0200b240
-	movs	r0, #5
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r0, #5
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r3, #128
-	lsls	r3, r3, #11
-	str	r3, [r5, #40]
-	movs	r3, #3
-	adds	r5, #85
-	strb	r3, [r5, #0]
-	movs	r0, #40
-	bl 0x0200b138
-	movs	r1, #128
-	movs	r2, #20
-	lsls	r1, r1, #1
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r0, #5
-	lsls	r1, r1, #7
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r0, #5
-	lsls	r1, r1, #8
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r2, #20
-	movs	r0, #5
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r5, [pc, #240]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r5, r5, r2
-	ldr	r1, [r5, #0]
-	movs	r2, #0
-	movs	r0, #5
-	bl 0x0200b270
-	movs	r0, #20
-	bl 0x0200b1b0
-	ldr	r0, [r5, #0]
-	movs	r1, #5
-	movs	r2, #0
-	bl 0x0200b270
-	movs	r1, #132
-	movs	r2, #0
-	lsls	r1, r1, #1
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #3
-	ldr	r0, [r5, #0]
-	bl 0x0200b248
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r1, #2
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r1, #0
-	movs	r0, #5
-	bl 0x0200b290
-	ldr	r0, [r5, #0]
-	movs	r1, #0
-	bl 0x0200b1d0
-	cmp	r0, #0
-	bne.n	.L_02000416
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	b.n	.L_02000430
-.L_02000416:
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	movs	r0, #5
-	adds	r3, #2
-	strh	r3, [r2, #0]
-	movs	r1, #0
-	bl 0x0200b2a0
-.L_02000430:
-	movs	r2, #204
-	lsls	r2, r2, #8
-	adds	r2, #204
-	movs	r0, #5
-	ldr	r1, [pc, #92]
-	bl 0x0200b1e0
-	movs	r0, #5
-	movs	r1, #2
-	bl 0x0200b240
-	ldr	r3, [pc, #76]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r3, r3, r2
-	ldr	r0, [r3, #0]
-	bl 0x0200b1d8
-	cmp	r0, #0
-	beq.n	.L_02000466
-	movs	r3, #10
-	ldrsh	r1, [r0, r3]
-	movs	r3, #18
-	ldrsh	r2, [r0, r3]
-	movs	r0, #5
-	bl 0x0200b208
-.L_02000466:
-	movs	r0, #5
-	bl 0x0200b220
-	movs	r2, #0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b228
-	movs	r1, #1
-	movs	r0, #5
-	bl 0x0200b1c8
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #100
-	bl 0x0200b158
-	bl 0x0200b1c0
-	add	sp, #8
-	pop	{r5, pc}
+.L_020082b0:
+	.4byte gPartyState
+	.section .text.x020082b4,"ax",%progbits
+	.global Func_020002b4
+	.thumb_func
+Func_020002b4:
+	push {r5, lr}
+	sub sp, #8
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	movs r1, #1
+	movs r0, #5
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #2
+	movs r0, #5
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #20
+	bl Battle_WaitMode0
+	ldr r0, .L_02008490
+	bl Func_02003288
+	movs r0, #5
+	movs r1, #0
+	movs r2, #40
+	bl Func_02003298
+	movs r1, #2
+	movs r2, #20
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r3, #17
+	movs r2, #46
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r3, #1
+	movs r2, #2
+	movs r1, #31
+	movs r0, #38
+	bl Func_02003190
+	movs r0, #5
+	bl Object_GetById
+	movs r1, #1
+	adds r5, r0, #0
+	movs r0, #5
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #1
+	bl Task_Wait
+	movs r0, #5
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r3, #128
+	lsls r3, r3, #11
+	str r3, [r5, #40]
+	movs r3, #3
+	adds r5, #85
+	strb r3, [r5]
+	movs r0, #40
+	bl Task_Wait
+	movs r1, #128
+	movs r2, #20
+	lsls r1, r1, #1
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r0, #5
+	lsls r1, r1, #7
+	movs r2, #20
+	bl Func_020032b0
+	movs r1, #160
+	movs r0, #5
+	lsls r1, r1, #8
+	movs r2, #20
+	bl Func_020032b0
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r2, #20
+	movs r0, #5
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	ldr r5, .L_02008494
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r5, r2
+	ldr r1, [r5]
+	movs r2, #0
+	movs r0, #5
+	bl Func_02003270
+	movs r0, #20
+	bl Battle_WaitMode0
+	ldr r0, [r5]
+	movs r1, #5
+	movs r2, #0
+	bl Func_02003270
+	movs r1, #132
+	movs r2, #0
+	lsls r1, r1, #1
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #3
+	ldr r0, [r5]
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #2
+	adds r1, #255
+	movs r2, #0
+	movs r0, #5
+	bl Func_020032c0
+	movs r1, #0
+	movs r0, #5
+	bl Func_02003290
+	ldr r0, [r5]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_02008416
+	movs r0, #5
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	b .L_02008430
+.L_02008416:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	movs r0, #5
+	adds r3, #2
+	strh r3, [r2]
+	movs r1, #0
+	bl Func_020032a0
+.L_02008430:
+	movs r2, #204
+	lsls r2, r2, #8
+	adds r2, #204
+	movs r0, #5
+	ldr r1, .L_02008498
+	bl ObjectMotion_SetSpeedParameters
+	movs r0, #5
+	movs r1, #2
+	bl Engine_ActorSetAnimation
+	ldr r3, .L_02008494
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	ldr r0, [r3]
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_02008466
+	movs r3, #10
+	ldrsh r1, [r0, r3]
+	movs r3, #18
+	ldrsh r2, [r0, r3]
+	movs r0, #5
+	bl ObjectMotion_ResetAndSetPosition
+.L_02008466:
+	movs r0, #5
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r2, #0
+	movs r0, #5
+	movs r1, #0
+	bl Func_02003228
+	movs r1, #1
+	movs r0, #5
+	bl Event_PrepareObjectAndApplyValue
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #100
+	bl Func_02003158
+	bl Func_020031c0
+	add sp, #8
+	pop {r5, pc}
+.L_02008490:
 	.4byte 0x000016ab
-	.4byte 0x02000240
-	.2byte 0x9999
-	.2byte 0x0001
-	push	{r5, lr}
-	sub	sp, #8
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	movs	r1, #2
-	movs	r0, #6
-	bl 0x0200b268
-	ldr	r0, [pc, #384]
-	bl 0x0200b288
-	movs	r2, #40
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #6
-	movs	r1, #18
-	bl 0x0200b240
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r3, #14
-	movs	r2, #40
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r1, #31
-	movs	r2, #2
-	movs	r3, #1
-	movs	r0, #38
-	bl 0x0200b190
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r3, #3
-	adds	r0, #85
-	strb	r3, [r0, #0]
-	movs	r2, #0
-	movs	r0, #6
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r1, #1
-	movs	r0, #6
-	bl 0x0200b240
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r0, #20
-	bl 0x0200b1b0
-	ldr	r5, [pc, #280]
-	movs	r3, #133
-	lsls	r3, r3, #2
-	adds	r5, r5, r3
-	movs	r2, #0
-	ldr	r1, [r5, #0]
-	movs	r0, #6
-	bl 0x0200b278
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r0, [r5, #0]
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r1, #6
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #224
-	movs	r0, #6
-	lsls	r1, r1, #8
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r0, #6
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r0, #6
-	lsls	r1, r1, #7
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r2, #20
-	lsls	r1, r1, #1
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #0
-	ldr	r1, [r5, #0]
-	movs	r0, #6
-	bl 0x0200b270
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r0, #6
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r0, [r5, #0]
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #204
-	lsls	r2, r2, #8
-	movs	r0, #6
-	ldr	r1, [pc, #120]
-	adds	r2, #204
-	bl 0x0200b1e0
-	movs	r2, #170
-	movs	r0, #6
-	movs	r1, #212
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r1, #224
-	movs	r2, #20
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #6
-	movs	r1, #2
-	bl 0x0200b240
-	ldr	r0, [r5, #0]
-	bl 0x0200b1d8
-	cmp	r0, #0
-	beq.n	.L_0200060a
-	movs	r3, #10
-	ldrsh	r1, [r0, r3]
-	movs	r3, #18
-	ldrsh	r2, [r0, r3]
-	movs	r0, #6
-	bl 0x0200b208
-.L_0200060a:
-	movs	r0, #6
-	bl 0x0200b220
-	movs	r2, #0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b228
-	movs	r1, #1
-	movs	r0, #6
-	bl 0x0200b1c8
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #101
-	bl 0x0200b158
-	bl 0x0200b1c0
-	add	sp, #8
-	pop	{r5, pc}
+.L_02008494:
+	.4byte gPartyState
+.L_02008498:
+	.4byte 0x00019999
+	.section .text.x0200849c,"ax",%progbits
+	.global Func_0200049c
+	.thumb_func
+Func_0200049c:
+	push {r5, lr}
+	sub sp, #8
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	movs r1, #2
+	movs r0, #6
+	bl Motion_SetVarCbAndRefresh
+	ldr r0, .L_02008634
+	bl Func_02003288
+	movs r2, #40
+	movs r0, #6
+	movs r1, #0
+	bl Func_02003298
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #6
+	movs r1, #18
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r3, #14
+	movs r2, #40
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r1, #31
+	movs r2, #2
+	movs r3, #1
+	movs r0, #38
+	bl Func_02003190
+	movs r0, #6
+	bl Object_GetById
+	movs r3, #3
+	adds r0, #85
+	strb r3, [r0]
+	movs r2, #0
+	movs r0, #6
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r1, #1
+	movs r0, #6
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #20
+	bl Battle_WaitMode0
+	ldr r5, .L_02008638
+	movs r3, #133
+	lsls r3, r3, #2
+	adds r5, r5, r3
+	movs r2, #0
+	ldr r1, [r5]
+	movs r0, #6
+	bl Object_LinkPair
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	ldr r0, [r5]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #6
+	movs r2, #20
+	adds r1, #255
+	movs r0, #6
+	bl Func_020032c0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #224
+	movs r0, #6
+	lsls r1, r1, #8
+	movs r2, #20
+	bl Func_020032b0
+	movs r1, #160
+	movs r0, #6
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #192
+	movs r0, #6
+	lsls r1, r1, #7
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	movs r2, #20
+	lsls r1, r1, #1
+	movs r0, #6
+	bl Func_020032c0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #0
+	ldr r1, [r5]
+	movs r0, #6
+	bl Func_02003270
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r0, #6
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	ldr r0, [r5]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #6
+	ldr r1, .L_0200863c
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #170
+	movs r0, #6
+	movs r1, #212
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #224
+	movs r2, #20
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #6
+	movs r1, #2
+	bl Engine_ActorSetAnimation
+	ldr r0, [r5]
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_0200860a
+	movs r3, #10
+	ldrsh r1, [r0, r3]
+	movs r3, #18
+	ldrsh r2, [r0, r3]
+	movs r0, #6
+	bl ObjectMotion_ResetAndSetPosition
+.L_0200860a:
+	movs r0, #6
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r2, #0
+	movs r0, #6
+	movs r1, #0
+	bl Func_02003228
+	movs r1, #1
+	movs r0, #6
+	bl Event_PrepareObjectAndApplyValue
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #101
+	bl Func_02003158
+	bl Func_020031c0
+	add sp, #8
+	pop {r5, pc}
+.L_02008634:
 	.4byte 0x000016b5
-	.4byte 0x02000240
-	.2byte 0x9999
-	.2byte 0x0001
-	push	{lr}
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	movs	r0, #123
-	bl 0x0200b328
-	bl 0x0200b300
-	bl 0x0200b308
-	movs	r0, #3
-	bl 0x0200b2e8
-	pop	{pc}
+.L_02008638:
+	.4byte gPartyState
+.L_0200863c:
+	.4byte 0x00019999
+	.section .text.x02008640,"ax",%progbits
+	.global Func_02000640
+	.thumb_func
+Func_02000640:
+	push {lr}
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	movs r0, #123
+	bl Engine_AudioPlayCue
+	bl Event_ClearStatus1c6
+	bl Event_WaitValue1c8Frames
+	movs r0, #3
+	bl Func_020032e8
+	pop {pc}
 	.2byte 0x0000
-	push	{r5, lr}
-	movs	r0, #128
-	lsls	r0, r0, #2
-	bl 0x0200b150
-	cmp	r0, #0
-	bne.n	.L_020006a0
-	ldr	r5, [pc, #48]
-	movs	r3, #133
-	lsls	r3, r3, #2
-	movs	r1, #204
-	movs	r2, #204
-	adds	r5, r5, r3
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	ldr	r0, [r5, #0]
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r2, #189
-	ldr	r0, [r5, #0]
-	movs	r1, #152
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r0, #128
-	lsls	r0, r0, #2
-	bl 0x0200b158
-.L_020006a0:
-	pop	{r5, pc}
+	.section .text.x02008664,"ax",%progbits
+	.global Func_02000664
+	.thumb_func
+Func_02000664:
+	push {r5, lr}
+	movs r0, #128
+	lsls r0, r0, #2
+	bl Func_02003150
+	cmp r0, #0
+	bne .L_020086a0
+	ldr r5, .L_020086a4
+	movs r3, #133
+	lsls r3, r3, #2
+	movs r1, #204
+	movs r2, #204
+	adds r5, r5, r3
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	ldr r0, [r5]
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #189
+	ldr r0, [r5]
+	movs r1, #152
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #128
+	lsls r0, r0, #2
+	bl Func_02003158
+.L_020086a0:
+	pop {r5, pc}
 	.2byte 0x0000
-	.2byte 0x0240
-	.2byte 0x0200
-	push	{r5, r6, lr}
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #99
-	sub	sp, #8
-	bl 0x0200b150
-	cmp	r0, #0
-	beq.n	.L_020006bc
-	b.n	.L_0200087e
-.L_020006bc:
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	bl 0x02008664
-	ldr	r6, [pc, #984]
-	adds	r0, r6, #0
-	bl 0x0200b288
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b228
-	movs	r2, #0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b228
-	movs	r0, #153
-	movs	r1, #152
-	lsls	r0, r0, #8
-	lsls	r1, r1, #5
-	adds	r0, #153
-	adds	r1, #51
-	bl 0x0200b2d0
-	movs	r0, #168
-	movs	r1, #1
-	lsls	r0, r0, #16
-	negs	r1, r1
-	ldr	r2, [pc, #928]
-	movs	r3, #1
-	bl 0x0200b2d8
-	ldr	r3, [pc, #924]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r5, r3, r2
-	movs	r1, #224
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r3, #25
-	movs	r2, #42
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #1
-	movs	r1, #31
-	movs	r2, #2
-	movs	r0, #38
-	bl 0x0200b190
-	movs	r0, #8
-	bl 0x02008098
-	movs	r1, #156
-	lsls	r1, r1, #17
-	ldr	r2, [pc, #876]
-	movs	r0, #8
-	bl 0x0200b228
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r2, #204
-	lsls	r2, r2, #8
-	movs	r0, #8
-	ldr	r1, [pc, #860]
-	adds	r2, #204
-	bl 0x0200b1e0
-	movs	r2, #170
-	movs	r0, #8
-	movs	r1, #212
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r2, #178
-	movs	r0, #8
-	movs	r1, #192
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r1, #160
-	movs	r2, #0
-	lsls	r1, r1, #7
-	movs	r0, #8
-	bl 0x0200b2b0
-	movs	r0, #8
-	bl 0x0200b1f0
-	ldr	r1, [pc, #816]
-	movs	r0, #8
-	bl 0x0200b200
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	movs	r2, #0
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r2, #20
-	lsls	r1, r1, #1
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #208
-	movs	r2, #0
-	movs	r0, #8
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #160
-	movs	r2, #0
-	movs	r0, #8
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #189
-	movs	r0, #8
-	movs	r1, #172
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r2, #0
-	ldr	r1, [r5, #0]
-	movs	r0, #8
-	bl 0x0200b278
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #192
-	lsls	r0, r0, #7
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200b240
-	ldr	r0, [r5, #0]
-	bl 0x0200b1d8
-	cmp	r0, #0
-	beq.n	.L_0200084a
-	movs	r3, #10
-	ldrsh	r1, [r0, r3]
-	movs	r3, #18
-	ldrsh	r2, [r0, r3]
-	movs	r0, #8
-	bl 0x0200b208
-.L_0200084a:
-	movs	r0, #8
-	bl 0x0200b220
-	movs	r2, #0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b228
-	adds	r0, r6, #0
-	adds	r0, #8
-	movs	r1, #1
-	bl 0x0200b1a0
-	movs	r1, #128
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #7
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #99
-	bl 0x0200b158
-	bl 0x0200b1c0
-.L_0200087e:
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #100
-	bl 0x0200b150
-	cmp	r0, #0
-	beq.n	.L_0200088e
-	b.n	.L_02000ac8
-.L_0200088e:
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	bl 0x02008664
-	movs	r1, #156
-	ldr	r2, [pc, #528]
-	lsls	r1, r1, #17
-	movs	r0, #5
-	bl 0x0200b228
-	movs	r0, #1
-	bl 0x0200b138
-	ldr	r0, [pc, #524]
-	bl 0x0200b288
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b228
-	movs	r0, #153
-	movs	r1, #152
-	lsls	r0, r0, #8
-	lsls	r1, r1, #5
-	adds	r0, #153
-	adds	r1, #51
-	bl 0x0200b2d0
-	movs	r0, #168
-	movs	r1, #1
-	movs	r3, #1
-	lsls	r0, r0, #16
-	negs	r1, r1
-	ldr	r2, [pc, #452]
-	bl 0x0200b2d8
-	movs	r2, #204
-	lsls	r2, r2, #8
-	adds	r2, #204
-	movs	r0, #8
-	ldr	r1, [pc, #452]
-	bl 0x0200b1e0
-	ldr	r1, [pc, #456]
-	movs	r0, #8
-	bl 0x0200b1e8
-	ldr	r6, [pc, #428]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r6, r6, r2
-	movs	r1, #224
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r3, #17
-	movs	r2, #46
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #1
-	movs	r1, #31
-	movs	r2, #2
-	movs	r0, #38
-	bl 0x0200b190
-	movs	r0, #5
-	bl 0x02008098
-	movs	r2, #204
-	lsls	r2, r2, #8
-	movs	r0, #5
-	ldr	r1, [pc, #384]
-	adds	r2, #204
-	bl 0x0200b1e0
-	movs	r2, #170
-	movs	r0, #5
-	movs	r1, #212
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r2, #178
-	movs	r0, #5
-	movs	r1, #192
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r1, #192
-	lsls	r1, r1, #7
-	movs	r2, #0
-	movs	r0, #5
-	bl 0x0200b2b0
-	movs	r0, #5
-	bl 0x0200b1f0
-	movs	r1, #4
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r2, #20
-	movs	r0, #5
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #129
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r1, #129
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r1, #8
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #6
-	movs	r2, #0
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	ldr	r0, [r6, #0]
-	movs	r1, #3
-.L_020009c0:
-	bl 0x0200b248
-	ldr	r0, [r6, #0]
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b298
-	movs	r1, #6
-	movs	r2, #40
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #224
-	movs	r2, #40
-	movs	r0, #5
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #7
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r0, #8
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r2, #20
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b240
-	ldr	r0, [r6, #0]
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r2, #182
-	movs	r0, #5
-	movs	r1, #178
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #5
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #7
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #208
-	movs	r0, #8
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #224
-	movs	r2, #20
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	ldr	r0, [r6, #0]
-	movs	r1, #3
-	bl 0x0200b248
-	ldr	r5, [pc, #84]
-	movs	r0, #8
-	adds	r1, r5, #0
-	bl 0x0200b1e8
-	movs	r0, #5
-	adds	r1, r5, #0
-	bl 0x0200b200
-	movs	r0, #5
-	movs	r1, #1
-	bl 0x0200b1c8
-	movs	r1, #128
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #7
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #100
-	bl 0x0200b158
-	bl 0x0200b1c0
-	b.n	.L_02000ac8
+.L_020086a4:
+	.4byte gPartyState
+	.section .text.x020086a8,"ax",%progbits
+	.global Func_020006a8
+	.thumb_func
+Func_020006a8:
+	push {r5, r6, lr}
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #99
+	sub sp, #8
+	bl Func_02003150
+	cmp r0, #0
+	beq .L_020086bc
+	b .L_0200887e
+.L_020086bc:
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	bl Func_02000664
+	ldr r6, .L_02008aa4
+	adds r0, r6, #0
+	bl Func_02003288
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #0
+	movs r2, #0
+	bl Func_02003228
+	movs r2, #0
+	movs r0, #6
+	movs r1, #0
+	bl Func_02003228
+	movs r0, #153
+	movs r1, #152
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #153
+	adds r1, #51
+	bl Func_020032d0
+	movs r0, #168
+	movs r1, #1
+	lsls r0, r0, #16
+	negs r1, r1
+	ldr r2, .L_02008aa8
+	movs r3, #1
+	bl Func_020032d8
+	ldr r3, .L_02008aac
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r3, r2
+	movs r1, #224
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r3, #25
+	movs r2, #42
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r3, #1
+	movs r1, #31
+	movs r2, #2
+	movs r0, #38
+	bl Func_02003190
+	movs r0, #8
+	bl Func_02000098
+	movs r1, #156
+	lsls r1, r1, #17
+	ldr r2, .L_02008ab0
+	movs r0, #8
+	bl Func_02003228
+	movs r0, #1
+	bl Task_Wait
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #8
+	ldr r1, .L_02008ab4
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #170
+	movs r0, #8
+	movs r1, #212
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r2, #178
+	movs r0, #8
+	movs r1, #192
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #160
+	movs r2, #0
+	lsls r1, r1, #7
+	movs r0, #8
+	bl Func_020032b0
+	movs r0, #8
+	bl Object_RefreshSelectorById
+	ldr r1, .L_02008ab8
+	movs r0, #8
+	bl Object_SetActionCallbackAndRefreshById
+	movs r2, #20
+	movs r0, #8
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	movs r2, #0
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r2, #20
+	lsls r1, r1, #1
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #208
+	movs r2, #0
+	movs r0, #8
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #160
+	movs r2, #0
+	movs r0, #8
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #189
+	movs r0, #8
+	movs r1, #172
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r2, #0
+	ldr r1, [r5]
+	movs r0, #8
+	bl Object_LinkPair
+	movs r0, #8
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #192
+	lsls r0, r0, #7
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorSetAnimation
+	ldr r0, [r5]
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_0200884a
+	movs r3, #10
+	ldrsh r1, [r0, r3]
+	movs r3, #18
+	ldrsh r2, [r0, r3]
+	movs r0, #8
+	bl ObjectMotion_ResetAndSetPosition
+.L_0200884a:
+	movs r0, #8
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r2, #0
+	movs r0, #8
+	movs r1, #0
+	bl Func_02003228
+	adds r0, r6, #0
+	adds r0, #8
+	movs r1, #1
+	bl UiText_ShowPositionedMessageAndWait
+	movs r1, #128
+	ldr r0, [r5]
+	lsls r1, r1, #7
+	movs r2, #20
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #99
+	bl Func_02003158
+	bl Func_020031c0
+.L_0200887e:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #100
+	bl Func_02003150
+	cmp r0, #0
+	beq .L_0200888e
+	b .L_02008ac8
+.L_0200888e:
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	bl Func_02000664
+	movs r1, #156
+	ldr r2, .L_02008ab0
+	lsls r1, r1, #17
+	movs r0, #5
+	bl Func_02003228
+	movs r0, #1
+	bl Task_Wait
+	ldr r0, .L_02008abc
+	bl Func_02003288
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #0
+	movs r0, #6
+	movs r1, #0
+	bl Func_02003228
+	movs r0, #153
+	movs r1, #152
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #153
+	adds r1, #51
+	bl Func_020032d0
+	movs r0, #168
+	movs r1, #1
+	movs r3, #1
+	lsls r0, r0, #16
+	negs r1, r1
+	ldr r2, .L_02008aa8
+	bl Func_020032d8
+	movs r2, #204
+	lsls r2, r2, #8
+	adds r2, #204
+	movs r0, #8
+	ldr r1, .L_02008ab4
+	bl ObjectMotion_SetSpeedParameters
+	ldr r1, .L_02008ac0
+	movs r0, #8
+	bl ObjectMotion_EnableActionAndSetCallback
+	ldr r6, .L_02008aac
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r6, r6, r2
+	movs r1, #224
+	ldr r0, [r6]
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r3, #17
+	movs r2, #46
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r3, #1
+	movs r1, #31
+	movs r2, #2
+	movs r0, #38
+	bl Func_02003190
+	movs r0, #5
+	bl Func_02000098
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #5
+	ldr r1, .L_02008ab4
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #170
+	movs r0, #5
+	movs r1, #212
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r2, #178
+	movs r0, #5
+	movs r1, #192
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #192
+	lsls r1, r1, #7
+	movs r2, #0
+	movs r0, #5
+	bl Func_020032b0
+	movs r0, #5
+	bl Object_RefreshSelectorById
+	movs r1, #4
+	adds r1, #255
+	movs r2, #0
+	movs r0, #5
+	bl Func_020032c0
+	movs r2, #20
+	movs r0, #5
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #129
+	ldr r0, [r6]
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r1, #129
+	movs r0, #8
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r1, #8
+	movs r2, #20
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #6
+	movs r2, #0
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	ldr r0, [r6]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	ldr r0, [r6]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #8
+	movs r1, #0
+	movs r2, #40
+	bl Func_02003298
+	movs r1, #6
+	movs r2, #40
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #224
+	movs r2, #40
+	movs r0, #5
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r0, #8
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #160
+	movs r2, #20
+	ldr r0, [r6]
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	ldr r0, [r6]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r2, #182
+	movs r0, #5
+	movs r1, #178
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #192
+	movs r2, #0
+	movs r0, #5
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #208
+	movs r0, #8
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #224
+	movs r2, #20
+	ldr r0, [r6]
+	lsls r1, r1, #8
+	bl Func_020032b0
+	ldr r0, [r6]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	ldr r5, .L_02008ac4
+	movs r0, #8
+	adds r1, r5, #0
+	bl ObjectMotion_EnableActionAndSetCallback
+	movs r0, #5
+	adds r1, r5, #0
+	bl Object_SetActionCallbackAndRefreshById
+	movs r0, #5
+	movs r1, #1
+	bl Event_PrepareObjectAndApplyValue
+	movs r1, #128
+	ldr r0, [r6]
+	lsls r1, r1, #7
+	movs r2, #20
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #100
+	bl Func_02003158
+	bl Func_020031c0
+	b .L_02008ac8
+.L_02008aa4:
 	.4byte 0x000016bf
+.L_02008aa8:
 	.4byte 0x02d10000
-	.4byte 0x02000240
+.L_02008aac:
+	.4byte gPartyState
+.L_02008ab0:
 	.4byte 0x029a0000
+.L_02008ab4:
 	.4byte 0x00019999
-	.4byte 0x0200b650
+.L_02008ab8:
+	.4byte Data_02003650
+.L_02008abc:
 	.4byte 0x000016c8
-	.4byte 0x0200b734
-	.2byte 0xb790
-	.2byte 0x0200
-.L_02000ac8:
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #101
-	bl 0x0200b150
-	cmp	r0, #0
-	beq.n	.L_02000ad8
-	b.n	.L_02000cf4
-.L_02000ad8:
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	bl 0x02008664
-	movs	r1, #156
-	ldr	r2, [pc, #524]
-	lsls	r1, r1, #17
-	movs	r0, #6
-	bl 0x0200b228
-	movs	r0, #1
-	bl 0x0200b138
-	ldr	r0, [pc, #512]
-	bl 0x0200b288
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #153
-	movs	r1, #152
-	lsls	r0, r0, #8
-	lsls	r1, r1, #5
-	adds	r0, #153
-	adds	r1, #51
-	bl 0x0200b2d0
-	movs	r0, #168
-	movs	r1, #1
-	movs	r3, #1
-	lsls	r0, r0, #16
-	negs	r1, r1
-	ldr	r2, [pc, #476]
-	bl 0x0200b2d8
-	movs	r2, #204
-	lsls	r2, r2, #8
-	adds	r2, #204
-	movs	r0, #8
-	ldr	r1, [pc, #468]
-	bl 0x0200b1e0
-	ldr	r1, [pc, #464]
-	movs	r0, #8
-	bl 0x0200b1e8
-	ldr	r6, [pc, #460]
-	movs	r3, #133
-	lsls	r3, r3, #2
-	adds	r6, r6, r3
-	movs	r1, #224
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r3, #14
-	movs	r2, #40
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r1, #31
-	movs	r2, #2
-	movs	r3, #1
-	movs	r0, #38
-	bl 0x0200b190
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r3, #3
-	adds	r0, #85
-	strb	r3, [r0, #0]
-	movs	r2, #0
-	movs	r0, #6
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r1, #1
-	movs	r0, #6
-	bl 0x0200b240
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r2, #204
-	lsls	r2, r2, #8
-	movs	r0, #6
-	ldr	r1, [pc, #360]
-	adds	r2, #204
-	bl 0x0200b1e0
-	movs	r2, #170
-	movs	r0, #6
-	movs	r1, #212
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r2, #178
-	movs	r0, #6
-	movs	r1, #192
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r1, #192
-	movs	r2, #0
-	lsls	r1, r1, #7
-	movs	r0, #6
-	bl 0x0200b2b0
-	movs	r0, #6
-	bl 0x0200b1f0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #129
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r1, #8
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #40
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #10
-	movs	r2, #40
-	adds	r1, #255
-	ldr	r0, [r6, #0]
-	bl 0x0200b2c0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #6
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #6
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b240
-	ldr	r0, [r6, #0]
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r1, #128
-	movs	r0, #6
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r0, #6
-	lsls	r1, r1, #6
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r0, [r6, #0]
-	movs	r1, #4
-	bl 0x0200b248
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b248
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #6
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b248
-	ldr	r5, [pc, #76]
-	movs	r0, #8
-	adds	r1, r5, #0
-	bl 0x0200b1e8
-	movs	r0, #6
-	adds	r1, r5, #0
-	bl 0x0200b200
-	movs	r0, #6
-	movs	r1, #1
-	bl 0x0200b1c8
-	movs	r1, #128
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #7
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #101
-	bl 0x0200b158
-	bl 0x0200b1c0
-.L_02000cf4:
-	add	sp, #8
-	pop	{r5, r6, pc}
+.L_02008ac0:
+	.4byte Data_02003734
+.L_02008ac4:
+	.4byte Data_02003790
+.L_02008ac8:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #101
+	bl Func_02003150
+	cmp r0, #0
+	beq .L_02008ad8
+	b .L_02008cf4
+.L_02008ad8:
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	bl Func_02000664
+	movs r1, #156
+	ldr r2, .L_02008cf8
+	lsls r1, r1, #17
+	movs r0, #6
+	bl Func_02003228
+	movs r0, #1
+	bl Task_Wait
+	ldr r0, .L_02008cfc
+	bl Func_02003288
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #153
+	movs r1, #152
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #153
+	adds r1, #51
+	bl Func_020032d0
+	movs r0, #168
+	movs r1, #1
+	movs r3, #1
+	lsls r0, r0, #16
+	negs r1, r1
+	ldr r2, .L_02008d00
+	bl Func_020032d8
+	movs r2, #204
+	lsls r2, r2, #8
+	adds r2, #204
+	movs r0, #8
+	ldr r1, .L_02008d04
+	bl ObjectMotion_SetSpeedParameters
+	ldr r1, .L_02008d08
+	movs r0, #8
+	bl ObjectMotion_EnableActionAndSetCallback
+	ldr r6, .L_02008d0c
+	movs r3, #133
+	lsls r3, r3, #2
+	adds r6, r6, r3
+	movs r1, #224
+	ldr r0, [r6]
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r3, #14
+	movs r2, #40
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r1, #31
+	movs r2, #2
+	movs r3, #1
+	movs r0, #38
+	bl Func_02003190
+	movs r0, #6
+	bl Object_GetById
+	movs r3, #3
+	adds r0, #85
+	strb r3, [r0]
+	movs r2, #0
+	movs r0, #6
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r1, #1
+	movs r0, #6
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #6
+	ldr r1, .L_02008d04
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #170
+	movs r0, #6
+	movs r1, #212
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r2, #178
+	movs r0, #6
+	movs r1, #192
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #192
+	movs r2, #0
+	lsls r1, r1, #7
+	movs r0, #6
+	bl Func_020032b0
+	movs r0, #6
+	bl Object_RefreshSelectorById
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #129
+	ldr r0, [r6]
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r1, #8
+	movs r2, #20
+	adds r1, #255
+	movs r0, #6
+	bl Func_020032c0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #40
+	movs r0, #8
+	movs r1, #0
+	bl Func_02003298
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #10
+	movs r2, #40
+	adds r1, #255
+	ldr r0, [r6]
+	bl Func_020032c0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #6
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #6
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	ldr r0, [r6]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #128
+	movs r0, #6
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #128
+	movs r0, #6
+	lsls r1, r1, #6
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #192
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	movs r2, #20
+	adds r1, #255
+	movs r0, #6
+	bl Func_020032c0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	ldr r0, [r6]
+	movs r1, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #8
+	movs r1, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #6
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	ldr r5, .L_02008d10
+	movs r0, #8
+	adds r1, r5, #0
+	bl ObjectMotion_EnableActionAndSetCallback
+	movs r0, #6
+	adds r1, r5, #0
+	bl Object_SetActionCallbackAndRefreshById
+	movs r0, #6
+	movs r1, #1
+	bl Event_PrepareObjectAndApplyValue
+	movs r1, #128
+	ldr r0, [r6]
+	lsls r1, r1, #7
+	movs r2, #20
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #101
+	bl Func_02003158
+	bl Func_020031c0
+.L_02008cf4:
+	add sp, #8
+	pop {r5, r6, pc}
+.L_02008cf8:
 	.4byte 0x029a0000
+.L_02008cfc:
 	.4byte 0x000016d1
+.L_02008d00:
 	.4byte 0x02d10000
+.L_02008d04:
 	.4byte 0x00019999
-	.4byte 0x0200b734
-	.4byte 0x02000240
-	.2byte 0xb790
-	.2byte 0x0200
-	push	{r5, lr}
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	movs	r0, #153
-	movs	r1, #152
-	lsls	r0, r0, #8
-	lsls	r1, r1, #5
-	adds	r0, #153
-	adds	r1, #51
-.L_02000d2c:
-	bl 0x0200b2d0
-	movs	r0, #216
-	movs	r1, #1
-	movs	r2, #180
-	movs	r3, #1
-	lsls	r0, r0, #15
-	negs	r1, r1
-	lsls	r2, r2, #18
-	bl 0x0200b2d8
-	ldr	r5, [pc, #852]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r5, r5, r2
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	ldr	r0, [r5, #0]
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r2, #178
-	lsls	r2, r2, #2
-	ldr	r0, [r5, #0]
-	movs	r1, #86
-	bl 0x0200b218
-	ldr	r1, [r5, #0]
-	movs	r0, #8
-	bl 0x0200b238
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #8
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r2, #178
-	movs	r0, #8
-	movs	r1, #104
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	ldr	r0, [r5, #0]
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r2, #20
-	lsls	r1, r1, #8
-	movs	r0, #8
-	bl 0x0200b2b0
-	ldr	r0, [pc, #752]
-	bl 0x0200b288
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #182
-	ldr	r0, [r5, #0]
-	movs	r1, #104
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	ldr	r0, [r5, #0]
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r1, #128
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #6
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r2, #0
-	ldr	r0, [r5, #0]
-	movs	r1, #0
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r0, #8
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r2, #20
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200b2a8
-	movs	r1, #131
-	movs	r2, #40
-	lsls	r1, r1, #1
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r1, [r5, #0]
-	movs	r0, #5
-	bl 0x0200b238
-	ldr	r1, [r5, #0]
-	movs	r0, #6
-	bl 0x0200b238
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #6
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #5
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r2, #178
-	movs	r0, #5
-	movs	r1, #86
-	lsls	r2, r2, #2
-	bl 0x0200b210
-	movs	r2, #182
-	movs	r0, #6
-	movs	r1, #86
-	lsls	r2, r2, #2
-	bl 0x0200b218
-	movs	r1, #224
-	movs	r2, #0
-	lsls	r1, r1, #8
-	movs	r0, #6
-	bl 0x0200b2b0
-	movs	r0, #5
-	bl 0x0200b220
-	movs	r0, #5
-	movs	r1, #1
-	bl 0x0200b240
-	movs	r1, #128
-	movs	r2, #0
-	movs	r0, #5
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #224
-	movs	r0, #6
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r2, #0
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #4
-.L_02000efe:
-	bl 0x0200b240
-	movs	r0, #128
-	lsls	r0, r0, #6
-	movs	r1, #0
-	adds	r0, #8
-	bl 0x0200b290
-	movs	r0, #6
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	ldr	r0, [r5, #0]
-	movs	r1, #0
-	bl 0x0200b1d0
-	cmp	r0, #0
-	bne.n	.L_02000f58
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b248
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	adds	r3, #1
-	strh	r3, [r2, #0]
-	b.n	.L_02000f7e
-.L_02000f58:
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	movs	r0, #8
-	adds	r3, #1
-	movs	r1, #3
-	strh	r3, [r2, #0]
-	bl 0x0200b248
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-.L_02000f7e:
-	movs	r2, #0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2b0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #160
-	movs	r2, #0
-	movs	r0, #8
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r3, [pc, #204]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r3, r3, r2
-	movs	r1, #2
-	ldr	r0, [r3, #0]
-	adds	r1, #255
-	movs	r2, #40
-	bl 0x0200b2c0
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #8
-	lsls	r1, r1, #6
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r2, #20
-	lsls	r1, r1, #1
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r2, #20
-	movs	r0, #8
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #20
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #0
-	movs	r0, #5
-	bl 0x0200b290
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b1d0
-	cmp	r0, #0
-	bne.n	.L_020010a0
-	movs	r1, #192
-	movs	r2, #20
-	movs	r0, #8
-	lsls	r1, r1, #6
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	adds	r3, #1
-	strh	r3, [r2, #0]
-	b.n	.L_020010da
+.L_02008d08:
+	.4byte Data_02003734
+.L_02008d0c:
+	.4byte gPartyState
+.L_02008d10:
+	.4byte Data_02003790
+	.section .text.x02008d14,"ax",%progbits
+	.global Func_02000d14
+	.thumb_func
+Func_02000d14:
+	push {r5, lr}
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	movs r0, #153
+	movs r1, #152
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #153
+	adds r1, #51
+	bl Func_020032d0
+	movs r0, #216
+	movs r1, #1
+	movs r2, #180
+	movs r3, #1
+	lsls r0, r0, #15
+	negs r1, r1
+	lsls r2, r2, #18
+	bl Func_020032d8
+	ldr r5, .L_02009098
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r5, r2
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	ldr r0, [r5]
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #178
+	lsls r2, r2, #2
+	ldr r0, [r5]
+	movs r1, #86
+	bl ObjectMotion_SetPositionAndReset
+	ldr r1, [r5]
+	movs r0, #8
+	bl Func_02003238
+	movs r0, #1
+	bl Task_Wait
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #8
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #178
+	movs r0, #8
+	movs r1, #104
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	ldr r0, [r5]
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	movs r2, #20
+	lsls r1, r1, #8
+	movs r0, #8
+	bl Func_020032b0
+	ldr r0, .L_0200909c
+	bl Func_02003288
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #0
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #20
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #182
+	ldr r0, [r5]
+	movs r1, #104
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	ldr r0, [r5]
+	movs r1, #0
+	movs r2, #20
+	bl Func_020032b0
+	movs r1, #128
+	ldr r0, [r5]
+	lsls r1, r1, #6
+	movs r2, #20
+	bl Func_020032b0
+	movs r2, #0
+	ldr r0, [r5]
+	movs r1, #0
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r0, #8
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #192
+	movs r2, #20
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r1, #0
+	movs r0, #8
+	bl Func_020032a8
+	movs r1, #131
+	movs r2, #40
+	lsls r1, r1, #1
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	ldr r1, [r5]
+	movs r0, #5
+	bl Func_02003238
+	ldr r1, [r5]
+	movs r0, #6
+	bl Func_02003238
+	movs r0, #1
+	bl Task_Wait
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #6
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #5
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #178
+	movs r0, #5
+	movs r1, #86
+	lsls r2, r2, #2
+	bl ObjectMotion_ResetAndSetPositionInMode2
+	movs r2, #182
+	movs r0, #6
+	movs r1, #86
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #224
+	movs r2, #0
+	lsls r1, r1, #8
+	movs r0, #6
+	bl Func_020032b0
+	movs r0, #5
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r0, #5
+	movs r1, #1
+	bl Engine_ActorSetAnimation
+	movs r1, #128
+	movs r2, #0
+	movs r0, #5
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #224
+	movs r0, #6
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #192
+	movs r2, #0
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #128
+	lsls r0, r0, #6
+	movs r1, #0
+	adds r0, #8
+	bl Func_02003290
+	movs r0, #6
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	ldr r0, [r5]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_02008f58
+	movs r0, #8
+	movs r1, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	b .L_02008f7e
+.L_02008f58:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	movs r0, #8
+	adds r3, #1
+	movs r1, #3
+	strh r3, [r2]
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+.L_02008f7e:
+	movs r2, #0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032b0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	adds r1, #255
+	movs r2, #0
+	movs r0, #6
+	bl Func_020032c0
+	movs r1, #192
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #160
+	movs r2, #0
+	movs r0, #8
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	ldr r3, .L_02009098
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	movs r1, #2
+	ldr r0, [r3]
+	adds r1, #255
+	movs r2, #40
+	bl Func_020032c0
+	movs r1, #192
+	movs r2, #0
+	movs r0, #8
+	lsls r1, r1, #6
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r2, #20
+	lsls r1, r1, #1
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r2, #20
+	movs r0, #8
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #20
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #0
+	movs r0, #5
+	bl Func_02003290
+	movs r0, #8
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_020090a0
+	movs r1, #192
+	movs r2, #20
+	movs r0, #8
+	lsls r1, r1, #6
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	b .L_020090da
 	.2byte 0x0000
-	.4byte 0x02000240
-	.2byte 0x16de
+.L_02009098:
+	.4byte gPartyState
+.L_0200909c:
+	.4byte 0x000016de
+.L_020090a0:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	movs r1, #4
+	adds r3, #1
+	strh r3, [r2]
+	adds r1, #255
+	movs r2, #0
+	movs r0, #8
+	bl Func_020032c0
+	movs r1, #128
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #20
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	bl Func_02003320
+.L_020090da:
+	movs r1, #128
+	movs r2, #0
+	lsls r1, r1, #1
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #40
+	movs r0, #8
+	bl Func_020032c0
+	movs r1, #160
+	movs r2, #0
+	movs r0, #8
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	adds r1, #255
+	movs r2, #0
+	movs r0, #6
+	bl Func_020032c0
+	movs r1, #224
+	movs r2, #40
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r2, #20
+	movs r0, #5
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r0, #8
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	ldr r5, .L_02009478
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r5, r2
+	movs r1, #192
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	movs r2, #20
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	movs r1, #0
+	adds r0, #8
+	bl Func_02003290
+	ldr r0, [r5]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_020091b0
+	movs r1, #4
+	adds r1, #255
+	movs r2, #0
+	movs r0, #6
+	bl Func_020032c0
+	movs r2, #20
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	b .L_020091e0
+.L_020091b0:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	movs r1, #132
+	adds r3, #1
+	strh r3, [r2]
+	lsls r1, r1, #1
+	movs r2, #0
+	movs r0, #6
+	bl Func_020032c0
+	movs r0, #6
+	movs r1, #0
+	movs r2, #20
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+.L_020091e0:
+	movs r1, #128
+	movs r2, #0
+	lsls r1, r1, #1
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #224
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	movs r2, #40
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	ldr r5, .L_02009478
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r5, r2
+	ldr r0, [r5]
+	movs r1, #6
+	bl Object_LinkObjectAndSetCallback
+	movs r0, #8
+	movs r1, #6
+	bl Object_LinkObjectAndSetCallback
+	movs r0, #5
+	movs r1, #6
+	bl Object_LinkObjectAndSetCallback
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #7
+	lsls r2, r2, #6
+	movs r0, #6
+	adds r1, #102
+	adds r2, #51
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #187
+	movs r1, #86
+	lsls r2, r2, #2
+	movs r0, #6
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #10
+	movs r2, #80
+	adds r1, #255
+	movs r0, #6
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #6
+	movs r1, #0
+	adds r0, #8
+	bl Func_020032a0
+	ldr r0, [r5]
+	bl ObjectMotion_EnableActionAndResetMotion
+	movs r0, #8
+	bl ObjectMotion_EnableActionAndResetMotion
+	movs r0, #5
+	bl ObjectMotion_EnableActionAndResetMotion
+	movs r1, #3
+	movs r0, #6
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r0, #5
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r2, #0
+	lsls r1, r1, #8
+	movs r0, #6
+	bl Func_020032b0
+	movs r0, #6
+	bl Object_RefreshSelectorById
+	movs r0, #6
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r0, #8
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #192
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #192
+	movs r2, #20
+	ldr r0, [r5]
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #6
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	ldr r0, [r5]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #224
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r2, #0
+	movs r0, #8
+	lsls r1, r1, #6
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	movs r1, #0
+	adds r0, #8
+	bl Func_020032a8
+	movs r1, #160
+	movs r2, #40
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	movs r2, #20
+	movs r0, #8
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #7
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #6
+	adds r1, #255
+	movs r2, #0
+	movs r0, #8
+	bl Func_020032c0
+	movs r1, #6
+	movs r2, #40
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #129
+	movs r0, #8
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #132
+	lsls r1, r1, #1
+	movs r2, #20
+	movs r0, #6
+	bl Func_020032c0
+	movs r1, #224
+	movs r2, #20
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #0
+	movs r0, #5
+	bl Func_02003290
+	ldr r0, [r5]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_0200947c
+	movs r0, #5
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	b .L_0200949e
 	.2byte 0x0000
-.L_020010a0:
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	movs	r1, #4
-	adds	r3, #1
-	strh	r3, [r2, #0]
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r1, #128
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	bl 0x0200b320
-.L_020010da:
-	movs	r1, #128
-	movs	r2, #0
-	lsls	r1, r1, #1
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	lsls	r1, r1, #1
-	movs	r2, #40
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r1, #160
-	movs	r2, #0
-	movs	r0, #8
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r1, #224
-	movs	r2, #40
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r2, #20
-	movs	r0, #5
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-.L_02001148:
-	movs	r0, #8
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	ldr	r5, [pc, #804]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r5, r5, r2
-	movs	r1, #192
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #8
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	movs	r1, #0
-	adds	r0, #8
-	bl 0x0200b290
-	ldr	r0, [r5, #0]
-	movs	r1, #0
-	bl 0x0200b1d0
-	cmp	r0, #0
-	bne.n	.L_020011b0
-	movs	r1, #4
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r2, #20
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	adds	r3, #1
-	strh	r3, [r2, #0]
-	b.n	.L_020011e0
-.L_020011b0:
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	movs	r1, #132
-	adds	r3, #1
-	strh	r3, [r2, #0]
-	lsls	r1, r1, #1
-	movs	r2, #0
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r0, #6
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-.L_020011e0:
-	movs	r1, #128
-	movs	r2, #0
-	lsls	r1, r1, #1
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #224
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	movs	r2, #40
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r5, [pc, #588]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r5, r5, r2
-	ldr	r0, [r5, #0]
-	movs	r1, #6
-	bl 0x0200b318
-	movs	r0, #8
-	movs	r1, #6
-	bl 0x0200b318
-	movs	r0, #5
-	movs	r1, #6
-	bl 0x0200b318
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #7
-	lsls	r2, r2, #6
-	movs	r0, #6
-	adds	r1, #102
-	adds	r2, #51
-	bl 0x0200b1e0
-	movs	r2, #187
-	movs	r1, #86
-	lsls	r2, r2, #2
-	movs	r0, #6
-	bl 0x0200b218
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r1, #10
-	movs	r2, #80
-	adds	r1, #255
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	movs	r1, #0
-	adds	r0, #8
-	bl 0x0200b2a0
-	ldr	r0, [r5, #0]
-	bl 0x0200b1f8
-	movs	r0, #8
-	bl 0x0200b1f8
-	movs	r0, #5
-	bl 0x0200b1f8
-	movs	r1, #3
-	movs	r0, #6
-	bl 0x0200b248
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r0, #5
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r2, #0
-	lsls	r1, r1, #8
-	movs	r0, #6
-	bl 0x0200b2b0
-	movs	r0, #6
-	bl 0x0200b1f0
-	movs	r0, #6
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r0, #8
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #192
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r2, #20
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #6
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b240
-	ldr	r0, [r5, #0]
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r1, #224
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #8
-	lsls	r1, r1, #6
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	movs	r1, #0
-	adds	r0, #8
-	bl 0x0200b2a8
-	movs	r1, #160
-	movs	r2, #40
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r2, #20
-	movs	r0, #8
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #7
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #6
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r1, #6
-	movs	r2, #40
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #129
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #132
-	lsls	r1, r1, #1
-	movs	r2, #20
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r1, #224
-	movs	r2, #20
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #0
-	movs	r0, #5
-	bl 0x0200b290
-	ldr	r0, [r5, #0]
-	movs	r1, #0
-	bl 0x0200b1d0
-	cmp	r0, #0
-	bne.n	.L_0200147c
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	adds	r3, #1
-	strh	r3, [r2, #0]
-	b.n	.L_0200149e
+.L_02009478:
+	.4byte gPartyState
+.L_0200947c:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	movs r0, #5
+	adds r3, #1
+	movs r1, #4
+	strh r3, [r2]
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+.L_0200949e:
+	movs r1, #10
+	movs r2, #40
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r1, #4
+	movs r0, #6
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #6
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #128
+	movs r2, #20
+	movs r0, #8
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #20
+	movs r0, #8
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	adds r2, #102
+	movs r0, #6
+	adds r1, #204
+	bl ObjectMotion_SetSpeedParameters
+	ldr r5, .L_02009538
+	movs r0, #8
+	adds r1, r5, #0
+	bl ObjectMotion_EnableActionAndSetCallback
+	adds r1, r5, #0
+	movs r0, #5
+	bl ObjectMotion_EnableActionAndSetCallback
+	adds r1, r5, #0
+	movs r0, #6
+	bl Object_SetActionCallbackAndRefreshById
+	movs r0, #237
+	lsls r0, r0, #3
+	adds r0, #255
+	bl Func_02003158
+	bl Func_020031c0
+	pop {r5, pc}
 	.2byte 0x0000
-	.2byte 0x0240
-	.2byte 0x0200
-.L_0200147c:
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	movs	r0, #5
-	adds	r3, #1
-	movs	r1, #4
-	strh	r3, [r2, #0]
-	bl 0x0200b240
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-.L_0200149e:
-	movs	r1, #10
-	movs	r2, #40
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r1, #4
-	movs	r0, #6
-	bl 0x0200b248
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #6
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r1, #128
-	movs	r2, #20
-	movs	r0, #8
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	adds	r2, #102
-	movs	r0, #6
-	adds	r1, #204
-	bl 0x0200b1e0
-	ldr	r5, [pc, #40]
-	movs	r0, #8
-	adds	r1, r5, #0
-	bl 0x0200b1e8
-	adds	r1, r5, #0
-	movs	r0, #5
-	bl 0x0200b1e8
-	adds	r1, r5, #0
-	movs	r0, #6
-	bl 0x0200b200
-	movs	r0, #237
-	lsls	r0, r0, #3
-	adds	r0, #255
-	bl 0x0200b158
-	bl 0x0200b1c0
-	pop	{r5, pc}
-	.2byte 0x0000
-	.4byte 0x0200b7c4
+.L_02009538:
+	.4byte Data_020037c4
+	.section .text.x0200953c,"ax",%progbits
 	.global Func_0200153c
 	.thumb_func
 Func_0200153c:
-	ldr r2, [pc, #16]
-	ldr r3, [pc, #12]
+	ldr r2, .L_02009550
+	ldr r3, .L_0200954c
 	strh r3, [r2]
-	ldr r2, [pc, #16]
+	ldr r2, .L_02009554
 	movs r3, #0
 	str r3, [r2]
 	bx lr
 	.2byte 0x0000
+.L_0200954c:
 	.4byte 0x00000000
-	.4byte 0x0200bc14
-	.4byte 0x0200bc10
-	.4byte 0x4a0c4b0d
-	.4byte 0x4053881b
-	.4byte 0x141b041b
-	.4byte 0x18c00098
-	.4byte 0x01804b0a
-	.4byte 0x220018c0
-	.4byte 0x21805e83
-	.4byte 0x311e04c9
-	.4byte 0x2380800b
-	.4byte 0x33b004db
-	.4byte 0x4a053002
-	.4byte 0x3b0cc307
-	.4byte 0x0000e008
-	.4byte 0x00000001
-	.4byte 0x0200bc14
-	.4byte 0x0200b990
-	.4byte 0xa2600001
-	.2byte 0x4770
+.L_02009550:
+	.4byte gOverlayArea + 0x3c14
+.L_02009554:
+	.4byte gOverlayArea + 0x3c10
+	.section .text.x02009558,"ax",%progbits
+	.global Func_02001558
+	.thumb_func
+Func_02001558:
+	ldr r3, .L_02009590
+	ldr r2, .L_0200958c
+	ldrh r3, [r3]
+	eors r3, r2
+	lsls r3, r3, #16
+	asrs r3, r3, #16
+	lsls r0, r3, #2
+	adds r0, r0, r3
+	ldr r3, .L_02009594
+	lsls r0, r0, #6
+	adds r0, r0, r3
+	movs r2, #0
+	ldrsh r3, [r0, r2]
+	movs r1, #128
+	lsls r1, r1, #19
+	adds r1, #30
+	strh r3, [r1]
+	movs r3, #128
+	lsls r3, r3, #19
+	adds r3, #176
+	adds r0, #2
+	ldr r2, .L_02009598
+	stmia r3!, {r0, r1, r2}
+	subs r3, #12
+	b .L_0200959c
 	.2byte 0x0000
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r3, [r3, #32]
-	movs	r1, #132
-	lsls	r1, r1, #1
-	adds	r1, r1, r3
-	ldr	r3, [pc, #92]
-	mov	r8, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	movs	r6, #0
-	lsls	r3, r2, #2
-	adds	r3, r3, r2
-	ldr	r2, [pc, #80]
-	lsls	r3, r3, #6
-	adds	r5, r3, r2
-.L_020015c6:
-	ldr	r7, [pc, #80]
-	mov	r1, r8
-	ldrb	r0, [r7, #0]
-	movs	r2, #6
-	ldrsh	r3, [r1, r2]
-	subs	r0, r0, r6
-	subs	r0, r0, r3
-	adds	r0, #160
-	lsls	r0, r0, #9
-	bl 0x0200b148
-	movs	r2, #128
-	lsls	r2, r2, #9
-	adds	r0, r0, r2
-	mov	r2, r8
-	movs	r1, #6
-	ldrsh	r3, [r2, r1]
-	asrs	r0, r0, #15
-	adds	r3, r3, r0
-	adds	r6, #1
-	strh	r3, [r5, #0]
-	adds	r5, #2
-	cmp	r6, #160
-	bne.n	.L_020015c6
-	ldr	r1, [pc, #24]
-	ldr	r2, [pc, #16]
-	ldrh	r3, [r1, #0]
-	eors	r3, r2
-	strh	r3, [r1, #0]
-	ldr	r3, [r7, #0]
-	adds	r3, #1
-	str	r3, [r7, #0]
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
+.L_0200958c:
 	.4byte 0x00000001
-	.4byte 0x0200bc14
-	.4byte 0x0200b990
-	.2byte 0xbc10
-	.2byte 0x0200
-	push	{lr}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	adds	r3, #128
-	ldr	r0, [r3, #0]
-	movs	r3, #128
-	lsls	r3, r3, #1
-	adds	r1, r0, #0
-	adds	r2, r0, r3
-	movs	r4, #0
-.L_02001630:
-	ldrh	r3, [r2, #0]
-	adds	r4, #1
-	strh	r3, [r1, #0]
-	adds	r2, #2
-	adds	r1, #2
-	cmp	r4, #63
-	bls.n	.L_02001630
-	movs	r3, #0
-	strh	r3, [r0, #0]
-	movs	r0, #128
-	lsls	r0, r0, #9
-	movs	r1, #0
-	bl 0x0200b2f0
-	pop	{pc}
+.L_02009590:
+	.4byte gOverlayArea + 0x3c14
+.L_02009594:
+	.4byte gOverlayArea + 0x3990
+.L_02009598:
+	.4byte 0xa2600001
+.L_0200959c:
+	bx lr
+	.2byte 0x0000
+	.section .text.x020095a0,"ax",%progbits
+	.global Func_020015a0
+	.thumb_func
+Func_020015a0:
+	push {r5, r6, r7, lr}
+	mov r7, r8
+	push {r7}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #32]
+	movs r1, #132
+	lsls r1, r1, #1
+	adds r1, r1, r3
+	ldr r3, .L_02009610
+	mov r8, r1
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	movs r6, #0
+	lsls r3, r2, #2
+	adds r3, r3, r2
+	ldr r2, .L_02009614
+	lsls r3, r3, #6
+	adds r5, r3, r2
+.L_020095c6:
+	ldr r7, .L_02009618
+	mov r1, r8
+	ldrb r0, [r7]
+	movs r2, #6
+	ldrsh r3, [r1, r2]
+	subs r0, r0, r6
+	subs r0, r0, r3
+	adds r0, #160
+	lsls r0, r0, #9
+	bl Math_Sine
+	movs r2, #128
+	lsls r2, r2, #9
+	adds r0, r0, r2
+	mov r2, r8
+	movs r1, #6
+	ldrsh r3, [r2, r1]
+	asrs r0, r0, #15
+	adds r3, r3, r0
+	adds r6, #1
+	strh r3, [r5]
+	adds r5, #2
+	cmp r6, #160
+	bne .L_020095c6
+	ldr r1, .L_02009610
+	ldr r2, .L_0200960c
+	ldrh r3, [r1]
+	eors r3, r2
+	strh r3, [r1]
+	ldr r3, [r7]
+	adds r3, #1
+	str r3, [r7]
+	pop {r3}
+	mov r8, r3
+	pop {r5, r6, r7, pc}
+.L_0200960c:
+	.4byte 0x00000001
+.L_02009610:
+	.4byte gOverlayArea + 0x3c14
+.L_02009614:
+	.4byte gOverlayArea + 0x3990
+.L_02009618:
+	.4byte gOverlayArea + 0x3c10
+	.section .text.x0200961c,"ax",%progbits
+	.global Func_0200161c
+	.thumb_func
+Func_0200161c:
+	push {lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	adds r3, #128
+	ldr r0, [r3]
+	movs r3, #128
+	lsls r3, r3, #1
+	adds r1, r0, #0
+	adds r2, r0, r3
+	movs r4, #0
+.L_02009630:
+	ldrh r3, [r2]
+	adds r4, #1
+	strh r3, [r1]
+	adds r2, #2
+	adds r1, #2
+	cmp r4, #63
+	bls .L_02009630
+	movs r3, #0
+	strh r3, [r0]
+	movs r0, #128
+	lsls r0, r0, #9
+	movs r1, #0
+	bl Func_020032f0
+	pop {pc}
 	.2byte 0x0000
 	.section .text.x020096d8,"ax",%progbits
-	push	{r5, r6, lr}
-	mov	r6, fp
-	mov	r5, sl
-	push	{r5, r6}
-	mov	r6, r9
-	mov	r5, r8
-	push	{r5, r6}
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	movs	r0, #1
-	movs	r1, #1
-	movs	r2, #1
-	negs	r1, r1
-	negs	r2, r2
-	movs	r3, #0
-	negs	r0, r0
-	bl 0x0200b2d8
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r0, #252
-	movs	r1, #1
-	movs	r2, #216
-	negs	r1, r1
-	lsls	r2, r2, #16
-	movs	r3, #0
-	lsls	r0, r0, #16
-	bl 0x0200b2d8
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200b180
-	ldr	r3, [pc, #1016]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r3, r3, r2
-	ldr	r0, [r3, #0]
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b228
-	movs	r3, #128
-	movs	r1, #184
-	movs	r2, #168
-	lsls	r3, r3, #7
-	lsls	r1, r1, #16
-	lsls	r2, r2, #16
-	movs	r0, #5
-	mov	sl, r3
-	bl 0x0200b230
-	movs	r0, #8
-	bl 0x0200b1d8
-	movs	r2, #128
-	lsls	r2, r2, #8
-	mov	r9, r2
-	mov	r3, r9
-	movs	r1, #186
-	movs	r2, #164
-	strh	r3, [r0, #6]
-	lsls	r2, r2, #16
-	lsls	r1, r1, #16
-	movs	r0, #10
-	bl 0x0200b228
-	movs	r0, #10
-	bl 0x0200b1d8
-	movs	r1, #15
-	bl 0x0200b280
-	movs	r0, #10
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200b2f8
-	movs	r0, #153
-	movs	r1, #152
-	lsls	r0, r0, #8
-	lsls	r1, r1, #5
-	adds	r0, #153
-	adds	r1, #51
-	bl 0x0200b2d0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #5
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r0, #5
-	movs	r1, #204
-	movs	r2, #196
-	bl 0x0200b218
-	movs	r0, #5
-	movs	r1, #208
-	movs	r2, #218
-	bl 0x0200b218
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #5
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r1, #5
-	movs	r0, #8
-	bl 0x0200b238
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #8
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r0, #8
-	movs	r1, #186
-	movs	r2, #216
-	bl 0x0200b218
-	movs	r1, #192
-	movs	r0, #8
-	lsls	r1, r1, #6
-	movs	r2, #60
-	bl 0x0200b2b0
-	mov	r1, r9
-	movs	r0, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r0, #8
-	lsls	r1, r1, #6
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r2, #0
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200b2b0
-	ldr	r0, [pc, #756]
-	bl 0x0200b288
-	movs	r0, #128
-	lsls	r0, r0, #5
-	movs	r1, #0
-	adds	r0, #8
-	bl 0x0200b290
-	movs	r2, #0
-	mov	r1, r9
-	movs	r0, #5
-	bl 0x0200b2b0
-	movs	r1, #0
-	movs	r0, #5
-	bl 0x0200b1d0
-	movs	r0, #5
-	bl 0x0200b250
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r1, #208
-	movs	r0, #8
-	lsls	r1, r1, #8
-	movs	r2, #80
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #8
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b298
-	movs	r1, #131
-	movs	r2, #40
-	lsls	r1, r1, #1
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r2, #0
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #5
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	adds	r2, #102
-	movs	r0, #8
-	adds	r1, #204
-	bl 0x0200b1e0
-	ldr	r1, [pc, #556]
-	movs	r0, #8
-	bl 0x0200b1e8
-	movs	r0, #40
-	bl 0x0200b1b0
-	ldr	r1, [pc, #544]
-	movs	r0, #5
-	bl 0x0200b200
-	movs	r0, #5
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	lsls	r1, r1, #1
-	movs	r2, #20
-	movs	r0, #8
-	bl 0x0200b2c0
-	mov	r1, r9
-	movs	r0, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #204
-	lsls	r2, r2, #8
-	movs	r0, #8
-	ldr	r1, [pc, #492]
-	adds	r2, #204
-	bl 0x0200b1e0
-	movs	r1, #129
-	movs	r2, #172
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x0200b218
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #7
-	lsls	r2, r2, #6
-	movs	r0, #5
-	adds	r1, #102
-	adds	r2, #51
-	bl 0x0200b1e0
-	movs	r0, #5
-	movs	r1, #242
-	movs	r2, #172
-	bl 0x0200b218
-	movs	r0, #8
-	movs	r1, #248
-	movs	r2, #156
-	bl 0x0200b218
-	movs	r0, #8
-	movs	r1, #226
-	movs	r2, #164
-	bl 0x0200b218
-	movs	r0, #8
-	movs	r1, #228
-	movs	r2, #180
-	bl 0x0200b218
-	movs	r1, #192
-	movs	r2, #40
-	movs	r0, #8
-	lsls	r1, r1, #6
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #226
-	movs	r2, #164
-	bl 0x0200b218
-	movs	r0, #8
-	movs	r1, #248
-	movs	r2, #156
-	bl 0x0200b218
-	movs	r1, #129
-	movs	r0, #8
-	lsls	r1, r1, #1
-	movs	r2, #172
-	bl 0x0200b218
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r1, #6
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #6
-	movs	r2, #0
-	bl 0x0200b258
-	movs	r1, #128
-	movs	r0, #8
-	lsls	r1, r1, #1
-	movs	r2, #198
-	bl 0x0200b218
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b228
-	mov	r1, sl
-	movs	r0, #5
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r1, #6
-	adds	r1, #255
-	movs	r2, #40
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #8
-	adds	r0, #5
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200b298
-	movs	r0, #5
-	movs	r1, #224
-	movs	r2, #182
-	bl 0x0200b218
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #6
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #6
-	adds	r1, #255
-	movs	r2, #80
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #242
-	movs	r2, #172
-	bl 0x0200b218
-	mov	r1, sl
-	movs	r0, #5
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #6
-	adds	r1, #255
-	movs	r2, #120
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r1, #8
-	adds	r1, #255
-	movs	r2, #40
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #2
-	movs	r2, #10
-	bl 0x0200b258
-	movs	r0, #5
-	movs	r1, #4
-	movs	r2, #20
-	bl 0x0200b258
-	movs	r0, #128
-	lsls	r0, r0, #8
-	movs	r2, #40
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r0, #153
-	movs	r1, #152
-	lsls	r0, r0, #8
-	lsls	r1, r1, #5
-	adds	r0, #153
-	adds	r1, #51
-	bl 0x0200b2d0
-	movs	r0, #131
-	movs	r1, #1
-	movs	r2, #180
-	movs	r3, #1
-	lsls	r0, r0, #17
-	negs	r1, r1
-	lsls	r2, r2, #16
-	bl 0x0200b2d8
-	movs	r1, #128
-	movs	r2, #198
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	movs	r0, #8
-	bl 0x0200b228
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r1, #128
-	lsls	r1, r1, #1
-	movs	r2, #0
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #6
-	movs	r2, #0
-	bl 0x0200b258
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r2, #172
-	movs	r0, #8
-	bl 0x0200b218
-	b.n	.L_02001b34
-	.4byte 0x02000240
+	.global Func_020016d8
+	.thumb_func
+Func_020016d8:
+	push {r5, r6, lr}
+	mov r6, r11
+	mov r5, r10
+	push {r5, r6}
+	mov r6, r9
+	mov r5, r8
+	push {r5, r6}
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	movs r0, #1
+	movs r1, #1
+	movs r2, #1
+	negs r1, r1
+	negs r2, r2
+	movs r3, #0
+	negs r0, r0
+	bl Func_020032d8
+	movs r0, #1
+	bl Task_Wait
+	movs r0, #252
+	movs r1, #1
+	movs r2, #216
+	negs r1, r1
+	lsls r2, r2, #16
+	movs r3, #0
+	lsls r0, r0, #16
+	bl Func_020032d8
+	movs r0, #1
+	bl Task_Wait
+	bl Func_02003180
+	ldr r3, .L_02009b20
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	ldr r0, [r3]
+	movs r1, #0
+	movs r2, #0
+	bl Func_02003228
+	movs r3, #128
+	movs r1, #184
+	movs r2, #168
+	lsls r3, r3, #7
+	lsls r1, r1, #16
+	lsls r2, r2, #16
+	movs r0, #5
+	mov r10, r3
+	bl Func_02003230
+	movs r0, #8
+	bl Object_GetById
+	movs r2, #128
+	lsls r2, r2, #8
+	mov r9, r2
+	mov r3, r9
+	movs r1, #186
+	movs r2, #164
+	strh r3, [r0, #6]
+	lsls r2, r2, #16
+	lsls r1, r1, #16
+	movs r0, #10
+	bl Func_02003228
+	movs r0, #10
+	bl Object_GetById
+	movs r1, #15
+	bl Func_02003280
+	movs r0, #10
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #1
+	bl Task_Wait
+	bl Event_SetStatus1c6
+	movs r0, #153
+	movs r1, #152
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #153
+	adds r1, #51
+	bl Func_020032d0
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #5
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r0, #5
+	movs r1, #204
+	movs r2, #196
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #5
+	movs r1, #208
+	movs r2, #218
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #192
+	movs r2, #0
+	movs r0, #5
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r1, #5
+	movs r0, #8
+	bl Func_02003238
+	movs r0, #1
+	bl Task_Wait
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #8
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r0, #8
+	movs r1, #186
+	movs r2, #216
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #192
+	movs r0, #8
+	lsls r1, r1, #6
+	movs r2, #60
+	bl Func_020032b0
+	mov r1, r9
+	movs r0, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #20
+	bl Func_020032b0
+	movs r1, #192
+	movs r0, #8
+	lsls r1, r1, #6
+	movs r2, #40
+	bl Func_020032b0
+	movs r2, #0
+	movs r1, #0
+	movs r0, #8
+	bl Func_020032b0
+	ldr r0, .L_02009b24
+	bl Func_02003288
+	movs r0, #128
+	lsls r0, r0, #5
+	movs r1, #0
+	adds r0, #8
+	bl Func_02003290
+	movs r2, #0
+	mov r1, r9
+	movs r0, #5
+	bl Func_020032b0
+	movs r1, #0
+	movs r0, #5
+	bl Inventory_PromptAndSetObjectMode
+	movs r0, #5
+	bl ObjectMotion_WaitForAnimationChange
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #208
+	movs r0, #8
+	lsls r1, r1, #8
+	movs r2, #80
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #8
+	movs r1, #0
+	movs r2, #40
+	bl Func_02003298
+	movs r1, #131
+	movs r2, #40
+	lsls r1, r1, #1
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r2, #0
+	movs r0, #8
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #8
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #5
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	adds r2, #102
+	movs r0, #8
+	adds r1, #204
+	bl ObjectMotion_SetSpeedParameters
+	ldr r1, .L_02009b28
+	movs r0, #8
+	bl ObjectMotion_EnableActionAndSetCallback
+	movs r0, #40
+	bl Battle_WaitMode0
+	ldr r1, .L_02009b2c
+	movs r0, #5
+	bl Object_SetActionCallbackAndRefreshById
+	movs r0, #5
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #20
+	movs r0, #8
+	bl Func_020032c0
+	mov r1, r9
+	movs r0, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #8
+	ldr r1, .L_02009b30
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #129
+	movs r2, #172
+	movs r0, #8
+	lsls r1, r1, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #7
+	lsls r2, r2, #6
+	movs r0, #5
+	adds r1, #102
+	adds r2, #51
+	bl ObjectMotion_SetSpeedParameters
+	movs r0, #5
+	movs r1, #242
+	movs r2, #172
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #8
+	movs r1, #248
+	movs r2, #156
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #8
+	movs r1, #226
+	movs r2, #164
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #8
+	movs r1, #228
+	movs r2, #180
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #192
+	movs r2, #40
+	movs r0, #8
+	lsls r1, r1, #6
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #226
+	movs r2, #164
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #8
+	movs r1, #248
+	movs r2, #156
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #129
+	movs r0, #8
+	lsls r1, r1, #1
+	movs r2, #172
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #20
+	bl Func_020032b0
+	movs r1, #6
+	movs r2, #20
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #6
+	movs r2, #0
+	bl ObjectMotion_Launch
+	movs r1, #128
+	movs r0, #8
+	lsls r1, r1, #1
+	movs r2, #198
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	bl Func_02003228
+	mov r1, r10
+	movs r0, #5
+	movs r2, #20
+	bl Func_020032b0
+	movs r1, #6
+	adds r1, #255
+	movs r2, #40
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #8
+	adds r0, #5
+	movs r1, #0
+	movs r2, #20
+	bl Func_02003298
+	movs r0, #5
+	movs r1, #224
+	movs r2, #182
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #6
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #6
+	adds r1, #255
+	movs r2, #80
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #242
+	movs r2, #172
+	bl ObjectMotion_SetPositionAndReset
+	mov r1, r10
+	movs r0, #5
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #6
+	adds r1, #255
+	movs r2, #120
+	movs r0, #5
+	bl Func_020032c0
+	movs r1, #8
+	adds r1, #255
+	movs r2, #40
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #2
+	movs r2, #10
+	bl ObjectMotion_Launch
+	movs r0, #5
+	movs r1, #4
+	movs r2, #20
+	bl ObjectMotion_Launch
+	movs r0, #128
+	lsls r0, r0, #8
+	movs r2, #40
+	adds r0, #5
+	movs r1, #0
+	bl Func_02003298
+	movs r0, #153
+	movs r1, #152
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #153
+	adds r1, #51
+	bl Func_020032d0
+	movs r0, #131
+	movs r1, #1
+	movs r2, #180
+	movs r3, #1
+	lsls r0, r0, #17
+	negs r1, r1
+	lsls r2, r2, #16
+	bl Func_020032d8
+	movs r1, #128
+	movs r2, #198
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	movs r0, #8
+	bl Func_02003228
+	movs r0, #1
+	bl Task_Wait
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #0
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #6
+	movs r2, #0
+	bl ObjectMotion_Launch
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r2, #172
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	b .L_02009b34
+.L_02009b20:
+	.4byte gPartyState
+.L_02009b24:
 	.4byte 0x00001619
-	.4byte 0x0200b330
-	.4byte 0x0200b36c
-	.2byte 0x9999
-	.2byte 0x0001
-.L_02001b34:
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r1, #6
-	movs	r2, #80
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #8
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b248
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #8
-	movs	r2, #20
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #224
-	lsls	r2, r2, #8
-	movs	r5, #192
-	movs	r6, #172
-	mov	r8, r2
-	lsls	r5, r5, #14
-	lsls	r6, r6, #16
-	movs	r0, #238
-	adds	r1, r5, #0
-	adds	r2, r6, #0
-	mov	r3, r8
-	lsls	r0, r0, #16
-	bl 0x0200968c
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r0, #246
-	movs	r3, #128
-	lsls	r3, r3, #6
-	adds	r2, r6, #0
-	adds	r1, r5, #0
-	lsls	r0, r0, #16
-	mov	fp, r3
-	bl 0x0200968c
-	movs	r0, #30
-	bl 0x0200b1b0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r0, #192
-	lsls	r0, r0, #7
-	adds	r0, #8
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200b298
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #5
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r2, #148
-	movs	r0, #5
-	movs	r1, #248
-	bl 0x0200b218
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #176
-	movs	r0, #8
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #2
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	mov	r1, sl
-	movs	r0, #5
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #20
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b248
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r2, #20
-	lsls	r1, r1, #1
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #8
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #244
-	movs	r2, #170
-	movs	r0, #8
-	bl 0x0200b218
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r2, #170
-	movs	r0, #8
-	bl 0x0200b218
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r1, #137
-	lsls	r1, r1, #1
-	movs	r2, #170
-	movs	r0, #8
-	bl 0x0200b218
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r2, #170
-	movs	r0, #8
-	bl 0x0200b218
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r1, #244
-	movs	r2, #170
-	movs	r0, #8
-	bl 0x0200b218
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r2, #170
-	movs	r0, #8
-	bl 0x0200b218
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r1, #137
-	lsls	r1, r1, #1
-	movs	r2, #170
-	movs	r0, #8
-	bl 0x0200b218
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r2, #170
-	movs	r0, #8
-	bl 0x0200b218
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r1, #131
-	movs	r2, #40
-	lsls	r1, r1, #1
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	movs	r2, #0
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #176
-	movs	r2, #20
-	movs	r0, #8
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #144
-	lsls	r0, r0, #8
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r0, #5
-	lsls	r1, r1, #7
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #0
-	mov	r1, r9
-	movs	r0, #8
-	bl 0x0200b2b0
-	movs	r0, #10
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r0, #10
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b280
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r2, #40
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2b0
-	movs	r0, #10
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #144
-	lsls	r0, r0, #8
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #10
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r0, #10
-	movs	r1, #216
-	movs	r2, #164
-	bl 0x0200b218
-	movs	r1, #234
-	movs	r2, #160
-	movs	r0, #10
-	bl 0x0200b218
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r1, #192
-	movs	r2, #20
-	movs	r0, #10
-	lsls	r1, r1, #6
-	bl 0x0200b2b0
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #208
-	movs	r2, #0
-	movs	r0, #10
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #8
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	mov	r1, r8
-	movs	r0, #5
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #208
-	movs	r2, #20
-	movs	r0, #8
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r1, #2
-	movs	r2, #40
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	mov	r1, fp
-	movs	r0, #5
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #0
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #8
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #160
-	lsls	r0, r0, #8
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #208
-	movs	r2, #40
-	movs	r0, #10
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #8
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #5
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	mov	r1, r8
-	movs	r2, #80
-	bl 0x0200b2b0
-	bl 0x0200b300
-	bl 0x0200b308
-	movs	r0, #11
-	bl 0x0200b2e8
-	pop	{r3, r5, r6}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	pop	{r3}
-	mov	fp, r3
-	pop	{r5, r6, pc}
-	push	{r5, r6, lr}
-	movs	r0, #5
-	sub	sp, #28
-	bl 0x0200b1d8
-	adds	r6, r0, #0
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	bl 0x0200961c
-	bl 0x02009650
-	movs	r0, #1
-	movs	r1, #1
-	movs	r2, #1
-	movs	r3, #0
-	negs	r0, r0
-	negs	r1, r1
-	negs	r2, r2
-	bl 0x0200b2d8
-	movs	r1, #222
-	movs	r2, #212
-	lsls	r2, r2, #16
-	movs	r0, #6
-	lsls	r1, r1, #17
-	bl 0x0200b228
-	movs	r1, #19
-	movs	r0, #6
-	bl 0x0200b240
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	ldr	r5, [pc, #940]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r5, r5, r2
-	movs	r1, #216
-	movs	r2, #234
-	lsls	r2, r2, #16
-	lsls	r1, r1, #17
-	ldr	r0, [r5, #0]
-	bl 0x0200b228
-	ldr	r0, [r5, #0]
-	bl 0x0200b1d8
-	ldr	r3, [pc, #916]
-	movs	r1, #41
-	str	r3, [r0, #24]
-	adds	r6, #100
-	ldr	r0, [r5, #0]
-	bl 0x0200b240
-	ldr	r0, [r5, #0]
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r1, #196
-	movs	r2, #172
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	movs	r0, #10
-	bl 0x0200b228
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r0, #192
-	movs	r1, #1
-	movs	r2, #214
-	movs	r3, #0
-	negs	r1, r1
-	lsls	r2, r2, #16
-	lsls	r0, r0, #16
-	bl 0x0200b2d8
-	bl 0x0200b180
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r1, #208
-	movs	r2, #218
-	lsls	r2, r2, #16
-	movs	r0, #5
-	lsls	r1, r1, #16
-	bl 0x0200b228
-	movs	r1, #19
-	movs	r0, #5
-	bl 0x0200b240
-	movs	r0, #5
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r1, #176
-	movs	r2, #204
-	lsls	r2, r2, #16
-	movs	r0, #8
-	lsls	r1, r1, #16
-	bl 0x0200b228
-	movs	r1, #5
-	movs	r0, #8
-	bl 0x0200b240
-	movs	r0, #8
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200b2f8
-	bl 0x0200b308
-	movs	r0, #120
-	bl 0x0200b1b0
-	ldr	r0, [pc, #756]
-	bl 0x0200b288
-	movs	r2, #40
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #8
-	movs	r2, #0
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #6
-	movs	r2, #80
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #6
-	adds	r1, #255
-	movs	r2, #40
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r1, #10
-	movs	r2, #80
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #129
-	movs	r2, #0
-	lsls	r1, r1, #1
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r0, #8
-	bl 0x0200b2c8
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #6
-	adds	r1, #255
-	movs	r2, #40
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b298
-	movs	r1, #10
-	adds	r1, #255
-	movs	r2, #20
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200b298
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b298
-	movs	r1, #6
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #10
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #152
-	movs	r0, #10
-	lsls	r1, r1, #1
-	movs	r2, #172
-	bl 0x0200b218
-	movs	r0, #10
-	movs	r1, #224
-	movs	r2, #172
-	bl 0x0200b218
-	movs	r2, #192
-	movs	r0, #10
-	movs	r1, #208
-	bl 0x0200b218
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	adds	r1, #255
-	movs	r2, #0
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r1, #2
-	movs	r2, #80
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r1, [pc, #440]
-	movs	r0, #10
-	bl 0x0200b1e8
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r1, #1
-	movs	r0, #8
-	bl 0x0200b240
-	movs	r0, #8
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r1, #1
-	movs	r0, #5
-	bl 0x0200b240
-	movs	r0, #5
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r0, #5
-	movs	r1, #4
-	movs	r2, #20
-	bl 0x0200b258
-	movs	r1, #192
-	movs	r0, #8
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r0, #5
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #8
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	adds	r2, #102
-	movs	r0, #5
-	adds	r1, #204
-	bl 0x0200b1e0
-	ldr	r1, [pc, #312]
-	movs	r0, #8
-	bl 0x0200b1e8
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r0, #204
-	movs	r1, #200
-	lsls	r0, r0, #8
-	lsls	r1, r1, #5
-	adds	r0, #204
-	adds	r1, #153
-	bl 0x0200b2d0
-	movs	r0, #184
-	movs	r1, #1
-	movs	r2, #210
-	lsls	r0, r0, #17
-	negs	r1, r1
-	movs	r3, #1
-	lsls	r2, r2, #16
-	bl 0x0200b2d8
-	movs	r3, #0
-	strh	r3, [r6, #0]
-	ldr	r1, [pc, #264]
-	movs	r0, #5
-	bl 0x0200b1e8
-.L_020021f2:
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r2, #0
-	ldrsh	r3, [r6, r2]
-	cmp	r3, #0
-	beq.n	.L_020021f2
-	movs	r0, #10
-	bl 0x0200b1b0
-	movs	r1, #129
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r1, #129
-	movs	r0, #5
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r3, #12
-	movs	r2, #8
-	movs	r1, #9
-	movs	r0, #2
-	movs	r4, #4
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	str	r1, [sp, #8]
-	str	r0, [sp, #12]
-	movs	r3, #2
-	movs	r5, #1
-	movs	r6, #0
-	movs	r0, #5
-	movs	r1, #7
-	movs	r2, #13
-	str	r4, [sp, #16]
-	str	r5, [sp, #20]
-	str	r6, [sp, #24]
-	bl 0x0200b2b8
-	movs	r1, #192
-	movs	r0, #10
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #204
-	lsls	r2, r2, #8
-	movs	r0, #8
-	ldr	r1, [pc, #160]
-	adds	r2, #204
-	bl 0x0200b1e0
-	movs	r2, #204
-	lsls	r2, r2, #8
-	adds	r2, #204
-	movs	r0, #5
-	ldr	r1, [pc, #144]
-	bl 0x0200b1e0
-	ldr	r1, [pc, #144]
-	movs	r0, #8
-	bl 0x0200b1e8
-	ldr	r1, [pc, #140]
-	movs	r0, #5
-	bl 0x0200b200
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r0, #160
-	lsls	r0, r0, #7
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #10
-	movs	r0, #5
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #176
-	movs	r0, #8
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #8
-	movs	r1, #0
-	adds	r0, #8
-	movs	r2, #40
-	bl 0x0200b298
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r3, [r3, #108]
-	movs	r2, #218
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	movs	r2, #120
-	str	r2, [r3, #0]
-	bl 0x0200b300
-	bl 0x0200b308
-	movs	r0, #12
-	bl 0x0200b2e8
-	add	sp, #28
-	pop	{r5, r6, pc}
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0xffff0000
-	.4byte 0x00001645
-	.4byte 0x0200b3a8
-	.4byte 0x0200b400
-	.4byte 0x0200b46c
+.L_02009b28:
+	.4byte Data_02003330
+.L_02009b2c:
+	.4byte Data_0200336c
+.L_02009b30:
 	.4byte 0x00019999
-	.2byte 0xb4e4
-	.2byte 0x0200
-	push	{r2, r3, lr}
-	lsls	r0, r0, #8
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	ldr	r6, [pc, #1016]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r6, r6, r2
-	ldr	r0, [r6, #0]
-	sub	sp, #28
-	bl 0x0200b1d8
-	adds	r7, r0, #0
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	movs	r0, #1
-	movs	r1, #1
-	movs	r2, #1
-	negs	r0, r0
-	negs	r1, r1
-	negs	r2, r2
-	movs	r3, #0
-	bl 0x0200b2d8
-	bl 0x02009650
-	movs	r3, #192
-	movs	r1, #157
-	movs	r2, #200
-	lsls	r3, r3, #6
-	movs	r0, #8
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	movs	r5, #208
-	mov	r9, r3
-	lsls	r5, r5, #8
-	bl 0x0200b230
-	movs	r1, #164
-	movs	r2, #240
-	adds	r3, r5, #0
-	movs	r0, #10
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	bl 0x0200b230
-	movs	r2, #128
-	lsls	r2, r2, #7
-	mov	fp, r2
-	movs	r1, #170
-	movs	r2, #200
-	movs	r0, #5
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	mov	r3, fp
-	bl 0x0200b230
-	movs	r1, #171
-	movs	r2, #230
-	lsls	r2, r2, #16
-	movs	r3, #0
-	movs	r0, #6
-	lsls	r1, r1, #17
-	bl 0x0200b230
-	movs	r1, #19
-	movs	r0, #6
-	bl 0x0200b240
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r3, #128
-	movs	r1, #156
-	movs	r2, #230
-	lsls	r3, r3, #8
-	lsls	r2, r2, #16
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #17
-	mov	r8, r3
-	bl 0x0200b230
-	movs	r1, #41
-	ldr	r0, [r6, #0]
-	bl 0x0200b240
-	ldr	r0, [r6, #0]
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200b2f8
-	bl 0x0200b308
-	movs	r0, #20
-	bl 0x0200b1b0
-	ldr	r0, [pc, #812]
-	bl 0x0200b288
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #176
-	movs	r2, #0
-	movs	r0, #10
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #6
-	movs	r1, #2
-	bl 0x0200b268
-	adds	r1, r5, #0
-	movs	r0, #10
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	lsls	r1, r1, #1
-	movs	r2, #80
-	movs	r0, #10
-	bl 0x0200b2c0
-	movs	r1, #176
-	movs	r0, #10
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #10
-	str	r2, [sp, #4]
-	movs	r3, #6
-	movs	r1, #12
-	movs	r0, #16
-	movs	r2, #0
-	movs	r4, #18
-	str	r3, [sp, #0]
-	str	r1, [sp, #8]
-	str	r0, [sp, #12]
-	str	r2, [sp, #24]
-	movs	r3, #7
-	movs	r5, #11
-	movs	r0, #8
-	movs	r1, #9
-	movs	r2, #1
-	str	r5, [sp, #20]
-	str	r4, [sp, #16]
-	bl 0x0200b2b8
-	movs	r1, #2
-	movs	r2, #40
-	adds	r1, #255
-	movs	r0, #8
-	bl 0x0200b2c0
-	movs	r0, #6
-	movs	r1, #2
-	bl 0x0200b268
-	movs	r1, #129
-	movs	r0, #5
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r2, #20
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r1, #1
-	movs	r0, #6
-	bl 0x0200b268
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	movs	r2, #40
-	adds	r1, #255
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #18
-	movs	r0, #6
-	bl 0x0200b240
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b298
-	movs	r1, #0
-	movs	r2, #40
-	movs	r0, #6
-	bl 0x0200b298
-	movs	r0, #6
-	bl 0x0200b1d8
-	adds	r0, #90
-	ldrb	r2, [r0, #0]
-	movs	r5, #254
-	adds	r3, r5, #0
-	ands	r3, r2
-	movs	r1, #170
-	strb	r3, [r0, #0]
-	lsls	r1, r1, #1
-	movs	r0, #6
-	movs	r2, #226
-	bl 0x0200b210
-	movs	r2, #0
-	movs	r0, #6
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r1, #1
-	movs	r0, #6
-	bl 0x0200b240
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r0, #5
-	bl 0x0200b2c8
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r1, #0
-	movs	r0, #5
-	bl 0x0200b2a0
-	movs	r0, #6
-	bl 0x0200b1d8
-	adds	r0, #90
-	ldrb	r3, [r0, #0]
-	movs	r2, #1
-	mov	sl, r2
-	mov	r2, sl
-	orrs	r3, r2
-	movs	r1, #160
-	strb	r3, [r0, #0]
-	movs	r2, #0
-	lsls	r1, r1, #8
-	movs	r0, #6
-	bl 0x0200b2b0
-	movs	r0, #6
-	bl 0x0200b1f0
-	movs	r1, #3
-	movs	r0, #6
-	bl 0x0200b248
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r0, #8
-	movs	r1, #6
-	bl 0x0200b318
-	movs	r0, #5
-	movs	r1, #6
-	bl 0x0200b318
-	movs	r0, #10
-	movs	r1, #6
-	bl 0x0200b318
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #7
-	lsls	r2, r2, #6
-	movs	r0, #6
-	adds	r1, #102
-	adds	r2, #51
-	bl 0x0200b1e0
-	movs	r1, #179
-	lsls	r1, r1, #1
-	movs	r2, #222
-	movs	r0, #6
-	bl 0x0200b218
-	movs	r0, #40
-	bl 0x0200b1b0
-	movs	r1, #128
-	movs	r0, #6
-	lsls	r1, r1, #6
-	movs	r2, #80
-	bl 0x0200b2b0
-	movs	r1, #224
-	movs	r0, #6
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r0, #6
-	mov	r1, r8
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #20
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #224
-	movs	r0, #6
-	lsls	r1, r1, #8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r0, #6
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #2
-	adds	r1, #255
-	movs	r2, #40
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #0
-	movs	r0, #5
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #20
-	movs	r0, #6
-	mov	r1, r8
-	bl 0x0200b2b0
-	movs	r0, #10
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #204
-	lsls	r2, r2, #8
-	movs	r0, #6
-	ldr	r1, [pc, #136]
-	adds	r2, #204
-	bl 0x0200b1e0
-	movs	r1, #174
-	movs	r0, #6
-	lsls	r1, r1, #1
-	movs	r2, #222
-	bl 0x0200b218
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #7
-	movs	r1, #0
-	adds	r0, #6
-	bl 0x0200b2a0
-	movs	r0, #8
-	bl 0x0200b1f8
-	movs	r0, #5
-	bl 0x0200b1f8
-	movs	r0, #10
-	bl 0x0200b1f8
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #7
-	lsls	r2, r2, #6
-	movs	r0, #8
-	adds	r1, #102
-	adds	r2, #51
-	bl 0x0200b1e0
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #1
-	movs	r2, #200
-	bl 0x0200b218
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #40
-	bl 0x0200b298
-	movs	r2, #40
-	movs	r0, #6
-	mov	r1, r8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r2, #0
-	lsls	r1, r1, #1
-	movs	r0, #10
-	b.n	.L_02002718
-	.4byte 0x02000240
-	.4byte 0x00001659
-	.2byte 0x9999
-	.2byte 0x0001
-.L_02002718:
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #6
-	movs	r1, #4
-	bl 0x0200b248
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #7
-	adds	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #0
-	movs	r0, #5
-	mov	r1, r8
-	bl 0x0200b2b0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #160
-	movs	r2, #0
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #192
-	movs	r2, #0
-	lsls	r1, r1, #7
-	movs	r0, #6
-	bl 0x0200b2b0
-	movs	r0, #6
-	bl 0x0200b1f0
-	movs	r1, #3
-	movs	r0, #6
-	bl 0x0200b248
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r0, #10
-	movs	r1, #4
-	bl 0x0200b248
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	movs	r2, #0
-	movs	r0, #8
-	lsls	r1, r1, #6
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #160
-	movs	r2, #0
-	lsls	r1, r1, #8
-	movs	r0, #6
-	bl 0x0200b2b0
-	movs	r0, #6
-	bl 0x0200b1f0
-	movs	r0, #6
-	movs	r1, #4
-	bl 0x0200b240
-	movs	r2, #20
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b298
-	movs	r1, #2
-	ldr	r0, [r6, #0]
-	bl 0x0200b268
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r0, #5
-	mov	r1, fp
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #5
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200b298
-	movs	r1, #6
-	adds	r1, #255
-	movs	r2, #0
-	ldr	r0, [r6, #0]
-	bl 0x0200b2c0
-	movs	r1, #192
-	movs	r2, #0
-	lsls	r1, r1, #8
-	movs	r0, #6
-	bl 0x0200b2b0
-	movs	r0, #6
-	bl 0x0200b1f0
-	movs	r0, #6
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #6
-	movs	r2, #0
-	adds	r1, #255
-	ldr	r0, [r6, #0]
-	bl 0x0200b2c0
-	ldr	r0, [r6, #0]
-	movs	r1, #2
-	bl 0x0200b268
-	movs	r1, #129
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b298
-	ldr	r0, [r6, #0]
-	movs	r1, #3
-	bl 0x0200b260
-	movs	r1, #128
-	lsls	r1, r1, #1
-	movs	r2, #20
-	movs	r0, #10
-	bl 0x0200b2c0
-	movs	r1, #176
-	movs	r2, #20
-	movs	r0, #10
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #42
-	ldr	r0, [r6, #0]
-	bl 0x0200b240
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r1, #160
-	movs	r0, #8
-	lsls	r1, r1, #7
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r0, #5
-	lsls	r1, r1, #7
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r2, #20
-	movs	r0, #6
-	mov	r1, r8
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #10
-	movs	r2, #40
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r1, #0
-	movs	r0, #5
-	bl 0x0200b2a0
-	ldr	r0, [r6, #0]
-	bl 0x0200b1d8
-	adds	r0, #90
-	ldrb	r3, [r0, #0]
-	movs	r1, #157
-	ands	r5, r3
-	strb	r5, [r0, #0]
-	lsls	r1, r1, #1
-	ldr	r0, [r6, #0]
-	movs	r2, #226
-	bl 0x0200b210
-	movs	r2, #0
-	ldr	r0, [r6, #0]
-	movs	r1, #4
-	bl 0x0200b258
-	movs	r1, #1
-	ldr	r0, [r6, #0]
-	bl 0x0200b240
-	ldr	r0, [r6, #0]
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r3, #128
-	lsls	r3, r3, #9
-	str	r3, [r7, #24]
-	movs	r0, #20
-	bl 0x0200b1b0
-	movs	r1, #129
-	movs	r0, #5
-	lsls	r1, r1, #1
-	bl 0x0200b2c8
-	movs	r1, #0
-	movs	r0, #5
-	bl 0x0200b2a0
-	ldr	r0, [r6, #0]
-	bl 0x0200b1d8
-	adds	r0, #90
-	ldrb	r3, [r0, #0]
-	mov	r2, sl
-	orrs	r2, r3
-	strb	r2, [r0, #0]
-	movs	r1, #192
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #7
-	mov	sl, r2
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #128
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #6
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #160
-	movs	r2, #80
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #128
-	lsls	r0, r0, #6
-	adds	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #2
-	adds	r1, #255
-	movs	r2, #0
-	ldr	r0, [r6, #0]
-	bl 0x0200b2c0
-	ldr	r0, [r6, #0]
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r1, #176
-	movs	r2, #0
-	movs	r0, #10
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #128
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #8
-	mov	r1, r9
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r0, #6
-	lsls	r1, r1, #7
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #192
-	movs	r2, #0
-	movs	r0, #5
-	lsls	r1, r1, #7
-	bl 0x0200b2b0
-	movs	r0, #10
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #5
-	mov	r1, r8
-	movs	r2, #40
-	bl 0x0200b2b0
-	movs	r1, #10
-	movs	r2, #20
-	adds	r1, #255
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #160
-	movs	r2, #20
-	movs	r0, #6
-	lsls	r1, r1, #8
-	bl 0x0200b2b0
-	movs	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r2, #0
-	movs	r0, #8
-	mov	r1, r9
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #5
-	mov	r1, r8
-	movs	r2, #0
-	bl 0x0200b2b0
-	ldr	r0, [r6, #0]
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r0, #6
-	mov	r1, r8
-	movs	r2, #20
-	bl 0x0200b2b0
-	movs	r2, #0
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #5
-	movs	r1, #3
-	bl 0x0200b240
-	ldr	r0, [r6, #0]
-	movs	r1, #3
-	bl 0x0200b240
-	movs	r0, #6
-	movs	r1, #3
-	bl 0x0200b248
-	movs	r2, #204
-	lsls	r2, r2, #8
-	movs	r0, #10
-	ldr	r1, [pc, #316]
-	adds	r2, #204
-	bl 0x0200b1e0
-	movs	r1, #184
-	movs	r2, #128
-	movs	r0, #10
-	lsls	r1, r1, #1
-	lsls	r2, r2, #1
-	bl 0x0200b218
-	movs	r0, #10
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	lsls	r1, r1, #1
-	movs	r2, #0
-	movs	r0, #6
-	bl 0x0200b2c0
-	movs	r1, #128
-	movs	r2, #0
-	lsls	r1, r1, #6
-	movs	r0, #6
-	bl 0x0200b2b0
-	movs	r0, #6
-	bl 0x0200b1f0
-	movs	r0, #160
-	lsls	r0, r0, #7
-	adds	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #8
-	mov	r1, r9
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	movs	r0, #5
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #128
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #6
-	movs	r2, #0
-	bl 0x0200b2b0
-	movs	r1, #200
-	movs	r2, #132
-	movs	r0, #10
-	lsls	r1, r1, #1
-	lsls	r2, r2, #1
-	bl 0x0200b218
-	movs	r2, #0
-	movs	r0, #10
-	movs	r1, #0
-	bl 0x0200b2b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #132
-	movs	r2, #0
-	lsls	r1, r1, #1
-	movs	r0, #10
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #10
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #153
-	movs	r1, #152
-	lsls	r0, r0, #8
-	lsls	r1, r1, #5
-	adds	r0, #153
-	adds	r1, #51
-	bl 0x0200b2d0
-	movs	r0, #198
-	movs	r1, #1
-	movs	r2, #234
-	movs	r3, #1
-	lsls	r0, r0, #17
-	negs	r1, r1
-	lsls	r2, r2, #16
-	bl 0x0200b2d8
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #5
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #6
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	movs	r0, #8
-	adds	r1, #204
-	adds	r2, #102
-	bl 0x0200b1e0
-	movs	r1, #204
-	movs	r2, #204
-	lsls	r1, r1, #8
-	lsls	r2, r2, #7
-	adds	r2, #102
-	ldr	r0, [r6, #0]
-	adds	r1, #204
-	bl 0x0200b1e0
-	ldr	r3, [pc, #40]
-	adds	r5, r7, #0
-	adds	r5, #100
-	strh	r3, [r5, #0]
-	ldr	r1, [pc, #40]
-	movs	r0, #8
-	bl 0x0200b1e8
-	ldr	r1, [pc, #36]
-	movs	r0, #5
-	bl 0x0200b1e8
-	ldr	r0, [r6, #0]
-	ldr	r1, [pc, #32]
-	bl 0x0200b1e8
-	ldr	r1, [pc, #28]
-	movs	r0, #6
-	bl 0x0200b1e8
-	.2byte 0xe00c
+.L_02009b34:
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #6
+	movs r2, #80
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #8
+	adds r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	adds r1, #255
+	movs r2, #0
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #8
+	movs r2, #20
+	adds r0, #5
+	movs r1, #0
+	bl Func_02003298
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #224
+	lsls r2, r2, #8
+	movs r5, #192
+	movs r6, #172
+	mov r8, r2
+	lsls r5, r5, #14
+	lsls r6, r6, #16
+	movs r0, #238
+	adds r1, r5, #0
+	adds r2, r6, #0
+	mov r3, r8
+	lsls r0, r0, #16
+	bl DriftScene_SpawnObject
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r0, #246
+	movs r3, #128
+	lsls r3, r3, #6
+	adds r2, r6, #0
+	adds r1, r5, #0
+	lsls r0, r0, #16
+	mov r11, r3
+	bl DriftScene_SpawnObject
+	movs r0, #30
+	bl Battle_WaitMode0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #40
+	bl Func_020032b0
+	movs r0, #192
+	lsls r0, r0, #7
+	adds r0, #8
+	movs r1, #0
+	movs r2, #20
+	bl Func_02003298
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #5
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #148
+	movs r0, #5
+	movs r1, #248
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #176
+	movs r0, #8
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #2
+	movs r2, #20
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	mov r1, r10
+	movs r0, #5
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #20
+	movs r0, #5
+	movs r1, #0
+	bl Func_02003298
+	movs r0, #8
+	movs r1, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r2, #20
+	lsls r1, r1, #1
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #8
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #244
+	movs r2, #170
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r2, #170
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #137
+	lsls r1, r1, #1
+	movs r2, #170
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r2, #170
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #244
+	movs r2, #170
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r2, #170
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #137
+	lsls r1, r1, #1
+	movs r2, #170
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r2, #170
+	movs r0, #8
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #131
+	movs r2, #40
+	lsls r1, r1, #1
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	movs r2, #0
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #176
+	movs r2, #20
+	movs r0, #8
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #144
+	lsls r0, r0, #8
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r0, #5
+	lsls r1, r1, #7
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #0
+	mov r1, r9
+	movs r0, #8
+	bl Func_020032b0
+	movs r0, #10
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #10
+	bl Object_GetById
+	movs r1, #0
+	bl Func_02003280
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r2, #40
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032b0
+	movs r0, #10
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #144
+	lsls r0, r0, #8
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #10
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r0, #10
+	movs r1, #216
+	movs r2, #164
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #234
+	movs r2, #160
+	movs r0, #10
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #192
+	movs r2, #20
+	movs r0, #10
+	lsls r1, r1, #6
+	bl Func_020032b0
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #208
+	movs r2, #0
+	movs r0, #10
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #8
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	mov r1, r8
+	movs r0, #5
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #208
+	movs r2, #20
+	movs r0, #8
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #5
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #2
+	movs r2, #40
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	mov r1, r11
+	movs r0, #5
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #0
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #8
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #160
+	lsls r0, r0, #8
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #208
+	movs r2, #40
+	movs r0, #10
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #8
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r2, #0
+	movs r0, #5
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	mov r1, r8
+	movs r2, #80
+	bl Func_020032b0
+	bl Event_ClearStatus1c6
+	bl Event_WaitValue1c8Frames
+	movs r0, #11
+	bl Func_020032e8
+	pop {r3, r5, r6}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	pop {r3}
+	mov r11, r3
+	pop {r5, r6, pc}
+	.section .text.x02009ee0,"ax",%progbits
+	.global Func_02001ee0
+	.thumb_func
+Func_02001ee0:
+	push {r5, r6, lr}
+	movs r0, #5
+	sub sp, #28
+	bl Object_GetById
+	adds r6, r0, #0
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	bl Func_0200161c
+	bl DriftScene_Prepare
+	movs r0, #1
+	movs r1, #1
+	movs r2, #1
+	movs r3, #0
+	negs r0, r0
+	negs r1, r1
+	negs r2, r2
+	bl Func_020032d8
+	movs r1, #222
+	movs r2, #212
+	lsls r2, r2, #16
+	movs r0, #6
+	lsls r1, r1, #17
+	bl Func_02003228
+	movs r1, #19
+	movs r0, #6
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	ldr r5, .L_0200a2e0
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r5, r2
+	movs r1, #216
+	movs r2, #234
+	lsls r2, r2, #16
+	lsls r1, r1, #17
+	ldr r0, [r5]
+	bl Func_02003228
+	ldr r0, [r5]
+	bl Object_GetById
+	ldr r3, .L_0200a2e4
+	movs r1, #41
+	str r3, [r0, #24]
+	adds r6, #100
+	ldr r0, [r5]
+	bl Engine_ActorSetAnimation
+	ldr r0, [r5]
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r1, #196
+	movs r2, #172
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	movs r0, #10
+	bl Func_02003228
+	movs r0, #1
+	bl Task_Wait
+	movs r0, #192
+	movs r1, #1
+	movs r2, #214
+	movs r3, #0
+	negs r1, r1
+	lsls r2, r2, #16
+	lsls r0, r0, #16
+	bl Func_020032d8
+	bl Func_02003180
+	movs r0, #1
+	bl Task_Wait
+	movs r1, #208
+	movs r2, #218
+	lsls r2, r2, #16
+	movs r0, #5
+	lsls r1, r1, #16
+	bl Func_02003228
+	movs r1, #19
+	movs r0, #5
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r1, #176
+	movs r2, #204
+	lsls r2, r2, #16
+	movs r0, #8
+	lsls r1, r1, #16
+	bl Func_02003228
+	movs r1, #5
+	movs r0, #8
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #1
+	bl Task_Wait
+	bl Event_SetStatus1c6
+	bl Event_WaitValue1c8Frames
+	movs r0, #120
+	bl Battle_WaitMode0
+	ldr r0, .L_0200a2e8
+	bl Func_02003288
+	movs r2, #40
+	movs r0, #5
+	movs r1, #0
+	bl Func_02003298
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #8
+	movs r2, #0
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #6
+	movs r2, #80
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #6
+	adds r1, #255
+	movs r2, #40
+	movs r0, #8
+	bl Func_020032c0
+	movs r1, #10
+	movs r2, #80
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #129
+	movs r2, #0
+	lsls r1, r1, #1
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r0, #8
+	bl Func_020032c8
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #6
+	adds r1, #255
+	movs r2, #40
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #8
+	movs r1, #0
+	movs r2, #40
+	bl Func_02003298
+	movs r1, #10
+	adds r1, #255
+	movs r2, #20
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	movs r2, #20
+	bl Func_02003298
+	movs r0, #8
+	movs r1, #0
+	movs r2, #40
+	bl Func_02003298
+	movs r1, #6
+	movs r2, #20
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #10
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #152
+	movs r0, #10
+	lsls r1, r1, #1
+	movs r2, #172
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	movs r1, #224
+	movs r2, #172
+	bl ObjectMotion_SetPositionAndReset
+	movs r2, #192
+	movs r0, #10
+	movs r1, #208
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	adds r1, #255
+	movs r2, #0
+	movs r0, #8
+	bl Func_020032c0
+	movs r1, #2
+	movs r2, #80
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	ldr r1, .L_0200a2ec
+	movs r0, #10
+	bl ObjectMotion_EnableActionAndSetCallback
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #1
+	movs r0, #8
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r2, #20
+	movs r0, #8
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r1, #1
+	movs r0, #5
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #5
+	movs r1, #4
+	movs r2, #20
+	bl ObjectMotion_Launch
+	movs r1, #192
+	movs r0, #8
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #160
+	movs r0, #5
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #8
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	adds r2, #102
+	movs r0, #5
+	adds r1, #204
+	bl ObjectMotion_SetSpeedParameters
+	ldr r1, .L_0200a2f0
+	movs r0, #8
+	bl ObjectMotion_EnableActionAndSetCallback
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r0, #204
+	movs r1, #200
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #204
+	adds r1, #153
+	bl Func_020032d0
+	movs r0, #184
+	movs r1, #1
+	movs r2, #210
+	lsls r0, r0, #17
+	negs r1, r1
+	movs r3, #1
+	lsls r2, r2, #16
+	bl Func_020032d8
+	movs r3, #0
+	strh r3, [r6]
+	ldr r1, .L_0200a2f4
+	movs r0, #5
+	bl ObjectMotion_EnableActionAndSetCallback
+.L_0200a1f2:
+	movs r0, #1
+	bl Task_Wait
+	movs r2, #0
+	ldrsh r3, [r6, r2]
+	cmp r3, #0
+	beq .L_0200a1f2
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #129
+	movs r0, #8
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r1, #129
+	movs r0, #5
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r3, #12
+	movs r2, #8
+	movs r1, #9
+	movs r0, #2
+	movs r4, #4
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	str r1, [sp, #8]
+	str r0, [sp, #12]
+	movs r3, #2
+	movs r5, #1
+	movs r6, #0
+	movs r0, #5
+	movs r1, #7
+	movs r2, #13
+	str r4, [sp, #16]
+	str r5, [sp, #20]
+	str r6, [sp, #24]
+	bl Func_020032b8
+	movs r1, #192
+	movs r0, #10
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #8
+	ldr r1, .L_0200a2f8
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #204
+	lsls r2, r2, #8
+	adds r2, #204
+	movs r0, #5
+	ldr r1, .L_0200a2f8
+	bl ObjectMotion_SetSpeedParameters
+	ldr r1, .L_0200a2fc
+	movs r0, #8
+	bl ObjectMotion_EnableActionAndSetCallback
+	ldr r1, .L_0200a300
+	movs r0, #5
+	bl Object_SetActionCallbackAndRefreshById
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r0, #160
+	lsls r0, r0, #7
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #10
+	movs r0, #5
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #176
+	movs r0, #8
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #8
+	movs r1, #0
+	adds r0, #8
+	movs r2, #40
+	bl Func_02003298
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r2, #218
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r2, #120
+	str r2, [r3]
+	bl Event_ClearStatus1c6
+	bl Event_WaitValue1c8Frames
+	movs r0, #12
+	bl Func_020032e8
+	add sp, #28
+	pop {r5, r6, pc}
 	.2byte 0x0000
+.L_0200a2e0:
+	.4byte gPartyState
+.L_0200a2e4:
+	.4byte 0xffff0000
+.L_0200a2e8:
+	.4byte 0x00001645
+.L_0200a2ec:
+	.4byte Data_020033a8
+.L_0200a2f0:
+	.4byte Data_02003400
+.L_0200a2f4:
+	.4byte Data_0200346c
+.L_0200a2f8:
+	.4byte 0x00019999
+.L_0200a2fc:
+	.4byte Data_020034e4
+.L_0200a300:
+	.4byte Data_0200350c
+	.section .text.x0200a304,"ax",%progbits
+	.global Func_02002304
+	.thumb_func
+Func_02002304:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	ldr r6, .L_0200a70c
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r6, r6, r2
+	ldr r0, [r6]
+	sub sp, #28
+	bl Object_GetById
+	adds r7, r0, #0
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	movs r0, #1
+	movs r1, #1
+	movs r2, #1
+	negs r0, r0
+	negs r1, r1
+	negs r2, r2
+	movs r3, #0
+	bl Func_020032d8
+	bl DriftScene_Prepare
+	movs r3, #192
+	movs r1, #157
+	movs r2, #200
+	lsls r3, r3, #6
+	movs r0, #8
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	movs r5, #208
+	mov r9, r3
+	lsls r5, r5, #8
+	bl Func_02003230
+	movs r1, #164
+	movs r2, #240
+	adds r3, r5, #0
+	movs r0, #10
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	bl Func_02003230
+	movs r2, #128
+	lsls r2, r2, #7
+	mov r11, r2
+	movs r1, #170
+	movs r2, #200
+	movs r0, #5
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	mov r3, r11
+	bl Func_02003230
+	movs r1, #171
+	movs r2, #230
+	lsls r2, r2, #16
+	movs r3, #0
+	movs r0, #6
+	lsls r1, r1, #17
+	bl Func_02003230
+	movs r1, #19
+	movs r0, #6
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r3, #128
+	movs r1, #156
+	movs r2, #230
+	lsls r3, r3, #8
+	lsls r2, r2, #16
+	ldr r0, [r6]
+	lsls r1, r1, #17
+	mov r8, r3
+	bl Func_02003230
+	movs r1, #41
+	ldr r0, [r6]
+	bl Engine_ActorSetAnimation
+	ldr r0, [r6]
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #1
+	bl Task_Wait
+	bl Event_SetStatus1c6
+	bl Event_WaitValue1c8Frames
+	movs r0, #20
+	bl Battle_WaitMode0
+	ldr r0, .L_0200a710
+	bl Func_02003288
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #176
+	movs r2, #0
+	movs r0, #10
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #6
+	movs r1, #2
+	bl Motion_SetVarCbAndRefresh
+	adds r1, r5, #0
+	movs r0, #10
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #80
+	movs r0, #10
+	bl Func_020032c0
+	movs r1, #176
+	movs r0, #10
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #10
+	str r2, [sp, #4]
+	movs r3, #6
+	movs r1, #12
+	movs r0, #16
+	movs r2, #0
+	movs r4, #18
+	str r3, [sp, #0]
+	str r1, [sp, #8]
+	str r0, [sp, #12]
+	str r2, [sp, #24]
+	movs r3, #7
+	movs r5, #11
+	movs r0, #8
+	movs r1, #9
+	movs r2, #1
+	str r5, [sp, #20]
+	str r4, [sp, #16]
+	bl Func_020032b8
+	movs r1, #2
+	movs r2, #40
+	adds r1, #255
+	movs r0, #8
+	bl Func_020032c0
+	movs r0, #6
+	movs r1, #2
+	bl Motion_SetVarCbAndRefresh
+	movs r1, #129
+	movs r0, #5
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r2, #20
+	movs r0, #5
+	movs r1, #0
+	bl Func_02003298
+	movs r1, #1
+	movs r0, #6
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	movs r2, #40
+	adds r1, #255
+	movs r0, #6
+	bl Func_020032c0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #18
+	movs r0, #6
+	bl Engine_ActorSetAnimation
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	movs r1, #0
+	movs r2, #40
+	bl Func_02003298
+	movs r1, #0
+	movs r2, #40
+	movs r0, #6
+	bl Func_02003298
+	movs r0, #6
+	bl Object_GetById
+	adds r0, #90
+	ldrb r2, [r0]
+	movs r5, #254
+	adds r3, r5, #0
+	ands r3, r2
+	movs r1, #170
+	strb r3, [r0]
+	lsls r1, r1, #1
+	movs r0, #6
+	movs r2, #226
+	bl ObjectMotion_ResetAndSetPositionInMode2
+	movs r2, #0
+	movs r0, #6
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r1, #1
+	movs r0, #6
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r0, #5
+	bl Func_020032c8
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #0
+	movs r0, #5
+	bl Func_020032a0
+	movs r0, #6
+	bl Object_GetById
+	adds r0, #90
+	ldrb r3, [r0]
+	movs r2, #1
+	mov r10, r2
+	mov r2, r10
+	orrs r3, r2
+	movs r1, #160
+	strb r3, [r0]
+	movs r2, #0
+	lsls r1, r1, #8
+	movs r0, #6
+	bl Func_020032b0
+	movs r0, #6
+	bl Object_RefreshSelectorById
+	movs r1, #3
+	movs r0, #6
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r0, #8
+	movs r1, #6
+	bl Object_LinkObjectAndSetCallback
+	movs r0, #5
+	movs r1, #6
+	bl Object_LinkObjectAndSetCallback
+	movs r0, #10
+	movs r1, #6
+	bl Object_LinkObjectAndSetCallback
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #7
+	lsls r2, r2, #6
+	movs r0, #6
+	adds r1, #102
+	adds r2, #51
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #179
+	lsls r1, r1, #1
+	movs r2, #222
+	movs r0, #6
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #128
+	movs r0, #6
+	lsls r1, r1, #6
+	movs r2, #80
+	bl Func_020032b0
+	movs r1, #224
+	movs r0, #6
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r0, #6
+	mov r1, r8
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #20
+	movs r0, #6
+	movs r1, #0
+	bl Func_02003298
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #224
+	movs r0, #6
+	lsls r1, r1, #8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #128
+	movs r0, #6
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #2
+	adds r1, #255
+	movs r2, #40
+	movs r0, #6
+	bl Func_020032c0
+	movs r1, #192
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #0
+	movs r0, #5
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #20
+	movs r0, #6
+	mov r1, r8
+	bl Func_020032b0
+	movs r0, #10
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #6
+	ldr r1, .L_0200a714
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #174
+	movs r0, #6
+	lsls r1, r1, #1
+	movs r2, #222
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #192
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #7
+	movs r1, #0
+	adds r0, #6
+	bl Func_020032a0
+	movs r0, #8
+	bl ObjectMotion_EnableActionAndResetMotion
+	movs r0, #5
+	bl ObjectMotion_EnableActionAndResetMotion
+	movs r0, #10
+	bl ObjectMotion_EnableActionAndResetMotion
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #7
+	lsls r2, r2, #6
+	movs r0, #8
+	adds r1, #102
+	adds r2, #51
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #1
+	movs r2, #200
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #8
+	movs r1, #0
+	movs r2, #40
+	bl Func_02003298
+	movs r2, #40
+	movs r0, #6
+	mov r1, r8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r2, #0
+	lsls r1, r1, #1
+	movs r0, #10
+	b .L_0200a718
+.L_0200a70c:
+	.4byte gPartyState
+.L_0200a710:
+	.4byte 0x00001659
+.L_0200a714:
+	.4byte 0x00019999
+.L_0200a718:
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #6
+	movs r1, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r1, #192
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #0
+	movs r0, #5
+	mov r1, r8
+	bl Func_020032b0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #160
+	movs r2, #0
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #192
+	movs r2, #0
+	lsls r1, r1, #7
+	movs r0, #6
+	bl Func_020032b0
+	movs r0, #6
+	bl Object_RefreshSelectorById
+	movs r1, #3
+	movs r0, #6
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r0, #10
+	movs r1, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	movs r2, #0
+	movs r0, #8
+	lsls r1, r1, #6
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #160
+	movs r2, #0
+	lsls r1, r1, #8
+	movs r0, #6
+	bl Func_020032b0
+	movs r0, #6
+	bl Object_RefreshSelectorById
+	movs r0, #6
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r2, #20
+	movs r0, #6
+	movs r1, #0
+	bl Func_02003298
+	movs r1, #2
+	ldr r0, [r6]
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r0, #5
+	mov r1, r11
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #5
+	movs r1, #0
+	movs r2, #20
+	bl Func_02003298
+	movs r1, #6
+	adds r1, #255
+	movs r2, #0
+	ldr r0, [r6]
+	bl Func_020032c0
+	movs r1, #192
+	movs r2, #0
+	lsls r1, r1, #8
+	movs r0, #6
+	bl Func_020032b0
+	movs r0, #6
+	bl Object_RefreshSelectorById
+	movs r0, #6
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #6
+	movs r2, #0
+	adds r1, #255
+	ldr r0, [r6]
+	bl Func_020032c0
+	ldr r0, [r6]
+	movs r1, #2
+	bl Motion_SetVarCbAndRefresh
+	movs r1, #129
+	movs r0, #8
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r2, #20
+	movs r0, #8
+	movs r1, #0
+	bl Func_02003298
+	ldr r0, [r6]
+	movs r1, #3
+	bl ObjectMotion_SetVariantCallback
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #20
+	movs r0, #10
+	bl Func_020032c0
+	movs r1, #176
+	movs r2, #20
+	movs r0, #10
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #42
+	ldr r0, [r6]
+	bl Engine_ActorSetAnimation
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #160
+	movs r0, #8
+	lsls r1, r1, #7
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #192
+	movs r0, #5
+	lsls r1, r1, #7
+	movs r2, #0
+	bl Func_020032b0
+	movs r2, #20
+	movs r0, #6
+	mov r1, r8
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #10
+	movs r2, #40
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r1, #0
+	movs r0, #5
+	bl Func_020032a0
+	ldr r0, [r6]
+	bl Object_GetById
+	adds r0, #90
+	ldrb r3, [r0]
+	movs r1, #157
+	ands r5, r3
+	strb r5, [r0]
+	lsls r1, r1, #1
+	ldr r0, [r6]
+	movs r2, #226
+	bl ObjectMotion_ResetAndSetPositionInMode2
+	movs r2, #0
+	ldr r0, [r6]
+	movs r1, #4
+	bl ObjectMotion_Launch
+	movs r1, #1
+	ldr r0, [r6]
+	bl Engine_ActorSetAnimation
+	ldr r0, [r6]
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r7, #24]
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #129
+	movs r0, #5
+	lsls r1, r1, #1
+	bl Func_020032c8
+	movs r1, #0
+	movs r0, #5
+	bl Func_020032a0
+	ldr r0, [r6]
+	bl Object_GetById
+	adds r0, #90
+	ldrb r3, [r0]
+	mov r2, r10
+	orrs r2, r3
+	strb r2, [r0]
+	movs r1, #192
+	ldr r0, [r6]
+	lsls r1, r1, #7
+	mov r10, r2
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #128
+	ldr r0, [r6]
+	lsls r1, r1, #6
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #160
+	movs r2, #80
+	ldr r0, [r6]
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #2
+	adds r1, #255
+	movs r2, #0
+	ldr r0, [r6]
+	bl Func_020032c0
+	ldr r0, [r6]
+	movs r1, #0
+	movs r2, #20
+	bl Func_020032b0
+	movs r1, #176
+	movs r2, #0
+	movs r0, #10
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #128
+	ldr r0, [r6]
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #8
+	mov r1, r9
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #192
+	movs r0, #6
+	lsls r1, r1, #7
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #192
+	movs r2, #0
+	movs r0, #5
+	lsls r1, r1, #7
+	bl Func_020032b0
+	movs r0, #10
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #5
+	mov r1, r8
+	movs r2, #40
+	bl Func_020032b0
+	movs r1, #10
+	movs r2, #20
+	adds r1, #255
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #160
+	movs r2, #20
+	movs r0, #6
+	lsls r1, r1, #8
+	bl Func_020032b0
+	movs r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r2, #0
+	movs r0, #8
+	mov r1, r9
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #5
+	mov r1, r8
+	movs r2, #0
+	bl Func_020032b0
+	ldr r0, [r6]
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r0, #6
+	mov r1, r8
+	movs r2, #20
+	bl Func_020032b0
+	movs r2, #0
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #5
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	ldr r0, [r6]
+	movs r1, #3
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #10
+	ldr r1, .L_0200abc8
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #184
+	movs r2, #128
+	movs r0, #10
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r0, #10
+	movs r1, #0
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #0
+	movs r0, #6
+	bl Func_020032c0
+	movs r1, #128
+	movs r2, #0
+	lsls r1, r1, #6
+	movs r0, #6
+	bl Func_020032b0
+	movs r0, #6
+	bl Object_RefreshSelectorById
+	movs r0, #160
+	lsls r0, r0, #7
+	adds r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #8
+	mov r1, r9
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	movs r0, #5
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #128
+	ldr r0, [r6]
+	lsls r1, r1, #6
+	movs r2, #0
+	bl Func_020032b0
+	movs r1, #200
+	movs r2, #132
+	movs r0, #10
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r2, #0
+	movs r0, #10
+	movs r1, #0
+	bl Func_020032b0
+	movs r0, #8
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #132
+	movs r2, #0
+	lsls r1, r1, #1
+	movs r0, #10
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #10
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #153
+	movs r1, #152
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #153
+	adds r1, #51
+	bl Func_020032d0
+	movs r0, #198
+	movs r1, #1
+	movs r2, #234
+	movs r3, #1
+	lsls r0, r0, #17
+	negs r1, r1
+	lsls r2, r2, #16
+	bl Func_020032d8
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #5
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #6
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #8
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	adds r2, #102
+	ldr r0, [r6]
+	adds r1, #204
+	bl ObjectMotion_SetSpeedParameters
+	ldr r3, .L_0200abc4
+	adds r5, r7, #0
+	adds r5, #100
+	strh r3, [r5]
+	ldr r1, .L_0200abcc
+	movs r0, #8
+	bl ObjectMotion_EnableActionAndSetCallback
+	ldr r1, .L_0200abd0
+	movs r0, #5
+	bl ObjectMotion_EnableActionAndSetCallback
+	ldr r0, [r6]
+	ldr r1, .L_0200abd4
+	bl ObjectMotion_EnableActionAndSetCallback
+	ldr r1, .L_0200abd8
+	movs r0, #6
+	bl ObjectMotion_EnableActionAndSetCallback
+	b .L_0200abdc
+	.2byte 0x0000
+.L_0200abc4:
 	.4byte 0x00000000
-	.2byte 0x9999
-	.2byte 0x0001
-	push	{r2, r3, r4, r5, r7, lr}
-	lsls	r0, r0, #8
-	push	{r2, r4, r5, lr}
-	lsls	r0, r0, #8
-	.2byte 0xb600
-	lsls	r0, r0, #8
-	push	{r3, r4, r5, r6, lr}
-	lsls	r0, r0, #8
-.L_02002bdc:
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r2, #0
-	ldrsh	r3, [r5, r2]
-	cmp	r3, #0
-	beq.n	.L_02002bdc
-	bl 0x0200b2e0
-	movs	r1, #128
-	movs	r2, #20
-	lsls	r1, r1, #1
-	movs	r0, #5
-	bl 0x0200b2c0
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #5
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r0, #128
-	lsls	r0, r0, #5
-	adds	r0, #6
-	movs	r1, #0
-	bl 0x0200b2a0
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200b2a0
-	movs	r0, #13
-	bl 0x0200b2e8
-	add	sp, #28
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7, pc}
+.L_0200abc8:
+	.4byte 0x00019999
+.L_0200abcc:
+	.4byte Data_020035bc
+.L_0200abd0:
+	.4byte Data_02003534
+.L_0200abd4:
+	.4byte Data_02003600
+.L_0200abd8:
+	.4byte Data_02003578
+.L_0200abdc:
+	movs r0, #1
+	bl Task_Wait
+	movs r2, #0
+	ldrsh r3, [r5, r2]
+	cmp r3, #0
+	beq .L_0200abdc
+	bl Func_020032e0
+	movs r1, #128
+	movs r2, #20
+	lsls r1, r1, #1
+	movs r0, #5
+	bl Func_020032c0
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #5
+	movs r1, #0
+	bl Func_020032a0
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #6
+	movs r1, #0
+	bl Func_020032a0
+	movs r1, #0
+	movs r0, #8
+	bl Func_020032a0
+	movs r0, #13
+	bl Func_020032e8
+	add sp, #28
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 	.section .text.x0200ac64,"ax",%progbits
-	push	{r5, lr}
-	bl 0x0200ac30
-	bl 0x0200b1b8
-	movs	r0, #0
-	bl 0x0200b310
-	movs	r0, #1
-	movs	r1, #1
-	movs	r2, #1
-	negs	r1, r1
-	negs	r2, r2
-	movs	r3, #0
-	negs	r0, r0
-	bl 0x0200b2d8
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r0, #192
-	movs	r1, #1
-	movs	r2, #182
-	negs	r1, r1
-	lsls	r2, r2, #18
-	movs	r3, #0
-	lsls	r0, r0, #17
-	bl 0x0200b2d8
-	movs	r0, #1
-	bl 0x0200b138
-	ldr	r3, [pc, #532]
-	movs	r2, #133
-	lsls	r2, r2, #2
-	adds	r5, r3, r2
-	movs	r1, #41
-	ldr	r0, [r5, #0]
-	bl 0x0200b240
-	movs	r0, #1
-	bl 0x0200b138
-	ldr	r0, [r5, #0]
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r1, #192
-	movs	r2, #182
-	ldr	r0, [r5, #0]
-	lsls	r1, r1, #17
-	lsls	r2, r2, #18
-	bl 0x0200b228
-	movs	r1, #192
-	ldr	r2, [pc, #480]
-	lsls	r1, r1, #17
-	movs	r0, #11
-	bl 0x0200b228
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200b180
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200ac34
-	bl 0x0200b2f8
-	bl 0x0200b308
-	movs	r0, #10
-	bl 0x0200b138
-	bl 0x0200ac38
-	bl 0x0200ac30
-	movs	r1, #2
-	ldr	r0, [r5, #0]
-	bl 0x0200b268
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200ac34
-	bl 0x0200ac38
-	bl 0x0200ac30
-	movs	r1, #42
-	ldr	r0, [r5, #0]
-	bl 0x0200b240
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200ac34
-	bl 0x0200ac38
-	bl 0x0200ac30
-	movs	r1, #1
-	ldr	r0, [r5, #0]
-	bl 0x0200b240
-	ldr	r0, [r5, #0]
-	bl 0x0200b1d8
-	movs	r1, #1
-	bl 0x0200b198
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r2, #20
-	movs	r1, #4
-	ldr	r0, [r5, #0]
-	bl 0x0200b258
-	ldr	r0, [pc, #344]
-	bl 0x0200b288
-	movs	r1, #0
-	movs	r0, #11
-	bl 0x0200b290
-	movs	r0, #1
-	bl 0x0200b138
-	ldr	r0, [r5, #0]
-	movs	r1, #0
-	bl 0x0200b1d0
-	ldr	r3, [r5, #0]
-	cmp	r0, #0
-	bne.n	.L_02002e3c
-	adds	r0, r3, #0
-	bl 0x0200b250
-	movs	r1, #45
-	ldr	r0, [r5, #0]
-	bl 0x0200b240
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200ac34
-	movs	r0, #50
-	bl 0x0200b1b0
-	bl 0x0200ac30
-	movs	r1, #46
-	ldr	r0, [r5, #0]
-	bl 0x0200b240
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200ac34
-	movs	r0, #50
-	bl 0x0200b1b0
-	bl 0x0200ac30
-	movs	r1, #0
-	movs	r0, #11
-	bl 0x0200b2a0
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r1, #3
-	ldr	r0, [r5, #0]
-	bl 0x0200b248
-	bl 0x0200ac34
-	movs	r0, #20
-	bl 0x0200b1b0
-	bl 0x0200ac30
-	movs	r1, #47
-	ldr	r0, [r5, #0]
-	bl 0x0200b240
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200ac34
-	movs	r0, #50
-	bl 0x0200b1b0
-	bl 0x0200ac30
-	movs	r1, #48
-	ldr	r0, [r5, #0]
-	bl 0x0200b240
-	movs	r0, #1
-	bl 0x0200b138
-	bl 0x0200ac34
-	movs	r0, #50
-	bl 0x0200b1b0
-	bl 0x0200ac30
-	movs	r1, #0
-	movs	r0, #11
-	bl 0x0200b2a0
-	movs	r0, #1
-	bl 0x0200b138
-	ldr	r0, [r5, #0]
-	movs	r1, #3
-	bl 0x0200b248
-	b.n	.L_02002e94
-.L_02002e3c:
-	adds	r0, r3, #0
-	bl 0x0200b250
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #108]
-	movs	r3, #226
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	movs	r1, #204
-	adds	r3, #2
-	strh	r3, [r2, #0]
-	movs	r2, #204
-	lsls	r1, r1, #7
-	lsls	r2, r2, #6
-	ldr	r0, [r5, #0]
-	adds	r1, #102
-	adds	r2, #51
-	bl 0x0200b1e0
-	movs	r2, #128
-	movs	r1, #192
-	lsls	r2, r2, #2
-	lsls	r1, r1, #1
-	adds	r2, #234
-	ldr	r0, [r5, #0]
-	bl 0x0200b218
-	bl 0x0200ac34
-	movs	r0, #20
-	bl 0x0200b1b0
-	bl 0x0200ac30
-	movs	r0, #11
-	movs	r1, #0
-	bl 0x0200b2a0
-	ldr	r0, [r5, #0]
-	movs	r1, #3
-	bl 0x0200b248
-.L_02002e94:
-	movs	r1, #0
-	movs	r2, #0
-	movs	r0, #11
-	bl 0x0200b228
-	movs	r0, #48
-	adds	r0, #255
-	bl 0x0200b160
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #68
-	bl 0x0200b158
-	bl 0x0200b1c0
-	bl 0x0200ac34
-	pop	{r5, pc}
+	.global Func_02002c64
+	.thumb_func
+Func_02002c64:
+	push {r5, lr}
+	bl FelixWake_BeginStep
+	bl Func_020031b8
+	movs r0, #0
+	bl Func_02003310
+	movs r0, #1
+	movs r1, #1
+	movs r2, #1
+	negs r1, r1
+	negs r2, r2
+	movs r3, #0
+	negs r0, r0
+	bl Func_020032d8
+	movs r0, #1
+	bl Task_Wait
+	movs r0, #192
+	movs r1, #1
+	movs r2, #182
+	negs r1, r1
+	lsls r2, r2, #18
+	movs r3, #0
+	lsls r0, r0, #17
+	bl Func_020032d8
+	movs r0, #1
+	bl Task_Wait
+	ldr r3, .L_0200aebc
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r3, r2
+	movs r1, #41
+	ldr r0, [r5]
+	bl Engine_ActorSetAnimation
+	movs r0, #1
+	bl Task_Wait
+	ldr r0, [r5]
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #1
+	bl Task_Wait
+	movs r1, #192
+	movs r2, #182
+	ldr r0, [r5]
+	lsls r1, r1, #17
+	lsls r2, r2, #18
+	bl Func_02003228
+	movs r1, #192
+	ldr r2, .L_0200aec0
+	lsls r1, r1, #17
+	movs r0, #11
+	bl Func_02003228
+	movs r0, #1
+	bl Task_Wait
+	bl Func_02003180
+	movs r0, #1
+	bl Task_Wait
+	bl FelixWake_EndStep
+	bl Event_SetStatus1c6
+	bl Event_WaitValue1c8Frames
+	movs r0, #10
+	bl Task_Wait
+	bl FelixWake_WaitForButton
+	bl FelixWake_BeginStep
+	movs r1, #2
+	ldr r0, [r5]
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #1
+	bl Task_Wait
+	bl FelixWake_EndStep
+	bl FelixWake_WaitForButton
+	bl FelixWake_BeginStep
+	movs r1, #42
+	ldr r0, [r5]
+	bl Engine_ActorSetAnimation
+	movs r0, #1
+	bl Task_Wait
+	bl FelixWake_EndStep
+	bl FelixWake_WaitForButton
+	bl FelixWake_BeginStep
+	movs r1, #1
+	ldr r0, [r5]
+	bl Engine_ActorSetAnimation
+	ldr r0, [r5]
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildField26
+	movs r0, #1
+	bl Task_Wait
+	movs r2, #20
+	movs r1, #4
+	ldr r0, [r5]
+	bl ObjectMotion_Launch
+	ldr r0, .L_0200aec4
+	bl Func_02003288
+	movs r1, #0
+	movs r0, #11
+	bl Func_02003290
+	movs r0, #1
+	bl Task_Wait
+	ldr r0, [r5]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	ldr r3, [r5]
+	cmp r0, #0
+	bne .L_0200ae3c
+	adds r0, r3, #0
+	bl ObjectMotion_WaitForAnimationChange
+	movs r1, #45
+	ldr r0, [r5]
+	bl Engine_ActorSetAnimation
+	movs r0, #1
+	bl Task_Wait
+	bl FelixWake_EndStep
+	movs r0, #50
+	bl Battle_WaitMode0
+	bl FelixWake_BeginStep
+	movs r1, #46
+	ldr r0, [r5]
+	bl Engine_ActorSetAnimation
+	movs r0, #1
+	bl Task_Wait
+	bl FelixWake_EndStep
+	movs r0, #50
+	bl Battle_WaitMode0
+	bl FelixWake_BeginStep
+	movs r1, #0
+	movs r0, #11
+	bl Func_020032a0
+	movs r0, #1
+	bl Task_Wait
+	movs r1, #3
+	ldr r0, [r5]
+	bl Motion_SetModeAndWaitAnimation
+	bl FelixWake_EndStep
+	movs r0, #20
+	bl Battle_WaitMode0
+	bl FelixWake_BeginStep
+	movs r1, #47
+	ldr r0, [r5]
+	bl Engine_ActorSetAnimation
+	movs r0, #1
+	bl Task_Wait
+	bl FelixWake_EndStep
+	movs r0, #50
+	bl Battle_WaitMode0
+	bl FelixWake_BeginStep
+	movs r1, #48
+	ldr r0, [r5]
+	bl Engine_ActorSetAnimation
+	movs r0, #1
+	bl Task_Wait
+	bl FelixWake_EndStep
+	movs r0, #50
+	bl Battle_WaitMode0
+	bl FelixWake_BeginStep
+	movs r1, #0
+	movs r0, #11
+	bl Func_020032a0
+	movs r0, #1
+	bl Task_Wait
+	ldr r0, [r5]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	b .L_0200ae94
+.L_0200ae3c:
+	adds r0, r3, #0
+	bl ObjectMotion_WaitForAnimationChange
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	movs r1, #204
+	adds r3, #2
+	strh r3, [r2]
+	movs r2, #204
+	lsls r1, r1, #7
+	lsls r2, r2, #6
+	ldr r0, [r5]
+	adds r1, #102
+	adds r2, #51
+	bl ObjectMotion_SetSpeedParameters
+	movs r2, #128
+	movs r1, #192
+	lsls r2, r2, #2
+	lsls r1, r1, #1
+	adds r2, #234
+	ldr r0, [r5]
+	bl ObjectMotion_SetPositionAndReset
+	bl FelixWake_EndStep
+	movs r0, #20
+	bl Battle_WaitMode0
+	bl FelixWake_BeginStep
+	movs r0, #11
+	movs r1, #0
+	bl Func_020032a0
+	ldr r0, [r5]
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+.L_0200ae94:
+	movs r1, #0
+	movs r2, #0
+	movs r0, #11
+	bl Func_02003228
+	movs r0, #48
+	adds r0, #255
+	bl Func_02003160
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #68
+	bl Func_02003158
+	bl Func_020031c0
+	bl FelixWake_EndStep
+	pop {r5, pc}
 	.2byte 0x0000
-	.4byte 0x02000240
+.L_0200aebc:
+	.4byte gPartyState
+.L_0200aec0:
 	.4byte 0x02be0000
-	.2byte 0x169e
-	.2byte 0x0000
+.L_0200aec4:
+	.4byte 0x0000169e
+	.section .text.x0200aec8,"ax",%progbits
 	.global Func_02002ec8
 	.thumb_func
 Func_02002ec8:
-	push	{lr}
-	bl 0x0200953c
-	movs	r1, #200
-	lsls	r1, r1, #4
-	ldr	r0, [pc, #156]
-	bl 0x0200b140
-	movs	r1, #144
-	ldr	r0, [pc, #152]
-	lsls	r1, r1, #3
-	bl 0x0200b140
-	ldr	r3, [pc, #148]
-	movs	r0, #241
-	lsls	r0, r0, #1
-	adds	r3, r3, r0
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	subs	r3, #2
-	cmp	r3, #11
-	bhi.n	.L_02002f6a
-	ldr	r2, [pc, #132]
-	lsls	r3, r3, #2
-	ldr	r3, [r3, r2]
-	mov	pc, r3
-	.4byte 0x0200af2c
-	.4byte 0x0200af6a
-	.4byte 0x0200af3e
-	.4byte 0x0200af6a
-	.4byte 0x0200af6a
-	.4byte 0x0200af6a
-	.4byte 0x0200af6a
-	.4byte 0x0200af6a
-	.4byte 0x0200af6a
-	.4byte 0x0200af5a
-	.4byte 0x0200af60
-	.4byte 0x0200af66
-	.4byte 0x30ff200a
-	.4byte 0xf90ef000
-	.4byte 0xd1022800
-	.4byte 0xf0002001
-	.4byte 0x490ef935
-	.4byte 0x20f24b0f
-	.4byte 0x180a0040
-	.4byte 0x23f38013
-	.4byte 0x18ca005b
-	.4byte 0x80132301
-	.4byte 0xf83ef000
-	.4byte 0xf7fee007
-	.4byte 0xe004fbbd
-	.4byte 0xffbef7fe
-	.4byte 0xf7ffe001
-	.2byte 0xf9cd
-.L_02002f6a:
-	movs	r0, #0
-	pop	{pc}
+	push {lr}
+	bl Func_0200153c
+	movs r1, #200
+	lsls r1, r1, #4
+	ldr r0, .L_0200af70
+	bl Func_02003140
+	movs r1, #144
+	ldr r0, .L_0200af74
+	lsls r1, r1, #3
+	bl Func_02003140
+	ldr r3, .L_0200af78
+	movs r0, #241
+	lsls r0, r0, #1
+	adds r3, r3, r0
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	subs r3, #2
+	cmp r3, #11
+	bhi .L_0200af6a
+	ldr r2, .L_0200af7c
+	lsls r3, r3, #2
+	ldr r3, [r3, r2]
+	mov pc, r3
+.L_0200aefc:
+	.4byte .L_0200af2c
+	.4byte .L_0200af6a
+	.4byte .L_0200af3e
+	.4byte .L_0200af6a
+	.4byte .L_0200af6a
+	.4byte .L_0200af6a
+	.4byte .L_0200af6a
+	.4byte .L_0200af6a
+	.4byte .L_0200af6a
+	.4byte .L_0200af5a
+	.4byte .L_0200af60
+	.4byte .L_0200af66
+.L_0200af2c:
+	movs r0, #10
+	adds r0, #255
+	bl Func_02003150
+	cmp r0, #0
+	bne .L_0200af3e
+	movs r0, #1
+	bl Func_020031a8
+.L_0200af3e:
+	ldr r1, .L_0200af78
+	ldr r3, .L_0200af80
+	movs r0, #242
+	lsls r0, r0, #1
+	adds r2, r1, r0
+	strh r3, [r2]
+	movs r3, #243
+	lsls r3, r3, #1
+	adds r2, r1, r3
+	movs r3, #1
+	strh r3, [r2]
+	bl Func_02002fd4
+	b .L_0200af6a
+.L_0200af5a:
+	bl Func_020016d8
+	b .L_0200af6a
+.L_0200af60:
+	bl Func_02001ee0
+	b .L_0200af6a
+.L_0200af66:
+	bl Func_02002304
+.L_0200af6a:
+	movs r0, #0
+	pop {pc}
 	.2byte 0x0000
-	.4byte 0x02009559
-	.4byte 0x020095a1
-	.4byte 0x02000240
-	.4byte 0x0200aefc
-	.2byte 0x000c
-	.2byte 0x0000
+.L_0200af70:
+	.4byte Func_02001558
+.L_0200af74:
+	.4byte Func_020015a0
+.L_0200af78:
+	.4byte gPartyState
+.L_0200af7c:
+	.4byte .L_0200aefc
+.L_0200af80:
+	.4byte 0x0000000c
 	.section .text.x0200af88,"ax",%progbits
-	push	{r5, r6, lr}
-	adds	r5, r0, #0
-	bl 0x0200b1d8
-	adds	r6, r0, #0
-	adds	r0, r5, #0
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r3, #128
-	ldr	r2, [pc, #40]
-	lsls	r3, r3, #7
-	strh	r3, [r6, #6]
-	adds	r3, r6, #0
-	adds	r3, #85
-	strb	r2, [r3, #0]
-	movs	r1, #192
-	ldr	r3, [r6, #8]
-	lsls	r1, r1, #12
-	adds	r3, r3, r1
-	str	r3, [r6, #8]
-	movs	r3, #128
-	lsls	r3, r3, #13
-	str	r3, [r6, #12]
-	adds	r3, r6, #0
-	adds	r3, #89
-	strb	r2, [r3, #0]
-	movs	r3, #192
-	ldr	r2, [r6, #80]
-	lsls	r3, r3, #8
-	strh	r3, [r2, #18]
-	b.n	.L_02002fd0
+	.global Func_02002f88
+	.thumb_func
+Func_02002f88:
+	push {r5, r6, lr}
+	adds r5, r0, #0
+	bl Object_GetById
+	adds r6, r0, #0
+	adds r0, r5, #0
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r3, #128
+	ldr r2, .L_0200afcc
+	lsls r3, r3, #7
+	strh r3, [r6, #6]
+	adds r3, r6, #0
+	adds r3, #85
+	strb r2, [r3]
+	movs r1, #192
+	ldr r3, [r6, #8]
+	lsls r1, r1, #12
+	adds r3, r3, r1
+	str r3, [r6, #8]
+	movs r3, #128
+	lsls r3, r3, #13
+	str r3, [r6, #12]
+	adds r3, r6, #0
+	adds r3, #89
+	strb r2, [r3]
+	movs r3, #192
+	ldr r2, [r6, #80]
+	lsls r3, r3, #8
+	strh r3, [r2, #18]
+	b .L_0200afd0
+.L_0200afcc:
+	.4byte 0x00000000
+.L_0200afd0:
+	pop {r5, r6, pc}
 	.2byte 0x0000
+	.section .text.x0200afd4,"ax",%progbits
+	.global Func_02002fd4
+	.thumb_func
+Func_02002fd4:
+	push {r5, r6, lr}
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #99
+	sub sp, #8
+	bl Func_02003150
+	cmp r0, #0
+	bne .L_0200b044
+	movs r1, #208
+	movs r2, #170
+	movs r0, #8
+	lsls r1, r1, #17
+	lsls r2, r2, #18
+	bl Func_02003228
+	movs r3, #25
+	movs r2, #42
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r3, #1
+	movs r2, #2
+	movs r1, #32
+	movs r0, #38
+	bl Func_02003190
+	movs r0, #8
+	bl Object_GetById
+	adds r5, r0, #0
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r3, #128
+	ldr r2, .L_0200b040
+	lsls r3, r3, #7
+	strh r3, [r5, #6]
+	adds r3, r5, #0
+	adds r3, #85
+	strb r2, [r3]
+	movs r3, #192
+	lsls r3, r3, #12
+	str r3, [r5, #12]
+	adds r5, #89
+	strb r2, [r5]
+	movs r0, #8
+	movs r1, #5
+	bl Engine_ActorSetAnimation
+	b .L_0200b044
 	.2byte 0x0000
-.L_02002fd0:
-	pop	{r5, r6, pc}
+.L_0200b040:
+	.4byte 0x00000000
+.L_0200b044:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #100
+	bl Func_02003150
+	cmp r0, #0
+	bne .L_0200b0b0
+	movs r1, #144
+	movs r2, #186
+	movs r0, #5
+	lsls r1, r1, #17
+	lsls r2, r2, #18
+	bl Func_02003228
+	movs r3, #17
+	movs r2, #46
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r3, #1
+	movs r2, #2
+	movs r1, #33
+	movs r0, #38
+	bl Func_02003190
+	movs r0, #5
+	bl Object_GetById
+	adds r5, r0, #0
+	movs r0, #5
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	movs r3, #128
+	ldr r2, .L_0200b0ac
+	lsls r3, r3, #7
+	strh r3, [r5, #6]
+	adds r3, r5, #0
+	adds r3, #85
+	strb r2, [r3]
+	movs r3, #192
+	lsls r3, r3, #12
+	str r3, [r5, #12]
+	adds r5, #89
+	strb r2, [r5]
+	movs r0, #5
+	movs r1, #18
+	bl Engine_ActorSetAnimation
+	b .L_0200b0b0
 	.2byte 0x0000
-	push	{r5, r6, lr}
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #99
-	sub	sp, #8
-	bl 0x0200b150
-	cmp	r0, #0
-	bne.n	.L_02003044
-	movs	r1, #208
-	movs	r2, #170
-	movs	r0, #8
-	lsls	r1, r1, #17
-	lsls	r2, r2, #18
-	bl 0x0200b228
-	movs	r3, #25
-	movs	r2, #42
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #1
-	movs	r2, #2
-	movs	r1, #32
-	movs	r0, #38
-	bl 0x0200b190
-	movs	r0, #8
-	bl 0x0200b1d8
-	adds	r5, r0, #0
-	movs	r0, #8
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r3, #128
-	ldr	r2, [pc, #32]
-	lsls	r3, r3, #7
-	strh	r3, [r5, #6]
-	adds	r3, r5, #0
-	adds	r3, #85
-	strb	r2, [r3, #0]
-	movs	r3, #192
-	lsls	r3, r3, #12
-	str	r3, [r5, #12]
-	adds	r5, #89
-	strb	r2, [r5, #0]
-	movs	r0, #8
-	movs	r1, #5
-	bl 0x0200b240
-	b.n	.L_02003044
-	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0x0000
-.L_02003044:
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #100
-	bl 0x0200b150
-	cmp	r0, #0
-	bne.n	.L_020030b0
-	movs	r1, #144
-	movs	r2, #186
-	movs	r0, #5
-	lsls	r1, r1, #17
-	lsls	r2, r2, #18
-	bl 0x0200b228
-	movs	r3, #17
-	movs	r2, #46
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #1
-	movs	r2, #2
-	movs	r1, #33
-	movs	r0, #38
-	bl 0x0200b190
-	movs	r0, #5
-	bl 0x0200b1d8
-	adds	r5, r0, #0
-	movs	r0, #5
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	movs	r3, #128
-	ldr	r2, [pc, #32]
-	lsls	r3, r3, #7
-	strh	r3, [r5, #6]
-	adds	r3, r5, #0
-	adds	r3, #85
-	strb	r2, [r3, #0]
-	movs	r3, #192
-	lsls	r3, r3, #12
-	str	r3, [r5, #12]
-	adds	r5, #89
-	strb	r2, [r5, #0]
-	movs	r0, #5
-	movs	r1, #18
-	bl 0x0200b240
-	b.n	.L_020030b0
-	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0x0000
-.L_020030b0:
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #101
-	bl 0x0200b150
-	adds	r6, r0, #0
-	cmp	r6, #0
-	bne.n	.L_0200310a
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r1, #240
-	movs	r2, #162
-	adds	r5, r0, #0
-	lsls	r1, r1, #16
-	movs	r0, #6
-	lsls	r2, r2, #18
-	bl 0x0200b228
-	movs	r3, #14
-	movs	r2, #40
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #1
-	movs	r2, #2
-	movs	r0, #38
-	movs	r1, #34
-	bl 0x0200b190
-	movs	r1, #19
-	movs	r0, #6
-	bl 0x0200b240
-	movs	r0, #6
-	bl 0x0200b1d8
-	movs	r1, #0
-	bl 0x0200b198
-	adds	r3, r5, #0
-	adds	r3, #85
-	strb	r6, [r3, #0]
-	movs	r3, #192
-	lsls	r3, r3, #12
-	str	r3, [r5, #12]
-.L_0200310a:
-	movs	r3, #1
-	str	r3, [sp, #0]
-	str	r3, [sp, #4]
-	movs	r0, #72
-	movs	r1, #42
-	movs	r2, #75
-	movs	r3, #40
-	bl 0x0200b188
-	movs	r0, #1
-	bl 0x0200b138
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #68
-	bl 0x0200b150
-	cmp	r0, #0
-	bne.n	.L_02003134
-	bl 0x0200ac64
-.L_02003134:
-	add	sp, #8
-	pop	{r5, r6, pc}
+.L_0200b0ac:
+	.4byte 0x00000000
+.L_0200b0b0:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #101
+	bl Func_02003150
+	adds r6, r0, #0
+	cmp r6, #0
+	bne .L_0200b10a
+	movs r0, #6
+	bl Object_GetById
+	movs r1, #240
+	movs r2, #162
+	adds r5, r0, #0
+	lsls r1, r1, #16
+	movs r0, #6
+	lsls r2, r2, #18
+	bl Func_02003228
+	movs r3, #14
+	movs r2, #40
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r3, #1
+	movs r2, #2
+	movs r0, #38
+	movs r1, #34
+	bl Func_02003190
+	movs r1, #19
+	movs r0, #6
+	bl Engine_ActorSetAnimation
+	movs r0, #6
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildField26
+	adds r3, r5, #0
+	adds r3, #85
+	strb r6, [r3]
+	movs r3, #192
+	lsls r3, r3, #12
+	str r3, [r5, #12]
+.L_0200b10a:
+	movs r3, #1
+	str r3, [sp, #0]
+	str r3, [sp, #4]
+	movs r0, #72
+	movs r1, #42
+	movs r2, #75
+	movs r3, #40
+	bl Engine_MapCopyCellsTo
+	movs r0, #1
+	bl Task_Wait
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #68
+	bl Func_02003150
+	cmp r0, #0
+	bne .L_0200b134
+	bl Func_02002c64
+.L_0200b134:
+	add sp, #8
+	pop {r5, r6, pc}
 	.section .rodata.x0200b330,"a",%progbits
+	.global Data_02003330
+Data_02003330:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -4978,6 +5122,8 @@ Func_02002ec8:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_0200336c
+Data_0200336c:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -4993,6 +5139,8 @@ Func_02002ec8:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_020033a8
+Data_020033a8:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5015,6 +5163,8 @@ Func_02002ec8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_02003400
+Data_02003400:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5042,6 +5192,8 @@ Func_02002ec8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_0200346c
+Data_0200346c:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5072,6 +5224,8 @@ Func_02002ec8:
 	.4byte 0x00000023
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_020034e4
+Data_020034e4:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5082,6 +5236,8 @@ Func_02002ec8:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_0200350c
+Data_0200350c:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5092,6 +5248,8 @@ Func_02002ec8:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_02003534
+Data_02003534:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5109,6 +5267,8 @@ Func_02002ec8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_02003578
+Data_02003578:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5126,6 +5286,8 @@ Func_02002ec8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_020035bc
+Data_020035bc:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5143,6 +5305,8 @@ Func_02002ec8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_02003600
+Data_02003600:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5163,6 +5327,8 @@ Func_02002ec8:
 	.4byte 0x00000023
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_02003650
+Data_02003650:
 	.4byte 0x80010000
 	.4byte 0x00000017
 	.4byte 0x00000009
@@ -5220,6 +5386,8 @@ Func_02002ec8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_02003734
+Data_02003734:
 	.4byte 0x00000002
 	.4byte 0x00980000
 	.4byte 0x00000000
@@ -5243,6 +5411,8 @@ Func_02002ec8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_02003790
+Data_02003790:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5256,6 +5426,8 @@ Func_02002ec8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global Data_020037c4
+Data_020037c4:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5345,7 +5517,7 @@ gIdejimaEvents:
 gIdejimaEventsEntrance1:
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008641
+	.4byte Func_02000640
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -5355,26 +5527,26 @@ gIdejimaEventsWake:
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x00000003
-	.4byte 0x0863000a
-	.4byte 0x020080f1
+	.4byte Resource_Data012 + 0x33000a
+	.4byte Func_020000f0
 	.4byte 0x00000003
 	.4byte 0x0864000b
-	.4byte 0x020082b5
+	.4byte Func_020002b4
 	.4byte 0x00000003
 	.4byte 0x0865000c
-	.4byte 0x0200849d
+	.4byte Func_0200049c
 	.4byte 0x00008d15
 	.4byte 0xffff0408
-	.4byte 0x020080f1
+	.4byte Func_020000f0
 	.4byte 0x00008d15
 	.4byte 0xffff0405
-	.4byte 0x020082b5
+	.4byte Func_020002b4
 	.4byte 0x00000002
 	.4byte 0xffff0009
-	.4byte 0x020086a9
+	.4byte Func_020006a8
 	.4byte 0x00000002
 	.4byte 0x08670008
-	.4byte 0x02008d15
+	.4byte Func_02000d14
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

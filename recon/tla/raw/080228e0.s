@@ -50,7 +50,7 @@ InitializeAnimationObjects:
 	movs r2, #0
 	ldrsh r0, [r6, r2]
 	str r1, [sp, #0]
-	bl Func_080228bc
+	bl Animation_LookupValueByKey
 	ldr r1, [sp, #0]
 .L_08022942:
 	ldrb r3, [r5, #4]

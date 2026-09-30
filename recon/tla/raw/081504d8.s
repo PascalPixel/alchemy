@@ -341,7 +341,7 @@ Func_081504d8:
 	bl Func_08014de4
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #24]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, [r6, #8]
 	add r5, sp, #72
 	str r3, [r5]
@@ -353,7 +353,7 @@ Func_081504d8:
 	bl Func_08014de4
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #24]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	adds r0, r5, #0
 	bl SceneTransform_ApplyPosition
 	movs r3, #0

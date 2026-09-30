@@ -38,7 +38,7 @@ Func_080fe274:
 	movs r0, #0
 	movs r2, #30
 	movs r3, #20
-	bl Func_080383e8
+	bl UiWindow_DrawFrameFar
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #160
@@ -51,7 +51,7 @@ Func_080fe274:
 	strh r3, [r5]
 	bl Func_080f80c4
 	movs r0, #0
-	bl Func_080f80e0
+	bl UiWindow_InitializeWork
 	ldr r3, .L_080fe324
 	movs r2, #135
 	lsls r2, r2, #2
@@ -164,7 +164,7 @@ Func_080fe274:
 	movs r1, #0
 	movs r2, #30
 	movs r0, #0
-	bl Func_080383e8
+	bl UiWindow_DrawFrameFar
 	movs r0, #1
 	bl WaitFrames
 	bl Func_08038290
@@ -210,7 +210,7 @@ Func_080fe274:
 	movs r2, #30
 	movs r3, #20
 	movs r0, #0
-	bl Func_080383e8
+	bl UiWindow_DrawFrameFar
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock
 	mov r2, r11

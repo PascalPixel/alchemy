@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080201c0
+	.global Map_GetTerrainHeightFar
 	.thumb_func
-Func_080201c0:
+Map_GetTerrainHeightFar:
 	overlay_veneer Func_0802d45c
 	.global Func_080201c8
 	.thumb_func

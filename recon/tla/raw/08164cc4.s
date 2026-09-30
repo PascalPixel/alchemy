@@ -113,7 +113,7 @@ Func_08164cc4:
 	adds r6, #126
 .L_08164da4:
 	adds r0, r6, #0
-	bl Func_08020040
+	bl GetBattleEffectObject
 	ldr r1, [sp, #60]
 	ldr r3, [r1]
 	str r0, [r3, r5]
@@ -1350,7 +1350,7 @@ Func_08164cc4:
 	adds r1, #12
 	adds r0, r5, #0
 	ldr r7, .L_08165968
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	movs r1, #0
 	movs r2, #63
 	mov r8, r1

@@ -17,7 +17,7 @@ Func_08046414:
 	mov r8, r0
 	mov r10, r1
 	mov r11, r2
-	bl Func_08038eb0
+	bl RenderOutput_AcquireFree
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080464cc

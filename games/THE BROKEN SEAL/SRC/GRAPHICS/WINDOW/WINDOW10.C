@@ -17,11 +17,11 @@ struct ChooserMenu {
 };
 
 struct ChooserTextWork {
-    u8 reserved_000[0xea6];
+    u8 reserved_000[RENDER_MENU_BUSY_OFS];
     u8 menu_busy;
-    u8 reserved_ea7[0x40f];
+    u8 reserved_ea7[RENDER_COUNTER_OFS - RENDER_MENU_BUSY_OFS - 1];
     u16 resource;
-    u8 reserved_12b8[0x40];
+    u8 reserved_12b8[RENDER_RESULT_OFS + 4 - RENDER_COUNTER_OFS - 2];
     u8 text_busy;
 };
 
@@ -113,8 +113,6 @@ void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 he
   ofs = 0xC;
   UiWindow_SetRectPalette(((*((u16 *)(((u8 *)obj) + ofs))) + x) + 1, ((*((u16 *)(((u8 *)obj) + 0xE))) + y) + 1, width, height, palette);
 }
-
-#if defined(TBS_EDITION_EN)
 
 /* The other editions keep their code here in their scaffolds for now. */
 
@@ -234,4 +232,3 @@ s32 DjinnMenu_ShowHelp(void)
     return result;
 }
 
-#endif

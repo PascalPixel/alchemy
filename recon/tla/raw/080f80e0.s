@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080f80e0
+	.global UiWindow_InitializeWork
 	.thumb_func
-Func_080f80e0:
+UiWindow_InitializeWork:
 	movs r3, #192
 	lsls r3, r3, #18
 	sub sp, #4

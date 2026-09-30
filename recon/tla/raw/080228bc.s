@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080228bc
+	.global Animation_LookupValueByKey
 	.thumb_func
-Func_080228bc:
+Animation_LookupValueByKey:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

@@ -9,9 +9,9 @@
 	.thumb_func
 Func_080c82a8:
 	overlay_veneer Func_080d5bec
-	.global Func_080c82b0
+	.global Object_GetTriggerTileAheadOfCurrentFar
 	.thumb_func
-Func_080c82b0:
+Object_GetTriggerTileAheadOfCurrentFar:
 	overlay_veneer Func_080cc54c
 	.global Func_080c82b8
 	.thumb_func

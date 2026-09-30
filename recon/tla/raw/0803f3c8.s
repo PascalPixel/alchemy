@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f3c8
+	.global Menu_ConfirmSelection
 	.thumb_func
-Func_0803f3c8:
+Menu_ConfirmSelection:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

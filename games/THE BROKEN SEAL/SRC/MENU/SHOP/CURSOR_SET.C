@@ -18,9 +18,6 @@ void Shop_SetCursor(
     cursor->active = 0;
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct SpriteAttr {
     u16 y : 8;
     u16 affine : 2;
@@ -66,4 +63,3 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
         sprite->oam.y = sprite->y = y;
     }
 }
-#endif

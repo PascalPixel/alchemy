@@ -267,6 +267,7 @@ void FieldScene_RunFlag821Dialogue(void)
     Event_End();
 }
 
+/* Setting the small gem into the empty socket opens the gate. */
 void SoruIriguchi_SetSmallGem(void)
 {
     s32 message;
@@ -469,6 +470,9 @@ s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
     return 0;
 }
 
+/* Push the faced block and leader together, then refresh the current puzzle.
+ * The coordinate lookup and position lifetime follow the exact Biribino
+ * push-block family; Soru retains its own entrance-dependent flag updates. */
 void SoruIriguchi_PushFacedBlock(void)
 {
     struct FieldActor *leader;
@@ -741,6 +745,8 @@ void Scene_EnterSolSanctum(void)
     Event_End();
 }
 
+/* Sukureta suspects a hidden passage at the sanctum entrance, and the party
+ * decides whether to split up and search. */
 void Scene_SukuretaSuspectsHiddenPassage(void)
 {
     u8 *record;

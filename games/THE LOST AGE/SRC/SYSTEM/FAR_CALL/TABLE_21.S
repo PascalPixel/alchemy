@@ -5,14 +5,14 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080383e8
+	.global UiWindow_DrawFrameFar
 	.thumb_func
-Func_080383e8:
+UiWindow_DrawFrameFar:
 	overlay_veneer Func_0803a084
 	.global Func_080383f0
 	.thumb_func
 Func_080383f0:
-	overlay_veneer Func_0803911c
+	overlay_veneer UiWindow_EraseBorderRect
 	.global Link_DrawShiftedTilePairFar
 	.thumb_func
 Link_DrawShiftedTilePairFar:

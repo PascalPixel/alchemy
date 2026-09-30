@@ -73,7 +73,7 @@ Func_08151040:
 	mov r2, r10
 	mov r8, r0
 	ldr r0, [r2, #8]
-	bl Func_08118070
+	bl Battle_GetObjectTableValueFar
 	mov r4, r8
 	ldr r3, [r4, #12]
 	ldr r7, .L_081510f8
@@ -220,7 +220,7 @@ Func_08151040:
 	bl Func_08014de4
 	ldr r1, [sp, #8]
 	ldr r0, [sp, #24]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	mov r3, r10
 	ldr r2, [r3, #24]
 	movs r1, #0

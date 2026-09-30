@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080cacc0
+	.global ObjectTable_FindLastActiveId
 	.thumb_func
-Func_080cacc0:
+ObjectTable_FindLastActiveId:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

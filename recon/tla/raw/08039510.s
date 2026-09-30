@@ -5,7 +5,7 @@
 RenderOutput_Release:
 	push {r5, lr}
 	adds r5, r0, #0
-	bl Func_08038edc
+	bl RenderOutput_ReleaseFree
 	ldrb r3, [r5, #4]
 	cmp r3, #0
 	beq .L_08039540

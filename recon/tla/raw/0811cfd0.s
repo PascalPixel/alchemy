@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811cfd0
+	.global BattlePres_BuildOpponentEntries
 	.thumb_func
-Func_0811cfd0:
+BattlePres_BuildOpponentEntries:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

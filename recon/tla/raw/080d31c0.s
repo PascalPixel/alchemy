@@ -31,7 +31,7 @@ Func_080d31c0:
 	ldrb r0, [r3]
 	ldr r2, [r5, #16]
 	ldr r1, [r5, #8]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	ldr r3, [r5, #12]
 	ldr r2, [r5, #20]
 	str r0, [r5, #20]

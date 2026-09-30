@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
 
-#if defined(TBS_EDITION_EN)
 /* Exact (2026-09-30): complete 864-byte extent, 0 differing halfwords.
  * The ROM keeps several statement groups in source order where sched2
  * would otherwise hoist constants and argument loads: GCC 2.96 treats a
@@ -253,7 +252,6 @@ s32 Map_InitializePerspectiveScene(void)
     for (i = 255; i >= 0; i--)
         work->lines[i] = i;
 }
-#endif /* TBS_EDITION_EN */
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 

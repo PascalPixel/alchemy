@@ -267,7 +267,7 @@ Func_0802c240:
 	bl Func_08014de4
 	mov r1, r9
 	ldr r0, [sp, #32]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r7, .L_0802c4c8
 	ldrh r0, [r6]
 	ldr r3, [r7]

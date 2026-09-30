@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08118070
+	.global Battle_GetObjectTableValueFar
 	.thumb_func
-Func_08118070:
+Battle_GetObjectTableValueFar:
 	overlay_veneer Func_0811c37c
 	.global BattleMotion_ApproachTargetFar
 	.thumb_func

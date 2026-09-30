@@ -150,6 +150,8 @@ void Villager_AskAboutTheTravelers(void)
     Event_End();
 }
 
+/* The villager who shows off his psynergy by shaking the view. */
+
 /* Once the party has left the vale he only asks about the journey, one line
  * further for each of the two companions; before, he lifts the view up and
  * down for three seconds. */
@@ -216,6 +218,7 @@ void Villager_ShowOffPsynergy(void)
     Event_End();
 }
 
+/* The psynergy stone falling on the hut. */
 void SceneDialogue_RunFlagGatedMessageStep(void)
 {
     Event_Begin();
@@ -304,6 +307,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Event_End();
 }
 
+/* The villager who points the way the others went. */
 void Villager_PointTheWay(void)
 {
     Event_Begin();
@@ -318,6 +322,7 @@ void Villager_PointTheWay(void)
     Event_End();
 }
 
+/* Return visits, supplemental sequences and the entry state. */
 void Villager_WelcomeBack(void)
 {
     u32 i;
@@ -801,6 +806,9 @@ void HaidiaIe_RunScriptScene(void)
     Engine_EventEnd();
 }
 
+/* Stages the two moving actors around actor 25, sends actors 23, 24, 25 and
+ * the leader off on their own actions, then advances the area's scene state
+ * and records this house as the scene the party returns to. */
 void FieldScene_RunGroupChoreography(void)
 {
     extern u8 Data_0200ac00[];
@@ -902,6 +910,7 @@ void FieldScene_RunGroupChoreography(void)
     Engine_GameFlagSet(0x11a);
 }
 
+/* Scripted scenes and the paired effects they spawn. */
 void HaidiaIe_RunScene015B4(void)
 {
 

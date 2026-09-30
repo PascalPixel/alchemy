@@ -493,6 +493,9 @@ struct Registry {
     shift: u32,
     /// Names the script or another image gives a value.
     reserved: BTreeSet<String>,
+    /// Placeholders spelled for an address while another address has them,
+    /// such as a scaffold label that spells the byte after its own.
+    clashes: BTreeMap<String, u32>,
 }
 
 impl Registry {
@@ -532,6 +535,13 @@ impl Registry {
             }
         });
         self.define(address, name.clone(), is_thumb);
+        let here = self
+            .defined
+            .get(&address)
+            .is_some_and(|names| names.iter().any(|(defined, _)| *defined == name));
+        if !here {
+            self.clashes.insert(name.clone(), address);
+        }
         name
     }
 }
@@ -1144,6 +1154,17 @@ pub fn relist(input: &Input) -> Result<Output, String> {
             texts.insert(piece.start, text);
         }
     }
+    if !registry.clashes.is_empty() {
+        let list: Vec<String> = registry
+            .clashes
+            .iter()
+            .map(|(name, address)| format!("{name} for {address:08x}"))
+            .collect();
+        return Err(format!(
+            "placeholders another address already has: {}",
+            list.join(", ")
+        ));
+    }
     // Scaffolds: included data outside functions and reserved RAM, with
     // every name the registry defines inside them.
     let mut incbin = input.incbin.clone();
@@ -1426,6 +1447,58 @@ mod tests {
                 ],
             )]
         );
+    }
+
+    #[test]
+    fn a_placeholder_another_address_has_stops_the_relisting() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0x4800, // ldr r0, [pc, #0]: the word at 0x04
+            0x4770, // bx lr
+        ]);
+        bytes.extend(0x0800_0009u32.to_le_bytes()); // 0x04: the byte after 0x08
+        bytes.extend([1, 2, 3, 4]); // 0x08: included data
+        let input = Input {
+            image: Image {
+                bytes: &bytes,
+                base,
+            },
+            regions: vec![
+                region(
+                    base,
+                    base + 8,
+                    RegionKind::Listing { regenerate: true },
+                    "08000000",
+                    ".text",
+                ),
+                region(
+                    base + 8,
+                    base + 0x0c,
+                    RegionKind::Incbin { scaffold: 0 },
+                    "unidentified",
+                    ".unidentified.08000008",
+                ),
+            ],
+            // An earlier tool put the name for 0x08000009 on 0x08000008.
+            names: vec![Name {
+                name: "Data_08000009".into(),
+                address: base + 8,
+                thumb: false,
+                absolute: false,
+            }],
+            external: BTreeSet::new(),
+            incbin: vec![scaffold::parse(
+                "\t.section .unidentified.08000008,\"a\"\n\t.global Data_08000009\nData_08000009:\n\t.incbin \"baserom.gba\", 0x00000008, 0x00000004\n",
+            )
+            .unwrap()],
+            space: Vec::new(),
+            rom_end: base + bytes.len() as u32,
+            foreign: Vec::new(),
+            spell: base,
+            pieces: Pieces::Files,
+        };
+        let error = relist(&input).err().unwrap();
+        assert!(error.contains("Data_08000009 for 08000009"), "{error}");
     }
 
     #[test]

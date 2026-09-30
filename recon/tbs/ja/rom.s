@@ -1006,12 +1006,6 @@ InventoryMenu_ShowModalMessage:
 	.thumb_func
 RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x00099454, 0x00000d74
-	.section .rom.0009a4d0, "ax"
-	.global ItemMenu_RunOwnerSelection
-	.type ItemMenu_RunOwnerSelection, %function
-	.thumb_func
-ItemMenu_RunOwnerSelection:
-	.incbin "baserom.gba", 0x0009a4d0, 0x000002d0
 	.section .rom.0009b008, "ax"
 	.incbin "baserom.gba", 0x0009b008, 0x00000330
 	.section .rom.0009b6b4, "ax"
@@ -1112,7 +1106,13 @@ Data_080aedcc:
 	.incbin "baserom.gba", 0x000a5cec, 0x00000440
 	.global Data_080af20c
 Data_080af20c:
-	.incbin "baserom.gba", 0x000a612c, 0x00000024
+	.incbin "baserom.gba", 0x000a612c, 0x00000014
+	.global ItemMenu_ArrangeKeysString
+ItemMenu_ArrangeKeysString:
+	.incbin "baserom.gba", 0x000a6140, 0x00000008
+	.global ItemMenu_EquipmentKeyString
+ItemMenu_EquipmentKeyString:
+	.incbin "baserom.gba", 0x000a6148, 0x00000008
 	.global Menu_PlusSignString
 Menu_PlusSignString:
 	.incbin "baserom.gba", 0x000a6150, 0x00000004

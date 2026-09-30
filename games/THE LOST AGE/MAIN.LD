@@ -622,7 +622,7 @@ SECTIONS
         "*/recon/tla/raw/080b0d58.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_3.o"(.text)
         "*/recon/tla/raw/080b0f5a.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080b0f5c.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GAME/DJINN/SUM_OWNER_COUNTS.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_4.o"(.text)
         "*/recon/tla/raw/080b1002.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080b1004.o"(.text .rodata .data .padding)

@@ -1,3 +1,7 @@
+/*
+ * Draft: RollWeaponUnleash does not yet match; 2 halfwords differ from ☀️'s C, first at +0x30 (movs r1, #100).
+ * Links as recon/tla/raw/080b04bc.s.
+ */
 #include "INVENTORY.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

@@ -45,11 +45,11 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Camera_ApplyShake(s32 a, s32 b);
-extern u16 Data_080edebe[];
+extern u16 BattleFx_GlintCellOffsets[];
 
 extern u8 Data_080eebd6[];      /* per-group [4] byte table: gate/count selectors */
-extern u8 Data_080edeca[];      /* per-mask byte table (announce geometry A) */
-extern u8 Data_080eded0[];      /* per-mask byte table (announce geometry B) */
+extern u8 BattleFx_GlintCellWidths[];      /* per-mask byte table (announce geometry A) */
+extern u8 BattleFx_GlintCellHeights[];      /* per-mask byte table (announce geometry B) */
 extern u8 Data_080eebe2[];     /* random draw-mode flags */
 extern u8 Data_080eebe6[];      /* effect-variant draw selector */
 extern u16 ParticleStreams_CellOffsets[];     /* per-step halfword table (shared w/ 080d82b0.c) */
@@ -209,20 +209,20 @@ void Region_080ddde0(struct BattleEffectArgument *table_param)
                             offset = Math_ModU(random, range);
                             y = pos.y - offset;
                             range -= offset;
-                            y = y - Data_080eded0[mask] / 2 + 8;
+                            y = y - BattleFx_GlintCellHeights[mask] / 2 + 8;
                             cnt++;
                             random = Random16();
                             range++;
                             x = pos.x + Math_ModU(random, range);
                             x -= range / 2;
-                            tmp7 = Data_080edeca[mask];
+                            tmp7 = BattleFx_GlintCellWidths[mask];
                             x = x - tmp7 / 2;
                             random = Random16();
                             table = work->effect;
                             tmp5 = 3 & random;
                             BattleEffect_LoadWork(47, 7, 7, 3 | Data_080eebe2[tmp5], *(Data_080eebe6 + table->variant));
                             draw47 = *(DrawRectangleFn *)0x03001f0c;
-                            draw47(draw_destination, (u8 *)work + Data_080edebe[mask], x, y, *(mask + Data_080edeca), Data_080eded0[mask]);
+                            draw47(draw_destination, (u8 *)work + BattleFx_GlintCellOffsets[mask], x, y, *(mask + BattleFx_GlintCellWidths), BattleFx_GlintCellHeights[mask]);
                             Runtime_ReleaseHeapBlock(47);
                             table = work->effect;
                             tmp = table->variant;

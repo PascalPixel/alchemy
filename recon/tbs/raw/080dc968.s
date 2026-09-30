@@ -63,7 +63,7 @@ Func_080dc968:
 	bl	Engine_ScheduleCallback
 	movs	r1, #0
 	movs	r0, #0
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	b.n	.L_080dca08
 	.4byte 0x00000100
 	.4byte 0x00000000
@@ -153,7 +153,7 @@ Func_080dc968:
 	str	r3, [r0, #16]
 	movs	r1, #1
 	movs	r0, #0
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	ldr	r3, [pc, #44]
 	movs	r2, #128
 	lsls	r2, r2, #19

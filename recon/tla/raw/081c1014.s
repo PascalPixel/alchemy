@@ -191,6 +191,9 @@ Func_081c1158:
 	movs	r0, r0
 	.2byte 0x5840
 	.2byte 0x0200
+	.global Func_081c117c
+	.thumb_func
+Func_081c117c:
 	ldr	r3, [pc, #4]
 	ldrh	r0, [r3, #0]
 	bx	lr

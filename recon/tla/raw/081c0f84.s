@@ -53,6 +53,9 @@ Func_081c0fd0:
 	movs	r0, r0
 	.2byte 0x5800
 	.2byte 0x0200
+	.global Func_081c0fdc
+	.thumb_func
+Func_081c0fdc:
 	push	{r5, r6, lr}
 	ldr	r6, [pc, #28]
 	movs	r5, #0

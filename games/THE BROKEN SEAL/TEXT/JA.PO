@@ -8483,7 +8483,7 @@ msgctxt "message"
 msgid "02118"
 msgstr "{argument_actor_name:234} にげだした!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "02119"
 msgstr "しかし にげられなかった!"
 
@@ -9251,7 +9251,7 @@ msgctxt "message"
 msgid "02310"
 msgstr "ゲームチケット"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "02311"
 msgstr "ベット"
 
@@ -12963,7 +12963,7 @@ msgctxt "MsgPanelStatLabel"
 msgid "03238"
 msgstr "こうげき"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "03239"
 msgstr "ぼうぎょ"
 
@@ -15959,7 +15959,7 @@ msgctxt "message"
 msgid "03987"
 msgstr "ぎょるぎす"
 
-msgctxt "message"
+msgctxt "MsgPonderEllipsis"
 msgid "03988"
 msgstr "・{pause_20_skippable}・{pause_20_skippable}・{pause_20_skippable}。{end_wait}"
 

@@ -3,6 +3,7 @@
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 MsgItemName[];
 extern u8 MsgStatLabel[];
+extern char MsgItemMenuEmpty;
 extern u8 gMenuWork[];
 void UiWindow_ClearInteriorTilesFar();
 void UiText_DrawCharacterAtOffsetFar();
@@ -52,7 +53,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
     Menu_SetPageIcons(5, p8, a0, 119, 52);
     Menu_DrawPageIndicator(a0, *(s32 *)(a2 + 20), 5, *(s32 *)(a2 + 8), 28);
     if (*(u8 *)((0x218 + p9)) == 0) {
-        Call4(UiText_DrawCharacterAtOffsetFar, 0xad7, a0, 120, 8);
+        Call4(UiText_DrawCharacterAtOffsetFar, (s32)&MsgItemMenuEmpty, a0, 120, 8);
         v6 = r10;
     } else {
         v6 = 0;

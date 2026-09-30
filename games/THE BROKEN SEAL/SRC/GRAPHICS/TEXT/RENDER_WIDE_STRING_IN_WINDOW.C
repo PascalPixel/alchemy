@@ -1,7 +1,8 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
 struct TextWork {
-    u8 unknown_000[0xea3];
+    u8 unknown_000[RENDER_DIRTY_OFS];
     u8 dirty;
     u8 unknown_ea4[0xc];
     u16 entries[0x200];

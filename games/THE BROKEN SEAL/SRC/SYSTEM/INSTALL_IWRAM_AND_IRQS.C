@@ -38,7 +38,13 @@ void Runtime_InstallIwramAndIrqs(void)
     *(volatile u16 *)0x04000004 = zero;
     value = 0xc3ff;
     *(volatile u16 *)0x04000132 = value;
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    /* The European editions also take the Game Pak interrupt. */
+    value = 0x3001;
+#else
     value = 0x1001;
+#endif
     *(volatile u16 *)0x04000200 = value;
     one = 1;
     *ime = one;

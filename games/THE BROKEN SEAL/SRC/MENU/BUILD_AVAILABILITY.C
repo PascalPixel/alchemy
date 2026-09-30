@@ -115,7 +115,11 @@ extern const struct TileMask Data_080af23c[];
 
 void Menu_BuildPatternTiles(void)
 {
+#if defined(TBS_EDITION_JA)
+    u32 *vram = (u32 *)0x06004000;
+#else
     u32 *vram = (u32 *)0x06005000;
+#endif
     s32 set;
     s32 n;
 

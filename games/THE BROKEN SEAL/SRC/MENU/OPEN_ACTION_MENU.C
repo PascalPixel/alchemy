@@ -3,6 +3,7 @@
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
@@ -124,13 +125,13 @@ s32 ActionMenu_Open(void)
     CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, 0x2000);
     Runtime_BumpFree(tiles);
     Runtime_BumpFree(palette);
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, 0xea6) = 1;
+    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(55);
     gMenuCtrlWork->suspended = 0;
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, 0xea6) = 0;
+    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 0;
     return result;
 }

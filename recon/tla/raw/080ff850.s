@@ -595,7 +595,7 @@ Func_080ff850:
 	movs	r2, #0
 	mov	r8, r4
 	str	r4, [sp, #4]
-	bl	0x080f811c
+	bl	Func_080f811c
 	adds	r3, r7, #0
 	adds	r3, #240
 	str	r3, [sp, #12]
@@ -1261,7 +1261,7 @@ Func_080ff850:
 	movs	r2, #10
 	movs	r3, #15
 	adds	r0, #52
-	bl	0x080f811c
+	bl	Func_080f811c
 	adds	r3, r7, #0
 	adds	r3, #240
 	str	r3, [sp, #8]

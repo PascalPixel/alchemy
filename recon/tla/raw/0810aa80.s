@@ -150,10 +150,10 @@ Func_0810aa80:
 	bl	0x0810a9ac
 	ldr	r0, [r7, #12]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, r8
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	0x0810824c
 	movs	r0, #0
 	add	sp, #8
@@ -469,10 +469,10 @@ Func_0810aa80:
 	bl	0x080f8068
 	movs	r1, #2
 	ldr	r0, [sp, #8]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, fp
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #0

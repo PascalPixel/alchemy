@@ -228,13 +228,13 @@ Func_0810b7b4:
 	bl	0x080f8068
 	mov	r0, fp
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #2
 	ldr	r0, [r7, #36]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	bl	0x0810824c
@@ -490,7 +490,7 @@ Func_0810b7b4:
 	strb	r3, [r2, #0]
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #192
 	lsls	r3, r3, #4
 	adds	r3, #232
@@ -587,10 +587,10 @@ Func_0810b7b4:
 .L_0810bc6a:
 	ldr	r0, [sp, #24]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #2
 	ldr	r0, [sp, #20]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r5, #0

@@ -889,7 +889,7 @@ Func_08109188:
 	bl	WaitFrames
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 .L_0810989e:
 	movs	r0, #56
 	bl	Runtime_ReleaseHeapBlock
@@ -1360,13 +1360,13 @@ Func_08109188:
 	bl	0x080f8068
 	mov	r0, sl
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	ldr	r0, [r6, #36]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	ldr	r0, [r6, #12]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r5, #0
@@ -1593,7 +1593,7 @@ Func_08109188:
 	strb	r3, [r2, #0]
 	movs	r1, #2
 	adds	r0, r7, #0
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	.L_08109188
 	movs	r3, #192
 	lsls	r3, r3, #4
@@ -1712,7 +1712,7 @@ Func_08109188:
 .L_08109f48:
 	ldr	r0, [sp, #20]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
 	bl	WaitFrames
 	cmp	r5, #0
@@ -1779,7 +1779,7 @@ Func_08109188:
 .L_08109fd8:
 	ldr	r0, [sp, #16]
 	movs	r1, #2
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r0, r5, #0
 	add	sp, #28
 	pop	{r3, r5, r6, r7}

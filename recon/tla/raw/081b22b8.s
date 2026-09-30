@@ -366,7 +366,7 @@ Func_081b22b8:
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #148
 	adds	r3, r3, r7
 	mov	sl, r3
@@ -447,7 +447,7 @@ Func_081b22b8:
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r2, r8
 	ldr	r3, [r2, #0]
 	movs	r5, #0
@@ -468,7 +468,7 @@ Func_081b22b8:
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r0, #152
 	lsls	r0, r0, #1
 	bl	Audio_PlayCue
@@ -671,7 +671,7 @@ Func_081b22b8:
 	adds	r5, r7, r2
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
@@ -719,7 +719,7 @@ Func_081b22b8:
 	adds	r5, r7, r0
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
@@ -759,7 +759,7 @@ Func_081b22b8:
 	adds	r5, r7, r3
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
@@ -789,7 +789,7 @@ Func_081b22b8:
 	adds	r5, r7, r2
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
@@ -817,7 +817,7 @@ Func_081b22b8:
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	adds	r2, r7, #0
 	adds	r2, #152
 	str	r2, [sp, #12]
@@ -942,7 +942,7 @@ Func_081b22b8:
 	adds	r3, r7, r0
 	movs	r1, #1
 	ldr	r0, [r3, #0]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 .L_081b29ee:
 	adds	r1, r7, #0
 	movs	r2, #148
@@ -1254,7 +1254,7 @@ Func_081b22b8:
 	adds	r3, r7, r0
 	movs	r1, #1
 	ldr	r0, [r3, #0]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #148
 	b.n	.L_081b2d56
 .L_081b2c38:
@@ -1271,7 +1271,7 @@ Func_081b22b8:
 	str	r1, [r3, #0]
 	ldr	r0, [r6, #0]
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r3, #148
 	adds	r3, r3, r7
 	mov	sl, r3

@@ -65,7 +65,7 @@ Func_080fb6d4:
 	movs	r1, #0
 	movs	r2, #0
 	adds	r0, r7, #0
-	bl	0x080f811c
+	bl	Func_080f811c
 	bl	0x080f92ac
 	movs	r3, #182
 	lsls	r3, r3, #1

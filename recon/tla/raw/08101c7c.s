@@ -388,13 +388,13 @@ Func_08101c7c:
 	bl	WaitFrames
 	movs	r1, #1
 	ldr	r0, [sp, #28]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	movs	r1, #1
 	ldr	r0, [sp, #32]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	bl	0x08038290
 	ldr	r2, [sp, #16]
 	movs	r3, #2
@@ -1300,7 +1300,7 @@ Func_08101c7c:
 	beq.n	.L_081026f4
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
@@ -1328,7 +1328,7 @@ Func_08101c7c:
 	beq.n	.L_08102736
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r2, #132
@@ -1388,7 +1388,7 @@ Func_08101c7c:
 	beq.n	.L_081027b8
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r2, #132
@@ -1490,7 +1490,7 @@ Func_08101c7c:
 	beq.n	.L_08102892
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r2, #132
@@ -1607,7 +1607,7 @@ Func_08101c7c:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
@@ -1655,7 +1655,7 @@ Func_08101c7c:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1
@@ -1703,7 +1703,7 @@ Func_08101c7c:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	0x08038018
+	bl	UiWork_FinalizeFar
 	mov	r0, sl
 	bl	0x08101c0c
 	movs	r0, #1

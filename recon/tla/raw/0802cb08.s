@@ -26,7 +26,7 @@ Func_0802cb08:
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #36]
 	bl	Func_0801587c
-	bl	0x0802c4d8
+	bl	Func_0802c4d8
 	ldr	r0, [pc, #28]
 	bl	Func_0801475c
 	movs	r0, #1

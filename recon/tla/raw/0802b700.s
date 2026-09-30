@@ -95,7 +95,7 @@ Func_0802b700:
 	adds	r3, r5, #0
 	adds	r2, r6, #0
 	str	r4, [sp, #4]
-	bl	0x0802b1a0
+	bl	Func_0802b1a0
 	b.n	.L_0802b75c
 .L_0802b7c6:
 	ldr	r3, [sp, #8]

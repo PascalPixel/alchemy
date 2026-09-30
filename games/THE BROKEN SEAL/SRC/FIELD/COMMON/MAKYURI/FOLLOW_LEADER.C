@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 
-#define FrameCounter (*(u32 *)&gFrameCount)
+#define FrameCounter gFrameCount
 
 s32 FixedSqrt(s32 value);
 

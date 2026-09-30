@@ -124,8 +124,8 @@ void DisplayScroll_InitObjectTable(void)
         entry += 2;
     }
     Data_02004c00 = 0;
-    (*(u16 *)&Flash_Layout) = 0;
-    (*(u16 *)&Flash_Handler0) = 0;
+    Flash_Layout = 0;
+    Flash_Handler0 = 0;
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0x480);
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0xc80);
     for (i = 0; i < 32; i++)

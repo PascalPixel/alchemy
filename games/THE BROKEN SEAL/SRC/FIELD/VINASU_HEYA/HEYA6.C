@@ -181,7 +181,7 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     u32 i;
 
     Call3((void (*)())Engine_ActorSetSpeed, 8, 0x8000, 0x4000);
-    ((void (*)())Engine_ActorSetSpeed)(9, 0x8000, 0x4000);
+    Engine_ActorSetSpeed(9, 0x8000, 0x4000);
     if (wait != 0) {
         Engine_AudioPlayCue(180);
     }

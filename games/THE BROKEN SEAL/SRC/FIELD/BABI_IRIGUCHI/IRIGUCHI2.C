@@ -39,7 +39,7 @@ void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 void SceneActor_PushObjectAheadIfLevel(void)
 {
     struct LevelCheckRecord *p = Actor_Get(ACTOR_PARTY_LEADER);
-    struct LevelCheckRecord *q = ((s32 (*)())BabiIriguchi_FindActorAhead)(p);
+    struct LevelCheckRecord *q = BabiIriguchi_FindActorAhead(p);
     s32 diff;
 
     if (q == 0) {

@@ -481,12 +481,12 @@ void FieldScene_RunBranchingActorSequence(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Iriguchi_Wait(30);
         Actor_SetAnimationAndWait(14, 4);
-        ((void (*)())Battle_WaitMode0)(20);
+        Battle_WaitMode0(20);
         Event_ShowMessage(14, 0);
         bump_step_02001238(1);
     } else {
         Iriguchi_Wait(30);
-        ((void (*)())Engine_ActorSetAnimationAndWait)(14, 4);
+        Engine_ActorSetAnimationAndWait(14, 4);
         Iriguchi_Wait(20);
         bump_step_02001238(1);
         Event_ShowMessage(14, 0);
@@ -522,7 +522,7 @@ void FieldScene_RunBranchingActorSequence(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Iriguchi_Wait(30);
         Actor_SetAnimationAndWait(10, 3);
-        ((void (*)())Battle_WaitMode0)(30);
+        Battle_WaitMode0(30);
         Event_ShowMessage(10, 0);
         bump_step_02001238(1);
     } else {

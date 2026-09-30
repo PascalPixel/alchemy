@@ -21,7 +21,6 @@ extern u8 MsgKuupuappuWonderOutsideWorldLike[];
 extern u8 MsgKuupuappuWouldReallyWouldHelpMe[];
 extern u8 MsgKuupuappuWowHaveManyThingsArent[];
 
-/* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
 
 enum {
@@ -937,12 +936,12 @@ void FieldScene_RunOpeningSequenceSecond(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
     if (GameFlag_IsSet(0x854) == 0) {
         Event_Begin();
-        ((s32 (*)())Engine_EventSetMessage)((s32)MsgKuupuappuUhnnUhnn);
+        Engine_EventSetMessage((s32)MsgKuupuappuUhnnUhnn);
         Event_ShowMessage(8, 0);
         Event_End();
     }
     *(u32 *)((u8 *)gEventWork + 456) = 16;
-    ((s32 (*)())Engine_AudioPlayCue)(123);
+    Engine_AudioPlayCue(123);
     Event_RequestExit(14);
 }
 
@@ -984,8 +983,8 @@ void FieldScene_RunOpeningSequenceThird(void)
     void *actor24;
     void *actor25;
 
-    actor24 = ((void *(*)())Object_GetById)(24);
-    actor25 = ((void *(*)())Object_GetById)(25);
+    actor24 = Object_GetById(24);
+    actor25 = Object_GetById(25);
     Event_Begin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, RATIO_HI, RATIO_LO);
     Actor_SetSpeed(ACTOR_GERALD, RATIO_HI, RATIO_LO);
@@ -1164,7 +1163,7 @@ void FieldScene_ConfigurePairedActors(void)
         *(u16 *)(record + ACTOR_SHOWN_OFFSET) = shown;
     }
     {
-        u8 *record = (u8 *)((s32 (*)())Object_GetById)(25);
+        u8 *record = (u8 *)Object_GetById(25);
         s32 shown = 3;
 
         *(u16 *)(record + ACTOR_SHOWN_OFFSET) = shown;
@@ -1305,7 +1304,7 @@ void KuupuappuHeya_RunScene021C8(void)
     Call3(Engine_ActorSetPosition, 25, 0x780000, 0x2b80000);
     Engine_ActorFaceEachOther(24, 25, 0);
     Engine_CameraFollowActor(0, 0);
-    ((void (*)())Engine_CameraWaitForMove)();
+    Engine_CameraWaitForMove();
     Engine_MapRedraw();
     Engine_EventWait(30);
     {
@@ -1509,7 +1508,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
             Call3((void (*)())Engine_ActorFaceDirection, 2, 0x4000, 0);
         }
         if (Engine_GameFlagIsSet(0x856) != 0) {
-            ((void (*)())Engine_ActorSetPosition)(2, 0, 0);
+            Engine_ActorSetPosition(2, 0, 0);
         }
         if (Engine_GameFlagIsSet(0x855) != 0) {
             Call3((void (*)())Engine_ActorSetPosition, 16, 0x2180000, 0x1d00000);
@@ -1526,7 +1525,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
             OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000, 0x2a00000);
             ((void (*)())Engine_TaskAddCallback)((s32)SceneState_SetFlagByActorPosition, 0xc80);
         } else if (Engine_GameFlagIsSet(0x853) != 0) {
-            ((void (*)())Engine_ActorSetPosition)(18, 0, 0);
+            Engine_ActorSetPosition(18, 0, 0);
         }
         break;
     case 12:
@@ -1543,7 +1542,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         if (Engine_GameFlagIsSet(0x852) != 0) {
             Call6((void (*)())Engine_MapCopyCellAttributes, 14, 45, 3, 1, 14, 44);
             if (Engine_GameFlagIsSet(0x853) == 0) {
-                ((void (*)())Engine_MapCopyCellAttributes)(14, 50, 3, 1, 14, 44);
+                Engine_MapCopyCellAttributes(14, 50, 3, 1, 14, 44);
                 break;
             }
             ((struct ActorMode *)((u8 *)Object_GetById(24)))->mode = 5;
@@ -1555,10 +1554,10 @@ s32 KuupuappuHeya_ApplyEntryState(void)
     case 14:
         Engine_EventWait(2);
         Call6((void (*)())Engine_MapCopyCellsTo, 54, 2, 35, 20, 2, 10);
-        ((void (*)())Engine_MapCopyCellsTo)(54, 2, 95, 20, 2, 10);
-        ((void (*)())Engine_MapCopyCellsTo)(54, 2, 35, 80, 2, 10);
+        Engine_MapCopyCellsTo(54, 2, 95, 20, 2, 10);
+        Engine_MapCopyCellsTo(54, 2, 35, 80, 2, 10);
         Call6((void (*)())Engine_MapCopyCellsTo, 54, 2, 46, 21, 4, 8);
-        ((void (*)())Engine_MapCopyCellsTo)(54, 2, 46, 81, 4, 8);
+        Engine_MapCopyCellsTo(54, 2, 46, 81, 4, 8);
         ((struct ActorFlags *)((u8 *)Object_GetById(26)))->flags |= 4;
         Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
         if (Engine_GameFlagIsSet(0x859) != 0) {
@@ -1569,48 +1568,48 @@ s32 KuupuappuHeya_ApplyEntryState(void)
     case 15:
         Engine_EventWait(2);
         Call6((void (*)())Engine_MapCopyCellsTo, 54, 2, 44, 21, 2, 8);
-        ((void (*)())Engine_MapCopyCellsTo)(54, 2, 44, 81, 2, 8);
+        Engine_MapCopyCellsTo(54, 2, 44, 81, 2, 8);
         Engine_EventBegin();
         if (Engine_GameFlagIsSet(0x855) != 0) {
-            ((void (*)())Engine_ActorSetAnimation)(15, 2);
-            ((void (*)())Engine_ActorSetAnimation)(16, 2);
+            Engine_ActorSetAnimation(15, 2);
+            Engine_ActorSetAnimation(16, 2);
             Engine_EventWait(1);
-            ((void (*)())Engine_ActorSetAnimation)(17, 2);
+            Engine_ActorSetAnimation(17, 2);
             break;
         }
-        ((void (*)())Engine_ActorSetPosition)(8, 0x3380000, 0x1c80000);
+        Engine_ActorSetPosition(8, 0x3380000, 0x1c80000);
         if (Engine_GameFlagIsSet(0x854) != 0) {
             KuupuappuHeya_RunVaultEvent();
             Engine_EventEnd();
             break;
         }
-        ((void (*)())Engine_ActorSetAnimation)(8, 7);
+        Engine_ActorSetAnimation(8, 7);
         SceneState_SetWord1c0To209AndRun();
         Engine_AudioPlayCue(17);
         Engine_EventSetMessage((s32)MsgKuupuappuUhnnUhnn);
-        ((void (*)())SceneActor_SetModeZeroAndValue)(8, 10);
+        SceneActor_SetModeZeroAndValue(8, 10);
         Engine_EventEnd();
         break;
     case 16:
-        ((void (*)())Map_CopyMetatileCellsRect)(54, 2, 2, 8, 44, 21);
-        ((void (*)())Map_CopyMetatileCellsRect)(54, 2, 2, 8, 44, 81);
-        ((void (*)())Engine_ActorSetPosition)(8, 0x3380000, 0x1c80000);
+        Map_CopyMetatileCellsRect(54, 2, 2, 8, 44, 21);
+        Map_CopyMetatileCellsRect(54, 2, 2, 8, 44, 81);
+        Engine_ActorSetPosition(8, 0x3380000, 0x1c80000);
         FieldScene_RunLateSequence();
         Engine_EventRequestExit(16);
         break;
     case 17:
-        ((void (*)())Map_CopyMetatileCellsRect)(54, 2, 2, 8, 44, 21);
-        ((void (*)())Map_CopyMetatileCellsRect)(54, 2, 2, 8, 44, 81);
+        Map_CopyMetatileCellsRect(54, 2, 2, 8, 44, 21);
+        Map_CopyMetatileCellsRect(54, 2, 2, 8, 44, 81);
         if (Engine_GameFlagIsSet(0x109) == 0) {
             Call3((void (*)())Engine_ActorSetPosition, 8, 0x3380000, 0x1c80000);
             RunEventScript01();
             RunDialoguePromptScene();
             break;
         }
-        ((void (*)())Engine_ActorSetAnimation)(15, 2);
-        ((void (*)())Engine_ActorSetAnimation)(16, 2);
+        Engine_ActorSetAnimation(15, 2);
+        Engine_ActorSetAnimation(16, 2);
         Engine_EventWait(1);
-        ((void (*)())Engine_ActorSetAnimation)(17, 2);
+        Engine_ActorSetAnimation(17, 2);
         break;
     }
     return 0;
@@ -1646,9 +1645,9 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 void SceneActor_FaceActors24And25TowardActorZero(void)
 {
-    struct FieldActor *origin = ((struct FieldActor *(*)())Object_GetById)(0);
-    struct FieldActor *first = ((struct FieldActor *(*)())Object_GetById)(24);
-    struct FieldActor *second = ((struct FieldActor *(*)())Object_GetById)(25);
+    struct FieldActor *origin = Object_GetById(0);
+    struct FieldActor *first = Object_GetById(24);
+    struct FieldActor *second = Object_GetById(25);
 
     first->facing = ArcTan2(origin->z.fixed - first->z.fixed, origin->x.fixed - first->x.fixed);
     second->facing = ArcTan2(origin->z.fixed - second->z.fixed, origin->x.fixed - second->x.fixed);

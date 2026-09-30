@@ -211,7 +211,7 @@ void FieldScene_RunActor11Step(void) { FieldScene_RunMiddleAuxiliarySequence(11)
 
 void FieldScene_RunActor12Step(void) { FieldScene_RunMiddleAuxiliarySequence(12); }
 
-/* FAKEMATCH: one-pass IME wrappers and a signed queue limit preserve the
+/* FAKEMATCH: a one-pass IME wrapper and a signed queue limit preserve the
  * queued write order, as in VISIT_BLEND.C. */
 void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 {
@@ -255,22 +255,20 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
             q = &gIoWriteQueue;
             next_frame = i + 1;
             do {
-                do {
-                    saved = *ime;
-                } while (0);
-                *ime = (u16)ime;
-                limit = 31;
-                count = q->count;
-                if (count <= limit) {
-                    u32 *dst = (u32 *)((u8 *)q + count * 12 + 4);
-
-                    *(u16 *)&q->count = count + 1;
-                    *dst++ = ((16 - next_frame) << 8) | next_frame;
-                    *dst++ = 0x04000052;
-                    *dst = 0x20000;
-                }
-                *ime = saved;
+                saved = *ime;
             } while (0);
+            *ime = (u16)ime;
+            limit = 31;
+            count = q->count;
+            if (count <= limit) {
+                u32 *dst = (u32 *)((u8 *)q + count * 12 + 4);
+
+                *(u16 *)&q->count = count + 1;
+                *dst++ = ((16 - next_frame) << 8) | next_frame;
+                *dst++ = 0x04000052;
+                *dst = 0x20000;
+            }
+            *ime = saved;
         } else {
             next_frame = i + 1;
         }
@@ -483,7 +481,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
         }
     }
     GameFlag_SetByte(0x210, 0);
-    ((void (*)())BattleFx_SetWeightedResult)(98, 5);
+    BattleFx_SetWeightedResult(98, 5);
     /* FAKEMATCH: publish the byte before retaining the scene pointer. */
     do {
         ((union GameStateRows *)&gGameState)->bytes[277][1] = 3;

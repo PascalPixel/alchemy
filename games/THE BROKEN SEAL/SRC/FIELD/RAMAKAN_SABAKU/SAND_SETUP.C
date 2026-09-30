@@ -28,11 +28,9 @@ void RamakanSabaku_ClaimSandEffectVram(void)
 
     Resource_DecodeType01(RamakanSabaku_SandEffectTiles, RamakanSabaku_SandTileBuffer);
     slotp = &RamakanSabaku_SandVramSlot;
-    /* FAKEMATCH: the do-while wrap keeps the slot address in r5 across the
-     * call, and the size temporary schedules the slot store after it. */
-    do {
-        slot = Resource_FindFreeEntry();
-    } while (0);
+    /* FAKEMATCH: the size temporary schedules the slot store after the
+     * call. */
+    slot = Resource_FindFreeEntry();
     {
         s32 size = 0x480;
 

@@ -570,7 +570,7 @@ L_020009da:
     }
     Actor_SetSpriteFlags((s32)Object_GetById(19), 0);
     Actor_SetChildValue(22, 15);
-    ((void (*)())Engine_ActorSetChildValue)(23, 15);
+    Engine_ActorSetChildValue(23, 15);
     Actor_SetChildValue(24, 15);
     {
         u8 bits = 8;

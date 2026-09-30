@@ -261,7 +261,7 @@ void Owner_RefreshDerivedData(s32 owner_no)
 {
     struct OwnerDerivedState *owner = Owner_GetState(owner_no);
 
-    owner->value_129 = ((s8 (*)(u8, const u8 *))Owner_DetermineClass)(owner->value_128, owner->values_f8);
+    owner->value_129 = Owner_DetermineClass(owner->value_128, owner->values_f8);
     Owner_RefreshClassActions(owner_no);
     ((u32 (*)(s32, void *))Owner_BuildDigitTiles)(owner_no, owner->data_024);
 }

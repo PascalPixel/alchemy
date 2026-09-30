@@ -1,12 +1,26 @@
-#include "TYPES.H"
 #include "BATTLE_TYPES.H"
+#include "PSYNERGY_MENU.H"
+#include "TBS_EDITION.H"
+#include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
-#include "TBS_EDITION.H"
-#include "PSYNERGY_MENU.H"
+
+void RenderOutput_RedrawSavedRectFar(s32 window);
+void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
+void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
+s32 UiWork_SetParamNibbleFar(s32 color);
+void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
+struct BattleAction *BattleAction_Get(s32 action);
+extern u8 MsgAbilityName;
+extern u8 MsgShortcutHelp[];
+extern u8 MsgChangeCharacterHelp[];
+extern u8 MsgPsynergyPp[];
 
 s32 GameFlag_IsSet(s32 message);
 void Object_InitializeMode(s32 object, s32 mode);
@@ -57,12 +71,8 @@ struct PsynergyListWork {
     u8 mode;                                  /* 0x268 */
 };
 
-extern u8 MsgShortcutHelp[];
-extern u8 MsgChangeCharacterHelp[];
 void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-struct BattleUnit *Owner_GetStateFar(s32 owner);
-struct BattleAction *BattleAction_Get(s32 action);
 s32 GameFlag_TestFar(s32 message);
 void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
@@ -73,7 +83,6 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 pane);
 s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *result);
-s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, struct MenuResult *result);
 s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);
 void Audio_PlayCue(s32 cue);
 #define KEY_A 1
@@ -83,6 +92,80 @@ void Audio_PlayCue(s32 cue);
 #define KEY_L 0x200
 #define ACTION_ID_MASK 0x3fff
 #define LIST_PAGE_SIZE 5
+
+s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state);
+
+s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state)
+{
+    u32 first_entry;
+    u32 visible_count;
+    u8 row;
+    s32 cursor;
+    struct BattleUnit *owner;
+    struct BattleAction *ability;
+    struct PsynergyMenuState *menu = gMenuWork;
+
+    (void)unused;
+
+    RenderOutput_RedrawSavedRectFar(window);
+    UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
+
+    if (2 & *(u16 *)((u8 *)menu + 0x220)) {
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutHelp, window, 0, 88);
+    } else {
+        UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, HELP_TEXT_X, 88);
+    }
+
+    first_entry = state->page * 5;
+    visible_count = (u8)(state->entry_count - first_entry);
+    if (visible_count > 5) {
+        visible_count = 5;
+    }
+
+#if defined(TBS_EDITION_JA)
+    Menu_SetPageIcons(5, first_entry, window, 0x78, 0x22);
+#else
+    Menu_SetPageIcons(5, first_entry, window, 0x70, 0x22);
+#endif
+    Menu_DrawPageIndicator(window, state->entry_count, 5, state->page, 15);
+#if defined(TBS_EDITION_JA)
+    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x48, 0);
+#else
+    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x60, 0);
+#endif
+
+    row = 0;
+    if (visible_count > row) {
+        cursor = first_entry * 2 + 0x1c8;
+        do {
+            owner = Owner_GetStateFar(menu->owner_ids[0]);
+            ability = BattleAction_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
+
+            if (ability->pp_cost > owner->pp) {
+                UiWork_SetParamNibbleFar(2);
+            } else if (PsynergyMenu_IsActionRestricted(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
+                UiWork_SetParamNibbleFar(4);
+            } else {
+                UiWork_SetParamNibbleFar(15);
+            }
+
+            UiText_DrawCharacterAtOffsetFar(
+                (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&MsgAbilityName,
+#if defined(TBS_EDITION_JA)
+                window, 32, row * 16 + 8);
+#else
+                window, 16, row * 16 + 8);
+#endif
+            UiText_DrawNumberAtOffsetFar(ability->pp_cost, 2, window, 104, row * 16 + 8);
+            UiWork_SetParamNibbleFar(15);
+
+            row++;
+            cursor += 2;
+        } while (visible_count > row);
+    }
+
+    return 1;
+}
 
 /*
  * Psynergy / action list selection loop.

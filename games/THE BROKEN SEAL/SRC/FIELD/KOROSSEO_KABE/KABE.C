@@ -604,7 +604,7 @@ void KorosseoKabe_RunStageStart(void)
     base = 2;
     SceneState_EmptyHook();
     Engine_EventBegin();
-    rec8 = ((s32 (*)())FieldScene_RunFlag211ApproachScene)(77, 89);
+    rec8 = FieldScene_RunFlag211ApproachScene(77, 89);
     SceneState_WaitUntilStatusNine();
     v5 = 9;
     do {
@@ -624,22 +624,22 @@ void KorosseoKabe_RunStageStart(void)
     Call3((void (*)())Engine_ActorSetSpeed, 0, 0x20000, 0x10000);
     Call3((void (*)())Engine_ActorSetSpeed, 8, 0x20000, 0x10000);
     Call3((void (*)())Engine_ActorWalkTo, 0, 112, 0x100);
-    ((void (*)())Engine_ActorWalkToAndWait)(8, 96, 0x100);
+    Engine_ActorWalkToAndWait(8, 96, 0x100);
     Engine_ActorSetAnimation(0, 16);
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
     /* FAKEMATCH: base is set at the top of the function, so 2 - rec8 + 1
      * is not folded into 3 - rec8. */
-    ((s32 (*)())BattleFx_SetWeightedResult)(72, base - rec8 + 1);
+    BattleFx_SetWeightedResult(72, base - rec8 + 1);
     base3_2000240 = (s32)&gGameState;
     /* FAKEMATCH: the do/while keeps the stage flag store ahead of the
      * pool load that follows it. */
     do {
         *(u8 *)((base3_2000240 + 0x22b)) = 3;
     } while (0);
-    ((s32 (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_KorosseoKabe, 4);
+    Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKabe, 4);
     Event_SetPair1d4((s32)&SceneId_KorosseoKabe, 5);
-    ((void (*)())Engine_GameFlagSet)(0x11a);
+    Engine_GameFlagSet(0x11a);
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
@@ -687,7 +687,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
     s32 zero;
 
     gEventWork->start_transition = 0;
-    ((void (*)())Engine_GameFlagSet)(0x144);
+    Engine_GameFlagSet(0x144);
     Call6(Engine_MapCopyCellAttributes, 14, 11, 12, 4, 100, 11);
     Call6(Engine_MapCopyCellAttributes, 48, 10, 5, 6, 120, 10);
     for (i = 26; i <= 30; i++) {

@@ -244,7 +244,7 @@ s32 LinkLobby_RunBattleApplication(void)
             Engine_EventOpenMessage(8, 0);
             answer = Engine_EventChooseYesNo(0, 0);
             if (answer == 0) {
-                ((u32 (*)(u32, u8))GameFlag_SetByte)(1000, 0);
+                GameFlag_SetByte(1000, 0);
                 Engine_GameFlagSet(0x173);
                 Engine_GameFlagClear(0x172);
                 Engine_GameFlagClear(0x16c);

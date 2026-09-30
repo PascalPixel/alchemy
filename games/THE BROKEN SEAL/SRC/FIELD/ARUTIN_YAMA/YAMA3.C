@@ -142,7 +142,7 @@ void ArutinYama_ApplyEntryState(void)
             record = ((u8 *)Object_GetById(9));
             *(s32 *)((s32)record + 12) = 0x200000;
             Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
-            ((void (*)())Engine_ActorSetPosition)(10, 0x780000, 0xd70000);
+            Engine_ActorSetPosition(10, 0x780000, 0xd70000);
             record = ((u8 *)Object_GetById(10));
             *(u16 *)((s32)record + 6) = rec7;
             Engine_ActorSetAnimation(10, 3);
@@ -167,7 +167,7 @@ void ArutinYama_ApplyEntryState(void)
         }
     } else {
         p5 = *(s32 *)&gMapWork;
-        ((void (*)())Engine_ActorSetPosition)(10, 0, 0);
+        Engine_ActorSetPosition(10, 0, 0);
         Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 2, 3, 14);
         *(u16 *)((s32)p5 + 20) &= 0xfdff;
         SceneActor_ClearCollisionFlagAndPlaceMarker(8);
@@ -348,7 +348,7 @@ void FieldScene_RunScene3a4_020026c0(void)
     }
     SceneActor_ClearCollisionFlagAndPlaceMarker(11);
     if (GameFlag_IsSet(0x201) != 0) {
-        ((void (*)())Engine_ActorSetAnimation)(11, 5);
+        Engine_ActorSetAnimation(11, 5);
         Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
         {
             u8 *record = Actor_Get(11);
@@ -425,7 +425,7 @@ void FieldScene_RunScene3a4_02002934(void)
     rec7 = GameFlag_IsSet(0x909);
     if (rec7 != 0) {
         Actor_SetPosition(8, 0, 0);
-        ((void (*)())Engine_ActorSetPosition)(9, 0, 0);
+        Engine_ActorSetPosition(9, 0, 0);
     } else {
         record = Actor_Get(8);
         Actor_SetSpriteFlags(record, 0);
@@ -1258,7 +1258,7 @@ void ArutinYama_StartPaletteAnim(void)
     struct Half zero;
 
     zero.v = 0;
-    (*(u16 *)&ArutinYama_PaletteStep) = zero.v;
-    (*(u16 *)&ArutinYama_PaletteHold) = zero.v;
+    ArutinYama_PaletteStep = zero.v;
+    ArutinYama_PaletteHold = zero.v;
     Engine_TaskAddCallback((s32)&ArutinYama_StepPaletteAnim, 0xc80);
 }

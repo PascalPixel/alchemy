@@ -646,11 +646,11 @@ void FieldScene_RunScene3b1SequenceB(void)
         if (record != 0) {
             Actor_SetDestination(rec7, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
-        ((void (*)())Engine_ActorWaitForMove)(rec7);
+        Engine_ActorWaitForMove(rec7);
         Actor_SetPosition(rec7, 0, 0);
     } else {
         Event_SetMessage((s32)MsgFuneHaHaHaRowingFeel);
-        ((void (*)())Engine_EventShowMessageAndWait)(9, 0, 60);
+        Engine_EventShowMessageAndWait(9, 0, 60);
         Actor_RunRepeatedMotion(9, 1);
         Event_OpenMessage(9, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {

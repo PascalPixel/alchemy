@@ -48,7 +48,7 @@ void HaidiaDou_RunLoweredActorScene(void)
         if ((probe.word[4] >> 20) == 20) {
             Engine_GameFlagSet(0x205);
         } else {
-            ((void (*)())Engine_GameFlagSet)(0x204);
+            Engine_GameFlagSet(0x204);
             {
                 s32 column = 14;
 

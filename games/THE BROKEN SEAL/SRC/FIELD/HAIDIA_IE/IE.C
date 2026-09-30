@@ -959,7 +959,7 @@ void HaidiaIe_RunScene015B4(void)
     Call3(Engine_ActorFaceDirection, 24, 0xc000, 40);
     Engine_ActorSetAnimationAndWait(23, 3);
     Engine_EventWait(20);
-    ((void (*)())Engine_ActorSetAnimationAndWait)(24, 3);
+    Engine_ActorSetAnimationAndWait(24, 3);
     Call3(Engine_ActorFaceDirection, 23, 0x8000, 10);
     Call3(Engine_ActorFaceDirection, 24, 0x8000, 10);
     Engine_ActorSetSpritePriority(0, 3);

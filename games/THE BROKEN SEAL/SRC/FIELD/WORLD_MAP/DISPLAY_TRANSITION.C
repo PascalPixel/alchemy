@@ -59,14 +59,6 @@ void FieldScene_RunLateSequence(void);
 
 #define QueueFrame(buffer, offset) QueueTransfer((buffer) + (offset), 0x06002000, 0x84000140)
 
-static __inline__ void StartCallback(void (*callback)(void), s32 priority)
-{
-    /* FAKEMATCH: a single-pass call keeps the callback before its priority. */
-    do {
-        ((void (*)(void (*)(void), s32))Engine_TaskAddCallback)(callback, priority);
-    } while (0);
-}
-
 void Scene_RunScene371SequenceA(s32 palette)
 {
     struct DisplayTransferQueue *q;
@@ -86,7 +78,7 @@ void Scene_RunScene371SequenceA(s32 palette)
     } while (0);
     QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010)
     QueueTransfer(buffer, (void *)0x06001000, 0x84000400)
-    StartCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
+    Engine_TaskAddCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
     Engine_EventBegin();
     QueueFrame(buffer, 0x3a80)
     Object_GetById(gGameState.selected_actor)->active = 0;

@@ -202,7 +202,7 @@ void SoruFunka_StepEmbers(void)
 
     if (gEmberMask == 999)
         return;
-    if (gEmberMask & (*(s32 *)&gFrameCount))
+    if (gEmberMask & gFrameCount)
         return;
     for (i = 0; i < 16; i++) {
         angle = IwramUnsignedRemainder(Engine_RandomNext(), 0xffff);

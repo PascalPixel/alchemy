@@ -20,7 +20,7 @@ s32 UiWork_IsIdleFar(s32 window);
 void Event_ShowSpeakerMessage(s32 speaker)
 {
     register s32 x asm("r6"); /* FAKEMATCH: the unset x lives in r6 */
-    register s32 y asm("r7"); /* FAKEMATCH: the unset y lives in r7 */
+    s32 y;
     register struct EventWork *state asm("r8") = gEventWork; /* FAKEMATCH: keeps the work in r8 */
 
     speaker &= 0xfff;

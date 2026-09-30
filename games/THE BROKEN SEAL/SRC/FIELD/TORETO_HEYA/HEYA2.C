@@ -279,7 +279,7 @@ void ToretoHeya_RunTableScene(void)
     if (rec8 != 0) {
         record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
-            ((void (*)())Engine_ActorSetPosition)(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
+            Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
         Engine_ActorEnableActionCallback(3, ToretoHeya_TableActions3);
     }
@@ -443,7 +443,7 @@ void FieldScene_RunFourActorEncounter(void)
     Actor_StartRepeatedMotion(ACTOR_MIA, 2);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, (v6 << 8), 0);
-    ((void (*)())Engine_ActorFaceDirection)(1, (v6 << 8), 0);
+    Engine_ActorFaceDirection(1, (v6 << 8), 0);
     Actor_FaceDirection(ACTOR_IVAN, (v6 << 8), 40);
     ToretoHeya_PlayGesture(4);
     Event_OpenMessage(0x8009, 0);

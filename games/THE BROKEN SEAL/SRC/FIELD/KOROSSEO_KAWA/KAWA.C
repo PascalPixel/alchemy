@@ -110,7 +110,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 void StagedActor_PushActorAhead(void);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
 u8 *Runtime_AllocateBlock(s32 id, s32 size);
-
 void Resource3ba_NoOpCallback(void);
 s32 FieldScene_RunFlag211ApproachScene();
 void SceneState_WaitUntilWord1000IsNine(void);
@@ -118,12 +117,10 @@ void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0();
 void Event_SetPair1d4(s32 scene, s32 entrance);
-
 extern u8 KorosseoKawa_SceneTableD[];
 void Owner_RefreshActiveRatios();
 void FieldScene_RunTwoCallSequence(void);
 void FieldScene_RunLateSequence(s32 a0);
-
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 GameFlag_GetByteFar(s32 flag);
 void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
@@ -151,7 +148,6 @@ extern u8 MsgKorosseoAskAttendantsForExplanationsStages[];
 extern u8 MsgKorosseoRobinYoureContestantInFinals[];
 extern u8 MsgKorosseoSiteFirstFinalsBattle[];
 extern u8 MsgKorosseoWarriorsEnterFinalsWithoutAny[];
-
 extern u8 MsgKorosseoCallRockChallenge[];
 extern u8 MsgKorosseoObjectiveStageClear[];
 void Korosseo_FinishSoloRound();
@@ -177,15 +173,25 @@ void Engine_CameraFollowActor();
 void Engine_ActorSetPosition();
 void SceneState_SendIdBySceneId();
 void Engine_EventEnd();
-
 extern u8 MsgKorosseoAreaCalledPipeworks[];
 extern u8 MsgKorosseoObjectiveMakeGood[];
 void SceneState_StoreParamsAndInitTable();
 void SceneState_InitTableWordsAndLoad3200();
 void SceneState_ReleaseTableAndResetC6a6();
 void Engine_ObjectSetPosition();
-
 void SceneActor_MarkObjectAtTiles94To95(void);
+
+extern u8 MsgKorosseoLogsKeyClearingStage[];
+extern u8 MsgKorosseoOperatorBridgeWillAlsoCheer[];
+extern u8 MsgKorosseoPlaceNormallyCalledLumberWater[];
+extern u8 MsgKorosseoTheyCallBrokenBridge[];
+s32 GameFlag_GetByteFar(s32);
+void SceneState_ResetCounterAndStartTask(void);
+void SceneState_SetMode66AndPassOpeningSequence(void);
+void SceneState_WaitUntilWordC41cIs22(void);
+void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz);
+void SceneState_SendIdBySceneId(s32 a, s32 b);
+void SceneState_ReleaseTableAndResetC6a6(void);
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
 
@@ -929,7 +935,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    ((void (*)())Engine_ActorSetPosition)(0, x << 16, (z << 16) - 0x300000);
+    Engine_ActorSetPosition(0, x << 16, (z << 16) - 0x300000);
     Actor_SetPosition(ACTOR_GERALD, (x << 16) - 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - 0x200000);
@@ -1123,13 +1129,13 @@ void Korosseo_RunPipeworksIntro(s32 a0)
         Engine_EventBegin();
         rec4 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 2);
         if (rec4 == 0) {
-            ((void (*)())Engine_EventSetMessage)((s32)MsgKorosseoAreaCalledPipeworks);
-            ((void (*)())Engine_CameraSetSpeed)(0x30000, 0x6000);
+            Engine_EventSetMessage((s32)MsgKorosseoAreaCalledPipeworks);
+            Engine_CameraSetSpeed(0x30000, 0x6000);
             Call4((void (*)())Engine_CameraMoveTo, 0x2500000, -1, 0x780000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(60);
-            ((void (*)())Engine_CameraSetSpeed)(0x18000, 0x3000);
-            ((void (*)())Engine_CameraMoveTo)(0x2600000, -1, 0xd80000, 1);
+            Engine_CameraSetSpeed(0x18000, 0x3000);
+            Engine_CameraMoveTo(0x2600000, -1, 0xd80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
             SceneState_StoreParamsAndInitTable(56, 64, 0);
@@ -1139,19 +1145,19 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_EventShowMessage(a0, 0);
             SceneState_ReleaseTableAndResetC6a6();
             Engine_TaskWait(2);
-            record = (u8 *)((s32 (*)())Object_GetById)(13);
+            record = (u8 *)Object_GetById(13);
             record[85] = 0;
             *(s32 *)(record + 52) = 0x6666;
             *(s32 *)(record + 48) = 0xcccc;
             Engine_ObjectSetPosition((s32)record, *(s32 *)(record + 8), 0x80000, *(s32 *)(record + 16));
-            rec7 = (u8 *)((s32 (*)())Object_GetById)(14);
+            rec7 = (u8 *)Object_GetById(14);
             rec7[85] = 0;
             *(s32 *)(rec7 + 52) = 0x6666;
             *(s32 *)(rec7 + 48) = 0xcccc;
             Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), 0x200000, *(s32 *)(rec7 + 16));
             Script_WaitForEventTimeout((s32)rec7);
             Engine_EventWait(45);
-            record = (u8 *)((s32 (*)())Object_GetById)(13);
+            record = (u8 *)Object_GetById(13);
             record[85] = 0;
             *(s32 *)(record + 52) = 0x6666;
             *(s32 *)(record + 48) = 0xcccc;
@@ -1176,10 +1182,169 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_CameraFollowActor(0, 0);
             SceneState_SendIdBySceneId(a0, 2);
         } else if (rec4 == 1) {
-            ((void (*)())Engine_EventSetMessage)((s32)MsgKorosseoObjectiveMakeGood);
+            Engine_EventSetMessage((s32)MsgKorosseoObjectiveMakeGood);
             Engine_EventShowMessage(a0, 0);
         }
         ((s32 (*)())FieldScene_RunMiddleSequence)(rec4, a0, 2);
         Engine_EventEnd();
+    }
+}
+
+/* Contiguous unnamed leaf-owner run for resource_3ba. */
+
+/*
+ * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
+ * parameter block, uploads image and palette, and installs the per-frame task.
+ */
+
+/* Import veneers, named by the main-image function each one reaches.
+ * Old-style declarations: arities vary between call sites in this overlay. */
+
+/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
+
+/* The per-frame task this owner installs: in-image code, published below as
+ * its entry address plus the Thumb bit. */
+
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+ * A phase-two fast path, full and revisit branches, and all 42 calls across
+ * the complete scene-four coordinator. */
+
+/* This overlay's own occupancy lookup for a cell. The record pointer the call
+ * sites also load is spelled here, although the lookup itself uses only the
+ * position. */
+
+/* In-image direction table: sixteen packed steps, high half x, low half z. */
+
+/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
+ * it by one, and specific values select which sub-sequence runs this call.
+ * Reaching 0 restarts the countdown at 120 after running its own branch. */
+void FieldScene_RunScene3ba_020015e0(s32 a0)
+{
+
+    u32 i;
+    s32 rec8;
+    s32 record;
+
+    if (gGameState.entrance == 2) {
+        Korosseo_FinishSoloRound();
+    } else {
+        Event_Begin();
+        rec8 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 3);
+        if (rec8 == 0) {
+            Event_SetMessage((s32)MsgKorosseoTheyCallBrokenBridge);
+            SceneState_ResetCounterAndStartTask();
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x3480000, -1, 0xd80000, 1);
+            Engine_CameraWaitForMove();
+            Event_ShowMessage(a0, 0);
+            SceneState_SetMode66AndPassOpeningSequence();
+            Event_Wait(60);
+            Event_ShowMessage(a0, 0);
+            Korosseo_FadeInCompetitor(0, 0x2e0, 200);
+            Value3(Engine_ActorFaceDirection, 0, 0, 0);
+            SceneState_WaitUntilWordC41cIs22();
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x330, 200);
+            Event_Wait(30);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+            Event_ShowMessage(a0, 0);
+            Korosseo_RestoreCompetitor(0);
+            Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
+            SceneState_SendIdBySceneId(a0, 3);
+        } else {
+            if (rec8 == 1) {
+                Event_SetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
+                Event_ShowMessage(a0, 0);
+            }
+        }
+        Value3(FieldScene_RunMiddleSequence, rec8, a0, 3);
+        Event_End();
+    }
+}
+
+void Scene_RunSceneFourCoordinator(s32 scene)
+{
+
+    s32 path;
+
+    if (gGameState.entrance == 2) {
+        Korosseo_FinishSoloRound();
+        return;
+    }
+    Event_Begin();
+    path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 4);
+    if (path == 0) {
+        Event_SetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
+        Camera_SetSpeed(196608, 24576);
+        Camera_MoveTo(71303168, -1, 11010048, 1);
+        Camera_WaitForMove();
+        Event_ShowMessage(scene, 0);
+        Value3(SceneState_StoreParamsAndInitTable, 120, 72, 0);
+        Event_ShowMessage(scene, 0);
+        SceneState_ReleaseTableAndResetC6a6();
+        Event_Wait(15);
+        Korosseo_FadeInCompetitor(0, 984, 200);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
+        Event_ShowMessage(scene, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 262, 60);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
+        OverlayObject_PlaceWithScale14000(0, 1000, 192);
+        OverlayObject_PlaceWithScale14000(0, 1000, 176);
+        OverlayObject_PlaceWithScale14000(0, 1016, 168);
+        Event_Wait(15);
+        Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
+        Camera_MoveTo(71303168, -1, 11010048, 1);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+        Event_Wait(10);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
+        Event_Wait(10);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 32768, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+        Event_ShowMessage(scene, 0);
+        Korosseo_RestoreCompetitor(0);
+        Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
+        Actor_SetPosition(18, 66584576, 11010048);
+        SceneState_SendIdBySceneId(scene, 4);
+    } else if (path == 1) {
+        Event_SetMessage((s32)MsgKorosseoLogsKeyClearingStage);
+        Event_ShowMessage(scene, 0);
+    }
+    Value3(FieldScene_RunMiddleSequence, path, scene, 4);
+    Event_End();
+}
+
+void SceneActor_PlaceSlots1To3FromWork(void)
+{
+    {
+        s32 x = GameFlag_GetByteFar(896);
+        s32 y = GameFlag_GetByteFar(904);
+
+        x <<= 20;
+        x += 0x80000;
+        y <<= 20;
+        y += 0x80000;
+        Actor_SetPosition(ACTOR_GERALD, x, y);
+    }
+    {
+        s32 x = GameFlag_GetByteFar(912);
+        s32 y = GameFlag_GetByteFar(920);
+
+        x <<= 20;
+        x += 0x80000;
+        y <<= 20;
+        y += 0x80000;
+        Actor_SetPosition(ACTOR_IVAN, x, y);
+    }
+    {
+        s32 x = GameFlag_GetByteFar(928);
+        s32 y = GameFlag_GetByteFar(936);
+
+        x <<= 20;
+        x += 0x80000;
+        y <<= 20;
+        y += 0x80000;
+        Actor_SetPosition(ACTOR_MIA, x, y);
     }
 }

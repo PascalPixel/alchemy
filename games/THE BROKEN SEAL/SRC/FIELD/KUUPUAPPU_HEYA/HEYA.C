@@ -5,7 +5,6 @@
 /* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
  * this file's code made before it shared the header's declaration. */
 
-/* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
 
 
@@ -286,7 +285,7 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
     s32 z;
 
     Event_Begin();
-    obj = ((struct FieldActor *(*)())Object_GetById)(26);
+    obj = Object_GetById(26);
     if ((obj->x.fixed >> 20) == 42) {
         x = 41;
         z = 24;
@@ -583,7 +582,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
     s32 v;
     s32 n;
 
-    p = ((struct FieldActor *(*)())Object_GetById)(24);
+    p = Object_GetById(24);
     Event_Begin();
     Actor_RunRepeatedMotion(24, 2);
     Event_SetMessage((s32)MsgKuupuappuOwStop);

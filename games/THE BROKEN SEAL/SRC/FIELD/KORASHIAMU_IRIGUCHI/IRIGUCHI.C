@@ -203,7 +203,7 @@ void FieldScene_RunScene3b9_0200039c(void)
                 if (Event_ChooseYesNo(0, 0) == 0) {
                     bump_step(1);
                 }
-                ((void (*)())Engine_EventWait)(40);
+                Engine_EventWait(40);
                 Event_ShowMessage(16, 0);
                 GameFlag_Set(0x3c0);
                 goto L_02000448;

@@ -1482,6 +1482,8 @@ SECTIONS
         "*/recon/tla/raw/081c0f70.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SOUND/MUSIC_SET_VOLUME.o"(.text)
         "*/recon/tla/raw/081c0fac.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SOUND/WAIT_FOR_COMPLETION.o"(.text)
+        "*/recon/tla/raw/081c1000.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c1014.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c11ac.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c11ec.o"(.text .rodata .data .padding)

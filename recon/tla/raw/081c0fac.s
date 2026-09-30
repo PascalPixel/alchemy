@@ -34,37 +34,3 @@ Func_081c0fd0:
 	movs	r0, r0
 	.2byte 0x5800
 	.2byte 0x0200
-	.global AudioCommand_WaitForCompletion
-	.thumb_func
-AudioCommand_WaitForCompletion:
-	push	{r5, r6, lr}
-	ldr	r6, [pc, #28]
-	movs	r5, #0
-.L_081c0fe2:
-	ldrb	r3, [r6, #0]
-	cmp	r3, #0
-	beq.n	.L_081c0ff8
-	movs	r0, #1
-	bl	WaitFrames
-	movs	r3, #44
-	adds	r5, #1
-	adds	r3, #255
-	cmp	r5, r3
-	ble.n	.L_081c0fe2
-.L_081c0ff8:
-	pop	{r5, r6, pc}
-	movs	r0, r0
-	.2byte 0x5800
-	.2byte 0x0200
-	.global Func_081c1000
-	.thumb_func
-Func_081c1000:
-	push	{lr}
-	bl	AudioEngine_SuspendDirectSound
-	pop	{pc}
-	svc	27
-	bx	lr
-	svc	35
-	bx	lr
-	bx	lr
-	.2byte 0x0000

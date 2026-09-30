@@ -2,7 +2,7 @@
 //! words its loads read, which switch tables it jumps through, and what it
 //! calls and branches to.
 
-use crate::decode::{decode_one, Ins, Kind};
+use crate::decode::{decode_one, Cond, Ins, Kind, Shift};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// A bounded view of the image by address.
@@ -285,10 +285,32 @@ fn jump_table(
     let Some(table) = near.or(hoisted.then_some(after)) else {
         return Vec::new();
     };
-    let bound = before.iter().find_map(|ins| match ins.kind {
-        Kind::CmpImm { imm, .. } => Some(imm + 1),
-        _ => None,
-    });
+    // The nearest compare bounds the index: `cmp rN, #n`, or `cmp rN, rM`
+    // against a constant built just before it, whose branch past the
+    // table says whether the bound itself is a case.
+    let bound = before
+        .iter()
+        .enumerate()
+        .find_map(|(at, ins)| match ins.kind {
+            Kind::CmpImm { imm, .. } => Some(Some(imm + 1)),
+            Kind::CmpReg { rm, .. } => {
+                let limit = constant(&before[at + 1..], rm);
+                let branch = at.checked_sub(1).map(|next| &before[next].kind);
+                Some(match branch {
+                    Some(Kind::Bcond {
+                        cond: Cond::Cc | Cond::Cs,
+                        ..
+                    }) => limit,
+                    Some(Kind::Bcond {
+                        cond: Cond::Hi | Cond::Ls,
+                        ..
+                    }) => limit.map(|n| n + 1),
+                    _ => None,
+                })
+            }
+            _ => None,
+        })
+        .flatten();
     let mut cases = Vec::new();
     let mut first_case = limit;
     let mut word = table;
@@ -311,6 +333,64 @@ fn jump_table(
         word += 4;
     }
     cases
+}
+
+/// The register an instruction writes, if it writes one.
+fn written(kind: &Kind) -> Option<u8> {
+    match *kind {
+        Kind::MovImm { rd, .. }
+        | Kind::MovHi { rd, .. }
+        | Kind::Movs { rd, .. }
+        | Kind::AddImm3 { rd, .. }
+        | Kind::AddImm8 { rd, .. }
+        | Kind::AddReg { rd, .. }
+        | Kind::AddHi { rd, .. }
+        | Kind::AddSp { rd, .. }
+        | Kind::AddPc { rd, .. }
+        | Kind::SubImm3 { rd, .. }
+        | Kind::SubImm8 { rd, .. }
+        | Kind::SubReg { rd, .. }
+        | Kind::ShiftImm { rd, .. }
+        | Kind::Alu { rd, .. }
+        | Kind::LdrPool { rd, .. }
+        | Kind::LdrSp { rd, .. }
+        | Kind::Load { rd, .. } => Some(rd),
+        _ => None,
+    }
+}
+
+/// The constant `register` holds, built by the instructions before a use,
+/// nearest first: a `movs` of an immediate, then shifts left and adds.
+fn constant(before: &[&Ins], register: u8) -> Option<u32> {
+    let mut steps = Vec::new();
+    for ins in before {
+        if written(&ins.kind) != Some(register) {
+            if matches!(
+                ins.kind,
+                Kind::Bl { .. } | Kind::B { .. } | Kind::Bcond { .. }
+            ) {
+                return None;
+            }
+            continue;
+        }
+        match ins.kind {
+            Kind::MovImm { imm, .. } => {
+                return steps.iter().rev().try_fold(imm, |value, step| match step {
+                    Ok(shift) => value.checked_shl(*shift),
+                    Err(add) => value.checked_add(*add),
+                });
+            }
+            Kind::ShiftImm {
+                shift: Shift::Lsl,
+                rd,
+                rm,
+                imm,
+            } if rd == rm => steps.push(Ok(imm)),
+            Kind::AddImm8 { imm, .. } => steps.push(Err(imm)),
+            _ => return None,
+        }
+    }
+    None
 }
 
 /// What a part of an area holds: a listing of code, a listing of data words,
@@ -586,6 +666,43 @@ pub(crate) mod tests {
         assert_eq!(
             function.tables,
             BTreeMap::from([(base + 0x14, base + 0x1c), (base + 0x18, base)])
+        );
+    }
+
+    #[test]
+    fn a_switch_bounded_by_a_built_constant_reads_that_many_cases() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0x2800, // cmp r0, #0: an earlier compare that bounds nothing
+            0xd100, // bne 0x08000006
+            0x2000, // movs r0, #0
+            0x2201, // movs r2, #1
+            0x0052, // lsls r2, r2, #1: two cases
+            0x4290, // cmp r0, r2
+            0xd301, // bcc 0x08000012
+            0x2000, // movs r0, #0
+            0x4770, // bx lr
+            0x0080, // lsls r0, r0, #2
+            0x4902, // ldr r1, [pc, #8]: the word at 0x20
+            0x1840, // adds r0, r0, r1
+            0x6800, // ldr r0, [r0]
+            0x4687, // mov pc, r0
+            0x0000, 0x0000,
+        ]);
+        bytes.extend(0x0800_0024u32.to_le_bytes()); // 0x20: the table's address
+        bytes.extend(0x0800_0034u32.to_le_bytes()); // 0x24: case 0
+        bytes.extend(0x0800_0038u32.to_le_bytes()); // 0x28: case 1
+        bytes.extend(0x0800_0038u32.to_le_bytes()); // 0x2c: data that looks like a case
+        bytes.extend(0u32.to_le_bytes());
+        bytes.extend(halves(&[0x2001, 0x4770, 0x2002, 0x4770]));
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert_eq!(
+            function.tables,
+            BTreeMap::from([(base + 0x24, base + 0x34), (base + 0x28, base + 0x38)])
         );
     }
 

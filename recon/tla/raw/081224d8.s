@@ -1,21 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_081224c0
+	.balign 4
+	.global Func_081224d8
 	.thumb_func
-Func_081224c0:
-	push	{lr}
-	cmp	r0, #126
-	bne.n	.L_081224ca
-	movs	r0, #1
-	b.n	.L_081224d6
-.L_081224ca:
-	bl	0x080ad078
-	ldrb	r3, [r0, #9]
-	negs	r0, r3
-	orrs	r0, r3
-	lsrs	r0, r0, #31
-.L_081224d6:
-	pop	{pc}
+Func_081224d8:
 	push	{r5, lr}
 	mov	r5, r9
 	push	{r5}

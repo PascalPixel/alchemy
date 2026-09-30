@@ -8,34 +8,34 @@
 	.balign 4
 	overlay_veneer IwramSignedDivide
 	overlay_veneer IwramSignedRemainder
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080000d8
 	overlay_veneer Func_08000170
-	overlay_veneer Func_08000178
+	overlay_veneer Sys_FreeFar
 	overlay_veneer Func_080001a8
-	overlay_veneer Func_080001d0
+	overlay_veneer Resource_FindFreeEntryFar
 	overlay_veneer Func_080001f0
-	overlay_veneer Func_08000290
+	overlay_veneer Resource_GetTableEntryFar
 	overlay_veneer Func_080002a8
 	overlay_veneer Func_08000300
 	overlay_veneer Func_08000370
 	overlay_veneer Func_08000388
-	overlay_veneer Func_080003c0
+	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
-	overlay_veneer Func_08038040
-	overlay_veneer Func_08038060
-	overlay_veneer Func_08038070
-	overlay_veneer Func_08038078
-	overlay_veneer Func_08038080
-	overlay_veneer Func_08038098
-	overlay_veneer Func_080380c8
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	overlay_veneer RenderOutput_PrepareForRedrawFar
+	overlay_veneer UiWindow_DrawDividerLineFar
+	overlay_veneer UiText_DrawResourceFar
+	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	overlay_veneer UiText_DrawStringInWindowFar
+	overlay_veneer RenderOutput_CreateFar
 	overlay_veneer Func_08038140
-	overlay_veneer Func_080381f0
+	overlay_veneer Menu_SelectSaveSlotActionFar
 	overlay_veneer Func_080381f8
 	overlay_veneer Func_08038210
 	overlay_veneer RenderOutput_RedrawSavedRectFar
@@ -49,26 +49,26 @@
 	overlay_veneer Func_08038300
 	overlay_veneer Func_08038308
 	overlay_veneer Func_08038348
-	overlay_veneer Func_08038378
+	overlay_veneer Menu_RunConfirmSelectionFar
 	overlay_veneer Func_080383b8
 	overlay_veneer Func_08038428
 	overlay_veneer Func_08038430
 	overlay_veneer Trade_GetOfferStateFar
 	overlay_veneer Owner_RecalculateStatsFar
-	overlay_veneer Func_080ad028
+	overlay_veneer PartyInventory_AddFar
 	overlay_veneer Func_080ad090
 	overlay_veneer Party_AddActiveOwnerFar
 	overlay_veneer Func_080ad110
 	overlay_veneer Func_080ad200
 	overlay_veneer Func_080ad238
-	overlay_veneer Func_080ad248
+	overlay_veneer Djinn_AddToLeastLoadedOwnerFar
 	overlay_veneer Func_080ad298
 	overlay_veneer Func_080ad2c8
 	overlay_veneer Func_080ad2e0
 	overlay_veneer Func_080ad320
 	overlay_veneer Func_080ad330
-	overlay_veneer Func_080c8010
-	overlay_veneer Func_080c8088
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c8268
 	overlay_veneer Func_080c83a8
 	overlay_veneer Func_080c83b0

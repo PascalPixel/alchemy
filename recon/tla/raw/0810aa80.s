@@ -24,7 +24,7 @@ Func_0810aa80:
 	mov	r1, r8
 	strb	r1, [r3, #0]
 	adds	r0, r5, #0
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	ldr	r3, [r0, #80]
 	movs	r1, #128
 	ldr	r3, [r3, #40]
@@ -80,7 +80,7 @@ Func_0810aa80:
 	mov	r2, r8
 	movs	r3, #0
 	str	r6, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r3, #1
 	adds	r5, r0, #0
 	strb	r3, [r5, #5]
@@ -614,7 +614,7 @@ Func_0810aa80:
 	adds	r2, r6, #0
 	movs	r3, #88
 	lsls	r1, r1, #23
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r2, #0
 	movs	r3, #17
 	strb	r2, [r0, #4]
@@ -635,7 +635,7 @@ Func_0810aa80:
 	lsls	r1, r1, #23
 	adds	r2, r6, #0
 	str	r5, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r3, #15
 	strb	r5, [r0, #4]
 	strb	r3, [r0, #5]
@@ -670,11 +670,11 @@ Func_0810aa80:
 	cmp	r3, r9
 	bne.n	.L_0810b00a
 	movs	r1, #30
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	b.n	.L_0810b010
 .L_0810b00a:
 	movs	r1, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_0810b010:
 	movs	r3, #128
 	lsls	r3, r3, #9

@@ -223,7 +223,7 @@ Func_0811b75c:
 	beq.n	.L_0811b90e
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	mov	r1, sl
 	adds	r5, r0, #0
 	strb	r1, [r5, #6]
@@ -233,7 +233,7 @@ Func_0811b75c:
 	beq.n	.L_0811b92a
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	adds	r5, r0, #0
 	str	r5, [r7, #32]
 	movs	r1, #0
@@ -253,7 +253,7 @@ Func_0811b75c:
 .L_0811b93c:
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	mov	r2, r9
 	adds	r5, r0, #0
 	str	r5, [r7, #36]

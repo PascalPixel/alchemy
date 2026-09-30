@@ -372,7 +372,7 @@ Func_0814ce30:
 	lsls	r5, r5, #1
 	ldrb	r1, [r6, r5]
 	ldr	r0, [r3, #0]
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r1, #238
 	ldr	r0, [sp, #64]
 	lsls	r1, r1, #7
@@ -381,7 +381,7 @@ Func_0814ce30:
 	adds	r5, #1
 	ldr	r0, [r3, #0]
 	ldrb	r1, [r6, r5]
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_0814d142:
 	ldr	r3, [sp, #56]
 	subs	r3, #72
@@ -1134,7 +1134,7 @@ Func_0814ce30:
 	b.n	.L_0814d708
 .L_0814d700:
 	movs	r1, #5
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	adds	r5, #1
 .L_0814d708:
 	ldr	r0, [r6, #0]
@@ -2014,7 +2014,7 @@ Func_0814ce30:
 	movs	r2, #3
 	ands	r3, r2
 	ldrb	r1, [r1, r3]
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_0814de32:
 	ldr	r2, [sp, #16]
 	movs	r3, #128

@@ -6,26 +6,26 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer UiWork_FinalizeFar
-	overlay_veneer Func_08038038
-	overlay_veneer Func_08038048
+	overlay_veneer UiText_OpenMessageWindowFar
+	overlay_veneer UiWork_IsCompleteFar
 	overlay_veneer Func_080380f8
 	overlay_veneer Func_08038108
 	overlay_veneer Func_08038140
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80a0
-	overlay_veneer Func_080c80a8
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer Object_RefreshSelectorByIdFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
+	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8268
 	overlay_veneer Func_080c8278

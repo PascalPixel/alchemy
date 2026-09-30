@@ -5,13 +5,13 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c8008
+	.global Game_ResetForNewGameFar
 	.thumb_func
-Func_080c8008:
-	overlay_veneer Func_080c9944
-	.global Func_080c8010
+Game_ResetForNewGameFar:
+	overlay_veneer Game_ResetForNewGame
+	.global Battle_WaitMode0Far
 	.thumb_func
-Func_080c8010:
+Battle_WaitMode0Far:
 	overlay_veneer Battle_WaitMode0
 	.global Func_080c8018
 	.thumb_func
@@ -21,32 +21,32 @@ Func_080c8018:
 	.thumb_func
 Func_080c8020:
 	overlay_veneer Func_080d2350
-	overlay_veneer Func_080d2398
-	overlay_veneer Func_080d23b8
-	overlay_veneer Func_080cacec
-	overlay_veneer Func_080d23cc
-	.global Func_080c8048
+	overlay_veneer Event_RunObjectHookAndWait
+	overlay_veneer Event_CallWithLastActiveObjectId
+	overlay_veneer Scene_AssignViewFlags
+	overlay_veneer Event_SetWorkWord10
+	.global Event_PrepareObjectAndApplyValueFar
 	.thumb_func
-Func_080c8048:
+Event_PrepareObjectAndApplyValueFar:
 	overlay_veneer Event_PrepareObjectAndApplyValue
 	overlay_veneer Event_PrepareTwoObjectsAndApply
-	.global Func_080c8058
+	.global Party_RemoveOwnerRestoredFar
 	.thumb_func
-Func_080c8058:
-	overlay_veneer Func_080d2488
-	.global Func_080c8060
+Party_RemoveOwnerRestoredFar:
+	overlay_veneer Party_RemoveOwnerRestored
+	.global PartyInventory_GiveItemFar
 	.thumb_func
-Func_080c8060:
-	overlay_veneer Func_080d260c
-	overlay_veneer Func_080d27ec
-	.global Func_080c8070
+PartyInventory_GiveItemFar:
+	overlay_veneer PartyInventory_GiveItem
+	overlay_veneer Inventory_TryAddAndReturnOwner
+	.global Inventory_PromptAndSetObjectModeFar
 	.thumb_func
-Func_080c8070:
-	overlay_veneer Func_080d2840
-	.global Func_080c8078
+Inventory_PromptAndSetObjectModeFar:
+	overlay_veneer Inventory_PromptAndSetObjectMode
+	.global UiText_DrawQuantityPairWithCueFar
 	.thumb_func
-Func_080c8078:
-	overlay_veneer Func_080d296c
+UiText_DrawQuantityPairWithCueFar:
+	overlay_veneer UiText_DrawQuantityPairWithCue
 	.global Func_080c8080
 	.thumb_func
 Func_080c8080:

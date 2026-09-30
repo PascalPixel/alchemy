@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811cd7c
+	.global Camera_ConfigureScene
 	.thumb_func
-Func_0811cd7c:
+Camera_ConfigureScene:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r8

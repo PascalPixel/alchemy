@@ -7,8 +7,8 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramSignedRemainder
-	overlay_veneer Func_080000c0
-	overlay_veneer Func_080003c0
+	overlay_veneer WaitFramesFar
+	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080200c0
@@ -16,16 +16,16 @@
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
-	overlay_veneer Func_08038038
-	overlay_veneer Func_08038040
-	overlay_veneer Func_08038048
-	overlay_veneer Func_08038060
-	overlay_veneer Func_08038078
-	overlay_veneer Func_08038080
-	overlay_veneer Func_08038090
-	overlay_veneer Func_08038098
+	overlay_veneer UiText_OpenMessageWindowFar
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	overlay_veneer UiWork_IsCompleteFar
+	overlay_veneer RenderOutput_PrepareForRedrawFar
+	overlay_veneer UiText_DrawResourceFar
+	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	overlay_veneer UiText_DrawStringAtOffsetFar
+	overlay_veneer UiText_DrawStringInWindowFar
 	overlay_veneer UiText_DrawNumberAtOffsetFar
-	overlay_veneer Func_080380b0
+	overlay_veneer UiText_DrawNumberInWindowFar
 	overlay_veneer Func_080380f8
 	overlay_veneer Func_08038120
 	overlay_veneer Func_08038140
@@ -36,29 +36,29 @@
 	overlay_veneer Func_08038340
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Item_Get
-	overlay_veneer Func_080ad020
-	overlay_veneer Func_080ad028
-	overlay_veneer Func_080ad058
-	overlay_veneer Func_080ad0c0
-	overlay_veneer Func_080ad0c8
-	overlay_veneer Func_080ad100
+	overlay_veneer Inventory_AddFar
+	overlay_veneer PartyInventory_AddFar
+	overlay_veneer Inventory_BreakFar
+	overlay_veneer Owner_AdjustFirstValueFar
+	overlay_veneer Owner_AdjustSecondValueFar
+	overlay_veneer Party_ListActiveOwnersFar
 	overlay_veneer Func_080ad110
 	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Djinn_ActivateFar
-	overlay_veneer Func_080ad198
+	overlay_veneer Party_AdvanceOwnerCountToTargetFar
 	overlay_veneer Func_080ad1d8
-	overlay_veneer Func_080ad1f8
+	overlay_veneer PartyInventory_HasSpaceFar
 	overlay_veneer Func_080ad240
-	overlay_veneer Func_080ad248
+	overlay_veneer Djinn_AddToLeastLoadedOwnerFar
 	overlay_veneer Func_080ad2b8
 	overlay_veneer Func_080ad2f0
 	overlay_veneer Func_080ad2f8
-	overlay_veneer Func_080c8010
-	overlay_veneer Func_080c8060
-	overlay_veneer Func_080c8070
-	overlay_veneer Func_080c8088
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer PartyInventory_GiveItemFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
+	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8188
 	overlay_veneer Func_080c81a0

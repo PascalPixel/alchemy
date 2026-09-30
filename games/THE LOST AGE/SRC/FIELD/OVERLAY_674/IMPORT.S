@@ -7,12 +7,12 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramSignedRemainder
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080000d8
-	overlay_veneer Func_08000118
+	overlay_veneer Math_SineFar
 	overlay_veneer Func_08000128
-	overlay_veneer Func_08000148
+	overlay_veneer Runtime_AllocateBlockFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
@@ -20,7 +20,7 @@
 	overlay_veneer Object_SetCallback
 	overlay_veneer Func_080200c0
 	overlay_veneer Func_080200c8
-	overlay_veneer Func_080200e8
+	overlay_veneer Object_SetPositionAndResetMotionFar
 	overlay_veneer Object_SetPosition
 	overlay_veneer Object_CommitPosition
 	overlay_veneer Func_08020170
@@ -28,31 +28,31 @@
 	overlay_veneer Func_08020210
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020300
-	overlay_veneer Func_08038040
-	overlay_veneer Func_080ad038
-	overlay_veneer Func_080ad040
-	overlay_veneer Func_080c8010
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	overlay_veneer PartyInventory_FindOwnerFar
+	overlay_veneer PartyInventory_RemoveFar
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8060
-	overlay_veneer Func_080c8070
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80a0
-	overlay_veneer Func_080c80b0
-	overlay_veneer Func_080c80b8
-	overlay_veneer Func_080c80c0
-	overlay_veneer Func_080c80c8
-	overlay_veneer Func_080c80d0
-	overlay_veneer Func_080c80d8
-	overlay_veneer Func_080c80e8
-	overlay_veneer Func_080c80f0
+	overlay_veneer PartyInventory_GiveItemFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8100
 	overlay_veneer Func_080c8110
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8128
-	overlay_veneer Func_080c8138
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
 	overlay_veneer Func_080c8150
 	overlay_veneer Func_080c8158
 	overlay_veneer Func_080c8170
@@ -77,7 +77,7 @@
 	overlay_veneer Func_080c84f0
 	overlay_veneer Func_080c84f8
 	overlay_veneer Func_080c8500
-	overlay_veneer Func_080c8600
+	overlay_veneer Object_LinkObjectAndSetCallbackFar
 	overlay_veneer Func_080c8690
 	overlay_veneer Func_080c8738
 	overlay_veneer Func_080c8748

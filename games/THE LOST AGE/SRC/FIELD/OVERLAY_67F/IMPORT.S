@@ -7,16 +7,16 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramSignedDivide
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000f8
-	overlay_veneer Func_08000118
-	overlay_veneer Func_08000120
+	overlay_veneer Math_SineFar
+	overlay_veneer Math_CosineFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Object_SetMode
 	overlay_veneer Object_SetCallback
 	overlay_veneer Func_080200c0
-	overlay_veneer Func_080200e8
+	overlay_veneer Object_SetPositionAndResetMotionFar
 	overlay_veneer Func_08020120
 	overlay_veneer Func_08020178
 	overlay_veneer Func_080201c0
@@ -27,10 +27,10 @@
 	overlay_veneer Func_08020360
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8088
+	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8110
-	overlay_veneer Func_080c8118
+	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c8170
 	overlay_veneer Func_080c8208
 	overlay_veneer Func_080c8220

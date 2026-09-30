@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803a7ac
+	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
-Func_0803a7ac:
+UiText_ShowPositionedMessageAndWait:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -119,7 +119,7 @@ Func_0803a7ac:
 	bl	WaitFrames
 .L_0803a88e:
 	adds	r0, r5, #0
-	bl	Func_0803a3e4
+	bl	UiWork_IsIdle
 	cmp	r0, #0
 	beq.n	.L_0803a888
 .L_0803a898:

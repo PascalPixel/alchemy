@@ -868,7 +868,7 @@ Func_0811cfd0:
 	bl	GameFlag_SetBitFar
 	adds	r5, #69
 	movs	r0, #0
-	bl	Func_0811cd7c
+	bl	Camera_ConfigureScene
 	bl	Func_08038218
 	ldrb	r3, [r5, #0]
 	cmp	r3, #2

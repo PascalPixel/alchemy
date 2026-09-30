@@ -15,9 +15,9 @@ Func_08038248:
 	.thumb_func
 RenderOutput_RedrawSavedRectFar:
 	overlay_veneer RenderOutput_RedrawSavedRect
-	.global Func_08038268
+	.global RenderOutput_ClearListFar
 	.thumb_func
-Func_08038268:
+RenderOutput_ClearListFar:
 	overlay_veneer RenderOutput_ClearList
 	.global UiWindow_SetTilemapEntryFar
 	.thumb_func

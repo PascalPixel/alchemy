@@ -85,7 +85,7 @@ Func_080464dc:
 	adds	r0, r7, #0
 	adds	r1, r5, #0
 	adds	r2, r6, #0
-	bl	Func_080ad1b0
+	bl	Djinn_IsActiveFar
 	cmp	r0, #0
 	beq.n	.L_08046598
 	adds	r0, r7, #0
@@ -252,7 +252,7 @@ Func_080464dc:
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r3, #19
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	ldr	r3, [sp, #68]
 	cmp	r3, #0
 	bne.n	.L_0804670a
@@ -496,7 +496,7 @@ Func_080464dc:
 	str	r3, [sp, #0]
 	movs	r2, #10
 	movs	r3, #19
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 .L_080468f8:
 	ldr	r1, [sp, #60]
 	cmp	r1, #0
@@ -2118,13 +2118,13 @@ Func_080464dc:
 	adds	r0, r0, r3
 .L_0804758e:
 	movs	r2, #32
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_080475a0
 .L_08047596:
 	ldr	r0, [pc, #140]
 	add	r1, sp, #284
 	movs	r2, #32
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 .L_080475a0:
 	ldr	r0, [sp, #136]
 	bl	RenderOutput_RedrawSavedRect
@@ -2155,7 +2155,7 @@ Func_080464dc:
 	movs	r1, #0
 	movs	r3, #29
 	movs	r2, #16
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	mov	r1, sl
 	lsls	r3, r1, #1
 	add	r3, fp
@@ -2478,13 +2478,13 @@ Func_080464dc:
 	add	r1, sp, #156
 	adds	r0, r0, r3
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_0804787a
 .L_08047870:
 	ldr	r0, [pc, #204]
 	add	r1, sp, #156
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 .L_0804787a:
 	ldr	r0, [sp, #136]
 	bl	RenderOutput_RedrawSavedRect
@@ -2514,7 +2514,7 @@ Func_080464dc:
 	movs	r1, #0
 	movs	r2, #16
 	movs	r3, #29
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	ldr	r2, [sp, #60]
 	mov	r1, sl
 	lsls	r3, r1, #1
@@ -2818,7 +2818,7 @@ Func_080464dc:
 	movs	r1, #0
 	movs	r2, #16
 	movs	r3, #29
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r0, #0
 	ldr	r7, [sp, #64]
 	str	r0, [sp, #80]
@@ -2998,13 +2998,13 @@ Func_080464dc:
 .L_08047c70:
 	add	r1, sp, #156
 	movs	r2, #32
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_08047c84
 .L_08047c7a:
 	ldr	r0, [pc, #100]
 	add	r1, sp, #156
 	movs	r2, #32
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 .L_08047c84:
 	ldr	r0, [sp, #140]
 	mov	r4, r9
@@ -3149,7 +3149,7 @@ Func_080464dc:
 	movs	r1, #0
 	movs	r2, #14
 	movs	r3, #29
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 .L_08047db2:
 	ldr	r0, [sp, #64]
 	ldr	r1, [sp, #136]
@@ -3936,7 +3936,7 @@ Func_080464dc:
 	ldr	r1, [sp, #48]
 	adds	r0, r1, r0
 	ldr	r1, [sp, #52]
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_08048452
 .L_080483f6:
 	cmp	r3, #2
@@ -3960,7 +3960,7 @@ Func_080464dc:
 	ldr	r0, [pc, #32]
 	ldr	r1, [sp, #52]
 	movs	r2, #128
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_08048452
 	movs	r0, r0
 	.4byte 0x00000d1d
@@ -3976,7 +3976,7 @@ Func_080464dc:
 	ldr	r1, [sp, #52]
 	adds	r0, r0, r3
 	movs	r2, #128
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 .L_08048452:
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #128]
@@ -4234,7 +4234,7 @@ Func_080464dc:
 	str	r3, [r2, #72]
 	ldr	r0, [sp, #96]
 	bl	0x08118120
-	bl	Func_08118118
+	bl	BattleActor_CommitPlacementFar
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #84]
@@ -4544,7 +4544,7 @@ Func_080464dc:
 	ldr	r0, [pc, #808]
 	adds	r1, r6, #0
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	ldr	r3, [sp, #68]
 	cmp	r3, #0
 	beq.n	.L_080489ac
@@ -4584,7 +4584,7 @@ Func_080464dc:
 	adds	r1, r6, #0
 	adds	r0, r0, r3
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	ldr	r1, [sp, #68]
 	cmp	r1, #0
 	beq.n	.L_080489ac
@@ -4608,7 +4608,7 @@ Func_080464dc:
 	adds	r1, r6, #0
 	ldr	r0, [pc, #680]
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	movs	r3, #240
 	lsls	r3, r3, #4
 	ands	r5, r3
@@ -4641,14 +4641,14 @@ Func_080464dc:
 	adds	r0, r0, r3
 	adds	r1, r6, #0
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_080489ac
 .L_080489a0:
 	ldr	r6, [sp, #8]
 	ldr	r0, [pc, #604]
 	adds	r1, r6, #0
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 .L_080489ac:
 	ldr	r2, [sp, #72]
 	movs	r1, #0
@@ -5075,7 +5075,7 @@ Func_080464dc:
 	movs	r2, #52
 	ldr	r1, [sp, #8]
 	ldr	r0, [pc, #584]
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	movs	r2, #0
 	ldr	r0, [sp, #8]
 	ldr	r1, [sp, #44]
@@ -5873,7 +5873,7 @@ Func_080464dc:
 	adds	r0, r0, r3
 	adds	r1, r5, #0
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	movs	r2, #0
 	ldr	r1, [sp, #60]
 	movs	r3, #4

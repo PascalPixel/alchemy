@@ -101,7 +101,7 @@ Func_0815b290:
 	strb	r5, [r6, #26]
 	movs	r1, #0
 	adds	r0, r6, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r7, [r3, #24]
@@ -190,7 +190,7 @@ Func_0815b290:
 	strb	r1, [r5, #26]
 	strh	r1, [r5, #18]
 	adds	r0, r5, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	adds	r0, r6, #0
 	pop	{r3}
 	mov	r8, r3
@@ -623,7 +623,7 @@ Func_0815b290:
 	subs	r1, r0, r1
 	adds	r1, #7
 	adds	r0, r6, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldr	r3, [r5, #0]
 	add	sp, #24
 	adds	r3, #1

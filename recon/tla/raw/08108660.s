@@ -15,7 +15,7 @@ Func_08108660:
 	adds	r7, r0, #0
 	ldr	r0, [r5, #0]
 	ldrb	r6, [r0, #5]
-	bl	Func_080f8028
+	bl	UiIcon_PrepareObjectFar
 	adds	r2, r7, #0
 	movs	r1, #7
 	movs	r0, #7

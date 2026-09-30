@@ -191,7 +191,7 @@ Func_0811b4d8:
 	mov	r8, r3
 .L_0811b622:
 	movs	r1, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	adds	r7, r0, #0
 	cmp	r7, #0
 	beq.n	.L_0811b69c
@@ -228,7 +228,7 @@ Func_0811b4d8:
 	beq.n	.L_0811b68c
 	adds	r0, r7, #0
 	adds	r1, r6, #0
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	movs	r3, #1
 	negs	r3, r3
 	str	r0, [r5, #32]

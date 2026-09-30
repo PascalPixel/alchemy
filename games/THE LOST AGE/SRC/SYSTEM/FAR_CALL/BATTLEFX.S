@@ -9,17 +9,17 @@
 	.thumb_func
 Func_080c8520:
 	overlay_veneer Func_080ca494
-	.global Func_080c8528
+	.global BattleFx_StartItemBreakFar
 	.thumb_func
-Func_080c8528:
+BattleFx_StartItemBreakFar:
 	overlay_veneer BattleFx_StartItemBreak
-	.global Func_080c8530
+	.global BattleFx_SnapScaleToFullFar
 	.thumb_func
-Func_080c8530:
+BattleFx_SnapScaleToFullFar:
 	overlay_veneer BattleFx_SnapScaleToFull
-	.global Func_080c8538
+	.global UpdateRisingParticleBurstFar
 	.thumb_func
-Func_080c8538:
+UpdateRisingParticleBurstFar:
 	overlay_veneer UpdateRisingParticleBurst
 	.global Func_080c8540
 	.thumb_func

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803a668
+	.global UiWork_SetBusyFlags
 	.thumb_func
-Func_0803a668:
+UiWork_SetBusyFlags:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

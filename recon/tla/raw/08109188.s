@@ -180,7 +180,7 @@ Func_08109188:
 	adds	r2, r6, #0
 	movs	r3, #88
 	lsls	r1, r1, #23
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r2, #0
 	movs	r3, #17
 	strb	r2, [r0, #4]
@@ -201,7 +201,7 @@ Func_08109188:
 	lsls	r1, r1, #23
 	adds	r2, r6, #0
 	str	r5, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r3, #15
 	strb	r5, [r0, #4]
 	strb	r3, [r0, #5]
@@ -236,11 +236,11 @@ Func_08109188:
 	cmp	r3, r9
 	bne.n	.L_08109364
 	movs	r1, #30
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	b.n	.L_0810936a
 .L_08109364:
 	movs	r1, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_0810936a:
 	movs	r3, #128
 	lsls	r3, r3, #9
@@ -464,7 +464,7 @@ Func_08109188:
 	lsls	r1, r1, #23
 	movs	r3, #56
 	mov	r2, sl
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r3, #0
 	adds	r6, r7, #0
 	strb	r3, [r0, #4]
@@ -747,13 +747,13 @@ Func_08109188:
 	mov	r2, sl
 	movs	r3, #0
 	str	r7, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	adds	r1, r5, #0
 	mov	r2, sl
 	movs	r3, #32
 	ldr	r0, [sp, #4]
 	str	r7, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	ldrh	r1, [r0, #24]
 	ldr	r3, [pc, #20]
 	lsls	r2, r1, #22
@@ -1898,7 +1898,7 @@ Func_08109188:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [r5, #0]
-	bl	Func_080f8028
+	bl	UiIcon_PrepareObjectFar
 	movs	r0, #0
 	mov	r1, r8
 	adds	r2, r6, #0

@@ -5,16 +5,14 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080ad0c0
+	.global Owner_AdjustFirstValueFar
 	.thumb_func
-Func_080ad0c0:
+Owner_AdjustFirstValueFar:
 	overlay_veneer Owner_AdjustFirstValue
-	.global Func_080ad0c8
-	.thumb_func
-Func_080ad0c8:
 	.global Owner_AdjustSecondValueFar
 	.thumb_func
 Owner_AdjustSecondValueFar:
+	.thumb_func
 	overlay_veneer Owner_AdjustSecondValue
 	.global Owner_RecalculateRatiosFar
 	.thumb_func
@@ -34,9 +32,9 @@ Func_080ad0f0:
 	.thumb_func
 Party_AddActiveOwnerFar:
 	overlay_veneer Func_080afdd8
-	.global Func_080ad100
+	.global Party_ListActiveOwnersFar
 	.thumb_func
-Func_080ad100:
+Party_ListActiveOwnersFar:
 	overlay_veneer Party_ListActiveOwners
 	overlay_veneer Func_080b04bc
 	.global Func_080ad110
@@ -78,17 +76,17 @@ Djinn_ActivateFar:
 	.thumb_func
 Trade_RemoveOfferFar:
 	overlay_veneer Trade_RemoveOffer
-	.global Func_080ad170
+	.global Trade_AddOfferFar
 	.thumb_func
-Func_080ad170:
+Trade_AddOfferFar:
 	overlay_veneer Trade_AddOffer
 	overlay_veneer Djinn_Transfer
 	overlay_veneer Func_080aff28
 	overlay_veneer Func_080aff7c
 	overlay_veneer Djinn_GetDefinitionHeader
-	.global Func_080ad198
+	.global Party_AdvanceOwnerCountToTargetFar
 	.thumb_func
-Func_080ad198:
+Party_AdvanceOwnerCountToTargetFar:
 	overlay_veneer Party_AdvanceOwnerCountToTarget
 	overlay_veneer Func_080b0028
 	overlay_veneer Trade_CountPendingOffers

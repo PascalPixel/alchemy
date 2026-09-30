@@ -317,7 +317,7 @@
 	str	r3, [r0, #28]
 	str	r1, [r0, #32]
 	str	r2, [r0, #36]
-	bl	Func_08038000
+	bl	UiWork_InitializeWithResourceCountersFar
 	movs	r1, #6
 	str	r1, [sp, #0]
 	mov	r8, r1

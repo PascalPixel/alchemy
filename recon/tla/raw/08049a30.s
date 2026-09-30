@@ -217,7 +217,7 @@ Func_08049a30:
 	adds	r0, r0, r3
 .L_08049be6:
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_08049c08
 	movs	r0, r0
 	.4byte 0x000001ff
@@ -229,7 +229,7 @@ Func_08049a30:
 	ldr	r0, [pc, #100]
 	adds	r1, r5, #0
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 .L_08049c08:
 	ldr	r1, [sp, #52]
 	movs	r3, #4
@@ -630,14 +630,14 @@ Func_08049a30:
 .L_08049f3a:
 	adds	r1, r5, #0
 	movs	r2, #32
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_08049f50
 .L_08049f44:
 	ldr	r5, [sp, #32]
 	ldr	r0, [pc, #488]
 	adds	r1, r5, #0
 	movs	r2, #32
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 .L_08049f50:
 	bl	0x080396bc
 	adds	r0, r5, #0
@@ -1083,7 +1083,7 @@ Func_08049a30:
 	adds	r1, r5, #0
 	adds	r0, r0, r3
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_0804a2f4
 	movs	r0, r0
 	.4byte 0x00003fff
@@ -1094,7 +1094,7 @@ Func_08049a30:
 	ldr	r0, [pc, #192]
 	adds	r1, r5, #0
 	movs	r2, #52
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 .L_0804a2f4:
 	movs	r2, #0
 	movs	r3, #4
@@ -3197,7 +3197,7 @@ Func_08049a30:
 	add	r6, sp, #120
 	adds	r1, r6, #0
 	movs	r2, #14
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	b.n	.L_0804b36a
 .L_0804b328:
 	cmp	r7, #13
@@ -3849,7 +3849,7 @@ Func_08049a30:
 	adds	r1, r5, #0
 	movs	r2, #52
 	ldr	r0, [pc, #72]
-	bl	Func_0803c9bc
+	bl	UiText_CopyMessageString
 	adds	r0, r5, #0
 	mov	r1, sl
 	movs	r2, #0

@@ -15,7 +15,7 @@ Func_0811e7dc:
 	beq.n	.L_0811e82c
 	movs	r1, #0
 	adds	r0, r6, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	bl	Func_08020370
 	movs	r0, #1
 	bl	WaitFrames
@@ -25,14 +25,14 @@ Func_0811e7dc:
 	movs	r1, #0
 	adds	r0, r6, #0
 	str	r3, [r5, #44]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	ldrb	r2, [r0, #26]
 	movs	r3, #32
 	orrs	r3, r2
 	strb	r3, [r0, #26]
 	movs	r1, #0
 	adds	r0, r6, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	movs	r1, #0
 	bl	0x08020068
 .L_0811e82c:

@@ -126,7 +126,7 @@ Func_08118958:
 	beq.n	.L_08118a52
 	bl	0x080ad090
 	mov	r0, r8
-	bl	Func_08118738
+	bl	DebugParty_LoadPreset
 	mov	fp, r8
 .L_08118a52:
 	ldr	r3, [r5, #0]

@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08118118
+	.global BattleActor_CommitPlacementFar
 	.thumb_func
-Func_08118118:
+BattleActor_CommitPlacementFar:
 	overlay_veneer BattleActor_CommitPlacement
 	overlay_veneer Func_0811b724
 	overlay_veneer Func_08120060

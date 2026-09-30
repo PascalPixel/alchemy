@@ -214,7 +214,7 @@ Func_080d4384:
 	str	r7, [r3, #0]
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	Func_080200d8
+	bl	ObjectDispatch_InitFromTable4WithArgumentFar
 	mov	r3, sl
 	cmp	r3, #0
 	bne.n	.L_080d43e4

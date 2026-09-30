@@ -8,8 +8,8 @@
 	.balign 4
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080003d0
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8118
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c86a8
 	overlay_veneer Func_080c86b0
 	overlay_veneer Func_080c86c0

@@ -11,7 +11,7 @@ Func_080f8658:
 	ldr	r0, [pc, #152]
 	movs	r3, #40
 	adds	r6, r1, #0
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r3, [pc, #144]
 	adds	r1, r6, #0
 	mov	r8, r3
@@ -52,7 +52,7 @@ Func_080f8658:
 	ldr	r0, [pc, #68]
 	movs	r2, #0
 	movs	r3, #48
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	mov	r0, r8
 	adds	r1, r6, #0
 	movs	r3, #48
@@ -251,7 +251,7 @@ Func_080f8840:
 	mov	r2, r8
 	mov	r3, sl
 	str	r7, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	adds	r6, r0, #0
 .L_080f8876:
 	adds	r0, r6, #0
@@ -361,7 +361,7 @@ UiIcon_PrepareObject:
 	movs	r3, #84
 	lsls	r1, r1, #23
 	adds	r0, r6, #0
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	mov	r2, r8
 	strb	r2, [r0, #5]
 	movs	r2, #188
@@ -383,7 +383,7 @@ UiIcon_PrepareObject:
 	movs	r3, #84
 	lsls	r1, r1, #23
 	adds	r0, r6, #0
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r2, #190
 	mov	r3, r8
 	lsls	r2, r2, #1

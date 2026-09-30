@@ -63,7 +63,7 @@ Func_08040a48:
 	movs	r3, #14
 	subs	r5, #1
 	str	r6, [sp, #0]
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	adds	r6, #2
 	cmp	r5, #0
 	bge.n	.L_08040abc
@@ -332,7 +332,7 @@ Func_08040a48:
 	movs	r3, #17
 	subs	r6, #1
 	str	r5, [sp, #0]
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	adds	r5, #3
 	cmp	r6, #0
 	bge.n	.L_08040cec

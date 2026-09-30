@@ -345,7 +345,7 @@ Func_08123648:
 	movs	r1, #192
 	adds	r0, r5, #0
 	lsls	r1, r1, #24
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	cmp	r0, #0
 	bne.n	.L_081238f2
 	movs	r0, #8
@@ -669,7 +669,7 @@ Func_08123648:
 	ldr	r2, [sp, #12]
 	movs	r1, #1
 	ldr	r0, [r2, #0]
-	bl	Func_080ad070
+	bl	Inventory_GetEquippedItemFar
 	movs	r1, #2
 	bl	0x08038120
 	ldr	r5, [pc, #788]
@@ -1185,7 +1185,7 @@ Func_08123648:
 	asrs	r1, r1, #24
 	ands	r1, r6
 	ands	r2, r3
-	bl	Func_080ad1b0
+	bl	Djinn_IsActiveFar
 	cmp	r0, #0
 	beq.n	.L_08124060
 	b.n	.L_081241b0

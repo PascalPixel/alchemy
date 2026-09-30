@@ -699,19 +699,19 @@ Func_0803c40c:
 	movs	r0, r0
 	.2byte 0x1100
 	.2byte 0x0300
-	.global Func_0803c9ac
+	.global Ui_AdjustValueWithoutLimit
 	.thumb_func
-Func_0803c9ac:
+Ui_AdjustValueWithoutLimit:
 	push	{lr}
 	ldr	r2, [pc, #8]
-	bl	Func_0803ca20
+	bl	UiText_DecodeMessage
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x7fff
-	.global Func_0803c9bc
+	.global UiText_CopyMessageString
 	.thumb_func
-Func_0803c9bc:
+UiText_CopyMessageString:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -765,9 +765,9 @@ Func_0803c9bc:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0x0000
-	.global Func_0803ca20
+	.global UiText_DecodeMessage
 	.thumb_func
-Func_0803ca20:
+UiText_DecodeMessage:
 .L_0803ca20:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

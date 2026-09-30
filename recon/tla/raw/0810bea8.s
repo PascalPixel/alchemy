@@ -79,7 +79,7 @@ Func_0810bea8:
 	mov	r1, fp
 	adds	r2, r5, #0
 	ldrh	r0, [r7, #0]
-	bl	Func_08038410
+	bl	UiIcon_CopyResourceToSlotFar
 	movs	r3, #128
 	adds	r2, r6, #4
 	lsls	r3, r3, #23

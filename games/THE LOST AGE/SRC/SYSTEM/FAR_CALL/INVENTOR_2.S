@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080ad040
+	.global PartyInventory_RemoveFar
 	.thumb_func
-Func_080ad040:
+PartyInventory_RemoveFar:
 	overlay_veneer PartyInventory_Remove
 	.global Func_080ad048
 	.thumb_func
@@ -17,9 +17,9 @@ Func_080ad048:
 	.thumb_func
 Inventory_RemoveFar:
 	overlay_veneer Inventory_Remove
-	.global Func_080ad058
+	.global Inventory_BreakFar
 	.thumb_func
-Func_080ad058:
+Inventory_BreakFar:
 	overlay_veneer Inventory_Break
 	overlay_veneer Inventory_Repair
 	overlay_veneer Func_080af338

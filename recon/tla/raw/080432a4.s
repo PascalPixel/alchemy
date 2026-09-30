@@ -300,7 +300,7 @@ Func_080434ec:
 	beq.n	.L_08043506
 	ldr	r0, [pc, #44]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	subs	r6, #9
 	b.n	.L_0804351e
 .L_08043506:
@@ -311,7 +311,7 @@ Func_080434ec:
 	beq.n	.L_0804351e
 	ldr	r0, [pc, #28]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	movs	r6, #3
 	negs	r6, r6
 .L_0804351e:
@@ -350,7 +350,7 @@ Func_08043534:
 	beq.n	.L_08043570
 	ldr	r0, [pc, #128]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	movs	r2, #9
 	b.n	.L_080435ca
 .L_08043570:
@@ -364,7 +364,7 @@ Func_08043534:
 	beq.n	.L_08043590
 	ldr	r0, [pc, #104]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	movs	r3, #2
 	negs	r3, r3
 	mov	sl, r3
@@ -392,7 +392,7 @@ Func_08043534:
 	beq.n	.L_080435ce
 	ldr	r0, [pc, #40]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	movs	r2, #3
 .L_080435ca:
 	negs	r2, r2
@@ -440,7 +440,7 @@ Func_080435fc:
 	bl	Audio_PlayCue
 	movs	r1, #13
 	ldr	r0, [pc, #84]
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	bl	.L_08043358
 	bl	Func_080c8628
 	adds	r0, r5, #0
@@ -462,13 +462,13 @@ Func_080435fc:
 	movs	r1, #1
 	movs	r6, #3
 .L_0804365e:
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	negs	r6, r6
 	b.n	.L_0804366e
 .L_08043666:
 	ldr	r0, [pc, #36]
 	movs	r1, #9
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 .L_0804366e:
 	bl	0x0801613c
 	adds	r0, r6, #0
@@ -491,7 +491,7 @@ Func_08043690:
 	beq.n	.L_080436a8
 	ldr	r0, [pc, #188]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	subs	r7, #9
 	b.n	.L_08043752
 .L_080436a8:
@@ -523,7 +523,7 @@ Func_08043690:
 	beq.n	.L_08043710
 	ldr	r0, [pc, #132]
 	movs	r1, #13
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	b.n	.L_080436ee
 .L_080436e8:
 	movs	r0, #1
@@ -563,13 +563,13 @@ Func_08043690:
 	ldr	r0, [pc, #44]
 	movs	r1, #1
 	movs	r7, #3
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	negs	r7, r7
 	b.n	.L_08043752
 .L_0804374a:
 	ldr	r0, [pc, #36]
 	movs	r1, #9
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 .L_08043752:
 	bl	0x0801613c
 	adds	r0, r7, #0
@@ -593,7 +593,7 @@ Func_08043774:
 	beq.n	.L_0804378e
 	ldr	r0, [pc, #104]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	subs	r6, #9
 	b.n	.L_080437e2
 .L_0804378e:
@@ -619,7 +619,7 @@ Func_08043774:
 	ldr	r0, [pc, #60]
 	movs	r1, #1
 	movs	r6, #2
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	negs	r6, r6
 	b.n	.L_080437e2
 .L_080437c6:
@@ -663,7 +663,7 @@ Func_0804380c:
 	beq.n	.L_08043828
 	ldr	r0, [pc, #148]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	subs	r7, #9
 	b.n	.L_080438a6
 .L_08043828:
@@ -719,13 +719,13 @@ Func_0804380c:
 	movs	r1, #1
 	movs	r7, #3
 .L_08043896:
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	negs	r7, r7
 	b.n	.L_080438a6
 .L_0804389e:
 	ldr	r0, [pc, #36]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 .L_080438a6:
 	bl	0x0801613c
 	adds	r0, r7, #0
@@ -749,7 +749,7 @@ Func_080438c8:
 	beq.n	.L_080438e0
 	ldr	r0, [pc, #144]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	subs	r7, #9
 	b.n	.L_08043960
 .L_080438e0:
@@ -802,13 +802,13 @@ Func_080438c8:
 	ldr	r0, [pc, #36]
 	movs	r1, #1
 	movs	r7, #4
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 	negs	r7, r7
 	b.n	.L_08043960
 .L_08043958:
 	ldr	r0, [pc, #24]
 	movs	r1, #1
-	bl	Func_0803a7ac
+	bl	UiText_ShowPositionedMessageAndWait
 .L_08043960:
 	bl	0x0801613c
 	adds	r0, r7, #0

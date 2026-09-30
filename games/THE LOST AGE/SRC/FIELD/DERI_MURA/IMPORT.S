@@ -18,7 +18,7 @@ Engine_GameFlagSet:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
@@ -30,33 +30,33 @@ Engine_EventEnd:
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:
-	overlay_veneer Func_080c8070
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
-	overlay_veneer Func_080c8088
+	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func
 Engine_ActorSetSpeed:
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80c0
-	overlay_veneer Func_080c80c8
-	overlay_veneer Func_080c80d8
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	.global Engine_ActorCenterAndWalk
 	.thumb_func
 Engine_ActorCenterAndWalk:
-	overlay_veneer Func_080c80e0
-	overlay_veneer Func_080c80f0
+	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8138
-	overlay_veneer Func_080c8140
-	overlay_veneer Func_080c8148
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
 	overlay_veneer Func_080c8158
-	overlay_veneer Func_080c8160
+	overlay_veneer Object_LinkPairFar
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d296c
+	.global UiText_DrawQuantityPairWithCue
 	.thumb_func
-Func_080d296c:
+UiText_DrawQuantityPairWithCue:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
 	adds	r6, r0, #0
@@ -57,7 +57,7 @@ Func_080d296c:
 	bl	Func_080cf424
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	Func_080d260c
+	bl	PartyInventory_GiveItem
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r7, r3

@@ -29,7 +29,7 @@ Func_0804d678:
 	str	r3, [sp, #0]
 	movs	r1, #8
 	movs	r3, #128
-	bl	Func_08039454
+	bl	UiWindow_ClearInteriorTiles
 	movs	r2, #0
 	ldrsh	r3, [r5, r2]
 	cmp	r3, #1

@@ -352,13 +352,13 @@ Func_0811e830:
 	ldr	r5, [r0, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	ldr	r3, [r0, #40]
 	movs	r1, #2
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
 	movs	r2, #1
-	bl	Func_080202a8
+	bl	ResourceMetadata_SumCommandLengthsFar
 	mov	r1, r8
 	ldr	r3, [r1, #0]
 	mov	fp, r0
@@ -405,13 +405,13 @@ Func_0811e830:
 	adds	r5, r0, #0
 	movs	r1, #0
 	ldr	r0, [r5, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	ldr	r3, [r0, #40]
 	movs	r1, #2
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
 	movs	r2, #1
-	bl	Func_080202a8
+	bl	ResourceMetadata_SumCommandLengthsFar
 	ldr	r3, [sp, #16]
 	mov	fp, r0
 	ldrb	r0, [r3, #2]
@@ -745,7 +745,7 @@ Func_0811e830:
 	bl	0x0811be3c
 	movs	r1, #0
 	ldr	r0, [r0, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	ldrb	r3, [r0, #27]
 	movs	r1, #0
 	subs	r3, #1
@@ -1029,7 +1029,7 @@ Func_0811e830:
 .L_0811f072:
 	mov	r0, r8
 	adds	r1, r6, #0
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_0811f044
 	pop	{r3, r5}

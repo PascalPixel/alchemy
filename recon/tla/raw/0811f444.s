@@ -18,11 +18,11 @@ Func_0811f444:
 	cmp	r3, #1
 	beq.n	.L_0811f468
 	movs	r1, #4
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	b.n	.L_0811f46e
 .L_0811f468:
 	movs	r1, #5
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_0811f46e:
 	adds	r5, #1
 .L_0811f470:
@@ -30,7 +30,7 @@ Func_0811f444:
 	bl	0x0811be3c
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_0811f454
 	movs	r2, #149
@@ -56,7 +56,7 @@ Func_0811f444:
 	bl	0x0811be3c
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	Func_0811bdb0
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_0811f494
 	movs	r0, #4

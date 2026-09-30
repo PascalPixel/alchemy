@@ -14,7 +14,7 @@
 	movs	r1, #0
 	movs	r2, #4
 	movs	r3, #13
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	adds	r0, r7, #0
 	adds	r0, #16
 	adds	r1, r5, #0
@@ -625,14 +625,14 @@
 	movs	r1, #0
 	movs	r2, #2
 	movs	r3, #27
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #4
 	str	r3, [sp, #0]
 	mov	r0, r9
 	movs	r1, #0
 	movs	r2, #4
 	movs	r3, #27
-	bl	Func_08041c54
+	bl	UiWindow_DrawDividerLine
 	mov	r3, r8
 	lsls	r2, r3, #1
 	movs	r3, #1

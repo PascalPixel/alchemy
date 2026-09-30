@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080202a8
+	.global ResourceMetadata_SumCommandLengthsFar
 	.thumb_func
-Func_080202a8:
+ResourceMetadata_SumCommandLengthsFar:
 	overlay_veneer ResourceMetadata_SumCommandLengths
 	overlay_veneer Func_0802dc48
 	overlay_veneer Func_080227e0
@@ -15,9 +15,9 @@ Func_080202a8:
 	.thumb_func
 Func_080202c0:
 	overlay_veneer Func_0802d6e8
-	.global Func_080202c8
+	.global Animation_ApplyChildValueFar
 	.thumb_func
-Func_080202c8:
+Animation_ApplyChildValueFar:
 	overlay_veneer Animation_ApplyChildValue
 	overlay_veneer Func_0802a52c
 	.global Func_080202d8

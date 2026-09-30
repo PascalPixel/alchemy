@@ -114,6 +114,8 @@ SECTIONS
         "*/recon/tla/raw/08015ec8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08015f0c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08016054.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/LINK/SERIAL_QUEUE_COMMAND.o"(.text)
+        "*/recon/tla/raw/08016180.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080162dc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08016348.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08016430.o"(.text .rodata .data .padding)

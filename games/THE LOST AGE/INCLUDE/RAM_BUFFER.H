@@ -36,6 +36,10 @@ struct HeapSlots {
     void *unknown_4c[8];
     /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
+    void *unknown_70[23];
+    /* The serial link runtime's work. */
+    void *serial_work;
+    void *unknown_d0[12];
 };
 
 #define Ram_HeapSlots ((struct HeapSlots *)0x03000000) /* gHeapSlots */

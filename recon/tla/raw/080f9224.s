@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080f9224
+	.global Render_SetTilemapFlagRect
 	.thumb_func
-Func_080f9224:
+Render_SetTilemapFlagRect:
 	push {r5, r6, r7, lr}
 	adds r6, r3, #0
 	movs r3, #192

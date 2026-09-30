@@ -37,7 +37,7 @@ Func_081093a4:
 	bl RenderOutput_PrepareForRedrawFar
 	mov r1, r9
 	ldr r0, [sp, #20]
-	bl Djinn_IsActiveFar + 0x10
+	bl Item_CanOwnerEquip
 	cmp r0, #0
 	bne .L_08109402
 	ldr r0, .L_08109464
@@ -49,7 +49,7 @@ Func_081093a4:
 .L_08109402:
 	ldrb r1, [r5, #2]
 	ldr r0, [sp, #20]
-	bl Djinn_IsActiveFar + 0x20
+	bl Inventory_FindEquippedFar
 	ldr r2, [sp, #12]
 	cmp r0, r2
 	bne .L_08109468
@@ -124,7 +124,7 @@ Func_081093a4:
 	strh r1, [r7, r5]
 	ldr r0, [sp, #20]
 	mov r8, r2
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldrh r3, [r7, #60]
 	add r2, sp, #24
 	str r3, [r2]
@@ -148,7 +148,7 @@ Func_081093a4:
 	str r3, [r2, #12]
 	strh r0, [r7, r5]
 	ldr r0, [sp, #20]
-	bl BattleUnit_Recalculate
+	bl Owner_RecalculateStatsFar
 	ldrh r3, [r7, #60]
 	add r1, sp, #40
 	str r3, [r1]

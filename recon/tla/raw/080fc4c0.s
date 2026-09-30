@@ -41,19 +41,19 @@ Func_080fc4c0:
 .L_080fc50a:
 	movs r1, #5
 	adds r0, r6, #0
-	bl __divsi3
+	bl Math_Div
 	movs r1, #5
 	mov r9, r0
 	adds r0, r6, #0
-	bl Math_Mod
+	bl __modsi3
 	movs r1, #5
 	mov r8, r0
 	adds r0, r7, #0
-	bl __divsi3
+	bl Math_Div
 	movs r1, #5
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	beq .L_080fc536
 	adds r5, #1

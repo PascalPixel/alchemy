@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803a404
+	.global UiWork_ResetCounters
 	.thumb_func
-Func_0803a404:
+UiWork_ResetCounters:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #60]

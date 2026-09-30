@@ -111,11 +111,11 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r3]
 	cmp r0, #0
 	blt .L_081202b6
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_081202b6:
 	bl BattlePresentation_WaitForAdvance
 .L_081202ba:
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	b .L_08120346
 .L_081202c0:
 	lsls r3, r7, #2
@@ -123,7 +123,7 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r3]
 	cmp r0, #0
 	blt .L_081202ba
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_081202ba
 .L_081202d0:
 	movs r2, #180
@@ -171,7 +171,7 @@ BattleEv_DispatchQueued:
 	bl GetBattleObjectSlot
 	adds r1, r0, #0
 	ldr r0, [r6, r5]
-	bl Func_0811b4d8
+	bl BattleUnit_BuildStatusFlags
 	ldr r0, [r6, r5]
 	bl BattlePres_SetActorModeAndAction
 	b .L_08120346
@@ -179,7 +179,7 @@ BattleEv_DispatchQueued:
 	lsls r3, r7, #2
 	adds r3, #64
 	ldr r0, [r6, r3]
-	bl Func_0811f3b8
+	bl BattleActor_RemoveFromLists
 .L_08120346:
 	movs r2, #162
 	lsls r2, r2, #1

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080db974
+	.global Motion_SetTargetPositionFromMagnitudeAngle
 	.thumb_func
-Func_080db974:
+Motion_SetTargetPositionFromMagnitudeAngle:
 	push {r5, r6, lr}
 	adds r6, r0, #0
 	sub sp, #12
@@ -18,7 +18,7 @@ Func_080db974:
 	str r3, [r5, #4]
 	ldr r3, [r6, #16]
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r1, [r5]
 	ldr r2, [r5, #4]
 	ldr r3, [r5, #8]

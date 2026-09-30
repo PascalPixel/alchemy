@@ -25,7 +25,7 @@ Func_080ec16c:
 	lsls r1, r1, #2
 	adds r0, r0, r2
 	adds r1, #85
-	bl __divsi3
+	bl Math_Div
 	asrs r7, r7, #16
 	adds r5, r0, #0
 	movs r3, #224
@@ -36,7 +36,7 @@ Func_080ec16c:
 	adds r0, r0, r3
 	str r5, [r6, #8]
 	lsls r1, r1, #2
-	bl __divsi3
+	bl Math_Div
 	mov r2, r8
 	lsls r0, r0, #16
 	str r0, [r6, #16]

@@ -271,21 +271,21 @@ Func_081a7a28:
 	adds r0, r7, #0
 	add r9, r2
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #0]
 	subs r7, r7, r0
 	adds r4, #6
 	adds r0, r4, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	adds r7, #4
 	adds r4, r0, #0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	subs r5, #6
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	ldr r2, .L_081a7e2c
 	adds r5, r0, #0
 	lsls r3, r5, #1
@@ -357,16 +357,16 @@ Func_081a7a28:
 	movs r5, #26
 .L_081a7cc2:
 	adds r0, r4, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	adds r7, #2
 	adds r4, r0, #0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	adds r5, #2
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	adds r5, r0, #0
 	mov r2, r10
 	lsls r3, r5, #1
@@ -421,8 +421,8 @@ Func_081a7a28:
 	adds r0, r0, r5
 	str r4, [sp, #0]
 	add r9, r3
-	bl __divsi3
-	bl Func_081a8264
+	bl Math_Div
+	bl BattleFx_ClampRgb555Channel
 	ldr r4, [sp, #0]
 	asrs r3, r4, #1
 	adds r4, r3, r0
@@ -431,14 +431,14 @@ Func_081a7a28:
 	asrs r3, r5, #1
 	adds r5, r3, r0
 	adds r0, r4, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	adds r4, r0, #0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	adds r5, r0, #0
 	mov r2, r10
 	lsls r3, r5, #1
@@ -489,16 +489,16 @@ Func_081a7a28:
 	movs r1, #2
 	adds r0, r4, #0
 	add r9, r1
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	movs r1, #3
 	adds r4, r0, #0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	movs r1, #3
 	subs r7, r7, r0
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	ldr r1, .L_081a7e30
 	subs r5, r5, r0
 	lsls r3, r5, #1
@@ -529,7 +529,7 @@ Func_081a7a28:
 .L_081a7e20:
 	.4byte .L_081a7aec
 .L_081a7e24:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 .L_081a7e28:
 	.4byte Data_081a87ba
 .L_081a7e2c:
@@ -563,21 +563,21 @@ Func_081a7a28:
 	movs r1, #3
 	ands r5, r2
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	ldr r4, [sp, #0]
 	subs r7, r7, r0
 	adds r4, #6
 	adds r0, r4, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	adds r7, #4
 	adds r4, r0, #0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	subs r5, #6
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	ldr r2, .L_081a7ebc
 	adds r5, r0, #0
 	lsls r3, r5, #1
@@ -712,13 +712,13 @@ Func_081a7a28:
 	muls r7, r6
 	adds r5, r1, #0
 	muls r5, r6
-	bl Func_081a8278
+	bl BattleFx_ClampRgb555Component
 	mov r8, r0
 	adds r0, r7, #0
-	bl Func_081a8278
+	bl BattleFx_ClampRgb555Component
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Func_081a8278
+	bl BattleFx_ClampRgb555Component
 	mov r2, r10
 	mov r3, r10
 	mov r1, r8
@@ -832,15 +832,15 @@ Func_081a7a28:
 	mov r8, r1
 	adds r6, r0, #0
 	mov r0, r8
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	lsrs r5, r5, #16
 	mov r8, r0
 	adds r0, r5, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	lsrs r6, r6, #16
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl Func_081a8264
+	bl BattleFx_ClampRgb555Channel
 	ldr r2, .L_081a80c0
 	lsls r0, r0, #1
 	ldrh r3, [r2, r0]
@@ -862,7 +862,7 @@ Func_081a7a28:
 	b .L_081a813e
 	.2byte 0x0000
 .L_081a80b8:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 .L_081a80bc:
 	.4byte IwramMulQ16
 .L_081a80c0:

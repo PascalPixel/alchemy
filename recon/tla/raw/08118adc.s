@@ -91,7 +91,7 @@ Func_08118adc:
 	bl Func_080150ac
 	movs r2, #52
 	ldrsh r0, [r5, r2]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	bl Func_08015198
 	movs r3, #0
@@ -115,13 +115,13 @@ Func_08118adc:
 	adds r0, r1, #0
 	movs r2, #0
 	movs r3, #0
-	bl Func_08126548
+	bl BattleCamera_SetRange
 .L_08118bba:
 	add sp, #16
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08118bc0:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_08118bc4:
 	.4byte 0x04000128
 .L_08118bc8:

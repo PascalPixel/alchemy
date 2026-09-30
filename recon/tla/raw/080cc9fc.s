@@ -18,7 +18,7 @@ Func_080cc9fc:
 	sub sp, #12
 	mov r10, r2
 	mov r8, r2
-	bl Func_08015830
+	bl Resource_DecompressHalfwords
 	movs r3, #0
 	str r3, [sp, #8]
 	mov r11, r3
@@ -32,7 +32,7 @@ Func_080cc9fc:
 	mov r11, r2
 	b .L_080cca48
 .L_080cca34:
-	.4byte Data_080efd70
+	.4byte Debug_PaletteSwatchTiles
 .L_080cca38:
 	.4byte 0x06001a00
 .L_080cca3c:

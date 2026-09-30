@@ -102,7 +102,7 @@ ItemMenu_DrawEquipPage:
 	movs r1, #14
 	adds r2, r5, #0
 	str r3, [sp, #4]
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	b .L_08100004
 .L_080fffb4:
 	mov r1, r9
@@ -131,7 +131,7 @@ ItemMenu_DrawEquipPage:
 	movs r1, #14
 	adds r2, r5, #0
 	movs r3, #13
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	b .L_08100004
 .L_080ffff0:
 	mov r3, r11
@@ -142,7 +142,7 @@ ItemMenu_DrawEquipPage:
 	movs r1, #14
 	adds r2, r5, #0
 	movs r3, #14
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 .L_08100004:
 	movs r1, #2
 	adds r7, #1
@@ -166,7 +166,7 @@ ItemMenu_DrawEquipPage:
 	subs r7, #1
 	str r6, [sp, #4]
 	adds r5, #2
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	cmp r7, #0
 	bge .L_0810001a
 	mov r2, r10
@@ -231,7 +231,7 @@ ItemMenu_DrawEquipPage:
 	movs r2, #5
 .L_081000a8:
 	movs r3, #9
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	b .L_081000c6
 .L_081000b0:
 	mov r2, r8
@@ -243,7 +243,7 @@ ItemMenu_DrawEquipPage:
 	movs r1, #2
 	movs r2, #7
 	movs r3, #9
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 .L_081000c6:
 	movs r0, #1
 	bl WaitFrames

@@ -31,7 +31,7 @@ Func_081a150c:
 	strh r2, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_081a15a0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r3, #64
 	movs r5, #128
 	lsls r5, r5, #19

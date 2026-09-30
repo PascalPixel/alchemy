@@ -9,14 +9,29 @@
 	.thumb_func
 Func_08038390:
 	overlay_veneer Func_0804da3c
+	.global Func_08038398
+	.thumb_func
+Func_08038398:
 	overlay_veneer Func_08044460
+	.global UiText_MeasureResourceEntriesFar
+	.thumb_func
+UiText_MeasureResourceEntriesFar:
 	overlay_veneer UiText_MeasureResourceEntries
+	.global Func_080383a8
+	.thumb_func
+Func_080383a8:
 	overlay_veneer Func_08046134
+	.global Ability_LoadGlyphFar
+	.thumb_func
+Ability_LoadGlyphFar:
 	overlay_veneer Ability_LoadGlyph
 	.global Func_080383b8
 	.thumb_func
 Func_080383b8:
 	overlay_veneer Func_080453d0
+	.global Func_080383c0
+	.thumb_func
+Func_080383c0:
 	overlay_veneer Func_08041c0c
 	.global Menu_AnimateSelectionToEntryFar
 	.thumb_func

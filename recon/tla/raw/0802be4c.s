@@ -47,7 +47,7 @@ Func_0802be4c:
 	movs r1, #10
 	lsls r3, r3, #2
 	lsrs r0, r3, #26
-	bl __divsi3
+	bl Math_Div
 	movs r3, #3
 	cmp r0, #3
 	beq .L_0802bec2
@@ -243,7 +243,7 @@ Func_0802be4c:
 .L_0802c040:
 	.4byte Data_02038000
 .L_0802c044:
-	.4byte Data_0202c000
+	.4byte gMapCollision
 .L_0802c048:
 	.4byte 0x06008000
 .L_0802c04c:

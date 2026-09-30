@@ -6,7 +6,7 @@ Func_080d4084:
 	push {r5, r6, r7, lr}
 	adds r6, r1, #0
 	adds r5, r0, #0
-	bl Func_080d3c88
+	bl UiText_OpenMessageAtObject
 	bl Func_080cdf5c
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode

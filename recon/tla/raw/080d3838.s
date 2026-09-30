@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d3838
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_080d3838:
+ObjectMotion_ArmCallback:
 	push {r5, r6, lr}
 	adds r5, r1, #0
 	adds r6, r2, #0

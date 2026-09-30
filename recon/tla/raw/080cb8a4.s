@@ -32,7 +32,7 @@ Func_080cb8a4:
 	ldr r3, [r3]
 	adds r3, #91
 	strb r2, [r3]
-	bl Func_08020268 + 0x8
+	bl Func_08020270
 .L_080cb8e4:
 	pop {pc}
 	.2byte 0x0000

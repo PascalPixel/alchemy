@@ -30,7 +30,7 @@ Func_0811c314:
 	lsls r2, r2, #1
 	adds r3, r0, r2
 	ldrh r0, [r3]
-	bl Func_081280fc
+	bl Summon_IsEntryFlagged
 	cmp r0, #0
 	beq .L_0811c362
 	adds r0, r5, #0

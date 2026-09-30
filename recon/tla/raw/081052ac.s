@@ -19,7 +19,7 @@ Func_081052ac:
 	mov r8, r2
 	cmp r0, #0
 	beq .L_081052d4
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	movs r3, #0
 	str r3, [r7, r6]
 .L_081052d4:

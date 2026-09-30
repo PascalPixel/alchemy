@@ -25,7 +25,7 @@ Func_0814512c:
 	cmp r2, #7
 	bne .L_08145180
 	movs r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, [sp, #52]
 	add r2, sp, #64
 	ldr r1, [r3, #4]
@@ -45,7 +45,7 @@ Func_0814512c:
 	.4byte 0x00000785
 .L_08145180:
 	movs r0, #1
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r2, #128
 	ldr r3, .L_081451c0
 	lsls r2, r2, #19
@@ -154,7 +154,7 @@ Func_0814512c:
 	bne .L_0814523a
 	ldr r1, [sp, #52]
 	ldr r0, [r1, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r3, [sp, #48]
 	movs r2, #160
 	lsls r2, r2, #14
@@ -181,12 +181,12 @@ Func_0814512c:
 	mov r8, r2
 .L_0814527e:
 	ldr r0, [sp, #28]
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, [sp, #52]
 	lsls r0, r0, #1
 	adds r0, #36
 	ldrsh r0, [r4, r0]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r5, .L_081454a4
 	movs r2, #0
 	ldr r6, [r0]
@@ -301,7 +301,7 @@ Func_0814512c:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_081454ac
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, [sp, #48]
 	ldr r2, .L_081454b0
 	ldr r4, [sp, #52]
@@ -375,7 +375,7 @@ Func_0814512c:
 	ldr r3, [sp, #52]
 	adds r0, r4, #0
 	ldr r1, [r3, #20]
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, [sp, #52]
 	lsls r0, r0, #1
 	movs r3, #16
@@ -387,7 +387,7 @@ Func_0814512c:
 	ldr r3, [sp, #28]
 	bl Func_0814cd48
 	movs r0, #133
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0814541a:
 	ldr r3, [r7, #24]
 	cmp r3, #0
@@ -398,7 +398,7 @@ Func_0814512c:
 	mov r3, r9
 	subs r0, r2, r3
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	adds r6, r0, #0
 	cmp r6, #9
 	ble .L_08145436
@@ -672,7 +672,7 @@ Func_0814512c:
 	mov r1, r8
 	ldr r0, [r1, #24]
 	movs r1, #5
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #32]
 	movs r1, #1
 	ands r3, r1
@@ -768,7 +768,7 @@ Func_0814512c:
 	b .L_0814539e
 .L_081456fc:
 	ldr r0, .L_08145774
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -791,7 +791,7 @@ Func_0814512c:
 	mov lr, r5
 	.2byte 0xf800
 	ldr r0, .L_08145780
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r3, [sp, #48]
 	cmp r3, #3
 	bne .L_08145742

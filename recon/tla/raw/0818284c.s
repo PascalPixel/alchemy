@@ -9,7 +9,7 @@ Func_0818284c:
 	lsls r3, r3, #18
 	movs r0, #0
 	ldr r5, [r3, #92]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, .L_0818288c
 	movs r2, #128
 	lsls r2, r2, #19

@@ -40,14 +40,14 @@ Func_0811de78:
 	cmp r2, #0
 	bne .L_0811decc
 	ldr r0, .L_0811df6c
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 	b .L_0811df5a
 .L_0811decc:
 	add r7, sp, #4
 	movs r0, #1
 	adds r1, r7, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	movs r3, #1
 	subs r6, r0, #1
 	negs r3, r3
@@ -101,13 +101,13 @@ Func_0811de78:
 	movs r0, #8
 	bl WaitFrames
 	ldrb r0, [r6]
-	bl Func_0811f3b8
+	bl BattleActor_RemoveFromLists
 	ldrb r0, [r6]
-	bl Func_0811bc64
+	bl ActivateBattleObjectSlot
 	b .L_0811df5a
 .L_0811df50:
 	ldr r0, .L_0811df6c
-	bl Func_080381c0 + 0x8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance
 .L_0811df5a:
 	movs r3, #0

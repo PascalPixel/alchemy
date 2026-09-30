@@ -39,7 +39,7 @@ Func_080dbc04:
 	adds r0, r7, #0
 	adds r1, r5, #0
 	adds r2, r6, #0
-	bl Func_080201c8 + 0x8
+	bl Func_080201d0
 	cmp r0, #0
 	beq .L_080dbc5c
 .L_080dbc58:

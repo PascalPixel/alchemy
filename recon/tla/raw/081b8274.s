@@ -50,12 +50,12 @@ Func_081b8274:
 .L_081b82ca:
 	movs r1, #10
 	adds r5, #1
-	bl __divsi3
+	bl Math_Div
 	cmp r5, r8
 	bne .L_081b82ca
 .L_081b82d6:
 	movs r1, #10
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	beq .L_081b82e6
 	movs r2, #1

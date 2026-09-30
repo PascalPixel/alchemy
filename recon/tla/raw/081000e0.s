@@ -31,7 +31,7 @@ Func_081000e0:
 	mov r11, r0
 	movs r1, #128
 	adds r0, r7, #0
-	bl RenderOutput_PrepareForRedrawFar + 0x8
+	bl UiWindow_ClearInteriorTilesFar
 	ldr r2, [r5, #8]
 	lsls r3, r2, #2
 	adds r3, r3, r2
@@ -53,7 +53,7 @@ Func_081000e0:
 	mov r1, r8
 	adds r2, r7, #0
 	movs r3, #123
-	bl Func_080f92dc
+	bl Menu_SetPageIcons
 	movs r2, #28
 	ldr r3, [r5, #8]
 	ldr r1, [r5, #20]

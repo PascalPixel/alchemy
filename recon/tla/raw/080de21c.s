@@ -41,7 +41,7 @@ Func_080de21c:
 	str r3, [r6, #4]
 	ldr r3, [r2, #16]
 	str r3, [r6, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	movs r1, #168
 	ldr r2, [r6]
 	ldr r3, [r6, #8]
@@ -88,14 +88,14 @@ Func_080de21c:
 	lsls r0, r0, #12
 	ldrh r1, [r2]
 	mov r2, r10
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r3, r10
 	movs r0, #139
 	ldr r1, [r3]
 	ldr r2, [r3, #4]
 	lsls r0, r0, #1
 	ldr r3, [r3, #8]
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080de2f8
@@ -165,7 +165,7 @@ Func_080de21c:
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #16]
 	lsls r0, r0, #1
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	str r0, [r7]
 	subs r7, #4
@@ -228,7 +228,7 @@ Func_080de21c:
 	str r3, [r4, #8]
 	mov r2, r10
 	ldrh r1, [r1]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	b .L_080de414
 .L_080de3fe:
 	mov r1, r9
@@ -331,7 +331,7 @@ Func_080de21c:
 	str r3, [r2, #8]
 	mov r3, r9
 	ldrh r1, [r3]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r1, r10
 	ldr r0, [sp, #8]
 	bl Func_08020210
@@ -339,7 +339,7 @@ Func_080de21c:
 	bne .L_080de4fa
 	ldr r0, [sp, #8]
 	mov r1, r10
-	bl Func_08020290 + 0x8
+	bl Func_08020298
 	cmp r0, #0
 	bne .L_080de4fa
 	ldr r4, [sp, #8]
@@ -379,7 +379,7 @@ Func_080de21c:
 	mov r0, r11
 	cmp r0, #96
 	beq .L_080de53a
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_080de53a:
 	add sp, #40
 	pop {r3, r5, r6, r7}

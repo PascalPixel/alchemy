@@ -13,7 +13,7 @@ Func_080d3fb0:
 	ldr r3, [r3, #108]
 	adds r7, r0, #0
 	mov r9, r3
-	bl Func_080d3c88
+	bl UiText_OpenMessageAtObject
 	mov r10, r0
 	movs r0, #1
 	bl WaitFrames
@@ -28,7 +28,7 @@ Func_080d3fb0:
 	adds r6, #255
 	ands r6, r7
 	adds r0, r6, #0
-	bl Func_080cccb8
+	bl BattleAction_FindDescriptor
 	cmp r0, #0
 	bne .L_080d3ff2
 	mov r8, r6
@@ -73,10 +73,10 @@ Func_080d3fb0:
 	cmp r3, #0
 	beq .L_080d4046
 .L_080d4042:
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 .L_080d4046:
 	mov r0, r10
-	bl UiWork_IsCompleteFar + 0x8
+	bl UiWork_IsIdleFar
 	cmp r0, #0
 	beq .L_080d4006
 .L_080d4050:

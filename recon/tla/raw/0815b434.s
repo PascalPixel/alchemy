@@ -40,7 +40,7 @@ Func_0815b434:
 	adds r5, r4, #0
 	adds r6, r4, #0
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	bl Trig_Cos
 	lsls r3, r0, #6
 	ldr r2, [sp, #4]

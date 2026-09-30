@@ -18,7 +18,7 @@ Func_080dc0d8:
 	b .L_080dc106
 .L_080dc0f2:
 	ldrb r0, [r5, #16]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldrb r3, [r6, #16]
 	movs r2, #1
 	strb r3, [r5, #16]

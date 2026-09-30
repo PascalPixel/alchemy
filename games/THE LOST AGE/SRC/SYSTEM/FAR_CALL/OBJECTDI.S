@@ -9,6 +9,9 @@
 	.thumb_func
 Func_08020080:
 	overlay_veneer Func_08022acc
+	.global Func_08020088
+	.thumb_func
+Func_08020088:
 	overlay_veneer Func_080230e0
 	.global Object_SetMode
 	.thumb_func
@@ -18,4 +21,7 @@ Object_SetMode:
 	.thumb_func
 ObjectDispatch_ApplyValueToChildrenFar:
 	overlay_veneer ObjectDispatch_ApplyValueToChildren
+	.global ObjectDispatch_ApplyPairToChildrenFar
+	.thumb_func
+ObjectDispatch_ApplyPairToChildrenFar:
 	overlay_veneer ObjectDispatch_ApplyPairToChildren

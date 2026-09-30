@@ -12,7 +12,7 @@ Func_080f89a4:
 	adds r3, #220
 	sub sp, #32
 	ldr r5, [r3]
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	lsls r0, r0, #16
 	lsrs r0, r0, #16
 	mov r10, r0
@@ -69,7 +69,7 @@ Func_080f89a4:
 	movs r3, #128
 	adds r1, r6, #0
 	lsls r3, r3, #7
-	bl Func_08020010 + 0x8
+	bl Func_08020018
 	ldr r4, [sp, #4]
 .L_080f8a2e:
 	adds r4, #1

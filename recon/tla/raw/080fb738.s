@@ -21,7 +21,7 @@ Func_080fb738:
 	movs r2, #0
 	adds r0, r7, #0
 	bl UiWindow_UpdateOrCreate
-	bl Func_080f92ac
+	bl Palette_CopyObjectBankToBackground14
 	movs r3, #182
 	lsls r3, r3, #1
 	lsls r5, r5, #1
@@ -31,7 +31,7 @@ Func_080fb738:
 	beq .L_080fb778
 	ldr r0, [r7]
 	adds r1, r3, #0
-	bl Func_080fb8ac
+	bl ItemMenu_DrawItemDetails
 .L_080fb778:
 	movs r0, #1
 	add sp, #8

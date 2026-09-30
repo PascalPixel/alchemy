@@ -21,7 +21,7 @@ Func_08182898:
 	mov r11, r1
 	movs r1, #200
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -184,7 +184,7 @@ Func_08182898:
 	str r6, [sp, #0]
 	bl Func_0814cd48
 	movs r0, #126
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 	movs r0, #126
 	bl Audio_PlayCue
 	mov r4, r9
@@ -229,7 +229,7 @@ Func_08182898:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_08182a84
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #24
 	pop {r3, r5, r6, r7}

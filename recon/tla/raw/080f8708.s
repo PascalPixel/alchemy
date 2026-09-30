@@ -43,14 +43,14 @@ Func_080f8708:
 	movs r1, #44
 	movs r2, #36
 	movs r3, #0
-	bl Func_08104b58
+	bl UiIcon_CreateStatChangeArrow
 	b .L_080f8770
 .L_080f8764:
 	adds r0, r6, #0
 	movs r1, #44
 	movs r2, #36
 	movs r3, #1
-	bl Func_08104b58
+	bl UiIcon_CreateStatChangeArrow
 .L_080f8770:
 	ldr r0, .L_080f8838
 	adds r1, r6, #0
@@ -84,14 +84,14 @@ Func_080f8708:
 	movs r1, #44
 	movs r2, #52
 	movs r3, #0
-	bl Func_08104b58
+	bl UiIcon_CreateStatChangeArrow
 	b .L_080f87c8
 .L_080f87bc:
 	adds r0, r6, #0
 	movs r1, #44
 	movs r2, #52
 	movs r3, #1
-	bl Func_08104b58
+	bl UiIcon_CreateStatChangeArrow
 .L_080f87c8:
 	ldr r0, .L_080f883c
 	adds r1, r6, #0
@@ -129,14 +129,14 @@ Func_080f8708:
 	movs r1, #44
 	movs r2, #68
 	movs r3, #0
-	bl Func_08104b58
+	bl UiIcon_CreateStatChangeArrow
 	b .L_080f8828
 .L_080f881c:
 	adds r0, r6, #0
 	movs r1, #44
 	movs r2, #68
 	movs r3, #1
-	bl Func_08104b58
+	bl UiIcon_CreateStatChangeArrow
 .L_080f8828:
 	add sp, #4
 	pop {r3, r5}

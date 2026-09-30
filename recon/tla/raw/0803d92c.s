@@ -46,7 +46,7 @@ Func_0803d92c:
 	strh r2, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0803d988:

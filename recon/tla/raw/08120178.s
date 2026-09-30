@@ -13,11 +13,11 @@ Func_08120178:
 	cmp r3, #1
 	bne .L_081201b2
 	movs r1, #0
-	bl Owner_RecalculateRatiosFar + 0x8
+	bl Owner_UpdateRatioPairFar
 	adds r0, r5, #0
-	bl Func_0811f3b8
+	bl BattleActor_RemoveFromLists
 	adds r0, r5, #0
-	bl Func_0811bc64
+	bl ActivateBattleObjectSlot
 	adds r0, r5, #0
 	bl GetBattleObjectSlot
 	adds r5, r0, #0

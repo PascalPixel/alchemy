@@ -10,7 +10,7 @@ Func_0803e918:
 	adds r6, r0, #0
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_0803ef8c
+	bl Menu_LoadSelectionNodeResource
 .L_0803e92a:
 	movs r0, #1
 	bl WaitFrames

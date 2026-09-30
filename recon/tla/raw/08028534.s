@@ -18,7 +18,7 @@ Func_08028534:
 	str r0, [sp, #4]
 	adds r0, r1, #0
 	str r1, [sp, #0]
-	bl Func_0802dac0
+	bl GetWorldMapCollision
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r1, [r3, #108]
@@ -112,7 +112,7 @@ Func_08028534:
 	adds r1, r6, #0
 	mov r0, r10
 	mov r2, r8
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, .L_0802890c
 	ldrb r3, [r3]
 	cmp r3, #0
@@ -143,7 +143,7 @@ Func_08028534:
 	movs r3, #128
 	lsls r3, r3, #5
 	adds r1, r6, r3
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802db88
@@ -160,7 +160,7 @@ Func_08028534:
 	ldr r3, [r7, #16]
 	adds r2, r5, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802db88
@@ -178,7 +178,7 @@ Func_08028534:
 	mov r0, r10
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802db88
@@ -195,7 +195,7 @@ Func_08028534:
 	ldr r3, [r7, #16]
 	adds r2, r5, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802db88
@@ -257,7 +257,7 @@ Func_08028534:
 	str r3, [r4, #8]
 	mov r11, r2
 	mov r2, r8
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	mov r1, r8
 	bl Func_0802db88
@@ -276,7 +276,7 @@ Func_08028534:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802db88
@@ -293,7 +293,7 @@ Func_08028534:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802db88
@@ -311,7 +311,7 @@ Func_08028534:
 	movs r3, #128
 	lsls r3, r3, #6
 	adds r1, r6, r3
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802db88
@@ -328,7 +328,7 @@ Func_08028534:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802db88
@@ -531,7 +531,7 @@ Func_08028534:
 	lsrs r5, r3, #16
 	adds r2, #36
 	adds r1, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r0, #100
 	adds r0, r0, r7
 	movs r1, #0
@@ -621,7 +621,7 @@ Func_08028534:
 	cmp r3, #1
 	bne .L_08028a8c
 	ldr r0, [sp, #0]
-	bl Func_0802dac0
+	bl GetWorldMapCollision
 	mov r1, r8
 	movs r0, #0
 	ldrsh r3, [r1, r0]

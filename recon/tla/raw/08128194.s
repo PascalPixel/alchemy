@@ -18,4 +18,4 @@ Func_08128194:
 .L_081281aa:
 	pop {pc}
 .L_081281ac:
-	.4byte Data_08130d0c
+	.4byte Summon_EntryTable

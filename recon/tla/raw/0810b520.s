@@ -15,7 +15,7 @@ Func_0810b520:
 	negs r5, r5
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	cmp r7, #0
 	ble .L_0810b570
 	mov r10, r8
@@ -56,15 +56,15 @@ Func_0810b520:
 	str r3, [r1, r5]
 	movs r0, #20
 	bl WaitFrames
-	bl Func_080c83b0
-	bl Func_080c83b8
+	bl Event_ClearStatus1c6Far
+	bl Event_WaitValue1c8FramesFar
 	movs r0, #86
 	bl Audio_PlayCue
 	bl AudioCommand_WaitForStateByteClear
 	movs r0, #10
 	bl WaitFrames
-	bl Func_080c83a8
-	bl Func_080c83b8
+	bl Event_SetStatus1c6Far
+	bl Event_WaitValue1c8FramesFar
 	movs r0, #30
 	bl WaitFrames
 	ldr r2, [r6, #108]

@@ -23,6 +23,6 @@ Func_080149f8:
 	strb r3, [r2, #8]
 	pop {pc}
 .L_08014a1c:
-	.4byte Data_03001250
+	.4byte gNumberTextBuffer
 .L_08014a20:
 	.4byte Data_08017cd0

@@ -206,7 +206,7 @@ Func_081380ae:
 	.4byte 0xe58d2014
 	.4byte 0xea00001f
 	.4byte IwramTransformVector
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 	.4byte 0xe1a00845
 	.4byte 0xe1a03847
 	.4byte 0xe1500003
@@ -504,7 +504,7 @@ Func_081380ae:
 	.4byte 0xe2603000
 	.4byte 0xe3a00000
 	.4byte 0xea000002
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 	.4byte 0xe240307f
 	.4byte 0xe3a0007f
 	.4byte 0xe0222993

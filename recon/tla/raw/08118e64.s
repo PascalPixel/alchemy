@@ -7,7 +7,7 @@ Func_08118e64:
 	sub sp, #32
 	mov r6, sp
 	adds r0, r6, #0
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	adds r5, r0, #0
 	lsls r0, r5, #1
 	adds r0, r6, r0

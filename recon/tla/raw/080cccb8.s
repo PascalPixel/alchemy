@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080cccb8
+	.global BattleAction_FindDescriptor
 	.thumb_func
-Func_080cccb8:
+BattleAction_FindDescriptor:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18

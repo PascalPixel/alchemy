@@ -24,7 +24,7 @@ Func_0814cca8:
 	ldrh r1, [r1]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	ldr r5, .L_0814ccfc
 	movs r1, #128
 	adds r0, r6, #0

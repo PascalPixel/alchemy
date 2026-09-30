@@ -242,7 +242,7 @@ Func_080d50f8:
 	lsls r1, r1, #8
 	movs r2, #0
 	ldr r0, [r5]
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	ldr r0, [r5]
 	bl Object_RefreshSelectorById
 	adds r1, r7, #0

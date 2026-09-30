@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d7af8
+	.global BattleFx_AdvanceSpinAngle
 	.thumb_func
-Func_080d7af8:
+BattleFx_AdvanceSpinAngle:
 	ldrh r3, [r0, #6]
 	movs r2, #128
 	lsls r2, r2, #6

@@ -63,7 +63,7 @@ Func_080d9f1c:
 	mov lr, r3
 	.2byte 0xf800
 	movs r1, #6
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #36]
 	ldr r3, [sp, #36]
 	lsls r2, r2, #3
@@ -95,19 +95,19 @@ Func_080d9f1c:
 	adds r3, #1
 	strb r3, [r5, #17]
 	mov r0, r10
-	bl __divsi3
+	bl Math_Div
 	ldr r1, [sp, #32]
 	adds r0, r1, r0
 	str r0, [r5, #4]
 	adds r1, r6, #0
 	mov r0, r9
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #28]
 	adds r1, r6, #0
 	adds r0, r2, r0
 	str r0, [r5, #8]
 	mov r0, r11
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #24]
 	adds r0, r3, r0
 	str r0, [r5, #12]

@@ -32,7 +32,7 @@ Func_0803f86c:
 	add r3, sp, #8
 	str r0, [sp, #0]
 	adds r0, r5, #0
-	bl Func_0803b880
+	bl UiText_GetResourceDimensions
 	ldr r2, [sp, #8]
 	ldr r3, [sp, #4]
 	movs r0, #30
@@ -63,7 +63,7 @@ Func_0803f86c:
 	strh r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_0803f8fc
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #20
 	pop {r5, r6, pc}
 .L_0803f8f4:

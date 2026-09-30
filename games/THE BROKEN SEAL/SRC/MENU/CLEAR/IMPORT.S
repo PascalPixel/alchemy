@@ -158,9 +158,9 @@ Link_DrawShiftedTilePair:
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_02001444
+	.global Item_Get
 	.thumb_func
-Func_02001444:
+Item_Get:
 	overlay_veneer Func_08077018
 	.global GameState_InitDefaults
 	.thumb_func

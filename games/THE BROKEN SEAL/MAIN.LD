@@ -748,7 +748,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENT/PACKED_ID.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/REMOVE_OWNER_RESTORED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/CHECK_MEMBER_VALUE_TOTAL.o"(.text)
-        "*/recon/tbs/raw/08091a58.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GAME/INVENTORY/TRY_ADD_AND_RETURN_OWNER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/RESERVED_NO_OP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/WAIT_UNTIL_CHILD_VALUE_DIFFERS.o"(.text)

@@ -9651,7 +9651,7 @@ msgctxt "MsgKorosseoRobinGotItem"
 msgid "02410"
 msgstr "{protagonist_name} got{line_break}{argument_item_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGaveItemToMember"
 msgid "02411"
 msgstr "{protagonist_name} gave {argument_item_name:2}{line_break}to {argument_actor_name:1}.{end_wait}"
 
@@ -9699,11 +9699,11 @@ msgctxt "message"
 msgid "02422"
 msgstr "but found nothing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryAnyMore"
 msgid "02423"
 msgstr "But you can't carry{line_break}any more items.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWillYouDrop"
 msgid "02424"
 msgstr "What will you drop?{end_wait}"
 

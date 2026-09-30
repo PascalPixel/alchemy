@@ -16,7 +16,10 @@ struct PartyState {
     u8 unknown_1f6[0x1e];
     s32 current_owner;
     u8 active_owners[8];
-    u8 unknown_220[0x2b];
+    u8 unknown_220[0x20];
+    /* Two packed event ids, cleared once they fail validation. */
+    u16 packed_events[2];
+    u8 unknown_244[7];
     /* 6 in the battles whose foes cannot fall below 1 HP. */
     u8 battle_rule_24b;
 };

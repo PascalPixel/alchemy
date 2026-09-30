@@ -12,7 +12,7 @@ Func_080c85c8:
 	.global Event_ClearInvalidPackedValuesFar
 	.thumb_func
 Event_ClearInvalidPackedValuesFar:
-	overlay_veneer Func_080d2454
+	overlay_veneer Event_ClearValidPackedIds
 	overlay_veneer Func_080d7a78
 	overlay_veneer Func_080d7ab4
 	.global Func_080c85e8

@@ -1,35 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_080d2454
-	.thumb_func
-Func_080d2454:
-.L_080d2454:
-	push	{r5, r6, lr}
-	ldr	r6, [pc, #44]
-	movs	r3, #144
-	lsls	r3, r3, #2
-	adds	r5, r6, r3
-	ldrh	r0, [r5, #0]
-	bl	Event_ValidatePackedId
-	cmp	r0, #0
-	beq.n	.L_080d246c
-	movs	r3, #0
-	strh	r3, [r5, #0]
-.L_080d246c:
-	movs	r3, #128
-	lsls	r3, r3, #2
-	adds	r3, #66
-	adds	r5, r6, r3
-	ldrh	r0, [r5, #0]
-	bl	Event_ValidatePackedId
-	cmp	r0, #0
-	beq.n	.L_080d2482
-	movs	r3, #0
-	strh	r3, [r5, #0]
-.L_080d2482:
-	pop	{r5, r6, pc}
-	.2byte 0x0240
-	.2byte 0x0200
+	.balign 4
 	.global Party_RemoveOwnerRestored
 	.thumb_func
 Party_RemoveOwnerRestored:
@@ -38,7 +9,7 @@ Party_RemoveOwnerRestored:
 	push	{r7}
 	adds	r5, r0, #0
 	bl	0x080ad110
-	bl	Func_080d2454
+	bl	Event_ClearValidPackedIds
 	adds	r0, r5, #0
 	bl	Owner_GetState
 	adds	r6, r0, #0

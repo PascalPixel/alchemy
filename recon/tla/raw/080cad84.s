@@ -21,6 +21,9 @@ ObjectTable_Get:
 	ldr	r0, [r2, r3]
 .L_080cad9a:
 	pop	{pc}
+	.global Func_080cad9c
+	.thumb_func
+Func_080cad9c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -123,6 +126,9 @@ ObjectTable_Get:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x1024
 	.2byte 0x0200
+	.global Func_080cae5c
+	.thumb_func
+Func_080cae5c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

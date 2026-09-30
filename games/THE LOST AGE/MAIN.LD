@@ -343,7 +343,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/UITEXTRE.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/RENDEROU_2.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_17.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080382b8.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/RENDEROU_3.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08038328.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08038358.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08038368.o"(.text .rodata .data .padding)

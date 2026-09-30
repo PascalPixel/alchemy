@@ -289,6 +289,9 @@ Func_080432a4:
 	.4byte 0x03001200
 	.2byte 0x0040
 	.2byte 0x0200
+	.global Func_080434ec
+	.thumb_func
+Func_080434ec:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r6, #0
@@ -320,6 +323,9 @@ Func_080432a4:
 	.4byte 0x02000000
 	.2byte 0x000c
 	.2byte 0x0000
+	.global Func_08043534
+	.thumb_func
+Func_08043534:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -472,6 +478,9 @@ Func_080432a4:
 	.4byte 0x0000000c
 	.2byte 0x0019
 	.2byte 0x0000
+	.global Func_08043690
+	.thumb_func
+Func_08043690:
 	push	{r5, r6, r7, lr}
 	movs	r7, #0
 	bl	0x0801596c
@@ -570,6 +579,9 @@ Func_080432a4:
 	.4byte 0x0000000c
 	.2byte 0x0019
 	.2byte 0x0000
+	.global Func_08043774
+	.thumb_func
+Func_08043774:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	movs	r6, #0
@@ -636,6 +648,9 @@ Func_080432a4:
 	.4byte 0x03001200
 	.2byte 0x1218
 	.2byte 0x0300
+	.global Func_0804380c
+	.thumb_func
+Func_0804380c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -721,6 +736,9 @@ Func_080432a4:
 	.4byte 0x0000000e
 	.2byte 0x001b
 	.2byte 0x0000
+	.global Func_080438c8
+	.thumb_func
+Func_080438c8:
 	push	{r5, r6, r7, lr}
 	movs	r7, #0
 	bl	0x0801596c

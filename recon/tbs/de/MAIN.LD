@@ -15,6 +15,8 @@
     "*/recon/tbs/de/rom.o"(.rom.00001b70)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
     "*/recon/tbs/de/rom.o"(.rom.00032bd4)
+    "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
+    "*/recon/tbs/de/rom.o"(.rom.0007a770)
 }
 .iwram_mixer :
 {

@@ -340,7 +340,7 @@ Func_0810b1b4:
 	movs	r2, #12
 	movs	r3, #4
 	movs	r0, #0
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	str	r0, [r6, #12]
 	bl	Func_08109188
 	movs	r0, #0

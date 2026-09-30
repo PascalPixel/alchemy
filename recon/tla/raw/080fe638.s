@@ -26,7 +26,7 @@ Func_080fe638:
 	str	r1, [sp, #24]
 	movs	r6, #1
 	ldr	r0, [r1, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r2, [sp, #24]
 	ldr	r0, [pc, #124]
 	ldr	r1, [r2, #0]
@@ -96,7 +96,7 @@ Func_080fe638:
 	ldr	r3, [r3, #40]
 	mov	r8, r3
 	mov	r0, r8
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r3, #11
@@ -245,7 +245,7 @@ Func_080fe638:
 .L_080fe834:
 	ldr	r1, [sp, #32]
 	ldr	r0, [r1, #40]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r2, [sp, #24]
 	ldr	r0, [r2, #0]
 	bl	0x08038268

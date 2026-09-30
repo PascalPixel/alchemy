@@ -15,9 +15,9 @@ Func_08038248:
 	bx	r4
 	.2byte 0x2589
 	.2byte 0x0804
-	.global Func_08038260
+	.global RenderOutput_RedrawSavedRectFar
 	.thumb_func
-Func_08038260:
+RenderOutput_RedrawSavedRectFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x9419

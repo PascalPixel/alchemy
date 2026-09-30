@@ -188,7 +188,7 @@ Func_08101c7c:
 	movs	r3, #10
 	movs	r0, #0
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r5, #2
 	movs	r1, #12
 	movs	r2, #22
@@ -196,14 +196,14 @@ Func_08101c7c:
 	mov	r8, r0
 	movs	r0, #8
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r1, #9
 	str	r0, [sp, #32]
 	movs	r2, #22
 	movs	r3, #3
 	movs	r0, #8
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	str	r0, [sp, #28]
 	bl	0x08038290
 	ldr	r7, [pc, #480]
@@ -953,7 +953,7 @@ Func_08101c7c:
 	movs	r7, #42
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r7, #255
 	adds	r0, r5, #0
 	adds	r1, r6, #0
@@ -990,7 +990,7 @@ Func_08101c7c:
 	bl	0x08038080
 .L_0810244a:
 	ldr	r0, [sp, #76]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r1, [sp, #84]
 	cmp	r1, #0
 	bne.n	.L_081024e0

@@ -134,9 +134,9 @@ Func_080ff8e0:
 	pop	{r3}
 	mov	fp, r3
 	pop	{r5, r6, pc}
-	.global Func_080ff94c
+	.global PsynergyMenu_DrawRangePage
 	.thumb_func
-Func_080ff94c:
+PsynergyMenu_DrawRangePage:
 .L_080ff94c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -162,7 +162,7 @@ Func_080ff94c:
 	str	r3, [r1, #24]
 	ldr	r0, [r2, #48]
 	sub	sp, #8
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #1
 	bl	WaitFrames
 	mov	r1, fp
@@ -396,9 +396,9 @@ Func_080ff94c:
 	.4byte 0x00001043
 	.2byte 0x1042
 	.2byte 0x0000
-	.global Func_080ffb5c
+	.global PsynergyMenu_DrawListPage
 	.thumb_func
-Func_080ffb5c:
+PsynergyMenu_DrawListPage:
 .L_080ffb5c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -423,7 +423,7 @@ Func_080ffb5c:
 	bl	Owner_GetState
 	str	r0, [sp, #4]
 	mov	r0, r8
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r2, [r5, #8]
 	lsls	r3, r2, #2
 	adds	r6, r3, r2
@@ -604,7 +604,7 @@ Func_080ffb5c:
 	movs	r2, #0
 	mov	r8, r4
 	str	r4, [sp, #4]
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	adds	r3, r7, #0
 	adds	r3, #240
 	str	r3, [sp, #12]
@@ -674,12 +674,12 @@ Func_080ffb5c:
 	mov	r0, sl
 	movs	r1, #0
 	adds	r2, r6, #0
-	bl	Func_080ffb5c
+	bl	PsynergyMenu_DrawListPage
 .L_080ffdac:
 	mov	r0, sl
 	movs	r1, #0
 	adds	r2, r6, #0
-	bl	Func_080ff94c
+	bl	PsynergyMenu_DrawRangePage
 	movs	r3, #0
 	mov	r8, r3
 .L_080ffdba:
@@ -814,7 +814,7 @@ Func_080ffb5c:
 	ldr	r0, [r7, #48]
 	bl	0x08038060
 	mov	r0, sl
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r3, [sp, #12]
 	ldr	r0, [r3, #0]
 	bl	0x08038268
@@ -829,9 +829,9 @@ Func_080ffb5c:
 	.4byte 0x00001037
 	.2byte 0x1150
 	.2byte 0x0300
-	.global Func_080ffee4
+	.global ItemMenu_DrawEquipPage
 	.thumb_func
-Func_080ffee4:
+ItemMenu_DrawEquipPage:
 .L_080ffee4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -858,7 +858,7 @@ Func_080ffee4:
 	adds	r6, r0, #0
 	ldr	r0, [r2, #48]
 	sub	sp, #8
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #1
 	bl	WaitFrames
 	mov	r1, sl
@@ -1276,7 +1276,7 @@ Func_081000e0:
 	movs	r2, #10
 	movs	r3, #15
 	adds	r0, #52
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	adds	r3, r7, #0
 	adds	r3, #240
 	str	r3, [sp, #8]
@@ -1323,7 +1323,7 @@ Func_081000e0:
 	adds	r3, r7, r4
 	strb	r0, [r3, #0]
 	mov	r0, r9
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r2, fp
 	add	r4, sp, #20
 	adds	r2, #216
@@ -1352,7 +1352,7 @@ Func_081000e0:
 	adds	r0, r5, #0
 	bl	0x080fadd0
 	ldr	r0, [r7, #52]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r4, #128
 	lsls	r4, r4, #2
 	adds	r4, #22
@@ -1383,7 +1383,7 @@ Func_081000e0:
 	movs	r1, #0
 	mov	r2, r8
 	mov	r0, r9
-	bl	Func_080ffee4
+	bl	ItemMenu_DrawEquipPage
 	ldr	r5, [pc, #348]
 	movs	r6, #24
 	negs	r6, r6
@@ -1545,7 +1545,7 @@ Func_081000e0:
 	ldr	r0, [r7, #48]
 	bl	0x08038060
 	mov	r0, r9
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r2, [sp, #8]
 	ldr	r0, [r2, #0]
 	bl	0x08038268
@@ -1614,7 +1614,7 @@ Func_081004b8:
 	movs	r1, #1
 	bl	0x080fadd0
 	adds	r0, r5, #0
-	bl	Func_08100660
+	bl	ItemMenu_ArrangeCategoryItemIcons
 .L_08100532:
 	pop	{r3, r5}
 	mov	r8, r3

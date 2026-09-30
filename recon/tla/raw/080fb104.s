@@ -32,13 +32,13 @@
 	beq.n	.L_080fb178
 	bl	Func_080fa458
 	ldr	r0, [r6, #56]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r3, r6, #0
 	adds	r3, #240
 	ldr	r5, [r3, #0]
 	bl	Func_080fbe24
 	adds	r0, r5, #0
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r3, #3
 	str	r3, [sp, #0]
 	adds	r0, r5, #0

@@ -18,7 +18,7 @@
 	overlay_veneer Object_SetMode
 	overlay_veneer ObjectDispatch_ApplyValueToChildrenFar
 	overlay_veneer Func_08020178
-	overlay_veneer Func_08038010
+	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer Func_08038040
 	overlay_veneer Func_08038080

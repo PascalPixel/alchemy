@@ -109,7 +109,7 @@ Func_080fa2d0:
 	movs	r3, #3
 	movs	r0, #0
 	str	r6, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r3, r7, #0
 	adds	r3, #244
 	str	r0, [r7, #48]

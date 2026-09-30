@@ -48,7 +48,7 @@
 	movs	r1, #0
 	movs	r2, #5
 	movs	r3, #13
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	str	r0, [sp, #16]
 .L_080f81da:
 	mov	r3, r9

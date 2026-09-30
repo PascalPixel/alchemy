@@ -133,7 +133,7 @@ Func_080fe274:
 	movs	r3, #5
 	movs	r1, #0
 	movs	r2, #17
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r3, r6, #0
 	adds	r3, #240
 	str	r0, [r3, #0]
@@ -378,7 +378,7 @@ Func_080fe274:
 	sub	sp, #4
 	mov	r8, r2
 	ldrsb	r7, [r5, r2]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #185
 	lsls	r0, r0, #1
 	bl	GameFlag_TestFar

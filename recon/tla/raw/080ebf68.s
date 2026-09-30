@@ -191,7 +191,7 @@ Func_080ebf68:
 	movs	r2, #0
 	movs	r3, #0
 	movs	r0, #0
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255

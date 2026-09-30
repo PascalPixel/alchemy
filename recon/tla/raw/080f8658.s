@@ -316,7 +316,7 @@ UiIcon_PrepareObject:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #13
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	ldr	r5, [r5, #0]
 	movs	r3, #3
 	str	r3, [sp, #0]

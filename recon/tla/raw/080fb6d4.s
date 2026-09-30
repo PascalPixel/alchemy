@@ -66,7 +66,7 @@ Func_080fb6d4:
 	movs	r2, #0
 	adds	r0, r7, #0
 	bl	UiWindow_UpdateOrCreate
-	bl	0x080f92ac
+	bl	Func_080f92ac
 	movs	r3, #182
 	lsls	r3, r3, #1
 	lsls	r5, r5, #1
@@ -76,7 +76,7 @@ Func_080fb6d4:
 	beq.n	.L_080fb778
 	ldr	r0, [r7, #0]
 	adds	r1, r3, #0
-	bl	0x080fb8ac
+	bl	Func_080fb8ac
 .L_080fb778:
 	movs	r0, #1
 	add	sp, #8

@@ -846,7 +846,7 @@ SECTIONS
         "*/recon/tla/raw/080ef81c.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.080ef824)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_38.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080f8028.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/UIICON_2.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8058.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8090.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)

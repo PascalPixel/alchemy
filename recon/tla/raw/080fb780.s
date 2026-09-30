@@ -39,7 +39,7 @@ Func_080fb780:
 	ldr	r3, [r3, #0]
 	movs	r6, #0
 	strb	r5, [r3, #5]
-	bl	0x080f92ac
+	bl	Func_080f92ac
 	movs	r0, #1
 	bl	WaitFrames
 	b.n	.L_080fb7fe
@@ -81,7 +81,7 @@ Func_080fb780:
 	mov	r1, r9
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	.L_080fb8ac
+	bl	Func_080fb8ac
 .L_080fb826:
 	ldr	r1, [pc, #128]
 	movs	r2, #1
@@ -142,12 +142,18 @@ Func_080fb780:
 	.4byte 0x08104da9
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_080fb8ac
+	.thumb_func
+Func_080fb8ac:
 .L_080fb8ac:
 	push	{lr}
 	movs	r2, #1
 	negs	r2, r2
-	bl	.L_080fb8b8
+	bl	Func_080fb8b8
 	pop	{pc}
+	.global Func_080fb8b8
+	.thumb_func
+Func_080fb8b8:
 .L_080fb8b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

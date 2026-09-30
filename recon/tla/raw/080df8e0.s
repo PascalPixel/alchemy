@@ -112,7 +112,7 @@ Func_080df8e0:
 	beq.n	.L_080df9c0
 	ldr	r1, [r7, #4]
 	adds	r0, r6, #0
-	bl	Func_080d3744
+	bl	Object_SetPartAttribute
 .L_080df9c0:
 	movs	r3, #128
 	lsls	r3, r3, #10

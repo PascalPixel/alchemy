@@ -562,13 +562,13 @@ Func_0813d098:
 	adds r1, r5, #0
 	bl Math_Div
 	movs r1, #6
-	bl __modsi3
+	bl Math_Mod
 	lsls r1, r5, #1
 	adds r1, r1, r5
 	adds r6, r0, #0
 	lsls r1, r1, #1
 	ldr r0, [sp, #68]
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	bne .L_0813d55c
 	ldr r3, [sp, #80]
@@ -699,7 +699,7 @@ Func_0813d098:
 	adds r1, r1, r5
 	lsls r1, r1, #1
 	str r4, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r5, #2
 	subs r5, #4
 	ldr r4, [sp, #8]
@@ -725,7 +725,7 @@ Func_0813d098:
 	lsls r1, r5, #1
 	adds r1, r1, r5
 	lsls r1, r1, #1
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r5, #2
 	ldr r4, [sp, #8]
 	cmp r0, r5
@@ -1146,7 +1146,7 @@ Func_0813d098:
 	ldr r0, [sp, #68]
 	str r4, [sp, #8]
 	mov r8, r2
-	bl __modsi3
+	bl Math_Mod
 	lsls r3, r5, #1
 	adds r3, r3, r5
 	ldr r4, [sp, #8]

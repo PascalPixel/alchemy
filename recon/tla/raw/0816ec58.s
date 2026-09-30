@@ -242,7 +242,7 @@ Func_0816ec58:
 	mov r2, r10
 	ldr r1, [r2, #20]
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	adds r3, r0, #0
 	lsls r5, r3, #1
 	mov r4, r10

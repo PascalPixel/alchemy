@@ -1096,7 +1096,7 @@ Func_081039fc:
 	adds r2, #1
 	adds r0, r2, #0
 	str r2, [sp, #92]
-	bl __modsi3
+	bl Math_Mod
 	subs r6, r0, #5
 	cmp r6, #0
 	bge .L_081042e8
@@ -1118,7 +1118,7 @@ Func_081039fc:
 	bhi .L_08104368
 	movs r1, #30
 	adds r0, r6, #0
-	bl __modsi3
+	bl Math_Mod
 	adds r3, r0, #0
 	lsls r0, r3, #4
 	adds r0, r0, r3
@@ -1144,7 +1144,7 @@ Func_081039fc:
 .L_0810433a:
 	adds r0, r6, #0
 	movs r1, #35
-	bl __modsi3
+	bl Math_Mod
 	lsls r6, r0, #1
 	adds r1, r6, #0
 	adds r2, r5, #0
@@ -1248,7 +1248,7 @@ Func_081039fc:
 	ldr r0, [sp, #88]
 	movs r1, #3
 	adds r0, #1
-	bl __modsi3
+	bl Math_Mod
 	movs r2, #2
 	str r0, [sp, #88]
 	movs r0, #111

@@ -453,7 +453,7 @@ Func_081b34a8:
 	ldr r2, .L_081b38b8
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Resource_FarCall004
+	bl UiWork_InitializeWithResourceCountersFar
 	bl Func_081b336c
 	movs r7, #0
 	mov r10, r7
@@ -573,7 +573,7 @@ Func_081b34a8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #104
-	bl Func_08138000
+	bl Resource_FarCall00C
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
@@ -584,7 +584,7 @@ Func_081b34a8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #188
-	bl Func_08138000
+	bl Resource_FarCall00C
 	adds r5, #188
 	ldr r3, [r5]
 	mov r7, sp
@@ -753,7 +753,7 @@ Func_081b34a8:
 .L_081b3a8a:
 	mov r0, r11
 	movs r1, #80
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #15
 	bgt .L_081b3a9e
 	ldr r0, .L_081b3c7c

@@ -136,7 +136,7 @@ Func_080fc2e0:
 	adds r0, #2
 	movs r1, #2
 	str r3, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	mov r8, r0
 .L_080fc402:
 	ldr r5, .L_080fc47c

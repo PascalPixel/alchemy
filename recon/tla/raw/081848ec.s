@@ -1897,7 +1897,7 @@ Func_081848ec:
 	ldr r0, [sp, #92]
 	movs r1, #3
 	add r0, r9
-	bl __modsi3
+	bl Math_Mod
 	movs r1, #128
 	lsls r1, r1, #6
 	lsls r0, r0, #12

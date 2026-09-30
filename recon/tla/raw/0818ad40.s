@@ -914,7 +914,7 @@ Func_0818ad40:
 .L_0818b448:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	lsls r1, r0, #4
 	subs r1, r1, r0
 	ldr r2, [sp, #20]
@@ -1082,7 +1082,7 @@ Func_0818ad40:
 .L_0818b59a:
 	movs r1, #3
 	asrs r0, r0, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0818b834
 	adds r0, r5, r0
 	lsls r3, r0, #1

@@ -9,7 +9,7 @@ Func_080dce20:
 	asrs r2, r0, #16
 	lsls r1, r1, #1
 	adds r0, r2, r1
-	bl __modsi3
+	bl Math_Mod
 	lsls r0, r0, #16
 	asrs r2, r0, #16
 	movs r5, #0

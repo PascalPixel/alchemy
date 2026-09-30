@@ -404,7 +404,7 @@ Func_081b243c:
 	ldr r0, [r5]
 	movs r1, #6
 	adds r0, #1
-	bl __modsi3
+	bl Math_Mod
 	str r0, [r5]
 	movs r0, #111
 	bl Audio_PlayCue
@@ -420,7 +420,7 @@ Func_081b243c:
 	ldr r0, [r5]
 	movs r1, #6
 	adds r0, #5
-	bl __modsi3
+	bl Math_Mod
 	str r0, [r5]
 	movs r0, #111
 	bl Audio_PlayCue
@@ -962,7 +962,7 @@ Func_081b243c:
 .L_081b2b80:
 	movs r1, #21
 	str r4, [sp, #4]
-	bl __modsi3
+	bl Math_Mod
 	adds r0, r0, r5
 	adds r0, #4
 	ldrb r3, [r7, r0]
@@ -1745,7 +1745,7 @@ Func_081b243c:
 	movs r1, #21
 	adds r0, #21
 	str r4, [sp, #4]
-	bl __modsi3
+	bl Math_Mod
 	adds r0, #4
 	ldrb r3, [r5, r0]
 	movs r2, #128

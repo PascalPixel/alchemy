@@ -188,7 +188,7 @@ Func_08154d5c:
 	asrs r0, r0, #2
 	adds r0, r0, r6
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	adds r3, r5, #0
 	adds r3, #32
 	cmp r7, r3

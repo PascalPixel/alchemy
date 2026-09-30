@@ -116,7 +116,7 @@ Func_0804b8b8:
 	mov r1, r11
 	add r0, r11
 	subs r0, #1
-	bl __modsi3
+	bl Math_Mod
 	str r0, [sp, #20]
 	movs r0, #112
 	bl Audio_PlayCue
@@ -135,7 +135,7 @@ Func_0804b8b8:
 	ldr r0, [sp, #20]
 	mov r1, r11
 	adds r0, #1
-	bl __modsi3
+	bl Math_Mod
 	str r0, [sp, #20]
 	movs r0, #112
 	bl Audio_PlayCue

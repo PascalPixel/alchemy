@@ -472,7 +472,7 @@ Func_08168a40:
 	bne .L_08168e54
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_08168e1c
 	adds r0, #1
 	lsls r4, r0, #1

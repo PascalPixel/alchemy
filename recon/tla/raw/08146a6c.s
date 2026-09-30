@@ -263,7 +263,7 @@ Func_08146a6c:
 	mov r0, r9
 	movs r1, #10
 	mov r10, r2
-	bl __modsi3
+	bl Math_Mod
 	add r0, r11
 	lsls r3, r0, #3
 	ldr r5, .L_08146df4

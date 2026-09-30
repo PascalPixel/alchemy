@@ -786,7 +786,7 @@ Func_0818cb74:
 	ldr r3, [r6, #4]
 	adds r6, #8
 	str r3, [r5, #20]
-	bl __modsi3
+	bl Math_Mod
 	movs r4, #1
 	lsls r0, r0, #2
 	add r9, r4
@@ -820,7 +820,7 @@ Func_0818cb74:
 .L_0818d1e4:
 	asrs r0, r0, #3
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	mov r8, r0
 	movs r3, #16
 	negs r3, r3

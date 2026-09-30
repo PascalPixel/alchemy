@@ -128,7 +128,7 @@ Func_0804e3f4:
 	mov r1, r10
 	str r0, [sp, #8]
 	adds r0, r5, r1
-	bl __modsi3
+	bl Math_Mod
 	adds r5, r0, #0
 	adds r0, r7, #0
 	bl RenderOutput_PrepareForRedraw

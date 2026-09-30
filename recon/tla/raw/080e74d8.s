@@ -214,7 +214,7 @@ Func_080e74d8:
 	add r11, r1
 	mov r0, r11
 	movs r1, #100
-	bl __modsi3
+	bl Math_Mod
 	movs r2, #1
 	negs r2, r2
 	add r10, r2

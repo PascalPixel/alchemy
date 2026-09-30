@@ -126,7 +126,7 @@ Func_080fe894:
 	ldr r0, [sp, #4]
 	mov r1, r8
 	add r0, r8
-	bl __modsi3
+	bl Math_Mod
 	str r0, [sp, #4]
 	lsls r0, r0, #1
 	add r0, r11
@@ -135,7 +135,7 @@ Func_080fe894:
 	mov r0, r10
 	movs r1, #3
 	adds r0, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, [sp, #4]
 	mov r10, r0
 	lsls r3, r3, #1

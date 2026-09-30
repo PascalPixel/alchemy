@@ -55,7 +55,7 @@ Func_081b8274:
 	bne .L_081b82ca
 .L_081b82d6:
 	movs r1, #10
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	beq .L_081b82e6
 	movs r2, #1

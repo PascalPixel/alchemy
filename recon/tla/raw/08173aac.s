@@ -1945,7 +1945,7 @@ Func_08173aac:
 .L_081749e4:
 	mov r0, r8
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r1, [sp, #48]
 	lsls r0, r0, #10
 	movs r2, #224
@@ -3024,7 +3024,7 @@ Func_08173aac:
 	str r3, [r0, #20]
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	ldr r1, [sp, #48]
 	lsls r0, r0, #10
 	movs r2, #224
@@ -3202,7 +3202,7 @@ Func_08173aac:
 	str r3, [r1, #20]
 	mov r0, r8
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #48]
 	lsls r0, r0, #10
 	movs r3, #224

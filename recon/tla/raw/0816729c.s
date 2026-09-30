@@ -1178,7 +1178,7 @@ Func_0816729c:
 	strb r3, [r5, #26]
 	movs r1, #3
 	adds r0, r7, #0
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Animation_ApplyChildArgumentFar

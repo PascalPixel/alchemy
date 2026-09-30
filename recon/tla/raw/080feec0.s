@@ -145,7 +145,7 @@ Func_080feec0:
 	bne .L_080ff00c
 	adds r0, r7, r5
 	adds r1, r5, #0
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #24]
 	adds r7, r0, #0
 	cmp r2, #0
@@ -183,7 +183,7 @@ Func_080feec0:
 .L_080ff028:
 	adds r0, r7, #7
 	movs r1, #7
-	bl __modsi3
+	bl Math_Mod
 	adds r7, r0, #0
 .L_080ff032:
 	adds r1, r7, #0
@@ -340,7 +340,7 @@ Func_080feec0:
 	adds r3, r2, r4
 	ldrb r1, [r3]
 	adds r0, r0, r1
-	bl __modsi3
+	bl Math_Mod
 	movs r1, #129
 	ldr r4, [sp, #36]
 	lsls r2, r0, #1

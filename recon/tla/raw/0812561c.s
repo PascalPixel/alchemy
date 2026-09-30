@@ -35,7 +35,7 @@ Func_0812561c:
 	bls .L_0812565a
 	movs r0, #1
 .L_0812565a:
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	adds r3, r0, #0
 	movs r0, #148
 	lsls r0, r0, #1
@@ -99,7 +99,7 @@ Func_0812561c:
 	beq .L_081256d8
 	movs r0, #1
 .L_081256d8:
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	add r3, sp, #16
 	mov r11, r3
 	adds r6, r0, #0

@@ -51,7 +51,7 @@ Func_0803f778:
 	beq .L_0803f7fa
 	b .L_0803f782
 .L_0803f7e0:
-	bl Func_080f8000
+	bl Resource_FarCall007
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2

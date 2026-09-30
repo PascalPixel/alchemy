@@ -121,7 +121,7 @@ Func_080ece20:
 	lsls r1, r1, #2
 	adds r0, #128
 	str r2, [sp, #0]
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #0]
 	movs r1, #128
 	lsls r3, r2, #2

@@ -273,7 +273,7 @@ Func_0817d174:
 	ldr r2, [sp, #52]
 	mov r0, r9
 	ldr r1, [r2, #20]
-	bl __modsi3
+	bl Math_Mod
 	lsls r3, r0, #1
 	str r3, [sp, #28]
 	ldr r7, [sp, #52]

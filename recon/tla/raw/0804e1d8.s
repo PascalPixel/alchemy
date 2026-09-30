@@ -286,7 +286,7 @@ Func_0804e1d8:
 	mov	fp, r3
 	movs	r0, #0
 	movs	r3, #5
-	bl	0x0803d3c0
+	bl	Func_0803d3c0
 	movs	r3, #2
 	movs	r2, #14
 	str	r0, [sp, #12]

@@ -548,8 +548,14 @@ Resource_LoadByMode:
 	.2byte 0xffff
 	bx	lr
 	movs	r0, r0
+	.global Func_0803f610
+	.thumb_func
+Func_0803f610:
 	bx	lr
 	movs	r0, r0
+	.global Func_0803f614
+	.thumb_func
+Func_0803f614:
 	bx	lr
 	movs	r0, r0
 	bx	lr

@@ -446,7 +446,7 @@ Func_080432a4:
 	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_08043642
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	cmp	r5, #0
 	beq.n	.L_08043666
 	ldr	r0, [pc, #44]
@@ -527,10 +527,10 @@ Func_080432a4:
 	bl	Menu_RunConfirmSelection
 	cmp	r0, #0
 	beq.n	.L_0804370c
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	b.n	.L_08043752
 .L_0804370c:
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 .L_08043710:
 	ldr	r3, [pc, #76]
 	movs	r0, #0
@@ -545,7 +545,7 @@ Func_080432a4:
 	adds	r5, r0, #0
 	adds	r0, r6, #0
 	bl	0x08042eec
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	cmp	r5, #0
 	beq.n	.L_0804374a
 	ldr	r0, [pc, #44]
@@ -764,10 +764,10 @@ Func_080432a4:
 	bl	Menu_RunConfirmSelection
 	cmp	r0, #0
 	beq.n	.L_0804392c
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	b.n	.L_08043960
 .L_0804392c:
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	movs	r0, #1
 	bl	Func_08042e28
 	adds	r6, r0, #0

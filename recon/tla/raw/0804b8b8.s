@@ -180,7 +180,7 @@ Func_0804b8b8:
 	ldr	r3, [r3, #36]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
-	bl	0x0804297c
+	bl	Func_0804297c
 	bl	Func_08118118
 	mov	r1, r8
 	movs	r3, #255
@@ -235,7 +235,7 @@ Func_0804b8b8:
 	ldr	r3, [r3, #36]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
-	bl	0x0804297c
+	bl	Func_0804297c
 	bl	Func_08118118
 	movs	r0, #1
 	bl	WaitFrames

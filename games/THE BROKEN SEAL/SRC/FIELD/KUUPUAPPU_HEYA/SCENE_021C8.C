@@ -6,7 +6,7 @@ extern struct EventWork *gEventWork;
 
 void Engine_AudioPlaySceneCue();
 void Engine_ActorSetSpritePriority();
-u8 * Engine_ActorGet();
+u8 * Object_GetById();
 void Map_SetWorkFourValues();
 void Engine_ActorSetSpeed();
 void Engine_ActorSetPosition();
@@ -47,7 +47,7 @@ void KuupuappuHeya_RunScene021C8(void)
     Engine_AudioPlaySceneCue();
     Engine_ActorSetSpritePriority(0, 1);
     {
-        u8 *record = Engine_ActorGet(0);
+        u8 *record = Object_GetById(0);
         u8 value = *(volatile u8 *)&record[35];
     
         record[35] = (u8)(value | 1);
@@ -59,11 +59,11 @@ void KuupuappuHeya_RunScene021C8(void)
     Call3(Engine_ActorSetPosition, 0, 0xf80000, 0x2d80000);
     Call3(Engine_ActorSetPosition, 2, 0x1080000, 0x2e80000);
     Engine_ActorSetPosition(1, 0xe80000, 0x2e80000);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
-    record = Engine_ActorGet(1);
+    record = Object_GetById(1);
     ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
-    record = Engine_ActorGet(2);
+    record = Object_GetById(2);
     ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
     Engine_ActorFaceEachOther(0, 2, 0);
     FieldScene_RunSplitTripleSteps(1, 2, 30);

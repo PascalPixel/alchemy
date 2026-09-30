@@ -324,7 +324,7 @@ void FieldScene_RunScene3b9_020023e0(void)
     Camera_FollowActor(11, 1);
     Actor_SetSpeed(11, 0x19999, 0xcccc);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
-    record = Engine_ActorGet(11);
+    record = Object_GetById(11);
     record->facing = 0;
     Event_OpenScreen();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -350,7 +350,7 @@ void FieldScene_RunScene3b9_020024d8(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(13);
+    rec7 = Object_GetById(13);
     Event_Begin();
     Event_OpenScreen();
     Event_WaitForScreen();
@@ -483,7 +483,7 @@ void FieldScene_RunScene3b9_02002820(void)
     Camera_FollowActor(11, 1);
     Actor_SetSpeed(11, 0x19999, 0xcccc);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
-    record = Engine_ActorGet(11);
+    record = Object_GetById(11);
     record->facing = 0x8000;
     Event_OpenScreen();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);

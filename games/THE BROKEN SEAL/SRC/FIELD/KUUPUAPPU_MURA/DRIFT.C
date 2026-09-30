@@ -91,7 +91,7 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     s32 z;
     s32 zero;
 
-    leader = (union DriftingObject *)Engine_ActorGet(19);
+    leader = (union DriftingObject *)Object_GetById(19);
     if (leader == NULL)
         return;
     x = Engine_RandomNext();
@@ -121,11 +121,11 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
      * pair as one random variant, rather than as a boolean flag. */
     switch (Engine_RandomNext() & 1) {
     case 1:
-        Engine_ObjectSetAnimation(&leaf->actor, 3);
+        Object_SetMode(&leaf->actor, 3);
         Engine_ObjectSetScript(&leaf->actor, KuupuappuMura_DriftScriptA);
         break;
     default:
-        Engine_ObjectSetAnimation(&leaf->actor, 2);
+        Object_SetMode(&leaf->actor, 2);
         Engine_ObjectSetScript(&leaf->actor, KuupuappuMura_DriftScriptB);
         break;
     }

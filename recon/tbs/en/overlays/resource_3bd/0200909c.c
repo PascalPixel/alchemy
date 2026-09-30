@@ -36,7 +36,7 @@ void ArutamiraDou_RunWheelGame(s32 actor)
     Engine_EventShowMessage(16, 0);
     Engine_EventEnd();
     for (i = 0; i <= 4; i++) {
-        object = (u8 *)Engine_ActorGet(i + 11);
+        object = (u8 *)Object_GetById(i + 11);
         *(s32 *)(object + 108) = 0;
         *(s32 *)(object + 24) = 0x10000;
         *(s32 *)(object + 28) = 0x10000;
@@ -66,7 +66,7 @@ void ArutamiraDou_RunWheelGame(s32 actor)
             for (i = 0; i <= 4; i++) {
                 SceneActor_SetPositionFromTransformedBase(i + 11, 0x180000, (u16)angle);
                 Audio_PlayCue(151);
-                object = (u8 *)Engine_ActorGet(i + 11);
+                object = (u8 *)Object_GetById(i + 11);
                 *(s32 *)(object + 24) = 0;
                 scale = 0x6666;
                 do {
@@ -89,7 +89,7 @@ void ArutamiraDou_RunWheelGame(s32 actor)
             Audio_PlayCue(114);
             Engine_TaskWait(30);
             for (i = 0; i <= 4; i++) {
-                object = (u8 *)Engine_ActorGet(i + 11);
+                object = (u8 *)Object_GetById(i + 11);
                 Audio_PlayCue(151);
                 scale = *(s32 *)(object + 24);
                 while (*(s32 *)(object + 24) > 0x6666) {
@@ -159,7 +159,7 @@ void ArutamiraDou_RunWheelGame(s32 actor)
         angle = (s16)ArutamiraDou_ClearTarget[3];
         do {
             for (i = 0; i <= 4; i++) {
-                object = (u8 *)Engine_ActorGet(i + 11);
+                object = (u8 *)Object_GetById(i + 11);
                 *(s32 *)(object + 24) -= 16;
                 *(s32 *)(object + 28) -= 16;
                 SceneActor_SetPositionFromTransformedBase(i + 11, radius, (u16)angle);

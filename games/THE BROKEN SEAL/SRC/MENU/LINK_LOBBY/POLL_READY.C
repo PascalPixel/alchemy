@@ -22,7 +22,7 @@ s32 LinkLobby_PollPeerReady(void)
 
     work = gEventWork;
     result = 1;
-    if (Engine_ActorGet(0)->z.fixed > 0xe00000) {
+    if (Object_GetById(0)->z.fixed > 0xe00000) {
         Engine_GameFlagClear(0x304);
     }
     if (work->raised_trigger != 2) {

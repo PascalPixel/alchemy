@@ -112,10 +112,10 @@ void Scene_SaturosTakesHostages(void)
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
     FieldScene_RunVariantStep(0, 20, 20);
-    record = Engine_ActorGet(15);
+    record = Object_GetById(15);
     Actor_SetSpriteFlags(record, 0);
     Actor_SetPosition(15, 0x1450000, 0x12e0000);
-    record = Engine_ActorGet(15);
+    record = Object_GetById(15);
     record[85] = 5;
     *(s32 *)(((s32)p7 + 0x40c)) = 1;
     Audio_PlayCue(0x121);
@@ -189,7 +189,7 @@ void Scene_SaturosTakesHostages(void)
     Actor_FaceDirection(ACTOR_SATUROS, 0x8000, 0);
     Actor_FaceDirection(ACTOR_GARCIA, 0x8000, 0);
     Actor_FaceDirection(ACTOR_ALEX, 0x8000, 0);
-    record = Engine_ActorGet(5);
+    record = Object_GetById(5);
     Camera_MoveTo((*(s16 *)((s32)record + 10) << 16), -1, (*(s16 *)((s32)record + 18) << 16), 1);
     Camera_WaitForMove();
     Event_Wait(40);
@@ -307,7 +307,7 @@ void Scene_SaturosTakesHostages(void)
     Actor_SetSpeed(ACTOR_MENARDI, 0x19999, 0xcccc);
     Actor_SetSpeed(ACTOR_JASMINE, 0x13333, 0x9999);
     Actor_WalkToAndWait(ACTOR_MENARDI, 0x1db, 0x152);
-    record = Engine_ActorGet(11);
+    record = Object_GetById(11);
     ((struct FacingObject *)record)->facing_flags = (u8)(254 & ((struct FacingObject *)record)->facing_flags);
     Actor_WalkToAndWait(ACTOR_MENARDI, 0x1db, 0x15c);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
@@ -403,15 +403,15 @@ void FieldScene_RunScene381_02000e30(s32 a0)
     s32 rec2;
     u8 i;
 
-    recA = Engine_ActorGet(8);
+    recA = Object_GetById(8);
     *(s32 *)(recA + 24) = 0x10000;
     *(s32 *)(recA + 28) = 0x10000;
     Engine_ActorWalkToAndWait(a0, 0x1d7, 0x122);
     Actor_FaceDirection(a0, 0xc000, 0);
     Event_Wait(10);
     Actor_SetPosition(8, 0x1d70000, 0x1220000);
-    rec7 = Engine_ActorGet(a0);
-    rec2 = Engine_ActorGet(a0);
+    rec7 = Object_GetById(a0);
+    rec2 = Object_GetById(a0);
     Actor_SetSpriteFlags(rec2, 0);
     Actor_SetChildValue(a0, 0x100);
     rec7[85] = 0;

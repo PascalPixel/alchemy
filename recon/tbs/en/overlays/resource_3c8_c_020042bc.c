@@ -98,7 +98,7 @@ void Scene_RunPairedParticleWaveSequence(void)
 
     gEventWork->start_transition = 0x202;
     Engine_EventBegin();
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(0), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorSetChildValue(0, 15);
     Main_0808a5e0(170);
     Engine_EventOpenScreen();

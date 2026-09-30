@@ -30,9 +30,9 @@ Engine_EventEnd:
 	.thumb_func
 FieldScene_PrepareActors:
 	overlay_veneer Func_0808a038
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetPosition
 	.thumb_func

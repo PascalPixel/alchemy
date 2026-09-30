@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "CALL.H"
 
-s32 Engine_ActorGet();
+s32 Object_GetById();
 extern u8 ImiruMura_TurnScript[];
 s32 Engine_GameFlagIsSet();
 void Engine_ShopOpen();
@@ -23,7 +23,7 @@ void ImiruMura_RunArmorShop(void)
 {
     s32 dir;
 
-    dir = *(s16 *)(Engine_ActorGet(0) + 6);
+    dir = *(s16 *)(Object_GetById(0) + 6);
     if (Engine_GameFlagIsSet(0x881) != 0) {
         if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000) {
             Engine_ShopOpen(11, 13);

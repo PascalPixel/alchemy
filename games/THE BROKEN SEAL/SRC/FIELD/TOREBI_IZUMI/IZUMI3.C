@@ -37,7 +37,7 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
 /* The zero is a one-halfword struct; the child-byte OR goes through a word temporary with 255 held in a variable, so it stays ldrb/orrs. */
 void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
 {
-    u8 *actor = (u8 *)Engine_ActorGet(id);
+    u8 *actor = (u8 *)Object_GetById(id);
     u8 *sprite;
     u32 n;
 
@@ -78,7 +78,7 @@ void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
 
 void OverlayObject_SetField54(s32 arg0, s32 arg1)
 {
-    u8 *entry = (u8 *)Engine_ActorGet(arg0);
+    u8 *entry = (u8 *)Object_GetById(arg0);
 
     if (entry != 0) {
         u8 *field = entry + 0x54;

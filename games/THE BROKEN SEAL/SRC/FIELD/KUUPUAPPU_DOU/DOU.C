@@ -9,7 +9,6 @@ extern const struct SceneEntrance gKuupuappuDouEntrances2[];
 extern const struct SceneEntrance gKuupuappuDouEntrances3[];
 extern const struct SceneEntrance gKuupuappuDouEntrancesOther[];
 
-u8 *Object_GetById(s32);
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void Object_SetMoveTarget(s32 *, s32, s32, s32);
 void KuupuappuDou_PushBlockAhead();
@@ -31,7 +30,7 @@ enum SelectByRuntimeSelectorMessage {
     MSG_ROBIN_FLIPPED_SWITCH = 0x1528
 };
 
-extern u8 *Object_GetById(s32);
+extern 
 
 extern const u32 gKuupuappuDouExits1[];
 extern const u32 gKuupuappuDouExits2[];
@@ -190,7 +189,7 @@ s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
  * cell is higher; leader and block then move together. */
 void KuupuappuDou_PushBlockAhead(void)
 {
-    struct FieldActor *leader = Engine_ActorGet(0);
+    struct FieldActor *leader = Object_GetById(0);
     s32 direction = leader->facing >> 12;
     struct FieldActor *block;
     struct FieldActor *beyond;
@@ -208,7 +207,7 @@ void KuupuappuDou_PushBlockAhead(void)
         return;
     }
     for (i = 0; i <= 3; i++) {
-        if (block == Engine_ActorGet(i + 11)) {
+        if (block == Object_GetById(i + 11)) {
             return;
         }
     }
@@ -227,7 +226,7 @@ void KuupuappuDou_PushBlockAhead(void)
     if (Object_CheckMovementCollision(block, p) > 0) {
         return;
     }
-    Engine_ObjectSetAnimation(leader, 8);
+    Object_SetMode(leader, 8);
     Engine_TaskWait(15);
     Engine_AudioPlayCue(238);
     block->speed = 0x3333;
@@ -246,7 +245,7 @@ void KuupuappuDou_PushBlockAhead(void)
     leader->velocity_z = zero;
     leader->target_x = ACTOR_NO_TARGET;
     leader->target_z = ACTOR_NO_TARGET;
-    Engine_ObjectSetAnimation(leader, 1);
+    Object_SetMode(leader, 1);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
@@ -437,7 +436,7 @@ void SceneState_ApplyRectAndMarkActor16(void)
 
     if (rec != 0) {
         /* The rec is reloaded with the same selector before this store. */
-        Object_GetById(16)[85] = 0;
+        ((u8 *)Object_GetById(16))[85] = 0;
         rec[35] = 1;
     }
 
@@ -457,7 +456,7 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 
     if (rec != 0) {
         /* The record is reloaded with the same selector before this store. */
-        Object_GetById(17)[85] = 0;
+        ((u8 *)Object_GetById(17))[85] = 0;
         rec[35] = 1;
     }
 
@@ -477,7 +476,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 
     if (record != 0) {
         /* The record is reloaded with the same selector before this store. */
-        Object_GetById(18)[85] = 0;
+        ((u8 *)Object_GetById(18))[85] = 0;
         record[35] = 1;
     }
 
@@ -498,7 +497,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
     if (p != 0) {
         Actor_SetSpriteFlags(p, 0);
         /* The record is reloaded with the same selector before this store. */
-        Object_GetById(19)[85] = 0;
+        ((u8 *)Object_GetById(19))[85] = 0;
         p[35] = 1;
     }
 
@@ -519,7 +518,7 @@ void SceneActor_SetupSlotTwenty(void)
     if (rec != 0) {
         Actor_SetSpriteFlags(rec, 0);
         /* The rec is reloaded with the same selector before this store. */
-        Object_GetById(20)[85] = 0;
+        ((u8 *)Object_GetById(20))[85] = 0;
         rec[35] = 1;
     }
 
@@ -540,7 +539,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
     if (record != 0) {
         Actor_SetSpriteFlags(record, 0);
         /* The record is reloaded with the same selector before this store. */
-        Object_GetById(21)[85] = 0;
+        ((u8 *)Object_GetById(21))[85] = 0;
         record[35] = 1;
     }
 
@@ -565,7 +564,7 @@ void KuupuappuDou_RaiseActorPriorities(void)
 
     id = 16;
     for (i = 0; i < 6; i++) {
-        Engine_ActorGet(id)->priority_flags |= 2;
+        Object_GetById(id)->priority_flags |= 2;
         id++;
     }
 }
@@ -669,11 +668,11 @@ void FieldScene_RunScene3a7SequenceB(void)
  * returns 1; otherwise it returns 0. */
 s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 {
-    struct SceneActorRecord *subject = (struct SceneActorRecord *)Engine_ActorGet(subject_actor);
+    struct SceneActorRecord *subject = (struct SceneActorRecord *)Object_GetById(subject_actor);
     s32 index = 0;
 
     do {
-        struct SceneActorRecord *actor = (struct SceneActorRecord *)Engine_ActorGet(index + 11);
+        struct SceneActorRecord *actor = (struct SceneActorRecord *)Object_GetById(index + 11);
 
         if ((u32)(actor->y - 1) <= 0x000ffffe) {
             s32 actor_z = TILE(actor->z);
@@ -707,7 +706,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 flag;
     s32 index;
 
-    flag = *(u8 *)(Object_GetById(10) + 91);
+    flag = *(u8 *)((u8 *)Object_GetById(10) + 91);
     if (flag == 0) {
         if (++KuupuappuDou_ScheduleTimer > 190) {
             KuupuappuDou_ScheduleTimer = 0;
@@ -921,7 +920,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
     }
     if (gGameState.scene == (s32)&SceneId_KuupuappuDou2) {
         if (Engine_GameFlagIsSet(0x300) == 0) {
-            Engine_ActorGet(22)->scale_y = 0x18000;
+            Object_GetById(22)->scale_y = 0x18000;
         }
         switch (gGameState.entrance) {
         case 1:
@@ -971,36 +970,36 @@ s32 KuupuappuDou_ApplyEntryState(void)
                 SceneState_ApplyThreeRects();
                 Call3((void (*)())Engine_ActorSetPosition, 9, 0xf80000, 0x36c0000);
             }
-            Engine_ActorGet(8)->priority_flags = 2;
+            Object_GetById(8)->priority_flags = 2;
             break;
         }
         ((void (*)())Engine_ActorSetAnimation)(8, 2);
         ((void (*)())Engine_ActorSetAnimation)(9, 2);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
-        Engine_ActorGet(9)->collision_flags = 1;
+        Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
+        Object_GetById(9)->collision_flags = 1;
     }
     if (gGameState.scene == (s32)&SceneId_KuupuappuDou3) {
         ((void (*)())Engine_ActorSetAnimation)(8, 2);
         if (Engine_GameFlagIsSet(0x207) == 0) {
             ((void (*)())Engine_ActorSetAnimation)(10, 2);
         }
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
-        Engine_ActorGet(10)->collision_flags |= 0x80;
-        Engine_ActorGet(9)->collision_flags |= 0x80;
+        Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
+        Object_GetById(10)->collision_flags |= 0x80;
+        Object_GetById(9)->collision_flags |= 0x80;
         switch (gGameState.entrance) {
         case 5:
         case 6:
             SceneActor_SetupActors11To14AndInstallTask();
-            Engine_ActorGet(11)->collision_flags = 2;
-            Engine_ActorGet(12)->collision_flags = 2;
-            Engine_ActorGet(13)->collision_flags = 2;
-            Engine_ActorGet(14)->collision_flags = 2;
-            Engine_ActorGet(8)->collision_flags = 1;
-            Engine_ActorGet(10)->collision_flags = 1;
-            Engine_ActorGet(9)->collision_flags = 1;
+            Object_GetById(11)->collision_flags = 2;
+            Object_GetById(12)->collision_flags = 2;
+            Object_GetById(13)->collision_flags = 2;
+            Object_GetById(14)->collision_flags = 2;
+            Object_GetById(8)->collision_flags = 1;
+            Object_GetById(10)->collision_flags = 1;
+            Object_GetById(9)->collision_flags = 1;
             if (Engine_GameFlagIsSet(0x9aa) != 0) {
                 SceneState_ApplyThreeRectsRows9And10();
                 Call3((void (*)())Engine_ActorSetPosition, 10, 0x1080000, 0xcc0000);

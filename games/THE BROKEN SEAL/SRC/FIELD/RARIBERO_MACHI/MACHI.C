@@ -164,7 +164,7 @@ void Scene_RunTableTransition(void)
     s32 x = RariberoMachi_DoorCells[no][0];
     s32 y = RariberoMachi_DoorCells[no][1];
 
-    ((u8 *)Engine_ActorGet(0))[85] = 2;
+    ((u8 *)Object_GetById(0))[85] = 2;
     Audio_PlayCue(158);
     if (no == 6) {
         Value3(Engine_MapAnimateCells, (s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
@@ -444,7 +444,7 @@ void FieldScene_RunSecondarySequence(void)
     Event_Wait(80);
     Actor_SetSpeed(22, 0xcccc, 0x6666);
     /* Set the byte at offset 85 of actor 22's record to 2. */
-    *(u8 *)((s32)Engine_ActorGet(22) + 85) = 2;
+    *(u8 *)((s32)Object_GetById(22) + 85) = 2;
     Actor_SetSpritePriority(22, 2);
     Call6(Engine_MapCopyCellsTo, 34, 0, 1, 2, 4, 18);
     Audio_PlayCue(158);
@@ -642,21 +642,21 @@ void FieldScene_RunSecondarySequence(void)
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, REC_S16(record, 10), REC_S16(record, 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_MIA, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, REC_S16(record, 10), REC_S16(record, 18));
     }
     Actor_WaitForMove(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, REC_S16(record, 10), REC_S16(record, 18));
     }

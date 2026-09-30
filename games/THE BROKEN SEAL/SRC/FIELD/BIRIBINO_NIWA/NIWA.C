@@ -202,7 +202,7 @@ void BiribinoNiwa_RunGardenEvent(void)
         }
         *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
         Engine_EventShowMessageAndWait(12, 0, 10);
-        record = ((u8 * (*)())Engine_ActorGet)(0);
+        record = ((u8 * (*)())Object_GetById)(0);
         if (*(s32 *)((s32)record + 16) <= 0x10dffff) {
             Call3(Engine_ActorSetSpeed, 12, 0xcccc, 0x6666);
             Call3(Engine_ActorWalkToAndWait, 0, 0x15a, 0x112);
@@ -225,11 +225,11 @@ void BiribinoNiwa_RunGardenEvent(void)
         Engine_EventShowMessageAndWait(11, 0, 20);
         Call3(Engine_ActorFaceDirection, 11, 0xf000, 0);
         Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-        *(u8 *)(((u8 * (*)())Engine_ActorGet)(12) + 90) &= 254;
+        *(u8 *)(((u8 * (*)())Object_GetById)(12) + 90) &= 254;
         Call3(Engine_ActorWalkToAndWait, 12, 0x15a, 0x107);
         Engine_EventWait(1);
         {
-            u8 *record = ((u8 * (*)())Engine_ActorGet)(12);
+            u8 *record = ((u8 * (*)())Object_GetById)(12);
             /* FAKEMATCH: the flag byte is read through a volatile access. */
             u8 value = *(volatile u8 *)&record[90];
         
@@ -286,7 +286,7 @@ s32 Scene_Initialize(void)
 
     *(s32 *)(work + 448) = 256;            /* 128 << 1 */
 
-    ent = (struct SceneEntity *)Engine_ActorGet(8);
+    ent = (struct SceneEntity *)Object_GetById(8);
     fp = (u8 *)ent + 35;
     /* FAKEMATCH: one register carries the stored zero and then, decremented
        by 13, the ~0x0c handle mask, so the two are not folded into separate
@@ -402,11 +402,11 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_EventWait(60);
     if (Engine_GameFlagIsSet(0x84a) == 0) {
         Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-        ((u8 * (*)())Engine_ActorGet)(12)[90] &= 254;
+        ((u8 * (*)())Object_GetById)(12)[90] &= 254;
         Engine_ActorWalkToAndWait(12, 0x15a, 0x107);
         Engine_EventWait(1);
         {
-            u8 *record = ((u8 * (*)())Engine_ActorGet)(12);
+            u8 *record = ((u8 * (*)())Object_GetById)(12);
             /* FAKEMATCH: a result temporary, not a compound or-assign: the
              * reference merges the byte into the mask's register, which the
              * two-address ORR does only when the result is its own object. */
@@ -482,7 +482,7 @@ void InitializeOrbitingSceneEntity(s32 id)
     u8 *transfer;
     s32 zero;
 
-    actor = (OrbitingSceneObject *)Engine_ActorGet(id);
+    actor = (OrbitingSceneObject *)Object_GetById(id);
     sprite = actor->sprite;
     sprite->flags_09_mode = 1;
     sprite->flags_05_bit_5 = 0;

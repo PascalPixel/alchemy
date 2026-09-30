@@ -57,9 +57,9 @@ AnimationObjects_SelectAnimation:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_ObjectSetScript
 	.thumb_func
@@ -148,9 +148,9 @@ Engine_EventEnd:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func

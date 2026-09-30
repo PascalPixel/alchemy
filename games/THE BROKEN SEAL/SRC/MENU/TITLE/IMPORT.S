@@ -66,9 +66,9 @@ Party_ApplyStatePreset:
 	.thumb_func
 Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Event_SetPairWork1c0
 	.thumb_func

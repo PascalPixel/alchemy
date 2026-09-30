@@ -24,7 +24,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Battle_SetObjectFlag5bWhenMode3();
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     if (leader != NULL) {
         Engine_ActorSetPosition(gWorldMapTriggerActor, leader->x.fixed, leader->z.fixed);
     }
@@ -55,7 +55,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
-    while ((s16)Engine_ActorGet(0)->unknown_64 == 0) {
+    while ((s16)Object_GetById(0)->unknown_64 == 0) {
         Engine_TaskWait(1);
     }
     Call3(Engine_ActorFaceDirection, 0, 0x4000, 20);
@@ -65,15 +65,15 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x8000, 10);
     Engine_EventShowMessage(gWorldMapTriggerActor, 0);
     Engine_ActorFaceDirection(0, 0, 20);
-    Engine_ActorGet(gWorldMapTriggerActor)->unknown_5a &= ~1;
+    Object_GetById(gWorldMapTriggerActor)->unknown_5a &= ~1;
     Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x178c, 0xd48);
     Engine_EventWait(1);
-    Engine_ActorGet(gWorldMapTriggerActor)->unknown_5a |= 1;
+    Object_GetById(gWorldMapTriggerActor)->unknown_5a |= 1;
     Engine_EventWait(20);
-    Engine_ActorGet(gWorldMapTriggerActor)->unknown_5a &= ~1;
+    Object_GetById(gWorldMapTriggerActor)->unknown_5a &= ~1;
     Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 0x1794, 0xd48);
     Engine_EventWait(1);
-    Engine_ActorGet(gWorldMapTriggerActor)->unknown_5a |= 1;
+    Object_GetById(gWorldMapTriggerActor)->unknown_5a |= 1;
     Engine_ItemShowFound(242, 3);
     Engine_PartyGiveItem(242, 0);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);

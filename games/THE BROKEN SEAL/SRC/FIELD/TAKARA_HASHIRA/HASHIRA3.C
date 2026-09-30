@@ -59,8 +59,8 @@ void FieldScene_RunScene3b3_02001fd4(void)
 {
     Event_Begin();
     if (FieldScene_RunScene3b3SequenceD() == 0) {
-        *((u8 *)Engine_ActorGet(0) + 85) &= 254;
-        *((u8 *)Engine_ActorGet(0) + 35) &= 254;
+        *((u8 *)Object_GetById(0) + 85) &= 254;
+        *((u8 *)Object_GetById(0) + 35) &= 254;
         StagedActor_AdvancePair();
         TakaraHashira_UpdatePillarActors();
         {
@@ -88,7 +88,7 @@ void FieldScene_RunSingleStep(void)
  * otherwise falls back to sequence D. */
 void TakaraHashira_RunStagedCellScene(void)
 {
-    struct FieldActor *leader = Engine_ActorGet(0);
+    struct FieldActor *leader = Object_GetById(0);
     s32 pos[3];
     s32 *p = pos;
 
@@ -112,7 +112,7 @@ void SceneState_LinkActorZeroToWork24(void)
 
 /*
  * Clears PILLAR_WORK[+24] and one flag byte on the object returned by
- * Engine_ActorGet. The 28-byte owner at 0x0200209c includes its one pool
+ * Object_GetById. The 28-byte owner at 0x0200209c includes its one pool
  * word, the PILLAR_WORK pointer.
  */
 void SceneState_ClearWord24AndObjectByte62(void)
@@ -158,7 +158,7 @@ void TakaraHashira_RunActorAction(s32 a0)
     s32 rec7;
     s32 record;
 
-    rec7 = Value0(Engine_ActorGet);
+    rec7 = Value0(Object_GetById);
     Event_Begin();
     *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
     Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
@@ -188,7 +188,7 @@ void FieldScene_RunScene3b3_0200215c(void)
     s32 record;
     u8 *p6;
 
-    rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec7 = Object_GetById(ACTOR_PARTY_LEADER);
     record = Actor_Get(13);
     p6 = *(s32 *)gEffectWork;
     if ((*(s32 *)(record + 8) >> 20) == (*(s32 *)(rec7 + 8) >> 20)) {
@@ -211,13 +211,13 @@ void TakaraHashira_RaiseActorFourteen(void)
     s32 record;
     s32 v5;
 
-    rec8 = (s32)Engine_ActorGet(14);
+    rec8 = (s32)Object_GetById(14);
     v5 = 128;
-    record = (s32)Engine_ActorGet(13);
+    record = (s32)Object_GetById(13);
     *(s32 *)(record + 24) = (v5 << 9);
-    record = (s32)Engine_ActorGet(13);
+    record = (s32)Object_GetById(13);
     *(s32 *)(record + 28) = (v5 << 9);
-    record = (s32)Engine_ActorGet(13);
+    record = (s32)Object_GetById(13);
     { s8 *p = *(s8 **)(record + 80); p[9] = (p[9] & -13) | 8; }
     { s8 *p = *(s8 **)(rec8 + 80); p[9] = (p[9] & -13) | 8; }
     *(s32 *)(rec8 + 52) = 0x6666;
@@ -312,11 +312,11 @@ void TakaraHashira_RunMapShiftScene(void)
         Engine_TaskAddCallback((s32)SceneEffect_SpawnRandomizedParticle, 0xc80);
         Engine_EventWait(40);
         if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
-            record = (s32)Engine_ActorGet(12);
+            record = (s32)Object_GetById(12);
             *(s32 *)(record + 108) = (s32)SceneEffect_SpawnRandomEffectEveryEightFrames;
             Engine_ActorSetAnimation(12, 6);
             ObjectMotion_WaitForAnimationChange(12);
-            record = (s32)Engine_ActorGet(12);
+            record = (s32)Object_GetById(12);
             *(s32 *)(record + 108) = rec7;
             Call6(Engine_MapCopyCellAttributes, 17, 13, 1, 1, 18, 13);
             Engine_GameFlagClear(0x201);
@@ -360,7 +360,7 @@ void TakaraHashira_DropActorTen(void)
     u8 *rec7;
     s32 rec8;
 
-    rec7 = (s32)Engine_ActorGet(10);
+    rec7 = (s32)Object_GetById(10);
     Engine_EventBegin();
     StagedActor_FillGridAttributeRectangle(2, (*(s32 *)((s32)rec7 + 8) >> 20), (*(s32 *)((s32)rec7 + 16) >> 20), 1, 1, 255);
     if ((*(s32 *)((s32)rec7 + 8) >> 20) == 16) {
@@ -419,7 +419,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void TakaraHashira_PrepLoweredActor(s32 id)
 {
-    struct FieldActor *actor = Engine_ActorGet(id);
+    struct FieldActor *actor = Object_GetById(id);
 
     actor->collision_flags &= 254;
     actor->priority_flags |= 2;
@@ -434,7 +434,7 @@ void FieldScene_RunScene3b3_0200263c(s32 a0)
     s32 rec7;
     s32 record;
 
-    rec7 = (s32)Engine_ActorGet(a0);
+    rec7 = (s32)Object_GetById(a0);
     if (GameFlag_IsSet((a0 + 0x1f5)) != 0) {
         Stage_SetMode(rec7, 5);
         *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
@@ -445,7 +445,7 @@ void FieldScene_RunScene3b3_0200263c(s32 a0)
 
 void OverlayObject_SetCallbackAndMode2(s32 id)
 {
-    u8 *obj = (u8 *)Engine_ActorGet(id);
+    u8 *obj = (u8 *)Object_GetById(id);
     u8 *base = obj;
     u8 zero = 0;
 
@@ -483,7 +483,7 @@ loop:
 
 mark_and_continue:
     {
-        u8 *mark = (u8 *)Engine_ActorGet(0) + 35;
+        u8 *mark = (u8 *)Object_GetById(0) + 35;
         u8 bit = 1;
         bit |= *mark;
         *mark = bit;
@@ -550,10 +550,10 @@ s32 TakaraHashira_SetupArea(void)
             }
             OverlayObject_CreateConfiguredObject(0x2480000, 0, 0xc80000, 223);
             if (Engine_GameFlagIsSet(0x109) == 0) {
-                *((u8 *)Engine_ActorGet(0) + 98) = 1;
+                *((u8 *)Object_GetById(0) + 98) = 1;
             }
             BattleFx_StartFadeOverlay(0);
-            if (*((u8 *)Engine_ActorGet(0) + 98) == 0) {
+            if (*((u8 *)Object_GetById(0) + 98) == 0) {
                 SceneState_ClearWord24AndObjectByte62();
             }
             OverlayObject_SetCallbackAndMode2(8);
@@ -578,7 +578,7 @@ s32 TakaraHashira_SetupArea(void)
                 goto L_020029fa;
             }
             for (base5_8 = 8; (u32)base5_8 <= 11; base5_8++) {
-                record = (u8 *)((s32 (*)())Engine_ActorGet)(base5_8);
+                record = (u8 *)((s32 (*)())Object_GetById)(base5_8);
                 v2 = *(s32 *)(record + 8) >> 20;
                 if (v2 == 37) {
                     v0 = *(s32 *)(record + 16) >> 20;
@@ -597,8 +597,8 @@ s32 TakaraHashira_SetupArea(void)
             FieldScene_RedrawActorFootprint(8);
             FieldScene_RedrawActorFootprint(9);
             v5 = 0;
-            *((u8 *)Engine_ActorGet(8) + 85) = v5;
-            *((u8 *)Engine_ActorGet(9) + 85) = v5;
+            *((u8 *)Object_GetById(8) + 85) = v5;
+            *((u8 *)Object_GetById(9) + 85) = v5;
             TakaraHashira_DropActorTen();
             TakaraHashira_PrepLoweredActor(11);
             TakaraHashira_PrepLoweredActor(12);
@@ -606,11 +606,11 @@ s32 TakaraHashira_SetupArea(void)
             FieldScene_RunScene3b3_0200263c(11);
             FieldScene_RunScene3b3_0200263c(12);
             FieldScene_RunScene3b3_0200263c(13);
-            record = (u8 *)((s32 (*)())Engine_ActorGet)(13);
+            record = (u8 *)((s32 (*)())Object_GetById)(13);
             *(s32 *)((s32)record + 108) = v5;
             TakaraHashira_PrepLoweredActor(14);
             {
-                u8 *record = (u8 *)Engine_ActorGet(14);
+                u8 *record = (u8 *)Object_GetById(14);
                 /* FAKEMATCH: retain the flag read before its merge. */
                 u8 value = *(volatile u8 *)&record[89];
 
@@ -618,13 +618,13 @@ s32 TakaraHashira_SetupArea(void)
             }
             if (Engine_GameFlagIsSet(0x202) == 0) {
                 v5 = 192;
-                record = (u8 *)Engine_ActorGet(13);
+                record = (u8 *)Object_GetById(13);
                 *(s32 *)((s32)record + 24) = (v5 << 9);
-                record = (u8 *)((s32 (*)())Engine_ActorGet)(13);
+                record = (u8 *)((s32 (*)())Object_GetById)(13);
                 *(s32 *)((s32)record + 28) = (v5 << 9);
-                record = (u8 *)((s32 (*)())Engine_ActorGet)(13);
+                record = (u8 *)((s32 (*)())Object_GetById)(13);
                 *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-                record = (u8 *)((s32 (*)())Engine_ActorGet)(14);
+                record = (u8 *)((s32 (*)())Object_GetById)(14);
                 *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
                 Call6(Engine_MapCopyCellAttributes, 26, 12, 1, 1, 22, 16);
             }

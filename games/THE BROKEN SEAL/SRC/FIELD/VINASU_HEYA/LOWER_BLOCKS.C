@@ -8,8 +8,8 @@ extern s32 gVinasuBlockHeights[];
  * cell under each of actors 8 to 12 that has sunk below the floor. */
 void VinasuHeya_LowerFloatingBlocks(s32 wait)
 {
-    struct FieldActor *a = Engine_ActorGet(8);
-    struct FieldActor *b = Engine_ActorGet(9);
+    struct FieldActor *a = Object_GetById(8);
+    struct FieldActor *b = Object_GetById(9);
     u32 i;
 
     Call3((void (*)())Engine_ActorSetSpeed, 8, 0x8000, 0x4000);
@@ -27,7 +27,7 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
         Engine_AudioPlayCue(0x121);
     }
     for (i = 0; i < 5; i++) {
-        struct FieldActor *actor = Engine_ActorGet(i + 8);
+        struct FieldActor *actor = Object_GetById(i + 8);
 
         if (actor->y.fixed / 0x10000 < 0 && actor->y.fixed / 0x10000 > -30) {
             Call6((void (*)())Engine_MapCopyCellAttributes, 4, 19, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);

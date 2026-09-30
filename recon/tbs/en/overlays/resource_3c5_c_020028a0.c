@@ -100,7 +100,7 @@ s32 BabiIriguchi_SetupScene(void)
     } else {
         struct FieldActor *actor;
 
-        actor = Engine_ActorGet(12);
+        actor = Object_GetById(12);
         x = actor->x.fixed >> 20;
         if (x == 20) {
             z = actor->z.fixed >> 20;
@@ -117,14 +117,14 @@ s32 BabiIriguchi_SetupScene(void)
             Actor_SetPosition(9, 0x1380000, 0x1480000);
         }
         SceneState_ApplyRectsAtActors8And9();
-        actor = Engine_ActorGet(9);
-        actor->y.fixed = *(s32 *)Engine_ActorGet(9)->unknown_14;
+        actor = Object_GetById(9);
+        actor->y.fixed = *(s32 *)Object_GetById(9)->unknown_14;
         if (Engine_GameFlagIsSet(0x300) != 0) {
             Engine_ActorSetAnimation(10, 4);
-            Engine_ActorGet(10)->collision_flags = 0xfe;
+            Object_GetById(10)->collision_flags = 0xfe;
             SceneState_ConfigureRegion82_7AndApply768();
         }
-        panel = (struct PanelActor *)Engine_ActorGet(11);
+        panel = (struct PanelActor *)Object_GetById(11);
         panel->collision_flags = 0;
         panel->priority_flags = 0;
         panel->delay = 0;
@@ -133,7 +133,7 @@ s32 BabiIriguchi_SetupScene(void)
         ((u8 *)panel->sprite)[38] = zero;
         panel->sprite->angle = 0xc000;
         Engine_ActorSetAnimation(11, 0);
-        panel = (struct PanelActor *)Engine_ActorGet(12);
+        panel = (struct PanelActor *)Object_GetById(12);
         panel->collision_flags = zero;
         panel->priority_flags = zero;
         panel->delay = 30;
@@ -141,7 +141,7 @@ s32 BabiIriguchi_SetupScene(void)
         ((u8 *)panel->sprite)[38] = zero;
         panel->sprite->angle = 0x4000;
         Engine_ActorSetAnimation(12, 0);
-        panel = (struct PanelActor *)Engine_ActorGet(13);
+        panel = (struct PanelActor *)Object_GetById(13);
         panel->collision_flags = zero;
         panel->priority_flags = zero;
         panel->delay = 60;
@@ -149,7 +149,7 @@ s32 BabiIriguchi_SetupScene(void)
         ((u8 *)panel->sprite)[38] = zero;
         panel->sprite->angle = 0x8000;
         Engine_ActorSetAnimation(13, 0);
-        panel = (struct PanelActor *)Engine_ActorGet(14);
+        panel = (struct PanelActor *)Object_GetById(14);
         panel->collision_flags = zero;
         panel->priority_flags = zero;
         panel->delay = 90;
@@ -192,8 +192,8 @@ s32 BabiIriguchi_SetupScene(void)
             break;
         }
     } else if (scene == (s32)SceneId_BabiIriguchi1) {
-        Engine_ActorGet(8)->unknown_5a &= 0xfe;
-        Engine_ActorGet(9)->unknown_5a &= 0xfe;
+        Object_GetById(8)->unknown_5a &= 0xfe;
+        Object_GetById(9)->unknown_5a &= 0xfe;
         Actor_SetSpeed(8, 0x10000, 0x8000);
         Actor_SetSpeed(9, 0x10000, 0x8000);
         if (Engine_GameFlagIsSet(0x109) == 0) {

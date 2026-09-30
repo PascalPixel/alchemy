@@ -3,7 +3,7 @@
 
 extern s16 gGameState[];
 
-u8 *Engine_ActorGet();
+u8 *Object_GetById();
 u8 *Engine_GameFlagIsSet();
 void Engine_EventWait();
 void SpawnRadialEffectBurst();
@@ -19,7 +19,7 @@ void FieldScene_HandleEscapeColumn(void)
     s16 *slot;
     s32 column;
 
-    entity = Engine_ActorGet(8);
+    entity = Object_GetById(8);
     column = *(s32 *)(entity + 8) >> 20;    /* 16.16 -> 16-pixel tile grid */
     if (column != 40) {
         return;
@@ -40,7 +40,7 @@ void FieldScene_HandleEscapeColumn(void)
     Engine_AudioPlayCue(136);
     Engine_EventWait(40);
 
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
     ObjectMotion_SetActionVariant(8, 3);
 
     entity[85] = 0;

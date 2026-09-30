@@ -15,10 +15,10 @@ void SoruFunka_ThrowEruptionRing(void)
     s32 dz;
 
     for (i = 16; i <= 31; i++) {
-        actor = Engine_ActorGet(i);
+        actor = Object_GetById(i);
         Engine_ActorStop(i);
         Engine_ActorSetSpriteFlags(actor, 0);
-        Engine_ObjectSetAnimation(actor, 2);
+        Object_SetMode(actor, 2);
         actor->sprite->priority = 0;
         actor->motion_flags = 0;
         actor->speed = 0x80000;
@@ -31,7 +31,7 @@ void SoruFunka_ThrowEruptionRing(void)
     }
     Engine_AudioPlayCue(145);
     for (i = 0; i <= 15; i++) {
-        spun = Engine_ActorGet(i + 16);
+        spun = Object_GetById(i + 16);
         sprite = spun->sprite;
         angle = i << 12;
         sprite->rotation = angle - 0x4000;
@@ -42,7 +42,7 @@ void SoruFunka_ThrowEruptionRing(void)
     Engine_EventWait(20);
     Engine_ActorWaitForMove(16);
     for (i = 16; i <= 31; i++) {
-        actor = Engine_ActorGet(i);
+        actor = Object_GetById(i);
         Engine_ActorStop(i);
         actor->scale_x = 0x10000;
         actor->scale_y = 0x10000;

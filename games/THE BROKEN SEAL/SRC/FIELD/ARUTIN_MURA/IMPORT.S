@@ -22,9 +22,9 @@ Engine_TaskRemoveCallback:
 	.thumb_func
 Random16:
 	overlay_veneer Random16Far
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_ObjectCreate
 	.thumb_func
@@ -90,9 +90,9 @@ FieldScene_PrepareActors:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func

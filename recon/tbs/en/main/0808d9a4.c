@@ -21,7 +21,7 @@ extern u8 Data_00001000[];
 extern u8 gGameState[];
 extern u16 Data_02000240_t[][2];
 void WaitFrames();
-void Engine_ObjectSetAnimation();
+void Object_SetMode();
 void ObjectDispatch_ReleaseFar();
 s32 UiText_ShowPositionedMessageAndWaitFar();
 void UiWork_PushValueSlotFar();
@@ -185,7 +185,7 @@ s32 Func_0808d9a4(s32 a0)
                         Audio_PlayCue(126);
                         ((void (*)())UiText_ShowPositionedMessageAndWaitFar)(((s32)Data_00000970 + 1), 1);
                         UiWork_FinalizeAndReleaseBlock16Far();
-                        Engine_ObjectSetAnimation(rec8, 2);
+                        Object_SetMode(rec8, 2);
                         Audio_PlayCue(246);
                         Battle_WaitMode0(30);
                         ((void (*)())UiText_ShowPositionedMessageAndWaitFar)(((s32)Data_00000970 + 2), 1);

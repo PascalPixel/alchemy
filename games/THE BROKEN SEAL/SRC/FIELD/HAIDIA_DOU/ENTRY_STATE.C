@@ -45,7 +45,7 @@ void HaidiaDou_ApplyEntryState(void)
                 break;
             }
             Call3(Engine_ActorSetPosition, 8, 0x3180000, 0x1180000);
-            Engine_ActorGet(8)->update = SceneActor_FaceActorZero;
+            Object_GetById(8)->update = SceneActor_FaceActorZero;
             break;
         case 8:
         case 9:

@@ -3325,11 +3325,10 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.087fd4b9)
     } > ROM
     /* Field services that shared overlay C calls through its import veneers are
-       the engine functions themselves in the main image (SPAWN.C and
-       SCROLL_INITIALIZE_HBLANK_DMA.C also link here). */
-    Engine_ActorGet = Object_GetById;
+       the far entries themselves in the main image (SPAWN.C links here too):
+       each overlay veneer targets that very entry, so one name cannot serve
+       both. */
     Engine_ObjectCreate = Object_CreateFar;
-    Engine_ObjectSetAnimation = Object_SetMode;
     Engine_ObjectSetScript = ObjectDispatch_InitializeFar;
     /* The compiler calls its division helpers by their ABI names; here they are
        the veneers into the resident IWRAM divider (DIVISION_ENTRY.S). */

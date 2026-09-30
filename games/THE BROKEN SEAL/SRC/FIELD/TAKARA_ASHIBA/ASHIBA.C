@@ -38,7 +38,6 @@ struct Slot {
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
 s32 ArcTan2();
 void ObjectDispatch_ApplyValueToChildren();
-s32 Object_GetById();
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
@@ -333,7 +332,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
     if (GameFlag_IsSet(0x9c9) != 0 && GameFlag_IsSet(0x9ca) == 0) {
         GameFlag_Set(0x9ca);
         Event_Begin();
-        record = Object_GetById(15);
+        record = (s32)Object_GetById(15);
         *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
         ObjectDispatch_ApplyValueToChildren(record, 16);
         Audio_PlayCue(152);
@@ -383,11 +382,11 @@ void FieldScene_CopyActorPosition(void)
     if (GameFlag_IsSet(0x9ca) != 0) {
         if (Data_02000240[293] != 15) {
             idx = work->touched_trigger;
-            dst = Object_GetById(15);
-            src = Object_GetById(0);
+            dst = (s32)Object_GetById(15);
+            src = (s32)Object_GetById(0);
             *(s32 *)(dst + 48) = *(s32 *)(src + 48);
-            dst = Object_GetById(15);
-            src = Object_GetById(0);
+            dst = (s32)Object_GetById(15);
+            src = (s32)Object_GetById(0);
             *(s32 *)(dst + 52) = *(s32 *)(src + 48);
             idx -= 30;
             tbl = 0x0200a808;
@@ -643,7 +642,7 @@ void FieldScene_RunStep12ValueEeb(void)
  * trigger 91; flag 0x220 keeps it from firing again. */
 void TakaraAshiba_RaiseTriggerOnStand(void)
 {
-    struct FieldActor *leader = Engine_ActorGet(0);
+    struct FieldActor *leader = (s32)Object_GetById(0);
     s32 x = leader->x.fixed / 0x100000;
     s32 z = leader->z.fixed / 0x100000;
     struct EventWork *event = gEventWork;
@@ -814,16 +813,16 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
         Call3(ObjectMotion_SetSpeedParameters, 0, 0x1b333, 0xd999);
         ObjectMotion_SetSpeedParameters(11, 0x1b333, 0xd999);
         AudioCommand_Play(188);
-        v3 = *(s32 *)((s32)Engine_ActorGet(0) + 8) / 0x100000;
-        if (v3 > *(s32 *)((s32)Engine_ActorGet(11) + 8) / 0x100000) {
+        v3 = *(s32 *)((s32)Object_GetById(0) + 8) / 0x100000;
+        if (v3 > *(s32 *)((s32)Object_GetById(11) + 8) / 0x100000) {
             ObjectMotion_OffsetPositionAndResetMotion(11, 8, 0);
         }
-        v3 = *(s32 *)((s32)Engine_ActorGet(0) + 8) / 0x100000;
-        if (v3 < *(s32 *)((s32)Engine_ActorGet(11) + 8) / 0x100000) {
+        v3 = *(s32 *)((s32)Object_GetById(0) + 8) / 0x100000;
+        if (v3 < *(s32 *)((s32)Object_GetById(11) + 8) / 0x100000) {
             Call3(ObjectMotion_OffsetPositionAndResetMotion, 11, -8, 0);
         }
         ObjectMotion_CommitCurrentPositionAndActivate(11);
-        record = (s32)Engine_ActorGet(0);
+        record = (s32)Object_GetById(0);
         if (record != 0) {
             ObjectMotion_ResetAndSetPosition(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -1187,7 +1186,7 @@ void SceneState_ApplyRectAndClearActor10Byte85(void)
  * 42 and 38, and anywhere else the two rectangles at row 56. */
 void TakaraAshiba_UpdateBlockRects(void)
 {
-    struct FieldActor *block = Engine_ActorGet(10);
+    struct FieldActor *block = (s32)Object_GetById(10);
     s32 y = block->y.fixed / 0x100000;
     s32 x = block->x.fixed / 0x100000;
     s32 z = block->z.fixed / 0x100000;

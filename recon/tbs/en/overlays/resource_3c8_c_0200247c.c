@@ -117,7 +117,7 @@ void VinasuHeya_ResolveFloatingBlock(void)
     id = 10;
 again:
     {
-        block = Engine_ActorGet(id);
+        block = Object_GetById(id);
         x = block->x.fixed >> 20;
         if (x == 13) {
             z = block->z.fixed >> 20;
@@ -151,7 +151,7 @@ again:
         goto check_height;
 
 swap_coords:
-        other = Engine_ActorGet(j + 10);
+        other = Object_GetById(j + 10);
         temp->x.fixed = block->x.fixed;
         temp->y.fixed = block->y.fixed;
         temp->z.fixed = block->z.fixed;
@@ -187,25 +187,25 @@ check_height:
             } while (j < i);
         }
 apply_height:
-        other = Engine_ActorGet(slot + 10);
+        other = Object_GetById(slot + 10);
         FloatingBlock_ResetMotion(other, 0);
         Camera_SetSpeed(0x30000, 0x6000);
         Engine_EventGetViewCenter()->motion_flags = 0;
         Camera_MoveTo(0x880000, 0x80000, 0x1580000, 1);
         Engine_CameraWaitForMove();
         SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);
-        other = Engine_ActorGet(slot + 10);
+        other = Object_GetById(slot + 10);
         if (other->x.fixed >> 20 == 6) {
-            ((struct FloatingBlockHeight *)Engine_ActorGet(8))->index++;
-            ((struct FloatingBlockHeight *)Engine_ActorGet(9))->index--;
+            ((struct FloatingBlockHeight *)Object_GetById(8))->index++;
+            ((struct FloatingBlockHeight *)Object_GetById(9))->index--;
         } else {
-            ((struct FloatingBlockHeight *)Engine_ActorGet(8))->index--;
-            ((struct FloatingBlockHeight *)Engine_ActorGet(9))->index++;
+            ((struct FloatingBlockHeight *)Object_GetById(8))->index--;
+            ((struct FloatingBlockHeight *)Object_GetById(9))->index++;
         }
-        other = Engine_ActorGet(slot + 10);
+        other = Object_GetById(slot + 10);
         other->update = (void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
         VinasuHeya_LowerFloatingBlocks(40);
-        Engine_ActorGet(slot + 10)->priority_flags |= 2;
+        Object_GetById(slot + 10)->priority_flags |= 2;
         Engine_GameFlagSet(slot + 0x200);
         goto done;
     }

@@ -59,7 +59,7 @@ Func_0808bb2c:
 	cmp	r1, #0
 	beq.n	.L_0808bb9c
 	adds	r0, r5, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 .L_0808bb9c:
 	ldr	r2, [sp, #0]
 	adds	r0, r5, #0

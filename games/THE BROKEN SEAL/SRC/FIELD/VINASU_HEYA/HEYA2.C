@@ -36,7 +36,7 @@ void VinasuHeya_RetractBridge(void)
     s32 dust_x;
 
     layer = &(*(struct MapWork * *)&gMapWork)->layer;
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
     leader->y.fixed = 0;
@@ -99,7 +99,7 @@ void VinasuHeya_ExtendBridge(void)
     s32 dust_x;
 
     layer = &(*(struct MapWork * *)&gMapWork)->layer;
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
     leader->y.fixed = 0;

@@ -11,7 +11,7 @@ void SceneActor_MoveTo232_125AndFace4000(s32 no)
 {
     Ent_02002820 *rec;
 
-    rec = (Ent_02002820 *)Engine_ActorGet(no);
+    rec = (Ent_02002820 *)Object_GetById(no);
     Actor_SetPosition(no, 0xe80000, 0x7d0000);
     rec->unk6 = 0x4000;
     Actor_SetSpritePriority(no, 3);

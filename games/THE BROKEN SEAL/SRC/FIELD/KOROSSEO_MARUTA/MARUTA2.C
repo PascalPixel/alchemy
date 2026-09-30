@@ -24,7 +24,7 @@ void RunPartyCountInteractionCopyB(s32 actorId)
     s32 x;
     s32 y;
 
-    record = (PartyInteractionRecord *)Engine_ActorGet(actorId);
+    record = (PartyInteractionRecord *)Object_GetById(actorId);
     x = record->x;
     y = record->y;
     Event_Begin();
@@ -141,7 +141,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     s32 i;
     u8 buf[8];
 
-    rec = Engine_ActorGet(owner);
+    rec = Object_GetById(owner);
     p9 = *(s16 *)(rec + 10);
     p11 = *(s16 *)(rec + 18);
     if (mode != 3) {
@@ -202,7 +202,7 @@ L_main:
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);
     Actor_SetSpeed(owner, 0x10000, 0x8000);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(obj, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -225,7 +225,7 @@ L_main:
     Actor_WalkToAndWait(owner, p9, p11);
     Party_RemoveActiveOwner(obj);
     GameFlag_Set(base + 512);
-    rec = Engine_ActorGet(obj);
+    rec = Object_GetById(obj);
     sx = *(s32 *)(rec + 8) >> 20;
     GameFlag_SetByte((obj << 4) + 880, sx);
     sy = *(s32 *)(rec + 16) >> 20;

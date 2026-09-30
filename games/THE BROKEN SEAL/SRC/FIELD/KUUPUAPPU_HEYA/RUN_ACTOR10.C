@@ -6,8 +6,6 @@ extern u8 MsgKuupuappuHeardDefeatedThoseThieves[];
 extern u8 MsgKuupuappuMyFatherWorriedAboutThose[];
 /* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-s32 Object_GetById();
 
 enum {
     /* Message 0x182 + 189. */

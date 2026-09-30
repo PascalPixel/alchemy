@@ -91,7 +91,7 @@ void FieldScene_RunPrimarySequence(void)
 
     p6 = *(u8 **)Data_03001ebc;
     for (i = 8; i < 66; i++) {
-        record = Engine_ActorGet(i);
+        record = Object_GetById(i);
         if (record != 0) {
             *(u8 *)(record + 85) = 0;
         }
@@ -101,7 +101,7 @@ void FieldScene_RunPrimarySequence(void)
     Audio_PlayCue(158);
     Value3(Engine_MapAnimateCells, Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    *(u8 *)((s32)Engine_ActorGet(0) + 85) = 0;
+    *(u8 *)((s32)Object_GetById(0) + 85) = 0;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
     Event_RequestExit(*(s16 *)p6);
 }
@@ -213,10 +213,10 @@ s32 Scene_InitFacingActors(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if (Engine_GameFlagIsSet(0x950) != 0) {
         Call6(Engine_MapCopyCellAttributes, 51, 47, 3, 1, 51, 45);
-        record = Engine_ActorGet(31);
+        record = Object_GetById(31);
         record[35] = none = 0;
         (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
-        record = Engine_ActorGet(32);
+        record = Object_GetById(32);
         record[35] = none;
         (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
         if (Value1(Engine_GameFlagIsSet, 0x8bc) != 0) {
@@ -247,7 +247,7 @@ s32 Scene_InitFacingActors(void)
 
 void SceneDialogue_RunFacingPrompt(s32 no)
 {
-    u8 *actor = Engine_ActorGet(0);
+    u8 *actor = Object_GetById(0);
     s32 msg;
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0x8000) {
         Shop_Open(28, no);
@@ -273,7 +273,7 @@ void SceneDialogue_RunFacingPrompt(s32 no)
 
 void SceneDialogue_RunFacingActionPrompt(s32 no)
 {
-    u8 *actor = Engine_ActorGet(0);
+    u8 *actor = Object_GetById(0);
     s32 msg;
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
         Shop_Open(26, no);
@@ -302,7 +302,7 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
 
 void SceneDialogue_RunFacingAction(s32 no)
 {
-    u8 *actor = Engine_ActorGet(0);
+    u8 *actor = Object_GetById(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
         Shop_Open(27, no);
     } else {
@@ -448,7 +448,7 @@ void SceneDialogue_RunFacingMessage(s32 no)
 {
     s32 GameFlag_IsSet(s32 flag);
 
-    u8 *actor = Engine_ActorGet(0);
+    u8 *actor = Object_GetById(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
         Sanctum_Open(no);
     } else {

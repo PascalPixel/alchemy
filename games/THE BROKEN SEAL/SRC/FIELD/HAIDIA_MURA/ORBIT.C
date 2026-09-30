@@ -1,4 +1,7 @@
 #include "STAGED_MOTION.H"
+
+/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
+ * this file's code made before it shared the header's declaration. */
 extern u8 MsgHaidiaDoorWontOpen[];
 
 void Effect_PlayStepSound(void)
@@ -25,11 +28,11 @@ void FieldScene_RunScene373SequenceB(void)
         if (rec7 != 0) {
             goto L_02005a8a;
         }
-        *(u8 *)(Object_GetById(22) + 91) = rec7;
+        *(u8 *)((u8 *)Object_GetById(22) + 91) = rec7;
         GameFlag_Clear(0x241);
     } else {
         if (GameFlag_IsSet(0x106) != 0) {
-            *(u8 *)(Object_GetById(22) + 91) = 1;
+            *(u8 *)((u8 *)Object_GetById(22) + 91) = 1;
             GameFlag_Set(0x241);
         }
     }
@@ -75,7 +78,7 @@ void InitializeStagedActorSceneOrbitingEffect(void)
     u8 *transfer;
     s32 zero;
 
-    actor = Object_GetById();
+    actor = ((u8 * (*)())Object_GetById)();
     sprite = actor->sprite;
     sprite->flags_09_mode = 1;
     sprite->flags_05_bit_5 = 0;

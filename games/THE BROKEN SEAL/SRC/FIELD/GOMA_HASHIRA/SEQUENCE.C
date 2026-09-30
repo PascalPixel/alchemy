@@ -20,7 +20,6 @@ extern u8 GomaHashira_Messages[];
 extern u8 GomaHashira_Actors[];
 
 /* Imports this overlay shares with the staged-actor module, by its names. */
-u8 *Object_GetById();
 void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -86,13 +85,13 @@ void FieldScene_RunActor13Departure(void)
     Event_ShowMessage(13, 0);
     Actor_SetAnimationAndWait(13, 3);
     Goma_Wait(30);
-    *(u8 *)(Object_GetById(10) + 35) &= 253;
+    *(u8 *)((u8 *)Object_GetById(10) + 35) &= 253;
     Goma_SetSpeed(13, 0x20000, 0x10000);
     Actor_WalkToAndWait(13, 0x258, 216);
     Actor_WalkToAndWait(13, 0x258, 248);
     Actor_WalkToAndWait(13, 0x238, 0x128);
     Actor_SetPosition(13, 0, 0);
-    SetFlagBits(Object_GetById(10) + 35, 2);
+    SetFlagBits((u8 *)Object_GetById(10) + 35, 2);
     GameFlag_Set(0x869);
     Event_End();
 }
@@ -105,7 +104,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
     work = gWork;
     *(s32 *)((s32)work + 0x1c0) = 0x204;
     *(s32 *)((s32)work + 0x1c8) = 24;
-    SetFlagBits(Object_GetById(9) + 89, 16);
+    SetFlagBits((u8 *)Object_GetById(9) + 89, 16);
     if (GameFlag_IsSet(0x302) != 0) {
         Actor_SetPosition(8, 0x1580000, 0x680000);
         Goma_CopyCellAttributes(24, 40, 6, 3, 18, 6);
@@ -121,12 +120,12 @@ s32 FieldScene_SetupPillarsOnEntry(void)
         if ((u32)(((u16)Data_02000240[225] - 2) << 16) > 0x10000) {
             goto L_0200131c;
         }
-        *(u8 *)(Object_GetById(10) + 34) = 2;
-        record = Object_GetById(10);
+        *(u8 *)((u8 *)Object_GetById(10) + 34) = 2;
+        record = (u8 *)Object_GetById(10);
         *(s32 *)((s32)record + 12) = *(s32 *)((s32)record + 12) - 1;
         {
             u8 bits = 2;
-            u8 *flags = Object_GetById(10) + 35;
+            u8 *flags = (u8 *)Object_GetById(10) + 35;
 
             *flags |= bits;
         }
@@ -138,7 +137,7 @@ L_0200131c:
         Event_WaitForScreen();
         Actor_SetPosition(9, 0x1800000, 0xc00000);
         Goma_Wait(60);
-        *(u8 *)(Object_GetById(9) + 34) = 2;
+        *(u8 *)((u8 *)Object_GetById(9) + 34) = 2;
         Actor_MoveToAndWait(9, 0x198, 192);
         ((void (*)())Battle_WaitMode0)(60);
         FieldScene_RunPillarSequence();

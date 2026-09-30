@@ -89,7 +89,7 @@ void Scene_RunScene371SequenceA(s32 palette)
     StartCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
     Engine_EventBegin();
     QueueFrame(buffer, 0x3a80)
-    Engine_ActorGet(gGameState.selected_actor)->active = 0;
+    Object_GetById(gGameState.selected_actor)->active = 0;
     gEventWork->transition_frames = 16;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();

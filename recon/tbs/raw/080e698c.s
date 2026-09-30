@@ -158,7 +158,7 @@ Func_080e698c:
 	bl	Object_SetPosition
 	movs	r1, #2
 	adds	r0, r6, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r3, [pc, #540]
 	movs	r1, #0
 	add	r2, sp, #24

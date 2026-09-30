@@ -46,7 +46,6 @@ struct Slot {
 
 void TakaraAshiba_OpenPassage();
 void Korosseo_ShowItemIcon();
-s32 Object_GetById();
 void TakaraAshiba_DispatchByActorEightColumn();
 void TakaraAshiba_UpdateBlockRects();
 void ObjectDispatch_ApplyValueToChildren();
@@ -131,10 +130,10 @@ void FieldScene_RunScene3b4_02002290(void)
 {
     s32 record;
 
-    *(u8 *)(Object_GetById(8) + 89) = 1;
-    *(u8 *)(Object_GetById(9) + 89) = 1;
-    *(u8 *)(Object_GetById(10) + 89) = 1;
-    *(u8 *)(Object_GetById(11) + 89) = 1;
+    *(u8 *)((s32)Object_GetById(8) + 89) = 1;
+    *(u8 *)((s32)Object_GetById(9) + 89) = 1;
+    *(u8 *)((s32)Object_GetById(10) + 89) = 1;
+    *(u8 *)((s32)Object_GetById(11) + 89) = 1;
     record = Engine_GetTriggerActor(8);
     *(s32 *)(record + 24) = 0xb333;
     record = Engine_GetTriggerActor(9);
@@ -161,7 +160,7 @@ void FieldScene_RunScene3b4_02002334(void)
 {
     s32 record;
 
-    *(u8 *)(Object_GetById(14) + 85) = 0;
+    *(u8 *)((s32)Object_GetById(14) + 85) = 0;
     Call2(Scheduler_AddOrUpdateCallback, (s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
     MapObject_SetPosition(107, 0, 0);
@@ -174,8 +173,8 @@ void FieldScene_RunScene3b4_02002334(void)
     FieldScene_RunSingleStep();
     FieldScene_CallHelper3c70();
     Actor_SetSpritePriority(8, 3);
-    *(u8 *)(Object_GetById(11) + 85) = 0;
-    *(u8 *)(Object_GetById(12) + 85) = 0;
+    *(u8 *)((s32)Object_GetById(11) + 85) = 0;
+    *(u8 *)((s32)Object_GetById(12) + 85) = 0;
     ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
     if (GameFlag_IsSet(0x200) != 0) {
         SceneActor_MarkSlot13AndSetFlag200();

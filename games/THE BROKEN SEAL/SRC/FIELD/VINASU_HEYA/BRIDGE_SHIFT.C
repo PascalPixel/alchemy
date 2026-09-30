@@ -28,7 +28,7 @@ void VinasuHeya_ShiftBridge(void)
     s32 dust_x;
 
     layer = &gMapWork->layer;
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
     leader->y.fixed = 0;

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "HEYA.H"
+#include "CALL.H"
 extern u8 FuneHeya_StepScriptF[];
 extern u8 FuneHeya_StepScriptG[];
 extern u8 FuneHeya_StepScriptE[];
@@ -22,10 +23,10 @@ s32 FuneHeya_GetStepScript(void)
     case 1:
     case 2:
     case 11:
-        if (Value1(Engine_GameFlagIsSet, 0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return (s32)FuneHeya_StepScriptF;
-        } else if (Value1(Engine_GameFlagIsSet, 0x928) != 0) {
-            if (Value1(Engine_GameFlagIsSet, 0x8a0) != 0) {
+        } else if (Engine_GameFlagIsSet(0x928) != 0) {
+            if (Engine_GameFlagIsSet(0x8a0) != 0) {
                 script = FuneHeya_StepScriptG;
                 script[22] = 2;
                 script[70] = 2;
@@ -37,8 +38,8 @@ s32 FuneHeya_GetStepScript(void)
                 script[94] = 2;
             }
             return (s32)FuneHeya_StepScriptG;
-        } else if (Value1(Engine_GameFlagIsSet, 0x911) != 0) {
-            if (Value1(Engine_GameFlagIsSet, 0x925) != 0) {
+        } else if (Engine_GameFlagIsSet(0x911) != 0) {
+            if (Engine_GameFlagIsSet(0x925) != 0) {
                 FuneHeya_StepScriptF[22] = 2;
                 FuneHeya_StepScriptF[118] = 2;
                 FuneHeya_StepScriptF[46] = 2;
@@ -74,15 +75,15 @@ s32 FuneHeya_GetStepScript(void)
         script[238] = 2;
         return (s32)script;
     case 5:
-        if (Value1(Engine_GameFlagIsSet, 0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return (s32)FuneHeya_StepScriptD;
-        } else if (Value1(Engine_GameFlagIsSet, 0x911) != 0) {
-            if (Value1(Engine_GameFlagIsSet, 0x922) != 0) {
+        } else if (Engine_GameFlagIsSet(0x911) != 0) {
+            if (Engine_GameFlagIsSet(0x922) != 0) {
                 if (Value1(Engine_GameFlagIsSet, 0x8a0) != 0) {
                     FuneHeya_StepScriptC[46] = 1;
                 }
-                if (Value1(Engine_GameFlagIsSet, 0x925) != 0) {
-                    if (!(Value1(Engine_GameFlagIsSet, 0x8a0) != 0)) {
+                if (Engine_GameFlagIsSet(0x925) != 0) {
+                    if (!(Engine_GameFlagIsSet(0x8a0) != 0)) {
                         FuneHeya_StepScriptC[22] = 0;
                     }
                 }

@@ -1,4 +1,5 @@
 #include "FUNE.H"
+#include "CALL.H"
 extern u8 MsgFuneShipsCourseClear[];
 
 void FieldScene_RunScene3b0_0200040c(void)

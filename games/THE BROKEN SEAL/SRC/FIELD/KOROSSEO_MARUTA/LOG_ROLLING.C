@@ -2,6 +2,7 @@
  * opening, closing and final sequences, the obstacle checks and the scene
  * event. */
 #include "LOG_ROLLING.H"
+#include "CALL.H"
 
 void ColossoLogRollingStage_ResetAndRunSceneTask(void)
 {
@@ -108,17 +109,17 @@ void FieldScene_RunClosingAuxiliarySequence(void)
     p6 = *(u8 **)(base + 500);
     rec = GameFlag_IsSet(0x362);
     if (rec == 0) {
-        record = Value1(Engine_ActorGet, 10);
+        record = Engine_ActorGet(10);
         if ((s32)record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
         Engine_ActorWaitForMove((s32)p6);
-        record = Value1(Engine_ActorGet, 11);
+        record = Engine_ActorGet(11);
         record[85] = rec;
         *(s32 *)((s32)record + 52) = 0x6666;
         *(s32 *)((s32)record + 48) = 0xcccc;
-        Call4(Object_SetPosition, (s32)record, *(s32 *)((s32)record + 8), 0x200000, *(s32 *)((s32)record + 16));
-        record = Value1(Engine_ActorGet, 10);
+        Object_SetPosition((s32)record, *(s32 *)((s32)record + 8), 0x200000, *(s32 *)((s32)record + 16));
+        record = Engine_ActorGet(10);
         record[85] = rec;
         *(s32 *)((s32)record + 52) = 0x6666;
         *(s32 *)((s32)record + 48) = 0xcccc;
@@ -128,7 +129,7 @@ void FieldScene_RunClosingAuxiliarySequence(void)
         *p9 = rec;
         *(s32 *)(rec7 + 52) = 0x6666;
         *(s32 *)(rec7 + 48) = 0xcccc;
-        Call4(Object_SetPosition, rec7, *(s32 *)(rec7 + 8), 0x40000, *(s32 *)(rec7 + 16));
+        Object_SetPosition(rec7, *(s32 *)(rec7 + 8), 0x40000, *(s32 *)(rec7 + 16));
         Actor_SetSpriteFlags(rec7, 1);
         Actor_WaitForMove((s32)p6);
         Map_CopyCellAttributes(0, 24, 1, 1, 9, 12);
@@ -136,7 +137,7 @@ void FieldScene_RunClosingAuxiliarySequence(void)
         Actor_SetSpriteFlags(rec7, 1);
         *p9 = 3;
         *(s32 *)(rec7 + 20) = *(s32 *)(rec7 + 12);
-        Call1(Engine_GameFlagSet, 0x367);
+        Engine_GameFlagSet(0x367);
     }
 }
 
@@ -187,7 +188,7 @@ void FieldScene_RunFinalAuxiliarySequence(void)
     s32 a;
     s32 b;
 
-    rec = (u8 *)Value1(Engine_ActorGet, 12);
+    rec = (u8 *)Engine_ActorGet(12);
     a = (*(s32 *)((s32)rec + 8) >> 20);
     if (a == 9) {
         b = (*(s32 *)((s32)rec + 16) >> 20);
@@ -203,15 +204,15 @@ void FieldScene_RunFinalAuxiliarySequence(void)
             *(s32 *)((s32)b1 + 52) = 0x6666;
             *(s32 *)((s32)b1 + 48) = 0xcccc;
             Call4(Object_SetPosition, (s32)b1, *(s32 *)((s32)b1 + 8), 0x40000, *(s32 *)((s32)b1 + 16));
-            b2 = (u8 *)Value1(Engine_ActorGet, 11);
+            b2 = (u8 *)Engine_ActorGet(11);
             b2[35] = two;
             *(s32 *)((s32)b2 + 52) = 0x6666;
             *(s32 *)((s32)b2 + 48) = 0xcccc;
-            Call4(Object_SetPosition, (s32)b2, *(s32 *)((s32)b2 + 8), 0x200000, *(s32 *)((s32)b2 + 16));
+            Object_SetPosition((s32)b2, *(s32 *)((s32)b2 + 8), 0x200000, *(s32 *)((s32)b2 + 16));
             b3 = Engine_ActorGet(10);
             *(s32 *)((s32)b3 + 52) = 0x6666;
             *(s32 *)((s32)b3 + 48) = 0xcccc;
-            Call4(Object_SetPosition, (s32)b3, *(s32 *)((s32)b3 + 8), 0x40000, *(s32 *)((s32)b3 + 16));
+            Object_SetPosition((s32)b3, *(s32 *)((s32)b3 + 8), 0x40000, *(s32 *)((s32)b3 + 16));
             GameFlag_Set(0x368);
             Map_CopyCellAttributes(15, 12, 1, 1, 13, b);
             Map_CopyCellAttributes(1, 25, 1, 1, a, b);
@@ -362,15 +363,15 @@ void FieldScene_RunEarlySequence(void)
     s32 cell_center[3];
 
     state = (u8 *)&gGameState;
-    leader = Value1(Engine_ActorGet, *(s32 *)(state + 500));
-    log_actor = Value1(Engine_ActorGet, 31);
+    leader = Engine_ActorGet(*(s32 *)(state + 500));
+    log_actor = Engine_ActorGet(31);
     steps = 0;
     tile = gColossoEarlySequenceData[*(u16 *)(leader + 6) >> 13];
     selected_actor = *(s32 *)(state + 500);
     cell_center[0] = (*(s32 *)(leader + 8) & -0x100000) + 0x80000;
     cell_center[1] = *(s32 *)(leader + 12);
     cell_center[2] = (*(s32 *)(leader + 16) & -0x100000) + 0x80000;
-    Call3(Vector_AddPolarOffset, 0x100000, tile, (s32)cell_center);
+    Vector_AddPolarOffset(0x100000, tile, (s32)cell_center);
     x = *(s32 *)(log_actor + 8);
     z = *(s32 *)(log_actor + 16);
     if ((cell_center[0] - x >= 0 ? cell_center[0] - x : x - cell_center[0]) > 0x80000
@@ -383,7 +384,7 @@ void FieldScene_RunEarlySequence(void)
         cell_step = -8;
         for (;;) {
             next_x = x - 0x100000;
-            if (Value2(ColossoLogRollingStage_CheckPathClearance, next_x, z) != 0) {
+            if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0) {
                 goto moved;
             }
             steps++;
@@ -397,7 +398,7 @@ void FieldScene_RunEarlySequence(void)
     cell_step = 8;
     for (;;) {
         next_x = x + 0x100000;
-        if (Value2(ColossoLogRollingStage_CheckPathClearance, next_x, z) != 0) {
+        if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0) {
             goto moved;
         }
         steps++;
@@ -415,11 +416,11 @@ moved:
     *(s32 *)(log_actor + 48) = 0x8000;
     acceleration = 0x3333;
     *(s32 *)(log_actor + 52) = acceleration;
-    Value2(Engine_ObjectSetAnimation, log_actor, direction);
+    Engine_ObjectSetAnimation(log_actor, direction);
     Object_SetPosition(log_actor, x, 0, z);
     Event_Wait(6);
     Actor_SetAnimation(selected_actor, 2);
-    record = Value2(Runtime_AllocateBlock, 27, 0xccc);
+    record = Runtime_AllocateBlock(27, 0xccc);
     ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(record + 0x1e0), log_actor);
     Actor_SetSpeed(selected_actor, 0x8000, acceleration);
     Audio_PlayCue(239);
@@ -427,7 +428,7 @@ moved:
     Object_SetPosition(leader, ((steps * cell_step) << 16) + *(s32 *)(leader + 8), 0,
                        *(s32 *)(leader + 16));
     Object_CommitPosition(leader);
-    Value2(Engine_ObjectSetAnimation, leader, 1);
+    Engine_ObjectSetAnimation(leader, 1);
     Object_CommitPosition(log_actor);
     if (x >= 0x5300000) {
         GameFlag_Set(0x369);

@@ -20,10 +20,10 @@ void FieldScene_RunScene372SequenceE(void)
         Camera_SetSpeed(0x6666, 0xccc);
         Camera_MoveTo(0x1000000, -1, 0x24c0000, 1);
         Actor_SetSpeed(22, 0x20000, 0x10000);
-        Value2((s32 (*)())Object_SetActionCallbackAndRefreshById, 22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
+        ((s32 (*)())Object_SetActionCallbackAndRefreshById)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
         Actor_FaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
         Event_Wait(30);
-        Value2((s32 (*)())Engine_ActorEnableActionCallback, 22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
+        ((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
         Event_ShowMessage(22, 0);
         record = Actor_Get(22);
         *(s32 *)(record + 28) = 0x10000;
@@ -39,7 +39,7 @@ void FieldScene_RunScene372SequenceE(void)
         Event_ShowMessage(22, 0);
         Actor_SetSpeed(22, 0x10000, 0x8000);
         Actor_SetAnimation(22, 2);
-        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }

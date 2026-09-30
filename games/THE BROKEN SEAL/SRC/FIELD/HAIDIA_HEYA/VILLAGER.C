@@ -1,4 +1,5 @@
 #include "TIMED_EVENTS.H"
+#include "CALL.H"
 extern u8 MsgHaidiaDidYouHearAboutDora[];
 extern u8 MsgHaidiaLetsScareSukuretasVisitors[];
 extern u8 MsgHaidiaSukuretaCameToStudyMt[];

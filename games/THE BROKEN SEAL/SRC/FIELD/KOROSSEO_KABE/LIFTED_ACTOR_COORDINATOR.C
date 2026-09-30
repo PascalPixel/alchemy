@@ -1,10 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 extern u8 MsgKorosseoFansJustCallWall[];
 extern u8 MsgKorosseoScalingWallQuickly[];
-
-
 
 void Korosseo_FinishSoloRound();
 s32 KorosseoKabe_RunStateInteraction();
@@ -30,32 +29,6 @@ void battle_owner_69();
 void Engine_EventSetMessage();
 void Engine_CameraFollowActor();
 
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 /* In transition phase 2 only the fast path runs. Otherwise route 0 plays the
  * full presentation, passing actor 0's position on with Y raised by 0x400000,
  * route 1 plays the short revisit, and every such path ends in the common
@@ -73,7 +46,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
     path = KorosseoKabe_RunStateInteraction(scene, 4);
     if (path == 0) {
         Event_SetMessage((s32)MsgKorosseoFansJustCallWall);
-        Call2(Engine_CameraSetSpeed, 196608, 24576);
+        Engine_CameraSetSpeed(196608, 24576);
         Call4(Engine_CameraMoveTo, 35127296, -1, 15728640, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(45);
@@ -102,13 +75,13 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Value3(SceneActor_PlaceWithScale14000, 0, 488, 248);
         Call3(Engine_ActorFaceDirection, 0, 16384, 20);
         BattleFx_RunRisingObjectSequence(0, 6, 0);
-        Call4(Engine_CameraMoveTo, 35127296, -1, 10485760, 1);
+        Engine_CameraMoveTo(35127296, -1, 10485760, 1);
         Engine_EventShowMessage(scene, 0);
         Korosseo_RestoreCompetitor(0);
         Engine_CameraFollowActor(0, 0);
         KorosseoKabe_ShowFollowUpPrompt(scene, 4);
     } else if (path == 1) {
-        Call1(Engine_EventSetMessage, (s32)MsgKorosseoScalingWallQuickly);
+        Engine_EventSetMessage((s32)MsgKorosseoScalingWallQuickly);
         Engine_EventShowMessage(scene, 0);
     }
     Value3(FieldScene_RunMiddleSequence, path, scene, 4);

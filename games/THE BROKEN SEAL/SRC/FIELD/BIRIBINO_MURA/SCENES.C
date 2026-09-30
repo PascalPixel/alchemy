@@ -1,4 +1,5 @@
 #include "MURA.H"
+#include "CALL.H"
 extern u8 MsgBiribinoAreaOffLimitsThoseWithout[];
 extern u8 MsgBiribinoCurseWasBrokenThanksEfforts[];
 extern u8 MsgBiribinoDidSeeTreeAtEntrance[];
@@ -102,7 +103,7 @@ void FieldScene_RunEarlySequence(void)
     p7 = *(u8 **)&gEventWork;
     Event_Begin();
     for (i = 8; i < 66; i++) {
-        record = (u8 *)Value1(Engine_ActorGet, i);
+        record = (u8 *)Engine_ActorGet(i);
         if (record != 0) {
             record[85] = 0;
         }
@@ -111,7 +112,7 @@ void FieldScene_RunEarlySequence(void)
     if (v5 == 6) {
         Audio_PlayCue(188);
     } else {
-        Call1((void (*)())Engine_AudioPlayCue, 158);
+        ((void (*)())Engine_AudioPlayCue)(158);
     }
     off = v5 << 2;
     tbl = (u8 *)Mura_DoorCellOrigins;
@@ -119,7 +120,7 @@ void FieldScene_RunEarlySequence(void)
     off2 = off + 2;
     a2 = *(s16 *)(tbl + off2);
     tbl2 = (u8 *)Mura_DoorCellSteps;
-    Value3(Engine_MapAnimateCells, *(s32 *)(tbl2 + off), a1, a2);
+    Engine_MapAnimateCells(*(s32 *)(tbl2 + off), a1, a2);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *((u8 *)Engine_ActorGet(0) + 85) = 0;
     *(s32 *)((*(u8 **)&gEventWork + 0x1c0)) = 0x100;
@@ -144,8 +145,8 @@ void FieldScene_RunScene38bSequenceC(void)
     struct FieldActor *rec;
     struct FieldActor *rec7;
 
-    rec = (struct FieldActor *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    rec7 = (struct FieldActor *)Value1(Engine_ActorGet, 11);
+    rec = (struct FieldActor *)Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec7 = (struct FieldActor *)Engine_ActorGet(11);
     if ((rec7->x.fixed >> 20) == 6) {
         Event_Begin();
         Actor_SetSpritePriority(11, 1);
@@ -202,7 +203,7 @@ void FieldScene_RunScene38b_02000584(void)
     struct FieldActor *record;
     s32 villager_actions;
 
-    rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (GameFlag_IsSet(0x845) == 0) {
     } else {
         if (GameFlag_IsSet(0x848) == 0) {

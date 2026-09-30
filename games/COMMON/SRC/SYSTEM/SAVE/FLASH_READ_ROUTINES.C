@@ -1,4 +1,4 @@
-#include "FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
 
 extern u8 *gFlash;
 extern volatile u8 gFlashTimerNum;

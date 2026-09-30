@@ -9,11 +9,6 @@ extern u8 KorimaMura_RegionScript[];
 void Engine_ObjectSetScript();
 void Engine_AudioPlayCue();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 s32 KorimaMura_TriggerRegionScript(s32 a0)
 {
     if (KorimaMura_LayoutFlag != 0) {

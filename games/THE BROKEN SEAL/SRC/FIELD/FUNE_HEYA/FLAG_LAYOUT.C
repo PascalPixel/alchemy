@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "HEYA.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void FuneHeya_PlaceAnchorCharm(void);
 void FieldScene_RunSceneStep(s32 step, s32 a, s32 b);
@@ -23,18 +24,18 @@ void FuneHeya_ApplyFlaggedLayout(void)
     s32 heading;
     struct Half zero;
 
-    if (!Value1((s32 (*)())Engine_GameFlagIsSet, 0x911)) {
+    if (!((s32 (*)())Engine_GameFlagIsSet)(0x911)) {
         FuneHeya_PlaceAnchorCharm();
         return;
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x928)) {
         FuneHeya_PlaceAnchorCharm();
     }
-    done = Value1((s32 (*)())Engine_GameFlagIsSet, 0x93e);
+    done = ((s32 (*)())Engine_GameFlagIsSet)(0x93e);
     if (done != 0) {
         return;
     }
-    if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x8a0)) {
+    if (((s32 (*)())Engine_GameFlagIsSet)(0x8a0)) {
         actor = Engine_ActorGet(9);
         FieldScene_RunSceneStep(13, 0, 0);
         OverlayObject_SetPositionAndHeading(8, 0x1c8, 0x28c, 0);
@@ -49,16 +50,16 @@ void FuneHeya_ApplyFlaggedLayout(void)
         other = Engine_ActorGet(8);
         other->rise_counter = zero.v;
         other->update = (void (*)(union FieldObject *))&UpdateActorNineEffectMode;
-        if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x109)) {
+        if (((s32 (*)())Engine_GameFlagIsSet)(0x109)) {
             OverlayObject_SetPositionAndHeading(0, x, 0x29a, 0xa000);
         }
-    } else if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x928)) {
+    } else if (((s32 (*)())Engine_GameFlagIsSet)(0x928)) {
         OverlayObject_SetPositionAndHeading(8, 0x1bc, 0x266, 0xd000);
         FieldScene_RunSceneStep(13, 0, 0);
-    } else if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x925)) {
+    } else if (((s32 (*)())Engine_GameFlagIsSet)(0x925)) {
         OverlayObject_SetPositionAndHeading(8, 0x1c8, 0x288, 0);
         FieldScene_RunSceneStep(13, 0, 0);
-    } else if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x921)) {
+    } else if (((s32 (*)())Engine_GameFlagIsSet)(0x921)) {
         heading = 0xb000;
         OverlayObject_SetPositionAndHeading(8, 0x1db, 0x256, 0x8000);
         OverlayObject_SetPositionAndHeading(9, 0x1ce, 0x26a, heading);

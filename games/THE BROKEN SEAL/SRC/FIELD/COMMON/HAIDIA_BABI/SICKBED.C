@@ -1,6 +1,7 @@
 /* The sickbed visit: actor 8 coughs, asks who told the party about the
  * illness and leaves the bed; the scene ends by setting flags 0x81e and 0x203. */
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgHaidiaCoughCoughWho[];
 extern u8 MsgHaidiaWhoToldIll[];
 
@@ -32,33 +33,6 @@ void Engine_ActorJump();
 void Engine_GameFlagSet();
 void Engine_EventEnd();
 
-
-
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 void HaidiaBabi_RunSickbedVisit(void)
 {
     u8 *record;
@@ -69,7 +43,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Call3(Engine_ActorWalkToAndWait, 0, 0x239, 0x189);
     Call3(Engine_ActorFaceDirection, 0, 0x4000, 40);
     Engine_ActorStartRepeatedMotion(8, 2);
-    Call1(Engine_EventSetMessage, (s32)MsgHaidiaCoughCoughWho);
+    Engine_EventSetMessage((s32)MsgHaidiaCoughCoughWho);
     Engine_EventShowMessageAndWait(8, 0, 80);
     Call3(Engine_ActorShowEmote, 8, 0x101, 60);
     Engine_ActorStartRepeatedMotion(8, 1);
@@ -77,7 +51,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(80);
     Call3(Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
-    Call3(Engine_ActorSetDestination, 8, 0x248, 0x196);
+    Engine_ActorSetDestination(8, 0x248, 0x196);
     Map_SetLayerEntryFlag(11);
     Map_ClearLayerEntryFlag(12);
     Engine_ActorSetAnimation(8, 12);
@@ -100,8 +74,8 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventWait(20);
     Call3(Engine_ActorShowEmote, 0, 0x102, 60);
     Engine_ActorSetAnimation(8, 13);
-    Value2(Engine_EventOpenMessage, 8, 0);
-    if (Value2(Engine_EventChooseYesNo, 0, 0) == 1) {
+    Engine_EventOpenMessage(8, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 1) {
         *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
@@ -112,16 +86,16 @@ void HaidiaBabi_RunSickbedVisit(void)
     Call3(Engine_ActorShowEmote, 8, 0x107, 60);
     msg = (s32)MsgHaidiaWhoToldIll;
     Engine_EventSetMessage(msg);
-    Value2(Engine_EventOpenMessage, 8, 0);
-    if (Value2(Engine_EventChooseYesNo, 0, 0) == 1) {
+    Engine_EventOpenMessage(8, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 1) {
         *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
     }
-    if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
+    if (Engine_GameFlagIsSet(0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);
     }
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
-    Call3(Engine_ActorShowEmote, 8, 0x107, 60);
+    Engine_ActorShowEmote(8, 0x107, 60);
     Engine_EventSetMessage(msg + 3);
     Engine_EventShowMessage(8, 0);
     Engine_ActorRunRepeatedMotion(8, 1);
@@ -148,7 +122,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Call3(Engine_ActorSetDestination, 0, 0x22e, 0x184);
     Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
     Engine_ActorSetAnimation(8, 14);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 8, 0x24a, 0x190);
+    Engine_ObjectMotionSetPositionAndCommit(8, 0x24a, 0x190);
     Engine_EventWait(40);
     Call3(Engine_ActorWalkToAndWait, 8, 0x244, 0x17e);
     Call3(Engine_ActorFaceDirection, 8, 0x8000, 40);
@@ -161,7 +135,7 @@ void HaidiaBabi_RunSickbedVisit(void)
 
         record[90] = merged;
     }
-    Call3(Engine_ActorFaceDirection, 8, 0xc000, 8);
+    Engine_ActorFaceDirection(8, 0xc000, 8);
     Engine_ActorFaceDirection(8, 0, 8);
     Call3(Engine_ActorFaceDirection, 8, 0x4000, 8);
     Call3(Engine_ActorFaceDirection, 8, 0x8000, 10);
@@ -175,7 +149,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(8, 3);
-    Call1(Engine_GameFlagSet, 0x81e);
-    Call1(Engine_GameFlagSet, 0x203);
+    Engine_GameFlagSet(0x81e);
+    Engine_GameFlagSet(0x203);
     Engine_EventEnd();
 }

@@ -6,18 +6,18 @@ void FieldScene_RunScene3a0_02001060(void)
     s32 record;
 
     Event_Begin();
-    Call2((void (*)())Engine_ActorEnableActionCallback, 18, 1);
+    ((void (*)())Engine_ActorEnableActionCallback)(18, 1);
     record = Actor_Get(18);
     *(s32 *)(record + 108) = 0;
     record = Actor_Get(18);
     *(s32 *)(record + 56) = -0x80000000;
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     *(s32 *)(record + 64) = -0x80000000;
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     *(s32 *)(record + 36) = 0;
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     *(s32 *)(record + 44) = 0;
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     *(s32 *)(record + 48) = 0;
     record = Actor_Get(18);
     *(s32 *)(record + 52) = 0;
@@ -34,7 +34,7 @@ void FieldScene_RunScene3a0_02001060(void)
     Actor_EnableActionCallback(18, ShianMura_ActionTable);
     record = Actor_Get(18);
     *(s32 *)(record + 108) = (s32)ShianMura_WatchGateTrigger;
-    Call0(Engine_EventEnd);
+    Engine_EventEnd();
 }
 
 u8 *SceneEffect_GetTertiaryData(void)

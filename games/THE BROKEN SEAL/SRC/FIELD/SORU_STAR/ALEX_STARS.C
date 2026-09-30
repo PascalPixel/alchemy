@@ -1,4 +1,5 @@
 #include "STAR.H"
+#include "CALL.H"
 extern u8 MsgSoruDontWantAnything[];
 extern u8 MsgSoruDoubtHowFeel[];
 extern u8 MsgSoruPermitRelieveElemental[];
@@ -49,7 +50,7 @@ void Scene_AlexTakesStars(void)
     Event_SayThenWait(1, 20);
     UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
-    rec = Value1(Engine_ActorGet, ACTOR_GERALD);
+    rec = Engine_ActorGet(ACTOR_GERALD);
     rec[90] &= 254;
     /* FAKEMATCH: the zero is parked here, well before its one store, which
      * keeps it in the register the reference holds it in. */
@@ -71,7 +72,7 @@ void Scene_AlexTakesStars(void)
     Actor_SetChildValue(ACTOR_ALEX, 0x100);
     record = Actor_Get(ACTOR_ALEX);
     Actor_SetSpriteFlags(record, 0);
-    rec = Value1(Engine_ActorGet, ACTOR_ALEX);
+    rec = Engine_ActorGet(ACTOR_ALEX);
     rec[85] = none;
     Audio_PlayCue(220);
     for (i = 0; i != 30; i++) {
@@ -110,13 +111,13 @@ void Scene_AlexTakesStars(void)
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     if (Event_ChooseYesNo(1, 0) != 0) {
         Event_Wait(10);
-        Value2(Engine_ActorSetAnimationAndWait, 14, 4);
+        Engine_ActorSetAnimationAndWait(14, 4);
         Event_SetMessage((s32)MsgSoruDontWantAnything);
         Event_OpenMessage(ACTOR_ALEX, 0);
         if (Event_ChooseYesNo(1, 0) == 0) {
             do {
                 Event_Wait(20);
-                Value2(Engine_ActorSetAnimationAndWait, 14, 4);
+                Engine_ActorSetAnimationAndWait(14, 4);
                 Event_Wait(10);
                 Event_SetMessage((s32)MsgSoruDoubtHowFeel);
                 Event_OpenMessage(ACTOR_ALEX, 0);
@@ -145,7 +146,7 @@ void Scene_AlexTakesStars(void)
     Actor_ShowEmote(ACTOR_GERALD, 0x103, 40);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
     Event_Wait(20);
-    rec = Value1(Engine_ActorGet, ACTOR_GERALD);
+    rec = Engine_ActorGet(ACTOR_GERALD);
     SetFlagBits(&rec[90], 1);
     *(s32 *)(rec + 48) = 0x30000;
     *(s32 *)(rec + 52) = 0x20000;
@@ -179,7 +180,7 @@ void Scene_AlexTakesStars(void)
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_GERALD, 2);
     {
-        s32 slot = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        s32 slot = Engine_ActorGet(ACTOR_PARTY_LEADER);
 
         if (slot != 0) {
             Actor_SetDestination(ACTOR_GERALD, *(s16 *)(slot + 10), *(s16 *)(slot + 18));

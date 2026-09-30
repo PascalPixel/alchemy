@@ -92,7 +92,7 @@ void FieldScene_RunRewardReminder(void)
     s32 record;
 
     if (GameFlag_IsSet(FLAG_REWARD_TAKEN) == 0) {
-        if (Value1(Engine_GameFlagIsSet, 0x322) != 0) {
+        if (Engine_GameFlagIsSet(0x322) != 0) {
             Event_Begin();
             Actor_ShowEmote(19, 0x100, 0);
             Actor_FaceDirection(19, 0x7000, 10);

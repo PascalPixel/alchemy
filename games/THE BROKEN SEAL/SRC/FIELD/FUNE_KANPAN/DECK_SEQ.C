@@ -33,6 +33,7 @@
 #include "TYPES.H"
 #include "KANPAN.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 FuneKanpan_CrewScriptD[];
 extern u8 MsgFuneArrgh[];
 extern u8 FuneKanpan_CrewScript[];
@@ -54,13 +55,6 @@ void Ui_SetRenderResultFromObject();
 void Event_ClearStatus1c6Far();
 void Event_WaitValue1c8FramesFar();
 
-/* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. The legacy
- * Value2 callback calls retain that return-shape adapter around the actual
- * void service; their unused nominal results are not game values. */
-
 void FieldScene_RunActorSequence(void)
 {
     u32 i;
@@ -76,18 +70,18 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetChildValue(0, 15);
     record = Engine_ActorGet(0);
     ObjectDispatch_SetSingleChildField26Far(record, 0);
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptD);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptD);
     Engine_TaskWait(1);
-    Call3(Engine_ActorSetPosition, 22, 0xb00000, 0x2b80000);
+    Engine_ActorSetPosition(22, 0xb00000, 0x2b80000);
     record = Engine_ActorGet(22);
     {
         s32 shown = 0xd000;
 
         record->facing = shown;
     }
-    Call3(Engine_ActorSetPosition, 21, 0x1080000, 0x2960000);
+    Engine_ActorSetPosition(21, 0x1080000, 0x2960000);
     record = Engine_ActorGet(21);
     {
         s32 shown = 0xb000;
@@ -99,7 +93,7 @@ void FieldScene_RunActorSequence(void)
     Call3(Engine_ActorSetPosition, 26, 0xfc0000, 0x2860000);
     Call3(Engine_ActorSetPosition, 27, 0x1000000, 0x2ae0000);
     Call3(Engine_ActorSetPosition, 28, 0xac0000, 0x2780000);
-    Call3(Engine_ActorSetPosition, 29, 0x1000000, 0x26e0000);
+    Engine_ActorSetPosition(29, 0x1000000, 0x26e0000);
     {
         /* FAKEMATCH: halfword zero retains the short literal-pool reach. */
         struct { u16 v; } zero;
@@ -110,13 +104,13 @@ void FieldScene_RunActorSequence(void)
         Engine_ActorGet(26)->rise_enabled = zero.v;
         Engine_ActorGet(27)->rise_enabled = 2;
     }
-    Call3(Engine_ActorSetPosition, 20, 0, 0);
+    Engine_ActorSetPosition(20, 0, 0);
     Engine_ActorEnableActionCallback(24, FuneKanpan_DeckActionsA);
-    Value2(Engine_ActorEnableActionCallback, 25, (s32)FuneKanpan_DeckActionsA);
+    Engine_ActorEnableActionCallback(25, (s32)FuneKanpan_DeckActionsA);
     Engine_ActorEnableActionCallback(26, FuneKanpan_DeckActionsB);
-    Value2(Engine_ActorEnableActionCallback, 27, (s32)FuneKanpan_DeckActionsB);
+    Engine_ActorEnableActionCallback(27, (s32)FuneKanpan_DeckActionsB);
     Engine_ActorEnableActionCallback(28, FuneKanpan_DeckActionsC);
-    Value2(Engine_ActorEnableActionCallback, 29, (s32)FuneKanpan_DeckActionsC);
+    Engine_ActorEnableActionCallback(29, (s32)FuneKanpan_DeckActionsC);
     Engine_ActorSetChildValue(24, 3);
     Engine_ActorSetChildValue(25, 3);
     Engine_ActorSetChildValue(26, 3);
@@ -174,7 +168,7 @@ void FieldScene_RunActorSequence(void)
     Call3(Engine_ActorSetSpeed, 28, 0x19999, 0xcccc);
     base5_200c888 = FuneKanpan_SailorActions;
     Engine_ActorEnableActionCallback(28, base5_200c888);
-    Call2(FieldScene_CallPairWith10, 30, 0xd000);
+    FieldScene_CallPairWith10(30, 0xd000);
     FieldScene_RunScene3af_02000bb8();
     Engine_EventWait(10);
     Engine_ActorEnableActionCallback(30, base5_200c888);
@@ -194,7 +188,7 @@ void FieldScene_RunActorSequence(void)
     Engine_EventWait(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
-    Call3(UiText_ShowCenteredMessage, (s32)MsgFuneArrgh, 1, 0);
+    UiText_ShowCenteredMessage((s32)MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventRequestExit(14);
 }

@@ -3,8 +3,6 @@
  * morning the party wakes in the palace (FieldScene_RunScene3b8SequenceB).
  * The questions load their first message once and add to it for the
  * answers. */
-/* FAKEMATCH: KYUDEN.H's inline call and value wrappers keep the game's
- * argument order at the calls that use them. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -13,6 +11,7 @@ extern u8 MsgTorebiEasternShoresKaragol[];
 extern u8 MsgTorebiFoundCloakBall[];
 extern u8 MsgTorebiMeetBabi[];
 #include "KYUDEN.H"
+#include "CALL.H"
 
 void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
@@ -104,7 +103,7 @@ void FieldScene_RunScene3b8SequenceB(void)
     gEventWork->transition_frames = 24;
     Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
     Actor_WalkByAndWait(ACTOR_MIA, 16, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0x2000, 0);
+    Engine_ActorFaceDirection(3, 0x2000, 0);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(3, 2);
     Engine_EventWait(30);
@@ -124,7 +123,7 @@ void FieldScene_RunScene3b8SequenceB(void)
     Engine_EventWait(30);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorShowEmote, 0, 0x105, 60);
+    Engine_ActorShowEmote(0, 0x105, 60);
     Engine_EventWait(20);
     Call3(Engine_ActorShowEmote, 1, 0x102, 60);
     Engine_EventShowMessage(1, 0);
@@ -135,21 +134,21 @@ void FieldScene_RunScene3b8SequenceB(void)
     Engine_EventWait(10);
     Call3(Engine_ActorShowEmote, 0, 0x102, 80);
     Call3(Engine_ActorShowEmote, 2, 0x106, 60);
-    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Engine_ActorFaceDirection(2, 0xc000, 0);
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(2, 4);
     Engine_EventWait(20);
     Engine_EventShowMessage(2, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorFaceDirection, 1, 0x4000, 0);
+    Engine_ActorFaceDirection(1, 0x4000, 0);
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(1, 2);
     Engine_EventWait(45);
     Engine_ActorFaceDirection(1, 0, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xe000, 0);
+    Engine_ActorFaceDirection(2, 0xe000, 0);
     Engine_EventWait(30);
-    Value2(Engine_EventOpenMessage, 1, 0);
-    if (Value2(Engine_EventChooseYesNo, -1, 0) != 0) {
+    Engine_EventOpenMessage(1, 0);
+    if (Engine_EventChooseYesNo(-1, 0) != 0) {
         Engine_EventWait(10);
         Engine_ActorSetAnimationAndWait(0, 34);
         Engine_EventWait(20);
@@ -179,11 +178,11 @@ void FieldScene_RunScene3b8SequenceB(void)
     Engine_EventWait(35);
     Engine_ActorJump(0, 6, 0);
     Call3(Engine_ActorSetSpeed, 0, 0x1e666, 0xf333);
-    Call3(Engine_ActorWalkByAndWait, 0, -32, 0);
+    Engine_ActorWalkByAndWait(0, -32, 0);
     record = Engine_ActorGet(0);
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorFaceDirection, 3, 0x4000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Engine_ActorFaceDirection(2, 0xc000, 0);
     Engine_EventWait(40);
     Engine_ActorSetAnimation(0, 3);
     Event_Wait(30);

@@ -58,8 +58,22 @@ pub struct GameDone {
     pub game_asm: i64,
     pub game_c: i64,
     pub executable: i64,
+    /// Whole 8-byte far-call stubs (veneers), counted within the assembly.
+    pub veneers: i64,
 }
 impl GameDone {
+    /// DONE in its parts, in percentage points of the executable bytes: C,
+    /// assembly without the stubs, and the 8-byte stubs.
+    pub fn parts(&self) -> (f64, f64, f64) {
+        (
+            floor_percent(self.common_c + self.game_c, self.executable),
+            floor_percent(
+                self.common_asm + self.game_asm - self.veneers,
+                self.executable,
+            ),
+            floor_percent(self.veneers, self.executable),
+        )
+    }
     pub fn bytes(&self) -> i64 {
         self.common_asm + self.common_c + self.game_asm + self.game_c
     }
@@ -98,10 +112,12 @@ fn done_line(mark: &str, game: &str, status: Result<Measurement, String>) -> Str
     match status {
         Ok(m) => {
             let d = m.done;
+            let (c, assembly, stubs) = d.parts();
             let mut line = format!(
-                "{mark} {game} DONE: {} / {} executable bytes ({:.2}%) = common assembly {} + common C {} + game assembly {} (compiler library {}) + game C {}; not yet C: disassembly {} + overlay listings {}",
+                "{mark} {game} DONE: {} / {} executable bytes ({:.2}%) = C {} ({c:.2} points) + assembly {} ({assembly:.2}, compiler library {} of it) + 8-byte stubs {} ({stubs:.2}); FAKEMATCH-steered C {} ({:.2} points, removed last); uncredited padding {} not counted; not yet C: disassembly {} + overlay listings {}",
                 commas(d.bytes()), commas(d.executable), d.percent(),
-                commas(d.common_asm), commas(d.common_c), commas(d.game_asm), commas(m.library), commas(d.game_c),
+                commas(d.common_c + d.game_c), commas(d.common_asm + d.game_asm - d.veneers), commas(m.library), commas(d.veneers),
+                commas(m.steered), floor_percent(m.steered, d.executable), commas(m.uncredited),
                 commas(m.raw), commas(m.listings)
             );
             for (object, bytes) in &m.other {
@@ -111,6 +127,26 @@ fn done_line(mark: &str, game: &str, status: Result<Measurement, String>) -> Str
         }
         Err(reason) => format!("{mark} {game} DONE: {reason}"),
     }
+}
+
+/// One game's data and name coverage, as pret's calcrom reports beside code.
+fn data_line(mark: &str, game: &str, status: &Result<Measurement, String>) -> Option<String> {
+    let m = status.as_ref().ok()?;
+    let data = m.data_source + m.data_scaffold;
+    let n = m.names;
+    let share = |part: i64, whole: i64| {
+        if whole == 0 {
+            0.0
+        } else {
+            100.0 * part as f64 / whole as f64
+        }
+    };
+    Some(format!(
+        "{mark} {game} data: {} / {} bytes from source ({:.2}%), scaffold {}; names: {} of {} documented ({:.2}%), {} address-only, {} with an address",
+        commas(m.data_source), commas(data), share(m.data_source, data), commas(m.data_scaffold),
+        commas(n.documented()), commas(n.total), share(n.documented(), n.total),
+        commas(n.undocumented), commas(n.partial)
+    ))
 }
 
 fn display(report: &GameDone) -> String {
@@ -171,11 +207,17 @@ fn run(argv: &[String]) -> Result<String, String> {
         return crate::verify::verified_subject(&root);
     }
     if action.is_empty() {
-        return Ok(format!(
-            "{}\n{}",
-            done_line("☀️", "The Broken Seal", status(&root, "tbs-en")?),
-            done_line("⚓️", "The Lost Age", status(&root, "tla-en")?)
-        ));
+        let mut lines = Vec::new();
+        for (mark, game, target) in [
+            ("☀️", "The Broken Seal", "tbs-en"),
+            ("⚓️", "The Lost Age", "tla-en"),
+        ] {
+            let state = status(&root, target)?;
+            let data = data_line(mark, game, &state);
+            lines.push(done_line(mark, game, state));
+            lines.extend(data);
+        }
+        return Ok(lines.join("\n"));
     }
     let report = match status(&root, &target)? {
         Ok(measurement) => Ok(measurement.done),
@@ -226,6 +268,7 @@ mod tests {
             game_asm: 20,
             common_asm: 0,
             executable: 200,
+            veneers: 0,
         };
         assert_eq!(done.percent(), 25.0);
         let report = table(&report_rows(&done, "tla-en"));

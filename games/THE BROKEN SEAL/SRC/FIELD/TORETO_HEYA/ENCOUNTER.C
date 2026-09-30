@@ -1,4 +1,5 @@
 #include "HEYA.H"
+#include "CALL.H"
 extern u8 MsgToretoDoingNowsNot[];
 extern u8 MsgToretoMmmmm[];
 extern u8 MsgToretoTurnedPeopleKolima[];
@@ -33,11 +34,11 @@ void FieldScene_RunFourActorEncounter(void)
     record = Actor_Get(ACTOR_GERALD);
     *(u16 *)(record + 6) = (v6 << 8);
     Actor_SetPosition(ACTOR_IVAN, 0xb60000, 0x5a0000);
-    record = Value1(Engine_ActorGet, ACTOR_IVAN);
+    record = Engine_ActorGet(ACTOR_IVAN);
     *(u16 *)(record + 6) = (v6 << 8);
     if (rec != 0) {
         Actor_SetPosition(ACTOR_MIA, 0xa60000, 0x680000);
-        record = Value1(Engine_ActorGet, ACTOR_MIA);
+        record = Engine_ActorGet(ACTOR_MIA);
         *(u16 *)(record + 6) = (v6 << 8);
     }
     ToretoHeya_PlayGesture(0);
@@ -166,7 +167,7 @@ void FieldScene_RunFourActorEncounter(void)
     Event_ShowMessageAndWait(0x8009, 0, 10);
     ToretoHeya_PlayGesture(0);
     Event_ShowMessage(0x8009, 0);
-    Call2(Object_SetActionCallbackAndRefreshById, 8, (s32)ToretoHeya_ActionTable1);
+    Object_SetActionCallbackAndRefreshById(8, (s32)ToretoHeya_ActionTable1);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
     Event_ShowMessage(0x8001, 0);
@@ -181,7 +182,7 @@ void FieldScene_RunFourActorEncounter(void)
     Event_ShowMessageAndWait(0x8002, 0, 10);
     if (rec != 0) {
         Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-        Call3(Engine_EventShowMessageAndWait, 0x8003, 0, 10);
+        Engine_EventShowMessageAndWait(0x8003, 0, 10);
     }
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
     Actor_SetAnimation(ACTOR_GERALD, 3);
@@ -196,7 +197,7 @@ void FieldScene_RunFourActorEncounter(void)
     Event_Wait(20);
     *((u8 *)Engine_ActorGet(0) + 35) |= 1;
     GameFlag_Set(0x844);
-    Value2(Engine_TaskAddCallback, (s32)ToretoPalette_ApplyTint, 0xc80);
+    Engine_TaskAddCallback((s32)ToretoPalette_ApplyTint, 0xc80);
     Event_End();
 }
 

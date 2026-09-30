@@ -1,5 +1,6 @@
 /* Platform landing and the late sequences. */
 #include "BABI.H"
+#include "CALL.H"
 
 /*
  * Scan slots 10 to 14, skipping the subject, keep those whose whole-tile x
@@ -61,7 +62,7 @@ void FieldScene_RunMiddleSequence(void)
 
     Event_Begin();
     for (i = 0; i <= 2; i++) {
-        if (((struct FieldActor *)Value1(Object_GetById, i + 12))->sprite->priority == 3
+        if (((struct FieldActor *)Object_GetById(i + 12))->sprite->priority == 3
             && GameFlag_IsSet(i + 0x200) == 0) {
             Actor_Get(i + 12);
             SceneActor_WaitValueBelowLimit();
@@ -69,25 +70,25 @@ void FieldScene_RunMiddleSequence(void)
             GameFlag_Set(i + 0x200);
             break;
         }
-        if ((((struct FieldActor *)Value1(Object_GetById, i + 12))->z.fixed >> 20) == 9
+        if ((((struct FieldActor *)Object_GetById(i + 12))->z.fixed >> 20) == 9
             && GameFlag_IsSet(i + 0x200) == 0) {
             *(s32 *)(Value1(Object_GetById, i + 12) + 20) = 0;
-            ((struct FieldActor *)Value1(Object_GetById, i + 12))->velocity_y = 0;
+            ((struct FieldActor *)Object_GetById(i + 12))->velocity_y = 0;
             *(s32 *)(((s32 (*)())Object_GetById)(i + 12) + 60) = -0x80000000;
             ((struct FieldActor *)Actor_Get(i + 12))->motion_flags = 0;
             *(u16 *)(((s32 (*)())Object_GetById)(i + 12) + 100) = 0;
             found = i;
             for (j = 0; j < i; j++) {
                 if (GameFlag_IsSet(0x200 + j) == 0) {
-                    saved.x.fixed = ((struct FieldActor *)Value1(Object_GetById, i + 12))->x.fixed;
-                    saved.y.fixed = ((struct FieldActor *)Value1(Object_GetById, i + 12))->y.fixed;
-                    saved.z.fixed = ((struct FieldActor *)Value1(Object_GetById, i + 12))->z.fixed;
+                    saved.x.fixed = ((struct FieldActor *)Object_GetById(i + 12))->x.fixed;
+                    saved.y.fixed = ((struct FieldActor *)Object_GetById(i + 12))->y.fixed;
+                    saved.z.fixed = ((struct FieldActor *)Object_GetById(i + 12))->z.fixed;
                     ((struct FieldActor *)Actor_Get(i + 12))->x.fixed =
-                        ((struct FieldActor *)Value1(Object_GetById, j + 12))->x.fixed;
-                    ((struct FieldActor *)Value1(Object_GetById, i + 12))->y.fixed =
-                        ((struct FieldActor *)Value1(Object_GetById, j + 12))->y.fixed;
-                    ((struct FieldActor *)Value1(Object_GetById, i + 12))->z.fixed =
-                        ((struct FieldActor *)Value1(Object_GetById, j + 12))->z.fixed;
+                        ((struct FieldActor *)Object_GetById(j + 12))->x.fixed;
+                    ((struct FieldActor *)Object_GetById(i + 12))->y.fixed =
+                        ((struct FieldActor *)Object_GetById(j + 12))->y.fixed;
+                    ((struct FieldActor *)Object_GetById(i + 12))->z.fixed =
+                        ((struct FieldActor *)Object_GetById(j + 12))->z.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->x.fixed = saved.x.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->y.fixed = saved.y.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->z.fixed = saved.z.fixed;
@@ -100,12 +101,12 @@ void FieldScene_RunMiddleSequence(void)
             *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 60) = -0x80000000;
             ((struct FieldActor *)Actor_Get(found + 12))->motion_flags = 0;
             *(u16 *)(((s32 (*)())Object_GetById)(found + 12) + 100) = 0;
-            Value2(Engine_CameraSetSpeed, 0x30000, 0x6000);
+            Engine_CameraSetSpeed(0x30000, 0x6000);
             ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
             Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
             Camera_WaitForMove();
             SceneActor_LandOnHighestPlatform(found + 12);
-            if ((((struct FieldActor *)Value1(Object_GetById, found + 12))->x.fixed >> 20) == 8) {
+            if ((((struct FieldActor *)Object_GetById(found + 12))->x.fixed >> 20) == 8) {
                 (*(s16 *)(((s32 (*)())Object_GetById)(10) + 100))++;
                 (*(s16 *)(((s32 (*)())Object_GetById)(11) + 100))--;
             } else {
@@ -199,67 +200,67 @@ void FieldScene_RunScene3c4SequenceA(void)
     v6 = 0;
     Engine_EventBegin();
     Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
-    record = Value1(Object_GetById, 19);
+    record = Object_GetById(19);
     p5 = *(s32 *)(record + 8);
     q = *(s32 *)(Value1(Object_GetById, 19) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Object_GetById, 20);
+    record = Object_GetById(20);
     p5 = *(s32 *)(record + 8);
     q = *(s32 *)(Value1(Object_GetById, 20) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Object_GetById, 21);
+    record = Object_GetById(21);
     p5 = *(s32 *)(record + 8);
     q = *(s32 *)(Value1(Object_GetById, 21) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Object_GetById, 22);
+    record = Object_GetById(22);
     p5 = *(s32 *)(record + 8);
     q = *(s32 *)(Value1(Object_GetById, 22) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Object_GetById, 23);
+    record = Object_GetById(23);
     p5 = *(s32 *)(record + 8);
     q = *(s32 *)(Value1(Object_GetById, 23) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Object_GetById, 19);
+    record = Object_GetById(19);
     if ((*(s32 *)(record + 8) >> 20) == 25) {
-        record = Value1(Object_GetById, 19);
+        record = Object_GetById(19);
         if ((*(s32 *)(record + 16) >> 20) == 49) {
             v6 = 1;
         }
     }
-    record = Value1(Object_GetById, 20);
+    record = Object_GetById(20);
     if ((*(s32 *)(record + 8) >> 20) == 23) {
-        record = Value1(Object_GetById, 20);
+        record = Object_GetById(20);
         if ((*(s32 *)(record + 16) >> 20) == 49) {
             v6 = (v6 + 1);
         }
     }
-    record = Value1(Object_GetById, 21);
+    record = Object_GetById(21);
     if ((*(s32 *)(record + 8) >> 20) == 25) {
-        record = Value1(Object_GetById, 21);
+        record = Object_GetById(21);
         if ((*(s32 *)(record + 16) >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
-    record = Value1(Object_GetById, 22);
+    record = Object_GetById(22);
     if ((*(s32 *)(record + 8) >> 20) == 23) {
-        record = Value1(Object_GetById, 22);
+        record = Object_GetById(22);
         if ((*(s32 *)(record + 16) >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
-    record = Value1(Object_GetById, 23);
+    record = Object_GetById(23);
     if ((*(s32 *)(record + 8) >> 20) == 24) {
-        record = Value1(Object_GetById, 23);
+        record = Object_GetById(23);
         if ((*(s32 *)(record + 16) >> 20) == 48) {
             v6 = (v6 + 1);
         }
@@ -390,19 +391,19 @@ void FieldScene_RunScene3c4_02002480(void)
     Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
     Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
     *(u8 *)(((s32 (*)())Object_GetById)(14) + 34) = 1;
-    record = Value1(Object_GetById, 12);
+    record = Object_GetById(12);
     p5 = *(s32 *)(record + 8);
-    record = Value1(Object_GetById, 12);
+    record = Object_GetById(12);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
-    record = Value1(Object_GetById, 13);
+    record = Object_GetById(13);
     p5 = *(s32 *)(record + 8);
-    record = Value1(Object_GetById, 13);
+    record = Object_GetById(13);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
-    record = Value1(Object_GetById, 14);
+    record = Object_GetById(14);
     p5 = *(s32 *)(record + 8);
-    record = Value1(Object_GetById, 14);
+    record = Object_GetById(14);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
 }

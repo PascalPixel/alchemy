@@ -69,7 +69,7 @@ void RunScene58Sequence(void)
     Event_Wait(20);
     Camera_SetSpeed(0x18000, 0x3000);
     Camera_MoveTo(PIXELS(0x148), PIXELS(0x28), PIXELS(0xB0), 1);
-    FIELD(Value0(Battle_GetWorkObject1e0Far), s8 *, 0x55) = 0;
+    FIELD(Battle_GetWorkObject1e0Far(), s8 *, 0x55) = 0;
     Actor_SetSpeed(ACTOR_GERALD, 0x18000, 0xC000);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x148, 0xD8);
     Camera_WaitForMove();
@@ -79,7 +79,7 @@ void RunScene58Sequence(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 20);
     Camera_WaitForMove();
     Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
-    Call1(Event_SetValue1d8Far, (s32)MsgMakyuriLighthouseAlreadyLit);
+    Event_SetValue1d8Far((s32)MsgMakyuriLighthouseAlreadyLit);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
     Event_Wait(60);
@@ -90,7 +90,7 @@ void RunScene58Sequence(void)
     Actor_SetAnimationAndWait(ACTOR_MIA, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 30);
-    Call3(Object_LinkPairFar, 2, 0, 0);
+    Object_LinkPairFar(2, 0, 0);
     Event_Wait(60);
     Actor_WalkToAndWait(ACTOR_IVAN, 0x150, 0xF8);
     Actor_FaceDirection(ACTOR_IVAN, 0xA000, 0);
@@ -98,7 +98,7 @@ void RunScene58Sequence(void)
     Event_Wait(30);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Actor_FaceDirection(ACTOR_MIA, 0, 30);
-    Value2(UiText_OpenMessageAtObjectFar, 3, 0);
+    UiText_OpenMessageAtObjectFar(3, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
         Actor_ShowEmote(ACTOR_MIA, 0x100, 60);
@@ -126,7 +126,7 @@ void RunScene58Sequence(void)
     }
     Actor_ShowEmote(ACTOR_MIA, 0x00000101, 60);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
-    Call3(Object_LinkPairFar, 0, 1, 0);
+    Object_LinkPairFar(0, 1, 0);
     Event_Wait(60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 20);
@@ -308,7 +308,7 @@ void RunScene58Sequence(void)
     Event_ShowMessageAndWait(0x17, 0, 20);
     Actor_FaceDirection(5, 0x5000, 0);
     Actor_FaceDirection(0x14, 0x3000, 70);
-    Call3(Object_LinkPairFar, 5, 0x14, 0);
+    Object_LinkPairFar(5, 0x14, 0);
     Event_Wait(50);
     Actor_FaceDirection(5, 0x5000, 0);
     Actor_FaceDirection(0x14, 0x3000, 20);
@@ -362,10 +362,10 @@ void RunScene58Sequence(void)
     Audio_PlayCue(0x98);
     temp_r0_9 = Actor_Get(0x17);
     FIELD(temp_r0_9, u8 *, 0x55) = (u8)(0x7E & FIELD(temp_r0_9, u8 *, 0x55));
-    Call2(SetOverlayObjectMode, ((s32)Engine_ActorGet(0x17)), 0);
+    SetOverlayObjectMode(((s32)Engine_ActorGet(0x17)), 0);
     FIELD(((s32)Engine_ActorGet(0x11)), s8 *, 0x55) = 4;
-    Call3(ObjectMotion_SetPositionAndCommitFar, 0x17, 0x68, 0xA8);
-    Call2(SetOverlayObjectMode, ((s32)Engine_ActorGet(0x17)), 1);
+    ObjectMotion_SetPositionAndCommitFar(0x17, 0x68, 0xA8);
+    SetOverlayObjectMode(((s32)Engine_ActorGet(0x17)), 1);
     FIELD(Actor_Get(0x17), s8 *, 0x55) = 3;
     Actor_FaceDirection(0x17, 0, 30);
     Actor_FaceDirection(0x15, 0, 10);
@@ -377,7 +377,7 @@ void RunScene58Sequence(void)
     Event_ShowMessageAndWait(0x17, 0, 20);
     Actor_SetSpritePriority(0x11, 0);
     Actor_SetSpritePriority(0x12, 0);
-    Call0(MakyuriChojo_LowerCollectedActors);
+    MakyuriChojo_LowerCollectedActors();
     Actor_SetSpritePriority(0x11, 1);
     Actor_SetSpritePriority(0x12, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
@@ -431,7 +431,7 @@ void RunScene58Sequence(void)
     Event_Wait(20);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Actor_ShowEmote(0x16, 0x00000101, 60);
-    Value2(UiText_OpenMessageAtObjectFar, 0x16, 0);
+    UiText_OpenMessageAtObjectFar(0x16, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
         Actor_SetAnimationAndWait(0x16, 4);
@@ -470,12 +470,12 @@ void RunScene58Sequence(void)
     Event_Wait(20);
     Event_ShowMessageAndWait(0x16, 0, 20);
     Actor_WalkToAndWait(0x16, 0x150, 0xD8);
-    Call2(Party_SetFields1ceAnd1d0, (s32)&SceneId_MakyuriChojo1, 2);
+    Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriChojo1, 2);
     /* FAKEMATCH: the do/while loads the game state's base before the 0x22b
        offset, which fixes their registers and literal-pool order. */
     do {
         gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
     } while (0);
-    Call2(BattleFx_SetWeightedResult, 0x24, 2);
+    BattleFx_SetWeightedResult(0x24, 2);
     Event_End();
 }

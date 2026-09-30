@@ -1,4 +1,5 @@
 #include "TASK.H"
+#include "CALL.H"
 
 /*
  * The mode task's per-frame routine is installed as a callback.  The branch
@@ -122,7 +123,7 @@ void FieldScene_RunLateSequence(s32 a0)
         kind = 8;
     }
     Actor_ShowEmote(kind, 0x105, 0);
-    while (Value0(AudioCommand_GetStateByte)!= 0) {
+    while (AudioCommand_GetStateByte()!= 0) {
         Task_Wait(1);
     }
     Audio_PlayCue(19);

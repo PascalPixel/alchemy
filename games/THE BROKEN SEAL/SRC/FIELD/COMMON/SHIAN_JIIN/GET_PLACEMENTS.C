@@ -1,17 +1,13 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 
 void FieldScene_PrepareActors(struct ScenePlacement *placements);
 
 extern const struct ScenePlacement gShianJiinPlacements1[];
 extern const struct ScenePlacement gShianJiinPlacementsEntrance3[];
 extern struct ScenePlacement gShianJiinPlacements[];
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
 
 /* The actors placed in the temple: the first scene and the third entrance
    have their own tables. Once flag 0x895 is set, the gated actors of the

@@ -111,7 +111,7 @@ void FieldScene_RunActorEightApproach(void)
         *(u16 *)(actor + 6) = value;
     }
     Task_Wait(1);
-    Call2(BattleFx_ScheduleRatioTransition, 0x13333, 1);
+    BattleFx_ScheduleRatioTransition(0x13333, 1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Camera_FollowActor(ACTOR, 1);
     Task_Wait(1);

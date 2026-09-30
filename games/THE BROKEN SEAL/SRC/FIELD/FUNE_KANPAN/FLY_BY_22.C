@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "KANPAN.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
@@ -41,7 +42,7 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
             if (obj->rise_enabled != 0) {
                 Call3(Engine_ActorFaceDirection, 22, 0xd000, 0);
             } else {
-                Call3(Engine_ActorFaceDirection, 22, 0, 0);
+                Engine_ActorFaceDirection(22, 0, 0);
             }
             if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
                 Engine_ActorGet(22)->velocity_y = 0x20000;

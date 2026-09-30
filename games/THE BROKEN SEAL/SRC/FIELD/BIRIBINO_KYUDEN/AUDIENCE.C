@@ -1,4 +1,5 @@
 #include "KYUDEN.H"
+#include "CALL.H"
 extern u8 MsgBiribinoHumblyThank[];
 extern u8 MsgBiribinoNaeYehDinnaeNeedTae[];
 extern u8 MsgBiribinoNameSorryRejected[];
@@ -18,11 +19,11 @@ void FieldScene_RunPalaceGreeting(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x100, 0x294);
     Engine_EventWait(20);
     Camera_MoveTo(-1, -1, -1, 0);
-    Call1(Engine_GameFlagSet, 0x200);
+    Engine_GameFlagSet(0x200);
     Audio_PlayCue(188);
     Map_ClearLayerEntryFlag(1);
     Map_ClearLayerEntryFlag(2);
-    Call3(Engine_ActorSetPosition, 19, 0x1000000, 0x2780000);
+    Engine_ActorSetPosition(19, 0x1000000, 0x2780000);
     Engine_TaskWait(1);
     Call3(Engine_ActorSetSpeed, 19, 0x9999, 0x4ccc);
     Call3(Engine_ActorWalkToAndWait, 19, 0x100, 0x284);
@@ -30,7 +31,7 @@ void FieldScene_RunPalaceGreeting(void)
     Map_SetLayerEntryFlag(2);
     Event_Wait(20);
     Actor_RunRepeatedMotion(19, 2);
-    Call1(Engine_EventSetMessage, (s32)MsgBiribinoNameSorryRejected);
+    Engine_EventSetMessage((s32)MsgBiribinoNameSorryRejected);
     Engine_EventShowMessageAndWait(19, 0, 10);
     Call3(Engine_ActorShowEmote, 0, 0x100, 40);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x108, 0x294);
@@ -40,7 +41,7 @@ void FieldScene_RunPalaceGreeting(void)
     Engine_ActorSetAnimationAndWait(19, 4);
     Engine_EventShowMessage(19, 0);
     Engine_ActorSetAnimationAndWait(19, 3);
-    Value2(Engine_EventAskYesNo, 19, 0);
+    Engine_EventAskYesNo(19, 0);
     Actor_RunRepeatedMotion(19, 2);
     Engine_EventShowMessageAndWait(19, 0, 10);
     Call3(Engine_ActorShowEmote, 0, 0x101, 60);
@@ -53,8 +54,8 @@ void FieldScene_RunPalaceGreeting(void)
     Actor_SetSpeed(19, 0xcccc, 0x6666);
     Call3(Engine_ActorWalkToAndWait, 19, 248, 0x304);
     Engine_ActorSetPosition(19, 0, 0);
-    Call1(Engine_GameFlagClear, 0x12f);
-    Call1(Engine_GameFlagSet, 0x84f);
+    Engine_GameFlagClear(0x12f);
+    Engine_GameFlagSet(0x84f);
     Engine_EventEnd();
 }
 

@@ -12,18 +12,6 @@ void Object_RefreshSelectorById(s32);
 /* The "shown" halfword of an actor record. */
 #define ACTOR_SHOWN_OFFSET 100
 
-/* FAKEMATCH: a value-returning call spelled through these wrappers sets r0
- * last of its arguments. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 /* Actors 24 and 25 come back: one line, then each takes up its script and
  * its shown state. */
 void FieldScene_ConfigurePairedActors(void)
@@ -42,7 +30,7 @@ void FieldScene_ConfigurePairedActors(void)
     SceneActor_SetModeZeroAndValue(24, 20);
     Actor_SetSpeed(24, 0x40000, 0x20000);
     Actor_SetSpeed(25, 0x38000, 0x1c000);
-    Value2((s32 (*)())Engine_ActorEnableActionCallback, 25, (s32)KuupuappuHeya_PairScriptO);
+    ((s32 (*)())Engine_ActorEnableActionCallback)(25, (s32)KuupuappuHeya_PairScriptO);
     Actor_EnableActionCallback(24, KuupuappuHeya_PairScriptB);
     Object_RefreshSelectorById(24);
     /* FAKEMATCH: each shown state is parked in a word-sized local before
@@ -55,7 +43,7 @@ void FieldScene_ConfigurePairedActors(void)
         *(u16 *)(record + ACTOR_SHOWN_OFFSET) = shown;
     }
     {
-        u8 *record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 25);
+        u8 *record = (u8 *)((s32 (*)())Engine_ActorGet)(25);
         s32 shown = 3;
 
         *(u16 *)(record + ACTOR_SHOWN_OFFSET) = shown;

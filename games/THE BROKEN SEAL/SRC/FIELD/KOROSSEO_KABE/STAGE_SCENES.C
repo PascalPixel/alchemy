@@ -1,4 +1,5 @@
 #include "TASK.H"
+#include "CALL.H"
 extern u8 MsgKorosseoHereYourObjectiveRideLogs[];
 extern u8 MsgKorosseoLogRollingStage[];
 extern u8 MsgKorosseoOperatorLiftsWillCheerFor[];
@@ -14,7 +15,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
         Korosseo_FinishSoloRound();
     } else {
         Event_Begin();
-        rec = Value2(KorosseoKabe_RunStateInteraction, a0, 2);
+        rec = KorosseoKabe_RunStateInteraction(a0, 2);
         if (rec == 0) {
             Event_SetMessage((s32)MsgKorosseoShiftingFloorStage);
             FieldScene_PlaceSpectatorRow();
@@ -28,7 +29,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             Event_Wait(15);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             Value3(SceneActor_PlaceWithScale14000, 0, 0x438, 216);
-            Value3(SceneActor_PlaceWithScale14000, 0, 0x428, 216);
+            SceneActor_PlaceWithScale14000(0, 0x428, 216);
             SceneState_WaitForStatusWords();
             Leader_CheckAhead();
             Camera_MoveTo(-1, -1, -1, 0);
@@ -57,7 +58,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
         Korosseo_FinishSoloRound();
     } else {
         Event_Begin();
-        rec2 = Value2(KorosseoKabe_RunStateInteraction, a0, 3);
+        rec2 = KorosseoKabe_RunStateInteraction(a0, 3);
         if (rec2 != 0) {
         } else {
             Event_SetMessage((s32)MsgKorosseoLogRollingStage);
@@ -75,7 +76,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Value3(SceneActor_PlaceWithScale14000, 0, 0x358, 0x108);
             Value3(SceneActor_PlaceWithScale14000, 0, 0x358, 232);
             Event_ShowMessage(a0, 0);
-            Call3(SceneActor_PlaceWithScale14000, 0, 0x348, 232);
+            SceneActor_PlaceWithScale14000(0, 0x348, 232);
             Event_Wait(10);
             Value3(SceneActor_MovePairByTileOffset, 33, -64, 0);
             Camera_MoveTo(0x2f00000, -1, 0xd80000, 1);

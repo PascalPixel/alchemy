@@ -1,5 +1,6 @@
 /* Scene tables, the hostage scene and small callbacks. */
 #include "FUNKA.H"
+#include "CALL.H"
 extern u8 MsgSoruIKnowItsARock[];
 extern u8 MsgSoruJasmineWhatHappened[];
 extern u8 MsgSoruSomeoneIsLiftingIt[];
@@ -92,8 +93,8 @@ void Scene_SaturosTakesHostages(void)
     FieldScene_RunVariantStep(1, 20, 20);
     FieldScene_RunVariantStep(0, 20, 40);
     Event_SetMessage((s32)MsgSoruJasmineWhatHappened);
-    Call3((void (*)())Engine_EventShowMessageAndWait, 11, 0, 20);
-    Call2((void (*)())Engine_EventShowMessage, 10, 0);
+    ((void (*)())Engine_EventShowMessageAndWait)(11, 0, 20);
+    ((void (*)())Engine_EventShowMessage)(10, 0);
     FieldScene_RunVariantStep(1, 20, 0);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
     FieldScene_RunVariantStep(0, 20, 0);
@@ -172,8 +173,8 @@ void Scene_SaturosTakesHostages(void)
     FieldScene_RunVariantStep(0, 20, 20);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 30);
     SceneState_InitStateWordsAndSlots();
-    InstallTask(Engine_TaskAddCallback, (void (*)())SoruFunka_StepEmbers, 0xc80);
-    InstallTask(Engine_TaskAddCallback, (void (*)())SceneState_UpdateRandomTimerLevel, 0xc80);
+    Value2(Engine_TaskAddCallback, (s32)SoruFunka_StepEmbers, 0xc80);
+    Value2(Engine_TaskAddCallback, (s32)SceneState_UpdateRandomTimerLevel, 0xc80);
     Event_Wait(240);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 30);
     Actor_SetPosition(ACTOR_JASMINE, 0x1db0000, 0x14c0000);
@@ -405,11 +406,11 @@ void FieldScene_RunScene381_02000e30(s32 a0)
     recA = Engine_ActorGet(8);
     *(s32 *)(recA + 24) = 0x10000;
     *(s32 *)(recA + 28) = 0x10000;
-    Value3(Engine_ActorWalkToAndWait, a0, 0x1d7, 0x122);
+    Engine_ActorWalkToAndWait(a0, 0x1d7, 0x122);
     Actor_FaceDirection(a0, 0xc000, 0);
     Event_Wait(10);
     Actor_SetPosition(8, 0x1d70000, 0x1220000);
-    rec7 = Value1(Engine_ActorGet, a0);
+    rec7 = Engine_ActorGet(a0);
     rec2 = Engine_ActorGet(a0);
     Actor_SetSpriteFlags(rec2, 0);
     Actor_SetChildValue(a0, 0x100);

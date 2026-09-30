@@ -6,7 +6,6 @@ extern u8 MsgRariberoOhhTheyTookShebaHeaded[];
 /* Lalivero's scene tables and the first actor setups that precede
    FLAGGED_CUE.C in the overlay. */
 
-
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
 /* The scene's tables, laid out after the code; the actor table has an
@@ -17,14 +16,6 @@ extern u8 Placement_Actors[];
 extern u8 Placement_Actors9a7[];
 /* The lamenting villager's action table. */
 extern const u8 RariberoMachi_LamentActions[];
-
-/* A value-returning call sets r0 last of its arguments. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    void Actor_FaceDirection();
-
-    return f(a0);
-}
 
 void SceneActor_SetActor23Params2And6(void)
 {

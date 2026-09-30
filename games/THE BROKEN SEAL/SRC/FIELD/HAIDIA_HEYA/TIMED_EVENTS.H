@@ -24,7 +24,6 @@ enum {
     ITEM_HERB = 180
 };
 
-
 typedef struct {
     u8 pad_to_position[8];
     s32 x;
@@ -50,7 +49,6 @@ union SceneField {
     u16 value;
     u8 bytes[2];
 } __attribute__((packed, aligned(2)));
-
 
 extern u8 gValeFaceTargetScript[];
 extern u8 gValeActor10Script[];
@@ -80,56 +78,10 @@ s32 Object_SetActionCallbackAndRefreshById();
 void Scene_UpdateTimedActor(void);
 void Scene_GiveFarewellHerb(void);
 
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the
- * block. A value-returning call sets r0 last of its arguments, so a callee
- * is declared to return a value here even where the result is unused.
- */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
     gEventWork->message += amount;
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    void Camera_MoveTo();
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-    void Camera_MoveTo();
-
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
 }
 
 #endif

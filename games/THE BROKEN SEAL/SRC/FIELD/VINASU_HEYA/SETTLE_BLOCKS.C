@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 struct SwitchCell {
     u32 x;
@@ -15,11 +16,6 @@ struct SwitchEffect {
 struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
 void OverlayObject_WaitUntilIdle(struct FieldActor *object);
 struct SwitchEffect *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, const void *script);
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 extern struct SwitchCell gVinasuSwitchCells[];
 extern u8 gVinasuSettleScriptA[];

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 extern u8 MsgBiribinoCurseOnKolimaScaryDevelopment[];
 extern u8 MsgBiribinoDoBelieveTreeSpiritCan[];
 extern u8 MsgBiribinoDoKnowIfHolyTree[];
@@ -27,45 +28,12 @@ extern u8 BiribinoHeya_PrimaryTable[];
 extern u8 BiribinoHeya_SecondaryTable[];
 extern u8 BiribinoHeya_TertiaryTable[];
 
-
-
 /* Marks which of a scene's placements lie inside the current view. */
 void ScenePlacement_ClipToView(s32 placements);
-
-/*
- * Call sites spelled through these wrappers pass their constants straight into
- * the argument registers; a direct call precomputes a costly constant into a
- * pseudo shared with later uses in the block.  A value-returning call also
- * sets r0 last of its arguments.
- */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /* The workspace pointer this overlay reaches through. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
 static __inline__ void bump_step(s32 amount)
 {
 
@@ -75,13 +43,6 @@ static __inline__ void bump_step(s32 amount)
 static __inline__ void SetScale(s32 actor, s32 scale, s32 duration)
 {
     Actor_FaceDirection(actor, scale, duration);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    void Actor_FaceDirection();
-
-    f(a0, a1);
 }
 
 static __inline__ void SetScale_020009d8(s32 actor, s32 scale, s32 duration)

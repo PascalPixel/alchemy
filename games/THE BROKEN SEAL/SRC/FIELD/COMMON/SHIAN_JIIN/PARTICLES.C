@@ -59,7 +59,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 
     Event_Begin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
-    Value3(Engine_ActorSetDestinationOffset, 0, a0, a1);
+    Engine_ActorSetDestinationOffset(0, a0, a1);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 7);
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
@@ -75,7 +75,7 @@ void FieldScene_RunScene39eSequenceA(void)
 
     Event_Begin();
     base5_200a5b9 = (s32)FieldScene_SpawnRandomizedParticle;
-    Call2(Engine_ScheduleCallbackFar, base5_200a5b9, 0xc80);
+    Engine_ScheduleCallbackFar(base5_200a5b9, 0xc80);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
     gEventWork->transition_frames = 60;
     Event_CloseScreen();

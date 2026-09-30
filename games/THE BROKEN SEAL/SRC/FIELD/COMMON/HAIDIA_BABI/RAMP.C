@@ -3,11 +3,11 @@
    blend alpha ramps up and back down before the actors react. */
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
+#include "CALL.H"
 extern u8 MsgHaidiaDoraHurryBoulder[];
 void DisplayBlend_EnableRunScript();
 void Object_RefreshSelectorById(s32 actor);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
-
 
 struct RampWork {
     u8 unknown_00[0x1c0];
@@ -36,13 +36,6 @@ extern const s32 gHaidiaBabiRampFinalAction[];
 extern const s32 gHaidiaBabiRampActor10Action[];
 extern const s32 gHaidiaBabiRampActor10ActionB[];
 
-/* FAKEMATCH: the CallN inline wrappers set up each call's arguments as the reference does. */
-static __inline__ void Call1(void (*f)(),s32 a0){f(a0);}
-static __inline__ void Call2(void (*f)(),s32 a0,s32 a1){f(a0,a1);}
-static __inline__ void Call3(void (*f)(),s32 a0,s32 a1,s32 a2){f(a0,a1,a2);}
-static __inline__ void Call4(void (*f)(),s32 a0,s32 a1,s32 a2,s32 a3){f(a0,a1,a2,a3);}
-static __inline__ void Call5(void (*f)(),s32 a0,s32 a1,s32 a2,s32 a3,s32 a4){f(a0,a1,a2,a3,a4);}
-
 static __inline__ void SetBlendTarget(u32 value)
 {
     REG_BLDCNT = value;
@@ -64,19 +57,19 @@ void FieldScene_RunPaletteRampSequence(void)
     p1 = Engine_ActorGet(10);
     sprite = p1->sprite;
     Engine_EventBegin();
-    Call3(Engine_ActorSetPosition, 11, 0, 0);
-    Call3(Engine_ActorSetPosition, 12, 0, 0);
-    Call3(Engine_ActorSetPosition, 13, 0, 0);
-    Call3(Engine_ActorSetPosition, 14, 0, 0);
-    Call3(Engine_ActorSetPosition, 15, 0, 0);
-    Call3(Engine_ActorSetPosition, 16, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
+    Engine_ActorSetPosition(12, 0, 0);
+    Engine_ActorSetPosition(13, 0, 0);
+    Engine_ActorSetPosition(14, 0, 0);
+    Engine_ActorSetPosition(15, 0, 0);
+    Engine_ActorSetPosition(16, 0, 0);
     Call3(Engine_ActorSetPosition, 8, 28246016, 25624576);
-    Call3(Engine_ActorSetPosition, 10, 30343168, 26476544);
+    Engine_ActorSetPosition(10, 30343168, 26476544);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);
     p1->priority_flags &= 0xfe;
     p1->motion_flags = 0;
     sprite->priority = 1;
-    Call2(Engine_ActorEnableActionCallback, 10, (s32)gHaidiaBabiRampActor10Action);
+    Engine_ActorEnableActionCallback(10, (s32)gHaidiaBabiRampActor10Action);
     {
         struct RampWork *scene = ((struct RampRoots *)&gEventWork)->scene;
 
@@ -102,41 +95,41 @@ void FieldScene_RunPaletteRampSequence(void)
     BattleFx_StartTwelveFrameBlend();
     ((struct RampRoots *)&gEventWork)->work->enabled = 1;
     BattleFx_SetBlock30Values12Zero();
-    Call1(Engine_TaskWait, 30);
-    Call2(Engine_CameraFollowActor, 8, 1);
+    Engine_TaskWait(30);
+    Engine_CameraFollowActor(8, 1);
     Call3(Engine_ActorSetSpeed, 8, 98304, 49152);
     Call3(Engine_ActorSetSpeed, 0, 98304, 49152);
     Call3(Engine_ActorSetSpeed, 9, 98304, 49152);
-    Call2(Engine_ActorEnableActionCallback, 0, (s32)gHaidiaBabiRampLeaderAction);
-    Call2(Engine_ActorEnableActionCallback, 8, (s32)gHaidiaBabiRampActor8Action);
+    Engine_ActorEnableActionCallback(0, (s32)gHaidiaBabiRampLeaderAction);
+    Engine_ActorEnableActionCallback(8, (s32)gHaidiaBabiRampActor8Action);
     Engine_EventOpenScreen();
-    Call1(Object_RefreshSelectorById, 8);
-    Call1(Engine_AudioPlayCue, 158);
+    Object_RefreshSelectorById(8);
+    Engine_AudioPlayCue(158);
     Call3(Engine_ActorShowEmote, 8, 256, 0);
-    Call2(Engine_ActorRunRepeatedMotion, 8, 2);
+    Engine_ActorRunRepeatedMotion(8, 2);
     Call3(Engine_ActorFaceDirection, 8, 16384, 10);
     Call2(Engine_CameraSetSpeed, 262144, 32768);
     Call4(Engine_CameraMoveTo, 27131904, -1, 34734080, 1);
     Call3(Engine_ActorSetPosition, 9, 27131904, 34734080);
-    Call3(Engine_ActorWalkToAndWait, 9, 427, 483);
+    Engine_ActorWalkToAndWait(9, 427, 483);
     Engine_CameraWaitForMove();
-    Call1(Engine_EventSetMessage, (s32)MsgHaidiaDoraHurryBoulder);
-    Call3(Engine_EventShowMessageAndWait, 32777, 0, 10);
-    Call2(Engine_CameraSetSpeed, 98304, 12288);
-    Call4(Engine_CameraMoveTo, 31457280, -1, 29097984, 1);
+    Engine_EventSetMessage((s32)MsgHaidiaDoraHurryBoulder);
+    Engine_EventShowMessageAndWait(32777, 0, 10);
+    Engine_CameraSetSpeed(98304, 12288);
+    Engine_CameraMoveTo(31457280, -1, 29097984, 1);
     Engine_CameraWaitForMove();
-    Call1(Engine_EventWait, 20);
+    Engine_EventWait(20);
     Call3(Engine_ActorFaceDirection, 8, 32768, 20);
-    Call2(Engine_ActorSetAnimation, 8, 3);
-    Call2(Engine_ActorSetAnimationAndWait, 0, 3);
-    Call2(Engine_ActorSetAnimationAndWait, 9, 3);
-    Call3(Engine_ActorWalkTo, 9, 415, 589);
-    Call1(Engine_EventWait, 10);
-    Call2(Engine_ActorEnableActionCallback, 8, (s32)gHaidiaBabiRampActor8ActionB);
-    Call2(Engine_ActorEnableActionCallback, 0, (s32)gHaidiaBabiRampLeaderActionB);
-    Call1(Engine_AudioPlayCue, 234);
-    Call1(Engine_EventWait, 20);
-    Call2(Engine_ActorEnableActionCallback, 10, (s32)gHaidiaBabiRampActor10ActionB);
+    Engine_ActorSetAnimation(8, 3);
+    Engine_ActorSetAnimationAndWait(0, 3);
+    Engine_ActorSetAnimationAndWait(9, 3);
+    Engine_ActorWalkTo(9, 415, 589);
+    Engine_EventWait(10);
+    Engine_ActorEnableActionCallback(8, (s32)gHaidiaBabiRampActor8ActionB);
+    Engine_ActorEnableActionCallback(0, (s32)gHaidiaBabiRampLeaderActionB);
+    Engine_AudioPlayCue(234);
+    Engine_EventWait(20);
+    Engine_ActorEnableActionCallback(10, (s32)gHaidiaBabiRampActor10ActionB);
     alpha = &REG_BLDALPHA;
     i1 = 0;
 ramp:
@@ -151,11 +144,11 @@ ramp:
             *alpha = level;
         }
     }
-    Call1(Engine_TaskWait, 1);
+    Engine_TaskWait(1);
     if (++i1 <= 3)
         goto ramp;
-    Call1(Engine_AudioPlayCue, 202);
-    Call1(Engine_TaskWait, 10);
+    Engine_AudioPlayCue(202);
+    Engine_TaskWait(10);
     base = 0x100f;
     {
         u32 cnt;
@@ -163,28 +156,28 @@ ramp:
 
         for (cnt = 0; cnt <= 15; cnt++) {
             *port = base - cnt;
-            Call1(Engine_TaskWait, 1);
+            Engine_TaskWait(1);
         }
     }
-    Call1(Object_RefreshSelectorById, 0);
-    Call2(Engine_ActorSetAnimation, 8, 1);
-    Call2(Engine_ActorStartRepeatedMotion, 8, 2);
-    Call2(Engine_ActorRunRepeatedMotion, 0, 2);
-    Call1(Engine_EventWait, 10);
+    Object_RefreshSelectorById(0);
+    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorStartRepeatedMotion(8, 2);
+    Engine_ActorRunRepeatedMotion(0, 2);
+    Engine_EventWait(10);
     Call3(Engine_ActorFaceDirection, 8, 49152, 0);
     Call3(Engine_ActorFaceDirection, 0, 49152, 20);
     Call2(Engine_ActorSetAttachedEffect, 8, 258);
-    Call2(Engine_ActorSetAttachedEffect, 0, 258);
-    Call1(Engine_EventWait, 80);
-    Call3(Engine_ActorSetPosition, 9, 0, 0);
-    Call3(Engine_ActorFaceEachOther, 8, 0, 20);
-    Call2(Engine_ActorSetAnimation, 8, 3);
-    Call2(Engine_ActorSetAnimationAndWait, 0, 3);
-    Call1(Engine_EventWait, 40);
-    Call2(Engine_CameraSetSpeed, 52428, 6553);
-    Call2(Engine_CameraFollowActor, 8, 1);
-    Call2(Engine_ActorEnableActionCallback, 8, (s32)gHaidiaBabiRampFinalAction);
-    Call2(Object_SetActionCallbackAndRefreshById, 0, (s32)gHaidiaBabiRampFinalAction);
+    Engine_ActorSetAttachedEffect(0, 258);
+    Engine_EventWait(80);
+    Engine_ActorSetPosition(9, 0, 0);
+    Engine_ActorFaceEachOther(8, 0, 20);
+    Engine_ActorSetAnimation(8, 3);
+    Engine_ActorSetAnimationAndWait(0, 3);
+    Engine_EventWait(40);
+    Engine_CameraSetSpeed(52428, 6553);
+    Engine_CameraFollowActor(8, 1);
+    Engine_ActorEnableActionCallback(8, (s32)gHaidiaBabiRampFinalAction);
+    Object_SetActionCallbackAndRefreshById(0, (s32)gHaidiaBabiRampFinalAction);
     {
         struct RampWork *scene = ((struct RampRoots *)&gEventWork)->scene;
 
@@ -193,5 +186,5 @@ ramp:
     }
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Call1(Engine_EventRequestExit, 21);
+    Engine_EventRequestExit(21);
 }

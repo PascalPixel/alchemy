@@ -7,7 +7,6 @@
 #include "SCENE_EFFECT_SEQUENCE.H"
 #include "IWRAM_CALL.H"
 
-
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
     u8 pad[9];
@@ -56,42 +55,9 @@ void BattleFx_RunPageEffectForSlot();
 void Effect_Spawn();
 void BattleFx_PlayQueuedSound();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call0(void (*f)())
-{
-    f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
     gEventWork->message += amount;
 }
 
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}

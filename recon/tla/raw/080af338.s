@@ -6,6 +6,9 @@
 	bl	0x080af43c
 	ldrb	r0, [r0, #0]
 	pop	{pc}
+	.global Func_080af348
+	.thumb_func
+Func_080af348:
 .L_080af348:
 	push	{lr}
 	movs	r3, #150
@@ -50,7 +53,7 @@ Item_AdjustCounter:
 	cmp	r0, #0
 	beq.n	.L_080af396
 	subs	r0, #1
-	bl	.L_080af348
+	bl	Func_080af348
 	adds	r4, r0, #0
 .L_080af396:
 	adds	r0, r4, #0
@@ -58,58 +61,3 @@ Item_AdjustCounter:
 	movs	r0, r0
 	.2byte 0x1f40
 	.2byte 0x080b
-	.global Inventory_CountItem
-	.thumb_func
-Inventory_CountItem:
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	adds	r6, r1, #0
-	sub	sp, #4
-	bl	Owner_GetState
-	movs	r3, #128
-	lsls	r3, r3, #1
-	adds	r3, #255
-	mov	r8, r0
-	movs	r1, #0
-	ands	r6, r3
-	movs	r7, #0
-	movs	r5, #216
-	mov	sl, r3
-.L_080af3c2:
-	mov	r2, r8
-	ldrh	r3, [r5, r2]
-	mov	r2, sl
-	ands	r3, r2
-	cmp	r3, r6
-	bne.n	.L_080af3ee
-	adds	r0, r6, #0
-	str	r1, [sp, #0]
-	bl	Item_GetDirect
-	ldrb	r2, [r0, #3]
-	movs	r3, #16
-	ands	r3, r2
-	ldr	r1, [sp, #0]
-	cmp	r3, #0
-	beq.n	.L_080af3ec
-	mov	r2, r8
-	ldrh	r3, [r5, r2]
-	lsrs	r3, r3, #11
-	adds	r1, r3, #1
-	b.n	.L_080af3f6
-.L_080af3ec:
-	adds	r1, #1
-.L_080af3ee:
-	adds	r7, #1
-	adds	r5, #2
-	cmp	r7, #14
-	ble.n	.L_080af3c2
-.L_080af3f6:
-	adds	r0, r1, #0
-	add	sp, #4
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7, pc}
-	.2byte 0x0000

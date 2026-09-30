@@ -350,6 +350,9 @@ Func_080d6b90:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0000
 	.2byte 0xff80
+	.global Func_080d6e58
+	.thumb_func
+Func_080d6e58:
 	.2byte 0xb5e0
 	mov	r7, r8
 	push	{r7}
@@ -450,6 +453,9 @@ Func_080d6b90:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global Func_080d6f34
+	.thumb_func
+Func_080d6f34:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

@@ -2624,7 +2624,7 @@ Func_080ec1d0:
 	movs	r4, #16
 	ldrsh	r3, [r0, r4]
 	adds	r0, r3, #0
-	bl	0x080ca368
+	bl	Func_080ca368
 	b.n	.L_080ed654
 .L_080ed628:
 	ldr	r2, [r5, #12]

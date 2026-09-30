@@ -59,6 +59,9 @@ Func_080d2d08:
 .L_080d2d6c:
 	pop	{r5, pc}
 	movs	r0, r0
+	.global Func_080d2d70
+	.thumb_func
+Func_080d2d70:
 	ldr	r2, [pc, #12]
 	movs	r3, #157
 	lsls	r3, r3, #2

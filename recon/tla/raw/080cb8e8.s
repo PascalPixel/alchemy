@@ -439,7 +439,7 @@ Func_080cb8e8:
 	strb	r3, [r2, #0]
 	movs	r4, #0
 	mov	sl, r4
-	bl	0x080e7804
+	bl	Func_080e7804
 	movs	r0, #128
 	lsls	r0, r0, #2
 	adds	r0, #190
@@ -502,7 +502,7 @@ Func_080cb8e8:
 	bne.n	.L_080cbd14
 	movs	r3, #0
 	strb	r3, [r2, #0]
-	bl	0x080e7238
+	bl	Func_080e7238
 .L_080cbd14:
 	movs	r5, #48
 	adds	r5, #255
@@ -791,7 +791,7 @@ Func_080cb8e8:
 	asrs	r0, r0, #16
 	asrs	r1, r1, #16
 	lsls	r6, r6, #2
-	bl	0x080ca3f4
+	bl	Func_080ca3f4
 	adds	r6, #255
 	bl	Func_080cb8a4
 	b.n	.L_080cbf7c

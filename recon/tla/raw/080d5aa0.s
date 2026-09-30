@@ -459,6 +459,9 @@ Func_080d5d70:
 	.4byte 0x02000240
 	.2byte 0x0000
 	.2byte 0xfff0
+	.global Func_080d5e50
+	.thumb_func
+Func_080d5e50:
 	.2byte 0xb500
 	movs	r0, #26
 	bl	.L_080d5de0

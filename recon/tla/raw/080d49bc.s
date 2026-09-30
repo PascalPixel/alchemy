@@ -122,6 +122,9 @@ Func_080d49bc:
 	movs	r0, r0
 	.2byte 0xf000
 	.2byte 0xffff
+	.global Func_080d4aa8
+	.thumb_func
+Func_080d4aa8:
 	ldr	r3, [pc, #4]
 	str	r1, [r0, #104]
 	str	r3, [r0, #108]

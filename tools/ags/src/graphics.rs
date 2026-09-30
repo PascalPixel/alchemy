@@ -108,7 +108,10 @@ impl Atlas {
 /// Pack pixels `width` by `height` into GBA 8x8 tiles. Without an atlas the
 /// tiles run left to right, top to bottom; with one, each of its first
 /// `frames` frames (whole tiles each) contributes its own tiles in that
-/// order before the next frame's.
+/// order before the next frame's. A four-bit tile keeps each pixel's low
+/// four bits, as pret's gbagfx does: an 8-bit PNG may carry each tile's
+/// palette row in the high bits, so a bank whose tiles use several rows is
+/// drawn in its real colours.
 pub fn tiles(
     pixels: &[u8],
     width: usize,
@@ -153,12 +156,11 @@ pub fn tiles(
         for row in 0..8 {
             let values = &pixels[(y + row) * width + x..][..8];
             match bpp {
-                GbaBpp::Bpp4 => {
-                    if values.iter().any(|pixel| *pixel > 15) {
-                        return Err("four-bit tile pixel exceeds its palette".into());
-                    }
-                    data.extend(values.chunks_exact(2).map(|pair| pair[0] | pair[1] << 4));
-                }
+                GbaBpp::Bpp4 => data.extend(
+                    values
+                        .chunks_exact(2)
+                        .map(|pair| (pair[0] & 0xf) | (pair[1] & 0xf) << 4),
+                ),
                 GbaBpp::Bpp8 => data.extend_from_slice(values),
             }
         }
@@ -723,6 +725,17 @@ mod metatile_tests {
         assert_eq!(plain, tiles(&pixels, 16, 16, GbaBpp::Bpp8, None).unwrap());
         assert!(metatiles(&pixels, 16, 16, GbaBpp::Bpp8, 3, 1).is_err());
     }
+
+    #[test]
+    fn four_bit_tiles_keep_the_low_bits_of_an_eight_bit_index() {
+        // Row 2 colour 1 and row 3 colour 15, as an 8-bit PNG draws a tile
+        // that uses those palette rows: the tile keeps colours 1 and 15.
+        let mut pixels = vec![0x21u8; 64];
+        pixels[1] = 0x3f;
+        let packed = tiles(&pixels, 8, 8, GbaBpp::Bpp4, None).unwrap();
+        assert_eq!(packed[0], 0xf1);
+        assert_eq!(packed[1], 0x11);
+    }
 }
 
 #[cfg(test)]
@@ -802,8 +815,12 @@ mod tests {
         assert_eq!(firsts, [0, 1, 4, 5, 2, 3, 6, 7]);
         assert!(tiles(&pixels, 32, 16, GbaBpp::Bpp8, Some((atlas, 3))).is_err());
         assert!(tiles(&pixels, 32, 16, GbaBpp::Bpp4, None).is_ok());
+        // An index above 15 keeps its low four bits, as gbagfx packs it.
         pixels[0] = 16;
-        assert!(tiles(&pixels, 32, 16, GbaBpp::Bpp4, None).is_err());
+        assert_eq!(
+            tiles(&pixels, 32, 16, GbaBpp::Bpp4, None).unwrap()[0] & 0xf,
+            0
+        );
     }
 
     #[test]

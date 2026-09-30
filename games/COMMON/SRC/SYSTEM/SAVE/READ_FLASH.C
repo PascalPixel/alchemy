@@ -1,4 +1,4 @@
-#include "FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
 
 /* The flash chip description: its five handlers, then its geometry. */
 struct FlashChipType {

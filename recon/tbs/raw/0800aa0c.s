@@ -104,49 +104,37 @@ Func_0800aa0c:
 	.4byte .L_0800ab46
 	.4byte .L_0800ab32
 	.4byte .L_0800ab2a
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xab20
-	.2byte 0x0800
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xab5a
-	.2byte 0x0800
-	.2byte 0xaa94
-	.2byte 0x0800
-	.2byte 0xab1c
-	.2byte 0x0800
-	.2byte 0xab0c
-	.2byte 0x0800
-	.2byte 0xab36
-	.2byte 0x0800
-	.2byte 0x1c30
-	.2byte 0x1c29
-	.2byte 0xf000
-	.2byte 0xff70
-	.2byte 0x9b0b
-	.2byte 0x3324
-	.2byte 0x701d
-	.2byte 0xe7bb
-	.2byte 0x7535
-	.2byte 0xe7b9
-	.2byte 0x8873
-	.2byte 0x012a
-	.2byte 0x189b
-	.2byte 0x8073
-	.2byte 0xe7b4
+	.4byte .L_0800aa94
+	.4byte .L_0800aa94
+	.4byte .L_0800aa94
+	.4byte .L_0800ab20
+	.4byte .L_0800aa94
+	.4byte .L_0800aa94
+	.4byte .L_0800aa94
+	.4byte .L_0800aa94
+	.4byte .L_0800aa94
+	.4byte .L_0800ab5a
+	.4byte .L_0800aa94
+	.4byte .L_0800ab1c
+	.4byte .L_0800ab0c
+	.4byte .L_0800ab36
+.L_0800ab0c:
+	adds r0, r6, #0
+	adds r1, r5, #0
+	bl Animation_SetWorkEntry
+	ldr r3, [sp, #44]
+	adds r3, #36
+	strb r5, [r3]
+	b .L_0800aa94
+.L_0800ab1c:
+	strb r5, [r6, #20]
+	b .L_0800aa94
+.L_0800ab20:
+	ldrh r3, [r6, #2]
+	lsls r2, r5, #4
+	adds r3, r3, r2
+	strh r3, [r6, #2]
+	b .L_0800aa94
 .L_0800ab2a:
 	ldrb r3, [r6, #20]
 	adds r3, #254
@@ -155,14 +143,15 @@ Func_0800aa0c:
 .L_0800ab32:
 	strb r5, [r6, #4]
 	b .L_0800aa94
-	.2byte 0x23ff
-	.2byte 0x75f3
-	.2byte 0x8873
-	.2byte 0x012a
-	.2byte 0x189b
-	.2byte 0x20ff
-	.2byte 0x8073
-	.2byte 0xe013
+.L_0800ab36:
+	movs r3, #255
+	strb r3, [r6, #23]
+	ldrh r3, [r6, #2]
+	lsls r2, r5, #4
+	adds r3, r3, r2
+	movs r0, #255
+	strh r3, [r6, #2]
+	b .L_0800ab6e
 .L_0800ab46:
 	movs r3, #255
 	mov r1, r11

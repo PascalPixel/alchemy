@@ -151,7 +151,7 @@ ColossoLogRollingStage_SceneTask:
 	pop {r0}
 	bx r0
 .L_0200816c:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_02008170:
 	.4byte gCell
 .L_02008174:
@@ -505,7 +505,7 @@ FieldScene_RunScene3bcSequenceB:
 	lsls r5, r5, #12
 	subs r0, r0, r3
 	adds r1, r5, #0
-	bl __divsi3
+	bl Engine_MathDivide
 	ldr r3, [sp, #16]
 	adds r3, #236
 	ldr r3, [r3]
@@ -515,7 +515,7 @@ FieldScene_RunScene3bcSequenceB:
 	adds r1, r5, #0
 	subs r0, r0, r3
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Engine_MathDivide
 	ldr r3, [sp, #16]
 	adds r3, #218
 	movs r1, #0
@@ -570,7 +570,7 @@ FieldScene_RunScene3bcSequenceB:
 	lsls r5, r5, #12
 	subs r0, r0, r3
 	adds r1, r5, #0
-	bl __divsi3
+	bl Engine_MathDivide
 	ldr r3, [sp, #16]
 	adds r3, #236
 	ldr r3, [r3]
@@ -580,7 +580,7 @@ FieldScene_RunScene3bcSequenceB:
 	adds r1, r5, #0
 	subs r0, r0, r3
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Engine_MathDivide
 	ldr r3, [sp, #16]
 	adds r3, #218
 	movs r1, #0

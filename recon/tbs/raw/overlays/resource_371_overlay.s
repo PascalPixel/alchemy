@@ -1029,7 +1029,7 @@ Func_020028e8:
 .L_0200aca8:
 	.4byte 0x176d0000
 .L_0200acac:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0200acb0:
 	.4byte 0x0000085d
 	.section .rodata.x0200c4ac,"a",%progbits

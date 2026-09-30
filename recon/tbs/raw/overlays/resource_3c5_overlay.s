@@ -56,7 +56,7 @@ BabiIriguchi_SetupScene:
 	b .L_0200aaf2
 	.2byte 0x0000
 .L_0200a904:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0200a908:
 	.4byte gCell
 .L_0200a90c:

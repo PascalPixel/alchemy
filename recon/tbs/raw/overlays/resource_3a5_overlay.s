@@ -242,7 +242,7 @@ Func_02000e2c:
 	pop {r0}
 	bx r0
 .L_02009028:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0200902c:
 	.4byte gCell
 .L_02009030:
@@ -428,7 +428,7 @@ Func_020018a4:
 	adds r0, r6, #0
 	adds r7, r2, #0
 	str r4, [sp, #0]
-	bl __divsi3
+	bl IwramSignedDivideEntry
 	movs r1, #6
 	add r8, r0
 	b .L_02009a00
@@ -448,7 +448,7 @@ Func_020018a4:
 	.4byte Data_020026bc
 .L_02009a00:
 	adds r0, r6, #0
-	bl __divsi3
+	bl IwramSignedDivideEntry
 	subs r7, #20
 	subs r0, r7, r0
 	adds r7, r0, #0
@@ -464,7 +464,7 @@ Func_020018a4:
 	beq .L_02009a30
 	lsls r0, r6, #6
 	movs r1, #120
-	bl __divsi3
+	bl IwramSignedDivideEntry
 	adds r0, r5, r0
 	adds r5, r0, #0
 	ldr r4, [sp, #0]
@@ -525,7 +525,7 @@ Func_020018a4:
 	movs r3, #0
 	ldrsh r1, [r2, r3]
 	lsls r0, r0, #3
-	bl __divsi3
+	bl IwramSignedDivideEntry
 	ldr r5, .L_02009af8
 	movs r1, #236
 	strh r0, [r5]

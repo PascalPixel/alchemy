@@ -4,44 +4,6 @@
 	.global Rom_Start
 Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
-	.section .rom.00002ef4, "ax"
-	.incbin "baserom.gba", 0x00002ef4, 0x00000044
-	.section .rom.00002f38, "ax"
-	.global RuntimeDispatch_ReservedNoOpA
-	.type RuntimeDispatch_ReservedNoOpA, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpA:
-	.incbin "baserom.gba", 0x00002f38, 0x00000004
-	.section .rom.00002f3c, "ax"
-	.global RuntimeDispatch_ReservedNoOpB
-	.type RuntimeDispatch_ReservedNoOpB, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpB:
-	.incbin "baserom.gba", 0x00002f3c, 0x00000004
-	.section .rom.00002f40, "ax"
-	.global RuntimeDispatch_ReservedNoOpC
-	.type RuntimeDispatch_ReservedNoOpC, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpC:
-	.incbin "baserom.gba", 0x00002f40, 0x00000004
-	.section .rom.00002f44, "ax"
-	.global RuntimeDispatch_ReservedNoOpD
-	.type RuntimeDispatch_ReservedNoOpD, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpD:
-	.incbin "baserom.gba", 0x00002f44, 0x00000004
-	.section .rom.00002f48, "ax"
-	.global RuntimeDispatch_ReservedNoOpE
-	.type RuntimeDispatch_ReservedNoOpE, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpE:
-	.incbin "baserom.gba", 0x00002f48, 0x00000004
-	.section .rom.00002f4c, "ax"
-	.global RuntimeDispatch_ReturnZero
-	.type RuntimeDispatch_ReturnZero, %function
-	.thumb_func
-RuntimeDispatch_ReturnZero:
-	.incbin "baserom.gba", 0x00002f4c, 0x00000004
 	.section .rom.00005024, "ax"
 	.global Graphics_PrepareTransfer
 	.type Graphics_PrepareTransfer, %function
@@ -499,12 +461,6 @@ SaveMenu_SelectSlot:
 	.thumb_func
 NameEntry_EditOwnerName:
 	.incbin "baserom.gba", 0x00020b80, 0x00000494
-	.section .rom.000211d0, "ax"
-	.global Djinn_ShowJoinedMessage
-	.type Djinn_ShowJoinedMessage, %function
-	.thumb_func
-Djinn_ShowJoinedMessage:
-	.incbin "baserom.gba", 0x000211d0, 0x00000138
 	.section .rom.00021338, "ax"
 	.global Party_ShowJoinedMessage
 	.type Party_ShowJoinedMessage, %function
@@ -630,7 +586,10 @@ SideObject_ActorKindIdMap:
 	.incbin "baserom.gba", 0x000369a0, 0x000009d4
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
-	.incbin "baserom.gba", 0x00037374, 0x00000026
+	.incbin "baserom.gba", 0x00037374, 0x0000001e
+	.global Data_080371fe
+Data_080371fe:
+	.incbin "baserom.gba", 0x00037392, 0x00000008
 	.global Party_CharacterValues
 Party_CharacterValues:
 	.incbin "baserom.gba", 0x0003739a, 0x00000010
@@ -1081,8 +1040,6 @@ RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x000a24d0, 0x00000de4
 	.section .rom.000a38cc, "ax"
 	.incbin "baserom.gba", 0x000a38cc, 0x00000338
-	.section .rom.000a3d98, "ax"
-	.incbin "baserom.gba", 0x000a3d98, 0x00000044
 	.section .rom.000a414a, "ax"
 	.incbin "baserom.gba", 0x000a414a, 0x00000342
 	.section .rom.000a4f08, "ax"

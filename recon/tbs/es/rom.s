@@ -6,44 +6,6 @@ Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
-	.section .rom.00002f14, "ax"
-	.incbin "baserom.gba", 0x00002f14, 0x00000044
-	.section .rom.00002f58, "ax"
-	.global RuntimeDispatch_ReservedNoOpA
-	.type RuntimeDispatch_ReservedNoOpA, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpA:
-	.incbin "baserom.gba", 0x00002f58, 0x00000004
-	.section .rom.00002f5c, "ax"
-	.global RuntimeDispatch_ReservedNoOpB
-	.type RuntimeDispatch_ReservedNoOpB, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpB:
-	.incbin "baserom.gba", 0x00002f5c, 0x00000004
-	.section .rom.00002f60, "ax"
-	.global RuntimeDispatch_ReservedNoOpC
-	.type RuntimeDispatch_ReservedNoOpC, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpC:
-	.incbin "baserom.gba", 0x00002f60, 0x00000004
-	.section .rom.00002f64, "ax"
-	.global RuntimeDispatch_ReservedNoOpD
-	.type RuntimeDispatch_ReservedNoOpD, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpD:
-	.incbin "baserom.gba", 0x00002f64, 0x00000004
-	.section .rom.00002f68, "ax"
-	.global RuntimeDispatch_ReservedNoOpE
-	.type RuntimeDispatch_ReservedNoOpE, %function
-	.thumb_func
-RuntimeDispatch_ReservedNoOpE:
-	.incbin "baserom.gba", 0x00002f68, 0x00000004
-	.section .rom.00002f6c, "ax"
-	.global RuntimeDispatch_ReturnZero
-	.type RuntimeDispatch_ReturnZero, %function
-	.thumb_func
-RuntimeDispatch_ReturnZero:
-	.incbin "baserom.gba", 0x00002f6c, 0x00000004
 	.section .rom.00005044, "ax"
 	.global Graphics_PrepareTransfer
 	.type Graphics_PrepareTransfer, %function
@@ -494,8 +456,6 @@ UiText_DrawNumberInWindow:
 	.thumb_func
 UiWindow_DrawPartyStatusContents:
 	.incbin "baserom.gba", 0x0001e21c, 0x000003d4
-	.section .rom.0001f1b4, "ax"
-	.incbin "baserom.gba", 0x0001f1b4, 0x000000ac
 	.section .rom.0001f260, "ax"
 	.global SaveMenu_SelectSlot
 	.type SaveMenu_SelectSlot, %function
@@ -522,12 +482,6 @@ PartyTalkMenu_Choose:
 	.thumb_func
 Party_ShowJoinedMessage:
 	.incbin "baserom.gba", 0x000203cc, 0x000000f8
-	.section .rom.00020c70, "ax"
-	.global Link_CreateCountdownLabelWindow
-	.type Link_CreateCountdownLabelWindow, %function
-	.thumb_func
-Link_CreateCountdownLabelWindow:
-	.incbin "baserom.gba", 0x00020c70, 0x00000030
 	.section .rom.00020ea6, "ax"
 	.incbin "baserom.gba", 0x00020ea6, 0x000008fe
 	.section .rom.00021858, "ax"
@@ -552,12 +506,6 @@ Battle_CollectPartyCommands:
 	.thumb_func
 AffineEffect_UpdateFrame:
 	.incbin "baserom.gba", 0x00027354, 0x00000348
-	.section .rom.00027dc4, "ax"
-	.global Menu_SelectResourceLayout
-	.type Menu_SelectResourceLayout, %function
-	.thumb_func
-Menu_SelectResourceLayout:
-	.incbin "baserom.gba", 0x00027dc4, 0x00000170
 	.section .rom.00028714, "ax"
 	.global DebugMenu_BrowseIcons
 	.type DebugMenu_BrowseIcons, %function
@@ -650,7 +598,10 @@ SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x00035aac, 0x00000028
 	.global SideObject_ActorKindIdMap
 SideObject_ActorKindIdMap:
-	.incbin "baserom.gba", 0x00035ad4, 0x000009fc
+	.incbin "baserom.gba", 0x00035ad4, 0x000009d4
+	.global StatusMenu_LevelLetterString
+StatusMenu_LevelLetterString:
+	.incbin "baserom.gba", 0x000364a8, 0x00000028
 	.global Data_080371fe
 Data_080371fe:
 	.incbin "baserom.gba", 0x000364d0, 0x00000008
@@ -674,7 +625,10 @@ gRomShiftedTilePair:
 	.incbin "baserom.gba", 0x00036550, 0x00000040
 	.global Graphics_ExpandNibbleTable
 Graphics_ExpandNibbleTable:
-	.incbin "baserom.gba", 0x00036590, 0x0000013f
+	.incbin "baserom.gba", 0x00036590, 0x00000040
+	.global Link_TimeLabelString
+Link_TimeLabelString:
+	.incbin "baserom.gba", 0x000365d0, 0x000000ff
 	.global Menu_SelectionStepDelays
 Menu_SelectionStepDelays:
 	.incbin "baserom.gba", 0x000366cf, 0x00000008
@@ -1505,8 +1459,6 @@ RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x000a6cc4, 0x00000de4
 	.section .rom.000a80c0, "ax"
 	.incbin "baserom.gba", 0x000a80c0, 0x00000338
-	.section .rom.000a858c, "ax"
-	.incbin "baserom.gba", 0x000a858c, 0x00000044
 	.section .rom.000a893e, "ax"
 	.incbin "baserom.gba", 0x000a893e, 0x00000342
 	.section .rom.000a96fc, "ax"
@@ -2411,7 +2363,7 @@ Unnamed_080f3078:
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x000f7168, 0x00001e98
 	.section .rom.000f9440, "ax"
-	.incbin "baserom.gba", 0x000f9440, 0x0000106c
+	.incbin "baserom.gba", 0x000f9440, 0x00000f28
 	.section .rom.000fa4ac, "ax"
 	.global Unnamed_080f7460
 	.type Unnamed_080f7460, %function
@@ -2419,7 +2371,10 @@ LuckyDice_Run:
 Unnamed_080f7460:
 	.incbin "baserom.gba", 0x000fa4ac, 0x00000954
 	.section .rom.000fafc4, "ax"
-	.incbin "baserom.gba", 0x000fafc4, 0x0000083c
+	.incbin "baserom.gba", 0x000fafc4, 0x000007bf
+	.global ReelGame_TitleLetterWidths
+ReelGame_TitleLetterWidths:
+	.incbin "baserom.gba", 0x000fb783, 0x0000007d
 	.section .rom.000fdfa0, "ax"
 	.global Sound_CommandTableTemplate
 Sound_CommandTableTemplate:

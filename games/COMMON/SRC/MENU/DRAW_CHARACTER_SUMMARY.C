@@ -13,6 +13,13 @@ extern u8 MsgClassName;
 extern u8 StatusMenu_LevelLetterString[];
 extern u8 MsgCoins[];
 
+/* The Spanish summary sets its level letters at a pixel offset further left
+   and pushes the coins label right, around its longer words. */
+#if defined(TBS_EDITION_ES)
+#define SUMMARY_COINS_X 56
+#else
+#define SUMMARY_COINS_X 48
+#endif
 
 /* Draws one character entry into the summary surface: its name, the two-digit
  * value at +0x1c, the class message selected by +0x1d, the formatted value at
@@ -27,13 +34,17 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
         UiWindow_DrawDividerLine(surface, 0, 4, 13, 4);
         UiText_DrawStringAtOffset(st + 16, surface, 0, 0);
         extra = 0;
+#if defined(TBS_EDITION_ES)
+        UiText_DrawStringAtOffset(StatusMenu_LevelLetterString, surface, 64, 0);
+#else
         UiText_DrawStringInWindow((s32)StatusMenu_LevelLetterString, surface, 72, 0);
+#endif
         UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
         UiText_DrawCharacterAtOffset(st[29] + (s32)&MsgClassName, surface, 0, 16);
         UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 32);
         UiText_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(st + 32), buf), surface, 48, 40);
         extra = 48;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
-        UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, 48, 48);
+        UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
     }
 }

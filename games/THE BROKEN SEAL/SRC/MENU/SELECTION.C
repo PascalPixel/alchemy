@@ -234,11 +234,12 @@ void Menu_DrawModeIndicator(void)
     if (*shown != *current) {
         *shown = (u16)*current;
         RenderOutput_PrepareForRedraw(*(void **)(state + 124));
+        /* The German help sits in whole character cells, a row apart. */
         if (*current == 0) {
 #if defined(TBS_EDITION_DE)
-            UiText_DrawResource((s32)&MsgPasswordTransferHelp,
+            UiText_DrawCharacterAtOffset((s32)&MsgPasswordTransferHelp,
                 *(void **)(state + 124), 32, 8);
-            UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1,
+            UiText_DrawCharacterAtOffset((s32)&MsgPasswordTransferHelp + 1,
                 *(void **)(state + 124), 32, 24);
 #else
             UiText_DrawResource((s32)&MsgPasswordTransferHelp,
@@ -248,18 +249,17 @@ void Menu_DrawModeIndicator(void)
 #endif
         } else {
 #if defined(TBS_EDITION_DE)
-            UiText_DrawResource((s32)&MsgCableTransferHelp,
+            UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp,
                 *(void **)(state + 124), 0, 0);
+            UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp + 1,
+                *(void **)(state + 124), 0, 16);
+            UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp + 2,
+                *(void **)(state + 124), 0, 32);
 #else
             UiText_DrawResource((s32)&MsgCableTransferHelp,
                 *(void **)(state + 124), 0, 4);
-#endif
             UiText_DrawResource((s32)&MsgCableTransferHelp + 1,
                 *(void **)(state + 124), 0, 16);
-#if defined(TBS_EDITION_DE)
-            UiText_DrawResource((s32)&MsgCableTransferHelp + 2,
-                *(void **)(state + 124), 0, 32);
-#else
             UiText_DrawResource((s32)&MsgCableTransferHelp + 2,
                 *(void **)(state + 124), 0, 28);
 #endif

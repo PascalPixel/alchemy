@@ -2,10 +2,6 @@
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 
-#if !defined(TBS_EDITION_IT)
-/* The Italian edition lays the joining message out its own way, which
-   stays in its scaffold for now. */
-
 struct MessageWindow;
 
 extern u8 *gWindowWork;
@@ -48,7 +44,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
     name = Data_080371fe[element & 3];
     entry = sprite;
     /* FAKEMATCH: the null window is also the style argument (ROM passes its register). */
-    window = UiWindow_Create(2, 1, 26, 5, (s32)window);
+    window = UiWindow_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, (s32)window);
 
     if (window != NULL) {
         UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
@@ -60,7 +56,8 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 
         p = entry;
         *p++ = zero;
-        *p++ = 0x8014000c;
+        /* the Djinni sits half a tile into the window, 12 lines down */
+        *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
         *p = palette | 0xe000;
 
         *(u16 *)(work + RENDER_RESULT_OFS) = zero;
@@ -85,7 +82,6 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
         Resource_ResetEntry(handle);
     }
 }
-#endif
 
 extern s16 Party_CharacterValues[];
 extern s16 Party_CharacterValuesFlag32[];

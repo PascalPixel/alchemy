@@ -91,6 +91,26 @@
 #define MENU_ROW_COUNT   8
 #endif
 
+/* The Djinni joining window: the Italian line takes two more columns, so its
+   window starts a column further left. */
+#if defined(TBS_EDITION_IT)
+#define DJINN_JOIN_X      1
+#define DJINN_JOIN_WIDTH  28
+#else
+#define DJINN_JOIN_X      2
+#define DJINN_JOIN_WIDTH  26
+#endif
+
+/* The reel game's falling title: the Spanish word has nine letters and
+   starts further left. */
+#if defined(TBS_EDITION_ES)
+#define REEL_TITLE_LETTERS 9
+#define REEL_TITLE_X       8
+#else
+#define REEL_TITLE_LETTERS 8
+#define REEL_TITLE_X       24
+#endif
+
 #if defined(TBS_EDITION_JA)
 #define RENDER_RESOURCE_BASE 0x9D4
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \

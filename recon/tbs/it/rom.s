@@ -599,12 +599,6 @@ AffineEffect_UpdateFrame:
 	.thumb_func
 Menu_RunResourceSelectionLoop:
 	.incbin "baserom.gba", 0x000286a0, 0x0000012c
-	.section .rom.00028d30, "ax"
-	.global Menu_SelectResourceLayout
-	.type Menu_SelectResourceLayout, %function
-	.thumb_func
-Menu_SelectResourceLayout:
-	.incbin "baserom.gba", 0x00028d30, 0x00000170
 	.section .rom.00028f80, "ax"
 	.global Menu_RunConfirmSelectionAt
 	.type Menu_RunConfirmSelectionAt, %function

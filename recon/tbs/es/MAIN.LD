@@ -1025,7 +1025,7 @@
     "*/recon/tbs/es/rom.o"(.rom.000b5260)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_PARTY_MEMBER_ITEMS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SELECT_PURCHASE_QUANTITY.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000b5614)
+    "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SELECT_QUANTITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/TRADE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SELL_ITEM.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/COMPUTE_REPAIR_PRICE.o"(.text)

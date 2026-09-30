@@ -36,6 +36,9 @@ Runtime_BumpAllocate:
 	pop	{pc}
 	.2byte 0x6fbf
 	.2byte 0x0300
+	.global Func_08014dac
+	.thumb_func
+Func_08014dac:
 	push	{lr}
 	movs	r1, #192
 	lsls	r1, r1, #18

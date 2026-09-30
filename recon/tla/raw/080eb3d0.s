@@ -416,7 +416,7 @@ Func_080eb3d0:
 	adds	r0, r5, #0
 	movs	r1, #32
 	movs	r2, #32
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r2, [r5, #5]
 	movs	r3, #33
 	negs	r3, r3
@@ -455,7 +455,7 @@ Func_080eb3d0:
 	ldr	r3, [r3, #0]
 	adds	r0, r5, #0
 	strh	r3, [r5, #28]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldrb	r2, [r6, #0]
 .L_080eb75a:
 	movs	r1, #128
@@ -472,7 +472,7 @@ Func_080eb3d0:
 	adds	r0, r5, #0
 	movs	r1, #32
 	movs	r2, #32
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r5, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -508,7 +508,7 @@ Func_080eb3d0:
 	ldr	r3, [r3, #0]
 	adds	r0, r5, #0
 	strh	r3, [r5, #28]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldrb	r2, [r6, #0]
 .L_080eb7c6:
 	lsls	r3, r2, #24
@@ -544,7 +544,7 @@ Func_080eb3d0:
 	ldr	r3, [r3, #0]
 	adds	r0, r5, #0
 	strh	r3, [r5, #28]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 .L_080eb80c:
 	adds	r2, r5, #0
 	adds	r2, #160

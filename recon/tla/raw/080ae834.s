@@ -27,6 +27,9 @@ Func_080ae834:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, pc}
+	.global Func_080ae868
+	.thumb_func
+Func_080ae868:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -42,7 +45,7 @@ Func_080ae834:
 	beq.n	.L_080ae886
 	b.n	.L_080aea18
 .L_080ae886:
-	bl	0x080afdbc
+	bl	Func_080afdbc
 	mov	fp, r0
 	cmp	r0, #0
 	ble.n	.L_080ae8aa
@@ -72,7 +75,7 @@ Func_080ae834:
 	lsls	r0, r0, #24
 	asrs	r0, r0, #24
 	adds	r6, #1
-	bl	0x080afe1c
+	bl	Func_080afe1c
 	cmp	r5, #0
 	bne.n	.L_080ae8b4
 .L_080ae8c6:
@@ -80,7 +83,7 @@ Func_080ae834:
 .L_080ae8c8:
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	cmp	r5, #3
 	ble.n	.L_080ae8c8
 	movs	r0, #0
@@ -102,10 +105,10 @@ Func_080ae834:
 	mov	r9, r2
 	mov	sl, r6
 .L_080ae8fc:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #2
 	lsrs	r5, r0, #16
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #3
 	subs	r3, r3, r0
 	lsls	r0, r5, #2
@@ -159,7 +162,7 @@ Func_080ae834:
 	subs	r3, r3, r2
 	cmp	r3, #1
 	bgt.n	.L_080ae99e
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #100
 	adds	r2, r0, #0
 	muls	r2, r3
@@ -225,7 +228,7 @@ Func_080ae834:
 .L_080ae9f0:
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	0x080afe1c
+	bl	Func_080afe1c
 	cmp	r5, #3
 	ble.n	.L_080ae9f0
 	mov	r3, fp
@@ -239,7 +242,7 @@ Func_080ae834:
 	lsls	r0, r0, #24
 	asrs	r0, r0, #24
 	adds	r6, #1
-	bl	0x080afdd8
+	bl	Func_080afdd8
 	cmp	r5, #0
 	bne.n	.L_080aea06
 .L_080aea18:

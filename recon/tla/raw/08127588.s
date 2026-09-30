@@ -119,13 +119,13 @@ Func_08127588:
 	movs	r0, #128
 	sub	sp, #16
 	mov	r9, r2
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	r5, sp
 	movs	r3, #0
 	mov	sl, r0
 	adds	r0, r5, #0
 	mov	r8, r3
-	bl	0x0811a038
+	bl	Func_0811a038
 	adds	r7, r0, #0
 	cmp	r7, #0
 	ble.n	.L_08127692
@@ -337,7 +337,7 @@ Func_08127588:
 	mov	r3, r9
 	cmp	r3, #0
 	beq.n	.L_08127848
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r3, r9
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -382,7 +382,7 @@ Func_08127588:
 	str	r0, [sp, #8]
 	movs	r0, #36
 	mov	sl, r1
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	r9, r0
 	ldr	r0, [sp, #8]
 	bl	Owner_GetState
@@ -583,7 +583,7 @@ Func_08127588:
 	push	{r6, r7}
 	mov	sl, r0
 	movs	r0, #36
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	r8, r0
 	mov	r0, sl
 	bl	Owner_GetState

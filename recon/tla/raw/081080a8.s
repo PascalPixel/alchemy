@@ -178,7 +178,7 @@ Func_081080a8:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #40]
-	bl	0x080145a8
+	bl	Func_080145a8
 	bl	0x0810bdf4
 	add	sp, #4
 	pop	{r5, pc}
@@ -206,36 +206,36 @@ Func_081080a8:
 	adds	r2, #236
 	adds	r3, r5, r2
 	ldrh	r0, [r3, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #238
 	adds	r3, r5, r2
 	ldrh	r0, [r3, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r2, #158
 	lsls	r2, r2, #3
 	adds	r3, r5, r2
 	ldrh	r0, [r3, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #242
 	adds	r3, r5, r2
 	ldrh	r0, [r3, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #244
 	adds	r3, r5, r2
 	ldrh	r0, [r3, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r3, #128
 	lsls	r3, r3, #3
 	adds	r3, #246
 	adds	r5, r5, r3
 	ldrh	r0, [r5, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #220
 	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, pc}
@@ -481,6 +481,9 @@ Func_081080a8:
 	.4byte 0x02000240
 	.2byte 0x0d40
 	.2byte 0x0003
+	.global Func_081084e0
+	.thumb_func
+Func_081084e0:
 	push	{lr}
 	b.n	.L_081084ea
 .L_081084e4:

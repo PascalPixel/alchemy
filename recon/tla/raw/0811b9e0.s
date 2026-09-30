@@ -83,7 +83,7 @@ Func_0811b9e0:
 	beq.n	.L_0811ba9a
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	cmp	r0, #0
 	beq.n	.L_0811ba9a
 	ldr	r3, [r6, #12]

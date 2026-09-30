@@ -348,7 +348,7 @@ Func_08124cc4:
 	ldrh	r1, [r3, #0]
 	movs	r2, #0
 	movs	r0, #2
-	bl	0x0812628c
+	bl	Func_0812628c
 	ldr	r3, [pc, #348]
 	ldr	r2, [sp, #4]
 	ldr	r4, [r3, #4]
@@ -390,7 +390,7 @@ Func_08124cc4:
 	bne.n	.L_08125004
 	lsls	r0, r0, #1
 	add	r0, fp
-	bl	0x0811a0b0
+	bl	Func_0811a0b0
 	add	r8, r0
 .L_08125004:
 	movs	r3, #0
@@ -1183,12 +1183,12 @@ Battle_ApplyActionExtras:
 .L_081256a4:
 	movs	r0, #1
 	movs	r1, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	beq.n	.L_081256c0
 	movs	r0, #2
 	movs	r1, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	beq.n	.L_081256c0
 	movs	r1, #1
@@ -1332,7 +1332,7 @@ Battle_ApplyActionExtras:
 	movs	r5, #166
 	lsls	r5, r5, #1
 	adds	r0, r5, #0
-	bl	0x08014dac
+	bl	Func_08014dac
 	adds	r2, r5, #0
 	ldr	r3, [pc, #704]
 	ldr	r1, [sp, #8]
@@ -1709,16 +1709,16 @@ Battle_ApplyActionExtras:
 	ldr	r3, [pc, #56]
 	adds	r2, #66
 	strh	r3, [r2, #0]
-	bl	0x08013e70
+	bl	Func_08013e70
 	movs	r6, #128
 	lsls	r6, r6, #19
 	movs	r5, #0
 	adds	r6, #76
 .L_08125b0c:
-	bl	0x08014878
-	bl	0x08014878
-	bl	0x08014878
-	bl	0x08014878
+	bl	Func_08014878
+	bl	Func_08014878
+	bl	Func_08014878
+	bl	Func_08014878
 	lsls	r3, r5, #8
 	orrs	r3, r5
 	strh	r3, [r6, #0]

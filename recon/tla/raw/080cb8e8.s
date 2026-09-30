@@ -94,7 +94,7 @@ Func_080cb8e8:
 	adds	r2, #255
 	adds	r3, r5, r2
 	strb	r1, [r3, #0]
-	bl	0x080144c0
+	bl	Func_080144c0
 	movs	r0, #0
 	bl	0x080d793c
 	movs	r4, #253
@@ -170,7 +170,7 @@ Func_080cb8e8:
 	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cba4e
-	bl	0x080cae5c
+	bl	Func_080cae5c
 .L_080cba4e:
 	ldr	r5, [pc, #72]
 	movs	r2, #149
@@ -218,11 +218,11 @@ Func_080cb8e8:
 	.2byte 0x2020
 	adds	r0, #255
 	bl	GameFlag_ClearBitFar
-	bl	0x080d1684
+	bl	Func_080d1684
 	movs	r0, #128
 	lsls	r0, r0, #9
 	movs	r1, #0
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r2, #214
 	lsls	r2, r2, #1
 	movs	r3, #128
@@ -338,10 +338,10 @@ Func_080cb8e8:
 	ldrsb	r3, [r6, r3]
 	cmp	r3, #2
 	bne.n	.L_080cbbc8
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	str	r7, [r0, #24]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	movs	r1, #0
 	bl	ObjectDispatch_SetSingleChildField26Far
@@ -394,7 +394,7 @@ Func_080cb8e8:
 	mov	r2, r9
 	ldr	r0, [r1, #0]
 	ldr	r1, [r2, #0]
-	bl	0x080d01cc
+	bl	Func_080d01cc
 	movs	r3, #1
 	mov	r4, sl
 	strh	r3, [r4, #0]
@@ -439,7 +439,7 @@ Func_080cb8e8:
 	strb	r3, [r2, #0]
 	movs	r4, #0
 	mov	sl, r4
-	bl	0x080e7804
+	bl	Func_080e7804
 	movs	r0, #128
 	lsls	r0, r0, #2
 	adds	r0, #190
@@ -502,7 +502,7 @@ Func_080cb8e8:
 	bne.n	.L_080cbd14
 	movs	r3, #0
 	strb	r3, [r2, #0]
-	bl	0x080e7238
+	bl	Func_080e7238
 .L_080cbd14:
 	movs	r5, #48
 	adds	r5, #255
@@ -539,14 +539,14 @@ Func_080cb8e8:
 	ldrh	r3, [r5, #0]
 	cmp	r3, #0
 	beq.n	.L_080cbd7c
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	ldrh	r0, [r5, #0]
-	bl	0x080d25c8
+	bl	Func_080d25c8
 	cmp	r0, #0
 	bne.n	.L_080cbd74
 	ldrh	r0, [r5, #0]
 	movs	r1, #0
-	bl	0x080d260c
+	bl	Func_080d260c
 .L_080cbd74:
 	bl	Func_080cb8a4
 	movs	r3, #0
@@ -638,7 +638,7 @@ Func_080cb8e8:
 	b.n	.L_080cbf84
 .L_080cbe28:
 	bl	Func_080d2260
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	movs	r3, #182
 	lsls	r3, r3, #1
 	add	r3, r8
@@ -791,7 +791,7 @@ Func_080cb8e8:
 	asrs	r0, r0, #16
 	asrs	r1, r1, #16
 	lsls	r6, r6, #2
-	bl	0x080ca3f4
+	bl	Func_080ca3f4
 	adds	r6, #255
 	bl	Func_080cb8a4
 	b.n	.L_080cbf7c
@@ -1023,7 +1023,7 @@ Func_080cb8e8:
 	beq.n	.L_080cc192
 	str	r1, [sp, #4]
 	bl	Func_080d2260
-	bl	0x080cad9c
+	bl	Func_080cad9c
 	movs	r3, #128
 	ldr	r0, [sp, #8]
 	lsls	r3, r3, #2
@@ -1083,7 +1083,7 @@ Func_080cb8e8:
 .L_080cc1be:
 	movs	r0, #8
 .L_080cc1c0:
-	bl	0x080cd91c
+	bl	Func_080cd91c
 	adds	r5, r0, #0
 	movs	r3, #1
 	negs	r3, r3
@@ -1151,7 +1151,7 @@ Func_080cb8e8:
 	bl	Func_080d2260
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	movs	r0, #131
 	lsls	r0, r0, #1
 	bl	GameFlag_SetBitFar
@@ -1212,11 +1212,11 @@ Func_080cb8e8:
 	ldrsh	r6, [r5, r1]
 	cmp	r6, #0
 	beq.n	.L_080cc2e8
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	ldrh	r3, [r5, #0]
 	ldr	r0, [pc, #40]
 	ands	r0, r3
-	bl	0x080ccec8
+	bl	Func_080ccec8
 	bl	Func_080cb8a4
 	b.n	.L_080cc106
 .L_080cc2e8:
@@ -1227,7 +1227,7 @@ Func_080cb8e8:
 	ldrsh	r7, [r5, r2]
 	cmp	r7, #0
 	beq.n	.L_080cc310
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
 	bl	0x080cd808
@@ -1252,7 +1252,7 @@ Func_080cb8e8:
 	bl	0x08038208
 	cmp	r6, #0
 	bne.n	.L_080cc33a
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	movs	r0, #1
 	bl	WaitFrames
 .L_080cc33a:
@@ -1276,7 +1276,7 @@ Func_080cb8e8:
 	ldrsh	r3, [r5, r2]
 	cmp	r3, #0
 	beq.n	.L_080cc380
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
 	movs	r3, #193
@@ -1300,7 +1300,7 @@ Func_080cb8e8:
 	movs	r0, #111
 	bl	Audio_PlayCue
 	bl	Func_080d2260
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	movs	r0, #131
 	lsls	r0, r0, #1
 	bl	GameFlag_SetBitFar
@@ -1482,7 +1482,7 @@ Func_080cb8e8:
 	add	r5, r8
 	ldr	r0, [r3, #0]
 	ldr	r1, [r5, #0]
-	bl	0x080d0520
+	bl	Func_080d0520
 	movs	r3, #0
 	strh	r3, [r7, #0]
 	ldr	r0, [r5, #0]

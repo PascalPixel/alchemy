@@ -40,7 +40,7 @@ Func_0803a7ac:
 	str	r0, [sp, #0]
 	add	r1, sp, #24
 	mov	r0, sl
-	bl	0x0803b880
+	bl	Func_0803b880
 	ldr	r2, [sp, #16]
 	movs	r3, #30
 	subs	r3, r3, r2

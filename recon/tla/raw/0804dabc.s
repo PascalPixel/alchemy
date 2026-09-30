@@ -7,7 +7,7 @@ Func_0804dabc:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0xdb75
@@ -85,6 +85,9 @@ Func_0804dabc:
 	.4byte 0x0805f8d8
 	.2byte 0x0eba
 	.2byte 0x0000
+	.global Func_0804db74
+	.thumb_func
+Func_0804db74:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

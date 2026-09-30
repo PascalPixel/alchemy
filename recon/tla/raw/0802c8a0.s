@@ -20,7 +20,7 @@ Func_0802c8a0:
 	mov	r2, r8
 	strb	r2, [r3, #0]
 	ldr	r0, [pc, #160]
-	bl	0x08014694
+	bl	Func_08014694
 	movs	r2, #144
 	lsls	r2, r2, #4
 	adds	r2, #114
@@ -34,7 +34,7 @@ Func_0802c8a0:
 	ldr	r0, [r6, #12]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #132]
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #151
 	lsls	r3, r3, #4
 	adds	r7, r5, r3
@@ -45,7 +45,7 @@ Func_0802c8a0:
 	ldr	r0, [r6, #16]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #112]
-	bl	0x0801587c
+	bl	Func_0801587c
 .L_0802c900:
 	movs	r3, #0
 	strb	r3, [r7, #0]

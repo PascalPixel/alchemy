@@ -22,7 +22,7 @@ Func_0811a4e0:
 	lsls	r5, r5, #1
 	add	r5, r9
 	ldrh	r0, [r5, #0]
-	bl	0x081280fc
+	bl	Func_081280fc
 	movs	r1, #0
 	mov	r8, r0
 	ldrh	r0, [r5, #0]
@@ -330,7 +330,7 @@ Func_0811a4e0:
 	movs	r1, #0
 	strb	r3, [r2, #0]
 	movs	r0, #0
-	bl	0x080148e8
+	bl	Func_080148e8
 	movs	r3, #128
 	lsls	r3, r3, #8
 	adds	r2, r6, #0
@@ -1565,7 +1565,7 @@ BattlePresentation_SpawnActorObject:
 .L_0811b116:
 	asrs	r0, r3, #3
 	ldr	r1, [sp, #16]
-	bl	0x080148e8
+	bl	Func_080148e8
 	movs	r3, #128
 	lsls	r3, r3, #8
 	adds	r0, r0, r3

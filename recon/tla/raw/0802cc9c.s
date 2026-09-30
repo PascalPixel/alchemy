@@ -75,7 +75,7 @@ Func_0802cc9c:
 	beq.n	.L_0802cd3a
 	ldr	r5, [pc, #36]
 	adds	r0, r5, #0
-	bl	0x0801456c
+	bl	Func_0801456c
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r0, r3
@@ -83,7 +83,7 @@ Func_0802cc9c:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	adds	r0, r5, #0
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_0802cd3a:
 	pop	{r3, r5}
 	mov	r8, r3
@@ -93,6 +93,9 @@ Func_0802cc9c:
 	.4byte 0x03000258
 	.2byte 0xcb65
 	.2byte 0x0802
+	.global Func_0802cd4c
+	.thumb_func
+Func_0802cd4c:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -106,11 +109,14 @@ Func_0802cc9c:
 	cmp	r3, #0
 	bne.n	.L_0802cd6a
 	ldr	r0, [pc, #4]
-	bl	0x08014694
+	bl	Func_08014694
 .L_0802cd6a:
 	pop	{pc}
 	.2byte 0xcb65
 	.2byte 0x0802
+	.global Func_0802cd70
+	.thumb_func
+Func_0802cd70:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -124,7 +130,7 @@ Func_0802cc9c:
 	cmp	r3, #0
 	bne.n	.L_0802cd8e
 	ldr	r0, [pc, #4]
-	bl	0x0801475c
+	bl	Func_0801475c
 .L_0802cd8e:
 	pop	{pc}
 	.2byte 0xcb65

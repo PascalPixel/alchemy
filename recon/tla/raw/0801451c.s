@@ -50,6 +50,9 @@ Func_0801451c:
 	movs	r0, r0
 	.2byte 0x3610
 	.2byte 0x0200
+	.global Func_0801456c
+	.thumb_func
+Func_0801456c:
 	push	{r5, lr}
 	ldr	r4, [pc, #48]
 	movs	r5, #1
@@ -81,6 +84,9 @@ Func_0801451c:
 	.4byte 0x02003610
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Func_080145a8
+	.thumb_func
+Func_080145a8:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #84]
 	ldr	r4, [pc, #84]

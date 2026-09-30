@@ -5,7 +5,7 @@
 Func_080d2260:
 .L_080d2260:
 	push	{lr}
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r3, #128
 	lsls	r3, r3, #9
@@ -38,6 +38,9 @@ Func_080d2260:
 	pop	{pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d22a8
+	.thumb_func
+Func_080d22a8:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -97,7 +100,7 @@ Func_080d2260:
 	strh	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #36]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #153
 	lsls	r0, r0, #1
 	bl	GameFlag_ClearBitFar
@@ -117,6 +120,9 @@ Func_080d2260:
 	.4byte 0x080d21f5
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2350
+	.thumb_func
+Func_080d2350:
 	push	{lr}
 	ldr	r0, [pc, #52]
 	bl	Func_08014644
@@ -134,12 +140,12 @@ Func_080d2260:
 	adds	r3, r2, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x080d4384
+	bl	Func_080d4384
 	b.n	.L_080d2382
 .L_080d237a:
 	movs	r0, #8
 	movs	r1, #1
-	bl	0x080d4384
+	bl	Func_080d4384
 .L_080d2382:
 	bl	Func_080ad2b8
 	pop	{pc}

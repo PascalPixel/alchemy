@@ -10,7 +10,7 @@ Func_080ec1d0:
 	push	{r6, r7}
 	mov	sl, r1
 	mov	r8, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	movs	r7, #143
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -138,8 +138,8 @@ Func_080ec1d0:
 	str	r1, [sp, #16]
 	str	r2, [sp, #12]
 	str	r0, [sp, #20]
-	bl	0x080cdf5c
-	bl	.L_080ed804
+	bl	Func_080cdf5c
+	bl	Func_080ed804
 	mov	fp, r0
 	movs	r0, #128
 	lsls	r0, r0, #19
@@ -416,7 +416,7 @@ Func_080ec1d0:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #84
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	ldr	r0, [pc, #680]
 	ldr	r1, [pc, #680]
 	adds	r0, #32
@@ -436,7 +436,7 @@ Func_080ec1d0:
 	str	r3, [sp, #36]
 	str	r4, [sp, #32]
 	str	r4, [sp, #28]
-	bl	.L_080ed804
+	bl	Func_080ed804
 	ldr	r5, [pc, #640]
 	str	r0, [sp, #8]
 	movs	r0, #198
@@ -525,7 +525,7 @@ Func_080ec1d0:
 	.2byte 0xf800
 	.2byte 0x182d
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 	adds	r7, r0, #0
 .L_080ec5c4:
 	adds	r1, r7, #0
@@ -608,7 +608,7 @@ Func_080ec1d0:
 	ldr	r3, [r0, #8]
 	str	r3, [r5, #8]
 	ldr	r0, [r0, #24]
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r5, #0]
 	movs	r4, #128
 	lsls	r4, r4, #13
@@ -979,7 +979,7 @@ Func_080ec1d0:
 	adds	r5, r0, #0
 	adds	r5, #12
 	str	r5, [sp, #52]
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080ec950:
 	movs	r0, #1
 	add	r9, r0
@@ -1019,7 +1019,7 @@ Func_080ec1d0:
 	mov	r5, sl
 	subs	r1, r4, r5
 	subs	r0, r2, r3
-	bl	0x080148e8
+	bl	Func_080148e8
 	adds	r1, r0, #0
 	ldr	r0, [pc, #60]
 	add	r5, sp, #72
@@ -1032,7 +1032,7 @@ Func_080ec1d0:
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
 	ldr	r0, [r0, #24]
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r5, #0]
 	ldr	r1, [pc, #32]
 	str	r3, [r1, #4]
@@ -1156,7 +1156,7 @@ Func_080ec1d0:
 .L_080ecab2:
 	ldr	r0, [sp, #52]
 	movs	r1, #246
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080ecaba:
 	ldr	r0, [pc, #16]
 	ldr	r3, [pc, #16]
@@ -1237,7 +1237,7 @@ Func_080ec1d0:
 .L_080ecb5a:
 	ldr	r0, [sp, #52]
 	movs	r1, #246
-	bl	0x080140d8
+	bl	Func_080140d8
 	ldr	r4, [pc, #12]
 	ldr	r5, [sp, #40]
 	b.n	.L_080ecb74
@@ -1305,7 +1305,7 @@ Func_080ec1d0:
 .L_080ecbdc:
 	ldr	r0, [sp, #20]
 	ldr	r1, [sp, #16]
-	bl	0x080ca280
+	bl	Func_080ca280
 	ldr	r3, [pc, #536]
 	adds	r0, r0, r3
 	str	r0, [sp, #20]
@@ -1712,7 +1712,7 @@ Func_080ec1d0:
 	lsls	r1, r7, #12
 	add	r0, r9
 	adds	r1, r1, r2
-	bl	0x0801587c
+	bl	Func_0801587c
 	lsls	r5, r7, #6
 	ldr	r3, [pc, #80]
 	add	r5, r8
@@ -1806,7 +1806,7 @@ Func_080ec1d0:
 	ldr	r6, [pc, #96]
 	adds	r0, r7, r0
 	adds	r1, r1, r6
-	bl	0x0801587c
+	bl	Func_0801587c
 	mov	r3, r8
 	movs	r7, #0
 	cmp	r3, #63
@@ -2021,7 +2021,7 @@ Func_080ec1d0:
 	.2byte 0x183f
 	adds	r0, r7, #0
 	str	r7, [sp, #0]
-	bl	0x080149e0
+	bl	Func_080149e0
 	adds	r7, r0, #0
 .L_080ed174:
 	adds	r1, r7, #0
@@ -2217,7 +2217,7 @@ Func_080ec1d0:
 	cmp	r3, #3
 	beq.n	.L_080ed30c
 .L_080ed2f6:
-	bl	0x080cad9c
+	bl	Func_080cad9c
 	ldr	r6, [sp, #16]
 	movs	r1, #197
 	lsls	r1, r1, #1
@@ -2297,7 +2297,7 @@ Func_080ec1d0:
 	str	r3, [r2, #0]
 	bl	Func_080d2a64
 	bl	Func_080d2a8c
-	bl	0x080144c0
+	bl	Func_080144c0
 	bl	Func_08038000
 	ldr	r2, [sp, #12]
 	movs	r0, #1
@@ -2601,7 +2601,7 @@ Func_080ec1d0:
 	bne.n	.L_080ed5f2
 	b.n	.L_080ed498
 .L_080ed5f2:
-	bl	.L_080ed804
+	bl	Func_080ed804
 	mov	r4, fp
 	movs	r3, #18
 	ldrsh	r2, [r4, r3]
@@ -2624,7 +2624,7 @@ Func_080ec1d0:
 	movs	r4, #16
 	ldrsh	r3, [r0, r4]
 	adds	r0, r3, #0
-	bl	0x080ca368
+	bl	Func_080ca368
 	b.n	.L_080ed654
 .L_080ed628:
 	ldr	r2, [r5, #12]
@@ -2756,7 +2756,7 @@ Func_080ec1d0:
 	adds	r4, #114
 	adds	r3, r2, r4
 	strb	r5, [r3, #0]
-	bl	0x080d2a3c
+	bl	Func_080d2a3c
 	bl	Func_080d2a8c
 	ldr	r6, [sp, #16]
 	ldr	r2, [sp, #24]
@@ -2802,7 +2802,7 @@ Func_080ec1d0:
 	lsls	r0, r0, #8
 	movs	r1, #6
 	adds	r0, #137
-	bl	0x080d46a4
+	bl	Func_080d46a4
 	ldr	r1, [pc, #72]
 	movs	r2, #128
 	ldr	r3, [r1, #0]
@@ -2832,19 +2832,22 @@ Func_080ec1d0:
 	movs	r0, #128
 	lsls	r0, r0, #9
 	movs	r1, #6
-	bl	0x080d46a4
+	bl	Func_080d46a4
 	b.n	.L_080ed7f8
 .L_080ed7ee:
 	movs	r0, #128
 	lsls	r0, r0, #9
 	movs	r1, #6
-	bl	0x080d46a4
+	bl	Func_080d46a4
 .L_080ed7f8:
 	pop	{r5, r6, pc}
 	movs	r0, r0
 	.4byte 0x03001150
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ed804
+	.thumb_func
+Func_080ed804:
 .L_080ed804:
 	ldr	r0, [pc, #0]
 	bx	lr

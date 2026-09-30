@@ -225,6 +225,9 @@ Func_080f8658:
 	.4byte 0x0000104c
 	.2byte 0x104f
 	.2byte 0x0000
+	.global Func_080f8840
+	.thumb_func
+Func_080f8840:
 .L_080f8840:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -329,7 +332,7 @@ UiIcon_PrepareObject:
 	negs	r1, r1
 	movs	r2, #11
 	adds	r0, r5, #0
-	bl	.L_080f8840
+	bl	Func_080f8840
 	movs	r2, #13
 	mov	r8, r2
 	mov	r3, r8

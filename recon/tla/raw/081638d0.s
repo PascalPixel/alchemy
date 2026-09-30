@@ -65,7 +65,7 @@ Func_081638d0:
 .L_08163950:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #336]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r5, #127
 	movs	r1, #0
 	mov	r9, r1
@@ -224,7 +224,7 @@ Func_081638d0:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #56]
 	lsls	r1, r1, #4
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r2, [pc, #52]
 	movs	r0, #0
 	mov	r8, r0

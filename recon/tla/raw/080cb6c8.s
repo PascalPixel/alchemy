@@ -25,6 +25,9 @@ Func_080cb6c8:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080cb6f4
+	.thumb_func
+Func_080cb6f4:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -38,7 +41,7 @@ Func_080cb6c8:
 	movs	r1, #0
 	bl	Func_080d172c
 	movs	r0, #4
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	movs	r2, #10
 	negs	r2, r2
 	cmp	r5, r2
@@ -170,7 +173,7 @@ Func_080cb6c8:
 	movs	r1, #0
 	bl	Func_080d172c
 	movs	r0, #4
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	movs	r0, #133
 	bl	Audio_PlayCue
 .L_080cb822:
@@ -179,6 +182,9 @@ Func_080cb6c8:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080cb82c
+	.thumb_func
+Func_080cb82c:
 	push	{r5, r6, lr}
 	movs	r1, #213
 	lsls	r1, r1, #4

@@ -53,7 +53,7 @@ Func_080d7430:
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	movs	r3, #12
-	bl	0x080d0c50
+	bl	Func_080d0c50
 	movs	r3, #224
 	lsls	r3, r3, #4
 	add	r8, r3
@@ -76,7 +76,7 @@ Func_080d7430:
 	strh	r3, [r5, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #20]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{r3, r5, r6}
 	mov	r8, r3

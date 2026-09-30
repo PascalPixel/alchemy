@@ -39,7 +39,7 @@ BattleFormation_SelectRandomAvailableMember:
 	adds	r0, #2
 	cmp	r1, #0
 	bge.n	.L_08127ca4
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -131,7 +131,7 @@ BattleFormation_SelectRandomAvailableMember:
 	beq.n	.L_08127d86
 	ldrh	r0, [r6, #0]
 	adds	r0, #8
-	bl	.L_081280fc
+	bl	Func_081280fc
 	negs	r3, r0
 	orrs	r3, r0
 	movs	r2, #2
@@ -180,7 +180,7 @@ BattleFormation_SelectRandomAvailableMember:
 	ldr	r1, [sp, #8]
 	ldrh	r0, [r1, #0]
 	adds	r0, #8
-	bl	.L_081280fc
+	bl	Func_081280fc
 	negs	r1, r0
 	orrs	r1, r0
 	lsrs	r1, r1, #31
@@ -192,7 +192,7 @@ BattleFormation_SelectRandomAvailableMember:
 	bge.n	.L_08127de8
 	adds	r5, r0, #0
 .L_08127de8:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #1
 	muls	r3, r0
 	mov	r2, r8
@@ -230,7 +230,7 @@ BattleFormation_SelectRandomAvailableMember:
 	beq.n	.L_08127e66
 	str	r1, [sp, #4]
 	str	r4, [sp, #0]
-	bl	.L_081280fc
+	bl	Func_081280fc
 	negs	r3, r0
 	orrs	r3, r0
 	lsrs	r3, r3, #31
@@ -291,10 +291,10 @@ BattleFormation_SelectRandomAvailableMember:
 	movs	r7, #0
 	mov	r6, r8
 .L_08127ea0:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r0, #2
 	adds	r5, r5, r0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r5, r5, #16
@@ -372,7 +372,7 @@ BattleFormation_SelectRandomAvailableMember:
 	cmp	r5, #0
 	beq.n	.L_08127fa2
 	str	r4, [sp, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -602,6 +602,9 @@ BattleFormation_SelectRandomAvailableMember:
 	movs	r0, r0
 	.2byte 0x0d0c
 	.2byte 0x0813
+	.global Func_081280fc
+	.thumb_func
+Func_081280fc:
 .L_081280fc:
 	.global Summon_IsEntryFlagged
 	.thumb_func
@@ -651,6 +654,9 @@ Summon_IsEntryFlagged:
 	pop	{pc}
 	.2byte 0x0d0c
 	.2byte 0x0813
+	.global Func_0812814c
+	.thumb_func
+Func_0812814c:
 	push	{lr}
 	movs	r3, #193
 	lsls	r3, r3, #1
@@ -673,6 +679,9 @@ Summon_IsEntryFlagged:
 	movs	r0, r0
 	.2byte 0x0d0c
 	.2byte 0x0813
+	.global Func_08128174
+	.thumb_func
+Func_08128174:
 	push	{lr}
 	movs	r3, #193
 	lsls	r3, r3, #1
@@ -691,6 +700,9 @@ Summon_IsEntryFlagged:
 	pop	{pc}
 	.2byte 0x0d0c
 	.2byte 0x0813
+	.global Func_08128194
+	.thumb_func
+Func_08128194:
 	push	{lr}
 	movs	r3, #193
 	lsls	r3, r3, #1

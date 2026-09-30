@@ -360,8 +360,8 @@ Func_080cc9fc:
 	ldr	r4, [sp, #0]
 	b.n	.L_080ccad6
 .L_080ccca2:
-	bl	0x08014bac
-	bl	0x08014b70
+	bl	Func_08014bac
+	bl	Func_08014b70
 	add	sp, #12
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

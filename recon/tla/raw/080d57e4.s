@@ -61,7 +61,7 @@ Func_080d57e4:
 	ldr	r3, [r6, #16]
 	adds	r2, r7, #0
 	str	r3, [r7, #8]
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r2, [pc, #204]
 	ldr	r3, [r6, #12]
 	adds	r3, r3, r2

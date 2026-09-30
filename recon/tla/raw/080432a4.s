@@ -289,6 +289,9 @@ Func_080432a4:
 	.4byte 0x03001200
 	.2byte 0x0040
 	.2byte 0x0200
+	.global Func_080434ec
+	.thumb_func
+Func_080434ec:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r6, #0
@@ -320,6 +323,9 @@ Func_080432a4:
 	.4byte 0x02000000
 	.2byte 0x000c
 	.2byte 0x0000
+	.global Func_08043534
+	.thumb_func
+Func_08043534:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -328,7 +334,7 @@ Func_080432a4:
 	movs	r2, #0
 	lsls	r0, r0, #6
 	mov	sl, r2
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldr	r3, [pc, #152]
 	adds	r7, r0, #0
 	movs	r2, #0
@@ -409,6 +415,9 @@ Func_080432a4:
 	.4byte 0x02000000
 	.2byte 0x0730
 	.2byte 0x0300
+	.global Func_080435fc
+	.thumb_func
+Func_080435fc:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r6, #0
@@ -446,7 +455,7 @@ Func_080432a4:
 	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_08043642
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	cmp	r5, #0
 	beq.n	.L_08043666
 	ldr	r0, [pc, #44]
@@ -472,6 +481,9 @@ Func_080432a4:
 	.4byte 0x0000000c
 	.2byte 0x0019
 	.2byte 0x0000
+	.global Func_08043690
+	.thumb_func
+Func_08043690:
 	push	{r5, r6, r7, lr}
 	movs	r7, #0
 	bl	0x0801596c
@@ -527,10 +539,10 @@ Func_080432a4:
 	bl	Menu_RunConfirmSelection
 	cmp	r0, #0
 	beq.n	.L_0804370c
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	b.n	.L_08043752
 .L_0804370c:
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 .L_08043710:
 	ldr	r3, [pc, #76]
 	movs	r0, #0
@@ -545,7 +557,7 @@ Func_080432a4:
 	adds	r5, r0, #0
 	adds	r0, r6, #0
 	bl	0x08042eec
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	cmp	r5, #0
 	beq.n	.L_0804374a
 	ldr	r0, [pc, #44]
@@ -570,6 +582,9 @@ Func_080432a4:
 	.4byte 0x0000000c
 	.2byte 0x0019
 	.2byte 0x0000
+	.global Func_08043774
+	.thumb_func
+Func_08043774:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	movs	r6, #0
@@ -636,6 +651,9 @@ Func_080432a4:
 	.4byte 0x03001200
 	.2byte 0x1218
 	.2byte 0x0300
+	.global Func_0804380c
+	.thumb_func
+Func_0804380c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -721,6 +739,9 @@ Func_080432a4:
 	.4byte 0x0000000e
 	.2byte 0x001b
 	.2byte 0x0000
+	.global Func_080438c8
+	.thumb_func
+Func_080438c8:
 	push	{r5, r6, r7, lr}
 	movs	r7, #0
 	bl	0x0801596c
@@ -764,10 +785,10 @@ Func_080432a4:
 	bl	Menu_RunConfirmSelection
 	cmp	r0, #0
 	beq.n	.L_0804392c
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	b.n	.L_08043960
 .L_0804392c:
-	bl	0x0803ce1c
+	bl	Func_0803ce1c
 	movs	r0, #1
 	bl	Func_08042e28
 	adds	r6, r0, #0
@@ -839,7 +860,7 @@ Func_080432a4:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x3979

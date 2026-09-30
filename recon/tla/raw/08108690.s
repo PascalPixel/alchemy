@@ -106,6 +106,9 @@ Func_08108690:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_0810875c
+	.thumb_func
+Func_0810875c:
 	push	{lr}
 	lsls	r3, r1, #4
 	adds	r1, r3, #1
@@ -282,6 +285,9 @@ Func_08108690:
 	.4byte 0x0810c148
 	.2byte 0x8000
 	.2byte 0x8000
+	.global Func_081088d8
+	.thumb_func
+Func_081088d8:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -319,6 +325,9 @@ Func_08108690:
 	.4byte 0x84000150
 	.2byte 0x02a0
 	.2byte 0x8400
+	.global Func_08108928
+	.thumb_func
+Func_08108928:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

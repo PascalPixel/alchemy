@@ -87,7 +87,7 @@ Func_08196958:
 	subs	r0, r0, r5
 	lsls	r0, r0, #2
 	adds	r0, #28
-	bl	0x08014dac
+	bl	Func_08014dac
 	adds	r3, r5, #1
 	adds	r1, r0, #0
 	cmp	r3, #0
@@ -115,7 +115,7 @@ Func_08196958:
 	ldrb	r3, [r5, #1]
 	adds	r7, r1, #0
 	lsls	r6, r3
-	bl	0x08014ca0
+	bl	Func_08014ca0
 	adds	r2, r6, #0
 	adds	r2, #8
 	cmp	r0, r2

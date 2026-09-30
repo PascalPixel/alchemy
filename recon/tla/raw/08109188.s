@@ -818,22 +818,22 @@ Func_08109188:
 	mov	r2, r8
 	movs	r0, #30
 	movs	r1, #14
-	bl	0x0810875c
+	bl	Func_0810875c
 	mov	r0, fp
 	add	r0, r9
 	movs	r1, #0
 	mov	r2, r8
-	bl	0x0810875c
+	bl	Func_0810875c
 	mov	r3, fp
 	adds	r0, r3, r7
 	adds	r0, #1
 	movs	r1, #10
 	mov	r2, r8
-	bl	0x0810875c
+	bl	Func_0810875c
 	mov	r0, fp
 	movs	r1, #2
 	mov	r2, r8
-	bl	0x0810875c
+	bl	Func_0810875c
 	movs	r1, #128
 	ldr	r0, [sp, #4]
 	lsls	r1, r1, #1

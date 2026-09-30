@@ -28,13 +28,13 @@ Func_080ebf68:
 	push	{r5, r6, r7, lr}
 	movs	r0, #32
 	sub	sp, #20
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldr	r7, [pc, #392]
 	adds	r6, r0, #0
 	adds	r1, r7, #0
 	adds	r1, #32
 	str	r1, [sp, #4]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	movs	r5, #0
 	str	r5, [sp, #12]
@@ -237,9 +237,9 @@ Func_080ebf68:
 	push	{r5, lr}
 	ldr	r5, [pc, #24]
 	ldrh	r0, [r5, #0]
-	bl	0x08014274
+	bl	Func_08014274
 	ldrh	r0, [r5, #2]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r0, [r5, #28]
 	movs	r1, #2
 	bl	UiWork_FinalizeFar
@@ -252,7 +252,7 @@ Func_080ebf68:
 	push	{r7}
 	adds	r7, r1, #0
 	adds	r5, r0, #0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #32]

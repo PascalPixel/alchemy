@@ -41,6 +41,9 @@ Func_080dc164:
 	movs	r0, r0
 	.2byte 0x04aa
 	.2byte 0x0200
+	.global Func_080dc1b0
+	.thumb_func
+Func_080dc1b0:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -101,12 +104,12 @@ Func_080dc164:
 	lsls	r0, r0, #14
 	orrs	r0, r6
 	movs	r1, #1
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r0, #132
 	lsls	r0, r0, #1
 	bl	GameFlag_SetBitFar
 	adds	r0, r7, #0
-	bl	0x080d17ac
+	bl	Func_080d17ac
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.4byte 0x84000150

@@ -31,7 +31,7 @@ Func_08042690:
 	bl	0x08039260
 	str	r0, [r5, #0]
 	mov	r0, r8
-	bl	.L_0804297c
+	bl	Func_0804297c
 	mov	r3, sl
 	strb	r3, [r6, #6]
 	add	sp, #4
@@ -390,6 +390,9 @@ Func_08042690:
 	.4byte 0x88888888
 	.2byte 0xdddd
 	.2byte 0xdddd
+	.global Func_0804297c
+	.thumb_func
+Func_0804297c:
 .L_0804297c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -541,7 +544,7 @@ Func_08042690:
 	ldrh	r1, [r5, #6]
 	ldrh	r2, [r5, #8]
 	ldrh	r3, [r5, #10]
-	bl	0x0803911c
+	bl	Func_0803911c
 	b.n	.L_08042d94
 .L_08042a9e:
 	ldr	r2, [sp, #28]
@@ -561,7 +564,7 @@ Func_08042690:
 	ldrh	r2, [r5, #8]
 	ldrh	r3, [r5, #10]
 	ldrh	r0, [r5, #4]
-	bl	0x0803911c
+	bl	Func_0803911c
 	mov	r0, sl
 	bl	0x08042630
 	ldrh	r3, [r5, #8]
@@ -624,7 +627,7 @@ Func_08042690:
 	cmp	r5, #0
 	bne.n	.L_08042b48
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08042b62
 .L_08042b48:
 	cmp	r3, #0
@@ -635,11 +638,11 @@ Func_08042690:
 	cmp	r5, r3
 	bgt.n	.L_08042b5c
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08042b62
 .L_08042b5c:
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08042b62:
 	ldr	r0, [sp, #28]
 	movs	r3, #14
@@ -667,7 +670,7 @@ Func_08042690:
 	ldr	r3, [sp, #16]
 	bl	UiText_DrawStringAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	movs	r2, #52
 	ldrsh	r1, [r6, r2]
 	cmp	r1, #0
@@ -783,7 +786,7 @@ Func_08042690:
 	movs	r2, #0
 	adds	r3, r6, #0
 	str	r7, [sp, #0]
-	bl	0x0803c378
+	bl	Func_0803c378
 	movs	r1, #160
 	lsls	r1, r1, #7
 	adds	r1, #2
@@ -791,7 +794,7 @@ Func_08042690:
 	movs	r2, #2
 	adds	r3, r6, #0
 	str	r7, [sp, #0]
-	bl	0x0803c378
+	bl	Func_0803c378
 	adds	r2, r6, #1
 	movs	r1, #160
 	mov	r8, r2
@@ -801,7 +804,7 @@ Func_08042690:
 	movs	r2, #0
 	mov	r3, r8
 	str	r7, [sp, #0]
-	bl	0x0803c378
+	bl	Func_0803c378
 	movs	r1, #160
 	lsls	r1, r1, #7
 	mov	r3, r8
@@ -809,7 +812,7 @@ Func_08042690:
 	mov	r0, r9
 	movs	r2, #2
 	str	r7, [sp, #0]
-	bl	0x0803c378
+	bl	Func_0803c378
 	ldrb	r3, [r5, #0]
 	cmp	r3, #9
 	bhi.n	.L_08042cd2
@@ -855,7 +858,7 @@ Func_08042690:
 	mov	r0, r9
 	adds	r3, r6, #0
 	movs	r2, #1
-	bl	0x0803c378
+	bl	Func_0803c378
 	ldrb	r3, [r5, #1]
 	cmp	r3, #9
 	bls.n	.L_08042d20
@@ -877,7 +880,7 @@ Func_08042690:
 	mov	r0, r9
 	adds	r3, r6, #0
 	movs	r2, #3
-	bl	0x0803c378
+	bl	Func_0803c378
 	ldrb	r3, [r5, #2]
 	cmp	r3, #9
 	bls.n	.L_08042d4a
@@ -899,7 +902,7 @@ Func_08042690:
 	mov	r0, r9
 	mov	r3, r8
 	movs	r2, #1
-	bl	0x0803c378
+	bl	Func_0803c378
 	ldrb	r3, [r5, #3]
 	cmp	r3, #9
 	bls.n	.L_08042d74
@@ -921,7 +924,7 @@ Func_08042690:
 	mov	r0, r9
 	movs	r2, #3
 	mov	r3, r8
-	bl	0x0803c378
+	bl	Func_0803c378
 .L_08042d8e:
 	ldr	r0, [sp, #28]
 	movs	r3, #0
@@ -938,6 +941,9 @@ Func_08042690:
 	.4byte 0x080aa1b8
 	.2byte 0x3400
 	.2byte 0x0600
+	.global Func_08042dac
+	.thumb_func
+Func_08042dac:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

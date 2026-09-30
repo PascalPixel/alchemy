@@ -62,9 +62,9 @@ Func_080d7024:
 	lsrs	r3, r3, #1
 	lsls	r3, r3, #2
 	adds	r6, r3, r2
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r2, [r7, #12]
 	movs	r3, #1
 	ands	r0, r3
@@ -159,7 +159,7 @@ Func_080d7024:
 	strb	r1, [r7, #7]
 	adds	r0, r7, #0
 	movs	r1, #240
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080d7166:
 	ldrh	r3, [r7, #28]
 	movs	r1, #255
@@ -212,7 +212,7 @@ Func_080d7024:
 	.2byte 0x003e
 	.2byte 0x0000
 .L_080d71cc:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	ands	r0, r3
 	cmp	r0, #0
@@ -220,13 +220,13 @@ Func_080d7024:
 	ldr	r0, [sp, #12]
 	ldr	r5, [pc, #96]
 	ldr	r6, [r0, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [r6, #0]
 	lsls	r0, r0, #8
 	adds	r3, r3, r0
 	adds	r3, r3, r5
 	str	r3, [sp, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [r6, #8]
 	ldr	r1, [sp, #4]
 	lsls	r0, r0, #8
@@ -268,6 +268,9 @@ Func_080d7024:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0xff80
+	.global Func_080d7240
+	.thumb_func
+Func_080d7240:
 	.2byte 0xb5e0
 	mov	r7, r8
 	push	{r7}
@@ -297,7 +300,7 @@ Func_080d7024:
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #112]
-	bl	0x0801591c
+	bl	Func_0801591c
 	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	adds	r2, r6, #0
@@ -342,7 +345,7 @@ Func_080d7024:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #24]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	b.n	.L_080d72fc
 	.4byte 0x0000000f

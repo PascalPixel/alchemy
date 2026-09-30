@@ -50,7 +50,7 @@ Func_080fa870:
 	movs	r1, #144
 	ldr	r0, [pc, #16]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r2, #128
 	lsls	r2, r2, #1
 	adds	r2, #255

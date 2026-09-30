@@ -42,6 +42,9 @@ Func_0803cfd0:
 	movs	r0, r0
 	.2byte 0xa4e0
 	.2byte 0x0805
+	.global Func_0803d020
+	.thumb_func
+Func_0803d020:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

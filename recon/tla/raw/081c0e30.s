@@ -136,9 +136,15 @@ Func_081c0e70:
 	.4byte 0x0200583c
 	.2byte 0x580c
 	.2byte 0x0200
+	.global Func_081c0f3c
+	.thumb_func
+Func_081c0f3c:
 	push	{lr}
 	bl	SoundDriver_Update
 	pop	{pc}
+	.global Func_081c0f44
+	.thumb_func
+Func_081c0f44:
 	push	{lr}
 	adds	r1, r0, #0
 	lsls	r1, r1, #16
@@ -148,6 +154,9 @@ Func_081c0e70:
 	pop	{pc}
 	.2byte 0x6a90
 	.2byte 0x0200
+	.global Func_081c0f58
+	.thumb_func
+Func_081c0f58:
 	push	{lr}
 	adds	r2, r0, #0
 	lsls	r2, r2, #16
@@ -159,6 +168,9 @@ Func_081c0e70:
 	movs	r0, r0
 	.2byte 0x6a90
 	.2byte 0x0200
+	.global Func_081c0f70
+	.thumb_func
+Func_081c0f70:
 	ldr	r3, [pc, #8]
 	strh	r0, [r3, #0]
 	ldr	r3, [pc, #8]

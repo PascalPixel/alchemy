@@ -5,7 +5,7 @@
 Func_080d2cc4:
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r0, #0
 	bl	Func_080cded4
 	movs	r1, #1
@@ -14,7 +14,7 @@ Func_080d2cc4:
 	movs	r0, #161
 	lsls	r0, r0, #1
 	bl	GameFlag_ClearBitFar
-	bl	0x080d2350
+	bl	Func_080d2350
 	movs	r0, #136
 	bl	Func_080ad2e8
 	movs	r1, #1

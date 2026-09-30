@@ -293,6 +293,9 @@ Func_080af4e4:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Func_080af6f4
+	.thumb_func
+Func_080af6f4:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r7, r0, #0
@@ -358,7 +361,7 @@ Func_080af4e4:
 	b.n	.L_080af790
 .L_080af76c:
 	adds	r0, r7, #0
-	bl	0x080b02d4
+	bl	Func_080b02d4
 	movs	r3, #88
 	ldrh	r3, [r5, r3]
 	movs	r1, #0

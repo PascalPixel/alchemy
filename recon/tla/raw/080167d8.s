@@ -29,6 +29,9 @@ Func_080167d8:
 	.4byte 0x0300124c
 	.2byte 0x0128
 	.2byte 0x0400
+	.global Func_0801680c
+	.thumb_func
+Func_0801680c:
 	push	{r5, r6, r7, lr}
 	ldr	r5, [pc, #48]
 	adds	r6, r1, #0
@@ -63,6 +66,9 @@ Func_080167d8:
 	.4byte 0x020036d4
 	.2byte 0x54c4
 	.2byte 0x0200
+	.global Func_08016854
+	.thumb_func
+Func_08016854:
 	push	{r5, r6, lr}
 	ldr	r5, [pc, #52]
 	ldr	r6, [pc, #52]
@@ -98,6 +104,9 @@ Func_080167d8:
 	.4byte 0x02005354
 	.2byte 0x54c4
 	.2byte 0x0200
+	.global Func_080168a0
+	.thumb_func
+Func_080168a0:
 	push	{r5, r6, lr}
 	ldr	r2, [pc, #32]
 	movs	r5, #0
@@ -120,6 +129,9 @@ Func_080167d8:
 	.4byte 0x020038d0
 	.2byte 0x27bf
 	.2byte 0x0009
+	.global Func_080168cc
+	.thumb_func
+Func_080168cc:
 	push	{r5, r6, lr}
 	ldr	r2, [pc, #32]
 	movs	r5, #0
@@ -142,6 +154,9 @@ Func_080167d8:
 	.4byte 0x020055d0
 	.2byte 0x27bf
 	.2byte 0x0009
+	.global Func_080168f8
+	.thumb_func
+Func_080168f8:
 	push	{r5, lr}
 	ldr	r3, [pc, #36]
 	movs	r5, #0
@@ -168,6 +183,9 @@ Func_080167d8:
 	.4byte 0x000927bf
 	.2byte 0x55d0
 	.2byte 0x0200
+	.global Func_0801692c
+	.thumb_func
+Func_0801692c:
 	push	{lr}
 	ldr	r3, [pc, #24]
 	movs	r0, #0
@@ -214,6 +232,9 @@ Func_080167d8:
 	.4byte 0x020055d0
 	.2byte 0x5354
 	.2byte 0x0200
+	.global Func_08016990
+	.thumb_func
+Func_08016990:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

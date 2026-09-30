@@ -336,6 +336,9 @@ Func_08041c54:
 	.4byte 0x08041ea8
 	.2byte 0x1f14
 	.2byte 0x0804
+	.global Func_08041f70
+	.thumb_func
+Func_08041f70:
 	ldr	r2, [pc, #20]
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -353,6 +356,9 @@ Func_08041c54:
 .L_08041f8c:
 	bx	lr
 	movs	r0, r0
+	.global Func_08041f90
+	.thumb_func
+Func_08041f90:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #60]

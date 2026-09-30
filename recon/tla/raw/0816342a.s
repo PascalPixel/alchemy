@@ -79,17 +79,17 @@ Func_0816342a:
 	str	r3, [r5, #0]
 	ldr	r3, [r1, #16]
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #11
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	subs	r0, #64
 	lsls	r0, r0, #11
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r2, fp
 	lsrs	r3, r2, #31
 	add	r3, fp

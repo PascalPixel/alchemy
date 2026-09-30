@@ -15,7 +15,7 @@ Func_080420fc:
 	mov	sl, r2
 	mov	r8, r3
 	adds	r7, r1, #0
-	bl	0x08014dac
+	bl	Func_08014dac
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r6, r0, #0

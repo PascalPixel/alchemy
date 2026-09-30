@@ -14,7 +14,7 @@ Func_080d2a64:
 	ldr	r0, [r3, #0]
 	adds	r3, r5, r2
 	ldr	r1, [r3, #0]
-	bl	0x080d0520
+	bl	Func_080d0520
 	movs	r3, #217
 	lsls	r3, r3, #1
 	adds	r2, r5, r3

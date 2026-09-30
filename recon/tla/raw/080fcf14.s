@@ -2309,6 +2309,9 @@ Func_080fcf14:
 	movs	r0, #0
 .L_080fe182:
 	pop	{pc}
+	.global Func_080fe184
+	.thumb_func
+Func_080fe184:
 	push	{r5, r6, r7, lr}
 	movs	r1, #192
 	lsls	r1, r1, #4

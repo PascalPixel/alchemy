@@ -292,7 +292,7 @@ Func_08119374:
 	lsls	r3, r3, #18
 	adds	r0, r5, #0
 	ldr	r6, [r3, #36]
-	bl	0x0811a038
+	bl	Func_0811a038
 	movs	r1, #0
 	adds	r4, r0, #0
 	cmp	r1, r4

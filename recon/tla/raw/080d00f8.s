@@ -52,12 +52,12 @@ Func_080d00f8:
 	strh	r3, [r4, #0]
 	subs	r1, #182
 	ldr	r0, [pc, #28]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r1, #192
 	lsls	r1, r1, #4
 	adds	r1, #118
 	ldr	r0, [pc, #20]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	b.n	.L_080d0180
 	.4byte 0x00000001

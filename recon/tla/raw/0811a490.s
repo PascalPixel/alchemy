@@ -4,7 +4,7 @@
 	.thumb_func
 Summon_ClassValid:
 	push	{r5, lr}
-	bl	0x081280fc
+	bl	Func_081280fc
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r4, [r3, #36]

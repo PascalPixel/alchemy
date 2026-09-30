@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_080d2454
+	.thumb_func
+Func_080d2454:
 .L_080d2454:
 	push	{r5, r6, lr}
 	ldr	r6, [pc, #44]
@@ -27,12 +30,15 @@
 	pop	{r5, r6, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2488
+	.thumb_func
+Func_080d2488:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
 	adds	r5, r0, #0
 	bl	0x080ad110
-	bl	.L_080d2454
+	bl	Func_080d2454
 	adds	r0, r5, #0
 	bl	Owner_GetState
 	adds	r6, r0, #0
@@ -188,6 +194,9 @@
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d25c8
+	.thumb_func
+Func_080d25c8:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	bl	0x080ad0f0
@@ -218,6 +227,9 @@
 	pop	{r5, r6, pc}
 	.2byte 0x0e26
 	.2byte 0x0000
+	.global Func_080d260c
+	.thumb_func
+Func_080d260c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -293,7 +305,7 @@
 	movs	r1, #5
 	bl	0x08038040
 	movs	r0, #1
-	bl	0x080d295c
+	bl	Func_080d295c
 	adds	r5, r0, #0
 	bl	0x08038140
 	cmp	r5, #0
@@ -430,6 +442,9 @@
 	.4byte 0x02000240
 	.2byte 0x0e12
 	.2byte 0x0000
+	.global Func_080d27ec
+	.thumb_func
+Func_080d27ec:
 	push	{r5, lr}
 	adds	r5, r2, #0
 	adds	r1, r0, #0

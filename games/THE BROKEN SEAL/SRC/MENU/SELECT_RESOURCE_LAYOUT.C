@@ -42,10 +42,15 @@ s32 Menu_SelectResourceLayout(s32 mode)
         Menu_AppendResourceEntry(46);
         Menu_AppendResourceEntry(47);
         Menu_AppendResourceEntry(48);
+#if defined(TBS_EDITION_ES)
+        /* Only the Spanish password list is centred; its transfer list keeps
+           its place. */
+        Menu_CenterResourceEntries(17, 5, 0);
+#endif
     }
 #if defined(TBS_EDITION_FR)
     Menu_CenterResourceEntries(17, 9, 0);
-#else
+#elif !defined(TBS_EDITION_ES)
     Menu_CenterResourceEntries(17, 7, 0);
 #endif
     if (mode != 0) {
@@ -53,6 +58,8 @@ s32 Menu_SelectResourceLayout(s32 mode)
         work->selection = 0xffff;
 #if defined(TBS_EDITION_FR)
         window = UiWindow_Create(5, 0, 22, 4, 2);
+#elif defined(TBS_EDITION_ES)
+        window = UiWindow_Create(5, 0, 21, 4, 2);
 #else
         window = UiWindow_Create(7, 0, 17, 4, 2);
 #endif
@@ -75,6 +82,8 @@ s32 Menu_SelectResourceLayout(s32 mode)
         work->selection = 0xffff;
 #if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
         window = UiWindow_Create(5, 0, 20, 4, 2);
+#elif defined(TBS_EDITION_ES)
+        window = UiWindow_Create(4, 0, 21, 4, 2);
 #else
         window = UiWindow_Create(6, 0, 18, 4, 2);
 #endif

@@ -19,9 +19,15 @@ s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item)
     i = 0;
     do {
         if (state->inventory[i] != 0 && (state->inventory[i] & 0x1ff) == item) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+            /* The Spanish and Italian menus add up every stack of it. */
+            quantity += (state->inventory[i] & 0xf800) >> 11;
+            quantity++;
+#else
             quantity = (state->inventory[i] & 0xf800) >> 11;
             quantity++;
             break;
+#endif
         }
         i++;
     } while (i <= 14);

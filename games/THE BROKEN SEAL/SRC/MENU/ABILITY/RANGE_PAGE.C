@@ -238,7 +238,12 @@ s32 PsynergyMenu_DrawListPage(
     UiText_DrawStringAtOffsetFar(owner, (void *)window, 40, 0);
     UiText_DrawAt(
         owner[OWNER_CLASS_MSG_OFS] + (s32)&MsgClassName, window, 0, 32);
+#if defined(TBS_EDITION_FR)
+    /* The French level label is drawn at a pixel offset. */
+    UiText_DrawStringAtOffsetFar(&Menu_LvString, (void *)window, 0, 48);
+#else
     UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);
+#endif
     UiText_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFS], 2, window, 24, 48);
 
     return 1;

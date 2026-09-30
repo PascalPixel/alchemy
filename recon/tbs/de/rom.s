@@ -449,42 +449,6 @@ Battle_CollectPartyCommands:
 	.thumb_func
 AffineEffect_UpdateFrame:
 	.incbin "baserom.gba", 0x00026e58, 0x00000348
-	.section .rom.0002756c, "ax"
-	.global Menu_LayoutResourceEntries
-	.type Menu_LayoutResourceEntries, %function
-	.thumb_func
-Menu_LayoutResourceEntries:
-	.incbin "baserom.gba", 0x0002756c, 0x00000078
-	.section .rom.000275e4, "ax"
-	.global Menu_SelectTopEntry
-	.type Menu_SelectTopEntry, %function
-	.thumb_func
-Menu_SelectTopEntry:
-	.incbin "baserom.gba", 0x000275e4, 0x0000007c
-	.section .rom.00027660, "ax"
-	.global Menu_AnimateSelectionToEntry
-	.type Menu_AnimateSelectionToEntry, %function
-	.thumb_func
-Menu_AnimateSelectionToEntry:
-	.incbin "baserom.gba", 0x00027660, 0x0000004c
-	.section .rom.000276ac, "ax"
-	.global Menu_SelectSaveSlotAction
-	.type Menu_SelectSaveSlotAction, %function
-	.thumb_func
-Menu_SelectSaveSlotAction:
-	.incbin "baserom.gba", 0x000276ac, 0x000000c0
-	.section .rom.0002776c, "ax"
-	.global Menu_DrawModeLabel
-	.type Menu_DrawModeLabel, %function
-	.thumb_func
-Menu_DrawModeLabel:
-	.incbin "baserom.gba", 0x0002776c, 0x000000d8
-	.section .rom.00027844, "ax"
-	.global Menu_DrawModeIndicator
-	.type Menu_DrawModeIndicator, %function
-	.thumb_func
-Menu_DrawModeIndicator:
-	.incbin "baserom.gba", 0x00027844, 0x00000084
 	.section .rom.00028218, "ax"
 	.global DebugMenu_BrowseIcons
 	.type DebugMenu_BrowseIcons, %function
@@ -610,7 +574,16 @@ Link_TimeLabelString:
 	.incbin "baserom.gba", 0x00036134, 0x000000ef
 	.global Menu_SelectionStepDelays
 Menu_SelectionStepDelays:
-	.incbin "baserom.gba", 0x00036223, 0x00000039
+	.incbin "baserom.gba", 0x00036223, 0x00000008
+	.global Menu_TopEntryCommandByPosition
+Menu_TopEntryCommandByPosition:
+	.incbin "baserom.gba", 0x0003622b, 0x0000000c
+	.global Menu_TopEntryPositionByCommand
+Menu_TopEntryPositionByCommand:
+	.incbin "baserom.gba", 0x00036237, 0x0000000c
+	.global Menu_SaveSlotActionByPosition
+Menu_SaveSlotActionByPosition:
+	.incbin "baserom.gba", 0x00036243, 0x00000019
 	.global Menu_ColonString
 Menu_ColonString:
 	.incbin "baserom.gba", 0x0003625c, 0x00000004

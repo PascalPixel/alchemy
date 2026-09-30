@@ -473,12 +473,6 @@ NameEntry_EditOwnerName:
 	.thumb_func
 Party_ShowJoinedMessage:
 	.incbin "baserom.gba", 0x00020334, 0x000000f8
-	.section .rom.00020bd8, "ax"
-	.global Link_CreateCountdownLabelWindow
-	.type Link_CreateCountdownLabelWindow, %function
-	.thumb_func
-Link_CreateCountdownLabelWindow:
-	.incbin "baserom.gba", 0x00020bd8, 0x00000030
 	.section .rom.00020e0e, "ax"
 	.incbin "baserom.gba", 0x00020e0e, 0x000008fe
 	.section .rom.000217c0, "ax"
@@ -655,7 +649,10 @@ gRomShiftedTilePair:
 	.incbin "baserom.gba", 0x00036340, 0x00000040
 	.global Graphics_ExpandNibbleTable
 Graphics_ExpandNibbleTable:
-	.incbin "baserom.gba", 0x00036380, 0x0000012f
+	.incbin "baserom.gba", 0x00036380, 0x00000040
+	.global Link_TimeLabelString
+Link_TimeLabelString:
+	.incbin "baserom.gba", 0x000363c0, 0x000000ef
 	.global Menu_SelectionStepDelays
 Menu_SelectionStepDelays:
 	.incbin "baserom.gba", 0x000364af, 0x00000039
@@ -1495,20 +1492,6 @@ Func_080a6614:
 	.thumb_func
 CharacterMenu_DrawStatusAilments:
 	.incbin "baserom.gba", 0x000ace90, 0x00000300
-	.section .rom.000ad54c, "ax"
-	.incbin "baserom.gba", 0x000ad54c, 0x00000074
-	.section .rom.000ad5c0, "ax"
-	.global PsynergyMenu_DrawRangePage
-	.type PsynergyMenu_DrawRangePage, %function
-	.thumb_func
-PsynergyMenu_DrawRangePage:
-	.incbin "baserom.gba", 0x000ad5c0, 0x0000020c
-	.section .rom.000ad7cc, "ax"
-	.global PsynergyMenu_DrawListPage
-	.type PsynergyMenu_DrawListPage, %function
-	.thumb_func
-PsynergyMenu_DrawListPage:
-	.incbin "baserom.gba", 0x000ad7cc, 0x0000017c
 	.section .rom.000aeff4, "ax"
 	.global Func_080aa768
 Func_080aa768:

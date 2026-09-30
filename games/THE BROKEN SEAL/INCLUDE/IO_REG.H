@@ -26,6 +26,10 @@
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 
+/* The cartridge header's four-letter game code; its last letter names the
+   release's language. */
+#define ROM_GAME_CODE ((const u8 *)0x080000ac)
+
 /* BG2's screen block in the canvas layout. */
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
 #define REG_BG0HOFS ((void *)0x04000010)

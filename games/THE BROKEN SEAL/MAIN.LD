@@ -277,7 +277,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/LOAD_AREA_GRAPHICS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/LOAD_DEFAULT_CELLS_AND_UPDATE_BLOCK.o"(.text)
-        "*/recon/tbs/raw/0801179c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/BLEND_SCRIPT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/ALLOCATE_AND_CLEAR_QUEUE.o"(.text)

@@ -12487,7 +12487,7 @@ msgctxt "message"
 msgid "03119"
 msgstr "The Pause menu is not{line_break}available now.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoPrompt"
 msgid "03120"
 msgstr "Select the items"
 
@@ -12495,7 +12495,7 @@ msgctxt "message"
 msgid "03121"
 msgstr "{button_icon:6}:Djinni selection"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoTopic"
 msgid "03122"
 msgstr "Djinn"
 
@@ -12523,7 +12523,7 @@ msgctxt "message"
 msgid "03128"
 msgstr "Psynergy"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoText"
 msgid "03129"
 msgstr "The four elements are{line_break}the basic building{line_break}blocks of all matter.{page_break}The elemental spirits{line_break}are called Djinn.{page_break}The four elements are{line_break}Venus for Earth,{line_break}Mercury for Water,{page_break}Mars for Fire, and{line_break}Jupiter for Wind.{page_break}Each element has many{line_break}Djinn."
 

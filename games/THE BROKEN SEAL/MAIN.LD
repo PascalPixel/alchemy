@@ -1091,7 +1091,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_AT_WINDOW_OFFSET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_RECT_PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/APPLY_RECT_AT_OBJECT_ORIGIN.o"(.text)
-        "*/recon/tbs/raw/080ab314.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080ab5e4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/LIST_OWNER_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/RUN_PAIRED_ENTRY_ACTION.o"(.text)

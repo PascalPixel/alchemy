@@ -57,7 +57,7 @@ Func_08000130:
 	.global Func_08000140
 	.thumb_func
 Func_08000140:
-	overlay_veneer Func_08014cc0
+	overlay_veneer Runtime_AllocateHeapBlock
 	.global Runtime_AllocateBlockFar
 	.thumb_func
 Runtime_AllocateBlockFar:

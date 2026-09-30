@@ -417,7 +417,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/COUNT_SECOND_TABLE_ENTRIES.o"(.text)
         "*/recon/tla/raw/0803d4e4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803d5c4.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/0803d8f0.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/RENDER/BUILD_PATTERN_TO_SLOT.o"(.text)
         "*/recon/tla/raw/0803d92c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803d9bc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803db54.o"(.text .rodata .data .padding)

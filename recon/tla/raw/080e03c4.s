@@ -750,7 +750,7 @@ Func_080e03c4:
 	adds	r1, #20
 	movs	r0, #92
 	sub	sp, #16
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	adds	r3, r2, #0
@@ -2241,7 +2241,7 @@ Func_080e15fc:
 	.2byte 0xb560
 	movs	r1, #172
 	movs	r0, #248
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r6, r0, #0
 	bl	Resource_FindFreeEntry
 	adds	r3, r6, #0

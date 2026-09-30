@@ -32,7 +32,7 @@ Func_08100e7c:
 	adds	r1, #236
 	movs	r0, #220
 	sub	sp, #4
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r3, [pc, #156]
 	movs	r2, #139
 	lsls	r2, r2, #2

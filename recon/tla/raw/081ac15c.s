@@ -16,11 +16,11 @@ LuckyDice_Run:
 	adds	r1, #14
 	movs	r0, #100
 	add	sp, r5
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #128
 	lsls	r1, r1, #2
 	movs	r0, #96
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #246
 	lsls	r1, r1, #7
 	str	r0, [sp, #116]

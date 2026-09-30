@@ -31,7 +31,7 @@ Func_0802386c:
 	str	r3, [sp, #52]
 	ldr	r1, [pc, #848]
 	movs	r0, #80
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r2, [pc, #844]
 	adds	r1, r0, #0
 	ldr	r0, [pc, #844]

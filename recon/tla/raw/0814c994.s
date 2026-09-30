@@ -10,16 +10,16 @@ Func_0814c994:
 	adds	r5, r0, #0
 	adds	r1, #2
 	movs	r0, #100
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #246
 	lsls	r1, r1, #7
 	adds	r1, #124
 	movs	r0, #92
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #128
 	lsls	r1, r1, #7
 	movs	r0, #96
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #92]
@@ -183,16 +183,16 @@ Func_0814cb60:
 	adds	r5, r0, #0
 	adds	r1, #2
 	movs	r0, #100
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #246
 	lsls	r1, r1, #7
 	adds	r1, #124
 	movs	r0, #92
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #128
 	lsls	r1, r1, #7
 	movs	r0, #96
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #92]

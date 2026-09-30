@@ -332,7 +332,7 @@ Func_080cf050:
 	str	r3, [r7, #72]
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r5, r0, #0
 	mov	r0, r9
 	bl	Func_08038248

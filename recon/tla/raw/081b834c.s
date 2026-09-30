@@ -84,7 +84,7 @@ Func_081b834c:
 	lsls	r1, r1, #2
 	movs	r0, #96
 	add	sp, r5
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #246
 	lsls	r1, r1, #7
 	str	r0, [sp, #128]

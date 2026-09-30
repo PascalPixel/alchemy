@@ -32,8 +32,8 @@ void ObjectMotion_SnapToTerrain(void *object)
     *(s32 *)((u8 *)object + 0x14) = height;
 }
 
-#if !defined(TBS_EDITION_JA)
-/* The Japanese edition keeps its code here in its scaffold for now. */
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
 
 /*
  * Places the battle markers listed by the current map: each (column, row,

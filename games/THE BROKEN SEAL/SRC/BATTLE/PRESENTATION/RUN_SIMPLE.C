@@ -74,8 +74,8 @@ void BattleEventRuntime_WaitForReady(void);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void BattleEvent_Playback(void);
 
-#if !defined(TBS_EDITION_JA)
-/* The Japanese edition keeps its code here in its scaffold for now. */
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
 
 /* Play an actor's action against its first target: turn to face it, walk
    up, run the action's effect and walk back. */

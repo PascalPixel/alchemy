@@ -4,8 +4,8 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_TYPES.H"
 
-#if !defined(TBS_EDITION_JA)
-/* The Japanese edition keeps its code here in its scaffold for now. */
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
 
 /* Counts one defeated enemy toward the battle spoils: its coins and
    experience (randomly raised in proportion to the enemy's level when the

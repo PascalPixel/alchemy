@@ -379,7 +379,7 @@ BattleFx_SetBlock30Values128OneFar:
 	.thumb_func
 BattleFx_StartBufferBlendFar:
 	overlay_veneer BattleFx_StartBufferBlend
-	overlay_veneer Unnamed_08094da0
+	overlay_veneer FieldMotes_Start
 	.global FieldEffect_InitSparklesFar
 	.thumb_func
 FieldEffect_InitSparklesFar:

@@ -18,7 +18,7 @@ Func_080d8740:
 	bne.n	.L_080d875e
 	b.n	.L_080d8960
 .L_080d875e:
-	bl	0x080d7a78
+	bl	Func_080d7a78
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #224
@@ -241,7 +241,7 @@ Func_080d8740:
 	movs	r0, #50
 	bl	WaitFrames
 	bl	0x08108060
-	bl	0x080d7ab4
+	bl	Func_080d7ab4
 .L_080d8960:
 	add	sp, #52
 	pop	{r3, r5, r6, r7}

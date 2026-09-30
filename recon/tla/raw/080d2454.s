@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_080d2454
+	.thumb_func
+Func_080d2454:
 .L_080d2454:
 	push	{r5, r6, lr}
 	ldr	r6, [pc, #44]
@@ -35,7 +38,7 @@ Func_080d2488:
 	push	{r7}
 	adds	r5, r0, #0
 	bl	0x080ad110
-	bl	.L_080d2454
+	bl	Func_080d2454
 	adds	r0, r5, #0
 	bl	Owner_GetState
 	adds	r6, r0, #0

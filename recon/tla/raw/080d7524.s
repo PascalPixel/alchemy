@@ -653,6 +653,9 @@ Func_080d7788:
 	cmp	r6, #0
 	bge.n	.L_080d7a68
 	pop	{r5, r6, pc}
+	.global Func_080d7a78
+	.thumb_func
+Func_080d7a78:
 	push	{lr}
 	movs	r1, #224
 	lsls	r1, r1, #3
@@ -680,6 +683,9 @@ Func_080d7788:
 	.4byte 0x850001fd
 	.2byte 0x7a59
 	.2byte 0x080d
+	.global Func_080d7ab4
+	.thumb_func
+Func_080d7ab4:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

@@ -18,8 +18,7 @@
    stores go through r7; the reference stores only icon[0] through r7 and
    the other two through sp. Moving entry = icon after the window, after the
    stores or writing *entry for icon[0] scores 1530 to 1665. The 0x1b pool
-   word is a message symbol (Value_0000001b), which blocks adoption until
-   the catalogs name it. */
+   word is message 27, named MsgJoinedParty since 2026-09-30. */
 #include "TYPES.H"
 
 struct PartyJoinWork {
@@ -32,7 +31,7 @@ struct PartyJoinWork {
 
 extern struct PartyJoinWork *gWindowWork;
 extern u32 gKeyState;
-extern const u8 Value_0000001b;
+extern const u8 MsgJoinedParty;
 
 void *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(void *, s32, s32, s32, s32);
@@ -75,7 +74,7 @@ void Party_ShowJoinedMessage(s32 member)
         work->cursor = zero;
         work->scroll = zero;
         UiWork_PushValueSlot(member, 1);
-        UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)&Value_0000001b), 36, 2, zero);
+        UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)&MsgJoinedParty), 36, 2, zero);
         Audio_PlayCue(81);
         do {
             Runtime_PushSlotEntry(entry, 250);

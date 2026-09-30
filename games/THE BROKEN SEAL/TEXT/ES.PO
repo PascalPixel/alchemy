@@ -115,7 +115,7 @@ msgctxt "MsgSaving"
 msgid "00026"
 msgstr "Guardando...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00027"
 msgstr "{argument_actor_name:1} se{line_break}unió a tu equipo.{end_wait}"
 
@@ -12127,7 +12127,7 @@ msgctxt "message"
 msgid "03029"
 msgstr "Botón B: Salir"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceSaveQuest"
 msgid "03030"
 msgstr "Guardar"
 
@@ -12135,7 +12135,7 @@ msgctxt "message"
 msgid "03031"
 msgstr "Salvapantallas"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceChangeSettings"
 msgid "03032"
 msgstr "Opciones"
 
@@ -12143,7 +12143,7 @@ msgctxt "message"
 msgid "03033"
 msgstr "Récords de Batalla"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceRoughMenu"
 msgid "03034"
 msgstr "Menú borrador"
 

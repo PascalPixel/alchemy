@@ -2,6 +2,7 @@
 #include "SYSTEM.H"
 #include "UI.H"
 #include "TBS_EDITION.H"
+#include "IWRAM_CALL.H"
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
@@ -28,6 +29,34 @@ void ItemMenu_Close(void);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
 
+/* The European editions keep the 8 KB of background tiles at 0x06004000
+   aside while the prompt is open and fill that area with colour 3. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define PROMPT_SAVES_TILES 1
+#define PROMPT_TILES ((void *)0x06004000)
+#define PROMPT_TILES_SIZE 0x2000
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+void Runtime_BumpFree(void *buffer);
+void Scheduler_EnableOverlayCallbacksWithFlags(void);
+void Scheduler_DisableOverlayCallbacksWithFlags(void);
+void UiWork_SetAltFlagAndClearTableFar(s32 enable);
+void UiWindow_MarkVisibleTileAttributesFar(void);
+
+typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
+typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
+
+static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
+{
+    return copy(dst, src, size);
+}
+
+static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
+{
+    return fill(dst, size, value);
+}
+#endif
+
 /*
  * Open a modal menu screen and run its blocking interaction body.
  *
@@ -38,6 +67,9 @@ void Event_ClearInvalidPackedValuesFar(void);
  */
 s32 Menu_OpenConfirmPrompt(void)
 {
+#if defined(PROMPT_SAVES_TILES)
+    void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
+#endif
     void *state = (void *)Runtime_AllocateHeapBlock(0x37, 0xa70);
     s32 high;
     s32 unused;
@@ -53,6 +85,12 @@ s32 Menu_OpenConfirmPrompt(void)
     FIELD(state, s32, 0x10c) = UiWindow_CreateFar(13, 0, 17, 3, 2);
     Palette_LightenBankHighlight(14);
     Link_DrawShiftedTilePairFar(0x06002500);
+#if defined(PROMPT_SAVES_TILES)
+    Scheduler_EnableOverlayCallbacksWithFlags();
+    CopyWords(Iwram_CopyWords, saved, PROMPT_TILES, PROMPT_TILES_SIZE);
+    FillWords(Iwram_FillWords, PROMPT_TILES, PROMPT_TILES_SIZE, 0x33333333);
+    UiWork_SetAltFlagAndClearTableFar(1);
+#endif
     Menu_CancelSoundReset();
     result = Menu_ResolveSelectedAction(
         &high, &unused, &low);
@@ -70,6 +108,15 @@ s32 Menu_OpenConfirmPrompt(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(0x37);
     gMenuCtrlWork->suspended = 0;
+#if defined(PROMPT_SAVES_TILES)
+    UiWindow_MarkVisibleTileAttributesFar();
+    UiWork_SetAltFlagAndClearTableFar(0);
+    CopyWords(Iwram_CopyWords, PROMPT_TILES, saved, PROMPT_TILES_SIZE);
+    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 0;
+    Runtime_BumpFree(saved);
+    WaitFrames(1);
+    Scheduler_DisableOverlayCallbacksWithFlags();
+#endif
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
     FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 0;

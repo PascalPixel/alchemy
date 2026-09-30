@@ -20,6 +20,7 @@ extern u8 *gWork;
 s32 Object_GetTriggerTileAheadOfCurrentFar(void);
 s32 Menu_OpenConfirmPromptFar(void);
 s32 RunAssetSelectionScreenFar(void);
+void BattleFx_ClearRandomParticlesFar(void);
 
 s32 Menu_RunTopSelection(void)
 {
@@ -36,7 +37,7 @@ loop:
 #if defined(HAS_LOCALIZED_MENU_GUARD)
     state[0xcca] = 1;
     if (*(s16 *)(state + 0xcb8) != 0) {
-        MapGroupTable_SelectEntry();
+        BattleFx_ClearRandomParticlesFar();
         WaitFrames(1);
     }
 #endif

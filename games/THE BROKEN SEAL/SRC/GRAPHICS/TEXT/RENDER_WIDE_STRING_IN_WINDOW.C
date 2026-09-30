@@ -55,8 +55,14 @@ void UiText_RenderWideStringInWindow(s16 *text, void *window, s32 x, s32 y)
             }
         } else {
             UiWindow_PutGlyph(window, c, x, y, 0);
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            /* The European editions advance a column for every glyph. */
+            x++;
+#else
             if ((u16)(c - 0xde) > 1)
                 x++;
+#endif
         }
         c = *text++;
     } while (c != 0);

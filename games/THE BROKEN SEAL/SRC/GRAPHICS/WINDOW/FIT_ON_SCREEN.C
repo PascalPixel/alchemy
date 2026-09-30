@@ -6,9 +6,17 @@ s32 UiText_MeasureStringVariant(s32 start, s32 *width, s32 *count, s32 mode);
 
 extern u8 *gWindowWork;
 
+/* The European editions never widen a window for the render mode. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define FIT_FIXED_LIMIT 1
+#endif
+
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 {
+#if !defined(FIT_FIXED_LIMIT)
     u8 *base;
+#endif
     s32 x;
     s32 y;
     s32 limit;
@@ -17,7 +25,9 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
     s32 over;
     s32 pos;
 
+#if !defined(FIT_FIXED_LIMIT)
     base = gWindowWork;
+#endif
     x = *px;
     y = *py;
     limit = 30;
@@ -35,10 +45,12 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
     if (!(flags & 2)) {
         *pw = (*pw + 19) >> 3;
         *ph = (*ph + 15) >> 3;
+#if !defined(FIT_FIXED_LIMIT)
         if (base[RENDER_MODE_OFS] != 0) {
             *pw += 2;
             limit = 29;
         }
+#endif
     }
 
     right = x + *pw;

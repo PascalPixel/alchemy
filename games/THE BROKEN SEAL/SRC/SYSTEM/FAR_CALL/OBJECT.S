@@ -727,3 +727,12 @@ Func_0808a5e8:
 	.thumb_func
 Func_0808a5f0:
 	overlay_veneer Party_RemapCharacterIdIfEnabled
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	@ The European editions add the top menu's particle pause.
+	.global BattleFx_ClearRandomParticlesFar
+	.thumb_func
+BattleFx_ClearRandomParticlesFar:
+	overlay_veneer BattleFx_ClearRandomParticles
+	.endif
+	.endif

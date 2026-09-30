@@ -38,7 +38,7 @@ Func_080f93c4:
 	bl	Audio_PlayCue
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	ldr	r0, [pc, #52]
 	bl	Func_08014644
 .L_080f9414:
@@ -65,7 +65,7 @@ Func_080f93c4:
 	push	{lr}
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
@@ -77,7 +77,7 @@ Func_080f93c4:
 	push	{lr}
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080f9478
 	ldr	r0, [pc, #8]

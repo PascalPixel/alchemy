@@ -29,7 +29,7 @@ Func_080ae118:
 	adds	r0, r6, #0
 	subs	r5, r6, #1
 	adds	r0, #67
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	movs	r1, #1
 	adds	r2, r5, #0
 	movs	r0, #7
@@ -182,7 +182,7 @@ Func_080ae220:
 	bne.n	.L_080ae258
 	movs	r0, #136
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080ae270
 	movs	r0, #137
@@ -191,13 +191,13 @@ Func_080ae220:
 .L_080ae258:
 	movs	r0, #18
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080ae270
 	movs	r0, #20
 	adds	r0, #255
 .L_080ae268:
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ae272
 .L_080ae270:

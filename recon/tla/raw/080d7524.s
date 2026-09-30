@@ -306,7 +306,7 @@ Func_080d7788:
 .L_080d77aa:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080d77d0
 	lsls	r0, r5, #2
@@ -319,7 +319,7 @@ Func_080d7788:
 	adds	r3, r3, r2
 	adds	r0, #48
 	ldr	r7, [r3, #0]
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	b.n	.L_080d77da
 .L_080d77d0:
 	adds	r0, r5, #0
@@ -403,7 +403,7 @@ Func_080d7788:
 	mov	sl, r0
 	movs	r0, #10
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080d7926
 	cmp	r7, #0
@@ -541,7 +541,7 @@ Func_080d7788:
 .L_080d7992:
 	adds	r0, r6, #0
 	subs	r0, #172
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	strh	r5, [r7, #0]
 	b.n	.L_080d7a48
 .L_080d799e:
@@ -564,7 +564,7 @@ Func_080d7788:
 	beq.n	.L_080d7a3e
 	adds	r0, r6, #0
 	str	r1, [sp, #0]
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	ldr	r1, [sp, #0]
 	b.n	.L_080d7a3e
 .L_080d79cc:

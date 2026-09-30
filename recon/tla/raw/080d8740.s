@@ -590,7 +590,7 @@ Func_080d897c:
 	mov	r8, r1
 	ldr	r6, [r3, #0]
 	movs	r7, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080d8cd2
 	movs	r3, #194

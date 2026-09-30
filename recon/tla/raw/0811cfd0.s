@@ -865,7 +865,7 @@ Func_0811cfd0:
 	bl	.L_0811d5a0
 	movs	r0, #108
 	adds	r0, #255
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	adds	r5, #69
 	movs	r0, #0
 	bl	Camera_ConfigureScene
@@ -957,7 +957,7 @@ Func_0811cfd0:
 .L_0811d702:
 	movs	r0, #108
 	adds	r0, #255
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	bl	0x0811bddc
 	movs	r3, #192
 	lsls	r3, r3, #18

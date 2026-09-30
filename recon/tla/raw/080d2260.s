@@ -103,7 +103,7 @@ Func_080d22a8:
 	bl	Func_080145a8
 	movs	r0, #153
 	lsls	r0, r0, #1
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	ldr	r3, [pc, #28]
 	movs	r1, #240
 	lsls	r1, r1, #1

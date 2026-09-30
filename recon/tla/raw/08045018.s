@@ -191,7 +191,7 @@ Func_08045018:
 	push	{lr}
 	movs	r0, #118
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080451ae
 	ldr	r0, [pc, #8]

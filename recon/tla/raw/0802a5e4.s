@@ -430,11 +430,11 @@ Func_0802a6b8:
 	movs	r5, #184
 	lsls	r5, r5, #1
 	adds	r0, r5, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0802a982
 	adds	r0, r5, #0
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	b.n	.L_0802aa24
 .L_0802a982:
 	movs	r2, #128

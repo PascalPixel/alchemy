@@ -11,6 +11,30 @@ extern u8 MsgSpeechSetting;
 extern u8 MsgAutoSleepSetting;
 extern u8 MsgOptionHelp;
 extern u8 Data_02000240[];
+
+/* The options screen's help window, sliders and setting names: the
+   Japanese labels are narrower, so the sliders start further left and the
+   settings a column further right; the German and French speed setting
+   needs a wider slot. */
+#if defined(TBS_EDITION_JA)
+#define OPTION_HELP_X      2
+#define OPTION_HELP_WIDTH  26
+#define OPTION_SLIDER_X    100
+#define OPTION_SETTING_X   168
+#define OPTION_SETTING_END 192
+#define OPTION_SPEED_END   192
+#else
+#define OPTION_HELP_X      1
+#define OPTION_HELP_WIDTH  28
+#define OPTION_SLIDER_X    140
+#define OPTION_SETTING_X   160
+#define OPTION_SETTING_END 184
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#define OPTION_SPEED_END   208
+#else
+#define OPTION_SPEED_END   200
+#endif
+#endif
 extern s8 Data_080367c9[];
 extern s8 Data_080367cc[];
 extern s8 Data_080367ce[];
@@ -63,7 +87,7 @@ s32 Menu_RunWorkspaceOptions(void)
     page = 0;
     OptionMenu_InitializeWork();
     work = gSelectionWork;
-    win = UiWindow_Create(1, 2, 28, 3, 2);
+    win = UiWindow_Create(OPTION_HELP_X, 2, OPTION_HELP_WIDTH, 3, 2);
     icon = Menu_OpenWorkspaceOptions();
     pair = RenderResource_CreatePair(7, icon, 64, -48);
     WaitFrames(1);
@@ -107,28 +131,24 @@ s32 Menu_RunWorkspaceOptions(void)
                 RenderResource_LoadFrame(Data_080367ce[i], index, dim);
             }
 
-            x = icon->x * 8 + 140;
+            x = icon->x * 8 + OPTION_SLIDER_X;
             x += Math_Div(*pA * 60, work->option_count[0]);
             y = icon->y * 8 + 4;
             Shop_SetCursorFar(&work->marker[0], x, y, 1);
-            x = icon->x * 8 + 140;
+            x = icon->x * 8 + OPTION_SLIDER_X;
             x += Math_Div(*pB * 60, work->option_count[1]);
             y = icon->y * 8 + 20;
             Shop_SetCursorFar(&work->marker[1], x, y, 1);
 
             x = work->option[2] + (s32)&MsgMessageSpeedSetting;
-        #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
-    UiWindow_ClearInteriorTiles(icon, 160, 40, 208, 48);
-#else
-    UiWindow_ClearInteriorTiles(icon, 160, 40, 200, 48);
-#endif
-            UiText_DrawCharacterAtOffset(x, icon, 160, 40);
+            UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 40, OPTION_SPEED_END, 48);
+            UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 40);
             x = work->option[3] + (s32)&MsgSpeechSetting;
-            UiWindow_ClearInteriorTiles(icon, 160, 64, 184, 72);
-            UiText_DrawCharacterAtOffset(x, icon, 160, 64);
+            UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 64, OPTION_SETTING_END, 72);
+            UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 64);
             x = work->option[4] + (s32)&MsgAutoSleepSetting;
-            UiWindow_ClearInteriorTiles(icon, 160, 88, 184, 96);
-            UiText_DrawCharacterAtOffset(x, icon, 160, 88);
+            UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 88, OPTION_SETTING_END, 96);
+            UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 88);
             PaletteGlow_Update(*pA, *pB);
 
             x = icon->x * 8;

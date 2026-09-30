@@ -137,6 +137,7 @@ make worktree      # in a new worktree, before its first build
 make compare-all   # make compare-editions for all twelve
 make test
 make deps          # dependency map for choosing targets
+make drafts        # compile and score every draft against its listing
 make verify
 make land          # on main, before committing a landing
 ```

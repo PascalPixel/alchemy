@@ -897,10 +897,55 @@ pub struct Located {
     pub function: Function,
 }
 
+/// The functions a source defines, in order, each with whether it is
+/// declared inline.
+pub fn definitions(source: &str) -> Result<Vec<(String, bool)>> {
+    let tokens = lex(source)?;
+    Ok(scan_definitions(&tokens)
+        .into_iter()
+        .map(|(name, boundary, name_index, _, _)| {
+            let inline = tokens[boundary..name_index].iter().any(|token| {
+                matches!(&token.tok, Tok::Ident(word) if word == "inline" || word == "__inline" || word == "__inline__")
+            });
+            (name, inline)
+        })
+        .collect())
+}
+
 /// Find and parse the definition of `name`; `None` picks the draft's only
 /// function definition.
 pub fn locate(source: &str, name: Option<&str>, typedefs: &BTreeSet<String>) -> Result<Located> {
     let tokens = lex(source)?;
+    let mut found = scan_definitions(&tokens);
+    let (ident, boundary, name_index, close, open) = match name {
+        Some(name) => found
+            .into_iter()
+            .find(|entry| entry.0 == name)
+            .ok_or_else(|| format!("the draft does not define {name}"))?,
+        None => match found.len() {
+            1 => found.pop().expect("one definition"),
+            0 => return Err("the draft defines no function".into()),
+            _ => {
+                return Err(format!(
+                    "the draft defines {}; choose one with --function",
+                    found
+                        .iter()
+                        .map(|entry| entry.0.as_str())
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                ))
+            }
+        },
+    };
+    locate_at(
+        source, &tokens, typedefs, ident, boundary, name_index, close, open,
+    )
+}
+
+/// Every top-level function definition: name, the token index where its
+/// declaration starts, its name, its parameter list's close and its body's
+/// open brace.
+fn scan_definitions(tokens: &[Token]) -> Vec<(String, usize, usize, usize, usize)> {
     let mut depth = 0usize;
     let mut boundary = 0usize;
     let mut found = Vec::new();
@@ -937,26 +982,21 @@ pub fn locate(source: &str, name: Option<&str>, typedefs: &BTreeSet<String>) -> 
         }
         index += 1;
     }
-    let (ident, boundary, name_index, close, open) = match name {
-        Some(name) => found
-            .into_iter()
-            .find(|entry| entry.0 == name)
-            .ok_or_else(|| format!("the draft does not define {name}"))?,
-        None => match found.len() {
-            1 => found.pop().expect("one definition"),
-            0 => return Err("the draft defines no function".into()),
-            _ => {
-                return Err(format!(
-                    "the draft defines {}; choose one with --function",
-                    found
-                        .iter()
-                        .map(|entry| entry.0.as_str())
-                        .collect::<Vec<_>>()
-                        .join(", ")
-                ))
-            }
-        },
-    };
+    found
+}
+
+/// Parse the definition `scan_definitions` found at these token indices.
+#[allow(clippy::too_many_arguments)]
+fn locate_at(
+    source: &str,
+    tokens: &[Token],
+    typedefs: &BTreeSet<String>,
+    ident: String,
+    boundary: usize,
+    name_index: usize,
+    close: usize,
+    open: usize,
+) -> Result<Located> {
     let first = tokens[boundary..name_index]
         .iter()
         .position(|token| !matches!(token.tok, Tok::Comment(_)))

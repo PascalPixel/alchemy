@@ -1,39 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080f8c54
-	.thumb_func
-Func_080f8c54:
-.L_080f8c54:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	adds	r6, r1, #0
-	mov	r8, r2
-	adds	r7, r3, #0
-	cmp	r6, #15
-	ble.n	.L_080f8c66
-	movs	r6, #0
-.L_080f8c66:
-	ldr	r1, [sp, #20]
-	ldr	r5, [r0, #0]
-	adds	r0, r6, #0
-	bl	Math_Div
-	lsls	r0, r0, #4
-	adds	r0, r0, r7
-	strh	r0, [r5, #8]
-	ldr	r1, [sp, #20]
-	adds	r0, r6, #0
-	bl	Math_Mod
-	lsls	r3, r0, #1
-	adds	r3, r3, r0
-	lsls	r3, r3, #3
-	add	r3, r8
-	strh	r3, [r5, #6]
-	adds	r0, r5, #0
-	bl	UiIcon_PrepareObject
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -66,7 +32,7 @@ Func_080f8c54:
 	adds	r1, r6, #0
 	movs	r2, #116
 	mov	r3, r8
-	bl	Func_080f8c54
+	bl	ItemMenu_PosOwner
 .L_080f8cd4:
 	adds	r6, #1
 	adds	r5, #4

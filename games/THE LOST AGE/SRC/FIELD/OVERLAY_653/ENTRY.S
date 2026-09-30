@@ -13,4 +13,4 @@
 	overlay_veneer Func_020003d0
 	overlay_veneer Func_02000580
 	overlay_veneer Func_02000390
-	overlay_veneer Func_02002908
+	overlay_veneer Scene_PrepareMap

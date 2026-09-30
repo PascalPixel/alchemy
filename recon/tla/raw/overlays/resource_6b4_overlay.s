@@ -2315,12 +2315,6 @@ Func_02000564:
 	.4byte gInput
 .L_02009404:
 	.4byte 0x00000003
-	.section .text.x02009408,"ax",%progbits
-	.global Func_02001408
-	.thumb_func
-Func_02001408:
-	movs r0, #0
-	bx lr
 	.section .rodata.x0200959c,"a",%progbits
 .L_0200959c:
 	.4byte 0x00000000

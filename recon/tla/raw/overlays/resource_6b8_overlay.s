@@ -1125,12 +1125,6 @@ Func_0200079c:
 	.2byte 0x0000
 .L_02008914:
 	.4byte gPartyState
-	.section .text.x02008918,"ax",%progbits
-	.global Func_02000918
-	.thumb_func
-Func_02000918:
-	movs r0, #0
-	bx lr
 	.section .text.x0200891c,"ax",%progbits
 	.global Func_0200091c
 	.thumb_func

@@ -682,12 +682,6 @@ Func_02000514:
 	.4byte gInput
 .L_02008650:
 	.4byte 0x00000061
-	.section .text.x02008654,"ax",%progbits
-	.global Func_02000654
-	.thumb_func
-Func_02000654:
-	movs r0, #0
-	bx lr
 	.section .text.x02008658,"ax",%progbits
 	.global Func_02000658
 	.thumb_func

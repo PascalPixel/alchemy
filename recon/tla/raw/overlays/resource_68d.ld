@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68D/SCENE_EVENTS.o"(.text)
         "*/resource_68d_overlay.o"(.text.x020080f4)
         "*/resource_68d_overlay.o"(.text.x02008158)
-        "*/resource_68d_overlay.o"(.text.x020081d4)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68D/PREPARE.o"(.text)
         "*/resource_68d_overlay.o"(.text.x020081d8)
         "*/resource_68d_overlay.o"(.text.x020082b4)
         "*/resource_68d_overlay.o"(.text.x020083a0)

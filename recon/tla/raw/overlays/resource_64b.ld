@@ -33,7 +33,7 @@ SECTIONS
         "*/resource_64b_overlay.o"(.text.x02008db0)
         "*/games/THE LOST AGE/SRC/FIELD/WORLD_MAP/SCENE_EVENTS.o"(.text)
         "*/resource_64b_overlay.o"(.text.x02008dc4)
-        "*/resource_64b_overlay.o"(.text.x020091f8)
+        "*/games/THE LOST AGE/SRC/FIELD/WORLD_MAP/PREPARE.o"(.text)
         "*/resource_64b_overlay.o"(.text.x020091fc)
         "*/resource_64b_overlay.o"(.text.x020092bc)
         "*/resource_64b_overlay.o"(.text.x02009c5c)

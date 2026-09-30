@@ -107,7 +107,7 @@ SECTIONS
         "*/resource_655_overlay.o"(.text.x0200b90c)
         "*/resource_655_overlay.o"(.text.x0200ba30)
         "*/resource_655_overlay.o"(.text.x0200baa0)
-        "*/resource_655_overlay.o"(.text.x0200bb34)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_655/PREPARE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_655/IMPORT.o"(.text)
         "*/resource_655_overlay.o"(.rodata.x0200be00)
     }

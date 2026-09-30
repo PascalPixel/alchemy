@@ -53,7 +53,7 @@ SECTIONS
         "*/resource_686_overlay.o"(.text.x0200a338)
         "*/resource_686_overlay.o"(.text.x0200a3d0)
         "*/resource_686_overlay.o"(.text.x0200a438)
-        "*/resource_686_overlay.o"(.text.x0200ad50)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_686/PREPARE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_686/IMPORT.o"(.text)
         "*/resource_686_overlay.o"(.rodata.x0200aef4)
     }

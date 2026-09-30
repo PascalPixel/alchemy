@@ -1268,12 +1268,6 @@ Func_02000328:
 	.4byte Data_020024f6
 .L_02008a68:
 	.4byte Data_020024f8
-	.section .text.x02008a6c,"ax",%progbits
-	.global Func_02000a6c
-	.thumb_func
-Func_02000a6c:
-	movs r0, #0
-	bx lr
 	.section .text.x02008a70,"ax",%progbits
 	.global Func_02000a70
 	.thumb_func

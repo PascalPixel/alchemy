@@ -1703,12 +1703,6 @@ Func_02000d54:
 	.4byte 0x00000033
 .L_02008dc4:
 	.4byte 0x00000034
-	.section .text.x02008dc8,"ax",%progbits
-	.global Func_02000dc8
-	.thumb_func
-Func_02000dc8:
-	movs r0, #0
-	bx lr
 	.section .text.x02008dcc,"ax",%progbits
 	.global Func_02000dcc
 	.thumb_func

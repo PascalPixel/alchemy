@@ -255,12 +255,6 @@ Func_02000280:
 	str r2, [r3]
 	movs r0, #0
 	bx lr
-	.section .text.x02008294,"ax",%progbits
-	.global Func_02000294
-	.thumb_func
-Func_02000294:
-	movs r0, #0
-	bx lr
 	.section .rodata.x02008348,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:

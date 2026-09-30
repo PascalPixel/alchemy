@@ -27,12 +27,6 @@ Func_02000070:
 	str r2, [r3]
 	movs r0, #0
 	bx lr
-	.section .text.x02008084,"ax",%progbits
-	.global Func_02000084
-	.thumb_func
-Func_02000084:
-	movs r0, #0
-	bx lr
 	.section .rodata.x02008090,"a",%progbits
 .L_02008090:
 	.4byte 0x00000016

@@ -69,7 +69,7 @@ SECTIONS
         "*/resource_674_overlay.o"(.text.x0200b0b4)
         "*/resource_674_overlay.o"(.text.x0200b164)
         "*/resource_674_overlay.o"(.text.x0200b29c)
-        "*/resource_674_overlay.o"(.text.x0200b40c)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_674/PREPARE.o"(.text)
         "*/resource_674_overlay.o"(.text.x0200b410)
         "*/resource_674_overlay.o"(.text.x0200b46c)
         "*/resource_674_overlay.o"(.text.x0200b4d8)

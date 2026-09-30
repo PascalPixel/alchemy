@@ -9170,12 +9170,6 @@ Func_02005034:
 	.4byte 0x0000007d
 .L_0200d0a4:
 	.4byte 0x00000070
-	.section .text.x0200d0a8,"ax",%progbits
-	.global Func_020050a8
-	.thumb_func
-Func_020050a8:
-	movs r0, #0
-	bx lr
 	.section .text.x0200d0ac,"ax",%progbits
 	.global Func_020050ac
 	.thumb_func

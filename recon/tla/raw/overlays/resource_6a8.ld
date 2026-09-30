@@ -49,7 +49,7 @@ SECTIONS
         "*/resource_6a8_overlay.o"(.text.x02009c24)
         "*/resource_6a8_overlay.o"(.text.x02009cf0)
         "*/resource_6a8_overlay.o"(.text.x0200a614)
-        "*/resource_6a8_overlay.o"(.text.x0200a798)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A8/PREPARE.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x0200a79c)
         "*/resource_6a8_overlay.o"(.text.x0200a7e4)
         "*/resource_6a8_overlay.o"(.text.x0200a878)

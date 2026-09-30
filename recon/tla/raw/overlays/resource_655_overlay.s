@@ -7221,12 +7221,6 @@ Func_02003aa0:
 	.4byte Data_02003fb8
 .L_0200bb30:
 	.4byte Data_02003f92
-	.section .text.x0200bb34,"ax",%progbits
-	.global Func_02003b34
-	.thumb_func
-Func_02003b34:
-	movs r0, #0
-	bx lr
 	.section .rodata.x0200be00,"a",%progbits
 	.global Data_02003e00
 Data_02003e00:

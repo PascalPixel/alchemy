@@ -54,12 +54,6 @@ Func_02000090:
 Func_020000ac:
 	movs r0, #0
 	bx lr
-	.section .text.x020080b0,"ax",%progbits
-	.global Func_020000b0
-	.thumb_func
-Func_020000b0:
-	movs r0, #0
-	bx lr
 	.section .rodata.x020080c4,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:

@@ -82,7 +82,7 @@ SECTIONS
         "*/resource_661_overlay.o"(.text.x0200ae98)
         "*/resource_661_overlay.o"(.text.x0200aebc)
         "*/resource_661_overlay.o"(.text.x0200b094)
-        "*/resource_661_overlay.o"(.text.x0200b168)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_661/PREPARE.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200b16c)
         "*/resource_661_overlay.o"(.text.x0200b1b4)
         "*/resource_661_overlay.o"(.text.x0200b2c4)

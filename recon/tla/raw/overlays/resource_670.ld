@@ -107,7 +107,7 @@ SECTIONS
         "*/resource_670_overlay.o"(.text.x0200ca28)
         "*/resource_670_overlay.o"(.text.x0200ccf4)
         "*/resource_670_overlay.o"(.text.x0200d034)
-        "*/resource_670_overlay.o"(.text.x0200d0a8)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_670/PREPARE.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200d0ac)
         "*/resource_670_overlay.o"(.text.x0200d114)
         "*/resource_670_overlay.o"(.text.x0200d16c)

@@ -84,7 +84,7 @@ SECTIONS
         "*/resource_653_overlay.o"(.text.x0200a814)
         "*/resource_653_overlay.o"(.text.x0200a834)
         "*/resource_653_overlay.o"(.text.x0200a854)
-        "*/resource_653_overlay.o"(.text.x0200a908)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_653/PREPARE.o"(.text)
         "*/resource_653_overlay.o"(.text.x0200a90c)
         "*/resource_653_overlay.o"(.text.x0200aa5c)
         "*/resource_653_overlay.o"(.text.x0200aa84)

@@ -41,7 +41,7 @@ SECTIONS
         "*/resource_662_overlay.o"(.text.x020093c8)
         "*/resource_662_overlay.o"(.text.x020093d8)
         "*/resource_662_overlay.o"(.text.x02009418)
-        "*/resource_662_overlay.o"(.text.x020097dc)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_662/PREPARE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_662/IMPORT.o"(.text)
         "*/resource_662_overlay.o"(.rodata.x02009968)
     }

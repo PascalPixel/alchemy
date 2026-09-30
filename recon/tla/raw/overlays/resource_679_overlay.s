@@ -2041,12 +2041,6 @@ Func_02000fb8:
 	.4byte Func_02000540
 .L_0200904c:
 	.4byte 0x0000009c
-	.section .text.x02009050,"ax",%progbits
-	.global Func_02001050
-	.thumb_func
-Func_02001050:
-	movs r0, #0
-	bx lr
 	.section .text.x02009054,"ax",%progbits
 	.global Func_02001054
 	.thumb_func

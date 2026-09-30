@@ -23,7 +23,7 @@ SECTIONS
         "*/resource_6b1_overlay.o"(.text.x02008588)
         "*/resource_6b1_overlay.o"(.text.x02008714)
         "*/resource_6b1_overlay.o"(.text.x02008740)
-        "*/resource_6b1_overlay.o"(.text.x02008854)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B1/PREPARE.o"(.text)
         "*/resource_6b1_overlay.o"(.text.x02008858)
         "*/resource_6b1_overlay.o"(.text.x02008a98)
         "*/resource_6b1_overlay.o"(.text.x02008b18)

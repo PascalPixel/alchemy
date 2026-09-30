@@ -750,12 +750,6 @@ Func_02000610:
 	adds r3, #53
 	strb r2, [r3]
 	bx lr
-	.section .text.x02008620,"ax",%progbits
-	.global Func_02000620
-	.thumb_func
-Func_02000620:
-	movs r0, #0
-	bx lr
 	.section .text.x02008624,"ax",%progbits
 	.global Func_02000624
 	.thumb_func

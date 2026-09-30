@@ -40,12 +40,6 @@ Func_02000064:
 	movs r0, #0
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x020080a4,"ax",%progbits
-	.global Func_020000a4
-	.thumb_func
-Func_020000a4:
-	movs r0, #0
-	bx lr
 	.section .rodata.x020080c0,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:

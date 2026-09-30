@@ -790,6 +790,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BEGIN_CONTEXT_EFFECT_26.o"(.text)
         "*/recon/tla/raw/080d5e64.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d5e78.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/RUN_PENDING_FLAG_EVENT.o"(.text)
+        "*/recon/tla/raw/080d5fd4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d6b90.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d7024.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d7304.o"(.text .rodata .data .padding)

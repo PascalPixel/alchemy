@@ -1258,7 +1258,7 @@ Func_080e82cc:
 	str	r3, [r2, #0]
 	movs	r3, #24
 	ldrsh	r0, [r4, r3]
-	bl	Func_080d4384
+	bl	Object_AttachWorkTargetToObject
 .L_080e8cf8:
 	pop	{r5, pc}
 	.2byte 0x0000

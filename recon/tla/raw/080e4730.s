@@ -86,7 +86,7 @@ Func_080e4730:
 	adds	r0, r2, #0
 	adds	r1, r2, #0
 	movs	r3, #0
-	bl	Func_080d440c
+	bl	Motion_CamBounds
 	mov	r2, r8
 	adds	r2, #85
 	movs	r3, #0
@@ -243,7 +243,7 @@ Func_080e4730:
 	movs	r1, #1
 	movs	r5, #24
 	ldrsh	r0, [r6, r5]
-	bl	Func_080d4384
+	bl	Object_AttachWorkTargetToObject
 	movs	r0, #142
 	lsls	r0, r0, #1
 	adds	r0, #255
@@ -474,7 +474,7 @@ Func_080e4730:
 	adds	r0, r2, #0
 	adds	r1, r2, #0
 	movs	r3, #0
-	bl	Func_080d440c
+	bl	Motion_CamBounds
 	ldr	r3, [sp, #44]
 	mov	r5, r8
 	ldr	r0, [r3, #16]
@@ -649,7 +649,7 @@ Func_080e4730:
 	movs	r1, #1
 	movs	r2, #24
 	ldrsh	r0, [r3, r2]
-	bl	Func_080d4384
+	bl	Object_AttachWorkTargetToObject
 	ldr	r6, [sp, #24]
 	add	r0, sp, #20
 	str	r6, [r5, #12]

@@ -312,6 +312,9 @@ Func_08042e28:
 	.4byte 0x04000200
 	.2byte 0x2dc5
 	.2byte 0x0804
+	.global Func_080430c4
+	.thumb_func
+Func_080430c4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

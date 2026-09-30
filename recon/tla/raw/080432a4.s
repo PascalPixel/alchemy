@@ -415,6 +415,9 @@ Func_08043534:
 	.4byte 0x02000000
 	.2byte 0x0730
 	.2byte 0x0300
+	.global Func_080435fc
+	.thumb_func
+Func_080435fc:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r6, #0

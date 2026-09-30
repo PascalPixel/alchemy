@@ -68,6 +68,9 @@ Func_080452bc:
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x0fff
+	.global Func_08045330
+	.thumb_func
+Func_08045330:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #56]
 	adds	r7, r0, #0

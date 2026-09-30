@@ -5197,21 +5197,21 @@ Func_08157638:
 	cmp	r3, #0
 	bne.n	.L_0815a054
 	movs	r1, #6
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 	b.n	.L_0815a066
 .L_0815a054:
 	cmp	r3, #1
 	bne.n	.L_0815a060
 	movs	r1, #7
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 	b.n	.L_0815a066
 .L_0815a060:
 	movs	r1, #8
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 .L_0815a066:
 	pop	{pc}
 	push	{lr}
 	movs	r1, #0
-	bl	0x0815a110
+	bl	BattlePres_RunBurstScene
 	pop	{pc}
 	.2byte 0x0000

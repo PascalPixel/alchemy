@@ -729,7 +729,7 @@ Func_080d2d98:
 	ldr	r2, [sp, #32]
 	movs	r0, #1
 	ldr	r1, [sp, #28]
-	bl	Unnamed_080e6eac
+	bl	BattleEffect_RunImpactBurst
 	ldr	r3, [sp, #44]
 	movs	r2, #0
 	subs	r7, #76

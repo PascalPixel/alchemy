@@ -491,7 +491,7 @@ loop_114:
     Runtime_ReleaseHeapBlock(0x2F);
     Runtime_ReleaseHeapBlock(0x2E);
     if (sp38 == 0) {
-        Unnamed_080e6eac(3, sp18, sp1C);
+        BattleEffect_RunImpactBurst(3, sp18, sp1C);
         var_r7_1152 = 0;
         var_r5_1153 = temp_r3_25 + 0x77D8;
         do {

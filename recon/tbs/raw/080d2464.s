@@ -1098,7 +1098,7 @@ Func_080d2464:
 	movs	r0, #3
 	ldr	r1, [sp, #24]
 	ldr	r2, [sp, #28]
-	bl	Unnamed_080e6eac
+	bl	BattleEffect_RunImpactBurst
 	ldr	r5, [pc, #52]
 	movs	r7, #0
 	add	r5, sl

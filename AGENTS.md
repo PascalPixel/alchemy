@@ -20,10 +20,11 @@ corrections separately. Timebox work that cannot move this number.
 
 1. Count a function only when its complete extent, including its literal pool,
    compiles exactly and the ROM remains byte-identical.
-2. Tagged `/* FAKEMATCH: reason */` C counts. Never patch compiler output or use
-   inline assembly in game C except the reviewed `Dma_Set` and `Iwram_*` macros
-   and `/* CAMELOT_ASM: proof */` statements Camelot very likely wrote in C, or
-   `/* FAKEMATCH: reason */` statements as temporary workarounds until ☀️ is 100%.
+2. Tagged `/* FAKEMATCH: reason */` C counts. Until ☀️ is 100%, inline
+   assembly and fixed-register variables tagged `/* FAKEMATCH: reason */` are
+   allowed as temporary workarounds; `/* CAMELOT_ASM: proof */` marks assembly
+   Camelot very likely wrote in C, and the reviewed `Dma_Set` and `Iwram_*`
+   macros stay. Any other inline assembly, and patched compiler output, never.
 3. Uncredited disassembly is `not-yet-c`. Only proven library, handwritten and
    veneer modules count as assembly; difficulty never changes that classification.
 4. Commit each adoption and attempt; keep near misses as drafts with the
@@ -193,3 +194,5 @@ a verified build.
   as native-sounding gcc flags (`-mthumb-split-constants`, TLA game code only).
 - 2026-09-30: fix the agscc nondeterminism by hashing symbols by name and
   labels by number.
+- 2026-09-30: parts in the same part list may share part 1's built palette in
+  the grey-sheet check; the layout check runs in verify.

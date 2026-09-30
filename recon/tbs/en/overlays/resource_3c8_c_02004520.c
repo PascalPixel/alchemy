@@ -1,3 +1,7 @@
+/* 2026-09-30 (Jupiter): five more spellings (unnamed options, a copied x,
+ * split spin draw, x << 16 << 3) keep 31 differing lines. Asm idea, if
+ * admitted: pin x to r7 and options to r8 with tagged register variables.
+ */
 /* 2026-09-27 sol-venus-room bounded revalidation: full normalized diff and
  * allocator-order dump read, with the complete three-word pool accounted.
  * Retained H1 is 204/208 bytes, 99 differing halfwords / 35 aligned edits.

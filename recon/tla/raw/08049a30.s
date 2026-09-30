@@ -188,7 +188,7 @@ Func_08049a30:
 	str	r3, [sp, #0]
 	subs	r2, #2
 	movs	r3, #1
-	bl	0x08046134
+	bl	Func_08046134
 	bl	0x080396bc
 	ldr	r1, [sp, #72]
 	cmp	r1, #0
@@ -388,7 +388,7 @@ Func_08049a30:
 	str	r3, [sp, #0]
 	adds	r0, #1
 	movs	r3, #1
-	bl	0x08046134
+	bl	Func_08046134
 	ldr	r1, [sp, #68]
 	movs	r3, #1
 	movs	r2, #0
@@ -1066,7 +1066,7 @@ Func_08049a30:
 	adds	r1, #1
 	subs	r2, #2
 	movs	r3, #1
-	bl	0x08046134
+	bl	Func_08046134
 	bl	0x080396bc
 	ldr	r0, [sp, #68]
 	cmp	r0, #0
@@ -1329,7 +1329,7 @@ Func_08049a30:
 	str	r3, [sp, #0]
 	subs	r2, #2
 	movs	r3, #1
-	bl	0x08046134
+	bl	Func_08046134
 	ldr	r0, [sp, #64]
 	movs	r3, #1
 	movs	r1, #0

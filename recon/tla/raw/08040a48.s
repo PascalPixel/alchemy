@@ -363,7 +363,7 @@ Func_08040a48:
 	movs	r2, #8
 	movs	r3, #100
 	bl	UiText_DrawResource
-	bl	0x08044460
+	bl	Func_08044460
 	movs	r1, #128
 	movs	r6, #0
 	lsls	r1, r1, #23

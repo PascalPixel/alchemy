@@ -703,7 +703,7 @@ Func_0803f9c0:
 	movs	r3, #88
 	ldr	r0, [pc, #744]
 	bl	UiText_DrawCharacterAtOffset
-	bl	0x08044460
+	bl	Func_08044460
 	movs	r1, #0
 	str	r1, [sp, #0]
 	movs	r1, #128

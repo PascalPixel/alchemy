@@ -159,7 +159,7 @@ Func_080405dc:
 	adds	r3, r7, #0
 	bl	UiText_DrawResource
 .L_0804071c:
-	bl	0x08044460
+	bl	Func_08044460
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23
@@ -518,7 +518,7 @@ Func_080405dc:
 	movs	r0, #7
 	bl	0x08039260
 	adds	r5, r0, #0
-	bl	0x08044460
+	bl	Func_08044460
 	movs	r1, #128
 	movs	r3, #0
 	adds	r2, r5, #0

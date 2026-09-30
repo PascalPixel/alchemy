@@ -152,6 +152,9 @@ Func_08044348:
 	movs	r0, r0
 	.2byte 0xefff
 	.2byte 0xffff
+	.global Func_08044460
+	.thumb_func
+Func_08044460:
 	push	{r5, lr}
 	bl	Resource_FindFreeEntry
 	ldr	r2, [pc, #12]

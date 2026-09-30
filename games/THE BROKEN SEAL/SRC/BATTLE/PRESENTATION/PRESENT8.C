@@ -2,10 +2,10 @@
 #include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
 #include "SCENE.H"
+#include "MOTION_OBJECT.H"
+#include "BATTLE_WORK.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-void *GetBattleObjectSlot();
-
 extern u8 Data_03001e74[];
 extern s32 Summon_IsEntryFlagged(s32 index);
 
@@ -13,8 +13,6 @@ struct Layout {
     u8 pad[4];
     s16 field[6];
 };
-
-extern u8 *gBattleWork;
 
 struct BattleActorDefinition {
     u8 reserved_000[296];
@@ -27,9 +25,7 @@ s32 Summon_IsEntryFlagged(s32 class_id);
 s32 Summon_GetEntryValue(s32 class_id);
 s32 Summon_GetEntryFlag1Field(s32 class_id);
 s32 ResourceSlot_LoadFar(s32 slot, s32 buffer_addr, s32 value, s32 flag);
-
 extern u16 Resource_SlotAssignments[];
-
 s32 Inventory_FindEquippedFar(s32, s32);
 extern u16 RomBytes_080c2a1c[];
 extern u16 BattleUnit_WeaponAnimsClass1[];
@@ -84,15 +80,15 @@ extern const u8 BattlePres_ActorObjectScript[];
 
 /* Step table for battle placement: signed bytes in (x, y) pairs. */
 extern const s8 BattlePlacement_StepPairs[];
-
 struct BattleActorDefinition;
 struct BattleActorDefinition *Owner_GetStateFar(s32);
-
 s32 Resource_FindFreeSlot(s32 key);
 
-s32 BattleMotion_GetSlotField14(void)
+void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
+
+s32 BattleMotion_GetSlotField14(s32 id)
 {
-    return FIELD_AT_OFFSET(GetBattleObjectSlot(), s32 *, 0x14);
+    return FIELD_AT_OFFSET(GetBattleObjectSlot(id), s32 *, 0x14);
 }
 
 s32 Summon_ClassValid(s32 arg0)
@@ -438,4 +434,34 @@ s32 Summon_FindSlot(void)
     if (i == 6)
         return -1;
     return id;
+}
+
+/*
+ * Lays out the battle's enemy list again: collects up to six ids,
+ * computes their standing positions and moves every unit still present
+ * there.
+ */
+s32 Summon_Refresh(void)
+{
+    struct BattleSession *work = gBattleWork;
+    u16 unit_ids[14];
+    s32 x[6];
+    s32 z[6];
+    s32 count;
+    s32 i;
+
+    for (i = 0; i < 6 && work->enemy_units[i] != 0xff; i++)
+        unit_ids[i] = work->enemy_units[i];
+    count = i;
+    Summon_LayoutPositions(unit_ids, count, x, z);
+    for (i = 0; i < count; i++) {
+        s32 id = work->enemy_units[i];
+
+        if (id != 0xfe) {
+            struct BattleObjectSlot *object = GetBattleObjectSlot(id);
+
+            object->anchor_x = x[i] << 16;
+            object->anchor_z = z[i] << 16;
+        }
+    }
 }

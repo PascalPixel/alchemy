@@ -1142,7 +1142,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/CREATE_WITH_LOADED_RESOURCE.o"(.text)
         "*/recon/tbs/raw/080ae99a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/STAT_CHANGE_ARROW.o"(.text)
-        "*/recon/tbs/raw/080ae9f0.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/VARIANT_ICON.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.080aea4c)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SHOP.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/BUILD_AVAILABLE_LIST.o"(.text)

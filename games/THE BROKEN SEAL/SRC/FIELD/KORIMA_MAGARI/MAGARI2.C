@@ -36,11 +36,9 @@ void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
                                s32 dest_y);
 void State_StampRecordCells(s16 *records, s32 value);
 void State_ApplyRectByLayoutSelector(void);
-
 extern u8 gBgScroll[];
 extern u32 KorimaMagari_ShakeScroll[];
 extern u32 KorimaMagari_ShakeChance;
-
 extern u8 MsgFieldFlippedSwitch[];
 void State_CopyPresetA0d0WithOffsetB0(void);
 void State_UpdateScrollRegistersWithPreset(void);
@@ -59,7 +57,6 @@ void Engine_ActorSetAnimation();
 void Runtime_SetIrqHandler();
 void Engine_MapRedraw();
 void Engine_EventEnd();
-
 extern u16 *gKorimaMagariReturned;
 void Engine_EventWait();
 void Engine_ActorSetSpeed();
@@ -67,13 +64,11 @@ void Engine_ActorSetDestination();
 void Map_CopyCellAttributeRect();
 void Engine_ActorSetDestinationOffset();
 void Engine_ActorWaitForMove();
-
 void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void KorimaMagari_PlaceObjects();
 void Scene_RepaintBoardRecords(void);
 void Effect_AdjustPaletteColors(s32 amount);
 extern u16 KorimaMagari_DefaultRecords[];
-
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 /* An object placed at a cell, turned along one axis or the other. */
@@ -88,7 +83,33 @@ struct IcePlacement {
 /* The map's cells, 128 to a row. */
 extern struct MapCell gMapCellBuffer[];
 
-void State_StampRecordCells(s16 *records, s32 value);
+/* A block on the ice: the four cells it covers from (x, z), across or down,
+   and the object that draws it. */
+struct TileRun2 {
+    s16 id;
+    s16 x;
+    s16 z;
+    s16 vertical;
+    struct FieldActor *object;
+};
+
+/* By the leader's facing, in quarter turns: the push animation and the
+   leader's step after the block. */
+extern const u8 KorimaMagari_PushAnimations[];
+extern const s8 KorimaMagari_PushStepX[];
+extern const s8 KorimaMagari_PushStepZ[];
+s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
+void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *point);
+u8 *Runtime_AllocateBlock(s32 block, s32 size);
+void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
+void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
+void Object_CommitPosition(struct FieldActor *object);
+void KorimaPalette_SaveFirst(void);
+void KorimaPalette_SaveSecond(void);
+void KorimaPalette_Capture(void);
+u16 Effect_AdjustColorChannels(u16 color, s32 adj);
+
+const struct TileRun *SceneData_FindTileRunAt( const struct TileRun *run, s32 x, s32 y);
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
 
@@ -564,4 +585,151 @@ s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
         }
     }
     return 0;
+}
+
+/* Push the block in front of the leader: slide it cell by cell, up to eleven
+   cells, while the four cells beyond it are open, then play the push with
+   the block gliding to where it stopped. The actor is first the leader,
+   then the block. */
+void Scene_PushBlockAlongRun(struct TileRun2 *runs)
+{
+    struct FieldActor *actor;
+    struct TileRun2 *run;
+    s32 point[3];
+    s32 facing;
+    s32 moved;
+    s32 i;
+    s32 x;
+    s32 z;
+    s32 quarter;
+
+    moved = 0;
+    actor = Object_GetById(0);
+    facing = (actor->facing + 0x2000) & 0xc000;
+    point[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
+    point[1] = actor->y.fixed;
+    point[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
+    Vector_AddPolarOffset(0x100000, facing, point);
+    run = SceneData_FindTileRunAt(runs, point[0] / 0x100000, point[2] / 0x100000);
+    if (run == 0)
+        return;
+    for (i = 0; i <= 10; i++) {
+        point[0] = run->x << 20;
+        point[2] = run->z << 20;
+        Vector_AddPolarOffset(0x100000, facing, point);
+        if (State_CheckFourCellRun(point[0] / 0x100000, point[2] / 0x100000, run->vertical) != 0)
+            break;
+        moved = 1;
+        if (run->vertical == 0) {
+            x = point[0] + 0x200000;
+            z = point[2] + 0x80000;
+        } else {
+            x = point[0] + 0x80000;
+            z = point[2] + 0x200000;
+        }
+        run->x = point[0] / 0x100000;
+        run->z = point[2] / 0x100000;
+    }
+    if (moved == 0)
+        return;
+    point[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
+    point[1] = actor->y.fixed;
+    point[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
+    Vector_AddPolarOffset(0x80000, facing, point);
+    actor = run->object;
+    quarter = facing / 0x4000;
+    Event_Begin();
+    Actor_SetAnimation(0, 8);
+    Event_Wait(6);
+    actor->speed = 0x8000;
+    actor->acceleration = 0x3333;
+    Audio_PlayCue(239);
+    Object_SetAnimation(actor, KorimaMagari_PushAnimations[quarter]);
+    Object_SetPosition(actor, x, 0, z);
+    Event_Wait(6);
+    Actor_SetAnimation(0, 2);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);
+    Actor_SetSpeed(0, 0x4ccc, 0x3333);
+    Actor_SetDestinationOffset(0, KorimaMagari_PushStepX[quarter], KorimaMagari_PushStepZ[quarter]);
+    Event_Wait(24);
+    Actor_SetAnimation(0, 1);
+    Object_CommitPosition(actor);
+    Object_SetAnimation(actor, 1);
+    Audio_PlayCue(0x120);
+    Audio_PlayCue(213);
+    Event_Wait(15);
+    Event_End();
+}
+
+/* Adjust every palette colour but for colours 17 to 23 and 193 to 200 by
+   the amount given, keeping the palette before and after, then blend
+   towards it. */
+void Effect_AdjustPaletteColors(s32 amount)
+{
+    u32 x;
+
+    KorimaPalette_SaveFirst();
+    x = 0;
+    do {
+        u32 idx = x >> 16;
+        if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
+            u16 *pal = (u16 *)(0x5000000 + idx * 2);
+            *pal = Effect_AdjustColorChannels(*pal, amount);
+        }
+        /* FAKEMATCH: forced temporary; the step is kept in its own
+           register and tested before it replaces x, which the plain
+           loop condition does not do. */
+        {
+            u32 nx = x + 0x10000;
+            x = nx;
+            if (nx > 0xdf0000) {
+                break;
+            }
+        }
+    } while (1);
+    KorimaPalette_Capture();
+    KorimaPalette_SaveSecond();
+    Engine_ColorBufferApplyTarget(0x10000, 0);
+}
+
+/* Old-style declarations: interfaces vary by call site across this overlay. */
+
+  /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
+
+  /* Place a fixture, second bank. */
+
+  /* Set object motion state. */
+
+/*
+ * One symbol per call site, named at the site's pc-relative-decoded address.
+ * All three reach the same ARM-mode IWRAM helper that scales a channel by the
+ * adjustment, and each still needs its own name.
+ */
+
+/* 0x02000eec */
+
+/* 0x02000efa */
+
+/* 0x02000f08 */
+u16 Effect_AdjustColorChannels(u16 color, s32 adj)
+{
+    s16 green = (s16)((color >> 5) & 31);
+    s16 red = (s16)(color & 31);
+    s16 blue = (s16)((color >> 10) & 31);
+    u32 packed;
+
+    red = (s16)(red + IwramSignedDivide(
+        red,
+        (s32)((u32)adj << 2)
+    ));
+    green = (s16)(green - IwramSignedDivide(green, adj));
+    blue = (s16)(blue - IwramSignedDivide(blue, adj));
+
+    /* Only the increasing channel is explicitly saturated by this owner. */
+    if (red > 31)
+        red = 31;
+
+    packed = (u32)(s32)red;
+    packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
+    return (u16)packed;
 }

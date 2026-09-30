@@ -17,11 +17,6 @@
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 extern u8 gEffectWork[];
 
-struct LevelCheckRecord {
-    u8 unknown_00[12];
-    s32 y;                          /* +0x0c */
-};
-
 struct Owner {
     u8 unk0[9];
     u8 unk9_0 : 2;
@@ -58,11 +53,6 @@ struct MotionEffect {
     u32 callback;
 };
 
-struct Obj {
-    u8 pad00[6];
-    u16 f06;
-};
-
 /* The entrance's exits, in the overlay's data. */
 extern u8 gBabiIriguchiExits[];
 
@@ -71,7 +61,7 @@ void BabiIriguchi_OpenTruthDoor(void);
 void BabiIriguchi_CloseTruthDoor(void);
 
 /* The occupant one square ahead of an actor. */
-struct LevelCheckRecord *BabiIriguchi_FindActorAhead();
+struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor);
 
 /* Main-image services reached through the overlay's import veneers. The
  * staged-actor code linked into this overlay names several of them, so the

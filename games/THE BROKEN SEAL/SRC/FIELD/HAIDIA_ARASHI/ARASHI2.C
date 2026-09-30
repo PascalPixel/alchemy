@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
+#include "FIELD_EFFECT.H"
 
 struct Pulse {
     u8 unknown_00[0x64];
@@ -12,6 +13,57 @@ struct Pulse {
 extern u8 MsgHaidiaICantMoveGetHelp[];
 extern u8 MsgHaidiaIllGo[];
 extern u8 MsgHaidiaRobin[];
+
+struct PairDetail {
+    u8 unknown_00[22];
+    u8 field_16;
+};
+
+struct PairSprite {
+    struct FieldSprite sprite;
+    struct PairDetail *detail;
+};
+
+union PairObject {
+    union FieldObject object;
+    s32 words[28];
+    struct {
+        u8 unknown_00[0x68];
+        union PairObject *parent;
+    } link;
+};
+
+struct PairWork {
+    u8 unknown_00[70];
+    u16 vram_block;
+};
+
+LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
+LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
+extern struct PairWork *gEffectWork;
+
+struct WorldMapVramBlock {
+    u16 base;
+    u16 offset;
+};
+
+extern struct WorldMapVramBlock gVramBlockCache[];
+s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
+void Resource_ResetEntry(s32 block);
+void OverlayObject_UpdateArcFromParent(union FieldObject *object);
+void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
+
+/* The OAM view with attribute 1 ending in the two-bit size field. */
+struct WorldMapOam {
+    u8 unknown_00[4];
+    u16 attr0;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 size : 2;
+};
+
+extern u8 MsgHaidiaDoorWontOpen[];
+extern u8 MsgHaidiaSChestValuables[];
 
 void HaidiaArashi_FlashLightning(void)
 {
@@ -283,7 +335,7 @@ void SceneActor_SetModeByFrameBit1(s32 o)
         volatile s32 *q = (volatile s32 *)&gFrameCount;
         v = (HaidiaArashi_ShakeShift << 3) + 16;
         if (IwramUnsignedRemainder(*q, v) == 0) {
-            HaidiaArashi_SpawnEffectPair(o);
+            HaidiaArashi_SpawnEffectPair((union PairObject *)o);
         }
     }
 }
@@ -300,7 +352,7 @@ void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
     }
     n = (HaidiaArashi_ShakeShift << 3) + 16;
     if (IwramUnsignedRemainder(*fc, n) == 0) {
-        HaidiaArashi_SpawnEffectPair(obj);
+        HaidiaArashi_SpawnEffectPair((union PairObject *)obj);
     }
 }
 
@@ -315,8 +367,9 @@ void OverlayObject_ApplyIwramWord1e40(s32 o)
     }
 }
 
-void SceneEffect_UpdateArcOverAnchor(Obj *o)
+void SceneEffect_UpdateArcOverAnchor(union FieldObject *object)
 {
+    Obj *o = (Obj *)object;
     Obj *b;
     s32 t;
     s32 d;
@@ -340,8 +393,9 @@ void SceneEffect_UpdateArcOverAnchor(Obj *o)
     }
 }
 
-void OverlayObject_UpdateArcFromParent(Obj *o)
+void OverlayObject_UpdateArcFromParent(union FieldObject *object)
 {
+    Obj *o = (Obj *)object;
     Obj *b;
     s32 t;
     s32 d;
@@ -363,4 +417,116 @@ void OverlayObject_UpdateArcFromParent(Obj *o)
         k -= d;
         o->f10 = b->f10 - ((k << 2) + k) + 0x100000;
     }
+}
+
+/* Stormy Haidia: spawns the linked pair of effect objects above the parent actor, with a cue, and gives both the parent's sprite priority. */
+void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
+{
+    union PairObject *pair[2];
+    union PairObject *child;
+    struct PairSprite *part;
+    struct FieldSprite *sprite;
+    struct PairWork *work = gEffectWork;
+    s32 i;
+
+    Engine_AudioPlayCue(152);
+    for (i = 0; i < 2; ++i) {
+        child = (union PairObject *)Engine_ObjectCreate(26,
+            parent->object.actor.x.fixed, parent->object.actor.y.fixed,
+            parent->object.actor.z.fixed);
+        pair[i] = child;
+        if (child != NULL) {
+            child->words[5] = parent->words[5];
+            part = (struct PairSprite *)child->object.actor.sprite;
+            child->object.actor.motion_flags = 0;
+            child->object.effect.spin = 0;
+            child->link.parent = parent;
+            if (part != NULL) {
+                sprite = &part->sprite;
+                Object_InitializeMode(sprite, 0);
+                sprite->flags = 0;
+                Resource_ResetEntry(sprite->vram_block);
+                sprite->vram_block = work->vram_block;
+                /* FAKEMATCH: a plain byte access; the struct field store
+                 * leaves a dead QImode zero that takes r3 from the +85
+                 * address. */
+                *(u8 *)&sprite->unknown_1d |= 1;
+                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->full_color = 0;
+                sprite->shape = 1;
+                ((struct WorldMapOam *)sprite)->size = 2;
+                part->detail->field_16 = 0;
+            }
+        }
+    }
+    {
+        union PairObject *p = pair[0];
+        struct FieldSprite *sp = p->object.actor.sprite;
+
+        p->object.actor.update = OverlayObject_UpdateArcFromParent;
+        sp->priority = parent->object.actor.sprite->priority;
+    }
+    {
+        struct FieldActor *p = &pair[1]->object.actor;
+        struct FieldSprite *sp = p->sprite;
+
+        sp->priority = parent->object.actor.sprite->priority;
+        p->update = SceneEffect_UpdateArcOverAnchor;
+        p->priority_flags = 2;
+    }
+}
+
+void SceneState_SetValue140Mode0(void)
+{
+
+    Psynergy_Begin(140, 0);
+}
+
+void FieldScene_RunSingleStep(void)
+{
+    BattleEffect_CleanupSceneObjects();
+}
+
+void FieldScene_RunFourPairedSteps(void)
+{
+    OverlayObject_UpdateRandomSlotByFrame((s32)Actor_Get(32));
+    OverlayObject_UpdateRandomSlotByFrame((s32)Actor_Get(33));
+    OverlayObject_UpdateRandomSlotByFrame((s32)Actor_Get(30));
+    if (HaidiaArashi_ShakeDone == 0) {
+        OverlayObject_UpdateRandomSlotByFrame((s32)Actor_Get(29));
+    }
+}
+
+void SceneState_SetValue19ThenCall(void)
+{
+
+    OverlayObject_ApplyIwramWord1e40((s32)Actor_Get(19));
+}
+
+void OverlayObject_CopyRecordField1ToSlots22And8(void)
+{
+    Ent *src;
+    Ent *dst;
+    Ent *dst2;
+
+    src = ((Rec *)Object_GetById(0))->f50;
+    dst = ((Rec *)Object_GetById(22))->f50;
+    dst->f = src->f;
+    dst2 = ((Rec *)Object_GetById(8))->f50;
+    dst2->f = src->f;
+}
+
+void SceneState_SetValueEe4(void)
+{
+
+    Event_Begin();
+    Message_ShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
+    Event_End();
+}
+
+void FieldScene_ShowChestValuables(void)
+{
+    Event_Begin();
+    Message_ShowCentered((s32)MsgHaidiaSChestValuables, 1);
+    Event_End();
 }

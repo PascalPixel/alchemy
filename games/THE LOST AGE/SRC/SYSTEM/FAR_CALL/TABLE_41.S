@@ -24,7 +24,7 @@ Func_08108048:
 	.global Func_08108050
 	.thumb_func
 Func_08108050:
-	overlay_veneer Func_0810875c
+	overlay_veneer Shop_FillSelector
 	.global Unnamed_080b0840Far
 	.thumb_func
 Unnamed_080b0840Far:

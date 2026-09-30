@@ -31,7 +31,7 @@ Func_080d1f20:
 	adds r7, r7, r3
 	mov r1, r8
 	adds r0, r7, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212

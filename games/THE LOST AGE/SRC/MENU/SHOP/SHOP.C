@@ -1,15 +1,12 @@
 #include "TYPES.H"
-#include "SCENE.H"
 
-extern u16 RomBytes_080b413c[];
-
-/* shop/sel/fill.c */
 struct Record_080b06c0 {
     u8 filler0[4];
     u8 values[21];
 };
 
-extern u16 RomBytes_080b4100[];
+/* The byte offset of each selector cell in the shop's tilemap. */
+extern u16 Shop_SelectorOffsets[];
 
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {
@@ -19,7 +16,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
     selector = shifted + 1;
 
     if (count > 0) {
-        offset = RomBytes_080b4100;
+        offset = Shop_SelectorOffsets;
         do {
             struct Record_080b06c0 *record = (struct Record_080b06c0 *)(base + *offset++);
             record->values[0] = selector;

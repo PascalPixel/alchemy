@@ -8,7 +8,7 @@
 	.global Func_080c8520
 	.thumb_func
 Func_080c8520:
-	overlay_veneer Func_080ca494
+	overlay_veneer Event_GetSpecialValue
 	.global BattleFx_StartItemBreakFar
 	.thumb_func
 BattleFx_StartItemBreakFar:

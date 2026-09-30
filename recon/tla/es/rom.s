@@ -244,8 +244,6 @@ Resource_GetBuffer:
 	.thumb_func
 Func_080144c0:
 	.incbin "baserom.gba", 0x000144ec, 0x00000044
-	.section .rom.00014546, "ax"
-	.incbin "baserom.gba", 0x00014546, 0x00000052
 	.section .rom.00014598, "ax"
 	.global Func_0801456c
 	.type Func_0801456c, %function
@@ -511,10 +509,10 @@ Render_ProjectPoint:
 Func_0801587c:
 	.incbin "baserom.gba", 0x000158a8, 0x000000a0
 	.section .rom.00015948, "ax"
-	.global Func_0801591c
-	.type Func_0801591c, %function
+	.global Resource_DecodeByteLzInRam
+	.type Resource_DecodeByteLzInRam, %function
 	.thumb_func
-Func_0801591c:
+Resource_DecodeByteLzInRam:
 	.incbin "baserom.gba", 0x00015948, 0x000006e0
 	.section .rom.00016048, "ax"
 	.incbin "baserom.gba", 0x00016048, 0x00000134
@@ -2976,10 +2974,10 @@ Func_080dca50:
 Func_080ca6a4:
 	.incbin "baserom.gba", 0x000e6048, 0x000005e8
 	.section .rom.000e6630, "ax"
-	.global Func_080ca494
-	.type Func_080ca494, %function
+	.global Event_GetSpecialValue
+	.type Event_GetSpecialValue, %function
 	.thumb_func
-Func_080ca494:
+Event_GetSpecialValue:
 	.incbin "baserom.gba", 0x000e6630, 0x0000002c
 	.section .rom.000e665c, "ax"
 	.global BattleFx_StartItemBreak

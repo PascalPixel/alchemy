@@ -249,8 +249,6 @@ Resource_GetBuffer:
 	.thumb_func
 Func_080144c0:
 	.incbin "baserom.gba", 0x000144c0, 0x00000044
-	.section .rom.0001451a, "ax"
-	.incbin "baserom.gba", 0x0001451a, 0x00000052
 	.section .rom.0001456c, "ax"
 	.global Func_0801456c
 	.type Func_0801456c, %function
@@ -516,10 +514,10 @@ Render_ProjectPoint:
 Func_0801587c:
 	.incbin "baserom.gba", 0x0001587c, 0x000000a0
 	.section .rom.0001591c, "ax"
-	.global Func_0801591c
-	.type Func_0801591c, %function
+	.global Resource_DecodeByteLzInRam
+	.type Resource_DecodeByteLzInRam, %function
 	.thumb_func
-Func_0801591c:
+Resource_DecodeByteLzInRam:
 	.incbin "baserom.gba", 0x0001591c, 0x000006e0
 	.section .rom.0001601c, "ax"
 	.incbin "baserom.gba", 0x0001601c, 0x00000134

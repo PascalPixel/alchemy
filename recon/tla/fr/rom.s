@@ -244,8 +244,6 @@ Resource_GetBuffer:
 	.thumb_func
 Func_080144c0:
 	.incbin "baserom.gba", 0x000144ec, 0x00000044
-	.section .rom.00014546, "ax"
-	.incbin "baserom.gba", 0x00014546, 0x00000052
 	.section .rom.00014598, "ax"
 	.global Func_0801456c
 	.type Func_0801456c, %function
@@ -511,10 +509,10 @@ Render_ProjectPoint:
 Func_0801587c:
 	.incbin "baserom.gba", 0x000158a8, 0x000000a0
 	.section .rom.00015948, "ax"
-	.global Func_0801591c
-	.type Func_0801591c, %function
+	.global Resource_DecodeByteLzInRam
+	.type Resource_DecodeByteLzInRam, %function
 	.thumb_func
-Func_0801591c:
+Resource_DecodeByteLzInRam:
 	.incbin "baserom.gba", 0x00015948, 0x000006e0
 	.section .rom.00016048, "ax"
 	.incbin "baserom.gba", 0x00016048, 0x00000134
@@ -2287,10 +2285,10 @@ Func_080ca368:
 Func_080ca3f4:
 	.incbin "baserom.gba", 0x000cf3f4, 0x000000a0
 	.section .rom.000cf494, "ax"
-	.global Func_080ca494
-	.type Func_080ca494, %function
+	.global Event_GetSpecialValue
+	.type Event_GetSpecialValue, %function
 	.thumb_func
-Func_080ca494:
+Event_GetSpecialValue:
 	.incbin "baserom.gba", 0x000cf494, 0x00000210
 	.section .rom.000cf6a4, "ax"
 	.global Func_080ca6a4
@@ -2969,10 +2967,10 @@ FacingObject_TurnPairToFaceEachOther:
 Func_080d36a8:
 	.incbin "baserom.gba", 0x000d869c, 0x00000020
 	.section .rom.000d86bc, "ax"
-	.global Func_080d36c8
-	.type Func_080d36c8, %function
+	.global ObjectGroup_ConfigureChildValue
+	.type ObjectGroup_ConfigureChildValue, %function
 	.thumb_func
-Func_080d36c8:
+ObjectGroup_ConfigureChildValue:
 	.incbin "baserom.gba", 0x000d86bc, 0x0000007c
 	.section .rom.000d8738, "ax"
 	.global Object_SetPartAttribute

@@ -69,7 +69,7 @@ Scheduler_AddOrUpdateCallback:
 	strb r3, [r4, #6]
 	adds r5, r2, #0
 .L_08014624:
-	bl Func_0801451c
+	bl Scheduler_SortTasks
 	ldr r3, .L_08014634
 	strh r6, [r3]
 	adds r0, r5, #0

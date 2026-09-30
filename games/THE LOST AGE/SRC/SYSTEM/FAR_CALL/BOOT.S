@@ -120,7 +120,7 @@ Func_08000198:
 	.global Func_080001a0
 	.thumb_func
 Func_080001a0:
-	overlay_veneer Func_0801591c
+	overlay_veneer Resource_DecodeByteLzInRam
 	.global Func_080001a8
 	.thumb_func
 Func_080001a8:

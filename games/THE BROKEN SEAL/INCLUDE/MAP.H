@@ -14,9 +14,21 @@ struct MapLayer {
     u8 unknown04[0x2c];
 };
 
+/* A blend script's playback state. */
+struct BlendScriptState {
+    u16 *script;
+    u16 *cursor;
+    u16 delay;
+    u16 paused;
+};
+
 struct MapState {
-    u8 unknown000[0x130];
-    struct MapLayer layers[4];
+    u8 unknown000[0xd8];
+    struct BlendScriptState blend;   /* 0xd8 */
+    u8 unknown_e4[0x1f];
+    u8 blend_control;                /* 0x103: last BLDCNT written */
+    u8 unknown_104[0x2c];
+    struct MapLayer layers[4];       /* 0x130 */
 };
 
 struct WorldPosition {

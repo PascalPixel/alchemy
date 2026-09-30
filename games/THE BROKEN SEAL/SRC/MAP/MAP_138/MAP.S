@@ -23,7 +23,7 @@ Field_Map138:
 	.incbin "MAP/MAP_138/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map138_ANIMATION:
-	.incbin "MAP/MAP_031/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_031/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map138_BLEND:
 	.incbin "MAP/MAP_020/BLEND.script.lz"

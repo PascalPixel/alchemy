@@ -1,25 +1,29 @@
 #include "TYPES.H"
+#include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "INN.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "SHOP.H"
 #include "INN_RUNTIME.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
+#include "SYSTEM.H"
 
-extern u8 Data_03001f2c[];
+extern struct InnState *Data_03001f2c;
+
+/* ui/ability_menu/build_available_list.c */
+s32 Ability_GetMaximum(s32, s32);
+
 s32 ShopCursor_Advance(s32);
-
 void Shop_StepCursor(void);
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Battle_ResetEffectCounterFar(void);
 u8 Party_ListActiveOwnersFar(void *);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
-
-s32 Runtime_ReleaseHeapBlock(s32);
 s32 Resource_ResetEntry(u16);
 s32 UiWork_FinalizePendingCoreFar();
-
 extern u8 MsgWeaponShopWelcome[];
 extern u8 MsgWhatWouldYouLike[];
 extern u8 MsgWhatToSell[];
@@ -56,6 +60,59 @@ s32 Shop_PickUnit(void);
 void UiWork_FinalizeFar(s32 window, s32 style);
 void Inn_Cleanup(void);
 void WaitFrames(s32 frames);
+
+void Inventory_EquipFar(s32, s32);
+s32 Inventory_AddItemFar(s32, s32);
+#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+
+/*
+ * This owner's view of gGameState, which games/THE BROKEN SEAL/INCLUDE/BATTLE_EFFECT_RUNTIME.H
+ * declares as `struct BattleWork`. Two fields are evidence here; the paddings
+ * are arithmetic to reach them.
+ */
+struct Work_080b0444 {
+    u8 padding0[0x10];
+    s32 value10;
+    u8 padding14[0x108];
+    s8 value11c;
+};
+
+extern struct Work_080b0444 gGameState;
+void *Owner_GetStateFar(s32);
+
+s32 Audio_Check(void);
+
+s32 Shop_Run(s32 row, s32 keeper_id);
+
+s32 AbilityMenu_BuildAvailableList(void)
+{
+    u8 *state;
+    s16 *output;
+    s32 index;
+    s32 count;
+    s32 offset;
+    s8 mode;
+
+    state = (u8 *)Data_03001f2c;
+    count = 0;
+    index = 0;
+    output = (s16 *)(state + 0x26c);
+    do {
+        mode = *(s8 *)(state + 0x3a9);
+        if (mode == Item_GetEquipmentGroupFar(index)&&
+            Ability_GetMaximum(index, 0) != 0) {
+            *output = index;
+            count++;
+            output++;
+        }
+        index++;
+    } while (index <= 0x1ff);
+    offset = count << 1;
+    offset += 0x26c;
+    *(u16 *)(state + offset) = 0;
+    *(u8 *)(state + 0x3a6) = count;
+    return count;
+}
 
 void Shop_StepCursor(void)
 {
@@ -180,4 +237,32 @@ done:
     UiWork_FinalizeFar(window, 2);
     Inn_Cleanup();
     return 0;
+}
+
+#if defined(TBS_EDITION_JA)
+#define FINAL_ARG 2
+#else
+#define FINAL_ARG 1
+#endif
+
+/* 固定値を設定し、3つの項目フラグを1にする。 */
+s32 Battle_ApplyPresetItemsAndFlags(void)
+{
+    gGameState.value10 = 0x30d40;
+    gGameState.value11c = 0x1c;
+    Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
+    Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
+    Inventory_AddItemFar(2, 0xe7);
+    FIELD((void *)Owner_GetStateFar(3), s8 *, 0x131) = 1;
+    FIELD((void *)Owner_GetStateFar(5), s8 *, 0x131) = 1;
+    FIELD((void *)Owner_GetStateFar(2), s8 *, 0x140) = 1;
+    Shop_Run(FINAL_ARG, 0x1e);
+    return 0;
+}
+
+void AudioCommand_WaitForStateByteClear(void)
+{
+    while (Audio_Check() != 0) {
+        WaitFrames(1);
+    }
 }

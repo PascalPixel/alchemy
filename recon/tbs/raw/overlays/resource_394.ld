@@ -10,8 +10,6 @@ SECTIONS
         "*/resource_394_overlay.o"(.text.x02008096)
         "*/resource_394_overlay.o"(.text.x02008098)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/MAGARI2.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/MAGARI3.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/ADJUST_PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KORIMA/PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/IMPORT.o"(.text)
         "*/resource_394_overlay.o"(.rodata.x0200911c)

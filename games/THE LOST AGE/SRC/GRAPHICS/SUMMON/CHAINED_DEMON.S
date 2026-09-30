@@ -1,7 +1,7 @@
-@ Summon_ChainedDemonTiles: 8-bit sprite tiles in a column 3644 pixels tall, their 192-colour
-@ palette and then the tiles as a packed 8-bit bitmap.
+@ Summon_ChainedDemonTiles: its 192-colour palette, then 28 8-bit sprites of
+@ 32x32 and 480 zero bytes (ZERO_FILL.TSV), joined and packed by the resource packer.
 	.section .rodata
 	.global Summon_ChainedDemonTiles
 Summon_ChainedDemonTiles:
 	.incbin "GRAPHICS/SUMMON/CHAINED_DEMON.gbapal"
-	.incbin "GRAPHICS/SUMMON/CHAINED_DEMON.bitmap.lz"
+	.incbin "GRAPHICS/SUMMON/CHAINED_DEMON.parts.lz"

@@ -15,10 +15,10 @@ Field_Map000:
 	map_block Field_Map000
 	map_block Field_Map000, .LField_Map000_SCENE
 .LField_Map000_METATILES:
-	.incbin "MAP/MAP_000/METATILES.delta0.lz"
+	.incbin "COMMON/MAP/MAP_001/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map000_SHAPES:
-	.incbin "MAP/MAP_000/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_001/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map000_GRID:
 	.incbin "MAP/MAP_000/GRID.parts.lz"

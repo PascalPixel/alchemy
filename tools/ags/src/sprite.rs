@@ -21,6 +21,10 @@
 //!   numbers, or `-` for an empty entry.
 //! - `empty`: blank frames stored as empty streams.
 //!
+//! A sprite whose picture both games draw alike reads it from
+//! `games/COMMON`: the optional `PICTURES.TSV` beside the table maps the
+//! stem of its files to the shared picture's, read as `COMMON/NAME.PNG`.
+//!
 //! Frames are coded by the record's codec: 0 zero-skip, 1 the packer's
 //! tagged LZ of the pixels, 3 arena streams whose copies read the sprite's
 //! earlier frames.
@@ -244,7 +248,61 @@ fn label(sprite: &str, item: &str) -> String {
 struct Bank {
     records: Vec<Record>,
     sprites: HashMap<String, Sprite>,
+    /// Sprites whose picture both games draw alike, by the stem of their
+    /// files: the picture in `games/COMMON` that draws it.
+    pictures: HashMap<String, String>,
 }
+
+/// The optional `PICTURES.TSV` beside a bank: a `sprite\tpicture` header,
+/// then one line per sprite whose picture lives once in `games/COMMON`,
+/// the stem of its files and of the shared picture. A sprite named there
+/// reads `COMMON/PICTURE.PNG`, which the build resolves in COMMON's folder
+/// of the same name; its animations stay the game's own.
+fn shared_pictures(
+    built: &str,
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<HashMap<String, String>, String> {
+    let Ok(text) = sibling(PICTURES) else {
+        return Ok(HashMap::new());
+    };
+    let text = String::from_utf8(text).map_err(|_| format!("{built}: {PICTURES} is not text"))?;
+    let mut lines = text.lines().filter(|line| !line.trim().is_empty());
+    if lines.next() != Some("sprite\tpicture") {
+        return Err(format!(
+            "{built}: {PICTURES} needs a sprite\\tpicture header"
+        ));
+    }
+    let mut pictures = HashMap::new();
+    for line in lines {
+        let fields: Vec<&str> = line.split('\t').map(str::trim).collect();
+        let [sprite, picture] = fields.as_slice() else {
+            return Err(format!(
+                "{built}: {PICTURES} line {line:?} needs two fields"
+            ));
+        };
+        let plain = |name: &str| {
+            !name.is_empty()
+                && name
+                    .bytes()
+                    .all(|byte| byte.is_ascii_uppercase() || byte.is_ascii_digit() || byte == b'_')
+        };
+        if !plain(sprite) || !plain(picture) {
+            return Err(format!(
+                "{built}: {PICTURES} line {line:?} names no plain stems"
+            ));
+        }
+        if pictures
+            .insert((*sprite).to_owned(), (*picture).to_owned())
+            .is_some()
+        {
+            return Err(format!("{built}: {PICTURES} names {sprite} twice"));
+        }
+    }
+    Ok(pictures)
+}
+
+/// The shared-picture table beside a sprite bank.
+pub const PICTURES: &str = "PICTURES.TSV";
 
 impl Bank {
     fn read(
@@ -264,7 +322,12 @@ impl Bank {
                 sprites.insert(record.name.clone(), sprite_text(built, &text)?);
             }
         }
-        Ok(Self { records, sprites })
+        let pictures = shared_pictures(built, sibling)?;
+        Ok(Self {
+            records,
+            sprites,
+            pictures,
+        })
     }
     fn sprite(&self, built: &str, name: &str) -> Result<&Sprite, String> {
         self.sprites
@@ -342,7 +405,10 @@ impl Bank {
         sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
     ) -> Result<(Data, Data), String> {
         let name = &record.name;
-        let png = sibling(&format!("{}.PNG", record.files))?;
+        let png = match self.pictures.get(&record.files) {
+            Some(picture) => sibling(&format!("COMMON/{picture}.PNG"))?,
+            None => sibling(&format!("{}.PNG", record.files))?,
+        };
         let image =
             indexed_bitmap_png(&png).map_err(|error| format!("{built}: {name}: {}", error.0))?;
         let (width, height) = (record.bytes[0] as usize, record.bytes[1] as usize);
@@ -502,6 +568,25 @@ mod tests {
             .iter()
             .map(|(_, p)| p.symbol.as_str())
             .collect()
+    }
+
+    #[test]
+    fn a_shared_picture_is_read_from_common() {
+        let shared = |name: &str| match name {
+            "A.PNG" => Err("A.PNG lives in COMMON".to_owned()),
+            "COMMON/SHARED_A.PNG" => files("A.PNG"),
+            "PICTURES.TSV" => Ok(b"sprite\tpicture\nA\tSHARED_A\n".to_vec()),
+            other => files(other),
+        };
+        assert_eq!(
+            bank("S.sprites", table().as_bytes(), &shared).unwrap(),
+            bank("S.sprites", table().as_bytes(), &files).unwrap()
+        );
+        let twice = |name: &str| match name {
+            "PICTURES.TSV" => Ok(b"sprite\tpicture\nA\tX\nA\tY\n".to_vec()),
+            other => files(other),
+        };
+        assert!(bank("S.sprites", table().as_bytes(), &twice).is_err());
     }
 
     #[test]

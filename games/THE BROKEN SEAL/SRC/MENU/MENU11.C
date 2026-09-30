@@ -3,6 +3,8 @@
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 
+s32 Scheduler_AddOrUpdateCallback(s32, s32);
+
 s32 BattleFx_FindConditionResourceFar(s16, s16);
 void Event_SetPairWork1c0Far(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
@@ -36,11 +38,16 @@ struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
 void Menu_DrawSelectionRow(
     struct Work *work, s16 primary, const s16 *secondary);
 void UiWork_Finalize(struct Work *work, s32 release);
-
 extern volatile u32 gKeysRepeat;
-
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second);
 s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode_arg);
+
+s16 Menu_RunSelection(void);
+
+void Scheduler_ScheduleCallbackCAfterFrames(void)
+{
+    Scheduler_AddOrUpdateCallback((s32)&Menu_RunSelection, 0xC80);
+}
 
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second)
 {

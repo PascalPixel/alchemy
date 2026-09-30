@@ -912,6 +912,33 @@ pub fn definitions(source: &str) -> Result<Vec<(String, bool)>> {
         .collect())
 }
 
+/// The functions a source's `tag` comments steer: a comment inside a
+/// definition, or among the comments and declarations leading up to it,
+/// steers that function. `None` when any tag sits elsewhere (at file scope
+/// before a declaration, or inside a preprocessor line), so the whole source
+/// counts as steered.
+pub fn tagged_functions(source: &str, tag: &str) -> Option<BTreeSet<String>> {
+    let tokens = lex(source).ok()?;
+    let spans = scan_definitions(&tokens)
+        .into_iter()
+        .map(|(name, boundary, _, _, open)| Some((name, boundary, matching(&tokens, open)?)))
+        .collect::<Option<Vec<_>>>()?;
+    let mut steered = BTreeSet::new();
+    let mut seen = 0;
+    for (index, token) in tokens.iter().enumerate() {
+        if let Tok::Comment(text) = &token.tok {
+            seen += text.matches(tag).count();
+            if text.contains(tag) {
+                let (name, _, _) = spans
+                    .iter()
+                    .find(|(_, start, end)| (*start..=*end).contains(&index))?;
+                steered.insert(name.clone());
+            }
+        }
+    }
+    (seen == source.matches(tag).count()).then_some(steered)
+}
+
 /// Find and parse the definition of `name`; `None` picks the draft's only
 /// function definition.
 pub fn locate(source: &str, name: Option<&str>, typedefs: &BTreeSet<String>) -> Result<Located> {

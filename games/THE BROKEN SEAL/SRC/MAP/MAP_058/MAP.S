@@ -17,13 +17,13 @@ Field_Map058:
 	.incbin "MAP/MAP_058/METATILES.delta2.lz"
 	.balign 4, 0
 .LField_Map058_SHAPES:
-	.incbin "MAP/MAP_058/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_058/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map058_GRID:
 	.incbin "MAP/MAP_058/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map058_ANIMATION:
-	.incbin "MAP/MAP_058/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_058/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map058_BLEND:
 	.incbin "MAP/MAP_058/BLEND.script.lz"

@@ -1449,7 +1449,7 @@ Func_081a04d0:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x1c28
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	0x081a109a
 .L_081a1074:
 	ldr	r4, [sp, #4]

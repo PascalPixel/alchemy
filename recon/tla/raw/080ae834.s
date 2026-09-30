@@ -22,7 +22,7 @@ Func_080ae834:
 	mov	r2, r8
 	bl	Trade_AddOffer
 	adds	r0, r5, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5
@@ -205,7 +205,7 @@ Func_080ae834:
 	cmp	r0, #0
 	beq.n	.L_080ae9d0
 	adds	r0, r7, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080ae9d0:
 	adds	r0, r6, #0
 	bl	GameFlag_ClearBitFar

@@ -263,7 +263,7 @@ Func_080cb8e8:
 	movs	r0, #162
 	str	r7, [r2, #0]
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080cbb14:
 	movs	r3, #212
 	ldr	r2, [pc, #84]
@@ -563,7 +563,7 @@ Func_080cb8e8:
 .L_080cbd8c:
 	movs	r0, #130
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	bl	.L_080cb8e8
 	mov	r9, r0
 	bl	Object_ResetMotion
@@ -1154,7 +1154,7 @@ Func_080cb8e8:
 	bl	0x080cb82c
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r3, [pc, #168]
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
@@ -1303,7 +1303,7 @@ Func_080cb8e8:
 	bl	0x080cb82c
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r1, [pc, #172]
 	ldrb	r3, [r1, #0]
 	cmp	r3, #0

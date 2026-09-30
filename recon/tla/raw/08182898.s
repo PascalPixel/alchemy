@@ -1311,7 +1311,7 @@ Func_08182898:
 .L_081832de:
 	mov	r0, r8
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [sp, #56]
 	lsls	r0, r0, #21
 	adds	r0, r0, r3
@@ -1433,7 +1433,7 @@ Func_08182898:
 .L_081833e0:
 	movs	r1, #9
 	mov	r0, sl
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r3, r0, #3
 	subs	r3, r3, r0
 	add	r3, r8
@@ -1977,7 +1977,7 @@ Func_08182898:
 	movs	r1, #7
 	mov	r0, r8
 	subs	r7, r3, r2
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, fp
 	lsls	r0, r0, #3
 	subs	r0, r1, r0
@@ -5792,7 +5792,7 @@ Func_08182898:
 	ldr	r0, [sp, #92]
 	movs	r1, #3
 	add	r0, r9
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #128
 	lsls	r1, r1, #6
 	lsls	r0, r0, #12
@@ -9405,14 +9405,14 @@ Func_08182898:
 .L_08187524:
 	ldr	r0, [sp, #48]
 	movs	r1, #13
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r5, [sp, #48]
 	adds	r4, r0, #0
 	adds	r5, #1
 	movs	r1, #13
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [sp, #44]
 	ldr	r1, [pc, #312]
 	mov	r9, r2
@@ -9682,7 +9682,7 @@ Func_08182898:
 .L_0818775c:
 	movs	r1, #6
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #744]
 	lsls	r3, r0, #1
 	ldrh	r1, [r2, r3]
@@ -11572,7 +11572,7 @@ Func_08182898:
 	strb	r2, [r6, #8]
 	adds	r1, r4, #0
 	adds	r0, r7, #0
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #0]
 	mov	r1, r8
 	adds	r2, r0, r1
@@ -11583,7 +11583,7 @@ Func_08182898:
 	adds	r1, r4, #0
 	mov	r0, sl
 	str	r2, [sp, #4]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #0]
 	ldr	r2, [sp, #4]
 	adds	r3, r0, r4
@@ -12788,7 +12788,7 @@ Func_08182898:
 .L_08189060:
 	movs	r1, #6
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r0, #0
 	lsls	r1, r1, #8
 	movs	r2, #139
@@ -12822,7 +12822,7 @@ Func_08182898:
 .L_081890b8:
 	movs	r1, #3
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #3
 	adds	r1, r1, r0
 	lsls	r1, r1, #6

@@ -201,14 +201,3 @@ Func_080f9224:
 	.4byte 0x02000240
 	.2byte 0x103a
 	.2byte 0x0000
-	push	{lr}
-	cmp	r0, #0
-	beq.n	.L_080f93b4
-	strh	r3, [r0, #8]
-	ldr	r3, [sp, #4]
-	strh	r1, [r0, #12]
-	strh	r3, [r0, #10]
-	strh	r2, [r0, #14]
-.L_080f93b4:
-	pop	{pc}
-	.2byte 0x0000

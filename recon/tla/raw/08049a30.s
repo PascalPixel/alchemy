@@ -260,7 +260,7 @@ Func_08049a30:
 	mov	sl, r2
 .L_08049c42:
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r0, #15
 	bl	0x08041f70
 	adds	r1, r5, #0
@@ -596,7 +596,7 @@ Func_08049a30:
 	ldrh	r0, [r5, #0]
 	mov	sl, r1
 	movs	r7, #128
-	bl	0x080ad010
+	bl	Item_Get
 	ldrh	r2, [r5, #0]
 	lsls	r7, r7, #3
 	adds	r3, r7, #0
@@ -2151,7 +2151,7 @@ Func_08049a30:
 	adds	r0, r3, #0
 	adds	r1, r2, #0
 	str	r3, [sp, #68]
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #68]
 .L_0804ab1c:
 	ldr	r3, [sp, #68]
@@ -3547,7 +3547,7 @@ Func_08049a30:
 	str	r1, [sp, #68]
 	adds	r0, r1, #0
 	ldr	r1, [sp, #60]
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #68]
 	ldr	r4, [sp, #20]
 	lsls	r2, r0, #1
@@ -3572,7 +3572,7 @@ Func_08049a30:
 	subs	r3, #1
 	adds	r0, r3, #0
 	str	r3, [sp, #68]
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #68]
 	ldr	r2, [sp, #20]
 	lsls	r3, r0, #1

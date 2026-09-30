@@ -1530,7 +1530,7 @@ Func_080464dc:
 	blt.n	.L_0804715a
 	adds	r0, r6, #0
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r6, r0, #0
 	b.n	.L_08047152
 	movs	r0, r0
@@ -1561,7 +1561,7 @@ Func_080464dc:
 	adds	r5, r5, r0
 	movs	r1, #3
 	adds	r0, r6, #3
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r6, r5, r0
 .L_08047152:
 	ldr	r3, [sp, #456]
@@ -1736,7 +1736,7 @@ Func_080464dc:
 	ldrsb	r6, [r3, r6]
 	movs	r1, #3
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r5, r0, #0
 	lsls	r5, r5, #24
 	asrs	r5, r5, #23
@@ -2002,7 +2002,7 @@ Func_080464dc:
 .L_080474ac:
 	adds	r0, r5, #0
 	str	r2, [sp, #8]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r1, r5, #0
 	ldr	r0, [sp, #144]
 	bl	.L_080499b4
@@ -2037,7 +2037,7 @@ Func_080464dc:
 .L_080474f0:
 	adds	r0, r5, #0
 	str	r2, [sp, #8]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r1, r5, #0
 	ldr	r0, [sp, #144]
 	bl	.L_080499b4
@@ -2170,7 +2170,7 @@ Func_080464dc:
 	mov	fp, r2
 .L_080475fc:
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r0, #15
 	bl	0x08041f70
 	adds	r1, r5, #0
@@ -3108,7 +3108,7 @@ Func_080464dc:
 	subs	r6, r3, r0
 	movs	r1, #3
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #128
 	lsls	r0, r0, #1
 	adds	r5, r0, #0
@@ -6714,7 +6714,7 @@ Func_080464dc:
 	cmp	r6, #0
 	beq.n	.L_08049a00
 	adds	r0, r6, #0
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r5, r0, #0
 	ldrb	r3, [r5, #12]
 	movs	r0, #1

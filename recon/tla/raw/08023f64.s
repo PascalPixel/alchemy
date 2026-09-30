@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08023f64
+	.global Object_IsTargetUnset
 	.thumb_func
-Func_08023f64:
+Object_IsTargetUnset:
 .L_08023f64:
 	push	{lr}
 	adds	r3, r0, #0
@@ -33,7 +33,7 @@ Func_08023f64:
 .L_08023f92:
 	pop	{pc}
 	push	{lr}
-	bl	.L_08023f64
+	bl	Object_IsTargetUnset
 	pop	{pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

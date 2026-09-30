@@ -29,9 +29,9 @@ Func_08038268:
 	bx	r4
 	.2byte 0x9431
 	.2byte 0x0803
-	.global Func_08038270
+	.global UiWindow_SetTilemapEntryFar
 	.thumb_func
-Func_08038270:
+UiWindow_SetTilemapEntryFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xc379

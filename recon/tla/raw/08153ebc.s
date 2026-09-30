@@ -933,7 +933,7 @@ Func_08153ebc:
 .L_08154660:
 	ldr	r0, [sp, #48]
 	movs	r1, #6
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [sp, #64]
 	ldr	r3, [r2, #20]
 	cmp	r0, r3
@@ -1154,7 +1154,7 @@ Func_08153ebc:
 	bl	Audio_PlayCue
 	movs	r1, #6
 	ldr	r0, [sp, #48]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r1, [sp, #64]
 	adds	r4, r0, #0
 	ldr	r3, [r1, #20]

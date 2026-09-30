@@ -1676,7 +1676,7 @@ Func_080e03c4:
 	cmp	r2, r3
 	bne.n	.L_080e1192
 	movs	r1, #7
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	bne.n	.L_080e11a2
 	adds	r0, r5, #0
@@ -1684,7 +1684,7 @@ Func_080e03c4:
 	b.n	.L_080e11a2
 .L_080e1192:
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	bne.n	.L_080e11a2
 	adds	r0, r5, #0
@@ -1848,7 +1848,7 @@ Func_080e03c4:
 .L_080e12f4:
 	adds	r0, r5, #0
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	bne.n	.L_080e1308
 	mov	r2, r8

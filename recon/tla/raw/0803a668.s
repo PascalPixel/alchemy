@@ -31,6 +31,9 @@ Func_0803a668:
 	strb	r1, [r3, #0]
 .L_0803a69a:
 	pop	{pc}
+	.global UiText_OpenMessageWindow
+	.thumb_func
+UiText_OpenMessageWindow:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

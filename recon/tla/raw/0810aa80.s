@@ -535,7 +535,7 @@ Func_0810aa80:
 	cmp	r3, #0
 	beq.n	.L_0810af16
 	ldrh	r0, [r5, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #1
 	ands	r3, r2

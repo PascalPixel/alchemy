@@ -274,7 +274,7 @@
 	cmp	r5, r3
 	bne.n	.L_080d26d8
 	adds	r0, r6, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #8
 	ands	r3, r2

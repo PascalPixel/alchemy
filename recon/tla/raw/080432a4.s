@@ -443,7 +443,7 @@ Func_080432a4:
 	movs	r0, #1
 	bl	WaitFrames
 .L_08043648:
-	bl	0x0803a3b8
+	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_08043642
 	bl	0x0803ce1c
@@ -517,7 +517,7 @@ Func_080432a4:
 	movs	r0, #1
 	bl	WaitFrames
 .L_080436ee:
-	bl	0x0803a3b8
+	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_080436e8
 	movs	r0, #1
@@ -748,13 +748,13 @@ Func_080432a4:
 	movs	r2, #1
 	movs	r3, #2
 	ldr	r0, [pc, #104]
-	bl	0x0803a69c
+	bl	UiText_OpenMessageWindow
 	b.n	.L_0804390e
 .L_08043908:
 	movs	r0, #1
 	bl	WaitFrames
 .L_0804390e:
-	bl	0x0803a3b8
+	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_08043908
 	movs	r0, #1

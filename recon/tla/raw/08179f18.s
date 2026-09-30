@@ -823,7 +823,7 @@ Func_08179f18:
 	bgt.n	.L_0817a65e
 	adds	r0, r4, #0
 	movs	r1, #6
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #1
 	bne.n	.L_0817a5ea
 	movs	r7, #1
@@ -924,7 +924,7 @@ Func_08179f18:
 .L_0817a68c:
 	mov	r0, sl
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [sp, #140]
 	lsls	r0, r0, #5
 	adds	r0, r0, r7
@@ -1698,7 +1698,7 @@ Func_08179f18:
 	ldrh	r0, [r4, r5]
 	lsls	r1, r1, #4
 	adds	r0, #32
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r6, [pc, #8]
 	adds	r1, r5, #0
 	strh	r0, [r6, r1]
@@ -1713,7 +1713,7 @@ Func_08179f18:
 	ldrh	r0, [r2, r3]
 	lsls	r1, r1, #4
 	adds	r0, #128
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [pc, #96]
 	ldr	r5, [sp, #40]
 	strh	r0, [r4, r5]
@@ -2734,7 +2734,7 @@ Func_08179f18:
 .L_0817b4b6:
 	movs	r1, #15
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #172]
 	adds	r1, r0, #0
 	movs	r0, #2

@@ -865,7 +865,7 @@ Func_0811cfd0:
 	bl	.L_0811d5a0
 	movs	r0, #108
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	adds	r5, #69
 	movs	r0, #0
 	bl	Func_0811cd7c

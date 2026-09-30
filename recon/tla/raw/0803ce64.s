@@ -84,7 +84,7 @@ Func_0803ce64:
 	movs	r0, #1
 	bl	WaitFrames
 .L_0803cf0c:
-	bl	0x0803a3b8
+	bl	UiWork_IsComplete
 	cmp	r0, #0
 	beq.n	.L_0803cf06
 	cmp	r6, #0

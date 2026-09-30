@@ -1723,7 +1723,7 @@
 	asrs	r0, r0, #10
 	movs	r1, #3
 	str	r4, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #8]
 	cmp	r0, #1
 	bne.n	.L_081acf4e

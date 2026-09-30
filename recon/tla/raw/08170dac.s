@@ -355,7 +355,7 @@ Func_08170dac:
 .L_0817107e:
 	adds	r0, r6, #4
 	movs	r1, #6
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #1
 	mov	r1, r8
 	adds	r3, r0, #1
@@ -414,7 +414,7 @@ Func_08170dac:
 	ldr	r0, [sp, #32]
 	movs	r1, #6
 	str	r4, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	lsls	r5, r5, #2

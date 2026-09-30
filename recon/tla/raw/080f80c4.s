@@ -3,10 +3,10 @@
 	push	{lr}
 	movs	r0, #169
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #179
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	bl	0x080202d8
 	bl	0x080146d4
 	pop	{pc}
@@ -115,7 +115,7 @@
 	adds	r0, #255
 	ands	r0, r3
 	mov	r8, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldr	r2, [sp, #20]
 	movs	r5, #128
 	lsls	r5, r5, #1
@@ -372,7 +372,7 @@
 	adds	r0, r7, #0
 	movs	r2, #3
 	movs	r3, #5
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	movs	r3, #42
 	adds	r3, #255
 	add	r3, sl

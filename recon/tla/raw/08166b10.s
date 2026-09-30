@@ -554,7 +554,7 @@ Func_08166b10:
 	mov	sl, r4
 	mov	r8, r3
 	ldr	r6, [sp, #16]
-	bl	0x08002064
+	bl	Math_Mod
 	subs	r6, #17
 	adds	r5, r0, #0
 	mov	r9, r6
@@ -590,7 +590,7 @@ Func_08166b10:
 	blt.n	.L_081670a2
 	mov	r0, r8
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [r5, #16]
 	adds	r4, r0, #2
 	cmp	r3, #0
@@ -2078,7 +2078,7 @@ Func_08166b10:
 	strb	r3, [r5, #26]
 	movs	r1, #3
 	adds	r0, r7, #0
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r0, #0
 	adds	r0, r5, #0
 	bl	Func_08020030
@@ -4362,7 +4362,7 @@ Func_08166b10:
 	bne.n	.L_08168e54
 	movs	r1, #3
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #44]
 	adds	r0, #1
 	lsls	r4, r0, #1

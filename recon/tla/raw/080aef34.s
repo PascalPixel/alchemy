@@ -20,7 +20,7 @@ Func_080aef34:
 	ldrh	r5, [r7, r3]
 	mov	r0, r8
 	adds	r1, r5, #0
-	bl	0x080aec1c
+	bl	Item_CanOwnerEquipDirect
 	cmp	r0, #0
 	bne.n	.L_080aef66
 	movs	r0, #1

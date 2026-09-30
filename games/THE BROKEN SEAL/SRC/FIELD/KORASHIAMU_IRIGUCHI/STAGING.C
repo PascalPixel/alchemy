@@ -47,8 +47,8 @@ void FieldScene_RunConditionalSceneSetup(void)
         Camera_SetSpeed(0x66666, 0xcccc);
         Camera_MoveTo(0x21c0000, -1, 0xd00000, 1);
         Camera_WaitForMove();
-        SCENE_PHASE = 0x200;
-        SCENE_FIELD_1C8 = 32;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+        gEventWork->transition_frames = 32;
         Event_CloseScreen();
         Event_WaitForScreen();
         if (GameFlag_IsSet(0x8a3) != 0) {
@@ -64,10 +64,7 @@ void FieldScene_BuildActorPresentationGroup(void)
 {
 
     struct FieldActor *rec2;
-    u8 *work;
     s32 shift;
-    s32 phase;
-    s32 field;
 
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -92,11 +89,8 @@ void FieldScene_BuildActorPresentationGroup(void)
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Task_Wait(1);
-    work = (u8 *)gEventWork;
-    phase = 0x1c0;
-    *(s32 *)(work + phase) = 0x200;
-    field = 0x1c8;
-    *(s32 *)(work + field) = 32;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->transition_frames = 32;
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(40);
@@ -168,13 +162,11 @@ void FieldScene_BuildActorPresentationGroup(void)
     Actor_WalkToAndWait(16, 184, 0x35f);
     Actor_WalkToAndWait(16, 184, 0x31c);
     Actor_SetPosition(16, 0, 0);
-    work = (u8 *)gEventWork;
-    *(s32 *)(work + phase) = 0x201;
-    *(s32 *)(work + field) = 16;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gEventWork->transition_frames = 16;
     Event_CloseScreen();
     Event_WaitForScreen();
-    work = (u8 *)gEventWork;
-    *(s32 *)(work + phase) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_RequestExit(69);
     Event_End();
 }
@@ -213,7 +205,6 @@ void FieldScene_RunMiddleSequence(void)
     u32 counter;
     struct FieldActor *rec;
     struct FieldActor *rec2;
-    u8 *work;
 
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -238,11 +229,8 @@ void FieldScene_RunMiddleSequence(void)
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Task_Wait(1);
-    /* Advance the scene phase/status word at +0x1c0 and its companion word
-     * at +0x1c8 of the shared scene work record. */
-    work = (u8 *)gEventWork;
-    *(s32 *)((work + 0x1c0)) = 0x200;
-    *(s32 *)((work + 0x1c8)) = 32;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->transition_frames = 32;
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(40);
@@ -323,11 +311,8 @@ void FieldScene_RunMiddleSequence(void)
     Event_Wait(20);
     Actor_SetAnimation(17, 10);
     Event_Wait(80);
-    /* Advance the scene phase/status word at +0x1c0 and its companion word
-     * at +0x1c8 of the shared scene work record. */
-    work = (u8 *)gEventWork;
-    *(s32 *)((work + 0x1c0)) = 0x201;
-    *(s32 *)((work + 0x1c8)) = 16;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gEventWork->transition_frames = 16;
     Event_CloseScreen();
     Event_WaitForScreen();
     GameFlag_Set(0x8a4);

@@ -128,11 +128,6 @@ s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
     return 1;
 }
 
-/*
- * The clamp store takes its zero from a local.  Written as a literal it is
- * materialised from the literal pool, which changes the store's source
- * register and costs a pool word.
- */
 s32 SceneActor_UpdateRandomCounterMode(u8 *object)
 {
     u16 *counter = (u16 *)(object + 100);
@@ -271,7 +266,6 @@ s32 Scene_Initialize(void)
     }
     return 0;
 }
-
 
 void Object_RefreshSelectorById(s32 id);
 void SceneActor_SetPairZeroAndValue(s32 actor, s32 facing, s32 frames);
@@ -468,7 +462,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Battle_WaitMode0(40);
         Event_SayThenWait(ACTOR_MIA, 40);
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Battle_WaitMode0(20);
     party_flag = &KorimaHashi_PartyFlag;
@@ -555,7 +549,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
         Event_SayThenWait(ACTOR_MIA, 10);
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     formation_phase = &gFallingEffectState;
     *formation_phase = 3;
@@ -625,7 +619,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetPosition(12, 0xdc0000, 0x1ee0000);
     WaitFrames(1);
     if (Event_ChooseYesNo(11, 0) == 1) {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Battle_WaitMode0(20);
@@ -688,7 +682,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Battle_WaitMode0(20);
         Event_SayThenWait(ACTOR_MIA, 20);
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Actor_Jump(ACTOR_GERALD, 2, 0);
     SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
@@ -747,7 +741,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Object_SetModeById(ACTOR_IVAN, 3);
         Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     } else {
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         SceneActor_SetPairZeroAndValue(1, 0x2000, 10);
@@ -767,7 +761,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Object_SetModeById(ACTOR_MIA, 4);
         Event_SayThenWait(ACTOR_MIA, 10);
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     SceneActor_SetPairZeroAndValue(0, 0xa000, 10);
@@ -812,7 +806,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Battle_WaitMode0(20);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Battle_WaitMode0(40);
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Event_ShowMessage(ACTOR_GERALD, 0);
     Audio_PlayCue(21);
@@ -1056,7 +1050,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_StartRepeatedMotion(ACTOR_MIA, 3);
             Event_SayThenWait(ACTOR_MIA, 20);
         } else {
-            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+            gEventWork->message += 1;
         }
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
@@ -1071,7 +1065,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_SetAnimationAndWait(ACTOR_MIA, 4);
             Event_SayThenWait(ACTOR_MIA, 10);
         } else {
-            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+            gEventWork->message += 1;
         }
         Battle_WaitMode0(60);
         Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
@@ -1102,7 +1096,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_StartRepeatedMotion(ACTOR_MIA, 1);
         Event_SayThenWait(ACTOR_MIA, 20);
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
@@ -1117,7 +1111,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Object_SetModeById(ACTOR_MIA, 4);
         Event_SayThenWait(ACTOR_MIA, 40);
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Battle_WaitMode0(20);

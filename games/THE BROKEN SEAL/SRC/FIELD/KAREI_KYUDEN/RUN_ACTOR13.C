@@ -5,7 +5,6 @@ extern u8 MsgKareiHasLegacyLordHammetsSilk[];
 extern u8 MsgKareiLordHammetWillReleasedSoon[];
 extern u8 MsgKareiRobinSneakedIntoLunpaThats[];
 
-
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
 u8 *Object_GetById();
@@ -14,13 +13,6 @@ void SceneChannel_ConfigureUniformAndHandoff();
 s32 Object_SetActionCallbackAndRefreshById();
 
 /* Signed halfword table in RAM; index 225 selects the scene. */
-
-/*
- * Each Func_ symbol names the pre-relocation call word the image holds, not
- * a runtime address; imports are named by the main-image address in the
- * trailing word of the overlay veneer. Old-style declarations are required
- * here, because the arity varies from site to site.
- */
 
 /*
  * Call sites spelled through these wrappers pass their constants straight
@@ -40,9 +32,7 @@ static __inline__ void bump_step(s32 amount)
 {
     void Map_ClearLayerEntryFlag();
 
-    u8 *work = *(u8 **)&gEventWork;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
@@ -108,7 +98,7 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 
-    *(u16 *)(*(u8 **)&gEventWork + 0x1d8) += amount;
+    gEventWork->message += amount;
 }
 
 void SceneDialogue_RunActor13Message1b83(void)

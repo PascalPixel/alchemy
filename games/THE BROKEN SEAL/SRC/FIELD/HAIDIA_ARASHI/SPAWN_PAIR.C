@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-
 struct PairDetail {
     u8 unknown_00[22];
     u8 field_16;

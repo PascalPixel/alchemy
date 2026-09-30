@@ -31,6 +31,7 @@
  * the reference store/movs/increment/call order: all 856 bytes and pools
  * exact. No counter type, declaration-order or fixed-register changes. */
 #include "TYPES.H"
+#include "KANPAN.H"
 #include "FIELD_EVENT.H"
 extern u8 FuneKanpan_CrewScriptD[];
 extern u8 MsgFuneArrgh[];
@@ -59,31 +60,6 @@ void Event_WaitValue1c8FramesFar();
  * A value-returning call also sets r0 last of its arguments. The legacy
  * Value2 callback calls retain that return-shape adapter around the actual
  * void service; their unused nominal results are not game values. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 void FieldScene_RunActorSequence(void)
 {

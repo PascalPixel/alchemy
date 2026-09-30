@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-
 extern const u16 *ImiruMura_ExitCellSteps[];
 extern s16 ImiruMura_ExitCellPoints[][2];
 

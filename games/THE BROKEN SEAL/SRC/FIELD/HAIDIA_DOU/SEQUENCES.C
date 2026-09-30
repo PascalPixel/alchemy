@@ -133,7 +133,6 @@ void FieldScene_RunScene3a6SequenceC(void)
     }
 }
 
-/* Actor-8 presentation reset at 0x02001378, including alignment to 0x1390. */
 void FieldScene_RunActor8ZeroStep(void)
 {
     Event_Begin();

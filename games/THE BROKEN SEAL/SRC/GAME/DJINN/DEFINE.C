@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_SUMMON.H"
 
 struct State_0807977c {
     u32 flags;
@@ -22,4 +23,13 @@ s32 Trade_ListFlaggedEntries(u8 *output)
     } while (source <= end);
     *output = 32;
     return count;
+}
+
+extern const struct SummonDefinition Summon_DefinitionTable[];
+
+const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
+{
+    if (summon_id > 15)
+        return NULL;
+    return &Summon_DefinitionTable[summon_id];
 }

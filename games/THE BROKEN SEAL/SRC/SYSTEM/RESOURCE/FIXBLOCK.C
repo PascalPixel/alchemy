@@ -13,3 +13,10 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
     VramBlock_LoadCached(slot, 0x80, Resource_FixedBlockBTiles);
     return slot;
 }
+
+/* A routine that only reports success, after the fixed resource block
+   loader; nothing in the image calls it by name. */
+s32 Resource_ReturnTrue(void)
+{
+    return 1;
+}

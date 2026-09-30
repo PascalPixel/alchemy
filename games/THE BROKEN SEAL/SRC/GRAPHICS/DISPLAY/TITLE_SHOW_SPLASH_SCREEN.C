@@ -9,7 +9,7 @@ struct BgScroll {
     s16 y;
 };
 
-extern u8 Data_03001d18;
+extern u8 gOamCopyEnabled;
 extern struct BgScroll gBgScroll[4];
 extern volatile u32 gKeyState;
 
@@ -38,7 +38,7 @@ s32 Title_ShowSplashScreen(s32 mode)
     s32 resource;
 
     Audio_PlayCue(110);
-    Data_03001d18 = 1;
+    gOamCopyEnabled = 1;
     resource = (s32)&ResourceId_NintendoLogo;
     blank = 0x1ff;
     Scheduler_ResetTaskTable();

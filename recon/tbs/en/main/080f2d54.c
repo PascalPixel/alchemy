@@ -40,7 +40,7 @@ struct BgScroll {
     s16 y;
 };
 
-extern u8 Data_03001d18;
+extern u8 gOamCopyEnabled;
 extern struct BgScroll gBgScroll[4];
 extern u32 gFrameCount;
 extern volatile u32 gKeyState;
@@ -64,7 +64,7 @@ s32 Title_ShowAnimatedSplash(void)
     struct BgScroll *scroll;
     s32 zero;
 
-    Data_03001d18 = 1;
+    gOamCopyEnabled = 1;
     resource = (s32)&ResourceId_CamelotLogo;
     Scheduler_ResetTaskTable();
     Blend_SetDarkenTarget16(1);

@@ -8,7 +8,7 @@ extern u8 Data_03001ac4;
 extern u8 gDebugMode;
 extern u8 Data_03001f58;
 extern s32 Data_03007800;
-extern u8 Data_03001d18;
+extern u8 gOamCopyEnabled;
 extern u8 Data_03001ca0;
 
 
@@ -57,7 +57,7 @@ void System_Initialize(void)
     Resource_InitializeTable();
     Scheduler_ResetTaskTable();
     Data_03007800 = 0;
-    Data_03001d18 = 1;
+    gOamCopyEnabled = 1;
     Data_03001ca0 = 0;
     WaitFrames(10);
     Game_ResetForNewGameFar(0);

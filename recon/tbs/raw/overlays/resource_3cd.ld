@@ -6,10 +6,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/RECORD_COUNT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL_PANEL.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/SELECT_ITEM.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/SELECT_ABILITY.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/IMPORT.o"(.text)
         "*/resource_3cd_overlay.o"(.rodata)

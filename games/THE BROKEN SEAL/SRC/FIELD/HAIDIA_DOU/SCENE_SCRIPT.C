@@ -5,7 +5,6 @@
 void WaitFrames();
 void HaidiaDou_ApplyEntryState();
 
-
 s32 HaidiaDou_RunSceneScript(void)
 {
     s32 *request = &gEventWork->start_transition;

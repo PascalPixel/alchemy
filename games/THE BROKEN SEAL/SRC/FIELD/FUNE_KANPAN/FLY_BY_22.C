@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "KANPAN.H"
 #include "FIELD_EVENT.H"
 
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
@@ -7,16 +8,6 @@ struct FlyBy {
     u8 unknown_00[0x64];
     s16 step;
 };
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 /* A deck object's update: wait a random while, fly to its mark, make actor 22 turn and react, then fly off and start over. */
 s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)

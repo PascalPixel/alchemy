@@ -2,7 +2,6 @@
 
 void SceneEffect_UpdateLobeOrbitEffect26();
 
-
 s32 Engine_GameFlagIsSet();
 s32 Engine_GameFlagSet();
 void Engine_ActorSetPosition();
@@ -13,7 +12,6 @@ void Engine_ItemLoadIcon();
 s32 Engine_VramLoad();
 void Engine_HeapRelease();
 void Engine_TaskAddCallback();
-
 
 extern s16 gGameState[][1];
 

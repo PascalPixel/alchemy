@@ -38,13 +38,6 @@ void Effect_ConfigureSpawnedParticle(struct SourceEntity *source)
     Audio_PlayCue(0x8a);
 }
 
-/*
- * Play a rising-dust burst from a source entity. The owner extends through its
- * four literal pool words. Both loops count down inclusively, so they run 31
- * lift steps and 8 particles. The address handed to Engine_ObjectSetScript is passed
- * through as a plain pointer; whether it is animation data or a callback is
- * not established.
- */
 void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
 {
     s32 frame_countdown;

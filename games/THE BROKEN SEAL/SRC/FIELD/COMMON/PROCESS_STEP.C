@@ -84,6 +84,21 @@ struct StepOwner {
     u8 unknown_131;                 /* 0x131 */
 };
 
+enum StepTileEvent {
+    STEP_EVENT_FIRST = 1,
+    STEP_EVENT_LAST = 239,
+    STEP_TERRAIN_FIRST = 240,
+    STEP_TERRAIN_LAST = 241,
+    STEP_EVENT_HAZARD = 250,
+    STEP_WARP_FIRST = 252,
+    STEP_WARP_LAST = 254
+};
+
+#define STEP_MODE_WORLD_MAP 3
+#define STEP_NO_TARGET ((s32)0x80000000)
+#define STEP_FLAG_DOUBLE_SPEED 0x167
+#define STEP_CUE_EFFECT 139
+
 extern struct StepWork *Data_03001ebc;
 extern struct StepState Data_02000240;
 
@@ -130,7 +145,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
     for (i = 0; i < count; i++)
         hp[i] = Owner_GetStateFar(Data_02000240.party[i])->hp;
 
-    if (work->mode == 3) {
+    if (work->mode == STEP_MODE_WORLD_MAP) {
         tile = &((struct StepTile *)Ram_MapBlocks)[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)];
     } else {
         if ((u32)layer <= 2)
@@ -144,21 +159,21 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
     work->tile = tile;
     if (event != 0)
         UpdateMapRegionAtPosition(x, y, z);
-    if (event >= 1 && event <= 239)
+    if (event >= STEP_EVENT_FIRST && event <= STEP_EVENT_LAST)
         work->step_event = event;
-    if (event >= 252 && event <= 254)
+    if (event >= STEP_WARP_FIRST && event <= STEP_WARP_LAST)
         work->warp_event = event;
 
-    if (Data_02000240.unknown_1f2 == 0 && actor != NULL && actor->unknown_38 != (s32)0x80000000) {
+    if (Data_02000240.unknown_1f2 == 0 && actor != NULL && actor->unknown_38 != STEP_NO_TARGET) {
         speed = actor->speed;
-        if (GameFlag_TestFar(0x167))
+        if (GameFlag_TestFar(STEP_FLAG_DOUBLE_SPEED))
             speed <<= 1;
-        if (work->mode == 3) {
+        if (work->mode == STEP_MODE_WORLD_MAP) {
             full = 1;
             work->unknown_17c = BattleFx_ApplyLookupResult(actor->motion, speed);
-        } else if (event == 240 || event == 241) {
-            full = work->encounter_full[event - 239];
-            work->unknown_17c = EffectRuntime_LookupByTableEntry(event - 239, speed);
+        } else if (event == STEP_TERRAIN_FIRST || event == STEP_TERRAIN_LAST) {
+            full = work->encounter_full[event - (STEP_TERRAIN_FIRST - 1)];
+            work->unknown_17c = EffectRuntime_LookupByTableEntry(event - (STEP_TERRAIN_FIRST - 1), speed);
         } else {
             full = work->encounter_full[0];
             work->unknown_17c = EffectRuntime_LookupByTableEntry(0, speed);
@@ -173,12 +188,12 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             work->encounter_steps = sum & 0xffff;
             BattleParty_ApplyDrain(n, 0);
             if (Func_080b50f8())
-                Audio_PlayCue(139);
+                Audio_PlayCue(STEP_CUE_EFFECT);
             Event_ClearInvalidPackedValues();
             fell = BattleParty_ApplyStatusDamage();
         }
-        if (Data_02000240.unknown_22e == 0 && event == 250) {
-            if (work->previous_tile->event == 250)
+        if (Data_02000240.unknown_22e == 0 && event == STEP_EVENT_HAZARD) {
+            if (work->previous_tile->event == STEP_EVENT_HAZARD)
                 Data_02000240.unknown_232 += actor->speed / 0x10000;
             else
                 Data_02000240.unknown_232 = Data_02000240.unknown_22c / 2;

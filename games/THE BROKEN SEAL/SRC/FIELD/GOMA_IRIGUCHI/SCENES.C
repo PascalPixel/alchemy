@@ -53,25 +53,21 @@ void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 
 /* Contiguous unnamed leaf-owner run for resource_387. */
 
-/* resource_387 prologue-less table getter, including its one-word pool. */
 void *SceneData_GetTable92f8(void)
 {
     return GomaIriguchi_SceneTableA;
 }
 
-/* resource_387 zero-return leaf at 0x02000334. */
 int SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/* resource_387 prologue-less table getter, including its one-word pool. */
 void *SceneData_GetTable9358(void)
 {
     return GomaIriguchi_SceneTableB;
 }
 
-/* resource_387 prologue-less table getter, including its one-word pool. */
 void *SceneData_GetTable9368(void)
 {
     return GomaIriguchi_SceneTableC;
@@ -138,12 +134,10 @@ void FieldScene_RunScene387SequenceD(void)
     Event_End();
 }
 
-/* resource_387 deliberate no-op leaf at 0x020004cc. */
 void Resource387_NoOpCallbackA(void)
 {
 }
 
-/* resource_387 deliberate no-op leaf at 0x020004d0. */
 void Resource387_NoOpCallbackB(void)
 {
 }
@@ -155,7 +149,6 @@ void FieldScene_RunStepWithValue866(void)
     Event_End();
 }
 
-/* resource_387 prologue-less table getter, including its one-word pool. */
 void *SceneData_GetTable9488(void)
 {
     return GomaIriguchi_SceneTableD;

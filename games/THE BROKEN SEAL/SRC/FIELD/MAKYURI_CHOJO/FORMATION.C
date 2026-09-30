@@ -13,14 +13,14 @@ void FieldScene_RunScene39d_020009fc(void)
     s32 record;
     s32 nearest;
 
-    rec = Value1(Engine_ActorGet, 0);
+    rec = Actor_Get(ACTOR_PARTY_LEADER);
     Event_Begin();
     record = FindNearestF2Actor();
     nearest = (s32)MakyuriChojo_NearestActor;
     *(s32 *)nearest = record;
     if (record != 0) {
         GameFlag_Set(0x250);
-        rec8 = Value1(Engine_ActorGet, *(s32 *)nearest);
+        rec8 = Actor_Get(*(s32 *)nearest);
         rec8[85] = 0;
         rec[85] &= 254;
         *(s32 *)((s32)rec8 + 12) += -0x30000;

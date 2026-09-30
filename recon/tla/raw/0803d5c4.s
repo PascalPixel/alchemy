@@ -370,36 +370,3 @@ ItemIcon_Compose:
 	.4byte 0x0804e740
 	.2byte 0xe7dc
 	.2byte 0x0804
-	.global UiIcon_CopyResourceToSlot
-	.thumb_func
-UiIcon_CopyResourceToSlot:
-	push	{r5, r6, lr}
-	mov	r6, sl
-	mov	r5, r8
-	push	{r5, r6}
-	mov	r8, r1
-	movs	r1, #193
-	adds	r6, r0, #0
-	lsls	r1, r1, #3
-	movs	r0, #68
-	mov	sl, r2
-	bl	Runtime_AllocateHeapBlock
-	mov	r1, r8
-	adds	r5, r0, #0
-	adds	r0, r6, #0
-	bl	ItemIcon_Compose
-	movs	r3, #128
-	lsls	r3, r3, #3
-	adds	r5, r5, r3
-	movs	r1, #128
-	adds	r2, r5, #0
-	mov	r0, sl
-	bl	VramBlock_LoadCached
-	movs	r0, #68
-	bl	Runtime_ReleaseHeapBlock
-	movs	r0, #1
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, pc}
-	.2byte 0x0000

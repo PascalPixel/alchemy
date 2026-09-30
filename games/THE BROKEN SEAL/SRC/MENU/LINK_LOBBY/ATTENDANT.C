@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgLobbyBattleArenaOld[];
 extern u8 MsgLobbyChangeOrderParty[];
 extern u8 MsgLobbyThreeAlliesFight[];
@@ -27,23 +28,6 @@ s32 Engine_EventEnd(void);
 
 extern union GameStateRows gGameState;
 
-/* FAKEMATCH: calls spelled through these wrappers pass their constants
- * straight into the argument registers. */
-static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(void (*f)(s32), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Call2(s32 (*f)(s32, s32), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 /* The three lobby regulars face the leader and speak a line that moves on
  * with the lobby's progress flags. */
 s32 LinkLobby_TalkToAttendant(s32 actor)
@@ -68,7 +52,7 @@ s32 LinkLobby_TalkToAttendant(s32 actor)
     if (Engine_GameFlagIsSet(0x304))
         step = 2 - (Engine_GameFlagIsSet(0x305) != 0);
     Engine_EventSetMessage(message + step);
-    Call2(Engine_EventOpenMessage, actor, 0);
+    Engine_EventOpenMessage(actor, 0);
     return Engine_EventEnd();
 }
 
@@ -85,12 +69,12 @@ s32 LinkLobby_TalkAlternating(s32 actor)
             message = (s32)MsgLobbyThreeAlliesFightLinkedFinals;
         else
             message = (s32)MsgLobbyThreeAlliesFightLinked;
-        Call1(Engine_GameFlagSet, 0x204);
+        Engine_GameFlagSet(0x204);
     } else {
         message = (s32)MsgLobbyChangeOrderParty;
-        Call1(Engine_GameFlagClear, 0x204);
+        Engine_GameFlagClear(0x204);
     }
     Engine_EventSetMessage(message);
-    Call2(Engine_EventOpenMessage, actor, 0);
+    Engine_EventOpenMessage(actor, 0);
     return Engine_EventEnd();
 }

@@ -9,6 +9,7 @@
 #include "IO_REG.H"
 #include "VRAM_BLOCK.H"
 #include "RAM_BUFFER.H"
+#include "CALL.H"
 
 extern u8 gTitleEntrances[];
 extern u8 gTitleExits[];
@@ -35,13 +36,6 @@ u8 *Resource_GetTableEntry(s32 resource);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 VramBlock_LoadCached(s32 block, s32 size, const void *data);
 #define DMA3 ((volatile u32 *)0x040000d4)
-
-/* FAKEMATCH: calling through the inline passes each constant straight into
- * its argument register instead of precomputing it. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 void Runtime_PushSlotEntry(void *entry, s32 slot);
 

@@ -549,6 +549,8 @@ SECTIONS
         "*/recon/tla/raw/080af794.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080af8d0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080afb80.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GAME/PARTY/ADVANCE_OWNER_COUNT_TO_TARGET.o"(.text)
+        "*/recon/tla/raw/080afbec.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080affac.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080b005c.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/CHARACTER/GET_RECORD_STRIDE84.o"(.text)

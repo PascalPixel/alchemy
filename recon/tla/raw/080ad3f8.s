@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ad3f8
+	.global Owner_RecalculateStats
 	.thumb_func
-Func_080ad3f8:
+Owner_RecalculateStats:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

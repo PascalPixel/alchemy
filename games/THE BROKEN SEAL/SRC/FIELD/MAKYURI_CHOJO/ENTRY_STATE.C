@@ -83,7 +83,7 @@ s32 MakyuriChojo_ApplyEntryState(void)
             }
             Engine_MapRedraw();
             Engine_TaskWait(1);
-            Call6(Engine_MapCopyCellsTo, 4, 70, 4, 74, 5, 4);
+            Map_CopyCellsTo(4, 70, 4, 74, 5, 4);
             Engine_ActorSetPosition(9, 0, 0);
             if (!Engine_GameFlagIsSet(0x109)) {
                 RunScene59Sequence();

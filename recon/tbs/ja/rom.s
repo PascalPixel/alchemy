@@ -121,38 +121,12 @@ Render_ApplyProjectedPlacement:
 	.thumb_func
 ResourceSlot_Load:
 	.incbin "baserom.gba", 0x0000b6b8, 0x000000e0
-	.section .rom.0000c0ca, "ax"
-	.incbin "baserom.gba", 0x0000c0ca, 0x00000002
-	.section .rom.0000c0cc, "ax"
-	.global ObjectDispatch_FindFreeObject
-	.type ObjectDispatch_FindFreeObject, %function
-	.thumb_func
-ObjectDispatch_FindFreeObject:
-	.incbin "baserom.gba", 0x0000c0cc, 0x00000028
-	.section .rom.0000c0f4, "ax"
-	.global ObjectDispatch_Release
-	.type ObjectDispatch_Release, %function
-	.thumb_func
-ObjectDispatch_Release:
-	.incbin "baserom.gba", 0x0000c0f4, 0x0000005c
-	.section .rom.0000c150, "ax"
-	.global FieldObject_Create
-	.type FieldObject_Create, %function
-	.thumb_func
-FieldObject_Create:
-	.incbin "baserom.gba", 0x0000c150, 0x00000188
 	.section .rom.0000c62c, "ax"
 	.global ObjectSystem_UpdateCamera
 	.type ObjectSystem_UpdateCamera, %function
 	.thumb_func
 ObjectSystem_UpdateCamera:
-	.incbin "baserom.gba", 0x0000c62c, 0x00000254
-	.section .rom.0000c880, "ax"
-	.global ObjectSystem_UpdateCameraFixed
-	.type ObjectSystem_UpdateCameraFixed, %function
-	.thumb_func
-ObjectSystem_UpdateCameraFixed:
-	.incbin "baserom.gba", 0x0000c880, 0x000001ac
+	.incbin "baserom.gba", 0x0000c62c, 0x00000250
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
 	.section .rom.0000cacc, "ax"
@@ -234,49 +208,13 @@ Map_UpdateCurrentTileBlock:
 	.type Map_UpdateCurrentTileBlockUntilBlocked, %function
 	.thumb_func
 Map_UpdateCurrentTileBlockUntilBlocked:
-	.incbin "baserom.gba", 0x00011400, 0x000000f0
-	.section .rom.000114f0, "ax"
-	.global MapAnimation_Start
-	.type MapAnimation_Start, %function
-	.thumb_func
-MapAnimation_Start:
-	.incbin "baserom.gba", 0x000114f0, 0x0000008c
-	.section .rom.0001157c, "ax"
-	.global Map_ShowBg1FromBuffer
-	.type Map_ShowBg1FromBuffer, %function
-	.thumb_func
-Map_ShowBg1FromBuffer:
-	.incbin "baserom.gba", 0x0001157c, 0x00000028
+	.incbin "baserom.gba", 0x00011400, 0x000000c8
 	.section .rom.000116fc, "ax"
 	.global MapAnimation_Update
 	.type MapAnimation_Update, %function
 	.thumb_func
 MapAnimation_Update:
 	.incbin "baserom.gba", 0x000116fc, 0x0000010c
-	.section .rom.00011808, "ax"
-	.global Map_ClearLayerEntryFlag
-	.type Map_ClearLayerEntryFlag, %function
-	.thumb_func
-Map_ClearLayerEntryFlag:
-	.incbin "baserom.gba", 0x00011808, 0x00000018
-	.section .rom.00011820, "ax"
-	.global Map_SetLayerEntryFlag
-	.type Map_SetLayerEntryFlag, %function
-	.thumb_func
-Map_SetLayerEntryFlag:
-	.incbin "baserom.gba", 0x00011820, 0x000000c4
-	.section .rom.000118e4, "ax"
-	.global Map_EnableUpdateCallback
-	.type Map_EnableUpdateCallback, %function
-	.thumb_func
-Map_EnableUpdateCallback:
-	.incbin "baserom.gba", 0x000118e4, 0x00000024
-	.section .rom.00011908, "ax"
-	.global Map_DisableUpdateCallback
-	.type Map_DisableUpdateCallback, %function
-	.thumb_func
-Map_DisableUpdateCallback:
-	.incbin "baserom.gba", 0x00011908, 0x00000024
 	.section .rom.00011b54, "ax"
 	.global Func_08011bf4
 	.type Func_08011bf4, %function
@@ -291,24 +229,6 @@ Func_08011bf4:
 	.thumb_func
 Func_08011f54:
 	.incbin "baserom.gba", 0x00011eb4, 0x00000084
-	.section .rom.00011f38, "ax"
-	.global Map_GetCellAttributeLowNibble
-	.type Map_GetCellAttributeLowNibble, %function
-	.thumb_func
-Map_GetCellAttributeLowNibble:
-	.incbin "baserom.gba", 0x00011f38, 0x00000060
-	.section .rom.00011f98, "ax"
-	.global GetMapCellCollision
-	.type GetMapCellCollision, %function
-	.thumb_func
-GetMapCellCollision:
-	.incbin "baserom.gba", 0x00011f98, 0x00000040
-	.section .rom.00011fd8, "ax"
-	.global SetMapCellCollision
-	.type SetMapCellCollision, %function
-	.thumb_func
-SetMapCellCollision:
-	.incbin "baserom.gba", 0x00011fd8, 0x00000064
 	.section .rom.0001203c, "ax"
 	.global Func_080120dc
 	.type Func_080120dc, %function
@@ -329,7 +249,10 @@ Object_ShadowTiles:
 	.incbin "baserom.gba", 0x00012e80, 0x0000022c
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
-	.incbin "baserom.gba", 0x000130ac, 0x000000f4
+	.incbin "baserom.gba", 0x000130ac, 0x00000044
+	.global Camera_FixedViewMatrix
+Camera_FixedViewMatrix:
+	.incbin "baserom.gba", 0x000130f0, 0x000000b0
 	.global Script_MainScript
 Script_MainScript:
 	.incbin "baserom.gba", 0x000131a0, 0x0000008c
@@ -347,7 +270,10 @@ WorldMap_TerrainBehaviorTable:
 	.incbin "baserom.gba", 0x0001349c, 0x00000048
 	.global Battle_FormationPlacementScale
 Battle_FormationPlacementScale:
-	.incbin "baserom.gba", 0x000134e4, 0x0000000c
+	.incbin "baserom.gba", 0x000134e4, 0x00000008
+	.global ObjectDispatch_DefaultScript
+ObjectDispatch_DefaultScript:
+	.incbin "baserom.gba", 0x000134ec, 0x00000004
 	.global ObjectDispatch_Table0Script
 ObjectDispatch_Table0Script:
 	.incbin "baserom.gba", 0x000134f0, 0x00000018
@@ -973,24 +899,6 @@ BattleFx_FindConditionResource:
 	.thumb_func
 Event_SpawnObjectTable:
 	.incbin "baserom.gba", 0x000823ec, 0x00000260
-	.section .rom.000829f8, "ax"
-	.global ObjectTable_ClearBattleSlots
-	.type ObjectTable_ClearBattleSlots, %function
-	.thumb_func
-ObjectTable_ClearBattleSlots:
-	.incbin "baserom.gba", 0x000829f8, 0x00000024
-	.section .rom.00082a1c, "ax"
-	.global ObjectTable_Get
-	.type ObjectTable_Get, %function
-	.thumb_func
-ObjectTable_Get:
-	.incbin "baserom.gba", 0x00082a1c, 0x0000001c
-	.section .rom.00082a38, "ax"
-	.global ObjectTable_Snapshot
-	.type ObjectTable_Snapshot, %function
-	.thumb_func
-ObjectTable_Snapshot:
-	.incbin "baserom.gba", 0x00082a38, 0x000000f4
 	.section .rom.00082b2c, "ax"
 	.global ObjectTable_Restore
 	.type ObjectTable_Restore, %function
@@ -1025,16 +933,12 @@ BattleFx_FindDescriptorWithOverride:
 	.thumb_func
 Event_FindFacingTrigger:
 	.incbin "baserom.gba", 0x0008514c, 0x00000368
-	.section .rom.000859c0, "ax"
-	.incbin "baserom.gba", 0x000859c0, 0x00000254
 	.section .rom.00085e0c, "ax"
 	.global BattleFx_EmitRandomParticle
 	.type BattleFx_EmitRandomParticle, %function
 	.thumb_func
 BattleFx_EmitRandomParticle:
 	.incbin "baserom.gba", 0x00085e0c, 0x000000d8
-	.section .rom.00086304, "ax"
-	.incbin "baserom.gba", 0x00086304, 0x00000194
 	.section .rom.0008652c, "ax"
 	.global DisplayTransition_UpdateScanlineTable
 	.type DisplayTransition_UpdateScanlineTable, %function
@@ -1067,44 +971,6 @@ BattleFx_BuildBuffer:
 	.thumb_func
 Object_EffectSpawnCallback:
 	.incbin "baserom.gba", 0x000882b8, 0x000001dc
-	.section .rom.00088778, "ax"
-	.incbin "baserom.gba", 0x00088778, 0x00000008
-	.section .rom.00088780, "ax"
-	.global Event_RunObjectHookAndWait
-	.type Event_RunObjectHookAndWait, %function
-	.thumb_func
-Event_RunObjectHookAndWait:
-	.incbin "baserom.gba", 0x00088780, 0x0000002c
-	.section .rom.000887ac, "ax"
-	.global Event_CallWithLastActiveObjectId
-	.type Event_CallWithLastActiveObjectId, %function
-	.thumb_func
-Event_CallWithLastActiveObjectId:
-	.incbin "baserom.gba", 0x000887ac, 0x00000018
-	.section .rom.000887c4, "ax"
-	.global Event_SetWorkWord10
-	.type Event_SetWorkWord10, %function
-	.thumb_func
-Event_SetWorkWord10:
-	.incbin "baserom.gba", 0x000887c4, 0x0000000c
-	.section .rom.000887d0, "ax"
-	.global Event_PrepareObjectAndApplyValue
-	.type Event_PrepareObjectAndApplyValue, %function
-	.thumb_func
-Event_PrepareObjectAndApplyValue:
-	.incbin "baserom.gba", 0x000887d0, 0x00000024
-	.section .rom.000887f4, "ax"
-	.global Event_PrepareTwoObjectsAndApply
-	.type Event_PrepareTwoObjectsAndApply, %function
-	.thumb_func
-Event_PrepareTwoObjectsAndApply:
-	.incbin "baserom.gba", 0x000887f4, 0x00000064
-	.section .rom.00088858, "ax"
-	.global Event_ClearInvalidPackedValues
-	.type Event_ClearInvalidPackedValues, %function
-	.thumb_func
-Event_ClearInvalidPackedValues:
-	.incbin "baserom.gba", 0x00088858, 0x00000038
 	.section .rom.00088a58, "ax"
 	.global PartyInventory_GiveItem
 	.type PartyInventory_GiveItem, %function
@@ -1123,12 +989,8 @@ UiText_OpenMessageAtObject:
 	.thumb_func
 battle_owner_69:
 	.incbin "baserom.gba", 0x0008af88, 0x000001b4
-	.section .rom.0008b13c, "ax"
-	.global Object_GetScreenPosition
-	.type Object_GetScreenPosition, %function
-	.thumb_func
-Object_GetScreenPosition:
-	.incbin "baserom.gba", 0x0008b13c, 0x0000018c
+	.section .rom.0008b1c6, "ax"
+	.incbin "baserom.gba", 0x0008b1c6, 0x00000102
 	.section .rom.0008b52c, "ax"
 	.global DisplayScroll_BuildAndSwapHBlankPage
 	.type DisplayScroll_BuildAndSwapHBlankPage, %function
@@ -1148,19 +1010,7 @@ Unnamed_08094ac8:
 	.type FieldMotes_Start, %function
 	.thumb_func
 FieldMotes_Start:
-	.incbin "baserom.gba", 0x0008bd88, 0x000002fc
-	.section .rom.0008c084, "ax"
-	.global FieldEffect_InitSparkles
-	.type FieldEffect_InitSparkles, %function
-	.thumb_func
-FieldEffect_InitSparkles:
-	.incbin "baserom.gba", 0x0008c084, 0x000000c4
-	.section .rom.0008cbf0, "ax"
-	.global BattleEffect_UpdatePhasedRadialParticle
-	.type BattleEffect_UpdatePhasedRadialParticle, %function
-	.thumb_func
-BattleEffect_UpdatePhasedRadialParticle:
-	.incbin "baserom.gba", 0x0008cbf0, 0x000001c8
+	.incbin "baserom.gba", 0x0008bd88, 0x000000dc
 	.section .rom.0008df98, "ax"
 	.global BattleFx_LoadActionEffectResources
 	.type BattleFx_LoadActionEffectResources, %function
@@ -1247,12 +1097,6 @@ RunBattleEffect16:
 	.thumb_func
 EffectSlot_UpdateMotion:
 	.incbin "baserom.gba", 0x000928e8, 0x00000140
-	.section .rom.00092cec, "ax"
-	.global Map_UpdateWorldMapMarkers
-	.type Map_UpdateWorldMapMarkers, %function
-	.thumb_func
-Map_UpdateWorldMapMarkers:
-	.incbin "baserom.gba", 0x00092cec, 0x00000440
 	.section .rom.00093404, "ax"
 	.incbin "baserom.gba", 0x00093404, 0x00000200
 	.global Encounter_EnemyGroupTable
@@ -1296,7 +1140,10 @@ RomBytes_0809e75c:
 	.incbin "baserom.gba", 0x00095740, 0x00000120
 	.global BattleFx_ParticleScript
 BattleFx_ParticleScript:
-	.incbin "baserom.gba", 0x00095860, 0x00000174
+	.incbin "baserom.gba", 0x00095860, 0x00000024
+	.global BattleFx_MarkerParticleScript
+BattleFx_MarkerParticleScript:
+	.incbin "baserom.gba", 0x00095884, 0x00000150
 	.global BattleFx_DefinitionTable
 BattleFx_DefinitionTable:
 	.incbin "baserom.gba", 0x000959d4, 0x0000020c
@@ -1305,7 +1152,10 @@ ObjectMotion_VariantScripts:
 	.incbin "baserom.gba", 0x00095be0, 0x00000184
 	.global ObjectGroup_BlinkChildValues
 ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x00095d64, 0x00000324
+	.incbin "baserom.gba", 0x00095d64, 0x000002a4
+	.global Data_0809f024
+Data_0809f024:
+	.incbin "baserom.gba", 0x00096008, 0x00000080
 	.global BattleFx_PulseScales
 BattleFx_PulseScales:
 	.incbin "baserom.gba", 0x00096088, 0x0000000c
@@ -1323,7 +1173,13 @@ BattleFx_BurstParticleObjectScript:
 	.incbin "baserom.gba", 0x00096100, 0x00000044
 	.global BattleFx_RandomChildValues
 BattleFx_RandomChildValues:
-	.incbin "baserom.gba", 0x00096144, 0x00000048
+	.incbin "baserom.gba", 0x00096144, 0x00000008
+	.global WorldMap_MarkerBlendCycle
+WorldMap_MarkerBlendCycle:
+	.incbin "baserom.gba", 0x0009614c, 0x00000020
+	.global WorldMap_CursorDirectionAngles
+WorldMap_CursorDirectionAngles:
+	.incbin "baserom.gba", 0x0009616c, 0x00000020
 	.section .rom.000967d4, "ax"
 	.incbin "baserom.gba", 0x000967d4, 0x00000020
 	.global Data_0809f810
@@ -1373,7 +1229,10 @@ ObjectMotion_TurnTowardLinkedScript:
 	.incbin "baserom.gba", 0x00096f10, 0x00000014
 	.global ObjectMotion_LinkedActionScript
 ObjectMotion_LinkedActionScript:
-	.incbin "baserom.gba", 0x00096f24, 0x000001c8
+	.incbin "baserom.gba", 0x00096f24, 0x00000178
+	.global Data_080a00b8
+Data_080a00b8:
+	.incbin "baserom.gba", 0x0009709c, 0x00000050
 	.global Data_080a0108
 Data_080a0108:
 	.incbin "baserom.gba", 0x000970ec, 0x00000020
@@ -1382,7 +1241,10 @@ BattleFx_UntargetedObjectScript:
 	.incbin "baserom.gba", 0x0009710c, 0x00000004
 	.global gEffectScripts
 gEffectScripts:
-	.incbin "baserom.gba", 0x00097110, 0x00000ef0
+	.incbin "baserom.gba", 0x00097110, 0x0000000c
+	.global WorldMap_PlaceMarkers
+WorldMap_PlaceMarkers:
+	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
 	.section .rom.0009812c, "ax"
 	.incbin "baserom.gba", 0x0009812c, 0x000005ac
 	.section .rom.00098a6a, "ax"
@@ -1537,12 +1399,6 @@ ItemMenu_SelectItem:
 	.thumb_func
 ItemMenu_DrawEquippedItemNames:
 	.incbin "baserom.gba", 0x000a09e8, 0x000000a8
-	.section .rom.000a0e0c, "ax"
-	.global BattleEffect_ApplyToTargets
-	.type BattleEffect_ApplyToTargets, %function
-	.thumb_func
-BattleEffect_ApplyToTargets:
-	.incbin "baserom.gba", 0x000a0e0c, 0x00000538
 	.section .rom.000a1664, "ax"
 	.global Func_080aa768
 Func_080aa768:
@@ -1678,30 +1534,6 @@ Shop_DrawUnitGrid:
 	.incbin "baserom.gba", 0x000a8e10, 0x00000160
 	.section .rom.000a9140, "ax"
 	.incbin "baserom.gba", 0x000a9140, 0x0000020c
-	.section .rom.000a96ec, "ax"
-	.global EventTable_GetRowLimit
-	.type EventTable_GetRowLimit, %function
-	.thumb_func
-EventTable_GetRowLimit:
-	.incbin "baserom.gba", 0x000a96ec, 0x00000004
-	.section .rom.000a96f0, "ax"
-	.global EventTable_ApplyRowAbilities
-	.type EventTable_ApplyRowAbilities, %function
-	.thumb_func
-EventTable_ApplyRowAbilities:
-	.incbin "baserom.gba", 0x000a96f0, 0x00000054
-	.section .rom.000a9744, "ax"
-	.global EventTable_CopyRowHeader
-	.type EventTable_CopyRowHeader, %function
-	.thumb_func
-EventTable_CopyRowHeader:
-	.incbin "baserom.gba", 0x000a9744, 0x00000044
-	.section .rom.000a9788, "ax"
-	.global EventTable_GetRowType
-	.type EventTable_GetRowType, %function
-	.thumb_func
-EventTable_GetRowType:
-	.incbin "baserom.gba", 0x000a9788, 0x00000014
 	.section .rom.000a99cc, "ax"
 	.global Shop_ConfirmAct
 	.type Shop_ConfirmAct, %function
@@ -1746,7 +1578,10 @@ RomBytes_080b413c:
 	.incbin "baserom.gba", 0x000ab160, 0x0000000a
 	.global Shop_SpecialItemPrices
 Shop_SpecialItemPrices:
-	.incbin "baserom.gba", 0x000ab16a, 0x0000096c
+	.incbin "baserom.gba", 0x000ab16a, 0x00000066
+	.global EventTable_AbilityLoadouts
+EventTable_AbilityLoadouts:
+	.incbin "baserom.gba", 0x000ab1d0, 0x00000906
 	.global Data_080b4ab2
 Data_080b4ab2:
 	.incbin "baserom.gba", 0x000abad6, 0x00000004
@@ -1805,8 +1640,6 @@ BattlePresentation_AppendLinkedActions:
 	.incbin "baserom.gba", 0x000b0b2e, 0x00000206
 	.section .rom.000b0ec0, "ax"
 	.incbin "baserom.gba", 0x000b0ec0, 0x000003bc
-	.section .rom.000b12be, "ax"
-	.incbin "baserom.gba", 0x000b12be, 0x000002c6
 	.section .rom.000b16ac, "ax"
 	.incbin "baserom.gba", 0x000b16ac, 0x0000026c
 	.section .rom.000b1976, "ax"
@@ -1873,12 +1706,6 @@ BattleFx_PlayUnitElementEffect:
 	.incbin "baserom.gba", 0x000b8798, 0x0000027c
 	.section .rom.000b8ffc, "ax"
 	.incbin "baserom.gba", 0x000b8ffc, 0x0000036c
-	.section .rom.000b94f0, "ax"
-	.global BattleEnemy_RecordDefeat
-	.type BattleEnemy_RecordDefeat, %function
-	.thumb_func
-BattleEnemy_RecordDefeat:
-	.incbin "baserom.gba", 0x000b94f0, 0x00000234
 	.section .rom.000b9a0a, "ax"
 	.incbin "baserom.gba", 0x000b9a0a, 0x00000006
 	.global BattleParty_CenterOrderOffsets
@@ -2457,8 +2284,8 @@ Unnamed_080f2d54:
 	.thumb_func
 Unnamed_080f3078:
 	.incbin "baserom.gba", 0x000ea078, 0x00000704
-	.section .rom.000ea898, "ax"
-	.incbin "baserom.gba", 0x000ea898, 0x00000768
+	.section .rom.000ea8bc, "ax"
+	.incbin "baserom.gba", 0x000ea8bc, 0x00000744
 	.section .rom.000eb168, "ax"
 	.global LuckyDice_Run
 	.type LuckyDice_Run, %function
@@ -2475,92 +2302,6 @@ Unnamed_080f7460:
 	.incbin "baserom.gba", 0x000ee388, 0x00000950
 	.section .rom.000eee9c, "ax"
 	.incbin "baserom.gba", 0x000eee9c, 0x00001164
-	.section .rom.000f16a0, "ax"
-	.global AudioEngine_Initialize
-	.type AudioEngine_Initialize, %function
-	.thumb_func
-AudioEngine_Initialize:
-	.incbin "baserom.gba", 0x000f16a0, 0x000000f8
-	.section .rom.000f1798, "ax"
-	.global AudioEngine_SetPcmRate
-	.type AudioEngine_SetPcmRate, %function
-	.thumb_func
-AudioEngine_SetPcmRate:
-	.incbin "baserom.gba", 0x000f1798, 0x000000a4
-	.section .rom.000f183c, "ax"
-	.global AudioEngine_SetMode
-	.type AudioEngine_SetMode, %function
-	.thumb_func
-AudioEngine_SetMode:
-	.incbin "baserom.gba", 0x000f183c, 0x000001a4
-	.section .rom.000f19e0, "ax"
-	.global MusicPlayer_Initialize
-	.type MusicPlayer_Initialize, %function
-	.thumb_func
-MusicPlayer_Initialize:
-	.incbin "baserom.gba", 0x000f19e0, 0x00000078
-	.section .rom.000f1a58, "ax"
-	.global MusicPlayer_StartSong
-	.type MusicPlayer_StartSong, %function
-	.thumb_func
-MusicPlayer_StartSong:
-	.incbin "baserom.gba", 0x000f1a58, 0x000000e4
-	.section .rom.000f1b3c, "ax"
-	.global MusicPlayer_Stop
-	.type MusicPlayer_Stop, %function
-	.thumb_func
-MusicPlayer_Stop:
-	.incbin "baserom.gba", 0x000f1b3c, 0x00000040
-	.section .rom.000f1b7c, "ax"
-	.global MusicPlayer_StepFade
-	.type MusicPlayer_StepFade, %function
-	.thumb_func
-MusicPlayer_StepFade:
-	.incbin "baserom.gba", 0x000f1b7c, 0x000000c8
-	.section .rom.000f1c44, "ax"
-	.global MusicTrack_CalcOutput
-	.type MusicTrack_CalcOutput, %function
-	.thumb_func
-MusicTrack_CalcOutput:
-	.incbin "baserom.gba", 0x000f1c44, 0x000000b4
-	.section .rom.000f1cf8, "ax"
-	.global Cgb_KeyToFrequency
-	.type Cgb_KeyToFrequency, %function
-	.thumb_func
-Cgb_KeyToFrequency:
-	.incbin "baserom.gba", 0x000f1cf8, 0x000000a8
-	.section .rom.000f1da0, "ax"
-	.global CgbChannel_Mute
-	.type CgbChannel_Mute, %function
-	.thumb_func
-CgbChannel_Mute:
-	.incbin "baserom.gba", 0x000f1da0, 0x000000b8
-	.section .rom.000f1e58, "ax"
-	.global Cgb_UpdateChannels
-	.type Cgb_UpdateChannels, %function
-	.thumb_func
-Cgb_UpdateChannels:
-	.incbin "baserom.gba", 0x000f1e58, 0x0000044c
-	.section .rom.000f22a4, "ax"
-	.global MusicPlayer_SetPitchAndUpdateFrequency
-	.type MusicPlayer_SetPitchAndUpdateFrequency, %function
-	.thumb_func
-MusicPlayer_SetPitchAndUpdateFrequency:
-	.incbin "baserom.gba", 0x000f22a4, 0x00000028
-	.section .rom.000f22cc, "ax"
-	.global MusicPlayer_SetVolume
-	.type MusicPlayer_SetVolume, %function
-	.thumb_func
-MusicPlayer_SetVolume:
-	.incbin "baserom.gba", 0x000f22cc, 0x00000068
-	.section .rom.000f2334, "ax"
-	.global MusicPlayer_SetPitch
-	.type MusicPlayer_SetPitch, %function
-	.thumb_func
-MusicPlayer_SetPitch:
-	.incbin "baserom.gba", 0x000f2334, 0x000001e4
-	.section .rom.000f274e, "ax"
-	.incbin "baserom.gba", 0x000f274e, 0x0000001a
 	.section .rom.000f27a0, "ax"
 	.global Sound_CommandTableTemplate
 Sound_CommandTableTemplate:
@@ -2570,7 +2311,22 @@ Sound_PcmPitchCodes:
 	.incbin "baserom.gba", 0x000f2830, 0x000000b4
 	.global Sound_PcmFrequencySteps
 Sound_PcmFrequencySteps:
-	.incbin "baserom.gba", 0x000f28e4, 0x00000130
+	.incbin "baserom.gba", 0x000f28e4, 0x00000030
+	.global Sound_FrameLengths
+Sound_FrameLengths:
+	.incbin "baserom.gba", 0x000f2914, 0x00000018
+	.global Sound_CgbPitchCodes
+Sound_CgbPitchCodes:
+	.incbin "baserom.gba", 0x000f292c, 0x00000084
+	.global Sound_CgbFrequencySteps
+Sound_CgbFrequencySteps:
+	.incbin "baserom.gba", 0x000f29b0, 0x00000018
+	.global Sound_NoisePitchCodes
+Sound_NoisePitchCodes:
+	.incbin "baserom.gba", 0x000f29c8, 0x0000003c
+	.global Sound_Cgb3LevelCodes
+Sound_Cgb3LevelCodes:
+	.incbin "baserom.gba", 0x000f2a04, 0x00000010
 	.global Sound_ClockLengths
 Sound_ClockLengths:
 	.incbin "baserom.gba", 0x000f2a14, 0x00000034

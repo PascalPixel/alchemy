@@ -11,7 +11,6 @@
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void ItemMenu_RefreshEntry(s32 mode);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
 void *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *buffer);
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
@@ -20,7 +19,7 @@ void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 
-s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode)
+s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode)
 {
     s32 count;
     s32 i;
@@ -69,7 +68,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
 void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
 {
     struct InventoryMenuState *menu;
-    struct OwnerInventoryState *owner;
+    struct BattleUnit *owner;
     u16 *items;
 
     menu = gMenuWork;
@@ -94,7 +93,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 {
     struct InventoryMenuState *menu = gMenuWork;
     register s32 style asm("sl") = 0; /* FAKEMATCH: the ROM allocates owner (r8) before style (sl); style's 19 references over 246 insns outrank owner's 4 over 28 */
-    struct OwnerInventoryState *state = Owner_GetStateFar(owner);
+    struct BattleUnit *state = Owner_GetStateFar(owner);
     s32 item = state->inventory[slot];
     void *saved;
     s32 equipped;
@@ -172,7 +171,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner)
 {
-    struct OwnerInventoryState *state = Owner_GetStateFar(owner);
+    struct BattleUnit *state = Owner_GetStateFar(owner);
     s32 result = 0;
     s32 i;
 

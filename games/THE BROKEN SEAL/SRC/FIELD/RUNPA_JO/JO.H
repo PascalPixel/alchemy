@@ -15,26 +15,7 @@
 #include "FIELD_SCENE.H"
 #include "SYSTEM.H"
 
-/* The part of the saved game that records where the party is. */
-struct GameState {
-    u8 unknown_000[0x1c0];
-    s16 scene;
-    s16 entrance;
-    s16 saved_scene;
-    s16 saved_entrance;
-    u8 unknown_1c8[0x2c];
-    /* The actor whose position actor contact is measured from. */
-    s32 selected_actor;
-    u8 unknown_1f8[0x48];
-    /* Where Retreat returns the party. */
-    s16 retreat_scene;
-    s16 retreat_entrance;
-    u8 unknown_244[8];
-    /* Set while Cloak hides the party; no monsters appear. */
-    s16 cloaked;
-};
-
-extern struct GameState gGameState;
+#include "GAME_STATE.H"
 
 /* Counts the frames the game has drawn. */
 extern u32 gFrameCount;

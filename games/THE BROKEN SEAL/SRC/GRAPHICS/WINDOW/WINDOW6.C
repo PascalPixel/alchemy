@@ -133,10 +133,10 @@ s32 Item_ReturnTrue(void)
 
 void Party_AdjustByte205ByDirection(s32 arg0)
 {
-    u8 value = gGameState.unknown_1f8[0x205 - 0x1f8];
+    u8 value = gGameState.unknown_200[0x205 - 0x200];
     if (arg0 & 0x20)
         value += 0xff;
     else
         value += 1;
-    gGameState.unknown_1f8[0x205 - 0x1f8] = value;
+    gGameState.unknown_200[0x205 - 0x200] = value;
 }

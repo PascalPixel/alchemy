@@ -193,7 +193,7 @@ s32 LinkLobby_RunConnectionSequence(void)
             Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 10);
             Event_SetPair1d4((s32)&SceneId_LinkLobby, 11);
         }
-        gGameState.unknown_1f8[0x22b - 0x1f8] = 4;
+        gGameState.unknown_200[0x22b - 0x200] = 4;
         BattleFx_SetWeightedResult(1, 1);
         tbl = (u16 *)gSerialTransfer.reserved;
         value.value = 0x45;

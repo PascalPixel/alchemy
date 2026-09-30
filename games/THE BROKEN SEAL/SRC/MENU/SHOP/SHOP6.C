@@ -336,7 +336,7 @@ s32 Sanctum_RunPartyService(void)
                 retry = 1;
                 continue;
             }
-            if ((u32)price > (u32)gGameState.money) {
+            if ((u32)price > (u32)gGameState.coins) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 UiMessage_ShowResolvedAndRestoreState(message + 1);
                 retry = 1;

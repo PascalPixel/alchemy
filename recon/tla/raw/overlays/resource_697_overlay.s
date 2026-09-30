@@ -8995,28 +8995,7 @@ Func_0200242c:
 	pop	{pc}
 	.2byte 0x0000
 	.4byte 0x0200e3ac
-	.4byte 0x00004770
-	.4byte 0x23094a01
-	.4byte 0x47708013
-	.2byte 0x234c
-	.2byte 0x0200
-	push	{r5, lr}
-	ldr	r5, [pc, #24]
-	movs	r2, #0
-	ldrsh	r3, [r5, r2]
-	cmp	r3, #9
-	beq.n	.L_02004dd6
-.L_02004dc8:
-	movs	r0, #1
-	bl 0x0200d728
-	movs	r2, #0
-	ldrsh	r3, [r5, r2]
-	cmp	r3, #9
-	bne.n	.L_02004dc8
-.L_02004dd6:
-	pop	{r5, pc}
-	.2byte 0x234c
-	.2byte 0x0200
+	.section .text.x0200cddc,"ax",%progbits
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

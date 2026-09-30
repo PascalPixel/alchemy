@@ -10,6 +10,9 @@
 	overlay_veneer IwramSignedRemainder
 	overlay_veneer IwramUnsignedDivide
 	overlay_veneer IwramUnsignedRemainder
+	.global Task_Wait
+	.thumb_func
+Task_Wait:
 	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080000f8

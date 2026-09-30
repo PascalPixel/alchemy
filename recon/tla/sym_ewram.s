@@ -7,7 +7,10 @@ GameFlagBytes:
 	.space 0x00000200
 	.global gPartyState
 gPartyState:
-	.space 0x00002dd0
+	.space 0x0000210c
+	.global gSceneState
+gSceneState:
+	.space 0x00000cc4
 	.global gOamBuckets
 gOamBuckets:
 	.space 0x000006d0

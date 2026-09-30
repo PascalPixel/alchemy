@@ -1,13 +1,7 @@
-/*
- * Overlay resource_397: a field scene that shifts its two tracked objects by
- * whole blocks, blends the display for scene 9, and scrolls BG3 against the
- * vertical counter.
- */
-
 #include "TYPES.H"
 #include "SCENE.H"
-
 #include "RESOURCE_397.H"
+
 extern struct EventWork *gEventWork;
 extern u8 Data_03001ecc[];
 
@@ -51,11 +45,20 @@ extern u8 ToretoEda_SceneTable0[];
 extern u8 ToretoEda_SceneTable1[];
 extern u8 ToretoEda_SceneTable2[];
 extern u8 ToretoEda_SceneTable3[];
-
 void *Object_GetById(u32);
 void BattleFx_SetPhaseRequest(s32, s32);
 void ToretoEda_StartBg3Split(void);
 
+void Effect_UpdateBg3HofsByVcount(void);
+void Effect_SetBg3HofsSplit(void);
+void Runtime_SetIrqHandler(s32 slot, s32 mode, void (*handler)(void));
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+
+/*
+ * Overlay resource_397: a field scene that shifts its two tracked objects by
+ * whole blocks, blends the display for scene 9, and scrolls BG3 against the
+ * vertical counter.
+ */
 void State_SetActorEightValue3d(void)
 {
     BattleFx_SetPhaseRequest(8, 0x3D);
@@ -297,4 +300,12 @@ void Effect_SetBg3HofsSplit(void)
     sSplitLine = 192 - work[1].h[1];
     sHofsAbove = hofs = work[0].h[1];
     sHofsBelow = hofs - (gFrameCount >> 2);
+}
+
+/* Start the BG3 split: run the scroll update from the vertical-count
+ * interrupt and schedule the task that prepares its values. */
+void ToretoEda_StartBg3Split(void)
+{
+    Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
+    Scheduler_AddOrUpdateCallback(Effect_SetBg3HofsSplit, 0xc80);
 }

@@ -1,8 +1,15 @@
-/* The engine's object constructor, reached from far code through
-   Object_CreateFar: takes a free object slot, attaches the sprite or the
-   two-sprite list the descriptor id names (its top nibble is the kind), and
-   resets position, scale, speed and script to their defaults. */
+#include "TYPES.H"
+#include "SCENE.H"
+#include "OBJECT_DISPATCH.H"
+#include "OBJECT_COMMANDS.H"
 #include "DMA.H"
+
+void *ObjectDispatch_FindFreeObject(void);
+
+/* object/dispatch/find_free_object.c */
+extern u8 *gObjectSlots;
+
+void ResourceObject_Release(void *);
 
 struct FieldObject {
     u32 script;
@@ -45,11 +52,45 @@ struct ObjectSpriteList {
 
 extern struct ObjectSpriteList *gMenuCtrlWork;
 extern const u32 ObjectDispatch_DefaultScript[];
-
-struct FieldObject *ObjectDispatch_FindFreeObject(void);
 void *ResourceObject_Create(s32 id);
 struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 void Object_SetPositionAndResetMotion(struct FieldObject *object, s32 x, s32 y, s32 z);
+
+void *ObjectDispatch_FindFreeObject(void)
+{
+    u8 *entry = gObjectSlots;
+    void *ret = 0;
+    s32 index = 0;
+
+    while (index <= 63) {
+        if (*(u32 *)entry == 0) {
+            ret = entry;
+            break;
+        }
+        index++;
+        entry += 112;
+    }
+    return ret;
+}
+
+void ObjectDispatch_Release(struct DispatchObject *work)
+{
+    volatile u32 zero;
+    s32 count;
+    void **child;
+    if (work) {
+        switch (work->kind & 15) {
+        case 1: ResourceObject_Release(work->target.child); break;
+        case 2:
+            child = work->target.children;
+            count = 3;
+            do { void *entry = *child++; if (entry) ResourceObject_Release(entry); } while (--count >= 0);
+            break;
+        }
+        zero = 0;
+        Dma_Set(&zero, work, 0x8500001c, (volatile u32 *)0x040000d4);
+    }
+}
 
 struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 {
@@ -63,7 +104,7 @@ struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
     ObjectDispatch_FindFreeObject();
     kind = id / 4096;
     id &= 0xfff;
-    object = ObjectDispatch_FindFreeObject();
+    object = (struct FieldObject *)ObjectDispatch_FindFreeObject();
     if (object != NULL) {
         object->radius = 16;
         switch (kind) {

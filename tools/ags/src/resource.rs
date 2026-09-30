@@ -17,6 +17,9 @@
 //!   stacked. The bank is a table of each icon's halfword offset, then each
 //!   icon as 8-bit tiles in the packer's palette LZ without its tag,
 //!   its stream zero-padded to a multiple of 32 bytes.
+//! - `.icon4`: one 4-bit icon, its pixels row by row in the 4-bit icon
+//!   coder (Psynergy's icon4), without a palette; its data source lists the
+//!   icons of a table by label, as pret's item icon table does.
 //! - `.frames`: a sprite bank. The image is one square frame wide with its
 //!   frames stacked, a front and a back pose in turn. The bank is a table of
 //!   each frame's offset in that order, ending 0, then the back frames and
@@ -127,7 +130,7 @@ pub fn is_recipe(built: &str) -> bool {
         || data_form(form)
         || matches!(
             form,
-            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "glyphs"
+            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "icon4" | "glyphs"
         );
     !stem.is_empty() && form && codec.is_none_or(|codec| CODECS.contains(&codec))
 }
@@ -707,6 +710,9 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         }
         "frames" => sprite_bank(built, &indices(&image), width, height)?,
         "icons" => icon_bank(built, &indices(&image), width, height)?,
+        "icon4" => {
+            encode_icon4(&indices(&image)).map_err(|error| format!("{built}: {}", error.0))?
+        }
         "glyphs" if width == 8 => indices(&image)
             .chunks(8)
             .map(|row| {
@@ -724,6 +730,16 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
 mod tests {
     use super::*;
     use psynergy::assets::image::{png_from_bitmap, png_from_gba_tiles};
+
+    #[test]
+    fn an_icon4_is_its_pixels_in_the_icon_coder_without_a_palette() {
+        let pixels: Vec<u8> = (0..256).map(|index| (index % 16) as u8).collect();
+        let png = png_from_bitmap(&pixels, &[0u8; 32], 16).unwrap();
+        let built = build_file("UI/ICON.icon4", &png).unwrap();
+        assert_eq!(built, encode_icon4(&pixels).unwrap());
+        assert!(is_recipe("UI/ICON.icon4"));
+        assert_eq!(input_name("UI/ICON.icon4").unwrap(), "UI/ICON.PNG");
+    }
 
     #[test]
     fn metatile_forms_cut_the_sheet_into_their_obj_shape() {

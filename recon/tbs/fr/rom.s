@@ -938,6 +938,10 @@ Party_AdjustSixDigitCounterAFar:
 Item_GetEquipmentGroupFar:
 	.incbin "baserom.gba", 0x0007c238, 0x00000008
 	.section .rom.0007c240, "ax"
+	.global Func_08077240
+	.type Func_08077240, %function
+	.thumb_func
+Func_08077240:
 	.global Ability_GetMaximum
 	.type Ability_GetMaximum, %function
 	.thumb_func
@@ -1000,7 +1004,13 @@ Func_080772b0:
 	.type BattleFx_IsReviveFar, %function
 	.thumb_func
 BattleFx_IsReviveFar:
-	.incbin "baserom.gba", 0x0007c2b8, 0x00000010
+	.incbin "baserom.gba", 0x0007c2b8, 0x00000008
+	.section .rom.0007c2c0, "ax"
+	.global Func_080772c0
+	.type Func_080772c0, %function
+	.thumb_func
+Func_080772c0:
+	.incbin "baserom.gba", 0x0007c2c0, 0x00000008
 	.section .rom.0007c2c8, "ax"
 	.global Party_GetAverageLevelFar
 	.type Party_GetAverageLevelFar, %function
@@ -1405,14 +1415,30 @@ UiMenu_SlideCursor:
 	.type RunAssetSelectionScreen, %function
 	.thumb_func
 RunAssetSelectionScreen:
-	.incbin "baserom.gba", 0x000a6cd0, 0x00000df8
+	.incbin "baserom.gba", 0x000a6cd0, 0x000001b0
 	.section .rom.000a80e0, "ax"
+	.global ItemMenu_SelectTarget
+	.type ItemMenu_SelectTarget, %function
+	.thumb_func
+ItemMenu_SelectTarget:
 	.incbin "baserom.gba", 0x000a80e0, 0x00000338
 	.section .rom.000a895a, "ax"
-	.incbin "baserom.gba", 0x000a895a, 0x00000342
+	.incbin "baserom.gba", 0x000a895a, 0x00000002
+	.section .rom.000a895c, "ax"
+	.global Func_080a414c
+	.type Func_080a414c, %function
+	.thumb_func
+Func_080a414c:
+	.incbin "baserom.gba", 0x000a895c, 0x00000340
 	.section .rom.000a9718, "ax"
+	.global Func_080a4f08
+Func_080a4f08:
 	.incbin "baserom.gba", 0x000a9718, 0x000002c8
 	.section .rom.000a9b98, "ax"
+	.global Unnamed_080a5388
+	.type Unnamed_080a5388, %function
+	.thumb_func
+Unnamed_080a5388:
 	.incbin "baserom.gba", 0x000a9b98, 0x000001ac
 	.section .rom.000aa54c, "ax"
 	.global Menu_ResolveSelectedAction

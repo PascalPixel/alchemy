@@ -870,7 +870,6 @@ SECTIONS
         "*/recon/tbs/raw/080cbc0c.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080cc5d8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT3.o"(.text)
-        "*/recon/tbs/raw/080ccc38.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080ccebc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT44.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY5.o"(.text)

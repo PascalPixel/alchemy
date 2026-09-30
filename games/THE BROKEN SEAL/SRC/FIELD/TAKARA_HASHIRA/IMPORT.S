@@ -34,9 +34,9 @@ Vector_AddPolarOffset:
 	.thumb_func
 Runtime_SetIrqHandler:
 	overlay_veneer Runtime_SetIrqHandlerFar
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -135,9 +135,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

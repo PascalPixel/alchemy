@@ -17,7 +17,7 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
     u8 *slot;
     s32 saved;
 
-    rec = (u8 *)Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec = (u8 *)Object_GetById(ACTOR_PARTY_LEADER);
     flag = rec + 85;
     saved = *flag;
     slot = (u8 *)box;
@@ -118,11 +118,11 @@ void FieldScene_RunScene3a6SequenceC(void)
         off24a = 0x24a;
         if (*(s16 *)((s32)&gGameState + off24a) != 8) {
             idx = p5->touched_trigger;
-            rec8 = Engine_ActorGet(8);
-            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            rec8 = Object_GetById(8);
+            record = Object_GetById(ACTOR_PARTY_LEADER);
             *(s32 *)(rec8 + 48) = *(s32 *)(record + 48);
-            rec8 = Engine_ActorGet(8);
-            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            rec8 = Object_GetById(8);
+            record = Object_GetById(ACTOR_PARTY_LEADER);
             *(s32 *)(rec8 + 52) = *(s32 *)(record + 52);
             idx -= 45;
             tbl = (s32)HaidiaDou_WalkTargets;

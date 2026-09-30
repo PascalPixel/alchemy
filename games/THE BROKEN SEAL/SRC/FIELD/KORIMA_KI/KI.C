@@ -212,7 +212,7 @@ void RunEventScript01(void)
     gKorimaKiSparkSound = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-    *((u8 *)Engine_ActorGet(0) + 90) &= 254;
+    *((u8 *)Object_GetById(0) + 90) &= 254;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 16);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Audio_PlayCue(133);
@@ -648,9 +648,9 @@ s32 KorimaKi_PrepareActors(void)
     struct FieldActor *second;
     u8 zero;
 
-    first = Engine_ActorGet(10);
-    third = Engine_ActorGet(14);
-    second = Engine_ActorGet(11);
+    first = Object_GetById(10);
+    third = Object_GetById(14);
+    second = Object_GetById(11);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(14, 15);
     gEventWork->start_transition = 0x204;
@@ -661,15 +661,15 @@ s32 KorimaKi_PrepareActors(void)
     zero = 0;
     if (!Engine_GameFlagIsSet(0x845))
         PaletteScene_AdjustPaletteWindow(3);
-    Engine_ActorGet(8)->radius = 6;
-    Engine_ActorGet(9)->radius = 6;
-    Engine_ActorGet(12)->radius = 6;
-    Engine_ActorGet(13)->radius = 6;
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(11), 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
+    Object_GetById(8)->radius = 6;
+    Object_GetById(9)->radius = 6;
+    Object_GetById(12)->radius = 6;
+    Object_GetById(13)->radius = 6;
+    Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
     Engine_ActorSetSpritePriority(8, 2);
     Engine_ActorSetSpritePriority(14, 2);
     Engine_ActorSetSpritePriority(9, 2);
@@ -681,11 +681,11 @@ s32 KorimaKi_PrepareActors(void)
     third->y.fixed = 0x1c0000;
     Engine_ActorSetAnimation(9, 3);
     Engine_ActorSetAnimation(8, 3);
-    Engine_ActorGet(8)->collision_flags |= 8;
-    Engine_ActorGet(9)->collision_flags |= 8;
-    Engine_ActorGet(10)->collision_flags |= 8;
-    Engine_ActorGet(11)->collision_flags |= 8;
-    Engine_ActorGet(14)->collision_flags |= 8;
+    Object_GetById(8)->collision_flags |= 8;
+    Object_GetById(9)->collision_flags |= 8;
+    Object_GetById(10)->collision_flags |= 8;
+    Object_GetById(11)->collision_flags |= 8;
+    Object_GetById(14)->collision_flags |= 8;
     return 0;
 }
 
@@ -917,7 +917,7 @@ void KorimaKi_SpawnOrbitSparks(void)
                 spark->motion_flags = 0;
                 spark->sprite->priority = 1;
                 Engine_ActorSetSpriteFlags(spark, 0);
-                Engine_ObjectSetAnimation(spark, 1);
+                Object_SetMode(spark, 1);
                 ((struct Spark *)spark)->phase = 0;
                 ((struct Spark *)spark)->angle = (i * 60 << 16) / 360;
                 spark->target_x = gKorimaKiSparkOrigin[0];

@@ -186,7 +186,7 @@ void FieldScene_RunComplexActorSequence(void)
         work = gScenePointers.map_work;
         scene_actor = event->view_center;
     }
-    sprite = Engine_ActorGet(17)->sprite;
+    sprite = Object_GetById(17)->sprite;
     Main_0808a018();
     Main_0808a0f0(11, 0, 0);
     Main_0808a0f0(12, 0, 0);
@@ -194,7 +194,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a0f0(14, 0, 0);
     Main_0808a0f0(15, 0, 0);
     Main_0808a0f0(16, 0, 0);
-    Main_080091e0(Engine_ActorGet(0), 0);
+    Main_080091e0(Object_GetById(0), 0);
     Actor_SetAnimation(0, 18);
     /* FAKEMATCH candidate: delimit the wide position initialization from
      * the narrow actor flag so its lifetime starts in the setup phase. */
@@ -202,12 +202,12 @@ void FieldScene_RunComplexActorSequence(void)
         ground = 0;
     } while (0);
     sprite->rotation = 1365;
-    p12 = Engine_ActorGet(17);
+    p12 = Object_GetById(17);
     /* FAKEMATCH candidate: keep the byte flag's halfword zero separate
      * from the wide scene-position zero, as the two reference loads are. */
     stopped.value = 0;
     p12->motion_flags = stopped.value;
-    Main_080091e0(Engine_ActorGet(17), 0);
+    Main_080091e0(Object_GetById(17), 0);
     Main_0808a0f0(17, 37748736, 42598400);
     Main_08009188(7);
     Main_0808a0f0(8, 34996224, 45088768);
@@ -259,7 +259,7 @@ void FieldScene_RunComplexActorSequence(void)
     Actor_MoveToAndWait(0, 555, 680);
     Main_0808a010(30);
     Actor_Jump(8, 53248, 0);
-    Main_080091e0(Engine_ActorGet(0), 1);
+    Main_080091e0(Object_GetById(0), 1);
     Main_0808a128(0, 4, 0);
     Actor_WalkToAndWait(0, 543, 674);
     Main_0808a1e0(0, 3);
@@ -270,28 +270,28 @@ void FieldScene_RunComplexActorSequence(void)
     Local_020017e4();
     Main_0808a130(8, 2);
     Event_ShowMessageAndWait(36872, 0, 20);
-    Engine_ActorGet(8)->unknown_5a &= 0xfe;
+    Object_GetById(8)->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(8, 542, 680);
     Main_0808a010(1);
-    Engine_ActorGet(8)->unknown_5a |= 0x1;
+    Object_GetById(8)->unknown_5a |= 0x1;
     Main_0808a010(10);
     Main_0808a138(8, 2);
-    Main_08009228(Engine_ActorGet(0), 226);
+    Main_08009228(Object_GetById(0), 226);
     Main_080770c8(33);
     Main_080f9010(126);
     Main_0808a158(0, 7);
     Main_0808a010(10);
     Main_0808a158(0, 0);
     Main_0808a010(20);
-    Engine_ActorGet(8)->unknown_5a &= 0xfe;
+    Object_GetById(8)->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(8, 534, 688);
     Main_0808a010(1);
-    Engine_ActorGet(8)->unknown_5a |= 0x1;
+    Object_GetById(8)->unknown_5a |= 0x1;
     Main_0808a010(20);
     Actor_SetSpeed(8, 98304, 49152);
     Actor_SetSpeed(0, 98304, 49152);
     Main_0808a200(8, 1);
-    p89 = Engine_ActorGet(0);
+    p89 = Object_GetById(0);
     p89->priority_flags |= 0x1;
     Engine_ActorEnableActionCallback(8, HaidiaBabi_SharedAction);
     Main_0808a010(20);

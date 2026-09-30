@@ -144,9 +144,9 @@ Object_GetById:
 	.global Object_GetByIdFar
 	.thumb_func
 Object_GetByIdFar:
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	.global Engine_GetTriggerActor
 	.thumb_func
 Engine_GetTriggerActor:

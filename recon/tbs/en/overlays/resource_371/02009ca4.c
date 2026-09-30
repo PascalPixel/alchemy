@@ -68,15 +68,15 @@ void WorldMap_MeetVenusDjinni(void)
     s32 i;
 
     i = 0;
-    djinni = Engine_ActorGet(DJINNI);
-    leader = Engine_ActorGet(0);
+    djinni = Object_GetById(DJINNI);
+    leader = Object_GetById(0);
     x = (leader->x.fixed + (s32)0xea300000) / 2 + 0x15d00000;
     z = (leader->z.fixed + (s32)0xfad00000) / 2 + 0x5300000;
     if (!Value1(Engine_GameFlagIsSet, FLAG_DJINNI_MET)) {
         Owner_RefreshActiveRatios(1);
         Call1(Engine_GameFlagSet, FLAG_DJINNI_MET);
         Event_Begin();
-        leader = (struct FieldActor *)Value1((s32 (*)())Engine_ActorGet, 0);
+        leader = (struct FieldActor *)Value1((s32 (*)())Object_GetById, 0);
         if (leader != 0)
             Actor_SetPosition(DJINNI, leader->x.fixed, leader->z.fixed);
         Djinn_AddToOwner(0, 0, 0);
@@ -208,7 +208,7 @@ listened:
         goto finish;
     }
     Event_Begin();
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     if (leader != 0)
         Actor_SetPosition(DJINNI, leader->x.fixed, leader->z.fixed);
     djinni->velocity_y = 0xa0000;

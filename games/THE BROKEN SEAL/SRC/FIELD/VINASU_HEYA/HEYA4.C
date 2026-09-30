@@ -46,7 +46,7 @@ void Scene_RunParticleWaveSequence(void)
 
     gEventWork->start_transition = 0x202;
     Engine_EventBegin();
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(0), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorSetChildValue(0, 15);
     BattleFx_SetQueuedSoundAndPlay(170);
     Engine_EventOpenScreen();
@@ -107,7 +107,7 @@ void Scene_RunEastParticleWaveSequence(void)
 
     gEventWork->start_transition = 0x202;
     Engine_EventBegin();
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(0), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorSetChildValue(0, 15);
     BattleFx_SetQueuedSoundAndPlay(170);
     Engine_EventOpenScreen();
@@ -187,8 +187,8 @@ void FieldScene_RunLeaderDropSequence(void)
     s32 v2;
     s32 slot0;
 
-    rec = Engine_ActorGet(ACTOR_PARTY_LEADER);
-    rec8 = Engine_ActorGet(20);
+    rec = Object_GetById(ACTOR_PARTY_LEADER);
+    rec8 = Object_GetById(20);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Map_Redraw();

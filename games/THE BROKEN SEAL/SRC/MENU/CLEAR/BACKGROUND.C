@@ -88,7 +88,7 @@ col:
     {
         struct FieldActor *leader;
 
-        leader = Engine_ActorGet(gGameState.selected_actor);
+        leader = Object_GetById(gGameState.selected_actor);
         /* FAKEMATCH: a halfword zero keeps the reference's short-reach pool. */
         zero = 0;
         leader->motion_flags = zero;

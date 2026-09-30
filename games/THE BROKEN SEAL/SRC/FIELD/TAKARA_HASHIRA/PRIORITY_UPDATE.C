@@ -10,7 +10,7 @@ void TakaraHashira_SyncPriorityIfAhead(struct FieldActor *actor, struct FieldAct
 
 s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
 {
-    struct FieldActor *leader = Engine_ActorGet(0);
+    struct FieldActor *leader = Object_GetById(0);
     s32 hit;
     u32 id;
 
@@ -21,11 +21,11 @@ s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
     }
     hit = TakaraHashira_SyncPriorityIfBehind(actor, leader);
     for (id = 8; id <= 11; id++) {
-        hit += TakaraHashira_SyncPriorityIfBehind(actor, Engine_ActorGet(id));
+        hit += TakaraHashira_SyncPriorityIfBehind(actor, Object_GetById(id));
     }
     if (hit != 0) {
         for (id = 8; id <= 11; id++) {
-            TakaraHashira_SyncPriorityIfAhead(actor, Engine_ActorGet(id));
+            TakaraHashira_SyncPriorityIfAhead(actor, Object_GetById(id));
         }
     }
     if (actor->y.fixed < leader->y.fixed) {

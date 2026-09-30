@@ -11,7 +11,7 @@ extern s32 BabiFune_StoredSlot0;
 extern s32 BabiFune_StoredRecord1;
 extern s32 BabiFune_StoredSlot3;
 extern s32 BabiFune_StoredRecord2;
-T *Engine_ActorGet(s32);
+T *Object_GetById(s32);
 
 extern u8 MsgFieldLooksLikeFinally[];
 extern u8 gMapWork[];
@@ -56,7 +56,7 @@ s32 SceneState_StoreSlotZeroField12(void)
     T *p;
 
     d = &BabiFune_StoredSlot0;
-    p = Engine_ActorGet(0);
+    p = Object_GetById(0);
     *d = p->unk12;
     return 0;
 }
@@ -67,7 +67,7 @@ s32 SceneData_StoreRecord1Field12(void)
     T *rec;
 
     p = &BabiFune_StoredRecord1;
-    rec = Engine_ActorGet(1);
+    rec = Object_GetById(1);
     *p = rec->unk12;
     return 0;
 }
@@ -78,7 +78,7 @@ s32 SceneState_StoreSlotThreeField12(void)
     T *p;
 
     d = &BabiFune_StoredSlot3;
-    p = Engine_ActorGet(3);
+    p = Object_GetById(3);
     *d = p->unk12;
     return 0;
 }
@@ -89,7 +89,7 @@ s32 SceneData_StoreRecord2Field12(void)
     T *p;
 
     d = &BabiFune_StoredRecord2;
-    p = Engine_ActorGet(2);
+    p = Object_GetById(2);
     *d = p->unk12;
     return 0;
 }
@@ -292,7 +292,7 @@ void Scene_RunExtendedPresentationSequence(void)
     BabiFune_ScheduleFade();
     Engine_EventWait(80);
     scene = *(u8 **)gMapWork;
-    p176 = (void *)Engine_ActorGet(8);
+    p176 = (void *)Object_GetById(8);
     *(s32 *)(p176 + 52) = 131;
     *(s32 *)(p176 + 48) = 131072;
     *(s32 *)(scene + 284) = -0x3000;

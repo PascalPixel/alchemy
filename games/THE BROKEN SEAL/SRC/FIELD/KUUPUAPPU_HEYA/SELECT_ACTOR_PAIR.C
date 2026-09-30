@@ -12,7 +12,6 @@ void Scheduler_RemoveCallback();
 void SceneActor_SetModeZeroAndValue();
 void Ui_SetBank15PaletteAndClearRenderMode();
 void SceneState_SetValue2ThenFinish();
-u8 *Object_GetById();
 void KuupuappuHeya_RunScene021C8();
 void Scheduler_AddOrUpdateCallback();
 void KuupuappuHeya_UpdateActorStops(void);
@@ -94,11 +93,11 @@ void FieldScene_SelectActorPair(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(40);
-    record = Object_GetById(0);
+    record = (u8 *)Object_GetById(0);
     (*(struct SceneObjectFlags **)(record + 80))->mode = 1;
-    record = Object_GetById(1);
+    record = (u8 *)Object_GetById(1);
     (*(struct SceneObjectFlags **)(record + 80))->mode = 1;
-    record = Object_GetById(2);
+    record = (u8 *)Object_GetById(2);
 
     (*(struct SceneObjectFlags **)(record + 80))->mode = 1;
     Data_03001ebc->value_1c8 = 24;
@@ -109,13 +108,13 @@ void FieldScene_SelectActorPair(void)
     Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
     GameFlag_Set(0x853);
     {
-        u8 *record = Object_GetById(24);
+        u8 *record = (u8 *)Object_GetById(24);
         s32 shown = 5;
 
         *(u16 *)((s32)record + 100) = shown;
     }
     {
-        u8 *record = Object_GetById(25);
+        u8 *record = (u8 *)Object_GetById(25);
         s32 shown = 4;
 
         *(u16 *)((s32)record + 100) = shown;

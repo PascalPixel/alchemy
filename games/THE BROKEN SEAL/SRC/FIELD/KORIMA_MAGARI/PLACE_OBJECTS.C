@@ -33,7 +33,7 @@ void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
         if (actor == NULL)
             return;
         entry->actor = actor;
-        Engine_ObjectSetAnimation(actor, 1);
+        Object_SetMode(actor, 1);
         Engine_ActorSetSpriteFlags(actor, 0);
         actor->collision_flags = 0;
         actor->radius = 32;

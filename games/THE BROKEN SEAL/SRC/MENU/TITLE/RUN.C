@@ -28,7 +28,7 @@ s32 Title_Run(void)
     s32 wait;
 
     if (gGameState.entrance == 10) {
-        Engine_ActorGet(gGameState.selected_actor)->motion_flags = 0;
+        Object_GetById(gGameState.selected_actor)->motion_flags = 0;
         Engine_AudioPlayCue(75);
         Title_RevealScreen(0);
         Engine_TaskWait(120);

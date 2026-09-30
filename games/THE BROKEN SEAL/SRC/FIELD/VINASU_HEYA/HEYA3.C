@@ -229,7 +229,7 @@ s32 Scene_RunEntrySetup(void)
         case 11:
             if (Engine_GameFlagIsSet(0x987)) {
                 Call3((void (*)())Engine_ActorSetPosition, 12, 218 << 18, 176 << 15);
-                actor = Engine_ActorGet(12);
+                actor = Object_GetById(12);
                 actor->y.fixed = -0x180000;
                 actor->target_y = ACTOR_NO_TARGET;
             }
@@ -250,11 +250,11 @@ s32 Scene_RunEntrySetup(void)
             break;
         case 9:
         case 10:
-            actor = Engine_ActorGet(11);
+            actor = Object_GetById(11);
             SceneActor_ApplyPositionsOfActors11And12();
             if (actor->x.fixed >> 20 == 8)
                 SceneState_MarkActorAndApplyRectAtTile(actor);
-            actor = Engine_ActorGet(12);
+            actor = Object_GetById(12);
             if (actor->x.fixed >> 20 == 7)
                 SceneState_MarkActorAndApplyRectAtTile(actor);
             OverlayObject_SpawnWithMode14(206 << 16, 0, 0x1c10000, 223);
@@ -264,13 +264,13 @@ s32 Scene_RunEntrySetup(void)
         case 8:
             BattleFx_StartFadeOverlay(0);
             Engine_TaskWait(2);
-            actor = Engine_ActorGet(8);
+            actor = Object_GetById(8);
             actor->motion_flags = 0;
             actor->update = SceneActor_SetFlagBitByRelativeDepth;
-            actor = Engine_ActorGet(9);
+            actor = Object_GetById(9);
             actor->motion_flags = 0;
             actor->update = SceneActor_SetFlagBitByRelativeDepth;
-            actor = Engine_ActorGet(10);
+            actor = Object_GetById(10);
             actor->motion_flags = 0;
             actor->update = SceneActor_SetFlagBitByRelativeDepth;
             FieldScene_PlaceAndPinSlots8To10();
@@ -310,10 +310,10 @@ s32 Scene_RunEntrySetup(void)
             break;
         case 9:
         case 10:
-            actor = Engine_ActorGet(8);
+            actor = Object_GetById(8);
             actor->motion_flags = 0;
             actor->y.fixed = 0;
-            actor = Engine_ActorGet(9);
+            actor = Object_GetById(9);
             actor->motion_flags = 0;
             actor->collision_flags = 0;
             if (Engine_GameFlagIsSet(0x301)) {
@@ -328,7 +328,7 @@ s32 Scene_RunEntrySetup(void)
                 ((void (*)())Engine_MapCopyCellAttributes)(45, 45, 1, 1, 46, 45);
                 ((void (*)())Engine_ActorSetAnimation)(10, 7);
                 ((void (*)())Engine_ActorSetSpritePriority)(10, 1);
-                actor = Engine_ActorGet(10);
+                actor = Object_GetById(10);
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Call3((void (*)())Engine_ActorSetPosition, 10, 0x2e70000, 174 << 18);
@@ -338,7 +338,7 @@ s32 Scene_RunEntrySetup(void)
             break;
         case 11:
             gEventWork->start_transition = 0x202;
-            Engine_ActorGet(0)->y.fixed = -0x20000;
+            Object_GetById(0)->y.fixed = -0x20000;
         case 7:
         case 8:
             BattleFx_SetQueuedSoundAndPlay(170);
@@ -404,12 +404,12 @@ s32 Scene_RunEntrySetup(void)
             break;
         case 15:
         case 16:
-            actor = Engine_ActorGet(8);
+            actor = Object_GetById(8);
             actor->motion_flags = 0;
             actor->y.fixed = 0;
-            Engine_ActorGet(9)->motion_flags = 0;
-            Engine_ActorGet(10)->motion_flags = 0;
-            Engine_ActorGet(11)->motion_flags = 0;
+            Object_GetById(9)->motion_flags = 0;
+            Object_GetById(10)->motion_flags = 0;
+            Object_GetById(11)->motion_flags = 0;
             if (Engine_GameFlagIsSet(0x304)) {
                 Engine_TaskWait(1);
                 Call6((void (*)())Engine_MapCopyCellsTo, 111, 59, 109, 37, 1, 2);
@@ -424,21 +424,21 @@ s32 Scene_RunEntrySetup(void)
                     Call3((void (*)())Engine_ActorSetPosition, 11, 210 << 18, 174 << 18);
                 }
                 ((void (*)())Engine_ActorSetSpritePriority)(9, 3);
-                actor = Engine_ActorGet(9);
+                actor = Object_GetById(9);
                 actor->y.fixed = -0x100000;
                 actor->priority_flags = 2;
                 ((void (*)())Engine_ActorSetSpritePriority)(10, 3);
-                actor = Engine_ActorGet(10);
+                actor = Object_GetById(10);
                 actor->y.fixed = -0x100000;
                 actor->priority_flags = 2;
                 ((void (*)())Engine_ActorSetSpritePriority)(11, 3);
-                actor = Engine_ActorGet(11);
+                actor = Object_GetById(11);
                 actor->y.fixed = -0x100000;
                 actor->priority_flags = 2;
                 ((void (*)())Engine_ActorSetAnimation)(12, 7);
-                ((void (*)())Engine_ActorSetSpriteFlags)(Engine_ActorGet(12), 0);
+                ((void (*)())Engine_ActorSetSpriteFlags)(Object_GetById(12), 0);
                 ((void (*)())Engine_ActorSetSpritePriority)(12, 1);
-                actor = Engine_ActorGet(12);
+                actor = Object_GetById(12);
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Call3((void (*)())Engine_ActorSetPosition, 12, 0x2d70000, 158 << 18);
@@ -455,9 +455,9 @@ s32 Scene_RunEntrySetup(void)
         case 2:
             if (Engine_GameFlagIsSet(0x109)) {
                 VinasuHeya_LowerFloatingBlocks(0);
-                OverlayObject_WaitUntilIdle(Engine_ActorGet(0));
+                OverlayObject_WaitUntilIdle(Object_GetById(0));
                 for (i = 0; i <= 3; i++) {
-                    actor = Engine_ActorGet(i + 10);
+                    actor = Object_GetById(i + 10);
                     x = actor->x.fixed >> 20;
                     if (x == 13) {
                         z = actor->z.fixed >> 20;
@@ -466,36 +466,36 @@ s32 Scene_RunEntrySetup(void)
                     }
                 }
             } else {
-                actor = Engine_ActorGet(8);
+                actor = Object_GetById(8);
                 actor->motion_flags = 0;
                 actor->y.fixed = -0x300000;
                 actor->priority_flags |= 2;
                 actor->collision_flags &= 0xfe;
                 actor->unknown_64 = 3;
                 ((void (*)())Engine_ActorSetSpritePriority)(8, 1);
-                actor = Engine_ActorGet(9);
+                actor = Object_GetById(9);
                 actor->motion_flags = 0;
                 actor->y.fixed = -0x300000;
                 actor->priority_flags |= 2;
                 actor->collision_flags &= 0xfe;
                 actor->unknown_64 = 3;
                 ((void (*)())Engine_ActorSetSpritePriority)(9, 1);
-                actor = Engine_ActorGet(10);
+                actor = Object_GetById(10);
                 actor->motion_flags = 0;
                 actor->unknown_64 = 0;
-                ((void (*)())Engine_ActorSetSpriteFlags)(Engine_ActorGet(10), 0);
-                actor = Engine_ActorGet(11);
+                ((void (*)())Engine_ActorSetSpriteFlags)(Object_GetById(10), 0);
+                actor = Object_GetById(11);
                 actor->motion_flags = 0;
                 actor->unknown_64 = 0;
-                ((void (*)())Engine_ActorSetSpriteFlags)(Engine_ActorGet(11), 0);
-                actor = Engine_ActorGet(12);
+                ((void (*)())Engine_ActorSetSpriteFlags)(Object_GetById(11), 0);
+                actor = Object_GetById(12);
                 actor->motion_flags = 0;
                 actor->unknown_64 = 0;
-                ((void (*)())Engine_ActorSetSpriteFlags)(Engine_ActorGet(12), 0);
-                actor = Engine_ActorGet(13);
+                ((void (*)())Engine_ActorSetSpriteFlags)(Object_GetById(12), 0);
+                actor = Object_GetById(13);
                 actor->motion_flags = 0;
                 actor->unknown_64 = 0;
-                ((void (*)())Engine_ActorSetSpriteFlags)(Engine_ActorGet(13), 0);
+                ((void (*)())Engine_ActorSetSpriteFlags)(Object_GetById(13), 0);
             }
             break;
         case 13:
@@ -506,7 +506,7 @@ s32 Scene_RunEntrySetup(void)
         case 18:
         case 19:
             gEventWork->start_transition = 0x202;
-            Engine_ActorGet(0)->y.fixed = -0x20000;
+            Object_GetById(0)->y.fixed = -0x20000;
         case 3:
         case 4:
         case 5:
@@ -518,9 +518,9 @@ s32 Scene_RunEntrySetup(void)
         case 11:
         case 12:
         case 20:
-            Engine_ActorGet(20)->motion_flags = 4;
-            Engine_ActorGet(20)->priority_flags |= 2;
-            Engine_ActorGet(20)->y.fixed = -0x108000;
+            Object_GetById(20)->motion_flags = 4;
+            Object_GetById(20)->priority_flags |= 2;
+            Object_GetById(20)->y.fixed = -0x108000;
             DisplayBlend_EnableRunScript();
             do { *(s16 *)&REG_BLDCNT = 0; } while (0); /* FAKEMATCH: the do/while keeps the zero ahead of the register address */
             if (Engine_GameFlagIsSet(0x306)) {
@@ -558,41 +558,41 @@ s32 Scene_RunEntrySetup(void)
         case 16:
             Engine_TaskWait(1);
             ((void (*)())Engine_TaskAddCallback)(SceneState_ApplyStepToSlots15To18, 0xc80);
-            actor = Engine_ActorGet(14);
+            actor = Object_GetById(14);
             actor->motion_flags = 0;
             actor->y.fixed = 0;
-            Engine_ActorGet(15)->motion_flags = 0;
-            Engine_ActorGet(16)->motion_flags = 0;
-            Engine_ActorGet(17)->motion_flags = 0;
-            Engine_ActorGet(18)->motion_flags = 0;
+            Object_GetById(15)->motion_flags = 0;
+            Object_GetById(16)->motion_flags = 0;
+            Object_GetById(17)->motion_flags = 0;
+            Object_GetById(18)->motion_flags = 0;
             if (Engine_GameFlagIsSet(0x308)) {
                 Engine_TaskWait(1);
                 ((void (*)())Engine_MapCopyCellsTo)(95, 56, 77, 35, 1, 2);
                 Call6((void (*)())Engine_MapCopyCellAttributes, 13, 35, 1, 1, 13, 36);
                 ((void (*)())Engine_ActorSetPosition)(15, 132 << 17, 186 << 18);
-                actor = Engine_ActorGet(15);
+                actor = Object_GetById(15);
                 actor->y.fixed = -0x100000;
                 actor->priority_flags = 2;
                 ((void (*)())Engine_ActorSetSpritePriority)(15, 3);
                 Call3((void (*)())Engine_ActorSetPosition, 16, 184 << 16, 158 << 18);
-                actor = Engine_ActorGet(16);
+                actor = Object_GetById(16);
                 actor->y.fixed = -0x100000;
                 actor->priority_flags = 2;
                 ((void (*)())Engine_ActorSetSpritePriority)(16, 3);
                 ((void (*)())Engine_ActorSetPosition)(17, 232 << 16, 174 << 18);
-                actor = Engine_ActorGet(17);
+                actor = Object_GetById(17);
                 actor->y.fixed = -0x100000;
                 actor->priority_flags = 2;
                 ((void (*)())Engine_ActorSetSpritePriority)(17, 3);
                 ((void (*)())Engine_ActorSetPosition)(18, 184 << 16, 166 << 18);
-                actor = Engine_ActorGet(18);
+                actor = Object_GetById(18);
                 actor->y.fixed = -0x100000;
                 actor->priority_flags = 2;
                 ((void (*)())Engine_ActorSetSpritePriority)(18, 3);
                 ((void (*)())Engine_ActorSetAnimation)(19, 7);
-                ((void (*)())Engine_ActorSetSpriteFlags)(Engine_ActorGet(19), 0);
+                ((void (*)())Engine_ActorSetSpriteFlags)(Object_GetById(19), 0);
                 ((void (*)())Engine_ActorSetSpritePriority)(19, 1);
-                actor = Engine_ActorGet(19);
+                actor = Object_GetById(19);
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Call3((void (*)())Engine_ActorSetPosition, 19, 215 << 16, 150 << 18);
@@ -660,7 +660,7 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
         id = gGameState.selected_actor;
         center = event->view_center;
     }
-    actor = Engine_ActorGet(id);
+    actor = Object_GetById(id);
     pos[0] = actor->x.fixed + ((dir->x * 3) << 15);
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + ((dir->z * 3) << 15);
@@ -681,12 +681,12 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     if (hit < 0) {
         ((void (*)())Engine_ActorSetAttachedEffect)(id, 0x102);
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + 0x80000);
-        Engine_ObjectSetAnimation(actor, 7);
+        Object_SetMode(actor, 7);
         Engine_ObjectCommitPosition(actor);
         do {
             Engine_TaskWait(1);
         } while (actor->y.fixed != *(s32 *)((u8 *)actor + 20));
-        Engine_ObjectSetAnimation(actor, 6);
+        Object_SetMode(actor, 6);
         Engine_TaskWait(3);
         return;
     }

@@ -64,7 +64,7 @@ void Dialogue_HandleFacingChoice(s32 no)
 
 void Dialogue_HandleFacingBranch(s32 no)
 {
-    u16 facing = (((u16 *)Engine_ActorGet(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (((u16 *)Object_GetById(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Inn_CheckIn(10, no);
     } else if (Engine_GameFlagIsSet(0x96f)) {
@@ -78,7 +78,7 @@ void Dialogue_HandleFacingBranch(s32 no)
 
 void Dialogue_HandleFacingAction(s32 no)
 {
-    u16 facing = (((u16 *)Engine_ActorGet(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (((u16 *)Object_GetById(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Shop_ConfirmAct(no);
     } else if (Engine_GameFlagIsSet(0x96f)) {
@@ -370,7 +370,7 @@ void Scene_RunPrimaryScript(void)
         Engine_AudioPlayCue(30);
         Call3(Engine_ActorSetSpeed, 19, 78643, 39321);
         Engine_ActorSetAnimation(19, 2);
-        record = (u8 *)Engine_ActorGet(0);
+        record = (u8 *)Object_GetById(0);
         if (record != 0) {
             Engine_ActorSetDestination(19, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -397,9 +397,9 @@ s32 Scene_InitActorRecords(void)
         Engine_GameFlagSet(0x96f);
     ((s32 *)gEventWork)[112] = 521;
     ((s32 *)gEventWork)[114] = 24;
-    ((union SceneActor *)Engine_ActorGet(12))->bytes[89] |= 4;
-    ((union SceneActor *)Engine_ActorGet(13))->bytes[89] |= 4;
-    work = (union SceneActor *)Engine_ActorGet(20);
+    ((union SceneActor *)Object_GetById(12))->bytes[89] |= 4;
+    ((union SceneActor *)Object_GetById(13))->bytes[89] |= 4;
+    work = (union SceneActor *)Object_GetById(20);
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     {
@@ -410,7 +410,7 @@ s32 Scene_InitActorRecords(void)
         flags = flags & record->flags;
         record->flags = flags | 4;
     }
-    work = (union SceneActor *)Engine_ActorGet(21);
+    work = (union SceneActor *)Object_GetById(21);
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     work->bytes[85] = 2;

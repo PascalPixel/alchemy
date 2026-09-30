@@ -9,7 +9,7 @@ struct Obj {
     u16 f06;
 };
 
-struct Obj *Engine_ActorGet(s32 id);
+struct Obj *Object_GetById(s32 id);
 s32 BabiIriguchi_FindActorAhead(void);
 s32 battle_owner_69(void);
 s32 FieldEffect_UpdateGridPlacement(void);
@@ -21,7 +21,7 @@ void SceneActor_PushObjectAheadIfLevel(void);
  * the byte is clear. */
 void SceneActor_RunSlotZeroFacingCheck(void)
 {
-    struct Obj *p = Engine_ActorGet(0);
+    struct Obj *p = Object_GetById(0);
     s32 x = BabiIriguchi_FindActorAhead();
     s32 m = (p->f06 + 0x2000) & 0xc000;
     s32 r = -1;

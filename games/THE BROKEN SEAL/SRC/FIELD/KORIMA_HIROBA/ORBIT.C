@@ -75,7 +75,6 @@ extern u8 KorimaHiroba_Messages[];
 extern u8 KorimaHiroba_Actors[];
 extern u8 KorimaHiroba_Extras[];
 
-void *Object_GetById(u32);
 
 /* Constant getter; the owner includes its own pool word. */
 
@@ -115,7 +114,7 @@ void SceneEffect_InitOrbitingParticle(s32 id)
     u8 *transfer;
     s32 zero;
 
-    actor = Object_GetById(id);
+    actor = (void *)Object_GetById(id);
     sprite = actor->sprite;
     sprite->flags_09_mode = 1;
     sprite->flags_05_bit_5 = 0;

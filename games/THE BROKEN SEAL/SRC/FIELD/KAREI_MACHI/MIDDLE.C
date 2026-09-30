@@ -213,7 +213,7 @@ void FieldScene_RunMiddleSequence(void)
         p5 = base[9];
         r0 = GameFlag_IsSet(0x200);
         if (r0 != 0) {
-            r0 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            r0 = Object_GetById(ACTOR_PARTY_LEADER);
         }
         *(s32 *)(p5 + 24) = r0;
     } else {

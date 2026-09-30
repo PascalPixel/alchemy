@@ -2,8 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-u8 *Object_GetById();
 /* FAKEMATCH: calls that cast SceneActor_FindSlotAtTilePosition to another return type keep their original register order. */
 s32 *SceneActor_FindSlotAtTilePosition(s32 *arg0);
 
@@ -292,7 +290,7 @@ s32 *SceneActor_FindOccupantAheadOfSubject(void)
     s32 pos[3];
     s32 *hit;
 
-    rec = Object_GetById(((ActiveSubjectSlot *)Data_02000240)->handle);
+    rec = (u8 *)Object_GetById(((ActiveSubjectSlot *)Data_02000240)->handle);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (*(u16 *)(rec + 6) + 0x2000) & 0xc000;

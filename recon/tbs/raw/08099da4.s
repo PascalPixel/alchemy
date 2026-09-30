@@ -228,10 +228,10 @@ Battle_unk3_2:
 	bl	Object_SetPosition
 	ldr	r0, [sp, #20]
 	movs	r1, #1
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r0, [sp, #24]
 	movs	r1, #1
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	b.n	.L_0809a0e8
 .L_08099f84:
 	ldr	r3, [r7, #8]
@@ -296,10 +296,10 @@ Battle_unk3_2:
 .L_0809a00a:
 	ldr	r0, [sp, #20]
 	movs	r1, #4
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r0, [sp, #24]
 	movs	r1, #4
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r3, [pc, #200]
 	ldr	r3, [r3, #0]
 	movs	r2, #15
@@ -317,10 +317,10 @@ Battle_unk3_2:
 	movs	r1, #4
 	ldr	r5, [r2, #0]
 	ldr	r6, [r2, #8]
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r0, [sp, #24]
 	movs	r1, #4
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r0, #15
 	bl	WaitFrames
 	ldr	r1, [pc, #132]
@@ -397,10 +397,10 @@ Battle_unk3_2:
 .L_0809a0fc:
 	ldr	r0, [sp, #20]
 	movs	r1, #4
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r0, [sp, #24]
 	movs	r1, #4
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r0, [pc, #372]
 	bl	Scheduler_RemoveCallback
 	movs	r0, #135

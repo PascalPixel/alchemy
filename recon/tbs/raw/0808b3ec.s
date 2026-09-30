@@ -166,7 +166,7 @@ Func_0808b3ec:
 	beq.n	.L_0808b600
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	adds	r3, r6, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]
@@ -194,7 +194,7 @@ Func_0808b3ec:
 	bl	ObjectMotion_SetActionCallback
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r2, [r6, #8]
 	cmp	r2, #0
 	bge.n	.L_0808b57c

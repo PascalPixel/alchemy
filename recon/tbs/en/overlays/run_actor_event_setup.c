@@ -9,7 +9,7 @@ void Engine_ActorSetPosition();
 void Engine_ActorFaceDirection();
 s32 Engine_GameFlagClear();
 void FieldScene_RunScene3a2SequenceA();
-u8 * Engine_ActorGet();
+u8 * Object_GetById();
 void Engine_ActorSetSpriteFlags();
 void ActorPresentation_PrepareActorFourteenWithCallback();
 void FieldScene_SetSlot15Byte89AndRunStep();
@@ -89,10 +89,10 @@ s32 Func_020011b0(void)
     } else {
         if (Data_02000240_t[224][0] != (s32)Data_0000004a) {
         } else {
-            record = Engine_ActorGet(14);
+            record = Object_GetById(14);
             Engine_ActorSetSpriteFlags((s32)record, 0);
             {
-                u8 *record = Engine_ActorGet(14);
+                u8 *record = Object_GetById(14);
                 u8 value = *(volatile u8 *)&record[35];
             
                 record[35] = (u8)(value | 2);
@@ -141,14 +141,14 @@ s32 Func_020011b0(void)
                     Call3(Engine_ActorFaceDirection, 8, 0x5000, 0);
                     Call3(Engine_ActorFaceDirection, 10, 0xb000, 0);
                     Value2(Engine_ActorEnableActionCallback, 9, 0x2009730);
-                    record = Engine_ActorGet(9);
+                    record = Object_GetById(9);
                     *(s32 *)((s32)record + 24) = -0x10000;
                 }
             }
             if (Value1(Engine_GameFlagIsSet, 0x8b2) == 0) {
                 Call3(Engine_ActorSetPosition, 9, 0xa40000, 0x1180000);
                 Value2(Engine_ActorEnableActionCallback, 9, 0x2009730);
-                record = Engine_ActorGet(9);
+                record = Object_GetById(9);
                 *(s32 *)((s32)record + 24) = -0x10000;
             }
             if (Data_02000240_t[225][0] == 5) {

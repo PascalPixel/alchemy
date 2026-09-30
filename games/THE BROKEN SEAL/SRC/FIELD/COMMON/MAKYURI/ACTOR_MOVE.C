@@ -91,7 +91,7 @@ void Makyuri_RunActorMove(void)
     if (obj != NULL) {
         ((union FieldObject *)obj)->effect.spin = 0;
         Engine_ObjectSetScript(obj, Makyuri_ScaleCounterScript);
-        Engine_ObjectSetAnimation(obj, 7);
+        Object_SetMode(obj, 7);
         state->effect = NULL;
     }
     if (to->level == state->level && state->count != 0) {
@@ -121,20 +121,20 @@ void Makyuri_RunActorMove(void)
             state->source = NULL;
             Engine_GameFlagClear(0x161);
         } else if (state->source != NULL) {
-            Engine_ObjectSetAnimation(state->source, 6 - n);
+            Object_SetMode(state->source, 6 - n);
         }
     }
-    Engine_ObjectSetAnimation(actor, 6);
+    Object_SetMode(actor, 6);
     WaitFrames(3);
     Audio_PlayCue(152);
-    Engine_ObjectSetAnimation(actor, 7);
+    Object_SetMode(actor, 7);
     actor->speed = 0x30000;
     actor->acceleration = 0x20000;
     actor->velocity_y = 0x40000;
     *flags &= 0x7e;
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ActorMoveToAndWait(0, pos[0].part.pixel, pos[2].part.pixel);
-    Engine_ObjectSetAnimation(actor, 6);
+    Object_SetMode(actor, 6);
     WaitFrames(2);
     if (to->level != state->level)
         Engine_ActorSetSpriteFlags(actor, 1);
@@ -143,7 +143,7 @@ void Makyuri_RunActorMove(void)
     WaitFrames(1);
     *flags = saved;
     if (to->level == state->level && state->effect == NULL) {
-        Engine_ObjectSetAnimation(actor, 18);
+        Object_SetMode(actor, 18);
         Audio_PlayCue(241);
         for (i = 0;; i++) {
             if ((i & 15) == 0)

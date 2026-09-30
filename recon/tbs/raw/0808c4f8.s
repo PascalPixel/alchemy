@@ -424,7 +424,7 @@ Func_0808c4f8:
 .L_0808c894:
 	mov	r0, sl
 	movs	r1, #22
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	mov	r1, r8
 	ldrsh	r0, [r5, r1]
 	movs	r1, #1
@@ -461,12 +461,12 @@ Func_0808c4f8:
 	beq.n	.L_0808c8ec
 	mov	r0, sl
 	movs	r1, #21
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	b.n	.L_0808c908
 .L_0808c8ec:
 	mov	r0, sl
 	movs	r1, #37
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	b.n	.L_0808c908
 	movs	r0, r0
 	.4byte 0x0000091a
@@ -475,7 +475,7 @@ Func_0808c4f8:
 .L_0808c900:
 	mov	r0, sl
 	movs	r1, #19
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 .L_0808c908:
 	movs	r0, #59
 	bl	Audio_PlayCue

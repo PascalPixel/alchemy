@@ -26,7 +26,7 @@ u8 *Owner_GetState();
 void Owner_RecalculateStats();
 s32 Party_ListActiveOwners();
 void Party_AdvanceOwnerCountToTarget();
-u8 *Engine_ActorGet();
+u8 *Object_GetById();
 void Engine_ActorSetAnimation();
 void Engine_ActorShowEmote();
 void Engine_EventSetMessage();

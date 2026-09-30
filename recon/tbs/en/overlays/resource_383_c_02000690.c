@@ -120,7 +120,7 @@ void KuupuappuHeya_RunActor25Response(void)
     s32 half;
     s32 next;
 
-    actor = Engine_ActorGet(25);
+    actor = Object_GetById(25);
     facing = actor->facing & 0xf000;
     side = (s16 *)&actor->unknown_64;
     half = *side >> 1;

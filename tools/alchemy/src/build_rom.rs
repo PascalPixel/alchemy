@@ -41,8 +41,11 @@ pub fn run(args: &[String]) -> Result<(), String> {
         }
     }
     let root = crate::compiler::routing::root();
-    let script = script.unwrap_or_else(|| target.script());
     let output = output.unwrap_or_else(|| PathBuf::from(target.output_dir));
+    let script = match script {
+        Some(script) => script,
+        None => crate::edition::script(root, target, &output)?,
+    };
     let linked = link(
         root,
         target,

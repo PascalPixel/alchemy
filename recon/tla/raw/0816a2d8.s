@@ -741,7 +741,7 @@ Func_0816a2d8:
 	movs	r2, #7
 	movs	r3, #3
 	str	r7, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	b.n	.L_0816a8e8
 .L_0816a8da:
 	movs	r0, #104
@@ -749,7 +749,7 @@ Func_0816a2d8:
 	movs	r2, #7
 	movs	r3, #7
 	str	r7, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 .L_0816a8e8:
 	movs	r3, #192
 	lsls	r3, r3, #18

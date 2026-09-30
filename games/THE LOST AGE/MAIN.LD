@@ -1061,7 +1061,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.081287c4)
         "*/recon/tla/raw/0812ce74.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.0812ce7c)
-        "*/recon/tla/raw/08138000.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_47.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/KERNEL_BANK_INTEGRATE_VECTORS.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081380ac.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/RELOCATED_KERNELS.o"(.text .rodata .data .padding)

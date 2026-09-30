@@ -1044,7 +1044,7 @@ Func_0813d098:
 	movs	r2, #7
 	movs	r3, #3
 	movs	r0, #104
-	bl	0x08196404
+	bl	Func_08196404
 	mov	r6, fp
 	ldr	r3, [sp, #36]
 	lsls	r5, r6, #3
@@ -1085,7 +1085,7 @@ Func_0813d098:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r3, #7
-	bl	0x08196404
+	bl	Func_08196404
 	mov	r3, sp
 	adds	r3, #140
 	str	r3, [sp, #36]
@@ -1463,7 +1463,7 @@ Func_0813d098:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #188
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r2, [pc, #560]
 	lsls	r3, r7, #1
 	ldrh	r1, [r2, r3]

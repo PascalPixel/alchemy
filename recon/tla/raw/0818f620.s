@@ -3974,7 +3974,7 @@ Func_0818f620:
 	movs	r1, #8
 	movs	r0, #104
 	str	r3, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	movs	r1, #200
 	lsls	r3, r3, #18

@@ -178,7 +178,7 @@ Func_08170dac:
 	movs	r2, #7
 	movs	r0, #104
 	str	r5, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #11
 	orrs	r6, r3
 	movs	r1, #7
@@ -186,7 +186,7 @@ Func_08170dac:
 	adds	r3, r6, #0
 	movs	r0, #188
 	str	r5, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #104]

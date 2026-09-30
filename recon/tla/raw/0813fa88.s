@@ -327,6 +327,9 @@ Func_0813fa88:
 	.4byte 0x0813f89d
 	.2byte 0xf8d5
 	.2byte 0x0813
+	.global Func_0813fd40
+	.thumb_func
+Func_0813fd40:
 	push	{lr}
 	ldr	r0, [pc, #44]
 	bl	Func_08014644
@@ -4430,7 +4433,7 @@ Func_0813fa88:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #188
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r2, [pc, #332]
 	lsls	r3, r7, #1
 	ldrh	r1, [r2, r3]

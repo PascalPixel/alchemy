@@ -490,7 +490,7 @@ Func_08164cc4:
 .L_081650c0:
 	movs	r3, #3
 	str	r7, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r5, [r5, #104]
 	ldr	r4, [sp, #60]
 	str	r5, [sp, #68]

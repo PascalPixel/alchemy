@@ -122,7 +122,7 @@ Func_080d8740:
 	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r1, sl
 	ldr	r0, [r5, #80]
-	bl	0x080dc0d8
+	bl	Func_080dc0d8
 	mov	r1, r8
 	str	r1, [r5, #104]
 	mov	sl, r0

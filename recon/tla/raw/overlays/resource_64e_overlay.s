@@ -1017,39 +1017,6 @@ Func_02000684:
 	.4byte 0xfffffd5c
 	.2byte 0x0000
 	.2byte 0xfffe
-	.section .text.x020088d4,"ax",%progbits
-	.global Func_020008d4
-	.thumb_func
-Func_020008d4:
-	push {lr}
-	bl 0x02009b94
-	movs r0, #0
-	bl 0x02009ca4
-	bl 0x02009cc4
-	movs r1, #1
-	bl 0x02009bec
-	ldr r0, [pc, #12]
-	movs r1, #1
-	bl 0x02009b7c
-	bl 0x02009b9c
-	pop {pc}
-	.4byte 0x00001617
-	.global Func_020008fc
-	.thumb_func
-Func_020008fc:
-	push {lr}
-	bl 0x02009b94
-	movs r0, #0
-	bl 0x02009ca4
-	bl 0x02009cc4
-	movs r1, #1
-	bl 0x02009bec
-	ldr r0, [pc, #12]
-	movs r1, #1
-	bl 0x02009b7c
-	bl 0x02009b9c
-	pop {pc}
-	.4byte 0x00001618
 	.section .text.x02008a0c,"ax",%progbits
 	.global Func_02000a0c
 	.thumb_func

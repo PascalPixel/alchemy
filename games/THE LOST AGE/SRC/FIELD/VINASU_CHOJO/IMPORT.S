@@ -31,6 +31,9 @@ Engine_MapCopyCellAttributes:
 	overlay_veneer Func_08020210
 	overlay_veneer Func_08020218
 	overlay_veneer Func_08020220
+	.global Engine_MessageShowCentered
+	.thumb_func
+Engine_MessageShowCentered:
 	overlay_veneer Func_08038040
 	overlay_veneer Func_080ad110
 	.global Engine_EventWait
@@ -57,6 +60,9 @@ Engine_ActorGet:
 	overlay_veneer Func_080c80d8
 	overlay_veneer Func_080c80f0
 	overlay_veneer Func_080c80f8
+	.global Engine_ActorSetAnimation
+	.thumb_func
+Engine_ActorSetAnimation:
 	overlay_veneer Func_080c8118
 	overlay_veneer Func_080c8128
 	overlay_veneer Func_080c8140
@@ -87,6 +93,9 @@ Engine_EventPrepareSpeakers:
 	overlay_veneer Func_080c85f8
 	overlay_veneer Func_080c8600
 	overlay_veneer Func_080c8690
+	.global Engine_PartyGetLeaderActor
+	.thumb_func
+Engine_PartyGetLeaderActor:
 	overlay_veneer Func_080c8778
 	overlay_veneer Func_080c8798
 	overlay_veneer Func_080c87a0

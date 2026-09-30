@@ -7,7 +7,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/ENTRY.o"(.text)
         "*/resource_64e_overlay.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/PUSH.o"(.text)
-        "*/resource_64e_overlay.o"(.text.x020088d4)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/STATUE.o"(.text)
         "*/resource_64e_overlay.o"(.text.x02008a0c)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/IMPORT.o"(.text)

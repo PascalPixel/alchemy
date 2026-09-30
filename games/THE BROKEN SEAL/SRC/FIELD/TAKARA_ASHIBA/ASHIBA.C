@@ -1343,6 +1343,8 @@ void SceneActor_PublishMarkerBySlotZeroHeight(void)
     ((u8 *)Engine_GetTriggerActor(12))[35] = marker;
 }
 
+/* The platforms' scene start, entry veneer 0: the screen opens through the
+ * window, and each platform runs its own opening. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

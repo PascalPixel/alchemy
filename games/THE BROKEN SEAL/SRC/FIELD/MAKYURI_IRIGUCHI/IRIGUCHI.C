@@ -233,6 +233,7 @@ void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
     }
 }
 
+/* The entrance opens: the scene restarts at its entrance 31. */
 void MakyuriIriguchi_OpenEntrance(void)
 {
     s32 game;

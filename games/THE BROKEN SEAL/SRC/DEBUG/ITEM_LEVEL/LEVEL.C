@@ -73,6 +73,10 @@ void Scene_AddToListedRecordCounts(s32 amount)
     }
 }
 
+/* The item and level debug room's level panel: a 30x9 window with three
+ * caption lines and the current owner's name and level, looping on the
+ * button latch until B closes it. Select and Start raise every listed owner
+ * by five and A by one. */
 void FieldScene_RunCountAdjustPanel(void)
 {
     u8 *record;

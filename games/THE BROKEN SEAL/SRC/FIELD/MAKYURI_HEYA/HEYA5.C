@@ -163,6 +163,9 @@ void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
  * flag 0x875 is set, then per room and entrance restores the pushed
  * pillars, lifts and cells from the story flags. */
 
+/* FAKEMATCH: the do/while blocks keep the blend constants out of the shared
+ * pool. */
+
 /* Mercury Lighthouse rooms: set the blend and lights, then per area and entrance restore the pushed pillars, lifts and cells from the story flags. */
 s32 Scene_Initialize(void)
 {

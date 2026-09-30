@@ -935,6 +935,10 @@ void FieldScene_RunActor184Sequence(void)
     Event_End();
 }
 
+/* The rising sequence goes through Call3, which sets r0 and r1 before
+ * negating the third argument, as the game does; a direct call negates it
+ * first. */
+
 /* In the first room the leader walks to the stair, turns, and sinks out of
  * sight through the opened floor before the party leaves by exit 8; in the
  * others the leader only rises. */

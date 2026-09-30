@@ -81,6 +81,10 @@ void Effect_AdvanceMotion(struct MotionEffect *effect)
     sprite->angle += effect->step64;
 }
 
+/* The leader drops into the entrance from high above: raised far over the
+   floor with the words at +68 and +72 set, the motion byte at +85 lets the
+   fall play once the screen has opened. */
+
 /* The arrival by entrance 3 the scene start plays until its flag is set: the
    leader lands in a ring of seventeen sparks and recovers. */
 void FieldScene_RunSupplementalSequenceOne(void)
@@ -903,6 +907,9 @@ void SceneState_ApplyRectAt32x78(void)
         Engine_MapCopyCellsTo(32, 78, 1, 2, k5, k6);
     }
 }
+
+/* The door of truth: actors 8 and 9 are its two leaves. Flag 0x985 records
+   it open; a switch opens it for one who sees with a true heart. */
 
 /* Slide the leaves apart and open the passage; the first time, the scene
    that follows plays. */

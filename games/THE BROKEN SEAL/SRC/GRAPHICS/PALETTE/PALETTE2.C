@@ -48,6 +48,14 @@ void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n)
     }
 }
 
+/* Title palette fade: step the 8.8 colour channels toward the target, pack
+   them into the back palette buffer and queue both banks for the next frame.
+
+   FAKEMATCH: each queued write is QueueIoWriteDelay-style inline code with
+   function-level queue and IME pointers and the one-pass loop around the
+   IME read (as in SYSTEM/IO_WRITE_QUEUE.C); the front bank address passes
+   through a block local, and the packing loop counts down from an explicit
+   512 set before the source pointer. */
 void TitlePalette_UpdateFade(void)
 {
     u8 *buffer = *(u8 **)(gWorkSlot + 32 * 4);

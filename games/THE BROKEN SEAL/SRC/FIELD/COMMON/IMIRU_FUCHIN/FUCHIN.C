@@ -124,6 +124,8 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gImiruFuchinEntrancesOther;
 }
 
+/* Two of the scene hooks the entry veneers export: no follow-up, and the
+ * cave's exits. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -160,6 +162,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gImiruFuchinPlacementsOther;
 }
 
+/* The cave's flag steps: each places or moves actors 8 to 11. */
 void SceneActor_PlacePairAtOffset(s32 a0, s32 a1, s32 a2)
 {
     Obj *p;
@@ -878,6 +881,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gImiruFuchinEventsOther;
 }
 
+/* The service step and the cave's dialogue layouts. */
 void SceneState_SetServiceZeroValue06(void)
 {
     struct SceneService *work;
@@ -1113,6 +1117,9 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
     }
 }
 
+/* Two map triggers of the cave: while the entry setup has raised the cave's
+ * tracking flag, one hands the leader to the tracking work, the other takes
+ * it away. */
 void ImiruFuchin_StartTrackingLeader(void)
 {
     if (ImiruFuchin_TrackLeader != 0) {
@@ -1146,6 +1153,7 @@ s32 ImiruFuchin_ApplyEntryHook(void)
     return 0;
 }
 
+/* The leader's arrival when the cave first opens. */
 void FieldScene_RunScene39aSequenceA(void)
 {
     u32 i;
@@ -1253,6 +1261,7 @@ void ImiruFuchin_HopOnTrigger(void)
     }
 }
 
+/* The leader's hops and the Dragon's Eye: placing it and taking it. */
 void FieldScene_ApplyOffset0Neg32(void)
 {
     ImiruFuchin_HopBy(0, -32);
@@ -1533,6 +1542,8 @@ void SceneState_SetWorkspace370ByFlag820(void)
     Event_End();
 }
 
+/* The cave's fade-in, installed in its event table. */
+
 /* While the stage is early enough, start the fade-in: raise the fade flag,
  * set the three light flags of the work in slot 31 and interpolate the
  * palette over 16 frames. */
@@ -1555,6 +1566,7 @@ void ImiruFuchin_StartFadeIn(void)
     }
 }
 
+/* Turning and stepping an actor along the heading the held direction gives. */
 void SceneActor_TurnTowardTableAngle(s32 z)
 {
     T *o;

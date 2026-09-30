@@ -64,6 +64,18 @@ void Map_ApplyWorkOriginAndSpan(void)
     Map_UpdateLayerScroll();
 }
 
+/* Exact candidate: whole owner [0800fec8, 0800ff54), 140 bytes, four own pool
+   words. Baseline 2026-09-26: 144 bytes, 64 differing halfwords, 59
+   aligned edits. No callees. Raw caller 08010000 selects this row update
+   on a vertical scroll boundary and ff54 on a horizontal boundary.
+   H1: use the adopted ff54 family's typed per-cell helper and explicit
+   outer row/base lifetimes, with paired word stores for this row owner.
+   Prediction: only r8/sl saved, base in ip, all four pools reloaded where
+   the reference owns them. Accept only exact 140 bytes plus landing gates.
+   H1 result: exact 140/140 bytes, zero differing halfwords/aligned edits,
+   topology equal; complete normalized comparison read. The same-source
+   family evidence is the adopted ff54 implementation, not another project.
+   The ff54 owner is unchanged. */
 void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 {
     u8 *dest = (u8 *)(0x06002800 + (a0 << 11));

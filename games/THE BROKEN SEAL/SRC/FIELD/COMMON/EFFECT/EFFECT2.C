@@ -269,6 +269,10 @@ void FieldEffect_UpdateSparkles(void)
     } while (i <= 31);
 }
 
+/* FieldEffect_InitSparkles: allocate and clear the sparkle work, load the
+   sparkle tiles into a cached VRAM block, place the 32 particles on the
+   ground under the leader with staggered timers and schedule
+   FieldEffect_UpdateSparkles. */
 void FieldEffect_InitSparkles(void)
 {
     struct DustWork *work = Runtime_AllocateBlock(29, 0x410);

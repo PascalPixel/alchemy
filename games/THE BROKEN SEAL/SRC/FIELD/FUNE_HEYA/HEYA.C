@@ -530,6 +530,8 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
     }
 }
 
+/* What actor 11 says aboard, by how far the choice of who rows has come. */
+
 /* Once flag 0x8a0 is set actor 11 will not talk; once someone is picked
  * (flag 0x300) the picked actor walks back to the leader; otherwise actor 11
  * asks, and the flag its yes sets depends on which of 0x92b, 0x92a and 0x929

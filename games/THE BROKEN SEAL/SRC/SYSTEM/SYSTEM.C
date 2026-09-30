@@ -120,6 +120,16 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
     }
 }
 
+/* WaitFrames (2026-09-29): exact. The soft reset calls the cartridge entry
+   through a pointer returning a value, which keeps the address in r0 as
+   the ROM does; a void pointer put it in r1.
+   What lined up: sl as a register variable the end's sp read keeps live,
+   so i and frames spill; a bare asm (no outputs, no clobbers) for the
+   second sp write, which flushes CSE and reloads gSavedStackSize's
+   address; the do/while (0) register-write macro, whose loop notes keep
+   sched2 from moving pool loads across the stores; volatile idle, combo,
+   sleep and key-repeat counters, which the ROM re-reads after each store;
+   and the soft reset as one inline with the entry address in a local. */
 void WaitFrames(s32 frames)
 {
     u32 i;

@@ -199,6 +199,8 @@ s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActo
     return result;
 }
 
+/* The sprite read through an s32 view of actor->sprite, so the pointer reloads
+ * after each bitfield store. */
 s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
 {
     struct FieldActor *leader = Object_GetById(0);

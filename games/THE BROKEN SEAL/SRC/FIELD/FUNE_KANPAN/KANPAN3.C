@@ -83,6 +83,9 @@ s32 SceneData_SelectTableEntryByFlagGroup(u32 sel)
     return 0;
 }
 
+/* The deck's slot actors 8 to 19: each of the four drifting slots takes a
+   phase step by the band its value falls in, and the eight standing slots
+   take their value and position. */
 void SceneState_ConfigureEntries8Through19(void)
 {
     SceneEffect_AdvanceSlotByValueBand(8, 0);

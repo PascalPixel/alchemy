@@ -960,6 +960,8 @@ s32 SoruStar_ApplyEntryState(void)
     return 0;
 }
 
+/* A line followed by a wait. */
+
 /* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
@@ -967,6 +969,8 @@ void Event_SayThenWait(s32 speaker, s32 frames)
     Event_Wait(frames);
 }
 
+/* Presenting an item: its icon rises over the scene while the party member
+   holding item 224 exchanges it for the presented item. */
 s32 Scene_PresentItem(s32 item)
 {
     register u8 *buf asm("r8"); /* FAKEMATCH: pins the buffer to r8 */
@@ -1016,6 +1020,8 @@ s32 Scene_PresentItem(s32 item)
     }
     return owner;
 }
+
+/* The mythril bags. */
 
 /*
  * Drain until room: save the s16 counter at scene workspace + 472, prime two

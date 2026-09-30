@@ -101,6 +101,7 @@ void TorebiIzumi_AskIfFirstTime(s32 object)
     Event_ShowMessage(object, 0);
 }
 
+/* The saved game as words: word 125 is the selected actor. */
 void TorebiIzumi_WalkLeaderToSpring(void)
 {
     s32 leader = gGameState.selected_actor;

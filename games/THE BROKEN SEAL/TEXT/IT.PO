@@ -115,7 +115,7 @@ msgctxt "MsgSaving"
 msgid "00026"
 msgstr "Salvataggio...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00027"
 msgstr "{argument_actor_name:1} è nella tua{line_break}squadra ora.{end_wait}"
 
@@ -10811,7 +10811,7 @@ msgctxt "message"
 msgid "02700"
 msgstr "disfartene?"
 
-msgctxt "message"
+msgctxt "MsgEquipThisItem"
 msgid "02701"
 msgstr "Attivare strumento?"
 
@@ -10851,7 +10851,7 @@ msgctxt "message"
 msgid "02710"
 msgstr "Psinergia"
 
-msgctxt "message"
+msgctxt "MsgShortcutLabel"
 msgid "02711"
 msgstr "Preselezione"
 
@@ -10967,11 +10967,11 @@ msgctxt "message"
 msgid "02739"
 msgstr "Recupero PP / mossa"
 
-msgctxt "message"
+msgctxt "MsgDjinnLabel"
 msgid "02740"
 msgstr "Djinn"
 
-msgctxt "message"
+msgctxt "MsgPowerLabel"
 msgid "02741"
 msgstr "Forza"
 
@@ -11143,7 +11143,7 @@ msgctxt "MsgYes"
 msgid "02783"
 msgstr "Sì"
 
-msgctxt "message"
+msgctxt "MsgNo"
 msgid "02784"
 msgstr "No"
 
@@ -11811,11 +11811,11 @@ msgctxt "message"
 msgid "02950"
 msgstr "Djinn in standby.{line_break}Ora {argument_actor_name:1} è {argument_class_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNormalLabel"
 msgid "02951"
 msgstr "Norm."
 
-msgctxt "message"
+msgctxt "MsgDownLabel"
 msgid "02952"
 msgstr "KO"
 
@@ -12127,7 +12127,7 @@ msgctxt "message"
 msgid "03029"
 msgstr "Pulsante B: Esci"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceSaveQuest"
 msgid "03030"
 msgstr "Salva il gioco"
 
@@ -12135,7 +12135,7 @@ msgctxt "message"
 msgid "03031"
 msgstr "Riposo"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceChangeSettings"
 msgid "03032"
 msgstr "Impostazioni"
 
@@ -12143,7 +12143,7 @@ msgctxt "message"
 msgid "03033"
 msgstr "Record battaglie"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceRoughMenu"
 msgid "03034"
 msgstr "Menu rapido"
 

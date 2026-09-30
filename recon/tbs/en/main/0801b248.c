@@ -1,110 +1,97 @@
-/* Draft, not exact (2026-09-24): 143 differing halfwords, 284 of 292 bytes.
-   Layout is settled: 52-byte sides at +8, each with a sprite at +32 whose
-   OAM starts at +4; count, first, second and other at 0x394..0x39c. The
-   OAM bitfield writes merge into one read-modify-write per byte as in the
-   ROM. Residual: the reference keeps the graphics pointer in fp from its
-   zero initialiser (storing side->more from it) and the sprite pointer in
-   sl, which this C folds into constants and recomputes.
-   2026-09-29 (alchemy permute scorer): the draft scored 2395; with the
-   right-marker tiles as the linked Menu_CursorObjectTiles and the left ones
-   as Menu_CursorLeftObjectTiles (the last 0x400 bytes of the UiText_Glyphs scaffold
-   block, still unlabelled, one fixed operand) it scores 2530. A 300-second
-   search (36,000 candidates) reached this body at 1100 (11 register-only,
-   3 operand, 6 reordered, 5 inserted, 1 deleted); the fp/sl pointers above
-   are still the difference. The literal tile addresses are gone.
- */
+/* 2026-09-30 (Mercury's helper): EXACT, 292 of 292 bytes, one FAKEMATCH (a
+   separate local for the right-hand cursor tiles gives the reference's
+   early r5 load and late mov fp, r5). Its structs follow MENU.C's
+   SlotEntry/MenuNode/MenuSelection, with MenuSelection extended by
+   count/first/second/other at 0x394..0x39c; MENU.C's own MenuSelection
+   keeps mode at 0x2e2, inside this file's unknown_68 pad, so the two need
+   merging on adoption. The natural host, SELECTION_SET_NODE_COORDINATES.C,
+   declares it s32 Menu_SetupSelectionSide(s32, s32) and calls it twice;
+   that prototype has to become void (struct MenuSelection *, s32) first.
+   Compile it under #if defined(TBS_EDITION_EN) until the other editions
+   adopt theirs. */
 #include "TYPES.H"
 
-extern const u8 Menu_CursorObjectTiles[];
-extern const u8 Menu_CursorLeftObjectTiles[];
-
-struct SelectionOam {
-    u16 y:8;
-    u16 affine:2;
-    u16 mode:2;
-    u16 mosaic:1;
-    u16 color:1;
-    u16 shape:2;
-    u16 x:9;
-    u16 matrix:5;
-    u16 size:2;
-    u16 tile:10;
-    u16 priority:2;
-    u16 palette:4;
-    u16 unused;
+struct SlotEntry {
+    struct SlotEntry *next;
+    u8 y;
+    u8 affine : 2;
+    u8 mode : 2;
+    u8 mosaic : 1;
+    u8 colors : 1;
+    u8 shape : 2;
+    u16 x : 9;
+    u16 param : 5;
+    u16 size : 2;
+    u16 tile : 10;
+    u16 prio : 2;
+    u16 pal : 4;
 };
 
-struct SelectionSprite {
-    u32 link;
-    struct SelectionOam oam;
+struct MenuNode {
+    s32 unknown_00;
+    struct MenuNode *next;
+    u16 offset;
+    u16 active;
+    u16 handle;
+    u16 tile_id;
+    s16 x, y, dx, dy, x_end, y_end;
+    u8 unknown_1c[6];
+    s16 scale, scale_step, scale_end;
+    struct SlotEntry entry;
 };
 
-struct SelectionSide {
-    u16 frame;
-    u16 more;
-    u16 entry;
-    u16 vram;
-    u16 x;
-    s16 y;
-    u8 pad0c[20];
-    struct SelectionSprite sprite;
-    u8 pad2c[8];
-};
-
-struct SelectionMenu {
-    u8 pad000[8];
-    struct SelectionSide sides[2];
-    u8 pad070[0x394 - 0x70];
+struct MenuSelection {
+    struct MenuNode nodes[2];
+    u8 unknown_68[0x394 - 0x68];
     u16 count;
     u16 first;
     u16 second;
-    u16 pad39a;
+    u16 unknown_39a;
     u16 other;
 };
 
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
+extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
+extern s32 Resource_FindFreeEntry(void);
+extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
-void Menu_SetupSelectionSide(struct SelectionMenu *menu, s32 index)
+void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index)
 {
-    struct SelectionSide *side = &menu->sides[index];
-    const void *gfx = 0;
-    struct SelectionSprite *sprite = &menu->sides[index].sprite;
+    struct SlotEntry *entry = &state->nodes[index].entry;
+    u8 *frames = 0;
     u32 count;
 
-    side->more = (u32)gfx;
-    if (0 != index) {
-        count = menu->count;
-        if (menu->other != 0)
-            count -= menu->other;
-        if (5 < count) {
-            side->more = 1;
-            count = (u32)5;
+    state->nodes[index].active = 0;
+    if (index != 0) {
+        /* FAKEMATCH: a separate local gives the early r5 load and late copy */
+        u8 *right = Menu_CursorObjectTiles;
+
+        count = state->count;
+        if (state->other != 0)
+            count -= state->other;
+        if (count > 5) {
+            state->nodes[index].active = 1;
+            count = 5;
         }
-        menu->sides[1].x = menu->first + 16 * (count - 1) + 17;
-        gfx = Menu_CursorObjectTiles;
+        frames = right;
+        state->nodes[1].x = state->first + 16 * (count - 1) + 17;
     } else {
-        s32 tmp2;
-        u16 tmp;
-        menu->sides[0].x = menu->first - 9;
-        tmp = menu->other;
-        gfx = Menu_CursorLeftObjectTiles;
-        tmp2 = tmp != 0;
-        if (tmp2)
-            menu->sides[0].more = 1;
+        frames = Menu_CursorLeftObjectTiles;
+        state->nodes[0].x = state->first - 9;
+        if (state->other != 0)
+            state->nodes[0].active = 1;
     }
-    if (!menu->sides[index].y) {
-        menu[0].sides[index].entry = Resource_FindFreeEntry();
-        menu->sides[index].vram = VramBlock_LoadCached(menu->sides[index].entry, 128, gfx);
-        menu->sides[index].y = menu->second;
-        menu->sides[index].frame = (s32)0;
-        sprite->oam.mode = 0;
-        sprite->oam.mosaic = 0;
-        sprite->oam.color = 1;
-        sprite->oam.affine = 0;
-        sprite->oam.matrix = 0;
-        sprite->oam.size = 0;
-        sprite->oam.shape = 2;
-        sprite->oam.priority = 0;
+    if (state->nodes[index].y == 0) {
+        state->nodes[index].handle = Resource_FindFreeEntry();
+        state->nodes[index].tile_id = VramBlock_LoadCached(state->nodes[index].handle, 128, frames);
+        state->nodes[index].y = state->second;
+        state->nodes[index].offset = 0;
+        entry->mode = 0;
+        entry->mosaic = 0;
+        entry->colors = 1;
+        entry->affine = 0;
+        entry->param = 0;
+        entry->size = 0;
+        entry->shape = 2;
+        entry->prio = 0;
     }
 }

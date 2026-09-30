@@ -115,7 +115,7 @@ msgctxt "MsgSaving"
 msgid "00026"
 msgstr "きろく中です{end_now}"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00027"
 msgstr "{argument_actor_name:150}゙ なかまになった{end_wait}"
 
@@ -12699,7 +12699,7 @@ msgctxt "message"
 msgid "03172"
 msgstr "すててもよろしいですか?"
 
-msgctxt "message"
+msgctxt "MsgEquipThisItem"
 msgid "03173"
 msgstr "そうびしますか?"
 
@@ -12739,7 +12739,7 @@ msgctxt "message"
 msgid "03182"
 msgstr "エナジー"
 
-msgctxt "message"
+msgctxt "MsgShortcutLabel"
 msgid "03183"
 msgstr "ショートカット"
 
@@ -12847,11 +12847,11 @@ msgctxt "message"
 msgid "03209"
 msgstr "かいふくEP/ターン"
 
-msgctxt "message"
+msgctxt "MsgDjinnLabel"
 msgid "03210"
 msgstr "ジン"
 
-msgctxt "message"
+msgctxt "MsgPowerLabel"
 msgid "03211"
 msgstr "パワー"
 
@@ -13027,7 +13027,7 @@ msgctxt "MsgYes"
 msgid "03254"
 msgstr "はい"
 
-msgctxt "message"
+msgctxt "MsgNo"
 msgid "03255"
 msgstr "いいえ"
 
@@ -13699,11 +13699,11 @@ msgctxt "message"
 msgid "03422"
 msgstr "スタンバイにしました{line_break}{argument_actor_name:234}{argument_class_name:230}なりました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNormalLabel"
 msgid "03423"
 msgstr "せいじょう"
 
-msgctxt "message"
+msgctxt "MsgDownLabel"
 msgid "03424"
 msgstr "せんとうふのう"
 
@@ -14007,7 +14007,7 @@ msgctxt "message"
 msgid "03499"
 msgstr "Bボタン:おしまい"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceSaveQuest"
 msgid "03500"
 msgstr "ぼうけんをきろく"
 
@@ -14015,7 +14015,7 @@ msgctxt "message"
 msgid "03501"
 msgstr "いますぐスリープ"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceChangeSettings"
 msgid "03502"
 msgstr "かんきょうせってい"
 
@@ -14023,7 +14023,7 @@ msgctxt "message"
 msgid "03503"
 msgstr "たいせんきろく"
 
-msgctxt "message"
+msgctxt "MsgWorkspaceRoughMenu"
 msgid "03504"
 msgstr "がさつメニュー"
 

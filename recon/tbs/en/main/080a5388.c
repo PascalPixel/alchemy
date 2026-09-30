@@ -27,7 +27,8 @@ struct EquipMenu {
     u8 owner;
 };
 
-extern u8 Value_00000b2c;
+extern u8 MsgYes;
+extern u8 MsgEquipThisItem;
 extern struct EquipMenu *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
@@ -61,10 +62,10 @@ s32 Unnamed_080a5388(void)
     CopyWords((WordCopyFn)Iwram_CopyWords, backup, state, 0x14c);
     window = menu->selector_window;
     if ((u32)(Inventory_EquipFar(menu->owner, menu->item) + 2) > 1) {
-        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b2c, window, 24, 24);
-        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b2c + 1, window, 72, 24);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgYes, window, 24, 24);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgYes + 1, window, 72, 24);
         UiWindow_ClearInteriorTilesFar(window, 16, 16, 96, 24);
-        UiText_DrawCharacterAtOffsetFar(0xad6, window, 0, 16);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipThisItem, window, 0, 16);
         UiMenu_SlideCursor(110, 32);
         while (!GameFlag_TestFar(0x150)) {
             if (changed) {

@@ -4,7 +4,7 @@
  * two measurement calls and repeated global reads. */
 #include "PSYNERGY_MENU.H"
 
-extern char Value_00000ae0;
+extern char MsgShortcutLabel;
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 s32 UiText_GetResourceDimensionsFar(s32 message, s32 *left, s32 *top, s32 *width, s32 *height);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
@@ -35,7 +35,7 @@ s32 Func_080a6614(s32 window)
         Data_02000240.psynergy_shortcuts[1] != 0)
         UiText_DrawCharacterAtOffsetFar(0xae4, window, 0, -8);
     else
-        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000ae0, window, 0, -8);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutLabel, window, 0, -8);
     MeasureShortcut(Data_02000240.psynergy_shortcuts[0], &left, &top, &width, &height);
     wide = 1;
     if ((u32)width <= 10)

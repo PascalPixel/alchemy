@@ -6,6 +6,118 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
+
+extern u8 gWorkSlot[];
+
+void BattleFx_BeginCanvasLayer(s32 mode);
+s32 BattleFx_EndCanvasLayer(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void *Resource_GetTableEntry(s32 id);
+u32 Resource_DecodeType01(const void *source, void *destination);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void **GetBattleObjectSlotFar(s32 member_id);
+
+/* Three sparks orbit each affected unit for 64 frames from frame i * 16,
+   drawn through the first blitter of the pair. */
+void BattleFx_RunOrbitingSparks(void)
+{
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 record[3];
+    struct EffectPosition center;
+    struct EffectPosition pos;
+    s32 frame;
+    DrawRectangleFn draw[2]; /* FAKEMATCH: only draw[0] is used; the pair is the reference's frame layout */
+    s32 member;
+    s32 facing;
+    u8 *palette;
+    s32 x_offset;
+    s32 i;
+
+    heap_cache = (void **)(gWorkSlot + 39 * 4);
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    facing = *(s32 *)(gWorkSlot + 12 * 4);
+    BattleFx_BeginCanvasLayer(1);
+    *(volatile u16 *)0x04000020 = 0x100;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
+    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    Resource_DecodeType01(palette + 128, work);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
+    draw[0] = (DrawRectangleFn)heap_cache[7];
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    if (work->effect->side == 0)
+        x_offset = 0;
+    else
+        x_offset = -112;
+    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the seed counter is set before its pointer */
+    do {
+        *(volatile s32 *)0x04000028 = x_offset << 8;
+    } while (0);
+    for (i = 0; i != 64; i++) {
+        struct EffectStep *step = &work->particles[i];
+
+        step->x = 0;
+        step->y = 0;
+        step->velocity_x = 0;
+        step->z = 4;
+    }
+    for (frame = 0; frame != work->effect->count * 16 + 64; frame++) {
+        for (member = 0; member != work->effect->count; member++) {
+            void *member_object;
+            u32 window;
+
+            member_object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+            EffectPosition_ApplyStepAndYOffset(work->effect->actors[member], &pos);
+            window = frame - member * 16;
+            pos.x += x_offset;
+            if (window < 64) {
+                /* FAKEMATCH: record is filled through r0 so loop.c cannot hoist its address into fp */
+                register s32 *rec asm("r0");
+
+                Render_ResetTransformState();
+                Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+                rec = record;
+                rec[0] = *(s32 *)((u8 *)member_object + 8);
+                rec[1] = *(s32 *)((u8 *)member_object + 12);
+                rec[2] = *(s32 *)((u8 *)member_object + 16);
+                EffectPosition_ApplyBaseAndYOffset(rec, &center);
+                /* FAKEMATCH: sched2 barrier, so this store precedes the spark counter as in the reference */
+                do {
+                    center.x += x_offset;
+                } while (0);
+                for (i = 0; i != 3; i++) {
+                    struct EffectStep *spark = &work->particles[member * 3 + i];
+                    s32 x;
+                    s32 y;
+
+                    x = pos.x + ((Trig_Sin(spark->velocity_x + i * 0x5555) << 3) >> 16);
+                    y = pos.y + ((Trig_Cos(spark->velocity_x + i * 0x5555) << 3) >> 16);
+                    spark->velocity_x += 0x200;
+                    draw[0](canvas, (u8 *)work + i * 0x240, x - 12, y - 28, 24, 24);
+                }
+            }
+        }
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+}
+#endif
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
 

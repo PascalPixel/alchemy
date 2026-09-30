@@ -11,8 +11,8 @@
    An unpacked one-byte struct has a four-byte stride and is not equivalent.
    2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): best 995 against
    1370 after 25 rewrites, mostly operand swaps and casts; not kept. The
-   three pooled message ids (Value_00000c23/c25/c27) block adoption whatever
-   the spelling. The build names gDebugMode gDebugMode and Menu_WorkspaceIconFrames
+   three pooled message ids are named since 2026-09-30
+   (MsgWorkspaceSaveQuest, MsgWorkspaceChangeSettings, MsgWorkspaceRoughMenu). The build names gDebugMode gDebugMode and Menu_WorkspaceIconFrames
    Menu_WorkspaceIconFrames, but the renamed draft does not compile against
    the declarations here, so it keeps the old spellings. */
 #include "TYPES.H"
@@ -25,7 +25,7 @@ struct WorkspaceMenu {
 
 extern u8 gDebugMode;
 extern const s8 Menu_WorkspaceIconFrames[];
-extern u8 Value_00000c23, Value_00000c25, Value_00000c27;
+extern u8 MsgWorkspaceSaveQuest, MsgWorkspaceChangeSettings, MsgWorkspaceRoughMenu;
 
 s32 GameFlag_TestFar(s32 flag);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
@@ -76,16 +76,16 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
     }
     y = 4;
     if (has_flag == 0) {
-        msg = (s32)&Value_00000c23;
+        msg = (s32)&MsgWorkspaceSaveQuest;
         UiText_DrawResource(msg, window, 48, 4);
         msg++;
         UiText_DrawResource(msg, window, 48, 28);
         y = 52;
     }
-    UiText_DrawResource((s32)&Value_00000c25, window, 48, y);
+    UiText_DrawResource((s32)&MsgWorkspaceChangeSettings, window, 48, y);
     y += 24;
     if (gDebugMode != 0) {
-        msg = (s32)&Value_00000c27;
+        msg = (s32)&MsgWorkspaceRoughMenu;
         UiText_DrawResource(msg, window, 48, y);
         y += 24;
         UiText_DrawResource(msg + 1, window, 48, y);

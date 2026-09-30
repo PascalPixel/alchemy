@@ -18,7 +18,7 @@
    reading of the ROM; the literal addresses still keep it a draft.
  */
 #include "TYPES.H"
-extern u8 Value_00000059;
+extern u8 ResourceId_SpiderWebSheet;
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
@@ -54,7 +54,7 @@ void Unnamed_080ccebc(void *arg0)
     base->effect = arg0;
     tmp2 = (u16 *)0x04000020;
     BattleFx_BeginCanvasLayer(2);
-    tmp3 = &Value_00000059;
+    tmp3 = &ResourceId_SpiderWebSheet;
     *tmp2 = 0x100;
     *(u16 *)0x04000052 = 0x1000;
     EffectPosition_ApplyStepAndYOffset(((struct BattleEffectArgument *)base->effect)->actors[0], &local1);

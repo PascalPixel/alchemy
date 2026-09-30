@@ -27,6 +27,9 @@ Func_080ae834:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, pc}
+	.global Func_080ae868
+	.thumb_func
+Func_080ae868:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

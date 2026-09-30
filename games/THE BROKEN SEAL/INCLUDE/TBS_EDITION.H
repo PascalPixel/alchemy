@@ -103,6 +103,33 @@
 #define DJINN_JOIN_WIDTH  26
 #endif
 
+/* The options screen's windows, sliders, frame icons and setting names: the
+   Japanese labels are narrower, so its windows are narrower and a column
+   further right, the sliders start further left, the first row of frames
+   sits further right and the settings a column further right; the German and
+   French speed setting needs a wider slot. */
+#if defined(TBS_EDITION_JA)
+#define OPTION_WINDOW_X     2
+#define OPTION_WINDOW_WIDTH 26
+#define OPTION_SLIDER_X     100
+#define OPTION_FRAME_X      92
+#define OPTION_SETTING_X    168
+#define OPTION_SETTING_END  192
+#define OPTION_SPEED_END    192
+#else
+#define OPTION_WINDOW_X     1
+#define OPTION_WINDOW_WIDTH 28
+#define OPTION_SLIDER_X     140
+#define OPTION_FRAME_X      84
+#define OPTION_SETTING_X    160
+#define OPTION_SETTING_END  184
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#define OPTION_SPEED_END    208
+#else
+#define OPTION_SPEED_END    200
+#endif
+#endif
+
 /* Where the item menu's in-stock label follows a member's count. */
 #if defined(TBS_EDITION_DE)
 #define STOCK_LABEL_X 32

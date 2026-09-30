@@ -1370,13 +1370,13 @@ Func_080d0c50:
 	muls	r7, r6
 	adds	r5, r1, #0
 	muls	r5, r6
-	bl	Func_080d1830
+	bl	Graphics_ClampRgb555Component
 	mov	r8, r0
 	adds	r0, r7, #0
-	bl	Func_080d1830
+	bl	Graphics_ClampRgb555Component
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	Func_080d1830
+	bl	Graphics_ClampRgb555Component
 	mov	r2, sl
 	mov	r3, sl
 	mov	r1, r8

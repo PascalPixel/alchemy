@@ -394,12 +394,6 @@ Debug_SelectAbilityPair:
 	.thumb_func
 Menu_Check:
 	.incbin "baserom.gba", 0x0001c494, 0x00000360
-	.section .rom.0001d100, "ax"
-	.global Menu_OpenWorkspaceOptions
-	.type Menu_OpenWorkspaceOptions, %function
-	.thumb_func
-Menu_OpenWorkspaceOptions:
-	.incbin "baserom.gba", 0x0001d100, 0x000003b4
 	.section .rom.0001d9bc, "ax"
 	.incbin "baserom.gba", 0x0001d9bc, 0x0000019c
 	.section .rom.0001db58, "ax"
@@ -479,7 +473,10 @@ DebugMenu_BrowseIcons:
 	.type DebugMenu_BrowseEntryGlyphs, %function
 	.thumb_func
 DebugMenu_BrowseEntryGlyphs:
-	.incbin "baserom.gba", 0x000297d4, 0x00000294
+	.incbin "baserom.gba", 0x000297d4, 0x00000194
+	.global WorkspaceOptions_SliderTiles
+WorkspaceOptions_SliderTiles:
+	.incbin "baserom.gba", 0x00029968, 0x00000100
 	.global UiIcon_FramePointerTable
 UiIcon_FramePointerTable:
 	.global RomBytes_08029a10
@@ -601,7 +598,10 @@ Menu_ColonString:
 Menu_HexDigitsString:
 	.incbin "baserom.gba", 0x00037b34, 0x00000038
 	.section .rom.0006c1a0, "ax"
-	.incbin "baserom.gba", 0x0006c1a0, 0x0000004c
+	.incbin "baserom.gba", 0x0006c1a0, 0x0000000a
+	.global WorkspaceOptions_SliderPalette
+WorkspaceOptions_SliderPalette:
+	.incbin "baserom.gba", 0x0006c1aa, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
 	.incbin "baserom.gba", 0x0006c1ec, 0x000003a8

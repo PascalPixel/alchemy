@@ -134,6 +134,20 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
             .display()
     )
 }
+/// The shared headers' modules under `games/COMMON/INCLUDE`.
+const COMMON_INCLUDE_MODULES: &[&str] = &[
+    "BATTLE", "FIELD", "GAME", "GRAPHICS", "LIB", "MENU", "SOUND", "SYSTEM",
+];
+/// Game code finds a shared header by its name, as it finds its own game's:
+/// each shared module follows the game's include tree on the search path.
+fn common_include_flags() -> impl Iterator<Item = String> {
+    COMMON_INCLUDE_MODULES.iter().map(|module| {
+        format!(
+            "-I{}",
+            root().join("games/COMMON/INCLUDE").join(module).display()
+        )
+    })
+}
 /// Whether the game's own code was built to interwork with ARM callers.
 ///
 /// This is a per-game build decision: TBS interworks and TLA does not.
@@ -163,6 +177,7 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
         flags.push("-mthumb-call-via-lr".to_string());
     }
     flags.push(include_flag(target));
+    flags.extend(common_include_flags());
     flags
 }
 pub fn cflags() -> Vec<String> {
@@ -332,6 +347,41 @@ mod target_tests {
             assert!(!flags
                 .iter()
                 .any(|flag| flag == "-mthumb-inline-register-call"));
+        }
+    }
+    /// Every shared header module is searched, after the game's own tree, so
+    /// no game header only forwards to a shared one.
+    #[test]
+    fn game_code_searches_every_shared_module_after_its_own_tree() {
+        let mut modules: Vec<String> = std::fs::read_dir(root().join("games/COMMON/INCLUDE"))
+            .unwrap()
+            .map(|entry| entry.unwrap())
+            .filter(|entry| entry.file_type().unwrap().is_dir())
+            .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .collect();
+        modules.sort();
+        assert_eq!(modules, COMMON_INCLUDE_MODULES);
+        for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+            let flags = cflags_for_target(target);
+            let includes: Vec<&String> = flags.iter().filter(|f| f.starts_with("-I")).collect();
+            assert_eq!(includes.len(), 1 + modules.len());
+            assert!(includes[0].ends_with(&format!("/games/{}/INCLUDE", target.directory())));
+            for (flag, module) in includes[1..].iter().zip(&modules) {
+                assert!(flag.ends_with(&format!("/games/COMMON/INCLUDE/{module}")));
+            }
+        }
+        for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
+            for entry in std::fs::read_dir(root().join("games").join(game).join("INCLUDE")).unwrap()
+            {
+                let path = entry.unwrap().path();
+                let text = std::fs::read_to_string(&path).unwrap_or_default();
+                let lines: Vec<&str> = text.lines().filter(|l| !l.trim().is_empty()).collect();
+                assert!(
+                    !(lines.len() == 1 && lines[0].contains("COMMON/INCLUDE")),
+                    "{} only forwards to a shared header",
+                    path.display()
+                );
+            }
         }
     }
     /// The games' interworking decisions differ; inherited library files

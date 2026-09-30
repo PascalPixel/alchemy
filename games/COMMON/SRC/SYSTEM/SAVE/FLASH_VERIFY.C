@@ -1,4 +1,4 @@
-#include "FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
 
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size)
 {

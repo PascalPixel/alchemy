@@ -1,5 +1,5 @@
-#include "FLASH.H"
-#include "FLASH_DATA.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
 
 /* 0x08007c10 のフラッシュ設定表。wait は WAITCNT の SRAM 待ち値。 */
 struct FlashConfig08007028 {

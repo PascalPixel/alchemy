@@ -34,7 +34,7 @@ Func_0802372c:
 	adds	r2, r5, #0
 	movs	r1, #128
 	ldrb	r0, [r6, #16]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	adds	r5, r0, #0
 	movs	r0, #68
 	bl	Runtime_ReleaseSlot

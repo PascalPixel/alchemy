@@ -32,7 +32,7 @@ Func_080d1a18:
 	adds	r2, r4, #0
 	lsls	r1, r1, #2
 	movs	r0, #94
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r0, #56
 	bl	Runtime_ReleaseSlot
 	movs	r1, #144
@@ -366,7 +366,7 @@ Func_080d1a18:
 	lsls	r1, r1, #2
 	adds	r2, r4, #0
 	movs	r0, #94
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r1, #144
 	ldr	r0, [pc, #40]
 	lsls	r1, r1, #3
@@ -439,7 +439,7 @@ Func_080d1a18:
 	lsls	r1, r1, #2
 	adds	r2, r4, #0
 	movs	r0, #94
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r0, #56
 	bl	Runtime_ReleaseSlot
 	add	sp, #4

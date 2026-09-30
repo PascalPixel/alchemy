@@ -148,7 +148,7 @@ Func_081a729c:
 	lsrs	r2, r2, #1
 	adds	r2, r6, r2
 	movs	r1, #128
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	adds	r2, r5, #0
 	movs	r3, #0
 	stmia	r2!, {r3}

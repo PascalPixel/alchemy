@@ -632,7 +632,7 @@ Func_081a133c:
 	lsls	r1, r1, #2
 	adds	r0, r5, #0
 	movs	r2, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #140]
 	ldr	r2, [pc, #140]
 	adds	r4, r0, #0

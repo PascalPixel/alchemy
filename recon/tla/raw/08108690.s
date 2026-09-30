@@ -260,7 +260,7 @@ Func_08108690:
 	movs	r1, #128
 	lsls	r1, r1, #1
 	adds	r2, r6, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r1, [pc, #40]
 	adds	r0, r5, #0
 	mov	r2, r8

@@ -79,7 +79,7 @@ Func_0803d5c4:
 	ldr	r0, [r1, #0]
 	adds	r2, r5, r3
 	movs	r1, #128
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	mov	r1, r9
 	str	r0, [r1, #0]
 	movs	r0, #68
@@ -391,7 +391,7 @@ UiIcon_CopyResourceToSlot:
 	movs	r1, #128
 	adds	r2, r5, #0
 	mov	r0, sl
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r0, #68
 	bl	Runtime_ReleaseSlot
 	movs	r0, #1

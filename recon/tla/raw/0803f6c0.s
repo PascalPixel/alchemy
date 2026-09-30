@@ -54,7 +54,7 @@ UiTextResource_Release:
 	ldrh	r0, [r5, #12]
 	lsls	r1, r1, #3
 	adds	r2, r7, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r3, #1
 	strh	r3, [r5, #10]
 	mov	r3, r8

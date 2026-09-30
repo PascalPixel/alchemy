@@ -151,7 +151,7 @@ Func_080cf350:
 	add	r2, r8
 	movs	r1, #128
 	ldrb	r0, [r5, #16]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r0, #68
 	bl	Runtime_ReleaseSlot
 	movs	r3, #1

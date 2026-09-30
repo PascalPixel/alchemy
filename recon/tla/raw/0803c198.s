@@ -92,7 +92,7 @@ Func_0803c198:
 	strb	r1, [r7, #14]
 	strh	r3, [r7, #8]
 	adds	r1, r7, #0
-	bl	Func_08039500
+	bl	RenderOutput_AppendToList
 	adds	r0, r5, #0
 	b.n	.L_0803c264
 	.4byte 0x00004000

@@ -38,7 +38,7 @@ Func_080d6b90:
 	adds	r2, r6, #0
 	lsls	r1, r1, #2
 	str	r0, [r5, #0]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	str	r0, [r5, #4]
 	movs	r0, #56
 	bl	Runtime_ReleaseSlot
@@ -385,7 +385,7 @@ Func_080d6b90:
 	adds	r2, r6, #0
 	str	r0, [r5, #0]
 	lsls	r1, r1, #2
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	str	r0, [r5, #4]
 	movs	r0, #56
 	bl	Runtime_ReleaseSlot
@@ -487,7 +487,7 @@ Func_080d6b90:
 	adds	r2, r6, #0
 	str	r0, [r5, #0]
 	lsls	r1, r1, #2
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	str	r0, [r5, #4]
 	movs	r0, #56
 	bl	Runtime_ReleaseSlot

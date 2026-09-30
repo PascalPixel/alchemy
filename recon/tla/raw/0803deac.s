@@ -630,7 +630,7 @@ Func_0803deac:
 	add	r2, fp
 	ldrh	r0, [r4, #12]
 	lsls	r1, r1, #1
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #44]
 	ldr	r1, [sp, #8]
 	ands	r0, r3
@@ -851,7 +851,7 @@ Func_0803deac:
 	adds	r2, r1, r2
 	ldrh	r0, [r6, r3]
 	movs	r1, #128
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #40]
 	ldrh	r2, [r5, #8]
 	ands	r0, r3

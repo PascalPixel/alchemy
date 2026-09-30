@@ -1033,7 +1033,7 @@ Menu_RunResourceSelectionLoop:
 	mov	r0, sl
 	mov	r1, r8
 	adds	r2, r6, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	adds	r0, r6, #0
 	bl	Func_08013164
 	pop	{r3, r5}

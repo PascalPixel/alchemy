@@ -182,7 +182,7 @@ Func_080eb824:
 	adds	r1, r5, #0
 	ldr	r2, [sp, #32]
 	str	r0, [sp, #24]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r3, [sp, #32]
 	movs	r1, #176
 	str	r0, [sp, #20]

@@ -50,7 +50,7 @@ Func_08022bd8:
 	ldr	r2, [pc, #52]
 	movs	r1, #128
 	movs	r0, #93
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r5, [pc, #44]
 	movs	r0, #84
 	adds	r1, r5, #0

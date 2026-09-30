@@ -246,7 +246,7 @@ Func_0803c40c:
 	adds	r2, r2, r3
 	ldrh	r0, [r1, #0]
 	movs	r1, #128
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #60]
 	ldrh	r2, [r7, #8]
 	ands	r0, r3

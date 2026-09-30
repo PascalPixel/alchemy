@@ -725,7 +725,7 @@ Func_080219cc:
 	ldr	r1, [sp, #20]
 	movs	r2, #0
 	ldrb	r0, [r7, #16]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r4, [pc, #80]
 	adds	r5, r0, #0
 	movs	r0, #192

@@ -438,7 +438,7 @@ Func_0803f82c:
 	adds	r2, r0, #0
 	lsls	r1, r1, #1
 	ldrb	r0, [r3, #14]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	cmp	r6, #1
 	bne.n	.L_0803fbe4
 	movs	r2, #160
@@ -464,7 +464,7 @@ Func_0803f82c:
 	adds	r2, r0, #0
 	lsls	r1, r1, #1
 	ldrb	r0, [r3, #14]
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	cmp	r6, #1
 	ble.n	.L_0803fc24
 	movs	r1, #160
@@ -735,7 +735,7 @@ Func_0803f82c:
 	lsls	r1, r1, #1
 	ldr	r2, [pc, #656]
 	adds	r0, r6, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #652]
 	movs	r7, #0
 	mov	r8, r3
@@ -824,7 +824,7 @@ Func_0803f82c:
 	movs	r1, #128
 	lsls	r1, r1, #1
 	movs	r2, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23
@@ -883,7 +883,7 @@ Func_0803f82c:
 	movs	r1, #128
 	lsls	r1, r1, #1
 	movs	r2, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23

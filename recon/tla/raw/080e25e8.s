@@ -673,7 +673,7 @@ Func_080e25e8:
 	mov	r1, r8
 	adds	r2, r5, #0
 	adds	r6, r0, #0
-	bl	0x080142d4
+	bl	VramBlock_LoadCached
 	movs	r2, #216
 	mov	fp, r0
 	movs	r0, #216

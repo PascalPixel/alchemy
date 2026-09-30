@@ -2261,13 +2261,23 @@ OwnerAction_AddFar:
 	.type Equipment_HasValueFar, %function
 	.thumb_func
 Equipment_HasValueFar:
-	.incbin "baserom.gba", 0x000a8088, 0x00000070
+	.incbin "baserom.gba", 0x000a8088, 0x00000068
+	.global Party_CountActiveOwnersFar
+	.type Party_CountActiveOwnersFar, %function
+	.thumb_func
+Party_CountActiveOwnersFar:
+	.incbin "baserom.gba", 0x000a80f0, 0x00000008
 	.section .rom.000a80f8, "ax"
 	.global Party_AddActiveOwnerFar
 	.type Party_AddActiveOwnerFar, %function
 	.thumb_func
 Party_AddActiveOwnerFar:
-	.incbin "baserom.gba", 0x000a80f8, 0x00000050
+	.incbin "baserom.gba", 0x000a80f8, 0x00000018
+	.global Party_RemoveActiveOwnerFar
+	.type Party_RemoveActiveOwnerFar, %function
+	.thumb_func
+Party_RemoveActiveOwnerFar:
+	.incbin "baserom.gba", 0x000a8110, 0x00000038
 	.section .rom.000a8148, "ax"
 	.global BattleRandom16Far
 	.type BattleRandom16Far, %function
@@ -2489,8 +2499,8 @@ Battle_WaitMode0:
 	.incbin "baserom.gba", 0x000d2220, 0x00000178
 	.section .rom.000d23aa, "ax"
 	.incbin "baserom.gba", 0x000d23aa, 0x0000000e
-	.section .rom.000d2468, "ax"
-	.incbin "baserom.gba", 0x000d2468, 0x00000364
+	.section .rom.000d25a8, "ax"
+	.incbin "baserom.gba", 0x000d25a8, 0x00000224
 	.section .rom.000d27ea, "ax"
 	.incbin "baserom.gba", 0x000d27ea, 0x00000202
 	.section .rom.000d2a1c, "ax"

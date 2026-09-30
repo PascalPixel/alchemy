@@ -753,7 +753,7 @@
     "*/recon/tla/ja/rom.o"(.rom.000d23aa)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PACKED_ID.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/CLEAR_PACKED_EVENTS.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000d2468)
+    "*/recon/tla/ja/rom.o"(.rom.000d25a8)
     "*/games/COMMON/SRC/GAME/INVENTORY/TRY_ADD_AND_RETURN_OWNER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d27ea)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_DRAW_QUANTITY_PAIR_WITH_CUE.o"(.text)

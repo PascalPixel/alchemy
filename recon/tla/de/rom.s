@@ -2898,12 +2898,6 @@ Event_RunObjectHookAndWait:
 	.thumb_func
 Event_SetWorkWord10:
 	.incbin "baserom.gba", 0x000df3cc, 0x0000000c
-	.section .rom.000df488, "ax"
-	.global Party_RemoveOwnerRestored
-	.type Party_RemoveOwnerRestored, %function
-	.thumb_func
-Party_RemoveOwnerRestored:
-	.incbin "baserom.gba", 0x000df488, 0x00000140
 	.section .rom.000df5c8, "ax"
 	.global Func_080d25c8
 	.type Func_080d25c8, %function

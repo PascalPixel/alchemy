@@ -2066,13 +2066,23 @@ OwnerAction_AddFar:
 	.type Equipment_HasValueFar, %function
 	.thumb_func
 Equipment_HasValueFar:
-	.incbin "baserom.gba", 0x000b2088, 0x00000070
+	.incbin "baserom.gba", 0x000b2088, 0x00000068
+	.global Party_CountActiveOwnersFar
+	.type Party_CountActiveOwnersFar, %function
+	.thumb_func
+Party_CountActiveOwnersFar:
+	.incbin "baserom.gba", 0x000b20f0, 0x00000008
 	.section .rom.000b20f8, "ax"
 	.global Party_AddActiveOwnerFar
 	.type Party_AddActiveOwnerFar, %function
 	.thumb_func
 Party_AddActiveOwnerFar:
-	.incbin "baserom.gba", 0x000b20f8, 0x00000050
+	.incbin "baserom.gba", 0x000b20f8, 0x00000018
+	.global Party_RemoveActiveOwnerFar
+	.type Party_RemoveActiveOwnerFar, %function
+	.thumb_func
+Party_RemoveActiveOwnerFar:
+	.incbin "baserom.gba", 0x000b2110, 0x00000038
 	.section .rom.000b2148, "ax"
 	.global BattleRandom16Far
 	.type BattleRandom16Far, %function
@@ -2766,12 +2776,6 @@ Event_RunObjectHookAndWait:
 	.thumb_func
 Event_SetWorkWord10:
 	.incbin "baserom.gba", 0x000d73cc, 0x0000000c
-	.section .rom.000d7488, "ax"
-	.global Party_RemoveOwnerRestored
-	.type Party_RemoveOwnerRestored, %function
-	.thumb_func
-Party_RemoveOwnerRestored:
-	.incbin "baserom.gba", 0x000d7488, 0x00000140
 	.section .rom.000d75c8, "ax"
 	.global Func_080d25c8
 	.type Func_080d25c8, %function

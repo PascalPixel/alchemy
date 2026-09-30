@@ -1,3 +1,11 @@
+/* 2026-09-30 (Mercury): every name is adoptable now: the buffers are
+ * RAM_BUFFER.H's Ram_MapCellBuffer and Ram_MapCollision (constants, so the
+ * 0202c000/0202c001 pool words stay separate) and the table is its label
+ * Func_080134fc. 10 differing halfwords remain, all the allocation below:
+ * metatile*4 takes r0 here where the ROM keeps it in r1 and loads 0202c001
+ * into r7. Scaling once, pointer or index spellings, a function-pointer
+ * local, and computing the height pointer before or after the kind all
+ * stay at 10 or get worse (13 to 44). */
 /* Not-yet-C, main:08011f54, complete 132-byte function and pool.
  * 2026-09-28: 132 of 132 bytes, 10 differing halfwords (12 while the
  * function table has no label; it is the 16 words at 080134fc, the tail of
@@ -20,11 +28,12 @@
  * the two addresses were unrelated integer constants.
  */
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
 typedef s32 (*TerrainHeightFn)(u8 *cell, s32 x, s32 y);
 
 extern u8 *gMapWork;
-extern TerrainHeightFn Map_TerrainHeightFunctions[16];
+extern TerrainHeightFn Func_080134fc[16];
 
 /* Height of the terrain at a 16.16 map position on one of the layers: the
    metatile's shape selects the height function, which gets the metatile's
@@ -37,7 +46,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
 
     x >>= 16;
     y >>= 16;
-    cells = (u8 *)0x02010000;
+    cells = Ram_MapCellBuffer;
     if (work != NULL) {
         s32 offset = (layer & 3) * 48 + 304;
 
@@ -45,6 +54,6 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
     }
     cells += (x / 16 + (y / 16 << 7)) * 4;
     metatile = cells[3];
-    return Map_TerrainHeightFunctions[*(u8 *)(0x0202c000 + metatile * 4) & 15](
-        (u8 *)(0x0202c001 + metatile * 4), x & 15, y & 15);
+    return Func_080134fc[Ram_MapCollision[metatile * 4] & 15](
+        Ram_MapCollision + 1 + metatile * 4, x & 15, y & 15);
 }

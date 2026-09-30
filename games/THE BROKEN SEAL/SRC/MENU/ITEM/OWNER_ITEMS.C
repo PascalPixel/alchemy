@@ -1,6 +1,8 @@
 #include "INVENTORY_MENU.H"
 #include "OWNER_STATE.H"
-
+#include "TYPES.H"
+#include "ITEM.H"
+#include "IWRAM_CALL.H"
 
 s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode)
 {
@@ -20,7 +22,6 @@ s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode)
     }
     return count;
 }
-
 
 void ItemMenu_DrawIcons(u16 *items, s32 style)
 {
@@ -49,7 +50,6 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
     Menu_HideEmptyEntryIcons(items);
 }
 
-
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void ItemMenu_RefreshEntry(s32 mode);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -75,3 +75,96 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
 void InventoryMenu_NoOp(void)
 {
 }
+
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
+
+struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
+void *Runtime_BumpAllocate(s32 size);
+void Runtime_BumpFree(void *buffer);
+s32 Inventory_RemoveFirstUnflagged(s32 owner);
+s32 Inventory_AddItemFar(s32 owner, s32 item);
+void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
+
+/* Temporarily equip the selected item on the target, draw its status, then
+   restore the complete 0x14c-byte owner record. */
+void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
+{
+    struct InventoryMenuState *menu = gMenuWork;
+    register s32 style asm("sl") = 0; /* FAKEMATCH: the ROM allocates owner (r8) before style (sl); style's 19 references over 246 insns outrank owner's 4 over 28 */
+    struct OwnerInventoryState *state = Owner_GetStateFar(owner);
+    s32 item = state->inventory[slot];
+    void *saved;
+    s32 equipped;
+
+    if (mode == 1)
+        style = 0x100;
+    switch (Item_Get(item & 0x1ff)->type) {
+    case 0:
+        Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+        break;
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+    case 8:
+    case 9:
+        if (owner == target) {
+            style |= 2;
+            Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+        } else {
+            s32 size;
+
+            state = Owner_GetStateFar(target);
+            size = 0x14c;
+            saved = Runtime_BumpAllocate(size);
+            Iwram_CopyWords(saved, state, size);
+            equipped = Inventory_RemoveFirstUnflagged(target);
+            if (equipped != 0) {
+                item &= ~0x200;
+                equipped = Inventory_AddItemFar(target, item);
+                if (equipped != -1) {
+                    style |= 2;
+                    Menu_DrawOwnerStatusPanel(menu->status_window, target, equipped, style);
+                } else {
+                    Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+                }
+            } else {
+                Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+            }
+            Iwram_CopyWords(state, saved, size);
+            Runtime_BumpFree(saved);
+        }
+        break;
+    case 6:
+        if (target == owner) {
+            style |= 4;
+            Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+        } else {
+            s32 size;
+
+            state = Owner_GetStateFar(target);
+            size = 0x14c;
+            saved = Runtime_BumpAllocate(size);
+            Iwram_CopyWords(saved, state, size);
+            equipped = Inventory_RemoveFirstUnflagged(target);
+            if (equipped != 0) {
+                equipped = Inventory_AddItemFar(target, item);
+                if (equipped != -1) {
+                    style |= 4;
+                    Menu_DrawOwnerStatusPanel(menu->status_window, target, equipped, style);
+                } else {
+                    Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+                }
+            } else {
+                Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+            }
+            Iwram_CopyWords(state, saved, size);
+            Runtime_BumpFree(saved);
+        }
+        break;
+    }
+}
+#endif

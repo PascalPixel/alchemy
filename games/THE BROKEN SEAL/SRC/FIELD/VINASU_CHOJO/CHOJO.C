@@ -54,6 +54,7 @@ struct Half {
 
 extern u8 MsgVinasuRobin[];
 extern u8 MsgVinasuRobinHandedOverShamansRod[];
+extern u8 MsgVinasuLongLastTime[];
 extern const s32 SceneAction_EntryGroup[];
 extern const s32 SceneAction_EntryPair[];
 void BattleFx_SetWeightedResult();
@@ -570,7 +571,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_ActorSetPosition(18, 0, 0);
     base6_4013 = 0x4013;
     Engine_AudioPlayCue(0x121);
-    Engine_EventSetMessage(0x2757);
+    Engine_EventSetMessage((s32)MsgVinasuLongLastTime);
     VinasuChojo_ShowMessage(base6_4013);
     ((void (*)())Engine_ActorFaceDirection)(0, 0x8000, 0);
     ((void (*)())Engine_ActorFaceDirection)(1, 0x8000, 0);

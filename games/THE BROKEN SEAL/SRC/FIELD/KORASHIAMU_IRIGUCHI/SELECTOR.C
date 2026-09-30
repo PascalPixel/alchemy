@@ -13,16 +13,10 @@ extern u8 MsgKorashiamuWonBothMatches[];
  */
 void FieldScene_DispatchBySelector(void)
 {
-    extern u8 gCell[];
-
     s32 no;
 
     Task_Wait(1);
-    {
-        s32 off = 450;
-
-        no = *(s16 *)(gCell + off);
-    }
+    no = gGameState.entrance;
     switch (no) {
     case 5:
         Actor_SetAnimation(8, 2);
@@ -130,8 +124,8 @@ void FieldScene_BuildActorPresentationSequence(void)
     ColorBuffer_ApplyTarget(0, 0);
     ColorBuffer_Interpolate(1);
     Task_Wait(1);
-    SCENE_PHASE = 515;
-    SCENE_FIELD_1C8 = 1;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+    gEventWork->transition_frames = 1;
     Event_OpenScreen();
     Event_WaitForScreen();
     Engine_ColorBufferApplySource(0, 0);
@@ -248,13 +242,13 @@ void FieldScene_BuildActorPresentationSequence(void)
         FieldScene_CallPairWith10(2);
         flag = 1;
     } else {
-        SCENE_STEP++;
+        gEventWork->message++;
         Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
         SceneState_ForwardMaskedHalfwordWith10(2, 0xc000);
         FieldScene_CallPairWith10(2);
     }
     if (flag != 0) {
-        SCENE_STEP++;
+        gEventWork->message++;
     }
     Actor_FaceDirection(8, 0x8000, 0);
     Actor_FaceDirection(9, 0, 0);
@@ -307,8 +301,8 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);
     Event_Wait(60);
-    SCENE_PHASE = 256;
-    SCENE_FIELD_1C8 = 40;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 40;
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_RequestExit(64);

@@ -6,8 +6,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/EXTENDED_EFFECT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ERUPTION_RING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/FUNKA.o"(.text)
         "*/resource_381_overlay.o"(.text.x0200b01c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RING_SETUP.o"(.text)

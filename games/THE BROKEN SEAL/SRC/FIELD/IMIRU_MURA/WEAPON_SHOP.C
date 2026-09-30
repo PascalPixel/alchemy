@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "CALL.H"
+extern u8 MsgMakyuriCatchUpLostOpportunity[];
+extern u8 MsgMakyuriStoreClosedUntilWell[];
 
 s32 Object_GetById();
 extern u8 ImiruMura_TurnScript[];
@@ -33,7 +35,7 @@ void ImiruMura_RunWeaponShop(void)
         Engine_EventBegin();
         Engine_ActorFaceActor(12, 0, 0);
         Engine_EventWait(10);
-        Engine_EventSetMessage(0x164b);
+        Engine_EventSetMessage((s32)MsgMakyuriCatchUpLostOpportunity);
         Engine_EventShowMessage(12, 0);
         Call3(Engine_ActorFaceDirection, 12, 0x4000, 10);
         Engine_EventEnd();
@@ -45,7 +47,7 @@ void ImiruMura_RunWeaponShop(void)
             Engine_CameraWaitForMove();
             Engine_EventWait(20);
             Object_SetActionCallbackAndRefreshById(12, (s32)ImiruMura_TurnScript);
-            Engine_EventSetMessage(0x153e);
+            Engine_EventSetMessage((s32)MsgMakyuriStoreClosedUntilWell);
             Engine_EventShowMessage(12, 0);
             Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
             Engine_CameraWaitForMove();

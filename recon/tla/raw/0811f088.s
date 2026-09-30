@@ -260,7 +260,7 @@ Func_0811f088:
 	movs	r0, #4
 	bl	0x08120360
 .L_0811f276:
-	bl	Func_081201c4
+	bl	BattleEv_DispatchQueued
 	bl	0x0812756c
 	b.n	.L_0811f306
 .L_0811f280:

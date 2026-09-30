@@ -214,6 +214,9 @@ Func_08126b64:
 	strh	r1, [r0, #0]
 .L_08126cfa:
 	pop	{pc}
+	.global BattlePres_SetActorModes
+	.thumb_func
+BattlePres_SetActorModes:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

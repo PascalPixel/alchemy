@@ -412,7 +412,7 @@ Func_0811d7e8:
 	adds	r0, #124
 	add	r0, sl
 	movs	r1, #0
-	bl	Func_0811e36c
+	bl	BattlePres_RunActorEntries
 	b.n	.L_0811dd70
 	movs	r0, #192
 	lsls	r0, r0, #3
@@ -616,7 +616,7 @@ Func_0811d7e8:
 .L_0811dce0:
 	cmp	r5, #1
 	bgt.n	.L_0811dd70
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 	b.n	.L_0811dd70
 	movs	r5, #192
 	lsls	r5, r5, #3
@@ -672,7 +672,7 @@ Func_0811d7e8:
 	negs	r2, r2
 	cmp	r0, r2
 	bne.n	.L_0811dd68
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 	movs	r0, #3
 	bl	0x08013560
 .L_0811dd68:
@@ -845,7 +845,7 @@ Func_0811d7e8:
 	bne.n	.L_0811decc
 	ldr	r0, [pc, #168]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 	b.n	.L_0811df5a
 .L_0811decc:
 	add	r7, sp, #4
@@ -912,7 +912,7 @@ Func_0811d7e8:
 .L_0811df50:
 	ldr	r0, [pc, #24]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_0811df5a:
 	movs	r3, #0
 	mov	r2, r8
@@ -1142,7 +1142,7 @@ Func_0811d7e8:
 	movs	r0, #4
 	bl	0x08120360
 .L_0811e11c:
-	bl	Func_081201c4
+	bl	BattleEv_DispatchQueued
 	bl	0x0812756c
 	b.n	.L_0811e29a
 .L_0811e126:

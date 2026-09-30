@@ -5,7 +5,7 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
-#define FrameCounter (*(u32 *)&gFrameCount)
+#define FrameCounter gFrameCount
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 
 enum {

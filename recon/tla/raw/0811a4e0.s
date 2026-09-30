@@ -22,7 +22,7 @@ Func_0811a4e0:
 	lsls	r5, r5, #1
 	add	r5, r9
 	ldrh	r0, [r5, #0]
-	bl	0x081280fc
+	bl	Func_081280fc
 	movs	r1, #0
 	mov	r8, r0
 	ldrh	r0, [r5, #0]

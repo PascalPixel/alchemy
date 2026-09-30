@@ -73,7 +73,7 @@ Func_0811c2b4:
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
 	ldrh	r0, [r3, #0]
-	bl	0x081280fc
+	bl	Func_081280fc
 	cmp	r0, #0
 	beq.n	.L_0811c362
 	adds	r0, r5, #0
@@ -113,7 +113,7 @@ Func_0811c2b4:
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
 	ldrh	r0, [r3, #0]
-	bl	0x081280fc
+	bl	Func_081280fc
 	movs	r3, #192
 	lsls	r3, r3, #13
 	cmp	r0, #0

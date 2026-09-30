@@ -105,16 +105,16 @@ struct StoryVerticalEffectActor_02004004 {
 /* The world map's scene tables, labelled where the overlay's data lies. */
 extern u8 gWorldMapEntrances[];
 extern u8 gWorldMapExits[];
-extern u8 gWorldMapEvents[];
-extern u8 gWorldMapPlacements[];
-extern u8 gWorldMapPlacements49[];
-extern u8 gWorldMapPlacements64[];
-extern u8 gWorldMapPlacements65[];
-extern u8 gWorldMapPlacements66[];
-extern u8 gWorldMapPlacements71[];
-extern u8 gWorldMapPlacements72[];
-extern u8 gWorldMapPlacements73[];
-extern u8 gWorldMapPlacements80[];
+extern struct SceneEvent gWorldMapEvents[];
+extern struct ScenePlacement gWorldMapPlacements[];
+extern struct ScenePlacement gWorldMapPlacements49[];
+extern struct ScenePlacement gWorldMapPlacements64[];
+extern struct ScenePlacement gWorldMapPlacements65[];
+extern struct ScenePlacement gWorldMapPlacements66[];
+extern struct ScenePlacement gWorldMapPlacements71[];
+extern struct ScenePlacement gWorldMapPlacements72[];
+extern struct ScenePlacement gWorldMapPlacements73[];
+extern struct ScenePlacement gWorldMapPlacements80[];
 extern s32 gWorldMapRewards[];
 
 /* Action scripts the transfer scene hands its actors. */

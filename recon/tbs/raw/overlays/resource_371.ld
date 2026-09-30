@@ -9,9 +9,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP.o"(.text)
         "*/resource_371_overlay.o"(.text.x02009ca4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP2.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/SITE_138.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/EXIT_TRIGGER.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/REWARD.o"(.text)
         "*/resource_371_overlay.o"(.text.x0200a8e8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/LINKED_EFFECTS.o"(.text)
@@ -20,7 +17,7 @@ SECTIONS
     }
     .bss (NOLOAD) :
     {
-        "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/REWARD.o"(.bss COMMON)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP2.o"(.bss COMMON)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP3.o"(.bss COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

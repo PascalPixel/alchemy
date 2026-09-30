@@ -31,7 +31,12 @@ struct GameState {
     u8 unknown_1f3;
     /* The actor whose position actor contact is measured from. */
     s32 selected_actor;
-    u8 unknown_1f8[0x46];
+    u8 unknown_1f8[0x34];
+    u16 unknown_22c;
+    u16 unknown_22e;
+    u16 unknown_230;
+    s16 unknown_232;
+    u8 unknown_234[0x0a];
     s16 unknown_23e;
     /* Where Retreat returns the party. */
     s16 retreat_scene;

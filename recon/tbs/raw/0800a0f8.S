@@ -177,5 +177,5 @@ Func_0800a0f8:
 	add	sp, sp, #8
 	pop	{r5, r6, r7, r8, r9, sl, lr}
 	bx	lr
-	.global Transform_UpdateVerticesSize
-	.equiv Transform_UpdateVerticesSize, . - Transform_UpdateVertices
+	.global Transform_UpdateVerticesEnd
+Transform_UpdateVerticesEnd:

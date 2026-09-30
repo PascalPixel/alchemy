@@ -1,4 +1,7 @@
 #include "TYPES.H"
+#include "PARTY_STATE.H"
+#include "FIXED_MATH.H"
+#include "EFFECT_0809B11C.H"
 
 /* Object updates of the phased radial particle sequence. */
 
@@ -41,3 +44,122 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
         Object_Destroy();
     }
 }
+
+#if !defined(TBS_EDITION_JA)
+/* The Japanese edition keeps its code here in its scaffold for now. */
+
+/*
+ * Moves a particle out from its origin to a random point on a ring,
+ * waits there, then flies it to a random point near the current owner's
+ * screen position before the slot is cleared. The particle's sprite takes
+ * the owner sprite's draw priority on launch and the front priority while
+ * it waits.
+ */
+
+struct EffectVector {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+struct EffectSprite {
+    u8 unknown_00[9];
+    s8 flags;                       /* 0x09; bits 2-3 are the draw priority */
+    u8 unknown_0a[0x0e];
+    s32 scale;                      /* 0x18 */
+};
+
+struct EffectOwner {
+    u8 unknown_00[8];
+    struct EffectVector position;   /* 0x08 */
+    u8 unknown_14[0x3c];
+    struct EffectSprite *sprite;    /* 0x50 */
+};
+
+extern u32 gFrameTick;
+
+struct EffectOwner *Engine_ActorGet(s32 actor);
+u32 BattleFx_HasReachedTarget(struct EffectSlot *effect);
+void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
+u32 Random16(void);
+void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
+void Camera_WorldToScreen(struct EffectVector *position);
+void Audio_PlayCue(s32 cue);
+
+void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
+{
+    struct EffectOwner *owner;
+    struct EffectVector position;
+    s32 state;
+    u8 priority;
+    u8 flags;
+
+    owner = Engine_ActorGet(gGameState.current_owner);
+    state = effect->state;
+
+    if (state == 0) {
+        effect->x = effect->origin_x;
+        effect->z = effect->origin_z;
+        position.x = effect->x;
+        position.z = effect->z;
+        Vector_AddPolarOffset(
+            0x780000,
+            ((Random16() * 3 << 11) >> 16)
+                - ((Random16() * 3 << 11) >> 16)
+                + 0xc000,
+            &position);
+        effect->target_x = position.x;
+        effect->target_z = position.z;
+        effect->acceleration = 0x50000;
+        effect->max_speed = 0x50000;
+        effect->flag42 = state;
+        effect->state++;
+
+        priority = owner->sprite->flags & 0xc;
+        flags = ((struct EffectSprite *)effect->object)->flags & -13;
+        flags |= priority;
+        ((struct EffectSprite *)effect->object)->flags = flags;
+        effect->flags = 0;
+        effect->age = 0;
+        if ((gFrameTick & 1) != 0)
+            Audio_PlayCue(134);
+    } else if (state == 1) {
+        if ((s16)effect->age == 3) {
+            ((struct EffectSprite *)effect->object)->flags &= -13;
+            effect->flags = 4;
+        }
+        if (BattleFx_HasReachedTarget(effect) == 0)
+            effect->state--;
+    } else if (state == 2) {
+        if (BattleFx_HasReachedTarget(effect) == 0) {
+            effect->origin_x = effect->x;
+            effect->origin_z = effect->z;
+            ((struct EffectSprite *)effect->object)->flags &= -13;
+            effect->flags = 4;
+            effect->render = 0;
+            effect->state++;
+            effect->callback_delay = 40;
+        }
+    } else if (state == 3) {
+        effect->render = 1;
+        effect->x = effect->origin_x;
+        effect->z = effect->origin_z;
+        position.x = owner->position.x;
+        position.y = owner->position.y + 0x140000;
+        position.z = owner->position.z;
+        Camera_WorldToScreen(&position);
+        Vector_AddPolarOffset(0x40000, Random16(), &position);
+        effect->target_x = position.x;
+        effect->target_z = position.z;
+        effect->state++;
+        if ((gFrameTick & 1) != 0)
+            Audio_PlayCue(145);
+    } else if (state == 4) {
+        if (BattleFx_HasReachedTarget(effect) == 0)
+            effect->state--;
+    } else if (state == 5) {
+        if (BattleFx_HasReachedTarget(effect) == 0)
+            BattleFx_ClearOwnedSlot(effect);
+    }
+}
+#endif

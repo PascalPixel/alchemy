@@ -133,7 +133,7 @@ extern const u8 Data_0200ac90[];
 extern const u8 Data_0200adf0[];
 extern u8 Data_03001ebc[];
 extern struct PairWork *Data_03001f30;
-extern struct WorldMapVramBlock Data_03001b10[];
+extern struct WorldMapVramBlock ResourceTableEntries[];
 
 void BattleEffect_CleanupSceneObjects(void);
 void BattleFx_SetBlock30ValuesMaxZero(void);

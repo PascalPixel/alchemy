@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-extern u8 Data_03001e70[];
+extern u8 gCam[];
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 s32 WaitFrames(s32 frames);
@@ -9,7 +9,7 @@ s32 WaitFrames(s32 frames);
 void Event_WaitForDisplayField358Clear(void)
 {
     s32 frames;
-    u8 *work = *(u8 **)((u32)&Data_03001e70);
+    u8 *work = *(u8 **)((u32)&gCam);
 
     if (*(s16 *)((u8 *)Runtime_AllocateBlock(0x1b, 0xccc) + 0x19e) == 3) {
         frames = 0;

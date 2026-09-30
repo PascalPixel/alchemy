@@ -3,9 +3,9 @@
 #include "WORKSPACE_OPTIONS.H"
 
 extern volatile u32 Data_03001c94;
-extern volatile u32 Data_03001b04;
+extern volatile u32 gKeysRepeat;
 extern u8 Data_03001ca0;
-extern u8 Data_03001d08;
+extern u8 gOptionMirror;
 extern u8 MsgMessageSpeedSetting;
 extern u8 MsgSpeechSetting;
 extern u8 MsgAutoSleepSetting;
@@ -62,7 +62,7 @@ s32 Menu_RunWorkspaceOptions(void)
     redraw = 1;
     page = 0;
     OptionMenu_InitializeWork();
-    work = Data_03001ea0;
+    work = gSelectionWork;
     win = UiWindow_Create(1, 2, 28, 3, 2);
     icon = Menu_OpenWorkspaceOptions();
     pair = RenderResource_CreatePair(7, icon, 64, -48);
@@ -162,21 +162,21 @@ s32 Menu_RunWorkspaceOptions(void)
             Audio_PlayCue(113);
             break;
         }
-        if (Data_03001b04 & 64) {
+        if (gKeysRepeat & 64) {
             Audio_PlayCue(111);
             page--;
             redraw = 1;
-        } else if (Data_03001b04 & 128) {
+        } else if (gKeysRepeat & 128) {
             Audio_PlayCue(111);
             page++;
             redraw = 1;
         } else {
-            if (Data_03001b04 & 32) {
+            if (gKeysRepeat & 32) {
                 Audio_PlayCue(111);
                 work->option[page]--;
                 redraw = 1;
             }
-            if (Data_03001b04 & 16) {
+            if (gKeysRepeat & 16) {
                 Audio_PlayCue(111);
                 work->option[page]++;
                 redraw = 1;
@@ -192,7 +192,7 @@ s32 Menu_RunWorkspaceOptions(void)
         Data_02000240[0x20c] = work->option[2];
         Data_02000240[0x20a] = work->option[3];
         Data_02000240[0x22a] = work->option[4];
-        Data_03001d08 = Data_02000240[0x22a];
+        gOptionMirror = Data_02000240[0x22a];
     } else {
         PaletteGlow_Update(Data_02000240[0x205], Data_02000240[0x206]);
     }

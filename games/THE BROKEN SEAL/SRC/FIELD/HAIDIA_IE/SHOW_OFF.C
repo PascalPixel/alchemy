@@ -33,7 +33,7 @@ void Villager_ShowOffPsynergy(void)
         }
         Event_ShowMessage(17, 0);
     } else {
-        origin = Data_03001e70->origin;
+        origin = gCam->origin;
         Event_SetMessage((s32)MsgHaidiaShownNewAbility);
         Actor_FaceEachOther(17, ACTOR_PARTY_LEADER, 0);
         Event_AskYesNo(17, 0);

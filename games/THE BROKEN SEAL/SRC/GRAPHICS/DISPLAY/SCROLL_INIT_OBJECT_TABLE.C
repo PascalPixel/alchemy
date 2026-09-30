@@ -10,8 +10,8 @@ void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Func_080f07f0(const void *resource, s32 offset, s32 mode);
 
 extern u16 Data_02004c00;
-extern u16 Data_02004c08;
-extern u16 Data_02004c04;
+extern u16 Flash_Layout;
+extern u16 Flash_Handler0;
 extern const void *DisplayScroll_LineTable[];
 
 /* Allocate the scrolling display's object table, clear OBJ VRAM and fill its
@@ -72,8 +72,8 @@ void DisplayScroll_InitObjectTable(void)
         entry += 2;
     }
     Data_02004c00 = 0;
-    Data_02004c08 = 0;
-    Data_02004c04 = 0;
+    Flash_Layout = 0;
+    Flash_Handler0 = 0;
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0x480);
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0xc80);
     for (i = 0; i < 32; i++)

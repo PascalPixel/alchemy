@@ -27,8 +27,8 @@ struct MapScrollWork {
 
 struct BgScroll { u16 x, y; };
 
-extern struct MapScrollWork *Data_03001e70;
-extern struct BgScroll Data_03001ad0[];
+extern struct MapScrollWork *gCam;
+extern struct BgScroll gBgScroll[];
 
 void Map_RenderPaletteMappedBlock(u32 layer, s32 x, s32 y);
 void Map_RenderMetatileRow(u32 layer, s32 x, s32 y);

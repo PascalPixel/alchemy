@@ -8,7 +8,7 @@
  * Start blinks the colour and Select leaves.
  */
 
-extern volatile u32 Data_03001b04;
+extern volatile u32 gKeysRepeat;
 extern volatile u32 Data_03001ae8;
 extern volatile u32 Data_03001e40;
 
@@ -67,39 +67,39 @@ redraw:
     }
     WaitFrames(1);
     for (;;) {
-        if (Data_03001b04 & 0x40) {
+        if (gKeysRepeat & 0x40) {
             channel--;
             if (channel <= 0)
                 channel = 3;
         }
-        if (Data_03001b04 & 0x80) {
+        if (gKeysRepeat & 0x80) {
             channel++;
             if (channel > 3)
                 channel = 1;
         }
-        if (Data_03001b04 & 0x20) {
+        if (gKeysRepeat & 0x20) {
             color--;
             if (color <= 0)
                 color = 15;
         }
-        if (Data_03001b04 & 0x10) {
+        if (gKeysRepeat & 0x10) {
             color++;
             if (color > 15)
                 color = 1;
         }
-        if (Data_03001b04 & 0x200) {
+        if (gKeysRepeat & 0x200) {
             palette--;
             if (palette < 0)
                 palette = 13;
             goto redraw;
         }
-        if (Data_03001b04 & 0x100) {
+        if (gKeysRepeat & 0x100) {
             palette++;
             if (palette > 13)
                 palette = 0;
             goto redraw;
         }
-        if (Data_03001b04 & 1) {
+        if (gKeysRepeat & 1) {
             colors = &PALETTE[palette * 16 + color];
             value = *colors;
             red = value & 31;
@@ -114,7 +114,7 @@ redraw:
             *colors = (blue << 10) | (green << 5) | red;
             goto redraw;
         }
-        if (Data_03001b04 & 2) {
+        if (gKeysRepeat & 2) {
             colors = &PALETTE[palette * 16 + color];
             value = *colors;
             red = value & 31;
@@ -129,7 +129,7 @@ redraw:
             *colors = (blue << 10) | (green << 5) | red;
             goto redraw;
         }
-        if (Data_03001b04 & 8) {
+        if (gKeysRepeat & 8) {
             colors = &PALETTE[palette * 16 + color];
             value = *colors;
             red = 0;
@@ -150,7 +150,7 @@ redraw:
             }
             *colors = value;
         }
-        if (Data_03001b04 & 4)
+        if (gKeysRepeat & 4)
             break;
         Data_03001e40;
         WaitFrames(1);

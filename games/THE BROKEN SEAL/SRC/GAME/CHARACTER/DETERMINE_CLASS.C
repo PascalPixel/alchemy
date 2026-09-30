@@ -8,7 +8,7 @@ struct ClassDefinition {
     u8 unknown_08[0x4c];
 };
 
-extern struct ClassDefinition Data_08084b1c[];
+extern struct ClassDefinition Class_DefinitionTable[];
 
 void Owner_GetDigitValues(s32 character, const u8 *djinn, s32 *levels);
 s32 GameFlag_Test(s32 flag);
@@ -59,10 +59,10 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn)
     }
     series = Owner_LookupFourColumnTable(primary, levels[j] > 9 ? j : primary);
     for (i = 202; i >= 0; i--) {
-        if (Data_08084b1c[i].series != series)
+        if (Class_DefinitionTable[i].series != series)
             continue;
         for (j = 0; j < 4; j++) {
-            if (levels[j] < Data_08084b1c[i].required[j] * 10)
+            if (levels[j] < Class_DefinitionTable[i].required[j] * 10)
                 break;
         }
         if (j == 4) {

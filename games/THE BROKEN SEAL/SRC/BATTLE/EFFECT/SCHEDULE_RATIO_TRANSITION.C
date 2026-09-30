@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
-extern u8 Data_03001e70[];
+extern u8 gCam[];
 
 /*
  * Record a ratio-driven transition on the battle effect work block and
@@ -22,7 +22,7 @@ extern u8 BattleFx_StepRatioTransition[]; /* the transition callback, Thumb addr
 
 void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 {
-    struct Work_080936a0 *state = *(struct Work_080936a0 **)((u32)&Data_03001e70);
+    struct Work_080936a0 *state = *(struct Work_080936a0 **)((u32)&gCam);
     s32 handle;
     s32 result;
 

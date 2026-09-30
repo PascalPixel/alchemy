@@ -1,5 +1,5 @@
 #include "TYPES.H"
-extern u8 Data_03001e64[];
+extern u8 gObjectSlots[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -164,7 +164,7 @@ struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32
 
     found = NULL;
     best = 40;
-    entry = *(struct FacingEntry **)((u32)&Data_03001e64);
+    entry = *(struct FacingEntry **)((u32)&gObjectSlots);
     for (cnt = 0; cnt < 64; cnt++, entry++) {
         if (entry->data == NULL)
             continue;

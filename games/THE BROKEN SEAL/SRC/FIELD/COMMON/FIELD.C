@@ -1,14 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-/* The Japanese edition tests the held keys where the others read the key state. */
-#if defined(TBS_EDITION_JA)
-extern u8 gKeysHeld[];
-#define ASSIGNED_KEYS gKeysHeld
-#else
-extern u8 Data_03001c94[];
-#define ASSIGNED_KEYS Data_03001c94
-#endif
 
 /* field/store_assigned_key_value.c */
 extern u8 *gWork;
@@ -18,6 +10,22 @@ static __inline__ void StoreHalfword(u8 *address, s32 value)
 {
     *(s16 *)address = value;
 }
+
+extern u16 gGameState[];
+extern volatile u32 gKeyState;
+
+/* The Japanese edition tests the held keys where the others read the key state. */
+#if defined(TBS_EDITION_JA)
+
+extern u8 gKeysHeld[];
+
+#define ASSIGNED_KEYS gKeysHeld
+#else
+
+extern u8 Data_03001c94[];
+
+#define ASSIGNED_KEYS Data_03001c94
+#endif
 
 u32 Field_StoreAssignedKeyValue(u32 value)
 {
@@ -51,10 +59,6 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 /* キー入力と設定表の照合。押下キーに対応する番号欄へ1を立てる。
    該当が無ければ表の値を Field_StoreAssignedKeyValue へ渡す。
    キー状態は割り込みで更新されるため、判定ごとに読み直す。 */
-
-extern u16 gGameState[];
-extern volatile u32 gKeyState;
-
 s32 Field_CheckConfiguredKeys(void)
 {
     u8 *work = gWork;
@@ -86,4 +90,16 @@ s32 Field_CheckConfiguredKeys(void)
     }
 
     return ret;
+}
+
+s32 Runtime_CheckRadiusOverlap(s32 *a, s32 arg1, s32 *b, s32 arg3)
+{
+    s32 dx = (*a++ - *b++) >> 16;
+    s32 dy = (*a++ - *b++) >> 16;
+    s32 dz = (*a - *b) >> 16;
+    s32 radius = arg1 + arg3;
+    if (!(dx > 0x400000) && !(dz > 0x400000) &&
+        (dx *dx + dy *dy + dz *dz) < radius *radius)
+        return 0;
+    return -1;
 }

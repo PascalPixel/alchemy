@@ -6,12 +6,6 @@
 #include "SYSTEM.H"
 #include "UI.H"
 
-#if defined(TBS_EDITION_JA)
-#define ROW_CNT 4
-#else
-#define ROW_CNT 8
-#endif
-
 struct MenuObjectControl {
     u8 padding00[4];
     u16 suspended;
@@ -57,9 +51,7 @@ LAYOUT_OFFSET_GUARD(
     struct CharacterSelectorState,
     flags,
     0x220);
-
 extern struct MenuObjectControl *gMenuCtrlWork;
-
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
 void RenderOutput_ClearListFar(s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
@@ -67,6 +59,21 @@ s32 Party_ListActiveOwnersFar(const u16 *);
 void UiWindow_InitializeWork(s32);
 void Menu_InitSelectorCursorAndEntries(s32, s32, s32, s32);
 s32 CharacterSelector_Run(void);
+
+struct CharacterSelectorWork {
+    u8 pad0[0x174];
+    u16 cursor;
+    u8 pad176[0x21a - 0x176];
+    u8 choice;
+};
+
+s32 Func_080a77a4(s32 mode);
+
+#if defined(TBS_EDITION_JA)
+#define ROW_CNT 4
+#else
+#define ROW_CNT 8
+#endif
 
 /*
  * Open the compact character selector, run its blocking interaction body,
@@ -100,5 +107,23 @@ s32 Menu_OpenCharacterSelector(void)
     gMenuCtrlWork->suspended = 0;
     WaitFrames(1);
     Runtime_ReleaseHeapBlock(55);
+    return result;
+}
+
+/* Run the character selector and return the chosen slot, or -1 when it was
+   cancelled. */
+s32 CharacterSelector_Run(void)
+{
+    struct CharacterSelectorWork *work = *(struct CharacterSelectorWork **)((u8 *)&gMenuWork);
+    s32 result = 0;
+
+    /* FAKEMATCH: the do-while keeps the cursor store in source order */
+    do {
+        work->cursor = result;
+    } while (0);
+    if (Func_080a77a4(0) == -1)
+        result = -1;
+    else
+        result = work->choice;
     return result;
 }

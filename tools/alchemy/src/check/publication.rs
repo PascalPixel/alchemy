@@ -1467,8 +1467,9 @@ fn asset_game(path: &str) -> Option<&str> {
     asset.then_some(*game)
 }
 /// The shared root holds only what every game builds byte-exact from the
-/// same text: nested C source, interface headers, and asset sources with the
-/// PNG, TSV and BIN inputs they are built from.
+/// same text: nested C source, interface headers, asset sources with the
+/// PNG, TSV and BIN inputs they are built from, and sequences, as MIDI or
+/// assembly, under SOUND/SEQUENCE as in each game.
 fn shared_root_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, root, rest @ ..] = components.as_slice() else {
@@ -1480,8 +1481,11 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
     let source = matches!(rest, ["SRC", _, .., leaf]
         if listed(extension(leaf), &["C", "S", "PNG", "TSV", "BIN"]));
     let interface = matches!(rest, ["INCLUDE", _, .., leaf] if extension(leaf) == "H");
-    (!(source || interface)).then_some(
-        "games/COMMON holds only shared SRC/<module>/ sources and inputs and INCLUDE/<module>/*.H",
+    let sequence = matches!(rest, ["SOUND", "SEQUENCE", leaf]
+        if listed(extension(leaf), &["MID", "S"]));
+    (!(source || interface || sequence)).then_some(
+        "games/COMMON holds only shared SRC/<module>/ sources and inputs, INCLUDE/<module>/*.H \
+         and SOUND/SEQUENCE/ sequences",
     )
 }
 const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD, C drafts under an edition and metrics/history.tsv";
@@ -2798,6 +2802,21 @@ fn text_fixtures() -> Vec<Fixture> {
             "games/COMMON/INCLUDE/SOUND/X.H",
             b"void f(void);\n".to_vec(),
             None,
+        ),
+        (
+            "games/COMMON/SOUND/SEQUENCE/X.S",
+            b"\t.section .rodata\n".to_vec(),
+            None,
+        ),
+        (
+            "games/COMMON/SOUND/SAMPLE/X.S",
+            b"\t.section .rodata\n".to_vec(),
+            Some("games/COMMON holds only"),
+        ),
+        (
+            "games/COMMON/SOUND/SEQUENCE/DEEP/X.S",
+            b"\t.section .rodata\n".to_vec(),
+            Some("games/COMMON holds only"),
         ),
         (
             "games/COMMON/SRC/SOUND/TABLE.JSON",

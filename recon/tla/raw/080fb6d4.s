@@ -16,7 +16,7 @@ Func_080fb6d4:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #12]
 	cmp	r3, #2
 	bne.n	.L_080fb730

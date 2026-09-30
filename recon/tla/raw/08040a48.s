@@ -43,13 +43,13 @@ Func_08040a48:
 	movs	r1, #4
 	adds	r0, #4
 	mov	r9, r3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r4, sl
 	mov	r8, r0
 	ldr	r0, [r4, #12]
 	movs	r1, #5
 	adds	r0, #5
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, sl
 	str	r0, [r1, #12]
 	adds	r0, r7, #0
@@ -406,7 +406,7 @@ Func_08040a48:
 	beq.n	.L_08040de8
 	adds	r0, r5, #5
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, r8
 	adds	r5, r0, #0
 	movs	r0, #12
@@ -517,7 +517,7 @@ Func_08040a48:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #171
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #245
 	lsls	r0, r0, #3
 	adds	r0, #255
@@ -525,7 +525,7 @@ Func_08040a48:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #170
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r1, #202
 	adds	r1, #255
 	movs	r0, #4

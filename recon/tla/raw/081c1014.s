@@ -56,7 +56,7 @@ Func_081c1014:
 	mov	r0, fp
 	adds	r0, #1
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	mov	fp, r0
 	bl	0x08013b30
 .L_081c1082:

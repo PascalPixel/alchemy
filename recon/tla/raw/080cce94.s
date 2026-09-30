@@ -187,7 +187,7 @@ Func_080cce94:
 	bl	0x08038040
 .L_080ccffe:
 	mov	r0, r9
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_080cd00a
 	b.n	.L_080cd394
@@ -271,7 +271,7 @@ Func_080cce94:
 	b.n	.L_080cd39e
 .L_080cd0c2:
 	mov	r0, r9
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_080cd39e
 .L_080cd0ca:
 	mov	r1, r8
@@ -293,7 +293,7 @@ Func_080cce94:
 	cmp	r9, r2
 	beq.n	.L_080cd100
 	mov	r0, r9
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080cd100:
 	bl	0x080d2350
 	b.n	.L_080cd39e
@@ -456,7 +456,7 @@ Func_080cce94:
 	cmp	r9, r1
 	beq.n	.L_080cd270
 	mov	r0, r9
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080cd270:
 	mov	r2, r8
 	cmp	r2, #131
@@ -481,7 +481,7 @@ Func_080cce94:
 	cmp	r9, r3
 	beq.n	.L_080cd394
 	mov	r0, r9
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_080cd394
 .L_080cd2a4:
 	mov	r1, r8
@@ -569,7 +569,7 @@ Func_080cce94:
 	cmp	r9, r2
 	beq.n	.L_080cd364
 	mov	r0, r9
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080cd364:
 	mov	r3, r8
 	cmp	r3, #131

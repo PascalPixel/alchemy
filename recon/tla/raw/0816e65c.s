@@ -976,7 +976,7 @@ Func_0816e65c:
 	mov	r2, sl
 	ldr	r1, [r2, #20]
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r3, r0, #0
 	lsls	r5, r3, #1
 	mov	r4, sl

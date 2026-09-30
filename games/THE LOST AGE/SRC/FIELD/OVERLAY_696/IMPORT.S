@@ -50,7 +50,7 @@
 	overlay_veneer Func_08038120
 	overlay_veneer Func_08038248
 	overlay_veneer Func_08038348
-	overlay_veneer Func_080ad010
+	overlay_veneer Item_Get
 	overlay_veneer Func_080ad038
 	overlay_veneer Func_080ad100
 	overlay_veneer Func_080ad208

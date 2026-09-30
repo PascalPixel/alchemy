@@ -1337,7 +1337,7 @@ Func_0814a814:
 	movs	r1, #6
 	bl	Math_Div
 	movs	r1, #9
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #1
 	ldr	r2, [sp, #20]
 	adds	r1, r1, r0
@@ -2090,7 +2090,7 @@ Func_0814a814:
 	lsls	r0, r3, #2
 	movs	r1, #9
 	add	r0, r9
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #204]
 	lsls	r3, r0, #1
 	ldrh	r1, [r2, r3]

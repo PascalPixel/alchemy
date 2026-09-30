@@ -1091,7 +1091,7 @@ Func_0815b290:
 .L_0815bb2a:
 	movs	r1, #18
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #88]
 	movs	r3, #215
 	lsls	r3, r3, #2
@@ -1666,7 +1666,7 @@ Func_0815b290:
 	movs	r1, #6
 	bl	Math_Div
 	movs	r1, #6
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #288]
 	lsls	r3, r0, #1
 	ldrh	r1, [r2, r3]
@@ -1706,7 +1706,7 @@ Func_0815b290:
 .L_0815c018:
 	movs	r1, #18
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #224]
 	lsls	r3, r0, #1
 	ldrh	r1, [r2, r3]
@@ -1992,7 +1992,7 @@ Func_0815b290:
 	adds	r0, r3, r0
 	movs	r1, #6
 	asrs	r0, r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #4
 	ldr	r4, [sp, #20]
 	subs	r1, r1, r0
@@ -2405,7 +2405,7 @@ Func_0815b290:
 .L_0815c5e2:
 	movs	r1, #6
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #276]
 	lsls	r3, r0, #1
 	ldrh	r1, [r2, r3]

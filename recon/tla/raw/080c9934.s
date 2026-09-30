@@ -410,7 +410,7 @@ Func_080c9934:
 	ble.n	.L_080c9c80
 	movs	r0, #48
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r5, [pc, #292]
 	movs	r1, #150
 	lsls	r1, r1, #2
@@ -493,7 +493,7 @@ Func_080c9934:
 	beq.n	.L_080c9d5c
 	movs	r0, #187
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_080c9d64
 .L_080c9d5c:
 	movs	r0, #187
@@ -541,7 +541,7 @@ Func_080c9934:
 	bne.n	.L_080c9dba
 	movs	r0, #36
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080c9dba:
 	bl	Func_080ad2b8
 	pop	{r5, r6, r7, pc}
@@ -589,7 +589,7 @@ Func_080c9934:
 	movs	r3, #192
 	lsls	r3, r3, #1
 	adds	r0, r0, r3
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080c9e18:
 	pop	{r5, r6, pc}
 	.2byte 0x0000

@@ -1109,7 +1109,7 @@ Func_08101c7c:
 	movs	r3, #0
 	movs	r2, #6
 	str	r3, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r4, [sp, #8]
 	ldr	r1, [sp, #76]
 	adds	r0, r4, #1

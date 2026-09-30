@@ -1111,7 +1111,7 @@ Func_08149bac:
 	adds	r3, r3, r7
 	adds	r0, r0, r3
 	movs	r1, #104
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r5, [sp, #32]
 	mov	r8, r0
 	mov	r3, fp

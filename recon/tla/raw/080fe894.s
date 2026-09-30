@@ -125,7 +125,7 @@ Func_080fe894:
 	ldr	r0, [sp, #4]
 	mov	r1, r8
 	add	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #4]
 	lsls	r0, r0, #1
 	add	r0, fp
@@ -134,7 +134,7 @@ Func_080fe894:
 	mov	r0, sl
 	movs	r1, #3
 	adds	r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [sp, #4]
 	mov	sl, r0
 	lsls	r3, r3, #1
@@ -397,7 +397,7 @@ Func_080fe894:
 	ldr	r0, [sp, #0]
 	mov	r1, sl
 	add	r0, sl
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #0]
 	lsls	r0, r0, #1
 	adds	r0, r0, r6
@@ -406,7 +406,7 @@ Func_080fe894:
 	mov	r0, r9
 	movs	r1, #3
 	adds	r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [sp, #0]
 	mov	r9, r0
 	lsls	r3, r3, #1
@@ -910,7 +910,7 @@ Func_080fe894:
 	bne.n	.L_080ff00c
 	adds	r0, r7, r5
 	adds	r1, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [sp, #24]
 	adds	r7, r0, #0
 	cmp	r2, #0
@@ -948,7 +948,7 @@ Func_080fe894:
 .L_080ff028:
 	adds	r0, r7, #7
 	movs	r1, #7
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r7, r0, #0
 .L_080ff032:
 	adds	r1, r7, #0
@@ -1105,7 +1105,7 @@ Func_080fe894:
 	adds	r3, r2, r4
 	ldrb	r1, [r3, #0]
 	adds	r0, r0, r1
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #129
 	ldr	r4, [sp, #36]
 	lsls	r2, r0, #1

@@ -1162,7 +1162,7 @@ Func_080fcf14:
 	movs	r1, #5
 	mov	sl, r0
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #5
 	mov	r8, r0
 	adds	r0, r7, #0
@@ -1170,7 +1170,7 @@ Func_080fcf14:
 	movs	r1, #5
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	beq.n	.L_080fd87e
 	adds	r5, #1
@@ -2031,7 +2031,7 @@ Func_080fcf14:
 	adds	r0, r6, r2
 	mov	r1, fp
 	str	r4, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r6, r0, #0
 	movs	r0, #129
 	lsls	r3, r6, #1

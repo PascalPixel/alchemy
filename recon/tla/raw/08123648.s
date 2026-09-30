@@ -856,7 +856,7 @@ Func_08123648:
 	ldr	r3, [r4, #0]
 	adds	r2, #216
 	ldrh	r0, [r3, r2]
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r5, r0, #0
 	ldrh	r7, [r5, #40]
 	cmp	r7, #0

@@ -73,7 +73,7 @@ Func_080ce458:
 .L_080ce4e0:
 	movs	r3, #6
 	ldrsh	r0, [r5, r3]
-	bl	Func_080ccd48
+	bl	GameFlag_IsConditionActive
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_080ce556
@@ -341,7 +341,7 @@ Func_080ce458:
 	beq.n	.L_080ce71c
 	movs	r0, #72
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r3, [sp, #12]
 	movs	r0, #181
 	lsls	r0, r0, #1
@@ -604,7 +604,7 @@ Func_080ce458:
 .L_080ce948:
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #66
 	adds	r0, #255
 	bl	GameFlag_ClearBitFar
@@ -639,7 +639,7 @@ Func_080ce458:
 	movs	r5, #66
 	adds	r5, #255
 	adds	r0, r5, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	mov	r3, r8
 	cmp	r3, #0
 	beq.n	.L_080ce9b6

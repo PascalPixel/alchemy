@@ -98,12 +98,12 @@ Func_0804e1d8:
 	movs	r1, #12
 	adds	r0, #12
 	str	r2, [sp, #4]
-	bl	0x08002064
+	bl	Math_Mod
 	mov	fp, r0
 	mov	r0, r9
 	movs	r1, #3
 	adds	r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #2
 	mov	r9, r0
 	mov	r0, sl
@@ -393,7 +393,7 @@ Func_0804e1d8:
 	mov	r1, sl
 	str	r0, [sp, #8]
 	adds	r0, r5, r1
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r5, r0, #0
 	adds	r0, r7, #0
 	bl	0x080393fc

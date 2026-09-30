@@ -316,7 +316,7 @@ Func_080d7524:
 	adds	r3, r3, r2
 	adds	r0, #48
 	ldr	r7, [r3, #0]
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_080d77da
 .L_080d77d0:
 	adds	r0, r5, #0
@@ -538,7 +538,7 @@ Func_080d7524:
 .L_080d7992:
 	adds	r0, r6, #0
 	subs	r0, #172
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	strh	r5, [r7, #0]
 	b.n	.L_080d7a48
 .L_080d799e:
@@ -561,7 +561,7 @@ Func_080d7524:
 	beq.n	.L_080d7a3e
 	adds	r0, r6, #0
 	str	r1, [sp, #0]
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r1, [sp, #0]
 	b.n	.L_080d7a3e
 .L_080d79cc:
@@ -592,7 +592,7 @@ Func_080d7524:
 	movs	r1, #20
 	mov	r8, r0
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r5, #8
 	adds	r7, r0, #0
 	b.n	.L_080d7a10

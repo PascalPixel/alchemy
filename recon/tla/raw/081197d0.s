@@ -80,10 +80,10 @@ Func_081197d0:
 	str	r7, [r1, #28]
 	strh	r2, [r3, #0]
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #106
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	bl	Func_08014de4
 	ldr	r5, [pc, #560]
 	movs	r1, #76
@@ -918,7 +918,7 @@ Func_081197d0:
 	add	r3, r9
 	lsls	r0, r0, #2
 	ldr	r7, [r3, #0]
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_08119fea
 	.4byte 0x00000001
 	.2byte 0x0c84

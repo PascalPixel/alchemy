@@ -117,11 +117,11 @@ Func_08108b34:
 	lsls	r3, r3, #1
 	ldrsh	r5, [r3, r1]
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r1, #7
 	adds	r6, r0, #0
 	ldr	r0, [sp, #36]
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r0, #0
 	lsls	r1, r1, #5
 	ldr	r0, [sp, #28]
@@ -181,7 +181,7 @@ Func_08108b34:
 	bl	0x080ad2a8
 	adds	r5, r0, #0
 	mov	r0, r8
-	bl	0x080ad010
+	bl	Item_Get
 	str	r0, [sp, #8]
 	movs	r0, #126
 	bl	Audio_PlayCue
@@ -263,7 +263,7 @@ Func_08108b34:
 	ldr	r0, [pc, #524]
 	bl	0x081084f4
 	ldrh	r0, [r5, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r2, #1
 	str	r0, [sp, #4]
 	str	r2, [sp, #16]
@@ -706,7 +706,7 @@ Func_08108b34:
 	movs	r2, #0
 	ldrsh	r5, [r3, r2]
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	mov	r1, sl
 	movs	r2, #0
 	lsls	r3, r1, #5

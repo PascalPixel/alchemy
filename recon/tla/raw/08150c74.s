@@ -816,7 +816,7 @@ Func_08150c74:
 	mov	r3, sl
 	ldr	r1, [r3, #20]
 	mov	r0, r9
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #1
 	mov	r4, sl
 	adds	r0, #36
@@ -901,7 +901,7 @@ Func_08150c74:
 	mov	r5, sl
 	ldr	r1, [r5, #20]
 	mov	r0, r9
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r3, r0, #0
 	lsls	r2, r3, #1
 	adds	r2, #36
@@ -1396,7 +1396,7 @@ Func_08150c74:
 	adds	r3, #8
 	str	r3, [r6, #8]
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [r6, #4]
 	adds	r0, #2
 	lsls	r0, r0, #16
@@ -1459,7 +1459,7 @@ Func_08150c74:
 	bge.n	.L_08151894
 	movs	r1, #3
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r3, r5, #1
 	adds	r4, r0, #0
 	ldr	r0, [pc, #64]
@@ -2091,7 +2091,7 @@ Func_08150c74:
 .L_08151cfe:
 	adds	r0, r3, #0
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #2
 	bne.n	0x08151d18
 	movs	r1, #128

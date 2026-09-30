@@ -17,6 +17,9 @@ Math_DivU:
 	bx	r3
 	.2byte 0x0534
 	.2byte 0x0300
+	.global Math_Mod
+	.thumb_func
+Math_Mod:
 	ldr	r3, [pc, #0]
 	bx	r3
 	.2byte 0x0508

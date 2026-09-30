@@ -79,7 +79,7 @@ Func_080f8f40:
 	adds	r1, r7, #0
 	mov	r9, r0
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	beq.n	.L_080f8fde
 	movs	r3, #1
@@ -294,93 +294,3 @@ Func_080f8f40:
 	orrs	r3, r0
 	strh	r3, [r5, #8]
 	pop	{r5, pc}
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	adds	r5, r1, #0
-	adds	r6, r2, #0
-	sub	sp, #4
-	adds	r1, r6, #0
-	mov	r9, r0
-	mov	fp, r3
-	adds	r0, r5, #0
-	movs	r3, #49
-	ldr	r7, [sp, #36]
-	mov	sl, r3
-	bl	Math_Div
-	adds	r1, r6, #0
-	mov	r8, r0
-	adds	r0, r5, #0
-	bl	0x08002064
-	cmp	r0, #0
-	beq.n	.L_080f91a8
-	movs	r3, #1
-	add	r8, r3
-.L_080f91a8:
-	mov	r3, r8
-	subs	r7, r7, r3
-	cmp	r3, #1
-	ble.n	.L_080f9214
-	movs	r1, #241
-	movs	r0, #0
-	lsls	r1, r1, #8
-	movs	r3, #1
-	str	r0, [sp, #0]
-	adds	r1, #40
-	subs	r2, r7, #1
-	negs	r3, r3
-	mov	r0, r9
-	movs	r5, #0
-	bl	0x08038270
-	cmp	r5, r8
-	bge.n	.L_080f91fe
-.L_080f91cc:
-	cmp	r5, fp
-	bne.n	.L_080f91e2
-	movs	r3, #2
-	str	r3, [sp, #0]
-	mov	r0, r9
-	mov	r1, sl
-	adds	r2, r7, #0
-	subs	r3, #3
-	bl	0x08038270
-	b.n	.L_080f91f2
-.L_080f91e2:
-	movs	r3, #3
-	str	r3, [sp, #0]
-	mov	r0, r9
-	mov	r1, sl
-	adds	r2, r7, #0
-	subs	r3, #4
-	bl	0x08038270
-.L_080f91f2:
-	movs	r3, #1
-	adds	r5, #1
-	add	sl, r3
-	adds	r7, #1
-	cmp	r5, r8
-	blt.n	.L_080f91cc
-.L_080f91fe:
-	movs	r1, #241
-	movs	r2, #0
-	lsls	r1, r1, #8
-	movs	r3, #1
-	str	r2, [sp, #0]
-	adds	r1, #41
-	negs	r3, r3
-	mov	r0, r9
-	adds	r2, r7, #0
-	bl	0x08038270
-.L_080f9214:
-	add	sp, #4
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7, pc}
-	.2byte 0x0000

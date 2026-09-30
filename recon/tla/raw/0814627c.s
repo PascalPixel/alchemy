@@ -298,7 +298,7 @@ Func_0814627c:
 	adds	r0, r7, #0
 	str	r3, [sp, #40]
 	str	r7, [sp, #32]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r1, [sp, #36]
 	mov	r2, r9
 	adds	r0, r0, r1
@@ -773,7 +773,7 @@ Func_0814627c:
 	movs	r1, #10
 	adds	r0, r4, #0
 	str	r4, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r1, [sp, #32]
 	ldr	r2, [pc, #248]
 	adds	r0, r0, r1
@@ -1238,7 +1238,7 @@ Func_0814627c:
 	mov	r0, r9
 	movs	r1, #10
 	mov	sl, r2
-	bl	0x08002064
+	bl	Math_Mod
 	add	r0, fp
 	lsls	r3, r0, #3
 	ldr	r5, [pc, #356]

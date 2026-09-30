@@ -459,7 +459,7 @@ Func_080f9644:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #16
 	ands	r3, r2
@@ -636,7 +636,7 @@ Func_080f9644:
 	movs	r1, #0
 	ands	r0, r3
 	mov	sl, r1
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #16
 	ands	r3, r2
@@ -887,7 +887,7 @@ Func_080f9644:
 	lsls	r3, r3, #1
 	add	r3, r9
 	ldrh	r0, [r3, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #1
 	ands	r3, r2
@@ -1010,7 +1010,7 @@ Func_080f9644:
 	beq.n	.L_080f9ed4
 	ldr	r0, [pc, #28]
 	ands	r0, r2
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #2
 	ands	r3, r2
@@ -1216,7 +1216,7 @@ Func_080f9644:
 	movs	r1, #15
 	bl	Func_080f8ce8
 	ldrh	r0, [r5, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #1
 	ands	r3, r2
@@ -1326,7 +1326,7 @@ Func_080f9644:
 	lsls	r3, r3, #1
 	add	r3, r9
 	ldrh	r0, [r3, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #1
 	ands	r3, r2

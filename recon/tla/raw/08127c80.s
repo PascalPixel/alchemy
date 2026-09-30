@@ -704,35 +704,3 @@ BattleFormation_SelectRandomAvailableMember:
 	pop	{pc}
 	.2byte 0x0d0c
 	.2byte 0x0813
-	push	{r5, r6, lr}
-	movs	r3, #128
-	lsls	r3, r3, #1
-	adds	r6, r0, #0
-	adds	r3, #255
-	ands	r6, r3
-	movs	r5, #0
-	movs	r0, #0
-	cmp	r6, #0
-	beq.n	.L_081281e8
-	adds	r0, r6, #0
-	bl	0x080ad010
-	ldrb	r2, [r0, #3]
-	movs	r3, #8
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_081281d6
-	movs	r5, #1
-.L_081281d6:
-	movs	r3, #4
-	ands	r3, r2
-	lsls	r5, r5, #1
-	cmp	r3, #0
-	beq.n	.L_081281e2
-	adds	r5, #1
-.L_081281e2:
-	lsls	r5, r5, #9
-	adds	r5, r5, r6
-	adds	r0, r5, #0
-.L_081281e8:
-	pop	{r5, r6, pc}
-	.2byte 0x0000

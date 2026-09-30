@@ -75,7 +75,7 @@ Func_080fae2c:
 	adds	r0, #255
 	ands	r0, r3
 	mov	r8, r3
-	bl	0x080ad010
+	bl	Item_Get
 	mov	r3, fp
 	cmp	r3, #1
 	bne.n	.L_080faed8
@@ -472,7 +472,7 @@ Func_080fae2c:
 .L_080fb1f6:
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #24
 	asrs	r7, r0, #24
 	movs	r1, #3
@@ -503,7 +503,7 @@ Func_080fae2c:
 	adds	r0, r7, #3
 	movs	r1, #3
 	mov	r9, r2
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, sl
 	adds	r2, #2
 	lsrs	r3, r2, #31
@@ -747,7 +747,7 @@ Func_080fae2c:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	mov	r8, r0
 	cmp	r3, #0

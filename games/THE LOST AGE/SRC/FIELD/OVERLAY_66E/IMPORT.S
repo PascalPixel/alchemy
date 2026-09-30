@@ -16,7 +16,7 @@
 	overlay_veneer Func_08020300
 	overlay_veneer Func_08038040
 	overlay_veneer Func_08038120
-	overlay_veneer Func_080ad010
+	overlay_veneer Item_Get
 	overlay_veneer Func_080ad038
 	overlay_veneer Func_080ad1d8
 	overlay_veneer Func_080ad2e8

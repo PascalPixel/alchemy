@@ -292,7 +292,7 @@ Func_08109188:
 	bl	Owner_GetState
 	adds	r7, r0, #0
 	mov	r0, r9
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r5, r0, #0
 	movs	r0, #1
 	negs	r0, r0
@@ -357,7 +357,7 @@ Func_08109188:
 	cmp	r5, #14
 	bgt.n	.L_0810945a
 	ldrh	r0, [r6, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	adds	r6, #2
 	cmp	r3, #6
@@ -603,7 +603,7 @@ Func_08109188:
 	bl	Owner_GetState
 	adds	r7, r0, #0
 	adds	r0, r6, #0
-	bl	0x080ad010
+	bl	Item_Get
 	mov	r8, r0
 	mov	r3, r8
 	ldrb	r2, [r3, #3]
@@ -803,7 +803,7 @@ Func_08109188:
 	adds	r0, r7, r2
 	mov	r1, r9
 	str	r3, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #128
 	movs	r2, #132
 	lsls	r3, r3, #19
@@ -914,7 +914,7 @@ Func_08109188:
 	adds	r7, r0, #0
 	mov	r0, r8
 	adds	r5, r2, #0
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r6, r0, #0
 	movs	r3, #0
 	ldrb	r1, [r6, #2]
@@ -986,7 +986,7 @@ Func_08109188:
 	adds	r6, #255
 	ands	r6, r3
 	adds	r0, r6, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrh	r2, [r7, r5]
 	movs	r3, #128
 	lsls	r3, r3, #2
@@ -1011,7 +1011,7 @@ Func_08109188:
 	lsls	r3, r0, #1
 	adds	r3, #216
 	ldrh	r0, [r7, r3]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #2
 	ands	r3, r2
@@ -1102,13 +1102,13 @@ Func_08109188:
 	adds	r5, #255
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	movs	r0, #0
 	cmp	r3, #6
 	beq.n	.L_08109a92
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #8
 	ands	r3, r2
@@ -1127,10 +1127,10 @@ Func_08109188:
 .L_08109a98:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrh	r5, [r0, #0]
 	adds	r0, r6, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #8
 	ands	r3, r2
@@ -1460,7 +1460,7 @@ Func_08109188:
 	mov	r2, fp
 	movs	r1, #5
 	ldr	r6, [r2, #36]
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #5
 	adds	r5, r0, #0
 	mov	r0, sl
@@ -1621,7 +1621,7 @@ Func_08109188:
 	add	sl, r3
 	add	r0, sl
 	ldr	r1, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #4]
 	movs	r1, #1
 	mov	sl, r0
@@ -1640,7 +1640,7 @@ Func_08109188:
 	add	sl, r2
 	add	r0, sl
 	ldr	r1, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #4]
 	movs	r3, #1
 	mov	sl, r0
@@ -1841,7 +1841,7 @@ Func_08109188:
 	adds	r6, r0, #0
 	adds	r5, #216
 	ldrh	r0, [r6, r5]
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r2, #1
 	str	r2, [sp, #0]
 	mov	r8, r0
@@ -1945,7 +1945,7 @@ Func_08109188:
 	ands	r2, r3
 	mov	r9, r2
 	mov	r0, r9
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #4
 	ands	r3, r2
@@ -2116,7 +2116,7 @@ Func_08109188:
 .L_0810a2ac:
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldrh	r3, [r0, #0]
 	lsrs	r0, r3, #2
 	movs	r3, #128

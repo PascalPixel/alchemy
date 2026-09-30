@@ -147,6 +147,9 @@ GameFlag_TestFar:
 	bx	lr
 	.2byte 0x0040
 	.2byte 0x0200
+	.global GameFlag_SetBitFar
+	.thumb_func
+GameFlag_SetBitFar:
 	movs	r3, #7
 	ands	r3, r0
 	ldr	r1, [pc, #16]

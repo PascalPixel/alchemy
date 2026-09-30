@@ -44,7 +44,7 @@ Func_08000100:
 	.global Func_08000108
 	.thumb_func
 Func_08000108:
-	overlay_veneer Func_080149b4
+	overlay_veneer Math_IntegerSqrt
 	.global Func_08000110
 	.thumb_func
 Func_08000110:

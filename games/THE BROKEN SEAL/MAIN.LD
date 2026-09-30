@@ -1240,7 +1240,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/PROJECT_CONDITIONAL_POSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/GET_OBJECT_TABLE_VALUE.o"(.text)
         "*/recon/tbs/raw/080b8572.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080b8574.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ADJUST_CAMERA_BY_SHOULDER_KEYS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PAIRED_TRANS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_APPROACH.o"(.text)

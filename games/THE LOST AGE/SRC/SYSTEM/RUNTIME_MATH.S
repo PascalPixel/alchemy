@@ -56,6 +56,8 @@ AlchemyUncreditedEnd_08000818:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
 	.thumb
+	.global IwramSqrt
+IwramSqrt:
 AlchemyUncredited_0800088c:
 	bx	pc
 	.2byte	0x0200

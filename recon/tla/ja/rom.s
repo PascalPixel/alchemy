@@ -10,7 +10,10 @@ Resource_Data000:
 	.incbin "baserom.gba", 0x00000810, 0x00000008
 	.global IwramFillWords
 IwramFillWords:
-	.incbin "baserom.gba", 0x00000818, 0x000000f4
+	.incbin "baserom.gba", 0x00000818, 0x00000074
+	.global IwramSqrt
+IwramSqrt:
+	.incbin "baserom.gba", 0x0000088c, 0x00000080
 	.section .rom.000019f4, "ax"
 	.incbin "baserom.gba", 0x000019f4, 0x00000020
 	.section .rom.00001c90, "ax"
@@ -2559,8 +2562,8 @@ Object_AttachWorkTargetToObject:
 	.thumb_func
 Motion_CamBounds:
 	.incbin "baserom.gba", 0x000d43ec, 0x00000580
-	.section .rom.000d4980, "ax"
-	.incbin "baserom.gba", 0x000d4980, 0x0000016c
+	.section .rom.000d4a34, "ax"
+	.incbin "baserom.gba", 0x000d4a34, 0x000000b8
 	.section .rom.000d4aec, "ax"
 	.global Object_SetActionCallback
 	.type Object_SetActionCallback, %function

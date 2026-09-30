@@ -933,7 +933,7 @@
     "*/recon/tla/de/rom.o"(.rom.000e17b4)
     "*/recon/tla/de/rom.o"(.rom.000e189c)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ACTION.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000e19a0)
+    "*/recon/tla/de/rom.o"(.rom.000e1a54)
     "*/recon/tla/de/rom.o"(.rom.000e1aa8)
     "*/recon/tla/de/rom.o"(.rom.000e1ab4)
     "*/recon/tla/de/rom.o"(.rom.000e1b0c)

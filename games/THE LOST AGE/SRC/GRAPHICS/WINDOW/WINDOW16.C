@@ -1,15 +1,8 @@
 #include "TYPES.H"
-#include "SCENE.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
-void Runtime_RemapBytesByTableFar(void *, s32);
-u32 Resource_DecodeByteLz(const void *, void *);
-void Runtime_ReleaseHeapBlock(s32);
 
-/* graphics/resource/RenderResource_LoadFrame.c */
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-
-void VramBlock_LoadCached(s32, s32, void *);
+void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 
 void *RenderResource_CreateFrame(
     s32 arg0,

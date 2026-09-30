@@ -807,7 +807,7 @@
     "*/recon/tla/es/rom.o"(.rom.000dd698)
     "*/recon/tla/es/rom.o"(.rom.000dd708)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ACTION.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000dd994)
+    "*/recon/tla/es/rom.o"(.rom.000dda48)
     "*/recon/tla/es/rom.o"(.rom.000ddaa8)
     "*/recon/tla/es/rom.o"(.rom.000ddb00)
     "*/recon/tla/es/rom.o"(.rom.000ddcfc)

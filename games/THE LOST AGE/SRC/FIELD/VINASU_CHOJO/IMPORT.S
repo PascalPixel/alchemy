@@ -10,6 +10,9 @@
 	overlay_veneer Func_080000c0
 	overlay_veneer Func_080000f8
 	overlay_veneer Func_080003c8
+	.global Engine_GameFlagSet
+	.thumb_func
+Engine_GameFlagSet:
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
 	overlay_veneer Object_SetMode
@@ -17,16 +20,37 @@
 	overlay_veneer Func_080200c0
 	overlay_veneer Object_SetPosition
 	overlay_veneer Object_CommitPosition
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
 	overlay_veneer Func_08020178
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_08020210
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020220
+	.global Engine_MessageShowCentered
+	.thumb_func
+Engine_MessageShowCentered:
 	overlay_veneer Func_08038040
 	overlay_veneer Func_080ad110
+	.global Engine_EventWait
+	.thumb_func
+Engine_EventWait:
 	overlay_veneer Func_080c8010
+	.global Engine_EventBegin
+	.thumb_func
+Engine_EventBegin:
 	overlay_veneer Func_080c8018
+	.global Engine_EventEnd
+	.thumb_func
+Engine_EventEnd:
 	overlay_veneer Func_080c8020
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
 	overlay_veneer Func_080c8088
 	overlay_veneer Func_080c8098
 	overlay_veneer Func_080c80a0
@@ -36,6 +60,9 @@
 	overlay_veneer Func_080c80d8
 	overlay_veneer Func_080c80f0
 	overlay_veneer Func_080c80f8
+	.global Engine_ActorSetAnimation
+	.thumb_func
+Engine_ActorSetAnimation:
 	overlay_veneer Func_080c8118
 	overlay_veneer Func_080c8128
 	overlay_veneer Func_080c8140
@@ -59,11 +86,20 @@
 	overlay_veneer Func_080c84b0
 	overlay_veneer Func_080c84b8
 	overlay_veneer Func_080c84c0
+	.global Engine_EventPrepareSpeakers
+	.thumb_func
+Engine_EventPrepareSpeakers:
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c85f8
 	overlay_veneer Func_080c8600
 	overlay_veneer Func_080c8690
+	.global Engine_PartyGetLeaderActor
+	.thumb_func
+Engine_PartyGetLeaderActor:
 	overlay_veneer Func_080c8778
 	overlay_veneer Func_080c8798
 	overlay_veneer Func_080c87a0
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
 	overlay_veneer Audio_PlayCue

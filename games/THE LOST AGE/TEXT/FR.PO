@@ -24431,11 +24431,11 @@ msgctxt "message"
 msgid "06105"
 msgstr "Pas par là, {actor_name:6}!{line_break}Le lieu du rendez-vous{line_break}se trouve plus au sud.{page_break}Nous devons redescendre{line_break}et entrer dans cette caverne.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoReliefWords"
 msgid "06106"
 msgstr "Des mots sont gravés{line_break}dans le marbre...{page_break}Pour gravir le Phare de Vénus,{line_break}commencez par chercher{line_break}la source du pouvoir.{page_break}La recherche de la vérité{line_break}vous conduira vers ce pouvoir.{page_break}Mais la voie révélée{line_break}n'est qu'une étape.{page_break}La source véritable se trouve{line_break}sur des terres lointaines,{page_break}dans un dédale vieux{line_break}de plusieurs éons.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoTrueHeart"
 msgid "06107"
 msgstr "Le vrai chemin{line_break}sera révélé à un{line_break}c¾ur pur.{end_wait}"
 

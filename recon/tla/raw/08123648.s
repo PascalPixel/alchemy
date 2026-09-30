@@ -373,7 +373,7 @@ Func_08123648:
 .L_0812390c:
 	cmp	r5, #255
 	bne.n	.L_081238d0
-	bl	Func_081201c4
+	bl	BattleEv_DispatchQueued
 	bl	.L_0812417c
 .L_08123918:
 	bl	0x08038118
@@ -618,7 +618,7 @@ Func_08123648:
 	ldr	r0, [pc, #52]
 	bl	0x080381c8
 .L_08123bd2:
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 	mov	r4, fp
 	ldr	r2, [r4, #0]
 	movs	r3, #7
@@ -1417,7 +1417,7 @@ Func_08123648:
 	beq.n	.L_08124256
 	movs	r0, #1
 .L_08124256:
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	adds	r0, #8
 	str	r0, [sp, #4]
 	mov	r3, r8

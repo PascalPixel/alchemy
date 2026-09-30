@@ -6,7 +6,10 @@
 gHeapSlots:
 	.space 0x00000070
 	.section .sym_iwram,"aw",%nobits
-	.space 0x000000d4
+	.space 0x000000b0
+	.global gInput
+gInput:
+	.space 0x00000024
 	.global gDecodeFillByte
 gDecodeFillByte:
 	.space 0x0000001c

@@ -1,66 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x0200b7f8
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x0200b828
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x0200b844
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #2
-	beq .L_02000054_0
-	cmp r3, #2
-	bgt .L_02000054_1
-	cmp r3, #1
-	beq .L_02000054_2
-	b .L_02000054_3
-.L_02000054_1:
-	cmp r3, #3
-	beq .L_02000054_2
-	cmp r3, #4
-	beq .L_02000054_0
-	b .L_02000054_3
-.L_02000054_2:
-	ldr r0, [pc, #16]
-	b .L_02000054_4
-.L_02000054_0:
-	ldr r0, [pc, #16]
-	b .L_02000054_4
-.L_02000054_3:
-	ldr r0, [pc, #16]
-.L_02000054_4:
-	pop {pc}
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0200b8f8
-	.4byte 0x0200b910
-	.4byte 0x0200b8ec
+	.section .text.x02008098,"ax",%progbits
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	bl 0x0200b1d8
@@ -2330,74 +2270,7 @@ Func_0200153c:
 	bl 0x0200b2f0
 	pop	{pc}
 	.2byte 0x0000
-	.global Func_02001650
-	.thumb_func
-Func_02001650:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #32]
-	movs r2, #132
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #128
-	lsls r2, r2, #7
-	str r2, [r3, #24]
-	movs r2, #128
-	lsls r2, r2, #6
-	sub sp, #8
-	str r2, [r3, #28]
-	movs r3, #1
-	str r3, [sp, #0]
-	str r3, [sp, #4]
-	movs r2, #75
-	movs r3, #8
-	movs r0, #72
-	movs r1, #10
-	bl 0x0200b188
-	movs r0, #9
-	movs r1, #2
-	bl 0x0200b240
-	sub sp, #-8
-	pop {pc}
-	.2byte 0x0000
-	.global Func_0200168c
-	.thumb_func
-Func_0200168c:
-	push {r5, r6, r7, lr}
-	adds r4, r0, #0
-	adds r6, r2, #0
-	adds r5, r1, #0
-	lsls r3, r3, #16
-	movs r0, #244
-	asrs r7, r3, #16
-	lsls r0, r0, #1
-	adds r3, r6, #0
-	adds r1, r4, #0
-	adds r2, r5, #0
-	bl 0x0200b178
-	adds r6, r0, #0
-	cmp r6, #0
-	beq .L_0200168c_0
-	movs r0, #151
-	ldr r5, [r6, #80]
-	bl 0x0200b328
-	adds r0, r6, #0
-	movs r1, #1
-	bl 0x0200b168
-	ldr r1, [pc, #20]
-	adds r0, r6, #0
-	bl 0x0200b170
-	adds r2, r6, #0
-	movs r3, #0
-	adds r2, #85
-	strb r3, [r2]
-	strb r3, [r5, #26]
-	strh r7, [r5, #18]
-.L_0200168c_0:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-	.4byte 0x0200b97c
+	.section .text.x020096d8,"ax",%progbits
 	push	{r5, r6, lr}
 	mov	r6, fp
 	mov	r5, sl
@@ -4609,39 +4482,7 @@ Func_0200168c:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0000
-	.global Func_02002c30
-	.thumb_func
-Func_02002c30:
-	bx lr
-	.2byte 0x0000
-	.global Func_02002c34
-	.thumb_func
-Func_02002c34:
-	bx lr
-	.2byte 0x0000
-	.global Func_02002c38
-	.thumb_func
-Func_02002c38:
-	push {r5, lr}
-	movs r5, #180
-	bl 0x0200ac30
-.L_02002c38_1:
-	movs r3, #1
-	subs r5, #1
-	negs r3, r3
-	cmp r5, r3
-	beq .L_02002c38_0
-	movs r0, #1
-	bl 0x0200b138
-	ldr r3, [pc, #12]
-	ldr r3, [r3, #4]
-	cmp r3, #0
-	beq .L_02002c38_1
-.L_02002c38_0:
-	bl 0x0200ac34
-	pop {r5, pc}
-	.2byte 0x0000
-	.4byte 0x03001150
+	.section .text.x0200ac64,"ax",%progbits
 	push	{r5, lr}
 	bl 0x0200ac30
 	bl 0x0200b1b8
@@ -4927,11 +4768,7 @@ Func_02002ec8:
 	.4byte 0x0200aefc
 	.2byte 0x000c
 	.2byte 0x0000
-	.global Func_02002f84
-	.thumb_func
-Func_02002f84:
-	movs r0, #0
-	bx lr
+	.section .text.x0200af88,"ax",%progbits
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	bl 0x0200b1d8
@@ -5432,6 +5269,8 @@ Func_02002f84:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.global gIdejimaEntrances
+gIdejimaEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -5444,6 +5283,8 @@ Func_02002f84:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaExits
+gIdejimaExits:
 	.4byte 0x00000009
 	.4byte 0x00303009
 	.4byte 0x00401002
@@ -5451,6 +5292,8 @@ Func_02002f84:
 	.4byte 0x00c03000
 	.4byte 0x00d41002
 	.4byte 0x000001ff
+	.global gIdejimaPlacements
+gIdejimaPlacements:
 	.4byte 0xffff0038
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -5493,15 +5336,21 @@ Func_02002f84:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaEvents
+gIdejimaEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaEventsEntrance1
+gIdejimaEventsEntrance1:
 	.4byte 0x0000c602
 	.4byte 0xffff0003
 	.4byte 0x02008641
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaEventsWake
+gIdejimaEventsWake:
 	.4byte 0x00000001
 	.4byte 0xffff0004
 	.4byte 0x00000004
@@ -5529,6 +5378,8 @@ Func_02002f84:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaSpawnScript
+gIdejimaSpawnScript:
 	.4byte 0x00000000
 	.4byte 0x0000002e
 	.4byte 0x00000026

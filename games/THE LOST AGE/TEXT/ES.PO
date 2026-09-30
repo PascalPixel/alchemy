@@ -24459,11 +24459,11 @@ msgctxt "message"
 msgid "06112"
 msgstr "¡Por ahí no, {actor_name:6}!{line_break}El punto de encuentro{line_break}está bajando por aquí.{page_break}Bajemos y entremos{line_break}en esa cueva.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoReliefWords"
 msgid "06113"
 msgstr "Hay unas palabras{line_break}esculpidas en relieve...{page_break}Si queréis subir al{line_break}Faro de Venus, primero{line_break}busca su poder.{page_break}Para obtenerlo, debes ver{line_break}con los ojos de la verdad.{line_break}Así se abrirá el camino.{page_break}Pero el camino que desvelo{line_break}no es el comienzo.{page_break}El verdadero comienzo está{line_break}en antiguos pasadizos{line_break}de tierras lejanas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoTrueHeart"
 msgid "06114"
 msgstr "El verdadero camino sólo puede{line_break}ser revelado a aquel que tenga{line_break}un corazón verdadero.{end_wait}"
 

@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_080dd528
+	.balign 4
+	.global BattleFx_StartItemBreak
 	.thumb_func
-Func_080dd528:
+BattleFx_StartItemBreak:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -131,6 +132,9 @@ Func_080dd528:
 	.4byte 0x080dcf8d
 	.2byte 0x0e78
 	.2byte 0x080f
+	.global BattleFx_SnapScaleToFull
+	.thumb_func
+BattleFx_SnapScaleToFull:
 	push	{lr}
 	cmp	r0, #0
 	beq.n	.L_080dd664

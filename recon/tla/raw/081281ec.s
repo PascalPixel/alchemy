@@ -407,7 +407,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #676]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_081284f4:
 	mov	r2, sp
 	adds	r2, #28
@@ -488,7 +488,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #504]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 	movs	r3, #252
 	lsls	r3, r3, #6
 	adds	r3, #255
@@ -544,7 +544,7 @@ Func_081281ec:
 	bl	Audio_PlayCue
 	ldr	r0, [pc, #388]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_0812861a:
 	subs	r7, #1
 	cmp	r7, #0
@@ -558,7 +558,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #360]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_0812863a:
 	mov	r3, r8
 	movs	r2, #6
@@ -569,7 +569,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #340]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_08128654:
 	mov	r3, r8
 	movs	r2, #8
@@ -580,7 +580,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #316]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_0812866e:
 	mov	r3, r8
 	movs	r2, #10
@@ -591,7 +591,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #296]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_08128688:
 	mov	r3, r8
 	movs	r2, #12
@@ -602,7 +602,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #272]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_081286a2:
 	mov	r3, r8
 	movs	r2, #14
@@ -613,7 +613,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #252]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_081286bc:
 	movs	r2, #166
 	mov	r1, sl
@@ -653,7 +653,7 @@ Func_081281ec:
 	ldr	r3, [sp, #24]
 	ldr	r0, [r3, #0]
 	bl	0x080ad1d8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_08128712:
 	ldr	r0, [pc, #168]
 	mov	sl, r0
@@ -692,7 +692,7 @@ Func_081281ec:
 	bl	0x08038120
 	ldr	r0, [pc, #104]
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 	ldr	r2, [sp, #24]
 	ldrh	r0, [r2, r5]
 	bl	0x080ad028

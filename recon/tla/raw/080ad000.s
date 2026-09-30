@@ -2,16 +2,16 @@
 	.thumb
 	.global Resource_FarCall005
 Resource_FarCall005:
-	.global Func_080ad000
+	.global Trade_GetOfferStateFar
 	.thumb_func
-Func_080ad000:
+Trade_GetOfferStateFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xd349
 	.2byte 0x080a
-	.global Func_080ad008
+	.global Owner_RecalculateStatsFar
 	.thumb_func
-Func_080ad008:
+Owner_RecalculateStatsFar:
 	.global BattleUnit_Recalculate
 	.thumb_func
 BattleUnit_Recalculate:

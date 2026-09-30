@@ -3,7 +3,7 @@
  * its messages 0xb98 and 0xc40 are still Value_ symbols. */
 /* 2026-09-29: the address macros for the menu, window and key cells are now
  * extern declarations of the build's names (gMenuWork, gWindowWork,
- * gKeysHeld, gKeysRepeat, gKeyState, Data_03001af8) and callees are
+ * gKeysHeld, gKeysRepeat, gKeyState, gKeysPressedLatch) and callees are
  * renamed, so the draft compiles again; alchemy permute scores 16667. */
 /* NONMATCHING: shared callee return types audited on 2026-09-26.
  * 4872 of 4888 bytes, 2287 differing halfwords, 1169 aligned edits.
@@ -111,7 +111,7 @@ enum DjinnTutorialMessage {
 extern struct DjinnMenuState *gMenuWork;
 extern u8 *gWindowWork;
 extern u32 gKeysHeld;
-extern u32 Data_03001af8;
+extern u32 gKeysPressedLatch;
 extern u32 gKeysRepeat;
 extern u32 gKeyState;
 extern const char Data_080af28c[];
@@ -355,7 +355,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         else
             UiMenu_PositionCursor(x * 56 - 8, y * 8 + 60);
         WaitFrames(1);
-        if (!(gKeysHeld & 0x100) || (Data_03001af8 & 0x100)) {
+        if (!(gKeysHeld & 0x100) || (gKeysPressedLatch & 0x100)) {
             if (groupMode)
                 redraw = 1;
             groupMode = 0;
@@ -541,7 +541,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
                 ok = 1;
             groupMode = 1;
-            Data_03001af8 = 0;
+            gKeysPressedLatch = 0;
             if (ok == 0) {
                 Audio_PlayCue(114);
                 RenderOutput_ClearListFar(state->djinn_window);

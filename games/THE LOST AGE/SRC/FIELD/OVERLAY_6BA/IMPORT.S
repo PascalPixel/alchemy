@@ -34,7 +34,7 @@
 	overlay_veneer Func_08038318
 	overlay_veneer Func_08038320
 	overlay_veneer Func_08038340
-	overlay_veneer Func_080ad008
+	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Func_080ad010
 	overlay_veneer Func_080ad020
 	overlay_veneer Func_080ad028
@@ -44,7 +44,7 @@
 	overlay_veneer Func_080ad100
 	overlay_veneer Func_080ad110
 	overlay_veneer Func_080ad150
-	overlay_veneer Func_080ad158
+	overlay_veneer Djinn_ActivateFar
 	overlay_veneer Func_080ad198
 	overlay_veneer Func_080ad1d8
 	overlay_veneer Func_080ad1f8

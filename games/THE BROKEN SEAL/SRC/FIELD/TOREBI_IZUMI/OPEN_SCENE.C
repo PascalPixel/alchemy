@@ -7,7 +7,7 @@ extern u8 MsgTorebiWonItemGo[];
 extern u8 MsgTorebiWonItemGo2[];
 extern u8 MsgTorebiYaLostNumber[];
 extern u8 MsgTorebiYaWonNumber[];
-extern u8 Data_03001d18; /* OAM buffer pending */
+extern u8 gOamCopyEnabled; /* OAM buffer pending */
 
 void SceneState_InitFourActorRecordsAndInstallTask(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
@@ -55,7 +55,7 @@ s32 TorebiIzumi_OpenScene(void)
         if (Engine_GameFlagIsSet(0x950)) {
             Engine_ActorSetPosition(17, 0, 0);
         }
-        Data_03001d18 = 1;
+        gOamCopyEnabled = 1;
         gEventWork->start_transition = 0x209;
         if (gGameState.entrance == 10) {
             Engine_ActorSetChildValue(8, 1);

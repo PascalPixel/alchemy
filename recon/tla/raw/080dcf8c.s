@@ -142,7 +142,7 @@ Func_080dcf8c:
 	ldr	r1, [pc, #892]
 	bl	Object_SetCallback
 	mov	r0, fp
-	bl	Func_080dd528
+	bl	BattleFx_StartItemBreak
 	mov	r9, r0
 	cmp	r0, #0
 	bne.n	.L_080dd0bc
@@ -551,7 +551,7 @@ Func_080dcf8c:
 .L_080dd40a:
 	bl	0x080dc384
 	mov	r0, r9
-	bl	Func_080dd668
+	bl	UpdateRisingParticleBurst
 .L_080dd414:
 	add	sp, #68
 	pop	{r3, r5, r6, r7}

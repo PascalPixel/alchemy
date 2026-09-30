@@ -94,7 +94,7 @@ Func_0815f16c:
 	lsls r3, r3, #1
 	ldr r0, .L_0815f51c
 	movs r2, #40
-	bl Func_0817ea14
+	bl Graphics_PackTileRows
 	ldr r1, [sp, #124]
 	cmp r1, #5
 	beq .L_0815f236

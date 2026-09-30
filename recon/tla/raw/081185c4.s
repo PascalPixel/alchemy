@@ -24,7 +24,7 @@ Func_081185c4:
 	ldr r4, [sp, #0]
 	adds r6, r0, #0
 	ldrb r0, [r5, r4]
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	bne .L_081185fa

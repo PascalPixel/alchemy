@@ -254,7 +254,7 @@ void Func_0815e1ec(void *, s32 *);
 void Func_0815e20c(s32, s32 *);
 void Func_0815f000(s32, s32, s32, s32, s32, s32);
 void Func_0815f0a0(s32);
-void Func_0817ea14(void *, void *, s32, s32);
+void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
 void Func_081963ec(s32, s32);
 void Func_08196404(s32, s32, s32, s32, s32);
@@ -372,7 +372,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     Func_08157cf4((s32)&Value_00000134, tiles, 0, 0);
     Func_08157cf4((s32)&Value_00000159, work->frames, 1, 0);
     Func_08157cf4((s32)&Value_0000015c, EWRAM_BUF, 1, 0);
-    Func_0817ea14(EWRAM_BUF, work->frames + 0x5100, 40, 0x120);
+    Graphics_PackTileRows(EWRAM_BUF, work->frames + 0x5100, 40, 0x120);
 
     if (kind == 5 || kind == 53 || kind == 78) {
         Func_08157cf4((s32)&Value_0000013e, EWRAM_BUF, 1, 0);

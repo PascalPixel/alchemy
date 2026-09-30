@@ -37,7 +37,7 @@ Func_0811ddd8:
 .L_0811de16:
 	ldrb r0, [r5]
 	str r1, [sp, #0]
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	ldr r1, [sp, #0]
 	cmp r0, #0
 	beq .L_0811de4c

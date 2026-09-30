@@ -1281,7 +1281,7 @@ Func_0812381c:
 	cmp r3, r9
 	bne .L_08124320
 	ldrb r0, [r5, #2]
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	cmp r0, #0
 	beq .L_08124320
 	ldrb r1, [r5]

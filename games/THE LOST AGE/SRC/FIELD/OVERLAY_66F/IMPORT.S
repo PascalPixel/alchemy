@@ -6,8 +6,8 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_080000c0
-	overlay_veneer Func_08000120
+	overlay_veneer WaitFramesFar
+	overlay_veneer Math_CosineFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Object_SetMode
@@ -18,22 +18,22 @@
 	overlay_veneer Func_080201c0
 	overlay_veneer Func_080201e8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c80a0
-	overlay_veneer Func_080c80b0
-	overlay_veneer Func_080c80c0
-	overlay_veneer Func_080c80c8
-	overlay_veneer Func_080c80d0
-	overlay_veneer Func_080c80d8
-	overlay_veneer Func_080c80f0
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8128
-	overlay_veneer Func_080c8138
-	overlay_veneer Func_080c8148
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
 	overlay_veneer Func_080c8158
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0
@@ -48,10 +48,10 @@
 	overlay_veneer Func_080c83a8
 	overlay_veneer Func_080c83b8
 	overlay_veneer Func_080c84e0
-	overlay_veneer Func_080c8600
+	overlay_veneer Object_LinkObjectAndSetCallbackFar
 	overlay_veneer Func_080c86a8
 	overlay_veneer Func_080c86e8
 	overlay_veneer Func_080c8778
 	overlay_veneer Func_080c8860
-	overlay_veneer Func_080c88f8
+	overlay_veneer ObjectMotion_ResetTargetsAndVelocityFar
 	overlay_veneer Audio_PlayCue

@@ -310,7 +310,7 @@ Func_0810b1b4:
 	movs	r3, #1
 	strb	r3, [r2, #0]
 	mov	r0, r9
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	ldr	r3, [r0, #80]
 	movs	r2, #128
 	ldr	r3, [r3, #40]
@@ -376,7 +376,7 @@ Func_0810b1b4:
 	adds	r0, r5, #0
 	bl	Func_0810b520
 	mov	r0, r9
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	ldr	r3, [r0, #80]
 	movs	r1, #0
 	ldr	r3, [r3, #40]
@@ -512,7 +512,7 @@ Func_0810b520:
 	movs	r3, #4
 	strb	r3, [r2, #0]
 	adds	r0, r5, #0
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	ldr	r3, [r0, #80]
 	movs	r1, #128
 	ldr	r3, [r3, #40]
@@ -539,7 +539,7 @@ Func_0810b520:
 	mov	r3, r9
 	mov	r2, fp
 	str	r3, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r3, #255
 	adds	r5, r0, #0
 	strb	r3, [r5, #15]

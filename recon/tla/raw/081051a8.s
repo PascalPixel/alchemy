@@ -52,7 +52,7 @@ Func_081051a8:
 	cmp	r5, #0
 	beq.n	.L_0810521a
 	movs	r1, #2
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldrb	r3, [r5, #9]
 	movs	r1, #13
 	negs	r1, r1
@@ -164,7 +164,7 @@ Func_081052ac:
 	cmp	r5, #0
 	beq.n	.L_081052f4
 	mov	r1, r8
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldrb	r2, [r5, #9]
 	movs	r3, #13
 	negs	r3, r3

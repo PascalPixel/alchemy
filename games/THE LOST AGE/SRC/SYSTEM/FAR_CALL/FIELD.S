@@ -68,9 +68,9 @@ Func_080c87f0:
 	.thumb_func
 Func_080c87f8:
 	overlay_veneer Func_080dc1b0
-	.global Func_080c8800
+	.global Field_BeginPaletteTransitionFar
 	.thumb_func
-Func_080c8800:
+Field_BeginPaletteTransitionFar:
 	overlay_veneer Field_BeginPaletteTransition
 	.global Func_080c8808
 	.thumb_func

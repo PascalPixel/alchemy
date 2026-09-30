@@ -372,7 +372,7 @@ Func_080d5d70:
 	movs	r6, #26
 	subs	r6, r6, r2
 	mov	r8, r0
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	movs	r1, #0
 	mov	r2, r8
 	strb	r1, [r2, #26]
@@ -423,7 +423,7 @@ Func_080d5d70:
 	movs	r1, #12
 	adds	r1, #255
 	adds	r0, r6, #0
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	movs	r1, #0
 	strb	r1, [r6, #26]
 	movs	r3, #15

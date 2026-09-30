@@ -2812,11 +2812,11 @@ Func_08027e20:
 	subs	r6, #20
 	movs	r3, #0
 	ldrsh	r0, [r6, r3]
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	adds	r5, r0, #0
 	movs	r1, #2
 	ldrsh	r0, [r6, r1]
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	ldr	r2, [r5, #8]
 	ldr	r3, [r0, #8]
 	cmp	r2, r3
@@ -2827,11 +2827,11 @@ Func_08027e20:
 .L_0802944e:
 	movs	r3, #0
 	ldrsh	r0, [r6, r3]
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	adds	r5, r0, #0
 	movs	r1, #2
 	ldrsh	r0, [r6, r1]
-	bl	Func_080c8088
+	bl	Object_GetByIdFar
 	ldr	r2, [r5, #12]
 	ldr	r3, [r0, #12]
 	cmp	r2, r3

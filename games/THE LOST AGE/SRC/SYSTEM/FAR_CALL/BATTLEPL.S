@@ -24,9 +24,9 @@ Func_08118088:
 	overlay_veneer ColorBuffer_Scale
 	overlay_veneer BattlePlacement_UpdateTimedEntries
 	overlay_veneer Func_0811a484
-	.global Func_08118108
+	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	.thumb_func
-Func_08118108:
+BattlePlacement_UpdateTimedEntriesTwentyTimesFar:
 	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimes
 	.global Func_08118110
 	.thumb_func

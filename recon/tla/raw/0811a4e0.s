@@ -1536,7 +1536,7 @@ BattlePresentation_SpawnActorObject:
 	bhi.n	.L_0811b10e
 	mov	r0, sl
 	movs	r1, #1
-	bl	Func_080ad070
+	bl	Inventory_GetEquippedItemFar
 	cmp	r0, #15
 	bne.n	.L_0811b10e
 	b.n	.L_0811b0f8

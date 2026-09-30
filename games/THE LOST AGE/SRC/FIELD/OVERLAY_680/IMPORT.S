@@ -6,11 +6,11 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080000f8
-	overlay_veneer Func_08000118
-	overlay_veneer Func_08000120
+	overlay_veneer Math_SineFar
+	overlay_veneer Math_CosineFar
 	overlay_veneer Func_08000128
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
@@ -23,13 +23,13 @@
 	overlay_veneer Func_08020228
 	overlay_veneer Func_08020290
 	overlay_veneer Func_08038040
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8088
+	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8140
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0
 	overlay_veneer Func_080c81a8

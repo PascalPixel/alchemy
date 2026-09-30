@@ -217,7 +217,7 @@ Func_080ca6e8:
 	ldr	r2, [r0, #12]
 	ldr	r3, [r0, #16]
 	adds	r0, r6, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 .L_080ca892:
 	cmp	r6, #0
 	beq.n	.L_080ca98a
@@ -727,7 +727,7 @@ Func_080caa4c:
 	adds	r6, r0, #0
 	str	r3, [r6, #20]
 	adds	r1, r5, #0
-	bl	Func_080200d8
+	bl	ObjectDispatch_InitFromTable4WithArgumentFar
 	movs	r3, #197
 	lsls	r3, r3, #1
 	add	r3, r8
@@ -739,7 +739,7 @@ Func_080caa4c:
 	movs	r1, #133
 	ldr	r0, [r5, #80]
 	lsls	r1, r1, #1
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	movs	r3, #15
 	strb	r3, [r0, #5]
 	movs	r3, #9

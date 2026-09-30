@@ -234,7 +234,7 @@ Func_080dfb0c:
 	movs	r3, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	movs	r3, #0
 	str	r3, [r5, #108]
 .L_080dfcf6:

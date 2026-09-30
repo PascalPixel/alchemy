@@ -463,7 +463,7 @@ Func_08124cc4:
 .L_08125084:
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	adds	r0, r6, #0
 	movs	r1, #1
 	bl	0x08038120
@@ -802,7 +802,7 @@ Battle_ApplyActionExtras:
 	mov	r0, r9
 	mov	r1, sl
 	mov	r2, r8
-	bl	Func_080ad1b0
+	bl	Djinn_IsActiveFar
 	cmp	r0, #0
 	beq.n	.L_081253e6
 	mov	r3, sl
@@ -1457,7 +1457,7 @@ Battle_ApplyActionExtras:
 	ldr	r1, [r0, #96]
 	mov	r0, r8
 	negs	r1, r1
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	cmp	r0, #0
 	bne.n	.L_0812591c
 	mov	r0, r8
@@ -1466,7 +1466,7 @@ Battle_ApplyActionExtras:
 	beq.n	.L_081258f8
 	movs	r1, #1
 	mov	r0, r8
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	movs	r0, #11
 	mov	r1, r8
 	bl	0x08120360
@@ -1545,7 +1545,7 @@ Battle_ApplyActionExtras:
 	strh	r3, [r2, #0]
 	negs	r1, r7
 	mov	r0, r8
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	cmp	r0, #0
 	bne.n	.L_081259dc
 	mov	r0, r8
@@ -1554,7 +1554,7 @@ Battle_ApplyActionExtras:
 	beq.n	.L_081259b8
 	movs	r1, #1
 	mov	r0, r8
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	movs	r0, #11
 	mov	r1, r8
 	bl	0x08120360
@@ -1604,7 +1604,7 @@ Battle_ApplyActionExtras:
 	movs	r1, #192
 	lsls	r1, r1, #24
 	mov	r0, r8
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	cmp	r0, #0
 	bne.n	.L_08125a60
 	movs	r0, #0

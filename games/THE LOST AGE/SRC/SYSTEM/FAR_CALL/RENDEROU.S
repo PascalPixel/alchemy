@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080380c8
+	.global RenderOutput_CreateFar
 	.thumb_func
-Func_080380c8:
+RenderOutput_CreateFar:
 	overlay_veneer RenderOutput_Create
 	overlay_veneer RenderOutput_CreateFromResource
 	overlay_veneer Func_08042450

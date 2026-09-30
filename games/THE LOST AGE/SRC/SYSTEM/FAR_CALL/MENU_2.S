@@ -10,9 +10,9 @@
 Func_08038368:
 	overlay_veneer Func_0804d968
 	overlay_veneer Menu_SelectEntry19To1c
-	.global Func_08038378
+	.global Menu_RunConfirmSelectionFar
 	.thumb_func
-Func_08038378:
+Menu_RunConfirmSelectionFar:
 	overlay_veneer Menu_RunConfirmSelection
 	.global Func_08038380
 	.thumb_func

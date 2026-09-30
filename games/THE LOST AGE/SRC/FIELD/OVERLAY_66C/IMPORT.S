@@ -11,9 +11,9 @@
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8128
-	overlay_veneer Func_080c8138
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
 	overlay_veneer Func_080c8158
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0

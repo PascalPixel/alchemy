@@ -1381,7 +1381,7 @@ BattlePres_RunBurstScene:
 	adds	r1, r6, #3
 .L_0815ac14:
 	asrs	r1, r1, #2
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldr	r2, [sp, #48]
 	ldr	r1, [r5, r2]
 	movs	r2, #4

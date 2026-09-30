@@ -269,7 +269,7 @@ Func_0810875c:
 	mov	r2, r8
 	mov	r3, sl
 	str	r7, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	mov	r9, r0
 .L_081088ba:
 	movs	r0, #56

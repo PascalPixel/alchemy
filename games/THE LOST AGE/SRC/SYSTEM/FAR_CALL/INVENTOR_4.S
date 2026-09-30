@@ -5,18 +5,18 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080ad248
+	.global Djinn_AddToLeastLoadedOwnerFar
 	.thumb_func
-Func_080ad248:
+Djinn_AddToLeastLoadedOwnerFar:
 	overlay_veneer Djinn_AddToLeastLoadedOwner
 	overlay_veneer Party_SumDjinnCounts
 	overlay_veneer Func_080afed4
 	overlay_veneer Func_080aff00
 	overlay_veneer Func_080af244
 	overlay_veneer Func_080af1fc
-	.global Func_080ad278
+	.global Inventory_DiscardFar
 	.thumb_func
-Func_080ad278:
+Inventory_DiscardFar:
 	overlay_veneer Inventory_Discard
 	.global BattleFx_IsReviveFar
 	.thumb_func
@@ -34,13 +34,13 @@ Func_080ad290:
 	.thumb_func
 Func_080ad298:
 	overlay_veneer Func_080b0298
-	.global Func_080ad2a0
+	.global Inventory_CountItemFar
 	.thumb_func
-Func_080ad2a0:
+Inventory_CountItemFar:
 	overlay_veneer Inventory_CountItem
-	.global Func_080ad2a8
+	.global PartyInventory_CountItemFar
 	.thumb_func
-Func_080ad2a8:
+PartyInventory_CountItemFar:
 	overlay_veneer PartyInventory_CountItem
 	.global Func_080ad2b0
 	.thumb_func

@@ -7,44 +7,44 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramUnsignedRemainder
-	overlay_veneer Func_080000c0
-	overlay_veneer Func_08000118
+	overlay_veneer WaitFramesFar
+	overlay_veneer Math_SineFar
 	overlay_veneer Func_080001b8
-	overlay_veneer Func_080001c8
-	overlay_veneer Func_080001d0
-	overlay_veneer Func_080003c0
+	overlay_veneer VramBlock_LoadCachedFar
+	overlay_veneer Resource_FindFreeEntryFar
+	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
 	overlay_veneer Func_080200c0
 	overlay_veneer Func_080201e0
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_08020278
+	overlay_veneer Animation_ApplyChildValuesFar
 	overlay_veneer Func_08020300
 	overlay_veneer UiWork_FinalizeFar
-	overlay_veneer Func_08038038
+	overlay_veneer UiText_OpenMessageWindowFar
 	overlay_veneer Func_08038040
-	overlay_veneer Func_08038048
+	overlay_veneer UiWork_IsCompleteFar
 	overlay_veneer Func_080380f8
 	overlay_veneer Func_08038120
 	overlay_veneer Func_08038140
 	overlay_veneer Func_080382f8
 	overlay_veneer Func_08038318
 	overlay_veneer Owner_RecalculateStatsFar
-	overlay_veneer Func_080ad020
-	overlay_veneer Func_080ad0c0
-	overlay_veneer Func_080ad0c8
+	overlay_veneer Inventory_AddFar
+	overlay_veneer Owner_AdjustFirstValueFar
+	overlay_veneer Owner_AdjustSecondValueFar
 	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Djinn_ActivateFar
-	overlay_veneer Func_080ad198
-	overlay_veneer Func_080ad1e8
-	overlay_veneer Func_080c8010
+	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+	overlay_veneer Item_AdjustCounterFar
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8078
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c80d8
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8138
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer ObjectMotion_LaunchFar
 	overlay_veneer Func_080c8158
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0

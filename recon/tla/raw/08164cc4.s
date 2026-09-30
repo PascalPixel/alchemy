@@ -121,7 +121,7 @@ Func_08164cc4:
 	movs	r3, #0
 	strb	r3, [r0, #26]
 	movs	r1, #2
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldr	r2, [sp, #60]
 	ldr	r3, [r2, #0]
 	movs	r2, #12
@@ -1304,7 +1304,7 @@ Func_08164cc4:
 	adds	r3, r3, r0
 	ldr	r0, [r3, #0]
 	bl	0x08020048
-	bl	Func_08118118
+	bl	BattleActor_CommitPlacementFar
 .L_08165734:
 	movs	r0, #134
 	bl	0x081180e8
@@ -1819,7 +1819,7 @@ Func_08164cc4:
 	bl	Math_Mod
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	mov	r0, fp
 	ldr	r1, [r6, r0]
 	mov	r2, r8

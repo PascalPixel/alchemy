@@ -15,9 +15,9 @@ Func_080c8648:
 	overlay_veneer Func_080d1f20
 	overlay_veneer Func_080d2084
 	overlay_veneer Func_080d20fc
-	.global Func_080c8680
+	.global Object_SetActionCallbackFar
 	.thumb_func
-Func_080c8680:
+Object_SetActionCallbackFar:
 	overlay_veneer Object_SetActionCallback
 	.global Func_080c8688
 	.thumb_func

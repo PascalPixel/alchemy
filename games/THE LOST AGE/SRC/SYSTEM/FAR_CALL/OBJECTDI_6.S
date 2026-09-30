@@ -13,7 +13,7 @@ Func_08020210:
 	.thumb_func
 ObjectDispatch_SetSingleChildField26Far:
 	overlay_veneer ObjectDispatch_SetSingleChildField1a
-	.global Func_08020220
+	.global Animation_SetStateFlagsFar
 	.thumb_func
-Func_08020220:
+Animation_SetStateFlagsFar:
 	overlay_veneer Animation_SetStateFlags

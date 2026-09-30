@@ -963,7 +963,7 @@ Func_0814b9e8:
 	ldmia	r5!, {r0}
 	adds	r1, #12
 	adds	r7, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	cmp	r7, #12
 	bne.n	.L_0814c1c4
 	ldr	r3, [pc, #60]
@@ -1231,7 +1231,7 @@ Func_0814b9e8:
 	ldmia	r5!, {r0}
 	adds	r1, #24
 	adds	r7, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	cmp	r7, #11
 	bne.n	.L_0814c3dc
 	movs	r2, #239

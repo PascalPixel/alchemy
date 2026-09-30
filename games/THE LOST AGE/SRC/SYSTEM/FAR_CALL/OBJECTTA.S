@@ -60,9 +60,9 @@ Func_080c8438:
 	overlay_veneer Func_080caa4c
 	overlay_veneer Func_080ca6e8
 	overlay_veneer Func_080caa2c
-	.global Func_080c8458
+	.global ObjectTable_GetFar
 	.thumb_func
-Func_080c8458:
+ObjectTable_GetFar:
 	overlay_veneer ObjectTable_Get
 	overlay_veneer Func_080ca9cc
 	overlay_veneer Func_080d1a18
@@ -99,7 +99,7 @@ Func_080c84b8:
 Func_080c84c0:
 	overlay_veneer Func_080dc6d8
 	overlay_veneer BattleEffect_InitializeSharedScene
-	.global Func_080c84d0
+	.global BattleFx_PrepareBufferInterpolationFar
 	.thumb_func
-Func_080c84d0:
+BattleFx_PrepareBufferInterpolationFar:
 	overlay_veneer BattleFx_PrepareBufferInterpolation

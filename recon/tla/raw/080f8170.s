@@ -73,7 +73,7 @@
 	mov	r0, sl
 	adds	r1, r7, #0
 	movs	r2, #32
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	add	r6, sp, #28
 	adds	r0, r6, #0
 	movs	r1, #1
@@ -131,7 +131,7 @@
 	adds	r1, r7, #0
 	movs	r2, #40
 	movs	r3, #16
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	movs	r3, #16
 	str	r3, [sp, #0]
 	adds	r0, r6, #0

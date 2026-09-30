@@ -8,11 +8,11 @@
 	.balign 4
 	overlay_veneer IwramSignedDivide
 	overlay_veneer IwramSignedRemainder
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080000f8
-	overlay_veneer Func_08000118
-	overlay_veneer Func_08000120
+	overlay_veneer Math_SineFar
+	overlay_veneer Math_CosineFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Object_SetMode
@@ -21,28 +21,28 @@
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer Func_08038040
-	overlay_veneer Func_08038080
-	overlay_veneer Func_080380b0
+	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	overlay_veneer UiText_DrawNumberInWindowFar
 	overlay_veneer Func_08038120
 	overlay_veneer Func_08038140
 	overlay_veneer Func_08038340
 	overlay_veneer Func_08038380
-	overlay_veneer Func_080ad040
+	overlay_veneer PartyInventory_RemoveFar
 	overlay_veneer Func_080ad1d8
 	overlay_veneer Func_080ad208
-	overlay_veneer Func_080ad2a8
-	overlay_veneer Func_080ad2d0
+	overlay_veneer PartyInventory_CountItemFar
+	overlay_veneer PartyInventory_CountFreeSlotsFar
 	overlay_veneer Func_080ad2f8
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
 	overlay_veneer Func_080c8060
 	overlay_veneer Func_080c8070
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c80d8
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8110
-	overlay_veneer Func_080c8118
+	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8188
 	overlay_veneer Func_080c81a0

@@ -9,9 +9,9 @@
 	.thumb_func
 UiText_DrawNumberAtOffsetFar:
 	overlay_veneer UiText_DrawNumberAtOffset
-	.global Func_080380b0
+	.global UiText_DrawNumberInWindowFar
 	.thumb_func
-Func_080380b0:
+UiText_DrawNumberInWindowFar:
 	overlay_veneer UiText_DrawNumberInWindow
 	overlay_veneer Func_08041f70
 	overlay_veneer Func_08041f90

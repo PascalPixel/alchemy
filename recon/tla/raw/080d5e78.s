@@ -23,7 +23,7 @@ Func_080d5e78:
 	mov	r8, r2
 	adds	r1, #255
 	mov	r0, r8
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	movs	r3, #0
 	mov	sl, r3
 	mov	r1, sl
@@ -170,7 +170,7 @@ Func_080d5e78:
 	movs	r1, #134
 	lsls	r1, r1, #1
 	ldr	r0, [r0, #80]
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	movs	r3, #15
 	strb	r3, [r0, #5]
 	pop	{pc}

@@ -170,7 +170,7 @@ Func_080cb8e8:
 	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080cba4e
-	bl	0x080cae5c
+	bl	Func_080cae5c
 .L_080cba4e:
 	ldr	r5, [pc, #72]
 	movs	r2, #149
@@ -1023,7 +1023,7 @@ Func_080cb8e8:
 	beq.n	.L_080cc192
 	str	r1, [sp, #4]
 	bl	Func_080d2260
-	bl	0x080cad9c
+	bl	Func_080cad9c
 	movs	r3, #128
 	ldr	r0, [sp, #8]
 	lsls	r3, r3, #2

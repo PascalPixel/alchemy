@@ -101,6 +101,9 @@ Func_080d45d8:
 	.4byte 0x03001144
 	.2byte 0x45d9
 	.2byte 0x080d
+	.global Func_080d46a4
+	.thumb_func
+Func_080d46a4:
 	push	{r5, r6, r7, lr}
 	adds	r7, r1, #0
 	movs	r3, #192
@@ -155,6 +158,9 @@ Func_080d45d8:
 	.4byte 0x03000230
 	.2byte 0x45d9
 	.2byte 0x080d
+	.global Func_080d4714
+	.thumb_func
+Func_080d4714:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	movs	r1, #213

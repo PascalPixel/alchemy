@@ -2217,7 +2217,7 @@ Func_080ec1d0:
 	cmp	r3, #3
 	beq.n	.L_080ed30c
 .L_080ed2f6:
-	bl	0x080cad9c
+	bl	Func_080cad9c
 	ldr	r6, [sp, #16]
 	movs	r1, #197
 	lsls	r1, r1, #1
@@ -2802,7 +2802,7 @@ Func_080ec1d0:
 	lsls	r0, r0, #8
 	movs	r1, #6
 	adds	r0, #137
-	bl	0x080d46a4
+	bl	Func_080d46a4
 	ldr	r1, [pc, #72]
 	movs	r2, #128
 	ldr	r3, [r1, #0]
@@ -2832,13 +2832,13 @@ Func_080ec1d0:
 	movs	r0, #128
 	lsls	r0, r0, #9
 	movs	r1, #6
-	bl	0x080d46a4
+	bl	Func_080d46a4
 	b.n	.L_080ed7f8
 .L_080ed7ee:
 	movs	r0, #128
 	lsls	r0, r0, #9
 	movs	r1, #6
-	bl	0x080d46a4
+	bl	Func_080d46a4
 .L_080ed7f8:
 	pop	{r5, r6, pc}
 	movs	r0, r0

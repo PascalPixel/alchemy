@@ -651,6 +651,7 @@ mod tests {
     fn function(name: &str, address: u32, bytes: u32, origin: Origin) -> Function {
         Function {
             build: "t".into(),
+            image: "t".into(),
             name: name.into(),
             address,
             bytes,

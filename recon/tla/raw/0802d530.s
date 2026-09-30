@@ -1,0 +1,60 @@
+.syntax unified
+	.thumb
+	.global Func_0802d530
+	.thumb_func
+Func_0802d530:
+	push {r5, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	adds r5, r0, #0
+	ldr r0, [r3, #32]
+	adds r4, r2, #0
+	asrs r1, r1, #16
+	asrs r4, r4, #16
+	cmp r0, #0
+	beq .L_0802d558
+	movs r2, #3
+	ands r2, r5
+	lsls r3, r2, #3
+	subs r3, r3, r2
+	movs r2, #158
+	lsls r3, r3, #3
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	ldr r0, [r0, r3]
+	b .L_0802d55a
+.L_0802d558:
+	ldr r0, .L_0802d58c
+.L_0802d55a:
+	cmp r1, #0
+	bge .L_0802d560
+	adds r1, #15
+.L_0802d560:
+	adds r2, r4, #0
+	asrs r1, r1, #4
+	cmp r2, #0
+	bge .L_0802d56a
+	adds r2, #15
+.L_0802d56a:
+	asrs r3, r2, #4
+	lsls r3, r3, #7
+	adds r3, r1, r3
+	ldrb r3, [r0, r3]
+	ldr r2, .L_0802d590
+	lsls r3, r3, #2
+	adds r1, r3, r2
+	ldrb r0, [r1]
+	cmp r0, #7
+	bne .L_0802d588
+	ldrb r2, [r1, #1]
+	ldrb r3, [r1, #2]
+	cmp r2, r3
+	beq .L_0802d588
+	movs r0, #99
+.L_0802d588:
+	pop {r5, pc}
+	.2byte 0x0000
+.L_0802d58c:
+	.4byte Data_02024000
+.L_0802d590:
+	.4byte Data_0202c000

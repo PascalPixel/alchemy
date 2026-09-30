@@ -172,8 +172,13 @@ fn index(o: &Options) -> Result<Vec<Function>, String> {
             let map_path = elf_path.with_extension("map");
             let map = fs::read_to_string(&map_path)
                 .map_err(|e| format!("{}: {e}", map_path.display()))?;
+            let stem = elf_path
+                .file_stem()
+                .map(|s| s.to_string_lossy().into_owned())
+                .unwrap_or_default();
             let image = Image {
                 build: &name,
+                name: &stem,
                 elf: &elf,
                 map: &map,
             };
@@ -190,16 +195,25 @@ fn index(o: &Options) -> Result<Vec<Function>, String> {
             ));
         }
     }
-    // The same code can be listed twice when two images link one object.
-    all.sort_by(|a, b| (&a.build, a.address, &a.name).cmp(&(&b.build, b.address, &b.name)));
-    all.dedup_by(|a, b| a.build == b.build && a.address == b.address);
-    Ok(all)
+    Ok(unique(all))
+}
+
+/// One function per place: a build's overlays share load addresses, so a
+/// place is its build, its image and its address, and twins in different
+/// overlays stay apart.
+fn unique(mut all: Vec<Function>) -> Vec<Function> {
+    all.sort_by(|a, b| {
+        (&a.build, &a.image, a.address, &a.name).cmp(&(&b.build, &b.image, b.address, &b.name))
+    });
+    all.dedup_by(|a, b| a.build == b.build && a.image == b.image && a.address == b.address);
+    all
 }
 
 fn row(f: &Function) -> String {
     format!(
-        "{}\t{:08x}\t{}\t{}\t{}\t{}\t{}",
+        "{}\t{}\t{:08x}\t{}\t{}\t{}\t{}\t{}",
         f.build,
+        f.image,
         f.address,
         f.name,
         f.origin.label(),
@@ -294,7 +308,7 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
     });
     rows.sort_by(|a, b| a.0.total_cmp(&b.0).then(b.1.cmp(&a.1)).then(a.2.cmp(&b.2)));
     let mut tsv = String::from(
-        "build\taddress\tname\torigin\tbytes\tinsns\tsource\tdistance\tratio\tmatch_build\tmatch_address\tmatch_name\tmatch_origin\tmatch_bytes\tmatch_insns\tmatch_source\n",
+        "build\timage\taddress\tname\torigin\tbytes\tinsns\tsource\tdistance\tratio\tmatch_build\tmatch_image\tmatch_address\tmatch_name\tmatch_origin\tmatch_bytes\tmatch_insns\tmatch_source\n",
     );
     for (_, _, line) in &rows {
         tsv.push_str(line);
@@ -310,4 +324,44 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
         rows.len(),
         out.display()
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn function(image: &str, address: u32) -> Function {
+        Function {
+            build: "tla-en".into(),
+            image: image.into(),
+            name: format!("Func_{address:08x}"),
+            address,
+            bytes: 4,
+            origin: Origin::NotYetC,
+            source: String::new(),
+            tokens: vec![1, 2],
+        }
+    }
+
+    #[test]
+    fn overlays_sharing_a_load_address_keep_every_function() {
+        let all = vec![
+            function("resource_64a", 0x0200_8000),
+            function("resource_649", 0x0200_8000),
+            function("resource_649", 0x0200_8000),
+            function("tla-en", 0x0800_1000),
+        ];
+        let places: Vec<(String, u32)> = unique(all)
+            .into_iter()
+            .map(|f| (f.image, f.address))
+            .collect();
+        assert_eq!(
+            places,
+            vec![
+                ("resource_649".into(), 0x0200_8000),
+                ("resource_64a".into(), 0x0200_8000),
+                ("tla-en".into(), 0x0800_1000),
+            ]
+        );
+    }
 }

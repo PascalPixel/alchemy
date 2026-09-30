@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global LuckyDice_Run
+	.thumb_func
+LuckyDice_Run:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

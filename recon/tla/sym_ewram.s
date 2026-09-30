@@ -16,7 +16,19 @@ ResourceTableEntries:
 	.space 0x00001df0
 	.global gObjAffineMatrices
 gObjAffineMatrices:
-	.space 0x00000380
+	.space 0x00000330
+	.global gMusicRestoreDelay
+gMusicRestoreDelay:
+	.space 0x00000008
+	.global gMusicVolume
+gMusicVolume:
+	.space 0x00000030
+	.global gMusicVolumeTarget
+gMusicVolumeTarget:
+	.space 0x00000008
+	.global Audio_CommandMask
+Audio_CommandMask:
+	.space 0x00000010
 	.global Sound_Work
 Sound_Work:
 	.space 0x00000fb0
@@ -28,7 +40,10 @@ Sound_JumpCommand:
 	.space 0x0000008c
 	.global Sound_CgbNotes
 Sound_CgbNotes:
-	.space 0x000002c0
+	.space 0x00000200
+	.global gMusicPlayerBgm
+gMusicPlayerBgm:
+	.space 0x000000c0
 	.global Sound_WorkBytes
 Sound_WorkBytes:
 	.space 0x000008b0

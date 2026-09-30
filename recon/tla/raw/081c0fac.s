@@ -1,25 +1,6 @@
 .syntax unified
 	.thumb
-	.global MusicCommand_SetVolume
-	.thumb_func
-MusicCommand_SetVolume:
-	push	{r5, lr}
-	adds	r2, r0, #0
-	lsls	r2, r2, #16
-	asrs	r5, r2, #16
-	ldr	r0, [pc, #16]
-	lsrs	r2, r2, #16
-	movs	r1, #255
-	bl	MusicPlayer_SetVolume
-	ldr	r3, [pc, #12]
-	strh	r5, [r3, #0]
-	ldr	r3, [pc, #12]
-	strh	r5, [r3, #0]
-	pop	{r5, pc}
-	.4byte 0x02006a90
-	.4byte 0x02005838
-	.2byte 0x5808
-	.2byte 0x0200
+	.balign 4
 	.global Func_081c0fac
 	.thumb_func
 Func_081c0fac:

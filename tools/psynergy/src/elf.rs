@@ -13,6 +13,8 @@ pub struct Symbol {
     pub size: u32,
     /// STT_* in the low nibble of st_info.
     pub kind: u8,
+    /// STB_* in the high nibble of st_info: 0 local, 1 global, 2 weak.
+    pub binding: u8,
     pub section: u16,
 }
 
@@ -105,6 +107,7 @@ impl Elf {
                         value: word(entry, 4)?,
                         size: word(entry, 8)?,
                         kind: info & 0xf,
+                        binding: info >> 4,
                         section: half(entry, 14)?,
                     });
                 }

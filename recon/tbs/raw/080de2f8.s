@@ -173,7 +173,7 @@ BattleFx_PrepareCanvasEffect:
 	str r3, [r7, #12]
 	str r1, [r7, #16]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	asrs r3, r3, #5
@@ -292,7 +292,7 @@ BattleFx_PrepareCanvasEffect:
 .L_080de53c:
 	.4byte 0x00000073
 .L_080de540:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080de544:
 	.4byte gMapCellBuffer
 .L_080de548:
@@ -355,7 +355,7 @@ BattleFx_PrepareCanvasEffect:
 	cmp r1, #8
 	bne .L_080de5d4
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080de5d4
 .L_080de5c4:
 	.4byte 0x000000a8
@@ -688,7 +688,7 @@ BattleFx_PrepareCanvasEffect:
 	asrs r3, r3, #6
 	str r3, [r7, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	asrs r3, r3, #5

@@ -185,7 +185,7 @@ Func_080c972c:
 .L_080c9894:
 	.4byte 0x00000080
 .L_080c9898:
-	.4byte Data_02010158
+	.4byte gMapCellBuffer + 0x158
 .L_080c989c:
 	.4byte Data_080ededc
 .L_080c98a0:
@@ -492,7 +492,7 @@ Func_080c972c:
 	cmp r3, #0
 	bne .L_080c9ade
 	movs r0, #132
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080c9ade:
 	ldr r2, .L_080c9c2c
 	add r2, r10
@@ -673,7 +673,7 @@ Func_080c972c:
 .L_080c9c40:
 	.4byte 0x0000027f
 .L_080c9c44:
-	.4byte Data_02010140
+	.4byte gMapCellBuffer + 0x140
 .L_080c9c48:
 	.4byte 0x000001ff
 .L_080c9c4c:

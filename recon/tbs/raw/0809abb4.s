@@ -24,7 +24,7 @@ BattleEffect_RunFallbackObjectTransition:
 	movs r1, #0
 	adds r6, r0, #0
 	movs r7, #0
-	bl Func_08009080
+	bl Object_SetMode
 	cmp r6, #0
 	bne .L_0809abea
 	b .L_0809ad52
@@ -108,21 +108,21 @@ BattleEffect_RunFallbackObjectTransition:
 	bl WaitFrames
 	movs r1, #1
 	adds r0, r6, #0
-	bl Func_08009080
+	bl Object_SetMode
 	movs r0, #108
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #108
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #108
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #109
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	add r3, sp, #24
 	mov r5, r9
 	mov r8, r3
@@ -196,7 +196,7 @@ BattleEffect_RunFallbackObjectTransition:
 	bx r0
 	.2byte 0x0000
 .L_0809ad64:
-	.4byte Data_03001f30
+	.4byte gEffectWork
 .L_0809ad68:
 	.4byte 0x0000011d
 .L_0809ad6c:

@@ -162,7 +162,7 @@ BattleTarget_RunSelection:
 	mov r10, r6
 	b .L_080262b6
 .L_080261a8:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080261ac:
 	.4byte 0x0000ffff
 .L_080261b0:
@@ -208,7 +208,7 @@ BattleTarget_RunSelection:
 	beq .L_080262ac
 	adds r0, r3, #0
 	str r4, [sp, #8]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r2, [sp, #80]
 	adds r1, r0, #0
 	ldr r4, [sp, #8]
@@ -352,7 +352,7 @@ BattleTarget_RunSelection:
 	adds r0, r3, #0
 	adds r1, r4, #0
 	str r3, [sp, #68]
-	bl Func_080022fc
+	bl Math_Mod
 	str r0, [sp, #68]
 .L_08026308:
 	ldr r5, [sp, #68]
@@ -364,14 +364,14 @@ BattleTarget_RunSelection:
 	beq .L_080262f4
 	movs r0, #182
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_08026336
 	mov r7, r8
 	cmp r7, #1
 	bne .L_08026336
 	ldrh r0, [r6, r5]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	cmp r3, #0
@@ -791,7 +791,7 @@ BattleTarget_RunSelection:
 	.4byte 0x000000ff
 .L_08026648:
 	adds r0, r3, #0
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r3, [sp, #24]
 	adds r6, r0, #0
 	mov r1, r11
@@ -1360,7 +1360,7 @@ BattleTarget_RunSelection:
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
 	ldrh r0, [r1, r2]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r3, [sp, #28]
 	ldr r4, [sp, #24]
 	add r5, sp, #108
@@ -1767,14 +1767,14 @@ BattleTarget_RunSelection:
 	cmp r3, #0
 	beq .L_08026dc4
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_08026da2:
 	ldr r1, [sp, #68]
 	adds r1, #1
 	str r1, [sp, #68]
 	adds r0, r1, #0
 	ldr r1, [sp, #60]
-	bl Func_080022fc
+	bl Math_Mod
 	str r0, [sp, #68]
 	ldr r4, [sp, #28]
 	lsls r2, r0, #1
@@ -1791,7 +1791,7 @@ BattleTarget_RunSelection:
 	cmp r3, #0
 	beq .L_08026df6
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_08026dd2:
 	ldr r0, [sp, #68]
 	ldr r1, [sp, #60]
@@ -1799,7 +1799,7 @@ BattleTarget_RunSelection:
 	subs r3, #1
 	adds r0, r3, #0
 	str r3, [sp, #68]
-	bl Func_080022fc
+	bl Math_Mod
 	str r0, [sp, #68]
 	ldr r2, [sp, #28]
 	lsls r3, r0, #1
@@ -1822,7 +1822,7 @@ BattleTarget_RunSelection:
 	beq .L_08026e16
 .L_08026e08:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r5, #1
 	negs r5, r5
 	str r5, [sp, #68]

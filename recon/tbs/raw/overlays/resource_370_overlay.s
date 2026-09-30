@@ -567,7 +567,7 @@ Func_020003cc:
 .L_02008880:
 	.4byte 0x00000c83
 .L_02008884:
-	.4byte Data_02002224
+	.4byte gSerialTransfer + 0x4
 .L_02008888:
 	.4byte gLinkPeerSignatures
 .L_0200888c:

@@ -164,13 +164,13 @@ UiWork_StepChannelScript:
 	strh r3, [r6, #16]
 	b .L_08016d64
 .L_08016a5c:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08016a60:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_08016a64:
 	.4byte gCell
 .L_08016a68:
-	.4byte Data_0807380b
+	.4byte Data_08073808 + 0x3
 .L_08016a6c:
 	.4byte 0x00000ea5
 .L_08016a70:
@@ -637,7 +637,7 @@ UiWork_StepChannelScript:
 .L_08016ddc:
 	.4byte gCell
 .L_08016de0:
-	.4byte Data_0807380e
+	.4byte Data_08073808 + 0x6
 .L_08016de4:
 	.4byte 0x00000ea4
 .L_08016de8:
@@ -735,7 +735,7 @@ UiWork_StepChannelScript:
 	ands r3, r7
 	adds r0, r0, r3
 	str r4, [sp, #12]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r1, r10
 	strh r1, [r5]
 	ldr r4, [sp, #12]

@@ -401,7 +401,7 @@ AudioTrack_PackStream:
 	b .L_080f833e
 	.2byte 0x0000
 .L_080f8270:
-	.4byte Data_02004c00
+	.4byte Flash_Handler3
 .L_080f8274:
 	.4byte gMapCellBuffer
 .L_080f8278:
@@ -807,7 +807,7 @@ AudioTrack_PackStream:
 .L_080f8570:
 	.4byte 0x000003ff
 .L_080f8574:
-	.4byte Data_02004c00
+	.4byte Flash_Handler3
 .L_080f8578:
 	.4byte 0x00003404
 .L_080f857c:
@@ -988,7 +988,7 @@ AudioTrack_PackStream:
 	pop {r1}
 	bx r1
 .L_080f86d8:
-	.4byte Data_02004c00
+	.4byte Flash_Handler3
 .L_080f86dc:
 	.4byte 0x00004404
 .L_080f86e0:

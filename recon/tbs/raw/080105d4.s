@@ -160,6 +160,6 @@ Map_CopyMetatileCellsRect:
 .L_080106f8:
 	.4byte gMapBlocks
 .L_080106fc:
-	.4byte Data_02020004
+	.4byte gMapBlocks + 0x4
 .L_08010700:
 	.4byte 0x06002840

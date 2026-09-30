@@ -41,7 +41,7 @@ BattleFx_InitializeStarField:
 	lsrs r6, r3, #1
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r1, r6, #0
 	mov r12, pc
 	bx r10
@@ -114,7 +114,7 @@ BattleFx_InitializeStarField:
 	mov r9, r2
 .L_080c1552:
 	adds r0, r7, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r1, r8
 	movs r0, r0
 	mov r12, pc
@@ -128,7 +128,7 @@ BattleFx_InitializeStarField:
 	bx r6
 	str r0, [r5, #4]
 	adds r0, r7, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	movs r1, #128
 	lsls r1, r1, #2
 	mov r12, pc
@@ -276,7 +276,7 @@ BattleFx_InitializeStarField:
 .L_080c16a0:
 	.4byte 0x000013cc
 .L_080c16a4:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080c16a8:
 	.4byte IwramClearWords
 .L_080c16ac:

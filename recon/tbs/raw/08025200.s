@@ -96,7 +96,7 @@ ItemList_SelectEntry:
 .L_080252b8:
 	.4byte 0x000001ff
 .L_080252bc:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080252c0:
 	.4byte 0xfffffe00
 .L_080252c4:
@@ -637,7 +637,7 @@ ItemList_SelectEntry:
 	b .L_080258c8
 .L_08025706:
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	cmp r6, #2
 	bne .L_08025716
 	ldr r5, [sp, #32]
@@ -686,7 +686,7 @@ ItemList_SelectEntry:
 	beq .L_08025772
 .L_08025764:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #1
 	negs r3, r3
 	mov r10, r3
@@ -704,7 +704,7 @@ ItemList_SelectEntry:
 	cmp r3, #0
 	beq .L_080257b0
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #1
 	add r8, r2
 	mov r3, r8
@@ -732,7 +732,7 @@ ItemList_SelectEntry:
 	cmp r3, #0
 	beq .L_080257f6
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #1
 	negs r2, r2
 	add r8, r2
@@ -769,7 +769,7 @@ ItemList_SelectEntry:
 	cmp r3, #0
 	beq .L_08025854
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	mov r3, r9
 	ldr r1, [sp, #72]
@@ -815,7 +815,7 @@ ItemList_SelectEntry:
 	cmp r3, #0
 	beq .L_080258c0
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	mov r2, r9
 	cmp r2, #0

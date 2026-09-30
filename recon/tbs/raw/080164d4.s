@@ -73,7 +73,7 @@ UiWindow_ClearInteriorTiles:
 .L_08016554:
 	.4byte 0x0000f020
 .L_08016558:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_0801655c:
 	.4byte 0x00000ea3
 .L_08016560:

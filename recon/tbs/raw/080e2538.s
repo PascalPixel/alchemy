@@ -229,7 +229,7 @@ Unnamed_080e2538:
 	cmp r11, r2
 	bne .L_080e2710
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, .L_080e28d8
 	ldr r0, [sp, #28]
 	movs r3, #4
@@ -259,14 +259,14 @@ Unnamed_080e2538:
 	adds r7, r2, r0
 	movs r1, #5
 	mov r0, r8
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
 	bl FixedPoint_Ratio
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r2, .L_080e28dc
 	adds r5, r5, r0
 	lsls r3, r5, #1
@@ -454,27 +454,27 @@ Unnamed_080e2538:
 .L_080e28bc:
 	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
 .L_080e28c0:
-	.4byte Data_080eecfc
+	.4byte ParticleReveal_CellSourceOffsets + 0x94
 .L_080e28c4:
 	.4byte 0xffc00000
 .L_080e28c8:
-	.4byte Data_080eecb2
+	.4byte ParticleReveal_CellSourceOffsets + 0x4a
 .L_080e28cc:
 	.4byte gMapCellBuffer
 .L_080e28d0:
-	.4byte Data_080eecf2
+	.4byte ParticleReveal_CellSourceOffsets + 0x8a
 .L_080e28d4:
-	.4byte Data_080eecf7
+	.4byte ParticleReveal_CellSourceOffsets + 0x8f
 .L_080e28d8:
 	.4byte 0x000077a8
 .L_080e28dc:
-	.4byte Data_080eed1e
+	.4byte ParticleReveal_CellSourceOffsets + 0xb6
 .L_080e28e0:
 	.4byte 0x0000083c
 .L_080e28e4:
-	.4byte Data_080eecff
+	.4byte ParticleReveal_CellSourceOffsets + 0x97
 .L_080e28e8:
-	.4byte Data_080eed0e
+	.4byte ParticleReveal_CellSourceOffsets + 0xa6
 .L_080e28ec:
 	.4byte 0x00007828
 .L_080e28f0:

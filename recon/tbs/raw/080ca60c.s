@@ -458,7 +458,7 @@ BattleFx_RunTwelveMode:
 	adds r0, r5, #0
 	bl FixedPoint_Ratio
 	movs r1, #6
-	bl Func_080022fc
+	bl Math_Mod
 	adds r6, r0, #0
 	ldr r0, [sp, #48]
 	ldr r3, [r0]
@@ -529,7 +529,7 @@ BattleFx_RunTwelveMode:
 .L_080caa3c:
 	.4byte 0x000001ff
 .L_080caa40:
-	.4byte Data_02013800
+	.4byte gMapCellBuffer + 0x3800
 .L_080caa44:
 	.4byte 0xffffff00
 .L_080caa48:
@@ -545,7 +545,7 @@ BattleFx_RunTwelveMode:
 .L_080caa5c:
 	.4byte Data_080edf5e
 .L_080caa60:
-	.4byte Data_03001f08
+	.4byte gTransitionWork + 0x8
 .L_080caa64:
 	movs r3, #2
 	str r3, [sp, #0]
@@ -590,7 +590,7 @@ BattleFx_RunTwelveMode:
 	adds r1, r1, r5
 	lsls r1, r1, #1
 	ldr r0, [sp, #88]
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r5, r5, #2
 	cmp r0, r5
 	beq .L_080caaca
@@ -604,7 +604,7 @@ BattleFx_RunTwelveMode:
 	b .L_080caae4
 .L_080caad8:
 	movs r0, #133
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #133
 	bl BattleEventRuntime_BeginPhaseFar
 .L_080caae4:
@@ -836,7 +836,7 @@ BattleFx_RunTwelveMode:
 	ldrb r5, [r1, r6]
 	ldr r0, [sp, #88]
 	lsls r1, r5, #2
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r3, r5, #1
 	adds r3, r3, r5
 	cmp r0, r3
@@ -880,20 +880,20 @@ BattleFx_RunTwelveMode:
 .L_080cad04:
 	.4byte Data_080edf58
 .L_080cad08:
-	.4byte Data_03001f08
+	.4byte gTransitionWork + 0x8
 .L_080cad0c:
 	.4byte Data_080edf04
 .L_080cad10:
 	.4byte 0x000077a8
 .L_080cad14:
-	.4byte Data_02013818
+	.4byte gMapCellBuffer + 0x3818
 .L_080cad18:
-	.4byte Data_02013800
+	.4byte gMapCellBuffer + 0x3800
 .L_080cad1c:
 	.4byte Data_080edf76
 .L_080cad20:
 	movs r0, #133
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080cad26:
 	ldr r6, [sp, #44]
 	movs r1, #0
@@ -1031,7 +1031,7 @@ BattleFx_RunTwelveMode:
 	adds r0, r2, #0
 	lsrs r3, r3, #1
 	subs r6, r6, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	mov r1, r10
@@ -1322,7 +1322,7 @@ BattleFx_RunTwelveMode:
 .L_080cb080:
 	.4byte Data_080edf04
 .L_080cb084:
-	.4byte Data_02013800
+	.4byte gMapCellBuffer + 0x3800
 .L_080cb088:
 	.4byte gMapCellBuffer
 .L_080cb08c:
@@ -1336,9 +1336,9 @@ BattleFx_RunTwelveMode:
 .L_080cb09c:
 	.4byte BattleFx_GlintCellOffsets
 .L_080cb0a0:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080cb0a4:
-	.4byte Data_03001f08
+	.4byte gTransitionWork + 0x8
 .L_080cb0a8:
 	.4byte 0xfffffc00
 .L_080cb0ac:

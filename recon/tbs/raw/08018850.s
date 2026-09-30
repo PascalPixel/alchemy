@@ -199,7 +199,7 @@ UiText_MeasureEntryDimensions:
 .L_080189ec:
 	.4byte 0x00000000
 .L_080189f0:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080189f4:
 	.4byte .L_080188d4
 .L_080189f8:

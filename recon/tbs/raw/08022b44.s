@@ -18,7 +18,7 @@ DjinnMenu_ShowChangePreview:
 	mov r10, r4
 	mov r8, r2
 	str r3, [sp, #60]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	str r0, [sp, #56]
 	mov r1, r10
 	ldr r0, [r1]
@@ -89,7 +89,7 @@ DjinnMenu_ShowChangePreview:
 	adds r0, r7, #0
 	adds r1, r5, #0
 	adds r2, r6, #0
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 	b .L_08022c0a
 .L_08022c00:
 	adds r0, r7, #0
@@ -315,7 +315,7 @@ DjinnMenu_ShowChangePreview:
 	mov r11, r3
 .L_08022dda:
 	ldrh r0, [r6]
-	bl Func_08077080
+	bl Ability_GetData
 	adds r5, r0, #0
 	ldrb r3, [r5, #2]
 	cmp r3, #4
@@ -411,7 +411,7 @@ DjinnMenu_ShowChangePreview:
 	mov r3, r9
 	bl UiWindow_SetTilemapEntry
 	ldrh r0, [r6]
-	bl Func_08077080
+	bl Ability_GetData
 	mov r4, r11
 	ldr r2, [r7]
 	ldrb r0, [r0, #9]

@@ -35,7 +35,7 @@ Func_080f07f0:
 	movs r5, #128
 	lsls r5, r5, #2
 	adds r0, r5, #0
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_080f0848
 	ldr r3, .L_080f0a28

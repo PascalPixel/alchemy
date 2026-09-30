@@ -18,7 +18,7 @@ Menu_CreateWorkspaceWindows:
 	lsls r0, r0, #1
 	sub sp, #12
 	mov r11, r3
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	movs r2, #0
 	mov r9, r0
 	str r2, [sp, #8]
@@ -147,7 +147,7 @@ Menu_CreateWorkspaceWindows:
 	adds r0, r2, #0
 	lsls r1, r1, #3
 	adds r2, r7, #0
-	bl Func_080b0038
+	bl ShopCursor_SetPositionImmediateFar
 .L_0801db02:
 	movs r7, #4
 	mov r2, r10

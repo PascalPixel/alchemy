@@ -26,7 +26,7 @@ Battle_unk3_2:
 	str r7, [r1, #104]
 	ldr r0, [sp, #28]
 	ldr r1, .L_0809a0c0
-	bl Engine_ObjectSetScript
+	bl ObjectDispatch_InitializeFar
 	mov r3, r11
 	ldr r0, [r3, #4]
 	add r2, sp, #32
@@ -121,7 +121,7 @@ Battle_unk3_2:
 	ldr r0, .L_0809a0d0
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #130
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	adds r1, r7, #0
 	adds r1, #85
 	movs r3, #4
@@ -129,7 +129,7 @@ Battle_unk3_2:
 	adds r0, r7, #0
 	strb r3, [r1]
 	movs r1, #0
-	bl Func_080091e0
+	bl ObjectDispatch_SetSingleChildField26Far
 	ldr r2, [sp, #20]
 	cmp r2, #0
 	beq .L_08099efe
@@ -225,10 +225,10 @@ Battle_unk3_2:
 	bl Object_SetMoveTargetFar
 	ldr r0, [sp, #20]
 	movs r1, #1
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r0, [sp, #24]
 	movs r1, #1
-	bl Func_08009080
+	bl Object_SetMode
 	b .L_0809a0e8
 .L_08099f84:
 	ldr r3, [r7, #8]
@@ -293,10 +293,10 @@ Battle_unk3_2:
 .L_0809a00a:
 	ldr r0, [sp, #20]
 	movs r1, #4
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r0, [sp, #24]
 	movs r1, #4
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r3, .L_0809a0e4
 	ldr r3, [r3]
 	movs r2, #15
@@ -304,20 +304,20 @@ Battle_unk3_2:
 	cmp r3, #0
 	bne .L_0809a0e8
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_0809a0e8
 .L_0809a02e:
 	movs r0, #175
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r0, [sp, #20]
 	mov r2, r10
 	movs r1, #4
 	ldr r5, [r2]
 	ldr r6, [r2, #8]
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r0, [sp, #24]
 	movs r1, #4
-	bl Func_08009080
+	bl Object_SetMode
 	movs r0, #15
 	bl WaitFrames
 	ldr r1, .L_0809a0d8
@@ -370,7 +370,7 @@ Battle_unk3_2:
 	bl WaitFrames
 	b .L_0809a0fc
 .L_0809a0bc:
-	.4byte Data_03001f30
+	.4byte gEffectWork
 .L_0809a0c0:
 	.4byte Data_0809f0bc
 .L_0809a0c4:
@@ -386,7 +386,7 @@ Battle_unk3_2:
 .L_0809a0d8:
 	.4byte 0x00003333
 .L_0809a0dc:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_0809a0e0:
 	.4byte 0x0000ffff
 .L_0809a0e4:
@@ -404,18 +404,18 @@ Battle_unk3_2:
 .L_0809a0fc:
 	ldr r0, [sp, #20]
 	movs r1, #4
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r0, [sp, #24]
 	movs r1, #4
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r0, .L_0809a284
 	bl Scheduler_RemoveCallback
 	movs r0, #135
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #15
 	bl WaitFrames
 	movs r0, #135
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #15
 	bl WaitFrames
 	ldr r3, [r7, #8]
@@ -451,7 +451,7 @@ Battle_unk3_2:
 	cmp r6, #0
 	beq .L_0809a1a2
 	ldr r1, .L_0809a28c
-	bl Engine_ObjectSetScript
+	bl ObjectDispatch_InitializeFar
 	bl Random16
 	mov r3, r9
 	adds r2, r6, #0
@@ -481,7 +481,7 @@ Battle_unk3_2:
 	cmp r2, #0
 	bge .L_0809a14e
 	movs r0, #131
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r0, [sp, #20]
 	bl ObjectDispatch_ReleaseFar
 	ldr r0, [sp, #24]
@@ -494,7 +494,7 @@ Battle_unk3_2:
 	mov r3, r11
 	ldr r1, [r3, #60]
 	adds r0, r7, #0
-	bl Engine_ObjectSetScript
+	bl ObjectDispatch_InitializeFar
 	mov r0, r11
 	ldr r3, [r0, #56]
 	str r3, [r7, #108]

@@ -108,7 +108,7 @@ GameState_InitDefaults:
 .L_08077e04:
 	.4byte 0x85000080
 .L_08077e08:
-	.4byte Data_02000500
+	.4byte gSaveStamp + 0x1c
 .L_08077e0c:
 	.4byte 0x85000298
 .L_08077e10:

@@ -56,7 +56,7 @@ Unnamed_080eb754:
 .L_080eb7c0:
 	.4byte 0x00000000
 .L_080eb7c4:
-	.4byte Data_03001ef0
+	.4byte gBattleFxWork + 0x4
 .L_080eb7c8:
 	.4byte 0x00007828
 .L_080eb7cc:
@@ -211,7 +211,7 @@ Unnamed_080eb754:
 .L_080eb908:
 	.4byte 0x00007784
 .L_080eb90c:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080eb910:
 	.4byte 0x0400000c
 .L_080eb914:
@@ -402,7 +402,7 @@ Unnamed_080eb754:
 	asrs r5, r5, #16
 	adds r0, r6, #0
 	adds r5, r5, r2
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r4, [sp, #36]
 	adds r3, r4, #0
 	muls r3, r0
@@ -468,7 +468,7 @@ Unnamed_080eb754:
 	bne .L_080ebb78
 	movs r1, #3
 	mov r0, r8
-	bl Func_080022fc
+	bl Math_Mod
 	adds r0, #1
 	lsls r4, r0, #1
 	ldr r2, .L_080ebb34
@@ -481,7 +481,7 @@ Unnamed_080eb754:
 .L_080ebb0c:
 	.4byte gBgScroll
 .L_080ebb10:
-	.4byte Data_080edad8
+	.4byte Data_080edac8 + 0x10
 .L_080ebb14:
 	.4byte 0xfffff980
 .L_080ebb18:
@@ -495,9 +495,9 @@ Unnamed_080eb754:
 .L_080ebb28:
 	.4byte 0x000077d8
 .L_080ebb2c:
-	.4byte Data_080eef56
+	.4byte Data_080eef18 + 0x3e
 .L_080ebb30:
-	.4byte Data_080eef5f
+	.4byte Data_080eef18 + 0x47
 .L_080ebb34:
 	.4byte ParticleStreams_CellOffsets
 .L_080ebb38:
@@ -656,31 +656,31 @@ Unnamed_080eb754:
 	cmp r7, #0
 	bne .L_080ebc6a
 	movs r0, #136
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebc6a:
 	mov r1, r11
 	cmp r1, #26
 	bne .L_080ebc76
 	movs r0, #141
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebc76:
 	mov r2, r11
 	cmp r2, #40
 	bne .L_080ebc82
 	movs r0, #154
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebc82:
 	mov r3, r11
 	cmp r3, #72
 	bne .L_080ebc8e
 	movs r0, #154
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebc8e:
 	mov r4, r11
 	cmp r4, #104
 	bne .L_080ebc9a
 	movs r0, #154
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebc9a:
 	ldr r3, .L_080ebd08
 	ldr r3, [r3]
@@ -817,7 +817,7 @@ Unnamed_080eb754:
 .L_080ebd98:
 	.4byte 0x00001010
 .L_080ebd9c:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080ebda0:
 	.4byte 0x00007784
 .L_080ebda4:
@@ -825,7 +825,7 @@ Unnamed_080eb754:
 .L_080ebda8:
 	.4byte 0xfffffe20
 .L_080ebdac:
-	.4byte Data_080edae0
+	.4byte Data_080edac8 + 0x18
 .L_080ebdb0:
 	movs r1, #128
 	lsls r3, r0, #11
@@ -908,19 +908,19 @@ Unnamed_080eb754:
 	adds r3, r7, r0
 	str r4, [r3]
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebe50:
 	mov r1, r11
 	cmp r1, #11
 	bne .L_080ebe5c
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebe5c:
 	mov r2, r11
 	cmp r2, #46
 	bne .L_080ebe68
 	movs r0, #137
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebe68:
 	ldr r2, .L_080ec0c8
 	ldr r4, [sp, #76]
@@ -1007,7 +1007,7 @@ Unnamed_080eb754:
 	movs r1, #1
 	bl BattleMotion_ApplyVariantMotionFar
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebf1c:
 	ldr r4, [sp, #12]
 	movs r7, #224
@@ -1071,7 +1071,7 @@ Unnamed_080eb754:
 	cmp r2, #48
 	bne .L_080ebf98
 	movs r0, #136
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ebf98:
 	mov r3, r11
 	cmp r3, #40
@@ -1216,9 +1216,9 @@ Unnamed_080eb754:
 .L_080ec0b8:
 	.4byte 0x000077d8
 .L_080ec0bc:
-	.4byte Data_080eef56
+	.4byte Data_080eef18 + 0x3e
 .L_080ec0c0:
-	.4byte Data_080eef5f
+	.4byte Data_080eef18 + 0x47
 .L_080ec0c4:
 	.4byte 0x000077a8
 .L_080ec0c8:

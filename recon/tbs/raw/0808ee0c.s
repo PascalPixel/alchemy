@@ -104,7 +104,7 @@ BattleFx_EmitRandomParticle:
 .L_0808eed0:
 	.4byte gCell
 .L_0808eed4:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0808eed8:
 	.4byte 0xfff80000
 .L_0808eedc:

@@ -28,7 +28,7 @@ BattlePres_RunBeamSequence:
 	add r5, r11
 	str r0, [r5]
 	ldr r0, [r0, #8]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	str r0, [sp, #24]
 	movs r0, #1
 	bl WaitFrames
@@ -252,7 +252,7 @@ BattlePres_RunBeamSequence:
 .L_080e3ca4:
 	.4byte 0x00001f81
 .L_080e3ca8:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e3cac:
 	.4byte 0x0000006b
 .L_080e3cb0:
@@ -324,7 +324,7 @@ BattlePres_RunBeamSequence:
 	ldr r6, [r0]
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	movs r5, #225

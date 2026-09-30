@@ -26,7 +26,7 @@ UiMenu_SlideCursor:
 	strh r3, [r2]
 	b .L_080a1bb6
 .L_080a1aec:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080a1af0:
 	.4byte 0x00000222
 .L_080a1af4:

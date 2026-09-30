@@ -88,7 +88,7 @@ Shop_SelBuy:
 	movs r1, #7
 	adds r0, r7, #0
 	mov r11, r2
-	bl Func_080022fc
+	bl Math_Mod
 	adds r1, r0, #0
 	lsls r1, r1, #5
 	ldr r0, [sp, #28]
@@ -141,12 +141,12 @@ Shop_SelBuy:
 	mov r8, r7
 	subs r7, #1
 	adds r0, r7, r1
-	bl Func_080022fc
+	bl Math_Mod
 	adds r7, r0, #0
 	cmp r8, r7
 	beq .L_080b0be2
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #1
 	mov r11, r2
 .L_080b0be2:
@@ -160,12 +160,12 @@ Shop_SelBuy:
 	mov r8, r7
 	adds r7, #1
 	adds r0, r7, r1
-	bl Func_080022fc
+	bl Math_Mod
 	adds r7, r0, #0
 	cmp r8, r7
 	beq .L_080b0c0a
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #1
 	mov r11, r2
 .L_080b0c0a:
@@ -268,7 +268,7 @@ Shop_SelBuy:
 	movs r1, #2
 	movs r2, #0
 	movs r3, #8
-	bl Func_080a1028
+	bl PsynergyMenu_InitializeEntryObjectsFar
 	movs r3, #9
 	movs r0, #16
 	movs r1, #11
@@ -300,7 +300,7 @@ Shop_SelBuy:
 	movs r0, #0
 	mov r11, r0
 	adds r0, r7, r1
-	bl Func_080022fc
+	bl Math_Mod
 	movs r3, #219
 	adds r7, r0, #0
 	lsls r1, r7, #1
@@ -356,13 +356,13 @@ Shop_SelBuy:
 	cmp r1, #0
 	bge .L_080b0de8
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldrh r0, [r5]
 	movs r1, #2
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	adds r0, r6, #0
 	bl Ability_GetAvailability
 	cmp r0, #15
@@ -375,7 +375,7 @@ Shop_SelBuy:
 	bl UiMessage_ShowAndWait
 	b .L_080b0cf0
 .L_080b0dc0:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080b0dc4:
 	.4byte 0x000003a6
 .L_080b0dc8:
@@ -413,7 +413,7 @@ Shop_SelBuy:
 	bne .L_080b0e28
 	movs r1, #1
 	adds r0, r6, #0
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080b0f88
 	bl UiMessage_ShowAndWait
 	movs r0, #0
@@ -426,7 +426,7 @@ Shop_SelBuy:
 .L_080b0e28:
 	ldr r5, .L_080b0f8c
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	add r5, r10
 	movs r0, #1
 	bl WaitFrames
@@ -466,7 +466,7 @@ Shop_SelBuy:
 	cmp r3, #0
 	beq .L_080b0e8c
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #1
 	subs r7, #1
 	mov r11, r0
@@ -477,7 +477,7 @@ Shop_SelBuy:
 	cmp r3, #0
 	beq .L_080b0ea2
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #1
 	adds r7, #1
 	mov r11, r1
@@ -539,14 +539,14 @@ Shop_SelBuy:
 	b .L_080b0af4
 .L_080b0f18:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #1
 	negs r1, r1
 	mov r8, r1
 	b .L_080b0eaa
 .L_080b0f26:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r0, .L_080b0fa0
 	bl UiMessage_ShowAndRestoreState
 	movs r2, #1
@@ -555,7 +555,7 @@ Shop_SelBuy:
 	b .L_080b0eaa
 .L_080b0f3a:
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #1
 	negs r3, r3
 	mov r8, r3
@@ -563,7 +563,7 @@ Shop_SelBuy:
 .L_080b0f48:
 	movs r0, #112
 	str r7, [sp, #16]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #0
 	mov r8, r0
 	b .L_080b0c5a

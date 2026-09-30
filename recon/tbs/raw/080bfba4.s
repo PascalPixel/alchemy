@@ -16,7 +16,7 @@ BattleUnit_ProcessTurnEnd:
 	movs r1, #0
 	mov r8, r0
 	str r1, [sp, #4]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	mov r2, r8
 	str r0, [sp, #8]
 	movs r0, #0
@@ -24,7 +24,7 @@ BattleUnit_ProcessTurnEnd:
 	bls .L_080bfbce
 	movs r0, #1
 .L_080bfbce:
-	bl Func_08077000
+	bl Trade_GetOfferStateFar
 	adds r3, r0, #0
 	movs r0, #132
 	lsls r0, r0, #1
@@ -51,7 +51,7 @@ BattleUnit_ProcessTurnEnd:
 	ldrb r1, [r5]
 	ldrb r2, [r5, #1]
 	mov r0, r8
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 .L_080bfc08:
 	movs r0, #128
 	lsls r0, r0, #1
@@ -81,7 +81,7 @@ BattleUnit_ProcessTurnEnd:
 	bls .L_080bfc3e
 	movs r0, #1
 .L_080bfc3e:
-	bl Func_08077000
+	bl Trade_GetOfferStateFar
 	mov r3, sp
 	adds r3, #16
 	str r3, [sp, #0]
@@ -274,12 +274,12 @@ BattleUnit_ProcessTurnEnd:
 	movs r0, #11
 	bl BattleEv_Push
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r0, r8
 	bl GetBattleObjectSlot
 	movs r1, #3
 	ldr r0, [r0]
-	bl Func_08009080
+	bl Object_SetMode
 	mov r0, r8
 	bl GetBattleObjectSlot
 	movs r1, #32
@@ -326,7 +326,7 @@ BattleUnit_ProcessTurnEnd:
 	ldr r1, [r0, #96]
 	mov r0, r8
 	negs r1, r1
-	bl Func_08077118
+	bl Owner_AdjustFirstValueFar
 	cmp r0, #0
 	bne .L_080bfe60
 	mov r1, r8
@@ -398,7 +398,7 @@ BattleUnit_ProcessTurnEnd:
 	str r3, [r2]
 	negs r1, r7
 	mov r0, r8
-	bl Func_08077118
+	bl Owner_AdjustFirstValueFar
 	cmp r0, #0
 	bne .L_080bfefc
 	mov r1, r8
@@ -440,7 +440,7 @@ BattleUnit_ProcessTurnEnd:
 	movs r1, #192
 	lsls r1, r1, #24
 	mov r0, r8
-	bl Func_08077118
+	bl Owner_AdjustFirstValueFar
 	cmp r0, #0
 	bne .L_080bff74
 	mov r1, r8
@@ -497,7 +497,7 @@ BattleUnit_ProcessTurnEnd:
 .L_080bffa4:
 	.4byte 0x00000131
 .L_080bffa8:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080bffac:
 	.4byte 0x00000851
 .L_080bffb0:

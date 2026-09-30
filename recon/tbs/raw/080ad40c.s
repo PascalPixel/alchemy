@@ -128,6 +128,6 @@ FourObjectMotion_UpdateBottomRow:
 	pop {r0}
 	bx r0
 .L_080ad500:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080ad504:
 	.4byte 0x06002500

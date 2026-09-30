@@ -215,7 +215,7 @@ BattleActor_SpawnObjectsForList:
 	adds r5, r0, #0
 	str r5, [r7, #32]
 	movs r1, #0
-	bl Func_08009070
+	bl Animation_SetWorkEntryFar
 	movs r3, #3
 	strb r3, [r5, #6]
 .L_080b7d14:

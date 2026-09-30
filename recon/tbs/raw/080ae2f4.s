@@ -38,7 +38,7 @@ Unnamed_080ae2f4:
 .L_080ae334:
 	.4byte 0x000000c8
 .L_080ae338:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080ae33c:
 	subs r2, #1
 	strh r1, [r3]
@@ -65,7 +65,7 @@ Unnamed_080ae2f4:
 	add r3, r9
 	adds r6, r0, #0
 	ldrb r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r1, r0, #0
 	add r2, sp, #60
 	adds r1, #88
@@ -294,7 +294,7 @@ Unnamed_080ae2f4:
 	adds r0, r3, #0
 	movs r1, #60
 	str r3, [sp, #48]
-	bl Func_080022fc
+	bl Math_Mod
 	subs r0, #5
 	movs r0, #0
 	movs r1, #32
@@ -351,7 +351,7 @@ Unnamed_080ae2f4:
 	movs r0, #113
 	movs r7, #1
 .L_080ae5c6:
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	negs r7, r7
 	b .L_080ae638
 .L_080ae5ce:
@@ -371,7 +371,7 @@ Unnamed_080ae2f4:
 	mov r1, r10
 	str r0, [r1]
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	movs r2, #1
 	str r2, [sp, #52]
@@ -387,7 +387,7 @@ Unnamed_080ae2f4:
 	adds r3, #1
 	str r3, [r1]
 	movs r0, #111
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl Runtime_SetMainState19
 	movs r2, #1
 	str r2, [sp, #52]
@@ -471,7 +471,7 @@ Unnamed_080ae2f4:
 .L_080ae6cc:
 	.4byte 0x00000baa
 .L_080ae6d0:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080ae6d4:
 	.4byte gKeyState
 .L_080ae6d8:

@@ -215,7 +215,7 @@ BattleFx_RunTwoResource:
 	b .L_080ccdfa
 .L_080ccde0:
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, [r6]
 	movs r4, #36
 	ldrsh r0, [r3, r4]

@@ -161,6 +161,6 @@ Func_0807a664:
 	pop {r0}
 	bx r0
 .L_0807a798:
-	.4byte Data_02000438
+	.4byte gItemCounters + 0xb8
 .L_0807a79c:
 	.4byte 0x00000952

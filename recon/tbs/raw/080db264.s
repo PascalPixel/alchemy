@@ -75,7 +75,7 @@ Unnamed_080db264:
 .L_080db2f0:
 	.4byte 0x04000020
 .L_080db2f4:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080db2f8:
 	.4byte 0x0000060e
 .L_080db2fc:
@@ -145,7 +145,7 @@ Unnamed_080db264:
 	asrs r3, r3, #16
 	str r3, [r7, #8]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -174,7 +174,7 @@ Unnamed_080db264:
 	ldr r0, .L_080db69c
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #138
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r2, #0
 	str r2, [sp, #28]
 .L_080db3c6:
@@ -191,7 +191,7 @@ Unnamed_080db264:
 .L_080db3da:
 	adds r0, r1, #0
 	movs r1, #5
-	bl Func_080022fc
+	bl Math_Mod
 	cmp r0, #2
 	bne .L_080db3f4
 	movs r1, #128
@@ -226,7 +226,7 @@ Unnamed_080db264:
 	adds r3, #64
 	adds r0, r5, #0
 	mov r9, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, .L_080db678
 	add r3, r10
 	lsls r0, r0, #3
@@ -328,7 +328,7 @@ Unnamed_080db264:
 	asrs r3, r3, #9
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	lsls r3, r3, #1

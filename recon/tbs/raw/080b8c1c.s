@@ -80,7 +80,7 @@ BattlePres_RunUnitAction:
 	ldr r0, [r0]
 	movs r1, #3
 	mov r10, r0
-	bl Func_08009080
+	bl Object_SetMode
 	mov r0, r10
 	movs r1, #16
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -167,7 +167,7 @@ BattlePres_RunUnitAction:
 	bl BattleFx_DispatchModeFar
 	mov r0, r10
 	movs r1, #1
-	bl Func_08009080
+	bl Object_SetMode
 	add r5, sp, #8
 	ldr r3, [r5, #20]
 	adds r2, r5, #0
@@ -204,4 +204,4 @@ BattlePres_RunUnitAction:
 .L_080b8db0:
 	.4byte 0xffffe000
 .L_080b8db4:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork

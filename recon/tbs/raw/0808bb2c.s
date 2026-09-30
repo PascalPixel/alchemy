@@ -57,12 +57,12 @@ ObjectTable_Restore:
 	cmp r1, #0
 	beq .L_0808bb9c
 	adds r0, r5, #0
-	bl Func_08009080
+	bl Object_SetMode
 .L_0808bb9c:
 	ldr r2, [sp, #0]
 	adds r0, r5, #0
 	ldrb r1, [r2]
-	bl Func_080091e0
+	bl ObjectDispatch_SetSingleChildField26Far
 	mov r3, r11
 	ldrb r1, [r3]
 	movs r3, #3
@@ -138,8 +138,8 @@ ObjectTable_Restore:
 .L_0808bc34:
 	.4byte 0x8400001c
 .L_0808bc38:
-	.4byte Data_02000434
+	.4byte gItemCounters + 0xb4
 .L_0808bc3c:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0808bc40:
 	.4byte gMapWork

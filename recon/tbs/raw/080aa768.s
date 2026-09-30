@@ -326,7 +326,7 @@ Unnamed_080aa768:
 	b .L_080aac56
 .L_080aa9da:
 	movs r0, #126
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, .L_080aaaa0
 	ldr r1, .L_080aaa94
 	adds r3, r7, r2
@@ -411,7 +411,7 @@ Unnamed_080aa768:
 	b .L_080aac56
 	.2byte 0x0000
 .L_080aaa8c:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080aaa90:
 	.4byte .L_080aa7a8
 .L_080aaa94:
@@ -439,7 +439,7 @@ Unnamed_080aa768:
 	b .L_080aac56
 .L_080aaac0:
 	movs r0, #175
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, .L_080aac70
 	ldr r1, .L_080aac74
 	adds r3, r7, r2
@@ -450,7 +450,7 @@ Unnamed_080aa768:
 	ldrb r2, [r5]
 	ldrb r0, [r6]
 	str r3, [sp, #4]
-	bl Func_080771b8
+	bl Djinn_DeactivateFar
 	ldr r3, [sp, #4]
 	ldrb r2, [r5]
 	ldrb r1, [r3]
@@ -474,7 +474,7 @@ Unnamed_080aa768:
 	b .L_080aac56
 .L_080aab08:
 	movs r0, #126
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, .L_080aac74
 	ldr r1, .L_080aac70
 	adds r6, r7, r2
@@ -603,7 +603,7 @@ Unnamed_080aa768:
 	blt .L_080aac56
 .L_080aac06:
 	movs r0, #139
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, .L_080aac70
 	ldr r1, .L_080aac74
 	adds r3, r7, r2

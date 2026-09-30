@@ -344,7 +344,7 @@ LuckyDice_Run:
 	str r0, [r3]
 	adds r3, r7, r5
 	str r1, [r3]
-	bl Func_08015000
+	bl FarCall_WindowTable
 	movs r6, #6
 	movs r1, #0
 	movs r2, #12
@@ -511,7 +511,7 @@ LuckyDice_Run:
 	ldr r0, .L_080f478c
 	str r1, [sp, #16]
 	str r2, [sp, #12]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, [sp, #12]
 	ldr r1, [sp, #16]
 .L_080f459c:
@@ -690,7 +690,7 @@ LuckyDice_Run:
 	cmp r3, #0
 	beq .L_080f4742
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r4, [sp, #80]
 	cmp r4, #0
 	ble .L_080f470a
@@ -960,7 +960,7 @@ LuckyDice_Run:
 	cmp r5, #0
 	beq .L_080f4920
 	movs r0, #113
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r5, [sp, #64]
 	movs r1, #1
 	ldr r0, [r5]
@@ -974,7 +974,7 @@ LuckyDice_Run:
 	beq .L_080f49e6
 	movs r0, #151
 	lsls r0, r0, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r7, [sp, #64]
 	movs r1, #1
 	ldr r0, [r7]
@@ -1170,7 +1170,7 @@ LuckyDice_Run:
 .L_080f4ac0:
 	.4byte gKeysRepeat
 .L_080f4ac4:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_080f4ac8:
 	.4byte 0x00007084
 .L_080f4acc:
@@ -1779,7 +1779,7 @@ LuckyDice_Run:
 	asrs r3, r3, #8
 	str r3, [r7, #12]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	asrs r3, r3, #8
@@ -1833,7 +1833,7 @@ LuckyDice_Run:
 .L_080f4fc6:
 	asrs r0, r0, #10
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	cmp r0, #1
 	bne .L_080f4fdc
 	movs r4, #128
@@ -2034,7 +2034,7 @@ LuckyDice_Run:
 	str r3, [sp, #0]
 	bl UiNumber_DrawAt
 	movs r0, #93
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080f5260
 .L_080f5148:
 	.4byte IwramSqrt
@@ -2144,7 +2144,7 @@ LuckyDice_Run:
 	movs r1, #2
 	movs r0, #91
 	str r1, [sp, #84]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080f521e:
 	mov r2, r8
 	cmp r2, #3
@@ -2175,7 +2175,7 @@ LuckyDice_Run:
 	movs r1, #1
 	movs r0, #92
 	str r1, [sp, #84]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080f5260:
 	ldr r2, [sp, #68]
 	cmp r2, #128

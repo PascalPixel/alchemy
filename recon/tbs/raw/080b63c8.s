@@ -90,7 +90,7 @@ Battle_RunEncounter:
 	ldr r2, .L_080b662c
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_0808a4a0
+	bl Event_GetSpecialValueFar
 	movs r3, #201
 	lsls r3, r3, #3
 	add r3, r8
@@ -107,7 +107,7 @@ Battle_RunEncounter:
 	bl ObjectSystem_InitializeFar
 	movs r0, #183
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_080b64c6
 	movs r0, #1
@@ -146,7 +146,7 @@ Battle_RunEncounter:
 	adds r6, r0, #0
 	movs r0, #182
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_080b6528
 	mov r3, r8
@@ -236,29 +236,29 @@ Battle_RunEncounter:
 	ldrsh r0, [r3, r2]
 	cmp r0, #0
 	beq .L_080b65d8
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #182
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_080b65e4
 	movs r0, #55
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #4
 	bl Sound_LoadPresetParameters
 	b .L_080b65e4
 .L_080b65d8:
 	movs r0, #51
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #76
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080b65e4:
 	bl BattleParty_CollectUnitList
 	bl BattleUnit_RefreshPlacement
 	bl BattlePlacement_UpdateEntries
 	bl BattleSummon_UpdateAvailability
 	movs r0, #0
-	bl Func_08077000
+	bl Trade_GetOfferStateFar
 	ldr r3, [r0]
 	cmp r3, #0
 	beq .L_080b6658
@@ -356,7 +356,7 @@ Battle_RunEncounter:
 	strb r5, [r1]
 	lsls r0, r0, #1
 	mov r11, r1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_080b6700
 	ldr r3, .L_080b66ec
@@ -376,7 +376,7 @@ Battle_RunEncounter:
 .L_080b66f0:
 	.4byte 0x0000022b
 .L_080b66f4:
-	bl Func_080771a0
+	bl BattleRandom16Far
 	movs r3, #15
 	ands r0, r3
 	cmp r0, #0
@@ -387,7 +387,7 @@ Battle_RunEncounter:
 	strb r3, [r2]
 	b .L_080b671a
 .L_080b6708:
-	bl Func_080771a0
+	bl BattleRandom16Far
 	movs r3, #31
 	ands r0, r3
 	cmp r0, #0
@@ -412,7 +412,7 @@ Battle_RunEncounter:
 	bl Battle_ReservedNoOp9B2C
 	bl BattleSummon_UpdateAvailability
 	movs r0, #0
-	bl Func_08077000
+	bl Trade_GetOfferStateFar
 	ldr r3, [r0]
 	cmp r3, #0
 	beq .L_080b6752
@@ -447,7 +447,7 @@ Battle_RunEncounter:
 	bl Resource_ResetEntry
 	movs r0, #181
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_080b67ac
 	bl Runtime_GetRemainingIwram
@@ -487,7 +487,7 @@ Battle_RunEncounter:
 	bl Runtime_GetRemainingEwram
 	movs r0, #181
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_080b6806
 	mov r2, r8
@@ -567,7 +567,7 @@ Battle_RunEncounter:
 .L_080b688c:
 	movs r0, #183
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_080b689a
 	b .L_080b6736
@@ -610,7 +610,7 @@ Battle_RunEncounter:
 	bl Battle_ApplyValueToWork2224
 	movs r0, #183
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_080b6954
 	ldr r1, [sp, #4]
@@ -618,7 +618,7 @@ Battle_RunEncounter:
 	cmp r3, #0
 	beq .L_080b690a
 	movs r0, #58
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080b690a:
 	movs r3, #167
 	lsls r3, r3, #3
@@ -627,7 +627,7 @@ Battle_RunEncounter:
 	cmp r3, #0
 	beq .L_080b6950
 	movs r0, #58
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r2, r8
 	ldrh r3, [r2, #62]
 	cmp r3, #1
@@ -642,7 +642,7 @@ Battle_RunEncounter:
 	bl UiWork_ClearValueNameTablesFar
 	movs r0, #128
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	mov r3, r8
 	ldrh r0, [r3, #62]
 	ldr r3, .L_080b69ac
@@ -653,7 +653,7 @@ Battle_RunEncounter:
 	bl Battle_AwardSpoils
 .L_080b6954:
 	movs r0, #17
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #30
 	bl Blend_SetDarkenTarget16
 	bl Blend_WaitForTransition
@@ -696,7 +696,7 @@ Battle_RunEncounter:
 .L_080b69b0:
 	bl Battle_ApplyValueToWork2224
 	movs r0, #59
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	bl UiWork_ClearValueNameTablesFar
 	ldr r3, .L_080b6a48
 	movs r1, #252
@@ -704,7 +704,7 @@ Battle_RunEncounter:
 	adds r3, r3, r1
 	ldrb r0, [r3]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	movs r0, #0
 	bl BattleParty_PrepareActiveOwners
 	cmp r0, #1
@@ -718,7 +718,7 @@ Battle_RunEncounter:
 .L_080b69e6:
 	bl BattlePresentation_WaitForAdvance
 	movs r0, #17
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r7, #1
 	movs r0, #30
 	bl Blend_SetDarkenTarget16
@@ -727,7 +727,7 @@ Battle_RunEncounter:
 	b .L_080b6a12
 .L_080b6a00:
 	movs r0, #17
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #30
 	bl Blend_SetDarkenTarget16
 	bl Blend_WaitForTransition

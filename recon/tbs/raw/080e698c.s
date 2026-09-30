@@ -162,7 +162,7 @@ Unnamed_080e698c:
 	bl Object_SetMoveTargetFar
 	movs r1, #2
 	adds r0, r6, #0
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r3, .L_080e6d04
 	movs r1, #0
 	add r2, sp, #24
@@ -300,7 +300,7 @@ Unnamed_080e698c:
 	asrs r3, r3, #7
 	str r3, [r7, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	negs r3, r3
@@ -360,7 +360,7 @@ Unnamed_080e698c:
 .L_080e6c72:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl Func_080022fc
+	bl Math_Mod
 	adds r1, r0, #0
 	lsls r1, r1, #8
 	movs r2, #250
@@ -423,7 +423,7 @@ Unnamed_080e698c:
 .L_080e6cfc:
 	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
 .L_080e6d00:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080e6d04:
 	.4byte 0x00007828
 .L_080e6d08:

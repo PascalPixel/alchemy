@@ -72,7 +72,7 @@ UiWindow_DrawPartyStatusContents:
 	bne .L_0801f26a
 	b .L_0801f2d8
 .L_0801f288:
-	bl Func_08077148
+	bl Party_CountActiveOwnersFar
 	str r0, [sp, #28]
 	ldr r1, [sp, #28]
 	movs r0, #0
@@ -238,7 +238,7 @@ UiWindow_DrawPartyStatusContents:
 	ldr r3, [sp, #4]
 	ldr r4, [sp, #16]
 	ldrh r0, [r3, r4]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r5, r0, #0
 	movs r0, #56
 	ldrsh r7, [r5, r0]

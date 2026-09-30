@@ -7,7 +7,7 @@ BattleActor_RemoveFromLists:
 	ldr r3, .L_080bac98
 	adds r6, r0, #0
 	ldr r5, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r3, #149
 	lsls r3, r3, #1
 	adds r2, r0, r3
@@ -27,7 +27,7 @@ BattleActor_RemoveFromLists:
 .L_080bac94:
 	.4byte 0x000000fe
 .L_080bac98:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080bac9c:
 	cmp r3, #255
 	bne .L_080bac88

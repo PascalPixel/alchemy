@@ -149,7 +149,7 @@ Func_0801dd28:
 .L_0801de38:
 	.4byte 0x0000f000
 .L_0801de3c:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_0801de40:
 	.4byte 0x00000013
 .L_0801de44:

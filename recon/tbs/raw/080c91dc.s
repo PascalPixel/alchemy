@@ -219,7 +219,7 @@ BattleEffect_RunFallingParticles:
 .L_080c9388:
 	.4byte 0x00007418
 .L_080c938c:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080c9390:
 	.4byte gMapCellBuffer
 .L_080c9394:
@@ -413,7 +413,7 @@ BattleEffect_RunFallingParticles:
 	cmp r3, #0
 	bne .L_080c94f6
 	movs r0, #115
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080c94f6:
 	ldr r2, .L_080c971c
 	movs r3, #2

@@ -18,7 +18,7 @@ Party_SetReturnPoint:
 	lsls r4, r4, #1
 	adds r3, r1, r4
 	ldr r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r6, r0, #0
 	movs r5, #56
 	ldrsh r3, [r6, r5]
@@ -78,13 +78,13 @@ Party_SetReturnPoint:
 	strh r3, [r6, #22]
 .L_0808a774:
 	movs r0, #32
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0808a7f6
 	movs r5, #0
 .L_0808a780:
 	adds r0, r5, #0
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r6, r0, #0
 	ldrh r1, [r6, #52]
 	ldrh r3, [r6, #54]

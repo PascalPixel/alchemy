@@ -204,7 +204,7 @@ BattleFx_RunMemberBeam:
 	cmp r3, #64
 	bne .L_080cf45c
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080cf45c:
 	ldr r5, [sp, #44]
 	cmp r5, #80
@@ -235,7 +235,7 @@ BattleFx_RunMemberBeam:
 	subs r3, #20
 	adds r0, r5, #0
 	mov r10, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [sp, #60]
 	lsls r0, r0, #2
 	asrs r0, r0, #16
@@ -402,7 +402,7 @@ BattleFx_RunMemberBeam:
 .L_080cf5f0:
 	.4byte 0x000065c0
 .L_080cf5f4:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080cf5f8:
 	.4byte gMapCellBuffer
 .L_080cf5fc:

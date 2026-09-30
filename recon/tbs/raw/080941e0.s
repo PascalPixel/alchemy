@@ -15,12 +15,12 @@ Func_080941e0:
 	movs r2, #0
 	ldrsh r0, [r3, r2]
 	sub sp, #8
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #144
 	lsls r0, r0, #1
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #147
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #207
 	lsls r1, r1, #1
 	adds r3, r6, r1
@@ -113,7 +113,7 @@ Func_080941e0:
 	bx r1
 	.2byte 0x0000
 .L_080942c4:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_080942c8:
 	.4byte gCell
 .L_080942cc:

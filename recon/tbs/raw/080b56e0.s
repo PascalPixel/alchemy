@@ -180,11 +180,11 @@ Unnamed_080b56e0:
 	b .L_080b56f6
 	.2byte 0x0000
 .L_080b5850:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_080b5854:
 	.4byte 0x00000101
 .L_080b5858:
-	.4byte Data_0200046b
+	.4byte gItemCounters + 0xeb
 .L_080b585c:
 	.4byte gKeysRepeat
 .L_080b5860:

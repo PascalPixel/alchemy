@@ -132,7 +132,7 @@ BattleFx_RunFortyEightFrameEffect:
 .L_080cf104:
 	.4byte 0x04000028
 .L_080cf108:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080cf10c:
 	movs r0, #47
 	str r6, [sp, #0]
@@ -168,7 +168,7 @@ BattleFx_RunFortyEightFrameEffect:
 	add r2, r8
 	str r3, [r2]
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080cf15e
 .L_080cf156:
 	ldr r2, .L_080cf288
@@ -223,7 +223,7 @@ BattleFx_RunFortyEightFrameEffect:
 	cmp r3, #0
 	bne .L_080cf1be
 	movs r0, #126
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080cf1be:
 	cmp r7, #31
 	bgt .L_080cf226
@@ -324,12 +324,12 @@ BattleFx_RunFortyEightFrameEffect:
 .L_080cf288:
 	.4byte 0x000077a8
 .L_080cf28c:
-	.4byte Data_080ee09f
+	.4byte Data_080ee090 + 0xf
 .L_080cf290:
 	.4byte 0x00007828
 .L_080cf294:
-	.4byte Data_080ee096
+	.4byte Data_080ee090 + 0x6
 .L_080cf298:
-	.4byte Data_080ee09c
+	.4byte Data_080ee090 + 0xc
 .L_080cf29c:
 	.4byte 0x00007824

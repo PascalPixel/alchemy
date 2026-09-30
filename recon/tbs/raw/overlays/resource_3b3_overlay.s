@@ -97,7 +97,7 @@ TakaraHashira_CopyCellBlock:
 .L_02008d6c:
 	.4byte gMapBlocks
 .L_02008d70:
-	.4byte Data_02020004
+	.4byte gMapBlocks + 0x4
 .L_02008d74:
 	.4byte 0x06002840
 	.section .text.x02009d84,"ax",%progbits

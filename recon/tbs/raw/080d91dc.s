@@ -329,7 +329,7 @@ BattleEffectB:
 	str r5, [sp, #44]
 .L_080d945e:
 	movs r0, #142
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, .L_080d967c
 	ldr r1, [sp, #68]
 	adds r3, r1, r2
@@ -378,7 +378,7 @@ BattleEffectB:
 	subs r3, #20
 	adds r0, r5, #0
 	mov r10, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [sp, #76]
 	ldr r2, [sp, #44]
 	lsls r0, r0, #2
@@ -485,7 +485,7 @@ BattleEffectB:
 	ldr r4, [sp, #12]
 	ldr r5, [r0]
 	ldrsh r0, [r3, r4]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	movs r1, #3
 	lsls r0, r0, #1
 	bl FixedPoint_Ratio
@@ -495,7 +495,7 @@ BattleEffectB:
 	cmp r11, r3
 	bne .L_080d95ba
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d95ba:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
@@ -600,9 +600,9 @@ BattleEffectB:
 .L_080d968c:
 	.4byte gCameraWork
 .L_080d9690:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080d9694:
-	.4byte Data_03001f08
+	.4byte gTransitionWork + 0x8
 .L_080d9698:
 	mov r4, r11
 	lsls r5, r4, #10
@@ -762,7 +762,7 @@ BattleEffectB:
 .L_080d97da:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl Func_080022fc
+	bl Math_Mod
 	movs r4, #2
 	adds r5, r0, #0
 	ldr r3, [sp, #44]
@@ -819,7 +819,7 @@ BattleEffectB:
 .L_080d984c:
 	asrs r0, r3, #2
 	movs r1, #7
-	bl Func_080022fc
+	bl Math_Mod
 	movs r1, #2
 	adds r5, r0, #0
 	str r1, [sp, #0]
@@ -876,7 +876,7 @@ BattleEffectB:
 .L_080d98ba:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl Func_080022fc
+	bl Math_Mod
 	movs r1, #2
 	str r1, [sp, #0]
 	ldr r3, [sp, #44]
@@ -927,7 +927,7 @@ BattleEffectB:
 	adds r0, r0, r3
 	movs r1, #6
 	asrs r0, r0, #1
-	bl Func_080022fc
+	bl Math_Mod
 	movs r2, #2
 	str r2, [sp, #0]
 	ldr r3, [sp, #44]
@@ -1000,13 +1000,13 @@ BattleEffectB:
 .L_080d99bc:
 	.4byte BattleFx6_FlareCells
 .L_080d99c0:
-	.4byte Data_03001f08
+	.4byte gTransitionWork + 0x8
 .L_080d99c4:
 	.4byte 0x0000060e
 .L_080d99c8:
 	.4byte 0x00002b8e
 .L_080d99cc:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080d99d0:
 	ldr r3, [sp, #16]
 	adds r3, #80
@@ -1024,7 +1024,7 @@ BattleEffectB:
 .L_080d99ea:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl Func_080022fc
+	bl Math_Mod
 	movs r3, #3
 	adds r5, r0, #0
 	str r3, [sp, #0]
@@ -1111,7 +1111,7 @@ BattleEffectB:
 	bx r0
 	.2byte 0x0000
 .L_080d9aa4:
-	.4byte Data_03001f08
+	.4byte gTransitionWork + 0x8
 .L_080d9aa8:
 	.4byte 0x00002b8e
 .L_080d9aac:

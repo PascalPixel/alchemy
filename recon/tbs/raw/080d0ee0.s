@@ -49,7 +49,7 @@ Region_080d0ee0:
 	bl Resource_DecodeType01
 	mov r0, r10
 	movs r1, #2
-	bl Func_08009080
+	bl Object_SetMode
 	mov r0, r10
 	movs r1, #48
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -330,7 +330,7 @@ Region_080d0ee0:
 	movs r1, #10
 	adds r0, r4, #0
 	str r4, [sp, #8]
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r1, [sp, #32]
 	adds r0, r0, r1
 	lsls r3, r0, #3
@@ -469,7 +469,7 @@ Region_080d0ee0:
 .L_080d1290:
 	.4byte 0x0000199a
 .L_080d1294:
-	.4byte Data_080ee140
+	.4byte Data_080ee128 + 0x18
 .L_080d1298:
 	.4byte 0x00061a7f
 .L_080d129c:
@@ -480,7 +480,7 @@ Region_080d0ee0:
 	.4byte 0xffd80000
 .L_080d12a8:
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r4, .L_080d1340
 	ldr r2, [sp, #76]
 	adds r3, r2, r4

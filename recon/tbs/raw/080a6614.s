@@ -80,7 +80,7 @@ Func_080a6614:
 	ldr r0, .L_080a6778
 	movs r1, #4
 	ands r0, r2
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080a6780
 	adds r1, r5, #0
 	movs r2, #0
@@ -90,11 +90,11 @@ Func_080a6614:
 	bne .L_080a66e2
 	ldrh r0, [r7]
 	lsrs r0, r0, #10
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r1, r5, #0
 	movs r2, #80
 	movs r3, #0
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	b .L_080a66e2
 .L_080a66d6:
 	ldr r0, .L_080a6784
@@ -133,7 +133,7 @@ Func_080a6614:
 	ldr r0, .L_080a6778
 	movs r1, #4
 	ands r0, r2
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080a678c
 	adds r1, r5, #0
 	movs r2, #0
@@ -143,11 +143,11 @@ Func_080a6614:
 	bne .L_080a6744
 	ldrh r0, [r7]
 	lsrs r0, r0, #10
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r1, r5, #0
 	movs r2, #80
 	movs r3, #8
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 .L_080a6744:
 	movs r0, #15
 	bl UiWork_SetParamNibbleFar

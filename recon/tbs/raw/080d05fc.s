@@ -130,7 +130,7 @@ Func_080d05fc:
 	lsls r3, r3, #8
 	str r3, [r2]
 	movs r0, #142
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #0
 	str r1, [sp, #56]
 	ldr r3, [r7]
@@ -181,7 +181,7 @@ Func_080d05fc:
 	subs r3, #20
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [sp, #76]
 	lsls r0, r0, #2
 	asrs r0, r0, #16
@@ -405,7 +405,7 @@ Func_080d05fc:
 	adds r0, r7, #0
 	str r3, [sp, #36]
 	str r7, [sp, #24]
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r3, [sp, #32]
 	adds r0, r0, r3
 	lsls r3, r0, #3
@@ -566,9 +566,9 @@ Func_080d05fc:
 .L_080d0a8c:
 	.4byte 0x00007828
 .L_080d0a90:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080d0a94:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080d0a98:
 	.4byte 0x01010101
 .L_080d0a9c:

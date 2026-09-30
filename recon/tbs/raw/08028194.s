@@ -417,7 +417,7 @@ AffineEffect_UpdateFrame:
 	pop {r0}
 	bx r0
 .L_08028498:
-	.4byte Data_03001f38
+	.4byte gMenuSelectWork
 .L_0802849c:
 	.4byte gFrameCount
 .L_080284a0:

@@ -49,7 +49,7 @@ RunBattleEffect13:
 	bl Vector_AddPolarOffset
 	b .L_0809aedc
 .L_0809aec0:
-	.4byte Data_03001f30
+	.4byte gEffectWork
 .L_0809aec4:
 	add r3, sp, #4
 	mov r9, r3
@@ -83,7 +83,7 @@ RunBattleEffect13:
 .L_0809aefe:
 	bl BattleEffect_InitializeSharedScene
 	movs r0, #138
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldrh r3, [r7, #6]
 	strh r3, [r6, #6]
 	ldr r3, .L_0809af34
@@ -94,7 +94,7 @@ RunBattleEffect13:
 	strb r2, [r3]
 	adds r0, r6, #0
 	movs r1, #5
-	bl Func_08009080
+	bl Object_SetMode
 	adds r0, r6, #0
 	movs r1, #1
 	bl Animation_ApplyChildValuesFar
@@ -160,7 +160,7 @@ RunBattleEffect13:
 	bl WaitFrames
 	adds r0, r6, #0
 	movs r1, #6
-	bl Func_08009080
+	bl Object_SetMode
 	movs r0, #15
 	bl WaitFrames
 	movs r5, #9
@@ -176,9 +176,9 @@ RunBattleEffect13:
 	bge .L_0809afba
 	adds r0, r6, #0
 	movs r1, #5
-	bl Func_08009080
+	bl Object_SetMode
 	movs r0, #132
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r2, [sp, #0]
 	cmp r2, #0
 	beq .L_0809afee
@@ -205,7 +205,7 @@ RunBattleEffect13:
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #114
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r7, #0
 	mov r10, r9
 	mov r8, r11

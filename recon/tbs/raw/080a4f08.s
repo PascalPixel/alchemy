@@ -79,13 +79,13 @@ ItemMenu_SelectGiveQuantity:
 	adds r2, r7, #0
 	movs r3, #48
 	str r5, [sp, #0]
-	bl Func_080150c8
+	bl RenderOutput_CreateFar
 	adds r1, r6, #0
 	adds r2, r7, #0
 	ldr r0, [sp, #16]
 	movs r3, #80
 	str r5, [sp, #0]
-	bl Func_080150c8
+	bl RenderOutput_CreateFar
 	ldrh r1, [r0, #24]
 	lsls r2, r1, #22
 	ldr r3, .L_080a4fd8
@@ -104,7 +104,7 @@ ItemMenu_SelectGiveQuantity:
 .L_080a4fd8:
 	.4byte 0x000003ff
 .L_080a4fdc:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080a4fe0:
 	.4byte 0x0000021b
 .L_080a4fe4:
@@ -126,7 +126,7 @@ ItemMenu_SelectGiveQuantity:
 	movs r2, #0
 	add r0, r8
 	str r2, [sp, #12]
-	bl Func_080022fc
+	bl Math_Mod
 	mov r8, r0
 	adds r0, r7, #0
 	bl RenderOutput_RedrawSavedRectFar
@@ -223,22 +223,22 @@ ItemMenu_SelectGiveQuantity:
 	ldr r3, .L_080a51c0
 	add r3, r9
 	ldrb r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r2, #16
 	adds r1, r7, #0
 	movs r3, #16
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 	ldr r2, [sp, #20]
 	cmp r2, #0
 	bne .L_080a5104
 	ldr r3, .L_080a51c4
 	add r3, r9
 	ldrb r0, [r3]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r1, r7, #0
 	movs r2, #80
 	movs r3, #16
-	bl Func_08015090
+	bl UiText_DrawStringAtOffsetFar
 .L_080a5104:
 	ldr r1, .L_080a51c8
 	ldr r3, [r1]
@@ -247,7 +247,7 @@ ItemMenu_SelectGiveQuantity:
 	cmp r3, #0
 	beq .L_080a5118
 	movs r0, #112
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a517c
 .L_080a5118:
 	ldr r3, [r1]
@@ -259,7 +259,7 @@ ItemMenu_SelectGiveQuantity:
 	negs r3, r3
 	movs r0, #113
 	mov r8, r3
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080a517c
 .L_080a5130:
 	movs r0, #128
@@ -276,7 +276,7 @@ ItemMenu_SelectGiveQuantity:
 	movs r0, #111
 	add r8, r2
 	str r3, [sp, #12]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080a5152:
 	ldr r3, [r5]
 	movs r2, #16
@@ -287,14 +287,14 @@ ItemMenu_SelectGiveQuantity:
 	movs r0, #111
 	add r8, r2
 	str r2, [sp, #12]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080a5168:
 	movs r0, #1
 	bl WaitFrames
 .L_080a516e:
 	movs r0, #168
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_080a517c
 	b .L_080a4ff4
@@ -313,7 +313,7 @@ ItemMenu_SelectGiveQuantity:
 	movs r3, #13
 	strb r3, [r2, #5]
 	lsls r0, r0, #1
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_080a51ac
 	movs r3, #1

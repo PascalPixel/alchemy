@@ -186,7 +186,7 @@ Func_080cc5d8:
 	ldr r3, [r3]
 	movs r0, #140
 	str r3, [sp, #12]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r3, #28
 	movs r2, #0
 	add r3, sp
@@ -219,7 +219,7 @@ Func_080cc5d8:
 	cmp r1, #26
 	bne .L_080cc7e4
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, .L_080cc7e0
 	add r3, r9
 	ldr r3, [r3]
@@ -253,7 +253,7 @@ Func_080cc5d8:
 .L_080cc7d4:
 	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
 .L_080cc7d8:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080cc7dc:
 	.4byte 0x04000028
 .L_080cc7e0:
@@ -289,7 +289,7 @@ Func_080cc5d8:
 	movs r1, #3
 	bl FixedPoint_Ratio
 	movs r1, #5
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r6, .L_080cc944
 	lsls r0, r0, #10
 	movs r7, #0
@@ -353,7 +353,7 @@ Func_080cc5d8:
 	adds r3, #64
 	ldr r0, [r5]
 	mov r8, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [r5, #4]
 	muls r3, r0
 	mov r1, r11
@@ -426,7 +426,7 @@ Func_080cc5d8:
 	bx r0
 	.2byte 0x0000
 .L_080cc944:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080cc948:
 	.4byte Data_080ee060
 .L_080cc94c:

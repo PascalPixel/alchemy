@@ -97,7 +97,7 @@ Unnamed_080d82b0:
 	ldr r2, [sp, #12]
 	ldr r6, [r0]
 	ldrsh r0, [r3, r2]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	ldr r3, [r6, #8]
@@ -139,7 +139,7 @@ Unnamed_080d82b0:
 	adds r2, r2, r3
 	str r2, [r7]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r2, r6, #0
 	muls r2, r0
 	mov r0, r10
@@ -237,7 +237,7 @@ Unnamed_080d82b0:
 	cmp r9, r7
 	bne .L_080d84b6
 	movs r0, #143
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	mov r1, r11
 	ldr r2, [r6]
 	lsls r3, r1, #1
@@ -263,7 +263,7 @@ Unnamed_080d82b0:
 	blt .L_080d852e
 	movs r1, #3
 	mov r0, r8
-	bl Func_080022fc
+	bl Math_Mod
 	adds r0, #1
 	lsls r4, r0, #1
 	ldr r2, .L_080d85c4
@@ -374,7 +374,7 @@ Unnamed_080d82b0:
 .L_080d85ac:
 	.4byte IwramCopyWords
 .L_080d85b0:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080d85b4:
 	.4byte gMapCellBuffer
 .L_080d85b8:

@@ -15,7 +15,7 @@ BattleCommand_SelectTargets:
 	mov r1, r9
 	str r1, [r3]
 	mov r10, r1
-	bl Func_08077080
+	bl Ability_GetData
 	movs r3, #0
 	ldrb r2, [r0]
 	str r3, [sp, #20]
@@ -145,7 +145,7 @@ BattleCommand_SelectTargets:
 	bne .L_080be2a6
 	adds r0, r5, #0
 	str r4, [sp, #0]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	ldr r4, [sp, #0]
@@ -183,7 +183,7 @@ BattleCommand_SelectTargets:
 	bne .L_080be2f0
 	adds r0, r5, #0
 	str r4, [sp, #0]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	ldr r4, [sp, #0]
@@ -229,7 +229,7 @@ BattleCommand_SelectTargets:
 	movs r1, #0
 	ldrsh r0, [r3, r1]
 	movs r1, #1
-	bl Func_08015120
+	bl UiText_DrawQuantity
 	ldr r0, .L_080be370
 	bl UiText_ShowMessageAndWaitCoreFar
 	mov r3, r10

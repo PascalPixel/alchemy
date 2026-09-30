@@ -121,7 +121,7 @@ BattleEffect_RunDitherDissolveScene:
 .L_080d6a5c:
 	.4byte 0x000000b2
 .L_080d6a60:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080d6a64:
 	bl Unnamed_080ed408
 	adds r5, #188
@@ -300,7 +300,7 @@ BattleEffect_RunDitherDissolveScene:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #157
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, .L_080d6d80
 	mov r0, r9
 	ldr r3, [r0, r1]
@@ -329,13 +329,13 @@ BattleEffect_RunDitherDissolveScene:
 	cmp r4, #72
 	bne .L_080d6c10
 	movs r0, #136
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d6c10:
 	ldr r0, [sp, #60]
 	cmp r0, #140
 	bne .L_080d6c1c
 	movs r0, #156
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d6c1c:
 	ldr r1, [sp, #52]
 	movs r2, #128
@@ -363,7 +363,7 @@ BattleEffect_RunDitherDissolveScene:
 	movs r1, #24
 	bl FixedPoint_Ratio
 	movs r1, #3
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r3, .L_080d6d9c
 	ldr r6, .L_080d6da0
 	adds r5, r0, #0
@@ -406,7 +406,7 @@ BattleEffect_RunDitherDissolveScene:
 .L_080d6ca4:
 	movs r1, #5
 	asrs r0, r0, #2
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r4, .L_080d6dac
 	lsls r1, r0, #1
 	ldrh r1, [r4, r1]
@@ -666,7 +666,7 @@ BattleEffect_RunDitherDissolveScene:
 	movs r1, #3
 	mov r0, r10
 	mov r8, r3
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r3, .L_080d6fec
 	adds r1, r0, #0
 	ldrb r4, [r3, r1]
@@ -719,7 +719,7 @@ BattleEffect_RunDitherDissolveScene:
 	blt .L_080d6f8e
 	movs r1, #5
 	mov r0, r10
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r2, .L_080d6ff4
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -1212,7 +1212,7 @@ BattleEffect_RunDitherDissolveScene:
 	str r7, [sp, #0]
 	bl ObjectGroup_UpdateMembers
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, .L_080d7390
 	add r3, r9
 	str r7, [r3]
@@ -1317,7 +1317,7 @@ BattleEffect_RunDitherDissolveScene:
 .L_080d7398:
 	.4byte 0x000000c0
 .L_080d739c:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080d73a0:
 	.4byte 0x04000050
 .L_080d73a4:
@@ -1372,7 +1372,7 @@ BattleEffect_RunDitherDissolveScene:
 	adds r3, r3, r1
 	str r3, [r6, #16]
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r7, #1
 	lsls r0, r0, #2
 	movs r3, #0

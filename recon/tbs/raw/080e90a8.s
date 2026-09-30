@@ -159,7 +159,7 @@ Unnamed_080e90a8:
 	cmp r2, #8
 	bne .L_080e91f4
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080e91f4:
 	ldr r5, .L_080e9268
 	add r5, r11
@@ -234,7 +234,7 @@ Unnamed_080e90a8:
 .L_080e9284:
 	.4byte 0xffffaf00
 .L_080e9288:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e928c:
 	ldr r2, [sp, #76]
 	lsrs r3, r2, #31
@@ -484,7 +484,7 @@ Unnamed_080e90a8:
 	pop {r0}
 	bx r0
 .L_080e948c:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080e9490:
 	.4byte gMapCellBuffer
 .L_080e9494:

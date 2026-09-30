@@ -99,7 +99,7 @@ KorimaMagari_DrawPanel:
 .L_02008144:
 	.4byte gMapBlocks
 .L_02008148:
-	.4byte Data_02020004
+	.4byte gMapBlocks + 0x4
 .L_0200814c:
 	.4byte 0x06002840
 	.section .rodata.x0200911c,"a",%progbits

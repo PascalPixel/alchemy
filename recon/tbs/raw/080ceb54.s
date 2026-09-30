@@ -89,7 +89,7 @@ BattleFx_RunMemberBurst:
 	ldr r3, [r5]
 	ldr r6, [r0]
 	ldr r0, [r3, #8]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	ldr r5, .L_080ced90
 	mov r8, r0
 	movs r7, #0
@@ -157,7 +157,7 @@ BattleFx_RunMemberBurst:
 	ldr r0, .L_080ced9c
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #146
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, [sp, #60]
 	movs r2, #0
 	lsls r3, r3, #1
@@ -249,7 +249,7 @@ BattleFx_RunMemberBurst:
 	ldr r1, [sp, #16]
 	mov r9, r0
 	ldrsh r0, [r3, r1]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
@@ -263,7 +263,7 @@ BattleFx_RunMemberBurst:
 	cmp r1, #0
 	bne .L_080ceda4
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	b .L_080cedaa
 .L_080ced70:
 	.4byte gBattleFxWork
@@ -280,7 +280,7 @@ BattleFx_RunMemberBurst:
 .L_080ced88:
 	.4byte IwramCopyWords
 .L_080ced8c:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080ced90:
 	.4byte gMapCellBuffer
 .L_080ced94:
@@ -293,7 +293,7 @@ BattleFx_RunMemberBurst:
 	.4byte Data_080ee090
 .L_080ceda4:
 	movs r0, #133
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080cedaa:
 	mov r3, r11
 	ldr r2, [sp, #52]
@@ -350,7 +350,7 @@ BattleFx_RunMemberBurst:
 	str r5, [r2]
 	movs r1, #3
 	adds r0, r7, #0
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r1, r0, #2
 	adds r1, r1, r0
 	mov r0, r8

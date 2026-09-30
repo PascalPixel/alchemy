@@ -553,7 +553,7 @@ Ui_RunIconMonitor:
 .L_08012940:
 	.4byte Battle_PlaceActorsByFormationKind
 .L_08012944:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_08012948:
 	.4byte gKeysRepeat
 .L_0801294c:

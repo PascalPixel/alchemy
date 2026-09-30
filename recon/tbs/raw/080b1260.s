@@ -18,7 +18,7 @@ Shop_DrawEquipComparison:
 	adds r0, r1, #0
 	mov r9, r2
 	str r3, [sp, #16]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	adds r7, r0, #0
 	mov r0, r9
 	bl Item_Get
@@ -99,7 +99,7 @@ Shop_DrawEquipComparison:
 	lsls r0, r5, #1
 	b .L_080b1332
 .L_080b131c:
-	.4byte Data_03001f2c
+	.4byte gMenuWork
 .L_080b1320:
 	.4byte 0x00000c8e
 .L_080b1324:
@@ -192,7 +192,7 @@ Shop_DrawEquipComparison:
 	lsls r1, r1, #23
 	movs r3, #56
 	mov r2, r10
-	bl Func_080150c8
+	bl RenderOutput_CreateFar
 	movs r3, #0
 	adds r6, r7, #0
 	strb r3, [r0, #4]

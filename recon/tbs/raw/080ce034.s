@@ -187,7 +187,7 @@ Unnamed_080ce034:
 	asrs r3, r3, #16
 	adds r0, r6, #0
 	adds r5, r5, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r2, r11
 	muls r2, r0
 	ldr r3, [r7, #4]
@@ -241,14 +241,14 @@ Unnamed_080ce034:
 	bl Object_SetMoveTargetFar
 	mov r0, r10
 	movs r1, #2
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r2, .L_080ce41c
 	ldr r1, [sp, #36]
 	mov r0, r11
 	adds r3, r1, r2
 	str r0, [r3]
 	movs r0, #136
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080ce23a:
 	mov r1, r11
 	cmp r1, #16
@@ -372,7 +372,7 @@ Unnamed_080ce034:
 	asrs r3, r3, #6
 	str r3, [r7, #8]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	lsls r3, r3, #1
@@ -479,7 +479,7 @@ Unnamed_080ce034:
 .L_080ce408:
 	.4byte BattlePresentation_ProcessPendingGraphicsTransfer
 .L_080ce40c:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080ce410:
 	.4byte 0xfff10000
 .L_080ce414:

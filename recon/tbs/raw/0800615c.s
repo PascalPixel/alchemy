@@ -118,7 +118,7 @@ SerialRuntime_CollectReceivedPayloads:
 .L_08006230:
 	.4byte gSerialRuntime
 .L_08006234:
-	.4byte Data_02002244
+	.4byte gSerialRuntime + 0x4
 .L_08006238:
 	.4byte 0x040000d4
 .L_0800623c:

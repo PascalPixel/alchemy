@@ -77,7 +77,7 @@ RunAssetSelectionScreen:
 	ldr r0, .L_080a2624
 	bl _call_via_r3
 	movs r0, #1
-	bl Func_080153e0
+	bl UiWork_SetAltFlagAndClearTableFar
 	bl Menu_CancelSoundReset
 	add r1, sp, #8
 	add r0, sp, #12
@@ -130,7 +130,7 @@ RunAssetSelectionScreen:
 	strh r3, [r2, #4]
 	bl UiWindow_MarkVisibleTileAttributesFar
 	movs r0, #0
-	bl Func_080153e0
+	bl UiWork_SetAltFlagAndClearTableFar
 	mov r2, r9
 	adds r1, r7, #0
 	ldr r0, .L_080a2624

@@ -23,7 +23,7 @@ BattleFormation_BuildEnemyList:
 	strb r2, [r3]
 	str r0, [sp, #28]
 	ldr r0, .L_080c2278
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_080c2034
 	add r0, sp, #32
@@ -335,13 +335,13 @@ BattleFormation_BuildEnemyList:
 	str r3, [r4, r2]
 	b .L_080c222a
 .L_080c2274:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080c2278:
 	.4byte 0x00000173
 .L_080c227c:
 	.4byte BattleFormation_Records
 .L_080c2280:
-	.4byte Data_080c5c48
+	.4byte BattleFormation_Records + 0x10
 .L_080c2284:
 	ldr r5, [sp, #12]
 	lsls r3, r7, #2
@@ -391,7 +391,7 @@ BattleFormation_BuildEnemyList:
 	.4byte IwramClearWords
 .L_080c22d8:
 	adds r0, r7, #0
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r1, #166
 	lsls r1, r1, #1
 	adds r7, #1
@@ -429,7 +429,7 @@ BattleFormation_BuildEnemyList:
 	adds r0, r5, #0
 	bl BattleUnit_AssignFar
 	adds r0, r5, #0
-	bl Func_08077008
+	bl Owner_GetStateFar
 	ldr r1, [sp, #32]
 	cmp r1, #0
 	beq .L_080c233c

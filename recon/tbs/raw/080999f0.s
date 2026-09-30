@@ -28,7 +28,7 @@ RunBattleEffect05:
 .L_08099a1e:
 	bl BattleEffect_InitializeSharedScene
 	movs r0, #138
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r3, [r6, #20]
 	cmp r3, #0
 	bne .L_08099a52
@@ -46,7 +46,7 @@ RunBattleEffect05:
 	ldr r1, [r5]
 	ldr r2, [r6, #12]
 	movs r0, #0
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	str r0, [r6, #8]
 .L_08099a52:
 	mov r3, sp
@@ -224,7 +224,7 @@ RunBattleEffect05:
 	strb r3, [r2]
 .L_08099bb8:
 	movs r0, #132
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r0, #6
 	bl WaitFrames
 	movs r2, #1
@@ -297,7 +297,7 @@ RunBattleEffect05:
 	strb r2, [r1, #9]
 	adds r0, r5, #0
 	movs r1, #8
-	bl Func_08009080
+	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #7
 	bl Animation_ApplyChildValuesFar
@@ -381,7 +381,7 @@ RunBattleEffect05:
 	bx r0
 	.2byte 0x0000
 .L_08099d04:
-	.4byte Data_03001f30
+	.4byte gEffectWork
 .L_08099d08:
 	.4byte 0xffe00000
 .L_08099d0c:

@@ -226,7 +226,7 @@ RunPaletteRampEffect:
 .L_080d9c8a:
 	str r3, [r5, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r7, #0
 	muls r3, r0
 	movs r1, #128
@@ -373,7 +373,7 @@ RunPaletteRampEffect:
 .L_080d9dbe:
 	movs r1, #7
 	asrs r0, r0, #2
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r1, r0, #4
 	subs r1, r1, r0
 	ldr r2, [sp, #48]
@@ -435,7 +435,7 @@ RunPaletteRampEffect:
 .L_080d9e3a:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r1, r0, #1
 	adds r1, r1, r0
 	lsls r1, r1, #3
@@ -459,7 +459,7 @@ RunPaletteRampEffect:
 	cmp r1, #24
 	bne .L_080d9e74
 	movs r0, #143
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d9e74:
 	ldr r2, [sp, #12]
 	cmp r2, #36
@@ -511,7 +511,7 @@ RunPaletteRampEffect:
 .L_080d9eca:
 	movs r1, #3
 	asrs r0, r0, #3
-	bl Func_080022fc
+	bl Math_Mod
 	mov r1, r11
 	adds r5, r0, #0
 	adds r0, r7, #0

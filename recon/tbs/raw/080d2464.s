@@ -62,7 +62,7 @@ BattleEffect_RunPaletteParticles:
 .L_080d24dc:
 	.4byte 0x00000784
 .L_080d24e0:
-	.4byte Data_03001ef0
+	.4byte gBattleFxWork + 0x4
 .L_080d24e4:
 	.4byte 0x00007828
 .L_080d24e8:
@@ -511,7 +511,7 @@ BattleEffect_RunPaletteParticles:
 .L_080d286c:
 	.4byte 0x00007320
 .L_080d2870:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080d2874:
 	.4byte 0x00000179
 .L_080d2878:
@@ -525,13 +525,13 @@ BattleEffect_RunPaletteParticles:
 .L_080d2888:
 	.4byte 0x000077e8
 .L_080d288c:
-	.4byte Data_02020202
+	.4byte gMapBlocks + 0x202
 .L_080d2890:
 	.4byte 0x10101010
 .L_080d2894:
 	.4byte 0x3f3f3f3f
 .L_080d2898:
-	.4byte Data_080ee184
+	.4byte Data_080ee17e + 0x6
 .L_080d289c:
 	.4byte gMapCellBuffer
 .L_080d28a0:
@@ -561,7 +561,7 @@ BattleEffect_RunPaletteParticles:
 	asrs r3, r3, #9
 	str r3, [r5, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r3, r8
 	muls r3, r0
 	movs r6, #1
@@ -583,13 +583,13 @@ BattleEffect_RunPaletteParticles:
 	cmp r1, #48
 	bne .L_080d2904
 	movs r0, #141
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d2904:
 	ldr r2, [sp, #36]
 	cmp r2, #128
 	bne .L_080d2910
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d2910:
 	ldr r3, [sp, #36]
 	subs r3, #129
@@ -645,7 +645,7 @@ BattleEffect_RunPaletteParticles:
 	asrs r3, r3, #6
 	str r3, [r5, #12]
 	adds r0, r6, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r3, r8
 	muls r3, r0
 	asrs r3, r3, #6
@@ -1028,13 +1028,13 @@ BattleEffect_RunPaletteParticles:
 .L_080d2c64:
 	.4byte 0x000074e0
 .L_080d2c68:
-	.4byte Data_080ee188
+	.4byte Data_080ee17e + 0xa
 .L_080d2c6c:
 	.4byte 0xfffffc00
 .L_080d2c70:
 	.4byte gMapCellBuffer
 .L_080d2c74:
-	.4byte Data_080ee18a
+	.4byte Data_080ee17e + 0xc
 .L_080d2c78:
 	.4byte ParticleStreams_CellOffsets
 .L_080d2c7c:
@@ -1058,13 +1058,13 @@ BattleEffect_RunPaletteParticles:
 .L_080d2ca0:
 	.4byte 0x00007320
 .L_080d2ca4:
-	.4byte Data_080ee1a0
+	.4byte Data_080ee17e + 0x22
 .L_080d2ca8:
-	.4byte Data_080ee18e
+	.4byte Data_080ee17e + 0x10
 .L_080d2cac:
-	.4byte Data_080ee19a
+	.4byte Data_080ee17e + 0x1c
 .L_080d2cb0:
-	.4byte Data_080ee194
+	.4byte Data_080ee17e + 0x16
 .L_080d2cb4:
 	ldr r3, [r5, #24]
 	cmp r3, #0
@@ -1086,7 +1086,7 @@ BattleEffect_RunPaletteParticles:
 	ble .L_080d2ce2
 	movs r0, #136
 	str r4, [sp, #8]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r4, [sp, #8]
 .L_080d2ce2:
 	ldr r2, .L_080d2d88

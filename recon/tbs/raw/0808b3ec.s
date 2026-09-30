@@ -99,7 +99,7 @@ Event_SpawnObjectTable:
 	ldr r2, [r7, #12]
 	ldr r3, [r7, #16]
 	mov r0, r10
-	bl Func_080090c8
+	bl Object_CreateFar
 	ldrb r2, [r7, #23]
 	movs r3, #1
 	ands r3, r2
@@ -138,7 +138,7 @@ Event_SpawnObjectTable:
 	strb r5, [r1, #28]
 .L_0808b4f6:
 	movs r0, #33
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	beq .L_0808b528
 	mov r3, r10
@@ -151,7 +151,7 @@ Event_SpawnObjectTable:
 	b .L_0808b528
 .L_0808b512:
 	ldr r0, .L_0808b640
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808b528
 	ldr r1, [r7, #8]
@@ -164,7 +164,7 @@ Event_SpawnObjectTable:
 	beq .L_0808b600
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_08009080
+	bl Object_SetMode
 	adds r3, r6, #0
 	adds r3, #84
 	ldrb r3, [r3]
@@ -192,7 +192,7 @@ Event_SpawnObjectTable:
 	bl ObjectMotion_SetActionCallback
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_08009080
+	bl Object_SetMode
 	ldr r2, [r6, #8]
 	cmp r2, #0
 	bge .L_0808b57c
@@ -239,7 +239,7 @@ Event_SpawnObjectTable:
 	ands r2, r3
 	strb r2, [r1]
 	movs r0, #33
-	bl Func_080770c0
+	bl GameFlag_IsSet
 	cmp r0, #0
 	bne .L_0808b5f8
 	mov r1, r8
@@ -257,7 +257,7 @@ Event_SpawnObjectTable:
 	ldr r1, [r6, #8]
 	ldr r2, [r6, #16]
 	movs r0, #0
-	bl Func_080091a8
+	bl Map_GetTerrainHeightFar
 	ldr r3, [r6, #12]
 	adds r3, r3, r0
 	str r0, [r6, #20]
@@ -300,7 +300,7 @@ Event_SpawnObjectTable:
 	bx r0
 	.2byte 0x0000
 .L_0808b638:
-	.4byte Data_03001ebc
+	.4byte gEventWork
 .L_0808b63c:
 	.4byte 0x00002705
 .L_0808b640:

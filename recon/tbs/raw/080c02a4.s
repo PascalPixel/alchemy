@@ -263,7 +263,7 @@ Func_080c02a4:
 .L_080c04bc:
 	.4byte Graphics_ClearBg0Vofs
 .L_080c04c0:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080c04c4:
 	.4byte 0x04000008
 .L_080c04c8:
@@ -293,7 +293,7 @@ Func_080c02a4:
 	bl GetBattleObjectSlot
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r3, #148
 	lsls r3, r3, #1
 	adds r0, r0, r3
@@ -431,7 +431,7 @@ Func_080c02a4:
 .L_080c0620:
 	.4byte 0x00003f40
 .L_080c0624:
-	.4byte Data_03001e74_a
+	.4byte gBattleWork
 .L_080c0628:
 	.4byte 0x04000008
 .L_080c062c:

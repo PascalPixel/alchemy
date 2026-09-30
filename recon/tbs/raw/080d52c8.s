@@ -228,7 +228,7 @@ BattleFx_RenderMode:
 	ldr r0, .L_080d552c
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #142
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, [sp, #60]
 	movs r0, #0
 	str r0, [sp, #64]
@@ -438,7 +438,7 @@ BattleFx_RenderMode:
 	adds r0, r2, #0
 	lsrs r3, r3, #1
 	subs r6, r6, r3
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r5, #0
 	muls r3, r0
 	ldr r5, [sp, #84]
@@ -747,7 +747,7 @@ BattleFx_RenderMode:
 .L_080d5894:
 	.4byte 0x00007828
 .L_080d5898:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080d589c:
 	.4byte BattleFx_GlintCellHeights
 .L_080d58a0:
@@ -759,7 +759,7 @@ BattleFx_RenderMode:
 .L_080d58ac:
 	.4byte BattleFx_GlintCellOffsets
 .L_080d58b0:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080d58b4:
 	.4byte gMapCellBuffer
 .L_080d58b8:

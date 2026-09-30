@@ -290,7 +290,7 @@ BattleFx_PlayUnitElementEffect:
 .L_080c19e4:
 	.4byte 0x04000208
 .L_080c19e8:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080c19ec:
 	.4byte 0x00000544
 .L_080c19f0:

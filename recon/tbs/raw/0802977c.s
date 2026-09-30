@@ -127,7 +127,7 @@ DebugMenu_BrowseEntryGlyphs:
 	mov r1, r10
 	str r0, [sp, #8]
 	adds r0, r5, r1
-	bl Func_080022fc
+	bl Math_Mod
 	adds r5, r0, #0
 	adds r0, r7, #0
 	bl RenderOutput_PrepareForRedraw
@@ -196,7 +196,7 @@ DebugMenu_BrowseEntryGlyphs:
 	pop {r1}
 	bx r1
 .L_080298f8:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_080298fc:
 	.4byte SideObject_CharacterIdMap
 .L_08029900:

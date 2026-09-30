@@ -15,7 +15,7 @@ BattleCommand_SelectAutomatic:
 	adds r7, r0, #0
 	movs r1, #0
 	ldrsh r0, [r7, r1]
-	bl Func_08077008
+	bl Owner_GetStateFar
 	movs r3, #0
 	movs r2, #1
 	str r3, [sp, #12]
@@ -98,7 +98,7 @@ BattleCommand_SelectAutomatic:
 	lsls r3, r2, #31
 	cmp r3, #0
 	bne .L_080bd508
-	bl Func_080771a0
+	bl BattleRandom16Far
 	mov r1, r8
 	movs r3, #7
 	ldrb r2, [r1]
@@ -192,7 +192,7 @@ BattleCommand_SelectAutomatic:
 	cmp r3, #1
 	bne .L_080bd5b4
 	ldrh r0, [r5, #40]
-	bl Func_08077080
+	bl Ability_GetData
 	movs r3, #2
 	ldrh r5, [r5, #40]
 	strh r3, [r7, #6]
@@ -219,7 +219,7 @@ BattleCommand_SelectAutomatic:
 	b .L_080bd766
 .L_080bd5c6:
 	mov r0, r9
-	bl Func_08077080
+	bl Ability_GetData
 	adds r5, r0, #0
 	ldrb r3, [r5, #3]
 	cmp r3, #47
@@ -321,11 +321,11 @@ BattleCommand_SelectAutomatic:
 .L_080bd67c:
 	.4byte .L_080bd4a0
 .L_080bd680:
-	.4byte Data_080c2b80
+	.4byte HpDmgFalloff + 0x18
 .L_080bd684:
-	.4byte Data_080c2b88
+	.4byte HpDmgFalloff + 0x20
 .L_080bd688:
-	.4byte Data_080c2b90
+	.4byte HpDmgFalloff + 0x28
 .L_080bd68c:
 	.4byte 0x000001ff
 .L_080bd690:

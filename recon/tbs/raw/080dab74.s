@@ -173,13 +173,13 @@ Unnamed_080dab74:
 	cmp r3, #0
 	bne .L_080dacd4
 	movs r0, #115
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080dacd4:
 	ldr r0, [sp, #40]
 	cmp r0, #85
 	bne .L_080dace0
 	movs r0, #136
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080dace0:
 	ldr r2, .L_080daf30
 	ldr r6, [sp, #48]
@@ -299,7 +299,7 @@ Unnamed_080dab74:
 	ldr r3, [r6, #4]
 	str r3, [r1, #4]
 	ldr r0, [r6]
-	bl Func_0800231c
+	bl Trig_Cos
 	ldr r3, [r6, #8]
 	muls r3, r0
 	mov r2, r11
@@ -379,7 +379,7 @@ Unnamed_080dab74:
 	str r3, [r6, #8]
 	movs r1, #5
 	mov r0, r10
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r3, [r6, #4]
 	adds r0, #2
 	lsls r0, r0, #16
@@ -444,7 +444,7 @@ Unnamed_080dab74:
 	bge .L_080daf84
 	movs r1, #3
 	mov r0, r10
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r1, [sp, #16]
 	ldr r3, [r1]
 	ldr r2, [r3, #24]

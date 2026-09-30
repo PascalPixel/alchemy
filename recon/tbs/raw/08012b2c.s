@@ -257,7 +257,7 @@ Map_BuildProbeRing:
 .L_08012d0c:
 	.4byte gSpriteObjects
 .L_08012d10:
-	.4byte Data_03001ae8
+	.4byte gKeysHeld
 .L_08012d14:
 	.4byte gFrameTick
 .L_08012d18:

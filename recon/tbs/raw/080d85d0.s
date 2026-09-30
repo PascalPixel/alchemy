@@ -86,7 +86,7 @@ Unnamed_080d85d0:
 	ldr r4, [sp, #24]
 	ldr r6, [r0]
 	ldrsh r0, [r3, r4]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	ldr r2, [sp, #16]
@@ -169,7 +169,7 @@ Unnamed_080d85d0:
 	ldr r0, .L_080d8934
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #142
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	ldr r1, .L_080d890c
 	mov r2, r9
 	ldr r3, [r2, r1]
@@ -198,7 +198,7 @@ Unnamed_080d85d0:
 	ldr r0, [r0]
 	mov r10, r0
 	ldr r0, [r3, #8]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
@@ -418,11 +418,11 @@ Unnamed_080d85d0:
 .L_080d891c:
 	.4byte IwramCopyWords
 .L_080d8920:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080d8924:
 	.4byte gMapCellBuffer
 .L_080d8928:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080d892c:
 	.4byte 0x00007784
 .L_080d8930:

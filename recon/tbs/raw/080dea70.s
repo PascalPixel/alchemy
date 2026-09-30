@@ -224,7 +224,7 @@ BattleFx_RunProjectileVolley:
 .L_080dec1c:
 	.4byte 0x00007828
 .L_080dec20:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080dec24:
 	.4byte 0x00000073
 .L_080dec28:
@@ -347,7 +347,7 @@ BattleFx_RunProjectileVolley:
 	str r1, [sp, #76]
 	ldr r3, [r5]
 	ldr r0, [r3, #8]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	str r0, [sp, #72]
 	ldr r5, [r5]
 	ldr r4, [sp, #88]
@@ -383,7 +383,7 @@ BattleFx_RunProjectileVolley:
 	ldr r3, [r2]
 	ldr r7, [r0]
 	ldrsh r0, [r3, r4]
-	bl Func_080b5070
+	bl Battle_GetObjectTableValueFar
 	ldr r3, [sp, #88]
 	movs r2, #0
 	str r0, [sp, #64]
@@ -697,7 +697,7 @@ BattleFx_RunProjectileVolley:
 .L_080defb4:
 	.4byte 0xfff40000
 .L_080defb8:
-	.4byte Data_02010018
+	.4byte gMapCellBuffer + 0x18
 .L_080defbc:
 	ldr r3, .L_080df2f8
 	add r3, r11
@@ -737,7 +737,7 @@ BattleFx_RunProjectileVolley:
 	cmp r4, #4
 	bne .L_080df006
 	movs r0, #136
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080df006:
 	ldr r6, [sp, #120]
 	cmp r6, #32
@@ -786,7 +786,7 @@ BattleFx_RunProjectileVolley:
 	subs r0, #10
 	mov r10, r0
 	adds r0, r5, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	lsls r0, r0, #1
 	ldr r3, [sp, #136]
 	asrs r0, r0, #16
@@ -1048,7 +1048,7 @@ BattleFx_RunProjectileVolley:
 	str r0, [sp, #100]
 	movs r0, #132
 	str r2, [sp, #12]
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080df26a:
 	ldr r2, [sp, #12]
 .L_080df26c:
@@ -1125,13 +1125,13 @@ BattleFx_RunProjectileVolley:
 .L_080df2f8:
 	.4byte 0x00007828
 .L_080df2fc:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080df300:
 	.4byte 0x000065c0
 .L_080df304:
 	.4byte gMapCellBuffer
 .L_080df308:
-	.4byte Data_02013800
+	.4byte gMapCellBuffer + 0x3800
 .L_080df30c:
 	.4byte 0x000077a8
 .L_080df310:
@@ -1322,7 +1322,7 @@ BattleFx_RunProjectileVolley:
 	bgt .L_080df57c
 	movs r1, #6
 	ldr r0, [sp, #120]
-	bl Func_080022fc
+	bl Math_Mod
 	lsls r1, r0, #1
 	ldr r2, [r7]
 	ldr r3, [r7, #4]
@@ -1368,7 +1368,7 @@ BattleFx_RunProjectileVolley:
 	bne .L_080df4fc
 	movs r1, #6
 	ldr r0, [sp, #124]
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r2, [r7]
 	ldr r3, [r7, #4]
 	adds r1, r0, #0
@@ -1587,7 +1587,7 @@ BattleFx_RunProjectileVolley:
 	bl Runtime_ReleaseHeapBlock
 	b .L_080df74a
 .L_080df68c:
-	.4byte Data_02010af0
+	.4byte gMapCellBuffer + 0xaf0
 .L_080df690:
 	.4byte Data_080eebec
 .L_080df694:
@@ -1595,7 +1595,7 @@ BattleFx_RunProjectileVolley:
 .L_080df698:
 	.4byte Data_080eebe9
 .L_080df69c:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080df6a0:
 	.4byte Data_080eec52
 .L_080df6a4:
@@ -1840,17 +1840,17 @@ BattleFx_RunProjectileVolley:
 .L_080df890:
 	.4byte Data_080eec2f
 .L_080df894:
-	.4byte Data_03001f0c
+	.4byte gTransitionWork + 0xc
 .L_080df898:
 	.4byte Data_080eec36
 .L_080df89c:
 	.4byte 0x00007828
 .L_080df8a0:
-	.4byte Data_02010af0
+	.4byte gMapCellBuffer + 0xaf0
 .L_080df8a4:
 	.4byte ParticleStreams_CellOffsets
 .L_080df8a8:
-	.4byte Data_02013800
+	.4byte gMapCellBuffer + 0x3800
 .L_080df8ac:
 	.4byte 0xffffc000
 .L_080df8b0:

@@ -166,6 +166,6 @@ Func_08010788:
 .L_080108b8:
 	.4byte gMapBlocks
 .L_080108bc:
-	.4byte Data_02020004
+	.4byte gMapBlocks + 0x4
 .L_080108c0:
 	.4byte 0x06002840

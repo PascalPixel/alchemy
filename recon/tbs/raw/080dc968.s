@@ -311,7 +311,7 @@ BattleEffect_RunStagedParticles:
 .L_080dcbfc:
 	.4byte 0x00000784
 .L_080dcc00:
-	.4byte Data_02013800
+	.4byte gMapCellBuffer + 0x3800
 .L_080dcc04:
 	.4byte gMapCellBuffer
 .L_080dcc08:
@@ -457,7 +457,7 @@ BattleEffect_RunStagedParticles:
 	cmp r1, r3
 	bne .L_080dcd1a
 	movs r0, #212
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080dcd1a:
 	adds r3, r6, #0
 	ldr r2, [sp, #40]
@@ -673,7 +673,7 @@ BattleEffect_RunStagedParticles:
 .L_080dcec8:
 	.4byte 0x000077d8
 .L_080dcecc:
-	.4byte Data_080eeb40
+	.4byte Data_080eeafa + 0x46
 .L_080dced0:
 	.4byte 0x000077b4
 .L_080dced4:
@@ -836,7 +836,7 @@ BattleEffect_RunStagedParticles:
 .L_080dd010:
 	ldr r0, [sp, #44]
 	movs r1, #6
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r3, .L_080dd054
 	add r3, r11
 	ldr r2, [r3]
@@ -848,7 +848,7 @@ BattleEffect_RunStagedParticles:
 .L_080dd028:
 	.4byte 0x00007741
 .L_080dd02c:
-	.4byte Data_02013800
+	.4byte gMapCellBuffer + 0x3800
 .L_080dd030:
 	.4byte gMapCellBuffer
 .L_080dd034:
@@ -1070,10 +1070,10 @@ BattleEffect_RunStagedParticles:
 	movs r3, #2
 	str r3, [r2]
 	movs r0, #134
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 	movs r1, #6
 	ldr r0, [sp, #44]
-	bl Func_080022fc
+	bl Math_Mod
 	ldr r6, .L_080dd2a0
 	add r6, r11
 	ldr r2, [r6]

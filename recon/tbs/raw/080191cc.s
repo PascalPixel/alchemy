@@ -75,7 +75,7 @@ UiWork_AnimateSpriteSlots:
 	.4byte .L_080194e0
 	.4byte .L_0801950c
 .L_08019270:
-	.4byte Data_03001e8c
+	.4byte gWindowWork
 .L_08019274:
 	.4byte gFrameTick
 .L_08019278:
@@ -322,7 +322,7 @@ UiWork_AnimateSpriteSlots:
 	lsls r2, r2, #7
 	strh r3, [r7, #6]
 	adds r0, r0, r2
-	bl Func_0800231c
+	bl Trig_Cos
 	ldrb r3, [r6, #8]
 	asrs r0, r0, #14
 	subs r3, r3, r0

@@ -100,7 +100,7 @@ BattleFx_RunSparkGroups:
 .L_080d46c4:
 	.4byte 0x04000052
 .L_080d46c8:
-	.4byte Data_03001e50
+	.4byte gWorkSlot
 .L_080d46cc:
 	movs r2, #1
 	ldr r0, .L_080d49d0
@@ -174,7 +174,7 @@ BattleFx_RunSparkGroups:
 	muls r3, r0
 	adds r0, r5, #0
 	str r3, [r7]
-	bl Func_0800231c
+	bl Trig_Cos
 	adds r3, r6, #0
 	muls r3, r0
 	mov r1, r10
@@ -277,7 +277,7 @@ BattleFx_RunSparkGroups:
 	asrs r3, r3, #6
 	str r3, [r6, #12]
 	adds r0, r7, #0
-	bl Func_0800231c
+	bl Trig_Cos
 	mov r3, r8
 	muls r3, r0
 	lsls r3, r3, #1
@@ -417,7 +417,7 @@ BattleFx_RunSparkGroups:
 	cmp r1, #2
 	bne .L_080d4946
 	movs r0, #145
-	bl Func_080f9010
+	bl AudioCommand_PlayFar
 .L_080d4946:
 	ldr r2, [sp, #44]
 	cmp r2, #24

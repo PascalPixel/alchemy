@@ -120,46 +120,6 @@ SerialRuntime_StepBlockTransfer:
 	.incbin "baserom.gba", 0x000065bc, 0x0000023c
 	.section .rom.000068ce, "ax"
 	.incbin "baserom.gba", 0x000068ce, 0x00000002
-	.section .rom.000068d6, "ax"
-	.incbin "baserom.gba", 0x000068d6, 0x00000002
-	.section .rom.000068d8, "ax"
-	.global ReadFlashId
-	.type ReadFlashId, %function
-	.thumb_func
-ReadFlashId:
-	.incbin "baserom.gba", 0x000068d8, 0x00000098
-	.section .rom.00006ad8, "ax"
-	.incbin "baserom.gba", 0x00006ad8, 0x00000048
-	.section .rom.00006b20, "ax"
-	.global CopyFlashReadRoutineToRam
-	.type CopyFlashReadRoutineToRam, %function
-	.thumb_func
-CopyFlashReadRoutineToRam:
-	.incbin "baserom.gba", 0x00006b20, 0x000000c4
-	.section .rom.00006be4, "ax"
-	.global ReadFlashCore
-	.type ReadFlashCore, %function
-	.thumb_func
-ReadFlashCore:
-	.incbin "baserom.gba", 0x00006be4, 0x00000024
-	.section .rom.00006c84, "ax"
-	.global VerifyFlashCore
-	.type VerifyFlashCore, %function
-	.thumb_func
-VerifyFlashCore:
-	.incbin "baserom.gba", 0x00006c84, 0x00000044
-	.section .rom.00006fa8, "ax"
-	.global CountRemainingErasedFlashBytes
-	.type CountRemainingErasedFlashBytes, %function
-	.thumb_func
-CountRemainingErasedFlashBytes:
-	.incbin "baserom.gba", 0x00006fa8, 0x00000024
-	.section .rom.00006fcc, "ax"
-	.global RunFlashEraseVerifier
-	.type RunFlashEraseVerifier, %function
-	.thumb_func
-RunFlashEraseVerifier:
-	.incbin "baserom.gba", 0x00006fcc, 0x00000018
 	.section .rom.00007380, "ax"
 	.incbin "baserom.gba", 0x00007380, 0x00000356
 	.global Math_ArcTanTable
@@ -645,60 +605,14 @@ UiWindow_FillFromScene:
 	.thumb_func
 UiWindow_DrawPartyStatusContents:
 	.incbin "baserom.gba", 0x0001e21c, 0x000003d4
-	.section .rom.0001e720, "ax"
-	.incbin "baserom.gba", 0x0001e720, 0x0000002c
-	.section .rom.0001e74c, "ax"
-	.global SaveState_CountRecordsExcludingFlagged
-	.type SaveState_CountRecordsExcludingFlagged, %function
-	.thumb_func
-SaveState_CountRecordsExcludingFlagged:
-	.incbin "baserom.gba", 0x0001e74c, 0x0000004c
-	.section .rom.0001e798, "ax"
-	.global SaveState_ScanRecordFlags
-	.type SaveState_ScanRecordFlags, %function
-	.thumb_func
-SaveState_ScanRecordFlags:
-	.incbin "baserom.gba", 0x0001e798, 0x0000009c
-	.section .rom.0001e9d0, "ax"
-	.global SaveState_WriteCurrentSlotPair
-	.type SaveState_WriteCurrentSlotPair, %function
-	.thumb_func
-SaveState_WriteCurrentSlotPair:
-	.incbin "baserom.gba", 0x0001e9d0, 0x00000088
-	.section .rom.0001ea58, "ax"
-	.global SaveState_WriteSlotPair
-	.type SaveState_WriteSlotPair, %function
-	.thumb_func
-SaveState_WriteSlotPair:
-	.incbin "baserom.gba", 0x0001ea58, 0x0000006c
-	.section .rom.0001eb64, "ax"
-	.incbin "baserom.gba", 0x0001eb64, 0x00000060
-	.section .rom.0001ebc4, "ax"
-	.global SaveState_CopySlotPair
-	.type SaveState_CopySlotPair, %function
-	.thumb_func
-SaveState_CopySlotPair:
-	.incbin "baserom.gba", 0x0001ebc4, 0x000000dc
-	.section .rom.0001eca0, "ax"
-	.global SaveState_DeleteSelectedSlot
-	.type SaveState_DeleteSelectedSlot, %function
-	.thumb_func
-SaveState_DeleteSelectedSlot:
-	.incbin "baserom.gba", 0x0001eca0, 0x000000b0
 	.section .rom.0001f1b4, "ax"
-	.incbin "baserom.gba", 0x0001f1b4, 0x0000062c
-	.section .rom.0001f7e0, "ax"
-	.global Save_WriteSelectedSlot
-	.type Save_WriteSelectedSlot, %function
+	.incbin "baserom.gba", 0x0001f1b4, 0x000000ac
+	.section .rom.0001f260, "ax"
+	.global SaveMenu_SelectSlot
+	.type SaveMenu_SelectSlot, %function
 	.thumb_func
-Save_WriteSelectedSlot:
-	.incbin "baserom.gba", 0x0001f7e0, 0x00000120
-	.section .rom.0001f900, "ax"
-	.global SaveState_LoadRecordIntoWork
-	.type SaveState_LoadRecordIntoWork, %function
-	.thumb_func
-SaveState_LoadRecordIntoWork:
-	.incbin "baserom.gba", 0x0001f900, 0x000000cc
+SaveMenu_SelectSlot:
+	.incbin "baserom.gba", 0x0001f260, 0x00000580
 	.section .rom.0001fbf2, "ax"
 	.incbin "baserom.gba", 0x0001fbf2, 0x00000002
 	.section .rom.0001fbf4, "ax"

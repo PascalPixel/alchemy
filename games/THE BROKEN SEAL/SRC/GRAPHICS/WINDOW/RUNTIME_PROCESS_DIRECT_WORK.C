@@ -75,6 +75,6 @@ loop:
     }
     index++;
     work++;
-    if (index != 8)
+    if (index != WINDOW_COUNT)
         goto loop;
 }

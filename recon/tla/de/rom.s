@@ -622,46 +622,6 @@ Func_08016dd0:
 	.incbin "baserom.gba", 0x00016dfc, 0x00000028
 	.section .rom.00016e2e, "ax"
 	.incbin "baserom.gba", 0x00016e2e, 0x00000002
-	.section .rom.00016e36, "ax"
-	.incbin "baserom.gba", 0x00016e36, 0x00000002
-	.section .rom.00016e38, "ax"
-	.global ReadFlashId
-	.type ReadFlashId, %function
-	.thumb_func
-ReadFlashId:
-	.incbin "baserom.gba", 0x00016e38, 0x00000098
-	.section .rom.00017038, "ax"
-	.incbin "baserom.gba", 0x00017038, 0x00000048
-	.section .rom.00017080, "ax"
-	.global CopyFlashReadRoutineToRam
-	.type CopyFlashReadRoutineToRam, %function
-	.thumb_func
-CopyFlashReadRoutineToRam:
-	.incbin "baserom.gba", 0x00017080, 0x000000c4
-	.section .rom.00017144, "ax"
-	.global ReadFlashCore
-	.type ReadFlashCore, %function
-	.thumb_func
-ReadFlashCore:
-	.incbin "baserom.gba", 0x00017144, 0x00000024
-	.section .rom.000171e4, "ax"
-	.global VerifyFlashCore
-	.type VerifyFlashCore, %function
-	.thumb_func
-VerifyFlashCore:
-	.incbin "baserom.gba", 0x000171e4, 0x00000044
-	.section .rom.00017508, "ax"
-	.global CountRemainingErasedFlashBytes
-	.type CountRemainingErasedFlashBytes, %function
-	.thumb_func
-CountRemainingErasedFlashBytes:
-	.incbin "baserom.gba", 0x00017508, 0x00000024
-	.section .rom.0001752c, "ax"
-	.global RunFlashEraseVerifier
-	.type RunFlashEraseVerifier, %function
-	.thumb_func
-RunFlashEraseVerifier:
-	.incbin "baserom.gba", 0x0001752c, 0x00000018
 	.section .rom.000178e0, "ax"
 	.incbin "baserom.gba", 0x000178e0, 0x00000434
 	.section .rom.00017d34, "ax"
@@ -1805,7 +1765,13 @@ Ui_FixedTileBlocks:
 	.section .rom.000ba248, "ax"
 	.incbin "baserom.gba", 0x000ba248, 0x000000a8
 	.section .rom.000ba338, "ax"
-	.incbin "baserom.gba", 0x000ba338, 0x0000008c
+	.incbin "baserom.gba", 0x000ba338, 0x00000010
+	.section .rom.000ba348, "ax"
+	.global Trade_GetOfferState
+	.type Trade_GetOfferState, %function
+	.thumb_func
+Trade_GetOfferState:
+	.incbin "baserom.gba", 0x000ba348, 0x0000007c
 	.section .rom.000ba3f6, "ax"
 	.incbin "baserom.gba", 0x000ba3f6, 0x0000089a
 	.section .rom.000bac90, "ax"
@@ -1844,14 +1810,14 @@ Func_080ad338:
 	.thumb_func
 Func_080ae830:
 	.incbin "baserom.gba", 0x000bb868, 0x000001c8
-	.section .rom.000bbc02, "ax"
-	.incbin "baserom.gba", 0x000bbc02, 0x00000002
-	.section .rom.000bbc04, "ax"
-	.global Item_GetDirect
-	.type Item_GetDirect, %function
+	.section .rom.000bbc66, "ax"
+	.incbin "baserom.gba", 0x000bbc66, 0x00000002
+	.section .rom.000bbc68, "ax"
+	.global Item_GetEquipmentGroup
+	.type Item_GetEquipmentGroup, %function
 	.thumb_func
-Item_GetDirect:
-	.incbin "baserom.gba", 0x000bbc04, 0x000000c4
+Item_GetEquipmentGroup:
+	.incbin "baserom.gba", 0x000bbc68, 0x00000060
 	.section .rom.000bbe40, "ax"
 	.global Owner_GetLevelThreshold
 	.type Owner_GetLevelThreshold, %function
@@ -1879,11 +1845,19 @@ Func_080ae0dc:
 	.type Inventory_Remove, %function
 	.thumb_func
 Inventory_Remove:
-	.incbin "baserom.gba", 0x000bc148, 0x00000150
+	.incbin "baserom.gba", 0x000bc148, 0x00000080
+	.section .rom.000bc1fa, "ax"
+	.incbin "baserom.gba", 0x000bc1fa, 0x0000009e
 	.section .rom.000bc2c0, "ax"
 	.incbin "baserom.gba", 0x000bc2c0, 0x00000028
 	.section .rom.000bc338, "ax"
-	.incbin "baserom.gba", 0x000bc338, 0x00000068
+	.incbin "baserom.gba", 0x000bc338, 0x00000040
+	.section .rom.000bc378, "ax"
+	.global Item_AdjustCounter
+	.type Item_AdjustCounter, %function
+	.thumb_func
+Item_AdjustCounter:
+	.incbin "baserom.gba", 0x000bc378, 0x00000028
 	.section .rom.000bc43c, "ax"
 	.incbin "baserom.gba", 0x000bc43c, 0x00000980
 	.section .rom.000bcdd8, "ax"
@@ -1909,13 +1883,27 @@ Func_080ae16c:
 Djinn_AddToOwner:
 	.incbin "baserom.gba", 0x000bdb78, 0x00000100
 	.section .rom.000bdc9a, "ax"
-	.incbin "baserom.gba", 0x000bdc9a, 0x0000016a
-	.section .rom.000bde04, "ax"
-	.global Trade_AddOffer
-	.type Trade_AddOffer, %function
+	.incbin "baserom.gba", 0x000bdc9a, 0x00000002
+	.section .rom.000bdc9c, "ax"
+	.global Djinn_Activate
+	.type Djinn_Activate, %function
 	.thumb_func
-Trade_AddOffer:
-	.incbin "baserom.gba", 0x000bde04, 0x00000158
+Djinn_Activate:
+	.incbin "baserom.gba", 0x000bdc9c, 0x00000068
+	.section .rom.000bdd04, "ax"
+	.global Djinn_Deactivate
+	.type Djinn_Deactivate, %function
+	.thumb_func
+Djinn_Deactivate:
+	.incbin "baserom.gba", 0x000bdd04, 0x00000054
+	.section .rom.000bdd58, "ax"
+	.global Trade_RemoveOffer
+	.type Trade_RemoveOffer, %function
+	.thumb_func
+Trade_RemoveOffer:
+	.incbin "baserom.gba", 0x000bdd58, 0x000000ac
+	.section .rom.000bdf5a, "ax"
+	.incbin "baserom.gba", 0x000bdf5a, 0x00000002
 	.section .rom.000bdf5c, "ax"
 	.global Func_080ae410
 	.type Func_080ae410, %function
@@ -1928,7 +1916,10 @@ Func_080ae410:
 	.type Func_080ae220, %function
 	.thumb_func
 Func_080ae220:
-	.incbin "baserom.gba", 0x000be004, 0x00010508
+	.incbin "baserom.gba", 0x000be004, 0x00001360
+	.global Item_DefinitionTable
+Item_DefinitionTable:
+	.incbin "baserom.gba", 0x000bf364, 0x0000f1a8
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000ce50c, 0x000000e8

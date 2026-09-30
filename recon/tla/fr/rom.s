@@ -622,46 +622,6 @@ Func_08016dd0:
 	.incbin "baserom.gba", 0x00016dfc, 0x00000028
 	.section .rom.00016e2e, "ax"
 	.incbin "baserom.gba", 0x00016e2e, 0x00000002
-	.section .rom.00016e36, "ax"
-	.incbin "baserom.gba", 0x00016e36, 0x00000002
-	.section .rom.00016e38, "ax"
-	.global ReadFlashId
-	.type ReadFlashId, %function
-	.thumb_func
-ReadFlashId:
-	.incbin "baserom.gba", 0x00016e38, 0x00000098
-	.section .rom.00017038, "ax"
-	.incbin "baserom.gba", 0x00017038, 0x00000048
-	.section .rom.00017080, "ax"
-	.global CopyFlashReadRoutineToRam
-	.type CopyFlashReadRoutineToRam, %function
-	.thumb_func
-CopyFlashReadRoutineToRam:
-	.incbin "baserom.gba", 0x00017080, 0x000000c4
-	.section .rom.00017144, "ax"
-	.global ReadFlashCore
-	.type ReadFlashCore, %function
-	.thumb_func
-ReadFlashCore:
-	.incbin "baserom.gba", 0x00017144, 0x00000024
-	.section .rom.000171e4, "ax"
-	.global VerifyFlashCore
-	.type VerifyFlashCore, %function
-	.thumb_func
-VerifyFlashCore:
-	.incbin "baserom.gba", 0x000171e4, 0x00000044
-	.section .rom.00017508, "ax"
-	.global CountRemainingErasedFlashBytes
-	.type CountRemainingErasedFlashBytes, %function
-	.thumb_func
-CountRemainingErasedFlashBytes:
-	.incbin "baserom.gba", 0x00017508, 0x00000024
-	.section .rom.0001752c, "ax"
-	.global RunFlashEraseVerifier
-	.type RunFlashEraseVerifier, %function
-	.thumb_func
-RunFlashEraseVerifier:
-	.incbin "baserom.gba", 0x0001752c, 0x00000018
 	.section .rom.000178e0, "ax"
 	.incbin "baserom.gba", 0x000178e0, 0x00000434
 	.section .rom.00017d34, "ax"
@@ -3975,7 +3935,15 @@ Func_0811c37c:
 Func_081280fc:
 	.incbin "baserom.gba", 0x0011c394, 0x000013a4
 	.section .rom.0011d760, "ax"
-	.incbin "baserom.gba", 0x0011d760, 0x00002918
+	.incbin "baserom.gba", 0x0011d760, 0x00000c24
+	.section .rom.0011e3c2, "ax"
+	.incbin "baserom.gba", 0x0011e3c2, 0x00001b5e
+	.section .rom.0011ff20, "ax"
+	.global BattlePresentation_WaitForAdvance
+	.type BattlePresentation_WaitForAdvance, %function
+	.thumb_func
+BattlePresentation_WaitForAdvance:
+	.incbin "baserom.gba", 0x0011ff20, 0x00000158
 	.section .rom.00120078, "ax"
 	.global Func_08120060
 	.type Func_08120060, %function
@@ -3983,9 +3951,19 @@ Func_081280fc:
 Func_08120060:
 	.incbin "baserom.gba", 0x00120078, 0x00000154
 	.section .rom.001201dc, "ax"
+	.global BattleEv_DispatchQueued
+	.type BattleEv_DispatchQueued, %function
+	.thumb_func
+BattleEv_DispatchQueued:
 	.incbin "baserom.gba", 0x001201dc, 0x000001c4
 	.section .rom.001203c0, "ax"
-	.incbin "baserom.gba", 0x001203c0, 0x00002118
+	.incbin "baserom.gba", 0x001203c0, 0x000000ac
+	.section .rom.0012046c, "ax"
+	.global Battle_ResolveTargetAction
+	.type Battle_ResolveTargetAction, %function
+	.thumb_func
+Battle_ResolveTargetAction:
+	.incbin "baserom.gba", 0x0012046c, 0x0000206c
 	.section .rom.001224f0, "ax"
 	.incbin "baserom.gba", 0x001224f0, 0x0000109c
 	.section .rom.0012358c, "ax"
@@ -4023,7 +4001,13 @@ Func_08126944:
 BattlePres_SetActorRecordMode:
 	.incbin "baserom.gba", 0x00126afc, 0x00000080
 	.section .rom.00126bb8, "ax"
-	.incbin "baserom.gba", 0x00126bb8, 0x0000155c
+	.incbin "baserom.gba", 0x00126bb8, 0x0000015c
+	.section .rom.00126d14, "ax"
+	.global BattlePres_SetActorModes
+	.type BattlePres_SetActorModes, %function
+	.thumb_func
+BattlePres_SetActorModes:
+	.incbin "baserom.gba", 0x00126d14, 0x00001400
 	.section .rom.00128114, "ax"
 	.global Func_0812814c
 	.type Func_0812814c, %function

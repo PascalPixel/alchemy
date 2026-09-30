@@ -665,6 +665,8 @@ struct World<'a> {
     labelable: BTreeMap<u32, u32>,
     /// Every name by address, for references into maintained objects.
     by_address: BTreeMap<u32, Vec<&'a Name>>,
+    /// The labels of reserved RAM scaffolds.
+    reserved_labels: BTreeSet<&'a str>,
 }
 
 impl World<'_> {
@@ -679,13 +681,13 @@ impl World<'_> {
             .is_some_and(|(_, &end)| address < end)
     }
     /// Where the scaffold bytes holding `value` run from: its stretch of
-    /// included data or reserved RAM, or the reserved RAM it runs on past.
+    /// included data or reserved RAM. Past the end of reserved RAM nothing
+    /// is known of what lies where, so each place a word reaches there is
+    /// its own.
     fn scaffold_from(&self, value: u32) -> Option<u32> {
         match self.labelable.range(..=value).next_back() {
             Some((&start, &end)) if value < end => Some(start),
-            _ => self
-                .extendable(value)
-                .map(|index| self.input.regions[index].start),
+            _ => self.extendable(value).map(|_| value),
         }
     }
     /// The nearest name at or before `address` inside its region that a
@@ -736,7 +738,9 @@ impl World<'_> {
     }
     /// The reserved RAM a RAM address just past it can extend to: the space
     /// region ending last at or before `value` in the same RAM, with nothing
-    /// placed between.
+    /// placed between and no name up to it but reserved RAM's own: not a
+    /// variable another object defines there, nor a name another image
+    /// gives, such as the main image's RAM after an overlay's own.
     fn extendable(&self, value: u32) -> Option<usize> {
         let regions = &self.input.regions;
         if !(0x0200_0000..0x0400_0000).contains(&value) || region_at(regions, value).is_some() {
@@ -745,9 +749,15 @@ impl World<'_> {
         let before = regions.partition_point(|region| region.start <= value);
         let index = before.checked_sub(1)?;
         let region = &regions[index];
+        let named = self.by_address.range(region.end..=value).any(|(_, names)| {
+            names
+                .iter()
+                .any(|name| name.absolute || !self.reserved_labels.contains(name.name.as_str()))
+        });
         (matches!(region.kind, RegionKind::Space { .. })
             && region.end <= value
-            && region.start >> 24 == value >> 24)
+            && region.start >> 24 == value >> 24
+            && !named)
             .then_some(index)
     }
     /// Where `address` is, for a note.
@@ -864,17 +874,18 @@ impl Resolver<'_, '_> {
             };
             return expression(&name, value - row);
         }
-        // One name per place: a word into a scaffold object is that
-        // object's name plus the offset, never a label of its own.
-        if let Some(from) = world.scaffold_from(value) {
-            return self.registry.borrow_mut().object(from, value);
-        }
         // A listing of data words packs coordinates, ids and fixed-point
         // numbers into words that fall in ROM or RAM as often as pointers
         // do, even on another image's names (0x02000000 is 512.0 as often as
         // the first byte of EWRAM): there a word names only its own image's
-        // places, the only ones its pointers are seen to reach.
+        // places, the only ones its pointers are seen to reach, and never
+        // reserves RAM.
         let data = world.words[self.piece];
+        // One name per place: a word into a scaffold object is that
+        // object's name plus the offset, never a label of its own.
+        if let Some(from) = world.scaffold_from(value).filter(|_| !data) {
+            return self.registry.borrow_mut().object(from, value);
+        }
         let own = |name: &&&Name| !(data && name.absolute);
         if let Some(names) = world.by_address.get(&value) {
             let fits = names
@@ -1174,6 +1185,16 @@ pub fn relist(input: &Input) -> Result<Output, String> {
         rows,
         labelable,
         by_address: by_address.clone(),
+        reserved_labels: input
+            .space
+            .iter()
+            .flat_map(|scaffold| &scaffold.sections)
+            .flat_map(|section| &section.items)
+            .filter_map(|item| match item {
+                scaffold::Item::Label(name) => Some(name.as_str()),
+                _ => None,
+            })
+            .collect(),
     };
     // Names: those of scaffolds stay; a listing's stay when they are more
     // than a placeholder or something else refers to them.
@@ -1307,6 +1328,8 @@ pub fn relist(input: &Input) -> Result<Output, String> {
     }
     // Scaffolds: included data outside functions and reserved RAM, with
     // every name the registry defines inside them.
+    // The names the image already has, defined by the objects it links.
+    let linked: BTreeSet<String> = input.names.iter().map(|name| name.name.clone()).collect();
     let mut incbin = input.incbin.clone();
     let mut space = input.space.clone();
     let mut replaced: BTreeMap<(usize, String), Vec<Layout>> = BTreeMap::new();
@@ -1338,7 +1361,8 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                 None => vec![(region.start, region.end)],
             }
         } else {
-            // Reserved RAM runs on to the last name placed past its end.
+            // Reserved RAM runs on to the last name this relisting placed
+            // past its end; names other objects define there are theirs.
             let limit = input
                 .regions
                 .get(index + 1)
@@ -1346,7 +1370,8 @@ pub fn relist(input: &Input) -> Result<Output, String> {
             let to = registry
                 .defined
                 .range(region.end..limit)
-                .next_back()
+                .rev()
+                .find(|(_, names)| names.iter().any(|(name, _)| !linked.contains(name)))
                 .map_or(region.end, |(at, _)| (*at).max(region.end));
             vec![(region.start, to)]
         };
@@ -1371,8 +1396,9 @@ pub fn relist(input: &Input) -> Result<Output, String> {
             // Reserved RAM ends at its last name, which may sit at its end.
             let last = if is_incbin { to } else { to + 1 };
             for (&at, names) in registry.defined.range(from..last) {
-                let present = slice.labels.entry(at).or_default();
-                for (name, _) in names {
+                let theirs = |name: &String| at >= region.end && linked.contains(name);
+                for (name, _) in names.iter().filter(|(name, _)| !theirs(name)) {
+                    let present = slice.labels.entry(at).or_default();
                     if !present.contains(name) {
                         present.push(name.clone());
                     }
@@ -1748,6 +1774,86 @@ mod tests {
         };
         let error = relist(&input).err().unwrap();
         assert!(error.contains("Data_08000009 for 08000009"), "{error}");
+    }
+
+    #[test]
+    fn an_overlay_reserves_the_ram_past_its_image_up_to_the_main_images_next_name() {
+        let base = 0x0200_8000;
+        let mut bytes = halves(&[
+            0x4802, // ldr r0, [pc, #8]: the word at 0x0c
+            0x4903, // ldr r1, [pc, #12]: the word at 0x10
+            0x4a03, // ldr r2, [pc, #12]: the word at 0x14
+            0x4770, // bx lr
+            0x0000, 0x0000,
+        ]);
+        bytes.extend(0x0200_8024u32.to_le_bytes()); // its own RAM, past its image
+        bytes.extend(0x0200_8804u32.to_le_bytes()); // the main image's RAM after it
+        bytes.extend(0x0200_8040u32.to_le_bytes()); // a variable C code defines there
+        let object = "resource_x_overlay";
+        let end = base + bytes.len() as u32;
+        let input = Input {
+            image: Image {
+                bytes: &bytes,
+                base,
+            },
+            regions: vec![
+                region(
+                    base,
+                    end,
+                    RegionKind::Listing { regenerate: true },
+                    object,
+                    ".text",
+                ),
+                region(end, end, RegionKind::Space { scaffold: 0 }, object, ".bss"),
+            ],
+            names: vec![
+                Name {
+                    name: "gOverlayArea".into(),
+                    address: base,
+                    thumb: false,
+                    absolute: true,
+                },
+                Name {
+                    name: "gMapBuffer".into(),
+                    address: 0x0200_8800,
+                    thumb: false,
+                    absolute: true,
+                },
+                Name {
+                    name: "gCommonVar".into(),
+                    address: 0x0200_8040,
+                    thumb: false,
+                    absolute: false,
+                },
+            ],
+            external: BTreeSet::new(),
+            incbin: Vec::new(),
+            space: vec![scaffold::parse("\t.section .bss,\"aw\",%nobits\n").unwrap()],
+            rom_end: 0x0900_0000,
+            foreign: vec![region(
+                0x0200_0000,
+                0x0204_0000,
+                RegionKind::Other,
+                "sym_ewram",
+                ".sym_ewram",
+            )],
+            spell: 0x0200_0000,
+            pieces: Pieces::Sections {
+                object: object.into(),
+            },
+        };
+        let output = relist(&input).unwrap();
+        let piece = &output.pieces[&base];
+        assert!(
+            piece.contains(
+                "\t.4byte Data_02000024\n.L_02008010:\n\t.4byte gMapBuffer + 0x4\n.L_02008014:\n\t.4byte gCommonVar\n"
+            ),
+            "{piece}"
+        );
+        assert_eq!(
+            scaffold::render(&output.space[0]),
+            "\t.section .bss,\"aw\",%nobits\n\t.space 0x0000000c\n\t.global Data_02000024\nData_02000024:\n"
+        );
     }
 
     #[test]

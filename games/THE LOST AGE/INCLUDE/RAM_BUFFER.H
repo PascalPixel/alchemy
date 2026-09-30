@@ -18,8 +18,13 @@
 /* The heap's slot words, which hold the resident work blocks, open IWRAM.
  * GCC reaches a slot from the constant base with the slot's offset in the
  * load, as it does for a field of a structure at a constant address. */
+struct BattleSession;
+
 struct HeapSlots {
-    void *unknown_00[27];
+    void *unknown_00[9];
+    /* The battle session, which The Broken Seal keeps in its own cell. */
+    struct BattleSession *battle_work;
+    void *unknown_28[17];
     /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
 };

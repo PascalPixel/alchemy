@@ -3,6 +3,9 @@
 	.global Func_081203c8
 	.thumb_func
 Func_081203c8:
+	.global BattleParty_InsertUnitCentered
+	.thumb_func
+BattleParty_InsertUnitCentered:
 .L_081203c8:
 	push	{r5, r6, r7, lr}
 	adds	r7, r0, #0

@@ -12715,11 +12715,11 @@ msgctxt "message"
 msgid "03176"
 msgstr "Your {argument_item_name:1} broke!"
 
-msgctxt "message"
+msgctxt "MsgHpRecover"
 msgid "03177"
 msgstr "{argument_actor_name:1} recovers {argument_signed_number} HP!"
 
-msgctxt "message"
+msgctxt "MsgPpRecover"
 msgid "03178"
 msgstr "{argument_actor_name:1} recovers {argument_signed_number} PP!"
 
@@ -12727,15 +12727,15 @@ msgctxt "message"
 msgid "03179"
 msgstr "{argument_actor_name:1} returns to battle!"
 
-msgctxt "message"
+msgctxt "MsgHpFull"
 msgid "03180"
 msgstr "{argument_actor_name:1}'s HP is fully restored!"
 
-msgctxt "message"
+msgctxt "MsgPpFull"
 msgid "03181"
 msgstr "{argument_actor_name:1}'s PP is fully restored!"
 
-msgctxt "message"
+msgctxt "MsgCritical"
 msgid "03182"
 msgstr "A critical hit!"
 
@@ -12743,19 +12743,19 @@ msgctxt "message"
 msgid "03183"
 msgstr "A bitter blow!"
 
-msgctxt "message"
+msgctxt "MsgFelled"
 msgid "03184"
 msgstr "You felled {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgGoesDown"
 msgid "03185"
 msgstr "{argument_actor_name:1} was downed..."
 
-msgctxt "message"
+msgctxt "MsgDmgE"
 msgid "03186"
 msgstr "{argument_actor_name:1} takes {argument_signed_number} damage!"
 
-msgctxt "message"
+msgctxt "MsgDmgP"
 msgid "03187"
 msgstr "{argument_actor_name:1} takes {argument_signed_number} damage!"
 
@@ -12763,11 +12763,11 @@ msgctxt "message"
 msgid "03188"
 msgstr "The Grim Reaper calls out to {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgPpLossE"
 msgid "03189"
 msgstr "{argument_actor_name:1} loses {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgPpLossP"
 msgid "03190"
 msgstr "{argument_actor_name:1} loses {argument_signed_number} PP!"
 
@@ -12795,7 +12795,7 @@ msgctxt "message"
 msgid "03196"
 msgstr "{argument_actor_name:1} takes {argument_signed_number} damage."
 
-msgctxt "message"
+msgctxt "MsgDmgEmphE"
 msgid "03197"
 msgstr "{argument_actor_name:1} takes {argument_signed_number} damage!"
 
@@ -12807,7 +12807,7 @@ msgctxt "message"
 msgid "03199"
 msgstr "{argument_actor_name:1} takes {argument_signed_number} damage."
 
-msgctxt "message"
+msgctxt "MsgDmgEmphP"
 msgid "03200"
 msgstr "{argument_actor_name:1} takes {argument_signed_number} damage!"
 
@@ -12939,7 +12939,7 @@ msgctxt "message"
 msgid "03232"
 msgstr "A curse does {argument_signed_number} damage to {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgSpiritDrain"
 msgid "03233"
 msgstr "{argument_actor_name:1}'s spirit has been drained!"
 
@@ -12951,11 +12951,11 @@ msgctxt "message"
 msgid "03235"
 msgstr "{argument_actor_name:1} was slain."
 
-msgctxt "message"
+msgctxt "MsgKoDown"
 msgid "03236"
 msgstr "{argument_actor_name:1} was downed!"
 
-msgctxt "message"
+msgctxt "MsgSuffocate"
 msgid "03237"
 msgstr "{argument_actor_name:1} suffocated!"
 
@@ -12979,7 +12979,7 @@ msgctxt "message"
 msgid "03242"
 msgstr "{argument_actor_name:1} nimbly dodges the blow!"
 
-msgctxt "message"
+msgctxt "MsgNoEffect"
 msgid "03243"
 msgstr "But it has no effect on {argument_actor_name:1}!"
 
@@ -13031,11 +13031,11 @@ msgctxt "message"
 msgid "03255"
 msgstr "Drained {argument_signed_number} more HP!"
 
-msgctxt "message"
+msgctxt "MsgLeechGain"
 msgid "03256"
 msgstr "Recovered {argument_signed_number} more PP!"
 
-msgctxt "message"
+msgctxt "MsgLeechTake"
 msgid "03257"
 msgstr "{argument_signed_number} more PP were sucked away!"
 
@@ -13047,59 +13047,59 @@ msgctxt "message"
 msgid "03259"
 msgstr "{argument_signed_number} more PP were lost!"
 
-msgctxt "message"
+msgctxt "MsgAtkDown"
 msgid "03260"
 msgstr "{argument_actor_name:1}'s Attack drops by {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAtkUp"
 msgid "03261"
 msgstr "{argument_actor_name:1}'s Attack rises by {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgDefDown"
 msgid "03262"
 msgstr "{argument_actor_name:1}'s Defense drops by {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgDefUp"
 msgid "03263"
 msgstr "{argument_actor_name:1}'s Defense rises by {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgRevived"
 msgid "03264"
 msgstr "{argument_actor_name:1} has been revived!"
 
-msgctxt "message"
+msgctxt "MsgResDown"
 msgid "03265"
 msgstr "{argument_actor_name:1}'s Resistance drops by {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgResUp"
 msgid "03266"
 msgstr "{argument_actor_name:1}'s Resistance rises by {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgPoisoned"
 msgid "03267"
 msgstr "{argument_actor_name:1} is poisoned!"
 
-msgctxt "message"
+msgctxt "MsgDelusion"
 msgid "03268"
 msgstr "{argument_actor_name:1} is wrapped in delusion!"
 
-msgctxt "message"
+msgctxt "MsgConfused"
 msgid "03269"
 msgstr "{argument_actor_name:1} is confused!"
 
-msgctxt "message"
+msgctxt "MsgCharmed"
 msgid "03270"
 msgstr "{argument_actor_name:1}'s heart has been stolen!"
 
-msgctxt "message"
+msgctxt "MsgStunned"
 msgid "03271"
 msgstr "{argument_actor_name:1} has been stunned!"
 
-msgctxt "message"
+msgctxt "MsgAsleep"
 msgid "03272"
 msgstr "{argument_actor_name:1} falls asleep!"
 
-msgctxt "message"
+msgctxt "MsgPsyBlock"
 msgid "03273"
 msgstr "{argument_actor_name:1}'s Psynergy is blocked!"
 
@@ -13107,11 +13107,11 @@ msgctxt "message"
 msgid "03274"
 msgstr "{argument_actor_name:1} is in the clutches of a curse!"
 
-msgctxt "message"
+msgctxt "MsgHpRegen"
 msgid "03275"
 msgstr "{argument_actor_name:1} recovered HP!"
 
-msgctxt "message"
+msgctxt "MsgReflect"
 msgid "03276"
 msgstr "{argument_actor_name:1} feels the effects of Reflect!"
 
@@ -13119,31 +13119,31 @@ msgctxt "message"
 msgid "03277"
 msgstr "He broke through {argument_actor_name:1}'s field!"
 
-msgctxt "message"
+msgctxt "MsgEvilSpirit"
 msgid "03278"
 msgstr "An evil spirit grips {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgDeathCurse"
 msgid "03279"
 msgstr "The Spirit of Death embraces {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgVenom"
 msgid "03280"
 msgstr "{argument_actor_name:1} is infected with deadly poison!"
 
-msgctxt "message"
+msgctxt "MsgDeathCount"
 msgid "03281"
 msgstr "The Grim Reaper calls to {argument_actor_name:1}! {argument_signed_number}..."
 
-msgctxt "message"
+msgctxt "MsgPsySeal"
 msgid "03282"
 msgstr "{argument_actor_name:1}'s Psynergy has been sealed!"
 
-msgctxt "message"
+msgctxt "MsgAgiUp"
 msgid "03283"
 msgstr "{argument_actor_name:1}'s Agility rises by {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAgiDown"
 msgid "03284"
 msgstr "{argument_actor_name:1}'s Agility drops by {argument_signed_number}!"
 
@@ -13163,15 +13163,15 @@ msgctxt "message"
 msgid "03288"
 msgstr "{argument_actor_name:1}'s Wind Power rises by {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgReadies"
 msgid "03289"
 msgstr "{argument_actor_name:1} readies for action!"
 
-msgctxt "message"
+msgctxt "MsgChallenge"
 msgid "03290"
 msgstr "{argument_actor_name:1} rises to the challenge!"
 
-msgctxt "message"
+msgctxt "MsgImmobile"
 msgid "03291"
 msgstr "{argument_actor_name:1} has become unable to move!"
 
@@ -13179,11 +13179,11 @@ msgctxt "message"
 msgid "03292"
 msgstr "{argument_actor_name:1} is unable to move!"
 
-msgctxt "message"
+msgctxt "MsgAura"
 msgid "03293"
 msgstr "A protective aura encircles {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgAura2"
 msgid "03294"
 msgstr "A protective aura encircles {argument_actor_name:1}!"
 
@@ -13203,11 +13203,11 @@ msgctxt "message"
 msgid "03298"
 msgstr "But no Djinn are in Recovery!"
 
-msgctxt "message"
+msgctxt "MsgWakes"
 msgid "03299"
 msgstr "{argument_actor_name:1} wakes from slumber!"
 
-msgctxt "message"
+msgctxt "MsgCurePoison"
 msgid "03300"
 msgstr "The poison is purged from {argument_actor_name:1}!"
 
@@ -13235,15 +13235,15 @@ msgctxt "message"
 msgid "03306"
 msgstr "{argument_actor_name:1} regains consciousness!"
 
-msgctxt "message"
+msgctxt "MsgCureDelusion"
 msgid "03307"
 msgstr "{argument_actor_name:1} sees clearly once again!"
 
-msgctxt "message"
+msgctxt "MsgCureSeal"
 msgid "03308"
 msgstr "{argument_actor_name:1}'s Psynergy seal is gone!"
 
-msgctxt "message"
+msgctxt "MsgCureStun"
 msgid "03309"
 msgstr "{argument_actor_name:1} is no longer stunned!"
 
@@ -13251,7 +13251,7 @@ msgctxt "message"
 msgid "03310"
 msgstr "{argument_actor_name:1} regains consciousness!"
 
-msgctxt "message"
+msgctxt "MsgCureSpirit"
 msgid "03311"
 msgstr "The Spirit of Death leaves {argument_actor_name:1}!"
 
@@ -13271,7 +13271,7 @@ msgctxt "message"
 msgid "03315"
 msgstr "{argument_actor_name:1} regains consciousness!"
 
-msgctxt "message"
+msgctxt "MsgCureCurse"
 msgid "03316"
 msgstr "{argument_actor_name:1} shakes off the Grim Reaper!"
 
@@ -13279,7 +13279,7 @@ msgctxt "message"
 msgid "03317"
 msgstr "{argument_actor_name:1} returns to normal!"
 
-msgctxt "message"
+msgctxt "MsgBuffsReset"
 msgid "03318"
 msgstr "{argument_actor_name:1}'s strength returns to normal!"
 

@@ -13,7 +13,7 @@ UiTextResource_Release:
 	lsls	r3, r3, #18
 	ldr	r5, [r3, #72]
 	adds	r0, r5, #0
-	bl	0x0803e8ec
+	bl	NodeChain_GetNodeAtCount
 	adds	r6, r0, #0
 	ldrh	r3, [r6, #10]
 	cmp	r3, #1

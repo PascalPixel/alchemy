@@ -42,7 +42,7 @@ Func_08038140:
 	overlay_veneer Func_0803dd68
 	overlay_veneer Func_0803df00
 	overlay_veneer Func_0803df14
-	overlay_veneer Func_0803e5a8
+	overlay_veneer Menu_OpenSelectionWindow
 	overlay_veneer Func_0803e6d8
 	overlay_veneer Func_0803e7ac
 	overlay_veneer Func_0803e918

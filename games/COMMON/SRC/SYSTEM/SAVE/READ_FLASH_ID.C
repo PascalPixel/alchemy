@@ -19,7 +19,7 @@
 // routine must run from RAM because it reads the flash chip at 0x0e000000
 // while that chip is in ID mode, which is why it is copied to the stack at
 // all.
-#include "FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
 
 /// The routine CopyFlashReadRoutineToRam copies into the stack buffer: reads one byte
 /// from the flash chip. Entered through the veneer with the Thumb bit set.

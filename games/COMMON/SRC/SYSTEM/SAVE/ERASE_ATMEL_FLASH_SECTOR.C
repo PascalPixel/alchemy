@@ -1,5 +1,5 @@
-#include "FLASH.H"
-#include "FLASH_DATA.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
 
 extern FlashWaitProc Flash_Handler3;
 

@@ -515,7 +515,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.0805c0e0)
         "*/games/THE LOST AGE/TEXT/MESSAGES.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080aa0dc)
-        "*/recon/tla/raw/080ad000.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/INVENTOR.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad040.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad070.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad0b0.o"(.text .rodata .data .padding)

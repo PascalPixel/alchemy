@@ -1,17 +1,26 @@
-/* Set the deck's slot actors 8 to 19 out for the crossing: every slot
-   value to its top band, the slots active, the modes cleared, the standing
-   slots' depths kept, and each slot placed by its value. */
+/* Place one deck slot actor: unless told to keep its value, take the phase
+   its mode selects and copy that drifting slot's look; then set its depth
+   and its sprite's tilt from the sine of its value, on the near or the far
+   side of its resting depth. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KANPAN.H"
 
+extern u16 FuneKanpan_SlotPhase[];
 extern u16 FuneKanpan_SlotValue[];
-extern s32 FuneKanpan_SlotMode[];
+extern u32 FuneKanpan_SlotMode[];
 extern s32 FuneKanpan_SlotDepth[];
+void ObjectVisual_CopyAttributes(s32 actor, s32 source);
+
+struct SlotSprite {
+    s32 unknown_00[7];
+    s16 unknown_1c;
+    s16 tilt;
+};
+
 void OverlayObject_ActivateSlotWithMode3(s32 actor);
 void SceneEffect_SelectSlotValueAndPosition(s32 actor, s32 slot, s32 row);
-void ObjectVisual_CopyAttributes(s32 actor, s32 source);
 
 union Slot {
     s32 w;
@@ -20,7 +29,6 @@ union Slot {
 
 extern u8 LinkedMessage_TheresNothingWeCanDo[];
 s32 BuildMotionCountdown(s32, s16);
-
 extern s32 FuneKanpan_LayerScroll[];
 extern s32 FuneKanpan_LayerSpeed[];
 extern u8 FuneKanpan_CrewScript[];
@@ -28,19 +36,57 @@ extern u8 MsgFuneFinallyReachedTolbi[];
 void Event_CallWithLastActiveObjectId(u8 *script);
 void FieldScene_RunStepThen10(s32 step);
 void FieldScene_CallPairWith10(s32 actor, s32 facing);
-
 extern u8 MsgFuneRobinDontTalkLikeShouldnt[];
 extern u8 MsgFuneRobinTalkedPassengersDidntTour[];
 extern u8 MsgFuneSeeYoureGoingGoFor[];
 #define ACTOR_FLAGS_OFFSET 90
 void FieldScene_RunStepThen10(s32 a);
 void FieldScene_CallPairWith10(s32 a, s32 b);
-
 extern u8 FuneKanpan_ClosingCrewScript[];
 extern u8 FuneKanpan_LeaveActions[];
 extern u8 MsgFuneHowWasRobinDidExplore[];
 void FieldScene_RunScene3af_02000bb8(void);
 
+void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
+{
+    struct FieldActor *actor = Object_GetById(id);
+    struct SlotSprite *sprite = (struct SlotSprite *)actor->sprite;
+    s32 sine;
+
+    if ((flags & 2) == 0) {
+        switch (FuneKanpan_SlotMode[slot]) {
+        case 1:
+            FuneKanpan_SlotValue[slot] = FuneKanpan_SlotPhase[0];
+            ObjectVisual_CopyAttributes(id, 8);
+            break;
+        case 2:
+            FuneKanpan_SlotValue[slot] = FuneKanpan_SlotPhase[1];
+            ObjectVisual_CopyAttributes(id, 9);
+            break;
+        case 3:
+            FuneKanpan_SlotValue[slot] = FuneKanpan_SlotPhase[2];
+            ObjectVisual_CopyAttributes(id, 10);
+            break;
+        case 4:
+            FuneKanpan_SlotValue[slot] = FuneKanpan_SlotPhase[3];
+            ObjectVisual_CopyAttributes(id, 11);
+            break;
+        }
+    }
+    if (flags & 1) {
+        sine = Engine_MathSin(FuneKanpan_SlotValue[slot]);
+        sprite->tilt = Engine_MathSin(FuneKanpan_SlotValue[slot] + 0x8000) >> 5;
+        actor->z.fixed = FuneKanpan_SlotDepth[slot] - (sine << 2) - (sine << 1);
+    } else {
+        sine = Engine_MathSin(FuneKanpan_SlotValue[slot] + 0x8000);
+        sprite->tilt = Engine_MathSin(FuneKanpan_SlotValue[slot]) >> 5;
+        actor->z.fixed = FuneKanpan_SlotDepth[slot] + (sine << 2) + (sine << 1);
+    }
+}
+
+/* Set the deck's slot actors 8 to 19 out for the crossing: every slot
+   value to its top band, the slots active, the modes cleared, the standing
+   slots' depths kept, and each slot placed by its value. */
 void SceneState_InitActorSlots8To19(void)
 {
     struct FieldActor *actor;

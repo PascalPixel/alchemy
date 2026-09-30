@@ -1,4 +1,4 @@
-#include "FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
 
 /* The chip description a detected flash ID selects: five handlers, then the
    chip's geometry and timing, whose ID sits at offset 0x28. */

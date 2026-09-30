@@ -1,4 +1,4 @@
-#include "FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
 
 /* gFlash が指すフラッシュ機種表。 */
 struct FlashChipInfo {

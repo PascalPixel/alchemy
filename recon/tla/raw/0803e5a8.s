@@ -234,6 +234,9 @@ Func_0803e6d8:
 	movs	r0, #72
 	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, r6, r7, pc}
+	.global Func_0803e774
+	.thumb_func
+Func_0803e774:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

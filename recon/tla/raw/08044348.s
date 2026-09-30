@@ -162,6 +162,9 @@ Func_08044348:
 	pop	{r5, pc}
 	.2byte 0x01fa
 	.2byte 0x0000
+	.global Func_08044478
+	.thumb_func
+Func_08044478:
 	push	{lr}
 	ldr	r2, [pc, #8]
 	movs	r1, #128
@@ -169,6 +172,9 @@ Func_08044348:
 	pop	{pc}
 	.2byte 0x01fa
 	.2byte 0x0000
+	.global Func_08044488
+	.thumb_func
+Func_08044488:
 	push	{lr}
 	ldr	r2, [pc, #8]
 	movs	r1, #128

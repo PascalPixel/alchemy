@@ -35,7 +35,7 @@ Func_0804e0d0:
 	bl	Func_0803a7ac
 	b.n	.L_0804e0d4
 .L_0804e110:
-	bl	0x08043690
+	bl	Func_08043690
 	cmp	r0, r6
 	bne.n	.L_0804e138
 	b.n	.L_0804e0d4

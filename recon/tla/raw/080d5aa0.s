@@ -461,14 +461,3 @@ ObjectEffect_PrepareContextEffect:
 	.4byte 0x02000240
 	.2byte 0x0000
 	.2byte 0xfff0
-	.global ObjectEffect_BeginContextEffect26
-	.thumb_func
-ObjectEffect_BeginContextEffect26:
-	.2byte 0xb500
-	movs	r0, #26
-	bl	ObjectEffect_PrepareContextEffect
-	movs	r0, #144
-	lsls	r0, r0, #1
-	bl	GameFlag_SetBit
-	pop	{pc}
-	.2byte 0x0000

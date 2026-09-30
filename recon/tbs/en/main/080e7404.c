@@ -48,7 +48,7 @@ void BattleFx_BeginCanvasLayer(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Audio_PlayCue(s32);
 void BattlePres_ConfigureEffectDisplay(void);
-void Unnamed_080cd104(s32, s32);
+void BattleEffect_WipeCanvas(s32, s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void BattleFx_SpawnObjects(s32, s32, s32);
 void *Resource_GetTableEntry(s32);
@@ -267,7 +267,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     (*(s16 *)((u8 *)((void *)0x05000000) + (2))) = 0;
     (*(s32 *)((u8 *)(*sp3C) + (0x7780))) = 0;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    Unnamed_080cd104(0, 0);
+    BattleEffect_WipeCanvas(0, 0);
     Scheduler_RemoveCallback(0x080CD261);
     if (sp4C == 1) {
         var_r5_135 = 0x77D8;

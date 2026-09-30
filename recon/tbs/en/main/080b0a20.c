@@ -1,3 +1,7 @@
+/* 2026-09-30 Mercury, asm tried: "ldr %0, =0xffff" puts the constant in the
+   assembler's pool after the function, not in GCC's; an asm "0"(0xffff) tie
+   leaves the pool order unchanged; an "m"(0xffff) operand is an internal
+   compiler error in push_minipool_fix (arm.c:5379). */
 /* 2026-09-30 asm-only (inline asm not yet permitted to workers): a FAKEMATCH-tagged "ldr %0, =0xffff" issued first puts 0xffff at the head of the pool, as the ROM has it. */
 /* Draft, not exact (2026-09-29, Mercury): the code is exact; only the
    literal pool order differs. The ROM pools 0xffff, 0, 0x1ff, 0xfffffe00;

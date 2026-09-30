@@ -652,7 +652,7 @@ Func_080e28d4:
 	adds	r1, r1, r4
 	adds	r0, r0, r4
 	sub	sp, #8
-	bl	Func_080148e8
+	bl	ArcTan2
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	movs	r3, #216

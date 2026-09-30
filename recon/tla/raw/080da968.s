@@ -241,7 +241,7 @@ Func_080da968:
 	subs	r0, r7, r1
 	adds	r1, r4, #0
 .L_080dab60:
-	bl	Func_080148e8
+	bl	ArcTan2
 	lsls	r0, r0, #16
 	lsrs	r7, r0, #16
 	movs	r3, #18

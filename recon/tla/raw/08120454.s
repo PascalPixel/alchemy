@@ -611,7 +611,7 @@ Func_08120454:
 	ldrh	r0, [r6, #0]
 	subs	r5, #1
 	adds	r6, #2
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	cmp	r5, #0
 	bne.n	.L_081208fc
 .L_0812090a:

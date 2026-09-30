@@ -45,7 +45,7 @@ Func_0811f088:
 	ldr	r0, [r3, #8]
 	ldr	r1, [r3, #16]
 	ldrb	r6, [r7, #0]
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldr	r2, [pc, #572]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
@@ -321,7 +321,7 @@ Func_0811f088:
 .L_0811f2f0:
 	ldrsh	r0, [r6, r7]
 	str	r4, [sp, #0]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	adds	r5, r6, #0
 	ldr	r4, [sp, #0]
 	ldr	r3, [r5, #20]

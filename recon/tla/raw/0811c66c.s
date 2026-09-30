@@ -477,9 +477,9 @@ Func_0811c66c:
 	bl	0x08138008
 	movs	r3, #36
 	ldrsh	r0, [r5, r3]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	ldr	r0, [r5, #8]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	movs	r0, #0
 .L_0811ca4a:
 	add	sp, #88
@@ -664,7 +664,7 @@ Func_0811c66c:
 	str	r2, [sp, #4]
 	str	r2, [sp, #0]
 	ldrsh	r0, [r2, r6]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	ldr	r1, [sp, #4]
 	adds	r7, #1
 	ldr	r3, [r1, #20]
@@ -674,7 +674,7 @@ Func_0811c66c:
 	bne.n	.L_0811cbb8
 .L_0811cbd0:
 	ldr	r0, [r5, #8]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	movs	r0, #0
 .L_0811cbd8:
 	add	sp, #96

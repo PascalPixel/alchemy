@@ -20,7 +20,7 @@ Func_080e9ee4:
 	mov	r9, r2
 	adds	r1, r6, #0
 	mov	r0, r9
-	bl	Func_080148e8
+	bl	ArcTan2
 	adds	r5, r0, #0
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16

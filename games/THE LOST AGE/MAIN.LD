@@ -1006,7 +1006,7 @@ SECTIONS
         "*/recon/tla/raw/0811bc64.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811bc98.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811bd10.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/0811be68.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RESET_MOTION_AT_ANCHOR.o"(.text)
         "*/recon/tla/raw/0811bec8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811bf18.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/MOTION/SET_OBJECT_POSITION.o"(.text)

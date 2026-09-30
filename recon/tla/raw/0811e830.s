@@ -167,7 +167,7 @@ Func_0811e830:
 	bne.n	.L_0811e970
 .L_0811e980:
 	ldr	r0, [sp, #8]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	mov	r2, sl
 	ldr	r3, [r2, #56]
 	movs	r7, #128
@@ -259,7 +259,7 @@ Func_0811e830:
 	ldr	r1, [r0, #16]
 	adds	r0, r2, #0
 	str	r1, [r3, #16]
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldr	r1, [pc, #404]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
@@ -516,7 +516,7 @@ Func_0811e830:
 	mov	r2, r8
 	movs	r1, #36
 	ldrsh	r0, [r2, r1]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	b.n	.L_0811ed88
 .L_0811ec78:
 	movs	r3, #0
@@ -652,14 +652,14 @@ Func_0811e830:
 	mov	r2, r8
 	movs	r1, #36
 	ldrsh	r0, [r2, r1]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 .L_0811ed88:
 	ldr	r3, [sp, #4]
 	cmp	r3, #0
 	bne.n	.L_0811ed96
 	mov	r4, r8
 	ldr	r0, [r4, #8]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 .L_0811ed96:
 	movs	r0, #0
 	add	sp, #116
@@ -848,7 +848,7 @@ Func_0811e830:
 .L_0811ef0c:
 	ldrsh	r0, [r6, r2]
 	str	r2, [sp, #0]
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	adds	r5, r6, #0
 	ldr	r2, [sp, #0]
 	ldr	r3, [r5, #20]

@@ -12,7 +12,7 @@ Func_080250f4:
 	subs	r0, r0, r3
 	ldr	r3, [r5, #8]
 	subs	r1, r1, r3
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldrh	r3, [r5, #4]
 	strh	r0, [r5, #6]
 	adds	r3, #1

@@ -34,7 +34,7 @@ Func_080000f8:
 	.global Func_08000100
 	.thumb_func
 Func_08000100:
-	overlay_veneer Func_080148e8
+	overlay_veneer ArcTan2
 	overlay_veneer Func_080149b4
 	overlay_veneer Func_080149e0
 	.global Func_08000118

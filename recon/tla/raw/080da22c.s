@@ -97,7 +97,7 @@ Func_080da22c:
 	adds	r1, r6, #0
 	str	r5, [r2, #0]
 	lsls	r0, r0, #11
-	bl	Func_080148e8
+	bl	ArcTan2
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	adds	r7, r7, r0
@@ -287,7 +287,7 @@ Func_080da22c:
 .L_080da470:
 	mov	r1, fp
 	mov	r0, r9
-	bl	Func_080148e8
+	bl	ArcTan2
 	adds	r5, r0, #0
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16
@@ -746,7 +746,7 @@ Func_080da22c:
 	adds	r1, r5, #0
 	strb	r3, [r7, #16]
 	lsls	r0, r0, #11
-	bl	Func_080148e8
+	bl	ArcTan2
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	add	sl, r0

@@ -957,7 +957,7 @@ Func_08023f94:
 .L_0802466a:
 	ldr	r0, [sp, #16]
 	ldr	r1, [sp, #24]
-	bl	Func_080148e8
+	bl	ArcTan2
 	ldrh	r3, [r7, #6]
 	movs	r2, #128
 	subs	r0, r0, r3

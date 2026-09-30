@@ -307,7 +307,7 @@ Func_08100e7c:
 	movs	r0, #1
 	movs	r1, #0
 	movs	r2, #200
-	bl	0x08105300
+	bl	Func_08105300
 	movs	r0, #0
 	bl	0x08102008
 	adds	r4, r0, #0
@@ -415,7 +415,7 @@ Func_08100e7c:
 	subs	r1, r1, r3
 	lsls	r1, r1, #3
 	adds	r1, #48
-	bl	0x08105300
+	bl	Func_08105300
 	movs	r0, #1
 	bl	0x08102008
 	movs	r2, #139

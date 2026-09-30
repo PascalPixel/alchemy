@@ -58,7 +58,7 @@ Func_081c1014:
 	movs	r1, #5
 	bl	Math_Mod
 	mov	fp, r0
-	bl	0x08013b30
+	bl	Func_08013b30
 .L_081c1082:
 	ldr	r3, [r5, #12]
 	movs	r2, #128
@@ -132,7 +132,7 @@ Func_081c1014:
 	mov	r3, r8
 	mov	r4, r9
 	ldr	r0, [r3, r4]
-	bl	0x081c0cb0
+	bl	Func_081c0cb0
 .L_081c110a:
 	ldr	r3, [r5, #12]
 	movs	r2, #2
@@ -140,7 +140,7 @@ Func_081c1014:
 	cmp	r3, #0
 	beq.n	.L_081c111a
 	movs	r0, #0
-	bl	0x081c0cb0
+	bl	Func_081c0cb0
 .L_081c111a:
 	ldr	r3, [r5, #12]
 	movs	r2, #8
@@ -148,7 +148,7 @@ Func_081c1014:
 	cmp	r3, #0
 	beq.n	.L_081c112a
 	movs	r0, #78
-	bl	0x081c0cb0
+	bl	Func_081c0cb0
 .L_081c112a:
 	ldr	r3, [r5, #12]
 	movs	r2, #4
@@ -157,7 +157,7 @@ Func_081c1014:
 	beq.n	.L_081c113c
 	movs	r0, #195
 	lsls	r0, r0, #1
-	bl	0x081c0cb0
+	bl	Func_081c0cb0
 .L_081c113c:
 	movs	r0, #1
 	bl	WaitFrames
@@ -168,6 +168,9 @@ Func_081c1014:
 	.4byte 0x03000ee4
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_081c1158
+	.thumb_func
+Func_081c1158:
 	push	{lr}
 	movs	r3, #128
 	ands	r3, r0
@@ -188,6 +191,9 @@ Func_081c1014:
 	movs	r0, r0
 	.2byte 0x5840
 	.2byte 0x0200
+	.global Func_081c117c
+	.thumb_func
+Func_081c117c:
 	ldr	r3, [pc, #4]
 	ldrh	r0, [r3, #0]
 	bx	lr

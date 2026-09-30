@@ -37,7 +37,7 @@ Func_0801319c:
 	ldr	r2, [pc, #108]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	0x08014c6c
+	bl	Func_08014c6c
 	bl	Func_080133c4
 	ldr	r3, [pc, #96]
 	str	r5, [r3, #0]
@@ -48,8 +48,8 @@ Func_0801319c:
 	ldr	r3, [pc, #96]
 	strb	r5, [r3, #0]
 	bl	Func_080132d0
-	bl	0x08014bac
-	bl	0x08014b70
+	bl	Func_08014bac
+	bl	Func_08014b70
 	ldr	r3, [pc, #56]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -57,19 +57,19 @@ Func_0801319c:
 	movs	r0, #0
 	ldr	r2, [pc, #76]
 	movs	r1, #1
-	bl	0x08013438
+	bl	Func_08013438
 	ldr	r2, [pc, #72]
 	movs	r0, #13
 	movs	r1, #1
-	bl	0x08013438
+	bl	Func_08013438
 	movs	r2, #192
 	ldr	r3, [pc, #64]
 	lsls	r2, r2, #8
 	adds	r2, #15
 	strh	r2, [r3, #0]
 	bl	0x081c0008
-	bl	0x08014368
-	bl	0x080144c0
+	bl	Func_08014368
+	bl	Func_080144c0
 	ldr	r3, [pc, #48]
 	ldr	r2, [pc, #48]
 	str	r5, [r3, #0]

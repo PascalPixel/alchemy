@@ -42,7 +42,7 @@ Func_080d3940:
 	lsls	r0, r0, #13
 	adds	r1, r7, #0
 	adds	r2, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r2, sl
 	ldrb	r0, [r2, #0]
 	movs	r3, #255
@@ -110,6 +110,9 @@ Func_080d3940:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.global Func_080d3a10
+	.thumb_func
+Func_080d3a10:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -156,7 +159,7 @@ Func_080d3940:
 	lsls	r0, r0, #13
 	mov	r1, r8
 	adds	r2, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r2, sl
 	ldrb	r0, [r2, #0]
 	movs	r3, #255
@@ -254,6 +257,9 @@ Func_080d3940:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0xfff8
+	.global Func_080d3b28
+	.thumb_func
+Func_080d3b28:
 	.2byte 0xb5e0
 	mov	r7, sl
 	mov	r6, r9
@@ -345,6 +351,9 @@ Func_080d3940:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.global Func_080d3be8
+	.thumb_func
+Func_080d3be8:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]
@@ -383,6 +392,9 @@ ObjectTable_ReadActiveValue:
 .L_080d3c28:
 	adds	r0, r1, #0
 	pop	{pc}
+	.global Func_080d3c2c
+	.thumb_func
+Func_080d3c2c:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

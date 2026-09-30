@@ -79,6 +79,9 @@ Func_080f9224:
 	movs	r0, r0
 	.2byte 0xefff
 	.2byte 0xffff
+	.global Func_080f92ac
+	.thumb_func
+Func_080f92ac:
 	movs	r3, #128
 	movs	r2, #128
 	lsls	r3, r3, #19

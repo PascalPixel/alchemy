@@ -99,7 +99,7 @@ Func_0802e7a8:
 	adds	r1, r6, #0
 	mov	r2, fp
 	str	r4, [sp, #0]
-	bl	0x080220f0
+	bl	Func_080220f0
 	movs	r3, #56
 	mov	r1, r9
 	add	r8, r3

@@ -26,7 +26,7 @@ Func_08163c2c:
 	mov	r5, fp
 	mov	r8, r3
 .L_08163c58:
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	strb	r0, [r5, #0]
 	adds	r5, #1

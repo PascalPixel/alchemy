@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_0811b724
+	.thumb_func
+Func_0811b724:
 	push	{r5, r6, lr}
 	bl	0x0811be3c
 	cmp	r0, #0
@@ -18,7 +21,7 @@
 .L_0811b744:
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	cmp	r0, #0
 	bne.n	.L_0811b73e
 	adds	r3, r5, #0

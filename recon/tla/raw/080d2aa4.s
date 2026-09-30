@@ -25,6 +25,9 @@ Func_080d2aa4:
 	bx	lr
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2ad0
+	.thumb_func
+Func_080d2ad0:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]
@@ -47,6 +50,9 @@ Func_080d2aa4:
 	bx	lr
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2afc
+	.thumb_func
+Func_080d2afc:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]

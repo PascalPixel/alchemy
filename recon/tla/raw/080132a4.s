@@ -13,5 +13,8 @@ Func_080132a4:
 	movs	r0, r0
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_080132b8
+	.thumb_func
+Func_080132b8:
 	bx	lr
 	.2byte 0x0000

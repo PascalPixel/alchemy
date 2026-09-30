@@ -194,7 +194,7 @@ Func_0802386c:
 	adds	r1, r6, #0
 	mov	r2, r8
 	mov	fp, r3
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	mov	r4, r9
 	ldr	r3, [r4, #20]
 	cmp	r0, r3
@@ -216,14 +216,14 @@ Func_0802386c:
 	adds	r2, r7, r3
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	movs	r4, #136
 	lsls	r4, r4, #14
 	asrs	r5, r0, #16
 	adds	r2, r7, r4
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	asrs	r0, r0, #16
 	subs	r0, #16
 	cmp	r0, r5
@@ -250,7 +250,7 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	mov	r2, r8
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	mov	r4, r9
 	ldr	r3, [r4, #20]
 	cmp	r0, r3
@@ -270,14 +270,14 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	str	r3, [sp, #20]
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	movs	r2, #128
 	lsls	r2, r2, #14
 	asrs	r5, r0, #16
 	add	r2, r8
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	asrs	r0, r0, #16
 	subs	r0, #16
 	cmp	r0, r5
@@ -313,14 +313,14 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	lsrs	r7, r3, #30
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	movs	r2, #128
 	lsls	r2, r2, #14
 	asrs	r5, r0, #16
 	add	r2, r8
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	asrs	r0, r0, #16
 	subs	r0, #16
 	cmp	r0, r5
@@ -344,7 +344,7 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	mov	r2, r8
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	mov	r4, r9
 	ldr	r3, [r4, #20]
 	cmp	r3, r0
@@ -373,7 +373,7 @@ Func_0802386c:
 	ldr	r0, [sp, #40]
 	adds	r1, r6, #0
 	mov	r2, r8
-	bl	0x0802d45c
+	bl	Func_0802d45c
 	mov	r4, r9
 	ldr	r3, [r4, #20]
 	cmp	r3, r0
@@ -577,14 +577,14 @@ Func_0802386c:
 	ldr	r0, [sp, #48]
 	str	r2, [sp, #0]
 	adds	r2, r6, #0
-	bl	0x08022318
+	bl	Func_08022318
 	b.n	.L_08023d44
 .L_08023cd4:
 	mov	r2, r9
 	ldrh	r3, [r2, #6]
 	ldr	r0, [sp, #48]
 	adds	r2, r6, #0
-	bl	0x080220f0
+	bl	Func_080220f0
 	b.n	.L_08023d44
 .L_08023ce2:
 	ldr	r3, [sp, #4]
@@ -611,7 +611,7 @@ Func_0802386c:
 	cmp	r3, #0
 	bne.n	.L_08023d44
 	ldrb	r0, [r0, #16]
-	bl	0x080142ac
+	bl	Func_080142ac
 	ldr	r1, [sp, #48]
 	strb	r5, [r1, #25]
 	b.n	.L_08023d44
@@ -634,7 +634,7 @@ Func_0802386c:
 	bne.n	.L_08023d44
 .L_08023d3c:
 	ldrb	r0, [r5, #16]
-	bl	0x080142ac
+	bl	Func_080142ac
 	strb	r6, [r5, #25]
 .L_08023d44:
 	ldr	r4, [sp, #80]

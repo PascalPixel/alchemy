@@ -44,6 +44,9 @@ Func_08014644:
 	.4byte 0x02003610
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Func_08014694
+	.thumb_func
+Func_08014694:
 	push	{r5, r6, lr}
 	ldr	r4, [pc, #52]
 	movs	r5, #1
@@ -115,6 +118,9 @@ Func_08014644:
 	.4byte 0x02003610
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Func_0801471c
+	.thumb_func
+Func_0801471c:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0
 	ldr	r1, [pc, #48]
@@ -148,6 +154,9 @@ Func_08014644:
 	.4byte 0x02003610
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Func_0801475c
+	.thumb_func
+Func_0801475c:
 	push	{r5, r6, r7, lr}
 	ldr	r4, [pc, #52]
 	movs	r5, #1
@@ -216,6 +225,9 @@ Scheduler_DisableOverlayCallbacks:
 	.4byte 0x02003610
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Func_080147d8
+	.thumb_func
+Func_080147d8:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #40]
 	adds	r7, r0, #0

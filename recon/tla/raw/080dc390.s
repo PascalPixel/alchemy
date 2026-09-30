@@ -68,6 +68,9 @@ Func_080dc390:
 	cmp	r6, #0
 	bge.n	.L_080dc400
 	pop	{r5, r6, pc}
+	.global Func_080dc410
+	.thumb_func
+Func_080dc410:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -130,7 +133,7 @@ Func_080dc390:
 	beq.n	.L_080dc48c
 	b.n	.L_080dc5fc
 .L_080dc48c:
-	bl	0x080dc0b8
+	bl	Func_080dc0b8
 	ldr	r3, [pc, #16]
 	adds	r2, r6, #0
 	subs	r3, r3, r0
@@ -266,7 +269,7 @@ Func_080dc390:
 	movs	r1, #1
 	ldr	r0, [r3, #0]
 	negs	r1, r1
-	bl	.L_080dc62c
+	bl	Func_080dc62c
 	movs	r1, #30
 	ldrsh	r3, [r6, r1]
 	ldrh	r2, [r6, #30]
@@ -314,11 +317,11 @@ Func_080dc390:
 	adds	r2, r7, r3
 	movs	r3, #255
 	strb	r3, [r2, #0]
-	bl	0x080e15fc
+	bl	Func_080e15fc
 	movs	r1, #144
 	ldr	r0, [pc, #48]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_080dc5fc:
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -336,6 +339,9 @@ Func_080dc390:
 	.4byte 0x0000010a
 	.2byte 0xc3f1
 	.2byte 0x080d
+	.global Func_080dc62c
+	.thumb_func
+Func_080dc62c:
 .L_080dc62c:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
@@ -419,9 +425,12 @@ Func_080dc390:
 	ldrh	r1, [r6, #0]
 	str	r3, [r6, #8]
 	adds	r2, r6, #4
-	bl	0x0801489c
+	bl	Func_0801489c
 .L_080dc6d6:
 	pop	{r5, r6, r7, pc}
+	.global Func_080dc6d8
+	.thumb_func
+Func_080dc6d8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -466,7 +475,7 @@ Func_080dc390:
 	bl	Audio_PlayCue
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x080e1420
+	bl	Func_080e1420
 .L_080dc738:
 	adds	r3, r7, #0
 	adds	r3, #35
@@ -515,14 +524,14 @@ Func_080dc390:
 	beq.n	.L_080dc7a2
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x080e1420
+	bl	Func_080e1420
 .L_080dc7a2:
 	adds	r0, r6, #0
 	movs	r1, #21
 	bl	Object_SetMode
 	b.n	.L_080dc7b0
 .L_080dc7ac:
-	bl	.L_080dc7cc
+	bl	Func_080dc7cc
 .L_080dc7b0:
 	movs	r2, #192
 	lsls	r2, r2, #4
@@ -538,6 +547,9 @@ Func_080dc390:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0dc2
 	.2byte 0x0000
+	.global Func_080dc7cc
+	.thumb_func
+Func_080dc7cc:
 .L_080dc7cc:
 	push	{lr}
 	movs	r3, #192
@@ -546,7 +558,7 @@ Func_080dc390:
 	ldr	r3, [r3, #0]
 	movs	r1, #0
 	ldr	r0, [r3, #16]
-	bl	0x080e1420
+	bl	Func_080e1420
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{pc}

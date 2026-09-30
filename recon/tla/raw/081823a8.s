@@ -84,7 +84,7 @@ Func_081823a8:
 	lsls	r1, r1, #4
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #596]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r1, [sp, #36]
 	movs	r4, #0
 	mov	r9, r4
@@ -150,18 +150,18 @@ Func_081823a8:
 	mov	r8, r2
 	mov	sl, r2
 .L_081824ca:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	adds	r6, r0, #0
 	ands	r6, r3
-	bl	0x08014878
+	bl	Func_08014878
 	mov	r3, sl
 	str	r3, [r7, #0]
 	movs	r5, #255
 	ands	r5, r0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #20
@@ -306,7 +306,7 @@ Func_081823a8:
 	bl	Func_08014de4
 	ldr	r0, [sp, #32]
 	ldr	r1, [sp, #20]
-	bl	0x080156e8
+	bl	Func_080156e8
 	mov	r3, sl
 	adds	r3, #4
 	cmp	r9, r3
@@ -320,7 +320,7 @@ Func_081823a8:
 	bl	BattleFxKernels_IntegrateVector3
 .L_08182624:
 	ldr	r0, [sp, #12]
-	bl	0x08015128
+	bl	Func_08015128
 	ldr	r2, [sp, #28]
 	movs	r1, #0
 	mov	r8, r1
@@ -355,7 +355,7 @@ Func_081823a8:
 	beq.n	.L_08182664
 	b.n	.L_081827b8
 .L_08182664:
-	bl	0x08014e38
+	bl	Func_08014e38
 	ldr	r2, [sp, #44]
 	movs	r3, #3
 	add	r2, r8
@@ -375,15 +375,15 @@ Func_081823a8:
 	b.n	.L_081826c8
 .L_08182688:
 	mov	r0, fp
-	bl	0x08015068
+	bl	Func_08015068
 	b.n	.L_081826c8
 .L_08182690:
 	adds	r0, r7, #0
-	bl	0x08015024
+	bl	Func_08015024
 	b.n	.L_081826c8
 .L_08182698:
 	adds	r0, r7, #0
-	bl	0x080150e4
+	bl	Func_080150e4
 	b.n	.L_081826c8
 	.4byte 0x08143001
 	.4byte 0x02010000
@@ -395,9 +395,9 @@ Func_081823a8:
 	.2byte 0x0000
 .L_081826bc:
 	adds	r0, r7, #0
-	bl	0x08015024
+	bl	Func_08015024
 	adds	r0, r7, #0
-	bl	0x080150e4
+	bl	Func_080150e4
 .L_081826c8:
 	add	r5, sp, #72
 	adds	r1, r5, #0
@@ -406,7 +406,7 @@ Func_081823a8:
 	ldr	r3, [r5, #0]
 	asrs	r3, r3, #1
 	str	r3, [r5, #0]
-	bl	0x08014ea8
+	bl	Func_08014ea8
 	ldr	r2, [r5, #8]
 	cmp	r2, #249
 	bgt.n	.L_081826e8

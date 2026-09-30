@@ -25,7 +25,7 @@ Func_080cb09c:
 	str	r3, [r5, #8]
 	ldrh	r1, [r2, #6]
 	adds	r2, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r0, #197
 	lsls	r0, r0, #1
 	adds	r3, r6, r0
@@ -300,7 +300,7 @@ Func_080cb09c:
 	mov	r8, r1
 	mov	r9, r0
 	str	r3, [sp, #20]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	str	r0, [sp, #16]
 	bl	Func_080cb8e8
 	movs	r1, #0
@@ -543,7 +543,7 @@ Func_080cb09c:
 	movs	r0, #139
 	bl	Audio_PlayCue
 .L_080cb4a8:
-	bl	0x080d2454
+	bl	Func_080d2454
 	bl	0x080cb788
 	str	r0, [sp, #8]
 .L_080cb4b2:
@@ -721,7 +721,7 @@ Func_080cb09c:
 	negs	r0, r0
 	ands	r1, r3
 	str	r4, [sp, #0]
-	bl	0x080cb6f4
+	bl	Func_080cb6f4
 	ldr	r3, [sp, #8]
 	ldr	r4, [sp, #0]
 	adds	r3, #1

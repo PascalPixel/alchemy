@@ -96,7 +96,7 @@ Object_SetMoveTarget:
 	.2byte 0x4445
 	adds	r5, r5, r0
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 	adds	r5, r0, #0
 .L_080247f2:
 	movs	r3, #128
@@ -650,7 +650,7 @@ Object_SetMoveTarget:
 .L_08024bf8:
 	mov	r0, r9
 	mov	r1, fp
-	bl	0x080148e8
+	bl	Func_080148e8
 	ldrh	r3, [r6, #6]
 	movs	r2, #128
 	subs	r0, r0, r3

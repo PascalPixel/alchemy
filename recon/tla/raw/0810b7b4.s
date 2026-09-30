@@ -799,7 +799,7 @@ Func_0810b7b4:
 	strb	r2, [r3, #0]
 	adds	r1, #138
 	ldr	r0, [pc, #12]
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_0810be38
 	movs	r0, r0
 	.4byte 0x00000060

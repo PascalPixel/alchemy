@@ -6,9 +6,15 @@ Func_080ceffc:
 	push	{lr}
 	bl	ObjectTable_Get
 	pop	{pc}
+	.global Func_080cf004
+	.thumb_func
+Func_080cf004:
 	push	{lr}
-	bl	0x080caa2c
+	bl	Func_080caa2c
 	pop	{pc}
+	.global Func_080cf00c
+	.thumb_func
+Func_080cf00c:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r7, r2, #0
@@ -44,11 +50,14 @@ Func_080ceffc:
 	str	r0, [r5, #12]
 .L_080cf04e:
 	pop	{r5, r6, r7, pc}
+	.global Func_080cf050
+	.thumb_func
+Func_080cf050:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
 	push	{r6, r7}
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r2, [pc, #100]
 	movs	r3, #128
@@ -79,7 +88,7 @@ Func_080ceffc:
 	adds	r1, r6, #0
 	ldr	r3, [r4, #16]
 	str	r3, [r5, #16]
-	bl	0x080148e8
+	bl	Func_080148e8
 	adds	r1, r0, #0
 	lsls	r1, r1, #16
 	movs	r0, #160
@@ -87,7 +96,7 @@ Func_080ceffc:
 	lsrs	r1, r1, #16
 	lsls	r0, r0, #13
 	adds	r2, #8
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r3, sl
 	str	r3, [r5, #56]
 	str	r3, [r5, #60]
@@ -119,7 +128,7 @@ Func_080ceffc:
 	movs	r3, #0
 	strb	r3, [r2, #0]
 .L_080cf0ea:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #100
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -132,14 +141,14 @@ Func_080ceffc:
 	str	r3, [r6, #4]
 	ldr	r3, [r5, #16]
 	str	r3, [r6, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r5, #4
 	adds	r1, r0, #0
 	adds	r2, r6, #0
 	adds	r0, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r0, #209
 	lsls	r0, r0, #1
 	adds	r0, #255
@@ -214,14 +223,14 @@ Func_080ceffc:
 	str	r3, [sp, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [sp, #8]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	cmp	r5, r0
 	bne.n	.L_080cf1de
 	movs	r0, #128
 	ldrh	r1, [r7, #6]
 	mov	r2, r8
 	lsls	r0, r0, #13
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r2, r8
 	ldr	r3, [r2, #0]
 	ldr	r1, [pc, #280]

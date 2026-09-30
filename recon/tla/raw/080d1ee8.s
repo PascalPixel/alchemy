@@ -25,6 +25,9 @@ Func_080d1ee8:
 	movs	r0, r0
 	.2byte 0x3228
 	.2byte 0x080f
+	.global Func_080d1f0c
+	.thumb_func
+Func_080d1f0c:
 	push	{lr}
 	bl	.L_080d1ee8
 	movs	r0, #0

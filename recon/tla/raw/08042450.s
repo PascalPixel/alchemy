@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_08042450
+	.thumb_func
+Func_08042450:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -12,7 +15,7 @@
 	sub	sp, #16
 	adds	r5, r2, #0
 	ldr	r6, [r3, #60]
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r1, #1
 	adds	r7, r0, #0
 	negs	r1, r1

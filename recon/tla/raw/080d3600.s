@@ -19,7 +19,7 @@ FacingObject_TurnPairToFaceEachOther:
 	subs	r0, r0, r3
 	ldr	r3, [r6, #8]
 	subs	r1, r1, r3
-	bl	0x080148e8
+	bl	Func_080148e8
 	lsls	r0, r0, #16
 	lsrs	r7, r0, #16
 	movs	r0, #128
@@ -95,6 +95,9 @@ FacingObject_TurnPairToFaceEachOther:
 	movs	r0, r0
 	.2byte 0xf000
 	.2byte 0xffff
+	.global Func_080d36a8
+	.thumb_func
+Func_080d36a8:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	bl	ObjectTable_Get
@@ -110,6 +113,9 @@ FacingObject_TurnPairToFaceEachOther:
 	str	r2, [r6, r3]
 .L_080d36c6:
 	pop	{r5, r6, pc}
+	.global Func_080d36c8
+	.thumb_func
+Func_080d36c8:
 	push	{r5, lr}
 	adds	r5, r1, #0
 	bl	ObjectTable_Get
@@ -126,7 +132,7 @@ FacingObject_TurnPairToFaceEachOther:
 .L_080d36e4:
 	str	r3, [r0, #108]
 	adds	r1, r5, #0
-	bl	.L_080d3744
+	bl	Func_080d3744
 .L_080d36ec:
 	pop	{r5, pc}
 	movs	r0, r0
@@ -175,6 +181,9 @@ FacingObject_TurnPairToFaceEachOther:
 	.4byte 0x0300122c
 	.2byte 0x088c
 	.2byte 0x080f
+	.global Func_080d3744
+	.thumb_func
+Func_080d3744:
 .L_080d3744:
 	push	{r5, r6, lr}
 	adds	r3, r0, #0
@@ -210,6 +219,9 @@ FacingObject_TurnPairToFaceEachOther:
 	strb	r3, [r5, #25]
 .L_080d377e:
 	pop	{r5, r6, pc}
+	.global Func_080d3780
+	.thumb_func
+Func_080d3780:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r7, r2, #0

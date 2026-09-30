@@ -1014,7 +1014,7 @@ UiText_BuildRenderEntries:
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	0x0803ca20
+	bl	Func_0803ca20
 	ldr	r3, [sp, #24]
 	adds	r2, r6, #0
 	str	r3, [sp, #4]
@@ -1042,7 +1042,7 @@ UiText_BuildRenderEntries:
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	0x0803ca20
+	bl	Func_0803ca20
 	ldr	r1, [sp, #24]
 	add	r3, sp, #52
 	str	r1, [sp, #4]
@@ -1062,7 +1062,7 @@ UiText_BuildRenderEntries:
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	0x0803ca20
+	bl	Func_0803ca20
 	ldr	r1, [sp, #12]
 	adds	r0, r6, #0
 	ldrh	r2, [r1, #0]
@@ -1094,7 +1094,7 @@ UiText_BuildRenderEntries:
 	ldr	r1, [sp, #12]
 	adds	r0, r0, r3
 	movs	r2, #24
-	bl	0x0803ca20
+	bl	Func_0803ca20
 	ldr	r1, [sp, #12]
 	adds	r0, r6, #0
 	ldrh	r2, [r1, #0]
@@ -1433,7 +1433,7 @@ UiText_BuildRenderEntries:
 	mov	r1, fp
 	cmp	r1, #0
 	beq.n	.L_0803b782
-	bl	0x0803cca8
+	bl	Func_0803cca8
 .L_0803b782:
 	ldr	r0, [sp, #32]
 	add	sp, #132

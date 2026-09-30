@@ -67,8 +67,8 @@ Func_080dc7e8:
 	asrs	r3, r3, #24
 	cmp	r3, #0
 	bne.n	.L_080dc942
-	bl	0x080e137c
-	bl	0x080e1650
+	bl	Func_080e137c
+	bl	Func_080e1650
 	movs	r3, #197
 	lsls	r3, r3, #1
 	add	r3, fp
@@ -173,7 +173,7 @@ Func_080dc7e8:
 	movs	r3, #1
 	strb	r3, [r2, #0]
 .L_080dc938:
-	bl	0x080d2c98
+	bl	Func_080d2c98
 	movs	r0, #224
 	bl	Runtime_ReleaseHeapBlock
 .L_080dc942:

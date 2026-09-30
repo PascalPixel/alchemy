@@ -37,7 +37,7 @@ Func_0803ce64:
 	add	r3, sp, #12
 	str	r0, [sp, #0]
 	adds	r0, r7, #0
-	bl	0x0803b880
+	bl	Func_0803b880
 	ldr	r2, [sp, #12]
 	movs	r3, #30
 	ldr	r4, [sp, #8]

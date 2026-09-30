@@ -36,6 +36,9 @@ Func_08022f24:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global Func_08022f64
+	.thumb_func
+Func_08022f64:
 .L_08022f64:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -107,28 +110,34 @@ Func_08022f24:
 	.4byte 0x06010000
 	.2byte 0xeb4c
 	.2byte 0x0802
+	.global Func_08022fe8
+	.thumb_func
+Func_08022fe8:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r6, #0
 .L_08022fee:
 	adds	r1, r6, #0
 	adds	r0, r5, #0
-	bl	.L_08022f64
+	bl	Func_08022f64
 	adds	r1, r6, #1
 	adds	r0, r5, #0
-	bl	.L_08022f64
+	bl	Func_08022f64
 	adds	r1, r6, #2
 	adds	r0, r5, #0
-	bl	.L_08022f64
+	bl	Func_08022f64
 	adds	r1, r6, #3
 	adds	r0, r5, #0
-	bl	.L_08022f64
+	bl	Func_08022f64
 	adds	r6, #4
 	movs	r0, #1
 	bl	WaitFrames
 	cmp	r6, #127
 	bls.n	.L_08022fee
 	pop	{r5, r6, pc}
+	.global Func_0802301c
+	.thumb_func
+Func_0802301c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -155,17 +164,17 @@ Func_08022f24:
 .L_08023048:
 	ldr	r0, [r5, #0]
 	adds	r1, r7, #0
-	bl	.L_08022f64
+	bl	Func_08022f64
 	ldr	r0, [r5, #0]
 	mov	r1, r9
-	bl	.L_08022f64
+	bl	Func_08022f64
 	ldr	r0, [r5, #0]
 	mov	r1, sl
-	bl	.L_08022f64
+	bl	Func_08022f64
 	subs	r6, #1
 	ldmia	r5!, {r0}
 	mov	r1, r8
-	bl	.L_08022f64
+	bl	Func_08022f64
 	cmp	r6, #0
 	bne.n	.L_08023048
 .L_0802306e:
@@ -181,6 +190,9 @@ Func_08022f24:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Func_08023088
+	.thumb_func
+Func_08023088:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -225,6 +237,9 @@ Func_08022f24:
 	.4byte 0x001fffff
 	.2byte 0xfffe
 	.2byte 0x012f
+	.global Func_080230e0
+	.thumb_func
+Func_080230e0:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -266,19 +281,19 @@ Func_08022f24:
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #80]
 	adds	r1, #138
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_08023156
 .L_0802313e:
 	movs	r1, #227
 	lsls	r1, r1, #2
 	adds	r1, #255
 	ldr	r0, [pc, #68]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r1, #128
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #64]
 	adds	r1, #138
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_08023156:
 	subs	r3, r7, #3
 	cmp	r3, #1
@@ -286,13 +301,13 @@ Func_08022f24:
 	movs	r1, #144
 	ldr	r0, [pc, #52]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_08023172
 .L_08023168:
 	movs	r1, #144
 	ldr	r0, [pc, #44]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_08023172:
 	mov	r1, r8
 	movs	r2, #0

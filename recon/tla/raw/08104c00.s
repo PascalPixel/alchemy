@@ -225,6 +225,9 @@ Func_08104c00:
 	cmp	r1, #3
 	ble.n	.L_08104d88
 	pop	{r5, r6, r7, pc}
+	.global Func_08104da8
+	.thumb_func
+Func_08104da8:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

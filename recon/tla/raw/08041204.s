@@ -34,7 +34,7 @@ Func_08041204:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #12]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{pc}
 	.4byte 0x8500018a
@@ -139,7 +139,7 @@ Func_08041204:
 	adds	r5, #2
 	cmp	r3, #8
 	ble.n	.L_080412dc
-	bl	0x08044460
+	bl	Func_08044460
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23

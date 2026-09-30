@@ -53,6 +53,9 @@ Func_080133c4:
 	.4byte 0x030001e4
 	.2byte 0x0132
 	.2byte 0x0400
+	.global Func_08013438
+	.thumb_func
+Func_08013438:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
 	adds	r1, r2, #0
@@ -234,7 +237,7 @@ WaitFrames:
 	movs	r0, #144
 	strb	r1, [r5, #0]
 	lsls	r0, r0, #3
-	bl	0x080147d8
+	bl	Func_080147d8
 	movs	r3, #0
 	strb	r3, [r5, #0]
 	ldr	r3, [pc, #208]
@@ -605,6 +608,9 @@ WaitFrames:
 	.4byte 0x19670704
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Func_080138a8
+	.thumb_func
+Func_080138a8:
 	ldr	r2, [pc, #4]
 	movs	r3, #19
 	str	r3, [r2, #32]
@@ -771,7 +777,7 @@ WaitFrames:
 	ldr	r5, [pc, #168]
 	bl	Func_080164e8
 	strh	r0, [r5, #0]
-	bl	0x08016990
+	bl	Func_08016990
 .L_080139d6:
 	bl	SoundDriver_VSyncRefresh
 	ldr	r3, [pc, #156]
@@ -930,6 +936,9 @@ WaitFrames:
 	.4byte 0x030011d4
 	.2byte 0x121c
 	.2byte 0x0300
+	.global Func_08013b30
+	.thumb_func
+Func_08013b30:
 	push	{lr}
 	movs	r0, #0
 	pop	{pc}

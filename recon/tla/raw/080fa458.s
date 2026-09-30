@@ -27,7 +27,7 @@ Func_080fa458:
 	lsls	r3, r3, #18
 	adds	r3, #220
 	ldr	r5, [r3, #0]
-	bl	0x0810508c
+	bl	Func_0810508c
 	bl	.L_080fa458
 	movs	r0, #1
 	bl	WaitFrames

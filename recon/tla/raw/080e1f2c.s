@@ -44,7 +44,7 @@ Func_080e1f2c:
 	ldr	r0, [pc, #724]
 	bl	Resource_GetTableEntry
 	ldr	r1, [r6, #0]
-	bl	0x0801587c
+	bl	Func_0801587c
 	bl	Resource_FindFreeEntry
 	str	r0, [sp, #8]
 	adds	r1, r5, #0
@@ -63,7 +63,7 @@ Func_080e1f2c:
 	adds	r0, r7, #0
 	movs	r1, #16
 	movs	r2, #16
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r7, #5]
 	ldrb	r2, [r7, #9]
 	movs	r1, #15
@@ -76,7 +76,7 @@ Func_080e1f2c:
 	mov	r2, fp
 	strb	r3, [r7, #9]
 	ldr	r0, [r2, #16]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	movs	r1, #13
 	ldrb	r2, [r7, #9]
 	negs	r1, r1
@@ -115,7 +115,7 @@ Func_080e1f2c:
 	lsls	r0, r0, #12
 	ldrh	r1, [r2, #2]
 	adds	r2, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r5, #0]
 	ldr	r0, [pc, #560]
 	str	r3, [r7, #0]
@@ -127,7 +127,7 @@ Func_080e1f2c:
 	str	r3, [r7, #8]
 	bl	Resource_GetTableEntry
 	ldr	r1, [r6, #0]
-	bl	0x0801587c
+	bl	Func_0801587c
 	bl	Resource_FindFreeEntry
 	str	r0, [sp, #12]
 	movs	r1, #128
@@ -143,7 +143,7 @@ Func_080e1f2c:
 	adds	r0, r7, #0
 	movs	r1, #12
 	movs	r2, #8
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r7, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -155,7 +155,7 @@ Func_080e1f2c:
 	strb	r0, [r7, #9]
 	mov	r8, r0
 	ldr	r0, [r1, #16]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	ldrb	r3, [r7, #9]
 	movs	r2, #3
 	mov	r1, r9
@@ -189,7 +189,7 @@ Func_080e1f2c:
 	lsls	r0, r0, #13
 	ldrh	r1, [r2, #2]
 	adds	r2, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r5, #0]
 	movs	r0, #96
 	str	r3, [r7, #0]
@@ -205,7 +205,7 @@ Func_080e1f2c:
 	adds	r3, #240
 	ldr	r0, [r1, #16]
 	ldr	r5, [r3, #0]
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	adds	r3, r5, #0
 	adds	r3, #191
 	mov	r2, fp
@@ -267,7 +267,7 @@ Func_080e1f2c:
 	mov	r3, fp
 	lsls	r0, r0, #15
 	ldrh	r1, [r3, #2]
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r4, [pc, #236]
 	movs	r0, #128
 	movs	r1, #0
@@ -319,7 +319,7 @@ Func_080e1f2c:
 	ldr	r0, [pc, #144]
 	strh	r2, [r3, #0]
 	adds	r1, #90
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r2, #0
 	ldrsh	r3, [r5, r2]
 	movs	r2, #186
@@ -364,9 +364,9 @@ Func_080e1f2c:
 	strb	r2, [r3, #0]
 .L_080e222c:
 	ldr	r0, [sp, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r0, [sp, #8]
-	bl	0x08014274
+	bl	Func_08014274
 	bl	0x080dc384
 	bl	0x080eb930
 	movs	r0, #92
@@ -717,7 +717,7 @@ Func_080e1f2c:
 	lsls	r1, r1, #20
 	ldrb	r2, [r3, #0]
 	str	r4, [sp, #4]
-	bl	0x080dbdc8
+	bl	Func_080dbdc8
 	movs	r5, #0
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16

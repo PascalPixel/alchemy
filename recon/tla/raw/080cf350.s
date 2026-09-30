@@ -8,7 +8,7 @@ Func_080cf350:
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080cf3ac
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r3, #128
 	lsls	r3, r3, #9
@@ -48,12 +48,15 @@ Func_080cf350:
 	movs	r0, r0
 	.2byte 0x0074
 	.2byte 0x080f
+	.global Func_080cf3b4
+	.thumb_func
+Func_080cf3b4:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0
 	cmp	r5, #0
 	beq.n	.L_080cf41a
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r3, #1
 	ands	r3, r6
@@ -100,6 +103,9 @@ Func_080cf350:
 	.4byte 0x080effd8
 	.2byte 0xf0d1
 	.2byte 0x080c
+	.global Func_080cf424
+	.thumb_func
+Func_080cf424:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -107,7 +113,7 @@ Func_080cf350:
 	push	{r5, r6, r7}
 	mov	sl, r1
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r1, #193
 	adds	r7, r0, #0
@@ -189,7 +195,7 @@ Func_080cf350:
 	push	{r5, r6, lr}
 	sub	sp, #12
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #100
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -202,14 +208,14 @@ Func_080cf350:
 	str	r3, [r6, #4]
 	ldr	r3, [r5, #16]
 	str	r3, [r6, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r5, #4
 	adds	r1, r0, #0
 	adds	r2, r6, #0
 	adds	r0, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r0, #209
 	lsls	r0, r0, #1
 	adds	r0, #255
@@ -822,7 +828,7 @@ Func_080cf350:
 	subs	r6, r3, r5
 .L_080cfa7c:
 	str	r4, [sp, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r3, r6, #0
 	muls	r3, r0
 	ldr	r4, [sp, #0]
@@ -983,7 +989,7 @@ Func_080cf350:
 	lsls	r5, r5, #4
 .L_080cfbb6:
 	str	r4, [sp, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #4
 	lsrs	r0, r0, #16
 	adds	r0, r5, r0
@@ -1142,7 +1148,7 @@ Func_080cf350:
 	ands	r5, r3
 	ands	r6, r3
 	str	r4, [sp, #0]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r4, [sp, #0]
@@ -1429,7 +1435,7 @@ Func_080cf350:
 	ands	r5, r3
 	ands	r6, r3
 	str	r4, [sp, #0]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r4, [sp, #0]
@@ -1557,7 +1563,7 @@ Func_080cf350:
 	ands	r5, r3
 	ands	r6, r3
 	str	r4, [sp, #0]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r4, [sp, #0]

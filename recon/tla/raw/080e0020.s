@@ -28,9 +28,9 @@ Func_080e0020:
 	str	r3, [sp, #0]
 	ldr	r3, [r7, #24]
 	str	r3, [sp, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r5, r5, #16
 	adds	r3, r0, #0
 	lsls	r0, r3, #4
@@ -44,7 +44,7 @@ Func_080e0020:
 	adds	r0, r0, r2
 	adds	r1, r5, #0
 	mov	r2, r8
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r2, r8
 	ldr	r3, [r2, #0]
 	str	r3, [r7, #12]
@@ -88,12 +88,12 @@ Func_080e0020:
 	ldr	r3, [r2, #12]
 	str	r3, [r5, #8]
 	bl	Func_080dc390
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r5, #0
 	lsls	r0, r0, #11
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r5, #0]
 	adds	r2, r7, #0
 	str	r3, [r7, #12]
@@ -280,12 +280,12 @@ Func_080e0020:
 	ldr	r3, [r6, #16]
 	str	r3, [r7, #8]
 	bl	Func_080dc390
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #11
 	adds	r2, r7, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r1, #209
 	lsls	r1, r1, #1
 	ldr	r3, [r7, #8]
@@ -337,7 +337,7 @@ Func_080e0020:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	ldr	r5, [pc, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r0, r0, #3
 	lsrs	r0, r0, #16
 	ldrsb	r1, [r5, r0]
@@ -346,6 +346,9 @@ Func_080e0020:
 	pop	{r5, r6, pc}
 	.2byte 0x0f2c
 	.2byte 0x080f
+	.global Func_080e0308
+	.thumb_func
+Func_080e0308:
 	push	{lr}
 	bl	ObjectTable_Get
 	cmp	r0, #0
@@ -387,6 +390,9 @@ Func_080e0020:
 	.4byte 0x02000240
 	.2byte 0x02ed
 	.2byte 0x080e
+	.global Func_080e035c
+	.thumb_func
+Func_080e035c:
 	push	{r5, lr}
 	bl	ObjectTable_Get
 	adds	r5, r0, #0

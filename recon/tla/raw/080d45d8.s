@@ -101,6 +101,9 @@ Func_080d45d8:
 	.4byte 0x03001144
 	.2byte 0x45d9
 	.2byte 0x080d
+	.global Func_080d46a4
+	.thumb_func
+Func_080d46a4:
 	push	{r5, r6, r7, lr}
 	adds	r7, r1, #0
 	movs	r3, #192
@@ -149,12 +152,15 @@ Func_080d45d8:
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #12]
 	adds	r1, #148
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_080d470a:
 	pop	{r5, r6, r7, pc}
 	.4byte 0x03000230
 	.2byte 0x45d9
 	.2byte 0x080d
+	.global Func_080d4714
+	.thumb_func
+Func_080d4714:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	movs	r1, #213

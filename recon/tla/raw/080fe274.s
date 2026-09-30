@@ -18,11 +18,11 @@ Func_080fe274:
 	bl	Func_08014cc0
 	adds	r6, r0, #0
 	movs	r0, #64
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	r8, r0
 	movs	r0, #160
 	lsls	r0, r0, #6
-	bl	0x08014dac
+	bl	Func_08014dac
 	movs	r2, #1
 	negs	r2, r2
 	str	r2, [sp, #8]
@@ -156,7 +156,7 @@ Func_080fe274:
 	bl	0x08105468
 	ldr	r0, [r6, #40]
 	bl	0x08038268
-	bl	0x0810526c
+	bl	Func_0810526c
 	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r3, #20
 	movs	r1, #0
@@ -278,7 +278,7 @@ Func_080fe274:
 	strh	r7, [r3, #0]
 	lsls	r1, r1, #3
 	mov	r0, r8
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #1
 	bl	Func_081054cc
 	movs	r0, #0

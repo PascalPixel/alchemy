@@ -30,6 +30,9 @@ Func_080d4580:
 	str	r3, [r5, #16]
 .L_080d45b6:
 	pop	{r5, r6, r7, pc}
+	.global Func_080d45b8
+	.thumb_func
+Func_080d45b8:
 	movs	r4, #192
 	lsls	r4, r4, #18
 	ldr	r4, [r4, #32]

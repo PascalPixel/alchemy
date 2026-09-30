@@ -27,7 +27,7 @@ UiWork_Finalize:
 	asrs	r1, r1, #16
 	ldrh	r2, [r5, #8]
 	ldrh	r3, [r5, #10]
-	bl	0x0803911c
+	bl	Func_0803911c
 	str	r6, [r5, #0]
 	str	r6, [r5, #4]
 	strh	r6, [r5, #8]

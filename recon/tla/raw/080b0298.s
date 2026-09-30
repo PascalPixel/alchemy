@@ -29,6 +29,9 @@ Func_080b0298:
 	adds	r0, r5, #0
 	bl	0x080b0084
 	pop	{r5, r6, pc}
+	.global Func_080b02d4
+	.thumb_func
+Func_080b02d4:
 	push	{lr}
 	bl	.L_080b0298
 	pop	{pc}
@@ -118,6 +121,9 @@ Func_080b0298:
 	movs	r0, r0
 	.2byte 0x6b04
 	.2byte 0x080c
+	.global Func_080b0378
+	.thumb_func
+Func_080b0378:
 .L_080b0378:
 	ldr	r1, [pc, #24]
 	ldr	r3, [pc, #28]
@@ -137,7 +143,7 @@ Func_080b0298:
 	.2byte 0x4e6d
 	.2byte 0x41c6
 	push	{lr}
-	bl	.L_080b0378
+	bl	Func_080b0378
 	movs	r3, #100
 	muls	r0, r3
 	lsrs	r0, r0, #16

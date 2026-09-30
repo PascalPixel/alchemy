@@ -11,6 +11,9 @@ Func_080d23b8:
 	bl	Func_080ca6e8
 	pop	{r5, pc}
 	movs	r0, r0
+	.global Func_080d23cc
+	.thumb_func
+Func_080d23cc:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]

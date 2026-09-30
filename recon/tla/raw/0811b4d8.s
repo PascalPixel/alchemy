@@ -191,7 +191,7 @@ Func_0811b4d8:
 	mov	r8, r3
 .L_0811b622:
 	movs	r1, #0
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	adds	r7, r0, #0
 	cmp	r7, #0
 	beq.n	.L_0811b69c

@@ -14,11 +14,11 @@ Func_08044348:
 	lsls	r0, r0, #2
 	ldr	r5, [r3, #60]
 	mov	r8, r1
-	bl	0x08014dac
+	bl	Func_08014dac
 	mov	sl, r0
 	mov	r1, sl
 	mov	r0, r8
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r1, #14
 	ldrsh	r3, [r6, r1]
 	movs	r1, #12
@@ -152,6 +152,9 @@ Func_08044348:
 	movs	r0, r0
 	.2byte 0xefff
 	.2byte 0xffff
+	.global Func_08044460
+	.thumb_func
+Func_08044460:
 	push	{r5, lr}
 	bl	Resource_FindFreeEntry
 	ldr	r2, [pc, #12]
@@ -162,6 +165,9 @@ Func_08044348:
 	pop	{r5, pc}
 	.2byte 0x01fa
 	.2byte 0x0000
+	.global Func_08044478
+	.thumb_func
+Func_08044478:
 	push	{lr}
 	ldr	r2, [pc, #8]
 	movs	r1, #128
@@ -169,6 +175,9 @@ Func_08044348:
 	pop	{pc}
 	.2byte 0x01fa
 	.2byte 0x0000
+	.global Func_08044488
+	.thumb_func
+Func_08044488:
 	push	{lr}
 	ldr	r2, [pc, #8]
 	movs	r1, #128

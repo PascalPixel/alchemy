@@ -60,7 +60,7 @@ Func_080227e0:
 .L_08022848:
 	bl	Resource_GetTableEntry
 	adds	r1, r7, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r3, [r7, #0]
 	adds	r4, r7, #0
 	movs	r5, #0
@@ -218,6 +218,9 @@ InitializeAnimationObjects:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global Func_0802296c
+	.thumb_func
+Func_0802296c:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	cmp	r5, #0

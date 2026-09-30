@@ -211,7 +211,7 @@ Func_0818bc98:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #700]
 	lsls	r1, r1, #4
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r5, [sp, #64]
 	cmp	r5, #2
 	bne.n	.L_0818be64
@@ -288,9 +288,9 @@ Func_0818bc98:
 .L_0818bedc:
 	negs	r3, r7
 	str	r3, [r5, #24]
-	bl	0x08014878
+	bl	Func_08014878
 	str	r0, [r5, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #32
@@ -475,7 +475,7 @@ Func_0818bc98:
 	mov	r1, r8
 	str	r0, [r5, #0]
 	str	r1, [r5, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	subs	r0, #32
 	lsls	r0, r0, #14
@@ -484,17 +484,17 @@ Func_0818bc98:
 	ldr	r3, [r2, #4]
 	cmp	r3, #0
 	bne.n	.L_0818c06c
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	negs	r0, r0
 	b.n	.L_0818c072
 .L_0818c06c:
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 .L_0818c072:
 	lsls	r0, r0, #13
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #16
@@ -756,7 +756,7 @@ Func_0818bc98:
 .L_0818c270:
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	0x08014dac
+	bl	Func_08014dac
 	str	r0, [sp, #16]
 	movs	r0, #1
 	bl	0x081969f8
@@ -868,9 +868,9 @@ Func_0818bc98:
 	lsls	r1, r1, #6
 	lsls	r0, r7, #14
 	adds	r0, r0, r1
-	bl	0x080150e4
+	bl	Func_080150e4
 	ldr	r0, [pc, #344]
-	bl	0x08015024
+	bl	Func_08015024
 	b.n	.L_0818c39c
 .L_0818c360:
 	mov	r2, fp
@@ -897,10 +897,10 @@ Func_0818bc98:
 	movs	r0, #200
 	lsls	r0, r0, #6
 	adds	r0, #200
-	bl	0x08015068
+	bl	Func_08015068
 	movs	r0, #128
 	lsls	r0, r0, #7
-	bl	0x08015024
+	bl	Func_08015024
 .L_0818c39c:
 	ldr	r3, [sp, #64]
 	cmp	r3, #2
@@ -1070,13 +1070,13 @@ Func_0818bc98:
 	movs	r0, #216
 	lsls	r0, r0, #6
 	adds	r0, #176
-	bl	0x08015068
+	bl	Func_08015068
 	movs	r0, #128
 	lsls	r0, r0, #7
-	bl	0x08015024
+	bl	Func_08015024
 	ldr	r5, [sp, #52]
 	lsls	r0, r5, #10
-	bl	0x08015068
+	bl	Func_08015068
 	ldr	r0, [pc, #624]
 	ldr	r1, [sp, #16]
 	movs	r2, #32
@@ -1155,7 +1155,7 @@ Func_0818bc98:
 	negs	r6, r6
 .L_0818c5a4:
 	adds	r0, r6, #0
-	bl	0x080150e4
+	bl	Func_080150e4
 	movs	r0, #128
 	movs	r1, #128
 	lsls	r0, r0, #11

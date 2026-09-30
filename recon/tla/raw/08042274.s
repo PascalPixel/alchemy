@@ -102,7 +102,7 @@ RenderOutput_Create:
 	cmp	r5, #0
 	bne.n	.L_08042338
 	adds	r0, r7, #0
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #0
 	b.n	.L_08042390
 .L_08042338:

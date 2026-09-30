@@ -30,7 +30,7 @@ Func_08044558:
 	str	r3, [sp, #20]
 	str	r2, [sp, #16]
 	mov	fp, r2
-	bl	0x08014bac
+	bl	Func_08014bac
 	ldr	r3, [pc, #348]
 	movs	r0, #147
 	movs	r1, #128
@@ -42,7 +42,7 @@ Func_08044558:
 	adds	r3, r3, r1
 	ldrb	r0, [r2, #0]
 	ldrb	r1, [r3, #0]
-	bl	0x0803f9c0
+	bl	Func_0803f9c0
 	movs	r5, #2
 	movs	r1, #6
 	movs	r2, #24
@@ -62,7 +62,7 @@ Func_08044558:
 	movs	r3, #1
 	ldr	r0, [sp, #48]
 	movs	r1, #0
-	bl	0x0803d3c0
+	bl	Func_0803d3c0
 	ldr	r1, [pc, #280]
 	mov	r0, sl
 	bl	Func_08044348
@@ -605,7 +605,7 @@ Func_08044558:
 	ldr	r0, [sp, #44]
 	bl	UiWork_Finalize
 	ldr	r0, [sp, #48]
-	bl	0x0803d450
+	bl	Func_0803d450
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r2, [pc, #36]
@@ -631,5 +631,8 @@ Func_08044558:
 	movs	r0, r0
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_08044a54
+	.thumb_func
+Func_08044a54:
 	movs	r0, #0
 	bx	lr

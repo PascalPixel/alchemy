@@ -41,6 +41,9 @@ Func_080d1760:
 	cmp	r4, #0
 	bne.n	.L_080d1788
 	pop	{r5, r6, r7, pc}
+	.global Func_080d17ac
+	.thumb_func
+Func_080d17ac:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -68,9 +71,12 @@ Func_080d1760:
 	adds	r0, r4, r2
 	adds	r2, r4, r3
 	adds	r3, r5, #0
-	bl	0x080d0c50
+	bl	Func_080d0c50
 .L_080d17e6:
 	pop	{r5, pc}
+	.global Func_080d17e8
+	.thumb_func
+Func_080d17e8:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

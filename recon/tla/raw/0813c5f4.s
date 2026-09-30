@@ -111,7 +111,7 @@ Func_0813c5f4:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #336]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r1, [sp, #72]
 	ldr	r0, [r1, #8]
 	bl	0x08118098
@@ -256,7 +256,7 @@ Func_0813c5f4:
 	bl	Func_08014de4
 	ldr	r0, [sp, #44]
 	ldr	r1, [sp, #32]
-	bl	0x080156e8
+	bl	Func_080156e8
 	movs	r0, #0
 	str	r0, [sp, #56]
 	ldr	r1, [sp, #72]

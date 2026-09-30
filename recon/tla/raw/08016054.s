@@ -121,7 +121,7 @@ Func_08016054:
 	movs	r0, #5
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08013438
+	bl	Func_08013438
 	movs	r0, #204
 	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
@@ -150,6 +150,9 @@ Func_08016054:
 	strh	r3, [r2, #0]
 .L_0801617e:
 	pop	{pc}
+	.global Func_08016180
+	.thumb_func
+Func_08016180:
 	push	{r5, r6, r7, lr}
 	ldr	r6, [pc, #72]
 	sub	sp, #4
@@ -160,11 +163,11 @@ Func_08016054:
 	movs	r0, #7
 	movs	r1, #0
 	adds	r2, r5, #0
-	bl	0x08013438
+	bl	Func_08013438
 	movs	r0, #6
 	movs	r1, #0
 	adds	r2, r5, #0
-	bl	0x08013438
+	bl	Func_08013438
 	ldr	r4, [pc, #36]
 	adds	r3, r6, #0
 	strh	r4, [r3, #0]

@@ -7,7 +7,7 @@
 	movs	r5, #128
 	lsls	r5, r5, #8
 	adds	r0, r5, #0
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldr	r3, [pc, #68]
 	ldr	r1, [pc, #72]
 	adds	r2, r5, #0
@@ -47,6 +47,9 @@
 	.4byte 0x08021704
 	.2byte 0x8000
 	.2byte 0x0201
+	.global Func_0802a650
+	.thumb_func
+Func_0802a650:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r8
@@ -71,7 +74,7 @@
 	adds	r0, r0, r3
 	bl	Resource_GetTableEntry
 	adds	r1, r6, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	mov	r3, r8
 	strh	r3, [r6, #0]
 	movs	r2, #132
@@ -94,6 +97,9 @@
 	.4byte 0x0802f380
 	.2byte 0x026c
 	.2byte 0x0000
+	.global Func_0802a6b8
+	.thumb_func
+Func_0802a6b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -138,7 +144,7 @@
 	ldr	r3, [r7, #36]
 	ldr	r1, [pc, #496]
 	adds	r0, r7, r3
-	bl	0x0801587c
+	bl	Func_0801587c
 	bl	Tilemap_DecodeStagedBuffer
 	movs	r3, #1
 	add	r0, sp, #4
@@ -153,23 +159,23 @@
 	subs	r3, #12
 	ldr	r3, [r7, #40]
 	adds	r0, r7, r3
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r3, [r7, #44]
 	ldr	r1, [pc, #464]
 	adds	r0, r7, r3
-	bl	0x0801587c
+	bl	Func_0801587c
 	bl	.L_0802a5e4
 	ldr	r3, [r7, #48]
 	ldr	r1, [pc, #452]
 	adds	r0, r7, r3
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r0, [r7, #52]
 	cmp	r0, #0
 	beq.n	.L_0802a76a
 	ldr	r5, [pc, #444]
 	adds	r0, r7, r0
 	adds	r1, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	adds	r0, r5, #0
 	bl	Func_0802cc9c
 .L_0802a76a:
@@ -179,14 +185,14 @@
 	ldr	r5, [pc, #424]
 	adds	r0, r7, r0
 	adds	r1, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	adds	r0, r5, #0
 	bl	Func_0802ce4c
 .L_0802a780:
 	ldr	r3, [r7, #60]
 	ldr	r1, [pc, #412]
 	adds	r0, r7, r3
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldrb	r3, [r7, #0]
 	mov	r2, r8
 	adds	r2, #236
@@ -450,7 +456,7 @@
 	adds	r0, r0, r6
 	bl	Resource_GetTableEntry
 	adds	r1, r7, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r2, #224
 	adds	r1, r7, #0
 	strh	r5, [r7, #0]
@@ -516,7 +522,7 @@
 	movs	r1, #128
 	lsls	r1, r1, #3
 	adds	r1, #133
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #2
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
@@ -534,6 +540,9 @@
 	.4byte 0x02028000
 	.2byte 0xad85
 	.2byte 0x0802
+	.global Func_0802aa74
+	.thumb_func
+Func_0802aa74:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -701,7 +710,7 @@
 	mov	r5, r8
 	subs	r1, r3, r5
 	mov	r0, lr
-	bl	.L_0802af9c
+	bl	Func_0802af9c
 	bl	.L_0802ad84
 	add	sp, #4
 	pop	{r3, r5}
@@ -1024,9 +1033,9 @@
 	mov	r1, ip
 	cmp	r1, #0
 	beq.n	.L_0802ae42
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [pc, #364]
 	subs	r5, r5, r0
 	mov	r2, r8
@@ -1046,9 +1055,9 @@
 .L_0802ae42:
 	cmp	r4, #0
 	beq.n	.L_0802ae70
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r2, [pc, #316]
 	subs	r5, r5, r0
 	mov	r1, r8
@@ -1218,6 +1227,9 @@
 	.4byte 0xfff00000
 	.2byte 0x1120
 	.2byte 0x0300
+	.global Func_0802af9c
+	.thumb_func
+Func_0802af9c:
 .L_0802af9c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -1486,6 +1498,9 @@
 	.4byte 0x02020000
 	.2byte 0x0004
 	.2byte 0x0202
+	.global Func_0802b1a0
+	.thumb_func
+Func_0802b1a0:
 .L_0802b1a0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -1644,6 +1659,9 @@
 	.4byte 0x02020004
 	.2byte 0x2840
 	.2byte 0x0600
+	.global Func_0802b2d4
+	.thumb_func
+Func_0802b2d4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1683,7 +1701,7 @@
 	mov	r2, sl
 	mov	r3, r8
 	lsrs	r5, r5, #16
-	bl	.L_0802b1a0
+	bl	Func_0802b1a0
 	adds	r7, #10
 	adds	r0, r5, #0
 	bl	WaitFrames

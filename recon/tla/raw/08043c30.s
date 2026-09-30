@@ -618,7 +618,7 @@
 	str	r1, [sp, #32]
 .L_0804410a:
 	mov	r0, r9
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	mov	r2, fp
 	str	r2, [sp, #0]
 	mov	r0, r9

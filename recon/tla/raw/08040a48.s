@@ -53,7 +53,7 @@ Func_08040a48:
 	mov	r1, sl
 	str	r0, [r1, #12]
 	adds	r0, r7, #0
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	movs	r6, #2
 	movs	r5, #2
 .L_08040abc:

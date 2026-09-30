@@ -1,73 +1,35 @@
 .syntax unified
 	.thumb
-	.global Func_08014d78
-	.thumb_func
-Func_08014d78:
 	.global Runtime_BumpAllocate
 	.thumb_func
 Runtime_BumpAllocate:
-	push	{lr}
-	movs	r1, #192
-	lsls	r1, r1, #18
-	adds	r3, r0, #3
-	ldr	r2, [r1, #4]
-	lsrs	r3, r3, #2
-	ldr	r4, [pc, #32]
-	lsls	r0, r3, #2
-	adds	r3, r2, r0
-	cmp	r3, r4
-	bls.n	.L_08014da2
-	ldr	r2, [r1, #0]
-	movs	r3, #129
-	adds	r0, r2, r0
-	lsls	r3, r3, #18
-	cmp	r0, r3
-	bcc.n	.L_08014d9e
-	movs	r0, #0
-	b.n	.L_08014da6
+	push {lr}
+	movs r1, #192
+	lsls r1, r1, #18
+	adds r3, r0, #3
+	ldr r2, [r1, #4]
+	lsrs r3, r3, #2
+	ldr r4, .L_08014da8
+	lsls r0, r3, #2
+	adds r3, r2, r0
+	cmp r3, r4
+	bls .L_08014da2
+	ldr r2, [r1]
+	movs r3, #129
+	adds r0, r2, r0
+	lsls r3, r3, #18
+	cmp r0, r3
+	bcc .L_08014d9e
+	movs r0, #0
+	b .L_08014da6
 .L_08014d9e:
-	str	r0, [r1, #0]
-	b.n	.L_08014da4
+	str r0, [r1]
+	b .L_08014da4
 .L_08014da2:
-	str	r3, [r1, #4]
+	str r3, [r1, #4]
 .L_08014da4:
-	adds	r0, r2, #0
+	adds r0, r2, #0
 .L_08014da6:
-	pop	{pc}
-	.2byte 0x6fbf
-	.2byte 0x0300
-	.global Runtime_BumpAllocateAlternatePool
-	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	push	{lr}
-	movs	r1, #192
-	lsls	r1, r1, #18
-	adds	r3, r0, #3
-	ldr	r2, [r1, #0]
-	lsrs	r3, r3, #2
-	lsls	r0, r3, #2
-	movs	r4, #129
-	adds	r3, r2, r0
-	lsls	r4, r4, #18
-	cmp	r3, r4
-	bcc.n	.L_08014dd6
-	ldr	r2, [r1, #4]
-	ldr	r3, [pc, #20]
-	adds	r0, r2, r0
-	cmp	r0, r3
-	bls.n	.L_08014dd2
-	movs	r0, #0
-	b.n	.L_08014dda
-.L_08014dd2:
-	str	r0, [r1, #4]
-	b.n	.L_08014dd8
-.L_08014dd6:
-	str	r3, [r1, #0]
-.L_08014dd8:
-	adds	r0, r2, #0
-.L_08014dda:
-	pop	{pc}
-	.2byte 0x6fbf
-	.2byte 0x0300
-	bx	lr
-	.2byte 0x0000
+	pop {pc}
+.L_08014da8:
+	.4byte Data_03006fbf

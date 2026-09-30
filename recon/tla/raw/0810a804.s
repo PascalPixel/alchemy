@@ -3,57 +3,29 @@
 	.global Func_0810a804
 	.thumb_func
 Func_0810a804:
-	push	{r5, r6, r7, lr}
-	sub	sp, #32
-	mov	r6, sp
-	adds	r0, r6, #0
-	bl	0x080ad100
-	movs	r5, #0
-	adds	r7, r0, #0
-	cmp	r5, r7
-	bge.n	.L_0810a82e
+	push {r5, r6, r7, lr}
+	sub sp, #32
+	mov r6, sp
+	adds r0, r6, #0
+	bl Party_ListActiveOwnersFar
+	movs r5, #0
+	adds r7, r0, #0
+	cmp r5, r7
+	bge .L_0810a82e
 .L_0810a818:
-	ldrh	r0, [r6, #0]
-	adds	r6, #2
-	bl	0x0810a7dc
-	cmp	r0, #0
-	beq.n	.L_0810a828
-	movs	r0, #1
-	b.n	.L_0810a830
+	ldrh r0, [r6]
+	adds r6, #2
+	bl Func_0810a7dc
+	cmp r0, #0
+	beq .L_0810a828
+	movs r0, #1
+	b .L_0810a830
 .L_0810a828:
-	adds	r5, #1
-	cmp	r5, r7
-	blt.n	.L_0810a818
+	adds r5, #1
+	cmp r5, r7
+	blt .L_0810a818
 .L_0810a82e:
-	movs	r0, #0
+	movs r0, #0
 .L_0810a830:
-	add	sp, #32
-	pop	{r5, r6, r7, pc}
-	.global Func_0810a834
-	.thumb_func
-Func_0810a834:
-	ldr	r2, [pc, #12]
-	ldr	r3, [pc, #16]
-	ands	r0, r2
-	movs	r2, #175
-	lsls	r2, r2, #2
-	adds	r3, r3, r2
-	strh	r0, [r3, #0]
-	bx	lr
-	.4byte 0x000001ff
-	.2byte 0x0240
-	.2byte 0x0200
-	.global Func_0810a84c
-	.thumb_func
-Func_0810a84c:
-	ldr	r3, [pc, #16]
-	movs	r2, #175
-	lsls	r2, r2, #2
-	adds	r3, r3, r2
-	ldrh	r3, [r3, #0]
-	movs	r0, #128
-	lsls	r0, r0, #1
-	adds	r0, #255
-	ands	r0, r3
-	bx	lr
-	.4byte 0x02000240
+	add sp, #32
+	pop {r5, r6, r7, pc}

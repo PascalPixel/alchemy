@@ -3,199 +3,93 @@
 	.global Func_0803d9bc
 	.thumb_func
 Func_0803d9bc:
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r9
-	mov	r5, r8
-	push	{r5, r6, r7}
-	adds	r7, r1, #0
-	movs	r1, #193
-	adds	r6, r0, #0
-	lsls	r1, r1, #3
-	movs	r0, #68
-	mov	sl, r2
-	mov	r9, r3
-	bl	Runtime_AllocateHeapBlock
-	movs	r1, #0
-	adds	r5, r0, #0
-	mov	r8, r1
-	bl	Ui_CountSecondTableEntries
-	cmp	r6, r0
-	bcc.n	.L_0803d9e8
-	movs	r6, #0
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r9
+	mov r5, r8
+	push {r5, r6, r7}
+	adds r7, r1, #0
+	movs r1, #193
+	adds r6, r0, #0
+	lsls r1, r1, #3
+	movs r0, #68
+	mov r10, r2
+	mov r9, r3
+	bl Runtime_AllocateHeapBlock
+	movs r1, #0
+	adds r5, r0, #0
+	mov r8, r1
+	bl Ui_CountSecondTableEntries
+	cmp r6, r0
+	bcc .L_0803d9e8
+	movs r6, #0
 .L_0803d9e8:
-	cmp	r7, #0
-	beq.n	.L_0803da16
-	movs	r3, #192
-	lsls	r3, r3, #3
-	adds	r3, #4
-	adds	r2, r5, r3
-	ldr	r3, [pc, #120]
-	movs	r1, #192
-	ldr	r3, [r3, #8]
-	lsls	r1, r1, #3
-	str	r3, [r2, #0]
-	movs	r2, #2
-	adds	r3, r5, r1
-	adds	r1, #2
-	strh	r2, [r3, #0]
-	adds	r3, r5, r1
-	strh	r2, [r3, #0]
-	adds	r0, r5, #0
-	movs	r1, #0
-	bl	Func_0803db54
-	movs	r2, #1
-	mov	r8, r2
+	cmp r7, #0
+	beq .L_0803da16
+	movs r3, #192
+	lsls r3, r3, #3
+	adds r3, #4
+	adds r2, r5, r3
+	ldr r3, .L_0803da70
+	movs r1, #192
+	ldr r3, [r3, #8]
+	lsls r1, r1, #3
+	str r3, [r2]
+	movs r2, #2
+	adds r3, r5, r1
+	adds r1, #2
+	strh r2, [r3]
+	adds r3, r5, r1
+	strh r2, [r3]
+	adds r0, r5, #0
+	movs r1, #0
+	bl Func_0803db54
+	movs r2, #1
+	mov r8, r2
 .L_0803da16:
-	movs	r3, #192
-	ldr	r2, [pc, #88]
-	lsls	r3, r3, #3
-	adds	r3, #4
-	adds	r1, r5, r3
-	lsls	r3, r6, #2
-	ldr	r3, [r2, r3]
-	movs	r2, #2
-	str	r3, [r1, #0]
-	movs	r1, #192
-	lsls	r1, r1, #3
-	adds	r3, r5, r1
-	adds	r1, #2
-	strh	r2, [r3, #0]
-	adds	r3, r5, r1
-	strh	r2, [r3, #0]
-	adds	r0, r5, #0
-	mov	r1, r8
-	bl	Func_0803db54
-	ldr	r2, [sp, #28]
-	cmp	r2, #0
-	bne.n	.L_0803da4c
-	bl	Resource_FindFreeEntry
-	mov	r3, sl
-	str	r0, [r3, #0]
+	movs r3, #192
+	ldr r2, .L_0803da74
+	lsls r3, r3, #3
+	adds r3, #4
+	adds r1, r5, r3
+	lsls r3, r6, #2
+	ldr r3, [r2, r3]
+	movs r2, #2
+	str r3, [r1]
+	movs r1, #192
+	lsls r1, r1, #3
+	adds r3, r5, r1
+	adds r1, #2
+	strh r2, [r3]
+	adds r3, r5, r1
+	strh r2, [r3]
+	adds r0, r5, #0
+	mov r1, r8
+	bl Func_0803db54
+	ldr r2, [sp, #28]
+	cmp r2, #0
+	bne .L_0803da4c
+	bl Resource_FindFreeEntry
+	mov r3, r10
+	str r0, [r3]
 .L_0803da4c:
-	movs	r3, #128
-	mov	r1, sl
-	lsls	r3, r3, #3
-	ldr	r0, [r1, #0]
-	adds	r2, r5, r3
-	movs	r1, #128
-	bl	VramBlock_LoadCached
-	mov	r1, r9
-	str	r0, [r1, #0]
-	movs	r0, #68
-	bl	Runtime_ReleaseHeapBlock
-	pop	{r3, r5, r6}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	pop	{r5, r6, r7, pc}
-	.4byte 0x0804e684
-	.2byte 0x4a14
-	.2byte 0x0805
-	.global Ui_PrepareTransferFromTableEntry
-	.thumb_func
-Ui_PrepareTransferFromTableEntry:
-	push	{lr}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r1, [r3, #68]
-	movs	r3, #192
-	lsls	r3, r3, #3
-	adds	r3, #4
-	adds	r2, r1, r3
-	ldr	r3, [pc, #32]
-	lsls	r0, r0, #2
-	ldr	r3, [r3, r0]
-	movs	r0, #192
-	lsls	r0, r0, #3
-	str	r3, [r2, #0]
-	adds	r3, r1, r0
-	movs	r2, #2
-	adds	r0, #2
-	strh	r2, [r3, #0]
-	adds	r3, r1, r0
-	strh	r2, [r3, #0]
-	adds	r0, r1, #0
-	movs	r1, #0
-	bl	Func_0803db54
-	pop	{pc}
-	movs	r0, r0
-	.2byte 0x8ff4
-	.2byte 0x0805
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	movs	r1, #193
-	adds	r5, r0, #0
-	lsls	r1, r1, #3
-	movs	r0, #68
-	mov	r8, r3
-	adds	r7, r2, #0
-	bl	Runtime_AllocateHeapBlock
-	adds	r6, r0, #0
-	ldr	r0, [pc, #124]
-	bl	Resource_GetTableEntry
-	adds	r3, r5, #0
-	cmp	r5, #127
-	bls.n	.L_0803dad6
-	subs	r3, #112
-.L_0803dad6:
-	lsls	r3, r3, #1
-	ldrh	r3, [r3, r0]
-	movs	r1, #192
-	adds	r5, r0, r3
-	lsls	r1, r1, #3
-	adds	r1, #4
-	adds	r3, r5, #0
-	adds	r2, r6, r1
-	adds	r3, #32
-	str	r3, [r2, #0]
-	movs	r2, #192
-	lsls	r2, r2, #3
-	adds	r3, r6, r2
-	subs	r1, #2
-	movs	r2, #4
-	strh	r2, [r3, #0]
-	adds	r3, r6, r1
-	strh	r2, [r3, #0]
-	adds	r0, r6, #0
-	movs	r1, #0
-	bl	Func_0803db54
-	ldr	r2, [sp, #24]
-	cmp	r2, #0
-	bne.n	.L_0803db0e
-	bl	Resource_FindFreeEntry
-	str	r0, [r7, #0]
-.L_0803db0e:
-	movs	r3, #128
-	lsls	r3, r3, #3
-	movs	r1, #128
-	adds	r2, r6, r3
-	ldr	r0, [r7, #0]
-	lsls	r1, r1, #2
-	bl	VramBlock_LoadCached
-	mov	r1, r8
-	str	r0, [r1, #0]
-	movs	r0, #68
-	bl	Runtime_ReleaseHeapBlock
-	ldr	r1, [sp, #20]
-	ldr	r2, [pc, #32]
-	lsls	r1, r1, #5
-	adds	r1, r1, r2
-	movs	r3, #128
-	movs	r2, #128
-	lsls	r3, r3, #19
-	lsls	r2, r2, #24
-	adds	r3, #212
-	adds	r0, r5, #0
-	adds	r2, #16
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
-	.4byte 0x000001d6
-	.2byte 0x0200
-	.2byte 0x0500
-	bx	lr
-	.2byte 0x0000
+	movs r3, #128
+	mov r1, r10
+	lsls r3, r3, #3
+	ldr r0, [r1]
+	adds r2, r5, r3
+	movs r1, #128
+	bl VramBlock_LoadCached
+	mov r1, r9
+	str r0, [r1]
+	movs r0, #68
+	bl Runtime_ReleaseHeapBlock
+	pop {r3, r5, r6}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	pop {r5, r6, r7, pc}
+.L_0803da70:
+	.4byte Data_0804e684
+.L_0803da74:
+	.4byte Data_08054a14

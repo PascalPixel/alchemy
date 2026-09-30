@@ -43,8 +43,11 @@ impl Origin {
 
 #[derive(Clone, Debug)]
 pub struct Function {
-    /// The build (image) the function was read from.
+    /// The build the function was read from.
     pub build: String,
+    /// The linked image within the build: the main image or one overlay,
+    /// which share load addresses with each other.
+    pub image: String,
     pub name: String,
     pub address: u32,
     /// Bytes from the function's start to the next function (pools included).
@@ -180,7 +183,10 @@ pub fn nearest(
     let mut found: Vec<Match> = Vec::new();
     for &index in candidates {
         let candidate = &corpus[index];
-        if candidate.build == query.build && candidate.address == query.address {
+        if candidate.build == query.build
+            && candidate.image == query.image
+            && candidate.address == query.address
+        {
             continue;
         }
         let longest = query.tokens.len().max(candidate.tokens.len());
@@ -206,6 +212,8 @@ pub fn nearest(
 /// section to the object it came from.
 pub struct Image<'a> {
     pub build: &'a str,
+    /// The image's name within its build, such as its ELF's stem.
+    pub name: &'a str,
     pub elf: &'a Elf,
     pub map: &'a str,
 }
@@ -375,6 +383,7 @@ pub fn decoded(
             out.push((
                 Function {
                     build: image.build.to_string(),
+                    image: image.name.to_string(),
                     name,
                     address: from,
                     bytes: to - from,
@@ -457,6 +466,7 @@ mod tests {
     fn nearest_ranks_the_closest_function_first_and_skips_itself() {
         let function = |address, tokens: &[u32]| Function {
             build: "test".into(),
+            image: "test".into(),
             name: format!("f{address}"),
             address,
             bytes: tokens.len() as u32 * 2,
@@ -482,6 +492,25 @@ mod tests {
         let found = nearest(&corpus[0], &corpus, &sorted, &all, 5, 0.5);
         let order: Vec<(usize, usize)> = found.iter().map(|m| (m.index, m.distance)).collect();
         assert_eq!(order, vec![(1, 1), (2, 2)]);
+    }
+
+    #[test]
+    fn a_twin_at_the_same_address_in_another_overlay_is_a_match() {
+        let overlay = |image: &str| Function {
+            build: "tla-en".into(),
+            image: image.into(),
+            name: "Func_02008000".into(),
+            address: 0x0200_8000,
+            bytes: 16,
+            origin: Origin::NotYetC,
+            source: String::new(),
+            tokens: vec![1, 2, 3, 4, 5, 6, 7, 8],
+        };
+        let corpus = vec![overlay("resource_649"), overlay("resource_64a")];
+        let sorted: Vec<Vec<u32>> = corpus.iter().map(|f| f.tokens.clone()).collect();
+        let found = nearest(&corpus[0], &corpus, &sorted, &[0, 1], 5, 0.35);
+        let order: Vec<(usize, usize)> = found.iter().map(|m| (m.index, m.distance)).collect();
+        assert_eq!(order, vec![(1, 0)]);
     }
 
     #[test]

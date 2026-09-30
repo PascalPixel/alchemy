@@ -3,258 +3,144 @@
 	.global Func_080d41fc
 	.thumb_func
 Func_080d41fc:
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	sub	sp, #4
-	str	r3, [sp, #0]
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r3, [r3, #108]
-	mov	r8, r2
-	adds	r6, r1, #0
-	ldr	r5, [sp, #40]
-	ldr	r7, [sp, #60]
-	mov	sl, r3
-	bl	ObjectTable_ReadActiveValue
-	mov	fp, r0
-	adds	r0, r5, #0
-	bl	ObjectTable_ReadActiveValue
-	mov	r9, r0
-	mov	r0, fp
-	bl	Func_080d1eac
-	movs	r1, #226
-	lsls	r1, r1, #1
-	add	r1, sl
-	adds	r3, r0, #0
-	ldrh	r0, [r1, #0]
-	lsls	r3, r3, #16
-	adds	r2, r0, #1
-	lsls	r0, r0, #16
-	strh	r2, [r1, #0]
-	asrs	r0, r0, #16
-	mov	r2, r8
-	adds	r1, r6, #0
-	bl	0x08038038
-	movs	r1, #0
-	mov	r8, r0
-	ldr	r2, [sp, #0]
-	mov	r0, fp
-	ldr	r3, [sp, #36]
-	bl	Func_080380f8
-	cmp	r7, #0
-	beq.n	.L_080d4270
-	b.n	.L_080d4268
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	sub sp, #4
+	str r3, [sp, #0]
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	mov r8, r2
+	adds r6, r1, #0
+	ldr r5, [sp, #40]
+	ldr r7, [sp, #60]
+	mov r10, r3
+	bl ObjectTable_ReadActiveValue
+	mov r11, r0
+	adds r0, r5, #0
+	bl ObjectTable_ReadActiveValue
+	mov r9, r0
+	mov r0, r11
+	bl Func_080d1eac
+	movs r1, #226
+	lsls r1, r1, #1
+	add r1, r10
+	adds r3, r0, #0
+	ldrh r0, [r1]
+	lsls r3, r3, #16
+	adds r2, r0, #1
+	lsls r0, r0, #16
+	strh r2, [r1]
+	asrs r0, r0, #16
+	mov r2, r8
+	adds r1, r6, #0
+	bl UiText_OpenMessageWindowFar
+	movs r1, #0
+	mov r8, r0
+	ldr r2, [sp, #0]
+	mov r0, r11
+	ldr r3, [sp, #36]
+	bl Func_080380f8
+	cmp r7, #0
+	beq .L_080d4270
+	b .L_080d4268
 .L_080d4262:
-	adds	r0, r7, #0
-	bl	WaitFrames
+	adds r0, r7, #0
+	bl WaitFrames
 .L_080d4268:
-	bl	0x08038048
-	cmp	r0, #0
-	beq.n	.L_080d4262
+	bl UiWork_IsCompleteFar
+	cmp r0, #0
+	beq .L_080d4262
 .L_080d4270:
-	mov	r0, r9
-	bl	Func_080d1eac
-	movs	r1, #226
-	lsls	r1, r1, #1
-	add	r1, sl
-	adds	r3, r0, #0
-	ldrh	r0, [r1, #0]
-	lsls	r3, r3, #16
-	adds	r2, r0, #1
-	strh	r2, [r1, #0]
-	lsls	r0, r0, #16
-	ldr	r1, [sp, #44]
-	ldr	r2, [sp, #48]
-	asrs	r0, r0, #16
-	bl	0x08038038
-	movs	r1, #0
-	adds	r7, r0, #0
-	ldr	r2, [sp, #52]
-	mov	r0, r9
-	ldr	r3, [sp, #56]
-	bl	Func_080380f8
-	b.n	.L_080d42a8
+	mov r0, r9
+	bl Func_080d1eac
+	movs r1, #226
+	lsls r1, r1, #1
+	add r1, r10
+	adds r3, r0, #0
+	ldrh r0, [r1]
+	lsls r3, r3, #16
+	adds r2, r0, #1
+	strh r2, [r1]
+	lsls r0, r0, #16
+	ldr r1, [sp, #44]
+	ldr r2, [sp, #48]
+	asrs r0, r0, #16
+	bl UiText_OpenMessageWindowFar
+	movs r1, #0
+	adds r7, r0, #0
+	ldr r2, [sp, #52]
+	mov r0, r9
+	ldr r3, [sp, #56]
+	bl Func_080380f8
+	b .L_080d42a8
 .L_080d42a2:
-	movs	r0, #1
-	bl	WaitFrames
+	movs r0, #1
+	bl WaitFrames
 .L_080d42a8:
-	bl	0x08038048
-	cmp	r0, #0
-	beq.n	.L_080d42a2
-	movs	r0, #1
-	bl	WaitFrames
-	ldr	r1, [pc, #116]
-	movs	r2, #129
-	ldr	r3, [r1, #4]
-	lsls	r2, r2, #2
-	adds	r2, #255
-	ands	r3, r2
-	cmp	r3, #0
-	bne.n	.L_080d42d8
-	adds	r6, r1, #0
-	adds	r5, r2, #0
+	bl UiWork_IsCompleteFar
+	cmp r0, #0
+	beq .L_080d42a2
+	movs r0, #1
+	bl WaitFrames
+	ldr r1, .L_080d432c
+	movs r2, #129
+	ldr r3, [r1, #4]
+	lsls r2, r2, #2
+	adds r2, #255
+	ands r3, r2
+	cmp r3, #0
+	bne .L_080d42d8
+	adds r6, r1, #0
+	adds r5, r2, #0
 .L_080d42ca:
-	movs	r0, #1
-	bl	WaitFrames
-	ldr	r3, [r6, #4]
-	ands	r3, r5
-	cmp	r3, #0
-	beq.n	.L_080d42ca
+	movs r0, #1
+	bl WaitFrames
+	ldr r3, [r6, #4]
+	ands r3, r5
+	cmp r3, #0
+	beq .L_080d42ca
 .L_080d42d8:
-	movs	r0, #1
-	bl	WaitFrames
-	mov	r0, fp
-	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
-	mov	r0, r9
-	bl	UiWork_FinalizeEntityMatchingLocalizedIdFar
-	bl	0x08038140
-	movs	r0, #1
-	bl	WaitFrames
-	b.n	.L_080d42fc
+	movs r0, #1
+	bl WaitFrames
+	mov r0, r11
+	bl UiWork_FinalizeEntityMatchingLocalizedIdFar
+	mov r0, r9
+	bl UiWork_FinalizeEntityMatchingLocalizedIdFar
+	bl Func_08038140
+	movs r0, #1
+	bl WaitFrames
+	b .L_080d42fc
 .L_080d42f6:
-	movs	r0, #1
-	bl	WaitFrames
+	movs r0, #1
+	bl WaitFrames
 .L_080d42fc:
-	mov	r0, r8
-	bl	0x08038050
-	cmp	r0, #0
-	beq.n	.L_080d42f6
-	b.n	.L_080d430e
+	mov r0, r8
+	bl UiWork_IsCompleteFar + 0x8
+	cmp r0, #0
+	beq .L_080d42f6
+	b .L_080d430e
 .L_080d4308:
-	movs	r0, #1
-	bl	WaitFrames
+	movs r0, #1
+	bl WaitFrames
 .L_080d430e:
-	adds	r0, r7, #0
-	bl	0x08038050
-	cmp	r0, #0
-	beq.n	.L_080d4308
-	movs	r0, #1
-	bl	WaitFrames
-	add	sp, #4
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7, pc}
-	.2byte 0x1150
-	.2byte 0x0300
-	.global Func_080d4330
-	.thumb_func
-Func_080d4330:
-	push	{r5, lr}
-	movs	r3, #192
-	movs	r1, #128
-	lsls	r3, r3, #18
-	lsls	r1, r1, #24
-	ldr	r5, [r3, #60]
-	cmp	r0, r1
-	bne.n	.L_080d4354
-	movs	r2, #152
-	lsls	r2, r2, #5
-	movs	r1, #152
-	adds	r2, #132
-	lsls	r1, r1, #5
-	adds	r3, r5, r2
-	adds	r1, #134
-	movs	r2, #0
-	strh	r2, [r3, #0]
-	b.n	.L_080d4376
-.L_080d4354:
-	bl	ObjectTable_ReadActiveValue
-	bl	Func_080d1eac
-	ldr	r3, [pc, #28]
-	movs	r1, #139
-	lsls	r1, r1, #2
-	adds	r3, r3, r1
-	ldrb	r3, [r3, #0]
-	ldr	r2, [pc, #24]
-	movs	r1, #152
-	lsls	r1, r1, #5
-	ldrb	r2, [r2, r3]
-	adds	r1, #132
-	adds	r3, r5, r1
-	adds	r1, #2
-	strh	r0, [r3, #0]
-.L_080d4376:
-	adds	r3, r5, r1
-	strh	r2, [r3, #0]
-	pop	{r5, pc}
-	.4byte 0x02000240
-	.2byte 0x330c
-	.2byte 0x080f
-	.global Object_AttachWorkTargetToObject
-	.thumb_func
-Object_AttachWorkTargetToObject:
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	mov	sl, r1
-	bl	ObjectTable_Get
-	movs	r2, #192
-	lsls	r2, r2, #18
-	ldr	r3, [r2, #108]
-	adds	r5, r0, #0
-	mov	r8, r3
-	movs	r3, #230
-	lsls	r3, r3, #1
-	add	r3, r8
-	ldr	r6, [r3, #0]
-	ldr	r3, [r2, #32]
-	cmp	r5, #0
-	beq.n	.L_080d43e4
-	adds	r7, r6, #0
-	adds	r7, #8
-	str	r7, [r3, #0]
-	adds	r0, r6, #0
-	adds	r1, r5, #0
-	bl	ObjectDispatch_InitFromTable4WithArgumentFar
-	mov	r3, sl
-	cmp	r3, #0
-	bne.n	.L_080d43e4
-	ldr	r3, [r5, #8]
-	movs	r0, #1
-	str	r3, [r7, #0]
-	ldr	r3, [r5, #12]
-	str	r3, [r6, #12]
-	ldr	r3, [r5, #16]
-	str	r3, [r6, #16]
-	bl	WaitFrames
-	movs	r3, #197
-	lsls	r3, r3, #1
-	add	r3, r8
-	ldrb	r3, [r3, #0]
-	lsls	r3, r3, #24
-	asrs	r3, r3, #24
-	cmp	r3, #3
-	beq.n	.L_080d43e4
-	bl	Func_08020120
-.L_080d43e4:
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7, pc}
-	.global Func_080d43ec
-	.thumb_func
-Func_080d43ec:
-	push	{r5, r6, lr}
-	adds	r6, r1, #0
-	movs	r1, #213
-	adds	r5, r0, #0
-	lsls	r1, r1, #4
-	movs	r0, #108
-	bl	Runtime_AllocateBlock
-	movs	r3, #230
-	lsls	r3, r3, #1
-	adds	r0, r0, r3
-	ldr	r3, [r0, #0]
-	str	r5, [r3, #48]
-	str	r6, [r3, #52]
-	pop	{r5, r6, pc}
-	.2byte 0x0000
+	adds r0, r7, #0
+	bl UiWork_IsCompleteFar + 0x8
+	cmp r0, #0
+	beq .L_080d4308
+	movs r0, #1
+	bl WaitFrames
+	add sp, #4
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+.L_080d432c:
+	.4byte gInput

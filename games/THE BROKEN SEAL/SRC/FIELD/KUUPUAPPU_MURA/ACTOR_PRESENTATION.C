@@ -308,7 +308,7 @@ void FieldScene_RunScene382_020004a0(void)
         return;
     }
     Event_Begin();
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -317,7 +317,7 @@ void FieldScene_RunScene382_020004a0(void)
         Actor_WalkToAndWait(ACTOR_IVAN, 0x190, 0x1c0);
     } else {
         Camera_SetSpeed(0xcccc, 0x1999);
-        Camera_MoveTo(0xe00000, -1, 0xa20000, 1);
+        Camera_MoveTo(PIXELS(0xE0), -1, PIXELS(0xA2), 1);
         Actor_WalkToAndWait(ACTOR_IVAN, 224, 162);
         Camera_WaitForMove();
     }

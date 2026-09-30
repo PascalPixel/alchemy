@@ -146,7 +146,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             }
         }
         for (i = 0; i <= 3; i++) {
-            rec7 = Value1(Engine_ActorGet, (i + 11));
+            rec7 = Actor_Get((i + 11));
             if (*(s32 *)(rec7 + 40) >= 0) {
                 if (*(s32 *)(rec7 + 12) <= 0xffff) {
                     KuupuappuDou_SpawnPuffs();
@@ -181,7 +181,7 @@ void FieldScene_RunScene3a7SequenceD(void)
     s32 record;
     s32 *selected;
 
-    rec7 = (u8 *)Value1(Engine_ActorGet, 10);
+    rec7 = (u8 *)Actor_Get(10);
     if (rec7[91] == 0) {
         if ((++KuupuappuDou_TickCounter & 63) == 0) {
             selected = &KuupuappuDou_TickValue;

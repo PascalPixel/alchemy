@@ -12739,7 +12739,7 @@ msgctxt "MsgCritical"
 msgid "03182"
 msgstr "かいしんの いちげき!"
 
-msgctxt "message"
+msgctxt "MsgBitterBlow"
 msgid "03183"
 msgstr "つうこんの いちげき!"
 
@@ -12823,7 +12823,7 @@ msgctxt "message"
 msgid "03203"
 msgstr "{protagonist_name}たちは 戦いに やぶれた・・・"
 
-msgctxt "message"
+msgctxt "MsgDowned"
 msgid "03204"
 msgstr "{argument_actor_name:134} たおした!"
 

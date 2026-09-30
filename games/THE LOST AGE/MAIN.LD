@@ -2270,7 +2270,7 @@ SECTIONS
         "*/recon/tla/raw/0811c710.o"(.text)
         "*/recon/tla/raw/0811c984.o"(.text)
         "*/recon/tla/raw/0811ca54.o"(.text)
-        "*/recon/tla/raw/0811cbe8.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT12.o"(.text)
         "*/recon/tla/raw/0811ccf0.o"(.text)
         "*/recon/tla/raw/0811cd30.o"(.text)
         "*/recon/tla/raw/0811cd7c.o"(.text)

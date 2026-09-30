@@ -13,6 +13,8 @@
 @ credit: library — TBS/TLA common ARM byte-LZ decoder copied to the heap
 .syntax unified
 	.thumb
+	.global Resource_DecodeByteLzCode
+Resource_DecodeByteLzCode:
 	.global Resource_DecodeByteLz
 	.thumb_func
 Resource_DecodeByteLz:

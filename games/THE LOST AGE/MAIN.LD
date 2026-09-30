@@ -183,7 +183,7 @@ SECTIONS
         "*/games/COMMON/SRC/SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_SECTOR.o"(.rodata)
         "*/games/COMMON/SRC/SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_BLOCK.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08017fbc)
-        "*/recon/tla/raw/08020000.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/RESOURCE.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08020010.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08020030.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08020040.o"(.text .rodata .data .padding)

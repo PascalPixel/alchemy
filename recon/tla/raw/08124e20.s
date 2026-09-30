@@ -124,7 +124,7 @@ Func_08124e20:
 	movs r0, #212
 	bl Audio_PlayCue
 	adds r0, r5, #0
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	cmp r0, #0
 	beq .L_08124f46
 	adds r0, r5, #0
@@ -150,7 +150,7 @@ Func_08124e20:
 	adds r0, r5, #0
 	bl BattleUnit_Recalculate
 	adds r0, r5, #0
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	cmp r0, #0
 	beq .L_08124f78
 	adds r0, r5, #0

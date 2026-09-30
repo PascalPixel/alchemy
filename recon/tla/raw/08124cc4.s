@@ -30,7 +30,7 @@ Func_08124cc4:
 	cmp r3, #0
 	ble .L_08124d1a
 	ldrb r0, [r5, #2]
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	cmp r0, #0
 	beq .L_08124d1a
 	ldrb r0, [r5, #2]
@@ -71,7 +71,7 @@ Func_08124cc4:
 	bne .L_08124dfe
 	ldrb r5, [r6, #2]
 	adds r0, r5, #0
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	cmp r0, #0
 	beq .L_08124e04
 	movs r2, #2
@@ -106,7 +106,7 @@ Func_08124cc4:
 	adds r1, r5, #0
 	bl BattleEv_Push
 	adds r0, r5, #0
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	cmp r0, #0
 	beq .L_08124dc6
 	adds r0, r5, #0
@@ -132,7 +132,7 @@ Func_08124cc4:
 	adds r0, r5, #0
 	bl BattleUnit_Recalculate
 	adds r0, r5, #0
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	cmp r0, #0
 	beq .L_08124df8
 	adds r0, r5, #0

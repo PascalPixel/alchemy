@@ -7,8 +7,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/SEKIZO.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/GUARD_SCENES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/SEKIZO2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/SEKIZO3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/IMPORT.o"(.text)
         "*/resource_37b_overlay.o"(.rodata)
@@ -16,7 +14,7 @@ SECTIONS
     .bss ALIGN(16) (NOLOAD) :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/SEKIZO3.o"(.bss COMMON)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/GUARD_SCENES.o"(.bss COMMON)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/SEKIZO.o"(.bss COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

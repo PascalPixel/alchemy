@@ -41,9 +41,7 @@ void Scene_RunFourActorStagingSequence(void);
 void FieldScene_RunActorNinePresentationCycles(void);
 void FieldScene_RunPrimarySequence(void);
 void FieldScene_RunSevenActorEnsemble(void);
-
 extern u8 MsgFuneShipsCourseClear[];
-
 extern u8 MsgFuneAvast[];
 
 /* The IWRAM field globals: the map work first, the event work at +0x4c. */
@@ -54,7 +52,6 @@ struct FieldGlobals {
 };
 
 extern u8 MsgFuneMonsters2[];
-
 extern u8 MsgFuneLandHo[];
 
 /* Each actor's walk ashore, where the overlay's data lies. */
@@ -67,6 +64,17 @@ extern u8 FuneHobashira_EnsembleWalk14[];
 extern u8 FuneHobashira_EnsembleWalk15[];
 void OverlayObject_InitWithRandomFields(s32 object);
 s32 SceneData_GetDifferenceOfPairSums(void);
+
+/* The mast's own work, past its image: the drift the sway has added up, its
+ * two angles, and the camera centre and origin the staging saves for the
+ * camera-offset placement. */
+s32 FuneHobashira_DriftY __attribute__((section(".bss")));
+s32 FuneHobashira_DriftX __attribute__((section(".bss")));
+s32 FuneHobashira_SwayY __attribute__((section(".bss")));
+s32 FuneHobashira_SwayUnused __attribute__((section(".bss")));
+s32 FuneHobashira_CameraCenter[2] __attribute__((section(".bss")));
+s32 FuneHobashira_CameraOrigin[2] __attribute__((section(".bss")));
+s32 FuneHobashira_SwayX __attribute__((section(".bss")));
 
 /* Places the object where the camera has moved relative to the staging's
  * saved camera origin, around the saved centre. */
@@ -747,4 +755,62 @@ void FieldScene_RunSevenActorEnsemble(void)
         Event_RequestExit(14);
     }
     Event_End();
+}
+
+/* Sway: add cos(SwayX) and 4 * sin(SwayY) to the point the map work's first
+ * word names and to the drift totals, then advance both angles by small
+ * random steps, kept to 16 bits. */
+void FuneHobashira_UpdateSway(void)
+{
+    s32 *pos = *gMapWork;
+    s32 dx = Engine_MathCos(FuneHobashira_SwayX);
+    s32 dy = Engine_MathSin(FuneHobashira_SwayY);
+
+    *pos++ += dx;
+    dy <<= 2;
+    *pos += dy;
+    FuneHobashira_DriftX += dx;
+    FuneHobashira_DriftY += dy;
+    FuneHobashira_SwayX += (u32)(Random16() * 3 << 7) >> 16;
+    FuneHobashira_SwayY += (u32)(Random16() << 9) >> 16;
+    FuneHobashira_SwayX &= 0xffff;
+    FuneHobashira_SwayY &= 0xffff;
+}
+
+s32 SceneData_GetDifferenceOfPairSums(void)
+{
+    s32 a;
+    s32 b;
+
+    a = SceneData_GetValueByFirstSetFlag(0);
+    a += SceneData_GetValueByFirstSetFlag(2);
+    b = SceneData_GetValueByFirstSetFlag(1);
+    b += SceneData_GetValueByFirstSetFlag(3);
+    return a - b;
+}
+
+s32 SceneData_GetValueByFirstSetFlag(u32 a)
+{
+    s32 base = 0;
+    u32 i;
+
+    switch (a) {
+    case 0:
+        base = 0x92c;
+        break;
+    case 1:
+        base = 0x935;
+        break;
+    case 2:
+        base = 0x917;
+        break;
+    case 3:
+        base = 0x990;
+        break;
+    }
+    for (i = 0; i <= 8; i++) {
+        if (GameFlag_IsSet(base + i) != 0)
+            return FuneHobashira_FlagValues[i];
+    }
+    return 0;
 }

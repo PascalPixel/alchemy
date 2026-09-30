@@ -9,20 +9,16 @@ extern const struct SceneEntrance gBiribinoMuraEntrances2[];
 extern const struct SceneEntrance gBiribinoMuraEntrances3[];
 extern const struct SceneEntrance gBiribinoMuraEntrancesOther[];
 extern const struct SceneRegion gBiribinoMuraRegions2[];
-
 extern const struct ScenePlacement gBiribinoMuraPlacements1[];
 extern const struct ScenePlacement gBiribinoMuraPlacements2[];
 extern const struct ScenePlacement gBiribinoMuraPlacements3[];
 extern const struct ScenePlacement gBiribinoMuraPlacementsOther[];
-
 extern u8 MsgBiribinoBottomNotVisibleLooksVery[];
 extern u8 MsgFieldPeeredWell[];
-
 extern const struct SceneEvent gBiribinoMuraEvents1[];
 extern const struct SceneEvent gBiribinoMuraEvents2[];
 extern const struct SceneEvent gBiribinoMuraEvents3[];
 extern const struct SceneEvent gBiribinoMuraEventsOther[];
-
 extern u8 MsgBiribinoAreaOffLimitsThoseWithout[];
 extern u8 MsgBiribinoCurseWasBrokenThanksEfforts[];
 extern u8 MsgBiribinoDidSeeTreeAtEntrance[];
@@ -35,12 +31,10 @@ extern u8 MsgBiribinoThankSavedMeFromBeing[];
 extern u8 MsgBiribinoThereTreeLooksLikePerson[];
 extern u8 MsgBiribinoWasTurnedIntoTreeFor[];
 extern u8 MsgBiribinoYoureGuy[];
-
 void FieldScene_RunScene38b_020008f0(void);
 void FieldScene_RunScene38bSequenceA(void);
 void FieldScene_RunScene38b_02000d10(void);
 void BiribinoMura_UpdateCornerSpawn(void);
-
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void Engine_ObjectCommitPosition(struct FieldActor *object);
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
@@ -49,6 +43,15 @@ void FieldScene_DrawTilesByActor8Row(void);
 
 /* One cell step per facing sixteenth: x in the high half, z in the low. */
 extern s32 BiribinoMura_FacingCellSteps[];
+
+void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
+
+/* FAKEMATCH: halfword aggregates retain the short literal-pool reach. */
+struct SpawnCounter {
+    s16 frames;
+};
+
+struct SpawnCounter gCornerSpawnCounter;
 
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 {
@@ -755,4 +758,74 @@ void BiribinoMura_PushFacedBlock(void)
                 FieldScene_DrawTilesByActor8Row();
         }
     }
+}
+
+/* Spawn a kind-24 effect every thirty calls while the selected actor is
+ * below both coordinate limits. Only the y limit resets the counter. */
+void BiribinoMura_UpdateCornerSpawn(void)
+{
+    struct FieldActor *actor;
+
+    actor = Engine_ActorGet(gGameState.selected_actor);
+    if (actor->x.fixed < 0x8e0000) {
+        if (actor->y.fixed < 0x80000) {
+            if (gCornerSpawnCounter.frames == 0)
+                OverlayObject_SpawnKind24AtActor(actor);
+            if (++gCornerSpawnCounter.frames == 30) {
+                struct SpawnCounter zero = { 0 };
+                gCornerSpawnCounter = zero;
+            }
+        } else {
+            struct SpawnCounter *cnt = &gCornerSpawnCounter;
+            struct SpawnCounter zero;
+            /* FAKEMATCH: retain destination setup before the aggregate reset. */
+            do { zero.frames = 0; } while (0);
+            *cnt = zero;
+        }
+    }
+}
+
+/* Spawns the kind-24 effect where the actor stands, drawn translucent
+   behind the background layers. */
+void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
+{
+    struct FieldActor *effect;
+    struct FieldSprite *sprite;
+
+    effect = Engine_ObjectCreate(24, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    if (effect == NULL)
+        return;
+
+    sprite = effect->sprite;
+    Object_SetScript(effect, Mura_SpawnScript);
+    effect->motion_flags = 0;
+    effect->unknown_22 = 1;
+    effect->priority_flags = 2;
+    if (sprite == NULL)
+        return;
+
+    AnimationObjects_SelectAnimation(sprite, 2);
+    sprite->flags = 0;
+    sprite->blend_mode = 1;
+    sprite->priority = 3;
+}
+
+/* Opens the two gate cells on row 14 the actor stands in (z 6 or 9). */
+void FieldScene_DrawTilesByActor8Row(void)
+{
+    struct FieldActor *actor;
+
+    actor = Actor_Get(8);
+    if (actor == NULL)
+        return;
+
+    if (actor->z.fixed >> 20 == 6)
+        Map_CopyCellAttributes(2, 0, 1, 1, 14, 6);
+    else
+        Map_CopyCellAttributes(0, 0, 1, 1, 14, 6);
+
+    if (actor->z.fixed >> 20 == 9)
+        Map_CopyCellAttributes(2, 0, 1, 1, 14, 9);
+    else
+        Map_CopyCellAttributes(1, 0, 1, 1, 14, 9);
 }

@@ -14,8 +14,8 @@
 	.incbin "baserom.gba", 0x6848d0, 0xc0
 	.section .rom.0068a9c1, "a"
 	.incbin "baserom.gba", 0x68a9c1, 0xddab
-	.section .rom.006a4114, "a"
-	.incbin "baserom.gba", 0x6a4114, 0x51a4
+	.section .rom.006a5301, "a"
+	.incbin "baserom.gba", 0x6a5301, 0x3fb7
 	.section .rom.006aa7f5, "a"
 	.incbin "baserom.gba", 0x6aa7f5, 0x2476b
 	.section .rom.006d194e, "a"

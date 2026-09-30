@@ -13,10 +13,7 @@ regex = "1"
 fs2 = "0.4"
 libc = "0.2"
 object = { version = "0.39.1", default-features = false, features = ["read_core", "elf", "std"] }
-objdiff-core = { version = "3.8.0", default-features = false, features = ["arm", "std"] }
 walkdir = "2.5"
-encoding_rs = "0.8"
-unicode-normalization = "0.1"
 sha2 = "0.10"
 tempfile = "3"
 sha1 = "0.10"

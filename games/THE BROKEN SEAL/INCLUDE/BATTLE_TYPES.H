@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_TYPES_H
 
 #include "LAYOUT_GUARD.H"
-#include "../../COMMON/INCLUDE/BATTLE/BATTLE_UNIT.H"
+#include "BATTLE_UNIT.H"
 
 enum {
     BATTLE_TARGET_CAPACITY = 14,

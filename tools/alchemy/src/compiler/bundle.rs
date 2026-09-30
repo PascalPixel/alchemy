@@ -442,6 +442,28 @@ pub fn compiler_bundle_signature() -> String {
         .get_or_init(compiler_bundle_signature_uncached)
         .clone()
 }
+/// Identity of every executable a build step runs: the approved compilers
+/// and their assembler, and the GNU binutils that assemble listings and
+/// link. Object and overlay keys include it, so a changed tool rebuilds
+/// what it made instead of reusing an object another tool wrote.
+pub fn toolchain_signature() -> String {
+    static SIGNATURE: OnceLock<String> = OnceLock::new();
+    SIGNATURE
+        .get_or_init(|| {
+            let bin = root().join("tools/out/binutils/bin");
+            let mut paths = signature_paths();
+            paths.extend(
+                [
+                    "arm-none-eabi-as",
+                    "arm-none-eabi-ld",
+                    "arm-none-eabi-objcopy",
+                ]
+                .map(|name| bin.join(name)),
+            );
+            compiler_bundle_signature_for_paths(&paths, &[])
+        })
+        .clone()
+}
 pub fn compiler_bundle_signature_checked() -> Result<String> {
     ensure_compiler_bundle_access()?;
     Ok(compiler_bundle_signature())

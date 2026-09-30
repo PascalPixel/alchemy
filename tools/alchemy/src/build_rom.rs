@@ -622,6 +622,7 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
         let preprocess = preprocessor_only(&steps, &source_text, &preprocessed)?;
         command(&preprocess, root)?;
         let mut hasher = Sha256::new();
+        hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
         hasher.update(fs::read(&preprocessed).map_err(|error| error.to_string())?);
         for step in &steps {
             hasher.update(step.join("\0").as_bytes());
@@ -633,6 +634,7 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
             .find(|path| path.join("baserom.gba").exists())
             .ok_or("the base ROM link is missing")?;
         let mut hasher = Sha256::new();
+        hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
         hasher.update(with_includes(&[root, base], &root.join(source))?);
         let mut step = assembly_command(&source_text, &object_text);
         // Every file the build makes for this source is part of its key, so
@@ -674,6 +676,7 @@ fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), Str
     let assembly = object.with_extension("s");
     let step = assembly_command(&assembly.to_string_lossy(), &object.to_string_lossy());
     let mut hasher = Sha256::new();
+    hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
     hasher.update(text.as_bytes());
     hasher.update(step.join("\0").as_bytes());
     let key = format!("{:x}", hasher.finalize());
@@ -974,6 +977,7 @@ fn build_overlay(
     }
     hasher.update(command(&["arm-none-eabi-nm", &symbols.to_string_lossy()], root)?.as_bytes());
     hasher.update(format!("{OVERLAY_MACHINE:?}").as_bytes());
+    hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
     // The steps between the commands (the names an overlay hides, the
     // packer's transform) belong to this build implementation.
     hasher.update(env!("ALCHEMY_BUILD_IMPLEMENTATION").as_bytes());

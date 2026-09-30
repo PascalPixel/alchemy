@@ -357,7 +357,7 @@ Func_080ae5fc:
 	bne.n	.L_080ae6e2
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	Inventory_Add
+	bl	Inventory_AddItem
 .L_080ae6e2:
 	pop	{r5, r6, pc}
 	.global Func_080ae6e4

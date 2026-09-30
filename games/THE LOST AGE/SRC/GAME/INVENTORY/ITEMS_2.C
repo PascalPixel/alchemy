@@ -2,7 +2,7 @@
 
 /* 所持品追加。積み重ね可能な品は同一番号の枠を探して個数を増やし、
    そうでなければ空き枠へ入れる。戻り値は枠番号、失敗は -1。 */
-s32 Inventory_Add(s32 owner_id, s32 item_id)
+s32 Inventory_AddItem(s32 owner_id, s32 item_id)
 {
     struct OwnerInventoryState *inv = Owner_GetState(owner_id);
     struct ItemDefinition *item = Item_GetDirect(item_id);
@@ -61,7 +61,7 @@ s32 PartyInventory_Add(s32 item_id)
         do {
             s16 owner_id = *owner_cursor++;
 
-            if (Inventory_Add(owner_id, item_id) >= 0)
+            if (Inventory_AddItem(owner_id, item_id) >= 0)
                 return owner_id;
             owner_index++;
         } while (owner_index < owner_count);

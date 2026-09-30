@@ -115,7 +115,7 @@ Func_080af7ac:
 	ldrh	r3, [r6, #0]
 	mov	r1, r9
 	ands	r1, r3
-	bl	Inventory_Add
+	bl	Inventory_AddItem
 	mov	r2, r8
 	adds	r1, r0, #0
 	adds	r5, #1

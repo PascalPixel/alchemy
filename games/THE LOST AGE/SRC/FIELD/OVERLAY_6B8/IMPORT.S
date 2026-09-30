@@ -31,7 +31,7 @@
 	overlay_veneer Func_080382f8
 	overlay_veneer Func_08038318
 	overlay_veneer Owner_RecalculateStatsFar
-	overlay_veneer Inventory_AddFar
+	overlay_veneer Inventory_AddItemFar
 	overlay_veneer Owner_AdjustFirstValueFar
 	overlay_veneer Owner_AdjustSecondValueFar
 	overlay_veneer Djinn_AddToOwnerFar

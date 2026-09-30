@@ -600,6 +600,8 @@ SECTIONS
         "*/recon/tla/raw/080afb80.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GAME/PARTY/ADVANCE_OWNER_COUNT_TO_TARGET.o"(.text)
         "*/recon/tla/raw/080afbec.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GAME/PARTY/COUNTERS.o"(.text)
+        "*/recon/tla/raw/080aff00.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/DJINN/GET_DEFINITION.o"(.text)
         "*/recon/tla/raw/080aff94.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080affac.o"(.text .rodata .data .padding)

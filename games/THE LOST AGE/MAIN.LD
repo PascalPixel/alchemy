@@ -939,7 +939,7 @@ SECTIONS
         "*/recon/tla/raw/08046b08.o"(.text)
         "*/recon/tla/raw/0804868c.o"(.text)
         "*/recon/tla/raw/08049154.o"(.text)
-        "*/recon/tla/raw/080499b4.o"(.text)
+        "*/games/COMMON/SRC/GAME/ITEM/CLASSIFY_USE_ABILITY.o"(.text)
         "*/recon/tla/raw/08049a04.o"(.text)
         "*/recon/tla/raw/08049a30.o"(.text)
         "*/recon/tla/raw/0804a134.o"(.text)

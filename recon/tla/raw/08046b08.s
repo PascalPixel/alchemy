@@ -1260,7 +1260,7 @@ Func_08046b08:
 	bl Item_Get
 	adds r1, r5, #0
 	ldr r0, [sp, #144]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	ldr r2, [sp, #8]
 	cmp r0, #0
 	bne .L_080474ca
@@ -1295,7 +1295,7 @@ Func_08046b08:
 	bl Item_Get
 	adds r1, r5, #0
 	ldr r0, [sp, #144]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	ldr r2, [sp, #8]
 	cmp r0, #0
 	beq .L_0804750e
@@ -1356,7 +1356,7 @@ Func_08046b08:
 	adds r5, r3, r4
 	ldrh r1, [r5]
 	ldr r0, [sp, #144]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	cmp r0, #2
 	bne .L_0804757e
 	ldr r0, .L_0804761c
@@ -1430,7 +1430,7 @@ Func_08046b08:
 	bl Func_08041f70
 	adds r1, r5, #0
 	ldr r0, [sp, #144]
-	bl Func_080499b4
+	bl Item_ClassifyUseAbility
 	cmp r0, #0
 	beq .L_08047628
 	movs r0, #4

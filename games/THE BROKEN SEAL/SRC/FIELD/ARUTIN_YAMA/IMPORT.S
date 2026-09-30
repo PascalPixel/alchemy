@@ -325,6 +325,9 @@ BattleEffect_CleanupSceneObjects:
 	.thumb_func
 Engine_PsynergyRaiseHands:
 	overlay_veneer EventObject_InitializeFar
+	.global Battle_ResetEffectCounter
+	.thumb_func
+Battle_ResetEffectCounter:
 	overlay_veneer Battle_ResetEffectCounterFar
 	.global Audio_PlayCueFromEventWork
 	.thumb_func

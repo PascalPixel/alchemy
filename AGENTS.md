@@ -5,194 +5,138 @@ rebuilt byte for byte from readable C, assembly and editable assets. Japanese
 releases are the source editions; localizations are measured differences.
 Build IDs are `tbs` and `tla`.
 
-This is the working guide; `README.md` is for fans. Keep it short. Implementation
-details belong in source and build rules. No separate notes, plans or reports.
+This file is the only place Alchemy's rules live. `README.md` is for fans.
+Every rule has an ID; a rule a tool can enforce names its check, and every
+check in `make verify` names the rule it enforces. Only Pascal changes a rule;
+git history records when.
 
 ## Goal
 
 **DONE = matching C + proven library, handwritten or veneer assembly**, over
-each game's executable bytes. `make progress` prints the exact counts.
-Optimise **☀️ percentage points landed on main per hour**, measured in complete
-hourly bins over 12 hours. Use exact DONE and executable bytes; show credit
-corrections separately. Timebox work that cannot move this number.
+each game's executable bytes. `make progress` prints the exact counts. ☀️ has
+the priority; the target is ☀️ 100% and ⚓️ 100%, sharing as much code between
+the games as possible.
 
 ## Rules
 
-1. Count a function only when its complete extent, including its literal pool,
-   compiles exactly and the ROM remains byte-identical.
-2. Tagged `/* FAKEMATCH: reason */` C counts. Until ☀️ is 100%, inline
-   assembly and fixed-register variables tagged `/* FAKEMATCH: reason */` are
-   allowed as temporary workarounds; `/* CAMELOT_ASM: proof */` marks assembly
-   Camelot very likely wrote in C, and the reviewed `Dma_Set` and `Iwram_*`
-   macros stay. Any other inline assembly, and patched compiler output, never.
-3. Uncredited disassembly is `not-yet-c`. Only proven library, handwritten and
-   veneer modules count as assembly; difficulty never changes that classification.
-4. Commit each adoption and attempt; keep near misses as drafts with the
-   remaining difference in their header. Never throw work away.
-5. Commit code, tooling, our documentation and editable assets, as pret does:
-   indexed PNGs with the game's palettes, tilemaps, sound, text and game
-   definitions, built into the ROM by our tools. Never commit ROMs, the
-   cartridge logo, raw dumps (grey sheets, whole-area blobs, compression
-   tokens), another project's Golden Sun work, SDK or leaked code. Evidence
-   comes from our ROMs, this repository and public documentation.
-6. Only Pascal changes credit standards, approves compiler source, binaries
-   and digests, or authorises pushes and parallel workflows. Record approvals below.
+### Legal
 
-## Oracle leakage
+- **L1** Never commit, upload or publish a ROM, the cartridge logo, private
+  inputs or any other copy of the original game files. _Check: publication._
+- **L2** Evidence comes only from our own ROMs, this repository and public
+  documentation. Never use another project's Golden Sun work.
+  _Check: publication._
+- **L3** Never use leaked Nintendo or Camelot code or SDKs, and never open, read
+  or mention sources that might contain them.
 
-The reference ROM is the test oracle: it judges the build and never feeds it.
-Oracle leakage (Goodhart's law, specification gaming) is any path by which the
-expected answer steers the build or the count, so the comparison passes by
-construction. Every past cheat was one leak in a new form: a cloned ROM,
-catalogs, receipts, name-decoded equates, `#define` aliases, addresses stored
-in assets. Banning forms only moves the answer; hold these invariants instead.
+### Counting
 
-1. **One door.** ROM bytes reach the build only through pret's
-   `.incbin "baserom.gba", OFFSET, SIZE` scaffold in `recon/<game>`, which never
-   counts. Nothing else derived from the ROM or the expected output (bytes,
-   addresses, sizes, tokens, tables, per-asset hashes) may steer the build or
-   the count, in any file or location, `out/` included.
-2. **The linker places.** Every name is defined where its bytes are, as a C
-   definition or a label, and layout is the linker scripts' object order. No
-   equate, alias, `#define` or table gives a name an address, except
-   Camelot's own: ROM code calls the resident IWRAM routines through fixed
-   entry addresses or offsets from the bank's first routine, and reaches
-   fixed RAM buffers its code addressed as constants, each listed once in a
-   game header beside its linked name and checked by the build against
-   where the linker placed it.
-3. **The map counts.** DONE is pret's calcrom over the linker maps of
-   byte-identical builds: the code the linker places from `games/`. `games/`
-   holds only real source: C from an approved compiler, or proven library,
-   handwritten or veneer assembly written as instructions, never as copied
-   bytes. Unfinished code is disassembly in `recon/<game>/raw`, `not-yet-c`.
-4. **Verification is fixed.** A mismatch is fixed in source, or the code stays
-   disassembly or a draft. Only Pascal changes gates, credit or the comparison.
-5. **Audit before claiming.** No list is complete: before announcing a
-   milestone, run an independent adversarial audit for leaks and fix each at
-   its owner.
+- **C1** A function counts only when its complete extent, literal pool
+  included, compiles exactly and every edition stays byte-identical.
+  _Check: compare, compare-tla, compare-other-editions._
+- **C2** DONE is pret's calcrom over the linker maps of byte-identical builds:
+  the code the linker places from `games/`. Uncredited disassembly is
+  `not-yet-c` in `recon/<game>/raw`; only proven library, handwritten and veneer
+  assembly counts as assembly. Whole aligned 8-byte far-call stubs count as
+  veneers. _Check: coverage-check._
+- **C3** Main commits carry the verified percentage, README and both progress
+  figures, written by `make land`. _Check: commit-msg hook, coverage-check._
 
-Reports may be generated under `out/` for people to read, never for the build
-or the count to consume. Keep each decision once: names in code, declarations
-in headers, layout and bindings in linker rules, encoder options beside assets.
-Approved checksums, dependency pins and published progress are intentional
-records.
+### The oracle stays out of the build
 
-## Source
+The reference ROM judges the build and never feeds it. Any path by which the
+expected answer steers the build or the count is cheating, whatever its form.
 
-Use `~/Developer/pret/pokeemerald` for method only, never code or symbols.
-Our presentation follows a plausible Camelot project from 2001:
-`games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT`; uppercase 8.3-style names,
-C89, `Subsystem_VerbObject` functions and short locals. Use Japanese character
-names and romaji plus one area word for places. Share declarations in headers
-and proven common code in `games/COMMON`; instanced code spells no address names.
-Scaffolding stays under `recon/tbs` and `recon/tla` and shrinks toward zero.
+- **O1** ROM bytes reach the build only through pret's
+  `.incbin "baserom.gba", OFFSET, SIZE` scaffold in `recon/<game>`, which never
+  counts. Nothing else derived from the ROM or the expected output (bytes,
+  addresses, sizes, tokens, tables, hashes) may steer the build or the count,
+  `out/` included; reports under `out/` are for people only.
+  _Check: publication._
+- **O2** Every name is defined where its bytes are, as a C definition or a
+  label, and layout is the linker scripts' object order. No equate, alias,
+  `#define` or table gives a name an address, except Camelot's own fixed
+  addresses: resident IWRAM routines called through fixed entries, and RAM
+  buffers its code addressed as constants, each listed once in a game header
+  and checked against where the linker placed it. One name per place; never a
+  name that spells its own value. _Check: publication, fixed-address check._
+- **O3** Scene and resource ids come only from their tables and are used whole.
+  Overlay code never branches straight into the main image.
+  _Check: publication._
+- **O4** A mismatch is fixed in source, or the code stays disassembly or a
+  draft. Before announcing a milestone, run an independent audit for leaks.
 
-Assets are individual indexed PNGs with real palettes, identified tilemap/table
-BINs, WAV, MIDI, PO and editable game definitions, converted by our tools in
-the build as pret's gbagfx, mid2agb and preproc convert theirs. Compression
-comes from these inputs and per-file encoder options. Asset tooling and
-identified assets are source: never delete them as dumps. Bytes not yet
-identified stay in the baserom scaffold.
+### Source
 
-## Work and build
+- **S1** `games/` holds only real source: C from an approved compiler, or
+  proven assembly written as instructions, never copied bytes. Drafts and
+  scaffolding live under `recon/` and shrink toward zero. _Check: publication._
+- **S2** Tagged `/* FAKEMATCH: reason */` code counts. Until ☀️ is 100%,
+  compiler-steering C (wrappers, volatile, forced temporaries, dead code),
+  inline assembly and fixed-register variables are allowed when each carries a
+  `FAKEMATCH` tag with a reason. `/* CAMELOT_ASM: proof */` marks assembly
+  Camelot very likely wrote in C; the reviewed `Dma_Set` and `Iwram_*` macros
+  stay. Never patch compiler output. _Check: no-asm (in lint-staged)._
+- **S3** Write it the way Camelot would have in 2001: `games/<GAME>/SRC`,
+  `INCLUDE`, `SOUND`, `TEXT`, with the same folder layout in both games and
+  `games/COMMON`; uppercase 8.3-style names, C89, `Subsystem_VerbObject`
+  functions, short locals, named struct fields and enums, Japanese character
+  names and romaji plus one area word for places. Shared code and declarations
+  live once in `games/COMMON`.
+- **S4** Never throw work away: commit each adoption and attempt, and keep near
+  misses as drafts with the remaining difference in their header. Workers may
+  edit and delete `recon/` listing and linker lines when adopting a function.
 
-Work on the assigned branch; `main` is the only long-lived branch. Give agents
-disjoint slices. Inspect complete functions and their neighbours, reuse proven
-source, and change one hypothesis at a time. After 30 minutes or three attempts
-without a new idea, commit the draft and move on.
+### Assets
 
-Alchemy owns compilation, linking and verification; the ags crate owns
-encoding, with the pret-style tools agsgfx, mid2ags, wav2ags and po2ags;
-Psynergy owns portable reading, decoding, analysis and comparison. Prefer
-existing commands and read `--help`. Scripts are TypeScript on Bun or Rust. New tooling must solve
-a demonstrated recurring blocker and carry a test.
+- **A1** Assets are editable files built by our tools in every build, as pret's
+  are: indexed PNGs with the game's real palettes, TSV tables and tilemaps,
+  WAV, MIDI, PO and text definitions. Never raw dumps, grey sheets without a
+  built palette, whole-area blobs or stored compression tokens. Sources may
+  include the files the build makes from these inputs. _Check: publication._
+- **A2** A picture is drawn the way the game shows it: tile sheets at their real
+  width or sprite shape, pictures with a tilemap as the map shows them,
+  animations one frame wide. _Check: layout._
+- **A3** A PNG may carry an all-grey palette only when the build writes that
+  palette into the ROM from it or from the first part of its part list.
+  _Check: publication._
+- **A4** Encoder options live beside their assets; recipes may carry a sprite
+  shape (one of the 12 hardware sizes) in the file name.
+- **A5** No JSON anywhere: tables are TSV. _Check: publication._
 
-Use approved agscc (GCC 2.96) for both games with stock options. Compiler family and flags
-apply to whole files with their reason recorded in compiler routing; never tune
-individual functions. Library routes remain agbcc `-O` for flash and `-O2` for
-MusicPlayer2000; RAM-executed ARM code uses `-marm -mno-apcs-frame`.
+### Compilers
+
+- **K1** Game code uses the approved agscc (GCC 2.96); library code uses
+  pret's agbcc with pret's flags (`-O` for flash, `-O2` for MusicPlayer2000);
+  RAM-executed ARM code uses pret's agbcc_arm with `-fomit-frame-pointer`.
+  Families and flags apply to whole files, with the reason in compiler routing;
+  never tune a single function. _Check: routing tests._
+- **K2** ⚓️ game code adds `-mthumb-split-constants` and `-mthumb-call-via-lr`,
+  Camelot's constant and call-through-register rules found across ⚓️. A compiler change needs Pascal's approval and evidence
+  across many functions; every compiler binary's digest is recorded.
+  _Check: compiler-source-check, bundle validation._
+
+### Work
+
+- **W1** Scripts are TypeScript on Bun or Rust; no Python, no shell beyond a
+  command line. New tooling solves a demonstrated recurring blocker and
+  carries a test. _Check: language-check._
+- **W2** Work on your own branch; `main` is the only long-lived branch. Land on
+  main with `make land`, which builds and compares all twelve editions and runs
+  the tests. _Check: land._
+- **W3** Alchemy owns compilation, linking and verification; the ags crate owns
+  encoding (agsgfx, mid2ags, wav2ags, po2ags); Psynergy owns reading, decoding,
+  analysis and comparison. Look at how pret does something before inventing.
+
+## Commands
 
 ```sh
 git submodule update --init && git config core.hooksPath .hooks
 make bootstrap
 make worktree      # in a new worktree, before its first build
-make compare-all
+make compare-all   # make compare-editions for all twelve
 make test
-make coverage
+make deps          # dependency map for choosing targets
 make verify
 make land          # on main, before committing a landing
 ```
-
-Commit hooks only check: every commit runs the staged checks, and on main the
-commit-msg hook writes the verified percentage or pending prefix. Land on main
-with `make land` before committing: it builds and compares both ROMs, runs the
-tests and writes and stages README and both progress figures. Pre-push checks
-outgoing history and main's publication. DONE is `?` until the current tree has
-a verified build.
-
-## Pascal's decisions
-
-- 2026-09-23: tagged fake matches count; ARM uses `-marm -mno-apcs-frame`.
-  Private inputs are never published.
-- 2026-09-24: whole aligned 8-byte main-image far-call stubs count as
-  reconstructed veneers, like overlay entry veneers.
-- 2026-09-27: attribution after noon September 26 (Lisbon) is Sol 6 or Astra 6.
-  New trailers name the actual session model.
-- 2026-09-28: tooling baseline is `2db71499f1f991c9a4899641737212bfba8104c0`.
-  Main commits own verified percentages, README and both progress figures.
-- 2026-09-28: the oracle-leakage rule supersedes the September 22/23 exceptions for stored
-  compression answers and tracked machine ledgers.
-- 2026-09-28: approved the stock `da598c1` agbcc rebuild; its exact binary
-  digest is recorded in the compiler admission table.
-- 2026-09-28: the dashboard is removed.
-- 2026-09-28: prime directive: what pret published, we may; what pret did not
-  publish, we may not. Not-yet-sourced data links through pret's early
-  `.incbin "baserom.gba", OFFSET, SIZE` scaffolding in `recon/<game>`.
-- 2026-09-28: the cheating rule is restated as oracle leakage: five invariants
-  that keep the answer out of the build and the count, not a list of forms.
-- 2026-09-28: compilers take stock options only; a game-specific compiler flag
-  is an invented answer. agscc is GCC 2.96 with its host ports, and agbcc is
-  called with pret's flags.
-- 2026-09-28: pret publishes graphics, sound, text and maps as editable files
-  built by its tools; so does Alchemy.
-- 2026-09-29: do what Camelot did for IWRAM calls. The ROM loads a resident
-  IWRAM routine's address before the arguments, which only a call through a
-  fixed address reproduces; a label compiles to a direct `bl` and `long_call`
-  loads the address last.
-- 2026-09-29: compiler-steering idioms are fakes and carry a FAKEMATCH tag:
-  inline call or value wrappers, volatile on plain RAM, forced temporaries,
-  dead code and jumps into blocks, unless rewritten as plain C.
-- 2026-09-29: fixed RAM buffers that Camelot's code addressed as constants
-  are checked entries, as the IWRAM routines are.
-- 2026-09-29: gates: overlay code never branches straight into the main
-  image; scene and resource ids come only from their tables and are used
-  whole; one name per place; sound sources may include the files the build
-  makes from MIDI and WAV.
-- 2026-09-29: gates: asset sources may include the files the build makes
-  from their editable inputs (PNGs, tilemaps, fonts, maps), as pret's do.
-  The symbols-pass check compares global symbols only.
-- 2026-09-29: JSON is banned from the repository for good: tables are TSV,
-  sequence skeletons and events are text, and the publication check refuses
-  JSON by name or content.
-- 2026-09-29: gates: the fixed-address check runs on every build that links
-  game code; builds that are still only the original ROM skip it.
-- 2026-09-29: a PNG may carry an all-grey palette when the build writes that
-  palette into the ROM from the PNG, as pret's grey images with their own palettes do.
-- 2026-09-29: gates: asset recipes may carry the sprite shape, one of the 12
-  hardware sizes, in their file name, as pret's gbagfx takes -mwidth/-mheight.
-- 2026-09-29: inline assembly is allowed with proof that Camelot very likely
-  had it in their own C files, tagged `/* CAMELOT_ASM: proof */`.
-- 2026-09-29: gates: make land compares all twelve editions.
-- 2026-09-29: build ARM files with pret's agbcc_arm from the approved da598c1
-  source, with -fomit-frame-pointer, and record its digest.
-- 2026-09-29: inline assembly tagged FAKEMATCH is allowed as a temporary
-  workaround until ☀️ is 100%.
-- 2026-09-29: workers may edit and delete lines in recon/ listings and linker
-  files when adopting a matched function.
-- 2026-09-29: a rule that explains nearly all of ⚓️'s 2,000 constant-building
-  functions is solid evidence TLA was made with a modified 2.96: implement it
-  as native-sounding gcc flags (`-mthumb-split-constants`, TLA game code only).
-- 2026-09-30: fix the agscc nondeterminism by hashing symbols by name and
-  labels by number.
-- 2026-09-30: parts in the same part list may share part 1's built palette in
-  the grey-sheet check; the layout check runs in verify.

@@ -156,9 +156,11 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
         flags.push(flag.to_string());
     }
     // TLA's game code, main image and overlays alike, builds Thumb
-    // constants from a shifted byte and an add (Pascal, 2026-09-29).
+    // constants from a shifted byte and an add (Pascal, 2026-09-29) and
+    // calls through a register with mov lr and a bl (Pascal, 2026-09-30).
     if target == CompilerTarget::Tla {
         flags.push("-mthumb-split-constants".to_string());
+        flags.push("-mthumb-call-via-lr".to_string());
     }
     flags.push(include_flag(target));
     flags
@@ -319,7 +321,11 @@ mod target_tests {
             .collect();
         let derived: Vec<&String> = tla
             .iter()
-            .filter(|flag| *flag != "-mthumb-split-constants" && !flag.starts_with("-I"))
+            .filter(|flag| {
+                *flag != "-mthumb-split-constants"
+                    && *flag != "-mthumb-call-via-lr"
+                    && !flag.starts_with("-I")
+            })
             .collect();
         assert_eq!(shared, derived);
         for flags in [&tbs, &tla] {
@@ -341,7 +347,7 @@ mod target_tests {
             bundle_for(CompilerTarget::Tla)
         );
         for flags in [&tbs, &tla] {
-            // No invented -mgs option: TLA adds only -mthumb-split-constants.
+            // No invented -mgs option: TLA adds only its two approved options.
             assert!(!flags.iter().any(|flag| flag.starts_with("-mgs")));
             assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-mthumb"));
@@ -364,6 +370,47 @@ mod target_tests {
         assert!(!split(cflags_for_target_source(
             CompilerTarget::Tla,
             "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"
+        )));
+    }
+    /// TLA's game code calls through a register as mov lr, rX and the second
+    /// half of a bl; stock GCC calls a _call_via_rX stub.
+    #[test]
+    fn call_via_lr_calls_through_a_register_inline() {
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("c.c");
+        std::fs::write(&source, "void f(void (*g)(void)) { g(); }\n").unwrap();
+        let compile = |via: bool| {
+            let output = work.path().join(if via { "via.s" } else { "stock.s" });
+            let mut arguments: Vec<String> = ["-O2", "-mthumb", "-S", "-o"]
+                .iter()
+                .map(|s| (*s).to_string())
+                .collect();
+            arguments.push(output.to_string_lossy().into_owned());
+            if via {
+                arguments.push("-mthumb-call-via-lr".into());
+            }
+            arguments.push(source.to_string_lossy().into_owned());
+            let argv = crate::compiler::bundle::compiler_command_for_target(
+                CompilerTarget::Tla,
+                &arguments,
+            )
+            .unwrap();
+            let status = std::process::Command::new(&argv[0])
+                .args(&argv[1..])
+                .status()
+                .unwrap();
+            assert!(status.success());
+            std::fs::read_to_string(output).unwrap()
+        };
+        let via = compile(true);
+        assert!(via.contains("mov\tlr, r0") && via.contains(".2byte\t0xf800"));
+        assert!(compile(false).contains("_call_via_r0"));
+        let flags = |t, s| cflags_for_target_source(t, s);
+        let has = |f: Vec<String>| f.iter().any(|x| x == "-mthumb-call-via-lr");
+        assert!(has(flags(CompilerTarget::Tla, "GAME/FLAGS/GET_BYTE.C")));
+        assert!(!has(flags(
+            CompilerTarget::Tbs,
+            "MENU/INPUT_CANCEL_SOUND_TICK.C"
         )));
     }
     /// 301 is not a shifted byte, so stock GCC loads it from the pool; the

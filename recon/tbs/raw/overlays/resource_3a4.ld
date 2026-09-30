@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/GET_TABLES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SCENE_DATA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/GET_PLACEMENTS.o"(.text)
-        "*/resource_3a4_overlay.o"(.text.x020082cc)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLLING_RIDE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SET_PIECE.o"(.text)
         "*/resource_3a4_overlay.o"(.text.x02008d2c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SHARED.o"(.text)

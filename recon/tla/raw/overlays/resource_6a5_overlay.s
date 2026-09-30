@@ -53,22 +53,6 @@ Func_02000070:
 	bx lr
 .L_02008074:
 	.4byte Data_02006520
-	.section .text.x02008078,"ax",%progbits
-	.global Func_02000078
-	.thumb_func
-Func_02000078:
-	movs r3, #128
-	lsls r3, r3, #24
-	str r3, [r0, #56]
-	str r3, [r0, #60]
-	str r3, [r0, #64]
-	movs r3, #0
-	str r3, [r0, #36]
-	str r3, [r0, #40]
-	str r3, [r0, #44]
-	adds r0, #100
-	strh r3, [r0]
-	bx lr
 	.section .text.x02008090,"ax",%progbits
 	.global Func_02000090
 	.thumb_func
@@ -326,7 +310,7 @@ Func_02000198:
 	lsls r3, r3, #9
 	str r3, [r6, #24]
 	str r3, [r6, #28]
-	bl Func_02000078
+	bl SceneActor_ParkRecord
 	ldr r1, .L_02008374
 	movs r0, #36
 	bl ObjectMotion_EnableActionAndSetCallback

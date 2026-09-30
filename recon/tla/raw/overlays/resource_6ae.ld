@@ -30,7 +30,7 @@ SECTIONS
         "*/resource_6ae_overlay.o"(.text.x0200a9ac)
         "*/resource_6ae_overlay.o"(.text.x0200b210)
         "*/resource_6ae_overlay.o"(.text.x0200b26c)
-        "*/resource_6ae_overlay.o"(.text.x0200b358)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/PARK_RECORD.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200b370)
         "*/resource_6ae_overlay.o"(.text.x0200b5ec)
         "*/resource_6ae_overlay.o"(.text.x0200b61c)

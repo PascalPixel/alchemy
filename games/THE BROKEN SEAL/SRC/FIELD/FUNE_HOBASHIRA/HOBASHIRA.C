@@ -401,7 +401,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_EventShowMessageAndWait(8, 0, 10);
     Call3((void (*)())Engine_ActorSetPosition, 10, x, 0xd20000);
     Call3((void (*)())Engine_ActorSetPosition, 11, x, 0xd20000);
-    ((void (*)())Engine_ActorSetPosition)(12, x, 0xd20000);
+    Engine_ActorSetPosition(12, x, 0xd20000);
     Engine_ActorSetSpritePriority(10, 3);
     Engine_ActorSetSpritePriority(11, 3);
     Engine_ActorSetSpritePriority(12, 3);
@@ -428,7 +428,7 @@ void Scene_RunFourActorStagingSequence(void)
     Call3((void (*)())Engine_ActorSetSpeed, 12, 0x9999, 0x4ccc);
     Call3((void (*)())Engine_ActorSetDestination, 10, 128, 345);
     Call3((void (*)())Engine_ActorSetDestination, 11, 136, 330);
-    ((void (*)())Engine_ActorSetDestination)(12, 156, 340);
+    Engine_ActorSetDestination(12, 156, 340);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(8, 2);
     Call3((void (*)())Engine_ActorWalkToAndWait, 8, 164, 344);
@@ -454,7 +454,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     record = (u8 *)Object_GetById(0);
     Actor_SetSpriteFlags(record, 0);
     Task_Wait(1);
-    ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneHobashira_EnsembleObjects);
+    Event_CallWithLastActiveObjectId((s32)FuneHobashira_EnsembleObjects);
     Task_Wait(1);
     OverlayObject_InitWithRandomFields(9);
     OverlayObject_InitWithRandomFields(10);
@@ -578,9 +578,9 @@ void FieldScene_RunPrimarySequence(void)
     id0_state = (u8 *)Object_GetById(0);
     Actor_SetSpriteFlags(id0_state, 0);
     Task_Wait(1);
-    ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneHobashira_EnsembleObjects);
+    Event_CallWithLastActiveObjectId((s32)FuneHobashira_EnsembleObjects);
     Task_Wait(1);
-    ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneHobashira_LandingObjects);
+    Event_CallWithLastActiveObjectId((s32)FuneHobashira_LandingObjects);
     Task_Wait(1);
     OverlayObject_InitWithRandomFields(9);
     OverlayObject_InitWithRandomFields(10);

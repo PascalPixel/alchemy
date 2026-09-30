@@ -234,7 +234,7 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
         Object_SetAnimation((s32)rec, 6);
         Actor_SetSpriteFlags((s32)rec, 1);
         *flag = (u8)saved;
-        ((void (*)())Engine_EventEnd)();
+        Engine_EventEnd();
         return 1;
     }
     return 0;
@@ -292,7 +292,7 @@ void FieldScene_RunScene3a6SequenceB(void)
             Actor_FaceDirection(8, 0xc000, 20);
             record = Actor_Get(8);
             *(s32 *)(record + 108) = (s32)SceneActor_FaceActorZero;
-            ((void (*)())Engine_EventEnd)();
+            Engine_EventEnd();
         }
     }
 }

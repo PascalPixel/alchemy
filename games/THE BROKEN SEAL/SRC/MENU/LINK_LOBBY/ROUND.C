@@ -81,7 +81,7 @@ s32 LinkLobby_RunRoundResult(void)
     LinkLobby_DrawThreeDigitValue(ROW(344));
     {
         s32 a = 13, b = 10;
-        ((void (*)())Engine_MapCopyCellAttributes)(11, 11, 1, 1, a, b);
+        Engine_MapCopyCellAttributes(11, 11, 1, 1, a, b);
     }
     LinkLobby_WriteSlotValue(4);
     Engine_TaskWait(1);

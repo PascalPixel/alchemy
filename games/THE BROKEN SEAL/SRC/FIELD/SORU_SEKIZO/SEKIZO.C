@@ -612,7 +612,7 @@ void FieldScene_RunPrimarySequenceHead(void)
 {
     if (GameFlag_IsSet(GATE_CODE) == 0) {
         Event_Begin();
-        ((void (*)())Object_GetById)(TARGET_ID);
+        Object_GetById(TARGET_ID);
         Actor_SetSpeed(TARGET_ID, 13107, 0x00001999); /* object_id, speed_limit, acceleration */
         Actor_WalkToAndWait(TARGET_ID, 504, 152); /* object_id, x=504, z=152 */
         Event_End();
@@ -896,7 +896,7 @@ void SoruSekizo_RunStatueDropScene(void)
                     Engine_ActorSetSpritePriority(17, 3);
                     Engine_AudioPlayCue(189);
                     Engine_ActorSetDestination(17, 0x120, 178);
-                    ((void (*)())Engine_EventWait)(8);
+                    Engine_EventWait(8);
                     Call3(Engine_ActorSetPosition, 18, 0x1200000, 0xb20000);
                     *(s32 *)((s32)rec8 + 56) = -0x80000000;
                     *(s32 *)((s32)rec8 + 60) = -0x80000000;

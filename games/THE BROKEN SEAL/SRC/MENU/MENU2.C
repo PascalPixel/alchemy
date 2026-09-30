@@ -421,7 +421,7 @@ void Menu_StepLeft(struct StepMenu *state)
     state->status = 1;
     Menu_LoadSelectionNodeResource(state, state->cursor);
     WaitFrames(1);
-    ((void (*)(s32, u32))Menu_OpenSelectionWindow)(state->nodes->id, 0);
+    Menu_OpenSelectionWindow(state->nodes->id, 0);
     WaitFrames(1);
 }
 

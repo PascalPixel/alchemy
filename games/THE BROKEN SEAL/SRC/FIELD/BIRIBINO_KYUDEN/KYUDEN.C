@@ -431,7 +431,7 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
     *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
-    ((void (*)())Engine_GameFlagSet)(0x84b);
+    Engine_GameFlagSet(0x84b);
     if (Engine_GameFlagIsSet(0x109) != 0) {
         Engine_GameFlagClear(0x200);
     }
@@ -663,7 +663,7 @@ void Kyuden_RunKolimaRequest(void)
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetPosition(2, 0, 0);
         Actor_SetPosition(ACTOR_MIA, 0, 0);
-        ((void (*)())Engine_GameFlagSet)(0x85f);
+        Engine_GameFlagSet(0x85f);
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x37e, 0x2f0);
         gEventWork->transition_frames = 16;
@@ -801,7 +801,7 @@ accepted:
     Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
     while (Event_ChooseYesNo(0, 0) != 0) {
         Engine_EventSetMessage((s32)MsgBiribinoComeSaidYoud);
-        ((void (*)())Engine_EventOpenMessage)(0x4001, 0);
+        Engine_EventOpenMessage(0x4001, 0);
     }
     Engine_EventWait(10);
     Call3(Engine_ActorFaceDirection, 3, 0x8000, 0);
@@ -933,7 +933,7 @@ accepted:
     gEventWork->transition_frames = 16;
     Event_CloseScreen();
     Engine_EventWaitForScreen();
-    ((void (*)())Engine_GameFlagSet)(0x321);
+    Engine_GameFlagSet(0x321);
 leave:
     Event_RequestExit(29);
     Engine_EventEnd();
@@ -1287,19 +1287,19 @@ void BiribinoKyuden_RunActorRowScene(void)
     Engine_EventBegin();
     Call4((void (*)())Engine_CameraMoveTo, -1, -1, -1, 0);
     Engine_EventGetViewCenter()->motion_flags = 0;
-    ((void (*)())Engine_CameraMoveTo)(0x2740000, -1, 0x2ec0000, 0);
+    Engine_CameraMoveTo(0x2740000, -1, 0x2ec0000, 0);
     Engine_MapCopyCellAttributes(38, 55, 4, 1, 38, 45);
     Engine_MapCopyCellAttributes(42, 55, 4, 1, 38, 46);
     Object_GetById(0)->facing = 0;
     Call3((void (*)())Engine_ActorSetPosition, 0, 0x2410000, 0x2f80000);
     Object_GetById(19)->facing = 0;
-    ((void (*)())Engine_ActorSetPosition)(19, 0x2500000, 0x2f80000);
+    Engine_ActorSetPosition(19, 0x2500000, 0x2f80000);
     Object_GetById(17)->facing = 0x9000;
     Call3((void (*)())Engine_ActorSetPosition, 17, 0x2960000, 0x2fc0000);
     Call3((void (*)())Engine_ActorSetPosition, 21, 0x2680000, 0x2d80000);
     Call3((void (*)())Engine_ActorSetPosition, 22, 0x2780000, 0x2d80000);
     Call3((void (*)())Engine_ActorSetPosition, 23, 0x2880000, 0x2d80000);
-    ((void (*)())Engine_ActorSetPosition)(24, 0x2980000, 0x2d80000);
+    Engine_ActorSetPosition(24, 0x2980000, 0x2d80000);
     Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(22), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
@@ -1328,11 +1328,11 @@ void BiribinoKyuden_RunActorRowScene(void)
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(19, 1);
     Engine_EventSetMessage((s32)MsgBiribinoLordMccoyOrdered);
-    ((void (*)())Engine_EventShowMessageAndWait)(19, 0, 10);
+    Engine_EventShowMessageAndWait(19, 0, 10);
     Call3((void (*)())Engine_ActorWalkToAndWait, 19, 0x26e, 0x30c);
     Call3((void (*)())Engine_ActorFaceDirection, 19, 0xc000, 10);
     Engine_ActorRunRepeatedMotion(17, 2);
-    ((void (*)())Engine_EventShowMessageAndWait)(17, 0, 10);
+    Engine_EventShowMessageAndWait(17, 0, 10);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_GameFlagClear(0x12f);
     Engine_GameFlagSet(0x202);

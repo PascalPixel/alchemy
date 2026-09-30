@@ -41,8 +41,7 @@ void Clear_UpdateBlend(void);
 
 static __inline__ void RestoreInterrupts(u32 saved)
 {
-    /* FAKEMATCH: keep the final hardware address local to restoration. */
-    do { REG_IME = saved; } while (0);
+    REG_IME = saved;
 }
 
 /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;

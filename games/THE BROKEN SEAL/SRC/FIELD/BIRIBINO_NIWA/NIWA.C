@@ -186,7 +186,7 @@ void BiribinoNiwa_RunGardenEvent(void)
                 Call3(Engine_ActorShowEmote, 12, 0x107, 40);
                 Engine_EventShowMessageAndWait(12, 0, 10);
                 Engine_ActorRunRepeatedMotion(12, 2);
-                ((void (*)())Engine_GameFlagSet)(0x201);
+                Engine_GameFlagSet(0x201);
             }
             Engine_EventSetMessage((s32)MsgBiribinoMasterQuiteCranky);
             Engine_EventShowMessage(12, 0);
@@ -213,7 +213,7 @@ void BiribinoNiwa_RunGardenEvent(void)
         Call3(Engine_ActorFaceDirection, 12, 0x7000, 20);
         Call3(Engine_ActorShowEmote, 11, 0x102, 20);
         Engine_ActorStartRepeatedMotion(11, 1);
-        ((void (*)())Engine_EventShowMessageAndWait)(11, 0, 10);
+        Engine_EventShowMessageAndWait(11, 0, 10);
         Call3(Engine_ActorShowEmote, 12, 0x108, 60);
         Engine_ActorStartRepeatedMotion(12, 1);
         Engine_EventShowMessageAndWait(12, 0, 20);
@@ -245,7 +245,7 @@ void BiribinoNiwa_RunGardenEvent(void)
         /* FAKEMATCH: the do/while keeps this call after the argument setup
          * of the previous one. */
         do {
-            ((void (*)())Engine_GameFlagSet)(0x84a);
+            Engine_GameFlagSet(0x84a);
         } while (0);
     }
     Call3(Engine_ObjectSetTargetAndCallback, 12, 0x10000, (s32)BiribinoNiwa_GuardScript);
@@ -321,10 +321,10 @@ void BiribinoNiwa_ApplyEntryState(void)
     }
     if (Engine_GameFlagIsSet(0x84a) != 0) {
         Call3(Engine_ActorSetPosition, 11, 0x1340000, 0x1070000);
-        ((void (*)())Engine_ActorSetPosition)(12, 0x15a0000, 0x1070000);
+        Engine_ActorSetPosition(12, 0x15a0000, 0x1070000);
         if (Engine_GameFlagIsSet(0x84f) == 0) {
             if (Engine_GameFlagIsSet(0x845) == 0) {
-                ((void (*)())Engine_ActorSetPosition)(11, 0, 0);
+                Engine_ActorSetPosition(11, 0, 0);
                 {
                     u8 *script = BiribinoNiwa_GuardScript;
 
@@ -376,7 +376,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_ActorRunRepeatedMotion(11, 1);
     Engine_EventShowMessageAndWait(11, 0, 10);
     Engine_ActorRunRepeatedMotion(12, 1);
-    Value2(Engine_EventOpenMessage, 12, 0);
+    Engine_EventOpenMessage(12, 0);
     Call3(Engine_ActorFaceDirection, 0, 0xe000, 0);
     while (Engine_EventChooseYesNo(0, 0) != 0) {
         Engine_ActorShowEmote(12, 0x100, 60);
@@ -424,9 +424,9 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_EventWait(40);
     Call3(Engine_ActorWalkTo, 0, 0x148, 242);
     Call3(Engine_ActorWalkToAndWait, 11, 0x148, 242);
-    ((void (*)())Engine_ActorSetPosition)(11, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
     Engine_ActorWaitForMove(0);
-    ((void (*)())Engine_ActorSetPosition)(0, 0, 0);
+    Engine_ActorSetPosition(0, 0, 0);
     *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x201;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

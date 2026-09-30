@@ -602,7 +602,7 @@ void FieldScene_RunScene3b8SequenceA(void)
         Event_Wait(10);
         Engine_EventShowMessage(3, 0);
         Engine_ActorSetAnimationAndWait(1, 3);
-        ((void (*)())Engine_EventWait)(10);
+        Engine_EventWait(10);
         if (Engine_GameFlagIsSet(0x96a) == 0) {
             Engine_EventShowMessage(1, 0);
         } else {
@@ -630,7 +630,7 @@ void FieldScene_RunScene3b8SequenceA(void)
         Engine_EventWait(10);
         Engine_EventShowMessage(1, 0);
         Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-        ((void (*)())Engine_EventWait)(10);
+        Engine_EventWait(10);
         if (Engine_GameFlagIsSet(0x96a) == 0) {
             Engine_EventShowMessage(2, 0);
         } else {

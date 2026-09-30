@@ -533,7 +533,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 record;
     s32 shown;
 
-    ((void (*)())Engine_EventBegin)();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x925) != 0) {
         Event_SetMessage((s32)MsgFuneNowWeHaveProtectShip);
         Event_ShowMessage(21, 0);
@@ -563,7 +563,7 @@ void FieldScene_RunScene3afSequenceA(void)
     s32 record;
     s32 shown;
 
-    ((void (*)())Engine_EventBegin)();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x925) != 0) {
         Event_SetMessage((s32)MsgFuneHaveMakeThemPromiseHelp);
         Event_ShowMessage(24, 0);
@@ -705,7 +705,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Event_ShowMessageAndWait(0x4016, 0, 20);
         Actor_ShowEmote(23, 0x102, 60);
         FieldScene_RunStepThen10(0x4017);
-        ((s32 (*)())FieldScene_CallPairWith10)(22, 0x8000);
+        FieldScene_CallPairWith10(22, 0x8000);
         Actor_SetAnimationAndWait(22, 3);
         Event_ShowMessageAndWait(0x4016, 0, 20);
         Actor_ShowEmote(20, 0x102, 40);
@@ -767,7 +767,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         record = (u8 *)Object_GetById(20);
         *(s32 *)(record + 24) = 0x10000;
         /* Set the fixed-point word at +28 of actor 20's record to 1.0. */
-        record = (u8 *)((s32 (*)())Object_GetById)(20);
+        record = (u8 *)Object_GetById(20);
         *(s32 *)(record + 28) = 0x10000;
         GameFlag_Set(0x920);
         Event_End();
@@ -1112,7 +1112,7 @@ void FieldScene_RunScene3af_0200185c(void)
     *(s32 *)(record + 12) = 0x100000;
     bits = 128;
     {
-        u8 *record = ((s32 (*)())Object_GetById)(22);
+        u8 *record = Object_GetById(22);
         u8 value = record[89];
 
         record[89] = value | bits;
@@ -1702,7 +1702,7 @@ void FuneKanpan_RunJumpScene(void)
     s32 record;
 
     Engine_EventBegin();
-    ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneKanpan_CrewScriptE);
+    Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScriptE);
     Engine_TaskWait(1);
     Engine_CameraFollowActor(25, 1);
     Engine_TaskWait(1);
@@ -1746,7 +1746,7 @@ void FuneKanpan_RunJumpScene(void)
         *((u8 *)Object_GetById(25) + 85) = zero.v;
     }
     Call3((void (*)())Engine_ActorSetSpeed, 25, 0x20000, 0x10000);
-    ((void (*)())Engine_ActorSetDestination)(25, 216, 0x264);
+    Engine_ActorSetDestination(25, 216, 0x264);
     Engine_AudioPlayCue(149);
     Engine_ActorSetSpritePriority(22, 2);
     Engine_ActorSetAnimation(22, 5);
@@ -1758,7 +1758,7 @@ void FuneKanpan_RunJumpScene(void)
     *(s32 *)(record + 108) = (s32)OverlayObject_DecayFields24And28;
     *(s32 *)(record + 68) = 0x8000;
     Call3((void (*)())Engine_ActorSetSpeed, 22, 0x60000, 0x30000);
-    ((void (*)())Engine_ObjectMotionSetPositionAndCommit)(22, 182, 0x26a);
+    Engine_ObjectMotionSetPositionAndCommit(22, 182, 0x26a);
     record = (s32)Object_GetById(22);
     Engine_ActorSetSpriteFlags(record, 0);
     FieldScene_CallPairWith10(0, 0xa000);
@@ -1785,20 +1785,20 @@ void FuneKanpan_RunJumpScene(void)
     Call3((void (*)())Engine_ActorWalkTo, 0, 250, 0x248);
     Call3((void (*)())Engine_ActorWalkTo, 1, 240, 0x258);
     Call3((void (*)())Engine_ActorWalkTo, 2, 254, 0x258);
-    ((void (*)())Engine_ActorWalkToAndWait)(3, 248, 0x268);
+    Engine_ActorWalkToAndWait(3, 248, 0x268);
     Engine_ActorSetAnimation(0, 1);
     Engine_ActorSetAnimation(1, 1);
     Engine_ActorSetAnimation(2, 1);
     Call3((void (*)())Engine_ActorFaceDirection, 0, 0xc000, 0);
     Call3((void (*)())Engine_ActorFaceDirection, 1, 0xc000, 0);
     Call3((void (*)())Engine_ActorFaceDirection, 2, 0xc000, 0);
-    ((void (*)())Engine_ActorFaceDirection)(3, 0xc000, 20);
+    Engine_ActorFaceDirection(3, 0xc000, 20);
     Engine_AudioPlayCue(149);
     Engine_EventWait(40);
     Call2((void (*)())Engine_ActorSetAttachedEffect, 0, 0x102);
     Call2((void (*)())Engine_ActorSetAttachedEffect, 1, 0x102);
     Call2((void (*)())Engine_ActorSetAttachedEffect, 2, 0x102);
-    ((void (*)())Engine_ActorSetAttachedEffect)(3, 0x102);
+    Engine_ActorSetAttachedEffect(3, 0x102);
     Engine_EventWait(60);
     Call3((void (*)())Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3((void (*)())Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
@@ -1819,9 +1819,6 @@ void FuneKanpan_RunJumpScene(void)
 }
 
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-/* FAKEMATCH: calls that cast FieldScene_RunStepThen10 to another return type keep their original register order. */
-/* FAKEMATCH: calls that cast FieldScene_CallPairWith10 to another return type keep their original register order. */
-
 /* Configures actors 20, 21, 22 and 23 (position, pose, and movement/sprite
  * flags) and advances the shared scene phase before the scene runs. */
 void FieldScene_ConfigureLeadActors(void)
@@ -1862,7 +1859,7 @@ void FieldScene_ConfigureLeadActors(void)
     FieldScene_CallPairWith10(0, 0x8000);
     Actor_RunRepeatedMotion(20, 1);
     Event_SetMessage((s32)MsgFuneThankRobinDidGoodAgainst);
-    ((void (*)())FieldScene_RunStepThen10)(20);
+    FieldScene_RunStepThen10(20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(40);
     Actor_FaceDirection(20, 0x5000, 20);

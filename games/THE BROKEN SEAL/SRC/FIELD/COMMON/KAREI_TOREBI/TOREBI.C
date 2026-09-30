@@ -401,7 +401,7 @@ void FieldScene_RunScene3ae_020006c8(void)
         Event_Wait(20);
         Event_SetMessage((s32)MsgKareiThanksMessageParents);
         Event_ShowMessage(11, 0);
-        ((void (*)())Engine_EventEnd)();
+        Engine_EventEnd();
     } else {
         Event_Wait(20);
         Actor_ShowEmote(11, 0x100, 50);
@@ -419,7 +419,7 @@ void FieldScene_RunScene3ae_020006c8(void)
                 GameFlag_Set(0x8a8);
                 goto L_020007be;
             }
-            ((void (*)())Engine_EventWait)(10);
+            Engine_EventWait(10);
             bump_step(1);
             Event_ShowMessage(11, 0);
             Event_Wait(10);
@@ -664,7 +664,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    ((void (*)())Engine_EventWait)(20);
+    Engine_EventWait(20);
     /* Clear the flag byte at +91 of record 8. */
     *(u8 *)(((s32)Object_GetById(8)) + 91) = 0;
     Engine_ActorEnableActionCallback(8, 2);
@@ -722,7 +722,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Event_Wait(10);
     Actor_SetAnimationAndWait(13, 4);
     Event_Wait(20);
-    ((void (*)())Engine_EventShowMessage)(13, 0);
+    Engine_EventShowMessage(13, 0);
     Event_Wait(10);
     Actor_ShowEmote(10, 0x103, 55);
     Actor_SetSpeed(10, 0x20000, 0x10000);
@@ -742,7 +742,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_SetAttachedEffect(13, 0x102);
     Actor_StartRepeatedMotion(13, 2);
     Audio_PlayCue(155);
-    ((void (*)())Engine_EventWait)(10);
+    Engine_EventWait(10);
     Audio_PlayCue(155);
     Event_Wait(10);
     Audio_PlayCue(155);

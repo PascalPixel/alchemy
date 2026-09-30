@@ -767,13 +767,13 @@ s32 StageSetup_BuildAndDispatch(void)
     s32 cnt;
 
     *(s32 *)(((u8 *)gEventWork) + 448) = 256;
-    ((void (*)())Engine_GameFlagSet)(324);
+    Engine_GameFlagSet(324);
     Engine_TaskAddCallback(ColossoLogRollingStage_ShowActorPositionMessage, 3200);
     Call6(Engine_MapCopyCellAttributes, 74, 60, 8, 6, 120, 60);
 
-    Engine_ActorSetSpriteFlags(((u8 * (*)())Object_GetById)(9), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 
-    rec = ((u8 * (*)())Object_GetById)(10);
+    rec = Object_GetById(10);
     Engine_ActorSetSpriteFlags(rec, 0);
     rec[85] = 0;
     *(s32 *)(rec + 12) = 0x200000;
@@ -985,14 +985,14 @@ s32 StageSetup_BuildAndDispatch(void)
     case 4:
         FieldScene_RunMultiPhaseActorSequence(1);
         Engine_EventRequestExit(4);
-        ((void (*)())Engine_GameFlagSet)(2384);
-        ((void (*)())Engine_GameFlagSet)(2385);
+        Engine_GameFlagSet(2384);
+        Engine_GameFlagSet(2385);
         break;
 
     case 5:
         FieldScene_RunMultiPhaseActorSequence(-1);
         Engine_EventRequestExit(5);
-        ((void (*)())Engine_GameFlagSet)(2384);
+        Engine_GameFlagSet(2384);
         break;
     }
     return 0;
@@ -1176,7 +1176,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Object_LinkObjectAndSetCallback(1, 2);
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-    ((void (*)())Engine_EventWait)(10);
+    Engine_EventWait(10);
     Object_LinkObjectAndSetCallback(2, 3);
     Object_LinkObjectAndSetCallback(1, 3);
     Engine_EventWait(20);
@@ -1294,11 +1294,11 @@ void Korosseo_RunGreetScene(s32 a0)
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
-    ((void (*)())Engine_ActorSetPosition)(0, (p9 << 16), ((p10 << 16) - 0x300000));
-    ((s32 (*)())Engine_ActorSetPosition)(1, (p9 << 16) - 0x100000, (p10 << 16) - 0x280000);
-    ((s32 (*)())Engine_ActorSetPosition)(2, (p9 << 16) + 0x100000, (p10 << 16) - 0x280000);
-    ((s32 (*)())Engine_ActorSetPosition)(3, (p9 << 16), ((p10 << 16) - 0x200000));
-    ((s32 (*)())Engine_ActorSetPosition)(a0, (p9 << 16), ((p10 << 16) - 0x500000));
+    Engine_ActorSetPosition(0, (p9 << 16), ((p10 << 16) - 0x300000));
+    Engine_ActorSetPosition(1, (p9 << 16) - 0x100000, (p10 << 16) - 0x280000);
+    Engine_ActorSetPosition(2, (p9 << 16) + 0x100000, (p10 << 16) - 0x280000);
+    Engine_ActorSetPosition(3, (p9 << 16), ((p10 << 16) - 0x200000));
+    Engine_ActorSetPosition(a0, (p9 << 16), ((p10 << 16) - 0x500000));
     /* FAKEMATCH: the facing is built from a parked local, which keeps its
      * constant in the register the reference holds it in for both uses. */
     v6 = 192;
@@ -1337,9 +1337,9 @@ void Korosseo_RunGreetScene(s32 a0)
         Engine_ActorSetDestination(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 64));
-    ((void (*)())Engine_ActorSetPosition)(1, 0, 0);
-    ((void (*)())Engine_ActorSetPosition)(2, 0, 0);
-    ((void (*)())Engine_ActorSetPosition)(3, 0, 0);
+    Engine_ActorSetPosition(1, 0, 0);
+    Engine_ActorSetPosition(2, 0, 0);
+    Engine_ActorSetPosition(3, 0, 0);
     Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 16));
     Engine_ActorWalkToAndWait(a0, p9, p10);
     Engine_ActorFaceDirection(a0, (v6 << 8), 10);
@@ -1397,7 +1397,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         *(s32 *)(p25 + 48) = 52428;
         Object_SetPosition((s32)p25, *(s32 *)(p25 + 8), 262144, *(s32 *)(p25 + 16));
         Object_CommitPosition(p25);
-        ((void (*)())Engine_EventWait)(15);
+        Engine_EventWait(15);
         Event_ShowMessage(scene, 0);
         ColossoLogRollingStage_StartPaletteTask(104, 68, 0);
         Event_Wait(30);

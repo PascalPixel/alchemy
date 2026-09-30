@@ -788,7 +788,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         Engine_GameFlagClear(0x242);
     }
     if (Engine_GameFlagIsSet(0x834) != 0) {
-        ((void (*)())Effect_SoundAndFlash)();
+        Effect_SoundAndFlash();
         BattleFx_StartTwelveFrameBlend();
         Engine_EventBegin();
         Engine_ActorSetPosition(12, 0, 0);

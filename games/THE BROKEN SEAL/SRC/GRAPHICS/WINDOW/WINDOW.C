@@ -239,7 +239,7 @@ void UiWork_Finalize(struct UiWindowWork *work, s32 release)
     work->previous_height = work->height;
 
     if (release != 0) {
-        ((void (*)(u16, u16, u16, u16))UiWindow_EraseBorderRect)(work->x, work->y, work->width, work->height);
+        UiWindow_EraseBorderRect(work->x, work->y, work->width, work->height);
         work->unknown00 = zero;
         work->unknown04 = zero;
         work->width = zero;

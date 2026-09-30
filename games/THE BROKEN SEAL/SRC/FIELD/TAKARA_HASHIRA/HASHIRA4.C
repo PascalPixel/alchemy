@@ -358,7 +358,7 @@ void TakaraHashira_JitterBackgroundScroll(void)
     volatile u32 *reg = (volatile u32 *)0x04000014;
 
     if (line == 227 || line <= 46) {
-        if ((u32)(Engine_RandomNext() * 100) >> 16 < (*(u32 *)&TakaraHashira_ShakeChance)) {
+        if ((u32)(Engine_RandomNext() * 100) >> 16 < TakaraHashira_ShakeChance) {
             src = ((u32 *)TakaraHashira_ShakenScroll);
         }
     }

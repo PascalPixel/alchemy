@@ -4,7 +4,6 @@
 #include "STAGED_ACTOR.H"
 
 
-/* FAKEMATCH: calls that cast SceneActor_FindSlotAtTilePosition to another return type keep their original register order. */
 s32 *SceneActor_FindSlotAtTilePosition(s32 *arg0);
 
 enum CoordinatorMessage {

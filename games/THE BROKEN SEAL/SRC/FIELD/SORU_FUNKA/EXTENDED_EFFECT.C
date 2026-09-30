@@ -93,8 +93,8 @@ void Scene_SaturosTakesHostages(void)
     FieldScene_RunVariantStep(1, 20, 20);
     FieldScene_RunVariantStep(0, 20, 40);
     Event_SetMessage((s32)MsgSoruJasmineWhatHappened);
-    ((void (*)())Engine_EventShowMessageAndWait)(11, 0, 20);
-    ((void (*)())Engine_EventShowMessage)(10, 0);
+    Engine_EventShowMessageAndWait(11, 0, 20);
+    Engine_EventShowMessage(10, 0);
     FieldScene_RunVariantStep(1, 20, 0);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
     FieldScene_RunVariantStep(0, 20, 0);

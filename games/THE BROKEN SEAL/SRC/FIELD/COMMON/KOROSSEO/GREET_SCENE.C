@@ -40,7 +40,7 @@ void Korosseo_RunGreetScene(s32 a0)
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
-    ((void (*)())Engine_ActorSetPosition)(0, (p9 << 16), ((p10 << 16) - 0x300000));
+    Engine_ActorSetPosition(0, (p9 << 16), ((p10 << 16) - 0x300000));
     Engine_ActorSetPosition(1, (p9 << 16) - 0x100000, (p10 << 16) - 0x280000);
     Engine_ActorSetPosition(2, (p9 << 16) + 0x100000, (p10 << 16) - 0x280000);
     Engine_ActorSetPosition(3, (p9 << 16), ((p10 << 16) - 0x200000));

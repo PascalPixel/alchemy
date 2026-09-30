@@ -332,7 +332,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.0802e89c)
         "*/recon/tla/raw/08030310.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.08030320)
-        "*/recon/tla/raw/08038000.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/UITEXT.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08038090.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080380a8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080380c8.o"(.text .rodata .data .padding)

@@ -96,6 +96,9 @@ Func_08038f40:
 	pop	{pc}
 	.2byte 0x0258
 	.2byte 0x0300
+	.global Func_08039004
+	.thumb_func
+Func_08039004:
 	push	{r5, r6, lr}
 	mov	r6, r9
 	mov	r5, r8

@@ -699,13 +699,19 @@ Func_0803c40c:
 	movs	r0, r0
 	.2byte 0x1100
 	.2byte 0x0300
+	.global Func_0803c9ac
+	.thumb_func
+Func_0803c9ac:
 	push	{lr}
 	ldr	r2, [pc, #8]
-	bl	.L_0803ca20
+	bl	Func_0803ca20
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x7fff
+	.global Func_0803c9bc
+	.thumb_func
+Func_0803c9bc:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -759,6 +765,9 @@ Func_0803c40c:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0x0000
+	.global Func_0803ca20
+	.thumb_func
+Func_0803ca20:
 .L_0803ca20:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

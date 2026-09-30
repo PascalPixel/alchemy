@@ -336,7 +336,7 @@ Func_081185c4:
 	movs	r1, #18
 	adds	r0, #7
 	str	r4, [sp, #0]
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r7, #0
 	adds	r2, r0, #0
 	mov	r0, r8
@@ -344,7 +344,7 @@ Func_081185c4:
 	ldr	r0, [r6, r5]
 	movs	r1, #18
 	adds	r0, #7
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r7, #0
 	adds	r2, r0, #0
 	mov	r0, r8

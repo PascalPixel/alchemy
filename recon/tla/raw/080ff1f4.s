@@ -297,25 +297,25 @@ Func_080ff1f4:
 	movs	r1, #1
 	movs	r2, #15
 	str	r5, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	adds	r0, r7, #0
 	ldr	r3, [sp, #12]
 	movs	r1, #2
 	movs	r2, #19
 	str	r5, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	adds	r0, r7, #0
 	movs	r1, #3
 	movs	r2, #23
 	ldr	r3, [sp, #12]
 	str	r5, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	adds	r0, r7, #0
 	movs	r1, #4
 	movs	r2, #27
 	ldr	r3, [sp, #12]
 	str	r5, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 .L_080ff476:
 	ldr	r3, [sp, #8]
 	cmp	r3, #0
@@ -743,7 +743,7 @@ Func_080ff1f4:
 	movs	r1, #5
 	mov	sl, r0
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #5
 	mov	r8, r0
 	adds	r0, r7, #0
@@ -751,7 +751,7 @@ Func_080ff1f4:
 	movs	r1, #5
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	beq.n	.L_080ff82c
 	adds	r5, #1

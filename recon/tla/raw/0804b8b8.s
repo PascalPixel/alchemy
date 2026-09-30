@@ -116,7 +116,7 @@ Func_0804b8b8:
 	mov	r1, fp
 	add	r0, fp
 	subs	r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #20]
 	movs	r0, #112
 	bl	Audio_PlayCue
@@ -135,7 +135,7 @@ Func_0804b8b8:
 	ldr	r0, [sp, #20]
 	mov	r1, fp
 	adds	r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #20]
 	movs	r0, #112
 	bl	Audio_PlayCue

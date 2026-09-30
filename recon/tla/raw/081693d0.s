@@ -1198,7 +1198,7 @@ Func_081693d0:
 	blt.n	.L_08169d98
 	movs	r1, #3
 	mov	r0, sl
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #216]
 	adds	r0, #2
 	lsls	r4, r0, #1
@@ -1500,7 +1500,7 @@ Func_081693d0:
 	mov	r1, r8
 	lsls	r0, r1, #4
 	movs	r1, #104
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r6, #104
 	ldr	r3, [r7, #4]
 	movs	r4, #17

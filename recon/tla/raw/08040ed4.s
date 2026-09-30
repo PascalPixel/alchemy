@@ -268,7 +268,7 @@ Func_08040ed4:
 	adds	r0, r5, #0
 	movs	r1, #9
 	adds	r0, #9
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, r8
 	adds	r5, r0, #0
 	movs	r0, #12

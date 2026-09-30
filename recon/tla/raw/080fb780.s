@@ -77,7 +77,7 @@ Func_080fb780:
 	adds	r0, r6, #5
 	movs	r1, #5
 	mov	sl, r3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, r9
 	adds	r6, r0, #0
 	adds	r0, r7, #0
@@ -348,7 +348,7 @@ Func_080fb780:
 	mov	r0, r8
 	movs	r2, #0
 	str	r4, [sp, #4]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r4, [sp, #4]
 	mov	r1, sl
 	ldrb	r0, [r1, r4]

@@ -1297,7 +1297,7 @@ Func_080e68c8:
 	movs	r1, #100
 	str	r5, [r6, #12]
 	str	r7, [r6, #20]
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #1
 	negs	r3, r3
 	add	sl, r3
@@ -1702,7 +1702,7 @@ Func_080e68c8:
 	add	fp, r1
 	mov	r0, fp
 	movs	r1, #100
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r2, #1
 	negs	r2, r2
 	add	sl, r2

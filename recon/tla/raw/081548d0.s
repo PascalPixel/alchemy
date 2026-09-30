@@ -128,7 +128,7 @@ Func_081548d0:
 	str	r5, [r6, #16]
 	mov	r0, sl
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldrb	r3, [r7, r0]
 	cmp	r3, r5
 	bge.n	.L_081549de
@@ -256,7 +256,7 @@ Func_081548d0:
 	ble.n	0x08154b6c
 	movs	r1, #3
 	mov	r0, sl
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r1, fp
 	mov	r2, r9
 	subs	r3, r1, r2
@@ -758,7 +758,7 @@ Func_081548d0:
 	asrs	r0, r0, #2
 	adds	r0, r0, r6
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r3, r5, #0
 	adds	r3, #32
 	cmp	r7, r3

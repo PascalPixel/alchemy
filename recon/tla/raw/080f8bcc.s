@@ -62,7 +62,7 @@ Func_080f8bcc:
 	strh	r0, [r5, #8]
 	ldr	r1, [sp, #20]
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #4
 	add	r0, r8
 	strh	r0, [r5, #6]
@@ -91,7 +91,7 @@ Func_080f8bcc:
 	strh	r0, [r5, #8]
 	ldr	r1, [sp, #20]
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsls	r3, r3, #3

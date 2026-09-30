@@ -1725,7 +1725,7 @@ Func_08156140:
 .L_08156e90:
 	movs	r1, #6
 	ldr	r0, [sp, #128]
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #1
 	ldr	r2, [sp, #144]
 	adds	r1, r1, r0
@@ -1781,7 +1781,7 @@ Func_08156140:
 	bne.n	.L_08156f26
 	movs	r1, #6
 	ldr	r0, [sp, #132]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r7, [sp, #144]
 	adds	r1, r0, #0
 	lsls	r1, r1, #7
@@ -1869,7 +1869,7 @@ Func_08156140:
 	ldr	r7, [sp, #64]
 	adds	r0, r7, r1
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r3, r0, #1
 	adds	r5, r3, r0
 	ldr	r0, [sp, #128]
@@ -1879,7 +1879,7 @@ Func_08156140:
 .L_08156fb8:
 	movs	r1, #3
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #104]
 	adds	r0, r5, r0
 	lsls	r3, r0, #2

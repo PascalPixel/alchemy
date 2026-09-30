@@ -104,7 +104,7 @@ Func_080ff850:
 	mov	r3, r9
 	str	r6, [sp, #0]
 	mov	sl, r0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	movs	r3, #243
 	lsls	r3, r3, #8
 	adds	r5, r5, r3
@@ -114,7 +114,7 @@ Func_080ff850:
 	mov	r3, r9
 	adds	r2, #1
 	str	r6, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	movs	r3, #2
 	add	r8, r3
 	mov	r0, sl
@@ -122,7 +122,7 @@ Func_080ff850:
 	mov	r2, r8
 	mov	r3, r9
 	str	r6, [sp, #0]
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	add	sp, #4
 	pop	{r3, r5, r6}
 	mov	r8, r3
@@ -290,7 +290,7 @@ Func_080ff850:
 	adds	r0, r7, #0
 	movs	r2, #24
 	adds	r3, r6, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	mov	r2, r9
 	movs	r3, #14
 	str	r2, [sp, #0]
@@ -335,7 +335,7 @@ Func_080ff850:
 	adds	r0, r7, #0
 	movs	r2, #24
 	adds	r3, r6, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	mov	r3, r9
 	movs	r1, #15
 	str	r3, [sp, #0]
@@ -775,7 +775,7 @@ Func_080ff850:
 	adds	r3, r7, r4
 	ldrb	r1, [r3, #0]
 	adds	r0, r0, r1
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #129
 	lsls	r2, r0, #1
 	lsls	r3, r3, #2
@@ -908,7 +908,7 @@ Func_080ff850:
 	adds	r0, r6, #0
 	movs	r2, #27
 	adds	r3, r5, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	mov	r2, fp
 	movs	r3, #14
 	b.n	.L_080fffde
@@ -939,7 +939,7 @@ Func_080ff850:
 	adds	r0, r6, #0
 	movs	r2, #27
 	adds	r3, r5, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	mov	r2, fp
 	movs	r3, #15
 .L_080fffde:
@@ -1500,7 +1500,7 @@ Func_080ff850:
 	adds	r3, r7, r2
 	ldrb	r1, [r3, #0]
 	adds	r0, r0, r1
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #129
 	lsls	r2, r0, #1
 	lsls	r3, r3, #2
@@ -1741,7 +1741,7 @@ Func_080ff850:
 	strh	r0, [r6, #8]
 	ldr	r1, [sp, #20]
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #4
 	add	r0, r8
 	strh	r0, [r6, #6]

@@ -360,7 +360,7 @@ Func_0813c5f4:
 	lsls	r5, r5, #3
 	asrs	r0, r0, #1
 	adds	r5, r5, r2
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r2, r0, #2
 	adds	r2, r2, r0
 	lsls	r3, r2, #4

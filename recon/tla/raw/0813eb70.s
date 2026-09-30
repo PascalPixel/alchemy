@@ -1511,7 +1511,7 @@ Func_0813eb70:
 	movs	r1, #3
 	bl	Math_Div
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #10
 	add	r0, fp
 	movs	r7, #0

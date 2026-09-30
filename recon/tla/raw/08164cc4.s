@@ -1816,7 +1816,7 @@ Func_08164cc4:
 	strb	r3, [r5, #26]
 	movs	r1, #3
 	adds	r0, r7, #0
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r0, #0
 	adds	r0, r5, #0
 	bl	Func_08020030

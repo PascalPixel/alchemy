@@ -1794,7 +1794,7 @@ Func_081a6030:
 	strh	r0, [r6, #4]
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #16
 	cmp	r0, #0
 	bne.n	.L_081a6e38

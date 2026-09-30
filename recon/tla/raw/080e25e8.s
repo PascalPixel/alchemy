@@ -810,7 +810,7 @@ Func_080e25e8:
 	bhi.n	.L_080e2ce2
 	movs	r1, #6
 	asrs	r0, r0, #3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r3, r9
 	ldrh	r1, [r3, #0]
 	ldr	r3, [pc, #56]

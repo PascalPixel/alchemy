@@ -86,7 +86,7 @@ Func_080ca6e8:
 	movs	r1, #20
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #19
 	bne.n	.L_080ca7b6
 	movs	r0, #200

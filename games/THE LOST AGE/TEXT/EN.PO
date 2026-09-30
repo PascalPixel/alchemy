@@ -12739,7 +12739,7 @@ msgctxt "MsgCritical"
 msgid "03182"
 msgstr "A critical hit!"
 
-msgctxt "message"
+msgctxt "MsgBitterBlow"
 msgid "03183"
 msgstr "A bitter blow!"
 
@@ -12823,7 +12823,7 @@ msgctxt "message"
 msgid "03203"
 msgstr "{protagonist_name}'s party has been defeated!"
 
-msgctxt "message"
+msgctxt "MsgDowned"
 msgid "03204"
 msgstr "{argument_actor_name:1} has been downed!"
 

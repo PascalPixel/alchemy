@@ -12739,7 +12739,7 @@ msgctxt "MsgCritical"
 msgid "03182"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgBitterBlow"
 msgid "03183"
 msgstr "?"
 
@@ -12823,7 +12823,7 @@ msgctxt "message"
 msgid "03203"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDowned"
 msgid "03204"
 msgstr "?"
 

@@ -275,6 +275,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_3.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_5.o"(.text)
         "*/recon/tla/raw/08024e3c.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/TOGGLE_FLAG.o"(.text)
         "*/recon/tla/raw/08024ea8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08024ec8.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/SKIP_COMMAND.o"(.text)

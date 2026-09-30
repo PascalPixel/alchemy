@@ -1,7 +1,36 @@
-#include "DMA.H"
-#include "RESOURCE.H"
-#include "RESOURCE_IDS.H"
 #include "TYPES.H"
+#include "SCENE.H"
+#include "GLOBAL_CELLS.H"
+#include "RESOURCE.H"
+#include "DMA.H"
+#include "RESOURCE_IDS.H"
+
+extern u8 RomBytes_080308a0[];
+
+/* ui/icon/build_ability_icon_tiles.c */
+typedef struct {
+    u8 pad0[0x400];
+    u8 f400;
+    u8 pad401[0x600 - 0x401];
+    s16 f600;
+    s16 f602;
+    s32 f604;
+} FontTransfer;
+
+extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
+extern s32 VramBlock_LoadCached(s32 index, s32 size, u8 *destination);
+extern s32 RomBytes_08029a10[];
+extern s32 UiIcon_PsynergyIconPointers[];
+
+struct State_0801a4c0 {
+    u8 filler0[0x600];
+    u16 first;
+    u16 second;
+    u32 value;
+};
+
+extern struct State_0801a4c0 *gGlyphWork;
+extern u32 UiIcon_MiscIconPointers[];
 
 typedef struct {
     u8 input[0x400];
@@ -11,10 +40,7 @@ typedef struct {
     u8 *encoded;
 } GlyphTransfer;
 
-GlyphTransfer *Runtime_AllocateHeapBlock(s32 kind, s32 size);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Runtime_ReleaseHeapBlock(s32 kind);
-
 extern const u8 Tile_Decompress4bpp[];
 extern const u8 Tile_ExpandMasked[];
 extern const u8 Tile_ExpandOpaque[];
@@ -88,7 +114,6 @@ struct GlyphWork {
 extern const u8 Data_080346f8[];
 struct GlyphWork *Runtime_AllocateBlock(s32 kind, s32 size);
 s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 
 static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 {
@@ -97,6 +122,101 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 }
 
 void UiGlyph_DecodeWithHeapRoutines(u8 *glyph, s32 outlined);
+
+extern u8 Data_03001e98[];
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+
+struct State_0801a7c0 {
+    u8 filler0[0x354];
+    u16 first[16];
+    u16 second[16];
+    u16 cnt;
+};
+
+extern struct State_0801a7c0 *volatile gResQueueWork;
+
+struct SelectionNode {
+    struct SelectionNode *prev;
+    struct SelectionNode *next;
+    s16 base;
+    u16 kind;
+    u8 unknown_0c[4];
+    u16 x;
+    u16 y;
+    u16 unknown_14;
+    u16 unknown_16;
+    u16 draw_x;
+    u16 draw_y;
+    u8 unknown_1c[0x34 - 0x1c];
+};
+
+struct SelectionScreen {
+    u8 unknown_000[0x68];
+    struct SelectionNode nodes[7];
+    struct SelectionNode others[5];
+    u8 unknown_2d8[0x348 - 0x2d8];
+    struct SelectionNode *head;
+    u8 unknown_34c[0x354 - 0x34c];
+    u16 kinds[16];
+    u16 bases[16];
+    u16 count;
+    u16 x;
+    u16 y;
+    u16 unknown_39a;
+    u16 first;
+    u8 unknown_39e[0x3b8 - 0x39e];
+    u16 f3b8;
+};
+
+struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
+void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
+void Menu_LoadSelectedResource(void);
+
+void UiGlyph_DecodeWithHeapRoutines(u8 *glyph, s32 outlined);
+
+/* ui/icon/build_ability_icon_tiles.c */
+/* ui/icon/icon_build_ability_icon_tiles.c */
+void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
+                   s32 *dst, s32 reuse)
+{
+    FontTransfer *work;
+    s32 slot;
+
+    work = Runtime_AllocateHeapBlock(0x11, 0x608);
+    slot = 0;
+
+    if (glyph >= Ui_CountSecondTableEntries())
+        glyph = 0;
+
+    if (with_base != 0) {
+        work->f604 = RomBytes_08029a10[2];
+        work->f600 = 2;
+        work->f602 = 2;
+        UiGlyph_DecodeWithHeapRoutines(work, 0);
+        slot = 1;
+    }
+
+    work->f604 = UiIcon_PsynergyIconPointers[glyph];
+    work->f600 = 2;
+    work->f602 = 2;
+    UiGlyph_DecodeWithHeapRoutines(work, slot);
+
+    if (reuse == 0)
+        *src = Resource_FindFreeEntry();
+
+    *dst = VramBlock_LoadCached(*src, 0x80, &work->f400);
+    Runtime_ReleaseHeapBlock(0x11);
+}
+
+void Ui_PrepareTransferFromTableEntry(u32 index)
+{
+    struct State_0801a4c0 *state = gGlyphWork;
+
+    state->value = UiIcon_MiscIconPointers[index];
+    state->first = 2;
+    state->second = 2;
+    UiGlyph_DecodeWithHeapRoutines(state, 0);
+}
 
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse)
 {
@@ -217,4 +337,91 @@ void UiGlyph_ResetWorkState(void)
     visual->flags07_6 = 1;
     visual->flags05_6 = 0;
     visual->flags09_2 = 0;
+}
+
+void Resource_ClearOwnerListAndCounters(void)
+{
+    void *state;
+
+    state = *(void **)((u32)&Data_03001e98);
+    FIELD_AT_OFFSET(state, s32 *, 0x348) = 0;
+    FIELD_AT_OFFSET(state, s16 *, 0x39A) = 0;
+    if (0x80 & FIELD_AT_OFFSET(state, u16 *, 0x39E)) {
+        FIELD_AT_OFFSET(state, s16 *, 0x39C) = 0;
+        FIELD_AT_OFFSET(state, u16 *, 0x39E) = 0U;
+    }
+    FIELD_AT_OFFSET(state, s16 *, 0x3A0) = 0;
+    FIELD_AT_OFFSET(state, s16 *, 0x394) = 0;
+}
+
+void Resource_PushPendingPair(u32 first, u32 second)
+{
+    struct State_0801a7c0 *state = gResQueueWork;
+    u16 cnt = state->cnt;
+
+    if (cnt != 16) {
+        state->first[cnt] = first;
+        state->second[cnt] = second;
+        state->cnt++;
+    }
+}
+
+/* Link up to five of the selection screen's options into its node list,
+   then place the nodes around the screen's centred x. */
+void MenuSelection_BuildEntries(void)
+{
+    struct SelectionScreen *screen = gResQueueWork;
+    u32 count = screen->count;
+    u32 index = screen->first;
+    struct SelectionNode *prev = 0;
+    struct SelectionNode *node;
+    s32 cnt = 0;
+
+    while (index < count) {
+        s32 base = screen->bases[index];
+        u32 kind = screen->kinds[index];
+
+        node = Resource_FindFreeTransferEntry(0);
+        if (node == 0)
+            break;
+        MenuSelection_SetupEntry(kind, base, node, 0);
+        if (screen->head == 0) {
+            screen->head = node;
+            node->prev = 0;
+        } else {
+            prev->next = node;
+            node->prev = prev;
+        }
+        node->next = 0;
+        cnt++;
+        prev = node;
+        if (cnt == 5)
+            break;
+        index++;
+    }
+
+    screen->x = 100 - cnt * 8;
+    screen->y = 140;
+    for (prev = screen->head, cnt = 0; prev != 0; prev = prev->next) {
+        s32 x = screen->x + cnt;
+        s32 y;
+
+        prev->x = x;
+        y = screen->y;
+        prev->y = y;
+        prev->draw_x = x;
+        prev->draw_y = y;
+        if (prev->kind == 6 && screen->f3b8 == 0) {
+            prev->y = 6;
+            prev->draw_y = 6;
+        }
+        prev->unknown_14 = 0;
+        prev->unknown_16 = 0;
+        cnt += 16;
+    }
+    Menu_LoadSelectedResource();
+}
+
+void UiWork_ReservedNoOp(void)
+{
 }

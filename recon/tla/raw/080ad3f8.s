@@ -1651,6 +1651,9 @@ Func_080addf0:
 	.4byte 0x02001000
 	.2byte 0x1f2c
 	.2byte 0x080b
+	.global Func_080ae0dc
+	.thumb_func
+Func_080ae0dc:
 	ldr	r3, [pc, #12]
 	movs	r2, #133
 	lsls	r2, r2, #2

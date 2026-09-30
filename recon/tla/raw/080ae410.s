@@ -218,7 +218,7 @@ Func_080ae410:
 	blt.n	.L_080ae530
 	bl	Func_080b1004
 	movs	r0, #1
-	bl	0x080ae16c
+	bl	Func_080ae16c
 	ldr	r2, [sp, #4]
 	movs	r0, #1
 	ands	r0, r2
@@ -357,6 +357,9 @@ Func_080ae410:
 	bl	Inventory_Add
 .L_080ae6e2:
 	pop	{r5, r6, pc}
+	.global Func_080ae6e4
+	.thumb_func
+Func_080ae6e4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -418,7 +421,7 @@ Func_080ae410:
 	cmp	r2, #7
 	ble.n	.L_080ae758
 	movs	r0, #1
-	bl	0x080ae16c
+	bl	Func_080ae16c
 	movs	r0, #34
 	bl	GameFlag_SetBitFar
 	add	r3, sp, #8
@@ -512,5 +515,8 @@ Func_080ae410:
 	.4byte 0x02001000
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ae830
+	.thumb_func
+Func_080ae830:
 	bx	lr
 	.2byte 0x0000

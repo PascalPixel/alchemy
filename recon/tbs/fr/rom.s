@@ -302,8 +302,8 @@ UiWindow_ClearInteriorTiles:
 	.thumb_func
 UiWork_StepChannelScript:
 	.incbin "baserom.gba", 0x000158d0, 0x0000060c
-	.section .rom.00016e04, "ax"
-	.incbin "baserom.gba", 0x00016e04, 0x0000015c
+	.section .rom.00016f5e, "ax"
+	.incbin "baserom.gba", 0x00016f5e, 0x00000002
 	.section .rom.00016f60, "ax"
 	.global UiText_BuildRenderEntries
 	.type UiText_BuildRenderEntries, %function
@@ -532,7 +532,10 @@ RenderResource_PairSourceTable:
 UiText_SecondGlyphs:
 	.incbin "baserom.gba", 0x00030ecc, 0x00000400
 	.section .rom.00032ecc, "ax"
-	.incbin "baserom.gba", 0x00032ecc, 0x000000ec
+	.incbin "baserom.gba", 0x00032ecc, 0x0000002c
+	.global Data_08033e40
+Data_08033e40:
+	.incbin "baserom.gba", 0x00032ef8, 0x000000c0
 	.global Menu_CursorLeftObjectTiles
 Menu_CursorLeftObjectTiles:
 	.incbin "baserom.gba", 0x00032fb8, 0x00000400

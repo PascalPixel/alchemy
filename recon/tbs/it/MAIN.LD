@@ -291,7 +291,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_GLYPH_TILE_AT_WORK_OFFSET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_WIDE_STRING_IN_WINDOW.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_NUMBER.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00017e04)
+    "*/recon/tbs/it/rom.o"(.rom.00017f42)
     "*/recon/tbs/it/rom.o"(.rom.00017f44)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/FIT_ON_SCREEN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RESOURCE_MEASURE.o"(.text)

@@ -1,28 +1,6 @@
 .syntax unified
 	.thumb
-	.global Link_CreateCountdownLabelWindow
-	.thumb_func
-Link_CreateCountdownLabelWindow:
-	push	{r5, lr}
-	sub	sp, #4
-	movs	r3, #6
-	str	r3, [sp, #0]
-	movs	r1, #0
-	movs	r2, #6
-	movs	r3, #4
-	movs	r0, #0
-	bl	0x08039260
-	adds	r5, r0, #0
-	adds	r1, r5, #0
-	ldr	r0, [pc, #12]
-	movs	r2, #0
-	movs	r3, #0
-	bl	UiText_DrawStringInWindow
-	adds	r0, r5, #0
-	add	sp, #4
-	pop	{r5, pc}
-	.2byte 0xf7b0
-	.2byte 0x0805
+	.balign 4
 .L_080455dc:
 	push	{r5, r6, lr}
 	mov	r6, r8

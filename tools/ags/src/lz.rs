@@ -145,6 +145,17 @@ impl<'a> Matcher<'a> {
     }
 }
 
+// DRAFT (end of stream, open): ☀️ Title_IntroGraphicsC (⚓️ Resource_Data017),
+// 85,440 decoded bytes, differs from Camelot only in lazy deferrals at
+// 85224, 85239, 85240 and 85264, inside the final 272-byte read-ahead.
+// Camelot defers where `alt + 1 >= count + fol` says not to (fol would need
+// to be at most 4, 2, 4 and 1 instead of 5, 6, 5 and 2), and defers again
+// at 85240 straight after a deferral. It does not defer at 85247. Rules keyed
+// on distance from the end (fol forced to 0 or 1, lazy always on, fol
+// history cut to the last K bytes) and hiding copy interiors all fail or
+// break the lighthouse picture, which matches today. The likeliest cause is
+// stale ring bytes past the end that the matcher still compares. The
+// TypeScript port used to test this is tools/ags/drafts/palette_lz_model.ts.
 /// Compress `decoded` on one ring with nearest-longest matches and one-byte
 /// lazy evaluation. The encoder defers a copy to a literal when the copy at
 /// the next byte (longer than two bytes) covers at least as far as the copy

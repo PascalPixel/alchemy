@@ -74,7 +74,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
     Runtime_ApplyValueToWork7818();
     *(s32 *)(display + 12) = 1;
     WaitFrames(1);
-    *(volatile u16 *)0x04000050 = 0;
+    REG_BLDCNT = 0;
     q = &gIoWriteQueue;
     ime = &REG_IME;
     QUEUE_DISPLAY_CONTROL(0x7741);
@@ -86,26 +86,26 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
     Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 0xc80);
     QUEUE_DISPLAY_CONTROL(0x7341);
     WaitFrames(1);
-    *(volatile u16 *)0x0400000c = bg_control | 0x784;
+    REG_BG2CNT = bg_control | 0x784;
     QUEUE_DISPLAY_CONTROL(0x7341);
     Func_080b5028(0, 0, 0, 100);
     *(s32 *)(display + 12) = 0;
     WaitFrames(1);
 
-    *(volatile u16 *)0x04000050 = 0x3f44;
-    *(volatile u16 *)0x04000052 = 0x100e;
-    *(volatile u32 *)0x04000028 = 0;
-    *(volatile s32 *)0x0400002c = -0x1000;
-    *(volatile u16 *)0x04000020 = 0x80;
-    *(volatile u16 *)0x04000022 = 0;
-    *(volatile u16 *)0x04000024 = 0;
-    *(volatile u16 *)0x04000026 = 0x100;
-    *(volatile u16 *)0x04000040 = 0xf0;
-    *(volatile u16 *)0x04000044 = 0x1088;
-    *(volatile u16 *)0x04000042 = 0xf0;
-    *(volatile u16 *)0x04000046 = 0x1088;
-    *(volatile u16 *)0x04000048 = 0x3537;
-    *(volatile u16 *)0x0400004a = 0x3f21;
+    REG_BLDCNT = 0x3f44;
+    REG_BLDALPHA = 0x100e;
+    REG_BG2X = 0;
+    REG_BG2Y = -0x1000;
+    REG_BG2PA = 0x80;
+    REG_BG2PB = 0;
+    REG_BG2PC = 0;
+    REG_BG2PD = 0x100;
+    REG_WIN0H = 0xf0;
+    REG_WIN0V = 0x1088;
+    REG_WIN1H = 0xf0;
+    REG_WIN1V = 0x1088;
+    REG_WININ = 0x3537;
+    REG_WINOUT = 0x3f21;
     QUEUE_DISPLAY_CONTROL(0x7741);
 
     offset = 0;
@@ -116,7 +116,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 
             tile = row * 16 + col * 2;
             pair = ((tile + 1) << 8) | tile;
-            *(volatile s16 *)(0x06003800 + offset) = pair;
+            *(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
         }
     }
 

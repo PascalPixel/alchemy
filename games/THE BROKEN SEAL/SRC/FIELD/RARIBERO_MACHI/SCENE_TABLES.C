@@ -62,7 +62,7 @@ void SceneActor_StartLament(s32 actor)
 
     object = (struct FieldActor *)Actor_Get(actor);
     object->scale_x = 0x10000;
-    object = (struct FieldActor *)Value1(Engine_ActorGet, actor);
+    object = (struct FieldActor *)Actor_Get(actor);
     object->scale_y = 0x10000;
     Event_SetMessage((s32)MsgRariberoOhhTheyTookShebaHeaded);
     Event_ShowMessage(actor, 0);

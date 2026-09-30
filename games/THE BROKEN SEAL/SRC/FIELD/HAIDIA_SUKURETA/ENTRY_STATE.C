@@ -18,7 +18,6 @@ void Engine_MapCopyCellAttributes();
 void Scene_LeaveForMtAleph();
 void Object_SetTargetAndCallback();
 
-
 struct GameState;
 extern struct GameState gGameState;
 

@@ -24,12 +24,6 @@ struct EffectWork {
     struct EffectRecord *record;
 };
 
-/*
- * resource_3be owner at 0x020011d8, 32 bytes.
- *
- * Runs a step at most 40 times, stopping early once the caller's +12 field has
- * come down to the limit. Both the counter and the field test guard the loop.
- */
 struct HeightTrackedObject {
     u8 pad00[12];
     s32 height;                 /* +12 */

@@ -264,7 +264,7 @@ void FieldScene_RunScene385SequenceA(void)
         Event_ShowMessage(16, 0);
         *((u8 *)Actor_Get(16) + 91) = rec7;
         Actor_EnableActionCallback(16, 2);
-        Call0(Engine_EventEnd);
+        Event_End();
         GameFlag_Set(0x308);
     } else {
         Event_SetMessage((s32)MsgKuupuappuNotLikeEasy);

@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 void ActorPresentation_SetEightSceneCells();
 s32 SceneActor_RunActor22PlacementSequence();
 void Engine_TaskWait();

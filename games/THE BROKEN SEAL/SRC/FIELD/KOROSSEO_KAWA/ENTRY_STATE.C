@@ -49,13 +49,13 @@ s32 KorosseoKawa_ApplyEntryState(void)
     s32 col;
 
     gEventWork->start_transition = 0;
-    Call1(Engine_GameFlagSet, 0x144);
+    GameFlag_Set(0x144);
     actor = Engine_ActorGet(9);
     hit = Map_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
     if (actor->y.fixed == 0 && hit == 0) {
         actor->priority_flags = 2;
         actor->motion_flags = hit;
-        Call6(Engine_MapCopyCellAttributes, 14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+        Map_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
     }
     x = GameFlag_GetByteFar(0x310);
     if (x == 0) {
@@ -65,7 +65,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     actor->x.fixed = (x << 20) + 0x80000;
     actor->motion_flags = 0;
     actor->priority_flags = 2;
-    Call6(Engine_MapCopyCellAttributes, 14, 13, 1, 1, x, 12);
+    Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
     Engine_ScheduleCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
     actor = Engine_ActorGet(15);
     actor->unknown_22 = 1;
@@ -75,26 +75,26 @@ s32 KorosseoKawa_ApplyEntryState(void)
         Engine_ActorSetSpriteFlags(actor, 0);
         actor->collision_flags = zero;
         actor->priority_flags = 3;
-        Call6(Engine_MapCopyCellAttributes, 47, 24, 1, 1, 47, 12);
+        Map_CopyCellAttributes(47, 24, 1, 1, 47, 12);
     }
     actor = Engine_ActorGet(17);
     col = actor->z.fixed >> 20;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Call6(Engine_MapCopyCellAttributes, 64, 24, 3, 1, 64, col);
+    Map_CopyCellAttributes(64, 24, 3, 1, 64, col);
     actor = Engine_ActorGet(18);
     col = actor->x.fixed >> 20;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Call6(Engine_MapCopyCellAttributes, 63, 25, 1, 3, col, 9);
+    Map_CopyCellAttributes(63, 25, 1, 3, col, 9);
     if (Engine_GameFlagIsSet(0x302)) {
-        Call6(Engine_MapCopyCellAttributes, 37, 7, 1, 4, 34, 7);
-        Call6(Engine_MapCopyCellAttributes, 36, 7, 1, 4, 37, 7);
-        Call6(Engine_MapCopyCells, 100, 29, 1, 3, 34, 38);
+        Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
+        Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
+        Map_CopyCells(100, 29, 1, 3, 34, 38);
     }
     actor = Engine_ActorGet(13);
     if (Engine_GameFlagIsSet(0x301)) {
-        Call6(Engine_MapCopyCellAttributes, 43, 12, 1, 1, 41, 12);
+        Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
         actor->motion_flags = zero;
         actor->acceleration = 0x6666;
         actor->speed = 0xcccc;

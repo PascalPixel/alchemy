@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "KANPAN.H"
 #include "FIELD_EVENT.H"
 extern u8 MsgFuneDontRowAnymore[];
 extern u8 MsgFuneMadeFinallyLucky[];
@@ -16,16 +17,6 @@ void FieldScene_CallPairWith10(s32 actor, s32 value);
 void Engine_ActorStartAction(s32 actor);
 
 extern const u8 FuneKanpan_RosterActions[];
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Walks up to four present party members in one at a time, each with a line chosen by who they are, then clears story flag 0x12f. */
 void FieldScene_RunPartyRosterScene(void)

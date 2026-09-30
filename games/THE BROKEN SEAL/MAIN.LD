@@ -1345,7 +1345,7 @@ SECTIONS
         "*/recon/tbs/raw/080ca1fc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TWELVE_MODE.o"(.text)
         "*/recon/tbs/raw/080ca60c.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080cb1a4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLIPPING_BURST.o"(.text)
         "*/recon/tbs/raw/080cb4ec.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080cb7f8.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080cbc0c.o"(.text .rodata .data .padding)

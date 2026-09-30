@@ -13,7 +13,9 @@ struct MotionObject {
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x10];
+    u8 unknown_14[0x08];
+    s32 scale_y; /* negated to draw the object upside down */
+    u8 unknown_20[0x04];
     s32 velocity_x;
     s32 velocity_y;
     s32 velocity_z;

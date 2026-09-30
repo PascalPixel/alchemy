@@ -18,13 +18,41 @@ extern u16 RomBytes_080b4100[];
 
 /* shop/draw/glyphs.c */
 extern u8 Shop_GlyphBytes[];
-
 s32 Math_Div(s32, s32);
 s32 Math_Mod(s32, s32);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
 u8 *RenderOutput_CreateFar(s32 no, u32 flags, s32 window, s32 x, s32 y);
-
 void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2);
+
+extern u8 gEventWork[];
+void BattleFx_ApplyColorToTargetBufferFar(s32, s32);
+void BattleFx_StartBufferInterpolationFar(s32);
+
+extern u8 Data_03001ebc[];
+
+struct SpriteAttr {
+    unsigned y : 8;
+    unsigned affine : 2;
+    unsigned blend_mode : 2;
+    unsigned mosaic : 1;
+    unsigned full_color : 1;
+    unsigned shape : 2;
+    unsigned x : 9;
+    unsigned affine_index : 5;
+    unsigned size : 2;
+};
+
+struct ShopCursorSprite {
+    u8 unknown_00[6];
+    u16 x;
+    u16 y;
+    u8 unknown_0a[0x0a];
+    struct SpriteAttr oam;
+};
+
+struct Half {
+    u16 v;
+};
 
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {
@@ -108,4 +136,59 @@ u8 *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     }
     Runtime_ReleaseHeapBlock(14);
     return sprite;
+}
+
+/* Copies the saved tile block at work + 0xe00 back into the scene's map and
+   the work area, then refreshes the scene layer. */
+void Shop_RestoreSceneTiles(s32 layer)
+{
+    u32 *scene = (u32 *)gEventWork;
+    u8 *work = (u8 *)scene[5];
+    u8 *map = (u8 *)scene[0];
+    u8 *saved = work + 0xe00;
+
+    Dma_Set(saved, map + 0x236, 0x84000150, (volatile u32 *)0x040000d4);
+    Dma_Set(saved, work + 0x380, 0x840002a0, (volatile u32 *)0x040000d4);
+    BattleFx_ApplyColorToTargetBufferFar(layer, 1);
+    BattleFx_StartBufferInterpolationFar(16);
+}
+
+void Shop_InitEffect(void)
+{
+    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)((u32)&Data_03001ebc) + 0x236, 1);
+    BattleFx_StartBufferInterpolationFar(0x10);
+}
+
+/* ShopCursor_Advance: step the cursor sprite one frame of a linear tween
+   from its position toward its target over kind frames, refreshing the
+   sprite's position and OAM coordinates, and stop when the tween ends.
+   FAKEMATCH: the zero that ends the tween is a one-halfword struct, which
+   keeps it a pool constant loaded before the second division as in the ROM. */
+void ShopCursor_Advance(struct ShopCursor *cursor)
+{
+    struct ShopCursorSprite *sprite;
+    s32 kind;
+    s32 step;
+    s32 x;
+    s32 y;
+    struct Half zero;
+
+    if (cursor == NULL)
+        return;
+    kind = cursor->kind;
+    if (kind == 0)
+        return;
+    sprite = (struct ShopCursorSprite *)cursor->anchor;
+    step = (s8)++cursor->active;
+    x = cursor->x + (cursor->target_x - (s16)cursor->x) * step / kind;
+    sprite->x = x;
+    zero.v = 0;
+    sprite->oam.x = x;
+    y = cursor->y + (cursor->target_y - (s16)cursor->y) * step / kind;
+    sprite->y = y;
+    sprite->oam.y = y;
+    if (step == kind) {
+        cursor->kind = zero.v;
+        cursor->active = zero.v;
+    }
 }

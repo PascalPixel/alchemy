@@ -10,6 +10,9 @@ Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Tile_Decompress4bpp;
 Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMasked;
 Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Tile_ExpandOpaque;
 SentouKouka_TenkaiCodeSize = SentouKouka_TenkaiEnd - SentouKouka_Tenkai;
+Object_UpdateAllCodeSize = Object_UpdateAllEnd - Object_UpdateAll;
+Tile_BuildMetatilesCodeSize = Tile_BuildMetatilesEnd - Tile_BuildMetatiles;
+Transform_UpdateVerticesSize = Transform_UpdateVerticesEnd - Transform_UpdateVertices;
 /* The sound driver's link-time settings: the number of music players and
    the mixer's scanline limit (0: none). */
 Sound_PlayerCount = 0x00000008;

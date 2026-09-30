@@ -25,7 +25,6 @@ struct MapState {
 
 extern struct MapState *gCam;
 
-#if defined(TBS_EDITION_EN)
 /* Steps the sixteen tile-animation channels. A channel whose timer has run
    out reads commands until one copies characters: 0xffff restarts the
    channel, 0xfeXX jumps to command XX (0xfeff stops it for this frame), and
@@ -82,7 +81,6 @@ void MapAnimation_Update(void)
         }
     }
 }
-#endif /* TBS_EDITION_EN */
 
 s32 Scheduler_EnableCallbacks(u32 value);
 

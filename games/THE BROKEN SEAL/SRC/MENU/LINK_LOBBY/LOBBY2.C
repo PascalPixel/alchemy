@@ -211,6 +211,7 @@ done:
     return result;
 }
 
+/* The link lobby: the party members copied for the exchange. */
 s32 SceneData_CopyUpToThreeEntries(u16 *dest)
 {
     s32 cnt = Party_CountActiveOwners();

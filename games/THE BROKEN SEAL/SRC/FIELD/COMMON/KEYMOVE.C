@@ -64,7 +64,9 @@ s32 Field_CheckConfiguredKeys(void);
 s32 FixedSqrt(s32);
 struct ObjectRuntime *FieldObject_Create(s32, s32, s32, s32);
 
-#if defined(TBS_EDITION_EN)
+/* The Japanese edition steers on the world map its own way, which stays in
+   its scaffold for now. */
+#if !defined(TBS_EDITION_JA)
 /*
  * World-map player movement: pick the heading from the pad, probe the map
  * ahead and to both sides, fall back to eight neighbouring headings, then
@@ -279,7 +281,7 @@ movement_done:
     object->step++;
     return 1;
 }
-#endif /* TBS_EDITION_EN */
+#endif /* !TBS_EDITION_JA */
 
 s32 Field_CheckConfiguredKeysAndCount(void *work)
 {
@@ -288,7 +290,6 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
     return 1;
 }
 
-#if defined(TBS_EDITION_EN)
 /*
  * Walks an object half a tile in the direction the pad is held. The step is
  * refused where the next cell is occupied or changes height; with L or R
@@ -392,4 +393,3 @@ refused:
     object->step++;
     return 1;
 }
-#endif /* TBS_EDITION_EN */

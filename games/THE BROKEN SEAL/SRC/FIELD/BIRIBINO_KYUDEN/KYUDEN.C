@@ -148,6 +148,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gBiribinoKyudenEventsOther;
 }
 
+/* Actor 10 in the palace asks whether the party will go to Kolima Forest. */
 void Kyuden_AskAboutKolima(void)
 {
     Event_Begin();
@@ -506,6 +507,8 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
     return 0;
 }
 
+/* Lord McCoy's audience: the party offers to go to Kolima Forest, and he
+ * weighs whether they are up to the job. */
 void Kyuden_RunKolimaRequest(void)
 {
     s32 record;

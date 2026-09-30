@@ -1,46 +1,14 @@
-/* 2026-09-29 alchemy permute: score 1005 to 985 on the permuter's scorer
-   (0 is exact); remaining 12 register-only, 3 operand, 1 reordered, 2
-   inserted, 6 deleted. Kept rewrites: 6x pointer arithmetic or indexing,
-   5x swap commutative operands, 5x introduce a temporary, 3x reorder local
-   declarations, 3x move an assignment into or out of a condition, 3x
-   toggle register, 2x reorder independent statements, 2x add a same-width
-   cast, 2x drop a same-width cast, 2x invert an if/else, 1x test truth or
-   compare with zero. FAKEMATCH: the permuter's temporaries, register hints
-   and swapped operand orders below only steer allocation and scheduling;
-   no programmer would write them, so they stay tagged until a natural
-   spelling replaces them. */
-/* 2026-09-29 alchemy permute: score 1330 to 1005 on the permuter's scorer
-   (0 is exact); remaining 13 register-only, 2 operand, 2 inserted, 7
-   deleted. Kept rewrites: 6x swap commutative operands, 3x reorder
-   independent statements, 2x reorder local declarations, 1x introduce a
-   temporary, 1x toggle register, 1x test truth or compare with zero.
-   FAKEMATCH: the permuter's temporaries, register hints and swapped
-   operand orders below only steer allocation and scheduling; no programmer
-   would write them, so they stay tagged until a natural spelling replaces
-   them. */
-/* Draft, not exact (2026-09-26): complete extent [080a77a4, 080a7850),
-   172 bytes including the interior pool and final alignment halfword.
-   Caller CharacterSelector_Run consumes -1 or the stored chosen member;
-   both selector callees return s32; redraw and icon preparation are void.
-   H1: exact sibling ItemMenu_PrepOwner keeps byte offsets, rather than
-   cursor/owner pointers, and initializes its eventual result to zero.
-   Candidate 158/172 bytes, 85 differing halfwords, 45 aligned edits;
-   equal topology.  The zero/result pseudo is recovered, but CSE retains
-   menu+slot*4 rather than the independent slot*4 offset.  No adoption.
-   H2: form complete cursor field offsets in short-lived locals, deriving
-   slot offsets before loading the menu.  158/172 bytes, 85 differing
-   halfwords, 38 aligned edits.  Indexed cursor loads and menu/result
-   register roles are recovered, but CSE retains slot*4+20 in r8 instead
-   of slot*4 in sl; owner offset/index use r7/r6 instead of r8/r7.
-   H3: the exact sibling's ordinary register declarations generate
-   identical bytes to H2 (158/172, 85 halfwords, 38 aligned edits).
-   Three bounded hypotheses used; preserve this result and stop.  No
-   source-path registration or DONE credit has been added for this owner.
-   Earlier baseline (2026-09-24): 162/172 bytes, 68 differing halfwords.
-   Menu: open the owner selector for one party slot. Open: the reference
-   computes slot + 28 and slot * 4 before loading the menu cell, keeps the
-   cursor offset in sl and the owner offset in r8, and zeroes the cursor
-   frame from the register that later holds the result. */
+/* 2026-09-30 (Mercury): 8 differing halfwords, 170 of 170 bytes plus the
+   pad (was 85 at 158). Plain C without the permuter's registers: reading
+   owner_index[slot] before the cursor gives the reference's offsets (slot +
+   28 before slot * 4, both kept whole) and registers; the pooled zero
+   stored into owner_index is the halfword zero of cursor->frame, which CSE
+   shares and local-alloc moves to its use in the other block. Left: sched2
+   order. The reference loads the cursor into r0 right after the slot * 4 +
+   20 address and reads the index last (ldrsb r7 after mov r8, r2); here the
+   cursor takes r2, so it waits behind the index read and the r8 copy (anti
+   dependences on r2). Cursor-first spellings give a different 160-byte
+   shape (84). */
 #include "TYPES.H"
 
 struct OwnerCursor {
@@ -62,7 +30,7 @@ struct OwnerSelectMenu {
 extern struct OwnerSelectMenu *gMenuWork;
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
-s32 GameFlag_TestFar(s32 flag);
+s32 GameFlag_IsSet(s32 flag);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiMenu_SlideCursor(s32 x, s32 y);
 s32 PsynergyMenu_SelectOwner(void);
@@ -72,51 +40,29 @@ void WaitFrames(s32 frames);
 
 s32 CharacterMenu_SelectOwner(s32 slot)
 {
-    register s32 index;
+    struct OwnerSelectMenu *menu;
+    struct OwnerCursor *cursor;
     s32 result;
-    register struct OwnerSelectMenu *menu;
-    register s32 cursor_offset;
-    register s32 owner_offset;
-    register s32 tmp;
-    register struct OwnerCursor *cursor;
-    register s32 tmp2;
-    s8 tmp5;
+    s32 index;
 
-    result = 0;
     menu = gMenuWork;
-    tmp = 4 * slot;
-    cursor_offset = tmp;
-    {
-        s32 off = cursor_offset + 20;
-        cursor = *(struct OwnerCursor **)(off + (u8 *)menu);
-    }
-    owner_offset = slot + 28;
+    index = menu->owner_index[slot];
+    result = 0;
+    cursor = menu->cursors[slot];
     cursor->state = 1;
-    cursor->frame = result;
-    tmp5 = *(s8 *)(owner_offset + (u8 *)menu);
-    index = tmp5;
+    cursor->frame = 0;
     RenderOutput_RedrawSavedRectFar(menu->window);
-    if (GameFlag_TestFar(0x172))
+    if (GameFlag_IsSet(0x172))
         UiWindow_DrawDividerLineFar(menu->window, 9, 1, 9, 3);
-    if ((tmp2 = -1) == index) {
-        s8 *tmp4;
-        tmp4 = (s8 *)&*((u8 *)menu + owner_offset);
-        *tmp4 = 0;
-    } else {
-        UiMenu_SlideCursor(24 * index - 10, 16);
-    }
+    if (index == -1)
+        menu->owner_index[slot] = 0;
+    else
+        UiMenu_SlideCursor(index * 24 - 10, 16);
     if (menu->mode == 3)
         result = PsynergyMenu_SelectOwner();
     else
         result = CharacterSelector_RunRearrange();
-    {
-        struct OwnerCursor **tmp3;
-        register s32 off = 20 + cursor_offset;
-        u8 *tmp6;
-        tmp6 = (u8 *)menu;
-        tmp3 = (struct OwnerCursor **)(off + tmp6);
-        UiIcon_PrepareObject(*tmp3);
-    }
+    UiIcon_PrepareObject(menu->cursors[slot]);
     WaitFrames(1);
     return result;
 }

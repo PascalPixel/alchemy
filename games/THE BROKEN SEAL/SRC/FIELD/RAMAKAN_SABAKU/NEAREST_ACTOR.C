@@ -46,12 +46,12 @@ void RamakanSabaku_FaceNearestActor(void)
     s32 dx;
     s32 dz;
 
-    target = Value1(Engine_ActorGet, gGameState.selected_actor);
+    target = Actor_Get(gGameState.selected_actor);
     best = 9;
-    Call1(Engine_GameFlagSet, 0x200);
+    GameFlag_Set(0x200);
     min = 0x100000;
     for (id = 9; id <= 12; id++) {
-        u8 *other = Value1(Engine_ActorGet, id);
+        u8 *other = Actor_Get(id);
 
         if (other != 0) {
             dx = (*(s32 *)(target + 8) - *(s32 *)(other + 8)) / 0x10000;
@@ -76,26 +76,26 @@ void RamakanSabaku_FaceNearestActor(void)
     *((u8 *)Engine_ActorGet(0) + 90) &= 254;
     Engine_ActorFaceActor(0, best, 0);
     Engine_EventWait(20);
-    Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
+    Actor_SetAttachedEffect(0, 0x102);
     Engine_ActorStartRepeatedMotion(0, 2);
     Engine_EventWait(60);
-    Call2(Engine_ActorSetAttachedEffect, 0, 0x101);
-    actor = Value1(Engine_ActorGet, 0);
+    Actor_SetAttachedEffect(0, 0x101);
+    actor = Actor_Get(0);
     record = Engine_ActorGet(0);
     *(u16 *)(actor + 6) = (*(u16 *)(record + 6) + 0x8000) & -0x1000;
     Engine_ActorSetAnimation(0, 5);
     Object_SetActionById(0, 24);
-    Call3(Engine_ActorSetSpeed, 0, 0x1999, 0xccc);
+    Actor_SetSpeed(0, 0x1999, 0xccc);
     record = Engine_ActorGet(0);
     *(s32 *)(record + 108) = (s32)RamakanSabaku_EmitSandEffect;
-    record = Value1(Engine_ActorGet, best);
+    record = Actor_Get(best);
     if (record != 0) {
         Engine_ActorSetDestination(0, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_EventWait(60);
-    Call3(Engine_ActorShowEmote, best, 0x104, 0);
+    Actor_ShowEmote(best, 0x104, 0);
     Engine_EventWait(60);
-    Call2(Engine_ActorSetAttachedEffect, 0, 0x100);
+    Actor_SetAttachedEffect(0, 0x100);
     *((u8 *)Engine_ActorGet(0) + 90) |= 1;
     record = Engine_ActorGet(0);
     *(s32 *)(record + 108) = 0;

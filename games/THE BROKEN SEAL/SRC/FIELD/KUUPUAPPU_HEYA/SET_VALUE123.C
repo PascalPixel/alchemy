@@ -245,6 +245,6 @@ void FieldScene_RunOpeningSequenceHead(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384); /* object_id 0, speed_limit 32768, acceleration 16384 */
     Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408); /* object_id 0, x 728, z 408 */
     SCENE_WORD_1C8 = 16;
-    Value1(Engine_AudioPlayCue, 123);
+    Audio_PlayCue(123);
     Event_RequestExit(15); /* main:0808a248 */
 }

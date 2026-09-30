@@ -696,7 +696,7 @@ SECTIONS
         "*/recon/tla/raw/080d3116.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d3118.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d3164.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080d3240.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BY_ID_6.o"(.text)
         "*/recon/tla/raw/080d3254.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_EVENTS.o"(.text)
         "*/recon/tla/raw/080d3300.o"(.text .rodata .data .padding)

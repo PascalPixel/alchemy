@@ -12739,7 +12739,7 @@ msgctxt "message"
 msgid "03182"
 msgstr "エナジー"
 
-msgctxt "message"
+msgctxt "MsgShortcutLabel"
 msgid "03183"
 msgstr "ショートカット"
 
@@ -12847,11 +12847,11 @@ msgctxt "message"
 msgid "03209"
 msgstr "かいふくEP/ターン"
 
-msgctxt "message"
+msgctxt "MsgDjinnLabel"
 msgid "03210"
 msgstr "ジン"
 
-msgctxt "message"
+msgctxt "MsgPowerLabel"
 msgid "03211"
 msgstr "パワー"
 
@@ -13699,11 +13699,11 @@ msgctxt "message"
 msgid "03422"
 msgstr "スタンバイにしました{line_break}{argument_actor_name:234}{argument_class_name:230}なりました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNormalLabel"
 msgid "03423"
 msgstr "せいじょう"
 
-msgctxt "message"
+msgctxt "MsgDownLabel"
 msgid "03424"
 msgstr "せんとうふのう"
 

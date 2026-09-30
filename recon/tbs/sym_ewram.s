@@ -209,18 +209,31 @@ gFlashSavedIme:
 gOverlayArea:
 	.space 0x00008000
 	.global gMapCellBuffer
+	.type gMapCellBuffer, %object
+	.size gMapCellBuffer, 0xc000
 gMapCellBuffer:
-	.space 0x0000c000
+	.space 0x00008000
+	.global gActorSpriteSlots
+gActorSpriteSlots:
+	.space 0x00004000
 	.global gDecodeBuffer
+	.type gDecodeBuffer, %object
+	.size gDecodeBuffer, 0x4000
 gDecodeBuffer:
 	.space 0x00004000
 	.global gMapBlocks
+	.type gMapBlocks, %object
+	.size gMapBlocks, 0x8000
 gMapBlocks:
 	.space 0x00008000
 	.global gMapLayerData
+	.type gMapLayerData, %object
+	.size gMapLayerData, 0x4000
 gMapLayerData:
 	.space 0x00004000
 	.global gMapCollision
+	.type gMapCollision, %object
+	.size gMapCollision, 0x4000
 gMapCollision:
 	.space 0x00004000
 	.global gEwramHeap

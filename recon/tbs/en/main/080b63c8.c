@@ -108,7 +108,7 @@ void UiWindow_CreateWithLayoutBoundsFar(s32 value);
 void Camera_InitDefaultTransform(void);
 void BattleActor_CommitPlacement(void);
 void BattlePresentation_InitializeWorkAndResetState(void);
-void Func_080c08ec(s32 a, s32 b, s32 c);
+void BattleBackground_Load(s32 a, s32 b, s32 c);
 void BattleCamera_SetRange(s32 a, s32 b, s32 c, s32 d, s32 e);
 void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
@@ -277,7 +277,7 @@ s32 Battle_RunEncounter(s32 arg)
     Camera_InitDefaultTransform();
     BattleActor_CommitPlacement();
     BattlePresentation_InitializeWorkAndResetState();
-    Func_080c08ec(1, work->field_648, 0);
+    BattleBackground_Load(1, work->field_648, 0);
     BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
     BattlePres_SetupTransitionScene(0, 0, 0, 190);
     Party_ReservedNoOp5B14(1);

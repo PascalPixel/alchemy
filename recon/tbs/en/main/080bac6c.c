@@ -22,6 +22,15 @@
    fields (BATTLE_WORK.H); the enemy scan indexes 50 entries past a base
    two bytes into the work, as Battle_ResolveTargetAction's summon insert
    does. Still 445: the ROM keeps the enemy scan unreduced. */
+/* 2026-09-30 (Mercury, asm): 118 of 124 bytes. A FAKEMATCH "+r" asm on i
+   at the top of the enemy scan stops strength reduction, and indexing
+   base + (i * 2 + 100) gives the ROM's lsls/adds/adds/ldrsh [base, offset]
+   shape with the party scan unchanged. Left: the removed mark. Stored as
+   a plain 0xfe, loop hoists it into r4 (push r7 frame); behind a volatile
+   "+r" asm it stays in the loop but as movs #254, where the ROM reloads it
+   from a pool entry after the branch (the hoisted value spilled back to
+   its constant), and i and offset take r2 and r1 where the ROM has r1
+   and r2. */
 #include "TYPES.H"
 #include "BATTLE_WORK.H"
 
@@ -39,7 +48,7 @@ void BattleActor_RemoveFromLists(s32 actor)
     s32 i;
     u32 j;
     s32 unit;
-    s16 *slots;
+    u8 *base;
 
     work = gBattleWork;
     Owner_GetStateFar(actor)->in_battle = 0;
@@ -51,11 +60,20 @@ void BattleActor_RemoveFromLists(s32 actor)
         if (work->party_units[i] == 0xff)
             break;
     }
-    slots = work->enemy_units - 50;
+    base = (u8 *)work + 2;
     for (i = 0; ; ) {
-        unit = slots[i + 50];
+        s32 offset;
+
+        /* FAKEMATCH: an opaque index keeps loop from strength-reducing the enemy scan */
+        asm("" : "+r"(i));
+        offset = i * 2 + 100;
+        unit = *(s16 *)(base + offset);
         if (unit == actor) {
-            slots[i + 50] = 0xfe;
+            s16 removed_mark = 0xfe;
+
+            /* FAKEMATCH: keeps loop from hoisting the removed mark out of the enemy scan */
+            asm volatile("" : "+r"(removed_mark));
+            *(s16 *)(base + offset) = removed_mark;
             goto removed;
         }
         i++;

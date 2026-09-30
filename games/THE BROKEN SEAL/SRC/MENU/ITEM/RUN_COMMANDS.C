@@ -107,7 +107,7 @@ s32 Func_080a414c(void);
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
 void Menu_SelectQuantity(s32 item);
 s32 Func_080a4f08(s32 unused, s32 limit, s32 mode);
-s32 Func_080a524c(s32 index);
+s32 ItemMenu_ConfirmDrop(s32 index);
 s32 Unnamed_080a5388(s32 mode);
 s32 ItemMenu_RunList(s32 pane);
 s32 ItemMenu_PrepOwner();
@@ -344,7 +344,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             UiIcon_PrepareObject(menu->selected_item_icon);
             UiWindow_ClearInteriorTilesFar(menu->preview_window, 0, 72, 120, 96);
             RenderOutput_RedrawSavedRectFar(menu->message_window);
-            if (Func_080a524c(sel) == 0) {
+            if (ItemMenu_ConfirmDrop(sel) == 0) {
                 command = menu->item_owner;
                 Owner_GetStateFar(command);
                 for (work = 0; work < result + 1; work++) {

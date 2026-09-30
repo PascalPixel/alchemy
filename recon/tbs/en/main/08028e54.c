@@ -1,3 +1,8 @@
+/* 2026-09-30 (Venus): psynergy editions: the 0x24 pool word is the same in
+  all six editions, a plain number. A tagged asm("ldr %0, =0x24") into a
+  local passed as the last argument matches under cmp.ts (modern gas), but
+  the era assembler the build uses for compiler output folds it to movs, so
+  the ROM differs; not adopted. */
 /*
  * main:08028e54 Menu_RunConfirmSelectionAt - draft; the range links as
  * disassembly (recon/tbs/raw/08028e54.s).

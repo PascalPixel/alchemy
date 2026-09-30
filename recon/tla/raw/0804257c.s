@@ -70,6 +70,9 @@ Func_08042588:
 	.4byte 0x00000218
 	.2byte 0x88fc
 	.2byte 0x0803
+	.global Func_080425fc
+	.thumb_func
+Func_080425fc:
 	push	{r5, r6, lr}
 	adds	r5, r3, #0
 	movs	r4, #0

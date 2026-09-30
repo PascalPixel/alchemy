@@ -17,4 +17,4 @@ Func_080f8000:
 Func_080f8010:
 	overlay_veneer Func_080fe274
 	overlay_veneer Func_080fe184
-	overlay_veneer Func_080f8840
+	overlay_veneer UiIcon_CreateWithResourceVariant

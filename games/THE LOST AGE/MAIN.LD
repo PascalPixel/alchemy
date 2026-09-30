@@ -507,6 +507,7 @@ SECTIONS
         "*/recon/tla/raw/0804d5ac.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804d678.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804d754.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/MENU/SELECT_ENTRY_11_TO_14.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/CONFIRM_SELECTION_2.o"(.text)
         "*/recon/tla/raw/0804d9de.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/MENU/CONFIRM_SELECTION.o"(.text)

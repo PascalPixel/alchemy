@@ -1,3 +1,11 @@
+/* 2026-09-30 (Jupiter): register allocation follows RTL order for the first
+ * BLDCNT store. Whichever of zero and address is set second gets r3, and
+ * sched2 keeps the order. Zero first gives movs r2; ldr r3 (2 edits,
+ * swapped); address first gives ldr r2; movs r3 (2 edits, order). Nested
+ * do/while barriers around the zero, address or store, an outer z, z|z,
+ * z+z, u8/u16 zeros and an address loaded before the call (r5) all fail.
+ * Asm idea, if admitted: a tagged `movs r3, #0` asm output feeding the store.
+ */
 /* 2026-09-28 inline store-boundary trial: a value-first helper emits the
  * reference's zero-before-address order, but uses r2 for zero and r3 for
  * the address (3 differing halfwords). Reversing the helper arguments

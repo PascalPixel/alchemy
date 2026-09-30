@@ -5,18 +5,6 @@ the world. This project hopes to do something similar for the games
 themselves: to bring **The Broken Seal** ☀️ and **The Lost Age** ⚓️ back to a
 form that fans can read, change and build on.
 
-## Why Alchemy?
-
-When Camelot made Golden Sun, they wrote it as human-readable instructions
-and then turned those into the unreadable code that sits on the cartridge.
-Those original instructions were never released.
-
-Once a game can be read, it can be changed. That opens the door to things fans
-have wanted for years: Golden Sun running natively on PC, phones and modern
-consoles, widescreen and smoother frame rates, quality-of-life fixes, new
-translations, and new storylines, quests and Djinn. Alchemy doesn't do these
-things itself; it lays the foundation that makes them possible.
-
 ## Progress
 
 **☀️ 78.44% · ⚓️ 6.54% (C 1.63 + assembly 1.40 + stubs 3.50)**
@@ -31,6 +19,18 @@ source, measured only when the rebuilt game is identical to the original; a game
 stays pending until it is. The drop on 28 September is a stricter count, not
 lost work: stored answers and generated bookkeeping were removed, and code now
 counts only once the game is linked from its source.
+
+## Why Alchemy?
+
+When Camelot made Golden Sun, they wrote it as human-readable instructions
+and then turned those into the unreadable code that sits on the cartridge.
+Those original instructions were never released.
+
+Once a game can be read, it can be changed. That opens the door to things fans
+have wanted for years: Golden Sun running natively on PC, phones and modern
+consoles, widescreen and smoother frame rates, quality-of-life fixes, new
+translations, and new storylines, quests and Djinn. Alchemy doesn't do these
+things itself; it lays the foundation that makes them possible.
 
 ## Acknowledgements
 

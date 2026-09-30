@@ -197,7 +197,7 @@ Func_080cc54c:
 	ldrsh	r0, [r6, r1]
 	cmp	r0, r5
 	beq.n	.L_080cc6d0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080cc6b2
 .L_080cc6d0:
@@ -211,7 +211,7 @@ Func_080cc54c:
 .L_080cc6dc:
 	movs	r0, #10
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080cc726
 	ldr	r1, [pc, #200]
@@ -409,7 +409,7 @@ Func_080cc54c:
 	movs	r0, #10
 	adds	r0, #255
 	ldrb	r5, [r3, #0]
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080cc898
 	ldr	r2, [pc, #272]

@@ -1439,7 +1439,7 @@ Func_081a04d0:
 	movs	r5, #128
 	lsls	r5, r5, #2
 	adds	r0, r5, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_081a1074
 	ldr	r3, [pc, #496]
@@ -1449,7 +1449,7 @@ Func_081a04d0:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x1c28
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	b.n	0x081a109a
 .L_081a1074:
 	ldr	r4, [sp, #4]

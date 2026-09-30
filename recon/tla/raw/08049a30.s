@@ -2163,7 +2163,7 @@ Func_08049a30:
 	beq.n	.L_0804ab08
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0804ab4e
 	mov	r5, r8

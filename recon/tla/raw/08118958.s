@@ -27,7 +27,7 @@ Func_08118958:
 	bl	Func_08014368
 	adds	r0, r5, #0
 	movs	r6, #69
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	cmp	r7, #0
 	bne.n	.L_0811899c
 	b.n	.L_08118ab8
@@ -38,11 +38,11 @@ Func_08118958:
 	adds	r0, r5, #0
 	mov	r8, r3
 	mov	fp, r2
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	ldr	r5, [pc, #280]
 .L_081189ae:
 	movs	r0, #32
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	movs	r0, #1
 	bl	WaitFrames
 	b.n	.L_081189e4
@@ -135,7 +135,7 @@ Func_08118958:
 	beq.n	.L_08118a62
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 .L_08118a62:
 	movs	r0, #0
 	bl	0x080ad008
@@ -147,11 +147,11 @@ Func_08118958:
 	bne.n	.L_08118a7c
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 .L_08118a7c:
 	movs	r0, #177
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	mov	r3, r9
 	cmp	r3, #0
 	beq.n	.L_08118a96
@@ -176,7 +176,7 @@ Func_08118958:
 .L_08118ab8:
 	movs	r0, #177
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	movs	r0, #69
 	bl	Func_081197f0
 	b.n	.L_08118976

@@ -137,7 +137,7 @@ Func_080d6b90:
 	lsls	r3, r1, #16
 	asrs	r3, r3, #16
 	mov	r9, r3
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080d6cc4
 	ldrh	r3, [r7, #28]

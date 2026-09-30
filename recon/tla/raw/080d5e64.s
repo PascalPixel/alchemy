@@ -8,6 +8,6 @@ Func_080d5e64:
 	bl	0x080d5de0
 	movs	r0, #34
 	adds	r0, #255
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	pop	{pc}
 	.2byte 0x0000

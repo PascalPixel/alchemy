@@ -234,15 +234,15 @@ Owner_GetStateFar:
 	.global Func_080003c8
 	.thumb_func
 Func_080003c8:
-	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_Test
 	.global Func_080003d0
 	.thumb_func
 Func_080003d0:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetBit
 	.global Func_080003d8
 	.thumb_func
 Func_080003d8:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearBit
 	overlay_veneer Func_08016d34
 	.global GameFlag_GetByteFar
 	.thumb_func

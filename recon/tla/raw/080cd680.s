@@ -244,12 +244,12 @@ Func_080cd680:
 	bl	0x08038040
 	movs	r0, #161
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	b.n	.L_080cd87c
 .L_080cd874:
 	movs	r0, #161
 	lsls	r0, r0, #1
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 .L_080cd87c:
 	ldr	r2, [r5, #8]
 	movs	r3, #240
@@ -279,7 +279,7 @@ Func_080cd680:
 	.2byte 0xf800
 	.2byte 0x20a1
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080cd8f0
 	ldr	r0, [pc, #68]
@@ -310,7 +310,7 @@ Func_080cd680:
 .L_080cd8f0:
 	movs	r0, #161
 	lsls	r0, r0, #1
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 .L_080cd8f8:
 	movs	r0, #0
 	pop	{r5, r6, r7, pc}

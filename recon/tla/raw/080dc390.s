@@ -514,7 +514,7 @@ Func_080dc6d8:
 .L_080dc784:
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080dc7ac
 	mov	r2, sl

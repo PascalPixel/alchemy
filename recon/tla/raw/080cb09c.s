@@ -467,7 +467,7 @@ Func_080cb09c:
 	adds	r0, #255
 	movs	r6, #0
 	ldr	r5, [r1, #48]
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080cb41c
 	lsls	r5, r5, #1

@@ -322,7 +322,7 @@ Func_080ca6e8:
 	ands	r2, r3
 	strb	r2, [r1, #0]
 	movs	r0, #33
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080ca982
 	movs	r1, #192

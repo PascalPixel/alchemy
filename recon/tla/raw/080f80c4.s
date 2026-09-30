@@ -3,10 +3,10 @@
 	push	{lr}
 	movs	r0, #169
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	movs	r0, #179
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	bl	0x080202d8
 	bl	0x080146d4
 	pop	{pc}

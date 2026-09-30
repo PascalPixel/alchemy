@@ -11,7 +11,7 @@ Func_0811bd10:
 	bl	Func_08014de4
 	movs	r0, #108
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_0811bd3c
 	ldr	r0, [pc, #28]

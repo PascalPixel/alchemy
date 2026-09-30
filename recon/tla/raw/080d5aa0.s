@@ -467,6 +467,6 @@ Func_080d5e50:
 	bl	.L_080d5de0
 	movs	r0, #144
 	lsls	r0, r0, #1
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	pop	{pc}
 	.2byte 0x0000

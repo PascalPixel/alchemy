@@ -718,16 +718,16 @@ Owner_RecalculateStats:
 	movs	r0, #136
 .L_080ad9c2:
 	lsls	r0, r0, #1
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	b.n	.L_080ad9dc
 	movs	r0, #20
 .L_080ad9cc:
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	b.n	.L_080ad9dc
 	movs	r0, #18
 	adds	r0, #255
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 .L_080ad9dc:
 	cmp	r0, #0
 	beq.n	.L_080ad9e6
@@ -1045,7 +1045,7 @@ Func_080adbec:
 	movs	r0, #104
 	adds	r0, #255
 	sub	sp, #8
-	bl	GameFlag_ClearBitFar
+	bl	GameFlag_ClearBit
 	bl	Func_080afdbc
 	mov	sl, r0
 	movs	r0, #0
@@ -1091,7 +1091,7 @@ Func_080adbec:
 	adds	r0, #255
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	ldr	r2, [sp, #0]
 	ldr	r1, [sp, #4]
 .L_080adc66:

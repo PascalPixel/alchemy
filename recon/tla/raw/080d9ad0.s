@@ -15,7 +15,7 @@ Func_080d9ad0:
 	adds	r3, r3, r2
 	strh	r1, [r3, #20]
 	adds	r0, r1, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080d9afc
 	adds	r0, r5, #0
@@ -317,7 +317,7 @@ Func_080d9b08:
 	mov	r8, r1
 	ldr	r6, [r3, #0]
 	movs	r7, #0
-	bl	GameFlag_TestFar
+	bl	GameFlag_Test
 	cmp	r0, #0
 	bne.n	.L_080d9e06
 	movs	r3, #194

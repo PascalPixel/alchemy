@@ -239,7 +239,7 @@ after_power:
                             dmg = 1;
                     }
                 }
-                if (GameFlag_TestFar(366) != 0 && ((plan)->command) == 5
+                if (GameFlag_Test(366) != 0 && ((plan)->command) == 5
                     && hp0 <= dmg) {
                     dmg = hp0 - 1;
                 }
@@ -396,7 +396,7 @@ after_power:
                 }
                 dmg += BattleRandom16Far() & 3;
                 { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = Math_Div(dmg * 2, 5); else dmg = Math_Div(dmg, 10); }; };
-                if (((gPartyState.battle_rule_24b == 6 || (GameFlag_TestFar(366) != 0 && ((plan)->command) == 6)) && (cur) > (dmg))) {
+                if (((gPartyState.battle_rule_24b == 6 || (GameFlag_Test(366) != 0 && ((plan)->command) == 6)) && (cur) > (dmg))) {
                     dmg = cur;
                 }
                 round++;

@@ -22,7 +22,7 @@ Func_080ceec8:
 	cmp	r7, #2
 	bne.n	.L_080cef1c
 	mov	r0, r8
-	bl	GameFlag_SetBitFar
+	bl	GameFlag_SetBit
 	ldr	r3, [r5, #8]
 	cmp	r3, #0
 	beq.n	.L_080ceefe

@@ -45,7 +45,7 @@ Func_08041fa4:
 	mov	r1, sl
 	mov	r2, r9
 	mov	r3, fp
-	bl	0x0803aae4
+	bl	Func_0803aae4
 	b.n	.L_08042000
 	.2byte 0x01ff
 	.2byte 0x0000

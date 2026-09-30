@@ -10,6 +10,9 @@ Func_0804257c:
 	strb	r3, [r0, #15]
 .L_08042586:
 	pop	{pc}
+	.global Func_08042588
+	.thumb_func
+Func_08042588:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

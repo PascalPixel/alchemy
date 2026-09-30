@@ -53,6 +53,9 @@ Resource_LoadByMode:
 .L_0803f230:
 	add	sp, #12
 	pop	{r5, r6, pc}
+	.global Func_0803f234
+	.thumb_func
+Func_0803f234:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

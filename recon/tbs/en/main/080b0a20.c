@@ -1,3 +1,4 @@
+/* 2026-09-30 asm-only (inline asm not yet permitted to workers): a FAKEMATCH-tagged "ldr %0, =0xffff" issued first puts 0xffff at the head of the pool, as the ROM has it. */
 /* Draft, not exact (2026-09-29, Mercury): the code is exact; only the
    literal pool order differs. The ROM pools 0xffff, 0, 0x1ff, 0xfffffe00;
    this emits 0, 0x1ff, 0xffff, 0xfffffe00. The one-halfword zero and the

@@ -1,3 +1,4 @@
+/* 2026-09-30 asm-only (inline asm not yet permitted to workers): as 080b6d30, a FAKEMATCH-tagged one-instruction asm copy of the zero result into the counter. */
 /* Draft, not exact (2026-09-24): 1 differing halfword. The reference copies a
    zero from another register (mov) where this spelling materialises movs #0.
    cse.c picks src_folded on a cost tie and COST(const_int 0) is 0 against 1

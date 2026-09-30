@@ -913,7 +913,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU12.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/OPEN_ACTION_MENU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/RUN_ACTION_FLOW.o"(.text)
-        "*/recon/tbs/raw/080a77a4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/SHOW_CURRENT_LIST.o"(.text)
         "*/recon/tbs/raw/080a7a32.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/CHARACTER_SELECTOR_RUN_REARRANGE.o"(.text)

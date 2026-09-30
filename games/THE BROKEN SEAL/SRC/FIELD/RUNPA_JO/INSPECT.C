@@ -102,15 +102,15 @@ void FieldScene_RunScene3bf_0200252c(void)
 {
     struct FieldActor *actor;
 
-    actor = (struct FieldActor *)Value1(Object_GetById, 0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != NULL) {
         Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Value1(Object_GetById, 0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != NULL) {
         Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Value1(Object_GetById, 0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != NULL) {
         Actor_SetPosition(ACTOR_GERALD, actor->x.fixed, actor->z.fixed);
     }
@@ -147,7 +147,7 @@ void FieldScene_RunScene3bf_020025f8(void)
     Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
-    Value3(Engine_ActorShowEmote, 12, 0x100, 0);
+    Engine_ActorShowEmote(12, 0x100, 0);
     Event_Wait(60);
 }
 

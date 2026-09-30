@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 void ActorPresentation_SetEightSceneCells();
 s32 SceneActor_RunActor22PlacementSequence();
@@ -16,31 +17,6 @@ void Engine_EventEnd();
 void ObjectMotion_SetActionVariant();
 void Engine_AudioPlayCue();
 void BattleFx_PlayQueuedSound();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 void HaidiaArashi_RunEventSequence(void)
 {
@@ -70,26 +46,26 @@ void HaidiaArashi_RunEventSequence(void)
             ObjectMotion_SetActionVariant(12, 2);
             Call3(Engine_ActorWalkToAndWait, 12, 224, 0x368);
             Engine_EventWait(40);
-            Call1(Engine_AudioPlayCue, 0x121);
+            Engine_AudioPlayCue(0x121);
             Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
             Engine_MapWaitWorkValuesBelow256();
             BattleFx_PlayQueuedSound();
-            Call1(Engine_GameFlagSet, 0x831);
+            Engine_GameFlagSet(0x831);
         }
         ActorPresentation_SetEightSceneCells();
-        Call1(Engine_GameFlagSet, 0x311);
-        if (Value1(Engine_GameFlagIsSet, 0x837) != 0) {
-            if (Value1(Engine_GameFlagIsSet, 0x841) == 0) {
-                if (Value1(Engine_GameFlagIsSet, 0x30c) == 0) {
+        Engine_GameFlagSet(0x311);
+        if (Engine_GameFlagIsSet(0x837) != 0) {
+            if (Engine_GameFlagIsSet(0x841) == 0) {
+                if (Engine_GameFlagIsSet(0x30c) == 0) {
                     record = Engine_ActorGet(0);
                     if (*(s32 *)(record + 12) > 0x800000) {
-                        Value2(SceneActor_RunActor22PlacementSequence, 219, 0x34b);
+                        SceneActor_RunActor22PlacementSequence(219, 0x34b);
                         Call3(Engine_ActorWalkToAndWait, 0, 179, 0x33d);
                     } else {
-                        Value2(SceneActor_RunActor22PlacementSequence, 214, 0x38c);
+                        SceneActor_RunActor22PlacementSequence(214, 0x38c);
                         Call3(Engine_ActorWalkToAndWait, 0, 219, 0x38f);
                     }
-                    Call1(Engine_GameFlagSet, 0x30c);
+                    Engine_GameFlagSet(0x30c);
                 }
             }
         }

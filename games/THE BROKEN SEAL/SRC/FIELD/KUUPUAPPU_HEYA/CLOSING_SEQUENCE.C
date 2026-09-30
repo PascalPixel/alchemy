@@ -14,25 +14,6 @@ void Party_SetFields1ceAnd1d0();
 void Event_SetPair1d4();
 void BattleFx_SetWeightedResult();
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants
- * straight into the argument registers; a direct call precomputes a costly
- * constant into a pseudo that the compiler then shares with later uses in
- * the block. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* The Vault's closing scene after the thieves are caught: the party is cut
  * free, the mayor and the villagers talk it over, one question decides who
  * speaks next, and the scene closes back into the house at entrance 17,

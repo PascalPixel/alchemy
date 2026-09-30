@@ -98,22 +98,6 @@ static __inline__ void DrawPlacement(
     Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
 }
 
-/*
- * These wrappers pass their constants straight into the argument registers.
- * A direct call precomputes a costly constant into a pseudo that is then
- * shared with later uses in the block.  A value-returning call also sets r0
- * last of its arguments.
- */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor,
                                   struct StagedActorEffectRequest *request);
 
@@ -274,36 +258,6 @@ void Object_SetActionCallbackAndRefreshById(s32 id, s32 callback);
 void Audio_PlayCueFromEventWork(void);
 void SceneActor_AlternateSlots13To16Field0c(void);
 
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ u8 *Record1(void *(*f)(u32), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 extern u8 KorimaHashi_GeraldAction[];
 extern u8 KorimaHashi_IvanAction[];
 extern u8 KorimaHashi_MiaAction[];
@@ -374,14 +328,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetMotionSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Actor_SetMotionSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
     {
-        u8 *record = Record1(Object_GetById, 0);
+        u8 *record = Object_GetById(0);
 
         if (record != 0) {
             Actor_SetPosition(ACTOR_GERALD, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
         }
     }
     {
-        u8 *record = Record1(Object_GetById, 0);
+        u8 *record = Object_GetById(0);
 
         if (record != 0) {
             Actor_SetPosition(ACTOR_IVAN, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
@@ -392,7 +346,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (*flag_work != 0) {
         Actor_SetMotionSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
         {
-            u8 *record = Record1(Object_GetById, 0);
+            u8 *record = Object_GetById(0);
 
             if (record != 0) {
                 Actor_SetPosition(ACTOR_MIA, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
@@ -442,7 +396,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     ColorBuffer_Interpolate(1);
     WaitFrames(1);
     KorimaHashi_SparkleSound = 1;
-    Value2(Engine_TaskAddCallback, (s32)SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
+    Engine_TaskAddCallback((s32)SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
     WaitFrames(20);
     ColorBuffer_ApplyTarget(0x405210, 1);
     ColorBuffer_ApplyTarget(0x10000, 2);
@@ -490,7 +444,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetSpriteFlags((s32)record, 0);
     Object_SetModeById(ACTOR_PARTY_LEADER, 19);
     Battle_WaitMode0(20);
-    record = Record1(Object_GetById, 1);
+    record = Object_GetById(1);
     *(s32 *)((s32)record + 40) = (value << 10);
     Battle_WaitMode0(10);
     Actor_SetMotionSpeed(ACTOR_GERALD, (value << 10), (value << 10));
@@ -499,7 +453,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetSpriteFlags((s32)record, 0);
     Object_SetModeById(ACTOR_GERALD, 19);
     Battle_WaitMode0(40);
-    record = Record1(Object_GetById, 2);
+    record = Object_GetById(2);
     *(s32 *)((s32)record + 40) = (value << 10);
     Battle_WaitMode0(10);
     Actor_EnableActionCallback(ACTOR_IVAN, reset_action);
@@ -508,7 +462,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Object_SetModeById(ACTOR_IVAN, 19);
     KorimaHashi_SparkleSound = 0;
     Battle_WaitMode0(160);
-    Value1(Engine_TaskRemoveCallback, (s32)SceneEffect_SpawnObject26EveryEightFrames);
+    Engine_TaskRemoveCallback((s32)SceneEffect_SpawnObject26EveryEightFrames);
     Battle_WaitMode0(120);
     ColorBuffer_ApplyTarget(0x406218, 1);
     ColorBuffer_Interpolate(60);
@@ -517,7 +471,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     effect_phase = &gFallingEffectState;
     gFallingEffectOffset = 0x800000;
     *effect_phase = 1;
-    Value2(Engine_TaskAddCallback, (s32)FieldScene_UpdateFallingEffect, 0xc80);
+    Engine_TaskAddCallback((s32)FieldScene_UpdateFallingEffect, 0xc80);
     Battle_WaitMode0(180);
     Audio_PlayCue(21);
     Event_SayThenWait(ACTOR_GERALD, 80);
@@ -563,7 +517,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     value = 0;
     Actor_SetSpritePriority(ACTOR_MIA, 3);
     KorimaHashi_TriggerPending = value;
-    Value2(Engine_TaskAddCallback, (s32)SceneActor_AlternateSlots13To16Field0c, 0xc80);
+    Engine_TaskAddCallback((s32)SceneActor_AlternateSlots13To16Field0c, 0xc80);
     Audio_PlayCue(220);
     *(u8 *)(Object_GetById(13) + 35) &= 254;
     Actor_SetSpritePriority(13, 2);
@@ -590,7 +544,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         } while (gFallingEffectState != 0);
     }
     Battle_WaitMode0(0x12c);
-    Value1(Engine_TaskRemoveCallback, (s32)FieldScene_UpdateFallingEffect);
+    Engine_TaskRemoveCallback((s32)FieldScene_UpdateFallingEffect);
     Battle_WaitMode0(120);
     Audio_PlayCue(17);
     ColorBuffer_ApplyTarget(0x10000, 1);
@@ -817,7 +771,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     gFallingEffectOffset = 0x800000;
     sequence_phase = &gFallingEffectState;
     *sequence_phase = 1;
-    Value2(Engine_TaskAddCallback, (s32)FieldScene_UpdateFallingEffect, 0xc80);
+    Engine_TaskAddCallback((s32)FieldScene_UpdateFallingEffect, 0xc80);
     Battle_WaitMode0(80);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
@@ -954,7 +908,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Battle_WaitMode0(60);
     Event_ShowMessage(12, 0);
     Event_ShowMessage(11, 0);
-    Value1(Engine_TaskRemoveCallback, (s32)FieldScene_UpdateFallingEffect);
+    Engine_TaskRemoveCallback((s32)FieldScene_UpdateFallingEffect);
     Battle_WaitMode0(80);
     ColorBuffer_ApplyTarget(0x10000, 1);
     ColorBuffer_Interpolate(60);
@@ -1127,7 +1081,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetMotionSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Object_SetModeById(ACTOR_GERALD, 2);
     {
-        u8 *record = Record1(Object_GetById, 0);
+        u8 *record = Object_GetById(0);
 
         if (record != 0) {
             Actor_SetDestination(ACTOR_GERALD, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
@@ -1137,7 +1091,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Object_SetModeById(ACTOR_IVAN, 2);
     {
-        u8 *record = Record1(Object_GetById, 0);
+        u8 *record = Object_GetById(0);
 
         if (record != 0) {
             Actor_SetDestination(ACTOR_IVAN, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
@@ -1148,7 +1102,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (KorimaHashi_PartyFlag != 0) {
         Object_SetModeById(ACTOR_MIA, 2);
         {
-            u8 *record = Record1(Object_GetById, 0);
+            u8 *record = Object_GetById(0);
 
             if (record != 0) {
                 Actor_SetDestination(ACTOR_MIA, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
@@ -1267,7 +1221,7 @@ s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0)
     return 0;
 hit:
     Audio_PlayCue(106);
-    Value2((s32 (*)())Engine_ObjectSetScript, (s32)arg0, (s32)KorimaHashi_TriggerScript);
+    ((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KorimaHashi_TriggerScript);
     KorimaHashi_TriggerPending = 1;
     return 0;
 }

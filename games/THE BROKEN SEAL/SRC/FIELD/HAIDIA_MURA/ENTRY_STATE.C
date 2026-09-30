@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void PaletteGlow_Update(s32 a, s32 b);
 void FieldScene_RunLargeStagingSequence(void);
@@ -12,26 +13,6 @@ void SceneActor_SetFlagByteBySlotZeroPosition(void);
 void FieldScene_RunScene373SequenceB(void);
 s32 SceneActor_RunStep18WhenTargetSet();
 extern u8 gHaidiaMuraActor22Actions[];
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Vale entry: from entrance 16 run the staging scene; otherwise place the story actors and cells for the flags, start the village tasks and redraw. */
 s32 HaidiaMura_ApplyEntryState(void)
@@ -50,8 +31,8 @@ s32 HaidiaMura_ApplyEntryState(void)
                 InitializeStagedActorSceneOrbitingEffect(20);
             }
         }
-        Call6(Engine_MapCopyCellsTo, 2, 102, 84, 41, 2, 1);
-        Call6(Engine_MapCopyCellsTo, 1, 102, 83, 41, 1, 1);
+        Engine_MapCopyCellsTo(2, 102, 84, 41, 2, 1);
+        Engine_MapCopyCellsTo(1, 102, 83, 41, 1, 1);
         actor = Engine_ActorGet((Engine_GameFlagIsSet(0x87a) != 0) + 20);
         Engine_ActorSetSpriteFlags(actor, 0);
         if (Engine_GameFlagIsSet(0x314)) {
@@ -79,7 +60,7 @@ s32 HaidiaMura_ApplyEntryState(void)
                 Engine_ActorSetPosition(16, 0, 0);
                 Engine_ActorSetPosition(17, 0, 0);
             }
-            set = Value1(Engine_GameFlagIsSet, 0x815);
+            set = Engine_GameFlagIsSet(0x815);
             if (set == 0) {
                 if (!Engine_GameFlagIsSet(0x109)) {
                     if (Engine_GameFlagIsSet(0x823)) {
@@ -97,7 +78,7 @@ s32 HaidiaMura_ApplyEntryState(void)
             }
             if (!Value1(Engine_GameFlagIsSet, 0x308) && gGameState.entrance == 17) {
                 Scene_RepairTheHouse();
-                Call1(Engine_GameFlagSet, 0x308);
+                Engine_GameFlagSet(0x308);
             }
         }
         if (Engine_GameFlagIsSet(0x109)) {

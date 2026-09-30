@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 
 void Map_SetLayerEntryFlagFar(s32 value);
 s32 Party_ListActiveOwners(s16 *owners);
@@ -23,7 +24,6 @@ struct OwnerState {
 
 struct OwnerState *Owner_GetState(s32 owner);
 
-
 /* Restore the whole party: every owner's HP and PP to their maximums, and
  * the three companions back into the active party. */
 static __inline__ void Party_RestoreAll(void)
@@ -44,24 +44,6 @@ static __inline__ void Party_RestoreAll(void)
     Party_AddActiveOwner(2);
     Party_AddActiveOwner(3);
     InventorySnapshot_Restore();
-}
-
-/* FAKEMATCH: these inline call and value wrappers pass their constants
- * straight into the argument registers where the game does; direct calls
- * share a pool constant with a later call and shift the pool. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 /* Babi's Palace entry: record the entrance flags, then outside the second scene restore the lighthouse-item scene and the guards, set the entrance selector and, arriving by entrance 99 or 98, restore the party and run its scene. */
@@ -105,7 +87,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
                 Engine_HeapRelease(17);
             }
             if (gGameState.entrance == 33 && !Value1(Engine_GameFlagIsSet, 0x96f)) {
-                Call1(Engine_GameFlagSet, 0x96f);
+                Engine_GameFlagSet(0x96f);
                 Call3(Engine_ActorSetPosition, 14, 0xd00000, 0x2c00000);
                 FieldScene_RunMainCutsceneSequence();
             }

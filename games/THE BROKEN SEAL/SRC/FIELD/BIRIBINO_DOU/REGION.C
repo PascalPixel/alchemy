@@ -118,7 +118,7 @@ void FieldScene_RunScene398SequenceB(void)
     s32 record;
     s32 v5;
 
-    rec7 = Value1(Engine_ActorGet, 11);
+    rec7 = Engine_ActorGet(11);
     rec8 = Actor_Get(12);
     if ((*(s32 *)(rec7 + 8) >> 20) == 35) {
         if ((*(s32 *)(rec7 + 16) >> 20) != 23) {

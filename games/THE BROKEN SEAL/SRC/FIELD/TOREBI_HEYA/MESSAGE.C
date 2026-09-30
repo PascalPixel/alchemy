@@ -13,10 +13,10 @@ void SceneDialogue_RunFacingMessage(s32 no)
         Sanctum_Open(no);
     } else {
         if (GameFlag_IsSet(0x950) != 0) {
-            Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiShipsArentGoing);
+            Engine_EventSetMessage((s32)MsgTorebiShipsArentGoing);
             Event_ShowMessage(no, 0);
         } else if (GameFlag_IsSet(0x962) != 0) {
-            Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiMissFinalsTolbis);
+            Engine_EventSetMessage((s32)MsgTorebiMissFinalsTolbis);
             Event_ShowMessage(no, 0);
         } else {
             Event_SetMessage((s32)MsgTorebiWasteStuckHereWhenSuch);

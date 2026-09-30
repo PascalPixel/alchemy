@@ -1,4 +1,5 @@
 #include "TASK.H"
+#include "CALL.H"
 
 /*
  * One fixed line, then three whose fifth or sixth argument is a field of the
@@ -75,7 +76,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
     rec8 = (s32)Engine_ActorGet(gGameState.selected_actor);
     for (i = 22; i <= 25; i++) {
-        rec7 = Value1(Engine_ActorGet, i);
+        rec7 = Engine_ActorGet(i);
         *(u8 *)(rec7 + 91) = 0;
         xa = *(s32 *)(rec7 + 8);
         xb = *(s32 *)(rec8 + 8);
@@ -159,7 +160,7 @@ void FieldScene_PlaceSpectatorRow(void)
 {
     KorosseoKabe_SpectatorTimer = 0;
     KorosseoKabe_SpectatorPhase = 0;
-    Call1(Engine_TaskRemoveCallback, (s32)FieldScene_RunSupplementalSequenceOne);
+    Engine_TaskRemoveCallback((s32)FieldScene_RunSupplementalSequenceOne);
     Actor_SetPosition(22, 0x3a80000, 0xd80000);
     Actor_SetPosition(23, 0x3c80000, 0xd80000);
     Actor_SetPosition(24, 0x3e80000, 0xd80000);

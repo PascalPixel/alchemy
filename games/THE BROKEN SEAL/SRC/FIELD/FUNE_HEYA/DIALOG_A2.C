@@ -44,12 +44,12 @@ void FieldScene_RunScene3b1SequenceA(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x300) != 0) {
-        rec7 = Value0(SceneState_ApplyLevelFromFlags);
+        rec7 = SceneState_ApplyLevelFromFlags();
         FuneHeya_TurnActorToOpenSide();
         Event_SetMessage((s32)MsgFuneGivesMeChillsThinkCould);
         FieldScene_RunStepThen10(12);
         Actor_SetAnimation(rec7, 2);
-        record = Value1(Object_GetByIdFar, 0);
+        record = Object_GetByIdFar(0);
         if (record != 0) {
             Actor_SetDestination(rec7, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -63,7 +63,7 @@ void FieldScene_RunScene3b1SequenceA(void)
         if (Event_ChooseYesNo(0, 0) == 0) {
             FieldScene_RunStepThen10(12);
             Actor_SetAnimation(12, 2);
-            record = Value1(Object_GetByIdFar, 0);
+            record = Object_GetByIdFar(0);
             if (record != 0) {
                 Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
@@ -100,12 +100,12 @@ void FieldScene_RunScene3b1SequenceB(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x300) != 0) {
-        rec7 = Value0(SceneState_ApplyLevelFromFlags);
+        rec7 = SceneState_ApplyLevelFromFlags();
         FuneHeya_TurnActorToOpenSide();
         Event_SetMessage((s32)MsgFuneRobinYouveGotGoodEye);
         FieldScene_RunStepThen10(9);
         Actor_SetAnimation(rec7, 2);
-        record = Value1(Object_GetByIdFar, 0);
+        record = Object_GetByIdFar(0);
         if (record != 0) {
             Actor_SetDestination(rec7, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -119,7 +119,7 @@ void FieldScene_RunScene3b1SequenceB(void)
         if (Event_ChooseYesNo(0, 0) == 0) {
             FieldScene_RunStepThen10(9);
             Actor_SetAnimation(9, 2);
-            record = Value1(Object_GetByIdFar, 0);
+            record = Object_GetByIdFar(0);
             if (record != 0) {
                 Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }

@@ -37,11 +37,6 @@ void GomaIriguchi_SetEntranceFlag();
 void GomaIriguchi_GiveShamansRod();
 void Event_PrepareObjectAndApplyValue();
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames);
 
 void FieldScene_RunScene387SequenceA(void)
@@ -56,7 +51,7 @@ void FieldScene_RunScene387SequenceA(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -70,7 +65,7 @@ void FieldScene_RunScene387SequenceA(void)
     Event_Wait(20);
     if (GameFlag_IsSet(0x855) == 0) {
         Actor_SetAnimation(ACTOR_GERALD, 2);
-        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }

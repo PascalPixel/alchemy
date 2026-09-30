@@ -1,5 +1,6 @@
 /* The Mars star, the party's talk and entering the star room. */
 #include "STAR.H"
+#include "CALL.H"
 extern u8 MsgSoruAlexOnlyOneLeft[];
 extern u8 MsgSoruGarciaSilence[];
 extern u8 MsgSoruJasmineBeCareful[];
@@ -43,7 +44,7 @@ void Scene_BagMarsStar(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Map_CopyCellsTo(0, 40, 13, 46, 3, 3);
     Event_Wait(20);
-    star = Value4(Scene_PresentItem, 222, 0xe80000, 0x100000, 0x900000);
+    star = Scene_PresentItem(222, 0xe80000, 0x100000, 0x900000);
     Event_Wait(40);
     UiWork_PushValueSlotFar(star, 1);
     Message_ShowCentered((s32)MsgSoruMarsStarBagged, 1);
@@ -55,7 +56,7 @@ void Scene_BagMarsStar(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 156);
     Event_Wait(10);
-    leader = (struct FieldActor *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    leader = (struct FieldActor *)Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
     }
@@ -87,7 +88,7 @@ void Scene_BagMarsStar(void)
     Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
     Actor_Jump(ACTOR_GERALD, 6, 40);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Value0(Engine_EventCloseScreen);
+    Engine_EventCloseScreen();
     Event_WaitForScreen();
     Event_RequestExit(2);
 }
@@ -387,7 +388,7 @@ void Scene_EnterStarRoom(void)
         *sukureta_sprite = shown;
     }
     Actor_SetPosition(8, 0, 0);
-    Call1((void (*)())Engine_EventWait, 30);
+    ((void (*)())Engine_EventWait)(30);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x13333, 0x9999);
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x132);
     Event_Wait(20);
@@ -600,9 +601,9 @@ void Scene_EnterStarRoom(void)
     Actor_Jump(ACTOR_SUKURETA, 4, 0);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 20);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
-    Call2(Event_SayThenWait, 0xa009, 10);
+    Event_SayThenWait(0xa009, 10);
     Actor_StartRepeatedMotion(ACTOR_SUKURETA, 3);
-    Call2(Event_SayThenWait, 0xa009, 20);
+    Event_SayThenWait(0xa009, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Actor_ShowEmote(ACTOR_JASMINE, 0x101, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
@@ -645,7 +646,7 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 10);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 1);
     Actor_Jump(ACTOR_SUKURETA, 4, 40);
-    Call2(Event_SayThenWait, 0xa009, 10);
+    Event_SayThenWait(0xa009, 10);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_JASMINE, 1);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
@@ -745,7 +746,7 @@ void Scene_EnterStarRoom(void)
     Event_SayThenWait(5, 20);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 40);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
-    Call2(Event_SayThenWait, 0xa009, 30);
+    Event_SayThenWait(0xa009, 30);
     Actor_FaceDirection(ACTOR_JASMINE, 0, 30);
     Actor_ShowEmote(ACTOR_JASMINE, 0x106, 60);
     Actor_FaceDirection(ACTOR_JASMINE, 0x2000, 30);
@@ -836,7 +837,7 @@ void Scene_EnterStarRoom(void)
     Event_Wait(10);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    leader = (struct FieldActor *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    leader = (struct FieldActor *)Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
         Actor_SetDestination(ACTOR_GERALD, leader->x.part.pixel, leader->z.part.pixel);
     }

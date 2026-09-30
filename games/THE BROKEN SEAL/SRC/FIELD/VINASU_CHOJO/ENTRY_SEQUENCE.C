@@ -1,9 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 extern u8 MsgVinasuRobin[];
 extern u8 MsgVinasuRobinHandedOverShamansRod[];
-
 
 extern const s32 SceneAction_EntryGroup[];
 extern const s32 SceneAction_EntryPair[];
@@ -18,39 +18,6 @@ s32 Scheduler_RemoveCallback();
 void VinasuChojo_ShowMessage();
 void VinasuChojo_FaceActor();
 void FieldScene_RunStep6(void);
-
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants
-   straight into the argument registers, and a value-returning call sets r0
-   last of its arguments; a direct call builds the constants first. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 /* The party reaches the summit: Robin speaks, the others gather, and the
    summit's scene is recorded in two scene and entrance pairs of the game
@@ -84,7 +51,7 @@ void Scene_RunActorEntrySequence(void)
     VinasuChojo_FaceActor(0, 0x8000);
     Actor_RunRepeatedMotion(21, 1);
     Event_SetMessage((s32)MsgVinasuRobin);
-    Call1(VinasuChojo_ShowMessage, 0x9015);
+    VinasuChojo_ShowMessage(0x9015);
     Engine_EventGetViewCenter()->motion_flags = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x1300000, 0x200000, 0xb40000, 1);
@@ -121,7 +88,7 @@ void Scene_RunActorEntrySequence(void)
     VinasuChojo_ShowMessage(21);
     Actor_StartRepeatedMotion(21, 2);
     Event_ShowMessageAndWait(21, 0, 20);
-    Call3(Engine_ActorFaceDirection, 21, 0xd000, 40);
+    Engine_ActorFaceDirection(21, 0xd000, 40);
     VinasuChojo_ShowMessage(21);
     Actor_SetAnimationAndWait(21, 4);
     VinasuChojo_FaceActor(21, 0);
@@ -201,7 +168,7 @@ void Scene_RunActorEntrySequence(void)
         Task_Wait(1);
     } while ((u32)frame <= 39);
     effectCallback = (s32)FieldScene_RunStep6;
-    Value2(Engine_TaskAddCallback, effectCallback, 0xc80);
+    Engine_TaskAddCallback(effectCallback, 0xc80);
     Event_Wait(80);
     Call3(Engine_ActorFaceDirection, 0, 0xa000, 0);
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
@@ -279,7 +246,7 @@ void Scene_RunActorEntrySequence(void)
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xe000, 0);
-    if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
         Actor_SetAnimationAndWait(20, 3);
         advanceStep = 1;
@@ -301,7 +268,7 @@ void Scene_RunActorEntrySequence(void)
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xe000, 0);
-    if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
         Actor_SetAnimation(ACTOR_IVAN, 3);
         advanceStep = 1;
@@ -346,7 +313,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_ShowEmote(21, 0x103, 60);
     VinasuChojo_FaceActor(19, 0x8000);
     Actor_RunRepeatedMotion(19, 1);
-    Call1(VinasuChojo_ShowMessage, 0x2013);
+    VinasuChojo_ShowMessage(0x2013);
     Actor_ShowEmote(21, 0x105, 60);
     Actor_SetAnimationAndWait(21, 3);
     Event_Wait(20);
@@ -453,7 +420,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     VinasuChojo_FaceActor(3, 0xa000);
     VinasuChojo_ShowMessage(3);
-    Call3(Engine_ActorFaceDirection, 1, 0x8000, 20);
+    Engine_ActorFaceDirection(1, 0x8000, 20);
     Actor_ShowEmote(ACTOR_GERALD, 0x103, 20);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     VinasuChojo_ShowMessage(1);
@@ -502,7 +469,7 @@ void Scene_RunActorEntrySequence(void)
         s32 actor = (s32)&SceneId_VinasuChojo;
 
         /*
-         * Through Call2 rather than called directly: the wrapper's parameter
+         * Through Call2 rather than called directly: the helper's parameter
          * pseudos fix the order the two argument registers are materialised
          * in, and direct calls here emit them the other way round.
          */

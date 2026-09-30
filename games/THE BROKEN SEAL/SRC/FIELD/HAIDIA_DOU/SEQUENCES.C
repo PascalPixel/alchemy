@@ -17,14 +17,14 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
     u8 *slot;
     s32 saved;
 
-    rec = (u8 *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    rec = (u8 *)Engine_ActorGet(ACTOR_PARTY_LEADER);
     flag = rec + 85;
     saved = *flag;
     slot = (u8 *)box;
     *(s32 *)(slot + 0) = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
     *(s32 *)(slot + 4) = *(s32 *)(rec + 12);
     *(s32 *)(slot + 8) = (*(s32 *)(rec + 16) & -0x100000) + 0x280000;
-    if (Value2(Object_CheckMovementCollision, (s32)rec, (s32)slot) == 0) {
+    if (Object_CheckMovementCollision((s32)rec, (s32)slot) == 0) {
         Event_Begin();
         Object_SetAnimation((s32)rec, 6);
         WaitFrames(6);
@@ -35,7 +35,7 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
         *(s32 *)(rec + 40) = 0x40000;
         *flag = *flag & 126;
         Actor_SetSpriteFlags((s32)rec, 0);
-        Value3(Engine_ActorMoveToAndWait, 0, *(s16 *)(slot + 2), *(s16 *)(slot + 10));
+        Engine_ActorMoveToAndWait(0, *(s16 *)(slot + 2), *(s16 *)(slot + 10));
         Object_SetAnimation((s32)rec, 6);
         Actor_SetSpriteFlags((s32)rec, 1);
         *flag = (u8)saved;
@@ -97,7 +97,7 @@ void FieldScene_RunScene3a6SequenceB(void)
             Actor_FaceDirection(8, 0xc000, 20);
             record = Actor_Get(8);
             *(s32 *)(record + 108) = (s32)SceneActor_FaceActorZero;
-            Call0((void (*)())Engine_EventEnd);
+            ((void (*)())Engine_EventEnd)();
         }
     }
 }
@@ -118,11 +118,11 @@ void FieldScene_RunScene3a6SequenceC(void)
         off24a = 0x24a;
         if (*(s16 *)((s32)&gGameState + off24a) != 8) {
             idx = p5->touched_trigger;
-            rec8 = Value1(Engine_ActorGet, 8);
-            record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            rec8 = Engine_ActorGet(8);
+            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
             *(s32 *)(rec8 + 48) = *(s32 *)(record + 48);
-            rec8 = Value1(Engine_ActorGet, 8);
-            record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            rec8 = Engine_ActorGet(8);
+            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
             *(s32 *)(rec8 + 52) = *(s32 *)(record + 52);
             idx -= 45;
             tbl = (s32)HaidiaDou_WalkTargets;

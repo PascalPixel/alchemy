@@ -1,4 +1,5 @@
 #include "RAMAKAN.H"
+#include "CALL.H"
 
 void FieldScene_RunScene3a5_020014b0(void)
 {
@@ -19,9 +20,9 @@ void FieldScene_RunScene3a5_020014b0(void)
             shown_addr = (u16 *)(p5 + 0xcba);
             shown = 0x258;
             *shown_addr = shown;
-            record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
             *(s32 *)(record + 36) = rec8;
-            record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
             *(s32 *)(record + 44) = rec8;
             record = Actor_Get(ACTOR_PARTY_LEADER);
             *(s32 *)(record + 56) = -0x80000000;

@@ -4,6 +4,7 @@
 #include "TYPES.H"
 #include "KANPAN.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 
 extern struct EventWork *gEventWork;
 extern struct GameState gGameState;
@@ -47,11 +48,6 @@ void Engine_ActorWalkTo();
 void Engine_ActorSetAttachedEffect();
 void Engine_EventEnd();
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants
- * straight into the argument registers; a direct call precomputes a costly
- * constant into a pseudo that the compiler then shares with later uses in
- * the block. A value-returning call also sets r0 last of its arguments. */
-
 /* Runs the deck scene: the leader jumps and walks, actors 22 and 25 move
  * into place, and the scene sets where the party returns. The game state's
  * rows are written through a halfword row view (FAKEMATCH: it keeps the
@@ -62,7 +58,7 @@ void FuneKanpan_RunJumpScene(void)
     s32 record;
 
     Engine_EventBegin();
-    Call1((void (*)())Event_CallWithLastActiveObjectId, (s32)FuneKanpan_CrewScriptE);
+    ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneKanpan_CrewScriptE);
     Engine_TaskWait(1);
     Engine_CameraFollowActor(25, 1);
     Engine_TaskWait(1);
@@ -88,7 +84,7 @@ void FuneKanpan_RunJumpScene(void)
     Call3((void (*)())Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
     Call3((void (*)())Engine_ActorWalkToAndWait, 0, 216, 0x256);
     Engine_EventWait(20);
-    Value2(FieldScene_CallPairWith10, 0, 0x6000);
+    FieldScene_CallPairWith10(0, 0x6000);
     Engine_ActorJump(0, 2, 10);
     Call3((void (*)())Engine_ActorSetSpeed, 0, 0x19999, 0xcccc);
     Call3((void (*)())Engine_ActorWalkToAndWait, 0, 194, 0x270);
@@ -106,7 +102,7 @@ void FuneKanpan_RunJumpScene(void)
         *((u8 *)Engine_ActorGet(25) + 85) = zero.v;
     }
     Call3((void (*)())Engine_ActorSetSpeed, 25, 0x20000, 0x10000);
-    Call3((void (*)())Engine_ActorSetDestination, 25, 216, 0x264);
+    ((void (*)())Engine_ActorSetDestination)(25, 216, 0x264);
     Engine_AudioPlayCue(149);
     Engine_ActorSetSpritePriority(22, 2);
     Engine_ActorSetAnimation(22, 5);
@@ -118,24 +114,24 @@ void FuneKanpan_RunJumpScene(void)
     *(s32 *)(record + 108) = (s32)OverlayObject_DecayFields24And28;
     *(s32 *)(record + 68) = 0x8000;
     Call3((void (*)())Engine_ActorSetSpeed, 22, 0x60000, 0x30000);
-    Call3((void (*)())Engine_ObjectMotionSetPositionAndCommit, 22, 182, 0x26a);
+    ((void (*)())Engine_ObjectMotionSetPositionAndCommit)(22, 182, 0x26a);
     record = Engine_ActorGet(22);
     Engine_ActorSetSpriteFlags(record, 0);
-    Value2(FieldScene_CallPairWith10, 0, 0xa000);
+    FieldScene_CallPairWith10(0, 0xa000);
     Engine_ActorJump(0, 6, 80);
     Call3((void (*)())Engine_ActorSetDestination, 25, 232, 0x234);
     Call3((void (*)())Engine_ActorWalkToAndWait, 0, 204, 0x262);
     Call3((void (*)())Engine_ActorWalkToAndWait, 0, 208, 0x256);
     Call3((void (*)())Engine_ActorWalkToAndWait, 0, 248, 0x256);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -145,20 +141,20 @@ void FuneKanpan_RunJumpScene(void)
     Call3((void (*)())Engine_ActorWalkTo, 0, 250, 0x248);
     Call3((void (*)())Engine_ActorWalkTo, 1, 240, 0x258);
     Call3((void (*)())Engine_ActorWalkTo, 2, 254, 0x258);
-    Call3((void (*)())Engine_ActorWalkToAndWait, 3, 248, 0x268);
+    ((void (*)())Engine_ActorWalkToAndWait)(3, 248, 0x268);
     Engine_ActorSetAnimation(0, 1);
     Engine_ActorSetAnimation(1, 1);
     Engine_ActorSetAnimation(2, 1);
     Call3((void (*)())Engine_ActorFaceDirection, 0, 0xc000, 0);
     Call3((void (*)())Engine_ActorFaceDirection, 1, 0xc000, 0);
     Call3((void (*)())Engine_ActorFaceDirection, 2, 0xc000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 3, 0xc000, 20);
+    ((void (*)())Engine_ActorFaceDirection)(3, 0xc000, 20);
     Engine_AudioPlayCue(149);
     Engine_EventWait(40);
     Call2((void (*)())Engine_ActorSetAttachedEffect, 0, 0x102);
     Call2((void (*)())Engine_ActorSetAttachedEffect, 1, 0x102);
     Call2((void (*)())Engine_ActorSetAttachedEffect, 2, 0x102);
-    Call2((void (*)())Engine_ActorSetAttachedEffect, 3, 0x102);
+    ((void (*)())Engine_ActorSetAttachedEffect)(3, 0x102);
     Engine_EventWait(60);
     Call3((void (*)())Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3((void (*)())Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);

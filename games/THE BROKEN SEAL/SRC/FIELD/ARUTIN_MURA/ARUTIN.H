@@ -5,8 +5,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-
-
 struct Slot02000338 {
     u8 head[6];
     u16 angle;
@@ -56,61 +54,5 @@ void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 u32 Random16(void);
 void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work);
 void SceneEffect_SpawnDriftingParticle(void);
-
-/* Calls spelled through these wrappers pass their constants straight into the
- * argument registers. Spelling them as direct calls instead precomputes a
- * costly constant into a temporary that is then shared with later uses in the
- * same block. A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call3_020006f0(void (*func)(), s32 a, s32 b, s32 c)
-{
-    func(a, b, c);
-}
-
-static __inline__ struct SceneMotion *CreateActor(
-    struct SceneMotion *(*func)(s32, s32, s32, s32),
-    s32 kind, s32 x, s32 y, s32 z)
-{
-    return func(kind, x, y, z);
-}
-
-static __inline__ s32 Value6(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    return f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 
 #endif

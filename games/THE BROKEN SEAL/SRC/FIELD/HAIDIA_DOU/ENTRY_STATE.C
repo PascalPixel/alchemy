@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 
 void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
 void WaitFrames(s32 frames);
@@ -10,16 +11,6 @@ void DialogueLayout_ConfigureRowsByFlag301(void);
 s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 void FieldScene_RedrawActorFootprint(s32 actor);
 void SceneActor_FaceActorZero(union FieldObject *object);
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Vale Cave entry: by the room and entrance, set the sprite priorities, spawn the stage objects and restore the opened cells and footprints the story flags record. */
 void HaidiaDou_ApplyEntryState(void)
@@ -92,8 +83,8 @@ void HaidiaDou_ApplyEntryState(void)
                 StagedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
             } else if (Engine_GameFlagIsSet(0x204) != 0) {
                 StagedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2, flag);
-                Call6(Map_CopyCellAttributeRect, 14, 17, 2, 1, 14, 16);
-                Call6(Map_CopyCellAttributeRect, 14, 13, 1, 1, 14, 15);
+                Map_CopyCellAttributeRect(14, 17, 2, 1, 14, 16);
+                Map_CopyCellAttributeRect(14, 13, 1, 1, 14, 15);
             } else {
                 FieldScene_RedrawActorFootprint(11);
                 Engine_ActorSetSpritePriority(11, 3);

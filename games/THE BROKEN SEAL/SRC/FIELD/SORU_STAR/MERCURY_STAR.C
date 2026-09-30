@@ -74,7 +74,7 @@ void Scene_BagMercuryStar(void)
     Event_Wait(40);
     UiWork_PushValueSlotFar(obj, 1);
     mes = (s32)MsgSoruPutMercuryStar;
-    Value2(Engine_MessageShowCentered, mes, 1);
+    Engine_MessageShowCentered(mes, 1);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xe000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xe000, 20);
     Event_CloseScreen();

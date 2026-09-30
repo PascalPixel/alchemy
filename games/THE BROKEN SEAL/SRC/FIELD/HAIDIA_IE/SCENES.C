@@ -1,5 +1,6 @@
 /* Scripted scenes and the paired effects they spawn. */
 #include "HAIDIA.H"
+#include "CALL.H"
 
 void HaidiaIe_RunScene015B4(void)
 {
@@ -12,7 +13,7 @@ void HaidiaIe_RunScene015B4(void)
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Engine_TaskWait(1);
-    Call4(Engine_CameraMoveTo, 0x400000, 0x900000, 0x15e0000, 0);
+    Engine_CameraMoveTo(0x400000, 0x900000, 0x15e0000, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Call3(Engine_ActorSetPosition, 0, 0x300000, 0x15a0000);
@@ -49,7 +50,7 @@ void HaidiaIe_RunScene015B4(void)
     Call3(Engine_ActorFaceDirection, 24, 0xc000, 40);
     Engine_ActorSetAnimationAndWait(23, 3);
     Engine_EventWait(20);
-    Call2((void (*)())Engine_ActorSetAnimationAndWait, 24, 3);
+    ((void (*)())Engine_ActorSetAnimationAndWait)(24, 3);
     Call3(Engine_ActorFaceDirection, 23, 0x8000, 10);
     Call3(Engine_ActorFaceDirection, 24, 0x8000, 10);
     Engine_ActorSetSpritePriority(0, 3);
@@ -59,13 +60,13 @@ void HaidiaIe_RunScene015B4(void)
     record = Engine_ActorGet(23);
     *(s32 *)(record + 68) = 0x28f;
     *(s32 *)(record + 72) = (v5 << 8);
-    Call2(Engine_ActorEnableActionCallback, 23, (s32)Data_0200aa48);
+    Engine_ActorEnableActionCallback(23, (s32)Data_0200aa48);
     Engine_EventWait(24);
-    Call3(Engine_ActorSetSpeed, 24, 0x26666, 0x13333);
+    Engine_ActorSetSpeed(24, 0x26666, 0x13333);
     record = Engine_ActorGet(24);
     *(s32 *)(record + 68) = 0x28f;
     *(s32 *)(record + 72) = (v5 << 8);
-    Call2(Object_SetActionCallbackAndRefreshById, 24, (s32)Data_0200ab2c);
+    Object_SetActionCallbackAndRefreshById(24, (s32)Data_0200ab2c);
     Engine_EventWait(40);
     BattleFx_SetBlock30ValuesMaxZero();
     BattleFx_SetBlock30Values12Zero();
@@ -79,7 +80,7 @@ void HaidiaIe_RunScene015B4(void)
     *(s32 *)(((s32)gEventWork + 0x1c8)) = 120;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Call1_020015b4(Engine_GameFlagClear, 0x834);
+    Engine_GameFlagClear(0x834);
     Engine_EventRequestExit(9);
     Engine_EventEnd();
 }
@@ -125,7 +126,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventWait(80);
     Call3(Engine_ActorShowEmote, 12, 0x101, 40);
     SceneActor_SetPairZeroAndValue(12, 0x7000, 20);
-    Call1_020017c8(Engine_EventSetMessage, 0x11fa);
+    Call1(Engine_EventSetMessage, 0x11fa);
     Event_SayThenWait(12, 10);
     Call3(Engine_ActorShowEmote, 11, 0x102, 20);
     SceneActor_SetPairZeroAndValue(11, 0x1000, 10);
@@ -152,11 +153,11 @@ void Scene_RunExtendedActorSequence(void)
     Call3(Engine_ActorSetPosition, 30, 0x6e0000, 0x2e80000);
     Engine_TaskWait(2);
     Engine_ActorSetAnimation(30, 3);
-    Call2(Engine_ActorEnableActionCallback, 30, (s32)Data_0200ac14);
+    Engine_ActorEnableActionCallback(30, (s32)Data_0200ac14);
     Engine_EventWait(40);
     base5_200ac00 = Data_0200ac00;
-    Callback3(Object_SetTargetAndCallback, 11, 0x1001e, base5_200ac00);
-    Callback3(Object_SetTargetAndCallback, 12, 0x1001e, base5_200ac00);
+    Call3(Object_SetTargetAndCallback, 11, 0x1001e, (s32)(base5_200ac00));
+    Call3(Object_SetTargetAndCallback, 12, 0x1001e, (s32)(base5_200ac00));
     Object_RefreshSelectorById(30);
     Engine_ActorStop(11);
     Engine_ActorStop(12);
@@ -199,7 +200,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorSetAnimationAndWait(11, 3);
     Event_SayThenWait(11, 10);
     {
-        struct FieldActor *actor = Pointer1(Engine_ActorGet, 30);
+        struct FieldActor *actor = Engine_ActorGet(30);
 
         if (actor != NULL) {
             Engine_ActorSetPosition(31, actor->x.fixed, actor->z.fixed);
@@ -222,7 +223,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(12, 2);
     SceneActor_SetPairZeroAndValue(12, 0x7000, 10);
-    Call2(Event_SayThenWait, 12, 10);
+    Event_SayThenWait(12, 10);
     Engine_ActorRunRepeatedMotion(11, 1);
     Engine_EventWait(20);
     SceneActor_SetPairZeroAndValue(11, 0x1000, 10);
@@ -234,14 +235,14 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventWait(20);
     Call3(Engine_ActorSetSpeed, 11, 0x26666, 0x13333);
     Call3(Engine_ActorSetSpeed, 12, 0x26666, 0x13333);
-    Call2(Engine_ActorEnableActionCallback, 11, (s32)Data_0200acf8);
+    Engine_ActorEnableActionCallback(11, (s32)Data_0200acf8);
     Engine_EventWait(10);
     Call2(Engine_CameraSetSpeed, 0x26666, 0x4ccc);
     v6 = 0;
     Battle_GetWorkObject1e0()->motion_flags = v6;
     Call4(Engine_CameraMoveTo, 0xd70000, 0x100000, 0x3210000, 1);
     Engine_EventWait(10);
-    Call2(Engine_ActorEnableActionCallback, 12, (s32)Data_0200ad74);
+    Engine_ActorEnableActionCallback(12, (s32)Data_0200ad74);
     Object_RefreshSelectorById(12);
     SceneActor_SetPairZeroAndValue(12, 0x3000, 120);
     Engine_ActorRunRepeatedMotion(13, 2);
@@ -375,7 +376,7 @@ void Scene_RunExtendedActorSequence(void)
     ObjectMotion_Launch(22, 4, 0);
     ObjectMotion_Launch(25, 4, 0);
     ObjectMotion_Launch(28, 4, 0);
-    Call2(Engine_MessageShowCentered, 0x1214, 1);
+    Engine_MessageShowCentered(0x1214, 1);
     v5 = 1;
     Engine_EventWait(80);
     Engine_ActorGet(0)->priority_flags |= v5;
@@ -394,7 +395,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorEnableActionCallback(0, base5_200adf0);
     Engine_EventWait(20);
     Call2(Engine_CameraSetSpeed, 0x6666, 0xccc);
-    Call4(Engine_CameraMoveTo, 0xd80000, 0x100000, 0x3890000, 1);
+    Engine_CameraMoveTo(0xd80000, 0x100000, 0x3890000, 1);
     Engine_EventWait(20);
     Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(1, base5_200adf0);

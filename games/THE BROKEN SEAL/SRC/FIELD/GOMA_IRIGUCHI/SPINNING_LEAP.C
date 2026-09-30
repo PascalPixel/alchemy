@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 void OverlayObject_TurnStateByEighth();
 
@@ -15,18 +16,6 @@ s32 Engine_MathSin(s32 angle);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 void Engine_ActorSetAnimation(s32 actor, s32 anim);
 void Engine_MapWaitWorkValuesBelow256(void);
-
-/* Passing constants through these wrappers loads them straight into the
- * argument registers. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 struct Actor {
     u8 pad00[8];
@@ -98,7 +87,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     actor->layer = 3;
     actor->flags34 = 0;
     Engine_ActorWaitForMove(id);
-    Call2(OverlayObject_WaitForHeight, (s32)actor, 0x200000);
+    OverlayObject_WaitForHeight((s32)actor, 0x200000);
     Engine_AudioPlayCue(188);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
     Engine_AudioPlayCue(141);
@@ -118,7 +107,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     actor->speed = 0x50000;
     Engine_ActorSetDestination(id, 139, 196);
     Engine_ActorWaitForMove(id);
-    Call2(OverlayObject_WaitForHeight, (s32)actor, 0x200000);
+    OverlayObject_WaitForHeight((s32)actor, 0x200000);
     actor->callback = zero;
     actor->sprite->angle = 0x1000;
     p = &params;

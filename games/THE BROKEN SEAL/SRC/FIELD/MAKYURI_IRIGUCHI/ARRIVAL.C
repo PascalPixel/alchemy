@@ -6,13 +6,13 @@ void MakyuriIriguchi_ArriveWithSparks(void)
     s32 flag;
     s32 record;
 
-    actor = (struct FieldActor *)Value1(Object_GetById, ACTOR_PARTY_LEADER);
+    actor = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
     flag = GameFlag_IsSet(0x109);
     if (flag == 0) {
         Event_Begin();
         Camera_MoveTo(-1, -1, -1, 0);
         actor->motion_flags = 0;
-        Value3(Engine_ActorSetPosition, 0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) + -0x100000);
+        Engine_ActorSetPosition(0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) + -0x100000);
         Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
         record = Actor_Get(ACTOR_PARTY_LEADER);
         Actor_SetSpriteFlags(record, 0);

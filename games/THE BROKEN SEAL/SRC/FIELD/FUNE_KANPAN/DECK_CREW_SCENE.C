@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "KANPAN.H"
+#include "CALL.H"
 extern u8 FuneKanpan_CrewActionsE[];
 extern u8 FuneKanpan_CrewScriptC[];
 extern u8 MsgFuneArrgh[];
@@ -57,9 +58,9 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_ActorSetChildValue(0, 15);
     record = Engine_ActorGet(0);
     Engine_ActorSetSpriteFlags(record, 0);
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptC);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptC);
     Engine_TaskWait(1);
     Engine_ActorSetAnimation(31, 0);
     record = Engine_ActorGet(24);
@@ -78,11 +79,11 @@ void FuneKanpan_RunDeckCrewScene(void)
     action_c80c = (s32)FuneKanpan_CrewActionsD;
     Engine_ActorEnableActionCallback(22, action_c80c);
     Call3(Engine_ActorSetPosition, 21, 0x10c0000, 0x2b40000);
-    Value2(Engine_ActorEnableActionCallback, 22, action_c80c);
+    Engine_ActorEnableActionCallback(22, action_c80c);
     Call3(Engine_ActorSetPosition, 24, 0xf20000, 0x25c0000);
     Call3(Engine_ActorSetPosition, 25, 0x1080000, 0x2580000);
     Call3(Engine_ActorSetPosition, 26, 0xfe0000, 0x29c0000);
-    Call3(Engine_ActorSetPosition, 27, 0x11a0000, 0x2920000);
+    Engine_ActorSetPosition(27, 0x11a0000, 0x2920000);
     v6 = 0;
     *(u8 *)(Engine_ActorGet(24) + 99) = v6;
     v5 = 1;
@@ -91,15 +92,15 @@ void FuneKanpan_RunDeckCrewScene(void)
     *(u8 *)(Engine_ActorGet(27) + 99) = v5;
     action_c7a8 = (s32)FuneKanpan_CrewActionsB;
     Engine_ActorEnableActionCallback(24, action_c7a8);
-    Value2(Engine_ActorEnableActionCallback, 25, action_c7a8);
+    Engine_ActorEnableActionCallback(25, action_c7a8);
     action_c764 = (s32)FuneKanpan_CrewActionsA;
     Engine_ActorEnableActionCallback(26, action_c764);
-    Value2(Engine_ActorEnableActionCallback, 27, action_c764);
+    Engine_ActorEnableActionCallback(27, action_c764);
     Engine_ActorSetPosition(20, 0, 0);
     *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x202;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Call1(Engine_EventWait, 0x190);
+    Engine_EventWait(0x190);
     Call3(Engine_ActorSetPosition, 28, 0xfe0000, 0x2e40000);
     Call3(Engine_ActorSetPosition, 29, 0x180000, 0x24a0000);
     Call3(Engine_ActorSetSpeed, 28, 0x19999, 0xcccc);
@@ -108,26 +109,26 @@ void FuneKanpan_RunDeckCrewScene(void)
     Call3(Engine_ObjectMotionSetPositionAndCommit, 28, 200, 0x294);
     Call3(Engine_ActorSetSpeed, 0, 0x40000, 0x20000);
     Call3(Engine_ActorSetDestination, 0, 174, 0x26c);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 28, 180, 0x244);
+    Engine_ObjectMotionSetPositionAndCommit(28, 180, 0x244);
     Engine_AudioPlayCue(146);
     action_c7ec = (s32)FuneKanpan_CrewActionsC;
     Engine_ActorEnableActionCallback(28, action_c7ec);
     Engine_ActorEnableActionCallback(29, action_c7ec);
     Engine_AudioPlayCue(240);
     Call3(Engine_ActorSetPosition, 31, 0x860000, 0x2520000);
-    Call2(Engine_ActorEnableActionCallback, 31, (s32)FuneKanpan_CrewActionsE);
+    Engine_ActorEnableActionCallback(31, (s32)FuneKanpan_CrewActionsE);
     Engine_EventWait(10);
     Call3(Engine_ActorSetPosition, 30, 0x860000, 0x2480000);
     Call3(Engine_ActorSetSpeed, 30, 0x40000, 0x20000);
     record = Engine_ActorGet(30);
     *(s32 *)(record + 40) = 0x80000;
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 186, 0x264);
+    Engine_ObjectMotionSetPositionAndCommit(30, 186, 0x264);
     record = Engine_ActorGet(30);
     Engine_ActorSetSpriteFlags(record, 1);
     Engine_EventWait(10);
     Call3(Engine_ActorSetSpeed, 30, 0x20000, 0x10000);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 216, 0x258);
-    Call2(FieldScene_CallPairWith10, 30, 0xc000);
+    Engine_ObjectMotionSetPositionAndCommit(30, 216, 0x258);
+    FieldScene_CallPairWith10(30, 0xc000);
     FieldScene_RunScene3af_02000bb8();
     Engine_EventWait(10);
     action_c888 = (s32)FuneKanpan_SailorActions;
@@ -147,7 +148,7 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_EventWait(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
-    Call3(UiText_ShowCenteredMessage, (s32)MsgFuneArrgh, 1, 0);
+    UiText_ShowCenteredMessage((s32)MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventRequestExit(13);
 }

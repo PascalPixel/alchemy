@@ -5,8 +5,6 @@
 extern u8 MsgVinasuDespiteLongTiring[];
 extern u8 MsgVinasuWhyHappeningProtectVenusLighthouse[];
 
-
-
 struct SceneWork {
     u8 unknown_000[0x1c0];
     s32 request;
@@ -30,17 +28,6 @@ void VinasuChojo_FaceActor();
 void VinasuChojo_ShowMessage();
 void Object_SetActionCallbackAndRefreshById();
 void Object_RefreshSelectorById();
-
-static __inline__ void Call1(void (*f)(), s32 a0) { f(a0); }
-static __inline__ s32 Value1(s32 (*f)(), s32 a0) { return f(a0); }
-static __inline__ u8 *Pointer1(u8 *(*f)(), s32 a0) { return f(a0); }
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1) { f(a0, a1); }
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1) { return f(a0, a1); }
-static __inline__ void CallAction(void (*f)(), s32 actor, u8 *action) { f(actor, action); }
-static __inline__ void CallRecord(void (*f)(), u8 *record, s32 mode) { f(record, mode); }
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2) { f(a0, a1, a2); }
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3) { f(a0, a1, a2, a3); }
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) { f(a0, a1, a2, a3, a4, a5); }
 
 /* Stages the long actor transition, takes one of two query-selected branches
  * that both advance the scene step counter by three, then posts the next scene
@@ -73,7 +60,7 @@ void Scene_RunExtendedActorTransition(void)
     Event_ShowMessageAndWait(6, 0, 20);
     Audio_PlayCue(17);
     Actor_RunRepeatedMotion(6, 2);
-    CallAction(Engine_ActorEnableActionCallback, 6, Data_0200e324);
+    Engine_ActorEnableActionCallback(6, Data_0200e324);
     Event_Wait(20);
     Actor_SetAttachedEffect(21, 0x102);
     Actor_StartRepeatedMotion(21, 3);
@@ -105,7 +92,7 @@ void Scene_RunExtendedActorTransition(void)
     *(void (**)(u8 *))(rec + 108) = OverlayObject_DecayRecordField1e;
     *(u16 *)(rec + 6) = (turn << 8);
     Actor_MoveToAndWait(21, 184, 237);
-    CallAction(Object_SetActionCallbackAndRefreshById, 21, Data_0200e360);
+    Object_SetActionCallbackAndRefreshById(21, Data_0200e360);
     Event_Wait(120);
     VinasuChojo_ShowMessage(0);
     Audio_PlayCue(72);
@@ -125,7 +112,7 @@ void Scene_RunExtendedActorTransition(void)
 
         *(u16 *)(record + 100) = shown;
     }
-    CallAction(Engine_ActorEnableActionCallback, 0, Data_0200e074);
+    Engine_ActorEnableActionCallback(0, Data_0200e074);
     Actor_ShowEmote(ACTOR_GERALD, 0x100, 80);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 40);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
@@ -140,11 +127,11 @@ void Scene_RunExtendedActorTransition(void)
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     Event_Wait(20);
     record = Engine_ActorGet(2);
-    CallRecord(Engine_ActorSetSpriteFlags, record, 1);
+    Engine_ActorSetSpriteFlags(record, 1);
     Actor_SetAnimation(ACTOR_IVAN, 1);
     Actor_Jump(ACTOR_IVAN, 6, 40);
     record = Engine_ActorGet(3);
-    CallRecord(Engine_ActorSetSpriteFlags, record, 1);
+    Engine_ActorSetSpriteFlags(record, 1);
     Actor_SetAnimation(ACTOR_MIA, 1);
     Actor_Jump(ACTOR_MIA, 6, 60);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 60);
@@ -240,22 +227,22 @@ void Scene_RunExtendedActorTransition(void)
     Map_CopyCellsTo(75, 28, 75, 4, 8, 23);
     Map_CopyCellsTo(92, 86, 11, 72, 16, 20);
     Map_CopyCellsTo(19, 92, 19, 68, 8, 21);
-    rec = Pointer1(Engine_ActorGet, 0);
+    rec = Engine_ActorGet(0);
     ((struct StagedActor *)rec)->z.value += -0x200000;
     none = 0;
     ((struct StagedActor *)rec)->vertical_motion_direction = none;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 1);
+    rec = Engine_ActorGet(1);
     ((struct StagedActor *)rec)->x.value += -0x40000;
     ((struct StagedActor *)rec)->z.value += -0x200000;
     ((struct StagedActor *)rec)->vertical_motion_direction = none;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 2);
+    rec = Engine_ActorGet(2);
     ((struct StagedActor *)rec)->x.value += -0x40000;
     ((struct StagedActor *)rec)->z.value += -0x200000;
     ((struct StagedActor *)rec)->vertical_motion_direction = none;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 3);
+    rec = Engine_ActorGet(3);
     ((struct StagedActor *)rec)->x.value += -0x40000;
     ((struct StagedActor *)rec)->z.value += -0x120000;
     ((struct StagedActor *)rec)->vertical_motion_direction = none;
@@ -286,28 +273,28 @@ void Scene_RunExtendedActorTransition(void)
     Map_CopyCellAttributes(110, 106, 18, 14, 10, 5);
     Map_CopyCellsTo(110, 105, 74, 4, 18, 23);
     Map_CopyCellsTo(92, 86, 11, 68, 16, 20);
-    rec = Pointer1(Engine_ActorGet, 0);
+    rec = Engine_ActorGet(0);
     *(s32 *)(rec + 8) += -0x100000;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 1);
+    rec = Engine_ActorGet(1);
     *(s32 *)(rec + 8) += -0x100000;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 2);
+    rec = Engine_ActorGet(2);
     *(s32 *)(rec + 8) += -0x100000;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 3);
+    rec = Engine_ActorGet(3);
     *(s32 *)(rec + 8) += -0x100000;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 8);
+    rec = Engine_ActorGet(8);
     *(s32 *)(rec + 8) += 0x100000;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 9);
+    rec = Engine_ActorGet(9);
     *(s32 *)(rec + 8) += 0x100000;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 10);
+    rec = Engine_ActorGet(10);
     *(s32 *)(rec + 8) += -0x100000;
     SceneActor_ParkRecord(rec);
-    rec = Pointer1(Engine_ActorGet, 11);
+    rec = Engine_ActorGet(11);
     *(s32 *)(rec + 8) += -0x100000;
     SceneActor_ParkRecord(rec);
     Camera_MoveTo(0x1420000, 0x200000, 0xb40000, 0);
@@ -374,7 +361,7 @@ void Scene_RunExtendedActorTransition(void)
     Graphics_EnableObjLayerAndCallbacks();
     *(u16 *)((*(s32 *)cell + 0x12f4)) = none;
     *(u16 *)((*(s32 *)cell + 0x12f6)) = none;
-    Call3(UiText_ShowCenteredMessage, (s32)MsgVinasuDespiteLongTiring, 0, 0);
+    UiText_ShowCenteredMessage((s32)MsgVinasuDespiteLongTiring, 0, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Event_Wait(80);
 }

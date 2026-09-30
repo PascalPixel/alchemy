@@ -55,10 +55,10 @@ void FieldScene_RunScene3b1_02006110(void)
     s32 rec7;
     s32 rec8;
 
-    rec2 = Value2(FuneHeya_FindFirstSetFlag, 0, 0);
+    rec2 = FuneHeya_FindFirstSetFlag(0, 0);
     rec8 = FuneHeya_FindFirstSetFlag(1, 0);
     rec7 = FuneHeya_FindFirstSetFlag(2, 0);
-    rec4 = Value2(FuneHeya_FindFirstSetFlag, 3, 0);
+    rec4 = FuneHeya_FindFirstSetFlag(3, 0);
     Event_Begin();
     FieldScene_RunSceneStep(10, 0, 0);
     OverlayObject_SetPositionAndHeading(8, 0x1d8, 144, 0x5000);
@@ -116,8 +116,8 @@ void FieldScene_RunScene3b1_02006110(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();
     Event_WaitForScreen();
-    Call2(SceneState_ScanTwoArraysAndCrossNotify, 0x92c, 0x935);
-    Call2(SceneState_ScanTwoArraysAndCrossNotify, 0x917, 0x990);
+    SceneState_ScanTwoArraysAndCrossNotify(0x92c, 0x935);
+    SceneState_ScanTwoArraysAndCrossNotify(0x917, 0x990);
     GameFlag_Clear(0x8a0);
     Event_RequestExit(10);
 }

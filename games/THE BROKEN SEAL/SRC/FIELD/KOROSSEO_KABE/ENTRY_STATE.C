@@ -1,5 +1,6 @@
 #include "TASK.H"
 #include "RESOURCE_IDS.H"
+#include "CALL.H"
 
 void SceneState_ApplyRectsForActors15To17(void);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
@@ -35,7 +36,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
     s32 zero;
 
     gEventWork->start_transition = 0;
-    Call1((void (*)())Engine_GameFlagSet, 0x144);
+    ((void (*)())Engine_GameFlagSet)(0x144);
     Call6(Engine_MapCopyCellAttributes, 14, 11, 12, 4, 100, 11);
     Call6(Engine_MapCopyCellAttributes, 48, 10, 5, 6, 120, 10);
     for (i = 26; i <= 30; i++) {
@@ -83,12 +84,12 @@ s32 KorosseoKabe_ApplyEntryState(void)
     col = actor->x.fixed >> 20;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Call6(Engine_MapCopyCellAttributes, 52, 28, 1, 3, col, 10);
+    Engine_MapCopyCellAttributes(52, 28, 1, 3, col, 10);
     actor = Engine_ActorGet(33);
     col = actor->x.fixed >> 20;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Call6(Engine_MapCopyCellAttributes, 52, 28, 1, 3, col, 13);
+    Engine_MapCopyCellAttributes(52, 28, 1, 3, col, 13);
 
     x = GameFlag_GetByte(0x340);
     if (x == 0) {
@@ -98,7 +99,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
     actor->x.fixed = (x << 20) + 0x80000;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Call6(Engine_MapCopyCellAttributes, 71, 16, 1, 1, x, 16);
+    Engine_MapCopyCellAttributes(71, 16, 1, 1, x, 16);
     x = GameFlag_GetByte(0x348);
     if (x == 0) {
         x = 76;
@@ -107,7 +108,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
     actor->x.fixed = (x << 20) + 0x80000;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Call6(Engine_MapCopyCellAttributes, 71, 16, 1, 1, x, 16);
+    Engine_MapCopyCellAttributes(71, 16, 1, 1, x, 16);
     x = GameFlag_GetByte(0x350);
     if (x == 0) {
         x = 79;
@@ -116,7 +117,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
     actor->x.fixed = (x << 20) + 0x80000;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Call6(Engine_MapCopyCellAttributes, 71, 16, 1, 1, x, 16);
+    Engine_MapCopyCellAttributes(71, 16, 1, 1, x, 16);
 
     SceneState_ApplyRectsForActors15To17();
     Engine_ActorSetAnimation(31, 10);
@@ -125,7 +126,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
             actor = Engine_ActorGet(k);
             actor->priority_flags = 2;
             Engine_ObjectSetAnimation(actor, 4);
-            Call6(Engine_MapCopyCellAttributes, 56, 13, 1, 1, pos, row);
+            Engine_MapCopyCellAttributes(56, 13, 1, 1, pos, row);
         }
         Engine_ActorSetAnimation(31, 10);
         BattleEffect_PauseObject(31);

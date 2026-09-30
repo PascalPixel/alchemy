@@ -126,17 +126,17 @@ void FieldScene_RunScene3b1_02005068(void)
     s32 base5_200e840;
     s32 base5_200e8e4;
 
-    rec8 = Value2(FuneHeya_FindFirstSetFlag, 0, 0);
+    rec8 = FuneHeya_FindFirstSetFlag(0, 0);
     Event_Begin();
     FieldScene_RunSceneStep(24, 1, 0);
     FieldScene_RunSceneStep(25, 2, 0);
     SceneActor_SetFlagBit3ForActors28To35();
-    Value3(FieldScene_RunSceneStep, 19, rec8, 12);
+    FieldScene_RunSceneStep(19, rec8, 12);
     Actor_SetAnimation(10, 6);
     base5_200e840 = (s32)FuneHeya_ActionScriptE;
     Actor_EnableActionCallback(rec8, base5_200e840);
     Actor_Destroy(11);
-    Value2(Engine_ActorEnableActionCallback, 12, base5_200e840);
+    Engine_ActorEnableActionCallback(12, base5_200e840);
     base5_200e8e4 = (s32)FuneHeya_EntryActionScript;
     Actor_EnableActionCallback(36, base5_200e8e4);
     Actor_EnableActionCallback(37, base5_200e8e4);

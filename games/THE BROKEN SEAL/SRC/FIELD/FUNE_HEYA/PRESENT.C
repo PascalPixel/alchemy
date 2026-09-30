@@ -53,11 +53,6 @@ u8 *Object_GetByIdFar();
  * where the same logical callee is used from more than one site.
  */
 
-static __inline__ u8 *Pointer1_020038ac(u8 *(*f)(), s32 a)
-{
-    return f(a);
-}
-
 void FieldScene_RunFourActorCoordinatePresentation(void)
 {
     u8 *record;
@@ -88,21 +83,21 @@ void FieldScene_RunFourActorCoordinatePresentation(void)
     Actor_SetAnimationAndWait(27, 3);
     FieldScene_RunStepThen10(27);
     FieldScene_CallPairWith10(27, 0xd000);
-    record = Pointer1_020038ac(Object_GetByIdFar, 0);
+    record = Object_GetByIdFar(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x1b8, 148);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
-    record = Pointer1_020038ac(Object_GetByIdFar, 1);
+    record = Object_GetByIdFar(1);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_IVAN, 0x1c8, 148);
     Actor_FaceDirection(ACTOR_IVAN, 0x4000, 0);
-    record = Pointer1_020038ac(Object_GetByIdFar, 2);
+    record = Object_GetByIdFar(2);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -200,7 +195,7 @@ void FieldScene_RunScene3b1_02003d10(void)
     Actor_WalkToAndWait(8, 0x1d8, 0x254);
     Actor_FaceDirection(8, 0x8000, 20);
     Actor_Jump(8, 4, 20);
-    rec7 = Value0(FuneHeya_PlaceAnchorCharm);
+    rec7 = FuneHeya_PlaceAnchorCharm();
     Event_Wait(20);
     Audio_PlayCue(214);
     Engine_ObjectSetScript(rec7, FuneHeya_Script01);
@@ -208,7 +203,7 @@ void FieldScene_RunScene3b1_02003d10(void)
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(20);
     Actor_WalkToAndWait(8, 0x1d2, 0x270);
-    Value2(FieldScene_CallPairWith10, 8, 0x5000);
+    FieldScene_CallPairWith10(8, 0x5000);
     Actor_StartRepeatedMotion(8, 2);
     Event_SetMessage((s32)MsgFuneCastOff);
     Event_ShowMessageAndWait(8, 0, 20);
@@ -239,7 +234,7 @@ void FieldScene_RunScene3b1_02003e34(void)
     FieldScene_RunSceneStep(18, 0, 0);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(16, 0x960000, 0x24a0000);
-    Call4(ConfigureSceneMotionFlags, 0x9c0000, -1, 0x2180000, 0x1000001);
+    ConfigureSceneMotionFlags(0x9c0000, -1, 0x2180000, 0x1000001);
     FieldScene_RunSceneStep(8, 0, 0);
     Actor_SetSpeed(16, 0xcccc, 0x6666);
     Actor_WalkToAndWait(16, 168, 0x242);
@@ -260,7 +255,7 @@ void FieldScene_RunScene3b1_02003eec(void)
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     SceneState_ApplyActor8FourFlags();
     Actor_SetPosition(18, 0x960000, 0x24a0000);
-    Call4(ConfigureSceneMotionFlags, 0x9c0000, -1, 0x2180000, 0x1000001);
+    ConfigureSceneMotionFlags(0x9c0000, -1, 0x2180000, 0x1000001);
     FieldScene_RunSceneStep(8, 0, 0);
     Actor_SetSpeed(18, 0xcccc, 0x6666);
     Actor_WalkToAndWait(18, 168, 0x242);

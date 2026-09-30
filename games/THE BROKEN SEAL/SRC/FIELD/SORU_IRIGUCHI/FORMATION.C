@@ -12,7 +12,7 @@ void Scene_RunTransitionCue(void)
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetPosition(8, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -45,7 +45,7 @@ void Scene_RunTransitionCue(void)
     Actor_FaceDirection(8, 0x5000, 20);
     Event_ShowMessageAndWait(0x4008, 0, 10);
     Actor_SetAnimation(8, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -60,7 +60,7 @@ void Scene_RunActorFormation(s32 a0)
     u32 i;
     s32 record;
 
-    Value6(Engine_MapCopyCellAttributes, 122, 20, 1, 1, 100, 32);
+    Engine_MapCopyCellAttributes(122, 20, 1, 1, 100, 32);
     Map_CopyCellAttributes(122, 20, 1, 1, 104, 32);
     Map_CopyCellAttributes(122, 20, 1, 1, 108, 32);
     Map_CopyCellAttributes(122, 20, 1, 1, 112, 32);
@@ -182,7 +182,7 @@ void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
         }
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     } else {
-        value = Value0(Engine_RandomNext);
+        value = Engine_RandomNext();
         if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
             Audio_PlayCue(138);
             Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);

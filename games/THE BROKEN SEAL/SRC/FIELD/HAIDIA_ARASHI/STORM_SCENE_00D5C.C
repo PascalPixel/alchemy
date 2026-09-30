@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
@@ -15,31 +16,6 @@ void Engine_GameFlagSet();
 void HaidiaArashi_SetStormCellAttributes();
 void SceneActor_RunActor22PlacementSequence();
 void Engine_EventEnd();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 struct Flags35 {
     u8 pad[35];
@@ -84,26 +60,26 @@ void HaidiaArashi_RunScene00D5C(void)
             ((struct Flags9 *)p6)->mode = 3;
             ((struct Flags35 *)rec7)->flags |= 1;
             Engine_EventWait(40);
-            Call1(Engine_AudioPlayCue, 0x121);
+            Engine_AudioPlayCue(0x121);
             Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
             Engine_MapWaitWorkValuesBelow256();
             BattleFx_PlayQueuedSound();
-            Call1(Engine_GameFlagSet, 0x830);
+            Engine_GameFlagSet(0x830);
         }
         HaidiaArashi_SetStormCellAttributes();
-        Call1(Engine_GameFlagSet, 0x310);
-        if (Value1(Engine_GameFlagIsSet, 0x837) != 0) {
-            if (Value1(Engine_GameFlagIsSet, 0x841) == 0) {
-                if (Value1(Engine_GameFlagIsSet, 0x30c) == 0) {
+        Engine_GameFlagSet(0x310);
+        if (Engine_GameFlagIsSet(0x837) != 0) {
+            if (Engine_GameFlagIsSet(0x841) == 0) {
+                if (Engine_GameFlagIsSet(0x30c) == 0) {
                     record = Engine_ActorGet(0);
                     if (*(s32 *)(record + 12) > 0x800000) {
                         base5_396 = 0x396;
-                        Call2(SceneActor_RunActor22PlacementSequence, 0x146, base5_396);
+                        SceneActor_RunActor22PlacementSequence(0x146, base5_396);
                         Call3(Engine_ActorWalkToAndWait, 0, 0x123, base5_396);
                     } else {
-                        Call2(SceneActor_RunActor22PlacementSequence, 0x14f, 0x3bd);
+                        SceneActor_RunActor22PlacementSequence(0x14f, 0x3bd);
                     }
-                    Call1(Engine_GameFlagSet, 0x30c);
+                    Engine_GameFlagSet(0x30c);
                 }
             }
         }

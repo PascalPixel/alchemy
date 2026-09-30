@@ -11,10 +11,10 @@ void SceneDialogue_RunFacingAction(s32 no)
         Shop_Open(27, no);
     } else {
         if (GameFlag_IsSet(0x950) != 0) {
-            Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiWasntAbleWatch);
+            Engine_EventSetMessage((s32)MsgTorebiWasntAbleWatch);
             Event_ShowMessage(no, 0);
         } else if (GameFlag_IsSet(0x962) != 0) {
-            Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiMaybeCloseShop);
+            Engine_EventSetMessage((s32)MsgTorebiMaybeCloseShop);
             Event_ShowMessage(no, 0);
         } else {
             Event_SetMessage((s32)MsgTorebiIfCanMakeNameFor);

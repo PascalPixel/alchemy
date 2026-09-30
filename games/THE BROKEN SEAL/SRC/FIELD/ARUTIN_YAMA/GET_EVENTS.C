@@ -20,7 +20,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     const struct SceneEvent *table;
 
     if (gGameState.scene == (s32)&SceneId_ArutinYama1) {
-        if (Value1(Engine_GameFlagIsSet, 0x8fd) != 0) {
+        if (Engine_GameFlagIsSet(0x8fd) != 0) {
             table = (const struct SceneEvent *)ArutinYama_OpenedAreaScript;
         } else {
             table = gArutinYamaEvents1;

@@ -48,13 +48,13 @@ void FieldScene_RunPrimarySequence(void)
     s32 hi;
     s32 lo;
 
-    actor = (struct FieldActor *)Value1(Engine_ActorGet, 20);
+    actor = (struct FieldActor *)Engine_ActorGet(20);
     Event_Begin();
     v7 = 0;
     record = Actor_Get(18);
     *(s32 *)((s32)record + 108) = v7;
     if (GameFlag_IsSet(0x200) == 0) {
-        record = Value1(Engine_ActorGet, 18);
+        record = Engine_ActorGet(18);
         if ((*(s32 *)((s32)record + 8) >> 20) > 19) {
             goto L_020006a2;
         }
@@ -68,7 +68,7 @@ void FieldScene_RunPrimarySequence(void)
         bump_step(1);
         Event_ShowMessage(18, 0);
         *(u16 *)((u8 *)Engine_ActorGet(18) + 100) = v7;
-        record = Value1(Engine_ActorGet, 18);
+        record = Engine_ActorGet(18);
         *(u16 *)((s32)record + 6) = p5;
     } else {
         Event_ShowMessage(18, 0);
@@ -76,28 +76,28 @@ void FieldScene_RunPrimarySequence(void)
     }
     record = Actor_Get(18);
     *(s32 *)((s32)record + 108) = (s32)ShianMura_WatchGateTrigger;
-    Call0(Engine_EventEnd);
+    Engine_EventEnd();
     goto L_02000916;
     L_020006a2:;
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if ((*(s32 *)((s32)record + 16) >> 19) > 27) {
-        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
         if ((*(s32 *)((s32)record + 16) >> 19) <= 29) {
-            record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
             if ((*(s32 *)((s32)record + 8) >> 20) != 26) {
                 Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-                Call3((void (*)())Engine_ActorFaceActor, 0, 18, 0);
+                ((void (*)())Engine_ActorFaceActor)(0, 18, 0);
                 Event_Wait(5);
-                rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+                rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
                 record = Actor_Get(18);
                 if (*(s32 *)(rec7 + 8) < *(s32 *)((s32)record + 8)) {
                     *(u8 *)((u8 *)Engine_ActorGet(0) + 90) &= 254;
-                    record = Value1(Engine_ActorGet, 18);
+                    record = Engine_ActorGet(18);
                     Actor_WalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) - 8), 232);
                     v7 = 1;
                 } else {
                     *(u8 *)((u8 *)Engine_ActorGet(0) + 90) &= 254;
-                    record = Value1(Engine_ActorGet, 18);
+                    record = Engine_ActorGet(18);
                     Actor_WalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) + 24), 232);
                 }
                 Actor_WaitForMove(ACTOR_PARTY_LEADER);
@@ -107,7 +107,7 @@ void FieldScene_RunPrimarySequence(void)
     v5 = 128;
     record = Actor_Get(18);
     *(s32 *)((s32)record + 56) = (v5 << 24);
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     *(s32 *)((s32)record + 60) = (v5 << 24);
     record = Actor_Get(18);
     *(s32 *)((s32)record + 64) = (v5 << 24);
@@ -118,14 +118,14 @@ void FieldScene_RunPrimarySequence(void)
     Audio_PlayCue(228);
     actor->scale_x = 0x4ccc;
     actor->scale_y = 0x4ccc;
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     q1 = *(s32 *)((s32)record + 8);
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     t2 = *(s32 *)((s32)record + 16) >> 20;
     Actor_SetPosition(20, (((q1 >> 20) << 20) + 0x80000), ((t2 << 20) + 0x80000));
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     q2 = *(s32 *)((s32)record + 8);
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     Map_CopyCellAttributes(16, 16, 1, 1, (q2 >> 20), (*(s32 *)((s32)record + 16) >> 20));
     Actor_SetSpritePriority(20, 2);
     actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -146,9 +146,9 @@ void FieldScene_RunPrimarySequence(void)
     Event_SetMessage((s32)MsgShianDoingMadeMeSpillMy);
     Event_ShowMessageAndWait(18, 0, 20);
     BattleFx_PlayQueuedSound();
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if ((*(s32 *)((s32)record + 8) >> 20) == 26) {
-        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
         if ((*(s32 *)((s32)record + 16) >> 20) > 13) {
             v7 = 1;
         }
@@ -163,7 +163,7 @@ void FieldScene_RunPrimarySequence(void)
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     }
     Actor_SetSpeed(18, 0xcccc, 0x6666);
-    record = Value1(Engine_ActorGet, 18);
+    record = Engine_ActorGet(18);
     if ((*(s32 *)((s32)record + 16) >> 20) != 14) {
         record = Actor_Get(18);
         Actor_WalkToAndWait(18, *(s16 *)((s32)record + 10), 232);
@@ -193,11 +193,11 @@ void FieldScene_RunScene3a0_02000968(void)
     *(u8 *)((u8 *)Engine_ActorGet(20) + 35) &= 253;
     v5 = 0;
     *(u8 *)((u8 *)Engine_ActorGet(20) + 85) = v5;
-    record = Value1(Engine_ActorGet, 20);
+    record = Engine_ActorGet(20);
     x = *(s32 *)(record + 8);
-    record = Value1(Engine_ActorGet, 20);
+    record = Engine_ActorGet(20);
     Map_CopyCellAttributes(3, 17, 1, 1, (x >> 20), (*(s32 *)(record + 16) >> 20));
-    Call2(Engine_TaskAddCallback, (s32)Actor_UpdatePresentationFlag, 0xc80);
+    Engine_TaskAddCallback((s32)Actor_UpdatePresentationFlag, 0xc80);
     GameFlag_Set(0x201);
     Actor_SetSpritePriority(20, 2);
     Event_End();

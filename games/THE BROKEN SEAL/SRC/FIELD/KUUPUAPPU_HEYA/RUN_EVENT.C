@@ -15,8 +15,6 @@ enum {
     ITEM_BONE = 231
 };
 
-
-
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
  * Points two records at a third: each gets the angle from its own offset to the
@@ -80,23 +78,9 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 /* Pair of ratio-like arguments shared by three setup calls below (each
  * applied to a different index: 0, 1, 2). */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
@@ -104,62 +88,9 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call0(void (*f)())
-{
-    f();
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value0_02001a4c(s32 (*f)())
-{
-
-    return f();
-}
-
-static __inline__ void Call1_02001a4c(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 /* The "shown" half word at +100 of an actor record. */
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
-
-static __inline__ void Call6_02001ba0(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_020036f8(s32 off, s32 amount)
@@ -171,11 +102,6 @@ static __inline__ void bump_step_020036f8(s32 off, s32 amount)
     s32 next = *slot + amount;
 
     *slot = next;
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
 }
 
 /* Sets up actors 10, 11, 12 (position, pose, flags) and actors 0-2 and 8-9 and
@@ -192,7 +118,7 @@ void RunEventScript01(void)
     s32 base5_200d17c;
     u8 *actor12_record;
 
-    record = Value1(Object_GetById, 12);
+    record = Object_GetById(12);
     actor12_record = *(u8 **)(record + 80);
     Event_Begin();
     Actor_SetPosition(10, 0x3180000, 0x1a00000);

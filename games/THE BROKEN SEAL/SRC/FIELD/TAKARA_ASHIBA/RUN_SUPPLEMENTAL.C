@@ -5,6 +5,7 @@ extern s16 Data_02000240[];
 
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
+#include "CALL.H"
 
 enum {
     /* Message 0x182 + 243. */
@@ -54,40 +55,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Actor_SetPosition(actor, x, y);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 s32 *Engine_GetTriggerActor(s32 slot);
 s32 Engine_TestTriggerFlag(s32 flag);
 void Engine_SetTriggerFlag(s32 flag);
@@ -106,7 +73,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
     Actor_SetSpeed(8, 0x1e666, 0xf333);
     Audio_PlayCue(188);
-    record = Value1(Engine_GetTriggerActor, 0);
+    record = Engine_GetTriggerActor(0);
     if (record != 0) {
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -147,7 +114,7 @@ void FieldScene_RunScene3b4SequenceA(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(9, 0x1b333, 0xd999);
     Audio_PlayCue(188);
-    record = Value1(Engine_GetTriggerActor, 0);
+    record = Engine_GetTriggerActor(0);
     if (record != 0) {
         Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -213,7 +180,7 @@ void FieldScene_RunPrimarySequence(void)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
         Audio_PlayCue(188);
-        record = Value1(Engine_GetTriggerActor, 0);
+        record = Engine_GetTriggerActor(0);
         if (record != 0) {
             Actor_SetDestination(10, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }

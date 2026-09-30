@@ -1,4 +1,5 @@
 #include "YAMA.H"
+#include "CALL.H"
 
 void FieldScene_RunScene3a4_02002310(void)
 {
@@ -69,7 +70,7 @@ void FieldScene_RunScene3a4_02002490(void)
         if (GameFlag_IsSet(0x907) == 0) {
             Actor_SetChildValue(10, 2);
             Actor_SetAnimation(10, 3);
-            Call4(SceneState_StoreParamsAndInstallTask, 0x2ec0000, 0x80000, 0x1180000, 0x8000);
+            SceneState_StoreParamsAndInstallTask(0x2ec0000, 0x80000, 0x1180000, 0x8000);
         }
     }
     SceneActor_ClearCollisionFlagAndPlaceMarker(9);
@@ -151,7 +152,7 @@ void FieldScene_RunScene3a4_020026c0(void)
     }
     SceneActor_ClearCollisionFlagAndPlaceMarker(11);
     if (GameFlag_IsSet(0x201) != 0) {
-        Call2((void (*)())Engine_ActorSetAnimation, 11, 5);
+        ((void (*)())Engine_ActorSetAnimation)(11, 5);
         Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
         {
             u8 *record = Actor_Get(11);
@@ -171,7 +172,7 @@ void FieldScene_RunScene3a4_020026c0(void)
             record[35] = flags;
         }
     }
-    Call2(Engine_TaskAddCallback, SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);
+    Engine_TaskAddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);
     if (GameFlag_IsSet(0x327) != 0) {
         Call6((void (*)())Engine_MapCopyCellAttributes, 30, 82, 1, 1, 29, 81);
         Map_CopyCellsTo(46, 28, 29, 17, 1, 2);

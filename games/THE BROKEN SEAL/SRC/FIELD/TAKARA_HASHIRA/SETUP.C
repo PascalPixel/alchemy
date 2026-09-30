@@ -2,6 +2,7 @@
  * the switches changed, and in the fourth room raise the pillars and watch
  * the actors near them. */
 #include "HASHIRA.H"
+#include "CALL.H"
 
 extern u8 TakaraHashira_PillarSlots[];
 
@@ -41,15 +42,15 @@ s32 TakaraHashira_SetupArea(void)
             FieldScene_RedrawActorFootprint(13);
             FieldScene_RedrawActorFootprint(14);
             FieldScene_RedrawActorFootprint(15);
-            if (Value1(Engine_GameFlagIsSet, 0x109) == 0) {
+            if (Engine_GameFlagIsSet(0x109) == 0) {
                 goto L_020029fa;
             }
-            if (Value1(Engine_GameFlagIsSet, 0x200) == 0) {
+            if (Engine_GameFlagIsSet(0x200) == 0) {
                 goto L_020029fa;
             }
             Call6(Engine_MapCopyCellsTo, 79, 34, 84, 24, 1, 2);
-            Call6(Engine_MapCopyCellsTo, 0, 32, 32, 0, 32, 32);
-            Call6(Engine_MapCopyCellsTo, 32, 32, 64, 0, 32, 32);
+            Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
+            Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
             SceneActor_ApplyPlacementQueryAndTag(9);
             SceneActor_ApplyPlacementQueryAndTag(10);
             SceneActor_ApplyPlacementQueryAndTag(11);
@@ -64,7 +65,7 @@ s32 TakaraHashira_SetupArea(void)
                 goto L_02002922;
             }
             OverlayObject_CreateConfiguredObject(0x2480000, 0, 0xc80000, 223);
-            if (Value1(Engine_GameFlagIsSet, 0x109) == 0) {
+            if (Engine_GameFlagIsSet(0x109) == 0) {
                 *((u8 *)Engine_ActorGet(0) + 98) = 1;
             }
             BattleFx_StartFadeOverlay(0);
@@ -88,17 +89,17 @@ s32 TakaraHashira_SetupArea(void)
             }
             TakaraHashira_UpdatePillarActors();
             Engine_EventWait(1);
-            Call2((void (*)())Engine_TaskAddCallback, (s32)SceneActor_CheckActors8To11NearSlotZero, 0xc80);
-            if (Value1(Engine_GameFlagIsSet, 0x109) == 0) {
+            ((void (*)())Engine_TaskAddCallback)((s32)SceneActor_CheckActors8To11NearSlotZero, 0xc80);
+            if (Engine_GameFlagIsSet(0x109) == 0) {
                 goto L_020029fa;
             }
             for (base5_8 = 8; (u32)base5_8 <= 11; base5_8++) {
-                record = (u8 *)Value1((s32 (*)())Engine_ActorGet, base5_8);
+                record = (u8 *)((s32 (*)())Engine_ActorGet)(base5_8);
                 v2 = *(s32 *)(record + 8) >> 20;
                 if (v2 == 37) {
                     v0 = *(s32 *)(record + 16) >> 20;
                     if (v0 == 9) {
-                        Call6(Engine_MapCopyCellAttributes, 27, 8, 1, 1, v2, v0);
+                        Engine_MapCopyCellAttributes(27, 8, 1, 1, v2, v0);
                         break;
                     }
                 }
@@ -121,7 +122,7 @@ s32 TakaraHashira_SetupArea(void)
             FieldScene_RunScene3b3_0200263c(11);
             FieldScene_RunScene3b3_0200263c(12);
             FieldScene_RunScene3b3_0200263c(13);
-            record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 13);
+            record = (u8 *)((s32 (*)())Engine_ActorGet)(13);
             *(s32 *)((s32)record + 108) = v5;
             TakaraHashira_PrepLoweredActor(14);
             {
@@ -131,15 +132,15 @@ s32 TakaraHashira_SetupArea(void)
 
                 record[89] = (u8)(value | 8);
             }
-            if (Value1(Engine_GameFlagIsSet, 0x202) == 0) {
+            if (Engine_GameFlagIsSet(0x202) == 0) {
                 v5 = 192;
                 record = (u8 *)Engine_ActorGet(13);
                 *(s32 *)((s32)record + 24) = (v5 << 9);
-                record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 13);
+                record = (u8 *)((s32 (*)())Engine_ActorGet)(13);
                 *(s32 *)((s32)record + 28) = (v5 << 9);
-                record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 13);
+                record = (u8 *)((s32 (*)())Engine_ActorGet)(13);
                 *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-                record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 14);
+                record = (u8 *)((s32 (*)())Engine_ActorGet)(14);
                 *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
                 Call6(Engine_MapCopyCellAttributes, 26, 12, 1, 1, 22, 16);
             }

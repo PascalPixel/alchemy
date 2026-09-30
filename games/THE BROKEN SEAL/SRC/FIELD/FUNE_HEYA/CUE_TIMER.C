@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "HEYA.H"
+#include "CALL.H"
 
 /*
  * Fune room: a one-shot cue timer. While the timer word is nonzero it counts

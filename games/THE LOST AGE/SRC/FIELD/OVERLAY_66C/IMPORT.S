@@ -8,11 +8,23 @@
 	.balign 4
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
+	.global ObjectDispatch_SetSingleChildField26
+	.thumb_func
+ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global Motion_SetModeAndWaitAnimation
+	.thumb_func
+Motion_SetModeAndWaitAnimation:
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	.global ObjectMotion_Launch
+	.thumb_func
+ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
 	overlay_veneer Func_080c8158
 	overlay_veneer Func_080c8180

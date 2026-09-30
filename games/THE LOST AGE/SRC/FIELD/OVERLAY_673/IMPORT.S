@@ -14,18 +14,42 @@
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_080201f0
 	overlay_veneer Func_08020210
+	.global ObjectDispatch_SetSingleChildField26
+	.thumb_func
+ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Animation_ApplyChildValues
+	.thumb_func
+Animation_ApplyChildValues:
 	overlay_veneer Animation_ApplyChildValuesFar
 	overlay_veneer Func_08038210
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_ResetAndSetPosition
+	.thumb_func
+ObjectMotion_ResetAndSetPosition:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global ObjectMotion_OffsetPositionAndResetMotion
+	.thumb_func
+ObjectMotion_OffsetPositionAndResetMotion:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8110
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0

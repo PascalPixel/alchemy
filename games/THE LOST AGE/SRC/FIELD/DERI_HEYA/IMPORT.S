@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
@@ -13,19 +16,46 @@
 	overlay_veneer Object_ResetMotion
 	overlay_veneer Func_080201a0
 	overlay_veneer Func_080201e0
+	.global ObjectDispatch_SetSingleChildField26
+	.thumb_func
+ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020300
+	.global UiText_ShowPositionedMessageAndWait
+	.thumb_func
+UiText_ShowPositionedMessageAndWait:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiText_DrawQuantity
+	.global UiWork_FinalizePendingCore
+	.thumb_func
+UiWork_FinalizePendingCore:
 	overlay_veneer UiWork_FinalizePendingCoreFar
+	.global Owner_RecalculateStats
+	.thumb_func
+Owner_RecalculateStats:
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Item_Get
+	.global Inventory_GetQuantity
+	.thumb_func
+Inventory_GetQuantity:
 	overlay_veneer Inventory_GetQuantityFar
+	.global PartyInventory_Add
+	.thumb_func
+PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
+	.global Inventory_Discard
+	.thumb_func
+Inventory_Discard:
 	overlay_veneer Inventory_DiscardFar
 	overlay_veneer Func_080ad288
+	.global Inventory_CountItem
+	.thumb_func
+Inventory_CountItem:
 	overlay_veneer Inventory_CountItemFar
 	overlay_veneer Func_080ad2f0
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
@@ -35,11 +65,26 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer Func_080c8020
+	.global Inventory_PromptAndSetObjectMode
+	.thumb_func
+Inventory_PromptAndSetObjectMode:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetPositionAndReset
+	.thumb_func
+ObjectMotion_SetPositionAndReset:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global ObjectMotion_Launch
+	.thumb_func
+ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
 	overlay_veneer Func_080c8158
 	.global Engine_EventSetMessage

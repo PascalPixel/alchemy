@@ -218,6 +218,9 @@ InitializeAnimationObjects:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global Func_0802296c
+	.thumb_func
+Func_0802296c:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	cmp	r5, #0

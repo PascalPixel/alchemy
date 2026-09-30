@@ -603,6 +603,9 @@ BattleFormation_SelectRandomAvailableMember:
 	.2byte 0x0d0c
 	.2byte 0x0813
 .L_081280fc:
+	.global Summon_IsEntryFlagged
+	.thumb_func
+Summon_IsEntryFlagged:
 	push	{lr}
 	movs	r3, #193
 	lsls	r3, r3, #1

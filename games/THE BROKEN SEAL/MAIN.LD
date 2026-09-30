@@ -906,7 +906,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PAIRED_ARC.o"(.text)
         "*/recon/tbs/raw/0809b5dc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENTS_SHOW_STATUS_MESSAGE.o"(.text)
-        "*/recon/tbs/raw/0809b698.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT_SLOT_UPDATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DRAW_SCALED_OBJECT.o"(.text)
         "*/recon/tbs/raw/0809b8f4.o"(.text .rodata .data .padding)

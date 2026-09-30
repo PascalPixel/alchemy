@@ -413,7 +413,7 @@ Func_0802a124:
 	adds r0, r7, #0
 	adds r0, #8
 	ldr r5, [r7, #80]
-	bl Func_0802dac0
+	bl GetWorldMapCollision
 	cmp r0, #9
 	bne .L_0802a488
 	ldr r3, [r5, #44]

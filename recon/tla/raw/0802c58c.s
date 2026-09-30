@@ -335,7 +335,7 @@ Func_0802c58c:
 .L_0802c830:
 	.4byte Data_0202d000
 .L_0802c834:
-	.4byte Data_0202c000
+	.4byte gMapCollision
 .L_0802c838:
 	.4byte Data_02038000
 .L_0802c83c:

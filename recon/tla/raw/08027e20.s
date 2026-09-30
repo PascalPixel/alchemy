@@ -884,7 +884,7 @@ Func_08027e20:
 	bne .L_08028500
 	mov r0, r8
 	adds r0, #8
-	bl Func_0802dac0
+	bl GetWorldMapCollision
 .L_08028500:
 	bl Func_08026e60
 	mov r2, r8

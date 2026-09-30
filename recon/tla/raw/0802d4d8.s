@@ -50,4 +50,4 @@ Func_0802d4d8:
 .L_0802d528:
 	.4byte Data_02024000
 .L_0802d52c:
-	.4byte Data_0202c000
+	.4byte gMapCollision

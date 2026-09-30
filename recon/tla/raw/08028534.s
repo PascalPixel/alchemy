@@ -18,7 +18,7 @@ Func_08028534:
 	str r0, [sp, #4]
 	adds r0, r1, #0
 	str r1, [sp, #0]
-	bl Func_0802dac0
+	bl GetWorldMapCollision
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r1, [r3, #108]
@@ -621,7 +621,7 @@ Func_08028534:
 	cmp r3, #1
 	bne .L_08028a8c
 	ldr r0, [sp, #0]
-	bl Func_0802dac0
+	bl GetWorldMapCollision
 	mov r1, r8
 	movs r0, #0
 	ldrsh r3, [r1, r0]

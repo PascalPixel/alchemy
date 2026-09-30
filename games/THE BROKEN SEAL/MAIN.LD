@@ -1236,7 +1236,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/LIST_ACTOR_IDS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTOR_COMMIT_PLACEMENT.o"(.text)
         "*/recon/tbs/raw/080b6cae.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/LIST_ALL_UNITS_AND_SUBMIT.o"(.text)
+        "*/games/COMMON/SRC/BATTLE/PARTY/LIST_ALL_UNITS_AND_SUBMIT.o"(.text)
         "*/recon/tbs/raw/080b6cce.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/GET_SLOT_FIELD_14.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/CLASS_IS_VALID.o"(.text)

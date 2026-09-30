@@ -557,7 +557,7 @@ Func_0811e830:
 	strh	r3, [r0, #2]
 	movs	r3, #255
 	strh	r3, [r0, #4]
-	bl	Func_0811b9d4
+	bl	BattleActor_SpawnObjectsForList
 .L_0811ecc4:
 	movs	r1, #8
 	negs	r1, r1
@@ -642,7 +642,7 @@ Func_0811e830:
 	ldr	r4, [sp, #8]
 	movs	r3, #0
 	str	r3, [r4, #20]
-	bl	Func_0811a468
+	bl	BattleParty_ListAllUnitsAndSubmit
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0

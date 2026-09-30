@@ -505,7 +505,7 @@ Func_08125c94:
 	strh	r2, [r5, r0]
 	movs	r1, #0
 	adds	r0, r6, #0
-	bl	Func_0811b9d4
+	bl	BattleActor_SpawnObjectsForList
 	adds	r0, r5, #0
 	bl	0x08138028
 	movs	r0, #0
@@ -563,7 +563,7 @@ Func_08125c94:
 	strh	r0, [r2, r3]
 	movs	r1, #0
 	mov	r0, r8
-	bl	Func_0811b9d4
+	bl	BattleActor_SpawnObjectsForList
 	movs	r0, #1
 	mov	r1, r8
 	bl	0x0811a31c

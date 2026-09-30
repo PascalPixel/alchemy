@@ -75,7 +75,7 @@ void ObjectDispatch_Initialize(void *, u32);
 s32 AnimationObjects_SelectAnimation(void *, s32);
 s32 Field_CheckConfiguredKeys(void);
 s32 FixedSqrt(s32);
-struct ObjectRuntime *Func_0800c150(s32, s32, s32, s32);
+struct ObjectRuntime *FieldObject_Create(s32, s32, s32, s32);
 s32 GetWorldMapCollision(struct WorldPosition *);
 
 s32 Func_0800f2f8(struct ObjectRuntime *object)
@@ -271,7 +271,7 @@ movement_done:
             *(u8 *)(animation + 38) = 1;
         }
         if (collision_kind == 6 && *(s16 *)&object->action == 0 && collision == 0) {
-            effect = Func_0800c150(24, object->x, object->y, object->z);
+            effect = FieldObject_Create(24, object->x, object->y, object->z);
             if (effect != 0) {
                 animation = effect->animation;
                 ObjectDispatch_Initialize(effect, 0x08013280);

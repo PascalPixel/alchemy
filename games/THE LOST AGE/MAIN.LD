@@ -1109,7 +1109,7 @@ SECTIONS
         "*/recon/tla/raw/080b03e0.o"(.text)
         "*/recon/tla/raw/080b0408.o"(.text)
         "*/recon/tla/raw/080b0434.o"(.text)
-        "*/recon/tla/raw/080b0460.o"(.text)
+        "*/games/THE LOST AGE/SRC/GAME/ITEM/GET_UNLEASH_RATE_BONUS.o"(.text)
         "*/recon/tla/raw/080b04bc.o"(.text)
         "*/recon/tla/raw/080b0514.o"(.text)
         "*/recon/tla/raw/080b06a8.o"(.text)

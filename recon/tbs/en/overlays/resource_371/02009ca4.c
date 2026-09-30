@@ -16,7 +16,15 @@
  * order follows the surrounding block, not the call's spelling. Every
  * inline-wrapper parameter order, unprototyped casts of Engine_ActorJump
  * and Engine_EventSetMessage, a do/while barrier, and a duplicated tail
- * left for cross-jumping to merge all leave it unchanged. */
+ * left for cross-jumping to merge all leave it unchanged.
+ * 2026-09-30 (Mars): built in place as WORLD_MAP/VENUS_DJINNI.C between
+ * TRANSFER and CHASE (gWorldMapEvents then names it), the FAKEMATCH
+ * register variables with volatile empty asm below fix the listened tail's
+ * jump and message argument order. The walk pin copies z to r3 first but
+ * then shifts it in place (asrs r3, r3; adds r2, r3) instead of
+ * asrs r2, r3. Still left: the 0x800 scale step's lsls r7 after movs r5,
+ * #15 (ROM: before) and the 0x100000 height's lsls r2 before mov r1, r9
+ * (ROM: after mov r1, r9). */
 /* The world map's Venus Djinni: on the first meeting it joins Isaac, grows
  * from a speck and explains itself, asking until the party agrees to listen;
  * later it offers to explain Djinn again. */
@@ -178,8 +186,16 @@ listened:
         i = (s32)MsgWorldMapAbilityVenusDjinni;
         Message_ShowCentered(i++, 3);
         Event_SetMessage(i);
-        Actor_Jump(DJINNI, 2, 20);
-        Event_ShowMessage(DJINNI, 0);
+        {
+            register s32 frames asm("r2") = 20; /* FAKEMATCH: pins the frames to r2 */
+            register s32 flags asm("r1"); /* FAKEMATCH: pins the flags to r1 */
+
+            asm volatile("" : : "r"(frames)); /* FAKEMATCH: sets the jump's frames first */
+            Actor_Jump(DJINNI, 2, frames);
+            flags = 0;
+            asm volatile("" : : "r"(flags)); /* FAKEMATCH: sets the message flags first */
+            Event_ShowMessage(DJINNI, flags);
+        }
         Audio_PlayCue(9);
         goto finish;
     }
@@ -221,7 +237,12 @@ listened:
     if (Event_ChooseYesNo(0, 0) == 1)
         goto learn;
     Event_ShowMessage(DJINNI, 0);
-    Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
+    {
+        register s32 far asm("r3") = z; /* FAKEMATCH: pins z to r3 */
+
+        asm volatile("" : : "r"(far)); /* FAKEMATCH: copies z before x */
+        Actor_WalkToAndWait(DJINNI, x >> 16, far >> 16);
+    }
 finish:
     FieldScene_RunScene371_02001c08();
     Battle_ClearObjectFlag5bWhenMode3();

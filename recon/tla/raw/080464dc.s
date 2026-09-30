@@ -2118,13 +2118,13 @@ Func_080464dc:
 	adds	r0, r0, r3
 .L_0804758e:
 	movs	r2, #32
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	b.n	.L_080475a0
 .L_08047596:
 	ldr	r0, [pc, #140]
 	add	r1, sp, #284
 	movs	r2, #32
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 .L_080475a0:
 	ldr	r0, [sp, #136]
 	bl	RenderOutput_RedrawSavedRect
@@ -2478,13 +2478,13 @@ Func_080464dc:
 	add	r1, sp, #156
 	adds	r0, r0, r3
 	movs	r2, #52
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	b.n	.L_0804787a
 .L_08047870:
 	ldr	r0, [pc, #204]
 	add	r1, sp, #156
 	movs	r2, #52
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 .L_0804787a:
 	ldr	r0, [sp, #136]
 	bl	RenderOutput_RedrawSavedRect
@@ -2998,13 +2998,13 @@ Func_080464dc:
 .L_08047c70:
 	add	r1, sp, #156
 	movs	r2, #32
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	b.n	.L_08047c84
 .L_08047c7a:
 	ldr	r0, [pc, #100]
 	add	r1, sp, #156
 	movs	r2, #32
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 .L_08047c84:
 	ldr	r0, [sp, #140]
 	mov	r4, r9
@@ -3936,7 +3936,7 @@ Func_080464dc:
 	ldr	r1, [sp, #48]
 	adds	r0, r1, r0
 	ldr	r1, [sp, #52]
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	b.n	.L_08048452
 .L_080483f6:
 	cmp	r3, #2
@@ -3960,7 +3960,7 @@ Func_080464dc:
 	ldr	r0, [pc, #32]
 	ldr	r1, [sp, #52]
 	movs	r2, #128
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	b.n	.L_08048452
 	movs	r0, r0
 	.4byte 0x00000d1d
@@ -3976,7 +3976,7 @@ Func_080464dc:
 	ldr	r1, [sp, #52]
 	adds	r0, r0, r3
 	movs	r2, #128
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 .L_08048452:
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #128]
@@ -4544,7 +4544,7 @@ Func_080464dc:
 	ldr	r0, [pc, #808]
 	adds	r1, r6, #0
 	movs	r2, #52
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	ldr	r3, [sp, #68]
 	cmp	r3, #0
 	beq.n	.L_080489ac
@@ -4584,7 +4584,7 @@ Func_080464dc:
 	adds	r1, r6, #0
 	adds	r0, r0, r3
 	movs	r2, #52
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	ldr	r1, [sp, #68]
 	cmp	r1, #0
 	beq.n	.L_080489ac
@@ -4608,7 +4608,7 @@ Func_080464dc:
 	adds	r1, r6, #0
 	ldr	r0, [pc, #680]
 	movs	r2, #52
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	movs	r3, #240
 	lsls	r3, r3, #4
 	ands	r5, r3
@@ -4641,14 +4641,14 @@ Func_080464dc:
 	adds	r0, r0, r3
 	adds	r1, r6, #0
 	movs	r2, #52
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	b.n	.L_080489ac
 .L_080489a0:
 	ldr	r6, [sp, #8]
 	ldr	r0, [pc, #604]
 	adds	r1, r6, #0
 	movs	r2, #52
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 .L_080489ac:
 	ldr	r2, [sp, #72]
 	movs	r1, #0
@@ -5075,7 +5075,7 @@ Func_080464dc:
 	movs	r2, #52
 	ldr	r1, [sp, #8]
 	ldr	r0, [pc, #584]
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	movs	r2, #0
 	ldr	r0, [sp, #8]
 	ldr	r1, [sp, #44]
@@ -5873,7 +5873,7 @@ Func_080464dc:
 	adds	r0, r0, r3
 	adds	r1, r5, #0
 	movs	r2, #52
-	bl	0x0803c9bc
+	bl	Func_0803c9bc
 	movs	r2, #0
 	ldr	r1, [sp, #60]
 	movs	r3, #4

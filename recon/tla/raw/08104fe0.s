@@ -90,6 +90,9 @@ Func_08104fe0:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x4da9
 	.2byte 0x0810
+	.global Func_0810508c
+	.thumb_func
+Func_0810508c:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -112,6 +115,9 @@ Func_08104fe0:
 	pop	{r5, r6, pc}
 	.2byte 0x4da9
 	.2byte 0x0810
+	.global Func_081050b8
+	.thumb_func
+Func_081050b8:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #220

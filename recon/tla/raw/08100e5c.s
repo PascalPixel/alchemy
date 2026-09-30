@@ -166,7 +166,7 @@ Func_08100e7c:
 	strh	r5, [r3, #0]
 	bl	Func_081051a8
 	bl	.L_0810106c
-	bl	0x0810526c
+	bl	Func_0810526c
 	bl	0x08104aa4
 	movs	r0, #1
 	bl	WaitFrames

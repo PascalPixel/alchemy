@@ -1433,7 +1433,7 @@ UiText_BuildRenderEntries:
 	mov	r1, fp
 	cmp	r1, #0
 	beq.n	.L_0803b782
-	bl	0x0803cca8
+	bl	Func_0803cca8
 .L_0803b782:
 	ldr	r0, [sp, #32]
 	add	sp, #132

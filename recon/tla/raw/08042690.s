@@ -31,7 +31,7 @@ Func_08042690:
 	bl	0x08039260
 	str	r0, [r5, #0]
 	mov	r0, r8
-	bl	.L_0804297c
+	bl	Func_0804297c
 	mov	r3, sl
 	strb	r3, [r6, #6]
 	add	sp, #4
@@ -390,6 +390,9 @@ Func_08042690:
 	.4byte 0x88888888
 	.2byte 0xdddd
 	.2byte 0xdddd
+	.global Func_0804297c
+	.thumb_func
+Func_0804297c:
 .L_0804297c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -938,6 +941,9 @@ Func_08042690:
 	.4byte 0x080aa1b8
 	.2byte 0x3400
 	.2byte 0x0600
+	.global Func_08042dac
+	.thumb_func
+Func_08042dac:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

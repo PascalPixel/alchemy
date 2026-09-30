@@ -62,7 +62,7 @@ Func_08044558:
 	movs	r3, #1
 	ldr	r0, [sp, #48]
 	movs	r1, #0
-	bl	0x0803d3c0
+	bl	Func_0803d3c0
 	ldr	r1, [pc, #280]
 	mov	r0, sl
 	bl	Func_08044348
@@ -605,7 +605,7 @@ Func_08044558:
 	ldr	r0, [sp, #44]
 	bl	UiWork_Finalize
 	ldr	r0, [sp, #48]
-	bl	0x0803d450
+	bl	Func_0803d450
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r2, [pc, #36]

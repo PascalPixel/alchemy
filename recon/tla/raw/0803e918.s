@@ -67,6 +67,9 @@ Func_0803e918:
 	pop	{r5, r6, pc}
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_0803e998
+	.thumb_func
+Func_0803e998:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

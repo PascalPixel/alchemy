@@ -17,16 +17,16 @@ Func_0803f82c:
 	adds	r3, r3, r2
 	movs	r2, #1
 	strh	r2, [r3, #0]
-	bl	0x0803dd98
+	bl	Func_0803dd98
 	bl	Func_0803e7ac
 	movs	r1, #5
 	movs	r0, #0
 	bl	Func_0803e5a8
-	bl	0x0803df00
+	bl	Func_0803df00
 	movs	r0, #1
-	bl	0x0803e998
+	bl	Func_0803e998
 	adds	r5, r0, #0
-	bl	0x0803e6d8
+	bl	Func_0803e6d8
 	adds	r0, r5, #0
 	pop	{r5, pc}
 	push	{r5, r6, lr}
@@ -58,7 +58,7 @@ Func_0803f82c:
 	add	r3, sp, #8
 	str	r0, [sp, #0]
 	adds	r0, r5, #0
-	bl	0x0803b880
+	bl	Func_0803b880
 	ldr	r2, [sp, #8]
 	ldr	r3, [sp, #4]
 	movs	r0, #30

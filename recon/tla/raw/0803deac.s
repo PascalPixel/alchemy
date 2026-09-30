@@ -52,6 +52,9 @@ Func_0803deac:
 	movs	r0, #0
 .L_0803defe:
 	pop	{pc}
+	.global Func_0803df00
+	.thumb_func
+Func_0803df00:
 	push	{lr}
 	movs	r1, #144
 	lsls	r1, r1, #3
@@ -61,6 +64,9 @@ Func_0803deac:
 	movs	r0, r0
 	.2byte 0xdf25
 	.2byte 0x0803
+	.global Func_0803df14
+	.thumb_func
+Func_0803df14:
 	push	{lr}
 	ldr	r0, [pc, #8]
 	bl	Func_08014644

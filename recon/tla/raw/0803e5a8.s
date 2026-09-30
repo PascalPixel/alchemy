@@ -156,11 +156,14 @@ Func_0803e5a8:
 	.4byte 0x0000006e
 	.2byte 0x006d
 	.2byte 0x0000
+	.global Func_0803e6d8
+	.thumb_func
+Func_0803e6d8:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r6, [r3, #72]
-	bl	0x0803df14
+	bl	Func_0803df14
 	movs	r2, #212
 	lsls	r2, r2, #2
 	adds	r3, r6, r2

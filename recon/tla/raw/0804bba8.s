@@ -374,7 +374,7 @@ Func_0804bba8:
 	adds	r5, #228
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
-	bl	0x0804297c
+	bl	Func_0804297c
 	bl	Func_08118118
 	ldr	r4, [sp, #36]
 	movs	r0, #130

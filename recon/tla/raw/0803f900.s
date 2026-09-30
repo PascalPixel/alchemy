@@ -26,7 +26,7 @@ Func_0803f900:
 	movs r1, #2
 	bl UiWork_Finalize
 	ldr r0, .L_0803f938
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_0803f934:
 	pop {pc}
 	.2byte 0x0000

@@ -94,7 +94,7 @@ Func_0816dc50:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0816df34
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r0, .L_0816df38
 	ldr r1, .L_0816df3c
 	movs r2, #0
@@ -954,7 +954,7 @@ Func_0816dc50:
 	ldr r0, [r5]
 	bl Func_08015160
 	adds r0, r6, #0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	bl Func_080150e4
 	movs r0, #128
@@ -1202,7 +1202,7 @@ Func_0816dc50:
 	bl .L_0816dda0
 .L_0816e5dc:
 	ldr r0, .L_0816e640
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

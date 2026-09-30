@@ -20,8 +20,8 @@ Func_08020068:
 	.global Func_08020070
 	.thumb_func
 Func_08020070:
-	overlay_veneer Func_08022d1c
+	overlay_veneer ResourceMetadata_ClearRecord
 	.global Func_08020078
 	.thumb_func
 Func_08020078:
-	overlay_veneer Func_0802296c
+	overlay_veneer Animation_InitWorkFromMetadata

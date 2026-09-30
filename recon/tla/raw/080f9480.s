@@ -5,6 +5,6 @@
 Func_080f9480:
 	push {lr}
 	movs r0, #15
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	pop {pc}
 	.2byte 0x0000

@@ -22,13 +22,13 @@ Func_08013f80:
 .L_08013fa0:
 	.4byte 0x0000003f
 .L_08013fa4:
-	.4byte Data_030011dc
+	.4byte gBlendBrighten
 .L_08013fa8:
-	.4byte Data_030011f4
+	.4byte gBlendLayers
 .L_08013fac:
-	.4byte Data_030011b0
+	.4byte gBlendTargetLevel
 .L_08013fb0:
-	.4byte Data_0300113c
+	.4byte gBlendStartLevel
 .L_08013fb4:
 	ldr r3, .L_08013fcc
 	strb r4, [r3]
@@ -44,10 +44,10 @@ Func_08013f80:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_08013fcc:
-	.4byte Data_0300113c
+	.4byte gBlendStartLevel
 .L_08013fd0:
-	.4byte Data_030011b0
+	.4byte gBlendTargetLevel
 .L_08013fd4:
-	.4byte Data_03001178
+	.4byte gBlendDuration
 .L_08013fd8:
-	.4byte Data_0300110c
+	.4byte gBlendFramesLeft

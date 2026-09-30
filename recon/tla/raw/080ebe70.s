@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ebe70
+	.global BattleFx_HasReachedTarget
 	.thumb_func
-Func_080ebe70:
+BattleFx_HasReachedTarget:
 	push {lr}
 	adds r3, r0, #0
 	adds r3, #65

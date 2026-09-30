@@ -125,7 +125,7 @@ Func_0810a2d8:
 	mov r0, r11
 	adds r0, #2
 	bl Func_0810857c
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #100
@@ -151,7 +151,7 @@ Func_0810a2d8:
 	bl Inventory_RepairFar
 	mov r3, r9
 	negs r0, r3
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	bl Func_08109188
 	ldr r2, [sp, #8]
 	adds r1, r7, #0

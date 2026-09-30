@@ -34,7 +34,7 @@ Func_08104e38:
 	beq .L_08104e82
 	adds r0, r5, #0
 	str r3, [sp, #0]
-	bl Func_08020048
+	bl ResourceObject_ReleaseFar
 	ldr r3, [sp, #0]
 	mov r2, r9
 	str r2, [r7, r6]

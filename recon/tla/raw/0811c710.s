@@ -19,7 +19,7 @@ Func_0811c710:
 	mov r9, r0
 	adds r0, r1, #0
 	str r1, [sp, #8]
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	blt .L_0811c74a
 	ldr r2, [sp, #12]
@@ -27,7 +27,7 @@ Func_0811c710:
 	ldrsh r2, [r2, r3]
 	adds r0, r2, #0
 	str r2, [sp, #4]
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	bge .L_0811c750
 .L_0811c74a:
@@ -249,7 +249,7 @@ Func_0811c710:
 	movs r3, #0
 .L_0811c8f2:
 	str r3, [r0, #4]
-	bl Func_08138010
+	bl BattleFx_InitializeModeFar
 	movs r0, #10
 	bl WaitFrames
 	bl BattleActor_CommitPlacement

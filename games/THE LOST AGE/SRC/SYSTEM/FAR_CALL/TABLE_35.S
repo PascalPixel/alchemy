@@ -84,4 +84,4 @@ Func_080c88b8:
 	.global Func_080c88c0
 	.thumb_func
 Func_080c88c0:
-	overlay_veneer Func_080db91c
+	overlay_veneer ObjectGroup_ApplyRandomChildValues

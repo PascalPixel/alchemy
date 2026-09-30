@@ -33,9 +33,9 @@ Owner_UpdateSecondInputAndRatiosFar:
 	.thumb_func
 BattleUnit_AssignFar:
 	overlay_veneer Func_080afbec
-	.global Func_080ad0f0
+	.global Party_CountActiveOwnersFar
 	.thumb_func
-Func_080ad0f0:
+Party_CountActiveOwnersFar:
 	overlay_veneer Party_CountActiveOwners
 	.global Party_AddActiveOwnerFar
 	.thumb_func
@@ -76,7 +76,7 @@ Battle_CalcRestore:
 	.global Func_080ad140
 	.thumb_func
 Func_080ad140:
-	overlay_veneer Func_080ad3a8
+	overlay_veneer Owner_GetRecord
 	.global BattleRandom16Far
 	.thumb_func
 BattleRandom16Far:

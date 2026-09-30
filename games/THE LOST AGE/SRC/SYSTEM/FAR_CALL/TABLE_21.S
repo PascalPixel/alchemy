@@ -13,9 +13,9 @@ Func_080383e8:
 	.thumb_func
 Func_080383f0:
 	overlay_veneer Func_0803911c
-	.global Func_080383f8
+	.global Link_DrawShiftedTilePairFar
 	.thumb_func
-Func_080383f8:
+Link_DrawShiftedTilePairFar:
 	overlay_veneer Func_08045330
 	.global Func_08038400
 	.thumb_func

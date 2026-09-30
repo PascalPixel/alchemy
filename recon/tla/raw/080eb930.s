@@ -5,9 +5,9 @@
 Func_080eb930:
 	push {lr}
 	ldr r0, .L_080eb958
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_080eb95c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #180

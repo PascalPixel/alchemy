@@ -48,7 +48,7 @@ Func_0815f16c:
 	b .L_0815f1c8
 .L_0815f1c2:
 	movs r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 .L_0815f1c8:
 	ldr r3, .L_0815f208
 	movs r2, #128
@@ -852,7 +852,7 @@ Func_0815f16c:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_0815fafc
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r2, [sp, #128]
 	mov r3, sp
 	adds r3, #240
@@ -996,7 +996,7 @@ Func_0815f16c:
 	ldr r0, [r6, #20]
 	bl Func_080150e4
 	ldr r0, [r6, #12]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r0, [r6, #16]
 	bl Func_08015068
 	add r5, sp, #204
@@ -1382,9 +1382,9 @@ Func_0815f16c:
 	movs r3, #0
 	str r3, [r1, #28]
 	ldr r0, .L_0815fe50
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_0815fe54
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -1446,9 +1446,9 @@ Func_0815f16c:
 	movs r3, #0
 	str r3, [r1, #28]
 	ldr r0, .L_0815fe50
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_0815fe54
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -1458,7 +1458,7 @@ Func_0815f16c:
 	str r3, [r2, #24]
 	ldr r0, [sp, #128]
 	movs r1, #2
-	bl Func_08149bac
+	bl BattleFx_RunSparkGroups
 	bl .L_081638ac
 .L_0815fd4a:
 	movs r1, #240
@@ -2052,7 +2052,7 @@ Func_0815f16c:
 	movs r1, #200
 	ldr r0, .L_081602a8
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_081601d6:
 	ldr r0, [sp, #124]
 	subs r0, #4
@@ -5645,7 +5645,7 @@ Func_0815f16c:
 	ands r5, r1
 	bl Func_08014de4
 	ldr r0, [r7, #12]
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r6, r10
 	ldr r0, [r7, #16]
 	bl Func_08015068
@@ -6875,18 +6875,18 @@ Func_0815f16c:
 	cmp r1, #82
 	bne .L_081627ee
 	ldr r0, .L_08162a40
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r2, [sp, #112]
 	negs r5, r2
 	lsls r0, r5, #11
 	lsls r5, r5, #4
 	bl Func_08015068
 	adds r0, r5, #0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	b .L_081627fc
 .L_081627ee:
 	ldr r0, .L_08162a44
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r3, [sp, #112]
 	lsls r0, r3, #11
 	bl Func_08015068
@@ -7071,7 +7071,7 @@ Func_0815f16c:
 	adds r0, r0, r1
 	bl Func_080150e4
 	ldr r0, .L_08162a44
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	asrs r0, r6, #1
 	bl Func_0801521c
 	ldr r0, .L_08162a48
@@ -7143,7 +7143,7 @@ Func_0815f16c:
 	bl Func_080151e4
 	movs r0, #128
 	lsls r0, r0, #7
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r5, #0
 	bl Func_0801521c
 	ldr r0, .L_08162a48
@@ -7210,7 +7210,7 @@ Func_0815f16c:
 	adds r0, r0, r1
 	bl Func_080150e4
 	ldr r0, .L_08162d70
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	bl Func_0801521c
 	ldr r0, .L_08162d74
@@ -7424,7 +7424,7 @@ Func_0815f16c:
 	bl Func_080151e4
 	movs r0, #250
 	lsls r0, r0, #2
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	bl Func_0801521c
 	ldr r0, .L_08162d74
@@ -7508,7 +7508,7 @@ Func_0815f16c:
 	bl Func_080151e4
 	movs r0, #250
 	lsls r0, r0, #2
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r5, r11
 	movs r3, #1
 	ands r3, r5
@@ -7697,7 +7697,7 @@ Func_0815f16c:
 	bl Func_080151e4
 	movs r0, #250
 	lsls r0, r0, #2
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r5, r11
 	movs r3, #1
 	ands r3, r5
@@ -8944,9 +8944,9 @@ Func_0815f16c:
 	movs r3, #0
 	str r3, [r5, #28]
 	ldr r0, .L_081638c4
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_081638c8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
@@ -9006,10 +9006,10 @@ Func_0815f16c:
 	bne .L_08163896
 .L_08163890:
 	ldr r0, .L_081638cc
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_08163896:
 	ldr r0, .L_081638c8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

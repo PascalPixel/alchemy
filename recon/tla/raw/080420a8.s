@@ -34,7 +34,7 @@ UiText_DrawString:
 	adds r1, r7, #0
 	mov r2, r8
 	mov r3, r10
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	adds r0, r6, #0
 	bl Sys_Free
 	b .L_080420f4

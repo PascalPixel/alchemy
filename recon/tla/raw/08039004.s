@@ -42,7 +42,7 @@ UiWork_Initialize:
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_080390b4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r0, r8
 	bl Func_0803a4b0
 	movs r0, #240

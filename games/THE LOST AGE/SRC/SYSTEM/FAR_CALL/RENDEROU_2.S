@@ -12,7 +12,7 @@ Func_08038248:
 	.global Func_08038250
 	.thumb_func
 Func_08038250:
-	overlay_veneer Func_0803aae4
+	overlay_veneer UiText_RenderWideStringAtOffset
 	.global Func_08038258
 	.thumb_func
 Func_08038258:
@@ -28,7 +28,7 @@ RenderOutput_ClearListFar:
 	.global UiWindow_SetTilemapEntryFar
 	.thumb_func
 UiWindow_SetTilemapEntryFar:
-	overlay_veneer Func_0803c378
+	overlay_veneer UiWindow_SetTilemapEntry
 	.global Func_08038278
 	.thumb_func
 Func_08038278:

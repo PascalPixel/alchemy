@@ -263,7 +263,7 @@ Func_0813eb70:
 .L_0813ed74:
 	lsls r1, r1, #4
 	ldr r0, .L_0813ef10
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #35
 	movs r0, #104
 	bl Func_081963ec
@@ -1196,7 +1196,7 @@ Func_0813eb70:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0813f508
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r2, [sp, #52]
 	movs r3, #1
 	movs r1, #36

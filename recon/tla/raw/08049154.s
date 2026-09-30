@@ -249,7 +249,7 @@ Func_08049154:
 	movs r3, #1
 	adds r0, #1
 	bl Func_08046134
-	bl Func_080396bc
+	bl Ui_FillVramBlockPattern
 	ldr r1, [sp, #32]
 	mov r3, r11
 	add r3, r10
@@ -267,7 +267,7 @@ Func_08049154:
 	ldr r1, [sp, #60]
 	movs r3, #4
 	adds r0, r5, #0
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	movs r3, #0
 	str r3, [sp, #52]
 	mov r2, r10
@@ -310,7 +310,7 @@ Func_08049154:
 	ldr r0, [sp, #56]
 	movs r3, #0
 	adds r2, r6, #0
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrb r3, [r5]
 	cmp r3, #9
 	bls .L_080493cc
@@ -336,7 +336,7 @@ Func_08049154:
 	movs r3, #0
 	ldr r0, [sp, #56]
 	adds r7, #1
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	adds r5, #1
 	adds r6, #2
 	cmp r7, #3
@@ -465,7 +465,7 @@ Func_08049154:
 	adds r2, r5, #0
 	mov r3, r8
 	str r4, [sp, #4]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrb r1, [r6]
 	mov r0, r9
 	adds r2, r5, #1
@@ -555,7 +555,7 @@ Func_08049154:
 	movs r3, #1
 	subs r2, #2
 	negs r3, r3
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldr r4, [sp, #4]
 	adds r4, #1
 .L_08049594:
@@ -601,7 +601,7 @@ Func_08049154:
 	adds r0, r6, #0
 	movs r1, #240
 	str r4, [sp, #4]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r4, [sp, #4]
 .L_080495e8:
 	adds r4, #1
@@ -683,7 +683,7 @@ Func_08049154:
 	adds r0, #248
 	strb r0, [r2, #4]
 	ldr r0, [sp, #24]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r4, .L_080499ac
 	movs r3, #8
 	ldr r6, [r4]
@@ -768,7 +768,7 @@ Func_08049154:
 	ldr r0, [sp, #76]
 	subs r3, #1
 	str r4, [sp, #4]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldr r4, [sp, #4]
 	adds r4, #1
 .L_08049730:
@@ -794,7 +794,7 @@ Func_08049154:
 	ldr r0, [sp, #76]
 	subs r2, #3
 	adds r1, #52
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldr r1, [sp, #76]
 	movs r3, #0
 	ldrh r2, [r1, #8]
@@ -805,7 +805,7 @@ Func_08049154:
 	subs r2, #2
 	adds r1, #53
 	adds r3, r5, #0
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldr r0, [sp, #76]
 	movs r2, #2
 	movs r4, #14
@@ -952,7 +952,7 @@ Func_08049154:
 	beq .L_080498d8
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Func_080138a8
+	bl Runtime_SetMainState19
 	ldr r4, [sp, #80]
 	mov r3, r11
 	adds r3, #4
@@ -1000,7 +1000,7 @@ Func_08049154:
 	beq .L_08049952
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Func_080138a8
+	bl Runtime_SetMainState19
 	mov r4, r11
 	cmp r4, #0
 	beq .L_08049902
@@ -1071,14 +1071,14 @@ Func_08049154:
 .L_08049964:
 	ldmia r5!, {r0}
 	str r4, [sp, #4]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r4, [sp, #4]
 	subs r4, #1
 	cmp r4, #0
 	bge .L_08049964
 	ldr r2, [sp, #12]
 	lsrs r0, r2, #16
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r1, #1
 	ldr r0, [sp, #56]
 	bl UiWork_Finalize

@@ -203,7 +203,7 @@ Func_080ec4d4:
 	ldr r3, [r0, #8]
 	str r3, [r5, #8]
 	ldr r0, [r0, #24]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	movs r4, #128
 	lsls r4, r4, #13
@@ -648,7 +648,7 @@ Func_080ec4d4:
 	str r3, [r5, #8]
 	adds r2, r5, #0
 	ldr r0, [r0, #24]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r5]
 	ldr r1, .L_080ec9dc
 	str r3, [r1, #4]

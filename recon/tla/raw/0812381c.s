@@ -55,7 +55,7 @@ Func_0812381c:
 	strb r2, [r3]
 	strb r2, [r3, #2]
 	str r6, [r3, #80]
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	ldr r0, [sp, #12]
 	ldr r3, [r0]
 	movs r1, #56
@@ -126,7 +126,7 @@ Func_0812381c:
 	bl BattleEv_DispatchQueued
 	bl .L_0812417c
 .L_08123918:
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	mov r2, r10
 	ldr r0, [r2]
 	movs r3, #6
@@ -148,7 +148,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123bec
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl .L_081241aa
 .L_08123950:
 	movs r1, #158
@@ -162,7 +162,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123bf0
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl .L_081241aa
 .L_08123970:
 	movs r1, #60
@@ -176,7 +176,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123bf4
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl .L_081241aa
 .L_08123990:
 	movs r0, #152
@@ -201,7 +201,7 @@ Func_0812381c:
 	ldrsh r0, [r3, r2]
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123bf8
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	bl .L_081241aa
 .L_081239c8:
 	mov r4, r10
@@ -360,14 +360,14 @@ Func_0812381c:
 	cmp r0, r3
 	bhi .L_08123bc4
 	ldr r0, .L_08123c00
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_08123bd2
 .L_08123bc4:
 	asrs r0, r0, #16
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123c04
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_08123bd2:
 	bl BattlePresentation_WaitForAdvance
 	mov r4, r11
@@ -426,7 +426,7 @@ Func_0812381c:
 	bl UiText_DrawQuantity
 	ldr r5, .L_08123f60
 	adds r0, r5, #0
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	adds r5, #1
 	bl Func_08120158
 	adds r0, r7, #0
@@ -434,7 +434,7 @@ Func_0812381c:
 	bl UiText_DrawQuantity
 	adds r0, r5, #0
 .L_08123c62:
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_08124376
 .L_08123c68:
 	ldr r4, [sp, #12]
@@ -518,15 +518,15 @@ Func_0812381c:
 	cmp r7, r0
 	blt .L_08123d1a
 	ldr r0, .L_08123f64
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_08123d20
 .L_08123d12:
 	ldr r0, .L_08123f68
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_08123d20
 .L_08123d1a:
 	ldr r0, .L_08123f6c
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 .L_08123d20:
 	ldr r2, [sp, #12]
 	ldr r1, [r2]
@@ -603,7 +603,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123f70
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_081241aa
 .L_08123db4:
 	ldr r4, [sp, #12]
@@ -640,7 +640,7 @@ Func_0812381c:
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123f74
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	ldr r4, [sp, #12]
 	movs r0, #44
 	ldr r3, [r4]
@@ -715,7 +715,7 @@ Func_0812381c:
 	ldrsh r0, [r3, r2]
 	bl UiText_DrawQuantity
 	ldr r0, .L_08123f74
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_081241aa
 .L_08123e90:
 	mov r4, r10
@@ -1111,7 +1111,7 @@ Func_0812381c:
 	movs r0, #114
 	bl Audio_PlayCue
 	ldr r0, .L_08124438
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	movs r0, #60
 	bl WaitFrames
 .L_081241aa:
@@ -1153,7 +1153,7 @@ Func_0812381c:
 	movs r1, #4
 	bl UiText_DrawQuantity
 	ldr r0, .L_0812443c
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	mov r3, r11
 	ldr r2, [r3]
 	ldrb r3, [r5, #2]
@@ -1250,7 +1250,7 @@ Func_0812381c:
 	movs r1, #4
 	bl UiText_DrawQuantity
 	ldr r0, .L_08124440
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	adds r0, r5, #0
 	b .L_081247ec
 .L_081242c6:
@@ -1264,7 +1264,7 @@ Func_0812381c:
 	adds r0, r7, #0
 	bl UiText_DrawQuantity
 	ldr r0, .L_08124444
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	ldr r0, [sp, #4]
 	movs r1, #144
 	lsls r1, r1, #1
@@ -1405,7 +1405,7 @@ Func_0812381c:
 	ldrsh r0, [r3, r4]
 	bl UiText_DrawQuantity
 	ldr r0, .L_08124448
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	b .L_0812444c
 .L_081243fc:
 	ldr r0, [sp, #12]

@@ -21,7 +21,7 @@ Func_080cdc40:
 	bl WaitFrames
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl Func_080cf17c
+	bl BattleFx_StartRandomParticleEmitter
 .L_080cdc70:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

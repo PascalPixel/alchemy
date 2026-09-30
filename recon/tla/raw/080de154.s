@@ -23,7 +23,7 @@ Func_080de154:
 	adds r0, #255
 	str r3, [r6, #8]
 	adds r2, r2, r4
-	bl Func_080dc10c
+	bl Object_Spawn
 	cmp r0, #0
 	beq .L_080de19a
 	adds r2, r0, #0
@@ -49,7 +49,7 @@ Func_080de154:
 	ldr r2, [r3, #4]
 	adds r0, #255
 	ldr r3, [r3, #8]
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080de1f4
@@ -75,7 +75,7 @@ Func_080de154:
 	adds r1, r5, #0
 	adds r2, r0, #0
 	adds r0, r6, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 .L_080de1f4:
 	subs r7, #1
 	cmp r7, #0
@@ -90,6 +90,6 @@ Func_080de154:
 .L_080de208:
 	.4byte 0xffe00000
 .L_080de20c:
-	.4byte Data_080f0e54
+	.4byte BattleFx_CommonParticleScript
 .L_080de210:
 	.4byte Data_080f0e78

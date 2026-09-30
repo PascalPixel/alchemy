@@ -249,7 +249,7 @@ Func_0810abf0:
 	bl UiText_DrawQuantity
 	adds r0, r6, #3
 	bl Func_0810a9ac
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	mov r0, r8
 	mov r1, r10
 	bl Func_0810aea4
@@ -264,7 +264,7 @@ Func_0810abf0:
 	subs r0, r3, r0
 	bl Func_0810b1b4
 	negs r0, r5
-	bl Func_080ad1d8
+	bl Party_AdjustSixDigitCounterAFar
 	bl Func_08109188
 	mov r0, r8
 	movs r1, #1

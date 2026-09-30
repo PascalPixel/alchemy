@@ -39,7 +39,7 @@ Func_0811c66c:
 	b .L_0811c6be
 .L_0811c6b6:
 	ldr r0, .L_0811c6c8
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	movs r0, #0
 .L_0811c6be:
 	add sp, #28

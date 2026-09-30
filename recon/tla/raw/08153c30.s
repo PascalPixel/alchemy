@@ -19,7 +19,7 @@ Func_08153c30:
 	movs r0, #0
 	str r2, [sp, #40]
 	mov r9, r1
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_08153ea8
@@ -119,7 +119,7 @@ Func_08153c30:
 	str r3, [r2]
 	ldr r0, .L_08153eb8
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r2, #0
 	str r2, [sp, #36]
 .L_08153d30:
@@ -164,7 +164,7 @@ Func_08153c30:
 	mov r0, r8
 	ldr r3, [r5, #16]
 	str r3, [r4, #8]
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #36]
 	lsls r3, r1, #3
@@ -294,7 +294,7 @@ Func_08153c30:
 	b .L_08153d30
 .L_08153e84:
 	ldr r0, .L_08153eb8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

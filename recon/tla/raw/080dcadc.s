@@ -8,7 +8,7 @@ Func_080dcadc:
 	lsls r3, r3, #18
 	ldr r0, .L_080dcb30
 	ldr r6, [r3, #60]
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r2, .L_080dcb34
 	ldr r3, .L_080dcb20
 	ldr r5, .L_080dcb24

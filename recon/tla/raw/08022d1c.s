@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08022d1c
+	.global ResourceMetadata_ClearRecord
 	.thumb_func
-Func_08022d1c:
+ResourceMetadata_ClearRecord:
 	push {lr}
 	adds r1, r0, #0
 	sub sp, #4

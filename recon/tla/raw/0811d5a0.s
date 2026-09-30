@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811d5a0
+	.global Palette_CopyBanksWithBrightnessOffset
 	.thumb_func
-Func_0811d5a0:
+Palette_CopyBanksWithBrightnessOffset:
 	push {r5, r6, r7, lr}
 	movs r1, #0
 	adds r5, r0, #0

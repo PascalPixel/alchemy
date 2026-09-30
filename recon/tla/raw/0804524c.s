@@ -27,7 +27,7 @@ Func_0804524c:
 	mov r3, r9
 	str r6, [sp, #0]
 	mov r10, r0
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r3, #243
 	lsls r3, r3, #8
 	adds r3, #20
@@ -38,7 +38,7 @@ Func_0804524c:
 	mov r3, r9
 	adds r2, #1
 	str r6, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r3, #2
 	add r8, r3
 	mov r0, r10
@@ -46,7 +46,7 @@ Func_0804524c:
 	mov r2, r8
 	mov r3, r9
 	str r6, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	add sp, #4
 	pop {r3, r5, r6}
 	mov r8, r3

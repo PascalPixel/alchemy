@@ -5,7 +5,7 @@
 Func_080cb788:
 	push {r5, r6, r7, lr}
 	movs r7, #0
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r7, r0
 	bge .L_080cb806
 	ldr r3, .L_080cb828

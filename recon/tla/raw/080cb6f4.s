@@ -32,7 +32,7 @@ Func_080cb6f4:
 	movs r0, #126
 	bl Audio_PlayCue
 .L_080cb732:
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	cmp r0, #0
 	ble .L_080cb77c
 	ldr r3, .L_080cb784

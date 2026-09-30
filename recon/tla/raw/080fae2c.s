@@ -18,7 +18,7 @@ Func_080fae2c:
 	adds r5, r7, r2
 	adds r1, r5, #0
 	movs r2, #0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r2, #133
 	lsls r2, r2, #2
 	adds r3, r7, r2

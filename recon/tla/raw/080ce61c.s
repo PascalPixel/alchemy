@@ -186,7 +186,7 @@ Func_080ce61c:
 	movs r0, #1
 	bl Func_080d295c
 	adds r5, r0, #0
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	movs r0, #0
 	cmp r5, #0
 	beq .L_080ce7b8

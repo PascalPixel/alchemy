@@ -27,6 +27,6 @@ Func_080167d8:
 	lsrs r0, r0, #30
 	pop {r5, r6, pc}
 .L_08016804:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_08016808:
 	.4byte 0x04000128

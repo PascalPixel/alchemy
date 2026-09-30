@@ -26,7 +26,7 @@ Func_08105370:
 	adds r0, r5, #0
 	movs r1, #240
 	subs r6, #1
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	adds r5, #12
 	cmp r6, #0
 	bge .L_08105396

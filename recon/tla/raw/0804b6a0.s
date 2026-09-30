@@ -44,7 +44,7 @@ Func_0804b6a0:
 	adds r0, r6, #0
 	movs r1, #240
 	str r2, [sp, #4]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r2, [sp, #4]
 .L_0804b6f4:
 	subs r2, #1

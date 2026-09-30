@@ -17,7 +17,7 @@ Func_08143d04:
 	adds r1, #65
 	lsls r0, r0, #19
 	ldr r5, [r2, #36]
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #206

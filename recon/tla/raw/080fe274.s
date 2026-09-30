@@ -146,7 +146,7 @@ Func_080fe274:
 	bl Func_081051a8
 .L_080fe3a8:
 	ldr r0, .L_080fe408
-	bl Func_080383f8
+	bl Link_DrawShiftedTilePairFar
 	bl Func_081053a8
 	bl Func_080f9448
 	ldr r2, .L_080fe3f4

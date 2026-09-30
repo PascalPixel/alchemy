@@ -191,7 +191,7 @@ Func_080d8a00:
 	strb r3, [r5, #25]
 	ldr r0, [sp, #4]
 	str r4, [sp, #0]
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	movs r3, #31
 	ands r0, r3
 	movs r1, #63

@@ -14,7 +14,7 @@ Func_08022e90:
 	cmp r3, #0
 	bne .L_08022eaa
 	ldrb r0, [r7, #16]
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_08022eaa:
 	adds r5, r7, #0
 	adds r5, #40
@@ -22,7 +22,7 @@ Func_08022e90:
 .L_08022eb0:
 	ldmia r5!, {r0}
 	subs r6, #1
-	bl Func_08022d1c
+	bl ResourceMetadata_ClearRecord
 	cmp r6, #0
 	bge .L_08022eb0
 	mov r0, sp

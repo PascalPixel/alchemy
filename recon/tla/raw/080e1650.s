@@ -11,9 +11,9 @@ Func_080e1650:
 	adds r3, #164
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, .L_080e1674
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #248
 	bl Runtime_ReleaseHeapBlock
 	pop {pc}

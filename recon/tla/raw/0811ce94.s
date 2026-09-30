@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811ce94
+	.global BattleEscape_CheckSuccess
 	.thumb_func
-Func_0811ce94:
+BattleEscape_CheckSuccess:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

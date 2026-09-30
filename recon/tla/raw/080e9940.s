@@ -199,7 +199,7 @@ Func_080e9940:
 	str r3, [r5, #4]
 	ldr r3, [r2, #16]
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r3, [r5]
 	mov r2, r8
 	str r3, [r6, #12]

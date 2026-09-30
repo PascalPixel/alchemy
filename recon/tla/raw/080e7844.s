@@ -49,7 +49,7 @@ Func_080e7844:
 	ldr r2, [sp, #68]
 	ldrh r1, [r2]
 	ldr r2, [sp, #16]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r3, #145
 	lsls r3, r3, #1
 	movs r4, #0
@@ -179,7 +179,7 @@ Func_080e7844:
 	ldr r3, [r0, #8]
 	str r3, [r4, #8]
 	ldr r0, [sp, #12]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	movs r3, #128
 	ldr r1, [sp, #72]
 	ldr r4, [sp, #12]
@@ -325,7 +325,7 @@ Func_080e7844:
 	adds r2, r6, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	bl Random16
 	lsls r0, r0, #5
 	lsrs r0, r0, #16
@@ -416,7 +416,7 @@ Func_080e7844:
 	str r3, [r5, #4]
 	ldr r3, [r6, #8]
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #20]
 	adds r0, r3, #0
@@ -913,7 +913,7 @@ Func_080e7844:
 	bl Func_080ceafc
 .L_080e7f5c:
 	ldr r0, [sp, #48]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r4, [sp, #28]
 	cmp r4, #2
 	bne .L_080e7f70

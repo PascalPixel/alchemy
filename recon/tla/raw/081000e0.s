@@ -53,7 +53,7 @@ Func_081000e0:
 	mov r1, r8
 	adds r2, r7, #0
 	movs r3, #123
-	bl Func_080f92dc
+	bl Menu_SetPageIcons
 	movs r2, #28
 	ldr r3, [r5, #8]
 	ldr r1, [r5, #20]

@@ -26,7 +26,7 @@ Func_0803bda4:
 	adds r5, #2
 	cmp r6, r2
 	bls Func_0803bd86
-	bl Func_0803a404
+	bl UiWork_ResetCounters
 	add sp, #108
 	pop {r3, r5, r6, r7}
 	mov r8, r3

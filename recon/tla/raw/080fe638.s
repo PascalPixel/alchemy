@@ -196,7 +196,7 @@ Func_080fe638:
 	movs r6, #0
 .L_080fe7c6:
 	ldr r0, .L_080fe800
-	bl Func_080383f8
+	bl Link_DrawShiftedTilePairFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_080fe804
@@ -238,7 +238,7 @@ Func_080fe638:
 	str r0, [sp, #28]
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Func_080138a8
+	bl Runtime_SetMainState19
 	movs r6, #1
 .L_080fe826:
 	movs r0, #168

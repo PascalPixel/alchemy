@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081007f8
+	.global BattleEffect_ApplyToTargets
 	.thumb_func
-Func_081007f8:
+BattleEffect_ApplyToTargets:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

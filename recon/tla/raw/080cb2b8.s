@@ -32,7 +32,7 @@ Func_080cb2b8:
 	bne .L_080cb2f4
 	b .L_080cb6b8
 .L_080cb2f4:
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	movs r6, #0
 	str r0, [sp, #4]
 	cmp r6, r0

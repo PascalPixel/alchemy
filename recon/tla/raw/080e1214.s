@@ -153,7 +153,7 @@ Func_080e1214:
 	adds r3, r1, r2
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r0, .L_080e1378
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar

@@ -10,7 +10,7 @@ Func_0811c6cc:
 	bl Owner_GetState
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	bge .L_0811c6ea
 	movs r0, #1
@@ -22,12 +22,12 @@ Func_0811c6cc:
 	movs r0, #0
 	cmp r3, #0
 	ble .L_0811c708
-	bl Func_08038118
+	bl UiWork_ClearValueNameTablesFar
 	adds r0, r5, #0
 	movs r1, #1
 	bl UiText_DrawQuantity
 	ldr r0, .L_0811c70c
-	bl Func_080381c8
+	bl UiText_ShowMessageAndWaitCoreFar
 	movs r0, #0
 .L_0811c708:
 	pop {r5, r6, pc}

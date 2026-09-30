@@ -78,14 +78,14 @@ Func_080dda30:
 	adds r2, r6, #0
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r2, [r7, #8]
 	movs r0, #26
 	str r2, [r6, #4]
 	ldr r1, [r6]
 	ldr r3, [r6, #8]
 	adds r0, #255
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080ddafa

@@ -42,7 +42,7 @@ Func_08143bb8:
 	mov lr, r3
 	.2byte 0xf800
 	ldr r0, .L_08143c38
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r1, .L_08143c3c
 	movs r3, #32
 	strh r3, [r6, #6]

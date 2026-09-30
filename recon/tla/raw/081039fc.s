@@ -501,7 +501,7 @@ Func_081039fc:
 	cmp r5, #0
 	bne .L_08103e16
 	movs r0, #2
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 .L_08103e16:
 	mov r3, r8
 	lsls r2, r3, #3
@@ -518,7 +518,7 @@ Func_081039fc:
 	cmp r3, #0
 	bne .L_08103e3a
 	movs r0, #2
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 .L_08103e3a:
 	ldr r0, [sp, #84]
 	movs r1, #40
@@ -554,7 +554,7 @@ Func_081039fc:
 	cmp r5, #0
 	beq .L_08103e7e
 	movs r0, #2
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 .L_08103e7e:
 	ldr r0, [sp, #84]
 	movs r1, #40
@@ -1276,7 +1276,7 @@ Func_081039fc:
 	str r0, [r5]
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Func_080138a8
+	bl Runtime_SetMainState19
 	movs r3, #1
 	str r3, [sp, #96]
 	b .L_08104488
@@ -1291,7 +1291,7 @@ Func_081039fc:
 	bgt .L_08104488
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Func_080138a8
+	bl Runtime_SetMainState19
 	ldr r2, [sp, #88]
 	ldr r0, [sp, #24]
 	lsls r3, r2, #2
@@ -1319,7 +1319,7 @@ Func_081039fc:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0810453c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r2, [r5, #60]
@@ -1385,4 +1385,4 @@ Func_081039fc:
 .L_08104538:
 	.4byte 0x44444444
 .L_0810453c:
-	.4byte Func_08104da8
+	.4byte Menu_UpdateEntryObjectTransforms

@@ -34,7 +34,7 @@ Func_0810a9fc:
 	strb r3, [r2, #5]
 	adds r7, r0, #0
 	lsls r5, r5, #16
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	movs r3, #34
 	orrs r5, r3
 	adds r0, r7, #0

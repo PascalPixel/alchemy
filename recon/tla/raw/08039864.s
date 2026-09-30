@@ -316,7 +316,7 @@ Func_08039864:
 	ldr r2, [sp, #20]
 	str r4, [sp, #12]
 	str r7, [sp, #8]
-	bl Func_0803b794
+	bl UiWindow_FitOnScreen
 	ldrh r1, [r5, #22]
 	movs r3, #128
 	ands r3, r1
@@ -363,7 +363,7 @@ Func_08039864:
 	mov r1, r11
 	ldr r2, [sp, #20]
 	ldr r3, [sp, #16]
-	bl Func_0803b794
+	bl UiWindow_FitOnScreen
 .L_08039b56:
 	ldr r3, [sp, #48]
 	strh r3, [r5, #12]
@@ -399,7 +399,7 @@ Func_08039864:
 	strh r2, [r6, #24]
 	bl Func_0803972c
 	ldrh r0, [r5]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r3, #99
 	strh r3, [r5]
 	b .L_08039cf0

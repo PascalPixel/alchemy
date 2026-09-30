@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08013b30
+	.global Sound_LoadPresetParameters
 	.thumb_func
-Func_08013b30:
+Sound_LoadPresetParameters:
 	push {lr}
 	movs r0, #0
 	pop {pc}

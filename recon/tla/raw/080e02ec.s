@@ -14,4 +14,4 @@ Func_080e02ec:
 	bl Animation_ApplyChildValuesFar
 	pop {r5, r6, pc}
 .L_080e0304:
-	.4byte Data_080f0f2c
+	.4byte BattleFx_RandomChildValues

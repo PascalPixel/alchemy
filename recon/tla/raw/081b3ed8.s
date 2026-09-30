@@ -69,7 +69,7 @@ Func_081b3ed8:
 	adds r3, r3, r2
 	str r4, [r1, r3]
 	adds r6, #1
-	bl Func_081b3e70
+	bl AudioTrack_InsertSlotNode
 	adds r7, #1
 	cmp r6, r8
 	blt .L_081b3f00

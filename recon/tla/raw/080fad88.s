@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080fad88
+	.global ItemMenu_Collect
 	.thumb_func
-Func_080fad88:
+ItemMenu_Collect:
 	push {r5, r6, r7, lr}
 	adds r5, r1, #0
 	ldr r2, .L_080fadac

@@ -19,7 +19,7 @@ Func_08188714:
 	movs r0, #0
 	ldr r3, [r3, #96]
 	str r3, [sp, #48]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r2, [sp, #52]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -104,7 +104,7 @@ Func_08188714:
 	lsls r1, r1, #4
 	ldr r0, .L_08188af0
 	str r3, [sp, #36]
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r1, [sp, #56]
 	ldr r0, [r1, #8]
 	bl GetBattleObjectSlotFar
@@ -565,7 +565,7 @@ Func_08188714:
 	adds r0, r7, #0
 	bl Func_080150e4
 	ldr r0, .L_08188ca4
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r2, #4
 	ldr r0, .L_08188ca8
 	mov r1, r10
@@ -673,7 +673,7 @@ Func_08188714:
 	b .L_081888a6
 .L_08188c76:
 	ldr r0, .L_08188cac
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl Func_08143bb8

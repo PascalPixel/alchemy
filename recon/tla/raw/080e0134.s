@@ -23,7 +23,7 @@ Func_080e0134:
 	movs r2, #0
 	movs r3, #0
 	sub sp, #36
-	bl Func_080dc10c
+	bl Object_Spawn
 	movs r1, #0
 	adds r6, r0, #0
 	movs r7, #0
@@ -144,13 +144,13 @@ Func_080e0134:
 	str r3, [r7, #4]
 	ldr r3, [r6, #16]
 	str r3, [r7, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	bl Random16
 	adds r1, r0, #0
 	movs r0, #128
 	lsls r0, r0, #11
 	adds r2, r7, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r1, #209
 	lsls r1, r1, #1
 	ldr r3, [r7, #8]

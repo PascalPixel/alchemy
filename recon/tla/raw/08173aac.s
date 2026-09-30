@@ -24,7 +24,7 @@ Func_08173aac:
 	str r2, [sp, #28]
 	ldr r3, [r3, #48]
 	str r3, [sp, #24]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r3, .L_08173b14
 	movs r2, #128
 	lsls r2, r2, #19
@@ -769,12 +769,12 @@ Func_08173aac:
 	movs r1, #200
 	ldr r0, .L_08174204
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_081740cc:
 	movs r1, #200
 	ldr r0, .L_08174208
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r2, [sp, #52]
 	cmp r2, #2
 	beq .L_081740e4
@@ -1856,7 +1856,7 @@ Func_08173aac:
 	adds r1, r6, #0
 	bl Func_080151e4
 	ldr r0, .L_08174b10
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r2, #4
 	ldr r0, .L_08174b14
 	ldr r1, [sp, #20]
@@ -1935,7 +1935,7 @@ Func_08173aac:
 	mov r3, r11
 	lsls r0, r3, #6
 	adds r0, r0, r4
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r3, #178
 	movs r6, #0
 	lsls r3, r3, #1
@@ -2051,7 +2051,7 @@ Func_08173aac:
 	bl Func_08015160
 	movs r0, #128
 	lsls r0, r0, #7
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r0, .L_08174b20
 	adds r7, #2
 	add r0, r9
@@ -2320,7 +2320,7 @@ Func_08173aac:
 	adds r0, r0, r2
 	bl Func_080150e4
 	ldr r0, .L_08174eec
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	bl Func_0801521c
 	ldr r0, .L_08174ef0
@@ -2425,7 +2425,7 @@ Func_08173aac:
 	bl Func_08015160
 	movs r0, #192
 	lsls r0, r0, #8
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	adds r1, r6, #0
 	adds r2, r6, #0
@@ -3938,7 +3938,7 @@ Func_08173aac:
 	lsls r3, r3, #4
 	lsls r0, r2, #13
 	adds r0, r0, r3
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r4, r11
 	lsls r0, r4, #9
 	bl Func_08015068
@@ -4303,7 +4303,7 @@ Func_08173aac:
 	adds r0, r0, r2
 	bl Func_080150e4
 	ldr r0, .L_08175dc8
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	ldr r0, .L_08175dcc
 	ldr r1, [sp, #20]
 	movs r2, #4
@@ -4531,7 +4531,7 @@ Func_08173aac:
 	bl Func_08015160
 	movs r0, #128
 	lsls r0, r0, #7
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	movs r1, #3
 	bl Math_Div
@@ -4606,10 +4606,10 @@ Func_08173aac:
 	bne .L_08175f44
 .L_08175f3e:
 	ldr r0, .L_08175f6c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_08175f44:
 	ldr r0, .L_08175f70
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #272
 	pop {r3, r5, r6, r7}

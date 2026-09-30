@@ -24,14 +24,14 @@ Func_080d82e0:
 	bne .L_080d830c
 	b .L_080d85a2
 .L_080d830c:
-	bl Func_080d7a78
+	bl BattleFx_InitializeSlots
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #224
 	ldr r3, [r3]
 	ldr r0, .L_080d846c
 	mov r9, r3
-	bl Func_08108058
+	bl Unnamed_080b0840Far
 	movs r0, #30
 	bl WaitFrames
 	adds r2, r6, #0
@@ -81,7 +81,7 @@ Func_080d82e0:
 	movs r2, #0
 	lsls r1, r1, #7
 	ldr r0, [r7]
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl WaitFrames
 	ldr r0, [r7]
@@ -105,7 +105,7 @@ Func_080d82e0:
 	ldr r3, [r6, #16]
 	movs r7, #23
 	str r3, [sp, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	mov r6, r8
 .L_080d83dc:
 	movs r1, #168
@@ -175,9 +175,9 @@ Func_080d82e0:
 .L_080d846c:
 	.4byte 0x00201204
 .L_080d8470:
-	.4byte Func_080d7af8
+	.4byte BattleFx_AdvanceSpinAngle
 .L_080d8474:
-	.4byte Func_080d8148
+	.4byte BattleFx_ShrinkObjectAndDestroyFast
 .L_080d8478:
 	.4byte 0x00019999
 .L_080d847c:
@@ -195,7 +195,7 @@ Func_080d82e0:
 	movs r0, #168
 	str r3, [r5, #8]
 	lsls r0, r0, #2
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080d84e8
@@ -285,7 +285,7 @@ Func_080d82e0:
 	adds r2, r0, #0
 	lsls r1, r1, #14
 	adds r0, r6, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 	adds r0, r6, #0
 	movs r1, #11
 	bl Animation_ApplyChildValuesFar
@@ -304,7 +304,7 @@ Func_080d82e0:
 	ldr r2, [r5, #4]
 	ldr r3, [r5, #8]
 	lsls r0, r0, #2
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_080d8528
@@ -324,4 +324,4 @@ Func_080d82e0:
 .L_080d85b0:
 	.4byte Func_080d8174
 .L_080d85b4:
-	.4byte Data_080f0e54
+	.4byte BattleFx_CommonParticleScript

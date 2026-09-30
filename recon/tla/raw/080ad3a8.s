@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ad3a8
+	.global Owner_GetRecord
 	.thumb_func
-Func_080ad3a8:
+Owner_GetRecord:
 	push {lr}
 	movs r3, #250
 	subs r0, #8

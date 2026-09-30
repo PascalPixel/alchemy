@@ -53,7 +53,7 @@ Func_08044dc8:
 	movs r3, #2
 	mov r0, r9
 	str r6, [sp, #0]
-	bl Func_0803954c
+	bl UiText_QueueRenderEntries
 	movs r0, #81
 	bl Audio_PlayCue
 	movs r5, #129
@@ -147,7 +147,7 @@ Func_08044dc8:
 	movs r2, #4
 	movs r3, #2
 	str r5, [sp, #0]
-	bl Func_0803954c
+	bl UiText_QueueRenderEntries
 	movs r5, #129
 	ldr r6, .L_08044f40
 	lsls r5, r5, #2
@@ -165,7 +165,7 @@ Func_08044dc8:
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [sp, #4]
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_08044f28:
 	add sp, #52
 	pop {r3, r5, r6, r7}

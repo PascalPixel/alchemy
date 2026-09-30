@@ -49,7 +49,7 @@ Func_0811ca54:
 	ldrsh r3, [r5, r1]
 	str r0, [r6, #8]
 	str r3, [r6, #12]
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	bge .L_0811cabc
 	movs r0, #1

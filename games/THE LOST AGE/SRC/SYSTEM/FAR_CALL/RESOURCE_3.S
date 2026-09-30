@@ -13,9 +13,9 @@ ResourceMetadata_SumCommandLengthsFar:
 	.thumb_func
 Func_080202b0:
 	overlay_veneer Func_0802dc48
-	.global Func_080202b8
+	.global ResourceSlot_LoadFar
 	.thumb_func
-Func_080202b8:
+ResourceSlot_LoadFar:
 	overlay_veneer Func_080227e0
 	.global Func_080202c0
 	.thumb_func
@@ -29,9 +29,9 @@ Animation_ApplyChildValueFar:
 	.thumb_func
 Func_080202d0:
 	overlay_veneer Func_0802a52c
-	.global Func_080202d8
+	.global Map_EnableUpdateCallbackFar
 	.thumb_func
-Func_080202d8:
+Map_EnableUpdateCallbackFar:
 	overlay_veneer Func_0802cd4c
 	.global Map_DisableUpdateCallbackFar
 	.thumb_func

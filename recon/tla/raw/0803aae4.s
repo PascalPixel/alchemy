@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803aae4
+	.global UiText_RenderWideStringAtOffset
 	.thumb_func
-Func_0803aae4:
+UiText_RenderWideStringAtOffset:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -111,7 +111,7 @@ Func_0803aae4:
 	adds r5, #2
 	b .L_0803ac3a
 .L_0803abdc:
-	bl Func_0803a404
+	bl UiWork_ResetCounters
 	b .L_0803ac3a
 .L_0803abe2:
 	movs r2, #15

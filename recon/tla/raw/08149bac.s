@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08149bac
+	.global BattleFx_RunSparkGroups
 	.thumb_func
-Func_08149bac:
+BattleFx_RunSparkGroups:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -25,7 +25,7 @@ Func_08149bac:
 	cmp r3, #0
 	bne .L_08149be6
 	movs r0, #1
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r5, #48
 	movs r4, #60
 	str r4, [sp, #28]
@@ -36,7 +36,7 @@ Func_08149bac:
 	cmp r1, #1
 	bne .L_08149c16
 	movs r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	movs r5, #238
 	ldr r4, [sp, #48]
 	lsls r5, r5, #7
@@ -57,7 +57,7 @@ Func_08149bac:
 	b .L_08149c38
 .L_08149c16:
 	movs r0, #0
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	mov r2, r10
 	add r5, sp, #64
 	ldr r0, [r2, #8]
@@ -328,7 +328,7 @@ Func_08149bac:
 	str r3, [r2]
 	lsls r1, r1, #4
 	ldr r0, .L_0814a000
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r4, #0
 	str r4, [sp, #36]
 	mov r5, r10
@@ -848,7 +848,7 @@ Func_08149bac:
 	b .L_08149e64
 .L_0814a222:
 	ldr r0, .L_0814a260
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104

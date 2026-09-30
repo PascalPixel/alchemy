@@ -19,4 +19,4 @@ Func_08013fdc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_08013ff8:
-	.4byte Data_03001178
+	.4byte gBlendDuration

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d3c88
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_080d3c88:
+UiText_OpenMessageAtObject:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

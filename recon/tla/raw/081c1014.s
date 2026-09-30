@@ -58,7 +58,7 @@ Func_081c1014:
 	movs r1, #5
 	bl __modsi3
 	mov r11, r0
-	bl Func_08013b30
+	bl Sound_LoadPresetParameters
 .L_081c1082:
 	ldr r3, [r5, #12]
 	movs r2, #128

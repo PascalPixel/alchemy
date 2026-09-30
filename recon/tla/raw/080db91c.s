@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080db91c
+	.global ObjectGroup_ApplyRandomChildValues
 	.thumb_func
-Func_080db91c:
+ObjectGroup_ApplyRandomChildValues:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

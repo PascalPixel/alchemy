@@ -82,7 +82,7 @@ Func_0811a4e0:
 	adds r1, r1, r2
 	adds r0, r5, #0
 	adds r2, r6, r4
-	bl Func_080202b8
+	bl ResourceSlot_LoadFar
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	bne .L_0811a58e

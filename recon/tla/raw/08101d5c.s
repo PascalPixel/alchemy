@@ -226,7 +226,7 @@ Func_08101d5c:
 	cmp r3, #99
 	beq .L_08101f4a
 	adds r0, r3, #0
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r3, #99
 	strh r3, [r5]
 .L_08101f4a:
@@ -295,7 +295,7 @@ Func_08101d5c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_08102004
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r0, [sp, #16]
 	add sp, #36
 	pop {r3, r5, r6, r7}
@@ -314,4 +314,4 @@ Func_08101d5c:
 .L_08102000:
 	.4byte 0x00002fcb
 .L_08102004:
-	.4byte Func_08104da8
+	.4byte Menu_UpdateEntryObjectTransforms

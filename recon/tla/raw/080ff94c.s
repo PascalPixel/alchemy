@@ -170,7 +170,7 @@ PsynergyMenu_DrawRangePage:
 	movs r1, #9
 	adds r2, r6, #0
 	movs r3, #15
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	mov r1, r9
 	movs r2, #14
 	str r1, [sp, #0]
@@ -185,7 +185,7 @@ PsynergyMenu_DrawRangePage:
 	movs r1, #9
 	adds r2, r6, #0
 	movs r3, #19
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	b .L_080ffb26
 .L_080ffabe:
 	mov r2, r8
@@ -215,7 +215,7 @@ PsynergyMenu_DrawRangePage:
 	movs r1, #9
 	adds r2, r6, #0
 	movs r3, #15
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	mov r2, r9
 	movs r3, #15
 	str r2, [sp, #0]
@@ -225,7 +225,7 @@ PsynergyMenu_DrawRangePage:
 	movs r1, #25
 	adds r2, r6, #0
 	movs r3, #3
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	b .L_080ffb26
 .L_080ffb12:
 	mov r1, r9
@@ -236,7 +236,7 @@ PsynergyMenu_DrawRangePage:
 	movs r1, #9
 	adds r2, r6, #0
 	movs r3, #19
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 .L_080ffb26:
 	movs r1, #1
 	add r10, r1

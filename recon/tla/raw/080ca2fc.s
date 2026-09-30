@@ -60,4 +60,4 @@ Func_080ca2fc:
 .L_080ca360:
 	.4byte gPartyState
 .L_080ca364:
-	.4byte Data_080ef824
+	.4byte Party_PairResolveRules

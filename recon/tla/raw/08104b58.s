@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08104b58
+	.global UiIcon_CreateStatChangeArrow
 	.thumb_func
-Func_08104b58:
+UiIcon_CreateStatChangeArrow:
 	push {r5, r6, lr}
 	adds r5, r3, #0
 	movs r3, #192

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080146d4
+	.global Scheduler_EnableUnmaskedOverlayCallbacks
 	.thumb_func
-Func_080146d4:
+Scheduler_EnableUnmaskedOverlayCallbacks:
 	push {r5, r6, r7, lr}
 	ldr r1, .L_08014714
 	movs r5, #1
@@ -38,6 +38,6 @@ Func_080146d4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08014714:
-	.4byte Data_02003610
+	.4byte gSchedulerTaskTable
 .L_08014718:
 	.4byte 0x04000208

@@ -61,7 +61,7 @@ Func_080ff5bc:
 	ldr r0, .L_080ff7a0
 	bl UiText_DrawStringAtOffsetFar
 	movs r0, #15
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	movs r3, #0
 	ldrb r0, [r7, #15]
 	movs r1, #2

@@ -13,11 +13,11 @@ Func_08104aa4:
 	adds r2, #238
 	adds r3, r5, r2
 	ldrh r0, [r3]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r3, #158
 	lsls r3, r3, #3
 	adds r5, r5, r3
 	ldrh r0, [r5]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	pop {r5, pc}
 	.2byte 0x0000

@@ -38,7 +38,7 @@ Func_080d0bec:
 	lsls r1, r1, #3
 	strh r6, [r5]
 	ldr r0, .L_080d0c4c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #120
 	bl WaitFrames
 	add sp, #4

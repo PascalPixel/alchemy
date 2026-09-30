@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d8148
+	.global BattleFx_ShrinkObjectAndDestroyFast
 	.thumb_func
-Func_080d8148:
+BattleFx_ShrinkObjectAndDestroyFast:
 	push {lr}
 	ldr r1, .L_080d8170
 	ldr r3, [r0, #28]

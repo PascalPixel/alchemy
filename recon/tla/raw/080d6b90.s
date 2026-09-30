@@ -84,7 +84,7 @@ Func_080d6b90:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080d6c5c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {r3}
 	mov r8, r3

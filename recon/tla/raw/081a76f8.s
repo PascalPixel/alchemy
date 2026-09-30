@@ -12,7 +12,7 @@ Func_081a76f8:
 	ldr r6, .L_081a7764
 	bl Func_080144c0
 	movs r0, #1
-	bl Func_08013e70
+	bl Blend_SetDarkenTarget16
 	bl Func_08014b70
 	movs r0, #1
 	bl WaitFrames

@@ -64,14 +64,14 @@ Func_080dcf8c:
 	adds r1, r0, #0
 	adds r2, r6, #0
 	adds r0, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r0, #209
 	lsls r0, r0, #1
 	adds r0, #255
 	ldr r1, [r6]
 	ldr r2, [r6, #4]
 	ldr r3, [r6, #8]
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080dd044
@@ -100,4 +100,4 @@ Func_080dcf8c:
 .L_080dd04c:
 	.4byte 0xfff80000
 .L_080dd050:
-	.4byte Data_080f0e54
+	.4byte BattleFx_CommonParticleScript

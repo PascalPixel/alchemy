@@ -12,14 +12,14 @@ Object_SetPositionAndResetMotionFar:
 	.global Func_080200f0
 	.thumb_func
 Func_080200f0:
-	overlay_veneer Func_08022f64
-	.global Func_080200f8
+	overlay_veneer Map_RenderAnimatedTileFrame
+	.global Map_RenderAnimatedTileFramesForObjectFar
 	.thumb_func
-Func_080200f8:
+Map_RenderAnimatedTileFramesForObjectFar:
 	overlay_veneer Func_08022fe8
-	.global Func_08020100
+	.global Map_RenderAllAnimatedTileFramesFar
 	.thumb_func
-Func_08020100:
+Map_RenderAllAnimatedTileFramesFar:
 	overlay_veneer Func_0802301c
 	.global Func_08020108
 	.thumb_func

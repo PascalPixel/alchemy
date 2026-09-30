@@ -101,7 +101,7 @@ Func_0803fc38:
 	strb r0, [r4]
 	lsls r1, r1, #3
 	ldr r0, .L_0803fd10
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {pc}
 	.2byte 0x0000

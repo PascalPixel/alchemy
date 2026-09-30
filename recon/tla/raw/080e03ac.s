@@ -5,7 +5,7 @@
 Func_080e03ac:
 	push {r5, lr}
 	adds r5, r0, #0
-	bl Func_080d1ed8
+	bl BattleFx_GetFlags
 	cmp r0, #255
 	bne .L_080e03be
 	movs r0, #1

@@ -93,7 +93,7 @@ Func_080ff370:
 	bl UiWindow_ClearInteriorTilesFar
 .L_080ff42a:
 	movs r0, #15
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	ldr r3, [sp, #24]
 	cmp r3, #1
 	beq .L_080ff43c

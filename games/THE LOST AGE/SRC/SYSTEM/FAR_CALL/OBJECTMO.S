@@ -136,7 +136,7 @@ Func_080c8180:
 	.global Func_080c8188
 	.thumb_func
 Func_080c8188:
-	overlay_veneer Func_080d3c88
+	overlay_veneer UiText_OpenMessageAtObject
 	.global Func_080c8190
 	.thumb_func
 Func_080c8190:
@@ -172,7 +172,7 @@ Func_080c81c8:
 	.global Func_080c81d0
 	.thumb_func
 Func_080c81d0:
-	overlay_veneer Func_080d3838
+	overlay_veneer ObjectMotion_ArmCallback
 	.global Func_080c81d8
 	.thumb_func
 Func_080c81d8:
@@ -196,7 +196,7 @@ Func_080c81f8:
 	.global Func_080c8200
 	.thumb_func
 Func_080c8200:
-	overlay_veneer Func_080d3888
+	overlay_veneer ObjectMotion_SetActionVariant
 	.global Func_080c8208
 	.thumb_func
 Func_080c8208:

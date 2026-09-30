@@ -54,7 +54,7 @@ Func_08101a54:
 	adds r2, r4, #0
 	bl UiWindow_SetTilemapEntryFar
 	movs r0, #15
-	bl Func_080380b8
+	bl UiWork_SetParamNibbleFar
 	add sp, #4
 	pop {r3}
 	mov r8, r3

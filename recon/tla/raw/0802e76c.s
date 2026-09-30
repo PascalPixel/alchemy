@@ -24,7 +24,7 @@ Func_0802e76c:
 	ldr r0, [r6, r3]
 	subs r5, #1
 	strh r7, [r0]
-	bl Func_0802296c
+	bl Animation_InitWorkFromMetadata
 	adds r6, #56
 	cmp r5, #0
 	bge .L_0802e78e

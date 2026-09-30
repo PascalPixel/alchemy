@@ -33,7 +33,7 @@ Func_080fb104:
 	ldrh r3, [r2]
 	cmp r3, #1
 	beq .L_080fb178
-	bl Func_080fa458
+	bl ItemMenu_HideAllIcons
 	ldr r0, [r6, #56]
 	bl RenderOutput_RedrawSavedRectFar
 	adds r3, r6, #0
@@ -195,7 +195,7 @@ Func_080fb104:
 	movs r1, #144
 	ldr r0, .L_080fb404
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_080fb2d2
 .L_080fb296:
 	mov r3, r8

@@ -54,7 +54,7 @@ ItemIcon_Compose:
 	strh r2, [r3]
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	movs r2, #1
 	str r2, [sp, #4]
 .L_0803d6ee:
@@ -84,7 +84,7 @@ ItemIcon_Compose:
 	strh r6, [r7]
 	ldr r1, [sp, #4]
 	adds r0, r5, #0
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	movs r3, #8
 	mov r1, r11
 	ands r3, r1
@@ -105,7 +105,7 @@ ItemIcon_Compose:
 	strh r6, [r2]
 	movs r1, #1
 	strh r6, [r7]
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 .L_0803d752:
 	movs r3, #16
 	mov r1, r11
@@ -135,7 +135,7 @@ ItemIcon_Compose:
 	strh r2, [r3]
 	adds r0, r5, #0
 	movs r1, #1
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 .L_0803d78e:
 	movs r3, #32
 	mov r2, r11
@@ -175,7 +175,7 @@ ItemIcon_Compose:
 	adds r3, r5, r2
 	strh r1, [r3]
 	movs r1, #1
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 .L_0803d7de:
 	movs r3, #2
 	mov r1, r11
@@ -242,7 +242,7 @@ ItemIcon_Compose:
 	adds r0, r5, #0
 	movs r1, #1
 	strh r6, [r7]
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	mov r0, r10
 	movs r1, #10
 	bl Math_Div
@@ -259,7 +259,7 @@ ItemIcon_Compose:
 	adds r0, r5, #0
 	strh r6, [r7]
 	movs r1, #1
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 .L_0803d888:
 	movs r0, #128
 	lsls r0, r0, #1

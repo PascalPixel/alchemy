@@ -117,7 +117,7 @@ Func_080e9af4:
 	strh r6, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_080e9dac
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	adds r3, r7, #0
 	movs r1, #0
 	adds r3, #34
@@ -229,14 +229,14 @@ Func_080e9af4:
 	movs r0, #5
 	bl WaitFrames
 	ldr r0, .L_080e9dac
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r3, #128
 	lsls r3, r3, #5
 	adds r3, #44
 	add r3, r8
 	movs r4, #0
 	ldrsh r0, [r3, r4]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 	b .L_080e9d9a

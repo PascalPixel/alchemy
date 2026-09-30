@@ -4,5 +4,5 @@
 	.thumb_func
 Owner_RefreshClassActions:
 	push {lr}
-	bl Func_080b0298
+	bl Owner_RefreshDerivedData
 	pop {pc}

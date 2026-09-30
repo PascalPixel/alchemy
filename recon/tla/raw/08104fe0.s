@@ -82,11 +82,11 @@ Func_08104fe0:
 	strb r3, [r2]
 	lsls r1, r1, #3
 	ldr r0, .L_08105088
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_08105088:
-	.4byte Func_08104da8
+	.4byte Menu_UpdateEntryObjectTransforms

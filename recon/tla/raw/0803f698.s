@@ -13,7 +13,7 @@ UiTextResource_SetPosition:
 	orrs r3, r1
 	strh r3, [r0, #6]
 	movs r1, #252
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	b .L_0803f6bc
 	.2byte 0x0000
 .L_0803f6b4:

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08126bcc
+	.global Graphics_AdvancePaletteCycle
 	.thumb_func
-Func_08126bcc:
+Graphics_AdvancePaletteCycle:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

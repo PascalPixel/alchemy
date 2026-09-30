@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08045048
+	.global RenderResource_LoadFrame
 	.thumb_func
-Func_08045048:
+RenderResource_LoadFrame:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

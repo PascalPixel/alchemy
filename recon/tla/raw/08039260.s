@@ -57,7 +57,7 @@ UiWindow_Create:
 	str r4, [r5, #4]
 	strh r7, [r5, #16]
 	strh r7, [r5, #22]
-	bl Func_0803a404
+	bl UiWork_ResetCounters
 	movs r0, #8
 	adds r3, r6, #0
 	ands r3, r0
@@ -133,7 +133,7 @@ UiWindow_Create:
 .L_08039350:
 	strh r2, [r5, #24]
 	adds r0, r5, #0
-	bl Func_080391c4
+	bl UiWork_DrawByAttributes
 	b .L_0803936c
 .L_0803935a:
 	movs r3, #7

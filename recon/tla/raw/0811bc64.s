@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811bc64
+	.global ActivateBattleObjectSlot
 	.thumb_func
-Func_0811bc64:
+ActivateBattleObjectSlot:
 	push {r5, lr}
 	adds r5, r0, #0
 	bl Func_0811a5fc

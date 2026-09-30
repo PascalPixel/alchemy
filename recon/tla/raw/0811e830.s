@@ -28,7 +28,7 @@ Func_0811e830:
 	lsls r0, r0, #19
 	adds r0, #80
 	lsls r1, r1, #6
-	bl Func_08013ba4
+	bl QueueIoWriteDelay2
 	movs r1, #1
 	ldr r0, [sp, #8]
 	bl BattlePres_SetActorRecordMode
@@ -86,14 +86,14 @@ Func_0811e830:
 	cmp r3, #0
 	beq .L_0811e8e2
 	ldr r0, [sp, #8]
-	bl Func_0811bc64
+	bl ActivateBattleObjectSlot
 	bl Func_0811bc98
 .L_0811e8e2:
 	movs r3, #0
 	movs r0, #7
 	movs r1, #0
 	movs r2, #0
-	bl Func_080202b8
+	bl ResourceSlot_LoadFar
 	adds r5, #49
 	str r5, [sp, #0]
 	ldrb r3, [r5]

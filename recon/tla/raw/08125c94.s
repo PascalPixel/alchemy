@@ -46,14 +46,14 @@ Func_08125c94:
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 	b.n	.L_08125cf6
 .L_08125cea:
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #100
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 .L_08125cf6:
 	pop	{pc}
 	.2byte 0x1120
@@ -323,7 +323,7 @@ Func_08125c94:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #180
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 	ldr	r3, [sp, #4]
 	mov	r2, r8
 	movs	r1, #144
@@ -512,7 +512,7 @@ Func_08125c94:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #100
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 	ldr	r0, [sp, #4]
 	mov	r3, r8
 	ldr	r2, [pc, #28]

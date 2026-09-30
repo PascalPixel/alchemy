@@ -1055,6 +1055,7 @@ SECTIONS
         "*/recon/tla/raw/08125c94.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081263fc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08126700.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/BATTLE/PRESENTATION/SETUP_TRANSITION_AT_PAIR_MIDPOINT.o"(.text)
         "*/recon/tla/raw/08126944.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08126978.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081269bc.o"(.text .rodata .data .padding)

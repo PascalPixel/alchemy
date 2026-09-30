@@ -588,7 +588,7 @@ Func_0811e830:
 	adds	r2, #100
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	Func_08126904
+	bl	BattlePres_SetupTransitionAtPairMidpoint
 .L_0811ed00:
 	movs	r0, #1
 	bl	WaitFrames
@@ -647,7 +647,7 @@ Func_0811e830:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #100
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 .L_0811ed7e:
 	mov	r2, r8
 	movs	r1, #36

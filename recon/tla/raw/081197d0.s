@@ -317,7 +317,7 @@ Func_081197f0:
 	movs	r2, #0
 	movs	r3, #190
 	movs	r0, #0
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 	movs	r0, #1
 	bl	Func_08118d6c
 	ldr	r5, [pc, #48]

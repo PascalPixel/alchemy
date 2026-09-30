@@ -1363,7 +1363,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/CAMERA_SET_RANGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/TRANS_SETUP_AT_DEPTH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/TRANS_SETUP.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/SETUP_TRANSITION_AT_PAIR_MIDPOINT.o"(.text)
+        "*/games/COMMON/SRC/BATTLE/PRESENTATION/SETUP_TRANSITION_AT_PAIR_MIDPOINT.o"(.text)
         "*/recon/tbs/raw/080c0e36.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/FADE_ALPHA_OUT.o"(.text)
         "*/recon/tbs/raw/080c0e6e.o"(.text .rodata .data .padding)

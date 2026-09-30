@@ -1021,7 +1021,7 @@ Func_08027e20:
 .L_0802861e:
 	adds	r0, r7, #0
 	mov	r1, r8
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080286ca
 	ldr	r2, [sp, #0]
@@ -1040,7 +1040,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080286ca
 	ldr	r4, [sp, #0]
@@ -1057,7 +1057,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080286ca
 	ldr	r1, [sp, #0]
@@ -1075,7 +1075,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080286ca
 	ldr	r4, [sp, #0]
@@ -1092,7 +1092,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080286ca
 	b.n	.L_080287f6
@@ -1154,7 +1154,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	mov	r1, r8
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080287e4
 	ldr	r3, [r7, #8]
@@ -1173,7 +1173,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080287e4
 	ldr	r3, [r7, #8]
@@ -1190,7 +1190,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080287e4
 	ldr	r3, [r7, #8]
@@ -1208,7 +1208,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080287e4
 	ldr	r3, [r7, #8]
@@ -1225,7 +1225,7 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	0x0802db88
+	bl	Func_0802db88
 	cmp	r0, #0
 	bne.n	.L_080287e4
 	b.n	.L_080285dc
@@ -3487,7 +3487,7 @@ Func_08027e20:
 	ldr	r0, [r7, #8]
 	ldr	r3, [r7, #20]
 	adds	r1, r5, #0
-	bl	0x0802d7b0
+	bl	Func_0802d7b0
 	cmp	r0, #2
 	bne.n	.L_08029968
 	ldr	r3, [r7, #12]
@@ -4560,15 +4560,15 @@ Func_08027e20:
 	bl	Func_0801489c
 	adds	r0, r7, #0
 	ldr	r1, [sp, #0]
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, fp
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, r9
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	orrs	r5, r6
 	orrs	r5, r0
 	cmp	r5, #0
@@ -4656,15 +4656,15 @@ Func_08027e20:
 	add	r3, sp, #88
 	adds	r1, r3, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, fp
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	mov	r1, r8
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	0x0802db64
+	bl	Func_0802db64
 	orrs	r5, r6
 	orrs	r5, r0
 	cmp	r5, #0

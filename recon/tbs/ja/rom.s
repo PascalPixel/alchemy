@@ -978,14 +978,6 @@ RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x00099454, 0x00000d74
 	.section .rom.0009b008, "ax"
 	.incbin "baserom.gba", 0x0009b008, 0x00000330
-	.section .rom.0009b6b4, "ax"
-	.incbin "baserom.gba", 0x0009b6b4, 0x0000010c
-	.section .rom.0009b7c0, "ax"
-	.global ItemMenu_DrawItemDetails
-	.type ItemMenu_DrawItemDetails, %function
-	.thumb_func
-ItemMenu_DrawItemDetails:
-	.incbin "baserom.gba", 0x0009b7c0, 0x000004ac
 	.section .rom.0009bdc0, "ax"
 	.incbin "baserom.gba", 0x0009bdc0, 0x000002e8
 	.section .rom.0009c260, "ax"
@@ -1076,7 +1068,10 @@ ItemMenu_ArrangeKeysString:
 	.incbin "baserom.gba", 0x000a6140, 0x00000008
 	.global ItemMenu_EquipmentKeyString
 ItemMenu_EquipmentKeyString:
-	.incbin "baserom.gba", 0x000a6148, 0x00000008
+	.incbin "baserom.gba", 0x000a6148, 0x00000004
+	.global Data_080af220
+Data_080af220:
+	.incbin "baserom.gba", 0x000a614c, 0x00000004
 	.global Menu_PlusSignString
 Menu_PlusSignString:
 	.incbin "baserom.gba", 0x000a6150, 0x00000004

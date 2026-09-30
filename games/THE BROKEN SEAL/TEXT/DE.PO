@@ -11431,7 +11431,7 @@ msgctxt "message"
 msgid "02855"
 msgstr "kann es nicht benutzt werden."
 
-msgctxt "message"
+msgctxt "MsgEffectRateSuffix"
 msgid "02856"
 msgstr "="
 

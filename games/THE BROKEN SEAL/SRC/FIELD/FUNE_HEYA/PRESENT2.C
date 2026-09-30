@@ -3,12 +3,12 @@
 
 extern const s32 FuneHeya_ActionScriptE[];
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
 extern u8 MsgFuneImTurning[];
 
 /* Message ids. */
-
 
 struct SceneActor {
     u8 pad00[99];
@@ -26,11 +26,6 @@ struct EffectRecord {
 extern u8 FuneHeya_EntryActionScript[];
 void FieldScene_RunSceneStep();
 void FieldScene_RunPositionTransferPresentation();
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
 
 void SceneActor_SetFlagBit3ForActors28To35(void);
 
@@ -74,11 +69,6 @@ void FieldScene_RunScene3b1_02004198(void)
     Event_End();
 }
 
-/*
- * A flat setter sequence, no branches; the final call takes no arguments.
- * The 60-byte owner at 0x02004218 includes its one pool word, the address
- * taken as Value_00000928.
- */
 void FieldScene_RunActors24And25Setup(void)
 {
     Event_Begin();

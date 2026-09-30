@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
 extern u8 MsgFuneBadLuckLosingMyLucky[];
@@ -21,7 +22,6 @@ extern u8 MsgFuneYouCameAskCaptainSet[];
 extern u8 MsgFuneYouGoingRow[];
 
 /* Message ids. */
-
 
 struct SceneActor {
     u8 pad00[99];
@@ -66,55 +66,14 @@ u8 *Object_GetByIdFar(s32 n);
  * fields the neighbouring scene sources touch; their meaning is not recovered.
  */
 
-/* Loader-relocated overlay calls: each Func_ symbol names the pre-relocation
- * call word the image holds.
- *
- * Three of those pre-relocation words repeat in this owner while reaching
- * different runtime helpers (0x0200af5a, 0x0200b0e8 and 0x0200b20c each cover
- * two distinct destinations), so one Func_ spelling cannot name both sites.
- * Those six sites are declared by their runtime address instead, which the
- * overlay symbol resolver binds directly. Registering this owner as a
- * translation unit with explicit absolute_symbols would let them go back to
- * suffixed Func_ spellings without changing a byte. */
-
-/* The scene work record pointer; +0x1c0 holds the scene request word. */
-
-/*
- * Actor slot search for resource_3b1.  The 48-byte owner at 0x02005038 has no
- * pool; the halfword at 0x02005066 is alignment before the next owner.
- */
-
 /*
  * Field scene beat for overlay resource_3b1.  Each callee is named for its own
  * call site: every call reaches its target through its own local veneer, even
  * where the same logical callee is used from more than one site.
  */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 void FieldScene_CallPairWith10(s32 a, u16 b);
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-/*
- * The 292-byte owner at 0x0200054c covers the dispatcher, a 23-entry jump
- * table, the case bodies, an alignment halfword and the literal pool. Case
- * order and the shared arms reproduce the reference: 23 shares an arm with
- * 4 while 22 does not, and the 15/17/19 arm skips 16, 18 and 20. 2208 is
- * synthesised in the reference and stays decimal; 0x928 and 0x93e are pool
- * loads.
- */
 u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 {
     s16 *tbl = Data_02000240;
@@ -264,30 +223,9 @@ void SceneDialogue_ShowLine1E19Or1D50(void)
     Event_End();
 }
 
-/*
- * Flag-branched scene setup for overlay resource_3b1. Each callee name
- * refers to that call site's own call word rather than to a shared runtime
- * address.
- */
-
-/*
- * Actors 24 and 25 setup for overlay resource_3b1. Each callee name refers
- * to its own call word rather than to a shared runtime address.
- */
-
 /* Scene setup for resource_3b1: installs actors 10 through 17. */
 
-/*
- * Set up actors 24 and 25 -- resource_3b1. A flat setter sequence with no
- * branches; the owner includes its one literal pool word.
- */
-
 /* The pool word, referenced by address so that it is emitted. */
-
-/*
- * The aliases name the call words encoded in the overlay image, and the
- * declarations are old-style because the call sites vary in arity.
- */
 
 /*
  * Actors 24 and 25 setup for overlay resource_3b1. Each callee slot uses

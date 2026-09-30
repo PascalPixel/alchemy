@@ -9,7 +9,7 @@ Func_080d7ab4:
 	adds r3, #224
 	ldr r0, .L_080d7af4
 	ldr r5, [r3]
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	adds r6, r5, #0
 	adds r6, #149
 	adds r5, #80
@@ -21,7 +21,7 @@ Func_080d7ab4:
 	cmp r3, #0
 	beq .L_080d7adc
 	adds r0, r5, #0
-	bl Func_080ebf68
+	bl BattleFx_ClearOwnedSlot
 .L_080d7adc:
 	subs r7, #1
 	adds r5, #72

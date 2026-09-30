@@ -91,4 +91,4 @@ Func_0811d24c:
 	mov r9, r3
 	pop {r5, r6, r7, pc}
 .L_0811d2f4:
-	.4byte Data_0300124c
+	.4byte gLinkStatus

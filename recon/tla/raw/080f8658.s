@@ -34,12 +34,12 @@ Func_080f8658:
 	cmp r5, r3
 	bge .L_080f86a0
 	movs r0, #4
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_080f86a0:
 	cmp r5, #0
 	bne .L_080f86aa
 	movs r0, #2
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 .L_080f86aa:
 	adds r1, r6, #0
 	adds r0, r5, #0
@@ -47,7 +47,7 @@ Func_080f8658:
 	movs r3, #40
 	bl UiText_DrawNumberRightAlignedFar
 	movs r0, #15
-	bl UiText_DrawNumberInWindowFar + 0x8
+	bl UiWork_SetParamNibbleFar
 	adds r1, r6, #0
 	ldr r0, .L_080f8704
 	movs r2, #0
@@ -77,8 +77,8 @@ Func_080f8658:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080f86fc:
-	.4byte Data_0810593c
+	.4byte Ui_HpString
 .L_080f8700:
-	.4byte Data_08105940
+	.4byte Ui_SlashString
 .L_080f8704:
-	.4byte Data_08105944
+	.4byte Ui_PpString

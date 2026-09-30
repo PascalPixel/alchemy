@@ -9,5 +9,11 @@
 	.thumb_func
 Func_08020040:
 	overlay_veneer Func_08022d40
+	.global ResourceObject_ReleaseFar
+	.thumb_func
+ResourceObject_ReleaseFar:
 	overlay_veneer Func_08022e90
+	.global Func_08020050
+	.thumb_func
+Func_08020050:
 	overlay_veneer Func_08022010

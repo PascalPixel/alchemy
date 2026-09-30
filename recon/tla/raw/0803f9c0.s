@@ -12,7 +12,7 @@ Func_0803f9c0:
 	adds r0, #12
 	movs r1, #24
 	sub sp, #8
-	bl Math_Mod
+	bl __modsi3
 	adds r5, r0, #0
 	ldr r2, .L_0803fb2c
 	lsls r5, r5, #18
@@ -20,7 +20,7 @@ Func_0803f9c0:
 	adds r0, r5, #0
 	movs r1, #96
 	mov r8, r2
-	bl Math_Mod
+	bl __modsi3
 	lsls r0, r0, #16
 	mov r2, r8
 	asrs r0, r0, #16
@@ -35,7 +35,7 @@ Func_0803f9c0:
 	movs r1, #96
 	adds r0, #32
 	mov r10, r3
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r8
 	ldrb r3, [r2, r0]
 	adds r5, #64
@@ -44,7 +44,7 @@ Func_0803f9c0:
 	adds r0, r5, #0
 	movs r1, #96
 	asrs r7, r3, #16
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r8
 	ldrb r3, [r2, r0]
 	mov r2, r10

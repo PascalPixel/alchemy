@@ -16,7 +16,7 @@ RenderOutput_Create:
 	cmp r5, #0
 	bne .L_08042338
 	adds r0, r7, #0
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r0, #0
 	b .L_08042390
 .L_08042338:

@@ -62,7 +62,7 @@ Func_080feb58:
 	ldr r0, [sp, #0]
 	mov r1, r10
 	add r0, r10
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #0]
 	lsls r0, r0, #1
 	adds r0, r0, r6
@@ -71,7 +71,7 @@ Func_080feb58:
 	mov r0, r9
 	movs r1, #3
 	adds r0, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [sp, #0]
 	mov r9, r0
 	lsls r3, r3, #1

@@ -17,7 +17,7 @@
 	overlay_veneer Func_08020300
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiText_DrawQuantity
-	overlay_veneer Func_08038140
+	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Item_Get
 	overlay_veneer Inventory_GetQuantityFar

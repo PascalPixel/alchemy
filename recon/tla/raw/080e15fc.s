@@ -34,7 +34,7 @@ Func_080e15fc:
 	str r5, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_080e164c
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_080e1648:

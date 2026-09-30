@@ -54,7 +54,7 @@ Func_0810857c:
 	ldr r2, [r7]
 	movs r3, #13
 	strb r3, [r2, #5]
-	bl Func_08038140
+	bl UiWork_FinalizePendingCoreFar
 	mov r2, r8
 	lsls r3, r2, #16
 	movs r2, #34

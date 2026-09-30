@@ -51,7 +51,7 @@ Func_080d7524:
 	adds r1, r5, #0
 	movs r2, #0
 	mov r0, r9
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #4
@@ -208,7 +208,7 @@ Func_080d7524:
 	adds r2, r3, r0
 	lsls r1, r1, #13
 	adds r0, r7, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 	movs r0, #153
 	bl Audio_PlayCue
 	mov r0, r9

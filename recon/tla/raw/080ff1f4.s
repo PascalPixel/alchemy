@@ -69,9 +69,9 @@ Func_080ff1f4:
 	adds r1, r7, #0
 	adds r2, r5, #0
 	adds r3, r6, #0
-	bl Func_080f9224
+	bl Render_SetTilemapFlagRect
 	add sp, #8
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080ff278:
-	.4byte Data_08105a38
+	.4byte CharacterMenu_CursorWidths

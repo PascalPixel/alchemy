@@ -44,4 +44,4 @@ Func_080e0308:
 .L_080e0354:
 	.4byte gPartyState
 .L_080e0358:
-	.4byte Func_080e02ec
+	.4byte BattleEffect_SetRandomTableValueOnObject

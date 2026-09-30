@@ -63,9 +63,9 @@
 	overlay_veneer Func_080c8378
 	overlay_veneer Func_080c8380
 	overlay_veneer Func_080c8390
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c8480
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c8518

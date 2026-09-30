@@ -57,13 +57,13 @@ Func_0816442c:
 .L_0816449a:
 	adds r0, r5, #0
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	lsls r0, r0, #21
 	add r0, r10
 	str r0, [r6]
 	movs r1, #3
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	lsls r0, r0, #21
 	add r0, r8
 	str r0, [r6, #8]

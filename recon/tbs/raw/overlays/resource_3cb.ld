@@ -12,10 +12,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/PEER_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/WRITE_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/POLL_READY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CIRCLE_CALL.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CLEAR_FLAGS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/RECEIVE_PARTY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/COPY_ENTRIES.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY2.o"(.text)
         "*/resource_3cb_overlay.o"(.text.x02008580)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/EXCHANGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CONNECT.o"(.text)
@@ -39,7 +36,7 @@ SECTIONS
     .bss (NOLOAD) :
     {
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/POLL_READY.o"(.bss)
-        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CIRCLE_CALL.o"(.bss)
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY2.o"(.bss)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

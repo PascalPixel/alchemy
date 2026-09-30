@@ -60,7 +60,7 @@ Func_08040798:
 	mov r0, r8
 	add r0, r11
 	mov r1, r11
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #160
 	lsls r3, r3, #3
 	mov r8, r0
@@ -99,7 +99,7 @@ Func_08040798:
 	mov r3, r9
 	ldrsb r0, [r6, r3]
 	str r4, [sp, #0]
-	bl Func_08045048
+	bl RenderResource_LoadFrame
 	adds r7, #1
 	adds r6, #1
 	ldr r4, [sp, #0]

@@ -77,7 +77,7 @@ Func_0819273c:
 	str r4, [r0]
 	str r3, [r0, #4]
 	str r2, [r0, #8]
-	bl Func_08015128
+	bl SceneTransform_ApplyPosition
 	mov r4, r9
 	movs r3, #4
 	str r3, [r4]

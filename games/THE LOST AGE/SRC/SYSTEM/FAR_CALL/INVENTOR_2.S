@@ -21,5 +21,11 @@ Inventory_RemoveFar:
 	.thumb_func
 Inventory_BreakFar:
 	overlay_veneer Inventory_Break
+	.global Inventory_RepairFar
+	.thumb_func
+Inventory_RepairFar:
 	overlay_veneer Inventory_Repair
+	.global Func_080ad068
+	.thumb_func
+Func_080ad068:
 	overlay_veneer Func_080af338

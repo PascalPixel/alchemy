@@ -94,7 +94,7 @@ Func_08016180:
 .L_08016230:
 	.4byte 0x04000128
 .L_08016234:
-	.4byte Data_02005360
+	.4byte gSerialRuntime
 .L_08016238:
 	mov r1, r12
 	adds r2, #88

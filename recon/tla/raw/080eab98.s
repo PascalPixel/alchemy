@@ -34,4 +34,4 @@ Func_080eab98:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080eabcc:
-	.4byte Data_0202c000
+	.4byte gMapCollision

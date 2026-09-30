@@ -20,7 +20,7 @@ Func_080debd8:
 	mov r10, r1
 	bl Audio_PlayCue
 	ldr r0, .L_080dec84
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	adds r0, r5, #0
 	movs r1, #0
 	bl Object_SetMode

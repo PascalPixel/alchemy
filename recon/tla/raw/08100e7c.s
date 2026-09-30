@@ -97,9 +97,9 @@ Func_08100e7c:
 .L_08100f3c:
 	bl Func_080f80c4
 	movs r0, #1
-	bl Func_080383b8 + 0x8
+	bl Func_080383c0
 	ldr r0, .L_08100fd4
-	bl Func_080383e8 + 0x10
+	bl Link_DrawShiftedTilePairFar
 	movs r2, #129
 	lsls r2, r2, #2
 	adds r0, r7, r2
@@ -167,9 +167,9 @@ Func_08100e7c:
 	lsls r3, r3, #18
 	ldr r3, [r3, #24]
 	strh r5, [r3, #4]
-	bl UiWindow_SetTilemapEntryFar + 0x20
+	bl Func_08038290
 	movs r0, #0
-	bl Func_080383b8 + 0x8
+	bl Func_080383c0
 	mov r1, r8
 	movs r2, #128
 	ldr r5, .L_08101060
@@ -195,7 +195,7 @@ Func_08100e7c:
 	movs r0, #0
 	movs r2, #30
 	movs r3, #20
-	bl Func_080383e8 + 0x8
+	bl Func_080383f0
 	movs r2, #192
 	lsls r2, r2, #1
 	adds r3, r7, r2

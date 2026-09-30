@@ -28,7 +28,7 @@ sub_08124af8:
 	adds r0, r3, #0
 	muls r0, r6
 	movs r1, #10
-	bl __divsi3
+	bl Math_Div
 	mov r9, r5
 	adds r5, r5, r0
 	cmp r5, r6

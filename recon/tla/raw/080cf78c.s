@@ -87,9 +87,9 @@ Func_080cf78c:
 	strh r2, [r3]
 .L_080cf82a:
 	ldr r0, .L_080cf860
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, .L_080cf864
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r2, #128
 	lsls r2, r2, #19
 	adds r2, #176
@@ -173,7 +173,7 @@ Func_080cf78c:
 	adds r4, r7, r3
 	adds r0, r4, #4
 	str r4, [sp, #0]
-	bl Func_08038248 + 0x10
+	bl Func_08038258
 	movs r1, #165
 	lsls r1, r1, #3
 	adds r3, r7, r1
@@ -295,7 +295,7 @@ Func_080cf78c:
 .L_080cfa60:
 	.4byte 0x00000001
 .L_080cfa64:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide
 .L_080cfa68:
 	.4byte .L_080cf8f8
 .L_080cfa6c:
@@ -403,12 +403,12 @@ Func_080cf78c:
 	str r2, [sp, #8]
 	str r3, [sp, #4]
 	str r4, [sp, #0]
-	bl __divsi3
+	bl Math_Div
 	ldr r2, [sp, #8]
 	adds r5, r0, #0
 	adds r1, r7, #0
 	adds r0, r2, #0
-	bl __divsi3
+	bl Math_Div
 	add r5, r11
 	ldr r4, [sp, #0]
 	adds r0, r6, r0

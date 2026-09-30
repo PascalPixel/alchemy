@@ -80,7 +80,7 @@ Func_080fb410:
 	subs r1, #23
 	ldrb r0, [r3]
 	ands r1, r2
-	bl Djinn_IsActiveFar + 0x10
+	bl Item_CanOwnerEquip
 	cmp r0, #0
 	bne .L_080fb4b4
 	movs r2, #1
@@ -140,7 +140,7 @@ Func_080fb410:
 	lsls r0, r0, #1
 	adds r0, #255
 	ands r0, r3
-	bl Func_080c8508 + 0x8
+	bl BattleFx_HasTriggerFar
 	cmp r0, #0
 	beq .L_080fb522
 	movs r3, #1

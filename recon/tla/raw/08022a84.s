@@ -16,7 +16,7 @@ Func_08022a84:
 	ldr r0, [r5, r6]
 	cmp r0, #0
 	beq .L_08022aca
-	bl Func_08022d1c
+	bl ResourceMetadata_ClearRecord
 	movs r3, #0
 	adds r2, r7, #1
 	str r3, [r5, r6]

@@ -40,7 +40,7 @@ Func_081053a8:
 	movs r0, #8
 	adds r2, r5, #0
 	movs r3, #0
-	bl UiWindow_SetTilemapEntryFar + 0x18
+	bl Func_08038288
 	movs r3, #128
 	adds r2, r6, #4
 	lsls r3, r3, #23
@@ -88,7 +88,7 @@ Func_081053a8:
 	strb r3, [r2]
 	adds r1, #138
 	ldr r0, .L_08105464
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	pop {r3, r5, r6, r7}
 	mov r8, r3
 	mov r9, r5

@@ -5,7 +5,7 @@
 Func_0802cf7c:
 	push {lr}
 	ldr r0, .L_0802cf8c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #112
 	bl Runtime_ReleaseHeapBlock
 	pop {pc}

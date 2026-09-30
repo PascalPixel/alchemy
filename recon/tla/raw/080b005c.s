@@ -8,7 +8,7 @@ Func_080b005c:
 	lsls r2, r2, #1
 	adds r3, r0, r2
 	ldrh r0, [r3]
-	bl Func_080ad3a8
+	bl Owner_GetRecord
 	adds r0, #42
 	ldrb r1, [r0]
 	cmp r1, #47

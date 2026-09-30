@@ -15,7 +15,7 @@ Func_08119734:
 	lsls r5, r5, #1
 .L_08119748:
 	movs r0, #128
-	bl Func_0811bc64
+	bl ActivateBattleObjectSlot
 	bl Func_0811bc98
 	movs r1, #1
 	adds r0, r5, #0

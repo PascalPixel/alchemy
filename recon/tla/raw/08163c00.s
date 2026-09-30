@@ -7,7 +7,7 @@ Func_08163c00:
 	adds r5, r0, #0
 	movs r0, #0
 	sub sp, #24
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	ldr r1, [r5, #4]
 	movs r3, #1
 	eors r1, r3

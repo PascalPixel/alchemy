@@ -126,7 +126,7 @@ Func_08119374:
 .L_08119458:
 	.4byte 0x0000006e
 .L_0811945c:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_08119460:
 	ldrh r2, [r6, #8]
 	ldrh r3, [r5, #8]
@@ -178,7 +178,7 @@ Func_08119374:
 .L_081194b8:
 	.4byte 0x00000043
 .L_081194bc:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_081194c0:
 	ldrh r2, [r6, #12]
 	ldrh r3, [r5, #12]
@@ -230,7 +230,7 @@ Func_08119374:
 .L_0811951c:
 	.4byte 0x00000075
 .L_08119520:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_08119524:
 	ldrh r2, [r6]
 	ldrh r3, [r5]
@@ -285,7 +285,7 @@ Func_08119374:
 .L_08119584:
 	.4byte 0x0000004e
 .L_08119588:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_0811958c:
 	ldrh r3, [r5, #12]
 	movs r7, #0

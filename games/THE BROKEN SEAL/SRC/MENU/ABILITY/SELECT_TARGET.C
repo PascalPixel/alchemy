@@ -67,7 +67,9 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_ClearListFar(s32 window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 void UiIcon_PrepareObject(struct PsynergyTargetMarker *marker);
 void Audio_PlayCue(s32 cue);
 
@@ -103,10 +105,19 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
                 PsynergyMenu_CallIconRoutineWithValue(
                     (s32)menu, menu->owner_ids[selection]);
                 if (!GameFlag_TestFar(0x151) && !shown) {
+/* The Japanese edition clears the info window and draws the description
+   as a message; the others redraw the saved window and draw it in place. */
+#if defined(TBS_EDITION_JA)
+                    RenderOutput_ClearListFar(menu->info_window);
+                    UiText_DrawMessageAt(
+                        (menu->selected_action & 0x3fff) + (s32)&MsgAbilityDescription,
+                        menu->info_window, 0, 0);
+#else
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
                     UiText_DrawCharacterAtOffsetFar(
                         (menu->selected_action & 0x3fff) + (s32)&MsgAbilityDescription,
                         menu->info_window, 0, 0);
+#endif
                     shown = 1;
                 } else {
                     GameFlag_ClearBitFar(0x151);

@@ -57,7 +57,7 @@ Func_0804cda8:
 	movs r5, #0
 	ands r3, r4
 	str r3, [r0, #4]
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	movs r2, #142
 	add r2, r8
 	mov r11, r0
@@ -158,7 +158,7 @@ Func_0804cda8:
 	str r3, [r0]
 	adds r0, r6, #0
 	str r4, [sp, #0]
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	ldr r4, [sp, #0]
 .L_0804ced4:
 	mov r1, r10

@@ -44,7 +44,7 @@ Func_080e9f68:
 	ldr r0, [r3]
 	adds r2, r6, #0
 	ldr r1, [r5]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r7, #132
 	ldr r3, [r6]
 	lsls r7, r7, #5
@@ -82,7 +82,7 @@ Func_080e9f68:
 	adds r3, #80
 	add r3, r8
 	ldr r0, [r3]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, [r7, #24]
 .L_080ea00a:
 	adds r3, #1
@@ -200,7 +200,7 @@ Func_080e9f68:
 	cmp r0, #19
 	bhi .L_080ea130
 	movs r1, #5
-	bl __divsi3
+	bl Math_Div
 	ldrh r1, [r6]
 	movs r3, #7
 	ands r3, r0

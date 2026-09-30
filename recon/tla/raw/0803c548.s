@@ -220,7 +220,7 @@ Func_0803c548:
 	ldr r3, [r0, #4]
 	ands r3, r1
 	str r3, [r0, #4]
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	ldrb r2, [r7, #7]
 	movs r3, #31
 	ands r0, r3
@@ -297,7 +297,7 @@ Func_0803c548:
 	strh r3, [r6, #12]
 	strh r3, [r5, #4]
 	adds r0, r5, #0
-	bl Func_0801401c
+	bl AffineMatrix_BuildForEffect
 	ldrb r2, [r7, #7]
 	movs r3, #31
 	ands r0, r3
@@ -501,7 +501,7 @@ Func_0803c548:
 	beq .L_0803c974
 	adds r0, r7, #0
 	movs r1, #255
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	b .L_0803c974
 .L_0803c940:
 	cmp r3, #19
@@ -521,14 +521,14 @@ Func_0803c548:
 	bhi .L_0803c974
 	ldrb r1, [r6, #15]
 	adds r0, r7, #0
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 	b .L_0803c974
 .L_0803c968:
 	cmp r3, #13
 	beq .L_0803c974
 	ldrb r1, [r6, #15]
 	adds r0, r7, #0
-	bl Func_08014128
+	bl Runtime_PushSlotEntry
 .L_0803c974:
 	ldr r3, .L_0803c9a8
 	ldr r6, [r6]

@@ -29,7 +29,7 @@ Func_0811843c:
 	strb r3, [r0, r7]
 	mov r1, r9
 	ldrb r0, [r1, r7]
-	bl Func_08123534
+	bl BattleParty_IsUnitListed
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	bne .L_0811847c

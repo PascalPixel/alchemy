@@ -69,22 +69,22 @@ Func_08043358:
 	ldr r3, [r5, #16]
 	movs r5, #0
 	str r3, [r7, #36]
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	adds r3, r7, #0
 	adds r3, #40
 	strb r0, [r3]
 	movs r0, #1
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	adds r3, r7, #0
 	adds r3, #41
 	strb r0, [r3]
 	movs r0, #2
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	adds r3, r7, #0
 	adds r3, #42
 	strb r0, [r3]
 	movs r0, #3
-	bl Djinn_AddToLeastLoadedOwnerFar + 0x8
+	bl Party_SumDjinnCountsFar
 	adds r3, r7, #0
 	adds r3, #43
 	mov r6, sp

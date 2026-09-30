@@ -20,4 +20,4 @@ Func_080ded84:
 .L_080deda2:
 	pop {r5, r6, pc}
 .L_080deda4:
-	.4byte Data_080f0e54
+	.4byte BattleFx_CommonParticleScript

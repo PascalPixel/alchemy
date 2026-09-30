@@ -92,7 +92,7 @@ Func_0810b7b4:
 	strb r1, [r3]
 	mov r0, r10
 	movs r1, #2
-	bl Func_080f8058 + 0x8
+	bl Func_080f8060
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #5
@@ -159,7 +159,7 @@ Func_0810b7b4:
 	cmp r2, #0
 	beq .L_0810b94c
 	mov r0, r9
-	bl Item_AdjustCounterFar + 0x8
+	bl Inventory_CountFar
 	cmp r0, #0
 	bne .L_0810b90c
 	movs r0, #113
@@ -225,7 +225,7 @@ Func_0810b7b4:
 	mov r8, r0
 	b .L_0810b87e
 .L_0810b984:
-	bl Func_080f8058 + 0x10
+	bl Func_080f8068
 	mov r0, r11
 	movs r1, #2
 	bl UiWork_FinalizeFar

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f2e4
+	.global MenuSelection_SetupEntry
 	.thumb_func
-Func_0803f2e4:
+MenuSelection_SetupEntry:
 	push {r5, r6, r7, lr}
 	adds r7, r0, #0
 	adds r6, r1, #0

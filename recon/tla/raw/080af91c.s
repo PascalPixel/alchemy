@@ -112,7 +112,7 @@ Owner_LevelUp:
 	lsls r0, r0, #16
 	asrs r0, r0, #16
 	movs r1, #20
-	bl __divsi3
+	bl Math_Div
 	lsls r0, r0, #16
 	asrs r5, r0, #16
 	cmp r5, #0

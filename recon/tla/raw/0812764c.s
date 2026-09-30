@@ -21,7 +21,7 @@ Func_0812764c:
 	mov r10, r0
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	adds r7, r0, #0
 	cmp r7, #0
 	ble .L_08127692
@@ -39,7 +39,7 @@ Func_0812764c:
 .L_08127692:
 	adds r1, r7, #0
 	mov r0, r8
-	bl __divsi3
+	bl Math_Div
 	mov r8, r0
 	movs r0, #254
 	lsls r0, r0, #2

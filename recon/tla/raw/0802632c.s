@@ -83,7 +83,7 @@ Func_0802632c:
 	str r3, [r0, #8]
 	movs r0, #128
 	lsls r0, r0, #12
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, .L_08026694
 	ldrb r3, [r3]
 	cmp r3, #0
@@ -118,7 +118,7 @@ Func_0802632c:
 	lsls r3, r3, #5
 	adds r1, r7, r3
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
 	adds r1, r5, #0
 	bl Func_0802d958
@@ -134,7 +134,7 @@ Func_0802632c:
 	adds r2, r5, #0
 	ldr r3, [r6, #16]
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
 	adds r1, r5, #0
 	bl Func_0802d958
@@ -151,7 +151,7 @@ Func_0802632c:
 	ldr r3, [r6, #16]
 	adds r2, r5, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
 	adds r1, r5, #0
 	bl Func_0802d958
@@ -167,7 +167,7 @@ Func_0802632c:
 	str r3, [r5, #8]
 	ldr r3, .L_0802669c
 	adds r1, r7, r3
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r1, r5, #0
 	adds r0, r6, #0
 	bl Func_0802d958
@@ -227,7 +227,7 @@ Func_0802632c:
 	str r2, [sp, #0]
 	adds r1, r7, #0
 	mov r2, r8
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
 	mov r1, r8
 	bl Func_0802d958
@@ -246,7 +246,7 @@ Func_0802632c:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
 	adds r1, r5, #0
 	bl Func_0802d958
@@ -263,7 +263,7 @@ Func_0802632c:
 	str r3, [r5, #8]
 	ldr r3, .L_08026698
 	adds r1, r7, r3
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
 	adds r1, r5, #0
 	bl Func_0802d958
@@ -281,7 +281,7 @@ Func_0802632c:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
 	adds r1, r5, #0
 	bl Func_0802d958
@@ -298,7 +298,7 @@ Func_0802632c:
 	ldr r3, [r6, #16]
 	adds r2, r5, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r6, #0
 	adds r1, r5, #0
 	bl Func_0802d958
@@ -336,7 +336,7 @@ Func_0802632c:
 	lsrs r1, r2, #16
 	lsls r0, r0, #11
 	mov r2, r8
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r5, [r3, #20]

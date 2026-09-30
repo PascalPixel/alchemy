@@ -60,7 +60,7 @@ Func_080d784c:
 	mov r9, r2
 .L_080d78bc:
 	mov r0, r8
-	bl Func_080cccb8
+	bl BattleAction_FindDescriptor
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080d791c

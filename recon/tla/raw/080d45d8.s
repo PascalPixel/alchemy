@@ -57,7 +57,7 @@ Func_080d45d8:
 	mov r3, r8
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl __divsi3
+	bl Math_Div
 	ldr r1, [r6]
 	adds r1, r1, r0
 	movs r0, #144
@@ -90,7 +90,7 @@ Func_080d45d8:
 	mov r3, r8
 	strh r2, [r3]
 	ldr r0, .L_080d46a0
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 .L_080d468e:
 	pop {r3, r5}
 	mov r8, r3

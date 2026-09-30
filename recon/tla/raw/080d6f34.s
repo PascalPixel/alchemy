@@ -92,7 +92,7 @@ Func_080d6f34:
 	ldr r0, .L_080d7008
 	movs r1, #144
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	b .L_080d700c
 .L_080d6ff8:
 	.4byte 0x0000000b

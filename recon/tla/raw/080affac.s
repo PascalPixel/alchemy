@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
-	.global Func_080affac
+	.global Owner_GetDigitValues
 	.thumb_func
-Func_080affac:
+Owner_GetDigitValues:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	adds r6, r2, #0
 	cmp r5, #7
 	ble .L_080affe8
-	bl Func_080ad3a8
+	bl Owner_GetRecord
 	adds r0, #42
 	ldrb r1, [r0]
 	cmp r1, #47

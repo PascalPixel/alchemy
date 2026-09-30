@@ -24,11 +24,11 @@ Func_0803f3c8:
 	mov r8, r0
 	adds r0, r5, #0
 	mov r9, r2
-	bl Func_0803efd4
+	bl Menu_SendNodeCountList
 	mov r0, r10
 	ldrh r1, [r0]
 	adds r0, r5, #0
-	bl Func_0803ef48
+	bl Menu_ReloadNodeResource
 	movs r1, #192
 	lsls r1, r1, #2
 	adds r1, #162
@@ -50,7 +50,7 @@ Func_0803f3c8:
 	strh r7, [r3]
 	adds r3, r5, r0
 	strh r7, [r3]
-	bl Func_0803f758
+	bl Resource_ResetPendingTransfer
 	movs r1, #210
 	lsls r1, r1, #2
 	adds r3, r5, r1
@@ -112,7 +112,7 @@ Func_0803f3c8:
 	cmp r7, r6
 	beq .L_0803f4a8
 	ldrh r0, [r7, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	mov r3, r8
 	strh r3, [r7, #10]
 .L_0803f4a8:

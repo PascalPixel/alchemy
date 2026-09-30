@@ -17,4 +17,7 @@ Func_08020240:
 	.thumb_func
 Func_08020248:
 	overlay_veneer Func_08023840
+	.global Animation_SetDisplayFlagFar
+	.thumb_func
+Animation_SetDisplayFlagFar:
 	overlay_veneer Animation_SetDisplayFlag

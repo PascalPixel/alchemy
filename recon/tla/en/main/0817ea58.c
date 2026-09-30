@@ -131,12 +131,12 @@ extern const u16 Ulysses_DropFrames[];
 extern const u8 Ulysses_BeamPalette[];
 extern const u8 Ulysses_BeamSprite[];
 
-void Func_081435e0(s32);
+void BattleFx_BeginCanvasLayer(s32);
 void Func_0813ba50(void);
 void Func_08179e6c(void);
 s32 Func_081963ec(s32, s32);
-void Func_080145a8(void *, s32);
-void Func_08014274(s32);
+void Scheduler_AddOrUpdateCallback(void *, s32);
+void Resource_ResetEntry(s32);
 void Func_08118010(void *, s32);
 void Func_08118040(s32, s32, s32);
 void Func_08157cf4(s32, void *, s32, s32);
@@ -160,15 +160,15 @@ s32 *Func_081969f8(s32);
 void Func_08014de4(void);
 void Func_08015160(s32, s32, s32);
 void Func_080150e4(s32);
-void Func_08015024(s32);
+void SceneTransform_ApplyPitch(s32);
 void Func_0801521c(s32);
 void Func_08196958(const void *, void *, s32);
 void Func_08196a7c(s32 *);
 void Func_08013164(void *);
 void Func_081434f8(void);
-void Func_08014644(void *);
+void Scheduler_RemoveCallback(void *);
 void Func_0814cca8(void);
-void Func_08020048(Sprite *);
+void ResourceObject_ReleaseFar(Sprite *);
 s32 Func_080143e0(s32);
 void Func_08014c4c(void);
 void Func_08152404(s32, s32, s32);
@@ -235,13 +235,13 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     work = SYSTEM->summon;
     ctl = SYSTEM->control;
     bank = SYSTEM->bank;
-    Func_081435e0(0);
+    BattleFx_BeginCanvasLayer(0);
     Func_0813ba50();
     Func_08179e6c();
     Func_081963ec(104, 3);
     blit[0] = SYSTEM->blit;
     work->transfer_mode = 0;
-    Func_080145a8(Func_08143000, 0xc80);
+    Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     camera = 0;
     wave_scroll = 0;
     ship_y = -0x1d0000;
@@ -251,7 +251,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
 
     for (frame = 0; frame != 52; frame++) {
         if (frame == 27) {
-            Func_08014274(bank[21]);
+            Resource_ResetEntry(bank[21]);
             *(s32 *)0x030011f0 = 240;
             targets[0] = 255;
             Func_08118010(targets, 0);
@@ -279,7 +279,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             work->unk_7794 = 5;
             work->unk_7798 = -1;
             work->unk_779c = 0;
-            Func_080145a8(Func_0813baec, 0x480);
+            Scheduler_AddOrUpdateCallback(Func_0813baec, 0x480);
             ctl[4] = 1;
             Func_08157cf4(0x134, work->frames, 0, 0);
             for (i = 0; i != 10; i++) {
@@ -775,7 +775,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 Func_08014de4();
                 Func_08015160(camera + 0x20000, 0x80000, 0);
                 Func_080150e4(0x4300);
-                Func_08015024(-0x800);
+                SceneTransform_ApplyPitch(-0x800);
                 Func_0801521c((v << 14) + 0x4180);
                 Func_08196958(Ulysses_BeamPalette, buffer, 4);
                 Func_08196a7c(beam);
@@ -924,12 +924,12 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         Func_08013560(1);
     }
 
-    Func_08014644(Func_0813baec);
+    Scheduler_RemoveCallback(Func_0813baec);
     *(u16 *)0x03001124 = saved_y;
     ctl[4] = 0;
     Func_0814cca8();
     for (i = 0; i != 57; i++)
-        Func_08020048(work->sprites[i]);
+        ResourceObject_ReleaseFar(work->sprites[i]);
     bank[21] = Func_080143e0(128);
     Func_08014c4c();
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, (vu32 *)0x040000d4);
@@ -1045,8 +1045,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         Func_08013560(1);
     }
     for (i = 0; i != 16; i++)
-        Func_08020048(work->sprites[i]);
-    Func_08014644(Func_08143000);
+        ResourceObject_ReleaseFar(work->sprites[i]);
+    Scheduler_RemoveCallback(Func_08143000);
     Func_0801314c(188);
     Func_0801314c(104);
     Func_08143bb8();

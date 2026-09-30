@@ -87,12 +87,12 @@ Func_080da9a8:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080daaa8
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #228
 	lsls r1, r1, #2
 	adds r1, #255
 	ldr r0, .L_080daaac
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	adds r0, r6, #0
 	bl Sys_Free
 	adds r0, r7, #0

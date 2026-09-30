@@ -64,7 +64,7 @@ Func_080d69f4:
 	str r3, [r1, #4]
 	ldr r3, [r5, #20]
 	str r3, [r1, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	mov r3, r10
 	movs r2, #2
 	ldrsh r6, [r3, r2]

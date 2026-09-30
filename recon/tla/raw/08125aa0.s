@@ -52,7 +52,7 @@ Func_08125aa0:
 	ldr r3, .L_08125b34
 	adds r2, #66
 	strh r3, [r2]
-	bl Func_08013e70
+	bl Blend_SetDarkenTarget16
 	movs r6, #128
 	lsls r6, r6, #19
 	movs r5, #0

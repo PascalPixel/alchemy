@@ -20,7 +20,7 @@ UiText_DrawPrefixedNumberAtOffset:
 	adds r1, r4, #0
 	movs r2, #4
 	mov r10, r3
-	bl Func_0803ae14
+	bl UiText_FormatNumber
 	cmp r5, #0
 	bne .L_080422a8
 	movs r3, #240

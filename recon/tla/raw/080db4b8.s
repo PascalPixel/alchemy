@@ -177,7 +177,7 @@ BattleFx_Run:
 	movs r2, #24
 	ldrsh r0, [r6, r2]
 	bl Func_080cdbf8
-	bl Func_080e03ac
+	bl BattleFx_FilterObjectIdByFlags
 	adds r5, r0, #0
 	bl Func_080cce94
 	cmp r0, #0

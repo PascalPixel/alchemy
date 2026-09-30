@@ -86,7 +86,7 @@ Func_080267bc:
 	ldr r3, [r0, #16]
 	adds r0, r5, #0
 	str r3, [r2, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r3, r8
 	adds r3, #35
 	ldrb r2, [r3]
@@ -217,7 +217,7 @@ Func_080267bc:
 	lsrs r6, r3, #16
 	adds r1, r6, r0
 	adds r0, r7, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -234,7 +234,7 @@ Func_080267bc:
 	adds r1, r6, r2
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -252,7 +252,7 @@ Func_080267bc:
 	ldr r3, [r0, #16]
 	adds r0, r7, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -269,7 +269,7 @@ Func_080267bc:
 	ldr r3, [r0, #16]
 	adds r0, r7, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -328,7 +328,7 @@ Func_080267bc:
 	lsls r0, r0, #12
 	str r2, [sp, #0]
 	adds r2, r7, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r7, #0
 	bl Func_0802d87c
@@ -348,7 +348,7 @@ Func_080267bc:
 	adds r1, r6, r2
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -366,7 +366,7 @@ Func_080267bc:
 	movs r0, #128
 	lsls r0, r0, #12
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -385,7 +385,7 @@ Func_080267bc:
 	movs r0, #128
 	lsls r0, r0, #12
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -403,7 +403,7 @@ Func_080267bc:
 	movs r0, #128
 	lsls r0, r0, #12
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -467,7 +467,7 @@ Func_080267bc:
 	lsls r0, r0, #11
 	lsrs r1, r2, #16
 	mov r2, r11
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r7, [r3, #20]
@@ -533,7 +533,7 @@ Func_080267bc:
 	mov r1, r10
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_08024f20
@@ -549,7 +549,7 @@ Func_080267bc:
 	adds r2, r5, #0
 	ldr r3, [r6, #8]
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -567,7 +567,7 @@ Func_080267bc:
 	lsls r0, r0, #12
 	str r3, [r5, #8]
 	adds r2, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -589,7 +589,7 @@ Func_080267bc:
 	ldr r3, [r6, #8]
 	adds r2, r5, #0
 	str r3, [r5, #8]
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
 	bl Func_0802d87c
@@ -599,7 +599,7 @@ Func_080267bc:
 	lsls r0, r0, #7
 	mov r1, r10
 	adds r2, r6, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	movs r3, #128
 	lsls r3, r3, #24
 	str r3, [r6, #48]

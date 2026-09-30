@@ -70,9 +70,6 @@ s32 Menu_RunActionFlow(void)
     return result;
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct OwnerCursor {
     u8 unknown_00[5];
     u8 state;
@@ -131,4 +128,3 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     WaitFrames(1);
     return result;
 }
-#endif

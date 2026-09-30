@@ -6,9 +6,6 @@
 
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct PsynergyOwnerIcon {
     u8 reserved_00[5];
     u8 state;
@@ -101,7 +98,9 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
             menu->row_positions[selection] = 0x1a;
             if (!GameFlag_TestFar(0x151) && !shown) {
                 RenderOutput_ClearListFar(menu->info_window);
+#if !defined(TBS_EDITION_JA)
                 RenderOutput_RedrawSavedRectFar(menu->info_window);
+#endif
                 UiText_DrawWorkValueWithLabel(menu->info_window);
                 shown = 1;
             } else {
@@ -157,7 +156,6 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
     menu->owner = owner_ids[selection];
     return result;
 }
-#endif
 
 void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 spacing);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 *, s32 x, s32 y);

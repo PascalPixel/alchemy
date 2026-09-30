@@ -1912,7 +1912,7 @@ Func_08171bb0:
 	str	r3, [r2, #28]
 .L_08172ab4:
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #40]
 	bl	Func_08014644
 	bl	Func_08143bb8

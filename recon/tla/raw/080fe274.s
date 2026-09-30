@@ -205,7 +205,7 @@ Func_080fe274:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r2, fp
 	ldr	r3, [r2, #24]
 	ldr	r2, [pc, #28]

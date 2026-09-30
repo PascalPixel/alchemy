@@ -19,7 +19,7 @@ Func_080d440c:
 	movs	r0, #108
 	str	r3, [sp, #12]
 	adds	r7, r2, #0
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #230
 	str	r0, [sp, #8]
 	lsls	r1, r1, #1

@@ -23,17 +23,17 @@
 	str	r0, [sp, #116]
 	adds	r1, #124
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	str	r0, [sp, #112]
 	adds	r1, #20
 	movs	r0, #180
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #76
 	str	r0, [sp, #108]
 	movs	r0, #48
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #104]
 	ldr	r0, [pc, #308]
 	bl	0x080132fc
@@ -2220,15 +2220,15 @@
 	cmp	r7, #17
 	bne.n	.L_081ad2da
 	movs	r0, #48
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #180
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #192
 	lsls	r3, r3, #2
 	add	sp, r3

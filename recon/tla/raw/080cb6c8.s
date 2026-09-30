@@ -183,7 +183,7 @@ Func_080cb6c8:
 	movs	r1, #213
 	lsls	r1, r1, #4
 	movs	r0, #108
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #197
 	adds	r2, r0, #0
 	lsls	r1, r1, #1
@@ -204,7 +204,7 @@ Func_080cb6c8:
 	lsls	r1, r1, #3
 	movs	r0, #124
 	movs	r6, #0
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	cmp	r0, #0
 	beq.n	.L_080cb89c
 	movs	r2, #160

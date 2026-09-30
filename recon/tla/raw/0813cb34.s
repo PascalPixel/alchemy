@@ -498,9 +498,9 @@ Func_0813cb34:
 	ldr	r0, [pc, #76]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r3, sl
 	cmp	r3, #2
 	bne.n	.L_0813cf5c

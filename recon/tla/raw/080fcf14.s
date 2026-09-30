@@ -2388,7 +2388,7 @@ Func_080fcf14:
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	adds	r0, r6, #0
 	add	sp, #4
 	pop	{r5, r6, r7, pc}

@@ -22,7 +22,7 @@ Func_080fbe6c:
 	mov	fp, r0
 	movs	r0, #56
 	mov	r9, r3
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r2, #1
 	movs	r3, #0
 	str	r2, [sp, #12]
@@ -300,7 +300,7 @@ Func_080fbe6c:
 	adds	r0, r7, #0
 	bl	0x08038268
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #134
 	lsls	r3, r3, #2
 	add	r3, r9
@@ -1591,7 +1591,7 @@ Func_080fbe6c:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	mov	r1, r8
 	ldr	r2, [r1, #24]
 	movs	r3, #0

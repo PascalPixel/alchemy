@@ -788,7 +788,7 @@ Func_080ea14c:
 	ldr	r0, [sp, #28]
 	bl	0x08014274
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #64
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

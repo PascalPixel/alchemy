@@ -734,9 +734,9 @@ Func_08163e14:
 	ldr	r0, [pc, #84]
 	bl	Func_08014644
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r1, [sp, #24]
 	ldr	r2, [sp, #28]
 	movs	r0, #1
@@ -1488,9 +1488,9 @@ Func_08163e14:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #36
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

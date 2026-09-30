@@ -708,7 +708,7 @@ Func_08109188:
 	lsls	r1, r1, #3
 	movs	r0, #56
 	str	r2, [sp, #12]
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r2, #1
 	str	r2, [sp, #8]
 	mov	r3, r9
@@ -892,7 +892,7 @@ Func_08109188:
 	bl	0x08038018
 .L_0810989e:
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	adds	r0, r5, #0
 	add	sp, #16
 	pop	{r3, r5, r6, r7}

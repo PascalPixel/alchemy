@@ -2129,7 +2129,7 @@ Func_08179f18:
 	.2byte 0x2e20
 	bne.n	.L_0817aee2
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_0817afe2:
 	ldr	r3, [sp, #160]
 	subs	r3, #186
@@ -2853,7 +2853,7 @@ Func_08179f18:
 	ldr	r0, [pc, #36]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 	add	sp, #292
 	pop	{r3, r5, r6, r7}

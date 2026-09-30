@@ -511,7 +511,7 @@ Func_0814ea58:
 	ldr	r0, [pc, #32]
 	bl	Func_08014644
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08143bb8
 	add	sp, #72
 	pop	{r3, r5, r6, r7}

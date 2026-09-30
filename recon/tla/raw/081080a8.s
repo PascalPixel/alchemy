@@ -237,7 +237,7 @@ Func_081080a8:
 	ldrh	r0, [r5, #0]
 	bl	0x08014274
 	movs	r0, #220
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, pc}
 	movs	r0, r0
 	.2byte 0x8131

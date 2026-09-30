@@ -213,9 +213,9 @@ Func_08145df8:
 	mov	lr, r4
 	.2byte 0xf800
 	.2byte 0x20bc
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 .L_08145fbc:
 	movs	r1, #19
 	movs	r0, #104
@@ -509,9 +509,9 @@ Func_08145df8:
 	b.n	.L_08146022
 .L_0814620a:
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #240
 	ldr	r2, [sp, #72]
 	lsls	r1, r1, #7

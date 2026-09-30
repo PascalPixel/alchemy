@@ -71,7 +71,7 @@ Func_08046414:
 .L_080464a0:
 	ldr	r1, [pc, #32]
 .L_080464a2:
-	bl	Func_080143f8
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #24]
 	ldrh	r2, [r7, #8]
 	ands	r0, r3

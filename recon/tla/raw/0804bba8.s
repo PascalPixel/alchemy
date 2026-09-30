@@ -78,7 +78,7 @@ Func_0804bba8:
 	str	r0, [sp, #48]
 	lsls	r1, r1, #1
 	movs	r0, #228
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	mov	r1, sp
 	adds	r1, #100
 	str	r1, [sp, #36]
@@ -1891,7 +1891,7 @@ Func_0804bba8:
 	ldr	r2, [sp, #72]
 	str	r4, [sp, #4]
 	ldrh	r0, [r2, r6]
-	bl	Func_080454a0
+	bl	Resource_LoadKind26EntryToBuffer
 	ldr	r3, [pc, #56]
 	ldrh	r2, [r5, #8]
 	ands	r0, r3

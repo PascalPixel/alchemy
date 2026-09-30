@@ -51,6 +51,9 @@ Func_0803d92c:
 	movs	r0, r0
 	.2byte 0xeb58
 	.2byte 0x0804
+	.global Ability_LoadGlyph
+	.thumb_func
+Ability_LoadGlyph:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r8

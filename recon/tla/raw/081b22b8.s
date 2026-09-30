@@ -2395,13 +2395,13 @@ Func_081b22b8:
 	str	r0, [sp, #44]
 	adds	r1, #124
 	movs	r0, #92
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	str	r0, [sp, #40]
 	adds	r1, #28
 	movs	r0, #180
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #36]
 	ldr	r0, [pc, #76]
 	ldr	r5, [pc, #76]
@@ -3506,9 +3506,9 @@ Func_081b22b8:
 	cmp	r1, #17
 	bne.n	.L_081b3daa
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #104
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [pc, #60]
 	bl	Func_08014644
 	ldr	r0, [pc, #56]
@@ -3516,13 +3516,13 @@ Func_081b22b8:
 	ldr	r0, [pc, #56]
 	bl	Func_08014644
 	movs	r0, #180
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #96
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #100
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #120
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

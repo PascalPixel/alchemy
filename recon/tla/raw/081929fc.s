@@ -594,7 +594,7 @@ Func_081929fc:
 	str	r5, [sp, #168]
 	movs	r0, #188
 	str	r3, [r5, #0]
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	Func_08014de4
 	ldr	r6, [sp, #184]
 	str	r6, [sp, #164]
@@ -1243,7 +1243,7 @@ Func_081929fc:
 	bne.n	.L_0819338a
 .L_081933ce:
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r4, [pc, #104]
 	ldr	r6, [sp, #64]
 	movs	r3, #18
@@ -3307,7 +3307,7 @@ Func_081929fc:
 	bl	Func_08192894
 .L_08194420:
 	movs	r0, #188
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r0, [sp, #168]
 	movs	r1, #185
 	ldr	r3, [r0, #0]
@@ -5629,7 +5629,7 @@ Func_081929fc:
 	ldr	r2, [sp, #192]
 	movs	r0, #104
 	strh	r1, [r2, #54]
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	bl	0x08191cc4
 	ldr	r2, [sp, #176]
 	movs	r1, #128

@@ -379,7 +379,7 @@ Func_080e8d80:
 	bl	0x080dc384
 .L_080e9064:
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #56
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -604,7 +604,7 @@ Func_080e8d80:
 	bl	.L_080e8d80
 	bl	0x080dc384
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #32
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -1308,7 +1308,7 @@ Func_080e8d80:
 	bl	0x08014274
 .L_080e97a6:
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #88
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -1415,7 +1415,7 @@ Func_080e8d80:
 	bl	0x080e8c9c
 	bl	0x080dc384
 	movs	r0, #92
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}

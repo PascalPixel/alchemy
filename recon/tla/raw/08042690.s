@@ -11,7 +11,7 @@ Func_08042690:
 	movs	r1, #16
 	movs	r0, #64
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r6, [r3, #60]
@@ -946,7 +946,7 @@ Func_08042690:
 	ldr	r0, [r3, #0]
 	bl	UiWork_Finalize
 	movs	r0, #64
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{pc}
 	push	{lr}
 	movs	r3, #192

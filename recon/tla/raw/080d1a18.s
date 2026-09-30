@@ -8,7 +8,7 @@ Func_080d1a18:
 	movs	r1, #28
 	movs	r0, #144
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	adds	r7, r0, #0
 	lsls	r1, r1, #3
@@ -34,7 +34,7 @@ Func_080d1a18:
 	movs	r0, #94
 	bl	VramBlock_LoadCached
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #84]
@@ -343,7 +343,7 @@ Func_080d1a18:
 	movs	r1, #28
 	movs	r0, #144
 	sub	sp, #4
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #128
 	adds	r6, r0, #0
 	lsls	r1, r1, #3
@@ -372,7 +372,7 @@ Func_080d1a18:
 	lsls	r1, r1, #3
 	bl	0x080145a8
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	cmp	r5, #0
 	bne.n	.L_080d1d24
 	ldr	r3, [pc, #24]
@@ -441,7 +441,7 @@ Func_080d1a18:
 	movs	r0, #94
 	bl	VramBlock_LoadCached
 	movs	r0, #56
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #4
 	pop	{r5, pc}
 	movs	r0, r0

@@ -123,7 +123,7 @@
 	adds	r1, r5, #0
 	movs	r0, #32
 	str	r3, [sp, #0]
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	adds	r1, r5, #0
 	ldr	r3, [pc, #512]
 	mov	r8, r0

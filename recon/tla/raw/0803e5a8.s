@@ -229,7 +229,7 @@ Func_0803e5a8:
 	ldrh	r0, [r3, #0]
 	bl	0x08014274
 	movs	r0, #72
-	bl	Runtime_ReleaseSlot
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r5, r6, r7, pc}
 	push	{lr}
 	movs	r3, #192

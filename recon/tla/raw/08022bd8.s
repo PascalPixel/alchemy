@@ -10,12 +10,12 @@ Func_08022bd8:
 	movs	r1, #224
 	lsls	r1, r1, #4
 	movs	r0, #16
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	movs	r1, #192
 	adds	r7, r0, #0
 	lsls	r1, r1, #3
 	movs	r0, #12
-	bl	0x08014d00
+	bl	Runtime_AllocateBlock
 	b.n	.L_08022c0e
 .L_08022bf8:
 	movs	r1, #224

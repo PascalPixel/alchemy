@@ -1107,7 +1107,7 @@ Graphics_AdjustPaletteBank:
 	negs	r1, r1
 	movs	r2, #11
 	adds	r0, r6, #0
-	bl	Func_080f8840
+	bl	UiIcon_CreateWithResourceVariant
 	movs	r3, #0
 	mov	fp, r3
 	movs	r3, #13

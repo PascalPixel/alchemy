@@ -225,10 +225,12 @@ Func_080f8658:
 	.4byte 0x0000104c
 	.2byte 0x104f
 	.2byte 0x0000
-	.global Func_080f8840
+	.global UiIcon_CreateWithResourceVariant
 	.thumb_func
-Func_080f8840:
-.L_080f8840:
+UiIcon_CreateWithResourceVariant:
+	.global UiIcon_CreateWithResourceVariant
+	.thumb_func
+UiIcon_CreateWithResourceVariant:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -332,7 +334,7 @@ UiIcon_PrepareObject:
 	negs	r1, r1
 	movs	r2, #11
 	adds	r0, r5, #0
-	bl	Func_080f8840
+	bl	UiIcon_CreateWithResourceVariant
 	movs	r2, #13
 	mov	r8, r2
 	mov	r3, r8

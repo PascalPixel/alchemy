@@ -245,28 +245,3 @@ Func_0804d7fc:
 	.4byte 0x0804d755
 	.2byte 0x1178
 	.2byte 0x0000
-	.global Func_0804d968
-	.thumb_func
-Func_0804d968:
-	push	{r5, lr}
-	adds	r5, r0, #0
-	bl	AffineEffect_InitializeWork
-	movs	r0, #17
-	bl	Menu_AppendResourceEntry
-	movs	r0, #18
-	bl	Menu_AppendResourceEntry
-	movs	r0, #19
-	bl	Menu_AppendResourceEntry
-	movs	r0, #20
-	bl	Menu_AppendResourceEntry
-	movs	r1, #7
-	movs	r2, #0
-	movs	r0, #17
-	bl	Menu_CenterResourceEntries
-	adds	r0, r5, #0
-	bl	Menu_RunResourceSelectionLoop
-	adds	r5, r0, #0
-	bl	Menu_EndResourceSelection
-	adds	r0, r5, #0
-	pop	{r5, pc}
-	.2byte 0x0000

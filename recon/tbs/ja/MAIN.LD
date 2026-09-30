@@ -792,7 +792,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/DRAW_DETAIL_PAGE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ABILITY3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU12.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0009e3bc)
+    "*/games/THE BROKEN SEAL/SRC/MENU/OPEN_ACTION_MENU.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/RUN_ACTION_FLOW.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/SHOW_CURRENT_LIST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/CHARACTER_SELECTOR_RUN_REARRANGE.o"(.text)

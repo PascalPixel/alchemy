@@ -338,10 +338,10 @@ Func_080cb8e8:
 	ldrsb	r3, [r6, r3]
 	cmp	r3, #2
 	bne.n	.L_080cbbc8
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	str	r7, [r0, #24]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	movs	r1, #0
 	bl	ObjectDispatch_SetSingleChildField26Far

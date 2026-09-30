@@ -208,7 +208,7 @@ Func_080cae5c:
 	ands	r3, r2
 	orrs	r3, r1
 	strb	r3, [r5, #0]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	cmp	r7, r0
 	bne.n	.L_080caf32
 	movs	r2, #192

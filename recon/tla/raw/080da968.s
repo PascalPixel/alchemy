@@ -423,7 +423,7 @@ Func_080da968:
 	sub	sp, #24
 	ldr	r5, [r3, #0]
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	movs	r1, #128
 	lsls	r1, r1, #1

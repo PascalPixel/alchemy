@@ -19,7 +19,7 @@ Func_080ce458:
 	adds	r6, r2, #0
 	ldr	r5, [r3, #16]
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldrh	r0, [r0, #6]
 	movs	r3, #1
@@ -209,7 +209,7 @@ Func_080ce458:
 	mov	r0, r8
 	movs	r1, #0
 	bl	Func_080dc410
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	adds	r1, r5, #0
 	bl	Func_080dc62c
 	adds	r1, r7, #0
@@ -587,7 +587,7 @@ Func_080ce458:
 	ldr	r2, [sp, #4]
 	cmp	r2, #23
 	bne.n	.L_080ce948
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r1, [r0, #16]
@@ -725,7 +725,7 @@ Func_080ce458:
 	strb	r2, [r1, #0]
 	strb	r2, [r3, #0]
 .L_080cea3e:
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	mov	r1, sl
 	bl	Func_080dc62c
 	bl	Func_080dc6d8

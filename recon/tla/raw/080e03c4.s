@@ -863,7 +863,7 @@ Func_080e03c4:
 	movs	r1, #4
 	movs	r2, #4
 	movs	r3, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r1, [r5, #9]
 	movs	r4, #13
 	negs	r4, r4
@@ -1908,6 +1908,9 @@ Func_080e03c4:
 	.4byte 0x080e1155
 	.2byte 0x0dbe
 	.2byte 0x0000
+	.global Func_080e137c
+	.thumb_func
+Func_080e137c:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -1991,6 +1994,9 @@ Func_080e03c4:
 	movs	r0, r0
 	.2byte 0x122c
 	.2byte 0x0300
+	.global Func_080e1420
+	.thumb_func
+Func_080e1420:
 	push	{lr}
 	cmp	r1, #0
 	bne.n	.L_080e1430
@@ -2055,7 +2061,7 @@ Func_080e03c4:
 	movs	r1, #16
 	movs	r2, #16
 	ldr	r3, [pc, #112]
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r5, #5]
 	movs	r1, #33
 	negs	r1, r1
@@ -2067,7 +2073,7 @@ Func_080e03c4:
 	ands	r3, r2
 	strb	r3, [r5, #9]
 	mov	r0, r9
-	bl	0x080db9c0
+	bl	Func_080db9c0
 	movs	r3, #3
 	ands	r0, r3
 	movs	r1, #13
@@ -2203,7 +2209,7 @@ Func_080e03c4:
 	ldr	r2, [sp, #0]
 	adds	r0, r5, #0
 	str	r2, [sp, #0]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldr	r2, [sp, #0]
 	adds	r5, #40
 	adds	r2, #1
@@ -2229,6 +2235,9 @@ Func_080e03c4:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0xffff
+	.global Func_080e15fc
+	.thumb_func
+Func_080e15fc:
 	.2byte 0xb560
 	movs	r1, #172
 	movs	r0, #248
@@ -2266,6 +2275,9 @@ Func_080e03c4:
 	.4byte 0x080ed80c
 	.2byte 0x150d
 	.2byte 0x080e
+	.global Func_080e1650
+	.thumb_func
+Func_080e1650:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -3166,7 +3178,7 @@ Func_080e03c4:
 	str	r3, [r5, #16]
 	adds	r0, r5, #0
 	add	r7, r8
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldr	r3, [r7, #0]
 	mov	r4, sl
 	str	r3, [r4, #0]
@@ -3185,7 +3197,7 @@ Func_080e03c4:
 	adds	r0, r5, #0
 	ldr	r3, [r6, #8]
 	str	r3, [r5, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	movs	r3, #205
 	lsls	r3, r3, #2
 	adds	r3, #255

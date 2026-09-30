@@ -72,6 +72,6 @@ Func_080db9cc:
 	movs	r3, #249
 	lsls	r3, r3, #3
 	adds	r0, r0, r3
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	pop	{pc}
 	.2byte 0x0000

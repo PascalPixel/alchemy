@@ -158,7 +158,7 @@ Func_080e82cc:
 	movs	r2, #4
 	movs	r3, #0
 	adds	r0, r5, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r5, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -508,7 +508,7 @@ Func_080e82cc:
 	adds	r0, r7, #0
 	movs	r2, #8
 	lsls	r3, r3, #23
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r1, [r7, #9]
 	movs	r0, #13
 	negs	r0, r0
@@ -749,7 +749,7 @@ Func_080e82cc:
 	movs	r1, #4
 	movs	r2, #4
 	movs	r3, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r7, #5]
 	movs	r2, #32
 	orrs	r3, r2

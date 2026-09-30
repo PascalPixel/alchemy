@@ -473,7 +473,7 @@ Func_080d1d44:
 	lsrs	r0, r0, #5
 	str	r0, [sp, #0]
 	adds	r0, r5, #0
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	movs	r3, #0
 	strh	r3, [r5, #30]
 	ldrb	r3, [r5, #9]
@@ -509,7 +509,7 @@ Func_080d1d44:
 	str	r3, [r6, #12]
 	ldr	r3, [r5, #8]
 	str	r3, [r6, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	add	sp, #12
 	pop	{r5, r6, pc}
 	.2byte 0x0000

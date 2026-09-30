@@ -74,7 +74,7 @@ Func_080d2b4c:
 	asrs	r3, r3, #24
 	cmp	r3, #3
 	bne.n	.L_080d2bec
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	adds	r0, #8
 	bl	0x080c9f2c

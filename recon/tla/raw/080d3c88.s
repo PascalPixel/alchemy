@@ -94,7 +94,7 @@ Func_080d3c88:
 	cmp	r6, #7
 	bgt.n	.L_080d3d82
 	str	r6, [sp, #24]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r1, [sp, #28]
 	movs	r2, #197
@@ -113,7 +113,7 @@ Func_080d3c88:
 	movs	r7, #1
 	b.n	.L_080d3d7c
 .L_080d3d66:
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	add	r5, sp, #52
 	adds	r1, r5, #0
 .L_080d3d6e:
@@ -536,7 +536,7 @@ Func_080d4084:
 	adds	r6, r1, #0
 	adds	r5, r0, #0
 	bl	.L_080d3c88
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	movs	r1, #0
 	bl	Func_080d2840
 	adds	r7, r0, #0

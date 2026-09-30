@@ -61,7 +61,7 @@ Func_080dba5c:
 	movs	r1, #16
 	movs	r2, #31
 	str	r5, [sp, #0]
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r6, #9]
 	mov	r2, sl
 	strh	r2, [r6, #30]

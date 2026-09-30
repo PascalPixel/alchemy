@@ -10,7 +10,7 @@ Func_080d2398:
 	bl	Func_080caa4c
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	pop	{r5, pc}
 	.2byte 0x0000

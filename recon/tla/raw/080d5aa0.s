@@ -352,6 +352,9 @@ Func_080d5bec:
 	.4byte 0x050001e6
 	.2byte 0xf800
 	.2byte 0xffff
+	.global Func_080d5d70
+	.thumb_func
+Func_080d5d70:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}

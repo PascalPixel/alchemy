@@ -8,7 +8,7 @@ Func_080cf350:
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080cf3ac
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r3, #128
 	lsls	r3, r3, #9
@@ -56,7 +56,7 @@ Func_080cf3b4:
 	adds	r6, r1, #0
 	cmp	r5, #0
 	beq.n	.L_080cf41a
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r3, #1
 	ands	r3, r6
@@ -113,7 +113,7 @@ Func_080cf424:
 	push	{r5, r6, r7}
 	mov	sl, r1
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r1, #193
 	adds	r7, r0, #0
@@ -1148,7 +1148,7 @@ Func_080cf424:
 	ands	r5, r3
 	ands	r6, r3
 	str	r4, [sp, #0]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r4, [sp, #0]
@@ -1435,7 +1435,7 @@ Func_080cf424:
 	ands	r5, r3
 	ands	r6, r3
 	str	r4, [sp, #0]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r4, [sp, #0]
@@ -1563,7 +1563,7 @@ Func_080cf424:
 	ands	r5, r3
 	ands	r6, r3
 	str	r4, [sp, #0]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	ldr	r4, [sp, #0]

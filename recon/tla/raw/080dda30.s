@@ -110,7 +110,7 @@ Func_080dda30:
 	movs	r3, #26
 	ldrsh	r0, [r7, r3]
 	movs	r1, #1
-	bl	0x080daecc
+	bl	Func_080daecc
 	b.n	.L_080ddb2c
 .L_080ddb20:
 	movs	r0, #10

@@ -190,7 +190,7 @@ Func_080e9ee4:
 	str	r3, [r5, #12]
 	ldr	r3, [r7, #4]
 	str	r3, [r5, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldr	r3, [r7, #24]
 .L_080ea05c:
 	adds	r3, #1
@@ -208,7 +208,7 @@ Func_080e9ee4:
 	str	r3, [r5, #12]
 	ldr	r3, [r7, #4]
 	str	r3, [r5, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	b.n	.L_080ea0bc
 .L_080ea080:
 	cmp	r3, #3
@@ -239,7 +239,7 @@ Func_080e9ee4:
 	str	r3, [r5, #12]
 	ldr	r3, [r7, #4]
 	str	r3, [r5, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 .L_080ea0bc:
 	movs	r2, #1
 	negs	r2, r2

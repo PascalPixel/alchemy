@@ -4,7 +4,7 @@
 	.thumb_func
 Func_080e781c:
 	push	{lr}
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -254,7 +254,7 @@ Func_080e781c:
 	movs	r2, #15
 	lsls	r3, r3, #23
 	str	r4, [sp, #4]
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	movs	r3, #250
 	strh	r3, [r5, #30]
 	ldrb	r3, [r5, #5]
@@ -442,7 +442,7 @@ Func_080e781c:
 	adds	r0, r7, #0
 	ldr	r3, [r5, #8]
 	str	r3, [r7, #16]
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldr	r3, [r6, #12]
 	ldr	r2, [r6, #16]
 	adds	r3, #1
@@ -595,7 +595,7 @@ Func_080e781c:
 	movs	r1, #31
 	movs	r2, #31
 	lsls	r3, r3, #24
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r7, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -627,7 +627,7 @@ Func_080e781c:
 	str	r6, [r7, #20]
 	str	r5, [r7, #24]
 	adds	r0, r7, #0
-	bl	0x080eb01c
+	bl	Func_080eb01c
 	ldr	r2, [sp, #28]
 	cmp	r2, #0
 	bne.n	.L_080e7dac

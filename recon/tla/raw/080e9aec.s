@@ -79,7 +79,7 @@ Func_080e9aec:
 	lsls	r3, r3, #24
 	movs	r1, #15
 	movs	r2, #15
-	bl	0x080eaf98
+	bl	Func_080eaf98
 	ldrb	r3, [r5, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -95,7 +95,7 @@ Func_080e9aec:
 	bl	Func_080200e8
 	adds	r0, r7, #0
 	movs	r1, #0
-	bl	0x080e1420
+	bl	Func_080e1420
 	movs	r1, #5
 	adds	r0, r7, #0
 	bl	Object_SetMode
@@ -344,7 +344,7 @@ Func_080e9aec:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r7, [r3, #92]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	adds	r5, r0, #0
 	ldr	r0, [pc, #188]

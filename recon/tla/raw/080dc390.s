@@ -317,7 +317,7 @@ Func_080dc410:
 	adds	r2, r7, r3
 	movs	r3, #255
 	strb	r3, [r2, #0]
-	bl	0x080e15fc
+	bl	Func_080e15fc
 	movs	r1, #144
 	ldr	r0, [pc, #48]
 	lsls	r1, r1, #3
@@ -475,7 +475,7 @@ Func_080dc6d8:
 	bl	Audio_PlayCue
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x080e1420
+	bl	Func_080e1420
 .L_080dc738:
 	adds	r3, r7, #0
 	adds	r3, #35
@@ -524,7 +524,7 @@ Func_080dc6d8:
 	beq.n	.L_080dc7a2
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x080e1420
+	bl	Func_080e1420
 .L_080dc7a2:
 	adds	r0, r6, #0
 	movs	r1, #21
@@ -558,7 +558,7 @@ Func_080dc7cc:
 	ldr	r3, [r3, #0]
 	movs	r1, #0
 	ldr	r0, [r3, #16]
-	bl	0x080e1420
+	bl	Func_080e1420
 	movs	r0, #1
 	bl	WaitFrames
 	pop	{pc}

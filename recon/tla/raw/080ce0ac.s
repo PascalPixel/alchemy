@@ -139,7 +139,7 @@ Func_080ce0ac:
 	lsls	r0, r0, #9
 	cmp	r3, r0
 	bge.n	.L_080ce1de
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Func_080cd91c
 	adds	r5, r0, #0
 	bl	Func_080d22a8
@@ -304,7 +304,7 @@ Func_080ce0ac:
 	sub	sp, #20
 	ldr	r5, [r3, #16]
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldrh	r0, [r0, #6]
 	str	r0, [sp, #16]
@@ -390,7 +390,7 @@ Func_080ce0ac:
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_080ce410
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	adds	r2, r7, #0
 	adds	r1, r0, #0
 	mov	r0, r9

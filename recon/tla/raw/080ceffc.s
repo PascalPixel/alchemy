@@ -57,7 +57,7 @@ Func_080cf050:
 	mov	r7, sl
 	mov	r6, r8
 	push	{r6, r7}
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	ObjectTable_Get
 	ldr	r2, [pc, #100]
 	movs	r3, #128
@@ -223,7 +223,7 @@ Func_080cf050:
 	str	r3, [sp, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [sp, #8]
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	cmp	r5, r0
 	bne.n	.L_080cf1de
 	movs	r0, #128

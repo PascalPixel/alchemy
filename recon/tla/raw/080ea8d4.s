@@ -123,7 +123,7 @@ Func_080ea8d4:
 .L_080ea9ce:
 	ldr	r0, [sp, #0]
 	bl	Func_080eaa14
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	adds	r5, r0, #0
 	adds	r6, r5, #0
@@ -881,6 +881,9 @@ Func_080eaf28:
 	movs	r0, #0
 .L_080eaf96:
 	pop	{r5, r6, r7, pc}
+	.global Func_080eaf98
+	.thumb_func
+Func_080eaf98:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -945,6 +948,9 @@ Func_080eaf28:
 	.4byte 0x080f3bc4
 	.2byte 0xfc00
 	.2byte 0xffff
+	.global Func_080eb01c
+	.thumb_func
+Func_080eb01c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

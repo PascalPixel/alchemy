@@ -24,6 +24,9 @@ Func_080daea8:
 	movs	r0, #0
 .L_080daeca:
 	pop	{pc}
+	.global Func_080daecc
+	.thumb_func
+Func_080daecc:
 .L_080daecc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -276,6 +279,9 @@ Func_080daea8:
 	.4byte 0xffc00000
 	.2byte 0x0000
 	.2byte 0xfff2
+	.global Func_080db0b0
+	.thumb_func
+Func_080db0b0:
 	.2byte 0xb5e0
 	mov	r7, fp
 	mov	r6, sl
@@ -287,7 +293,7 @@ Func_080daea8:
 	movs	r0, #0
 	sub	sp, #20
 	mov	r9, r0
-	bl	0x080cdf5c
+	bl	Func_080cdf5c
 	bl	Object_GetById
 	mov	r8, r0
 	adds	r0, r5, #0
@@ -731,6 +737,9 @@ Func_080daea8:
 	.4byte 0x0300021c
 	.2byte 0xf000
 	.2byte 0xffff
+	.global Func_080db444
+	.thumb_func
+Func_080db444:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0
@@ -753,14 +762,14 @@ Func_080daea8:
 	adds	r3, r3, r2
 	str	r3, [r0, #12]
 	adds	r0, r5, #0
-	bl	.L_080daecc
+	bl	Func_080daecc
 	b.n	.L_080db484
 .L_080db478:
 	cmp	r6, #0
 	beq.n	.L_080db484
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	.L_080daecc
+	bl	Func_080daecc
 .L_080db484:
 	pop	{r5, r6, pc}
 	movs	r0, r0

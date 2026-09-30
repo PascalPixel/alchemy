@@ -1250,7 +1250,6 @@ SECTIONS
         "*/recon/tbs/raw/080bae3e.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080bae40.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTOR_RESET_RUNTIME_FIELDS.o"(.text)
-        "*/recon/tbs/raw/080bb65c.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080bb7c0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_QUEUE.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/CAN_AFFECT_DEFEATED_UNIT.o"(.text)

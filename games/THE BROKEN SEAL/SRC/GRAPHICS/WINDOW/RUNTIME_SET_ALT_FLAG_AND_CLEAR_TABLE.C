@@ -17,7 +17,7 @@ void UiWork_SetAltFlagAndClearTable(s32 flag)
     if (flag != 0) {
         FIELD_AT_OFFSET(work, s8 *, RENDER_ALT_OFS) = 1;
         flag = 0;
-        for (i = 0x80, p = work + 0xE20; i <= 0xFF; i += 1) {
+        for (i = 0x80, p = work + RENDER_TILE_ATTR_OFS + 0x80; i <= 0xFF; i += 1) {
             *p = flag;
             p += 1;
         }
@@ -25,7 +25,7 @@ void UiWork_SetAltFlagAndClearTable(s32 flag)
     }
     FIELD_AT_OFFSET(work, s8 *, RENDER_ALT_OFS) = 0;
     flag = 0;
-    q = work + 0xE20;
+    q = work + RENDER_TILE_ATTR_OFS + 0x80;
     j = 0x7F;
     do {
         j -= 1;

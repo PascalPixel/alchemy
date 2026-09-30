@@ -51,7 +51,7 @@ void UiWork_InitFreeList(void)
 
     base = (u8 *)gWindowWork;
     /* 0x1cバイト単位の空きリストを初期化する。 */
-    item = base + 0x698;
+    item = base + RENDER_CHANNEL_OFS + 3 * 0x28;
     *(u8 **)(base + RENDER_FREE_HEAD_OFS) = item;
     count = 0x3e;
     do {

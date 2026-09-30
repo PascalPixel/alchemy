@@ -123,7 +123,7 @@ msgctxt "message"
 msgid "00028"
 msgstr "{argument_actor_name:1} a rejoint votre{line_break}groupe... Enfin, peut-être...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPairJoinedParty"
 msgid "00029"
 msgstr "{argument_actor_name:1} et {argument_actor_name:1} ont{line_break}rejoint votre groupe.{end_wait}"
 
@@ -9471,7 +9471,7 @@ msgctxt "message"
 msgid "02365"
 msgstr "{argument_actor_name:1} fuit!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "02366"
 msgstr "Mais il échoue!"
 
@@ -9519,7 +9519,7 @@ msgctxt "message"
 msgid "02377"
 msgstr "{argument_actor_name:1} lève sa garde!"
 
-msgctxt "message"
+msgctxt "MsgNimblyDodgesBlow"
 msgid "02378"
 msgstr "{argument_actor_name:1} évite le coup avec maestria!"
 
@@ -10227,7 +10227,7 @@ msgctxt "message"
 msgid "02554"
 msgstr "Ticket"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "02555"
 msgstr "Pari"
 
@@ -10611,7 +10611,7 @@ msgctxt "MsgKorosseoRobinGotItem"
 msgid "02650"
 msgstr "{protagonist_name} prend:{line_break}{argument_item_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGaveItemToMember"
 msgid "02651"
 msgstr "{protagonist_name} donne: {argument_item_name:1}{line_break}à {argument_actor_name:1}.{end_wait}"
 
@@ -10659,11 +10659,11 @@ msgctxt "message"
 msgid "02662"
 msgstr "sans rien trouver.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryAnyMore"
 msgid "02663"
 msgstr "Mais vous ne pouvez pas{line_break}porter d'autres objets.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWillYouDrop"
 msgid "02664"
 msgstr "Que voulez-vous jeter?{end_wait}"
 
@@ -10711,7 +10711,7 @@ msgctxt "message"
 msgid "02675"
 msgstr "Le Djinn de Jupiter{line_break}{text_color:10}{argument_ability_name}{text_color:16} rejoint {argument_actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "02676"
 msgstr "Position actuelle."
 
@@ -11079,7 +11079,7 @@ msgctxt "MsgPanelStatLabel"
 msgid "02767"
 msgstr "Attaque"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "02768"
 msgstr "Défense"
 
@@ -12595,7 +12595,7 @@ msgctxt "message"
 msgid "03146"
 msgstr "Menu test"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoPrompt"
 msgid "03147"
 msgstr "Choisir les objets"
 
@@ -12603,7 +12603,7 @@ msgctxt "message"
 msgid "03148"
 msgstr "{button_icon:6}:Choix Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoTopic"
 msgid "03149"
 msgstr "Djinn"
 
@@ -12631,7 +12631,7 @@ msgctxt "message"
 msgid "03155"
 msgstr "Psy."
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoText"
 msgid "03156"
 msgstr "Les quatre éléments{line_break}constituent la base{line_break}de notre univers.{page_break}Les esprits élémentaires{line_break}sont appelés Djinn.{page_break}Les quatre éléments sont{line_break}Vénus pour la Terre,{line_break}Mercure pour l'Eau,{page_break}Mars pour le Feu et{line_break}Jupiter pour l'Air.{page_break}Chaque élément possède{line_break}de nombreux Djinn."
 
@@ -14267,7 +14267,7 @@ msgctxt "message"
 msgid "03564"
 msgstr "Vous avez bien dormi?{line_break}Revenez bientôt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPonderEllipsis"
 msgid "03565"
 msgstr ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
 

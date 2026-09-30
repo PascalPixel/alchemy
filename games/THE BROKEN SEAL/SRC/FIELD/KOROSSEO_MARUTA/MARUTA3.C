@@ -89,7 +89,7 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
 s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
 {
 
-    StageEffect_02003d88 *effect = Engine_ActorGet(source->linked_effect_slot);
+    StageEffect_02003d88 *effect = Object_GetById(source->linked_effect_slot);
 
     Object_SetPosition(effect, source->x, source->y + 0x240000, source->z);
     effect->state = 0;
@@ -110,7 +110,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     s16 *wait;
 
     flag = GameFlag_IsSet(0x211);
-    actor = Engine_ActorGet(gGameState.selected_actor);
+    actor = Object_GetById(gGameState.selected_actor);
     if (*(s32 *)(work + 232) < actor->x.fixed) {
         x = *(s32 *)(work + 232) + 0xc0000;
     } else {

@@ -123,7 +123,7 @@ msgctxt "message"
 msgid "00028"
 msgstr "{argument_actor_name:150}゙ なかまになった・・・{line_break}かもしれない{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPairJoinedParty"
 msgid "00029"
 msgstr "{argument_actor_name:228} {argument_actor_name:150}゙{line_break}なかまになった{end_wait}"
 
@@ -8483,7 +8483,7 @@ msgctxt "message"
 msgid "02118"
 msgstr "{argument_actor_name:234} にげだした!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "02119"
 msgstr "しかし にげられなかった!"
 
@@ -8539,7 +8539,7 @@ msgctxt "message"
 msgid "02132"
 msgstr "{argument_actor_name:234} ガードした!"
 
-msgctxt "message"
+msgctxt "MsgNimblyDodgesBlow"
 msgid "02133"
 msgstr "{argument_actor_name:234} すばやくかわした!"
 
@@ -9251,7 +9251,7 @@ msgctxt "message"
 msgid "02310"
 msgstr "ゲームチケット"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "02311"
 msgstr "ベット"
 
@@ -9799,7 +9799,7 @@ msgctxt "MsgKorosseoRobinGotItem"
 msgid "02447"
 msgstr "{protagonist_name}は{line_break}{argument_item_name:134} 手に入れた{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGaveItemToMember"
 msgid "02448"
 msgstr "{protagonist_name}は {argument_item_name:134}{line_break}{argument_actor_name:230} てわたした{end_wait}"
 
@@ -9847,11 +9847,11 @@ msgctxt "message"
 msgid "02459"
 msgstr "しかし なにも 見つからなかった{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryAnyMore"
 msgid "02460"
 msgstr "しかし もちものがいっぱいで{line_break}これ以上 アイテムをもてません{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWillYouDrop"
 msgid "02461"
 msgstr "なにを すてますか?{end_wait}"
 
@@ -9899,7 +9899,7 @@ msgctxt "message"
 msgid "02472"
 msgstr "{argument_actor_name:234} ジュピターのジン{line_break}{text_color:10}{argument_ability_name}{text_color:16}を ゲットした{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "02473"
 msgstr "げんざいち"
 
@@ -12963,7 +12963,7 @@ msgctxt "MsgPanelStatLabel"
 msgid "03238"
 msgstr "こうげき"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "03239"
 msgstr "ぼうぎょ"
 
@@ -14059,7 +14059,7 @@ msgctxt "message"
 msgid "03512"
 msgstr "ポーズメニューは{line_break}ここではつかえません{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoPrompt"
 msgid "03513"
 msgstr "こうもくをえらんでください"
 
@@ -14067,7 +14067,7 @@ msgctxt "message"
 msgid "03514"
 msgstr "SEL:ジンせんたくにもどる"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoTopic"
 msgid "03515"
 msgstr "・ジン"
 
@@ -14095,7 +14095,7 @@ msgctxt "message"
 msgid "03521"
 msgstr "・エナジー"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoText"
 msgid "03522"
 msgstr "すべてのものを かたちづくる{line_break}4つのげんそがエレメンタルで{line_break}そのせいれいが ジンです{page_break}4つのげんその ぞくせいは{line_break}地のヴィーナス 水のマーキュリー{line_break}火のマーズ 風のジュピターです{page_break}そして4つのぞくせいごとに{line_break}たくさんのジンがいるんです"
 
@@ -15959,7 +15959,7 @@ msgctxt "message"
 msgid "03987"
 msgstr "ぎょるぎす"
 
-msgctxt "message"
+msgctxt "MsgPonderEllipsis"
 msgid "03988"
 msgstr "・{pause_20_skippable}・{pause_20_skippable}・{pause_20_skippable}。{end_wait}"
 

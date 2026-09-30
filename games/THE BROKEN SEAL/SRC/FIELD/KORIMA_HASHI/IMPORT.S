@@ -25,9 +25,9 @@ Engine_RandomNext:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_ObjectSetScript
 	.thumb_func

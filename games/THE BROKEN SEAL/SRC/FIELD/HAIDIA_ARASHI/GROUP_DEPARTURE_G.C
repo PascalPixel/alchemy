@@ -25,8 +25,8 @@ void FieldScene_RunScene372_02003e48(void)
     s32 rec8;
     s32 record;
 
-    rec8 = Engine_ActorGet(ACTOR_PARTY_LEADER);
-    rec7 = Engine_ActorGet(8);
+    rec8 = Object_GetById(ACTOR_PARTY_LEADER);
+    rec7 = Object_GetById(8);
     Event_Begin();
     if (GameFlag_IsSet(0x305) != 0) {
         Actor_Stop(8);

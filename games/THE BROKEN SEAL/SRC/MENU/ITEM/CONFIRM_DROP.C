@@ -33,9 +33,17 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     Item_Get(slot);
     UiText_DrawAt(slot + (s32)MsgItemName, win, 24, 0);
     text = (s32)MsgConfirmDrop;
+#if defined(TBS_EDITION_JA)
+    UiText_DrawAt(text, win, 8, 16);
+#else
     UiText_DrawAt(text, win, 0, 16);
+#endif
     text++;
+#if defined(TBS_EDITION_JA)
+    UiText_DrawAt(text, win, 8, 24);
+#else
     UiText_DrawAt(text, win, 0, 24);
+#endif
     label = (s32)MsgYes;
     UiText_DrawAt(label, win, 24, 40);
     label++;

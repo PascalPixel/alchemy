@@ -95,7 +95,11 @@ s32 ItemMenu_SelectItem(void)
         result = 0;
         Owner_GetStateFar(menu->owner_table[id]);
     }
+#if defined(TBS_EDITION_JA)
+    UiWindow_UpdateOrCreate(&menu->equip_window, 0, 10, 13, 10, 2);
+#else
     UiWindow_UpdateOrCreate(&menu->equip_window, 0, 10, 15, 10, 2);
+#endif
     ItemMenu_PosCategory();
 
     for (i = 0; i < 32; i++) {
@@ -143,7 +147,11 @@ s32 ItemMenu_SelectItem(void)
             UiMenu_PositionCursor(96, state.row * 16 + 52);
             WaitFrames(1);
 
+#if defined(TBS_EDITION_JA)
+            nav = Menu_HandlePageInput(0, state.entry_count, 6, &state.row, &state.page);
+#else
             nav = Menu_HandlePageInput(0, state.entry_count, 5, &state.row, &state.page);
+#endif
             if (nav == 1) {
                 first = 1;
                 redraw = 1;

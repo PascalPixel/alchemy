@@ -5,6 +5,7 @@ extern u8 Data_03001f2c[];
 extern u8 MsgSanctumWelcome[];
 extern u8 MsgSanctumMoreAid[];
 extern u8 MsgSanctumFarewell[];
+extern u8 MsgReviveService;
 
 s32 Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
@@ -63,7 +64,11 @@ s32 Shop_ConfirmAct(s32 unit_id)
     shop->cursor.anchor = cursor_anchor;
     UiMessage_ShowResolvedAndWait((s32)MsgSanctumWelcome);
 
+#if defined(TBS_EDITION_JA)
+    shop->money_window = UiWindow_CreateFar(16, 11, 11, 4, 2);
+#else
     shop->money_window = UiWindow_CreateFar(16, 11, 12, 4, 2);
+#endif
     Shop_DrawMoney();
 
     for (;;) {
@@ -73,7 +78,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
             break;
 
         {
-            s32 base = 0xd24;
+            s32 base = (s32)&MsgReviveService;
             s32 message = base;
 
             base = 0;

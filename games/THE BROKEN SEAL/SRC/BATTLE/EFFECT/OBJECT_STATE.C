@@ -32,9 +32,6 @@ void ObjectMotion_SnapToTerrain(void *object)
     *(s32 *)((u8 *)object + 0x14) = height;
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /*
  * Places the battle markers listed by the current map: each (column, row,
  * id) triplet names a map event; the first matching event of kind 19, or
@@ -192,4 +189,3 @@ void Battle_PlaceMapMarkers(void)
         row = *list++;
     }
 }
-#endif

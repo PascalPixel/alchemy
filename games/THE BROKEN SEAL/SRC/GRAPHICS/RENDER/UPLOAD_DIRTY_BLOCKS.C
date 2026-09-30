@@ -1,4 +1,5 @@
 #include "DMA.H"
+#include "TBS_EDITION.H"
 
 extern u8 gWindowWork[];
 void UiWork_UploadDirtyBlocks(void)
@@ -7,8 +8,8 @@ void UiWork_UploadDirtyBlocks(void)
     u32 flags;
     u8 *src;
     u8 *dst;
-    if (!work[0xea6]) {
-        flags = work[0xea3];
+    if (!work[RENDER_MENU_BUSY_OFS]) {
+        flags = work[RENDER_DIRTY_OFS];
         if (flags) {
             dst = (u8 *)0x06002000;
             src = work;
@@ -21,7 +22,7 @@ void UiWork_UploadDirtyBlocks(void)
                 src += 256;
                 dst += 256;
             } while (flags);
-            work[0xea3] = flags;
+            work[RENDER_DIRTY_OFS] = flags;
         }
     }
 }

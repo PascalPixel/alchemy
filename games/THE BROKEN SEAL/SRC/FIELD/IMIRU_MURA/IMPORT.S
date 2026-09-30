@@ -34,9 +34,9 @@ Engine_MathSin:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global ObjectDispatch_ApplyValueToChildren
 	.thumb_func
@@ -118,9 +118,9 @@ Engine_EventEnd:
 	.thumb_func
 FieldScene_PrepareActors:
 	overlay_veneer Func_0808a038
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

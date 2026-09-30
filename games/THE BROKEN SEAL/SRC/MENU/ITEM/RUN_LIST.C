@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
 s32 GameFlag_IsSet(s32 message);
 void Object_InitializeMode(s32 object, s32 mode);
 extern volatile u32 gKeyState;
@@ -145,7 +146,7 @@ s32 ItemMenu_RunList(s32 pane)
                     WaitFrames(1);
                     ItemMenu_DrawNamePage(window, 0, &state);
                     if (pane == 0) {
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgChangeCharacterHelp, window, 0, 88);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgChangeCharacterHelp, window, HELP_TEXT_X, 88);
                     }
                     redraw = 0;
                 }

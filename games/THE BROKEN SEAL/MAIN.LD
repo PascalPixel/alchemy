@@ -210,7 +210,6 @@ SECTIONS
         "*/recon/tbs/raw/0800aa0c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_SPRITE_PART_PAIR.o"(.text)
         "*/recon/tbs/raw/0800b166.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0800b168.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_PROJECTED_SPRITE.o"(.text)
         "*/recon/tbs/raw/0800b682.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/GROUP_SET_CHILD_VALUE_UNLESS_FIFTEEN.o"(.text)
@@ -230,7 +229,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/DISPATCH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/DISPATCH_RETURN_TRUE.o"(.text)
-        "*/recon/tbs/raw/0800c62c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/ADVANCE_PAST_CURSOR.o"(.text)
         "*/recon/tbs/raw/0800ca42.o"(.text .rodata .data .padding)
@@ -278,7 +276,6 @@ SECTIONS
         "*/recon/tbs/raw/08010788.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SET_WORK_FLAG_BITS9_11.o"(.text)
         "*/recon/tbs/raw/080108e4.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080109e8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SET_WINDOW_CELL_TILE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/LOAD_GRAPHICS.o"(.text)
         "*/recon/tbs/raw/08010ff0.o"(.text .rodata .data .padding)
@@ -412,7 +409,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/GLYPH/DECODE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/GLYPH/RESET_WORK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/OWNER.o"(.text)
-        "*/recon/tbs/raw/0801a7f4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RESERVED_WORK_NO_OP.o"(.text)
         "*/recon/tbs/raw/0801a90e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/FIND_FREE_TRANSFER_ENTRY.o"(.text)
@@ -519,10 +515,8 @@ SECTIONS
         "*/recon/tbs/raw/08020bd6.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08020bd8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/PARTY/TALK_CHOICE.o"(.text)
-        "*/recon/tbs/raw/08021228.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/LOOKUP_CHARACTER_VALUE_BY_FLAG32.o"(.text)
         "*/recon/tbs/raw/08021390.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/08021488.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)
         "*/recon/tbs/raw/080216b2.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/APPLY_TABLE_OFFSET_TO_PAIR.o"(.text)
@@ -658,7 +652,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SOUND/PLAY_PLAY_CUE_FROM_EVENT_WORK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_SELECT_LOCATION_RULE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOOKUP_RESULT.o"(.text)
-        "*/recon/tbs/raw/0808ae74.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
         "*/recon/tbs/raw/0808b158.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/RESOLVE_TABLE_PAIR.o"(.text)
@@ -668,9 +661,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/REMAP.o"(.text)
         "*/recon/tbs/raw/0808b3ea.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0808b3ec.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/TABLE_DESTROY_AT_INDEX.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/TABLE_RESET_FOR_OBJECT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/TABLE_FIND_LAST_ACTIVE_ID.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_ASSIGN_VIEW_FLAGS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CLEAR_OUT_OF_BOUNDS_OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CLEAR_ALL_OBJECTS.o"(.text)
@@ -698,8 +689,6 @@ SECTIONS
         "*/recon/tbs/raw/0808e0ae.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/APPLY_CHILD_PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/RUNTIME_RESET_EFFECT_COUNTER.o"(.text)
-        "*/recon/tbs/raw/0808e14c.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0808e23c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ABILITY_EVENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/COMMAND_EXECUTE_SELECTED_ACTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_STATE.o"(.text)
@@ -737,7 +726,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENT/EVENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/REMOVE_OWNER_RESTORED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/CHECK_MEMBER_VALUE_TOTAL.o"(.text)
-        "*/recon/tbs/raw/08091a58.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GAME/INVENTORY/TRY_ADD_AND_RETURN_OWNER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/RESERVED_NO_OP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/WAIT_UNTIL_CHILD_VALUE_DIFFERS.o"(.text)
@@ -830,7 +818,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_SCALED_ARCS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_FLICKER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_ALL_EFFECT_SLOTS.o"(.text)
-        "*/recon/tbs/raw/08096fb0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP_OBJECT_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/STOP_CURRENT_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CLEANUP_SCENE_OBJECTS.o"(.text)
@@ -912,10 +899,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PAIRED_ARC.o"(.text)
         "*/recon/tbs/raw/0809b5dc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENTS_SHOW_STATUS_MESSAGE.o"(.text)
-        "*/recon/tbs/raw/0809b698.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT_SLOT_UPDATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DRAW_SCALED_OBJECT.o"(.text)
-        "*/recon/tbs/raw/0809b8f4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_CONTROL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT_SLOT_INITIALIZE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CLEAR_OWNED_SLOT.o"(.text)
@@ -981,8 +966,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM_LIST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GET_ITEM_QUANTITY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/OWNER_ITEMS.o"(.text)
-        "*/recon/tbs/raw/080a3eee.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080a3ef0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/REMOVE_FIRST_UNFLAGGED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GET_COMMAND_CURSOR_X.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GET_COMMAND_CURSOR_Y.o"(.text)
@@ -1080,7 +1063,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_AT_WINDOW_OFFSET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_RECT_PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/APPLY_RECT_AT_OBJECT_ORIGIN.o"(.text)
-        "*/recon/tbs/raw/080ab314.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080ab5e4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/LIST_OWNER_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/RUN_PAIRED_ENTRY_ACTION.o"(.text)
@@ -1230,7 +1212,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/PROJECT_CONDITIONAL_POSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/GET_OBJECT_TABLE_VALUE.o"(.text)
         "*/recon/tbs/raw/080b8572.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080b8574.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ADJUST_CAMERA_BY_SHOULDER_KEYS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PAIRED_TRANS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_APPROACH.o"(.text)
@@ -3338,11 +3319,10 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.087fd4b9)
     } > ROM
     /* Field services that shared overlay C calls through its import veneers are
-       the engine functions themselves in the main image (SPAWN.C and
-       SCROLL_INITIALIZE_HBLANK_DMA.C also link here). */
-    Engine_ActorGet = Object_GetById;
+       the far entries themselves in the main image (SPAWN.C links here too):
+       each overlay veneer targets that very entry, so one name cannot serve
+       both. */
     Engine_ObjectCreate = Object_CreateFar;
-    Engine_ObjectSetAnimation = Object_SetMode;
     Engine_ObjectSetScript = ObjectDispatch_InitializeFar;
     /* The compiler calls its division helpers by their ABI names; here they are
        the veneers into the resident IWRAM divider (DIVISION_ENTRY.S). */

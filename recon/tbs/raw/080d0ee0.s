@@ -51,7 +51,7 @@ Func_080d0ee0:
 	bl	Resource_DecodeType01
 	mov	r0, sl
 	movs	r1, #2
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	mov	r0, sl
 	movs	r1, #48
 	bl	ObjectDispatch_ApplyValueToChildrenFar

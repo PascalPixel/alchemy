@@ -94,9 +94,9 @@ Scheduler_SetCallbackMask:
 	.thumb_func
 ResourceMetadata_ClearRecordFar:
 	overlay_veneer Func_08009060
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_ObjectSetScript
 	.thumb_func
@@ -238,9 +238,9 @@ Engine_EventChooseYesNo:
 	.global Object_GetByIdFar
 	.thumb_func
 Object_GetByIdFar:
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Func_0808a080
 	.global Engine_ActorDestroy
 	.thumb_func

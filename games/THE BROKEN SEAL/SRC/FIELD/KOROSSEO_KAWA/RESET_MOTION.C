@@ -3,6 +3,9 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 
+/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
+ * this file's code made before it shared the header's declaration. */
+
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -71,7 +74,6 @@ s16 Resource_LoadFixedBlockBIntoFreeSlot(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
-struct FieldActor *Object_GetById(void);
 void ObjectDispatch_InitFromTable6(struct FieldActor *);
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
@@ -129,7 +131,7 @@ static __inline__ void AdvanceMessage(s32 amount)
 
 void OverlayObject_ResetMotionFields(void)
 {
-    struct FieldActor *o = Object_GetById();
+    struct FieldActor *o = ((struct FieldActor * (*)(void))Object_GetById)();
 
     ObjectDispatch_InitFromTable6(o);
     o->velocity_x = 0;

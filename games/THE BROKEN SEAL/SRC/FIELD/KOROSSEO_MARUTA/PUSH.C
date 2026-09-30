@@ -38,7 +38,7 @@ void ColossoLogRollingStage_PushStagedActor(void)
     s32 subject_handle;
 
     subject_handle = *(s32 *)((u8 *)&gGameState + (data_index << 1));
-    subject = Engine_ActorGet(subject_handle);
+    subject = Object_GetById(subject_handle);
 
     direction = subject->facing >> 12;
 
@@ -122,7 +122,7 @@ s32 *ColossoLogRollingStage_FindActorAhead(void)
     s32 position[3];
     s32 *occupant;
 
-    record = Engine_ActorGet(gGameState.selected_actor);
+    record = Object_GetById(gGameState.selected_actor);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (*(u16 *)(record + 6) + 0x2000) & 0xc000;

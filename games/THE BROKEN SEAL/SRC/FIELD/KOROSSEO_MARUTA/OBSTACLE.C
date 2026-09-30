@@ -50,10 +50,10 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     best = 0x100000;
     table = (s16 *)&gGameState;
     active_slot = *(s32 *)&table[250];
-    target = Engine_ActorGet(active_slot);
+    target = Object_GetById(active_slot);
     Event_Begin();
     for (slot = 8; slot <= 66; slot++) {
-        actor = Engine_ActorGet(slot);
+        actor = Object_GetById(slot);
         if (actor == 0) {
             continue;
         }

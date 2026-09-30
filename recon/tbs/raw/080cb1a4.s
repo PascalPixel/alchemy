@@ -104,7 +104,7 @@ Func_080cb1a4:
 	bl	Object_SetPosition
 	movs	r1, #2
 	adds	r0, r7, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	adds	r3, r7, #0
 	movs	r2, #1
 	adds	r3, #88
@@ -318,7 +318,7 @@ Func_080cb1a4:
 	str	r3, [r2, #12]
 	adds	r0, r7, #0
 	movs	r1, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 .L_080cb440:
 	mov	r1, sl
 	cmp	r1, #54

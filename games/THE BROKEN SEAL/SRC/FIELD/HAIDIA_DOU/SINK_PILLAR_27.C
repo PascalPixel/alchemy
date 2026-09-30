@@ -17,12 +17,12 @@ void HaidiaDou_SinkPillarColumn27(void)
     u32 i;
 
     Engine_EventBegin();
-    if (Engine_ActorGet(10)->x.fixed >> 20 == 27) {
-        left = OverlayObject_CreateConfigured(Engine_ActorGet(10)->x.fixed - 0x80000, 0,
-                                              Engine_ActorGet(10)->z.fixed + 0x340000, 241);
-        right = OverlayObject_CreateConfigured(Engine_ActorGet(10)->x.fixed + 0x80000, 0,
-                                               Engine_ActorGet(10)->z.fixed + 0x340000, 241);
-        Engine_ActorGet(9)->motion_flags = 0;
+    if (Object_GetById(10)->x.fixed >> 20 == 27) {
+        left = OverlayObject_CreateConfigured(Object_GetById(10)->x.fixed - 0x80000, 0,
+                                              Object_GetById(10)->z.fixed + 0x340000, 241);
+        right = OverlayObject_CreateConfigured(Object_GetById(10)->x.fixed + 0x80000, 0,
+                                               Object_GetById(10)->z.fixed + 0x340000, 241);
+        Object_GetById(9)->motion_flags = 0;
         o = &options;
         o->start_scale_x = 0x9999;
         o->start_scale_y = 0x9999;
@@ -33,13 +33,13 @@ void HaidiaDou_SinkPillarColumn27(void)
             s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2900000;
 
             Effect_Spawn(x, 0, z, 0, 0, 0, 0x90000, o);
-            Engine_ActorGet(10)->y.fixed -= 0x8000;
+            Object_GetById(10)->y.fixed -= 0x8000;
             Battle_WaitMode0(1);
         }
         Call6((void (*)())Map_CopyCellAttributeRect, 31, 39, 2, 1, 27, 41);
-        Engine_ActorGet(10)->priority_flags |= 2;
+        Object_GetById(10)->priority_flags |= 2;
         Engine_GameFlagSet(0x201);
-        Engine_ActorGet(10)->y.fixed = -0x80000;
+        Object_GetById(10)->y.fixed = -0x80000;
         Object_SetModeById(10, 2);
         Engine_ObjectDispatchRelease(left);
         Engine_ObjectDispatchRelease(right);

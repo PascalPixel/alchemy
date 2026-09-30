@@ -68,7 +68,7 @@ void FieldScene_UpdateFallingEffect(void)
         sprite->flags = 0;
         object->priority_flags &= ~1;
         sprite->priority = 1;
-        Engine_ObjectSetAnimation(object, 1);
+        Object_SetMode(object, 1);
         Engine_ObjectSetScript(object, gFallingEffectScript);
     }
 }

@@ -203,21 +203,21 @@ void ShianJiin_RunTempleWalkScene(void)
     s32 record;
     u8 slot16[40];
 
-    rec8 = (s32)Engine_ActorGet(9);
+    rec8 = (s32)Object_GetById(9);
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianAlreadyHeardTest);
     Engine_EventShowMessageAndWait(9, 0, 20);
     Call3(Engine_ActorWalkToAndWait, 0, 168, 0x188);
     Engine_ActorFaceDirection(0, 0xc000, 20);
     Engine_AudioPlayCue(132);
-    record = (s32)Engine_ActorGet(9);
+    record = (s32)Object_GetById(9);
     *(s32 *)(record + 40) = 0x140000;
-    record = (s32)Engine_ActorGet(9);
+    record = (s32)Object_GetById(9);
     *(s32 *)(record + 72) = 0x40000;
     Call3(Engine_ActorSetSpeed, 9, 0x30000, 0x18000);
     Call3(Engine_ActorSetDestination, 9, 152, 0x188);
     Engine_ActorWaitForMove(9);
-    record = (s32)Engine_ActorGet(9);
+    record = (s32)Object_GetById(9);
     *(s32 *)(record + 72) = 0x10000;
     Engine_ActorFaceDirection(9, 0, 0);
     Engine_AudioPlayCue(132);
@@ -270,7 +270,7 @@ void Scene_RunScene39eSequenceB(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 0x1f8);
         Event_Wait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
-        *(u8 *)(((s32)Engine_ActorGet(8)) + 91) = 0;
+        *(u8 *)(((s32)Object_GetById(8)) + 91) = 0;
         Audio_PlayCue(152);
         record = Actor_Get(8);
         *(s32 *)(record + 40) = 0x80000;
@@ -288,7 +288,7 @@ void Scene_RunScene39eSequenceB(void)
         Event_Wait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
         Audio_PlayCue(152);
-        *(u8 *)(((s32)Engine_ActorGet(8)) + 91) = rec7;
+        *(u8 *)(((s32)Object_GetById(8)) + 91) = rec7;
         record = Actor_Get(8);
         *(s32 *)(record + 40) = 0x80000;
         Actor_SetAnimation(8, 1);
@@ -404,23 +404,23 @@ void FieldScene_RunRoofSceneExit(void)
 {
     Event_Begin();
 
-    ((u8 *)Engine_ActorGet(12))[91] = 0;
+    ((u8 *)Object_GetById(12))[91] = 0;
 
     goto testPendingWork;
 waitPendingWork:
         Task_Wait(1);
 testPendingWork:
-    if (*(s32 *)(((u8 *)Engine_ActorGet(12)) + 12) > 0) {
+    if (*(s32 *)(((u8 *)Object_GetById(12)) + 12) > 0) {
         goto waitPendingWork;
     }
 
-    *(s32 *)(((u8 *)Engine_ActorGet(12)) + 12) = 0;
+    *(s32 *)(((u8 *)Object_GetById(12)) + 12) = 0;
 
-    *(s32 *)(((u8 *)Engine_ActorGet(12)) + 60) = 128 << 24;
+    *(s32 *)(((u8 *)Object_GetById(12)) + 60) = 128 << 24;
 
-    *(s32 *)(((u8 *)Engine_ActorGet(12)) + 40) = 0;
+    *(s32 *)(((u8 *)Object_GetById(12)) + 40) = 0;
 
-    ((u8 *)Engine_ActorGet(12))[91] = 1;
+    ((u8 *)Object_GetById(12))[91] = 1;
 
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
 
@@ -436,7 +436,7 @@ testPendingWork:
 
     ((struct SceneRecordHeading *)Actor_Get(12))->heading = 128 << 7;
 
-    ((u8 *)Engine_ActorGet(12))[91] = 0;
+    ((u8 *)Object_GetById(12))[91] = 0;
 
     Actor_EnableActionCallback(12, ShianJiin_ActorTwelveScript);
     Event_End();
@@ -490,7 +490,7 @@ void ShianJiin_SpinAway(void)
     u32 i;
     s32 angle;
 
-    actor = Engine_ActorGet(19);
+    actor = Object_GetById(19);
     for (i = 8; i <= 12; i++) {
         angle = i << 12;
         actor->sprite->rotation = angle;
@@ -544,7 +544,7 @@ void Scene_RunPrimarySequence(void)
     s32 base;
     s32 slot;
 
-    scene = (void *)Engine_ActorGet(19);
+    scene = (void *)Object_GetById(19);
     actor = 0;
     slot = 8;
     do {
@@ -605,7 +605,7 @@ void ShianJiin_WalkByFacing(void)
     u32 dir;
     u32 limit;
 
-    dir = *(u16 *)((s32)Engine_ActorGet(0) + 6);
+    dir = *(u16 *)((s32)Object_GetById(0) + 6);
     limit = 0x3fff;
     if ((u32)((dir + -0x2000) << 16) <= 0x3fff0000) {
         Engine_ActorWalkToAndWait(15, 216, 168);
@@ -658,10 +658,10 @@ void ShianJiin_RunMasterScene(s32 mode)
     Engine_ActorRunRepeatedMotion(15, 3);
     Call3((void (*)())Engine_ActorSetPosition, 19, 0xe80000, 0xa80000);
     ((void (*)())Engine_ActorSetPosition)(20, 0xe80000, 0xa80000);
-    Engine_ActorGet(19)->y.fixed = 0xc0000;
-    Engine_ActorGet(19)->target_y = ACTOR_NO_TARGET;
-    Engine_ActorGet(19)->scale_x = 0xcccc;
-    Engine_ActorGet(19)->sprite->rotation = 0x8000;
+    Object_GetById(19)->y.fixed = 0xc0000;
+    Object_GetById(19)->target_y = ACTOR_NO_TARGET;
+    Object_GetById(19)->scale_x = 0xcccc;
+    Object_GetById(19)->sprite->rotation = 0x8000;
     Engine_AudioPlayCue(124);
     Engine_EventWait(40);
     ((void (*)())Engine_ActorWalkToAndWait)(15, 216, 152);
@@ -706,13 +706,13 @@ void ShianJiin_RunGatheringScene(void)
     Engine_ActorRunRepeatedMotion(15, 3);
     Call3(Engine_ActorSetPosition, 19, 0xe80000, 0xa80000);
     Engine_ActorSetPosition(20, 0xe80000, 0xa80000);
-    record = (s32)Engine_ActorGet(19);
+    record = (s32)Object_GetById(19);
     *(s32 *)(record + 12) = 0xc0000;
-    record = (s32)Engine_ActorGet(19);
+    record = (s32)Object_GetById(19);
     *(s32 *)(record + 60) = -0x80000000;
-    record = (s32)Engine_ActorGet(19);
+    record = (s32)Object_GetById(19);
     *(s32 *)(record + 24) = 0xcccc;
-    record = (s32)Engine_ActorGet(19);
+    record = (s32)Object_GetById(19);
     {
         s32 target = *(s32 *)(record + 80);
         s32 shown = 0x8000;
@@ -730,8 +730,8 @@ void FieldScene_DispatchApproachByFacing(void)
 {
     Event_Begin();
 
-    if (*(u16 *)(((u8 *)Engine_ActorGet(0)) + 6) > (128 << 7)
-        && *(u16 *)(((u8 *)Engine_ActorGet(0)) + 6) < (192 << 8)) {
+    if (*(u16 *)(((u8 *)Object_GetById(0)) + 6) > (128 << 7)
+        && *(u16 *)(((u8 *)Object_GetById(0)) + 6) < (192 << 8)) {
         FieldScene_RunForwardArcBurst();
     } else {
         ShianJiin_SpinAway();
@@ -856,11 +856,11 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_RunRepeatedMotion(16, 2);
     Event_Wait(20);
     Actor_SetSpeed(16, 192 << 9, 192 << 8);
-    rec = Engine_ActorGet(16);
+    rec = Object_GetById(16);
     rec[90] &= 0xfe;
     Actor_WalkToAndWait(16, 154 << 1, 136 << 1);
     Event_Wait(1);
-    rec = ((u8 *)Value1(Engine_ActorGet, 16));
+    rec = ((u8 *)Value1(Object_GetById, 16));
     {
         /*
          * A result temporary, not the compound or-assign the matching
@@ -1021,13 +1021,13 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Event_Wait(20);
     Actor_SetPosition(19, 232 << 16, 168 << 16);
     Actor_SetPosition(20, 232 << 16, 168 << 16);
-    rec = ((u8 *)Value1(Engine_ActorGet, 19));
+    rec = ((u8 *)Value1(Object_GetById, 19));
     *(s32 *)(rec + 12) = 0xc0000;
-    rec = ((u8 *)Value1(Engine_ActorGet, 19));
+    rec = ((u8 *)Value1(Object_GetById, 19));
     *(s32 *)(rec + 60) = -0x80000000;
-    rec = ((u8 *)Value1(Engine_ActorGet, 19));
+    rec = ((u8 *)Value1(Object_GetById, 19));
     *(s32 *)(rec + 24) = 0xcccc;
-    rec = ((u8 *)Value1(Engine_ActorGet, 19));
+    rec = ((u8 *)Value1(Object_GetById, 19));
     {
         u8 *target = *(u8 **)(rec + 80);
         s32 shown = 0x8000;
@@ -1131,11 +1131,11 @@ void FieldScene_RunEnsembleStoryBeat(void)
 
     actor = Actor_Get(18);
     ACTOR_FIELD_108(actor) = 0;
-    actor = Engine_ActorGet(13);
+    actor = Object_GetById(13);
     ACTOR_FIELD_108(actor) = 0;
-    actor = Engine_ActorGet(14);
+    actor = Object_GetById(14);
     ACTOR_FIELD_108(actor) = 0;
-    actor = Engine_ActorGet(15);
+    actor = Object_GetById(15);
     ACTOR_FIELD_108(actor) = 0;
     actor = Actor_Get(16);
     ACTOR_FIELD_108(actor) = 0;
@@ -1502,7 +1502,7 @@ void FieldScene_RunScene39e_02002778(void)
     Event_Begin();
     Audio_PlayCue(188);
     Map_AnimateCells((const u16 *)ShianJiin_CellStepsA, 77, 8);
-    *(u8 *)(((s32)Engine_ActorGet(0)) + 85) = 0;
+    *(u8 *)(((s32)Object_GetById(0)) + 85) = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -1527,7 +1527,7 @@ void ShianJiin_AskIfCurious(void)
     Actor_StartRepeatedMotion(8, 2);
     Actor_SetAttachedEffect(8, 0x102);
     Event_Wait(60);
-    ((u8 *)Engine_ActorGet(8))[91] = 0;
+    ((u8 *)Object_GetById(8))[91] = 0;
     Audio_PlayCue(152);
     record = Actor_Get(8);
     *(s32 *)(record + 40) = 0x80000;
@@ -2044,7 +2044,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(20);
     /* Clear bit 0 of the flag byte at +90. */
-    ((u8 *)Engine_ActorGet(0))[90] &= 0xfe;
+    ((u8 *)Object_GetById(0))[90] &= 0xfe;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
     Event_Wait(1);
     {
@@ -2189,7 +2189,7 @@ s32 ShianJiin_ApplyEntryState(void)
             Engine_GameFlagClear(0x12f);
             set = Engine_GameFlagIsSet(0x895);
             if (set == 0) {
-                actor = Engine_ActorGet(19);
+                actor = Object_GetById(19);
                 actor->motion_flags = set;
                 actor->y.fixed = 0xc0000;
                 actor->target_y = 0xc0000;
@@ -2200,15 +2200,15 @@ s32 ShianJiin_ApplyEntryState(void)
                     Engine_ActorSetPosition(18, 0xf80000, 0xd00000);
                     if (!Engine_GameFlagIsSet(0x89b)) {
                         Engine_ActorSetPosition(16, 0x1000000, 0xf00000);
-                        Engine_ActorGet(18)->update = FaceXianActorToPlayer;
-                        Engine_ActorGet(13)->update = FaceXianActorToPlayer;
-                        Engine_ActorGet(14)->update = FaceXianActorToPlayer;
-                        Engine_ActorGet(15)->update = FaceXianActorToPlayer;
-                        Engine_ActorGet(16)->update = FaceXianActorToPlayer;
+                        Object_GetById(18)->update = FaceXianActorToPlayer;
+                        Object_GetById(13)->update = FaceXianActorToPlayer;
+                        Object_GetById(14)->update = FaceXianActorToPlayer;
+                        Object_GetById(15)->update = FaceXianActorToPlayer;
+                        Object_GetById(16)->update = FaceXianActorToPlayer;
                     }
                 }
             } else {
-                actor = Engine_ActorGet(19);
+                actor = Object_GetById(19);
                 actor->motion_flags = 0;
                 actor->y.fixed = 0xc0000;
                 actor->target_y = 0xc0000;
@@ -2232,7 +2232,7 @@ s32 ShianJiin_ApplyEntryState(void)
         }
     } else {
         BattleFx_SetQueuedSoundAndPlay(170);
-        Engine_ActorGet(9)->collision_flags |= 16;
+        Object_GetById(9)->collision_flags |= 16;
         if (gGameState.entrance == 3 && Engine_GameFlagIsSet(0xf14) && !Engine_GameFlagIsSet(0x894)) {
             Call6(Engine_MapCopyCellAttributes, 10, 84, 1, 1, 10, 24);
         }
@@ -2309,14 +2309,14 @@ void FieldScene_RunParticleRain(void)
     s32 scale;
 
     Audio_PlayCue(0x83);
-    *(u32 *)(((u8 *)Engine_ActorGet(8)) + 108) = (u32)FieldScene_SelectActorModeFromInputBit;
+    *(u32 *)(((u8 *)Object_GetById(8)) + 108) = (u32)FieldScene_SelectActorModeFromInputBit;
     Event_Wait(40);
     ColorBuffer_ApplySource(128 << 9, 0);
     ColorBuffer_ApplyTarget(0x205c54, 1);
     ColorBuffer_Interpolate(60);
     Event_Wait(40);
     Audio_PlayCue(0x83);
-    *(u32 *)(((u8 *)Engine_ActorGet(2)) + 108) = (u32)FieldScene_SelectActorModeFromInputBit;
+    *(u32 *)(((u8 *)Object_GetById(2)) + 108) = (u32)FieldScene_SelectActorModeFromInputBit;
     Event_Wait(120);
     record = Actor_Get(8);
     descriptor.field0 = 1;
@@ -2342,8 +2342,8 @@ void FieldScene_RunParticleRain(void)
     ColorBuffer_ApplyTarget(128 << 9, 1);
     ColorBuffer_Interpolate(60);
     Event_Wait(40);
-    *(u32 *)(((u8 *)Engine_ActorGet(8)) + 108) = 0;
-    *(u32 *)(((u8 *)Engine_ActorGet(2)) + 108) = 0;
+    *(u32 *)(((u8 *)Object_GetById(8)) + 108) = 0;
+    *(u32 *)(((u8 *)Object_GetById(2)) + 108) = 0;
     Actor_SetChildValue(8, 0);
     Actor_SetChildValue(ACTOR_IVAN, 0);
 }

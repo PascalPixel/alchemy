@@ -175,7 +175,6 @@ void UiText_ShowCenteredMessage();
 void Audio_PlayCueFromEventWork();
 void Scheduler_RemoveCallback();
 void Object_SetPosition();
-u8 *Object_GetById();
 void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void HaidiaMura_OpenVillagerLane(void);
 s32 SceneActor_RunStep18WhenTargetSet();

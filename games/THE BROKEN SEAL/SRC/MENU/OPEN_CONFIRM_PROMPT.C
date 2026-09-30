@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
@@ -64,14 +65,14 @@ s32 Menu_OpenConfirmPrompt(void)
         FIELD(target, u16, 0x17e) = flags;
     }
     RenderOutput_ClearListFar(FIELD(state, s32, 0x24));
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, 0xea6) = 1;
+    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(0x37);
     gMenuCtrlWork->suspended = 0;
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, 0xea6) = 0;
+    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 0;
     Event_ClearInvalidPackedValuesFar();
     return result;
 }

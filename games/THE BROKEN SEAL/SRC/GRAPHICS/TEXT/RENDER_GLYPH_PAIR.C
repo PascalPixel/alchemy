@@ -1,8 +1,9 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "TBS_EDITION.H"
 
 struct GlyphWork {
-    u8 unknown_000[0xea4];
+    u8 unknown_000[RENDER_MODE_OFS];
     u8 fixed_colour;
     u8 unknown_ea5[7];
     u16 outlined;

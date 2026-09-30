@@ -188,7 +188,7 @@ void Villager_ShowOffPsynergy(void)
         SceneState_ApplyPair140And0();
         shakes = 0;
         for (i = 0; i < 40; i++) {
-            OverlayObject_UpdateOnFrameBit1((s32)Engine_ActorGet(17));
+            OverlayObject_UpdateOnFrameBit1((s32)Object_GetById(17));
             Task_Wait(1);
         }
         Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep17, 0xc80);
@@ -276,13 +276,13 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Event_Wait(20);
     SceneState_ApplyPair140And0();
     for (i = 0; i < 40; i++) {
-        OverlayObject_UpdateOnFrameBit1(Engine_ActorGet(15));
+        OverlayObject_UpdateOnFrameBit1(Object_GetById(15));
         Task_Wait(1);
     }
     Value2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunStep15, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep20, 0xc80);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
-    rec8 = Engine_ActorGet(20);
+    rec8 = Object_GetById(20);
     v2 = rec8[85];
     rec8[85] = 0;
     p8 = v2;
@@ -336,7 +336,7 @@ void Villager_WelcomeBack(void)
 
 void Scene_PsynergyStoneIsGone(void)
 {
-    struct Obj *p = Engine_ActorGet(21);
+    struct Obj *p = Object_GetById(21);
     Event_Begin();
     p->f38 = 0x80000000;
     p->f3c = 0x80000000;
@@ -515,11 +515,11 @@ s32 HaidiaIe_RestoreEntryState(void)
         return 0;
     }
     v5 = 192;
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     *(s32 *)(record + 28) = (v5 << 9);
-    record = Engine_ActorGet(9);
+    record = Object_GetById(9);
     *(s32 *)(record + 28) = (v5 << 9);
-    record = Engine_ActorGet(10);
+    record = Object_GetById(10);
     *(s32 *)(record + 28) = (v5 << 9);
     if (Engine_GameFlagIsSet(0x87a) != 0) {
         Engine_MapCopyCellsTo(97, 2, 80, 5, 2, 2);
@@ -552,19 +552,19 @@ s32 HaidiaIe_RestoreEntryState(void)
             Scene_RunExtendedActorSequence();
         } else {
             if (Engine_GameFlagIsSet(0x834) != 0) {
-                record = Engine_ActorGet(20);
+                record = Object_GetById(20);
                 *(s32 *)(record + 24) = 0x4ccc;
                 *(s32 *)(record + 28) = 0x4ccc;
-                record = Engine_ActorGet(20);
+                record = Object_GetById(20);
                 Engine_ActorSetSpriteFlags(record, 0);
-                record = Engine_ActorGet(21);
+                record = Object_GetById(21);
                 *(s32 *)(record + 24) = 0x9999;
                 *(s32 *)(record + 28) = 0x9999;
                 Engine_ActorSetAnimation(13, 5);
             } else {
                 if (Engine_GameFlagIsSet(0x815) != 0) {
                     Call3(Engine_ActorSetPosition, 21, 0x14b0000, 0xf90000);
-                    record = Engine_ActorGet(21);
+                    record = Object_GetById(21);
                     Engine_ActorSetSpriteFlags(record, 0);
                 }
             }
@@ -620,7 +620,7 @@ void FieldScene_RunElderAidEvent(void)
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Call3(Engine_ActorSetSpeed, 25, 0x10000, 0x8000);
         Call3(Engine_ActorWalkToAndWait, 0, 179, 0x315);
-        record = Engine_ActorGet(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Engine_ActorSetPosition(25, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
@@ -715,21 +715,21 @@ void FieldScene_RunElderAidEvent(void)
         Engine_ActorSetAnimationAndWait(26, 3);
         Actor_SetAnimationAndWait(22, 3);
         Actor_SetAnimation(25, 2);
-        record = Engine_ActorGet(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Engine_ActorSetDestination(25, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Actor_WaitForMove(25);
         Actor_SetPosition(25, 0, 0);
         Engine_ActorSetAnimation(26, 2);
-        record = Engine_ActorGet(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Actor_SetDestination(26, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(26);
         Actor_SetPosition(26, 0, 0);
         Engine_ActorSetAnimation(22, 2);
-        record = Engine_ActorGet(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -811,7 +811,7 @@ void FieldScene_RunGroupChoreography(void)
     s32 approach_speed;
 
     Engine_ActorSetChildValue(25, 15);
-    record = Engine_ActorGet(25);
+    record = Object_GetById(25);
     Engine_ActorSetSpriteFlags(record, 0);
     Call3(Engine_ActorSetPosition, 25, 0, 0x14b0000);
     Engine_TaskWait(1);
@@ -842,7 +842,7 @@ void FieldScene_RunGroupChoreography(void)
     Engine_ActorSetAnimation(24, 1);
     Engine_ActorFaceDirection(24, walk_speed, 0);
     Engine_ActorSetChildValue(25, 0);
-    record = Engine_ActorGet(25);
+    record = Object_GetById(25);
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorSetPosition, 25, 0, 0x14b0000);
     Call3(Engine_ActorSetSpeed, 25, 0x13333, 0x9999);
@@ -923,19 +923,19 @@ void HaidiaIe_RunScene015B4(void)
     Call3(Engine_ActorFaceDirection, 23, 0x8000, 0);
     Call3(Engine_ActorFaceDirection, 24, 0x8000, 0);
     Engine_ActorSetAnimation(0, 16);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     *(s32 *)(record + 24) = -0x10000;
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_ActorSetAnimation(25, 7);
-    record = Engine_ActorGet(25);
+    record = Object_GetById(25);
     {
         u8 *motion = *(u8 **)(record + 80);
         s32 shown = 0x1555;
 
         *(u16 *)(motion + 30) = shown;
     }
-    record = Engine_ActorGet(25);
+    record = Object_GetById(25);
     Engine_ActorSetSpriteFlags(record, 0);
     {
         u8 *work = (u8 *)gEventWork;
@@ -957,13 +957,13 @@ void HaidiaIe_RunScene015B4(void)
     Engine_ActorSetSpritePriority(25, 3);
     Call3(Engine_ActorSetSpeed, 23, 0x26666, 0x13333);
     v5 = 128;
-    record = Engine_ActorGet(23);
+    record = Object_GetById(23);
     *(s32 *)(record + 68) = 0x28f;
     *(s32 *)(record + 72) = (v5 << 8);
     Engine_ActorEnableActionCallback(23, (s32)Data_0200aa48);
     Engine_EventWait(24);
     Engine_ActorSetSpeed(24, 0x26666, 0x13333);
-    record = Engine_ActorGet(24);
+    record = Object_GetById(24);
     *(s32 *)(record + 68) = 0x28f;
     *(s32 *)(record + 72) = (v5 << 8);
     Object_SetActionCallbackAndRefreshById(24, (s32)Data_0200ab2c);
@@ -1003,17 +1003,17 @@ void Scene_RunExtendedActorSequence(void)
     Call4(Engine_CameraMoveTo, 0xb40000, 0x100000, 0x26a0000, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    record = Engine_ActorGet(22);
+    record = Object_GetById(22);
     Engine_ActorSetSpriteFlags((s32)record, 0);
-    record = Engine_ActorGet(23);
+    record = Object_GetById(23);
     Engine_ActorSetSpriteFlags((s32)record, 0);
-    record = Engine_ActorGet(24);
+    record = Object_GetById(24);
     Engine_ActorSetSpriteFlags((s32)record, 0);
-    record = Engine_ActorGet(25);
+    record = Object_GetById(25);
     Engine_ActorSetSpriteFlags((s32)record, 0);
-    record = Engine_ActorGet(26);
+    record = Object_GetById(26);
     Engine_ActorSetSpriteFlags((s32)record, 0);
-    record = Engine_ActorGet(29);
+    record = Object_GetById(29);
     Engine_ActorSetSpriteFlags((s32)record, 0);
     Engine_ActorSetSpritePriority(0, 1);
     Engine_ActorSetSpritePriority(1, 1);
@@ -1100,7 +1100,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorSetAnimationAndWait(11, 3);
     Event_SayThenWait(11, 10);
     {
-        struct FieldActor *actor = Engine_ActorGet(30);
+        struct FieldActor *actor = Object_GetById(30);
 
         if (actor != NULL) {
             Engine_ActorSetPosition(31, actor->x.fixed, actor->z.fixed);
@@ -1108,8 +1108,8 @@ void Scene_RunExtendedActorSequence(void)
     }
     v5 = 254;
     Engine_TaskWait(2);
-    Engine_ActorGet(30)->priority_flags &= v5;
-    Engine_ActorGet(31)->priority_flags &= v5;
+    Object_GetById(30)->priority_flags &= v5;
+    Object_GetById(31)->priority_flags &= v5;
     Engine_ActorSetSpritePriority(30, 2);
     Engine_ActorSetSpritePriority(31, 2);
     Call3(Engine_ActorSetSpeed, 31, 0x39999, 0x1cccc);
@@ -1279,9 +1279,9 @@ void Scene_RunExtendedActorSequence(void)
     Engine_MessageShowCentered(0x1214, 1);
     v5 = 1;
     Engine_EventWait(80);
-    Engine_ActorGet(0)->priority_flags |= v5;
+    Object_GetById(0)->priority_flags |= v5;
     {
-        struct FieldActor *actor = Engine_ActorGet(1);
+        struct FieldActor *actor = Object_GetById(1);
         u8 value = (u8)(v5 | actor->priority_flags);
 
         actor->priority_flags = value;
@@ -1474,17 +1474,17 @@ void FieldScene_Forward4dac(void)
 
 void FieldScene_RunStep15(void)
 {
-    SceneEffect_UpdateByFrameBits((s32)Engine_ActorGet(15));
+    SceneEffect_UpdateByFrameBits((s32)Object_GetById(15));
 }
 
 void FieldScene_RunStep17(void)
 {
-    SceneEffect_UpdateByFrameBits((s32)Engine_ActorGet(17));
+    SceneEffect_UpdateByFrameBits((s32)Object_GetById(17));
 }
 
 void FieldScene_RunStep20(void)
 {
-    SceneEffect_UpdateByFrameBit((s32)Engine_ActorGet(20));
+    SceneEffect_UpdateByFrameBit((s32)Object_GetById(20));
 }
 
 void SceneState_SetValues352_365_2116_2117_40(void)

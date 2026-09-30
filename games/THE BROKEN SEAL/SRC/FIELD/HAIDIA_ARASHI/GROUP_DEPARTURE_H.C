@@ -35,10 +35,10 @@ void OverlayObject_CopyRecordField1ToSlots22And8(void)
     Ent *dst;
     Ent *dst2;
 
-    src = ((Rec *)Engine_ActorGet(0))->f50;
-    dst = ((Rec *)Engine_ActorGet(22))->f50;
+    src = ((Rec *)Object_GetById(0))->f50;
+    dst = ((Rec *)Object_GetById(22))->f50;
     dst->f = src->f;
-    dst2 = ((Rec *)Engine_ActorGet(8))->f50;
+    dst2 = ((Rec *)Object_GetById(8))->f50;
     dst2->f = src->f;
 }
 

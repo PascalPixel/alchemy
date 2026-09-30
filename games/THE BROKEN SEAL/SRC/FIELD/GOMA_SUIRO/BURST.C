@@ -44,7 +44,7 @@ union SceneActor {
 };
 struct Vector { s32 x, y, z; };
 
-union SceneActor *Engine_ActorGet(s32);
+union SceneActor *Object_GetById(s32);
 void WaitFrames(s32);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
@@ -68,7 +68,7 @@ void SceneEffect_RunActorBurst(s32 no)
         u8 bytes[sizeof(struct ConfiguredEffectOptions)];
     } opt;
 
-    work = Engine_ActorGet(no);
+    work = Object_GetById(no);
     work->fields.mode = 0;
     for (cnt = 0; cnt < 18; cnt++) {
         WaitFrames(1);

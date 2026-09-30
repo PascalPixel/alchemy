@@ -119,7 +119,7 @@ s32 UiText_SetRenderString(const u8 *str)
     base = *(u8 **)((u32)&Data_03001e8c);
     count = 0;
     if (*str != 0) {
-        dst = (u16 *)(base + 0xEB0);
+        dst = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
         do {
             *dst = *str;
             str++;
@@ -127,7 +127,7 @@ s32 UiText_SetRenderString(const u8 *str)
             count++;
         } while (*str != 0);
     }
-    offset = 0xEB0 + count * 2;
+    offset = RENDER_ENTRY_TBL_OFS + count * 2;
     *(u16 *)(base + offset) = 0;
     UiText_MeasureEntryDimensions(0, &count_out, &width_out, 0);
     return count_out;

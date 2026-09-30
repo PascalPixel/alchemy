@@ -23,7 +23,7 @@ extern s32 Soru_RingOffsetX[];
 extern s32 Soru_RingOffsetZ[];
 void Soru_UpdateRing(void);
 struct SoruRingEntry *Runtime_AllocateBlock(s32 slot, s32 size);
-struct SoruRingObject *Engine_ActorGet(s32 actor);
+struct SoruRingObject *Object_GetById(s32 actor);
 void Engine_ObjectSetBlendMode(struct SoruRingObject *obj, s32 mode);
 s32 Engine_TaskAddCallback(void *callback, s32 priority);
 
@@ -52,7 +52,7 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
     if (count != 0) {
         cleared = none;
         do {
-            obj = Engine_ActorGet(first);
+            obj = Object_GetById(first);
             {
                 u8 *frame = &obj->anim[38];
 
@@ -60,7 +60,7 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
                 *frame = cleared;
             }
             obj->state = cleared;
-            Engine_ObjectSetBlendMode(Engine_ActorGet(first), 1);
+            Engine_ObjectSetBlendMode(Object_GetById(first), 1);
             entry->x = Soru_RingOffsetX[i];
             entry->z = -Soru_RingOffsetZ[i];
             entry->kind = 3;

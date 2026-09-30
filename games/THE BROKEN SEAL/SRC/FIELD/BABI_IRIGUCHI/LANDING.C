@@ -19,17 +19,17 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Map_Redraw();
     Iriguchi_TaskWait(1);
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 12) = 0x820000;
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 72) = 0x8000;
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 68) = 0;
-    *(u8 *)((u8 *)Engine_ActorGet(0) + 85) = 0;
+    *(s32 *)((u8 *)Object_GetById(0) + 12) = 0x820000;
+    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x8000;
+    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0;
+    *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
     Event_OpenScreen();
     Event_WaitForScreen();
     Iriguchi_Wait(30);
     Audio_PlayCue(204);
-    *(u8 *)((u8 *)Engine_ActorGet(0) + 85) = 3;
+    *(u8 *)((u8 *)Object_GetById(0) + 85) = 3;
     Iriguchi_Wait(24);
-    leader = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     options.palette = 7;
     options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
     options.start_scale_x = 0xcccc;
@@ -49,8 +49,8 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     MapRender_WaitForValues();
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 72) = 0x10000;
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 68) = 0x4000;
+    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x10000;
+    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0x4000;
     Event_End();
 }
 
@@ -69,13 +69,13 @@ void FieldScene_RunScene3c5SequenceA(s32 exit)
     *(s32 *)(leader + 72) = 0x4000;
     leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
     *(s32 *)(leader + 68) = 0;
-    *(u8 *)((u8 *)Engine_ActorGet(0) + 85) = 0;
+    *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Event_OpenScreen();
     Event_WaitForScreen();
     Iriguchi_Wait(10);
     Audio_PlayCue(204);
-    *(u8 *)((u8 *)Engine_ActorGet(0) + 85) = 3;
+    *(u8 *)((u8 *)Object_GetById(0) + 85) = 3;
     leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
     *(s32 *)(leader + 40) = -0x50000;
     OverlayObject_WaitUntilIdle((s32 *)Actor_Get(ACTOR_PARTY_LEADER));

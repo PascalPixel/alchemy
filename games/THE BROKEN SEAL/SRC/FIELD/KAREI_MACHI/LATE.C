@@ -222,7 +222,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Event_ShowMessageAndWait(9, 0, 10);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Event_Wait(60);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -702,7 +702,7 @@ void FieldScene_RunLateSequence(void)
     s32 zero;
     s32 k;
 
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     idx = (s32)((u32)*(u16 *)(record + 6) >> 12);
     a = *(s16 *)(record + 10);
     w = KareiMachi_Data01[idx];
@@ -749,13 +749,13 @@ void FieldScene_RunScene3a8SequenceB(void)
     s32 v6;
     s32 v7;
 
-    rec8 = Engine_ActorGet(8);
-    rec4 = Engine_ActorGet(9);
+    rec8 = Object_GetById(8);
+    rec4 = Object_GetById(9);
     rec7 = GameFlag_IsSet(0x302);
     if (rec7 != 0) {
     } else if ((*(s32 *)(rec8 + 8) >> 19) > 29) {
     } else {
-        rec2 = Engine_ActorGet(11);
+        rec2 = Object_GetById(11);
         Event_Begin();
         Map_CopyCellAttributes(7, 44, 1, 1, rec7, 1);
         i = 67;
@@ -898,13 +898,13 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     u8 *rp;
     u8 *p4;
 
-    rec7 = Engine_ActorGet(8);
+    rec7 = Object_GetById(8);
     rec8 = Actor_Get(9);
     if ((u32)(*(s16 *)(rec7 + 10) + -0x17d) <= 12) {
         if (*(s16 *)(rec7 + 18) <= 0x309) {
             goto L_020037ae;
         }
-        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        record = Object_GetById(ACTOR_PARTY_LEADER);
         p4 = (u8 *)*(s32 *)(rec7 + 80);
         rp = (u8 *)*(s32 *)(record + 80);
         c12 = 12 & rp[9];

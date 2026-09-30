@@ -1,191 +1,9 @@
+#include "OBJECT_DISPATCH.H"
 #include "TYPES.H"
 #include "SCENE.H"
-#include "OBJECT_DISPATCH.H"
-#include "OBJECT_COMMANDS.H"
-#include "DMA.H"
-
-/* object/dispatch/find_free_object.c */
-extern u8 *gObjectSlots;
-
-void ResourceObject_Release(void *);
-
-struct FieldObject {
-    u32 script;
-    u16 unknown_04;
-    u16 unknown_06;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u16 radius;
-    u8 unknown_22[14];
-    s32 speed_limit;
-    s32 acceleration;
-    u8 unknown_38[12];
-    s32 unknown_44;
-    s32 unknown_48;
-    s32 unknown_4c;
-    void *animation;
-    u8 animation_kind;
-    u8 unknown_55;
-    u8 unknown_56[3];
-    u8 unknown_59;
-    u8 unknown_5a;
-    u8 unknown_5b[9];
-    s16 tile_x;
-    s16 tile_z;
-};
-
-struct AnimationMetadata {
-    u8 unknown_00[9];
-    u8 radius;
-};
-
-struct ObjectSpriteList {
-    u8 unknown_00[24];
-    s32 count;
-};
-
-extern struct ObjectSpriteList *gMenuCtrlWork;
-extern const u32 ObjectDispatch_DefaultScript[];
-void *ResourceObject_Create(s32 id);
-struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
-void Object_SetPositionAndResetMotion(struct FieldObject *object, s32 x, s32 y, s32 z);
 
 s32 AnimationObjects_SelectAnimation(void *, s32);
 void AnimationObjects_SetField15OnActive(void *, s32);
-struct State_0800b7c0;
-s32 Animation_InitializeObjects(struct State_0800b7c0 *);
-s32 ResourceMetadata_Register(s32 child);
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-s32 WaitFrames(s32);
-
-struct ChildStateFlags {
-    u8 padding[5];
-    u8 unk_0 : 2;
-    u8 field_2 : 2;
-    u8 unk_4 : 4;
-};
-
-struct ChildDisplayFlags {
-    u8 padding[29];
-    u8 unk_0 : 1;
-    u8 field_1 : 1;
-    u8 unk_2 : 6;
-};
-
-s32 ObjectGroup_SetChildValueUnlessFifteen(s32);
-s32 Scheduler_EnableCallbacks(u32 value);
-s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
-s32 BattleFx_StartBufferInterpolationFar(s32);
-void ObjectSystem_UpdateCamera(void);
-void ObjectSystem_UpdateCameraFixed(void);
-s32 Scheduler_DisableCallbacks(u32 value);
-
-void *ObjectDispatch_FindFreeObject(void)
-{
-    u8 *entry = gObjectSlots;
-    void *ret = 0;
-    s32 index = 0;
-
-    while (index <= 63) {
-        if (*(u32 *)entry == 0) {
-            ret = entry;
-            break;
-        }
-        index++;
-        entry += 112;
-    }
-    return ret;
-}
-
-void ObjectDispatch_Release(struct DispatchObject *work)
-{
-    volatile u32 zero;
-    s32 count;
-    void **child;
-    if (work) {
-        switch (work->kind & 15) {
-        case 1: ResourceObject_Release(work->target.child); break;
-        case 2:
-            child = work->target.children;
-            count = 3;
-            do { void *entry = *child++; if (entry) ResourceObject_Release(entry); } while (--count >= 0);
-            break;
-        }
-        zero = 0;
-        Dma_Set(&zero, work, 0x8500001c, (volatile u32 *)0x040000d4);
-    }
-}
-
-struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
-{
-    struct FieldObject *object;
-    void *sprite;
-    s32 kind;
-    u32 *list;
-    u32 *entry;
-    volatile u32 zero;
-
-    ObjectDispatch_FindFreeObject();
-    kind = id / 4096;
-    id &= 0xfff;
-    object = (struct FieldObject *)ObjectDispatch_FindFreeObject();
-    if (object != NULL) {
-        object->radius = 16;
-        switch (kind) {
-        case 0:
-            sprite = ResourceObject_Create(id);
-            if (sprite != NULL) {
-                object->animation_kind = 1;
-                object->animation = sprite;
-                object->radius = Resource_GetMetadataRecordFar(id)->radius >> 1;
-            } else {
-                object->animation_kind = 0;
-            }
-            break;
-        case 2:
-            entry = (list = (u32 *)gMenuCtrlWork + gMenuCtrlWork->count++) + 2;
-            object->animation_kind = kind;
-            zero = 0;
-            object->animation = entry;
-            Dma_Set(&zero, entry, 0x85000004, (volatile u32 *)0x040000d4);
-            sprite = ResourceObject_Create(id);
-            if (sprite != NULL) {
-                /* FAKEMATCH: stored as a plain halfword, outside the object
-                   record's alias set, so the entry copy schedules above it
-                   as in the reference. */
-                *(u16 *)&object->radius = Resource_GetMetadataRecordFar(id)->radius >> 1;
-                *entry++ = (u32)sprite;
-            }
-            sprite = ResourceObject_Create(id + 1);
-            if (sprite != NULL)
-                *entry = (u32)sprite;
-            break;
-        }
-    }
-    if (object != NULL) {
-        Object_SetPositionAndResetMotion(object, x, y, z);
-        object->script = (u32)ObjectDispatch_DefaultScript;
-        object->speed_limit = 0x20000;
-        object->unknown_04 = 0;
-        object->scale_x = 0x10000;
-        object->scale_y = 0x10000;
-        object->acceleration = 0x10000;
-        object->unknown_55 = 3;
-        object->unknown_48 = 0x10000;
-        object->unknown_44 = 0x4000;
-        object->unknown_59 = 0;
-        object->unknown_5a = 1;
-        object->unknown_4c = 0;
-        object->unknown_06 = 0x4000;
-        object->tile_x = x / 65536;
-        object->tile_z = z / 65536;
-    }
-    return object;
-}
 
 void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)
 {
@@ -283,6 +101,10 @@ void ObjectDispatch_SetChildField1e(struct DispatchObject *object, u32 value)
         *(s16 *)((u8 *)object->target.child + 0x1e) = value;
 }
 
+struct State_0800b7c0;
+
+s32 Animation_InitializeObjects(struct State_0800b7c0 *);
+
 void Animation_SetIndexAndInitObjects(void *obj, s32 no)
 {
     if ((obj != NULL) && ((0xF & FIELD_AT_OFFSET(obj, u8 *, 0x54)) == 1)) {
@@ -293,6 +115,8 @@ void Animation_SetIndexAndInitObjects(void *obj, s32 no)
         }
     }
 }
+
+s32 ResourceMetadata_Register(s32 child);
 
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 value)
 {
@@ -345,6 +169,10 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s3
     }
 }
 
+#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+
+s32 WaitFrames(s32);
+
 void ObjectDispatch_WaitForValue16(void *obj)
 {
     s32 cnt;
@@ -369,6 +197,13 @@ void ObjectDispatch_SetSingleChildField26(u8 *arg0, u32 arg1)
     }
 }
 
+struct ChildStateFlags {
+    u8 padding[5];
+    u8 unk_0 : 2;
+    u8 field_2 : 2;
+    u8 unk_4 : 4;
+};
+
 void Animation_SetStateField5Bits2To3(u8 *obj, u32 v)
 {
     if (obj != 0 && obj[84] == 1) {
@@ -376,6 +211,13 @@ void Animation_SetStateField5Bits2To3(u8 *obj, u32 v)
         state->field_2 = v;
     }
 }
+
+struct ChildDisplayFlags {
+    u8 padding[29];
+    u8 unk_0 : 1;
+    u8 field_1 : 1;
+    u8 unk_2 : 6;
+};
 
 void Animation_SetStateField1dBit1(u8 *obj, u32 v)
 {
@@ -385,12 +227,21 @@ void Animation_SetStateField1dBit1(u8 *obj, u32 v)
     }
 }
 
+s32 ObjectGroup_SetChildValueUnlessFifteen(s32);
+
 void Animation_ApplyChildValues(void *obj)
 {
     if ((obj != NULL) && (FIELD_AT_OFFSET(obj, u8 *, 0x54) == 1)) {
         ObjectGroup_SetChildValueUnlessFifteen(FIELD_AT_OFFSET(obj, s32 *, 0x50));
     }
 }
+
+s32 WaitFrames(s32);
+s32 Scheduler_EnableCallbacks(u32 value);
+s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
+s32 BattleFx_StartBufferInterpolationFar(s32);
+void ObjectSystem_UpdateCamera(void);
+void ObjectSystem_UpdateCameraFixed(void);
 
 void Graphics_EnableObjLayerAndCallbacks(void)
 {
@@ -402,16 +253,13 @@ void Graphics_EnableObjLayerAndCallbacks(void)
     *(u16 *)0x04000000 = (0xF1FF & *(u16 *)0x04000000) | 0x1000;
 }
 
+s32 Scheduler_DisableCallbacks(u32 value);
+void ObjectSystem_UpdateCamera(void);
+void ObjectSystem_UpdateCameraFixed(void);
+
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
     Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCamera);
     Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCameraFixed);
     *(u16 *)0x04000000 &= 0xE1FF;
-}
-
-/* A routine that only reports success, after the object dispatcher;
-   nothing in the image calls it by name. */
-s32 ObjectDispatch_ReturnTrue(void)
-{
-    return 1;
 }

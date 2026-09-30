@@ -39,14 +39,6 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         return ExitCode::from(2);
     };
     let rest = &arguments[1..];
-    if matches!(
-        command,
-        "source-tracking" | "owners" | "tla-owners" | "integrate" | "siblings" | "source-build"
-    ) {
-        return report(Err(format!(
-            "{command} used the removed catalogs or receipts; make compare builds and verifies maintained source"
-        )));
-    }
     match command {
         "publication" => publication::entry(rest),
         "commit-progress" => commit_progress::entry(rest),

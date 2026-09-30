@@ -10,23 +10,13 @@ ALCHEMY_BIN := $(CARGO_TARGET_DIR)/release/alchemy
 BUILD := $(ALCHEMY) build
 CHECK := $(ALCHEMY) check
 TARGET ?= tbs-en
-TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
-
-ifeq ($(TARGET_GAME),tbs)
-include games/THE\ BROKEN\ SEAL/BUILD.MK
-else ifeq ($(TARGET_GAME),tla)
-include games/THE\ LOST\ AGE/BUILD.MK
-else
-$(error unknown game in TARGET=$(TARGET))
-endif
 
 # Compiler library members come from the pinned toolchain's own sources/rules.
 LIBGCC := tools/out/compiler-runtime/libgcc.a
 
 .PHONY: compiler-runtime worktree
-native: compiler-runtime
 compiler-runtime: toolchain-check compiler-source-check
 	$(BUILD) runtime --output $(LIBGCC) \
 	    _call_via_rX=gcc/config/arm/lib1funcs.asm \
@@ -38,7 +28,7 @@ compiler-runtime: toolchain-check compiler-source-check
 	    _thenan_df=dp-bit.c \
 	    _lshrdi3=gcc/libgcc2.c
 
-.PHONY: help native bootstrap compilers compiler-sources compiler-source-check toolchain-check build-tools
+.PHONY: help bootstrap compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-full build-rom
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check
@@ -48,7 +38,6 @@ compiler-runtime: toolchain-check compiler-source-check
 help:
 	@printf '%s\n' \
 	  'make bootstrap       install the approved toolchain from pinned source' \
-	  'make native          compile/link the maintained source list' \
 	  'make compare-all     compare linked source and both private ROM compositions' \
 	  'make compare-editions  compare all twelve editions, the other ten through their recon scaffold' \
 	  'make test            Rust tests, formatting and source policy' \

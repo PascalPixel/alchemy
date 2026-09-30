@@ -189,7 +189,7 @@ Menu_ConfirmSelection:
 	strh r3, [r1]
 	bl WaitFrames
 	movs r0, #1
-	bl Func_0803deac
+	bl Resource_FindFreeTransferEntry
 	ldrh r3, [r6, #10]
 	adds r7, r0, #0
 	strh r3, [r7, #10]

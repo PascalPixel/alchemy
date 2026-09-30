@@ -488,7 +488,6 @@
     "*/recon/tla/es/rom.o"(.rom.0003df60)
     "*/recon/tla/es/rom.o"(.rom.0003df74)
     "*/games/THE LOST AGE/SRC/MENU/SELECTION_OPEN_WINDOW.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0003e738)
     "*/recon/tla/es/rom.o"(.rom.0003e7d4)
     "*/recon/tla/es/rom.o"(.rom.0003e80c)
     "*/recon/tla/es/rom.o"(.rom.0003e94c)

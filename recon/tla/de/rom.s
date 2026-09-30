@@ -1485,12 +1485,6 @@ Func_0803df00:
 	.thumb_func
 Resource_ScheduleOwnerReset:
 	.incbin "baserom.gba", 0x0003df68, 0x00000694
-	.section .rom.0003e72c, "ax"
-	.global Func_0803e6d8
-	.type Func_0803e6d8, %function
-	.thumb_func
-Func_0803e6d8:
-	.incbin "baserom.gba", 0x0003e72c, 0x0000009c
 	.section .rom.0003e7c8, "ax"
 	.global Func_0803e774
 	.type Func_0803e774, %function
@@ -1570,7 +1564,12 @@ UiTextResource_SetPosition:
 	.type UiTextResource_Release, %function
 	.thumb_func
 UiTextResource_Release:
-	.incbin "baserom.gba", 0x0003f714, 0x000000b8
+	.incbin "baserom.gba", 0x0003f714, 0x00000098
+	.global Resource_ResetPendingTransfer
+	.type Resource_ResetPendingTransfer, %function
+	.thumb_func
+Resource_ResetPendingTransfer:
+	.incbin "baserom.gba", 0x0003f7ac, 0x00000020
 	.section .rom.0003f7cc, "ax"
 	.global Func_0803f778
 	.type Func_0803f778, %function

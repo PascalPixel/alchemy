@@ -78,3 +78,54 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
         }
     }
 }
+
+struct ResourceNode {
+    u32 value0;
+    struct ResourceNode *next;
+    u16 value8;
+    u16 active;
+    u16 handle;
+};
+
+void Resource_ScheduleOwnerReset(void);
+void WaitFrames(s32);
+s32 Resource_ResetEntry(u32 index);
+void Resource_ResetPendingTransfer(void);
+void Runtime_ReleaseHeapBlock(u32 value);
+
+/* ☀️'s, reaching the menu work through its heap slot, whose block ⚓️
+   releases by the slot's offset. */
+void Resource_ResetOwnerEntries(void)
+{
+    u8 *state = Ram_HeapSlots->menu_work;
+    struct ResourceNode *node;
+
+    Resource_ScheduleOwnerReset();
+    UiWork_Finalize(*(struct UiWork **)(state + 0x350), 2);
+    WaitFrames(1);
+    node = *(struct ResourceNode **)(state + 0x348);
+    while (node != 0) {
+        if (node->active != 0) {
+            Resource_ResetEntry(node->handle);
+            node->active = 0;
+        }
+        node = node->next;
+    }
+    node = *(struct ResourceNode **)(state + 0x34c);
+    while (node != 0) {
+        if (node->active != 0) {
+            Resource_ResetEntry(node->handle);
+            node->active = 0;
+        }
+        node = node->next;
+    }
+    Resource_ResetPendingTransfer();
+    if (*(s16 *)(state + 18) != 0) {
+        Resource_ResetEntry(*(u16 *)(state + 12));
+        if (*(s16 *)(state + 18) != 0) {
+            Resource_ResetEntry(*(u16 *)(state + 64));
+        }
+    }
+    Resource_ResetEntry(*(u16 *)(state + 0x2e4));
+    Runtime_ReleaseHeapBlock(72);
+}

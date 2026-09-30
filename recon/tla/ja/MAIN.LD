@@ -525,7 +525,6 @@
     "*/recon/tla/ja/rom.o"(.rom.0003e034)
     "*/recon/tla/ja/rom.o"(.rom.0003e048)
     "*/games/THE LOST AGE/SRC/MENU/SELECTION_OPEN_WINDOW.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0003e80c)
     "*/recon/tla/ja/rom.o"(.rom.0003e8a8)
     "*/recon/tla/ja/rom.o"(.rom.0003e8e0)
     "*/recon/tla/ja/rom.o"(.rom.0003ea20)

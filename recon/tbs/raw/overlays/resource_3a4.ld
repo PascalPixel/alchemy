@@ -6,12 +6,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/FACING.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/GET_TABLES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SCENE_DATA.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/GET_PLACEMENTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLLING_RIDE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SET_PIECE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/YAMA.o"(.text)
         "*/resource_3a4_overlay.o"(.text.x02008d2c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SHARED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/FALLING_ROCKS.o"(.text)

@@ -887,6 +887,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/MENU/DRAW_DRAW_PAGE_INDICATOR.o"(.text)
         "*/recon/tla/raw/080f9222.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f9224.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/DRAW_WORK_VALUE_WITH_LABEL.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/DRAW_DRAW_WORK_VALUE_WITH_LABEL_2.o"(.text)
         "*/recon/tla/raw/080f93b6.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f93b8.o"(.text .rodata .data .padding)

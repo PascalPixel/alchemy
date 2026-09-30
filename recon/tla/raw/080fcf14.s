@@ -266,7 +266,7 @@ Func_080fcf14:
 	ldr	r0, [r7, #48]
 	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r0, [r7, #48]
-	bl	0x080f9374
+	bl	UiText_DrawWorkValueWithLabel
 	movs	r1, #1
 	str	r1, [sp, #8]
 	b.n	.L_080fd150

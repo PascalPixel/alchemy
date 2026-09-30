@@ -16623,7 +16623,7 @@ msgctxt "message"
 msgid "04153"
 msgstr "{button_icon:1}:Details"
 
-msgctxt "message"
+msgctxt "MsgCoinsLabel"
 msgid "04154"
 msgstr "Coins"
 

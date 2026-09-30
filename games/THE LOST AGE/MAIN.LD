@@ -634,7 +634,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_35.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OBJECTMO_3.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_36.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/080c8970.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_37.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/INTEGRATE_VECTORS.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.080c89cc)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DECODE_FRAME.o"(.text .rodata .data .padding)

@@ -130,7 +130,7 @@ Func_081080a8:
 	strh	r0, [r3, #0]
 	ldr	r2, [pc, #136]
 	movs	r1, #128
-	bl	Func_08108b34
+	bl	VramBlock_LoadResource
 	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
@@ -139,7 +139,7 @@ Func_081080a8:
 	strh	r0, [r3, #0]
 	ldr	r2, [pc, #116]
 	movs	r1, #128
-	bl	Func_08108b34
+	bl	VramBlock_LoadResource
 	bl	Resource_FindFreeEntry
 	movs	r2, #158
 	lsls	r2, r2, #3
@@ -147,7 +147,7 @@ Func_081080a8:
 	strh	r0, [r3, #0]
 	ldr	r2, [pc, #100]
 	movs	r1, #128
-	bl	Func_08108b34
+	bl	VramBlock_LoadResource
 	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
@@ -156,7 +156,7 @@ Func_081080a8:
 	strh	r0, [r3, #0]
 	ldr	r2, [pc, #84]
 	movs	r1, #128
-	bl	Func_08108b34
+	bl	VramBlock_LoadResource
 	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
@@ -165,7 +165,7 @@ Func_081080a8:
 	strh	r0, [r3, #0]
 	ldr	r2, [pc, #64]
 	movs	r1, #128
-	bl	Func_08108b34
+	bl	VramBlock_LoadResource
 	bl	Resource_FindFreeEntry
 	movs	r3, #128
 	lsls	r3, r3, #3
@@ -174,7 +174,7 @@ Func_081080a8:
 	ldr	r2, [pc, #48]
 	strh	r0, [r5, #0]
 	movs	r1, #128
-	bl	Func_08108b34
+	bl	VramBlock_LoadResource
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #40]

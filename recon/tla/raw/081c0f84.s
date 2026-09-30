@@ -49,7 +49,7 @@ Func_081c0f84:
 	cmp	r3, #0
 	beq.n	.L_081c0ff8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #44
 	adds	r5, #1
 	adds	r3, #255

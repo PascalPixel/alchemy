@@ -30,7 +30,7 @@ Func_080fa458:
 	bl	0x0810508c
 	bl	.L_080fa458
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #184
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
@@ -147,7 +147,7 @@ Func_080fa458:
 	ldr	r0, [r7, r3]
 	bl	0x080f8888
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, r8
 	pop	{r3, r5}
 	mov	r8, r3
@@ -313,7 +313,7 @@ Func_080fa458:
 	lsls	r0, r0, #2
 	bl	Func_08104ef8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fa6f8:
 	ldr	r0, [r7, #16]
 	ldr	r1, [sp, #20]
@@ -336,7 +336,7 @@ Func_080fa458:
 	movs	r1, #16
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #288]
 	movs	r3, #1
 	ldr	r2, [r5, #4]

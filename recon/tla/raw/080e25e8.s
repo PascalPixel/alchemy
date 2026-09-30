@@ -425,7 +425,7 @@ Func_080e25e8:
 	.2byte 0x0000
 .L_080e2938:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [r7, #24]
 	movs	r3, #182
 	lsls	r3, r3, #2
@@ -547,7 +547,7 @@ Func_080e25e8:
 	adds	r5, r5, r0
 	str	r5, [r7, #16]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	add	r8, r3
 	cmp	r8, fp

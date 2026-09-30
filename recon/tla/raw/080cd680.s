@@ -759,7 +759,7 @@ Func_080cd680:
 	adds	r0, r5, #0
 	bl	Object_SetMode
 	movs	r0, #12
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r7, #0
 	adds	r1, r6, #0
 	bl	0x080cf17c

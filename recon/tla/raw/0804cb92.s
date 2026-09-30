@@ -222,7 +222,7 @@ Func_0804cb92:
 	movs	r6, #1
 .L_0804cd46:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldrb	r2, [r5, #0]
 	movs	r3, #1
 	eors	r3, r2
@@ -765,7 +765,7 @@ Menu_EndResourceSelection:
 	movs	r0, #232
 	bl	Runtime_ReleaseSlot
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.2byte 0xcda9
@@ -835,7 +835,7 @@ Menu_RunResourceSelectionLoop:
 	mov	r9, r3
 .L_0804d1e2:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [r6, #4]
 	movs	r3, #1
 	ands	r2, r3
@@ -992,11 +992,11 @@ Menu_RunResourceSelectionLoop:
 .L_0804d314:
 	ldrb	r0, [r0, r2]
 	add	r0, sl
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r8, r7
 	bne.n	.L_0804d2c4
 	movs	r0, #48
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #112
 	bl	Audio_PlayCue
 	adds	r0, r7, #0

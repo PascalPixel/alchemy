@@ -9,7 +9,7 @@ Func_080d2398:
 	adds	r0, r5, #0
 	bl	0x080caa4c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080cdf5c
 	bl	ObjectTable_Get
 	pop	{r5, pc}

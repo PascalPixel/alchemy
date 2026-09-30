@@ -69,13 +69,13 @@ Func_0810a960:
 	b.n	.L_0810a9ec
 .L_0810a9e6:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810a9ec:
 	bl	0x08038048
 	cmp	r0, #0
 	beq.n	.L_0810a9e6
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r5, r6, pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -119,13 +119,13 @@ Func_0810a960:
 	b.n	.L_0810aa5a
 .L_0810aa54:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810aa5a:
 	bl	0x08038048
 	cmp	r0, #0
 	beq.n	.L_0810aa54
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #128
 	lsls	r3, r3, #3
 	adds	r3, #220

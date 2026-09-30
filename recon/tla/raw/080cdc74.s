@@ -203,7 +203,7 @@ Func_080cdc74:
 	adds	r0, r5, #0
 	bl	Object_SetMode
 	movs	r0, #15
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #185
 	bl	Audio_PlayCue
 	movs	r3, #204
@@ -218,7 +218,7 @@ Func_080cdc74:
 	ldr	r3, [r7, #8]
 	bl	Object_SetPosition
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [r5, #52]
 	mov	r3, r9
 	str	r3, [r5, #52]
@@ -233,7 +233,7 @@ Func_080cdc74:
 	mov	r0, sl
 	bl	Object_CommitPosition
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x080d2c98
 	mov	r0, sl
 	ldr	r1, [r7, #0]

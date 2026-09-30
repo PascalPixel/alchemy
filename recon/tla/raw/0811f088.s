@@ -372,7 +372,7 @@ Func_0811f088:
 	ldr	r0, [r0, #0]
 	bl	0x0811f030
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	strh	r7, [r6, #0]
 	bl	Func_080382a0
@@ -385,7 +385,7 @@ Func_0811f088:
 	ldr	r0, [r5, #0]
 	bl	0x0811f030
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #1
 	negs	r3, r3
 	add	r8, r3

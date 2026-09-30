@@ -2489,7 +2489,7 @@ Func_08156140:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #128]
 	ldr	r6, [sp, #104]
 	adds	r5, #1

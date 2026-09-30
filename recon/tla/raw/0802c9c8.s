@@ -79,7 +79,7 @@ Func_0802c9c8:
 	adds	r2, r6, r3
 	movs	r3, #159
 	strh	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [pc, #108]
 	bl	Resource_GetTableEntry
 	mov	r1, r9
@@ -125,7 +125,7 @@ Func_0802c9c8:
 	.2byte 0xcb65
 	.2byte 0x0802
 .L_0802caf8:
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5

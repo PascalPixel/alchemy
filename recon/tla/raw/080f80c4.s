@@ -143,7 +143,7 @@
 	cmp	r5, #0
 	bne.n	.L_080f8200
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r9
 	movs	r3, #32
 	ldr	r0, [r2, #40]
@@ -228,7 +228,7 @@
 	cmp	r5, #0
 	bne.n	.L_080f82b2
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r9
 	movs	r3, #80
 	ldr	r0, [r2, #40]

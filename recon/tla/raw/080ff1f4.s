@@ -273,7 +273,7 @@ Func_080ff1f4:
 	cmp	r5, #0
 	bne.n	.L_080ff42a
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #96
 	str	r3, [sp, #0]
 	adds	r0, r7, #0
@@ -618,7 +618,7 @@ Func_080ff1f4:
 	cmp	r2, #0
 	bne.n	.L_080ff70c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #40
 	str	r3, [sp, #0]
 	adds	r0, r6, #0

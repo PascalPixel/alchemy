@@ -21,7 +21,7 @@ Func_08022f24:
 .L_08022f42:
 	movs	r0, #1
 	adds	r7, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #89
 	bgt.n	.L_08022f5e
 	ldrb	r3, [r5, #20]
@@ -125,7 +125,7 @@ Func_08022f24:
 	bl	.L_08022f64
 	adds	r6, #4
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #127
 	bls.n	.L_08022fee
 	pop	{r5, r6, pc}
@@ -171,7 +171,7 @@ Func_08022f24:
 .L_0802306e:
 	movs	r0, #1
 	adds	r7, #4
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #127
 	bls.n	.L_08023032
 	add	sp, #4

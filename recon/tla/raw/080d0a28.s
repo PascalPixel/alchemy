@@ -271,7 +271,7 @@ Func_080d0a28:
 	ldr	r0, [pc, #20]
 	bl	0x080145a8
 	movs	r0, #120
-	bl	0x08013560
+	bl	WaitFrames
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3

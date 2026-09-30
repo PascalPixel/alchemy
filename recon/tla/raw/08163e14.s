@@ -163,7 +163,7 @@ Func_08163e14:
 	ldr	r0, [r3, #0]
 	bl	0x0814cc4c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #197
 	lsls	r1, r1, #1
 	adds	r1, #255
@@ -725,7 +725,7 @@ Func_08163e14:
 	movs	r0, #1
 	str	r3, [r2, #0]
 	add	r9, r7
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, r9
 	cmp	r0, #124
 	beq.n	.L_081643d0
@@ -1474,7 +1474,7 @@ Func_08163e14:
 	str	r3, [r2, #0]
 	movs	r0, #1
 	adds	r7, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #72
 	beq.n	.L_081649f6
 	b.n	.L_08164848

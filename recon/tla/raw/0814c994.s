@@ -377,7 +377,7 @@ Func_0814c994:
 	.2byte 0x4000
 	.2byte 0x0600
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #36]
 	movs	r2, #128
 	lsls	r2, r2, #19

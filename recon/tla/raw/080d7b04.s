@@ -170,13 +170,13 @@ Func_080d7b04:
 	adds	r0, r6, #0
 	bl	Motion_SetVarCbAndRefresh
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #140
 	bl	Audio_PlayCue
 	ldr	r3, [pc, #220]
 	movs	r0, #40
 	str	r3, [r7, #108]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #153
 	bl	Audio_PlayCue
 	movs	r1, #12
@@ -227,12 +227,12 @@ Func_080d7b04:
 	str	r0, [r5, #40]
 	subs	r7, #1
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r5, #72
 	cmp	r7, #0
 	bge.n	.L_080d7c9c
 	movs	r0, #60
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #80]
 	movs	r3, #133
 	lsls	r3, r3, #2
@@ -243,17 +243,17 @@ Func_080d7b04:
 	ldr	r0, [r5, #0]
 	bl	0x080d3838
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [r5, #0]
 	bl	Object_GetById
 	movs	r1, #28
 	bl	Object_SetMode
 	movs	r0, #40
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #164
 	bl	Audio_PlayCue
 	movs	r0, #100
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x08108060
 	bl	0x080d7ab4
 .L_080d7d32:

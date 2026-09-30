@@ -470,7 +470,7 @@
 	movs	r0, #0
 	bl	0x080f8080
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #2
 	mov	fp, r3
 .L_08043fd4:
@@ -519,7 +519,7 @@
 	adds	r1, r6, #0
 	bl	.L_08043c30
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #28]
 	cmp	r3, #0
 	bne.n	.L_0804404c
@@ -539,7 +539,7 @@
 	adds	r3, r6, #0
 	bl	Func_08043a64
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #192
 	lsls	r2, r2, #6
 	movs	r1, #192
@@ -645,7 +645,7 @@
 	ldr	r0, [sp, #16]
 	bl	Func_08045018
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #220]
 	movs	r3, #64
 	ldr	r2, [r1, #12]
@@ -880,7 +880,7 @@
 	ldrb	r1, [r3, #0]
 	bl	0x0803f9c0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08044330:
 	adds	r0, r5, #0
 	add	sp, #40

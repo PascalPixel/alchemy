@@ -29,7 +29,7 @@ Func_0811c274:
 	strb	r3, [r5, #6]
 .L_0811c2aa:
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 .L_0811c2b0:
 	pop	{r5, pc}
 	.2byte 0x0000

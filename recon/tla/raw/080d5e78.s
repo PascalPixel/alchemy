@@ -46,7 +46,7 @@ Func_080d5e78:
 	adds	r0, r5, #0
 	bl	Object_SetMode
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r6, #1
 	mov	r2, r8
 	strb	r6, [r2, #27]
@@ -134,7 +134,7 @@ Func_080d5e78:
 	b.n	.L_080d5f9e
 .L_080d5f98:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d5f9e:
 	ldr	r2, [r5, #40]
 	ldr	r3, [r5, #12]

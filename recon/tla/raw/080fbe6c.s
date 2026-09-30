@@ -286,7 +286,7 @@ Func_080fbe6c:
 	bl	Audio_PlayCue
 .L_080fc0d2:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fc0d8:
 	movs	r0, #168
 	lsls	r0, r0, #1
@@ -470,7 +470,7 @@ Func_080fbe6c:
 	bl	Audio_PlayCue
 .L_080fc262:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fc268:
 	movs	r0, #168
 	lsls	r0, r0, #1
@@ -645,7 +645,7 @@ Func_080fbe6c:
 	bl	Audio_PlayCue
 .L_080fc3da:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fc3e0:
 	movs	r0, #168
 	lsls	r0, r0, #1
@@ -842,7 +842,7 @@ Func_080fbe6c:
 	sub	sp, #8
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r8
 	ldr	r3, [r2, #24]
 	movs	r1, #226
@@ -898,7 +898,7 @@ Func_080fbe6c:
 	cmp	r6, #4
 	ble.n	.L_080fc5b8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sp, #8
 	pop	{r3, r5}
@@ -1091,7 +1091,7 @@ Func_080fbe6c:
 	cmp	r3, #0
 	beq.n	.L_080fc7a0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #0
 	ldr	r0, [sp, #36]
 	mov	r2, r8
@@ -1220,7 +1220,7 @@ Func_080fbe6c:
 	bls.n	.L_080fc840
 .L_080fc880:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r8
 	ldr	r2, [r2, #24]
 	mov	r3, r8
@@ -1292,7 +1292,7 @@ Func_080fbe6c:
 	movs	r0, #114
 	bl	Audio_PlayCue
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080fc9d2
 .L_080fc912:
 	movs	r0, #111
@@ -1386,7 +1386,7 @@ Func_080fbe6c:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	strb	r2, [r3, #5]
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080fc9e0
 .L_080fc9d2:
 	movs	r0, #168
@@ -1485,7 +1485,7 @@ Func_080fbe6c:
 	str	r3, [sp, #32]
 .L_080fca9e:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #32]
 	add	sp, #88
 	pop	{r3, r5, r6, r7}
@@ -1518,7 +1518,7 @@ Func_080fbe6c:
 	movs	r1, #0
 	bl	Func_080383e8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	bl	0x080f80e0
 	movs	r2, #129
@@ -1597,7 +1597,7 @@ Func_080fbe6c:
 	movs	r3, #0
 	strh	r3, [r2, #4]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #30
@@ -1678,7 +1678,7 @@ Func_080fbe6c:
 	movs	r5, #1
 	b.n	.L_080fcedc
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #128
 	lsls	r2, r2, #2
 	adds	r2, #22

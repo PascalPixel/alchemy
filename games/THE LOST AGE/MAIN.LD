@@ -360,6 +360,8 @@ SECTIONS
         "*/recon/tla/raw/08038eb0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08038f40.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080391c4.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FINALIZE.o"(.text)
+        "*/recon/tla/raw/0803939a.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0803939c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08039418.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08039430.o"(.text .rodata .data .padding)

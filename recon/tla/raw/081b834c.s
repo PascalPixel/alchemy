@@ -3850,7 +3850,7 @@ Func_081b834c:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #108]
 	adds	r2, #1
 	str	r2, [sp, #108]
@@ -3932,7 +3932,7 @@ Func_081b834c:
 	bl	0x081b80a8
 	add	fp, r5
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, fp
 	cmp	r0, #17
 	bne.n	.L_081ba28a

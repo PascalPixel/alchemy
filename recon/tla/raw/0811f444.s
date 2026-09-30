@@ -60,7 +60,7 @@ Func_0811f444:
 	cmp	r0, #0
 	bne.n	.L_0811f494
 	movs	r0, #4
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r6, #0
 	bl	0x0811f3b8
 	adds	r0, r7, #0

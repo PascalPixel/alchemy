@@ -82,7 +82,7 @@ FacingObject_TurnPairToFaceEachOther:
 	beq.n	.L_080d369a
 	movs	r0, #1
 	str	r4, [sp, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #0]
 	adds	r4, #1
 	cmp	r4, #59

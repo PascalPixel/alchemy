@@ -211,7 +211,7 @@ Func_0815a0ec:
 	movs	r2, #8
 	bl	0x08118078
 	movs	r0, #7
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0815a2a0
 .L_0815a290:
 	ldr	r3, [sp, #68]
@@ -223,7 +223,7 @@ Func_0815a0ec:
 	bl	0x08118078
 .L_0815a2a0:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #68]
 	mov	r3, sp
 	adds	r3, #128
@@ -1060,7 +1060,7 @@ Func_0815a0ec:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #52]
 	ldr	r3, [sp, #40]
 	adds	r0, #1
@@ -2155,7 +2155,7 @@ Func_0815a0ec:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #40]
 	adds	r4, #1
 	str	r4, [sp, #40]

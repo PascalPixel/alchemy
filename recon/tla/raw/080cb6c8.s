@@ -231,7 +231,7 @@ Func_080cb6c8:
 	strb	r5, [r3, #0]
 	movs	r0, #2
 	strb	r6, [r1, #0]
-	bl	0x08013560
+	bl	WaitFrames
 .L_080cb89c:
 	bl	Func_08020268
 .L_080cb8a0:

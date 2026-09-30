@@ -585,7 +585,7 @@ Func_080fae2c:
 	adds	r1, #30
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #284]
 	movs	r3, #1
 	ldr	r2, [r5, #4]

@@ -208,7 +208,7 @@ Func_0803a448:
 	b.n	.L_0803a5ec
 .L_0803a5e6:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0803a5ec:
 	bl	0x0803a3b8
 	cmp	r0, #0
@@ -218,7 +218,7 @@ Func_0803a448:
 	b.n	.L_0803a602
 .L_0803a5fc:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0803a602:
 	bl	0x0803a3b8
 	cmp	r0, #0

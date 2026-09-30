@@ -441,7 +441,7 @@ Func_080432a4:
 	b.n	.L_08043648
 .L_08043642:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_08043648:
 	bl	0x0803a3b8
 	cmp	r0, #0
@@ -515,7 +515,7 @@ Func_080432a4:
 	b.n	.L_080436ee
 .L_080436e8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080436ee:
 	bl	0x0803a3b8
 	cmp	r0, #0
@@ -752,7 +752,7 @@ Func_080432a4:
 	b.n	.L_0804390e
 .L_08043908:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0804390e:
 	bl	0x0803a3b8
 	cmp	r0, #0

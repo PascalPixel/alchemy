@@ -592,7 +592,7 @@ Func_080f9644:
 	ldr	r3, [r1, #20]
 	movs	r0, #1
 	strb	r2, [r3, #5]
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r9
 	ldr	r0, [r2, #48]
 	bl	0x08038268
@@ -848,7 +848,7 @@ Func_080f9644:
 	movs	r3, #13
 	strb	r3, [r2, #5]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, sl
 	cmp	r1, #1
 	bne.n	.L_080f9d6e
@@ -1128,7 +1128,7 @@ Func_080f9644:
 	mov	sl, r3
 .L_080f9f98:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, sl
 	cmp	r1, #1
 	bne.n	.L_080f9fcc
@@ -1307,7 +1307,7 @@ Func_080f9644:
 	adds	r0, r5, #0
 	bl	0x080fadd0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldrb	r3, [r7, #0]
 	mov	r2, sl
 	ldrh	r1, [r2, #0]
@@ -1391,7 +1391,7 @@ Func_080f9644:
 	bl	0x080fadd0
 	lsls	r5, r5, #2
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	add	r5, r9
 	movs	r3, #1
 	strb	r3, [r5, #0]

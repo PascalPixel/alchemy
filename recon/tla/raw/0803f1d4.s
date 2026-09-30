@@ -282,7 +282,7 @@ Func_0803f1d4:
 	movs	r3, #33
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #128
 	lsls	r2, r2, #2
 	movs	r0, #128
@@ -345,7 +345,7 @@ Func_0803f1d4:
 	bne.n	.L_0803f468
 .L_0803f484:
 	movs	r0, #2
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #210
 	lsls	r1, r1, #2
 	adds	r3, r5, r1
@@ -433,7 +433,7 @@ Func_0803f1d4:
 	movs	r0, #2
 	orrs	r3, r2
 	strh	r3, [r1, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	bl	Func_0803deac
 	ldrh	r3, [r6, #10]

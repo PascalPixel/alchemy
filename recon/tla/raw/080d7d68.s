@@ -293,14 +293,14 @@ Func_080d7d68:
 	mov	sl, r3
 	bl	0x08108058
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #128
 	movs	r2, #0
 	lsls	r1, r1, #7
 	adds	r0, r6, #0
 	bl	0x080d3838
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #173
 	bl	Audio_PlayCue
 	adds	r0, r6, #0
@@ -317,7 +317,7 @@ Func_080d7d68:
 	adds	r0, r6, #0
 	bl	Motion_SetVarCbAndRefresh
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #140
 	bl	Audio_PlayCue
 	ldr	r3, [pc, #300]
@@ -327,7 +327,7 @@ Func_080d7d68:
 	movs	r3, #0
 	strh	r3, [r2, #0]
 	movs	r0, #80
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #284]
 	adds	r0, r5, #0
 	str	r3, [r5, #108]
@@ -371,12 +371,12 @@ Func_080d7d68:
 	str	r0, [r5, #40]
 	subs	r6, #1
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r5, #72
 	cmp	r6, #0
 	bge.n	.L_080d8042
 	movs	r0, #60
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #156]
 	movs	r2, #133
 	lsls	r2, r2, #2
@@ -387,13 +387,13 @@ Func_080d7d68:
 	ldr	r0, [r5, #0]
 	bl	0x080d3838
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [r5, #0]
 	bl	Object_GetById
 	movs	r1, #28
 	bl	Object_SetMode
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, sl
 	movs	r1, #2
 	adds	r2, #144
@@ -410,12 +410,12 @@ Func_080d7d68:
 	cmp	r6, #0
 	bge.n	.L_080d80c4
 	movs	r0, #60
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #100]
 	mov	r2, r8
 	str	r3, [r2, #108]
 	movs	r0, #100
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, sl
 	movs	r1, #5
 	adds	r2, #144
@@ -432,7 +432,7 @@ Func_080d7d68:
 	cmp	r6, #0
 	bge.n	.L_080d80f0
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r5, #0
 	mov	r3, r8
 	str	r5, [r3, #108]
@@ -442,7 +442,7 @@ Func_080d7d68:
 	str	r3, [r2, #24]
 	str	r3, [r2, #28]
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x08108060
 	bl	0x080d7ab4
 .L_080d8126:
@@ -681,7 +681,7 @@ Func_080d7d68:
 	mov	r9, r3
 	bl	0x08108058
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r2, r6, #0
 	movs	r3, #0
 	adds	r2, #91
@@ -699,7 +699,7 @@ Func_080d7d68:
 	adds	r0, r5, #0
 	bl	ObjectMotion_Launch
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #280]
 	movs	r0, #153
 	str	r3, [r6, #108]
@@ -724,20 +724,20 @@ Func_080d7d68:
 	movs	r1, #3
 	bl	Object_SetMode
 	movs	r0, #90
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r1, #128
 	movs	r2, #0
 	lsls	r1, r1, #7
 	ldr	r0, [r7, #0]
 	bl	0x080d3838
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [r7, #0]
 	bl	Object_GetById
 	movs	r1, #28
 	bl	Object_SetMode
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #192]
 	adds	r2, r5, #0
 	adds	r0, r1, #0
@@ -781,12 +781,12 @@ Func_080d7d68:
 	str	r0, [r5, #44]
 	subs	r7, #1
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r5, #72
 	cmp	r7, #0
 	bge.n	.L_080d83dc
 	movs	r0, #140
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r9
 	movs	r1, #2
 	adds	r2, #144
@@ -803,13 +803,13 @@ Func_080d7d68:
 	cmp	r7, #0
 	bge.n	.L_080d8430
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	movs	r1, #1
 	movs	r2, #1
 	bl	Func_08020228
 	movs	r0, #30
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [pc, #8]
 	movs	r7, #0
 	mov	r5, r8
@@ -876,12 +876,12 @@ Func_080d7d68:
 	cmp	r7, #23
 	ble.n	.L_080d8480
 	movs	r0, #100
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #149
 	lsls	r0, r0, #1
 	bl	Audio_PlayCue
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #151
 	bl	Audio_PlayCue
 	mov	r2, sl
@@ -952,7 +952,7 @@ Func_080d7d68:
 	bne.n	.L_080d8528
 .L_080d8594:
 	movs	r0, #15
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x08108060
 	bl	0x080d7ab4
 .L_080d85a2:

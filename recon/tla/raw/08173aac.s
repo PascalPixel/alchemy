@@ -4502,7 +4502,7 @@ Func_08173aac:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #32]
 	movs	r7, #1
 	add	fp, r7

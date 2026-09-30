@@ -133,23 +133,23 @@ Func_0810a2c8:
 	bl	0x0810857c
 	bl	0x08038140
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #100
 	bl	Audio_PlayCue
 	movs	r0, #110
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #100
 	bl	Audio_PlayCue
 	movs	r0, #110
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #100
 	bl	Audio_PlayCue
 	movs	r0, #110
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #112
 	bl	Audio_PlayCue
 	movs	r0, #20
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r8
 	strh	r6, [r2, r5]
 	ldr	r1, [sp, #12]
@@ -293,7 +293,7 @@ Func_0810a2c8:
 	lsls	r0, r0, #2
 	bl	Func_080f8058
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_0810a560:
 	movs	r4, #128
 	lsls	r4, r4, #3
@@ -383,7 +383,7 @@ Func_0810a2c8:
 	bl	Func_08108690
 	adds	r7, r0, #0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0810a508
 .L_0810a630:
 	movs	r4, #128

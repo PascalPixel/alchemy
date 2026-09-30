@@ -1614,7 +1614,7 @@ Func_080fbe6c:
 	.2byte 0x0600
 .L_080fcbc8:
 	strb	r3, [r2, #6]
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	adds	r0, r7, #0
 	add	sp, #16
 	pop	{r3}

@@ -623,7 +623,7 @@ Func_080f9644:
 	ldr	r2, [r3, #0]
 	movs	r3, #13
 	strb	r3, [r2, #5]
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	b.n	.L_080fa280
 	movs	r5, #182
 	lsls	r5, r5, #1
@@ -1244,7 +1244,7 @@ Func_080f9644:
 	mov	r0, fp
 	bl	Func_08013164
 .L_080fa0a6:
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	movs	r2, #0
 	mov	r8, r2
 	b.n	.L_080fa280
@@ -1410,7 +1410,7 @@ Func_080f9644:
 	ldr	r0, [pc, #176]
 	movs	r1, #14
 	bl	Func_080f8ce8
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	b.n	.L_080fa276
 	mov	r3, r9
 	ldr	r2, [r3, #20]

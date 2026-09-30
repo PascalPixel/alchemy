@@ -218,7 +218,7 @@ Func_08100e5c:
 	bl	Func_08013164
 	movs	r0, #220
 	bl	Runtime_ReleaseSlot
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	ldr	r3, [pc, #32]
 	movs	r2, #139
 	lsls	r2, r2, #2

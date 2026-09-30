@@ -105,7 +105,7 @@
 	overlay_veneer Func_080c83b8
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c85c0
-	overlay_veneer Func_080c85d0
+	overlay_veneer Event_ClearInvalidPackedValuesFar
 	overlay_veneer Func_080c85e8
 	overlay_veneer Func_080c85f0
 	overlay_veneer Func_080c85f8

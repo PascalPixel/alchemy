@@ -95,6 +95,9 @@
 	pop	{pc}
 	.2byte 0x208c
 	.2byte 0x0200
+	.global Item_AdjustCounter
+	.thumb_func
+Item_AdjustCounter:
 	push	{lr}
 	movs	r3, #128
 	lsls	r3, r3, #1

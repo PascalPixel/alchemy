@@ -75,6 +75,9 @@ Func_081c0fdc:
 	movs	r0, r0
 	.2byte 0x5800
 	.2byte 0x0200
+	.global Func_081c1000
+	.thumb_func
+Func_081c1000:
 	push	{lr}
 	bl	AudioEngine_SuspendDirectSound
 	pop	{pc}

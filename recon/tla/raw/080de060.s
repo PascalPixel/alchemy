@@ -53,7 +53,7 @@ Func_080de060:
 	cmp	r6, #1
 	bne.n	.L_080de0d6
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080de14a
 	mov	r2, r8
@@ -111,7 +111,7 @@ Func_080de060:
 	cmp	r6, #3
 	bne.n	.L_080de14a
 	adds	r0, r7, #0
-	bl	0x080ebe70
+	bl	Func_080ebe70
 	cmp	r0, #0
 	bne.n	.L_080de14a
 	adds	r0, r7, #0
@@ -258,7 +258,7 @@ Func_080de060:
 	ldr	r3, [r6, #8]
 	adds	r0, r5, #0
 	lsls	r1, r1, #2
-	bl	0x080ebec8
+	bl	Func_080ebec8
 	adds	r0, r5, #0
 	ldr	r1, [pc, #116]
 	bl	Func_080ebeb4

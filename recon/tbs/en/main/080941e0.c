@@ -36,10 +36,6 @@ struct SceneColorWork {
 extern struct SceneColorWork *gEventWork;
 extern s16 gGameState[];
 extern u16 Data_050001e6;
-extern const u8 Value_00007fff;
-extern const u8 Value_00000401;
-extern const u8 Value_00000207;
-extern const u8 Value_fffff800;
 void Audio_PlayCue(s32);
 void DisplayTransition_Finish(s32, s32);
 void WaitFrames(s32);
@@ -55,7 +51,7 @@ void Func_080941e0(void)
     if (work->mode == 3) {
         s32 green, cnt, blue, red;
         *(volatile u16 *)0x050001e6 = 0x7fff;
-        DisplayTransition_Finish((s32)&Value_00000401, 16);
+        DisplayTransition_Finish(0x401, 16);
         work->step = 0;
         WaitFrames(16);
         blue = (u32)30;
@@ -77,7 +73,7 @@ void Func_080941e0(void)
         s32 red, green, blue, cnt;
         tmp2 = (u32)0x7fff;
         *(volatile u16 *)0x05000000 = tmp2;
-        DisplayTransition_Finish((s32)&Value_00000207, 16);
+        DisplayTransition_Finish(0x207, 16);
         work->step = 0;
         WaitFrames(16);
         green = 960;

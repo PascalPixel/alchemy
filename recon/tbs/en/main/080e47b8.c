@@ -4,6 +4,14 @@
  * literal pool at 0x080e54cc, three more stubs and the default arm at
  * 0x080e551a. 0x080e657c and 0x080e65f8 are tail blocks this routine
  * reaches by bl, not separate functions. */
+/* 2026-09-30 (Mars): linked in place of the listing, 72 differing halfwords
+ * (was 1657 with a 4-byte size shortfall). The rising column's blitter is
+ * gWorkSlot pinned to r8 plus an asm-hidden 188 offset, which restores the
+ * size and every later offset. Left: the str r0,[sp,#24] scheduled before
+ * the effect loads (80e500c); the column's add r8,#188 scheduled late
+ * (80e594c); kind 31's low temporaries (r0/r3 for 2/48, r1 for 24); the
+ * orbit loop's r0/r3/r5 temporaries (80e610c). Pinning the orbit origin
+ * and projection to r8/r9 reshuffles the whole function (988). */
 /* 2026-09-29 (Mars, later): setting the kind 31 height before the first
  * load gives 48 r9 and 2 sl as the reference does; 183 lines remain, about
  * 98 of them the reference's jump-table words, so roughly 85 real. Kind 31
@@ -113,10 +121,10 @@ extern u8 PuffArc_CellWidths[];
 extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
-extern u16 BattleFx12_SmokeCells[];
-extern u8 BattleFx12_SmokeWidths[];
-extern u8 BattleFx12_SmokeHeights[];
-extern u8 CastingImpact_SmokeDrawFlags[];
+extern u16 BattleFx_GlintCellOffsets[];
+extern u8 BattleFx_GlintCellWidths[];
+extern u8 BattleFx_GlintCellHeights[];
+extern u8 CastingImpact_GlintDrawFlags[];
 extern u8 CastingImpact_ImageX[];
 extern u8 CastingImpact_ImageY[];
 
@@ -753,16 +761,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 image_x <<= 3;
                 image_x >>= 16;
                 image_x += target_screen->x / 2;
-                image_x -= BattleFx12_SmokeWidths[image] / 2;
+                image_x -= BattleFx_GlintCellWidths[image] / 2;
                 image_y = Trig_Cos(angle);
                 image_y <<= 5;
                 image_y >>= 16;
-                image_y -= BattleFx12_SmokeHeights[image] / 2;
+                image_y -= BattleFx_GlintCellHeights[image] / 2;
                 Runtime_ReleaseHeapBlock(47);
                 Runtime_ReleaseHeapBlock(46);
                 draw_flags = Random16();
-                BattleEffect_LoadWork(47, 7, 7, CastingImpact_SmokeDrawFlags[draw_flags & 3] | 3, 2);
-                ((RectangleBlit *)gWorkSlot)[47](canvas, IMAGE_WORK + BattleFx12_SmokeCells[image], image_x, image_y + 56, BattleFx12_SmokeWidths[image], BattleFx12_SmokeHeights[image]);
+                BattleEffect_LoadWork(47, 7, 7, CastingImpact_GlintDrawFlags[draw_flags & 3] | 3, 2);
+                ((RectangleBlit *)gWorkSlot)[47](canvas, IMAGE_WORK + BattleFx_GlintCellOffsets[image], image_x, image_y + 56, BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
                 Runtime_ReleaseHeapBlock(47);
                 BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
             }
@@ -784,7 +792,14 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             while (scroll > 104)
                 scroll -= 104;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            DrawRisingColumn(canvas, origin_x, rise, scroll, (RectangleBlit *)gWorkSlot + 47);
+            {
+                /* FAKEMATCH: the reference adds the slot offset in a register. */
+                register u8 *draw asm("r8") = gWorkSlot;
+                s32 slot_offset = 47 * 4;
+                asm("" : "+r"(slot_offset)); /* FAKEMATCH: hides the 188 so it is added in a register */
+                draw += slot_offset;
+                DrawRisingColumn(canvas, origin_x, rise, scroll, (RectangleBlit *)draw);
+            }
             Runtime_ReleaseHeapBlock(47);
             if (frame == 8) {
                 work->shake_frames = frame;

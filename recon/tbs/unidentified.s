@@ -1415,7 +1415,19 @@ Data_080eedbe:
 	.incbin "baserom.gba", 0x000eedbe, 0x0000000c
 	.global Data_080eedca
 Data_080eedca:
-	.incbin "baserom.gba", 0x000eedca, 0x0000002a
+	.incbin "baserom.gba", 0x000eedca, 0x00000006
+	.global CastingImpact_GlintDrawFlags
+CastingImpact_GlintDrawFlags:
+	.incbin "baserom.gba", 0x000eedd0, 0x00000004
+	.global CastingImpact_ImageX
+CastingImpact_ImageX:
+	.incbin "baserom.gba", 0x000eedd4, 0x0000000e
+	.global CastingImpact_ImageY
+CastingImpact_ImageY:
+	.incbin "baserom.gba", 0x000eede2, 0x00000008
+	.global CastingImpact_OrbitCells
+CastingImpact_OrbitCells:
+	.incbin "baserom.gba", 0x000eedea, 0x0000000a
 	.global Data_080eedf4
 Data_080eedf4:
 	.incbin "baserom.gba", 0x000eedf4, 0x00000006

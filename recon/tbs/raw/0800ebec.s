@@ -782,7 +782,7 @@ Func_0800ebec:
 	ldr	r2, [r7, #12]
 	ldr	r3, [r7, #16]
 	movs	r0, #25
-	bl	Func_0800c150
+	bl	FieldObject_Create
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_0800f2d8

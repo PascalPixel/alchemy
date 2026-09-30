@@ -1440,7 +1440,7 @@ Func_0811d7e8:
 	movs	r2, #0
 	movs	r3, #100
 	movs	r0, #0
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #0

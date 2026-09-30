@@ -13,4 +13,4 @@ Func_081c0040:
 	overlay_veneer Func_081c1014
 	overlay_veneer Func_081c0fc0
 	overlay_veneer Func_081c0fc8
-	overlay_veneer Func_081c1158
+	overlay_veneer AudioCommand_UpdateToggleMask

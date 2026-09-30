@@ -93,6 +93,8 @@ SECTIONS
         "*/recon/tla/raw/08013f3c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08013f80.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08014220.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/ACTIVATE_ENTRY.o"(.text)
+        "*/recon/tla/raw/080142d4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080143ac.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/INITIALIZE.o"(.text)
         "*/recon/tla/raw/080143f6.o"(.text .rodata .data .padding)

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081c0f84
+	.global MusicCommand_SetVolume
 	.thumb_func
-Func_081c0f84:
+MusicCommand_SetVolume:
 	push	{r5, lr}
 	adds	r2, r0, #0
 	lsls	r2, r2, #16
@@ -53,9 +53,9 @@ Func_081c0fd0:
 	movs	r0, r0
 	.2byte 0x5800
 	.2byte 0x0200
-	.global Func_081c0fdc
+	.global AudioCommand_WaitForCompletion
 	.thumb_func
-Func_081c0fdc:
+AudioCommand_WaitForCompletion:
 	push	{r5, r6, lr}
 	ldr	r6, [pc, #28]
 	movs	r5, #0

@@ -154,9 +154,9 @@ Func_081c0f44:
 	pop	{pc}
 	.2byte 0x6a90
 	.2byte 0x0200
-	.global Func_081c0f58
+	.global MusicCommand_SetPitch
 	.thumb_func
-Func_081c0f58:
+MusicCommand_SetPitch:
 	push	{lr}
 	adds	r2, r0, #0
 	lsls	r2, r2, #16

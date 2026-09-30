@@ -9519,7 +9519,7 @@ msgctxt "message"
 msgid "02377"
 msgstr "{argument_actor_name:1} alza la guardia!"
 
-msgctxt "message"
+msgctxt "MsgNimblyDodgesBlow"
 msgid "02378"
 msgstr "{argument_actor_name:1} schiva il colpo!"
 
@@ -10711,7 +10711,7 @@ msgctxt "message"
 msgid "02675"
 msgstr "Djinn Giove {text_color:10}{argument_ability_name}{text_color:16}{line_break}s'unisce a {argument_actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "02676"
 msgstr "Posizione attuale."
 

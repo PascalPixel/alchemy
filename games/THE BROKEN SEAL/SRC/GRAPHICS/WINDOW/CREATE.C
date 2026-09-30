@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
 /* One of the eight window records at gWindowWork + 0x500. */
 struct UiWindow {
@@ -27,7 +28,7 @@ void UiWork_WaitUntilField1aClear(struct UiWindow *window);
 /* Open a window at a tile position and size in the first free record, with
    the attribute bits that choose its frame and drawing; a window drawn
    through its attributes appears at once, any other one opens over eight
-   frames. Returns the record, or 0 when all eight are in use. */
+   frames. Returns the record, or 0 when every record is in use. */
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 {
     struct UiWindow *slot;
@@ -40,7 +41,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
     while ((slot->flags & 1) != 0 || slot->timer != 0) {
         i++;
         slot++;
-        if (i == 8) {
+        if (i == WINDOW_COUNT) {
             goto done;
         }
     }

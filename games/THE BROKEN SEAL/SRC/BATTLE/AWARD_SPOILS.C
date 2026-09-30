@@ -4,9 +4,6 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_TYPES.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /* Counts one defeated enemy toward the battle spoils: its coins and
    experience (randomly raised in proportion to the enemy's level when the
    party earned them), the formation slot it came from, and a chance at its
@@ -142,7 +139,6 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     }
     return 0;
 }
-#endif
 
 /* Hands out the battle spoils: experience to every living party member,
    with the level-up, newly learned Psynergy and stat-gain messages each

@@ -151,7 +151,7 @@ msgctxt "message"
 msgid "00035"
 msgstr "Rückzug"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00036"
 msgstr "Ja"
 

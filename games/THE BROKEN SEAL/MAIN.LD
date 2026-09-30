@@ -568,7 +568,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECT_RESOURCE_LAYOUT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CONFIRM_SELECTION.o"(.text)
-        "*/recon/tbs/raw/08028e54.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/MENU/SELECT_ENTRY_20_TO_21.o"(.text)
         "*/recon/tbs/raw/08028eda.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/SCHEDULE_CALLBACK_C_AFTER_FRAMES.o"(.text)

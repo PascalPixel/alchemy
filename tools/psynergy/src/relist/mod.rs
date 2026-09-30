@@ -238,7 +238,7 @@ pub fn plan(image: Image, regions: &[Region], names: &[Name]) -> Result<Plan, St
     let mut firm: BTreeSet<u32> = runs
         .iter()
         .filter(|(area, _)| area.parts.first().is_some_and(|part| part.1))
-        .map(|(area, _)| area.start)
+        .map(|(area, _)| area.opening(image))
         .collect();
     let mut weak = BTreeSet::new();
     for name in names
@@ -246,7 +246,10 @@ pub fn plan(image: Image, regions: &[Region], names: &[Name]) -> Result<Plan, St
         .filter(|name| name.thumb && in_listing(name.address))
     {
         if placeholder(&name.name) {
-            weak.insert(name.address);
+            // An earlier listing's cut off a word boundary is no function.
+            if name.address % 4 == 0 {
+                weak.insert(name.address);
+            }
         } else {
             firm.insert(name.address);
         }
@@ -342,9 +345,17 @@ pub fn plan(image: Image, regions: &[Region], names: &[Name]) -> Result<Plan, St
                     changed = true;
                 }
             }
-            // Flow runs into an entry only inside one function.
-            if let Some(entry) = function.falls_into {
-                if !firm.contains(&entry) && entries.starts.remove(&entry) {
+            // Flow runs into an entry, and a function's own extent holds
+            // one, only inside one function.
+            let held: Vec<u32> = entries
+                .starts
+                .range(function.start + 1..function.end)
+                .copied()
+                .chain(function.falls_into)
+                .filter(|entry| !firm.contains(entry))
+                .collect();
+            for entry in held {
+                if entries.starts.remove(&entry) {
                     refused.insert(entry);
                     changed = true;
                 }
@@ -657,8 +668,12 @@ impl render::Refer for Resolver<'_, '_> {
     fn branch(&self, site: u32, target: u32) -> String {
         self.code(site, target)
     }
+    /// A PC-relative load names its word only in a piece that starts on a
+    /// word boundary: the assembler computes the offset from the section's
+    /// start, which it takes to be word-aligned.
     fn pool(&self, word: u32) -> Option<String> {
-        self.same_piece(word).then(|| {
+        let aligned = self.world.pieces[self.piece].0 % 4 == 0;
+        (aligned && self.same_piece(word)).then(|| {
             self.locals.borrow_mut().insert(word);
             local(word)
         })
@@ -729,6 +744,27 @@ pub fn relist(input: &Input) -> Result<Output, String> {
             }
         }
     }
+    // Listing bytes no flow reaches, read as words where they are aligned.
+    let mut unreached: BTreeMap<u32, u32> = BTreeMap::new();
+    for planned in &plan.areas {
+        for segment in &planned.segments {
+            if let Segment::Data {
+                start,
+                end,
+                listing: true,
+            } = segment
+            {
+                unreached.insert(*start, *end);
+            }
+        }
+    }
+    let data_word = |at: u32| {
+        at % 4 == 0
+            && unreached
+                .range(..=at)
+                .next_back()
+                .is_some_and(|(_, &end)| at + 4 <= end)
+    };
     let mut rows = BTreeSet::new();
     for piece in &pieces {
         let mut cursor = piece.start;
@@ -737,7 +773,9 @@ pub fn relist(input: &Input) -> Result<Output, String> {
             let size = match instructions.get(&cursor) {
                 Some(ins) => ins.size,
                 None if cursor % 4 == 0
-                    && (pools.contains(&cursor) || tables.contains_key(&cursor)) =>
+                    && (pools.contains(&cursor)
+                        || tables.contains_key(&cursor)
+                        || data_word(cursor)) =>
                 {
                     4
                 }
@@ -888,8 +926,10 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                 } else if next == cursor + 4 && tables.contains_key(&cursor) {
                     let case = tables[&cursor];
                     format!(".4byte {}", resolver.code(cursor, case))
-                } else if next == cursor + 4 {
+                } else if next == cursor + 4 && pools.contains(&cursor) {
                     format!(".4byte {}", resolver.word(cursor, image.word(cursor)))
+                } else if next == cursor + 4 {
+                    format!(".4byte 0x{:08x}", image.word(cursor))
                 } else {
                     let mut rows = Vec::new();
                     let mut at = cursor;
@@ -986,7 +1026,13 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                 format!("{prefix}.{from:08x}")
             };
             let mut slice = layout.slice(from, to, name);
-            for (&at, names) in registry.defined.range(from..to) {
+            // Reserved RAM extended to a name ends at that name.
+            let last = if !is_incbin && to > region.end {
+                to + 1
+            } else {
+                to
+            };
+            for (&at, names) in registry.defined.range(from..last) {
                 let present = slice.labels.entry(at).or_default();
                 for (name, _) in names {
                     if !present.contains(name) {

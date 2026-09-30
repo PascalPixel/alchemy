@@ -433,7 +433,7 @@ Func_080fe274:
 	mov	r3, sl
 	adds	r3, #20
 	ldr	r0, [r5, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r6, #0

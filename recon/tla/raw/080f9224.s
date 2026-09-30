@@ -154,7 +154,7 @@ Func_080f9224:
 	strh	r7, [r5, #8]
 	adds	r0, r5, #0
 	str	r2, [sp, #0]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	adds	r6, #1
 	movs	r3, #1
 	strb	r3, [r5, #5]

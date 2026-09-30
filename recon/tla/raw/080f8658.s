@@ -260,6 +260,9 @@ Func_080f8658:
 	movs	r0, r0
 	.2byte 0x01fa
 	.2byte 0x0000
+	.global UiIcon_PrepareObject
+	.thumb_func
+UiIcon_PrepareObject:
 	push	{lr}
 	cmp	r0, #0
 	beq.n	.L_080f88be

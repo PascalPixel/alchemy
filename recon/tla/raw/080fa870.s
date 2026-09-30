@@ -358,7 +358,7 @@ Func_080fa870:
 	ldr	r5, [r6, #24]
 	movs	r7, #13
 	adds	r0, r5, #0
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	strb	r7, [r5, #5]
 	bl	Func_080fac58
 	movs	r0, #1

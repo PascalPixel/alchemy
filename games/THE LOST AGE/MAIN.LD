@@ -897,6 +897,8 @@ SECTIONS
         "*/recon/tla/raw/080fe894.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ff1f4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ff850.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/MENU/PLACE_ENTRY_OBJECT_IN_GRID.o"(.text)
+        "*/recon/tla/raw/08100660.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08100700.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08100738.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08100d40.o"(.text .rodata .data .padding)

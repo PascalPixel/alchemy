@@ -357,7 +357,7 @@ Func_080fbe6c:
 	ldr	r2, [r5, #0]
 	strh	r3, [r2, #8]
 	ldr	r0, [r5, #0]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	movs	r2, #128
 	lsls	r2, r2, #2
 	adds	r2, #22
@@ -1085,7 +1085,7 @@ Func_080fbe6c:
 	lsls	r3, r1, #2
 	adds	r3, #76
 	ldr	r0, [r7, r3]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 .L_080fc774:
 	ldr	r3, [sp, #28]
 	cmp	r3, #0
@@ -1450,7 +1450,7 @@ Func_080fbe6c:
 	movs	r3, #120
 	bl	0x08038068
 	ldr	r0, [r7, #72]
-	bl	0x080f8888
+	bl	UiIcon_PrepareObject
 	ldr	r4, [sp, #8]
 	movs	r1, #180
 	lsls	r1, r1, #1

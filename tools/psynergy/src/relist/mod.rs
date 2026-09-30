@@ -553,6 +553,8 @@ struct World<'a> {
     /// Piece index by first address.
     piece_at: BTreeMap<u32, usize>,
     pieces: Vec<(u32, u32)>,
+    /// Which pieces hold only data words.
+    words: Vec<bool>,
     /// Function starts in pieces.
     starts: BTreeSet<u32>,
     /// Row starts of pieces: addresses a listing label can sit at.
@@ -750,9 +752,17 @@ impl Resolver<'_, '_> {
         if world.in_scaffold(value) || world.extendable(value).is_some() {
             return self.registry.borrow_mut().name(value, Some(false));
         }
+        // A listing of data words packs coordinates, ids and fixed-point
+        // numbers into words that fall in ROM or RAM as often as pointers
+        // do, even on another image's names (0x02000000 is 512.0 as often as
+        // the first byte of EWRAM): there a word names only its own image's
+        // places, the only ones its pointers are seen to reach.
+        let data = world.words[self.piece];
+        let own = |name: &&&Name| !(data && name.absolute);
         if let Some(names) = world.by_address.get(&value) {
             if let Some(name) = names
                 .iter()
+                .filter(own)
                 .find(|name| !name.thumb && world.usable(name, value))
             {
                 return name.name.clone();
@@ -762,10 +772,18 @@ impl Resolver<'_, '_> {
             if let Some(name) = world.by_address.get(&code).and_then(|names| {
                 names
                     .iter()
+                    .filter(own)
                     .find(|name| name.thumb && world.usable(name, code))
             }) {
                 return name.name.clone();
             }
+        }
+        if data {
+            self.notes.borrow_mut().push(format!(
+                "{at:08x}: data word {value:08x} in {} stays a number",
+                world.place(value)
+            ));
+            return format!("0x{value:08x}");
         }
         if let Some(name) = world.nearest(value, value) {
             return name;
@@ -1033,6 +1051,7 @@ pub fn relist(input: &Input) -> Result<Output, String> {
             .iter()
             .map(|piece| (piece.start, piece.end))
             .collect(),
+        words: pieces.iter().map(|piece| piece.words).collect(),
         starts,
         rows,
         labelable,
@@ -1512,8 +1531,9 @@ mod tests {
         bytes.extend(halves(&[0x2001, 0x4770])); // 0x08: reached only from the table
         bytes.extend(0x0200_8009u32.to_le_bytes()); // 0x0c: the table
         bytes.extend(0x0200_800bu32.to_le_bytes()); // a place inside that function
-        bytes.extend(0x0800_0001u32.to_le_bytes()); // the main image's Thumb function
+        bytes.extend(0x0800_0001u32.to_le_bytes()); // the main image's function, by chance
         bytes.extend(0x0800_0004u32.to_le_bytes()); // inside it: no name reaches
+        bytes.extend(0x0200_0010u32.to_le_bytes()); // packed data, in RAM by chance
         bytes.extend(0x1234_5678u32.to_le_bytes());
         let object = "resource_x_overlay";
         let input = Input {
@@ -1531,7 +1551,7 @@ mod tests {
                 ),
                 region(
                     base + 0x0c,
-                    base + 0x20,
+                    base + 0x24,
                     RegionKind::Words,
                     object,
                     ".rodata",
@@ -1588,13 +1608,17 @@ mod tests {
         let table = &output.pieces[&(base + 0x0c)];
         assert!(
             table.contains(
-                "\t.4byte Func_02000008\n\t.4byte Data_0200000a + 0x1\n\t.4byte Main_Function\n\t.4byte 0x08000004\n\t.4byte 0x12345678\n"
+                "\t.4byte Func_02000008\n\t.4byte Data_0200000a + 0x1\n\t.4byte 0x08000001\n\t.4byte 0x08000004\n\t.4byte 0x02000010\n\t.4byte 0x12345678\n"
             ),
             "{table}"
         );
         assert_eq!(
             output.notes,
-            vec!["02008018: word 08000004 in nothing placed names no place".to_string()]
+            vec![
+                "02008014: data word 08000001 in nothing placed stays a number".to_string(),
+                "02008018: data word 08000004 in nothing placed stays a number".to_string(),
+                "0200801c: data word 02000010 in nothing placed stays a number".to_string(),
+            ]
         );
         let listing = |section: &str| Entry::Listing {
             object: object.into(),

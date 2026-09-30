@@ -139,7 +139,7 @@ Func_08041204:
 	adds	r5, #2
 	cmp	r3, #8
 	ble.n	.L_080412dc
-	bl	0x08044460
+	bl	Func_08044460
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23

@@ -224,7 +224,7 @@ Func_08040ed4:
 	adds	r7, #8
 	cmp	r3, #8
 	bne.n	.L_0804109e
-	bl	0x08044460
+	bl	Func_08044460
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23

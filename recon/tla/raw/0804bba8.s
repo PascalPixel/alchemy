@@ -91,7 +91,7 @@ Func_0804bc08:
 	str	r6, [sp, #92]
 	bl	0x080455dc
 	ldr	r0, [pc, #168]
-	bl	0x080453d0
+	bl	Func_080453d0
 	ldr	r0, [pc, #164]
 	bl	0x08045330
 	bl	0x080451bc

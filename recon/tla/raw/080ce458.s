@@ -850,6 +850,9 @@ Func_080ce458:
 	pop	{r5, r6, pc}
 	.2byte 0x0dc3
 	.2byte 0x0000
+	.global Func_080ceb58
+	.thumb_func
+Func_080ceb58:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	lsls	r5, r5, #16

@@ -404,7 +404,7 @@ Func_080de060:
 	bl	0x08020278
 	mov	r1, fp
 	ldr	r0, [r5, #80]
-	bl	0x080dc0d8
+	bl	Func_080dc0d8
 	mov	fp, r0
 .L_080de3b8:
 	movs	r3, #1
@@ -1217,7 +1217,7 @@ Func_080de060:
 	strb	r3, [r2, #0]
 	mov	r1, r8
 	ldr	r0, [r5, #80]
-	bl	0x080dc0d8
+	bl	Func_080dc0d8
 	mov	r8, r0
 .L_080dea5e:
 	movs	r0, #1

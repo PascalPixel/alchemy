@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_080af43c
+	.thumb_func
+Func_080af43c:
 	push	{lr}
 	movs	r3, #252
 	lsls	r3, r3, #6

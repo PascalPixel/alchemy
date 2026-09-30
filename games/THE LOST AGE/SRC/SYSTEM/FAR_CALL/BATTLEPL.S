@@ -15,8 +15,8 @@ Func_08118088:
 	overlay_veneer Func_0811bd50
 	overlay_veneer Func_0811c2b4
 	overlay_veneer Func_0811c314
-	overlay_veneer Func_0811a188
-	overlay_veneer Func_0811a038
+	overlay_veneer BattleParty_ListLivingUnits
+	overlay_veneer BattleParty_PrepareActiveOwners
 	overlay_veneer Camera_ConfigureScene
 	overlay_veneer GetMotionRecord
 	overlay_veneer BattlePres_SetActorModes

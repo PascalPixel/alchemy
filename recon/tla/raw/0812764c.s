@@ -21,7 +21,7 @@ Func_0812764c:
 	mov r10, r0
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	adds r7, r0, #0
 	cmp r7, #0
 	ble .L_08127692

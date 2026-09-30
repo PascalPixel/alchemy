@@ -2200,7 +2200,7 @@ SECTIONS
         "*/recon/tla/raw/0811a038.o"(.text)
         "*/recon/tla/raw/0811a0b0.o"(.text)
         "*/recon/tla/raw/0811a12c.o"(.text)
-        "*/recon/tla/raw/0811a188.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PARTY/LIST_LIVING_UNITS.o"(.text)
         "*/recon/tla/raw/0811a24c.o"(.text)
         "*/recon/tla/raw/0811a31c.o"(.text)
         "*/recon/tla/raw/0811a39c.o"(.text)

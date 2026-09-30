@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811a038
+	.global BattleParty_PrepareActiveOwners
 	.thumb_func
-Func_0811a038:
+BattleParty_PrepareActiveOwners:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

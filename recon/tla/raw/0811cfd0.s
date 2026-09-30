@@ -30,7 +30,7 @@ Func_0811cfd0:
 	movs r0, #2
 	adds r1, r2, #0
 	str r2, [sp, #4]
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	movs r3, #31
 	mov r10, r0
 	ldr r6, [sp, #4]

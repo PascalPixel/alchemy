@@ -47,7 +47,7 @@ Func_0811de78:
 	add r7, sp, #4
 	movs r0, #1
 	adds r1, r7, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	movs r3, #1
 	subs r6, r0, #1
 	negs r3, r3

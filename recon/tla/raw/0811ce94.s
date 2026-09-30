@@ -43,7 +43,7 @@ Func_0811ce94:
 	mov r10, r3
 	mov r1, r10
 	mov r9, r2
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	ldr r2, [sp, #4]
 	mov r8, r0
 	cmp r2, r8
@@ -72,7 +72,7 @@ Func_0811ce94:
 	mov r1, r10
 	add r9, r0
 	movs r0, #2
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	movs r6, #0
 	mov r8, r0
 	cmp r6, r8

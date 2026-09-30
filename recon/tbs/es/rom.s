@@ -310,8 +310,8 @@ UiWork_StepChannelScript:
 	.thumb_func
 UiText_RenderWideStringAtOffset:
 	.incbin "baserom.gba", 0x00016a5c, 0x00000190
-	.section .rom.00016e3c, "ax"
-	.incbin "baserom.gba", 0x00016e3c, 0x000001a4
+	.section .rom.00016fde, "ax"
+	.incbin "baserom.gba", 0x00016fde, 0x00000002
 	.section .rom.00016fe0, "ax"
 	.global UiText_BuildRenderEntries
 	.type UiText_BuildRenderEntries, %function
@@ -505,7 +505,13 @@ RenderResource_PairSourceTable:
 UiText_SecondGlyphs:
 	.incbin "baserom.gba", 0x000310b4, 0x00000400
 	.section .rom.000330b4, "ax"
-	.incbin "baserom.gba", 0x000330b4, 0x0000010c
+	.incbin "baserom.gba", 0x000330b4, 0x0000001c
+	.global Data_08033e40
+Data_08033e40:
+	.incbin "baserom.gba", 0x000330d0, 0x00000030
+	.global UiText_IndefiniteArticles
+UiText_IndefiniteArticles:
+	.incbin "baserom.gba", 0x00033100, 0x000000c0
 	.global Menu_CursorLeftObjectTiles
 Menu_CursorLeftObjectTiles:
 	.incbin "baserom.gba", 0x000331c0, 0x00000400

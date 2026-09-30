@@ -296,7 +296,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_GLYPH_TILE_AT_WORK_OFFSET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_WIDE_STRING_IN_WINDOW.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_NUMBER.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00016af4)
+    "*/recon/tbs/de/rom.o"(.rom.00016c56)
     "*/recon/tbs/de/rom.o"(.rom.00016c58)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/FIT_ON_SCREEN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RESOURCE_MEASURE.o"(.text)

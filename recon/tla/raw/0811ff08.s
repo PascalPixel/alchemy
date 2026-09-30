@@ -165,6 +165,9 @@ BattlePresentation_WaitForAdvance:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Func_08120060
+	.thumb_func
+Func_08120060:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

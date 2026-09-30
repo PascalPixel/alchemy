@@ -66,7 +66,7 @@ Func_0811e830:
 	cmp	r6, #16
 	bne.n	.L_0811e874
 	ldr	r0, [sp, #8]
-	bl	0x0811b724
+	bl	Func_0811b724
 	ldr	r3, [sp, #4]
 	ldrb	r0, [r3, #0]
 	bl	0x0811be3c

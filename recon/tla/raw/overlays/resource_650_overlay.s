@@ -2270,74 +2270,7 @@ Func_0200153c:
 	bl 0x0200b2f0
 	pop	{pc}
 	.2byte 0x0000
-	.global Func_02001650
-	.thumb_func
-Func_02001650:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #32]
-	movs r2, #132
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #128
-	lsls r2, r2, #7
-	str r2, [r3, #24]
-	movs r2, #128
-	lsls r2, r2, #6
-	sub sp, #8
-	str r2, [r3, #28]
-	movs r3, #1
-	str r3, [sp, #0]
-	str r3, [sp, #4]
-	movs r2, #75
-	movs r3, #8
-	movs r0, #72
-	movs r1, #10
-	bl 0x0200b188
-	movs r0, #9
-	movs r1, #2
-	bl 0x0200b240
-	sub sp, #-8
-	pop {pc}
-	.2byte 0x0000
-	.global Func_0200168c
-	.thumb_func
-Func_0200168c:
-	push {r5, r6, r7, lr}
-	adds r4, r0, #0
-	adds r6, r2, #0
-	adds r5, r1, #0
-	lsls r3, r3, #16
-	movs r0, #244
-	asrs r7, r3, #16
-	lsls r0, r0, #1
-	adds r3, r6, #0
-	adds r1, r4, #0
-	adds r2, r5, #0
-	bl 0x0200b178
-	adds r6, r0, #0
-	cmp r6, #0
-	beq .L_0200168c_0
-	movs r0, #151
-	ldr r5, [r6, #80]
-	bl 0x0200b328
-	adds r0, r6, #0
-	movs r1, #1
-	bl 0x0200b168
-	ldr r1, [pc, #20]
-	adds r0, r6, #0
-	bl 0x0200b170
-	adds r2, r6, #0
-	movs r3, #0
-	adds r2, #85
-	strb r3, [r2]
-	strb r3, [r5, #26]
-	strh r7, [r5, #18]
-.L_0200168c_0:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-	.4byte 0x0200b97c
+	.section .text.x020096d8,"ax",%progbits
 	push	{r5, r6, lr}
 	mov	r6, fp
 	mov	r5, sl
@@ -5445,6 +5378,8 @@ gIdejimaEventsWake:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gIdejimaSpawnScript
+gIdejimaSpawnScript:
 	.4byte 0x00000000
 	.4byte 0x0000002e
 	.4byte 0x00000026

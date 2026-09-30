@@ -8,6 +8,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/IDEJIMA/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/IDEJIMA/SCENE_TABLES.o"(.text)
         "*/resource_650_overlay.o"(.text.x02008098)
+        "*/games/THE LOST AGE/SRC/FIELD/IDEJIMA/DRIFT.o"(.text)
+        "*/resource_650_overlay.o"(.text.x020096d8)
         "*/games/THE LOST AGE/SRC/FIELD/IDEJIMA/WAKE.o"(.text)
         "*/resource_650_overlay.o"(.text.x0200ac64)
         "*/games/THE LOST AGE/SRC/FIELD/IDEJIMA/PREPARE.o"(.text)

@@ -247,6 +247,30 @@ extern u8 MsgCableTransferHelp;
 #define PASSWORD_HELP_X 16
 #endif
 
+#if defined(TBS_EDITION_FR)
+void RenderOutput_ClearList(void *);
+
+/* The French help clears its list in each branch and draws the cable help
+   only when it follows the password help. */
+void Menu_DrawModeIndicator(void)
+{
+    struct MenuModeLabelState *state = gMenuSelectWork;
+
+    if (state->previous_mode != state->mode) {
+        if (state->mode == 0) {
+            RenderOutput_ClearList(state->window);
+            UiText_DrawResource((s32)&MsgPasswordTransferHelp, (s32)state->window, 16, 4);
+            UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1, (s32)state->window, 16, 16);
+        } else if (state->previous_mode == 0) {
+            RenderOutput_ClearList(state->window);
+            UiText_DrawResource((s32)&MsgCableTransferHelp, (s32)state->window, 0, 4);
+            UiText_DrawResource((s32)&MsgCableTransferHelp + 1, (s32)state->window, 0, 16);
+            UiText_DrawResource((s32)&MsgCableTransferHelp + 2, (s32)state->window, 0, 28);
+        }
+        state->previous_mode = state->mode;
+    }
+}
+#else
 void Menu_DrawModeIndicator(void)
 {
     u8 *state = (u8 *)gMenuSelectWork;
@@ -289,3 +313,4 @@ void Menu_DrawModeIndicator(void)
         }
     }
 }
+#endif

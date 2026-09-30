@@ -6,6 +6,9 @@
 struct OwnerInventoryState {
     u8 unknown_000[0xd8];
     u16 inventory[15];
+    u8 unknown_0f6[0x54];
+    /* ⚓️ keeps the class as a halfword at 0x14a; ☀️ as a byte at 0x128. */
+    u16 class_id;
 };
 
 struct OwnerLearnedState {

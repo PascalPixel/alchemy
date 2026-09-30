@@ -6,26 +6,14 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/GET_ENTRANCES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENE_EXITS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/GET_TABLES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SMALL_GEM.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/ACTOR_FLAGS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/PUSH_BLOCK.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENE_INIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/ENTRY_STATE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENE_ENTRY_HOOK.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SANCTUM.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/HIDDEN_PASSAGE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/FORMATION.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/IRIGUCHI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/IMPORT.o"(.text)
         "*/resource_37f_overlay.o"(.rodata.part1)
     }
     /* The overlay's own work, past its loaded image. */
     .bss (NOLOAD) :
     {
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/ENTRY_STATE.o"(.bss)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/IRIGUCHI.o"(.bss)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

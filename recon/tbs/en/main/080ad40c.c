@@ -1,3 +1,7 @@
+/* 2026-09-30 (Venus): gMenuWork is named; a tagged memory barrier after
+ * the flag store fixes that slot (6 lines left). Left: the reference loads
+ * positions_y twice (for the request and again for the limit); a second
+ * plain, volatile or asm-hidden read reshuffles the frame (77 to 138). */
 /* Draft main:080ad40c, complete extent 252 bytes through 080ad508.
  * Bindings: gMenuWork=03001f2c; Link_DrawShiftedTilePairFar=08015418;
  * Math_Div=080022ec; Object_ApplyProjectedPlacementFar=08009008 (s32).
@@ -56,6 +60,7 @@ void FourObjectMotion_UpdateBottomRow(void)
             u32 zero;
 
             ((struct MenuMotionFlags *)(obj + 9))->flags &= -13;
+            asm volatile("" ::: "memory"); /* FAKEMATCH: stores the flags before the phase load */
             phase = work->phases[i];
             if (phase < 0) {
                 motion[0] = -phase;

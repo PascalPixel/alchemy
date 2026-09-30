@@ -295,19 +295,7 @@ UiWork_Initialize:
 	.type UiWindow_ClearInteriorTiles, %function
 	.thumb_func
 UiWindow_ClearInteriorTiles:
-	.incbin "baserom.gba", 0x00016484, 0x000000b0
-	.section .rom.00016534, "ax"
-	.global RenderOutput_AppendToList
-	.type RenderOutput_AppendToList, %function
-	.thumb_func
-RenderOutput_AppendToList:
-	.incbin "baserom.gba", 0x00016534, 0x00000010
-	.section .rom.00016544, "ax"
-	.global RenderOutput_Release
-	.type RenderOutput_Release, %function
-	.thumb_func
-RenderOutput_Release:
-	.incbin "baserom.gba", 0x00016544, 0x00000040
+	.incbin "baserom.gba", 0x00016484, 0x00000098
 	.section .rom.0001678a, "ax"
 	.incbin "baserom.gba", 0x0001678a, 0x0000008a
 	.section .rom.000168a0, "ax"
@@ -434,8 +422,6 @@ UiText_RenderStringTiles:
 	.thumb_func
 UiWindow_DrawPartyStatusContents:
 	.incbin "baserom.gba", 0x0001f1f8, 0x000003d4
-	.section .rom.00020098, "ax"
-	.incbin "baserom.gba", 0x00020098, 0x000000ac
 	.section .rom.00020144, "ax"
 	.global SaveMenu_SelectSlot
 	.type SaveMenu_SelectSlot, %function
@@ -609,7 +595,10 @@ SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x00036f6c, 0x00000028
 	.global SideObject_ActorKindIdMap
 SideObject_ActorKindIdMap:
-	.incbin "baserom.gba", 0x00036f94, 0x00000972
+	.incbin "baserom.gba", 0x00036f94, 0x00000954
+	.global StatusMenu_LevelLetterString
+StatusMenu_LevelLetterString:
+	.incbin "baserom.gba", 0x000378e8, 0x0000001e
 	.global Data_080371fe
 Data_080371fe:
 	.incbin "baserom.gba", 0x00037906, 0x00000008
@@ -1090,8 +1079,6 @@ ItemMenu_RunOwnerSelection:
 	.incbin "baserom.gba", 0x0009a4d0, 0x000002d0
 	.section .rom.0009b008, "ax"
 	.incbin "baserom.gba", 0x0009b008, 0x00000330
-	.section .rom.0009b600, "ax"
-	.incbin "baserom.gba", 0x0009b600, 0x00000068
 	.section .rom.0009b6b4, "ax"
 	.incbin "baserom.gba", 0x0009b6b4, 0x0000010c
 	.section .rom.0009b7c0, "ax"
@@ -1116,12 +1103,6 @@ Menu_ResolveSelectedAction:
 	.thumb_func
 Func_080a6614:
 	.incbin "baserom.gba", 0x0009d4ec, 0x000001ec
-	.section .rom.0009d9dc, "ax"
-	.global PsynergyMenu_DrawDetailPage
-	.type PsynergyMenu_DrawDetailPage, %function
-	.thumb_func
-PsynergyMenu_DrawDetailPage:
-	.incbin "baserom.gba", 0x0009d9dc, 0x000000cc
 	.section .rom.0009e3bc, "ax"
 	.global ActionMenu_Open
 	.type ActionMenu_Open, %function

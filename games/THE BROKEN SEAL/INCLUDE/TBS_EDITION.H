@@ -27,6 +27,7 @@
 #define RENDER_LEVEL_OFS      0xF37
 #define RENDER_COUNTER_OFS    0x1146
 #define RENDER_WORK_SIZE      0x118C
+#define RENDER_PALETTE_TBL_OFS 0x1160
 #define SELECT_MENU_WIDTH    5
 #define TYPE_MENU_WIDTH      4
 #define MENU_TEXT_X          100
@@ -56,6 +57,7 @@
 #define RENDER_LEVEL_OFS      0xEA7
 #define RENDER_COUNTER_OFS    0x12B6
 #define RENDER_WORK_SIZE      0x12FC
+#define RENDER_PALETTE_TBL_OFS 0x12D0
 #define SELECT_MENU_WIDTH    7
 #define TYPE_MENU_WIDTH      7
 #define MENU_TEXT_X          74

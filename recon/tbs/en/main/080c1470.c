@@ -3,7 +3,8 @@
  * (11 register-only, 2 stack-only, 16 operand, 8 reordered, 7 inserted, 13
  * deleted): the spoke loop rotated into a tested do/while that clears the
  * state before stepping the angle, and a few operand orders. Resource
- * numbers 0xc8..0xcb are still Value_ symbols. */
+ * numbers 0xc8..0xcb are the directory rows YellowPaletteB, BlueRingSheet,
+ * RedPaletteC and VioletPaletteD (2026-09-30). */
 /* Whole owner [080c1470, 080c16d0), 608 bytes including its pool.
    2026-09-26 H2: give the first loop its own angle/distance/speed locals.
    Candidate 596/608, 205 differing halfwords, 97 aligned edits. The complete
@@ -77,10 +78,10 @@ typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
 extern u8 gWorkSlot[];
 extern s32 *gTransitionWork;
-extern u8 Value_000000c8[];
-extern u8 Value_000000c9[];
-extern u8 Value_000000ca[];
-extern u8 Value_000000cb[];
+extern u8 ResourceId_YellowPaletteB[];
+extern u8 ResourceId_BlueRingSheet[];
+extern u8 ResourceId_RedPaletteC[];
+extern u8 ResourceId_VioletPaletteD[];
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
@@ -143,21 +144,21 @@ void BattleFx_InitializeStarField(s32 mode)
     work->unknown_13c0 = 0;
     work->unknown_13cc = 0;
     ((FillWordsFn)0x03000164)(*(void **)(gWorkSlot + 40 * 4), 0x4000);
-    data = Resource_GetTableEntry((s32)Value_000000c9);
+    data = Resource_GetTableEntry((s32)ResourceId_BlueRingSheet);
     ((WordCopyFn)0x03001388)((void *)0x05000000, data, 128);
     Resource_DecodeType01(data + 128, work);
     switch (mode) {
     case 0:
-        palette = (s32)Value_000000c8;
+        palette = (s32)ResourceId_YellowPaletteB;
         break;
     case 1:
-        palette = (s32)Value_000000c9;
+        palette = (s32)ResourceId_BlueRingSheet;
         break;
     case 2:
-        palette = (s32)Value_000000ca;
+        palette = (s32)ResourceId_RedPaletteC;
         break;
     default:
-        palette = (s32)Value_000000cb;
+        palette = (s32)ResourceId_VioletPaletteD;
         break;
     }
     data = Resource_GetTableEntry(palette);

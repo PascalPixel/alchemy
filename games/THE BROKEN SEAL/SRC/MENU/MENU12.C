@@ -67,7 +67,7 @@ struct CharacterSelectorWork {
     u8 choice;
 };
 
-s32 Func_080a77a4(s32 mode);
+s32 CharacterMenu_SelectOwner(s32 slot);
 
 #if defined(TBS_EDITION_JA)
 #define ROW_CNT 4
@@ -121,7 +121,7 @@ s32 CharacterSelector_Run(void)
     do {
         work->cursor = result;
     } while (0);
-    if (Func_080a77a4(0) == -1)
+    if (CharacterMenu_SelectOwner(0) == -1)
         result = -1;
     else
         result = work->choice;

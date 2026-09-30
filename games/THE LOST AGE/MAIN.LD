@@ -470,6 +470,8 @@ SECTIONS
         "*/recon/tla/raw/0804577e.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08045780.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08045794.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/SHOW_MESSAGE_AND_WAIT_COMPLETE.o"(.text)
+        "*/recon/tla/raw/080457ce.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080457d0.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
         "*/recon/tla/raw/08046412.o"(.text .rodata .data .padding)

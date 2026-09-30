@@ -166,98 +166,6 @@ Func_0200227c:
 	.4byte 0x01d70000
 	.2byte 0xcbd0
 	.2byte 0x0200
-	.section .text.x0200c25e,"ax",%progbits
-	.2byte 0x0000
-	.global Scene_PresentItem
-	.thumb_func
-Scene_PresentItem:
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r9
-	mov	r5, r8
-	push	{r5, r6, r7}
-	mov	sl, r0
-	movs	r0, #0
-	mov	r8, r0
-	movs	r0, #22
-	bl 0x0200c8c4
-	adds	r6, r0, #0
-	movs	r0, #224
-	bl 0x0200c95c
-	movs	r1, #224
-	adds	r7, r0, #0
-	bl 0x0200c954
-	mov	r9, r0
-	adds	r0, r7, #0
-	cmp	r6, #0
-	beq.n	.L_02004316
-	ldr	r1, [pc, #148]
-	adds	r0, r6, #0
-	bl 0x0200c8bc
-	ldr	r5, [r6, #80]
-	adds	r3, r5, #0
-	mov	r2, r8
-	adds	r3, #38
-	strb	r2, [r3, #0]
-	adds	r3, #1
-	strb	r2, [r3, #0]
-	movs	r3, #33
-	ldrb	r2, [r5, #5]
-	negs	r3, r3
-	ands	r3, r2
-	ldrb	r2, [r5, #9]
-	strb	r3, [r5, #5]
-	movs	r3, #15
-	ands	r3, r2
-	strb	r3, [r5, #9]
-	movs	r3, #160
-	lsls	r3, r3, #10
-	str	r3, [r6, #40]
-	movs	r3, #128
-	lsls	r3, r3, #7
-	movs	r1, #193
-	str	r3, [r6, #72]
-	lsls	r1, r1, #3
-	movs	r0, #17
-	bl 0x0200c894
-	mov	r8, r0
-	mov	r0, sl
-	bl 0x0200c934
-	movs	r2, #128
-	lsls	r2, r2, #3
-	add	r2, r8
-	movs	r1, #128
-	ldrb	r0, [r5, #28]
-	bl 0x0200c8ac
-	movs	r0, #17
-	bl 0x0200c8a4
-	movs	r0, #83
-	bl 0x0200cb14
-	adds	r0, r6, #0
-	movs	r1, #3
-	bl 0x0200cafc
-	mov	r1, r9
-	adds	r0, r7, #0
-	bl 0x0200c984
-	mov	r1, sl
-	adds	r0, r7, #0
-	bl 0x0200c944
-	adds	r0, r6, #0
-	bl 0x0200c8cc
-	movs	r0, #0
-	movs	r1, #1
-	bl 0x0200ca0c
-	adds	r0, r7, #0
-.L_02004316:
-	pop	{r3, r5, r6}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	pop	{r5, r6, r7}
-	pop	{r1}
-	bx	r1
-	.2byte 0xcbe4
-	.2byte 0x0200
 	.section .text.x0200c49c,"ax",%progbits
 	.global Soru_UpdateRing
 	.thumb_func
@@ -701,6 +609,8 @@ SoruStar_AngleScript:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global SoruStar_PresentItemScript
+SoruStar_PresentItemScript:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00008000

@@ -21,7 +21,7 @@ Func_080d9ad0:
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r7, #0
-	bl	0x080d9104
+	bl	Func_080d9104
 	b.n	.L_080d9b06
 .L_080d9afc:
 	adds	r0, r5, #0
@@ -30,6 +30,9 @@ Func_080d9ad0:
 	bl	Func_080d8d68
 .L_080d9b06:
 	pop	{r5, r6, r7, pc}
+	.global Func_080d9b08
+	.thumb_func
+Func_080d9b08:
 	push	{r5, r6, lr}
 	movs	r1, #128
 	lsls	r1, r1, #5
@@ -480,6 +483,9 @@ Func_080d9ad0:
 	movs	r0, #0
 .L_080d9e96:
 	pop	{pc}
+	.global Func_080d9e98
+	.thumb_func
+Func_080d9e98:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

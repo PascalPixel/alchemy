@@ -5,7 +5,7 @@
 Func_080c9e1c:
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	0x080ed804
+	bl	Func_080ed804
 	ldrb	r3, [r0, #0]
 	cmp	r3, #0
 	beq.n	.L_080c9e42

@@ -139,7 +139,7 @@ Func_080ec1d0:
 	str	r2, [sp, #12]
 	str	r0, [sp, #20]
 	bl	0x080cdf5c
-	bl	.L_080ed804
+	bl	Func_080ed804
 	mov	fp, r0
 	movs	r0, #128
 	lsls	r0, r0, #19
@@ -436,7 +436,7 @@ Func_080ec1d0:
 	str	r3, [sp, #36]
 	str	r4, [sp, #32]
 	str	r4, [sp, #28]
-	bl	.L_080ed804
+	bl	Func_080ed804
 	ldr	r5, [pc, #640]
 	str	r0, [sp, #8]
 	movs	r0, #198
@@ -2601,7 +2601,7 @@ Func_080ec1d0:
 	bne.n	.L_080ed5f2
 	b.n	.L_080ed498
 .L_080ed5f2:
-	bl	.L_080ed804
+	bl	Func_080ed804
 	mov	r4, fp
 	movs	r3, #18
 	ldrsh	r2, [r4, r3]
@@ -2845,6 +2845,9 @@ Func_080ec1d0:
 	.4byte 0x03001150
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ed804
+	.thumb_func
+Func_080ed804:
 .L_080ed804:
 	ldr	r0, [pc, #0]
 	bx	lr

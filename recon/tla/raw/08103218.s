@@ -1073,7 +1073,7 @@ Func_08103218:
 	movs	r3, #30
 	movs	r1, #0
 	movs	r2, #0
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	mov	r3, sp
 	movs	r7, #1
 	adds	r3, #124
@@ -1383,7 +1383,7 @@ Func_08103218:
 	movs	r3, #15
 	str	r6, [sp, #0]
 	str	r5, [sp, #4]
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	mov	r2, sl
 	adds	r2, #56
 	str	r2, [sp, #40]
@@ -1393,9 +1393,9 @@ Func_08103218:
 	movs	r2, #5
 	str	r6, [sp, #0]
 	str	r5, [sp, #4]
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	ldr	r0, [sp, #84]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r3, [sp, #104]
 	cmp	r3, #2
 	bne.n	.L_08103d8c
@@ -2295,7 +2295,7 @@ Func_08103218:
 	movs	r2, #0
 	movs	r3, #17
 	movs	r1, #13
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	movs	r1, #1
 	ldr	r0, [sp, #44]
 	bl	0x080f815c
@@ -2304,13 +2304,13 @@ Func_08103218:
 	bl	0x080f815c
 	mov	r3, sl
 	ldr	r0, [r3, #52]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r1, sl
 	ldr	r0, [r1, #44]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r2, sl
 	ldr	r0, [r2, #16]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r3, [r5, #60]
 	movs	r6, #0
 	strb	r6, [r3, #6]
@@ -2446,7 +2446,7 @@ Func_08103218:
 	str	r5, [sp, #4]
 	str	r0, [sp, #52]
 	str	r6, [sp, #0]
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	mov	r1, sl
 	adds	r1, #56
 	str	r1, [sp, #48]
@@ -2456,15 +2456,15 @@ Func_08103218:
 	movs	r1, #15
 	str	r5, [sp, #4]
 	str	r6, [sp, #0]
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	mov	r2, sl
 	adds	r2, #240
 	str	r2, [sp, #44]
 	ldr	r0, [r2, #0]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r3, sl
 	ldr	r0, [r3, #16]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r5, [pc, #680]
 	mov	r0, sl
 	ldr	r1, [r0, #16]
@@ -2762,7 +2762,7 @@ Func_08103218:
 	movs	r3, #17
 	movs	r2, #0
 	movs	r1, #13
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	movs	r1, #1
 	ldr	r0, [sp, #52]
 	bl	0x080f815c
@@ -2771,13 +2771,13 @@ Func_08103218:
 	bl	0x080f815c
 	mov	r1, sl
 	ldr	r0, [r1, #52]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r2, sl
 	ldr	r0, [r2, #44]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r3, sl
 	ldr	r0, [r3, #16]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r3, [r5, #60]
 	movs	r6, #0
 	strb	r6, [r3, #6]

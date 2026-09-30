@@ -85,7 +85,7 @@ Func_08101a54:
 	strb	r3, [r2, #6]
 	mov	fp, r0
 	ldr	r0, [sp, #20]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	bl	0x080ad0f0
 	adds	r5, r0, #0
 	movs	r0, #1

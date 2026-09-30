@@ -851,7 +851,7 @@ SECTIONS
         "*/recon/tla/raw/080f8090.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
         "*/recon/tla/raw/080f80c4.o"(.text .rodata .data .padding)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
         "*/recon/tla/raw/080f8170.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
         "*/recon/tla/raw/080f8656.o"(.text .rodata .data .padding)
@@ -859,6 +859,9 @@ SECTIONS
         "*/recon/tla/raw/080f8a44.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8ab4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8bcc.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/MENU/ABILITY/OWNER_ENTRIES.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/ITEM/POSITION_OWNER_ENTRY.o"(.text)
+        "*/recon/tla/raw/080f8c94.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8ce8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8f40.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/MENU/DRAW_DRAW_PAGE_INDICATOR.o"(.text)
@@ -4348,5 +4351,10 @@ SECTIONS
     /* The sound mixer runs in IWRAM; its ROM copy is called in place for its return trampoline. */
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
+    /* The compiler calls its division helpers by their ABI names; here they are
+       the veneers into the resident IWRAM divider, as in ☀️. */
+    __divsi3 = Math_Div;
+    __udivsi3 = Math_DivU;
+    __modsi3 = Math_Mod;
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -38,7 +38,7 @@ Func_080fa870:
 	mov	r0, r8
 	bl	0x080f93a4
 	ldr	r0, [r6, #36]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r3, #28
 	ldrsb	r3, [r6, r3]
 	movs	r1, #129
@@ -261,7 +261,7 @@ Func_080fa870:
 	cmp	r3, #0
 	bne.n	.L_080faaaa
 	ldr	r0, [r6, #48]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r1, #182
 	lsls	r1, r1, #1
 	adds	r3, r6, r1

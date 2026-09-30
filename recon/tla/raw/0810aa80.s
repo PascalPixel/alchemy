@@ -48,7 +48,7 @@ Func_0810aa80:
 	movs	r2, #5
 	movs	r3, #5
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	mov	r8, r0
 	cmp	r0, #0
 	bne.n	.L_0810ab0e
@@ -57,7 +57,7 @@ Func_0810aa80:
 	movs	r3, #5
 	movs	r0, #0
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #4
 	negs	r3, r3
 	mov	r8, r0
@@ -103,7 +103,7 @@ Func_0810aa80:
 	movs	r2, #12
 	movs	r3, #4
 	movs	r0, #16
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	str	r0, [r7, #12]
 	bl	Func_08109188
 	movs	r1, #129
@@ -202,7 +202,7 @@ Func_0810aa80:
 	movs	r3, #3
 	movs	r0, #1
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	mov	fp, r0
 	movs	r0, #128
 	lsls	r0, r0, #3
@@ -226,7 +226,7 @@ Func_0810aa80:
 	movs	r2, #23
 	movs	r3, #3
 	str	r5, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	mov	r8, r6
 	str	r0, [sp, #8]
 	str	r6, [sp, #12]

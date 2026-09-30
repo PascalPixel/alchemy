@@ -193,7 +193,7 @@ Func_080fa458:
 	movs	r1, #13
 	movs	r2, #3
 	movs	r3, #17
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	cmp	r0, #0
 	beq.n	.L_080fa604
 	ldr	r1, [r5, #0]
@@ -211,7 +211,7 @@ Func_080fa458:
 	movs	r1, #13
 	movs	r2, #13
 	movs	r3, #17
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	cmp	r0, #0
 	beq.n	.L_080fa640
 	ldr	r1, [sp, #12]
@@ -493,7 +493,7 @@ Func_080fa458:
 	adds	r6, r0, #0
 	bl	Func_08100700
 	ldr	r0, [r5, #36]
-	bl	0x08038260
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r0, [r5, #36]
 	adds	r1, r6, #0
 	movs	r2, #0

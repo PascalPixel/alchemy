@@ -325,7 +325,7 @@
 	movs	r1, #0
 	movs	r3, #3
 	movs	r0, #18
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	movs	r3, #128
 	ldr	r2, [sp, #108]
 	ldr	r5, [pc, #732]
@@ -351,7 +351,7 @@
 	movs	r3, #4
 	movs	r0, #22
 	str	r4, [sp, #0]
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	ldr	r7, [sp, #108]
 	movs	r0, #128
@@ -627,7 +627,7 @@
 	adds	r2, #13
 	movs	r1, #16
 	movs	r3, #3
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	ldr	r6, [sp, #108]
 	movs	r7, #153
 	lsls	r7, r7, #3
@@ -758,7 +758,7 @@
 	movs	r2, #8
 	movs	r3, #4
 	movs	r0, #22
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	ldr	r7, [sp, #108]
 	movs	r0, #128

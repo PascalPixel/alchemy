@@ -6,9 +6,9 @@
 	bl	0x080af43c
 	ldrb	r0, [r0, #0]
 	pop	{pc}
-	.global Func_080af348
+	.global ItemCounter_Adjust
 	.thumb_func
-Func_080af348:
+ItemCounter_Adjust:
 .L_080af348:
 	push	{lr}
 	movs	r3, #150
@@ -53,7 +53,7 @@ Item_AdjustCounter:
 	cmp	r0, #0
 	beq.n	.L_080af396
 	subs	r0, #1
-	bl	Func_080af348
+	bl	ItemCounter_Adjust
 	adds	r4, r0, #0
 .L_080af396:
 	adds	r0, r4, #0

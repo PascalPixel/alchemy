@@ -1,8 +1,8 @@
-#include "FAR_RUNTIME.H"
 #include "TYPES.H"
-#include "UI.H"
 
 s32 UiWork_FinalizeFar(void *handle);
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 RenderOutput_RedrawSavedRectFar();
 
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags)
 {

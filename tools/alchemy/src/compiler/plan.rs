@@ -355,7 +355,7 @@ mod tests {
     fn shared_tla_audio_file_routes_through_old_agbcc() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tla,
-            "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C",
+            "games/COMMON/SRC/SOUND/SOUND2.C",
             "candidate.c",
             "candidate.s",
         );

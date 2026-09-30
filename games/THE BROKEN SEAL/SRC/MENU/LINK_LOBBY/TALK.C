@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgLobbyTryingGetAway[];
 extern u8 MsgLobbyCantWaitLets[];
 extern u8 MsgLobbyGoingFightAlone[];
@@ -23,13 +24,6 @@ s32 Engine_EventEnd(void);
 
 extern union GameStateRows gGameState;
 
-/* FAKEMATCH: flag tests through an inline wrapper keep each constant
-   flag number its own load instead of one shared register. */
-static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
-{
-    return f(a0);
-}
-
 /* A lobby actor's line, one per actor from each base: with flag 0x304 set, by flag 0x305 and the actor's own flag 0x2f0 + actor; otherwise by what LinkLobby_PartyContains reports for actor 0 and for this actor. */
 s32 LinkLobby_TalkByProgress(s32 actor)
 {
@@ -39,11 +33,11 @@ s32 LinkLobby_TalkByProgress(s32 actor)
 
     Engine_EventBegin();
     Engine_ActorFaceActor(actor, gGameState.words[125], 0);
-    if (Value1(Engine_GameFlagIsSet, 0x304)) {
+    if (Engine_GameFlagIsSet(0x304)) {
 
         Value1(Engine_GameFlagIsSet, 0x2f0);
         base = Engine_GameFlagIsSet(actor + 0x2f0);
-        if (Value1(Engine_GameFlagIsSet, 0x305)) {
+        if (Engine_GameFlagIsSet(0x305)) {
             if (base)
                 base = (s32)MsgLobbyWonToldCountOn;
             else

@@ -1055,6 +1055,10 @@ Ability_GetMaximum:
 	.type Inventory_CountFar, %function
 	.thumb_func
 Inventory_CountFar:
+	.global Ability_GetAvailability
+	.type Ability_GetAvailability, %function
+	.thumb_func
+Ability_GetAvailability:
 	.incbin "baserom.gba", 0x0007c248, 0x00000010
 	.section .rom.0007c258, "ax"
 	.global Owner_GetLevelThresholdFar
@@ -1085,7 +1089,13 @@ Party_AdjustSixDigitCounterBFar:
 	.type Func_080772a0, %function
 	.thumb_func
 Func_080772a0:
-	.incbin "baserom.gba", 0x0007c2a0, 0x00000010
+	.incbin "baserom.gba", 0x0007c2a0, 0x00000008
+	.section .rom.0007c2a8, "ax"
+	.global Inventory_CheckDiscardFar
+	.type Inventory_CheckDiscardFar, %function
+	.thumb_func
+Inventory_CheckDiscardFar:
+	.incbin "baserom.gba", 0x0007c2a8, 0x00000008
 	.section .rom.0007c2b0, "ax"
 	.global Func_080772b0
 	.type Func_080772b0, %function
@@ -1755,12 +1765,6 @@ ShopCursor_SetPositionImmediate:
 	.thumb_func
 Shop_SelBuy:
 	.incbin "baserom.gba", 0x000b4aac, 0x000004f8
-	.section .rom.000b510c, "ax"
-	.global Shop_DrawItemPrice
-	.type Shop_DrawItemPrice, %function
-	.thumb_func
-Shop_DrawItemPrice:
-	.incbin "baserom.gba", 0x000b510c, 0x00000098
 	.section .rom.000b5260, "ax"
 	.incbin "baserom.gba", 0x000b5260, 0x00000210
 	.section .rom.000b5614, "ax"
@@ -1775,12 +1779,7 @@ Shop_SelectQuantity:
 	.thumb_func
 Sanctum_RunPartyService:
 	.incbin "baserom.gba", 0x000b6b10, 0x00000298
-	.section .rom.000b7444, "ax"
-	.global Shop_PickUnitItem
-	.type Shop_PickUnitItem, %function
-	.thumb_func
-Shop_PickUnitItem:
-	.incbin "baserom.gba", 0x000b7444, 0x000004fc
+	.section .rom.000b7940, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:
 	.incbin "baserom.gba", 0x000b7940, 0x00000080

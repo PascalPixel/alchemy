@@ -65,20 +65,30 @@
 
 #define MENU_TEXT_Y 60
 
-/* The shops' item list window, and where the character-change help starts:
-   each edition sizes them to its words. */
+/* The shops' item list window, where the character-change and switch help
+   start, the rows a menu page holds and the rows of character positions: each
+   edition sizes them to its words. */
 #if defined(TBS_EDITION_JA)
 #define SHOP_LIST_X      16
 #define SHOP_LIST_WIDTH  14
 #define HELP_TEXT_X      16
+#define SWITCH_HELP_X    64
+#define PAGE_ROWS        6
+#define MENU_ROW_COUNT   4
 #elif defined(TBS_EDITION_DE)
 #define SHOP_LIST_X      14
 #define SHOP_LIST_WIDTH  16
 #define HELP_TEXT_X      0
+#define SWITCH_HELP_X    80
+#define PAGE_ROWS        5
+#define MENU_ROW_COUNT   8
 #else
 #define SHOP_LIST_X      15
 #define SHOP_LIST_WIDTH  15
 #define HELP_TEXT_X      0
+#define SWITCH_HELP_X    80
+#define PAGE_ROWS        5
+#define MENU_ROW_COUNT   8
 #endif
 
 #if defined(TBS_EDITION_JA)

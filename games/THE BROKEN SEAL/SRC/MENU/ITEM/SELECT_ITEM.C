@@ -4,6 +4,7 @@
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
@@ -147,11 +148,7 @@ s32 ItemMenu_SelectItem(void)
             UiMenu_PositionCursor(96, state.row * 16 + 52);
             WaitFrames(1);
 
-#if defined(TBS_EDITION_JA)
-            nav = Menu_HandlePageInput(0, state.entry_count, 6, &state.row, &state.page);
-#else
-            nav = Menu_HandlePageInput(0, state.entry_count, 5, &state.row, &state.page);
-#endif
+            nav = Menu_HandlePageInput(0, state.entry_count, PAGE_ROWS, &state.row, &state.page);
             if (nav == 1) {
                 first = 1;
                 redraw = 1;

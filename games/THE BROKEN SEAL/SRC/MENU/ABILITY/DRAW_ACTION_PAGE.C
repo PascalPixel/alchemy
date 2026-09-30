@@ -1,5 +1,6 @@
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
+#include "TBS_EDITION.H"
 
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -34,7 +35,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     if (2 & *(u16 *)((u8 *)menu + 0x220)) {
         UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutHelp, window, 0, 88);
     } else {
-        UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, 0, 88);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, HELP_TEXT_X, 88);
     }
 
     first_entry = state->page * 5;
@@ -43,9 +44,17 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
         visible_count = 5;
     }
 
+#if defined(TBS_EDITION_JA)
+    Menu_SetPageIcons(5, first_entry, window, 0x78, 0x22);
+#else
     Menu_SetPageIcons(5, first_entry, window, 0x70, 0x22);
+#endif
     Menu_DrawPageIndicator(window, state->entry_count, 5, state->page, 15);
+#if defined(TBS_EDITION_JA)
+    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x48, 0);
+#else
     UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x60, 0);
+#endif
 
     row = 0;
     if (visible_count > row) {
@@ -64,7 +73,11 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
             UiText_DrawCharacterAtOffsetFar(
                 (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&MsgAbilityName,
+#if defined(TBS_EDITION_JA)
+                window, 32, row * 16 + 8);
+#else
                 window, 16, row * 16 + 8);
+#endif
             UiText_DrawNumberAtOffsetFar(ability->pp_cost, 2, window, 104, row * 16 + 8);
             UiWork_SetParamNibbleFar(15);
 

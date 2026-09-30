@@ -514,6 +514,8 @@ SECTIONS
         "*/recon/tla/raw/080ad318.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad338.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad348.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/COPY_BYTES_DIRECTIONAL.o"(.text)
+        "*/recon/tla/raw/080ad3f6.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad3f8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ae0f0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ae410.o"(.text .rodata .data .padding)

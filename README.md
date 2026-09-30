@@ -7,6 +7,21 @@ the world. This project hopes to do something similar for the games
 themselves: to bring **The Broken Seal** ☀️ and **The Lost Age** ⚓️ back to a
 form that fans can read, change and build on.
 
+## Progress
+
+**☀️ 78.44% · ⚓️ 6.54% (C 1.63 + assembly 1.40 + stubs 3.50)**
+
+<img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
+
+<img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
+
+The chart preserves past measurements: The Broken Seal in gold, The Lost Age
+in blue. Progress is the share of each game's code that is built from readable
+source, measured only when the rebuilt game is identical to the original; a game
+stays pending until it is. The drop on 28 September is a stricter count, not
+lost work: stored answers and generated bookkeeping were removed, and code now
+counts only once the game is linked from its source.
+
 ## Why Alchemy?
 
 When Camelot made Golden Sun, they wrote it as human-readable instructions
@@ -31,21 +46,6 @@ doesn't include the games themselves; you'll need your own copies. For now,
 the best way to help is to share the project and cheer it on. It will open to
 outside contributions once both games are complete, and developers can find
 the technical details in [AGENTS.md](AGENTS.md).
-
-## Progress
-
-**☀️ 78.44% · ⚓️ 6.54% (C 1.63 + assembly 1.40 + stubs 3.50)**
-
-<img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
-
-<img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
-
-The chart preserves past measurements: The Broken Seal in gold, The Lost Age
-in blue. Progress is the share of each game's code that is built from readable
-source, measured only when the rebuilt game is identical to the original; a game
-stays pending until it is. The drop on 28 September is a stricter count, not
-lost work: stored answers and generated bookkeeping were removed, and code now
-counts only once the game is linked from its source.
 
 ## Acknowledgements
 

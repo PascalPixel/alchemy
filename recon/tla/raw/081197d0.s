@@ -317,7 +317,7 @@ Func_081197f0:
 	movs	r2, #0
 	movs	r3, #190
 	movs	r0, #0
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 	movs	r0, #1
 	bl	Func_08118d6c
 	ldr	r5, [pc, #48]
@@ -1603,7 +1603,7 @@ BattleActor_CommitPlacement:
 	bl	.L_0811a31c
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	Func_0811b9d4
+	bl	BattleActor_SpawnObjectsForList
 	add	sp, #28
 	pop	{r5, pc}
 	.2byte 0x0000

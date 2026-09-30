@@ -3886,38 +3886,3 @@ Func_08049a30:
 	.4byte 0x00000c9a
 	.2byte 0x1150
 	.2byte 0x0300
-	push	{r5, lr}
-	ldrb	r3, [r0, #1]
-	movs	r2, #15
-	ands	r2, r3
-	movs	r5, #0
-	cmp	r2, #1
-	bne.n	.L_0804b88c
-	movs	r5, #1
-.L_0804b88c:
-	cmp	r2, #11
-	bne.n	.L_0804b892
-	movs	r5, #2
-.L_0804b892:
-	ldrb	r3, [r0, #3]
-	cmp	r3, #3
-	bne.n	.L_0804b89a
-	movs	r5, #3
-.L_0804b89a:
-	cmp	r3, #4
-	bne.n	.L_0804b8a0
-	movs	r5, #4
-.L_0804b8a0:
-	cmp	r3, #64
-	bne.n	.L_0804b8a6
-	movs	r5, #6
-.L_0804b8a6:
-	ldrb	r0, [r0, #3]
-	bl	0x080ad280
-	cmp	r0, #0
-	beq.n	.L_0804b8b2
-	movs	r5, #5
-.L_0804b8b2:
-	adds	r0, r5, #0
-	pop	{r5, pc}
-	.2byte 0x0000

@@ -1019,7 +1019,7 @@ Func_080ec1d0:
 	mov	r5, sl
 	subs	r1, r4, r5
 	subs	r0, r2, r3
-	bl	Func_080148e8
+	bl	ArcTan2
 	adds	r1, r0, #0
 	ldr	r0, [pc, #60]
 	add	r5, sp, #72

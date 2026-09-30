@@ -718,7 +718,7 @@ Func_080ebc30:
 .L_080ebdc6:
 	mov	r0, r8
 	mov	r1, sl
-	bl	Func_080148e8
+	bl	ArcTan2
 	adds	r3, r7, #0
 	adds	r3, #66
 	ldrb	r3, [r3, #0]

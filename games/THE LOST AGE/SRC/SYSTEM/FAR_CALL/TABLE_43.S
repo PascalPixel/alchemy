@@ -8,6 +8,6 @@
 	.global Func_08118010
 	.thumb_func
 Func_08118010:
-	overlay_veneer Func_0811b9d4
+	overlay_veneer BattleActor_SpawnObjectsForList
 	overlay_veneer Func_08126944
 	overlay_veneer Func_08126978

@@ -247,7 +247,7 @@ Func_0811d7e8:
 	ldrh	r0, [r6, #0]
 	subs	r5, #1
 	adds	r6, #2
-	bl	Func_0811be68
+	bl	Actor_ResetMotionAtAnchor
 	cmp	r5, #0
 	bne.n	.L_0811d9ba
 .L_0811d9c8:
@@ -1202,7 +1202,7 @@ Func_0811d7e8:
 	strh	r3, [r1, r2]
 	ldr	r0, [sp, #4]
 	movs	r1, #0
-	bl	Func_0811b9d4
+	bl	BattleActor_SpawnObjectsForList
 	mov	r2, sl
 	movs	r3, #1
 	ldrsb	r3, [r2, r3]
@@ -1440,7 +1440,7 @@ Func_0811d7e8:
 	movs	r2, #0
 	movs	r3, #100
 	movs	r0, #0
-	bl	Func_08126804
+	bl	BattlePres_SetupTransitionScene
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #0

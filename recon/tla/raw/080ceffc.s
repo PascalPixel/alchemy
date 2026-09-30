@@ -88,7 +88,7 @@ Func_080cf050:
 	adds	r1, r6, #0
 	ldr	r3, [r4, #16]
 	str	r3, [r5, #16]
-	bl	Func_080148e8
+	bl	ArcTan2
 	adds	r1, r0, #0
 	lsls	r1, r1, #16
 	movs	r0, #160

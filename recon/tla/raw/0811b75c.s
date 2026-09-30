@@ -329,9 +329,9 @@ Func_0811b75c:
 	.4byte 0x03000258
 	.2byte 0x021c
 	.2byte 0x0300
-	.global Func_0811b9d4
+	.global BattleActor_SpawnObjectsForList
 	.thumb_func
-Func_0811b9d4:
+BattleActor_SpawnObjectsForList:
 	push	{lr}
 	movs	r2, #1
 	bl	.L_0811b75c

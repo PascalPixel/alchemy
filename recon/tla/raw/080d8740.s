@@ -393,7 +393,7 @@ Func_080d897c:
 	mov	r2, r8
 	subs	r3, r2, r6
 	adds	r1, r1, r3
-	bl	Func_080148e8
+	bl	ArcTan2
 	movs	r3, #128
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16

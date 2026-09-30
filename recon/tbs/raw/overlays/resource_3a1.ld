@@ -9,9 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/OBJECT_SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/FLAGGED_OBJECT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/QUESTION.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/SCENE_SETUP.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/HEYA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/IMPORT.o"(.text)
         "*/resource_3a1_overlay.o"(.rodata)
     }

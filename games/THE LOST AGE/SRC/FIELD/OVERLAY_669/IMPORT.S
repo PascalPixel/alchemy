@@ -12,28 +12,28 @@
 	overlay_veneer Object_SetMode
 	overlay_veneer Object_SetCallback
 	overlay_veneer Func_080200c0
-	overlay_veneer Func_080200e8
+	overlay_veneer Object_SetPositionAndResetMotionFar
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
 	overlay_veneer Func_080c8070
 	overlay_veneer Func_080c8078
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80a0
-	overlay_veneer Func_080c80a8
-	overlay_veneer Func_080c80c0
-	overlay_veneer Func_080c80c8
-	overlay_veneer Func_080c80d0
-	overlay_veneer Func_080c80d8
-	overlay_veneer Func_080c80f0
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer Object_RefreshSelectorByIdFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8128
-	overlay_veneer Func_080c8138
-	overlay_veneer Func_080c8140
-	overlay_veneer Func_080c8148
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8188
 	overlay_veneer Func_080c8198
@@ -51,11 +51,11 @@
 	overlay_veneer Func_080c83b8
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c85e8
-	overlay_veneer Func_080c85f0
-	overlay_veneer Func_080c85f8
+	overlay_veneer ObjectMotion_OffsetPositionAndResetFar
+	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
 	overlay_veneer Func_080c87a8
 	overlay_veneer Func_080c87f8
-	overlay_veneer Func_080c8800
+	overlay_veneer Field_BeginPaletteTransitionFar
 	overlay_veneer Func_080c8808
 	overlay_veneer Func_080c8810
 	overlay_veneer Func_080c8818

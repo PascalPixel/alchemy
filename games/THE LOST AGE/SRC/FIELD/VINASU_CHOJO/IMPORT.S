@@ -7,7 +7,7 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramSignedDivide
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000f8
 	overlay_veneer Func_080003c8
 	.global Engine_GameFlagSet
@@ -30,7 +30,7 @@ Engine_MapCopyCellAttributes:
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_08020210
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_08020220
+	overlay_veneer Animation_SetStateFlagsFar
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:
@@ -39,7 +39,7 @@ Engine_MessageShowCentered:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
@@ -51,23 +51,23 @@ Engine_EventEnd:
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80a0
-	overlay_veneer Func_080c80a8
-	overlay_veneer Func_080c80c0
-	overlay_veneer Func_080c80d0
-	overlay_veneer Func_080c80d8
-	overlay_veneer Func_080c80f0
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer Object_RefreshSelectorByIdFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8128
-	overlay_veneer Func_080c8140
-	overlay_veneer Func_080c8148
-	overlay_veneer Func_080c8160
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
+	overlay_veneer Object_LinkPairFar
 	overlay_veneer Func_080c8170
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0
@@ -90,8 +90,8 @@ Engine_ActorSetAnimation:
 	.thumb_func
 Engine_EventPrepareSpeakers:
 	overlay_veneer Func_080c84e0
-	overlay_veneer Func_080c85f8
-	overlay_veneer Func_080c8600
+	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	overlay_veneer Object_LinkObjectAndSetCallbackFar
 	overlay_veneer Func_080c8690
 	.global Engine_PartyGetLeaderActor
 	.thumb_func

@@ -7,33 +7,33 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramSignedRemainder
-	overlay_veneer Func_080000c0
-	overlay_veneer Func_080003c0
+	overlay_veneer WaitFramesFar
+	overlay_veneer Owner_GetStateFar
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
-	overlay_veneer Func_08038078
-	overlay_veneer Func_08038080
-	overlay_veneer Func_08038090
-	overlay_veneer Func_08038098
+	overlay_veneer UiText_DrawResourceFar
+	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	overlay_veneer UiText_DrawStringAtOffsetFar
+	overlay_veneer UiText_DrawStringInWindowFar
 	overlay_veneer UiText_DrawNumberAtOffsetFar
-	overlay_veneer Func_080380b0
+	overlay_veneer UiText_DrawNumberInWindowFar
 	overlay_veneer Func_08038120
 	overlay_veneer RenderOutput_RedrawSavedRectFar
-	overlay_veneer Func_08038268
+	overlay_veneer RenderOutput_ClearListFar
 	overlay_veneer Func_08038318
 	overlay_veneer Func_08038320
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Item_Get
-	overlay_veneer Func_080ad028
-	overlay_veneer Func_080ad100
-	overlay_veneer Func_080ad198
-	overlay_veneer Func_080ad1f8
+	overlay_veneer PartyInventory_AddFar
+	overlay_veneer Party_ListActiveOwnersFar
+	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+	overlay_veneer PartyInventory_HasSpaceFar
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8088
+	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8130
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer ObjectMotion_WaitForAnimationChangeFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c81a0
 	overlay_veneer Func_080c8278

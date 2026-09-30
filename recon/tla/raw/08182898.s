@@ -8631,7 +8631,7 @@ Func_08182898:
 	movs	r3, #0
 	strb	r3, [r0, #26]
 	movs	r1, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldr	r0, [sp, #88]
 	adds	r3, r7, #0
 	ldr	r1, [r5, r0]
@@ -8671,7 +8671,7 @@ Func_08182898:
 	movs	r3, #0
 	strb	r3, [r0, #26]
 	movs	r1, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldr	r1, [r5, r7]
 	movs	r2, #4
 	ldrb	r3, [r1, #9]
@@ -9262,7 +9262,7 @@ Func_08182898:
 	movs	r1, #3
 	ands	r1, r0
 	adds	r0, r6, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldr	r1, [sp, #88]
 	movs	r3, #0
 	ldr	r0, [r1, r5]

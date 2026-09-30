@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080000c0
+	.global WaitFramesFar
 	.thumb_func
-Func_080000c0:
+WaitFramesFar:
 	overlay_veneer WaitFrames
 	overlay_veneer Func_080144c0
 	.global Func_080000d0
@@ -37,13 +37,13 @@ Func_08000100:
 	overlay_veneer Func_080148e8
 	overlay_veneer Func_080149b4
 	overlay_veneer Func_080149e0
-	.global Func_08000118
+	.global Math_SineFar
 	.thumb_func
-Func_08000118:
+Math_SineFar:
 	overlay_veneer Math_Sine
-	.global Func_08000120
+	.global Math_CosineFar
 	.thumb_func
-Func_08000120:
+Math_CosineFar:
 	overlay_veneer Math_Cosine
 	.global Func_08000128
 	.thumb_func
@@ -58,27 +58,27 @@ Func_08000130:
 	.thumb_func
 Func_08000140:
 	overlay_veneer Func_08014cc0
-	.global Func_08000148
+	.global Runtime_AllocateBlockFar
 	.thumb_func
-Func_08000148:
+Runtime_AllocateBlockFar:
 	overlay_veneer Runtime_AllocateBlock
-	.global Func_08000150
+	.global Runtime_ReleaseHeapBlockFar
 	.thumb_func
-Func_08000150:
+Runtime_ReleaseHeapBlockFar:
 	overlay_veneer Runtime_ReleaseHeapBlock
 	overlay_veneer Func_08014ca0
 	overlay_veneer Func_08014cb0
-	.global Func_08000168
+	.global Runtime_BumpAllocateFar
 	.thumb_func
-Func_08000168:
+Runtime_BumpAllocateFar:
 	overlay_veneer Runtime_BumpAllocate
 	.global Func_08000170
 	.thumb_func
 Func_08000170:
 	overlay_veneer Func_08014dac
-	.global Func_08000178
+	.global Sys_FreeFar
 	.thumb_func
-Func_08000178:
+Sys_FreeFar:
 	overlay_veneer Sys_Free
 	overlay_veneer Func_08014ae0
 	overlay_veneer Func_08014b30
@@ -101,13 +101,13 @@ Func_080001b8:
 	.thumb_func
 Func_080001c0:
 	overlay_veneer Func_080142ac
-	.global Func_080001c8
+	.global VramBlock_LoadCachedFar
 	.thumb_func
-Func_080001c8:
+VramBlock_LoadCachedFar:
 	overlay_veneer VramBlock_LoadCached
-	.global Func_080001d0
+	.global Resource_FindFreeEntryFar
 	.thumb_func
-Func_080001d0:
+Resource_FindFreeEntryFar:
 	overlay_veneer Resource_FindFreeEntry
 	.global Func_080001d8
 	.thumb_func
@@ -147,9 +147,9 @@ Func_08000268:
 	overlay_veneer Camera_StoreSceneParameters
 	overlay_veneer Func_080132d0
 	overlay_veneer Runtime_ConstantZeroResult
-	.global Func_08000290
+	.global Resource_GetTableEntryFar
 	.thumb_func
-Func_08000290:
+Resource_GetTableEntryFar:
 	overlay_veneer Resource_GetTableEntry
 	.global Func_08000298
 	.thumb_func
@@ -227,9 +227,9 @@ Func_080003a8:
 	.thumb_func
 Func_080003b8:
 	overlay_veneer Func_0801471c
-	.global Func_080003c0
+	.global Owner_GetStateFar
 	.thumb_func
-Func_080003c0:
+Owner_GetStateFar:
 	overlay_veneer Owner_GetState
 	.global Func_080003c8
 	.thumb_func
@@ -244,13 +244,13 @@ Func_080003d0:
 Func_080003d8:
 	overlay_veneer GameFlag_ClearBitFar
 	overlay_veneer Func_08016d34
-	.global Func_080003e8
+	.global GameFlag_GetByteFar
 	.thumb_func
-Func_080003e8:
+GameFlag_GetByteFar:
 	overlay_veneer GameFlag_GetByte
-	.global Func_080003f0
+	.global GameFlag_SetByteFar
 	.thumb_func
-Func_080003f0:
+GameFlag_SetByteFar:
 	overlay_veneer GameFlag_SetByte
 	overlay_veneer Func_08016d7c
 	overlay_veneer Func_08016d98

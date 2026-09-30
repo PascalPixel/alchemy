@@ -5,61 +5,61 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c8088
+	.global Object_GetByIdFar
 	.thumb_func
-Func_080c8088:
+Object_GetByIdFar:
 	overlay_veneer Object_GetById
 	.global Func_080c8090
 	.thumb_func
 Func_080c8090:
 	overlay_veneer Func_080d36a8
-	.global Func_080c8098
+	.global ObjectMotion_SetSpeedParametersFar
 	.thumb_func
-Func_080c8098:
+ObjectMotion_SetSpeedParametersFar:
 	overlay_veneer ObjectMotion_SetSpeedParameters
-	.global Func_080c80a0
+	.global ObjectMotion_EnableActionAndSetCallbackFar
 	.thumb_func
-Func_080c80a0:
+ObjectMotion_EnableActionAndSetCallbackFar:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallback
-	.global Func_080c80a8
+	.global Object_RefreshSelectorByIdFar
 	.thumb_func
-Func_080c80a8:
+Object_RefreshSelectorByIdFar:
 	overlay_veneer Object_RefreshSelectorById
-	.global Func_080c80b0
+	.global ObjectMotion_EnableActionAndResetMotionFar
 	.thumb_func
-Func_080c80b0:
+ObjectMotion_EnableActionAndResetMotionFar:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotion
-	.global Func_080c80b8
+	.global Object_SetActionCallbackAndRefreshByIdFar
 	.thumb_func
-Func_080c80b8:
+Object_SetActionCallbackAndRefreshByIdFar:
 	overlay_veneer Object_SetActionCallbackAndRefreshById
-	.global Func_080c80c0
+	.global ObjectMotion_ResetAndSetPositionFar
 	.thumb_func
-Func_080c80c0:
+ObjectMotion_ResetAndSetPositionFar:
 	overlay_veneer ObjectMotion_ResetAndSetPosition
-	.global Func_080c80c8
+	.global ObjectMotion_SetPositionAndCommitFar
 	.thumb_func
-Func_080c80c8:
+ObjectMotion_SetPositionAndCommitFar:
 	overlay_veneer ObjectMotion_SetPositionAndCommit
-	.global Func_080c80d0
+	.global ObjectMotion_ResetAndSetPositionInMode2Far
 	.thumb_func
-Func_080c80d0:
+ObjectMotion_ResetAndSetPositionInMode2Far:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2
-	.global Func_080c80d8
+	.global ObjectMotion_SetPositionAndResetFar
 	.thumb_func
-Func_080c80d8:
+ObjectMotion_SetPositionAndResetFar:
 	overlay_veneer ObjectMotion_SetPositionAndReset
-	.global Func_080c80e0
+	.global ObjectMotion_SnapHeadingAndOffsetFar
 	.thumb_func
-Func_080c80e0:
+ObjectMotion_SnapHeadingAndOffsetFar:
 	overlay_veneer ObjectMotion_SnapHeadingAndOffset
-	.global Func_080c80e8
+	.global ObjectMotion_OffsetPositionAndResetMotionFar
 	.thumb_func
-Func_080c80e8:
+ObjectMotion_OffsetPositionAndResetMotionFar:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotion
-	.global Func_080c80f0
+	.global ObjectMotion_CommitCurrentPositionAndActivateFar
 	.thumb_func
-Func_080c80f0:
+ObjectMotion_CommitCurrentPositionAndActivateFar:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivate
 	.global Func_080c80f8
 	.thumb_func
@@ -74,33 +74,33 @@ Func_080c8100:
 	.thumb_func
 Func_080c8110:
 	overlay_veneer Func_080d3214
-	.global Func_080c8118
+	.global Object_SetModeByIdFar
 	.thumb_func
-Func_080c8118:
+Object_SetModeByIdFar:
 	overlay_veneer Object_SetModeById
-	.global Func_080c8120
+	.global Object_SetActionByIdFar
 	.thumb_func
-Func_080c8120:
+Object_SetActionByIdFar:
 	overlay_veneer Object_SetActionById
-	.global Func_080c8128
+	.global Motion_SetModeAndWaitAnimationFar
 	.thumb_func
-Func_080c8128:
+Motion_SetModeAndWaitAnimationFar:
 	overlay_veneer Motion_SetModeAndWaitAnimation
-	.global Func_080c8130
+	.global ObjectMotion_WaitForAnimationChangeFar
 	.thumb_func
-Func_080c8130:
+ObjectMotion_WaitForAnimationChangeFar:
 	overlay_veneer ObjectMotion_WaitForAnimationChange
-	.global Func_080c8138
+	.global ObjectMotion_LaunchFar
 	.thumb_func
-Func_080c8138:
+ObjectMotion_LaunchFar:
 	overlay_veneer ObjectMotion_Launch
-	.global Func_080c8140
+	.global ObjectMotion_SetVariantCallbackFar
 	.thumb_func
-Func_080c8140:
+ObjectMotion_SetVariantCallbackFar:
 	overlay_veneer ObjectMotion_SetVariantCallback
-	.global Func_080c8148
+	.global Motion_SetVarCbAndRefreshFar
 	.thumb_func
-Func_080c8148:
+Motion_SetVarCbAndRefreshFar:
 	overlay_veneer Motion_SetVarCbAndRefresh
 	.global Func_080c8150
 	.thumb_func
@@ -110,9 +110,9 @@ Func_080c8150:
 	.thumb_func
 Func_080c8158:
 	overlay_veneer Func_080d359c
-	.global Func_080c8160
+	.global Object_LinkPairFar
 	.thumb_func
-Func_080c8160:
+Object_LinkPairFar:
 	overlay_veneer Object_LinkPair
 	.global Func_080c8168
 	.thumb_func

@@ -296,7 +296,7 @@ Func_080405dc:
 	strb	r3, [r5, #15]
 	adds	r0, r5, #0
 	str	r4, [sp, #0]
-	bl	Func_080f8028
+	bl	UiIcon_PrepareObjectFar
 	movs	r3, #160
 	lsls	r3, r3, #3
 	adds	r3, #116

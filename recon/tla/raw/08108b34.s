@@ -663,7 +663,7 @@ Func_08108b34:
 	mov	r2, r9
 	movs	r3, #216
 	lsls	r1, r1, #23
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r2, #0
 	movs	r3, #17
 	strb	r2, [r0, #4]
@@ -684,7 +684,7 @@ Func_08108b34:
 	mov	r2, r9
 	movs	r3, #216
 	lsls	r1, r1, #23
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r2, #0
 	movs	r3, #15
 	strb	r2, [r0, #4]
@@ -715,7 +715,7 @@ Func_08108b34:
 	mov	r2, r9
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	Func_080382b8
+	bl	RenderOutput_CreateLoadedFar
 	movs	r3, #252
 	strb	r3, [r0, #15]
 	ldr	r2, [sp, #8]

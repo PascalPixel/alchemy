@@ -22,7 +22,7 @@ Func_080fac58:
 	adds	r3, #248
 	ldr	r0, [r6, r3]
 	movs	r1, #1
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	movs	r1, #139
 	lsls	r1, r1, #1
 	adds	r1, #255

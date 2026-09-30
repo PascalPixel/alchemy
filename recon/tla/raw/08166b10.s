@@ -2081,7 +2081,7 @@ Func_08166b10:
 	bl	Math_Mod
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldr	r3, [sp, #88]
 	mov	r4, r8
 	ldr	r2, [r6, r3]

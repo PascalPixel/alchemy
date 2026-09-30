@@ -85,7 +85,7 @@ Func_080464dc:
 	adds	r0, r7, #0
 	adds	r1, r5, #0
 	adds	r2, r6, #0
-	bl	Func_080ad1b0
+	bl	Djinn_IsActiveFar
 	cmp	r0, #0
 	beq.n	.L_08046598
 	adds	r0, r7, #0
@@ -4234,7 +4234,7 @@ Func_080464dc:
 	str	r3, [r2, #72]
 	ldr	r0, [sp, #96]
 	bl	0x08118120
-	bl	Func_08118118
+	bl	BattleActor_CommitPlacementFar
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #84]

@@ -133,12 +133,12 @@ Func_08103218:
 	mov	r1, r9
 	adds	r2, r6, #0
 	mov	r3, sl
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	adds	r0, r5, #0
 	mov	r1, r9
 	adds	r2, r6, #0
 	mov	r3, r8
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	b.n	.L_08103370
 .L_08103336:
 	ldr	r3, [sp, #48]
@@ -313,12 +313,12 @@ Func_08103218:
 	mov	r1, r9
 	adds	r2, r6, #0
 	mov	r3, r8
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	adds	r3, r5, #0
 	ldr	r0, [pc, #400]
 	mov	r1, r9
 	adds	r2, r6, #0
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r2, [sp, #48]
 	adds	r3, r7, #0
 	ldrb	r0, [r2, #15]

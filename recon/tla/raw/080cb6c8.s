@@ -88,7 +88,7 @@ Func_080cb6f4:
 .L_080cb76e:
 	ldrb	r0, [r7, #0]
 	subs	r6, #1
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	adds	r7, #1
 	cmp	r6, #0
 	bne.n	.L_080cb744
@@ -160,7 +160,7 @@ Func_080cb6f4:
 .L_080cb7f8:
 	ldrb	r0, [r6, #0]
 	subs	r5, #1
-	bl	Func_080ad0c0
+	bl	Owner_AdjustFirstValueFar
 	adds	r6, #1
 	cmp	r5, #0
 	bne.n	.L_080cb79e

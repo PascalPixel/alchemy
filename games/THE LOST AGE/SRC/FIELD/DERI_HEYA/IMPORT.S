@@ -6,7 +6,7 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_080003c0
+	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
@@ -20,13 +20,13 @@
 	overlay_veneer Func_08038140
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Item_Get
-	overlay_veneer Func_080ad018
-	overlay_veneer Func_080ad028
-	overlay_veneer Func_080ad278
+	overlay_veneer Inventory_GetQuantityFar
+	overlay_veneer PartyInventory_AddFar
+	overlay_veneer Inventory_DiscardFar
 	overlay_veneer Func_080ad288
-	overlay_veneer Func_080ad2a0
+	overlay_veneer Inventory_CountItemFar
 	overlay_veneer Func_080ad2f0
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
@@ -36,11 +36,11 @@ Engine_EventBegin:
 Engine_EventEnd:
 	overlay_veneer Func_080c8020
 	overlay_veneer Func_080c8070
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c80d8
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8138
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer ObjectMotion_LaunchFar
 	overlay_veneer Func_080c8158
 	.global Engine_EventSetMessage
 	.thumb_func

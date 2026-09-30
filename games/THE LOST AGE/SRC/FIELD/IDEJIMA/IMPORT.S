@@ -9,9 +9,9 @@
 	.global Task_Wait
 	.thumb_func
 Task_Wait:
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
-	overlay_veneer Func_08000118
+	overlay_veneer Math_SineFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
@@ -36,35 +36,35 @@ Engine_MapCopyCellsTo:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08038040
 	overlay_veneer Func_080ad208
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8048
+	overlay_veneer Event_PrepareObjectAndApplyValueFar
 	overlay_veneer Func_080c8070
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80a0
-	overlay_veneer Func_080c80a8
-	overlay_veneer Func_080c80b0
-	overlay_veneer Func_080c80b8
-	overlay_veneer Func_080c80c0
-	overlay_veneer Func_080c80d0
-	overlay_veneer Func_080c80d8
-	overlay_veneer Func_080c80f0
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer Object_RefreshSelectorByIdFar
+	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8100
 	overlay_veneer Func_080c8110
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8128
-	overlay_veneer Func_080c8130
-	overlay_veneer Func_080c8138
-	overlay_veneer Func_080c8140
-	overlay_veneer Func_080c8148
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_WaitForAnimationChangeFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
 	overlay_veneer Func_080c8158
-	overlay_veneer Func_080c8160
+	overlay_veneer Object_LinkPairFar
 	overlay_veneer Func_080c8170
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8188
@@ -84,7 +84,7 @@ Engine_ActorSetAnimation:
 	overlay_veneer Func_080c83b0
 	overlay_veneer Func_080c83b8
 	overlay_veneer Func_080c84e0
-	overlay_veneer Func_080c8600
+	overlay_veneer Object_LinkObjectAndSetCallbackFar
 	overlay_veneer Func_080c8930
 	.global Engine_AudioPlayCue
 	.thumb_func

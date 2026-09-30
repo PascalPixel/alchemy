@@ -18,11 +18,11 @@ Func_0811f444:
 	cmp	r3, #1
 	beq.n	.L_0811f468
 	movs	r1, #4
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	b.n	.L_0811f46e
 .L_0811f468:
 	movs	r1, #5
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 .L_0811f46e:
 	adds	r5, #1
 .L_0811f470:

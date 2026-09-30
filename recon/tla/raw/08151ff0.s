@@ -551,7 +551,7 @@ Func_08151ff0:
 	movs	r3, #0
 	strb	r3, [r0, #26]
 	adds	r1, r6, #0
-	bl	Func_08020030
+	bl	Animation_ApplyChildArgumentFar
 	ldr	r2, [r5, r7]
 	mov	r1, fp
 	ldrb	r3, [r2, #9]

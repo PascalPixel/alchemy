@@ -22,20 +22,20 @@ BattleUnit_Recalculate:
 	.thumb_func
 Item_Get:
 	overlay_veneer Item_GetDirect
-	.global Func_080ad018
+	.global Inventory_GetQuantityFar
 	.thumb_func
-Func_080ad018:
+Inventory_GetQuantityFar:
 	overlay_veneer Inventory_GetQuantity
-	.global Func_080ad020
+	.global Inventory_AddFar
 	.thumb_func
-Func_080ad020:
+Inventory_AddFar:
 	overlay_veneer Inventory_Add
-	.global Func_080ad028
+	.global PartyInventory_AddFar
 	.thumb_func
-Func_080ad028:
+PartyInventory_AddFar:
 	overlay_veneer PartyInventory_Add
 	overlay_veneer Inventory_Find
-	.global Func_080ad038
+	.global PartyInventory_FindOwnerFar
 	.thumb_func
-Func_080ad038:
+PartyInventory_FindOwnerFar:
 	overlay_veneer PartyInventory_FindOwner

@@ -157,7 +157,7 @@ Func_0803f93c:
 Func_0803f968:
 	push	{lr}
 	adds	r0, r1, #0
-	bl	Func_080ad040
+	bl	PartyInventory_RemoveFar
 	movs	r0, #0
 	pop	{pc}
 .L_0803f974:
@@ -1161,7 +1161,7 @@ Func_080400e8:
 	ldr	r0, [r6, r7]
 	movs	r3, #251
 	strb	r3, [r0, #15]
-	bl	Func_080f8028
+	bl	UiIcon_PrepareObjectFar
 	ldr	r3, [r6, r7]
 	movs	r0, #160
 	lsls	r0, r0, #3
@@ -1190,7 +1190,7 @@ Func_080400e8:
 	ldr	r0, [r6, r7]
 	movs	r3, #251
 	strb	r3, [r0, #15]
-	bl	Func_080f8028
+	bl	UiIcon_PrepareObjectFar
 	ldr	r3, [r6, r7]
 	movs	r0, #147
 	lsls	r0, r0, #3
@@ -1220,7 +1220,7 @@ Func_080400e8:
 	ldr	r0, [r6, r7]
 	movs	r3, #251
 	strb	r3, [r0, #15]
-	bl	Func_080f8028
+	bl	UiIcon_PrepareObjectFar
 	ldr	r3, [r6, r7]
 	movs	r2, #0
 	ldrb	r1, [r3, #14]

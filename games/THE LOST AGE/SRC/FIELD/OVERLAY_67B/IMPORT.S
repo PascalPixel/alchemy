@@ -7,27 +7,27 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramSignedDivide
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080000f8
-	overlay_veneer Func_08000118
+	overlay_veneer Math_SineFar
 	overlay_veneer Func_08000128
-	overlay_veneer Func_08000148
-	overlay_veneer Func_08000150
-	overlay_veneer Func_08000168
-	overlay_veneer Func_08000178
+	overlay_veneer Runtime_AllocateBlockFar
+	overlay_veneer Runtime_ReleaseHeapBlockFar
+	overlay_veneer Runtime_BumpAllocateFar
+	overlay_veneer Sys_FreeFar
 	overlay_veneer Func_080001a0
 	overlay_veneer Func_080001a8
-	overlay_veneer Func_080001c8
-	overlay_veneer Func_080001d0
+	overlay_veneer VramBlock_LoadCachedFar
+	overlay_veneer Resource_FindFreeEntryFar
 	overlay_veneer Func_080001e8
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
-	overlay_veneer Func_080003e8
-	overlay_veneer Func_080003f0
-	overlay_veneer Func_08020030
-	overlay_veneer Func_08020058
+	overlay_veneer GameFlag_GetByteFar
+	overlay_veneer GameFlag_SetByteFar
+	overlay_veneer Animation_ApplyChildArgumentFar
+	overlay_veneer ResourceMetadata_RegisterFar
 	overlay_veneer Object_SetMode
 	overlay_veneer Object_SetCallback
 	overlay_veneer Func_080200c0
@@ -42,19 +42,19 @@
 	overlay_veneer Func_080201f0
 	overlay_veneer Func_08020210
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_08020220
-	overlay_veneer Func_08020278
-	overlay_veneer Func_080c8010
+	overlay_veneer Animation_SetStateFlagsFar
+	overlay_veneer Animation_ApplyChildValuesFar
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80c0
-	overlay_veneer Func_080c80c8
-	overlay_veneer Func_080c80e8
-	overlay_veneer Func_080c80f0
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
+	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Func_080c8170
 	overlay_veneer Func_080c8200
 	overlay_veneer Func_080c8218
@@ -68,7 +68,7 @@
 	overlay_veneer Func_080c83b0
 	overlay_veneer Func_080c83b8
 	overlay_veneer Func_080c84e0
-	overlay_veneer Func_080c85f8
+	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
 	overlay_veneer Func_080c8688
 	overlay_veneer Func_080c8690
 	overlay_veneer Func_080c8778

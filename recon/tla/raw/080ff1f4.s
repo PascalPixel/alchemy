@@ -346,7 +346,7 @@ Func_080ff1f4:
 	adds	r3, #16
 	adds	r1, r7, #0
 	movs	r2, #64
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r5, [pc, #256]
 	adds	r3, r6, #0
 	adds	r0, r5, #0
@@ -517,7 +517,7 @@ Func_080ff1f4:
 	adds	r1, r6, #0
 	movs	r2, #40
 	movs	r3, #0
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	movs	r2, #42
 	adds	r2, #255
 	adds	r3, r7, r2
@@ -532,7 +532,7 @@ Func_080ff1f4:
 	movs	r2, #104
 	movs	r3, #0
 	ldr	r0, [pc, #364]
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	movs	r0, #15
 	bl	0x080380b8
 	movs	r3, #0
@@ -546,7 +546,7 @@ Func_080ff1f4:
 	ldr	r0, [pc, #340]
 	adds	r1, r6, #0
 	movs	r3, #16
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	movs	r3, #16
 	movs	r2, #56
 	ldrsh	r0, [r7, r2]
@@ -574,7 +574,7 @@ Func_080ff1f4:
 	ldr	r0, [pc, #284]
 	adds	r1, r6, #0
 	movs	r3, #24
-	bl	Func_08038090
+	bl	UiText_DrawStringAtOffsetFar
 	movs	r3, #24
 	movs	r2, #58
 	ldrsh	r0, [r7, r2]

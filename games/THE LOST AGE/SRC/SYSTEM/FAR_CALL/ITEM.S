@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080ad1b0
+	.global Djinn_IsActiveFar
 	.thumb_func
-Func_080ad1b0:
+Djinn_IsActiveFar:
 	overlay_veneer Djinn_IsActive
 	overlay_veneer Trade_CanOfferDjinn
 	overlay_veneer Item_CanOwnerEquipDirect
@@ -18,12 +18,12 @@ Func_080ad1b0:
 Func_080ad1d8:
 	overlay_veneer Func_080afeb0
 	overlay_veneer Item_GetEquipmentGroup
-	.global Func_080ad1e8
+	.global Item_AdjustCounterFar
 	.thumb_func
-Func_080ad1e8:
+Item_AdjustCounterFar:
 	overlay_veneer Item_AdjustCounter
 	overlay_veneer Inventory_Count
-	.global Func_080ad1f8
+	.global PartyInventory_HasSpaceFar
 	.thumb_func
-Func_080ad1f8:
+PartyInventory_HasSpaceFar:
 	overlay_veneer PartyInventory_HasSpace

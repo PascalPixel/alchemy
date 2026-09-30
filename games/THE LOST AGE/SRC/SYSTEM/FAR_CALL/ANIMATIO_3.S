@@ -10,13 +10,13 @@
 Func_08020268:
 	overlay_veneer Func_0802c8a0
 	overlay_veneer Func_0802c9c8
-	.global Func_08020278
+	.global Animation_ApplyChildValuesFar
 	.thumb_func
-Func_08020278:
+Animation_ApplyChildValuesFar:
 	overlay_veneer Animation_ApplyChildValues
-	.global Func_08020280
+	.global Animation_ApplyChildValuesToRecordFar
 	.thumb_func
-Func_08020280:
+Animation_ApplyChildValuesToRecordFar:
 	overlay_veneer Animation_ApplyChildValuesToRecord
 	overlay_veneer Func_080227a0
 	.global Func_08020290

@@ -1130,7 +1130,7 @@ Func_08100e7c:
 	adds	r2, r6, #0
 	adds	r0, r5, #0
 	str	r3, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	mov	r3, r8
 	adds	r7, r0, #0
 	strb	r3, [r7, #5]
@@ -1154,7 +1154,7 @@ Func_08100e7c:
 	mov	r1, r9
 	adds	r2, r6, #0
 	str	r3, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	mov	r3, r8
 	adds	r7, r0, #0
 	strb	r3, [r7, #5]

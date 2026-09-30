@@ -9,9 +9,9 @@
 	.thumb_func
 Func_080c8008:
 	overlay_veneer Func_080c9944
-	.global Func_080c8010
+	.global Battle_WaitMode0Far
 	.thumb_func
-Func_080c8010:
+Battle_WaitMode0Far:
 	overlay_veneer Battle_WaitMode0
 	.global Func_080c8018
 	.thumb_func
@@ -25,9 +25,9 @@ Func_080c8020:
 	overlay_veneer Func_080d23b8
 	overlay_veneer Func_080cacec
 	overlay_veneer Func_080d23cc
-	.global Func_080c8048
+	.global Event_PrepareObjectAndApplyValueFar
 	.thumb_func
-Func_080c8048:
+Event_PrepareObjectAndApplyValueFar:
 	overlay_veneer Event_PrepareObjectAndApplyValue
 	overlay_veneer Event_PrepareTwoObjectsAndApply
 	.global Func_080c8058

@@ -455,7 +455,7 @@ Func_081b22b8:
 	beq.n	.L_081b262a
 .L_081b261a:
 	movs	r0, #228
-	bl	Func_080ad040
+	bl	PartyInventory_RemoveFar
 	mov	r0, r8
 	ldr	r3, [r0, #0]
 	adds	r5, #1

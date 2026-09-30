@@ -26,35 +26,35 @@ Func_08038020:
 	overlay_veneer Func_0803c9ac
 	overlay_veneer Func_0803ca20
 	overlay_veneer Func_0803c9bc
-	.global Func_08038038
+	.global UiText_OpenMessageWindowFar
 	.thumb_func
-Func_08038038:
+UiText_OpenMessageWindowFar:
 	overlay_veneer UiText_OpenMessageWindow
 	.global Func_08038040
 	.thumb_func
 Func_08038040:
 	overlay_veneer Func_0803a7ac
-	.global Func_08038048
+	.global UiWork_IsCompleteFar
 	.thumb_func
-Func_08038048:
+UiWork_IsCompleteFar:
 	overlay_veneer UiWork_IsComplete
 	overlay_veneer Func_0803a3e4
 	overlay_veneer Func_0803a668
-	.global Func_08038060
+	.global RenderOutput_PrepareForRedrawFar
 	.thumb_func
-Func_08038060:
+RenderOutput_PrepareForRedrawFar:
 	overlay_veneer RenderOutput_PrepareForRedraw
 	overlay_veneer Func_08039454
 	.global Func_08038070
 	.thumb_func
 Func_08038070:
 	overlay_veneer Func_08041c54
-	.global Func_08038078
+	.global UiText_DrawResourceFar
 	.thumb_func
-Func_08038078:
+UiText_DrawResourceFar:
 	overlay_veneer UiText_DrawResource
-	.global Func_08038080
+	.global UiText_DrawCharacterAtOffsetFar
 	.thumb_func
-Func_08038080:
+UiText_DrawCharacterAtOffsetFar:
 	overlay_veneer UiText_DrawCharacterAtOffset
 	overlay_veneer UiText_DrawString

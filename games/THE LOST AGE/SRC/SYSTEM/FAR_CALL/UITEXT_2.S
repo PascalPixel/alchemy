@@ -5,15 +5,15 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08038090
+	.global UiText_DrawStringAtOffsetFar
 	.thumb_func
-Func_08038090:
+UiText_DrawStringAtOffsetFar:
 	overlay_veneer UiText_DrawStringAtOffset
-	.global Func_08038098
+	.global UiText_DrawStringInWindowFar
 	.thumb_func
-Func_08038098:
+UiText_DrawStringInWindowFar:
 	overlay_veneer UiText_DrawStringInWindow
-	.global Func_080380a0
+	.global UiText_DrawNumberFar
 	.thumb_func
-Func_080380a0:
+UiText_DrawNumberFar:
 	overlay_veneer UiText_DrawNumber

@@ -358,7 +358,7 @@ Func_0811e830:
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
 	movs	r2, #1
-	bl	Func_080202a8
+	bl	ResourceMetadata_SumCommandLengthsFar
 	mov	r1, r8
 	ldr	r3, [r1, #0]
 	mov	fp, r0
@@ -411,7 +411,7 @@ Func_0811e830:
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
 	movs	r2, #1
-	bl	Func_080202a8
+	bl	ResourceMetadata_SumCommandLengthsFar
 	ldr	r3, [sp, #16]
 	mov	fp, r0
 	ldrb	r0, [r3, #2]

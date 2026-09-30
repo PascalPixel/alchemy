@@ -19,7 +19,7 @@ Func_0811c274:
 	lsls	r1, r1, #1
 	ldr	r0, [r0, #80]
 	adds	r1, #255
-	bl	Func_08020058
+	bl	ResourceMetadata_RegisterFar
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0811c2aa

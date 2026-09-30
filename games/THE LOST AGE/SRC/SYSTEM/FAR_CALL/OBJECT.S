@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080200e8
+	.global Object_SetPositionAndResetMotionFar
 	.thumb_func
-Func_080200e8:
+Object_SetPositionAndResetMotionFar:
 	overlay_veneer Object_SetPositionAndResetMotion
 	overlay_veneer Func_08022f64
 	overlay_veneer Func_08022fe8

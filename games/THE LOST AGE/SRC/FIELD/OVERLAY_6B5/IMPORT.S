@@ -8,13 +8,13 @@
 	.balign 4
 	overlay_veneer IwramSignedDivide
 	overlay_veneer IwramSignedRemainder
-	overlay_veneer Func_080000c0
+	overlay_veneer WaitFramesFar
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_080000d8
-	overlay_veneer Func_08000148
-	overlay_veneer Func_08000150
+	overlay_veneer Runtime_AllocateBlockFar
+	overlay_veneer Runtime_ReleaseHeapBlockFar
 	overlay_veneer Func_08000170
-	overlay_veneer Func_08000178
+	overlay_veneer Sys_FreeFar
 	overlay_veneer Func_08000300
 	overlay_veneer Func_08000370
 	overlay_veneer Func_08000378
@@ -22,12 +22,12 @@
 	overlay_veneer Func_08000388
 	overlay_veneer Func_080003a8
 	overlay_veneer Func_080003b8
-	overlay_veneer Func_080003c0
+	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
-	overlay_veneer Func_080003e8
-	overlay_veneer Func_080003f0
+	overlay_veneer GameFlag_GetByteFar
+	overlay_veneer GameFlag_SetByteFar
 	overlay_veneer Func_08020120
 	overlay_veneer Func_08020178
 	overlay_veneer Func_08020198
@@ -36,26 +36,26 @@
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer Func_08038020
-	overlay_veneer Func_08038038
+	overlay_veneer UiText_OpenMessageWindowFar
 	overlay_veneer Func_08038040
-	overlay_veneer Func_08038060
-	overlay_veneer Func_080380a0
+	overlay_veneer RenderOutput_PrepareForRedrawFar
+	overlay_veneer UiText_DrawNumberFar
 	overlay_veneer Func_08038118
 	overlay_veneer Func_08038120
 	overlay_veneer Func_080382e0
 	overlay_veneer Trade_GetOfferStateFar
 	overlay_veneer Func_080ad0f0
 	overlay_veneer Func_080ad208
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
 	overlay_veneer Func_080c8070
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80d0
-	overlay_veneer Func_080c80f0
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8140
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
 	overlay_veneer Func_080c8158
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8188
@@ -69,7 +69,7 @@
 	overlay_veneer Func_080c83b8
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_08108010
-	overlay_veneer Func_08118108
+	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	overlay_veneer Func_08118110
 	overlay_veneer Audio_PlayCue
 	overlay_veneer Func_081c0090

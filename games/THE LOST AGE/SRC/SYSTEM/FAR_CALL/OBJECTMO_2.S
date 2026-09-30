@@ -19,22 +19,22 @@ Event_ClearInvalidPackedValuesFar:
 	.thumb_func
 Func_080c85e8:
 	overlay_veneer Func_080d3070
-	.global Func_080c85f0
+	.global ObjectMotion_OffsetPositionAndResetFar
 	.thumb_func
-Func_080c85f0:
+ObjectMotion_OffsetPositionAndResetFar:
 	overlay_veneer ObjectMotion_OffsetPositionAndReset
-	.global Func_080c85f8
+	.global ObjectMotion_CommitPositionAndActivateFar
 	.thumb_func
-Func_080c85f8:
+ObjectMotion_CommitPositionAndActivateFar:
 	overlay_veneer ObjectMotion_CommitPositionAndActivate
-	.global Func_080c8600
+	.global Object_LinkObjectAndSetCallbackFar
 	.thumb_func
-Func_080c8600:
+Object_LinkObjectAndSetCallbackFar:
 	overlay_veneer Object_LinkObjectAndSetCallback
 	overlay_veneer Func_080e0308
 	overlay_veneer Func_080e035c
 	overlay_veneer Func_080d3c2c
-	.global Func_080c8620
+	.global ObjectTable_ReadActiveValueFar
 	.thumb_func
-Func_080c8620:
+ObjectTable_ReadActiveValueFar:
 	overlay_veneer ObjectTable_ReadActiveValue

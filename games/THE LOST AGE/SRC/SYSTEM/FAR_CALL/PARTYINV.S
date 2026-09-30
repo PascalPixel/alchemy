@@ -14,9 +14,9 @@ Func_080ad2b8:
 	.thumb_func
 Func_080ad2c8:
 	overlay_veneer Func_080add74
-	.global Func_080ad2d0
+	.global PartyInventory_CountFreeSlotsFar
 	.thumb_func
-Func_080ad2d0:
+PartyInventory_CountFreeSlotsFar:
 	overlay_veneer PartyInventory_CountFreeSlots
 	.global Func_080ad2d8
 	.thumb_func

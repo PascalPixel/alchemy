@@ -68,7 +68,7 @@ Func_0810b7b4:
 	mov	r2, fp
 	movs	r3, #0
 	str	r6, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 	movs	r3, #4
 	adds	r5, r0, #0
 	strb	r3, [r5, #5]

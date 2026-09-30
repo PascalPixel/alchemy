@@ -16,26 +16,26 @@
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_080201f0
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	overlay_veneer Func_08020278
+	overlay_veneer Animation_ApplyChildValuesFar
 	overlay_veneer Func_08020360
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
 	overlay_veneer Func_080c8070
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c8098
-	overlay_veneer Func_080c80a0
-	overlay_veneer Func_080c80a8
-	overlay_veneer Func_080c80b0
-	overlay_veneer Func_080c80d8
-	overlay_veneer Func_080c80e8
-	overlay_veneer Func_080c80f0
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer Object_RefreshSelectorByIdFar
+	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer Func_080c80f8
-	overlay_veneer Func_080c8118
-	overlay_veneer Func_080c8128
-	overlay_veneer Func_080c8138
-	overlay_veneer Func_080c8140
-	overlay_veneer Func_080c8148
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8188
 	overlay_veneer Func_080c8198
@@ -51,13 +51,13 @@
 	overlay_veneer Func_080c83b8
 	overlay_veneer Func_080c8480
 	overlay_veneer Func_080c84e0
-	overlay_veneer Func_080c8528
-	overlay_veneer Func_080c8530
-	overlay_veneer Func_080c8538
-	overlay_veneer Func_080c85f0
-	overlay_veneer Func_080c85f8
-	overlay_veneer Func_080c8600
-	overlay_veneer Func_080c8680
+	overlay_veneer BattleFx_StartItemBreakFar
+	overlay_veneer BattleFx_SnapScaleToFullFar
+	overlay_veneer UpdateRisingParticleBurstFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetFar
+	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	overlay_veneer Object_LinkObjectAndSetCallbackFar
+	overlay_veneer Object_SetActionCallbackFar
 	overlay_veneer Func_080c86a8
 	overlay_veneer Func_080c86e8
 	overlay_veneer Func_080c8700
@@ -66,7 +66,7 @@
 	overlay_veneer Func_080c8778
 	overlay_veneer Func_080c87a8
 	overlay_veneer Func_080c87f8
-	overlay_veneer Func_080c8800
+	overlay_veneer Field_BeginPaletteTransitionFar
 	overlay_veneer Func_080c8808
 	overlay_veneer Func_080c8810
 	overlay_veneer Func_080c8818

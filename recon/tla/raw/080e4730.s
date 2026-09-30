@@ -100,14 +100,14 @@ Func_080e4730:
 	ldr	r1, [r3, #8]
 	mov	r0, r8
 	ldr	r3, [r3, #16]
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	ldr	r6, [pc, #528]
 	movs	r0, #133
 	lsls	r0, r0, #2
 	adds	r3, r6, r0
 	ldr	r1, [r3, #0]
 	mov	r0, r8
-	bl	Func_08020238
+	bl	Animation_SetIndexAndInitObjectsFar
 	mov	r2, r8
 	ldr	r1, [r2, #80]
 	movs	r5, #63
@@ -484,7 +484,7 @@ Func_080e4730:
 	ldr	r2, [r5, #12]
 	ldr	r3, [r5, #16]
 	mov	r0, r8
-	bl	Func_080200e8
+	bl	Object_SetPositionAndResetMotionFar
 	ldr	r6, [sp, #16]
 	movs	r3, #0
 	movs	r0, #2
@@ -623,7 +623,7 @@ Func_080e4730:
 	mov	r5, r8
 	mov	r0, r8
 	movs	r1, #251
-	bl	Func_08020238
+	bl	Animation_SetIndexAndInitObjectsFar
 	ldr	r0, [r5, #80]
 	movs	r2, #63
 	ldrb	r1, [r0, #5]

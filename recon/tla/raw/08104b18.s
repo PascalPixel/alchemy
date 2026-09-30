@@ -25,7 +25,7 @@ Func_08104b18:
 	mov	r2, r8
 	mov	r3, sl
 	str	r7, [sp, #0]
-	bl	Func_080380c8
+	bl	RenderOutput_CreateFar
 .L_08104b4c:
 	add	sp, #4
 	pop	{r3, r5}

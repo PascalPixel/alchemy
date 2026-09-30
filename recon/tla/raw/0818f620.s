@@ -2586,7 +2586,7 @@ Func_0818f620:
 	ldr	r4, [sp, #40]
 	movs	r5, #0
 	str	r3, [r4, #72]
-	bl	Func_08118118
+	bl	BattleActor_CommitPlacementFar
 	movs	r3, #192
 	ldr	r0, [sp, #64]
 	lsls	r3, r3, #18
@@ -3765,7 +3765,7 @@ Func_0818f620:
 	beq.n	.L_081914b2
 	bl	.L_08190c5e
 .L_081914b2:
-	bl	Func_08118118
+	bl	BattleActor_CommitPlacementFar
 	add	r2, sp, #36
 	ldr	r3, [pc, #108]
 	ldrh	r2, [r2, #0]

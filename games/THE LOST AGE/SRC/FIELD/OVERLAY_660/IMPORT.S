@@ -15,16 +15,16 @@
 	overlay_veneer Func_08020248
 	overlay_veneer Func_080202a0
 	overlay_veneer Func_08038210
-	overlay_veneer Func_080c8010
+	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020
 	overlay_veneer Func_080c8070
-	overlay_veneer Func_080c8088
-	overlay_veneer Func_080c80a0
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8100
-	overlay_veneer Func_080c8128
-	overlay_veneer Func_080c8148
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
 	overlay_veneer Func_080c8158
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8188

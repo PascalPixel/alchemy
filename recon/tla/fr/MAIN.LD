@@ -1049,7 +1049,7 @@
     "*/recon/tla/fr/rom.o"(.rom.000fa028)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_39.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000fa0c4)
+    "*/recon/tla/fr/rom.o"(.rom.000fa0e0)
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000fa170)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)

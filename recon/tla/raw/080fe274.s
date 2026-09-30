@@ -49,7 +49,7 @@ Func_080fe274:
 	str r3, [sp, #4]
 	movs r3, #17
 	strh r3, [r5]
-	bl Func_080f80c4
+	bl Scheduler_EnableOverlayCallbacksWithFlags
 	movs r0, #0
 	bl UiWindow_InitializeWork
 	ldr r3, .L_080fe324

@@ -95,7 +95,7 @@ Func_08100e7c:
 .L_08100f3a:
 	str r3, [r6]
 .L_08100f3c:
-	bl Func_080f80c4
+	bl Scheduler_EnableOverlayCallbacksWithFlags
 	movs r0, #1
 	bl Func_080383c0
 	ldr r0, .L_08100fd4

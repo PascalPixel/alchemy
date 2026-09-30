@@ -269,7 +269,12 @@ Scheduler_RemoveCallback:
 	.type Func_08014694, %function
 	.thumb_func
 Func_08014694:
-	.incbin "baserom.gba", 0x000146c0, 0x00000088
+	.incbin "baserom.gba", 0x000146c0, 0x00000040
+	.global Scheduler_EnableUnmaskedOverlayCallbacks
+	.type Scheduler_EnableUnmaskedOverlayCallbacks, %function
+	.thumb_func
+Scheduler_EnableUnmaskedOverlayCallbacks:
+	.incbin "baserom.gba", 0x00014700, 0x00000048
 	.section .rom.00014748, "ax"
 	.global Func_0801471c
 	.type Func_0801471c, %function
@@ -3206,8 +3211,8 @@ Object_LinkedMotionScript:
 	.incbin "baserom.gba", 0x000fc774, 0x0000188c
 	.section .rom.000fe028, "ax"
 	.incbin "baserom.gba", 0x000fe028, 0x00000048
-	.section .rom.000fe0c4, "ax"
-	.incbin "baserom.gba", 0x000fe0c4, 0x00000058
+	.section .rom.000fe0e0, "ax"
+	.incbin "baserom.gba", 0x000fe0e0, 0x0000003c
 	.section .rom.000fe170, "ax"
 	.incbin "baserom.gba", 0x000fe170, 0x00000494
 	.section .rom.000fe64a, "ax"

@@ -1,13 +1,16 @@
 #include "TYPES.H"
 #include "BATTLE_RUNTIME.H"
+#include "OWNER_STATE.H"
 
 u8 *Item_Get(u16);
+void Owner_RecalculateStatsFar(s32 unit_id);
 
+/* ☀️'s, but ⚓️ reaches the owner's state with a direct call. */
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
     struct BattleUnit *unit;
 
-    unit = Owner_GetStateFar(id);
+    unit = Owner_GetState(id);
     if (mode == 0) {
         unit->hp = unit->max_hp;
         Owner_RecalculateRatiosFar(id);

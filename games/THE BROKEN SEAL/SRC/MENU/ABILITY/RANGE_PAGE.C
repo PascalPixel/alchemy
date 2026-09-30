@@ -98,7 +98,12 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 
     menu = (struct PsynergyListWork *)gMenuWork;
     state->selected_index = state->page * 5 + state->row;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    /* Spanish and Italian clear the info window's top row instead. */
+    UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
+#else
     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+#endif
     WaitFrames(1);
     if (menu->psynergies[state->selected_index] != 0) {
         UiText_DrawCharacterAtOffsetFar((menu->psynergies[state->selected_index] & ACTION_ID_MASK)
@@ -238,8 +243,8 @@ s32 PsynergyMenu_DrawListPage(
     UiText_DrawStringAtOffsetFar(owner, (void *)window, 40, 0);
     UiText_DrawAt(
         owner[OWNER_CLASS_MSG_OFS] + (s32)&MsgClassName, window, 0, 32);
-#if defined(TBS_EDITION_FR)
-    /* The French level label is drawn at a pixel offset. */
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
+    /* The Spanish and French level label is drawn at a pixel offset. */
     UiText_DrawStringAtOffsetFar(&Menu_LvString, (void *)window, 0, 48);
 #else
     UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);

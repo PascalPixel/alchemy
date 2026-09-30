@@ -1416,12 +1416,6 @@ UiMenu_SlideCursor:
 	.thumb_func
 RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x000a6cd0, 0x000001b0
-	.section .rom.000a80e0, "ax"
-	.global ItemMenu_SelectTarget
-	.type ItemMenu_SelectTarget, %function
-	.thumb_func
-ItemMenu_SelectTarget:
-	.incbin "baserom.gba", 0x000a80e0, 0x00000338
 	.section .rom.000a895a, "ax"
 	.incbin "baserom.gba", 0x000a895a, 0x00000002
 	.section .rom.000a895c, "ax"

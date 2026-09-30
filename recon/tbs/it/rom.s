@@ -978,12 +978,6 @@ UiMenu_SlideCursor:
 	.thumb_func
 RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x000a24d0, 0x000001b0
-	.section .rom.000a38cc, "ax"
-	.global ItemMenu_SelectTarget
-	.type ItemMenu_SelectTarget, %function
-	.thumb_func
-ItemMenu_SelectTarget:
-	.incbin "baserom.gba", 0x000a38cc, 0x00000338
 	.section .rom.000a414a, "ax"
 	.incbin "baserom.gba", 0x000a414a, 0x00000002
 	.section .rom.000a414c, "ax"
@@ -1020,28 +1014,6 @@ Func_080a6614:
 	.thumb_func
 CharacterMenu_DrawStatusAilments:
 	.incbin "baserom.gba", 0x000a8680, 0x00000300
-	.section .rom.000a8d3c, "ax"
-	.incbin "baserom.gba", 0x000a8d3c, 0x00000074
-	.section .rom.000a8db0, "ax"
-	.global PsynergyMenu_DrawRangePage
-	.type PsynergyMenu_DrawRangePage, %function
-	.thumb_func
-PsynergyMenu_DrawRangePage:
-	.incbin "baserom.gba", 0x000a8db0, 0x00000218
-	.section .rom.000a8fc8, "ax"
-	.global PsynergyMenu_DrawListPage
-	.type PsynergyMenu_DrawListPage, %function
-	.thumb_func
-PsynergyMenu_DrawListPage:
-	.incbin "baserom.gba", 0x000a8fc8, 0x0000017c
-	.section .rom.000a942a, "ax"
-	.incbin "baserom.gba", 0x000a942a, 0x00000002
-	.section .rom.000a942c, "ax"
-	.global ItemMenu_DrawEquipPage
-	.type ItemMenu_DrawEquipPage, %function
-	.thumb_func
-ItemMenu_DrawEquipPage:
-	.incbin "baserom.gba", 0x000a942c, 0x00000200
 	.section .rom.000aa7fc, "ax"
 	.global Func_080aa768
 Func_080aa768:

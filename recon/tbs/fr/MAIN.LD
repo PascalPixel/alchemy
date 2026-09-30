@@ -842,7 +842,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/PREPARE_OWNER_ITEMS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN_OWNER_SELECTION.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/OPEN_CATEGORY_ITEMS.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000a80e0)
+    "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/SELECT_TARGET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GET_ITEM_QUANTITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/OWNER_ITEMS.o"(.text)

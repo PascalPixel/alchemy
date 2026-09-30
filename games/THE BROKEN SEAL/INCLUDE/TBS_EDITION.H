@@ -101,6 +101,17 @@
 #define DJINN_JOIN_WIDTH  26
 #endif
 
+/* Where the item menu's in-stock label follows a member's count. */
+#if defined(TBS_EDITION_DE)
+#define STOCK_LABEL_X 32
+#elif defined(TBS_EDITION_ES)
+#define STOCK_LABEL_X 30
+#elif defined(TBS_EDITION_FR)
+#define STOCK_LABEL_X 29
+#else
+#define STOCK_LABEL_X 24
+#endif
+
 /* The reel game's falling title: the Spanish word has nine letters and
    starts further left. */
 #if defined(TBS_EDITION_ES)

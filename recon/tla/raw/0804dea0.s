@@ -124,7 +124,7 @@ Menu_HandleFlagGridInput:
 	b.n	.L_0804e092
 .L_0804df96:
 	adds	r0, r5, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	b.n	.L_0804e092
 .L_0804df9e:
 	ldr	r3, [r6, #4]

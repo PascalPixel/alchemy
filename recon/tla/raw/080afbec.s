@@ -260,7 +260,7 @@
 	bl	.L_080afdbc
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r2, #0
 	cmp	r2, r5
 	bge.n	.L_080afe0a

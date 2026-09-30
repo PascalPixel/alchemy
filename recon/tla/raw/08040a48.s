@@ -517,7 +517,7 @@ Func_08040a48:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #171
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #245
 	lsls	r0, r0, #3
 	adds	r0, #255
@@ -525,7 +525,7 @@ Func_08040a48:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #170
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r1, #202
 	adds	r1, #255
 	movs	r0, #4

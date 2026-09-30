@@ -43,7 +43,7 @@
 	overlay_veneer Func_080ad0c8
 	overlay_veneer Func_080ad100
 	overlay_veneer Func_080ad110
-	overlay_veneer Func_080ad150
+	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Djinn_ActivateFar
 	overlay_veneer Func_080ad198
 	overlay_veneer Func_080ad1d8

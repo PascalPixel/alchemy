@@ -26,7 +26,7 @@ Func_080ae0f0:
 	adds	r0, r6, #0
 	subs	r5, r6, #1
 	adds	r0, #67
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r1, #1
 	adds	r2, r5, #0
 	movs	r0, #7

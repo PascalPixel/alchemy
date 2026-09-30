@@ -422,7 +422,7 @@ Func_0810a2c8:
 	cmp	r0, #0
 	bne.n	.L_0810a6b2
 	adds	r0, r6, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	lsls	r3, r5, #5
 	ldr	r2, [pc, #36]
 	adds	r3, r3, r5

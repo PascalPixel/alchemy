@@ -1088,7 +1088,7 @@ Owner_RecalculateStats:
 	adds	r0, #255
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r2, [sp, #0]
 	ldr	r1, [sp, #4]
 .L_080adc66:

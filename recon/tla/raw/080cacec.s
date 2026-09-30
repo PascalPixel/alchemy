@@ -14,7 +14,7 @@ Func_080cacec:
 	ldr	r6, [r3, #32]
 	bl	GameFlag_ClearBitFar
 	adds	r0, r7, #0
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r2, #0
 	ldrsh	r3, [r5, r2]
 	movs	r2, #1

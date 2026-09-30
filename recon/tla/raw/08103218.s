@@ -233,7 +233,7 @@ Func_08103218:
 	ldr	r1, [sp, #28]
 	adds	r2, r5, #0
 	ldr	r0, [sp, #52]
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	adds	r2, r5, #0
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #28]
@@ -267,7 +267,7 @@ Func_08103218:
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #28]
 	adds	r2, r5, #0
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	ldr	r0, [sp, #20]
 	cmp	r0, #0
 	beq.n	.L_0810346e
@@ -283,7 +283,7 @@ Func_08103218:
 	adds	r2, r5, #0
 	ldr	r0, [sp, #52]
 	ldr	r1, [sp, #28]
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	ldr	r2, [sp, #20]
 	cmp	r2, #0
 	beq.n	.L_0810346e
@@ -1167,7 +1167,7 @@ Func_08103218:
 	lsrs	r5, r5, #16
 	adds	r0, r6, #0
 	ldr	r1, [sp, #72]
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	cmp	r5, #0
 	beq.n	.L_08103ba6
 	adds	r0, r6, #0
@@ -1226,7 +1226,7 @@ Func_08103218:
 	adds	r0, r6, #0
 	mov	r1, fp
 	mov	r2, r8
-	bl	0x080ad150
+	bl	Djinn_AddToOwnerFar
 	ldr	r0, [sp, #64]
 	cmp	r0, #0
 	beq.n	.L_08103c26

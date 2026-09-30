@@ -263,7 +263,7 @@ Func_080ea8d4:
 .L_080eaaf0:
 	adds	r0, r5, #0
 	adds	r7, #4
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 .L_080eaaf8:
 	ldr	r3, [r6, #8]
 	ldr	r2, [r6, #16]

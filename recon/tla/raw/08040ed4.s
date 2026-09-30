@@ -7,15 +7,15 @@ Func_08040ed4:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #171
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #245
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #170
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r3, [pc, #20]
 	movs	r2, #128
 	lsls	r2, r2, #2
@@ -43,7 +43,7 @@ Func_08040ed4:
 	movs	r0, #136
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r3, [pc, #20]
 	movs	r2, #128
 	lsls	r2, r2, #2
@@ -62,19 +62,19 @@ Func_08040ed4:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #254
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #76
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #225
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #133
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r0, [pc, #8]
 	movs	r1, #30
 	bl	Func_080c8268
@@ -85,29 +85,29 @@ Func_08040ed4:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #36
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #190
 	lsls	r0, r0, #1
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #197
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #160
 	lsls	r0, r0, #4
 	adds	r0, #61
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #156
 	lsls	r0, r0, #4
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #193
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #194
-	bl	0x08016cfc
+	bl	GameFlag_SetBitFar
 	ldr	r0, [pc, #8]
 	movs	r1, #1
 	bl	Func_080c8268

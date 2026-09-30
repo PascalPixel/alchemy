@@ -56,7 +56,7 @@
 	overlay_veneer Func_080ad0f0
 	overlay_veneer Party_AddActiveOwnerFar
 	overlay_veneer Func_080ad110
-	overlay_veneer Func_080ad150
+	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Func_080ad170
 	overlay_veneer Func_080ad208
 	overlay_veneer Func_080ad228

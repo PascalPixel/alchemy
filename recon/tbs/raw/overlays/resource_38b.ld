@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/MURA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/IMPORT.o"(.text)
-        "*/resource_38b_overlay.o"(.rodata)
+        "*/resource_38b_overlay.o"(.rodata.x020091c0)
     }
     .bss (NOLOAD) :
     {

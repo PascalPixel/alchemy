@@ -12,7 +12,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/SPAWN_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_H.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/IMPORT.o"(.text)
-        "*/resource_372_overlay.o"(.rodata)
+        "*/resource_372_overlay.o"(.rodata.x0200c8bc)
     }
     .bss (NOLOAD) :
     {

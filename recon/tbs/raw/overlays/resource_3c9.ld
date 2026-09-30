@@ -17,7 +17,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/CHOJO2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3c9_overlay.o"(.rodata.part1)
+        "*/resource_3c9_overlay.o"(.rodata.x0200df10)
     }
     /* The overlay's own work, past its loaded image. */
     .bss (NOLOAD) :

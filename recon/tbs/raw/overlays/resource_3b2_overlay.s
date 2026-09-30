@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200b15c,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -53,6 +53,7 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffe0
 	.4byte 0x00000008
 	.4byte 0x00000020
+.L_0200b214:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -67,6 +68,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b24c:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -81,6 +83,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b284:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -105,9 +108,9 @@ TakaraShima_EntranceCells:
 	.4byte 0x0000ffff
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200b214
-	.4byte 0x0200b24c
-	.4byte 0x0200b284
+	.4byte .L_0200b214
+	.4byte .L_0200b24c
+	.4byte .L_0200b284
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000098
@@ -500,16 +503,16 @@ gTakaraShimaEventsOther:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x020093ad
+	.4byte TakaraShima_RunAreaEntry
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x0200938d
+	.4byte StartSceneScript37
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x02009375
+	.4byte RunPrologueSceneSetup
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x020092b5
+	.4byte FieldScene_HandleEscapeColumn
 	.4byte 0x00000013
 	.4byte 0x0ef40064
 	.4byte 0x00500004
@@ -531,31 +534,31 @@ gTakaraShimaEvents2:
 gTakaraShimaEvents1:
 	.4byte 0x00009415
 	.4byte 0x0fd70008
-	.4byte 0x02008f3d
+	.4byte StartScriptedSceneMessage
 	.4byte 0x00000c15
 	.4byte 0x0240000b
-	.4byte 0x02009509
+	.4byte ConfigureSceneActor11
 	.4byte 0x00000c15
 	.4byte 0x0241000c
-	.4byte 0x02009549
+	.4byte ConfigureSceneActor12
 	.4byte 0x00000c15
 	.4byte 0x0242000d
-	.4byte 0x0200958d
+	.4byte ConfigureSceneActor13
 	.4byte 0x00000c15
 	.4byte 0x0243000e
-	.4byte 0x020095d1
+	.4byte ConfigureSceneActor14
 	.4byte 0x00004e15
 	.4byte 0x08c4000f
-	.4byte 0x02009625
+	.4byte ShowForgetEverythingMessage
 	.4byte 0x00004e15
 	.4byte 0x08c50010
-	.4byte 0x0200964d
+	.4byte ShowHelpYouForgetMessage
 	.4byte 0x00004e15
 	.4byte 0x08c60011
-	.4byte 0x0200965d
+	.4byte ShowDamagedDoorMessage
 	.4byte 0x00004e15
 	.4byte 0x08c70012
-	.4byte 0x0200966d
+	.4byte ShowSaveMyLifeMessage
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -564,10 +567,10 @@ gTakaraShimaEvents1:
 	.4byte 0x00000002
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x02009741
+	.4byte RunSceneVectorTransition
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x02009741
+	.4byte RunSceneVectorTransition
 	.4byte 0x00008413
 	.4byte 0x0ec00064
 	.4byte 0x00200001
@@ -599,196 +602,196 @@ gTakaraShimaEvents3:
 	.4byte 0x00000002
 	.4byte 0x00008602
 	.4byte 0xffff0028
-	.4byte 0x02009b69
+	.4byte CheckActorPathWest
 	.4byte 0x00000602
 	.4byte 0xffff0029
-	.4byte 0x02009b95
+	.4byte CheckActorPathEast
 	.4byte 0x00004602
 	.4byte 0xffff002a
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x0000c602
 	.4byte 0xffff002b
-	.4byte 0x02009b15
+	.4byte CheckActorPathSouth
 	.4byte 0x0000c602
 	.4byte 0xffff0015
-	.4byte 0x02009bbd
+	.4byte UpdateEscapeRouteForActorPositions
 	.4byte 0x00004602
 	.4byte 0xffff0015
-	.4byte 0x02009c85
+	.4byte UpdateActor8ReturnRoute
 	.4byte 0x00000602
 	.4byte 0xffff0015
-	.4byte 0x02009b95
+	.4byte CheckActorPathEast
 	.4byte 0x00008602
 	.4byte 0xffff0015
-	.4byte 0x02009b69
+	.4byte CheckActorPathWest
 	.4byte 0x0000c602
 	.4byte 0xffff0016
-	.4byte 0x02009d2d
+	.4byte UpdateActor10RetreatRoute
 	.4byte 0x00004602
 	.4byte 0xffff0016
-	.4byte 0x02009de1
+	.4byte UpdateActor10AdvanceRoute
 	.4byte 0x00000602
 	.4byte 0xffff0016
-	.4byte 0x02009b95
+	.4byte CheckActorPathEast
 	.4byte 0x00008602
 	.4byte 0xffff0016
-	.4byte 0x02009b69
+	.4byte CheckActorPathWest
 	.4byte 0x00008602
 	.4byte 0xffff0017
-	.4byte 0x02009e5d
+	.4byte UpdateActor11WestRoute
 	.4byte 0x00000602
 	.4byte 0xffff0017
-	.4byte 0x02009ef5
+	.4byte UpdateActor11EastRoute
 	.4byte 0x0000c602
 	.4byte 0xffff0017
-	.4byte 0x02009b15
+	.4byte CheckActorPathSouth
 	.4byte 0x00004602
 	.4byte 0xffff0017
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x00008602
 	.4byte 0xffff0018
-	.4byte 0x02009f79
+	.4byte UpdateActor12WestRoute
 	.4byte 0x00000602
 	.4byte 0xffff0018
-	.4byte 0x0200a005
+	.4byte UpdateActor12EastRoute
 	.4byte 0x0000c602
 	.4byte 0xffff0018
-	.4byte 0x02009b15
+	.4byte CheckActorPathSouth
 	.4byte 0x00004602
 	.4byte 0xffff0018
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x00008602
 	.4byte 0xffff0019
-	.4byte 0x0200a081
+	.4byte UpdateActor13WestRoute
 	.4byte 0x00000602
 	.4byte 0xffff0019
-	.4byte 0x0200a16d
+	.4byte UpdateActor13EastRoute
 	.4byte 0x0000c602
 	.4byte 0xffff0019
-	.4byte 0x02009b15
+	.4byte CheckActorPathSouth
 	.4byte 0x00004602
 	.4byte 0xffff0019
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x00008602
 	.4byte 0xffff001a
-	.4byte 0x0200a201
+	.4byte UpdateActor15WestRoute
 	.4byte 0x00000602
 	.4byte 0xffff001a
-	.4byte 0x0200a2c9
+	.4byte UpdateActor15EastRoute
 	.4byte 0x0000c602
 	.4byte 0xffff001a
-	.4byte 0x02009b15
+	.4byte CheckActorPathSouth
 	.4byte 0x00004602
 	.4byte 0xffff001a
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x0000c602
 	.4byte 0xffff001f
-	.4byte 0x0200a3c5
+	.4byte UpdateActor17SouthRoute
 	.4byte 0x00004602
 	.4byte 0xffff001f
-	.4byte 0x0200a451
+	.4byte UpdateActor17NorthRoute
 	.4byte 0x00000602
 	.4byte 0xffff001f
-	.4byte 0x02009b95
+	.4byte CheckActorPathEast
 	.4byte 0x00008602
 	.4byte 0xffff001f
-	.4byte 0x02009b69
+	.4byte CheckActorPathWest
 	.4byte 0x0000c602
 	.4byte 0xffff0020
-	.4byte 0x0200a4c9
+	.4byte TakaraShima_SettlePushedBlockNorth
 	.4byte 0x00004602
 	.4byte 0xffff0020
-	.4byte 0x0200a5f1
+	.4byte AdvanceActor18AlongEscapeRoute
 	.4byte 0x00000602
 	.4byte 0xffff0020
-	.4byte 0x02009b95
+	.4byte CheckActorPathEast
 	.4byte 0x00008602
 	.4byte 0xffff0020
-	.4byte 0x02009b69
+	.4byte CheckActorPathWest
 	.4byte 0x0000c602
 	.4byte 0xffff0021
-	.4byte 0x0200a701
+	.4byte TakaraShima_SettleSecondBlockNorth
 	.4byte 0x00004602
 	.4byte 0xffff0021
-	.4byte 0x0200a849
+	.4byte AdvanceActor9AlongEscapeRoute
 	.4byte 0x00000602
 	.4byte 0xffff0021
-	.4byte 0x02009b95
+	.4byte CheckActorPathEast
 	.4byte 0x00008602
 	.4byte 0xffff0021
-	.4byte 0x02009b69
+	.4byte CheckActorPathWest
 	.4byte 0x00008602
 	.4byte 0xffff0022
-	.4byte 0x0200a985
+	.4byte TakaraShima_SettlePushedBlockWest
 	.4byte 0x00000602
 	.4byte 0xffff0022
-	.4byte 0x0200aa99
+	.4byte TakaraShima_SettlePushedBlock
 	.4byte 0x0000c602
 	.4byte 0xffff0022
-	.4byte 0x02009b15
+	.4byte CheckActorPathSouth
 	.4byte 0x00004602
 	.4byte 0xffff0022
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x00008602
 	.4byte 0xffff0023
-	.4byte 0x0200ab81
+	.4byte RetreatActor14AlongEscapeRoute
 	.4byte 0x00000602
 	.4byte 0xffff0023
-	.4byte 0x0200ac4d
+	.4byte AdvanceActor14AlongEscapeRoute
 	.4byte 0x0000c602
 	.4byte 0xffff0023
-	.4byte 0x02009b15
+	.4byte CheckActorPathSouth
 	.4byte 0x00004602
 	.4byte 0xffff0023
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x00008602
 	.4byte 0xffff0024
-	.4byte 0x0200ad0d
+	.4byte RetreatActor16AlongEscapeRoute
 	.4byte 0x00000602
 	.4byte 0xffff0024
-	.4byte 0x0200add1
+	.4byte AdvanceActor16AlongEscapeRoute
 	.4byte 0x0000c602
 	.4byte 0xffff0024
-	.4byte 0x02009b15
+	.4byte CheckActorPathSouth
 	.4byte 0x00004602
 	.4byte 0xffff0024
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x020099b5
+	.4byte ActivateSceneActor8
 	.4byte 0x00000002
 	.4byte 0xffff0016
-	.4byte 0x020099c1
+	.4byte ActivateSceneActor10
 	.4byte 0x00000002
 	.4byte 0xffff0017
-	.4byte 0x020099cd
+	.4byte ActivateSceneActor11
 	.4byte 0x00000002
 	.4byte 0xffff0018
-	.4byte 0x020099d9
+	.4byte ActivateSceneActor12
 	.4byte 0x00000002
 	.4byte 0xffff0019
-	.4byte 0x020099e5
+	.4byte ActivateSceneActor13
 	.4byte 0x00000002
 	.4byte 0xffff001a
-	.4byte 0x020099f1
+	.4byte ActivateSceneActor15
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte 0x020099fd
+	.4byte ActivateSceneActor17
 	.4byte 0x00000002
 	.4byte 0xffff0020
-	.4byte 0x02009a09
+	.4byte ActivateSceneActor18
 	.4byte 0x00000002
 	.4byte 0xffff0021
-	.4byte 0x02009a15
+	.4byte ActivateSceneActor9
 	.4byte 0x00000002
 	.4byte 0xffff0022
-	.4byte 0x02009a21
+	.4byte ActivateSceneActor19
 	.4byte 0x00000002
 	.4byte 0xffff0023
-	.4byte 0x02009a2d
+	.4byte ActivateSceneActor14
 	.4byte 0x00000002
 	.4byte 0xffff0024
-	.4byte 0x02009a39
+	.4byte ActivateSceneActor16
 	.4byte 0x00000013
 	.4byte 0x0ee20064
 	.4byte 0x002003e7
@@ -822,10 +825,10 @@ gTakaraShimaEvents5:
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x08d1000a
-	.4byte 0x02008e89
+	.4byte InitializePrologueSceneState
 	.4byte 0x00004602
 	.4byte 0xffff0014
-	.4byte 0x02009b41
+	.4byte CheckActorPathNorth
 	.4byte 0x00000013
 	.4byte 0x0ee60064
 	.4byte 0x00100053

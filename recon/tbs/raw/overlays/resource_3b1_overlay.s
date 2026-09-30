@@ -1,171 +1,173 @@
 .syntax unified
 	.thumb
 	.section .text.x0200812c,"ax",%progbits
-	.align 2
 	.global FuneHeya_RunWalkerStep
 	.thumb_func
 FuneHeya_RunWalkerStep:
-	push	{r5, r6, r7, lr}
-	adds	r5, r0, #0
-	movs	r0, #8
-	bl	0x0200e4e8
-	adds	r6, r5, #0
-	adds	r6, #102
-	movs	r2, #0
-	ldrsh	r3, [r6, r2]
-	adds	r7, r0, #0
-	cmp	r3, #12
-	bls	.L_0200012c_1a
-	b	.L_0200012c_150
-.L_0200012c_1a:
-	ldr	r2, [pc, #204]
-	lsls	r3, r3, #2
-	ldr	r3, [r3, r2]
-	mov	pc, r3
-	movs	r0, r0
-	.4byte .L_0200012c_58
-	.4byte .L_0200012c_144
-	.4byte .L_0200012c_60
-	.4byte .L_0200012c_144
-	.4byte .L_0200012c_66
-	.4byte .L_0200012c_8a
-	.4byte .L_0200012c_144
-	.4byte .L_0200012c_ba
-	.4byte .L_0200012c_144
-	.4byte .L_0200012c_ec
-	.4byte .L_0200012c_124
-	.4byte .L_0200012c_144
-	.4byte .L_0200012c_14c
-.L_0200012c_58:
-	movs	r3, #176
-	lsls	r3, r3, #8
-	strh	r3, [r5, #6]
-	b	.L_0200012c_d4
-.L_0200012c_60:
-	movs	r3, #0
-	strh	r3, [r5, #6]
-	b	.L_0200012c_d4
-.L_0200012c_66:
-	adds	r0, r5, #0
-	movs	r1, #2
-	bl	0x0200e450
-	movs	r1, #234
-	movs	r2, #128
-	movs	r3, #158
-	lsls	r3, r3, #18
-	adds	r0, r5, #0
-	lsls	r1, r1, #17
-	lsls	r2, r2, #14
-	bl	0x0200e470
-	movs	r3, #60
-	str	r3, [r5, #76]
-	ldrh	r3, [r6, #0]
-	adds	r3, #1
-	b	.L_0200012c_14e
-.L_0200012c_8a:
-	adds	r0, r5, #0
-	bl	0x020080fc
-	cmp	r0, #0
-	beq	.L_0200012c_150
-	adds	r0, r5, #0
-	movs	r1, #1
-	bl	0x0200e450
-	adds	r2, r5, #0
-	movs	r3, #0
-	adds	r2, #98
-	strb	r3, [r2, #0]
-	adds	r3, r7, #0
-	adds	r3, #91
-	ldrb	r3, [r3, #0]
-	cmp	r3, #0
-	bne	.L_0200012c_b4
-	adds	r2, #1
-	movs	r3, #1
-	strb	r3, [r2, #0]
-.L_0200012c_b4:
-	ldrh	r3, [r6, #0]
-	adds	r3, #1
-	b	.L_0200012c_14e
-.L_0200012c_ba:
-	adds	r3, r7, #0
-	adds	r3, #91
-	ldrb	r3, [r3, #0]
-	cmp	r3, #0
-	bne	.L_0200012c_d4
-	adds	r0, r5, #0
-	movs	r1, #3
-	bl	0x0200e450
-	adds	r2, r5, #0
-	adds	r2, #99
-	movs	r3, #2
-	strb	r3, [r2, #0]
-.L_0200012c_d4:
-	ldrh	r3, [r6, #0]
-	adds	r3, #1
-	strh	r3, [r6, #0]
-	ldr	r2, [pc, #8]
-	adds	r3, r5, #0
-	adds	r3, #98
-	strb	r2, [r3, #0]
-	b	.L_0200012c_150
+	push {r5, r6, r7, lr}
+	adds r5, r0, #0
+	movs r0, #8
+	bl Object_GetById
+	adds r6, r5, #0
+	adds r6, #102
+	movs r2, #0
+	ldrsh r3, [r6, r2]
+	adds r7, r0, #0
+	cmp r3, #12
+	bls .L_02008146
+	b .L_0200827c
+.L_02008146:
+	ldr r2, .L_02008214
+	lsls r3, r3, #2
+	ldr r3, [r3, r2]
+	mov pc, r3
+	.2byte 0x0000
+.L_02008150:
+	.4byte .L_02008184
+	.4byte .L_02008270
+	.4byte .L_0200818c
+	.4byte .L_02008270
+	.4byte .L_02008192
+	.4byte .L_020081b6
+	.4byte .L_02008270
+	.4byte .L_020081e6
+	.4byte .L_02008270
+	.4byte .L_02008218
+	.4byte .L_02008250
+	.4byte .L_02008270
+	.4byte .L_02008278
+.L_02008184:
+	movs r3, #176
+	lsls r3, r3, #8
+	strh r3, [r5, #6]
+	b .L_02008200
+.L_0200818c:
+	movs r3, #0
+	strh r3, [r5, #6]
+	b .L_02008200
+.L_02008192:
+	adds r0, r5, #0
+	movs r1, #2
+	bl Object_SetMode
+	movs r1, #234
+	movs r2, #128
+	movs r3, #158
+	lsls r3, r3, #18
+	adds r0, r5, #0
+	lsls r1, r1, #17
+	lsls r2, r2, #14
+	bl Engine_ObjectSetPosition
+	movs r3, #60
+	str r3, [r5, #76]
+	ldrh r3, [r6]
+	adds r3, #1
+	b .L_0200827a
+.L_020081b6:
+	adds r0, r5, #0
+	bl StagedActor_CountdownUntilPositionUnset
+	cmp r0, #0
+	beq .L_0200827c
+	adds r0, r5, #0
+	movs r1, #1
+	bl Object_SetMode
+	adds r2, r5, #0
+	movs r3, #0
+	adds r2, #98
+	strb r3, [r2]
+	adds r3, r7, #0
+	adds r3, #91
+	ldrb r3, [r3]
+	cmp r3, #0
+	bne .L_020081e0
+	adds r2, #1
+	movs r3, #1
+	strb r3, [r2]
+.L_020081e0:
+	ldrh r3, [r6]
+	adds r3, #1
+	b .L_0200827a
+.L_020081e6:
+	adds r3, r7, #0
+	adds r3, #91
+	ldrb r3, [r3]
+	cmp r3, #0
+	bne .L_02008200
+	adds r0, r5, #0
+	movs r1, #3
+	bl Object_SetMode
+	adds r2, r5, #0
+	adds r2, #99
+	movs r3, #2
+	strb r3, [r2]
+.L_02008200:
+	ldrh r3, [r6]
+	adds r3, #1
+	strh r3, [r6]
+	ldr r2, .L_02008210
+	adds r3, r5, #0
+	adds r3, #98
+	strb r2, [r3]
+	b .L_0200827c
+.L_02008210:
 	.4byte 0x00000000
-	.4byte 0x02008150
-.L_0200012c_ec:
-	adds	r0, r5, #0
-	movs	r1, #2
-	bl	0x0200e450
-	movs	r1, #240
-	movs	r2, #128
-	movs	r3, #150
-	lsls	r3, r3, #18
-	adds	r0, r5, #0
-	lsls	r1, r1, #17
-	lsls	r2, r2, #14
-	bl	0x0200e470
-	movs	r3, #60
-	str	r3, [r5, #76]
-	ldrh	r3, [r6, #0]
-	adds	r3, #1
-	strh	r3, [r6, #0]
-	adds	r3, r7, #0
-	adds	r3, #91
-	ldrb	r3, [r3, #0]
-	cmp	r3, #0
-	bne	.L_0200012c_150
-	adds	r2, r5, #0
-	adds	r2, #99
-	movs	r3, #3
-	strb	r3, [r2, #0]
-	b	.L_0200012c_150
-.L_0200012c_124:
-	adds	r0, r5, #0
-	bl	0x020080fc
-	cmp	r0, #0
-	beq	.L_0200012c_150
-	adds	r0, r5, #0
-	movs	r1, #1
-	bl	0x0200e450
-	adds	r2, r5, #0
-	movs	r3, #0
-	adds	r2, #98
-	strb	r3, [r2, #0]
-	ldrh	r3, [r6, #0]
-	adds	r3, #1
-	b	.L_0200012c_14e
-.L_0200012c_144:
-	adds	r0, r5, #0
-	bl	0x020080d8
-	b	.L_0200012c_150
-.L_0200012c_14c:
-	movs	r3, #0
-.L_0200012c_14e:
-	strh	r3, [r6, #0]
-.L_0200012c_150:
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	movs	r0, r0
-	.section .rodata.part1,"a",%progbits
+.L_02008214:
+	.4byte .L_02008150
+.L_02008218:
+	adds r0, r5, #0
+	movs r1, #2
+	bl Object_SetMode
+	movs r1, #240
+	movs r2, #128
+	movs r3, #150
+	lsls r3, r3, #18
+	adds r0, r5, #0
+	lsls r1, r1, #17
+	lsls r2, r2, #14
+	bl Engine_ObjectSetPosition
+	movs r3, #60
+	str r3, [r5, #76]
+	ldrh r3, [r6]
+	adds r3, #1
+	strh r3, [r6]
+	adds r3, r7, #0
+	adds r3, #91
+	ldrb r3, [r3]
+	cmp r3, #0
+	bne .L_0200827c
+	adds r2, r5, #0
+	adds r2, #99
+	movs r3, #3
+	strb r3, [r2]
+	b .L_0200827c
+.L_02008250:
+	adds r0, r5, #0
+	bl StagedActor_CountdownUntilPositionUnset
+	cmp r0, #0
+	beq .L_0200827c
+	adds r0, r5, #0
+	movs r1, #1
+	bl Object_SetMode
+	adds r2, r5, #0
+	movs r3, #0
+	adds r2, #98
+	strb r3, [r2]
+	ldrh r3, [r6]
+	adds r3, #1
+	b .L_0200827a
+.L_02008270:
+	adds r0, r5, #0
+	bl StagedActor_AdvanceCounter98
+	b .L_0200827c
+.L_02008278:
+	movs r3, #0
+.L_0200827a:
+	strh r3, [r6]
+.L_0200827c:
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+	.2byte 0x0000
+	.section .rodata.x0200e668,"a",%progbits
 	.global FuneHeya_TurnSteps
 FuneHeya_TurnSteps:
 	.4byte 0x00100000
@@ -199,7 +201,7 @@ FuneHeya_ActionScriptA:
 	.4byte 0x02480000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte ResetStagedActorState
 	.4byte 0x00000010
 	.global FuneHeya_ActionScriptB
 FuneHeya_ActionScriptB:
@@ -222,7 +224,7 @@ FuneHeya_ActionScriptB:
 	.4byte 0x02c80000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte ResetStagedActorState
 	.4byte 0x00000010
 	.global FuneHeya_Script01
 FuneHeya_Script01:
@@ -272,7 +274,7 @@ FuneHeya_ProgressTableA:
 	.4byte 0x00a60000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte ResetStagedActorState
 	.4byte 0x00000010
 	.global FuneHeya_ActionScriptC
 FuneHeya_ActionScriptC:
@@ -284,7 +286,7 @@ FuneHeya_ActionScriptC:
 	.4byte 0x012c0000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte ResetStagedActorState
 	.4byte 0x00000010
 	.global FuneHeya_ActionScriptD
 FuneHeya_ActionScriptD:
@@ -296,7 +298,7 @@ FuneHeya_ActionScriptD:
 	.4byte 0x00a80000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte ResetStagedActorState
 	.4byte 0x00000010
 	.global FuneHeya_ActionScriptE
 FuneHeya_ActionScriptE:
@@ -350,7 +352,7 @@ FuneHeya_EntryActionScript:
 	.4byte 0x00000024
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02008059
+	.4byte UpdateStagedActorVerticalPosition
 	.global FuneHeya_ProgressTableB
 FuneHeya_ProgressTableB:
 	.4byte 0x0000001c
@@ -379,9 +381,10 @@ FuneHeya_ProgressTableC:
 	.global FuneHeya_ActionScriptF
 FuneHeya_ActionScriptF:
 	.4byte 0x00000022
-	.4byte 0x020080b1
+	.4byte StagedActor_SetAngleByKind
+.L_0200e960:
 	.4byte 0x00000022
-	.4byte 0x020082f5
+	.4byte StagedActor_SetReadyState
 	.global FuneHeya_AnchorObject
 FuneHeya_AnchorObject:
 	.4byte 0x00000000
@@ -661,7 +664,7 @@ FuneHeya_StepScriptD:
 	.global FuneHeya_StepScriptE
 FuneHeya_StepScriptE:
 	.4byte 0xffff00f4
-	.4byte 0x0200e960
+	.4byte .L_0200e960
 	.4byte 0x00960000
 	.4byte 0x00000000
 	.4byte 0x02100000
@@ -729,7 +732,7 @@ FuneHeya_StepScriptF:
 	.4byte 0x00000000
 	.4byte 0x0000d000
 	.4byte 0xffff00f4
-	.4byte 0x0200e960
+	.4byte .L_0200e960
 	.4byte 0x00960000
 	.4byte 0x00000000
 	.4byte 0x02100000
@@ -809,7 +812,7 @@ FuneHeya_StepScriptG:
 	.4byte 0x00000000
 	.4byte 0x0000d000
 	.4byte 0xffff00f4
-	.4byte 0x0200e960
+	.4byte .L_0200e960
 	.4byte 0x00960000
 	.4byte 0x00000000
 	.4byte 0x02100000
@@ -1121,10 +1124,10 @@ FuneHeya_SceneTable05:
 	.4byte 0x00000002
 	.4byte 0x00000002
 	.4byte 0x0922000b
-	.4byte 0x02009b35
+	.4byte FieldScene_RunThreeActorPresentation
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020087f9
+	.4byte FieldScene_RunScene3b1_020007f8
 	.4byte 0x00000000
 	.4byte 0x09250009
 	.4byte 0x00001d4f
@@ -1133,7 +1136,7 @@ FuneHeya_SceneTable05:
 	.4byte 0x00001e18
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020088a9
+	.4byte SceneDialogue_ShowLine1E19Or1D50
 	.4byte 0x00000000
 	.4byte 0x0925000b
 	.4byte 0x00001d51
@@ -1145,7 +1148,7 @@ FuneHeya_SceneTable05:
 	.4byte 0x00001e12
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02009895
+	.4byte FieldScene_RunScene3b1SequenceC
 	.4byte 0x00008d15
 	.4byte 0x09250008
 	.4byte 0x00001d52
@@ -1198,37 +1201,37 @@ FuneHeya_SceneTable06:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02009895
+	.4byte FieldScene_RunScene3b1SequenceC
 	.4byte 0x00008d15
 	.4byte 0xffff0011
 	.4byte 0x00001f80
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020088ed
+	.4byte SceneState_RunFlagBranchedActor8Setup
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020089b5
+	.4byte SceneDialogue_RunActorTenFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008a81
+	.4byte FieldScene_RunActor11FlagDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008b85
+	.4byte FieldScene_RunScene3b1SequenceA
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008cc9
+	.4byte FieldScene_RunScene3b1SequenceB
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x02008e15
+	.4byte SceneDialogue_RunActorThirteenFlag300Branch
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008ee1
+	.4byte FieldScene_RunFlag300BranchDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02008fad
+	.4byte FieldScene_RunActor15FlagDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x02009079
+	.4byte FieldScene_RunActor16FlagDialogue
 	.4byte 0x00008d15
 	.4byte 0x03000008
 	.4byte 0x00001e95
@@ -1299,7 +1302,7 @@ FuneHeya_SceneTable07:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02009895
+	.4byte FieldScene_RunScene3b1SequenceC
 	.4byte 0x00008d15
 	.4byte 0xffff0011
 	.4byte 0x00001f52
@@ -1329,7 +1332,7 @@ FuneHeya_SceneTable07:
 	.4byte 0x00001f46
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008a81
+	.4byte FieldScene_RunActor11FlagDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001f49
@@ -1370,10 +1373,10 @@ FuneHeya_SceneTable08:
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008729
+	.4byte FieldScene_RunScene3b1_02000728
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008671
+	.4byte FieldScene_RunScene3b1_02000670
 	.4byte 0x00000000
 	.4byte 0x09210009
 	.4byte 0x00001d32
@@ -1388,7 +1391,7 @@ FuneHeya_SceneTable08:
 	.4byte 0x00001dd0
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008709
+	.4byte SceneDialogue_RunActor12Line
 	.4byte 0x00008d15
 	.4byte 0x09210008
 	.4byte 0x00001d33
@@ -1424,10 +1427,10 @@ FuneHeya_SceneTable08:
 	.4byte 0x00001dd9
 	.4byte 0x00000002
 	.4byte 0x0920000a
-	.4byte 0x02009a61
+	.4byte FieldScene_RunFlagGatedThreeActorSetup
 	.4byte 0x0000e814
 	.4byte 0x09250008
-	.4byte 0x0200a7d9
+	.4byte FieldScene_RunBranchingActorPresentation
 	.4byte 0x0000c423
 	.4byte 0x0f940066
 	.4byte 0x001000b5
@@ -1582,16 +1585,16 @@ FuneHeya_SceneTable11:
 FuneHeya_SceneTable12:
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x02009a09
+	.4byte FieldScene_RunScene3b1SequenceD
 	.4byte 0x00000000
 	.4byte 0xffff0024
-	.4byte 0x02009979
+	.4byte FuneHeya_RunFlagBranchSequence
 	.4byte 0x00000000
 	.4byte 0xffff0025
-	.4byte 0x02009979
+	.4byte FuneHeya_RunFlagBranchSequence
 	.4byte 0x00000000
 	.4byte 0xffff0026
-	.4byte 0x02009979
+	.4byte FuneHeya_RunFlagBranchSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001e4a
@@ -1731,28 +1734,28 @@ FuneHeya_SceneTable13:
 	.4byte 0x00001ecd
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x02009325
+	.4byte SceneDialogue_ShowLine1ECETo1ED0
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x02009379
+	.4byte SceneDialogue_RunActor19TwoFlagLineA
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x020093cd
+	.4byte SceneDialogue_RunActor20TwoFlagLine
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02009421
+	.4byte SceneDialogue_ShowLine1ED1Or1ED2
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0200945d
+	.4byte SceneDialogue_RunActor22TwoFlagLine
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x020094b1
+	.4byte SceneDialogue_RunActor23BranchedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x02009505
+	.4byte SceneDialogue_RunActor24BranchedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x02009559
+	.4byte SceneDialogue_RunActor25FlaggedLine
 	.4byte 0x00000000
 	.4byte 0xffff001a
 	.4byte 0x00001ed3
@@ -1779,28 +1782,28 @@ FuneHeya_SceneTable13:
 	.4byte 0x00001eda
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x02009595
+	.4byte SceneDialogue_RunActor18TwoFlagLine
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x020095e9
+	.4byte SceneDialogue_RunActor19TwoFlagLineB
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0200963d
+	.4byte SceneDialogue_ShowLine1EDBTo1EDDActor20
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x02009691
+	.4byte SceneDialogue_RunActor21FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x020096cd
+	.4byte SceneDialogue_RunActor22BranchedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x02009721
+	.4byte SceneDialogue_ShowLine1EDBTo1EDDActor23
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x02009775
+	.4byte SceneDialogue_ShowLine1EDBTo1EDDActor24
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x020097c9
+	.4byte SceneDialogue_ShowLine1EDEOr1EDF
 	.4byte 0x00008d15
 	.4byte 0xffff001a
 	.4byte 0x00001ee0

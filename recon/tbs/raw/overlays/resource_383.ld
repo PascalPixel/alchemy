@@ -12,10 +12,11 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/THANKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/HEYA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/HEYA3.o"(.text)
+        "*/resource_383_overlay.o"(.text.x0200c8c6)
         "*/resource_383_overlay.o"(.text.x0200c8c8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/STOP_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/IMPORT.o"(.text)
-        "*/resource_383_overlay.o"(.rodata)
+        "*/resource_383_overlay.o"(.rodata.x0200cf2c)
     }
     .bss : { "*/resource_383_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

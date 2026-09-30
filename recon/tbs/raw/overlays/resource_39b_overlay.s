@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200a658,"a",%progbits
+.L_0200a658:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200a690:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200a6c8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -103,22 +106,22 @@ MakyuriIriguchi_RiseScript:
 	.global MakyuriHeya_SparkScript
 MakyuriHeya_SparkScript:
 	.4byte 0x00000022
-	.4byte 0x02009c21
+	.4byte SceneEffect_AdvanceAnchoredRiseFrame
 	.4byte 0x0000001b
 	.global Makyuri_RampScript
 Makyuri_RampScript:
 	.4byte 0x00000022
-	.4byte 0x02009c61
+	.4byte OverlayObject_RampWords24And28Over16Frames
 	.4byte 0x00000010
 	.global Makyuri_ScaleCounterScript
 Makyuri_ScaleCounterScript:
 	.4byte 0x00000022
-	.4byte 0x02009c89
+	.4byte OverlayObject_AdvanceScaleCounter
 	.4byte 0x0000001b
 	.global Makyuri_PillarScript
 Makyuri_PillarScript:
 	.4byte 0x00000022
-	.4byte 0x02009cb5
+	.4byte Makyuri_FollowLeader
 	.4byte 0x00000010
 	.global Makyuri_MoveAngles
 Makyuri_MoveAngles:
@@ -132,9 +135,9 @@ Makyuri_MoveAngles:
 	.4byte 0xffff8000
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200a658
-	.4byte 0x0200a690
-	.4byte 0x0200a6c8
+	.4byte .L_0200a658
+	.4byte .L_0200a690
+	.4byte .L_0200a6c8
 	.global MakyuriIriguchi_Actor8Path1
 MakyuriIriguchi_Actor8Path1:
 	.4byte 0x00000015
@@ -153,7 +156,7 @@ MakyuriIriguchi_Actor8Path1:
 	.4byte 0x00000000
 	.4byte 0x00980000
 	.4byte 0x00000022
-	.4byte 0x02008d49
+	.4byte SceneAudio_PlayCue118AndReturnZero
 	.4byte 0x00000001
 	.4byte 0x0000001c
 	.4byte 0x00000001
@@ -176,7 +179,7 @@ MakyuriIriguchi_Actor8Path2:
 	.4byte 0x00000000
 	.4byte 0x00980000
 	.4byte 0x00000022
-	.4byte 0x02008d49
+	.4byte SceneAudio_PlayCue118AndReturnZero
 	.4byte 0x00000001
 	.4byte 0x0000001c
 	.4byte 0x00000001
@@ -199,7 +202,7 @@ MakyuriIriguchi_Actor8Path3:
 	.4byte 0x00000000
 	.4byte 0x00980000
 	.4byte 0x00000022
-	.4byte 0x02008d49
+	.4byte SceneAudio_PlayCue118AndReturnZero
 	.4byte 0x00000001
 	.4byte 0x0000001c
 	.4byte 0x00000001
@@ -493,49 +496,49 @@ MakyuriIriguchi_SceneTableC:
 MakyuriIriguchi_SceneTableD:
 	.4byte 0x00000202
 	.4byte 0x1875001f
-	.4byte 0x02008e79
+	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x1875001f
-	.4byte 0x02008e6d
+	.4byte FieldScene_CallHelper2e58
 	.4byte 0x00000a02
 	.4byte 0x18750015
-	.4byte 0x02008e79
+	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x18750015
-	.4byte 0x02008e61
+	.4byte FieldScene_Forward31d4
 	.4byte 0x00000202
 	.4byte 0x1875000b
-	.4byte 0x02008e79
+	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x1875000b
-	.4byte 0x02008e85
+	.4byte FieldScene_CallHelper2d50
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02009145
+	.4byte FieldScene_RunIndexedStep63
 	.4byte 0x00000002
 	.4byte 0x12050028
-	.4byte 0x02009151
+	.4byte FieldScene_RunActor8StepWithTableA820
 	.4byte 0x00000002
 	.4byte 0x1205002a
-	.4byte 0x02009151
+	.4byte FieldScene_RunActor8StepWithTableA820
 	.4byte 0x00000002
 	.4byte 0x02050029
-	.4byte 0x0200916d
+	.4byte MakyuriIriguchi_SendActor8ByLeaderColumn
 	.4byte 0x0000c602
 	.4byte 0xffff0028
-	.4byte 0x020091b5
+	.4byte MakyuriIriguchi_OpenEntrance
 	.4byte 0x0000c602
 	.4byte 0xffff0029
-	.4byte 0x020091b5
+	.4byte MakyuriIriguchi_OpenEntrance
 	.4byte 0x0000c602
 	.4byte 0xffff0043
-	.4byte 0x02008fad
+	.4byte FieldScene_RunIndexedStep17
 	.4byte 0x0000c602
 	.4byte 0xffff0044
-	.4byte 0x02008fb9
+	.4byte FieldScene_RunIndexedStep18
 	.4byte 0x0000c602
 	.4byte 0xffff0045
-	.4byte 0x02008fc5
+	.4byte FieldScene_RunIndexedStep19
 	.4byte 0x00000001
 	.4byte 0xffff0033
 	.4byte 0x00000001
@@ -592,19 +595,19 @@ MakyuriIriguchi_SceneTableD:
 	.4byte 0x0000158e
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020091b5
+	.4byte MakyuriIriguchi_OpenEntrance
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x020091b5
+	.4byte MakyuriIriguchi_OpenEntrance
 	.4byte 0x00000003
 	.4byte 0xffff0001
-	.4byte 0x02008ead
+	.4byte FieldScene_RunStepWithValue1632
 	.4byte 0x00005d15
 	.4byte 0x08750010
-	.4byte 0x02008fd9
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x10009585
 	.4byte 0xffff0000
-	.4byte 0x0200a3b9
+	.4byte OverlayObject_ReleasePublishedAttachment
 	.4byte 0x00000013
 	.4byte 0x0f650064
 	.4byte 0x0010004c

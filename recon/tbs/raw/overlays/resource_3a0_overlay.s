@@ -1,7 +1,7 @@
 .syntax unified
 	.thumb
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x020094fc,"a",%progbits
+.L_020094fc:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -16,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009534:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -30,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200956c:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -46,11 +48,12 @@
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x020094fc
-	.4byte 0x02009534
-	.4byte 0x0200956c
+	.4byte .L_020094fc
+	.4byte .L_02009534
+	.4byte .L_0200956c
 	.global ShianMura_ActionTable
 ShianMura_ActionTable:
+.L_020095b0:
 	.4byte 0x00000015
 	.4byte 0x0000000f
 	.4byte 0x00006666
@@ -348,7 +351,7 @@ gShianMuraPlacements:
 	.4byte 0x01f00000
 	.4byte 0x00033000
 	.4byte 0xffff009f
-	.4byte 0x020095b0
+	.4byte .L_020095b0
 	.4byte 0x01180000
 	.4byte 0x00000000
 	.4byte 0x00e80000
@@ -405,46 +408,46 @@ gShianMuraPlacements:
 gShianMuraEvents:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008e4d
+	.4byte SceneEffect_DispatchStep
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008e4d
+	.4byte SceneEffect_DispatchStep
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008e4d
+	.4byte SceneEffect_DispatchStep
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008e4d
+	.4byte SceneEffect_DispatchStep
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008e4d
+	.4byte SceneEffect_DispatchStep
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008e4d
+	.4byte SceneEffect_DispatchStep
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008e4d
+	.4byte SceneEffect_DispatchStep
 	.4byte 0x00000001
 	.4byte 0xffff0008
 	.4byte 0x00000008
 	.4byte 0x00000202
 	.4byte 0x02010014
-	.4byte 0x02008d0d
+	.4byte ShianMura_HopLeaderAhead
 	.4byte 0x00004602
 	.4byte 0x02010015
-	.4byte 0x02008d0d
+	.4byte ShianMura_HopLeaderAhead
 	.4byte 0x00004602
 	.4byte 0x02010002
-	.4byte 0x02008d0d
+	.4byte ShianMura_HopLeaderAhead
 	.4byte 0x00004602
 	.4byte 0x02010003
-	.4byte 0x02008d0d
+	.4byte ShianMura_HopLeaderAhead
 	.4byte 0x00000000
 	.4byte 0x08950008
 	.4byte 0x000017e7
 	.4byte 0x00000000
 	.4byte 0x08950009
-	.4byte 0x020085d5
+	.4byte SceneEffect_ShowActorSetupMessage
 	.4byte 0x00000000
 	.4byte 0x0895000a
 	.4byte 0x000017eb
@@ -459,7 +462,7 @@ gShianMuraEvents:
 	.4byte 0x000017f1
 	.4byte 0x00000000
 	.4byte 0x0895000e
-	.4byte 0x020089dd
+	.4byte ShianMura_RunNpcMeetScene
 	.4byte 0x00000000
 	.4byte 0x0895000f
 	.4byte 0x000017f5
@@ -468,10 +471,10 @@ gShianMuraEvents:
 	.4byte 0x000017f6
 	.4byte 0x00000000
 	.4byte 0x08950011
-	.4byte 0x02008ced
+	.4byte SceneEffect_RunActorSceneMessage
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x020085f5
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001a24
@@ -501,13 +504,13 @@ gShianMuraEvents:
 	.4byte 0x00001a2c
 	.4byte 0x10001815
 	.4byte 0x02010014
-	.4byte 0x0200894d
+	.4byte SceneEffect_ActivateNearbyActor
 	.4byte 0x00001815
 	.4byte 0x02010014
-	.4byte 0x02008969
+	.4byte FieldScene_RunScene3a0_02000968
 	.4byte 0x00008e15
 	.4byte 0xffff0015
-	.4byte 0x02008f31
+	.4byte Scene_RunActorNineteenScript
 	.4byte 0x00008d15
 	.4byte 0x08950008
 	.4byte 0x000017ff
@@ -576,10 +579,10 @@ gShianMuraEvents:
 	.4byte 0x001000e5
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x02008315
+	.4byte SceneEffect_RequestFixedEffect
 	.4byte 0x00000006
 	.4byte 0xffff00c8
-	.4byte 0x02009061
+	.4byte FieldScene_RunScene3a0_02001060
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

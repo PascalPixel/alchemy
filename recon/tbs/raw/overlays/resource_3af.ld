@@ -7,6 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/UPDATE_SCALE.o"(.text)
+        "*/resource_3af_overlay.o"(.text.x020080c2)
         "*/resource_3af_overlay.o"(.text.x020080c4)
         "*/resource_3af_overlay.o"(.text.x020082ec)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN.o"(.text)
@@ -15,7 +16,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_POSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.o"(.text)
-        "*/resource_3af_overlay.o"(.rodata)
+        "*/resource_3af_overlay.o"(.rodata.x0200c464)
     }
     .bss ALIGN(16) (NOLOAD) :
     {

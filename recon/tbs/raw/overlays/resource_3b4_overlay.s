@@ -1,7 +1,6 @@
 .syntax unified
 	.thumb
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200a644,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -384,46 +383,46 @@ gTakaraAshibaEvents1:
 	.4byte 0x00000002
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02009199
+	.4byte SceneState_ApplyRectAndPlaceSlot12
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x020091d9
+	.4byte ConfigureAndPlaceActorTwelve
 	.4byte 0x00009415
 	.4byte 0xffff0008
-	.4byte 0x02009205
+	.4byte FieldScene_RunStep8ValueEe7
 	.4byte 0x00009415
 	.4byte 0xffff0009
-	.4byte 0x02009239
+	.4byte FieldScene_RunStep9ValueEe8
 	.4byte 0x00009415
 	.4byte 0xffff000a
-	.4byte 0x0200926d
+	.4byte FieldScene_RunStep10ValueEe9
 	.4byte 0x00009415
 	.4byte 0xffff000b
-	.4byte 0x020092a1
+	.4byte FieldScene_RunStep11ValueEea
 	.4byte 0x00009415
 	.4byte 0xffff000c
-	.4byte 0x020092d5
+	.4byte FieldScene_RunStep12ValueEeb
 	.4byte 0x00000002
 	.4byte 0xffff0032
-	.4byte 0x02009071
+	.4byte FieldScene_RunScene3b4SequenceC
 	.4byte 0x00000002
 	.4byte 0xffff0033
-	.4byte 0x02009109
+	.4byte FieldScene_RunIndexedStep0
 	.4byte 0x00000002
 	.4byte 0xffff0034
-	.4byte 0x02009115
+	.4byte FieldScene_RunIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff0035
-	.4byte 0x02009121
+	.4byte SceneState_ResetCounter412OnHeading4000B
 	.4byte 0x00000002
 	.4byte 0xffff0036
-	.4byte 0x0200915d
+	.4byte SceneState_ResetCounter412OnHeading4000
 	.4byte 0x00004602
 	.4byte 0xffff0035
-	.4byte 0x02008f35
+	.4byte FieldScene_CallHelper3500
 	.4byte 0x00004602
 	.4byte 0xffff0036
-	.4byte 0x02008f35
+	.4byte FieldScene_CallHelper3500
 	.4byte 0x00000013
 	.4byte 0x0eca0064
 	.4byte 0x0020014d
@@ -449,46 +448,46 @@ gTakaraAshibaEvents2:
 	.4byte 0x00000002
 	.4byte 0x00000002
 	.4byte 0xffff0035
-	.4byte 0x020095cd
+	.4byte FieldScene_RunLateIndexedStep0
 	.4byte 0x00000002
 	.4byte 0xffff0036
-	.4byte 0x020095d9
+	.4byte FieldScene_RunLateIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff003d
-	.4byte 0x020095f1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x00000002
 	.4byte 0xffff003e
-	.4byte 0x02009695
+	.4byte TakaraAshiba_RunActorElevenFollowScene
 	.4byte 0x00000006
 	.4byte 0xffff0060
-	.4byte 0x02009839
+	.4byte FieldScene_RunScene3b4SequenceB
 	.4byte 0x00000006
 	.4byte 0xffff005c
-	.4byte 0x0200949d
+	.4byte FieldScene_RunScene3b4SequenceA
 	.4byte 0x00000006
 	.4byte 0xffff005b
-	.4byte 0x0200938d
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x020098c1
+	.4byte SetBlendAlphaCoefficients
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x020098d1
+	.4byte SceneEffect_SetBlendAlpha0607
 	.4byte 0x00009115
 	.4byte 0xffff0008
-	.4byte 0x02008aa5
+	.4byte Resource3b4_EmptyHookB
 	.4byte 0x00009115
 	.4byte 0xffff0009
-	.4byte 0x02008aa5
+	.4byte Resource3b4_EmptyHookB
 	.4byte 0x00009115
 	.4byte 0xffff000a
-	.4byte 0x02008aa5
+	.4byte Resource3b4_EmptyHookB
 	.4byte 0x00009115
 	.4byte 0xffff000b
-	.4byte 0x02008aa5
+	.4byte Resource3b4_EmptyHookB
 	.4byte 0x00009115
 	.4byte 0xffff000c
-	.4byte 0x02008aa5
+	.4byte Resource3b4_EmptyHookB
 	.4byte 0x00000013
 	.4byte 0x0ece0064
 	.4byte 0x002001bc
@@ -514,97 +513,97 @@ gTakaraAshibaEvents3:
 	.4byte 0x00000002
 	.4byte 0x00000202
 	.4byte 0xffff0032
-	.4byte 0x02009d65
+	.4byte FieldScene_RunThreeCallSequenceB
 	.4byte 0x00000202
 	.4byte 0xffff0033
-	.4byte 0x02009b61
+	.4byte SceneActor_BranchOnSlotZeroAtTile38
 	.4byte 0x00000202
 	.4byte 0xffff0034
-	.4byte 0x02009c5d
+	.4byte FieldScene_RunTwoStepSequence
 	.4byte 0x00000202
 	.4byte 0xffff0035
-	.4byte 0x02009e61
+	.4byte FieldScene_RunThreeCallSequence
 	.4byte 0x00000202
 	.4byte 0xffff003d
-	.4byte 0x02009b61
+	.4byte SceneActor_BranchOnSlotZeroAtTile38
 	.4byte 0x00000202
 	.4byte 0xffff0036
-	.4byte 0x02009d79
+	.4byte FieldScene_DispatchByActorZeroFacing
 	.4byte 0x00000202
 	.4byte 0xffff003c
-	.4byte 0x020098e1
+	.4byte FieldScene_DispatchBySlotZeroFacing
 	.4byte 0x00000202
 	.4byte 0xffff0046
-	.4byte 0x020099cd
+	.4byte SceneState_BranchOnActorZeroFacing
 	.4byte 0x00000002
 	.4byte 0x00360014
-	.4byte 0x02008ad1
+	.4byte FieldScene_RunScene3b4_02000ad0
 	.4byte 0x00000002
 	.4byte 0x00360015
-	.4byte 0x02008b69
+	.4byte FieldScene_RunScene3b4_02000b68
 	.4byte 0x00000002
 	.4byte 0x00360016
-	.4byte 0x02008ccd
+	.4byte FieldScene_RunScene3b4_02000ccc
 	.4byte 0x00000002
 	.4byte 0x0036001e
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x0036001f
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360020
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360021
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360022
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360023
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360024
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360025
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360026
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360027
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360028
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000002
 	.4byte 0x00360029
-	.4byte 0x02008e51
+	.4byte FieldScene_CopyActorPosition
 	.4byte 0x00000007
 	.4byte 0xffff000f
-	.4byte 0x020089dd
+	.4byte SceneActor_SetActor15ModeZero
 	.4byte 0x00009115
 	.4byte 0xffff000f
-	.4byte 0x02008ec9
+	.4byte FieldScene_RunActor15ZeroStep
 	.4byte 0x00001815
 	.4byte 0x0200000d
-	.4byte 0x02009985
+	.4byte SceneActor_MarkSlot13AndSetFlag200
 	.4byte 0x00008c15
 	.4byte 0x02010008
-	.4byte 0x02009ac9
+	.4byte TakaraAshiba_DispatchByActorEightColumn
 	.4byte 0x00008c15
 	.4byte 0x02060009
-	.4byte 0x02009c29
+	.4byte SceneActor_RunWhenActor9AtTile45x43
 	.4byte 0x00008c15
 	.4byte 0x0203000a
-	.4byte 0x02009cf9
+	.4byte TakaraAshiba_UpdateBlockRects
 	.4byte 0x00008c15
 	.4byte 0x0204000b
-	.4byte 0x02009e55
+	.4byte FieldScene_RunSingleStep
 	.4byte 0x00008c15
 	.4byte 0x0205000c
-	.4byte 0x02009e75
+	.4byte FieldScene_CallHelper3c70
 	.4byte 0x00000013
 	.4byte 0x0ed60068
 	.4byte 0x0020029a

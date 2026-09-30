@@ -17,7 +17,7 @@ SECTIONS
         "*/resource_3c5_overlay.o"(.text.x0200a8a0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3c5_overlay.o"(.rodata.part1)
+        "*/resource_3c5_overlay.o"(.rodata.x0200afd4)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

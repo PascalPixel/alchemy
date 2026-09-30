@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008598,"a",%progbits
 	.global BiribinoHeya_PrimaryTable
 BiribinoHeya_PrimaryTable:
 	.4byte 0xffff0000
@@ -271,22 +271,22 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x000013e0
 	.4byte 0x00000000
 	.4byte 0x08450010
-	.4byte 0x0200805d
+	.4byte FieldScene_RunActor16MessageBranch
 	.4byte 0x00000000
 	.4byte 0x08450011
-	.4byte 0x02008125
+	.4byte FieldScene_RunActor17MessageBranch
 	.4byte 0x00000000
 	.4byte 0x08450012
-	.4byte 0x020080bd
+	.4byte FieldScene_RunActor18MessageBranch
 	.4byte 0x00000000
 	.4byte 0x08450013
-	.4byte 0x020082f5
+	.4byte FieldScene_RunActor19MessageBranch
 	.4byte 0x00000000
 	.4byte 0x08450014
 	.4byte 0x000013ec
 	.4byte 0x00000000
 	.4byte 0x08450015
-	.4byte 0x020081a9
+	.4byte FieldScene_ConfigureActor21Scene
 	.4byte 0x00000000
 	.4byte 0x08450016
 	.4byte 0x000013ee
@@ -295,7 +295,7 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x000013ef
 	.4byte 0x00000000
 	.4byte 0x08450018
-	.4byte 0x020081e1
+	.4byte FieldScene_RunActor24Sequence
 	.4byte 0x00000000
 	.4byte 0x08450019
 	.4byte 0x000013f4
@@ -304,7 +304,7 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x000013f5
 	.4byte 0x00000000
 	.4byte 0x0845001b
-	.4byte 0x02008251
+	.4byte FieldScene_RunActor27Sequence
 	.4byte 0x00000000
 	.4byte 0x0845001c
 	.4byte 0x000013f9
@@ -316,7 +316,7 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x000013fb
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020082b5
+	.4byte FieldScene_RunActor8Message
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x000016e4
@@ -331,7 +331,7 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x000016eb
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x020082d5
+	.4byte FieldScene_RunActor13Message
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x000016f1
@@ -340,28 +340,28 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x000016f2
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0200805d
+	.4byte FieldScene_RunActor16MessageBranch
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02008125
+	.4byte FieldScene_RunActor17MessageBranch
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x020080bd
+	.4byte FieldScene_RunActor18MessageBranch
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x020082f5
+	.4byte FieldScene_RunActor19MessageBranch
 	.4byte 0x00000000
 	.4byte 0xffff0014
 	.4byte 0x000016fe
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x0200835d
+	.4byte FieldScene_RunActor21SequenceOnFlag300
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x020083f5
+	.4byte FieldScene_ConfigureActor22Scene
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x02008431
+	.4byte FieldScene_ConfigureActor23Scene
 	.4byte 0x00000000
 	.4byte 0xffff0018
 	.4byte 0x00001707
@@ -373,7 +373,7 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x00001709
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x02008471
+	.4byte FieldScene_RunActor27Message
 	.4byte 0x00000000
 	.4byte 0xffff001c
 	.4byte 0x0000170d
@@ -391,7 +391,7 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x000013d6
 	.4byte 0x00008d15
 	.4byte 0x0845000a
-	.4byte 0x02008491
+	.4byte FieldScene_RunActor10MessageBranch
 	.4byte 0x00008d15
 	.4byte 0x0845000b
 	.4byte 0x000013da

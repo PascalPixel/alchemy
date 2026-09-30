@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02009234,"a",%progbits
+.L_02009234:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200926c:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_020092a4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -45,9 +48,10 @@
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x02009234
-	.4byte 0x0200926c
-	.4byte 0x020092a4
+	.4byte .L_02009234
+	.4byte .L_0200926c
+	.4byte .L_020092a4
+.L_020092e8:
 	.4byte 0x00000015
 	.4byte 0x0000000a
 	.4byte 0x00019999
@@ -147,7 +151,7 @@ GomaIriguchi_SceneTableC:
 	.4byte 0x00c20000
 	.4byte 0x0000c000
 	.4byte 0x086600f8
-	.4byte 0x020092e8
+	.4byte .L_020092e8
 	.4byte 0x00c80000
 	.4byte 0x00000000
 	.4byte 0x00a80000
@@ -168,25 +172,25 @@ GomaIriguchi_SceneTableD:
 	.4byte 0x00000002
 	.4byte 0x00000602
 	.4byte 0xffff0005
-	.4byte 0x0200843d
+	.4byte FieldScene_RunScene387SequenceD
 	.4byte 0x00008602
 	.4byte 0xffff0006
-	.4byte 0x0200843d
+	.4byte FieldScene_RunScene387SequenceD
 	.4byte 0x00008c15
 	.4byte 0x08650008
-	.4byte 0x0200867d
+	.4byte FieldScene_RunScene387SequenceA
 	.4byte 0x00008c15
 	.4byte 0x08600008
-	.4byte 0x02008d05
+	.4byte Overlay387_ConfigureActorEightAtDepth
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x02008349
+	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00008c15
 	.4byte 0x0863000a
-	.4byte 0x020083d1
+	.4byte FieldScene_RunScene387SequenceC
 	.4byte 0x00004e15
 	.4byte 0x08660010
-	.4byte 0x020084d5
+	.4byte FieldScene_RunStepWithValue866
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

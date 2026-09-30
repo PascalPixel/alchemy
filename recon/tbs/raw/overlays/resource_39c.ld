@@ -32,7 +32,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RELEASE_ATTACH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_39c_overlay.o"(.rodata.part1)
+        "*/resource_39c_overlay.o"(.rodata.x0200dca8)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helpers by their ABI names; here they

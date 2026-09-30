@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/KYUDEN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/IMPORT.o"(.text)
-        "*/resource_3b8_overlay.o"(.rodata)
+        "*/resource_3b8_overlay.o"(.rodata.x0200c550)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

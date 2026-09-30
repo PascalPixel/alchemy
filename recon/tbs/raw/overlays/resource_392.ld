@@ -13,7 +13,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/ORBIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_392_overlay.o"(.rodata.part1)
+        "*/resource_392_overlay.o"(.rodata.x02008ec8)
     }
     .bss : { "*/resource_392_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

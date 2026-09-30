@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009bdc,"a",%progbits
 	.global Sukureta_Actor11RockslideActions
 Sukureta_Actor11RockslideActions:
 	.4byte 0x0000001c
@@ -27,6 +27,7 @@ Sukureta_Actor11RockslideActions:
 	.4byte 0x00000010
 	.global Sukureta_Actor11Actions
 Sukureta_Actor11Actions:
+.L_02009c34:
 	.4byte 0x00000016
 	.4byte 0x0000000a
 	.4byte 0xfffff000
@@ -73,7 +74,7 @@ Sukureta_Actor11Actions:
 	.global Sukureta_StrangerActions
 Sukureta_StrangerActions:
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte OverlayObject_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -160,7 +161,7 @@ Placement_Actors:
 	.4byte 0x01480000
 	.4byte 0x00024000
 	.4byte 0xffff006c
-	.4byte 0x02009c34
+	.4byte .L_02009c34
 	.4byte 0x00530000
 	.4byte 0x00000000
 	.4byte 0x01110000
@@ -217,10 +218,10 @@ Placement_Actors:
 Placement_Effects:
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x02008171
+	.4byte Scene_PlanSanctumVisit
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x020080dd
+	.4byte Scene_RunActorTwelveDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x00000f9d
@@ -238,7 +239,7 @@ Placement_Effects:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008ba9
+	.4byte FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear
 	.4byte 0x00000001
 	.4byte 0xffff0004
 	.4byte 0x00000004
@@ -247,10 +248,10 @@ Placement_Effects:
 	.4byte 0x00000006
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x020092a1
+	.4byte HaidiaSukureta_RunArrivalScene
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte 0x02008be1
+	.4byte Scene_OverhearSaturosAndMenardi
 	.4byte 0x00008f15
 	.4byte 0xffff0008
 	.4byte 0x00000000
@@ -276,16 +277,16 @@ Placement_Effects834:
 	.4byte 0x00001121
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02009761
+	.4byte HaidiaSukureta_RunActorSequence
 	.4byte 0x00000002
 	.4byte 0x082f0014
-	.4byte 0x02009761
+	.4byte HaidiaSukureta_RunActorSequence
 	.4byte 0x00000002
 	.4byte 0x087d000a
-	.4byte 0x020099a5
+	.4byte SceneState_SetWorkAndFlag87d
 	.4byte 0x00000002
 	.4byte 0x087e000b
-	.4byte 0x020099e9
+	.4byte SceneState_SetWorkAndFlag87e
 	.4byte 0x00000023
 	.4byte 0xffff0064
 	.4byte 0x00000000
@@ -302,7 +303,7 @@ Placement_Effects87a:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008ba9
+	.4byte FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear
 	.4byte 0x00000001
 	.4byte 0xffff0004
 	.4byte 0x00000004
@@ -314,7 +315,7 @@ Placement_Effects87a:
 	.4byte 0x00001c8c
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x02009a2d
+	.4byte SceneDialogue_RunActorSixteenDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff000c
 	.4byte 0x00001ca0

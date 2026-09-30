@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020085f8,"a",%progbits
 	.global gTitleEntrances
 gTitleEntrances:
 	.4byte 0xffff0000

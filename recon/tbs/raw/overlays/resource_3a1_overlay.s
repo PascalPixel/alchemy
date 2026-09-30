@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020086c4,"a",%progbits
+.L_020086c4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_020086fc:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02008734:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -45,9 +48,9 @@
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x020086c4
-	.4byte 0x020086fc
-	.4byte 0x02008734
+	.4byte .L_020086c4
+	.4byte .L_020086fc
+	.4byte .L_02008734
 	.global ShianHeya_SceneTable0
 ShianHeya_SceneTable0:
 	.4byte 0xffff0000
@@ -271,16 +274,16 @@ ShianHeya_SceneTable3:
 	.4byte 0x00001814
 	.4byte 0x00000000
 	.4byte 0x0895000e
-	.4byte 0x0200835d
+	.4byte SceneDialogue_RunActor14FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x0895000f
-	.4byte 0x020083bd
+	.4byte SceneDialogue_RunActor15FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x08950010
-	.4byte 0x0200841d
+	.4byte SceneDialogue_RunActor16FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x08950011
-	.4byte 0x02008485
+	.4byte SceneDialogue_RunActor17FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x08950012
 	.4byte 0x0000181e
@@ -295,28 +298,28 @@ ShianHeya_SceneTable3:
 	.4byte 0x00001a37
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020084e5
+	.4byte SceneDialogue_RunActor10Dialogue
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte 0x00001a3d
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008505
+	.4byte SceneDialogue_RunActor12Dialogue
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte 0x00001a43
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0200835d
+	.4byte SceneDialogue_RunActor14FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x020083bd
+	.4byte SceneDialogue_RunActor15FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0200841d
+	.4byte SceneDialogue_RunActor16FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02008485
+	.4byte SceneDialogue_RunActor17FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x00001a4f
@@ -441,7 +444,7 @@ ShianHeya_SceneTable3Entrance8:
 	.4byte 0x00001a67
 	.4byte 0x00000000
 	.4byte 0x08b30009
-	.4byte 0x02008525
+	.4byte SceneDialogue_RunActor9MotionDialogue
 	.4byte 0x00000000
 	.4byte 0x08b3000a
 	.4byte 0x00001a66

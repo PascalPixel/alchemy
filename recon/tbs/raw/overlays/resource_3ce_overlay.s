@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020092b0,"a",%progbits
 	.4byte 0x00500050
 	.4byte 0x00000000
 	.4byte 0x00000050
@@ -190,73 +190,73 @@ MenuTest_CommandTableC:
 MenuTest_SlotValues:
 	.4byte 0x00000000
 	.4byte 0xffff0001
-	.4byte 0x02008245
+	.4byte FieldScene_ApplyTable9684ValueToFourSlots
 	.4byte 0x00000000
 	.4byte 0xffff0005
-	.4byte 0x02008bb9
+	.4byte FieldScene_AssignCodeSetAToSlots
 	.4byte 0x00000000
 	.4byte 0xffff0002
-	.4byte 0x0200829d
+	.4byte FieldScene_GrantItemListToSlots
 	.4byte 0x00000000
 	.4byte 0xffff0003
-	.4byte 0x0200821d
+	.4byte SceneState_ApplyZero
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008209
+	.4byte SceneState_QueryTwoValues
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x020088c5
+	.4byte CommandTable_ConfigureCommandGroups
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008b11
+	.4byte FieldScene_ApplySlotOffsetsAndFlags
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008f15
+	.4byte FieldScene_AssignCodeSetBToSlots
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x020081f9
+	.4byte SceneState_ApplyOne
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0200917d
+	.4byte SceneState_GetFarResult2418
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x00000e5c
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02009171
+	.4byte SceneState_GetFarResult2384
 	.4byte 0x0000c400
 	.4byte 0xffff0010
-	.4byte 0x02008131
+	.4byte SceneState_ApplyBlockC9b
 	.4byte 0x00008400
 	.4byte 0xffff0010
-	.4byte 0x02008149
+	.4byte SceneState_ApplyBlockCc6
 	.4byte 0x00000400
 	.4byte 0xffff0010
-	.4byte 0x02008161
+	.4byte SceneState_ApplyBlockCf1
 	.4byte 0x00004400
 	.4byte 0xffff0010
-	.4byte 0x02008181
+	.4byte SceneState_ApplyBlockD21
 	.4byte 0x0000c400
 	.4byte 0xffff0011
-	.4byte 0x02008199
+	.4byte SceneState_ApplyBlockD4c
 	.4byte 0x00008400
 	.4byte 0xffff0011
-	.4byte 0x020081b9
+	.4byte SceneState_ApplyBlockD77
 	.4byte 0x00000400
 	.4byte 0xffff0011
-	.4byte 0x020081d9
+	.4byte SceneState_ApplyBlockDa2
 	.4byte 0x00004e15
 	.4byte 0xffff000f
-	.4byte 0x02008229
+	.4byte CommandTable_NoOpCallback
 	.4byte 0x00008e15
 	.4byte 0xffff000f
-	.4byte 0x02008229
+	.4byte CommandTable_NoOpCallback
 	.4byte 0x00009415
 	.4byte 0xffff000f
-	.4byte 0x02008229
+	.4byte CommandTable_NoOpCallback
 	.4byte 0x10008e15
 	.4byte 0xffff000f
-	.4byte 0x0200822d
+	.4byte SceneState_SetRecordFlag53
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

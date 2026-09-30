@@ -19,9 +19,9 @@ SECTIONS
         *libgcc.a:_lshrdi3.o(.text)
         *libgcc.a:_pack_df.o(.text)
         *libgcc.a:_unpack_df.o(.text)
-        "*/resource_3bf_overlay.o"(.rodata.part1)
+        "*/resource_3bf_overlay.o"(.rodata.x0200ded8)
         *libgcc.a:_thenan_df.o(.rodata)
-        "*/resource_3bf_overlay.o"(.rodata.part2)
+        "*/resource_3bf_overlay.o"(.rodata.x0200dfa4)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

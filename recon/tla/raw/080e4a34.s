@@ -48,7 +48,7 @@ Func_080e4a34:
 	mov r0, r8
 	movs r1, #1
 	movs r2, #0
-	bl Func_080dc164
+	bl ObjectGroup_SetActionForOthers
 	mov r3, r8
 	adds r3, #34
 	ldr r0, [r5, #8]
@@ -381,7 +381,7 @@ Func_080e4a34:
 	movs r1, #0
 	movs r2, #16
 	mov r0, r8
-	bl Func_080dc164
+	bl ObjectGroup_SetActionForOthers
 	ldr r0, [sp, #36]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #32]

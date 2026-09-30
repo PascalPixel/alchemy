@@ -1,10 +1,5 @@
 #include "OBJECT_RUNTIME.H"
-extern u8 Data_03001f30[];
 
-struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
-void Object_Destroy(struct ObjectRuntime *);
-void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
-void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 extern u8 gPlayerObjectId[];
 
@@ -24,5 +19,5 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
             ObjectDispatch_ApplyValueToChildrenFar(object, action);
         }
         object_id++;
-    } while (object_id <= 0x42);
+    } while (object_id <= 0x50);
 }

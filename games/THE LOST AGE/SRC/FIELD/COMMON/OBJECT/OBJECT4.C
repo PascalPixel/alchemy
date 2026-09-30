@@ -1,10 +1,8 @@
 #include "OBJECT_LOOKUP.H"
 #include "OBJECT_DISPATCH.H"
 
-extern u8 *gEventWork;
-void Object_Destroy(void *);
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *);
-void ObjectGroup_SetChildValue(struct DispatchObject *, s32);
+void Object_SetPartAttribute(struct DispatchObject *, s32);
 
 void ObjectGroup_ConfigureChildValue(s32 object_id, s32 value)
 {
@@ -20,6 +18,6 @@ void ObjectGroup_ConfigureChildValue(s32 object_id, s32 value)
             return;
         }
         *(s32 *)((u8 *)object + 0x6c) = flags;
-        ObjectGroup_SetChildValue(object, value);
+        Object_SetPartAttribute(object, value);
     }
 }

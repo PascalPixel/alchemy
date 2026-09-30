@@ -105,7 +105,7 @@ Func_081a6b50:
 	ldr r0, .L_081a6c6c
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -415,7 +415,7 @@ Func_081a6b50:
 .L_081a6e68:
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212

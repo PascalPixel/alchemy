@@ -18,7 +18,9 @@ struct PartyState {
     /* Two halfword pairs; ☀️ keeps its first pair at 0x1ce. */
     u16 pair_1ee[2];
     u16 pair_1f2[2];
-    u8 unknown_1f6[0x1e];
+    /* The halfword Event_GetSpecialValue reads; ☀️ keeps it at 0x1d6. */
+    s16 special;
+    u8 unknown_1f8[0x1c];
     s32 current_owner;
     u8 active_owners[8];
     u8 unknown_220[0x20];

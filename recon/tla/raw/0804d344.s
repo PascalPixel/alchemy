@@ -21,7 +21,7 @@ Menu_LoadResourceSlot:
 	ldrh r3, [r5, r0]
 	adds r1, r6, #0
 	adds r0, r0, r3
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	mov r0, r10
 	mov r1, r8
 	adds r2, r6, #0

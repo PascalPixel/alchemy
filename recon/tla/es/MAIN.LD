@@ -108,7 +108,6 @@
     "*/recon/tla/es/rom.o"(.rom.00014424)
     "*/recon/tla/es/rom.o"(.rom.000144ec)
     "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/CALLBACK_SCHEDULER.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.00014546)
     "*/recon/tla/es/rom.o"(.rom.00014598)
     "*/recon/tla/es/rom.o"(.rom.000145d4)
     "*/recon/tla/es/rom.o"(.rom.00014670)

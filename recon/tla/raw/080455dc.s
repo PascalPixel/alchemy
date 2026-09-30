@@ -24,7 +24,7 @@ Resource_LoadIndexedIntoBuffer:
 	adds r1, r6, #0
 	adds r0, r0, r3
 	str r0, [r2]
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	adds r1, r6, #0
 	mov r0, r8
 	bl Resource_GetBuffer

@@ -120,7 +120,7 @@ Object_LinkPairFar:
 	.global Func_080c8168
 	.thumb_func
 Func_080c8168:
-	overlay_veneer Func_080d36c8
+	overlay_veneer ObjectGroup_ConfigureChildValue
 	.global Object_SetPartAttributeFar
 	.thumb_func
 Object_SetPartAttributeFar:

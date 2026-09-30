@@ -32,5 +32,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/IDEJIMA/IMPORT.o"(.text)
         "*/resource_650_overlay.o"(.rodata.x0200b330)
     }
+    .bss : { "*/resource_650_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

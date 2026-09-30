@@ -4108,7 +4108,7 @@ Func_02001f08:
 .L_02009fbc:
 	.4byte Data_02007e24
 .L_02009fc0:
-	.4byte gOverlayArea + 0x7e28
+	.4byte Data_02007e28
 	.section .text.x02009fc4,"ax",%progbits
 	.global Func_02001fc4
 	.thumb_func
@@ -4143,7 +4143,7 @@ Func_02001fc4:
 .L_02009ff8:
 	.4byte Data_02007e24
 .L_02009ffc:
-	.4byte gOverlayArea + 0x7e28
+	.4byte Data_02007e28
 .L_0200a000:
 	.4byte IwramCopyWords
 .L_0200a004:
@@ -13112,3 +13112,6 @@ Data_02007e20:
 	.global Data_02007e24
 Data_02007e24:
 	.4byte 0x00000001
+	.section .bss,"aw",%nobits
+	.global Data_02007e28
+Data_02007e28:

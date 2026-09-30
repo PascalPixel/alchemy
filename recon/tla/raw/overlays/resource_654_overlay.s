@@ -2495,7 +2495,7 @@ Func_02001340:
 .L_02009424:
 	.4byte 0xffff0000
 .L_02009428:
-	.4byte gOverlayArea + 0x4a18
+	.4byte Data_02004a18
 	.section .text.x0200942c,"ax",%progbits
 	.global Func_0200142c
 	.thumb_func
@@ -2526,7 +2526,7 @@ Func_0200142c:
 .L_0200945c:
 	.4byte gPartyState
 .L_02009460:
-	.4byte gOverlayArea + 0x4a18
+	.4byte Data_02004a18
 	.section .text.x02009464,"ax",%progbits
 	.global Func_02001464
 	.thumb_func
@@ -7768,3 +7768,6 @@ Data_020049f4:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.global Data_02004a18
+Data_02004a18:

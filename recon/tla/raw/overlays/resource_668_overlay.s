@@ -1240,7 +1240,7 @@ Func_02000a44:
 .L_02008a8c:
 	.4byte Data_020054f0
 .L_02008a90:
-	.4byte gOverlayArea + 0x56e0
+	.4byte Data_020056e0
 .L_02008a94:
 	.4byte 0xa2600001
 	.section .text.x02008a98,"ax",%progbits
@@ -1292,7 +1292,7 @@ Func_02000a98:
 .L_02008aec:
 	.4byte Data_020054f0
 .L_02008af0:
-	.4byte gOverlayArea + 0x56e0
+	.4byte Data_020056e0
 .L_02008af4:
 	.4byte Data_0300122c
 	.section .text.x02008af8,"ax",%progbits
@@ -8857,3 +8857,7 @@ Data_02005670:
 	.global Data_020056d4
 Data_020056d4:
 	.4byte 0x00000026
+	.section .bss,"aw",%nobits
+	.space 0x00000008
+	.global Data_020056e0
+Data_020056e0:

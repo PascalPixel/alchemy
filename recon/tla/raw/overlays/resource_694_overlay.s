@@ -89,13 +89,13 @@ Func_02000038:
 .L_020080da:
 	pop {r5, r6, pc}
 .L_020080dc:
-	.4byte gOverlayArea + 0x6010
+	.4byte Data_02006010
 .L_020080e0:
-	.4byte gOverlayArea + 0x6014
+	.4byte Data_02006014
 .L_020080e4:
-	.4byte gOverlayArea + 0x6018
+	.4byte Data_02006018
 .L_020080e8:
-	.4byte gOverlayArea + 0x6004
+	.4byte Data_02006004
 .L_020080ec:
 	.4byte 0x05000200
 .L_020080f0:
@@ -137,17 +137,17 @@ Func_020000f4:
 .L_02008134:
 	.4byte 0x00000001
 .L_02008138:
-	.4byte gOverlayArea + 0x6020
+	.4byte Data_02006020
 .L_0200813c:
-	.4byte gOverlayArea + 0x601c
+	.4byte Data_0200601c
 .L_02008140:
-	.4byte gOverlayArea + 0x6010
+	.4byte Data_02006010
 .L_02008144:
-	.4byte gOverlayArea + 0x600c
+	.4byte Data_0200600c
 .L_02008148:
-	.4byte gOverlayArea + 0x6008
+	.4byte Data_02006008
 .L_0200814c:
-	.4byte gOverlayArea + 0x6000
+	.4byte Data_02006000
 .L_02008150:
 	.4byte Func_020001f8
 .L_02008154:
@@ -205,17 +205,17 @@ Func_02000178:
 .L_020081b0:
 	.4byte 0x00000001
 .L_020081b4:
-	.4byte gOverlayArea + 0x6020
+	.4byte Data_02006020
 .L_020081b8:
-	.4byte gOverlayArea + 0x601c
+	.4byte Data_0200601c
 .L_020081bc:
-	.4byte gOverlayArea + 0x6010
+	.4byte Data_02006010
 .L_020081c0:
-	.4byte gOverlayArea + 0x600c
+	.4byte Data_0200600c
 .L_020081c4:
-	.4byte gOverlayArea + 0x6008
+	.4byte Data_02006008
 .L_020081c8:
-	.4byte gOverlayArea + 0x6000
+	.4byte Data_02006000
 .L_020081cc:
 	.4byte Func_020001f8
 .L_020081d0:
@@ -342,23 +342,23 @@ Func_020001f8:
 	ldr r3, .L_020082c8
 	b .L_020082ce
 .L_020082a8:
-	.4byte gOverlayArea + 0x6008
+	.4byte Data_02006008
 .L_020082ac:
-	.4byte gOverlayArea + 0x600c
+	.4byte Data_0200600c
 .L_020082b0:
-	.4byte gOverlayArea + 0x6018
+	.4byte Data_02006018
 .L_020082b4:
-	.4byte gOverlayArea + 0x601c
+	.4byte Data_0200601c
 .L_020082b8:
-	.4byte gOverlayArea + 0x6004
+	.4byte Data_02006004
 .L_020082bc:
-	.4byte gOverlayArea + 0x6020
+	.4byte Data_02006020
 .L_020082c0:
-	.4byte gOverlayArea + 0x6010
+	.4byte Data_02006010
 .L_020082c4:
-	.4byte gOverlayArea + 0x6000
+	.4byte Data_02006000
 .L_020082c8:
-	.4byte gOverlayArea + 0x6014
+	.4byte Data_02006014
 .L_020082cc:
 	ldr r3, .L_02008314
 .L_020082ce:
@@ -398,13 +398,13 @@ Func_020001f8:
 .L_02008310:
 	.4byte 0x00000000
 .L_02008314:
-	.4byte gOverlayArea + 0x6018
+	.4byte Data_02006018
 .L_02008318:
-	.4byte gOverlayArea + 0x6000
+	.4byte Data_02006000
 .L_0200831c:
-	.4byte gOverlayArea + 0x6020
+	.4byte Data_02006020
 .L_02008320:
-	.4byte gOverlayArea + 0x601c
+	.4byte Data_0200601c
 .L_02008324:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -4928,7 +4928,7 @@ Func_02001d50:
 .L_0200a9d4:
 	.4byte 0x00026666
 .L_0200a9d8:
-	.4byte gOverlayArea + 0x6030
+	.4byte Data_02006030
 .L_0200a9dc:
 	movs r0, #80
 	bl Battle_WaitMode0
@@ -9266,3 +9266,34 @@ Data_02005ed0:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 0x00000004
+	.global Data_02006000
+Data_02006000:
+	.space 0x00000004
+	.global Data_02006004
+Data_02006004:
+	.space 0x00000004
+	.global Data_02006008
+Data_02006008:
+	.space 0x00000004
+	.global Data_0200600c
+Data_0200600c:
+	.space 0x00000004
+	.global Data_02006010
+Data_02006010:
+	.space 0x00000004
+	.global Data_02006014
+Data_02006014:
+	.space 0x00000004
+	.global Data_02006018
+Data_02006018:
+	.space 0x00000004
+	.global Data_0200601c
+Data_0200601c:
+	.space 0x00000004
+	.global Data_02006020
+Data_02006020:
+	.space 0x00000010
+	.global Data_02006030
+Data_02006030:

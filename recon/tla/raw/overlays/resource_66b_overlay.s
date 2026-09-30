@@ -920,7 +920,7 @@ Func_02000738:
 .L_02008760:
 	.4byte Data_0300122c
 .L_02008764:
-	.4byte gOverlayArea + 0x1ae0
+	.4byte Data_02001ae0
 	.section .text.x02008768,"ax",%progbits
 	.global Func_02000768
 	.thumb_func
@@ -975,7 +975,7 @@ Func_02000768:
 .L_020087cc:
 	.4byte IwramCopyWords
 .L_020087d0:
-	.4byte gOverlayArea + 0x1ae0
+	.4byte Data_02001ae0
 .L_020087d4:
 	.4byte Func_02000738
 	.section .text.x020087d8,"ax",%progbits
@@ -1409,7 +1409,7 @@ Func_02000988:
 .L_02008ba8:
 	.4byte IwramCopyWords
 .L_02008bac:
-	.4byte gOverlayArea + 0x1ae0
+	.4byte Data_02001ae0
 .L_02008bb0:
 	.4byte Func_02000738
 	.section .text.x02008bb4,"ax",%progbits
@@ -2657,3 +2657,6 @@ Data_02001ac8:
 	.4byte 0x01601000
 	.4byte 0xffffffff
 	.4byte 0xffffffff
+	.section .bss,"aw",%nobits
+	.global Data_02001ae0
+Data_02001ae0:

@@ -408,7 +408,7 @@ Func_020002a4:
 .L_02008380:
 	.4byte Math_Sine
 .L_02008384:
-	.4byte gOverlayArea + 0x6340
+	.4byte Data_02006340
 .L_02008388:
 	.4byte Data_0300122c
 .L_0200838c:
@@ -9893,3 +9893,7 @@ Data_0200632c:
 	.global Data_02006330
 Data_02006330:
 	.4byte 0x00000026
+	.section .bss,"aw",%nobits
+	.space 0x0000000c
+	.global Data_02006340
+Data_02006340:

@@ -730,7 +730,7 @@ Func_02000580:
 .L_020085dc:
 	.4byte 0x00000000
 .L_020085e0:
-	.4byte gOverlayArea + 0x3450
+	.4byte Data_02003450
 .L_020085e4:
 	adds r3, #20
 	strh r2, [r6, r3]
@@ -1104,7 +1104,7 @@ Func_02000844:
 .L_020088ac:
 	.4byte 0x00000000
 .L_020088b0:
-	.4byte gOverlayArea + 0x3450
+	.4byte Data_02003450
 .L_020088b4:
 	strh r4, [r5, #24]
 	strh r2, [r5, #22]
@@ -1392,9 +1392,9 @@ Func_02000844:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008b00:
-	.4byte gOverlayArea + 0x3450
+	.4byte Data_02003450
 .L_02008b04:
-	.4byte gOverlayArea + 0x3470
+	.4byte Data_02003470
 .L_02008b08:
 	.4byte Func_02000740
 .L_02008b0c:
@@ -4376,7 +4376,7 @@ Func_02002250:
 .L_0200a3ac:
 	.4byte 0xffff0000
 .L_0200a3b0:
-	.4byte gOverlayArea + 0x34f0
+	.4byte Data_020034f0
 .L_0200a3b4:
 	.4byte ResourceTableEntries
 .L_0200a3b8:
@@ -4569,7 +4569,7 @@ Func_020023c0:
 .L_0200a520:
 	.4byte 0xffff0000
 .L_0200a524:
-	.4byte gOverlayArea + 0x34f0
+	.4byte Data_020034f0
 .L_0200a528:
 	.4byte ResourceTableEntries
 .L_0200a52c:
@@ -4593,7 +4593,7 @@ Func_02002534:
 .L_0200a54a:
 	pop {pc}
 .L_0200a54c:
-	.4byte gOverlayArea + 0x34f0
+	.4byte Data_020034f0
 	.section .text.x0200a550,"ax",%progbits
 	.global Func_02002550
 	.thumb_func
@@ -4629,7 +4629,7 @@ Func_02002550:
 	bl Scheduler_AddOrUpdateCallback
 	pop {r5, r6, pc}
 .L_0200a598:
-	.4byte gOverlayArea + 0x34f0
+	.4byte Data_020034f0
 .L_0200a59c:
 	.4byte IwramClearWords
 .L_0200a5a0:
@@ -4664,7 +4664,7 @@ Func_020025a8:
 .L_0200a5ce:
 	pop {r5, r6, pc}
 .L_0200a5d0:
-	.4byte gOverlayArea + 0x34f0
+	.4byte Data_020034f0
 	.section .text.x0200a5d4,"ax",%progbits
 	.global Func_020025d4
 	.thumb_func
@@ -5679,3 +5679,13 @@ Data_02003388:
 	.4byte 0x01701d02
 	.4byte 0x07012c05
 	.2byte 0x0000
+	.section .bss,"aw",%nobits
+	.space 0x00000002
+	.global Data_02003450
+Data_02003450:
+	.space 0x00000020
+	.global Data_02003470
+Data_02003470:
+	.space 0x00000080
+	.global Data_020034f0
+Data_020034f0:

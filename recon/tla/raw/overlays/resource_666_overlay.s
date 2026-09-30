@@ -625,7 +625,7 @@ Func_02000578:
 	pop {pc}
 	.2byte 0x0000
 .L_02008594:
-	.4byte gOverlayArea + 0x1c90
+	.4byte Data_02001c90
 	.section .text.x02008598,"ax",%progbits
 	.global Func_02000598
 	.thumb_func
@@ -644,7 +644,7 @@ Func_02000598:
 	pop {pc}
 	.2byte 0x0000
 .L_020085b4:
-	.4byte gOverlayArea + 0x1c60
+	.4byte Data_02001c60
 	.section .text.x020085b8,"ax",%progbits
 	.global Func_020005b8
 	.thumb_func
@@ -809,9 +809,9 @@ Func_020005b8:
 	movs r0, #0
 	pop {r5, pc}
 .L_02008720:
-	.4byte gOverlayArea + 0x1c90
+	.4byte Data_02001c90
 .L_02008724:
-	.4byte gOverlayArea + 0x1c60
+	.4byte Data_02001c60
 .L_02008728:
 	.4byte Func_02000578
 .L_0200872c:
@@ -2219,3 +2219,10 @@ Data_020019dc:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 0x00000008
+	.global Data_02001c60
+Data_02001c60:
+	.space 0x00000030
+	.global Data_02001c90
+Data_02001c90:

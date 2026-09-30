@@ -951,11 +951,11 @@ Func_02000748:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008788:
-	.4byte gOverlayArea + 0x1860
+	.4byte Data_02001860
 .L_0200878c:
 	.4byte gPartyState
 .L_02008790:
-	.4byte gOverlayArea + 0x17b0
+	.4byte Data_020017b0
 	.section .text.x0200879c,"ax",%progbits
 	.global Func_0200079c
 	.thumb_func
@@ -2239,3 +2239,10 @@ gSceneEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 0x0000000c
+	.global Data_020017b0
+Data_020017b0:
+	.space 0x000000b0
+	.global Data_02001860
+Data_02001860:

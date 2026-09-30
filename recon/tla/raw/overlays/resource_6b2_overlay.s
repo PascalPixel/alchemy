@@ -23,7 +23,7 @@ Func_02000038:
 	pop {pc}
 	.2byte 0x0000
 .L_0200805c:
-	.4byte gOverlayArea + 0x7e4
+	.4byte Data_020007e4
 	.section .text.x02008060,"ax",%progbits
 	.global Func_02000060
 	.thumb_func
@@ -180,7 +180,7 @@ Func_020000f4:
 .L_020081a8:
 	.4byte Data_02000618
 .L_020081ac:
-	.4byte gOverlayArea + 0x7e4
+	.4byte Data_020007e4
 	.section .text.x020081b0,"ax",%progbits
 	.global Func_020001b0
 	.thumb_func
@@ -492,7 +492,7 @@ Func_020001b0:
 .L_020084b0:
 	.4byte gPartyState
 .L_020084b4:
-	.4byte gOverlayArea + 0x7e4
+	.4byte Data_020007e4
 .L_020084b8:
 	.4byte Func_020000f4
 .L_020084bc:
@@ -665,3 +665,6 @@ gSceneEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.global Data_020007e4
+Data_020007e4:

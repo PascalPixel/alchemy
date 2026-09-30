@@ -8092,17 +8092,17 @@ Func_02003fc0:
 .L_0200c1fc:
 	.4byte IwramClearWords
 .L_0200c200:
-	.4byte gOverlayArea + 0x6fc8
+	.4byte Data_02006fc8
 .L_0200c204:
-	.4byte gOverlayArea + 0x6fe8
+	.4byte Data_02006fe8
 .L_0200c208:
-	.4byte gOverlayArea + 0x7008
+	.4byte Data_02007008
 .L_0200c20c:
-	.4byte gOverlayArea + 0x7028
+	.4byte Data_02007028
 .L_0200c210:
-	.4byte gOverlayArea + 0x7048
+	.4byte Data_02007048
 .L_0200c214:
-	.4byte gOverlayArea + 0x7068
+	.4byte Data_02007068
 .L_0200c218:
 	.4byte gSceneState
 .L_0200c21c:
@@ -12319,3 +12319,21 @@ Data_02006f38:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.section .bss,"aw",%nobits
+	.global Data_02006fc8
+Data_02006fc8:
+	.space 0x00000020
+	.global Data_02006fe8
+Data_02006fe8:
+	.space 0x00000020
+	.global Data_02007008
+Data_02007008:
+	.space 0x00000020
+	.global Data_02007028
+Data_02007028:
+	.space 0x00000020
+	.global Data_02007048
+Data_02007048:
+	.space 0x00000020
+	.global Data_02007068
+Data_02007068:

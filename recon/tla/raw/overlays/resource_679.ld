@@ -63,5 +63,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_679/IMPORT.o"(.text)
         "*/resource_679_overlay.o"(.rodata.x02009e34)
     }
+    .bss : { "*/resource_679_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

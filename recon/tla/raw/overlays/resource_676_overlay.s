@@ -2729,7 +2729,7 @@ Func_02001730:
 	bl Scheduler_RemoveCallbackFar
 	pop {r5, pc}
 .L_02009820:
-	.4byte gOverlayArea + 0x2fc0
+	.4byte Data_02002fc0
 .L_02009824:
 	.4byte gPartyState
 .L_02009828:
@@ -2835,7 +2835,7 @@ Func_0200182c:
 	bl Scheduler_AddOrUpdateCallback
 	pop {r5, pc}
 .L_020098f8:
-	.4byte gOverlayArea + 0x2fc0
+	.4byte Data_02002fc0
 .L_020098fc:
 	.4byte gPartyState
 .L_02009900:
@@ -4779,3 +4779,7 @@ Data_02002f10:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 0x00000008
+	.global Data_02002fc0
+Data_02002fc0:

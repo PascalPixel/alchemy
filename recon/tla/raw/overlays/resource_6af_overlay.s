@@ -1616,17 +1616,17 @@ Func_02000ba0:
 .L_02008cd0:
 	.4byte Data_02001aa4
 .L_02008cd4:
-	.4byte gOverlayArea + 0x1aa8
+	.4byte Data_02001aa8
 .L_02008cd8:
 	.4byte IwramCopyWords
 .L_02008cdc:
-	.4byte gOverlayArea + 0x1ac8
+	.4byte Data_02001ac8
 .L_02008ce0:
-	.4byte gOverlayArea + 0x1ae8
+	.4byte Data_02001ae8
 .L_02008ce4:
 	.4byte 0x05000140
 .L_02008ce8:
-	.4byte gOverlayArea + 0x1b08
+	.4byte Data_02001b08
 .L_02008cec:
 	.4byte Data_020038e0
 .L_02008cf0:
@@ -2609,3 +2609,15 @@ Data_02001a5c:
 	.global Data_02001aa4
 Data_02001aa4:
 	.4byte 0xffffffff
+	.section .bss,"aw",%nobits
+	.global Data_02001aa8
+Data_02001aa8:
+	.space 0x00000020
+	.global Data_02001ac8
+Data_02001ac8:
+	.space 0x00000020
+	.global Data_02001ae8
+Data_02001ae8:
+	.space 0x00000020
+	.global Data_02001b08
+Data_02001b08:

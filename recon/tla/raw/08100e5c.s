@@ -905,7 +905,9 @@ Func_08100e7c:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
-.L_081015b0:
+	.global Graphics_AdjustPaletteBank
+	.thumb_func
+Graphics_AdjustPaletteBank:
 	push	{r5, r6, r7, lr}
 	movs	r1, #0
 	adds	r5, r0, #0
@@ -1086,7 +1088,7 @@ Func_08100e7c:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #8
-	bl	.L_081015b0
+	bl	Graphics_AdjustPaletteBank
 	ldrh	r3, [r6, #0]
 	movs	r2, #160
 	lsls	r2, r2, #19

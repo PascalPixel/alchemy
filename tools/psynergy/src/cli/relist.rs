@@ -201,6 +201,12 @@ fn regions(options: &Options, map: &str) -> Vec<Region> {
                         RegionKind::Listing { regenerate: true }
                     } else if placed.section.starts_with(".rodata") {
                         RegionKind::Words
+                    } else if placed.section == ".bss" {
+                        // Its reserved RAM, read as the scaffold after the
+                        // files the options name.
+                        RegionKind::Space {
+                            scaffold: options.space.len(),
+                        }
                     } else {
                         RegionKind::Other
                     };
@@ -441,22 +447,86 @@ fn external(
     Ok(names)
 }
 
-/// The sections of a listing object that a relisting does not regenerate:
-/// every `.section` but `.text*` and `.rodata*`, with its lines as written.
-fn other_sections(listing: &str) -> String {
-    let mut kept = String::new();
-    let mut keeping = false;
+/// The sections of a listing object that a relisting does not regenerate
+/// as pieces, with their lines as written: its reserved RAM, `.bss`, and
+/// every other `.section` but `.text*` and `.rodata*`.
+fn other_sections(listing: &str) -> (String, String) {
+    let (mut bss, mut other) = (String::new(), String::new());
+    let mut keeping = None;
     for line in listing.lines() {
         if let Some(rest) = line.trim_start().strip_prefix(".section") {
             let name = rest.trim().split([',', ' ']).next().unwrap_or("");
-            keeping = !name.starts_with(".text") && !name.starts_with(".rodata");
+            keeping = (!name.starts_with(".text") && !name.starts_with(".rodata"))
+                .then_some(name == ".bss");
         }
-        if keeping {
-            kept.push_str(line);
-            kept.push('\n');
+        match keeping {
+            Some(true) => bss.push_str(line),
+            Some(false) => other.push_str(line),
+            None => continue,
+        }
+        if keeping == Some(true) {
+            bss.push('\n');
+        } else {
+            other.push('\n');
         }
     }
-    kept
+    (bss, other)
+}
+
+/// A listing object's reserved RAM as a scaffold: its `.bss` section, or
+/// an empty one.
+fn reserved(bss: &str) -> Result<scaffold::Scaffold, String> {
+    if bss.is_empty() {
+        return Ok(scaffold::Scaffold {
+            header: Vec::new(),
+            sections: vec![scaffold::Section {
+                name: ".bss".into(),
+                flags: "\"aw\",%nobits".into(),
+                items: Vec::new(),
+            }],
+            attributes: Default::default(),
+        });
+    }
+    scaffold::parse(bss)
+}
+
+/// Whether two scaffolds name the same places and span the same bytes,
+/// however their runs are split.
+fn same_places(one: &scaffold::Scaffold, other: &scaffold::Scaffold) -> bool {
+    let places = |scaffold: &scaffold::Scaffold| -> Vec<_> {
+        scaffold
+            .sections
+            .iter()
+            .map(|section| {
+                let layout = scaffold::Layout::new(section, 0);
+                (layout.name, layout.end, layout.labels)
+            })
+            .collect()
+    };
+    places(one) == places(other)
+}
+
+/// A script that places `object`'s reserved RAM right after the output
+/// section its code fills, if it does not yet.
+fn place_reserved(script: &str, object: &str) -> String {
+    let entry = format!("\"*/{object}.o\"(.bss)");
+    if script.contains(&entry) {
+        return script.to_string();
+    }
+    let mut lines: Vec<String> = script.lines().map(str::to_string).collect();
+    let text = lines
+        .iter()
+        .position(|line| line.trim_start().starts_with(".text"));
+    if let Some(close) =
+        text.and_then(|at| (at..lines.len()).find(|&index| lines[index].trim() == "}"))
+    {
+        let indent: String = lines[close]
+            .chars()
+            .take_while(|c| c.is_whitespace())
+            .collect();
+        lines.insert(close + 1, format!("{indent}.bss : {{ {entry} }}"));
+    }
+    lines.join("\n") + "\n"
 }
 
 /// Replace each area's linker-script entries with its new ones.
@@ -528,7 +598,36 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
             .len() as u32,
         None => bytes.len() as u32,
     };
-    let regions = regions(&options, &map);
+    let mut regions = regions(&options, &map);
+    // One listing object's reserved RAM: its .bss, or an empty one where
+    // its code ends, which words past the image may extend.
+    let own_ram = match &options.object {
+        Some(object) => {
+            let path = options
+                .root
+                .join(&options.listings)
+                .join(format!("{object}.s"));
+            let (bss, _) = other_sections(&read_text(&path)?);
+            let scaffold =
+                reserved(&bss).map_err(|error| format!("{}: {error}", path.display()))?;
+            let own = RegionKind::Space {
+                scaffold: options.space.len(),
+            };
+            if !regions.iter().any(|region| region.kind == own) {
+                let end = options.base + bytes.len() as u32;
+                regions.push(Region {
+                    start: end,
+                    end,
+                    kind: own,
+                    object: object.clone(),
+                    section: ".bss".into(),
+                });
+                regions.sort_by_key(|region| (region.start, region.end));
+            }
+            Some((bss, scaffold))
+        }
+        None => None,
+    };
     // A name the script assigns aliases a place another name owns, or is a
     // value: it is referred to, never turned into a label.
     let aliases = if options.script.is_empty() {
@@ -562,7 +661,10 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
             .collect(),
         external: external(&options, &map, &regenerated)?,
         incbin: load(&options.incbin)?,
-        space: load(&options.space)?,
+        space: load(&options.space)?
+            .into_iter()
+            .chain(own_ram.iter().map(|(_, scaffold)| scaffold.clone()))
+            .collect(),
         regions,
         rom_end: 0x0800_0000 + rom_size,
         foreign: match &options.foreign {
@@ -680,7 +782,7 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
         // other sections, such as reserved RAM, stay as written.
         const HEADER: &str = ".syntax unified\n\t.thumb\n";
         let path = directory.join(format!("{object}.s"));
-        let kept = other_sections(&read_text(&path)?);
+        let (_, kept) = other_sections(&read_text(&path)?);
         let mut source = String::from(HEADER);
         for (start, text) in &output.pieces {
             let words = output.words.contains(start);
@@ -693,6 +795,19 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
             source.push_str(text.strip_prefix(HEADER).unwrap_or(text));
         }
         source.push_str(&kept);
+        // Its reserved RAM, with every name a word needs there, as written
+        // while it needs no other.
+        if let Some(reserved) = output.space.last().filter(|reserved| {
+            reserved
+                .sections
+                .iter()
+                .any(|section| !section.items.is_empty())
+        }) {
+            match &own_ram {
+                Some((bss, before)) if same_places(before, reserved) => source.push_str(bss),
+                _ => source.push_str(&scaffold::render(reserved)),
+            }
+        }
         fs::write(&path, source).map_err(|error| format!("{}: {error}", path.display()))?;
     } else {
         for stem in &regenerated {
@@ -715,7 +830,20 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
             .map_err(|error| format!("{}: {error}", path.display()))?;
     }
     let script_path = options.root.join(&options.script);
-    let script = patch_script(&read_text(&script_path)?, &options, &output.script)?;
+    let mut script = patch_script(&read_text(&script_path)?, &options, &output.script)?;
+    // Reserved RAM an overlay's listing did not have is placed after its
+    // code by name.
+    if let (Some(object), Some((bss, _))) = (&options.object, &own_ram) {
+        let reserves = output.space.last().is_some_and(|reserved| {
+            reserved
+                .sections
+                .iter()
+                .any(|section| !section.items.is_empty())
+        });
+        if reserves && bss.is_empty() {
+            script = place_reserved(&script, object);
+        }
+    }
     fs::write(&script_path, script)
         .map_err(|error| format!("{}: {error}", script_path.display()))?;
     for note in &output.notes {
@@ -731,9 +859,25 @@ mod tests {
     #[test]
     fn a_relisting_keeps_the_reserved_ram_of_its_listing() {
         let listing = ".syntax unified\n\t.thumb\n\t.section .text.x02008000,\"ax\",%progbits\n\tbx lr\n\t.section .bss,\"aw\",%nobits\n\t.space 58\n\t.global gSprites\ngSprites:\n\t.space 216\n\t.section .rodata,\"a\",%progbits\n\t.4byte 0\n";
+        let (bss, other) = other_sections(listing);
         assert_eq!(
-            other_sections(listing),
+            bss,
             "\t.section .bss,\"aw\",%nobits\n\t.space 58\n\t.global gSprites\ngSprites:\n\t.space 216\n"
         );
+        assert_eq!(other, "");
+        let scaffold = reserved(&bss).unwrap();
+        assert_eq!(scaffold.sections[0].size(), 274);
+        assert!(reserved("").unwrap().sections[0].items.is_empty());
+    }
+
+    #[test]
+    fn reserved_ram_new_to_an_overlay_is_placed_after_its_code_once() {
+        let script = "SECTIONS\n{\n    .text 0x2008000 :\n    {\n        \"*/x_overlay.o\"(.text.x02008000)\n    }\n    /DISCARD/ : { *(.comment) }\n}\n";
+        let placed = place_reserved(script, "x_overlay");
+        assert_eq!(
+            placed,
+            "SECTIONS\n{\n    .text 0x2008000 :\n    {\n        \"*/x_overlay.o\"(.text.x02008000)\n    }\n    .bss : { \"*/x_overlay.o\"(.bss) }\n    /DISCARD/ : { *(.comment) }\n}\n"
+        );
+        assert_eq!(place_reserved(&placed, "x_overlay"), placed);
     }
 }

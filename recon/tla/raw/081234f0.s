@@ -98,7 +98,7 @@ Func_081234f0:
 	bls.n	.L_081235a8
 	movs	r0, #1
 .L_081235a8:
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	adds	r0, #8
 	mov	r8, r0
 	cmp	r6, #0

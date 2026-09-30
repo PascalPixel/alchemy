@@ -22,7 +22,7 @@
 	overlay_veneer Func_08038268
 	overlay_veneer Func_08038318
 	overlay_veneer Func_08038320
-	overlay_veneer Func_080ad008
+	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Func_080ad010
 	overlay_veneer Func_080ad028
 	overlay_veneer Func_080ad100

@@ -200,7 +200,7 @@ Func_080457d0:
 	movs	r5, #1
 	str	r5, [r0, r3]
 	movs	r0, #0
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	ldr	r3, [r0, #0]
 	movs	r5, #2
 	cmp	r3, #0

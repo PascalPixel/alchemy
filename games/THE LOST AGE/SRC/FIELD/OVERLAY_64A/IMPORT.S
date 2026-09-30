@@ -53,8 +53,8 @@
 	overlay_veneer Func_080383b8
 	overlay_veneer Func_08038428
 	overlay_veneer Func_08038430
-	overlay_veneer Func_080ad000
-	overlay_veneer Func_080ad008
+	overlay_veneer Trade_GetOfferStateFar
+	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Func_080ad028
 	overlay_veneer Func_080ad090
 	overlay_veneer Func_080ad0f8

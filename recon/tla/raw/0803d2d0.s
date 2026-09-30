@@ -19,6 +19,9 @@ Func_0803d2d0:
 	movs	r0, r0
 	.2byte 0x03e7
 	.2byte 0x0000
+	.global Func_0803d2f0
+	.thumb_func
+Func_0803d2f0:
 .L_0803d2f0:
 	push	{r5, lr}
 	adds	r3, r0, #0
@@ -139,7 +142,7 @@ Func_0803d3c0:
 	mov	sl, r0
 	mov	fp, r1
 	adds	r6, r2, #0
-	bl	.L_0803d2f0
+	bl	Func_0803d2f0
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r0, r3
@@ -207,7 +210,7 @@ Func_0803d450:
 	movs	r2, #161
 	lsls	r2, r2, #3
 	adds	r5, r6, r2
-	bl	.L_0803d2f0
+	bl	Func_0803d2f0
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r0, r3

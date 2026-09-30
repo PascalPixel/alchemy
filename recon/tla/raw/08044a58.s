@@ -45,7 +45,7 @@ Func_08044a58:
 	movs	r3, #1
 	strb	r3, [r5, #3]
 	adds	r0, r7, #0
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r1, #14
 	add	r2, sp, #16
 	add	r3, sp, #12
@@ -181,7 +181,7 @@ Func_08044a58:
 	strb	r3, [r5, #3]
 	mov	r0, sl
 	bl	.L_08044b80
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r1, #14
 	add	r2, sp, #12
 	add	r3, sp, #8
@@ -290,7 +290,7 @@ Func_08044a58:
 	strb	r3, [r2, #3]
 	mov	r0, fp
 	bl	.L_08044b80
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r3, #14
 	add	r5, sp, #16
 	add	r2, sp, #20
@@ -311,7 +311,7 @@ Func_08044a58:
 	str	r3, [sp, #32]
 	add	r7, sp, #36
 	bl	.L_08044b80
-	bl	0x0803d2f0
+	bl	Func_0803d2f0
 	movs	r3, #15
 	add	r2, sp, #12
 	str	r3, [sp, #0]

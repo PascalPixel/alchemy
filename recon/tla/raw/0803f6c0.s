@@ -90,6 +90,9 @@ UiTextResource_Release:
 	strh	r3, [r5, #10]
 .L_0803f776:
 	pop	{r5, pc}
+	.global Func_0803f778
+	.thumb_func
+Func_0803f778:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

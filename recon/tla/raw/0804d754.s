@@ -83,6 +83,9 @@ Func_0804d754:
 	.4byte 0x00001173
 	.2byte 0x1176
 	.2byte 0x0000
+	.global Func_0804d7fc
+	.thumb_func
+Func_0804d7fc:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

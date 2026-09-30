@@ -1,20 +1,18 @@
-/* Draft, not exact (2026-09-29, Mercury): ⚓️'s Battle_ResolveTargetAction,
+/* Draft, not exact (2026-09-30, Mars): ⚓️'s Battle_ResolveTargetAction,
  * the twin of ☀️'s 080bbb0c (games/THE BROKEN SEAL/SRC/BATTLE/
  * ACTION_RESOLVE_TARGET_ACTION.C), at 08120454 (recon/tla/raw/08120454.s;
- * ja 08120450, de 0812046c; `psynergy editions` names it as the nearest
- * start). The body is ☀️'s pre-cleanup body with the ⚓️ differences
- * recovered from the retired cross-edition hook set (e24225696^) written in
- * as code: a second actor for the combined attacks 0x138 and 0x13c, a
- * guard level 4 that blocks damage, guard 2 at two fifths, a battle rule
- * that keeps foes at 1 HP, 88 effects with the extra ⚓️ cases, five-turn
- * refrain and the per-state immunity checks after the copy.
- * Remaining before it can compile for ⚓️: ⚓️ headers for the battle types
- * (BattlePlan with actor_id2, BattleUnit, BattleAction), and names at
- * their own places for every callee the listing still calls by address
- * (BattleEv_Push 08120360, GameFlag_TestFar 080ad008, BattleRandom
- * 080ad148, Func_081203a8 and the rest), and for the message ids. The
- * helper macros and hook bodies are expanded inline here; fold them back
- * into shared code once both games compile from one source. */
+ * ja 08120450, de 0812046c). It compiles under ⚓️'s route against the
+ * shared battle headers; `alchemy permute --target tla-en` scores it 17155
+ * (130 register-only, 103 operand, 95 reordered, 50 inserted, 37 deleted).
+ * Remaining: the IWRAM copy at 0x03000730 is called as `mov lr, r3` and a
+ * bare BL low half, which agscc cannot emit (it calls _call_via_r3; about
+ * 2000 ⚓️ call sites share this, a compiler question for Pascal); the
+ * listing loads bytes with ldrb where the draft sign-extends s8 fields;
+ * the listing calls Owner_RecalculateRatiosFar seven times where the draft
+ * calls it five; and the shared text tails (.L_08122326, .L_081223ba) are
+ * reached by different paths. The helper macros and hook bodies are
+ * expanded inline here; fold them back into shared code once both games
+ * compile from one source. */
 #include "../../../../games/THE LOST AGE/INCLUDE/TYPES.H"
 #include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_ACTOR.H"
 #include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_CALC.H"
@@ -97,7 +95,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     actor = OwnerState_Get(actor_id);
     target = OwnerState_Get(target_id);
     ((void (*)(void *, const void *, s32))0x03000730)( (copy), (target), (size));
-    { s32 state = *(u16 *)((u8 *)target + 0x14a); switch (state) { case 0xdd: if (((plan)->command) == 1 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, 0xcb5); goto done; } break; case 0x65: case 0x66: case 0x67: if (action_id != 0x23d && ((u8 *)work)[0x868] != 0 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, 0xcb4); goto done; } break; } if (target->guard_level == 4 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, 0xcab); goto done; } };
+    { s32 state = *(u16 *)((u8 *)target + 0x14a); switch (state) { case 0xdd: if (((plan)->command) == 1 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgDissipated); goto done; } break; case 0x65: case 0x66: case 0x67: if (action_id != 0x23d && ((u8 *)work)[0x868] != 0 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgFieldProtects); goto done; } break; } if (target->guard_level == 4 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgNoEffect); goto done; } };
     if (action->range != 255) {
         offset = ((plan)->target_offsets[(slot)]);
         if (offset < 0)
@@ -174,7 +172,7 @@ after_power:
         else
             hit = first;
     }
-    { if ((u8)(action->effect + 206) <= 1 || action->effect == 0x56 || action->effect == 0x57) { s32 st; s32 rec; s32 state_save; s32 cursor; s32 msg; u8 efx; state_save = (s32)((u8 *)actor + 0x14a); st = *(u16 *)state_save; affi = -1; rec = Summon_FindSlot(); efx = action->effect; if (efx == EFX_STANDBY_WORK) { st = BattleFormation_SelectRandomAvailableMember(work->enemy_group); } else if (efx == 0x56) { if (*(u16 *)state_save == 0xa4) st = (BattleRandom16Far() & 3) + 0x17a; else st = 0x51; } else if (efx == 0x57) { if (((s8 *)work)[0x56b] != 0) { s32 qi; s32 state_offset; s32 charge_offset; qi = ((s8 *)work)[0x56a]; state_offset = 0x564 + qi * 2; st = *(u16 *)((u8 *)work + state_offset); charge_offset = 0x568 + qi; affi = ((u8 *)work)[charge_offset]; } else hit = 0; } if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) { if (affi == -1) { affi = Summon_TakeCharge(st, 1); if (affi & 0x8000) Summon_ResetCharge(st); } BattleUnit_AssignFar(rec, st, affi & 0x7fff); if (action->effect == 0x57) { s32 qi; ((s8 *)work)[0x56b]--; qi = ((s8 *)work)[0x56a] + 1; ((s8 *)work)[0x56a] = qi - (((s32)(qi + ((u32)qi >> 31)) >> 1) * 2); } if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) { BattleParty_InsertUnitCentered(work->enemy_units, rec); } else { s16 *slots; slots = (s16 *)((u8 *)work + 2); { s32 off; s32 i; s32 j; off = 100; i = 0; state_save = 0; if (*(s16 *)((u8 *)slots + off) == 254) { *(s16 *)((u8 *)slots + off) = rec; } else { s32 woff; s32 next; j = 0; woff = 100; for (;;) { affi = (s32)slots; cursor = j + 100; n = *(s16 *)(cursor + affi); if (n == 255) { *(s16 *)(affi + cursor) = rec; next = state_save + 102; *(s16 *)((u8 *)affi + next) = n; break; } i++; next = j + 2; j = next; if (i > 5) break; state_save = next; woff = next + 100; if (*(s16 *)(woff + affi) == 254) { *(s16 *)(woff + affi) = rec; break; } } } } } Summon_Refresh(); { s32 x; s32 y; cursor = (s32)GetBattleObjectSlot(rec); x = *(s32 *)(cursor + 12); if (x < 0) x += 0xffff; y = *(s32 *)(cursor + 16); x >>= 16; if (y < 0) y += 0xffff; y >>= 16; BattlePresentation_SpawnActorObject((void *)cursor, rec, x, y); } BattleActor_CommitPlacement(); { s32 listed; listed = BattleParty_ListPresentEnemies(saved); if (listed > 0) { u16 *q; q = (u16 *)saved; count = listed; do { Actor_ResetMotionAtAnchor(*q++); count--; } while (count != 0); } } BattleEv_Push(BATTLE_EVENT_UNIT, rec); if (action->effect == 0x57) { msg = 0xd64; goto tla_summon_msg; } else if (action_id != 0x1f7) { BattleEv_Push(BATTLE_EVENT_TEXT, 0xd56); } else { BattleEv_Push(BATTLE_EVENT_TEXT, 0xd54); } } else if (action_id == 0x1f7) { msg = 0xd55; tla_summon_msg: BattleEv_Push(BATTLE_EVENT_TEXT, msg); } else { BattleEv_Push(BATTLE_EVENT_TEXT, 0xd57); } } };
+    { if ((u8)(action->effect + 206) <= 1 || action->effect == 0x56 || action->effect == 0x57) { s32 st; s32 rec; s32 state_save; s32 cursor; s32 msg; u8 efx; state_save = (s32)((u8 *)actor + 0x14a); st = *(u16 *)state_save; affi = -1; rec = Summon_FindSlot(); efx = action->effect; if (efx == EFX_STANDBY_WORK) { st = BattleFormation_SelectRandomAvailableMember(work->enemy_group); } else if (efx == 0x56) { if (*(u16 *)state_save == 0xa4) st = (BattleRandom16Far() & 3) + 0x17a; else st = 0x51; } else if (efx == 0x57) { if (((s8 *)work)[0x56b] != 0) { s32 qi; s32 state_offset; s32 charge_offset; qi = ((s8 *)work)[0x56a]; state_offset = 0x564 + qi * 2; st = *(u16 *)((u8 *)work + state_offset); charge_offset = 0x568 + qi; affi = ((u8 *)work)[charge_offset]; } else hit = 0; } if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) { if (affi == -1) { affi = Summon_TakeCharge(st, 1); if (affi & 0x8000) Summon_ResetCharge(st); } BattleUnit_AssignFar(rec, st, affi & 0x7fff); if (action->effect == 0x57) { s32 qi; ((s8 *)work)[0x56b]--; qi = ((s8 *)work)[0x56a] + 1; ((s8 *)work)[0x56a] = qi - (((s32)(qi + ((u32)qi >> 31)) >> 1) * 2); } if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) { BattleParty_InsertUnitCentered(work->enemy_units, rec); } else { s16 *slots; slots = (s16 *)((u8 *)work + 2); { s32 off; s32 i; s32 j; off = 100; i = 0; state_save = 0; if (*(s16 *)((u8 *)slots + off) == 254) { *(s16 *)((u8 *)slots + off) = rec; } else { s32 woff; s32 next; j = 0; woff = 100; for (;;) { affi = (s32)slots; cursor = j + 100; n = *(s16 *)(cursor + affi); if (n == 255) { *(s16 *)(affi + cursor) = rec; next = state_save + 102; *(s16 *)((u8 *)affi + next) = n; break; } i++; next = j + 2; j = next; if (i > 5) break; state_save = next; woff = next + 100; if (*(s16 *)(woff + affi) == 254) { *(s16 *)(woff + affi) = rec; break; } } } } } Summon_Refresh(); { s32 x; s32 y; cursor = (s32)GetBattleObjectSlot(rec); x = *(s32 *)(cursor + 12); if (x < 0) x += 0xffff; y = *(s32 *)(cursor + 16); x >>= 16; if (y < 0) y += 0xffff; y >>= 16; BattlePresentation_SpawnActorObject((void *)cursor, rec, x, y); } BattleActor_CommitPlacement(); { s32 listed; listed = BattleParty_ListPresentEnemies(saved); if (listed > 0) { u16 *q; q = (u16 *)saved; count = listed; do { Actor_ResetMotionAtAnchor(*q++); count--; } while (count != 0); } } BattleEv_Push(BATTLE_EVENT_UNIT, rec); if (action->effect == 0x57) { msg = (s32)&MsgUpToFight; goto tla_summon_msg; } else if (action_id != 0x1f7) { BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAppears); } else { BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgSplitOff); } } else if (action_id == 0x1f7) { msg = (s32)&MsgSplitFailed; tla_summon_msg: BattleEv_Push(BATTLE_EVENT_TEXT, msg); } else { BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgNoOneCame); } } };
     if (hit != 0) {
         s32 efx;
 ;
@@ -509,7 +507,7 @@ dealt = target->hp - cur;
             break;
         }
     }
-    { if (((u8 *)work)[0x868] != 0 && action_id == 0x23d) { BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_TEXT, 0xca7); ((u8 *)work)[0x868] = 0; } };
+    { if (((u8 *)work)[0x868] != 0 && action_id == 0x23d) { BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgFieldBroken); ((u8 *)work)[0x868] = 0; } };
     BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
     if (!((action->effect != 0x4b || slot != 0) && (BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0 || BattleFx_CanAffectDefeatedUnit(action->effect) != 0) && hit != 0)) goto done;
     if ((u32)(action->effect - 3) > 88 - 3)
@@ -527,7 +525,7 @@ dealt = target->hp - cur;
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureStun);
         }
-        { if (target->sleep != 0) { target->sleep = 0; BattleEv_Push(BATTLE_EVENT_TEXT, 0xce3); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); } };
+        { if (target->sleep != 0) { target->sleep = 0; BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgWakes); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); } };
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureSeal);
@@ -562,7 +560,7 @@ dealt = target->hp - cur;
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureStun);
         }
-        { if (target->sleep != 0) { target->sleep = 0; BattleEv_Push(BATTLE_EVENT_RESET, 0); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_TEXT, 0xce3); } };
+        { if (target->sleep != 0) { target->sleep = 0; BattleEv_Push(BATTLE_EVENT_RESET, 0); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgWakes); } };
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
             BattleEv_Push(BATTLE_EVENT_RESET, 0);
@@ -843,7 +841,7 @@ dealt = target->hp - cur;
         { if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgLeechTake)); else BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgLeechGain)); };
         Owner_AdjustSecondValueFar(actor_id, dmg);
         break;
-    case 0x54: dmg = (s16)Math_Div(target->max_pp, 10); if (target->pp < dmg) dmg = target->pp; if (dmg == 0) break; BattleEv_Push(BATTLE_EVENT_VALUE, dmg); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, 0xcbb); else BattleEv_Push(BATTLE_EVENT_TEXT, 0xcba); Owner_AdjustSecondValueFar(target_id, -dmg); break;
+    case 0x54: dmg = (s16)Math_Div(target->max_pp, 10); if (target->pp < dmg) dmg = target->pp; if (dmg == 0) break; BattleEv_Push(BATTLE_EVENT_VALUE, dmg); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgMorePpLossP); else BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgMorePpLossE); Owner_AdjustSecondValueFar(target_id, -dmg); break;
     case EFX_BUFF_CLEAR:
         if (target->attack_modifier > 0) {
             target->attack_modifier = 0;
@@ -904,7 +902,7 @@ dealt = target->hp - cur;
         g1 = 1;
         (*(s8 *)&(target->guard_level)) = g1;
         break;
-    case 0x48: BattleEv_Push(BATTLE_EVENT_TEXT, 0xcdd); if ((u32)target->guard_level > 1) break; target->guard_level = 2; break;
+    case 0x48: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura); if ((u32)target->guard_level > 1) break; target->guard_level = 2; break;
     case EFX_GUARD2:
     case 0x58:
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura2);
@@ -912,11 +910,11 @@ dealt = target->hp - cur;
             break;
         (*(s8 *)&(target->guard_level)) = 3;
         break;
-    case 0x4f: BattleEv_Push(BATTLE_EVENT_TEXT, 0xcdf); if ((u32)target->guard_level > 3) break; target->guard_level = 4; break;
+    case 0x4f: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgVanished); if ((u32)target->guard_level > 3) break; target->guard_level = 4; break;
     case EFX_TEXT_NONE:
         BattleEv_Push(BATTLE_EVENT_TEXT, (u32)-1);
         break;
-    case 0x51: BattleEv_Push(BATTLE_EVENT_TEXT, 0xc8f); ((u8 *)work)[0x47] = 1; break; case 0x52: BattleEv_Push(BATTLE_EVENT_TEXT, 0xca6); BattleEv_Push(15, target_id); break; case 0x4a: BattleEv_Push(BATTLE_EVENT_TEXT, 0xce0); ((u8 *)target)[0x143] = 1; break;
+    case 0x51: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAllResting); ((u8 *)work)[0x47] = 1; break; case 0x52: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgBlownAway); BattleEv_Push(15, target_id); break; case 0x4a: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCounterReady); ((u8 *)target)[0x143] = 1; break;
     default:
         break;
     }

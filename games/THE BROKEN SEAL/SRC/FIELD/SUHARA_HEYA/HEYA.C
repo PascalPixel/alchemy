@@ -40,6 +40,8 @@ s32 SuharaHeya_SelectPlacements(void)
     return (s32)gSuharaHeyaPlacements;
 }
 
+/* The house's counters: a shop or the inn when the leader faces them,
+ * otherwise a line chosen by flag 0x96f. */
 void Dialogue_HandleFacingChoice(s32 no)
 {
     u16 facing = (Actor_Get(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
@@ -90,6 +92,8 @@ void Dialogue_HandleFacingAction(s32 no)
     }
 }
 
+/* Asks whether the party was blown here on the way to Babi Lighthouse, with a
+ * line for each answer. */
 void SuharaHeya_AskBlownHere(s32 obj)
 {
     s32 msg = (s32)MsgSuharaSupposeFolkBlown;

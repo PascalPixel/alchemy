@@ -42,6 +42,7 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
     return 1;
 }
 
+/* Status screens: create one of two icon variants, shifting its tile index by the variant. */
 s32 UiIcon_DrawVariantWithTileOffset(s32 x, s32 y, s32 tile, s32 variant)
 {
     struct MarkerObject *object;

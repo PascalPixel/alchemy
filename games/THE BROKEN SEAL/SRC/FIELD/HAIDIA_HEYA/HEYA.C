@@ -169,6 +169,7 @@ void Villager_AskAboutDora(void)
     Event_End();
 }
 
+/* A villager hopes the party did not get sick on its travels. */
 void HaidiaHeya_TalkHopeDidntGetSick(void)
 {
     Event_Begin();

@@ -150,6 +150,7 @@ void SceneDialogue_RunActor10Dialogue(void)
     Event_End();
 }
 
+/* Actor 12 asks whether the monsters in Altin spat water. */
 void SceneDialogue_RunActor12Dialogue(void)
 {
 

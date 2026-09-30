@@ -752,6 +752,9 @@ void SceneAudio_PlayCue183EverySixtyTicks(void)
     }
 }
 
+/* The late scene on the peak: the camera pans up, the leader walks to the
+ * ledge while cue 183 repeats, actors 8 and 9 follow, and the party is sent
+ * on to the tenth area when it next returns. */
 void FieldScene_RunLateAuxiliarySequence(void)
 {
     Event_Begin();
@@ -921,6 +924,7 @@ void RunEventScript01(void)
     Event_End();
 }
 
+/* Asks the engine for psynergy request 0x1018 on the next frame. */
 void ArutinYama_RequestPsynergy(void)
 {
     gEventWork->psynergy_request = 0x1018;

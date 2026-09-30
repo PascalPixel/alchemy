@@ -79,6 +79,7 @@ s32 HaidiaBabi_SelectPlacements(void)
     return (s32)tbl;
 }
 
+/* Asks whether the party knows Kraden, with a line for each answer. */
 void HaidiaBabi_AskAboutKraden(s32 object)
 {
     s32 msg = (s32)MsgHaidiaFolksSeemKnow;

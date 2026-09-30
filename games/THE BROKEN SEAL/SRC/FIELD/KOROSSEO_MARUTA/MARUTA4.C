@@ -55,6 +55,10 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     Runtime_BumpFree(handle);
 }
 
+/* The stage's scene control: decodes the given resource into the Colosso
+ * work, starts the control in the scene's saved words unless flag 0x109 is
+ * set, and schedules the path rival's update. Its setter twin is
+ * COMMON/KOROSSEO/SCENE_STATE.C. */
 void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
 {
     u8 *work = gKorosseoWork;

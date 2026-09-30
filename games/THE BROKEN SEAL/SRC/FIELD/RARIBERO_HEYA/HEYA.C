@@ -690,6 +690,8 @@ void FieldScene_RunSecondaryScript(void)
     Event_OpenMessage(0x2002, 0);
 }
 
+/* The action table actor 14 takes while flag 0x300 is set. */
+
 /*
  * Opens both Lalivero interiors. Arriving from the aerie by entrance 90 sets
  * flag 0x9a7. In the sanctum three actors take collision flag 4 and sprite

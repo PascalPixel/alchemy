@@ -624,6 +624,8 @@ void ShianJiin_WalkByFacing(void)
     }
 }
 
+/* The Xian master's lines to his pupils before the training starts. */
+
 /* Actor 15 speaks the lines for the given mode, then actors 19 and 20 are
  * placed and actor 15 walks up to them. The first mode's line is the one
  * before its name, as the game counts down from it in instructions. */
@@ -1512,6 +1514,8 @@ void FieldScene_RunScene39e_02002778(void)
     Event_End();
 }
 
+/* The party walks in and actor 8, who can read minds, asks whether it is
+ * curious. */
 void ShianJiin_AskIfCurious(void)
 {
     s32 record;

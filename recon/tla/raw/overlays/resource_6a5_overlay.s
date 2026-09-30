@@ -6799,37 +6799,7 @@ Func_02003d9c:
 	.4byte Func_020005b8
 .L_0200bf18:
 	.4byte 0x000000fb
-	.section .text.x0200bf1c,"ax",%progbits
-	.global Func_02003f1c
-	.thumb_func
-Func_02003f1c:
-	push {lr}
-	movs r0, #0
-	bl Func_02003f28
-	movs r0, #0
-	pop {pc}
-	.section .text.x0200bf28,"ax",%progbits
-	.global Func_02003f28
-	.thumb_func
-Func_02003f28:
-	push {lr}
-	movs r0, #20
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #37
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200bf50
-	movs r0, #98
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #162
-	lsls r0, r0, #1
-	bl GameFlag_SetBit
-.L_0200bf50:
-	pop {pc}
+	.section .text.x0200bf52,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200bf54,"ax",%progbits
 	.global Func_02003f54

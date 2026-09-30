@@ -1,0 +1,81 @@
+#include "TYPES.H"
+#include "IWRAM_CALL.H"
+#include "SCENE.H"
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(void *);
+void SceneTransform_ApplyYaw(s32);
+void SceneTransform_ApplyPitch(s32);
+void Camera_StoreSceneParameters(u32, u32, u32);
+
+struct SceneCameraState {
+    u8 filler0[12];
+    s32 field0c;
+    s32 field10;
+    s32 field14;
+    s32 field18;
+    s32 field1c;
+    s32 field20;
+    u8 filler24[16];
+    s16 field34;
+    s16 field36;
+};
+
+struct SceneCameraRuntime {
+    struct SceneCameraState *state;
+    u8 filler04[124];
+    void *secondary;
+};
+
+struct SceneCameraTransfer {
+    s32 first;
+    s32 second;
+    s32 third;
+};
+
+struct SceneCameraObject {
+    u32 field00;
+    u32 field04;
+    u32 field08;
+    u32 field0c;
+    s32 anchor;
+};
+
+extern struct SceneCameraRuntime gCameraWork;
+extern struct SceneCameraObject gProjection;
+
+void Camera_ResetSceneDefaults(void)
+{
+    struct SceneCameraState *state = gCameraWork.state;
+    struct SceneCameraTransfer local;
+    u32 result;
+    u32 param1;
+
+    state->field34 = 152 << 8;
+    state->field20 = 255 << 17;
+    state->field0c = 0;
+    state->field10 = 0;
+    state->field14 = 0;
+    state->field36 = 0;
+    state->field1c = 0;
+    gProjection.field0c = 0;
+    gProjection.anchor = 0;
+    state->field18 = 0;
+
+    Render_ResetTransformState();
+    SceneTransform_ApplyPosition(&state->field0c);
+    SceneTransform_ApplyYaw(state->field36);
+    SceneTransform_ApplyPitch(state->field34);
+
+    local.first = 0;
+    local.second = 0;
+    local.third = state->field20;
+    Iwram_TransformVector((s32 *)&local, (s32 *)state);
+
+    param1 = 250;
+    param1 = param1 << 16;
+    result = Iwram_RatioMulQ14(param1, 192 << 8);
+
+    param1 = 250;
+    param1 = param1 << 16;
+    Camera_StoreSceneParameters(param1, result, 0x7fff0000);
+}

@@ -1,4 +1,53 @@
 #include "TYPES.H"
+#include "VRAM_BLOCK.H"
+
+extern u8 ResourceBlockOwners[512];
+
+/* Finds the first run of SIZE / 64 free VRAM blocks, marks them as owned by
+   resource ID and returns the run's byte offset, or -1 when ID is out of range
+   or no run is free. Occupied blocks are skipped a whole cached entry at a
+   time. */
+s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
+{
+    u32 blocks;
+    s32 result;
+    s32 pos;
+    u32 end;
+    u32 i;
+
+    blocks = size >> 6;
+    if (id > 95) {
+        return -1;
+    }
+    pos = 0;
+    for (;;) {
+        result = -1;
+        if (pos >= 512) {
+            goto done;
+        }
+        if (ResourceBlockOwners[pos] != 0xff) {
+            goto occupied;
+        }
+        result = pos;
+        end = blocks + result;
+        while (pos < end) {
+            if (ResourceBlockOwners[pos] != 0xff) {
+                goto occupied;
+            }
+            pos++;
+        }
+        for (i = 0; i < blocks; i++) {
+            ResourceBlockOwners[result + i] = id;
+        }
+        goto found;
+occupied:
+        pos += gVramBlockCache[ResourceBlockOwners[pos]].size >> 6;
+    }
+found:
+    result <<= 6;
+done:
+    return result;
+}
 
 extern u8 ResourceBlockOwners[];
 

@@ -81,3 +81,85 @@ plain:
         return;
     *(u16 *)((u8 *)map + (index << 1)) = value;
 }
+
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
+
+struct ScaleEffect {
+    unsigned x : 16;
+    unsigned y : 16;
+    unsigned angle : 16;
+    unsigned unused : 16;
+};
+struct OutputSprite {
+    u32 link;
+    u8 y;
+    u8 affine : 2;
+    u8 mode : 2;
+    u8 other : 4;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 other_x : 2;
+    u16 tile;
+};
+struct AnimatedOutput {
+    u8 unknown_00[5];
+    u8 mode;
+    u16 x;
+    u16 y;
+    u16 unknown_0a;
+    u16 frame;
+    u8 unknown_0e[2];
+    struct OutputSprite sprite;
+};
+extern u16 Data_080366f8[];
+s32 AffineMatrix_BuildForEffect(struct ScaleEffect *);
+
+/* Steps the output's scale animation through the scale table (modes 9 and
+   10 loop, 11 and 12 play eight steps once, 10 and 12 at half size) and
+   sets the sprite's affine mode: none at 1.0 (256), double-size and moved
+   8 pixels up and left when larger, plain affine when smaller. */
+void RenderOutput_UpdateScaleAnimation(struct AnimatedOutput *output)
+{
+    s32 scale = 256;
+    struct OutputSprite *sprite = &output->sprite;
+    struct ScaleEffect effect;
+
+    switch (output->mode) {
+    case 9:
+        scale = Data_080366f8[output->frame++ & 31];
+        break;
+    case 10:
+        scale = Data_080366f8[output->frame++ & 31] >> 1;
+        break;
+    case 11:
+        if (output->frame <= 7)
+            scale = Data_080366f8[output->frame++ * 2 + 16];
+        break;
+    case 12:
+        if (output->frame <= 7)
+            scale = Data_080366f8[output->frame++ * 2 + 16] >> 1;
+        break;
+    }
+    if (scale == 256) {
+        sprite->affine_index = 0;
+        sprite->affine = 0;
+        sprite->x = output->x;
+        sprite->y = output->y;
+    } else {
+        effect.x = scale;
+        effect.y = scale;
+        effect.angle = 0;
+        sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+        if (scale > 256) {
+            sprite->affine = 3;
+            sprite->x = output->x - 8;
+            sprite->y = output->y - 8;
+        } else {
+            sprite->affine = 1;
+            sprite->x = output->x;
+            sprite->y = output->y;
+        }
+    }
+}
+#endif

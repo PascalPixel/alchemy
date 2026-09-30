@@ -25,8 +25,8 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
     struct MarkerObject *object;
     u32 resource;
     register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
-    register struct RenderInput *w asm("r4") = window; /* FAKEMATCH: keeps the window in r4 */
-    register s32 xx asm("r6") = x; /* FAKEMATCH: keeps x in r6 */
+    struct RenderInput *w = window;
+    s32 xx = x;
     struct ArrowResources *data = gMenuWork;
 
     if (v == 0)
@@ -48,8 +48,8 @@ s32 UiIcon_DrawVariantWithTileOffset(s32 x, s32 y, s32 tile, s32 variant)
     struct MarkerObject *object;
     u32 resource;
     register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
-    register s32 xx asm("r4") = x; /* FAKEMATCH: keeps x in r4 */
-    register s32 yy asm("r6") = y; /* FAKEMATCH: keeps y in r6 */
+    s32 xx = x;
+    s32 yy = y;
     u8 *data = ((u8 *)gMenuWork);
 
     if (v == 0) {

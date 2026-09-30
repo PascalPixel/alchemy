@@ -214,7 +214,7 @@ Func_0811f088:
 	bl	0x0811be3c
 	movs	r1, #0
 	ldr	r0, [r0, #0]
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	ldrb	r3, [r0, #27]
 	movs	r1, #0
 	subs	r3, #1

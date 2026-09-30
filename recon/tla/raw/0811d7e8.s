@@ -169,7 +169,7 @@ Func_0811d7e8:
 	bhi.n	.L_0811d93a
 	mov	r7, sp
 	adds	r0, r7, #0
-	bl	0x0811a038
+	bl	Func_0811a038
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r7, r0
@@ -627,12 +627,12 @@ Func_0811d7e8:
 	bl	.L_0811df70
 	movs	r0, #1
 	movs	r1, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	beq.n	.L_0811dd70
 	movs	r0, #2
 	movs	r1, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	beq.n	.L_0811dd70
 	adds	r0, r5, #0
@@ -851,7 +851,7 @@ Func_0811d7e8:
 	add	r7, sp, #4
 	movs	r0, #1
 	adds	r1, r7, #0
-	bl	0x0811a188
+	bl	Func_0811a188
 	movs	r3, #1
 	subs	r6, r0, #1
 	negs	r3, r3
@@ -1245,7 +1245,7 @@ Func_0811d7e8:
 	bl	0x0811be3c
 	movs	r1, #0
 	ldr	r0, [r0, #0]
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	ldrb	r3, [r0, #27]
 	movs	r1, #0
 	subs	r3, #1

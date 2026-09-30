@@ -33,6 +33,9 @@ Func_0811bd10:
 	.4byte 0x08128868
 	.2byte 0x03c8
 	.2byte 0x0300
+	.global Func_0811bd50
+	.thumb_func
+Func_0811bd50:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -58,7 +61,7 @@ Func_0811bd10:
 	ldr	r5, [r5, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	.L_0811bdb0
+	bl	Func_0811bdb0
 	adds	r6, r0, #0
 	bl	.L_0811bd10
 	ldr	r3, [r5, #8]
@@ -80,6 +83,9 @@ Func_0811bd10:
 	movs	r0, r0
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_0811bdb0
+	.thumb_func
+Func_0811bdb0:
 .L_0811bdb0:
 	push	{lr}
 	cmp	r0, #0

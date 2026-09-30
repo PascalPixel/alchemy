@@ -31,7 +31,7 @@ Func_0811cfd0:
 	movs	r0, #2
 	adds	r1, r2, #0
 	str	r2, [sp, #4]
-	bl	0x0811a188
+	bl	Func_0811a188
 	movs	r3, #31
 	mov	sl, r0
 	ldr	r6, [sp, #4]

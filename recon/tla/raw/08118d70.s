@@ -11,7 +11,7 @@ Func_08118d70:
 	sub	sp, #20
 	mov	r8, sp
 	mov	r0, r8
-	bl	0x0811a038
+	bl	Func_0811a038
 	adds	r7, r0, #0
 	lsls	r0, r7, #1
 	add	r0, r8
@@ -128,7 +128,7 @@ Func_08118d70:
 	sub	sp, #32
 	mov	r6, sp
 	adds	r0, r6, #0
-	bl	0x0811a038
+	bl	Func_0811a038
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r6, r0
@@ -168,7 +168,7 @@ Func_08118d70:
 	sub	sp, #20
 	mov	r5, sp
 	adds	r0, r5, #0
-	bl	0x0811a038
+	bl	Func_0811a038
 	movs	r2, #0
 	mov	sl, r0
 	mov	r8, r2

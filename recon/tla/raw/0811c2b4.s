@@ -14,7 +14,7 @@ Func_0811c2b4:
 	ldr	r5, [r0, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	adds	r5, #8
 	adds	r6, r0, #0
 	bl	Func_0811bd10
@@ -46,6 +46,9 @@ Func_0811c2b4:
 	movs	r0, r0
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_0811c314
+	.thumb_func
+Func_0811c314:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -55,7 +58,7 @@ Func_0811c2b4:
 	ldr	r5, [r0, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	0x0811bdb0
+	bl	Func_0811bdb0
 	adds	r5, #8
 	adds	r6, r0, #0
 	bl	Func_0811bd10

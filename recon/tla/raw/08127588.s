@@ -125,7 +125,7 @@ Func_08127588:
 	mov	sl, r0
 	adds	r0, r5, #0
 	mov	r8, r3
-	bl	0x0811a038
+	bl	Func_0811a038
 	adds	r7, r0, #0
 	cmp	r7, #0
 	ble.n	.L_08127692

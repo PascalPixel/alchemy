@@ -20,6 +20,9 @@ Func_081197d0:
 	.4byte 0x00003007
 	.2byte 0x2fd2
 	.2byte 0x0000
+	.global Func_081197f0
+	.thumb_func
+Func_081197f0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -564,14 +567,14 @@ Func_081197d0:
 .L_08119c7c:
 	movs	r0, #1
 	movs	r1, #0
-	bl	.L_0811a188
+	bl	Func_0811a188
 	cmp	r0, #0
 	bne.n	.L_08119c8a
 	b.n	.L_08119dde
 .L_08119c8a:
 	movs	r0, #2
 	movs	r1, #0
-	bl	.L_0811a188
+	bl	Func_0811a188
 	ldr	r4, [sp, #4]
 	cmp	r0, #0
 	bne.n	.L_08119cd8
@@ -941,7 +944,7 @@ Func_081197d0:
 	bl	Audio_PlayCue
 	bl	0x08038118
 	movs	r0, #0
-	bl	.L_0811a038
+	bl	Func_0811a038
 	cmp	r0, #1
 	bne.n	.L_08119fb0
 	ldr	r0, [pc, #124]
@@ -1005,6 +1008,9 @@ Func_081197d0:
 	.4byte 0x02000240
 	.2byte 0xb9fd
 	.2byte 0x0811
+	.global Func_0811a038
+	.thumb_func
+Func_0811a038:
 .L_0811a038:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -1188,6 +1194,9 @@ BattleParty_ListPresentEnemies:
 	movs	r0, r0
 	.2byte 0x00ff
 	.2byte 0x0000
+	.global Func_0811a188
+	.thumb_func
+Func_0811a188:
 .L_0811a188:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -1216,7 +1225,7 @@ BattleParty_ListPresentEnemies:
 	beq.n	.L_0811a1f2
 	add	r5, sp, #4
 	adds	r0, r5, #0
-	bl	.L_0811a038
+	bl	Func_0811a038
 	cmp	r8, r0
 	bge.n	.L_0811a1f2
 	adds	r2, r5, #0
@@ -1321,7 +1330,7 @@ BattleParty_ListPresentEnemies:
 	beq.n	.L_0811a2c0
 	add	r6, sp, #4
 	adds	r0, r6, #0
-	bl	.L_0811a038
+	bl	Func_0811a038
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r6, r0

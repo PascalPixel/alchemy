@@ -151,7 +151,7 @@ Func_08119054:
 	bge.n	.L_08119172
 	mov	r7, sp
 	adds	r0, r7, #0
-	bl	0x0811a038
+	bl	Func_0811a038
 	movs	r5, #0
 	mov	r8, r0
 	cmp	r5, r8

@@ -402,7 +402,7 @@ Func_08125c94:
 	movs	r3, #0
 	str	r3, [r6, #16]
 	adds	r0, r5, #0
-	bl	0x0811a038
+	bl	Func_0811a038
 	mov	r8, r0
 	lsls	r0, r0, #1
 	adds	r0, r5, r0

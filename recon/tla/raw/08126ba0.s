@@ -416,9 +416,9 @@ BattlePres_SetActorModes:
 	ldr	r3, [r3, #0]
 	cmp	r3, #24
 	bgt.n	.L_08126f4c
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r3, r3, r0
@@ -455,7 +455,7 @@ BattlePres_SetActorModes:
 	negs	r3, r2
 	str	r3, [r7, #4]
 .L_08126f18:
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #128
 	lsls	r2, r2, #8
 	adds	r0, r0, r2
@@ -658,9 +658,9 @@ BattlePres_SetActorModes:
 	add	r7, r9
 	mov	sl, r2
 .L_081270ac:
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r3, r3, r0
@@ -698,7 +698,7 @@ BattlePres_SetActorModes:
 	negs	r3, r2
 	str	r3, [r7, #4]
 .L_08127100:
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #128
 	lsls	r2, r2, #8
 	adds	r0, r0, r2

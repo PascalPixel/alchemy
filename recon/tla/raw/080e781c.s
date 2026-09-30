@@ -332,30 +332,30 @@ Func_080e781c:
 	str	r3, [r6, #4]
 	ldr	r3, [r1, #8]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r2, #144
 	lsls	r2, r2, #12
 	lsls	r5, r5, #2
 	adds	r5, r5, r2
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
 	bl	Func_0801489c
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #5
 	lsrs	r0, r0, #16
 	str	r0, [r6, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r0, r0, #9
 	lsls	r3, r3, #1
 	lsrs	r0, r0, #16
 	adds	r0, r0, r3
 	str	r0, [r6, #20]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #0
 	add	r0, sl
 	str	r0, [r6, #16]
@@ -1231,7 +1231,7 @@ Func_080e781c:
 	cmp	r5, #0
 	bne.n	.L_080e8200
 	str	r4, [sp, #0]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r4, [sp, #0]
 	adds	r2, r7, #0
 	strh	r0, [r4, #28]

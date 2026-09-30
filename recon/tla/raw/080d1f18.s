@@ -23,7 +23,7 @@ Func_080d1f20:
 	bl	Func_080d2a8c
 	movs	r0, #130
 	lsls	r0, r0, #5
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	lsls	r5, r5, #2
 	ldr	r3, [r5, r7]
 	ldr	r6, [pc, #220]

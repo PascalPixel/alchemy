@@ -10,7 +10,7 @@ Owner_RecalculateStats:
 	adds	r5, r0, #0
 	movs	r0, #96
 	sub	sp, #4
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	bl	Owner_GetState
@@ -1613,7 +1613,7 @@ Func_080addf0:
 	adds	r5, r3, r2
 	movs	r6, #7
 .L_080ae078:
-	bl	Func_08014878
+	bl	Random16
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r3, r3, #16

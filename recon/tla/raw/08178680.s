@@ -310,9 +310,9 @@ Func_08178680:
 	subs	r3, #16
 	lsls	r3, r3, #16
 	str	r3, [r7, #4]
-	bl	Func_08014878
+	bl	Random16
 	adds	r6, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ands	r5, r0
 	adds	r0, r6, #0
 	bl	Math_Sine
@@ -327,7 +327,7 @@ Func_08178680:
 	muls	r3, r0
 	asrs	r3, r3, #6
 	str	r3, [r7, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #15
 	ands	r3, r0
 	movs	r0, #1
@@ -1849,14 +1849,14 @@ Func_08178680:
 	adds	r3, #2
 	str	r3, [r6, #24]
 	str	r7, [r6, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #15
 	ands	r3, r0
 	add	r3, sl
 	adds	r3, #16
 	lsls	r3, r3, #16
 	str	r3, [r6, #4]
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, fp
 	ldr	r3, [r1, #24]
 	ldr	r2, [pc, #644]
@@ -1869,7 +1869,7 @@ Func_08178680:
 	subs	r0, r0, r5
 	lsls	r0, r0, #12
 	str	r0, [r6, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #255
 	ands	r2, r0
 	movs	r3, #192
@@ -1906,13 +1906,13 @@ Func_08178680:
 	ldr	r4, [sp, #32]
 	mov	r6, r9
 	str	r4, [r7, #0]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	add	r0, sl
 	adds	r0, #24
 	lsls	r0, r0, #16
 	str	r0, [r7, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r6, #254
 	lsls	r6, r6, #7
 	adds	r6, #255
@@ -1920,7 +1920,7 @@ Func_08178680:
 	movs	r0, #128
 	lsls	r0, r0, #7
 	adds	r6, r6, r0
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #255
 	ands	r5, r0
 	adds	r0, r6, #0
@@ -1936,7 +1936,7 @@ Func_08178680:
 	muls	r3, r0
 	asrs	r3, r3, #5
 	str	r3, [r7, #16]
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, r9
 	ands	r0, r1
 	adds	r0, #16
@@ -2139,7 +2139,7 @@ Func_08178680:
 	bne.n	.L_08179742
 .L_0817979c:
 	movs	r0, #32
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #28]
 	movs	r0, #1
 	bl	0x081969f8
@@ -2787,9 +2787,9 @@ Func_08178680:
 	ldr	r3, [r0, #4]
 	lsls	r3, r3, #16
 	str	r3, [r7, #4]
-	bl	Func_08014878
+	bl	Random16
 	adds	r6, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ands	r5, r0
 	adds	r0, r6, #0
 	bl	Math_Sine
@@ -2804,7 +2804,7 @@ Func_08178680:
 	muls	r3, r0
 	asrs	r3, r3, #6
 	str	r3, [r7, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #24

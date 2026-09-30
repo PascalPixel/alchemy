@@ -96,7 +96,7 @@ Func_0810b1b4:
 	movs	r1, #7
 	adds	r0, r5, #0
 	bl	0x080c85a0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r1, r0, #3
 	subs	r1, r1, r0
 	lsrs	r1, r1, #16

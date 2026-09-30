@@ -25,7 +25,7 @@ BattleFx_IsReviveFar:
 	.global Func_080ad288
 	.thumb_func
 Func_080ad288:
-	overlay_veneer Func_080b02d4
+	overlay_veneer Owner_RefreshClassActions
 	.global Func_080ad290
 	.thumb_func
 Func_080ad290:

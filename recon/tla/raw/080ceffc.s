@@ -128,7 +128,7 @@ Func_080cf050:
 	movs	r3, #0
 	strb	r3, [r2, #0]
 .L_080cf0ea:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #100
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -141,9 +141,9 @@ Func_080cf050:
 	str	r3, [r6, #4]
 	ldr	r3, [r5, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r5, r5, #4
 	adds	r1, r0, #0
 	adds	r2, r6, #0

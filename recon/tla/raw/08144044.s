@@ -65,17 +65,17 @@ Func_08144044:
 	mov	sl, r1
 	movs	r6, #255
 .L_081440ca:
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	movs	r2, #1

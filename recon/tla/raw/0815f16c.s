@@ -948,7 +948,7 @@ Func_0815f16c:
 	mov r8, r3
 	adds r6, #255
 .L49:
-	bl Func_08014878
+	bl Random16
 	movs r3, #63
 	ands r3, r0
 	adds r3, #32
@@ -956,13 +956,13 @@ Func_0815f16c:
 	str r3, [r5]
 	str r0, [r5, #4]
 	str r0, [r5, #8]
-	bl Func_08014878
+	bl Random16
 	ands r0, r6
 	str r0, [r5, #12]
-	bl Func_08014878
+	bl Random16
 	ands r0, r6
 	str r0, [r5, #16]
-	bl Func_08014878
+	bl Random16
 	movs r1, #1
 	add r11, r1
 	ands r0, r6

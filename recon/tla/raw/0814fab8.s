@@ -347,19 +347,19 @@ Func_0814fab8:
 	movs	r4, #0
 	mov	sl, r4
 .L_0814fd3c:
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #200
 	bl	0x0800206c
 	subs	r0, #100
 	lsls	r0, r0, #14
 	str	r0, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #200
 	bl	0x0800206c
 	subs	r0, #100
 	lsls	r0, r0, #15
 	str	r0, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #200
 	bl	0x0800206c
 	movs	r1, #1

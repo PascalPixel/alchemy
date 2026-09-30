@@ -1372,7 +1372,7 @@ Func_0817ea58:
 	ldr	r3, [r7, #4]
 	adds	r7, #8
 	str	r3, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #127
 	movs	r2, #1
 	ands	r3, r0
@@ -1741,7 +1741,7 @@ Func_0817ea58:
 	ldr	r2, [r5, #4]
 	adds	r2, r2, r3
 	str	r2, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	ldr	r4, [pc, #612]
 	lsls	r3, r3, #8
@@ -1749,7 +1749,7 @@ Func_0817ea58:
 	ands	r3, r0
 	adds	r3, r3, r4
 	str	r3, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #252
 	lsls	r3, r3, #6
 	adds	r3, #255
@@ -2120,24 +2120,24 @@ Func_0817ea58:
 	mov	r8, r1
 	movs	r6, #31
 .L_0817fb2e:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #15
 	ands	r3, r0
 	adds	r3, #56
 	lsls	r3, r3, #16
 	str	r3, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	adds	r0, #64
 	lsls	r0, r0, #16
 	str	r0, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	adds	r0, #8
 	negs	r0, r0
 	lsls	r0, r0, #12
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	adds	r0, #8
 	movs	r2, #1
@@ -2258,12 +2258,12 @@ Func_0817ea58:
 	lsls	r5, r5, #2
 	adds	r5, r5, r0
 	str	r2, [r5, #24]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r6
 	adds	r0, #16
 	lsls	r0, r0, #12
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #16
 	negs	r3, r3
 	negs	r0, r0
@@ -2633,7 +2633,7 @@ Func_0817ea58:
 	blt.n	.L_0817ffcc
 	movs	r0, #128
 	lsls	r0, r0, #2
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r7, r0, #0
 	movs	r0, #1
 	bl	0x081969f8
@@ -3816,7 +3816,7 @@ Func_0817ea58:
 	mov	r5, fp
 .L_0818089c:
 	str	r7, [r5, #24]
-	bl	Func_08014878
+	bl	Random16
 	str	r7, [r5, #20]
 	mov	r2, sl
 	ldr	r3, [r5, #20]
@@ -3836,7 +3836,7 @@ Func_0817ea58:
 	negs	r0, r0
 	lsls	r0, r0, #3
 	str	r0, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #80
 	bl	0x0800206c
 	ldr	r2, [r5, #12]
@@ -3847,7 +3847,7 @@ Func_0817ea58:
 	lsls	r0, r0, #16
 	subs	r0, r0, r3
 	str	r0, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r2, [r5, #16]
 	movs	r1, #7
 	ands	r1, r0
@@ -3955,10 +3955,10 @@ Func_0817ea58:
 	adds	r7, r1, r2
 .L_081809b0:
 	str	r4, [sp, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r6, #31
 	ands	r6, r0
-	bl	Func_08014878
+	bl	Random16
 	movs	r5, #254
 	ldr	r4, [sp, #8]
 	lsls	r5, r5, #7

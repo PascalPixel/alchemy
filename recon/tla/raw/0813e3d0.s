@@ -129,13 +129,13 @@ Func_0813e3d0:
 .L_0813e4ce:
 	movs	r3, #0
 	str	r3, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	ands	r3, r0
 	str	r3, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #1
 	mov	r4, r8

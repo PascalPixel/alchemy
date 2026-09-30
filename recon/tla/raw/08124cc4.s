@@ -1332,7 +1332,7 @@ Battle_ApplyActionExtras:
 	movs	r5, #166
 	lsls	r5, r5, #1
 	adds	r0, r5, #0
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r2, r5, #0
 	ldr	r3, [pc, #704]
 	ldr	r1, [sp, #8]
@@ -1715,10 +1715,10 @@ Battle_ApplyActionExtras:
 	movs	r5, #0
 	adds	r6, #76
 .L_08125b0c:
-	bl	Func_08014878
-	bl	Func_08014878
-	bl	Func_08014878
-	bl	Func_08014878
+	bl	Random16
+	bl	Random16
+	bl	Random16
+	bl	Random16
 	lsls	r3, r5, #8
 	orrs	r3, r5
 	strh	r3, [r6, #0]

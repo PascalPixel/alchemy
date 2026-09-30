@@ -94,13 +94,13 @@ Func_08144b14:
 	movs	r3, #160
 	lsls	r3, r3, #15
 	str	r3, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #32
 	negs	r3, r3
 	orrs	r3, r0
 	lsls	r3, r3, #14
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	ands	r3, r0
 	movs	r1, #128

@@ -364,7 +364,7 @@ Func_080e68c8:
 	asrs	r3, r3, #24
 	cmp	r3, #0
 	beq.n	.L_080e6be8
-	bl	Func_08014878
+	bl	Random16
 	movs	r1, #128
 	lsls	r1, r1, #5
 	cmp	r0, r1
@@ -486,7 +486,7 @@ Func_080e68c8:
 	str	r3, [r7, #4]
 	ldr	r3, [r0, #12]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r7, #0
@@ -496,7 +496,7 @@ Func_080e68c8:
 	str	r1, [r7, #12]
 	str	r1, [r7, #16]
 	str	r1, [r7, #20]
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r7, #0
 	adds	r1, r0, #0
 	adds	r2, #12
@@ -601,7 +601,7 @@ Func_080e68c8:
 	str	r3, [r7, #4]
 	ldr	r3, [r2, #12]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r7, #0
@@ -611,7 +611,7 @@ Func_080e68c8:
 	str	r3, [r7, #12]
 	str	r3, [r7, #16]
 	str	r3, [r7, #20]
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r7, #0
 	adds	r1, r0, #0
 	movs	r0, #128
@@ -711,13 +711,13 @@ Func_080e68c8:
 	str	r3, [r7, #4]
 	ldr	r3, [r2, #12]
 	str	r3, [r7, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
 	movs	r0, #192
 	lsls	r0, r0, #10
 	lsls	r5, r5, #2
 	adds	r5, r5, r0
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r7, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
@@ -1111,13 +1111,13 @@ Func_080e70f8:
 	mov	r1, r8
 	str	r6, [r1, r3]
 .L_080e71c0:
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #192
 	lsls	r2, r2, #8
 	cmp	r0, r2
 	bcs.n	.L_080e71f0
 	ldr	r5, [pc, #100]
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #4
 	lsrs	r0, r0, #16
 	lsls	r0, r0, #1
@@ -1133,7 +1133,7 @@ Func_080e70f8:
 	adds	r5, #1
 	b.n	.L_080e7204
 .L_080e71f0:
-	bl	Func_08014878
+	bl	Random16
 	ldrb	r3, [r5, #15]
 	muls	r3, r0
 	lsls	r3, r3, #1
@@ -1266,7 +1266,7 @@ Func_080e7238:
 	lsls	r7, r7, #15
 	mov	sl, r1
 .L_080e7308:
-	bl	Func_08014878
+	bl	Random16
 	mov	r2, fp
 	ldr	r1, [sp, #16]
 	lsls	r3, r2, #3
@@ -1282,7 +1282,7 @@ Func_080e7238:
 	ldr	r3, [r1, #8]
 	adds	r5, r0, #0
 	str	r3, [r6, #0]
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, r8
 	ldr	r2, [r1, #12]
 	lsls	r3, r0, #2
@@ -1292,7 +1292,7 @@ Func_080e7238:
 	str	r2, [r6, #4]
 	ldr	r3, [r1, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r5, #0
 	lsls	r0, r0, #3
 	adds	r2, r6, #0
@@ -1638,7 +1638,7 @@ Func_080e74d8:
 	beq.n	.L_080e76bc
 	mov	sl, r3
 .L_080e760c:
-	bl	Func_08014878
+	bl	Random16
 	mov	r1, fp
 	ldr	r2, [sp, #20]
 	lsls	r3, r1, #3
@@ -1653,7 +1653,7 @@ Func_080e74d8:
 	ldr	r3, [r7, #8]
 	mov	r8, r0
 	str	r3, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	ldr	r2, [r7, #12]
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
@@ -1662,7 +1662,7 @@ Func_080e74d8:
 	str	r2, [r5, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r5, #0
 	lsls	r0, r0, #3
 	mov	r1, r8
@@ -1677,7 +1677,7 @@ Func_080e74d8:
 	str	r1, [r5, #12]
 	str	r3, [r5, #16]
 	str	r1, [r5, #20]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	movs	r2, #128
 	lsls	r3, r3, #3
@@ -1695,7 +1695,7 @@ Func_080e74d8:
 	str	r2, [r5, #12]
 	str	r3, [r5, #16]
 	str	r2, [r5, #20]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	movs	r1, #128
 	lsls	r3, r3, #3

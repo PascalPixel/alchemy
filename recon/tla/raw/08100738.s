@@ -276,7 +276,7 @@ Func_08100738:
 	mov	r8, r0
 	movs	r7, #3
 	b.n	.L_08100a74
-	bl	Func_08014878
+	bl	Random16
 	lsls	r0, r0, #2
 	lsrs	r0, r0, #16
 	cmp	r0, #0

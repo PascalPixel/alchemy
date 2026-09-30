@@ -148,14 +148,14 @@ void Func_08020010(Sprite *, Vec3 *, Vec2 *, s32);
 void Func_08013560(s32);
 void Func_0801314c(s32);
 void Func_08144aac(s32, void **);
-u32 Func_08014878(void);
+u32 Random16(void);
 s32 Func_08002090(s32);
 s32 Func_08002096(s32);
 void Func_081c0010(s32);
 void Func_0815f0a0(s32);
 void Func_08138086(Particle *, s32, s32);
 void Func_08138058(Particle *, s32, s32);
-void *Func_08014dac(s32);
+void *Runtime_BumpAllocateAlternatePool(s32);
 s32 *Func_081969f8(s32);
 void Func_08014de4(void);
 void Func_08015160(s32, s32, s32);
@@ -511,7 +511,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->y = Ulysses_FishStart[i][1] << 16;
                 p->vx = Ulysses_FishVelocity[i][0];
                 p->vy = Ulysses_FishVelocity[i][1];
-                p->timer = Func_08014878() & 127;
+                p->timer = Random16() & 127;
             }
         }
         for (i = 0; i != 10; i++) {
@@ -597,8 +597,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->timer = 1;
                 p->x += sway_x;
                 p->y += sway_y - (Ulysses_Shake[work->shake] << 16);
-                p->vy = (Func_08014878() & 0xffff) - 0x8000;
-                p->ay = (Func_08014878() & 0x3fff) - 0x2000;
+                p->vy = (Random16() & 0xffff) - 0x8000;
+                p->ay = (Random16() & 0x3fff) - 0x2000;
             }
         }
         if (frame <= 489) {
@@ -659,10 +659,10 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             p->vy = -0x5000;
             for (i = 0; i != 16; i++) {
                 q = &PARTICLES[312 + i];
-                q->x = ((Func_08014878() & 15) + 56) << 16;
-                q->y = ((Func_08014878() & 31) + 64) << 16;
-                q->vx = -((Func_08014878() & 31) + 8) << 12;
-                q->vy = -((Func_08014878() & 31) + 8) << 12;
+                q->x = ((Random16() & 15) + 56) << 16;
+                q->y = ((Random16() & 31) + 64) << 16;
+                q->vx = -((Random16() & 31) + 8) << 12;
+                q->vy = -((Random16() & 31) + 8) << 12;
                 q->timer = 0;
             }
             for (i = 0; i != 32; i++)
@@ -682,8 +682,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             if (((p->timer >= 50 && p->timer < 60) || (p->timer >= 113 && p->timer < 200)) && (p->timer & 3) == 0) {
                 q = &PARTICLES[432 + (p->timer & 31)];
                 q->timer = 0;
-                q->vx = ((Func_08014878() & 31) + 16) << 12;
-                q->vy = -(((Func_08014878() - 1) & 15) + 1) << 14;
+                q->vx = ((Random16() & 31) + 16) << 12;
+                q->vy = -(((Random16() - 1) & 15) + 1) << 14;
                 q->x = 0x580000;
                 q->y = 0x800000;
             }
@@ -756,7 +756,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             s32 *beam;
             void *buffer;
 
-            buffer = Func_08014dac(512);
+            buffer = Runtime_BumpAllocateAlternatePool(512);
             beam = Func_081969f8(1);
             bitmap.width = 7;
             bitmap.height = 7;
@@ -960,13 +960,13 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             for (i = 0; i != 16; i++) {
                 p = &work->particles[i];
                 p->timer = 0;
-                Func_08014878();
+                Random16();
                 p->ay = 0;
                 p->z = z - p->ay * 40 - 0x800;
                 p->vx = -Func_08002090(p->z) * 8;
                 p->vy = -Func_08002096(p->z) * 8;
-                p->x = ((Func_08014878() % 80 + 80) << 16) - p->vx * 24;
-                p->y = (((Func_08014878() & 7) + 96) << 16) - p->vy * 24;
+                p->x = ((Random16() % 80 + 80) << 16) - p->vx * 24;
+                p->y = (((Random16() & 7) + 96) << 16) - p->vy * 24;
                 work->sprites[i]->rotation = p->z;
                 work->sprites[i]->unk_16 = 0;
                 work->sprites[i]->unk_17 = 8;
@@ -992,8 +992,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                         s32 angle;
 
                         q = &PARTICLES[i * 8 + j];
-                        speed = Func_08014878() & 31;
-                        angle = (Func_08014878() & 0x7fff) + 0x4000;
+                        speed = Random16() & 31;
+                        angle = (Random16() & 0x7fff) + 0x4000;
                         q->x = p->x / 2;
                         q->y = p->y;
                         speed += 32;

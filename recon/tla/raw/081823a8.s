@@ -150,18 +150,18 @@ Func_081823a8:
 	mov	r8, r2
 	mov	sl, r2
 .L_081824ca:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
 	adds	r6, r0, #0
 	ands	r6, r3
-	bl	Func_08014878
+	bl	Random16
 	mov	r3, sl
 	str	r3, [r7, #0]
 	movs	r5, #255
 	ands	r5, r0
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #20

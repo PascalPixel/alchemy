@@ -29,7 +29,7 @@ Func_0810b168:
 	negs	r3, r3
 	cmp	r5, r3
 	beq.n	.L_0810b1b0
-	bl	Func_08014878
+	bl	Random16
 	lsls	r3, r5, #2
 	lsls	r1, r0, #3
 	subs	r1, r1, r0

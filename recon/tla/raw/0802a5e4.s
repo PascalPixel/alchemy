@@ -7,7 +7,7 @@
 	movs	r5, #128
 	lsls	r5, r5, #8
 	adds	r0, r5, #0
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	ldr	r3, [pc, #68]
 	ldr	r1, [pc, #72]
 	adds	r2, r5, #0
@@ -1033,9 +1033,9 @@ Func_0802aa74:
 	mov	r1, ip
 	cmp	r1, #0
 	beq.n	.L_0802ae42
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r3, [pc, #364]
 	subs	r5, r5, r0
 	mov	r2, r8
@@ -1055,9 +1055,9 @@ Func_0802aa74:
 .L_0802ae42:
 	cmp	r4, #0
 	beq.n	.L_0802ae70
-	bl	Func_08014878
+	bl	Random16
 	adds	r5, r0, #0
-	bl	Func_08014878
+	bl	Random16
 	ldr	r2, [pc, #316]
 	subs	r5, r5, r0
 	mov	r1, r8

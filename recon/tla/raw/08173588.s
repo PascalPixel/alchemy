@@ -211,24 +211,24 @@ Func_08173588:
 	movs	r6, #0
 	mov	r5, fp
 .L_08173738:
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #31
 	ands	r3, r0
 	subs	r3, #16
 	lsls	r3, r3, #16
 	str	r3, [r5, #0]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #63
 	ands	r3, r0
 	subs	r3, #16
 	lsls	r3, r3, #16
 	str	r3, [r5, #4]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #127
 	ands	r3, r0
 	adds	r3, #128
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #1
 	add	r8, r2
 	mov	r3, r8
@@ -314,7 +314,7 @@ Func_08173588:
 	movs	r3, #104
 	str	r3, [r2, #16]
 	movs	r0, #32
-	bl	Func_08014dac
+	bl	Runtime_BumpAllocateAlternatePool
 	str	r0, [sp, #16]
 	movs	r0, #1
 	bl	0x081969f8

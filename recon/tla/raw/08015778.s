@@ -465,7 +465,7 @@ Func_0801591c:
 	movs	r5, #15
 	b.n	.L_08015b1e
 .L_08015b0c:
-	bl	Func_08014878
+	bl	Random16
 	adds	r1, r6, #0
 	bl	0x0800206c
 	adds	r5, r0, #0

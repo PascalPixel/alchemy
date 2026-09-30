@@ -727,25 +727,25 @@ Func_080e28d4:
 	str	r3, [r6, #4]
 	ldr	r3, [r2, #16]
 	str	r3, [r6, #8]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #128
 	adds	r5, r0, #0
 	lsls	r3, r3, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r3
-	bl	Func_08014878
+	bl	Random16
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
 	bl	Func_0801489c
 	ldr	r0, [sp, #4]
 	str	r0, [r6, #12]
-	bl	Func_08014878
+	bl	Random16
 	movs	r2, #128
 	lsls	r2, r2, #9
 	adds	r0, r0, r2
 	str	r0, [r6, #16]
-	bl	Func_08014878
+	bl	Random16
 	movs	r3, #1
 	lsrs	r0, r0, #6
 	mov	r2, sl

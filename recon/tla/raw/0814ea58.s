@@ -113,17 +113,17 @@ Func_0814ea58:
 	str	r3, [r5, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	subs	r0, #128
 	lsls	r0, r0, #10
 	str	r0, [r5, #12]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	subs	r0, #128
 	lsls	r0, r0, #10
 	str	r0, [r5, #16]
-	bl	Func_08014878
+	bl	Random16
 	ands	r0, r7
 	subs	r0, #128
 	lsls	r3, r0, #10

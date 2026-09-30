@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "CALL.H"
+extern u8 MsgMakyuriShameStoreClosed[];
+extern u8 MsgMakyuriTooSickBusiness[];
 
 s32 Object_GetById();
 extern u8 ImiruMura_TurnScript[];
@@ -32,7 +34,7 @@ void ImiruMura_RunArmorShop(void)
         Engine_EventBegin();
         Engine_ActorFaceActor(13, 0, 0);
         Engine_EventWait(10);
-        Engine_EventSetMessage(0x164d);
+        Engine_EventSetMessage((s32)MsgMakyuriShameStoreClosed);
         Engine_EventShowMessage(13, 0);
         Call3(Engine_ActorFaceDirection, 13, 0x4000, 10);
         Engine_EventEnd();
@@ -44,7 +46,7 @@ void ImiruMura_RunArmorShop(void)
             Engine_CameraWaitForMove();
             Engine_EventWait(20);
             Object_SetActionCallbackAndRefreshById(13, (s32)ImiruMura_TurnScript);
-            Engine_EventSetMessage(0x1543);
+            Engine_EventSetMessage((s32)MsgMakyuriTooSickBusiness);
             Engine_EventShowMessage(13, 0);
             Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
             Engine_CameraWaitForMove();

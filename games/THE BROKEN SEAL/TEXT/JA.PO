@@ -23291,7 +23291,7 @@ msgctxt "message"
 msgid "05820"
 msgstr "{actor_name:4}は やまいのちりょうで{line_break}村中を かけまわっているよ{page_break}せめて うちだけでも{line_break}めいわくを かけんように{line_break}しなきゃならんね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriOoohHelpMe"
 msgid "05821"
 msgstr "{text_effect:4}くっ{pause_20_skippable} くるしい・・・。{end_wait}"
 
@@ -23331,7 +23331,7 @@ msgctxt "message"
 msgid "05830"
 msgstr "手のひらの あおい光{line_break}・・・あのこは ホントに{line_break}天使じゃ なかろうか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriStoreClosedUntilWell"
 msgid "05831"
 msgstr "このびょうきが なおるまでは{line_break}みせも おやすみじゃ・・・。{end_wait}"
 
@@ -23351,7 +23351,7 @@ msgctxt "message"
 msgid "05835"
 msgstr "こいつら なに者じゃ・・・{line_break}冬のイミル村に くるなんて{line_break}まともなヤツではあるまいのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriTooSickBusiness"
 msgid "05836"
 msgstr "お客さん わるいね・・・{line_break}きょうは もう みせじまいだ{line_break}また 明日 きておくれ・・・。{end_wait}"
 
@@ -23363,11 +23363,11 @@ msgctxt "message"
 msgid "05838"
 msgstr "ああ せっかくの客が こんな{line_break}びょうきの時に くるとは{line_break}まったく ついてないのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriMomsSickGetWhatever"
 msgid "05839"
 msgstr "はい いらっちゃいまし!{line_break}どんな ごようでしゅか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDadLumberjack"
 msgid "05840"
 msgstr "父ちゃんは 木こりでしゅ{line_break}南のコリマの村に行って{line_break}しごとをしてるはずでしゅよ。{end_wait}"
 
@@ -23515,7 +23515,7 @@ msgctxt "message"
 msgid "05876"
 msgstr "まさか・・・アレクス!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriFeelMuchBetter"
 msgid "05877"
 msgstr "{actor_name:4}の 力のおかげで{line_break}こんなに げんきになったわい{line_break}もう だいじょうぶじゃぞい。{end_wait}"
 
@@ -23591,7 +23591,7 @@ msgctxt "message"
 msgid "05895"
 msgstr "わたしが中に入るのを だれかが{line_break}じゃましようとしているんですわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDidThat"
 msgid "05896"
 msgstr "いまのは あなた方が?{end_now}"
 
@@ -24379,7 +24379,7 @@ msgctxt "message"
 msgid "06092"
 msgstr "ウチの ジイさんに{line_break}いずみの水をのませたら{line_break}すごく げんきになったよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriReallySayDie"
 msgid "06093"
 msgstr "びょうきで 死にそうだなんて{line_break}ワシ いっておったかのう?{end_now}"
 
@@ -24407,7 +24407,7 @@ msgctxt "message"
 msgid "06099"
 msgstr "手のひらの あおい光{line_break}・・・あのこは ホントに{line_break}天使じゃ なかろうか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriCatchUpLostOpportunity"
 msgid "06100"
 msgstr "びょうきで やすんだ分を{line_break}とりもどさんとのう・・・{line_break}商売 商売!{end_wait}"
 
@@ -24415,7 +24415,7 @@ msgctxt "message"
 msgid "06101"
 msgstr "たまの お客さんじゃから{line_break}にがしたら たいへんじゃ{line_break}武器をかってもらわんと!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriShameStoreClosed"
 msgid "06102"
 msgstr "びょうきに かかったぐらいで{line_break}みせを しめてたなんて・・・{line_break}なさけない はなしじゃよ。{end_wait}"
 
@@ -24423,7 +24423,7 @@ msgctxt "message"
 msgid "06103"
 msgstr "のがしたと おもっていた{line_break}お客さんが もどってきたぞ{line_break}ううむ なんてラッキー!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriRecoveredThanksFountain"
 msgid "06104"
 msgstr "ああ いずみの水で{line_break}すっかり げんきですわ{line_break}どうぞ ごちゅうもんを!{end_wait}"
 

@@ -21599,7 +21599,7 @@ msgctxt "message"
 msgid "05397"
 msgstr "{actor_name:4} ist in der Stadt{line_break}unterwegs und kümmert sich{line_break}um die kranken Leute.{page_break}Ich will ihr nicht auch{line_break}noch zur Last fallen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriOoohHelpMe"
 msgid "05398"
 msgstr "{text_effect:4}Oooh...{pause_20_skippable} Helft mir...{end_wait}"
 
@@ -21639,7 +21639,7 @@ msgctxt "message"
 msgid "05407"
 msgstr "Ein blaues Licht schimmert{line_break}in ihren Händen...{line_break}Ob sie wohl{pause_20_skippable} ein Engel ist?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriStoreClosedUntilWell"
 msgid "05408"
 msgstr "Unser Geschäft ist{line_break}geschlossen, bis es uns{line_break}besser geht.{end_wait}"
 
@@ -21659,7 +21659,7 @@ msgctxt "message"
 msgid "05412"
 msgstr "Wer sind diese Leute?{page_break}Um im Winter nach Imil{line_break}zu kommen, müssen sie{line_break}wirklich abgehärtet sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriTooSickBusiness"
 msgid "05413"
 msgstr "Es tut mir Leid, aber{line_break}ich bin zu krank, als{line_break}dass ich heute meinen{page_break}Laden öffnen könnte.{line_break}Kommt doch bitte morgen{line_break}nochmals vorbei.{end_wait}"
 
@@ -21671,11 +21671,11 @@ msgctxt "message"
 msgid "05415"
 msgstr "Warum kommen sie{line_break}ausgerechnet dann,{line_break}wenn ich krank bin?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriMomsSickGetWhatever"
 msgid "05416"
 msgstr "Mama ist krank, aber{line_break}ich kann euch alles{line_break}geben, was ihr braucht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDadLumberjack"
 msgid "05417"
 msgstr "Mein Papa ist Holzfäller.{line_break}Er ist im Süden und{line_break}arbeitet in Kolima.{end_wait}"
 
@@ -21823,7 +21823,7 @@ msgctxt "message"
 msgid "05453"
 msgstr "Oh nein...{pause_20_skippable} Alex!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriFeelMuchBetter"
 msgid "05454"
 msgstr "Dank {actor_name:4} fühle ich{line_break}mich schon viel besser.{page_break}Ich bin bald wieder{line_break}auf den Beinen.{end_wait}"
 
@@ -21899,7 +21899,7 @@ msgctxt "message"
 msgid "05472"
 msgstr "Jemand will nicht,{line_break}dass ich hineinkomme.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDidThat"
 msgid "05473"
 msgstr "Hast du das getan?{end_now}"
 
@@ -22687,7 +22687,7 @@ msgctxt "message"
 msgid "05669"
 msgstr "Das Wasser aus dem{line_break}Brunnen hat Großvater{line_break}wieder gesund gemacht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriReallySayDie"
 msgid "05670"
 msgstr "Habe ich wirklich gesagt,{line_break}dass mich die Epidemie{line_break}dahinraffen würde?{end_now}"
 
@@ -22715,7 +22715,7 @@ msgctxt "message"
 msgid "05676"
 msgstr "Das blaue Licht, in dem{line_break}ihre Hände leuchteten...{page_break}Ob sie vielleicht ein{line_break}Engel ist?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriCatchUpLostOpportunity"
 msgid "05677"
 msgstr "Mir sind einige{line_break}Gelegenheiten durch{line_break}die Lappen gegangen!{page_break}Es ist an der Zeit,{line_break}wieder ein paar{line_break}Geschäfte zu machen!{end_wait}"
 
@@ -22723,7 +22723,7 @@ msgctxt "message"
 msgid "05678"
 msgstr "Es ist schwer, Kunden{line_break}zu gewinnen und ich kann{line_break}es mir nicht leisten,{page_break}auch nur einen einzigen{line_break}zu verlieren!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriShameStoreClosed"
 msgid "05679"
 msgstr "Es ist eine Schande, dass{line_break}der Laden wegen so einer{line_break}Kleinigkeit wie einem{page_break}Schnupfen geschlossen{line_break}werden musste.{end_wait}"
 
@@ -22731,7 +22731,7 @@ msgctxt "message"
 msgid "05680"
 msgstr "Es gibt jetzt wieder{line_break}Kunden!{page_break}Ich dachte schon, ich{line_break}wäre raus aus dem Geschäft!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriRecoveredThanksFountain"
 msgid "05681"
 msgstr "Dem Brunnen sei Dank,{line_break}ich habe mich wieder{line_break}vollständig erholt!{page_break}Ich kann wieder zurück{line_break}an meine Arbeit!{end_wait}"
 

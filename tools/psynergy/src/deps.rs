@@ -334,9 +334,16 @@ impl<'a> Index<'a> {
                                 }
                             }
                             let own = (f.address..f.address + f.bytes).contains(&word);
-                            if let Some((class, name)) =
-                                classify_word(&lookups[ii], word).filter(|_| !own)
-                            {
+                            // IWRAM the overlay does not name itself is named by the main image.
+                            let named = classify_word(&lookups[ii], word).map(|found| {
+                                match (found.0, main) {
+                                    (Class::Raw, Some(m)) if m != ii && word >= 0x0300_0000 => {
+                                        classify_word(&lookups[m], word).unwrap_or(found)
+                                    }
+                                    _ => found,
+                                }
+                            });
+                            if let Some((class, name)) = named.filter(|_| !own) {
                                 references.push(Reference {
                                     function: caller,
                                     class,
@@ -861,6 +868,46 @@ mod tests {
             "veneer",
             Some("to Done".into())
         )));
+    }
+
+    #[test]
+    fn overlays_take_iwram_names_from_the_main_image() {
+        let mut images = fixture();
+        images[0].symbols.push(symbol("gSlots", 0x0300_0000, 0x10));
+        images.push(Image {
+            build: "t".into(),
+            name: "overlay".into(),
+            main: false,
+            functions: vec![(
+                function("Func_02000000", 0x0200_0000, 8, Origin::NotYetC),
+                vec![
+                    ins(
+                        0x0200_0000,
+                        Kind::LdrPool {
+                            rd: 0,
+                            word: 0x0300_0004,
+                        },
+                    ),
+                    ins(
+                        0x0200_0002,
+                        Kind::LdrPool {
+                            rd: 1,
+                            word: 0x0200_0100,
+                        },
+                    ),
+                ],
+            )],
+            symbols: vec![symbol("Func_02000000", 0x0200_0001, 8)],
+        });
+        let index = Index::build(&images, &BTreeMap::new());
+        let seen: Vec<(&str, Class)> = index
+            .references
+            .iter()
+            .filter(|r| r.function.0 == 1)
+            .map(|r| (r.name.as_str(), r.class))
+            .collect();
+        assert!(seen.contains(&("gSlots+0x4", Class::Named)));
+        assert!(seen.contains(&("02000100", Class::Raw)));
     }
 
     #[test]

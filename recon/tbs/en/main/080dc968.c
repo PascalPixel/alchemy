@@ -133,7 +133,7 @@ void BattleEffect_RunStagedParticles(void *arg0) {
     *(s16 *)0x05000002 = 0;
     M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 0;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    Unnamed_080cd104(0, 0);
+    BattleEffect_WipeCanvas(0, 0);
     BattleFx_SelectLivingTargets(M2C_FIELD(temp_r3_25, void **, 0x7828));
     BattleFx_SpawnObjects(9, 0x172, 1);
     Resource_LoadAndDecompress(0x6A, temp_r3_25, 1, 1);
@@ -155,7 +155,7 @@ void BattleEffect_RunStagedParticles(void *arg0) {
     M2C_FIELD(temp_r3_25, s32 *, 0x779C) = 0;
     Scheduler_AddOrUpdateCallback(0x080C90E5, 0x480);
     sp38->field_0010 = 1;
-    Unnamed_080cd104(0, 1);
+    BattleEffect_WipeCanvas(0, 1);
     M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     M2C_FIELD((void *)0x04000000, s16 *, 0x52) = 0x1010;

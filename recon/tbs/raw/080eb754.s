@@ -48,7 +48,7 @@ Func_080eb754:
 	bl	Engine_ScheduleCallback
 	movs	r0, #1
 	movs	r1, #0
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	ldr	r1, [pc, #28]
 	movs	r0, #9
 	movs	r2, #1
@@ -82,7 +82,7 @@ Func_080eb754:
 	bl	BattleBackground_LoadFar
 	movs	r0, #1
 	movs	r1, #1
-	bl	Unnamed_080cd104
+	bl	BattleEffect_WipeCanvas
 	ldr	r0, [pc, #40]
 	ldr	r1, [sp, #68]
 	movs	r2, #0

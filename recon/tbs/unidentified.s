@@ -936,14 +936,14 @@ PuffArc_CellBiasY:
 	.global PuffArc_CellSourceOffsets
 PuffArc_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000edeb2, 0x0000000c
-	.global Data_080edebe
-Data_080edebe:
+	.global BattleFx_GlintCellOffsets
+BattleFx_GlintCellOffsets:
 	.incbin "baserom.gba", 0x000edebe, 0x0000000c
-	.global Data_080edeca
-Data_080edeca:
+	.global BattleFx_GlintCellWidths
+BattleFx_GlintCellWidths:
 	.incbin "baserom.gba", 0x000edeca, 0x00000006
-	.global Data_080eded0
-Data_080eded0:
+	.global BattleFx_GlintCellHeights
+BattleFx_GlintCellHeights:
 	.incbin "baserom.gba", 0x000eded0, 0x00000006
 	.global Data_080eded6
 Data_080eded6:

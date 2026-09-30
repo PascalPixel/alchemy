@@ -62,9 +62,9 @@ typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
 extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
-extern const u16 Data_080edebe[];
-extern const u8 Data_080edeca[];
-extern const u8 Data_080eded0[];
+extern const u16 BattleFx_GlintCellOffsets[];
+extern const u8 BattleFx_GlintCellWidths[];
+extern const u8 BattleFx_GlintCellHeights[];
 extern const u8 Data_080edf04[];
 extern const u8 Data_080edf58[];
 extern const u8 Data_080edf5e[];
@@ -451,14 +451,14 @@ void BattleFx_RunTwelveMode(void *object, s32 kind)
                 radius = (s32)(Random16() & 31) + 4;
                 x = ((base_pos[0] / 2)
                         + ((radius * Trig_Sin(angle)) >> 17))
-                    - (Data_080edeca[frame & 3] >> 1);
+                    - (BattleFx_GlintCellWidths[frame & 3] >> 1);
                 y = (base_pos[1] - ((radius * Trig_Cos(angle)) >> 17))
-                    - (Data_080eded0[frame & 3] >> 1);
+                    - (BattleFx_GlintCellHeights[frame & 3] >> 1);
                 BattleEffect_LoadWork(47, 7, 7,
                     3 | Data_080edf7b[Random16() & 3], 3);
                 ((DrawRectangleFn)gWorkSlot[47])(draw_destination,
-                    (s8 *)work + Data_080edebe[frame & 3], x, y,
-                    Data_080edeca[frame & 3], Data_080eded0[frame & 3]);
+                    (s8 *)work + BattleFx_GlintCellOffsets[frame & 3], x, y,
+                    BattleFx_GlintCellWidths[frame & 3], BattleFx_GlintCellHeights[frame & 3]);
                 Runtime_ReleaseHeapBlock(47);
                 i++;
             } while (i != 3);

@@ -538,7 +538,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/ENTRY_CLEAR_FIRST_OBJECT_ROW_AND_SCHEDULE_UPDATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/OBJECT_ROW.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_FOUR_NUMBERS_IN_ROW.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)
+        "*/games/COMMON/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)
         "*/recon/tbs/raw/08020244.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/WRITE_SELECTED_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/STATE_LOAD_RECORD_INTO_WORK.o"(.text)

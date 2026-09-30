@@ -47,7 +47,7 @@ msgctxt "message"
 msgid "00009"
 msgstr "Du kannst dein Abenteuer{line_break}nicht mit diesen Daten fortsetzen.{page_break}Wähle einen Speicherplatz,{line_break}um deine Daten zu sichern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Spielzeit:"
 
@@ -11667,7 +11667,7 @@ msgctxt "message"
 msgid "02914"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgClassName"
 msgid "02915"
 msgstr "?"
 
@@ -18651,7 +18651,7 @@ msgctxt "message"
 msgid "04660"
 msgstr "Entf."
 
-msgctxt "message"
+msgctxt "MsgCoins"
 msgid "04661"
 msgstr "Das Anlegen zeigt keinen Effekt."
 

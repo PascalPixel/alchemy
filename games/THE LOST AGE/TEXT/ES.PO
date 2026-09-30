@@ -47,7 +47,7 @@ msgctxt "message"
 msgid "00009"
 msgstr "No puedes continuar tu{line_break}aventura con esta partida.{page_break}Elige cuidadosamente{line_break}dónde ubicarla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Tiempo jugado:"
 
@@ -11667,7 +11667,7 @@ msgctxt "message"
 msgid "02914"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgClassName"
 msgid "02915"
 msgstr "?"
 
@@ -18651,7 +18651,7 @@ msgctxt "message"
 msgid "04660"
 msgstr "Quitar"
 
-msgctxt "message"
+msgctxt "MsgCoins"
 msgid "04661"
 msgstr "Equipar no tiene efecto"
 

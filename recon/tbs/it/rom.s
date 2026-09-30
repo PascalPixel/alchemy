@@ -977,14 +977,30 @@ UiMenu_SlideCursor:
 	.type RunAssetSelectionScreen, %function
 	.thumb_func
 RunAssetSelectionScreen:
-	.incbin "baserom.gba", 0x000a24d0, 0x00000de4
+	.incbin "baserom.gba", 0x000a24d0, 0x000001b0
 	.section .rom.000a38cc, "ax"
+	.global ItemMenu_SelectTarget
+	.type ItemMenu_SelectTarget, %function
+	.thumb_func
+ItemMenu_SelectTarget:
 	.incbin "baserom.gba", 0x000a38cc, 0x00000338
 	.section .rom.000a414a, "ax"
-	.incbin "baserom.gba", 0x000a414a, 0x00000342
+	.incbin "baserom.gba", 0x000a414a, 0x00000002
+	.section .rom.000a414c, "ax"
+	.global Func_080a414c
+	.type Func_080a414c, %function
+	.thumb_func
+Func_080a414c:
+	.incbin "baserom.gba", 0x000a414c, 0x00000340
 	.section .rom.000a4f08, "ax"
+	.global Func_080a4f08
+Func_080a4f08:
 	.incbin "baserom.gba", 0x000a4f08, 0x000002c8
 	.section .rom.000a5388, "ax"
+	.global Unnamed_080a5388
+	.type Unnamed_080a5388, %function
+	.thumb_func
+Unnamed_080a5388:
 	.incbin "baserom.gba", 0x000a5388, 0x000001ac
 	.section .rom.000a5d3c, "ax"
 	.global Menu_ResolveSelectedAction

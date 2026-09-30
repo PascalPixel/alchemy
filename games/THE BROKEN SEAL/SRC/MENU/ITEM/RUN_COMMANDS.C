@@ -477,8 +477,14 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
             ItemMenu_DrawMsg(0, (s32)&MsgSwapForWhat);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+            /* In Spanish and Italian the swap list's choice does not
+               replace the selection a later drop confirms. */
+            if (ItemMenu_RunList(1) == -1) {
+#else
             sel = ItemMenu_RunList(1);
             if (sel == -1) {
+#endif
                 state = 6;
                 break;
             }
@@ -546,7 +552,14 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 CopyWords(IWRAM_COPY_WORDS, source, source_copy, 0x14c);
                 CopyWords(IWRAM_COPY_WORDS, target, target_copy, 0x14c);
                 RenderOutput_ClearListFar(menu->info_window);
+#if defined(TBS_EDITION_FR)
+                /* The longer French line starts further left, and the status
+                   window is redrawn after it. */
+                InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 11, 14);
+                RenderOutput_RedrawSavedRectFar(menu->status_window);
+#else
                 InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 15, 14);
+#endif
             } else {
                 Owner_RecalculateStatsFar(menu->item_owner);
                 Owner_RecalculateStatsFar(menu->target_owner);
@@ -577,8 +590,14 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                                 (s32)&MsgEquippedIt + 7, 14, 14);
                         }
                     } else {
+#if defined(TBS_EDITION_IT)
+                        /* The longer Italian line starts further left. */
+                        InventoryMenu_ShowModalMessage(
+                            (s32)&MsgTraded, 13, 14);
+#else
                         InventoryMenu_ShowModalMessage(
                             (s32)&MsgTraded, 15, 14);
+#endif
                     }
                 }
             }

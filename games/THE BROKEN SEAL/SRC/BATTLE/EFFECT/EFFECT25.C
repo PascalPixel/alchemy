@@ -1,9 +1,14 @@
 #include "TYPES.H"
+#include "SCENE.H"
+#include "GAME_STATE.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "BATTLE_RUNTIME.H"
 
-extern u16 gGameState[];
+extern const s16 Party_PairResolveRules[];
+
+/* battle/effects/set_special_from_table.c */
+extern s32 RomWords_0809e270[];
 
 /*
  * Groups of battle keys, each group led by its cue with bit 15 set, ended by
@@ -11,8 +16,50 @@ extern u16 gGameState[];
  * the last group's cue.
  */
 extern const u16 gBattleCueTable[];
-
 s32 GameFlag_TestFar(s32);
+
+void Party_ResolveTablePair(void)
+{
+    s16 first = gGameState.scene;
+    s16 second = gGameState.entrance;
+    const s16 *entry = Party_PairResolveRules;
+
+    /* -1で終端する4半語の表を検索する。 */
+    while (entry[0] != -1) {
+        if (entry[0] == first &&
+            (entry[1] == -1 || entry[1] == second)) {
+            gGameState.saved_scene = entry[2];
+            gGameState.saved_entrance = entry[3];
+            return;
+        }
+        entry += 4;
+    }
+}
+
+/* event/get_special_value.c */
+s16 Event_GetSpecialValue(void)
+{
+    /* 作業領域0x1d6の半語を返す。 */
+    return gGameState.special;
+}
+
+void BattleFx_SetSpecialFromTable(s32 arg0, s32 arg1)
+{
+    s32 target = gGameState.scene;
+    s32 *table = RomWords_0809e270;
+    s32 entry = *table++;
+    s32 result = arg1;
+
+    if (entry != 0 && entry != target) {
+        do {
+            if (entry & 0x80000000) {
+                result = entry & 0xFFFF;
+            }
+            entry = *table++;
+        } while (entry != 0 && entry != target);
+    }
+    gGameState.special = result;
+}
 
 /* Picks the next battle's backdrop for a kind of terrain: grassland, forest,
    desert, beach or snowfield, else the Sol Sanctum's. Halfword 235 of the
@@ -44,7 +91,7 @@ void BattleFx_SelectResultPointer(s32 arg0)
         value = (u16)(u32)&ResourceId_SoruShindenBackdrop;
         break;
     }
-    gGameState[235] = value;
+    gGameState.special = value;
 }
 
 void BattleFx_SelectBattleCue(s32 first, s32 second)

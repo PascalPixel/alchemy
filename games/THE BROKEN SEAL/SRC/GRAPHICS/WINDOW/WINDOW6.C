@@ -2,6 +2,7 @@
 #include "TBS_EDITION.H"
 #include "FIELD_EVENT.H"
 #include "GLOBAL_CELLS.H"
+#include "GAME_STATE.H"
 
 s32 WaitFrames(s32);
 s32 UiGlyph_ResetWorkState();
@@ -21,7 +22,6 @@ void Menu_OpenSelectionWindow(u32, u32);
 void Resource_ScheduleOwnerResetDelayed(void);
 u32 Menu_WaitForSelectionInput(u32);
 void Resource_ResetOwnerEntries(void);
-
 s32 BattleFx_FindConditionResourceFar(s16 scene, s16 entrance);
 s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *height);
 s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -32,7 +32,6 @@ extern u8 Data_03001ebc[];
 s32 Scheduler_RemoveCallback(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
 s32 PartyInventory_RemoveFar(s32);
 
 void Ui_ClearWorkStateAndWaitFrame(void)
@@ -130,4 +129,14 @@ s32 Item_CallHandler48(s32 arg0, s32 arg1)
 s32 Item_ReturnTrue(void)
 {
     return 1;
+}
+
+void Party_AdjustByte205ByDirection(s32 arg0)
+{
+    u8 value = gGameState.unknown_1f8[0x205 - 0x1f8];
+    if (arg0 & 0x20)
+        value += 0xff;
+    else
+        value += 1;
+    gGameState.unknown_1f8[0x205 - 0x1f8] = value;
 }

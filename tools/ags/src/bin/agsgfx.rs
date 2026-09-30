@@ -108,7 +108,7 @@ fn run(args: &[String]) -> Result<(), String> {
             )?
         }
         ("png", "gbapal") => bgr555_palette_from_png(&data).map_err(|error| error.0)?,
-        ("png" | "bin" | "tsv", _) if from == "png" || option(options, "--lz").is_none() => {
+        ("png" | "tsv", _) if from == "png" || option(options, "--lz").is_none() => {
             ags::resource::build_file_with(output, &data, &|name| {
                 let path = std::path::Path::new(input).with_file_name(name);
                 fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))

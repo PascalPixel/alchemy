@@ -22,10 +22,6 @@
 //!   each frame's offset in that order, ending 0, then the back frames and
 //!   then the front frames, each zero-skip coded.
 //!
-//! A data form reads the identified table `STEM.BIN`:
-//!
-//! - `.bin`: the table's bytes as they are.
-//!
 //! A table reads its text `STEM.TSV`:
 //!
 //! - `.table`: records of little-endian fields. The first line names each
@@ -110,8 +106,7 @@ pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 fn data_form(form: &str) -> bool {
     matches!(
         form,
-        "bin"
-            | "delta0"
+        "delta0"
             | "delta1"
             | "delta2"
             | "parts"
@@ -126,7 +121,7 @@ fn data_form(form: &str) -> bool {
 }
 
 /// The input a built file name reads, relative to the same directory: the
-/// name up to its first extension, then `.BIN` for a data form or `.PNG`.
+/// name up to its first extension, then `.TSV` for a data form or `.PNG`.
 pub fn input_name(built: &str) -> Result<String, String> {
     let (directory, file) = built.rsplit_once('/').unwrap_or(("", built));
     let (stem, rest) = file
@@ -134,7 +129,6 @@ pub fn input_name(built: &str) -> Result<String, String> {
         .ok_or_else(|| format!("{built} names no form"))?;
     let form = rest.split('.').next().unwrap_or_default();
     let extension = match form {
-        "bin" => "BIN",
         form if data_form(form) => "TSV",
         _ => "PNG",
     };
@@ -166,7 +160,6 @@ pub fn build_file_with(
     };
     let pixels = if data_form(form) {
         match form {
-            "bin" => input.to_vec(),
             "parts" => parts(built, input, sibling)?,
             "table" => table(built, input)?,
             "plane" => plane(built, input)?,
@@ -758,8 +751,7 @@ mod tests {
             input_name("MAP/M/CELLS.delta1.lz").unwrap(),
             "MAP/M/CELLS.TSV"
         );
-        assert_eq!(input_name("M/T.bin").unwrap(), "M/T.BIN");
-        assert_eq!(build_file("T.bin", &[1, 2, 3]).unwrap(), [1, 2, 3]);
+        assert!(build_file("T.bin", &[1, 2, 3]).is_err());
         assert_eq!(
             build_file("T.delta2", b"a:u16\tb:u16\n1\t3\n").unwrap(),
             [2, 1, 0, 2, 0]

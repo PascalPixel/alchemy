@@ -29,6 +29,9 @@ Func_0803f82c:
 	bl	Func_0803e6d8
 	adds	r0, r5, #0
 	pop	{r5, pc}
+	.global Func_0803f86c
+	.thumb_func
+Func_0803f86c:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -125,6 +128,9 @@ Func_0803f82c:
 	movs	r0, r0
 	.2byte 0xf901
 	.2byte 0x0803
+	.global Func_0803f93c
+	.thumb_func
+Func_0803f93c:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

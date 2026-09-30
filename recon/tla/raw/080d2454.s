@@ -194,6 +194,9 @@ Func_080d2488:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d25c8
+	.thumb_func
+Func_080d25c8:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	bl	0x080ad0f0

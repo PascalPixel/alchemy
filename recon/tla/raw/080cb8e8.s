@@ -541,7 +541,7 @@ Func_080cb8e8:
 	beq.n	.L_080cbd7c
 	bl	Func_080cb82c
 	ldrh	r0, [r5, #0]
-	bl	0x080d25c8
+	bl	Func_080d25c8
 	cmp	r0, #0
 	bne.n	.L_080cbd74
 	ldrh	r0, [r5, #0]

@@ -54,6 +54,7 @@ extern struct ItemListWork *gMenuWork;
 extern u8 MsgItemPlainName;
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
@@ -72,7 +73,12 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     menu = gMenuWork;
     base = state->page * 5;
     state->selected_index = base + state->row;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    /* Spanish and Italian clear the info window's top row instead. */
+    UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
+#else
     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+#endif
     WaitFrames(1);
     if (menu->items[state->selected_index] != 0) {
         UiText_DrawCharacterAtOffsetFar((menu->items[state->selected_index] & ITEM_ID_MASK)

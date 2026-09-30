@@ -12,6 +12,8 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, 4bpp decompressor
 .syntax unified
 	.thumb
+	.global Tile_Decompress4bppCode
+Tile_Decompress4bppCode:
 	.global Tile_Decompress4bpp
 	.thumb_func
 Tile_Decompress4bpp:

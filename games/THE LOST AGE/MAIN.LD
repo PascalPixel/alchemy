@@ -4423,6 +4423,8 @@ SECTIONS
         "*/recon/tla/overlays.o"(.overlays)
         "*/recon/tla/unidentified.o"(.unidentified.08f79646)
     } > ROM
+    /* Start-up copies the resident runtime from its ROM image. */
+    IwramRuntime_Rom = LOADADDR(.iwram_runtime);
     /* The sound mixer runs in IWRAM; its ROM copy is called in place for its return trampoline. */
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));

@@ -10,6 +10,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, strided copy kernel
 .syntax unified
 	.thumb
+	.global Render_CopyStridedCode
+Render_CopyStridedCode:
 	.global Render_CopyStrided
 	.thumb_func
 Render_CopyStrided:

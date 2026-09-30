@@ -415,12 +415,6 @@ Debug_SelectAbilityPair:
 	.thumb_func
 Menu_Check:
 	.incbin "baserom.gba", 0x0001b3fc, 0x00000360
-	.section .rom.0001c42c, "ax"
-	.global Menu_RunWorkspaceOptions
-	.type Menu_RunWorkspaceOptions, %function
-	.thumb_func
-Menu_RunWorkspaceOptions:
-	.incbin "baserom.gba", 0x0001c42c, 0x00000480
 	.section .rom.0001c934, "ax"
 	.global Menu_CreateWorkspaceWindows
 	.type Menu_CreateWorkspaceWindows, %function
@@ -588,13 +582,19 @@ Menu_AnimateSelectionToEntry:
 	.type Menu_SelectSaveSlotAction, %function
 	.thumb_func
 Menu_SelectSaveSlotAction:
-	.incbin "baserom.gba", 0x0002798c, 0x00000230
-	.section .rom.00027bbc, "ax"
-	.global Menu_SelectResourceLayout
-	.type Menu_SelectResourceLayout, %function
+	.incbin "baserom.gba", 0x0002798c, 0x000000c0
+	.section .rom.00027a4c, "ax"
+	.global Menu_DrawModeLabel
+	.type Menu_DrawModeLabel, %function
 	.thumb_func
-Menu_SelectResourceLayout:
-	.incbin "baserom.gba", 0x00027bbc, 0x00000170
+Menu_DrawModeLabel:
+	.incbin "baserom.gba", 0x00027a4c, 0x000000d8
+	.section .rom.00027b24, "ax"
+	.global Menu_DrawModeIndicator
+	.type Menu_DrawModeIndicator, %function
+	.thumb_func
+Menu_DrawModeIndicator:
+	.incbin "baserom.gba", 0x00027b24, 0x00000098
 	.section .rom.00027e0c, "ax"
 	.global Menu_RunConfirmSelectionAt
 	.type Menu_RunConfirmSelectionAt, %function
@@ -675,7 +675,13 @@ Data_080367cc:
 	.incbin "baserom.gba", 0x0003588c, 0x00000002
 	.global Data_080367ce
 Data_080367ce:
-	.incbin "baserom.gba", 0x0003588e, 0x0000000e
+	.incbin "baserom.gba", 0x0003588e, 0x00000002
+	.global Data_080367d0
+Data_080367d0:
+	.incbin "baserom.gba", 0x00035890, 0x00000006
+	.global Data_080367d6
+Data_080367d6:
+	.incbin "baserom.gba", 0x00035896, 0x00000006
 	.global Menu_WorkspaceIconFrames
 Menu_WorkspaceIconFrames:
 	.incbin "baserom.gba", 0x0003589c, 0x00000008
@@ -1767,18 +1773,6 @@ Shop_SelBuy:
 	.incbin "baserom.gba", 0x000b4aac, 0x000004f8
 	.section .rom.000b5260, "ax"
 	.incbin "baserom.gba", 0x000b5260, 0x00000210
-	.section .rom.000b5614, "ax"
-	.global Shop_SelectQuantity
-	.type Shop_SelectQuantity, %function
-	.thumb_func
-Shop_SelectQuantity:
-	.incbin "baserom.gba", 0x000b5614, 0x000001d0
-	.section .rom.000b6b10, "ax"
-	.global Sanctum_RunPartyService
-	.type Sanctum_RunPartyService, %function
-	.thumb_func
-Sanctum_RunPartyService:
-	.incbin "baserom.gba", 0x000b6b10, 0x00000298
 	.section .rom.000b7940, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:
@@ -1803,7 +1797,10 @@ Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x000b7d40, 0x00000140
 	.global Shop_PriceTiles
 Shop_PriceTiles:
-	.incbin "baserom.gba", 0x000b7e80, 0x00000280
+	.incbin "baserom.gba", 0x000b7e80, 0x00000100
+	.global Shop_QuantityTiles
+Shop_QuantityTiles:
+	.incbin "baserom.gba", 0x000b7f80, 0x00000180
 	.global RomBytes_080b4100
 RomBytes_080b4100:
 	.incbin "baserom.gba", 0x000b8100, 0x0000003c

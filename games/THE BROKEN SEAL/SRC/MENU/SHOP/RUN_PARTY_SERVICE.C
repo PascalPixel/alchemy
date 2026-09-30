@@ -55,7 +55,13 @@ s32 Sanctum_RunPartyService(void)
     shop->cursor.anchor->kind = 4;
     shop->mode = redraw;
     PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, price_window);
+#if defined(TBS_EDITION_DE)
+    price_window = UiWindow_CreateFar(0, 16, 30, 3, 2);
+#elif defined(TBS_EDITION_FR)
+    price_window = UiWindow_CreateFar(1, 16, 25, 3, 2);
+#else
     price_window = UiWindow_CreateFar(1, 16, 23, 3, 2);
+#endif
 
     selection = 0;
     unit_id = 0;

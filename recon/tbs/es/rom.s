@@ -1828,12 +1828,6 @@ Shop_SelBuy:
 	.incbin "baserom.gba", 0x000b4aac, 0x000004f8
 	.section .rom.000b5260, "ax"
 	.incbin "baserom.gba", 0x000b5260, 0x00000210
-	.section .rom.000b5614, "ax"
-	.global Shop_SelectQuantity
-	.type Shop_SelectQuantity, %function
-	.thumb_func
-Shop_SelectQuantity:
-	.incbin "baserom.gba", 0x000b5614, 0x000001d0
 	.section .rom.000b7940, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:
@@ -1858,7 +1852,10 @@ Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x000b7d40, 0x00000140
 	.global Shop_PriceTiles
 Shop_PriceTiles:
-	.incbin "baserom.gba", 0x000b7e80, 0x00000280
+	.incbin "baserom.gba", 0x000b7e80, 0x00000100
+	.global Shop_QuantityTiles
+Shop_QuantityTiles:
+	.incbin "baserom.gba", 0x000b7f80, 0x00000180
 	.global RomBytes_080b4100
 RomBytes_080b4100:
 	.incbin "baserom.gba", 0x000b8100, 0x0000003c

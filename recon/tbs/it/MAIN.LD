@@ -485,7 +485,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/RESOURCE_ENTRIES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/CENTER_RESOURCE_ENTRIES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00028d30)
+    "*/games/THE BROKEN SEAL/SRC/MENU/SELECT_RESOURCE_LAYOUT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/CONFIRM_SELECTION.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00028f80)
     "*/games/COMMON/SRC/MENU/SELECT_ENTRY_20_TO_21.o"(.text)

@@ -533,6 +533,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/GAME/CHARACTER/VALUES_2.o"(.text)
         "*/recon/tla/raw/080aec02.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080aec04.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/GAME/ITEM/DEFINITION.o"(.text)
+        "*/recon/tla/raw/080aec66.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080aec68.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080aeca4.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS.o"(.text)

@@ -724,7 +724,7 @@ Func_08122d10:
 	lsls r1, r1, #1
 	adds r3, r0, r1
 	ldrh r0, [r3]
-	bl Func_081280a0
+	bl Summon_GetEntryByte3Kind
 	cmp r0, #0
 	blt .L_081232ce
 	subs r0, #1
@@ -765,7 +765,7 @@ Func_08122d10:
 	lsls r2, r2, #1
 	adds r3, r0, r2
 	ldrh r0, [r3]
-	bl Func_081280a0
+	bl Summon_GetEntryByte3Kind
 	cmp r0, #0
 	blt .L_08123316
 	adds r0, #146

@@ -47,4 +47,4 @@ Func_080de5fc:
 	add sp, #12
 	pop {r5, r6, pc}
 .L_080de650:
-	.4byte Func_080de578
+	.4byte BattleFx_UpdateOrbitingParticleFade

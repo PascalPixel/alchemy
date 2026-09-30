@@ -888,7 +888,7 @@ Func_081197f0:
 .L_08119f34:
 	movs r0, #30
 	bl Blend_SetDarkenTarget16
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	movs r3, #171
 	lsls r3, r3, #3
 	add r3, r9
@@ -954,14 +954,14 @@ Func_081197f0:
 	movs r7, #1
 	bl Blend_SetDarkenTarget16
 	negs r7, r7
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	b .L_08119fea
 .L_08119fd0:
 	movs r0, #78
 	bl Audio_PlayCue
 	movs r0, #30
 	bl Blend_SetDarkenTarget16
-	bl Func_08013fdc
+	bl Blend_WaitForTransition
 	ldr r5, [sp, #40]
 	movs r7, #186
 	lsls r7, r7, #2

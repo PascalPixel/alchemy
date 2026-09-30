@@ -499,7 +499,10 @@ Data_0809e8ac:
 	.incbin "baserom.gba", 0x0009e8ac, 0x00000022
 	.global Data_0809e8ce
 Data_0809e8ce:
-	.incbin "baserom.gba", 0x0009e8ce, 0x00000060
+	.incbin "baserom.gba", 0x0009e8ce, 0x00000020
+	.global DisplayTransition_DitherTable
+DisplayTransition_DitherTable:
+	.incbin "baserom.gba", 0x0009e8ee, 0x00000040
 	.global Data_0809e92e
 Data_0809e92e:
 	.incbin "baserom.gba", 0x0009e92e, 0x00000040

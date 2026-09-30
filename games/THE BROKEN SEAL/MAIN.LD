@@ -661,8 +661,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSITION_UPDATE_FROM_CENTRE.o"(.text)
         "*/recon/tbs/raw/08090582.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSITION_UPDATE_SCANLINE.o"(.text)
-        "*/recon/tbs/raw/08090656.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/08090658.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/INTERPOLATE_BUFFERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/BATTLE_UPDATE_BLEND.o"(.text)

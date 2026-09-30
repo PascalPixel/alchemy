@@ -553,7 +553,7 @@ Func_08124cc4:
 	bl	Func_0811ff08
 .L_0812515a:
 	adds	r0, r6, #0
-	bl	Func_08124854
+	bl	BattleUnit_TickCounter132
 	cmp	r0, #0
 	beq.n	.L_08125184
 	adds	r0, r6, #0

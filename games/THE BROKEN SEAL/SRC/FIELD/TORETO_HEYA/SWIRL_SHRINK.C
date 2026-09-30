@@ -4,13 +4,6 @@ void Vector_AddPolarOffset();
 void Resource_ResetEntry();
 void Engine_ObjectDispatchRelease();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 struct Vec {
     s32 x;
     s32 y;

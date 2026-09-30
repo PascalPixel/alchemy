@@ -46,10 +46,10 @@ void Villager_ShowOffPsynergy(void)
             OverlayObject_UpdateOnFrameBit1((s32)Engine_ActorGet(17));
             Task_Wait(1);
         }
-        Value2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunStep17, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep17, 0xc80);
         Audio_PlayCue(107);
         for (i = 0; i != 180; i++) {
-            if (Value2(IwramUnsignedRemainder, i, 10) == 0) {
+            if (IwramUnsignedRemainder(i, 10) == 0) {
                 if ((1 & shakes) != 0) {
                     *origin -= 0x10000;
                 } else {
@@ -60,7 +60,7 @@ void Villager_ShowOffPsynergy(void)
             Event_Wait(1);
         }
         Audio_PlayCue(0x121);
-        Call1(Scheduler_RemoveCallback, (s32)FieldScene_RunStep17);
+        Scheduler_RemoveCallback((s32)FieldScene_RunStep17);
         Task_Wait(1);
         FieldScene_Forward4dac();
         Actor_SetChildValue(17, 0);

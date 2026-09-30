@@ -66,31 +66,6 @@ void FieldScene_ResetActor9AndDrawTiles();
 s32 UiWindow_CreateWithSideObject();
 void UiText_OpenMessageWindow();
 
-/*
- * FAKEMATCH: call sites spelled through the wrappers below pass their
- * constants straight into the argument registers. A direct call instead
- * precomputes a costly constant into a temporary that is then shared with
- * later uses in the same block. A value-returning call sets r0 last of its
- * arguments.
- */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
 static __inline__ void bump_step(s32 amount)
 {
 
@@ -98,18 +73,6 @@ static __inline__ void bump_step(s32 amount)
     u8 *work = (u8 *)gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
 }
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
@@ -132,36 +95,9 @@ static __inline__ void bump_step_02000568(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ void Call1_02000644(void (*f)(), s32 a)
-{
-
-    f(a);
-}
-
-static __inline__ void Call3_02000644(void (*f)(), s32 a, s32 b, s32 c)
-{
-
-    f(a, b, c);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
 static __inline__ void bump_step_02000728(s32 amount)
 {
     gEventWork->message += amount;
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
 }
 
 static __inline__ void bump_step_02000980(s32 amount)

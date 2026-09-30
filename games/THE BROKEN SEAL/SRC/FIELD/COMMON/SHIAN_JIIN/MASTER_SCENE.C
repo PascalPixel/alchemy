@@ -1,18 +1,10 @@
 /* The Xian master's lines to his pupils before the training starts. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 MsgShianCannotPushHands[];
 extern u8 MsgShianGreatWarriorTrain[];
 extern u8 MsgShianWarriorsCannotUse[];
-
-/* FAKEMATCH: call sites spelled through this wrapper pass their constants
- * straight into the argument registers; a direct call precomputes a costly
- * constant into a pseudo that the compiler then shares with later uses in
- * the block. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 void ShianJiin_WalkByFacing(void);
 
@@ -49,13 +41,13 @@ void ShianJiin_RunMasterScene(s32 mode)
     ShianJiin_WalkByFacing();
     Engine_ActorRunRepeatedMotion(15, 3);
     Call3((void (*)())Engine_ActorSetPosition, 19, 0xe80000, 0xa80000);
-    Call3((void (*)())Engine_ActorSetPosition, 20, 0xe80000, 0xa80000);
+    ((void (*)())Engine_ActorSetPosition)(20, 0xe80000, 0xa80000);
     Engine_ActorGet(19)->y.fixed = 0xc0000;
     Engine_ActorGet(19)->target_y = ACTOR_NO_TARGET;
     Engine_ActorGet(19)->scale_x = 0xcccc;
     Engine_ActorGet(19)->sprite->rotation = 0x8000;
     Engine_AudioPlayCue(124);
     Engine_EventWait(40);
-    Call3((void (*)())Engine_ActorWalkToAndWait, 15, 216, 152);
+    ((void (*)())Engine_ActorWalkToAndWait)(15, 216, 152);
     Call3((void (*)())Engine_ActorFaceDirection, 15, 0x2000, 30);
 }

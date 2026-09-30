@@ -4,6 +4,7 @@
  * function sits in each of the three Colosso trial overlays. */
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
+#include "CALL.H"
 
 extern s16 Korosseo_PortraitSlot;
 extern u8 Korosseo_PortraitPaletteOffsets[];
@@ -13,13 +14,6 @@ s32 Resource_FindFreeEntry(void);
 s32 Resource_GetTableEntry(s32 id);
 void Resource_DecodeType01(s32 entry, u8 *destination);
 void VramBlock_LoadCached(s32 slot, s32 size, s32 source);
-
-/* FAKEMATCH: the tile load's arguments go through this wrapper so the
- * source address is formed last, as the game does. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 static __inline__ void Dma_Wait(volatile u32 *dma)
 {

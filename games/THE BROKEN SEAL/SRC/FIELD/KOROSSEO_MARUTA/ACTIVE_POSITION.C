@@ -2,8 +2,6 @@
  * the first time flag 0x211 is met and on the far side after, runs the
  * stage's placement script until its cue runs out, then hands over the item
  * for that side and shows who got it. Returns whether the flag was set. */
-/* FAKEMATCH: the item handover goes through LOG_ROLLING.H's value
- * wrapper, which sets r0 after r1 as the game does. */
 #include "LOG_ROLLING.H"
 extern u8 MsgKorosseoRobinGotItem[];
 
@@ -49,10 +47,10 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
         Task_Wait(1);
     }
     if (flag == 0) {
-        Value2((s32 (*)())ColossoLogRollingStage_ApplyItemToMatchingSlots, 0, first_handle);
+        ((s32 (*)())ColossoLogRollingStage_ApplyItemToMatchingSlots)(0, first_handle);
         UiText_DrawQuantity(first_handle, 2);
     } else {
-        Value2((s32 (*)())ColossoLogRollingStage_ApplyItemToMatchingSlots, 0, second_handle);
+        ((s32 (*)())ColossoLogRollingStage_ApplyItemToMatchingSlots)(0, second_handle);
         UiText_DrawQuantity(second_handle, 2);
     }
     UiText_DrawQuantity(gGameState.selected_actor, 1);

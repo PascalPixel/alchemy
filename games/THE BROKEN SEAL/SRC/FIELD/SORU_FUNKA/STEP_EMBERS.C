@@ -16,6 +16,7 @@ s32 Engine_MathSin(u16 angle);
 void Engine_ObjectSetPosition(void *object, s32 x, s32 y, s32 z);
 
 #include "IWRAM_CALL.H"
+#include "CALL.H"
 
 struct EmberSprite {
     u8 unknown_00[9];
@@ -52,17 +53,9 @@ extern s32 gEmberState[16];
 extern s32 gEmberMask;
 extern s32 gFrameCount;
 
-/* Passes its constants straight into the argument registers; a direct call
- * shares one -1 between the first two arguments. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Sixteen-actor effect step (actors 16..31): sets the work values from the
  * effect timer, ages the actors that have come to rest, and when the frame
  * mask allows, launches the first idle one on a random bearing. */
-/* FAKEMATCH: both WorkSetValues calls go through the Call3 inline wrapper. */
 void SoruFunka_StepEmbers(void)
 {
     u8 *work;

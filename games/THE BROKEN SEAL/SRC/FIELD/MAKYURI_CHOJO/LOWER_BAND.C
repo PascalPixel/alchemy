@@ -6,18 +6,6 @@ u8 * Engine_ActorGet();
 void Engine_AudioPlayCue();
 void Engine_TaskWait();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 struct Flags85 {
     u8 pad[85];
     u8 flags;

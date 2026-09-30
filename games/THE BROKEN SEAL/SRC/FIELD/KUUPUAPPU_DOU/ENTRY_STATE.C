@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "CALL.H"
 
 void SceneActor_InitSlots10To15AndStartTask(void);
 void SceneState_ApplyRectAndMarkActor16(void);
@@ -14,21 +15,6 @@ void SceneState_ApplyThreeRects(void);
 void SceneActor_SetupActors11To14AndInstallTask(void);
 void SceneState_ApplyThreeRectsRows9And10(void);
 void SceneState_DispatchByActorZeroDepth(void);
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /*
  * Kuupuappu Cave entry: open the screen with the window transition, then
@@ -48,11 +34,11 @@ s32 KuupuappuDou_ApplyEntryState(void)
             if (Engine_GameFlagIsSet(0x9a8) == 0) {
                 Call6((void (*)())Engine_MapCopyCellAttributes, 22, 29, 1, 1, 21, 29);
             } else {
-                Call6((void (*)())Engine_MapCopyCells, 108, 27, 1, 1, 92, 27);
+                ((void (*)())Engine_MapCopyCells)(108, 27, 1, 1, 92, 27);
                 Engine_TaskWait(1);
                 Call6((void (*)())Engine_MapCopyCells, 19, 83, 15, 8, 19, 91);
                 Engine_TaskWait(1);
-                Call6((void (*)())Engine_MapCopyCells, 2, 24, 1, 2, 25, 27);
+                ((void (*)())Engine_MapCopyCells)(2, 24, 1, 2, 25, 27);
             }
             Engine_MapRedraw();
             Engine_TaskWait(1);
@@ -75,7 +61,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
                 Call6((void (*)())Engine_MapCopyCells, 5, 81, 11, 7, 5, 73);
             } else {
                 Call6((void (*)())Engine_MapCopyCellAttributes, 5, 12, 1, 1, 6, 12);
-                Call6((void (*)())Engine_MapCopyCellAttributes, 12, 10, 1, 1, 12, 11);
+                ((void (*)())Engine_MapCopyCellAttributes)(12, 10, 1, 1, 12, 11);
             }
             break;
         case 8:
@@ -83,30 +69,30 @@ s32 KuupuappuDou_ApplyEntryState(void)
         case 14:
             SceneActor_InitSlots10To15AndStartTask();
             if (Engine_GameFlagIsSet(0x200) != 0) {
-                Call2((void (*)())Engine_ActorSetAnimation, 16, 5);
+                ((void (*)())Engine_ActorSetAnimation)(16, 5);
                 SceneState_ApplyRectAndMarkActor16();
             }
             if (Engine_GameFlagIsSet(0x201) != 0) {
-                Call2((void (*)())Engine_ActorSetAnimation, 17, 5);
+                ((void (*)())Engine_ActorSetAnimation)(17, 5);
                 SceneState_ConfigureRegion26_30AndMarkActor17();
             }
             if (Engine_GameFlagIsSet(0x202) != 0) {
-                Call2((void (*)())Engine_ActorSetAnimation, 18, 5);
+                ((void (*)())Engine_ActorSetAnimation)(18, 5);
                 SceneState_ConfigureRegion26_30AndClearActor18Mode();
             }
             if (Engine_GameFlagIsSet(0x203) != 0) {
-                Call2((void (*)())Engine_ActorSetAnimation, 19, 5);
+                ((void (*)())Engine_ActorSetAnimation)(19, 5);
                 SceneState_ApplyRectAndSetupActor19();
             }
             if (Engine_GameFlagIsSet(0x204) != 0) {
-                Call2((void (*)())Engine_ActorSetAnimation, 20, 5);
+                ((void (*)())Engine_ActorSetAnimation)(20, 5);
                 SceneActor_SetupSlotTwenty();
             }
             if (Engine_GameFlagIsSet(0x205) != 0) {
-                Call2((void (*)())Engine_ActorSetAnimation, 21, 5);
+                ((void (*)())Engine_ActorSetAnimation)(21, 5);
                 SceneActor_MarkSlot21AndSetFlag205();
             }
-            Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)SceneState_DispatchByActorZeroDepth, 0xc80);
+            ((void (*)())Scheduler_AddOrUpdateCallback)((s32)SceneState_DispatchByActorZeroDepth, 0xc80);
             break;
         case 10:
         case 11:
@@ -117,16 +103,16 @@ s32 KuupuappuDou_ApplyEntryState(void)
             Engine_ActorGet(8)->priority_flags = 2;
             break;
         }
-        Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
-        Call2((void (*)())Engine_ActorSetAnimation, 9, 2);
+        ((void (*)())Engine_ActorSetAnimation)(8, 2);
+        ((void (*)())Engine_ActorSetAnimation)(9, 2);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
         Engine_ActorGet(9)->collision_flags = 1;
     }
     if (gGameState.scene == (s32)&SceneId_KuupuappuDou3) {
-        Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
+        ((void (*)())Engine_ActorSetAnimation)(8, 2);
         if (Engine_GameFlagIsSet(0x207) == 0) {
-            Call2((void (*)())Engine_ActorSetAnimation, 10, 2);
+            ((void (*)())Engine_ActorSetAnimation)(10, 2);
         }
         Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);

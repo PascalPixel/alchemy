@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 
 extern struct GameState gGameState;
 
@@ -34,31 +35,6 @@ u8 *OverlayObject_SpawnConfiguredWithMode15(s32, s32, s32, s32);
 void FieldScene_RunSupplementalSequenceOne();
 void Engine_ActorEnableActionCallback();
 extern u8 MogoruMori_ActorScript[];
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Stores 0x204 in the scene work word at 448, then by area of Mogoru Forest
  * (SceneId_MogoruMori1 to 3) and entry number applies the flag-dependent
@@ -95,7 +71,7 @@ s32 FieldScene_RunSceneEntryHook(void)
                 Call3(Engine_ActorSetPosition, 10, 0x5c0000, 0x780000);
                 Call3(Engine_ActorFaceDirection, 10, 0xd000, 0);
                 Call3(ObjectMotion_SetSpeedParameters, 0, 0x6666, 0x3333);
-                Call3(Engine_ActorWalkTo, 0, 136, 64);
+                Engine_ActorWalkTo(0, 136, 64);
                 Engine_EventOpenScreen();
                 Engine_EventWaitForScreen();
                 ObjectMotion_CommitCurrentPositionAndActivate(0);
@@ -105,9 +81,9 @@ s32 FieldScene_RunSceneEntryHook(void)
                 Battle_WaitMode0(30);
                 FieldScene_RunScene39f_02000d90(10, 136, 116, 0x70000);
                 MogoruMori_SpawnPuffRing(10);
-                Call2(Engine_ActorSetChildValue, 10, 15);
+                Engine_ActorSetChildValue(10, 15);
                 Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);
-                Call1(Engine_GameFlagSet, 0x89c);
+                Engine_GameFlagSet(0x89c);
                 Battle_WaitMode0(60);
                 Engine_EventEnd();
             }
@@ -135,12 +111,12 @@ s32 FieldScene_RunSceneEntryHook(void)
                 *(s32 *)(rec + 12) = 0x200000;
             }
             WaitFrames(1);
-            Call3(Engine_ActorSetPosition, 16, 0x2780000, 0x1b80000);
+            Engine_ActorSetPosition(16, 0x2780000, 0x1b80000);
             if (Engine_GameFlagIsSet(0xfd4) == 0) {
                 InitializeOrbitingEffect(16);
             }
             Engine_ActorSetChildValue(11, 15);
-            Call2(Engine_ActorSetChildValue, 12, 15);
+            Engine_ActorSetChildValue(12, 15);
             Engine_ActorSetSpriteFlags(Engine_ActorGet(11), 0);
             Engine_ActorSetSpriteFlags(Engine_ActorGet(12), 0);
             FieldScene_RedrawActorFootprint(8);
@@ -163,13 +139,13 @@ s32 FieldScene_RunSceneEntryHook(void)
         case 5:
         case 6:
             if (Engine_GameFlagIsSet(0x303) == 0) {
-                Call2(Engine_ActorSetChildValue, 12, 15);
+                Engine_ActorSetChildValue(12, 15);
                 Engine_ActorSetSpriteFlags(Engine_ActorGet(12), 0);
             }
             if (Engine_GameFlagIsSet(772) != 0) {
                 break;
             }
-            Call2(Engine_ActorSetChildValue, 13, 15);
+            Engine_ActorSetChildValue(13, 15);
             Engine_ActorSetSpriteFlags(Engine_ActorGet(13), 0);
             break;
 
@@ -183,7 +159,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 
                 WaitFrames(1);
                 Call3(Engine_ActorSetPosition, 10, 0x2280000, 0x1fe0000);
-                Call2(Object_SetModeById, 10, 4);
+                Object_SetModeById(10, 4);
                 *(u8 *)(Engine_ActorGet(10) + 35) = 2;
                 Call6(Map_CopyCellAttributeRect, 44, 30, 2, 4, 34, 30);
                 StagedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, attr);
@@ -205,7 +181,7 @@ s32 FieldScene_RunSceneEntryHook(void)
             if (Engine_GameFlagIsSet(0x306) != 0) {
                 break;
             }
-            Call2(Engine_ActorSetChildValue, 14, 15);
+            Engine_ActorSetChildValue(14, 15);
             Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 0);
             if (Engine_GameFlagIsSet(0x305) == 0) {
                 break;
@@ -223,19 +199,19 @@ s32 FieldScene_RunSceneEntryHook(void)
         case 6:
             WaitFrames(1);
             if (Engine_GameFlagIsSet(0x307) == 0) {
-                Call2(Engine_ActorSetChildValue, 15, 15);
+                Engine_ActorSetChildValue(15, 15);
                 Engine_ActorSetSpriteFlags(Engine_ActorGet(15), 0);
                 Engine_ActorSetSpriteFlags(Engine_ActorGet(19), 0);
             }
             if (Engine_GameFlagIsSet(776) == 0) {
-                Call2(Engine_ActorSetChildValue, 16, 15);
+                Engine_ActorSetChildValue(16, 15);
                 Engine_ActorSetSpriteFlags(Engine_ActorGet(16), 0);
                 Engine_ActorSetSpriteFlags(Engine_ActorGet(20), 0);
             }
             if (Engine_GameFlagIsSet(0x309) != 0) {
                 break;
             }
-            Call2(Engine_ActorSetChildValue, 17, 15);
+            Engine_ActorSetChildValue(17, 15);
             Engine_ActorSetSpriteFlags(Engine_ActorGet(17), 0);
             Engine_ActorSetSpriteFlags(Engine_ActorGet(21), 0);
             break;
@@ -245,7 +221,7 @@ s32 FieldScene_RunSceneEntryHook(void)
             tmp = *(s32 *)(Engine_ActorGet(13) + 16);
             pos >>= 20;
             StagedActor_FillGridAttributeRectangle(2, pos, tmp >> 20, 1, 1, 255);
-            Call2(Engine_ActorSetChildValue, 13, 6);
+            Engine_ActorSetChildValue(13, 6);
             WaitFrames(1);
             {
                 u8 *obj = Engine_ActorGet(8);
@@ -269,7 +245,7 @@ s32 FieldScene_RunSceneEntryHook(void)
             } else {
                 WaitFrames(1);
                 Object_SetModeById(9, 4);
-                Call3(Engine_ActorSetPosition, 9, 0x2ba0000, 0x18e0000);
+                Engine_ActorSetPosition(9, 0x2ba0000, 0x18e0000);
                 {
                     u8 *obj = Engine_ActorGet(9);
                     u32 mask = 2;
@@ -286,7 +262,7 @@ s32 FieldScene_RunSceneEntryHook(void)
             } else {
                 WaitFrames(1);
                 Object_SetModeById(11, 4);
-                Call3(Engine_ActorSetPosition, 11, 0x29a0000, 0x2260000);
+                Engine_ActorSetPosition(11, 0x29a0000, 0x2260000);
                 *(u8 *)(Engine_ActorGet(11) + 35) = 2;
                 Call6(Map_CopyCellAttributeRect, 26, 20, 2, 4, 40, 32);
             }
@@ -294,7 +270,7 @@ s32 FieldScene_RunSceneEntryHook(void)
             tmp = *(s32 *)(Engine_ActorGet(14) + 16);
             pos >>= 20;
             StagedActor_FillGridAttributeRectangle(2, pos, tmp >> 20, 1, 1, 255);
-            Call2(Engine_ActorSetChildValue, 14, 6);
+            Engine_ActorSetChildValue(14, 6);
             WaitFrames(1);
             {
                 u8 *obj = Engine_ActorGet(9);
@@ -303,7 +279,7 @@ s32 FieldScene_RunSceneEntryHook(void)
                 obj[89] = mask;
             }
             if (Engine_GameFlagIsSet(0x30b) == 0) {
-                Call2(Engine_ActorSetChildValue, 18, 15);
+                Engine_ActorSetChildValue(18, 15);
                 Engine_ActorSetSpriteFlags(Engine_ActorGet(18), 0);
                 if (Engine_GameFlagIsSet(0x30a) != 0) {
                     Call3(Engine_ActorSetPosition, 22, 0x2e80000, 0x1f80000);

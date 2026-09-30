@@ -11,43 +11,11 @@ extern const s32 ShindenHeya_GeraldCircleScript[];
 
 void ShindenHeya_SpawnOwnerEffect();
 
-/* The sibling actor-update script passes repeated large constants through
- * these inline call forms, keeping each call's argument evaluation local. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3_scene_primary_script(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
-}
-
 static __inline__ void bump_step(void)
 {
     u8 *work = Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + 1);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 #include "TYPES.H"
@@ -121,39 +89,7 @@ void Object_RefreshSelectorById();
  * repository are provisional.
  */
 
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers, while a direct call precomputes a costly
- * constant into a local that later uses in the block share. A call that
- * returns a value sets r0 last of its arguments; the Value wrappers spell
- * those sites, and the result is sometimes unused.
- */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
-static __inline__ void Call2_scene_primary_script(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    return f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    return f(a0, a1, a2, a3);
-}
 
 /*
  * Runs actor nine's flag-branched dialogue. The 112-byte owner includes its
@@ -190,6 +126,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  */
 
 #include "TYPES.H"
+#include "CALL.H"
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 u8 *Object_GetById();
 
@@ -225,20 +162,20 @@ s32 UpdateFacingFromResolvedObject(struct FacingObject *object);
 void FieldScene_RunPairedActorChoreography(void)
 {
 
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 1, 0x18000, 0xc000);
-    Call2_scene_primary_script((void (*)())Engine_ActorRunRepeatedMotion, 12, 2); /* main:0808a138 */
+    Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
+    Call3(Engine_ActorSetSpeed, 1, 0x18000, 0xc000);
+    ((void (*)())Engine_ActorRunRepeatedMotion)(12, 2); /* main:0808a138 */
     Event_Wait(10);
     Actor_SetAnimationAndWait(12, 3); /* main:0808a110 */
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
     Event_Wait(15);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-    Call2_scene_primary_script((void (*)())Engine_ActorStartRepeatedMotion, 0, 1); /* object 0, variant 1 */
+    ((void (*)())Engine_ActorStartRepeatedMotion)(0, 1); /* object 0, variant 1 */
     ((struct FacingObject *(*)())Object_GetById)(0)->facing_flags &= ~1;
     Actor_WalkTo(ACTOR_PARTY_LEADER, 184, 168);
     ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags &= ~1;
-    Call3_scene_primary_script((void (*)())Engine_ActorWalkToAndWait, 1, 200, 168);
+    ((void (*)())Engine_ActorWalkToAndWait)(1, 200, 168);
     Event_Wait(1);
     ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags |= 1;
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
@@ -248,7 +185,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_Jump(ACTOR_GERALD, 2, 0);
     Event_Wait(15);
     Actor_FaceActor(ACTOR_GERALD, 8, 0);
-    Call1((void (*)())Engine_EventWait, 5); /* main:0808a080 */
+    ((void (*)())Engine_EventWait)(5); /* main:0808a080 */
     Actor_Jump(ACTOR_GERALD, 2, 0);
     Event_Wait(25);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
@@ -286,38 +223,38 @@ void FieldScene_RunPairedActorChoreography(void)
     Event_Wait(15);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2); /* main:0808a138 */
     Event_Wait(10);
-    Value4(ShindenHeya_RaiseItemIcon, 222, 0xb80000, 0x1b0000, 0xa80000);
+    ShindenHeya_RaiseItemIcon(222, 0xb80000, 0x1b0000, 0xa80000);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
     Event_Wait(10);
     Actor_Jump(ACTOR_GERALD, 4, 0); /* main:0808a138 */
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xd000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xd000, 0);
     Event_Wait(15);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xb000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xb000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xd000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xd000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xb000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xb000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xd000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xd000, 0);
     Event_Wait(30);
     Actor_Jump(ACTOR_GERALD, 4, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0x3000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0x3000, 0);
     Event_Wait(15);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0x5000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0x3000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0x3000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0x5000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0x3000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0x3000, 0);
     Event_Wait(30);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 0, 0xc000, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 1, 0x102, 0);
     Event_Wait(60);
     Actor_FaceActor(ACTOR_GERALD, 12, 0);
     Event_Wait(10);
@@ -327,27 +264,27 @@ void FieldScene_RunPairedActorChoreography(void)
     *(s32 *)(Object_GetById(8) + 108) = (s32)UpdateFacingFromResolvedObject;
     ((struct FacingObject *(*)())Object_GetById)(12)->unknown_64 = 1;
     *(s32 *)(Object_GetById(12) + 108) = (s32)UpdateFacingFromResolvedObject;
-    Value3(Engine_ActorWalkToAndWait, 1, 196, 180);
+    Engine_ActorWalkToAndWait(1, 196, 180);
     Actor_WalkToAndWait(ACTOR_GERALD, 184, 184);
     Actor_WalkToAndWait(ACTOR_GERALD, 180, 180);
     Actor_WalkToAndWait(ACTOR_GERALD, 168, 168);
     Actor_WalkToAndWait(ACTOR_GERALD, 180, 156);
     Actor_WalkTo(ACTOR_GERALD, 200, 104);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 168);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 0, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
     Actor_WaitForMove(ACTOR_GERALD);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 1); /* main:0808a138 */
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0x5000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
     Event_Wait(15);
     *(s32 *)(Object_GetById(12) + 108) = 0;
     *(s32 *)(Object_GetById(8) + 108) = 0;
-    Value2(Engine_ActorStartRepeatedMotion, 8, 2);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x100, 0);
-    Call1((void (*)())Engine_EventWait, 60); /* main:0808a080 */
+    Engine_ActorStartRepeatedMotion(8, 2);
+    Engine_ActorShowEmote(8, 0x100, 0);
+    ((void (*)())Engine_EventWait)(60); /* main:0808a080 */
     Actor_SetAnimation(8, 0);
-    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
+    Engine_ActorShowEmote(0, 0x102, 0);
     Event_Wait(60);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
     Event_Wait(10);
@@ -355,7 +292,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Event_Wait(10);
     Actor_SetAnimationAndWait(11, 3); /* main:0808a110 */
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 0, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(10);
@@ -394,12 +331,12 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(10);
-    Value2(Engine_ActorEnableActionCallback, 0, (s32)ShindenHeya_LeaderCircleScript);
-    Call2_scene_primary_script(Engine_ActorEnableActionCallback, 1, (s32)ShindenHeya_GeraldCircleScript);
+    Engine_ActorEnableActionCallback(0, (s32)ShindenHeya_LeaderCircleScript);
+    Engine_ActorEnableActionCallback(1, (s32)ShindenHeya_GeraldCircleScript);
     Object_RefreshSelectorById(0); /* main:0808a0a0 */
     Object_RefreshSelectorById(1); /* main:0808a0a0 */
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
-    Call3_scene_primary_script(Engine_ActorSetSpeed, 1, 0x18000, 0xc000);
+    Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
+    Call3(Engine_ActorSetSpeed, 1, 0x18000, 0xc000);
     Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
     Actor_Jump(ACTOR_GERALD, 6, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
@@ -415,17 +352,17 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_WalkToAndWait(ACTOR_GERALD, 208, 168);
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 0, 0x3000, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xd000, 0);
+    Call3(Engine_ActorFaceDirection, 0, 0x3000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xd000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 0, 0x5000, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xb000, 0);
+    Call3(Engine_ActorFaceDirection, 0, 0x5000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xb000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 0, 0x3000, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xd000, 0);
+    Call3(Engine_ActorFaceDirection, 0, 0x3000, 0);
+    Engine_ActorFaceDirection(1, 0xd000, 0);
     Event_Wait(10);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 0, 0x5000, 0);
-    Call3_scene_primary_script(Engine_ActorFaceDirection, 1, 0xb000, 0);
+    Call3(Engine_ActorFaceDirection, 0, 0x5000, 0);
+    Engine_ActorFaceDirection(1, 0xb000, 0);
     Event_Wait(20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
     Actor_FaceActor(ACTOR_GERALD, 12, 0);

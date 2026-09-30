@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 
 void FieldScene_PlaceSlots14And15(void);
 
@@ -8,7 +9,6 @@ union GameStateRows {
     s16 halves[512][1];
     s32 words[256];
 };
-
 
 /* The sprite's attribute bytes as the scene scripts write them. */
 struct SpriteBytes {
@@ -21,21 +21,6 @@ struct SpriteBytes {
     u8 unknown_20[6];
     u8 flags;
 };
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Places the flagged actors: the guards and posts moved by flags 0x8aa and 0x8ab, and the cells opened by flag 0x950. */
 void FieldScene_ConfigureFlaggedActors(void)
@@ -78,8 +63,8 @@ void FieldScene_ConfigureFlaggedActors(void)
         ((u8 *)actor->sprite)[9] |= 12;
         ((u8 *)actor->sprite)[21] |= 12;
     }
-    if (Value1(Engine_GameFlagIsSet, 0x950)) {
+    if (Engine_GameFlagIsSet(0x950)) {
         Call6(Engine_MapCopyCellAttributes, 18, 18, 1, 1, 14, 18);
-        Call6(Engine_MapCopyCellAttributes, 18, 18, 1, 1, 15, 18);
+        Engine_MapCopyCellAttributes(18, 18, 1, 1, 15, 18);
     }
 }

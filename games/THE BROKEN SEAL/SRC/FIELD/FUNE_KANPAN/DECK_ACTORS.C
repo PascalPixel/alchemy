@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "KANPAN.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 FuneKanpan_CrewScriptE[];
 extern struct MapRenderWork *gMapWork;
 
@@ -22,14 +23,14 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
 
     *(s32 *)(*(s32 *)&gMapWork + 236) = 0x410000;
     Engine_EventBegin();
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptE);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptE);
     Engine_TaskWait(1);
     Engine_ActorDestroy(24);
     Call3(Engine_ActorSetPosition, 23, 0xee0000, 0x2720000);
     v5 = 192;
     record = (s32)Engine_ActorGet(23);
     *(u16 *)(record + 6) = (v5 << 6);
-    if (Value1(Engine_GameFlagIsSet, 0x903) != 0) {
+    if (Engine_GameFlagIsSet(0x903) != 0) {
         Call3(Engine_ActorSetPosition, 22, 0xa20000, 0x27a0000);
         record = (s32)Engine_ActorGet(22);
         *(u16 *)(record + 6) = (v5 << 6);
@@ -41,7 +42,7 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
             *(u16 *)(record + 6) = facing;
         }
     } else {
-        Call3(Engine_ActorSetPosition, 22, 0xa00000, 0x28c0000);
+        Engine_ActorSetPosition(22, 0xa00000, 0x28c0000);
         record = (s32)Engine_ActorGet(22);
         *(u16 *)(record + 6) = (v5 << 6);
         Call3(Engine_ActorSetPosition, 21, 0xa60000, 0x29c0000);

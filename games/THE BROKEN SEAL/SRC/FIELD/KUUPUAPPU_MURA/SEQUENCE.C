@@ -25,13 +25,6 @@ void PartyInventory_Discard();
 /* Map cell steps played as the leader arrives in scene twelve. */
 extern const u16 KuupuappuMura_Scene12Cells[];
 
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    void Actor_SetPosition();
-
-    f(a0, a1, a2, a3);
-}
-
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {
 
@@ -85,7 +78,7 @@ void FieldScene_RunActor23SequenceOnceByFlag867(void)
         Event_Wait(12);
         Actor_Jump(23, 4, 0);
         Event_Wait(20);
-        Call4(ActorPresentation_MoveActorToPositionAndWait, 23, 0x188, 104, 0x70000);
+        ActorPresentation_MoveActorToPositionAndWait(23, 0x188, 104, 0x70000);
         Event_Wait(20);
         Actor_WalkToAndWait(23, 0x198, 104);
         Actor_WalkToAndWait(23, 0x198, 120);

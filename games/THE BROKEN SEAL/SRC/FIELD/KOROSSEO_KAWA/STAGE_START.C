@@ -10,25 +10,6 @@ s32 BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0();
 void Event_SetPair1d4(s32 scene, s32 entrance);
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants
- * straight into the argument registers; a direct call precomputes a costly
- * constant into a pseudo that the compiler then shares with later uses in
- * the block. A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* The river stage's start: after the approach scene and once the stage is
    ready, actor 8 and the leader walk to the start line and face each
    other. The approach's outcome goes to the weighted result, the river's
@@ -44,7 +25,7 @@ void KorosseoKawa_RunStageStart(void)
     base = 0;
     Resource3ba_NoOpCallback();
     Engine_EventBegin();
-    approach = Value2(FieldScene_RunFlag211ApproachScene, 120, 127);
+    approach = FieldScene_RunFlag211ApproachScene(120, 127);
     SceneState_WaitUntilWord1000IsNine();
     n = 9;
     do {
@@ -70,14 +51,14 @@ void KorosseoKawa_RunStageStart(void)
     Engine_EventWait(10);
     /* FAKEMATCH: base is 0 from the top of the function, so 0 - approach
      * + 1 is not folded into 1 - approach. */
-    Value2(BattleFx_SetWeightedResult, 72, base - approach + 1);
+    BattleFx_SetWeightedResult(72, base - approach + 1);
     state = (u8 *)&gGameState;
     /* FAKEMATCH: the do-while keeps the stage flag store ahead of the
      * scene's pool load. */
     do {
         state[0x22b] = 3;
     } while (0);
-    Value2(Party_SetFields1ceAnd1d0, (s32)&SceneId_KorosseoKawa, 4);
+    Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKawa, 4);
     Event_SetPair1d4((s32)&SceneId_KorosseoKawa, 5);
     GameFlag_Set(0x11a);
 }

@@ -58,40 +58,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Actor_SetPosition(actor, x, y);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 s32 *Engine_GetTriggerActor(s32 slot);
 s32 Engine_TestTriggerFlag(s32 flag);
 void Engine_SetTriggerFlag(s32 flag);
@@ -144,7 +110,7 @@ void FieldScene_RunScene3b4_02001bc4(void)
     u32 i;
     s32 record;
 
-    Call1(Scheduler_RemoveCallbackFar, (s32)ActorPresentation_PlaceActorFourteenOnActorNine);
+    Scheduler_RemoveCallbackFar((s32)ActorPresentation_PlaceActorFourteenOnActorNine);
     Actor_SetPosition(14, 0, 0);
     if (GameFlag_IsSet(0x207) != 0) {
         Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);

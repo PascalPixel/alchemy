@@ -21,11 +21,6 @@ struct MapWork {
 /* The map work, read here as its layers. */
 extern void *gMapWork;
 
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 /* Mercury Lighthouse aerie entry: set the entrance selector and, in the aerie's first scene, raise the sprite priorities, lift actors 14-19 and set up the scene for the entrance. */
 s32 MakyuriChojo_ApplyEntryState(void)
 {

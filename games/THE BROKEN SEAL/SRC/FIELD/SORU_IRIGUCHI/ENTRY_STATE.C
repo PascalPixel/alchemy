@@ -1,4 +1,5 @@
 #include "SORU.H"
+#include "CALL.H"
 
 /* The overlay's work, past its loaded image. */
 s32 SoruIriguchi_CueTimer __attribute__((section(".bss")));

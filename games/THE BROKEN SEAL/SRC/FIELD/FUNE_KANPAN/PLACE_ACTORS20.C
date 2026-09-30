@@ -56,7 +56,7 @@ void FieldScene_RunScene3af_0200185c(void)
     u8 bits;
 
     Event_Begin();
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Task_Wait(1);
     Actor_SetPosition(20, 0, 0);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -91,7 +91,7 @@ void FieldScene_RunScene3af_02001920(void)
     u8 *record;
 
     Event_Begin();
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Task_Wait(1);
     Actor_SetPosition(20, 0, 0);
     Actor_SetPosition(23, 0xee0000, 0x2720000);

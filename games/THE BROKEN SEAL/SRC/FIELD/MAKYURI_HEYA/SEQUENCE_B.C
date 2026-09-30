@@ -1,11 +1,12 @@
 /* In the first room the leader walks to the stair, turns, and sinks out of
  * sight through the opened floor before the party leaves by exit 8; in the
  * others the leader only rises. */
-/* FAKEMATCH: the rising sequence is called through PROBE.H's inline call
- * wrapper, which sets r0 and r1 before negating the third argument, as the
- * game does; a direct call negates it first. */
+/* The rising sequence goes through Call3, which sets r0 and r1 before
+ * negating the third argument, as the game does; a direct call negates it
+ * first. */
 #include "PROBE.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 
 void BattleFx_RunRisingObjectSequence();
 

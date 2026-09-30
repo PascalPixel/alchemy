@@ -1,6 +1,5 @@
 #include "DMA.H"
-
-
+#include "CALL.H"
 
 void BabiFune_StepFade();
 extern s16 BabiFune_FadeSlot;
@@ -9,16 +8,6 @@ s32 Runtime_BumpAllocateAlternatePool();
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadCached();
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 struct Half {
     u16 v;
@@ -35,7 +24,7 @@ void BabiFune_ScheduleFade(void)
     BabiFune_FadeSlot = Resource_FindFreeEntry();
     fill = 0x11111111;
     Dma_Set((const void *)&fill, buf, 0x85000040, (volatile u32 *)0x040000d4);
-    Call3(VramBlock_LoadCached, BabiFune_FadeSlot, 0x100, (s32)buf);
+    VramBlock_LoadCached(BabiFune_FadeSlot, 0x100, (s32)buf);
     /* The halfword constant comes from the literal pool (HImode move). */
     BabiFune_FadeStep = 0x30;
     Scheduler_AddOrUpdateCallback(BabiFune_StepFade, 0xc80);

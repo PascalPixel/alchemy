@@ -101,7 +101,7 @@ void FieldScene_RunScene39f_02002004(void)
     Event_Begin();
     FieldScene_RunSixCallSetupSequence(18, 1);
     Camera_MoveTo(0x2e80000, -1, 0x1f80000, 1);
-    Call4(FieldScene_RunScene39f_02000d90, 18, 0x2e8, 0x1f8, 0x90000);
+    FieldScene_RunScene39f_02000d90(18, 0x2e8, 0x1f8, 0x90000);
     MogoruMori_SpawnPuffRing(18);
     Actor_SetChildValue(18, 15);
     record = Actor_Get(18);
@@ -165,7 +165,7 @@ void FieldScene_RunScene39f_020021b0(void)
 {
     s32 rec7;
 
-    rec7 = Value1(Engine_ActorGet, 18);
+    rec7 = Engine_ActorGet(18);
     Event_Begin();
     Actor_SetPosition(18, 0x880000, 0x1680000);
     FieldScene_RunSixCallSetupSequence(18, 1);

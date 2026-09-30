@@ -1,5 +1,6 @@
 #include "HEYA.H"
 #include "IWRAM_CALL.H"
+#include "CALL.H"
 extern struct MapRenderWork *gMapWork;
 
 void ToretoPalette_CaptureBank(void);
@@ -39,7 +40,7 @@ s32 ToretoHeya_EnterRoom(void)
     Engine_ActorSetChildValue(9, 15);
     ToretoHeya_PlayGesture(0);
     if (gGameState.entrance != 19)
-        Call2((void (*)())Engine_TaskAddCallback, (s32)ToretoPalette_ApplyTint, 0xc80);
+        ((void (*)())Engine_TaskAddCallback)((s32)ToretoPalette_ApplyTint, 0xc80);
     if (Engine_GameFlagIsSet(0x844)) {
         Engine_ActorSetPosition(9, 0, 0);
         Engine_ActorSetPosition(8, 0, 0);
@@ -82,7 +83,7 @@ s32 ToretoHeya_EnterRoom(void)
         Engine_ActorSetAttachedEffect(leader, 0x100);
         Engine_EventWait(8);
     } else if (entrance == 10) {
-        if (!Value1(Engine_GameFlagIsSet, 0x109))
+        if (!Engine_GameFlagIsSet(0x109))
             ToretoHeya_RunLandingDustScene();
     } else if (entrance == 19) {
         SceneState_ApplyRectsByFlag844(1);

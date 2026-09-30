@@ -10,43 +10,11 @@ extern const s32 ShindenHeya_PlacementSequenceB[];
 
 void ShindenHeya_SpawnOwnerEffect();
 
-/* The sibling actor-update script passes repeated large constants through
- * these inline call forms, keeping each call's argument evaluation local. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3_scene_primary_script(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
-}
-
 static __inline__ void bump_step(void)
 {
     u8 *work = Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + 1);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 #include "TYPES.H"
@@ -123,39 +91,7 @@ void AudioCommand_WaitForCompletion();
  * repository are provisional.
  */
 
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers, while a direct call precomputes a costly
- * constant into a local that later uses in the block share. A call that
- * returns a value sets r0 last of its arguments; the Value wrappers spell
- * those sites, and the result is sometimes unused.
- */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
-static __inline__ void Call2_scene_primary_script(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    return f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    return f(a0, a1, a2, a3);
-}
 
 /*
  * Runs actor nine's flag-branched dialogue. The 112-byte owner includes its
@@ -192,6 +128,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  */
 
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgShindenAreYouSure[];
 extern u8 MsgShindenChildHasAwakenedOurTeachings[];
 extern u8 MsgShindenDirtyGoldenStatueCleanedUp[];
@@ -201,7 +138,6 @@ extern u8 MsgShindenPolishedGoldStatueReturnedUs[];
 extern u8 MsgShindenRobinYourNewFriendsAdepts[];
 extern u8 MsgShindenWhenStrayFromYourWorldly[];
 extern u8 MsgShindenWonderIfEverSeeOur[];
-
 
 extern u8 ShindenHeya_TableA;
 extern u8 ShindenHeya_TableB;
@@ -411,7 +347,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             if (Event_ChooseYesNo(0, 0) == 0) {
                 Event_Wait(20);
                 if (Object_GetById(8)->facing >= 0xa000 && Object_GetById(8)->facing <= 0xe000) {
-                    Call3_scene_primary_script(Engine_ActorSetSpeed, 8, 0x8000, 0x4000);
+                    Call3(Engine_ActorSetSpeed, 8, 0x8000, 0x4000);
                     Actor_FaceDirection(8, 0, 0);
                     Event_Wait(10);
                     Object_GetById(8)->facing_flags &= ~1;
@@ -425,12 +361,12 @@ void FieldScene_RunSupplementalSequenceOne(void)
                     Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
                     Event_Wait(20);
                     Actor_WalkToAndWait(8, 168, 120);
-                    Call3_scene_primary_script(Engine_ActorFaceDirection, 8, 0x3000, 0);
+                    Engine_ActorFaceDirection(8, 0x3000, 0);
                     Actor_WaitForMove(ACTOR_PARTY_LEADER);
                 } else {
                     Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
                     Event_Wait(20);
-                    Call3_scene_primary_script(Engine_ActorFaceDirection, 8, 0x3000, 0);
+                    Engine_ActorFaceDirection(8, 0x3000, 0);
                     Actor_WaitForMove(ACTOR_PARTY_LEADER);
                 }
                 FieldScene_RunActorUpdateSequence();
@@ -455,8 +391,8 @@ void FieldScene_RunScene378SequenceB(void)
     s32 record;
 
     Event_Begin();
-    Call1(Event_CallWithLastActiveObjectId, (s32)ShindenHeya_PlacementSequenceB);
-    Call1((void (*)())Engine_TaskWait, 1);
+    Event_CallWithLastActiveObjectId((s32)ShindenHeya_PlacementSequenceB);
+    ((void (*)())Engine_TaskWait)(1);
     Event_SetMessage((s32)MsgShindenRobinYourNewFriendsAdepts);
     Event_OpenMessage(9, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {

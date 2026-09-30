@@ -24,10 +24,10 @@ void FieldScene_RunCompanionActorSequence(void)
     shared_data = ((s32)gVillagerAction);
     Actor_EnableActionCallback(ACTOR_A, shared_data);
     Task_Wait(10);
-    Value2(Engine_ActorEnableActionCallback, ACTOR_B, shared_data);
+    Engine_ActorEnableActionCallback(ACTOR_B, shared_data);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Task_Wait(20);
-    Value2(Object_SetActionCallbackAndRefreshById, ACTOR_C, shared_data);
+    Object_SetActionCallbackAndRefreshById(ACTOR_C, shared_data);
     Actor_ShowEmote(ACTOR_D, 0x100, 40);
     Actor_RunRepeatedMotion(ACTOR_D, 2);
     Actor_FaceDirection(ACTOR_D, 0xd000, 10);

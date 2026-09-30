@@ -1,5 +1,6 @@
 #include "STAGED_MOTION.H"
 #include "IWRAM_CALL.H"
+#include "CALL.H"
 extern u8 MsgHaidiaAsStubbornAsYourFather[];
 extern u8 MsgHaidiaDevastatedWhenKyle[];
 extern u8 MsgHaidiaGoodJob[];
@@ -195,7 +196,7 @@ void Scene_RepairTheHouse(void)
     callback_e = (s32)SceneState_SetValue0ThenCall;
     Value2(Engine_TaskAddCallback, callback_e, 3200);
     callback_f = (s32)SceneState_SetValue25ThenCall;
-    Value2(Engine_TaskAddCallback, callback_f, 3200);
+    Engine_TaskAddCallback(callback_f, 3200);
     Actor_SetSpeed(25, 0x3333, 0x1999);
     Actor_MoveToAndWait(25, 390, 832);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
@@ -313,7 +314,7 @@ void Scene_RepairTheHouse(void)
     Actor_FaceDirection(ACTOR_JASMINE, 0x9000, 0);
     Actor_FaceDirection(ACTOR_DORA, 0x3000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 20);
-    Call2((void (*)())Engine_ActorSetAnimationAndWait, 21, 3);
+    ((void (*)())Engine_ActorSetAnimationAndWait)(21, 3);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
@@ -577,7 +578,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_GERALD), 0);
     Actor_Jump(ACTOR_GERALD, 4, 0);
-    Call3((void (*)())Engine_ActorWalkToAndWait, 1, 398, 828);
+    ((void (*)())Engine_ActorWalkToAndWait)(1, 398, 828);
     Event_Wait(60);
     Actor_FaceDirection(ACTOR_DORA, 0x4000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 60);
@@ -617,7 +618,7 @@ void Scene_RepairTheHouse(void)
 
         record[90] = (u8)(value | flag);
     }
-    Call4(HaidiaMura_RunWalkScene03380, 21, 6, 5, 0);
+    HaidiaMura_RunWalkScene03380(21, 6, 5, 0);
     Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
     Actor_FaceDirection(ACTOR_DORA, 0x4000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 40);

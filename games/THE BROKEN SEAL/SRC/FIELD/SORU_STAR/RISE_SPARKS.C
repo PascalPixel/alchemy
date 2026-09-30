@@ -8,13 +8,6 @@ void Engine_EventWait(s32 frames);
 u32 Engine_RandomNext(void);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 
-/* Passing the constant through a wrapper loads it straight into the argument
- * register. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
 struct Actor {
     u8 pad[8];
     s32 x;
@@ -62,7 +55,7 @@ void SoruStar_RiseActorFourteenSparks(void)
             Effect_Spawn(x, actor->y + (((Engine_RandomNext() << 5) >> 16) << 16) + 0x200000, actor->z, 0, -0x40000, 0, 0x1b0000, p);
         }
         if (i == 20)
-            Call2(Engine_ActorSetChildValue, 14, 0x100);
+            Engine_ActorSetChildValue(14, 0x100);
     }
     Engine_ActorSetChildValue(14, 0);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 1);

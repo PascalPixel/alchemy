@@ -350,7 +350,7 @@ void FieldScene_RunScene3b9_020024d8(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Value1(Engine_ActorGet, 13);
+    rec7 = Engine_ActorGet(13);
     Event_Begin();
     Event_OpenScreen();
     Event_WaitForScreen();
@@ -444,7 +444,7 @@ void FieldScene_RunScene3b9_02002668(void)
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     base5_200adac = (s32)KorashiamuIriguchi_ActionTable3;
     Actor_EnableActionCallback(ACTOR_GERALD, base5_200adac);
-    Value2(Engine_ActorEnableActionCallback, 2, base5_200adac);
+    Engine_ActorEnableActionCallback(2, base5_200adac);
     Object_SetActionCallbackAndRefreshById(3, base5_200adac);
     Event_Wait(20);
     SceneState_ForwardMaskedHalfwordWith10(0, 0);
@@ -547,7 +547,7 @@ void FieldScene_RunScene3b9_02002964(void)
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     base5_200adac = (s32)KorashiamuIriguchi_ActionTable3;
     Actor_EnableActionCallback(ACTOR_GERALD, base5_200adac);
-    Value2(Engine_ActorEnableActionCallback, 2, base5_200adac);
+    Engine_ActorEnableActionCallback(2, base5_200adac);
     Object_SetActionCallbackAndRefreshById(3, base5_200adac);
     Event_Wait(20);
     SceneState_ForwardMaskedHalfwordWith10(0, 0);

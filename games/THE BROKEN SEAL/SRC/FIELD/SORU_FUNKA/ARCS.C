@@ -191,7 +191,7 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 
     /* FAKEMATCH: the view-centre import is passed the tile x it ignores, as
      * the game passes it. */
-    p = (Ent_02002c1c *)Value1((s32 (*)())Engine_EventGetViewCenter, a);
+    p = (Ent_02002c1c *)((s32 (*)())Engine_EventGetViewCenter)(a);
     b = b << 16;
     a = a << 16;
     Camera_MoveTo(a, -1, b, 1);

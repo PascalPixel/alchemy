@@ -13,8 +13,8 @@ void FieldScene_RunLeaderDropSequence(void)
     s32 v2;
     s32 slot0;
 
-    rec = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    rec8 = Value1(Engine_ActorGet, 20);
+    rec = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec8 = Engine_ActorGet(20);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Map_Redraw();

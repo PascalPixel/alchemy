@@ -9,7 +9,7 @@ void MakyuriIriguchi_RunDoorScene(void)
         Event_Begin();
         record = Actor_Get(12);
         *(s32 *)(record + 24) = -0x10000;
-        record = Value1(Object_GetById, 13);
+        record = Object_GetById(13);
         *(s32 *)(record + 24) = -0x10000;
         record = Actor_Get(14);
         *(s32 *)(record + 24) = -0x10000;

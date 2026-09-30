@@ -1,4 +1,5 @@
 #include "IMIRU.H"
+#include "CALL.H"
 
 void SceneDialogue_RunActorEightFlagGatedDialogue(void)
 {
@@ -87,45 +88,45 @@ void FieldScene_RunSupplementalSequenceOne(void)
     if (GameFlag_IsSet(2177) != 0) {
         Event_Begin();
         unused_actor9_record = Value3(Engine_ActorFaceActor, 9, 0, 0);
-        Value1(Engine_EventWait, 10);
-        Value1(Engine_EventSetMessage, 5700);
+        Engine_EventWait(10);
+        Engine_EventSetMessage(5700);
         Event_AskYesNo(9, 0);
         Event_End();
     } else {
         if (GameFlag_IsSet(2091) != 0) {
             Event_Begin();
             Actor_SetAnimation(9, 7);
-            Value3(Engine_MapAnimateCells, (s32)ImiruMura_CellStepsA, 10, 69);
-            Value1(Engine_EventSetMessage, 5484);
+            Engine_MapAnimateCells((s32)ImiruMura_CellStepsA, 10, 69);
+            Engine_EventSetMessage(5484);
             Event_ShowMessage(9, 0);
             Actor_SetAnimation(9, 8);
             Map_AnimateCells((s32)ImiruMura_CellStepsB, 10, 69);
             Event_End();
         } else {
             Event_Begin();
-            actor9_record = Value1(Engine_ActorGet, 9);
+            actor9_record = Engine_ActorGet(9);
             ((struct SceneRecord *)actor9_record)->field_0x64 = 10;
-            Value2(Engine_ActorEnableActionCallback, 9, (s32)ImiruMura_ActorScriptA);
-            Value1(Engine_EventSetMessage, 5428);
-            Value2(Engine_EventShowMessage, 9, 0);
-            Value1(Engine_ActorStop, 8);
+            Engine_ActorEnableActionCallback(9, (s32)ImiruMura_ActorScriptA);
+            Engine_EventSetMessage(5428);
+            Engine_EventShowMessage(9, 0);
+            Engine_ActorStop(8);
             Actor_ShowEmote(8, 256, 40);
             Actor_FaceDirection(8, 53248, 10);
             Actor_StartRepeatedMotion(8, 2);
             Event_ShowMessageAndWait(8, 0, 20);
-            Value2(Engine_ActorEnableActionCallback, 0, (s32)ImiruMura_ActorScriptC);
+            Engine_ActorEnableActionCallback(0, (s32)ImiruMura_ActorScriptC);
             Actor_SetSpeed(8, 104857, 52428);
-            Value2(Object_SetActionCallbackAndRefreshById, 8, (s32)ImiruMura_ActorScriptB);
-            Value1(Engine_EventWait, 40);
+            Object_SetActionCallbackAndRefreshById(8, (s32)ImiruMura_ActorScriptB);
+            Engine_EventWait(40);
             Actor_Jump(8, 2, 0);
             Actor_StartRepeatedMotion(8, 2);
-            Value2(Engine_ActorSetAttachedEffect, 8, 258);
-            Value1(Engine_EventWait, 60);
+            Engine_ActorSetAttachedEffect(8, 258);
+            Engine_EventWait(60);
             Event_ShowMessageAndWait(8, 0, 10);
             Actor_FaceDirection(8, 12288, 20);
             Actor_StartRepeatedMotion(8, 2);
-            Value2(Engine_EventShowMessage, 8, 0);
-            actor8_record = Value1(Engine_ActorGet, 8);
+            Engine_EventShowMessage(8, 0);
+            actor8_record = Engine_ActorGet(8);
             *(u8 *)((u8 *)(actor8_record) + ACTOR_FLAGS_OFFSET) ^= 0x2;
             GameFlag_Set(0x82c);
             Event_End();

@@ -19,13 +19,6 @@ void Scene_UpdateFormationActor12Flags(void);
 void Scene_UpdateFormationActor13Flags(void);
 void Scene_UpdateFormationActor14Flags(void);
 
-/* FAKEMATCH: preserve the value-call boundary used by the exact Biribino
- * push-block sibling, not a recovered original helper. */
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 void SoruIriguchi_PushFacedBlock(void)
 {
     struct FieldActor *leader;
@@ -49,7 +42,7 @@ void SoruIriguchi_PushFacedBlock(void)
         p[0].fixed = block->x.fixed + (step & -0x10000);
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
-        if (Value2((s32 (*)())Object_CheckMovementCollision, (s32)block, (s32)p) <= 0) {
+        if (((s32 (*)())Object_CheckMovementCollision)((s32)block, (s32)p) <= 0) {
             Engine_ObjectSetAnimation(leader, 8);
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);

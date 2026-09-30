@@ -1,5 +1,6 @@
 /* Tolbi town: actor lines, the entry setup and the first sequence. */
 #include "MACHI.H"
+#include "CALL.H"
 extern u8 MsgTorebiFestivalLongerUsual[];
 extern u8 MsgTorebiFinalsWerent[];
 extern u8 MsgTorebiInnsFullStaying[];
@@ -15,7 +16,7 @@ void FieldScene_RunScene3b5_02000568(void)
     Engine_EventBegin();
     Call3(Engine_ActorFaceDirection, 26, 0x4000, 0);
     Engine_ActorStartRepeatedMotion(26, 2);
-    Call1(Engine_EventSetMessage, (s32)MsgTorebiWaahBuySweets);
+    Engine_EventSetMessage((s32)MsgTorebiWaahBuySweets);
     Engine_EventShowMessage(26, 0);
     Engine_EventEnd();
 }
@@ -45,14 +46,14 @@ void FieldScene_RunScene3b5_020005dc(void)
     Event_Begin();
     if (Value1(Engine_GameFlagIsSet, 0x8bf) == 0) {
         GameFlag_Set(0x8bf);
-        Call1(Engine_EventSetMessage, (s32)MsgTorebiLeftovers);
+        Engine_EventSetMessage((s32)MsgTorebiLeftovers);
         Engine_EventShowMessage(19, 0);
         Engine_ItemShowFound(233, 3);
         Engine_EventShowMessage(19, 0);
         Engine_ActorSetAnimation(0, 1);
         Engine_PartyGiveItem(233, 0);
     } else {
-        Call1(Engine_EventSetMessage, (s32)MsgTorebiFestivalLongerUsual);
+        Engine_EventSetMessage((s32)MsgTorebiFestivalLongerUsual);
         Engine_EventShowMessage(19, 0);
     }
     Engine_EventEnd();
@@ -73,15 +74,13 @@ void SceneScript_SetupActors(void)
         }
     }
     index = *(s16 *)(work + 0x16c) - 1;
-    Call1_02000644(Engine_AudioPlayCue, 158);
-    Call3_02000644(Engine_MapAnimateCells, (s32)gTorebiMachiCellSteps[index].commands,
-                 gTorebiMachiCellSteps[index].first,
-                 gTorebiMachiCellSteps[index].second);
-    Call3_02000644(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
+    Engine_AudioPlayCue(158);
+    Call3(Engine_MapAnimateCells, (s32)gTorebiMachiCellSteps[index].commands, gTorebiMachiCellSteps[index].first, gTorebiMachiCellSteps[index].second);
+    Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
     ((u8 *)Engine_ActorGet(0))[85] = 0;
     Engine_ActorSetAnimation(0, 2);
     if (index != 6) {
-        Call3_02000644(Engine_ActorCenterAndWalk, 0, 2, -8);
+        Call3(Engine_ActorCenterAndWalk, 0, 2, -8);
         Engine_EventWait(10);
     }
     Engine_EventRequestExit(*(s16 *)(work + 0x16c));
@@ -116,14 +115,14 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Call3(Engine_ActorSetPosition, 16, 0x1600000, 0x1600000);
     Actor_EnableActionCallback(16, gTorebiMachiActor16Action);
-    record = Value1(Engine_ActorGet, 16);
+    record = Engine_ActorGet(16);
     handler = (s32)SceneActor_UpdatePartnerProximity;
     ((struct SceneActor *)record)->proximity_flags = 1;
     *(s32 *)(record + 108) = handler;
     hidden = 0;
-    Value3(Engine_ActorSetPosition, 17, 0x1700000, 0x1400000);
+    Engine_ActorSetPosition(17, 0x1700000, 0x1400000);
     Actor_EnableActionCallback(17, gTorebiMachiActor17Action);
-    record = Value1(Engine_ActorGet, 17);
+    record = Engine_ActorGet(17);
     ((struct SceneActor *)record)->proximity_flags = hidden;
     *(s32 *)(record + 108) = handler;
     record = Engine_ActorGet(14);
@@ -131,14 +130,14 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
     if (GameFlag_IsSet(0x8c1) != 0) {
         Call3(Engine_ActorSetPosition, 28, 0x13c0000, 0x1480000);
     }
-    if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
+    if (Engine_GameFlagIsSet(0x201) != 0) {
         FieldScene_ResetActor9AndDrawTiles();
     }
     if (GameFlag_IsSet(0x200) != 0) {
         FieldScene_RunScene3b5_02000224();
         Engine_ActorSetAnimation(8, 4);
     }
-    if (Value1(Engine_GameFlagIsSet, 0x950) != 0) {
+    if (Engine_GameFlagIsSet(0x950) != 0) {
         Call3(Engine_ActorSetPosition, 20, 0x2080000, 0x2300000);
         Call3(Engine_ActorSetPosition, 21, 0x2080000, 0x2300000);
         Call3(Engine_ActorSetPosition, 22, 0x2080000, 0x2300000);
@@ -147,7 +146,7 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
         Call3(Engine_ActorSetPosition, 26, 0x2080000, 0x2300000);
         Call3(Engine_ActorSetPosition, 27, 0x2080000, 0x2300000);
     } else {
-        if (Value1(Engine_GameFlagIsSet, 0x962) != 0) {
+        if (Engine_GameFlagIsSet(0x962) != 0) {
             Call3(Engine_ActorSetPosition, 27, 0x1180000, 0x500000);
             Call3(Engine_ActorFaceDirection, 27, 0x2000, 0);
             Engine_ActorSetAnimation(27, 1);
@@ -165,18 +164,18 @@ void FieldScene_RunScene3b5SequenceA(void)
     Engine_EventBegin();
     Call3(Engine_ActorWalkToAndWait, 0, 0x130, 0x138);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 28, 0x4000, 0);
+    Engine_ActorFaceDirection(28, 0x4000, 0);
     Engine_EventWait(20);
-    Call1(Engine_EventSetMessage, (s32)MsgTorebiWantTestLuck);
+    Engine_EventSetMessage((s32)MsgTorebiWantTestLuck);
     Event_OpenMessage(28, 0);
-    if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         bump_step(1);
         Engine_EventShowMessage(28, 0);
         Call3(Engine_ActorSetSpeed, 28, 0x10000, 0x8000);
         Call3(Engine_ActorWalkToAndWait, 28, 0x140, 0x130);
         Call3(Engine_ActorWalkToAndWait, 28, 0x13c, 0x148);
-        Call3(Engine_ActorFaceDirection, 28, 0xa000, 0);
-        Call1(Engine_GameFlagSet, 0x8c1);
+        Engine_ActorFaceDirection(28, 0xa000, 0);
+        Engine_GameFlagSet(0x8c1);
     } else {
         Engine_EventShowMessage(28, 0);
     }

@@ -1,4 +1,5 @@
 #include "FUNE.H"
+#include "CALL.H"
 extern u8 MsgFuneAvast[];
 
 /* The IWRAM field globals: the map work first, the event work at +0x4c. */
@@ -54,7 +55,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_EventShowMessageAndWait(8, 0, 10);
     Call3((void (*)())Engine_ActorSetPosition, 10, x, 0xd20000);
     Call3((void (*)())Engine_ActorSetPosition, 11, x, 0xd20000);
-    Call3((void (*)())Engine_ActorSetPosition, 12, x, 0xd20000);
+    ((void (*)())Engine_ActorSetPosition)(12, x, 0xd20000);
     Engine_ActorSetSpritePriority(10, 3);
     Engine_ActorSetSpritePriority(11, 3);
     Engine_ActorSetSpritePriority(12, 3);
@@ -81,7 +82,7 @@ void Scene_RunFourActorStagingSequence(void)
     Call3((void (*)())Engine_ActorSetSpeed, 12, 0x9999, 0x4ccc);
     Call3((void (*)())Engine_ActorSetDestination, 10, 128, 345);
     Call3((void (*)())Engine_ActorSetDestination, 11, 136, 330);
-    Call3((void (*)())Engine_ActorSetDestination, 12, 156, 340);
+    ((void (*)())Engine_ActorSetDestination)(12, 156, 340);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(8, 2);
     Call3((void (*)())Engine_ActorWalkToAndWait, 8, 164, 344);

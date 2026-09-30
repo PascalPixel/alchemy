@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgShianAlreadyHeardTest[];
 
 s32 Engine_ActorGet();
@@ -18,38 +19,6 @@ void Engine_MapCopyCellAttributes();
 void Engine_GameFlagSet();
 void Engine_EventEnd();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7);
-}
-
 void ShianJiin_RunTempleWalkScene(void)
 {
     s32 *p8;
@@ -57,12 +26,12 @@ void ShianJiin_RunTempleWalkScene(void)
     s32 record;
     u8 slot16[40];
 
-    rec8 = Value1(Engine_ActorGet, 9);
+    rec8 = Engine_ActorGet(9);
     Engine_EventBegin();
-    Call1(Engine_EventSetMessage, (s32)MsgShianAlreadyHeardTest);
+    Engine_EventSetMessage((s32)MsgShianAlreadyHeardTest);
     Engine_EventShowMessageAndWait(9, 0, 20);
     Call3(Engine_ActorWalkToAndWait, 0, 168, 0x188);
-    Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
+    Engine_ActorFaceDirection(0, 0xc000, 20);
     Engine_AudioPlayCue(132);
     record = Engine_ActorGet(9);
     *(s32 *)(record + 40) = 0x140000;
@@ -83,6 +52,6 @@ void ShianJiin_RunTempleWalkScene(void)
     Engine_EventWait(30);
     BattleFx_PlayQueuedSoundFar();
     Call6(Engine_MapCopyCellAttributes, 10, 24, 1, 1, 10, 22);
-    Call1(Engine_GameFlagSet, 0x892);
+    Engine_GameFlagSet(0x892);
     Engine_EventEnd();
 }

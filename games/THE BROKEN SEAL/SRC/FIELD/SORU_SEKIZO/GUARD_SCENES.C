@@ -1,4 +1,5 @@
 #include "STATUE_HALL.H"
+#include "CALL.H"
 
 /* The scrolling sprite rows: three rows of nine, after the seal scene. */
 struct Ent SoruSekizo_SpriteRows[27];
@@ -73,7 +74,7 @@ void FieldScene_RunPrimarySequenceHead(void)
 {
     if (GameFlag_IsSet(GATE_CODE) == 0) {
         Event_Begin();
-        Call1((void (*)())Engine_ActorGet, TARGET_ID);
+        ((void (*)())Engine_ActorGet)(TARGET_ID);
         Actor_SetSpeed(TARGET_ID, 13107, 0x00001999); /* object_id, speed_limit, acceleration */
         Actor_WalkToAndWait(TARGET_ID, 504, 152); /* object_id, x=504, z=152 */
         Event_End();
@@ -87,7 +88,7 @@ s32 Scene_RunGuardSequenceB(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Scene_RunGuardSequenceC();
     GameFlag_Set(0x144);
-    record = (u8 *)Value1(Engine_ActorGet, 18);
+    record = (u8 *)Engine_ActorGet(18);
     record[89] = 0;
     {
         u8 flags = record[35] | 2;
@@ -195,8 +196,8 @@ void Scene_RunGuardSequenceC(void)
     s32 buf;
 
     p = (s32 *)SoruSekizo_SpriteRows;
-    buf = Value2(Runtime_AllocateBlock, 14, 0x400);
-    Call2(Resource_DecodeByteLz, (s32)SoruSekizo_SpriteRowsGfx, buf);
+    buf = Runtime_AllocateBlock(14, 0x400);
+    Resource_DecodeByteLz((s32)SoruSekizo_SpriteRowsGfx, buf);
     value = Vram_Load(Resource_FindFreeEntry(), 128, buf);
     for (i = 0; i < 9; i++) {
         s32 *q = p;
@@ -282,9 +283,9 @@ void FieldScene_RunClosingSequence(void)
     s32 kind;
     s32 second;
 
-    first = Value1(Engine_ActorGet, 0);
+    first = Engine_ActorGet(0);
     kind = *(s32 *)(first + 8) >> 20;
-    second = Value1(Engine_ActorGet, 0);
+    second = Engine_ActorGet(0);
     if ((*(s32 *)(second + 16) >> 20) == 8) {
         if ((u32)(kind - 17) <= 1) {
             Call4(SetMapCellCollision, 2, 0x1100000, 0x800000, 255);

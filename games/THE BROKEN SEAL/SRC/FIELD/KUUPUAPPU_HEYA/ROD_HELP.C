@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgKuupuappuThankHelpBelieve[];
 
 void SceneActor_SetModeZeroAndValue();
@@ -26,31 +27,6 @@ void Engine_EventShowMessage();
 void Engine_ActorShowEmote();
 void Engine_ActorSetAttachedEffect();
 void Ui_SetBank15PaletteAndClearRenderMode();
-
-/* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 void Scene_JoinRodSearch(void)
 {
@@ -106,7 +82,7 @@ void Scene_JoinRodSearch(void)
     Engine_EventWait(60);
     Call3(Engine_ActorShowEmote, 2, 0x102, 0);
     Engine_EventWait(60);
-    Value2(Engine_EventOpenMessage, 2, 0);
+    Engine_EventOpenMessage(2, 0);
     Engine_ActorFaceActor(0, 2, 0);
     Engine_ActorFaceActor(1, 2, 0);
     Engine_EventChooseYesNo(0, 0);
@@ -160,11 +136,11 @@ void Scene_JoinRodSearch(void)
     Engine_EventWait(60);
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
     Engine_EventShowMessage(2, 0);
-    Call3(Engine_ActorShowEmote, 1, 0x103, 0);
+    Engine_ActorShowEmote(1, 0x103, 0);
     Engine_EventWait(60);
     FieldScene_RunSplitTripleSteps(1, 0, 10);
     Engine_EventShowMessage(1, 0);
-    Call3(Engine_ActorShowEmote, 2, 0x100, 0);
+    Engine_ActorShowEmote(2, 0x100, 0);
     Engine_EventWait(60);
     Engine_EventShowMessage(2, 0);
     Call3(Engine_ActorShowEmote, 1, 0x102, 0);
@@ -173,7 +149,7 @@ void Scene_JoinRodSearch(void)
     Engine_EventSetMessage((mes + 14));
     Engine_ActorFaceEachOther(2, 0, 0);
     Engine_ActorFaceActor(1, 0, 0);
-    Call3(Engine_ActorShowEmote, 0, 0x102, 0);
+    Engine_ActorShowEmote(0, 0x102, 0);
     Engine_EventWait(60);
     SceneEffect_ApplyPairWithValue141(2, 0);
     Ui_SetBank15PaletteAndClearRenderMode();
@@ -197,7 +173,7 @@ void Scene_JoinRodSearch(void)
     Engine_ActorFaceActor(0, 2, 0);
     Engine_ActorFaceActor(1, 2, 0);
     Engine_ActorFaceActor(2, 0, 0);
-    Call3(Engine_ActorShowEmote, 2, 0x106, 0);
+    Engine_ActorShowEmote(2, 0x106, 0);
     Engine_EventWait(60);
     SceneActor_SetModeZeroAndValue(2, 10);
     Engine_ActorSetAnimation(0, 3);
@@ -205,11 +181,11 @@ void Scene_JoinRodSearch(void)
     SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
     SceneActor_SetModeZeroAndValue(2, 20);
     Call3(Engine_ActorShowEmote, 0, 0x101, 0);
-    Call3(Engine_ActorShowEmote, 1, 0x101, 0);
+    Engine_ActorShowEmote(1, 0x101, 0);
     Engine_EventWait(60);
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
     SceneActor_SetModeZeroAndValue(2, 30);
-    Call3(Engine_ActorShowEmote, 0, 0x105, 0);
+    Engine_ActorShowEmote(0, 0x105, 0);
     Engine_EventWait(60);
     SceneEffect_ApplyThreeValuesAndFinish(2, 4, 10);
     SceneActor_SetModeZeroAndValue(2, 30);

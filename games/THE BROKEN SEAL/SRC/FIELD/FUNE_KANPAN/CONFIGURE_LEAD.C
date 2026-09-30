@@ -34,7 +34,7 @@ void FieldScene_ConfigureLeadActors(void)
     u8 *record;
 
     Event_Begin();
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Task_Wait(1);
     Actor_SetPosition(20, 0xb60000, 0x26a0000);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -64,7 +64,7 @@ void FieldScene_ConfigureLeadActors(void)
     Actor_SetSpeed(20, 0x19999, 0xcccc);
     Actor_WalkToAndWait(20, 182, 0x224);
     FieldScene_CallPairWith10(20, 0);
-    Value2(FieldScene_CallPairWith10, 0, 0x8000);
+    FieldScene_CallPairWith10(0, 0x8000);
     Actor_RunRepeatedMotion(20, 1);
     Event_SetMessage((s32)MsgFuneThankRobinDidGoodAgainst);
     ((void (*)())FieldScene_RunStepThen10)(20);
@@ -79,7 +79,7 @@ void FieldScene_ConfigureLeadActors(void)
     Actor_SetAnimationAndWait(20, 3);
     Actor_WalkToAndWait(20, 182, 0x258);
     Actor_WalkToAndWait(20, 216, 0x258);
-    Call2(FieldScene_CallPairWith10, 20, 0xc000);
+    FieldScene_CallPairWith10(20, 0xc000);
     FieldScene_RunScene3af_02000bb8();
     Event_Wait(10);
     Actor_WalkToAndWait(20, 216, 0x244);
@@ -103,7 +103,7 @@ void FieldScene_ConfigureThreeActors(void)
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     record = Object_GetById(0);
     Actor_SetSpriteFlags(record, 0);
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Task_Wait(1);
     Actor_SetPosition(20, 0xc40000, 0x1f60000);
     record = Object_GetById(20);
@@ -121,7 +121,7 @@ void FieldScene_ConfigureThreeActors(void)
 
         *(volatile u16 *)(record + 6) = shown;
     }
-    Value2(Engine_ActorSetSpritePriority, 21, 1);
+    Engine_ActorSetSpritePriority(21, 1);
     Actor_SetPosition(21, 0xb80000, 0x2780000);
     record = Object_GetById(21);
     {
@@ -141,7 +141,7 @@ void FieldScene_ConfigureThreeActors(void)
     Actor_SetAnimationAndWait(20, 3);
     Actor_SetSpeed(21, 0x30000, 0x18000);
     Actor_WalkToAndWait(21, 180, 0x222);
-    Value3(Engine_ActorFaceDirection, 21, 0xb000, 40);
+    Engine_ActorFaceDirection(21, 0xb000, 40);
     Actor_RunRepeatedMotion(21, 1);
     FieldScene_RunStepThen10(21);
     Event_RequestExit(15);

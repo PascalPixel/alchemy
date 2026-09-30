@@ -33,7 +33,7 @@ compiler-runtime: toolchain-check compiler-source-check
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check
 .PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
-.PHONY: progress progress-subject progress-report progress-check prepare-inputs raw similar deps clean
+.PHONY: progress progress-subject progress-report progress-check prepare-inputs raw drafts similar deps clean
 
 help:
 	@printf '%s\n' \
@@ -45,6 +45,7 @@ help:
 	  'make coverage        update README and both published figures' \
 	  'make progress        report DONE from the linker maps of verified builds' \
 	  'make raw             generate private disassembly under out/' \
+	  'make drafts         compile and score every draft against its listing' \
 	  'make similar         rank not-yet-C functions against C into out/reports/similar.tsv' \
 	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv'
 
@@ -211,6 +212,9 @@ progress-report:
 	$(CHECK) progress --write-report
 
 # A report for people only: the build and the count never read it.
+drafts:
+	$(ALCHEMY) drafts
+
 similar:
 	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- similar --build out/tbs-en --build out/tla-en \
 	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)

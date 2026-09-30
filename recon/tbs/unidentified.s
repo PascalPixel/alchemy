@@ -460,7 +460,10 @@ Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x0009d8b0, 0x00000140
 	.global Scene_InteractionRuleTable
 Scene_InteractionRuleTable:
-	.incbin "baserom.gba", 0x0009d9f0, 0x000007e8
+	.incbin "baserom.gba", 0x0009d9f0, 0x000003e8
+	.global BattleFx_ConditionResources
+BattleFx_ConditionResources:
+	.incbin "baserom.gba", 0x0009ddd8, 0x00000400
 	.global Party_PairResolveRules
 Party_PairResolveRules:
 	.incbin "baserom.gba", 0x0009e1d8, 0x00000098
@@ -496,7 +499,10 @@ Data_0809e8ac:
 	.incbin "baserom.gba", 0x0009e8ac, 0x00000022
 	.global Data_0809e8ce
 Data_0809e8ce:
-	.incbin "baserom.gba", 0x0009e8ce, 0x00000060
+	.incbin "baserom.gba", 0x0009e8ce, 0x00000020
+	.global DisplayTransition_DitherTable
+DisplayTransition_DitherTable:
+	.incbin "baserom.gba", 0x0009e8ee, 0x00000040
 	.global Data_0809e92e
 Data_0809e92e:
 	.incbin "baserom.gba", 0x0009e92e, 0x00000040

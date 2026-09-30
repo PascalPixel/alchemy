@@ -676,7 +676,7 @@ Func_080ca6e8:
 	strb	r2, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r1, #12
 	adds	r0, r5, #0
 	bl	Object_SetMode

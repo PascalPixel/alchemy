@@ -168,7 +168,7 @@ Func_080e3698:
 	mov	r0, r8
 	bl	Object_GetById
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	bl	0x080d2a3c
 	bl	Func_080d2a8c
 	movs	r0, #140
@@ -234,7 +234,7 @@ Func_080e3698:
 	mov	r0, r8
 	bl	Object_GetById
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #10
 	bl	Battle_WaitMode0
 	adds	r0, r5, #0

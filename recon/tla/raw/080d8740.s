@@ -119,7 +119,7 @@ Func_080d8740:
 	bl	Object_SetMode
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r1, sl
 	ldr	r0, [r5, #80]
 	bl	0x080dc0d8

@@ -41,7 +41,7 @@ Func_080d3460:
 	adds	r7, #85
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldrb	r2, [r7, #0]
 	movs	r3, #2
 	orrs	r3, r2
@@ -132,7 +132,7 @@ Func_080d3460:
 .L_080d3572:
 	adds	r0, r6, #0
 	ldr	r1, [sp, #0]
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #2
 	bl	0x08013560
 	bl	0x080d2c98

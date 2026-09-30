@@ -177,7 +177,7 @@ Func_080d53b8:
 	str	r0, [sp, #4]
 	ldr	r1, [sp, #4]
 	adds	r0, r7, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r7, #48]
@@ -297,7 +297,7 @@ Func_080d53b8:
 	orrs	r2, r6
 	adds	r1, r2, #0
 	str	r2, [sp, #4]
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #4
 	bl	Battle_WaitMode0
 	movs	r3, #128

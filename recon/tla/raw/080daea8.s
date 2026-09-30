@@ -133,7 +133,7 @@ Func_080daea8:
 	adds	r3, r3, r1
 	str	r3, [r7, #12]
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r2, #240
 	mov	r7, sl
 	lsls	r2, r2, #12
@@ -567,7 +567,7 @@ Func_080daea8:
 	strb	r3, [r4, #0]
 	movs	r1, #0
 	mov	r0, r8
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #5
 	bl	0x08013560
 	mov	r0, r8
@@ -708,7 +708,7 @@ Func_080daea8:
 	bl	Object_SetMode
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	add	r1, sp, #8
 	ldrb	r1, [r1, #0]
 	mov	r2, fp

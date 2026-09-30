@@ -370,7 +370,7 @@ Func_080e306c:
 	bl	Func_080200e8
 	movs	r1, #0
 	mov	r0, sl
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r2, [sp, #36]
 	movs	r5, #0
 	movs	r1, #24
@@ -519,7 +519,7 @@ Func_080e306c:
 	bl	Func_080200e8
 	movs	r1, #0
 	mov	r0, sl
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r2, sl
 	adds	r2, #85
 	movs	r3, #0

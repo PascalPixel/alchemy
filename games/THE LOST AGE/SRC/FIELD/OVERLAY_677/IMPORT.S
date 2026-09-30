@@ -9,7 +9,7 @@
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
-	overlay_veneer Func_08020218
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08038120
 	overlay_veneer Func_080ad010
 	overlay_veneer Func_080ad038

@@ -1245,7 +1245,7 @@ Func_080e68c8:
 	str	r3, [r1, #28]
 	mov	r0, r8
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #0
 	movs	r2, #2
 	str	r2, [sp, #4]
@@ -1440,7 +1440,7 @@ Func_080e68c8:
 	strh	r3, [r1, #6]
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r2, #3
 	str	r2, [sp, #4]
 .L_080e7476:
@@ -1833,7 +1833,7 @@ Func_080e68c8:
 	movs	r1, #0
 	str	r3, [r7, #28]
 	adds	r0, r7, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r1, r9
 	cmp	r1, #30
 	bne.n	.L_080e77c8

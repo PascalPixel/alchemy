@@ -715,6 +715,8 @@ SECTIONS
         "*/recon/tla/raw/080d45d8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d476c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d489c.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ACTION.o"(.text)
+        "*/recon/tla/raw/080d49a0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d49bc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d4ab4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d4bc4.o"(.text .rodata .data .padding)

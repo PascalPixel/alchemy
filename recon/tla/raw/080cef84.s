@@ -20,7 +20,7 @@ Func_080cef84:
 	str	r3, [r5, #40]
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 .L_080cefb2:
 	pop	{r5, pc}
 	push	{lr}

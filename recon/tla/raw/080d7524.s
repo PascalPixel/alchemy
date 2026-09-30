@@ -184,7 +184,7 @@ Func_080d7524:
 	bl	Object_SetMode
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r0, [r5, #80]
 	ldr	r1, [sp, #12]
 	bl	0x080dc0d8

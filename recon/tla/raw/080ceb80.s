@@ -263,7 +263,7 @@ Func_080ceb80:
 	bl	Object_SetMode
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r0, sl
 	bl	0x08016ce4
 	cmp	r0, #0

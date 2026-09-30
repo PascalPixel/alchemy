@@ -130,6 +130,7 @@ fn walk_once(
     };
     let mut queue = vec![start];
     while let Some(mut pc) = queue.pop() {
+        let mut after_call = false;
         loop {
             if function.instructions.contains_key(&pc) {
                 break;
@@ -142,7 +143,15 @@ fn walk_once(
             if !inside(pc) || !image.contains(pc, 2) {
                 return Err((pc, "flow leaves the listing"));
             }
+            // A call that alignment padding or its own words follow does not
+            // return: a far jump, or a call that never comes back.
+            if after_call && pc % 4 == 2 && image.contains(pc, 2) && image.half(pc) == 0 {
+                break;
+            }
             if barriers.contains(&pc) {
+                if after_call {
+                    break;
+                }
                 return Err((pc, "flow runs into a word its loads read"));
             }
             let ins = image.decode(pc).ok_or((pc, "undecodable"))?;
@@ -183,7 +192,10 @@ fn walk_once(
                     }
                 }
                 Kind::Bl { target } => {
-                    if entries.far.contains(&target) && local(target) {
+                    // GCC begins every function on a word boundary, so a call
+                    // off one inside the listing is a far jump.
+                    let far = entries.far.contains(&target) || target % 4 != 0;
+                    if far && local(target) {
                         function.labels.insert(target);
                         queue.push(target);
                         next = false;
@@ -207,6 +219,7 @@ fn walk_once(
                 _ => {}
             }
             let size = ins.size;
+            after_call = next && matches!(ins.kind, Kind::Bl { .. });
             function.instructions.insert(pc, ins);
             if !next {
                 break;
@@ -311,6 +324,14 @@ impl Area {
     pub fn end(&self) -> u32 {
         self.parts.last().map_or(self.start, |part| part.0)
     }
+    /// Where its first function begins, when it opens with a listing: its
+    /// first byte, or after the zero halfword that aligns a listing that
+    /// opens off a word boundary.
+    pub fn opening(&self, image: Image) -> Option<u32> {
+        self.parts.first().filter(|part| part.1)?;
+        let padded = self.start % 4 == 2 && image.half(self.start) == 0;
+        Some(self.start + if padded { 2 } else { 0 })
+    }
     /// The part holding `address`: its start, end and whether it is a listing.
     pub fn part(&self, address: u32) -> (u32, u32, bool) {
         let mut from = self.start;
@@ -332,11 +353,23 @@ impl Area {
 /// begins a function only at a known entry.
 pub fn partition(image: Image, area: &Area, entries: &Entries) -> Vec<Segment> {
     let end = area.end();
+    let opening = area.opening(image);
     let mut segments: Vec<Segment> = Vec::new();
     let mut cursor = area.start;
     while cursor < end {
         let (_, part_end, listing) = area.part(cursor);
-        let known = cursor == area.start || entries.starts.contains(&cursor);
+        // A zero halfword off a word boundary aligns what follows; GCC
+        // begins every function on a word boundary.
+        if listing && cursor % 4 == 2 && cursor + 2 <= part_end && image.half(cursor) == 0 {
+            segments.push(Segment::Data {
+                start: cursor,
+                end: cursor + 2,
+                listing,
+            });
+            cursor += 2;
+            continue;
+        }
+        let known = Some(cursor) == opening || entries.starts.contains(&cursor);
         let next = entries
             .starts
             .range(cursor + 1..end)
@@ -347,7 +380,12 @@ pub fn partition(image: Image, area: &Area, entries: &Entries) -> Vec<Segment> {
             .then(|| walk(image, cursor, end, entries))
             .flatten()
             .filter(|function| {
-                function.end <= next && (known || (listing && unnamed_function(image, function)))
+                function.end <= next
+                    && if listing {
+                        known || unnamed_function(image, function)
+                    } else {
+                        known && unnamed_function(image, function)
+                    }
             });
         if let Some(function) = function {
             cursor = function.end;
@@ -541,5 +579,31 @@ pub(crate) mod tests {
         };
         let segments = partition(image, &area, &entries);
         assert!(matches!(&segments[1], Segment::Function(f) if f.start == base + 8));
+    }
+
+    #[test]
+    fn a_call_off_a_word_boundary_is_a_far_jump_and_padding_ends_a_call() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0xb500, // push {lr}
+            0x4802, // ldr r0, [pc, #8]: the word at 0x0c
+            0xf000, 0xf805, // bl 0x08000012, off a word boundary: a far jump
+            0xf000, 0xf804, // 0x08: bl 0x08000014, never reached
+        ]);
+        bytes.extend(0x1234_5678u32.to_le_bytes()); // 0x0c: pool
+        bytes.extend(halves(&[
+            0x0000, // 0x10: padding
+            0xf7ff, 0xfff5, // 0x12: bl 0x08000000, a call that padding follows
+            0x0000, // 0x16: padding
+        ]));
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert!(function.labels.contains(&(base + 0x12)));
+        assert!(!function.instructions.contains_key(&(base + 8)));
+        assert!(!function.instructions.contains_key(&(base + 0x16)));
+        assert_eq!(function.calls, BTreeSet::from([base]));
     }
 }

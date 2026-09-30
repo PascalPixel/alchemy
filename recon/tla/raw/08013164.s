@@ -1,37 +1,23 @@
 .syntax unified
 	.thumb
-	.global Func_08013164
-	.thumb_func
-Func_08013164:
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
-	movs	r4, #3
-	lsls	r4, r4, #24
-	movs	r1, #4
-	lsrs	r2, r0, #22
-	ands	r2, r1
-	str	r0, [r2, r4]
-	bx	lr
-	movs	r0, r0
-	movs	r0, r0
-	.2byte 0xef03
-	.2byte 0xfffc
-	.2byte 0xeaff
-	.2byte 0xc301
-	b.n	0x080138c2
-	subs	r4, #2
-	b.n	0x0801369e
-	movs	r0, #0
-	b.n	0x08012cb0
-	adds	r2, r4, r0
-	b.n	.L_08013192
-	movs	r0, #0
-	b.n	0x080138d2
-	lsrs	r2, r0, #8
-.L_08013192:
-	b.n	0x080135b8
-	lsls	r4, r7, #5
-	asrs	r3, r0, #21
-	.2byte 0xfffe
-	.2byte 0x1aff
+	movs r4, #3
+	lsls r4, r4, #24
+	movs r1, #4
+	lsrs r2, r0, #22
+	ands r2, r1
+	str r0, [r2, r4]
+	bx lr
+	.2byte 0x0000
+	.4byte 0xef030000
+	.4byte 0xeafffffc
+	.4byte 0xe3a0c301
+	.4byte 0xe28c3c02
+	.4byte 0xe5932000
+	.4byte 0xe0021822
+	.4byte 0xe3a02000
+	.4byte 0xe2110a02
+	.4byte 0x1543017c
+	.4byte 0x1afffffe

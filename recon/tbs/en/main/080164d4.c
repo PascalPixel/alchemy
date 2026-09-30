@@ -1,23 +1,10 @@
-/* 2026-09-29 alchemy permute: score 1490 to 1015 on the permuter's scorer
-   (0 is exact); remaining 27 register-only, 5 operand, 9 reordered, 2
-   deleted. Kept rewrites: 12x reorder independent statements, 6x introduce
-   a temporary, 4x reorder local declarations, 3x remove a temporary, 3x
-   toggle register, 2x change loop form, 2x split or join a compound
-   assignment, 1x add a same-width cast, 1x drop a same-width cast.
-   FAKEMATCH: the permuter's temporaries, register hints and swapped
-   operand orders below only steer allocation and scheduling; no programmer
-   would write them, so they stay tagged until a natural spelling replaces
-   them. */
-/* NONMATCHING: complete 152-byte listing through 0801656c, including the
- * final alignment halfword; candidate 150 bytes, 50 differing halfwords /
- * 48 aligned edits (2026-09-26). Separate coordinate conversion and origin
- * addition preserve all four absolute coordinates. Reusing left/top inputs
- * gives 152/57/53 with an extra saved sl; an unused-result call cast only
- * changes argument setup (152/57/52), so it is rejected. Separate signed
- * x/y locals restore the single r8 save and the reference's pool/epilogue
- * offsets. Retain that typed model and the actual void callee interface.
- * Remaining: coordinate setup, width and x/y register lifetimes, then tile
- * cursor/row/column allocation. Three bounded hypotheses; no credit. */
+/* 2026-09-30 (Mercury): 49 differing halfwords, 150 of 152 bytes, plain C
+   (the permuter's version was 60). The edges are shifted first and the
+   window offset added in separate statements: written as one expression,
+   CSE cancels window->x out of right - x, where the reference subtracts the
+   two offset edges. Left: register roles (the reference copies top to r7
+   and left to r5 first and gives x0/y0 r4/r2, the interior origin r5/r7 and
+   width/height r6/r4) and the tile pointer formed after the call. */
 #include "RENDER_INPUT.H"
 
 extern u8 *gWindowWork;
@@ -26,49 +13,33 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     u32 left, u32 top, u32 right, u32 bottom)
 {
-    u8 *work;
-    u16 *tiles;
-    s32 x;
-    u32 height;
-    s32 y;
+    u8 *work = gWindowWork;
+    u32 x;
+    u32 y;
     u32 width;
+    u32 height;
+    u16 *tiles;
     u32 row;
-    u32 tmp;
-    register u32 column;
-    u32 tmp4;
-    u16 tmp2;
+    u32 column;
 
-    y = top >> 3;
-    tmp4 = right + 7;
-    tmp = (bottom + 7) >> 3;
-    work = gWindowWork;
-    bottom = tmp;
     x = left >> 3;
-    right = tmp4 >> 3;
+    y = top >> 3;
+    right = (right + 7) >> 3;
+    bottom = (bottom + 7) >> 3;
+    x += window->x;
     y += window->y;
-    tmp2 = window->x;
-    x += tmp2;
-    bottom = bottom + window->y;
     right += window->x;
+    bottom += window->y;
     width = right - x;
     height = bottom - y;
     x++;
-    ++y;
-    tiles = (u16 *)work + y * 32 + x;
-    row = 0;
+    y++;
     UiWindow_ClearTileAttributesInRect(x, y, width, height);
-    if (row < height) {
-        do {
-            column = 0;
-            if (column < width) {
-                do {
-                    *tiles++ = 0xf020;
-                    column++;
-                } while (column < width);
-            }
-            tiles += 32 - width;
-            row++;
-        } while (row < height);
+    tiles = (u16 *)work + y * 32 + x;
+    for (row = 0; row < height; row++) {
+        for (column = 0; column < width; column++)
+            *tiles++ = 0xf020;
+        tiles += 32 - width;
     }
     work[0xea3] = 1;
 }

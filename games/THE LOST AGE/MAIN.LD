@@ -995,6 +995,8 @@ SECTIONS
         "*/recon/tla/raw/0811c66c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811cd7c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811cfd0.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/BATTLE/GET_TAGGED_SLOT_VALUE.o"(.text)
+        "*/recon/tla/raw/0811d748.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811d7e8.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/BATTLE/PRESENTATION/ACT_RUN_ENTRIES.o"(.text)
         "*/recon/tla/raw/0811e3ac.o"(.text .rodata .data .padding)

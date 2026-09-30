@@ -45,7 +45,7 @@ Func_080d3378:
 	beq.n	.L_080d33d8
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	0x080d3744
+	bl	Func_080d3744
 .L_080d33d8:
 	adds	r3, r6, #0
 	adds	r3, #85

@@ -825,10 +825,10 @@ Func_080ce458:
 	bge.n	.L_080ceb2e
 	bl	Func_080d22a8
 	ldr	r0, [r5, #8]
-	bl	0x080d3be8
+	bl	Func_080d3be8
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	0x080d407c
+	bl	Func_080d407c
 	bl	Func_080d2350
 	b.n	0x080ceb34
 .L_080ceb2e:

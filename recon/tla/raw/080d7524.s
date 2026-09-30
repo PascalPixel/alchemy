@@ -51,7 +51,7 @@ Func_080d7524:
 	adds	r1, r5, #0
 	movs	r2, #0
 	mov	r0, r9
-	bl	0x080d3838
+	bl	Func_080d3838
 	movs	r0, #10
 	bl	WaitFrames
 	movs	r1, #4
@@ -59,7 +59,7 @@ Func_080d7524:
 	movs	r2, #50
 	strh	r5, [r7, #6]
 	mov	r0, r9
-	bl	0x080d47b4
+	bl	Func_080d47b4
 	mov	r0, r9
 	bl	Object_GetById
 	adds	r0, #90

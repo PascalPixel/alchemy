@@ -140,12 +140,12 @@ Func_080d2350:
 	adds	r3, r2, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	0x080d4384
+	bl	Func_080d4384
 	b.n	.L_080d2382
 .L_080d237a:
 	movs	r0, #8
 	movs	r1, #1
-	bl	0x080d4384
+	bl	Func_080d4384
 .L_080d2382:
 	bl	Func_080ad2b8
 	pop	{pc}

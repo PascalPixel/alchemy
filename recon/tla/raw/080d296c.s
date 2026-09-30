@@ -41,7 +41,7 @@ Func_080d296c:
 	ldr	r0, [r3, #0]
 	adds	r1, r6, #0
 	movs	r2, #0
-	bl	0x080d359c
+	bl	Func_080d359c
 	movs	r0, #20
 	bl	Battle_WaitMode0
 	movs	r0, #1

@@ -16,6 +16,9 @@ Func_080d452c:
 	bl	Func_080d440c
 .L_080d4546:
 	pop	{r5, pc}
+	.global Func_080d4548
+	.thumb_func
+Func_080d4548:
 	push	{lr}
 	movs	r1, #213
 	lsls	r1, r1, #4
@@ -29,6 +32,9 @@ Func_080d452c:
 	movs	r0, #2
 	bl	Battle_WaitMode0
 	pop	{pc}
+	.global Func_080d4568
+	.thumb_func
+Func_080d4568:
 	push	{lr}
 	movs	r1, #213
 	lsls	r1, r1, #4

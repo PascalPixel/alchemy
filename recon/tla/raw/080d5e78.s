@@ -153,7 +153,7 @@ Func_080d5e78:
 	bl	Battle_WaitMode0
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x080d4384
+	bl	Func_080d4384
 	movs	r6, #3
 .L_080d5fcc:
 	adds	r0, r6, #0

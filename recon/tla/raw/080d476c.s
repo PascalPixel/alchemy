@@ -38,6 +38,9 @@ Func_080d476c:
 .L_080d47b0:
 	movs	r0, #0
 	pop	{r5, r6, pc}
+	.global Func_080d47b4
+	.thumb_func
+Func_080d47b4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

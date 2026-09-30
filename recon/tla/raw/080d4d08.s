@@ -744,7 +744,7 @@ Func_080d4d08:
 	lsls	r1, r1, #8
 	movs	r2, #0
 	ldr	r0, [r5, #0]
-	bl	0x080d3838
+	bl	Func_080d3838
 	ldr	r0, [r5, #0]
 	bl	Object_RefreshSelectorById
 	adds	r1, r7, #0

@@ -135,6 +135,9 @@ Func_080d440c:
 	.4byte 0xff880000
 	.2byte 0x0000
 	.2byte 0xffc0
+	.global Func_080d450c
+	.thumb_func
+Func_080d450c:
 	.2byte 0xb520
 	adds	r5, r1, #0
 	bl	ObjectTable_Get

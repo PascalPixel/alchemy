@@ -101,9 +101,6 @@ void Scene_ResolveInteractionResult(void)
     gGameState[248] = result;
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct BattleResourceCondition {
     s16 id;
     s16 condition : 15;
@@ -146,4 +143,3 @@ void *BattleFx_FindConditionResource(s32 effect_id, s32 condition)
     }
     return resource;
 }
-#endif

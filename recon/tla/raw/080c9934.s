@@ -293,7 +293,7 @@ Func_080c9944:
 	movs	r3, #0
 	ldrsh	r0, [r2, r3]
 	bl	.L_080c9c38
-	bl	0x080ca1bc
+	bl	Func_080ca1bc
 	adds	r0, r5, #0
 	bl	GameFlag_TestFar
 	cmp	r0, #0
@@ -308,7 +308,7 @@ Func_080c9944:
 	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080c9bc4
-	bl	.L_080c9dc8
+	bl	Func_080c9dc8
 	b.n	.L_080c9bec
 .L_080c9bc4:
 	movs	r0, #141
@@ -329,7 +329,7 @@ Func_080c9944:
 	bl	Audio_PlayCue
 	b.n	.L_080c9bec
 .L_080c9be8:
-	bl	.L_080c9dc8
+	bl	Func_080c9dc8
 .L_080c9bec:
 	ldr	r3, [pc, #28]
 	mov	r0, sl
@@ -551,6 +551,9 @@ Func_080c9944:
 	.4byte 0x02000240
 	.2byte 0x17a8
 	.2byte 0x080f
+	.global Func_080c9dc8
+	.thumb_func
+Func_080c9dc8:
 .L_080c9dc8:
 	push	{lr}
 	ldr	r3, [pc, #16]

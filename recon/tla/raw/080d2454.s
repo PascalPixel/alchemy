@@ -299,7 +299,7 @@ Func_080d260c:
 	movs	r1, #5
 	bl	0x08038040
 	movs	r0, #1
-	bl	0x080d295c
+	bl	Func_080d295c
 	adds	r5, r0, #0
 	bl	0x08038140
 	cmp	r5, #0

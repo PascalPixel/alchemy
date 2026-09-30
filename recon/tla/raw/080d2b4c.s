@@ -61,7 +61,7 @@ Func_080d2b4c:
 	adds	r2, r2, r1
 	strh	r3, [r2, #0]
 	adds	r0, r6, #0
-	bl	0x080ca1a4
+	bl	Func_080ca1a4
 	movs	r3, #178
 	lsls	r3, r3, #1
 	add	r3, sl

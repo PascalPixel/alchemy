@@ -195,7 +195,7 @@ Func_080ce0ac:
 	ldr	r0, [pc, #216]
 	bl	0x08038040
 	movs	r0, #1
-	bl	0x080d295c
+	bl	Func_080d295c
 	adds	r6, r0, #0
 	bl	0x08038140
 	movs	r0, #0

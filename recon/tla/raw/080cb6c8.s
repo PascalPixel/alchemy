@@ -25,6 +25,9 @@ Func_080cb6c8:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080cb6f4
+	.thumb_func
+Func_080cb6f4:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

@@ -282,6 +282,9 @@ Func_080d7524:
 	.4byte 0x080d74f1
 	.2byte 0xffff
 	.2byte 0x0013
+	.global Func_080d7788
+	.thumb_func
+Func_080d7788:
 .L_080d7788:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -617,7 +620,7 @@ Func_080d7524:
 	mov	r1, r8
 	adds	r0, r5, #0
 	adds	r2, r7, #0
-	bl	.L_080d7788
+	bl	Func_080d7788
 .L_080d7a3c:
 	ldr	r1, [pc, #16]
 .L_080d7a3e:

@@ -9,7 +9,7 @@ Func_080d2b0c:
 	ldr	r5, [r3, #108]
 	adds	r6, r0, #0
 	adds	r7, r1, #0
-	bl	0x080ca18c
+	bl	Func_080ca18c
 	movs	r2, #178
 	lsls	r2, r2, #1
 	adds	r3, r5, r2

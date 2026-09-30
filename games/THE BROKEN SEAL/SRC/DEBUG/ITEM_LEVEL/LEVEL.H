@@ -44,19 +44,6 @@ void Engine_TaskWait();
 s32 DebugMenu_BrowseIcons(void);
 s32 DebugMenu_BrowseEntryGlyphs(void);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo shared with later uses in the block. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 u8 *ItemLevel_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *ItemLevel_GetExits(void);

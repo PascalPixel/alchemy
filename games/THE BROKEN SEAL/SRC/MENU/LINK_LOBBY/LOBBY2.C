@@ -3,6 +3,7 @@
 /* The link lobby: the scene teardown that clears the lobby flags. */
 #include "LOBBY.H"
 #include "SERIAL_RUNTIME.H"
+#include "CALL.H"
 
 extern u8 MsgLobbyWantParticipatePlease[];
 s32 Engine_GameFlagIsSet(s32 flag);
@@ -18,16 +19,6 @@ s32 Engine_EventEnd(void);
  * image, after the peers' wait. */
 u32 gLinkLobbyCallFrames;
 
-static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1(void (*f)(s32), s32 a0)
-{
-    f(a0);
-}
-
 extern u8 MsgLobbyLinkDisconnected[];
 
 extern u8 MsgEnemyLabel[];
@@ -39,11 +30,6 @@ s32 SerialRuntime_GetActiveTransfers(void);
 u8 *Owner_GetState(s32 owner);
 void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
 void Trade_GetOfferState(s32 mode);
-
-static __inline__ void Call2(void (*f)(s32, u16 *), s32 a0, u16 *a1)
-{
-    f(a0, a1);
-}
 
 /* Unless flag 0x203 is set, has the attendant call "please step into the
  * circle!" (MsgLobbyWantParticipatePlease) once every 300 frames: flag 0x200 marks a call
@@ -58,7 +44,7 @@ s32 LinkLobby_CallIntoCircle(void)
     }
     if (++gLinkLobbyCallFrames == 300) {
         gLinkLobbyCallFrames = 0;
-        Call1(Engine_GameFlagClear, 0x200);
+        Engine_GameFlagClear(0x200);
     }
     set = Value1(Engine_GameFlagIsSet, 0x200);
     if (set != 0) {
@@ -68,7 +54,7 @@ s32 LinkLobby_CallIntoCircle(void)
     Engine_EventSetMessage((s32)MsgLobbyWantParticipatePlease);
     Engine_EventOpenMessage(8, 0);
     Engine_TaskWait(5);
-    Call1(Engine_GameFlagSet, 0x200);
+    Engine_GameFlagSet(0x200);
     return Engine_EventEnd();
 }
 
@@ -157,7 +143,7 @@ test1:
         result++;
     }
     Engine_TaskWait(2);
-    Call2(Ui_AdjustValueWithoutLimit, (s32)MsgEnemyLabel, buf);
+    Call2(Ui_AdjustValueWithoutLimit, (s32)MsgEnemyLabel, (s32)(buf));
     i = 0;
     if (buf[i] != 0) {
         do {

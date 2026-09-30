@@ -372,13 +372,13 @@ Debug_SelectAbilityPair:
 Menu_Check:
 	.incbin "baserom.gba", 0x0001c494, 0x00000360
 	.section .rom.0001d9bc, "ax"
-	.incbin "baserom.gba", 0x0001d9bc, 0x0000019c
-	.section .rom.0001db58, "ax"
-	.global Menu_RunWorkspaceSelectionLoop
-	.type Menu_RunWorkspaceSelectionLoop, %function
+	.global Menu_CreateWorkspaceWindows
+	.type Menu_CreateWorkspaceWindows, %function
 	.thumb_func
-Menu_RunWorkspaceSelectionLoop:
-	.incbin "baserom.gba", 0x0001db58, 0x000002dc
+Menu_CreateWorkspaceWindows:
+	.incbin "baserom.gba", 0x0001d9bc, 0x0000019c
+	.section .rom.0001dd00, "ax"
+	.incbin "baserom.gba", 0x0001dd00, 0x00000134
 	.section .rom.0001de34, "ax"
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function
@@ -517,7 +517,10 @@ Data_080367d0:
 	.incbin "baserom.gba", 0x00036f58, 0x00000006
 	.global Data_080367d6
 Data_080367d6:
-	.incbin "baserom.gba", 0x00036f5e, 0x0000000e
+	.incbin "baserom.gba", 0x00036f5e, 0x00000006
+	.global Menu_WorkspaceIconFrames
+Menu_WorkspaceIconFrames:
+	.incbin "baserom.gba", 0x00036f64, 0x00000008
 	.global SideObject_CharacterIdMap
 SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x00036f6c, 0x00000028
@@ -993,12 +996,6 @@ Menu_ResolveSelectedAction:
 	.thumb_func
 Func_080a6614:
 	.incbin "baserom.gba", 0x0009d4ec, 0x000001ec
-	.section .rom.0009f490, "ax"
-	.global StatusMenu_ShowOwnerProgressMessage
-	.type StatusMenu_ShowOwnerProgressMessage, %function
-	.thumb_func
-StatusMenu_ShowOwnerProgressMessage:
-	.incbin "baserom.gba", 0x0009f490, 0x0000008c
 	.section .rom.0009f51c, "ax"
 	.global CharacterMenu_DrawStatusAilments
 	.type CharacterMenu_DrawStatusAilments, %function

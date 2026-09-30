@@ -1804,7 +1804,7 @@ Func_080e15e8:
 	movs	r0, #0
 	ldr	r1, [sp, #80]
 	ldr	r2, [sp, #76]
-	bl	Unnamed_080e6eac
+	bl	BattleEffect_RunImpactBurst
 	ldr	r1, [pc, #104]
 	ldr	r0, [sp, #128]
 	movs	r5, #0

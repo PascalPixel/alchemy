@@ -5,7 +5,6 @@ extern u8 MsgKareiHasLegacyLordHammetsSilk[];
 extern u8 MsgKareiLordHammetWillReleasedSoon[];
 extern u8 MsgKareiRobinSneakedIntoLunpaThats[];
 
-
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
 u8 *Object_GetById();
@@ -14,13 +13,6 @@ void SceneChannel_ConfigureUniformAndHandoff();
 s32 Object_SetActionCallbackAndRefreshById();
 
 /* Signed halfword table in RAM; index 225 selects the scene. */
-
-/*
- * Each Func_ symbol names the pre-relocation call word the image holds, not
- * a runtime address; imports are named by the main-image address in the
- * trailing word of the overlay veneer. Old-style declarations are required
- * here, because the arity varies from site to site.
- */
 
 /*
  * Call sites spelled through these wrappers pass their constants straight

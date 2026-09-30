@@ -10,7 +10,6 @@ extern u8 MsgHaidiaWhenDidYouComeBack[];
 extern u8 MsgHaidiaYouCameBack[];
 extern u8 MsgHaidiaYoureLeavingAgainSoon[];
 
-/* The 76-byte shared numbered-scene owner includes its two pool words. */
 void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 {
     if (GameFlag_IsSet(0x834) != 0)
@@ -64,11 +63,6 @@ void FieldScene_RunIndexedStep8(void)
     SceneState_SetRuntimeWord448To521AndRun(8);
 }
 
-/*
- * The record the fourth scene work cell (0x03001ec8) points to. The main-image
- * routine at 080949a8 counts the halfword at 0x1f80 down and, while the
- * halfword at 0x1f84 is set, plays cue 172 rather than 171.
- */
 struct FlashCueWork {
     u8 unknown_0000[0x1f84];
     s16 alternate_cue;
@@ -126,13 +120,6 @@ s32 Scene_RunSupplementalSequenceOne(void)
     return 0;
 }
 
-/*
- * Choose what follows from actor zero's directional halfword at +6 and two
- * story flags. The halfword is reduced by 0xa001 modulo 2^32 and compared
- * unsigned with 0x3ffe, so the first arm covers 0xa001..0xdfff; what that
- * range means is not established. The record is fetched before either path
- * is chosen. The 128-byte owner includes its seven pool words.
- */
 void FieldScene_RunByActorDirectionAndFlags(void)
 {
 

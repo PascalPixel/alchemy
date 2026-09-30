@@ -17,8 +17,6 @@ union Slot {
 
 s32 BuildMotionCountdown(s32, s16);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 void FieldScene_RunStepThen10(s32 a);
 void FieldScene_CallPairWith10(s32 a, s32 b);
 

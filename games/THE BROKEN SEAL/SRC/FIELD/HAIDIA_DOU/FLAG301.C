@@ -8,11 +8,6 @@ void SceneAudio_PlayCue123AndDispatchWork364(void)
     Event_RequestExit(val);
 }
 
-/*
- * resource_3a6 owner at 0x02001770, complete 104-byte span through its
- * one-word pool. It installs the common window rectangle, then selects one of
- * two row layouts from story flag 0x301.
- */
 void DialogueLayout_ConfigureRowsByFlag301(void)
 {
     Map_CopyCellRect(0, 34, 13, 3, 23, 34);
@@ -63,12 +58,6 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
     Event_End();
 }
 
-/*
- * The 54-byte owner at 0x020018b4 includes its two pool words: 0x301 and
- * 0x121 are identifiers passed as arguments, never dereferenced as
- * addresses.  0x301 is this scene's event flag.  The two shift calls carry
- * a displacement and its opposite, not two unrelated magnitudes.
- */
 void FieldScene_RunShiftAndSetFlag301(void)
 {
 

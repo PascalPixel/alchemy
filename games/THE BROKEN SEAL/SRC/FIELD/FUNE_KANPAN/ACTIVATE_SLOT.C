@@ -13,9 +13,6 @@ extern u8 LinkedMessage_TheresNothingWeCanDo[];
 s32 BuildMotionCountdown(s32, s16);
 u8 *Object_GetById(s32);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 void OverlayObject_ActivateSlotWithMode3(s32 a)
 {
     u8 *p = Object_GetById(a);

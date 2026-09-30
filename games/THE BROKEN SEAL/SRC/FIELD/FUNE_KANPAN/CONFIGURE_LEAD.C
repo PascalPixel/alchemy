@@ -25,8 +25,6 @@ s32 BuildMotionCountdown(s32, s16);
 
 void Event_CallWithLastActiveObjectId();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 void FieldScene_RunScene3af_02000bb8(void);
 
 /* Configures actors 20, 21, 22 and 23 (position, pose, and movement/sprite

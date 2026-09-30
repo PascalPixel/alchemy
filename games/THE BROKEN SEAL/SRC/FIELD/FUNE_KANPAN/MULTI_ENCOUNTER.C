@@ -15,8 +15,6 @@ s32 BuildMotionCountdown(s32, s16);
 
 void Battle_ResetEffectCounter();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 void FieldScene_RunScene3af_02000bf0(void);
 
 void FieldScene_RunScene3af_020010a0(void)

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "ITEM_IDS.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
@@ -12,13 +13,6 @@ void Owner_RecalculateStats();
 extern u8 KuupuappuHeya_Scripts[];
 extern u8 KuupuappuHeya_Messages[];
 extern u8 KuupuappuHeya_Regions[];
-
-enum {
-    /* Message 0x182 + 189. */
-    ITEM_WATER_OF_LIFE = 189,
-    /* Message 0x182 + 231. */
-    ITEM_BONE = 231
-};
 
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
@@ -71,12 +65,12 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
+extern struct EventRuntime *Data_03001ebc;
+
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_020036f8(s32 off, s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
+    u8 *work = (u8 *)Data_03001ebc;
     u16 *slot = (u16 *)((s32)work + off);
     s32 next = *slot + amount;
 

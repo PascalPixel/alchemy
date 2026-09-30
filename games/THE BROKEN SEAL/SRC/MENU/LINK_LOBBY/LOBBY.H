@@ -1,13 +1,13 @@
 #ifndef LINK_LOBBY_LOBBY_H
 #define LINK_LOBBY_LOBBY_H
 
-/* The link lobby (resource_3cb): the declarations its scene sources share. */
+/* The link lobby (resource_3cb): the declarations its scene sources share.
+   Its scene handlers return s32 but many end in a void engine call, leaving
+   that call's r0 as their result, as the ROM's handlers do. */
 
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 #include "SCENE.H"
-extern struct EventWork *gEventWork;
-
-extern s16 gGameState[];
 extern u8 gLinkLobbyEntrances[];
 extern u8 gLinkLobbyExits[];
 extern u8 gLinkLobbyPlacements[];

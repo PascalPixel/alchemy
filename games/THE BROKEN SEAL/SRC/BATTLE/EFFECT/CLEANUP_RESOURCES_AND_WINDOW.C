@@ -142,7 +142,7 @@ void Map_UpdateWorldMapMarkers(void)
     volatile u16 *ime;
 
     work = (struct WorldMapWork *)Ram_MapCellBuffer;
-    leader = gGameState.current_owner;
+    leader = gGameState.selected_actor;
     place = WorldMap_PlaceMarkers;
     tile_base = gVramBlockCache[work->vram_block].offset >> 5;
     marker = work->markers;
@@ -150,7 +150,7 @@ void Map_UpdateWorldMapMarkers(void)
     best_distance = 100;
     blend = WorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
     if (!GameFlag_TestFar(0x11c) && (gKeysHeld & 0x300)) {
-        object = ObjectTable_Get(gGameState.current_owner);
+        object = ObjectTable_Get(gGameState.selected_actor);
         if (object == NULL)
             goto markers;
         cursor_x = ((object->x - 0x10000000) >> 16) * 240 / 4096;

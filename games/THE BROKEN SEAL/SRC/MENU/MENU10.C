@@ -1,10 +1,10 @@
 #include "TYPES.H"
+#include "SCENE.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
 #include "OWNER_STATE.H"
-#include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
@@ -45,16 +45,72 @@ void Func_080153d8(void *);
 void *Runtime_GetLowTableAddress(void);
 void Graphics_AdjustPaletteBank(s32);
 s32 Func_080aafb8(struct BackdropSave *);
-
 #define ACTION_MASK 0x3fff
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000
-
 extern u8 Data_03001f2c[];
 s16 Djinn_ListOwnerEntries(void *, s32, s32);
 
 /* menu/core/compute_entry_values.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+
+void Graphics_AdjustPaletteBank(s32 arg0)
+{
+    s32 iter;
+    s32 bank;
+    s32 col;
+    s32 mask;
+    s32 idx;
+
+    bank = 15;
+    iter = 0;
+    mask = 31;
+    do
+    {
+        for (col = 0; col <= 15; col++)
+        {
+            u32 color;
+            s32 blue;
+            s32 green;
+            s32 red;
+            s32 value;
+
+            idx = bank * 16 + col;
+            color = ((u16 *)0x05000000)[idx];
+            blue = (color >> 10) & mask;
+            green = (color >> 5) & mask;
+            red = color & mask;
+            blue += arg0;
+            green += arg0;
+            red += arg0;
+            if (blue > 31)
+                blue = 31;
+            if (green > 31)
+                green = 31;
+            if (red > 31)
+                red = 31;
+            if (blue < 0)
+                blue = 0;
+            if (green < 0)
+                green = 0;
+            if (red < 0)
+                red = 0;
+            value = blue << 10;
+            value |= green << 5;
+            value |= red;
+            ((s16 *)0x04FFFFE0)[idx] = (s16)value;
+        }
+        if (iter == 0)
+        {
+            bank = 5;
+        } else
+        {
+            bank = 7;
+            arg0 = -12;
+        }
+        iter++;
+    } while (iter <= 2);
+}
 
 /* Opens the full-width menu window: saves BG character block 1 and
    palettes 4-7 into the backdrop buffer, blanks them with fill patterns,

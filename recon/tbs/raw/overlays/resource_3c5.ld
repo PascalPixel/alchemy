@@ -12,8 +12,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IRIGUCHI.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/FIND_FWD.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IRIGUCHI2.o"(.text)
         "*/resource_3c5_overlay.o"(.text.x0200a8a0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

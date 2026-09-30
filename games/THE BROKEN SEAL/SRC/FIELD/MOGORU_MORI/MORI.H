@@ -2,6 +2,9 @@
 #ifndef MORI_H
 #define MORI_H
 
+/* The forest links the staged-actor code, so its scenes reach the engine by
+   the names that code gives the imports. */
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -24,12 +27,6 @@ struct Owner {
     u8 unk9_0 : 2;
     u8 mode : 2;
     u8 unk9_4 : 4;
-};
-
-/* The probe record is passed on by value: four words in r0-r3 and the last two
- * copied to the outgoing stack area by an `ldmia`/`stmia` pair. */
-struct Resource39fProbe {
-    s32 word[6];
 };
 
 typedef struct OrbitingSceneObjectSprite {
@@ -121,7 +118,6 @@ extern u8 MogoruMori_SceneTable[];
 /* 0x02004f28 serves two imports: the two-argument setter at site 7 and the
  * three-argument step at site 14. */
 
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 /* The sources call one another across files. */
 void OverlayObject_SetOwnerMode(u8 *object, s32 mode);

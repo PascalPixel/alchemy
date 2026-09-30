@@ -1,21 +1,19 @@
 #include "IRIGUCHI.H"
 #include "TYPES.H"
 #include "CALL.H"
+#include "STAGED_ACTOR.H"
 
 void Effect_AdvanceMotion(struct MotionEffect *effect);
 void OverlayObject_WaitUntilIdle(s32 *obj);
-
 extern const struct SceneEntrance gBabiIriguchiEntrances3[];
 extern const struct SceneEntrance gBabiIriguchiEntrances2[];
 extern const struct SceneEntrance gBabiIriguchiEntrances1[];
 extern const struct SceneEntrance gBabiIriguchiEntrancesOther[];
 extern const struct SceneRegion gBabiIriguchiRegions3[];
-
 extern const struct ScenePlacement gBabiIriguchiPlacements3[];
 extern const struct ScenePlacement gBabiIriguchiPlacements2[];
 extern const struct ScenePlacement gBabiIriguchiPlacements1[];
 extern const struct ScenePlacement gBabiIriguchiPlacementsOther[];
-
 void Engine_EventBegin();
 void Engine_ActorShowEmote();
 void ObjectMotion_SetSpeedParameters();
@@ -25,14 +23,23 @@ void ObjectMotion_CommitCurrentPositionAndActivate();
 void Engine_ActorFaceDirection();
 void SceneState_ApplyRectsAtActors8And9();
 void Engine_EventEnd();
-
 extern u8 MsgBabiSeemsLocked[];
 extern u8 MsgBabiTheDoor[];
 extern u8 MsgBabiYoureSureTheyWentThrough[];
-
 extern u8 MsgBabiTruthDoorOpenThoseSeeing[];
 extern u8 MsgFieldFlippedSwitch[];
 void FieldScene_RunActorEventSequence(void);
+
+extern s32 StagedActor_DirectionSteps[];
+s32 Map_GetTerrainHeight(s32 mode, s32 x, s32 z);
+
+s32 battle_owner_69(void);
+s32 FieldEffect_UpdateGridPlacement(void);
+void SceneActor_PushObjectAheadIfLevel(void);
+extern const struct SceneEvent gBabiIriguchiEvents3[];
+extern const struct SceneEvent gBabiIriguchiEvents2[];
+extern const struct SceneEvent gBabiIriguchiEvents1[];
+extern const struct SceneEvent gBabiIriguchiEventsOther[];
 
 void SceneState_SetValue8Mode66(void)
 {
@@ -981,4 +988,168 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
         Event_ShowMessage(-1, 0);
     }
     Event_End();
+}
+
+/* The terrain lookup consumes both computed coordinates, not just the mode.
+ * Omitting x/z left their live argument registers unexplained in the draft.
+ * Exact complete 72-byte owner, including both final pool words. */
+struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
+{
+    s32 pos[3];
+    s32 *p = pos;
+    s32 step = StagedActor_DirectionSteps[actor->direction_and_kind >> 12];
+
+    {
+        s32 x = actor->x.value;
+        s32 z = actor->z.value;
+
+        x += -0x10000 & step;
+        z += step << 16;
+        p[0] = x;
+        p[2] = z;
+    }
+    p[1] = Map_GetTerrainHeight(actor->transition_mode, p[0], p[2]);
+    return StagedActor_FindAtTile(p, actor);
+}
+
+void SceneState_SetRuntimeByte34(void)
+{
+    FIELD_AT_OFFSET(*(void **)gEffectWork, s8 *, 0x34) = 1;
+}
+
+void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
+{
+    s32 *p = Actor_Get(12);
+    s32 a = p[2] >> 20;
+
+    if (a == 20) {
+        s32 b = p[4] >> 20;
+
+        if (b == 12) {
+            ((u8 *)p)[85] = 2;
+            p[5] = 0x300000;
+            ((u8 *)p)[35] = 2;
+            {
+                s32 k5 = a, k6 = b;
+
+                Iriguchi_CopyCellAttributes(38, 12, 1, 1, k5, k6);
+            }
+        }
+    }
+}
+
+void SceneActor_PushObjectAheadIfLevel(void)
+{
+    struct StagedActor *p = (struct StagedActor *)Actor_Get(ACTOR_PARTY_LEADER);
+    struct StagedActor *q = BabiIriguchi_FindActorAhead(p);
+    s32 diff;
+
+    if (q == 0) {
+        return;
+    }
+
+    diff = q->y - p->y;
+
+    if (diff >= 0) {
+        /* Written with an empty arm on purpose: the reference branches away on
+         * the *return* condition (`bge`), and spelling this as a plain
+         * `if (diff >= 0x80000) return;` inverts it to `blt`. Arm order
+         * decides the branch sense; no flag moves it. */
+        if (diff < 0x80000) {
+        } else {
+            return;
+        }
+    } else if (p->y - q->y >= 0x80000) {
+        return;
+    }
+
+    StagedActor_AdvancePair();
+}
+
+/* The facing check reads the game state as rows of bytes, not through the
+ * field event header's structure. */
+
+/* With the party leader facing north or south and either the byte at 498 of
+ * the game state set or no actor ahead, runs the grid placement for that
+ * facing; unless that placement reports zero, pushes the object ahead when
+ * the byte is clear. */
+void SceneActor_RunSlotZeroFacingCheck(void)
+{
+    struct StagedActor *p = (struct StagedActor *)Object_GetById(0);
+    struct StagedActor *ahead = BabiIriguchi_FindActorAhead(p);
+    s32 m = (p->direction_and_kind + 0x2000) & 0xc000;
+    s32 r = -1;
+
+    if (gGameState.movement_mode == 1 || ahead == 0) {
+        if (m == 0xc000) {
+            r = battle_owner_69();
+        }
+        if (m == 0x4000) {
+            r = FieldEffect_UpdateGridPlacement();
+        }
+    }
+    if (r != 0) {
+        if (gGameState.movement_mode != 1) {
+            SceneActor_PushObjectAheadIfLevel();
+        }
+    }
+}
+
+/* What each of the entrance's scenes answers. */
+const struct SceneEvent *Scene_GetEvents(void)
+{
+    s16 scene = gGameState.scene;
+
+    if (scene == (s32)&SceneId_BabiIriguchi3) {
+        return gBabiIriguchiEvents3;
+    }
+    if (scene == (s32)&SceneId_BabiIriguchi2) {
+        return gBabiIriguchiEvents2;
+    }
+    if (scene == (s32)&SceneId_BabiIriguchi1) {
+        return gBabiIriguchiEvents1;
+    }
+    return gBabiIriguchiEventsOther;
+}
+
+void SceneState_ConfigureRegion82_7AndApply768(void)
+{
+    /* The two stack arguments each need their own local: the reference builds
+     * both into separate registers before storing either, and a literal pair
+     * lets the compiler reuse one register for both. */
+    s32 a = 18;
+    s32 b = 7;
+
+    Iriguchi_CopyCellAttributes(82, 7, 1, 2, a, b);
+    Iriguchi_TaskWait(1);
+    GameFlag_Set(768);
+}
+
+void SceneState_ApplyRectsAtActors8And9(void)
+{
+    s32 *p = Actor_Get(8);
+
+    Actor_SetSpritePriority(8, 1);
+    Actor_SetSpritePriority(9, 1);
+    {
+        s32 k5 = 5, k6 = 19;
+
+        Iriguchi_CopyCellAttributes(69, 19, 3, 3, k5, k6);
+    }
+    {
+        s32 k5 = 17, k6 = 19;
+
+        Iriguchi_CopyCellAttributes(69, 19, 3, 3, k5, k6);
+    }
+    {
+        s32 k5 = p[2] >> 20, k6 = p[4] >> 20;
+
+        Iriguchi_CopyCellAttributes(3, 3, 1, 1, k5, k6);
+    }
+    {
+        s32 *q = Actor_Get(9);
+        s32 k5 = q[2] >> 20, k6 = q[4] >> 20;
+
+        Iriguchi_CopyCellAttributes(3, 3, 1, 1, k5, k6);
+    }
 }

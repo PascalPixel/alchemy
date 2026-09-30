@@ -1,12 +1,4 @@
 #include "DMA.H"
-/* Load character set `resource` into the background (or, when alternate, the
-   second) character block and its palette into the matching bank; resource
-   0 clears them instead. The packed decoder is copied from ROM into heap
-   block 49 and run there; the palette load is queued for the next frame.
-
-   FAKEMATCH: the queued palette load is QueueIoWriteDelay-style inline code
-   with the odd constructs of SYSTEM/IO_WRITE_QUEUE.C (a one-pass loop around
-   the IME read, and the count stored through an explicit u16 pointer). */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
@@ -21,6 +13,16 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 
 /* The decoder returns a value this caller ignores. */
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
+
+typedef struct {
+    u16 unused[4];
+    u16 first;
+    u16 padding;
+    u16 second;
+} State;
+
+extern u32 gFrameTick;
+extern State gBgScroll;
 
 /* Clears the background (or, when alternate, the second) character block to
    its fill pattern and the matching palette bank to zero. */
@@ -46,6 +48,14 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alternate)
     Dma_Set((const void *)&fill, (void *)palette, 0x85000040, (volatile u32 *)0x040000d4);
 }
 
+/* Load character set `resource` into the background (or, when alternate, the
+   second) character block and its palette into the matching bank; resource
+   0 clears them instead. The packed decoder is copied from ROM into heap
+   block 49 and run there; the palette load is queued for the next frame.
+
+   FAKEMATCH: the queued palette load is QueueIoWriteDelay-style inline code
+   with the odd constructs of SYSTEM/IO_WRITE_QUEUE.C (a one-pass loop around
+   the IME read, and the count stored through an explicit u16 pointer). */
 void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
 {
     u8 *data;
@@ -96,5 +106,45 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
             *destination = 0x84000040;
         }
         *ime = saved;
+    }
+}
+
+void DisplayScroll_BuildHblankWordTable(u32 *arg0)
+{
+    s32 count;
+    u32 value = 0x01FF01FF;
+    u32 step = 0x10000;
+
+    count = 31;
+    do {
+        count--;
+        *arg0++ = value;
+    } while (count >= 0);
+    count = 239;
+    do {
+        count--;
+        *arg0++ = step;
+        step += 0x20002;
+    } while (count >= 0);
+    count = 47;
+    do {
+        count--;
+        *arg0++ = value;
+    } while (count >= 0);
+    step = 0;
+    count = 191;
+    do {
+        count--;
+        *arg0++ = step;
+    } while (count >= 0);
+}
+
+void DisplayScroll_StepPositionEveryFourFrames(void)
+{
+    if ((gFrameTick & 3) == 0) {
+        State *state = &gBgScroll;
+        u32 decrement = 0xffff; /* one step back in the 16-bit positions */
+        state->first += decrement;
+        state->second += decrement;
     }
 }

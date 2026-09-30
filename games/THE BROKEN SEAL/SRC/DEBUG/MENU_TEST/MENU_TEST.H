@@ -3,6 +3,7 @@
 #define MENU_TEST_H
 
 #include "TYPES.H"
+#include "OWNER_STATE.H"
 
 extern s16 Data_02000240[];
 extern volatile s32 Data_03001ae8;
@@ -38,7 +39,6 @@ s32 Inventory_AddItem();
 s32 Djinn_AddToOwner();
 s32 Djinn_Activate();
 s32 Owner_AdjustFirstValue();
-s32 Owner_GetState();
 s32 Owner_AdjustSecondValue();
 s32 Party_RemoveActiveOwner();
 s32 Party_AddActiveOwner();

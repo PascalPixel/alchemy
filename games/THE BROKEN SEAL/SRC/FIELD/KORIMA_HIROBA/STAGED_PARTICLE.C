@@ -87,9 +87,9 @@ u8 *SceneData_GetActorTable(void) { return KorimaHiroba_Actors; }
 /* Runs the six-word placement query and forwards a successful result. */
 void SceneActor_RunPlacementQuery(void)
 {
-    StagedActorMovementRequest result;
+    struct StagedActorProbe result;
     Event_Begin();
-    if (StagedActor_FindClearPosition((struct StagedActorProbe *)&result))
+    if (StagedActor_FindClearPosition(&result))
         SceneActor_MoveAndRedraw(result);
     Event_End();
 }

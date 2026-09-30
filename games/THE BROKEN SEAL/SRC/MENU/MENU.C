@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "GLOBAL_CELLS.H"
 
 struct SlotEntry {
     struct SlotEntry *next;
@@ -71,6 +72,45 @@ struct Node *NodeChain_GetNodeAtCount(struct Screen *, u32);
 void UiText_DrawCharacterAtOffset(s32, struct UiWork *, s32, s32);
 void UiWork_Finalize(struct UiWork *, s32);
 void RenderOutput_PrepareForRedraw(struct UiWork *);
+
+void Runtime_ReleaseHeapBlock(u32 value);
+
+struct Node_0801b148 {
+    u32 value0;
+    struct Node_0801b148 *next;
+    u16 value8;
+    u16 active;
+    u16 handle;
+};
+
+struct Work;
+void Resource_ScheduleOwnerReset(void);
+void WaitFrames(s32);
+s32 Resource_ResetEntry(u32 index);
+void Resource_ResetPendingTransfer(void);
+
+s32 Menu_SetupSelectionSide(s32, s32);
+extern u8 Data_03001e98[];
+
+/* menu/selection/set_node_coordinates.c */
+struct Node_0801b1ec {
+    u8 filler0[4];
+    struct Node_0801b1ec *next;
+    u8 filler8[8];
+    u16 first1;
+    u16 second1;
+    u8 filler14[4];
+    u16 first2;
+    u16 second2;
+};
+
+struct State_0801b1ec {
+    u8 filler0[0x348];
+    struct Node_0801b1ec *head;
+    u8 filler34c[0x4a];
+    u16 first;
+    u16 second;
+};
 
 void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
 {
@@ -149,4 +189,67 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
             break;
         }
     }
+}
+
+void Resource_ResetOwnerEntries(void)
+{
+    u8 *state = gResQueueWork;
+    struct Node_0801b148 *node;
+
+    Resource_ScheduleOwnerReset();
+    UiWork_Finalize(*(struct Work **)(state + 0x350), 2);
+    WaitFrames(1);
+    node = *(struct Node_0801b148 **)(state + 0x348);
+    while (node != 0) {
+        if (node->active != 0) {
+            Resource_ResetEntry(node->handle);
+            node->active = 0;
+        }
+        node = node->next;
+    }
+    node = *(struct Node_0801b148 **)(state + 0x34c);
+    while (node != 0) {
+        if (node->active != 0) {
+            Resource_ResetEntry(node->handle);
+            node->active = 0;
+        }
+        node = node->next;
+    }
+    Resource_ResetPendingTransfer();
+    if (*(s16 *)(state + 18) != 0) {
+        Resource_ResetEntry(*(u16 *)(state + 12));
+        if (*(s16 *)(state + 18) != 0) {
+            Resource_ResetEntry(*(u16 *)(state + 64));
+        }
+    }
+    Resource_ResetEntry(*(u16 *)(state + 0x2e4));
+    Runtime_ReleaseHeapBlock(18);
+}
+
+void Menu_SetNodeCoordinates(u32 first, u32 second)
+{
+    struct State_0801b1ec *state = gResQueueWork;
+    struct Node_0801b1ec *node;
+
+    state->first = first;
+    state->second = second;
+    node = state->head;
+    while (node != 0) {
+        node->first1 = first;
+        node->first2 = first;
+        node->second1 = second;
+        node->second2 = second;
+        node = node->next;
+        first += 16;
+    }
+}
+
+/* menu/selection/setup_both_sides.c */
+void Menu_SetupSelectionBothSides(void)
+{
+    s32 state;
+
+    state = *(s32 *)((u32)&Data_03001e98);
+    Menu_SetupSelectionSide(state, 0);
+    Menu_SetupSelectionSide(state, 1);
 }

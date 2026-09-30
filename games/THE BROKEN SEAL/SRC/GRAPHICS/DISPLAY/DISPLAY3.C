@@ -1,45 +1,124 @@
-#include "DMA.H"
-#include "SYSTEM.H"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
+#include "FIXED_MATH.H"
 
-extern u8 Data_03001ecc[];
+extern u8 gBlendFramesLeft;
+extern volatile u8 gBlendTargetLevel;
+extern u8 gBlendStartLevel;
+extern volatile u8 gBlendDuration;
+extern u8 gBlendBrighten;
+extern u16 gBlendLayers;
+s32 WaitFrames(s32);
 
-struct DisplayTransitionState {
-    u8 data[0x528];
-    s16 value;
-    s16 timer;
-};
+extern u8 IwramClearWords[];
+extern u8 gObjAffineCount[];
+extern u8 Data_03001400[];
 
-void DisplayTransition_FillTilemapAndSolidTile(s32);
-void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
-void DisplayTransition_UpdateFrame(void);
+/*
+ * _call_via_r3 names a bx rN veneer slot, so this is an indirect call
+ * through the register loaded just before it -- the relocated routine at
+ * 0x03000164. Its argument count is not established.
+ */
+s32 _call_via_r3(s32, s32, s32, s32);
 
-void DisplayTransition_FillTilemapAndSolidTile(s32 color)
+void BlendTransition_Update(void)
 {
-    u8 *work = *(u8 **)Data_03001ecc;
-    volatile u32 fill = 0xf000f000;
-    Dma_Set(&fill, (void *)0x06002000, 0x85000140, (volatile u32 *)0x040000d4);
-    if (color != -1) {
-        u32 pattern = 0;
-        s32 cnt;
-        u32 *tile;
-        for (cnt = 7; cnt >= 0; --cnt) pattern = (pattern << 4) | color;
-        tile = (u32 *)(work + 1288);
-        for (cnt = 7; cnt >= 0; --cnt) *tile++ = pattern;
-        Dma_Set(work + 1288, (void *)0x06000000, 0x84000008, (volatile u32 *)0x040000d4);
+    if (gBlendDuration != 0) {
+        {
+            volatile u16 *blend_control;
+            u32 control;
+
+            if (gBlendBrighten != 0) {
+                control = gBlendLayers | 0x80;
+                blend_control = (volatile u16 *)0x04000050;
+            } else {
+                control = gBlendLayers | 0xc0;
+                blend_control = (volatile u16 *)0x04000050;
+            }
+            *blend_control = control;
+        }
+        {
+            u8 *remaining = &gBlendFramesLeft;
+            s32 delta;
+            s32 level;
+            s32 step;
+
+            (*remaining)--;
+            level = gBlendTargetLevel;
+            delta = gBlendStartLevel - gBlendTargetLevel;
+            step = *remaining;
+            level += Math_Div(delta * step, gBlendDuration);
+            *(volatile u16 *)0x04000054 = level;
+            if (*remaining == 0)
+                gBlendDuration = 0;
+        }
     }
 }
 
-void DisplayTransition_InitializeState(s32 value)
+void Blend_SetDarkenTarget16(s32 duration)
 {
-    struct DisplayTransitionState *state;
-    volatile u32 zero;
+    gBlendBrighten = 0;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0x10;
+    gBlendDuration = duration;
+    gBlendFramesLeft = gBlendDuration;
+}
 
-    state = Runtime_AllocateBlock(0x1f, 0x540);
-    zero = 0;
-    Dma_Set(&zero, state, 0x85000150, (volatile u32 *)0x040000d4);
-    DisplayTransition_FillTilemapAndSolidTile(0);
-    state->value = value;
-    state->timer = 0;
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
-    WaitFrames(0x78);
+void Blend_SetDarkenTarget0(s32 duration)
+{
+    gBlendBrighten = 0;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0;
+    gBlendDuration = duration;
+    gBlendFramesLeft = gBlendDuration;
+}
+
+void Blend_SetBrightenTarget16(s32 duration)
+{
+    gBlendBrighten = 1;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0x10;
+    gBlendDuration = duration;
+    gBlendFramesLeft = gBlendDuration;
+}
+
+void Blend_SetBrightenTarget0(s32 duration)
+{
+    gBlendBrighten = 1;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0;
+    gBlendDuration = duration;
+    gBlendFramesLeft = gBlendDuration;
+}
+
+void Blend_ConfigureTransition(s8 mode, s32 coefficient, u32 start, s32 target, s32 duration)
+{
+    gBlendBrighten = mode;
+    gBlendLayers = coefficient & 0x3f;
+    if (start > 0x10U) {
+        gBlendStartLevel = gBlendTargetLevel;
+    } else {
+        gBlendStartLevel = start;
+    }
+    gBlendTargetLevel = target;
+    gBlendFramesLeft = (gBlendDuration = duration);
+}
+
+void Blend_WaitForTransition(void)
+{
+    if (gBlendDuration != 0) {
+        do {
+            WaitFrames(1);
+        } while (gBlendDuration != 0);
+    }
+}
+
+void Graphics_ResetFrameState(void)
+{
+    *(s8 *)((u32)&gObjAffineCount) = 0;
+    _call_via_r3(((u32)&Data_03001400), 0x400, ((u32)&gObjAffineCount), (u32)IwramClearWords);
 }

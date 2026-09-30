@@ -712,13 +712,15 @@ fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), Str
 /// The sound files a game's data source reads, as pret's data files read the
 /// `.bin` files its build makes: `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"`
 /// names the file the build writes from `SOUND/SAMPLE/WAVE_00.PCM8.WAV`,
-/// relative to the build directory.
+/// relative to the build directory. `COMMON/SOUND/...` names a file built
+/// from the input of that path in games/COMMON, one both games share.
 fn sound_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"(SOUND/[A-Za-z0-9_./]+\.bin)""#)
-        .expect("static pattern");
+    let pattern =
+        regex::Regex::new(r#"(?m)^\s*\.incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)""#)
+            .expect("static pattern");
     pattern
         .captures_iter(&text)
         .map(|capture| capture[1].to_owned())
@@ -741,9 +743,13 @@ fn build_sound_files(
                 source.display()
             ));
         }
+        let (game, stem) = match stem.strip_prefix("COMMON/") {
+            Some(shared) => ("games/COMMON", shared),
+            None => (target.game_dir(), stem),
+        };
         let inputs: Vec<PathBuf> = ["WAV", "PCM4"]
             .iter()
-            .map(|extension| Path::new(target.game_dir()).join(format!("{stem}.{extension}")))
+            .map(|extension| Path::new(game).join(format!("{stem}.{extension}")))
             .filter(|path| root.join(path).is_file())
             .collect();
         let [input] = inputs.as_slice() else {

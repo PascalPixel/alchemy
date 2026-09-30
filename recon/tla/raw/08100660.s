@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08100660
+	.global ItemMenu_ArrangeCategoryItemIcons
 	.thumb_func
-Func_08100660:
+ItemMenu_ArrangeCategoryItemIcons:
 .L_08100660:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

@@ -851,7 +851,7 @@ SECTIONS
         "*/recon/tla/raw/080f8090.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
         "*/recon/tla/raw/080f80c4.o"(.text .rodata .data .padding)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
         "*/recon/tla/raw/080f8170.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
         "*/recon/tla/raw/080f8656.o"(.text .rodata .data .padding)

@@ -13,9 +13,9 @@ Func_08038000:
 	bx	r4
 	.2byte 0x9005
 	.2byte 0x0803
-	.global Func_08038010
+	.global UiWindow_CreateFar
 	.thumb_func
-Func_08038010:
+UiWindow_CreateFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x9261

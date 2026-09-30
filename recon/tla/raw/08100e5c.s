@@ -141,7 +141,7 @@ Func_08100e5c:
 	movs	r2, #17
 	movs	r3, #5
 	movs	r0, #13
-	bl	0x08038010
+	bl	UiWindow_CreateFar
 	adds	r3, r7, #0
 	adds	r3, #240
 	str	r0, [r3, #0]
@@ -1010,7 +1010,7 @@ Func_08100e5c:
 	ldr	r0, [sp, #8]
 	movs	r2, #5
 	movs	r3, #30
-	bl	Func_080f811c
+	bl	UiWindow_UpdateOrCreate
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r3, [pc, #324]

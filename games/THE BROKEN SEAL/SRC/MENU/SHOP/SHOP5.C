@@ -6,6 +6,7 @@
 #include "UI.H"
 #include "TBS_EDITION.H"
 #include "PARTY_STATE.H"
+#include "TYPES.H"
 
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
@@ -18,7 +19,6 @@ void UiMessage_ShowAndWait(s32);
 void Shop_RepairItem(s32, s32);
 extern u8 MsgItemPlainName;
 extern u8 MsgRepairAnythingElse;
-
 extern u8 MsgShopRepairConfirm[];
 extern u8 MsgCannotRepairKind[];
 extern u8 MsgNotDamaged[];
@@ -34,7 +34,6 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Func_08077068(s32 unit_id, s32 slot);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
-
 extern volatile u32 gKeyState;
 #define SPECIAL_ITEM 228
 
@@ -57,6 +56,11 @@ void Inventory_RemoveFar(s32 unit_id, s32 slot);
 s32 Inventory_CountFar(s32 unit_id);
 void Party_AdjustSixDigitCounterBFar(s32 amount);
 void Func_080772a0(s32 value);
+
+extern s16 EventTable_AbilityLoadouts[][33];
+s32 GameFlag_TestFar(s32);
+s32 GameFlag_SetBitFar(s32);
+void Ability_GetMaximum(s32, s32);
 
 s32 Shop_SelUnit(void)
 {
@@ -206,7 +210,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
         UiMessage_ShowAndRestoreState((s32)MsgCursedWontComeOff);
         return;
     }
-    if (price > gGameState.money) {
+    if (price > gGameState.coins) {
         UiMessage_ShowAndRestoreState((s32)MsgNotEnoughMoney);
         return;
     }
@@ -325,4 +329,67 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
     }
 done:
     shop->selected_item = saved;
+}
+
+s32 EventTable_GetRowLimit(void)
+{
+    return 35;
+}
+
+void EventTable_ApplyRowAbilities(s32 row_no)
+{
+    s16 *row;
+    s16 *entry;
+    s32 value;
+    s32 count;
+    s32 flag;
+
+    flag = row_no + 0x400;
+    if (GameFlag_TestFar(flag) == 0) {
+        GameFlag_SetBitFar(flag);
+        count = 0;
+        value = EventTable_AbilityLoadouts[row_no][24];
+        if (value != 0) {
+            row = EventTable_AbilityLoadouts[row_no];
+            entry = row + 24;
+            do {
+                Ability_GetMaximum(value, 1);
+                count++;
+                if (count > 7)
+                    break;
+                entry++;
+                value = *entry;
+            } while (value != 0);
+        }
+    }
+}
+
+s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
+{
+    s16 *src;
+    s16 *dst;
+    s32 count;
+
+    count = 0;
+    if (EventTable_AbilityLoadouts[row_no][0] != 0) {
+        dst = output;
+        src = EventTable_AbilityLoadouts[row_no];
+        do {
+            /* FAKEMATCH: only the copy read is volatile, so its lifetime
+               stays separate from the signed sentinel read. */
+            *dst = *(volatile s16 *)src;
+            count++;
+            src++;
+            dst++;
+            if (count > 23)
+                break;
+        } while (*src != 0);
+    }
+    output[count] = 0;
+    return count;
+}
+
+s32 EventTable_GetRowType(s32 index)
+{
+    return EventTable_AbilityLoadouts[index][32];
 }

@@ -28,7 +28,7 @@ Field_Map175:
 	.incbin "MAP/MAP_175/SHAPE_GRID_JA.plane.lz"
 	.balign 4, 0
 .LField_Map175_ANIMATION:
-	.incbin "MAP/MAP_175/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_029/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map175_BLEND:
 	.incbin "MAP/MAP_057/BLEND.script.lz"
@@ -60,7 +60,7 @@ Field_Map175:
 	.incbin "MAP/MAP_175/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map175_ANIMATION:
-	.incbin "MAP/MAP_175/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_029/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map175_BLEND:
 	.incbin "MAP/MAP_057/BLEND.script.lz"

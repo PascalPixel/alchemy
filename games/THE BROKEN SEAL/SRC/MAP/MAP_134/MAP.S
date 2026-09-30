@@ -18,7 +18,7 @@ Field_Map134:
 	.incbin "MAP/MAP_134/METATILES_DE.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "MAP/MAP_130/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_130/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "MAP/MAP_134/GRID_DE.parts.lz"
@@ -47,7 +47,7 @@ Field_Map134:
 	.incbin "MAP/MAP_134/METATILES_DE.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "MAP/MAP_130/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_130/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "MAP/MAP_134/GRID_DE.parts.lz"
@@ -76,7 +76,7 @@ Field_Map134:
 	.incbin "MAP/MAP_134/METATILES_DE.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "MAP/MAP_130/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_130/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "MAP/MAP_134/GRID_DE.parts.lz"
@@ -105,7 +105,7 @@ Field_Map134:
 	.incbin "MAP/MAP_134/METATILES_DE.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "MAP/MAP_130/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_130/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "MAP/MAP_134/GRID_DE.parts.lz"
@@ -133,7 +133,7 @@ Field_Map134:
 	.incbin "MAP/MAP_134/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "MAP/MAP_130/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_130/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
 	.incbin "MAP/MAP_134/GRID.parts.lz"

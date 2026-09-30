@@ -341,10 +341,10 @@ void FieldScene_RunTransitionOrFallback(void)
  */
 void SceneState_ApplyPlacementResult(void)
 {
-    StagedActorMovementRequest out;
+    struct StagedActorProbe out;
 
     Event_Begin();
-    if (StagedActor_FindClearPosition((struct StagedActorProbe *)&out) != 0)
+    if (StagedActor_FindClearPosition(&out) != 0)
         SceneActor_MoveAndRedraw(out);
     Event_End();
 }

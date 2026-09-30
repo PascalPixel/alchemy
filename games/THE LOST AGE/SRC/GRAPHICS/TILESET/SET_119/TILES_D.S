@@ -3,4 +3,4 @@
 	.section .rodata
 	.global Tileset_Set119TilesD
 Tileset_Set119TilesD:
-	.incbin "GRAPHICS/TILESET/SET_119/TILES_D.4bpp.mtf"
+	.incbin "COMMON/GRAPHICS/TILESET/SET_08/TILES_D.4bpp.mtf"

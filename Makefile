@@ -28,6 +28,10 @@ compiler-runtime: toolchain-check compiler-source-check
 	    _thenan_df=dp-bit.c \
 	    _lshrdi3=gcc/libgcc2.c
 
+# A fresh clone builds the library once, from make bootstrap.
+$(LIBGCC):
+	$(MAKE) compiler-runtime
+
 .PHONY: help bootstrap compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-full build-rom
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
@@ -51,6 +55,7 @@ help:
 
 bootstrap:
 	$(ALCHEMY) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
+	$(MAKE) $(LIBGCC)
 
 # In a new worktree, before its first build: link the main checkout's ROMs
 # and installed tools, and clone its tool and game builds copy-on-write so

@@ -1,7 +1,13 @@
-#include "DMA.H"
-#include "RESOURCE_IDS.H"
 #include "TYPES.H"
+#include "RESOURCE.H"
+#include "SYSTEM.H"
+#include "RESOURCE_IDS.H"
+#include "DMA.H"
 #include "TBS_EDITION.H"
+
+s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
+u32 Resource_DecodeByteLz(const void *, void *);
+s32 Resource_GetBuffer(s32 index, s32 value);
 
 /* A text window's glyph palette: the slot each font colour was given, 0xff
    while unassigned, and the number of slots used. */
@@ -10,14 +16,9 @@ struct GlyphPalette {
     s32 count;
 };
 
-u8 *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-u8 *Resource_GetTableEntry(u32 index);
-s32 Resource_DecodeByteLz(const void *source, void *destination);
 u8 *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
 void Runtime_ReleaseHeapBlock(s32 slot);
-
-s32 Resource_LoadIndexedIntoBuffer(u16 packed, u32 value);
 
 typedef struct
 {
@@ -26,6 +27,23 @@ typedef struct
 } CharacterCell;
 
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
+
+s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
+
+s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
+{
+    void *buffer = Runtime_AllocateHeapBlock(0x11, 0x608);
+    u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+    void **slot = (void **)((u32)buffer + 0x604);
+    void *target = (void *)((u32)base + base[arg1]);
+    s32 ret;
+
+    *slot = target;
+    Resource_DecodeByteLz(target, buffer);
+    ret = Resource_GetBuffer(arg0, (s32)buffer);
+    Runtime_ReleaseHeapBlock(0x11);
+    return ret;
+}
 
 /* Decodes one glyph of the font resource, remaps its colours through the
    window's glyph palette (assigning and uploading new colours while slots

@@ -15,6 +15,6 @@ void Shop_DrawMoney(void)
     window = shop->money_window;
     if (window != 0) {
         UiText_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
-        UiText_DrawNumberInWindowFar(gGameState.money, 6, window, 0x20, 8);
+        UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0x20, 8);
     }
 }

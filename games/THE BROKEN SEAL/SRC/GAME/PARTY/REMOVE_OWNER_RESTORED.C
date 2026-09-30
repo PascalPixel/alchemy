@@ -65,7 +65,7 @@ void Party_RemoveOwnerRestored(s32 owner)
             standing++;
     }
     if (standing == 0) {
-        vitals = Owner_GetStateFar(gGameState.current_owner);
+        vitals = Owner_GetStateFar(gGameState.selected_actor);
         vitals->hp = 1;
         vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
         if (vitals->hp_ratio == 0 && vitals->hp != 0)

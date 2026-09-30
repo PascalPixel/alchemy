@@ -1,7 +1,7 @@
-@ Summon_LeafWarriorTiles: 8-bit sprite tiles in a column 1468 pixels tall, their 256-colour
-@ palette and then the tiles as a packed 8-bit bitmap.
+@ Summon_LeafWarriorTiles: its 256-colour palette, then 11 8-bit sprites of
+@ 32x32 and 480 zero bytes (ZERO_FILL.TSV), joined and packed by the resource packer.
 	.section .rodata
 	.global Summon_LeafWarriorTiles
 Summon_LeafWarriorTiles:
 	.incbin "GRAPHICS/SUMMON/LEAF_WARRIOR.gbapal"
-	.incbin "GRAPHICS/SUMMON/LEAF_WARRIOR.bitmap.lz"
+	.incbin "GRAPHICS/SUMMON/LEAF_WARRIOR.parts.lz"

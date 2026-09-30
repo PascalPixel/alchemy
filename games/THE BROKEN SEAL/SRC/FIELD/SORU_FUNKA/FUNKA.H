@@ -102,7 +102,7 @@ struct Actor_02002e5c {
 
 extern u8 *gParticleWork[];
 
-void *SoruFunka_ThrowEruptionRing();
+void SoruFunka_ThrowEruptionRing(void);
 void Party_RemoveOwnerRestored();
 void SceneState_InitStateWordsAndSlots();
 s32 Engine_TaskAddCallback(void (*)(), s32);

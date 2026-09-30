@@ -9,6 +9,11 @@
 //! banks (`.frames`) stay one frame wide by their format and are not tile
 //! recipes.
 //!
+//! A `.bitmap` recipe writes its pixels row by row, so a bitmap one tile (8
+//! pixels) wide is byte for byte a column of 8-bit tiles: its whole tiles are
+//! judged as that column, so tiles never pass as a narrow bitmap. A wider
+//! bitmap is a picture drawn row by row and is not a tile sheet.
+//!
 //! A part list that carries a tilemap (a table of u16 columns) builds a
 //! background: each of its tile parts must be drawn by that map, as the
 //! picture the map shows or as animation frames of the tiles it swaps in
@@ -59,6 +64,15 @@ fn tile_form(form: &str) -> Option<(GbaBpp, (usize, usize))> {
     ))
 }
 
+/// Whether a form is judged: a tile form, or a bitmap, whose one-tile-wide
+/// pictures are columns of 8-bit tiles.
+fn judged_form(form: &str) -> bool {
+    tile_form(form).is_some() || form == BITMAP
+}
+
+/// The bitmap form: pixels row by row, one palette index per byte.
+const BITMAP: &str = "bitmap";
+
 /// The form a built name gives, the extension after its stem.
 fn form_of(built: &str) -> Option<&str> {
     let file = built.rsplit('/').next()?;
@@ -86,11 +100,19 @@ fn recipes_in(
         let Some(form) = form_of(built) else {
             continue;
         };
+        // A COMMON/ recipe reads its input from games/COMMON's SRC.
+        let (root, built) = match built.strip_prefix("COMMON/") {
+            Some(shared) => match source_root.parent().and_then(Path::parent) {
+                Some(games) => (games.join("COMMON/SRC"), shared),
+                None => continue,
+            },
+            None => (source_root.to_path_buf(), built),
+        };
         let Ok(input) = ags::resource::input_name(built) else {
             continue;
         };
-        let input = source_root.join(input);
-        if tile_form(form).is_some() {
+        let input = root.join(input);
+        if judged_form(form) {
             found.insert(Recipe {
                 png: input,
                 form: form.to_owned(),
@@ -99,9 +121,9 @@ fn recipes_in(
             let Ok(list) = std::fs::read_to_string(&input) else {
                 continue;
             };
-            let directory = input.parent().unwrap_or(source_root);
             let sibling = |name: &str| {
-                std::fs::read(directory.join(name)).map_err(|error| format!("{name}: {error}"))
+                let path = ags::resource::sibling_path(&input, name)?;
+                std::fs::read(path).map_err(|error| format!("{name}: {error}"))
             };
             problems.extend(
                 tilemap_problems(&list, &sibling)
@@ -111,9 +133,10 @@ fn recipes_in(
             for line in list.lines() {
                 let fields: Vec<&str> = line.split('\t').map(str::trim).collect();
                 if let [part, form] = fields.as_slice() {
-                    if tile_form(form).is_some() {
+                    let png = ags::resource::sibling_path(&input, &format!("{part}.PNG"));
+                    if let (true, Ok(png)) = (judged_form(form), png) {
                         found.insert(Recipe {
-                            png: directory.join(format!("{part}.PNG")),
+                            png,
                             form: (*form).to_owned(),
                         });
                     }
@@ -209,6 +232,9 @@ pub struct Judgement {
     pub best_score: f64,
     pub runs: Vec<SpriteRun>,
     pub runs_score: f64,
+    /// Whether the sheet is a bitmap one tile wide, which is judged against
+    /// its sprite runs whatever their shapes.
+    pub bitmap: bool,
 }
 
 impl Judgement {
@@ -225,9 +251,11 @@ impl Judgement {
     }
 
     /// Whether the sheet is one tile column of OBJ pictures of several
-    /// shapes, which only a part list of sprite runs draws whole.
+    /// shapes, which only a part list of sprite runs draws whole, or a
+    /// bitmap column of tiles, whose runs may also be plain tiles.
     fn mixed(&self) -> bool {
-        self.drawn.tiles_wide == 1 && self.runs.iter().any(|run| run.layout.meta != (1, 1))
+        self.drawn.tiles_wide == 1
+            && (self.bitmap || self.runs.iter().any(|run| run.layout.meta != (1, 1)))
     }
 
     /// The better of the finder's layout and its sprite runs, as judged.
@@ -254,10 +282,19 @@ const ANIMATION_TILES: usize = 4;
 
 /// Judge one PNG as the tile form `form` builds it.
 pub fn judge(png: &[u8], form: &str) -> Result<Option<Judgement>, String> {
-    let (bpp, meta) = tile_form(form).ok_or_else(|| format!(".{form} is not a tile form"))?;
     let image = indexed_bitmap_png(png).map_err(|error| error.0)?;
-    let tiles = ags::resource::build_file(&format!("SHEET.{form}"), png)?;
+    let (bpp, meta) = match tile_form(form) {
+        Some(tiles) => tiles,
+        // A bitmap one tile wide is a column of 8-bit tiles; any wider
+        // bitmap is drawn row by row and is not a tile sheet.
+        None if form == BITMAP && image.width == 8 => (GbaBpp::Bpp8, (1, 1)),
+        None if form == BITMAP => return Ok(None),
+        None => return Err(format!(".{form} is not a tile form")),
+    };
+    let mut tiles = ags::resource::build_file(&format!("SHEET.{form}"), png)?;
     let count = tiles.len() / bpp.tile_bytes();
+    // Only whole tiles are judged: bytes after the last one are not a tile.
+    tiles.truncate(count * bpp.tile_bytes());
     if count < 2 {
         return Ok(None);
     }
@@ -292,6 +329,7 @@ pub fn judge(png: &[u8], form: &str) -> Result<Option<Judgement>, String> {
         best_score: tile_sheet_score(&tiles, bpp, best),
         runs_score: sprite_runs_score(&tiles, bpp, &runs),
         runs,
+        bitmap: form == BITMAP,
     }))
 }
 
@@ -453,6 +491,22 @@ mod tests {
     }
 
     #[test]
+    fn a_bitmap_one_tile_wide_is_judged_as_its_column_of_tiles() {
+        let palette = [0u8; 32];
+        // The picture's tiles stacked in one column, with half a tile of
+        // bytes after them, drawn as a bitmap 8 pixels wide.
+        let mut column = banked(&picture(), 80, 8);
+        column.extend([0u8; 32]);
+        let png = png_from_bitmap(&column, &palette, 8).unwrap();
+        let judgement = judge(&png, "bitmap").unwrap().unwrap();
+        assert_eq!(judgement.tiles, 20);
+        assert!(judgement.banked(), "{judgement:?}");
+        // The same picture as a bitmap at its own width is no tile sheet.
+        let png = png_from_bitmap(&picture(), &palette, 80).unwrap();
+        assert!(judge(&png, "bitmap").unwrap().is_none());
+    }
+
+    #[test]
     fn an_animation_strip_one_frame_wide_passes() {
         // Four 8x8 frames of a spark touching every edge, stacked.
         let pixels: Vec<u8> = (0..4 * 64)
@@ -528,6 +582,28 @@ mod tests {
         assert_eq!(tile_form("8bpp32x16"), Some((GbaBpp::Bpp8, (4, 2))));
         assert_eq!(tile_form("frames"), None);
         assert_eq!(tile_form("bitmap"), None);
+        assert!(judged_form("bitmap") && judged_form("8bpp32x16") && !judged_form("frames"));
+    }
+
+    #[test]
+    fn a_common_recipe_reads_its_input_from_common() {
+        let directory = tempfile::tempdir().unwrap();
+        let source_root = directory.path().join("games/GAME/SRC");
+        let mut found = BTreeSet::new();
+        let mut problems = Vec::new();
+        recipes_in(
+            &source_root,
+            "\t.incbin \"COMMON/GRAPHICS/SET/TILES.4bpp.mtf\"\n",
+            &mut found,
+            &mut problems,
+        );
+        let found: Vec<_> = found.into_iter().map(|recipe| recipe.png).collect();
+        assert_eq!(
+            found,
+            [directory
+                .path()
+                .join("games/COMMON/SRC/GRAPHICS/SET/TILES.PNG")]
+        );
     }
 
     #[test]
@@ -544,7 +620,7 @@ mod tests {
         let mut problems = Vec::new();
         recipes_in(
             root,
-            "\t.incbin \"A/LOGO.parts.lz\"\n\t.incbin \"A/WORD.4bpp32x16.lz\"\n\t.incbin \"A/HERO.frames\"\n",
+            "\t.incbin \"A/LOGO.parts.lz\"\n\t.incbin \"A/WORD.4bpp32x16.lz\"\n\t.incbin \"A/HERO.frames\"\n\t.incbin \"A/SPARK.bitmap.lz\"\n",
             &mut found,
             &mut problems,
         );
@@ -562,6 +638,7 @@ mod tests {
             found,
             [
                 ("A/LOGO_TILES.PNG".to_owned(), "8bpp".to_owned()),
+                ("A/SPARK.PNG".to_owned(), "bitmap".to_owned()),
                 ("A/WORD.PNG".to_owned(), "4bpp32x16".to_owned()),
             ]
         );

@@ -315,6 +315,9 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
         tsv.push('\n');
     }
     let out = o.out.as_ref().expect("batch mode has --out");
+    if let Some(parent) = out.parent().filter(|parent| !parent.as_os_str().is_empty()) {
+        fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
+    }
     fs::write(out, tsv).map_err(|e| format!("{}: {e}", out.display()))?;
     Ok(format!(
         "indexed {} functions; {} queries, {} candidates; {} rows in {}\n",

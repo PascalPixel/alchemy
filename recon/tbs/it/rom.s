@@ -463,21 +463,8 @@ RomBytes_08029a10:
 	.global UiIcon_OverlayPointerTable
 UiIcon_OverlayPointerTable:
 	.incbin "baserom.gba", 0x00029f2c, 0x000000e4
-	.global UiIcon_ItemIconPointers
-UiIcon_ItemIconPointers:
-	.incbin "baserom.gba", 0x0002a010, 0x000003fc
-	.global UiIcon_ItemIconPointersEnd
-UiIcon_ItemIconPointersEnd:
-	.incbin "baserom.gba", 0x0002a40c, 0x00003ba8
-	.global UiIcon_PsynergyIconPointers
-UiIcon_PsynergyIconPointers:
-	.incbin "baserom.gba", 0x0002dfb4, 0x00000280
-	.global UiIcon_PsynergyIconPointersEnd
-UiIcon_PsynergyIconPointersEnd:
-	.incbin "baserom.gba", 0x0002e234, 0x00002798
-	.global UiIcon_MiscIconPointers
-UiIcon_MiscIconPointers:
-	.incbin "baserom.gba", 0x000309cc, 0x00000804
+	.section .rom.000311cc, "ax"
+	.incbin "baserom.gba", 0x000311cc, 0x00000004
 	.global Resource_FixedBlockBTiles
 Resource_FixedBlockBTiles:
 	.global RomBytes_080310a4

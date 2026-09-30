@@ -12,7 +12,7 @@ pub mod drafts;
 mod effects;
 mod lex;
 mod mutate;
-mod parse;
+pub(crate) mod parse;
 mod routine;
 mod score;
 mod types;

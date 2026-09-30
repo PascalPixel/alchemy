@@ -19,6 +19,7 @@
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];
 extern u8 MsgCoins[];
+extern u8 MsgPiece[];
 
 struct UiSprite {
     u8 unknown_00[24];
@@ -48,6 +49,9 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
     s32 count;
     s32 result;
     struct UiSprite *sprite;
+#if defined(TBS_EDITION_JA)
+    s32 msg;
+#endif
 
     buffer = Runtime_AllocateBlock(14, 0x400);
     changed = 1;
@@ -93,9 +97,19 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                     Shop_FillSelector(minimum, 2, buffer);
                     VramBlock_LoadCached(slot, 0x100, buffer);
                     result = count + 1;
+#if defined(TBS_EDITION_JA)
+                    /* The Japanese count takes its counter word, and the
+                       coins label is the message before it. */
+                    UiText_DrawNumberInWindowFar(result, 2, window, 64, 0);
+                    msg = (s32)MsgPiece;
+                    UiText_DrawCharacterAtOffsetFar(msg, window, 80, 0);
+                    UiText_DrawNumberInWindowFar(price * result, 6, window, 96, 0);
+                    UiText_DrawCharacterAtOffsetFar(msg - 1, window, 144, 0);
+#else
                     UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);
                     UiText_DrawNumberInWindowFar(price * result, 6, window, QUANTITY_X + 16, 0);
                     UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, COINS_X, 0);
+#endif
                 }
                 WaitFrames(1);
             }

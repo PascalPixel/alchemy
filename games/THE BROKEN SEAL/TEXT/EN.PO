@@ -12843,7 +12843,7 @@ msgctxt "MsgCoins"
 msgid "03208"
 msgstr "Coins"
 
-msgctxt "MsgCoin"
+msgctxt "MsgPiece"
 msgid "03209"
 msgstr "="
 

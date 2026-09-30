@@ -1128,20 +1128,8 @@ FourObjectMotion_ResourceIds:
 	.thumb_func
 Shop_SelBuy:
 	.incbin "baserom.gba", 0x000a7aac, 0x000004f8
-	.section .rom.000a80cc, "ax"
-	.global Shop_DrawMoney
-	.type Shop_DrawMoney, %function
-	.thumb_func
-Shop_DrawMoney:
-	.incbin "baserom.gba", 0x000a80cc, 0x00000050
 	.section .rom.000a8278, "ax"
 	.incbin "baserom.gba", 0x000a8278, 0x00000210
-	.section .rom.000a862c, "ax"
-	.global Shop_SelectQuantity
-	.type Shop_SelectQuantity, %function
-	.thumb_func
-Shop_SelectQuantity:
-	.incbin "baserom.gba", 0x000a862c, 0x000001dc
 	.section .rom.000aa964, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:
@@ -1166,7 +1154,10 @@ Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x000aad64, 0x00000140
 	.global Shop_PriceTiles
 Shop_PriceTiles:
-	.incbin "baserom.gba", 0x000aaea4, 0x00000280
+	.incbin "baserom.gba", 0x000aaea4, 0x00000100
+	.global Shop_QuantityTiles
+Shop_QuantityTiles:
+	.incbin "baserom.gba", 0x000aafa4, 0x00000180
 	.global RomBytes_080b4100
 RomBytes_080b4100:
 	.incbin "baserom.gba", 0x000ab124, 0x0000003c

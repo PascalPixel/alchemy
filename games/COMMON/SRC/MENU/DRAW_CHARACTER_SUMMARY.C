@@ -12,7 +12,7 @@ extern u8 MsgStatusLabel;
 extern u8 MsgClassName;
 extern u8 StatusMenu_LevelLetterString[];
 extern u8 MsgCoins[];
-extern u8 MsgCoin[];
+extern u8 MsgPiece[];
 
 /* The Spanish and French summaries set their level letters at a pixel offset
    further left and push the coins label right, around their longer words. */
@@ -59,11 +59,11 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
         extra = 48;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
 #if defined(TBS_EDITION_FR)
-        /* French names a single coin in the singular. */
+        /* French names a single coin as one piece. */
         if (*(u32 *)(st + 36) > 1)
             UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
         else
-            UiText_DrawCharacterAtOffset((s32)MsgCoin, surface, SUMMARY_COINS_X, 48);
+            UiText_DrawCharacterAtOffset((s32)MsgPiece, surface, SUMMARY_COINS_X, 48);
 #else
         UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
 #endif

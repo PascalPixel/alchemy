@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
 /* One of the three queued text renders in the glyph work area. */
 struct TextRender {
@@ -27,7 +28,7 @@ extern u8 *gWindowWork;
    given colours (or colour 0) and flags. Returns the slot, or NULL. */
 struct TextRender *UiText_QueueRenderEntries(void *entries, s32 window, s32 x, s32 y, u16 *colours, s32 flags)
 {
-    struct TextRender *render = (struct TextRender *)(gWindowWork + 0x620);
+    struct TextRender *render = (struct TextRender *)(gWindowWork + RENDER_CHANNEL_OFS);
     struct TextRender *found = NULL;
     u32 i;
 

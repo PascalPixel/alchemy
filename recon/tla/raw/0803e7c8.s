@@ -151,6 +151,9 @@ Func_0803e7c8:
 	.4byte 0x0805c5c4
 	.2byte 0xc1c4
 	.2byte 0x0805
+	.global NodeChain_GetNodeAtCount
+	.thumb_func
+NodeChain_GetNodeAtCount:
 	push	{lr}
 	movs	r2, #210
 	movs	r4, #192

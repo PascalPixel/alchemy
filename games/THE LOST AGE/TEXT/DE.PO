@@ -443,11 +443,11 @@ msgctxt "message"
 msgid "00108"
 msgstr "Wie!?"
 
-msgctxt "message"
+msgctxt "MsgItemNotHeld"
 msgid "00109"
 msgstr "Das hast du nicht."
 
-msgctxt "message"
+msgctxt "MsgAbilityNotKnown"
 msgid "00110"
 msgstr "Du weißt es nicht."
 

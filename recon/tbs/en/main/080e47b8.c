@@ -4,6 +4,19 @@
  * literal pool at 0x080e54cc, three more stubs and the default arm at
  * 0x080e551a. 0x080e657c and 0x080e65f8 are tail blocks this routine
  * reaches by bl, not separate functions. */
+/* 2026-09-30 (Mercury, later): sched2's table (-fsched-verbose=5) at
+ * 80e500c: the motion spill store and the target_actor and position
+ * reloads all have priority 125 and five dependents, and neither depends
+ * on the add before them, so insn order picks the store. The spill slot MEM
+ * has alias set 0 (reload turns spilled pseudos into MEMs with no alias
+ * information), so both operand loads truly depend on it. The reference's
+ * order (both reloads, the store, position->x, target->x) is exactly what
+ * sched2 gives when the store loses one of those load dependences: its
+ * dependent count drops to four and the reloads outrank it, and after it
+ * the independent position->x load comes before target->x, which waits on
+ * r0. The ROM never takes the slot's address (no add rN, sp, #24), so
+ * motion is a spilled pseudo there too; what removes the dependence is not
+ * found yet (a volatile motion moves the frame: 2759). */
 /* 2026-09-30 (Mercury): 5 differing halfwords, all in the first
  * Math_Div (80e500c): the reference loads target_actor and position into
  * r1/r2 before the motion spill store; here the store, the two reloads and

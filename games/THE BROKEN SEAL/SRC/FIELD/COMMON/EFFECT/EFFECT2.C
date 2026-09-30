@@ -162,7 +162,7 @@ void FieldMotes_Start(void)
     work->vram = VramBlock_LoadCached(work->resource, 0x300, tiles);
     Runtime_ReleaseHeapBlock(14);
     for (i = 0; i < 32; i++) {
-        register s32 *pos asm("r2") = *gMapWork; /* FAKEMATCH: keeps the position in r2 */
+        s32 *pos = *gMapWork;
         register s32 *p asm("r1") = &mote->state; /* FAKEMATCH: steps the fields through r1 */
         s32 x, z;
         *p++ = 0;

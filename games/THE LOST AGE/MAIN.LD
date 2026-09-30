@@ -1418,7 +1418,7 @@ SECTIONS
         "*/recon/tla/raw/081b834c.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081ba30c)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/AUDIOENG.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/081c0040.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_48.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c0070.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c0080.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SOUND/LEFTOVER_HANDLE_NOTE.o"(.text .rodata .data .padding)

@@ -43,11 +43,11 @@ PartyInventory_GiveItemFar:
 	.thumb_func
 Inventory_PromptAndSetObjectModeFar:
 	overlay_veneer Inventory_PromptAndSetObjectMode
+	.global Func_080c8078
+	.thumb_func
+Func_080c8078:
+	overlay_veneer Func_080d296c
 	.global UiText_DrawQuantityPairWithCueFar
 	.thumb_func
 UiText_DrawQuantityPairWithCueFar:
 	overlay_veneer UiText_DrawQuantityPairWithCue
-	.global Func_080c8080
-	.thumb_func
-Func_080c8080:
-	overlay_veneer Func_080d2a0c

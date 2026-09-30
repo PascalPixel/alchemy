@@ -293,9 +293,9 @@ Func_080af4e4:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
-	.global Func_080af6f4
+	.global OwnerAction_Add
 	.thumb_func
-Func_080af6f4:
+OwnerAction_Add:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r7, r0, #0

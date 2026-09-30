@@ -1,7 +1,6 @@
 /*
- * Draft: StatusMenu_DrawCharacterSummary does not yet match; ported from its ☀️ twin.
- * Differing ranges: 0x81015d0..0x81015d8 (8 bytes)
- * Links as its recon/tla/raw listing.
+ * Draft: StatusMenu_DrawCharacterSummary does not yet match; 2 halfwords differ from ☀️'s C, first at +0x9a (data).
+ * Links as recon/tla/raw/08043c30.s.
  */
 #include "TYPES.H"
 
@@ -17,7 +16,6 @@ extern u8 MsgStatusLabel;
 extern u8 MsgClassName;
 extern u8 StatusMenu_LevelLetterString[];
 extern u8 MsgCoins[];
-
 
 /* Draws one character entry into the summary surface: its name, the two-digit
  * value at +0x1c, the class message selected by +0x1d, the formatted value at

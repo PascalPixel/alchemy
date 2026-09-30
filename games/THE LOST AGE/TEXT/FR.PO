@@ -235,7 +235,7 @@ msgctxt "message"
 msgid "00056"
 msgstr "en attente sont requis.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgAbilityLearned"
 msgid "00057"
 msgstr "{argument_actor_name:1} a appris{line_break}{argument_ability_name}.{end_wait}"
 

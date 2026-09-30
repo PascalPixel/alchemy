@@ -557,7 +557,7 @@ Func_0811e830:
 	strh	r3, [r0, #2]
 	movs	r3, #255
 	strh	r3, [r0, #4]
-	bl	0x0811b9d4
+	bl	Func_0811b9d4
 .L_0811ecc4:
 	movs	r1, #8
 	negs	r1, r1

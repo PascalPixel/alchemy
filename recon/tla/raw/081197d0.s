@@ -1588,7 +1588,7 @@ BattleActor_CommitPlacement:
 	bl	.L_0811a31c
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x0811b9d4
+	bl	Func_0811b9d4
 	add	sp, #28
 	pop	{r5, pc}
 	.2byte 0x0000

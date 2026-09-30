@@ -285,7 +285,7 @@ Func_0811c66c:
 	strh	r2, [r1, r3]
 	mov	r0, sl
 	movs	r1, #0
-	bl	0x0811b9d4
+	bl	Func_0811b9d4
 	ldr	r1, [sp, #12]
 	add	r0, sp, #16
 	movs	r2, #8

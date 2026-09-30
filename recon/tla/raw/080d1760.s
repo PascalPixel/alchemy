@@ -74,6 +74,9 @@ Func_080d17ac:
 	bl	Func_080d0c50
 .L_080d17e6:
 	pop	{r5, pc}
+	.global Func_080d17e8
+	.thumb_func
+Func_080d17e8:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

@@ -123,7 +123,7 @@ msgctxt "message"
 msgid "00028"
 msgstr "{argument_actor_name:1} puede{line_break}que se una a tu equipo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPairJoinedParty"
 msgid "00029"
 msgstr "{argument_actor_name:1} y {argument_actor_name:1} se{line_break}unieron a tu equipo.{end_wait}"
 

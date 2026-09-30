@@ -123,7 +123,7 @@ msgctxt "message"
 msgid "00028"
 msgstr "{argument_actor_name:150}゙ なかまになった・・・{line_break}かもしれない{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPairJoinedParty"
 msgid "00029"
 msgstr "{argument_actor_name:228} {argument_actor_name:150}゙{line_break}なかまになった{end_wait}"
 

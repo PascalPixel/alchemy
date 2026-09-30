@@ -399,30 +399,6 @@ UiWindow_DrawPartyStatusContents:
 	.thumb_func
 SaveMenu_SelectSlot:
 	.incbin "baserom.gba", 0x00020144, 0x000005f8
-	.section .rom.00020928, "ax"
-	.global Resource_LoadFixedBlockBIntoFreeSlot
-	.type Resource_LoadFixedBlockBIntoFreeSlot, %function
-	.thumb_func
-Resource_LoadFixedBlockBIntoFreeSlot:
-	.incbin "baserom.gba", 0x00020928, 0x00000114
-	.section .rom.00020a3c, "ax"
-	.global UiWindow_SetTileAttributeRect
-	.type UiWindow_SetTileAttributeRect, %function
-	.thumb_func
-UiWindow_SetTileAttributeRect:
-	.incbin "baserom.gba", 0x00020a3c, 0x0000008c
-	.section .rom.00020ac8, "ax"
-	.global Resource_CopyFixedBlockB
-	.type Resource_CopyFixedBlockB, %function
-	.thumb_func
-Resource_CopyFixedBlockB:
-	.incbin "baserom.gba", 0x00020ac8, 0x00000014
-	.section .rom.00020adc, "ax"
-	.global Resource_CopyFixedBlockA
-	.type Resource_CopyFixedBlockA, %function
-	.thumb_func
-Resource_CopyFixedBlockA:
-	.incbin "baserom.gba", 0x00020adc, 0x00000014
 	.section .rom.00020af0, "ax"
 	.global NameEntry_EditOwnerName
 	.type NameEntry_EditOwnerName, %function
@@ -499,7 +475,12 @@ UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x000308ec, 0x00000804
 	.global Resource_FixedBlockBTiles
 Resource_FixedBlockBTiles:
-	.incbin "baserom.gba", 0x000310f0, 0x000007c0
+	.global RomBytes_080310a4
+RomBytes_080310a4:
+	.incbin "baserom.gba", 0x000310f0, 0x00000740
+	.global RomBytes_080317e4
+RomBytes_080317e4:
+	.incbin "baserom.gba", 0x00031830, 0x00000080
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x000318b0, 0x00000bc0
@@ -546,7 +527,13 @@ SideObject_ActorKindIdMap:
 	.incbin "baserom.gba", 0x00036f94, 0x00000954
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
-	.incbin "baserom.gba", 0x000378e8, 0x0000001e
+	.incbin "baserom.gba", 0x000378e8, 0x00000002
+	.global NameEntry_DakutenRanges
+NameEntry_DakutenRanges:
+	.incbin "baserom.gba", 0x000378ea, 0x0000000f
+	.global NameEntry_HandakutenRanges
+NameEntry_HandakutenRanges:
+	.incbin "baserom.gba", 0x000378f9, 0x0000000d
 	.global Data_080371fe
 Data_080371fe:
 	.incbin "baserom.gba", 0x00037906, 0x00000008

@@ -34,10 +34,48 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
     return slot;
 }
 
-#if !defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_JA)
+/* The letters that take the voiced and the semi-voiced mark, as pairs of
+   first and last codes ending at zero. */
+extern const u8 NameEntry_DakutenRanges[];
+extern const u8 NameEntry_HandakutenRanges[];
+
+/* Whether the name entry may put a mark after a letter: a voiced mark (0xde)
+   or semi-voiced mark (0xdf) only follows the letters in its ranges; any
+   other code follows anything. */
+s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
+{
+    const u8 *range;
+
+    if ((u32)(mark - 0xde) > 1)
+        return 1;
+    if (mark == 0xde)
+        range = NameEntry_DakutenRanges;
+    else
+        range = NameEntry_HandakutenRanges;
+    for (; *range != 0; range += 2) {
+        if (letter >= range[0] && letter <= range[1])
+            return 1;
+    }
+    return 0;
+}
+
+/* The letters of a name, not counting its voiced and semi-voiced marks. */
+s32 NameEntry_CountLetters(const u8 *name)
+{
+    s32 count;
+
+    count = 0;
+    for (; *name != 0; name++) {
+        if ((u8)(*name - 0xde) > 1)
+            count++;
+    }
+    return count;
+}
+#else
 /* A routine that only reports success, after the fixed resource block
-   loader; nothing in the image calls it by name. The Japanese edition has
-   other code here. */
+   loader; nothing in the image calls it by name. The Japanese edition checks
+   the name entry's voiced marks here instead. */
 s32 Resource_ReturnTrue(void)
 {
     return 1;

@@ -36,30 +36,3 @@ Func_08024c70:
 	movs	r0, #0
 .L_08024caa:
 	pop	{r5, pc}
-	push	{r5, r6, lr}
-	adds	r5, r0, #0
-	movs	r1, #4
-	ldrsh	r6, [r5, r1]
-	ldr	r2, [r5, #0]
-	lsls	r3, r6, #2
-	adds	r3, r3, r2
-	ldr	r3, [r3, #4]
-	mov	lr, r3
-	.2byte 0xf800
-	.2byte 0x2800
-	beq.n	.L_08024cc8
-	movs	r0, #0
-	b.n	.L_08024cd8
-.L_08024cc8:
-	movs	r1, #4
-	ldrsh	r3, [r5, r1]
-	ldrh	r2, [r5, #4]
-	cmp	r3, r6
-	bne.n	.L_08024cd6
-	adds	r3, r2, #2
-	strh	r3, [r5, #4]
-.L_08024cd6:
-	movs	r0, #1
-.L_08024cd8:
-	pop	{r5, r6, pc}
-	.2byte 0x0000

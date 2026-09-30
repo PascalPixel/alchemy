@@ -33,9 +33,7 @@ static __inline__ void bump_step(s32 amount)
 {
     void Map_ClearLayerEntryFlag();
 
-    u8 *work = *(u8 **)&gEventWork;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
@@ -101,7 +99,7 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 
-    *(u16 *)(*(u8 **)&gEventWork + 0x1d8) += amount;
+    gEventWork->message += amount;
 }
 
 void FieldScene_DispatchSceneByIndex(void)
@@ -663,8 +661,8 @@ void Scene_RunPartySequence(void)
     Map_Redraw();
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3600000, 0x2760000);
-    *(s32 *)(*(u8 **)&gEventWork + 0x1c0) = v5 = 0x100;
-    *(s32 *)(*(u8 **)&gEventWork + 0x1c8) = 40;
+    gEventWork->start_transition = v5 = 0x100;
+    gEventWork->transition_frames = 40;
     Event_OpenScreen();
     Camera_SetSpeed(0x6666, 0xccc);
     Camera_MoveTo(0x3600000, -1, 0x1d80000, 1);

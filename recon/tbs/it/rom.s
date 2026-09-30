@@ -69,7 +69,9 @@ Tile_ExpandOpaqueEnd:
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00031990, 0x000009dc
 	.section .rom.00033f6c, "a"
-	.incbin "baserom.gba", 0x00033f6c, 0x0005e174
+	.incbin "baserom.gba", 0x00033f6c, 0x0000369c
+	.section .rom.00072c78, "a"
+	.incbin "baserom.gba", 0x00072c78, 0x0001f468
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

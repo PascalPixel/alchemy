@@ -22,7 +22,9 @@ Math_DivU:
 Math_Mod:
 	.incbin "baserom.gba", 0x00002064, 0x000586fc
 	.section .rom.0005c360, "a"
-	.incbin "baserom.gba", 0x0005c360, 0x00164fb0
+	.incbin "baserom.gba", 0x0005c360, 0x0000387c
+	.section .rom.000a8fd8, "a"
+	.incbin "baserom.gba", 0x000a8fd8, 0x00118338
 	.section .rom.001c1310, "a"
 	.incbin "baserom.gba", 0x001c1310, 0x0000039e
 	.global Mixer_CallViaR3

@@ -15,6 +15,8 @@
     "*/recon/tla/ja/rom.o"(.rom.00001658)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.0005cdcc)
+    "*/games/THE LOST AGE/TEXT/MESSAGES.o"(.rodata)
+    "*/recon/tla/ja/rom.o"(.rom.0009d0d0)
 }
 .iwram_mixer :
 {

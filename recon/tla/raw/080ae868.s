@@ -19,7 +19,7 @@ Func_080ae868:
 	beq.n	.L_080ae886
 	b.n	.L_080aea18
 .L_080ae886:
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	mov	fp, r0
 	cmp	r0, #0
 	ble.n	.L_080ae8aa

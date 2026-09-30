@@ -6,7 +6,12 @@
 struct PartyState {
     u8 unknown_000[0x10];
     s32 coins;
-    u8 unknown_014[0x1cc];
+    u8 unknown_014[0x124];
+    /* A second six-digit counter, as ☀️'s Party_AdjustSixDigitCounterB keeps. */
+    s32 counter_b;
+    /* A counter capped at 28. */
+    s8 counter_c;
+    u8 unknown_13d[0xa3];
     s16 scene;
     s16 entrance;
     u8 unknown_1e4[0xa];

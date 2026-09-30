@@ -34,7 +34,7 @@ Func_080b0ab8:
 	negs	r0, r0
 	b.n	.L_080b0b66
 .L_080b0af2:
-	bl	Func_080afdbc
+	bl	Party_CountActiveOwners
 	cmp	r9, r0
 	bge.n	.L_080b0b3a
 	ldr	r3, [pc, #120]

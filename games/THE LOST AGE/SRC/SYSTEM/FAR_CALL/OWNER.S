@@ -27,7 +27,7 @@ BattleUnit_AssignFar:
 	.global Func_080ad0f0
 	.thumb_func
 Func_080ad0f0:
-	overlay_veneer Func_080afdbc
+	overlay_veneer Party_CountActiveOwners
 	.global Party_AddActiveOwnerFar
 	.thumb_func
 Party_AddActiveOwnerFar:

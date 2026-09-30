@@ -1,33 +1,28 @@
 /*
- * Draft: Party_AdjustSixDigitCounterA does not yet match; 4 halfwords differ from ☀️'s C, first at +0x4 (ldr r2, [pc, #24]).
+ * Draft: Party_AdjustSixDigitCounterA does not yet match; the reference loads
+ * 999999 before the coins (1 swap), in plain and in ☀️'s pointer form.
  * Links as recon/tla/raw/080afbec.s.
  */
-#include "GLOBAL_PROGRESS.H"
+#include "TYPES.H"
+#include "PARTY_STATE.H"
 
-extern struct GameState gGameState;
-
-struct PartyCounterWork {
-    u8 unknown_00[0x10];
-    s32 value;
-};
-
+/* Adds to the party's coins, kept within 0..999999. */
 s32 Party_AdjustSixDigitCounterA(s32 amount)
 {
     s32 value;
-    struct PartyCounterWork *work;
-    struct PartyCounterWork *store;
 
-    work = (struct PartyCounterWork *)&gGameState;
-    value = work->value;
+    struct PartyState *work;
+    struct PartyState *store;
+
+    work = &gPartyState;
+    value = work->coins;
     value = (s32)((u32)value + (u32)amount);
     store = work;
-    if (value > 0xF423F) {
-        value = 0xF423F;
-    }
-    if (value < 0) {
+    if (value > 0xf423f)
+        value = 0xf423f;
+    if (value < 0)
         value = 0;
-    }
     work = store;
-    work->value = value;
+    work->coins = value;
     return value;
 }

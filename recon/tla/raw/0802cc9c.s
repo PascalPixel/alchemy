@@ -93,6 +93,9 @@ Func_0802cc9c:
 	.4byte 0x03000258
 	.2byte 0xcb65
 	.2byte 0x0802
+	.global Func_0802cd4c
+	.thumb_func
+Func_0802cd4c:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -111,6 +114,9 @@ Func_0802cc9c:
 	pop	{pc}
 	.2byte 0xcb65
 	.2byte 0x0802
+	.global Func_0802cd70
+	.thumb_func
+Func_0802cd70:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

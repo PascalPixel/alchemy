@@ -53,6 +53,9 @@ Func_08024f20:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
+	.global Func_08024f80
+	.thumb_func
+Func_08024f80:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

@@ -32,6 +32,9 @@ Object_IsTargetUnset:
 	movs	r0, #0
 .L_08023f92:
 	pop	{pc}
+	.global Func_08023f94
+	.thumb_func
+Func_08023f94:
 	push	{lr}
 	bl	Object_IsTargetUnset
 	pop	{pc}

@@ -424,7 +424,7 @@ Func_08108b34:
 	b.n	.L_08108dc0
 .L_08108ebe:
 	adds	r0, r6, #0
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	ldr	r2, [pc, #180]
 	ldr	r1, [sp, #4]
 	ldr	r2, [r2, #16]

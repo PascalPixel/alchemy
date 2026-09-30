@@ -372,7 +372,7 @@ Func_081185c4:
 	mov	r0, r8
 	movs	r1, #0
 	subs	r7, #1
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	cmp	r7, #0
 	bge.n	.L_081188aa
 	ldr	r3, [sp, #12]

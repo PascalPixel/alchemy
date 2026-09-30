@@ -879,7 +879,7 @@ Func_0811e830:
 	ldrsh	r1, [r3, r6]
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	0x080ad050
+	bl	Inventory_RemoveFar
 	mov	r1, r8
 	movs	r7, #8
 	ldrsh	r5, [r1, r7]

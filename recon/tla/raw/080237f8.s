@@ -32,6 +32,9 @@ Func_080237f8:
 	.4byte 0x0802386d
 	.2byte 0x3e19
 	.2byte 0x0802
+	.global Func_08023840
+	.thumb_func
+Func_08023840:
 	push	{lr}
 	ldr	r0, [pc, #28]
 	bl	Func_0801475c

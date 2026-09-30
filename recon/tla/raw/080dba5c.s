@@ -100,7 +100,7 @@ Func_080dba5c:
 	ldr	r3, [r5, #8]
 	lsls	r1, r1, #3
 	str	r3, [r6, #16]
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_080dbb2c:
 	add	sp, #16
 	pop	{r3, r5, r6}
@@ -133,7 +133,7 @@ Func_080dba5c:
 	adds	r3, r5, r2
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
-	bl	0x08014274
+	bl	Func_08014274
 .L_080dbb72:
 	pop	{r5, pc}
 	.2byte 0xba45

@@ -33,7 +33,7 @@ Func_08122c88:
 	strb	r4, [r3, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x2d11
@@ -527,10 +527,10 @@ Func_08122c88:
 	bl	0x08038118
 	adds	r0, r5, #0
 	movs	r1, #4
-	bl	0x08013d0c
+	bl	Func_08013d0c
 	adds	r0, r5, #0
 	movs	r1, #16
-	bl	0x08013c58
+	bl	Func_08013c58
 	movs	r3, #160
 	mov	r1, r9
 	lsls	r3, r3, #8

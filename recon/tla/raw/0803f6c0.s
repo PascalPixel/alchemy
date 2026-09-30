@@ -4,7 +4,7 @@
 	.thumb_func
 UiTextResource_Release:
 	push	{lr}
-	bl	0x08014274
+	bl	Func_08014274
 	pop	{pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -43,7 +43,7 @@ UiTextResource_Release:
 	ldrh	r3, [r3, r0]
 	adds	r0, r0, r3
 	str	r0, [r2, #0]
-	bl	0x0801591c
+	bl	Func_0801591c
 	ldrh	r3, [r5, #10]
 	cmp	r3, #0
 	bne.n	.L_0803f726
@@ -85,7 +85,7 @@ UiTextResource_Release:
 	cmp	r3, #0
 	beq.n	.L_0803f776
 	ldrh	r0, [r5, #12]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r3, #0
 	strh	r3, [r5, #10]
 .L_0803f776:

@@ -190,7 +190,7 @@ Func_081c0c1c:
 	strh	r6, [r2, #0]
 	adds	r0, r6, #0
 	bl	.L_081c0cac
-	bl	0x08013b30
+	bl	Func_08013b30
 	lsls	r0, r6, #16
 	lsrs	r0, r0, #16
 	bl	Audio_PlaySound

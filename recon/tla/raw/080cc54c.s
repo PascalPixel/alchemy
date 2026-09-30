@@ -30,7 +30,7 @@ Func_080cc54c:
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
 	ldrh	r1, [r7, #6]
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r3, #197
 	lsls	r3, r3, #1
 	add	r3, sl

@@ -81,7 +81,7 @@ Func_0802be4c:
 	mov	r8, r3
 	bl	Resource_GetTableEntry
 	adds	r1, r7, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	mov	r2, r8
 	strh	r2, [r7, #0]
 	movs	r3, #128
@@ -100,18 +100,18 @@ Func_0802be4c:
 	ldr	r0, [r6, #4]
 	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	adds	r0, r5, #0
 	bl	Func_0802cc9c
 	ldr	r5, [pc, #288]
 	ldr	r0, [r6, #8]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #284]
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r0, [r6, #12]
 	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -124,7 +124,7 @@ Func_0802be4c:
 	ldr	r0, [r6, #16]
 	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -137,7 +137,7 @@ Func_0802be4c:
 	ldr	r0, [r6, #20]
 	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -150,7 +150,7 @@ Func_0802be4c:
 	ldr	r0, [r6, #24]
 	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -162,11 +162,11 @@ Func_0802be4c:
 	ldr	r0, [r6, #28]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #192]
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r0, [r6, #32]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #184]
-	bl	0x0801587c
+	bl	Func_0801587c
 	ldr	r3, [pc, #180]
 	mov	r0, sp
 	str	r3, [r0, #0]
@@ -539,9 +539,9 @@ Func_0802be4c:
 	mov	sl, r5
 	cmp	r3, #0
 	beq.n	.L_0802c2de
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	subs	r5, r5, r0
 	ldr	r6, [pc, #492]
 	adds	r1, r5, #0
@@ -559,9 +559,9 @@ Func_0802be4c:
 	ldr	r3, [r7, #8]
 	cmp	r3, #0
 	beq.n	.L_0802c308
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r5, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	subs	r5, r5, r0
 	ldr	r6, [pc, #448]
 	adds	r1, r5, #0
@@ -704,17 +704,17 @@ Func_0802be4c:
 	bl	Camera_StoreSceneParameters
 	bl	Func_08014de4
 	mov	r0, r9
-	bl	0x08015128
+	bl	Func_08015128
 	movs	r1, #143
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
 	ldrh	r0, [r3, #0]
-	bl	0x08015068
+	bl	Func_08015068
 	movs	r2, #142
 	lsls	r2, r2, #1
 	adds	r6, r7, r2
 	ldrh	r0, [r6, #0]
-	bl	0x08015024
+	bl	Func_08015024
 	movs	r1, #144
 	lsls	r1, r1, #4
 	adds	r1, #118
@@ -741,7 +741,7 @@ Func_0802be4c:
 	.2byte 0xfccd
 	.2byte 0x4649
 	ldr	r0, [sp, #32]
-	bl	0x080156e8
+	bl	Func_080156e8
 	ldr	r7, [pc, #116]
 	ldrh	r0, [r6, #0]
 	ldr	r3, [r7, #0]
@@ -1098,7 +1098,7 @@ Func_0802be4c:
 	ldrsh	r6, [r5, r3]
 	bl	Resource_GetTableEntry
 	mov	r1, r8
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r3, #128
 	movs	r2, #132
 	mov	r0, r8
@@ -1116,18 +1116,18 @@ Func_0802be4c:
 	ldr	r0, [r7, #4]
 	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	adds	r0, r5, #0
 	bl	Func_0802cc9c
 	ldr	r0, [r7, #8]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #204]
-	bl	0x0801587c
+	bl	Func_0801587c
 	b.n	.L_0802c7f6
 	ldr	r0, [r7, #12]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #192]
-	bl	0x0801587c
+	bl	Func_0801587c
 	b.n	.L_0802c7f6
 	movs	r3, #128
 	lsls	r3, r3, #19
@@ -1138,7 +1138,7 @@ Func_0802be4c:
 	ldr	r0, [r7, #16]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #176]
-	bl	0x0801587c
+	bl	Func_0801587c
 	b.n	.L_0802c7f6
 	movs	r3, #128
 	lsls	r3, r3, #19
@@ -1149,7 +1149,7 @@ Func_0802be4c:
 	ldr	r0, [r7, #20]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #156]
-	bl	0x0801587c
+	bl	Func_0801587c
 	b.n	.L_0802c7f6
 	movs	r3, #128
 	lsls	r3, r3, #19
@@ -1160,7 +1160,7 @@ Func_0802be4c:
 	ldr	r0, [r7, #24]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #140]
-	bl	0x0801587c
+	bl	Func_0801587c
 	b.n	.L_0802c7f6
 	movs	r3, #128
 	lsls	r3, r3, #19
@@ -1175,12 +1175,12 @@ Func_0802be4c:
 	ldr	r0, [r7, #28]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #120]
-	bl	0x0801587c
+	bl	Func_0801587c
 	b.n	.L_0802c7f6
 	ldr	r0, [r7, #32]
 	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #108]
-	bl	0x0801587c
+	bl	Func_0801587c
 .L_0802c7f6:
 	ldr	r1, [sp, #20]
 	movs	r3, #144

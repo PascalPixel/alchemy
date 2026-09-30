@@ -52,15 +52,15 @@ Func_08126700:
 	bl	Camera_StoreSceneParameters
 	bl	Func_08014de4
 	mov	r0, sl
-	bl	0x08015128
+	bl	Func_08015128
 	mov	r2, r8
 	movs	r3, #54
 	ldrsh	r0, [r2, r3]
-	bl	0x08015068
+	bl	Func_08015068
 	mov	r2, r8
 	movs	r3, #52
 	ldrsh	r0, [r2, r3]
-	bl	0x08015024
+	bl	Func_08015024
 	add	r0, sp, #28
 	str	r5, [r0, #0]
 	str	r5, [r0, #4]
@@ -78,7 +78,7 @@ Func_08126700:
 	bl	Func_08014de4
 	mov	r0, r8
 	mov	r1, sl
-	bl	0x080156e8
+	bl	Func_080156e8
 	add	r6, sp, #16
 	adds	r1, r6, #0
 	mov	r0, r9
@@ -171,15 +171,15 @@ Func_08126700:
 	bl	Camera_StoreSceneParameters
 	bl	Func_08014de4
 	mov	r0, sl
-	bl	0x08015128
+	bl	Func_08015128
 	mov	r2, r8
 	movs	r3, #54
 	ldrsh	r0, [r2, r3]
-	bl	0x08015068
+	bl	Func_08015068
 	mov	r2, r8
 	movs	r3, #52
 	ldrsh	r0, [r2, r3]
-	bl	0x08015024
+	bl	Func_08015024
 	add	r0, sp, #28
 	mov	r1, r8
 	str	r5, [r0, #0]
@@ -195,7 +195,7 @@ Func_08126700:
 	bl	Func_08014de4
 	mov	r0, r8
 	mov	r1, sl
-	bl	0x080156e8
+	bl	Func_080156e8
 	add	r6, sp, #16
 	adds	r1, r6, #0
 	mov	r0, r9

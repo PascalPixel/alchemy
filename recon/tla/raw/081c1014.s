@@ -58,7 +58,7 @@ Func_081c1014:
 	movs	r1, #5
 	bl	Math_Mod
 	mov	fp, r0
-	bl	0x08013b30
+	bl	Func_08013b30
 .L_081c1082:
 	ldr	r3, [r5, #12]
 	movs	r2, #128

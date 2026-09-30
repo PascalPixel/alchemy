@@ -766,7 +766,7 @@ Func_080ea8d4:
 	adds	r1, r7, #0
 	adds	r2, r5, #0
 	str	r3, [r5, #8]
-	bl	0x0801489c
+	bl	Func_0801489c
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	.L_080eaf28
@@ -782,7 +782,7 @@ Func_080ea8d4:
 	adds	r2, r5, #0
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	0x0801489c
+	bl	Func_0801489c
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	.L_080eaf28
@@ -999,7 +999,7 @@ Func_080ea8d4:
 	ands	r3, r1
 	orrs	r3, r2
 	str	r3, [sp, #40]
-	bl	0x0801401c
+	bl	Func_0801401c
 	movs	r2, #1
 	str	r0, [sp, #32]
 	str	r2, [sp, #36]
@@ -1239,7 +1239,7 @@ Func_080ea8d4:
 	.2byte 0xfe00
 	.2byte 0xffff
 .L_080eb284:
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080eb288:
 	add	sp, #48
 	pop	{r3, r5, r6, r7}

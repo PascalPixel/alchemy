@@ -269,7 +269,7 @@ Func_080d0a28:
 	lsls	r1, r1, #3
 	strh	r6, [r5, #0]
 	ldr	r0, [pc, #20]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #120
 	bl	WaitFrames
 	add	sp, #4
@@ -1635,7 +1635,7 @@ Func_080d0a28:
 	lsls	r1, r1, #2
 	adds	r1, #255
 	ldr	r0, [pc, #16]
-	bl	0x080145a8
+	bl	Func_080145a8
 	add	sp, #4
 	pop	{pc}
 	.4byte 0x85000a81

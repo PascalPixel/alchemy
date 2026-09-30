@@ -151,7 +151,7 @@ Func_0810532c:
 	strb	r3, [r2, #0]
 	adds	r1, #138
 	ldr	r0, [pc, #16]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
 	mov	r9, r5
@@ -177,7 +177,7 @@ Func_0810532c:
 	ldrh	r0, [r5, #0]
 	subs	r6, #1
 	adds	r5, #2
-	bl	0x08014274
+	bl	Func_08014274
 	cmp	r6, #0
 	bge.n	.L_08105482
 	pop	{r5, r6, pc}

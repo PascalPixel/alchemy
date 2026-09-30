@@ -68,7 +68,7 @@ Func_080464dc:
 	bl	Func_08014d78
 	str	r0, [sp, #52]
 	movs	r0, #96
-	bl	0x08014dac
+	bl	Func_08014dac
 	adds	r2, r5, #0
 	str	r0, [sp, #24]
 	ldr	r3, [pc, #648]
@@ -779,7 +779,7 @@ Func_080464dc:
 	lsls	r0, r0, #1
 	str	r4, [sp, #92]
 	str	r4, [sp, #88]
-	bl	0x08014dac
+	bl	Func_08014dac
 	str	r0, [sp, #84]
 	movs	r0, #0
 	str	r0, [sp, #80]
@@ -4198,7 +4198,7 @@ Func_080464dc:
 .L_08048606:
 	ldmia	r5!, {r0}
 	subs	r6, #1
-	bl	0x08014274
+	bl	Func_08014274
 	cmp	r6, #0
 	bge.n	.L_08048606
 	ldr	r5, [sp, #36]
@@ -4206,13 +4206,13 @@ Func_080464dc:
 .L_08048616:
 	ldmia	r5!, {r0}
 	subs	r6, #1
-	bl	0x08014274
+	bl	Func_08014274
 	cmp	r6, #0
 	bge.n	.L_08048616
 	ldr	r0, [sp, #108]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r0, [sp, #120]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #1
 	bl	WaitFrames
 	bl	Func_08041b68
@@ -4274,7 +4274,7 @@ Func_080464dc:
 	str	r0, [sp, #60]
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08014dac
+	bl	Func_08014dac
 	str	r0, [sp, #56]
 	ldr	r0, [sp, #64]
 	movs	r3, #0
@@ -5328,7 +5328,7 @@ Func_080464dc:
 	beq.n	.L_08048f2a
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	ldr	r2, [sp, #52]
 	mov	r3, fp
 	adds	r3, #5
@@ -5366,7 +5366,7 @@ Func_080464dc:
 	beq.n	.L_08048f82
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	mov	r3, fp
 	cmp	r3, #0
 	beq.n	.L_08048f5c
@@ -5581,7 +5581,7 @@ Func_080464dc:
 	bl	0x08046134
 .L_080490ec:
 	ldr	r0, [sp, #60]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r1, #1
 	ldr	r0, [sp, #44]
 	bl	UiWork_Finalize
@@ -6556,7 +6556,7 @@ Func_080464dc:
 	beq.n	.L_080498d8
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	ldr	r4, [sp, #80]
 	mov	r3, fp
 	adds	r3, #4
@@ -6604,7 +6604,7 @@ Func_080464dc:
 	beq.n	.L_08049952
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	mov	r4, fp
 	cmp	r4, #0
 	beq.n	.L_08049902
@@ -6675,14 +6675,14 @@ Func_080464dc:
 .L_08049964:
 	ldmia	r5!, {r0}
 	str	r4, [sp, #4]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r4, [sp, #4]
 	subs	r4, #1
 	cmp	r4, #0
 	bge.n	.L_08049964
 	ldr	r2, [sp, #12]
 	lsrs	r0, r2, #16
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r1, #1
 	ldr	r0, [sp, #56]
 	bl	UiWork_Finalize

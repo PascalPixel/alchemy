@@ -202,7 +202,7 @@ Func_0815e3ac:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #88]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r3, [pc, #36]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -293,16 +293,16 @@ Func_0815e3ac:
 	str	r3, [r5, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	lsls	r0, r0, #10
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	subs	r0, #32
 	lsls	r0, r0, #10
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [r5, #0]
 	ands	r0, r7
 	subs	r0, #127
@@ -661,7 +661,7 @@ Func_0815e3ac:
 	.2byte 0xfa72
 	.2byte 0x9808
 	ldr	r1, [sp, #8]
-	bl	0x080156e8
+	bl	Func_080156e8
 	cmp	r5, #27
 	bhi.n	.L_0815e986
 	movs	r1, #64
@@ -917,7 +917,7 @@ Func_0815e3ac:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #576]
 	lsls	r1, r1, #4
-	bl	0x080145a8
+	bl	Func_080145a8
 	cmp	r5, #1
 	beq.n	.L_0815eb44
 	b.n	.L_0815ed04
@@ -935,20 +935,20 @@ Func_0815e3ac:
 	movs	r7, #0
 	adds	r6, #255
 .L_0815eb5e:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #63
 	ands	r3, r0
 	adds	r3, #16
 	str	r3, [r5, #0]
 	str	r7, [r5, #4]
 	str	r7, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r6
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #1
 	add	sl, r1
 	ands	r0, r6
@@ -1016,7 +1016,7 @@ Func_0815e3ac:
 	movs	r1, #144
 	str	r5, [r3, #0]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r0, #212
 	bl	Audio_PlayCue
 .L_0815ec16:
@@ -1046,11 +1046,11 @@ Func_0815e3ac:
 	adds	r7, r3, #5
 	bl	Func_08014de4
 	ldr	r0, [r6, #20]
-	bl	0x080150e4
+	bl	Func_080150e4
 	ldr	r0, [r6, #12]
-	bl	0x08015024
+	bl	Func_08015024
 	ldr	r0, [r6, #16]
-	bl	0x08015068
+	bl	Func_08015068
 	add	r5, sp, #80
 	adds	r0, r6, #0
 	adds	r1, r5, #0
@@ -1249,15 +1249,15 @@ Func_0815e3ac:
 	str	r3, [r5, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r5, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	lsls	r0, r0, #10
 	str	r0, [r5, #12]
-	bl	0x08014878
+	bl	Func_08014878
 	ands	r0, r7
 	lsls	r0, r0, #10
 	str	r0, [r5, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [r5, #0]
 	ands	r0, r7
 	subs	r0, #127
@@ -1372,7 +1372,7 @@ Func_0815e3ac:
 	.2byte 0xff81
 	.2byte 0x980a
 	ldr	r1, [sp, #8]
-	bl	0x080156e8
+	bl	Func_080156e8
 	mov	r3, r9
 	subs	r3, #4
 	cmp	r3, #27

@@ -242,7 +242,7 @@ Object_IsTargetUnset:
 	.2byte 0x19ad
 	adds	r5, r5, r0
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 	ldr	r1, [r7, #48]
 	cmp	r0, r1
 	bgt.n	.L_08024126
@@ -294,7 +294,7 @@ Object_IsTargetUnset:
 	.2byte 0x19ad
 	adds	r5, r5, r0
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 	cmp	r0, #0
 	beq.n	.L_080241ba
 	ldr	r3, [r7, #52]
@@ -391,7 +391,7 @@ Object_IsTargetUnset:
 	.2byte 0xf800
 	.2byte 0x182d
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 .L_0802423e:
 	cmp	r0, #0
 	bne.n	.L_0802424c
@@ -436,7 +436,7 @@ Object_IsTargetUnset:
 	.2byte 0xf800
 	.2byte 0x182d
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 	ldr	r1, [r7, #48]
 	cmp	r0, r1
 	ble.n	.L_0802431c
@@ -470,7 +470,7 @@ Object_IsTargetUnset:
 	.2byte 0xf800
 	.2byte 0x182d
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 	cmp	r0, #0
 	beq.n	.L_08024318
 	ldr	r3, [r7, #52]
@@ -668,7 +668,7 @@ Object_IsTargetUnset:
 	.2byte 0x19ad
 	adds	r5, r5, r0
 	adds	r0, r5, #0
-	bl	0x080149e0
+	bl	Func_080149e0
 	cmp	r0, #0
 	beq.n	.L_08024492
 	mov	r3, r8
@@ -954,7 +954,7 @@ Object_IsTargetUnset:
 .L_0802466a:
 	ldr	r0, [sp, #16]
 	ldr	r1, [sp, #24]
-	bl	0x080148e8
+	bl	Func_080148e8
 	ldrh	r3, [r7, #6]
 	movs	r2, #128
 	subs	r0, r0, r3

@@ -48,7 +48,7 @@ Func_0803a448:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
-	bl	0x080145a8
+	bl	Func_080145a8
 	pop	{r5, pc}
 	movs	r0, r0
 	.2byte 0xa8c9
@@ -104,13 +104,13 @@ Func_0803a448:
 	movs	r1, #144
 	ldr	r0, [pc, #20]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	b.n	.L_0803a526
 .L_0803a51c:
 	movs	r1, #144
 	ldr	r0, [pc, #12]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_0803a526:
 	pop	{r5, r6, pc}
 	.4byte 0x0803a8c9

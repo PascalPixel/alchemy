@@ -205,7 +205,7 @@ Func_0802254c:
 	movs	r1, #1
 .L_080226c8:
 	adds	r0, r7, #0
-	bl	0x080140d8
+	bl	Func_080140d8
 	b.n	.L_080226e0
 	.4byte 0x0300021c
 	.2byte 0xfc00
@@ -213,7 +213,7 @@ Func_0802254c:
 .L_080226d8:
 	adds	r0, r7, #0
 	ldr	r1, [sp, #72]
-	bl	0x080140d8
+	bl	Func_080140d8
 .L_080226e0:
 	ldrb	r2, [r7, #26]
 	movs	r3, #1
@@ -281,11 +281,11 @@ Func_0802254c:
 	cmp	r3, #0
 	bne.n	.L_0802276a
 	movs	r1, #0
-	bl	0x080140d8
+	bl	Func_080140d8
 	b.n	.L_08022790
 .L_0802276a:
 	ldr	r1, [sp, #72]
-	bl	0x080140d8
+	bl	Func_080140d8
 	b.n	.L_08022790
 .L_08022772:
 	movs	r3, #192
@@ -300,7 +300,7 @@ Func_0802254c:
 	cmp	r3, #0
 	bne.n	.L_08022790
 	ldrb	r0, [r7, #16]
-	bl	0x080142ac
+	bl	Func_080142ac
 	strb	r5, [r7, #25]
 .L_08022790:
 	add	sp, #40

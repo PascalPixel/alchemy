@@ -10,7 +10,7 @@ RenderOutput_Release:
 	cmp	r3, #0
 	beq.n	.L_08039540
 	ldrb	r0, [r5, #14]
-	bl	0x08014274
+	bl	Func_08014274
 	ldrb	r3, [r5, #4]
 	cmp	r3, #2
 	bne.n	.L_08039540

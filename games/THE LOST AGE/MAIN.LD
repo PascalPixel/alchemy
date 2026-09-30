@@ -15,7 +15,7 @@ SECTIONS
     .rom_start :
     {
         "*/recon/tla/unidentified.o"(.unidentified.08000000)
-        "*/recon/tla/raw/080000c0.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/BOOT.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SYSTEM/ENTRY.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SOUND/RESAMPLER_RECORDS.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/SOUND/RESAMPLER_RECORDS_PAD.o"(.text .rodata .data .padding)

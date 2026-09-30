@@ -94,7 +94,7 @@ Func_080cb8e8:
 	adds	r2, #255
 	adds	r3, r5, r2
 	strb	r1, [r3, #0]
-	bl	0x080144c0
+	bl	Func_080144c0
 	movs	r0, #0
 	bl	0x080d793c
 	movs	r4, #253

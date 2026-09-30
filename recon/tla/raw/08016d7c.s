@@ -18,6 +18,9 @@ Func_08016d7c:
 	pop	{pc}
 	.2byte 0x0040
 	.2byte 0x0200
+	.global Func_08016d98
+	.thumb_func
+Func_08016d98:
 	push	{lr}
 	ldr	r1, [pc, #20]
 	lsls	r3, r0, #20

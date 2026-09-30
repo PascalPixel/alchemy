@@ -156,7 +156,7 @@ Func_080d8d68:
 	mov	r0, fp
 	str	r3, [sp, #16]
 	str	r2, [sp, #12]
-	bl	0x080148e8
+	bl	Func_080148e8
 	adds	r5, r0, #0
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16
@@ -353,7 +353,7 @@ Func_080d8d68:
 	adds	r0, r3, #0
 	asrs	r1, r1, #8
 	mov	r8, r2
-	bl	0x080148e8
+	bl	Func_080148e8
 	adds	r5, r0, #0
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16
@@ -620,7 +620,7 @@ Func_080d8d68:
 	adds	r1, r6, #0
 	str	r5, [r2, #0]
 	lsls	r0, r0, #11
-	bl	0x080148e8
+	bl	Func_080148e8
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	adds	r7, r7, r0
@@ -969,7 +969,7 @@ Func_080d8d68:
 .L_080d9524:
 	adds	r1, r2, #0
 	adds	r0, r6, #0
-	bl	0x080148e8
+	bl	Func_080148e8
 	adds	r5, r0, #0
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16
@@ -1398,7 +1398,7 @@ Func_080d8d68:
 	adds	r1, r5, #0
 	strb	r3, [r7, #18]
 	lsls	r0, r0, #11
-	bl	0x080148e8
+	bl	Func_080148e8
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	add	sl, r0

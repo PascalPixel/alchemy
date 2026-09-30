@@ -290,13 +290,13 @@ Func_0802dd08:
 	movs	r0, #1
 	bl	Func_08013eb4
 .L_0802df54:
-	bl	0x08014c6c
-	bl	0x080144c0
+	bl	Func_08014c6c
+	bl	Func_080144c0
 	movs	r1, #160
 	movs	r0, #36
 	bl	Runtime_AllocateBlock
 	str	r0, [sp, #4]
-	bl	0x08014368
+	bl	Func_08014368
 	movs	r0, #2
 	bl	0x080230e0
 	mov	r0, sl
@@ -411,7 +411,7 @@ Func_0802dd08:
 	movs	r1, #144
 	ldr	r0, [pc, #552]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_0802e062:
 	movs	r0, #1
 	bl	WaitFrames
@@ -905,7 +905,7 @@ Func_0802dd08:
 	ands	r2, r3
 	cmp	r2, #0
 	beq.n	.L_0802e402
-	bl	0x080144c0
+	bl	Func_080144c0
 	ldr	r0, [pc, #60]
 	ldr	r1, [pc, #64]
 	bl	Runtime_ConstantZeroResult
@@ -1087,7 +1087,7 @@ Func_0802dd08:
 	adds	r2, r7, #0
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r3, #168
 	lsls	r3, r3, #6
 	ldr	r4, [sp, #0]
@@ -1123,7 +1123,7 @@ Func_0802dd08:
 	adds	r2, r7, #0
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r3, #128
 	ldr	r4, [sp, #0]
 	lsls	r3, r3, #6
@@ -1158,7 +1158,7 @@ Func_0802dd08:
 	adds	r2, r7, #0
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r3, #200
 	lsls	r3, r3, #5
 	ldr	r4, [sp, #0]
@@ -1200,7 +1200,7 @@ Func_0802dd08:
 	adds	r2, r7, #0
 	mov	r0, r9
 	str	r4, [sp, #0]
-	bl	0x0801489c
+	bl	Func_0801489c
 	mov	r3, sl
 	str	r3, [r6, #16]
 	mov	r3, fp
@@ -1211,7 +1211,7 @@ Func_0802dd08:
 	str	r3, [r6, #24]
 	adds	r1, r5, #0
 	mov	r0, r9
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r2, #128
 	ldr	r4, [sp, #0]
 	lsls	r2, r2, #8
@@ -1247,7 +1247,7 @@ Func_0802dd08:
 	adds	r1, r5, #0
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r2, #128
 	ldr	r4, [sp, #0]
 	lsls	r2, r2, #7

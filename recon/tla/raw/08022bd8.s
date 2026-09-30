@@ -29,7 +29,7 @@ Func_08022bd8:
 	bl	Func_08014cc0
 .L_08022c0e:
 	adds	r6, r0, #0
-	bl	0x08014c4c
+	bl	Func_08014c4c
 	movs	r3, #128
 	mov	r4, sp
 	movs	r5, #0
@@ -76,6 +76,6 @@ Func_08022bd8:
 	.2byte 0x0802
 	push	{lr}
 	movs	r0, #93
-	bl	0x08014274
+	bl	Func_08014274
 	pop	{pc}
 	.2byte 0x0000

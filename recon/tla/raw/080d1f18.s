@@ -20,7 +20,7 @@ Func_080d1f18:
 	bl	Func_080d2a8c
 	movs	r0, #130
 	lsls	r0, r0, #5
-	bl	0x08014dac
+	bl	Func_08014dac
 	lsls	r5, r5, #2
 	ldr	r3, [r5, r7]
 	ldr	r6, [pc, #220]
@@ -34,7 +34,7 @@ Func_080d1f18:
 	adds	r7, r7, r3
 	mov	r1, r8
 	adds	r0, r7, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212

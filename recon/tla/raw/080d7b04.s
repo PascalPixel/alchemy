@@ -129,7 +129,7 @@ Func_080d7b04:
 	lsls	r0, r0, #16
 	lsls	r1, r1, #11
 	adds	r2, r6, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r6, #0]
 	add	sp, #12
 	str	r3, [r5, #4]
@@ -211,13 +211,13 @@ Func_080d7b04:
 	adds	r0, r5, #0
 	movs	r1, #7
 	bl	Func_080ebea8
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r1, r0, #3
 	subs	r1, r1, r0
 	lsrs	r1, r1, #16
 	ldr	r0, [r5, #0]
 	bl	0x08020280
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #3
 	bl	0x0800205c
 	movs	r3, #128

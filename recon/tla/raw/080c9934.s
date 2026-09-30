@@ -90,9 +90,9 @@ Func_080c9934:
 	ldrb	r0, [r2, #0]
 	ldrb	r1, [r3, #0]
 	bl	0x08038348
-	bl	0x08014368
-	bl	0x080144c0
-	bl	0x080144c0
+	bl	Func_08014368
+	bl	Func_080144c0
+	bl	Func_080144c0
 	ldr	r2, [pc, #52]
 	mov	r9, r2
 .L_080c99ea:
@@ -149,17 +149,17 @@ Func_080c9934:
 	ldrh	r3, [r1, #10]
 	movs	r3, #1
 	strb	r3, [r2, #0]
-	bl	0x080144c0
+	bl	Func_080144c0
 	movs	r0, #1
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08013438
+	bl	Func_08013438
 	movs	r0, #2
 	movs	r1, #0
 	movs	r2, #0
-	bl	0x08013438
-	bl	0x08014c6c
-	bl	0x08014b70
+	bl	Func_08013438
+	bl	Func_08014c6c
+	bl	Func_08014b70
 	b.n	.L_080c9a98
 	movs	r0, r0
 	.4byte 0x0000c5ff
@@ -168,7 +168,7 @@ Func_080c9934:
 	.2byte 0x120c
 	.2byte 0x0300
 .L_080c9a98:
-	bl	0x08014368
+	bl	Func_08014368
 	mov	r1, r8
 	movs	r0, #0
 	ldrsh	r3, [r1, r0]

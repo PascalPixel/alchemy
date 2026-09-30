@@ -318,7 +318,7 @@ Func_080dc390:
 	movs	r1, #144
 	ldr	r0, [pc, #48]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 .L_080dc5fc:
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -419,7 +419,7 @@ Func_080dc390:
 	ldrh	r1, [r6, #0]
 	str	r3, [r6, #8]
 	adds	r2, r6, #4
-	bl	0x0801489c
+	bl	Func_0801489c
 .L_080dc6d6:
 	pop	{r5, r6, r7, pc}
 	push	{r5, r6, r7, lr}

@@ -82,7 +82,7 @@ Func_080e3698:
 	adds	r2, r6, #0
 	ldr	r1, [sp, #0]
 	lsls	r0, r0, #5
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r2, [r6, #0]
 	movs	r1, #128
 	str	r2, [r7, #8]
@@ -381,7 +381,7 @@ Func_080e3698:
 	ldrh	r1, [r3, #0]
 	ldr	r0, [r7, #0]
 	adds	r2, #12
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r3, #0
 	str	r3, [r6, #24]
 	b.n	.L_080e39e0
@@ -597,7 +597,7 @@ Func_080e3698:
 	beq.n	.L_080e3bba
 	ldr	r3, [r6, #0]
 	str	r3, [r7, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [r6, #4]
 	lsls	r0, r0, #2
 	subs	r3, r3, r0
@@ -615,13 +615,13 @@ Func_080e3698:
 	lsls	r3, r3, #8
 	adds	r1, r1, r3
 	lsls	r0, r0, #12
-	bl	0x0801489c
-	bl	0x08014878
+	bl	Func_0801489c
+	bl	Func_08014878
 	adds	r1, r0, #0
 	movs	r0, #192
 	adds	r2, r7, #0
 	lsls	r0, r0, #12
-	bl	0x0801489c
+	bl	Func_0801489c
 	ldr	r3, [r7, #0]
 	mov	r2, r9
 	str	r3, [r2, #0]
@@ -1197,7 +1197,7 @@ Func_080e3698:
 .L_080e4012:
 	bl	Resource_GetTableEntry
 	mov	r1, r8
-	bl	0x0801587c
+	bl	Func_0801587c
 	bl	Resource_FindFreeEntry
 	movs	r5, #128
 	lsls	r5, r5, #5
@@ -1258,7 +1258,7 @@ Func_080e3698:
 	ldr	r0, [pc, #240]
 	bl	Resource_GetTableEntry
 	mov	r1, r8
-	bl	0x0801587c
+	bl	Func_0801587c
 	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #4
@@ -1324,7 +1324,7 @@ Func_080e3698:
 	strb	r3, [r2, #0]
 	ldr	r0, [pc, #100]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r3, #0
 	mov	r9, r3
 .L_080e4132:
@@ -1440,9 +1440,9 @@ Func_080e3698:
 	ldr	r0, [pc, #44]
 	bl	Func_08014644
 	ldr	r0, [sp, #8]
-	bl	0x08014274
+	bl	Func_08014274
 	mov	r0, fp
-	bl	0x08014274
+	bl	Func_08014274
 .L_080e4222:
 	bl	0x080dc384
 	movs	r0, #92
@@ -1684,7 +1684,7 @@ Func_080e3698:
 	lsls	r3, r3, #2
 	ldr	r0, [r3, r2]
 	adds	r1, r7, #0
-	bl	0x0801587c
+	bl	Func_0801587c
 	b.n	0x080e4440
 .L_080e440e:
 	cmp	r3, #3
@@ -1919,19 +1919,19 @@ Func_080e3698:
 	lsls	r5, r5, #10
 	adds	r3, r2, r5
 	str	r3, [r6, #4]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r2, r6, #0
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	b.n	.L_080e4604
 .L_080e45f4:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #11
 	adds	r2, r6, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 .L_080e4604:
 	ldr	r3, [r6, #0]
 	mov	r1, r8
@@ -1946,22 +1946,22 @@ Func_080e3698:
 	ldr	r2, [sp, #44]
 	cmp	r2, #0
 	beq.n	.L_080e4632
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r0, #0
 	movs	r0, #204
 	lsls	r0, r0, #6
 	adds	r0, #51
 	adds	r2, r6, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	b.n	.L_080e4644
 .L_080e4632:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r1, r0, #0
 	movs	r0, #204
 	lsls	r0, r0, #8
 	adds	r0, #204
 	adds	r2, r6, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 .L_080e4644:
 	ldr	r3, [r6, #0]
 	mov	r1, r8

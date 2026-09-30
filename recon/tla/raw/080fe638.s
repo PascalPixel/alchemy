@@ -233,7 +233,7 @@ Func_080fe638:
 	str	r0, [sp, #28]
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	movs	r6, #1
 .L_080fe826:
 	movs	r0, #168

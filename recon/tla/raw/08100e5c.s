@@ -58,7 +58,7 @@ Func_08100e5c:
 	movs	r0, #132
 	lsls	r0, r0, #6
 	adds	r0, #48
-	bl	0x08014dac
+	bl	Func_08014dac
 	movs	r2, #192
 	lsls	r2, r2, #1
 	adds	r3, r7, r2

@@ -84,7 +84,7 @@ Func_080d4d08:
 	adds	r3, r3, r2
 	str	r3, [r7, #8]
 	adds	r2, r7, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	adds	r0, r6, #0
 	adds	r1, r7, #0
 	bl	Func_08020210
@@ -110,7 +110,7 @@ Func_080d4d08:
 	adds	r3, r3, r2
 	str	r3, [r7, #8]
 	adds	r2, r7, #0
-	bl	0x0801489c
+	bl	Func_0801489c
 	movs	r3, #0
 	adds	r0, r6, #0
 	adds	r1, r7, #0

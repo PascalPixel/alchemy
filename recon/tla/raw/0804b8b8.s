@@ -263,7 +263,7 @@ Func_0804b8b8:
 	movs	r0, #9
 	str	r1, [sp, #12]
 	str	r2, [sp, #8]
-	bl	0x08014dac
+	bl	Func_08014dac
 	ldr	r2, [sp, #12]
 	adds	r5, r0, #0
 	ldr	r2, [r2, #0]

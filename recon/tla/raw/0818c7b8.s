@@ -118,7 +118,7 @@ Func_0818c7b8:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #28]
-	bl	0x080145a8
+	bl	Func_080145a8
 	ldr	r2, [sp, #8]
 	movs	r3, #36
 	ldrsh	r1, [r2, r3]
@@ -532,7 +532,7 @@ Func_0818c7b8:
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #20]
 	str	r5, [sp, #40]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r7, #166
 	ldr	r4, [sp, #52]
 	lsls	r7, r7, #7
@@ -630,7 +630,7 @@ Func_0818c7b8:
 .L_0818ccee:
 	mov	r4, r9
 	lsls	r6, r4, #1
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -965,7 +965,7 @@ Func_0818c7b8:
 .L_0818cf98:
 	cmp	r3, #0
 	bne.n	.L_0818d020
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #254
 	lsls	r3, r3, #7
 	adds	r3, #255
@@ -975,7 +975,7 @@ Func_0818c7b8:
 	ands	r6, r3
 	adds	r2, r6, r4
 	str	r2, [sp, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r5, #128
 	lsls	r5, r5, #1
 	ldr	r2, [sp, #16]
@@ -1019,7 +1019,7 @@ Func_0818c7b8:
 	muls	r3, r0
 	asrs	r3, r3, #8
 	str	r3, [r7, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r4, #7
 	ands	r0, r4
 	adds	r0, #4
@@ -1075,7 +1075,7 @@ Func_0818c7b8:
 .L_0818d080:
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	0x08014dac
+	bl	Func_08014dac
 	str	r0, [sp, #24]
 	movs	r0, #1
 	bl	0x081969f8
@@ -1163,7 +1163,7 @@ Func_0818c7b8:
 	lsls	r0, r0, #4
 	strb	r3, [r7, #24]
 	adds	r0, #184
-	bl	0x08015024
+	bl	Func_08015024
 	ldr	r0, [pc, #452]
 	ldr	r1, [sp, #24]
 	movs	r2, #32
@@ -1276,7 +1276,7 @@ Func_0818c7b8:
 	movs	r2, #0
 	bl	0x08015160
 	ldr	r0, [r6, #8]
-	bl	0x080150e4
+	bl	Func_080150e4
 	movs	r3, #1
 	mov	r1, r9
 	ands	r3, r1
@@ -1284,7 +1284,7 @@ Func_0818c7b8:
 	beq.n	.L_0818d234
 	movs	r0, #128
 	lsls	r0, r0, #8
-	bl	0x08015068
+	bl	Func_08015068
 .L_0818d234:
 	ldr	r3, [r6, #8]
 	ldr	r2, [r6, #20]
@@ -1336,9 +1336,9 @@ Func_0818c7b8:
 	mov	r9, r2
 	mov	r8, r3
 .L_0818d296:
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r6, r0, #0
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r5, #128
 	lsls	r5, r5, #1
 	adds	r5, #255
@@ -1389,7 +1389,7 @@ Func_0818c7b8:
 .L_0818d318:
 	mov	r2, r8
 	str	r2, [r7, #0]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r1, #104
 	bl	0x0800206c
 	mov	r4, r9
@@ -1413,7 +1413,7 @@ Func_0818c7b8:
 	movs	r2, #0
 	mov	r9, r2
 .L_0818d34a:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r6, #254
 	lsls	r6, r6, #7
 	adds	r6, #255
@@ -1421,7 +1421,7 @@ Func_0818c7b8:
 	lsls	r3, r3, #7
 	ands	r6, r0
 	adds	r6, r6, r3
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r5, #128
 	lsls	r5, r5, #1
 	adds	r5, #255
@@ -1446,7 +1446,7 @@ Func_0818c7b8:
 	muls	r3, r0
 	asrs	r3, r3, #5
 	str	r3, [r7, #16]
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #15
 	movs	r1, #1
 	ands	r3, r0
@@ -1559,7 +1559,7 @@ Func_0818c7b8:
 	mov	r4, r9
 	ands	r4, r7
 	str	r4, [sp, #8]
-	bl	0x08014878
+	bl	Func_08014878
 	adds	r6, r0, #0
 	bl	Math_Sine
 	ldr	r3, [pc, #260]
@@ -1586,7 +1586,7 @@ Func_0818c7b8:
 	adds	r6, r6, r0
 	mov	r8, r2
 	subs	r6, r6, r3
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r3, [pc, #212]
 	ands	r0, r7
 	ldrb	r2, [r3, r0]

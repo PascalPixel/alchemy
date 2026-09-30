@@ -18,7 +18,7 @@ Func_08108b34:
 	adds	r5, r0, #0
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	0x0801591c
+	bl	Func_0801591c
 	adds	r0, r7, #0
 	mov	r1, r8
 	adds	r2, r5, #0

@@ -897,7 +897,7 @@ Func_0811f66c:
 	beq.n	.L_0811fdd2
 	b.n	.L_0811fdf4
 .L_0811fdaa:
-	bl	0x08014878
+	bl	Func_08014878
 	movs	r3, #11
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -908,7 +908,7 @@ Func_0811f66c:
 	movs	r1, #1
 	b.n	.L_0811fdf4
 .L_0811fdbe:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #4
 	subs	r3, r3, r0
 	lsrs	r1, r3, #16
@@ -918,7 +918,7 @@ Func_0811f66c:
 	bgt.n	.L_0811fdee
 	b.n	.L_0811fdba
 .L_0811fdd2:
-	bl	0x08014878
+	bl	Func_08014878
 	lsls	r3, r0, #3
 	adds	r3, r3, r0
 	lsls	r3, r3, #1
@@ -960,7 +960,7 @@ Func_0811f66c:
 	adds	r2, #32
 	str	r2, [sp, #12]
 .L_0811fe16:
-	bl	0x08014878
+	bl	Func_08014878
 	ldr	r4, [sp, #20]
 	ldr	r6, [sp, #12]
 	adds	r3, r4, #0

@@ -234,7 +234,7 @@ Func_081197d0:
 	lsls	r1, r1, #2
 	adds	r1, #255
 	ldr	r0, [pc, #276]
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r5, #128
 	ldr	r3, [pc, #248]
 	lsls	r5, r5, #2
@@ -253,7 +253,7 @@ Func_081197d0:
 	movs	r0, #55
 	bl	Audio_PlayCue
 	movs	r0, #4
-	bl	0x08013b30
+	bl	Func_08013b30
 	b.n	.L_081199f0
 .L_081199ea:
 	movs	r0, #50
@@ -396,7 +396,7 @@ Func_081197d0:
 	strb	r2, [r3, #0]
 	ldr	r0, [pc, #424]
 	lsls	r1, r1, #3
-	bl	0x080145a8
+	bl	Func_080145a8
 	movs	r5, #1
 	str	r5, [sp, #32]
 .L_08119b32:
@@ -443,7 +443,7 @@ Func_081197d0:
 	.2byte 0xf800
 	.2byte 0x4649
 	ldr	r0, [r1, #84]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #181
 	lsls	r0, r0, #1
 	bl	GameFlag_TestFar
@@ -894,8 +894,8 @@ Func_081197d0:
 	bl	Audio_PlayCue
 .L_08119f34:
 	movs	r0, #30
-	bl	0x08013e70
-	bl	0x08013fdc
+	bl	Func_08013e70
+	bl	Func_08013fdc
 	movs	r3, #171
 	lsls	r3, r3, #3
 	add	r3, r9
@@ -907,7 +907,7 @@ Func_081197d0:
 .L_08119f4c:
 	bl	Func_081195d4
 	movs	r0, #0
-	bl	0x08014694
+	bl	Func_08014694
 	ldr	r3, [pc, #24]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -958,16 +958,16 @@ Func_081197d0:
 .L_08119fc0:
 	movs	r0, #30
 	movs	r7, #1
-	bl	0x08013e70
+	bl	Func_08013e70
 	negs	r7, r7
-	bl	0x08013fdc
+	bl	Func_08013fdc
 	b.n	.L_08119fea
 .L_08119fd0:
 	movs	r0, #78
 	bl	Audio_PlayCue
 	movs	r0, #30
-	bl	0x08013e70
-	bl	0x08013fdc
+	bl	Func_08013e70
+	bl	Func_08013fdc
 	ldr	r5, [sp, #40]
 	movs	r7, #186
 	lsls	r7, r7, #2

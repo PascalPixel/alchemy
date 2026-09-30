@@ -747,7 +747,7 @@ Func_08049a30:
 	beq.n	.L_0804a06e
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	ldr	r2, [sp, #72]
 	mov	r3, r9
 	adds	r3, #5
@@ -793,7 +793,7 @@ Func_08049a30:
 	beq.n	.L_0804a0d8
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	mov	r1, r9
 	cmp	r1, #0
 	beq.n	.L_0804a09a
@@ -856,13 +856,13 @@ Func_08049a30:
 	movs	r0, #1
 	bl	WaitFrames
 	ldr	r0, [sp, #56]
-	bl	0x08014274
+	bl	Func_08014274
 	ldr	r5, [sp, #24]
 	movs	r7, #4
 .L_0804a100:
 	ldmia	r5!, {r0}
 	subs	r7, #1
-	bl	0x08014274
+	bl	Func_08014274
 	cmp	r7, #0
 	bge.n	.L_0804a100
 	movs	r0, #1
@@ -1649,7 +1649,7 @@ Func_08049a30:
 	beq.n	.L_0804a79c
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	ldr	r1, [sp, #68]
 	mov	r3, fp
 	adds	r3, #5
@@ -1696,7 +1696,7 @@ Func_08049a30:
 	beq.n	.L_0804a80e
 	movs	r0, #111
 	bl	Audio_PlayCue
-	bl	0x080138a8
+	bl	Func_080138a8
 	mov	r0, fp
 	cmp	r0, #0
 	beq.n	.L_0804a7c8
@@ -1766,11 +1766,11 @@ Func_08049a30:
 .L_0804a830:
 	ldmia	r5!, {r0}
 	subs	r7, #1
-	bl	0x08014274
+	bl	Func_08014274
 	cmp	r7, #0
 	bge.n	.L_0804a830
 	ldr	r0, [sp, #52]
-	bl	0x08014274
+	bl	Func_08014274
 	movs	r0, #1
 	bl	WaitFrames
 	adds	r0, r6, #0
@@ -2405,7 +2405,7 @@ Func_08049a30:
 	ands	r2, r3
 	str	r2, [r0, #4]
 	ldr	r0, [sp, #36]
-	bl	0x0801401c
+	bl	Func_0801401c
 	ldr	r1, [sp, #56]
 	movs	r3, #1
 	ands	r3, r1
@@ -3614,7 +3614,7 @@ Func_08049a30:
 	bl	WaitFrames
 	mov	r7, r9
 	ldr	r0, [sp, #52]
-	bl	0x08014274
+	bl	Func_08014274
 	cmp	r7, #0
 	beq.n	.L_0804b66a
 	mov	r0, r9

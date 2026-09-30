@@ -89,85 +89,61 @@ UiText_MeasureStringVariant:
 .L_08018aec:
 	.4byte .L_08018b92
 	.4byte .L_08018bac
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8b60
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8bde
-	.2byte 0x0801
-	.2byte 0x8bce
-	.2byte 0x0801
-	.2byte 0x8bde
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8bc6
-	.2byte 0x0801
-	.2byte 0x8bde
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8bde
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8aa4
-	.2byte 0x0801
-	.2byte 0x8bc6
-	.2byte 0x0801
-	.2byte 0x464b
-	.2byte 0x4662
-	.2byte 0x3601
-	.2byte 0x529e
-	.2byte 0x465b
-	.2byte 0x529c
-	.2byte 0x2f00
-	.2byte 0xd102
-	.2byte 0x45a2
-	.2byte 0xd200
-	.2byte 0x46a2
-	.2byte 0x9b01
-	.2byte 0x2b02
-	.2byte 0xd803
-	.2byte 0x3301
-	.2byte 0x9301
-	.2byte 0x005b
-	.2byte 0x469c
-	.2byte 0x00ba
-	.2byte 0x588b
-	.2byte 0x330f
-	.2byte 0x2600
-	.2byte 0x2400
-	.2byte 0x508b
-	.2byte 0xe788
+	.4byte .L_08018aa4
+	.4byte .L_08018b60
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018bde
+	.4byte .L_08018bce
+	.4byte .L_08018bde
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018bc6
+	.4byte .L_08018bde
+	.4byte .L_08018aa4
+	.4byte .L_08018bde
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018aa4
+	.4byte .L_08018bc6
+.L_08018b60:
+	mov r3, r9
+	mov r2, r12
+	adds r6, #1
+	strh r6, [r3, r2]
+	mov r3, r11
+	strh r4, [r3, r2]
+	cmp r7, #0
+	bne .L_08018b76
+	cmp r10, r4
+	bcs .L_08018b76
+	mov r10, r4
+.L_08018b76:
+	ldr r3, [sp, #4]
+	cmp r3, #2
+	bhi .L_08018b84
+	adds r3, #1
+	str r3, [sp, #4]
+	lsls r3, r3, #1
+	mov r12, r3
+.L_08018b84:
+	lsls r2, r7, #2
+	ldr r3, [r1, r2]
+	adds r3, #15
+	movs r6, #0
+	movs r4, #0
+	str r3, [r1, r2]
+	b .L_08018aa4
 .L_08018b92:
 	mov r2, r9
 	mov r3, r12
@@ -198,22 +174,25 @@ UiText_MeasureStringVariant:
 .L_08018bc2:
 	adds r7, #1
 	b .L_08018aa4
-	.2byte 0x4b24
-	.2byte 0x3001
-	.2byte 0x4018
-	.2byte 0xe007
-	.2byte 0x22eb
-	.2byte 0x0043
-	.2byte 0x0112
-	.2byte 0x189b
-	.2byte 0x5aea
-	.2byte 0x4b21
-	.2byte 0x18eb
-	.2byte 0x801a
-	.2byte 0x4b1e
-	.2byte 0x3001
-	.2byte 0x4018
-	.2byte 0xe75e
+.L_08018bc6:
+	ldr r3, .L_08018c58
+	adds r0, #1
+	ands r0, r3
+	b .L_08018bde
+.L_08018bce:
+	movs r2, #235
+	lsls r3, r0, #1
+	lsls r2, r2, #4
+	adds r3, r3, r2
+	ldrh r2, [r5, r3]
+	ldr r3, .L_08018c60
+	adds r3, r5, r3
+	strh r2, [r3]
+.L_08018bde:
+	ldr r3, .L_08018c58
+	adds r0, #1
+	ands r0, r3
+	b .L_08018aa4
 .L_08018be6:
 	ldr r2, .L_08018c68
 	adds r3, r5, r2

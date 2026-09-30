@@ -271,10 +271,18 @@ fn jump_table(
         .take(16)
         .map(|(_, ins)| ins)
         .collect();
-    let Some(table) = before.iter().take(8).find_map(|ins| match ins.kind {
+    // GCC places the table on the word boundary after the jump, and loads
+    // its address just before the jump, or once before a loop around it.
+    let after = (pc + 2).next_multiple_of(4);
+    let hoisted = function
+        .instructions
+        .range(..pc)
+        .any(|(_, ins)| matches!(ins.kind, Kind::LdrPool { word, .. } if word == after));
+    let near = before.iter().take(8).find_map(|ins| match ins.kind {
         Kind::LdrPool { word, .. } if word % 4 == 0 && word > pc && word < limit => Some(word),
         _ => None,
-    }) else {
+    });
+    let Some(table) = near.or(hoisted.then_some(after)) else {
         return Vec::new();
     };
     let bound = before.iter().find_map(|ins| match ins.kind {
@@ -288,11 +296,17 @@ fn jump_table(
         if bound.is_some_and(|n| cases.len() as u32 >= n) {
             break;
         }
+        // A bounded switch may send a case back to code before the jump,
+        // such as the head of the loop around it; the table still ends
+        // before the first case that follows it.
         let case = image.word(word);
-        if case % 2 != 0 || case < start || case >= limit || case <= pc {
+        let back = bound.is_some() && case < pc;
+        if case % 2 != 0 || case < start || case >= limit || (case <= pc && !back) {
             break;
         }
-        first_case = first_case.min(case);
+        if case > table {
+            first_case = first_case.min(case);
+        }
         cases.push((word, case));
         word += 4;
     }
@@ -545,6 +559,62 @@ pub(crate) mod tests {
         assert_eq!(function.pools, BTreeSet::from([base + 0x10]));
         assert_eq!(function.end, base + 0x28);
         assert!(function.terminated);
+    }
+
+    #[test]
+    fn a_bounded_switch_reads_a_case_that_leads_back_before_the_jump() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0x2801, // cmp r0, #1
+            0xd80f, // bhi 0x08000024
+            0x0080, // lsls r0, r0, #2
+            0x4902, // ldr r1, [pc, #8]: the word at 0x10
+            0x1840, // adds r0, r0, r1
+            0x6800, // ldr r0, [r0]
+            0x4687, // mov pc, r0
+            0x0000, // padding
+        ]);
+        bytes.extend(0x0800_0014u32.to_le_bytes()); // 0x10: the table's address
+        bytes.extend(0x0800_001cu32.to_le_bytes()); // 0x14: case 0
+        bytes.extend(0x0800_0000u32.to_le_bytes()); // 0x18: case 1, back to the cmp
+        bytes.extend(halves(&[0x2001, 0x4770, 0x2002, 0x4770, 0x2000, 0x4770]));
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert_eq!(
+            function.tables,
+            BTreeMap::from([(base + 0x14, base + 0x1c), (base + 0x18, base)])
+        );
+    }
+
+    #[test]
+    fn a_switch_whose_table_address_was_loaded_before_a_loop_is_read() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0x4b05, // ldr r3, [pc, #20]: the word at 0x18
+            0x469e, // mov lr, r3
+            0x2801, // cmp r0, #1
+            0xd80d, // bhi 0x08000024
+            0x0083, // lsls r3, r0, #2
+            0x4672, // mov r2, lr
+            0x589b, // ldr r3, [r3, r2]
+            0x469f, // mov pc, r3
+        ]);
+        bytes.extend(0x0800_001cu32.to_le_bytes()); // 0x10: case 0
+        bytes.extend(0x0800_0020u32.to_le_bytes()); // 0x14: case 1
+        bytes.extend(0x0800_0010u32.to_le_bytes()); // 0x18: the table's address
+        bytes.extend(halves(&[0x2001, 0x4770, 0x2002, 0x4770, 0x2000, 0x4770]));
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert_eq!(
+            function.tables,
+            BTreeMap::from([(base + 0x10, base + 0x1c), (base + 0x14, base + 0x20)])
+        );
     }
 
     #[test]

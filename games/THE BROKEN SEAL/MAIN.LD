@@ -334,7 +334,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/FIT_ON_SCREEN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RESOURCE_MEASURE.o"(.text)
         "*/recon/tbs/raw/08018850.o"(.text)
-        "*/recon/tbs/raw/08018a04.o"(.text)
         "*/recon/tbs/raw/08018a50.o"(.text)
         "*/recon/tbs/raw/08018cac.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/PUT_GLYPH.o"(.text)

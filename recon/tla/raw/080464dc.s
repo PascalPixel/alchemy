@@ -261,7 +261,7 @@ Func_080464dc:
 	beq.n	.L_08046710
 .L_0804670a:
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08046710:
 	mov	r2, sl
 	ldr	r0, [pc, #232]
@@ -270,7 +270,7 @@ Func_080464dc:
 	movs	r2, #24
 	bl	UiText_DrawCharacterAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08046724:
 	ldr	r3, [sp, #60]
 	cmp	r3, #0
@@ -364,7 +364,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_080467da
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08046806
 .L_080467da:
 	ldr	r3, [pc, #20]
@@ -372,7 +372,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_08046800
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08046806
 	movs	r0, r0
 	.4byte 0x00008000
@@ -383,7 +383,7 @@ Func_080464dc:
 	.2byte 0x0000
 .L_08046800:
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08046806:
 	ldrh	r3, [r6, #0]
 	movs	r0, #252
@@ -448,7 +448,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_080468a2
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	mov	r4, sl
 	ldr	r1, [r4, #0]
 	ldr	r0, [pc, #604]
@@ -462,7 +462,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_080468c6
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r4, [sp, #12]
 	mov	r2, sl
 	lsls	r3, r4, #3
@@ -486,9 +486,9 @@ Func_080464dc:
 	bl	UiText_DrawCharacterAtOffset
 .L_080468da:
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	movs	r3, #10
 	mov	r4, sl
 	ldr	r0, [r4, #0]
@@ -2172,14 +2172,14 @@ Func_080464dc:
 	adds	r0, r5, #0
 	bl	Item_Get
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	adds	r1, r5, #0
 	ldr	r0, [sp, #144]
 	bl	.L_080499b4
 	cmp	r0, #0
 	beq.n	.L_08047628
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08047638
 	.4byte 0x00000d4f
 	.4byte 0x00000092
@@ -2192,7 +2192,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_08047638
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08047638:
 	movs	r0, #128
 	ldr	r3, [pc, #88]
@@ -2205,7 +2205,7 @@ Func_080464dc:
 	mov	r3, fp
 	bl	UiText_DrawCharacterAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	mov	r4, r8
 	add	r2, sp, #420
 	lsls	r3, r4, #2
@@ -2571,7 +2571,7 @@ Func_080464dc:
 	cmp	r3, #0
 	bne.n	.L_08047944
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_0804796c
 	.4byte 0x000003ff
 	.4byte 0xfffffc00
@@ -2586,7 +2586,7 @@ Func_080464dc:
 	cmp	r2, r3
 	ble.n	.L_08047958
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_0804796c
 .L_08047958:
 	ldr	r2, [sp, #64]
@@ -2597,7 +2597,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_0804796c
 	movs	r0, #9
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_0804796c:
 	ldr	r1, [sp, #140]
 	movs	r0, #0
@@ -2618,7 +2618,7 @@ Func_080464dc:
 	ldr	r2, [sp, #136]
 	bl	UiText_DrawNumberAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r4, [sp, #140]
 	movs	r3, #15
 	strb	r3, [r4, #7]
@@ -3043,7 +3043,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_08047ce4
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08047cf4
 	.4byte 0x00000cf9
 	.4byte 0x000009b1
@@ -3056,7 +3056,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_08047cf4
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08047cf4:
 	movs	r3, #240
 	lsls	r3, r3, #4
@@ -3091,7 +3091,7 @@ Func_080464dc:
 	bl	UiText_DrawNumberAtOffset
 .L_08047d36:
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	movs	r4, #1
 	add	r8, r4
 .L_08047d40:
@@ -4722,7 +4722,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_08048a46
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08048a56
 .L_08048a46:
 	movs	r3, #128
@@ -4731,7 +4731,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_08048a56
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08048a56:
 	movs	r0, #240
 	lsls	r0, r0, #4
@@ -4765,7 +4765,7 @@ Func_080464dc:
 .L_08048a94:
 	movs	r0, #15
 	adds	r7, #1
-	bl	0x08041f70
+	bl	Func_08041f70
 	cmp	r7, #4
 	bgt.n	.L_08048ab0
 	movs	r1, #4
@@ -6031,7 +6031,7 @@ Func_080464dc:
 	cmp	r5, #0
 	bne.n	.L_08049490
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r4, [sp, #4]
 .L_08049490:
 	adds	r0, r6, #0
@@ -6092,7 +6092,7 @@ Func_080464dc:
 	ble.n	.L_080494c8
 	movs	r0, #15
 	str	r4, [sp, #4]
-	bl	0x08041f70
+	bl	Func_08041f70
 	ldr	r4, [sp, #4]
 	add	r3, sp, #92
 	movs	r1, #1

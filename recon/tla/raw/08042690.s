@@ -624,7 +624,7 @@ Func_08042690:
 	cmp	r5, #0
 	bne.n	.L_08042b48
 	movs	r0, #2
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08042b62
 .L_08042b48:
 	cmp	r3, #0
@@ -635,11 +635,11 @@ Func_08042690:
 	cmp	r5, r3
 	bgt.n	.L_08042b5c
 	movs	r0, #4
-	bl	0x08041f70
+	bl	Func_08041f70
 	b.n	.L_08042b62
 .L_08042b5c:
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 .L_08042b62:
 	ldr	r0, [sp, #28]
 	movs	r3, #14
@@ -667,7 +667,7 @@ Func_08042690:
 	ldr	r3, [sp, #16]
 	bl	UiText_DrawStringAtOffset
 	movs	r0, #15
-	bl	0x08041f70
+	bl	Func_08041f70
 	movs	r2, #52
 	ldrsh	r1, [r6, r2]
 	cmp	r1, #0

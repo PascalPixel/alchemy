@@ -9,7 +9,7 @@
 	.thumb_func
 Func_080c8508:
 	overlay_veneer Func_080ceb58
-	overlay_veneer Func_080ceb80
+	overlay_veneer BattleFx_HasTrigger
 	.global Func_080c8518
 	.thumb_func
 Func_080c8518:

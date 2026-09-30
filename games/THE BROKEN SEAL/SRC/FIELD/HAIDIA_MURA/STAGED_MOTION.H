@@ -17,7 +17,8 @@ enum {
     ITEM_NUT = 181
 };
 
-/* Robin's mother, as in the repair-morning scene of this overlay. */
+/* Robin's mother, as in the repair-morning scene of this overlay; the
+   villagers call her Dora. */
 enum {
     ACTOR_DORA = 21
 };

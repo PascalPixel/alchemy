@@ -6,16 +6,31 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Task_Wait
+	.thumb_func
+Task_Wait:
 	overlay_veneer Func_080000c0
 	overlay_veneer Func_080000d0
 	overlay_veneer Func_08000118
 	overlay_veneer Func_080003c8
 	overlay_veneer Func_080003d0
 	overlay_veneer Func_080003d8
+	.global Engine_ObjectSetMode
+	.thumb_func
+Engine_ObjectSetMode:
 	overlay_veneer Object_SetMode
+	.global Engine_ObjectSetScript
+	.thumb_func
+Engine_ObjectSetScript:
 	overlay_veneer Object_SetCallback
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	overlay_veneer Func_08020120
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
 	overlay_veneer Func_08020178
 	overlay_veneer Func_080201e8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
@@ -39,6 +54,9 @@
 	overlay_veneer Func_080c80f8
 	overlay_veneer Func_080c8100
 	overlay_veneer Func_080c8110
+	.global Engine_ActorSetAnimation
+	.thumb_func
+Engine_ActorSetAnimation:
 	overlay_veneer Func_080c8118
 	overlay_veneer Func_080c8128
 	overlay_veneer Func_080c8130
@@ -68,4 +86,7 @@
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c8600
 	overlay_veneer Func_080c8930
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
 	overlay_veneer Audio_PlayCue

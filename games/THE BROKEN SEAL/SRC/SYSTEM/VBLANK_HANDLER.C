@@ -6,13 +6,13 @@
 extern u16 gSerialExchangeActive;    /* VBlank runs the link exchange */
 extern u16 Data_03001f64;            /* link exchange status */
 extern u8 Data_03001e44;             /* display registers pending */
-extern u8 Data_03001d18;             /* OAM buffer pending */
+extern u8 gOamCopyEnabled;             /* OAM buffer pending */
 extern u8 *Data_03001e50[];
 extern u8 Data_03001ad0[];
 extern void (*Data_03001cfc)(void);  /* one-shot VBlank hook */
 extern volatile u32 Data_03001ae8;   /* keys held */
 extern u32 Data_03001c94;            /* keys newly pressed */
-extern u32 Data_03001af8;            /* presses since last read */
+extern u32 gKeysPressedLatch;            /* presses since last read */
 extern s32 Data_03001b00;            /* key repeat delay */
 extern u32 Data_03001b04;            /* key repeat keys */
 extern u32 Data_03001d0c;            /* keys held last frame */
@@ -52,7 +52,7 @@ void System_VBlankHandler(void)
     Func_080f9018();
     BlendTransition_Update();
     if (Data_03001e44 != 0) {
-        if (Data_03001d18 != 0)
+        if (gOamCopyEnabled != 0)
             Dma_Set(Data_03001e50[52], OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
         Dma_Set(Data_03001ad0, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
         IoWriteQueue_FlushPending();
@@ -69,7 +69,7 @@ void System_VBlankHandler(void)
         u32 pressed = keys & ~Data_03001ae8;
 
         Data_03001c94 = pressed;
-        Data_03001af8 |= pressed;
+        gKeysPressedLatch |= pressed;
     }
     Data_03001ae8 = keys;
     if (keys == 0) {

@@ -43,6 +43,9 @@ Func_080dc244:
 	adds	r0, r7, #0
 	bl	0x080d17ac
 	pop	{r5, r6, r7, pc}
+	.global BattleEffect_InitializeSharedScene
+	.thumb_func
+BattleEffect_InitializeSharedScene:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -171,6 +174,9 @@ Func_080dc244:
 	push	{lr}
 	bl	.L_080dc244
 	pop	{pc}
+	.global BattleFx_PrepareBufferInterpolation
+	.thumb_func
+BattleFx_PrepareBufferInterpolation:
 	push	{lr}
 	movs	r0, #8
 	bl	.L_080dc244

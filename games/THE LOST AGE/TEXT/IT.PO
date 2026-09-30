@@ -24431,11 +24431,11 @@ msgctxt "message"
 msgid "06105"
 msgstr "Non da quella parte, {actor_name:6}!{line_break}Il luogo dell'appuntamento è{line_break}per di qua.{page_break}Dobbiamo scendere{line_break}verso la caverna.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoReliefWords"
 msgid "06106"
 msgstr "Ci sono parole scritte{line_break}in rilievo...{page_break}Se vuoi arrivare alla{line_break}cima del Faro di Venere, prima{line_break}cerca il potere che è interno.{page_break}Per ottenerlo, guarda{line_break}con gli occhi della verità.{line_break}Allora la via si aprirà.{page_break}Ma il cammino che io rivelo{line_break}non è l'inizio.{page_break}Il vero inizio giace{line_break}su antiche strade{line_break}in terre lontane.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoTrueHeart"
 msgid "06107"
 msgstr "La vera strada sarà{line_break}accessibile solo a chi{line_break}avrà il cuore sincero.{end_wait}"
 

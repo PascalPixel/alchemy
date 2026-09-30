@@ -28,7 +28,7 @@
 #include "SYSTEM.H"
 #include "CALLBACK_SCHEDULER.H"
 
-extern u8 Data_03001d18;
+extern u8 gOamCopyEnabled;
 extern u8 Data_03001f58;
 extern u8 Data_03001ac4;
 extern u8 gOptionMirror;
@@ -58,7 +58,7 @@ s32 DisplayScroll_RunSlideshow(void)
     s32 tmp2;
     void *tmp4;
 
-    Data_03001d18 = 0;
+    gOamCopyEnabled = 0;
     Data_03001f58 = 0;
     tmp4 = (void *)0x0600f800;
     Data_03001ac4 = 0;
@@ -105,6 +105,6 @@ s32 DisplayScroll_RunSlideshow(void)
     WriteHalf((volatile u16 *)0x04000000, 0x1040);
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
-    Data_03001d18 = 1;
+    gOamCopyEnabled = 1;
     return 0;
 }

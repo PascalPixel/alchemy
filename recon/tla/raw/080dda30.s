@@ -527,10 +527,10 @@ Func_080dda30:
 	ble.n	.L_080dde52
 	ldr	r0, [sp, #0]
 .L_080dde82:
-	bl	Func_080dd668
+	bl	UpdateRisingParticleBurst
 	mov	r2, r8
 	ldr	r0, [r2, #4]
-	bl	Func_080dd668
+	bl	UpdateRisingParticleBurst
 	bl	0x080dc384
 .L_080dde92:
 	add	sp, #20

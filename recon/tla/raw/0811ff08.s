@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811ff08
+	.global BattlePresentation_WaitForAdvance
 	.thumb_func
-Func_0811ff08:
+BattlePresentation_WaitForAdvance:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

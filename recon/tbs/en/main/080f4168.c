@@ -91,7 +91,7 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 extern struct LuckyDiceParty gGameState;
 extern struct LuckyDiceScroll gBgScroll;
-extern u8 Data_03001d18;
+extern u8 gOamCopyEnabled;
 extern u8 Data_080f53fc[];
 extern u8 Data_080f5400[];
 extern u8 Data_080f5408[];
@@ -211,7 +211,7 @@ void LuckyDice_Run(void)
     RuntimeDispatch_NoOpHook((s32)&Value_0000000c);
     Camera_ResetSceneDefaults();
     Scheduler_ResetTaskTable();
-    Data_03001d18 = 0;
+    gOamCopyEnabled = 0;
 
     pos = 0;
     for (row = 0; row != 20; row++) {

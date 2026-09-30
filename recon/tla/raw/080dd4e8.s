@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dd4e8
+	.global BattleFx_RunItemBreakSequence
 	.thumb_func
-Func_080dd4e8:
+BattleFx_RunItemBreakSequence:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -12,7 +12,7 @@ Func_080dd4e8:
 	ldr	r5, [r3, #16]
 	bl	0x080dc294
 	adds	r0, r5, #0
-	bl	Func_080dd528
+	bl	BattleFx_StartItemBreak
 	adds	r5, r0, #0
 	bl	0x080dd63c
 	cmp	r5, #0
@@ -25,7 +25,7 @@ Func_080dd4e8:
 .L_080dd518:
 	bl	0x080dc384
 	adds	r0, r5, #0
-	bl	Func_080dd668
+	bl	UpdateRisingParticleBurst
 	add	sp, #12
 	pop	{r5, pc}
 	.2byte 0x0000

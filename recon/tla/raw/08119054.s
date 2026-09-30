@@ -102,7 +102,7 @@ Func_08119054:
 	bl	0x08014dac
 	mov	r8, r0
 	movs	r0, #1
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	bl	0x08016854
 	movs	r3, #1
 	negs	r3, r3
@@ -232,7 +232,7 @@ Func_08119054:
 	bl	0x08014dac
 	adds	r6, r0, #0
 	movs	r0, #0
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	ldr	r3, [pc, #104]
 	adds	r1, r0, #0
 	adds	r2, r5, #0

@@ -23719,11 +23719,11 @@ msgctxt "message"
 msgid "05927"
 msgstr "どこへ行く気じゃ {actor_name:6}{line_break}まちあわせの 出島へは{line_break}すぐこの下へ いかねばならん{page_break}そして 下ったさきにある{line_break}どうくつの入り口をはいり{line_break}そこを ぬければすぐじゃ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoReliefWords"
 msgid "05928"
 msgstr "へきがに なにやら{line_break}もじが きざまれている・・・{page_break}なんじ ヴィーナス灯台にのぼりて{line_break}ちょうじょうをきわめんとするなら{line_break}灯台に ふういんされし力を見つけよ{page_break}その力 えることをのぞむならば{line_break}われに ただしき目をしめすべし{line_break}われ そこに道をしめすであろう{page_break}さらに われ なんじにつたえる{line_break}はじまりの道は はじまりにあらず{line_break}ふるき道より はじまりを見つけよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoTrueHeart"
 msgid "05929"
 msgstr "ただしき こころで見る者に{line_break}まことの道が しめされる。{end_wait}"
 

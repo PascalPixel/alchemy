@@ -218,7 +218,7 @@ Func_081185c4:
 	movs	r0, #7
 	bl	0x080ad110
 	movs	r0, #0
-	bl	Func_080ad000
+	bl	Trade_GetOfferStateFar
 	movs	r2, #148
 	ldr	r3, [sp, #16]
 	lsls	r2, r2, #1

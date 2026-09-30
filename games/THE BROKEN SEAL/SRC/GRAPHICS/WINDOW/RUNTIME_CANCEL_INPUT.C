@@ -4,7 +4,7 @@
 extern u8 Data_03001e8c[];
 extern u8 Data_03001ae8[];
 extern u8 Data_03001c94[];
-extern u8 Data_03001af8[];
+extern u8 gKeysPressedLatch[];
 
 s32 AudioCommand_GetStateByteFar();
 s32 UiWork_CheckCancelByInput(void *obj)
@@ -48,7 +48,7 @@ s32 UiWork_CheckCancelByModeInput(void *obj)
   zero = 0;
   if ((*((u8 *)(work + RENDER_MODE_OFS))) != zero)
   {
-    key = *((s32 *)((u32)&Data_03001af8));
+    key = *((s32 *)((u32)&gKeysPressedLatch));
   }
   if (0x303 & key)
   {

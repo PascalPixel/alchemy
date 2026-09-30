@@ -1322,7 +1322,7 @@ SECTIONS
         "*/games/COMMON/SRC/BATTLE/EFFECT/CAN_AFFECT_DEFEATED_UNIT.o"(.text)
         "*/recon/tbs/raw/080bbb0a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/BATTLE/CHECK_STATUS_OR_SPECIAL_ID.o"(.text)
+        "*/games/COMMON/SRC/BATTLE/CHECK_STATUS_OR_SPECIAL_ID.o"(.text)
         "*/recon/tbs/raw/080bd3e2.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SELECT_WEIGHTED_INDEX.o"(.text)
         "*/recon/tbs/raw/080bd422.o"(.text .rodata .data .padding)

@@ -874,7 +874,7 @@ Func_08027e20:
 	bne.n	.L_08028500
 	mov	r0, r8
 	adds	r0, #8
-	bl	0x0802dac0
+	bl	Func_0802dac0
 .L_08028500:
 	bl	0x08026e60
 	mov	r2, r8
@@ -912,7 +912,7 @@ Func_08027e20:
 	str	r0, [sp, #4]
 	adds	r0, r1, #0
 	str	r1, [sp, #0]
-	bl	0x0802dac0
+	bl	Func_0802dac0
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r1, [r3, #108]
@@ -1509,7 +1509,7 @@ Func_08027e20:
 	cmp	r3, #1
 	bne.n	.L_08028a8c
 	ldr	r0, [sp, #0]
-	bl	0x0802dac0
+	bl	Func_0802dac0
 	mov	r1, r8
 	movs	r0, #0
 	ldrsh	r3, [r1, r0]
@@ -1601,7 +1601,7 @@ Func_08027e20:
 	movs	r0, #0
 	str	r0, [sp, #4]
 	mov	r0, r8
-	bl	0x0802dac0
+	bl	Func_0802dac0
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r1, [r3, #108]
@@ -4850,7 +4850,7 @@ Func_08027e20:
 	adds	r0, r7, #0
 	adds	r0, #8
 	ldr	r5, [r7, #80]
-	bl	0x0802dac0
+	bl	Func_0802dac0
 	cmp	r0, #9
 	bne.n	.L_0802a488
 	ldr	r3, [r5, #44]

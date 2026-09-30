@@ -939,7 +939,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CLEAR_OWNED_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP_RESOURCES_AND_WINDOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CLEANUP_RESOURCES_AND_WINDOW.o"(.text)
-        "*/recon/tbs/raw/0809bcf8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SHOW_WORLD_MAP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/VISIBILITY_TRANSITION.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.0809c410)

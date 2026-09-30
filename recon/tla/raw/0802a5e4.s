@@ -537,6 +537,9 @@ Func_0802a6b8:
 	.4byte 0x02028000
 	.2byte 0xad85
 	.2byte 0x0802
+	.global Func_0802aa74
+	.thumb_func
+Func_0802aa74:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -1492,6 +1495,9 @@ Func_0802af9c:
 	.4byte 0x02020000
 	.2byte 0x0004
 	.2byte 0x0202
+	.global Func_0802b1a0
+	.thumb_func
+Func_0802b1a0:
 .L_0802b1a0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -1650,6 +1656,9 @@ Func_0802af9c:
 	.4byte 0x02020004
 	.2byte 0x2840
 	.2byte 0x0600
+	.global Func_0802b2d4
+	.thumb_func
+Func_0802b2d4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1689,7 +1698,7 @@ Func_0802af9c:
 	mov	r2, sl
 	mov	r3, r8
 	lsrs	r5, r5, #16
-	bl	.L_0802b1a0
+	bl	Func_0802b1a0
 	adds	r7, #10
 	adds	r0, r5, #0
 	bl	WaitFrames

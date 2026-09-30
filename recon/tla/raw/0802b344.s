@@ -21,7 +21,7 @@ Func_0802b344:
 	adds	r3, r6, #0
 	mov	r8, r0
 	mov	sl, r1
-	bl	0x0802b1a0
+	bl	Func_0802b1a0
 	mov	r0, r8
 	mov	r1, sl
 	mov	r2, r9

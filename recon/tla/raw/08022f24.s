@@ -190,6 +190,9 @@ Func_0802301c:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.global Func_08023088
+	.thumb_func
+Func_08023088:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

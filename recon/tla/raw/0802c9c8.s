@@ -85,7 +85,7 @@ Func_0802c9c8:
 	mov	r1, r9
 	bl	Func_0801587c
 	ldr	r5, [pc, #56]
-	bl	0x0802c4d8
+	bl	Func_0802c4d8
 	movs	r2, #128
 	lsls	r2, r2, #1
 	adds	r3, r6, r2

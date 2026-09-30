@@ -251,13 +251,13 @@ L_main:
     hi = p11 + 16;
     Actor_WalkToAndWait(obj, p9, hi);
     lo = p9 + 16;
-    Value3(Engine_ActorWalkToAndWait, 0, lo, hi);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, lo, hi);
     ((void (*)())Engine_ActorFaceEachOther)(obj, 0, 30);
     Actor_SetAnimation(obj, 3);
     tail = hi - 32;
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Actor_WalkToAndWait(owner, p9, tail);
-    Value3(Engine_ActorWalkTo, owner, lo, tail);
+    Actor_WalkTo(owner, lo, tail);
     Object_LinkObjectAndSetCallback(0, obj);
     Actor_WalkToAndWait(obj, p9, tail);
     Actor_SetAnimation(owner, 1);

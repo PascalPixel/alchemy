@@ -3,6 +3,7 @@
 
 extern const s32 FuneHeya_Script01[];
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
 extern u8 MsgFuneCastOff[];
@@ -11,7 +12,6 @@ extern u8 MsgFuneRowThoseOars[];
 extern u8 MsgFuneWereOff[];
 
 /* Message ids. */
-
 
 struct SceneActor {
     u8 pad00[99];
@@ -47,54 +47,10 @@ u8 *Object_GetByIdFar();
  * fields the neighbouring scene sources touch; their meaning is not recovered.
  */
 
-/* Loader-relocated overlay calls: each Func_ symbol names the pre-relocation
- * call word the image holds.
- *
- * Three of those pre-relocation words repeat in this owner while reaching
- * different runtime helpers (0x0200af5a, 0x0200b0e8 and 0x0200b20c each cover
- * two distinct destinations), so one Func_ spelling cannot name both sites.
- * Those six sites are declared by their runtime address instead, which the
- * overlay symbol resolver binds directly. Registering this owner as a
- * translation unit with explicit absolute_symbols would let them go back to
- * suffixed Func_ spellings without changing a byte. */
-
-/* The scene work record pointer; +0x1c0 holds the scene request word. */
-
-/*
- * Actor slot search for resource_3b1.  The 48-byte owner at 0x02005038 has no
- * pool; the halfword at 0x02005066 is alignment before the next owner.
- */
-
 /*
  * Field scene beat for overlay resource_3b1.  Each callee is named for its own
  * call site: every call reaches its target through its own local veneer, even
  * where the same logical callee is used from more than one site.
- */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-/*
- * Flag-gated scene setup for overlay resource_3b1. Each callee name refers
- * to that call site's own call word rather than to a shared runtime
- * address.
  */
 
 static __inline__ u8 *Pointer1_020038ac(u8 *(*f)(), s32 a)
@@ -316,12 +272,6 @@ void FieldScene_RunScene3b1_02003eec(void)
     FieldScene_RunSceneStep(9, 12, 0);
 }
 
-/*
- * A flat setter cascade, one workspace-slot store, then a four-way gated
- * chain ending in an unconditional default arm. The store spells both its
- * offset and its stored value as 224 << 1 rather than folded constants.
- * The 340-byte owner at 0x02003f94 includes its trailing pool words.
- */
 void FieldScene_RunFlagBranchedSetupCascade(void)
 {
     extern u8 *Data_03001ebc;

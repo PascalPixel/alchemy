@@ -13,8 +13,6 @@ extern u8 MsgKorimaGrandBridgeAcrossRiverPride[];
 extern u8 MsgKorimaTheySayMccoyHaltedConstruction[];
 extern u8 MsgKorimaWhenWasTreeLearnedAppreciate[];
 
-
-
 struct Approach390Subject {
     u16 unknown_00[3];
     u16 dir;                   /* 0x06, wrapped 16-bit */

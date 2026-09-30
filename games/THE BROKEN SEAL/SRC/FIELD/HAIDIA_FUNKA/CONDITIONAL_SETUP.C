@@ -3,7 +3,6 @@
 #include "FIELD_SCENE.H"
 extern u8 MsgHaidiaMtAlephWasInactive[];
 
-
 extern u8 HaidiaFunka_ActionScript[];
 /* The scene's four tables, in the overlay's read-only data. */
 extern u8 HaidiaFunka_SceneTable0[];

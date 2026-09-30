@@ -79,32 +79,32 @@ void KorosseoKawa_RunStageIntro(s32 a0)
         rec = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 1);
         if (rec != 0) {
         } else {
-            Call1(Engine_EventSetMessage, (s32)MsgKorosseoCallRockChallenge);
-            Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
-            Call4(Engine_CameraMoveTo, 0x1480000, -1, 0xa80000, 1);
+            Event_SetMessage((s32)MsgKorosseoCallRockChallenge);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x1480000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
             Value3(Korosseo_FadeInCompetitor, 0, 0x118, 200);
-            Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-            Call3(Engine_ActorWalkToAndWait, 0, 0x168, 200);
+            Actor_SetSpeed(0, 0x10000, 0x8000);
+            Actor_WalkToAndWait(0, 0x168, 200);
             Engine_EventWait(30);
-            Call3(Engine_ActorShowEmote, 0, 0x102, 60);
+            Actor_ShowEmote(0, 0x102, 60);
             Engine_EventShowMessage(a0, 0);
-            Call3(Engine_ActorWalkToAndWait, 0, 0x138, 200);
+            Actor_WalkToAndWait(0, 0x138, 200);
             Engine_EventWait(30);
-            Call3(Engine_ActorFaceDirection, 0, 0xc000, 10);
-            Call3(Engine_ActorShowEmote, 0, 0x106, 60);
-            Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
+            Actor_FaceDirection(0, 0xc000, 10);
+            Actor_ShowEmote(0, 0x106, 60);
+            Actor_SetSpeed(0, 0x18000, 0xc000);
             OverlayObject_PlaceWithScale14000(0, 0x128, 184);
             OverlayObject_PlaceWithScale14000(0, 0x128, 152);
             Value3(OverlayObject_PlaceWithScale14000, 0, 0x138, 152);
-            Call3(Engine_ActorFaceDirection, 0, 0x4000, 15);
+            Actor_FaceDirection(0, 0x4000, 15);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
-            Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
-            Call3(Engine_ActorWalkToAndWait, 0, 0x130, 184);
+            Actor_SetSpeed(0, 0x18000, 0xc000);
+            Actor_WalkToAndWait(0, 0x130, 184);
             Engine_ActorWalkToAndWait(0, 0x128, 192);
             Engine_ActorWalkToAndWait(0, 0x128, 200);
             Engine_ActorFaceDirection(0, 0, 15);
@@ -116,12 +116,12 @@ void KorosseoKawa_RunStageIntro(s32 a0)
             Engine_EventShowMessage(a0, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(0, 0);
-            Call3(Engine_ActorSetPosition, 9, 0x1380000, 0xa80000);
+            Actor_SetPosition(9, 0x1380000, 0xa80000);
             SceneState_SendIdBySceneId(a0, 1);
             goto L_020013c2;
         }
         if (rec == 1) {
-            Call1(Engine_EventSetMessage, (s32)MsgKorosseoObjectiveStageClear);
+            Event_SetMessage((s32)MsgKorosseoObjectiveStageClear);
             Engine_EventShowMessage(a0, 0);
         }
         L_020013c2:;

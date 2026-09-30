@@ -1087,7 +1087,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/PREPARE_USE_PALETTE.o"(.text)
         "*/recon/tbs/raw/080a9e46.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/USE.o"(.text)
-        "*/recon/tbs/raw/080a9f10.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/INVOKE_USE_ANIMATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/PLAY_USE_ANIMATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN.o"(.text)

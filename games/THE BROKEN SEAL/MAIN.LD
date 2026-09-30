@@ -1299,7 +1299,7 @@ SECTIONS
         "*/recon/tbs/raw/080b9b2e.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080b9b30.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/LIST_TARGETS.o"(.text)
-        "*/recon/tbs/raw/080b9dc4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_ENCOUNTER_OR_UNIT_TRIGGER.o"(.text)
         "*/recon/tbs/raw/080b9ec0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_ENTRIES.o"(.text)
         "*/recon/tbs/raw/080ba2be.o"(.text .rodata .data .padding)

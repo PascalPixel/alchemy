@@ -5,7 +5,11 @@
    every call match; the remaining difference is one hoisted load: this
    build loads *current as a halfword at the top for the final store on the
    path without calls (and shifts the registers by one), where the
-   reference reloads it once after both branches. */
+   reference reloads it once after both branches.
+   2026-09-30: alchemy permute against the French extent (--target tbs-fr)
+   for four minutes reached 595 (10 register-only, 8 operand, 3 reordered,
+   1 inserted, 1 deleted) with temporaries for the two halfwords and found
+   no match; the candidate was not kept. */
 #include "TYPES.H"
 
 extern void *gMenuSelectWork;

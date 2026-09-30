@@ -21,6 +21,13 @@
  * local, switch, while/break and goto forms are all deleted before reload.
  * A long long return cast also restores the copy but spills through the
  * stack. Next idea: a real join label reached from a path jump2 removes.
+ * 2026-09-30 (Mars): in ORBIT.C, the FAKEMATCH asm on effect before the
+ * null check restores the copy and the sprite load order. Built in place,
+ * one difference remains: lsls r0, r0, #1 (the kind 284) is scheduled
+ * before `ldr r1, [r5, #8]; ldr r3, [r5, #16]` instead of after them. x and
+ * z locals, a y local, register variables, Object_Create and asm pins on
+ * the halved kind (with or without x/z inputs, or volatile in a statement
+ * expression) all move the y temporary to r4 or the kind to the front.
  */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/CHOJO.H"
 
@@ -71,6 +78,7 @@ void SceneEffect_SpawnParticlesAboveActor(void)
     effect = (union OrbitEffect *)Engine_ObjectCreate(284, center->x.fixed,
                                                 (s32)(rise >> 16 << 16) + center->y.fixed + (s32)0xffe40000,
                                                 center->z.fixed);
+    asm("" : "+r"(effect)); /* FAKEMATCH: hides that r0 still holds the effect so its copy is kept */
     if (effect != 0) {
         sprite = ((struct FieldEffect *)effect)->sprite;
         Object_SetScript((struct FieldActor *)effect, VinasuChojo_OrbitParticleScript);

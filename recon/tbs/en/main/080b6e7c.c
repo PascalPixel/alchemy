@@ -1,3 +1,4 @@
+/* 2026-09-30 asm-only (inline asm not yet permitted to workers): a FAKEMATCH-tagged "ldrh %0, [%1, %2]" with the table then the byte offset reproduces the [r0, r1] reread. */
 /* Draft, not exact (2026-09-24): 1 differing halfword. The re-read of the entry
    for the result addresses [index, table] where the reference has [table,
    index]; plain indexing reuses the loaded entry (52 bytes), and every cast,

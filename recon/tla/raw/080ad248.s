@@ -34,6 +34,9 @@ Func_080ad278:
 	bx	r4
 	.2byte 0xf1c9
 	.2byte 0x080a
+	.global BattleFx_IsReviveFar
+	.thumb_func
+BattleFx_IsReviveFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x0741

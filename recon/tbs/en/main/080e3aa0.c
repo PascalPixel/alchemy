@@ -162,11 +162,6 @@ extern const u8 Data_080eedb8[];
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
-extern u8 Value_0000004a;
-extern u8 Value_0000006b;
-extern u8 Value_000000b5;
-extern u8 Value_000000b6;
-extern u8 Value_000000c5;
 
 struct Spark {
     s32 x;
@@ -294,18 +289,18 @@ void BattlePres_RunBeamSequence(void *object)
 
     /* The beam graphic itself, one resource per scene selector. */
     if (kind == 4) {
-        Resource_LoadAndDecompress((s32)&Value_0000006b, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work, 1, 1);
     } else if (kind == 3) {
-        Resource_LoadAndDecompress((s32)&Value_000000c5, work, 0, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work, 0, 0);
     } else {
         switch (kind) {
         case 0:
         case 1:
         case 5:
-            Resource_LoadAndDecompress((s32)&Value_000000b5, work, 1, 1);
+            Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work, 1, 1);
             break;
         case 2:
-            Resource_LoadAndDecompress((s32)&Value_000000b6, work, 1, 1);
+            Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work, 1, 1);
             break;
         }
     }
@@ -315,7 +310,7 @@ void BattlePres_RunBeamSequence(void *object)
             Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 0x80);
     } else {
         IWRAM_COPY((void *)0x05000000,
-            Resource_GetTableEntry((s32)&Value_0000004a), 0x80);
+            Resource_GetTableEntry((s32)&ResourceId_CrescentSheet), 0x80);
     }
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprite_src, 0, 0);

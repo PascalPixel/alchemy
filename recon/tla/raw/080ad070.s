@@ -7,6 +7,9 @@ Func_080ad070:
 	bx	r4
 	.2byte 0xf095
 	.2byte 0x080a
+	.global BattleAction_Get
+	.thumb_func
+BattleAction_Get:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xf43d

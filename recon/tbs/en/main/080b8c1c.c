@@ -1,3 +1,5 @@
+/* alchemy permute: BattlePres_RunUnitAction against recon/tbs/raw/080b8c1c.s: score 1487 (56 register-only, 2 stack-only, 5 operand, 11 reordered, 2 inserted, 2 deleted).
+   Job 2, iteration 14774; rewrites: 1x reorder independent statements, 1x introduce a temporary, 1x share one temporary between two statements. */
 /* Draft, not exact. 2026-09-29: callees carry the build's names where the
  * build has them; alchemy permute scores 3632 (37 register-only, 2
  * stack-only, 16 operand, 10 reordered, 10 inserted, 15 deleted). The
@@ -74,8 +76,11 @@ s32 BattlePres_RunUnitAction(s16 *action)
     s32 final_count;
     s16 *unit_list;
     s32 i;
+    s32 tmp;
+    s16 tmp2;
 
     transition = gTransitionWork;
+    tmp2 = saved_action[0];
     facing = -0x2000;
     if (saved_action[0] <= 4)
         facing = 0x2000;
@@ -87,14 +92,12 @@ s32 BattlePres_RunUnitAction(s16 *action)
         transition->timer = 40;
         WaitFrames(40);
     }
-
     work.stage = saved_action[4];
     work.action_value = saved_action[6];
     work.primary_unit = saved_action[0];
     work.secondary_unit = saved_action[5];
     if (BattleObject_IsValidId(work.primary_unit) < 0)
         return -1;
-
     if (work.secondary_unit > 127) {
         unit_list = work.units;
         side_mask = 2;
@@ -104,11 +107,9 @@ s32 BattlePres_RunUnitAction(s16 *action)
     }
     work.unit_count = BattleParty_ListLivingUnits(side_mask, unit_list);
     UiWindow_DrawPartyStatusContentsFar(gBattleWork[65] & ~1);
-
     primary_actor = GetBattleObjectSlot(work.primary_unit)->actor;
     Object_SetMode(primary_actor, 3);
     ObjectDispatch_ApplyValueToChildrenFar(primary_actor, 16);
-
     if ((u16)saved_action[5] <= 7) {
         final_count = 1;
         work.is_party_target = final_count;
@@ -119,15 +120,14 @@ s32 BattlePres_RunUnitAction(s16 *action)
         final_count = 1;
     }
     work.unit_count = final_count;
-
     i = 0;
-    if (work.unit_count != 0) {
+    tmp = work.unit_count;
+    if (tmp != 0) {
         s32 value_offset = 0;
         do {
             struct MotionEntry *motion;
             s32 j;
             s32 last;
-
             motion = GetBattleObjectSlot(work.units[i])->actor->motion;
             j = 0;
             last = motion->child_count - 1;
@@ -141,7 +141,6 @@ s32 BattlePres_RunUnitAction(s16 *action)
             i++;
         } while (i != work.unit_count);
     }
-
     work.stage = 0;
     work.reserved_18 = 0;
     Func_080c9020(&work);
@@ -153,10 +152,10 @@ s32 BattlePres_RunUnitAction(s16 *action)
     Func_080c9020(&work);
     work.stage = 0;
     BattleFx_DispatchModeFar(&work);
-
     Object_SetMode(primary_actor, 1);
     i = 0;
-    if (work.unit_count != 0) {
+    tmp = work.unit_count != 0;
+    if (tmp) {
         do {
             Actor_ResetMotionAtAnchor(work.units[i]);
             i++;

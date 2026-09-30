@@ -768,6 +768,9 @@ Func_08124cc4:
 	.4byte 0x00000cf1
 	.2byte 0x0cf2
 	.2byte 0x0000
+	.global Battle_ApplyActionExtras
+	.thumb_func
+Battle_ApplyActionExtras:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

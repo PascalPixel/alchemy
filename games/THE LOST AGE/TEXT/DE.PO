@@ -12715,11 +12715,11 @@ msgctxt "message"
 msgid "03176"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgHpRecover"
 msgid "03177"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPpRecover"
 msgid "03178"
 msgstr "?"
 
@@ -12727,15 +12727,15 @@ msgctxt "message"
 msgid "03179"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgHpFull"
 msgid "03180"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPpFull"
 msgid "03181"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCritical"
 msgid "03182"
 msgstr "?"
 
@@ -12743,19 +12743,19 @@ msgctxt "message"
 msgid "03183"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgFelled"
 msgid "03184"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgGoesDown"
 msgid "03185"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDmgE"
 msgid "03186"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDmgP"
 msgid "03187"
 msgstr "?"
 
@@ -12763,11 +12763,11 @@ msgctxt "message"
 msgid "03188"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPpLossE"
 msgid "03189"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPpLossP"
 msgid "03190"
 msgstr "?"
 
@@ -12795,7 +12795,7 @@ msgctxt "message"
 msgid "03196"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDmgEmphE"
 msgid "03197"
 msgstr "?"
 
@@ -12807,7 +12807,7 @@ msgctxt "message"
 msgid "03199"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDmgEmphP"
 msgid "03200"
 msgstr "?"
 
@@ -12939,7 +12939,7 @@ msgctxt "message"
 msgid "03232"
 msgstr "Wirft Karte der Farbe 'Flamme'."
 
-msgctxt "message"
+msgctxt "MsgSpiritDrain"
 msgid "03233"
 msgstr "Wirft Karte der Farbe 'Donner'."
 
@@ -12951,11 +12951,11 @@ msgctxt "message"
 msgid "03235"
 msgstr "Wirft Karte der Farbe 'Eis'."
 
-msgctxt "message"
+msgctxt "MsgKoDown"
 msgid "03236"
 msgstr "Täuscht mehrere Gegner."
 
-msgctxt "message"
+msgctxt "MsgSuffocate"
 msgid "03237"
 msgstr "Senkt gegnerische Attacke."
 
@@ -12979,7 +12979,7 @@ msgctxt "message"
 msgid "03242"
 msgstr "Ruft wölfischen Verbündeten."
 
-msgctxt "message"
+msgctxt "MsgNoEffect"
 msgid "03243"
 msgstr "Ein riesiger Vogel krallt einen Gegner."
 
@@ -13031,11 +13031,11 @@ msgctxt "message"
 msgid "03255"
 msgstr "Angriff mit Feuerstoß."
 
-msgctxt "message"
+msgctxt "MsgLeechGain"
 msgid "03256"
 msgstr "Angriff mit Eisstrahl."
 
-msgctxt "message"
+msgctxt "MsgLeechTake"
 msgid "03257"
 msgstr "Ruft Feen, um 120 KP aufzufüllen."
 
@@ -13047,59 +13047,59 @@ msgctxt "message"
 msgid "03259"
 msgstr "Belebt Freund mit Hilfe der Untoten."
 
-msgctxt "message"
+msgctxt "MsgAtkDown"
 msgid "03260"
 msgstr "Angriff mit teuflischer Macht."
 
-msgctxt "message"
+msgctxt "MsgAtkUp"
 msgid "03261"
 msgstr "Angriff mit mächtiger Axt."
 
-msgctxt "message"
+msgctxt "MsgDefDown"
 msgid "03262"
 msgstr "Angriff mit Phantom-Speeren."
 
-msgctxt "message"
+msgctxt "MsgDefUp"
 msgid "03263"
 msgstr "Angriff mit Feuerschlag."
 
-msgctxt "message"
+msgctxt "MsgRevived"
 msgid "03264"
 msgstr "Angriff mit Feuerschlag."
 
-msgctxt "message"
+msgctxt "MsgResDown"
 msgid "03265"
 msgstr "Ruft Elfen, um 125 KP aufzufüllen."
 
-msgctxt "message"
+msgctxt "MsgResUp"
 msgid "03266"
 msgstr "Ruft Feen, um 250 KP aufzufüllen."
 
-msgctxt "message"
+msgctxt "MsgPoisoned"
 msgid "03267"
 msgstr "Füllt 180 KP für jeden auf."
 
-msgctxt "message"
+msgctxt "MsgDelusion"
 msgid "03268"
 msgstr "Füllt 300 KP mit Flamme d. Reinheit auf."
 
-msgctxt "message"
+msgctxt "MsgConfused"
 msgid "03269"
 msgstr "Belebt Freund durch Phönixfeuer wieder."
 
-msgctxt "message"
+msgctxt "MsgCharmed"
 msgid "03270"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgStunned"
 msgid "03271"
 msgstr "Befiehlt Zombie Gegner anzugreifen."
 
-msgctxt "message"
+msgctxt "MsgAsleep"
 msgid "03272"
 msgstr "Angriff mit dämonischem Zorn."
 
-msgctxt "message"
+msgctxt "MsgPsyBlock"
 msgid "03273"
 msgstr "Angriff mit der Macht Dullahans."
 
@@ -13107,11 +13107,11 @@ msgctxt "message"
 msgid "03274"
 msgstr "Ruft das Feuer der Hölle hervor."
 
-msgctxt "message"
+msgctxt "MsgHpRegen"
 msgid "03275"
 msgstr "Ruft das Feuer der Hölle hervor."
 
-msgctxt "message"
+msgctxt "MsgReflect"
 msgid "03276"
 msgstr "Ruft das Feuer der Hölle hervor."
 
@@ -13119,31 +13119,31 @@ msgctxt "message"
 msgid "03277"
 msgstr "Ruft vergifteten Windstoß herbei."
 
-msgctxt "message"
+msgctxt "MsgEvilSpirit"
 msgid "03278"
 msgstr "Bändigt die Gegner durch Furcht."
 
-msgctxt "message"
+msgctxt "MsgDeathCurse"
 msgid "03279"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgVenom"
 msgid "03280"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDeathCount"
 msgid "03281"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgPsySeal"
 msgid "03282"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgAgiUp"
 msgid "03283"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgAgiDown"
 msgid "03284"
 msgstr "?"
 
@@ -13163,15 +13163,15 @@ msgctxt "message"
 msgid "03288"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgReadies"
 msgid "03289"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgChallenge"
 msgid "03290"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgImmobile"
 msgid "03291"
 msgstr "?"
 
@@ -13179,11 +13179,11 @@ msgctxt "message"
 msgid "03292"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgAura"
 msgid "03293"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgAura2"
 msgid "03294"
 msgstr "?"
 
@@ -13203,11 +13203,11 @@ msgctxt "message"
 msgid "03298"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgWakes"
 msgid "03299"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCurePoison"
 msgid "03300"
 msgstr "?"
 
@@ -13235,15 +13235,15 @@ msgctxt "message"
 msgid "03306"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureDelusion"
 msgid "03307"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureSeal"
 msgid "03308"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureStun"
 msgid "03309"
 msgstr "?"
 
@@ -13251,7 +13251,7 @@ msgctxt "message"
 msgid "03310"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureSpirit"
 msgid "03311"
 msgstr "?"
 
@@ -13271,7 +13271,7 @@ msgctxt "message"
 msgid "03315"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgCureCurse"
 msgid "03316"
 msgstr "?"
 
@@ -13279,7 +13279,7 @@ msgctxt "message"
 msgid "03317"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgBuffsReset"
 msgid "03318"
 msgstr "?"
 

@@ -102,7 +102,35 @@ Object_LinkedMotionScript:
 	.incbin "baserom.gba", 0x001287c4, 0x00000080
 	.global Data_08128844
 Data_08128844:
-	.incbin "baserom.gba", 0x00128844, 0x00004630
+	.incbin "baserom.gba", 0x00128844, 0x00000054
+	.global HitFalloff
+HitFalloff:
+	.incbin "baserom.gba", 0x00128898, 0x00000008
+	.global PpLossFalloff
+PpLossFalloff:
+	.incbin "baserom.gba", 0x001288a0, 0x00000018
+	.global HpHealFalloff
+HpHealFalloff:
+	.incbin "baserom.gba", 0x001288b8, 0x00000018
+	.global PpDmgFalloff
+PpDmgFalloff:
+	.incbin "baserom.gba", 0x001288d0, 0x00000018
+	.global HpDmgFalloff5
+HpDmgFalloff5:
+	.incbin "baserom.gba", 0x001288e8, 0x00000018
+	.global HpDmgFalloff8
+HpDmgFalloff8:
+	.incbin "baserom.gba", 0x00128900, 0x00000018
+	.global HpDmgFalloff6
+HpDmgFalloff6:
+	.incbin "baserom.gba", 0x00128918, 0x00000018
+	.global PpHealFalloff
+PpHealFalloff:
+	.incbin "baserom.gba", 0x00128930, 0x00000018
+	.global HpDmgFalloff
+HpDmgFalloff:
+	.incbin "baserom.gba", 0x00128948, 0x00000030
+	.incbin "baserom.gba", 0x00128978, 0x000044fc
 	.section .unidentified.0812ce7c,"a"
 	.incbin "baserom.gba", 0x0012ce7c, 0x0000b184
 	.section .unidentified.08161ac4,"a"

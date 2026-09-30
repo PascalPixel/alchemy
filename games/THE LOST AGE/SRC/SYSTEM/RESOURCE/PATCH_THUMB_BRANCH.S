@@ -10,6 +10,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, relocated Thumb branch patcher
 .syntax unified
 	.thumb
+	.global Resource_PatchThumbBranchCode
+Resource_PatchThumbBranchCode:
 	.global Resource_PatchThumbBranch
 	.thumb_func
 Resource_PatchThumbBranch:

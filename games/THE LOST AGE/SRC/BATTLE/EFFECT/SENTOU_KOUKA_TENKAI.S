@@ -15,6 +15,8 @@
 @ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, battle-effect link
 .syntax unified
 	.thumb
+	.global SentouKouka_TenkaiCode
+SentouKouka_TenkaiCode:
 	.global SentouKouka_Tenkai
 	.thumb_func
 SentouKouka_Tenkai:

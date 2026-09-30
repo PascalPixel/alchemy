@@ -10,6 +10,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, transfer command executor
 .syntax unified
 	.thumb
+	.global Resource_ExecuteTransferCode
+Resource_ExecuteTransferCode:
 	.global Resource_ExecuteTransfer
 	.thumb_func
 Resource_ExecuteTransfer:

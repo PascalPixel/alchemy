@@ -13,6 +13,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, model decoder
 .syntax unified
 	.thumb
+	.global Model_DecodeCode
+Model_DecodeCode:
 	.global Model_Decode
 	.thumb_func
 Model_Decode:

@@ -15,6 +15,8 @@
 @ credit: handwritten — relocated ARM kernels 1 to 3 of the battle-effect bank
 .syntax unified
 	.thumb
+	.global Data_08138fc8
+Data_08138fc8:
 	.global Func_08138fc8
 	.thumb_func
 Func_08138fc8:
@@ -164,6 +166,8 @@ AlchemyUncreditedEnd_081391bc:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
 	.thumb
+	.global Data_081391c8
+Data_081391c8:
 	.global Func_081391c8
 	.thumb_func
 Func_081391c8:
@@ -317,6 +321,8 @@ AlchemyUncreditedEnd_081393cc:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
 	.thumb
+	.global Data_081393d8
+Data_081393d8:
 	.global Func_081393d8
 	.thumb_func
 Func_081393d8:

@@ -12,6 +12,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, compression format 2 decoder
 .syntax unified
 	.thumb
+	.global Resource_Decode2Code
+Resource_Decode2Code:
 	.global Resource_Decode2
 	.thumb_func
 Resource_Decode2:

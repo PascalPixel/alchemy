@@ -86,8 +86,8 @@ s32 Item_ReturnOne(void)
     return 1;
 }
 
-#if !defined(TBS_EDITION_JA)
-/* The Japanese edition keeps its code here in its scaffold for now. */
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
 
 void BattleUnit_Recalculate(s32);
 struct BattleAction *BattleAction_Get(s32);

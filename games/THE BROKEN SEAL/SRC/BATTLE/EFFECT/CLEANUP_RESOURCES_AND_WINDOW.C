@@ -16,8 +16,8 @@ void BattleFx_CleanupResourcesAndWindow(void)
     UiWork_FinalizeFar(*(u32 *)(gMapCellBuffer + 0x1c), 2);
 }
 
-#if !defined(TBS_EDITION_JA)
-/* The Japanese edition keeps its code here in its scaffold for now. */
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
 
 struct MapMarker {
     struct MapMarker *link;

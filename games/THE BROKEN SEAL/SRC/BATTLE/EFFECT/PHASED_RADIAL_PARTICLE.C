@@ -45,8 +45,8 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
     }
 }
 
-#if !defined(TBS_EDITION_JA)
-/* The Japanese edition keeps its code here in its scaffold for now. */
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
 
 /*
  * Moves a particle out from its origin to a random point on a ring,

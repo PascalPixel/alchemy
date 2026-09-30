@@ -60,8 +60,8 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
     return buffer + 13 - width;
 }
 
-#if !defined(TBS_EDITION_JA)
-/* The Japanese edition keeps its code here in its scaffold for now. */
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
 
 /* The English articles by kind: "a ", "an ", "some ", "the ". */
 struct ArticleTable {

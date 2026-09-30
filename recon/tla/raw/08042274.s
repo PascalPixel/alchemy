@@ -147,7 +147,7 @@ RenderOutput_Create:
 	strb	r3, [r5, #5]
 	mov	r0, r8
 	adds	r1, r5, #0
-	bl	Func_08039500
+	bl	RenderOutput_AppendToList
 	adds	r0, r5, #0
 .L_08042390:
 	pop	{r3, r5}

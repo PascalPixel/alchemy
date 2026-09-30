@@ -102,7 +102,7 @@ Func_0803c274:
 .L_0803c33a:
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	Func_08039500
+	bl	RenderOutput_AppendToList
 	b.n	.L_0803c36c
 .L_0803c344:
 	cmp	r1, #255

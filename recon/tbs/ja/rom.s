@@ -294,20 +294,6 @@ UiWork_StepChannelScript:
 	.incbin "baserom.gba", 0x000168a0, 0x000005dc
 	.section .rom.000177fa, "ax"
 	.incbin "baserom.gba", 0x000177fa, 0x000001be
-	.section .rom.000179fc, "ax"
-	.global UiText_RenderWideStringAtOffset
-	.type UiText_RenderWideStringAtOffset, %function
-	.thumb_func
-UiText_RenderWideStringAtOffset:
-	.incbin "baserom.gba", 0x000179fc, 0x00000144
-	.section .rom.00017bae, "ax"
-	.incbin "baserom.gba", 0x00017bae, 0x00000002
-	.section .rom.00017bb0, "ax"
-	.global UiText_RenderWideStringInWindow
-	.type UiText_RenderWideStringInWindow, %function
-	.thumb_func
-UiText_RenderWideStringInWindow:
-	.incbin "baserom.gba", 0x00017bb0, 0x00000144
 	.section .rom.00017da8, "ax"
 	.global UiText_BuildRenderEntries
 	.type UiText_BuildRenderEntries, %function
@@ -327,7 +313,16 @@ UiText_MeasureEntryDimensions:
 	.type UiText_MeasureStringVariant, %function
 	.thumb_func
 UiText_MeasureStringVariant:
-	.incbin "baserom.gba", 0x0001898c, 0x00000670
+	.incbin "baserom.gba", 0x0001898c, 0x000002c0
+	.global Func_08018cac
+Func_08018cac:
+	.incbin "baserom.gba", 0x00018c4c, 0x00000268
+	.section .rom.00018eb4, "ax"
+	.global UiWindow_PutGlyph
+	.type UiWindow_PutGlyph, %function
+	.thumb_func
+UiWindow_PutGlyph:
+	.incbin "baserom.gba", 0x00018eb4, 0x00000148
 	.section .rom.000191c8, "ax"
 	.global UiWork_AnimateSpriteSlots
 	.type UiWork_AnimateSpriteSlots, %function

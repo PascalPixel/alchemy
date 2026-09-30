@@ -365,7 +365,7 @@ Func_0810aa80:
 	bl	0x08013560
 	mov	r1, sl
 	mov	r0, r8
-	bl	Func_0810a864
+	bl	Shop_ServicePrice
 	mov	r1, sl
 	adds	r5, r0, #0
 	mov	r0, r8

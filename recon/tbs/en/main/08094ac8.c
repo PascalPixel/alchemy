@@ -1,11 +1,13 @@
-/* 2026-09-29 alchemy permute: score 882 on the permuter's scorer,
-   unchanged after 13,842 candidates in 5 minutes; FieldFx_GroundParticleTiles is
-   now labelled; the residual is register allocation. */
-/* Draft, not exact (2026-09-24): 74 differing halfwords, 238 of 244 bytes.
-   Residual: the loop zero lands in r6 where the reference gives the three
-   leading particle words a walking pointer in r6 and holds the zero in r4,
-   saved around the terrain call (frame 8, not 4). Merging the pointer with
-   the LZ buffer variable, zero types and an early zero did not move it. */
+/* 2026-09-30 (Mercury): 46 differing halfwords, 242 of 244 bytes (was 73 at
+   238). The blend's last write takes a literal 0: with it written as zero,
+   zero is used after the loop, loop.c hoists its set (life 41) and it lands
+   in a call-saved register. The reference keeps the zero set in the loop
+   and gives it r4, saved around the terrain call (str r4, [sp, #0] / ldr
+   r4, [sp, #0]), which is why its frame is 8 bytes with fill at sp+4:
+   caller-saves pays only when the zero's weighted references outnumber four
+   times its calls. Here the zero still leaves the loop (life 2 against 29
+   insns); setting it after words = particle keeps it in the loop but then
+   local-alloc gives words r2 instead of r6 and the zero takes r6 (70). */
 #include "DMA.H"
 
 struct FxParticle {
@@ -85,6 +87,6 @@ void Unnamed_08094ac8(void)
     *blend = value;
     value = 0x1008;
     *++blend = value;
-    *++blend = zero;
+    *++blend = 0;
     Scheduler_AddOrUpdateCallback(Unnamed_08094820, 0xc80);
 }

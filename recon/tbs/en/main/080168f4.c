@@ -2,7 +2,7 @@
  * 118 rewrites; not kept, since the owner is far from exact (the allocation
  * residual below). */
 /* 2026-09-29: the removed ADDR_ macros are now gWindowWork, gKeysHeld and
- * Data_03001af8 and callees carry the build's names, so the draft compiles
+ * gKeysPressedLatch and callees carry the build's names, so the draft compiles
  * again; alchemy permute scores 8560 (the residual below still holds). */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -11,7 +11,7 @@
 
 extern u8 *gWindowWork;
 extern s32 gKeysHeld;
-extern s32 Data_03001af8;
+extern s32 gKeysPressedLatch;
 
 /*
  * Message-script step for one render channel.
@@ -209,7 +209,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
         case 1:
             /* Page break: wait for input, then refit the window. */
             if (base[RENDER_MODE_OFS] != 0 && ch->wait < 0x384)
-                Data_03001af8 = 0;
+                gKeysPressedLatch = 0;
             ch->wait = 0x397;
             if (UiWork_CheckCancelByModeInput(ch) == 0) {
                 pane = ch->work;
@@ -280,7 +280,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
         case 2:
             /* Wait for input, report a cancel to the caller. */
             if (base[RENDER_MODE_OFS] != 0 && ch->wait < 0x384)
-                Data_03001af8 = 0;
+                gKeysPressedLatch = 0;
             if (UiWork_CheckCancelByModeInput(ch) != 0)
                 return 9;
             ch->wait = 0x397;

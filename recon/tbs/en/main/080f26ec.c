@@ -58,7 +58,7 @@ struct Scroll {
 
 extern volatile struct Scroll gBgScroll;
 extern u32 gKeyState;
-extern u8 Data_03001d18;
+extern u8 gOamCopyEnabled;
 extern u8 Data_03001f58;
 extern const u8 Data_080f39b1[];
 extern volatile u16 RegIme;
@@ -108,7 +108,7 @@ s32 Func_080f26ec(s32 sprites)
     Resource_InitializeTable();
     WaitFrames(1);
     Scheduler_ResetTaskTable();
-    Data_03001d18 = result;
+    gOamCopyEnabled = result;
     Data_03001f58 = result;
     Unnamed_080f24a0();
     TitlePalette_InitializeBuffers();
@@ -194,7 +194,7 @@ s32 Func_080f26ec(s32 sprites)
         } else if (next == 0x118) {
             Blend_SetBrightenTarget16(1);
             Scheduler_RemoveCallback(0x080f2029);
-            Data_03001d18 = 1;
+            gOamCopyEnabled = 1;
             WaitFrames(1);
             *(u16 *)0x0400000c = 0x681;
             *(u16 *)0x04000000 = (u16)0x1440;

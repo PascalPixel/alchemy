@@ -46,8 +46,8 @@ gCpuLoadTimer:
 	.global Data_03001af4
 Data_03001af4:
 	.space 0x00000004
-	.global Data_03001af8
-Data_03001af8:
+	.global gKeysPressedLatch
+gKeysPressedLatch:
 	.space 0x00000004
 	.global Data_03001afc
 Data_03001afc:
@@ -154,8 +154,8 @@ gOptionMirror:
 	.global Data_03001d0c
 Data_03001d0c:
 	.space 0x0000000c
-	.global Data_03001d18
-Data_03001d18:
+	.global gOamCopyEnabled
+gOamCopyEnabled:
 	.space 0x00000004
 	.global Data_03001d1c
 Data_03001d1c:

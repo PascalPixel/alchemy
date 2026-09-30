@@ -48,6 +48,9 @@ Func_080cf350:
 	movs	r0, r0
 	.2byte 0x0074
 	.2byte 0x080f
+	.global Func_080cf3b4
+	.thumb_func
+Func_080cf3b4:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0
@@ -100,6 +103,9 @@ Func_080cf350:
 	.4byte 0x080effd8
 	.2byte 0xf0d1
 	.2byte 0x080c
+	.global Func_080cf424
+	.thumb_func
+Func_080cf424:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

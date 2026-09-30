@@ -750,6 +750,9 @@ Func_080cdbf8:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
+	.global Func_080cdc40
+	.thumb_func
+Func_080cdc40:
 	push	{r5, r6, r7, lr}
 	adds	r7, r0, #0
 	adds	r0, r1, #0

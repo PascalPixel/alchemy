@@ -239,7 +239,7 @@ Func_080ce0ac:
 	adds	r6, #182
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x080dc410
+	bl	Func_080dc410
 	add	r6, r8
 	movs	r2, #0
 	movs	r5, #1

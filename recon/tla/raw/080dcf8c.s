@@ -538,7 +538,7 @@ Func_080dd054:
 	ldrsh	r2, [r3, r4]
 	bl	0x080ceafc
 .L_080dd3ec:
-	bl	0x080dc7cc
+	bl	Func_080dc7cc
 	ldr	r0, [sp, #24]
 	cmp	r0, #1
 	bne.n	.L_080dd40a

@@ -185,7 +185,7 @@ Func_080db4b8:
 	adds	r1, r5, #0
 	movs	r3, #24
 	ldrsh	r0, [r6, r3]
-	bl	0x080dc62c
+	bl	Func_080dc62c
 	adds	r0, r5, #0
 	bl	0x080e011c
 	adds	r0, r5, #0

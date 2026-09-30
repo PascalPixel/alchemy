@@ -93,7 +93,7 @@ Func_080ceb80:
 	str	r3, [r1, #0]
 	str	r3, [r1, #4]
 	str	r3, [r1, #8]
-	bl	0x080ca9cc
+	bl	Func_080ca9cc
 	pop	{pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -360,6 +360,9 @@ Func_080ceb80:
 	movs	r0, r0
 	.2byte 0x4000
 	.2byte 0x0000
+	.global Func_080cee40
+	.thumb_func
+Func_080cee40:
 	push	{r5, lr}
 	adds	r5, r1, #0
 	bl	ObjectTable_Get

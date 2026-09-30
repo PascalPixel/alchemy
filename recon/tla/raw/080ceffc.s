@@ -6,9 +6,15 @@ Func_080ceffc:
 	push	{lr}
 	bl	ObjectTable_Get
 	pop	{pc}
+	.global Func_080cf004
+	.thumb_func
+Func_080cf004:
 	push	{lr}
-	bl	0x080caa2c
+	bl	Func_080caa2c
 	pop	{pc}
+	.global Func_080cf00c
+	.thumb_func
+Func_080cf00c:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r7, r2, #0
@@ -44,6 +50,9 @@ Func_080ceffc:
 	str	r0, [r5, #12]
 .L_080cf04e:
 	pop	{r5, r6, r7, pc}
+	.global Func_080cf050
+	.thumb_func
+Func_080cf050:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

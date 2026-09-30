@@ -1167,7 +1167,7 @@ Func_080de060:
 	.2byte 0x080f
 	push	{lr}
 	bl	.L_080de9f8
-	bl	0x080dc7cc
+	bl	Func_080dc7cc
 	pop	{pc}
 .L_080de9f8:
 	push	{r5, r6, r7, lr}

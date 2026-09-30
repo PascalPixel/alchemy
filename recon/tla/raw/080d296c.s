@@ -17,7 +17,7 @@ Func_080d296c:
 	str	r3, [r0, #24]
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	0x080cf424
+	bl	Func_080cf424
 	adds	r0, r5, #0
 	movs	r1, #2
 	bl	0x08038120
@@ -54,7 +54,7 @@ Func_080d296c:
 	bl	Func_080d3118
 	adds	r0, r5, #0
 	movs	r1, #3
-	bl	0x080cf424
+	bl	Func_080cf424
 	adds	r0, r5, #0
 	movs	r1, #0
 	bl	Func_080d260c
@@ -94,6 +94,9 @@ Func_080d2a0c:
 	movs	r0, r0
 	.2byte 0x0039
 	.2byte 0x0000
+	.global Func_080d2a3c
+	.thumb_func
+Func_080d2a3c:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

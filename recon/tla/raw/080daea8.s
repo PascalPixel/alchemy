@@ -766,6 +766,9 @@ Func_080daea8:
 	movs	r0, r0
 	.2byte 0x0000
 	.2byte 0xfff0
+	.global Func_080db48c
+	.thumb_func
+Func_080db48c:
 	.2byte 0xb500
 	cmp	r0, #0
 	bne.n	.L_080db498

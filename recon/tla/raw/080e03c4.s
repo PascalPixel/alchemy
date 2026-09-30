@@ -1710,7 +1710,7 @@ Func_080e03c4:
 	adds	r2, r5, r3
 	movs	r3, #0
 	str	r3, [r2, #0]
-	bl	0x080cb82c
+	bl	Func_080cb82c
 	movs	r2, #154
 	lsls	r2, r2, #2
 	adds	r3, r5, r2

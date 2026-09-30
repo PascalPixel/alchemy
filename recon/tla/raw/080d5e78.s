@@ -719,6 +719,9 @@ Func_080d5e78:
 	.4byte 0x080f08b0
 	.2byte 0x021c
 	.2byte 0x0300
+	.global Func_080d6408
+	.thumb_func
+Func_080d6408:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -803,6 +806,9 @@ Func_080d5e78:
 	.4byte 0x080d607d
 	.2byte 0x5ff9
 	.2byte 0x080d
+	.global Func_080d64b8
+	.thumb_func
+Func_080d64b8:
 	push	{lr}
 	ldr	r0, [pc, #44]
 	bl	Func_08014644

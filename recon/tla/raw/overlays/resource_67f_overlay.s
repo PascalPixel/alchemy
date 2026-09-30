@@ -1474,46 +1474,7 @@ Func_02000c4c:
 	.2byte 0x0000
 .L_02008c60:
 	.4byte gPartyState
-	.section .text.x02008c64,"ax",%progbits
-	.global Func_02000c64
-	.thumb_func
-Func_02000c64:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r4, r1, #0
-	cmp r5, #0
-	beq .L_02008ca8
-	adds r3, r5, #0
-	adds r3, #84
-	ldrb r2, [r3]
-	movs r3, #15
-	ands r3, r2
-	cmp r3, #0
-	beq .L_02008ca8
-	ldr r1, [r5, #80]
-	movs r2, #13
-	ldrb r0, [r1, #9]
-	movs r3, #3
-	negs r2, r2
-	ands r4, r3
-	adds r3, r2, #0
-	lsls r4, r4, #2
-	ands r3, r0
-	orrs r3, r4
-	strb r3, [r1, #9]
-	adds r1, #37
-	ldrb r3, [r1]
-	ands r2, r3
-	orrs r2, r4
-	strb r2, [r1]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-.L_02008ca8:
-	pop {r5, pc}
+	.section .text.x02008caa,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008cac,"ax",%progbits
 	.global Func_02000cac
@@ -1636,7 +1597,7 @@ Func_02000ce4:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_02000c64
+	bl Object_SetSpritePriority
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -1674,7 +1635,7 @@ Func_02000ce4:
 	strb r2, [r1]
 	ldr r1, [r7]
 	adds r0, r6, #0
-	bl Func_02000c64
+	bl Object_SetSpritePriority
 .L_02008de4:
 	movs r2, #128
 	lsls r2, r2, #12
@@ -1920,7 +1881,7 @@ Func_02000f30:
 .L_02008fa0:
 	adds r0, r6, #0
 	movs r1, #3
-	bl Func_02000c64
+	bl Object_SetSpritePriority
 	b .L_02008fd4
 .L_02008faa:
 	mov r2, r8
@@ -1944,7 +1905,7 @@ Func_02000f30:
 	movs r1, #2
 	mov r8, r2
 	adds r7, #4
-	bl Func_02000c64
+	bl Object_SetSpritePriority
 .L_02008fd4:
 	mov r1, r9
 	mov r2, r10

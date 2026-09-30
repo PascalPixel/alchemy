@@ -5,7 +5,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_679/ENTRY.o"(.text)
-        "*/resource_679_overlay.o"(.text.x02008038)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
+        "*/resource_679_overlay.o"(.text.x0200807e)
         "*/resource_679_overlay.o"(.text.x02008080)
         "*/resource_679_overlay.o"(.text.x020080d0)
         "*/resource_679_overlay.o"(.text.x02008124)

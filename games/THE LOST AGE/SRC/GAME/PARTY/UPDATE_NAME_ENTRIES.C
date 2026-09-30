@@ -1,30 +1,19 @@
 #include "TYPES.H"
-#include "SCENE.H"
+#include "OWNER_STATE.H"
+
 s32 Party_Check(void);
 void SerialRuntime_WaitForTransferB(void);
-void Party_Apply(s32, u16 *);
-void Party_Do(void *);
-
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define NAME_LIMIT 7
-#define APPEND_NAME_SPACE 1
-#else
-#define NAME_LIMIT 4
-#define APPEND_NAME_SPACE 0
-#endif
-
+void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
+void Sys_Free(void *);
 void *Runtime_BumpAllocateAlternatePool(s32);
-
 void WaitFrames(s32);
-u8 *Runtime_GetObject(s32);
-void *Trade_GetOfferStateFar(s32);
+void *Resource_FarCall005(s32);
 
 extern char MsgEnemyLabel;
 
 s32 UpdateNameEntries(void)
 {
-    u16 name_text[24];
+    u16 name_text[16];
     void *buffer;
     u8 *name_entry;
     s32 named_count;
@@ -36,7 +25,7 @@ s32 UpdateNameEntries(void)
     named_count = 0;
     index = 0;
     while (index <= 2) {
-        name_entry = Runtime_GetObject(index + 128);
+        name_entry = Owner_GetState(index + 128);
         if (Party_Check() == -1) {
             break;
         }
@@ -45,20 +34,16 @@ s32 UpdateNameEntries(void)
             named_count += 1;
         }
         WaitFrames(2);
-        Party_Apply((s32)&MsgEnemyLabel, name_text);
+        Ui_AdjustValueWithoutLimitFar((s32)&MsgEnemyLabel, name_text);
         i = 0;
         if (name_text[i] != 0) {
             do {
                 i += 1;
-                if (i > NAME_LIMIT) {
+                if (i > 4) {
                     break;
                 }
             } while (name_text[i] != 0);
         }
-#if APPEND_NAME_SPACE
-        name_text[i] = ' ';
-        i += 1;
-#endif
         len = i;
         for (i = 14; i >= len; i--) {
             name_entry[i] = name_entry[i - len];
@@ -69,13 +54,13 @@ s32 UpdateNameEntries(void)
         name_entry[14] = 0;
         index += 1;
     }
-    Party_Do(buffer);
-    buffer = Runtime_BumpAllocateAlternatePool(320);
-    Trade_GetOfferStateFar(1);
+    Sys_Free(buffer);
+    buffer = Runtime_BumpAllocateAlternatePool(340);
+    Resource_FarCall005(1);
     if (Party_Check() != -1) {
         SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }
-    Party_Do(buffer);
+    Sys_Free(buffer);
     return named_count;
 }

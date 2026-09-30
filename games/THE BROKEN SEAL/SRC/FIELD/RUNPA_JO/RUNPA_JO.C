@@ -100,6 +100,7 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gRunpaJoEntrancesOther;
 }
 
+/* The Lunpa fortress: the scene table slot that holds nothing. */
 s32 GetEmptySceneData(void) { return 0; }
 
 /* Where the fortress's exits lead; the third and fourth rows share theirs. */
@@ -157,6 +158,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gRunpaJoEventsOther;
 }
 
+/* The Lunpa fortress: actor 12's drop and the first bridge supports. */
 void ConfigureSceneActor12(void)
 {
 
@@ -272,6 +274,8 @@ void FieldScene_SetPositionPairs(s32 idx)
         Call6(Map_CopyCellAttributeRect, top_x, bottom_y, 1, 1, top_x, top_y - 43);
 }
 
+/* The Lunpa fortress: the other supports, the cell doors, the guards' items
+ * and the cell key. */
 void FieldScene_UpdateObjectPairB(void)
 {
 
@@ -460,6 +464,10 @@ s32 IsPlayerInAccidentTriggerArea(void)
     return 0;
 }
 
+/* Lunpa fortress: each frame the two guards sway with the map, and unless
+ * the alarm is already raised they watch for the party: a cloaked party
+ * that walks within four steps of either guard is caught, and an uncloaked
+ * one they can talk to sets the alarm. */
 void FieldScene_UpdateActorPairInteraction(void)
 {
     struct ObjectRuntime *actor = Object_GetById(9);
@@ -511,6 +519,7 @@ void FieldScene_UpdateActorPairInteraction(void)
     }
 }
 
+/* The Lunpa fortress: the patrolling guards and the village path triggers. */
 void ConfigureSceneActor9(void)
 {
     Event_Begin();
@@ -897,6 +906,8 @@ void TriggerScene40AtVillagePath(void)
     }
 }
 
+/* The Lunpa fortress: a guard who catches the party asks who they are, and
+ * the party is put out of the fortress. */
 void RunActor9ScriptedSequence(void)
 {
     Event_Begin();
@@ -950,6 +961,7 @@ void RunActorScriptedSequenceA(s32 actor_id)
     Event_End();
 }
 
+/* The Lunpa fortress: a guard turns to the party and says one of his lines. */
 void TurnActorToSceneDirection(s32 actor_id)
 {
 
@@ -974,6 +986,7 @@ void TurnActorToSceneDirection(s32 actor_id)
     }
 }
 
+/* The Lunpa fortress: the guards' lines and the first searchable objects. */
 void RunActorScriptedSequenceB(s32 handle)
 {
     s32 id;
@@ -1073,6 +1086,9 @@ void InspectEmptyChest(void)
     GameFlag_Set(2377);
 }
 
+/* Lunpa fortress: the guards challenge the party ("Who are you!?"),
+ * talk it over and send the party back out to the fortress's second scene
+ * at entrance 31. */
 void RunpaJo_RunGuardChallenge(void)
 {
     s32 line;
@@ -1135,6 +1151,7 @@ void RunpaJo_RunGuardChallenge(void)
     GameFlag_Set(0x94a);
 }
 
+/* The Lunpa fortress: the end of a sequence and an empty object. */
 void FieldScene_RunSequenceTail(void)
 {
     Event_Begin();
@@ -1164,6 +1181,8 @@ void InspectEmptySceneObject(void)
     GameFlag_Set(2379);
 }
 
+/* The Lunpa fortress: the other guards' challenges, which also put the party
+ * out and set a flag. */
 void RunActor12InteractionSequence(void)
 {
     Event_Begin();
@@ -1217,6 +1236,7 @@ void RunActors13And21InteractionSequence(void)
     GameFlag_Set(0x225);
 }
 
+/* The Lunpa fortress: the interaction regions and the searchable objects. */
 void ConfigureInteractionRegionA(void)
 {
     Map_CopyCells(2, 82, 1, 2, 21, 81);
@@ -1404,6 +1424,11 @@ void FieldScene_RunScene3bf_02002718(void)
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
 }
+
+/* Lunpa fortress: Dodonpa's story. Unless the story has already been told,
+ * the party meets him and, on the first visit, hears it at length; either
+ * way the scene ends by sending the party on to the fortress's fourth
+ * scene. */
 
 /* The dialogue lines count on from each sequence's first message. */
 void PlayStoryScene(void)
@@ -1669,6 +1694,8 @@ void PlayStoryScene(void)
     }
     Event_End();
 }
+
+/* The Lunpa fortress: Dodonpa freed and reunited with his father. */
 
 /* Long fixed sequence of setup, positioning, and per-actor animation calls
  * against actor slots 0-3, 11-15, driven by three script line tables, with
@@ -2337,6 +2364,8 @@ void FieldScene_RunMainScriptSequence(void)
     Event_End();
 }
 
+/* The Lunpa fortress: actor 21's line by the day's draw, and the guard who
+ * thinks he heard someone. */
 void FieldScene_SelectActorTwentyOneMessage(void)
 {
 
@@ -2405,6 +2434,8 @@ void FieldScene_RunActorTwentyOneSequence(void)
     Event_ShowMessage(21, 0);
 }
 
+/* The Lunpa fortress: actor 25 asking the party not to wake Donpa, the scene
+ * variants of actors 24 and 25 and the second supplemental sequence. */
 void FieldScene_RunDonpaSleepingSequence(void)
 {
     u32 i;
@@ -2567,6 +2598,7 @@ void ConfigureSceneActor14(void)
     Event_ShowMessage(14, 0);
 }
 
+/* The Lunpa fortress: three actors' lines. */
 void ConfigureSceneActor13(void)
 {
     Actor_RunRepeatedMotion(13, 2);
@@ -2587,6 +2619,7 @@ void ConfigureSceneActor18(void)
     Event_AskYesNo(18, 0);
 }
 
+/* The Lunpa fortress: actor 20's sequence and its end. */
 void RunActor20SceneSequence(void)
 {
     u32 i;
@@ -2653,6 +2686,7 @@ void NoOpActorCallback(void)
 {
 }
 
+/* The Lunpa fortress: actor 13's lines. */
 void ConfigureActor13Interaction(void)
 {
     s32 msg = (s32)MsgRunpaWrongTurnOver;
@@ -2670,6 +2704,10 @@ void ConfigureActor13SceneResource(void)
     Event_ShowMessage(13, 0);
 }
 
+/* The fortress scene start: pick the random guard, then set up each floor.
+ * The second installs its tasks and actors, the third restores what the
+ * party changed, and the fourth stages its actors by the entrance the party
+ * came through. */
 s32 FieldScene_DispatchActorUpdate(void)
 {
     struct ObjectRuntime *actor;
@@ -2727,6 +2765,8 @@ s32 FieldScene_DispatchActorUpdate(void)
     return 0;
 }
 
+/* The Lunpa fortress: the scene tasks and the actors restored from the story
+ * flags. */
 void FieldScene_InstallSceneTasks(void)
 {
     FieldScene_ActivateThreeActorGroup();

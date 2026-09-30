@@ -28,6 +28,8 @@ void ColossoLogRollingStage_NoopSceneHook(void)
 {
 }
 
+/* The logs' balance state, the first halfword of the scene's saved words:
+ * 9 once the competitors stand balanced, which the stage start waits for. */
 void ColossoLogRollingStage_SetBalanceStateReady(void)
 {
     u16 *state = (u16 *)gSceneState;
@@ -47,6 +49,7 @@ void ColossoLogRollingStage_WaitForBalanceState(void)
     }
 }
 
+/* Spawning and raising the stage's scene effects. */
 void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
 {
     extern void Vector_AddPolarOffset(s32, s32, s32 *);
@@ -99,6 +102,10 @@ s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
     return 0;
 }
 
+/* Places the active actor beside the Colosso work's mark, on the near side
+ * the first time flag 0x211 is met and on the far side after, runs the
+ * stage's placement script until its cue runs out, then hands over the item
+ * for that side and shows who got it. Returns whether the flag was set. */
 s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle)
 {
     u8 *work = gKorosseoWork;

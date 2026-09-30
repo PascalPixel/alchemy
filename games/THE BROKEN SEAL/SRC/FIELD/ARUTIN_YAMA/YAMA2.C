@@ -187,6 +187,9 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     GameFlag_Set(0x908);
 }
 
+/* The falling-rocks sign on the mountain path. Unless flag 0x908 or 0xf14
+ * is set, it sets flag 0x205 and plays Gerald's scene at the wall, then the
+ * shared set piece. */
 void FieldScene_RunFallingRocksWarning(void)
 {
     u8 *record;

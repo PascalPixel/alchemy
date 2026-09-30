@@ -769,6 +769,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventEnd();
 }
 
+/* The first scene step. */
 void FieldScene_RunScene3c9_02001280(s32 a0, s32 a1)
 {
     u32 i;
@@ -1247,6 +1248,7 @@ void Scene_RunActorEntrySequence(void)
     GameFlag_Set(0x350);
 }
 
+/* Frame-driven effects. */
 void SceneEffect_UpdateObjectByFrameParity(s32 a)
 {
     if (*(s32 *)&gFrameCount & 2) {
@@ -1364,6 +1366,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
     }
 }
 
+/* Small scene steps. */
 void SceneState_ApplyPair140And0(void)
 {
     Psynergy_Begin(140, 0);

@@ -324,6 +324,8 @@ void Menu_StepRight(struct StepMenu *state)
     WaitFrames(1);
 }
 
+/* Selection lists: move the cursor up one entry, scrolling or wrapping the list to its end. */
+
 /* main:0801b810 Menu_StepLeft - hand-written draft, 174 of 204 halfwords
    differ, almost all from one register choice: the ROM keeps the top row
    in r1 and ORs it with the cursor into a scratch r3, then stores 0 from a

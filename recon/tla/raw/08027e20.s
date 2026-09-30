@@ -532,7 +532,7 @@ Func_08027e20:
 	adds	r0, r6, #0
 	subs	r3, #2
 	mov	r2, fp
-	bl	0x08026f80
+	bl	Func_08026f80
 	cmp	r0, #0
 	blt.n	.L_0802834a
 	ldr	r3, [r6, #80]
@@ -1966,7 +1966,7 @@ Func_08027e20:
 	ldrh	r1, [r5, #32]
 	ldrh	r3, [r7, #32]
 	ldr	r2, [sp, #0]
-	bl	0x08026f80
+	bl	Func_08026f80
 	cmp	r0, #0
 	blt.n	.L_08028dc4
 	ldr	r1, [sp, #12]

@@ -34,7 +34,7 @@ Func_08024f20:
 	subs	r3, #2
 	mov	r2, r8
 	str	r4, [sp, #0]
-	bl	0x08026f80
+	bl	Func_08026f80
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	blt.n	.L_08024f6c
@@ -87,7 +87,7 @@ Func_08024f80:
 	subs	r3, #2
 	mov	r2, r8
 	str	r4, [sp, #0]
-	bl	0x08026f80
+	bl	Func_08026f80
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	blt.n	.L_08024fca

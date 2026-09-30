@@ -46,6 +46,9 @@ Func_0802ce4c:
 	pop	{r5, r6, pc}
 	.2byte 0xcd95
 	.2byte 0x0802
+	.global Func_0802cea0
+	.thumb_func
+Func_0802cea0:
 	push	{lr}
 	ldr	r0, [pc, #8]
 	bl	Func_08014694
@@ -53,6 +56,9 @@ Func_0802ce4c:
 	movs	r0, r0
 	.2byte 0xcd95
 	.2byte 0x0802
+	.global Func_0802ceb0
+	.thumb_func
+Func_0802ceb0:
 	push	{lr}
 	ldr	r0, [pc, #8]
 	bl	Func_0801475c

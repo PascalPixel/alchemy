@@ -14,6 +14,10 @@
 #define Ram_MapCollision ((u8 *)0x0202c000) /* gMapCollision */
 #define Ram_BgTileBuffer ((u8 *)0x02038000) /* gBgTileBuffer */
 
+/* The actor sprite slots, 16 KB apiece: the slot base is a constant the
+ * slot index is added to, which a label turns into a different register. */
+#define Ram_ActorSpriteSlots ((u8 *)0x02018000) /* gActorSpriteSlots */
+
 /* The IWRAM copy of the sound mixer, which the sound set-up fills from ROM.
  * Its label is a Thumb routine, so only a constant gives the even address
  * the copy writes to without an extra instruction. */

@@ -12,4 +12,4 @@ Func_081c0070:
 	.global Func_081c0078
 	.thumb_func
 Func_081c0078:
-	overlay_veneer Func_081c0fdc
+	overlay_veneer AudioCommand_WaitForCompletion

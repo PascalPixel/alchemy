@@ -300,7 +300,7 @@ Func_0802254c:
 	cmp	r3, #0
 	bne.n	.L_08022790
 	ldrb	r0, [r7, #16]
-	bl	Func_080142ac
+	bl	Resource_ActivateEntry
 	strb	r5, [r7, #25]
 .L_08022790:
 	add	sp, #40

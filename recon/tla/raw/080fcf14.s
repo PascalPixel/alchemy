@@ -2318,7 +2318,7 @@ Func_080fe184:
 	adds	r1, #236
 	movs	r0, #220
 	sub	sp, #4
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #24]

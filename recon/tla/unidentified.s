@@ -81,7 +81,10 @@ Ui_FixedTileBlocks:
 	.section .unidentified.080b127c,"a"
 	.incbin "baserom.gba", 0x000b127c, 0x00000cac
 	.section .unidentified.080b1f2c,"a"
-	.incbin "baserom.gba", 0x000b1f2c, 0x0000f6c8
+	.incbin "baserom.gba", 0x000b1f2c, 0x0000f5e0
+	.global Summon_DefinitionTable
+Summon_DefinitionTable:
+	.incbin "baserom.gba", 0x000c150c, 0x000000e8
 	.global Data_080c15f4
 Data_080c15f4:
 	.incbin "baserom.gba", 0x000c15f4, 0x000055bc
@@ -104,7 +107,19 @@ Object_OffsetMotionScript:
 Object_LinkedMotionScript:
 	.incbin "baserom.gba", 0x000f3780, 0x00004880
 	.section .unidentified.081055f8,"a"
-	.incbin "baserom.gba", 0x001055f8, 0x00002a08
+	.incbin "baserom.gba", 0x001055f8, 0x000003f6
+	.global Menu_ListOrderDefault
+Menu_ListOrderDefault:
+	.incbin "baserom.gba", 0x001059ee, 0x0000000d
+	.global Menu_ListOrderMode2
+Menu_ListOrderMode2:
+	.incbin "baserom.gba", 0x001059fb, 0x0000000d
+	.global Menu_ListOrderMode1
+Menu_ListOrderMode1:
+	.incbin "baserom.gba", 0x00105a08, 0x00000018
+	.global Menu_ListOrderMode0
+Menu_ListOrderMode0:
+	.incbin "baserom.gba", 0x00105a20, 0x000025e0
 	.section .unidentified.0810c008,"a"
 	.incbin "baserom.gba", 0x0010c008, 0x0000bff8
 	.section .unidentified.081287c4,"a"

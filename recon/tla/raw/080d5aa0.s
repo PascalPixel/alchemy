@@ -407,7 +407,9 @@ Func_080d5d70:
 	pop	{r5, r6, pc}
 	.2byte 0x0000
 	.2byte 0xfff0
-.L_080d5de0:
+	.global ObjectEffect_PrepareContextEffect
+	.thumb_func
+ObjectEffect_PrepareContextEffect:
 	.2byte 0xb560
 	mov	r6, r8
 	push	{r6}
@@ -459,14 +461,3 @@ Func_080d5d70:
 	.4byte 0x02000240
 	.2byte 0x0000
 	.2byte 0xfff0
-	.global Func_080d5e50
-	.thumb_func
-Func_080d5e50:
-	.2byte 0xb500
-	movs	r0, #26
-	bl	.L_080d5de0
-	movs	r0, #144
-	lsls	r0, r0, #1
-	bl	GameFlag_SetBit
-	pop	{pc}
-	.2byte 0x0000

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08014cc0
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Func_08014cc0:
+Runtime_AllocateHeapBlock:
 	push	{r5, lr}
 	movs	r4, #192
 	adds	r5, r0, #0

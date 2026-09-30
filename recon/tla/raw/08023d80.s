@@ -94,7 +94,7 @@ Func_08023d80:
 	mov	r8, r3
 	ldr	r1, [pc, #184]
 	movs	r0, #80
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r2, [pc, #180]
 	adds	r1, r0, #0
 	ldr	r0, [pc, #180]

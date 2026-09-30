@@ -32,7 +32,7 @@ Func_08108070:
 	.global Func_08108078
 	.thumb_func
 Func_08108078:
-	overlay_veneer Func_081084e0
+	overlay_veneer AudioCommand_WaitForStateByteClear
 	.global Func_08108080
 	.thumb_func
 Func_08108080:

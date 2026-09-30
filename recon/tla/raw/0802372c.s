@@ -24,7 +24,7 @@ Func_0802372c:
 	movs	r1, #193
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r5, r0, #0
 	adds	r0, r7, #0
 	bl	Func_08038248

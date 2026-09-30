@@ -99,7 +99,7 @@ Func_080dc410:
 	adds	r5, #244
 	adds	r1, r5, #0
 	movs	r0, #224
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r6, r0, #0
 	ldr	r3, [pc, #12]
 	movs	r2, #0

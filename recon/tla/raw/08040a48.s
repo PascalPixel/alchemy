@@ -3,547 +3,264 @@
 	.global Func_08040a48
 	.thumb_func
 Func_08040a48:
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	ldr	r3, [pc, #496]
-	sub	sp, #24
-	movs	r2, #8
-	movs	r1, #0
-	add	r2, sp
-	movs	r0, #1
-	mov	r8, r1
-	mov	r9, r0
-	mov	fp, r2
-	ldmia	r3!, {r0, r1, r4}
-	stmia	r2!, {r0, r1, r4}
-	ldr	r3, [r3, #0]
-	mov	sl, fp
-	str	r3, [r2, #0]
-	bl	0x080409a4
-	movs	r3, #192
-	lsls	r3, r3, #18
-	adds	r3, #208
-	ldr	r3, [r3, #0]
-	str	r3, [sp, #4]
-	bl	0x080409f0
-	adds	r7, r0, #0
-	movs	r0, #1
-	bl	WaitFrames
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	ldr r3, .L_08040c48
+	sub sp, #24
+	movs r2, #8
+	movs r1, #0
+	add r2, sp
+	movs r0, #1
+	mov r8, r1
+	mov r9, r0
+	mov r11, r2
+	ldmia r3!, {r0, r1, r4}
+	stmia r2!, {r0, r1, r4}
+	ldr r3, [r3]
+	mov r10, r11
+	str r3, [r2]
+	bl Func_080409a4
+	movs r3, #192
+	lsls r3, r3, #18
+	adds r3, #208
+	ldr r3, [r3]
+	str r3, [sp, #4]
+	bl Func_080409f0
+	adds r7, r0, #0
+	movs r0, #1
+	bl WaitFrames
 .L_08040a8c:
-	mov	r2, r9
-	cmp	r2, #0
-	beq.n	.L_08040b42
-	mov	r0, r8
-	movs	r3, #0
-	movs	r1, #4
-	adds	r0, #4
-	mov	r9, r3
-	bl	Math_Mod
-	mov	r4, sl
-	mov	r8, r0
-	ldr	r0, [r4, #12]
-	movs	r1, #5
-	adds	r0, #5
-	bl	Math_Mod
-	mov	r1, sl
-	str	r0, [r1, #12]
-	adds	r0, r7, #0
-	bl	RenderOutput_RedrawSavedRect
-	movs	r6, #2
-	movs	r5, #2
+	mov r2, r9
+	cmp r2, #0
+	beq .L_08040b42
+	mov r0, r8
+	movs r3, #0
+	movs r1, #4
+	adds r0, #4
+	mov r9, r3
+	bl Math_Mod
+	mov r4, r10
+	mov r8, r0
+	ldr r0, [r4, #12]
+	movs r1, #5
+	adds r0, #5
+	bl Math_Mod
+	mov r1, r10
+	str r0, [r1, #12]
+	adds r0, r7, #0
+	bl RenderOutput_RedrawSavedRect
+	movs r6, #2
+	movs r5, #2
 .L_08040abc:
-	adds	r2, r6, #0
-	adds	r0, r7, #0
-	movs	r1, #0
-	movs	r3, #14
-	subs	r5, #1
-	str	r6, [sp, #0]
-	bl	UiWindow_DrawDividerLine
-	adds	r6, #2
-	cmp	r5, #0
-	bge.n	.L_08040abc
-	movs	r5, #0
-	mov	r6, fp
+	adds r2, r6, #0
+	adds r0, r7, #0
+	movs r1, #0
+	movs r3, #14
+	subs r5, #1
+	str r6, [sp, #0]
+	bl UiWindow_DrawDividerLine
+	adds r6, #2
+	cmp r5, #0
+	bge .L_08040abc
+	movs r5, #0
+	mov r6, r11
 .L_08040ad6:
-	lsls	r3, r5, #4
-	ldmia	r6!, {r0}
-	movs	r1, #0
-	str	r3, [sp, #0]
-	adds	r2, r7, #0
-	movs	r3, #72
-	adds	r5, #1
-	bl	UiText_DrawNumberInWindow
-	cmp	r5, #3
-	ble.n	.L_08040ad6
-	ldr	r0, [pc, #348]
-	adds	r1, r7, #0
-	movs	r2, #8
-	movs	r3, #0
-	bl	UiText_DrawStringInWindow
-	ldr	r0, [pc, #340]
-	adds	r1, r7, #0
-	movs	r2, #8
-	movs	r3, #16
-	bl	UiText_DrawStringInWindow
-	ldr	r0, [pc, #332]
-	adds	r1, r7, #0
-	movs	r2, #8
-	movs	r3, #32
-	bl	UiText_DrawStringInWindow
-	movs	r2, #8
-	movs	r3, #48
-	ldr	r0, [pc, #320]
-	adds	r1, r7, #0
-	bl	UiText_DrawStringInWindow
-	movs	r2, #12
-	ldrsh	r1, [r7, r2]
-	movs	r3, #14
-	ldrsh	r2, [r7, r3]
-	mov	r4, r8
-	lsls	r3, r4, #4
-	lsls	r2, r2, #3
-	adds	r2, r2, r3
-	movs	r4, #160
-	ldr	r3, [sp, #4]
-	lsls	r4, r4, #3
-	lsls	r1, r1, #3
-	adds	r4, #164
-	adds	r0, r3, r4
-	subs	r1, #4
-	adds	r2, #12
-	movs	r3, #3
-	bl	0x08108040
+	lsls r3, r5, #4
+	ldmia r6!, {r0}
+	movs r1, #0
+	str r3, [sp, #0]
+	adds r2, r7, #0
+	movs r3, #72
+	adds r5, #1
+	bl UiText_DrawNumberInWindow
+	cmp r5, #3
+	ble .L_08040ad6
+	ldr r0, .L_08040c4c
+	adds r1, r7, #0
+	movs r2, #8
+	movs r3, #0
+	bl UiText_DrawStringInWindow
+	ldr r0, .L_08040c50
+	adds r1, r7, #0
+	movs r2, #8
+	movs r3, #16
+	bl UiText_DrawStringInWindow
+	ldr r0, .L_08040c54
+	adds r1, r7, #0
+	movs r2, #8
+	movs r3, #32
+	bl UiText_DrawStringInWindow
+	movs r2, #8
+	movs r3, #48
+	ldr r0, .L_08040c58
+	adds r1, r7, #0
+	bl UiText_DrawStringInWindow
+	movs r2, #12
+	ldrsh r1, [r7, r2]
+	movs r3, #14
+	ldrsh r2, [r7, r3]
+	mov r4, r8
+	lsls r3, r4, #4
+	lsls r2, r2, #3
+	adds r2, r2, r3
+	movs r4, #160
+	ldr r3, [sp, #4]
+	lsls r4, r4, #3
+	lsls r1, r1, #3
+	adds r4, #164
+	adds r0, r3, r4
+	subs r1, #4
+	adds r2, #12
+	movs r3, #3
+	bl Func_08108040
 .L_08040b42:
-	movs	r0, #1
-	bl	WaitFrames
-	ldr	r5, [pc, #272]
-	movs	r2, #2
-	ldr	r3, [r5, #4]
-	ands	r3, r2
-	cmp	r3, #0
-	bne.n	.L_08040c26
-	ldr	r3, [r5, #4]
-	movs	r2, #1
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040b7a
-	mov	r0, r8
-	cmp	r0, #3
-	bne.n	.L_08040b6e
-	mov	r1, fp
-	ldr	r0, [r1, #12]
-	bl	Func_08013b30
-	b.n	.L_08040b7a
+	movs r0, #1
+	bl WaitFrames
+	ldr r5, .L_08040c5c
+	movs r2, #2
+	ldr r3, [r5, #4]
+	ands r3, r2
+	cmp r3, #0
+	bne .L_08040c26
+	ldr r3, [r5, #4]
+	movs r2, #1
+	ands r3, r2
+	cmp r3, #0
+	beq .L_08040b7a
+	mov r0, r8
+	cmp r0, #3
+	bne .L_08040b6e
+	mov r1, r11
+	ldr r0, [r1, #12]
+	bl Func_08013b30
+	b .L_08040b7a
 .L_08040b6e:
-	mov	r2, r8
-	lsls	r3, r2, #2
-	mov	r4, fp
-	ldr	r0, [r4, r3]
-	bl	Audio_PlayCue
+	mov r2, r8
+	lsls r3, r2, #2
+	mov r4, r11
+	ldr r0, [r4, r3]
+	bl Audio_PlayCue
 .L_08040b7a:
-	ldr	r3, [r5, #4]
-	movs	r2, #8
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040b92
-	movs	r0, #195
-	lsls	r0, r0, #1
-	bl	Audio_PlayCue
-	movs	r0, #0
-	bl	Audio_PlayCue
+	ldr r3, [r5, #4]
+	movs r2, #8
+	ands r3, r2
+	cmp r3, #0
+	beq .L_08040b92
+	movs r0, #195
+	lsls r0, r0, #1
+	bl Audio_PlayCue
+	movs r0, #0
+	bl Audio_PlayCue
 .L_08040b92:
-	ldr	r3, [r5, #12]
-	movs	r2, #128
-	lsls	r2, r2, #1
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040bae
-	mov	r0, r8
-	lsls	r2, r0, #2
-	mov	r1, sl
-	ldr	r3, [r1, r2]
-	adds	r3, #10
-	str	r3, [r1, r2]
-	movs	r2, #1
-	mov	r9, r2
+	ldr r3, [r5, #12]
+	movs r2, #128
+	lsls r2, r2, #1
+	ands r3, r2
+	cmp r3, #0
+	beq .L_08040bae
+	mov r0, r8
+	lsls r2, r0, #2
+	mov r1, r10
+	ldr r3, [r1, r2]
+	adds r3, #10
+	str r3, [r1, r2]
+	movs r2, #1
+	mov r9, r2
 .L_08040bae:
-	ldr	r3, [r5, #12]
-	movs	r2, #128
-	lsls	r2, r2, #2
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040bca
-	mov	r3, r8
-	lsls	r2, r3, #2
-	mov	r4, sl
-	ldr	r3, [r4, r2]
-	movs	r0, #1
-	subs	r3, #10
-	str	r3, [r4, r2]
-	mov	r9, r0
+	ldr r3, [r5, #12]
+	movs r2, #128
+	lsls r2, r2, #2
+	ands r3, r2
+	cmp r3, #0
+	beq .L_08040bca
+	mov r3, r8
+	lsls r2, r3, #2
+	mov r4, r10
+	ldr r3, [r4, r2]
+	movs r0, #1
+	subs r3, #10
+	str r3, [r4, r2]
+	mov r9, r0
 .L_08040bca:
-	ldr	r3, [r5, #12]
-	movs	r2, #16
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040be4
-	mov	r1, r8
-	lsls	r2, r1, #2
-	mov	r4, sl
-	ldr	r3, [r4, r2]
-	movs	r0, #1
-	adds	r3, #1
-	str	r3, [r4, r2]
-	mov	r9, r0
+	ldr r3, [r5, #12]
+	movs r2, #16
+	ands r3, r2
+	cmp r3, #0
+	beq .L_08040be4
+	mov r1, r8
+	lsls r2, r1, #2
+	mov r4, r10
+	ldr r3, [r4, r2]
+	movs r0, #1
+	adds r3, #1
+	str r3, [r4, r2]
+	mov r9, r0
 .L_08040be4:
-	ldr	r3, [r5, #12]
-	movs	r2, #32
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040bfe
-	mov	r1, r8
-	lsls	r2, r1, #2
-	mov	r4, sl
-	ldr	r3, [r4, r2]
-	movs	r0, #1
-	subs	r3, #1
-	str	r3, [r4, r2]
-	mov	r9, r0
+	ldr r3, [r5, #12]
+	movs r2, #32
+	ands r3, r2
+	cmp r3, #0
+	beq .L_08040bfe
+	mov r1, r8
+	lsls r2, r1, #2
+	mov r4, r10
+	ldr r3, [r4, r2]
+	movs r0, #1
+	subs r3, #1
+	str r3, [r4, r2]
+	mov r9, r0
 .L_08040bfe:
-	ldr	r3, [r5, #12]
-	movs	r2, #64
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040c12
-	movs	r1, #1
-	negs	r1, r1
-	movs	r2, #1
-	add	r8, r1
-	mov	r9, r2
+	ldr r3, [r5, #12]
+	movs r2, #64
+	ands r3, r2
+	cmp r3, #0
+	beq .L_08040c12
+	movs r1, #1
+	negs r1, r1
+	movs r2, #1
+	add r8, r1
+	mov r9, r2
 .L_08040c12:
-	ldr	r3, [r5, #12]
-	movs	r2, #128
-	ands	r3, r2
-	cmp	r3, #0
-	bne.n	.L_08040c1e
-	b.n	.L_08040a8c
+	ldr r3, [r5, #12]
+	movs r2, #128
+	ands r3, r2
+	cmp r3, #0
+	bne .L_08040c1e
+	b .L_08040a8c
 .L_08040c1e:
-	movs	r3, #1
-	add	r8, r3
-	mov	r9, r3
-	b.n	.L_08040a8c
+	movs r3, #1
+	add r8, r3
+	mov r9, r3
+	b .L_08040a8c
 .L_08040c26:
-	adds	r0, r7, #0
-	movs	r1, #2
-	bl	UiWork_Finalize
-	bl	0x080409dc
-	movs	r0, #1
-	bl	WaitFrames
-	movs	r0, #0
-	add	sp, #24
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7, pc}
-	.4byte 0x0805ea98
-	.4byte 0x0805eaa8
-	.4byte 0x0805eab0
-	.4byte 0x0805eab8
-	.4byte 0x0805eabc
-	.2byte 0x1150
-	.2byte 0x0300
-	push	{lr}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	adds	r3, #208
-	ldr	r0, [r3, #0]
-	movs	r3, #160
-	lsls	r3, r3, #3
-	adds	r3, #164
-	adds	r0, r0, r3
-	bl	Func_08108030
-	pop	{pc}
-.L_08040c78:
-	push	{lr}
-	movs	r1, #197
-	lsls	r1, r1, #3
-	movs	r0, #208
-	sub	sp, #4
-	bl	Runtime_AllocateBlock
-	movs	r3, #0
-	adds	r1, r0, #0
-	mov	r0, sp
-	str	r3, [r0, #0]
-	movs	r3, #128
-	lsls	r3, r3, #19
-	adds	r3, #212
-	ldr	r2, [pc, #16]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	movs	r1, #144
-	lsls	r1, r1, #3
-	ldr	r0, [pc, #12]
-	bl	Func_080145a8
-	add	sp, #4
-	pop	{pc}
-	.4byte 0x8500018a
-	.2byte 0x0c61
-	.2byte 0x0804
-.L_08040cb0:
-	push	{lr}
-	ldr	r0, [pc, #12]
-	bl	Func_08014644
-	movs	r0, #208
-	bl	Runtime_ReleaseHeapBlock
-	pop	{pc}
-	.2byte 0x0c61
-	.2byte 0x0804
-.L_08040cc4:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	adds	r3, #208
-	ldr	r3, [r3, #0]
-	sub	sp, #4
-	mov	r8, r3
-	movs	r3, #2
-	str	r3, [sp, #0]
-	movs	r0, #6
-	movs	r1, #2
-	movs	r2, #18
-	movs	r3, #16
-	bl	0x08039260
-	movs	r5, #3
-	adds	r7, r0, #0
-	movs	r6, #3
-.L_08040cec:
-	adds	r2, r5, #0
-	adds	r0, r7, #0
-	movs	r1, #0
-	movs	r3, #17
-	subs	r6, #1
-	str	r5, [sp, #0]
-	bl	UiWindow_DrawDividerLine
-	adds	r5, #3
-	cmp	r6, #0
-	bge.n	.L_08040cec
-	ldr	r5, [pc, #104]
-	adds	r1, r7, #0
-	adds	r0, r5, #0
-	movs	r2, #8
-	movs	r3, #4
-	bl	UiText_DrawResource
-	adds	r0, r5, #1
-	adds	r1, r7, #0
-	movs	r2, #8
-	movs	r3, #28
-	bl	UiText_DrawResource
-	adds	r0, r5, #2
-	adds	r1, r7, #0
-	movs	r2, #8
-	movs	r3, #52
-	bl	UiText_DrawResource
-	adds	r0, r5, #3
-	adds	r1, r7, #0
-	movs	r2, #8
-	movs	r3, #76
-	adds	r5, #4
-	bl	UiText_DrawResource
-	adds	r1, r7, #0
-	adds	r0, r5, #0
-	movs	r2, #8
-	movs	r3, #100
-	bl	UiText_DrawResource
-	bl	Func_08044460
-	movs	r1, #128
-	movs	r6, #0
-	lsls	r1, r1, #23
-	adds	r2, r7, #0
-	movs	r3, #0
-	str	r6, [sp, #0]
-	bl	0x08042314
-	movs	r3, #160
-	lsls	r3, r3, #3
-	adds	r3, #164
-	add	r3, r8
-	str	r0, [r3, #0]
-	add	sp, #4
-	adds	r0, r7, #0
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
-	movs	r0, r0
-	.2byte 0x115b
-	.2byte 0x0000
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	adds	r5, r0, #0
-	bl	.L_08040c78
-	movs	r3, #192
-	lsls	r3, r3, #18
-	adds	r3, #208
-	ldr	r3, [r3, #0]
-	movs	r0, #1
-	mov	sl, r3
-	bl	WaitFrames
-	bl	.L_08040cc4
-	movs	r7, #1
-	negs	r7, r7
-	mov	r8, r0
-.L_08040d98:
-	cmp	r7, #0
-	beq.n	.L_08040de8
-	adds	r0, r5, #5
-	movs	r1, #5
-	bl	Math_Mod
-	mov	r1, r8
-	adds	r5, r0, #0
-	movs	r0, #12
-	ldrsh	r3, [r1, r0]
-	mov	r0, r8
-	lsls	r3, r3, #3
-	subs	r1, r3, #4
-	movs	r3, #14
-	ldrsh	r2, [r0, r3]
-	lsls	r3, r5, #1
-	adds	r3, r3, r5
-	adds	r3, r3, r2
-	lsls	r3, r3, #3
-	adds	r2, r3, #0
-	movs	r3, #1
-	negs	r3, r3
-	adds	r2, #16
-	cmp	r7, r3
-	bne.n	.L_08040dd8
-	movs	r0, #160
-	lsls	r0, r0, #3
-	adds	r0, #164
-	add	r0, sl
-	bl	0x08108048
-	b.n	.L_08040de6
-.L_08040dd8:
-	movs	r0, #160
-	lsls	r0, r0, #3
-	adds	r0, #164
-	add	r0, sl
-	movs	r3, #3
-	bl	0x08108040
-.L_08040de6:
-	movs	r7, #0
-.L_08040de8:
-	movs	r0, #1
-	bl	WaitFrames
-	ldr	r6, [pc, #112]
-	movs	r2, #2
-	ldr	r3, [r6, #4]
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040e06
-	movs	r0, #113
-	movs	r5, #1
-	bl	Audio_PlayCue
-	negs	r5, r5
-	b.n	.L_08040e42
-.L_08040e06:
-	ldr	r3, [r6, #4]
-	movs	r2, #1
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040e18
-	movs	r0, #112
-	bl	Audio_PlayCue
-	b.n	.L_08040e42
-.L_08040e18:
-	ldr	r3, [r6, #12]
-	movs	r2, #64
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040e2c
-	movs	r0, #111
-	subs	r5, #1
-	movs	r7, #1
-	bl	Audio_PlayCue
-.L_08040e2c:
-	ldr	r3, [r6, #12]
-	movs	r2, #128
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_08040d98
-	movs	r0, #111
-	adds	r5, #1
-	movs	r7, #1
-	bl	Audio_PlayCue
-	b.n	.L_08040d98
-.L_08040e42:
-	mov	r0, r8
-	movs	r1, #2
-	bl	UiWork_Finalize
-	bl	.L_08040cb0
-	movs	r0, #1
-	bl	WaitFrames
-	adds	r0, r5, #0
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7, pc}
-	movs	r0, r0
-	.2byte 0x1150
-	.2byte 0x0300
-	push	{lr}
-	movs	r1, #243
-	movs	r0, #4
-	bl	0x080ad020
-	movs	r1, #244
-	movs	r0, #4
-	bl	0x080ad020
-	ldr	r0, [pc, #8]
-	movs	r1, #4
-	bl	Func_080c8268
-	pop	{pc}
-	.2byte 0x0101
-	.2byte 0x0000
-	push	{lr}
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #171
-	bl	GameFlag_SetBit
-	movs	r0, #245
-	lsls	r0, r0, #3
-	adds	r0, #255
-	bl	GameFlag_ClearBit
-	movs	r0, #128
-	lsls	r0, r0, #4
-	adds	r0, #170
-	bl	GameFlag_SetBit
-	movs	r1, #202
-	adds	r1, #255
-	movs	r0, #4
-	bl	0x080ad020
-	ldr	r3, [pc, #24]
-	movs	r2, #128
-	lsls	r2, r2, #2
-	adds	r2, #66
-	adds	r3, r3, r2
-	movs	r2, #141
-	strh	r2, [r3, #0]
-	ldr	r0, [pc, #12]
-	movs	r1, #1
-	bl	Func_080c8268
-	pop	{pc}
-	movs	r0, r0
-	.4byte 0x02000240
-	.2byte 0x005f
-	.2byte 0x0000
-	bx	lr
-	.2byte 0x0000
+	adds r0, r7, #0
+	movs r1, #2
+	bl UiWork_Finalize
+	bl Func_080409dc
+	movs r0, #1
+	bl WaitFrames
+	movs r0, #0
+	add sp, #24
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+.L_08040c48:
+	.4byte Data_0805ea98
+.L_08040c4c:
+	.4byte Data_0805eaa8
+.L_08040c50:
+	.4byte Data_0805eab0
+.L_08040c54:
+	.4byte Data_0805eab8
+.L_08040c58:
+	.4byte Data_0805eabc
+.L_08040c5c:
+	.4byte gInput

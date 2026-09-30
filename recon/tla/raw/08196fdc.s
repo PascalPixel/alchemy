@@ -1,7 +1,15 @@
 .syntax unified
 	.thumb
+	.global Data_08196fdc
+Data_08196fdc:
 	.4byte 0xe4515001
 	.4byte 0xe4c95001
+	.global Data_08196fe4
+Data_08196fe4:
+	.4byte 0xe4d15001
+	.4byte 0xe4c95001
+	.global Data_08196fec
+Data_08196fec:
 	.4byte 0xe4d15001
 	.4byte 0xe4c95001
 	.4byte 0xe4d15001
@@ -18,8 +26,8 @@
 	.4byte 0xe4c95001
 	.4byte 0xe4d15001
 	.4byte 0xe4c95001
-	.4byte 0xe4d15001
-	.4byte 0xe4c95001
+	.global Data_0819702c
+Data_0819702c:
 	.4byte 0xe4515001
 	.4byte 0xe4c95001
 	.4byte 0xe4515001
@@ -36,14 +44,20 @@
 	.4byte 0xe4c95001
 	.4byte 0xe4515001
 	.4byte 0xe4c95001
+	.global Data_0819706c
+Data_0819706c:
 	.4byte 0xe4d15001
 	.4byte 0xe3550000
 	.4byte 0x15c95000
 	.4byte 0xe2899001
+	.global Data_0819707c
+Data_0819707c:
 	.4byte 0xe4515001
 	.4byte 0xe3550000
 	.4byte 0x15c95000
 	.4byte 0xe2899001
+	.global Data_0819708c
+Data_0819708c:
 	.4byte 0xe4d15001
 	.4byte 0xe3550000
 	.4byte 0x15c95000
@@ -69,6 +83,8 @@
 	.4byte 0xe3550000
 	.4byte 0x15c95007
 	.4byte 0xe2899008
+	.global Data_081970f0
+Data_081970f0:
 	.4byte 0xe4515001
 	.4byte 0xe3550000
 	.4byte 0x15c95000
@@ -94,14 +110,20 @@
 	.4byte 0xe3550000
 	.4byte 0x15c95007
 	.4byte 0xe2899008
+	.global Data_08197154
+Data_08197154:
 	.4byte 0xe4d15001
 	.4byte 0xe4d98001
 	.4byte 0xe1550008
 	.4byte 0xc5495001
+	.global Data_08197164
+Data_08197164:
 	.4byte 0xe4515001
 	.4byte 0xe4d98001
 	.4byte 0xe1550008
 	.4byte 0xc5495001
+	.global Data_08197174
+Data_08197174:
 	.4byte 0xe4d15001
 	.4byte 0xe4998004
 	.4byte 0xe208a0ff
@@ -118,6 +140,8 @@
 	.4byte 0xe4d15001
 	.4byte 0xe1550c28
 	.4byte 0xc5495001
+	.global Data_081971b4
+Data_081971b4:
 	.4byte 0xe4515001
 	.4byte 0xe4998004
 	.4byte 0xe208a0ff
@@ -134,18 +158,24 @@
 	.4byte 0xe4515001
 	.4byte 0xe1550c28
 	.4byte 0xc5495001
+	.global Data_081971f4
+Data_081971f4:
 	.4byte 0xe4d15001
 	.4byte 0xe4d98001
 	.4byte 0xe0855008
 	.4byte 0xe355003f
 	.4byte 0x23a0503f
 	.4byte 0xe5495001
+	.global Data_0819720c
+Data_0819720c:
 	.4byte 0xe4515001
 	.4byte 0xe4d98001
 	.4byte 0xe0855008
 	.4byte 0xe355003f
 	.4byte 0x23a0503f
 	.4byte 0xe5495001
+	.global Data_08197224
+Data_08197224:
 	.4byte 0xe3a0a040
 	.4byte 0xe18aa40a
 	.4byte 0xe18aa80a

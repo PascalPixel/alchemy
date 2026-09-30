@@ -1,0 +1,37 @@
+.syntax unified
+	.thumb
+	.global Func_081524b4
+	.thumb_func
+Func_081524b4:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r0, [r3, #92]
+	movs r3, #128
+	lsls r3, r3, #19
+	adds r3, #176
+	ldrh r1, [r3, #10]
+	movs r2, #197
+	lsls r2, r2, #8
+	adds r2, #255
+	ands r2, r1
+	strh r2, [r3, #10]
+	movs r2, #254
+	ldrh r1, [r3, #10]
+	lsls r2, r2, #7
+	adds r2, #255
+	ands r2, r1
+	strh r2, [r3, #10]
+	movs r1, #128
+	ldrh r2, [r3, #10]
+	movs r2, #225
+	lsls r2, r2, #7
+	lsls r1, r1, #19
+	adds r0, r0, r2
+	adds r1, #20
+	ldr r2, .L_081524f0
+	stmia r3!, {r0, r1, r2}
+	subs r3, #12
+	bx lr
+	.2byte 0x0000
+.L_081524f0:
+	.4byte 0xa6600001

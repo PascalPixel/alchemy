@@ -778,8 +778,8 @@ Object_IsTargetUnset:
 	.incbin "baserom.gba", 0x00025c5c, 0x00000030
 	.section .rom.00025f9a, "ax"
 	.incbin "baserom.gba", 0x00025f9a, 0x00000036
-	.section .rom.00026276, "ax"
-	.incbin "baserom.gba", 0x00026276, 0x00000d0a
+	.section .rom.00026320, "ax"
+	.incbin "baserom.gba", 0x00026320, 0x00000c60
 	.section .rom.00026f80, "ax"
 	.global Func_0802db64
 	.type Func_0802db64, %function
@@ -901,7 +901,10 @@ ObjectDispatch_Table4:
 	.incbin "baserom.gba", 0x0002f1d0, 0x00000030
 	.global ObjectDispatch_Table6
 ObjectDispatch_Table6:
-	.incbin "baserom.gba", 0x0002f200, 0x00008e00
+	.incbin "baserom.gba", 0x0002f200, 0x000000dc
+	.global Script_OperandHandlerTable
+Script_OperandHandlerTable:
+	.incbin "baserom.gba", 0x0002f2dc, 0x00008d24
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x00000534
 	.section .rom.00038eb0, "ax"
@@ -1765,13 +1768,7 @@ Ui_FixedTileBlocks:
 	.section .rom.000ba248, "ax"
 	.incbin "baserom.gba", 0x000ba248, 0x000000a8
 	.section .rom.000ba338, "ax"
-	.incbin "baserom.gba", 0x000ba338, 0x00000010
-	.section .rom.000ba348, "ax"
-	.global Trade_GetOfferState
-	.type Trade_GetOfferState, %function
-	.thumb_func
-Trade_GetOfferState:
-	.incbin "baserom.gba", 0x000ba348, 0x0000007c
+	.incbin "baserom.gba", 0x000ba338, 0x0000008c
 	.section .rom.000ba3f6, "ax"
 	.incbin "baserom.gba", 0x000ba3f6, 0x0000089a
 	.section .rom.000bac90, "ax"
@@ -1810,14 +1807,14 @@ Func_080ad338:
 	.thumb_func
 Func_080ae830:
 	.incbin "baserom.gba", 0x000bb868, 0x000001c8
-	.section .rom.000bbc66, "ax"
-	.incbin "baserom.gba", 0x000bbc66, 0x00000002
-	.section .rom.000bbc68, "ax"
-	.global Item_GetEquipmentGroup
-	.type Item_GetEquipmentGroup, %function
+	.section .rom.000bbc02, "ax"
+	.incbin "baserom.gba", 0x000bbc02, 0x00000002
+	.section .rom.000bbc04, "ax"
+	.global Item_GetDirect
+	.type Item_GetDirect, %function
 	.thumb_func
-Item_GetEquipmentGroup:
-	.incbin "baserom.gba", 0x000bbc68, 0x00000060
+Item_GetDirect:
+	.incbin "baserom.gba", 0x000bbc04, 0x000000c4
 	.section .rom.000bbe40, "ax"
 	.global Owner_GetLevelThreshold
 	.type Owner_GetLevelThreshold, %function
@@ -1845,19 +1842,11 @@ Func_080ae0dc:
 	.type Inventory_Remove, %function
 	.thumb_func
 Inventory_Remove:
-	.incbin "baserom.gba", 0x000bc148, 0x00000080
-	.section .rom.000bc1fa, "ax"
-	.incbin "baserom.gba", 0x000bc1fa, 0x0000009e
+	.incbin "baserom.gba", 0x000bc148, 0x00000150
 	.section .rom.000bc2c0, "ax"
 	.incbin "baserom.gba", 0x000bc2c0, 0x00000028
 	.section .rom.000bc338, "ax"
-	.incbin "baserom.gba", 0x000bc338, 0x00000040
-	.section .rom.000bc378, "ax"
-	.global Item_AdjustCounter
-	.type Item_AdjustCounter, %function
-	.thumb_func
-Item_AdjustCounter:
-	.incbin "baserom.gba", 0x000bc378, 0x00000028
+	.incbin "baserom.gba", 0x000bc338, 0x00000068
 	.section .rom.000bc43c, "ax"
 	.incbin "baserom.gba", 0x000bc43c, 0x00000980
 	.section .rom.000bcdd8, "ax"
@@ -1874,8 +1863,6 @@ Func_080ae16c:
 	.incbin "baserom.gba", 0x000bcf94, 0x000002f4
 	.section .rom.000bd298, "ax"
 	.incbin "baserom.gba", 0x000bd298, 0x000007fc
-	.section .rom.000bdab8, "ax"
-	.incbin "baserom.gba", 0x000bdab8, 0x000000c0
 	.section .rom.000bdb78, "ax"
 	.global Djinn_AddToOwner
 	.type Djinn_AddToOwner, %function
@@ -1883,27 +1870,13 @@ Func_080ae16c:
 Djinn_AddToOwner:
 	.incbin "baserom.gba", 0x000bdb78, 0x00000100
 	.section .rom.000bdc9a, "ax"
-	.incbin "baserom.gba", 0x000bdc9a, 0x00000002
-	.section .rom.000bdc9c, "ax"
-	.global Djinn_Activate
-	.type Djinn_Activate, %function
+	.incbin "baserom.gba", 0x000bdc9a, 0x0000016a
+	.section .rom.000bde04, "ax"
+	.global Trade_AddOffer
+	.type Trade_AddOffer, %function
 	.thumb_func
-Djinn_Activate:
-	.incbin "baserom.gba", 0x000bdc9c, 0x00000068
-	.section .rom.000bdd04, "ax"
-	.global Djinn_Deactivate
-	.type Djinn_Deactivate, %function
-	.thumb_func
-Djinn_Deactivate:
-	.incbin "baserom.gba", 0x000bdd04, 0x00000054
-	.section .rom.000bdd58, "ax"
-	.global Trade_RemoveOffer
-	.type Trade_RemoveOffer, %function
-	.thumb_func
-Trade_RemoveOffer:
-	.incbin "baserom.gba", 0x000bdd58, 0x000000ac
-	.section .rom.000bdf5a, "ax"
-	.incbin "baserom.gba", 0x000bdf5a, 0x00000002
+Trade_AddOffer:
+	.incbin "baserom.gba", 0x000bde04, 0x00000158
 	.section .rom.000bdf5c, "ax"
 	.global Func_080ae410
 	.type Func_080ae410, %function
@@ -1916,10 +1889,7 @@ Func_080ae410:
 	.type Func_080ae220, %function
 	.thumb_func
 Func_080ae220:
-	.incbin "baserom.gba", 0x000be004, 0x00001360
-	.global Item_DefinitionTable
-Item_DefinitionTable:
-	.incbin "baserom.gba", 0x000bf364, 0x0000f1a8
+	.incbin "baserom.gba", 0x000be004, 0x00010508
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000ce50c, 0x000000e8

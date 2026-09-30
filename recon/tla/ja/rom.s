@@ -989,8 +989,8 @@ Func_08024f80:
 	.incbin "baserom.gba", 0x00025c5c, 0x00000030
 	.section .rom.00025f9a, "ax"
 	.incbin "baserom.gba", 0x00025f9a, 0x00000036
-	.section .rom.00026276, "ax"
-	.incbin "baserom.gba", 0x00026276, 0x00000d0a
+	.section .rom.00026320, "ax"
+	.incbin "baserom.gba", 0x00026320, 0x00000c60
 	.section .rom.00026f80, "ax"
 	.global Func_08026f80
 	.type Func_08026f80, %function
@@ -1340,7 +1340,10 @@ ObjectDispatch_Table4:
 	.incbin "baserom.gba", 0x0002f14c, 0x00000030
 	.global ObjectDispatch_Table6
 ObjectDispatch_Table6:
-	.incbin "baserom.gba", 0x0002f17c, 0x00008e84
+	.incbin "baserom.gba", 0x0002f17c, 0x000000dc
+	.global Script_OperandHandlerTable
+Script_OperandHandlerTable:
+	.incbin "baserom.gba", 0x0002f258, 0x00008da8
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x00000528
 	.section .rom.00038ea4, "ax"
@@ -2375,8 +2378,6 @@ Owner_LevelUp:
 	.incbin "baserom.gba", 0x000aaf90, 0x000002f4
 	.section .rom.000ab294, "ax"
 	.incbin "baserom.gba", 0x000ab294, 0x000007fc
-	.section .rom.000abab4, "ax"
-	.incbin "baserom.gba", 0x000abab4, 0x000000c0
 	.section .rom.000abb74, "ax"
 	.global Djinn_AddToOwner
 	.type Djinn_AddToOwner, %function
@@ -2859,15 +2860,7 @@ Func_081280fc:
 Func_0812814c:
 	.incbin "baserom.gba", 0x0011c378, 0x000013a4
 	.section .rom.0011d744, "ax"
-	.incbin "baserom.gba", 0x0011d744, 0x00000c24
-	.section .rom.0011e3a6, "ax"
-	.incbin "baserom.gba", 0x0011e3a6, 0x00001b5e
-	.section .rom.0011ff04, "ax"
-	.global BattlePresentation_WaitForAdvance
-	.type BattlePresentation_WaitForAdvance, %function
-	.thumb_func
-BattlePresentation_WaitForAdvance:
-	.incbin "baserom.gba", 0x0011ff04, 0x00000158
+	.incbin "baserom.gba", 0x0011d744, 0x00002918
 	.section .rom.0012005c, "ax"
 	.global Func_08120060
 	.type Func_08120060, %function
@@ -2875,19 +2868,9 @@ BattlePresentation_WaitForAdvance:
 Func_08120060:
 	.incbin "baserom.gba", 0x0012005c, 0x00000154
 	.section .rom.001201c0, "ax"
-	.global BattleEv_DispatchQueued
-	.type BattleEv_DispatchQueued, %function
-	.thumb_func
-BattleEv_DispatchQueued:
 	.incbin "baserom.gba", 0x001201c0, 0x000001c4
 	.section .rom.001203a4, "ax"
-	.incbin "baserom.gba", 0x001203a4, 0x000000ac
-	.section .rom.00120450, "ax"
-	.global Battle_ResolveTargetAction
-	.type Battle_ResolveTargetAction, %function
-	.thumb_func
-Battle_ResolveTargetAction:
-	.incbin "baserom.gba", 0x00120450, 0x0000206c
+	.incbin "baserom.gba", 0x001203a4, 0x00002118
 	.section .rom.001224d4, "ax"
 	.incbin "baserom.gba", 0x001224d4, 0x0000109c
 	.section .rom.00123570, "ax"
@@ -2925,13 +2908,7 @@ BattleActor_SpawnObjectsForList:
 BattlePres_SetActorRecordMode:
 	.incbin "baserom.gba", 0x00126ae0, 0x00000080
 	.section .rom.00126b9c, "ax"
-	.incbin "baserom.gba", 0x00126b9c, 0x0000015c
-	.section .rom.00126cf8, "ax"
-	.global BattlePres_SetActorModes
-	.type BattlePres_SetActorModes, %function
-	.thumb_func
-BattlePres_SetActorModes:
-	.incbin "baserom.gba", 0x00126cf8, 0x00001400
+	.incbin "baserom.gba", 0x00126b9c, 0x0000155c
 	.section .rom.001280f8, "ax"
 	.global Func_08128174
 	.type Func_08128174, %function

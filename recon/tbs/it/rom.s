@@ -1534,38 +1534,6 @@ Shop_SelBuy:
 	.incbin "baserom.gba", 0x000b0aac, 0x000004f8
 	.section .rom.000b1260, "ax"
 	.incbin "baserom.gba", 0x000b1260, 0x00000210
-	.section .rom.000b17e4, "ax"
-	.incbin "baserom.gba", 0x000b17e4, 0x00000084
-	.section .rom.000b1868, "ax"
-	.global Shop_ConfirmEquip
-	.type Shop_ConfirmEquip, %function
-	.thumb_func
-Shop_ConfirmEquip:
-	.incbin "baserom.gba", 0x000b1868, 0x00000104
-	.section .rom.000b196c, "ax"
-	.global Shop_SellOld
-	.type Shop_SellOld, %function
-	.thumb_func
-Shop_SellOld:
-	.incbin "baserom.gba", 0x000b196c, 0x00000060
-	.section .rom.000b19cc, "ax"
-	.global Shop_SalePrice
-	.type Shop_SalePrice, %function
-	.thumb_func
-Shop_SalePrice:
-	.incbin "baserom.gba", 0x000b19cc, 0x00000048
-	.section .rom.000b1a14, "ax"
-	.global Shop_PickUnit
-	.type Shop_PickUnit, %function
-	.thumb_func
-Shop_PickUnit:
-	.incbin "baserom.gba", 0x000b1a14, 0x000003d8
-	.section .rom.000b1dec, "ax"
-	.global Shop_DrawUnitGrid
-	.type Shop_DrawUnitGrid, %function
-	.thumb_func
-Shop_DrawUnitGrid:
-	.incbin "baserom.gba", 0x000b1dec, 0x00000160
 	.section .rom.000b3940, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:

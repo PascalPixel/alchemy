@@ -3,7 +3,7 @@
 
 struct MessageWork {
     u8 unknown_000[RENDER_ENTRY_TBL_OFS];
-    u16 text[513];
+    u16 text[(RENDER_ENTRY_COUNT_OFS - RENDER_ENTRY_TBL_OFS) / 2];
     u16 count;
 };
 

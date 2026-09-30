@@ -27,7 +27,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
         index = *counter * 2 + RENDER_ENTRY_TBL_OFS;
         buffer = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
         *(u16 *)(base + index) = 0;
-        *counter = (*counter + 1) & 0x1FF;
+        *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     }
 
     cell = ((work->y + offset_y + 1) << 5)

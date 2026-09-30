@@ -65,6 +65,22 @@
 
 #define MENU_TEXT_Y 60
 
+/* The shops' item list window, and where the character-change help starts:
+   each edition sizes them to its words. */
+#if defined(TBS_EDITION_JA)
+#define SHOP_LIST_X      16
+#define SHOP_LIST_WIDTH  14
+#define HELP_TEXT_X      16
+#elif defined(TBS_EDITION_DE)
+#define SHOP_LIST_X      14
+#define SHOP_LIST_WIDTH  16
+#define HELP_TEXT_X      0
+#else
+#define SHOP_LIST_X      15
+#define SHOP_LIST_WIDTH  15
+#define HELP_TEXT_X      0
+#endif
+
 #if defined(TBS_EDITION_JA)
 #define RENDER_RESOURCE_BASE 0x9D4
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \

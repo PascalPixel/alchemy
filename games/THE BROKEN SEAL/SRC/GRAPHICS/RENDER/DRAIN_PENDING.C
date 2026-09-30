@@ -88,6 +88,6 @@ directLoop:
     direct++;
     index++;
 directTest:
-    if (index != 8)
+    if (index != WINDOW_COUNT)
         goto directLoop;
 }

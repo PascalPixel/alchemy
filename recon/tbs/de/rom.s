@@ -767,24 +767,6 @@ Menu_SelectSaveSlotAction:
 	.thumb_func
 Menu_SelectResourceLayout:
 	.incbin "baserom.gba", 0x000278c8, 0x00000170
-	.section .rom.00027a38, "ax"
-	.global Menu_SelectEntry11To14
-	.type Menu_SelectEntry11To14, %function
-	.thumb_func
-Menu_SelectEntry11To14:
-	.incbin "baserom.gba", 0x00027a38, 0x00000040
-	.section .rom.00027a78, "ax"
-	.global Menu_SelectEntry19To1c
-	.type Menu_SelectEntry19To1c, %function
-	.thumb_func
-Menu_SelectEntry19To1c:
-	.incbin "baserom.gba", 0x00027a78, 0x00000040
-	.section .rom.00027ab8, "ax"
-	.global Menu_RunConfirmSelection
-	.type Menu_RunConfirmSelection, %function
-	.thumb_func
-Menu_RunConfirmSelection:
-	.incbin "baserom.gba", 0x00027ab8, 0x00000060
 	.section .rom.00027b18, "ax"
 	.global Menu_RunConfirmSelectionAt
 	.type Menu_RunConfirmSelectionAt, %function
@@ -1513,8 +1495,6 @@ UiMenu_SlideCursor:
 	.thumb_func
 RunAssetSelectionScreen:
 	.incbin "baserom.gba", 0x000a52d0, 0x00000de8
-	.section .rom.000a66d0, "ax"
-	.incbin "baserom.gba", 0x000a66d0, 0x00000338
 	.section .rom.000a6cee, "ax"
 	.incbin "baserom.gba", 0x000a6cee, 0x00000002
 	.section .rom.000a6cf0, "ax"
@@ -1731,39 +1711,7 @@ ShopCursor_SetPositionImmediate:
 	.type Shop_SelectQuantity, %function
 	.thumb_func
 Shop_SelectQuantity:
-	.incbin "baserom.gba", 0x000b3c14, 0x00000254
-	.section .rom.000b3e68, "ax"
-	.global Shop_ConfirmEquip
-	.type Shop_ConfirmEquip, %function
-	.thumb_func
-Shop_ConfirmEquip:
-	.incbin "baserom.gba", 0x000b3e68, 0x00000104
-	.section .rom.000b3f6c, "ax"
-	.global Shop_SellOld
-	.type Shop_SellOld, %function
-	.thumb_func
-Shop_SellOld:
-	.incbin "baserom.gba", 0x000b3f6c, 0x00000060
-	.section .rom.000b3fcc, "ax"
-	.global Shop_SalePrice
-	.type Shop_SalePrice, %function
-	.thumb_func
-Shop_SalePrice:
-	.incbin "baserom.gba", 0x000b3fcc, 0x00000048
-	.section .rom.000b4014, "ax"
-	.global Shop_PickUnit
-	.type Shop_PickUnit, %function
-	.thumb_func
-Shop_PickUnit:
-	.incbin "baserom.gba", 0x000b4014, 0x000003d8
-	.section .rom.000b43ec, "ax"
-	.global Shop_DrawUnitGrid
-	.type Shop_DrawUnitGrid, %function
-	.thumb_func
-Shop_DrawUnitGrid:
-	.incbin "baserom.gba", 0x000b43ec, 0x00000160
-	.section .rom.000b471c, "ax"
-	.incbin "baserom.gba", 0x000b471c, 0x0000020c
+	.incbin "baserom.gba", 0x000b3c14, 0x000001d0
 	.section .rom.000b4d78, "ax"
 	.global Shop_ServicePrice
 	.type Shop_ServicePrice, %function

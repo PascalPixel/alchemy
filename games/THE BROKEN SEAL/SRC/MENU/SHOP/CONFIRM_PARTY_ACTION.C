@@ -64,7 +64,11 @@ s32 Shop_ConfirmAct(s32 unit_id)
     shop->cursor.anchor = cursor_anchor;
     UiMessage_ShowResolvedAndWait((s32)MsgSanctumWelcome);
 
+#if defined(TBS_EDITION_JA)
+    shop->money_window = UiWindow_CreateFar(16, 11, 11, 4, 2);
+#else
     shop->money_window = UiWindow_CreateFar(16, 11, 12, 4, 2);
+#endif
     Shop_DrawMoney();
 
     for (;;) {

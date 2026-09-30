@@ -23,14 +23,24 @@ void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
 s32 Menu_SelectQuantity(s32 value)
 {
+#if defined(TBS_EDITION_JA)
+    u8 *menu = (u8 *)gMenuWork;
+    s32 changed = 1;
+#else
     s32 changed = 1;
     u8 *menu = (u8 *)gMenuWork;
     u8 *confirmState = MENU_SUBOBJECT(menu, 540);
+#endif
     s32 window;
     s32 quantity = 0;
 
+#if defined(TBS_EDITION_JA)
+    /* The Japanese window covers only the left of the screen. */
+    window = UiWindow_CreateFar(0, 0, 13, 10, 2);
+#else
     confirmState[5] = 13;
     window = UiWindow_CreateFar(0, 0, 30, 10, 2);
+#endif
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
     {
@@ -93,9 +103,21 @@ done:
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
+#if defined(TBS_EDITION_JA)
+        /* The Japanese menu marks itself for a redraw instead of framing
+           the right-hand windows again. */
+        /* FAKEMATCH: one register carries the 1 both stores write. */
+        s32 one = 1;
+
+        iconState[5] = one;
+        *(u16 *)(menu + 0x220) = one;
+#else
         iconState[5] = 1;
+#endif
     }
+#if !defined(TBS_EDITION_JA)
     UiWindow_DrawFrameFar(13, 0, 17, 10);
+#endif
 
     return quantity;
 }

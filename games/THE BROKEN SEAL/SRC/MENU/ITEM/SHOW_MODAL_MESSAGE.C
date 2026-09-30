@@ -53,23 +53,33 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
     }
     RenderOutput_RedrawSavedRectFar(window);
     RenderOutput_ClearListFar(window);
+#if defined(TBS_EDITION_JA)
+    /* The Japanese menu draws every message the same way and leaves the
+       sized window open. */
+    Func_08015078(message, window, 0, 0);
+#else
     if (y == -1)
         UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
     else
         Func_08015078(message, window, 0, 0);
+#endif
     if (x != -1) {
         WaitFrames(1);
         do {
             WaitFrames(1);
         } while (!(*(volatile u32 *)gKeyState & 1) && !(*(volatile u32 *)gKeyState & 2) && !(*(volatile u32 *)gKeyState & 8));
+#if !defined(TBS_EDITION_JA)
         if (y == -1)
             RenderOutput_RedrawSavedRectFar(window);
+#endif
         RenderOutput_ClearListFar(window);
     } else {
         GameFlag_SetBitFar(0x151);
     }
     menu->refresh = 1;
     menu->icon->state = 1;
+#if !defined(TBS_EDITION_JA)
     if (y != -1)
         UiWindow_CloseIfOpen(&menu->window, 1);
+#endif
 }

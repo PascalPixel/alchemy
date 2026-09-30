@@ -706,15 +706,15 @@ Func_080d0c50:
 	subs	r4, r6, #1
 	adds	r7, r4, #0
 	adds	r0, r7, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r4, r0, #0
 	adds	r0, r7, #0
 	str	r4, [sp, #0]
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	subs	r5, r6, #3
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r5, r0, #0
 	mov	r1, sl
 	lsls	r3, r5, #1
@@ -859,16 +859,16 @@ Func_080d0c50:
 	subs	r7, r7, r0
 	adds	r4, #10
 	adds	r0, r4, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r7, #8
 	adds	r4, r0, #0
 	adds	r0, r7, #0
 	str	r4, [sp, #0]
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	subs	r5, #7
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	ldr	r4, [sp, #0]
 	adds	r5, r0, #0
 .L_080d10d2:
@@ -948,16 +948,16 @@ Func_080d0c50:
 	movs	r5, #27
 .L_080d1158:
 	adds	r0, r4, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r7, #2
 	adds	r4, r0, #0
 	adds	r0, r7, #0
 	str	r4, [sp, #0]
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r5, #2
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	ldr	r4, [sp, #0]
 	adds	r5, r0, #0
 .L_080d1178:
@@ -1020,7 +1020,7 @@ Func_080d0c50:
 	movs	r1, #3
 	str	r4, [sp, #0]
 	bl	Math_Div
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	ldr	r4, [sp, #0]
 	asrs	r3, r4, #1
 	adds	r4, r3, r0
@@ -1029,14 +1029,14 @@ Func_080d0c50:
 	asrs	r3, r5, #1
 	adds	r5, r3, r0
 	adds	r0, r4, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r4, r0, #0
 	adds	r0, r7, #0
 	str	r4, [sp, #0]
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r5, r0, #0
 	mov	r1, sl
 	lsls	r3, r5, #1
@@ -1086,7 +1086,7 @@ Func_080d0c50:
 	ands	r4, r1
 	adds	r4, r4, r3
 	adds	r0, r4, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	movs	r1, #3
 	adds	r4, r0, #0
 	adds	r0, r7, #0
@@ -1150,16 +1150,16 @@ Func_080d0c50:
 	subs	r7, r7, r0
 	adds	r4, #6
 	adds	r0, r4, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r7, #4
 	adds	r4, r0, #0
 	adds	r0, r7, #0
 	str	r4, [sp, #0]
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	subs	r5, #6
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	ldr	r2, [pc, #212]
 	adds	r5, r0, #0
 	lsls	r3, r5, #1
@@ -1228,14 +1228,14 @@ Func_080d0c50:
 	subs	r5, r5, r0
 .L_080d13a2:
 	adds	r0, r4, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r4, r0, #0
 	adds	r0, r7, #0
 	str	r4, [sp, #0]
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	adds	r5, r0, #0
 	mov	r1, sl
 	lsls	r3, r5, #1
@@ -1490,15 +1490,15 @@ Func_080d0c50:
 	mov	r8, r1
 	adds	r6, r0, #0
 	mov	r0, r8
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	lsrs	r5, r5, #16
 	mov	r8, r0
 	adds	r0, r5, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	lsrs	r6, r6, #16
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	0x080d181c
+	bl	Graphics_ClampRgb555Channel
 	ldr	r2, [pc, #44]
 	lsls	r0, r0, #1
 	ldrh	r3, [r2, r0]

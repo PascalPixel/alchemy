@@ -696,6 +696,7 @@ SECTIONS
         "*/recon/tla/raw/080d172c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d174c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d1760.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/PALETTE/CLAMP_RGB555_CHANNEL.o"(.text)
         "*/recon/tla/raw/080d1830.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d1840.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d1a18.o"(.text .rodata .data .padding)

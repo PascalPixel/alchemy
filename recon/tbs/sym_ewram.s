@@ -212,7 +212,10 @@ gOverlayArea:
 	.type gMapCellBuffer, %object
 	.size gMapCellBuffer, 0xc000
 gMapCellBuffer:
-	.space 0x0000c000
+	.space 0x00008000
+	.global gActorSpriteSlots
+gActorSpriteSlots:
+	.space 0x00004000
 	.global gDecodeBuffer
 	.type gDecodeBuffer, %object
 	.size gDecodeBuffer, 0x4000

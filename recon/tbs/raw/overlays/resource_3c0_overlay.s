@@ -1,108 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008b24,"ax",%progbits
-	.p2align 2
-	.global Func_02000b24
-	.thumb_func
-Func_02000b24:
-	push	{r5, r6, lr}
-	ldr	r3, [pc, #184]
-	adds	r6, r1, #0
-	ldr	r3, [r3, #0]
-	movs	r1, #193
-	lsls	r1, r1, #1
-	adds	r2, r3, r1
-	movs	r1, #0
-	ldrsh	r3, [r2, r1]
-	cmp	r3, #99
-	bne.n	.L_02000b3e
-	movs	r3, #0
-	strh	r3, [r2, #0]
-.L_02000b3e:
-	ldr	r0, [pc, #164]
-	bl 0x0200925c
-	ldr	r3, [pc, #160]
-	movs	r2, #224
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #152]
-	cmp	r2, r3
-	bne.n	.L_02000b60
-	ldr	r2, [pc, #152]
-	adds	r0, r6, r2
-	bl 0x02009254
-	b.n	.L_02000b6e
-.L_02000b60:
-	ldr	r3, [pc, #144]
-	cmp	r2, r3
-	bne.n	.L_02000b6e
-	ldr	r3, [pc, #144]
-	adds	r0, r6, r3
-	bl 0x02009254
-.L_02000b6e:
-	movs	r0, #132
-	lsls	r0, r0, #2
-	movs	r1, #0
-	bl 0x0200926c
-	movs	r0, #98
-	movs	r1, #5
-	bl 0x0200933c
-	ldr	r1, [pc, #100]
-	ldr	r3, [pc, #120]
-	adds	r2, r1, r3
-	movs	r3, #3
-	strb	r3, [r2, #0]
-	adds	r5, r1, #0
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r5, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #92]
-	cmp	r2, r3
-	bne.n	.L_02000bc6
-	cmp	r6, #11
-	bne.n	.L_02000baa
-	movs	r0, #98
-	movs	r1, #7
-	bl 0x0200933c
-	b.n	.L_02000bc6
-.L_02000baa:
-	cmp	r6, #12
-	bne.n	.L_02000bc6
-	movs	r1, #6
-	movs	r0, #98
-	bl 0x0200933c
-	movs	r0, #12
-	bl 0x020092a4
-	movs	r0, #12
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x020092cc
-.L_02000bc6:
-	movs	r2, #250
-	lsls	r2, r2, #1
-	adds	r3, r5, r2
-	ldr	r0, [r3, #0]
-	bl 0x0200928c
-	movs	r3, #3
-	adds	r0, #85
-	strb	r3, [r0, #0]
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x0000020f
-	.4byte 0x02000240
-	.4byte 0x000000a4
-	.4byte 0x000002f9
-	.4byte 0x000000a5
-	.4byte 0x00000309
-	.2byte 0x022b
-	.2byte 0x0000
 	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
@@ -502,19 +399,19 @@ gSuharaSabakuEventsOther:
 	.4byte 0x02008b15
 	.4byte 0x00002115
 	.4byte 0x120f0008
-	.4byte 0x02008b25
+	.4byte SuharaSabaku_MeetActor
 	.4byte 0x00002115
 	.4byte 0x120f0009
-	.4byte 0x02008b25
+	.4byte SuharaSabaku_MeetActor
 	.4byte 0x00002115
 	.4byte 0x120f000a
-	.4byte 0x02008b25
+	.4byte SuharaSabaku_MeetActor
 	.4byte 0x00002115
 	.4byte 0x120f000b
-	.4byte 0x02008b25
+	.4byte SuharaSabaku_MeetActor
 	.4byte 0x00002115
 	.4byte 0x120f000c
-	.4byte 0x02008b25
+	.4byte SuharaSabaku_MeetActor
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte 0x02008dc9

@@ -224,7 +224,7 @@ BattlePres_RunActionThenWaitIfModeZeroFar:
 BattleEventRuntime_ProcessActionFar:
 	overlay_veneer BattleEventRuntime_ProcessAction
 	overlay_veneer BattleEventRuntime_EmptyCallback
-	overlay_veneer Func_080930bc
+	overlay_veneer Event_ShowSpeakerMessage
 	overlay_veneer ObjectTable_CallRefreshHook
 	overlay_veneer Event_ShowValue1d8AtPosition
 	.global ObjectMotion_ArmCallbackFar

@@ -90,3 +90,6 @@ Func_080b5344:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
+@ The end of the tile bit decoder block that begins at DECODE.S.
+	.global BitDecoder_End
+BitDecoder_End:

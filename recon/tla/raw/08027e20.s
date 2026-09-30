@@ -56,7 +56,7 @@ Func_08027e20:
 	str	r5, [r1, #48]
 	str	r3, [r1, #52]
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08027ea0
 	ldr	r0, [pc, #516]
@@ -3392,7 +3392,7 @@ Func_08027e20:
 .L_08029896:
 	movs	r0, #163
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080298b4
 	movs	r3, #179

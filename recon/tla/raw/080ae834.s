@@ -37,7 +37,7 @@ Func_080ae834:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	sub	sp, #12
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ae886
 	b.n	.L_080aea18
@@ -115,7 +115,7 @@ Func_080ae834:
 	lsls	r0, r0, #2
 	add	r0, r8
 	adds	r0, #48
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ae99e
 	mov	r0, sl
@@ -201,7 +201,7 @@ Func_080ae834:
 	add	r7, sl
 .L_080ae9c0:
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ae9d0
 	adds	r0, r7, #0

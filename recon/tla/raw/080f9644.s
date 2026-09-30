@@ -835,7 +835,7 @@ Func_080f9644:
 .L_080f9d38:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080f9d46
 	b.n	.L_080fa280
@@ -1190,7 +1190,7 @@ Func_080f9644:
 	adds	r6, r0, #0
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fa09a
 	mov	r3, r9
@@ -1460,14 +1460,14 @@ Func_080f9644:
 	bne.n	.L_080fa296
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fa296
 	bl	.L_080f9672
 .L_080fa296:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fa2a8
 	movs	r2, #1

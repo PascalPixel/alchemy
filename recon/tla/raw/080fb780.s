@@ -67,7 +67,7 @@ Func_080fb780:
 .L_080fb7fe:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fb840
 	mov	r3, sl

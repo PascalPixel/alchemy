@@ -54,7 +54,7 @@
 	overlay_veneer Func_080383c8
 	overlay_veneer Func_080ad0c8
 	overlay_veneer Func_080ad0f0
-	overlay_veneer Func_080ad0f8
+	overlay_veneer Party_AddActiveOwnerFar
 	overlay_veneer Func_080ad110
 	overlay_veneer Func_080ad150
 	overlay_veneer Func_080ad170

@@ -320,7 +320,7 @@ Func_08123648:
 	beq.n	.L_08123918
 	movs	r0, #110
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08123918
 	ldr	r1, [pc, #820]
@@ -1692,7 +1692,7 @@ Func_08123648:
 .L_08124484:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08124498
 	mov	r1, fp

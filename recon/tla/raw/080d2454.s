@@ -1,43 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080d2414
-	.thumb_func
-Func_080d2414:
-.L_080d2414:
-	push	{r5, r6, lr}
-	movs	r6, #192
-	lsrs	r5, r0, #10
-	movs	r3, #15
-	lsls	r6, r6, #2
-	adds	r6, #255
-	ands	r5, r3
-	ands	r6, r0
-	cmp	r5, #7
-	ble.n	.L_080d242e
-	movs	r0, #1
-	negs	r0, r0
-	b.n	.L_080d2452
-.L_080d242e:
-	adds	r0, r5, #0
-	bl	0x08016ce4
-	cmp	r0, #0
-	bne.n	.L_080d243e
-	movs	r0, #2
-	negs	r0, r0
-	b.n	.L_080d2452
-.L_080d243e:
-	adds	r0, r5, #0
-	adds	r1, r6, #0
-	bl	0x080ad088
-	cmp	r0, #0
-	bne.n	.L_080d2450
-	movs	r0, #3
-	negs	r0, r0
-	b.n	.L_080d2452
-.L_080d2450:
-	movs	r0, #0
-.L_080d2452:
-	pop	{r5, r6, pc}
 .L_080d2454:
 	push	{r5, r6, lr}
 	ldr	r6, [pc, #44]
@@ -45,7 +7,7 @@ Func_080d2414:
 	lsls	r3, r3, #2
 	adds	r5, r6, r3
 	ldrh	r0, [r5, #0]
-	bl	.L_080d2414
+	bl	Event_ValidatePackedId
 	cmp	r0, #0
 	beq.n	.L_080d246c
 	movs	r3, #0
@@ -56,7 +18,7 @@ Func_080d2414:
 	adds	r3, #66
 	adds	r5, r6, r3
 	ldrh	r0, [r5, #0]
-	bl	.L_080d2414
+	bl	Event_ValidatePackedId
 	cmp	r0, #0
 	beq.n	.L_080d2482
 	movs	r3, #0

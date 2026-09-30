@@ -299,7 +299,7 @@ Func_080cf350:
 	cmp	r7, r3
 	beq.n	.L_080cf5d2
 	adds	r0, r7, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080cf6b8
 .L_080cf5d2:
@@ -377,7 +377,7 @@ Func_080cf350:
 	beq.n	.L_080cf6b8
 	adds	r0, r7, #0
 	str	r4, [sp, #0]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	adds	r7, r0, #0
 	ldr	r4, [sp, #0]
 	cmp	r7, #0

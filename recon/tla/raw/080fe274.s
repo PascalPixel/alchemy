@@ -335,13 +335,13 @@ Func_080fe274:
 	bne.n	.L_080fe562
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fe4ba
 .L_080fe562:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fe572
 	movs	r6, #1
@@ -381,7 +381,7 @@ Func_080fe274:
 	bl	0x08038260
 	movs	r0, #185
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fe5ce
 	movs	r3, #3

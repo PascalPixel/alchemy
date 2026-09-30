@@ -303,7 +303,7 @@ Func_080d7524:
 .L_080d77aa:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080d77d0
 	lsls	r0, r5, #2
@@ -400,7 +400,7 @@ Func_080d7524:
 	mov	sl, r0
 	movs	r0, #10
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080d7926
 	cmp	r7, #0

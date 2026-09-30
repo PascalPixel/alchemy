@@ -705,7 +705,7 @@ Func_080fae2c:
 .L_080fb3d4:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_080fb3e4

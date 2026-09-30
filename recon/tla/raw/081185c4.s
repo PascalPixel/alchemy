@@ -253,7 +253,7 @@ Func_081185c4:
 	b.n	.L_081188ea
 .L_081187be:
 	mov	r0, r8
-	bl	0x080ad0f8
+	bl	Party_AddActiveOwnerFar
 	ldr	r1, [pc, #104]
 	mov	r0, r8
 	adds	r3, r5, r1

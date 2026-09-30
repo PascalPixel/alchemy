@@ -27,7 +27,7 @@ Func_080b0ab8:
 	mov	r0, fp
 	mov	r9, r2
 	mov	r8, r3
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080b0af2
 	movs	r0, #1

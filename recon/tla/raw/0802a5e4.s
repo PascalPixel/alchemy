@@ -424,7 +424,7 @@
 	movs	r5, #184
 	lsls	r5, r5, #1
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0802a982
 	adds	r0, r5, #0

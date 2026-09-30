@@ -45,7 +45,7 @@ Func_080c9694:
 	negs	r1, r1
 	cmp	r0, r1
 	beq.n	.L_080c96ea
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080c96f0
 .L_080c96ea:

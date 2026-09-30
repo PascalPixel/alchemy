@@ -176,7 +176,7 @@ Func_080cce94:
 	cmp	r2, #0
 	bne.n	.L_080ccffe
 	mov	r0, r9
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ccffe
 	adds	r0, r7, #0

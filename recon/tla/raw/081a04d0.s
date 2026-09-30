@@ -1439,7 +1439,7 @@ Func_081a04d0:
 	movs	r5, #128
 	lsls	r5, r5, #2
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_081a1074
 	ldr	r3, [pc, #496]

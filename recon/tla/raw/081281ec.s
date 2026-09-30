@@ -165,7 +165,7 @@ Func_081281ec:
 	movs	r0, #116
 	str	r3, [r7, #8]
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08128322
 	b.n	.L_081284b2

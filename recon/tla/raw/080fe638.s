@@ -141,7 +141,7 @@ Func_080fe638:
 	adds	r6, r3, r0
 	adds	r0, r6, #0
 	adds	r0, #48
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r4, [sp, #4]
 	cmp	r0, #0
 	beq.n	.L_080fe79a
@@ -238,7 +238,7 @@ Func_080fe638:
 .L_080fe826:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fe834
 	b.n	.L_080fe6f4

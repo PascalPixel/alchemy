@@ -7,7 +7,7 @@ Func_081197d0:
 	push	{lr}
 	movs	r0, #118
 	adds	r0, #255
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_081197e2
 	ldr	r0, [pc, #8]
@@ -129,7 +129,7 @@ Func_081197d0:
 	bl	0x08020088
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_081198f2
 	movs	r0, #1
@@ -146,7 +146,7 @@ Func_081197d0:
 	adds	r6, r0, #0
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0811992a
 	adds	r5, #68
@@ -247,7 +247,7 @@ Func_081197d0:
 	bl	Audio_PlayCue
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_081199f0
 	movs	r0, #55
@@ -332,7 +332,7 @@ Func_081197d0:
 	str	r1, [sp, #24]
 	lsls	r0, r0, #1
 	strb	r5, [r1, #0]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08119ad0
 	ldr	r2, [sp, #24]
@@ -446,7 +446,7 @@ Func_081197d0:
 	bl	0x08014274
 	movs	r0, #181
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08119bb4
 	adds	r0, r5, #0
@@ -512,7 +512,7 @@ Func_081197d0:
 	movs	r0, #181
 	lsls	r0, r0, #1
 	str	r4, [sp, #4]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r4, [sp, #4]
 	cmp	r0, #0
 	bne.n	.L_08119c46
@@ -793,7 +793,7 @@ Func_081197d0:
 .L_08119e4c:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_08119eb0
 	bl	.L_081197d0
@@ -848,7 +848,7 @@ Func_081197d0:
 	beq.n	.L_08119f2e
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_08119f2e
 	ldr	r0, [sp, #16]
@@ -1151,7 +1151,7 @@ BattleParty_ListPresentEnemies:
 	beq.n	.L_0811a17c
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0811a14e
 	movs	r7, #3
@@ -1203,7 +1203,7 @@ BattleParty_ListPresentEnemies:
 	sub	sp, #20
 	mov	r8, r1
 	mov	r9, r2
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0811a1b0
 	movs	r3, #3
@@ -1308,7 +1308,7 @@ BattleParty_ListPresentEnemies:
 	sub	sp, #24
 	mov	r8, r1
 	mov	r9, r2
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_0811a274
 	movs	r3, #3

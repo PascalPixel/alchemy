@@ -1,14 +1,14 @@
+#include "DMA.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
 extern u8 *gBattleBgFxWork;
+
 s32 BattleFx_HueChannelRamp(s32, s32, s32);
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum);
-
 s32 Fixed_Remainder(s32 value, s32 divisor);
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 s32 ObjectDispatch_InitializeFar(void *, s32);
 extern const u8 BattleFx_UntargetedObjectScript[];
@@ -27,6 +27,19 @@ extern void Scheduler_RemoveCallback(s32);
 extern void BattleFx_ArmBg0HBlankDma(void);
 extern s32 PaletteGlow_UpdateFar(s32, s32);
 extern u8 gGameState[];
+
+void BattleFx_ArmBg0HBlankDma(void)
+{
+    u8 *work = gBattleBgFxWork;
+    if (!work[660]) {
+        u32 offset = work[650] * 324;
+        volatile u16 *channel = (volatile u16 *)0x040000b0;
+        channel[5] &= 0xc5ff;
+        channel[5] &= 0x7fff;
+        (void)channel[5];
+        Dma_Set(work + offset, (void *)0x04000010, 0xa2600001, (volatile u32 *)channel);
+    }
+}
 
 void BattleFx_AdvanceHueCycle(void)
 {

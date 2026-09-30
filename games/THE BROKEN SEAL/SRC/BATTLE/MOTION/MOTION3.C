@@ -3,6 +3,11 @@
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+s32 WaitFrames(s32);
+void *ResourceMetadata_RegisterFar(s32, s32);
+s32 Animation_SetWorkEntryFar(void *, s32);
+
 struct BattleMotionRecord {
     u8 unknown_00[0x18];
     s32 scale_18;
@@ -11,9 +16,24 @@ struct BattleMotionRecord {
 void Camera_ApplyTransformByFlag(void);
 s32 Render_ProjectPoint(const s32 *, s32 *);
 u32 Battle_GetObjectTableValue(s32);
-
 u8 *Owner_GetStateFar(s32);
 s32 Summon_IsEntryFlagged(s32);
+
+void BattleMotion_SpawnSlotEffectAndWait(s32 id)
+{
+    void *object;
+    void *effect;
+
+    object = GetBattleObjectSlot(id)->object;
+    if ((object != NULL) && ((0xF & FIELD_AT_OFFSET(object, u8 *, 0x54)) == 1)) {
+        effect = ResourceMetadata_RegisterFar(FIELD_AT_OFFSET(object, s32 *, 0x50), 0x11B);
+        if (effect != NULL) {
+            Animation_SetWorkEntryFar(effect, 1);
+            FIELD_AT_OFFSET(effect, s8 *, 6) = 3;
+        }
+        WaitFrames(0xA);
+    }
+}
 
 s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 {

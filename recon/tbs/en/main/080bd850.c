@@ -8,6 +8,8 @@
 #include "BATTLE_EVENT.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
+
+extern u8 BattlePres_AdvanceArrowTiles[];
 #include "MOTION_OBJECT.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
@@ -310,7 +312,7 @@ void BattleEvent_Playback(void)
             s32 wave;
 
             table = ((((u32)REG_DISPCNT_SUB >> 2) & 7) << 7)
-                + 0x080c3734;
+                + (u32)BattlePres_AdvanceArrowTiles;
             display_runtime = *(struct BattleDisplayRuntime **)0x03001ee4;
             context = display_runtime->context;
             viewport = display_runtime->viewport;

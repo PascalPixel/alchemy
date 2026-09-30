@@ -1,3 +1,5 @@
+/* 2026-09-30: the arrow frames come from their linked label,
+   BattlePres_AdvanceArrowTiles, instead of the address 0x080c3734. */
 /* alchemy permute: BattlePresentation_WaitForAdvance against recon/tbs/raw/080bb65c.s: score 710 (14 register-only, 10 reordered).
    Job 7, iteration 7848; rewrites: 4x pointer arithmetic or indexing, 3x add a same-width cast, 2x reorder local declarations, 2x share one temporary between two statements, 2x drop a same-width cast, 2x toggle register, 1x swap commutative operands, 1x introduce a temporary, 1x test truth or compare with zero. */
 /* Draft, not exact (2026-09-26): candidate=356 reference=356 differing_halfwords=52,
@@ -74,6 +76,7 @@ struct UiDisplay {
     struct UiCursorOffset *offset;
 };
 
+extern u8 BattlePres_AdvanceArrowTiles[];
 extern u32 gFrameCount;
 extern struct UiDisplay *gBattleDisplayWork;
 extern volatile u32 gKeysHeld;
@@ -109,7 +112,7 @@ s32 BattlePresentation_WaitForAdvance(void)
     slot = Resource_LoadIntoFreeSlot(128);
     frame = 0;
 loop:
-    src = ((gFrameCount >> 2) & 7) * 128 + 0x080c3734;
+    src = ((gFrameCount >> 2) & 7) * 128 + (s32)BattlePres_AdvanceArrowTiles;
     origin = gBattleDisplayWork->origin;
     offset = gBattleDisplayWork->offset;
     QueueIoWriteDelay10(0x0400004a, 4);

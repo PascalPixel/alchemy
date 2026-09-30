@@ -2168,9 +2168,7 @@ Func_080d172c:
 	.type Func_080d1760, %function
 	.thumb_func
 Func_080d1760:
-	.incbin "baserom.gba", 0x000da7e8, 0x00000034
-	.section .rom.000da83e, "ax"
-	.incbin "baserom.gba", 0x000da83e, 0x00000516
+	.incbin "baserom.gba", 0x000da7e8, 0x0000056c
 	.section .rom.000dad54, "ax"
 	.global Func_080e70f8
 	.type Func_080e70f8, %function
@@ -3209,25 +3207,13 @@ Func_081c03d8:
 Func_081c0428:
 	.incbin "baserom.gba", 0x001c0428, 0x000001c0
 	.section .rom.001c075a, "ax"
-	.incbin "baserom.gba", 0x001c075a, 0x00000048
-	.section .rom.001c07a2, "ax"
-	.global MusicTrack_HandleNote
-	.type MusicTrack_HandleNote, %function
-	.thumb_func
-MusicTrack_HandleNote:
-	.incbin "baserom.gba", 0x001c07a2, 0x00000102
+	.incbin "baserom.gba", 0x001c075a, 0x0000014a
 	.section .rom.001c08a4, "ax"
 	.global Func_081c08a4
 	.type Func_081c08a4, %function
 	.thumb_func
 Func_081c08a4:
-	.incbin "baserom.gba", 0x001c08a4, 0x0000012c
-	.section .rom.001c09d0, "ax"
-	.global MusicPlayer_Tick
-	.type MusicPlayer_Tick, %function
-	.thumb_func
-MusicPlayer_Tick:
-	.incbin "baserom.gba", 0x001c09d0, 0x00000248
+	.incbin "baserom.gba", 0x001c08a4, 0x00000374
 	.section .rom.001c0c18, "ax"
 	.global Func_081c0c18
 	.type Func_081c0c18, %function
@@ -3337,13 +3323,7 @@ Func_081c11ac:
 Func_081c11cc:
 	.incbin "baserom.gba", 0x001c11cc, 0x000000b0
 	.section .rom.001c16ca, "ax"
-	.incbin "baserom.gba", 0x001c16ca, 0x00000052
-	.section .rom.001c171c, "ax"
-	.global Sound_LoadCommandTable
-	.type Sound_LoadCommandTable, %function
-	.thumb_func
-Sound_LoadCommandTable:
-	.incbin "baserom.gba", 0x001c171c, 0x000001c4
+	.incbin "baserom.gba", 0x001c16ca, 0x00000216
 	.section .rom.001c1e48, "ax"
 	.global Func_081c1e48
 	.type Func_081c1e48, %function
@@ -3365,39 +3345,96 @@ Func_081c2328:
 	.thumb_func
 AudioCommand_InvokeSlot35:
 	.incbin "baserom.gba", 0x001c2328, 0x00000014
+	.section .rom.001c233c, "ax"
+	.global AudioEngine_Initialize
+	.type AudioEngine_Initialize, %function
+	.thumb_func
+AudioEngine_Initialize:
+	.incbin "baserom.gba", 0x001c233c, 0x000000f8
+	.section .rom.001c2434, "ax"
+	.global AudioEngine_SetPcmRate
+	.type AudioEngine_SetPcmRate, %function
+	.thumb_func
+AudioEngine_SetPcmRate:
+	.incbin "baserom.gba", 0x001c2434, 0x000000a4
+	.section .rom.001c24d8, "ax"
+	.global AudioEngine_SetMode
+	.type AudioEngine_SetMode, %function
+	.thumb_func
+AudioEngine_SetMode:
+	.incbin "baserom.gba", 0x001c24d8, 0x000001a4
+	.section .rom.001c267c, "ax"
+	.global MusicPlayer_Initialize
+	.type MusicPlayer_Initialize, %function
+	.thumb_func
+MusicPlayer_Initialize:
+	.incbin "baserom.gba", 0x001c267c, 0x00000078
+	.section .rom.001c26f4, "ax"
+	.global MusicPlayer_StartSong
+	.type MusicPlayer_StartSong, %function
+	.thumb_func
+MusicPlayer_StartSong:
+	.incbin "baserom.gba", 0x001c26f4, 0x000000e4
+	.section .rom.001c27d8, "ax"
+	.global MusicPlayer_Stop
+	.type MusicPlayer_Stop, %function
+	.thumb_func
+MusicPlayer_Stop:
+	.incbin "baserom.gba", 0x001c27d8, 0x00000040
+	.section .rom.001c2818, "ax"
+	.global MusicPlayer_StepFade
+	.type MusicPlayer_StepFade, %function
+	.thumb_func
+MusicPlayer_StepFade:
+	.incbin "baserom.gba", 0x001c2818, 0x000000c8
+	.section .rom.001c28e0, "ax"
+	.global MusicTrack_CalcOutput
+	.type MusicTrack_CalcOutput, %function
+	.thumb_func
+MusicTrack_CalcOutput:
+	.incbin "baserom.gba", 0x001c28e0, 0x000000b4
+	.section .rom.001c2994, "ax"
+	.global Cgb_KeyToFrequency
+	.type Cgb_KeyToFrequency, %function
+	.thumb_func
+Cgb_KeyToFrequency:
+	.incbin "baserom.gba", 0x001c2994, 0x000000a8
+	.section .rom.001c2a3c, "ax"
+	.global CgbChannel_Mute
+	.type CgbChannel_Mute, %function
+	.thumb_func
+CgbChannel_Mute:
+	.incbin "baserom.gba", 0x001c2a3c, 0x000000b8
+	.section .rom.001c2af4, "ax"
+	.global Cgb_UpdateChannels
+	.type Cgb_UpdateChannels, %function
+	.thumb_func
+Cgb_UpdateChannels:
+	.incbin "baserom.gba", 0x001c2af4, 0x00000474
+	.section .rom.001c2f68, "ax"
+	.global MusicPlayer_SetVolume
+	.type MusicPlayer_SetVolume, %function
+	.thumb_func
+MusicPlayer_SetVolume:
+	.incbin "baserom.gba", 0x001c2f68, 0x00000068
+	.section .rom.001c2fd0, "ax"
+	.global MusicPlayer_SetPitch
+	.type MusicPlayer_SetPitch, %function
+	.thumb_func
+MusicPlayer_SetPitch:
+	.incbin "baserom.gba", 0x001c2fd0, 0x000001e4
 	.section .rom.001c332c, "ax"
 	.incbin "baserom.gba", 0x001c332c, 0x00000014
 	.section .rom.001c3388, "ax"
 	.incbin "baserom.gba", 0x001c3388, 0x00000028
-	.section .rom.001c3404, "ax"
-	.incbin "baserom.gba", 0x001c3404, 0x00000028
-	.section .rom.001c342c, "ax"
-	.global Audio_EmptyCallback
-	.type Audio_EmptyCallback, %function
-	.thumb_func
-Audio_EmptyCallback:
-	.incbin "baserom.gba", 0x001c342c, 0x000000a0
+	.section .rom.001c33ea, "ax"
+	.incbin "baserom.gba", 0x001c33ea, 0x000000e2
 	.global Sound_PcmPitchCodes
 Sound_PcmPitchCodes:
 	.incbin "baserom.gba", 0x001c34cc, 0x000000b4
 	.global Sound_PcmFrequencySteps
 Sound_PcmFrequencySteps:
-	.incbin "baserom.gba", 0x001c3580, 0x00000030
-	.global Sound_FrameLengths
-Sound_FrameLengths:
-	.incbin "baserom.gba", 0x001c35b0, 0x00000018
-	.global Sound_CgbPitchCodes
-Sound_CgbPitchCodes:
-	.incbin "baserom.gba", 0x001c35c8, 0x00000084
-	.global Sound_CgbFrequencySteps
-Sound_CgbFrequencySteps:
-	.incbin "baserom.gba", 0x001c364c, 0x00000018
-	.global Sound_NoisePitchCodes
-Sound_NoisePitchCodes:
-	.incbin "baserom.gba", 0x001c3664, 0x0000003c
-	.global Sound_Cgb3LevelCodes
-Sound_Cgb3LevelCodes:
-	.incbin "baserom.gba", 0x001c36a0, 0x00000010
+	.incbin "baserom.gba", 0x001c3580, 0x00000130
 	.global Sound_ClockLengths
 Sound_ClockLengths:
 	.incbin "baserom.gba", 0x001c36b0, 0x00000034

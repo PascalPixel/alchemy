@@ -18,13 +18,13 @@ Field_Map140:
 	.incbin "MAP/MAP_140/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map140_SHAPES:
-	.incbin "MAP/MAP_062/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_062/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map140_GRID:
 	.incbin "MAP/MAP_140/GRID_JA.parts.lz"
 	.balign 4, 0
 .LField_Map140_ANIMATION:
-	.incbin "MAP/MAP_029/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_029/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map140_BLEND:
 	.incbin "MAP/MAP_139/BLEND.script.lz"
@@ -46,13 +46,13 @@ Field_Map140:
 	.incbin "MAP/MAP_140/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map140_SHAPES:
-	.incbin "MAP/MAP_062/SHAPES.table.lz"
+	.incbin "COMMON/MAP/MAP_062/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map140_GRID:
 	.incbin "MAP/MAP_140/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map140_ANIMATION:
-	.incbin "MAP/MAP_029/ANIMATION.script.lz"
+	.incbin "COMMON/MAP/MAP_029/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map140_BLEND:
 	.incbin "MAP/MAP_139/BLEND.script.lz"

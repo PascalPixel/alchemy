@@ -31,7 +31,7 @@ Field_Map089:
 	.incbin "MAP/MAP_052/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map089_BLEND:
-	.incbin "MAP/MAP_010/BLEND.script.lz"
+	.incbin "COMMON/MAP/MAP_018/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map089_SCENE:
 	.incbin "MAP/MAP_089/SCENE_JA.parts.lz"
@@ -63,7 +63,7 @@ Field_Map089:
 	.incbin "MAP/MAP_052/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map089_BLEND:
-	.incbin "MAP/MAP_010/BLEND.script.lz"
+	.incbin "COMMON/MAP/MAP_018/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map089_SCENE:
 	.incbin "MAP/MAP_089/SCENE.parts.lz"

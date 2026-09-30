@@ -15,7 +15,7 @@ Field_Map298:
 	map_block Field_Map298
 	map_block Field_Map298, .LField_Map298_SCENE
 .LField_Map298_METATILES:
-	.incbin "MAP/MAP_000/METATILES.delta0.lz"
+	.incbin "COMMON/MAP/MAP_001/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map298_SHAPES:
 	.incbin "MAP/MAP_231/SHAPES.table.lz"

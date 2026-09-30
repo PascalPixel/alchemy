@@ -17,7 +17,8 @@ struct InventoryMenuIcon {
 struct InventoryMenuState {
     u8 unknown_000[0x20];
     s32 item_window;                /* 0x020 */
-    u8 unknown_024[8];
+    s32 status_window;              /* 0x024 */
+    u8 unknown_028[4];
     s32 info_window;                /* 0x02c */
     u8 unknown_030[0x18];
     struct InventoryMenuIcon *entry_icons[32]; /* 0x048 */

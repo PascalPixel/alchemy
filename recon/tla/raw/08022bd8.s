@@ -74,6 +74,9 @@ Func_08022bd8:
 	.4byte 0x00000080
 	.2byte 0x17a4
 	.2byte 0x0802
+	.global Func_08022c78
+	.thumb_func
+Func_08022c78:
 	push	{lr}
 	movs	r0, #93
 	bl	Func_08014274

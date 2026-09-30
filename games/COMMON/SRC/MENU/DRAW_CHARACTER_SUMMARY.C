@@ -41,10 +41,19 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
 #endif
         UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
         UiText_DrawCharacterAtOffset(st[29] + (s32)&MsgClassName, surface, 0, 16);
+#if defined(TBS_EDITION_JA)
+        /* The Japanese summary puts the coins above the play time. */
+        extra = 32;
+        UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 24, extra);
+        UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, 72, 32);
+        UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 48);
+        UiText_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(st + 32), buf), surface, 48, 48);
+#else
         UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 32);
         UiText_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(st + 32), buf), surface, 48, 40);
         extra = 48;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
         UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
+#endif
     }
 }

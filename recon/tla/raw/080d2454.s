@@ -442,25 +442,3 @@ PartyInventory_GiveItem:
 	.4byte 0x02000240
 	.2byte 0x0e12
 	.2byte 0x0000
-	.global Inventory_TryAddAndReturnOwner
-	.thumb_func
-Inventory_TryAddAndReturnOwner:
-	push	{r5, lr}
-	adds	r5, r2, #0
-	adds	r1, r0, #0
-	adds	r0, r5, #0
-	bl	0x080ad020
-	cmp	r0, #0
-	blt.n	.L_080d2800
-	adds	r0, r5, #0
-	b.n	.L_080d2804
-.L_080d2800:
-	movs	r0, #1
-	negs	r0, r0
-.L_080d2804:
-	pop	{r5, pc}
-	movs	r0, r0
-	bx	lr
-	movs	r0, r0
-	bx	lr
-	.2byte 0x0000

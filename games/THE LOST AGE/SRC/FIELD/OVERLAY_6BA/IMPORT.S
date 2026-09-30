@@ -36,7 +36,7 @@
 	overlay_veneer Func_08038340
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Item_Get
-	overlay_veneer Inventory_AddFar
+	overlay_veneer Inventory_AddItemFar
 	overlay_veneer PartyInventory_AddFar
 	overlay_veneer Inventory_BreakFar
 	overlay_veneer Owner_AdjustFirstValueFar

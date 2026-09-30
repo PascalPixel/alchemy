@@ -710,6 +710,8 @@ SECTIONS
         "*/recon/tla/raw/080d23b8.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PACKED_ID.o"(.text)
         "*/recon/tla/raw/080d2454.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GAME/INVENTORY/TRY_ADD_AND_RETURN_OWNER.o"(.text)
+        "*/recon/tla/raw/080d280c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d2810.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080d296c.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_DRAW_QUANTITY_PAIR_WITH_CUE.o"(.text)

@@ -41,9 +41,9 @@ VramBlock_LoadCached:
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
 	overlay_veneer Runtime_PushSlotEntryFar
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_ObjectSetScript
 	.thumb_func
@@ -81,9 +81,9 @@ Engine_EventBegin:
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

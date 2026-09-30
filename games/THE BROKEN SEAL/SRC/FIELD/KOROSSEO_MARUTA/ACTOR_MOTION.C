@@ -45,7 +45,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             battle_owner_69();
             Camera_MoveTo(-1, -1, -1, 0);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-            actor = Engine_ActorGet(0);
+            actor = Object_GetById(0);
             y = *(s32 *)(actor + 12);
             x = *(s32 *)(actor + 8);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -150,7 +150,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
             Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-            rec7 = Engine_ActorGet(0);
+            rec7 = Object_GetById(0);
             for (i = 119; i >= 0; i--) {
                 if (*(s32 *)(rec7 + 8) > 0x3e00000) {
                     *(s32 *)(rec7 + 8) += -0x13333;

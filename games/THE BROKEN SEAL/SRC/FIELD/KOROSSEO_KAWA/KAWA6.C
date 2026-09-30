@@ -3,8 +3,6 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-u8 *Object_GetById();
 
 /* FAKEMATCH: calls that cast SceneActor_FindSlotAtTilePosition to another return type keep their original register order. */
 s32 *SceneActor_FindSlotAtTilePosition(s32 *arg0);
@@ -199,8 +197,8 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     *(s32 *)(desc + 232) = centre;
     *(s32 *)(desc + 236) = extra;
 
-    rec0 = Object_GetById(first);
-    rec1 = Object_GetById(second);
+    rec0 = (u8 *)Object_GetById(first);
+    rec1 = (u8 *)Object_GetById(second);
 
     if (GameFlag_IsSet(0x109) == 0) {
         *(s32 *)(rec1 + 8) =

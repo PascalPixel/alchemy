@@ -14,7 +14,6 @@ typedef struct Placement {
     u16 y;
 } Placement;
 
-u8 *Object_GetById(s32);
 extern u8 KareiHeya_Exits[];
 
 extern const struct ScenePlacement gKareiHeyaPlacements1Entrance9[];
@@ -152,7 +151,7 @@ void SceneDialogue_RunActor16Dialogue(void)
 
 void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
-    u8 *p = Object_GetById(0);
+    u8 *p = (u8 *)Object_GetById(0);
 
     /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
@@ -178,7 +177,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 {
     void Event_SetMessage(int);
 
-    u8 *p = Object_GetById(0);
+    u8 *p = (u8 *)Object_GetById(0);
 
     /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
@@ -202,7 +201,6 @@ void SceneDialogue_RunActor8FacingDialogue(void)
  */
 void FieldScene_RunArrivalPlacement(void)
 {
-    u8 *Object_GetById();
 
     u8 *work = *(u8 **)&gEventWork;
     u32 slot;
@@ -212,7 +210,7 @@ void FieldScene_RunArrivalPlacement(void)
     Event_Begin();
 
     for (slot = 8; slot <= 65; slot++) {
-        u8 *rec = Object_GetById(slot);
+        u8 *rec = (u8 *)Object_GetById(slot);
 
         if (rec != 0) {
             rec[85] = 0;
@@ -240,7 +238,7 @@ void FieldScene_RunArrivalPlacement(void)
 
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
-    p = Object_GetById(0);
+    p = (u8 *)Object_GetById(0);
     p[85] = 0;
 
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);

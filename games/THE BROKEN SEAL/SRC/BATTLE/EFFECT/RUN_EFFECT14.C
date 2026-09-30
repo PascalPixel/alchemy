@@ -36,7 +36,7 @@ extern struct EffectScene *gEffectWork;
 
 void *Object_Spawn(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
-void Engine_ObjectSetAnimation(void *, s32);
+void Object_SetMode(void *, s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 u32 Random16(void);
@@ -71,7 +71,7 @@ void RunBattleEffect14(void)
         return;
     }
     BattleEffect_InitializeSharedScene();
-    Engine_ObjectSetAnimation(object, 2);
+    Object_SetMode(object, 2);
     do {
         s32 scale;
         object->x = origin.x + step * (target.x - origin.x) / 10;
@@ -113,7 +113,7 @@ void RunBattleEffect14(void)
         WaitFrames(20);
         WaitFrames(120);
     }
-    Engine_ObjectSetAnimation(object, 1);
+    Object_SetMode(object, 1);
     WaitFrames(30);
     Audio_PlayCue(0x88);
     WaitFrames(20);

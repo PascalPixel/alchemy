@@ -82,7 +82,6 @@ s32 ShindenHeya_MatchLeaderPriority();
 #define SKIP_BEATS (*(u16 *)(Data_03001ebc + 0x1d8))
 void ShindenHeya_CopyActorPose();
 void FieldScene_RunPairedActorChoreography();
-u8 *Object_GetById();
 void ObjectMotion_WaitForAnimationChange();
 void ShindenHeya_SpawnActorSpark();
 extern u8 MsgShindenAcceptRobinCantMean[];
@@ -121,7 +120,7 @@ struct Flags39 {
 };
 
 /* Resource 378 object reset at 0x02002660(28 bytes including alignment). */
-extern u8 *Object_GetById();
+extern 
 
 enum FacingGatedMessage {
     MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS = 0x1035,
@@ -681,8 +680,8 @@ void ShindenHeya_RunAltarScene(void)
 /* Draw the actor, both parts, at the leader's sprite priority. */
 s32 ShindenHeya_MatchLeaderPriority(struct FieldActor *actor)
 {
-    actor->sprite->priority = Engine_ActorGet(0)->sprite->priority;
-    actor->sprite->second_priority = Engine_ActorGet(0)->sprite->priority;
+    actor->sprite->priority = Object_GetById(0)->sprite->priority;
+    actor->sprite->second_priority = Object_GetById(0)->sprite->priority;
     return 0;
 }
 
@@ -1278,12 +1277,12 @@ dialogue:
         Event_Wait(0x14);
         Event_ShowMessage(0xc, 0);
         Event_Wait(0x14);
-        actor = Object_GetById(0xa);
+        actor = (u8 *)Object_GetById(0xa);
         actor += 0x23;
         flags = 254;
         flags &= *actor;
         *actor = flags;
-        actor = Object_GetById(0xa);
+        actor = (u8 *)Object_GetById(0xa);
         *(u32 *)(actor + 0x6c) = (u32)ShindenHeya_MatchLeaderPriority;
     }
     Event_End();
@@ -1400,9 +1399,9 @@ void FieldScene_RunActorUpdateSequence(void)
     for (i = 0; i < 32; i++) {
         ShindenHeya_SpawnActorSpark(13);
         Event_Wait(4);
-        record = Object_GetById(13);
+        record = (u8 *)Object_GetById(13);
         *(s32 *)(record + 24) += -0x28f;
-        record = Object_GetById(13);
+        record = (u8 *)Object_GetById(13);
         *(s32 *)(record + 28) += -0x28f;
     }
     Audio_PlayCue(0x120);
@@ -1714,17 +1713,17 @@ void ShindenHeya_CopyActorPose(void)
     u8 *v2;
     u8 *p5;
 
-    record = (s32)Engine_ActorGet(8);
+    record = (s32)Object_GetById(8);
     if (record != 0) {
         Engine_ActorSetPosition(14, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Engine_ActorSetAnimation(14, 0);
-    rec7 = (s32)Engine_ActorGet(14);
-    record = (s32)Engine_ActorGet(8);
+    rec7 = (s32)Object_GetById(14);
+    record = (s32)Object_GetById(8);
     *(u16 *)(rec7 + 6) = *(u16 *)(record + 6);
-    record = (s32)Engine_ActorGet(14);
+    record = (s32)Object_GetById(14);
     *(s32 *)(record + 108) = (s32)ShindenHeya_FollowLeaderOffset;
-    record = (s32)Engine_ActorGet(14);
+    record = (s32)Object_GetById(14);
     p5 = *(s32 *)(record + 80);
     {
         for (i = 0; i < ((struct Flags39 *)p5)->count; i++) {
@@ -1736,7 +1735,7 @@ void ShindenHeya_CopyActorPose(void)
         }
     }
     ((struct Flags37 *)p5)->flags = 1;
-    ((struct Flags35 *)((s32)Engine_ActorGet(14)))->flags &= 254;
+    ((struct Flags35 *)((s32)Object_GetById(14)))->flags &= 254;
     ((struct Flags9 *)p5)->mode = 2;
 }
 
@@ -1818,7 +1817,7 @@ void ShindenHeya_CopyActorPose(void)
  */
 void SceneState_ResetObject14Word108(void)
 {
-    u8 *state = Object_GetById(14);
+    u8 *state = (u8 *)Object_GetById(14);
     *(s32 *)(state + 108) = 0;
     Actor_SetPosition(14, 0, 0);
 }
@@ -1827,7 +1826,7 @@ void ShindenHeya_FollowLeaderOffset(u8 *obj)
 {
     u8 *leader;
 
-    leader = (u8 *)Engine_ActorGet(8);
+    leader = (u8 *)Object_GetById(8);
     *(s32 *)(obj + 56) = *(s32 *)(obj + 8) = *(s32 *)(leader + 8);
     *(s32 *)(obj + 60) = *(s32 *)(obj + 12) = *(s32 *)(leader + 12);
     *(s32 *)(obj + 64) = *(s32 *)(obj + 16) = *(s32 *)(leader + 16) + -0x20000;
@@ -1958,7 +1957,7 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
     u8 *p5;
 
     p8 = a1;
-    rec = ((s32 (*)())Engine_ActorGet)();
+    rec = ((s32 (*)())Object_GetById)();
     if (rec != 0) {
         rec8 = Value4(Engine_ObjectCreate, 0x11d, *(s32 *)(rec + 8), (*(s32 *)(rec + 12) + 0x2d0000), *(s32 *)(rec + 16));
         if ((s32)rec8 != 0) {

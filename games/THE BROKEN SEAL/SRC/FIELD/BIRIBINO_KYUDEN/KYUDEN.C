@@ -474,25 +474,25 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
                             Call3(Engine_ActorSetPosition, 22, 0x2780000, 0x2d80000);
                             Call3(Engine_ActorSetPosition, 23, 0x2880000, 0x2d80000);
                             Engine_ActorSetPosition(24, 0x2980000, 0x2d80000);
-                            record = (s32)Engine_ActorGet(21);
+                            record = (s32)Object_GetById(21);
                             Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-                            record = (s32)Engine_ActorGet(22);
+                            record = (s32)Object_GetById(22);
                             Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-                            record = (s32)Engine_ActorGet(23);
+                            record = (s32)Object_GetById(23);
                             Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-                            record = (s32)Engine_ActorGet(24);
+                            record = (s32)Object_GetById(24);
                             Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-                            *((u8 *)Engine_ActorGet(21) + 85) = rec8;
-                            *((u8 *)Engine_ActorGet(22) + 85) = rec8;
-                            *((u8 *)Engine_ActorGet(23) + 85) = rec8;
-                            *((u8 *)Engine_ActorGet(24) + 85) = rec8;
-                            record = (s32)Engine_ActorGet(21);
+                            *((u8 *)Object_GetById(21) + 85) = rec8;
+                            *((u8 *)Object_GetById(22) + 85) = rec8;
+                            *((u8 *)Object_GetById(23) + 85) = rec8;
+                            *((u8 *)Object_GetById(24) + 85) = rec8;
+                            record = (s32)Object_GetById(21);
                             *(s32 *)(record + 12) = -0x40000;
-                            record = ((s32 (*)())Engine_ActorGet)(22);
+                            record = ((s32 (*)())Object_GetById)(22);
                             *(s32 *)(record + 12) = -0x40000;
-                            record = ((s32 (*)())Engine_ActorGet)(23);
+                            record = ((s32 (*)())Object_GetById)(23);
                             *(s32 *)(record + 12) = -0x40000;
-                            record = ((s32 (*)())Engine_ActorGet)(24);
+                            record = ((s32 (*)())Object_GetById)(24);
                             *(s32 *)(record + 12) = -0x40000;
                         } else {
                             BiribinoKyuden_RunActorRowScene();
@@ -574,16 +574,16 @@ void Kyuden_RunKolimaRequest(void)
         Engine_EventShowMessage(0x2012, 0);
         Camera_MoveTo(0x37e0000, -1, 0x2980000, 1);
         Engine_ActorWalkToAndWait(0, 0x37e, 0x2ac);
-        record = ((s32 (*)())Engine_ActorGet)(0);
+        record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
             Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
-        record = ((s32 (*)())Engine_ActorGet)(0);
+        record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
             Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
         if (Engine_GameFlagIsSet(3) != 0) {
-            record = ((s32 (*)())Engine_ActorGet)(0);
+            record = ((s32 (*)())Object_GetById)(0);
             if (record != 0) {
                 Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
             }
@@ -640,18 +640,18 @@ void Kyuden_RunKolimaRequest(void)
         Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
         Actor_SetAnimation(ACTOR_GERALD, 2);
-        record = ((s32 (*)())Engine_ActorGet)(0);
+        record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
             Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorSetAnimation(2, 2);
-        record = ((s32 (*)())Engine_ActorGet)(0);
+        record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
             Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         if (Engine_GameFlagIsSet(3) != 0) {
             Engine_ActorSetAnimation(3, 2);
-            record = ((s32 (*)())Engine_ActorGet)(0);
+            record = ((s32 (*)())Object_GetById)(0);
             if (record != 0) {
                 Engine_ActorSetDestination(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
@@ -675,16 +675,16 @@ void Kyuden_RunKolimaRequest(void)
     Engine_CameraMoveTo(0x37e0000, -1, 0x2980000, 1);
     Engine_ActorWaitForMove(0);
     Engine_ActorSetAnimation(0, 1);
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     if (Engine_GameFlagIsSet(3) != 0) {
-        record = ((s32 (*)())Engine_ActorGet)(0);
+        record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
             Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
@@ -727,12 +727,12 @@ accepted:
     Engine_ActorShowEmote(18, 0x105, 60);
     Engine_EventSetMessage((s32)MsgBiribinoHmmmWellGrant);
     Call2(Engine_EventShowMessage, 0x2012, 0);
-    record = (s32)Engine_ActorGet(20);
+    record = (s32)Object_GetById(20);
     Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-    record = (s32)Engine_ActorGet(20);
+    record = (s32)Object_GetById(20);
     *(s32 *)(record + 24) = 0x8000;
     *(s32 *)(record + 28) = 0x8000;
-    record = ((s32 (*)())Engine_ActorGet)(18);
+    record = ((s32 (*)())Object_GetById)(18);
     if (record != 0) {
         Engine_ActorSetPosition(20, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -838,7 +838,7 @@ accepted:
     Actor_SetAnimation(18, 4);
     Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
     Engine_ActorJump(20, 6, 0);
-    record = ((s32 (*)())Engine_ActorGet)(18);
+    record = ((s32 (*)())Object_GetById)(18);
     if (record != 0) {
         Engine_ActorSetDestination(20, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -905,18 +905,18 @@ accepted:
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)Kyuden_FacingActions);
     Engine_ActorSetAnimation(1, 2);
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorSetAnimation(2, 2);
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     if (Engine_GameFlagIsSet(3) != 0) {
         Engine_ActorSetAnimation(3, 2);
-        record = ((s32 (*)())Engine_ActorGet)(0);
+        record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
             Engine_ActorSetDestination(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -1060,15 +1060,15 @@ void RunEventScript02(void)
     Actor_EnableActionCallback(19, Kyuden_PacingActions);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
-    actor = (struct FieldActor *)Engine_ActorGet(0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetPosition(ACTOR_GERALD, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Engine_ActorGet(0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Engine_ActorGet(0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
     }
@@ -1231,17 +1231,17 @@ void RunEventScript02(void)
     Event_Wait(20);
 
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    actor = (struct FieldActor *)Engine_ActorGet(0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_SetAnimation(ACTOR_IVAN, 2);
-    actor = (struct FieldActor *)Engine_ActorGet(0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_SetAnimation(ACTOR_MIA, 2);
-    actor = (struct FieldActor *)Engine_ActorGet(0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }
@@ -1287,30 +1287,30 @@ void BiribinoKyuden_RunActorRowScene(void)
     ((void (*)())Engine_CameraMoveTo)(0x2740000, -1, 0x2ec0000, 0);
     Engine_MapCopyCellAttributes(38, 55, 4, 1, 38, 45);
     Engine_MapCopyCellAttributes(42, 55, 4, 1, 38, 46);
-    Engine_ActorGet(0)->facing = 0;
+    Object_GetById(0)->facing = 0;
     Call3((void (*)())Engine_ActorSetPosition, 0, 0x2410000, 0x2f80000);
-    Engine_ActorGet(19)->facing = 0;
+    Object_GetById(19)->facing = 0;
     ((void (*)())Engine_ActorSetPosition)(19, 0x2500000, 0x2f80000);
-    Engine_ActorGet(17)->facing = 0x9000;
+    Object_GetById(17)->facing = 0x9000;
     Call3((void (*)())Engine_ActorSetPosition, 17, 0x2960000, 0x2fc0000);
     Call3((void (*)())Engine_ActorSetPosition, 21, 0x2680000, 0x2d80000);
     Call3((void (*)())Engine_ActorSetPosition, 22, 0x2780000, 0x2d80000);
     Call3((void (*)())Engine_ActorSetPosition, 23, 0x2880000, 0x2d80000);
     ((void (*)())Engine_ActorSetPosition)(24, 0x2980000, 0x2d80000);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(21), 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(22), 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(23), 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(24), 0);
-    actor = Engine_ActorGet(21);
+    Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(22), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(24), 0);
+    actor = Object_GetById(21);
     zero = 0;
     actor->motion_flags = zero;
-    Engine_ActorGet(22)->motion_flags = zero;
-    Engine_ActorGet(23)->motion_flags = zero;
-    Engine_ActorGet(24)->motion_flags = zero;
-    Engine_ActorGet(21)->y.fixed = -0x40000;
-    Engine_ActorGet(22)->y.fixed = -0x40000;
-    Engine_ActorGet(23)->y.fixed = -0x40000;
-    Engine_ActorGet(24)->y.fixed = -0x40000;
+    Object_GetById(22)->motion_flags = zero;
+    Object_GetById(23)->motion_flags = zero;
+    Object_GetById(24)->motion_flags = zero;
+    Object_GetById(21)->y.fixed = -0x40000;
+    Object_GetById(22)->y.fixed = -0x40000;
+    Object_GetById(23)->y.fixed = -0x40000;
+    Object_GetById(24)->y.fixed = -0x40000;
     Engine_MapRedraw();
     Engine_TaskWait(1);
     gEventWork->start_transition = 0x201;

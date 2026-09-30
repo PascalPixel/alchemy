@@ -167,8 +167,8 @@ void SceneActor_PlacePairAtOffset(s32 a0, s32 a1, s32 a2)
     s32 x;
     s32 y;
 
-    p = Engine_ActorGet(gGameState.selected_actor);
-    q = Engine_ActorGet(a0);
+    p = Object_GetById(gGameState.selected_actor);
+    q = Object_GetById(a0);
     Event_Begin();
     {
         x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
@@ -883,7 +883,7 @@ void SceneState_SetServiceZeroValue06(void)
     struct SceneService *work;
 
     Event_Begin();
-    work = Engine_ActorGet(0);
+    work = Object_GetById(0);
     work->value06 = 0x4000;
     Audio_PlayCue(123);
     Event_CloseScreen();
@@ -898,7 +898,7 @@ void FieldScene_RunSingleStep(void)
 
 void SceneActor_PlaceAtTileAndMark(s32 id, s32 x, s32 y)
 {
-    struct Rec_39a *rec = Engine_ActorGet(id);
+    struct Rec_39a *rec = Object_GetById(id);
 
     if (rec != 0) {
         Actor_SetSpritePriority(id, 3);
@@ -1118,7 +1118,7 @@ void ImiruFuchin_StartTrackingLeader(void)
     if (ImiruFuchin_TrackLeader != 0) {
         struct TrackingWork *work = *(gWorkSlot + 36);
 
-        work->actor = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        work->actor = Object_GetById(ACTOR_PARTY_LEADER);
     }
 }
 
@@ -1152,7 +1152,7 @@ void FieldScene_RunScene39aSequenceA(void)
     s32 record;
 
     Event_Begin();
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     Actor_SetSpriteFlags(record, 0);
     Event_OpenScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
@@ -1354,7 +1354,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     if (obj == 0)
         return;
     spr = obj->sprite;
-    Engine_ObjectSetAnimation((struct FieldActor *)obj, (flags + 1) & EFFECT_SCRIPT_MASK);
+    Object_SetMode((struct FieldActor *)obj, (flags + 1) & EFFECT_SCRIPT_MASK);
     Engine_ObjectSetScript((struct FieldActor *)obj, table.script[flags & EFFECT_SCRIPT_MASK]);
     obj->motion_flags = 0;
     spr->flags = 0;

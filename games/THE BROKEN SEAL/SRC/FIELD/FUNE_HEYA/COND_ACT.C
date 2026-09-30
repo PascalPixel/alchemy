@@ -53,7 +53,7 @@ void Scene_RunConditionalActorPresentation(s32 a0)
         Call3(Engine_ActorSetSpeed, 0, 0x10000, v6);
         ((void (*)())Engine_ActorWalkToAndWait)(0, x, 168);
         Engine_ActorFaceDirection(0, 0xc000, 0);
-        record = Engine_ActorGet(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Engine_ActorSetPosition(rec7, record->x.fixed, record->z.fixed);
         }

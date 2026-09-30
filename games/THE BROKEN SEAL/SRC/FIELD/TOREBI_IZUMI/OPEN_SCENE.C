@@ -39,10 +39,10 @@ s32 TorebiIzumi_OpenScene(void)
         do { Io_SetBlendAlpha(0x80c); } while (0);
         Engine_ActorSetAnimation(24, 2);
         Engine_ActorSetAnimation(25, 2);
-        Engine_ActorGet(24)->scale_x = -0x10000;
-        Engine_ActorGet(25)->scale_x = -0x10000;
-        Engine_ActorGet(24)->priority_flags = 2;
-        Engine_ActorGet(25)->priority_flags = 2;
+        Object_GetById(24)->scale_x = -0x10000;
+        Object_GetById(25)->scale_x = -0x10000;
+        Object_GetById(24)->priority_flags = 2;
+        Object_GetById(25)->priority_flags = 2;
         Engine_EventOpenScreen();
         if (gGameState.entrance == 1) {
             SceneState_InitFourActorRecordsAndInstallTask();

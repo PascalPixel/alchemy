@@ -281,7 +281,7 @@ Func_080bfba4:
 	bl	GetBattleObjectSlot
 	movs	r1, #3
 	ldr	r0, [r0, #0]
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	mov	r0, r8
 	bl	GetBattleObjectSlot
 	movs	r1, #32

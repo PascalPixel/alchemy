@@ -288,17 +288,17 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
     Engine_MapCopyCells(45, 41, 8, 45, 3, 3);
     Engine_TaskWait(1);
-    actor = (u8 *)Engine_ActorGet(14);
+    actor = (u8 *)Object_GetById(14);
     *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
     {
-        u8 *actor = (u8 *)Engine_ActorGet(14);
+        u8 *actor = (u8 *)Object_GetById(14);
         s32 mode = 1;
         *(u16 *)(actor + 100) = mode;
     }
     mode = 0;
-    actor = (u8 *)Engine_ActorGet(15);
+    actor = (u8 *)Object_GetById(15);
     *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
-    *(u16 *)((u8 *)Engine_ActorGet(15) + 100) = mode;
+    *(u16 *)((u8 *)Object_GetById(15) + 100) = mode;
     if (GameFlag_IsSet(0x858))
         Call3(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
     if (gGameState.entrance <= 2 && !GameFlag_IsSet(52) && !GameFlag_IsSet(0x109))

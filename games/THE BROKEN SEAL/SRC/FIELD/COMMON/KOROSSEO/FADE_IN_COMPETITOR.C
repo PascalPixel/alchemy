@@ -59,7 +59,7 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     s32 i;
 
     state = *(struct CompetitorState **)gMenuCtrlWork;
-    actor = Engine_ActorGet(id);
+    actor = Object_GetById(id);
     {
         /* FAKEMATCH: a word temporary keeps 1 out of a halfword pool. */
         s32 one = 1;
@@ -85,8 +85,8 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
         actor->facing = facing;
     }
     Engine_ActorSetSpriteFlags(actor, 3);
-    Engine_ObjectSetAnimation(actor, 0);
-    Engine_ObjectSetAnimation(actor, 1);
+    Object_SetMode(actor, 0);
+    Object_SetMode(actor, 1);
     Engine_ActorSetPosition(id, x << 16, z << 16);
     Engine_ActorFaceActor(0, 0x4000, 0);
     QUEUE_IO_WRITE(0x4000050, 0xf00, 0x20000);

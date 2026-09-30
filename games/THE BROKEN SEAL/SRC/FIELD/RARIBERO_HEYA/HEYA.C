@@ -103,7 +103,7 @@ u8 *RariberoHeya_GetPlacements(void)
  * are the lines after it. */
 void RariberoHeya_RunItemShop(s32 keeper)
 {
-    struct FieldActor *leader = Engine_ActorGet(0);
+    struct FieldActor *leader = Object_GetById(0);
 
     /* FAKEMATCH: the halfword cast of the masked facing keeps the
      * reference's compare. */
@@ -133,7 +133,7 @@ void RariberoHeya_RunItemShop(s32 keeper)
  */
 void Dialogue_HandleFacingBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Engine_ActorGet(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_Run(33, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -152,7 +152,7 @@ void Dialogue_HandleFacingBranch(s32 no)
  */
 void Dialogue_HandleAlternateFacingBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Engine_ActorGet(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_Run(34, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -170,7 +170,7 @@ void Dialogue_HandleAlternateFacingBranch(s32 no)
  */
 void Dialogue_HandleFacingAction(s32 no)
 {
-    u16 party_facing = (((u16 *)Engine_ActorGet(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_ConfirmAct(no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -189,7 +189,7 @@ void Dialogue_HandleFacingAction(s32 no)
  */
 void Dialogue_HandleFacingCueBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Engine_ActorGet(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Inn_CheckIn(11, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -589,7 +589,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_SetSpeed(ACTOR_IVAN, 78643, 39321);
     Engine_ActorSetAnimation(1, 2);
     {
-        u8 *rec = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);
@@ -600,7 +600,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_ActorSetAnimation(3, 2);
     {
-        u8 *rec = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);
@@ -611,7 +611,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Engine_ActorSetAnimation(2, 2);
     {
-        u8 *rec = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);

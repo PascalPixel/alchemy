@@ -130,10 +130,10 @@ s32 Func_020000c4(union DeckObject *work)
                     Call3(Engine_ActorFaceDirection, 21, 0xb000, 0);
                 }
                 if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
-                    Engine_ActorGet(21)->velocity_y = 0x20000;
+                    Object_GetById(21)->velocity_y = 0x20000;
                 } else {
                     Call3(Engine_ActorShowEmote, 21, 0x103, 0);
-                    Engine_ActorGet(21)->velocity_y = 0x60000;
+                    Object_GetById(21)->velocity_y = 0x60000;
                 }
             }
             break;

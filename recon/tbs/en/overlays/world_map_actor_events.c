@@ -42,7 +42,7 @@ void WorldMap_RunActorSequence(void)
     Func_0200c43c();
     Func_0200c44c();
     Func_0200c45c();
-    actor = Engine_ActorGet(0);
+    actor = Object_GetById(0);
     if (actor != NULL) {
         Engine_ActorSetPosition(gWorldMapActor, actor->x.fixed, actor->z.fixed);
     }
@@ -73,7 +73,7 @@ void WorldMap_RunActorSequence(void)
     Engine_EventWait(20);
     Func_0200c384(gWorldMapActor, 1);
     Func_0200c3bc(gWorldMapActor, 0, 10);
-    while ((s16)Engine_ActorGet(0)->unknown_64 == 0)
+    while ((s16)Object_GetById(0)->unknown_64 == 0)
         Func_0200c184(1);
     Func_0200c3c4(0, 0x4000, 20);
     Func_0200c3d4(gWorldMapActor, 0x106, 0);
@@ -82,15 +82,15 @@ void WorldMap_RunActorSequence(void)
     Func_0200c3c4(gWorldMapActor, 0x8000, 10);
     Func_0200c3b4(gWorldMapActor, 0);
     Func_0200c3c4(0, 0, 20);
-    Engine_ActorGet(gWorldMapActor)->unknown_5a &= 0xfe;
+    Object_GetById(gWorldMapActor)->unknown_5a &= 0xfe;
     Func_0200c344(gWorldMapActor, 0x178c, 0xd48);
     Engine_EventWait(1);
-    Engine_ActorGet(gWorldMapActor)->unknown_5a |= 1;
+    Object_GetById(gWorldMapActor)->unknown_5a |= 1;
     Engine_EventWait(20);
-    Engine_ActorGet(gWorldMapActor)->unknown_5a &= 0xfe;
+    Object_GetById(gWorldMapActor)->unknown_5a &= 0xfe;
     Func_0200c344(gWorldMapActor, 0x1794, 0xd48);
     Engine_EventWait(1);
-    Engine_ActorGet(gWorldMapActor)->unknown_5a |= 1;
+    Object_GetById(gWorldMapActor)->unknown_5a |= 1;
     Func_0200c454(242, 3);
     Func_0200c2ec(242, 0);
     Func_0200c384(gWorldMapActor, 1);

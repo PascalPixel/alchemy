@@ -742,7 +742,7 @@ void HaidiaArashi_RunScene00D5C(void)
     } else {
         Engine_EventBegin();
         if (Value1(Engine_GameFlagIsSet, 0x830) == 0) {
-            rec7 = (u8 *)Engine_ActorGet(11);
+            rec7 = (u8 *)Object_GetById(11);
             p6 = *(s32 *)((s32)rec7 + 80);
             Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
             Engine_AudioPlayCue(141);
@@ -772,7 +772,7 @@ void HaidiaArashi_RunScene00D5C(void)
         if (Engine_GameFlagIsSet(0x837) != 0) {
             if (Engine_GameFlagIsSet(0x841) == 0) {
                 if (Engine_GameFlagIsSet(0x30c) == 0) {
-                    record = (u8 *)Engine_ActorGet(0);
+                    record = (u8 *)Object_GetById(0);
                     if (*(s32 *)(record + 12) > 0x800000) {
                         base5_396 = 0x396;
                         SceneActor_RunActor22PlacementSequence(0x146, base5_396);
@@ -810,7 +810,7 @@ void HaidiaArashi_RunEventSequence(void)
     } else {
         Engine_EventBegin();
         if (Value1(Engine_GameFlagIsSet, 0x831) == 0) {
-            rec7 = (s32)Engine_ActorGet(12);
+            rec7 = (s32)Object_GetById(12);
             Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
             Engine_AudioPlayCue(141);
             Engine_TaskWait(40);
@@ -839,7 +839,7 @@ void HaidiaArashi_RunEventSequence(void)
         if (Engine_GameFlagIsSet(0x837) != 0) {
             if (Engine_GameFlagIsSet(0x841) == 0) {
                 if (Engine_GameFlagIsSet(0x30c) == 0) {
-                    record = (s32)Engine_ActorGet(0);
+                    record = (s32)Object_GetById(0);
                     if (*(s32 *)(record + 12) > 0x800000) {
                         SceneActor_RunActor22PlacementSequence(219, 0x34b);
                         Call3(Engine_ActorWalkToAndWait, 0, 179, 0x33d);
@@ -954,7 +954,7 @@ void HaidiaArashi_RunSecondEventSequence(void)
     } else {
         Engine_EventBegin();
         if (Value1(Engine_GameFlagIsSet, 0x833) == 0) {
-            rec7 = (s32)Engine_ActorGet(14);
+            rec7 = (s32)Object_GetById(14);
             Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
             Engine_AudioPlayCue(141);
             Engine_TaskWait(40);
@@ -979,7 +979,7 @@ void HaidiaArashi_RunSecondEventSequence(void)
         if (Engine_GameFlagIsSet(0x837) != 0) {
             if (Engine_GameFlagIsSet(0x841) == 0) {
                 if (Engine_GameFlagIsSet(0x30c) == 0) {
-                    record = (s32)Engine_ActorGet(0);
+                    record = (s32)Object_GetById(0);
                     if (*(s32 *)(record + 16) <= 0x479ffff) {
                         SceneActor_RunActor22PlacementSequence(0x19c, 0x460);
                         Call3(Engine_ActorWalkToAndWait, 0, 0x19e, 0x42c);
@@ -1127,7 +1127,7 @@ void HaidiaArashi_RunCallOutSequence(void)
     }
     Engine_EventShowMessage(22, 0);
     Engine_ActorSetAnimation(22, 2);
-    record = (s32)Engine_ActorGet(0);
+    record = (s32)Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -1172,7 +1172,7 @@ void FieldScene_RunScene372SequenceE(void)
         Event_ShowMessage(22, 0);
         Actor_SetSpeed(22, 0x10000, 0x8000);
         Actor_SetAnimation(22, 2);
-        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -1209,7 +1209,7 @@ void FieldScene_RunScene372SequenceD(void)
     Actor_FaceDirection(22, 0x4000, 0);
     Event_ShowMessage(22, 0);
     Actor_SetAnimation(22, 2);
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -1405,7 +1405,7 @@ void Scene_BoulderFalls(void)
         Actor_SetAnimationAndWait(22, 3);
         Event_Wait(20);
         Actor_SetAnimation(22, 2);
-        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -1480,7 +1480,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(10);
+        o = (u8 *)((s32 (*)())Object_GetById)(10);
         v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
         tbl = HaidiaArashi_ActorEightScript;
         *(u16 *)(o + 0x64) = v;
@@ -1494,7 +1494,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(24);
+        o = (u8 *)((s32 (*)())Object_GetById)(24);
         v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
         *(u16 *)(o + 0x64) = v;
         Engine_ActorEnableActionCallback(24, (s32)tbl);
@@ -1505,7 +1505,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(25);
+        o = (u8 *)((s32 (*)())Object_GetById)(25);
         v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
         *(u16 *)(o + 0x64) = v;
         Engine_ActorEnableActionCallback(25, (s32)tbl);
@@ -1514,7 +1514,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorFaceDirection, 26, 0x3000, 0);
     Call3(Engine_ActorSetPosition, 23, 0xF30000, 0x4FD0000);
     Call3(Engine_ActorFaceDirection, 23, 0xC000, 0);
-    Engine_ActorSetSpriteFlags(((s32 (*)())Engine_ActorGet)(23), 0);
+    Engine_ActorSetSpriteFlags(((s32 (*)())Object_GetById)(23), 0);
     Engine_TaskWait(3);
     Engine_EventSetMessage((s32)MsgHaidiaNoBrother);
     Engine_EventShowMessage(0x201a, 0);
@@ -1522,7 +1522,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorWalkToAndWait, ACTOR_PARTY_LEADER, 150, 0x446);
     {
         u8 *p;
-        p = (u8 *)((s32 (*)())Engine_ActorGet)(ACTOR_PARTY_LEADER);
+        p = (u8 *)((s32 (*)())Object_GetById)(ACTOR_PARTY_LEADER);
         if (p != 0) {
             Engine_ActorSetPosition(22, *(s32 *)(p + 8), *(s32 *)(p + 16));
         }
@@ -1557,21 +1557,21 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Engine_ActorSetAnimation(10, 1);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(10);
+        o = (u8 *)((s32 (*)())Object_GetById)(10);
         *(s32 *)(o + 0x18) = 0x10000;
         *(s32 *)(o + 0x1C) = 0x10000;
     }
     Engine_ActorSetAnimation(24, 1);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(24);
+        o = (u8 *)((s32 (*)())Object_GetById)(24);
         *(s32 *)(o + 0x18) = 0x10000;
         *(s32 *)(o + 0x1C) = 0x10000;
     }
     Engine_ActorSetAnimation(25, 1);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(25);
+        o = (u8 *)((s32 (*)())Object_GetById)(25);
         *(s32 *)(o + 0x18) = 0x10000;
         *(s32 *)(o + 0x1C) = 0x10000;
     }
@@ -1601,7 +1601,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Engine_AudioPlayCue(106);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(23);
+        o = (u8 *)((s32 (*)())Object_GetById)(23);
         *(s32 *)(o + 0x28) = 0x20000;
     }
     Engine_EventWait(6);
@@ -1621,12 +1621,12 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call2(Engine_EventShowMessage, 0x800A, 0);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(25);
+        o = (u8 *)((s32 (*)())Object_GetById)(25);
         o[0x5A] &= 0xFE;
     }
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(26);
+        o = (u8 *)((s32 (*)())Object_GetById)(26);
         o[0x5A] &= 0xFE;
     }
     Call3(Engine_ActorSetSpeed, 25, 0x9999, 0x4CCC);
@@ -1635,12 +1635,12 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorMoveToAndWait, 26, 227, 0x4A5);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(25);
+        o = (u8 *)((s32 (*)())Object_GetById)(25);
         o[0x5A] |= 1;
     }
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Engine_ActorGet)(26);
+        o = (u8 *)((s32 (*)())Object_GetById)(26);
         o += 0x5A;
         /* FAKEMATCH: the set bit first, so the or writes into the register
            that holds it, as the ROM's does. */
@@ -1923,13 +1923,13 @@ void HaidiaArashi_RunScene02DEC(void)
             Call3(Engine_ActorSetSpeed, 26, 0x10000, 0x8000);
             Call3(Engine_ActorSetSpeed, 8, 0x10000, 0x8000);
             Call3(Engine_ActorWalkToAndWait, 0, 217, 0x557);
-            record = (s32)Engine_ActorGet(0);
+            record = (s32)Object_GetById(0);
             if ((s32)record != 0) {
                 Engine_ActorSetPosition(22, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
             }
             Call3(Engine_ActorWalkToAndWait, 22, 235, 0x557);
             Call3(Engine_ActorFaceDirection, 22, 0xb000, 0);
-            record = (s32)Engine_ActorGet(0);
+            record = (s32)Object_GetById(0);
             if ((s32)record != 0) {
                 Engine_ActorSetPosition(26, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
             }
@@ -1937,15 +1937,15 @@ void HaidiaArashi_RunScene02DEC(void)
             Call3(Engine_ActorFaceDirection, 26, 0xd000, 0);
             Call3(Engine_ActorSetPosition, 25, 0xf70000, 0x4ba0000);
             Engine_ActorFaceDirection(25, 0x6000, 0);
-            record = (s32)Engine_ActorGet(8);
+            record = (s32)Object_GetById(8);
             p4 = *(s32 *)((s32)record + 80);
             ((struct Flags35 *)record)->flags &= 254;
             ((struct Flags9 *)p4)->mode = 1;
-            rec = (s32)Engine_ActorGet(0);
+            rec = (s32)Object_GetById(0);
             p4 = *(s32 *)((s32)rec + 80);
             ((struct Flags35 *)rec)->flags &= 254;
             ((struct Flags9 *)p4)->mode = 2;
-            record = (s32)Engine_ActorGet(0);
+            record = (s32)Object_GetById(0);
             if ((s32)record != 0) {
                 Engine_ActorSetPosition(8, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
             }
@@ -2009,7 +2009,7 @@ void HaidiaArashi_RunScene02DEC(void)
             v5 = 1;
             Engine_ActorSetAnimationAndWait(8, 3);
             rec[35] |= v5;
-            record = (s32)Engine_ActorGet(8);
+            record = (s32)Object_GetById(8);
             record[35] |= v5;
             Scene_RunActorGroupDepartureSequence();
             Engine_GameFlagSet(0x841);

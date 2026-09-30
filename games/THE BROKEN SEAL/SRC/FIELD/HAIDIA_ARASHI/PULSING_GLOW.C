@@ -16,8 +16,8 @@ void HaidiaArashi_UpdatePulsingGlow(void)
     struct FieldSprite *sprite;
     s16 *timer;
 
-    source = Engine_ActorGet(19);
-    glow = Engine_ActorGet(27);
+    source = Object_GetById(19);
+    glow = Object_GetById(27);
     sprite = glow->sprite;
     timer = &((struct Pulse *)source)->timer;
     if (*timer != 0) {

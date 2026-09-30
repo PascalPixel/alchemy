@@ -299,7 +299,7 @@ Func_080999f0:
 	strb	r2, [r1, #9]
 	adds	r0, r5, #0
 	movs	r1, #8
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	adds	r0, r5, #0
 	movs	r1, #7
 	bl	Animation_ApplyChildValuesFar

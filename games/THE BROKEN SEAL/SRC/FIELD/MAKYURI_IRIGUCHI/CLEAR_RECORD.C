@@ -4,7 +4,7 @@
  * Clear the current record's flag word and, if it has a linked object, reset
  * that object's halfword at +0x64, notify twice and drop the link.  The
  * 72-byte owner includes its three pool words.  Engine_ObjectSetScript and
- * Engine_ObjectSetAnimation are one import called twice with very different second
+ * Object_SetMode are one import called twice with very different second
  * arguments; its parameter meaning is unverified, so each call is left as
  * compiled rather than unified.
  */

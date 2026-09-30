@@ -15,7 +15,6 @@ enum PartyEventsMessage {
 
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
-u8 *Object_GetById();
 void SceneChannel_ConfigureUniformAndHandoff(s32);
 void SceneChannel_ConfigureUniformAndHandoff();
 s32 Object_SetActionCallbackAndRefreshById();
@@ -225,7 +224,7 @@ void FieldScene_DispatchSceneByIndex(void)
     switch (gGameState.entrance) {
     case 9:
         if (GameFlag_IsSet(0x941) != 0) {
-            rec = Object_GetById(8);
+            rec = (u8 *)Object_GetById(8);
             h = 0x1000;
             *(u16 *)(rec + 6) = h;
 
@@ -236,7 +235,7 @@ void FieldScene_DispatchSceneByIndex(void)
             Actor_SetPosition(9, 0, 0);
             if (GameFlag_IsSet(0x321) != 0) {
                 Actor_SetPosition(8, x1, z1);
-                rec = Object_GetById(8);
+                rec = (u8 *)Object_GetById(8);
                 h = 0xd000;
                 *(u16 *)(rec + 6) = h;
             }
@@ -781,15 +780,15 @@ void Scene_RunPartySequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x360, 0x1f2);
-    record = Object_GetById(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Object_GetById(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Object_GetById(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }

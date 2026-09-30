@@ -31,8 +31,6 @@ typedef struct {
 ActorState *GetActorState(s32 actor_id);
 void Object_RefreshSelectorById();
 
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-u8 *Object_GetById();
 
 enum FacingGatedMessage {
     MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS = 0x1035,
@@ -294,9 +292,9 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Event_Wait(10);
     ((struct FacingObject *(*)())Object_GetById)(8)->unknown_64 = 1;
-    *(s32 *)(Object_GetById(8) + 108) = (s32)UpdateFacingFromResolvedObject;
+    *(s32 *)((u8 *)Object_GetById(8) + 108) = (s32)UpdateFacingFromResolvedObject;
     ((struct FacingObject *(*)())Object_GetById)(12)->unknown_64 = 1;
-    *(s32 *)(Object_GetById(12) + 108) = (s32)UpdateFacingFromResolvedObject;
+    *(s32 *)((u8 *)Object_GetById(12) + 108) = (s32)UpdateFacingFromResolvedObject;
     Engine_ActorWalkToAndWait(1, 196, 180);
     Actor_WalkToAndWait(ACTOR_GERALD, 184, 184);
     Actor_WalkToAndWait(ACTOR_GERALD, 180, 180);
@@ -311,8 +309,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Event_Wait(10);
     Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
     Event_Wait(15);
-    *(s32 *)(Object_GetById(12) + 108) = 0;
-    *(s32 *)(Object_GetById(8) + 108) = 0;
+    *(s32 *)((u8 *)Object_GetById(12) + 108) = 0;
+    *(s32 *)((u8 *)Object_GetById(8) + 108) = 0;
     Engine_ActorStartRepeatedMotion(8, 2);
     Engine_ActorShowEmote(8, 0x100, 0);
     ((void (*)())Engine_EventWait)(60); /* main:0808a080 */
@@ -501,7 +499,7 @@ void ShindenHeya_SpawnActorSpark(s32 id)
     s32 r;
     struct Half zero;
 
-    actor = (u8 *)Engine_ActorGet(id);
+    actor = (u8 *)Object_GetById(id);
     if (actor == 0)
         return;
     r = IwramUnsignedRemainder(Engine_RandomNext(), 20);

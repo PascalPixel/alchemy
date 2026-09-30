@@ -3,6 +3,9 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 
+/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
+ * this file's code made before it shared the header's declaration. */
+
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -68,7 +71,6 @@ extern u8 HexDigits[];
 
 void Owner_RefreshActiveRatios();
 typedef void(*SceneTask)(void);
-struct FieldActor *Object_GetById(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -177,7 +179,7 @@ void SceneActor_MarkObjectAtTiles94To95(void)
     s32 x;
     s32 y;
 
-    o = Object_GetById();
+    o = ((struct FieldActor * (*)(void))Object_GetById)();
     if (o != 0) {
         x = o->x.fixed >> 19;
         y = o->z.fixed >> 19;

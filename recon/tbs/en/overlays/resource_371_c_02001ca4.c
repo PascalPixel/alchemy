@@ -226,8 +226,8 @@ void WorldMap_RunVenusDjinniMeeting(void)
     s32 text;
     u8 *mode;
 
-    rec8 = Engine_ActorGet(ACTOR);
-    record = Engine_ActorGet(LEADER);
+    rec8 = Object_GetById(ACTOR);
+    record = Object_GetById(LEADER);
     mid_x.fixed = (record->x.fixed - ANCHOR_X) / 2 + ANCHOR_X;
     mid_y.fixed = (record->z.fixed - ANCHOR_Y) / 2 + ANCHOR_Y;
     page = 0;
@@ -236,7 +236,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
         Main_08077260(1);
         Discard1(Engine_GameFlagSet, 0x16e);
         Engine_EventBegin();
-        record = Engine_ActorGet(LEADER);
+        record = Object_GetById(LEADER);
         if (record != 0) {
             Engine_ActorSetPosition(ACTOR, record->x.fixed, record->z.fixed);
         }
@@ -373,7 +373,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
     }
     /* Repeat visit: the short branch with two confirmations. */
     Engine_EventBegin();
-    record = Engine_ActorGet(LEADER);
+    record = Object_GetById(LEADER);
     if (record != 0) {
         Engine_ActorSetPosition(ACTOR, record->x.fixed, record->z.fixed);
     }

@@ -305,7 +305,7 @@ void Engine_EventWaitForScreen(void);
 void Engine_BlendSetDarkenTarget16(s32 target);
 u8 *Engine_ResourceGetTableEntry(s32 resource);
 void Engine_ResourceDecodeType01(const u8 *source, void *destination);
-struct FieldActor *Engine_ActorGet(s32 actor);
+struct FieldActor *Object_GetById(s32 actor);
 void Engine_ActorSetPosition(s32 actor, s32 fixed_x, s32 fixed_z);
 void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
@@ -352,7 +352,7 @@ void *Engine_HeapAllocate(s32 slot, s32 size);
 void Engine_HeapRelease(s32 slot);
 s32 Engine_VramLoad(s32 block, s32 size, const void *data);
 struct FieldActor *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y, s32 fixed_z);
-void Engine_ObjectSetAnimation(struct FieldActor *object, s32 animation);
+void Object_SetMode(struct FieldActor *object, s32 animation);
 void Engine_ObjectSetScript(struct FieldActor *object, const s32 *script);
 void Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
 void ObjectGroup_SetChildValue(struct FieldActor *object, s32 palette);
@@ -415,12 +415,10 @@ void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
  */
 void Battle_WaitMode0(s32 frames);
 void WaitFrames(s32 frames);
-struct FieldActor *Object_GetById(s32 actor);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void Object_SetModeById(s32 actor, s32 animation);
-void Object_SetMode(struct FieldActor *object, s32 animation);
 void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
                                s32 dest_y);
 void Audio_PlayCue(s32 cue);
@@ -521,17 +519,10 @@ static inline void Event_WaitForScreen(void)
  * Actors. Positions set directly are fixed-point; destinations and offsets
  * are whole pixels. Walking plays the walk animation on the way.
  */
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
-static inline struct FieldActor *Actor_Get(s32 actor)
-{
-    return Engine_ActorGet(actor);
-}
-#else
 static inline struct FieldActor *Actor_Get(s32 actor)
 {
     return Object_GetById(actor);
 }
-#endif
 
 static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
 {
@@ -815,17 +806,10 @@ static inline struct FieldActor *Object_Create(s32 type, s32 fixed_x, s32 fixed_
     return Engine_ObjectCreate(type, fixed_x, fixed_y, fixed_z);
 }
 
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
-static inline void Object_SetAnimation(struct FieldActor *object, s32 animation)
-{
-    Engine_ObjectSetAnimation(object, animation);
-}
-#else
 static inline void Object_SetAnimation(struct FieldActor *object, s32 animation)
 {
     Object_SetMode(object, animation);
 }
-#endif
 
 static inline void Object_SetScript(struct FieldActor *object, const s32 *script)
 {

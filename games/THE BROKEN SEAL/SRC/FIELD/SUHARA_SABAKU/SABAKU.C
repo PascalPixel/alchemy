@@ -171,14 +171,14 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     base = (u8 *)((s16 *)&gGameState);
     p6 = *(u8 **)(base + 500);
     p10 = a0;
-    rec7 = Engine_ActorGet((s32)p6);
+    rec7 = Object_GetById((s32)p6);
     Actor_Get(p10);
     rec2 = GameFlag_IsSet(0x20f);
     if (rec2 == 0) {
         Event_Begin();
         Actor_SetAttachedEffect((s32)p6, 0x101);
         Actor_SetAnimation((s32)p6, 9);
-        record = Engine_ActorGet(p10);
+        record = Object_GetById(p10);
         if (record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -235,8 +235,8 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     s32 v6;
 
     p10 = a0;
-    rec7 = Engine_ActorGet(gGameState.selected_actor);
-    rec = Engine_ActorGet(p10);
+    rec7 = Object_GetById(gGameState.selected_actor);
+    rec = Object_GetById(p10);
     rec2 = Engine_GameFlagIsSet(0x340);
     p9 = rec7->x.part.pixel;
     p11 = rec7->z.part.pixel;
@@ -282,17 +282,17 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
             Engine_GameFlagSet(0x9b6);
             Call3(Engine_ActorSetSpeed, 13, 0x10000, 0x8000);
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
-            record = Engine_ActorGet(0);
+            record = Object_GetById(0);
             if ((s32)record != 0) {
                 Engine_ActorSetPosition(13, record->x.fixed, record->z.fixed);
             }
             Call3(Engine_ActorFaceActor, 13, 0x4000, 0);
-            Engine_ActorGet(13)->unknown_5a &= 254;
+            Object_GetById(13)->unknown_5a &= 254;
             Engine_ActorWalkTo(13, p9, (p11 - 16));
-            Engine_ActorGet(0)->unknown_5a &= 254;
+            Object_GetById(0)->unknown_5a &= 254;
             Engine_ActorWalkToAndWait(0, (p9 + 8), (p11 - 40));
             Engine_EventWait(1);
-            SetFlagBits(&Engine_ActorGet(0)->unknown_5a, 1);
+            SetFlagBits(&Object_GetById(0)->unknown_5a, 1);
             Engine_ActorSetAnimation(13, 1);
             Engine_ActorFaceDirection(0, 0x4000, 0);
             Engine_EventSetMessage((s32)MsgSuharaSandstorm);
@@ -311,7 +311,7 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
             Engine_EventShowMessage(13, 0);
             Call3(Engine_ActorSetSpeed, 13, 0x10000, 0x8000);
             Engine_ActorSetAnimation(13, 2);
-            record = Engine_ActorGet(0);
+            record = Object_GetById(0);
             if ((s32)record != 0) {
                 Engine_ActorSetDestination(13, record->x.part.pixel, record->z.part.pixel);
             }
@@ -398,7 +398,7 @@ s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
     s32 dz;
     s32 phase;
 
-    leader = Engine_ActorGet(gGameState.selected_actor);
+    leader = Object_GetById(gGameState.selected_actor);
     actor->acceleration = 0x4000;
     actor->speed = 0x18000;
     actor->motion_flags = 0;
@@ -493,7 +493,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
             }
         }
     }
-    Engine_ActorGet(state->words[125])->motion_flags = 3;
+    Object_GetById(state->words[125])->motion_flags = 3;
 }
 
 void SuharaSabaku_DropAndLeave(void)
@@ -504,8 +504,8 @@ void SuharaSabaku_DropAndLeave(void)
     s32 i;
 
     other = GameFlag_GetByte(0x218);
-    leader = Engine_ActorGet(gGameState.selected_actor);
-    partner = Engine_ActorGet(other);
+    leader = Object_GetById(gGameState.selected_actor);
+    partner = Object_GetById(other);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_AudioPlayCue(219);
@@ -548,8 +548,8 @@ s32 FieldScene_RunOpeningAuxiliarySequence(void)
     s32 record;
 
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku2) {
-        Engine_ActorGet(14)->priority_flags = 2;
-        Engine_ActorGet(14)->motion_flags = 3;
+        Object_GetById(14)->priority_flags = 2;
+        Object_GetById(14)->motion_flags = 3;
         Actor_SetPosition(14, 0, 0);
         Map_CopyCellAttributes(16, 44, 1, 1, 15, 44);
         MapObject_SetPosition(100, 0, 0);
@@ -573,8 +573,8 @@ s32 FieldScene_RunOpeningAuxiliarySequence(void)
 s32 FieldScene_RunScene3c0SequenceA(void)
 {
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku2) {
-        Engine_ActorGet(14)->priority_flags = 2;
-        Engine_ActorGet(14)->motion_flags = 0;
+        Object_GetById(14)->priority_flags = 2;
+        Object_GetById(14)->motion_flags = 0;
         Actor_SetPosition(14, 0xf80000, 0x2c80000);
         Map_CopyCellAttributes(31, 95, 1, 1, 15, 44);
         MapObject_SetPosition(100, -1, -1);
@@ -655,7 +655,7 @@ void SuharaSabaku_ApplyVisitFlagBlend(void)
         Engine_GameFlagSet(0x20a);
     }
     for (id = 8; id <= 12; id++) {
-        actor = Engine_ActorGet(id);
+        actor = Object_GetById(id);
         if (actor != 0) {
             if (!Engine_GameFlagIsSet(0x109)) {
                 actor->scale_x = 0x800;
@@ -702,7 +702,7 @@ void SuharaSabaku_ApplyAltarFlagBlend(void)
         Engine_GameFlagSet(0x208);
     }
     for (id = 8; id <= 10; id++) {
-        actor = Engine_ActorGet(id);
+        actor = Object_GetById(id);
         if (actor != 0) {
             if (!Engine_GameFlagIsSet(0x109)) {
                 actor->scale_x = 0x800;
@@ -712,7 +712,7 @@ void SuharaSabaku_ApplyAltarFlagBlend(void)
             sprite->flags = 0;
         }
     }
-    actor = Engine_ActorGet(11);
+    actor = Object_GetById(11);
     if (actor != 0) {
         u8 *part;
 

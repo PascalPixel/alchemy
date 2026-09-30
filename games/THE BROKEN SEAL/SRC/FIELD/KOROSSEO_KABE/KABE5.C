@@ -28,8 +28,8 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     *(s32 *)(descriptor + 232) = centre;
     *(s32 *)(descriptor + 236) = extra;
 
-    first_record = (u8 *)Engine_ActorGet(first);
-    second_record = (u8 *)Engine_ActorGet(second);
+    first_record = (u8 *)Object_GetById(first);
+    second_record = (u8 *)Object_GetById(second);
 
     if (GameFlag_IsSet(0x109) == 0) {
         *(s32 *)(second_record + 8) =

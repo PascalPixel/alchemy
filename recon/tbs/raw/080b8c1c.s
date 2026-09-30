@@ -83,7 +83,7 @@ BattlePres_RunUnitAction:
 	ldr	r0, [r0, #0]
 	movs	r1, #3
 	mov	sl, r0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	mov	r0, sl
 	movs	r1, #16
 	bl	ObjectDispatch_ApplyValueToChildrenFar
@@ -170,7 +170,7 @@ BattlePres_RunUnitAction:
 	bl	0x080c9018
 	mov	r0, sl
 	movs	r1, #1
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	add	r5, sp, #8
 	ldr	r3, [r5, #20]
 	adds	r2, r5, #0

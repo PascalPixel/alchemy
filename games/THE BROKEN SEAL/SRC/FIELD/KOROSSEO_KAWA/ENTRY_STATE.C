@@ -39,7 +39,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 
     gEventWork->start_transition = 0;
     GameFlag_Set(0x144);
-    actor = Engine_ActorGet(9);
+    actor = Object_GetById(9);
     hit = Map_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
     if (actor->y.fixed == 0 && hit == 0) {
         actor->priority_flags = 2;
@@ -50,28 +50,28 @@ s32 KorosseoKawa_ApplyEntryState(void)
     if (x == 0) {
         x = 25;
     }
-    actor = Engine_ActorGet(10);
+    actor = Object_GetById(10);
     actor->x.fixed = (x << 20) + 0x80000;
     actor->motion_flags = 0;
     actor->priority_flags = 2;
     Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
     Scheduler_AddOrUpdateCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
-    actor = Engine_ActorGet(15);
+    actor = Object_GetById(15);
     actor->unknown_22 = 1;
     zero = 0;
     if (Engine_GameFlagIsSet(0x303)) {
-        Engine_ObjectSetAnimation(actor, 4);
+        Object_SetMode(actor, 4);
         Engine_ActorSetSpriteFlags(actor, 0);
         actor->collision_flags = zero;
         actor->priority_flags = 3;
         Map_CopyCellAttributes(47, 24, 1, 1, 47, 12);
     }
-    actor = Engine_ActorGet(17);
+    actor = Object_GetById(17);
     col = actor->z.fixed >> 20;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
     Map_CopyCellAttributes(64, 24, 3, 1, 64, col);
-    actor = Engine_ActorGet(18);
+    actor = Object_GetById(18);
     col = actor->x.fixed >> 20;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
@@ -81,18 +81,18 @@ s32 KorosseoKawa_ApplyEntryState(void)
         Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
         Map_CopyCells(100, 29, 1, 3, 34, 38);
     }
-    actor = Engine_ActorGet(13);
+    actor = Object_GetById(13);
     if (Engine_GameFlagIsSet(0x301)) {
         Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
         actor->motion_flags = zero;
         actor->acceleration = 0x6666;
         actor->speed = 0xcccc;
         actor->y.fixed = 0x80000;
-        Engine_ObjectSetAnimation(actor, 3);
+        Object_SetMode(actor, 3);
     } else {
-        Engine_ObjectSetAnimation(actor, 2);
+        Object_SetMode(actor, 2);
     }
-    Engine_ActorGet(14)->priority_flags = 2;
+    Object_GetById(14)->priority_flags = 2;
     Korosseo_ShowItemIcon(24, 120);
     Korosseo_ShowItemIcon(25, 127);
     switch (((union GameStateRows *)&gGameState)->halves[225][0]) {

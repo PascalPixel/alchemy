@@ -2,6 +2,9 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+
+/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
+ * this file's code made before it shared the header's declaration. */
 extern u8 MsgKorosseoAskAttendantsForExplanationsStages[];
 extern u8 MsgKorosseoRobinYoureContestantInFinals[];
 extern u8 MsgKorosseoSiteFirstFinalsBattle[];
@@ -48,7 +51,6 @@ typedef struct ActiveSubjectSlot {
 
 extern u8 HexDigits[];
 
-s32 Object_GetById();
 typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
@@ -113,7 +115,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     s32 x;
     s32 z;
 
-    actor = (struct FieldActor *)Object_GetById();
+    actor = (struct FieldActor *)((s32 (*)())Object_GetById)();
     x = actor->x.part.pixel;
     z = actor->z.part.pixel;
     Event_Begin();

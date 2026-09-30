@@ -986,6 +986,8 @@ SECTIONS
         "*/recon/tla/raw/0811be68.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811bec8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811bf18.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/BATTLE/MOTION/SET_OBJECT_POSITION.o"(.text)
+        "*/recon/tla/raw/0811bfd0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811c210.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811c214.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0811c274.o"(.text .rodata .data .padding)

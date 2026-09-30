@@ -5,14 +5,11 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.o"(.text)
-        "*/resource_64d_overlay.o"(.text.x02008038)
-        "*/resource_64d_overlay.o"(.text.x02008040)
-        "*/resource_64d_overlay.o"(.text.x02008044)
-        "*/resource_64d_overlay.o"(.text.x0200804c)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/SCENE_TABLES.o"(.text)
         "*/resource_64d_overlay.o"(.text.x02008054)
         "*/resource_64d_overlay.o"(.text.x0200809c)
         "*/resource_64d_overlay.o"(.text.x020080c8)
-        "*/resource_64d_overlay.o"(.text.x02008120)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/SCENE_EVENTS.o"(.text)
         "*/resource_64d_overlay.o"(.text.x02008128)
         "*/resource_64d_overlay.o"(.text.x02008308)
         "*/resource_64d_overlay.o"(.text.x0200830c)

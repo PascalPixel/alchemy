@@ -1,37 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_0200292c
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	ldr r0, .L_02008044
-	bx lr
-.L_02008044:
-	.4byte Data_0200295c
-	.section .text.x02008048,"ax",%progbits
-	.global Func_02000048
-	.thumb_func
-Func_02000048:
-	ldr r0, .L_0200804c
-	bx lr
-.L_0200804c:
-	.4byte Data_0200298c
-	.section .text.x02008050,"ax",%progbits
-	.global Func_02000050
-	.thumb_func
-Func_02000050:
-	ldr r0, .L_02008054
-	bx lr
-.L_02008054:
-	.4byte Data_02002a14
 	.section .text.x02008058,"ax",%progbits
 	.global Func_02000058
 	.thumb_func
@@ -279,14 +247,6 @@ Func_020001ec:
 	pop {r5, r6, r7, pc}
 .L_02008278:
 	.4byte 0x0000278d
-	.section .text.x0200827c,"ax",%progbits
-	.global Func_0200027c
-	.thumb_func
-Func_0200027c:
-	ldr r0, .L_02008280
-	bx lr
-.L_02008280:
-	.4byte Data_02002b94
 	.section .text.x02008284,"ax",%progbits
 	.global Func_02000284
 	.thumb_func
@@ -4235,8 +4195,8 @@ Func_020013f0:
 	mov r10, r5
 	pop {r5, r6, pc}
 	.section .rodata.x0200a92c,"a",%progbits
-	.global Data_0200292c
-Data_0200292c:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -4249,8 +4209,8 @@ Data_0200292c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200295c
-Data_0200295c:
+	.global gSceneRegions
+gSceneRegions:
 	.4byte 0x002001a0
 	.4byte 0x01b00250
 	.4byte 0x02600030
@@ -4263,8 +4223,8 @@ Data_0200295c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200298c
-Data_0200298c:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000000cb
 	.4byte 0x101010ca
 	.4byte 0xffffffff
@@ -4299,8 +4259,8 @@ Data_0200298c:
 	.4byte 0x110100ca
 	.4byte 0xffffffff
 	.4byte 0x000001ff
-	.global Data_02002a14
-Data_02002a14:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff009d
 	.4byte 0x00000002
 	.4byte 0x01e00000
@@ -4397,8 +4357,8 @@ Data_02002a14:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02002b94
-Data_02002b94:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

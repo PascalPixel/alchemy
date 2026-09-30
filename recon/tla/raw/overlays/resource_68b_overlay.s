@@ -187,36 +187,6 @@ Func_020000e8:
 	pop {r5, r6, r7, pc}
 .L_0200819c:
 	.4byte gPartyState
-	.section .text.x020081a0,"ax",%progbits
-	.global Func_020001a0
-	.thumb_func
-Func_020001a0:
-	ldr r0, .L_020081a4
-	bx lr
-.L_020081a4:
-	.4byte Data_02001e84
-	.section .text.x020081a8,"ax",%progbits
-	.global Func_020001a8
-	.thumb_func
-Func_020001a8:
-	movs r0, #0
-	bx lr
-	.section .text.x020081ac,"ax",%progbits
-	.global Func_020001ac
-	.thumb_func
-Func_020001ac:
-	ldr r0, .L_020081b0
-	bx lr
-.L_020081b0:
-	.4byte Data_02001eb4
-	.section .text.x020081b4,"ax",%progbits
-	.global Func_020001b4
-	.thumb_func
-Func_020001b4:
-	ldr r0, .L_020081b8
-	bx lr
-.L_020081b8:
-	.4byte Data_02001f14
 	.section .text.x020081bc,"ax",%progbits
 	.global Func_020001bc
 	.thumb_func
@@ -1278,14 +1248,6 @@ Func_02000934:
 	.4byte 0x000028a9
 .L_02008a60:
 	.4byte 0x00013333
-	.section .text.x02008a64,"ax",%progbits
-	.global Func_02000a64
-	.thumb_func
-Func_02000a64:
-	ldr r0, .L_02008a68
-	bx lr
-.L_02008a68:
-	.4byte Data_020021f4
 	.section .text.x02008a6c,"ax",%progbits
 	.global Func_02000a6c
 	.thumb_func
@@ -3179,8 +3141,8 @@ Data_02001e04:
 	.4byte 0x0000000d
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
-	.global Data_02001e84
-Data_02001e84:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000001cc
 	.4byte 0x40000226
@@ -3193,8 +3155,8 @@ Data_02001e84:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02001eb4
-Data_02001eb4:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000000ca
 	.4byte 0x101010cb
 	.4byte 0xffffffff
@@ -3219,8 +3181,8 @@ Data_02001eb4:
 	.4byte 0x111110cc
 	.4byte 0xffffffff
 	.4byte 0x000001ff
-	.global Data_02001f14
-Data_02001f14:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0197
 	.4byte 0x00000001
 	.4byte 0x03b80000
@@ -3423,8 +3385,8 @@ Data_020021e4:
 Data_020021ec:
 	.4byte .L_0200a184
 	.4byte 0x00320036
-	.global Data_020021f4
-Data_020021f4:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte Func_02000278

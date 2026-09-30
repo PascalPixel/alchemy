@@ -5,9 +5,9 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_680/ENTRY.o"(.text)
-        "*/resource_680_overlay.o"(.text.x02008038)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_680/SCENE_TABLES.o"(.text)
         "*/resource_680_overlay.o"(.text.x02008040)
-        "*/resource_680_overlay.o"(.text.x02008078)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_680/SCENE_TABLES_2.o"(.text)
         "*/resource_680_overlay.o"(.text.x02008080)
         "*/resource_680_overlay.o"(.text.x020080d0)
         "*/resource_680_overlay.o"(.text.x020080e0)

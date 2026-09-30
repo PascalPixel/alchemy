@@ -316,20 +316,6 @@ Func_02000290:
 	.4byte Data_02005314
 .L_020082cc:
 	.4byte Data_02005284
-	.section .text.x020082d0,"ax",%progbits
-	.global Func_020002d0
-	.thumb_func
-Func_020002d0:
-	movs r0, #0
-	bx lr
-	.section .text.x020082d4,"ax",%progbits
-	.global Func_020002d4
-	.thumb_func
-Func_020002d4:
-	ldr r0, .L_020082d8
-	bx lr
-.L_020082d8:
-	.4byte Data_02005344
 	.section .text.x020082dc,"ax",%progbits
 	.global Func_020002dc
 	.thumb_func
@@ -8872,8 +8858,8 @@ Data_02005314:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02005344
-Data_02005344:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000000f1
 	.4byte 0x0011f0f7
 	.4byte 0x002200f7

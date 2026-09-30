@@ -9,28 +9,6 @@ Func_02000038:
 	movs r1, #11
 	bl Func_02002940
 	pop {pc}
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_02002b24
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	movs r0, #0
-	bx lr
-	.section .text.x02008050,"ax",%progbits
-	.global Func_02000050
-	.thumb_func
-Func_02000050:
-	ldr r0, .L_02008054
-	bx lr
-.L_02008054:
-	.4byte Data_02002b54
 	.section .text.x02008058,"ax",%progbits
 	.global Func_02000058
 	.thumb_func
@@ -5098,8 +5076,8 @@ Data_02002af4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000026
-	.global Data_02002b24
-Data_02002b24:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -5112,8 +5090,8 @@ Data_02002b24:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02002b54
-Data_02002b54:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x0000008f
 	.4byte 0x00123002
 	.4byte 0x00201090

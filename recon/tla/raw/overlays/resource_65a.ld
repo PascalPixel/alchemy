@@ -10,7 +10,7 @@ SECTIONS
         "*/resource_65a_overlay.o"(.text.x02008270)
         "*/resource_65a_overlay.o"(.text.x02008318)
         "*/resource_65a_overlay.o"(.text.x02008358)
-        "*/resource_65a_overlay.o"(.text.x02008380)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_65A/SCENE_TABLES.o"(.text)
         "*/resource_65a_overlay.o"(.text.x02008388)
         "*/resource_65a_overlay.o"(.text.x020083ec)
         "*/resource_65a_overlay.o"(.text.x02008474)

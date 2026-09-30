@@ -5,10 +5,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_69B/ENTRY.o"(.text)
-        "*/resource_69b_overlay.o"(.text.x02008038)
-        "*/resource_69b_overlay.o"(.text.x02008040)
-        "*/resource_69b_overlay.o"(.text.x02008044)
-        "*/resource_69b_overlay.o"(.text.x0200804c)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_69B/SCENE_TABLES.o"(.text)
         "*/resource_69b_overlay.o"(.text.x02008054)
         "*/resource_69b_overlay.o"(.text.x020080b4)
         "*/resource_69b_overlay.o"(.text.x020080d0)
@@ -24,7 +21,7 @@ SECTIONS
         "*/resource_69b_overlay.o"(.text.x02008680)
         "*/resource_69b_overlay.o"(.text.x020086dc)
         "*/resource_69b_overlay.o"(.text.x02008704)
-        "*/resource_69b_overlay.o"(.text.x02008718)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_69B/SCENE_EVENTS.o"(.text)
         "*/resource_69b_overlay.o"(.text.x02008720)
         "*/resource_69b_overlay.o"(.text.x020087d0)
         "*/resource_69b_overlay.o"(.text.x02008854)

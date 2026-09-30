@@ -5,8 +5,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/DERI_HEYA/ENTRY.o"(.text)
-        "*/resource_652_overlay.o"(.text.x02008038)
-        "*/resource_652_overlay.o"(.text.x02008040)
+        "*/games/THE LOST AGE/SRC/FIELD/DERI_HEYA/SCENE_TABLES.o"(.text)
         "*/resource_652_overlay.o"(.text.x02008044)
         "*/resource_652_overlay.o"(.text.x02008064)
         "*/resource_652_overlay.o"(.text.x020080ac)

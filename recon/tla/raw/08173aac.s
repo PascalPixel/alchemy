@@ -1568,7 +1568,7 @@ Func_08173aac:
 	ldr r0, [sp, #24]
 	adds r1, r0, #0
 	adds r1, #12
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	adds r0, r7, #0
 	add r5, sp, #200
 	adds r1, r5, #0

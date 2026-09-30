@@ -26,7 +26,7 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c8268
-	overlay_veneer Func_080c85c8
+	overlay_veneer BattleFx_GetResourceIdFar
 	overlay_veneer Func_080c87c0
 	overlay_veneer Func_080c87c8
 	overlay_veneer Func_081a0008

@@ -15,7 +15,7 @@
 	overlay_veneer Object_ResetMotion
 	overlay_veneer Object_SetPosition
 	overlay_veneer Object_CommitPosition
-	overlay_veneer Func_080201c0
+	overlay_veneer Map_GetTerrainHeightFar
 	overlay_veneer Func_080201e8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Battle_WaitMode0Far

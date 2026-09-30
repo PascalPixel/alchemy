@@ -30,6 +30,6 @@ Func_081a8228:
 	adds r0, r4, r2
 	adds r2, r4, r3
 	adds r3, r5, #0
-	bl Func_081a7870
+	bl Graphics_InterpolatePaletteBuffers
 .L_081a8262:
 	pop {r5, pc}

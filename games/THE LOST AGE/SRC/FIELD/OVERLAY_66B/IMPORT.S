@@ -25,7 +25,7 @@
 	overlay_veneer Object_SetMode
 	overlay_veneer Object_SetCallback
 	overlay_veneer Func_080200c0
-	overlay_veneer Func_080201c0
+	overlay_veneer Map_GetTerrainHeightFar
 	overlay_veneer Func_080201e8
 	overlay_veneer Func_080201f0
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far

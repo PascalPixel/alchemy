@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803d2f0
+	.global Localization_LookupEntryId
 	.thumb_func
-Func_0803d2f0:
+Localization_LookupEntryId:
 	push {r5, lr}
 	adds r3, r0, #0
 	movs r4, #1

@@ -422,7 +422,7 @@ LuckyDice_Run:
 	bl Func_08014de4
 	ldr r0, [sp, #104]
 	ldr r1, [sp, #40]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, .L_081ac728
 	ldr r5, [sp, #108]
 	movs r2, #196
@@ -1170,7 +1170,7 @@ LuckyDice_Run:
 	adds r0, r4, #0
 	adds r1, r6, #0
 	str r4, [sp, #8]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r2, [r6, #8]
 	movs r0, #94
 	adds r0, #255
@@ -1295,7 +1295,7 @@ LuckyDice_Run:
 .L_081acb94:
 	mov r1, r9
 	mov r0, r10
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r5, [sp, #28]
 	ldr r0, [sp, #64]
 	ldmia r5!, {r3}
@@ -1394,7 +1394,7 @@ LuckyDice_Run:
 	adds r1, r5, #0
 	str r3, [r4, #8]
 	str r4, [sp, #8]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [r5, #8]
 	movs r0, #94
 	adds r0, #255

@@ -35,7 +35,7 @@ Engine_MapCopyCellAttributes:
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	overlay_veneer Func_080ad110
+	overlay_veneer Party_RemoveActiveOwnerFar
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:

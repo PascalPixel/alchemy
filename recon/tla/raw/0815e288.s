@@ -25,10 +25,10 @@ Func_0815e288:
 	adds r0, r6, #0
 	adds r1, #12
 	adds r5, #8
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	mov r1, r8
 	adds r0, r5, #0
-	bl Func_08015778
+	bl Render_ProjectPoint
 	mov r2, r10
 	ldr r1, [r2, #12]
 	ldr r6, .L_0815e2f8
@@ -36,7 +36,7 @@ Func_0815e288:
 	.2byte 0xf800
 	adds r5, r0, #0
 	mov r0, r9
-	bl Func_08118070
+	bl Battle_GetObjectTableValueFar
 	adds r1, r0, #0
 	asrs r1, r1, #17
 	adds r0, r5, #0

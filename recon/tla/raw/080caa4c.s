@@ -72,7 +72,7 @@ Func_080caa4c:
 	strh r3, [r5, #20]
 	adds r1, r6, #0
 	adds r0, r5, #0
-	bl Func_080ca6e8
+	bl Event_SpawnObjectTable
 	movs r1, #128
 	lsls r1, r1, #2
 	adds r1, r1, r7
@@ -93,7 +93,7 @@ Func_080caa4c:
 .L_080caafa:
 	mov r0, r9
 	movs r1, #8
-	bl Func_080ca6e8
+	bl Event_SpawnObjectTable
 	adds r3, r6, #0
 	adds r3, #20
 	mov r4, r8
@@ -218,7 +218,7 @@ Func_080caa4c:
 	ldr r1, [r5, #8]
 	adds r2, r2, r0
 	movs r0, #0
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	ldr r1, .L_080cacbc
 	ldr r3, [r5, #12]
 	adds r0, r0, r1

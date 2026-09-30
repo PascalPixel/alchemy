@@ -100,7 +100,7 @@ Game_ResetForNewGame:
 .L_080c9a00:
 	.4byte Data_03001238
 .L_080c9a04:
-	.4byte Data_080f17a8
+	.4byte Field_SceneTable
 .L_080c9a08:
 	.4byte gPartyState
 .L_080c9a0c:

@@ -175,7 +175,7 @@ Func_08178710:
 	bl Func_08014de4
 	ldr r1, [sp, #32]
 	ldr r0, [sp, #60]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r1, [sp, #64]
 	cmp r1, #0
 	bne .L_081788a8

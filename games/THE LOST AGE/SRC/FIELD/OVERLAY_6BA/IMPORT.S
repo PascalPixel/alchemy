@@ -42,7 +42,7 @@
 	overlay_veneer Owner_AdjustFirstValueFar
 	overlay_veneer Owner_AdjustSecondValueFar
 	overlay_veneer Party_ListActiveOwnersFar
-	overlay_veneer Func_080ad110
+	overlay_veneer Party_RemoveActiveOwnerFar
 	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Djinn_ActivateFar
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar

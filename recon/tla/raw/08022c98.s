@@ -44,7 +44,7 @@ Func_08022c98:
 	cmp r0, #0
 	bne .L_08022cea
 	adds r0, r7, #0
-	bl Func_080228bc
+	bl Animation_LookupValueByKey
 .L_08022cea:
 	ldr r2, [r6, #16]
 	str r0, [r5, #8]

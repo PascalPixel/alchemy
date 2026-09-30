@@ -32,7 +32,7 @@ Func_0803e918:
 	cmp r3, #0
 	beq .L_0803e95a
 	adds r0, r5, #0
-	bl Func_0803ebdc
+	bl Menu_StepRight
 	b .L_0803e97e
 .L_0803e95a:
 	ldr r3, [r1, #12]
@@ -41,7 +41,7 @@ Func_0803e918:
 	cmp r3, #0
 	beq .L_0803e96c
 	adds r0, r5, #0
-	bl Func_0803ed98
+	bl Menu_StepLeft
 	b .L_0803e97e
 .L_0803e96c:
 	ldr r3, [r1, #4]
@@ -50,7 +50,7 @@ Func_0803e918:
 	cmp r3, #0
 	beq .L_0803e97e
 	adds r0, r5, #0
-	bl Func_0803f3c8
+	bl Menu_ConfirmSelection
 	b .L_0803e992
 .L_0803e97e:
 	cmp r6, #0

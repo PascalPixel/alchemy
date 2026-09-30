@@ -55,7 +55,7 @@
 	overlay_veneer Owner_AdjustSecondValueFar
 	overlay_veneer Party_CountActiveOwnersFar
 	overlay_veneer Party_AddActiveOwnerFar
-	overlay_veneer Func_080ad110
+	overlay_veneer Party_RemoveActiveOwnerFar
 	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Trade_AddOfferFar
 	overlay_veneer Func_080ad208
@@ -128,5 +128,5 @@
 	overlay_veneer Func_080c8778
 	overlay_veneer Func_080c8860
 	overlay_veneer Func_080c8960
-	overlay_veneer Func_080f8030
+	overlay_veneer ItemMenu_Open
 	overlay_veneer Audio_PlayCue

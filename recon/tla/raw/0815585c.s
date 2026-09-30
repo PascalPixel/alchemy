@@ -480,7 +480,7 @@ Func_0815585c:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	mov r3, r9
 	subs r3, #6
 	cmp r3, #39

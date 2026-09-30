@@ -17,7 +17,7 @@
 	overlay_veneer Func_080200c0
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020228
-	overlay_veneer Func_080ad110
+	overlay_veneer Party_RemoveActiveOwnerFar
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Func_080c8018
 	overlay_veneer Func_080c8020

@@ -112,4 +112,4 @@ Func_080cb1dc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080cb2b4:
-	.4byte Data_02008000
+	.4byte gOverlayArea

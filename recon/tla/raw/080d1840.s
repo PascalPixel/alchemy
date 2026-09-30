@@ -54,14 +54,14 @@ Func_080d1840:
 	adds r7, r7, r3
 	add r2, r10
 	adds r1, r7, #0
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	movs r2, #128
 	lsls r2, r2, #14
 	asrs r6, r0, #16
 	add r2, r10
 	mov r0, r8
 	adds r1, r7, #0
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	asrs r0, r0, #16
 	subs r0, #16
 	cmp r0, r6
@@ -146,14 +146,14 @@ Func_080d1840:
 	adds r1, r7, #0
 	add r2, r10
 	mov r0, r8
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	movs r2, #128
 	lsls r2, r2, #14
 	asrs r6, r0, #16
 	add r2, r10
 	mov r0, r8
 	adds r1, r7, #0
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	asrs r0, r0, #16
 	mov r5, r11
 	subs r0, #16

@@ -38,7 +38,7 @@
 	overlay_veneer Func_08020120
 	overlay_veneer Object_SetPosition
 	overlay_veneer Object_CommitPosition
-	overlay_veneer Func_080201c0
+	overlay_veneer Map_GetTerrainHeightFar
 	overlay_veneer Func_080201c8
 	overlay_veneer Func_080201d8
 	overlay_veneer Func_080201e0

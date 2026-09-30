@@ -1866,7 +1866,7 @@ Func_081a6030:
 	movs	r1, #112
 	movs	r0, #172
 	sub	sp, #36
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r3, [pc, #56]
 	movs	r2, #128
 	lsls	r2, r2, #19

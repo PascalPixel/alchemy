@@ -12,14 +12,14 @@ Func_080eb824:
 	movs	r1, #196
 	movs	r0, #240
 	ldr	r5, [r3, #60]
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #128
 	lsls	r2, r2, #5
 	mov	r8, r2
 	adds	r7, r0, #0
 	mov	r1, r8
 	movs	r0, #96
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	mov	sl, r0
 	ldr	r6, [pc, #92]
 	movs	r1, #196
@@ -165,7 +165,7 @@ Func_080eb960:
 	adds	r5, r0, #0
 	movs	r0, #92
 	sub	sp, #48
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	str	r0, [sp, #32]
 	adds	r0, r5, #0
 	bl	ObjectTable_Get

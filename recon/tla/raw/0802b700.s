@@ -241,7 +241,7 @@ Func_0802b828:
 	strh	r5, [r2, #0]
 	movs	r0, #56
 	adds	r1, r6, #0
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	lsls	r3, r5, #2
 	mov	r2, fp
 	adds	r7, r0, #0
@@ -362,7 +362,7 @@ Func_0802b998:
 	lsls	r1, r1, #4
 	adds	r1, #120
 	movs	r0, #32
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #0
 	adds	r7, r0, #0
 	add	r0, sp, #32
@@ -486,7 +486,7 @@ Func_0802b998:
 	mov	sl, r0
 	adds	r1, #132
 	movs	r0, #28
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #200
 	movs	r1, #144
 	lsls	r3, r3, #4
@@ -566,7 +566,7 @@ Func_0802b998:
 	ldr	r5, [pc, #360]
 	movs	r0, #104
 	adds	r1, r5, #0
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #132
 	movs	r3, #128
 	lsrs	r5, r5, #2

@@ -289,7 +289,7 @@ Func_080d3b28:
 	movs	r1, #193
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #128
 	movs	r3, #0
 	adds	r5, r0, #0

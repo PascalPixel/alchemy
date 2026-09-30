@@ -32,7 +32,7 @@ Func_08100e7c:
 	adds	r1, #236
 	movs	r0, #220
 	sub	sp, #4
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r3, [pc, #156]
 	movs	r2, #139
 	lsls	r2, r2, #2
@@ -1107,7 +1107,7 @@ Graphics_AdjustPaletteBank:
 	negs	r1, r1
 	movs	r2, #11
 	adds	r0, r6, #0
-	bl	Func_080f8840
+	bl	UiIcon_CreateWithResourceVariant
 	movs	r3, #0
 	mov	fp, r3
 	movs	r3, #13

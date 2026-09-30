@@ -109,7 +109,7 @@ Func_080219cc:
 	bne.n	.L_08021ada
 	ldr	r1, [pc, #844]
 	movs	r0, #80
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r2, [pc, #840]
 	adds	r1, r0, #0
 	ldr	r0, [pc, #840]

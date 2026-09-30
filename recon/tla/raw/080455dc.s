@@ -10,7 +10,7 @@
 	mov	r8, r0
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r6, r0, #0
 	ldr	r0, [pc, #52]
 	bl	Resource_GetTableEntry
@@ -48,7 +48,7 @@
 	adds	r7, r0, #0
 	movs	r0, #68
 	mov	r8, r2
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	adds	r6, r0, #0
 	ldr	r0, [pc, #160]
 	bl	Resource_GetTableEntry

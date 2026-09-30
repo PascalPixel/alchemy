@@ -9,7 +9,11 @@ struct PartyState {
     u8 unknown_014[0x1cc];
     s16 scene;
     s16 entrance;
-    u8 unknown_1e4[0x30];
+    u8 unknown_1e4[0xa];
+    /* Two halfword pairs; ☀️ keeps its first pair at 0x1ce. */
+    u16 pair_1ee[2];
+    u16 pair_1f2[2];
+    u8 unknown_1f6[0x1e];
     s32 current_owner;
     u8 active_owners[8];
     u8 unknown_220[0x2b];

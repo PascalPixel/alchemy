@@ -14,12 +14,12 @@ Func_0813fa88:
 	movs	r1, #16
 	movs	r0, #92
 	sub	sp, #8
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #128
 	lsls	r1, r1, #7
 	mov	r9, r0
 	movs	r0, #96
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	str	r0, [sp, #4]
 	movs	r3, #192
 	lsls	r3, r3, #18

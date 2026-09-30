@@ -324,12 +324,13 @@ impl Area {
     pub fn end(&self) -> u32 {
         self.parts.last().map_or(self.start, |part| part.0)
     }
-    /// Where its first function begins: its first byte, or after the zero
-    /// halfword that aligns a listing that opens off a word boundary.
-    pub fn opening(&self, image: Image) -> u32 {
-        let listing = self.parts.first().is_some_and(|part| part.1);
-        let padded = listing && self.start % 4 == 2 && image.half(self.start) == 0;
-        self.start + if padded { 2 } else { 0 }
+    /// Where its first function begins, when it opens with a listing: its
+    /// first byte, or after the zero halfword that aligns a listing that
+    /// opens off a word boundary.
+    pub fn opening(&self, image: Image) -> Option<u32> {
+        self.parts.first().filter(|part| part.1)?;
+        let padded = self.start % 4 == 2 && image.half(self.start) == 0;
+        Some(self.start + if padded { 2 } else { 0 })
     }
     /// The part holding `address`: its start, end and whether it is a listing.
     pub fn part(&self, address: u32) -> (u32, u32, bool) {
@@ -368,7 +369,7 @@ pub fn partition(image: Image, area: &Area, entries: &Entries) -> Vec<Segment> {
             cursor += 2;
             continue;
         }
-        let known = cursor == opening || entries.starts.contains(&cursor);
+        let known = Some(cursor) == opening || entries.starts.contains(&cursor);
         let next = entries
             .starts
             .range(cursor + 1..end)

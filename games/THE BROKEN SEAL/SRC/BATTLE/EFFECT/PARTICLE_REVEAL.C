@@ -4,6 +4,198 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "EFFECT_STEP.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
+#include "IO_REG.H"
+
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
+
+extern u8 gBattleFxWork[];
+
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
+void BattleFx_EndCanvasLayer(void);
+void *Resource_GetTableEntry(s32 id);
+void Audio_PlayCue(s32 cue);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
+    s32 slot, s32 delay);
+void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
+void Camera_ApplyShake(s32 x, s32 y);
+void ObjectGroup_TickMemberTimers(void);
+
+extern u16 ParticleStreams_CellOffsets[];
+extern u8 PuffArc_CellWidths[];
+extern u8 PuffArc_CellHeights[];
+extern u8 PuffArc_CellBiasY[];
+extern u16 PuffArc_CellSourceOffsets[];
+
+/* The whole-pixel half of a 16.16 coordinate. */
+#define HI(v) (((s16 *)&(v))[1])
+
+/* Battle effect: a glow orb animates for 24 frames, then the small Mars
+   djinn sheet slides across as a 20-pixel strip (frames 20-31, its palette
+   copied in at frame 20); from frame 32 nine puffs open along a shallow arc
+   (the puff records at work->particles keep their frame in variant). Each
+   puff seeded sixteen motes in the map cell buffer, which fall under gravity
+   from frame 40 on, a burst every two frames, swaying on an angle kept in z.
+   At frame 38 every affected unit reacts. */
+void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
+{
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    void *sheet;
+    DrawRectangle callbacks[2];
+    DrawRectangle *draw;
+    struct EffectStep *step; /* walks the puffs, then the motes it draws */
+    struct EffectStep *mote;
+    s32 burst_offset;
+    s32 member;
+    s32 frame;
+    s32 i;
+    s32 curtain_y;
+    s32 angle_mask;
+    s32 speed_mask;
+
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    sheet = heap_cache[2];
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(0);
+    draw = callbacks;
+    BattleFx_FetchRectangleBlitters(0, draw);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, (u8 *)work + 0x320, 1, 1);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+    burst_offset = 0;
+    member = 0;
+    step = work->particles;
+    do {
+        s32 angle = member << 11;
+
+        step->x = (Trig_Sin(angle) * 24) >> 16;
+        step->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
+        if (member & 1)
+            step->x = 32 - step->x;
+        else
+            step->x += 32;
+        step->variant = -(member * 2);
+        i = 0;
+        /* FAKEMATCH: the two random masks sit in locals set in this order,
+           ahead of the mote pointer; that order gives 0xffff r9 and 127 fp
+           and keeps the reload registers of the reference. */
+        speed_mask = 127; /* FAKEMATCH: mask local, see above */
+        angle_mask = 0xffff; /* FAKEMATCH: mask local, see above */
+        mote = (struct EffectStep *)(Ram_MapCellBuffer + burst_offset);
+        do {
+            mote->x = (((Random16() & 15) + step->x) - 8) << 16;
+            mote->y = ((Random16() & 7) + 96) << 16;
+            mote->velocity_x = ((Random16() & speed_mask) - 64) << 11;
+            mote->velocity_y = ((Random16() & speed_mask) - 64) << 10;
+            mote->z = Random16() & angle_mask;
+            mote->velocity_z = Random16() & angle_mask;
+            i++;
+            mote++;
+        } while (i != 16);
+        step++;
+        member++;
+        burst_offset += 16 * sizeof(struct EffectStep);
+    } while (member != 9);
+
+    Audio_PlayCue(0x88);
+    frame = 0;
+    curtain_y = -172;
+    do {
+        if (frame == 56)
+            BattleEventRuntime_BeginPhaseFar(0x85);
+        if (frame <= 23)
+            callbacks[0](canvas, (u8 *)work + 0x320 + (frame / 4) * 0x640, 40, 20, 40, 40);
+        if (frame == 20)
+            Iwram_CopyWords((void *)BG_PLTT,
+                Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
+        if (frame >= 20 && frame <= 31) {
+            if (frame > 23)
+                draw[1](canvas, work, 146 - frame * 4, curtain_y, 20, 40);
+            else
+                callbacks[0](canvas, work, 50, 20, 20, 40);
+        }
+        if (frame == 32) {
+            Audio_PlayCue(0x91);
+            work->shake_frames = 8;
+            Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
+        }
+        if (frame > 31) {
+            member = 0;
+            step = work->particles;
+            do {
+                if (step->variant >= 0 && step->variant <= 47) {
+                    s32 cell = step->variant / 8;
+                    u32 width;
+
+                    callbacks[0](canvas, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                        step->x - ((width = PuffArc_CellWidths[cell]) >> 1),
+                        step->y + PuffArc_CellBiasY[cell],
+                        width, PuffArc_CellHeights[cell]);
+                }
+                member++;
+                step->variant++;
+                step++;
+            } while (member != 9);
+        }
+        step = (struct EffectStep *)Ram_MapCellBuffer;
+        member = 0;
+        do {
+            if (frame >= (member / 16) * 2 + 40) {
+                s32 size;
+                s32 x;
+                s32 angle;
+
+                size = (member & 1) + 3;
+                x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
+                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    x - ((u32)size >> 1), HI(step->y) - size, size, size * 2);
+                EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
+                angle = step->z;
+                step->z = angle + 0x800;
+                if (step->z > 0xffff)
+                    step->z = angle + 0x800 - 0xffff;
+            }
+            member++;
+            step++;
+        } while (member != 144);
+
+        if (frame == 38) {
+            for (member = 0; member != work->effect->count; member++) {
+                ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, 16);
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[member], 6);
+            }
+        }
+        Camera_ApplyShake(8, 8);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+        curtain_y += 8;
+        frame++;
+    } while (frame != 112);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+}
+#endif
 
 extern u8 gBattleFxWork[];
 
@@ -64,7 +256,6 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
-void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);

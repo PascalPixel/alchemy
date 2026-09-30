@@ -17,12 +17,12 @@ Func_08142944:
 	str	r0, [sp, #56]
 	adds	r1, #124
 	movs	r0, #92
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #128
 	str	r0, [sp, #48]
 	lsls	r1, r1, #7
 	movs	r0, #96
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r1, #240
 	str	r0, [sp, #44]
 	ldr	r0, [sp, #48]

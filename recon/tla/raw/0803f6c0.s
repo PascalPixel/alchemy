@@ -24,7 +24,7 @@ UiTextResource_Release:
 	movs	r1, #193
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r3, #195
 	lsls	r3, r3, #2
 	adds	r5, r5, r3

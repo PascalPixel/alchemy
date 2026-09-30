@@ -26,7 +26,7 @@ Func_080e3698:
 	adds	r0, r2, #0
 	adds	r1, r2, #0
 	movs	r3, #0
-	bl	Func_080d440c
+	bl	Motion_CamBounds
 	ldr	r1, [sp, #8]
 	movs	r3, #0
 	strb	r3, [r1, #0]
@@ -137,7 +137,7 @@ Func_080e3698:
 	bl	WaitFrames
 	movs	r1, #1
 	ldr	r0, [sp, #20]
-	bl	Func_080d4384
+	bl	Object_AttachWorkTargetToObject
 	add	sp, #36
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -816,7 +816,7 @@ Func_080e37e0:
 	adds	r1, #168
 	movs	r0, #92
 	sub	sp, #32
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #192
 	lsls	r2, r2, #18
 	adds	r3, r2, #0
@@ -1658,7 +1658,7 @@ Func_080e4244:
 	bne.n	.L_080e43ee
 	ldr	r1, [pc, #144]
 	movs	r0, #80
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r2, [pc, #140]
 	adds	r1, r0, #0
 	ldr	r0, [pc, #140]

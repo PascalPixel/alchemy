@@ -545,7 +545,7 @@ UiText_BuildRenderEntries:
 	ldr	r5, [pc, #228]
 	movs	r0, #200
 	adds	r1, r5, #0
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #132
 	movs	r3, #128
 	lsrs	r5, r5, #2

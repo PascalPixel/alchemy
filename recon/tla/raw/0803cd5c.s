@@ -16,7 +16,7 @@ Func_0803cd5c:
 	movs	r5, #0
 	cmp	r3, #0
 	beq.n	.L_0803cd80
-	bl	0x081c0048
+	bl	Audio_Check
 	cmp	r0, #0
 	bne.n	.L_0803cd80
 	movs	r5, #1
@@ -64,7 +64,7 @@ Func_0803cd5c:
 	movs	r7, #0
 	cmp	r3, #0
 	beq.n	.L_0803cdd8
-	bl	0x081c0048
+	bl	Audio_Check
 	cmp	r0, #0
 	bne.n	.L_0803cdd8
 	movs	r7, #1

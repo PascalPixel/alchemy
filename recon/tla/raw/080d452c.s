@@ -13,7 +13,7 @@ Func_080d452c:
 	ldr	r1, [r3, #12]
 	ldr	r2, [r3, #16]
 	adds	r3, r5, #0
-	bl	Func_080d440c
+	bl	Motion_CamBounds
 .L_080d4546:
 	pop	{r5, pc}
 	.global Func_080d4548

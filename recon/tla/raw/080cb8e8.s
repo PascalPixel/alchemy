@@ -384,7 +384,7 @@ Func_080cb8e8:
 	lsls	r1, r1, #5
 	adds	r1, #184
 	movs	r0, #92
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r0, #20
 	bl	WaitFrames
 	movs	r0, #92
@@ -406,7 +406,7 @@ Func_080cb8e8:
 	lsls	r1, r1, #5
 	adds	r1, #184
 	movs	r0, #92
-	bl	Func_08014cc0
+	bl	Runtime_AllocateHeapBlock
 	movs	r0, #20
 	bl	WaitFrames
 	movs	r0, #92
@@ -415,7 +415,7 @@ Func_080cb8e8:
 	movs	r3, #160
 	lsls	r3, r3, #19
 	strh	r5, [r3, #0]
-	bl	0x080d5f18
+	bl	ObjectEffect_RunPendingFlagEvent
 	cmp	r0, #0
 	bne.n	.L_080cbc7a
 	mov	r1, r9

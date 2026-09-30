@@ -4,6 +4,20 @@
  * literal pool at 0x080e54cc, three more stubs and the default arm at
  * 0x080e551a. 0x080e657c and 0x080e65f8 are tail blocks this routine
  * reaches by bl, not separate functions. */
+/* 2026-10-01 (matcher 2): 120 (3 operand, 1 reordered); the operand row
+ * at the pool word 0xfffff000 is the listing decoding that word as a bl
+ * and is not a difference in bytes. Which dependence has to go: only the
+ * store's memory dependence on the position->x load (1865). Its r0
+ * anti-dependence keeps target->x (1863) behind the store either way, so
+ * without 1865 the store has four dependents, both reloads outrank it, and
+ * after it position->x wins the class tie-break against target->x: the
+ * reference's order exactly. sched2 cannot drop it for a spill slot: the
+ * slot has alias set 0, sp counts as varying for
+ * fixed_scalar_and_varying_struct_p, and the reload register r2 has no
+ * base value. So the reference's RTL before sched2 differs, not the
+ * scheduler's choice. Moving motion's assignment before target_actor (371),
+ * computing the difference first (916) or assigning motion after the
+ * first Math_Div (1063) all break the spill slots. */
 /* 2026-09-30 (Mercury, later): sched2's table (-fsched-verbose=5) at
  * 80e500c: the motion spill store and the target_actor and position
  * reloads all have priority 125 and five dependents, and neither depends

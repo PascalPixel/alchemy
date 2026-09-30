@@ -1,0 +1,1 @@
+#include "../../COMMON/INCLUDE/BATTLE/BATTLE_PARTY.H"

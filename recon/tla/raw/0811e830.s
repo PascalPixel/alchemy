@@ -512,7 +512,7 @@ Func_0811e830:
 	ldr	r1, [pc, #324]
 	movs	r0, #4
 	bl	0x08120360
-	bl	Func_081201c4
+	bl	BattleEv_DispatchQueued
 	mov	r2, r8
 	movs	r1, #36
 	ldrsh	r0, [r2, r1]
@@ -957,7 +957,7 @@ Func_0811e830:
 	movs	r6, #8
 	ldrsh	r1, [r3, r6]
 	bl	0x080ad058
-	bl	Func_081201c4
+	bl	BattleEv_DispatchQueued
 	b.n	.L_0811f012
 .L_0811eff4:
 	cmp	r3, #4

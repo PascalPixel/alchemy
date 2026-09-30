@@ -886,7 +886,7 @@ Func_081197d0:
 	ldr	r3, [pc, #84]
 	adds	r0, r0, r3
 	bl	0x080381c8
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_08119f2a:
 	bl	0x081284c0
 .L_08119f2e:
@@ -951,7 +951,7 @@ Func_081197d0:
 	ldr	r0, [pc, #120]
 	bl	0x080381c8
 .L_08119fb6:
-	bl	Func_0811ff08
+	bl	BattlePresentation_WaitForAdvance
 .L_08119fba:
 	movs	r0, #78
 	bl	Audio_PlayCue
@@ -1404,6 +1404,9 @@ BattleParty_ListPresentEnemies:
 	.2byte 0x00ff
 	.2byte 0x0000
 .L_0811a31c:
+	.global BattleParty_ListActorIds
+	.thumb_func
+BattleParty_ListActorIds:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

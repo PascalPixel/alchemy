@@ -1,0 +1,1 @@
+#include "../../COMMON/INCLUDE/BATTLE/MOTION_OBJECT.H"

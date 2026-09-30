@@ -4,6 +4,16 @@
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
+
+/* The equipment slots' highlight: the Japanese slot names are narrower. */
+#if defined(TBS_EDITION_JA)
+#define EQUIP_SLOT_X     2
+#define EQUIP_SLOT_WIDTH 9
+#else
+#define EQUIP_SLOT_X     1
+#define EQUIP_SLOT_WIDTH 12
+#endif
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -55,6 +65,8 @@ extern u8 MsgItemPlainName;
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
+void RenderOutput_ClearListFar(s32 window);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
@@ -71,22 +83,32 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     s32 row;
 
     menu = gMenuWork;
-    base = state->page * 5;
+    base = state->page * PAGE_ROWS;
     state->selected_index = base + state->row;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     /* Spanish and Italian clear the info window's top row instead. */
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
+#elif defined(TBS_EDITION_JA)
+    /* Japanese clears the info window's list and names the item with
+       UiText_DrawMessageAt. */
+    RenderOutput_ClearListFar((s32)menu->info_window);
 #else
     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
 #endif
     WaitFrames(1);
     if (menu->items[state->selected_index] != 0) {
+#if defined(TBS_EDITION_JA)
+        UiText_DrawMessageAt((menu->items[state->selected_index] & ITEM_ID_MASK)
+                + (s32)&MsgItemPlainName,
+            (s32)menu->info_window, 0, 0);
+#else
         UiText_DrawCharacterAtOffsetFar((menu->items[state->selected_index] & ITEM_ID_MASK)
                 + (s32)&MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
+#endif
     }
 
-    for (row = 0; row <= 4; row++) {
+    for (row = 0; row < PAGE_ROWS; row++) {
         if (row == state->row) {
             item = Item_Get(menu->items[state->selected_index] & ITEM_ID_MASK);
             if (item->element != 4) {
@@ -107,23 +129,23 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     }
 
     for (row = 0; row <= 3; row++) {
-        Render_SetTilemapFlagRect((s32)menu->equip_window, 1, row * 2 + 1, 12, 1, 15);
+        Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, row * 2 + 1, EQUIP_SLOT_WIDTH, 1, 15);
     }
 
     if (menu->items[state->selected_index] & 0x200) {
         item = Item_Get(menu->items[state->selected_index] & ITEM_ID_MASK);
         switch (item->type) {
         case 1:
-            Render_SetTilemapFlagRect((s32)menu->equip_window, 1, 1, 12, 1, 14);
+            Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 1, EQUIP_SLOT_WIDTH, 1, 14);
             break;
         case 4:
-            Render_SetTilemapFlagRect((s32)menu->equip_window, 1, 3, 12, 1, 14);
+            Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 3, EQUIP_SLOT_WIDTH, 1, 14);
             break;
         case 3:
-            Render_SetTilemapFlagRect((s32)menu->equip_window, 1, 5, 12, 1, 14);
+            Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 5, EQUIP_SLOT_WIDTH, 1, 14);
             break;
         case 2:
-            Render_SetTilemapFlagRect((s32)menu->equip_window, 1, 7, 12, 1, 14);
+            Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 7, EQUIP_SLOT_WIDTH, 1, 14);
             break;
         }
     }

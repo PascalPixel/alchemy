@@ -365,7 +365,7 @@ Func_0200031c:
 .L_02008358:
 	.4byte Func_02000278
 .L_0200835c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008360:
 	.4byte 0x04000208
 .L_02008364:
@@ -518,7 +518,7 @@ Func_0200031c:
 	str r3, [r2, r5]
 	pop {r5, r6, pc}
 .L_02008488:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200848c:
 	.4byte 0x04000208
 	.section .text.x02008490,"ax",%progbits

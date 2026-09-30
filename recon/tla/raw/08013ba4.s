@@ -31,6 +31,6 @@ QueueIoWriteDelay2:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_08013bd8:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08013bdc:
 	.4byte 0x04000208

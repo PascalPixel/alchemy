@@ -620,7 +620,7 @@ Func_080ed2a4:
 .L_080ed768:
 	.4byte 0x00000000
 .L_080ed76c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080ed770:
 	.4byte 0x04000208
 .L_080ed774:

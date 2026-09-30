@@ -523,7 +523,7 @@ Func_08191530:
 .L_08191944:
 	.4byte Data_03001120
 .L_08191948:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0819194c:
 	.4byte IwramMulQ16
 .L_08191950:

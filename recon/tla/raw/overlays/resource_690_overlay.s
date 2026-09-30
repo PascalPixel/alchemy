@@ -1763,7 +1763,7 @@ Func_02000d14:
 .L_02008df8:
 	.4byte gOverlayArea + 0x2c80
 .L_02008dfc:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008e00:
 	.4byte 0x04000208
 	.section .text.x02008e04,"ax",%progbits

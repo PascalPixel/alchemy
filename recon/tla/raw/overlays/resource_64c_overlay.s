@@ -501,7 +501,7 @@ Func_0200020c:
 .L_02008418:
 	.4byte Data_0200217c
 .L_0200841c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008420:
 	.4byte 0x04000208
 .L_02008424:
@@ -590,7 +590,7 @@ Func_0200020c:
 .L_020084c4:
 	.4byte 0xffffec00
 .L_020084c8:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_020084cc:
 	.4byte 0x04000208
 .L_020084d0:
@@ -645,7 +645,7 @@ Func_0200020c:
 .L_0200852c:
 	.4byte 0x0000e080
 .L_02008530:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008534:
 	.4byte 0x04000208
 .L_02008538:
@@ -746,7 +746,7 @@ Func_0200020c:
 .L_020085f4:
 	.4byte Data_03001120
 .L_020085f8:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_020085fc:
 	.4byte 0x04000208
 .L_02008600:
@@ -922,7 +922,7 @@ Func_0200020c:
 .L_0200874c:
 	.4byte Data_02003d9c
 .L_02008750:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008754:
 	.4byte 0x04000208
 .L_02008758:
@@ -1121,7 +1121,7 @@ Func_0200020c:
 .L_020088c4:
 	.4byte 0x00000000
 .L_020088c8:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_020088cc:
 	.4byte 0x04000208
 .L_020088d0:
@@ -1284,7 +1284,7 @@ Func_0200020c:
 .L_020089fc:
 	.4byte 0x05000200
 .L_02008a00:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008a04:
 	.4byte 0x04000208
 .L_02008a08:
@@ -2066,7 +2066,7 @@ Func_02000fa0:
 .L_02009012:
 	pop {pc}
 .L_02009014:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02009018:
 	.4byte 0x04000208
 	.section .text.x0200901c,"ax",%progbits
@@ -2762,7 +2762,7 @@ Func_02001400:
 .L_0200954c:
 	.4byte Data_02002f3c
 .L_02009550:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02009554:
 	.4byte 0x04000208
 .L_02009558:

@@ -409,7 +409,7 @@ Func_08182aa8:
 .L_08182dd8:
 	.4byte 0x000000c2
 .L_08182ddc:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08182de0:
 	.4byte 0x04000208
 .L_08182de4:
@@ -3065,7 +3065,7 @@ Func_08182aa8:
 .L_08184260:
 	.4byte 0x06004000
 .L_08184264:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08184268:
 	.4byte 0x04000208
 .L_0818426c:

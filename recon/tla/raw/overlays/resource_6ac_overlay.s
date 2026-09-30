@@ -335,7 +335,7 @@ Func_020000c0:
 .L_020082bc:
 	.4byte gOverlayArea + 0x397c
 .L_020082c0:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_020082c4:
 	.4byte 0x04000208
 	.section .text.x020082c8,"ax",%progbits
@@ -676,7 +676,7 @@ Func_020003c4:
 .L_02008550:
 	.4byte gOverlayArea + 0x3a70
 .L_02008554:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008558:
 	.4byte 0x04000208
 	.section .text.x0200855c,"ax",%progbits
@@ -864,7 +864,7 @@ Func_0200055c:
 .L_020086b8:
 	.4byte gOverlayArea + 0x3a7e
 .L_020086bc:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_020086c0:
 	.4byte 0x04000208
 .L_020086c4:
@@ -1373,7 +1373,7 @@ Func_02000934:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008aac:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008ab0:
 	.4byte 0x04000208
 .L_02008ab4:

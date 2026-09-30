@@ -332,7 +332,7 @@ Func_0818fefc:
 .L_081901a0:
 	.4byte 0xffa00000
 .L_081901a4:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_081901a8:
 	.4byte 0x04000208
 .L_081901ac:
@@ -1091,7 +1091,7 @@ Func_0818fefc:
 .L_08190784:
 	.4byte IwramCopyWords
 .L_08190788:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0819078c:
 	.4byte 0x04000208
 .L_08190790:

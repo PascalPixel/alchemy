@@ -183,7 +183,7 @@ Func_0803d2d0:
 	mov	r0, sl
 	mov	r1, fp
 	adds	r3, r5, #0
-	bl	0x08042450
+	bl	Func_08042450
 .L_0803d440:
 	adds	r0, r5, #0
 .L_0803d442:

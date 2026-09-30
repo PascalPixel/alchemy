@@ -107,7 +107,7 @@ Func_08044a58:
 	bl	0x08014128
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x081c0048
+	bl	Audio_Check
 	cmp	r0, #0
 	beq.n	.L_08044b4c
 	ldr	r3, [r6, #4]
@@ -231,7 +231,7 @@ Func_08044b98:
 	bl	0x08014128
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x081c0048
+	bl	Audio_Check
 	cmp	r0, #0
 	beq.n	.L_08044c56
 	ldr	r3, [r6, #4]
@@ -368,7 +368,7 @@ Func_08044c80:
 	bl	0x08014128
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x081c0048
+	bl	Audio_Check
 	cmp	r0, #0
 	beq.n	.L_08044d90
 	ldr	r3, [pc, #64]
@@ -465,7 +465,7 @@ Func_08044dc8:
 .L_08044e42:
 	movs	r0, #1
 	bl	WaitFrames
-	bl	0x081c0048
+	bl	Audio_Check
 	cmp	r0, #0
 	beq.n	.L_08044e58
 	ldr	r3, [r6, #4]

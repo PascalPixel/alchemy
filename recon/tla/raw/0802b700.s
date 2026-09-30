@@ -15,6 +15,9 @@ Func_0802b700:
 	movs	r1, #0
 	bl	.L_0802b738
 	pop	{r5, pc}
+	.global Func_0802b71c
+	.thumb_func
+Func_0802b71c:
 	push	{r5, lr}
 	movs	r3, #240
 	lsls	r3, r3, #4

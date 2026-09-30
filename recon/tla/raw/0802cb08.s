@@ -183,6 +183,9 @@ Func_0802cb08:
 	.4byte 0x0201c000
 	.2byte 0x0000
 	.2byte 0x0202
+	.global Func_0802cc74
+	.thumb_func
+Func_0802cc74:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #32]
@@ -193,6 +196,9 @@ Func_0802cb08:
 	movs	r3, #0
 	strh	r3, [r2, #34]
 	bx	lr
+	.global Func_0802cc88
+	.thumb_func
+Func_0802cc88:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #32]

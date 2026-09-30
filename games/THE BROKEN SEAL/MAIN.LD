@@ -1000,7 +1000,7 @@ SECTIONS
         "*/recon/tbs/raw/080a1e36.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/SORT_BY_LIST_ORDER.o"(.text)
         "*/recon/tbs/raw/080a1f72.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/MENU/COPY_LIST_ORDER.o"(.text)
+        "*/games/COMMON/SRC/MENU/COPY_LIST_ORDER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/PAGE_INPUT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/LIGHTEN_BANK_HIGHLIGHT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_DRAW_PAGE_INDICATOR.o"(.text)

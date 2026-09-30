@@ -74,6 +74,7 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     s32 pz = *pos++;
     s32 pw = *pos;
     s32 slot;
+    /* FAKEMATCH: unused; they give the ROM's 68-byte frame */
     s32 ground[3];
     s32 screen[3];
     struct ProjectedEffect effect;

@@ -1032,12 +1032,6 @@ Menu_ResolveSelectedAction:
 	.thumb_func
 Func_080a6614:
 	.incbin "baserom.gba", 0x0009d4ec, 0x000001ec
-	.section .rom.0009e3bc, "ax"
-	.global ActionMenu_Open
-	.type ActionMenu_Open, %function
-	.thumb_func
-ActionMenu_Open:
-	.incbin "baserom.gba", 0x0009e3bc, 0x0000022c
 	.section .rom.0009f490, "ax"
 	.global StatusMenu_ShowOwnerProgressMessage
 	.type StatusMenu_ShowOwnerProgressMessage, %function

@@ -173,7 +173,7 @@ Func_080dc7e8:
 	movs	r3, #1
 	strb	r3, [r2, #0]
 .L_080dc938:
-	bl	0x080d2c98
+	bl	Func_080d2c98
 	movs	r0, #224
 	bl	Runtime_ReleaseHeapBlock
 .L_080dc942:

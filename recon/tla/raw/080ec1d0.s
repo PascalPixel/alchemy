@@ -1305,7 +1305,7 @@ Func_080ec1d0:
 .L_080ecbdc:
 	ldr	r0, [sp, #20]
 	ldr	r1, [sp, #16]
-	bl	0x080ca280
+	bl	Func_080ca280
 	ldr	r3, [pc, #536]
 	adds	r0, r0, r3
 	str	r0, [sp, #20]

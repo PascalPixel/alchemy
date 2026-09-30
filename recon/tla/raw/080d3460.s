@@ -135,7 +135,7 @@ Func_080d3460:
 	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #2
 	bl	WaitFrames
-	bl	0x080d2c98
+	bl	Func_080d2c98
 .L_080d3584:
 	add	sp, #4
 	pop	{r3, r5, r6, r7}

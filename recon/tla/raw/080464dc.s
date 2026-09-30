@@ -2127,7 +2127,7 @@ Func_080464dc:
 	bl	0x0803c9bc
 .L_080475a0:
 	ldr	r0, [sp, #136]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r2, [sp, #128]
 	ldr	r4, [sp, #128]
 	movs	r1, #12
@@ -2372,7 +2372,7 @@ Func_080464dc:
 	ldr	r0, [sp, #136]
 	mov	r8, r1
 	str	r3, [sp, #60]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r2, [sp, #64]
 	movs	r3, #88
 	ldrh	r3, [r2, r3]
@@ -2487,7 +2487,7 @@ Func_080464dc:
 	bl	0x0803c9bc
 .L_0804787a:
 	ldr	r0, [sp, #136]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r2, [sp, #128]
 	ldr	r4, [sp, #128]
 	movs	r1, #12
@@ -2801,7 +2801,7 @@ Func_080464dc:
 	mov	sl, r1
 	mov	fp, r2
 	mov	r9, r1
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r4, [sp, #128]
 	movs	r2, #14
 	ldrsh	r1, [r4, r2]
@@ -3132,7 +3132,7 @@ Func_080464dc:
 	cmp	r1, #0
 	bne.n	.L_08047db2
 	ldr	r0, [sp, #136]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r3, [sp, #128]
 	movs	r4, #14
 	ldrsh	r1, [r3, r4]
@@ -4689,7 +4689,7 @@ Func_080464dc:
 	bne.n	.L_08048aba
 .L_080489fa:
 	mov	r0, r9
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r1, [sp, #56]
 	mov	r0, fp
 	lsls	r3, r0, #2
@@ -5249,7 +5249,7 @@ Func_080464dc:
 	cmp	r2, #0
 	beq.n	.L_08048e5c
 	adds	r0, r2, #0
-	bl	Func_08039430
+	bl	RenderOutput_ClearList
 .L_08048e5c:
 	movs	r3, #1
 	str	r3, [sp, #32]
@@ -5313,7 +5313,7 @@ Func_080464dc:
 	cmp	r3, #0
 	beq.n	.L_08048ed0
 	adds	r0, r3, #0
-	bl	Func_08039430
+	bl	RenderOutput_ClearList
 .L_08048ed0:
 	movs	r1, #1
 	movs	r0, #0
@@ -5905,7 +5905,7 @@ Func_080464dc:
 	b.n	.L_08049546
 .L_08049390:
 	ldr	r0, [sp, #76]
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	movs	r7, #0
 	ldr	r5, [sp, #84]
 	movs	r0, #0

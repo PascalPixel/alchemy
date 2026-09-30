@@ -242,7 +242,7 @@ Func_08049a30:
 	cmp	r9, r1
 	beq.n	.L_08049cde
 	mov	r0, fp
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r1, [sp, #76]
 	mov	r2, r9
 	lsls	r3, r2, #1
@@ -1109,7 +1109,7 @@ Func_08049a30:
 	b.n	.L_0804a45c
 .L_0804a30c:
 	mov	r0, r9
-	bl	Func_08039418
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r1, [sp, #72]
 	mov	r0, fp
 	lsls	r3, r0, #1

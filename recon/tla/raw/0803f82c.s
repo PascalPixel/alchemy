@@ -1380,7 +1380,7 @@ Func_0803f82c:
 	adds	r1, r5, #0
 	bl	0x08108040
 	ldr	r0, [sp, #16]
-	bl	Func_08039430
+	bl	RenderOutput_ClearList
 	ldr	r0, [pc, #428]
 	ldr	r1, [sp, #16]
 	add	r0, r9

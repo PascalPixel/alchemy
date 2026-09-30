@@ -16623,7 +16623,7 @@ msgctxt "message"
 msgid "04153"
 msgstr "A:しょうさい"
 
-msgctxt "message"
+msgctxt "MsgCoinsLabel"
 msgid "04154"
 msgstr "コイン"
 

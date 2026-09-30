@@ -16623,7 +16623,7 @@ msgctxt "message"
 msgid "04153"
 msgstr "Garoh"
 
-msgctxt "message"
+msgctxt "MsgCoinsLabel"
 msgid "04154"
 msgstr "Désert Yampi"
 

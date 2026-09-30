@@ -411,7 +411,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/GLYPH/DECODE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/GLYPH/RESET_WORK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/OWNER.o"(.text)
-        "*/recon/tbs/raw/0801a7f4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RESERVED_WORK_NO_OP.o"(.text)
         "*/recon/tbs/raw/0801a90e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/FIND_FREE_TRANSFER_ENTRY.o"(.text)

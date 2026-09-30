@@ -8,7 +8,7 @@
 	.global Func_08020358
 	.thumb_func
 Func_08020358:
-	overlay_veneer Func_0802dac0
+	overlay_veneer GetWorldMapCollision
 	.global Func_08020360
 	.thumb_func
 Func_08020360:

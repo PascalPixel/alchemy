@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08044f4c
+	.global RenderResource_LoadPair
 	.thumb_func
-Func_08044f4c:
+RenderResource_LoadPair:
 	push {r5, r6, r7, lr}
 	adds r7, r1, #0
 	movs r1, #128
@@ -29,4 +29,4 @@ Func_08044f4c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08044f84:
-	.4byte Data_08059978
+	.4byte RenderResource_PairSourceTable

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f004
+	.global Menu_ScrollSelectionList
 	.thumb_func
-Func_0803f004:
+Menu_ScrollSelectionList:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -37,7 +37,7 @@ Func_0803f004:
 	adds r0, r6, #0
 	mov r1, r8
 	movs r3, #0
-	bl Func_0803f2e4
+	bl MenuSelection_SetupEntry
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #150
@@ -111,7 +111,7 @@ Func_0803f004:
 	ldr r2, [r5, #4]
 	str r2, [r3]
 	ldrh r0, [r5, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	strh r6, [r5, #10]
 	ldr r5, [r5, #4]
 	str r6, [r5]
@@ -140,7 +140,7 @@ Func_0803f004:
 	adds r0, r6, #0
 	mov r1, r8
 	movs r3, #0
-	bl Func_0803f2e4
+	bl MenuSelection_SetupEntry
 	movs r2, #192
 	lsls r2, r2, #2
 	adds r2, #150
@@ -227,7 +227,7 @@ Func_0803f004:
 	bne .L_0803f1b2
 .L_0803f1bc:
 	ldrh r0, [r5, #12]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	ldr r3, [r5]
 	movs r2, #0
 	strh r2, [r5, #10]

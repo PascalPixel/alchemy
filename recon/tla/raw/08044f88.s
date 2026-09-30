@@ -22,7 +22,7 @@ Func_08044f88:
 	bgt .L_08045008
 	adds r0, r5, #0
 	adds r1, r7, #0
-	bl Func_08044f4c
+	bl RenderResource_LoadPair
 	ldr r2, .L_08045000
 	mov r3, r10
 	mov r11, r2

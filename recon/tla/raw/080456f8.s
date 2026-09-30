@@ -21,7 +21,7 @@ Func_080456f8:
 	mov r1, r8
 	adds r2, r3, #0
 	str r4, [sp, #0]
-	bl Func_0804562c
+	bl UiText_LoadRemappedGlyph
 	movs r2, #142
 	ldr r4, [sp, #0]
 	lsls r2, r2, #1
@@ -37,7 +37,7 @@ Func_080456f8:
 	adds r5, r5, r3
 	ldrh r0, [r4, r5]
 	mov r1, r8
-	bl Func_080455dc
+	bl Resource_LoadIndexedIntoBuffer
 	ldr r3, .L_08045754
 	ldrh r2, [r6, #8]
 	ands r0, r3

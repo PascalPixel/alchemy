@@ -27,7 +27,7 @@ Func_0804297c:
 	cmp r3, #0
 	beq .L_080429fa
 	movs r0, #0
-	bl Func_08118088 + 0x40
+	bl BattleParty_PrepareActiveOwnersFar
 	movs r2, #1
 	negs r2, r2
 	movs r7, #0
@@ -67,7 +67,7 @@ Func_0804297c:
 	bne .L_080429de
 	b .L_08042a46
 .L_080429fa:
-	bl Func_080ad0f0
+	bl Party_CountActiveOwnersFar
 	str r0, [sp, #24]
 	cmp r0, #4
 	bls .L_08042a08
@@ -136,7 +136,7 @@ Func_0804297c:
 	beq .L_08042a80
 	movs r0, #0
 	movs r1, #0
-	bl BattleActor_CommitPlacementFar + 0x18
+	bl Func_08118130
 	cmp r0, #0
 	bne .L_08042a8a
 .L_08042a80:
@@ -289,7 +289,7 @@ Func_0804297c:
 	lsls r0, r5, #2
 	adds r0, r0, r5
 	lsls r0, r0, #3
-	bl __divsi3
+	bl Math_Div
 	adds r3, r0, #0
 	cmp r3, #0
 	bne .L_08042bbe
@@ -334,7 +334,7 @@ Func_0804297c:
 	lsls r0, r5, #2
 	adds r0, r0, r5
 	lsls r0, r0, #3
-	bl __divsi3
+	bl Math_Div
 	adds r3, r0, #0
 	cmp r3, #0
 	bne .L_08042c18
@@ -387,7 +387,7 @@ Func_0804297c:
 	add r5, sp, #32
 	adds r1, r5, #0
 	movs r0, #0
-	bl BattleActor_CommitPlacementFar + 0x18
+	bl Func_08118130
 	movs r1, #160
 	lsls r1, r1, #7
 	adds r1, #1
@@ -395,7 +395,7 @@ Func_0804297c:
 	movs r2, #0
 	adds r3, r6, #0
 	str r7, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r1, #160
 	lsls r1, r1, #7
 	adds r1, #2
@@ -403,7 +403,7 @@ Func_0804297c:
 	movs r2, #2
 	adds r3, r6, #0
 	str r7, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	adds r2, r6, #1
 	movs r1, #160
 	mov r8, r2
@@ -413,7 +413,7 @@ Func_0804297c:
 	movs r2, #0
 	mov r3, r8
 	str r7, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	movs r1, #160
 	lsls r1, r1, #7
 	mov r3, r8
@@ -421,7 +421,7 @@ Func_0804297c:
 	mov r0, r9
 	movs r2, #2
 	str r7, [sp, #0]
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrb r3, [r5]
 	cmp r3, #9
 	bhi .L_08042cd2
@@ -467,7 +467,7 @@ Func_0804297c:
 	mov r0, r9
 	adds r3, r6, #0
 	movs r2, #1
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrb r3, [r5, #1]
 	cmp r3, #9
 	bls .L_08042d20
@@ -489,7 +489,7 @@ Func_0804297c:
 	mov r0, r9
 	adds r3, r6, #0
 	movs r2, #3
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrb r3, [r5, #2]
 	cmp r3, #9
 	bls .L_08042d4a
@@ -511,7 +511,7 @@ Func_0804297c:
 	mov r0, r9
 	mov r3, r8
 	movs r2, #1
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 	ldrb r3, [r5, #3]
 	cmp r3, #9
 	bls .L_08042d74
@@ -533,7 +533,7 @@ Func_0804297c:
 	mov r0, r9
 	movs r2, #3
 	mov r3, r8
-	bl Func_0803c378
+	bl UiWindow_SetTilemapEntry
 .L_08042d8e:
 	ldr r0, [sp, #28]
 	movs r3, #0

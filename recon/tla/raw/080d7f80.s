@@ -22,21 +22,21 @@ Func_080d7f80:
 	bne .L_080d7fa8
 	b .L_080d8126
 .L_080d7fa8:
-	bl Func_080d7a78
+	bl BattleFx_InitializeSlots
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #224
 	ldr r3, [r3]
 	ldr r0, .L_080d8134
 	mov r10, r3
-	bl Func_08108048 + 0x10
+	bl Unnamed_080b0840Far
 	movs r0, #30
 	bl WaitFrames
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #7
 	adds r0, r6, #0
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl WaitFrames
 	movs r0, #173
@@ -81,7 +81,7 @@ Func_080d7f80:
 	ldr r3, [r5, #16]
 	mov r5, r10
 	str r3, [r7, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	adds r5, #80
 .L_080d8042:
 	movs r1, #168
@@ -123,7 +123,7 @@ Func_080d7f80:
 	movs r2, #0
 	lsls r1, r1, #7
 	ldr r0, [r5]
-	bl Func_080d3838
+	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl WaitFrames
 	ldr r0, [r5]
@@ -181,7 +181,7 @@ Func_080d7f80:
 	str r3, [r2, #28]
 	movs r0, #30
 	bl WaitFrames
-	bl Func_08108048 + 0x18
+	bl Func_08108060
 	bl Func_080d7ab4
 .L_080d8126:
 	add sp, #12

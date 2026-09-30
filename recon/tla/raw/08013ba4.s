@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08013ba4
+	.global QueueIoWriteDelay2
 	.thumb_func
-Func_08013ba4:
+QueueIoWriteDelay2:
 	push {r5, r6, lr}
 	ldr r4, .L_08013bd8
 	adds r6, r0, #0

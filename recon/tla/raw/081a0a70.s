@@ -139,11 +139,11 @@ Func_081a0a70:
 	ldr r3, .L_081a0bbc
 	ldr r0, .L_081a0bc0
 	strh r2, [r3]
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	movs r1, #144
 	ldr r0, .L_081a0bc4
 	lsls r1, r1, #3
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r7, .L_081a0bc8
 	movs r6, #0
 	movs r5, #0

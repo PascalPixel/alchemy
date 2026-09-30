@@ -37,12 +37,21 @@ ObjectMotion_ResetTargetsAndVelocityFar:
 	.thumb_func
 Func_080c8900:
 	overlay_veneer ObjectEffect_BeginContextEffect26
+	.global Func_080c8908
+	.thumb_func
+Func_080c8908:
 	overlay_veneer Func_080d5e64
+	.global Func_080c8910
+	.thumb_func
+Func_080c8910:
 	overlay_veneer Func_080d6e58
 	.global Func_080c8918
 	.thumb_func
 Func_080c8918:
 	overlay_veneer Func_080d6f34
+	.global Func_080c8920
+	.thumb_func
+Func_080c8920:
 	overlay_veneer Func_080d7024
 	.global Func_080c8928
 	.thumb_func
@@ -52,6 +61,9 @@ Func_080c8928:
 	.thumb_func
 Func_080c8930:
 	overlay_veneer Func_080d2d70
+	.global Func_080c8938
+	.thumb_func
+Func_080c8938:
 	overlay_veneer Func_080ca368
 	.global Func_080c8940
 	.thumb_func

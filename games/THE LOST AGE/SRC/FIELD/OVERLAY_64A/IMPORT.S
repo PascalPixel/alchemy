@@ -34,7 +34,7 @@
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
 	overlay_veneer UiText_DrawStringInWindowFar
 	overlay_veneer RenderOutput_CreateFar
-	overlay_veneer Func_08038140
+	overlay_veneer UiWork_FinalizePendingCoreFar
 	overlay_veneer Menu_SelectSaveSlotActionFar
 	overlay_veneer Func_080381f8
 	overlay_veneer Func_08038210
@@ -70,9 +70,9 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer Func_080c8268
-	overlay_veneer Func_080c83a8
-	overlay_veneer Func_080c83b0
-	overlay_veneer Func_080c83b8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Func_080c8558
 	overlay_veneer Func_080c8940
 	overlay_veneer Func_080f8010

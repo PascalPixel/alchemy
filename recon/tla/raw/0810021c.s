@@ -80,7 +80,7 @@ Func_0810021c:
 	adds r1, r7, r3
 	movs r2, #0
 	mov r11, r0
-	bl Func_080fad88
+	bl ItemMenu_Collect
 	movs r4, #133
 	lsls r4, r4, #2
 	adds r3, r7, r4
@@ -278,7 +278,7 @@ Func_0810021c:
 	adds r3, r7, r2
 	ldrb r1, [r3]
 	adds r0, r0, r1
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #129
 	lsls r2, r0, #1
 	lsls r3, r3, #2

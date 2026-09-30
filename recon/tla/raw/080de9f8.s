@@ -27,7 +27,7 @@ Func_080de9f8:
 	ldr r1, [r6, #8]
 	ldr r3, [r6, #16]
 	lsls r0, r0, #1
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080dea5e
@@ -70,7 +70,7 @@ Func_080de9f8:
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
-	bl Func_080dc10c
+	bl Object_Spawn
 	adds r6, r0, #0
 	adds r5, r6, #0
 	cmp r6, #0
@@ -178,7 +178,7 @@ Func_080de9f8:
 	lsls r1, r1, #16
 	lsls r2, r2, #8
 	adds r0, r6, #0
-	bl Func_080db974
+	bl Motion_SetTargetPositionFromMagnitudeAngle
 	adds r0, r6, #0
 	bl Object_CommitPosition
 	adds r0, r6, #0
@@ -188,7 +188,7 @@ Func_080de9f8:
 	cmp r3, #96
 	beq .L_080deb82
 	mov r0, r9
-	bl Func_08014274
+	bl Resource_ResetEntry
 .L_080deb82:
 	mov r2, r10
 	ldr r3, [r2, #36]

@@ -43,7 +43,7 @@ Func_0803d9bc:
 	strh r2, [r3]
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	movs r2, #1
 	mov r8, r2
 .L_0803da16:
@@ -65,7 +65,7 @@ Func_0803d9bc:
 	strh r2, [r3]
 	adds r0, r5, #0
 	mov r1, r8
-	bl Func_0803db54
+	bl UiGlyph_DecodeWithHeapRoutines
 	ldr r2, [sp, #28]
 	cmp r2, #0
 	bne .L_0803da4c

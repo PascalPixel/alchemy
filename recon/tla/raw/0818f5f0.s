@@ -6,7 +6,7 @@ Func_0818f5f0:
 	push {r5, r6, lr}
 	adds r6, r0, #0
 	ldr r0, [r6, #8]
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
 	movs r1, #2
 	adds r0, r5, #0

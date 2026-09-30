@@ -14,8 +14,9 @@ void UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 
+/* The Japanese edition decodes the message where the others copy it. */
 #if defined(TBS_EDITION_JA)
-void UiText_CopyMessageString(s32, s16 *, s32);
+void UiText_DecodeMessage(s32, s16 *, s32);
 #else
 s32 UiText_CopyMessageString(s32, s16 *, s32);
 #endif
@@ -50,7 +51,11 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 active:
         work = UiWindow_Create(0, 7, 30, 4, 42);
         Ui_FillVramBlockPattern();
+#if defined(TBS_EDITION_JA)
+        UiText_DecodeMessage((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
+#else
         UiText_CopyMessageString((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
+#endif
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {
             WaitFrames(1);

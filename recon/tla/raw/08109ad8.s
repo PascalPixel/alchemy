@@ -58,7 +58,7 @@ Func_08109ad8:
 	movs r1, #2
 	movs r2, #0
 	mov r10, r0
-	bl Func_080f8058 + 0x8
+	bl Func_080f8060
 	movs r0, #160
 	lsls r0, r0, #3
 	adds r0, #5
@@ -125,7 +125,7 @@ Func_08109ad8:
 	movs r0, #1
 	bl WaitFrames
 	mov r0, r8
-	bl Item_AdjustCounterFar + 0x8
+	bl Inventory_CountFar
 	cmp r0, #0
 	bne .L_08109be8
 	movs r0, #113
@@ -201,7 +201,7 @@ Func_08109ad8:
 .L_08109c72:
 	movs r0, #0
 	bl Func_0810bea8
-	bl Func_080f8058 + 0x10
+	bl Func_080f8068
 	mov r0, r10
 	movs r1, #2
 	bl UiWork_FinalizeFar

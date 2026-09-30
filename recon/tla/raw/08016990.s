@@ -44,7 +44,7 @@ Func_08016990:
 .L_080169d8:
 	.4byte Data_02003870
 .L_080169dc:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_080169e0:
 	.4byte Data_02003a70
 .L_080169e4:

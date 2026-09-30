@@ -61,7 +61,7 @@ Func_081192d0:
 .L_0811933c:
 	.4byte Data_02003a74
 .L_08119340:
-	.4byte Data_0300124c
+	.4byte gLinkStatus
 .L_08119344:
 	ldrh r2, [r5, #4]
 	ldrh r3, [r7, #4]

@@ -385,7 +385,7 @@ Func_08043cd8:
 	bl Func_08044f88
 	movs r5, #144
 	str r0, [sp, #16]
-	bl Func_080f8058 + 0x18
+	bl Func_080f8070
 	movs r4, #0
 .L_08043fae:
 	adds r0, r4, #0
@@ -399,7 +399,7 @@ Func_08043cd8:
 	cmp r4, #3
 	ble .L_08043fae
 	movs r0, #0
-	bl Func_080f8058 + 0x28
+	bl Func_080f8080
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #2
@@ -507,11 +507,11 @@ Func_08043cd8:
 	adds r1, r6, #0
 	bl UiText_DrawFourNumbersInRow
 	movs r0, #1
-	bl Func_080f8058 + 0x28
+	bl Func_080f8080
 	b .L_0804410a
 .L_080440b2:
 	movs r0, #0
-	bl Func_080f8058 + 0x28
+	bl Func_080f8080
 	movs r1, #2
 	ldr r0, [sp, #24]
 	bl UiWork_Finalize
@@ -532,7 +532,7 @@ Func_08043cd8:
 	ldrb r1, [r2]
 	bl Func_0803f9c0
 	movs r0, #0
-	bl Func_080f8058 + 0x28
+	bl Func_080f8080
 	bl Func_08043b34
 	movs r1, #2
 	ldr r0, [sp, #24]
@@ -658,7 +658,7 @@ Func_08043cd8:
 	mov r0, r8
 	adds r0, #2
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r10
 	mov r8, r0
 	cmp r2, #0
@@ -764,7 +764,7 @@ Func_08043cd8:
 	mov r0, r8
 	adds r0, #4
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r10
 	mov r8, r0
 	cmp r2, #0
@@ -789,7 +789,7 @@ Func_08043cd8:
 	bl Audio_PlayCue
 	mov r5, r8
 .L_080442de:
-	bl Func_080f8058 + 0x20
+	bl Func_080f8078
 	bl Func_08043b34
 	movs r1, #2
 	ldr r0, [sp, #24]

@@ -353,7 +353,7 @@ Func_0811ea0c:
 	beq .L_0811ed00
 	mov r1, r11
 	mov r0, r10
-	bl __divsi3
+	bl Math_Div
 	ldr r5, [r7, #8]
 	ldr r6, [r7, #12]
 	adds r2, r0, #0
@@ -374,7 +374,7 @@ Func_0811ea0c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0811edac
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	mov r1, r8
 	ldr r3, [r1]
 	cmp r3, #0
@@ -393,11 +393,11 @@ Func_0811ea0c:
 	cmp r3, #0
 	beq .L_0811ed46
 	mov r0, r8
-	bl Resource_FarCall00C + 0x8
+	bl Func_08138008
 	b .L_0811ed4c
 .L_0811ed46:
 	mov r0, r8
-	bl Resource_FarCall00C + 0x18
+	bl Func_08138018
 .L_0811ed4c:
 	ldr r1, [sp, #4]
 	cmp r1, #0

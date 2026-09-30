@@ -23,7 +23,7 @@ Func_081a0be8:
 	adds r1, r7, #0
 	adds r2, r6, #0
 	adds r0, r5, #0
-	bl UiIcon_CopyResourceToSlotFar + 0x8
+	bl Func_08038418
 	movs r6, #192
 	mov r10, r0
 	lsls r6, r6, #3

@@ -22,7 +22,7 @@ Func_0804bbd0:
 	ldr r1, [r3, #68]
 	movs r2, #0
 	movs r3, #4
-	bl Func_0803aae4
+	bl UiText_RenderWideStringAtOffset
 	add sp, #132
 	pop {r3}
 	mov r9, r3

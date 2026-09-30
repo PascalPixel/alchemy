@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803ef48
+	.global Menu_ReloadNodeResource
 	.thumb_func
-Func_0803ef48:
+Menu_ReloadNodeResource:
 	push {lr}
 	movs r3, #210
 	lsls r3, r3, #2

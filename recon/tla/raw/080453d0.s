@@ -80,4 +80,4 @@ Func_080453d0:
 .L_0804545c:
 	.4byte 0x06000600
 .L_08045460:
-	.4byte Data_0805f770
+	.4byte Graphics_ExpandNibbleTable

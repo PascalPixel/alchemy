@@ -37,7 +37,7 @@ UiText_DrawStringInWindow:
 	mov r1, r10
 	adds r2, r7, #0
 	mov r8, r3
-	bl Func_0803acd4
+	bl UiText_RenderWideStringInWindow
 	adds r0, r6, #0
 	bl Sys_Free
 	b .L_080421dc

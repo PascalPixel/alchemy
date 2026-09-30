@@ -44,4 +44,4 @@ Func_081a7870:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_081a78bc:
-	.4byte IwramDivide
+	.4byte IwramSignedDivide

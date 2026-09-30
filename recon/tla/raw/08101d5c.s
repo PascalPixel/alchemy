@@ -83,7 +83,7 @@ Func_08101d5c:
 	str r5, [sp, #0]
 	bl UiWindow_CreateFar
 	str r0, [sp, #28]
-	bl UiWindow_SetTilemapEntryFar + 0x20
+	bl Func_08038290
 	ldr r7, .L_08101ff8
 	movs r5, #0
 .L_08101e18:
@@ -112,7 +112,7 @@ Func_08101d5c:
 	ldr r1, .L_08102000
 	ldr r0, [sp, #32]
 	adds r1, r6, r1
-	bl Func_080383d0 + 0x8
+	bl Func_080383d8
 	mov r2, r11
 	movs r3, #15
 	str r2, [sp, #0]
@@ -226,7 +226,7 @@ Func_08101d5c:
 	cmp r3, #99
 	beq .L_08101f4a
 	adds r0, r3, #0
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r3, #99
 	strh r3, [r5]
 .L_08101f4a:
@@ -273,7 +273,7 @@ Func_08101d5c:
 	movs r1, #1
 	ldr r0, [sp, #32]
 	bl UiWork_FinalizeFar
-	bl UiWindow_SetTilemapEntryFar + 0x20
+	bl Func_08038290
 	ldr r2, [sp, #16]
 	movs r3, #2
 	negs r3, r3
@@ -295,7 +295,7 @@ Func_08101d5c:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_08102004
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r0, [sp, #16]
 	add sp, #36
 	pop {r3, r5, r6, r7}
@@ -314,4 +314,4 @@ Func_08101d5c:
 .L_08102000:
 	.4byte 0x00002fcb
 .L_08102004:
-	.4byte Func_08104da8
+	.4byte Menu_UpdateEntryObjectTransforms

@@ -25,7 +25,7 @@ Func_0814db04:
 	ldr r2, [r5, #100]
 	str r3, [sp, #24]
 	str r2, [sp, #28]
-	bl Func_081435e0
+	bl BattleFx_BeginCanvasLayer
 	bl Func_0813ba50
 	ldr r2, .L_0814db74
 	movs r3, #160
@@ -40,7 +40,7 @@ Func_0814db04:
 	str r3, [r6]
 	lsls r1, r1, #4
 	ldr r0, .L_0814db80
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, .L_0814db78
 	movs r2, #128
 	lsls r2, r2, #19
@@ -104,7 +104,7 @@ Func_0814db04:
 	ldr r1, .L_0814dc40
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r1, #194
 	lsls r1, r1, #1
 	adds r1, #255
@@ -226,7 +226,7 @@ Func_0814db04:
 	strh r3, [r7]
 	ldr r0, .L_0814dd0c
 	lsls r1, r1, #4
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 .L_0814dcdc:
 	ldr r4, [sp, #24]
 	ldrh r3, [r7]
@@ -238,7 +238,7 @@ Func_0814db04:
 	cmp r5, #15
 	bne .L_0814dd10
 	ldr r0, .L_0814dd0c
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	b .L_0814dd10
 	.2byte 0x0000
 .L_0814dcf8:
@@ -326,7 +326,7 @@ Func_0814db04:
 .L_0814dd92:
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r4, r11
 	lsls r3, r0, #1
 	ldrh r1, [r4, r3]
@@ -691,7 +691,7 @@ Func_0814db04:
 	ble .L_0814e0a4
 	mov r0, r8
 	movs r1, #7
-	bl Math_Mod
+	bl __modsi3
 	adds r4, r0, #4
 	b .L_0814e0aa
 .L_0814e07c:
@@ -815,7 +815,7 @@ Func_0814db04:
 	blt .L_0814e1d0
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r6, r8
 	movs r3, #1
 	ands r3, r6
@@ -916,7 +916,7 @@ Func_0814db04:
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, .L_0814e32c
 	ldr r2, [sp, #28]
 	ldrb r4, [r3, r0]
@@ -996,7 +996,7 @@ Func_0814db04:
 	adds r5, r0, r1
 .L_0814e2b8:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	movs r2, #1
 	add r8, r2
 	mov r3, r8
@@ -1115,7 +1115,7 @@ Func_0814db04:
 	cmp r3, #96
 	bne .L_0814e3b6
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_0814e3b6:
 	ldr r4, [sp, #40]
 	cmp r4, #16
@@ -1197,7 +1197,7 @@ Func_0814db04:
 .L_0814e44a:
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	lsls r3, r0, #1
 	ldrh r1, [r7, r3]
 	ldr r3, [sp, #44]
@@ -1298,7 +1298,7 @@ Func_0814db04:
 	bgt .L_0814e580
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0814e6d8
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -1460,7 +1460,7 @@ Func_0814db04:
 	adds r0, r3, r0
 	movs r1, #9
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, .L_0814e6e8
 	ldr r2, [sp, #28]
 	ldrb r4, [r3, r0]
@@ -1570,7 +1570,7 @@ Func_0814db04:
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	ldr r0, .L_0814e740
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	bl Func_08143bb8
 	add sp, #336
 	pop {r3, r5, r6, r7}

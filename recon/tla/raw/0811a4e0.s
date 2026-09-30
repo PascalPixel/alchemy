@@ -21,7 +21,7 @@ Func_0811a4e0:
 	lsls r5, r5, #1
 	add r5, r9
 	ldrh r0, [r5]
-	bl Func_081280fc
+	bl Summon_IsEntryFlagged
 	movs r1, #0
 	mov r8, r0
 	ldrh r0, [r5]
@@ -82,7 +82,7 @@ Func_0811a4e0:
 	adds r1, r1, r2
 	adds r0, r5, #0
 	adds r2, r6, r4
-	bl ResourceMetadata_SumCommandLengthsFar + 0x10
+	bl ResourceSlot_LoadFar
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	bne .L_0811a58e

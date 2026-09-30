@@ -53,7 +53,7 @@ Func_081848ec:
 	adds r1, #255
 	mov r0, r11
 	muls r0, r3
-	bl __divsi3
+	bl Math_Div
 	ldr r1, .L_081849f0
 	lsls r0, r0, #16
 	adds r1, r0, r1
@@ -132,7 +132,7 @@ Func_081848ec:
 	mov r0, r11
 	muls r0, r3
 	adds r1, #255
-	bl __divsi3
+	bl Math_Div
 	ldr r3, .L_081849ec
 	ldr r5, .L_08184a10
 	subs r3, r3, r0
@@ -359,7 +359,7 @@ Func_081848ec:
 	lsls r0, r2, #5
 	ldrh r1, [r3, r5]
 	subs r0, r0, r2
-	bl __divsi3
+	bl Math_Div
 	ldr r3, [sp, #120]
 	movs r4, #1
 	subs r3, #1
@@ -589,7 +589,7 @@ Func_081848ec:
 	adds r0, r5, #0
 	movs r1, #6
 	mov r8, r2
-	bl __divsi3
+	bl Math_Div
 	mov r12, r0
 	adds r0, r5, #0
 	cmp r0, #0
@@ -714,7 +714,7 @@ Func_081848ec:
 	adds r0, r6, r7
 	adds r1, #192
 	movs r3, #128
-	bl Func_08118088 + 0x68
+	bl ColorBuffer_ScaleFar
 .L_08184e1e:
 	ldr r0, [sp, #132]
 	cmp r0, #0
@@ -1897,7 +1897,7 @@ Func_081848ec:
 	ldr r0, [sp, #92]
 	movs r1, #3
 	add r0, r9
-	bl Math_Mod
+	bl __modsi3
 	movs r1, #128
 	lsls r1, r1, #6
 	lsls r0, r0, #12
@@ -2062,7 +2062,7 @@ Func_081848ec:
 	movs r0, #146
 	lsls r0, r0, #7
 	adds r0, #80
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r4, r11
 	negs r5, r4
 	lsls r5, r5, #10
@@ -2134,7 +2134,7 @@ Func_081848ec:
 	lsls r0, r0, #7
 .L_08185932:
 	negs r0, r0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 .L_08185938:
 	ldr r1, [sp, #112]
 	movs r2, #4
@@ -2466,13 +2466,13 @@ Func_08185b9c:
 	adds r5, r7, r0
 .L_08185bd6:
 	ldmia r5!, {r0}
-	bl Func_08020040 + 0x8
+	bl ResourceObject_ReleaseFar
 	movs r1, #1
 	add r9, r1
 	mov r2, r9
 	cmp r2, #50
 	bne .L_08185bd6
-	bl Func_08020380 + 0x8
+	bl Func_08020388
 	movs r0, #128
 	bl Resource_LoadIntoFreeSlot
 	ldr r3, [sp, #140]
@@ -2540,7 +2540,7 @@ Func_08185b9c:
 	ldr r1, .L_08185cdc
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r2, #16
 	negs r2, r2
 	adds r1, r2, #0
@@ -3103,7 +3103,7 @@ Func_08185b9c:
 	movs r0, #146
 	lsls r0, r0, #7
 	adds r0, #80
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	mov r2, r11
 	lsls r5, r2, #9
 	adds r0, r5, #0
@@ -3168,7 +3168,7 @@ Func_08185b9c:
 	movs r0, #0
 .L_0818616a:
 	negs r0, r0
-	bl Func_08015024
+	bl SceneTransform_ApplyPitch
 	movs r2, #4
 	ldr r1, [sp, #76]
 	ldr r0, .L_08186228
@@ -3674,7 +3674,7 @@ Func_08185b9c:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118028 + 0x18
+	bl Func_08118040
 	movs r1, #16
 	negs r1, r1
 	movs r2, #4
@@ -3808,7 +3808,7 @@ Func_08185b9c:
 	adds r3, r0, r5
 	str r6, [r3]
 	movs r0, #134
-	bl Func_08118088 + 0x60
+	bl Func_081180e8
 .L_08186690:
 	mov r7, r11
 	cmp r7, #0
@@ -4694,7 +4694,7 @@ Func_08185b9c:
 	movs r3, #0
 	str r3, [r7, #16]
 	ldr r0, .L_08186df8
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
 	bl Func_08143bb8

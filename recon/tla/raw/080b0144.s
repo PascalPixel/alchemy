@@ -24,7 +24,7 @@ Func_080b0144:
 	mov r5, sp
 	adds r0, r7, #0
 	adds r2, r5, #0
-	bl Func_080affac
+	bl Owner_GetDigitValues
 	mov r12, r11
 	mov r0, r11
 	movs r4, #0

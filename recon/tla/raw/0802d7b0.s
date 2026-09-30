@@ -105,7 +105,7 @@ Func_0802d7b0:
 .L_0802d868:
 	.4byte Data_02024000
 .L_0802d86c:
-	.4byte Data_0202c000
+	.4byte gMapCollision
 .L_0802d870:
 	.4byte Data_0802efc4
 .L_0802d874:

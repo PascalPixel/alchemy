@@ -75,7 +75,7 @@ Func_080d7304:
 	strh r3, [r5]
 	lsls r1, r1, #3
 	ldr r0, .L_080d73b0
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	add sp, #4
 	pop {r3}
 	mov r8, r3

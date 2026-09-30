@@ -56,7 +56,7 @@ UiText_OpenMessageWindow:
 	mov r9, r0
 	mov r0, r10
 	str r6, [sp, #8]
-	bl Func_0803b794
+	bl UiWindow_FitOnScreen
 	ldr r2, [sp, #16]
 	cmp r2, #0
 	bne .L_0803a71c
@@ -114,7 +114,7 @@ UiText_OpenMessageWindow:
 	movs r2, #0
 	movs r3, #0
 	str r5, [sp, #4]
-	bl Func_0803954c
+	bl UiText_QueueRenderEntries
 	cmp r0, #0
 	bne .L_0803a788
 	adds r0, r6, #0

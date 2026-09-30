@@ -15,7 +15,7 @@ Func_080b06e8:
 	adds r1, #33
 	adds r3, r2, r1
 	ldrh r0, [r3]
-	bl Func_080ad3a8
+	bl Owner_GetRecord
 	movs r2, #0
 	adds r0, #62
 .L_080b0708:

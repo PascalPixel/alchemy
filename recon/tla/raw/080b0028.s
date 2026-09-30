@@ -18,11 +18,11 @@ Func_080b0028:
 	ldrh r0, [r3]
 	adds r1, #248
 	adds r2, r5, #0
-	bl Func_080affac
+	bl Owner_GetDigitValues
 	lsls r3, r6, #2
 	ldr r0, [r5, r3]
 	movs r1, #10
-	bl __divsi3
+	bl Math_Div
 .L_080b0056:
 	add sp, #16
 	pop {r5, r6, pc}

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08014128
+	.global Runtime_PushSlotEntry
 	.thumb_func
-Func_08014128:
+Runtime_PushSlotEntry:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	cmp r1, #255

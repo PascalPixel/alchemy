@@ -30,6 +30,6 @@ Func_08014840:
 .L_0801486e:
 	pop {r5, r6, r7, pc}
 .L_08014870:
-	.4byte Data_03001228
+	.4byte gSchedulerTaskCount
 .L_08014874:
-	.4byte Data_02003610
+	.4byte gSchedulerTaskTable

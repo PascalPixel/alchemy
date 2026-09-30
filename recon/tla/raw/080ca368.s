@@ -71,7 +71,7 @@ Func_080ca368:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_080ca3e8:
-	.4byte Data_080ef824
+	.4byte Party_PairResolveRules
 .L_080ca3ec:
 	.4byte 0xffff0000
 .L_080ca3f0:

@@ -19,7 +19,7 @@ Func_0811c710:
 	mov r9, r0
 	adds r0, r1, #0
 	str r1, [sp, #8]
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	blt .L_0811c74a
 	ldr r2, [sp, #12]
@@ -27,7 +27,7 @@ Func_0811c710:
 	ldrsh r2, [r2, r3]
 	adds r0, r2, #0
 	str r2, [sp, #4]
-	bl Func_0811c650
+	bl BattleObject_IsValidId
 	cmp r0, #0
 	bge .L_0811c750
 .L_0811c74a:
@@ -65,7 +65,7 @@ Func_0811c710:
 	mov r10, r3
 	movs r0, #2
 	mov r1, r10
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	mov r11, r0
 	movs r0, #128
 	str r0, [sp, #0]
@@ -74,7 +74,7 @@ Func_0811c710:
 	add r1, sp, #104
 	movs r0, #1
 	mov r10, r1
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	movs r2, #0
 	str r2, [sp, #0]
 	mov r11, r0
@@ -148,7 +148,7 @@ Func_0811c710:
 	ble .L_0811c86a
 	movs r0, #2
 	mov r1, r10
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	mov r8, r0
 	movs r5, #0
 	cmp r9, r8
@@ -178,7 +178,7 @@ Func_0811c710:
 .L_0811c86a:
 	movs r0, #1
 	mov r1, r10
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	adds r7, r0, #0
 	movs r5, #0
 	cmp r9, r7
@@ -249,7 +249,7 @@ Func_0811c710:
 	movs r3, #0
 .L_0811c8f2:
 	str r3, [r0, #4]
-	bl Resource_FarCall00C + 0x10
+	bl BattleFx_InitializeModeFar
 	movs r0, #10
 	bl WaitFrames
 	bl BattleActor_CommitPlacement

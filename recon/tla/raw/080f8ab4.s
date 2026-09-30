@@ -72,7 +72,7 @@ Func_080f8ab4:
 	subs r0, r0, r5
 	movs r1, #2
 	adds r0, #1
-	bl __divsi3
+	bl Math_Div
 	mov r3, r8
 	mov r11, r0
 	lsls r6, r6, #4
@@ -80,7 +80,7 @@ Func_080f8ab4:
 	subs r0, r0, r6
 	adds r0, #1
 	movs r1, #2
-	bl __divsi3
+	bl Math_Div
 	ldr r4, .L_080f8b84
 	mov r8, r0
 .L_080f8b52:

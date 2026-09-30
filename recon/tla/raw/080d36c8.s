@@ -24,4 +24,4 @@ Func_080d36c8:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080d36f0:
-	.4byte Func_080d36f4
+	.4byte ObjectGroup_ApplyIndexedChildValue

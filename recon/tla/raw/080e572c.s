@@ -43,7 +43,7 @@ Func_080e572c:
 	str r3, [r5, #4]
 	ldr r3, [r2, #12]
 	str r3, [r5, #8]
-	bl Func_080dc390
+	bl Camera_WorldToScreen
 	ldr r2, [sp, #20]
 	movs r0, #2
 	ldrsh r3, [r5, r0]
@@ -168,7 +168,7 @@ Func_080e572c:
 	str r0, [r1, #4]
 	movs r1, #12
 	adds r0, r5, #0
-	bl __divsi3
+	bl Math_Div
 	movs r2, #128
 	lsls r2, r2, #8
 	adds r6, r6, r2
@@ -309,7 +309,7 @@ Func_080e572c:
 	strh r5, [r3]
 	lsls r1, r1, #3
 	ldr r0, .L_080e5a60
-	bl Func_080145a8
+	bl Scheduler_AddOrUpdateCallback
 	ldr r1, [sp, #24]
 	movs r0, #30
 	ldrsh r5, [r1, r0]
@@ -359,11 +359,11 @@ Func_080e572c:
 	bne .L_080e59f4
 .L_080e5a22:
 	ldr r0, .L_080e5a60
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	ldr r0, [sp, #16]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	mov r0, r11
-	bl Func_08014274
+	bl Resource_ResetEntry
 	bl BattleFx_PrepareBufferInterpolation
 	bl Func_080eb930
 	movs r0, #92

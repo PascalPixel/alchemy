@@ -21,7 +21,7 @@ Func_08104acc:
 	movs r1, #0
 	mov r0, r8
 	str r6, [sp, #8]
-	bl Func_08038390 + 0x20
+	bl Ability_LoadGlyphFar
 	movs r3, #128
 	lsls r3, r3, #3
 	adds r5, r5, r3

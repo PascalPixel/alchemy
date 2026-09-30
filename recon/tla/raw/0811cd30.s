@@ -24,7 +24,7 @@ Func_0811cd30:
 	movs r0, #1
 .L_0811cd56:
 	adds r1, r6, #0
-	bl Func_0811a188
+	bl BattleParty_ListLivingUnits
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_0811cd68

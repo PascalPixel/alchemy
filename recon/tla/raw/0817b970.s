@@ -7,7 +7,7 @@ Func_0817b970:
 	mov r7, r8
 	push {r7}
 	adds r5, r1, #0
-	bl Func_08118088 + 0x10
+	bl GetBattleObjectSlotFar
 	movs r3, #3
 	movs r2, #13
 	ands r5, r3
@@ -33,7 +33,7 @@ Func_0817b970:
 .L_0817b9a4:
 	ldr r0, [r6]
 	adds r1, r7, #0
-	bl Func_08118088 + 0x50
+	bl GetMotionRecordFar
 	cmp r0, #0
 	bne .L_0817b98e
 	pop {r3}

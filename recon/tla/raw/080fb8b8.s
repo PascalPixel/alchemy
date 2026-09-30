@@ -80,7 +80,7 @@ Func_080fb8b8:
 	mov r2, r8
 	movs r3, #72
 	str r6, [sp, #0]
-	bl Func_080fbd34
+	bl ItemMenu_DrawStat
 	adds r5, #1
 	lsls r5, r5, #24
 	lsrs r5, r5, #24
@@ -106,7 +106,7 @@ Func_080fb8b8:
 	mov r2, r8
 	movs r3, #72
 	str r6, [sp, #0]
-	bl Func_080fbd34
+	bl ItemMenu_DrawStat
 	adds r5, #1
 	lsls r5, r5, #24
 	lsrs r5, r5, #24
@@ -221,7 +221,7 @@ Func_080fb8b8:
 	mov r2, r8
 	movs r3, #72
 	str r5, [sp, #0]
-	bl Func_080fbd34
+	bl ItemMenu_DrawStat
 	b .L_080fbb22
 .L_080fba9e:
 	adds r3, r1, #0

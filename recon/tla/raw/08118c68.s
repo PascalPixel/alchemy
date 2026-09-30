@@ -10,7 +10,7 @@ Func_08118c68:
 	lsls r3, r3, #18
 	adds r0, r7, #0
 	ldr r5, [r3, #36]
-	bl Func_0811a038
+	bl BattleParty_PrepareActiveOwners
 	adds r6, r0, #0
 	cmp r6, #0
 	ble .L_08118c98

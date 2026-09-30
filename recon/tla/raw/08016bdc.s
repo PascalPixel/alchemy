@@ -28,7 +28,7 @@ Func_08016bdc:
 	bl Func_080167d8
 .L_08016c10:
 	ldr r0, .L_08016c8c
-	bl Func_08016854
+	bl Party_Check
 	ldr r6, .L_08016c94
 .L_08016c18:
 	ldr r3, [r6]

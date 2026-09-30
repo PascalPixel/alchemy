@@ -46,7 +46,7 @@ Func_080e87c4:
 	adds r3, r6, r2
 	strh r5, [r3]
 	ldr r0, .L_080e8978
-	bl Func_08014644
+	bl Scheduler_RemoveCallback
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #167
@@ -111,7 +111,7 @@ Func_080e87c4:
 	adds r0, r0, r3
 	adds r1, r5, #0
 	adds r2, r6, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	ldr r3, .L_080e8994
 	movs r2, #0
 	str r2, [r6, #12]
@@ -127,7 +127,7 @@ Func_080e87c4:
 	adds r0, r0, r1
 	adds r2, #12
 	adds r1, r5, #0
-	bl Func_0801489c
+	bl Vector_AddPolarOffset
 	mov r2, r8
 	negs r3, r2
 	cmp r3, #0
@@ -240,13 +240,13 @@ Func_080e87c4:
 	cmp r7, #39
 	ble .L_080e8928
 	ldr r0, [sp, #4]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	movs r3, #166
 	lsls r3, r3, #6
 	add r3, r10
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_08014274
+	bl Resource_ResetEntry
 	bl Func_080eb930
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock

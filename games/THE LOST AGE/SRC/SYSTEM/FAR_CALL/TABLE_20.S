@@ -9,5 +9,11 @@
 	.thumb_func
 Func_080383d0:
 	overlay_veneer Ui_GetTableWordZero
+	.global Func_080383d8
+	.thumb_func
+Func_080383d8:
 	overlay_veneer Func_0803a60c
+	.global Func_080383e0
+	.thumb_func
+Func_080383e0:
 	overlay_veneer Func_0804325c

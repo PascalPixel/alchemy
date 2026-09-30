@@ -123,7 +123,7 @@ Func_080cdac0:
 	ble .L_080cdbae
 	lsls r0, r1, #1
 	movs r1, #3
-	bl __divsi3
+	bl Math_Div
 	mov r8, r0
 .L_080cdbae:
 	ldrh r5, [r7, #6]

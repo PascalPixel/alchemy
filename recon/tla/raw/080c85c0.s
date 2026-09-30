@@ -6,4 +6,4 @@ Func_080c85c0:
 	ldr r4, .L_080c85c4
 	bx r4
 .L_080c85c4:
-	.4byte Func_080dc390
+	.4byte Camera_WorldToScreen

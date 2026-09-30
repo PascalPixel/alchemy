@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "KANPAN.H"
+#include "CALL.H"
 extern struct EventWork *gEventWork;
 
 void FieldScene_RunScene3af_02000bb8();

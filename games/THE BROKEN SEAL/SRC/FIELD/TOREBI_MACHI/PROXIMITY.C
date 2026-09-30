@@ -1,5 +1,6 @@
 /* Tolbi town: actor proximity, the scene tables and the first dialogue steps. */
 #include "MACHI.H"
+#include "CALL.H"
 extern u8 MsgTorebiFaceAwayTolbi[];
 extern u8 MsgTorebiTossLuckyMedal[];
 
@@ -113,7 +114,7 @@ void FieldScene_RunScene3b5_02000224(void)
     u32 i;
     u8 *record;
 
-    record = Value1(Engine_ActorGet, 8);
+    record = Engine_ActorGet(8);
     if ((s32)record != 0) {
         record[89] = 0;
     }

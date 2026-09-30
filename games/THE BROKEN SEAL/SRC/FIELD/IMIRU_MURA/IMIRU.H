@@ -41,7 +41,6 @@ enum FlaggedChoreographyMessage {
     MSG_MIA_GOING_ON_JOURNEY_WITH = 0x1671
 };
 
-
 #define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define ACTOR_FLAGS_OFFSET 89
@@ -227,7 +226,6 @@ s32 GetMapCellCollision();
 void Engine_ObjectSetPosition();
 void Engine_ObjectCommitPosition();
 
-
 /* Veneers with no unambiguous reference site name over this owner. */
 
 /* Byte offset of the flag byte on an actor record; bit 0 is cleared for
@@ -256,130 +254,6 @@ static __inline__ void Call_02002684(s32 channel, s32 angle, s32 frames)
 
 /* Byte offset of a flags field on the actor records touched below; bit 0
  * of that byte is cleared and later set back for actors 20 (twice). */
-static __inline__ void Call0(void (*f)())
-{
-
-    f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-
-    return f();
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    return f(a0, a1, a2);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_020005dc(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_02000a3c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_02000abc(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2_02001794(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call3_020019bc(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call1_020019e8(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call1_02000f90(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1_02000f90(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2_02000f90(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2_02000f90(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3_02000f90(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4_02000f90(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 /* ImiruMura_SwayHeadings is this overlay's heading table.  Data_02000240 is a resident
  * table; its word at byte offset 500 selects the subject. */
 

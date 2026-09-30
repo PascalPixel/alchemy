@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgKorashiamuDayTiredWaiting[];
 extern u8 MsgKorashiamuYouReadyForFinals[];
 extern struct EventWork *gEventWork;
@@ -44,46 +45,6 @@ void Engine_EventRequestExit();
 void Engine_EventShowMessage();
 void Engine_EventEnd();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 /* Colosso entrance: once flag 0x234 is set, gather the competitors, let the
  * player answer the entry question and send everyone into the arena. */
 void KorashiamuIriguchi_RunGatherScene(void)
@@ -92,9 +53,9 @@ void KorashiamuIriguchi_RunGatherScene(void)
     u8 *record;
     s32 base5_200af24;
 
-    if (Value1(Engine_GameFlagIsSet, 0x234) == 0) {
+    if (Engine_GameFlagIsSet(0x234) == 0) {
     } else {
-        Call1(Engine_GameFlagSet, 0x235);
+        Engine_GameFlagSet(0x235);
         Engine_EventBegin();
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Call3(Engine_ActorWalkToAndWait, 0, 0x368, 120);
@@ -104,16 +65,16 @@ void KorashiamuIriguchi_RunGatherScene(void)
         Engine_CameraWaitForMove();
         Call3(Engine_ActorFaceDirection, 8, 0x3000, 20);
         Engine_ActorRunRepeatedMotion(8, 1);
-        Call1(Engine_EventSetMessage, (s32)MsgKorashiamuYouReadyForFinals);
+        Engine_EventSetMessage((s32)MsgKorashiamuYouReadyForFinals);
         Value2(Engine_EventOpenMessage, 0x8008, 0);
-        rec = Value2(Engine_EventChooseYesNo, 0, 0);
+        rec = Engine_EventChooseYesNo(0, 0);
         if (rec != 0) {
         } else {
             Engine_EventWait(20);
             SceneState_ForwardMaskedHalfwordWith10(12, 0xd000);
             Engine_ActorRunRepeatedMotion(12, 1);
-            Call1(Engine_EventSetMessage, (s32)MsgKorashiamuDayTiredWaiting);
-            Call1(FieldScene_CallPairWith10, 0x400c);
+            Engine_EventSetMessage((s32)MsgKorashiamuDayTiredWaiting);
+            FieldScene_CallPairWith10(0x400c);
             SceneState_ForwardMaskedHalfwordWith10(17, 0);
             SceneState_ForwardMaskedHalfwordWith10(0, 0x8000);
             Engine_ActorSetAnimationAndWait(17, 3);
@@ -126,15 +87,15 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_ActorSetAnimationAndWait(16, 3);
             Engine_ActorRunRepeatedMotion(17, 2);
             SceneState_ForwardMaskedHalfwordWith10(17, 0xa000);
-            Call1(FieldScene_CallPairWith10, 0x4011);
+            FieldScene_CallPairWith10(0x4011);
             SceneState_ForwardMaskedHalfwordWith10(18, 0xb000);
             Engine_ActorStartRepeatedMotion(18, 2);
-            Call1(FieldScene_CallPairWith10, 0x4012);
-            Value2(SceneState_ForwardMaskedHalfwordWith10, 11, 0x3000);
-            Call2(Engine_ActorSetAttachedEffect, 11, 0x102);
+            FieldScene_CallPairWith10(0x4012);
+            SceneState_ForwardMaskedHalfwordWith10(11, 0x3000);
+            Engine_ActorSetAttachedEffect(11, 0x102);
             Engine_EventWait(60);
             Engine_ActorStartRepeatedMotion(11, 2);
-            Call1(FieldScene_CallPairWith10, 0x800b);
+            FieldScene_CallPairWith10(0x800b);
             Engine_ActorStop(13);
             Engine_TaskWait(1);
             Engine_ActorStartRepeatedMotion(13, 2);
@@ -150,27 +111,27 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Call3(Engine_ActorSetSpeed, 13, 0x19999, 0xcccc);
             Call3(Engine_ActorSetSpeed, 14, 0x19999, 0xcccc);
             Call3(Engine_ActorSetSpeed, 16, 0x19999, 0xcccc);
-            Value2(Engine_ActorEnableActionCallback, 13, (s32)KorashiamuIriguchi_ActionTable5);
-            Call2(Engine_ActorEnableActionCallback, 16, (s32)KorashiamuIriguchi_ActionTable7);
+            Engine_ActorEnableActionCallback(13, (s32)KorashiamuIriguchi_ActionTable5);
+            Engine_ActorEnableActionCallback(16, (s32)KorashiamuIriguchi_ActionTable7);
             Engine_EventWait(20);
             Engine_ActorFaceDirection(15, 0xd000, 0);
             Engine_ActorFaceDirection(17, 0xb000, 0);
             Engine_ActorFaceDirection(0, 0xa000, 0);
             Engine_ActorFaceDirection(12, 0xd000, 0);
             Engine_ActorFaceDirection(18, 0xb000, 0);
-            Call2(Object_SetActionCallbackAndRefreshById, 14, (s32)KorashiamuIriguchi_ActionTable6);
+            Object_SetActionCallbackAndRefreshById(14, (s32)KorashiamuIriguchi_ActionTable6);
             Engine_EventWait(20);
             Engine_ActorFaceDirection(8, 0, 0);
             Engine_ActorFaceDirection(11, 0x8000, 40);
             Engine_ActorSetAnimation(8, 3);
             Engine_ActorSetAnimationAndWait(11, 3);
-            Call4(Engine_CameraMoveTo, 0x3280000, -1, 0x560000, 1);
+            Engine_CameraMoveTo(0x3280000, -1, 0x560000, 1);
             Engine_CameraWaitForMove();
             Engine_ActorRunRepeatedMotion(8, 2);
             FieldScene_CallPairWith10(8);
-            Call3(Engine_ActorSetSpeed, 8, 0x10000, 0x8000);
+            Engine_ActorSetSpeed(8, 0x10000, 0x8000);
             *(u8 *)(Engine_ActorGet(8) + 90) &= 254;
-            Call3(Engine_ActorWalkToAndWait, 8, 0x318, 72);
+            Engine_ActorWalkToAndWait(8, 0x318, 72);
             Engine_EventWait(1);
             {
                 u8 *record = Engine_ActorGet(8);
@@ -180,7 +141,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
             }
             SceneState_ForwardMaskedHalfwordWith10(8, 0);
             Engine_ActorStop(13);
-            record = Value1(Engine_ActorGet, 13);
+            record = Engine_ActorGet(13);
             *(s32 *)((s32)record + 108) = rec;
             ((struct ActorMotion *)record)->step[0] = rec;
             ((struct ActorMotion *)record)->step[1] = rec;
@@ -212,7 +173,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
             goto L_0200115c;
         }
         *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
-        Call2(Engine_EventShowMessage, 0x8008, 0);
+        Engine_EventShowMessage(0x8008, 0);
         L_0200115c:;
         Engine_EventEnd();
     }

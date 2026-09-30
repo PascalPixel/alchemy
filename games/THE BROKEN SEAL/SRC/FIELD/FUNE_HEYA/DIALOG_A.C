@@ -195,7 +195,7 @@ void FieldScene_RunScene3b1_020007f8(void)
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_Wait(40);
             FieldScene_RunStepThen10(8);
-            Value2(FieldScene_CallPairWith10, 8, 0x3000);
+            FieldScene_CallPairWith10(8, 0x3000);
             Event_ShowMessage(8, 0);
             goto L_0200088e;
         }

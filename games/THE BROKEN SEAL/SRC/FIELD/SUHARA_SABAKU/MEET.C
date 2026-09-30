@@ -24,7 +24,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
             *target = shown;
         }
     }
-    Call1(Engine_GameFlagClear, 0x20f);
+    Engine_GameFlagClear(0x20f);
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku1) {
         Engine_GameFlagSet((a1 + 0x2f9));
     } else {
@@ -32,8 +32,8 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
             Engine_GameFlagSet((a1 + 0x309));
         }
     }
-    Call2(GameFlag_SetByte, 0x210, 0);
-    Call2((void (*)())BattleFx_SetWeightedResult, 98, 5);
+    GameFlag_SetByte(0x210, 0);
+    ((void (*)())BattleFx_SetWeightedResult)(98, 5);
     /* FAKEMATCH: publish the byte before retaining the scene pointer. */
     do {
         ((union GameStateRows *)&gGameState)->bytes[277][1] = 3;

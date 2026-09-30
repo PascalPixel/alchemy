@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 s32 ActorPresentation_UpdateEntityFromLeader();
 s32 SceneActor_UpdateProximityToLeader();
 extern u8 MsgKuupuappuWelcomeBackTwo[];
@@ -26,34 +27,8 @@ void Engine_ActorWaitForMove();
 void Event_PrepareObjectAndApplyValue();
 s32 Engine_EventEnd();
 
-
 /* The saved game state; the entrance the party came in by is at +450. */
 extern s16 gGameState[];
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 s32 KuupuappuMura_RestoreEntryState(void)
 {
@@ -63,10 +38,10 @@ s32 KuupuappuMura_RestoreEntryState(void)
     s32 v7;
     s32 zero;
 
-    if (Value1(Engine_GameFlagIsSet, 0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         Engine_EventRequestExit(14);
     }
-    if (Value1(Engine_GameFlagIsSet, 0x200) != 0) {
+    if (Engine_GameFlagIsSet(0x200) != 0) {
         Call6(Engine_MapCopyCellAttributes, 55, 26, 4, 2, 23, 26);
     }
     OverlayObject_CreateConfiguredObject(0x800000, 0, 0x1a40000, 223);
@@ -75,29 +50,29 @@ s32 KuupuappuMura_RestoreEntryState(void)
     record = Engine_ActorGet(14);
     *(u16 *)(record + 100) = v7;
     *(s32 *)(record + 108) = (s32)SceneActor_UpdateProximityToLeader;
-    record = Value1(Engine_ActorGet, 15);
+    record = Engine_ActorGet(15);
     *(u16 *)(record + 100) = zero;
     /* FAKEMATCH: the empty loop keeps the halfword store ahead of the
      * script-pointer store, as in the reference schedule. */
     do { } while (0);
     *(s32 *)(record + 108) = (s32)SceneActor_UpdateProximityToLeader;
-    if (Value1(Engine_GameFlagIsSet, 0x858) != 0) {
+    if (Engine_GameFlagIsSet(0x858) != 0) {
         Call3(Engine_ActorSetPosition, 19, 0xd80000, 0x1880000);
     }
-    rec7 = Value1(Engine_GameFlagIsSet, 0x853);
-    if (Value1(Engine_GameFlagIsSet, 0x855) == 0) {
+    rec7 = Engine_GameFlagIsSet(0x853);
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         if ((v7 & rec7) != 0) {
             record = Engine_ActorGet(21);
             *(s32 *)(record + 108) = (s32)ActorPresentation_UpdateEntityFromLeader;
         }
     }
     if (gGameState[225] <= 2) {
-        if (Value1(Engine_GameFlagIsSet, 0x109) == 0) {
-            Call1(Engine_GameFlagClear, 0x867);
-            if (Value1(Engine_GameFlagIsSet, 0x855) == 0) {
-                if (Value1(Engine_GameFlagIsSet, 0x856) != 0) {
+        if (Engine_GameFlagIsSet(0x109) == 0) {
+            Engine_GameFlagClear(0x867);
+            if (Engine_GameFlagIsSet(0x855) == 0) {
+                if (Engine_GameFlagIsSet(0x856) != 0) {
                     Engine_EventBegin();
-                    record = Value1(Engine_ActorGet, 0);
+                    record = Engine_ActorGet(0);
                     if (record != 0) {
                         Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
                     }
@@ -111,12 +86,12 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_EventWaitForScreen();
                     Engine_EventWait(30);
                     Engine_ActorRunRepeatedMotion(2, 2);
-                    Call1(Engine_EventSetMessage, (s32)MsgKuupuappuWelcomeBackTwo);
+                    Engine_EventSetMessage((s32)MsgKuupuappuWelcomeBackTwo);
                     Engine_EventShowMessageAndWait(2, 0, 20);
                     Engine_ActorSetAnimationAndWait(0, 3);
                     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
                     Engine_ActorSetAnimation(2, 2);
-                    record = Value1(Engine_ActorGet, 0);
+                    record = Engine_ActorGet(0);
                     if (record != 0) {
                         Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
                     }
@@ -128,13 +103,13 @@ s32 KuupuappuMura_RestoreEntryState(void)
             }
         }
     }
-    if (Value1(Engine_GameFlagIsSet, 0x867) != 0) {
+    if (Engine_GameFlagIsSet(0x867) != 0) {
         Call3(Engine_ActorSetPosition, 23, 0x1980000, 0x780000);
     }
     if (gGameState[225] == 11) {
-        if (Value1(Engine_GameFlagIsSet, 0x855) == 0) {
-            if (Value1(Engine_GameFlagIsSet, 0x856) != 0) {
-                if (Value1(Engine_GameFlagIsSet, 2) == 0) {
+        if (Engine_GameFlagIsSet(0x855) == 0) {
+            if (Engine_GameFlagIsSet(0x856) != 0) {
+                if (Engine_GameFlagIsSet(2) == 0) {
                     Engine_EventBegin();
                     Call3(Engine_ActorSetPosition, 2, 0x280000, 0x1360000);
                     Engine_ActorFaceEachOther(2, 0, 0);
@@ -142,12 +117,12 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_EventWaitForScreen();
                     Engine_EventWait(30);
                     Engine_ActorRunRepeatedMotion(2, 2);
-                    Call1(Engine_EventSetMessage, (s32)MsgKuupuappuWelcomeBackTwo);
+                    Engine_EventSetMessage((s32)MsgKuupuappuWelcomeBackTwo);
                     Engine_EventShowMessageAndWait(2, 0, 20);
                     Engine_ActorSetAnimationAndWait(0, 3);
                     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
                     Engine_ActorSetAnimation(2, 2);
-                    record = Value1(Engine_ActorGet, 0);
+                    record = Engine_ActorGet(0);
                     if (record != 0) {
                         Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
                     }
@@ -158,10 +133,10 @@ s32 KuupuappuMura_RestoreEntryState(void)
                 }
             }
         }
-        Call1(Engine_GameFlagClear, 0x12f);
+        Engine_GameFlagClear(0x12f);
     } else {
         if (gGameState[225] == 13) {
-            if (Value1(Engine_GameFlagIsSet, 0x855) != 0) {
+            if (Engine_GameFlagIsSet(0x855) != 0) {
                 Engine_ActorSetPosition(20, 0, 0);
             }
         }

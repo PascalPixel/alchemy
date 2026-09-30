@@ -5,11 +5,6 @@ s32 IwramUnsignedDivide();
 extern u16 BabiFune_PaletteStep;
 extern const u16 BabiFune_PaletteFrames[];
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* Babi Fune: copy six colours of the cycling palette for the current step
  * into palette colours 116..121 and advance the step, wrapping after 35. */
 void BabiFune_CyclePalette(void)

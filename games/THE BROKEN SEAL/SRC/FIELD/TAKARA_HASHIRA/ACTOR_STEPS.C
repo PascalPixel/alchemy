@@ -1,4 +1,5 @@
 #include "HASHIRA.H"
+#include "CALL.H"
 
 /* Complete scene/entity linker through return and its sole pool word. */
 void SceneState_LinkActorZeroToWork24(void)
@@ -61,7 +62,7 @@ void TakaraHashira_RunActorAction(s32 a0)
     *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
     Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
     GameFlag_Set((a0 + 0x1f5));
-    Value2(Engine_ActorEnableActionCallback, a0, (s32)TakaraHashira_ActionTable);
+    Engine_ActorEnableActionCallback(a0, (s32)TakaraHashira_ActionTable);
     Event_End();
 }
 
@@ -86,7 +87,7 @@ void FieldScene_RunScene3b3_0200215c(void)
     s32 record;
     u8 *p6;
 
-    rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
     record = Actor_Get(13);
     p6 = *(s32 *)gEffectWork;
     if ((*(s32 *)(record + 8) >> 20) == (*(s32 *)(rec7 + 8) >> 20)) {

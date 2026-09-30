@@ -1,4 +1,5 @@
 #include "HAIDIA_BABI.H"
+#include "CALL.H"
 
 /* The Mythril Bag scene and the sparkles that rise from the bag. */
 
@@ -57,7 +58,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Task_Wait(1);
     Camera_FollowActor(18, 1);
     rec7 = 0;
-    actor = (struct FieldActor *)Value4(Engine_ObjectCreate, 22, 0x1480000, 0x20000, 0xc30000);
+    actor = (struct FieldActor *)Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
     actor->motion_flags = rec7;
     sprite = actor->sprite;
     actor->y.fixed = 0x50000;

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "RESOURCE_IDS.H"
+#include "CALL.H"
 
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 GameFlag_GetByteFar(s32 flag);
@@ -25,18 +26,6 @@ union GameStateRows {
     u8 bytes[512][2];
     s16 halves[512][1];
 };
-
-
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* River arena entry: record the arrival, set the logs, ledges and item icons by the story flags, then start the entrance's opening scene. */
 s32 KorosseoKawa_ApplyEntryState(void)

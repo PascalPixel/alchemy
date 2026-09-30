@@ -1,4 +1,5 @@
 #include "SANCTUM.H"
+#include "CALL.H"
 extern u8 MsgSoruLookSymbolFloor[];
 extern u8 MsgSoruThePictureOfLunaChanged[];
 extern u8 MsgSoruWhatsHappening[];
@@ -186,7 +187,7 @@ void FieldScene_PrepareStatueTransition(void)
     ColorBuffer_ApplyTarget(0x10005, 1);
     ColorBuffer_Interpolate(8);
     Event_Wait(32);
-    Value2(Engine_ColorBufferApplyTarget, 0x2051cc, 1);
+    Engine_ColorBufferApplyTarget(0x2051cc, 1);
     ColorBuffer_Interpolate(24);
 }
 
@@ -295,7 +296,7 @@ void FieldScene_RunClosingSequence(void)
     Value2(Engine_TaskAddCallback, (s32)UpdateStatueLight1, 3200);
     Value2(Engine_TaskAddCallback, (s32)UpdateStatueLight2, 3200);
     Value2(Engine_TaskAddCallback, (s32)UpdateStatueLight3, 3200);
-    Value2(Engine_TaskAddCallback, (s32)UpdateStatueLight4, 3200);
+    Engine_TaskAddCallback((s32)UpdateStatueLight4, 3200);
     for (i = 0; i != 6; i++) {
         Audio_PlayCue(246);
         SetStatueLightGroup1();
@@ -448,7 +449,7 @@ void Scene_ChangeLunaPictureToSol(void)
 
     if (GameFlag_IsSet(FLAG_LUNA_PICTURE_CHANGED_TO_SOL) != 0) {
     } else {
-        if (Value0(CheckAllStatueLights) == 0) {
+        if (CheckAllStatueLights() == 0) {
         } else {
             Event_Begin();
             Actor_SetPosition(ACTOR_SUKURETA, 0x2410000, 0x930000);
@@ -478,14 +479,14 @@ void Scene_ChangeLunaPictureToSol(void)
             Event_Wait(6);
             Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
             Event_Wait(40);
-            Call2(SetSolShindenActorStep, 0x4010, 6);
+            SetSolShindenActorStep(0x4010, 6);
             Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 208);
             Event_Wait(40);
             Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Event_Wait(6);
             Actor_SetSpeed(ACTOR_SUKURETA, 0x8000, 0x4000);
             Actor_SetAnimation(ACTOR_SUKURETA, 2);
-            record = Value1(Engine_ActorGet, 0);
+            record = Engine_ActorGet(0);
             if (record != 0) {
                 Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
@@ -520,5 +521,5 @@ void FieldScene_RunActorPositionTransition(void)
     Call3(Engine_ActorWalkToAndWait, 16, 0x178, 184);
     Call3(Engine_ActorSetPosition, 16, 0x6480000, 0x6480000);
     Engine_EventWait(4);
-    Call1(Engine_GameFlagSet, 0x811);
+    Engine_GameFlagSet(0x811);
 }

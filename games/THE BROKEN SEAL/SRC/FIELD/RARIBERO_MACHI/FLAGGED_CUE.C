@@ -3,14 +3,13 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "ITEM_IDS.H"
+#include "CALL.H"
 extern u8 MsgRariberoBabiToldMeShipAncients[];
 extern u8 MsgRariberoMoreTolbisSoldiersLayDefeated[];
 extern u8 MsgRariberoThoughtShipWeSawAt[];
 extern u8 MsgRariberoWasToldLetInIf[];
 extern u8 MsgRariberoWhereGoingArentWeTaking[];
 extern u8 MsgRariberoWhereGoingRobinIodemAsked[];
-
-
 
 #define NULL ((void *)0)
 /* A signed 16-bit field of an actor record returned by one of the record
@@ -30,31 +29,6 @@ extern u8 Placement_Effects9a7[];
 void Motion_LaunchFromFocusedObject(u32, s32, s32, s32);
 void FieldScene_RunScene3c6SequenceA(void);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    void Actor_FaceDirection();
-
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    void Actor_FaceDirection();
-
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    void Actor_FaceDirection();
-
-    f(a0, a1, a2);
-}
-
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
     void Actor_SetSpeed(s32, s32, s32);
@@ -67,36 +41,6 @@ static __inline__ void SetOffset(s32 actor, s32 offset, s32 zero)
     void Actor_FaceDirection(s32, s32, s32);
 
     Actor_WalkByAndWait(actor, offset, zero);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Scene_Value3(s32 (*fn)(), s32 a, s32 b, s32 c)
-{
-    return fn(a, b, c);
-}
-
-static __inline__ void Scene_Call3(void (*fn)(), s32 a, s32 b, s32 c)
-{
-    fn(a, b, c);
 }
 
 void SceneActor_SetupActor18Event(void)
@@ -121,11 +65,11 @@ void Scene_RunTableTransition(void)
     ((u8 *)Engine_ActorGet(0))[85] = 2;
     Audio_PlayCue(158);
     if (no == 6) {
-        Scene_Value3(Engine_MapAnimateCells, (s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
-        Scene_Call3(Engine_ActorWalkBy, 0, 0, -16);
+        Value3(Engine_MapAnimateCells, (s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
+        Call3(Engine_ActorWalkBy, 0, 0, -16);
     } else {
-        Scene_Value3(Engine_MapAnimateCells, (s32)RariberoMachi_DoorOpenSteps, (u16)x, (u16)y);
-        Scene_Call3(Engine_ActorCenterAndWalk, 0, 2, -16);
+        Value3(Engine_MapAnimateCells, (s32)RariberoMachi_DoorOpenSteps, (u16)x, (u16)y);
+        Call3(Engine_ActorCenterAndWalk, 0, 2, -16);
     }
     Event_Wait(10);
     gEventWork->transition_frames = 16;
@@ -352,7 +296,7 @@ void FieldScene_RunSecondarySequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Call4(Motion_LaunchFromFocusedObject, 1, -32, 0, 0);
     Call4(Motion_LaunchFromFocusedObject, 3, -16, 16, 0xe000);
-    Call4(Motion_LaunchFromFocusedObject, 2, 0, 16, 0xc000);
+    Motion_LaunchFromFocusedObject(2, 0, 16, 0xc000);
     Actor_WaitForMove(ACTOR_GERALD);
     Event_Wait(30);
     Event_OpenMessage(ACTOR_GERALD, 0);
@@ -406,7 +350,7 @@ void FieldScene_RunSecondarySequence(void)
     Actor_SetPosition(22, 0x480000, 0x1380000);
     Event_Wait(20);
     Actor_WalkByAndWait(22, 0, 16);
-    Call6(Engine_MapCopyCellsTo, 32, 0, 1, 2, 4, 18);
+    Engine_MapCopyCellsTo(32, 0, 1, 2, 4, 18);
     Audio_PlayCue(159);
     Event_Wait(20);
     Event_ShowMessage(22, 0);
@@ -569,7 +513,7 @@ void FieldScene_RunSecondarySequence(void)
     Actor_WalkByAndWait(22, 0, -16);
     Actor_SetPosition(22, 0, 0);
     Event_Wait(10);
-    Call6(Engine_MapCopyCellsTo, 32, 0, 1, 2, 4, 18);
+    Engine_MapCopyCellsTo(32, 0, 1, 2, 4, 18);
     Audio_PlayCue(159);
     Event_Wait(50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -596,21 +540,21 @@ void FieldScene_RunSecondarySequence(void)
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, REC_S16(record, 10), REC_S16(record, 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_MIA, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, REC_S16(record, 10), REC_S16(record, 18));
     }
     Actor_WaitForMove(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, REC_S16(record, 10), REC_S16(record, 18));
     }

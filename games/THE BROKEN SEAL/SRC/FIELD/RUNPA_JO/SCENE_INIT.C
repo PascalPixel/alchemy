@@ -3,6 +3,7 @@
  * party changed, and the fourth stages its actors by the entrance the party
  * came through. */
 #include "FORTRESS.H"
+#include "CALL.H"
 
 s32 FieldScene_DispatchActorUpdate(void)
 {
@@ -10,7 +11,7 @@ s32 FieldScene_DispatchActorUpdate(void)
 
     gRunpaJoRandomPick = (u32)Random_Next() * 7 >> 16;
     if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo1) {
-        Scene_Call1(Map_SetWorkFlagBits9To11, 0xe00);
+        Map_SetWorkFlagBits9To11(0xe00);
         FieldScene_InstallSceneTasks();
     }
     if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo2)
@@ -35,20 +36,20 @@ s32 FieldScene_DispatchActorUpdate(void)
         if (actor != 0)
             Engine_ActorSetSpriteFlags(actor, 0);
         actor->unknown_23 = 2;
-        Scene_Call1(Map_SetWorkFlagBits9To11, 0xe00);
+        Map_SetWorkFlagBits9To11(0xe00);
         if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.second == 4) {
-            Scene_Call1(Map_SetWorkFlagBits9To11, 0xc00);
+            Map_SetWorkFlagBits9To11(0xc00);
             FieldScene_RunMainScriptSequence();
         }
         if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.second == 3) {
-            Scene_Call1(Map_SetWorkFlagBits9To11, 0xc00);
+            Map_SetWorkFlagBits9To11(0xc00);
             if (Engine_GameFlagIsSet(0x941) != 0) {
                 Engine_ActorSetPosition(12, 0, 0);
-                Scene_Call3(Engine_ActorSetPosition, 16, 0x1b00000, 0x1580000);
-                Scene_Call3(Engine_ActorFaceDirection, 16, 0x5000, 0);
-                Scene_Call3(Engine_ActorSetPosition, 13, 0x1c80000, 0x1200000);
-                Scene_Call3(Engine_ActorFaceDirection, 13, 0x5000, 0);
-                Scene_Call3(Engine_ActorSetPosition, 17, 0x1c80000, 0x1400000);
+                Call3(Engine_ActorSetPosition, 16, 0x1b00000, 0x1580000);
+                Call3(Engine_ActorFaceDirection, 16, 0x5000, 0);
+                Call3(Engine_ActorSetPosition, 13, 0x1c80000, 0x1200000);
+                Call3(Engine_ActorFaceDirection, 13, 0x5000, 0);
+                Call3(Engine_ActorSetPosition, 17, 0x1c80000, 0x1400000);
                 Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
             }
         }

@@ -1,4 +1,5 @@
 #include "STORY.H"
+#include "CALL.H"
 extern u8 MsgWorldMapSukuretaHowLongWillIsland[];
 
 extern u8 gPresentGuide9[];

@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
+#include "CALL.H"
 extern u8 MsgShianDidDoWarrior[];
 extern u8 MsgShianImTravelingAroundWorldSpread[];
 extern u8 MsgShianItIsLocked[];
@@ -140,11 +141,11 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_RunRepeatedMotion(16, 2);
     Event_Wait(20);
     Actor_SetSpeed(16, 192 << 9, 192 << 8);
-    rec = Record1(Engine_ActorGet, 16);
+    rec = Engine_ActorGet(16);
     rec[90] &= 0xfe;
     Actor_WalkToAndWait(16, 154 << 1, 136 << 1);
     Event_Wait(1);
-    rec = Record1(Engine_ActorGet, 16);
+    rec = ((u8 *)Value1(Engine_ActorGet, 16));
     {
         /*
          * A result temporary, not the compound or-assign the matching
@@ -305,13 +306,13 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Event_Wait(20);
     Actor_SetPosition(19, 232 << 16, 168 << 16);
     Actor_SetPosition(20, 232 << 16, 168 << 16);
-    rec = Record1(Engine_ActorGet, 19);
+    rec = ((u8 *)Value1(Engine_ActorGet, 19));
     *(s32 *)(rec + 12) = 0xc0000;
-    rec = Record1(Engine_ActorGet, 19);
+    rec = ((u8 *)Value1(Engine_ActorGet, 19));
     *(s32 *)(rec + 60) = -0x80000000;
-    rec = Record1(Engine_ActorGet, 19);
+    rec = ((u8 *)Value1(Engine_ActorGet, 19));
     *(s32 *)(rec + 24) = 0xcccc;
-    rec = Record1(Engine_ActorGet, 19);
+    rec = ((u8 *)Value1(Engine_ActorGet, 19));
     {
         u8 *target = *(u8 **)(rec + 80);
         s32 shown = 0x8000;
@@ -340,7 +341,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_FaceDirection(18, 160 << 7, 20);
     Event_OpenMessage(18, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Value2((s32 (*)())Engine_ActorRunRepeatedMotion, 16, 1);
+        ((s32 (*)())Engine_ActorRunRepeatedMotion)(16, 1);
         Event_Wait(20);
         id = 16;
         goto joinBeat;
@@ -415,15 +416,15 @@ void FieldScene_RunEnsembleStoryBeat(void)
 
     actor = Actor_Get(18);
     ACTOR_FIELD_108(actor) = 0;
-    actor = Scene_GetRecord_2(13);
+    actor = Engine_ActorGet(13);
     ACTOR_FIELD_108(actor) = 0;
-    actor = Scene_GetRecord_3(14);
+    actor = Engine_ActorGet(14);
     ACTOR_FIELD_108(actor) = 0;
-    actor = Scene_GetRecord_4(15);
+    actor = Engine_ActorGet(15);
     ACTOR_FIELD_108(actor) = 0;
     actor = Actor_Get(16);
     ACTOR_FIELD_108(actor) = 0;
-    Object_SetModeById_1(11, 1);
+    Engine_ActorSetAnimation(11, 1);
     Camera_SetSpeed(0x8000, 0x1000);
     Camera_MoveTo(0xe80000, -1, 0xc80000, 1);
     Camera_WaitForMove();
@@ -589,7 +590,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Actor_SetAnimation(10, 5);
     Actor_SetAnimation(11, 5);
     Actor_WaitForMove(12);
-    ObjectMotion_EnableActionAndSetCallback_1(12, (s32)ShianJiin_ActorTwelveScript);
+    Engine_ActorEnableActionCallback(12, (s32)ShianJiin_ActorTwelveScript);
     Actor_SetSpeed(15, 0xcccc, 0x6666);
     Actor_WalkToAndWait(15, 216, 168);
     Actor_WalkToAndWait(15, 232, 168);

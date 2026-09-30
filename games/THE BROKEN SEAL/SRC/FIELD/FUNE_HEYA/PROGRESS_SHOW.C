@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "HEYA.H"
+#include "CALL.H"
 extern u8 MsgFuneReachedIslandRowers[];
 extern u8 MsgFuneShipWentOff[];
 
@@ -56,10 +57,10 @@ void Scene_RunFourActorProgressPresentation(void)
     s32 base5_200e938;
     s32 base5_200e7c8;
 
-    rec7 = Value2(FuneHeya_FindFirstSetFlag, 0, 0);
+    rec7 = FuneHeya_FindFirstSetFlag(0, 0);
     rec2 = FuneHeya_FindFirstSetFlag(1, 0);
     rec4 = FuneHeya_FindFirstSetFlag(2, 0);
-    rec = Value2(FuneHeya_FindFirstSetFlag, 3, 0);
+    rec = FuneHeya_FindFirstSetFlag(3, 0);
     Engine_EventBegin();
     SceneActor_SetFlagBit3ForActors28To35();
     FieldScene_RunSceneStep(10, 0, 0);
@@ -71,7 +72,7 @@ void Scene_RunFourActorProgressPresentation(void)
     Engine_ActorSetSpriteFlags(record, 0);
     FieldScene_InstallFlaggedActors10To17(16);
     Engine_ActorSetAnimation(9, 5);
-    Call4(ConfigureSceneMotionFlags, 0x1b60000, -1, 0xae0000, 0x1000001);
+    ConfigureSceneMotionFlags(0x1b60000, -1, 0xae0000, 0x1000001);
     FieldScene_RunSceneStep(8, 1, 20);
     Engine_ActorSetChildValue(27, 0);
     record = Engine_ActorGet(27);
@@ -81,7 +82,7 @@ void Scene_RunFourActorProgressPresentation(void)
     Call3(Engine_ActorWalkToAndWait, 27, 0x198, 142);
     Call3(Engine_ActorFaceDirection, 27, 0x3000, 20);
     Engine_ActorStartRepeatedMotion(27, 2);
-    Call1(Engine_EventSetMessage, (s32)MsgFuneReachedIslandRowers);
+    Engine_EventSetMessage((s32)MsgFuneReachedIslandRowers);
     FieldScene_RunStepThen10(27);
     Engine_EventWait(120);
     FieldScene_RunSceneStep(12, rec7, 0);
@@ -93,9 +94,9 @@ void Scene_RunFourActorProgressPresentation(void)
     Call3(Engine_ActorFaceDirection, rec2, 0xb000, 0);
     Call3(Engine_ActorFaceDirection, rec4, 0xd000, 0);
     Call3(Engine_ActorFaceDirection, rec, 0xb000, 60);
-    if (Value1(Engine_GameFlagIsSet, 0x934)) {
+    if (Engine_GameFlagIsSet(0x934)) {
         v6 = 2;
-    } else if (Value1(Engine_GameFlagIsSet, 0x933) || Value1(Engine_GameFlagIsSet, 0x92f)) {
+    } else if (Engine_GameFlagIsSet(0x933) || Engine_GameFlagIsSet(0x92f)) {
         v6 = 1;
     }
     Engine_ActorRunRepeatedMotion(rec7, 1);
@@ -106,19 +107,19 @@ void Scene_RunFourActorProgressPresentation(void)
     }
     Engine_ActorStartRepeatedMotion(rec7, 2);
     FieldScene_RunStepThen10(rec7);
-    Call1(Engine_EventSetMessage, (s32)MsgFuneShipWentOff);
+    Engine_EventSetMessage((s32)MsgFuneShipWentOff);
     Engine_ActorSetAnimationAndWait(27, 4);
     FieldScene_RunStepThen10(27);
     Call3(Engine_ActorShowEmote, rec7, 0x102, 0);
     Call3(Engine_ActorShowEmote, rec2, 0x102, 0);
     Call3(Engine_ActorShowEmote, rec4, 0x102, 0);
-    Call3(Engine_ActorShowEmote, rec, 0x102, 60);
+    Engine_ActorShowEmote(rec, 0x102, 60);
     FieldScene_RunStepThen10(27);
     Call3(Engine_ActorWalkToAndWait, 27, 0x198, 132);
     Call3(Engine_ActorWalkToAndWait, 27, 0x1bc, 132);
     Engine_ActorDestroy(27);
     Engine_EventWait(40);
-    if (v6 == 0 && (Value1(Engine_GameFlagIsSet, 0x92c) || Value1(Engine_GameFlagIsSet, 0x92d))) {
+    if (v6 == 0 && (Engine_GameFlagIsSet(0x92c) || Engine_GameFlagIsSet(0x92d))) {
         v6 = 3;
     }
     if (v6 == 0) {
@@ -146,19 +147,19 @@ void Scene_RunFourActorProgressPresentation(void)
     Engine_EventWait(40);
     base5_200e938 = (s32)&FuneHeya_ProgressTableC;
     Object_SetActionCallbackAndRefreshById(rec2, base5_200e938);
-    Call2((void (*)())Engine_ActorEnableActionCallback, rec2, base6_200e904);
-    Call2((void (*)())Object_SetActionCallbackAndRefreshById, rec, base5_200e938);
-    Call2((void (*)())Object_SetActionCallbackAndRefreshById, rec, base6_200e904);
+    ((void (*)())Engine_ActorEnableActionCallback)(rec2, base6_200e904);
+    ((void (*)())Object_SetActionCallbackAndRefreshById)(rec, base5_200e938);
+    ((void (*)())Object_SetActionCallbackAndRefreshById)(rec, base6_200e904);
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
     base5_200e7c8 = (s32)&FuneHeya_ProgressTableA;
     Engine_ActorEnableActionCallback(1, base5_200e7c8);
-    Value2(Engine_ActorEnableActionCallback, 2, base5_200e7c8);
-    Value2(Object_SetActionCallbackAndRefreshById, 3, base5_200e7c8);
+    Engine_ActorEnableActionCallback(2, base5_200e7c8);
+    Object_SetActionCallbackAndRefreshById(3, base5_200e7c8);
     FieldScene_RunSceneStep(23, 0, 0);
-    Call1(Engine_GameFlagClear, 0x927);
-    Call1(Engine_GameFlagSet, 0x8a0);
-    Call1(Engine_GameFlagClear, 0x12f);
+    Engine_GameFlagClear(0x927);
+    Engine_GameFlagSet(0x8a0);
+    Engine_GameFlagClear(0x12f);
     Engine_EventEnd();
 }

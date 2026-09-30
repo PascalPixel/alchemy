@@ -28,7 +28,6 @@ enum {
     ITEM_BONE = 231
 };
 
-
 extern u8 *gWork;
 
 /* The scene's tables, laid out after the code. */
@@ -42,47 +41,10 @@ s32 PartyInventory_HasSpace(void);
 void SceneState_CheckPositionWindow(void);
 void OverlayObject_InitObject22(s32, s32, s32, s32);
 
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers. A direct call instead precomputes a costly
- * constant into a temporary that is then shared with later uses in the same
- * block. A value-returning call sets r0 last of its arguments.
- */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
     gEventWork->message += amount;
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    void Actor_FaceEachOther();
-    void Event_ShowMessage();
-
-    return f();
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    void Actor_FaceEachOther();
-    void Event_ShowMessage();
-
-    return f(a0);
 }
 
 void SceneState_CheckPositionWindow(void)
@@ -224,7 +186,7 @@ void FieldScene_RunActor18FlaggedSequence(void)
         Event_Wait(20);
         Actor_RunRepeatedMotion(18, 2);
         Event_Wait(20);
-        if (Value0(PartyInventory_HasSpace) == 0) {
+        if (PartyInventory_HasSpace() == 0) {
             Actor_SetAnimationAndWait(18, 4);
             Event_Wait(20);
             Event_SetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);

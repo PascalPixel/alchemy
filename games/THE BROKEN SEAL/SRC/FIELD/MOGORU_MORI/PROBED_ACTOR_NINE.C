@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 
 struct Resource39fProbe {
     s32 word[6];
@@ -18,12 +19,6 @@ void Engine_ActorSetSpritePriority(s32 actor, s32 value);
 u8 *Engine_ActorGet(s32 actor);
 void Map_CopyCellAttributeRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 void Engine_EventEnd(void);
-
-/* Spelled through this wrapper, the call loads r0 last of its arguments. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* Mogoru Forest: when the probe finds actor 9 in map column 26, set flag
  * 0x310, step actor 9 back, play cue 240 and copy the cleared cells. */

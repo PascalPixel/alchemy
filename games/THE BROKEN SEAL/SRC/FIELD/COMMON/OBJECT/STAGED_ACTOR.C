@@ -1,6 +1,7 @@
 #include "STAGED_ACTOR.H"
 #include "FIXED_POINT_POSITION.H"
 #include "IWRAM_CALL.H"
+#include "CALL.H"
 extern u8 gMapCellBuffer[];
 
 /* Linked into several field overlays; each overlay has its own copy of the
@@ -28,13 +29,6 @@ extern void Object_SetModeById(s32, s32);
 extern void BattleFx_PlayQueuedSound(void);
 extern void Map_CopyCellAttributeRect(s32, s32, s32, s32, s32, s32);
 extern void Audio_PlayCue(s32);
-
-static __inline__ void Scene_Call6(
-    void (*func)(s32, s32, s32, s32, s32, s32),
-    s32 x, s32 z, s32 width, s32 height, s32 dst_x, s32 dst_z)
-{
-    func(x, z, width, height, dst_x, dst_z);
-}
 
 /* Called through this helper, not directly: the copied arguments keep the
  * argument order the reference schedules. */
@@ -468,10 +462,7 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
         horizontal_origin = *(s32 *)(workspace + 316) >> 20;
         vertical_origin = *(s32 *)(workspace + 320) >> 20;
 
-        Scene_Call6(Map_CopyCellAttributeRect, request.target_x, request.tail.target_y,
-                    horizontal_extent, vertical_extent,
-                    horizontal_origin + request.target_x,
-                    vertical_origin + request.tail.target_y);
+        Call6(Map_CopyCellAttributeRect, request.target_x, request.tail.target_y, horizontal_extent, vertical_extent, horizontal_origin + request.target_x, vertical_origin + request.tail.target_y);
         StagedActor_FillGridAttributeRectangle(0, request.target_x, request.tail.target_y,
                                                horizontal_extent, vertical_extent, 255);
         StagedActor_FillGridAttributeRectangle(2, request.target_x, request.tail.target_y,
@@ -550,8 +541,7 @@ s32 FieldScene_RedrawActorFootprint(s32 id)
     probe.position_z >>= 20;
     idx = work[0x13c / 4] >> 20;
     dst_z = work[0x140 / 4] >> 20;
-    Scene_Call6(Map_CopyCellAttributeRect, probe.position_x, probe.position_z,
-        width, height, idx + probe.position_x, dst_z + probe.position_z);
+    Map_CopyCellAttributeRect(probe.position_x, probe.position_z, width, height, idx + probe.position_x, dst_z + probe.position_z);
     StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z, width, height, 255);
     StagedActor_FillGridAttributeRectangle(2, probe.position_x, probe.position_z, width, height, 255);
     return 1;

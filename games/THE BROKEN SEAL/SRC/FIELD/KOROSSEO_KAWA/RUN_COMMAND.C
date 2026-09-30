@@ -83,10 +83,6 @@ Rec *Owner_GetState(s32);
  * it by one, and specific values select which sub-sequence runs this call.
  * Reaching 0 restarts the countdown at 120 after running its own branch. */
 
-/* FAKEMATCH: Calls through these inline helpers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
@@ -94,46 +90,6 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
 
 static inline void InitializeActorZero(void)
 {
@@ -143,11 +99,6 @@ static inline void InitializeActorZero(void)
 static inline void InitializeSelectedActor(s32 actorId)
 {
     Actor_SetSpeed(actorId, 0x10000, 0x8000);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
 }
 
 /* Selects a later line in the current dialogue. */
@@ -171,7 +122,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    Call3((void (*)())Engine_ActorSetPosition, 0, x << 16, (z << 16) - 0x300000);
+    ((void (*)())Engine_ActorSetPosition)(0, x << 16, (z << 16) - 0x300000);
     Actor_SetPosition(ACTOR_GERALD, (x << 16) - 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - 0x200000);
@@ -261,17 +212,17 @@ void FieldScene_RunCommandSequence(s32 a0)
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(6);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    actor = (struct FieldActor *)Value1(Object_GetById, 0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_SetAnimation(ACTOR_IVAN, 2);
-    actor = (struct FieldActor *)Value1(Object_GetById, 0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_SetAnimation(ACTOR_MIA, 2);
-    actor = (struct FieldActor *)Value1(Object_GetById, 0);
+    actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }

@@ -1,5 +1,6 @@
 /* The psynergy stone falling on the hut. */
 #include "HAIDIA.H"
+#include "CALL.H"
 extern u8 MsgHaidiaAnythingInterestingOnYourTrip[];
 extern u8 MsgHaidiaCanIUsePsynergy[];
 extern u8 MsgHaidiaIHaveSomePsynergyLeft[];
@@ -61,7 +62,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 30);
     Event_SetMessage((s32)MsgHaidiaIHaveSomePsynergyLeft);
     Event_SayThenWait(15, 20);
-    Value3(SceneActor_SetPairZeroAndValue, 15, 0xa000, 20);
+    SceneActor_SetPairZeroAndValue(15, 0xa000, 20);
     Actor_SetAttachedEffect(15, 0x102);
     Event_Wait(20);
     SceneState_ApplyPair140And0();
@@ -70,9 +71,9 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
         Task_Wait(1);
     }
     Value2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunStep15, 0xc80);
-    Value2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunStep20, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep20, 0xc80);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
-    rec8 = Value1(Engine_ActorGet, 20);
+    rec8 = Engine_ActorGet(20);
     v2 = rec8[85];
     rec8[85] = 0;
     p8 = v2;
@@ -81,8 +82,8 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
         Task_Wait(1);
     }
     rec8[85] = p8;
-    Call1(Scheduler_RemoveCallback, (s32)FieldScene_RunStep15);
-    Call1(Scheduler_RemoveCallback, (s32)FieldScene_RunStep20);
+    Scheduler_RemoveCallback((s32)FieldScene_RunStep15);
+    Scheduler_RemoveCallback((s32)FieldScene_RunStep20);
     Task_Wait(1);
     Audio_PlayCue(161);
     Actor_SetChildValue(15, 0);

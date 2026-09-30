@@ -144,19 +144,6 @@ u8 *Object_GetByIdFar();
 void BattleFx_StartFadeOverlay();
 void BattleFx_SetQueuedSoundAndPlay();
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-/* Verified scene siblings use these call forms for independently evaluated
- * large constants in repeated actor operations. */
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
 void SceneState_CheckFlags941And940(void)
 {
     if (GameFlag_IsSet(0x941) != 0) {
@@ -226,7 +213,7 @@ void FieldScene_RunMiddleSequence(void)
         p5 = base[9];
         r0 = GameFlag_IsSet(0x200);
         if (r0 != 0) {
-            r0 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            r0 = Engine_ActorGet(ACTOR_PARTY_LEADER);
         }
         *(s32 *)(p5 + 24) = r0;
     } else {
@@ -257,7 +244,7 @@ void FieldScene_RunMiddleSequence(void)
     Actor_SetSpriteFlags((s32)record, 0);
     record = Actor_Get(9);
     Actor_SetSpriteFlags((s32)record, 0);
-    Call2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunSupplementalSequenceOne, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)FieldScene_RunSupplementalSequenceOne, 0xc80);
     if (GameFlag_IsSet(0x915) != 0) {
         Actor_SetPosition(10, 0x1aa0000, 0x2da0000);
         record = Actor_Get(10);

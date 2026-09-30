@@ -57,40 +57,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Actor_SetPosition(actor, x, y);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 /* Complete two-byte empty hook plus its alignment halfword. */
 void Resource3b4_EmptyHookB(void)
 {
@@ -170,7 +136,7 @@ void FieldScene_RunScene3b4_02000b68(void)
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Event_Wait(30);
             Actor_SetPosition(15, 0x3780000, 0x2980000);
-            rec7 = Value1(Engine_GetTriggerActor, 15);
+            rec7 = Engine_GetTriggerActor(15);
             {
                 s32 target = *(s32 *)(rec7 + 80);
                 s32 shown = 0xf800;
@@ -179,7 +145,7 @@ void FieldScene_RunScene3b4_02000b68(void)
             }
             *(u16 *)(rec7 + 6) = 0;
             ObjectDispatch_ApplyValueToChildren(rec7, 0);
-            Value2(Engine_ObjectSetScript, rec7, 0x200a6fc);
+            Engine_ObjectSetScript(rec7, 0x200a6fc);
             Event_End();
         }
     }
@@ -192,7 +158,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
     if (GameFlag_IsSet(0x9c9) != 0 && GameFlag_IsSet(0x9ca) == 0) {
         GameFlag_Set(0x9ca);
         Event_Begin();
-        record = Value1(Object_GetById, 15);
+        record = Object_GetById(15);
         *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
         ObjectDispatch_ApplyValueToChildren(record, 16);
         Audio_PlayCue(152);
@@ -242,11 +208,11 @@ void FieldScene_CopyActorPosition(void)
     if (GameFlag_IsSet(0x9ca) != 0) {
         if (Data_02000240[293] != 15) {
             idx = work->touched_trigger;
-            dst = Value1(Object_GetById, 15);
-            src = Value1(Object_GetById, 0);
+            dst = Object_GetById(15);
+            src = Object_GetById(0);
             *(s32 *)(dst + 48) = *(s32 *)(src + 48);
-            dst = Value1(Object_GetById, 15);
-            src = Value1(Object_GetById, 0);
+            dst = Object_GetById(15);
+            src = Object_GetById(0);
             *(s32 *)(dst + 52) = *(s32 *)(src + 48);
             idx -= 30;
             tbl = 0x0200a808;

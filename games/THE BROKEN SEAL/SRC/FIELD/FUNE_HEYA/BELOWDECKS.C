@@ -11,11 +11,6 @@ void UiText_ShowCenteredMessage();
 void Ui_SetRenderResultFromObject();
 void Object_SetActionCallbackAndRefreshById();
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants
- * straight into the argument registers; a direct call precomputes a costly
- * constant into a pseudo that the compiler then shares with later uses in
- * the block. A value-returning call also sets r0 last of its arguments. */
-
 void FieldScene_RunStepThen10(s32 a);
 void FieldScene_CallPairWith10(s32 a, u16 b);
 void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags);
@@ -39,15 +34,15 @@ void FieldScene_RunPositionTransferPresentation(void)
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x1b0, 166);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    record = Value1((s32 (*)())Engine_ActorGet, 0);
+    record = ((s32 (*)())Engine_ActorGet)(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1((s32 (*)())Engine_ActorGet, 0);
+    record = ((s32 (*)())Engine_ActorGet)(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1((s32 (*)())Engine_ActorGet, 1);
+    record = ((s32 (*)())Engine_ActorGet)(1);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -69,17 +64,17 @@ void FieldScene_RunPositionTransferPresentation(void)
     UiText_ShowCenteredMessage(message, 1, 10);
     Event_Wait(10);
     FieldScene_RunSceneStep(0, 0, 40);
-    Value3(FieldScene_RunSceneStep, 1, 0x4000, 20);
+    FieldScene_RunSceneStep(1, 0x4000, 20);
     Camera_SetSpeed(0x39999, 0x7333);
-    Call4(ConfigureSceneMotionFlags, 0x1b80000, -1, 0x1400000, 0x10000014);
+    ConfigureSceneMotionFlags(0x1b80000, -1, 0x1400000, 0x10000014);
     Actor_RunRepeatedMotion(8, 2);
-    Call2(FieldScene_CallPairWith10, 8, 0xd000);
+    FieldScene_CallPairWith10(8, 0xd000);
     Event_SetMessage(message + 1);
     FieldScene_RunStepThen10(8);
     Actor_FaceDirection(8, 0, 20);
-    Call4(ConfigureSceneMotionFlags, 0x1b80000, -1, 0x860000, 0x10000000);
+    ConfigureSceneMotionFlags(0x1b80000, -1, 0x860000, 0x10000000);
     Actor_EnableActionCallback(ACTOR_GERALD, (s32)FuneHeya_ProgressTableA);
-    Value2(Engine_ActorEnableActionCallback, 2, (s32)FuneHeya_ProgressTableA);
+    Engine_ActorEnableActionCallback(2, (s32)FuneHeya_ProgressTableA);
     Object_SetActionCallbackAndRefreshById(3, (s32)FuneHeya_ProgressTableA);
     Event_Wait(40);
     GameFlag_Set(0x301);

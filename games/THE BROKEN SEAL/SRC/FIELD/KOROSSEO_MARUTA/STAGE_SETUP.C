@@ -4,6 +4,7 @@
  * alternative layouts by the story flags; then run the beat the scene's
  * sub-state names. The overlay's exported entry. */
 #include "TYPES.H"
+#include "CALL.H"
 
 /* Cell holding the shared scene-work pointer; +448 is the scene phase word. */
 extern u8 *gEventWork;
@@ -49,15 +50,6 @@ void ColossoLogRollingStage_ClearSavedActorPositions();
 void ColossoLogRollingStage_ShowActorPositionMessage(void);
 void ColossoLogRollingStage_MarkSceneProgress(void);
 void ColossoLogRollingStage_SceneTask(void);
-
-/* FAKEMATCH: six-argument sites spelled through this wrapper pass their
- * constants straight into the argument registers, where a direct call
- * shares a costly constant with later uses in the block. */
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Builds the log-rolling stage, then runs the beat named by the scene
  * sub-state.  Returns 0 on every path. */
@@ -105,8 +97,8 @@ s32 StageSetup_BuildAndDispatch(void)
     }
 
     if (Engine_GameFlagIsSet(872) != 0) {
-        Call6(Engine_MapCopyCellAttributes, 15, 12, 1, 1, 13, 12);
-        Call6(Engine_MapCopyCellAttributes, 1, 25, 1, 1, 9, 12);
+        Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, 12);
+        Engine_MapCopyCellAttributes(1, 25, 1, 1, 9, 12);
         rec = Engine_ActorGet(12);
         Engine_ActorSetSpriteFlags(rec, 0);
         rec[85] = 0;
@@ -128,7 +120,7 @@ s32 StageSetup_BuildAndDispatch(void)
     rec[85] = 0;
     rec[35] = 2;
     Call6(Engine_MapCopyCellAttributes, 18, 10, 3, 1, 18, 11);
-    Call6(Engine_MapCopyCellAttributes, 17, 11, 1, 1, cnt, 11);
+    Engine_MapCopyCellAttributes(17, 11, 1, 1, cnt, 11);
 
     /* The three drifting obstacles: any one still at rest and clear of the
      * grid is planted and drawn twice, once on its own row and once 52 rows
@@ -139,10 +131,8 @@ s32 StageSetup_BuildAndDispatch(void)
         if (*(s32 *)(rec + 12) == 0 && hit == 0) {
             rec[35] = 2;
             rec[85] = hit;
-            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, *(s32 *)(rec + 8) >> 20,
-                          *(s32 *)(rec + 16) >> 20);
-            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, *(s32 *)(rec + 8) >> 20,
-                          (*(s32 *)(rec + 16) >> 20) + 52);
+            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, *(s32 *)(rec + 8) >> 20, *(s32 *)(rec + 16) >> 20);
+            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, *(s32 *)(rec + 8) >> 20, (*(s32 *)(rec + 16) >> 20) + 52);
         }
     }
 
@@ -168,7 +158,7 @@ s32 StageSetup_BuildAndDispatch(void)
             rec[85] = state;
             *(s32 *)(rec + 12) = 0x200000;
             Engine_ObjectSetAnimation(rec, 10);
-            Call6(Engine_MapCopyCellAttributes, 74, 12, 1, 1, val, row);
+            Engine_MapCopyCellAttributes(74, 12, 1, 1, val, row);
             val += 2;
         }
         Engine_ActorSetAnimation(28, 10);
@@ -213,8 +203,8 @@ s32 StageSetup_BuildAndDispatch(void)
         rec = Engine_ActorGet(31);
         Engine_ObjectSetAnimation(rec, 8);
         rec[35] = 2;
-        Call6(Engine_MapCopyCellAttributes, 86, 10, 1, 2, 84, 10);
-        Call6(Engine_MapCopyCellAttributes, 86, 9, 1, 1, 84, 12);
+        Engine_MapCopyCellAttributes(86, 10, 1, 2, 84, 10);
+        Engine_MapCopyCellAttributes(86, 9, 1, 1, 84, 12);
     } else {
         rec = Engine_ActorGet(31);
         Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, *(s32 *)(rec + 8) >> 20, 9);

@@ -54,7 +54,7 @@ void Owner_RecalculateRatiosFar(s32);
 s32 Battle_CalcRestore(s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
 s32 Math_Div(s32, s32);
-void Audio_PlayCueReturnOne(s32);
+s32 Audio_PlayCueReturnOne(s32 cue);
 
 /* ability/play_use_animation.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))

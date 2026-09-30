@@ -1,10 +1,13 @@
 #include "TYPES.H"
+#include "GAME_STATE.H"
 #include "FIXED_MATH.H"
 #include "OBJECT_EFFECT.H"
 #include "SYSTEM.H"
 #include "OBJECT_LOOKUP.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "EFFECT_RUNTIME.H"
+#include "DMA.H"
 
 struct ParticlePosition {
     s32 x;
@@ -95,23 +98,16 @@ struct EfxObj {
 extern u8 *gEventWork;
 extern const u8 BattleFx_ParticleEmitterScript[];
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Object_Destroy(struct EfxObj *obj);
+void Object_Destroy(void *object);
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void ItemIcon_LoadTilesFar(s32 item);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
-void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 #define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
-
 void WaitFrames(s32);
 struct EffectObject_0808f1c0;
 
 /* effect_runtime/prepare_rising_object.c */
-struct State_0808f0d8 {
-    u8 pad0[0x1f4];
-    s32 object_index;
-};
-
 struct Entity_0808f0d8 {
     u8 pad0[6];
     u16 angle;
@@ -128,7 +124,6 @@ struct Object_0808f0d8 {
     u8 field55;
 };
 
-extern struct State_0808f0d8 gGameState;
 void Object_SetPosition(struct Object_0808f0d8 *, s32, s32, s32);
 extern const u8 RomBytes_0809e75c[];
 
@@ -166,8 +161,69 @@ void *Runtime_AllocateHeapBlock(s32 asset_id, s32 size);
 void ItemIcon_LoadTilesFar(s32);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Runtime_ReleaseHeapBlock(s32);
-
 void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter);
+
+struct Values_0808f28c {
+    u32 first;
+    u32 second;
+    u32 third;
+};
+
+struct Source_0808f28c {
+    u8 padding[8];
+    struct Values_0808f28c values;
+};
+
+struct Child_0808f28c {
+    u8 padding[9];
+    u8 flags;
+};
+
+struct Object_0808f28c {
+    u8 padding[80];
+    struct Child_0808f28c *child;
+};
+
+extern struct Object_0808f28c *Object_Spawn(s32, u32, u32, u32);
+
+extern u8 Data_03001ebc[];
+extern const u8 BattleFx_MarkerParticleScript[];
+extern struct MapRenderWork *gMapWork;
+
+struct FieldActor {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+/* One 12-byte map event record; the table ends at flags == -1. */
+struct MapEventEntry {
+    s32 flags;
+    s16 id;
+    s16 flag;
+    s32 position;
+};
+
+struct FieldMapState {
+    u8 unknown_00[36];
+    s32 events;
+};
+
+extern struct FieldMapState gOverlayArea;
+s32 EffectRuntime_GetCurrentObject(s32 id);
+struct MapEventEntry *_call_via_r0(s32 resource);
+s32 GameFlag_TestFar(s32 flag);
+
+struct WindowHBlankWork {
+    u16 pages[2][322];
+    u8 unknown_508[0x31];
+    u8 page;
+};
+
+extern struct WindowHBlankWork *Data_03001ecc;
+
+void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source);
 
 #undef OBJECT_0808EEE4_OFFSET
 
@@ -303,7 +359,7 @@ void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
     if (object == 0)
         return;
 
-    entity = ObjectTable_Get(gGameState.object_index);
+    entity = ObjectTable_Get(gGameState.selected_actor);
     object->field34 = 0x10000;
     object->field30 = 0x20000;
     object->field55 = 0;
@@ -319,7 +375,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
     void *other;
 
     if (object != NULL) {
-        other = ObjectTable_Get(gGameState.object_index);
+        other = ObjectTable_Get(gGameState.selected_actor);
         if (flags & 1) {
             ObjectDispatch_SetSingleChildField26Far(object, 0);
             ObjectDispatch_InitializeFar(object, BattleFx_ParticleEmitterScript);
@@ -343,7 +399,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
 void BattleFx_StartEffectObject22(s32 value, s32 flags)
 {
     struct EffectResource_0808f1c0 *resource =
-        ObjectTable_Get(gGameState.object_index);
+        ObjectTable_Get(gGameState.selected_actor);
     void *handle = Runtime_AllocateHeapBlock(17, 0x608);
     struct EffectObject_0808f1c0 *object = Object_CreateFar(
         22, resource->x, resource->y + 0x240000, resource->z);
@@ -380,4 +436,190 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
         Object_SetMode(resource, 1);
         Object_Destroy(object);
     }
+}
+
+/* The European editions pause the random particles while the field's top
+   menu is open: the menu sets the event work's menu-open byte and clears the
+   particles already flying, and no new ones spawn until it closes. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+
+#define PARTICLES_PAUSE_FOR_MENU 1
+#endif
+
+#if defined(PARTICLES_PAUSE_FOR_MENU)
+#define BATTLE_ACTIVE_OFS 0xcb8
+#define MENU_OPEN_OFS     0xcca
+
+struct ParticleSlot {
+    s32 script;
+    u8 pad[0x6c];
+};
+
+extern u8 *gEventWork;
+
+void Object_Destroy(void *object);
+
+#define ParticlePool (*(struct ParticleSlot **)((u8 *)&gEventWork - 88))
+
+void BattleFx_ClearRandomParticles(void)
+{
+    if (*(s16 *)(gEventWork + BATTLE_ACTIVE_OFS) != 0) {
+        struct ParticleSlot *ent = ParticlePool;
+        s32 n = 63;
+
+        do {
+            if (ent->script != 0) {
+                if (ent->script == (s32)BattleFx_ParticleScript)
+                    Object_Destroy(ent);
+            }
+            n--;
+            ent++;
+        } while (n >= 0);
+    }
+}
+
+#endif
+
+void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source)
+{
+    struct Values_0808f28c values;
+    struct Object_0808f28c *object;
+    u32 rnd;
+
+#if defined(PARTICLES_PAUSE_FOR_MENU)
+    if (*(s8 *)(gEventWork + MENU_OPEN_OFS) != 0)
+        return;
+#endif
+    if ((100 * Random16() >> 16) > 9)
+        return;
+
+    values.first = source->values.first;
+    values.second = source->values.second;
+    values.third = source->values.third;
+    rnd = Random16();
+    Vector_AddPolarOffset(rnd << 4, Random16(), &values);
+    object = Object_Spawn(
+        0x11D, values.first, values.second, values.third);
+    if (object != 0) {
+        s32 mask;
+        u8 flags;
+
+        ObjectDispatch_InitializeFar(object, (void *)BattleFx_ParticleScript);
+        Object_SetMode(object, 0);
+        mask = 13;
+        flags = object->child->flags;
+        mask = -mask;
+        mask &= flags;
+        mask |= 4;
+        object->child->flags = mask;
+    }
+}
+
+u32 EffectRuntime_IsActive(void)
+{
+    s16 count;
+    u32 active = 0;
+    struct EffectRuntime *runtime = gEventWork;
+
+    if (runtime != NULL) {
+        count = *(s16 *)((u8 *)runtime + 0xcb8);
+        active = (u32)((0 - count) | count);
+        active >>= 31;
+    }
+    return active;
+}
+
+/* Walks the area's (x, z, id) marker list, ending at 0xff 0xff, and for each
+   marker within 8 by 5 tiles of the leader spawns a kind-22 effect object
+   on every matching event whose flag is still clear. */
+void FieldEffect_SpawnNearbyMarkers(void)
+{
+    u8 *list;
+    struct FieldActor *actor;
+    struct MapEventEntry *entry;
+    s32 actor_x;
+    s32 actor_z;
+    s32 x;
+    s32 z;
+    s32 id;
+
+    list = *(u8 **)(*(u8 **)&gMapWork + 16);
+    actor = ObjectTable_Get(gGameState.selected_actor);
+    actor_x = actor->x >> 20;
+    actor_z = actor->z >> 20;
+    if (list != 0) {
+        while (x = *list++, z = *list++, x != 0xff || z != 0xff) {
+            id = *list++;
+            if (EffectRuntime_GetCurrentObject(id) != 0)
+                continue;
+            if ((u32)(id - 100) > 139)
+                continue;
+            if (actor_x - x >= 0) {
+                if (actor_x - x > 8)
+                    continue;
+            } else if (x - actor_x > 8)
+                continue;
+            if (actor_z - z >= 0) {
+                if (actor_z - z > 5)
+                    continue;
+            } else if (z - actor_z > 5)
+                continue;
+            entry = _call_via_r0(gOverlayArea.events);
+            if (entry->flags == -1)
+                continue;
+            do {
+                if (entry->id == id && (entry->flags & 15) == 3) {
+                    switch (entry->position & 0xfff00000) {
+                    case 0:
+                    case 0x100000:
+                    case 0x200000:
+                    case 0x300000:
+                    case 0x500000:
+                        if (entry->flag != -1 && GameFlag_TestFar(entry->flag) == 0) {
+                            /* FAKEMATCH: the spawned object reuses the actor
+                               variable, which keeps both in r5. */
+                            actor = (struct FieldActor *)Object_CreateFar(22, (x << 20) + 0x80000, 0, (z << 20) + 0x80000);
+                            if (actor != 0) {
+                                ObjectDispatch_InitializeFar((s32)actor, (s32)BattleFx_MarkerParticleScript);
+                                ObjectDispatch_SetSingleChildField26Far((s32)actor, 0);
+                                *(s32 *)((u8 *)actor + 108) = (s32)BattleFx_SpawnRandomParticleAtPosition;
+                            }
+                        }
+                        break;
+                    }
+                }
+                entry++;
+            } while (entry->flags != -1);
+        }
+    }
+}
+
+void BattleFx_StartWindowHBlankDma(void)
+{
+    struct WindowHBlankWork *work = Data_03001ecc;
+    u16 *source = work->pages[work->page];
+    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    s32 value;
+    s32 other;
+
+    channel[5] &= 0xc5ff;
+    channel[5] &= 0x7fff;
+    (void)channel[5];
+    *(volatile u16 *)0x04000000 |= 0x6000;
+    /* FAKEMATCH: a do-while(0) around the WININ copy makes the reference load
+       the value before the WININ address */
+    do {
+        value = *source++;
+        *(volatile u16 *)0x04000048 = value;
+    } while (0);
+    value = *source++;
+    *(volatile u16 *)0x0400004a = value;
+    *(volatile u16 *)0x04000040 = *source++;
+    other = *source++;
+    *(volatile u16 *)0x04000042 = other;
+    other = 160;
+    *(volatile u16 *)0x04000044 = other;
+    *(volatile u16 *)0x04000046 = other;
+    Dma_Set(source, (void *)0x04000040, 0xa6600001, (volatile u32 *)channel);
 }

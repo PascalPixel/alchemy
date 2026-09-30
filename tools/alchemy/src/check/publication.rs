@@ -1216,7 +1216,29 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| attributes_reason(path, text))
         .or_else(|| runtime_definition_reason(path, text))
         .or_else(|| address_equate_reason(path, text))
+        .or_else(|| edition_equate_reason(path, text))
         .or_else(|| raw_encoding_reason(path, text))
+}
+const EDITION_EQUATE_REASON: &str = "equate in an edition scaffold: it brings in base-ROM bytes and labels where they are, never a number the linked code reads";
+/// Any equate or symbol assignment in an edition's scaffold,
+/// `recon/<game>/<lang>/*.s`: `.set`, `.equ`, `.equiv`, `.eqv` or `name =`.
+/// A length or address its code reads would come from the reference ROM;
+/// the scaffold places labels at bytes and the linker works out the rest.
+fn edition_equate_reason(path: &str, text: &str) -> Option<&'static str> {
+    let components: Vec<_> = path.split('/').collect();
+    let ["recon", game, lang, leaf] = components.as_slice() else {
+        return None;
+    };
+    let edition = lang.len() == 2 && lang.bytes().all(|b| b.is_ascii_lowercase());
+    if !matches!(*game, "tbs" | "tla") || !edition || !extension(leaf).eq_ignore_ascii_case("s") {
+        return None;
+    }
+    static EQUATE: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let equate = EQUATE.get_or_init(|| {
+        regex::Regex::new(r"(?im)^[ \t]*(?:\.(?:set|equ|equiv|eqv)\b|[A-Za-z_.$][\w.$]*[ \t]*=)")
+            .expect("edition equate pattern")
+    });
+    equate.is_match(text).then_some(EDITION_EQUATE_REASON)
 }
 const ADDRESS_EQUATE_REASON: &str = "assembler equate of a full address: define the name as a label where its bytes are and reference it";
 /// An assembler equate that gives a name a whole 32-bit address, such as
@@ -3505,6 +3527,49 @@ mod tests {
             publication_data_reason(tbs, spelled.as_bytes(), None),
             Some(RAW_ENCODING_REASON)
         );
+    }
+    #[test]
+    fn edition_scaffolds_hold_no_equates() {
+        let scaffold = "\t.section .rom.000158dc, \"ax\"\n\t.global Tile_BuildMetatiles\nFunc_080158e8:\n\t.incbin \"baserom.gba\", 0x000158dc, 0x000001f4\n";
+        for path in [
+            "recon/tbs/ja/rom.s",
+            "recon/tla/de/rom.s",
+            "recon/tbs/de/sym_iwram.s",
+        ] {
+            assert!(edition_equate_reason(path, scaffold).is_none(), "{path}");
+            for line in [
+                "\t.set Object_UpdateAllCodeSize, 0x4e8\n",
+                ".equ Size, End - Start\n",
+                "\t.equiv\tLength,0x214\n",
+                "  .eqv Count, 3\n",
+                "Tile_BuildMetatilesCodeSize = 0x1f4\n",
+                "\tSize=End-Start\n",
+            ] {
+                let text = format!("{scaffold}\t.global X\n{line}");
+                assert_eq!(
+                    edition_equate_reason(path, &text),
+                    Some(EDITION_EQUATE_REASON),
+                    "{path}: {line:?}"
+                );
+                assert_eq!(
+                    publication_data_reason(path, text.as_bytes(), None),
+                    Some(EDITION_EQUATE_REASON)
+                );
+            }
+        }
+        // Comments and pc-relative loads are no equates; the English
+        // disassembly and game source keep their own rules.
+        let accepted = "@ .set Size, 0x4e8 once stood here\n\tldr r0, =Label\n";
+        assert!(edition_equate_reason("recon/tbs/ja/rom.s", accepted).is_none());
+        let measured = "\t.set Tile_BuildMetatilesCodeSize, . - Tile_BuildMetatiles\n";
+        for path in [
+            "recon/tbs/raw/080158e8.S",
+            "recon/tbs/unidentified.s",
+            "games/THE BROKEN SEAL/SRC/X.S",
+            "recon/tbs/ja/MAIN.LD",
+        ] {
+            assert!(edition_equate_reason(path, measured).is_none(), "{path}");
+        }
     }
     #[test]
     fn full_address_equates_are_refused_in_game_and_reconstruction_assembly() {

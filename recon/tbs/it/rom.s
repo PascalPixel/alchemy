@@ -134,9 +134,17 @@ Flash_ChipAtmelLayout:
 Runtime_ByteRemapTable:
 	.incbin "baserom.gba", 0x000097b8, 0x00000400
 	.section .rom.0000a0f8, "ax"
+	.global Transform_UpdateVertices
+Transform_UpdateVertices:
 	.incbin "baserom.gba", 0x0000a0f8, 0x00000284
+	.global Transform_UpdateVerticesEnd
+Transform_UpdateVerticesEnd:
 	.section .rom.0000a494, "ax"
+	.global Object_UpdateAll
+Object_UpdateAll:
 	.incbin "baserom.gba", 0x0000a494, 0x000004e8
+	.global Object_UpdateAllEnd
+Object_UpdateAllEnd:
 	.section .rom.0000aa0c, "ax"
 	.global Func_0800aa0c
 	.type Func_0800aa0c, %function
@@ -157,16 +165,12 @@ ResourceSlot_Load:
 	.thumb_func
 Object_UpdateAllThumb:
 	.incbin "baserom.gba", 0x0000cacc, 0x00000664
-	.section .rom.0000d304, "ax"
-	.incbin "baserom.gba", 0x0000d304, 0x0000003c
 	.section .rom.0000daf0, "ax"
 	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000dd70, "ax"
 	.incbin "baserom.gba", 0x0000dd70, 0x000004b0
 	.section .rom.0000ebec, "ax"
-	.incbin "baserom.gba", 0x0000ebec, 0x00000bf0
-	.section .rom.0000f7f2, "ax"
-	.incbin "baserom.gba", 0x0000f7f2, 0x000001da
+	.incbin "baserom.gba", 0x0000ebec, 0x0000070c
 	.section .rom.0000fb38, "ax"
 	.global Map_LoadLayeredScene
 	.type Map_LoadLayeredScene, %function
@@ -198,20 +202,16 @@ Map_CopyMetatileCellsRect:
 Func_08010788:
 	.incbin "baserom.gba", 0x00010788, 0x0000013c
 	.section .rom.000108e4, "ax"
+	.global Map_WriteLayerCellTile
+	.type Map_WriteLayerCellTile, %function
+	.thumb_func
+Map_WriteLayerCellTile:
 	.incbin "baserom.gba", 0x000108e4, 0x00000104
-	.section .rom.000109e8, "ax"
-	.global Map_InitializePerspectiveScene
-	.type Map_InitializePerspectiveScene, %function
-	.thumb_func
-Map_InitializePerspectiveScene:
-	.incbin "baserom.gba", 0x000109e8, 0x00000360
-	.section .rom.00010d48, "ax"
-	.global Map_SetWindowCellTile
-	.type Map_SetWindowCellTile, %function
-	.thumb_func
-Map_SetWindowCellTile:
-	.incbin "baserom.gba", 0x00010d48, 0x000000cc
 	.section .rom.00010ff0, "ax"
+	.global MapAnimation_ApplyAffineFrame
+	.type MapAnimation_ApplyAffineFrame, %function
+	.thumb_func
+MapAnimation_ApplyAffineFrame:
 	.incbin "baserom.gba", 0x00010ff0, 0x000000f0
 	.section .rom.000113e4, "ax"
 	.global Map_UpdateCurrentTileBlock
@@ -225,12 +225,6 @@ Map_UpdateCurrentTileBlock:
 	.thumb_func
 Map_UpdateCurrentTileBlockUntilBlocked:
 	.incbin "baserom.gba", 0x000114a0, 0x000000c8
-	.section .rom.0001179c, "ax"
-	.global MapAnimation_Update
-	.type MapAnimation_Update, %function
-	.thumb_func
-MapAnimation_Update:
-	.incbin "baserom.gba", 0x0001179c, 0x0000010c
 	.section .rom.00011bf4, "ax"
 	.global Func_08011bf4
 	.type Func_08011bf4, %function
@@ -271,7 +265,16 @@ Camera_FixedViewMatrix:
 	.incbin "baserom.gba", 0x00013190, 0x000000b0
 	.global Script_MainScript
 Script_MainScript:
-	.incbin "baserom.gba", 0x00013240, 0x0000008c
+	.incbin "baserom.gba", 0x00013240, 0x00000014
+	.global Data_08013254
+Data_08013254:
+	.incbin "baserom.gba", 0x00013254, 0x00000020
+	.global Data_08013274
+Data_08013274:
+	.incbin "baserom.gba", 0x00013274, 0x00000018
+	.global Data_0801328c
+Data_0801328c:
+	.incbin "baserom.gba", 0x0001328c, 0x00000040
 	.global Data_080132cc
 Data_080132cc:
 	.incbin "baserom.gba", 0x000132cc, 0x00000030
@@ -315,7 +318,12 @@ ObjectDispatch_Table6Script:
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x000136e0, 0x00001920
 	.section .rom.000155d0, "ax"
-	.incbin "baserom.gba", 0x000155d0, 0x00000508
+	.incbin "baserom.gba", 0x000155d0, 0x000002f4
+	.global Tile_BuildMetatiles
+Tile_BuildMetatiles:
+	.incbin "baserom.gba", 0x000158c4, 0x00000214
+	.global Tile_BuildMetatilesEnd
+Tile_BuildMetatilesEnd:
 	.section .rom.000164ae, "ax"
 	.incbin "baserom.gba", 0x000164ae, 0x00000002
 	.section .rom.000164b0, "ax"
@@ -497,14 +505,6 @@ UiText_DrawNumberAtOffset:
 	.thumb_func
 UiText_DrawNumberInWindow:
 	.incbin "baserom.gba", 0x0001e9b0, 0x000000d4
-	.section .rom.0001ed92, "ax"
-	.incbin "baserom.gba", 0x0001ed92, 0x00000002
-	.section .rom.0001ed94, "ax"
-	.global UiWindow_FillFromScene
-	.type UiWindow_FillFromScene, %function
-	.thumb_func
-UiWindow_FillFromScene:
-	.incbin "baserom.gba", 0x0001ed94, 0x0000007c
 	.section .rom.0001ef10, "ax"
 	.incbin "baserom.gba", 0x0001ef10, 0x00000298
 	.section .rom.0001f1a8, "ax"

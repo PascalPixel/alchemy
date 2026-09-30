@@ -5508,22 +5508,6 @@ Func_0200326c:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200b358,"ax",%progbits
-	.global Func_02003358
-	.thumb_func
-Func_02003358:
-	movs r3, #128
-	lsls r3, r3, #24
-	str r3, [r0, #56]
-	str r3, [r0, #60]
-	str r3, [r0, #64]
-	movs r3, #0
-	str r3, [r0, #36]
-	str r3, [r0, #40]
-	str r3, [r0, #44]
-	adds r0, #100
-	strh r3, [r0]
-	bx lr
 	.section .text.x0200b370,"ax",%progbits
 	.global Func_02003370
 	.thumb_func
@@ -5618,7 +5602,7 @@ Func_02003370:
 	lsls r3, r3, #9
 	str r3, [r6, #24]
 	str r3, [r6, #28]
-	bl Func_02003358
+	bl SceneActor_ParkRecord
 	ldr r1, .L_0200b4d8
 	movs r0, #8
 	bl ObjectMotion_EnableActionAndSetCallback

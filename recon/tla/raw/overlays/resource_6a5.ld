@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x02008064)
         "*/resource_6a5_overlay.o"(.text.x02008068)
         "*/resource_6a5_overlay.o"(.text.x02008070)
-        "*/resource_6a5_overlay.o"(.text.x02008078)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/PARK_RECORD.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x02008090)
         "*/resource_6a5_overlay.o"(.text.x020080ec)
         "*/resource_6a5_overlay.o"(.text.x02008158)

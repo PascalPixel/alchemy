@@ -68,15 +68,6 @@ u16 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 void BattleEffect_CleanupSceneObjects(void);
 
-/* Calls spelled through this wrapper pass their constants straight into the
- * argument registers. Spelling them as direct calls instead precomputes a
- * costly constant into a temporary that is shared with later uses in the same
- * block. A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 void SceneActor_SetActors19To22HeightByFrameParity(void)
 {
     struct Ent_02000800 *p;
@@ -157,40 +148,6 @@ void FieldScene_RunPairedStepB();
 void Object_SetActionCallbackAndRefreshById();
 void Audio_PlayCueFromEventWork();
 
-/* The inline adapters retain argument lifetimes at constant-valued calls.
- * Their return types follow the target helpers. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ struct ObjectRuntime *Pointer1(struct ObjectRuntime *(*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-
 extern u8 KorimaMura_ActionTable1[];
 extern u8 KorimaMura_ActionTable2[];
 extern u8 KorimaMura_ActionTable3[];
@@ -234,11 +191,11 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 121, 238);
     Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
-    record = Pointer1((struct ObjectRuntime *(*)())Engine_ActorGet, 0);
+    record = ((struct ObjectRuntime *(*)())Engine_ActorGet)(0);
     if ((s32)record != 0) {
         Actor_SetPosition(ACTOR_GERALD, record->x, record->z);
     }
-    record = Pointer1((struct ObjectRuntime *(*)())Engine_ActorGet, 0);
+    record = ((struct ObjectRuntime *(*)())Engine_ActorGet)(0);
     if ((s32)record != 0) {
         Actor_SetPosition(ACTOR_IVAN, record->x, record->z);
     }
@@ -246,7 +203,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_EnableActionCallback(ACTOR_IVAN, (s32)KorimaMura_ActionTable2);
     if (*(s32 *)flag_addr != 0) {
         Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
-        record = Pointer1((struct ObjectRuntime *(*)())Engine_ActorGet, 0);
+        record = ((struct ObjectRuntime *(*)())Engine_ActorGet)(0);
         if ((s32)record != 0) {
             Actor_SetPosition(ACTOR_MIA, record->x, record->z);
         }
@@ -398,7 +355,7 @@ void FieldScene_RunExtendedActorSequence(void)
     ColorBuffer_Interpolate(1);
     Task_Wait(1);
     KorimaMura_EffectActive = 1;
-    Value2(Engine_TaskAddCallback, (s32)SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
+    Engine_TaskAddCallback((s32)SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
     Task_Wait(20);
     ColorBuffer_ApplyTarget(0x405210, 1);
     ColorBuffer_ApplyTarget(0x10000, 2);
@@ -445,7 +402,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_SetSpriteFlags((s32)record, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
     Event_Wait(20);
-    record = Pointer1((struct ObjectRuntime *(*)())Engine_ActorGet, 1);
+    record = ((struct ObjectRuntime *(*)())Engine_ActorGet)(1);
     record->velocity_y = (value << 10);
     Event_Wait(10);
     Actor_SetSpeed(ACTOR_GERALD, (value << 10), (value << 10));
@@ -454,7 +411,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_SetSpriteFlags((s32)record, 0);
     Actor_SetAnimation(ACTOR_GERALD, 19);
     Event_Wait(40);
-    record = Pointer1((struct ObjectRuntime *(*)())Engine_ActorGet, 2);
+    record = ((struct ObjectRuntime *(*)())Engine_ActorGet)(2);
     record->velocity_y = (value << 10);
     Event_Wait(10);
     Actor_EnableActionCallback(ACTOR_IVAN, action_b);
@@ -463,7 +420,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_SetAnimation(ACTOR_IVAN, 19);
     KorimaMura_EffectActive = 0;
     Event_Wait(160);
-    Value1(Engine_TaskRemoveCallback, (s32)SceneEffect_SpawnObject26EveryEightFrames);
+    Engine_TaskRemoveCallback((s32)SceneEffect_SpawnObject26EveryEightFrames);
     Event_Wait(120);
     ColorBuffer_ApplyTarget(0x406218, 1);
     ColorBuffer_Interpolate(60);
@@ -472,7 +429,7 @@ void FieldScene_RunExtendedActorSequence(void)
     step_addr = (s32)&gFallingEffectState;
     gFallingEffectOffset = 0x800000;
     *(s32 *)step_addr = 1;
-    Value2(Engine_TaskAddCallback, (s32)FieldScene_UpdateFallingEffect, 0xc80);
+    Engine_TaskAddCallback((s32)FieldScene_UpdateFallingEffect, 0xc80);
     Event_Wait(180);
     Audio_PlayCue(21);
     FieldScene_RunPairedStepA(1, 80);
@@ -518,7 +475,7 @@ void FieldScene_RunExtendedActorSequence(void)
     value = 0;
     Actor_SetSpritePriority(ACTOR_MIA, 3);
     KorimaMura_PendingPose = value;
-    Value2(Engine_TaskAddCallback, (s32)SceneActor_SetActors19To22HeightByFrameParity, 0xc80);
+    Engine_TaskAddCallback((s32)SceneActor_SetActors19To22HeightByFrameParity, 0xc80);
     Audio_PlayCue(220);
     ((struct ObjectRuntime *)Engine_ActorGet(19))->unknown_23 &= 254;
     Actor_SetSpritePriority(19, 2);
@@ -545,7 +502,7 @@ void FieldScene_RunExtendedActorSequence(void)
         } while (gFallingEffectState != 0);
     }
     Event_Wait(0x12c);
-    Value1(Engine_TaskRemoveCallback, (s32)FieldScene_UpdateFallingEffect);
+    Engine_TaskRemoveCallback((s32)FieldScene_UpdateFallingEffect);
     Event_Wait(120);
     Audio_PlayCue(17);
     ColorBuffer_ApplyTarget(0x10000, 1);
@@ -764,7 +721,7 @@ void FieldScene_RunExtendedActorSequence(void)
     gFallingEffectOffset = 0x800000;
     step_next = (s32)&gFallingEffectState;
     *(s32 *)step_next = 1;
-    Value2(Engine_TaskAddCallback, (s32)FieldScene_UpdateFallingEffect, 0xc80);
+    Engine_TaskAddCallback((s32)FieldScene_UpdateFallingEffect, 0xc80);
     Event_Wait(80);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
@@ -900,7 +857,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Event_Wait(60);
     Event_ShowMessage(18, 0);
     Event_ShowMessage(17, 0);
-    Value1(Engine_TaskRemoveCallback, (s32)FieldScene_UpdateFallingEffect);
+    Engine_TaskRemoveCallback((s32)FieldScene_UpdateFallingEffect);
     Event_Wait(80);
     ColorBuffer_ApplyTarget(0x10000, 1);
     ColorBuffer_Interpolate(60);
@@ -1065,14 +1022,14 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Pointer1((struct ObjectRuntime *(*)())Engine_ActorGet, 0);
+    record = ((struct ObjectRuntime *(*)())Engine_ActorGet)(0);
     if ((s32)record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, 2);
-    record = Pointer1((struct ObjectRuntime *(*)())Engine_ActorGet, 0);
+    record = ((struct ObjectRuntime *(*)())Engine_ActorGet)(0);
     if ((s32)record != 0) {
         Actor_SetDestination(ACTOR_IVAN, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
     }
@@ -1082,7 +1039,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_SetPosition(18, 0, 0);
     if (KorimaMura_LayoutFlag != 0) {
         Actor_SetAnimation(ACTOR_MIA, 2);
-        record = Pointer1((struct ObjectRuntime *(*)())Engine_ActorGet, 0);
+        record = ((struct ObjectRuntime *(*)())Engine_ActorGet)(0);
         if ((s32)record != 0) {
             Actor_SetDestination(ACTOR_MIA, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }

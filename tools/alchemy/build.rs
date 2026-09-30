@@ -10,18 +10,15 @@ use std::path::{Path, PathBuf};
 
 /// Modules that read build outputs but never produce a cached one: checks,
 /// the build's gates, coverage and progress, recovery aids, formatting and
-/// the command dispatch. Everything else, including every Psynergy source
-/// and the lockfile, is part of the implementation.
+/// the command dispatch. Everything else, including build_rom.rs, every
+/// Psynergy and ags source and the lockfile, is part of the implementation.
 const OUTSIDE: &[&str] = &[
     "alchemy/src/check",
     "alchemy/src/check.rs",
     "alchemy/src/coverage",
     "alchemy/src/recovery",
-    "alchemy/src/build_rom.rs",
-    "alchemy/src/cross_edition.rs",
     "alchemy/src/format.rs",
     "alchemy/src/gate",
-    "alchemy/src/http.rs",
     "alchemy/src/main.rs",
 ];
 
@@ -42,12 +39,17 @@ fn collect(tools: &Path, path: &Path, files: &mut Vec<PathBuf>) {
 fn main() {
     let tools = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
     let mut files = Vec::new();
-    for directory in ["alchemy/src", "psynergy/src"] {
+    for directory in ["alchemy/src", "psynergy/src", "ags/src"] {
         let path = tools.join(directory);
         println!("cargo:rerun-if-changed={}", path.display());
         collect(tools, &path, &mut files);
     }
-    for manifest in ["Cargo.lock", "alchemy/Cargo.toml", "psynergy/Cargo.toml"] {
+    for manifest in [
+        "Cargo.lock",
+        "alchemy/Cargo.toml",
+        "psynergy/Cargo.toml",
+        "ags/Cargo.toml",
+    ] {
         let path = tools.join(manifest);
         println!("cargo:rerun-if-changed={}", path.display());
         files.push(path);

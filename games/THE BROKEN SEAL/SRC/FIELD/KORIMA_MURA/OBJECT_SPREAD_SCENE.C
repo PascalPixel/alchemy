@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgKorimaGoingCrossBridge[];
 
 /* Actor 8's path and the debris script, laid out after the code. */
@@ -35,48 +36,6 @@ void Object_SetTargetAndCallback();
 void Engine_GameFlagSet();
 void Engine_EventEnd();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 struct Flags9 {
     u8 pad[9];
     u8 low : 2;
@@ -96,9 +55,9 @@ void KorimaMura_RunObjectSpreadScene(void)
     Engine_EventWait(20);
     Call3(Engine_ActorShowEmote, 8, 0x100, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
-    Call1(Engine_EventSetMessage, (s32)MsgKorimaGoingCrossBridge);
+    Engine_EventSetMessage((s32)MsgKorimaGoingCrossBridge);
     Engine_EventShowMessage(8, 0);
-    Call2(Engine_CameraSetSpeed, 0x6666, 0xccc);
+    Engine_CameraSetSpeed(0x6666, 0xccc);
     Call4(Engine_CameraMoveTo, 0xa80000, 0, 0xea0000, 1);
     Call3(Engine_ActorSetSpeed, 0, 0x9999, 0x4ccc);
     Call3(Engine_ActorWalkToAndWait, 0, 174, 0x116);
@@ -122,18 +81,18 @@ void KorimaMura_RunObjectSpreadScene(void)
     v5 = 5;
     v6 = 4;
     Engine_EventWait(30);
-    Call6(Engine_MapCopyCellsTo, 91, 0, 72, 9, v5, v6);
+    Engine_MapCopyCellsTo(91, 0, 72, 9, v5, v6);
     Engine_EventWait(12);
-    Call6(Engine_MapCopyCellsTo, 91, 4, 72, 9, v5, v6);
+    Engine_MapCopyCellsTo(91, 4, 72, 9, v5, v6);
     Engine_EventWait(9);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
-    Call6(Engine_MapCopyCellsTo, 91, 8, 72, 9, v5, v5);
+    Engine_MapCopyCellsTo(91, 8, 72, 9, v5, v5);
     Engine_EventWait(6);
-    Call6(Engine_MapCopyCellsTo, 91, 13, 72, 9, v5, 6);
+    Engine_MapCopyCellsTo(91, 13, 72, 9, v5, 6);
     Engine_EventWait(3);
     Engine_AudioPlayCue(188);
     for (i = 0; i < 10; i++) {
-        u8 *obj = (u8 *)Value4(Engine_ObjectCreate, 222, (148 + i * 4) << 16, 0, 0x1020000);
+        u8 *obj = (u8 *)Engine_ObjectCreate(222, (148 + i * 4) << 16, 0, 0x1020000);
 
         if (obj != 0) {
             obj[85] = 0;
@@ -150,7 +109,7 @@ void KorimaMura_RunObjectSpreadScene(void)
                 *(s32 *)(obj + 36) = -((s32)(((i & 3) << 16) + 0x10000) >> 1);
             }
             Engine_ObjectSetAnimation(obj, 1);
-            Call2(Engine_ObjectSetScript, (s32)obj, (s32)KorimaMura_DebrisScript);
+            Engine_ObjectSetScript((s32)obj, (s32)KorimaMura_DebrisScript);
         }
     }
     Call6(Engine_MapCopyCellsTo, 91, 19, 72, 9, 5, 7);
@@ -162,7 +121,7 @@ void KorimaMura_RunObjectSpreadScene(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Call3(Object_SetTargetAndCallback, 8, 0x10000, (s32)KorimaMura_Actor8Path);
     Engine_EventWait(60);
-    Call3(Engine_ActorShowEmote, 0, 0x102, 60);
-    Call1(Engine_GameFlagSet, 0x847);
+    Engine_ActorShowEmote(0, 0x102, 60);
+    Engine_GameFlagSet(0x847);
     Engine_EventEnd();
 }

@@ -11,28 +11,7 @@ void Engine_MapAnimateCells();
 void Engine_AudioPlayCue();
 void Engine_EventRequestExit();
 
-
 extern s16 gGameState[][1];
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
-}
 
 /* Crossbone Isle: on the first visit to an area (flag 0x8c8 + area) show its
  * title card; later visits animate the entrance cells and leave. */

@@ -62,10 +62,10 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             if (GameFlag_IsSet(0x841) == 0) {
                 if (GameFlag_IsSet(0x30c) == 0) {
                     if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed <= 0x2b4ffff) {
-                        Value2(SceneActor_RunActor22PlacementSequence, 62, 0x29d);
+                        SceneActor_RunActor22PlacementSequence(62, 0x29d);
                         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 0x273);
                     } else {
-                        Value2(SceneActor_RunActor22PlacementSequence, 75, 0x2cb);
+                        SceneActor_RunActor22PlacementSequence(75, 0x2cb);
                         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 67, 0x2f5);
                     }
                     GameFlag_Set(0x30c);

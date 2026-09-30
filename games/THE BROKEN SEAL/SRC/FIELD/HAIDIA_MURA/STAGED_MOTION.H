@@ -22,7 +22,6 @@ enum {
     ACTOR_DORA = 21
 };
 
-
 /*
  * Reset or tear down a consecutive run of scene actors -- resource_373.
  */
@@ -168,7 +167,6 @@ extern s32 gHaidiaMuraPairTableC[];
 extern s32 gHaidiaMuraPairTableD[];
 extern s32 gDustBurstScript[];
 
-
 void Object_RefreshSelectorById();
 s32 Object_SetActionCallbackAndRefreshById();
 void Graphics_EnableObjLayerAndCallbacks();
@@ -217,74 +215,19 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p);
 
 void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
 
-/* FAKEMATCH: call sites spelled through these wrappers pass their constants
- * straight into the argument registers; a direct call precomputes a costly
- * constant into a pseudo that the compiler then shares with later uses in
- * the block. A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
     gEventWork->message += amount;
 }
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 /* Newly identified engine calls: each macro below names the site's own
  * engine function from its reconstructed C source, and keeps the site's
  * own calling form. */
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
-}
 
 /*
  * Staged actor cutscene tail -- resource_373. The long scene script plus the
  * particle, sound, and vertical-motion effects it drives.
  */
-
-static __inline__ void Call6_02003fb0(
-    void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 #endif

@@ -17,7 +17,7 @@ void Scene_UnmaskGarcia(void)
     Audio_PlayCue(161);
     Actor_RunRepeatedMotion(ACTOR_GARCIA_MASKED, 3);
     Event_Wait(40);
-    other = Value1(Engine_ActorGet, ACTOR_GARCIA_MASKED);
+    other = Engine_ActorGet(ACTOR_GARCIA_MASKED);
     if (other != 0) {
         Actor_SetPosition(ACTOR_GARCIA, *(s32 *)(other + 8), *(s32 *)(other + 16));
     }
@@ -140,7 +140,7 @@ void Scene_UnmaskGarcia(void)
             Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
             Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
             Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
-            obj = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            obj = Engine_ActorGet(ACTOR_PARTY_LEADER);
             obj[90] &= 254;
             Actor_WalkToAndWait(ACTOR_GERALD, 244, 0x1de);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
@@ -173,7 +173,7 @@ void Scene_UnmaskGarcia(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 30);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
-    obj = Value1(Engine_ActorGet, ACTOR_GERALD);
+    obj = Engine_ActorGet(ACTOR_GERALD);
     obj[90] &= 254;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x1e2);
     {

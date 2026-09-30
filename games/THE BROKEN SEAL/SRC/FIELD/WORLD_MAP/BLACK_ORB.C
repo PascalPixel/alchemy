@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 extern u8 MsgWorldMapLook[];
 extern u8 MsgWorldMapNowUseOnShip[];
 
@@ -11,13 +12,6 @@ void BattleFx_ScheduleRatioTransition(s32 speed, s32 frames);
 
 extern s32 gWorldMapTriggerActor;
 extern const u8 gBlackOrbLeaderScript[];
-
-/* FAKEMATCH: call sites spelled through this wrapper pass their constants
-   straight into the argument registers; a direct call builds them first. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 /* World-map Black Orb scene: the trigger actor walks up, the camera shows the site, and the party receives the Black Orb before the map is sent to the world map's entrance 78. */
 void WorldMap_RunBlackOrbScene(void)
@@ -54,7 +48,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor | 0x3000, 0, 40);
     Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x1768, 0xd48);
-    Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x1794, 0xd48);
+    Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 0x1794, 0xd48);
     Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x3000, 20);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(0, gBlackOrbLeaderScript);
@@ -77,7 +71,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_ActorGet(gWorldMapTriggerActor)->unknown_5a |= 1;
     Engine_EventWait(20);
     Engine_ActorGet(gWorldMapTriggerActor)->unknown_5a &= ~1;
-    Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x1794, 0xd48);
+    Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 0x1794, 0xd48);
     Engine_EventWait(1);
     Engine_ActorGet(gWorldMapTriggerActor)->unknown_5a |= 1;
     Engine_ItemShowFound(242, 3);

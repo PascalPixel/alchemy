@@ -1,4 +1,4 @@
-#include "FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
 
 struct FlashInfo08007220 {
     u8 unknown_00[24];

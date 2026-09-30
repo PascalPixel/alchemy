@@ -25,8 +25,8 @@
  *     stack slot. Must be read with the surrounding code; must NOT be
  *     pattern-matched against other files.
  */
-#include "FLASH.H"
-#include "FLASH_DATA.H"
+#include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
 
 struct FlashChipInfo {
     u8 unknown_00[8];

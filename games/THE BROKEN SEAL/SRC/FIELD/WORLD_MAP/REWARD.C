@@ -12,7 +12,7 @@ void FieldScene_RunScene371_0200281c(void)
     Event_Begin();
     Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
     Event_SetMessage((s32)MsgWorldMapNowUseOnShip);
-    Value2(Engine_EventShowMessage, gWorldMapTriggerActor, 0);
+    Engine_EventShowMessage(gWorldMapTriggerActor, 0);
     Actor_FaceDirection(55, 0x3000, 0);
     Event_End();
 }
@@ -22,7 +22,7 @@ void FieldScene_RunScene371_02002858(void)
     Event_Begin();
     Battle_SetObjectFlag5bWhenMode3();
     Event_SetMessage((s32)MsgWorldMapRobinWhereGoingSaidUse);
-    Value2(Engine_EventShowMessage, gWorldMapTriggerActor, 0);
+    Engine_EventShowMessage(gWorldMapTriggerActor, 0);
     Battle_ClearObjectFlag5bWhenMode3();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1778, 0xd48);

@@ -1,5 +1,6 @@
 /* Scene tables, the primary sequence and the facing actors. */
 #include "TOREBI.H"
+#include "CALL.H"
 extern u8 MsgTorebiHeWontSailShipEven[];
 extern u8 MsgTorebiHeyWhatsThis[];
 
@@ -59,7 +60,7 @@ void FieldScene_RunPrimarySequence(void)
 
     p6 = *(u8 **)Data_03001ebc;
     for (i = 8; i < 66; i++) {
-        record = Value1(Engine_ActorGet, i);
+        record = Engine_ActorGet(i);
         if (record != 0) {
             *(u8 *)(record + 85) = 0;
         }
@@ -67,10 +68,7 @@ void FieldScene_RunPrimarySequence(void)
     p6 = p6 + 0x16c;
     n = *(s16 *)p6 - 14;
     Audio_PlayCue(158);
-    Value3(Engine_MapAnimateCells,
-           Data_02009dcc[n].a,
-           Data_02009dcc[n].b,
-           Data_02009dcc[n].c);
+    Value3(Engine_MapAnimateCells, Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *(u8 *)((s32)Engine_ActorGet(0) + 85) = 0;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -86,7 +84,7 @@ void FieldScene_RunScene3b6SequenceA(void)
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiHeyWhatsThis);
     Event_Wait(40);
-    rec7 = Value4(Engine_ObjectCreate, 0x11c, 0x2580000, 0, 0x3380000);
+    rec7 = Engine_ObjectCreate(0x11c, 0x2580000, 0, 0x3380000);
     Actor_SetSpriteFlags(rec7, 0);
     Object_SetAnimation(rec7, 6);
     Event_Wait(10);
@@ -182,33 +180,33 @@ s32 Scene_InitFacingActors(void)
     s32 none;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    if (SceneInit_Value1(Engine_GameFlagIsSet, 0x950) != 0) {
-        SceneInit_Call6(Engine_MapCopyCellAttributes, 51, 47, 3, 1, 51, 45);
+    if (Engine_GameFlagIsSet(0x950) != 0) {
+        Call6(Engine_MapCopyCellAttributes, 51, 47, 3, 1, 51, 45);
         record = Engine_ActorGet(31);
         record[35] = none = 0;
         (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
         record = Engine_ActorGet(32);
         record[35] = none;
         (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
-        if (SceneInit_Value1(Engine_GameFlagIsSet, 0x8bc) != 0) {
-            SceneInit_Call3(Engine_ActorSetPosition, 25, 0x2300000, 0x2a80000);
-            SceneInit_Call3(Engine_ActorFaceDirection, 25, 0x8000, 0);
+        if (Value1(Engine_GameFlagIsSet, 0x8bc) != 0) {
+            Call3(Engine_ActorSetPosition, 25, 0x2300000, 0x2a80000);
+            Call3(Engine_ActorFaceDirection, 25, 0x8000, 0);
         }
         if (gGameState.entrance == 19) {
-            if (SceneInit_Value1(Engine_GameFlagIsSet, 0x8bc) == 0) {
-                SceneInit_Call1(Engine_GameFlagSet, 0x8bc);
+            if (Value1(Engine_GameFlagIsSet, 0x8bc) == 0) {
+                Engine_GameFlagSet(0x8bc);
                 Event_OpenScreen();
                 FieldScene_RunScene3b6SequenceA();
             }
         }
         if (gGameState.entrance == 16) {
-            if (SceneInit_Value1(Engine_GameFlagIsSet, 0x300) == 0) {
-                SceneInit_Call1(Engine_GameFlagSet, 0x300);
+            if (Value1(Engine_GameFlagIsSet, 0x300) == 0) {
+                Engine_GameFlagSet(0x300);
                 Event_OpenScreen();
                 FieldScene_RunActorsThirtyOneToThirtyThreeChoreography();
             }
         }
-        if (SceneInit_Value1(Engine_GameFlagIsSet, 0x8ab) != 0) {
+        if (Engine_GameFlagIsSet(0x8ab) != 0) {
             Actor_SetPosition(35, 0, 0);
             Actor_SetPosition(36, 0, 0);
         }

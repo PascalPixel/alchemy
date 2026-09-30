@@ -229,7 +229,7 @@ void FieldScene_RunEarlySequence(void)
         *(s32 *)(rec + 12) -= 0x10000;
         Task_Wait(4);
         if (i == 8) {
-            record = Value1(Engine_ActorGet, 8);
+            record = Engine_ActorGet(8);
             *(s32 *)(record + 24) = 0x1999;
             record = Actor_Get(8);
             *(s32 *)(record + 28) = 0x1999;

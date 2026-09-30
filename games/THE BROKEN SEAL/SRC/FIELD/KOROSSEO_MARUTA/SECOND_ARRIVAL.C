@@ -1,5 +1,6 @@
 /* The second competitor's arrival. */
 #include "LOG_ROLLING.H"
+#include "CALL.H"
 extern u8 MsgKorosseoSteppingStoneStage[];
 extern u8 MsgKorosseoYourGoalInStageSimple[];
 
@@ -28,14 +29,14 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     Korosseo_FadeInCompetitor(0, 280, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
     Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, 280, 152);
-    Call3(ColossoLogRollingStage_SpawnPositionedObject, 0, 296, 152);
+    ColossoLogRollingStage_SpawnPositionedObject(0, 296, 152);
     Event_Wait(10);
     Leader_CheckAhead();
     Camera_MoveTo(-1, -1, -1, 0);
-    Value3(Engine_ActorFaceDirection, 0, 49152, 15);
+    Engine_ActorFaceDirection(0, 49152, 15);
     Leader_CheckAhead();
     Camera_MoveTo(-1, -1, -1, 0);
-    Value3(Engine_ActorFaceDirection, 0, 0, 15);
+    Engine_ActorFaceDirection(0, 0, 15);
     Leader_CheckAhead();
     Camera_MoveTo(-1, -1, -1, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 15);

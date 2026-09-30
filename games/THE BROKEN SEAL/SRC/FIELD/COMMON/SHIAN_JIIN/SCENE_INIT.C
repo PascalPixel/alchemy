@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALL.H"
 
 void ShianJiin_AskIfCurious(void);
 void FieldScene_RunRoofEnsembleSequence(void);
@@ -8,16 +9,6 @@ void *NewEffectObject(s32 x, s32 y, s32 z, s32 kind);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
 
 void FaceXianActorToPlayer(union FieldObject *object);
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Temple entry: in the second scene set the entrance selector and, by entrance and story flags, stage the roof and gathering actors; elsewhere restore the opened passages. */
 s32 ShianJiin_ApplyEntryState(void)

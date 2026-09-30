@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgKuupuappuLearn[];
 extern u8 MsgKuupuappuLeave[];
 extern struct EventWork *gEventWork;
@@ -31,38 +32,6 @@ void Engine_ActorStartRepeatedMotion();
 void Engine_ActorWalkTo();
 void Engine_ActorWalkToAndWait();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 struct Flags9 {
     u8 pad[9];
     u8 low : 2;
@@ -83,18 +52,18 @@ void KuupuappuHeya_RunScene021C8(void)
     
         record[35] = (u8)(value | 1);
     }
-    Call4(Map_SetWorkFourValues, 0x200000, 0x2400000, 0x1900000, 0x3a80000);
+    Map_SetWorkFourValues(0x200000, 0x2400000, 0x1900000, 0x3a80000);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
     Call3(Engine_ActorSetPosition, 0, 0xf80000, 0x2d80000);
     Call3(Engine_ActorSetPosition, 2, 0x1080000, 0x2e80000);
-    Call3(Engine_ActorSetPosition, 1, 0xe80000, 0x2e80000);
-    record = Value1(Engine_ActorGet, 0);
+    Engine_ActorSetPosition(1, 0xe80000, 0x2e80000);
+    record = Engine_ActorGet(0);
     ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
-    record = Value1(Engine_ActorGet, 1);
+    record = Engine_ActorGet(1);
     ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
-    record = Value1(Engine_ActorGet, 2);
+    record = Engine_ActorGet(2);
     ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
     Engine_ActorFaceEachOther(0, 2, 0);
     FieldScene_RunSplitTripleSteps(1, 2, 30);
@@ -116,7 +85,7 @@ void KuupuappuHeya_RunScene021C8(void)
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(1, 1);
     Engine_EventWait(10);
-    Call1(Engine_EventSetMessage, (s32)MsgKuupuappuLearn);
+    Engine_EventSetMessage((s32)MsgKuupuappuLearn);
     SceneActor_SetModeZeroAndValue(1, 20);
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
     SceneActor_SetModeZeroAndValue(2, 20);
@@ -133,25 +102,25 @@ void KuupuappuHeya_RunScene021C8(void)
     Engine_ActorRunRepeatedMotion(1, 1);
     Engine_EventWait(20);
     SceneActor_SetPairZeroAndValue(0, 1, 20);
-    Value2(Engine_EventOpenMessage, 1, 0);
+    Engine_EventOpenMessage(1, 0);
     v5 = 0;
-    if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) != 0) {
+    if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) != 0) {
         Engine_EventWait(20);
         Engine_ActorStartRepeatedMotion(2, 2);
         SceneEffect_ApplyThreeValuesAndFinish(1, 4, 30);
-        Value2(Engine_EventOpenMessage, 1, 0);
+        Engine_EventOpenMessage(1, 0);
         v5 = 0;
-        if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) != 0) {
+        if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) != 0) {
             Engine_EventWait(20);
-            Call3(Engine_ActorShowEmote, 2, 0x102, 0);
+            Engine_ActorShowEmote(2, 0x102, 0);
             Engine_EventWait(60);
             Engine_ActorRunRepeatedMotion(2, 2);
             SceneActor_SetPairZeroAndValue(0, 2, 20);
-            Value2(Engine_EventOpenMessage, 2, 0);
+            Engine_EventOpenMessage(2, 0);
             v5 = 0;
-            if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 2, 0) != 0) {
+            if (Engine_UiWorkWaitThenFinalizeCapacity(2, 0) != 0) {
                 Engine_EventWait(20);
-                Call3(Engine_ActorShowEmote, 2, 0x105, 0);
+                Engine_ActorShowEmote(2, 0x105, 0);
                 Engine_EventWait(60);
                 SceneActor_SetModeZeroAndValue(2, 20);
                 FieldScene_RunSplitTripleSteps(1, 2, 10);
@@ -159,7 +128,7 @@ void KuupuappuHeya_RunScene021C8(void)
                 Engine_EventWait(10);
                 SceneActor_SetModeZeroAndValue(1, 10);
                 FieldScene_RunSplitTripleSteps(2, 1, 20);
-                Call3(Engine_ActorShowEmote, 2, 0x101, 0);
+                Engine_ActorShowEmote(2, 0x101, 0);
                 Engine_EventWait(60);
                 SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
                 SceneActor_SetModeZeroAndValue(1, 10);
@@ -171,12 +140,12 @@ void KuupuappuHeya_RunScene021C8(void)
         }
     }
     if (v5 == 0) {
-        Call1(Engine_EventSetMessage, (s32)MsgKuupuappuLeave);
+        Engine_EventSetMessage((s32)MsgKuupuappuLeave);
         SceneActor_SetModeZeroAndValue(1, 20);
         SceneActor_SetPairZeroAndValue(1, 0, 20);
         SceneActor_SetModeZeroAndValue(1, 20);
     }
-    Call3(Engine_ActorShowEmote, 0, 0x105, 0);
+    Engine_ActorShowEmote(0, 0x105, 0);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(1, 1);
     SceneActor_SetModeZeroAndValue(1, 10);

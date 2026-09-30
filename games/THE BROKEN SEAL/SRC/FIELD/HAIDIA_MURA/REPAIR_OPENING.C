@@ -1,5 +1,6 @@
 /* Three years later: the opening of the repair morning. */
 #include "STAGED_MOTION.H"
+#include "CALL.H"
 extern u8 MsgHaidiaRepairCaption[];
 
 void FieldScene_RunLargeStagingSequence(void)
@@ -17,8 +18,8 @@ void FieldScene_RunLargeStagingSequence(void)
     s32 k;
     s32 facing;
 
-    rec3 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    rec8 = Value1(Engine_ActorGet, 14);
+    rec3 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    rec8 = Engine_ActorGet(14);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -169,7 +170,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Actor_SetSpeed(14, 0x2666, 0x1333);
     /* FAKEMATCH: the reference looks actor 9 up here and drops the result. */
     Engine_ActorGet(9);
-    Call4(Object_SetPosition, (s32)rec8, 0x1880000, 0xd00000, 0x2480000);
+    Object_SetPosition((s32)rec8, 0x1880000, 0xd00000, 0x2480000);
     Actor_MoveToAndWait(9, 0x17a, 0x248);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x2005, 0, 10);

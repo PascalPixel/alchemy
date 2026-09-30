@@ -1,4 +1,5 @@
 #include "GOMA.H"
+#include "CALL.H"
 
 void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
 {

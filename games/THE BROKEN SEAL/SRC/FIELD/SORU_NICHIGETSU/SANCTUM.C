@@ -35,7 +35,7 @@ void FieldScene_RunScene37aSequenceA(void)
     u32 i;
     s32 record;
 
-    if (Value0(CheckAllStatueLights)!= 0) {
+    if (CheckAllStatueLights()!= 0) {
         record = GameFlag_IsSet(0x201);
         if (record != 0) {
             goto L_020000f0;
@@ -49,7 +49,7 @@ void FieldScene_RunScene37aSequenceA(void)
         if (GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
             Scene_EnterInnerSanctum();
         }
-        if (Value0(CheckAllStatueLights)!= 0) {
+        if (CheckAllStatueLights()!= 0) {
             if (GameFlag_IsSet(0x811) == 0) {
                 FieldScene_RunActorPositionTransition();
             }
@@ -90,7 +90,7 @@ void FieldScene_RunScene37aSequenceC(void)
     u32 i;
     s32 record;
 
-    if (Value0(CheckAllStatueLights)!= 0) {
+    if (CheckAllStatueLights()!= 0) {
         record = GameFlag_IsSet(0x200);
         if (record != 0) {
             goto L_020001d6;

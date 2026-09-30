@@ -4,13 +4,12 @@
  * scene. */
 #include "FORTRESS.H"
 #include "SCENE_IDS.H"
+#include "CALL.H"
 extern u8 MsgRunpaBackMoreGuess[];
 extern u8 MsgRunpaDodonpaPulledLever[];
 extern u8 MsgRunpaTimeEat[];
 
-/* FAKEMATCH: the calls spelled through FORTRESS.H's Value2 and Value3
- * wrappers set r0 last of their arguments, as the game's code does. The
- * dialogue lines count on from each sequence's first message. */
+/* The dialogue lines count on from each sequence's first message. */
 void PlayStoryScene(void)
 {
     s32 text_line;
@@ -30,7 +29,7 @@ void PlayStoryScene(void)
         Actor_SetSpriteFlags(Object_GetById(12), 1);
         Event_Wait(30);
         Actor_SetSpeed(ACTOR_IVAN, 45875, 22937);
-        Value3(Engine_ActorWalkTo, 2, 464, 192);
+        Engine_ActorWalkTo(2, 464, 192);
         Actor_WaitForMove(ACTOR_IVAN);
         Event_Wait(30);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
@@ -38,20 +37,20 @@ void PlayStoryScene(void)
         Actor_FaceDirection(ACTOR_GERALD, 16384, 0);
         Actor_FaceDirection(ACTOR_MIA, 16384, 0);
         Actor_SetPosition(13, 29884416, 20971520);
-        Value2(Engine_CameraSetSpeed, 131072, 16384);
+        Engine_CameraSetSpeed(131072, 16384);
         text_line = (s32)MsgRunpaBackMoreGuess;
         Event_SetMessage(text_line);
         Event_ShowMessage(13, 0);
-        Value3(Engine_ActorWalkTo, 13, 458, 272);
+        Engine_ActorWalkTo(13, 458, 272);
         Actor_WaitForMove(13);
-        Value3(Engine_ActorFaceDirection, 13, 20480, 0);
+        Engine_ActorFaceDirection(13, 20480, 0);
         Event_Wait(40);
         Value3(ObjectMotion_OffsetPositionAndResetMotion, 13, -8, 8);
         Actor_WaitForMove(13);
         Event_Wait(60);
         Audio_PlayCue(155);
         Message_ShowCentered(text_line + 1, 1);
-        Value3(ObjectMotion_OffsetPositionAndResetMotion, 13, 8, -8);
+        ObjectMotion_OffsetPositionAndResetMotion(13, 8, -8);
         FieldScene_RunScene3bf_020025f8();
         Event_Wait(120);
         Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -91,12 +90,12 @@ void PlayStoryScene(void)
         Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
         FieldScene_RunScene3bf_0200252c();
         Actor_SetSpeed(ACTOR_IVAN, 45875, 22937);
-        Value3(Engine_ActorWalkTo, 2, 464, 192);
+        Engine_ActorWalkTo(2, 464, 192);
         Actor_WaitForMove(ACTOR_IVAN);
         Event_Wait(30);
         Event_SetMessage(text_line + 2);
         Event_ShowMessage(ACTOR_IVAN, 0);
-        Value3(Engine_ActorShowEmote, 12, 256, 0);
+        Engine_ActorShowEmote(12, 256, 0);
         Event_Wait(110);
         Audio_PlayCue(60);
         Event_SetMessage(text_line + 3);
@@ -108,11 +107,11 @@ void PlayStoryScene(void)
         Actor_StartRepeatedMotion(12, 1);
         Event_Wait(20);
         Actor_SetSpeed(12, 26214, 13107);
-        Value3(Engine_ActorWalkTo, 12, 520, 208);
+        Engine_ActorWalkTo(12, 520, 208);
         Actor_WaitForMove(12);
         Actor_SetAnimation(12, 1);
         Event_Wait(20);
-        Value3(Engine_ActorFaceDirection, 12, 45056, 0);
+        Engine_ActorFaceDirection(12, 45056, 0);
         Event_Wait(30);
         Value3(Engine_ActorFaceDirection, 12, 20480, 0);
         Event_Wait(30);
@@ -132,7 +131,7 @@ void PlayStoryScene(void)
         Event_Wait(30);
         Actor_SetAnimationAndWait(12, 3);
         Event_Wait(40);
-        Value3(Engine_ActorWalkTo, 2, 480, 200);
+        Engine_ActorWalkTo(2, 480, 200);
         Actor_WaitForMove(ACTOR_IVAN);
         Actor_FaceEachOther(ACTOR_IVAN, 12, 0);
         Event_Wait(60);
@@ -143,7 +142,7 @@ void PlayStoryScene(void)
         Event_Wait(80);
         Event_SetMessage(text_line + 7);
         Event_ShowMessage(12, 0);
-        Value3(Engine_ActorSetPosition, 13, 29884416, 20971520);
+        Engine_ActorSetPosition(13, 29884416, 20971520);
         Audio_PlayCue(19);
         Event_SetMessage(text_line + 8);
         Event_ShowMessage(13, 0);
@@ -203,17 +202,17 @@ void PlayStoryScene(void)
         Value3(Engine_ActorFaceDirection, 1, 16384, 0);
         Event_SetMessage(text_line + 14);
         Event_ShowMessage(ACTOR_GERALD, 0);
-        Value3(Engine_ActorWalkTo, 2, 472, 216);
+        Engine_ActorWalkTo(2, 472, 216);
         Actor_WaitForMove(ACTOR_IVAN);
-        Value3(Engine_ActorFaceDirection, 2, 16384, 0);
+        Engine_ActorFaceDirection(2, 16384, 0);
         Event_Wait(10);
         Event_SetMessage(text_line + 15);
         Event_ShowMessage(ACTOR_IVAN, 0);
-        Value3(Engine_ActorShowEmote, 12, 261, 0);
+        Engine_ActorShowEmote(12, 261, 0);
         Event_Wait(60);
         Event_SetMessage(text_line + 16);
         Event_ShowMessage(12, 0);
-        Value3(Engine_ActorWalkTo, 3, 440, 216);
+        Engine_ActorWalkTo(3, 440, 216);
         Actor_WaitForMove(ACTOR_MIA);
         Actor_FaceActor(ACTOR_MIA, 13, 0);
         Actor_SetAnimationAndWait(ACTOR_MIA, 3);
@@ -227,12 +226,12 @@ void PlayStoryScene(void)
         Actor_ShowEmote(ACTOR_GERALD, 258, 0);
         Actor_ShowEmote(ACTOR_MIA, 258, 0);
         Actor_ShowEmote(ACTOR_IVAN, 258, 0);
-        Value3(Engine_ActorShowEmote, 13, 264, 0);
+        Engine_ActorShowEmote(13, 264, 0);
         Event_Wait(60);
         Event_SetMessage(text_line + 19);
         Event_ShowMessage(13, 0);
         Event_Wait(20);
-        Value3(Engine_ActorShowEmote, 1, 259, 0);
+        Engine_ActorShowEmote(1, 259, 0);
         Event_Wait(60);
         Event_SetMessage(text_line + 20);
         Event_ShowMessage(ACTOR_GERALD, 0);
@@ -240,9 +239,9 @@ void PlayStoryScene(void)
         Event_Wait(60);
         Event_SetMessage(text_line + 21);
         Event_ShowMessage(13, 0);
-        Value3(Engine_ActorWalkTo, 13, 456, 280);
+        Engine_ActorWalkTo(13, 456, 280);
         Actor_WaitForMove(13);
-        Value3(Engine_ActorFaceDirection, 13, 20480, 0);
+        Engine_ActorFaceDirection(13, 20480, 0);
         Event_Wait(80);
         Value3(ObjectMotion_OffsetPositionAndResetMotion, 13, -8, 8);
         Actor_WaitForMove(13);

@@ -8,6 +8,7 @@
 
 mod ast;
 mod compile;
+pub mod drafts;
 mod effects;
 mod lex;
 mod mutate;

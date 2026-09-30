@@ -1,22 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 extern u8 MsgBiribinoLordMccoyOrdered[];
-
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
 
 /* Pans the camera over the palace, lines up four actors in a row and runs their scripted beat. */
 void BiribinoKyuden_RunActorRowScene(void)
@@ -27,19 +12,19 @@ void BiribinoKyuden_RunActorRowScene(void)
     Engine_EventBegin();
     Call4((void (*)())Engine_CameraMoveTo, -1, -1, -1, 0);
     Engine_EventGetViewCenter()->motion_flags = 0;
-    Call4((void (*)())Engine_CameraMoveTo, 0x2740000, -1, 0x2ec0000, 0);
-    Call6(Engine_MapCopyCellAttributes, 38, 55, 4, 1, 38, 45);
-    Call6(Engine_MapCopyCellAttributes, 42, 55, 4, 1, 38, 46);
+    ((void (*)())Engine_CameraMoveTo)(0x2740000, -1, 0x2ec0000, 0);
+    Engine_MapCopyCellAttributes(38, 55, 4, 1, 38, 45);
+    Engine_MapCopyCellAttributes(42, 55, 4, 1, 38, 46);
     Engine_ActorGet(0)->facing = 0;
     Call3((void (*)())Engine_ActorSetPosition, 0, 0x2410000, 0x2f80000);
     Engine_ActorGet(19)->facing = 0;
-    Call3((void (*)())Engine_ActorSetPosition, 19, 0x2500000, 0x2f80000);
+    ((void (*)())Engine_ActorSetPosition)(19, 0x2500000, 0x2f80000);
     Engine_ActorGet(17)->facing = 0x9000;
     Call3((void (*)())Engine_ActorSetPosition, 17, 0x2960000, 0x2fc0000);
     Call3((void (*)())Engine_ActorSetPosition, 21, 0x2680000, 0x2d80000);
     Call3((void (*)())Engine_ActorSetPosition, 22, 0x2780000, 0x2d80000);
     Call3((void (*)())Engine_ActorSetPosition, 23, 0x2880000, 0x2d80000);
-    Call3((void (*)())Engine_ActorSetPosition, 24, 0x2980000, 0x2d80000);
+    ((void (*)())Engine_ActorSetPosition)(24, 0x2980000, 0x2d80000);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(21), 0);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(22), 0);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(23), 0);
@@ -68,11 +53,11 @@ void BiribinoKyuden_RunActorRowScene(void)
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(19, 1);
     Engine_EventSetMessage((s32)MsgBiribinoLordMccoyOrdered);
-    Call3((void (*)())Engine_EventShowMessageAndWait, 19, 0, 10);
+    ((void (*)())Engine_EventShowMessageAndWait)(19, 0, 10);
     Call3((void (*)())Engine_ActorWalkToAndWait, 19, 0x26e, 0x30c);
     Call3((void (*)())Engine_ActorFaceDirection, 19, 0xc000, 10);
     Engine_ActorRunRepeatedMotion(17, 2);
-    Call3((void (*)())Engine_EventShowMessageAndWait, 17, 0, 10);
+    ((void (*)())Engine_EventShowMessageAndWait)(17, 0, 10);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_GameFlagClear(0x12f);
     Engine_GameFlagSet(0x202);

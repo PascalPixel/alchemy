@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALL.H"
 extern u8 MsgHaidiaPuppiesPlayingOver[];
 extern u8 MsgHaidiaRrruffRrrruff[];
 extern struct MapRenderWork *gMapWork;
@@ -22,31 +23,6 @@ void Engine_EventShowMessageAndWait();
 void Engine_EventShowMessageAndWait();
 void Engine_ActorWalkToAndWait();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Until flag 0x808 is set, raise the camera 40 steps above an actor while
  * MsgHaidiaRrruffRrrruff plays, show MsgHaidiaPuppiesPlayingOver, lower it again and return the
  * camera to its target. */
@@ -58,16 +34,16 @@ void HaidiaMura_RunCameraRiseScene(void)
     s32 n;
     s32 pos[3];
 
-    if (Value1(Engine_GameFlagIsSet, 0x808) == 0) {
+    if (Engine_GameFlagIsSet(0x808) == 0) {
         cam = *(s32 ***)&gMapWork;
         Engine_EventBegin();
         Call3(ObjectMotion_SetSpeedParameters, 0, 0x10000, 0x8000);
         Object_SetModeById(0, 1);
         Battle_WaitMode0(2);
-        Call1(Engine_EventSetMessage, (s32)MsgHaidiaRrruffRrrruff);
+        Engine_EventSetMessage((s32)MsgHaidiaRrruffRrrruff);
         Engine_EventShowMessageAndWait(15, 0, 2);
         Engine_EventShowMessageAndWait(16, 0, 2);
-        rec = (s32 *)Value1(Object_GetById, 0);
+        rec = (s32 *)Object_GetById(0);
         pos[0] = rec[2];
         pos[1] = rec[3];
         pos[2] = rec[4];
@@ -81,7 +57,7 @@ void HaidiaMura_RunCameraRiseScene(void)
             Engine_MapRedraw();
         } while (n != 40);
         Battle_WaitMode0(60);
-        Call2(Engine_MessageShowCentered, (s32)MsgHaidiaPuppiesPlayingOver, 1);
+        Engine_MessageShowCentered((s32)MsgHaidiaPuppiesPlayingOver, 1);
         n = 0;
         Battle_WaitMode0(6);
         do {

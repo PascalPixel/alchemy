@@ -1,4 +1,5 @@
 #include "FORTRESS.H"
+#include "CALL.H"
 
 /*
  * The Lunpa Fortress bridge: pairs of position words for the movable
@@ -11,13 +12,6 @@
 /* The support pairs, labelled where they lie among the overlay's data. */
 extern s32 gRunpaJoSupportPairs[];
 
-static __inline__ void FieldPair_Call6(
-    void (*func)(s32, s32, s32, s32, s32, s32),
-    s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    func(a0, a1, a2, a3, a4, a5);
-}
-
 void FieldScene_SetPositionPairs(s32 idx)
 {
     s32 top_x;
@@ -26,10 +20,10 @@ void FieldScene_SetPositionPairs(s32 idx)
 
     top_x = gRunpaJoSupportPairs[idx * 2];
     top_y = gRunpaJoSupportPairs[idx * 2 + 1];
-    FieldPair_Call6(Engine_MapCopyCells, 0, 77, 1, 3, top_x, top_y);
-    FieldPair_Call6(Engine_MapCopyCells, 1, 77, 1, 1, top_x + 1, top_y);
+    Engine_MapCopyCells(0, 77, 1, 3, top_x, top_y);
+    Engine_MapCopyCells(1, 77, 1, 1, top_x + 1, top_y);
     bottom_y = top_y - 44;
-    FieldPair_Call6(Map_CopyCellAttributeRect, top_x, top_y - 45, 1, 1, top_x, bottom_y);
+    Map_CopyCellAttributeRect(top_x, top_y - 45, 1, 1, top_x, bottom_y);
     if (idx == 1)
-        FieldPair_Call6(Map_CopyCellAttributeRect, top_x, bottom_y, 1, 1, top_x, top_y - 43);
+        Call6(Map_CopyCellAttributeRect, top_x, bottom_y, 1, 1, top_x, top_y - 43);
 }

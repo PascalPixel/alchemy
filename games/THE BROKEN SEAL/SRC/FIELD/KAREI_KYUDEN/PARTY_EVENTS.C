@@ -15,45 +15,12 @@ s32 Object_SetActionCallbackAndRefreshById();
 
 /* Signed halfword table in RAM; index 225 selects the scene. */
 
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers, while a direct call precomputes a costly
- * constant into a local that later uses in the block share. A call that
- * returns a value sets r0 last of its arguments.
- */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    void Map_ClearLayerEntryFlag();
-
-    f(a0, a1, a2);
-}
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
     void Map_ClearLayerEntryFlag();
 
     gEventWork->message += amount;
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
 }
 
 static __inline__ void ConfigureSecond(s32 channel, s32 value, s32 zero)
@@ -89,11 +56,6 @@ static __inline__ void ConfigureUniformThird(s32 channel, s32 value, s32 zero)
 static __inline__ void ConfigureUniformFourth(s32 channel, s32 value, s32 zero)
 {
     Actor_FaceDirection(channel, value, zero);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 static __inline__ void Scene_AdvanceStep(s32 amount)
@@ -614,8 +576,8 @@ void RunEventScript01(void)
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     tbl = (s32)KareiKyuden_PartyActions;
     Actor_EnableActionCallback(ACTOR_GERALD, tbl);
-    Value2(Engine_ActorEnableActionCallback, 2, tbl);
-    Value2(Object_SetActionCallbackAndRefreshById, 3, tbl);
+    Engine_ActorEnableActionCallback(2, tbl);
+    Object_SetActionCallbackAndRefreshById(3, tbl);
     work = *(u8 **)&gEventWork;
     *(s32 *)(work + 0x1c8) = 16;
     *(s32 *)(work + 0x1c0) = 0x209;
@@ -671,15 +633,15 @@ void Scene_RunPartySequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x360, 0x1f2);
-    record = Value1(Object_GetById, 0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Object_GetById, 0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Value1(Object_GetById, 0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -802,8 +764,8 @@ void Scene_RunPartySequence(void)
     Event_Wait(20);
     tbl = (s32)KareiKyuden_PartyActions;
     Actor_EnableActionCallback(ACTOR_GERALD, tbl);
-    Value2(Engine_ActorEnableActionCallback, 2, tbl);
-    Value2(Object_SetActionCallbackAndRefreshById, 3, tbl);
+    Engine_ActorEnableActionCallback(2, tbl);
+    Object_SetActionCallbackAndRefreshById(3, tbl);
     work = *(u8 **)&gEventWork;
     *(s32 *)(((s32)work + 0x1c8)) = 16;
     *(s32 *)(((s32)work + 0x1c0)) = 0x209;

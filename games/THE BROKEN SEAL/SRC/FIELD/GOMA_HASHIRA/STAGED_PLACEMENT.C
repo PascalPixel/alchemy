@@ -66,46 +66,8 @@ static __inline__ void ConfigureThird(s32 actor, s32 value)
     BattleFx_SetPhaseRequest(actor, value);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6)
-{
-    f(a0, a1, a2, a3, a4, a5, a6);
-}
-
 #include "TYPES.H"
+#include "CALL.H"
 
 enum StagedPlacementMessage {
     MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
@@ -158,15 +120,15 @@ void FieldScene_RunPrimarySequence(void)
 
     flags = *state & 7;
     if (flags == 0) {
-        rec7a = Value1(Object_GetById, 9);
-        v1a = Value0(Engine_RandomNext);
+        rec7a = Object_GetById(9);
+        v1a = Engine_RandomNext();
         a0 = *(s32 *)(rec7a + 8);
         a0 = a0 + (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
         rec4 = Object_GetById(9);
         reca = (s32)Object_GetById(9);
         a2 = *(s32 *)(reca + 16);
         a2 = a2 + 0x60000;
-        v2a = Value0(Engine_RandomNext);
+        v2a = Engine_RandomNext();
         ta = (s32)((u32)((v2a << 2) + v2a) >> 16);
         ua = (((ta << 1) + ta) << 2) + ta;
         na = ua << 6;
@@ -175,19 +137,18 @@ void FieldScene_RunPrimarySequence(void)
         na = na + ta;
         v3a = Random_Next();
         na = -na;
-        Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, na,
-              (s32)((u32)(v3a << 1) >> 16), flags);
+        Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
         if (flags == 0) {
-            rec7b = Value1(Object_GetById, 9);
-            v1b = Value0(Engine_RandomNext);
+            rec7b = Object_GetById(9);
+            v1b = Engine_RandomNext();
             a0 = *(s32 *)(rec7b + 8);
             a0 = a0 + (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
             rec4 = Object_GetById(9);
             recb = (s32)Object_GetById(9);
             a2 = *(s32 *)(recb + 16);
             a2 = a2 + 0x60000;
-            v2b = Value0(Engine_RandomNext);
+            v2b = Engine_RandomNext();
             tb = (s32)((u32)((v2b << 2) + v2b) >> 16);
             ub = (((tb << 1) + tb) << 2) + tb;
             nb = ub << 6;
@@ -196,8 +157,7 @@ void FieldScene_RunPrimarySequence(void)
             nb = nb + tb;
             v3b = Random_Next();
             nb = -nb;
-            Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, nb,
-                  (s32)((u32)(v3b << 1) >> 16), flags);
+            Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
         }
     }
 }

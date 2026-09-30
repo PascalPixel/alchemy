@@ -55,7 +55,7 @@ void FieldScene_RunScene39f_02001818(void)
 
     Event_Begin();
     FieldScene_RunSixCallSetupSequence(14, 1);
-    Call4(FieldScene_RunScene39f_02000d90, 14, 0x1a8, 0x1e0, 0x79999);
+    FieldScene_RunScene39f_02000d90(14, 0x1a8, 0x1e0, 0x79999);
     Battle_WaitMode0(2);
     MogoruMori_SpawnPuffRing(14);
     Actor_SetChildValue(14, 15);

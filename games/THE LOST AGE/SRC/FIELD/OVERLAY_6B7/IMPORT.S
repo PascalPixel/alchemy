@@ -17,7 +17,7 @@
 	overlay_veneer UiText_DrawStringInWindowFar
 	overlay_veneer UiText_DrawNumberAtOffsetFar
 	overlay_veneer UiText_DrawNumberInWindowFar
-	overlay_veneer Func_08038120
+	overlay_veneer UiText_DrawQuantity
 	overlay_veneer RenderOutput_RedrawSavedRectFar
 	overlay_veneer RenderOutput_ClearListFar
 	overlay_veneer Func_08038318

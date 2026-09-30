@@ -624,7 +624,7 @@ Func_080fb8b8:
 	adds	r0, r7, #1
 	movs	r1, #5
 	lsls	r5, r5, #24
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	asrs	r5, r5, #24
 	mov	r0, r9
 	lsls	r3, r5, #3

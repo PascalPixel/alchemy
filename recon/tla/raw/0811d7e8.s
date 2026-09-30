@@ -539,7 +539,7 @@ Func_0811d7e8:
 	bne.n	.L_0811dc60
 	movs	r1, #1
 	ldrb	r0, [r7, #0]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r1, r9
 	ldrb	r2, [r7, #0]
 	ldrb	r3, [r1, #0]

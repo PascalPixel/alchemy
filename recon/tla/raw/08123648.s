@@ -208,7 +208,7 @@ Func_08123648:
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #72]
 	bl	0x080381c8
 	mov	r3, fp
@@ -396,7 +396,7 @@ Func_08123648:
 	movs	r4, #0
 	ldrsh	r0, [r0, r4]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #676]
 	bl	0x080381c8
 	bl	.L_081241aa
@@ -410,7 +410,7 @@ Func_08123648:
 	movs	r2, #0
 	ldrsh	r0, [r0, r2]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #648]
 	bl	0x080381c8
 	bl	.L_081241aa
@@ -424,7 +424,7 @@ Func_08123648:
 	movs	r2, #0
 	ldrsh	r0, [r0, r2]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #620]
 	bl	0x080381c8
 	bl	.L_081241aa
@@ -449,7 +449,7 @@ Func_08123648:
 	movs	r1, #1
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #568]
 	bl	0x080381c8
 	bl	.L_081241aa
@@ -614,7 +614,7 @@ Func_08123648:
 .L_08123bc4:
 	asrs	r0, r0, #16
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #52]
 	bl	0x080381c8
 .L_08123bd2:
@@ -665,13 +665,13 @@ Func_08123648:
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r2, [sp, #12]
 	movs	r1, #1
 	ldr	r0, [r2, #0]
 	bl	Inventory_GetEquippedItemFar
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r5, [pc, #788]
 	adds	r0, r5, #0
 	bl	0x080381c8
@@ -679,7 +679,7 @@ Func_08123648:
 	bl	0x08120158
 	adds	r0, r7, #0
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 .L_08123c62:
 	bl	0x080381c8
@@ -741,10 +741,10 @@ Func_08123648:
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #0
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r2, #167
 	lsls	r2, r2, #1
 	adds	r2, #255
@@ -846,7 +846,7 @@ Func_08123648:
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #448]
 	bl	0x080381c8
 	b.n	.L_081241aa
@@ -883,7 +883,7 @@ Func_08123648:
 	movs	r2, #0
 	ldrsh	r0, [r1, r2]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #380]
 	bl	0x080381c8
 	ldr	r4, [sp, #12]
@@ -915,7 +915,7 @@ Func_08123648:
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r3, [sp, #12]
 	mov	r4, sl
 	ldr	r2, [r3, #0]
@@ -926,7 +926,7 @@ Func_08123648:
 	lsls	r3, r3, #1
 	adds	r3, #216
 	ldrh	r0, [r2, r3]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldrb	r3, [r5, #12]
 	cmp	r3, #2
 	beq.n	.L_08123e5a
@@ -957,7 +957,7 @@ Func_08123648:
 	movs	r1, #1
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #232]
 	bl	0x080381c8
 	b.n	.L_081241aa
@@ -980,10 +980,10 @@ Func_08123648:
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #0
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #0
 	bl	0x080ad078
 	ldrb	r2, [r0, #1]
@@ -1323,10 +1323,10 @@ Func_08123648:
 	movs	r1, #1
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r1, #4
 	adds	r0, r7, #0
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r0, #114
 	bl	Audio_PlayCue
 	ldr	r0, [pc, #664]
@@ -1367,10 +1367,10 @@ Func_08123648:
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #0
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #576]
 	bl	0x080381c8
 	mov	r3, fp
@@ -1463,10 +1463,10 @@ Func_08123648:
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #0
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #384]
 	bl	0x080381c8
 	adds	r0, r5, #0
@@ -1477,10 +1477,10 @@ Func_08123648:
 	movs	r1, #1
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r1, #4
 	adds	r0, r7, #0
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #356]
 	bl	0x080381c8
 	ldr	r0, [sp, #4]
@@ -1621,7 +1621,7 @@ Func_08123648:
 	movs	r1, #1
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #80]
 	bl	0x080381c8
 	b.n	.L_0812444c

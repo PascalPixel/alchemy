@@ -329,7 +329,7 @@ Func_0810b1b4:
 	bl	.L_0810b378
 	movs	r1, #5
 	adds	r5, r0, #0
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r3, [pc, #164]
 	mov	sl, r3
 	mov	r0, sl
@@ -640,7 +640,7 @@ Func_0810b520:
 .L_0810b718:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	cmp	r5, #1
 	bne.n	.L_0810b728
 	ldr	r0, [pc, #92]

@@ -184,7 +184,7 @@ Func_080ccec8:
 	bne.n	.L_080ccffe
 	adds	r0, r7, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #372]
 	movs	r1, #1
 	bl	0x08038040
@@ -226,7 +226,7 @@ Func_080ccec8:
 	bl	Audio_PlayCue
 	adds	r0, r7, #0
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r6, [pc, #288]
 	movs	r1, #3
 	adds	r0, r6, #0
@@ -448,7 +448,7 @@ Func_080ccec8:
 	ands	r7, r3
 	adds	r0, r7, #0
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r1, #3
 	ldr	r0, [pc, #600]
 	bl	0x08038040
@@ -513,7 +513,7 @@ Func_080ccec8:
 	bne.n	.L_080cd30e
 	adds	r0, r7, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r5, [pc, #464]
 	movs	r1, #1
 	adds	r0, r5, #0
@@ -547,7 +547,7 @@ Func_080ccec8:
 	bl	Audio_PlayCue
 	movs	r1, #2
 	adds	r0, r7, #0
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r3, [pc, #364]
 	movs	r1, #133
 	lsls	r1, r1, #2
@@ -562,7 +562,7 @@ Func_080ccec8:
 .L_080cd346:
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #364]
 	movs	r1, #3
 	bl	0x08038040

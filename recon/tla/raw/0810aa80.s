@@ -380,10 +380,10 @@ Func_0810aa80:
 	bl	0x08038060
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r6, [pc, #236]
 	adds	r0, r6, #0
 	bl	0x0810a9ac
@@ -411,7 +411,7 @@ Func_0810aa80:
 .L_0810ade6:
 	movs	r1, #1
 	mov	r0, r8
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r6, #3
 	bl	0x0810a9ac
 	bl	0x08038140
@@ -433,7 +433,7 @@ Func_0810aa80:
 	bl	Func_08109188
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r6, #4
 	bl	0x0810a9ac
 	bl	0x0810a8ec

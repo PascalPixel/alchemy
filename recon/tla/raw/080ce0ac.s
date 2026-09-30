@@ -126,10 +126,10 @@ Func_080ce0ac:
 	bne.n	.L_080ce1b2
 	mov	r0, sl
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, fp
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #360]
 	movs	r1, #1
 	bl	0x08038040
@@ -190,7 +190,7 @@ Func_080ce0ac:
 	bne.n	.L_080ce282
 	mov	r0, fp
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r1, #13
 	ldr	r0, [pc, #216]
 	bl	0x08038040
@@ -227,11 +227,11 @@ Func_080ce0ac:
 .L_080ce282:
 	mov	r0, sl
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r6, #192
 	mov	r0, fp
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	lsls	r6, r6, #4
 	ldr	r0, [pc, #124]
 	movs	r1, #1
@@ -245,7 +245,7 @@ Func_080ce0ac:
 	movs	r5, #1
 	mov	r8, r2
 	strb	r5, [r6, #0]
-	bl	Func_080db4b8
+	bl	BattleFx_Run
 	mov	r3, r8
 	strb	r3, [r6, #0]
 	bl	Func_080dc7e8

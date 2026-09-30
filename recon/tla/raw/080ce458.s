@@ -216,7 +216,7 @@ Func_080ce458:
 	adds	r2, r5, #0
 	mov	r0, sl
 	bl	.L_080ceafc
-	bl	0x080db884
+	bl	FieldEvent_RunTypeHandler
 	bl	Func_080dc7cc
 	adds	r1, r7, #0
 	adds	r2, r5, #0
@@ -286,10 +286,10 @@ Func_080ce458:
 	beq.n	.L_080ce6aa
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, r9
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #604]
 	movs	r1, #1
 	bl	0x08038040
@@ -312,10 +312,10 @@ Func_080ce458:
 .L_080ce6c6:
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, r9
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #552]
 	movs	r1, #1
 	bl	0x08038040
@@ -352,10 +352,10 @@ Func_080ce458:
 .L_080ce71c:
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, r9
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #464]
 	movs	r1, #1
 	bl	0x08038040
@@ -375,10 +375,10 @@ Func_080ce458:
 	bne.n	.L_080ce768
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r0, #139
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #416]
 	movs	r1, #1
 	bl	0x08038040
@@ -394,10 +394,10 @@ Func_080ce458:
 	beq.n	.L_080ce794
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r0, #149
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #380]
 	movs	r1, #1
 	bl	0x08038040
@@ -405,7 +405,7 @@ Func_080ce458:
 .L_080ce794:
 	movs	r0, #149
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r1, #13
 	ldr	r0, [pc, #364]
 	bl	0x08038040
@@ -531,10 +531,10 @@ Func_080ce458:
 	bne.n	.L_080ce8b8
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r0, #156
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #88]
 	movs	r1, #1
 	bl	0x08038040
@@ -564,10 +564,10 @@ Func_080ce458:
 .L_080ce8e6:
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, r9
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #28]
 	movs	r1, #1
 	bl	0x08038040
@@ -743,10 +743,10 @@ Func_080ce458:
 	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080cea74
-	bl	0x080db670
+	bl	BattleFx_DispatchRequestKind
 	b.n	.L_080cea78
 .L_080cea74:
-	bl	Func_080db4b8
+	bl	BattleFx_Run
 .L_080cea78:
 	bl	Func_080dc7cc
 	ldr	r1, [sp, #12]
@@ -784,7 +784,7 @@ Func_080ce458:
 	bl	GameFlag_Test
 	cmp	r0, #0
 	beq.n	.L_080ceacc
-	bl	0x080db848
+	bl	BattleFx_ClearChildValueOnMismatch
 .L_080ceacc:
 	ldr	r0, [sp, #12]
 	movs	r1, #192

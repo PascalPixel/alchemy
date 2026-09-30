@@ -792,6 +792,7 @@ SECTIONS
         "*/recon/tla/raw/080da938.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080da968.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080daea8.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/FIELD/COMMON/DISPATCH_TYPE_HANDLER.o"(.text)
         "*/recon/tla/raw/080db4b8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080db9a8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080db9cc.o"(.text .rodata .data .padding)

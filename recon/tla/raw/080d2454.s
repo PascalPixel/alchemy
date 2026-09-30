@@ -206,7 +206,7 @@ Func_080d25c8:
 	bge.n	.L_080d2604
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r5, [pc, #36]
 	movs	r1, #1
 	adds	r0, r5, #0
@@ -214,7 +214,7 @@ Func_080d25c8:
 	adds	r5, #1
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	0x08038040
@@ -259,7 +259,7 @@ PartyInventory_GiveItem:
 .L_080d2642:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #396]
 	movs	r1, #1
 	bl	0x08038040
@@ -294,13 +294,13 @@ PartyInventory_GiveItem:
 	beq.n	.L_080d269e
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #4
 	b.n	.L_080d2706
 .L_080d269e:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #1
 	movs	r1, #5
 	bl	0x08038040
@@ -315,7 +315,7 @@ PartyInventory_GiveItem:
 	bl	0x080ad1e8
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #2
 	movs	r1, #1
 	bl	0x08038040
@@ -334,10 +334,10 @@ PartyInventory_GiveItem:
 	ble.n	.L_080d270e
 	ldr	r0, [sp, #8]
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #7
 .L_080d2706:
 	movs	r1, #1
@@ -372,7 +372,7 @@ PartyInventory_GiveItem:
 	bne.n	.L_080d275a
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #132]
 	movs	r1, #3
 	bl	0x08038040
@@ -380,10 +380,10 @@ PartyInventory_GiveItem:
 .L_080d275a:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #124]
 	movs	r1, #3
 	bl	0x08038040
@@ -401,7 +401,7 @@ PartyInventory_GiveItem:
 	bl	Audio_PlayCue
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r5, [pc, #68]
 	movs	r1, #3
 	adds	r0, r5, #0
@@ -415,10 +415,10 @@ PartyInventory_GiveItem:
 	beq.n	.L_080d27c0
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	mov	r0, r8
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #1
 	movs	r1, #1
 	bl	0x08038040

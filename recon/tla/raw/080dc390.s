@@ -496,7 +496,7 @@ Func_080dc6d8:
 	bl	Func_080dc164
 	mov	r0, r9
 	movs	r1, #4
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r2, #224
 	lsls	r2, r2, #3
 	adds	r2, #18

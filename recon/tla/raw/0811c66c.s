@@ -71,7 +71,7 @@ Func_0811c66c:
 	bl	0x08038118
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #8]
 	bl	0x080381c8
 	movs	r0, #0
@@ -441,7 +441,7 @@ Func_0811c66c:
 	bl	Random16
 	movs	r1, #1
 	ldr	r0, [r5, #8]
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #96]
 	bl	0x080381c8
 	movs	r2, #13
@@ -731,10 +731,10 @@ Func_0811c66c:
 .L_0811cc46:
 	adds	r0, r7, #0
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #132]
 	bl	0x080381c8
 	b.n	.L_0811cc88
@@ -747,15 +747,15 @@ Func_0811c66c:
 .L_0811cc6a:
 	adds	r0, r7, #0
 	movs	r1, #5
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #104]
 	bl	0x080381c8
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 .L_0811cc88:
 	adds	r0, r5, #0
 	bl	.L_0811ccf0
@@ -767,7 +767,7 @@ Func_0811c66c:
 	bgt.n	.L_0811ccc0
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #68]
 	bl	0x080381c8
 	b.n	.L_0811ccc0
@@ -778,7 +778,7 @@ Func_0811c66c:
 	bgt.n	.L_0811ccc0
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	0x08038120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #48]
 	bl	0x080381c8
 .L_0811ccc0:

@@ -122,6 +122,9 @@ Event_CallWithLastActiveObjectId:
 	.thumb_func
 Event_PrepareObjectAndApplyValue:
 	overlay_veneer Event_PrepareObjectAndApplyValueFar
+	.global Party_RemoveOwnerRestored
+	.thumb_func
+Party_RemoveOwnerRestored:
 	overlay_veneer Party_RemoveOwnerRestoredFar
 	.global Engine_EventChooseYesNo
 	.thumb_func
@@ -259,6 +262,9 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Battle_GetWorkObject1e0
+	.thumb_func
+Battle_GetWorkObject1e0:
 	overlay_veneer Battle_GetWorkObject1e0Far
 	.global Engine_EventRequestExit
 	.thumb_func

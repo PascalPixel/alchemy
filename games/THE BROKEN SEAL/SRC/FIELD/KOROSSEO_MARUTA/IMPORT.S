@@ -66,6 +66,9 @@ Resource_DecodeType01:
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
+	.global Resource_ActivateEntry
+	.thumb_func
+Resource_ActivateEntry:
 	overlay_veneer Resource_ActivateEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func

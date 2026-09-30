@@ -24,6 +24,9 @@ Scheduler_AddOrUpdateCallback:
 	.thumb_func
 Scheduler_RemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Random16
+	.thumb_func
+Random16:
 	overlay_veneer Random16Far
 	.global ArcTan2
 	.thumb_func
@@ -41,6 +44,9 @@ Engine_HeapRelease:
 	.thumb_func
 Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
+	.global ObjectDispatch_ApplyArgumentToChildren
+	.thumb_func
+ObjectDispatch_ApplyArgumentToChildren:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Object_CreateFar
 	.thumb_func

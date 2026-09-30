@@ -10,6 +10,9 @@
 	.thumb_func
 IwramUnsignedDivide:
 	overlay_veneer IwramUnsignedDivideArm
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
 	overlay_veneer WaitFramesFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
@@ -23,6 +26,9 @@ Engine_TaskRemoveCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
+	.global Trig_Sin
+	.thumb_func
+Trig_Sin:
 	overlay_veneer Trig_SinFar
 	.global Runtime_AllocateBlock
 	.thumb_func
@@ -40,6 +46,9 @@ VramBlock_LoadCached:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
+	.global Runtime_PushSlotEntry
+	.thumb_func
+Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
 	.global Object_SetMode
 	.thumb_func
@@ -49,6 +58,9 @@ Object_SetMode:
 	.thumb_func
 Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
+	.global Object_Create
+	.thumb_func
+Object_Create:
 	overlay_veneer Object_CreateFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -58,7 +70,13 @@ Engine_MapRedraw:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global ObjectDispatch_SetSingleChildField26
+	.thumb_func
+ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Runtime_SetWorkTripleIfNonNegative
+	.thumb_func
+Runtime_SetWorkTripleIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Inventory_AddItemFar
 	.thumb_func
@@ -76,6 +94,9 @@ Engine_EventWait:
 	.thumb_func
 Engine_EventBegin:
 	overlay_veneer Battle_ResetFar
+	.global BattleFx_FinishAction
+	.thumb_func
+BattleFx_FinishAction:
 	overlay_veneer BattleFx_FinishActionFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
@@ -97,6 +118,9 @@ Engine_ActorEnableActionCallback:
 	.thumb_func
 Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
+	.global ObjectMotion_SetPositionAndReset
+	.thumb_func
+ObjectMotion_SetPositionAndReset:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	.global Engine_ActorWaitForMove
 	.thumb_func
@@ -162,6 +186,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Battle_ResetEffectCounter
+	.thumb_func
+Battle_ResetEffectCounter:
 	overlay_veneer Battle_ResetEffectCounterFar
 	.global Motion_LaunchFromFocusedObject
 	.thumb_func
@@ -171,6 +198,9 @@ Motion_LaunchFromFocusedObject:
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	.global AudioCommand_WaitForStateByteClear
+	.thumb_func
+AudioCommand_WaitForStateByteClear:
 	overlay_veneer AudioCommand_WaitForStateByteClearFar
 	.global Engine_AudioPlayCue
 	.thumb_func

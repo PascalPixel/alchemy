@@ -1,16 +1,126 @@
-/* Choosing a friend to cheer, and equipping a prize item. */
+/* Robin's look at the course, and clearing the saved actor positions. */
 #include "LOG_ROLLING.H"
+
+extern u8 MsgKorosseoRobinDidGetGoodLook[];
+extern u8 MsgKorosseoWaitShouldntDecideWhereBest[];
+
+extern u8 MsgKorosseoStageFirstFinalsMatch[];
+extern u8 MsgKorosseoStageSecondFinalsMatch[];
+extern u8 MsgKorosseoStageThirdFinalsMatch[];
+extern u8 MsgKorosseoWouldYouLikeHearDescription[];
+void Battle_ResetEffectCounter(void);
+void UiText_DrawQuantity(s32 value, s32 digits);
+s32 PartyTalkMenu_Choose(s32 menu);
+
 extern u8 MsgKorosseoDoYourBest[];
 extern u8 MsgKorosseoIfKnowWhoWantCheer[];
 extern u8 MsgKorosseoRobinWillCheerForWay[];
 extern u8 MsgKorosseoUnfortunatelyWeHaveFullHouse[];
 extern u8 MsgKorosseoWouldLikeFriendCheerFor[];
 
+void RunPartyCountInteractionCopyB(s32 actorId)
+{
+    PartyInteractionRecord *record;
+    s32 x;
+    s32 y;
+
+    record = (PartyInteractionRecord *)Engine_ActorGet(actorId);
+    x = record->x;
+    y = record->y;
+    Event_Begin();
+
+    if (GetPartyMemberCount() <= 1) {
+        Event_SetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
+        if (Event_AskYesNo(actorId, 0) == 0) {
+            InitializeActorZero();
+            InitializeSelectedActor(actorId);
+            Actor_WalkTo(actorId, x, y + 0x40);
+            Event_Wait(15);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
+            Event_CloseScreen();
+            Event_WaitForScreen();
+            Event_RequestExit(11);
+        }
+    } else {
+        Event_SetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
+        Event_ShowMessage(actorId, 0);
+    }
+
+    Event_End();
+}
+
+void ColossoLogRollingStage_ClearSavedActorPositions(void)
+{
+    extern void GameFlag_SetByte(s32, s32);
+
+    GameFlag_SetByte(896, 0);
+    GameFlag_SetByte(904, 0);
+    GameFlag_SetByte(912, 0);
+    GameFlag_SetByte(920, 0);
+    GameFlag_SetByte(928, 0);
+    GameFlag_SetByte(936, 0);
+}
+
+s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
+{
+    s32 scene;
+    s32 msg;
+    s32 result;
+
+    Battle_ResetEffectCounter();
+    UiText_DrawQuantity(flags, 5);
+    scene = gGameState.scene;
+    if (scene == (s32)&SceneId_KorosseoKawa) {
+        msg = (s32)MsgKorosseoStageFirstFinalsMatch;
+    } else if (scene == (s32)&SceneId_KorosseoKabe) {
+        msg = (s32)MsgKorosseoStageSecondFinalsMatch;
+    } else {
+        msg = (s32)MsgKorosseoStageThirdFinalsMatch;
+    }
+    Event_SetMessage(msg);
+    Event_ShowMessage(actor, 0);
+    if (GameFlag_IsSet(flags + 512) != 0) {
+        return 2;
+    }
+    if (GameFlag_IsSet(flags + 520) != 0) {
+        result = PartyTalkMenu_Choose(0);
+        if (result == 1) {
+            return 2;
+        }
+        if (result == 2 || result == -1) {
+            return 3;
+        }
+        return result;
+    }
+    GameFlag_Set(flags + 520);
+    Event_SetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
+    Event_OpenMessage(actor, 0);
+    return Event_ChooseYesNo(0, 0);
+}
+
+void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags)
+{
+    s32 scene;
+    s32 msg;
+
+    UiText_DrawQuantity(flags, 5);
+    scene = gGameState.scene;
+    if (scene == (s32)&SceneId_KorosseoKawa) {
+        msg = (s32)MsgKorosseoStageFirstFinalsMatch;
+    } else if (scene == (s32)&SceneId_KorosseoKabe) {
+        msg = (s32)MsgKorosseoStageSecondFinalsMatch;
+    } else {
+        msg = (s32)MsgKorosseoStageThirdFinalsMatch;
+    }
+    Event_SetMessage(msg + 1);
+    Event_ShowMessage(actor, 0);
+}
+
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
     extern s32 GetPartyMemberCount();
     extern void Party_RemoveActiveOwner();
-    extern s32 UiText_DrawQuantity();
     extern void Party_AddActiveOwner();
     extern void GameFlag_SetByte();
     extern s32 Menu_OpenCharacterSelector();

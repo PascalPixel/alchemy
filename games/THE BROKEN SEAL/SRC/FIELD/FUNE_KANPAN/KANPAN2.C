@@ -2,12 +2,22 @@
    standing ones and fill the drifting slots' modes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+#include "KANPAN.H"
 
 /* The standing slots' depths, uninitialised work after the deck's block. */
 s32 FuneKanpan_SlotDepth[8];
-
 void OverlayObject_ActivateSlotWithMode3(s32 actor);
 void FuneKanpan_ChooseSlotModes(void);
+
+union Slot {
+    s32 w;
+    s16 h[2];
+};
+
+extern u8 LinkedMessage_TheresNothingWeCanDo[];
+s32 BuildMotionCountdown(s32, s16);
+u8 *Object_GetById(s32);
 
 void SceneEffect_InitSlotsEightToNineteen(void)
 {
@@ -40,4 +50,20 @@ void SceneEffect_InitSlotsEightToNineteen(void)
     FuneKanpan_SlotDepth[6] = Engine_ActorGet(18)->z.fixed;
     FuneKanpan_SlotDepth[7] = Engine_ActorGet(19)->z.fixed;
     FuneKanpan_ChooseSlotModes();
+}
+
+void OverlayObject_ActivateSlotWithMode3(s32 a)
+{
+    u8 *p = Object_GetById(a);
+
+    if (p != 0) {
+        Actor_SetSpritePriority(a, 3);
+        Actor_SetSpriteFlags(p, 0);
+        p[89] = 0;
+        {
+            s32 c;
+            c = 2 | p[35];
+            p[35] = c;
+        }
+    }
 }

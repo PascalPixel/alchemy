@@ -630,7 +630,7 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.08073808)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/GAME.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/REFRESH_AND_RESET_ZERO.o"(.text)
-        "*/recon/tbs/raw/08077394.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/GET_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/GET_RECORD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/COPY_BYTES_DIRECTIONAL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/RECALCULATE_STATS.o"(.text)

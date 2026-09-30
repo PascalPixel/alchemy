@@ -99,46 +99,7 @@ Func_0200009c:
 	.4byte Data_0200193c
 .L_020080c4:
 	.4byte Data_0200178c
-	.section .text.x020080c8,"ax",%progbits
-	.global Func_020000c8
-	.thumb_func
-Func_020000c8:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r4, r1, #0
-	cmp r5, #0
-	beq .L_0200810c
-	adds r3, r5, #0
-	adds r3, #84
-	ldrb r2, [r3]
-	movs r3, #15
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200810c
-	ldr r1, [r5, #80]
-	movs r2, #13
-	ldrb r0, [r1, #9]
-	movs r3, #3
-	negs r2, r2
-	ands r4, r3
-	adds r3, r2, #0
-	lsls r4, r4, #2
-	ands r3, r0
-	orrs r3, r4
-	strb r3, [r1, #9]
-	adds r1, #37
-	ldrb r3, [r1]
-	ands r2, r3
-	orrs r2, r4
-	strb r2, [r1]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-.L_0200810c:
-	pop {r5, pc}
+	.section .text.x0200810e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008110,"ax",%progbits
 	.global Func_02000110
@@ -157,7 +118,7 @@ Func_02000110:
 	cmp r5, #0
 	beq .L_0200815a
 	movs r1, #0
-	bl Func_020000c8
+	bl Object_SetSpritePriority
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #0
@@ -198,7 +159,7 @@ Func_02000160:
 	cmp r5, #0
 	beq .L_020081ae
 	movs r1, #1
-	bl Func_020000c8
+	bl Object_SetSpritePriority
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #0
@@ -346,7 +307,7 @@ Func_020001ec:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_020000c8
+	bl Object_SetSpritePriority
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -396,7 +357,7 @@ Func_020001ec:
 	orrs r3, r2
 	strb r3, [r1, #9]
 	ldr r1, [r7]
-	bl Func_020000c8
+	bl Object_SetSpritePriority
 .L_02008304:
 	movs r2, #128
 	lsls r2, r2, #12

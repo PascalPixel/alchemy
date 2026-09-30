@@ -216,46 +216,7 @@ Func_02000128:
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
-	.section .text.x020081d0,"ax",%progbits
-	.global Func_020001d0
-	.thumb_func
-Func_020001d0:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r4, r1, #0
-	cmp r5, #0
-	beq .L_02008214
-	adds r3, r5, #0
-	adds r3, #84
-	ldrb r2, [r3]
-	movs r3, #15
-	ands r3, r2
-	cmp r3, #0
-	beq .L_02008214
-	ldr r1, [r5, #80]
-	movs r2, #13
-	ldrb r0, [r1, #9]
-	movs r3, #3
-	negs r2, r2
-	ands r4, r3
-	adds r3, r2, #0
-	lsls r4, r4, #2
-	ands r3, r0
-	orrs r3, r4
-	strb r3, [r1, #9]
-	adds r1, #37
-	ldrb r3, [r1]
-	ands r2, r3
-	orrs r2, r4
-	strb r2, [r1]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-.L_02008214:
-	pop {r5, pc}
+	.section .text.x02008216,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008218,"ax",%progbits
 	.global Func_02000218
@@ -274,7 +235,7 @@ Func_02000218:
 	cmp r5, #0
 	beq .L_02008262
 	movs r1, #0
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #0
@@ -315,7 +276,7 @@ Func_02000268:
 	cmp r5, #0
 	beq .L_020082b6
 	movs r1, #1
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #0
@@ -463,7 +424,7 @@ Func_020002f4:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -513,7 +474,7 @@ Func_020002f4:
 	orrs r3, r2
 	strb r3, [r1, #9]
 	ldr r1, [r7]
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 .L_0200840c:
 	movs r2, #128
 	lsls r2, r2, #12
@@ -969,7 +930,7 @@ Func_020006cc:
 	strb r3, [r1]
 	adds r0, r5, #0
 	movs r1, #3
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	b .L_0200877c
 .L_02008758:
 	movs r3, #255
@@ -988,7 +949,7 @@ Func_020006cc:
 	adds r0, r5, #0
 	movs r1, #1
 	adds r6, #4
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 .L_0200877c:
 	mov r1, r10
 	mov r2, r8
@@ -3790,7 +3751,7 @@ Func_02001828:
 	bl ObjectDispatch_SetSingleChildField26
 	adds r0, r5, #0
 	movs r1, #2
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	ldr r3, .L_02009f74
 	movs r2, #240
 	lsls r2, r2, #1
@@ -7494,7 +7455,7 @@ Func_02003b7c:
 	strh r3, [r2]
 	adds r7, r0, #0
 	movs r1, #0
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	adds r0, r7, #0
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildField26
@@ -7873,7 +7834,7 @@ Func_02003e7c:
 	bl Func_02005e9c
 	adds r0, r5, #0
 	movs r1, #1
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	adds r0, r5, #0
 	movs r1, #1
 	bl Func_02005d5c
@@ -8346,7 +8307,7 @@ Func_02004138:
 	bl Func_02005e9c
 	adds r0, r5, #0
 	movs r1, #1
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	adds r0, r5, #0
 	movs r1, #7
 	bl Func_02005d5c
@@ -8459,7 +8420,7 @@ Func_02004138:
 	bl Func_02005e9c
 	adds r0, r5, #0
 	movs r1, #1
-	bl Func_020001d0
+	bl Object_SetSpritePriority
 	adds r0, r5, #0
 	movs r1, #7
 	b .L_0200c374

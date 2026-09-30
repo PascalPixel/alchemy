@@ -6605,46 +6605,7 @@ Func_02003af0:
 	.2byte 0x0000
 .L_0200baf8:
 	.4byte gOverlayArea + 0x5b86
-	.section .text.x0200bafc,"ax",%progbits
-	.global Func_02003afc
-	.thumb_func
-Func_02003afc:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r4, r1, #0
-	cmp r5, #0
-	beq .L_0200bb40
-	adds r3, r5, #0
-	adds r3, #84
-	ldrb r2, [r3]
-	movs r3, #15
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200bb40
-	ldr r1, [r5, #80]
-	movs r2, #13
-	ldrb r0, [r1, #9]
-	movs r3, #3
-	negs r2, r2
-	ands r4, r3
-	adds r3, r2, #0
-	lsls r4, r4, #2
-	ands r3, r0
-	orrs r3, r4
-	strb r3, [r1, #9]
-	adds r1, #37
-	ldrb r3, [r1]
-	ands r2, r3
-	orrs r2, r4
-	strb r2, [r1]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-.L_0200bb40:
-	pop {r5, pc}
+	.section .text.x0200bb42,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200bb44,"ax",%progbits
 	.global Func_02003b44
@@ -6767,7 +6728,7 @@ Func_02003b7c:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_02003afc
+	bl Object_SetSpritePriority
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -6805,7 +6766,7 @@ Func_02003b7c:
 	strb r2, [r1]
 	ldr r1, [r7]
 	adds r0, r6, #0
-	bl Func_02003afc
+	bl Object_SetSpritePriority
 .L_0200bc7c:
 	movs r2, #128
 	lsls r2, r2, #12

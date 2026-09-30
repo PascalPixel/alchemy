@@ -3,6 +3,7 @@
 	.global Func_080c85c0
 	.thumb_func
 Func_080c85c0:
-	.2byte 0x4c00
-	.2byte 0x4720
-	.4byte 0x080dc391
+	ldr r4, .L_080c85c4
+	bx r4
+.L_080c85c4:
+	.4byte Func_080dc390

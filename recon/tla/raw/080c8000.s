@@ -2,5 +2,10 @@
 	.thumb
 	.global Resource_FarCall006
 Resource_FarCall006:
-	.4byte 0x47204c00
-	.4byte 0x080cb91d
+	.global Func_080c8000
+	.thumb_func
+Func_080c8000:
+	ldr r4, .L_080c8004
+	bx r4
+.L_080c8004:
+	.4byte Func_080cb91c

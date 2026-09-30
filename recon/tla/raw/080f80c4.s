@@ -115,7 +115,7 @@
 	adds	r0, #255
 	ands	r0, r3
 	mov	r8, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldr	r2, [sp, #20]
 	movs	r5, #128
 	lsls	r5, r5, #1

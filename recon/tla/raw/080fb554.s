@@ -115,7 +115,7 @@ Func_080fb554:
 	ands	r6, r3
 	mov	sl, r0
 	adds	r0, r6, #0
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r7, #1
 	adds	r5, r0, #0
 	adds	r0, r6, #0

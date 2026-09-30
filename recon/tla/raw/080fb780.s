@@ -165,7 +165,7 @@ Func_080fb780:
 	ands	r0, r1
 	mov	fp, r1
 	str	r5, [sp, #8]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	mov	sl, r0
 	cmp	r3, #0

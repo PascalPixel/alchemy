@@ -35,7 +35,7 @@
 	overlay_veneer Func_08038320
 	overlay_veneer Func_08038340
 	overlay_veneer Owner_RecalculateStatsFar
-	overlay_veneer Func_080ad010
+	overlay_veneer Item_Get
 	overlay_veneer Func_080ad020
 	overlay_veneer Func_080ad028
 	overlay_veneer Func_080ad058

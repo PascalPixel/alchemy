@@ -38,7 +38,7 @@ Func_0810a2c8:
 	ands	r2, r3
 	mov	sl, r2
 	mov	r0, sl
-	bl	0x080ad010
+	bl	Item_Get
 	adds	r5, r0, #0
 	ldrb	r1, [r5, #2]
 	adds	r0, r7, #0

@@ -260,7 +260,7 @@ Func_08049a30:
 	mov	sl, r2
 .L_08049c42:
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r0, #15
 	bl	0x08041f70
 	adds	r1, r5, #0
@@ -596,7 +596,7 @@ Func_08049a30:
 	ldrh	r0, [r5, #0]
 	mov	sl, r1
 	movs	r7, #128
-	bl	0x080ad010
+	bl	Item_Get
 	ldrh	r2, [r5, #0]
 	lsls	r7, r7, #3
 	adds	r3, r7, #0

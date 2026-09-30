@@ -404,7 +404,7 @@ Func_080fbe6c:
 	ands	r5, r3
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	0x080ad010
+	bl	Item_Get
 	ldr	r3, [pc, #248]
 	adds	r1, r7, #0
 	adds	r5, r5, r3

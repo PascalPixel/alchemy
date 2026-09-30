@@ -75,7 +75,7 @@ Func_080fae2c:
 	adds	r0, #255
 	ands	r0, r3
 	mov	r8, r3
-	bl	0x080ad010
+	bl	Item_Get
 	mov	r3, fp
 	cmp	r3, #1
 	bne.n	.L_080faed8
@@ -747,7 +747,7 @@ Func_080fae2c:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r3
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	mov	r8, r0
 	cmp	r3, #0

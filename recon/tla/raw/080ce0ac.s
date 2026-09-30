@@ -168,7 +168,7 @@ Func_080ce0ac:
 	adds	r0, r7, #0
 	bl	0x08016cfc
 	mov	r0, fp
-	bl	0x080ad010
+	bl	Item_Get
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]
@@ -250,7 +250,7 @@ Func_080ce0ac:
 	strb	r3, [r6, #0]
 	bl	Func_080dc7e8
 	mov	r0, fp
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r3, [r0, #12]
 	ands	r5, r3
 	cmp	r5, #0

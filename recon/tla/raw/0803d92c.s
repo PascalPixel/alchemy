@@ -12,7 +12,7 @@ Func_0803d92c:
 	lsls	r3, r3, #18
 	ands	r0, r5
 	ldr	r6, [r3, #68]
-	bl	0x080ad010
+	bl	Item_Get
 	cmp	r5, #0
 	beq.n	.L_0803d95a
 	movs	r2, #192

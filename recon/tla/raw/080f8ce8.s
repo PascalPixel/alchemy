@@ -227,7 +227,7 @@ Func_080f8ce8:
 	beq.n	.L_080f8eda
 	adds	r0, r3, #0
 	str	r4, [sp, #0]
-	bl	0x080ad010
+	bl	Item_Get
 	ldrb	r1, [r7, #0]
 	ldrb	r3, [r0, #2]
 	movs	r2, #127

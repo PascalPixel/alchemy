@@ -30,6 +30,10 @@ impl Image<'_> {
     }
 }
 
+/// `mov ip, pc`: the link of a call through `bx` to a routine that returns
+/// through ip.
+const MOV_IP_PC: u16 = 0x46fc;
+
 /// The word a `ldr rd, [pc, #k]` at `pc` reads.
 pub fn pool_address(pc: u32, half: u16) -> u32 {
     ((pc + 4) & !3) + u32::from(half & 0xff) * 4
@@ -203,6 +207,12 @@ fn walk_once(
                         function.calls.insert(target);
                     }
                 }
+                // `mov ip, pc` then `bx rN` calls a routine that returns
+                // through ip, to the instruction after the bx.
+                Kind::Bx(_)
+                    if pc >= start + 2
+                        && function.instructions.contains_key(&(pc - 2))
+                        && image.half(pc - 2) == MOV_IP_PC => {}
                 Kind::Bx(_) | Kind::Pop { pc: true, .. } => {
                     function.returns = true;
                     next = false;
@@ -590,6 +600,33 @@ pub(crate) mod tests {
         };
         let segments = partition(image, &area, &entries);
         assert!(matches!(&segments[1], Segment::Function(f) if f.start == base + 8));
+    }
+
+    #[test]
+    fn a_bx_after_mov_ip_pc_is_a_call_that_returns_after_it() {
+        let base = 0x0800_0000;
+        let bytes = halves(&[
+            0xb500, // push {lr}
+            0x46fc, // mov ip, pc
+            0x4750, // bx r10: returns through ip to 0x06
+            0x2001, // movs r0, #1
+            0xbd00, // pop {pc}
+        ]);
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert!(function.instructions.contains_key(&(base + 6)));
+        assert_eq!(function.end, base + 10);
+        // A bx that nothing links is a return.
+        let bytes = halves(&[0x4750, 0x2001]);
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + 4, &Entries::default()).unwrap();
+        assert_eq!(function.end, base + 2);
     }
 
     #[test]

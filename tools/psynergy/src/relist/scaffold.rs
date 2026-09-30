@@ -41,11 +41,19 @@ impl Section {
     }
 }
 
-/// A scaffold file: its leading comment lines and its sections.
+/// A scaffold file: its leading comment lines, its sections, and the
+/// `.thumb_func`, `.type` and `.size` lines written before a label, by the
+/// label's name, which stay with it wherever it moves.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Scaffold {
     pub header: Vec<String>,
     pub sections: Vec<Section>,
+    pub attributes: BTreeMap<String, Vec<String>>,
+}
+
+/// A line that describes the label after it.
+fn attribute(trimmed: &str) -> bool {
+    trimmed == ".thumb_func" || trimmed.starts_with(".type ") || trimmed.starts_with(".size ")
 }
 
 fn number(text: &str) -> Result<u32, String> {
@@ -58,12 +66,15 @@ fn number(text: &str) -> Result<u32, String> {
 }
 
 /// Read a scaffold of `.section`, `.global`, labels, `.incbin` and `.space`
-/// lines, with `@` comments before its first section.
+/// lines, with `@` comments before its first section, and a label's own
+/// `.thumb_func`, `.type` and `.size` lines before it.
 pub fn parse(text: &str) -> Result<Scaffold, String> {
     let mut scaffold = Scaffold {
         header: Vec::new(),
         sections: Vec::new(),
+        attributes: BTreeMap::new(),
     };
+    let mut pending: Vec<String> = Vec::new();
     for (index, line) in text.lines().enumerate() {
         let fail = |what: &str| format!("line {}: {what}: {line}", index + 1);
         let trimmed = line.trim();
@@ -94,7 +105,19 @@ pub fn parse(text: &str) -> Result<Scaffold, String> {
         if trimmed.starts_with(".global") || trimmed.starts_with(".globl") {
             continue;
         }
+        if attribute(trimmed) {
+            pending.push(trimmed.to_string());
+            continue;
+        }
+        if !pending.is_empty() && trimmed.strip_suffix(':').is_none() {
+            return Err(fail("a label's attribute line before no label"));
+        }
         if let Some(name) = trimmed.strip_suffix(':') {
+            if !pending.is_empty() {
+                scaffold
+                    .attributes
+                    .insert(name.to_string(), std::mem::take(&mut pending));
+            }
             section.items.push(Item::Label(name.to_string()));
         } else if let Some(rest) = trimmed.strip_prefix(".incbin") {
             let fields: Vec<&str> = rest.split(',').collect();
@@ -112,10 +135,14 @@ pub fn parse(text: &str) -> Result<Scaffold, String> {
             return Err(fail("not a scaffold line"));
         }
     }
+    if !pending.is_empty() {
+        return Err("a label's attribute line at the end".into());
+    }
     Ok(scaffold)
 }
 
-/// Write a scaffold back in the form `parse` reads, every label global.
+/// Write a scaffold back in the form `parse` reads, every label global and
+/// written after its own attribute lines.
 pub fn render(scaffold: &Scaffold) -> String {
     let mut text = String::new();
     for line in &scaffold.header {
@@ -130,7 +157,13 @@ pub fn render(scaffold: &Scaffold) -> String {
         }
         for item in &section.items {
             match item {
-                Item::Label(name) => text.push_str(&format!("\t.global {name}\n{name}:\n")),
+                Item::Label(name) => {
+                    text.push_str(&format!("\t.global {name}\n"));
+                    for line in scaffold.attributes.get(name).into_iter().flatten() {
+                        text.push_str(&format!("\t{line}\n"));
+                    }
+                    text.push_str(&format!("{name}:\n"));
+                }
                 Item::Bytes { file, offset, size } => text.push_str(&format!(
                     "\t.incbin \"{file}\", 0x{offset:08x}, 0x{size:08x}\n"
                 )),
@@ -288,6 +321,30 @@ mod tests {
         assert_eq!(render(&scaffold), INCBIN);
         let space = "\t.section .sym,\"aw\",%nobits\n\t.space 0x00000010\n\t.global gX\ngX:\n\t.space 0x00000004\n";
         assert_eq!(render(&parse(space).unwrap()), space);
+    }
+
+    #[test]
+    fn a_labels_own_lines_stay_before_it() {
+        let text = "\t.section .sym,\"aw\",%nobits\n\t.space 0x00000010\n\t.global gBuffer\n\t.type gBuffer, %object\n\t.size gBuffer, 0x8 @ two words\ngBuffer:\n\t.space 0x00000008\n\t.section .unidentified.08000100,\"ax\"\n\t.global Tiny\n\t.thumb_func\nTiny:\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000004\n";
+        let scaffold = parse(text).unwrap();
+        assert_eq!(
+            scaffold.attributes["gBuffer"],
+            vec![".type gBuffer, %object", ".size gBuffer, 0x8 @ two words"]
+        );
+        assert_eq!(render(&scaffold), text);
+        // Split by a new label, the section keeps them with their label.
+        let mut layout = Layout::new(&scaffold.sections[0], 0x0200_0000);
+        layout
+            .labels
+            .entry(0x0200_0004)
+            .or_default()
+            .push("Data_02000004".into());
+        let mut split = scaffold.clone();
+        split.sections[0] = layout.section();
+        assert!(render(&split).contains(
+            "\t.global Data_02000004\nData_02000004:\n\t.space 0x0000000c\n\t.global gBuffer\n\t.type gBuffer, %object\n"
+        ));
+        assert!(parse("\t.section .sym\n\t.thumb_func\n\t.space 0x00000004\n").is_err());
     }
 
     #[test]

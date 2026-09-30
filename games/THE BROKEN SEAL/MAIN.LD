@@ -985,7 +985,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/OPEN_CONFIRM_PROMPT.o"(.text)
         "*/recon/tbs/raw/080a5cc0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/CLASSIFY_SELECTED_PSYNERGY.o"(.text)
-        "*/recon/tbs/raw/080a60d4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/REFRESH_OWNER_PSYNERGY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/RETURN_TRUE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/SELECT_TARGET.o"(.text)

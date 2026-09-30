@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08038368
+	.global Menu_SelectEntry11To14Far
 	.thumb_func
-Func_08038368:
+Menu_SelectEntry11To14Far:
 	overlay_veneer Menu_SelectEntry11To14
 	.global Menu_SelectEntry19To1cFar
 	.thumb_func
@@ -17,9 +17,9 @@ Menu_SelectEntry19To1cFar:
 	.thumb_func
 Menu_RunConfirmSelectionFar:
 	overlay_veneer Menu_RunConfirmSelection
-	.global Func_08038380
+	.global Menu_SelectEntry20To21Far
 	.thumb_func
-Func_08038380:
+Menu_SelectEntry20To21Far:
 	overlay_veneer Menu_SelectEntry20To21
 	.global Func_08038388
 	.thumb_func

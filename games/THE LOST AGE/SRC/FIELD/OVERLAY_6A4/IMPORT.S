@@ -18,10 +18,10 @@ Engine_MathRemainder:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02002958
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02002958:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -58,10 +58,10 @@ Sys_Free:
 	.thumb_func
 Func_020029a0:
 	overlay_veneer Func_080001a8
-	.global Func_020029a8
+	.global Resource_ResetEntry
 	.thumb_func
-Func_020029a8:
-	overlay_veneer Func_080001b8
+Resource_ResetEntry:
+	overlay_veneer Resource_ResetEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -78,14 +78,14 @@ Func_020029c0:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_020029d0
+	.global GameFlag_Test
 	.thumb_func
-Func_020029d0:
-	overlay_veneer Func_080003c8
-	.global Func_020029d8
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020029d8:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -202,26 +202,26 @@ Func_02002ab8:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
-	.global Func_02002ac8
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02002ac8:
-	overlay_veneer Func_080c8170
-	.global Func_02002ad0
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02002ad0:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02002ad8
 	.thumb_func
 Func_02002ad8:
 	overlay_veneer Func_080c8218
-	.global Func_02002ae0
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02002ae0:
-	overlay_veneer Func_080c8228
-	.global Func_02002ae8
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02002ae8:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02002af0
 	.thumb_func
 Func_02002af0:
@@ -278,10 +278,10 @@ Func_02002b50:
 	.thumb_func
 Func_02002b58:
 	overlay_veneer Func_080c8848
-	.global Func_02002b60
+	.global AudioCommand_WaitForStateByteClear
 	.thumb_func
-Func_02002b60:
-	overlay_veneer Func_08108078
+AudioCommand_WaitForStateByteClear:
+	overlay_veneer AudioCommand_WaitForStateByteClearFar
 	.global Func_02002b68
 	.thumb_func
 Func_02002b68:

@@ -38,7 +38,7 @@ Func_08108148:
 	adds r2, #4
 	adds r3, r5, r2
 	strb r0, [r3]
-	bl Func_080f8048
+	bl Palette_CopyObjectBankToBackground14Far
 	bl Resource_FindFreeEntry
 	movs r2, #128
 	lsls r2, r2, #3

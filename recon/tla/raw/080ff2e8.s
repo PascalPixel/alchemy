@@ -36,7 +36,7 @@ Func_080ff2e8:
 	ldrb r1, [r5, #15]
 	ldrb r0, [r7]
 	adds r1, #1
-	bl Func_080ad200
+	bl Owner_GetLevelThresholdFar
 	movs r2, #146
 	lsls r2, r2, #1
 	adds r3, r5, r2
@@ -58,7 +58,7 @@ Func_080ff2e8:
 	negs r3, r3
 	mov r1, r8
 	movs r2, #0
-	bl Func_08038250
+	bl UiText_RenderWideStringAtOffsetFar
 	adds r0, r5, #0
 	bl Sys_Free
 	pop {r3}

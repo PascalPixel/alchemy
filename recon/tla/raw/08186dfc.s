@@ -711,7 +711,7 @@ Func_08186dfc:
 	ldr r0, [r4, r3]
 	ldr r2, .L_081873c8
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r2, #128
 	adds r0, r7, #0
 	movs r1, #63
@@ -779,7 +779,7 @@ Func_08186dfc:
 	ldr r0, [r1, r5]
 	ldr r2, .L_08187660
 	mov r1, r10
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r3, [r7, #24]
 	adds r3, #1
 	str r3, [r7, #24]
@@ -1172,7 +1172,7 @@ Func_08186dfc:
 	adds r1, r5, #0
 	mov r2, r10
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r0, #1
 	movs r4, #128
 	add r8, r0
@@ -1309,7 +1309,7 @@ Func_08186dfc:
 	ldr r0, [r3]
 	mov r2, r10
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 .L_0818782e:
 	ldr r7, [sp, #76]
 	movs r5, #12
@@ -1791,7 +1791,7 @@ Func_08186dfc:
 	ldmia r5!, {r0}
 	movs r3, #0
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r1, #1
 	add r8, r1
 	mov r2, r8
@@ -2515,7 +2515,7 @@ Func_08186dfc:
 	ldmia r5!, {r0}
 	movs r3, #0
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r1, #1
 	add r8, r1
 	mov r2, r8
@@ -2557,7 +2557,7 @@ Func_08186dfc:
 	movs r3, #0
 	adds r1, r5, #0
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r3, #1
 	add r8, r3
 	mov r0, r8

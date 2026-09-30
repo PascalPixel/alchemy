@@ -6,18 +6,18 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_0200043c
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_0200043c:
-	overlay_veneer Func_080000d0
-	.global Func_02000444
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global GameFlag_Test
 	.thumb_func
-Func_02000444:
-	overlay_veneer Func_080003c8
-	.global Func_0200044c
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_0200044c:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02000454
 	.thumb_func
 Func_02000454:
@@ -82,18 +82,18 @@ Object_SetModeById:
 	.thumb_func
 ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
-	.global Func_020004d4
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_020004d4:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Func_020004dc
 	.thumb_func
 Func_020004dc:
 	overlay_veneer Func_080c8180
-	.global Func_020004e4
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_020004e4:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_020004ec
 	.thumb_func
 Func_020004ec:
@@ -102,10 +102,10 @@ Func_020004ec:
 	.thumb_func
 Func_020004f4:
 	overlay_veneer Func_080c81d8
-	.global Func_020004fc
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_020004fc:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02000504
 	.thumb_func
 Func_02000504:

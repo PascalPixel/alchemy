@@ -10,10 +10,10 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02000530
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02000530:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -38,10 +38,10 @@ Runtime_ReleaseHeapBlock:
 	.thumb_func
 Func_02000560:
 	overlay_veneer Func_080001a8
-	.global Func_02000568
+	.global Resource_ResetEntry
 	.thumb_func
-Func_02000568:
-	overlay_veneer Func_080001b8
+Resource_ResetEntry:
+	overlay_veneer Resource_ResetEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -54,14 +54,14 @@ Resource_FindFreeEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_02000588
+	.global GameFlag_Test
 	.thumb_func
-Func_02000588:
-	overlay_veneer Func_080003c8
-	.global Func_02000590
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000590:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02000598
 	.thumb_func
 Func_02000598:

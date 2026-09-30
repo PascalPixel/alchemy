@@ -18,18 +18,18 @@ WaitFrames:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Func_02001b14
+	.global GameFlag_Test
 	.thumb_func
-Func_02001b14:
-	overlay_veneer Func_080003c8
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
 	.global Engine_GameFlagSet
 	.thumb_func
 Engine_GameFlagSet:
-	overlay_veneer Func_080003d0
-	.global Func_02001b24
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02001b24:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02001b2c
 	.thumb_func
 Func_02001b2c:
@@ -146,10 +146,10 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Object_LinkPair:
 	overlay_veneer Object_LinkPairFar
-	.global Func_02001c14
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02001c14:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02001c1c
 	.thumb_func
 Func_02001c1c:
@@ -158,22 +158,22 @@ Func_02001c1c:
 	.thumb_func
 Func_02001c24:
 	overlay_veneer Func_080c81a0
-	.global Func_02001c2c
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02001c2c:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02001c34
 	.thumb_func
 Func_02001c34:
 	overlay_veneer Func_080c8210
-	.global Func_02001c3c
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02001c3c:
-	overlay_veneer Func_080c8228
-	.global Func_02001c44
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02001c44:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02001c4c
 	.thumb_func
 Func_02001c4c:
@@ -194,10 +194,10 @@ Event_ClearStatus1c6:
 	.thumb_func
 Event_WaitValue1c8Frames:
 	overlay_veneer Event_WaitValue1c8FramesFar
-	.global Func_02001c74
+	.global Field_DispatchTypeHandler
 	.thumb_func
-Func_02001c74:
-	overlay_veneer Func_080c8498
+Field_DispatchTypeHandler:
+	overlay_veneer Field_DispatchTypeHandlerFar
 	.global Func_02001c7c
 	.thumb_func
 Func_02001c7c:

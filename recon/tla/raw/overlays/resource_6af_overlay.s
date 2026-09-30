@@ -1,45 +1,6 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r4, r1, #0
-	cmp r5, #0
-	beq .L_0200807c
-	adds r3, r5, #0
-	adds r3, #84
-	ldrb r2, [r3]
-	movs r3, #15
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200807c
-	ldr r1, [r5, #80]
-	movs r2, #13
-	ldrb r0, [r1, #9]
-	movs r3, #3
-	negs r2, r2
-	ands r4, r3
-	adds r3, r2, #0
-	lsls r4, r4, #2
-	ands r3, r0
-	orrs r3, r4
-	strb r3, [r1, #9]
-	adds r1, #37
-	ldrb r3, [r1]
-	ands r2, r3
-	orrs r2, r4
-	strb r2, [r1]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-.L_0200807c:
-	pop {r5, pc}
+	.section .text.x0200807e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008080,"ax",%progbits
 	.global Func_02000080
@@ -58,7 +19,7 @@ Func_02000080:
 	cmp r5, #0
 	beq .L_020080ca
 	movs r1, #0
-	bl Func_02000038
+	bl Object_SetSpritePriority
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #0
@@ -71,7 +32,7 @@ Func_02000080:
 	bl ObjectDispatch_SetSingleChildField26
 	adds r0, r5, #0
 	movs r1, #14
-	bl Func_02000ffc
+	bl Object_SetPartAttribute
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -99,7 +60,7 @@ Func_020000d0:
 	cmp r5, #0
 	beq .L_0200811e
 	movs r1, #1
-	bl Func_02000038
+	bl Object_SetSpritePriority
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #0
@@ -112,7 +73,7 @@ Func_020000d0:
 	bl ObjectDispatch_SetSingleChildField26
 	adds r0, r5, #0
 	movs r1, #15
-	bl Func_02000ffc
+	bl Object_SetPartAttribute
 	adds r1, r5, #0
 	adds r1, #35
 	ldrb r2, [r1]
@@ -247,7 +208,7 @@ Func_0200015c:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_02000038
+	bl Object_SetSpritePriority
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -269,7 +230,7 @@ Func_0200015c:
 	beq .L_0200823c
 	ldr r1, [r7, #4]
 	adds r0, r6, #0
-	bl Func_02000ffc
+	bl Object_SetPartAttribute
 .L_0200823c:
 	movs r3, #128
 	lsls r3, r3, #10
@@ -297,7 +258,7 @@ Func_0200015c:
 	orrs r3, r2
 	strb r3, [r1, #9]
 	ldr r1, [r7]
-	bl Func_02000038
+	bl Object_SetSpritePriority
 .L_02008274:
 	movs r2, #128
 	lsls r2, r2, #12
@@ -402,28 +363,6 @@ Func_0200015c:
 	.4byte Func_02000124
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x0200833c,"ax",%progbits
-	.global Func_0200033c
-	.thumb_func
-Func_0200033c:
-	ldr r0, .L_02008340
-	bx lr
-.L_02008340:
-	.4byte Data_020011fc
-	.section .text.x02008344,"ax",%progbits
-	.global Func_02000344
-	.thumb_func
-Func_02000344:
-	movs r0, #0
-	bx lr
-	.section .text.x02008348,"ax",%progbits
-	.global Func_02000348
-	.thumb_func
-Func_02000348:
-	ldr r0, .L_0200834c
-	bx lr
-.L_0200834c:
-	.4byte Data_0200122c
 	.section .text.x02008350,"ax",%progbits
 	.global Func_02000350
 	.thumb_func
@@ -557,7 +496,7 @@ Func_020003fc:
 	movs r0, #1
 	bl Func_02000f94
 	ldrh r0, [r5, #12]
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	add sp, #8
 	pop {r5, pc}
 	.section .text.x0200843c,"ax",%progbits
@@ -598,7 +537,7 @@ Func_0200043c:
 	add r0, r9
 	add r2, r9
 	negs r1, r1
-	bl Func_0200100c
+	bl Motion_CamBounds
 	bl Func_02001014
 	movs r1, #128
 	movs r2, #128
@@ -742,7 +681,7 @@ Func_020005ac:
 	lsls r0, r0, #2
 	adds r0, #255
 	movs r5, #0
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020085dc
 	bl Func_02000fcc
@@ -754,12 +693,12 @@ Func_020005ac:
 	movs r0, #129
 	lsls r0, r0, #2
 	adds r0, #255
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	movs r5, #1
 .L_020085dc:
 	movs r0, #193
 	lsls r0, r0, #2
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200860c
 	cmp r5, #0
@@ -773,7 +712,7 @@ Func_020005ac:
 	bl Func_0200043c
 	movs r0, #193
 	lsls r0, r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	adds r3, r5, #1
 	lsls r3, r3, #16
 	asrs r5, r3, #16
@@ -781,7 +720,7 @@ Func_020005ac:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #5
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008640
 	cmp r5, #0
@@ -796,7 +735,7 @@ Func_020005ac:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #5
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	adds r3, r5, #1
 	lsls r3, r3, #16
 	asrs r5, r3, #16
@@ -804,7 +743,7 @@ Func_020005ac:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #6
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008674
 	cmp r5, #0
@@ -819,7 +758,7 @@ Func_020005ac:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #6
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	adds r3, r5, #1
 	lsls r3, r3, #16
 	asrs r5, r3, #16
@@ -841,7 +780,7 @@ Func_02000684:
 	lsls r0, r0, #2
 	adds r0, #10
 	movs r5, #0
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020086b4
 	bl Func_02000fcc
@@ -853,13 +792,13 @@ Func_02000684:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #10
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	movs r5, #1
 .L_020086b4:
 	movs r0, #131
 	lsls r0, r0, #2
 	adds r0, #255
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020086e8
 	cmp r5, #0
@@ -874,14 +813,14 @@ Func_02000684:
 	movs r0, #131
 	lsls r0, r0, #2
 	adds r0, #255
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	adds r3, r5, #1
 	lsls r3, r3, #16
 	asrs r5, r3, #16
 .L_020086e8:
 	movs r0, #195
 	lsls r0, r0, #2
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008718
 	cmp r5, #0
@@ -895,7 +834,7 @@ Func_02000684:
 	bl Func_0200043c
 	movs r0, #195
 	lsls r0, r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	adds r3, r5, #1
 	lsls r3, r3, #16
 	asrs r5, r3, #16
@@ -916,7 +855,7 @@ Func_02000728:
 	movs r0, #130
 	lsls r0, r0, #2
 	adds r0, #255
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008758
 	bl Func_02000fcc
@@ -928,7 +867,7 @@ Func_02000728:
 	movs r0, #130
 	lsls r0, r0, #2
 	adds r0, #255
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	bl Func_02000fd4
 .L_02008758:
 	pop {pc}
@@ -961,7 +900,7 @@ Func_02000760:
 	bne .L_02008792
 	movs r0, #192
 	lsls r0, r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 .L_02008792:
 	cmp r6, #9
 	bne .L_020087a8
@@ -972,7 +911,7 @@ Func_02000760:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #1
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 .L_020087a8:
 	cmp r6, #10
 	bne .L_020087be
@@ -983,7 +922,7 @@ Func_02000760:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 .L_020087be:
 	ldr r3, .L_02008850
 	movs r2, #240
@@ -1002,7 +941,7 @@ Func_02000760:
 	bne .L_020087e4
 	movs r0, #194
 	lsls r0, r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 .L_020087e4:
 	cmp r6, #11
 	bne .L_020087fc
@@ -1034,7 +973,7 @@ Func_02000760:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #9
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 .L_02008824:
 	ldr r3, .L_02008850
 	movs r2, #240
@@ -1054,7 +993,7 @@ Func_02000760:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #13
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 .L_0200884c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
@@ -1159,7 +1098,7 @@ Func_02000880:
 	movs r3, #1
 	bl Func_02000f94
 	ldrh r0, [r5, #12]
-	bl Func_02000f74
+	bl GameFlag_ClearBit
 .L_02008906:
 	add sp, #8
 	pop {r5, pc}
@@ -1190,7 +1129,7 @@ Func_02000914:
 	strb r3, [r0]
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	pop {pc}
 	.section .text.x02008940,"ax",%progbits
 	.global Func_02000940
@@ -1215,7 +1154,7 @@ Func_02000940:
 	movs r0, #129
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x02008970,"ax",%progbits
@@ -1241,7 +1180,7 @@ Func_02000970:
 	movs r0, #128
 	lsls r0, r0, #2
 	adds r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x020089a0,"ax",%progbits
@@ -1267,7 +1206,7 @@ Func_020009a0:
 	movs r0, #130
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x020089d0,"ax",%progbits
@@ -1292,7 +1231,7 @@ Func_020009d0:
 	strb r3, [r0]
 	movs r0, #129
 	lsls r0, r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	pop {pc}
 	.section .text.x020089fc,"ax",%progbits
 	.global Func_020009fc
@@ -1317,7 +1256,7 @@ Func_020009fc:
 	movs r0, #131
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x02008a2c,"ax",%progbits
@@ -1343,7 +1282,7 @@ Func_02000a2c:
 	movs r0, #128
 	lsls r0, r0, #2
 	adds r0, #6
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x02008a5c,"ax",%progbits
@@ -1369,7 +1308,7 @@ Func_02000a5c:
 	movs r0, #132
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
 	.section .text.x02008a8c,"ax",%progbits
@@ -1718,18 +1657,18 @@ Func_02000cf4:
 	bne .L_02008d8c
 	movs r0, #192
 	lsls r0, r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #1
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #2
-	bl Func_02000f6c
+	bl GameFlag_SetBit
 	movs r0, #192
 	lsls r0, r0, #2
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008d54
 	movs r1, #132
@@ -1742,7 +1681,7 @@ Func_02000cf4:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #1
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008d70
 	movs r1, #164
@@ -1755,7 +1694,7 @@ Func_02000cf4:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #2
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008d8c
 	movs r1, #220
@@ -1777,14 +1716,14 @@ Func_02000cf4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008f34
-	bl Func_02000f5c
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #0
 	movs r1, #8
 	movs r2, #9
 	bl Func_02001064
 	movs r0, #194
 	lsls r0, r0, #2
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008dcc
 	movs r1, #132
@@ -1797,7 +1736,7 @@ Func_02000cf4:
 	movs r0, #129
 	lsls r0, r0, #2
 	adds r0, #255
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008de2
 	ldr r0, .L_02008f38
@@ -1806,7 +1745,7 @@ Func_02000cf4:
 .L_02008de2:
 	movs r0, #193
 	lsls r0, r0, #2
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008df6
 	ldr r0, .L_02008f38
@@ -1816,7 +1755,7 @@ Func_02000cf4:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #5
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e0c
 	ldr r0, .L_02008f38
@@ -1826,7 +1765,7 @@ Func_02000cf4:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #6
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e22
 	ldr r0, .L_02008f38
@@ -1836,7 +1775,7 @@ Func_02000cf4:
 	movs r0, #130
 	lsls r0, r0, #2
 	adds r0, #255
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e38
 	ldr r0, .L_02008f38
@@ -1855,7 +1794,7 @@ Func_02000cf4:
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008f34
-	bl Func_02000f5c
+	bl Scheduler_AddOrUpdateCallback
 	movs r0, #0
 	movs r1, #8
 	movs r2, #9
@@ -1863,7 +1802,7 @@ Func_02000cf4:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #9
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e7a
 	movs r1, #166
@@ -1876,7 +1815,7 @@ Func_02000cf4:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #10
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008e90
 	ldr r0, .L_02008f40
@@ -1886,7 +1825,7 @@ Func_02000cf4:
 	movs r0, #131
 	lsls r0, r0, #2
 	adds r0, #255
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008ea6
 	ldr r0, .L_02008f40
@@ -1895,7 +1834,7 @@ Func_02000cf4:
 .L_02008ea6:
 	movs r0, #195
 	lsls r0, r0, #2
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008eba
 	ldr r0, .L_02008f40
@@ -1914,7 +1853,7 @@ Func_02000cf4:
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #13
-	bl Func_02000f64
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008ee8
 	movs r1, #174
@@ -1970,12 +1909,6 @@ Func_02000cf4:
 	.4byte Data_020011cc
 .L_02008f44:
 	.4byte 0x0000012d
-	.section .text.x02008f48,"ax",%progbits
-	.global Func_02000f48
-	.thumb_func
-Func_02000f48:
-	movs r0, #0
-	bx lr
 	.section .text.x02008f4c,"ax",%progbits
 	.global Func_02000f4c
 	.thumb_func
@@ -2093,8 +2026,8 @@ Data_020011cc:
 	.4byte 0x00000017
 	.4byte 0x0000000d
 	.4byte 0x0000030c
-	.global Data_020011fc
-Data_020011fc:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -2107,8 +2040,8 @@ Data_020011fc:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200122c
-Data_0200122c:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x0000012a
 	.4byte 0x10157002
 	.4byte 0xffffffff

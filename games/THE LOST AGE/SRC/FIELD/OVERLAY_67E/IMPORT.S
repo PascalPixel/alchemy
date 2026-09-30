@@ -6,22 +6,22 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_02000cc0
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02000cc0:
-	overlay_veneer Func_080000d0
-	.global Func_02000cc8
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global GameFlag_Test
 	.thumb_func
-Func_02000cc8:
-	overlay_veneer Func_080003c8
-	.global Func_02000cd0
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000cd0:
-	overlay_veneer Func_080003d0
-	.global Func_02000cd8
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02000cd8:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02000ce0
 	.thumb_func
 Func_02000ce0:
@@ -82,30 +82,30 @@ Object_SetModeById:
 	.thumb_func
 ObjectMotion_SetVariantCallback:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
-	.global Func_02000d58
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02000d58:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Func_02000d60
 	.thumb_func
 Func_02000d60:
 	overlay_veneer Func_080c8180
-	.global Func_02000d68
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02000d68:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02000d70
 	.thumb_func
 Func_02000d70:
 	overlay_veneer Func_080c81a0
-	.global Func_02000d78
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02000d78:
-	overlay_veneer Func_080c81d0
-	.global Func_02000d80
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02000d80:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02000d88
 	.thumb_func
 Func_02000d88:
@@ -114,10 +114,10 @@ Func_02000d88:
 	.thumb_func
 Func_02000d90:
 	overlay_veneer Func_080c8218
-	.global Func_02000d98
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02000d98:
-	overlay_veneer Func_080c8228
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
 	.global Func_02000da0
 	.thumb_func
 Func_02000da0:

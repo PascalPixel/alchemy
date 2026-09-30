@@ -50,7 +50,7 @@ ObjectEffect_EndContextEffect:
 	mov r2, r8
 	strb r6, [r2, #27]
 	ldr r0, [r2, #44]
-	bl Func_08020070
+	bl ResourceMetadata_ClearRecordFar
 	mov r1, r8
 	strb r6, [r1, #26]
 	mov r3, r10

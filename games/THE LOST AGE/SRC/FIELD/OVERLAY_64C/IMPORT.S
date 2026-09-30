@@ -22,10 +22,10 @@ Engine_MathModulo:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02001f14
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02001f14:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -46,10 +46,10 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Func_02001f44
+	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
-Func_02001f44:
-	overlay_veneer Func_08000170
+Runtime_BumpAllocateAlternatePool:
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
@@ -58,10 +58,10 @@ Sys_Free:
 	.thumb_func
 Func_02001f54:
 	overlay_veneer Func_080001a8
-	.global Func_02001f5c
+	.global Resource_ResetEntry
 	.thumb_func
-Func_02001f5c:
-	overlay_veneer Func_080001b8
+Resource_ResetEntry:
+	overlay_veneer Resource_ResetEntryFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -78,30 +78,30 @@ Func_02001f74:
 	.thumb_func
 Func_02001f7c:
 	overlay_veneer Func_080001e8
-	.global Func_02001f84
+	.global Render_ProjectPoint
 	.thumb_func
-Func_02001f84:
-	overlay_veneer Func_08000268
+Render_ProjectPoint:
+	overlay_veneer Render_ProjectPointFar
 	.global Func_02001f8c
 	.thumb_func
 Func_02001f8c:
 	overlay_veneer Func_08000298
-	.global Func_02001f94
+	.global QueueIoWriteDelay2
 	.thumb_func
-Func_02001f94:
-	overlay_veneer Func_08000318
-	.global Func_02001f9c
+QueueIoWriteDelay2:
+	overlay_veneer QueueIoWriteDelay2Far
+	.global GameFlag_Test
 	.thumb_func
-Func_02001f9c:
-	overlay_veneer Func_080003c8
-	.global Func_02001fa4
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02001fa4:
-	overlay_veneer Func_080003d0
-	.global Func_02001fac
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02001fac:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -178,10 +178,10 @@ Object_SetModeById:
 	.thumb_func
 Func_02002044:
 	overlay_veneer Func_080c8230
-	.global Func_0200204c
+	.global Motion_CamBounds
 	.thumb_func
-Func_0200204c:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02002054
 	.thumb_func
 Func_02002054:

@@ -932,7 +932,7 @@ Func_08170364:
 	movs r3, #0
 	ldr r0, [r7, r2]
 	add r2, sp, #92
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	cmp r5, #9
 	bne .L_08170ad0
 	ldr r6, [sp, #80]

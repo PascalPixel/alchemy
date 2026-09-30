@@ -9,9 +9,9 @@
 	.thumb_func
 Func_08038248:
 	overlay_veneer Func_0803d92c
-	.global Func_08038250
+	.global UiText_RenderWideStringAtOffsetFar
 	.thumb_func
-Func_08038250:
+UiText_RenderWideStringAtOffsetFar:
 	overlay_veneer UiText_RenderWideStringAtOffset
 	.global Func_08038258
 	.thumb_func

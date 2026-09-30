@@ -14,10 +14,10 @@ Engine_MathDivide:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02002d64
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02002d64:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
@@ -54,18 +54,18 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_02002dac:
 	overlay_veneer Func_080001e8
-	.global Func_02002db4
+	.global GameFlag_Test
 	.thumb_func
-Func_02002db4:
-	overlay_veneer Func_080003c8
-	.global Func_02002dbc
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02002dbc:
-	overlay_veneer Func_080003d0
-	.global Func_02002dc4
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02002dc4:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02002dcc
 	.thumb_func
 Func_02002dcc:
@@ -158,14 +158,14 @@ Object_SetModeById:
 	.thumb_func
 Func_02002e7c:
 	overlay_veneer Func_080c8150
-	.global Func_02002e84
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02002e84:
-	overlay_veneer Func_080c8170
-	.global Func_02002e8c
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02002e8c:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02002e94
 	.thumb_func
 Func_02002e94:
@@ -174,14 +174,14 @@ Func_02002e94:
 	.thumb_func
 Func_02002e9c:
 	overlay_veneer Func_080c8218
-	.global Func_02002ea4
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02002ea4:
-	overlay_veneer Func_080c8228
-	.global Func_02002eac
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02002eac:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02002eb4
 	.thumb_func
 Func_02002eb4:

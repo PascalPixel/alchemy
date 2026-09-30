@@ -22,14 +22,14 @@ Math_Sine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Func_020027e4
+	.global GameFlag_Test
 	.thumb_func
-Func_020027e4:
-	overlay_veneer Func_080003c8
-	.global Func_020027ec
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020027ec:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_020027f4
 	.thumb_func
 Func_020027f4:
@@ -118,18 +118,18 @@ ObjectMotion_SetVariantCallback:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_020028a4
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_020028a4:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Func_020028ac
 	.thumb_func
 Func_020028ac:
 	overlay_veneer Func_080c8180
-	.global Func_020028b4
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_020028b4:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_020028bc
 	.thumb_func
 Func_020028bc:
@@ -138,14 +138,14 @@ Func_020028bc:
 	.thumb_func
 Func_020028c4:
 	overlay_veneer Func_080c81a0
-	.global Func_020028cc
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_020028cc:
-	overlay_veneer Func_080c81d0
-	.global Func_020028d4
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_020028d4:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_020028dc
 	.thumb_func
 Func_020028dc:
@@ -154,10 +154,10 @@ Func_020028dc:
 	.thumb_func
 Func_020028e4:
 	overlay_veneer Func_080c8218
-	.global Func_020028ec
+	.global Motion_CamBounds
 	.thumb_func
-Func_020028ec:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_020028f4
 	.thumb_func
 Func_020028f4:

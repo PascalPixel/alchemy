@@ -25,9 +25,9 @@ Func_080c83c0:
 	.thumb_func
 Func_080c83c8:
 	overlay_veneer Func_080d64b8
-	.global Func_080c83d0
+	.global BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.thumb_func
-Func_080c83d0:
+BattleFx_PlayCueAndStartEmitterOnTargetFar:
 	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTarget
 	.global Func_080c83d8
 	.thumb_func
@@ -65,9 +65,9 @@ Func_080c8410:
 	.thumb_func
 Func_080c8418:
 	overlay_veneer Func_080cf050
-	.global Func_080c8420
+	.global Object_SetWideSpriteFar
 	.thumb_func
-Func_080c8420:
+Object_SetWideSpriteFar:
 	overlay_veneer Object_SetWideSprite
 	.global Func_080c8428
 	.thumb_func
@@ -85,9 +85,9 @@ Func_080c8438:
 	.thumb_func
 Func_080c8440:
 	overlay_veneer Func_080caa4c
-	.global Func_080c8448
+	.global Event_SpawnObjectTableFar
 	.thumb_func
-Func_080c8448:
+Event_SpawnObjectTableFar:
 	overlay_veneer Event_SpawnObjectTable
 	.global Func_080c8450
 	.thumb_func
@@ -125,9 +125,9 @@ Func_080c8488:
 	.thumb_func
 Func_080c8490:
 	overlay_veneer Func_080d1d44
-	.global Func_080c8498
+	.global Field_DispatchTypeHandlerFar
 	.thumb_func
-Func_080c8498:
+Field_DispatchTypeHandlerFar:
 	overlay_veneer Field_DispatchTypeHandler
 	.global Func_080c84a0
 	.thumb_func

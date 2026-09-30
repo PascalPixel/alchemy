@@ -13,9 +13,9 @@ Func_080380f8:
 	.thumb_func
 UiWork_FinalizeEntityMatchingLocalizedIdFar:
 	overlay_veneer Func_0803d450
-	.global Func_08038108
+	.global UiText_GetResourceDimensionsFar
 	.thumb_func
-Func_08038108:
+UiText_GetResourceDimensionsFar:
 	overlay_veneer UiText_GetResourceDimensions
 	.global Func_08038110
 	.thumb_func
@@ -65,9 +65,9 @@ Func_08038160:
 	.thumb_func
 Func_08038168:
 	overlay_veneer Func_0803df00
-	.global Func_08038170
+	.global Resource_ScheduleOwnerResetFar
 	.thumb_func
-Func_08038170:
+Resource_ScheduleOwnerResetFar:
 	overlay_veneer Resource_ScheduleOwnerReset
 	.global Menu_OpenSelectionWindowFar
 	.thumb_func

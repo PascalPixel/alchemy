@@ -1631,7 +1631,7 @@ Func_08192c9c:
 	ldr r0, [r3, r5]
 	movs r3, #0
 	str r4, [sp, #16]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r3, #1
 	movs r2, #128
 	add r8, r3
@@ -1826,7 +1826,7 @@ Func_08192c9c:
 	mov r2, r9
 	ldr r0, [r5, r3]
 	movs r3, #0
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r3, [sp, #164]
 	ldr r4, [sp, #16]
 	ldr r1, [r3]

@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08118028
+	.global BattlePres_SetupTransitionSceneFar
 	.thumb_func
-Func_08118028:
+BattlePres_SetupTransitionSceneFar:
 	overlay_veneer BattlePres_SetupTransitionScene
 	.global BattlePres_SetupTransitionAtPairMidpointFar
 	.thumb_func

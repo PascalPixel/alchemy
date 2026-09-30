@@ -18,18 +18,18 @@ Engine_MathRemainder:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_020021d8
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_020021d8:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
 	overlay_veneer Func_080000d8
-	.global Func_020021e8
+	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
-Func_020021e8:
-	overlay_veneer Func_08000170
+Runtime_BumpAllocateAlternatePool:
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
@@ -50,10 +50,10 @@ Func_02002208:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_02002218
+	.global Blend_SetDarkenTarget16
 	.thumb_func
-Func_02002218:
-	overlay_veneer Func_080002a8
+Blend_SetDarkenTarget16:
+	overlay_veneer Blend_SetDarkenTarget16Far
 	.global Func_02002220
 	.thumb_func
 Func_02002220:
@@ -62,26 +62,26 @@ Func_02002220:
 	.thumb_func
 Func_02002228:
 	overlay_veneer Func_08000370
-	.global Func_02002230
+	.global Party_Check
 	.thumb_func
-Func_02002230:
-	overlay_veneer Func_08000388
+Party_Check:
+	overlay_veneer Party_CheckFar
 	.global Owner_GetState
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_02002240
+	.global GameFlag_Test
 	.thumb_func
-Func_02002240:
-	overlay_veneer Func_080003c8
-	.global Func_02002248
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02002248:
-	overlay_veneer Func_080003d0
-	.global Func_02002250
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02002250:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:
@@ -218,10 +218,10 @@ Party_AddActiveOwner:
 	.thumb_func
 Party_RemoveActiveOwner:
 	overlay_veneer Party_RemoveActiveOwnerFar
-	.global Func_02002368
+	.global Owner_GetLevelThreshold
 	.thumb_func
-Func_02002368:
-	overlay_veneer Func_080ad200
+Owner_GetLevelThreshold:
+	overlay_veneer Owner_GetLevelThresholdFar
 	.global Func_02002370
 	.thumb_func
 Func_02002370:
@@ -230,10 +230,10 @@ Func_02002370:
 	.thumb_func
 Djinn_AddToLeastLoadedOwner:
 	overlay_veneer Djinn_AddToLeastLoadedOwnerFar
-	.global Func_02002380
+	.global Owner_RefreshDerivedData
 	.thumb_func
-Func_02002380:
-	overlay_veneer Func_080ad298
+Owner_RefreshDerivedData:
+	overlay_veneer Owner_RefreshDerivedDataFar
 	.global Func_02002388
 	.thumb_func
 Func_02002388:

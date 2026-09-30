@@ -10,10 +10,10 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02000794
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02000794:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Runtime_BumpAllocate
 	.thumb_func
 Runtime_BumpAllocate:
@@ -46,10 +46,10 @@ Func_020007cc:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_020007dc
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_020007dc:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global UiWork_InitializeWithResourceCounters
 	.thumb_func
 UiWork_InitializeWithResourceCounters:
@@ -70,10 +70,10 @@ UiWork_IsComplete:
 	.thumb_func
 Func_02000804:
 	overlay_veneer Func_080380f8
-	.global Func_0200080c
+	.global UiText_GetResourceDimensions
 	.thumb_func
-Func_0200080c:
-	overlay_veneer Func_08038108
+UiText_GetResourceDimensions:
+	overlay_veneer UiText_GetResourceDimensionsFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:

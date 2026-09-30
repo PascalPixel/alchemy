@@ -18,10 +18,10 @@ Engine_MathRemainder:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_020020e0
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_020020e0:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -62,18 +62,18 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_02002130:
 	overlay_veneer Func_080001e8
-	.global Func_02002138
+	.global GameFlag_Test
 	.thumb_func
-Func_02002138:
-	overlay_veneer Func_080003c8
-	.global Func_02002140
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02002140:
-	overlay_veneer Func_080003d0
-	.global Func_02002148
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02002148:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -190,14 +190,14 @@ Func_02002228:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
-	.global Func_02002238
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02002238:
-	overlay_veneer Func_080c8170
-	.global Func_02002240
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02002240:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02002248
 	.thumb_func
 Func_02002248:
@@ -206,14 +206,14 @@ Func_02002248:
 	.thumb_func
 Func_02002250:
 	overlay_veneer Func_080c8218
-	.global Func_02002258
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02002258:
-	overlay_veneer Func_080c8228
-	.global Func_02002260
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02002260:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02002268
 	.thumb_func
 Func_02002268:

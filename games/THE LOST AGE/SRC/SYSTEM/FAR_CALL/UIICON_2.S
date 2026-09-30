@@ -13,19 +13,19 @@ UiIcon_PrepareObjectFar:
 	.thumb_func
 ItemMenu_Open:
 	overlay_veneer Func_08100e7c
-	.global Func_080f8038
+	.global ItemMenu_DrawItemDetailsFar
 	.thumb_func
-Func_080f8038:
+ItemMenu_DrawItemDetailsFar:
 	overlay_veneer ItemMenu_DrawItemDetails
 	.global Func_080f8040
 	.thumb_func
 Func_080f8040:
 	overlay_veneer Func_080fb8b8
-	.global Func_080f8048
+	.global Palette_CopyObjectBankToBackground14Far
 	.thumb_func
-Func_080f8048:
+Palette_CopyObjectBankToBackground14Far:
 	overlay_veneer Palette_CopyObjectBankToBackground14
-	.global Func_080f8050
+	.global Menu_UpdateEntryObjectTransformsFar
 	.thumb_func
-Func_080f8050:
+Menu_UpdateEntryObjectTransformsFar:
 	overlay_veneer Menu_UpdateEntryObjectTransforms

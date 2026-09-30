@@ -10,14 +10,14 @@
 	.thumb_func
 Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
-	.global Func_02002ad8
+	.global GameFlag_Test
 	.thumb_func
-Func_02002ad8:
-	overlay_veneer Func_080003c8
-	.global Func_02002ae0
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02002ae0:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02002ae8
 	.thumb_func
 Func_02002ae8:
@@ -122,26 +122,26 @@ ObjectMotion_Launch:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_02002bb8
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02002bb8:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:
 	overlay_veneer Object_LinkPairFar
-	.global Func_02002bc8
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02002bc8:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_02002bd0
 	.thumb_func
 Func_02002bd0:
 	overlay_veneer Func_080c8180
-	.global Func_02002bd8
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02002bd8:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02002be0
 	.thumb_func
 Func_02002be0:
@@ -150,18 +150,18 @@ Func_02002be0:
 	.thumb_func
 Func_02002be8:
 	overlay_veneer Func_080c81a0
-	.global Func_02002bf0
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02002bf0:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02002bf8
 	.thumb_func
 Func_02002bf8:
 	overlay_veneer Func_080c81d8
-	.global Func_02002c00
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02002c00:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02002c08
 	.thumb_func
 Func_02002c08:
@@ -170,14 +170,14 @@ Func_02002c08:
 	.thumb_func
 Func_02002c10:
 	overlay_veneer Func_080c8218
-	.global Func_02002c18
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02002c18:
-	overlay_veneer Func_080c8228
-	.global Func_02002c20
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02002c20:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02002c28
 	.thumb_func
 Func_02002c28:

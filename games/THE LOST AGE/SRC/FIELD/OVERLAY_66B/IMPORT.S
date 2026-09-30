@@ -22,10 +22,10 @@ Engine_MathModulo:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02001154
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02001154:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
@@ -38,10 +38,10 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Func_02001174
+	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
-Func_02001174:
-	overlay_veneer Func_08000170
+Runtime_BumpAllocateAlternatePool:
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
@@ -62,14 +62,14 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_0200119c:
 	overlay_veneer Func_080001e8
-	.global Func_020011a4
+	.global GameFlag_Test
 	.thumb_func
-Func_020011a4:
-	overlay_veneer Func_080003c8
-	.global Func_020011ac
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020011ac:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_020011b4
 	.thumb_func
 Func_020011b4:
@@ -166,18 +166,18 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 ObjectMotion_Launch:
 	overlay_veneer ObjectMotion_LaunchFar
-	.global Func_02001274
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_02001274:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:
 	overlay_veneer Object_LinkPairFar
-	.global Func_02001284
+	.global Object_SetPartAttribute
 	.thumb_func
-Func_02001284:
-	overlay_veneer Func_080c8170
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
 	.global Func_0200128c
 	.thumb_func
 Func_0200128c:
@@ -186,10 +186,10 @@ Func_0200128c:
 	.thumb_func
 Func_02001294:
 	overlay_veneer Func_080c81a0
-	.global Func_0200129c
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_0200129c:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_020012a4
 	.thumb_func
 Func_020012a4:

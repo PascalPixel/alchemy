@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_020001b4
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_020001e4
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_020001fc
 	.section .text.x02008054,"ax",%progbits
 	.global Func_02000054
 	.thumb_func
@@ -42,16 +12,8 @@ Func_02000054:
 	movs r0, #130
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_02000178
+	bl GameFlag_SetBit
 	pop {pc}
-	.section .text.x0200806c,"ax",%progbits
-	.global Func_0200006c
-	.thumb_func
-Func_0200006c:
-	ldr r0, .L_02008070
-	bx lr
-.L_02008070:
-	.4byte Data_020002bc
 	.section .text.x02008074,"ax",%progbits
 	.global Func_02000074
 	.thumb_func
@@ -79,7 +41,7 @@ Func_02000074:
 	lsls r1, r1, #3
 	str r2, [r3]
 	ldr r0, .L_020080f4
-	bl Func_02000170
+	bl Scheduler_AddOrUpdateCallback
 	ldr r3, .L_020080f8
 	movs r2, #133
 	lsls r2, r2, #2
@@ -179,18 +141,12 @@ Func_020000fc:
 	.4byte Data_020001b0
 .L_02008168:
 	.4byte 0x05000180
-	.section .text.x0200816c,"ax",%progbits
-	.global Func_0200016c
-	.thumb_func
-Func_0200016c:
-	movs r0, #0
-	bx lr
 	.section .rodata.x020081b0,"a",%progbits
 	.global Data_020001b0
 Data_020001b0:
 	.4byte 0x00000000
-	.global Data_020001b4
-Data_020001b4:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -203,16 +159,16 @@ Data_020001b4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020001e4
-Data_020001e4:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x00000036
 	.4byte 0x1010c002
 	.4byte 0xffffffff
 	.4byte 0x1020d002
 	.4byte 0xffffffff
 	.4byte 0x000001ff
-	.global Data_020001fc
-Data_020001fc:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0x08ff00c0
 	.4byte 0x00000001
 	.4byte 0x00c80000
@@ -261,8 +217,8 @@ Data_020001fc:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020002bc
-Data_020002bc:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

@@ -1,19 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_0200113c
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
 	.section .text.x02008044,"ax",%progbits
 	.global Func_02000044
 	.thumb_func
@@ -22,7 +8,7 @@ Func_02000044:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #115
-	bl Func_02000c84
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008058
 	ldr r0, .L_0200805c
@@ -55,7 +41,7 @@ Func_02000064:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #115
-	bl Func_02000c84
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_0200808e
 	ldr r0, .L_020080a0
@@ -99,7 +85,7 @@ Func_020000ac:
 	bl Battle_WaitMode0
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c84
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008112
 	ldr r0, .L_02008148
@@ -116,10 +102,10 @@ Func_020000ac:
 	adds r0, r5, #0
 	lsls r1, r1, #7
 	movs r2, #0
-	bl Func_02000d84
+	bl ObjectMotion_ArmCallback
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c8c
+	bl GameFlag_SetBit
 	b .L_02008140
 .L_02008112:
 	ldr r0, .L_0200814c
@@ -136,10 +122,10 @@ Func_020000ac:
 	adds r0, r5, #0
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02000d84
+	bl ObjectMotion_ArmCallback
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_02000c94
+	bl GameFlag_ClearBit
 .L_02008140:
 	movs r0, #20
 	bl Battle_WaitMode0
@@ -157,7 +143,7 @@ Func_02000150:
 	adds r0, r5, #0
 	movs r1, #4
 	movs r2, #0
-	bl Func_02000d64
+	bl ObjectMotion_SetAngleToward
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #4
@@ -193,7 +179,7 @@ Func_02000218:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #115
-	bl Func_02000c84
+	bl GameFlag_Test
 	ldr r3, .L_02008258
 	ldr r2, .L_0200825c
 	cmp r0, #0
@@ -403,7 +389,7 @@ Func_02000390:
 	movs r0, #233
 	lsls r0, r0, #3
 	adds r0, #255
-	bl Func_02000c84
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008430
 	bl Engine_EventBegin
@@ -423,7 +409,7 @@ Func_02000390:
 .L_020083e8:
 	.4byte 0x00001755
 .L_020083ec:
-	bl Func_02000d74
+	bl UiText_OpenMessageAtObject
 	bl Func_02000dd4
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -447,7 +433,7 @@ Func_02000390:
 	movs r0, #233
 	lsls r0, r0, #3
 	adds r0, #255
-	bl Func_02000c8c
+	bl GameFlag_SetBit
 	b .L_02008490
 .L_02008430:
 	adds r0, r6, #0
@@ -462,7 +448,7 @@ Func_02000390:
 	bl Engine_EventSetMessage
 	movs r1, #0
 	adds r0, r6, #0
-	bl Func_02000d74
+	bl UiText_OpenMessageAtObject
 	bl Func_02000dd4
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -486,7 +472,7 @@ Func_02000390:
 	movs r0, #233
 	lsls r0, r0, #3
 	adds r0, #255
-	bl Func_02000c8c
+	bl GameFlag_SetBit
 .L_02008490:
 	pop {r5, r6, pc}
 	.2byte 0x0000
@@ -691,7 +677,7 @@ Func_02000614:
 	bl Engine_EventSetMessage
 	movs r1, #0
 	movs r0, #12
-	bl Func_02000d74
+	bl UiText_OpenMessageAtObject
 	bl Func_02000dd4
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -729,7 +715,7 @@ Func_0200066c:
 	bl Engine_EventSetMessage
 	movs r1, #0
 	movs r0, #14
-	bl Func_02000d74
+	bl UiText_OpenMessageAtObject
 	bl Func_02000dd4
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -880,7 +866,7 @@ Func_02000730:
 	bl Func_02000d4c
 	movs r0, #162
 	lsls r0, r0, #4
-	bl Func_02000c8c
+	bl GameFlag_SetBit
 	b .L_02008866
 .L_020087e4:
 	movs r2, #0
@@ -1072,7 +1058,7 @@ Func_02000878:
 	bne .L_0200897c
 .L_0200898a:
 	ldr r0, [sp, #4]
-	bl Func_02000d04
+	bl Owner_RefreshClassActions
 	ldr r0, [sp, #4]
 	bl Owner_RecalculateStats
 	adds r0, r6, #0
@@ -1196,7 +1182,7 @@ Func_02000a50:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #115
-	bl Func_02000c84
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008ac0
 	movs r1, #5
@@ -1263,7 +1249,7 @@ Func_02000a50:
 	bl Func_02000dac
 	movs r0, #162
 	lsls r0, r0, #4
-	bl Func_02000c84
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008b90
 	movs r0, #9
@@ -1315,7 +1301,7 @@ Func_02000a50:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #115
-	bl Func_02000c84
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008be8
 	movs r0, #10
@@ -1375,7 +1361,7 @@ Func_02000c0c:
 	movs r0, #128
 	lsls r0, r0, #4
 	adds r0, #115
-	bl Func_02000c84
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008c4a
 	movs r0, #0
@@ -1412,7 +1398,7 @@ Func_02000c58:
 	adds r2, #93
 	str r2, [r3]
 	adds r0, #255
-	bl Func_02000c94
+	bl GameFlag_ClearBit
 	pop {pc}
 	.section .text.x02008c74,"ax",%progbits
 	.global Func_02000c74
@@ -1632,8 +1618,8 @@ Data_02000e04:
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
 	.4byte 0x00000011
-	.global Data_0200113c
-Data_0200113c:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

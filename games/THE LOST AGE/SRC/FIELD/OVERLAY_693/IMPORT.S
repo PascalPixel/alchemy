@@ -10,22 +10,22 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02000fd0
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02000fd0:
-	overlay_veneer Func_080000d0
-	.global Func_02000fd8
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global GameFlag_Test
 	.thumb_func
-Func_02000fd8:
-	overlay_veneer Func_080003c8
-	.global Func_02000fe0
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000fe0:
-	overlay_veneer Func_080003d0
-	.global Func_02000fe8
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02000fe8:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02000ff0
 	.thumb_func
 Func_02000ff0:
@@ -114,26 +114,26 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Func_02001098:
 	overlay_veneer Func_080c8180
-	.global Func_020010a0
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_020010a0:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_020010a8
 	.thumb_func
 Func_020010a8:
 	overlay_veneer Func_080c81a0
-	.global Func_020010b0
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_020010b0:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_020010b8
 	.thumb_func
 Func_020010b8:
 	overlay_veneer Func_080c81d8
-	.global Func_020010c0
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_020010c0:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_020010c8
 	.thumb_func
 Func_020010c8:
@@ -142,10 +142,10 @@ Func_020010c8:
 	.thumb_func
 Func_020010d0:
 	overlay_veneer Func_080c8230
-	.global Func_020010d8
+	.global Motion_CamBounds
 	.thumb_func
-Func_020010d8:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_020010e0
 	.thumb_func
 Func_020010e0:

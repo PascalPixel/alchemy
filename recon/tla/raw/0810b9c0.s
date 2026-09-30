@@ -213,7 +213,7 @@ Func_0810b9c0:
 	bl UiWindow_CreateFar
 	adds r1, r5, #0
 	mov r10, r0
-	bl Func_080f8038
+	bl ItemMenu_DrawItemDetailsFar
 	movs r3, #160
 	lsls r3, r3, #3
 	adds r3, #9

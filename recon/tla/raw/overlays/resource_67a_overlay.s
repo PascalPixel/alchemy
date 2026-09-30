@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_020000c4
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_020000f4
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_02000124
 	.section .text.x02008054,"ax",%progbits
 	.global Func_02000054
 	.thumb_func
@@ -40,17 +10,9 @@ Func_02000054:
 	adds r3, #225
 	adds r1, r1, r3
 	adds r0, r1, #0
-	bl Func_02000088
+	bl GameFlag_SetBit
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x02008068,"ax",%progbits
-	.global Func_02000068
-	.thumb_func
-Func_02000068:
-	ldr r0, .L_0200806c
-	bx lr
-.L_0200806c:
-	.4byte Data_0200019c
 	.section .text.x02008070,"ax",%progbits
 	.global Func_02000070
 	.thumb_func
@@ -63,12 +25,6 @@ Func_02000070:
 	adds r3, r3, r2
 	adds r2, #85
 	str r2, [r3]
-	movs r0, #0
-	bx lr
-	.section .text.x02008084,"ax",%progbits
-	.global Func_02000084
-	.thumb_func
-Func_02000084:
 	movs r0, #0
 	bx lr
 	.section .rodata.x02008090,"a",%progbits
@@ -86,8 +42,8 @@ Func_02000084:
 	.4byte 0x0000000a
 	.4byte 0x00018000
 	.4byte 0x00000011
-	.global Data_020000c4
-Data_020000c4:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -100,8 +56,8 @@ Data_020000c4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020000f4
-Data_020000f4:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x0000009d
 	.4byte 0x1010209d
 	.4byte 0xffffffff
@@ -114,8 +70,8 @@ Data_020000f4:
 	.4byte 0x1050509b
 	.4byte 0xffffffff
 	.4byte 0x000001ff
-	.global Data_02000124
-Data_02000124:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte Tileset_Set114TilesD + 0x4e3
 	.4byte .L_02008090
 	.4byte 0x00780000
@@ -146,8 +102,8 @@ Data_02000124:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200019c
-Data_0200019c:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0x18eb0001
 	.4byte 0x00000001

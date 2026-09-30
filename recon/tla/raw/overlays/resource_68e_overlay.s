@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, .L_0200803c
-	bx lr
-.L_0200803c:
-	.4byte Data_02001410
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs r0, #0
-	bx lr
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, .L_02008048
-	bx lr
-.L_02008048:
-	.4byte Data_02001440
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_02001450
 	.section .text.x02008054,"ax",%progbits
 	.global Func_02000054
 	.thumb_func
@@ -108,12 +78,12 @@ Func_020000d0:
 	adds r3, r3, r2
 	lsls r0, r0, #2
 	ldr r5, [r3]
-	bl Func_020012d8
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020080f4
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_020012e0
+	bl GameFlag_SetBit
 	bl Func_02000070
 .L_020080f4:
 	bl Func_02001380
@@ -127,21 +97,13 @@ Func_020000d0:
 	lsls r1, r1, #7
 	movs r2, #0
 	adds r0, r5, #0
-	bl Func_020013e0
+	bl ObjectMotion_ArmCallback
 	bl Func_020001e4
 	bl Func_02001388
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008120:
 	.4byte gPartyState
-	.section .text.x02008124,"ax",%progbits
-	.global Func_02000124
-	.thumb_func
-Func_02000124:
-	ldr r0, .L_02008128
-	bx lr
-.L_02008128:
-	.4byte Data_02001688
 	.section .text.x0200812c,"ax",%progbits
 	.global Func_0200012c
 	.thumb_func
@@ -212,7 +174,7 @@ Func_0200012c:
 	bl Func_020010f4
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Func_020012d8
+	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_020081d2
 	mov r3, r10
@@ -229,12 +191,6 @@ Func_0200012c:
 	pop {r5, r6, r7, pc}
 .L_020081dc:
 	.4byte gPartyState
-	.section .text.x020081e0,"ax",%progbits
-	.global Func_020001e0
-	.thumb_func
-Func_020001e0:
-	movs r0, #0
-	bx lr
 	.section .text.x020081e4,"ax",%progbits
 	.global Func_020001e4
 	.thumb_func
@@ -263,7 +219,7 @@ Func_020001e4:
 	movs r0, #1
 	movs r1, #0
 	negs r0, r0
-	bl Func_020013d0
+	bl UiText_OpenMessageAtObject
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0
@@ -298,7 +254,7 @@ Func_020001e4:
 	mov r0, r10
 	bl UiText_DrawNumberInWindow
 	adds r0, r7, #0
-	bl Func_02001340
+	bl Menu_SelectEntry20To21
 	movs r1, #2
 	adds r7, r0, #0
 	adds r0, r6, #0
@@ -350,7 +306,7 @@ Func_020001e4:
 	movs r0, #1
 	movs r1, #0
 	negs r0, r0
-	bl Func_020013d0
+	bl UiText_OpenMessageAtObject
 	movs r0, #0
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
@@ -459,13 +415,13 @@ Func_020001e4:
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #11
-	bl Func_020012d8
+	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_020083e8
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #11
-	bl Func_020012e0
+	bl GameFlag_SetBit
 	movs r0, #1
 	negs r0, r0
 	bl Func_0200049c
@@ -584,7 +540,7 @@ Func_0200049c:
 	lsls r1, r1, #8
 	movs r2, #0
 	movs r0, #0
-	bl Func_020013e0
+	bl ObjectMotion_ArmCallback
 	movs r0, #40
 	bl Battle_WaitMode0
 	movs r5, #3
@@ -2125,7 +2081,7 @@ Func_020010f4:
 	lsls r1, r1, #2
 	adds r1, #255
 	ldr r0, .L_02009180
-	bl Func_020012b8
+	bl Scheduler_AddOrUpdateCallback
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009168:
@@ -2277,8 +2233,8 @@ Func_02001184:
 .L_0200929c:
 	.4byte gOverlayArea + 0x1828
 	.section .rodata.x02009410,"a",%progbits
-	.global Data_02001410
-Data_02001410:
+	.global gSceneEntrances
+gSceneEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000120
 	.4byte 0xc00001c6
@@ -2291,14 +2247,14 @@ Data_02001410:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02001440
-Data_02001440:
+	.global gSceneExits
+gSceneExits:
 	.4byte 0x000000cd
 	.4byte 0x101050ca
 	.4byte 0xffffffff
 	.4byte 0x000001ff
-	.global Data_02001450
-Data_02001450:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff029d
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -2443,8 +2399,8 @@ Data_02001678:
 	.4byte 0x0c040b06
 	.4byte 0x0e020d03
 	.4byte 0x10000f01
-	.global Data_02001688
-Data_02001688:
+	.global gSceneEvents
+gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

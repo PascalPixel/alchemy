@@ -476,7 +476,7 @@ Func_08153ebc:
 	ldr r2, .L_081544ec
 	movs r3, #0
 	str r4, [sp, #8]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r4, [sp, #8]
 .L_08154298:
 	movs r2, #128

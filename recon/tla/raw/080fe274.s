@@ -234,7 +234,7 @@ Func_080fe274:
 .L_080fe478:
 	.4byte 0x06004000
 .L_080fe47c:
-	bl Func_080383f0
+	bl UiWindow_EraseBorderRectFar
 	mov r3, r11
 	ldr r2, [r3, #60]
 	ldr r3, .L_080fe498

@@ -50,7 +50,7 @@ Func_08043b70:
 	str r3, [r6, #12]
 	movs r3, #128
 	lsls r3, r3, #7
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r4, [sp, #0]
 .L_08043bd2:
 	movs r3, #1

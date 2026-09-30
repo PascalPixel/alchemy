@@ -18,14 +18,14 @@ WaitFrames:
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
-	.global Func_02000c78
+	.global GameFlag_Test
 	.thumb_func
-Func_02000c78:
-	overlay_veneer Func_080003c8
-	.global Func_02000c80
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000c80:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02000c88
 	.thumb_func
 Func_02000c88:
@@ -222,10 +222,10 @@ Object_SetModeById:
 	.thumb_func
 Func_02000e08:
 	overlay_veneer Func_080c8180
-	.global Func_02000e10
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02000e10:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02000e18
 	.thumb_func
 Func_02000e18:
@@ -242,10 +242,10 @@ Func_02000e28:
 	.thumb_func
 Func_02000e30:
 	overlay_veneer Func_080c8778
-	.global Func_02000e38
+	.global ItemMenu_DrawItemDetails
 	.thumb_func
-Func_02000e38:
-	overlay_veneer Func_080f8038
+ItemMenu_DrawItemDetails:
+	overlay_veneer ItemMenu_DrawItemDetailsFar
 	.global Func_02000e40
 	.thumb_func
 Func_02000e40:

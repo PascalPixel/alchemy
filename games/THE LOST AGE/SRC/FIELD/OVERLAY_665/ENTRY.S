@@ -8,9 +8,9 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer Func_020007d4
-	overlay_veneer Func_02000038
-	overlay_veneer Func_02000044
+	overlay_veneer Scene_GetEntrances
+	overlay_veneer Scene_GetExits
 	overlay_veneer Func_0200004c
 	overlay_veneer Func_02000788
-	overlay_veneer Func_02000040
+	overlay_veneer Scene_GetRegions
 	overlay_veneer Func_02000a18

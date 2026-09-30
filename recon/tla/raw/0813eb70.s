@@ -66,7 +66,7 @@ Func_0813eb70:
 	movs r2, #0
 	movs r3, #100
 	movs r0, #0
-	bl Func_08118028
+	bl BattlePres_SetupTransitionSceneFar
 	movs r3, #128
 	lsls r3, r3, #19
 	movs r5, #0

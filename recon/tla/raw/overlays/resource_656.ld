@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_656/ENTRY.o"(.text)
         "*/resource_656_overlay.o"(.text.x02008038)
         "*/resource_656_overlay.o"(.text.x02008078)
-        "*/resource_656_overlay.o"(.text.x020080b0)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_656/SCENE_TABLES.o"(.text)
         "*/resource_656_overlay.o"(.text.x020080b8)
         "*/resource_656_overlay.o"(.text.x0200821c)
         "*/resource_656_overlay.o"(.text.x02008324)

@@ -9,9 +9,9 @@
 	.thumb_func
 UiWindow_DrawFrameFar:
 	overlay_veneer Func_0803a084
-	.global Func_080383f0
+	.global UiWindow_EraseBorderRectFar
 	.thumb_func
-Func_080383f0:
+UiWindow_EraseBorderRectFar:
 	overlay_veneer UiWindow_EraseBorderRect
 	.global Link_DrawShiftedTilePairFar
 	.thumb_func

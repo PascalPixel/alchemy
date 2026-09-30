@@ -301,7 +301,7 @@ Func_0810abf0:
 	bl WaitFrames
 	b .L_0810acac
 .L_0810ae6a:
-	bl Func_080f8068
+	bl Menu_ReleaseEntryObjectsFar
 	movs r1, #2
 	ldr r0, [sp, #8]
 	bl UiWork_FinalizeFar

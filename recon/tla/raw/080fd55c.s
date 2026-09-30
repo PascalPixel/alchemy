@@ -65,7 +65,7 @@ Func_080fd55c:
 	mov r8, r3
 	mov r1, r10
 	mov r3, r11
-	bl Func_08038108
+	bl UiText_GetResourceDimensionsFar
 	ldrh r2, [r6]
 	adds r3, r2, #0
 	cmp r3, #0
@@ -112,7 +112,7 @@ Func_080fd55c:
 	str r2, [sp, #0]
 	mov r3, r11
 	mov r2, r9
-	bl Func_08038108
+	bl UiText_GetResourceDimensionsFar
 	ldrh r2, [r6]
 	adds r3, r2, #0
 	cmp r3, #0

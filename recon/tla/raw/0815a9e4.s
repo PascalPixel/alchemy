@@ -913,7 +913,7 @@ Func_0815a9e4:
 	adds r1, r6, #0
 	movs r3, #0
 	str r4, [sp, #12]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	ldr r4, [sp, #12]
 .L_0815b0c6:
 	ldr r3, [r5, #4]

@@ -1,0 +1,48 @@
+#include "RENDER_INPUT.H"
+#include "TYPES.H"
+#include "RAM_BUFFER.H"
+#include "RESOURCE.H"
+
+void *RenderOutput_AcquireFree(void);
+void Resource_ResetEntry(u32);
+s32 RenderOutput_AppendToList(void *, void *);
+
+struct TableEntry {
+    u16 unused;
+    u16 value;
+};
+
+struct RenderOutput *RenderOutput_Create(
+    s32 arg0,
+    s32 arg1,
+    struct RenderInput *arg2,
+    s32 arg3,
+    s32 arg4)
+{
+    s32 x;
+    struct RenderOutput *output;
+    s32 y;
+
+    output = RenderOutput_AcquireFree();
+    if (output == NULL) {
+        Resource_ResetEntry((u32)arg0);
+        return 0;
+    }
+    x = arg3 + (arg2->x * 8) + 8;
+    y = arg4 + (arg2->y * 8) + 8;
+    x &= 0x1ff;
+    y &= 0xff;
+    /* Xをbit16～24、Yをbit0～7へ置き、arg1のフラグを重ねる。 */
+    output->packed = (x << 16) | y | arg1;
+    output->table.value =
+        ((struct TableEntry *)Ram_VramBlockCache)[arg0].value >> 5;
+    output->sentinel = 0xff;
+    output->zero = 0;
+    output->x = x;
+    output->y = (s16)y;
+    output->index = (s8)arg0;
+    output->one4 = 1;
+    output->one5 = 1;
+    RenderOutput_AppendToList(arg2, output);
+    return output;
+}

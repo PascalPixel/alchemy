@@ -10,18 +10,18 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02000504
+	.global GameFlag_Test
 	.thumb_func
-Func_02000504:
-	overlay_veneer Func_080003c8
-	.global Func_0200050c
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_0200050c:
-	overlay_veneer Func_080003d0
-	.global Func_02000514
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_02000514:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -42,10 +42,10 @@ UiWork_IsComplete:
 	.thumb_func
 Func_0200053c:
 	overlay_veneer Func_080380f8
-	.global Func_02000544
+	.global UiText_GetResourceDimensions
 	.thumb_func
-Func_02000544:
-	overlay_veneer Func_08038108
+UiText_GetResourceDimensions:
+	overlay_veneer UiText_GetResourceDimensionsFar
 	.global UiWork_FinalizePendingCore
 	.thumb_func
 UiWork_FinalizePendingCore:

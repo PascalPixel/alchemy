@@ -10,10 +10,10 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_02000dec
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_02000dec:
-	overlay_veneer Func_080000d0
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -30,14 +30,14 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Func_02000e14
+	.global GameFlag_Test
 	.thumb_func
-Func_02000e14:
-	overlay_veneer Func_080003c8
-	.global Func_02000e1c
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02000e1c:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_02000e24
 	.thumb_func
 Func_02000e24:
@@ -118,10 +118,10 @@ Func_02000eb4:
 	.thumb_func
 Func_02000ebc:
 	overlay_veneer Func_080c8218
-	.global Func_02000ec4
+	.global Motion_CamBounds
 	.thumb_func
-Func_02000ec4:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02000ecc
 	.thumb_func
 Func_02000ecc:
@@ -146,10 +146,10 @@ Event_WaitValue1c8Frames:
 	.thumb_func
 Func_02000ef4:
 	overlay_veneer Func_080c84e0
-	.global Func_02000efc
+	.global Object_Spawn
 	.thumb_func
-Func_02000efc:
-	overlay_veneer Func_080c8758
+Object_Spawn:
+	overlay_veneer Object_SpawnFar
 	.global Func_02000f04
 	.thumb_func
 Func_02000f04:

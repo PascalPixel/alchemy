@@ -2395,7 +2395,7 @@ Func_0813fd84:
 	str r1, [sp, #20]
 	ldr r2, [sp, #52]
 	ldr r1, [sp, #40]
-	bl Func_08020010
+	bl Render_ApplyProjectedPlacementFar
 	movs r3, #1
 	add r10, r3
 	mov r0, r10
@@ -2578,7 +2578,7 @@ Func_0813fd84:
 	strh r2, [r5, r3]
 	adds r0, #36
 	movs r1, #0
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	movs r1, #253
 	lsls r1, r1, #6
 	ldr r0, .L_081411fc

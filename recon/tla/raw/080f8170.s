@@ -275,7 +275,7 @@ Func_080f8170:
 	mov r5, r10
 	strh r3, [r5, r1]
 	mov r0, r11
-	bl Func_080ad298
+	bl Owner_RefreshDerivedDataFar
 	b .L_080f83bc
 .L_080f83b4:
 	mov r0, r11

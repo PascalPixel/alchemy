@@ -14,14 +14,14 @@ WaitFrames:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Func_0200102c
+	.global GameFlag_Test
 	.thumb_func
-Func_0200102c:
-	overlay_veneer Func_080003c8
-	.global Func_02001034
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_02001034:
-	overlay_veneer Func_080003d0
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
 	.global Func_0200103c
 	.thumb_func
 Func_0200103c:
@@ -118,10 +118,10 @@ ObjectMotion_Launch:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_020010fc
+	.global ObjectMotion_SetAngleToward
 	.thumb_func
-Func_020010fc:
-	overlay_veneer Func_080c8158
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Func_02001104
 	.thumb_func
 Func_02001104:
@@ -130,10 +130,10 @@ Func_02001104:
 	.thumb_func
 Func_0200110c:
 	overlay_veneer Func_080c81a0
-	.global Func_02001114
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02001114:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_0200111c
 	.thumb_func
 Func_0200111c:
@@ -142,10 +142,10 @@ Func_0200111c:
 	.thumb_func
 Func_02001124:
 	overlay_veneer Func_080c8218
-	.global Func_0200112c
+	.global Motion_CamBounds
 	.thumb_func
-Func_0200112c:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02001134
 	.thumb_func
 Func_02001134:

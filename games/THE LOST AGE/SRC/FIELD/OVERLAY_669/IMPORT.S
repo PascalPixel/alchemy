@@ -6,18 +6,18 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Func_020030e8
+	.global GameFlag_Test
 	.thumb_func
-Func_020030e8:
-	overlay_veneer Func_080003c8
-	.global Func_020030f0
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020030f0:
-	overlay_veneer Func_080003d0
-	.global Func_020030f8
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_020030f8:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02003100
 	.thumb_func
 Func_02003100:
@@ -122,10 +122,10 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Func_020031c8:
 	overlay_veneer Func_080c8180
-	.global Func_020031d0
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_020031d0:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_020031d8
 	.thumb_func
 Func_020031d8:
@@ -134,10 +134,10 @@ Func_020031d8:
 	.thumb_func
 Func_020031e0:
 	overlay_veneer Func_080c81a0
-	.global Func_020031e8
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_020031e8:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_020031f0
 	.thumb_func
 Func_020031f0:
@@ -150,14 +150,14 @@ Func_020031f8:
 	.thumb_func
 Func_02003200:
 	overlay_veneer Func_080c8218
-	.global Func_02003208
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02003208:
-	overlay_veneer Func_080c8228
-	.global Func_02003210
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02003210:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02003218
 	.thumb_func
 Func_02003218:
@@ -166,10 +166,10 @@ Func_02003218:
 	.thumb_func
 Func_02003220:
 	overlay_veneer Func_080c8280
-	.global Func_02003228
+	.global Party_SetFields1eeAnd1f0
 	.thumb_func
-Func_02003228:
-	overlay_veneer Func_080c8290
+Party_SetFields1eeAnd1f0:
+	overlay_veneer Party_SetFields1eeAnd1f0Far
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:

@@ -7,7 +7,7 @@
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.global Resource_FarCall00D
 Resource_FarCall00D:
-	.global Func_081ac000
+	.global Runtime_BlankDisplayAndRunFar
 	.thumb_func
-Func_081ac000:
+Runtime_BlankDisplayAndRunFar:
 	overlay_veneer Runtime_BlankDisplayAndRun

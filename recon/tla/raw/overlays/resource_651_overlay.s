@@ -353,7 +353,7 @@ Func_020003a0:
 	ldr r0, [r5]
 	lsls r1, r1, #8
 	movs r2, #0
-	bl Func_02000cf8
+	bl ObjectMotion_ArmCallback
 	movs r1, #236
 	movs r2, #140
 	movs r0, #27
@@ -364,7 +364,7 @@ Func_020003a0:
 	lsls r1, r1, #6
 	movs r2, #0
 	movs r0, #27
-	bl Func_02000cf8
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #128
@@ -418,28 +418,28 @@ Func_020003a0:
 	movs r1, #0
 	movs r2, #0
 	movs r0, #27
-	bl Func_02000cf8
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #128
 	lsls r1, r1, #6
 	movs r2, #0
 	movs r0, #27
-	bl Func_02000cf8
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #128
 	lsls r1, r1, #7
 	movs r2, #0
 	movs r0, #27
-	bl Func_02000cf8
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #6
 	movs r0, #27
-	bl Func_02000cf8
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -450,7 +450,7 @@ Func_020003a0:
 	movs r2, #0
 	movs r1, #28
 	movs r0, #6
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #3
@@ -472,11 +472,11 @@ Func_020003a0:
 	movs r0, #28
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r2, #0
 	movs r1, #27
 	ldr r0, [r5]
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #60
 	bl Engine_EventWait
 	movs r1, #0
@@ -487,7 +487,7 @@ Func_020003a0:
 	movs r2, #0
 	movs r0, #6
 	movs r1, #27
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r1, #4
 	movs r0, #27
 	bl Engine_ActorSetAnimation
@@ -502,7 +502,7 @@ Func_020003a0:
 	movs r2, #0
 	lsls r1, r1, #8
 	movs r0, #27
-	bl Func_02000cf8
+	bl ObjectMotion_ArmCallback
 	movs r0, #60
 	bl Engine_EventWait
 	movs r0, #27
@@ -511,7 +511,7 @@ Func_020003a0:
 	movs r2, #0
 	ldr r1, [r5]
 	movs r0, #27
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #60
 	bl Engine_EventWait
 	movs r1, #1
@@ -537,7 +537,7 @@ Func_020003a0:
 	movs r2, #0
 	ldr r1, [r5]
 	movs r0, #5
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r1, #0
 	movs r0, #5
 	bl Engine_EventOpenMessage
@@ -566,7 +566,7 @@ Func_020003a0:
 	movs r0, #5
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -596,7 +596,7 @@ Func_020003a0:
 	movs r0, #5
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -622,7 +622,7 @@ Func_020003a0:
 	movs r2, #0
 	movs r1, #6
 	movs r0, #27
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #60
 	bl Engine_EventWait
 	movs r1, #0
@@ -663,19 +663,19 @@ Func_020003a0:
 	ldr r0, [r5]
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #5
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #6
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #28
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r1, #228
 	movs r2, #164
 	movs r0, #27
@@ -685,19 +685,19 @@ Func_020003a0:
 	ldr r0, [r5]
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #5
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #6
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #28
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r1, #212
 	movs r2, #236
 	movs r0, #27
@@ -707,19 +707,19 @@ Func_020003a0:
 	ldr r0, [r5]
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #5
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #6
 	movs r1, #27
 	movs r2, #0
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r1, #27
 	movs r2, #0
 	movs r0, #28
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #60
 	bl Engine_EventWait
 	movs r1, #0
@@ -763,14 +763,14 @@ Func_020003a0:
 	ldr r1, [r5]
 	movs r2, #0
 	movs r0, #28
-	bl Func_02000cd0
+	bl ObjectMotion_SetAngleToward
 	movs r0, #60
 	bl Engine_EventWait
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #7
 	movs r0, #28
-	bl Func_02000cf8
+	bl ObjectMotion_ArmCallback
 	movs r0, #30
 	bl Engine_EventWait
 	movs r1, #0
@@ -1111,7 +1111,7 @@ Func_02000ac8:
 	bne .L_02008b30
 	movs r0, #66
 	movs r1, #0
-	bl Func_02000d30
+	bl Object_SetWideSprite
 .L_02008b30:
 	movs r0, #0
 	pop {pc}

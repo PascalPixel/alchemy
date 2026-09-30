@@ -81,7 +81,7 @@ Func_081843fc:
 	add r0, sp, #244
 	strh r3, [r0]
 	movs r1, #0
-	bl Func_08118010
+	bl BattleActor_SpawnObjectsForListFar
 	ldr r2, .L_0818450c
 	movs r3, #240
 	str r3, [r2, #16]

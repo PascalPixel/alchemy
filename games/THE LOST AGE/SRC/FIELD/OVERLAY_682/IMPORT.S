@@ -10,22 +10,22 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Func_020029bc
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Func_020029bc:
-	overlay_veneer Func_080000d0
-	.global Func_020029c4
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global GameFlag_Test
 	.thumb_func
-Func_020029c4:
-	overlay_veneer Func_080003c8
-	.global Func_020029cc
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
 	.thumb_func
-Func_020029cc:
-	overlay_veneer Func_080003d0
-	.global Func_020029d4
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
 	.thumb_func
-Func_020029d4:
-	overlay_veneer Func_080003d8
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_020029dc
 	.thumb_func
 Func_020029dc:
@@ -158,10 +158,10 @@ Object_LinkPair:
 	.thumb_func
 Func_02002adc:
 	overlay_veneer Func_080c8180
-	.global Func_02002ae4
+	.global UiText_OpenMessageAtObject
 	.thumb_func
-Func_02002ae4:
-	overlay_veneer Func_080c8188
+UiText_OpenMessageAtObject:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Func_02002aec
 	.thumb_func
 Func_02002aec:
@@ -170,10 +170,10 @@ Func_02002aec:
 	.thumb_func
 Func_02002af4:
 	overlay_veneer Func_080c81a0
-	.global Func_02002afc
+	.global ObjectMotion_ArmCallback
 	.thumb_func
-Func_02002afc:
-	overlay_veneer Func_080c81d0
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Func_02002b04
 	.thumb_func
 Func_02002b04:
@@ -182,10 +182,10 @@ Func_02002b04:
 	.thumb_func
 Func_02002b0c:
 	overlay_veneer Func_080c81f0
-	.global Func_02002b14
+	.global ObjectMotion_SetActionVariant
 	.thumb_func
-Func_02002b14:
-	overlay_veneer Func_080c8200
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Func_02002b1c
 	.thumb_func
 Func_02002b1c:
@@ -194,14 +194,14 @@ Func_02002b1c:
 	.thumb_func
 Func_02002b24:
 	overlay_veneer Func_080c8218
-	.global Func_02002b2c
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Func_02002b2c:
-	overlay_veneer Func_080c8228
-	.global Func_02002b34
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Motion_CamBounds
 	.thumb_func
-Func_02002b34:
-	overlay_veneer Func_080c8238
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
 	.global Func_02002b3c
 	.thumb_func
 Func_02002b3c:

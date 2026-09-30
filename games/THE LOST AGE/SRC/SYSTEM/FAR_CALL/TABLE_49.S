@@ -9,7 +9,7 @@
 	.thumb_func
 Func_081c0070:
 	overlay_veneer Func_081c117c
-	.global Func_081c0078
+	.global AudioCommand_WaitForCompletionFar
 	.thumb_func
-Func_081c0078:
+AudioCommand_WaitForCompletionFar:
 	overlay_veneer AudioCommand_WaitForCompletion

@@ -101,7 +101,7 @@ Func_080dc164:
 	lsls	r0, r0, #14
 	orrs	r0, r6
 	movs	r1, #1
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r0, #132
 	lsls	r0, r0, #1
 	bl	GameFlag_SetBitFar

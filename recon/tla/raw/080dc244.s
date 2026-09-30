@@ -17,7 +17,7 @@ Func_080dc244:
 	adds	r7, r0, #0
 	movs	r1, #2
 	adds	r0, r6, #0
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r3, #192
 	lsls	r3, r3, #4
 	adds	r3, #164
@@ -30,12 +30,12 @@ Func_080dc244:
 	lsls	r0, r0, #9
 	adds	r0, #1
 	movs	r1, #1
-	bl	0x080d170c
+	bl	Func_080d170c
 	b.n	.L_080dc284
 .L_080dc27c:
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	0x080d170c
+	bl	Func_080d170c
 .L_080dc284:
 	movs	r0, #132
 	lsls	r0, r0, #1

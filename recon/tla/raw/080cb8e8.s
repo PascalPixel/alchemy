@@ -222,7 +222,7 @@ Func_080cb8e8:
 	movs	r0, #128
 	lsls	r0, r0, #9
 	movs	r1, #0
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r2, #214
 	lsls	r2, r2, #1
 	movs	r3, #128

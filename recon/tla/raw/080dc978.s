@@ -88,7 +88,7 @@ Func_080dc978:
 	movs	r3, #128
 	lsls	r3, r3, #14
 	orrs	r0, r3
-	bl	0x080d170c
+	bl	Func_080d170c
 	movs	r0, #8
 	bl	0x080d17ac
 	bl	.L_080dca84

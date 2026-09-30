@@ -68,7 +68,7 @@ Func_080d1760:
 	adds	r0, r4, r2
 	adds	r2, r4, r3
 	adds	r3, r5, #0
-	bl	0x080d0c50
+	bl	Func_080d0c50
 .L_080d17e6:
 	pop	{r5, pc}
 	push	{r5, lr}

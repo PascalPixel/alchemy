@@ -5963,18 +5963,18 @@ Data_02003334:
 Data_02003340:
 	.4byte 0x00070008
 	.4byte 0x00090200
-	.4byte Data_02010002 + 0x5
+	.4byte 0x02010007
 	.4byte 0x0007000a
 	.4byte 0x000b0202
-	.4byte Data_02030000 + 0x7
+	.4byte 0x02030007
 	.2byte 0xffff
 	.global Data_0200335a
 Data_0200335a:
 	.2byte 0x0008
-	.4byte Data_02000000 + 0x7
+	.4byte 0x02000007
 	.4byte 0x00070009
 	.4byte 0x000a0201
-	.4byte Data_02020004 + 0x3
+	.4byte 0x02020007
 	.4byte 0x0000ffff
 	.global Data_02003370
 Data_02003370:
@@ -6163,7 +6163,7 @@ Data_02003618:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6199,25 +6199,25 @@ Data_02003690:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6231,43 +6231,43 @@ Data_02003708:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6281,7 +6281,7 @@ Data_020037c8:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6441,7 +6441,7 @@ Data_020039e4:
 	.4byte 0xffff0032
 	.4byte Func_0200095c
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x33
+	.4byte 0x02000033
 	.4byte Func_02000964
 	.4byte 0x00000000
 	.4byte 0xffff0008
@@ -6488,16 +6488,16 @@ Data_02003a5c:
 	.4byte 0xffff0032
 	.4byte Func_0200095c
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02030000 + 0xb
+	.4byte 0x0203000b
 	.4byte Func_02000b34
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -6535,13 +6535,13 @@ Data_02003b28:
 	.4byte 0xffff001f
 	.4byte Func_02000f00
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000b34
 	.4byte 0x00000008
 	.4byte 0xffff0000

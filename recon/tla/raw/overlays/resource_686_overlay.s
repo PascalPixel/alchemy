@@ -5750,7 +5750,7 @@ gSceneExits:
 	.4byte 0x01d1f0bd
 	.4byte 0x01e1b0bd
 	.4byte 0x01f1d0bd
-	.4byte gOamBuckets + 0xae
+	.4byte 0x020030be
 	.4byte 0x021020be
 	.4byte 0x000000be
 	.4byte 0x001070bd
@@ -6713,13 +6713,13 @@ Data_02003f4c:
 	.4byte 0xffff001c
 	.4byte 0x0000001c
 	.4byte 0x00000002
-	.4byte Data_02020004 + 0x24
+	.4byte 0x02020028
 	.4byte Func_02001d34
 	.4byte 0x00000002
 	.4byte 0xffff0029
 	.4byte Func_02001ddc
 	.4byte 0x00000002
-	.4byte Data_02030000 + 0x2a
+	.4byte 0x0203002a
 	.4byte Func_02001e54
 	.4byte 0x00000002
 	.4byte 0xffff002b

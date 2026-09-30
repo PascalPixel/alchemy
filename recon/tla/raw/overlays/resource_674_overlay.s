@@ -7408,11 +7408,11 @@ Data_02004070:
 	.4byte 0x014b014c
 	.global Data_0200407c
 Data_0200407c:
-	.4byte Sound_Wave29 + 0x134c
+	.4byte 0x0820f8e0
 	.4byte 0x2008e0f8
 	.4byte 0x0020f0e0
 	.4byte 0x2008e0f8
-	.4byte Sound_Wave29 + 0x134c
+	.4byte 0x0820f8e0
 	.4byte 0x2008e0f8
 	.global Data_02004094
 Data_02004094:
@@ -7721,12 +7721,12 @@ Data_02004508:
 	.4byte 0x00000004
 	.4byte 0x00f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00980000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000016
 	.4byte 0x00000028
@@ -7744,7 +7744,7 @@ Data_02004554:
 	.4byte 0x00000004
 	.4byte 0x00f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00b00000
@@ -7759,7 +7759,7 @@ Data_020045a4:
 	.4byte 0x00000004
 	.4byte 0x00f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00f80000
@@ -7782,7 +7782,7 @@ Data_020045f0:
 	.4byte 0x00000004
 	.4byte 0x00f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00f80000

@@ -2193,7 +2193,7 @@ Func_02001320:
 	.section .rodata.x02009608,"a",%progbits
 	.global Data_02001608
 Data_02001608:
-	.4byte Data_02030000 + 0x10
+	.4byte 0x02030010
 	.4byte 0x0000ffff
 	.global Data_02001610
 Data_02001610:
@@ -2491,7 +2491,7 @@ Data_02001a18:
 	.4byte 0xffff0015
 	.4byte Func_020000fc
 	.4byte 0x00001815
-	.4byte Data_02030000 + 0x10
+	.4byte 0x02030010
 	.4byte Func_020000ec
 	.4byte 0x00008b85
 	.4byte 0xffff0000
@@ -2517,13 +2517,13 @@ Data_02001a90:
 	.4byte 0xffff000a
 	.4byte 0x0000000a
 	.4byte 0x00000002
-	.4byte Field_Map081 + 0xdc0
+	.4byte 0x08bd0014
 	.4byte Func_02000818
 	.4byte 0x00000000
-	.4byte Monster_PurpleBeastSprites + 0xdf
+	.4byte 0x08a70017
 	.4byte 0x00001b42
 	.4byte 0x00008d15
-	.4byte Monster_PurpleBeastSprites + 0xdf
+	.4byte 0x08a70017
 	.4byte 0x00001b43
 	.4byte 0x00000000
 	.4byte 0xffff0017
@@ -2568,13 +2568,13 @@ Data_02001a90:
 	.4byte 0xffff0014
 	.4byte 0x00001c9e
 	.4byte 0x00008515
-	.4byte Data_02000000 + 0xa
+	.4byte 0x0200000a
 	.4byte 0x00000000
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000084
 	.4byte 0x00001815
-	.4byte Data_02030000 + 0x10
+	.4byte 0x02030010
 	.4byte Func_020000ec
 	.4byte 0x10008c15
 	.4byte 0xffff0008

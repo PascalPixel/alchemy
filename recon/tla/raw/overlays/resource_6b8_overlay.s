@@ -2198,7 +2198,7 @@ gSceneEvents:
 	.4byte 0xffff0015
 	.4byte Func_020005b0
 	.4byte 0x50008805
-	.4byte gHeapSlots + 0x32
+	.4byte 0x03000032
 	.4byte Func_02000688
 	.4byte 0x50008805
 	.4byte 0x03010033

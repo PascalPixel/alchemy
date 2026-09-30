@@ -4636,10 +4636,10 @@ Data_02002ad0:
 	.4byte 0xffff000b
 	.4byte Func_02000c2c
 	.4byte 0x00000002
-	.4byte Data_02010002 + 0x12
+	.4byte 0x02010014
 	.4byte Func_02000c3c
 	.4byte 0x00008515
-	.4byte Data_02030000 + 0x8
+	.4byte 0x02030008
 	.4byte Func_02000cfc
 	.4byte 0x00000000
 	.4byte 0xffff000a

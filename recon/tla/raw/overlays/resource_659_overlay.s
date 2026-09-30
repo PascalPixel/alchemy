@@ -3489,13 +3489,13 @@ Data_02002240:
 	.4byte 0x00000000
 	.4byte 0x02c80000
 	.4byte 0x00014000
-	.4byte Field_Map008 + 0x25db
+	.4byte 0x08ab00ef
 	.4byte 0x00000001
 	.4byte 0x034f0000
 	.4byte 0x00000000
 	.4byte 0x02c70000
 	.4byte 0x00012000
-	.4byte Field_Map008 + 0x25db
+	.4byte 0x08ab00ef
 	.4byte 0x00000001
 	.4byte 0x038a0000
 	.4byte 0x00000000
@@ -3715,7 +3715,7 @@ Data_02002750:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00008000
-	.4byte Field_Map008 + 0x24f3
+	.4byte 0x08ab0007
 	.4byte 0x00000001
 	.4byte 0x01f80000
 	.4byte 0x00000000
@@ -4045,7 +4045,7 @@ Data_02002c9c:
 	.4byte 0xffff0002
 	.4byte 0x00000002
 	.4byte 0x00000000
-	.4byte Field_Map008 + 0x24f4
+	.4byte 0x08ab0008
 	.4byte 0x00001897
 	.4byte 0x00000000
 	.4byte 0x08ff0008
@@ -4054,7 +4054,7 @@ Data_02002c9c:
 	.4byte 0xffff0008
 	.4byte 0x00002069
 	.4byte 0x00000000
-	.4byte Field_Map008 + 0x24f5
+	.4byte 0x08ab0009
 	.4byte 0x00001898
 	.4byte 0x00000000
 	.4byte 0x08ff0009
@@ -4072,7 +4072,7 @@ Data_02002c9c:
 	.4byte 0xffff000b
 	.4byte 0x0000211d
 	.4byte 0x00008d15
-	.4byte Field_Map008 + 0x24f4
+	.4byte 0x08ab0008
 	.4byte 0x00001899
 	.4byte 0x00008d15
 	.4byte 0x08ff0008
@@ -4081,7 +4081,7 @@ Data_02002c9c:
 	.4byte 0xffff0008
 	.4byte 0x0000206b
 	.4byte 0x00008d15
-	.4byte Field_Map008 + 0x24f5
+	.4byte 0x08ab0009
 	.4byte 0x0000189a
 	.4byte 0x00008d15
 	.4byte 0x08ff0009

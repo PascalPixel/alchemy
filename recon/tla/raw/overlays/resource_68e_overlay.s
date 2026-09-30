@@ -2423,7 +2423,7 @@ gSceneEvents:
 	.4byte 0xffff001c
 	.4byte 0x000028a8
 	.4byte 0x00000003
-	.4byte Data_02000000 + 0x19
+	.4byte 0x02000019
 	.4byte Func_02000054
 	.4byte 0x00000003
 	.4byte 0xffff0050

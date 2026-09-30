@@ -2386,7 +2386,7 @@ Data_020016e4:
 	.4byte 0xffff0000
 	.4byte Func_02000760
 	.4byte 0x00008c15
-	.4byte gHeapSlots + 0x8
+	.4byte 0x03000008
 	.4byte Func_02000760
 	.4byte 0x00008c15
 	.4byte 0x03010009
@@ -2515,28 +2515,28 @@ Data_020018f4:
 	.4byte 0xffff0006
 	.4byte 0x00000006
 	.4byte 0x00008602
-	.4byte Data_02000000 + 0x1f
+	.4byte 0x0200001f
 	.4byte Func_02000f4c
 	.4byte 0x00000602
-	.4byte Data_02000000 + 0x20
+	.4byte 0x02000020
 	.4byte Func_02000f4c
 	.4byte 0x00008602
-	.4byte Data_02010020 + 0x1
+	.4byte 0x02010021
 	.4byte Func_02000f4c
 	.4byte 0x00000602
-	.4byte Data_02010020 + 0x2
+	.4byte 0x02010022
 	.4byte Func_02000f4c
 	.4byte 0x00008602
-	.4byte Data_02020004 + 0x1f
+	.4byte 0x02020023
 	.4byte Func_02000f4c
 	.4byte 0x00000602
-	.4byte Data_02020004 + 0x20
+	.4byte 0x02020024
 	.4byte Func_02000f4c
 	.4byte 0x00008602
-	.4byte Data_02030000 + 0x25
+	.4byte 0x02030025
 	.4byte Func_02000f4c
 	.4byte 0x00000602
-	.4byte Data_02030000 + 0x26
+	.4byte 0x02030026
 	.4byte Func_02000f4c
 	.4byte 0x00008602
 	.4byte 0x02040027
@@ -2560,16 +2560,16 @@ Data_020018f4:
 	.4byte 0xffff0000
 	.4byte Func_02000760
 	.4byte 0x00008f15
-	.4byte Data_02000000 + 0x9
+	.4byte 0x02000009
 	.4byte Func_02000914
 	.4byte 0x00008f15
-	.4byte Data_02010002 + 0x8
+	.4byte 0x0201000a
 	.4byte Func_02000940
 	.4byte 0x00008f15
-	.4byte Data_02020004 + 0x7
+	.4byte 0x0202000b
 	.4byte Func_02000970
 	.4byte 0x00008f15
-	.4byte Data_02030000 + 0xc
+	.4byte 0x0203000c
 	.4byte Func_020009a0
 	.4byte 0x00008f15
 	.4byte 0x0204000d

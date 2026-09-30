@@ -6005,7 +6005,7 @@ Data_02003ae4:
 	.4byte 0x0212002b
 	.4byte Func_02000af4
 	.4byte 0x00000002
-	.4byte Data_02010020 + 0xa
+	.4byte 0x0201002a
 	.4byte Func_020019e0
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -6145,16 +6145,16 @@ Data_02003dfc:
 	.4byte 0xffff0006
 	.4byte Func_02000438
 	.4byte 0x10008c15
-	.4byte Data_02020004 + 0x4
+	.4byte 0x02020008
 	.4byte Func_020010bc
 	.4byte 0x00008c15
-	.4byte Data_02020004 + 0x4
+	.4byte 0x02020008
 	.4byte Func_020010cc
 	.4byte 0x10008c15
-	.4byte Data_02030000 + 0x9
+	.4byte 0x02030009
 	.4byte Func_020010bc
 	.4byte 0x00008c15
-	.4byte Data_02030000 + 0x9
+	.4byte 0x02030009
 	.4byte Func_020010cc
 	.4byte 0x00000008
 	.4byte 0x09820000

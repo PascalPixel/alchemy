@@ -1470,7 +1470,7 @@ Data_02001078:
 	.4byte 0xffff0003
 	.4byte Func_02000308
 	.4byte 0x00000002
-	.4byte WorldMap_TilesA3 + 0x7d8
+	.4byte 0x08940014
 	.4byte Func_020003ac
 	.4byte 0x00000002
 	.4byte 0xffff000c
@@ -1496,7 +1496,7 @@ Data_020010e4:
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x00000002
-	.4byte Resource_Data1B7 + 0x1e1
+	.4byte 0x08950005
 	.4byte Func_02000494
 	.4byte 0x00000001
 	.4byte 0xffff0005
@@ -1537,10 +1537,10 @@ Data_02001180:
 	.4byte 0xffff0004
 	.4byte Func_02000378
 	.4byte 0x00000002
-	.4byte Ui_Icons + 0x44be
+	.4byte 0x08960016
 	.4byte Func_02000650
 	.4byte 0x00000002
-	.4byte Ui_Icons + 0x44bf
+	.4byte 0x08960017
 	.4byte Func_0200071c
 	.4byte 0xffffffff
 	.4byte 0x00000000

@@ -10662,7 +10662,7 @@ Data_020061a8:
 	.4byte 0x00000000
 	.global Data_02006324
 Data_02006324:
-	.4byte Data_02010002 + 0x6
+	.4byte 0x02010008
 	.4byte 0x0000ffff
 	.global gSceneEntrances
 gSceneEntrances:
@@ -11477,7 +11477,7 @@ Data_02006ef4:
 	.4byte 0xffff000f
 	.4byte Func_02002af8
 	.4byte 0x00001815
-	.4byte Data_02010002 + 0x6
+	.4byte 0x02010008
 	.4byte Func_020005d0
 	.4byte 0x00008515
 	.4byte 0x09e9000c
@@ -11599,7 +11599,7 @@ Data_020070d4:
 	.4byte 0xffff000f
 	.4byte Func_02002af8
 	.4byte 0x00001815
-	.4byte Data_02010002 + 0x6
+	.4byte 0x02010008
 	.4byte Func_020005d0
 	.4byte 0x00008515
 	.4byte 0x09e9000c
@@ -11796,7 +11796,7 @@ Data_02007434:
 	.4byte 0xffff0005
 	.4byte Func_020038ec
 	.4byte 0x00001815
-	.4byte Data_02010002 + 0x6
+	.4byte 0x02010008
 	.4byte Func_020005d0
 	.4byte 0x00008c15
 	.4byte 0x09ea000b
@@ -11805,7 +11805,7 @@ Data_02007434:
 	.4byte 0x09ea0000
 	.4byte Func_02000734
 	.4byte 0x50008805
-	.4byte Title_IntroLighthousePicture + 0x82c2
+	.4byte 0x086a000a
 	.4byte Func_02000618
 	.4byte 0x50008805
 	.4byte 0x0204000b
@@ -11846,7 +11846,7 @@ Data_020074dc:
 	.4byte 0xffff0005
 	.4byte Func_020038ec
 	.4byte 0x00001815
-	.4byte Data_02010002 + 0x6
+	.4byte 0x02010008
 	.4byte Func_020005d0
 	.4byte 0x00008c15
 	.4byte 0x09ea000b
@@ -11855,7 +11855,7 @@ Data_020074dc:
 	.4byte 0x09ea0000
 	.4byte Func_02000734
 	.4byte 0x50008805
-	.4byte Title_IntroLighthousePicture + 0x82c2
+	.4byte 0x086a000a
 	.4byte Func_02000618
 	.4byte 0x50008805
 	.4byte 0x0204000b

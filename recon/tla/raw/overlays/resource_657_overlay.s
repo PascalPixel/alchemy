@@ -3360,7 +3360,7 @@ Func_02001da0:
 	.section .rodata.x0200a0dc,"a",%progbits
 	.global Data_020020dc
 Data_020020dc:
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte 0x0000ffff
 	.global Data_020020e4
 Data_020020e4:
@@ -3609,7 +3609,7 @@ Data_020023f8:
 	.4byte 0x09850010
 	.4byte Func_02001178
 	.4byte 0x00001815
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02001064
 	.4byte 0xffffffff
 	.4byte 0x00000000

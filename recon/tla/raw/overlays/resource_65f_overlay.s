@@ -9764,22 +9764,22 @@ Data_0200611c:
 	.4byte 0x02110015
 	.4byte Func_020011c8
 	.4byte 0x10008c15
-	.4byte Data_02010002 + 0x6
+	.4byte 0x02010008
 	.4byte Func_02000e58
 	.4byte 0x00008c15
-	.4byte Data_02010002 + 0x6
+	.4byte 0x02010008
 	.4byte Func_02000f74
 	.4byte 0x10008c15
-	.4byte Data_02020004 + 0x5
+	.4byte 0x02020009
 	.4byte Func_02000e58
 	.4byte 0x00008c15
-	.4byte Data_02020004 + 0x5
+	.4byte 0x02020009
 	.4byte Func_02000f80
 	.4byte 0x10008c15
-	.4byte Data_02030000 + 0xa
+	.4byte 0x0203000a
 	.4byte Func_02000e58
 	.4byte 0x00008c15
-	.4byte Data_02030000 + 0xa
+	.4byte 0x0203000a
 	.4byte Func_02000f8c
 	.4byte 0x10008c15
 	.4byte 0x0204000b
@@ -9788,10 +9788,10 @@ Data_0200611c:
 	.4byte 0x0204000b
 	.4byte Func_02000f98
 	.4byte 0x00000008
-	.4byte gMapCellBuffer
+	.4byte 0x02010000
 	.4byte Func_02000e68
 	.4byte 0x00000009
-	.4byte gMapCellBuffer
+	.4byte 0x02010000
 	.4byte Func_02000fa4
 	.4byte 0x40009085
 	.4byte 0xffff0000

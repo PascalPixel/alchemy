@@ -2968,9 +2968,9 @@ Func_02001958:
 	.section .rodata.x02009d54,"a",%progbits
 	.global Data_02001d54
 Data_02001d54:
-	.4byte Data_02000000 + 0x1a
-	.4byte Data_02010018 + 0x3
-	.4byte Data_02020004 + 0x18
+	.4byte 0x0200001a
+	.4byte 0x0201001b
+	.4byte 0x0202001c
 	.4byte 0x0000ffff
 .L_02009d64:
 	.4byte 0x00000016
@@ -3725,13 +3725,13 @@ Data_020027f4:
 	.4byte 0xffff0013
 	.4byte Func_02000260
 	.4byte 0x00000002
-	.4byte Tileset_Set22TilesD + 0x1cd0
+	.4byte 0x08b30014
 	.4byte Func_02000aa0
 	.4byte 0x00000002
-	.4byte Tileset_Set22TilesD + 0x1cd1
+	.4byte 0x08b30015
 	.4byte Func_02000aa0
 	.4byte 0x00000002
-	.4byte Tileset_Set24TilesC + 0x456
+	.4byte 0x08b40016
 	.4byte Func_02000248
 	.4byte 0x00000000
 	.4byte 0xffff0008
@@ -3842,13 +3842,13 @@ Data_020027f4:
 	.4byte 0xffff000c
 	.4byte 0x00001b4b
 	.4byte 0x00001815
-	.4byte Data_02000000 + 0x1a
+	.4byte 0x0200001a
 	.4byte Func_0200026c
 	.4byte 0x00001815
-	.4byte Data_02010018 + 0x3
+	.4byte 0x0201001b
 	.4byte Func_0200026c
 	.4byte 0x00001815
-	.4byte Data_02020004 + 0x18
+	.4byte 0x0202001c
 	.4byte Func_0200026c
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -3904,7 +3904,7 @@ Data_02002ad0:
 	.4byte 0xffff0009
 	.4byte Func_02000130
 	.4byte 0x00000002
-	.4byte Tileset_Set31TilesA + 0x555
+	.4byte 0x08b70019
 	.4byte Func_0200047c
 	.4byte 0x00000000
 	.4byte 0x18ff0012
@@ -4018,7 +4018,7 @@ Data_02002ad0:
 	.4byte 0xffff001a
 	.4byte 0x00001c40
 	.4byte 0x00008d15
-	.4byte Tileset_Set27TilesB + 0x29b
+	.4byte 0x08b5001b
 	.4byte 0x00001c41
 	.4byte 0x00008d15
 	.4byte 0xffff001b
@@ -4063,13 +4063,13 @@ Data_02002ad0:
 	.4byte 0xffff000b
 	.4byte 0x00001ca2
 	.4byte 0x00000000
-	.4byte Tileset_Set29TilesB + 0x1580
+	.4byte 0x08b6000c
 	.4byte 0x00001ca3
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_0200066c
 	.4byte 0x00008d15
-	.4byte Field_Map059 + 0x780
+	.4byte 0x08b9000c
 	.4byte 0x00001ca4
 	.4byte 0x00008d15
 	.4byte 0xffff000c

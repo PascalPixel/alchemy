@@ -4029,7 +4029,7 @@ Func_02001eb8:
 Data_020020bc:
 	.4byte 0x00007c1f
 	.4byte 0x00080005
-	.4byte Resource_Data012 + 0x20042c
+	.4byte 0x0850042c
 	.4byte 0x0c770853
 	.4byte 0x1cfd109b
 	.4byte 0x3dfd2d7d
@@ -4083,7 +4083,7 @@ Data_0200215c:
 Data_0200217c:
 	.4byte 0xe0003e01
 	.4byte 0x00ff0200
-	.4byte gOverlayArea + 0x7f02
+	.4byte 0x0200ff02
 	.4byte 0xff0200ff
 	.4byte 0x01b10200
 	.4byte 0xe002e000
@@ -4138,7 +4138,7 @@ Data_0200217c:
 	.4byte 0x4000f094
 	.4byte 0x16f09529
 	.4byte 0x5f97f096
-	.4byte Data_0202e008 + 0x7f8
+	.4byte 0x0202e800
 	.4byte 0x42280050
 	.4byte 0xe0afe008
 	.4byte 0x2a0050b0
@@ -4617,14 +4617,14 @@ Data_02002468:
 	.4byte 0xe5ce1bb1
 	.4byte 0x3740459a
 	.4byte 0x9f0459f8
-	.4byte Field_Map098 + 0x22f
+	.4byte 0x08c16f0b
 	.4byte 0x200b8194
 	.4byte 0x3f207571
 	.4byte 0x38325038
 	.4byte 0xb0ae2c5c
 	.4byte 0x804e052c
 	.4byte 0x07c68643
-	.4byte Battle_StormyLighthouseBackdrop + 0x3805
+	.4byte 0x087c25e1
 	.4byte 0xc000403c
 	.4byte 0x02595b19
 	.4byte 0x1d3e34b3
@@ -4682,7 +4682,7 @@ Data_02002468:
 	.4byte 0x6704da3c
 	.4byte 0x38f8950d
 	.4byte 0x00f382dc
-	.4byte Battle_AerialViewBackdrop + 0x1202
+	.4byte 0x088037ce
 	.4byte 0x3825c894
 	.4byte 0xd04e60e3
 	.4byte 0x21981067
@@ -4718,7 +4718,7 @@ Data_02002468:
 	.4byte 0x0ee01c89
 	.4byte 0x75179914
 	.4byte 0xa620d30e
-	.4byte Resource_Data012 + 0xead33
+	.4byte 0x083ead33
 	.4byte 0x1667e077
 	.4byte 0x11f1759c
 	.4byte 0xe24503d8
@@ -4994,17 +4994,17 @@ Data_02002f3c:
 	.4byte 0xa0e4a108
 	.4byte 0x234000e4
 	.4byte 0x21b1e0b0
-	.4byte Data_02019600 + 0x1ce0
+	.4byte 0x0201b2e0
 	.4byte 0xb0e4b1e4
 	.4byte 0x09254000
 	.4byte 0xb2e8b1e8
 	.4byte 0xb1ec0201
 	.4byte 0x00840a01
 	.4byte 0xa1e825c0
-	.4byte Data_02019600 + 0xce8
+	.4byte 0x0201a2e8
 	.4byte 0x01cfa1ec
 	.4byte 0x2740100a
-	.4byte Data_02018000 + 0x12e8
+	.4byte 0x020192e8
 	.4byte 0x40200601
 	.4byte 0x020e202c
 	.4byte 0xff4000f7
@@ -5026,7 +5026,7 @@ Data_02002f3c:
 	.4byte 0xbce40201
 	.4byte 0x4000bbe4
 	.4byte 0xbce80925
-	.4byte Data_02019600 + 0x27e8
+	.4byte 0x0201bde8
 	.4byte 0x0a01bcec
 	.4byte 0x25c00084
 	.4byte 0xade8ace8
@@ -5055,7 +5055,7 @@ Data_02002f3c:
 	.4byte 0x018de829
 	.4byte 0xec060102
 	.4byte 0xe828c000
-	.4byte Data_02018000 + 0xf7f
+	.4byte 0x02018f7f
 	.4byte 0x00300601
 	.4byte 0xff400030
 	.4byte 0xb0ce4000
@@ -5070,7 +5070,7 @@ Data_02002f3c:
 	.4byte 0xaae0b927
 	.4byte 0xe4020193
 	.4byte 0x294000b9
-	.4byte Data_02019600 + 0x14e8
+	.4byte 0x0201aae8
 	.4byte 0xec4f0601
 	.4byte 0xe828c000
 	.4byte 0x0102019a
@@ -5094,7 +5094,7 @@ Data_02002f3c:
 	.4byte 0x83244000
 	.4byte 0x00e483e0
 	.4byte 0x85112940
-	.4byte Data_02018000 + 0x13e0
+	.4byte 0x020193e0
 	.4byte 0x00e485e4
 	.4byte 0xe8392840
 	.4byte 0x01020193
@@ -5112,7 +5112,7 @@ Data_02002f3c:
 	.4byte 0x0060a7e0
 	.4byte 0x00be082a
 	.4byte 0xbe082640
-	.4byte Sound_Wave55 + 0x39fc
+	.4byte 0x08264000
 	.4byte 0x4000febe
 	.4byte 0x003e0a24
 	.4byte 0xfc0a2240
@@ -5131,7 +5131,7 @@ Data_02002f3c:
 	.4byte 0xbe082c40
 	.4byte 0x00298000
 	.4byte 0xbe082c40
-	.4byte Sound_Wave56 + 0x2664
+	.4byte 0x08268050
 	.4byte 0x8000b0be
 	.4byte 0x8000ec27
 	.4byte 0x22c05038
@@ -5144,7 +5144,7 @@ Data_02002f3c:
 	.4byte 0xff0200df
 	.4byte 0xb77a0200
 	.4byte 0x00ff1210
-	.4byte gOverlayArea + 0x7f02
+	.4byte 0x0200ff02
 	.4byte 0xff0200ff
 	.4byte 0x80100200
 	.2byte 0x0000
@@ -5307,7 +5307,7 @@ Data_02003432:
 	.4byte 0x3e813e4f
 	.4byte 0x7e0bfaad
 	.4byte 0xce26f9bf
-	.4byte Monster_FireDragonSprites + 0x118
+	.4byte 0x08a4904c
 	.4byte 0x0a3e1d81
 	.4byte 0x5599f55f
 	.4byte 0xe147c0bb

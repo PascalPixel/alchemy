@@ -5527,7 +5527,7 @@ gIdejimaEventsWake:
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x00000003
-	.4byte Resource_Data012 + 0x33000a
+	.4byte 0x0863000a
 	.4byte Func_020000f0
 	.4byte 0x00000003
 	.4byte 0x0864000b

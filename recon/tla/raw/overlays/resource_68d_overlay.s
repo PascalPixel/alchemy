@@ -3735,7 +3735,7 @@ Data_02002620:
 	.4byte 0x61c9241c
 	.4byte 0x9c78080c
 	.4byte 0x5fca1127
-	.4byte Resource_Data012 + 0xf4cc
+	.4byte 0x0830f4cc
 	.4byte 0x78cfaf46
 	.4byte 0xe8e64de1
 	.4byte 0x021f0821
@@ -3787,7 +3787,7 @@ Data_02002620:
 	.4byte 0x1f04f513
 	.4byte 0xdd93643e
 	.4byte 0x9221c7b9
-	.4byte Text_MessageContexts + 0x2032e
+	.4byte 0x08080f5e
 	.4byte 0xd78fbcfa
 	.4byte 0x43079051
 	.4byte 0xedcc7b1f
@@ -3844,7 +3844,7 @@ Data_02002620:
 	.4byte 0x976c1ce1
 	.4byte 0x2f112ee1
 	.4byte 0x4863e8f7
-	.4byte Field_Map146 + 0x23e7
+	.4byte 0x08ccc66b
 	.4byte 0x51cb5c00
 	.4byte 0x0e68359f
 	.4byte 0x87300f61
@@ -3854,7 +3854,7 @@ Data_02002620:
 	.4byte 0x5e0a0204
 	.4byte 0x0605e4c3
 	.4byte 0x030822ce
-	.4byte Summon_WingedKnightATiles + 0x1258
+	.4byte 0x08871f38
 	.4byte 0x92906610
 	.4byte 0x2f906b10
 	.4byte 0x06624f30
@@ -3917,7 +3917,7 @@ Data_02002620:
 	.4byte 0x64ce443e
 	.4byte 0x8e0cc040
 	.4byte 0xd1a8fd7a
-	.4byte Resource_Data4C9 + 0x1629
+	.4byte 0x08d4af0d
 	.4byte 0x7c0ff3e0
 	.4byte 0x3fcf81fe
 	.4byte 0x3e07f9f0
@@ -4195,7 +4195,7 @@ Data_02002af8:
 	.4byte 0x1dfccac1
 	.4byte 0x394a0794
 	.4byte 0xe7f72967
-	.4byte Resource_Data012 + 0x97e1
+	.4byte 0x083097e1
 	.4byte 0x0de41669
 	.4byte 0x9fac26f4
 	.4byte 0x2238f0c8
@@ -4248,14 +4248,14 @@ Data_02002fd6:
 	.global Data_02002fe8
 Data_02002fe8:
 	.4byte 0x0c040e02
-	.4byte Text_MessageContexts + 0x1fdd6
+	.4byte 0x08080a06
 	.4byte 0x040c060a
 	.4byte 0x00100010
 	.4byte 0x060a040c
 	.4byte 0x0a060808
 	.4byte 0x0e020c04
 	.4byte 0x0c040e02
-	.4byte Text_MessageContexts + 0x1fdd6
+	.4byte 0x08080a06
 	.4byte 0x040c060a
 	.4byte 0x00100010
 	.4byte 0x060a040c

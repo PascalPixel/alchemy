@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-extern u8 Data_03001e98[];
+#include "RAM_BUFFER.H"
 
 /* resource/transfer/find_free_entry.c */
 
@@ -18,7 +18,7 @@ s32 Resource_FindFreeTransferEntry(s32 kind)
     u16 *p;
     u32 v;
 
-    (s32)s = (*(s32 *)((u32)&Data_03001e98)); state = s;
+    (s32)s = (s32)Ram_HeapSlots->menu_work; state = s;
     if (kind != 0) {
         (s32)i = 0;
         p = state + 0x1DE;

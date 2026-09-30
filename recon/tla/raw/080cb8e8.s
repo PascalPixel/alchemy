@@ -546,7 +546,7 @@ Func_080cb8e8:
 	bne.n	.L_080cbd74
 	ldrh	r0, [r5, #0]
 	movs	r1, #0
-	bl	0x080d260c
+	bl	Func_080d260c
 .L_080cbd74:
 	bl	Func_080cb8a4
 	movs	r3, #0

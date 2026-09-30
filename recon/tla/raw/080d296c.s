@@ -57,7 +57,7 @@ Func_080d296c:
 	bl	0x080cf424
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	0x080d260c
+	bl	Func_080d260c
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r7, r3
@@ -72,6 +72,9 @@ Func_080d296c:
 	.4byte 0x00000e0f
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080d2a0c
+	.thumb_func
+Func_080d2a0c:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0
 	adds	r5, r0, #0

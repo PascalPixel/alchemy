@@ -277,7 +277,7 @@ Func_080d4d08:
 	ldrb	r3, [r3, #26]
 	str	r3, [sp, #0]
 .L_080d4f16:
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	movs	r1, #6
 	adds	r0, r6, #0
 	bl	Object_SetMode
@@ -447,7 +447,7 @@ Func_080d4d08:
 	ldrb	r5, [r5, #0]
 	mov	r2, r9
 	strb	r5, [r2, #0]
-	bl	0x080d2350
+	bl	Func_080d2350
 	mov	r2, fp
 	cmp	r2, #0
 	beq.n	.L_080d50ae
@@ -549,7 +549,7 @@ Func_080d4d08:
 	movs	r2, #8
 	add	r2, r8
 	mov	r9, r2
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	adds	r3, r7, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]
@@ -837,11 +837,11 @@ Func_080d4d08:
 	.2byte 0x0001
 	.2byte 0x0000
 .L_080d5398:
-	bl	0x080d2350
+	bl	Func_080d2350
 	movs	r0, #0
 	b.n	.L_080d53a8
 .L_080d53a0:
-	bl	0x080d2350
+	bl	Func_080d2350
 	movs	r0, #1
 	negs	r0, r0
 .L_080d53a8:

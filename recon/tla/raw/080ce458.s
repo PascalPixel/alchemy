@@ -823,13 +823,13 @@ Func_080ce458:
 	lsls	r2, r2, #9
 	cmp	r3, r2
 	bge.n	.L_080ceb2e
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	ldr	r0, [r5, #8]
 	bl	0x080d3be8
 	adds	r0, r6, #0
 	movs	r1, #0
 	bl	0x080d407c
-	bl	0x080d2350
+	bl	Func_080d2350
 	b.n	0x080ceb34
 .L_080ceb2e:
 	adds	r1, r6, #0
@@ -840,11 +840,11 @@ Func_080ce458:
 	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ceb50
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	ldr	r0, [pc, #12]
 	movs	r1, #1
 	bl	0x08038040
-	bl	0x080d2350
+	bl	Func_080d2350
 .L_080ceb50:
 	movs	r0, #0
 	pop	{r5, r6, pc}

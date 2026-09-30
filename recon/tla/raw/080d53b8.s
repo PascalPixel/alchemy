@@ -43,7 +43,7 @@ Func_080d53b8:
 	movs	r1, #8
 	add	r1, r8
 	mov	r9, r1
-	bl	0x080d22a8
+	bl	Func_080d22a8
 	adds	r3, r7, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]
@@ -321,11 +321,11 @@ Func_080d53b8:
 	.2byte 0x0240
 	.2byte 0x0200
 .L_080d5650:
-	bl	0x080d2350
+	bl	Func_080d2350
 	movs	r0, #0
 	b.n	.L_080d5660
 .L_080d5658:
-	bl	0x080d2350
+	bl	Func_080d2350
 	movs	r0, #1
 	negs	r0, r0
 .L_080d5660:

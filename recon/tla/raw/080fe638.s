@@ -82,7 +82,7 @@ Func_080fe638:
 	cmp	r2, #0
 	bge.n	.L_080fe6ca
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080fe826
 	.4byte 0x00000038
 	.4byte 0x0000001a
@@ -98,7 +98,7 @@ Func_080fe638:
 	mov	r0, r8
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r3, #11
 	str	r3, [sp, #0]
 	mov	r0, r8
@@ -141,7 +141,7 @@ Func_080fe638:
 	adds	r6, r3, r0
 	adds	r0, r6, #0
 	adds	r0, #48
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r4, [sp, #4]
 	cmp	r0, #0
 	beq.n	.L_080fe79a
@@ -195,7 +195,7 @@ Func_080fe638:
 	ldr	r0, [pc, #56]
 	bl	0x080383f8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #48]
 	movs	r2, #7
 	ldr	r3, [r1, #4]
@@ -238,7 +238,7 @@ Func_080fe638:
 .L_080fe826:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fe834
 	b.n	.L_080fe6f4

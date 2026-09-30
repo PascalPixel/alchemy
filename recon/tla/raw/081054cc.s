@@ -96,7 +96,7 @@ Func_081054cc:
 	adds	r5, r0, #0
 	adds	r0, r2, #0
 	adds	r6, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #0
 	adds	r2, r0, #0
 	adds	r3, r5, #4

@@ -257,7 +257,7 @@ Func_08040ed4:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	mov	sl, r3
-	bl	0x08013560
+	bl	WaitFrames
 	bl	.L_08041068
 	movs	r7, #1
 	negs	r7, r7
@@ -304,7 +304,7 @@ Func_08040ed4:
 	movs	r7, #0
 .L_08041170:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [pc, #132]
 	movs	r2, #2
 	ldr	r3, [r6, #4]
@@ -352,7 +352,7 @@ Func_08040ed4:
 	bl	UiWork_Finalize
 	bl	.L_08041054
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	negs	r0, r0
 	cmp	r5, r0

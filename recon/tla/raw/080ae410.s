@@ -48,7 +48,7 @@ Func_080ae410:
 	b.n	.L_080ae46c
 .L_080ae466:
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080ae46c:
 	movs	r0, #1
 	add	sl, r0
@@ -80,7 +80,7 @@ Func_080ae410:
 	movs	r4, #130
 	lsls	r4, r4, #4
 	adds	r0, r7, r4
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 .L_080ae4ac:
 	adds	r7, #1
 	cmp	r7, #5
@@ -89,11 +89,11 @@ Func_080ae410:
 	lsls	r5, r5, #4
 	adds	r5, #34
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ae4ca
 	adds	r0, r5, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080ae4d0
 .L_080ae4ca:
 	adds	r0, r5, #0
@@ -149,7 +149,7 @@ Func_080ae410:
 	mov	fp, r3
 .L_080ae530:
 	adds	r0, r7, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r2, r9
 	mov	r3, r8
 	adds	r5, r0, #0
@@ -201,7 +201,7 @@ Func_080ae410:
 .L_080ae594:
 	adds	r0, r7, #0
 	adds	r1, r6, #0
-	bl	Func_080af148
+	bl	Inventory_Remove
 	cmp	r0, #1
 	beq.n	.L_080ae594
 .L_080ae5a0:
@@ -209,7 +209,7 @@ Func_080ae410:
 	cmp	r6, #0
 	bge.n	.L_080ae57e
 	adds	r0, r7, #0
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	movs	r1, #166
 	lsls	r1, r1, #1
 	adds	r7, #1
@@ -301,7 +301,7 @@ Func_080ae410:
 	movs	r5, #0
 .L_080ae66e:
 	adds	r0, r5, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #166
 	lsls	r3, r3, #1
 	adds	r1, r5, #0
@@ -329,7 +329,7 @@ Func_080ae410:
 	str	r3, [r0, r2]
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	cmp	r5, r7
 	blt.n	.L_080ae66e
 	mov	r1, r8
@@ -377,7 +377,7 @@ Func_080ae410:
 .L_080ae704:
 	adds	r0, r5, #0
 	str	r2, [sp, #0]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r2, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_080ae71a
@@ -396,7 +396,7 @@ Func_080ae410:
 	cmp	r2, #3
 	ble.n	.L_080ae6f2
 	movs	r0, #222
-	bl	Func_080af298
+	bl	PartyInventory_Remove
 	movs	r0, #0
 	bl	0x080afdd8
 	movs	r0, #1
@@ -412,7 +412,7 @@ Func_080ae410:
 .L_080ae758:
 	adds	r0, r2, #0
 	str	r2, [sp, #0]
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	ldr	r2, [sp, #0]
 	adds	r2, #1
 	cmp	r2, #7
@@ -443,7 +443,7 @@ Func_080ae410:
 	adds	r0, r6, #0
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	ldr	r1, [sp, #4]
 	ldr	r2, [sp, #0]
 	cmp	r0, #0

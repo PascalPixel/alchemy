@@ -2003,7 +2003,7 @@ Func_0813d098:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #68]
 	ldr	r2, [sp, #28]
 	ldr	r5, [sp, #80]
@@ -2365,7 +2365,7 @@ Func_0813d098:
 	str	r3, [r2, #0]
 	movs	r0, #1
 	adds	r7, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #120
 	beq.n	.L_0813e3a8
 	b.n	.L_0813e24c

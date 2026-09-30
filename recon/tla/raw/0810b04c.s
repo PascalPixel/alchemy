@@ -20,7 +20,7 @@ Func_0810b04c:
 	adds	r6, r0, #0
 	adds	r1, r5, #0
 	adds	r0, r7, #0
-	bl	Func_0810a864
+	bl	Shop_ServicePrice
 	mov	r8, r0
 	cmp	r6, #0
 	beq.n	.L_0810b0ac

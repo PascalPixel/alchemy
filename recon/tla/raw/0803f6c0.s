@@ -154,7 +154,7 @@ UiTextResource_Release:
 	movs	r0, #1
 	bl	Func_08042690
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 .L_0803f810:
 	push	{lr}
@@ -164,6 +164,6 @@ UiTextResource_Release:
 	bl	0x0803dc1c
 	bl	0x0803dd24
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	pop	{pc}
 	.2byte 0x0000

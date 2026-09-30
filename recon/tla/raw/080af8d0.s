@@ -6,7 +6,7 @@ Func_080af8d0:
 .L_080af8d0:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #42
 	adds	r2, r0, #0
 	adds	r1, #255
@@ -43,6 +43,9 @@ Func_080af8d0:
 	pop	{r5, pc}
 	.2byte 0x12c8
 	.2byte 0x080b
+	.global Owner_LevelUp
+	.thumb_func
+Owner_LevelUp:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -52,7 +55,7 @@ Func_080af8d0:
 	push	{r7}
 	adds	r6, r1, #0
 	mov	fp, r0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	sl, r0
 	movs	r0, #44
 	bl	0x08014dac
@@ -323,7 +326,7 @@ Func_080af8d0:
 	mov	r0, fp
 	bl	0x080b02d4
 	mov	r0, fp
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 .L_080afb6a:
 	mov	r0, r9
 	bl	Func_08013164

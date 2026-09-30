@@ -22,7 +22,7 @@ Item_GetDirect:
 .L_080aec1c:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	bl	.L_080aec04

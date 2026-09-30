@@ -158,7 +158,7 @@ Func_080ff850:
 	sub	sp, #8
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, fp
 	ldr	r3, [r1, #24]
 	movs	r2, #226
@@ -376,7 +376,7 @@ Func_080ff850:
 	cmp	r2, #4
 	ble.n	.L_080ffa58
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
@@ -411,7 +411,7 @@ Func_080ff850:
 	ldrb	r0, [r3, #0]
 	adds	r5, r2, #0
 	sub	sp, #8
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	str	r0, [sp, #4]
 	mov	r0, r8
 	bl	0x08038260
@@ -634,7 +634,7 @@ Func_080ff850:
 	adds	r4, #22
 	adds	r3, r7, r4
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r1, r9
 	movs	r2, #0
 	bl	0x080fd6f0
@@ -652,7 +652,7 @@ Func_080ff850:
 	movs	r3, #1
 	movs	r0, #1
 	mov	fp, r3
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_080ffd98
 .L_080ffd96:
 	add	r6, sp, #20
@@ -675,7 +675,7 @@ Func_080ff850:
 	mov	r8, r3
 .L_080ffdba:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	add	r3, sp, #28
 	ldr	r1, [r6, #20]
 	movs	r0, #0
@@ -797,7 +797,7 @@ Func_080ff850:
 .L_080ffeaa:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080ffeb8
 	b.n	.L_080ffd4c
@@ -848,7 +848,7 @@ Func_080ff850:
 	sub	sp, #8
 	bl	0x08038260
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, sl
 	ldr	r3, [r1, #24]
 	movs	r2, #226
@@ -1064,7 +1064,7 @@ Func_080ff850:
 	bl	Func_080f9224
 .L_081000c6:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
@@ -1096,7 +1096,7 @@ Func_080ff850:
 	ldrb	r0, [r3, #0]
 	adds	r5, r2, #0
 	sub	sp, #4
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #96
 	str	r3, [sp, #0]
 	movs	r2, #8
@@ -1250,7 +1250,7 @@ Func_080ff850:
 	mov	sl, r3
 	adds	r3, r7, r1
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	mov	r2, sl
 	mov	fp, r0
 	movs	r3, #10
@@ -1296,7 +1296,7 @@ Func_080ff850:
 	adds	r2, #22
 	adds	r3, r7, r2
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #226
 	lsls	r3, r3, #1
 	adds	r1, r7, r3
@@ -1349,7 +1349,7 @@ Func_080ff850:
 	movs	r1, #1
 	movs	r0, #1
 	str	r1, [sp, #12]
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_08100334
 .L_08100330:
 	add	r2, sp, #52
@@ -1386,7 +1386,7 @@ Func_080ff850:
 	mov	sl, r1
 .L_08100374:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r8
 	add	r3, sp, #60
 	ldr	r1, [r2, #20]
@@ -1522,7 +1522,7 @@ Func_080ff850:
 .L_0810047e:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_0810048c
 	b.n	.L_0810029a
@@ -1591,7 +1591,7 @@ Func_080ff850:
 	cmp	r3, #0
 	bne.n	.L_08100532
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	adds	r0, r5, #0
 	movs	r1, #1
 	bl	0x080fadd0

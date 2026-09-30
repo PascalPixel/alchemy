@@ -181,7 +181,7 @@ Func_08153ebc:
 	movs	r3, #240
 	str	r3, [r2, #16]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #184]
 	movs	r0, #1
 	movs	r2, #0
@@ -841,7 +841,7 @@ Func_08153ebc:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #44]
 	adds	r0, #1
 	str	r0, [sp, #44]
@@ -1193,7 +1193,7 @@ Func_08153ebc:
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [sp, #44]
 	adds	r3, #1
 	str	r3, [sp, #44]

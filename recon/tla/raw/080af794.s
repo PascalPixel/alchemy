@@ -28,7 +28,7 @@ Func_080af794:
 	mov	r9, sl
 .L_080af7c2:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	ldr	r0, [pc, #144]
 	mov	r1, r9
@@ -68,7 +68,7 @@ Func_080af794:
 	cmp	r0, r1
 	beq.n	.L_080af8be
 .L_080af812:
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	cmp	r7, #0
 	beq.n	.L_080af8ae
@@ -137,7 +137,7 @@ Func_080af794:
 	bl	Func_080b0298
 	mov	r3, r8
 	ldr	r0, [r3, #0]
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 .L_080af8ae:
 	movs	r1, #4
 	add	r8, r1

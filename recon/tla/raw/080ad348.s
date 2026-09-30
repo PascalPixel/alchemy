@@ -10,7 +10,7 @@ Trade_GetOfferState:
 	cmp	r0, #0
 	beq.n	.L_080ad356
 	movs	r0, #131
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	b.n	.L_080ad358
 .L_080ad356:
 	ldr	r0, [pc, #4]
@@ -38,7 +38,7 @@ Trade_GetOfferState:
 	ldrb	r0, [r2, #0]
 	adds	r2, #1
 	str	r2, [sp, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldrb	r3, [r0, #15]
 	subs	r5, #1
 	adds	r6, r6, r3

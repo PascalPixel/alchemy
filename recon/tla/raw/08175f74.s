@@ -93,7 +93,7 @@ Func_08175f74:
 	adds	r3, #64
 	strh	r5, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	bl	0x08014c4c
 	movs	r7, #237
 	ldr	r5, [sp, #68]
@@ -3197,7 +3197,7 @@ Func_08175f74:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #20]
 	ldr	r5, [sp, #16]
 	ldr	r6, [sp, #80]
@@ -3286,7 +3286,7 @@ Func_08175f74:
 	lsls	r2, r2, #19
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r5, #237
 	ldr	r4, [sp, #68]
 	lsls	r5, r5, #3
@@ -4831,7 +4831,7 @@ Func_08175f74:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #80]
 	adds	r0, #1
 	str	r0, [sp, #80]

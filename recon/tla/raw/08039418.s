@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08039418
+	.global RenderOutput_RedrawSavedRect
 	.thumb_func
-Func_08039418:
+RenderOutput_RedrawSavedRect:
 	push	{lr}
 	movs	r3, #12
 	ldrsh	r4, [r0, r3]

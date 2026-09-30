@@ -40,9 +40,9 @@ Func_080202d8:
 	bx	r4
 	.2byte 0xcd4d
 	.2byte 0x0802
-	.global Func_080202e0
+	.global Map_DisableUpdateCallbackFar
 	.thumb_func
-Func_080202e0:
+Map_DisableUpdateCallbackFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xcd71

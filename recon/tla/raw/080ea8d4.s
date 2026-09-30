@@ -61,7 +61,7 @@ Func_080ea8d4:
 	adds	r5, r5, r0
 	movs	r1, #0
 	adds	r0, r7, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r0, [r7, #8]
 	movs	r3, #255
 	strb	r3, [r5, #2]
@@ -97,14 +97,14 @@ Func_080ea8d4:
 	ldr	r3, [r7, #20]
 	bl	0x080ea8a8
 	adds	r0, r6, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080ea9b4
 	adds	r0, r7, #0
 	movs	r1, #0
 	bl	Object_SetMode
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080ea9bc
 .L_080ea9b4:
 	adds	r0, r7, #0
@@ -194,7 +194,7 @@ Func_080ea8d4:
 	lsls	r3, r3, #16
 	lsrs	r0, r3, #16
 	mov	fp, r3
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080eaa74
 	cmp	r5, #0
@@ -253,12 +253,12 @@ Func_080ea8d4:
 	lsrs	r5, r3, #16
 	asrs	r7, r0, #19
 	adds	r0, r5, #0
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080eaaf0
 	adds	r0, r5, #0
 	subs	r7, #4
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080eaaf8
 .L_080eaaf0:
 	adds	r0, r5, #0
@@ -283,7 +283,7 @@ Func_080ea8d4:
 	mov	r1, fp
 	strb	r0, [r3, #0]
 	lsrs	r0, r1, #16
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080eab34
 	movs	r3, #0
@@ -451,7 +451,7 @@ Func_080ea8d4:
 	strb	r3, [r2, #0]
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	0x08020218
+	bl	ObjectDispatch_SetSingleChildField26Far
 	ldr	r4, [sp, #0]
 	mov	r1, r9
 	adds	r4, #4

@@ -1176,7 +1176,7 @@ Func_0815f16c:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl 0x08013560
+	bl WaitFrames
 	ldr r2, [sp, #112]
 	adds r2, #1
 	str r2, [sp, #112]

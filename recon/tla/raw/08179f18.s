@@ -322,7 +322,7 @@ Func_08179f18:
 	movs	r4, #1
 	str	r4, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #160]
 	adds	r5, #1
 	str	r5, [sp, #160]
@@ -2456,7 +2456,7 @@ Func_08179f18:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #160]
 	movs	r6, #150
 	adds	r5, #1
@@ -2842,7 +2842,7 @@ Func_08179f18:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #160]
 	adds	r0, #1
 	str	r0, [sp, #160]
@@ -2873,7 +2873,7 @@ Func_08179f18:
 	adds	r7, r0, #0
 	adds	r0, r5, #0
 	ldr	r6, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2

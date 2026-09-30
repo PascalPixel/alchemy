@@ -2,7 +2,7 @@
 
 s32 Inventory_Count(s32 owner)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner);
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
     s32 count = 0;
 
     if (inv->inventory[count] != 0) {

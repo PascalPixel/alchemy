@@ -135,7 +135,7 @@ Func_0804dabc:
 	adds	r5, r2, #0
 .L_0804dbda:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r3, [r5, #0]
 	cmp	r3, #0
 	bne.n	.L_0804dbda
@@ -188,7 +188,7 @@ Func_0804dabc:
 	bl	UiTextResource_SetPosition
 	movs	r0, #1
 	adds	r6, r5, #0
-	bl	0x08013560
+	bl	WaitFrames
 	b.n	.L_0804dbe6
 .L_0804dc56:
 	add	sp, #24

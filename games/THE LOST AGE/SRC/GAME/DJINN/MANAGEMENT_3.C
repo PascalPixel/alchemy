@@ -74,7 +74,7 @@ u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
 
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
-    struct OwnerTransferState *state = OwnerState_Get(source);
+    struct OwnerTransferState *state = Owner_GetState(source);
     s32 avail_off = index * 4 + 0xf8;
     u32 mask = 1U << bit;
     u32 present;

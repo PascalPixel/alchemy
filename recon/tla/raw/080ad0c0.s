@@ -46,9 +46,9 @@ Func_080ad0f0:
 	bx	r4
 	.2byte 0xfdbd
 	.2byte 0x080a
-	.global Func_080ad0f8
+	.global Party_AddActiveOwnerFar
 	.thumb_func
-Func_080ad0f8:
+Party_AddActiveOwnerFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xfdd9

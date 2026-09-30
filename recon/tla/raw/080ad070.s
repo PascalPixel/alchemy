@@ -18,6 +18,9 @@ BattleAction_Get:
 	bx	r4
 	.2byte 0xf6f5
 	.2byte 0x080a
+	.global Equipment_HasValueFar
+	.thumb_func
+Equipment_HasValueFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xf4b9

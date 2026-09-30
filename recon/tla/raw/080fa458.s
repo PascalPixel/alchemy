@@ -30,7 +30,7 @@ Func_080fa458:
 	bl	0x0810508c
 	bl	.L_080fa458
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r2, #184
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
@@ -125,7 +125,7 @@ Func_080fa458:
 	lsls	r5, r5, #2
 	adds	r3, r6, r5
 	ldrh	r0, [r7, r3]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #226
 	lsls	r1, r1, #1
 	adds	r6, r7, r1
@@ -147,7 +147,7 @@ Func_080fa458:
 	ldr	r0, [r7, r3]
 	bl	0x080f8888
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, r8
 	pop	{r3, r5}
 	mov	r8, r3
@@ -181,7 +181,7 @@ Func_080fa458:
 	str	r1, [sp, #12]
 	mov	r9, r1
 	str	r1, [sp, #8]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r5, r7, #0
 	movs	r3, #10
 	mov	r2, sl
@@ -257,7 +257,7 @@ Func_080fa458:
 	ldrh	r0, [r3, r6]
 	mov	r9, r1
 	ldr	r5, [r7, #40]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	ldr	r2, [sp, #8]
 	mov	fp, r0
 	cmp	r2, #0
@@ -265,7 +265,7 @@ Func_080fa458:
 	ldr	r3, [sp, #20]
 	lsls	r3, r3, #1
 	ldrh	r0, [r3, r6]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #226
 	lsls	r3, r3, #1
 	adds	r1, r7, r3
@@ -313,7 +313,7 @@ Func_080fa458:
 	lsls	r0, r0, #2
 	bl	Func_08104ef8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080fa6f8:
 	ldr	r0, [r7, #16]
 	ldr	r1, [sp, #20]
@@ -336,7 +336,7 @@ Func_080fa458:
 	movs	r1, #16
 	bl	Func_080f8a44
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [pc, #288]
 	movs	r3, #1
 	ldr	r2, [r5, #4]
@@ -442,7 +442,7 @@ Func_080fa458:
 .L_080fa7f4:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fa802
 	b.n	.L_080fa668

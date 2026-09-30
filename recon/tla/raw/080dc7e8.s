@@ -97,7 +97,7 @@ Func_080dc7e8:
 .L_080dc89e:
 	movs	r0, #1
 	adds	r7, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #89
 	bgt.n	.L_080dc8b2
 	movs	r3, #0

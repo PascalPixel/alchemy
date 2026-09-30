@@ -63,7 +63,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
         owners = (u8 *)&gPartyState + off * 2;
         count = result;
         do {
-            u8 *p = OwnerState_Get(*owners);
+            u8 *p = Owner_GetState(*owners);
 
             if (((struct OwnerState_0807a0f4 *)p)->values[index] <= 9 &&
                 (p += 280, 1)) {

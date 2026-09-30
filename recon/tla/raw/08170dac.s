@@ -795,7 +795,7 @@ Func_08170dac:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #12]
 	ldr	r5, [sp, #64]
 	adds	r4, #8
@@ -1692,7 +1692,7 @@ Func_08170dac:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #56]
 	adds	r0, #1
 	str	r0, [sp, #56]

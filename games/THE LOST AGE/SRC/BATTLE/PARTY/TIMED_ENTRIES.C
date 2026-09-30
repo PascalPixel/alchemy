@@ -25,7 +25,7 @@ struct BattleObject {
     s16 active;
 };
 
-struct BattleObject *OwnerState_Get();
+struct BattleObject *Owner_GetState();
 struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
 void Owner_RecalculateStatsFar(u8 id);
 void Djinn_ActivateFar(u8 id, u8 x, u8 y);
@@ -33,7 +33,7 @@ void Trade_RemoveOfferFar(u8 id, u8 x, u8 y);
 
 s32 BattleUnit_TickCounter13f(s32 id)
 {
-    u8 *value = (u8 *)OwnerState_Get(id) + 0x13F;
+    u8 *value = (u8 *)Owner_GetState(id) + 0x13F;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {
@@ -45,7 +45,7 @@ s32 BattleUnit_TickCounter13f(s32 id)
 
 s32 BattleUnit_TickCounter146(s32 id)
 {
-    u8 *base = (u8 *)OwnerState_Get(id);
+    u8 *base = (u8 *)Owner_GetState(id);
     u8 *value = base + 0x146;
     if (*value != 0) {
         (*value)--;
@@ -74,7 +74,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
         timed_entry = list->entries;
         do {
             if (timed_entry->timer > 0 &&
-                OwnerState_Get(timed_entry->id)->active != 0) {
+                Owner_GetState(timed_entry->id)->active != 0) {
                 timed_entry->timer--;
             }
             index++;

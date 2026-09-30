@@ -52,7 +52,7 @@ Func_08013f80:
 	adds	r5, r2, #0
 .L_08013fe8:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldrb	r3, [r5, #0]
 	cmp	r3, #0
 	bne.n	.L_08013fe8

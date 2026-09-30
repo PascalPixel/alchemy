@@ -218,7 +218,7 @@ Func_08182898:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #8]
 	adds	r0, #1
 	str	r0, [sp, #8]
@@ -301,7 +301,7 @@ Func_08182898:
 	str	r3, [r4, #0]
 	movs	r0, #1
 	str	r7, [r6, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	fp, r0
 	mov	r1, fp
@@ -2887,7 +2887,7 @@ Func_08182898:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #20]
 	ldr	r2, [sp, #16]
 	movs	r1, #128
@@ -2983,14 +2983,14 @@ Func_08182898:
 	ldr	r0, [r3, #0]
 	bl	0x0814cc4c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [pc, #484]
 	bl	Func_08014644
 	ldr	r2, [pc, #480]
 	movs	r3, #120
 	str	r3, [r2, #16]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [pc, #472]
 	bl	Resource_GetTableEntry
 	adds	r1, r0, #0
@@ -3353,7 +3353,7 @@ Func_08182898:
 	movs	r0, #1
 	str	r3, [r2, #0]
 	add	fp, r7
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r0, fp
 	cmp	r0, #60
 	beq.n	.L_081843c4
@@ -6291,7 +6291,7 @@ Func_08182898:
 	movs	r6, #1
 	str	r6, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #188
 	ldr	r7, [sp, #32]
 	ldr	r1, [sp, #28]
@@ -7446,7 +7446,7 @@ Func_08182898:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #20]
 	movs	r1, #1
 	add	fp, r1
@@ -7481,7 +7481,7 @@ Func_08182898:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	add	r7, sp, #152
 	ldr	r3, [pc, #180]
 	ldrh	r7, [r7, #0]
@@ -8479,7 +8479,7 @@ Func_08182898:
 	str	r3, [r2, #0]
 	movs	r0, #1
 	mov	r6, fp
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r6, #104
 	beq.n	.L_08186d94
 	b.n	.L_081865f6
@@ -10520,7 +10520,7 @@ Func_08182898:
 	str	r2, [r3, #0]
 .L_08187e22:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r7, [sp, #16]
 	ldr	r0, [sp, #12]
 	ldr	r1, [sp, #76]
@@ -11441,7 +11441,7 @@ Func_08182898:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #20]
 	ldr	r7, [sp, #76]
 	adds	r5, #8
@@ -11800,7 +11800,7 @@ Func_08182898:
 	lsls	r3, r3, #12
 	movs	r0, #20
 	str	r3, [r4, #48]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #56
 	movs	r1, #92
 	movs	r5, #0
@@ -12277,7 +12277,7 @@ Func_08182898:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r5, [sp, #12]
 	ldr	r0, [sp, #8]
 	ldr	r1, [sp, #44]
@@ -12858,7 +12858,7 @@ Func_08182898:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #8]
 	ldr	r2, [sp, #12]
 	adds	r1, #1
@@ -14081,7 +14081,7 @@ Func_08182898:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #44]
 	adds	r1, #1
 	str	r1, [sp, #44]
@@ -14915,7 +14915,7 @@ Func_08182898:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #40]
 	ldr	r1, [sp, #52]
 	adds	r0, #1

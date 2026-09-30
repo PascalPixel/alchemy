@@ -7,9 +7,9 @@ Func_080380f8:
 	bx	r4
 	.2byte 0xd3c1
 	.2byte 0x0803
-	.global Func_08038100
+	.global UiWork_FinalizeEntityMatchingLocalizedIdFar
 	.thumb_func
-Func_08038100:
+UiWork_FinalizeEntityMatchingLocalizedIdFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xd451

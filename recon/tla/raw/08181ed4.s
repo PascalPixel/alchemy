@@ -556,7 +556,7 @@ Func_08181ed4:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #1
 	add	sl, r0
 	mov	r1, sl

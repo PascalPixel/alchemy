@@ -25,7 +25,7 @@ Func_080cef24:
 	strh	r3, [r6, #6]
 	movs	r0, #1
 	subs	r7, #1
-	bl	0x08013560
+	bl	WaitFrames
 	cmp	r7, #0
 	bge.n	.L_080cef3a
 	mov	r3, r8

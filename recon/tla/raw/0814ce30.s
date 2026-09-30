@@ -1577,7 +1577,7 @@ Func_0814ce30:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #56]
 	movs	r1, #183
 	adds	r0, #1
@@ -1722,7 +1722,7 @@ Func_0814ce30:
 	ldr	r0, [r3, #0]
 	bl	0x0814cc4c
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [pc, #100]
 	movs	r0, #1
 	movs	r2, #0
@@ -2563,7 +2563,7 @@ Func_0814ce30:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r4, [sp, #40]
 	movs	r5, #144
 	adds	r4, #1
@@ -3130,7 +3130,7 @@ Func_0814ce30:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [sp, #40]
 	movs	r5, #14
 	adds	r6, #1
@@ -3480,7 +3480,7 @@ Func_0814ce30:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, fp
 	ldr	r3, [r1, #20]
 	movs	r0, #1

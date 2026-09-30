@@ -345,7 +345,7 @@ Func_08144044:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #28]
 	ldr	r1, [sp, #40]
 	adds	r2, #1
@@ -669,7 +669,7 @@ Func_08144044:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, r9
 	ldr	r3, [r1, #20]
 	movs	r2, #1

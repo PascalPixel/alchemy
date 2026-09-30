@@ -6,7 +6,7 @@ Func_080b0298:
 .L_080b0298:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r1, #10
 	adds	r6, r0, #0
 	bl	Inventory_GetEquippedItem

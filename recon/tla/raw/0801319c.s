@@ -99,7 +99,7 @@ Func_0801319c:
 	strh	r5, [r2, #0]
 	strb	r1, [r3, #0]
 	movs	r0, #10
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	bl	Func_080c8008
 	add	sp, #4

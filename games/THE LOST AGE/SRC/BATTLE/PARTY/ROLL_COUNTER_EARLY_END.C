@@ -4,12 +4,12 @@
 
 /* battle/unit/roll_counter_early_end.c */
 s32 BattleRandom16Far(void);
-struct CounterRuntime *OwnerState_Get();
+struct CounterRuntime *Owner_GetState();
 s32 BattleUnit_RollCounterEarlyEnd(s32 value, s32 count, s32 bias);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 object_id, s32 count, s32 bias)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
 
     if (count <= 5) {
         s32 threshold = ((state->value_42 * 3 - count * 5) + bias) * 0x28f;
@@ -22,7 +22,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 object_id, s32 count, s32 bias)
 /* battle/unit/tick_counter_132.c */
 s32 BattleUnit_TickCounter132(s32 value)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
 
     if (state->counter_132 != 0) {
         s32 zero;
@@ -46,7 +46,7 @@ s32 BattleUnit_TickCounter132(s32 value)
 /* battle/unit/tick_counter_134.c */
 s32 BattleUnit_TickCounter134(s32 value)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
 
     if (state->counter_134 != 0) {
         state->counter_134--;
@@ -67,7 +67,7 @@ s32 BattleUnit_TickCounter134(s32 value)
 /* battle/unit/tick_counter_136.c */
 s32 BattleUnit_TickCounter136(s32 value)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
 
     if (state->counter_136 != 0) {
         state->counter_136--;
@@ -88,7 +88,7 @@ s32 BattleUnit_TickCounter136(s32 value)
 /* battle/unit/tick_counter_138.c */
 s32 BattleUnit_TickCounter138(s32 value)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
     if (state->counter_138 != 0) {
         state->counter_138--;
         if (state->counter_138 == 0)
@@ -104,7 +104,7 @@ s32 BattleUnit_TickCounter138(s32 value)
 /* battle/unit/tick_counter_139.c */
 s32 BattleUnit_TickCounter139(s32 value)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
     if (state->counter_139 != 0) {
         state->counter_139--;
         if (state->counter_139 == 0)
@@ -120,7 +120,7 @@ s32 BattleUnit_TickCounter139(s32 value)
 /* battle/unit/tick_counter_13a.c */
 s32 BattleUnit_TickCounter13a(s32 value)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
     if (state->counter_13a != 0) {
         state->counter_13a--;
         if (state->counter_13a == 0)
@@ -136,7 +136,7 @@ s32 BattleUnit_TickCounter13a(s32 value)
 /* battle/unit/tick_counter_13b.c */
 s32 BattleUnit_TickCounter13b(s32 value)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
     if (state->counter_13b != 0) {
         state->counter_13b--;
         if (state->counter_13b == 0)
@@ -152,7 +152,7 @@ s32 BattleUnit_TickCounter13b(s32 value)
 /* battle/unit/tick_counter_13c.c */
 s32 BattleUnit_TickCounter13c(s32 value)
 {
-    struct CounterRuntime *state = OwnerState_Get();
+    struct CounterRuntime *state = Owner_GetState();
     if (state->counter_13c != 0) {
         state->counter_13c--;
         if (state->counter_13c == 0)
@@ -177,7 +177,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
     s32 cnt;
     void *obj;
 
-    obj = OwnerState_Get(id);
+    obj = Owner_GetState(id);
     cnt = FIELD_AT_OFFSET(obj, u8 *, 0x13D);
     t = cnt & 0xFF;
     if (t != 0) {

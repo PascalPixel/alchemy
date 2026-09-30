@@ -1,36 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080af404
-	.thumb_func
-Func_080af404:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	sub	sp, #32
-	mov	r5, sp
-	mov	r8, r0
-	adds	r0, r5, #0
-	movs	r7, #0
-	bl	Party_ListActiveOwners
-	cmp	r7, r0
-	bge.n	.L_080af432
-	adds	r6, r5, #0
-	adds	r5, r0, #0
-.L_080af420:
-	ldrh	r0, [r6, #0]
-	mov	r1, r8
-	bl	0x080af3a0
-	subs	r5, #1
-	adds	r6, #2
-	adds	r7, r7, r0
-	cmp	r5, #0
-	bne.n	.L_080af420
-.L_080af432:
-	adds	r0, r7, #0
-	add	sp, #32
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
 	push	{lr}
 	movs	r3, #252
 	lsls	r3, r3, #6

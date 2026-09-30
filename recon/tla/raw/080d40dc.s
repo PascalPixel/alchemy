@@ -69,7 +69,7 @@ Func_080d40dc:
 	b.n	.L_080d415a
 .L_080d4154:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 .L_080d415a:
 	adds	r0, r5, #0
 	bl	0x08038050

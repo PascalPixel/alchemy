@@ -4,7 +4,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot)
 {
     s32 item_id;
 
-    owner = ((struct OwnerInventoryState *)OwnerState_Get(owner))->inventory[slot];
+    owner = ((struct OwnerInventoryState *)Owner_GetState(owner))->inventory[slot];
     item_id = 0x1ff;
     item_id &= owner;
     owner = (u32)owner >> 11;
@@ -17,7 +17,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot)
 
 s32 Inventory_Count(s32 owner)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner);
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
     s32 count = 0;
 
     if (inv->inventory[count] != 0) {
@@ -74,7 +74,7 @@ s32 PartyInventory_CountFreeSlots(void)
    そうでなければ空き枠へ入れる。戻り値は枠番号、失敗は -1。 */
 s32 Inventory_Add(s32 owner_id, s32 item_id)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner_id);
+    struct OwnerInventoryState *inv = Owner_GetState(owner_id);
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 slot;
 

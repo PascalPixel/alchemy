@@ -41,7 +41,7 @@
 	overlay_veneer Object_CommitPosition
 	overlay_veneer Func_08020200
 	overlay_veneer Func_08020208
-	overlay_veneer Func_08020218
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer Func_08020228
 	overlay_veneer Func_08020278
 	overlay_veneer Func_08020318
@@ -54,7 +54,7 @@
 	overlay_veneer Func_080383c8
 	overlay_veneer Func_080ad0c8
 	overlay_veneer Func_080ad0f0
-	overlay_veneer Func_080ad0f8
+	overlay_veneer Party_AddActiveOwnerFar
 	overlay_veneer Func_080ad110
 	overlay_veneer Func_080ad150
 	overlay_veneer Func_080ad170

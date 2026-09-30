@@ -43,7 +43,7 @@ Func_080b1088:
 	mov	sl, r1
 .L_080b10d2:
 	mov	r0, sl
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	adds	r2, r7, #0
 	adds	r2, #216
@@ -139,7 +139,7 @@ Func_080b1088:
 	mov	r0, sl
 	bl	Func_080b0298
 	mov	r0, sl
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	movs	r2, #1
 	add	sl, r2
 	mov	r3, sl
@@ -173,7 +173,7 @@ Func_080b1088:
 	lsls	r6, r6, #4
 .L_080b11d4:
 	adds	r0, r6, #0
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	movs	r3, #224
 	lsls	r3, r3, #4
 	adds	r6, #1
@@ -202,7 +202,7 @@ Func_080b1088:
 	movs	r6, #4
 .L_080b120e:
 	adds	r0, r6, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #14
 	adds	r0, #216
 .L_080b1218:
@@ -217,7 +217,7 @@ Func_080b1088:
 	bl	Func_080b0298
 	adds	r0, r6, #0
 	adds	r6, #1
-	bl	Func_080ad3f8
+	bl	Owner_RecalculateStats
 	cmp	r6, #7
 	ble.n	.L_080b120e
 	ldr	r1, [pc, #60]
@@ -248,7 +248,7 @@ Func_080b1088:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	0x08016d18
+	bl	GameFlag_ClearBitFar
 	pop	{r5, r6, pc}
 	.4byte 0x020023c4
 	.4byte 0x02000240

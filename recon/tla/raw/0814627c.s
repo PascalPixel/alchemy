@@ -428,7 +428,7 @@ Func_0814627c:
 	adds	r3, r2, r4
 	str	r5, [r3, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r1, [sp, #68]
 	ldr	r3, [sp, #80]
 	adds	r1, #1
@@ -953,7 +953,7 @@ Func_0814627c:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r2, [sp, #68]
 	adds	r2, #1
 	str	r2, [sp, #68]
@@ -1383,7 +1383,7 @@ Func_0814627c:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #40]
 	adds	r0, #1
 	str	r0, [sp, #40]
@@ -2956,7 +2956,7 @@ Func_0814627c:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r6, [sp, #84]
 	movs	r7, #200
 	adds	r6, #1

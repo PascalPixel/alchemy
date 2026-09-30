@@ -36,7 +36,7 @@ Func_080f94a4:
 	movs	r0, #0
 	bl	Func_080383e8
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	bl	0x080f80e0
 	movs	r1, #129
@@ -158,10 +158,10 @@ Func_080f94a4:
 	adds	r0, r6, #0
 	bl	Func_08013164
 	movs	r0, #1
-	bl	0x08013560
-	bl	Func_080f80a8
+	bl	WaitFrames
+	bl	Scheduler_DisableOverlayCallbacksWithFlags
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	movs	r0, #0
 	movs	r2, #30
 	movs	r1, #0
@@ -170,7 +170,7 @@ Func_080f94a4:
 	ldr	r3, [r7, #60]
 	mov	r1, fp
 	strb	r1, [r3, #6]
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	mov	r0, r8
 	add	sp, #16
 	pop	{r3, r5, r6, r7}

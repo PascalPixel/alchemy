@@ -241,7 +241,7 @@ Func_080f9644:
 	strb	r3, [r2, #5]
 	ldrb	r0, [r1, #0]
 	add	r5, r9
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	Func_080fad88
@@ -386,7 +386,7 @@ Func_080f9644:
 	lsls	r5, r5, #1
 	ldrb	r0, [r3, #0]
 	add	r5, r9
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	Func_080fad88
@@ -545,7 +545,7 @@ Func_080f9644:
 	add	r3, r9
 	ldrb	r7, [r3, #0]
 	adds	r0, r7, #0
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	adds	r0, r6, #1
 	cmp	r0, #0
 	ble.n	.L_080f9b1a
@@ -592,7 +592,7 @@ Func_080f9644:
 	ldr	r3, [r1, #20]
 	movs	r0, #1
 	strb	r2, [r3, #5]
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r2, r9
 	ldr	r0, [r2, #48]
 	bl	0x08038268
@@ -623,7 +623,7 @@ Func_080f9644:
 	ldr	r2, [r3, #0]
 	movs	r3, #13
 	strb	r3, [r2, #5]
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	b.n	.L_080fa280
 	movs	r5, #182
 	lsls	r5, r5, #1
@@ -835,7 +835,7 @@ Func_080f9644:
 .L_080f9d38:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080f9d46
 	b.n	.L_080fa280
@@ -848,7 +848,7 @@ Func_080f9644:
 	movs	r3, #13
 	strb	r3, [r2, #5]
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, sl
 	cmp	r1, #1
 	bne.n	.L_080f9d6e
@@ -932,14 +932,14 @@ Func_080f9644:
 	adds	r3, #22
 	add	r3, r9
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #140
 	str	r0, [sp, #12]
 	lsls	r3, r3, #1
 	adds	r3, #255
 	add	r3, r9
 	ldrb	r0, [r3, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r5, #166
 	lsls	r5, r5, #1
 	str	r0, [sp, #8]
@@ -1128,7 +1128,7 @@ Func_080f9644:
 	mov	sl, r3
 .L_080f9f98:
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	mov	r1, sl
 	cmp	r1, #1
 	bne.n	.L_080f9fcc
@@ -1190,7 +1190,7 @@ Func_080f9644:
 	adds	r6, r0, #0
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fa09a
 	mov	r3, r9
@@ -1244,7 +1244,7 @@ Func_080f9644:
 	mov	r0, fp
 	bl	Func_08013164
 .L_080fa0a6:
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	movs	r2, #0
 	mov	r8, r2
 	b.n	.L_080fa280
@@ -1295,7 +1295,7 @@ Func_080f9644:
 	strb	r3, [r2, #5]
 	add	r5, r9
 	ldrb	r0, [r7, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	Func_080fad88
@@ -1307,7 +1307,7 @@ Func_080f9644:
 	adds	r0, r5, #0
 	bl	0x080fadd0
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	ldrb	r3, [r7, #0]
 	mov	r2, sl
 	ldrh	r1, [r2, #0]
@@ -1349,7 +1349,7 @@ Func_080f9644:
 	adds	r6, #22
 	add	r6, r9
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r3, #180
 	lsls	r3, r3, #1
 	add	r3, r9
@@ -1377,7 +1377,7 @@ Func_080f9644:
 	strb	r3, [r2, #5]
 	add	r5, r9
 	ldrb	r0, [r6, #0]
-	bl	OwnerState_Get
+	bl	Owner_GetState
 	movs	r2, #0
 	adds	r1, r5, #0
 	bl	Func_080fad88
@@ -1391,7 +1391,7 @@ Func_080f9644:
 	bl	0x080fadd0
 	lsls	r5, r5, #2
 	movs	r0, #1
-	bl	0x08013560
+	bl	WaitFrames
 	add	r5, r9
 	movs	r3, #1
 	strb	r3, [r5, #0]
@@ -1410,7 +1410,7 @@ Func_080f9644:
 	ldr	r0, [pc, #176]
 	movs	r1, #14
 	bl	Func_080f8ce8
-	bl	0x080c85d0
+	bl	Event_ClearInvalidPackedValuesFar
 	b.n	.L_080fa276
 	mov	r3, r9
 	ldr	r2, [r3, #20]
@@ -1460,14 +1460,14 @@ Func_080f9644:
 	bne.n	.L_080fa296
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	bne.n	.L_080fa296
 	bl	.L_080f9672
 .L_080fa296:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	0x08016ce4
+	bl	GameFlag_TestFar
 	cmp	r0, #0
 	beq.n	.L_080fa2a8
 	movs	r2, #1

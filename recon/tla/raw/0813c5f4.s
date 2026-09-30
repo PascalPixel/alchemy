@@ -614,7 +614,7 @@ Func_0813c5f4:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	0x08013560
+	bl	WaitFrames
 	ldr	r0, [sp, #40]
 	movs	r4, #1
 	add	sl, r4

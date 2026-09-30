@@ -335,7 +335,7 @@ Func_080d9ad0:
 	adds	r1, #2
 	adds	r3, r2, r1
 	ldr	r0, [r3, #0]
-	bl	0x080cd91c
+	bl	Func_080cd91c
 	movs	r2, #1
 	adds	r5, r6, #0
 	negs	r2, r2

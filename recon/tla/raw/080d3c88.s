@@ -117,7 +117,7 @@ Func_080d3c88:
 	add	r5, sp, #52
 	adds	r1, r5, #0
 .L_080d3d6e:
-	bl	0x080d5bec
+	bl	Func_080d5bec
 	mvns	r0, r0
 	negs	r3, r0
 	orrs	r3, r0

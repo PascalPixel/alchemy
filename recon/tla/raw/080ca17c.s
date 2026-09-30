@@ -665,6 +665,9 @@ Func_080ca17c:
 	.4byte 0x080efd1c
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_080ca6a4
+	.thumb_func
+Func_080ca6a4:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	cmp	r5, #8

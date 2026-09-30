@@ -84,6 +84,9 @@ Func_080d7304:
 	.4byte 0x850007e2
 	.2byte 0x67e9
 	.2byte 0x080d
+	.global Func_080d73b4
+	.thumb_func
+Func_080d73b4:
 	push	{lr}
 	movs	r1, #248
 	lsls	r1, r1, #5

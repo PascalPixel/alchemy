@@ -76,7 +76,7 @@ Func_080db4b8:
 .L_080db546:
 	cmp	r2, #10
 	bne.n	.L_080db550
-	bl	0x080decb8
+	bl	Func_080decb8
 	b.n	.L_080db668
 .L_080db550:
 	cmp	r2, #8
@@ -176,7 +176,7 @@ Func_080db4b8:
 	movs	r1, #9
 	movs	r2, #24
 	ldrsh	r0, [r6, r2]
-	bl	0x080cdbf8
+	bl	Func_080cdbf8
 	bl	0x080e03ac
 	adds	r5, r0, #0
 	bl	Func_080cce94
@@ -236,7 +236,7 @@ Func_080db4b8:
 	cmp	r1, #1
 	bne.n	.L_080db69a
 	adds	r0, r5, #0
-	bl	0x080dd054
+	bl	Func_080dd054
 	b.n	.L_080db840
 .L_080db69a:
 	cmp	r1, #7
@@ -306,7 +306,7 @@ Func_080db4b8:
 .L_080db71c:
 	cmp	r1, #10
 	bne.n	.L_080db726
-	bl	0x080decb8
+	bl	Func_080decb8
 	b.n	.L_080db840
 .L_080db726:
 	cmp	r1, #15

@@ -151,7 +151,7 @@ msgctxt "message"
 msgid "00035"
 msgstr "Flee"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00036"
 msgstr "Yes"
 

@@ -927,7 +927,7 @@ Func_0200079c:
 .L_0200884c:
 	.4byte Data_02003318
 .L_02008850:
-	.4byte gOverlayArea + 0x3340
+	.4byte Data_02003340
 .L_02008854:
 	.4byte 0x05000184
 	.section .text.x02008858,"ax",%progbits
@@ -987,11 +987,11 @@ Func_02000858:
 .L_020088b8:
 	.4byte 0x05000180
 .L_020088bc:
-	.4byte gOverlayArea + 0x3340
+	.4byte Data_02003340
 .L_020088c0:
 	.4byte IwramCopyWords
 .L_020088c4:
-	.4byte gOverlayArea + 0x3360
+	.4byte Data_02003360
 .L_020088c8:
 	.4byte 0x050001a0
 .L_020088cc:
@@ -999,7 +999,7 @@ Func_02000858:
 .L_020088d0:
 	.4byte Func_0200079c
 .L_020088d4:
-	.4byte gOverlayArea + 0x3364
+	.4byte Data_02003364
 .L_020088d8:
 	.4byte 0x05000184
 	.section .text.x020088dc,"ax",%progbits
@@ -1535,7 +1535,7 @@ Func_02000b48:
 .L_02008d00:
 	.4byte Data_0200331c
 .L_02008d04:
-	.4byte gOverlayArea + 0x333c
+	.4byte Data_0200333c
 	.section .text.x02008d08,"ax",%progbits
 	.global Func_02000d08
 	.thumb_func
@@ -3462,23 +3462,23 @@ Func_02001a78:
 .L_02009c0c:
 	.4byte 0xffff0000
 .L_02009c10:
-	.4byte gOverlayArea + 0x3380
+	.4byte Data_02003380
 .L_02009c14:
 	.4byte ResourceTableEntries
 .L_02009c18:
-	.4byte gOverlayArea + 0x33c4
+	.4byte Data_020033c4
 .L_02009c1c:
-	.4byte gOverlayArea + 0x3382
+	.4byte Data_02003382
 .L_02009c20:
-	.4byte gOverlayArea + 0x3384
+	.4byte Data_02003384
 .L_02009c24:
-	.4byte gOverlayArea + 0x3484
+	.4byte Data_02003484
 .L_02009c28:
 	.4byte 0x40002000
 .L_02009c2c:
 	.4byte 0xc000a000
 .L_02009c30:
-	.4byte gOverlayArea + 0x3486
+	.4byte Data_02003486
 	.section .text.x02009c34,"ax",%progbits
 	.global Func_02001c34
 	.thumb_func
@@ -3528,19 +3528,19 @@ Func_02001c34:
 .L_02009c94:
 	.4byte IwramClearWords
 .L_02009c98:
-	.4byte gOverlayArea + 0x3384
+	.4byte Data_02003384
 .L_02009c9c:
 	.4byte Data_02002b70
 .L_02009ca0:
-	.4byte gOverlayArea + 0x3380
+	.4byte Data_02003380
 .L_02009ca4:
 	.4byte Func_02001a78
 .L_02009ca8:
-	.4byte gOverlayArea + 0x3382
+	.4byte Data_02003382
 .L_02009cac:
-	.4byte gOverlayArea + 0x3484
+	.4byte Data_02003484
 .L_02009cb0:
-	.4byte gOverlayArea + 0x3486
+	.4byte Data_02003486
 	.section .text.x02009cb4,"ax",%progbits
 	.global Func_02001cb4
 	.thumb_func
@@ -3590,19 +3590,19 @@ Func_02001cb4:
 .L_02009d14:
 	.4byte IwramClearWords
 .L_02009d18:
-	.4byte gOverlayArea + 0x3384
+	.4byte Data_02003384
 .L_02009d1c:
 	.4byte Data_02002cd2 + 0x1
 .L_02009d20:
-	.4byte gOverlayArea + 0x3380
+	.4byte Data_02003380
 .L_02009d24:
 	.4byte Func_02001a78
 .L_02009d28:
-	.4byte gOverlayArea + 0x3382
+	.4byte Data_02003382
 .L_02009d2c:
-	.4byte gOverlayArea + 0x3484
+	.4byte Data_02003484
 .L_02009d30:
-	.4byte gOverlayArea + 0x3486
+	.4byte Data_02003486
 	.section .text.x02009d34,"ax",%progbits
 	.global Func_02001d34
 	.thumb_func
@@ -3654,19 +3654,19 @@ Func_02001d34:
 .L_02009d98:
 	.4byte IwramClearWords
 .L_02009d9c:
-	.4byte gOverlayArea + 0x3384
+	.4byte Data_02003384
 .L_02009da0:
 	.4byte Data_02002f02
 .L_02009da4:
-	.4byte gOverlayArea + 0x3380
+	.4byte Data_02003380
 .L_02009da8:
 	.4byte Func_02001a78
 .L_02009dac:
-	.4byte gOverlayArea + 0x3382
+	.4byte Data_02003382
 .L_02009db0:
-	.4byte gOverlayArea + 0x3484
+	.4byte Data_02003484
 .L_02009db4:
-	.4byte gOverlayArea + 0x3486
+	.4byte Data_02003486
 .L_02009db8:
 	pop {r5, r6, pc}
 	.2byte 0x0000
@@ -3695,9 +3695,9 @@ Func_02001dbc:
 .L_02009de2:
 	pop {r5, pc}
 .L_02009de4:
-	.4byte gOverlayArea + 0x3382
+	.4byte Data_02003382
 .L_02009de8:
-	.4byte gOverlayArea + 0x3384
+	.4byte Data_02003384
 	.section .text.x02009dec,"ax",%progbits
 	.global Func_02001dec
 	.thumb_func
@@ -3707,7 +3707,7 @@ Func_02001dec:
 	bx lr
 	.2byte 0x0000
 .L_02009df4:
-	.4byte gOverlayArea + 0x3486
+	.4byte Data_02003486
 	.section .text.x02009e3e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009e40,"ax",%progbits
@@ -4119,7 +4119,7 @@ Func_02002040:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a158:
-	.4byte gOverlayArea + 0x3488
+	.4byte Data_02003488
 .L_0200a15c:
 	.4byte gPartyState
 .L_0200a160:
@@ -4413,7 +4413,7 @@ Func_0200216c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a39c:
-	.4byte gOverlayArea + 0x3488
+	.4byte Data_02003488
 .L_0200a3a0:
 	.4byte IwramClearWords
 .L_0200a3a4:
@@ -5016,7 +5016,7 @@ Func_020027d8:
 .L_0200a880:
 	.4byte gPartyState
 .L_0200a884:
-	.4byte gOverlayArea + 0x3488
+	.4byte Data_02003488
 	.section .text.x0200a888,"ax",%progbits
 	.global Func_02002888
 	.thumb_func
@@ -5107,7 +5107,7 @@ Func_02002888:
 .L_0200a938:
 	.4byte gPartyState
 .L_0200a93c:
-	.4byte gOverlayArea + 0x3488
+	.4byte Data_02003488
 	.section .rodata.x0200ab70,"a",%progbits
 	.global Data_02002b70
 Data_02002b70:
@@ -5635,3 +5635,36 @@ Data_02003330:
 	.4byte .L_0200afe4
 	.4byte .L_0200b020
 	.4byte .L_0200b05c
+	.section .bss,"aw",%nobits
+	.global Data_0200333c
+Data_0200333c:
+	.space 0x00000004
+	.global Data_02003340
+Data_02003340:
+	.space 0x00000020
+	.global Data_02003360
+Data_02003360:
+	.space 0x00000004
+	.global Data_02003364
+Data_02003364:
+	.space 0x0000001c
+	.global Data_02003380
+Data_02003380:
+	.space 0x00000002
+	.global Data_02003382
+Data_02003382:
+	.space 0x00000002
+	.global Data_02003384
+Data_02003384:
+	.space 0x00000040
+	.global Data_020033c4
+Data_020033c4:
+	.space 0x000000c0
+	.global Data_02003484
+Data_02003484:
+	.space 0x00000002
+	.global Data_02003486
+Data_02003486:
+	.space 0x00000002
+	.global Data_02003488
+Data_02003488:

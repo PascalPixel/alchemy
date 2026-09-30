@@ -6096,7 +6096,7 @@ Func_020030f4:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200b268:
-	.4byte gOverlayArea + 0x536c
+	.4byte Data_0200536c
 .L_0200b26c:
 	.4byte 0xffff0000
 .L_0200b270:
@@ -6140,7 +6140,7 @@ Func_02003278:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200b2c4:
-	.4byte gOverlayArea + 0x536c
+	.4byte Data_0200536c
 .L_0200b2c8:
 	.4byte IwramClearWords
 .L_0200b2cc:
@@ -6319,7 +6319,7 @@ Func_020032d4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b418:
-	.4byte gOverlayArea + 0x536c
+	.4byte Data_0200536c
 .L_0200b41c:
 	.4byte Data_0202c001 + 0x1df
 	.section .text.x0200b420,"ax",%progbits
@@ -6357,7 +6357,7 @@ Func_02003420:
 .L_0200b45a:
 	pop {r5, r6, pc}
 .L_0200b45c:
-	.4byte gOverlayArea + 0x536c
+	.4byte Data_0200536c
 	.section .text.x0200b460,"ax",%progbits
 	.global Func_02003460
 	.thumb_func
@@ -6390,7 +6390,7 @@ Func_02003460:
 	bge .L_0200b47e
 	pop {pc}
 .L_0200b490:
-	.4byte gOverlayArea + 0x536c
+	.4byte Data_0200536c
 .L_0200b494:
 	.4byte 0x0007ffff
 .L_0200b498:
@@ -6444,7 +6444,7 @@ Func_0200349c:
 	pop {pc}
 	.2byte 0x0000
 .L_0200b4f0:
-	.4byte gOverlayArea + 0x536c
+	.4byte Data_0200536c
 .L_0200b4f4:
 	.4byte 0x0007ffff
 .L_0200b4f8:
@@ -6594,7 +6594,7 @@ Func_020034fc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b618:
-	.4byte gOverlayArea + 0x5970
+	.4byte Data_02005970
 .L_0200b61c:
 	.4byte 0xffff0000
 .L_0200b620:
@@ -6639,7 +6639,7 @@ Func_02003628:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200b678:
-	.4byte gOverlayArea + 0x5970
+	.4byte Data_02005970
 .L_0200b67c:
 	.4byte IwramClearWords
 .L_0200b680:
@@ -6674,7 +6674,7 @@ Func_02003688:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200b6b4:
-	.4byte gOverlayArea + 0x5970
+	.4byte Data_02005970
 	.section .text.x0200b6b8,"ax",%progbits
 	.global Func_020036b8
 	.thumb_func
@@ -6889,7 +6889,7 @@ Func_020036b8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200b83c:
-	.4byte gOverlayArea + 0x5970
+	.4byte Data_02005970
 .L_0200b840:
 	.4byte Data_0200534c
 	.section .text.x0200b844,"ax",%progbits
@@ -8845,3 +8845,9 @@ Data_0200534c:
 	.4byte 0x0808ff08
 	.4byte 0x08080008
 	.4byte 0x08ff0108
+	.section .bss,"aw",%nobits
+	.global Data_0200536c
+Data_0200536c:
+	.space 0x00000604
+	.global Data_02005970
+Data_02005970:

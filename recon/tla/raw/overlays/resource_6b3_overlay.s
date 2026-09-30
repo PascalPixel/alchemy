@@ -27,13 +27,13 @@ Func_0200005c:
 	pop {pc}
 	.2byte 0x0000
 .L_02008088:
-	.4byte gOverlayArea + 0xa34
+	.4byte Data_02000a34
 .L_0200808c:
-	.4byte gOverlayArea + 0xa38
+	.4byte Data_02000a38
 .L_02008090:
-	.4byte gOverlayArea + 0xa00
+	.4byte Data_02000a00
 .L_02008094:
-	.4byte gOverlayArea + 0xa2c
+	.4byte Data_02000a2c
 	.section .text.x02008098,"ax",%progbits
 	.global Func_02000098
 	.thumb_func
@@ -113,13 +113,13 @@ Func_02000098:
 .L_02008138:
 	.4byte 0x000001f8
 .L_0200813c:
-	.4byte gOverlayArea + 0xa00
+	.4byte Data_02000a00
 .L_02008140:
-	.4byte gOverlayArea + 0x8f0
+	.4byte Data_020008f0
 .L_02008144:
-	.4byte gOverlayArea + 0xa30
+	.4byte Data_02000a30
 .L_02008148:
-	.4byte gOverlayArea + 0xa34
+	.4byte Data_02000a34
 .L_0200814c:
 	.4byte Func_0200005c
 .L_02008150:
@@ -239,13 +239,13 @@ Func_02000158:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008234:
-	.4byte gOverlayArea + 0xa28
+	.4byte Data_02000a28
 .L_02008238:
-	.4byte gOverlayArea + 0xa34
+	.4byte Data_02000a34
 .L_0200823c:
-	.4byte gOverlayArea + 0xa38
+	.4byte Data_02000a38
 .L_02008240:
-	.4byte gOverlayArea + 0xa2c
+	.4byte Data_02000a2c
 	.section .text.x02008244,"ax",%progbits
 	.global Func_02000244
 	.thumb_func
@@ -361,7 +361,7 @@ Func_02000244:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008314:
-	.4byte gOverlayArea + 0xa28
+	.4byte Data_02000a28
 	.section .text.x02008318,"ax",%progbits
 	.global Func_02000318
 	.thumb_func
@@ -707,7 +707,7 @@ Func_02000318:
 .L_02008668:
 	.4byte gPartyState
 .L_0200866c:
-	.4byte gOverlayArea + 0xa28
+	.4byte Data_02000a28
 .L_02008670:
 	.4byte 0x0000306e
 .L_02008674:
@@ -873,3 +873,25 @@ gSceneEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 0x00000004
+	.global Data_020008f0
+Data_020008f0:
+	.space 0x00000110
+	.global Data_02000a00
+Data_02000a00:
+	.space 0x00000028
+	.global Data_02000a28
+Data_02000a28:
+	.space 0x00000004
+	.global Data_02000a2c
+Data_02000a2c:
+	.space 0x00000004
+	.global Data_02000a30
+Data_02000a30:
+	.space 0x00000004
+	.global Data_02000a34
+Data_02000a34:
+	.space 0x00000004
+	.global Data_02000a38
+Data_02000a38:

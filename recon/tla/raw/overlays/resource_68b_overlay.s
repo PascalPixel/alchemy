@@ -1348,9 +1348,9 @@ Func_02000ad8:
 	subs r3, #12
 	bx lr
 .L_02008b1c:
-	.4byte gOverlayArea + 0x2590
+	.4byte Data_02002590
 .L_02008b20:
-	.4byte gOverlayArea + 0x25a0
+	.4byte Data_020025a0
 .L_02008b24:
 	.4byte 0xa2600001
 	.section .text.x02008b28,"ax",%progbits
@@ -1425,9 +1425,9 @@ Func_02000b28:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008bb0:
-	.4byte gOverlayArea + 0x2590
+	.4byte Data_02002590
 .L_02008bb4:
-	.4byte gOverlayArea + 0x25a0
+	.4byte Data_020025a0
 .L_02008bb8:
 	.4byte Data_0300122c
 	.section .text.x02008bbc,"ax",%progbits
@@ -3612,3 +3612,9 @@ gSceneEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.global Data_02002590
+Data_02002590:
+	.space 0x00000010
+	.global Data_020025a0
+Data_020025a0:

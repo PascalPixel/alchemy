@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
 s32 GameFlag_IsSet(s32 message);
 void Object_InitializeMode(s32 object, s32 mode);
 struct BattleAction *Ability_GetData(s32 action);
@@ -176,7 +177,11 @@ s32 PsynergyMenu_RunList(s32 pane)
         menu->pane_icon[pane]->state = 1;
 
         while (GameFlag_IsSet(0x150) == 0) {
+#if defined(TBS_EDITION_JA)
+            UiMenu_PositionCursor(98, state.row * 16 + 36);
+#else
             UiMenu_PositionCursor(88, state.row * 16 + 36);
+#endif
 
             if (changed != 0) {
                 changed = 0;
@@ -245,7 +250,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                     prompt = 0;
                     menu->flags &= 0xfffd;
                     UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-                    UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, 0, 88);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, HELP_TEXT_X, 88);
                 }
             }
 

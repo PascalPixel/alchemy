@@ -96,11 +96,11 @@ void Scene_RunScriptedActorPresentation(void)
         value |= actor->priority_flags;
         actor->priority_flags = value;
     }
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_ActorSetSpritePriority(18, 1);
     Call3(Engine_ActorSetPosition, 18, 0x2440000, 0x1520000);
-    actor = Engine_ActorGet(0);
+    actor = Object_GetById(0);
     actor->motion_flags = initial_flags;
     Engine_ActorSetSpritePriority(0, 1);
     Call3(Engine_ActorSetPosition, 0, 0x2450000, 0x1200000);
@@ -110,14 +110,14 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(20);
     Call3(Engine_ActorSetSpeed, 18, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-    Engine_ActorGet(0)->unknown_5a &= 254;
+    Object_GetById(0)->unknown_5a &= 254;
     Call3(Engine_ActorSetDestination, 18, 0x244, 221);
     Call3(Engine_ActorMoveToAndWait, 0, 0x245, 171);
     Call3(Engine_ActorSetDestination, 18, 0x212, 211);
     Call3(Engine_ActorMoveToAndWait, 0, 0x213, 161);
     Call3(Engine_ActorSetDestination, 18, 0x208, 191);
     Call3(Engine_ActorMoveToAndWait, 0, 0x209, 141);
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorSetDestination, 18, 0x203, 171);
     Call3(Engine_ActorMoveToAndWait, 0, 0x204, 121);
@@ -138,12 +138,12 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_AudioPlayCue(152);
     actor->velocity_y = 0x40000;
     Engine_AudioPlayCue(152);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorMoveToAndWait, 0, 0x1f8, 148);
     active_mask = 1;
     Engine_EventWait(10);
-    Engine_ActorGet(0)->unknown_5a |= active_mask;
+    Object_GetById(0)->unknown_5a |= active_mask;
     actor->y.fixed = -0x200000;
     {
         s32 shown = 0x4000;
@@ -153,13 +153,13 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(20);
     Call1(Engine_AudioPlayCue, 0x134);
     Call3(Engine_ActorMoveToAndWait, 18, 0x20c, 191);
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     Engine_ActorSetSpriteFlags(record, 0);
     Call3(Engine_ActorMoveToAndWait, 18, 0x212, 211);
     Call3(Engine_ActorMoveToAndWait, 18, 0x244, 221);
     Call3(Engine_ActorSetDestination, 18, 0x244, 0x152);
     {
-        struct FieldActor *record = Engine_ActorGet(0);
+        struct FieldActor *record = Object_GetById(0);
         u8 value = *(u8 *)&record->priority_flags;
 
         record->priority_flags = (u8)(value | active_mask);

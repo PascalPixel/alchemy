@@ -17,10 +17,10 @@ void FieldScene_RunScene39cSequenceB(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1d8, 0x258);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
         Camera_MoveTo(0x1d00000, -1, 0x2900000, 1);
-        Actor_SetSpriteFlags(Engine_ActorGet(ACTOR_PARTY_LEADER), 0);
-        OverlayObject_PrepareSpawnedObject(Engine_ActorGet(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
+        Actor_SetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
+        OverlayObject_PrepareSpawnedObject(Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
         Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
-        *(s32 *)&Engine_ActorGet(ACTOR_PARTY_LEADER)->unknown_44[4] = 0x8000;
+        *(s32 *)&Object_GetById(ACTOR_PARTY_LEADER)->unknown_44[4] = 0x8000;
         Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
         Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);

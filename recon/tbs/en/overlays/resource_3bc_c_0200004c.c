@@ -49,7 +49,7 @@ extern s8 Data_0200cc20[][6];
 void KorosseoMaruta_CycleLogPoses(void)
 {
     struct EventWork *work = gEventWork;
-    struct FieldActor *actor = Engine_ActorGet(gGameState.selected_actor);
+    struct FieldActor *actor = Object_GetById(gGameState.selected_actor);
     s32 z = actor->z.fixed >> 20;
     s32 i;
     s32 x;

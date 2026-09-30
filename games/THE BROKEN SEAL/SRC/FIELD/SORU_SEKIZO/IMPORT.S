@@ -94,9 +94,9 @@ Engine_EventEnd:
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

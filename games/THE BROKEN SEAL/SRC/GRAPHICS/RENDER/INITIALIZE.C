@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
+#include "TBS_EDITION.H"
 
 extern u8 *Runtime_AllocateBlock(s32, u32);
 extern void UiWork_InitFreeList(void);
@@ -25,16 +26,16 @@ void UiWork_Initialize(s32 kind)
         return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
     }
 
-    work = Runtime_AllocateBlock(15, 0x12fc);
+    work = Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
     fill = 0;
-    Dma_Set(&fill, work, 0x850004bf, (volatile u32 *)0x040000d4);
-    work[0xea3] = 1;
+    Dma_Set(&fill, work, (0x85000000 | RENDER_WORK_SIZE / 4), (volatile u32 *)0x040000d4);
+    work[RENDER_DIRTY_OFS] = 1;
     /* FAKEMATCH: the 99 goes through an s32 local and a u16 pointer so it is a movs, not a halfword pool constant */
-    half = (u16 *)(work + 0x12b6);
+    half = (u16 *)(work + RENDER_COUNTER_OFS);
     value = 99;
     *half = value;
-    work[0xea5] = 1;
-    work[0xea7] = 15;
+    work[RENDER_MENU_STATE_OFS] = 1;
+    work[RENDER_LEVEL_OFS] = 15;
     fill = 0xf000f000;
     Dma_Set(&fill, work, 0x85000140, (volatile u32 *)0x040000d4);
     UiWork_InitFreeList();
@@ -47,6 +48,6 @@ void UiWork_Initialize(s32 kind)
         u8 mode = 4;
 
         for (i = 2; i >= 0; i--)
-            work[i + 0xda0] = mode;
+            work[i + RENDER_TILE_ATTR_OFS] = mode;
     }
 }

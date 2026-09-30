@@ -5,8 +5,6 @@
 extern u8 MsgFuneRobinDontTalkLikeShouldnt[];
 extern u8 MsgFuneRobinTalkedPassengersDidntTour[];
 extern u8 MsgFuneSeeYoureGoingGoFor[];
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-s32 Object_GetById();
 
 #define ACTOR_FLAGS_OFFSET 90
 
@@ -34,15 +32,15 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     /* For each of actors 1, 2, and 3: fetch a source record, and if one
      * exists, copy its fields at +8 and +16 into the actor. */
-    record = Object_GetById(0);
+    record = (s32)Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Object_GetById(0);
+    record = (s32)Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Object_GetById(0);
+    record = (s32)Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -92,7 +90,7 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_SetSpeed(22, 0x10000, 0x8000);
     Actor_SetSpeed(21, 0x10000, 0x8000);
     /* Clear the low bit of the flag byte on actor 22. */
-    *(u8 *)(Object_GetById(22) + ACTOR_FLAGS_OFFSET) &= 254;
+    *(u8 *)((s32)Object_GetById(22) + ACTOR_FLAGS_OFFSET) &= 254;
     Actor_WalkToAndWait(22, 162, 0x27a);
     Event_Wait(1);
     bits = 1;
@@ -104,7 +102,7 @@ void FieldScene_RunThreeActorEncounter(void)
         record[ACTOR_FLAGS_OFFSET] = value | bits;
     }
     /* Clear the low bit of the flag byte on actor 21. */
-    *(u8 *)(Object_GetById(21) + ACTOR_FLAGS_OFFSET) &= 254;
+    *(u8 *)((s32)Object_GetById(21) + ACTOR_FLAGS_OFFSET) &= 254;
     Actor_WalkToAndWait(21, 162, 0x2a4);
     Event_Wait(1);
     {

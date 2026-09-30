@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-struct Actor *Engine_ActorGet(s32 actor);
+struct Actor *Object_GetById(s32 actor);
 void Audio_PlayCue(s32 cue);
 s32 Engine_MathCos(s32 angle);
 s32 Engine_MathSin(s32 angle);
@@ -38,7 +38,7 @@ void MogoruMori_SpawnPuffRing(s32 id)
     s32 x;
     s32 z;
 
-    actor = Engine_ActorGet(id);
+    actor = Object_GetById(id);
     Audio_PlayCue(188);
     p = &params;
     p->count = 1;

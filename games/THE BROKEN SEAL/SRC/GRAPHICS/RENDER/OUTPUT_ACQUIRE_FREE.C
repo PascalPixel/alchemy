@@ -32,9 +32,9 @@ void RenderOutput_ReleaseFree(u32 arg0)
 {
     u8 *base = (u8 *)gWindowWork;
     /* 管理領域内の要素だけを空きリストへ戻す。 */
-    if (arg0 >= (u32)(base + 0x698) && arg0 < (u32)(base + 0xd98)) {
-        u32 old = *(u32 *)(base + 0xd9c);
-        *(u32 *)(base + 0xd9c) = arg0;
+    if (arg0 >= (u32)(base + RENDER_CHANNEL_OFS + 3 * 0x28) && arg0 < (u32)(base + RENDER_FREE_HEAD_OFS)) {
+        u32 old = *(u32 *)(base + RENDER_FREE_TAIL_OFS);
+        *(u32 *)(base + RENDER_FREE_TAIL_OFS) = arg0;
         *(u32 *)old = arg0;
         *(u32 *)arg0 = 0;
     }
@@ -51,8 +51,8 @@ void UiWork_InitFreeList(void)
 
     base = (u8 *)gWindowWork;
     /* 0x1cバイト単位の空きリストを初期化する。 */
-    item = base + 0x698;
-    *(u8 **)(base + 0xd98) = item;
+    item = base + RENDER_CHANNEL_OFS + 3 * 0x28;
+    *(u8 **)(base + RENDER_FREE_HEAD_OFS) = item;
     count = 0x3e;
     do {
         next = item + 0x1c;
@@ -61,5 +61,5 @@ void UiWork_InitFreeList(void)
         item = next;
     } while (count >= 0);
     *(s32 *)next = 0;
-    *(u8 **)(base + 0xd9c) = next;
+    *(u8 **)(base + RENDER_FREE_TAIL_OFS) = next;
 }

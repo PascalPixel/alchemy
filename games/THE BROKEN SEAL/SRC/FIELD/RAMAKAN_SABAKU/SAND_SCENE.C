@@ -20,9 +20,9 @@ void FieldScene_RunScene3a5_020014b0(void)
             shown_addr = (u16 *)(p5 + 0xcba);
             shown = 0x258;
             *shown_addr = shown;
-            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            record = Object_GetById(ACTOR_PARTY_LEADER);
             *(s32 *)(record + 36) = rec8;
-            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            record = Object_GetById(ACTOR_PARTY_LEADER);
             *(s32 *)(record + 44) = rec8;
             record = Actor_Get(ACTOR_PARTY_LEADER);
             *(s32 *)(record + 56) = -0x80000000;
@@ -34,7 +34,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
             Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
             Event_Wait(40);
-            *((u8 *)Engine_ActorGet(0) + 90) &= 254;
+            *((u8 *)Object_GetById(0) + 90) &= 254;
             rect[0] = rec8;
             rect[1] = rec8;
             rect[2] = rec8;
@@ -45,7 +45,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000, rect[2] / 0x10000);
             Actor_WaitForMove(ACTOR_PARTY_LEADER);
             Event_Wait(2);
-            *((u8 *)Engine_ActorGet(0) + 90) |= 1;
+            *((u8 *)Object_GetById(0) + 90) |= 1;
             Event_Wait(30);
             Audio_PlayCue(148);
             Actor_RunRepeatedMotion(8, 2);

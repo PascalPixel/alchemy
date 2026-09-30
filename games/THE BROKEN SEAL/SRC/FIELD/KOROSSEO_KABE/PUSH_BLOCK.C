@@ -8,8 +8,8 @@ void Object_CommitPosition(struct FieldActor *object);
 void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
 {
     s32 pusher = gGameState.selected_actor;
-    struct FieldActor *leader = Engine_ActorGet(pusher);
-    struct FieldActor *block = Engine_ActorGet(id);
+    struct FieldActor *leader = Object_GetById(pusher);
+    struct FieldActor *block = Object_GetById(id);
     s32 along_x = (block->x.fixed >> 20) != column / 2;
     s32 dx;
     s32 dz;
@@ -28,17 +28,17 @@ void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
     block->speed = 0x8000;
     block->acceleration = 0x3333;
     Engine_AudioPlayCue(239);
-    Engine_ObjectSetAnimation(block, 3);
+    Object_SetMode(block, 3);
     Engine_ObjectSetPosition(block, column, 0, row);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(pusher, 2);
     Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
-    Engine_ObjectSetAnimation(leader, 2);
+    Object_SetMode(leader, 2);
     Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0, leader->z.fixed + dz);
     Object_CommitPosition(leader);
-    Engine_ObjectSetAnimation(leader, 1);
+    Object_SetMode(leader, 1);
     Object_CommitPosition(block);
-    Engine_ObjectSetAnimation(block, 1);
+    Object_SetMode(block, 1);
     Engine_AudioPlayCue(288);
     Engine_AudioPlayCue(213);
     Engine_EventWait(15);

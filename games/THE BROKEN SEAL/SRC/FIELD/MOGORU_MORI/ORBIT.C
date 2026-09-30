@@ -23,7 +23,7 @@ void InitializeOrbitingEffect(s32 id)
     u8 *transfer;
     s32 zero;
 
-    actor = (OrbitingSceneObject *)Engine_ActorGet(id);
+    actor = (OrbitingSceneObject *)Object_GetById(id);
     sprite = actor->sprite;
     sprite->flags_09_mode = 1;
     sprite->flags_05_bit_5 = 0;

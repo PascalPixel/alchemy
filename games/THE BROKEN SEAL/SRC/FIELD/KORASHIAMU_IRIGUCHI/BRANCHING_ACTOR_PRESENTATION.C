@@ -22,7 +22,7 @@ void Engine_EventWait();
 void Engine_EventBegin();
 void Engine_EventEnd();
 s32 Engine_EventChooseYesNo();
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_ActorSetSpeed();
 void Engine_ActorEnableActionCallback();
 void Object_SetActionCallbackAndRefreshById();
@@ -123,15 +123,15 @@ void Scene_RunBranchingActorPresentation(void)
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3(Engine_ActorWalkToAndWait, 0, 0x106, 188);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }

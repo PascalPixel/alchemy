@@ -4,7 +4,7 @@
 extern u8 Data_03001ee4[];
 
 struct UiCounterWork {
-    u8 unknown_000[0xea8];
+    u8 unknown_000[RENDER_WORD2_OFS];
     u16 ten;
     u16 one;
     u16 zero;

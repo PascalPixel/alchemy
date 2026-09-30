@@ -96,7 +96,7 @@ Func_0809ae64:
 	strb	r2, [r3, #0]
 	adds	r0, r6, #0
 	movs	r1, #5
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	adds	r0, r6, #0
 	movs	r1, #1
 	bl	Animation_ApplyChildValuesFar
@@ -161,7 +161,7 @@ Func_0809ae64:
 	bl	WaitFrames
 	adds	r0, r6, #0
 	movs	r1, #6
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r0, #15
 	bl	WaitFrames
 	movs	r5, #9
@@ -177,7 +177,7 @@ Func_0809ae64:
 	bge.n	.L_0809afba
 	adds	r0, r6, #0
 	movs	r1, #5
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r0, #132
 	bl	Audio_PlayCue
 	ldr	r2, [sp, #0]

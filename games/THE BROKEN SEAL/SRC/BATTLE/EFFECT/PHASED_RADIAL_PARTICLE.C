@@ -75,7 +75,7 @@ struct EffectOwner {
 
 extern u32 gFrameTick;
 
-struct EffectOwner *Engine_ActorGet(s32 actor);
+struct EffectOwner *Object_GetById(s32 actor);
 u32 BattleFx_HasReachedTarget(struct EffectSlot *effect);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 u32 Random16(void);
@@ -91,7 +91,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
     u8 priority;
     u8 flags;
 
-    owner = Engine_ActorGet(gGameState.current_owner);
+    owner = Object_GetById(gGameState.current_owner);
     state = effect->state;
 
     if (state == 0) {

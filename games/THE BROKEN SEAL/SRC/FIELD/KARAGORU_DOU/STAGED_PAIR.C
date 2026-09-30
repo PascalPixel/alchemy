@@ -24,7 +24,6 @@ struct HeightTrackedObject {
     s32 height;                 /* +12 */
 };
 
-s32 *Object_GetById();
 
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
@@ -103,7 +102,7 @@ void StagedActorPairScene_RunUpdate(void)
 void ActorPresentation_RunActorNineThresholdScene(void)
 {
     Event_Begin();
-    if ((Object_GetById(9)[2] >> 20) > 42) {
+    if ((((s32 *)Object_GetById(9))[2] >> 20) > 42) {
         s32 x = 107;
         s32 y = 17;
 

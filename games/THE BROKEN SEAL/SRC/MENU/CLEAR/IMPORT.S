@@ -76,9 +76,9 @@ Engine_GameFlagIsSet:
 	overlay_veneer Runtime_GetBuildStampTimeFar
 	overlay_veneer InventorySnapshot_RestoreFar
 	overlay_veneer Battle_WaitMode0Far
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer Event_SetPairWork1c0Far
 	overlay_veneer Event_SetStatus1c6Far

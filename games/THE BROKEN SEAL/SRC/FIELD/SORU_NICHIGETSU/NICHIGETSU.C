@@ -47,7 +47,7 @@ void Engine_TaskWait();
 void Engine_EventSetMessage();
 void Engine_EventShowMessage();
 void ObjectGroup_ConfigureChildValue();
-struct FieldActor *Engine_ActorGet();
+struct FieldActor *Object_GetById();
 void Engine_ActorJump();
 void Engine_ActorRunRepeatedMotion();
 void Engine_EventEnd();
@@ -338,7 +338,7 @@ void FieldScene_RunScene37aSequenceF(void)
         Engine_EventWait(20);
         Engine_AudioPlayCue(21);
         Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
-        rec = (u8 *)Engine_ActorGet(0);
+        rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
             Engine_ActorSetPosition(16, FIELD(rec, s32 *, 8), FIELD(rec, s32 *, 16));
         }
@@ -348,11 +348,11 @@ void FieldScene_RunScene37aSequenceF(void)
         Call3(Engine_ActorShowEmote, 16, 0x100, 0);
         Engine_ActorJump(16, 4, 60);
         SetSolShindenActorStep(16, 20);
-        rec = (u8 *)Engine_ActorGet(0);
+        rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
             Engine_ActorSetPosition(1, FIELD(rec, s32 *, 8), FIELD(rec, s32 *, 16));
         }
-        rec = (u8 *)Engine_ActorGet(0);
+        rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
             Engine_ActorSetPosition(5, FIELD(rec, s32 *, 8), FIELD(rec, s32 *, 16));
         }
@@ -457,21 +457,21 @@ void FieldScene_RunScene37aSequenceF(void)
         Call3(Engine_ActorSetSpeed, 5, 0x10000, 0x8000);
         Call3(Engine_ActorSetSpeed, 16, 0x20000, 0x10000);
         Engine_ActorSetAnimation(16, 2);
-        rec = (u8 *)Engine_ActorGet(0);
+        rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
             Actor_SetDestination(ACTOR_SUKURETA, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Engine_ActorWaitForMove(16);
         Engine_ActorSetPosition(16, 0, 0);
         Engine_ActorSetAnimation(1, 2);
-        rec = (u8 *)Engine_ActorGet(0);
+        rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
             Actor_SetDestination(ACTOR_GERALD, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Engine_ActorWaitForMove(1);
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetAnimation(5, 2);
-        rec = (u8 *)Engine_ActorGet(0);
+        rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
             Actor_SetDestination(ACTOR_JASMINE, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
@@ -493,7 +493,7 @@ void Scene_EnterInnerSanctum(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e8, 176);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -553,7 +553,7 @@ void UpdateStatueTrapActor(void)
     EntA *target_actor;
     EntB *target_position;
 
-    scene_actor = Engine_ActorGet(16);
+    scene_actor = Object_GetById(16);
     if (GameFlag_IsSet(0x809) == 0) {
         return;
     }
@@ -568,7 +568,7 @@ void UpdateStatueTrapActor(void)
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
     Event_SetMessage((s32)MsgSoruWayLeadsOutSanctum);
     if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
-        target_actor = Engine_ActorGet(0);
+        target_actor = Object_GetById(0);
         if (target_actor != 0) {
             Actor_SetPosition(ACTOR_SUKURETA, target_actor->unk8, target_actor->unk10);
         }
@@ -593,7 +593,7 @@ void UpdateStatueTrapActor(void)
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
         Actor_SetAnimation(ACTOR_SUKURETA, 2);
-        target_position = Engine_ActorGet(0);
+        target_position = Object_GetById(0);
         if (target_position != 0) {
             Actor_SetDestination(ACTOR_SUKURETA, target_position->unkA, target_position->unk12);
         }
@@ -1086,7 +1086,7 @@ void Scene_ChangeLunaPictureToSol(void)
             Event_Wait(6);
             Actor_SetSpeed(ACTOR_SUKURETA, 0x8000, 0x4000);
             Actor_SetAnimation(ACTOR_SUKURETA, 2);
-            record = Engine_ActorGet(0);
+            record = Object_GetById(0);
             if (record != 0) {
                 Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
@@ -1236,7 +1236,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Engine_EventWait(20);
         Call3(Engine_ActorFaceDirection, 16, 0xc000, 20);
         Engine_ActorSetSpeed(16, 0x4ccc, 0x2666);
-        actor = Engine_ActorGet(16);
+        actor = Object_GetById(16);
         /* FAKEMATCH: a mask temporary delays both byte stores past the zero. */
         {
             s32 m = 254;
@@ -1506,16 +1506,16 @@ void SoruNichigetsu_RunLightScene(void)
     Call3((void (*)())Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
     Engine_EventWait(40);
     InitializeSceneRecordBuffer();
-    Engine_ActorGet(0)->unknown_5a &= ~1;
-    Engine_ActorGet(1)->unknown_5a &= ~1;
+    Object_GetById(0)->unknown_5a &= ~1;
+    Object_GetById(1)->unknown_5a &= ~1;
     ((void (*)())Engine_ActorJump)(0, 4, 0);
     ((void (*)())Engine_ActorJump)(1, 4, 0);
     Call3((void (*)())Engine_ActorSetDestination, 0, 0x12c, 0x82);
     ((void (*)())Engine_ActorSetDestination)(1, 0x10a, 0x90);
     Engine_ActorWaitForMove(1);
     Engine_EventWait(40);
-    Engine_ActorGet(0)->unknown_5a |= 1;
-    Engine_ActorGet(1)->unknown_5a |= 1;
+    Object_GetById(0)->unknown_5a |= 1;
+    Object_GetById(1)->unknown_5a |= 1;
     BattleFx_SetQueuedSoundAndPlay(141);
     Call3((void (*)())Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
     Engine_EventWait(40);
@@ -1524,7 +1524,7 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_ActorSetAnimation(0, 3);
     Engine_ActorSetAnimationAndWait(1, 3);
     Engine_ActorSetAnimation(1, 2);
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     if (leader != NULL) {
         ((void (*)())Engine_ActorSetDestination)(1, leader->x.part.pixel, leader->z.part.pixel);
     }

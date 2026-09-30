@@ -4,7 +4,7 @@
 s32 BattleFx_GetResourceId(u32 id);
 
 struct State08093304 {
-    u8 padding[0x12F4];
+    u8 padding[RENDER_RESULT_OFS];
     s16 ret;
     s16 value;
 };

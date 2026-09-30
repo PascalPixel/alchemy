@@ -1,7 +1,7 @@
 #include "GOMA.H"
 #include "CALL.H"
 
-u8 *Engine_ActorGet();
+u8 *Object_GetById();
 void Engine_ActorSetSpriteFlags();
 void Map_CopyCellAttributeRect();
 void GameFlag_SetBit();
@@ -18,13 +18,13 @@ void FieldScene_RunActor8AtCell24Sequence(void)
     u8 *target;
     s32 value;
 
-    record = (s32 *)Engine_ActorGet(8);
+    record = (s32 *)Object_GetById(8);
     value = record[2] / 0x100000;
     if (value == 24) {
         SceneEffect_RunActorBurst(8);
-        SetFlagBits(Engine_ActorGet(8) + 35, 2);
+        SetFlagBits(Object_GetById(8) + 35, 2);
         Call6(Map_CopyCellAttributeRect, 19, 74, 9, 3, 19, 17);
-        target = Engine_ActorGet(8);
+        target = Object_GetById(8);
         Engine_ActorSetSpriteFlags((s32)target, 0);
         GameFlag_SetBit(0x864);
     }

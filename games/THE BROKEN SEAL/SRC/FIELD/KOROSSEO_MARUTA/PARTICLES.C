@@ -26,7 +26,7 @@ void ColossoLogRollingStage_SpawnPeriodicParticle(void)
     s32 kind;
     s32 count;
 
-    particle = Engine_ActorGet(0);
+    particle = Object_GetById(0);
     count = gColossoParticleCount + 1;
     kind = 41;
     x = particle->x;
@@ -44,15 +44,15 @@ void ColossoLogRollingStage_SpawnPeriodicParticle(void)
     default:
         return;
     }
-    particle = Engine_ActorGet(kind);
+    particle = Object_GetById(kind);
     if (particle == 0) {
         return;
     }
-    source = Engine_ActorGet(0);
+    source = Object_GetById(0);
     if (source != 0) {
         Engine_ActorSetPosition(kind, source->x, source->z);
     }
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(kind), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(kind), 0);
     particle->state = 0;
     particle->scale_x = 0x6666;
     particle->scale_y = 0x6666;
@@ -92,7 +92,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     }
     Engine_ActorEnableActionCallback(8, (s32)KorosseoMaruta_Actor8Action);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
@@ -107,21 +107,21 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Actor_SetPosition(ACTOR_GERALD, 0x5b80000, 0xb80000);
     Actor_SetPosition(ACTOR_IVAN, 0x5b80000, 0xc80000);
     Actor_SetPosition(ACTOR_MIA, 0x5a80000, 0xc00000);
-    record = Engine_ActorGet(1);
+    record = Object_GetById(1);
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
         *(u16 *)(record + 6) = shown;
     }
-    record = Engine_ActorGet(2);
+    record = Object_GetById(2);
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
         *(u16 *)(record + 6) = shown;
     }
-    record = Engine_ActorGet(3);
+    record = Object_GetById(3);
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
@@ -138,15 +138,15 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_Wait(60);
     data_table_addr = (s32)gColossoMultiPhaseData;
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     *(s32 *)(record + 24) = 0x10000;
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     *(s32 *)(record + 28) = 0x10000;
     Engine_ActorSetAnimationAndWait(0, 36);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     *(s32 *)(record + 8) += 0x30000;
     Event_Wait(10);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     Actor_SetSpriteFlags(record, 0);
     Event_Wait(20);
     Engine_ActorEnableActionCallback(0, (s32)KorosseoMaruta_LeaderActionB);

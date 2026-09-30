@@ -1,8 +1,9 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
 struct CenteredTextWork {
-    u8 unknown_000[0xeb0];
-    u16 entries[(0x12f4 - 0xeb0) / 2];
+    u8 unknown_000[RENDER_ENTRY_TBL_OFS];
+    u16 entries[(RENDER_RESULT_OFS - RENDER_ENTRY_TBL_OFS) / 2];
     u16 cursor;
     u16 scroll;
 };

@@ -20,7 +20,7 @@ struct SlotSprite {
 
 void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
 {
-    struct FieldActor *actor = Engine_ActorGet(id);
+    struct FieldActor *actor = Object_GetById(id);
     struct SlotSprite *sprite = (struct SlotSprite *)actor->sprite;
     s32 sine;
 

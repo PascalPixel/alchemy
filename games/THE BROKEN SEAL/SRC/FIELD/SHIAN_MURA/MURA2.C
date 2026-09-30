@@ -94,11 +94,11 @@ void SceneEffect_RequestFixedEffect(void)
  */
 void Actor_UpdatePresentationFlag(void)
 {
-    struct SceneState *scene = (void *)Engine_ActorGet(0);
+    struct SceneState *scene = (void *)Object_GetById(0);
     if (scene->field_0e > 31) {
-        ((struct Actor *)Engine_ActorGet(20))->presentation_flags |= 2;
+        ((struct Actor *)Object_GetById(20))->presentation_flags |= 2;
     } else {
-        ((struct Actor *)Engine_ActorGet(20))->presentation_flags &= (u8)~2;
+        ((struct Actor *)Object_GetById(20))->presentation_flags &= (u8)~2;
     }
 }
 
@@ -170,7 +170,7 @@ s32 SceneActor_UpdateTracking(
     s32 result = 0;
 
     if (actor->tracking_state == 1 && actor->tracking_mode == 0) {
-        Engine_ObjectSetAnimation(actor, 1);
+        Object_SetMode(actor, 1);
         return 1;
     }
 
@@ -185,17 +185,17 @@ s32 SceneActor_UpdateTracking(
         if (facing == heading || next == heading || prev == heading ||
             force_tracking != 0) {
             actor->tracking_state = 1;
-            Engine_ObjectSetAnimation(actor, 1);
+            Object_SetMode(actor, 1);
             result = 1;
             actor->tracking_mode = result;
         } else {
             actor->tracking_state = 0;
-            Engine_ObjectSetAnimation(actor, 2);
+            Object_SetMode(actor, 2);
             actor->tracking_mode = 0;
         }
     } else {
         actor->tracking_state = 0;
-        Engine_ObjectSetAnimation(actor, 2);
+        Object_SetMode(actor, 2);
         actor->tracking_mode = 0;
     }
 
@@ -210,7 +210,7 @@ s32 ShianMura_WatchGateTrigger(struct FieldActor *self)
 
     if (self->target_x == ACTOR_NO_TARGET && self->target_z == ACTOR_NO_TARGET)
         return 0;
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     if ((u32)((leader->x.fixed >> 20) - 17) <= 1 && leader->z.fixed >> 20 == 14 && self->x.fixed >> 20 <= 19
         && self->velocity_x <= 0) {
         if (leader->x.fixed <= self->x.fixed) {
@@ -273,13 +273,13 @@ void FieldScene_RunPrimarySequence(void)
     s32 hi;
     s32 lo;
 
-    actor = (struct FieldActor *)Engine_ActorGet(20);
+    actor = (struct FieldActor *)Object_GetById(20);
     Event_Begin();
     v7 = 0;
     record = Actor_Get(18);
     *(s32 *)((s32)record + 108) = v7;
     if (GameFlag_IsSet(0x200) == 0) {
-        record = Engine_ActorGet(18);
+        record = Object_GetById(18);
         if ((*(s32 *)((s32)record + 8) >> 20) > 19) {
             goto L_020006a2;
         }
@@ -292,8 +292,8 @@ void FieldScene_RunPrimarySequence(void)
     if (GameFlag_IsSet(0x200) == 0) {
         bump_step(1);
         Event_ShowMessage(18, 0);
-        *(u16 *)((u8 *)Engine_ActorGet(18) + 100) = v7;
-        record = Engine_ActorGet(18);
+        *(u16 *)((u8 *)Object_GetById(18) + 100) = v7;
+        record = Object_GetById(18);
         *(u16 *)((s32)record + 6) = p5;
     } else {
         Event_ShowMessage(18, 0);
@@ -304,25 +304,25 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventEnd();
     goto L_02000916;
     L_020006a2:;
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     if ((*(s32 *)((s32)record + 16) >> 19) > 27) {
-        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        record = Object_GetById(ACTOR_PARTY_LEADER);
         if ((*(s32 *)((s32)record + 16) >> 19) <= 29) {
-            record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            record = Object_GetById(ACTOR_PARTY_LEADER);
             if ((*(s32 *)((s32)record + 8) >> 20) != 26) {
                 Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
                 ((void (*)())Engine_ActorFaceActor)(0, 18, 0);
                 Event_Wait(5);
-                rec7 = Engine_ActorGet(ACTOR_PARTY_LEADER);
+                rec7 = Object_GetById(ACTOR_PARTY_LEADER);
                 record = Actor_Get(18);
                 if (*(s32 *)(rec7 + 8) < *(s32 *)((s32)record + 8)) {
-                    *(u8 *)((u8 *)Engine_ActorGet(0) + 90) &= 254;
-                    record = Engine_ActorGet(18);
+                    *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
+                    record = Object_GetById(18);
                     Actor_WalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) - 8), 232);
                     v7 = 1;
                 } else {
-                    *(u8 *)((u8 *)Engine_ActorGet(0) + 90) &= 254;
-                    record = Engine_ActorGet(18);
+                    *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
+                    record = Object_GetById(18);
                     Actor_WalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) + 24), 232);
                 }
                 Actor_WaitForMove(ACTOR_PARTY_LEADER);
@@ -332,7 +332,7 @@ void FieldScene_RunPrimarySequence(void)
     v5 = 128;
     record = Actor_Get(18);
     *(s32 *)((s32)record + 56) = (v5 << 24);
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     *(s32 *)((s32)record + 60) = (v5 << 24);
     record = Actor_Get(18);
     *(s32 *)((s32)record + 64) = (v5 << 24);
@@ -343,14 +343,14 @@ void FieldScene_RunPrimarySequence(void)
     Audio_PlayCue(228);
     actor->scale_x = 0x4ccc;
     actor->scale_y = 0x4ccc;
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     q1 = *(s32 *)((s32)record + 8);
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     t2 = *(s32 *)((s32)record + 16) >> 20;
     Actor_SetPosition(20, (((q1 >> 20) << 20) + 0x80000), ((t2 << 20) + 0x80000));
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     q2 = *(s32 *)((s32)record + 8);
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     Map_CopyCellAttributes(16, 16, 1, 1, (q2 >> 20), (*(s32 *)((s32)record + 16) >> 20));
     Actor_SetSpritePriority(20, 2);
     actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -371,9 +371,9 @@ void FieldScene_RunPrimarySequence(void)
     Event_SetMessage((s32)MsgShianDoingMadeMeSpillMy);
     Event_ShowMessageAndWait(18, 0, 20);
     BattleFx_PlayQueuedSound();
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     if ((*(s32 *)((s32)record + 8) >> 20) == 26) {
-        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        record = Object_GetById(ACTOR_PARTY_LEADER);
         if ((*(s32 *)((s32)record + 16) >> 20) > 13) {
             v7 = 1;
         }
@@ -381,14 +381,14 @@ void FieldScene_RunPrimarySequence(void)
     if (v7 != 0) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
-        *(u8 *)((u8 *)Engine_ActorGet(0) + 90) &= 254;
+        *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
         Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
         Actor_WaitForMove(ACTOR_PARTY_LEADER);
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     }
     Actor_SetSpeed(18, 0xcccc, 0x6666);
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     if ((*(s32 *)((s32)record + 16) >> 20) != 14) {
         record = Actor_Get(18);
         Actor_WalkToAndWait(18, *(s16 *)((s32)record + 10), 232);
@@ -415,12 +415,12 @@ void FieldScene_RunScene3a0_02000968(void)
     s32 x;
 
     Event_Begin();
-    *(u8 *)((u8 *)Engine_ActorGet(20) + 35) &= 253;
+    *(u8 *)((u8 *)Object_GetById(20) + 35) &= 253;
     v5 = 0;
-    *(u8 *)((u8 *)Engine_ActorGet(20) + 85) = v5;
-    record = Engine_ActorGet(20);
+    *(u8 *)((u8 *)Object_GetById(20) + 85) = v5;
+    record = Object_GetById(20);
     x = *(s32 *)(record + 8);
-    record = Engine_ActorGet(20);
+    record = Object_GetById(20);
     Map_CopyCellAttributes(3, 17, 1, 1, (x >> 20), (*(s32 *)(record + 16) >> 20));
     Engine_TaskAddCallback((s32)Actor_UpdatePresentationFlag, 0xc80);
     GameFlag_Set(0x201);
@@ -450,16 +450,16 @@ void ShianMura_RunNpcMeetScene(void)
         Engine_EventSetMessage((s32)MsgShianHooWhaaaHachaaa);
         Engine_EventShowMessage(14, 0);
         Engine_ActorRunRepeatedMotion(0, 2);
-        *(u8 *)((s32)Engine_ActorGet(0) + 90) &= 254;
+        *(u8 *)((s32)Object_GetById(0) + 90) &= 254;
         pos[0] = flag;
         pos[1] = flag;
         pos[2] = flag;
-        record = (s32)Engine_ActorGet(0);
+        record = (s32)Object_GetById(0);
         Call3(Vector_AddPolarOffset, -0x80000, *(u16 *)(record + 6), (s32)pos);
         Engine_ActorSetAnimation(0, 2);
         Engine_ActorSetDestinationOffset(0, pos[0] / 0x10000, pos[2] / 0x10000);
         Engine_ActorWaitForMove(0);
-        *(u8 *)((s32)Engine_ActorGet(0) + 90) |= 1;
+        *(u8 *)((s32)Object_GetById(0) + 90) |= 1;
         Engine_EventWait(30);
         ((void (*)())Engine_ActorRunRepeatedMotion)(14, 2);
         params.count = 1;
@@ -468,9 +468,9 @@ void ShianMura_RunNpcMeetScene(void)
         Engine_AudioPlayCue(132);
         cb = (s32)SceneEffect_SpawnPeriodicEffect;
         Value2(Engine_TaskAddCallback, cb, 0xc80);
-        *(s32 *)((s32)Engine_ActorGet(14) + 40) = 0x60000;
-        *(s32 *)((s32)Engine_ActorGet(14) + 72) = 0x10000;
-        *(s32 *)((s32)Engine_ActorGet(14) + 68) = 0;
+        *(s32 *)((s32)Object_GetById(14) + 40) = 0x60000;
+        *(s32 *)((s32)Object_GetById(14) + 72) = 0x10000;
+        *(s32 *)((s32)Object_GetById(14) + 68) = 0;
         Call3(Engine_ActorSetSpeed, 14, 0x30000, 0x18000);
         Call3(Engine_ActorSetDestination, 14, 168, 0x138);
         Engine_ActorWaitForMove(14);
@@ -498,9 +498,9 @@ void ShianMura_RunNpcMeetScene(void)
         Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0x3333, 0, 0, 0x20001, 0);
         Effect_Spawn(0xa80000, 0x80000, 0x1380000, -0x3333, 0, 0, 0x20001, 0);
         ((void (*)())Engine_TaskRemoveCallback)((s32)SceneEffect_AdvanceRotatingSprite);
-        *(u16 *)(*(s32 *)((s32)Engine_ActorGet(19) + 80) + 30) = back;
-        *(s32 *)((s32)Engine_ActorGet(14) + 68) = 0x4000;
-        *(s32 *)((s32)Engine_ActorGet(14) + 72) = 0x10000;
+        *(u16 *)(*(s32 *)((s32)Object_GetById(19) + 80) + 30) = back;
+        *(s32 *)((s32)Object_GetById(14) + 68) = 0x4000;
+        *(s32 *)((s32)Object_GetById(14) + 72) = 0x10000;
         ((void (*)())Engine_EventWait)(30);
         Engine_ActorFaceDirection(14, 0, 20);
         Engine_ActorRunRepeatedMotion(14, 2);
@@ -534,7 +534,7 @@ void ShianMura_HopLeaderAhead(void)
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
 
-    leader = (struct FieldActor *)((s32 (*)())Engine_ActorGet)(0);
+    leader = (struct FieldActor *)((s32 (*)())Object_GetById)(0);
     flags = leader->motion_flags;
     if (Engine_GameFlagIsSet(0x200) != 0) {
         p = pos;
@@ -544,17 +544,17 @@ void ShianMura_HopLeaderAhead(void)
         Call3((void (*)())Vector_AddPolarOffset, 0x200000, (leader->facing + 0x2000) & 0xc000, (s32)p);
         if (((s32 (*)())Object_CheckMovementCollision)((s32)leader, (s32)p) == 0) {
             Engine_EventBegin();
-            Engine_ObjectSetAnimation(leader, 6);
+            Object_SetMode(leader, 6);
             Engine_TaskWait(6);
             Engine_AudioPlayCue(152);
-            Engine_ObjectSetAnimation(leader, 7);
+            Object_SetMode(leader, 7);
             leader->speed = 0x30000;
             leader->acceleration = 0x20000;
             leader->velocity_y = 0x40000;
             leader->motion_flags &= 126;
             Engine_ActorSetSpriteFlags(leader, 0);
             Engine_ObjectMotionSetPositionAndCommit(0, p[0].part.pixel, p[2].part.pixel);
-            Engine_ObjectSetAnimation(leader, 6);
+            Object_SetMode(leader, 6);
             Engine_ActorSetSpriteFlags(leader, 1);
             leader->motion_flags = flags;
             Engine_EventEnd();
@@ -567,7 +567,7 @@ void FieldScene_RunScene3a0_02000de8(s32 a0)
     u32 i;
     s32 record;
 
-    *(u8 *)((u8 *)Engine_ActorGet(0) + 85) = 0;
+    *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     if (a0 == 6) {
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -650,7 +650,7 @@ void Scene_RunActorNineteenScript(void)
     Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0x3333, 0, 0, 0x20001, 0);
     Effect_Spawn(0xa80000, 0x80000, 0x1380000, -0x3333, 0, 0, 0x20001, 0);
     Engine_TaskRemoveCallback(cb);
-    Engine_ActorGet(19)->sprite->rotation = 0x8000;
+    Object_GetById(19)->sprite->rotation = 0x8000;
     Engine_ActorSetPosition(21, 0xa80000, 0x1380000);
     Engine_EventWait(20);
     Engine_ActorFaceActor(14, 19, 0);
@@ -677,13 +677,13 @@ void FieldScene_RunScene3a0_02001060(void)
     *(s32 *)(record + 108) = 0;
     record = Actor_Get(18);
     *(s32 *)(record + 56) = -0x80000000;
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     *(s32 *)(record + 64) = -0x80000000;
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     *(s32 *)(record + 36) = 0;
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     *(s32 *)(record + 44) = 0;
-    record = Engine_ActorGet(18);
+    record = Object_GetById(18);
     *(s32 *)(record + 48) = 0;
     record = Actor_Get(18);
     *(s32 *)(record + 52) = 0;
@@ -732,7 +732,7 @@ s32 ShianMura_SetupScene(void)
     }
     for (n = 0; n <= 2; n++) {
         struct FieldActor *actor;
-        actor = Engine_ActorGet(n + 23);
+        actor = Object_GetById(n + 23);
         /* FAKEMATCH: one value spans priority and motion setup so the
          * motion zero stays inside the loop and feeds the later actors. */
         x = 1;
@@ -751,29 +751,29 @@ s32 ShianMura_SetupScene(void)
     if (((s32 (*)())Engine_GameFlagIsSet)(0x201)) {
         Engine_ActorSetAnimation(20, 5);
         {
-            s32 px = Engine_ActorGet(20)->x.fixed;
+            s32 px = Object_GetById(20)->x.fixed;
 
-            ((void (*)())Engine_MapCopyCellAttributes)(3, 17, 1, 1, px >> 20, Engine_ActorGet(20)->z.fixed >> 20);
+            ((void (*)())Engine_MapCopyCellAttributes)(3, 17, 1, 1, px >> 20, Object_GetById(20)->z.fixed >> 20);
         }
         ((void (*)())Engine_TaskAddCallback)((s32)Actor_UpdatePresentationFlag, 0xc80);
     }
     Engine_ActorSetChildValue(18, 2);
-    Engine_ActorGet(18)->update = ShianMura_WatchGateTrigger;
-    actor = Engine_ActorGet(19);
+    Object_GetById(18)->update = ShianMura_WatchGateTrigger;
+    actor = Object_GetById(19);
     actor->motion_flags = x;
     actor->y.fixed = 0x100000;
     actor->target_y = 0x100000;
     actor->scale_x = 0x8ccc;
     actor->scale_y = 0x6666;
     actor->sprite->rotation = 0x8000;
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(21), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
     {
         /* FAKEMATCH: narrow local retains the short-range zero pool load. */
         u8 shown = 0;
 
-        Engine_ActorGet(21)->motion_flags = shown;
+        Object_GetById(21)->motion_flags = shown;
     }
-    Engine_ActorGet(21)->y.fixed = x;
-    Engine_ActorGet(21)->target_y = -0x80000000;
+    Object_GetById(21)->y.fixed = x;
+    Object_GetById(21)->target_y = -0x80000000;
     return 0;
 }

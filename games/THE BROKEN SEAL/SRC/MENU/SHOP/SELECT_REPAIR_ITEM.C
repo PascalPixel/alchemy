@@ -4,6 +4,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
@@ -43,7 +44,7 @@ s32 Shop_SelRepair(s32 unit_id)
     shop = gMenuWork;
     unit = Owner_GetStateFar(unit_id);
     item_count = 1;
-    list_window = UiWindow_CreateFar(15, 8, 15, 4, 2);
+    list_window = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
     selection = 0;
 
     for (;;) {

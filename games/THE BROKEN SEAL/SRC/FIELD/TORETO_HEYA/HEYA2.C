@@ -157,7 +157,7 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
     dest_x = (gGameState.x >> 20) + 64;
     dest_y = gGameState.z >> 20;
     leader = gGameState.selected_actor;
-    actor = Engine_ActorGet(leader);
+    actor = Object_GetById(leader);
     if (entrance == *ToretoHeya_PaletteBuffer)
         return;
     *ToretoHeya_PaletteBuffer = entrance;
@@ -172,7 +172,7 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
     Engine_EventBegin();
     Event_SetPairWork1c0((s32)&SceneId_ToretoHeya, entrance);
     Engine_ActorSetAnimation(leader, 27);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(leader), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
     Call2(Engine_ActorSetAttachedEffect, leader, 0x101);
     Engine_EventWait(30);
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
@@ -262,20 +262,20 @@ void ToretoHeya_RunTableScene(void)
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
     Engine_ActorSetSpeed(3, 0x10000, 0x8000);
-    *((u8 *)Engine_ActorGet(3) + 35) &= 254;
+    *((u8 *)Object_GetById(3) + 35) &= 254;
     Engine_ActorSetSpritePriority(3, 2);
-    *((u8 *)Engine_ActorGet(0) + 35) &= 254;
+    *((u8 *)Object_GetById(0) + 35) &= 254;
     Engine_ActorSetSpritePriority(0, 2);
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     if (rec8 != 0) {
-        record = ((s32 (*)())Engine_ActorGet)(0);
+        record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
             ((void (*)())Engine_ActorSetPosition)(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
@@ -341,9 +341,9 @@ void FieldScene_RunFourActorEncounter(void)
     s32 base5_2009ec8;
 
     rec = GameFlag_IsSet(3);
-    *((u8 *)Engine_ActorGet(3) + 35) &= 254;
+    *((u8 *)Object_GetById(3) + 35) &= 254;
     Actor_SetSpritePriority(ACTOR_MIA, 2);
-    *((u8 *)Engine_ActorGet(0) + 35) &= 254;
+    *((u8 *)Object_GetById(0) + 35) &= 254;
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
     PartyInventory_FindOwner(184);
     Audio_PlayCue(17);
@@ -360,11 +360,11 @@ void FieldScene_RunFourActorEncounter(void)
     record = Actor_Get(ACTOR_GERALD);
     *(u16 *)(record + 6) = (v6 << 8);
     Actor_SetPosition(ACTOR_IVAN, 0xb60000, 0x5a0000);
-    record = Engine_ActorGet(ACTOR_IVAN);
+    record = Object_GetById(ACTOR_IVAN);
     *(u16 *)(record + 6) = (v6 << 8);
     if (rec != 0) {
         Actor_SetPosition(ACTOR_MIA, 0xa60000, 0x680000);
-        record = Engine_ActorGet(ACTOR_MIA);
+        record = Object_GetById(ACTOR_MIA);
         *(u16 *)(record + 6) = (v6 << 8);
     }
     ToretoHeya_PlayGesture(0);
@@ -521,7 +521,7 @@ void FieldScene_RunFourActorEncounter(void)
     }
     Object_SetActionCallbackAndRefreshById(2, base5_2009ec8);
     Event_Wait(20);
-    *((u8 *)Engine_ActorGet(0) + 35) |= 1;
+    *((u8 *)Object_GetById(0) + 35) |= 1;
     GameFlag_Set(0x844);
     Engine_TaskAddCallback((s32)ToretoPalette_ApplyTint, 0xc80);
     Event_End();
@@ -567,13 +567,13 @@ s32 ToretoHeya_EnterRoom(void)
     s32 entrance;
     s32 leader;
 
-    lamp = Engine_ActorGet(8);
+    lamp = Object_GetById(8);
     ToretoHeya_PaletteBuffer = (s16 *)gSceneState;
     ToretoPalette_CaptureBank();
     lamp->motion_flags = 0;
     lamp->y.fixed = -0xa0000;
     {
-        struct FieldActor *other = Engine_ActorGet(9);
+        struct FieldActor *other = Object_GetById(9);
 
         other->motion_flags = 0;
         other->y.fixed = -0xa0000;
@@ -604,11 +604,11 @@ s32 ToretoHeya_EnterRoom(void)
     *(s32 *)(globals[19] + 0x1c0) = 0x202;
     entrance = gGameState.entrance;
     leader = gGameState.selected_actor;
-    actor = Engine_ActorGet(leader);
+    actor = Object_GetById(leader);
     if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
         Engine_EventOpenScreen();
         Engine_ActorSetAnimation(leader, 27);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(leader), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
         Call2(Engine_ActorSetAttachedEffect, leader, 0x101);
         Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
         actor->motion_flags = 2;
@@ -840,7 +840,7 @@ void ToretoHeya_SpawnSwirlSparks(void)
                 spark->motion_flags = 0;
                 spark->sprite->priority = 0;
                 Engine_ActorSetSpriteFlags(spark, 0);
-                Engine_ObjectSetAnimation(spark, 1);
+                Object_SetMode(spark, 1);
                 ((struct Spark *)spark)->phase = 0;
                 ((struct Spark *)spark)->angle = ((360 / (u32)(6 - wave) * i) << 16) / 360;
                 spark->target_x = (*(struct Vec3 *)ToretoHeya_SparkOrigin).x;
@@ -928,16 +928,16 @@ void ToretoHeya_RunLandingDustScene(void)
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 12) = 0x820000;
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 72) = 0x8000;
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 68) = 0;
-    ((u8 *)Engine_ActorGet(0))[85] = 0;
+    *(s32 *)((u8 *)Object_GetById(0) + 12) = 0x820000;
+    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x8000;
+    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0;
+    ((u8 *)Object_GetById(0))[85] = 0;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_AudioPlayCue(204);
-    ((u8 *)Engine_ActorGet(0))[85] = 3;
+    ((u8 *)Object_GetById(0))[85] = 3;
     Engine_EventWait(24);
-    leader = (u8 *)Engine_ActorGet(0);
+    leader = (u8 *)Object_GetById(0);
     p = &params;
     p->kind = 7;
     p->script = (s32)ToretoHeya_AdvanceEffectMotion;
@@ -961,7 +961,7 @@ void ToretoHeya_RunLandingDustScene(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Engine_ActorSetAttachedEffect(0, 0x100);
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 72) = 0x10000;
-    *(s32 *)((u8 *)Engine_ActorGet(0) + 68) = 0x4000;
+    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x10000;
+    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0x4000;
     Engine_EventEnd();
 }

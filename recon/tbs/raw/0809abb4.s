@@ -26,7 +26,7 @@ Func_0809abb4:
 	movs	r1, #0
 	adds	r6, r0, #0
 	movs	r7, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	cmp	r6, #0
 	bne.n	.L_0809abea
 	b.n	.L_0809ad52
@@ -110,7 +110,7 @@ Func_0809abb4:
 	bl	WaitFrames
 	movs	r1, #1
 	adds	r0, r6, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r0, #108
 	bl	Audio_PlayCue
 	movs	r0, #10

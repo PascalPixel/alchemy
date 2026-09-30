@@ -212,8 +212,8 @@ void ArutinYama_BeginRollingRide(s32 a0)
     s32 record;
     s32 v3;
 
-    rec8 = Engine_ActorGet(0);
-    rec7 = Engine_ActorGet(8);
+    rec8 = Object_GetById(0);
+    rec7 = Object_GetById(8);
     Battle_ResetEffectCounter();
     Engine_EventBegin();
     Engine_ActorSetAnimation(0, 22);
@@ -474,7 +474,7 @@ void FieldScene_RunEarlySequence(void)
         *(s32 *)(rec + 12) -= 0x10000;
         Task_Wait(4);
         if (i == 8) {
-            record = Engine_ActorGet(8);
+            record = Object_GetById(8);
             *(s32 *)(record + 24) = 0x1999;
             record = Actor_Get(8);
             *(s32 *)(record + 28) = 0x1999;
@@ -682,14 +682,14 @@ void SceneActor_SetActor10Byte23To3(void)
 {
     extern u32 Data_03001e40;
 
-    ((u8 *)Engine_ActorGet(10))[0x23] = 3;
+    ((u8 *)Object_GetById(10))[0x23] = 3;
 }
 
 void SceneActor_SetActor10Byte23To1(void)
 {
     extern u32 Data_03001e40;
 
-    ((u8 *)Engine_ActorGet(10))[0x23] = 1;
+    ((u8 *)Object_GetById(10))[0x23] = 1;
 }
 
 void FieldScene_RunScene3a4_02000c9c(void)
@@ -704,7 +704,7 @@ void FieldScene_RunScene3a4_02000c9c(void)
     Audio_PlayCue(185);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-    *(u8 *)((u8 *)Engine_ActorGet(10) + 90) &= 254;
+    *(u8 *)((u8 *)Object_GetById(10) + 90) &= 254;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 8);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 0x190, 0x1a8);
     Actor_SetDestination(10, 0x198, 0x1a8);

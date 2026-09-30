@@ -34,15 +34,15 @@ void FieldScene_RunPositionTransferPresentation(void)
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x1b0, 166);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = ((s32 (*)())Engine_ActorGet)(1);
+    record = ((s32 (*)())Object_GetById)(1);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }

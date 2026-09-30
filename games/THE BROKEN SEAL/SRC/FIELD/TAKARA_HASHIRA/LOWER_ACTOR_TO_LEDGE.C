@@ -10,7 +10,7 @@ void SceneActor_WaitHeightBelowLimit(struct FieldActor *actor, s32 limit);
 
 s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
 {
-    struct FieldActor *actor = Engine_ActorGet(id);
+    struct FieldActor *actor = Object_GetById(id);
     s32 found;
     s32 object;
     s32 height;

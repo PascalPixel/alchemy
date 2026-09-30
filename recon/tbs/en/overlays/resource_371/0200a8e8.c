@@ -32,7 +32,7 @@ void WorldMap_UseBlackOrb(void)
     u8 *buffer;
     s32 message;
 
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     Event_Begin();
     Battle_ClearObjectFlag5bWhenMode3();
     BattleFx_ScheduleRatioTransition(0x16666, 6);
@@ -75,7 +75,7 @@ void WorldMap_UseBlackOrb(void)
         orb->update = (void (*)(union FieldObject *))StoryActor_ConfigureSpawnedObject;
         Event_Wait(80);
     }
-    Engine_ActorGet(gWorldMapTriggerActor)->facing = 0x3000;
+    Object_GetById(gWorldMapTriggerActor)->facing = 0x3000;
     Actor_ShowEmote(gWorldMapTriggerActor, 0x100, 0);
     Actor_RunRepeatedMotion(gWorldMapTriggerActor, 2);
     message = (s32)MsgWorldMapMatter;
@@ -96,7 +96,7 @@ void WorldMap_UseBlackOrb(void)
     Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
     Actor_SetSpeed(gWorldMapTriggerActor, 0xcccc, 0x6666);
     Actor_SetAnimation(gWorldMapTriggerActor, 2);
-    site = Engine_ActorGet(SITE);
+    site = Object_GetById(SITE);
     Engine_ObjectSetPosition(site, 0x177a0000, site->y.fixed, 0xd480000);
     Engine_ObjectCommitPosition(site);
     Engine_ObjectSetPosition(site, 0x17710000, 0, 0xd580000);
@@ -106,7 +106,7 @@ void WorldMap_UseBlackOrb(void)
     Actor_RunRepeatedMotion(gWorldMapTriggerActor, 1);
     Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 20);
     Actor_SetSpeed(gWorldMapTriggerActor, 0x10000, 0x8000);
-    Engine_ActorGet(SITE)->unknown_5a &= ~1;
+    Object_GetById(SITE)->unknown_5a &= ~1;
     Actor_SetAnimation(SITE, 2);
     Engine_ObjectSetPosition(site, 0x176d0000, 0, 0xd600000);
     Engine_ObjectCommitPosition(site);
@@ -125,7 +125,7 @@ void WorldMap_UseBlackOrb(void)
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetAnimationAndWait(gWorldMapTriggerActor, 3);
     Actor_SetAnimation(gWorldMapTriggerActor, 2);
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     if (leader != NULL)
         Actor_SetDestination(gWorldMapTriggerActor, leader->x.part.pixel, leader->z.part.pixel);
     Actor_WaitForMove(gWorldMapTriggerActor);

@@ -132,7 +132,7 @@ void FieldScene_RunActorPresentationSequence(void)
         Actor_SetAnimation(10, 6);
         Actor_SetAnimation(6, 8);
         Task_Wait(1);
-    } while (*(s16 *)((u8 *)Engine_ActorGet(5) + 100) == 0);
+    } while (*(s16 *)((u8 *)Object_GetById(5) + 100) == 0);
     Event_Wait(20);
     Actor_FaceDirection(9, 0x8000, 20);
     Actor_SetAttachedEffect(8, 0x102);
@@ -335,7 +335,7 @@ void WorldMap_SpawnActorEightPuff(void)
 
     if ((*(s32 *)&gFrameCount & 15) != 0)
         return;
-    leader = (u8 *)Engine_ActorGet(8);
+    leader = (u8 *)Object_GetById(8);
     obj = (u8 *)Engine_ObjectCreate(222, *(s32 *)(leader + 8) + -0x200000, *(s32 *)(leader + 12), *(s32 *)(leader + 16) + -0x100000);
     if (obj == 0)
         return;
@@ -358,7 +358,7 @@ void WorldMap_SpawnActorEightPuff(void)
     ((struct Flags35 *)obj)->flags |= 2;
     ((struct Flags85 *)obj)->flags = leader[85];
     ObjectGroup_SetChildValue(obj, 9);
-    Engine_ObjectSetAnimation(obj, 2);
+    Object_SetMode(obj, 2);
     Engine_ObjectSetScript(obj, (s32)gActorEightPuffScript);
 }
 
@@ -367,7 +367,7 @@ void FieldScene_RunScene371_0200357c(void)
     struct FieldActor *actor;
     s32 record;
 
-    actor = (struct FieldActor *)Engine_ActorGet(8);
+    actor = (struct FieldActor *)Object_GetById(8);
     Event_Wait(60);
     Event_Begin();
     BattleFx_ScheduleRatioTransition(0x9999, 1);
@@ -430,13 +430,13 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 
     base = (u8 *)&gGameState;
     p6 = *(s32 *)(base + 500);
-    actor = (struct FieldActor *)Engine_ActorGet((s32)p6);
+    actor = (struct FieldActor *)Object_GetById((s32)p6);
     rec2 = GameFlag_IsSet(0x2f0);
     if (rec2 == 0) {
         Event_Begin();
         Actor_SetAttachedEffect((s32)p6, 0x101);
         Actor_SetAnimation((s32)p6, 9);
-        record = Engine_ActorGet(a0);
+        record = Object_GetById(a0);
         if (record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }

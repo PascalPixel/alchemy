@@ -42,7 +42,7 @@ void Scene_PushBlockAlongRun(struct TileRun *runs)
     s32 quarter;
 
     moved = 0;
-    actor = Engine_ActorGet(0);
+    actor = Object_GetById(0);
     facing = (actor->facing + 0x2000) & 0xc000;
     point[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
     point[1] = actor->y.fixed;

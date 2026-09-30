@@ -4,7 +4,7 @@ void FieldScene_RunScene399_02000a3c(void)
 {
     struct FieldActor *leader;
 
-    leader = (struct FieldActor *)((s32)Engine_ActorGet(0));
+    leader = (struct FieldActor *)((s32)Object_GetById(0));
     if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
         Inn_Open(4, 16);
     } else {
@@ -26,7 +26,7 @@ void FieldScene_RunScene399_02000abc(void)
 {
     struct FieldActor *leader;
 
-    leader = (struct FieldActor *)((s32)Engine_ActorGet(0));
+    leader = (struct FieldActor *)((s32)Object_GetById(0));
     if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
         Event_Begin();
         if (GameFlag_IsSet(0x82d) == 0) {

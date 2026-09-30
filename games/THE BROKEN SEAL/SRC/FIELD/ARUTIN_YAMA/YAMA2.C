@@ -201,7 +201,7 @@ void FieldScene_RunFallingRocksWarning(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x316, 140);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x30c, 140);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-        record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
@@ -214,13 +214,13 @@ void FieldScene_RunFallingRocksWarning(void)
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
         Actor_Jump(ACTOR_GERALD, 6, 0);
         Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
-        ((u8 *)Engine_ActorGet(ACTOR_GERALD))[90] &= 254;
+        ((u8 *)Object_GetById(ACTOR_GERALD))[90] &= 254;
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 110);
         Event_Wait(1);
-        ((u8 *)Engine_ActorGet(ACTOR_GERALD))[90] |= 1;
+        ((u8 *)Object_GetById(ACTOR_GERALD))[90] |= 1;
         Audio_PlayCue(161);
         Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
-        ((u8 *)Engine_ActorGet(ACTOR_GERALD))[90] &= 254;
+        ((u8 *)Object_GetById(ACTOR_GERALD))[90] &= 254;
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 120);
         Event_Wait(1);
         {
@@ -322,7 +322,7 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
             Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     }
     if (work->velocity == 0) {
-        Engine_ObjectSetAnimation(work,1);
+        Object_SetMode(work,1);
         work->y += -0x18000;
         if (work->y < work->ground) {
             if (work->active != 0) {
@@ -340,7 +340,7 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
     if (work->timer == 0) {
         Engine_AudioPlayCue(152);
         work->active = 1;
-        Engine_ObjectSetAnimation(work,2);
+        Object_SetMode(work,2);
         work->velocity = 0x30000;
     }
     if (++work->timer == 60)
@@ -359,7 +359,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     s32 record;
     s32 v6;
 
-    rec3 = (s32)Engine_ActorGet(10);
+    rec3 = (s32)Object_GetById(10);
     Engine_EventBegin();
     Engine_CameraSetSpeed(0x26666, 0x4ccc);
     Call4(Engine_CameraMoveTo, 0x12a0000, -1, 0x1510000, 1);
@@ -413,7 +413,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     Call3(Engine_ActorFaceDirection, 10, 0xf000, 20);
     Engine_ActorFaceDirection(10, 0xd000, 40);
     Engine_AudioPlayCue(153);
-    record = (s32)Engine_ActorGet(10);
+    record = (s32)Object_GetById(10);
     *(s32 *)(record + 40) = 0x40000;
     Engine_ActorSetAnimation(10, 2);
     Engine_ActorMoveToAndWait(10, 0x17c, 248);
@@ -442,21 +442,21 @@ void FieldScene_BuildMultiPhasePresentation(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(40);
     Engine_ActorFaceDirection(10, 0x8000, 40);
-    *(u8 *)((s32)Engine_ActorGet(9) + 85) = p10.v;
+    *(u8 *)((s32)Object_GetById(9) + 85) = p10.v;
     Engine_MapCopyCellAttributes(3, 0, 1, 1, 17, 13);
     Engine_MapCopyCellAttributes(3, 0, 1, 1, 18, 13);
     Engine_MapCopyCellAttributes(3, 0, 1, 1, 19, 13);
     Engine_ActorSetSpeed(10, 0x16666, 0xb333);
-    record = (s32)Engine_ActorGet(10);
+    record = (s32)Object_GetById(10);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_AudioPlayCue(153);
     v6 = 160;
-    record = (s32)Engine_ActorGet(10);
+    record = (s32)Object_GetById(10);
     *(s32 *)(record + 40) = (v6 << 11);
     ((void (*)())Engine_ActorSetAnimation)(10, 3);
     Call3(Engine_ActorMoveToAndWait, 10, 0x127, 215);
     Engine_ActorSetAnimation(10, 1);
-    record = (s32)Engine_ActorGet(10);
+    record = (s32)Object_GetById(10);
     Engine_ActorSetSpriteFlags(record, 1);
     Engine_AudioPlayCue(229);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0, 0x10000);
@@ -464,7 +464,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(40);
     Engine_AudioPlayCue(153);
-    record = (s32)Engine_ActorGet(10);
+    record = (s32)Object_GetById(10);
     *(s32 *)(record + 40) = (v6 << 11);
     Engine_ActorSetAnimation(10, 3);
     Call3(Engine_ActorMoveToAndWait, 10, 0x104, 215);
@@ -482,7 +482,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     Engine_MapCopyCellAttributes(4, 0, 1, 1, 17, 13);
     Engine_MapCopyCellAttributes(2, 0, 1, 1, 18, 13);
     Engine_MapCopyCellAttributes(4, 0, 1, 1, 19, 13);
-    rec7 = (s32)Engine_ActorGet(0);
+    rec7 = (s32)Object_GetById(0);
     Engine_CameraSetSpeed(0x4cccc, 0x9999);
     Engine_CameraMoveTo(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16), 1);
     Engine_CameraWaitForMove();

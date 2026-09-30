@@ -16,7 +16,7 @@ struct LobbyActor {
     u16 facing;
 };
 
-struct LobbyActor *Engine_ActorGet(s32 actor);
+struct LobbyActor *Object_GetById(s32 actor);
 void Engine_EventBegin(void);
 void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
 void Engine_EventSetMessage(s32 message);
@@ -29,7 +29,7 @@ extern union GameStateRows gGameState;
 /* The attendant's win count: by the player's facing, total or consecutive linked wins; with none yet, the matching wait line, otherwise the count as a five-digit argument before the line. The empty case of the first branch shares the printing tail. */
 s32 LinkLobby_TalkLinkedWins(s32 actor)
 {
-    u32 facing = Engine_ActorGet(0)->facing;
+    u32 facing = Object_GetById(0)->facing;
     u16 *count;
     s32 base;
 

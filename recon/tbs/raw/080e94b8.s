@@ -44,7 +44,7 @@ Func_080e94b8:
 	bl	BattleFx_FetchRectangleBlitters
 	movs	r1, #2
 	ldr	r0, [sp, #28]
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r1, #48
 	ldr	r0, [sp, #28]
 	bl	ObjectDispatch_ApplyValueToChildrenFar

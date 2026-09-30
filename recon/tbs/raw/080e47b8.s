@@ -837,7 +837,7 @@ Func_080e47b8:
 	bl	Runtime_ReleaseHeapBlock
 	adds	r0, r7, #0
 	movs	r1, #3
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	ldr	r3, [sp, #96]
 	cmp	r3, #15
 	bne.n	.L_080e4f64

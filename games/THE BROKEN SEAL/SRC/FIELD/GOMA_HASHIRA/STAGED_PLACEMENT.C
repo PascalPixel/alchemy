@@ -21,7 +21,6 @@ extern u8 GomaHashira_Messages[];
 extern u8 GomaHashira_Actors[];
 
 /* Imports this overlay shares with the staged-actor module, by its names. */
-u8 *Object_GetById();
 void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -88,7 +87,7 @@ void ConfigureSceneForActorEightColumn(void)
     s32 a4;
     s32 a5;
 
-    actor = Object_GetById(8);
+    actor = (u8 *)Object_GetById(8);
     x = *(s32 *)(actor + 8);
     if (x < 0)
         x += 0xfffff;
@@ -120,11 +119,11 @@ void FieldScene_RunPrimarySequence(void)
 
     flags = *state & 7;
     if (flags == 0) {
-        rec7a = Object_GetById(9);
+        rec7a = (u8 *)Object_GetById(9);
         v1a = Engine_RandomNext();
         a0 = *(s32 *)(rec7a + 8);
         a0 = a0 + (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
-        rec4 = Object_GetById(9);
+        rec4 = (u8 *)Object_GetById(9);
         reca = (s32)Object_GetById(9);
         a2 = *(s32 *)(reca + 16);
         a2 = a2 + 0x60000;
@@ -140,11 +139,11 @@ void FieldScene_RunPrimarySequence(void)
         Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
         if (flags == 0) {
-            rec7b = Object_GetById(9);
+            rec7b = (u8 *)Object_GetById(9);
             v1b = Engine_RandomNext();
             a0 = *(s32 *)(rec7b + 8);
             a0 = a0 + (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
-            rec4 = Object_GetById(9);
+            rec4 = (u8 *)Object_GetById(9);
             recb = (s32)Object_GetById(9);
             a2 = *(s32 *)(recb + 16);
             a2 = a2 + 0x60000;

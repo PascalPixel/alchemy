@@ -31,7 +31,7 @@ void FieldScene_RunScene373SequenceE(void)
     u8 *rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(22);
+    rec7 = Object_GetById(22);
     Event_Begin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Actor_Jump(ACTOR_PARTY_LEADER, 5, 0);
@@ -93,7 +93,7 @@ void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
     s32 record;
 
     p8 = a1;
-    rec8 = Engine_ActorGet(22);
+    rec8 = Object_GetById(22);
     Event_Begin();
     Actor_StartRepeatedMotion(22, 2);
     Actor_ShowEmote(22, 0x100, 20);
@@ -108,7 +108,7 @@ void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
     Actor_RunRepeatedMotion(22, 2);
     *(s32 *)(rec8 + 24) = 0x10000;
     *(s32 *)(rec8 + 28) = 0x10000;
-    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     *(s32 *)(record + 24) = 0x10000;
     *(s32 *)(record + 28) = 0x10000;
     Event_SetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);

@@ -9,13 +9,12 @@ struct BridgePost {
     u8 field55;
 };
 
-void *Object_GetById(u32 id);
 
 void SceneActor_AlternateSlots13To16Field0c(void)
 {
     struct BridgePost *p;
 
-    p = Object_GetById(13);
+    p = (void *)Object_GetById(13);
     if (p != 0) {
         p->field55 = 0;
         if ((gFrameCount & 1) == 0) {
@@ -24,7 +23,7 @@ void SceneActor_AlternateSlots13To16Field0c(void)
             p->field0c = 0x1f40000;
         }
     }
-    p = Object_GetById(14);
+    p = (void *)Object_GetById(14);
     if (p != 0) {
         p->field55 = 0;
         if ((gFrameCount & 1) != 0) {
@@ -33,7 +32,7 @@ void SceneActor_AlternateSlots13To16Field0c(void)
             p->field0c = 0x1f40000;
         }
     }
-    p = Object_GetById(15);
+    p = (void *)Object_GetById(15);
     if (p != 0) {
         p->field55 = 0;
         if ((gFrameCount & 1) == 0) {
@@ -42,7 +41,7 @@ void SceneActor_AlternateSlots13To16Field0c(void)
             p->field0c = 0x1f40000;
         }
     }
-    p = Object_GetById(16);
+    p = (void *)Object_GetById(16);
     if (p != 0) {
         p->field55 = 0;
         if ((gFrameCount & 1) != 0) {

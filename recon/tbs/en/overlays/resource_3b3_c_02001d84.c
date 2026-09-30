@@ -101,7 +101,7 @@ void TakaraHashira_UpdatePillarActors(void)
     struct MapCell cell;
 
     for (id = 8; id <= 11; id++) {
-        actor = Engine_ActorGet(id);
+        actor = Object_GetById(id);
         actor->unknown_22 = 2;
         i = id - 8;
         slot = &TakaraHashira_PillarSlots[i];
@@ -155,7 +155,7 @@ void TakaraHashira_UpdatePillarActors(void)
                 continue;
             }
             Engine_GameFlagClear(TakaraHashira_PillarSlots[k].flag);
-            other = Engine_ActorGet(k + 8);
+            other = Object_GetById(k + 8);
             if ((actor->x.fixed >> 20) == (other->x.fixed >> 20) && (actor->z.fixed >> 20) == (other->z.fixed >> 20)
                 && actor->y.fixed > other->y.fixed) {
                 Engine_GameFlagSet(TakaraHashira_PillarSlots[k].flag);

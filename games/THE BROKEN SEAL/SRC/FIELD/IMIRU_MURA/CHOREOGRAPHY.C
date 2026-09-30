@@ -120,7 +120,7 @@ void SceneState_UpdateZoneFlagsFromActorZero(void)
     s32 h;
     State *st;
 
-    obj = ((T *)Engine_ActorGet(0));
+    obj = ((T *)Object_GetById(0));
     x = obj->unk8;
     cx = x >> 19;
     g = 0x200;
@@ -173,7 +173,7 @@ void SceneActor_SetActorZeroFacingC000AndRun(void)
     struct SceneService_02001990 *work;
 
     Event_Begin();
-    work = ((struct SceneService_02001990 *)Engine_ActorGet(0));
+    work = ((struct SceneService_02001990 *)Object_GetById(0));
     work->value06 = 0xc000;
     Audio_PlayCue(123);
     Event_CloseScreen();
@@ -221,7 +221,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
-    leader = (struct FieldActor *)Engine_ActorGet(0);
+    leader = (struct FieldActor *)Object_GetById(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
@@ -272,10 +272,10 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_FaceDirection(19, 0x5000, 0);
     Actor_FaceDirection(20, 0x3000, 20);
     Actor_SetSpeed(20, 0x10000, 0x8000);
-    *(u8 *)(((s32)Engine_ActorGet(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
+    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
     Actor_WalkToAndWait(20, 0x290, 166);
     Event_Wait(1);
-    *(u8 *)(((s32)Engine_ActorGet(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
+    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4014, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
@@ -332,10 +332,10 @@ void FieldScene_RunThreeActorChoreography(void)
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_MIA, 0x2b0, 200);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
-    *(u8 *)(((s32)Engine_ActorGet(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
+    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
     Actor_WalkToAndWait(20, 0x284, 166);
     Event_Wait(1);
-    *(u8 *)(((s32)Engine_ActorGet(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
+    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
     (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     GameFlag_Set(0x82e);
     GameFlag_Clear(0x82d);

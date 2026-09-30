@@ -171,7 +171,7 @@ void Scene_PlanSanctumVisit(void)
         Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SUKURETA, 20);
         Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-        record = (u8 *)Engine_ActorGet(0);
+        record = (u8 *)Object_GetById(0);
         x = *(s16 *)(record + 10);
         y = *(s16 *)(record + 18);
         Actor_SetPosition(ACTOR_JASMINE, x << 16, y << 16);
@@ -391,10 +391,10 @@ void Scene_LeaveForMtAleph(void)
     Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
     Actor_SetPosition(ACTOR_GERALD, 0xd80000, 0x1080000);
     Actor_SetPosition(ACTOR_JASMINE, 0xf80000, 0x1080000);
-    record = (s32)Engine_ActorGet(1);
+    record = (s32)Object_GetById(1);
     facing = 0xc000;
     *(u16 *)(record + 6) = facing;
-    record = (s32)Engine_ActorGet(5);
+    record = (s32)Object_GetById(5);
     *(u16 *)(record + 6) = facing;
     Map_AnimateCells(Sukureta_GateCells, 43, 8);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
@@ -426,17 +426,17 @@ void Scene_LeaveForMtAleph(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0xcccc, 0x6666);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_SetAnimation(ACTOR_JASMINE, 2);
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_SetAnimation(ACTOR_SUKURETA, 2);
-    record = ((s32 (*)())Engine_ActorGet)(0);
+    record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -491,7 +491,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x148);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
 
-    record = (u8 *)Engine_ActorGet(0);
+    record = (u8 *)Object_GetById(0);
     x = *(s16 *)(record + 10);
     z = *(s16 *)(record + 18);
     Actor_SetPosition(ACTOR_JASMINE, x << 16, z << 16);
@@ -632,18 +632,18 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_SetSpeed(ACTOR_MENARDI, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_SATUROS, 0x8000, 0x4000);
 
-    record = (u8 *)Engine_ActorGet(14);
+    record = (u8 *)Object_GetById(14);
     *(record + 90) &= 0xfe;
-    record = (u8 *)Engine_ActorGet(15);
+    record = (u8 *)Object_GetById(15);
     *(record + 90) &= 0xfe;
 
     Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x178);
     Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x178);
     Event_Wait(6);
 
-    record = (u8 *)Engine_ActorGet(14);
+    record = (u8 *)Object_GetById(14);
     *(record + 90) |= 1;
-    record = (u8 *)Engine_ActorGet(15);
+    record = (u8 *)Object_GetById(15);
     {
         /* FAKEMATCH: a result temporary, not the compound or-assign the
          * first occurrence above uses: the reference merges the byte into
@@ -665,7 +665,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Audio_PlayCue(17);
 
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = (u8 *)Engine_ActorGet(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -673,7 +673,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
 
     Actor_SetAnimation(ACTOR_JASMINE, 2);
-    record = (u8 *)Engine_ActorGet(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -696,7 +696,7 @@ void HaidiaSukureta_RunArrivalScene(void)
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Engine_EventSetMessage((s32)MsgHaidiaWho);
         Engine_EventShowMessage(13, 0);
-        record = (s32)Engine_ActorGet(0);
+        record = (s32)Object_GetById(0);
         {
             s32 x = *(s16 *)(record + 10);
             s32 y = *(s16 *)(record + 18);
@@ -748,14 +748,14 @@ void HaidiaSukureta_RunArrivalScene(void)
         Engine_CameraFollowActor(0, 1);
         Engine_CameraWaitForMove();
         Engine_ActorSetAnimation(1, 2);
-        record = (s32)Engine_ActorGet(0);
+        record = (s32)Object_GetById(0);
         if (record != 0) {
             Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(1);
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetAnimation(5, 2);
-        record = (s32)Engine_ActorGet(0);
+        record = (s32)Object_GetById(0);
         if (record != 0) {
             Engine_ActorSetDestination(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -797,7 +797,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         Engine_ActorSetPosition(15, 0, 0);
         Engine_ActorSetPosition(5, 0, 0);
         {
-            u8 *record = (u8 *)Engine_ActorGet(8);
+            u8 *record = (u8 *)Object_GetById(8);
             u8 value = *(volatile u8 *)&record[89];
         
             record[89] = (u8)(value | 8);
@@ -805,7 +805,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         Call3(Engine_ActorSetPosition, 11, 0x530000, 0x1090000);
         Engine_ActorWalkToAndWait(11, 83, 0x111);
         Engine_ActorSetAnimation(11, 5);
-        record = (u8 *)Engine_ActorGet(11);
+        record = (u8 *)Object_GetById(11);
         {
             s32 shown = 12;
         
@@ -880,7 +880,7 @@ void HaidiaSukureta_RunActorSequence(void)
             Engine_CameraMoveTo(0x620000, -1, 0x11b0000, 1);
             Call3(Engine_ActorWalkToAndWait, 0, 94, 0x125);
             Call3(Engine_ActorFaceDirection, 0, 0xa000, 0);
-            record = (s32)Engine_ActorGet(0);
+            record = (s32)Object_GetById(0);
             if (record != 0) {
                 Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
             }
@@ -923,7 +923,7 @@ void HaidiaSukureta_RunActorSequence(void)
                 Engine_GameFlagSet(0x839);
             }
             Engine_ActorSetAnimation(1, 2);
-            record = (s32)Engine_ActorGet(0);
+            record = (s32)Object_GetById(0);
             if (record != 0) {
                 Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }

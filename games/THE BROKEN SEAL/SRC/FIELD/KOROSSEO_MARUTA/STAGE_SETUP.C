@@ -19,7 +19,7 @@ extern u8 KorosseoMaruta_Record30Script[];
 /* The stage picture the scene control decodes. */
 extern char ResourceId_RivalPathC;
 
-u8 *Engine_ActorGet();
+u8 *Object_GetById();
 s32 Engine_GameFlagIsSet();
 void Engine_GameFlagSet();
 s32 GameFlag_GetByte();
@@ -28,7 +28,7 @@ void Engine_MapCopyCellAttributes();
 void Engine_MapCopyCellsTo();
 s32 Map_GetTerrainHeight();
 void Engine_ActorSetSpriteFlags();
-void Engine_ObjectSetAnimation();
+void Object_SetMode();
 void Engine_ObjectSetScript();
 void Map_SetLayerEntryFlag();
 void Engine_ActorSetAnimation();
@@ -66,27 +66,27 @@ s32 StageSetup_BuildAndDispatch(void)
     Engine_TaskAddCallback(ColossoLogRollingStage_ShowActorPositionMessage, 3200);
     Call6(Engine_MapCopyCellAttributes, 74, 60, 8, 6, 120, 60);
 
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 
-    rec = Engine_ActorGet(10);
+    rec = Object_GetById(10);
     Engine_ActorSetSpriteFlags(rec, 0);
     rec[85] = 0;
     *(s32 *)(rec + 12) = 0x200000;
 
-    rec = Engine_ActorGet(11);
+    rec = Object_GetById(11);
     Engine_ActorSetSpriteFlags(rec, 0);
     rec[85] = 0;
     *(s32 *)(rec + 12) = 0x40000;
 
     if (Engine_GameFlagIsSet(866) != 0) {
         Engine_ActorSetAnimation(9, 5);
-        rec = Engine_ActorGet(10);
+        rec = Object_GetById(10);
         *(s32 *)(rec + 12) = 0x40000;
-        rec = Engine_ActorGet(11);
+        rec = Object_GetById(11);
         *(s32 *)(rec + 12) = 0x200000;
         Call6(Engine_MapCopyCellAttributes, 15, 12, 1, 1, 13, 12);
     } else {
-        rec = Engine_ActorGet(9);
+        rec = Object_GetById(9);
         *(s32 *)(rec + 24) = 0x18000;
         *(s32 *)(rec + 28) = 0x18000;
         if (Engine_GameFlagIsSet(871) != 0) {
@@ -99,15 +99,15 @@ s32 StageSetup_BuildAndDispatch(void)
     if (Engine_GameFlagIsSet(872) != 0) {
         Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, 12);
         Engine_MapCopyCellAttributes(1, 25, 1, 1, 9, 12);
-        rec = Engine_ActorGet(12);
+        rec = Object_GetById(12);
         Engine_ActorSetSpriteFlags(rec, 0);
         rec[85] = 0;
         *(s32 *)(rec + 12) = 0x20000;
         rec[35] = 2;
-        rec = Engine_ActorGet(10);
+        rec = Object_GetById(10);
         *(s32 *)(rec + 12) = 0x40000;
         rec[35] = 2;
-        rec = Engine_ActorGet(11);
+        rec = Object_GetById(11);
         *(s32 *)(rec + 12) = 0x200000;
     }
 
@@ -115,7 +115,7 @@ s32 StageSetup_BuildAndDispatch(void)
     if (cnt == 0) {
         cnt = 19;
     }
-    rec = Engine_ActorGet(13);
+    rec = Object_GetById(13);
     *(s32 *)(rec + 8) = (cnt << 20) + 0x80000;
     rec[85] = 0;
     rec[35] = 2;
@@ -126,7 +126,7 @@ s32 StageSetup_BuildAndDispatch(void)
      * grid is planted and drawn twice, once on its own row and once 52 rows
      * further down. */
     for (i = 15; i <= 17; i++) {
-        rec = Engine_ActorGet(i);
+        rec = Object_GetById(i);
         hit = Map_GetTerrainHeight(0, *(s32 *)(rec + 8), *(s32 *)(rec + 16));
         if (*(s32 *)(rec + 12) == 0 && hit == 0) {
             rec[35] = 2;
@@ -150,14 +150,14 @@ s32 StageSetup_BuildAndDispatch(void)
         val = 33;
         row = 11;
         for (; i <= 22; i++) {
-            rec = Engine_ActorGet(i);
+            rec = Object_GetById(i);
             rec[35] = mode;
-            Engine_ObjectSetAnimation(rec, 2);
-            rec = Engine_ActorGet(i + 5);
+            Object_SetMode(rec, 2);
+            rec = Object_GetById(i + 5);
             rec[35] = mode;
             rec[85] = state;
             *(s32 *)(rec + 12) = 0x200000;
-            Engine_ObjectSetAnimation(rec, 10);
+            Object_SetMode(rec, 10);
             Engine_MapCopyCellAttributes(74, 12, 1, 1, val, row);
             val += 2;
         }
@@ -171,9 +171,9 @@ s32 StageSetup_BuildAndDispatch(void)
         state = 0;
         mode = 2;
         for (; i <= 22; i++) {
-            rec = Engine_ActorGet(i);
+            rec = Object_GetById(i);
             rec[35] = mode;
-            rec = Engine_ActorGet(i + 5);
+            rec = Object_GetById(i + 5);
             rec[35] = mode;
             rec[85] = state;
             *(s32 *)(rec + 12) = 0x200000;
@@ -188,25 +188,25 @@ s32 StageSetup_BuildAndDispatch(void)
 
     if (Engine_GameFlagIsSet(867) != 0) {
         Map_SetLayerEntryFlag(1);
-        rec = Engine_ActorGet(30);
+        rec = Object_GetById(30);
         rec[85] = 0;
         *(s32 *)(rec + 8) = 0x046a0000;
         *(s32 *)(rec + 16) = 0xb80000;
         Engine_ActorSetSpriteFlags(rec, 0);
-        Engine_ObjectSetAnimation(rec, 3);
+        Object_SetMode(rec, 3);
         Engine_ObjectSetScript(rec, KorosseoMaruta_Record30Script);
     } else {
         Map_SetLayerEntryFlag(2);
     }
 
     if (Engine_GameFlagIsSet(873) != 0) {
-        rec = Engine_ActorGet(31);
-        Engine_ObjectSetAnimation(rec, 8);
+        rec = Object_GetById(31);
+        Object_SetMode(rec, 8);
         rec[35] = 2;
         Engine_MapCopyCellAttributes(86, 10, 1, 2, 84, 10);
         Engine_MapCopyCellAttributes(86, 9, 1, 1, 84, 12);
     } else {
-        rec = Engine_ActorGet(31);
+        rec = Object_GetById(31);
         Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, *(s32 *)(rec + 8) >> 20, 9);
         Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, *(s32 *)(rec + 8) >> 20, 61);
     }
@@ -217,13 +217,13 @@ s32 StageSetup_BuildAndDispatch(void)
 
         state = 0;
         mode = 2;
-        rec = Engine_ActorGet(9);
+        rec = Object_GetById(9);
         rec[85] = state;
         rec[35] = mode;
-        rec = Engine_ActorGet(10);
+        rec = Object_GetById(10);
         rec[85] = state;
         rec[35] = mode;
-        rec = Engine_ActorGet(11);
+        rec = Object_GetById(11);
         rec[85] = state;
         rec[35] = mode;
         Engine_ActorSetAnimation(8, 9);

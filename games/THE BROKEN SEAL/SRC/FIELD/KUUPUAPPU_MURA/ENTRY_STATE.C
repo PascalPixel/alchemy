@@ -8,7 +8,7 @@ s32 Engine_GameFlagIsSet();
 void Engine_EventRequestExit();
 void Engine_MapCopyCellAttributes();
 void OverlayObject_CreateConfiguredObject();
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_ActorSetPosition();
 s32 Engine_GameFlagClear();
 void Engine_EventBegin();
@@ -47,10 +47,10 @@ s32 KuupuappuMura_RestoreEntryState(void)
     OverlayObject_CreateConfiguredObject(0x800000, 0, 0x1a40000, 223);
     v7 = 1;
     zero = 0;
-    record = Engine_ActorGet(14);
+    record = Object_GetById(14);
     *(u16 *)(record + 100) = v7;
     *(s32 *)(record + 108) = (s32)SceneActor_UpdateProximityToLeader;
-    record = Engine_ActorGet(15);
+    record = Object_GetById(15);
     *(u16 *)(record + 100) = zero;
     /* FAKEMATCH: the empty loop keeps the halfword store ahead of the
      * script-pointer store, as in the reference schedule. */
@@ -62,7 +62,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
     rec7 = Engine_GameFlagIsSet(0x853);
     if (Engine_GameFlagIsSet(0x855) == 0) {
         if ((v7 & rec7) != 0) {
-            record = Engine_ActorGet(21);
+            record = Object_GetById(21);
             *(s32 *)(record + 108) = (s32)ActorPresentation_UpdateEntityFromLeader;
         }
     }
@@ -72,7 +72,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
             if (Engine_GameFlagIsSet(0x855) == 0) {
                 if (Engine_GameFlagIsSet(0x856) != 0) {
                     Engine_EventBegin();
-                    record = Engine_ActorGet(0);
+                    record = Object_GetById(0);
                     if (record != 0) {
                         Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
                     }
@@ -91,7 +91,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_ActorSetAnimationAndWait(0, 3);
                     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
                     Engine_ActorSetAnimation(2, 2);
-                    record = Engine_ActorGet(0);
+                    record = Object_GetById(0);
                     if (record != 0) {
                         Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
                     }
@@ -122,7 +122,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_ActorSetAnimationAndWait(0, 3);
                     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
                     Engine_ActorSetAnimation(2, 2);
-                    record = Engine_ActorGet(0);
+                    record = Object_GetById(0);
                     if (record != 0) {
                         Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
                     }

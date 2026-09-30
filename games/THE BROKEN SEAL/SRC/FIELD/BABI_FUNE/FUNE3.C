@@ -85,40 +85,40 @@ s32 BabiFune_SetupScene(void)
         Inventory_AddItemFar(0, 242);
     }
     *(s32 *)(gMapWork.event + 0x1c0) = 0x100;
-    Engine_ActorGet(8)->collision_flags = 0;
-    Engine_ActorGet(8)->priority_flags = 2;
-    Engine_ActorGet(9)->collision_flags = 0;
-    Engine_ActorGet(9)->priority_flags = 2;
+    Object_GetById(8)->collision_flags = 0;
+    Object_GetById(8)->priority_flags = 2;
+    Object_GetById(9)->collision_flags = 0;
+    Object_GetById(9)->priority_flags = 2;
     {
-        struct FieldActor *actor = Engine_ActorGet(8);
+        struct FieldActor *actor = Object_GetById(8);
 
         SET_PRIORITY(actor, 9);
     }
     {
-        struct FieldActor *actor = Engine_ActorGet(9);
+        struct FieldActor *actor = Object_GetById(9);
 
         SET_PRIORITY(actor, 9);
     }
     {
-        struct FieldActor *actor = Engine_ActorGet(0);
-
-        SET_PRIORITY(actor, 9);
-        SET_PRIORITY(actor, 21);
-    }
-    {
-        struct FieldActor *actor = Engine_ActorGet(1);
+        struct FieldActor *actor = Object_GetById(0);
 
         SET_PRIORITY(actor, 9);
         SET_PRIORITY(actor, 21);
     }
     {
-        struct FieldActor *actor = Engine_ActorGet(2);
+        struct FieldActor *actor = Object_GetById(1);
 
         SET_PRIORITY(actor, 9);
         SET_PRIORITY(actor, 21);
     }
     {
-        struct FieldActor *actor = Engine_ActorGet(3);
+        struct FieldActor *actor = Object_GetById(2);
+
+        SET_PRIORITY(actor, 9);
+        SET_PRIORITY(actor, 21);
+    }
+    {
+        struct FieldActor *actor = Object_GetById(3);
 
         SET_PRIORITY(actor, 9);
         SET_PRIORITY(actor, 21);

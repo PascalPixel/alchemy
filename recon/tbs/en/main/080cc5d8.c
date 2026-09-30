@@ -1,3 +1,12 @@
+/* 2026-09-30 (Mercury): 44 differing halfwords (Value_ symbols counted at
+   their values): the scroll and blend writes are REG_BG2X and REG_BLDALPHA,
+   and the second constant address becomes the ROM's add of 42 to the
+   first. The Value_ palette rows are ResourceId_YellowPaletteA (0x48),
+   ResourceId_IceTileSheet (0x57), ResourceId_RedPaletteA (0x47) and
+   ResourceId_VioletPaletteA (0x46) in DIRECTORY.S. Left: gcse PRE hoists
+   work + offset out of the four-sheet loop (the ROM adds r9 and r8 in the
+   loop, so the call goes through r4 where here r5 holds the sum), and
+   small reload differences at the loop's end. */
 /* 2026-09-30 (Mars): linked in place, 67 differing halfwords (from 70):
    the projection read after EffectPosition_ApplyStepAndYOffset goes
    through an r5 copy as in the reference. Left: the reference keeps
@@ -13,6 +22,7 @@
    rewrites, pointer and temporary spellings that cannot be written back to
    this macro form. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
@@ -168,12 +178,9 @@ void Func_080cc5d8(void *object)
         {
             register s32 *pos asm("r5") = screen; /* FAKEMATCH: the reference reads the projection through r5 */
             EffectPosition_ApplyStepAndYOffset(M2C_FIELD(object, s32 *, 8), screen);
-            display_base = (void *)0x04000028;
-            M2C_FIELD(display_base, s32 *, 0) = (64 - pos[0]) << 8;
-            if (frame > 49) {
-                M2C_FIELD(display_base, u16 *, 42) =
-                    (112 - frame * 2) | 0x1000;
-            }
+            REG_BG2X = (64 - pos[0]) << 8;
+            if (frame > 49)
+                REG_BLDALPHA = (112 - frame * 2) | 0x1000;
         }
 
         if (frame == 26) {

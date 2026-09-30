@@ -4,12 +4,12 @@ extern u8 gMenuCtrlWork[];
 /* The game state, read here as bytes: the byte at 498 is the retry flag. */
 extern u8 gGameState[];
 
-u8 * Engine_ActorGet();
+u8 * Object_GetById();
 void Engine_ActorSetAnimation();
 void Engine_ActorFaceDirection();
 void Engine_EventWait();
 void Engine_ActorSetSpriteFlags();
-void Engine_ObjectSetAnimation();
+void Object_SetMode();
 void Engine_TaskWait();
 
 /* The competitor's starting position and facing, kept in the overlay's
@@ -34,7 +34,7 @@ void Korosseo_RestoreCompetitor(s32 a0)
     } fall;
 
     p7 = *(u8 **)gMenuCtrlWork;
-    rec7 = Engine_ActorGet(a0);
+    rec7 = Object_GetById(a0);
     if (gGameState[498] == 1) {
         gGameState[498] = 0;
         Engine_ActorSetAnimation(a0, 1);
@@ -59,7 +59,7 @@ void Korosseo_RestoreCompetitor(s32 a0)
     *(s32 *)((s32)rec7 + 12) = zero;
     *(s32 *)((s32)rec7 + 20) = zero;
     Engine_ActorSetSpriteFlags((s32)rec7, 1);
-    Engine_ObjectSetAnimation((s32)rec7, 0);
-    Engine_ObjectSetAnimation((s32)rec7, 1);
+    Object_SetMode((s32)rec7, 0);
+    Object_SetMode((s32)rec7, 1);
     Engine_TaskWait(1);
 }

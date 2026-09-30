@@ -70,17 +70,17 @@ s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
 
         if (forward == facing || right == facing || left == facing || force != 0) {
             actor->active = 1;
-            Engine_ObjectSetAnimation(actor, 1);
+            Object_SetMode(actor, 1);
             result = 1;
         }
-        if ((u8 *)target == Engine_ActorGet(0) && (farRight == facing || farLeft == facing)) {
+        if ((u8 *)target == Object_GetById(0) && (farRight == facing || farLeft == facing)) {
             actor->active = 1;
-            Engine_ObjectSetAnimation(actor, 1);
+            Object_SetMode(actor, 1);
             result = 1;
         }
     } else {
         actor->active = 0;
-        Engine_ObjectSetAnimation(actor, 2);
+        Object_SetMode(actor, 2);
     }
     return result;
 }
@@ -102,15 +102,15 @@ s32 SceneActor_UpdatePartnerProximity(u8 *self)
      * selector folds into arithmetic on the bit instead.
      */
     if ((*flags & 1) != 0) {
-        partner = Engine_ActorGet(17);
+        partner = Object_GetById(17);
     } else {
-        partner = Engine_ActorGet(16);
+        partner = Object_GetById(16);
     }
     if (SceneActor_UpdatePlayerProximity(self, partner, 32, 0) != 0) {
         return 0;
     }
 
-    player = Engine_ActorGet(0);
+    player = Object_GetById(0);
 
     /*
      * Widen the test when the scene counter at work + 376 is already
@@ -160,11 +160,11 @@ void FieldScene_RunScene3b5_02000224(void)
     u32 i;
     u8 *record;
 
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     if ((s32)record != 0) {
         record[89] = 0;
     }
-    record = Engine_ActorGet(8);
+    record = Object_GetById(8);
     Engine_ActorSetSpriteFlags((s32)record, 0);
     Call4(SetMapCellCollision, 0, 0x2200000, 0x1200000, 253);
     GameFlag_Set(0x200);
@@ -207,7 +207,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     /* FAKEMATCH: the event work is read into a local before the actor
      * lookup, where the reference loads it. */
     work = gEventWork;
-    actor = Engine_ActorGet(16);
+    actor = Object_GetById(16);
     facing = actor->facing;
     Engine_EventBegin();
     actor->proximity_flags |= 2;
@@ -249,7 +249,7 @@ void FieldScene_RunSiblingsTalk(void)
     /* FAKEMATCH: the event work is read into a local before the actor
      * lookup, where the reference loads it. */
     work = gEventWork;
-    actor = Engine_ActorGet(17);
+    actor = Object_GetById(17);
     facing = actor->facing;
     Engine_EventBegin();
     actor->proximity_flags |= 2;
@@ -378,7 +378,7 @@ void SceneScript_SetupActors(void)
 
     Engine_EventBegin();
     for (no = 8; no <= 65; no++) {
-        u8 *actor = Engine_ActorGet(no);
+        u8 *actor = Object_GetById(no);
         if (actor != NULL) {
             actor[85] = 0;
         }
@@ -387,7 +387,7 @@ void SceneScript_SetupActors(void)
     Engine_AudioPlayCue(158);
     Call3(Engine_MapAnimateCells, (s32)gTorebiMachiCellSteps[index].commands, gTorebiMachiCellSteps[index].first, gTorebiMachiCellSteps[index].second);
     Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
-    ((u8 *)Engine_ActorGet(0))[85] = 0;
+    ((u8 *)Object_GetById(0))[85] = 0;
     Engine_ActorSetAnimation(0, 2);
     if (index != 6) {
         Call3(Engine_ActorCenterAndWalk, 0, 2, -8);
@@ -408,7 +408,7 @@ void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
     s32 priority;
 
     if (object != NULL) {
-        priority = Engine_ActorGet(0)->sprite->priority;
+        priority = Object_GetById(0)->sprite->priority;
         object->actor.priority_flags = 0;
         object->actor.sprite->priority = priority;
         ((struct SceneSprite *)object->actor.sprite)->priority_15 = priority;
@@ -425,17 +425,17 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Call3(Engine_ActorSetPosition, 16, 0x1600000, 0x1600000);
     Actor_EnableActionCallback(16, gTorebiMachiActor16Action);
-    record = Engine_ActorGet(16);
+    record = Object_GetById(16);
     handler = (s32)SceneActor_UpdatePartnerProximity;
     ((struct SceneActor *)record)->proximity_flags = 1;
     *(s32 *)(record + 108) = handler;
     hidden = 0;
     Engine_ActorSetPosition(17, 0x1700000, 0x1400000);
     Actor_EnableActionCallback(17, gTorebiMachiActor17Action);
-    record = Engine_ActorGet(17);
+    record = Object_GetById(17);
     ((struct SceneActor *)record)->proximity_flags = hidden;
     *(s32 *)(record + 108) = handler;
-    record = Engine_ActorGet(14);
+    record = Object_GetById(14);
     *(s32 *)(record + 108) = (s32)SceneActor_CopyPlayerModeToActor;
     if (GameFlag_IsSet(0x8c1) != 0) {
         Call3(Engine_ActorSetPosition, 28, 0x13c0000, 0x1480000);
@@ -519,7 +519,7 @@ void FieldScene_RunPrimarySequence(void)
     Call3(Engine_ActorSetPosition, 29, 0x480000, 0xd00000);
     Call3(Engine_ActorSetPosition, 30, 0x380000, 0xd00000);
     Engine_ActorSetChildValue(32, 15);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(32), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(32), 0);
     Call3(Engine_ActorSetPosition, 32, 0x5f0000, 0x280000);
     Engine_ActorWalkTo(29, 72, 248);
     Engine_ActorWalkTo(30, 56, 248);
@@ -603,7 +603,7 @@ void FieldScene_RunPrimarySequence(void)
 
 void FieldScene_ResetActor9AndDrawTiles(void)
 {
-    struct Actor *actor = Engine_ActorGet(9);
+    struct Actor *actor = Object_GetById(9);
     if (actor != 0) {
         Engine_ActorSetSpriteFlags(actor, 0);
         actor->field23 = 2;

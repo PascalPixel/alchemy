@@ -38,7 +38,7 @@ void Korosseo_UpdatePathRival(void)
     s32 x, z, d;
     u16 *facing;
 
-    obj = Engine_ActorGet(rec->actor);
+    obj = Object_GetById(rec->actor);
     if (obj == NULL) {
         return;
     }
@@ -48,7 +48,7 @@ void Korosseo_UpdatePathRival(void)
         if (x == 0 && z == 0) {
             s32 fz;
             rec->mode = 9;
-            Engine_ObjectSetAnimation(obj, 1);
+            Object_SetMode(obj, 1);
             if (work->finish_x < obj->x.fixed) {
                 x = work->finish_x + 0xc0000;
             } else {
@@ -93,9 +93,9 @@ void Korosseo_UpdatePathRival(void)
             rec->still++;
         }
         if (rec->still > 2) {
-            Engine_ObjectSetAnimation(obj, 1);
+            Object_SetMode(obj, 1);
         } else {
-            Engine_ObjectSetAnimation(obj, 5);
+            Object_SetMode(obj, 5);
         }
     } else if (rec->mode == 2) {
         x = obj->x.part.pixel;

@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-struct Actor *Engine_ActorGet(s32 actor);
+struct Actor *Object_GetById(s32 actor);
 void Engine_AudioPlayCue(s32 cue);
 void Engine_ActorSetChildValue();
 void Engine_ActorSetSpriteFlags(struct Actor *actor, s32 flags);
@@ -36,9 +36,9 @@ void SoruStar_RiseActorFourteenSparks(void)
     s32 x;
     s32 r;
 
-    actor = Engine_ActorGet(14);
+    actor = Object_GetById(14);
     Engine_AudioPlayCue(190);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
     p = &params;
     p->count = 1;
     p->kind = 5;
@@ -58,5 +58,5 @@ void SoruStar_RiseActorFourteenSparks(void)
             Engine_ActorSetChildValue(14, 0x100);
     }
     Engine_ActorSetChildValue(14, 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(14), 1);
 }

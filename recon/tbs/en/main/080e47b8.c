@@ -4,6 +4,29 @@
  * literal pool at 0x080e54cc, three more stubs and the default arm at
  * 0x080e551a. 0x080e657c and 0x080e65f8 are tail blocks this routine
  * reaches by bl, not separate functions. */
+/* 2026-09-30 (Mercury): 5 differing halfwords, all in the first
+ * Math_Div (80e500c): the reference loads target_actor and position into
+ * r1/r2 before the motion spill store; here the store, the two reloads and
+ * nothing else tie at sched2 priority 125 with equal dependents, so the
+ * store wins on insn order. Fixed since 72: reload picks reload registers
+ * round-robin over r0-r3/r5, so the kind 14 tail keeps its own
+ * FetchRectangleBlitters call (jump2 cross-jumps it into kind 31's) and the
+ * deleted copy's reloads advance the rotation as the reference's did; this
+ * fixes kind 31. The rising column is plain C in place: draw loaded then
+ * advanced by 47 (the reference's mov r8 / add r8,r5 is the reload of a
+ * two-step set), column_x before column_y, top before width and width before
+ * tile_height, which makes local-alloc give tile_height r5, width r6, draw
+ * r8, and the scrolled height subtracted inside DrawScrolledImage so width
+ * dies one insn earlier. The orbit origin is a zero-biased copy of
+ * target_screen made in the loop: global const propagation turns it into a
+ * copy after copy propagation has run, and the loop hoists it after the
+ * projection address, giving the reference's r3/r5/r0 reload order.
+ * Tried for the Math_Div order without success: operand temporaries,
+ * copies, an inline aim helper (any argument order), the subtraction first,
+ * split subtraction, velocity stored directly, motion assigned in the
+ * argument list or as the store's left side, a slot/object split, and asm
+ * or fixed-register forcing (these move the reloads but break the rotation
+ * or rematerialize position as sp+148). */
 /* 2026-09-30 (Mars): linked in place of the listing, 72 differing halfwords
  * (was 1657 with a 4-byte size shortfall). The rising column's blitter is
  * gWorkSlot pinned to r8 plus an asm-hidden 188 offset, which restores the
@@ -143,31 +166,18 @@ static __inline__ void DrawTallImage(void *canvas, const void *pixels,
     (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
+/* FAKEMATCH: Subtract the scrolled part inside the drawing scope. */
+static __inline__ void DrawScrolledImage(void *canvas, const void *pixels,
+    s32 x, s32 y, s32 width, s32 height, s32 scroll, RectangleBlit *draw)
+{
+    (*draw)(canvas, pixels, x, y, width, height - scroll);
+}
+
 /* FAKEMATCH: Keep the cropped height inside the drawing scope. */
 static __inline__ void DrawCroppedImage(void *canvas, const void *pixels,
     s32 x, s32 y, s32 width, RectangleBlit *draw)
 {
     (*draw)(canvas, pixels, x, y, width, 91);
-}
-
-/* Two scrolling pieces form the column; the wider image anchors its base. */
-static __inline__ void DrawRisingColumn(void *canvas, s32 origin_x, s32 rise,
-    s32 scroll, RectangleBlit *draw)
-{
-    s32 width;
-    s32 tile_height;
-    s32 column_x;
-    s32 column_y;
-
-    width = 17;
-    tile_height = 104;
-    column_y = rise + scroll;
-    column_x = origin_x - width / 2;
-    DrawImage(canvas, IMAGE_WORK, column_x, column_y - tile_height, width,
-              tile_height, draw);
-    DrawImage(canvas, IMAGE_WORK, column_x, column_y, width,
-              tile_height - scroll, draw);
-    DrawImage(canvas, (IMAGE_WORK + 0x6e8), origin_x - width, rise + 47, width * 2, 65, draw);
 }
 
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
@@ -781,54 +791,60 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             s32 scroll;
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
-            if ((u32)frame > 23) {
-                goto RestoreBlitters;
-            }
-            origin_x = target_screen->x / 2;
-            rise = frame * 32 - 232;
-            scroll = frame * 16 - 48;
-            if (rise > 0)
-                rise = 0;
-            while (scroll > 104)
-                scroll -= 104;
-            BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            {
-                /* FAKEMATCH: the reference adds the slot offset in a register. */
-                register u8 *draw asm("r8") = gWorkSlot;
-                s32 slot_offset = 47 * 4;
-                asm("" : "+r"(slot_offset)); /* FAKEMATCH: hides the 188 so it is added in a register */
-                draw += slot_offset;
-                DrawRisingColumn(canvas, origin_x, rise, scroll, (RectangleBlit *)draw);
-            }
-            Runtime_ReleaseHeapBlock(47);
-            if (frame == 8) {
-                work->shake_frames = frame;
-            }
-            if (frame <= 1) {
-                goto RestoreBlitters;
-            }
-            {
-                s32 emitted = 0;
-                struct EffectStep *step;
-                for (i = 0; i != 64; i++) {
-                    if ((step = &work->particles[i])->variant == 0) {
-                        step->x = target_actor->x;
-                        step->y = 0x140000;
-                        step->z = target_actor->z;
-                        step->velocity_x = ((Random16() & 255) - 127) << 12;
-                        step->velocity_y = ((Random16() & 255) - 64) << 10;
-                        /* FAKEMATCH: Finish velocity before deriving the particle lifetime. */
-                        do {
-                            step->velocity_z = ((Random16() & 255) - 127) << 12;
-                        } while (0);
-                        step->variant = i / 2 + 32;
-                        emitted++;
-                        if (emitted == 4)
-                            break;
+            if ((u32)frame <= 23) {
+                /* The rising column: two scrolling pieces over a wider base. */
+                RectangleBlit *draw;
+                s32 width;
+                s32 tile_height;
+                s32 column_x;
+                s32 column_y;
+                s32 top;
+                origin_x = target_screen->x / 2;
+                rise = frame * 32 - 232;
+                scroll = frame * 16 - 48;
+                if (rise > 0)
+                    rise = 0;
+                while (scroll > 104)
+                    scroll -= 104;
+                BattleEffect_LoadWork(47, 7, 7, 3, 2);
+                draw = (RectangleBlit *)gWorkSlot;
+                draw += 47;
+                column_x = origin_x - 8;
+                column_y = rise + scroll;
+                top = column_y - 104;
+                width = 17;
+                tile_height = 104;
+                DrawImage(canvas, IMAGE_WORK, column_x, top, width, tile_height, draw);
+                DrawScrolledImage(canvas, IMAGE_WORK, column_x, column_y, width, tile_height, scroll, draw);
+                (*draw)(canvas, IMAGE_WORK + 0x6e8, origin_x - width, rise + 47, width * 2, 65);
+                Runtime_ReleaseHeapBlock(47);
+                if (frame == 8) {
+                    work->shake_frames = frame;
+                }
+                if (frame > 1) {
+                    s32 emitted = 0;
+                    struct EffectStep *step;
+                    for (i = 0; i != 64; i++) {
+                        if ((step = &work->particles[i])->variant == 0) {
+                            step->x = target_actor->x;
+                            step->y = 0x140000;
+                            step->z = target_actor->z;
+                            step->velocity_x = ((Random16() & 255) - 127) << 12;
+                            step->velocity_y = ((Random16() & 255) - 64) << 10;
+                            /* FAKEMATCH: Finish velocity before deriving the particle lifetime. */
+                            do {
+                                step->velocity_z = ((Random16() & 255) - 127) << 12;
+                            } while (0);
+                            step->variant = i / 2 + 32;
+                            emitted++;
+                            if (emitted == 4)
+                                break;
+                        }
                     }
                 }
             }
-            goto RestoreBlitters;
+            BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
+            goto FinishFrame;
         }
         if (kind == 31) {
             s32 height;
@@ -845,8 +861,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 DrawImage(canvas, IMAGE_WORK, pair_x, 48, 24, height, work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
             }
-        RestoreBlitters:
-            ;
             BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
             goto FinishFrame;
         }
@@ -1019,9 +1033,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
             {
                 struct EffectStep *step = (struct EffectStep *)0x02014000;
-                /* FAKEMATCH: The wide snapshot keeps this origin in a saved
-                   * register; a pointer alias merges with the spilled pointer. */
-                u64 origin_addr = (u32)target_screen;
+                struct EffectPosition *origin;
+                /* FAKEMATCH: A zero offset known only after global const propagation keeps the origin copy out of copy propagation, so the loop hoists it after the projection address. */
+                s32 bias = 0;
                 for (i = 0; i != 64; i++, step++) {
                     if (step->x >= 0 && frame >= i / 2) {
                         s32 image = i & 3;
@@ -1029,8 +1043,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         SceneTransform_ApplyPitch(step->velocity_x);
                         SceneTransform_ApplyYaw(step->velocity_y);
                         EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-                        projected.x = projected.x / 2 + ((struct EffectPosition *)(u32)origin_addr)->x / 2;
-                        projected.y += ((struct EffectPosition *)(u32)origin_addr)->y + 32;
+                        origin = (struct EffectPosition *)((u8 *)target_screen + bias); /* FAKEMATCH: see bias above */
+                        projected.x = projected.x / 2 + origin->x / 2;
+                        projected.y += origin->y + 32;
                         blitters[1](canvas, IMAGE_WORK + CastingImpact_OrbitCells[image], projected.x - 4, projected.y - 4, 8, 8);
                         step->x -= 6;
                         if (step->x < 0 && ((i & 7) == 0 || i == 63)) {

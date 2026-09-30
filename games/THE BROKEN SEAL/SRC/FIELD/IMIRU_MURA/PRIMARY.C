@@ -24,11 +24,11 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x6666, 0x3333);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
-    leader = (struct FieldActor *)Engine_ActorGet(0);
+    leader = (struct FieldActor *)Object_GetById(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
     }
-    leader = (struct FieldActor *)Engine_ActorGet(0);
+    leader = (struct FieldActor *)Object_GetById(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
@@ -91,9 +91,9 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetAnimationAndWait(ACTOR_MIA, 3);
     Event_Wait(40);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    ((struct Work_399 *)((s32)Engine_ActorGet(3)))->f100 = 0;
+    ((struct Work_399 *)((s32)Object_GetById(3)))->f100 = 0;
     Actor_EnableActionCallback(ACTOR_MIA, (s32)ImiruMura_MiaScriptA);
-    while (*(s16 *)(((s32)Engine_ActorGet(3)) + ACTOR_DONE_OFFSET) == 0) {
+    while (*(s16 *)(((s32)Object_GetById(3)) + ACTOR_DONE_OFFSET) == 0) {
         Task_Wait(1);
     }
     Camera_MoveTo(0x8c0000, -1, 0xc60000, 1);
@@ -132,9 +132,9 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_Stop(ACTOR_GERALD);
     Actor_Stop(ACTOR_IVAN);
     Actor_SetSpeed(ACTOR_MIA, 0x30000, 0x18000);
-    ((struct Work_399 *)((s32)Engine_ActorGet(3)))->f100 = 0;
+    ((struct Work_399 *)((s32)Object_GetById(3)))->f100 = 0;
     Actor_EnableActionCallback(ACTOR_MIA, (s32)ImiruMura_MiaScriptB);
-    while (*(s16 *)(((s32)Engine_ActorGet(3)) + ACTOR_DONE_OFFSET) == 0) {
+    while (*(s16 *)(((s32)Object_GetById(3)) + ACTOR_DONE_OFFSET) == 0) {
         Task_Wait(1);
     }
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -144,17 +144,17 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x40000, 0x20000);
     Actor_SetSpeed(ACTOR_IVAN, 0x40000, 0x20000);
     Audio_PlayCue(152);
-    ((struct FieldActor *)((s32)Engine_ActorGet(0)))->unknown_5a &= 254;
-    ((struct FieldActor *)((s32)Engine_ActorGet(1)))->unknown_5a &= 254;
-    ((struct FieldActor *)((s32)Engine_ActorGet(2)))->unknown_5a &= 254;
+    ((struct FieldActor *)((s32)Object_GetById(0)))->unknown_5a &= 254;
+    ((struct FieldActor *)((s32)Object_GetById(1)))->unknown_5a &= 254;
+    ((struct FieldActor *)((s32)Object_GetById(2)))->unknown_5a &= 254;
     Actor_SetDestination(ACTOR_PARTY_LEADER, 132, 206);
     Actor_SetDestination(ACTOR_GERALD, 136, 221);
     Actor_SetDestination(ACTOR_IVAN, 122, 238);
     Object_RefreshSelectorById(3);
     Event_Wait(80);
-    ((struct FieldActor *)((s32)Engine_ActorGet(0)))->unknown_5a |= 1;
-    ((struct FieldActor *)((s32)Engine_ActorGet(1)))->unknown_5a |= 1;
-    ((struct FieldActor *)((s32)Engine_ActorGet(2)))->unknown_5a |= 1;
+    ((struct FieldActor *)((s32)Object_GetById(0)))->unknown_5a |= 1;
+    ((struct FieldActor *)((s32)Object_GetById(1)))->unknown_5a |= 1;
+    ((struct FieldActor *)((s32)Object_GetById(2)))->unknown_5a |= 1;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);

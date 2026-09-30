@@ -107,7 +107,7 @@ void FieldScene_RunScene3b9_02000468(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Engine_ActorGet(13);
+    rec7 = Object_GetById(13);
     Event_Begin();
     Actor_Stop(13);
     Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 20);

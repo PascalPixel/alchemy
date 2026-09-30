@@ -441,6 +441,24 @@ fn external(
     Ok(names)
 }
 
+/// The sections of a listing object that a relisting does not regenerate:
+/// every `.section` but `.text*` and `.rodata*`, with its lines as written.
+fn other_sections(listing: &str) -> String {
+    let mut kept = String::new();
+    let mut keeping = false;
+    for line in listing.lines() {
+        if let Some(rest) = line.trim_start().strip_prefix(".section") {
+            let name = rest.trim().split([',', ' ']).next().unwrap_or("");
+            keeping = !name.starts_with(".text") && !name.starts_with(".rodata");
+        }
+        if keeping {
+            kept.push_str(line);
+            kept.push('\n');
+        }
+    }
+    kept
+}
+
 /// Replace each area's linker-script entries with its new ones.
 fn patch_script(
     script: &str,
@@ -645,8 +663,11 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
     // Write: the new pieces replace every regenerated listing.
     let directory = options.root.join(&options.listings);
     if let Some(object) = &options.object {
-        // One listing object: each piece is its own section of it.
+        // One listing object: each piece is its own section of it, and its
+        // other sections, such as reserved RAM, stay as written.
         const HEADER: &str = ".syntax unified\n\t.thumb\n";
+        let path = directory.join(format!("{object}.s"));
+        let kept = other_sections(&read_text(&path)?);
         let mut source = String::from(HEADER);
         for (start, text) in &output.pieces {
             let words = output.words.contains(start);
@@ -658,7 +679,7 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
             );
             source.push_str(text.strip_prefix(HEADER).unwrap_or(text));
         }
-        let path = directory.join(format!("{object}.s"));
+        source.push_str(&kept);
         fs::write(&path, source).map_err(|error| format!("{}: {error}", path.display()))?;
     } else {
         for stem in &regenerated {
@@ -688,4 +709,18 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
         let _ = writeln!(text, "note\t{note}");
     }
     Ok(text)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_relisting_keeps_the_reserved_ram_of_its_listing() {
+        let listing = ".syntax unified\n\t.thumb\n\t.section .text.x02008000,\"ax\",%progbits\n\tbx lr\n\t.section .bss,\"aw\",%nobits\n\t.space 58\n\t.global gSprites\ngSprites:\n\t.space 216\n\t.section .rodata,\"a\",%progbits\n\t.4byte 0\n";
+        assert_eq!(
+            other_sections(listing),
+            "\t.section .bss,\"aw\",%nobits\n\t.space 58\n\t.global gSprites\ngSprites:\n\t.space 216\n"
+        );
+    }
 }

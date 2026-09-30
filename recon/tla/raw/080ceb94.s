@@ -1,17 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_080ceb80
+	.balign 4
+	.global Func_080ceb94
 	.thumb_func
-Func_080ceb80:
-	push	{lr}
-	lsls	r0, r0, #16
-	lsrs	r0, r0, #16
-	bl	0x080cdfb0
-	adds	r3, r0, #0
-	negs	r0, r3
-	orrs	r0, r3
-	lsrs	r0, r0, #31
-	pop	{pc}
+Func_080ceb94:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	ldr	r1, [r5, #8]

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811b9e0
+	.global ResetMotionRecordGroup
 	.thumb_func
-Func_0811b9e0:
+ResetMotionRecordGroup:
 	push	{lr}
 	cmp	r0, #0
 	beq.n	.L_0811b9fa

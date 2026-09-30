@@ -8,6 +8,7 @@ mod check;
 mod compiler;
 mod coverage;
 mod disasm;
+mod edition;
 mod format;
 mod gate;
 mod overlay;

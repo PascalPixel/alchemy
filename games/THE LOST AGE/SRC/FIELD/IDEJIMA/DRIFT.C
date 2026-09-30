@@ -19,12 +19,6 @@ struct MapWork {
 
 extern const u8 gIdejimaSpawnScript[];
 
-void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y,
-                           s32 width, s32 height);
-struct FieldActor *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
-void Engine_ObjectSetMode(struct FieldActor *object, s32 mode);
-void Engine_ObjectSetScript(struct FieldActor *object, const void *script);
-
 /* Before the island drifts: sets two map layer values, copies one map cell and
    gives actor 9 animation 2. */
 void DriftScene_Prepare(void)

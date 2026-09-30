@@ -365,7 +365,7 @@ Func_080b9ec0:
 	movs	r1, #200
 	ldr	r0, [pc, #48]
 	lsls	r1, r1, #4
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	mov	r3, r9
 	ldr	r0, [r3, #88]
 	movs	r3, #128

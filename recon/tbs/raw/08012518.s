@@ -24,7 +24,7 @@ Func_08012518:
 	mov	sl, r3
 	str	r2, [sp, #16]
 	str	r2, [sp, #12]
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	ldr	r2, [pc, #116]
 	str	r0, [sp, #8]
 	add	r4, sp, #28
@@ -100,7 +100,7 @@ Func_08012518:
 	bl	Scheduler_ResetTaskTable
 	movs	r1, #160
 	movs	r0, #9
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #8]
 	bl	Resource_InitializeTable
 	movs	r0, #2
@@ -220,7 +220,7 @@ Func_08012518:
 	movs	r1, #200
 	ldr	r0, [pc, #596]
 	lsls	r1, r1, #4
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 .L_080126f0:
 	movs	r0, #1
 	bl	WaitFrames

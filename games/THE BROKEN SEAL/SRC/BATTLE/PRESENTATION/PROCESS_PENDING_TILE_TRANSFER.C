@@ -6,7 +6,7 @@ static __inline__ void FillWords(void *dst, s32 size, s32 value)
     Iwram_FillWords(dst, size, value);
 }
 
-extern u8 *Data_03001eec[2];
+extern u8 *gBattleFxWork[2];
 
 void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes);
 void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup, u32 bytes);
@@ -19,9 +19,9 @@ void BattlePres_ProcessPendingTileTransfer(void)
     u8 *work;
     u8 *buffer;
 
-    work = Data_03001eec[0];
+    work = gBattleFxWork[0];
     if (*(s32 *)(work + 0x7824) == 1) {
-        buffer = Data_03001eec[1];
+        buffer = gBattleFxWork[1];
         switch (*(s32 *)(work + 0x7780)) {
         case 1:
             Dma_Set(buffer, (void *)0x06003500, 0x84002000, (volatile u32 *)0x040000d4);

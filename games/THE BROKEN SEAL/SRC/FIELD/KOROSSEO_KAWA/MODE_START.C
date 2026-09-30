@@ -18,7 +18,7 @@ extern u16 Korosseo_ModeMoveDuration;
 extern s32 Korosseo_ModeTaskPosition;
 
 void Korosseo_UpdateModeTask(void);
-s32 Engine_ScheduleCallback(void (*callback)(void), s32 priority);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 /*
  * The mode task's per-frame routine is installed as a callback.  The branch
@@ -32,7 +32,7 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
     Korosseo_ModeTaskMode = (u16)mode;
     Korosseo_ModeTaskParam = (u16)(param << 4);
 
-    Engine_ScheduleCallback(Korosseo_UpdateModeTask, 0xc80);
+    Scheduler_AddOrUpdateCallback(Korosseo_UpdateModeTask, 0xc80);
 
     handler = (s32)KorosseoKawa_RoundSpans;
     if (mode == 2) {

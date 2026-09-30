@@ -440,7 +440,7 @@ Func_080d89ac:
 	lsls	r1, r1, #3
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #232]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r1, [sp, #64]
 	movs	r0, #0
 	mov	fp, r0

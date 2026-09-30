@@ -3,7 +3,7 @@
 
 void Object_CommitPosition(struct FieldActor *object);
 void ObjectDispatch_InitFromTable4WithArgument(s32 handle, struct FieldActor *object);
-void *Engine_AllocateBlock(s32 slot, s32 size);
+void *Runtime_AllocateBlock(s32 slot, s32 size);
 
 /* The log's rolling animation for each quarter of the pusher's heading. */
 extern u8 KorosseoKabe_RollLogScript[];
@@ -39,7 +39,7 @@ void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
     Engine_ObjectSetPosition(log, column, 0, row);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(pusher, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)((u8 *)Engine_AllocateBlock(27, 0xccc) + 480), log);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)((u8 *)Runtime_AllocateBlock(27, 0xccc) + 480), log);
     Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
     Engine_ObjectSetAnimation(leader, 2);
     Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0, leader->z.fixed + dz);

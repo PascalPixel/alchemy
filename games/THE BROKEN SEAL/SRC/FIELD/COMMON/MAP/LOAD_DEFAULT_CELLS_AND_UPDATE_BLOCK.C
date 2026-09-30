@@ -2,7 +2,7 @@
 #include "SYSTEM.H"
 #include "RESOURCE_IDS.H"
 extern u8 gMapCellBuffer[];
-extern u8 Data_03001e70[];
+extern u8 gCam[];
 extern u8 Data_03001cfc[];
 
 /* map/shared/load_default_cells_and_update_block.c */
@@ -21,7 +21,7 @@ struct MapInitWork {
 
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
-    struct MapInitWork *work = *(struct MapInitWork **)((u32)&Data_03001e70);
+    struct MapInitWork *work = *(struct MapInitWork **)((u32)&gCam);
     *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
     work->first = 0;
     work->second = 0x9f;

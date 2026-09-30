@@ -19,3 +19,13 @@ s32 Sound_LoadPresetParameters(s32 preset)
             (volatile u32 *)0x040000d4);
     return 0;
 }
+
+/* Two empty routines between the preset loader and the key interrupt
+   setup; nothing in the image calls either by name. */
+void Sound_ReservedNoOpA(void)
+{
+}
+
+void Sound_ReservedNoOpB(void)
+{
+}

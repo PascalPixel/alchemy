@@ -9,3 +9,10 @@ s32 Item_CallHandler48(s32 arg0, s32 arg1)
     PartyInventory_RemoveFar(arg1);
     return 0;
 }
+
+/* A routine that only reports success; the window far-call table reaches
+   it through its stub. */
+s32 Item_ReturnTrue(void)
+{
+    return 1;
+}

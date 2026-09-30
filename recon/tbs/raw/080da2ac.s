@@ -170,7 +170,7 @@ Func_080da2ac:
 	lsls	r1, r1, #3
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #688]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	mov	r6, sp
 	adds	r6, #100
 	str	r6, [sp, #48]

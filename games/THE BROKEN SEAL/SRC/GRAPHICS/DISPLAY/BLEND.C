@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
-extern u8 Data_03001c98[];
 
 extern u8 gBlendFramesLeft;
 extern volatile u8 gBlendTargetLevel;
@@ -101,9 +100,9 @@ s32 WaitFrames(s32);
 
 void Blend_WaitForTransition(void)
 {
-    if (*(u8 *)((u32)&Data_03001c98) != 0) {
+    if (gBlendDuration != 0) {
         do {
             WaitFrames(1);
-        } while (*(u8 *)((u32)&Data_03001c98) != 0);
+        } while (gBlendDuration != 0);
     }
 }

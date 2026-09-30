@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
-extern u8 Data_03001e80[];
+extern u8 gCameraWork[];
 
 /* Per-frame world map view: follow the target (with a decaying random
    shake), redraw the palette-mapped column or row the view crossed, then
@@ -41,7 +41,7 @@ struct WorldScreen {
     s32 center_y;
 };
 
-extern struct WorldScreen Data_03001ce0;
+extern struct WorldScreen gProjection;
 extern u32 Data_03001af4;
 extern u32 Data_03001f60;
 extern u32 Data_03001e40;
@@ -63,7 +63,7 @@ void WorldMap_BuildScanlineTable(s32 value, s32 *position, u8 *map);
 
 void WorldMap_UpdateView(void)
 {
-    void **slot = (void **)((u32)&Data_03001e80);
+    void **slot = (void **)((u32)&gCameraWork);
     u8 *cam = slot[0];
     u8 *map = slot[-5];
     struct WorldView *view = slot[-4];
@@ -119,8 +119,8 @@ void WorldMap_UpdateView(void)
         view->last_x = x;
         view->last_y = y;
     }
-    Data_03001ce0.center_x = 120;
-    Data_03001ce0.center_y = 96;
+    gProjection.center_x = 120;
+    gProjection.center_y = 96;
     Camera_StoreSceneParameters(distance, height / 2, height * 2);
     pos[0] = *target++;
     pos[1] = 0;

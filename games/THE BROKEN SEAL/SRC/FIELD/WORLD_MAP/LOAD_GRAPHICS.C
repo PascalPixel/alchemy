@@ -10,7 +10,7 @@ s32 Resource_DecodeByteLz(const void *source, void *destination);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);
 
-extern u8 *Data_03001e70;
+extern u8 *gCam;
 extern u32 Data_080132cc[][6];
 
 struct WorldCell {
@@ -51,7 +51,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 
     variant = 0;
     buffer = (u8 *)Runtime_BumpAllocate(0x200);
-    state = (struct WorldMapState *)Data_03001e70;
+    state = (struct WorldMapState *)gCam;
     if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
         variant = 1;
     resources = Data_080132cc[variant];

@@ -60,7 +60,7 @@ struct Unit_080b12c0 {
     u8 class_id;
 };
 
-extern s32 *Data_03001f00;
+extern s32 *gTransitionWork;
 extern void *Data_03001e74;
 
 struct Slot_080b12c0 *GetBattleObjectSlot(s32 id);
@@ -112,7 +112,7 @@ s32 RunBattlePresentation(struct Input_080b12c0 *input)
     s32 index;
     s32 phase;
 
-    facing = Data_03001f00;
+    facing = gTransitionWork;
     saved_input = input;
     {
         /* FAKEMATCH: rereads the saved input into r1 as the ROM does */

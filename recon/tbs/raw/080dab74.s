@@ -95,7 +95,7 @@ BattleEffect_RunRisingMotes:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #748]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r2, [pc, #748]
 	adds	r3, r6, r2
 	ldr	r1, [r3, #0]

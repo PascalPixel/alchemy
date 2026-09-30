@@ -95,7 +95,7 @@ void Scene_ClosePresentationSequence(void)
     s32 phase;
     volatile u16 cnt;
 
-    runtime = Data_03001e70;
+    runtime = gCam;
 
     Event_Begin();
     Main_0808a460();

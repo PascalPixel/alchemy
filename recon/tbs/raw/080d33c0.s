@@ -171,7 +171,7 @@ Func_080d33c0:
 	str	r2, [r3, #0]
 	adds	r1, r5, #0
 	ldr	r0, [pc, #780]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r1, #239
 	lsls	r1, r1, #7
 	adds	r2, r7, r1
@@ -183,7 +183,7 @@ Func_080d33c0:
 	str	r3, [r2, #0]
 	adds	r1, r5, #0
 	ldr	r0, [pc, #760]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #164
 	bl	Audio_PlayCue
 	ldr	r0, [pc, #728]

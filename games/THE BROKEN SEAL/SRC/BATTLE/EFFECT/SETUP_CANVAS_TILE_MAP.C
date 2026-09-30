@@ -33,7 +33,7 @@ struct BattleLayer {
     s32 offset;
 };
 
-extern u16 Data_03001ad0[];
+extern u16 gBgScroll[];
 void Runtime_ApplyValueToWork7818(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 fade, s32 arg);
 
@@ -49,7 +49,7 @@ void BattleFx_SetupCanvasTileMap(void)
 
     Runtime_ApplyValueToWork7818();
     BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
-    Data_03001ad0[3] = 32;
+    gBgScroll[3] = 32;
     layer->offset = 0;
     ClearWords(Iwram_ClearWords, (void *)0x06003fc0, 64);
     FillWords(Iwram_FillWords, (void *)0x0600f900, 0x200, -1);

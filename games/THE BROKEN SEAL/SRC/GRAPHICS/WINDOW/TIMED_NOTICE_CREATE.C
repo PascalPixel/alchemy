@@ -7,7 +7,7 @@ s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *
 s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 void UiTimedNotice_Tick(void);
-s32 Engine_ScheduleCallback(void (*callback)(void), s32 priority);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 /* Show the text the party's scene and entrance select, centred in a
    window, and let UiTimedNotice_Tick close it after 90 frames. The window
@@ -37,5 +37,5 @@ void UiTimedNotice_Create(void)
     timer = (u16 *)(work + 0x234);
     frames = 90; /* FAKEMATCH: a word temporary keeps 90 out of the HImode pool. */
     *timer = frames;
-    Engine_ScheduleCallback(UiTimedNotice_Tick, 0xc80);
+    Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }

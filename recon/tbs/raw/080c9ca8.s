@@ -125,7 +125,7 @@ Func_080c9ca8:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #352]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [pc, #348]
 	ldr	r2, [sp, #64]
 	adds	r5, r2, r3

@@ -160,7 +160,7 @@ Func_080da6cc:
 	str	r2, [r3, #0]
 	adds	r1, r5, #0
 	ldr	r0, [pc, #792]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r2, #239
 	lsls	r2, r2, #7
 	add	r2, r9
@@ -172,7 +172,7 @@ Func_080da6cc:
 	str	r3, [r2, #0]
 	adds	r1, r5, #0
 	ldr	r0, [pc, #772]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r3, #0
 	str	r3, [sp, #28]
 	ldr	r3, [pc, #768]

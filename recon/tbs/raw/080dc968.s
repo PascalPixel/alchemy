@@ -60,7 +60,7 @@ Func_080dc968:
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #44]
 	mov	sl, r1
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r1, #0
 	movs	r0, #0
 	bl	BattleEffect_WipeCanvas
@@ -147,7 +147,7 @@ Func_080dc968:
 	str	r6, [r3, #0]
 	mov	r1, sl
 	ldr	r0, [pc, #124]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r0, [sp, #56]
 	movs	r3, #1
 	str	r3, [r0, #16]

@@ -142,7 +142,7 @@ Func_080ceff8:
 	ldr	r0, [pc, #344]
 	lsls	r1, r1, #3
 	str	r5, [sp, #12]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	mov	r3, sl
 	cmp	r3, #2
 	bne.n	.L_080cf140

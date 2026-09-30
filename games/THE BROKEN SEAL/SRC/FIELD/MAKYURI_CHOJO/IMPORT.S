@@ -165,9 +165,9 @@ Object_LinkPairFar:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
-	.global Engine_ObjectSetPalette
+	.global ObjectGroup_SetChildValue
 	.thumb_func
-Engine_ObjectSetPalette:
+ObjectGroup_SetChildValue:
 	.global SetOverlayObjectSlot
 	.thumb_func
 SetOverlayObjectSlot:

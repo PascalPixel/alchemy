@@ -215,7 +215,7 @@ BattleFx_RenderMode:
 	movs	r1, #144
 	ldr	r0, [pc, #196]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 .L_080d5466:
 	movs	r2, #239
 	lsls	r2, r2, #7
@@ -229,7 +229,7 @@ BattleFx_RenderMode:
 	lsls	r1, r1, #3
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #172]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #142
 	bl	Audio_PlayCue
 	ldr	r1, [sp, #60]

@@ -121,7 +121,7 @@ Func_080e90a8:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #220]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r2, #239
 	lsls	r2, r2, #7
 	add	r2, fp

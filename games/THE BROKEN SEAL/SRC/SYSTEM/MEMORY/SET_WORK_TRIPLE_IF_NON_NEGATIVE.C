@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern u8 Data_03001e70[];
+extern u8 gCam[];
 
 struct Work_08012330 {
     s32 unknown_00;
@@ -14,7 +14,7 @@ void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
 {
     struct Work_08012330 *work;
 
-    work = *(struct Work_08012330 **)((u32)&Data_03001e70);
+    work = *(struct Work_08012330 **)((u32)&gCam);
     if (value0 >= 0) {
         work->value_04 = value0;
     }

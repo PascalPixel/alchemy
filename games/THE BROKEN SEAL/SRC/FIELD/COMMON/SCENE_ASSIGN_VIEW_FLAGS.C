@@ -20,7 +20,7 @@ void GameFlag_ClearBitFar(s32 flag);
    kept set, when it lies outside. */
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 {
-    struct MapScrollWork *view = Data_03001e70;
+    struct MapScrollWork *view = gCam;
 
     GameFlag_ClearBitFar(0x164);
     GameFlag_SetBitFar(0x165);

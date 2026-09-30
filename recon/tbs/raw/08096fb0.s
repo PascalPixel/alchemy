@@ -145,7 +145,7 @@ Func_08096fb0:
 	movs	r1, #200
 	ldr	r0, [pc, #32]
 	lsls	r1, r1, #4
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 .L_080970d8:
 	add	sp, #4
 	pop	{r3, r5, r6}

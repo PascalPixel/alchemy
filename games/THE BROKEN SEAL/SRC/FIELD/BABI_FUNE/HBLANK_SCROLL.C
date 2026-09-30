@@ -15,7 +15,7 @@ struct DisplayScrollState {
 
 extern struct DisplayScrollState *gHBlankScrollWork;
 
-void Engine_ArmScrollDma(void)
+void DisplayScroll_ArmHBlankDma(void)
 {
     volatile u32 *dma;
     struct DisplayScrollState *state;

@@ -17,7 +17,7 @@ void FieldScene_RunSixSteps380To3A8(void);
 void FieldScene_RunScene3ba_02000974(s32 direction);
 void SceneState_InitControlWhenFlag109Clear(s32 value);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
-s32 Engine_ScheduleCallback(void (*callback)(void), s32 priority);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void FieldScene_RunOpeningAuxiliarySequence(void);
 void SceneState_SetStateHalfword386To99WhenMatched(void);
 
@@ -66,7 +66,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     actor->motion_flags = 0;
     actor->priority_flags = 2;
     Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
-    Engine_ScheduleCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
     actor = Engine_ActorGet(15);
     actor->unknown_22 = 1;
     zero = 0;
@@ -130,7 +130,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
         SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
         break;
     case 2:
-        Engine_ScheduleCallback(SceneState_SetStateHalfword386To99WhenMatched, 0xc80);
+        Scheduler_AddOrUpdateCallback(SceneState_SetStateHalfword386To99WhenMatched, 0xc80);
         Engine_ActorDestroy(24);
         Engine_ActorDestroy(25);
         if (!Engine_GameFlagIsSet(0x109)) {

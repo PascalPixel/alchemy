@@ -104,7 +104,7 @@ Func_080d41a4:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #632]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r0, [pc, #632]
 	ldr	r7, [sp, #40]
 	adds	r3, r7, r0

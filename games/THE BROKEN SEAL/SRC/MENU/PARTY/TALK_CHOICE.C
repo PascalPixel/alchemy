@@ -16,9 +16,9 @@ void Shop_SetCursorFar(union MenuCursor *cursor, s32 x, s32 y, s32 speed);
 void ShopCursor_SetPositionImmediateFar(union MenuCursor *cursor, s32 x, s32 y);
 
 extern u8 MsgTalkChoice[];
-extern u8 Data_080310a4[];
+extern u8 Resource_FixedBlockBTiles[];
 
-extern volatile u32 Data_03001b04;
+extern volatile u32 gKeysRepeat;
 
 /* FAKEMATCH: the shared MenuCursor union preserves pointer-store ordering. */
 /* "Descriptions", "Cheer" or "Nothing": returns the row chosen with A, or -1
@@ -40,7 +40,7 @@ s32 PartyTalkMenu_Choose(void)
     slot = Resource_FindFreeEntry();
     row = 0;
     if (slot < 96) {
-        VramBlock_LoadCached(slot, 128, Data_080310a4);
+        VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
         cursor.output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
         ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 - 3, window->y * 8 + 9);
     }
@@ -56,26 +56,26 @@ s32 PartyTalkMenu_Choose(void)
             Shop_SetCursorFar(&cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);
         }
         ShopCursor_AdvanceFar(&cursor);
-        if (Data_03001b04 & 0x40) {
+        if (gKeysRepeat & 0x40) {
             Audio_PlayCue(111);
             row--;
             moved = 1;
             if (row == -1)
                 row = 2;
         }
-        if (Data_03001b04 & 0x80) {
+        if (gKeysRepeat & 0x80) {
             Audio_PlayCue(111);
             row++;
             moved = 1;
             if (row == 3)
                 row = 0;
         }
-        if (Data_03001b04 & 2) {
+        if (gKeysRepeat & 2) {
             Audio_PlayCue(113);
             row = -1;
             goto close;
         }
-    } while (!(Data_03001b04 & 1));
+    } while (!(gKeysRepeat & 1));
     Audio_PlayCue(112);
 close:
     UiWork_Finalize(window, 2);

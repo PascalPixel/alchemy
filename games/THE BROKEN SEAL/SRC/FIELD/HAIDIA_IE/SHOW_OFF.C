@@ -33,7 +33,7 @@ void Villager_ShowOffPsynergy(void)
         }
         Event_ShowMessage(17, 0);
     } else {
-        origin = Data_03001e70->origin;
+        origin = gCam->origin;
         Event_SetMessage((s32)MsgHaidiaShownNewAbility);
         Actor_FaceEachOther(17, ACTOR_PARTY_LEADER, 0);
         Event_AskYesNo(17, 0);
@@ -46,7 +46,7 @@ void Villager_ShowOffPsynergy(void)
             OverlayObject_UpdateOnFrameBit1((s32)Engine_ActorGet(17));
             Task_Wait(1);
         }
-        Value2(Engine_ScheduleCallback, (s32)FieldScene_RunStep17, 0xc80);
+        Value2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunStep17, 0xc80);
         Audio_PlayCue(107);
         for (i = 0; i != 180; i++) {
             if (Value2(IwramUnsignedRemainder, i, 10) == 0) {

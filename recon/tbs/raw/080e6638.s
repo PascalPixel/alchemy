@@ -58,7 +58,7 @@ Func_080e6638:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #36]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r3, #254
 	b.n	.L_080e66d4
 	.4byte 0x00002784
@@ -222,7 +222,7 @@ Func_080e6638:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #52]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r2, [pc, #48]
 	ldr	r3, [pc, #48]
 	movs	r4, #0

@@ -345,7 +345,7 @@ Func_080e302c:
 	ldr	r0, [pc, #64]
 	lsls	r1, r1, #3
 	str	r5, [sp, #36]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [pc, #60]
 	ldr	r2, [sp, #44]
 	movs	r7, #0

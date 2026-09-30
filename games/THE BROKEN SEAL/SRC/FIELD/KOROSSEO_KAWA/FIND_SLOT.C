@@ -76,7 +76,7 @@ typedef void(*SceneTask)(void);
 void Scene_RunScene3baSequenceA(void);
 s32 Resource_GetTableEntryFar(void);
 void Resource_DecodeType01(s32, s32);
-void Engine_ScheduleCallback(s32, s32);
+void Scheduler_AddOrUpdateCallback(s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -183,7 +183,7 @@ static __inline__ void AdvanceMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-u8 *Engine_AllocateBlock();            /* allocate a record by (id, size) */
+u8 *Runtime_AllocateBlock();            /* allocate a record by (id, size) */
 
 s32 Runtime_BumpAllocateAlternatePool();            /* reserve a graphics handle */
 
@@ -191,7 +191,7 @@ void Resource_DecodeType01();           /* upload image data to a handle */
 
 s32 Resource_FindFreeEntry();            /* next palette slot index */
 
-void Engine_ScheduleCallback();           /* install a per-frame task (callback, rate) */
+void Scheduler_AddOrUpdateCallback();           /* install a per-frame task (callback, rate) */
 
 void Runtime_BumpFree();           /* release a graphics handle */
 

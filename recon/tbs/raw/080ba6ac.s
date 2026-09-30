@@ -96,7 +96,7 @@ Func_080ba6ac:
 	movs	r1, #200
 	ldr	r0, [pc, #400]
 	lsls	r1, r1, #4
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [r5, #0]
 	cmp	r3, #0
 	beq.n	.L_080ba7c0

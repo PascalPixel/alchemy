@@ -65,7 +65,7 @@ s32 ShianMura_SetupScene(void)
         actor->motion_flags = x;
         actor->collision_flags = 8;
         Engine_ActorSetSpriteFlags(actor, 0);
-        Engine_ObjectSetPalette(actor, 15);
+        ObjectGroup_SetChildValue(actor, 15);
         actor->priority_flags = (actor->priority_flags & 254) | 2;
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x202)) {

@@ -49,7 +49,7 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
             spark->scale_y = 0x9999;
             spark->priority_flags = 2;
             spark->motion_flags = 0;
-            Engine_ObjectSetPalette(spark, 9);
+            ObjectGroup_SetChildValue(spark, 9);
             Engine_ObjectSetScript(spark, (const s32 *)ImiruMura_SparkScript);
         }
     }

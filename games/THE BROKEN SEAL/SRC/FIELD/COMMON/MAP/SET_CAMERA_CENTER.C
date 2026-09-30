@@ -23,7 +23,7 @@ void Map_SetCameraCenter(s32 x, s32 y)
 {
     u32 no;
     u8 *dest;
-    struct MapScrollWork *work = Data_03001e70;
+    struct MapScrollWork *work = gCam;
     struct MapLayerScroll *layer = work->layers;
 
     x -= 0x780000;

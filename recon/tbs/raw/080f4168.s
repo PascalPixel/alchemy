@@ -24,16 +24,16 @@ Func_080f4168:
 	ldr	r1, [pc, #320]
 	str	r0, [sp, #116]
 	movs	r0, #39
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r1, #195
 	str	r0, [sp, #112]
 	lsls	r1, r1, #3
 	movs	r0, #45
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	movs	r1, #76
 	str	r0, [sp, #108]
 	movs	r0, #12
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	str	r0, [sp, #104]
 	ldr	r0, [pc, #292]
 	bl	RuntimeDispatch_NoOpHook

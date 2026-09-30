@@ -82,7 +82,7 @@ Func_080e0564:
 	ldr	r0, [pc, #644]
 	lsls	r1, r1, #3
 	movs	r5, #225
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	lsls	r5, r5, #7
 	movs	r4, #0
 	mov	sl, r4

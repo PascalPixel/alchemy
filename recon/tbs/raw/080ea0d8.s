@@ -71,7 +71,7 @@ Func_080ea0d8:
 .L_080ea164:
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #140]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r1, #0
 	movs	r0, #0
 	bl	BattleEffect_WipeCanvas

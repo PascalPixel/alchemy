@@ -206,7 +206,7 @@ Func_080a414c:
 	movs	r1, #200
 	ldr	r0, [pc, #392]
 	lsls	r1, r1, #4
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	b.n	.L_080a4330
 .L_080a42fc:
 	mov	r3, sl

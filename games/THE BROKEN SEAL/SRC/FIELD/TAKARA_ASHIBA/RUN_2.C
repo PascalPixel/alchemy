@@ -10,8 +10,8 @@ void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 void TakaraAshiba_RaiseTriggerOnStand(void);
 void SceneState_TriggerColumnTen(void);
 void SceneState_TriggerColumnNineteen(void);
-/* FAKEMATCH: calls that cast Engine_ScheduleCallback to another return type keep their original register order. */
-s32 Engine_ScheduleCallback();
+/* FAKEMATCH: calls that cast Scheduler_AddOrUpdateCallback to another return type keep their original register order. */
+s32 Scheduler_AddOrUpdateCallback();
 
 enum {
     /* Message 0x182 + 243. */
@@ -177,9 +177,9 @@ void FieldScene_RunScene3b4_02002290(void)
     *(s32 *)(record + 24) = 0xb333;
     record = Engine_GetTriggerActor(12);
     *(s32 *)(record + 24) = 0xb333;
-    Call2(Engine_ScheduleCallback, (s32)SceneState_TriggerColumnNineteen, 0xc80);
-    Value2(Engine_ScheduleCallback, (s32)SceneState_TriggerColumnTen, 0xc80);
-    Value2(Engine_ScheduleCallback, (s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
+    Call2(Scheduler_AddOrUpdateCallback, (s32)SceneState_TriggerColumnNineteen, 0xc80);
+    Value2(Scheduler_AddOrUpdateCallback, (s32)SceneState_TriggerColumnTen, 0xc80);
+    Value2(Scheduler_AddOrUpdateCallback, (s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
     {
         u16 t;
         t = 0x3f42;
@@ -194,8 +194,8 @@ void FieldScene_RunScene3b4_02002334(void)
     s32 record;
 
     *(u8 *)(Object_GetById(14) + 85) = 0;
-    Call2(Engine_ScheduleCallback, (s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
-    Value2(Engine_ScheduleCallback, (s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
+    Call2(Scheduler_AddOrUpdateCallback, (s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
+    Value2(Scheduler_AddOrUpdateCallback, (s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
     MapObject_SetPosition(107, 0, 0);
     if (GameFlag_IsSet(0xed9) != 0) {
         Actor_SetAnimation(14, 2);

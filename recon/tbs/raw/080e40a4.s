@@ -165,7 +165,7 @@ BattlePres_RunRingAndSparkScene:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #576]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	cmp	r6, #1
 	beq.n	.L_080e4214
 	b.n	.L_080e43cc
@@ -259,7 +259,7 @@ BattlePres_RunRingAndSparkScene:
 	str	r5, [r3, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #392]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #212
 	bl	Audio_PlayCue
 	mov	r9, r5

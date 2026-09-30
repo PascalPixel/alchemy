@@ -169,7 +169,7 @@ Func_080d85d0:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #532]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #142
 	bl	Audio_PlayCue
 	ldr	r1, [pc, #480]

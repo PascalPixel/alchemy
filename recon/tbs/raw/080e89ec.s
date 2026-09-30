@@ -123,7 +123,7 @@ BattleEffect_RunDualParticleStream:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #788]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r5, [pc, #784]
 	movs	r6, #0
 	movs	r7, #63

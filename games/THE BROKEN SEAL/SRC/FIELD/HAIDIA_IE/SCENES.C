@@ -536,7 +536,7 @@ void HaidiaIe_SpawnEffectPair(union PairObject *parent)
                  * leaves a dead QImode zero that takes r3 from the +85
                  * address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
-                sprite->tile = (Data_03001b10[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->tile = (ResourceTableEntries[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;

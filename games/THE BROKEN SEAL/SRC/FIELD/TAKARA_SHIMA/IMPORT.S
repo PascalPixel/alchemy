@@ -176,9 +176,9 @@ Object_SetModeById:
 	.thumb_func
 Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
-	.global Engine_ObjectSetPalette
+	.global ObjectGroup_SetChildValue
 	.thumb_func
-Engine_ObjectSetPalette:
+ObjectGroup_SetChildValue:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func

@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020091c0,"a",%progbits
 	.global Mura_VillagerActions
 Mura_VillagerActions:
 	.4byte 0x00000022
@@ -708,39 +708,49 @@ gBiribinoMuraEvents2:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+.L_02009c54:
 	.4byte 0x00210025
 	.4byte 0x00020004
 	.4byte 0x00210005
 	.4byte 0x00040021
 	.4byte 0x00050002
-	.4byte 0x0023ffff
+	.2byte 0xffff
+.L_02009c6a:
+	.2byte 0x0023
 	.4byte 0x0002002b
 	.4byte 0x00050002
 	.4byte 0x002b0021
 	.4byte 0x00020002
 	.4byte 0xffff0005
+.L_02009c80:
 	.4byte 0x00340023
 	.4byte 0x00020002
 	.4byte 0x00210005
 	.4byte 0x00020034
 	.4byte 0x00050002
-	.4byte 0x0023ffff
+	.2byte 0xffff
+.L_02009c96:
+	.2byte 0x0023
 	.4byte 0x00020036
 	.4byte 0x00050002
 	.4byte 0x00360021
 	.4byte 0x00020002
 	.4byte 0xffff0005
+.L_02009cac:
 	.4byte 0x00300023
 	.4byte 0x00020002
 	.4byte 0x00210005
 	.4byte 0x00020030
 	.4byte 0x00050002
-	.4byte 0x0023ffff
+	.2byte 0xffff
+.L_02009cc2:
+	.2byte 0x0023
 	.4byte 0x0002002e
 	.4byte 0x00050002
 	.4byte 0x002e0021
 	.4byte 0x00020002
 	.4byte 0xffff0005
+.L_02009cd8:
 	.4byte 0x00320023
 	.4byte 0x00020002
 	.4byte 0x00210005
@@ -749,13 +759,13 @@ gBiribinoMuraEvents2:
 	.4byte 0x0000ffff
 	.global Mura_DoorCellSteps
 Mura_DoorCellSteps:
-	.4byte 0x02009cac
-	.4byte 0x02009c96
-	.4byte 0x02009cc2
-	.4byte 0x02009cd8
-	.4byte 0x02009c6a
-	.4byte 0x02009c80
-	.4byte 0x02009c54
+	.4byte .L_02009cac
+	.4byte .L_02009c96
+	.4byte .L_02009cc2
+	.4byte .L_02009cd8
+	.4byte .L_02009c6a
+	.4byte .L_02009c80
+	.4byte .L_02009c54
 	.global Mura_DoorCellOrigins
 Mura_DoorCellOrigins:
 	.4byte 0x00140036

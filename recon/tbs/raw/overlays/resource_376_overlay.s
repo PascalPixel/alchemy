@@ -1,15 +1,16 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020092fc,"a",%progbits
 	.global gValeFaceTargetScript
 gValeFaceTargetScript:
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte OverlayObject_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.global gValeActor10Script
 gValeActor10Script:
+.L_02009310:
 	.4byte 0x00000015
 	.4byte 0x0000000f
 	.4byte 0x00009999
@@ -91,7 +92,7 @@ gValePartyScript:
 	.global gValeTimedActorScript
 gValeTimedActorScript:
 	.4byte 0x00000022
-	.4byte 0x02008089
+	.4byte AdvancePositionScaleAndVelocity
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -419,7 +420,7 @@ gValeHouseReturnPlacements:
 	.4byte 0x01e60000
 	.4byte 0x0000b000
 	.4byte 0x00000036
-	.4byte 0x02009310
+	.4byte .L_02009310
 	.4byte 0x03330000
 	.4byte 0x00000000
 	.4byte 0x01950000
@@ -524,28 +525,28 @@ gValeHouseReturnPlacements:
 gValeHouseLateEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x02008309
+	.4byte FieldScene_RunIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02008315
+	.4byte FieldScene_RunIndexedStep2
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x02008321
+	.4byte FieldScene_RunIndexedStep3
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x0200832d
+	.4byte FieldScene_RunIndexedStep4
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x02008339
+	.4byte FieldScene_RunIndexedStep5
 	.4byte 0x00000002
 	.4byte 0xffff0006
-	.4byte 0x02008345
+	.4byte FieldScene_RunIndexedStep6
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte 0x02008351
+	.4byte FieldScene_RunIndexedStep7
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x0200835d
+	.4byte FieldScene_RunIndexedStep8
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
 	.4byte 0x004029c4
@@ -625,7 +626,7 @@ gValeHouseEvents:
 	.4byte 0x00000f6c
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02008191
+	.4byte Villager_AskWhySukuretaCame
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte 0x00000f70
@@ -637,40 +638,40 @@ gValeHouseEvents:
 	.4byte 0x00000f72
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x020081bd
+	.4byte Villager_PlanToScareVisitors
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x020084dd
+	.4byte FieldScene_RunByActorDirectionAndFlags
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0200855d
+	.4byte FieldScene_RunScene376_0200055c
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x020085d5
+	.4byte FieldScene_RunScene376_020005d4
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x02008309
+	.4byte FieldScene_RunIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02008315
+	.4byte FieldScene_RunIndexedStep2
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x02008321
+	.4byte FieldScene_RunIndexedStep3
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x0200832d
+	.4byte FieldScene_RunIndexedStep4
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x02008339
+	.4byte FieldScene_RunIndexedStep5
 	.4byte 0x00000002
 	.4byte 0xffff0006
-	.4byte 0x02008345
+	.4byte FieldScene_RunIndexedStep6
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte 0x02008351
+	.4byte FieldScene_RunIndexedStep7
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x0200835d
+	.4byte FieldScene_RunIndexedStep8
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
 	.4byte 0x004029c4
@@ -735,7 +736,7 @@ gValeHouseEventsAfterLeaving:
 	.4byte 0x000011bd
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x02008259
+	.4byte Villager_AskAboutStrangePowers
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte 0x000011c1
@@ -747,13 +748,13 @@ gValeHouseEventsAfterLeaving:
 	.4byte 0x000011c3
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x020084dd
+	.4byte FieldScene_RunByActorDirectionAndFlags
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0200855d
+	.4byte FieldScene_RunScene376_0200055c
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x020085d5
+	.4byte FieldScene_RunScene376_020005d4
 	.4byte 0x00008d15
 	.4byte 0xffff0015
 	.4byte 0x000011db
@@ -801,28 +802,28 @@ gValeHouseEventsAfterLeaving:
 	.4byte 0x000011f0
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x02008309
+	.4byte FieldScene_RunIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02008315
+	.4byte FieldScene_RunIndexedStep2
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x02008321
+	.4byte FieldScene_RunIndexedStep3
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x0200832d
+	.4byte FieldScene_RunIndexedStep4
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x02008339
+	.4byte FieldScene_RunIndexedStep5
 	.4byte 0x00000002
 	.4byte 0xffff0006
-	.4byte 0x02008345
+	.4byte FieldScene_RunIndexedStep6
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte 0x02008351
+	.4byte FieldScene_RunIndexedStep7
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x0200835d
+	.4byte FieldScene_RunIndexedStep8
 	.4byte 0x00000033
 	.4byte 0x0f420064
 	.4byte 0x001000bb
@@ -869,10 +870,10 @@ gValeHouseReturnEvents:
 	.4byte 0x00001c3c
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008279
+	.4byte Villager_AskAboutDora
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008299
+	.4byte HaidiaHeya_TalkHopeDidntGetSick
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x00001c7c
@@ -899,13 +900,13 @@ gValeHouseReturnEvents:
 	.4byte 0x00001c8a
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x020084dd
+	.4byte FieldScene_RunByActorDirectionAndFlags
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0200855d
+	.4byte FieldScene_RunScene376_0200055c
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x020085d5
+	.4byte FieldScene_RunScene376_020005d4
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001c41
@@ -956,28 +957,28 @@ gValeHouseReturnEvents:
 	.4byte 0x00001c8b
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x02008309
+	.4byte FieldScene_RunIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02008315
+	.4byte FieldScene_RunIndexedStep2
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x02008321
+	.4byte FieldScene_RunIndexedStep3
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x0200832d
+	.4byte FieldScene_RunIndexedStep4
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x02008339
+	.4byte FieldScene_RunIndexedStep5
 	.4byte 0x00000002
 	.4byte 0xffff0006
-	.4byte 0x02008345
+	.4byte FieldScene_RunIndexedStep6
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte 0x02008351
+	.4byte FieldScene_RunIndexedStep7
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x0200835d
+	.4byte FieldScene_RunIndexedStep8
 	.4byte 0x00000033
 	.4byte 0x0f420064
 	.4byte 0x001000bb

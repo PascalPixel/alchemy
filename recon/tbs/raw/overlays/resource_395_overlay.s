@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009ab8,"a",%progbits
 	.global SceneAction_ActorOneEntry
 SceneAction_ActorOneEntry:
 	.4byte 0x0000001c
@@ -185,22 +185,22 @@ gKorimaKiEvents:
 	.4byte 0x00000001
 	.4byte 0x0000b814
 	.4byte 0x0845000c
-	.4byte 0x020082c1
+	.4byte PaletteScene_RunFlaggedBranch
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x02008089
+	.4byte KorimaKi_RunMessageScene
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008159
+	.4byte FieldScene_RunScene395_02000158
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x02008249
+	.4byte PaletteScene_RunActorNineBranch
 	.4byte 0x00008d15
 	.4byte 0x0844040c
-	.4byte 0x02008159
+	.4byte FieldScene_RunScene395_02000158
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x02008285
+	.4byte PaletteScene_RunActorEightBranch
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -210,7 +210,7 @@ gKorimaKiEffectScript:
 	.4byte 0x00000009
 	.4byte 0x00001999
 	.4byte 0x00000022
-	.4byte 0x020091e9
+	.4byte PaletteScene_AdvanceEffectFrame
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000

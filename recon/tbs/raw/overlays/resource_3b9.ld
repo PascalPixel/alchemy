@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/IRIGUCHI2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/IRIGUCHI3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/IMPORT.o"(.text)
-        "*/resource_3b9_overlay.o"(.rodata)
+        "*/resource_3b9_overlay.o"(.rodata.x0200ad3c)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

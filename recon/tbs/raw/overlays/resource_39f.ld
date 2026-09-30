@@ -31,7 +31,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MORI3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_39f_overlay.o"(.rodata.part1)
+        "*/resource_39f_overlay.o"(.rodata.x0200aef8)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

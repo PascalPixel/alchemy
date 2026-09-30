@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02009618,"a",%progbits
+.L_02009618:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009650:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009688:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -97,9 +100,9 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000020
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x02009618
-	.4byte 0x02009650
-	.4byte 0x02009688
+	.4byte .L_02009618
+	.4byte .L_02009650
+	.4byte .L_02009688
 	.global gKaragoruDouEntrancesOther
 gKaragoruDouEntrancesOther:
 	.4byte 0xffff0000
@@ -373,7 +376,7 @@ gKaragoruDouEvents1:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008fd1
+	.4byte KaragoruDou_AskToCross
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x000023cf
@@ -385,7 +388,7 @@ gKaragoruDouEvents1:
 	.4byte 0x000023d1
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x02009041
+	.4byte ActorPresentation_SelectActorNineScript
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte 0x000023d3
@@ -408,10 +411,10 @@ gKaragoruDouEvents1Flag96f:
 	.4byte 0x00000002
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02008df1
+	.4byte FieldScene_RunScene3beSequenceB
 	.4byte 0x00000002
 	.4byte 0x09a0000b
-	.4byte 0x02008f45
+	.4byte ActorPresentation_RunActorElevenRecoveryScene
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000023d6
@@ -423,7 +426,7 @@ gKaragoruDouEvents1Flag96f:
 	.4byte 0x000023d8
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008f45
+	.4byte ActorPresentation_RunActorElevenRecoveryScene
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x000023dd
@@ -475,7 +478,7 @@ gKaragoruDouEvents2:
 gKaragoruDouEvents3:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x02009081
+	.4byte FieldScene_RunScene3be_02001080
 	.4byte 0x00000001
 	.4byte 0xffff0002
 	.4byte 0x00000002
@@ -493,22 +496,22 @@ gKaragoruDouEvents3:
 	.4byte 0x00000006
 	.4byte 0x00008f15
 	.4byte 0xffff000b
-	.4byte 0x02009385
+	.4byte StagedActorPairScene_RunActorTwelveCommand
 	.4byte 0x00008c15
 	.4byte 0x09a20008
-	.4byte 0x020090fd
+	.4byte ActorPresentation_RunActorEightThresholdScene
 	.4byte 0x00008c15
 	.4byte 0x02050009
-	.4byte 0x02009159
+	.4byte ActorPresentation_RunActorNineThresholdScene
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte 0x020090f1
+	.4byte StagedActorPairScene_RunStep
 	.4byte 0x00000602
 	.4byte 0xffff000a
-	.4byte 0x020090f1
+	.4byte StagedActorPairScene_RunStep
 	.4byte 0x00000202
 	.4byte 0xffff0032
-	.4byte 0x02009149
+	.4byte StagedActorPairScene_RunUpdate
 	.4byte 0x00000013
 	.4byte 0x0fa00064
 	.4byte 0x001000c1

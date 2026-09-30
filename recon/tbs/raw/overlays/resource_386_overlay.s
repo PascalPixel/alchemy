@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020086dc,"a",%progbits
 	.global Placement_Scripts
 Placement_Scripts:
 	.4byte 0xffff0000
@@ -210,25 +210,25 @@ Placement_Effects:
 	.4byte 0x00001cc8
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x020080bd
+	.4byte SceneDialogue_RunActor9Line
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x00001ccc
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x020080dd
+	.4byte SceneDialogue_RunActor11Line
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x020080fd
+	.4byte SceneDialogue_RunActor12Line
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte 0x00001cd1
 	.4byte 0x00000000
 	.4byte 0x03000010
-	.4byte 0x0200811d
+	.4byte FieldScene_RunActor16Sequence
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020081c5
+	.4byte SceneDialogue_RunActor16Line
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte 0x00001cdb
@@ -240,25 +240,25 @@ Placement_Effects:
 	.4byte 0x00001cdd
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x02008381
+	.4byte FieldScene_RunActor19StepByPlace
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x020083c9
+	.4byte FieldScene_RunActor20StepByPlace
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008411
+	.4byte FieldScene_RunActor21StepByPlace
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x02008459
+	.4byte FieldScene_RunActor22StepByPlace
 	.4byte 0x00000000
 	.4byte 0xffff0017
 	.4byte 0x00001ced
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x020081e5
+	.4byte SceneDialogue_RunActor23Line
 	.4byte 0x00000000
 	.4byte 0x02500012
-	.4byte 0x02008205
+	.4byte FieldScene_RunActor18FlaggedSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001cca
@@ -279,7 +279,7 @@ Placement_Effects:
 	.4byte 0x00001cd3
 	.4byte 0x00008d15
 	.4byte 0x03000410
-	.4byte 0x020082fd
+	.4byte SceneActor_RunActor16StepWithFlag91
 	.4byte 0x00008d15
 	.4byte 0xffff0010
 	.4byte 0x00001cde
@@ -309,10 +309,10 @@ Placement_Effects:
 	.4byte 0x00001cf3
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x020084a1
+	.4byte SceneDialogue_RunActor18FlaggedLine
 	.4byte 0x00000003
 	.4byte 0xffff0029
-	.4byte 0x02008339
+	.4byte FieldScene_RunActor18ConditionalCue
 	.4byte 0x00000023
 	.4byte 0x0f4b0064
 	.4byte 0x00200007

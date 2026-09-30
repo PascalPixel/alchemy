@@ -18,7 +18,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/SPRING_RIDE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3b7_overlay.o"(.rodata.part1)
+        "*/resource_3b7_overlay.o"(.rodata.x02009a08)
     }
     .bss ALIGN(16) (NOLOAD) :
     {

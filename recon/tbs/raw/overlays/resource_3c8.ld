@@ -18,11 +18,12 @@ SECTIONS
         "*/resource_3c8_overlay.o"(.text.x0200ab14)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA3.o"(.text)
         "*/resource_3c8_overlay.o"(.text.x0200c2bc)
+        "*/resource_3c8_overlay.o"(.text.x0200c520)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA4.o"(.text)
         "*/resource_3c8_overlay.o"(.text.x0200cbd8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3c8_overlay.o"(.rodata.part1)
+        "*/resource_3c8_overlay.o"(.rodata.x0200d040)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

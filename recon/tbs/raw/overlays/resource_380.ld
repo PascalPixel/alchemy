@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_380_overlay.o"(.text.x0200c49c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RING_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/IMPORT.o"(.text)
-        "*/resource_380_overlay.o"(.rodata)
+        "*/resource_380_overlay.o"(.rodata.x0200cb1c)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

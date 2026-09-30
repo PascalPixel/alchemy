@@ -9,10 +9,11 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/CLEAR.o"(.text)
         "*/resource_370_overlay.o"(.text.x020083cc)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/CLEAR2.o"(.text)
+        "*/resource_370_overlay.o"(.text.x02008de2)
         "*/resource_370_overlay.o"(.text.x02008de4)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/CLEAR3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/IMPORT.o"(.text)
-        "*/resource_370_overlay.o"(.rodata)
+        "*/resource_370_overlay.o"(.rodata.x020094d4)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

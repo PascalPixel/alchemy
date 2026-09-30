@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x020096b8,"a",%progbits
 	.global KareiTorebi_LeaveCells1
 KareiTorebi_LeaveCells1:
 	.4byte 0x00540062
@@ -568,10 +568,10 @@ gKareiTorebiEvents1:
 	.4byte 0x00001d13
 	.4byte 0x00000400
 	.4byte 0x08a9000c
-	.4byte 0x02008329
+	.4byte SceneDialogue_RunActor12Event
 	.4byte 0x00008400
 	.4byte 0x08a9000c
-	.4byte 0x02008329
+	.4byte SceneDialogue_RunActor12Event
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte FieldScene_RunScene3ae_020002dc

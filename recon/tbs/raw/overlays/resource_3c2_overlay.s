@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008c3c,"a",%progbits
 	.global gSuharaHeyaEntrances
 gSuharaHeyaEntrances:
 	.4byte 0xffff0000
@@ -292,31 +292,31 @@ gSuharaHeyaPlacements96f:
 gSuharaHeyaEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000025c7
@@ -343,13 +343,13 @@ gSuharaHeyaEvents:
 	.4byte 0x000025ce
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0200806d
+	.4byte Dialogue_HandleFacingChoice
 	.4byte 0x00008d15
 	.4byte 0xffff000c
 	.4byte 0x000025d0
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x02008101
+	.4byte Dialogue_HandleFacingBranch
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x000025d2
@@ -361,7 +361,7 @@ gSuharaHeyaEvents:
 	.4byte 0x000025d4
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0200816d
+	.4byte Dialogue_HandleFacingAction
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte 0x000025d6
@@ -381,34 +381,34 @@ gSuharaHeyaEvents:
 gSuharaHeyaEvents96f:
 	.4byte 0x00000002
 	.4byte 0x09b00032
-	.4byte 0x02008241
+	.4byte Scene_RunPrimaryScript
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x0200821d
+	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000025e9
@@ -447,13 +447,13 @@ gSuharaHeyaEvents96f:
 	.4byte 0x0000261b
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0200806d
+	.4byte Dialogue_HandleFacingChoice
 	.4byte 0x00008d15
 	.4byte 0xffff000c
 	.4byte 0x0000261f
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x02008101
+	.4byte Dialogue_HandleFacingBranch
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x00002621
@@ -471,7 +471,7 @@ gSuharaHeyaEvents96f:
 	.4byte 0x00002623
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x020081d5
+	.4byte SuharaHeya_AskBlownHere
 	.4byte 0x00008d15
 	.4byte 0xffff000f
 	.4byte 0x00002629
@@ -483,7 +483,7 @@ gSuharaHeyaEvents96f:
 	.4byte 0x0000262b
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0200816d
+	.4byte Dialogue_HandleFacingAction
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte 0x0000262d

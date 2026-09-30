@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200ad68,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -169,7 +169,7 @@ KorimaHashi_FormationAction:
 	.4byte 0x00000046
 	.4byte 0xc0010000
 	.4byte 0x00000022
-	.4byte 0x020089dd
+	.4byte OverlayObject_ClearPendingAndRestoreMode
 	.4byte 0x00000010
 	.global KorimaHashi_FinishAction
 KorimaHashi_FinishAction:
@@ -212,7 +212,7 @@ KorimaHashi_EntryAction:
 	.4byte 0x00000000
 	.4byte 0x80010000
 	.4byte 0x00000022
-	.4byte 0x020089fd
+	.4byte SceneActor_UpdateRandomCounterMode
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -364,10 +364,10 @@ KorimaHashi_Placements:
 KorimaHashi_Events:
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x02008a69
+	.4byte FieldScene_RunTile10x20Transition
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte 0x02008c15
+	.4byte SceneActor_PassSubjectOffsetPosition
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -380,7 +380,7 @@ KorimaHashi_Events:
 	.global KorimaHashi_Object26Script
 KorimaHashi_Object26Script:
 	.4byte 0x00000022
-	.4byte 0x0200a799
+	.4byte SceneEffect_AdvanceAngleAndFinishWhenParked
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -401,14 +401,14 @@ gFallingEffectScript:
 	.4byte 0x00000006
 	.4byte 0xfffe0000
 	.4byte 0x00000022
-	.4byte 0x0200a865
+	.4byte OverlayObject_SelectValueByFrameBit1
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000016
 	.4byte 0x00000006
 	.4byte 0xfffe0000
 	.4byte 0x00000022
-	.4byte 0x0200a865
+	.4byte OverlayObject_SelectValueByFrameBit1
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -419,12 +419,12 @@ gFallingEffectScript:
 	.4byte 0x00000006
 	.4byte 0xffff0000
 	.4byte 0x00000022
-	.4byte 0x0200a865
+	.4byte OverlayObject_SelectValueByFrameBit1
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
 	.4byte 0x00000028
 	.4byte 0xc0010000
 	.4byte 0x00000022
-	.4byte 0x0200a88d
+	.4byte SceneActor_CheckRegionTrigger
 	.4byte 0x0000001b

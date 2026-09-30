@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200abd4,"a",%progbits
 	.global KorimaMura_ActionTable1
 KorimaMura_ActionTable1:
 	.4byte 0x0000001c

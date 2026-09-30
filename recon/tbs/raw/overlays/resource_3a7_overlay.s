@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009844,"a",%progbits
 	.global KuupuappuDou_DirectionSteps
 KuupuappuDou_DirectionSteps:
 	.4byte 0x00100000
@@ -22,7 +22,7 @@ KuupuappuDou_DirectionSteps:
 	.global KuupuappuDou_PuffScript
 KuupuappuDou_PuffScript:
 	.4byte 0x0000001b
-	.section .rodata.part2,"a",%progbits
+	.section .rodata.x0200989c,"a",%progbits
 	.global gKuupuappuDouEntrancesOther
 gKuupuappuDouEntrancesOther:
 	.4byte 0xffff0000

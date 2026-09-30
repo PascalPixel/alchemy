@@ -25,7 +25,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/RELEASE_ATTACH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_39b_overlay.o"(.rodata.part1)
+        "*/resource_39b_overlay.o"(.rodata.x0200a658)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

@@ -1,8 +1,5 @@
 #include "TYPES.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct SelectionNode {
     struct SelectionNode *prev;
     struct SelectionNode *next;
@@ -97,7 +94,6 @@ void MenuSelection_BuildEntries(void)
     }
     Menu_LoadSelectedResource();
 }
-#endif
 
 void UiWork_ReservedNoOp(void)
 {

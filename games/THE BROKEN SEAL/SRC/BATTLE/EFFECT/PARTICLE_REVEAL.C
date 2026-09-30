@@ -10,9 +10,6 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -195,7 +192,6 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }
-#endif
 
 extern u8 gBattleFxWork[];
 

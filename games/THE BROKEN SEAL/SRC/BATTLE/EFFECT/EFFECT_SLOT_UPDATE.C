@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_0809B11C.H"
-
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
+extern char MsgMonstersAttackLess;
 
 struct ArcPulseEntry {
     u8 unknown_00[5];
@@ -114,9 +112,8 @@ void RunBattleEffect16(void)
         ObjectDispatch_SetSingleChildField26Far(object, 1);
     Animation_ApplyChildValuesFar(object, 0);
     Resource_ResetEntry(scene->tile_slot);
-    UiText_DrawMessage(0x922, 1);
+    UiText_DrawMessage((s32)&MsgMonstersAttackLess, 1);
 }
-#endif
 
 /* battle/effects/runtime/update_slot.c */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);

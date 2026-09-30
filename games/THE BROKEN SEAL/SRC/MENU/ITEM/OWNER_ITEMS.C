@@ -76,9 +76,6 @@ void InventoryMenu_NoOp(void)
 {
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
 void *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *buffer);
@@ -167,4 +164,3 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
         break;
     }
 }
-#endif

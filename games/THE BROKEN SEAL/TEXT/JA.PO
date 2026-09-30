@@ -151,7 +151,7 @@ msgctxt "message"
 msgid "00035"
 msgstr "にげる"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00036"
 msgstr "はい"
 
@@ -9339,7 +9339,7 @@ msgctxt "message"
 msgid "02332"
 msgstr "{protagonist_name}たちは ぜんめつした・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgActorUsesItem"
 msgid "02333"
 msgstr "{argument_actor_name:234}{line_break}{argument_item_name:134} 使った{end_wait}"
 
@@ -9507,7 +9507,7 @@ msgctxt "MsgDoesNotWorkHere"
 msgid "02374"
 msgstr "{argument_ability_name}・・・{page_break}エナジーは かきけされてしまった・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "02375"
 msgstr "モンスターが おそってきにくくなった{end_wait}"
 
@@ -9515,7 +9515,7 @@ msgctxt "MsgAbilityWoreOff"
 msgid "02376"
 msgstr "{argument_ability_name}の こうかがきれた。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseItemQuestion"
 msgid "02377"
 msgstr "{argument_item_name:134} 使いますか?{end_now}"
 

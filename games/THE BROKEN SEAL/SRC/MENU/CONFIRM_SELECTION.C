@@ -71,3 +71,28 @@ s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     }
     return arg3;
 }
+
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
+
+extern u8 MsgCommandYes;
+void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h);
+
+/* Asks Yes or No at (x, y), starting on SEL; cancelling answers No. */
+s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 sel)
+{
+    /* Entries 5 and 6: the command names Yes and No. */
+    s32 msg = (s32)&MsgCommandYes;
+
+    AffineEffect_InitializeWork();
+    Menu_AppendResourceEntry(5);
+    Menu_AppendResourceEntry(6);
+    Menu_LayoutResourceEntries(x, y, 3, msg);
+    sel = Menu_RunResourceSelectionLoop(sel);
+    Menu_EndResourceSelection();
+    if (sel == -1) {
+        sel = 1;
+    }
+    return sel;
+}
+#endif

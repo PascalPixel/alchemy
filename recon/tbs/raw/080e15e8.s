@@ -153,10 +153,10 @@ Func_080e15e8:
 	mov	sl, r1
 	ldr	r0, [pc, #132]
 	adds	r1, r5, #0
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	adds	r1, r5, #0
 	ldr	r0, [pc, #124]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r2, #239
 	ldr	r1, [sp, #128]
 	lsls	r2, r2, #7

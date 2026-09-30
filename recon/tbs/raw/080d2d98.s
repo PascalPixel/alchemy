@@ -86,7 +86,7 @@ Func_080d2d98:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #860]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r7, #176
 	ldr	r0, [pc, #856]
 	lsls	r7, r7, #15

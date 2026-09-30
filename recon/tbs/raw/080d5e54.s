@@ -115,7 +115,7 @@ BattleEffect_RunSparkTravel:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #380]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	mov	r5, r9
 	movs	r2, #160
 	ldr	r3, [r5, #8]

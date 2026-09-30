@@ -33,7 +33,7 @@ Func_08027114:
 	str	r0, [sp, #48]
 	lsls	r1, r1, #1
 	movs	r0, #57
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	mov	r2, sp
 	adds	r2, #92
 	str	r2, [sp, #36]
@@ -202,7 +202,7 @@ Func_08027114:
 	movs	r1, #200
 	ldr	r0, [pc, #280]
 	lsls	r1, r1, #4
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 .L_080272a8:
 	add	r1, sp, #100
 	mov	r9, r1

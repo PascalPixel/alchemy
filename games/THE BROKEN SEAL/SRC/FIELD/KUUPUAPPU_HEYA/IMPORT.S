@@ -10,9 +10,9 @@
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Engine_ScheduleCallback
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Engine_ScheduleCallback:
+Scheduler_AddOrUpdateCallback:
 	.global Engine_TaskAddCallback
 	.thumb_func
 Engine_TaskAddCallback:

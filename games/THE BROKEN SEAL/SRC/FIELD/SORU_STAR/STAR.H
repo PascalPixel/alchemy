@@ -42,7 +42,7 @@ enum {
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-void Effect_Move(void *object);
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "OVERLAY_OBJECT.H"

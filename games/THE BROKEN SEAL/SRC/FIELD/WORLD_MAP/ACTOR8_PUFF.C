@@ -5,7 +5,7 @@ extern s32 gActorEightPuffScript[];
 u8 *Engine_ActorGet(s32 actor);
 u8 *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
 u32 Engine_RandomNext();
-void Engine_ObjectSetPalette(u8 *obj, s32 palette);
+void ObjectGroup_SetChildValue(u8 *obj, s32 palette);
 void Engine_ObjectSetAnimation(u8 *obj, s32 anim);
 void Engine_ObjectSetScript(u8 *obj, s32 script);
 
@@ -63,7 +63,7 @@ void WorldMap_SpawnActorEightPuff(void)
     spr->layer = ((struct Sprite371 *)*(u8 **)(leader + 80))->layer;
     ((struct Flags35 *)obj)->flags |= 2;
     ((struct Flags85 *)obj)->flags = leader[85];
-    Engine_ObjectSetPalette(obj, 9);
+    ObjectGroup_SetChildValue(obj, 9);
     Engine_ObjectSetAnimation(obj, 2);
     Engine_ObjectSetScript(obj, (s32)gActorEightPuffScript);
 }

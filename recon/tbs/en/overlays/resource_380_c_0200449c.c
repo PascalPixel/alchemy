@@ -70,7 +70,7 @@
  * not allocation respellings. No new exact function or alignment bytes. */
 #include "FIELD_EVENT.H"
 
-void *Engine_AllocateBlock(s32 id, s32 size);
+void *Runtime_AllocateBlock(s32 id, s32 size);
 
 struct SparkMotion {
     s32 y;
@@ -108,7 +108,7 @@ void Effect_UpdateSparkRing(void)
     struct SparkMotion *motion;
     s32 i;
 
-    work = Engine_AllocateBlock(33, 0x194);
+    work = Runtime_AllocateBlock(33, 0x194);
     spark = work->spark;
     motion = &spark->motion;
     for (i = 0; i != work->count; i++) {

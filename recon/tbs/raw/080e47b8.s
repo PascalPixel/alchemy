@@ -359,7 +359,7 @@ Func_080e47b8:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #648]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r2, [pc, #644]
 	ldr	r1, [sp, #92]
 	adds	r5, r1, r2
@@ -1198,7 +1198,7 @@ Func_080e47b8:
 	movs	r1, #144
 	ldr	r0, [pc, #624]
 	lsls	r1, r1, #3
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 .L_080e5264:
 	ldr	r3, [sp, #96]
 	subs	r3, #4

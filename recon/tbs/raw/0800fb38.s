@@ -32,7 +32,7 @@ Func_0800fb38:
 	adds	r1, r6, #0
 	movs	r0, #8
 	str	r3, [sp, #8]
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	adds	r1, r6, #0
 	ldr	r3, [pc, #444]
 	mov	r8, r0
@@ -370,7 +370,7 @@ Func_0800fb38:
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #60]
 	ldr	r1, [pc, #64]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #2
 	add	sp, #12
 	pop	{r3, r5, r6, r7}

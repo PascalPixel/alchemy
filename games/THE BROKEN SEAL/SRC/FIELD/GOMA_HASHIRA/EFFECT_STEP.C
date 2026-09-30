@@ -145,7 +145,7 @@ void SceneEffect_AdvancePositionByAxisMode(u8 *o)
 
 s32 OverlayObject_ApplyValue15(s32 actor)
 {
-    Engine_ObjectSetPalette(actor, 15);
+    ObjectGroup_SetChildValue(actor, 15);
     return 0;
 }
 

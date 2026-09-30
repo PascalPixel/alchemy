@@ -45,7 +45,7 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
         result[0x55] = 0;
         result[0x59] = 8;
         Engine_ActorSetSpriteFlags(result, 0);
-        Engine_ObjectSetPalette(result, 15);
+        ObjectGroup_SetChildValue(result, 15);
         result[0x23] = (result[0x23] & 0xfe) | 2;
         return result;
     }

@@ -23,7 +23,7 @@ Func_080f03f0:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #236]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r3, #64
 	movs	r5, #128
 	lsls	r5, r5, #19

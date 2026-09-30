@@ -192,13 +192,13 @@ Func_080c02a4:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	mov	r0, sl
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r1, [pc, #104]
 	mov	r8, r1
 	movs	r1, #144
 	lsls	r1, r1, #3
 	mov	r0, r8
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r2, [pc, #96]
 	movs	r1, #32
 	movs	r0, #2

@@ -33,9 +33,9 @@ CalculateAngleFromCoordinateDelta:
 	.thumb_func
 Engine_HeapAllocate:
 	overlay_veneer Runtime_AllocateHeapBlockFar
-	.global Engine_AllocateBlock
+	.global Runtime_AllocateBlock
 	.thumb_func
-Engine_AllocateBlock:
+Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
 	.global Engine_HeapRelease
 	.thumb_func
@@ -249,9 +249,9 @@ Engine_ActorFaceEachOther:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
-	.global Engine_ObjectSetPalette
+	.global ObjectGroup_SetChildValue
 	.thumb_func
-Engine_ObjectSetPalette:
+ObjectGroup_SetChildValue:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func

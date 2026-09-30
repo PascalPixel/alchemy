@@ -14,9 +14,9 @@ Engine_MathDivide:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Engine_ScheduleCallback
+	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
-Engine_ScheduleCallback:
+Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_TaskRemoveCallback
 	.thumb_func
@@ -41,9 +41,9 @@ Vector_AddPolarOffset:
 	.thumb_func
 Runtime_AllocateHeapBlockFar:
 	overlay_veneer Func_08000140
-	.global Engine_AllocateBlock
+	.global Runtime_AllocateBlock
 	.thumb_func
-Engine_AllocateBlock:
+Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func

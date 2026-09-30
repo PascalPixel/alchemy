@@ -7,7 +7,7 @@
  * WALL: structural-topology: spark lifetime and velocity loops */
 #include "TYPES.H"
 
-void *Engine_AllocateBlock(s32 id, s32 size);
+void *Runtime_AllocateBlock(s32 id, s32 size);
 s32 Engine_RandomNext(void);
 s32 IwramUnsignedDivide(s32 num, s32 den);
 s32 Engine_MathSin(s32 angle);
@@ -75,7 +75,7 @@ void SoruFunka_Func0200301c(void)
     s32 dy;
     s32 dz;
 
-    work = Engine_AllocateBlock(33, 0x194);
+    work = Runtime_AllocateBlock(33, 0x194);
     for (i = 0; i != work->count; i++) {
             spark = &work->sparks[i];
             obj = spark->obj;

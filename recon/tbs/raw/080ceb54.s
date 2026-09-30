@@ -145,7 +145,7 @@ Func_080ceb54:
 	lsls	r5, r5, #3
 	adds	r1, r5, #0
 	ldr	r0, [pc, #288]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r2, #239
 	lsls	r2, r2, #7
 	add	r2, sl
@@ -157,7 +157,7 @@ Func_080ceb54:
 	str	r3, [r2, #0]
 	adds	r1, r5, #0
 	ldr	r0, [pc, #268]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	movs	r0, #146
 	bl	Audio_PlayCue
 	ldr	r3, [sp, #60]

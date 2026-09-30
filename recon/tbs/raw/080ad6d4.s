@@ -1357,7 +1357,7 @@ OwnerAction_RunCompareLoop:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #192]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r3, [pc, #188]
 	movs	r5, #134
 	ldr	r2, [r3, #0]

@@ -67,7 +67,7 @@ Func_080f26ec:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #228]
-	bl	Engine_ScheduleCallback
+	bl	Scheduler_AddOrUpdateCallback
 	ldr	r0, [pc, #224]
 	movs	r1, #18
 	movs	r3, #1
@@ -367,7 +367,7 @@ Func_080f26ec:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #14
-	bl	Engine_AllocateBlock
+	bl	Runtime_AllocateBlock
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #120]

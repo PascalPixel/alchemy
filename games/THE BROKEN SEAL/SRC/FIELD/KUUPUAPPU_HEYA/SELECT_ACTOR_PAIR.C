@@ -15,7 +15,7 @@ void Ui_SetBank15PaletteAndClearRenderMode();
 void SceneState_SetValue2ThenFinish();
 u8 *Object_GetById();
 void KuupuappuHeya_RunScene021C8();
-void Engine_ScheduleCallback();
+void Scheduler_AddOrUpdateCallback();
 void KuupuappuHeya_UpdateActorStops(void);
 void SceneActor_FaceActors24And25TowardActorZero(void);
 
@@ -143,7 +143,7 @@ void FieldScene_SelectActorPair(void)
 
         *(u16 *)((s32)record + 100) = shown;
     }
-    Call2(Engine_ScheduleCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+    Call2(Scheduler_AddOrUpdateCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
     Data_03001ebc->value_1c0 = 0x209;
     Event_End();
 }

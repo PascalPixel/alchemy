@@ -14,7 +14,7 @@ struct PathRecorder {
 void *Resource_GetTableEntry(s32 resource);
 void Resource_DecodeType01(const void *source, void *destination);
 void Korosseo_UpdatePathRival(void);
-s32 Engine_ScheduleCallback(void (*callback)(void), s32 priority);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 /* Decode the rival's recorded course into the stage work and, until flag
    0x109 is set, start the recorder replaying it for the actor the work
@@ -32,5 +32,5 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
         recorder->still = 0;
         recorder->pos = 0;
     }
-    Engine_ScheduleCallback(Korosseo_UpdatePathRival, 0xc85);
+    Scheduler_AddOrUpdateCallback(Korosseo_UpdatePathRival, 0xc85);
 }

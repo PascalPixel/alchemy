@@ -8,7 +8,7 @@ extern u16 BabiFune_FadeStep;
 s32 Runtime_BumpAllocateAlternatePool();
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadCached();
-s32 Engine_ScheduleCallback(void *callback, s32 priority);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -38,5 +38,5 @@ void BabiFune_ScheduleFade(void)
     Call3(VramBlock_LoadCached, BabiFune_FadeSlot, 0x100, (s32)buf);
     /* The halfword constant comes from the literal pool (HImode move). */
     BabiFune_FadeStep = 0x30;
-    Engine_ScheduleCallback(BabiFune_StepFade, 0xc80);
+    Scheduler_AddOrUpdateCallback(BabiFune_StepFade, 0xc80);
 }

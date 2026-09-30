@@ -338,7 +338,7 @@ s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y)
 void FieldScene_RunEarlySequence(void)
 {
     extern void Vector_AddPolarOffset();
-    extern s32 Engine_AllocateBlock();
+    extern s32 Runtime_AllocateBlock();
     extern void Object_SetPosition();
     extern void ObjectDispatch_InitFromTable4WithArgument();
     extern void Object_CommitPosition();
@@ -419,7 +419,7 @@ moved:
     Object_SetPosition(log_actor, x, 0, z);
     Event_Wait(6);
     Actor_SetAnimation(selected_actor, 2);
-    record = Value2(Engine_AllocateBlock, 27, 0xccc);
+    record = Value2(Runtime_AllocateBlock, 27, 0xccc);
     ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(record + 0x1e0), log_actor);
     Actor_SetSpeed(selected_actor, 0x8000, acceleration);
     Audio_PlayCue(239);

@@ -138,7 +138,7 @@ extern u16 Korosseo_MarkerStep;
 
 /* Import veneers, named by the main-image code each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-void *Engine_AllocateBlock();
+void *Runtime_AllocateBlock();
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void Vector_AddPolarOffset();

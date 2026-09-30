@@ -46,7 +46,7 @@ void Villager_ShowOffPsynergy(void)
             OverlayObject_UpdateOnFrameBit1((s32)Engine_ActorGet(17));
             Task_Wait(1);
         }
-        Value2(Engine_ScheduleCallback, (s32)FieldScene_RunStep17, 0xc80);
+        Value2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunStep17, 0xc80);
         Audio_PlayCue(107);
         for (i = 0; i != 180; i++) {
             if (Value2(IwramUnsignedRemainder, i, 10) == 0) {

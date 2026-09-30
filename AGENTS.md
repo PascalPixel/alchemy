@@ -193,3 +193,5 @@ a verified build.
   as native-sounding gcc flags (`-mthumb-split-constants`, TLA game code only).
 - 2026-09-30: fix the agscc nondeterminism by hashing symbols by name and
   labels by number.
+- 2026-09-30: parts in the same part list may share part 1's built palette in
+  the grey-sheet check; the layout check runs in verify.

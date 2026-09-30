@@ -398,7 +398,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
             .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|[48]bpp(?:(?:8|16|32|64)x(?:8|16|32|64))?|bin|delta[012]|blocks|script|font|frames|glyphs|icons4?|parts|plane|table)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
+        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|[48]bpp(?:(?:8|16|32|64)x(?:8|16|32|64))?|delta[012]|blocks|script|font|frames|glyphs|icons4?|parts|plane|table)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
     )
     .expect("built graphics pattern");
     let scaffolding = path.starts_with("recon/");
@@ -3178,7 +3178,7 @@ mod tests {
     fn asset_sources_may_incbin_only_the_graphics_files_the_build_makes() {
         let sheet = b"BattleFx_Star:\n\t.incbin \"GRAPHICS/FX/STAR.gbapal\"\n\t.incbin \"GRAPHICS/FX/STAR.bitmap.lz\"\n";
         let tiles =
-            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n\t.incbin \"GRAPHICS/FX/STAR.4bpp32x16.lz\"\n\t.incbin \"MAP/M/METATILES.delta1.lz\"\n\t.incbin \"MAP/M/ANIMATION.script.lz\"\n\t.incbin \"MAP/M/END.bin\"\n\t.incbin \"MAP/M/PATH.table.lz\"\n\t.incbin \"GRAPHICS/FX/FONT.glyphs\"\n\t.incbin \"GRAPHICS/UI/ICONS/ICONS.icons4\"\n\t.incbin \"MAP/WORLD/BLOCKS.blocks\"\n";
+            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n\t.incbin \"GRAPHICS/FX/STAR.4bpp32x16.lz\"\n\t.incbin \"MAP/M/METATILES.delta1.lz\"\n\t.incbin \"MAP/M/ANIMATION.script.lz\"\n\t.incbin \"MAP/M/PATH.table.lz\"\n\t.incbin \"GRAPHICS/FX/FONT.glyphs\"\n\t.incbin \"GRAPHICS/UI/ICONS/ICONS.icons4\"\n\t.incbin \"MAP/WORLD/BLOCKS.blocks\"\n";
         for path in [
             "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S",
             "games/THE LOST AGE/SRC/BATTLE/EFFECT/STAR.S",
@@ -3198,6 +3198,7 @@ mod tests {
             (star, b".incbin \"GRAPHICS/UI/ICONS.icons5\"\n"),
             (star, b".incbin \"MAP/WORLD/BLOCKS.block\"\n"),
             (star, b".incbin \"TEXT/M/CELLS.bin\"\n"),
+            (star, b".incbin \"MAP/M/END.bin\"\n"),
             (star, b".incbin \"GRAPHICS/FX/star.4bpp\"\n"),
             (star, b".incbin \"GRAPHICS/../../roms/tbs-en.4bpp\"\n"),
             (star, b".incbin \"GRAPHICS/FX/STAR.4bpp\", 0, 16\n"),

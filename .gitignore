@@ -4,14 +4,3 @@ out/
 tools/out/
 # Worktree convenience symlink to the shared ROM set.
 /roms
-# Grey sheets, palette ledgers and packed byte runs the retired extractor
-# wrote under these names are dumps, not editable assets: they stay local.
-/games/*/SRC/**/CHR.PNG
-/games/*/SRC/**/*_CHR.PNG
-/games/*/SRC/**/*.BIN
-/games/*/SRC/GRAPHICS/COMMON/STILL.PNG
-/games/*/SRC/GRAPHICS/COMMON/TILE.PNG
-/games/*/SRC/GRAPHICS/COMMON/PORTRAIT.PNG
-/games/*/SRC/GRAPHICS/COMMON/TILE_BANK.PNG
-/games/*/SRC/GRAPHICS/CHARACTER/CHAR_*.PNG
-/games/*/SRC/GRAPHICS/CHARACTER/BATTLE_*.PNG

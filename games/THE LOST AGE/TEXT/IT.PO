@@ -47,7 +47,7 @@ msgctxt "message"
 msgid "00009"
 msgstr "Non puoi riprendere il{line_break}gioco con questi dati.{page_break}Decidi con attenzione{line_break}dove salvare i dati.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Tempo di gioco:"
 
@@ -11667,7 +11667,7 @@ msgctxt "message"
 msgid "02914"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgClassName"
 msgid "02915"
 msgstr "?"
 
@@ -18651,7 +18651,7 @@ msgctxt "message"
 msgid "04660"
 msgstr "Riponi"
 
-msgctxt "message"
+msgctxt "MsgCoins"
 msgid "04661"
 msgstr "Nessun effetto se attivato"
 

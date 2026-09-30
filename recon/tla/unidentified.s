@@ -66,7 +66,10 @@ Data_08054a14:
 Data_08054e24:
 	.incbin "baserom.gba", 0x00054e24, 0x000056bc
 	.section .unidentified.0805c0e0,"a"
-	.incbin "baserom.gba", 0x0005c0e0, 0x000036d0
+	.incbin "baserom.gba", 0x0005c0e0, 0x00003560
+	.global StatusMenu_LevelLetterString
+StatusMenu_LevelLetterString:
+	.incbin "baserom.gba", 0x0005f640, 0x00000170
 	.global Link_TimeLabelString
 Link_TimeLabelString:
 	.incbin "baserom.gba", 0x0005f7b0, 0x00000164

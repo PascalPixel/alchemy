@@ -47,7 +47,7 @@ msgctxt "message"
 msgid "00009"
 msgstr "Vous ne pourrez pas continuer{line_break}avec ces données de jeu.{page_break}Choisissez avec soin quel{line_break}fichier de sauvegarde utiliser.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Temps de jeu:"
 
@@ -11667,7 +11667,7 @@ msgctxt "message"
 msgid "02914"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgClassName"
 msgid "02915"
 msgstr "?"
 
@@ -18651,7 +18651,7 @@ msgctxt "message"
 msgid "04660"
 msgstr "Enlever"
 
-msgctxt "message"
+msgctxt "MsgCoins"
 msgid "04661"
 msgstr "L'équiper est sans effet"
 

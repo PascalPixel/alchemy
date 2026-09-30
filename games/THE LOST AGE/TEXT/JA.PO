@@ -47,7 +47,7 @@ msgctxt "message"
 msgid "00009"
 msgstr "このきろくからは ぼうけんを{line_break}さいかいできません{page_break}しんちょうに きろくするばしょを{line_break}えらんでください{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "プレイじかん"
 
@@ -11667,7 +11667,7 @@ msgctxt "message"
 msgid "02914"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgClassName"
 msgid "02915"
 msgstr "NPC"
 
@@ -18651,7 +18651,7 @@ msgctxt "message"
 msgid "04660"
 msgstr "はずせません"
 
-msgctxt "message"
+msgctxt "MsgCoins"
 msgid "04661"
 msgstr "すてられません!{end_wait}"
 

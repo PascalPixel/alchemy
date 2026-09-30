@@ -6,7 +6,7 @@ extern const u8 Menu_ColonString[];
 void RenderOutput_PrepareForRedraw(void);
 void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 void Text_FormatHex(s32 value, s32 width, s32 buf);
-s32 GameFlag_TestFar(s32 flag);
+s32 GameFlag_Test(s32 flag);
 
 void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 {
@@ -33,7 +33,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
         UiText_DrawStringInWindow((s32)Menu_ColonString, window, 32, y);
 
         for (i = 0; i < 16; i++) {
-            s32 val = GameFlag_TestFar(flag);
+            s32 val = GameFlag_Test(flag);
             bits[i] = (val != 0) + 48;
             flag++;
         }

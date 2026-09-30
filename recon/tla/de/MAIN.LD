@@ -106,7 +106,6 @@
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/INITIALIZE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00014422)
     "*/recon/tla/de/rom.o"(.rom.00014424)
-    "*/recon/tla/de/rom.o"(.rom.000144ec)
     "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/CALLBACK_SCHEDULER.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00014546)
     "*/recon/tla/de/rom.o"(.rom.00014598)

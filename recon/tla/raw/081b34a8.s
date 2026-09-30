@@ -51,7 +51,7 @@ Func_081b34a8:
 	adds r1, #152
 	str r1, [sp, #32]
 	str r3, [r1]
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r5, .L_081b3530
 	ldr r3, .L_081b3544
 	ldr r1, .L_081b3548

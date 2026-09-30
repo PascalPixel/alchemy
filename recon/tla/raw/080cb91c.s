@@ -65,7 +65,7 @@ Func_080cb91c:
 	adds r2, #255
 	adds r3, r5, r2
 	strb r1, [r3]
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	movs r0, #0
 	bl Func_080d793c
 	movs r4, #253

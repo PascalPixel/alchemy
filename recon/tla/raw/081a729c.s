@@ -22,7 +22,7 @@ Func_081a729c:
 	movs r0, #172
 	bl Runtime_AllocateBlock
 	mov r11, r0
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	movs r0, #1
 	bl Func_08013ef8
 	bl Func_08014b70

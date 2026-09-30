@@ -13,7 +13,7 @@ Func_081a7518:
 	movs r3, #1
 	strb r3, [r2]
 	ldr r5, .L_081a7584
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	movs r0, #1
 	bl Blend_SetDarkenTarget16
 	bl Func_08014b70

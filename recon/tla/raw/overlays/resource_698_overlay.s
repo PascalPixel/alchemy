@@ -220,37 +220,7 @@ Func_02000198:
 	.4byte gPartyState
 .L_020081f0:
 	.4byte 0x000000ed
-	.section .text.x020081f4,"ax",%progbits
-	.global Func_020001f4
-	.thumb_func
-Func_020001f4:
-	push {lr}
-	movs r0, #0
-	bl Func_02000200
-	movs r0, #0
-	pop {pc}
-	.section .text.x02008200,"ax",%progbits
-	.global Func_02000200
-	.thumb_func
-Func_02000200:
-	push {lr}
-	movs r0, #20
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #37
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008228
-	movs r0, #98
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #162
-	lsls r0, r0, #1
-	bl GameFlag_SetBit
-.L_02008228:
-	pop {pc}
+	.section .text.x0200822a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200822c,"ax",%progbits
 	.global Func_0200022c

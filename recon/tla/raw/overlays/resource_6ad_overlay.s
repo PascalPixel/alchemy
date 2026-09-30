@@ -2611,28 +2611,7 @@ Func_02001490:
 	.2byte 0x0000
 .L_020094ac:
 	.4byte Data_02005d3c
-	.section .text.x020094b0,"ax",%progbits
-	.global Func_020014b0
-	.thumb_func
-Func_020014b0:
-	push {lr}
-	movs r0, #20
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #37
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020094d8
-	movs r0, #98
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #162
-	lsls r0, r0, #1
-	bl GameFlag_SetBit
-.L_020094d8:
-	pop {pc}
+	.section .text.x020094da,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020094dc,"ax",%progbits
 	.global Func_020014dc

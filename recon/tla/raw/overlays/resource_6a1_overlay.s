@@ -191,7 +191,7 @@ Func_02000110:
 Func_020001d4:
 	push {r5, lr}
 	movs r0, #0
-	bl Func_02000244
+	bl Scene_SetArrivalFlags
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_Test
@@ -239,28 +239,7 @@ Func_020001d4:
 	pop {r5, pc}
 .L_02008240:
 	.4byte 0xffe00000
-	.section .text.x02008244,"ax",%progbits
-	.global Func_02000244
-	.thumb_func
-Func_02000244:
-	push {lr}
-	movs r0, #20
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #37
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200826c
-	movs r0, #98
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #162
-	lsls r0, r0, #1
-	bl GameFlag_SetBit
-.L_0200826c:
-	pop {pc}
+	.section .text.x0200826e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008270,"ax",%progbits
 	.global Func_02000270

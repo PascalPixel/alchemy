@@ -1911,7 +1911,7 @@ Func_02000e30:
 Func_02000fc0:
 	push {r5, lr}
 	movs r0, #0
-	bl Func_02001130
+	bl Scene_SetArrivalFlags
 	movs r0, #1
 	bl Func_02001224
 	ldr r3, .L_0200912c
@@ -2068,28 +2068,7 @@ Func_02000fc0:
 	.2byte 0x0000
 .L_0200912c:
 	.4byte gPartyState
-	.section .text.x02009130,"ax",%progbits
-	.global Func_02001130
-	.thumb_func
-Func_02001130:
-	push {lr}
-	movs r0, #20
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #37
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02009158
-	movs r0, #98
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #162
-	lsls r0, r0, #1
-	bl GameFlag_SetBit
-.L_02009158:
-	pop {pc}
+	.section .text.x0200915a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200915c,"ax",%progbits
 	.global Func_0200115c

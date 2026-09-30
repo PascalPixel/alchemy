@@ -397,10 +397,17 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     let built_sound =
         regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
             .expect("built sound pattern");
-    let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|[48]bpp(?:(?:8|16|32|64)x(?:8|16|32|64))?|delta[012]|blocks|script|font|frames|glyphs|icons4?|parts|plane|table)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
-    )
-    .expect("built graphics pattern");
+    // A graphics or map file the build makes: an uppercase path whose name
+    // is a recipe the ags encoder builds, so the encoder alone decides which
+    // forms and codecs exist.
+    let built_graphics =
+        regex::Regex::new(r#"^\s*\.incbin\s+"((?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#)
+            .expect("built graphics pattern");
+    let is_built_graphics = |line: &str| {
+        built_graphics
+            .captures(line)
+            .is_some_and(|capture| ags::resource::is_recipe(&capture[1]))
+    };
     let scaffolding = path.starts_with("recon/");
     let parts = path.split('/').collect::<Vec<_>>();
     let sound_source = matches!(
@@ -412,7 +419,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     text.split(['\n', '\r'])
         .filter(|line| !(scaffolding && (base_rom.is_match(line) || overlay.is_match(line))))
         .filter(|line| !(sound_source && built_sound.is_match(line)))
-        .filter(|line| !(asset_source && built_graphics.is_match(line)))
+        .filter(|line| !(asset_source && is_built_graphics(line)))
         .any(|line| {
             let trimmed =
                 line.trim_start_matches(|ch: char| ch.is_whitespace() || ch == '\u{feff}');

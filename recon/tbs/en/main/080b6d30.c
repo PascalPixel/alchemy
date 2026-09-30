@@ -1,3 +1,10 @@
+/* 2026-09-30 Mercury, asm tried: the FAKEMATCH asm copy (mov %0, %1 of
+   result into pass) does give mov r4, sl, but CSE then no longer knows pass
+   is zero, so the for loop gains an entry test (cmp/bgt, +2 halfwords).
+   As a do/while (the same loop with no entry test) pass and sprite_value
+   swap registers (r7/r4 for r4/r7); declaration order, "+r" or a copy of a
+   zero into result, and a bottom test of ++pass < 2 do not change that, and
+   pinning pass to r4 or sprite_value to r7 drops the ROM's spill of r4. */
 /* 2026-09-30 asm-only (inline asm not yet permitted to workers): a FAKEMATCH-tagged one-instruction asm copy "mov %0, %1" of result into pass hides the zero from cse and gives the mov r4, sl. */
 /* 2026-09-29 alchemy permute: score 200 on the permuter's scorer (1
    inserted, 1 deleted), unchanged after 56,705 candidates in 10 minutes.

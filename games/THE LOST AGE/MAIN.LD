@@ -916,6 +916,8 @@ SECTIONS
         "*/recon/tla/raw/081051a8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0810532c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081054cc.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/MENU/BUILD_AVAILABILITY.o"(.text)
+        "*/recon/tla/raw/081055f6.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081055f8)
         "*/recon/tla/raw/08108000.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08108030.o"(.text .rodata .data .padding)

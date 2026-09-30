@@ -316,42 +316,6 @@ RenderOutput_Release:
 	.thumb_func
 UiWork_StepChannelScript:
 	.incbin "baserom.gba", 0x000168a0, 0x000005dc
-	.section .rom.000172e4, "ax"
-	.global UiWork_IsIdle
-	.type UiWork_IsIdle, %function
-	.thumb_func
-UiWork_IsIdle:
-	.incbin "baserom.gba", 0x000172e4, 0x00000020
-	.section .rom.00017304, "ax"
-	.global UiWork_ResetCounters
-	.type UiWork_ResetCounters, %function
-	.thumb_func
-UiWork_ResetCounters:
-	.incbin "baserom.gba", 0x00017304, 0x00000120
-	.section .rom.00017424, "ax"
-	.global UiWork_FinalizeSharedSlot
-	.type UiWork_FinalizeSharedSlot, %function
-	.thumb_func
-UiWork_FinalizeSharedSlot:
-	.incbin "baserom.gba", 0x00017424, 0x00000020
-	.section .rom.00017444, "ax"
-	.global UiText_PrepareMessageWork
-	.type UiText_PrepareMessageWork, %function
-	.thumb_func
-UiText_PrepareMessageWork:
-	.incbin "baserom.gba", 0x00017444, 0x000000a8
-	.section .rom.000174ec, "ax"
-	.global UiText_ShowMessageAndWaitCore
-	.type UiText_ShowMessageAndWaitCore, %function
-	.thumb_func
-UiText_ShowMessageAndWaitCore:
-	.incbin "baserom.gba", 0x000174ec, 0x00000020
-	.section .rom.0001750c, "ax"
-	.global UiText_OpenEntryMessage
-	.type UiText_OpenEntryMessage, %function
-	.thumb_func
-UiText_OpenEntryMessage:
-	.incbin "baserom.gba", 0x0001750c, 0x00000060
 	.section .rom.000177fa, "ax"
 	.incbin "baserom.gba", 0x000177fa, 0x00000202
 	.section .rom.000179fc, "ax"
@@ -373,6 +337,8 @@ UiText_RenderWideStringInWindow:
 	.type UiText_BuildRenderEntries, %function
 	.thumb_func
 UiText_BuildRenderEntries:
+	.global Func_08018038
+Func_08018038:
 	.incbin "baserom.gba", 0x00017da8, 0x000007e4
 	.section .rom.00018750, "ax"
 	.global UiText_MeasureEntryDimensions
@@ -441,13 +407,11 @@ Debug_SelectAbilityPair:
 Menu_Check:
 	.incbin "baserom.gba", 0x0001c494, 0x00000360
 	.section .rom.0001d100, "ax"
-	.incbin "baserom.gba", 0x0001d100, 0x000003b4
-	.section .rom.0001d4b4, "ax"
-	.global Menu_RunWorkspaceOptions
-	.type Menu_RunWorkspaceOptions, %function
+	.global Menu_OpenWorkspaceOptions
+	.type Menu_OpenWorkspaceOptions, %function
 	.thumb_func
-Menu_RunWorkspaceOptions:
-	.incbin "baserom.gba", 0x0001d4b4, 0x00000480
+Menu_OpenWorkspaceOptions:
+	.incbin "baserom.gba", 0x0001d100, 0x000003b4
 	.section .rom.0001d9bc, "ax"
 	.incbin "baserom.gba", 0x0001d9bc, 0x0000019c
 	.section .rom.0001db58, "ax"
@@ -624,7 +588,22 @@ Data_080366f8:
 	.incbin "baserom.gba", 0x00036e80, 0x00000058
 	.global PaletteGlow_WaveTable
 PaletteGlow_WaveTable:
-	.incbin "baserom.gba", 0x00036ed8, 0x00000094
+	.incbin "baserom.gba", 0x00036ed8, 0x00000079
+	.global Data_080367c9
+Data_080367c9:
+	.incbin "baserom.gba", 0x00036f51, 0x00000003
+	.global Data_080367cc
+Data_080367cc:
+	.incbin "baserom.gba", 0x00036f54, 0x00000002
+	.global Data_080367ce
+Data_080367ce:
+	.incbin "baserom.gba", 0x00036f56, 0x00000002
+	.global Data_080367d0
+Data_080367d0:
+	.incbin "baserom.gba", 0x00036f58, 0x00000006
+	.global Data_080367d6
+Data_080367d6:
+	.incbin "baserom.gba", 0x00036f5e, 0x0000000e
 	.global SideObject_CharacterIdMap
 SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x00036f6c, 0x00000028
@@ -1160,7 +1139,7 @@ StatusMenu_ShowOwnerProgressMessage:
 	.type CharacterMenu_DrawStatusAilments, %function
 	.thumb_func
 CharacterMenu_DrawStatusAilments:
-	.incbin "baserom.gba", 0x0009f51c, 0x000004fc
+	.incbin "baserom.gba", 0x0009f51c, 0x00000300
 	.section .rom.0009fbc8, "ax"
 	.incbin "baserom.gba", 0x0009fbc8, 0x00000070
 	.section .rom.0009fc38, "ax"
@@ -1237,7 +1216,19 @@ Menu_PlusSignString:
 	.incbin "baserom.gba", 0x000a6150, 0x00000004
 	.global Menu_MinusSignString
 Menu_MinusSignString:
-	.incbin "baserom.gba", 0x000a6154, 0x00000024
+	.incbin "baserom.gba", 0x000a6154, 0x00000014
+	.global Menu_LvString
+Menu_LvString:
+	.incbin "baserom.gba", 0x000a6168, 0x00000004
+	.global Data_080af230
+Data_080af230:
+	.incbin "baserom.gba", 0x000a616c, 0x00000004
+	.global Data_080af234
+Data_080af234:
+	.incbin "baserom.gba", 0x000a6170, 0x00000004
+	.global Data_080af238
+Data_080af238:
+	.incbin "baserom.gba", 0x000a6174, 0x00000004
 	.global Data_080af23c
 Data_080af23c:
 	.incbin "baserom.gba", 0x000a6178, 0x00000030

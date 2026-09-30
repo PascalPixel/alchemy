@@ -9,27 +9,14 @@ struct UiCounterWork {
     u16 one;
     u16 zero;
     u16 fifteen;
-    u8 unknown_eb0[0x400];
+    /* nine sits just before the render entry count, wherever the edition
+       puts it */
+    u8 unknown_eb0[RENDER_ENTRY_COUNT_OFS - 2 - (RENDER_WORD2_OFS + 8)];
     u16 nine;
     u16 second_zero;
     u8 unknown_12b4[4];
     u16 result;
 };
-
-#if defined(TBS_EDITION_JA)
-struct UiCounterWorkJa {
-    u8 unknown_000[0xf38];
-    u16 ten;
-    u16 one;
-    u16 zero;
-    u16 fifteen;
-    u8 unknown_f40[0x200];
-    u16 nine;
-    u16 second_zero;
-    u8 unknown_1144[4];
-    u16 result;
-};
-#endif
 
 extern void *gWindowWork;
 void UiWork_ProcessAll(void);
@@ -40,6 +27,11 @@ void UiWork_Finalize(struct Work *, s32);
 
 s32 UiWork_IsIdle(void *arg0)
 {
+#if defined(TBS_EDITION_JA)
+    /* The Japanese check counts a missing work as idle. */
+    if (arg0 == NULL)
+        return 1;
+#endif
     if (*(u16 *)((u8 *)arg0 + 0x16) == 0) {
         if (*(s16 *)((u8 *)arg0 + 0x1a) == 0)
             return 1;
@@ -76,11 +68,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 {
-#if defined(TBS_EDITION_JA)
-    struct UiCounterWorkJa *state = gWindowWork;
-#else
     struct UiCounterWork *state = gWindowWork;
-#endif
     s32 size;
 
     if (initialize != 0)

@@ -9,7 +9,13 @@
    sl, the marker in r8, the tile in r7, the blend mode in r9 and spills the
    cursor's x to sp+16 with its y in fp, where this build keeps the work in
    r8, the marker in r7 and both cursor coordinates in registers, and comes
-   out 28 bytes shorter. */
+   out 28 bytes shorter. English keeps no register for the work block at
+   all and reloads its address each time.
+   2026-09-30: alchemy permute against the German extent (--target tbs-de)
+   took the score from 6008 to 1552 in ten minutes (39 register-only, 22
+   stack-only, 20 operand, 13 reordered, 1 deleted) through 116 rewrites,
+   mostly reordered declarations and statements, and stalled there; the
+   candidate was not kept. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"

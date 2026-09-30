@@ -951,9 +951,9 @@ void Korosseo_RunGreetScene(s32 a0)
         Engine_ActorSetDestination(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 64));
-    ((void (*)())Engine_ActorSetPosition)(1, 0, 0);
-    ((void (*)())Engine_ActorSetPosition)(2, 0, 0);
-    ((void (*)())Engine_ActorSetPosition)(3, 0, 0);
+    Engine_ActorSetPosition(1, 0, 0);
+    Engine_ActorSetPosition(2, 0, 0);
+    Engine_ActorSetPosition(3, 0, 0);
     Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 16));
     Engine_ActorWalkToAndWait(a0, p9, p10);
     Engine_ActorFaceDirection(a0, (v6 << 8), 10);

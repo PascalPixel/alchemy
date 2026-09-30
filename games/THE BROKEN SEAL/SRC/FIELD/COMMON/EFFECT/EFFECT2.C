@@ -329,7 +329,7 @@ loop:
     p++;
     if (i < 32)
         goto loop;
-    ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(FieldEffect_UpdateSparkles, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
 }
 
 /* Builds two 0xa80-byte buffers and the per-frame step between them for a

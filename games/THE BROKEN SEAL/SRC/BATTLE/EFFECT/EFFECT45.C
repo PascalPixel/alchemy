@@ -359,9 +359,5 @@ void BattleFx_SetTransitionFlagAndDisplay(void)
   WaitFrames(one);
   BattlePresentation_ConfigurePaletteFadeFar(2, *((u16 *)(state + 0x648)), 0);
   transfer = one;
-  do
-  {
-    WaitFrames(transfer);
-  }
-  while (0);
+  WaitFrames(transfer);
 }

@@ -7,11 +7,6 @@
  * sea, the drifting island and the steps of the scene where Felix wakes.
  */
 
-enum {
-    ENTRANCE_WAKE = 2,
-    ENTRANCE_WAKE_AGAIN = 4
-};
-
 /* The controller state the engine refreshes each frame. */
 struct InputState {
     u32 held;
@@ -40,51 +35,9 @@ struct FieldWork {
 
 #define FIELD_WORK ((struct FieldWork *)0x03000000)
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const u32 gSceneExits[];
-extern const struct ScenePlacement gScenePlacements[];
-extern const struct SceneEvent gSceneEvents[];
-extern const struct SceneEvent gSceneEventsEntrance1[];
-/* The search events that start the wake-up scenes. */
-extern const struct SceneEvent gSceneEventsWake[];
 extern const u8 gSpawnedObjectScript[];
 extern s16 gScanlineWavePage;
 extern s32 gScanlineWaveCount;
-
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    return gSceneEntrances;
-}
-
-/* This scene declares no regions. */
-const struct SceneRegion *Scene_GetRegions(void)
-{
-    return 0;
-}
-
-const u32 *Scene_GetExits(void)
-{
-    return gSceneExits;
-}
-
-const struct ScenePlacement *Scene_GetPlacements(void)
-{
-    return gScenePlacements;
-}
-
-const struct SceneEvent *Scene_GetEvents(void)
-{
-    switch (gGameState.entrance) {
-    case 1:
-    case 3:
-        return gSceneEventsEntrance1;
-    case ENTRANCE_WAKE:
-    case ENTRANCE_WAKE_AGAIN:
-        return gSceneEventsWake;
-    default:
-        return gSceneEvents;
-    }
-}
 
 void ScanlineWave_Reset(void)
 {

@@ -8,6 +8,26 @@
 
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)
 #define REG_VCOUNT (*(volatile u16 *)0x04000006)
+#define REG_BG2CNT (*(volatile u16 *)0x0400000c)
+
+#define REG_BG2PA (*(volatile u16 *)0x04000020)
+#define REG_BG2PB (*(volatile u16 *)0x04000022)
+#define REG_BG2PC (*(volatile u16 *)0x04000024)
+#define REG_BG2PD (*(volatile u16 *)0x04000026)
+#define REG_BG2X (*(volatile s32 *)0x04000028)
+#define REG_BG2Y (*(volatile s32 *)0x0400002c)
+
+#define REG_WIN0H (*(volatile u16 *)0x04000040)
+#define REG_WIN1H (*(volatile u16 *)0x04000042)
+#define REG_WIN0V (*(volatile u16 *)0x04000044)
+#define REG_WIN1V (*(volatile u16 *)0x04000046)
+#define REG_WININ (*(volatile u16 *)0x04000048)
+#define REG_WINOUT (*(volatile u16 *)0x0400004a)
+#define REG_BLDCNT (*(volatile u16 *)0x04000050)
+#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
+
+/* BG2's screen block in the canvas layout. */
+#define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
 
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 

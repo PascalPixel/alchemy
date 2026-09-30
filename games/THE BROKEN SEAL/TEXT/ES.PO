@@ -10611,7 +10611,7 @@ msgctxt "MsgKorosseoRobinGotItem"
 msgid "02650"
 msgstr "{protagonist_name} obtuvo{line_break}{argument_item_name:10}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGaveItemToMember"
 msgid "02651"
 msgstr "{protagonist_name} le dio{line_break}{argument_item_name:2} a {argument_actor_name:1}.{end_wait}"
 
@@ -10659,11 +10659,11 @@ msgctxt "message"
 msgid "02662"
 msgstr "pero no encontró nada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryAnyMore"
 msgid "02663"
 msgstr "Pero no puedes{line_break}llevar más objetos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWillYouDrop"
 msgid "02664"
 msgstr "¿Qué vas a tirar?{end_wait}"
 
@@ -12595,7 +12595,7 @@ msgctxt "message"
 msgid "03146"
 msgstr "Test de menú"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoPrompt"
 msgid "03147"
 msgstr "Elige el tema."
 
@@ -12603,7 +12603,7 @@ msgctxt "message"
 msgid "03148"
 msgstr "{button_icon:6}:Selección de Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoTopic"
 msgid "03149"
 msgstr "Djinn"
 
@@ -12631,7 +12631,7 @@ msgctxt "message"
 msgid "03155"
 msgstr "Psinerg."
 
-msgctxt "message"
+msgctxt "MsgDjinnInfoText"
 msgid "03156"
 msgstr "Los cuatro elementos son{line_break}la base de toda materia.{page_break}Los espíritus elementales{line_break}reciben el nombre de{line_break}Djinn.{page_break}Los cuatro elementos son{line_break}Venus para la Tierra;{line_break}Mercurio para el Agua;{page_break}Marte para el Fuego; y{line_break}Júpiter para el Viento.{page_break}Cada elemento agrupa a{line_break}varios Djinn."
 

@@ -19,6 +19,9 @@ Trade_GetOfferState:
 	movs	r0, r0
 	.2byte 0x024c
 	.2byte 0x0200
+	.global Func_080ad360
+	.thumb_func
+Func_080ad360:
 	push	{r5, r6, r7, lr}
 	sub	sp, #4
 	bl	Func_080afdbc

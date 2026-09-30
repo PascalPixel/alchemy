@@ -42,9 +42,9 @@ Engine_HeapRelease:
 	.thumb_func
 Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global ObjectDispatch_ApplyValueToChildren
 	.thumb_func
@@ -130,9 +130,9 @@ Engine_EventEnd:
 	.thumb_func
 Engine_PartyGiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

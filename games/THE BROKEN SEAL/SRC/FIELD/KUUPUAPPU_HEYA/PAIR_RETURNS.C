@@ -37,13 +37,13 @@ void FieldScene_ConfigurePairedActors(void)
      * its halfword store, which keeps the constants' loads where the
      * reference has them. */
     {
-        u8 *record = (u8 *)Engine_ActorGet(24);
+        u8 *record = (u8 *)Object_GetById(24);
         s32 shown = 1;
 
         *(u16 *)(record + ACTOR_SHOWN_OFFSET) = shown;
     }
     {
-        u8 *record = (u8 *)((s32 (*)())Engine_ActorGet)(25);
+        u8 *record = (u8 *)((s32 (*)())Object_GetById)(25);
         s32 shown = 3;
 
         *(u16 *)(record + ACTOR_SHOWN_OFFSET) = shown;

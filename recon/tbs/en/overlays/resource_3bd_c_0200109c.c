@@ -136,7 +136,7 @@ void FieldScene_RunStatefulSequence(s32 action)
     Engine_EventShowMessage(16, 0);
     Engine_EventEnd();
     for (i = 0; i <= 4; i++) {
-        actor = Engine_ActorGet(i + 11);
+        actor = Object_GetById(i + 11);
         actor->update = 0;
         actor->scale_x = 0x10000;
         actor->scale_y = 0x10000;
@@ -171,7 +171,7 @@ void FieldScene_RunStatefulSequence(s32 action)
                 action <<= 16;
                 Call3(SceneActor_SetPositionFromTransformedBase, id, 0x180000, (u32)action >> 16);
                 Engine_AudioPlayCue(151);
-                actor = Engine_ActorGet(id);
+                actor = Object_GetById(id);
                 actor->scale_x = 0;
                 scale = 0x6666;
                 do {
@@ -196,7 +196,7 @@ void FieldScene_RunStatefulSequence(s32 action)
             for (i = 0; i <= 4; i++) {
                 s32 id = i + 11;
 
-                actor = Engine_ActorGet(id);
+                actor = Object_GetById(id);
                 Engine_AudioPlayCue(151);
                 scale = actor->scale_x;
                 if (scale > 0x6666) {
@@ -256,7 +256,7 @@ void FieldScene_RunStatefulSequence(s32 action)
                 for (i = 0; i <= 4; i++) {
                     s32 id = i + 11;
 
-                    actor = Engine_ActorGet(id);
+                    actor = Object_GetById(id);
                     actor->scale_x -= 16;
                     actor->scale_y -= 16;
                     SceneActor_SetPositionFromTransformedBase(id, x, (u32)(action << 16) >> 16);

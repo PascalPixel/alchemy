@@ -5,8 +5,8 @@ s32 OverlayObject_SpawnWithMode14();
 void OverlayObject_WaitUntilIdle();
 void Engine_ActorSetSpriteFlags();
 void Engine_EventBegin();
-s32 Engine_ActorGet();
-s32 Engine_ActorGet();
+s32 Object_GetById();
+s32 Object_GetById();
 void Engine_EventWait();
 void Engine_EventWait();
 void Engine_ActorSetSpeed();
@@ -33,10 +33,10 @@ void Scene_RunActorLeapSequence(void)
     s32 zero;
 
     zero = 0;
-    rec7 = Engine_ActorGet(0);
+    rec7 = Object_GetById(0);
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     {
         s32 shown = 0x4000;

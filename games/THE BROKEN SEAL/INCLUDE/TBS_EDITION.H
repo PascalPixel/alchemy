@@ -1,7 +1,8 @@
 #ifndef GUARD_TBS_EDITION_H
 #define GUARD_TBS_EDITION_H
 
-/* The Japanese render work carries 0x90 more bytes before these flags. */
+/* The Japanese render work carries 0x90 more bytes before these flags:
+   four more 0x24-byte window records, twelve against eight. */
 #if defined(TBS_EDITION_JA)
 #define RENDER_DIRTY_OFS 0xF33
 #define RENDER_MODE_OFS  0xF34
@@ -22,6 +23,10 @@
 #define RENDER_ENTRY_COUNT_OFS 0x1142
 #define RENDER_RESULT_OFS      0x1184
 #define RENDER_ENTRY_MASK      0xFF
+#define WINDOW_COUNT          12
+#define RENDER_LEVEL_OFS      0xF37
+#define RENDER_COUNTER_OFS    0x1146
+#define RENDER_WORK_SIZE      0x118C
 #define SELECT_MENU_WIDTH    5
 #define TYPE_MENU_WIDTH      4
 #define MENU_TEXT_X          100
@@ -47,6 +52,10 @@
 #define RENDER_ENTRY_COUNT_OFS 0x12B2
 #define RENDER_RESULT_OFS      0x12F4
 #define RENDER_ENTRY_MASK      0x1FF
+#define WINDOW_COUNT          8
+#define RENDER_LEVEL_OFS      0xEA7
+#define RENDER_COUNTER_OFS    0x12B6
+#define RENDER_WORK_SIZE      0x12FC
 #define SELECT_MENU_WIDTH    7
 #define TYPE_MENU_WIDTH      7
 #define MENU_TEXT_X          74
@@ -55,6 +64,22 @@
 #endif
 
 #define MENU_TEXT_Y 60
+
+/* The shops' item list window, and where the character-change help starts:
+   each edition sizes them to its words. */
+#if defined(TBS_EDITION_JA)
+#define SHOP_LIST_X      16
+#define SHOP_LIST_WIDTH  14
+#define HELP_TEXT_X      16
+#elif defined(TBS_EDITION_DE)
+#define SHOP_LIST_X      14
+#define SHOP_LIST_WIDTH  16
+#define HELP_TEXT_X      0
+#else
+#define SHOP_LIST_X      15
+#define SHOP_LIST_WIDTH  15
+#define HELP_TEXT_X      0
+#endif
 
 #if defined(TBS_EDITION_JA)
 #define RENDER_RESOURCE_BASE 0x9D4

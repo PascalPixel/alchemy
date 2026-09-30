@@ -13,11 +13,11 @@ void ColossoLogRollingStage_OffsetActiveActor(void)
 
     table = (s16 *)&gGameState;
     slot = (s32 *)&table[250];
-    actor = Engine_ActorGet(*slot);
+    actor = Object_GetById(*slot);
     actor->move_rate_z = 0x10000;
     actor->move_rate_x = 0x20000;
     Engine_ActorSetAttachedEffect(*slot, 258);
-    Engine_ObjectSetAnimation(actor, 5);
+    Object_SetMode(actor, 5);
     z = actor->z & 0xFFF00000;
     Object_SetPosition(actor, actor->x, actor->y, z + 0x180000);
     Object_CommitPosition(actor);
@@ -36,13 +36,13 @@ void ColossoLogRollingStage_ClampAndOffsetActiveActor(void)
 
     table = (s16 *)&gGameState;
     slot = (s32 *)&table[250];
-    actor = Engine_ActorGet(*slot);
+    actor = Object_GetById(*slot);
     if (actor->x > 0x2980000) {
         actor->x = 0x2980000;
     }
     actor->move_rate_z = 0x10000;
     actor->move_rate_x = 0x20000;
-    Engine_ObjectSetAnimation(actor, 5);
+    Object_SetMode(actor, 5);
     z = actor->z & 0xFFF00000;
     Object_SetPosition(actor, actor->x, actor->y, z + 0xC0000);
     Object_CommitPosition(actor);

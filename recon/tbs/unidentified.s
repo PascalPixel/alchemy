@@ -606,7 +606,10 @@ ObjectMotion_LinkedActionScript:
 	.incbin "baserom.gba", 0x0009ff40, 0x00000018
 	.global FieldFx_GroundParticleTiles
 FieldFx_GroundParticleTiles:
-	.incbin "baserom.gba", 0x0009ff58, 0x00000160
+	.incbin "baserom.gba", 0x0009ff58, 0x000000c6
+	.global FieldFx_MoteTiles
+FieldFx_MoteTiles:
+	.incbin "baserom.gba", 0x000a001e, 0x0000009a
 	.global Data_080a00b8
 Data_080a00b8:
 	.incbin "baserom.gba", 0x000a00b8, 0x00000050

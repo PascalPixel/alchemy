@@ -252,7 +252,7 @@ s32 FuneHobashira_ApplyEntryState(void)
     switch (gGameState.entrance) {
     case 1:
         if (Engine_GameFlagIsSet(0x109) == 0) {
-            leader = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            leader = Object_GetById(ACTOR_PARTY_LEADER);
             Engine_EventBegin();
             battle_owner_69();
             leader->y.fixed = 0x380000;
@@ -318,7 +318,7 @@ void FieldScene_RunScene3b0_02000468(void)
     Event_Begin();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xa40000, 0x1410000);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    record = (u8 *)Engine_ActorGet(0);
+    record = (u8 *)Object_GetById(0);
     Actor_SetSpriteFlags(record, 0);
     Task_Wait(1);
     Map_Redraw();
@@ -372,7 +372,7 @@ void Scene_RunFourActorStagingSequence(void)
     Event_CallWithLastActiveObjectId((s32)FuneHobashira_StagingObjects);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(0, 15);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(0), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
     event = &(*(struct FieldGlobals *)&gMapWork).event;
     (*event)->start_transition = 0x203;
@@ -383,7 +383,7 @@ void Scene_RunFourActorStagingSequence(void)
     FuneHobashira_CameraOrigin[1] = *placement;
     Call3((void (*)())Engine_ActorSetPosition, 9, 0x500000, 0xd20000);
     x = 0x500000;
-    Engine_ActorGet(9)->motion_flags = zero;
+    Object_GetById(9)->motion_flags = zero;
     FuneHobashira_CameraCenter[0] = x;
     FuneHobashira_CameraCenter[1] = zero;
     Engine_ActorEnableActionCallback(9, FuneHobashira_FollowCameraActions);
@@ -405,17 +405,17 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorSetChildValue(10, 3);
     Engine_ActorSetChildValue(11, 3);
     Engine_ActorSetChildValue(12, 3);
-    actor = Engine_ActorGet(10);
+    actor = Object_GetById(10);
     scale = 0x8000;
     update = (s32)OverlayObject_Add160ToFields18And1c;
     actor->scale_y = scale;
     actor->scale_x = scale;
     actor->update = (void (*)(union FieldObject *))update;
-    actor = Engine_ActorGet(11);
+    actor = Object_GetById(11);
     actor->scale_y = scale;
     actor->scale_x = scale;
     actor->update = (void (*)(union FieldObject *))update;
-    actor = Engine_ActorGet(12);
+    actor = Object_GetById(12);
     actor->scale_y = scale;
     actor->scale_x = scale;
     actor->update = (void (*)(union FieldObject *))update;
@@ -448,7 +448,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
 
     Event_Begin();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    record = (u8 *)Engine_ActorGet(0);
+    record = (u8 *)Object_GetById(0);
     Actor_SetSpriteFlags(record, 0);
     Task_Wait(1);
     ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneHobashira_EnsembleObjects);
@@ -465,7 +465,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(120);
-    rec9 = (u8 *)Engine_ActorGet(9);
+    rec9 = (u8 *)Object_GetById(9);
     Actor_Stop(9);
     /* Reset record 9's waypoint/velocity fields: three fields to the
      * minimum s32, then four fields to zero. */
@@ -544,7 +544,7 @@ void OverlayObject_InitWithRandomFields(s32 a)
     u8 *obj;
     u32 x;
 
-    obj = (u8 *)Engine_ActorGet(a);
+    obj = (u8 *)Object_GetById(a);
     Actor_SetSpritePriority(a, 1);
     obj[0x55] = 0;
     *(u16 *)(obj + 0x64) = Random16() >> 15;
@@ -572,7 +572,7 @@ void FieldScene_RunPrimarySequence(void)
 
     Event_Begin();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    id0_state = (u8 *)Engine_ActorGet(0);
+    id0_state = (u8 *)Object_GetById(0);
     Actor_SetSpriteFlags(id0_state, 0);
     Task_Wait(1);
     ((void (*)())Event_CallWithLastActiveObjectId)((s32)FuneHobashira_EnsembleObjects);
@@ -625,7 +625,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_SetPosition(14, 0, 0);
     Actor_SetPosition(15, 0, 0);
     Event_Wait(100);
-    rec = (u8 *)Engine_ActorGet(18);
+    rec = (u8 *)Object_GetById(18);
     *(s32 *)(rec + 24) = 0x1999;
     *(s32 *)(rec + 28) = 0x1999;
     Actor_SetPosition(18, 0xac0000, 0x1540000);
@@ -645,7 +645,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_WalkToAndWait(8, 168, 0x154);
     Actor_WalkToAndWait(8, 200, 0x154);
     Actor_FaceDirection(8, 0x8000, 0);
-    rec = (u8 *)Engine_ActorGet(17);
+    rec = (u8 *)Object_GetById(17);
     *(s32 *)(rec + 24) = 0x12666;
     *(s32 *)(rec + 28) = 0x12666;
     *(s32 *)(rec + 8) = 0xac0000;
@@ -675,7 +675,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_SetDestination(18, 132, 0x168);
     Event_Wait(40);
     Actor_SetPosition(17, 0, 0);
-    rec = (u8 *)Engine_ActorGet(8);
+    rec = (u8 *)Object_GetById(8);
     *(s32 *)(rec + 24) = 0x10000;
     *(s32 *)(rec + 28) = 0x10000;
     {
@@ -696,7 +696,7 @@ void FieldScene_RunSevenActorEnsemble(void)
 {
     Event_Begin();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    Actor_SetSpriteFlags(Engine_ActorGet(ACTOR_PARTY_LEADER), 0);
+    Actor_SetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
     Event_CallWithLastActiveObjectId((s32)FuneHobashira_EnsembleObjects);
     Task_Wait(1);
     OverlayObject_InitWithRandomFields(9);

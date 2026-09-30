@@ -16,7 +16,7 @@ void StagedActorPairScene_RunSpinningLeap(s32 id)
     s32 velocity[3];
     s32 angle;
 
-    work = (union SpinningActor *)Engine_ActorGet(id);
+    work = (union SpinningActor *)Object_GetById(id);
     work->object.actor.motion_flags = 0;
     for (cnt = 0; cnt < 9; cnt++) {
         Engine_TaskWait(1);

@@ -18,9 +18,9 @@ Engine_TaskAddCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
-	.global Engine_ObjectSetAnimation
+	.global Object_SetMode
 	.thumb_func
-Engine_ObjectSetAnimation:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -90,9 +90,9 @@ FieldScene_PrepareActors:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Engine_ActorGet
+	.global Object_GetById
 	.thumb_func
-Engine_ActorGet:
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

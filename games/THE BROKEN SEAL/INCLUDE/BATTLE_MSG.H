@@ -58,6 +58,8 @@ extern char MsgDeathCount; /* 「しにがみが てまねく… N」 */
 extern char MsgPsySeal; /* 「エナジーを シールされた！」 */
 extern char MsgAgiUp; /* 「すばやさが Nあがった！」 */
 extern char MsgAgiDown; /* 「すばやさが Nさがった！」 */
+extern char MsgNimblyDodgesBlow; /* 「すばやくかわした!」 */
+extern char MsgNoEscape; /* 「しかし にげられなかった!」 */
 extern char MsgEarthPowerUp; /* Earth Power rises by N; the other elements follow (English text) */
 extern char MsgReadies; /* 「みがまえた！」 */
 extern char MsgChallenge; /* 「たたかいに もえてきた！」 */

@@ -1,6 +1,7 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
+#include "BATTLE_MSG.H"
 
 struct BattlePresentationState {
     s32 mode;
@@ -52,7 +53,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattleTrigger *trigger)
         }
 
         if (!party_mode) {
-            UiText_ShowMessageAndWaitCoreFar(0x847);
+            UiText_ShowMessageAndWaitCoreFar((s32)&MsgNoEscape);
             BattlePresentation_WaitForAdvance();
         } else {
             s16 unit_ids[14];
@@ -80,7 +81,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattleTrigger *trigger)
         BattleActor_RemoveFromLists(trigger->unit_id);
         ActivateBattleObjectSlot(trigger->unit_id);
     } else {
-        UiText_ShowMessageAndWaitCoreFar(0x847);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgNoEscape);
         BattlePresentation_WaitForAdvance();
     }
 

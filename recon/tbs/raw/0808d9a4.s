@@ -197,7 +197,7 @@ Func_0808d9a4:
 	bl	0x08015138
 	movs	r1, #2
 	adds	r0, r6, #0
-	bl	Engine_ObjectSetAnimation
+	bl	Object_SetMode
 	movs	r0, #246
 	bl	Audio_PlayCue
 	adds	r5, #2

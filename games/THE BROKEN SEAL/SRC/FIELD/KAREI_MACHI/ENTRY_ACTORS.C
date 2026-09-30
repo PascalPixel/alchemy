@@ -7,7 +7,7 @@ s32 Engine_GameFlagIsSet();
 s32 Engine_GameFlagSet();
 void Engine_ActorSetPosition();
 void Engine_ActorSetChildValue();
-s32 Engine_ActorGet();
+s32 Object_GetById();
 s32 Engine_HeapAllocate();
 void Engine_ItemLoadIcon();
 s32 Engine_VramLoad();
@@ -53,7 +53,7 @@ void KareiMachi_SetupEntryActors(void)
     if (rec2 != 0) {
         Engine_ActorSetPosition(26, 0, 0);
     } else {
-        rec = Engine_ActorGet(26);
+        rec = Object_GetById(26);
         p6 = *(s32 *)((s32)rec + 80);
         ((struct SpriteBits *)p6)->mode = 1;
         ((struct SpriteBits *)p6)->hidden = 0;

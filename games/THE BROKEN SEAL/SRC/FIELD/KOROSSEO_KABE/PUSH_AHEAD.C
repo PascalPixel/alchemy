@@ -44,7 +44,7 @@ void StagedActor_PushActorAhead(void)
     s32 handle;
 
     handle = *(s32 *)((u8 *)gCell + (idx << 1));
-    subject = (SceneRecord *)Engine_ActorGet(handle);
+    subject = (SceneRecord *)Object_GetById(handle);
 
     dir = subject->facing >> 12;
 
@@ -133,7 +133,7 @@ s32 *SceneActor_FindOccupantAheadOfSubject(void)
     s32 position[3];
     s32 *occupant;
 
-    record = (u8 *)Engine_ActorGet(gGameState.selected_actor);
+    record = (u8 *)Object_GetById(gGameState.selected_actor);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (*(u16 *)(record + 6) + 0x2000) & 0xc000;

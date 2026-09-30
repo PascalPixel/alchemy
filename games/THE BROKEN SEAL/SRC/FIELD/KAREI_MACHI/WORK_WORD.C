@@ -20,7 +20,7 @@ void SceneState_LinkRecordZeroWhenFlag200Clear(void)
 
     if (GameFlag_IsSet(0x200) == 0) {
         work = gActorEffectWork;
-        *(s32 *)(work + 24) = ((s32 (*)())Engine_ActorGet)(ACTOR_PARTY_LEADER);
+        *(s32 *)(work + 24) = ((s32 (*)())Object_GetById)(ACTOR_PARTY_LEADER);
         GameFlag_Set(0x200);
     }
 }

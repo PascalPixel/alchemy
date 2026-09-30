@@ -21,14 +21,14 @@ void KorosseoKabe_SelectNearestActor(void)
     s32 best = 8;
     s32 bestd = 0x100000;
     s32 n = gGameState.selected_actor;
-    Obj *p = (Obj *)Engine_ActorGet(n);
+    Obj *p = (Obj *)Object_GetById(n);
     s32 i;
     s32 *q;
     s32 base;
 
     Event_Begin();
     for (i = 8; i <= 66; i++) {
-        Obj *o = (Obj *)Engine_ActorGet(i);
+        Obj *o = (Obj *)Object_GetById(i);
 
         if (o != 0 && o->f54 == 1 && *o->f50->f28 == 165) {
             s32 dx = (p->f08 - o->f08) / 65536;

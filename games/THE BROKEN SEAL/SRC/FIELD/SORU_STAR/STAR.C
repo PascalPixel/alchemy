@@ -502,8 +502,8 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_ActorRunRepeatedMotion(9, 2);
     Engine_ActorSetAnimation(9, 4);
     Event_SayThenWait(9, 10);
-    record12 = (u8 *)Engine_ActorGet(12);
-    record8 = (u8 *)Engine_ActorGet(8);
+    record12 = (u8 *)Object_GetById(12);
+    record8 = (u8 *)Object_GetById(8);
     field_80_38 = *(u8 **)(record12 + 80) + 38;
     zero = 0;
     *field_80_38 = zero;
@@ -550,7 +550,7 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_ActorSetPosition(8, 0, 0);
     Actor_SetSpritePriority(12, 1);
     {
-        u8 *flags = (u8 *)Engine_ActorGet(12) + 35;
+        u8 *flags = (u8 *)Object_GetById(12) + 35;
         cnt = 1;
         cnt |= *flags;
         *flags = cnt;
@@ -742,7 +742,7 @@ void Scene_UnmaskGarcia(void)
     Audio_PlayCue(161);
     Actor_RunRepeatedMotion(ACTOR_GARCIA_MASKED, 3);
     Event_Wait(40);
-    other = Engine_ActorGet(ACTOR_GARCIA_MASKED);
+    other = Object_GetById(ACTOR_GARCIA_MASKED);
     if (other != 0) {
         Actor_SetPosition(ACTOR_GARCIA, *(s32 *)(other + 8), *(s32 *)(other + 16));
     }
@@ -865,7 +865,7 @@ void Scene_UnmaskGarcia(void)
             Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
             Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
             Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
-            obj = Engine_ActorGet(ACTOR_PARTY_LEADER);
+            obj = Object_GetById(ACTOR_PARTY_LEADER);
             obj[90] &= 254;
             Actor_WalkToAndWait(ACTOR_GERALD, 244, 0x1de);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
@@ -898,7 +898,7 @@ void Scene_UnmaskGarcia(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 30);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
-    obj = Engine_ActorGet(ACTOR_GERALD);
+    obj = Object_GetById(ACTOR_GERALD);
     obj[90] &= 254;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x1e2);
     {
@@ -969,7 +969,7 @@ void Scene_AlexTakesStars(void)
     Event_SayThenWait(1, 20);
     UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
-    rec = Engine_ActorGet(ACTOR_GERALD);
+    rec = Object_GetById(ACTOR_GERALD);
     rec[90] &= 254;
     /* FAKEMATCH: the zero is parked here, well before its one store, which
      * keeps it in the register the reference holds it in. */
@@ -991,7 +991,7 @@ void Scene_AlexTakesStars(void)
     Actor_SetChildValue(ACTOR_ALEX, 0x100);
     record = Actor_Get(ACTOR_ALEX);
     Actor_SetSpriteFlags(record, 0);
-    rec = Engine_ActorGet(ACTOR_ALEX);
+    rec = Object_GetById(ACTOR_ALEX);
     rec[85] = none;
     Audio_PlayCue(220);
     for (i = 0; i != 30; i++) {
@@ -1065,7 +1065,7 @@ void Scene_AlexTakesStars(void)
     Actor_ShowEmote(ACTOR_GERALD, 0x103, 40);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
     Event_Wait(20);
-    rec = Engine_ActorGet(ACTOR_GERALD);
+    rec = Object_GetById(ACTOR_GERALD);
     SetFlagBits(&rec[90], 1);
     *(s32 *)(rec + 48) = 0x30000;
     *(s32 *)(rec + 52) = 0x20000;
@@ -1099,7 +1099,7 @@ void Scene_AlexTakesStars(void)
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_GERALD, 2);
     {
-        s32 slot = Engine_ActorGet(ACTOR_PARTY_LEADER);
+        s32 slot = Object_GetById(ACTOR_PARTY_LEADER);
 
         if (slot != 0) {
             Actor_SetDestination(ACTOR_GERALD, *(s16 *)(slot + 10), *(s16 *)(slot + 18));

@@ -7,7 +7,7 @@ void ColossoLogRollingStage_ResetActorMotion(s32 selector)
 
     u8 *record;
 
-    record = Engine_ActorGet(selector);
+    record = Object_GetById(selector);
     ObjectDispatch_InitFromTable6();
 
     *(u32 *)(record + 36) = 0;

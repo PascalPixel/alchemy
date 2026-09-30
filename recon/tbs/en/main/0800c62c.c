@@ -1,9 +1,14 @@
+/* 2026-09-30 (Mercury): EXACT, 592 of 592 bytes with stock agscc and two
+   tagged FAKEMATCHes. It sits between
+   FIELD/COMMON/OBJECT/DISPATCH_RETURN_TRUE and OBJECT2, so its module is
+   Mars's to choose; compile it under #if defined(TBS_EDITION_EN) until the
+   other editions adopt theirs. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
 
-/* main:0800c62c ObjectSystem_UpdateCamera - hand-written draft, freshly
-   scored at 588 of 592 bytes, 86 differing halfwords / 35 aligned edits.
+/* main:0800c62c ObjectSystem_UpdateCamera - exact (592 of 592 bytes,
+   2026-09-30 helper hF).
 
    Each frame the field camera places every live object on screen: objects
    inside the view are projected through their tile's layer bits, and objects
@@ -20,7 +25,15 @@
    tail's operand order (23 to 11 diff lines). Left: the count-zero and
    63/pool-load scheduling at the loop head, and the out-of-view path loads
    flags_1d itself (ldrb r2) before joining the shared test; a goto into
-   the shared test reorders the whole body. */
+   the shared test reorders the whole body.
+   2026-09-30 (hF): exact. The out-of-view path stores the constant 1
+   (no kind = 1 before the test), so its flags load is not cross-jumped
+   into the shared tail; the loop counts up from 0 to 64, so loop.c emits
+   the reversed counter's 63 after the hoisted MulQ16 entry and reload
+   gives them r4 and r3 as in the ROM; and one do-while around the size
+   load and Dma_Set ends in a loop note, a scheduling barrier that keeps
+   the count-zero constant ahead of the object-list load, with the count
+   reset now written before that load. */
 
 struct CameraTile {
     u32 unk_00 : 12;
@@ -122,7 +135,7 @@ void ObjectSystem_UpdateCamera(void)
     s32 top;
     struct CameraTile *tile;
     u32 bits;
-    s32 unused[9]; /* the ROM frame is 80 bytes */
+    s32 unused[9]; /* FAKEMATCH: the ROM frame keeps 36 more bytes than it uses. */
     s32 scale[2];
     s32 pos[4];
     s32 y;
@@ -134,13 +147,15 @@ void ObjectSystem_UpdateCamera(void)
     cam_x = cam[0] & 0xffff0000;
     cam_z = cam[1] & 0xffff0000;
     sync = *(struct CameraSync **)((u32)gObjectSlots + 4);
-    /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
-    do { size = (u32)Render_DecodeFrameCodeSize; } while (0);
-    Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
-        (volatile u32 *)0x040000d4);
-    obj = *(struct CameraObject **)(u32)gObjectSlots;
+    /* FAKEMATCH: the do-while keeps the copy between the runtime loads and the count reset. */
+    do {
+        size = (u32)Render_DecodeFrameCodeSize;
+        Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
+            (volatile u32 *)0x040000d4);
+    } while (0);
     sync->count = 0;
-    for (cnt = 63; cnt >= 0; cnt--, obj++) {
+    obj = *(struct CameraObject **)(u32)gObjectSlots;
+    for (cnt = 0; cnt < 64; cnt++, obj++) {
         if (obj->active == 0)
             continue;
         if (obj->x != 0 || obj->z != 0) {
@@ -192,10 +207,9 @@ void ObjectSystem_UpdateCamera(void)
                 continue;
             }
             if (obj->held == 0) {
-                kind = 1;
                 if (!(sprite->flags_1d & 1)) {
                     Resource_ActivateEntry(sprite->resource);
-                    sprite->activated = kind;
+                    sprite->activated = 1;
                 }
             }
         } else {

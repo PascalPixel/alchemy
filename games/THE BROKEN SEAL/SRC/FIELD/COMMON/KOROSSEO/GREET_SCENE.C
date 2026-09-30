@@ -2,7 +2,7 @@
 #include "CALL.H"
 extern u8 MsgKorosseoSiteSecondFinals[];
 
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_EventBegin();
 void Engine_ActorSetSpeed();
 s32 Engine_ActorSetPosition();
@@ -31,7 +31,7 @@ void Korosseo_RunGreetScene(s32 a0)
     s32 record;
     s32 v6;
 
-    record = Engine_ActorGet(a0);
+    record = Object_GetById(a0);
     p9 = *(s16 *)(record + 10);
     p10 = *(s16 *)(record + 18);
     Engine_EventBegin();
@@ -48,7 +48,7 @@ void Korosseo_RunGreetScene(s32 a0)
     /* FAKEMATCH: the facing is built from a parked local, which keeps its
      * constant in the register the reference holds it in for both uses. */
     v6 = 192;
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     *(u16 *)(record + 6) = (v6 << 8);
     Engine_CameraFollowActor(0, 0);
     Engine_EventOpenScreen();
@@ -68,17 +68,17 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(1, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorSetAnimation(2, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorSetAnimation(3, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetDestination(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

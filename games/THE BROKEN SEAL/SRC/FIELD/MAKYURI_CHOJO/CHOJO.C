@@ -82,20 +82,20 @@ s32 MakyuriChojo_ApplyEntryState(void)
     Engine_ActorSetSpritePriority(13, 1);
     for (i = 14; i < 20; i++) {
         Engine_ActorSetSpritePriority(i, 1);
-        Engine_ActorGet(i)->motion_flags = 4;
-        Engine_ActorGet(i)->priority_flags |= 2;
-        Engine_ActorGet(i)->y.fixed = -0x328000;
+        Object_GetById(i)->motion_flags = 4;
+        Object_GetById(i)->priority_flags |= 2;
+        Object_GetById(i)->y.fixed = -0x328000;
     }
-    if (Engine_GameFlagIsSet(0x109) && (actor = FindNearestF2Actor()) != 0 && (obj = Engine_ActorGet(actor)) != NULL) {
+    if (Engine_GameFlagIsSet(0x109) && (actor = FindNearestF2Actor()) != 0 && (obj = Object_GetById(actor)) != NULL) {
         obj->motion_flags = 0;
     }
-    SetOverlayObjectMode(Engine_ActorGet(9), 0);
-    SetOverlayObjectMode(Engine_ActorGet(10), 0);
-    SetOverlayObjectMode(Engine_ActorGet(11), 0);
-    SetOverlayObjectMode(Engine_ActorGet(12), 0);
-    SetOverlayObjectMode(Engine_ActorGet(13), 0);
-    Engine_ActorGet(12)->scale_x = -0x10000;
-    Engine_ActorGet(13)->scale_x = -0x10000;
+    SetOverlayObjectMode(Object_GetById(9), 0);
+    SetOverlayObjectMode(Object_GetById(10), 0);
+    SetOverlayObjectMode(Object_GetById(11), 0);
+    SetOverlayObjectMode(Object_GetById(12), 0);
+    SetOverlayObjectMode(Object_GetById(13), 0);
+    Object_GetById(12)->scale_x = -0x10000;
+    Object_GetById(13)->scale_x = -0x10000;
     if (gGameState.entrance == 1) {
         if (!Engine_GameFlagIsSet(0x109)) {
             FieldScene_RunFourActorPresentation();
@@ -129,13 +129,13 @@ void FieldScene_RunFourActorPresentation(void)
 
     Event_Begin();
     Owner_RefreshRatiosOnFlagFar(); /* main:08077268 */
-    record = ((u8 *)Engine_ActorGet(0)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(0)); /* main:0808a080 */
     SetOverlayObjectMode(record, 0); /* main:080091e0 */
-    record = ((u8 *)Engine_ActorGet(1)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(1)); /* main:0808a080 */
     SetOverlayObjectMode(record, 0); /* main:080091e0 */
-    record = ((u8 *)Engine_ActorGet(2)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(2)); /* main:0808a080 */
     SetOverlayObjectMode(record, 0); /* main:080091e0 */
-    record = ((u8 *)Engine_ActorGet(3)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(3)); /* main:0808a080 */
     SetOverlayObjectMode(record, 0); /* main:080091e0 */
     Camera_MoveTo(0x1300000, -1, 0x780000, 0);
     Task_Wait(1); /* main:080000c0 */
@@ -175,7 +175,7 @@ void FieldScene_RunFourActorPresentation(void)
     ColorBuffer_Interpolate(30); /* main:0808a348 */
     Event_Wait(30);
     Event_Wait(80);
-    record = ((u8 *)Engine_ActorGet(0));
+    record = ((u8 *)Object_GetById(0));
     SetOverlayObjectMode(record, 1); /* main:080091e0 */
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(30);
@@ -183,7 +183,7 @@ void FieldScene_RunFourActorPresentation(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(60);
-    record = ((u8 *)Engine_ActorGet(1)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(1)); /* main:0808a080 */
     SetOverlayObjectMode(record, 1); /* main:080091e0 */
     Actor_SetAnimation(ACTOR_GERALD, 1);
     Event_Wait(20);
@@ -192,12 +192,12 @@ void FieldScene_RunFourActorPresentation(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-    record = ((u8 *)Engine_ActorGet(2));
+    record = ((u8 *)Object_GetById(2));
     SetOverlayObjectMode(record, 1); /* main:080091e0 */
     Actor_SetAnimation(ACTOR_IVAN, 1);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
     Event_Wait(40);
-    record = ((u8 *)Engine_ActorGet(3)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(3)); /* main:0808a080 */
     SetOverlayObjectMode(record, 1); /* main:080091e0 */
     Actor_SetAnimation(ACTOR_MIA, 1);
     Event_Wait(20);
@@ -209,15 +209,15 @@ void FieldScene_RunFourActorPresentation(void)
     Actor_SetAnimation(ACTOR_GERALD, 2);
     Actor_SetAnimation(ACTOR_IVAN, 2);
     Actor_SetAnimation(ACTOR_MIA, 2);
-    record = ((u8 *)Engine_ActorGet(0)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(0)); /* main:0808a080 */
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
     }
-    record = ((u8 *)Engine_ActorGet(0)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(0)); /* main:0808a080 */
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
     }
-    record = ((u8 *)Engine_ActorGet(0)); /* main:0808a080 */
+    record = ((u8 *)Object_GetById(0)); /* main:0808a080 */
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
     }

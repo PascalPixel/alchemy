@@ -166,8 +166,8 @@
  */
 
 /* Runtime names are bound by the single-overlay translation unit. */
-u8 *Engine_ActorGet(s32 id);
-void Engine_ObjectSetAnimation(u8 *rec, s32 mode);
+u8 *Object_GetById(s32 id);
+void Object_SetMode(u8 *rec, s32 mode);
 void TorebiIzumi_PlaceActor(s32 id, void *pos, s32 angle, s32 frame, s32 unk);
 void OverlayObject_SetField54(s32 id, s32 value);
 s32 Engine_MathCos(s32 angle);
@@ -252,9 +252,9 @@ void FieldScene_RunSecondaryScript(void)
                 /* Landing frame. */
                 work->velocity[1] = 0;
                 if (Data_0200a0c0 == 1) {
-                    Engine_ObjectSetAnimation(Engine_ActorGet(17), 1);
+                    Object_SetMode(Object_GetById(17), 1);
                 } else {
-                    Engine_ObjectSetAnimation(Engine_ActorGet(12), 1);
+                    Object_SetMode(Object_GetById(12), 1);
                 }
             }
 
@@ -284,12 +284,12 @@ void FieldScene_RunSecondaryScript(void)
                 }
                 if (work->velocity[0] == 0 && work->velocity[2] == 0) {
                     if (Data_0200a0c0 == 1) {
-                        Engine_ObjectSetAnimation(Engine_ActorGet(17), 2);
+                        Object_SetMode(Object_GetById(17), 2);
                         OverlayObject_SetField54(15, 0);
                         OverlayObject_SetField54(14, 0);
                         OverlayObject_SetField54(13, 0);
                     } else {
-                        Engine_ObjectSetAnimation(Engine_ActorGet(12), 2);
+                        Object_SetMode(Object_GetById(12), 2);
                         OverlayObject_SetField54(10, 0);
                         OverlayObject_SetField54(9, 0);
                         OverlayObject_SetField54(8, 0);
@@ -427,15 +427,15 @@ void FieldScene_RunSecondaryScript(void)
             }
             if (REC_REACT(rec) > 0) {
                 if (i == 0) {
-                    Engine_ObjectSetAnimation(Engine_ActorGet(18), 3);
+                    Object_SetMode(Object_GetById(18), 3);
                 } else {
-                    Engine_ObjectSetAnimation(Engine_ActorGet(19), 3);
+                    Object_SetMode(Object_GetById(19), 3);
                 }
             } else {
                 if (i == 0) {
-                    Engine_ObjectSetAnimation(Engine_ActorGet(18), 1);
+                    Object_SetMode(Object_GetById(18), 1);
                 } else {
-                    Engine_ObjectSetAnimation(Engine_ActorGet(19), 1);
+                    Object_SetMode(Object_GetById(19), 1);
                 }
                 if (REC_HOLD(rec) == 0) {
                     if (REC_HEADING(rec) == 0) {
@@ -474,12 +474,12 @@ void FieldScene_RunSecondaryScript(void)
                 step = step * 3;
             }
             if (REC_REACT(rec) > 0) {
-                Engine_ObjectSetAnimation(Engine_ActorGet(20), 3);
+                Object_SetMode(Object_GetById(20), 3);
             } else {
                 u16 heading;
                 u16 hold;
 
-                Engine_ObjectSetAnimation(Engine_ActorGet(20), 2);
+                Object_SetMode(Object_GetById(20), 2);
                 REC_X(rec) = Engine_MathCos(REC_HEADING(rec)) * 48 + 0x700000;
                 REC_Z(rec) = Engine_MathSin(REC_HEADING(rec)) * 40 + 0x480000;
                 heading = REC_HEADING(rec) + step;
@@ -500,14 +500,14 @@ void FieldScene_RunSecondaryScript(void)
                 step = step * 3;
             }
             if (REC_REACT(rec) > 0) {
-                Engine_ObjectSetAnimation(Engine_ActorGet(21), 3);
+                Object_SetMode(Object_GetById(21), 3);
             } else if (phase <= 383) {
                 REC_X(rec) = Engine_MathCos(REC_HEADING(rec)) * 52 + 0x700000;
                 REC_Z(rec) = Engine_MathSin(REC_HEADING(rec)) * 24 + 0x480000;
                 REC_HEADING(rec) = REC_HEADING(rec) + step;
-                Engine_ObjectSetAnimation(Engine_ActorGet(21), 2);
+                Object_SetMode(Object_GetById(21), 2);
             } else {
-                Engine_ObjectSetAnimation(Engine_ActorGet(21), 3);
+                Object_SetMode(Object_GetById(21), 3);
             }
             REC_HOLD(rec) = REC_HOLD(rec) + 1;
         }
@@ -592,18 +592,18 @@ void FieldScene_RunSecondaryScript(void)
         TorebiIzumi_PlaceActor(15, work->pos[1], 0, 0, 16);
         TorebiIzumi_PlaceActor(14, work->pos[2], 0, 0, 16);
         TorebiIzumi_PlaceActor(13, work->pos[3], 0, 0, 16);
-        Engine_ObjectSetAnimation(Engine_ActorGet(15), 4);
-        Engine_ObjectSetAnimation(Engine_ActorGet(14), 4);
-        Engine_ObjectSetAnimation(Engine_ActorGet(13), 4);
+        Object_SetMode(Object_GetById(15), 4);
+        Object_SetMode(Object_GetById(14), 4);
+        Object_SetMode(Object_GetById(13), 4);
     } else {
         TorebiIzumi_PlaceActor(12, work->pos[0], 0, 0, 16);
         TorebiIzumi_PlaceActor(11, work->flat, 0, 0, 16);
         TorebiIzumi_PlaceActor(10, work->pos[1], 0, 0, 16);
         TorebiIzumi_PlaceActor(9, work->pos[2], 0, 0, 16);
         TorebiIzumi_PlaceActor(8, work->pos[3], 0, 0, 16);
-        Engine_ObjectSetAnimation(Engine_ActorGet(10), 4);
-        Engine_ObjectSetAnimation(Engine_ActorGet(9), 4);
-        Engine_ObjectSetAnimation(Engine_ActorGet(8), 4);
+        Object_SetMode(Object_GetById(10), 4);
+        Object_SetMode(Object_GetById(9), 4);
+        Object_SetMode(Object_GetById(8), 4);
     }
 
     if (work->frame != -1) {

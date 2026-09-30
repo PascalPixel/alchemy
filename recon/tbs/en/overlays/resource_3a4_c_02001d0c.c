@@ -146,17 +146,17 @@ void FieldScene_RunMultiPhasePresentation(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(20);
     Call3(Engine_ActorFaceDirection, 10, 0x5000, 40);
-    Engine_ActorGet(10)->unknown_5a &= 254;
+    Object_GetById(10)->unknown_5a &= 254;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
-    record = Engine_ActorGet(10);
+    record = Object_GetById(10);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_AudioPlayCue(153);
-    record = Engine_ActorGet(10);
+    record = Object_GetById(10);
     record->velocity_y = 0x40000;
     Call2((void (*)())Engine_ActorSetAnimation, 10, 3);
     Engine_ActorMoveToAndWait(10, 86, 214);
     Engine_ActorSetAnimation(10, 1);
-    record = Engine_ActorGet(10);
+    record = Object_GetById(10);
     Engine_ActorSetSpriteFlags(record, 1);
     Engine_EventWait(10);
     Engine_AudioPlayCue(229);
@@ -165,7 +165,7 @@ void FieldScene_RunMultiPhasePresentation(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(40);
     {
-        struct FieldActor *record = Engine_ActorGet(10);
+        struct FieldActor *record = Object_GetById(10);
         /* FAKEMATCH: preserve the flag-read ordering. */
         u8 value = *(volatile u8 *)&record->unknown_5a;
     
@@ -205,7 +205,7 @@ void FieldScene_RunMultiPhasePresentation(void)
             }
         } while (gKeyState == 0);
     }
-    actor = (union TimedActor *)Engine_ActorGet(0);
+    actor = (union TimedActor *)Object_GetById(0);
     Call2(Engine_CameraSetSpeed, 0x4cccc, 0x9999);
     Engine_CameraMoveTo(actor->actor.x.fixed, actor->actor.y.fixed, actor->actor.z.fixed, 1);
     Engine_CameraWaitForMove();

@@ -325,7 +325,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
     Actor_WalkTo(ACTOR_GERALD, 392, 843);
-    Object_GetById(5)[90] &= 0xfe;
+    ((u8 *)Object_GetById(5))[90] &= 0xfe;
     Actor_WalkToAndWait(ACTOR_JASMINE, 408, 843);
     Event_Wait(1);
     {

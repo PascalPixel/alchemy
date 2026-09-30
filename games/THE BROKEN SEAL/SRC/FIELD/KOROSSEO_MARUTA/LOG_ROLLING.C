@@ -47,7 +47,7 @@ void ColossoLogRollingStage_NudgeActorsLeft(void)
     s16 *table = (s16 *)&gGameState;
     s32 id = *(s32 *)&table[250];
     StageObstacleActor *subject = *(StageObstacleActor **)(workspace + 480);
-    StageObstacleActor *actor = Engine_ActorGet(id);
+    StageObstacleActor *actor = Object_GetById(id);
     s32 z = *(s16 *)((u8 *)actor + 0x12);
 
     /* Nudge both records left while the actor occupies rows 183 through 186. */
@@ -74,16 +74,16 @@ void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
 
     PrimaryStageObject *object;
 
-    object = Engine_ActorGet(9);
+    object = Object_GetById(9);
     object->scale_x = 0x10000;
     object->scale_z = 0x10000;
 
-    object = Engine_ActorGet(11);
+    object = Object_GetById(11);
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xCCCC;
     Object_SetPosition(object, object->x, 0x200000, object->y);
 
-    object = Engine_ActorGet(10);
+    object = Object_GetById(10);
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xCCCC;
     Object_SetPosition(object, object->x, 0x40000, object->y);
@@ -109,22 +109,22 @@ void FieldScene_RunClosingAuxiliarySequence(void)
     p6 = *(u8 **)(base + 500);
     rec = GameFlag_IsSet(0x362);
     if (rec == 0) {
-        record = Engine_ActorGet(10);
+        record = Object_GetById(10);
         if ((s32)record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
         Engine_ActorWaitForMove((s32)p6);
-        record = Engine_ActorGet(11);
+        record = Object_GetById(11);
         record[85] = rec;
         *(s32 *)((s32)record + 52) = 0x6666;
         *(s32 *)((s32)record + 48) = 0xcccc;
         Object_SetPosition((s32)record, *(s32 *)((s32)record + 8), 0x200000, *(s32 *)((s32)record + 16));
-        record = Engine_ActorGet(10);
+        record = Object_GetById(10);
         record[85] = rec;
         *(s32 *)((s32)record + 52) = 0x6666;
         *(s32 *)((s32)record + 48) = 0xcccc;
         Call4(Object_SetPosition, (s32)record, *(s32 *)((s32)record + 8), 0x40000, *(s32 *)((s32)record + 16));
-        rec7 = Engine_ActorGet((s32)p6);
+        rec7 = Object_GetById((s32)p6);
         p9 = rec7 + 85;
         *p9 = rec;
         *(s32 *)(rec7 + 52) = 0x6666;
@@ -152,13 +152,13 @@ void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
 
     Engine_ActorSetAnimation(*(s32 *)&table[250], 1);
 
-    object = Engine_ActorGet(11);
+    object = Object_GetById(11);
     object->state = 0;
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xcccc;
     Object_SetPosition(object, object->x, 0x40000, object->z);
 
-    object = Engine_ActorGet(10);
+    object = Object_GetById(10);
     object->state = 0;
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xcccc;
@@ -188,12 +188,12 @@ void FieldScene_RunFinalAuxiliarySequence(void)
     s32 a;
     s32 b;
 
-    rec = (u8 *)Engine_ActorGet(12);
+    rec = (u8 *)Object_GetById(12);
     a = (*(s32 *)((s32)rec + 8) >> 20);
     if (a == 9) {
         b = (*(s32 *)((s32)rec + 16) >> 20);
         if (b == 12) {
-            b1 = Engine_ActorGet(12);
+            b1 = Object_GetById(12);
             Actor_SetSpriteFlags((s32)b1, 0);
             t = b1 + 35;
             zero = 0;
@@ -204,12 +204,12 @@ void FieldScene_RunFinalAuxiliarySequence(void)
             *(s32 *)((s32)b1 + 52) = 0x6666;
             *(s32 *)((s32)b1 + 48) = 0xcccc;
             Call4(Object_SetPosition, (s32)b1, *(s32 *)((s32)b1 + 8), 0x40000, *(s32 *)((s32)b1 + 16));
-            b2 = (u8 *)Engine_ActorGet(11);
+            b2 = (u8 *)Object_GetById(11);
             b2[35] = two;
             *(s32 *)((s32)b2 + 52) = 0x6666;
             *(s32 *)((s32)b2 + 48) = 0xcccc;
             Object_SetPosition((s32)b2, *(s32 *)((s32)b2 + 8), 0x200000, *(s32 *)((s32)b2 + 16));
-            b3 = Engine_ActorGet(10);
+            b3 = Object_GetById(10);
             *(s32 *)((s32)b3 + 52) = 0x6666;
             *(s32 *)((s32)b3 + 48) = 0xcccc;
             Object_SetPosition((s32)b3, *(s32 *)((s32)b3 + 8), 0x40000, *(s32 *)((s32)b3 + 16));
@@ -233,7 +233,7 @@ void ColossoLogRollingStage_ConfigureActorThirteen(void)
     StageObstacleActor *actor;
     s32 x;
 
-    actor = Engine_ActorGet(13);
+    actor = Object_GetById(13);
     x = actor->x >> 20;
     GameFlag_SetByte(880, x);
     Engine_MapCopyCellAttributes(18, 10, 3, 1, 18, 11);
@@ -261,7 +261,7 @@ void ColossoLogRollingStage_ActivateClearObstacleActors(void)
     s32 z2;
 
     for (slot = 15; slot <= 17; slot++) {
-        actor = Engine_ActorGet(slot);
+        actor = Object_GetById(slot);
         if (Map_GetTerrainHeight(0, actor->x, actor->z) == 0) {
             actor->direction_and_kind = 2;
             actor->state = 0;
@@ -287,7 +287,7 @@ void ColossoLogRollingStage_ShowActorPositionMessage(void)
     s32 message_id;
 
     table = (s16 *)&gGameState;
-    actor = Engine_ActorGet(*(s32 *)&table[250]);
+    actor = Object_GetById(*(s32 *)&table[250]);
     x = actor->x >> 20;
     message_id = 23;
     z = actor->z >> 20;
@@ -308,17 +308,17 @@ s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z)
     if (GetMapCellCollision(0, x, z) == 255) {
         return -2;
     }
-    actor = Engine_ActorGet(15);
+    actor = Object_GetById(15);
     x = x >> 20;
     z = z >> 20;
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
         return -1;
     }
-    actor = Engine_ActorGet(16);
+    actor = Object_GetById(16);
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
         return -1;
     }
-    actor = Engine_ActorGet(17);
+    actor = Object_GetById(17);
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
         return -1;
     }
@@ -363,8 +363,8 @@ void FieldScene_RunEarlySequence(void)
     s32 cell_center[3];
 
     state = (u8 *)&gGameState;
-    leader = Engine_ActorGet(*(s32 *)(state + 500));
-    log_actor = Engine_ActorGet(31);
+    leader = Object_GetById(*(s32 *)(state + 500));
+    log_actor = Object_GetById(31);
     steps = 0;
     tile = gColossoEarlySequenceData[*(u16 *)(leader + 6) >> 13];
     selected_actor = *(s32 *)(state + 500);
@@ -416,7 +416,7 @@ moved:
     *(s32 *)(log_actor + 48) = 0x8000;
     acceleration = 0x3333;
     *(s32 *)(log_actor + 52) = acceleration;
-    Engine_ObjectSetAnimation(log_actor, direction);
+    Object_SetMode(log_actor, direction);
     Object_SetPosition(log_actor, x, 0, z);
     Event_Wait(6);
     Actor_SetAnimation(selected_actor, 2);
@@ -428,7 +428,7 @@ moved:
     Object_SetPosition(leader, ((steps * cell_step) << 16) + *(s32 *)(leader + 8), 0,
                        *(s32 *)(leader + 16));
     Object_CommitPosition(leader);
-    Engine_ObjectSetAnimation(leader, 1);
+    Object_SetMode(leader, 1);
     Object_CommitPosition(log_actor);
     if (x >= 0x5300000) {
         GameFlag_Set(0x369);
@@ -476,12 +476,12 @@ void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
     StageMotionEffect *effect;
     s32 move_rate;
 
-    effect = Engine_ActorGet(30);
+    effect = Object_GetById(30);
     effect->state = 0;
     move_rate = 0x19999;
     effect->move_rate_z = move_rate;
     effect->move_rate_x = move_rate;
-    Engine_ObjectSetAnimation(effect, 2);
+    Object_SetMode(effect, 2);
     Engine_ObjectSetScript(effect, (s32)gColossoSceneEventEffect);
     Engine_GameFlagSet(0x363);
 }

@@ -307,7 +307,7 @@ void SoruIriguchi_SetSmallGem(void)
 
 void Scene_UpdateOuterActor9Flags(void)
 {
-    s32 *work = Engine_ActorGet(9);
+    s32 *work = Object_GetById(9);
     s32 pos;
 
     if (work == 0) {
@@ -325,7 +325,7 @@ void Scene_UpdateOuterActor9Flags(void)
 
 void Scene_UpdateOuterActor10Flags(void)
 {
-    s32 *work = Engine_ActorGet(10);
+    s32 *work = Object_GetById(10);
     s32 pos;
 
     if (work == 0) {
@@ -343,7 +343,7 @@ void Scene_UpdateOuterActor10Flags(void)
 
 void Scene_UpdateFormationActor9Flags(void)
 {
-    s32 *work = Engine_ActorGet(9);
+    s32 *work = Object_GetById(9);
     s32 pos;
 
     if (work == 0) {
@@ -362,7 +362,7 @@ void Scene_UpdateFormationActor9Flags(void)
 
 void Scene_UpdateFormationActor10Flags(void)
 {
-    s32 *work = Engine_ActorGet(10);
+    s32 *work = Object_GetById(10);
     s32 pos;
 
     if (work == 0) {
@@ -381,7 +381,7 @@ void Scene_UpdateFormationActor10Flags(void)
 
 void Scene_UpdateFormationActor11Flags(void)
 {
-    s32 *work = Engine_ActorGet(11);
+    s32 *work = Object_GetById(11);
     s32 pos;
 
     if (work == 0) {
@@ -400,7 +400,7 @@ void Scene_UpdateFormationActor11Flags(void)
 
 void Scene_UpdateFormationActor12Flags(void)
 {
-    s32 *work = Engine_ActorGet(12);
+    s32 *work = Object_GetById(12);
     s32 pos;
 
     if (work == 0) {
@@ -419,7 +419,7 @@ void Scene_UpdateFormationActor12Flags(void)
 
 void Scene_UpdateFormationActor13Flags(void)
 {
-    s32 *work = Engine_ActorGet(13);
+    s32 *work = Object_GetById(13);
     s32 pos;
 
     if (work == 0) {
@@ -438,7 +438,7 @@ void Scene_UpdateFormationActor13Flags(void)
 
 void Scene_UpdateFormationActor14Flags(void)
 {
-    s32 *work = Engine_ActorGet(14);
+    s32 *work = Object_GetById(14);
     s32 pos;
 
     if (work == 0) return;
@@ -479,7 +479,7 @@ void SoruIriguchi_PushFacedBlock(void)
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
 
-    leader = Engine_ActorGet(0);
+    leader = Object_GetById(0);
     dir = leader->facing >> 12;
     block = (struct FieldActor *)SceneActor_FindSlotByTilePosition(
         (leader->x.part.pixel + (gSoruPushSteps[dir] >> 16)) >> 4,
@@ -493,7 +493,7 @@ void SoruIriguchi_PushFacedBlock(void)
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
         if (((s32 (*)())Object_CheckMovementCollision)((s32)block, (s32)p) <= 0) {
-            Engine_ObjectSetAnimation(leader, 8);
+            Object_SetMode(leader, 8);
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);
             block->speed = 0x3333;
@@ -507,7 +507,7 @@ void SoruIriguchi_PushFacedBlock(void)
             block->z.fixed = p[2].fixed;
             block->velocity_x = zero;
             block->velocity_z = zero;
-            Engine_ObjectSetAnimation(leader, 1);
+            Object_SetMode(leader, 1);
             switch (gGameState.entrance) {
             case 11:
             case 12:
@@ -601,7 +601,7 @@ void FieldScene_RunSceneEntryHook(void)
         break;
 
     case 3:
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
         break;
 
     case 8:
@@ -614,17 +614,17 @@ void FieldScene_RunSceneEntryHook(void)
     case 11:
     case 12:
     case 13:
-        Actor_SetSpriteFlags(Engine_ActorGet(9), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(11), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(12), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(13), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(15), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(16), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(17), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(18), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(19), 0);
+        Actor_SetSpriteFlags(Object_GetById(9), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(15), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(16), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
         if (Engine_GameFlagIsSet(0x804) == 0)
             Scene_SukuretaSuspectsHiddenPassage();
         if (Engine_GameFlagIsSet(0x303) != 0)
@@ -640,12 +640,12 @@ void FieldScene_RunSceneEntryHook(void)
     case 14:
     case 15:
     case 16:
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(11), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(12), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(13), 0);
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
         if (Engine_GameFlagIsSet(0x825) == 0)
             Scene_RunTransitionCue();
         Scene_RunActorFormation(1);
@@ -673,15 +673,15 @@ void Scene_EnterSolSanctum(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Camera_SetSpeed(0x9999, 0x1333);
     Camera_MoveTo(0x4c80000, -1, 0x880000, 1);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_JASMINE, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -713,17 +713,17 @@ void Scene_EnterSolSanctum(void)
     Event_Wait(20);
     Camera_MoveTo(0x4c80000, -1, 0x940000, 1);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_SetAnimation(ACTOR_JASMINE, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_SetAnimation(ACTOR_SUKURETA, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -749,13 +749,13 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Event_OpenScreen();
     Event_WaitForScreen();
 
-    record = (u8 *)((s32 (*)())Engine_ActorGet)(0);
+    record = (u8 *)((s32 (*)())Object_GetById)(0);
     if (record != 0)
         Engine_ActorSetPosition(8, RECORD_A32(record), RECORD_B32(record));
-    record = (u8 *)((s32 (*)())Engine_ActorGet)(0);
+    record = (u8 *)((s32 (*)())Object_GetById)(0);
     if (record != 0)
         Engine_ActorSetPosition(5, RECORD_A32(record), RECORD_B32(record));
-    record = (u8 *)((s32 (*)())Engine_ActorGet)(0);
+    record = (u8 *)((s32 (*)())Object_GetById)(0);
     if (record != 0)
         Engine_ActorSetPosition(1, RECORD_A32(record), RECORD_B32(record));
 
@@ -913,15 +913,15 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Engine_EventWait(6);
     Engine_ActorSetAnimation(1, 2);
 
-    record = (u8 *)((s32 (*)())Engine_ActorGet)(0);
+    record = (u8 *)((s32 (*)())Object_GetById)(0);
     if (record != 0)
         Engine_ActorSetDestination(1, RECORD_A16(record), RECORD_B16(record));
     Engine_ActorSetAnimation(5, 2);
-    record = (u8 *)((s32 (*)())Engine_ActorGet)(0);
+    record = (u8 *)((s32 (*)())Object_GetById)(0);
     if (record != 0)
         Engine_ActorSetDestination(5, RECORD_A16(record), RECORD_B16(record));
     Engine_ActorSetAnimation(8, 2);
-    record = (u8 *)((s32 (*)())Engine_ActorGet)(0);
+    record = (u8 *)((s32 (*)())Object_GetById)(0);
     if (record != 0)
         Engine_ActorSetDestination(8, RECORD_A16(record), RECORD_B16(record));
 
@@ -947,7 +947,7 @@ void Scene_RunTransitionCue(void)
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(8, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -980,7 +980,7 @@ void Scene_RunTransitionCue(void)
     Actor_FaceDirection(8, 0x5000, 20);
     Event_ShowMessageAndWait(0x4008, 0, 10);
     Actor_SetAnimation(8, 2);
-    record = Engine_ActorGet(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

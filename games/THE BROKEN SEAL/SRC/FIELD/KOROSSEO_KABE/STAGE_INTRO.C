@@ -15,7 +15,7 @@ s32 Korosseo_FadeInCompetitor();
 void Engine_ActorSetSpeed();
 s32 SceneActor_PlaceWithScale14000();
 void Engine_EventWait();
-s32 Engine_ActorGet();
+s32 Object_GetById();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetAttachedEffect();
 void Korosseo_RestoreCompetitor();
@@ -53,7 +53,7 @@ void KorosseoKabe_RunStageIntro(s32 a0)
             SceneActor_PlaceWithScale14000(0, 0x4c8, 248);
             SceneActor_PlaceWithScale14000(0, 0x4a8, 248);
             Engine_EventWait(3);
-            record = Engine_ActorGet(0);
+            record = Object_GetById(0);
             *(s32 *)(record + 40) = 0x40000;
             Engine_ActorSetAnimation(0, 28);
             Engine_ActorSetAttachedEffect(0, 0x102);

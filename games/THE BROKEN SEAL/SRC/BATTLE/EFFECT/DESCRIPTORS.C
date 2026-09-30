@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 extern u8 gOverlayArea[];
+extern char MsgPonderEllipsis;
 
 extern const u8 ObjectMotion_LinkedActionScript[];
 extern const u8 ObjectMotion_StepAngleScript[];
@@ -205,7 +206,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
                 s32 index = BattleFx_GetFlags(id);
                 u32 random = Random16();
                 s32 message =
-                    0x0e0b + index * 2 + (random * 2 >> 16);
+                    (s32)&MsgPonderEllipsis + index * 2 + (random * 2 >> 16);
                 Battle_Reset();
                 Event_SetValue1d8(message);
                 BattleEv_RunWait(id, 0);

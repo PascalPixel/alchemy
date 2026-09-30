@@ -44,7 +44,7 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
         if (spark != NULL) {
             spark->sprite->priority = 0;
             Engine_ActorSetSpriteFlags(spark, 0);
-            Engine_ObjectSetAnimation(spark, 1);
+            Object_SetMode(spark, 1);
             spark->scale_x = 0x9999;
             spark->scale_y = 0x9999;
             spark->priority_flags = 2;

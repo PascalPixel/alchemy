@@ -734,7 +734,7 @@ Func_080fbe6c:
 	strh	r0, [r3, #0]
 	ldr	r2, [pc, #28]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 	bl	Resource_FindFreeEntry
 	movs	r3, #158
 	lsls	r3, r3, #3
@@ -742,7 +742,7 @@ Func_080fbe6c:
 	strh	r0, [r5, #0]
 	ldr	r2, [pc, #12]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 	pop	{r5, pc}
 	movs	r0, r0
 	.4byte 0x000001fd

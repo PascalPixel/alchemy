@@ -1,36 +1,6 @@
 .syntax unified
 	.thumb
-	.global UiWork_SetBusyFlags
-	.thumb_func
-UiWork_SetBusyFlags:
-	push	{lr}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r2, [r3, #60]
-	cmp	r2, #0
-	beq.n	.L_0803a69a
-	movs	r1, #1
-	adds	r3, r0, #0
-	ands	r3, r1
-	cmp	r3, #0
-	beq.n	.L_0803a688
-	movs	r4, #152
-	lsls	r4, r4, #5
-	adds	r4, #138
-	adds	r3, r2, r4
-	strb	r1, [r3, #0]
-.L_0803a688:
-	movs	r3, #2
-	ands	r3, r0
-	cmp	r3, #0
-	beq.n	.L_0803a69a
-	movs	r0, #152
-	lsls	r0, r0, #5
-	adds	r0, #139
-	adds	r3, r2, r0
-	strb	r1, [r3, #0]
-.L_0803a69a:
-	pop	{pc}
+	.balign 4
 	.global UiText_OpenMessageWindow
 	.thumb_func
 UiText_OpenMessageWindow:

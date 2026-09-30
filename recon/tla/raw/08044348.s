@@ -160,7 +160,7 @@ Func_08044460:
 	ldr	r2, [pc, #12]
 	movs	r1, #128
 	adds	r5, r0, #0
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 	adds	r0, r5, #0
 	pop	{r5, pc}
 	.2byte 0x01fa
@@ -171,7 +171,7 @@ Func_08044478:
 	push	{lr}
 	ldr	r2, [pc, #8]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 	pop	{pc}
 	.2byte 0x01fa
 	.2byte 0x0000
@@ -181,7 +181,7 @@ Func_08044488:
 	push	{lr}
 	ldr	r2, [pc, #8]
 	movs	r1, #128
-	bl	Func_08108088
+	bl	VramBlock_LoadResourceFar
 	pop	{pc}
 	.2byte 0x0202
 	.2byte 0x0000

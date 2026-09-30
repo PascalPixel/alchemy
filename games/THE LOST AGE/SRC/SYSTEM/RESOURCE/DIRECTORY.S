@@ -519,7 +519,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data1F7
 	resource , Resource_Data1F8
 	resource , Resource_Data1F9
-	resource , Resource_Data1FA
+	resource UiIconTiles, Resource_Data1FA
 	resource , Resource_Data1FB
 	resource , Resource_Data1FC
 	resource , Resource_Data1FD

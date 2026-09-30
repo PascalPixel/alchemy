@@ -543,7 +543,7 @@ Func_080cb09c:
 	movs	r0, #139
 	bl	Audio_PlayCue
 .L_080cb4a8:
-	bl	Func_080d2454
+	bl	Event_ClearValidPackedIds
 	bl	0x080cb788
 	str	r0, [sp, #8]
 .L_080cb4b2:

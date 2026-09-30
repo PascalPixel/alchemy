@@ -693,6 +693,8 @@ SECTIONS
         "*/recon/tla/raw/080ce458.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/HAS_TRIGGER.o"(.text)
         "*/recon/tla/raw/080ceb94.o"(.text .rodata .data .padding)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_WIDE_SPRITE.o"(.text)
+        "*/recon/tla/raw/080cee80.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ceeac.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ceec8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080cef24.o"(.text .rodata .data .padding)

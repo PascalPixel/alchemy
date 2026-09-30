@@ -1153,7 +1153,7 @@ void FieldScene_RunScene372SequenceE(void)
         Camera_SetSpeed(0x6666, 0xccc);
         Camera_MoveTo(0x1000000, -1, 0x24c0000, 1);
         Actor_SetSpeed(22, 0x20000, 0x10000);
-        ((s32 (*)())Object_SetActionCallbackAndRefreshById)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
+        Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
         Actor_FaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
         Event_Wait(30);
         ((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
@@ -1480,7 +1480,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = (u8 *)((s32 (*)())Object_GetById)(10);
+        o = (u8 *)Object_GetById(10);
         v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
         tbl = HaidiaArashi_ActorEightScript;
         *(u16 *)(o + 0x64) = v;
@@ -1494,7 +1494,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = (u8 *)((s32 (*)())Object_GetById)(24);
+        o = (u8 *)Object_GetById(24);
         v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
         *(u16 *)(o + 0x64) = v;
         Engine_ActorEnableActionCallback(24, (s32)tbl);
@@ -1505,7 +1505,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = (u8 *)((s32 (*)())Object_GetById)(25);
+        o = (u8 *)Object_GetById(25);
         v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
         *(u16 *)(o + 0x64) = v;
         Engine_ActorEnableActionCallback(25, (s32)tbl);
@@ -1514,7 +1514,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorFaceDirection, 26, 0x3000, 0);
     Call3(Engine_ActorSetPosition, 23, 0xF30000, 0x4FD0000);
     Call3(Engine_ActorFaceDirection, 23, 0xC000, 0);
-    Engine_ActorSetSpriteFlags(((s32 (*)())Object_GetById)(23), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
     Engine_TaskWait(3);
     Engine_EventSetMessage((s32)MsgHaidiaNoBrother);
     Engine_EventShowMessage(0x201a, 0);
@@ -1522,7 +1522,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorWalkToAndWait, ACTOR_PARTY_LEADER, 150, 0x446);
     {
         u8 *p;
-        p = (u8 *)((s32 (*)())Object_GetById)(ACTOR_PARTY_LEADER);
+        p = (u8 *)Object_GetById(ACTOR_PARTY_LEADER);
         if (p != 0) {
             Engine_ActorSetPosition(22, *(s32 *)(p + 8), *(s32 *)(p + 16));
         }
@@ -1557,21 +1557,21 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Engine_ActorSetAnimation(10, 1);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Object_GetById)(10);
+        o = (u8 *)Object_GetById(10);
         *(s32 *)(o + 0x18) = 0x10000;
         *(s32 *)(o + 0x1C) = 0x10000;
     }
     Engine_ActorSetAnimation(24, 1);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Object_GetById)(24);
+        o = (u8 *)Object_GetById(24);
         *(s32 *)(o + 0x18) = 0x10000;
         *(s32 *)(o + 0x1C) = 0x10000;
     }
     Engine_ActorSetAnimation(25, 1);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Object_GetById)(25);
+        o = (u8 *)Object_GetById(25);
         *(s32 *)(o + 0x18) = 0x10000;
         *(s32 *)(o + 0x1C) = 0x10000;
     }
@@ -1601,7 +1601,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Engine_AudioPlayCue(106);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Object_GetById)(23);
+        o = (u8 *)Object_GetById(23);
         *(s32 *)(o + 0x28) = 0x20000;
     }
     Engine_EventWait(6);
@@ -1621,12 +1621,12 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call2(Engine_EventShowMessage, 0x800A, 0);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Object_GetById)(25);
+        o = (u8 *)Object_GetById(25);
         o[0x5A] &= 0xFE;
     }
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Object_GetById)(26);
+        o = (u8 *)Object_GetById(26);
         o[0x5A] &= 0xFE;
     }
     Call3(Engine_ActorSetSpeed, 25, 0x9999, 0x4CCC);
@@ -1635,12 +1635,12 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorMoveToAndWait, 26, 227, 0x4A5);
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Object_GetById)(25);
+        o = (u8 *)Object_GetById(25);
         o[0x5A] |= 1;
     }
     {
         u8 *o;
-        o = (u8 *)((s32 (*)())Object_GetById)(26);
+        o = (u8 *)Object_GetById(26);
         o += 0x5A;
         /* FAKEMATCH: the set bit first, so the or writes into the register
            that holds it, as the ROM's does. */

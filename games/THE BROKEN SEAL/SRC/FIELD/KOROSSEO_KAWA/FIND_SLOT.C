@@ -194,7 +194,7 @@ void StagedActor_PushActorAhead(void)
     s32 handle;
 
     handle = *(s32 *)((u8 *)Data_02000240 + (idx << 1));
-    subject = ((struct FieldActor *(*)())Object_GetById)(handle);
+    subject = Object_GetById(handle);
 
     dir = subject->facing >> 12;
 

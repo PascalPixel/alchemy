@@ -195,18 +195,18 @@ void FieldScene_RunPairedActorChoreography(void)
 
     Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
     Call3(Engine_ActorSetSpeed, 1, 0x18000, 0xc000);
-    ((void (*)())Engine_ActorRunRepeatedMotion)(12, 2); /* main:0808a138 */
+    Engine_ActorRunRepeatedMotion(12, 2); /* main:0808a138 */
     Event_Wait(10);
     Actor_SetAnimationAndWait(12, 3); /* main:0808a110 */
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
     Event_Wait(15);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-    ((void (*)())Engine_ActorStartRepeatedMotion)(0, 1); /* object 0, variant 1 */
+    Engine_ActorStartRepeatedMotion(0, 1); /* object 0, variant 1 */
     ((struct FacingObject *(*)())Object_GetById)(0)->facing_flags &= ~1;
     Actor_WalkTo(ACTOR_PARTY_LEADER, 184, 168);
     ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags &= ~1;
-    ((void (*)())Engine_ActorWalkToAndWait)(1, 200, 168);
+    Engine_ActorWalkToAndWait(1, 200, 168);
     Event_Wait(1);
     ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags |= 1;
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
@@ -216,7 +216,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_Jump(ACTOR_GERALD, 2, 0);
     Event_Wait(15);
     Actor_FaceActor(ACTOR_GERALD, 8, 0);
-    ((void (*)())Engine_EventWait)(5); /* main:0808a080 */
+    Engine_EventWait(5); /* main:0808a080 */
     Actor_Jump(ACTOR_GERALD, 2, 0);
     Event_Wait(25);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
@@ -291,9 +291,9 @@ void FieldScene_RunPairedActorChoreography(void)
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Event_Wait(10);
-    ((struct FacingObject *(*)())Object_GetById)(8)->unknown_64 = 1;
+    Object_GetById(8)->unknown_64 = 1;
     *(s32 *)((u8 *)Object_GetById(8) + 108) = (s32)UpdateFacingFromResolvedObject;
-    ((struct FacingObject *(*)())Object_GetById)(12)->unknown_64 = 1;
+    Object_GetById(12)->unknown_64 = 1;
     *(s32 *)((u8 *)Object_GetById(12) + 108) = (s32)UpdateFacingFromResolvedObject;
     Engine_ActorWalkToAndWait(1, 196, 180);
     Actor_WalkToAndWait(ACTOR_GERALD, 184, 184);
@@ -313,7 +313,7 @@ void FieldScene_RunPairedActorChoreography(void)
     *(s32 *)((u8 *)Object_GetById(8) + 108) = 0;
     Engine_ActorStartRepeatedMotion(8, 2);
     Engine_ActorShowEmote(8, 0x100, 0);
-    ((void (*)())Engine_EventWait)(60); /* main:0808a080 */
+    Engine_EventWait(60); /* main:0808a080 */
     Actor_SetAnimation(8, 0);
     Engine_ActorShowEmote(0, 0x102, 0);
     Event_Wait(60);
@@ -330,7 +330,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_Jump(ACTOR_PARTY_LEADER, 2, 0); /* main:0808a138 */
     Event_Wait(20);
     Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
-    ((void (*)())Engine_EventWait)(20);
+    Engine_EventWait(20);
     Event_Wait(15);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
     Event_Wait(10);

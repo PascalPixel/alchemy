@@ -252,7 +252,7 @@ void FieldScene_RunScene3c9_02003924(void)
     Actor_SetPosition(21, 0xc40000, 0xdc0000);
     Actor_SetAnimation(21, 5);
     Actor_SetPosition(6, 0xbc0000, 0x13c0000);
-    ((void (*)())Engine_ActorSetAnimation)(6, 5);
+    Engine_ActorSetAnimation(6, 5);
     record = Actor_Get(6);
     Actor_SetSpriteFlags(record, 0);
     record = Actor_Get(8);

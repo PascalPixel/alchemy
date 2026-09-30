@@ -935,7 +935,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    ((void (*)())Engine_ActorSetPosition)(0, x << 16, (z << 16) - 0x300000);
+    Engine_ActorSetPosition(0, x << 16, (z << 16) - 0x300000);
     Actor_SetPosition(ACTOR_GERALD, (x << 16) - 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - 0x200000);
@@ -1129,13 +1129,13 @@ void Korosseo_RunPipeworksIntro(s32 a0)
         Engine_EventBegin();
         rec4 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 2);
         if (rec4 == 0) {
-            ((void (*)())Engine_EventSetMessage)((s32)MsgKorosseoAreaCalledPipeworks);
-            ((void (*)())Engine_CameraSetSpeed)(0x30000, 0x6000);
+            Engine_EventSetMessage((s32)MsgKorosseoAreaCalledPipeworks);
+            Engine_CameraSetSpeed(0x30000, 0x6000);
             Call4((void (*)())Engine_CameraMoveTo, 0x2500000, -1, 0x780000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(60);
-            ((void (*)())Engine_CameraSetSpeed)(0x18000, 0x3000);
-            ((void (*)())Engine_CameraMoveTo)(0x2600000, -1, 0xd80000, 1);
+            Engine_CameraSetSpeed(0x18000, 0x3000);
+            Engine_CameraMoveTo(0x2600000, -1, 0xd80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
             SceneState_StoreParamsAndInitTable(56, 64, 0);
@@ -1145,19 +1145,19 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_EventShowMessage(a0, 0);
             SceneState_ReleaseTableAndResetC6a6();
             Engine_TaskWait(2);
-            record = (u8 *)((s32 (*)())Object_GetById)(13);
+            record = (u8 *)Object_GetById(13);
             record[85] = 0;
             *(s32 *)(record + 52) = 0x6666;
             *(s32 *)(record + 48) = 0xcccc;
             Engine_ObjectSetPosition((s32)record, *(s32 *)(record + 8), 0x80000, *(s32 *)(record + 16));
-            rec7 = (u8 *)((s32 (*)())Object_GetById)(14);
+            rec7 = (u8 *)Object_GetById(14);
             rec7[85] = 0;
             *(s32 *)(rec7 + 52) = 0x6666;
             *(s32 *)(rec7 + 48) = 0xcccc;
             Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), 0x200000, *(s32 *)(rec7 + 16));
             Script_WaitForEventTimeout((s32)rec7);
             Engine_EventWait(45);
-            record = (u8 *)((s32 (*)())Object_GetById)(13);
+            record = (u8 *)Object_GetById(13);
             record[85] = 0;
             *(s32 *)(record + 52) = 0x6666;
             *(s32 *)(record + 48) = 0xcccc;
@@ -1182,7 +1182,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_CameraFollowActor(0, 0);
             SceneState_SendIdBySceneId(a0, 2);
         } else if (rec4 == 1) {
-            ((void (*)())Engine_EventSetMessage)((s32)MsgKorosseoObjectiveMakeGood);
+            Engine_EventSetMessage((s32)MsgKorosseoObjectiveMakeGood);
             Engine_EventShowMessage(a0, 0);
         }
         ((s32 (*)())FieldScene_RunMiddleSequence)(rec4, a0, 2);
@@ -1190,7 +1190,6 @@ void Korosseo_RunPipeworksIntro(s32 a0)
     }
 }
 
-/* FAKEMATCH: calls that cast Korosseo_FadeInCompetitor to another return type keep their original register order. */
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
 
 /*
@@ -1236,7 +1235,7 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3480000, -1, 0xd80000, 1);
-            ((void (*)())Engine_CameraWaitForMove)();
+            Engine_CameraWaitForMove();
             Event_ShowMessage(a0, 0);
             SceneState_SetMode66AndPassOpeningSequence();
             Event_Wait(60);

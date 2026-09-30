@@ -581,7 +581,7 @@ s32 TakaraHashira_SetupArea(void)
                 goto L_020029fa;
             }
             for (base5_8 = 8; (u32)base5_8 <= 11; base5_8++) {
-                record = (u8 *)((s32 (*)())Object_GetById)(base5_8);
+                record = (u8 *)Object_GetById(base5_8);
                 v2 = *(s32 *)(record + 8) >> 20;
                 if (v2 == 37) {
                     v0 = *(s32 *)(record + 16) >> 20;
@@ -609,7 +609,7 @@ s32 TakaraHashira_SetupArea(void)
             FieldScene_RunScene3b3_0200263c(11);
             FieldScene_RunScene3b3_0200263c(12);
             FieldScene_RunScene3b3_0200263c(13);
-            record = (u8 *)((s32 (*)())Object_GetById)(13);
+            record = (u8 *)Object_GetById(13);
             *(s32 *)((s32)record + 108) = v5;
             TakaraHashira_PrepLoweredActor(14);
             {
@@ -623,11 +623,11 @@ s32 TakaraHashira_SetupArea(void)
                 v5 = 192;
                 record = (u8 *)Object_GetById(13);
                 *(s32 *)((s32)record + 24) = (v5 << 9);
-                record = (u8 *)((s32 (*)())Object_GetById)(13);
+                record = (u8 *)Object_GetById(13);
                 *(s32 *)((s32)record + 28) = (v5 << 9);
-                record = (u8 *)((s32 (*)())Object_GetById)(13);
+                record = (u8 *)Object_GetById(13);
                 *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-                record = (u8 *)((s32 (*)())Object_GetById)(14);
+                record = (u8 *)Object_GetById(14);
                 *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
                 Call6(Engine_MapCopyCellAttributes, 26, 12, 1, 1, 22, 16);
             }

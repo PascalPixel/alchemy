@@ -98,7 +98,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_ActorWaitForMove(2);
                     Engine_ActorSetPosition(2, 0, 0);
                     Event_PrepareObjectAndApplyValue(2, 0);
-                    ((void (*)())Engine_EventEnd)();
+                    Engine_EventEnd();
                 }
             }
         }

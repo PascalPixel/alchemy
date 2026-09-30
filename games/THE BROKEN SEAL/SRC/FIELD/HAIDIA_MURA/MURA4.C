@@ -136,14 +136,14 @@ void HaidiaMura_OpenVillagerLane(void)
     Call1((void (*)())Engine_GameFlagClear, 0x316);
     column = actor->x.fixed >> 20;
     if (column == 22) {
-        ((void (*)())Engine_MapCopyCellAttributes)(17, 1, 1, 1, column, 36);
-        ((void (*)())Engine_GameFlagSet)(0x314);
+        Engine_MapCopyCellAttributes(17, 1, 1, 1, column, 36);
+        Engine_GameFlagSet(0x314);
     } else if (column == 23) {
-        ((void (*)())Engine_MapCopyCellAttributes)(17, 1, 1, 1, column, 36);
-        ((void (*)())Engine_GameFlagSet)(0x315);
+        Engine_MapCopyCellAttributes(17, 1, 1, 1, column, 36);
+        Engine_GameFlagSet(0x315);
     } else {
         Call6((void (*)())Engine_MapCopyCellAttributes, 17, 1, 1, 1, 24, 36);
-        ((void (*)())Engine_GameFlagSet)(0x316);
+        Engine_GameFlagSet(0x316);
     }
 }
 

@@ -483,7 +483,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
         }
     }
     GameFlag_SetByte(0x210, 0);
-    ((void (*)())BattleFx_SetWeightedResult)(98, 5);
+    BattleFx_SetWeightedResult(98, 5);
     /* FAKEMATCH: publish the byte before retaining the scene pointer. */
     do {
         ((union GameStateRows *)&gGameState)->bytes[277][1] = 3;

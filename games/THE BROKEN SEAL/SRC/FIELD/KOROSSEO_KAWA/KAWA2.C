@@ -326,7 +326,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     Event_ShowMessage(owner, 0);
     return;
 L_main:
-    ((void (*)())UiWork_PushValueSlot)(obj, 1);
+    UiWork_PushValueSlot(obj, 1);
     Event_SetMessage((s32)MsgKorosseoRobinWillCheerForWay);
     Event_ShowMessage(owner, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -340,7 +340,7 @@ L_main:
     Actor_WalkToAndWait(obj, p9, hi);
     lo = p9 + 16;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, lo, hi);
-    ((void (*)())Engine_ActorFaceEachOther)(obj, 0, 30);
+    Engine_ActorFaceEachOther(obj, 0, 30);
     Actor_SetAnimation(obj, 3);
     tail = hi - 32;
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -354,7 +354,7 @@ L_main:
     Actor_WalkToAndWait(owner, p9, tail);
     Actor_WalkToAndWait(owner, p9, p11);
     Party_RemoveActiveOwner(obj);
-    ((void (*)())Engine_GameFlagSet)(base + 512);
+    Engine_GameFlagSet(base + 512);
     rec = (s32)Object_GetById(obj);
     sx = rec->x.fixed >> 20;
     GameFlag_SetByte((obj << 4) + 880, sx);

@@ -311,7 +311,7 @@ void FieldScene_RunPrimarySequence(void)
             record = Object_GetById(ACTOR_PARTY_LEADER);
             if ((*(s32 *)((s32)record + 8) >> 20) != 26) {
                 Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-                ((void (*)())Engine_ActorFaceActor)(0, 18, 0);
+                Engine_ActorFaceActor(0, 18, 0);
                 Event_Wait(5);
                 rec7 = Object_GetById(ACTOR_PARTY_LEADER);
                 record = Actor_Get(18);
@@ -461,7 +461,7 @@ void ShianMura_RunNpcMeetScene(void)
         Engine_ActorWaitForMove(0);
         *(u8 *)((s32)Object_GetById(0) + 90) |= 1;
         Engine_EventWait(30);
-        ((void (*)())Engine_ActorRunRepeatedMotion)(14, 2);
+        Engine_ActorRunRepeatedMotion(14, 2);
         params.count = 1;
         Effect_Spawn(0xc00000, 0, 0x1380000, 0x1999, 0x3333, 0, 0x20001, 0);
         Effect_Spawn(0xc00000, 0, 0x1380000, 0x3333, 0x1999, 0, 0x20001, 0);
@@ -501,7 +501,7 @@ void ShianMura_RunNpcMeetScene(void)
         *(u16 *)(*(s32 *)((s32)Object_GetById(19) + 80) + 30) = back;
         *(s32 *)((s32)Object_GetById(14) + 68) = 0x4000;
         *(s32 *)((s32)Object_GetById(14) + 72) = 0x10000;
-        ((void (*)())Engine_EventWait)(30);
+        Engine_EventWait(30);
         Engine_ActorFaceDirection(14, 0, 20);
         Engine_ActorRunRepeatedMotion(14, 2);
         Engine_EventWait(20);
@@ -534,7 +534,7 @@ void ShianMura_HopLeaderAhead(void)
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
 
-    leader = (struct FieldActor *)((s32 (*)())Object_GetById)(0);
+    leader = (struct FieldActor *)Object_GetById(0);
     flags = leader->motion_flags;
     if (Engine_GameFlagIsSet(0x200) != 0) {
         p = pos;
@@ -661,7 +661,7 @@ void Scene_RunActorNineteenScript(void)
         gEventWork->message++;
     }
     Engine_EventShowMessage(14, 0);
-    ((void (*)())Engine_GameFlagSet)(0x203);
+    Engine_GameFlagSet(0x203);
     BattleFx_PlayQueuedSound();
     Engine_EventEnd();
 }
@@ -717,13 +717,13 @@ s32 ShianMura_SetupScene(void)
     gEventWork->start_transition = 0x100;
     BattleFx_SetQueuedSoundAndPlay(169);
     if (gGameState.entrance > 9) {
-        ((void (*)())Engine_GameFlagClear)(0x12f);
+        Engine_GameFlagClear(0x12f);
     }
-    if (((s32 (*)())Engine_GameFlagIsSet)(0x895)) {
+    if (Engine_GameFlagIsSet(0x895)) {
         Call3((void (*)())Engine_ActorFaceDirection, 13, 0x8000, 0);
         Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);
         Engine_ActorFaceDirection(14, 0, 0);
-        if (((s32 (*)())Engine_GameFlagIsSet)(0x89a)) {
+        if (Engine_GameFlagIsSet(0x89a)) {
             Engine_ActorSetPosition(17, 0, 0);
         }
     }
@@ -744,16 +744,16 @@ s32 ShianMura_SetupScene(void)
         ObjectGroup_SetChildValue(actor, 15);
         actor->priority_flags = (actor->priority_flags & 254) | 2;
     }
-    if (((s32 (*)())Engine_GameFlagIsSet)(0x202)) {
+    if (Engine_GameFlagIsSet(0x202)) {
         Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);
         Engine_ActorFaceDirection(14, 0, 0);
     }
-    if (((s32 (*)())Engine_GameFlagIsSet)(0x201)) {
+    if (Engine_GameFlagIsSet(0x201)) {
         Engine_ActorSetAnimation(20, 5);
         {
             s32 px = Object_GetById(20)->x.fixed;
 
-            ((void (*)())Engine_MapCopyCellAttributes)(3, 17, 1, 1, px >> 20, Object_GetById(20)->z.fixed >> 20);
+            Engine_MapCopyCellAttributes(3, 17, 1, 1, px >> 20, Object_GetById(20)->z.fixed >> 20);
         }
         ((void (*)())Engine_TaskAddCallback)((s32)Actor_UpdatePresentationFlag, 0xc80);
     }

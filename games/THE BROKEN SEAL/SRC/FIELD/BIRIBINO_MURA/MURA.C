@@ -258,7 +258,7 @@ void FieldScene_RunEarlySequence(void)
     if (v5 == 6) {
         Audio_PlayCue(188);
     } else {
-        ((void (*)())Engine_AudioPlayCue)(158);
+        Engine_AudioPlayCue(158);
     }
     off = v5 << 2;
     tbl = (u8 *)Mura_DoorCellOrigins;
@@ -463,7 +463,7 @@ void FieldScene_RunScene38b_020008f0(void)
     s16 sub_state;
 
     if (GameFlag_IsSet(0x845) != 0) {
-        ((void (*)())Engine_ActorSetPosition)(9, 0, 0);
+        Engine_ActorSetPosition(9, 0, 0);
         Actor_FaceDirection(14, 0x3000, 0);
         Actor_FaceDirection(15, 0x5000, 0);
     } else {
@@ -568,7 +568,7 @@ void FieldScene_RunScene38bSequenceA(void)
             if (GameFlag_IsSet(0x848) != 0) {
                 goto L_02000c92;
             }
-            ((void (*)())Engine_ActorSetPosition)(14, 0, 0);
+            Engine_ActorSetPosition(14, 0, 0);
         }
         Actor_FaceDirection(12, 0xd000, 0);
         Actor_FaceDirection(13, 0xb000, 0);

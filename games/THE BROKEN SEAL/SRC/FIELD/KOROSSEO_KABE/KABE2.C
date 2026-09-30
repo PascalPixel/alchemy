@@ -74,7 +74,7 @@ void KorosseoKabe_RunStageIntro(s32 a0)
             ((s32 (*)())SceneActor_PlaceWithScale14000)(0, 0x4c8, 216);
             Engine_EventShowMessage(a0, 0);
             ((s32 (*)())SceneActor_PlaceWithScale14000)(0, 0x4c8, 248);
-            ((s32 (*)())SceneActor_PlaceWithScale14000)(0, 0x4a8, 248);
+            SceneActor_PlaceWithScale14000(0, 0x4a8, 248);
             Engine_EventWait(3);
             record = ((s32 (*)())Object_GetById)(0);
             *(s32 *)(record + 40) = 0x40000;
@@ -135,7 +135,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             }
         }
         Value3(FieldScene_RunMiddleSequence, rec, a0, 2);
-        ((void (*)())Engine_EventEnd)();
+        Engine_EventEnd();
     }
 }
 
@@ -312,14 +312,14 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         s32 z;
 
         Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledBoard);
-        ((void (*)())Engine_CameraSetSpeed)(0x20000, 0x4000);
+        Engine_CameraSetSpeed(0x20000, 0x4000);
         Call4((void (*)())Engine_CameraMoveTo, 0x1480000, -1, 0x1080000, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
         Call2((void (*)())Engine_CameraSetSpeed, 0x18000, 0x3000);
         x = 408;
         z = 264;
-        ((void (*)())Engine_CameraMoveTo)(0x1380000, -1, 0xb00000, 1);
+        Engine_CameraMoveTo(0x1380000, -1, 0xb00000, 1);
         Engine_CameraWaitForMove();
         Engine_EventShowMessage(speaker, 0);
         Korosseo_FadeInCompetitor(0, x, z);
@@ -333,7 +333,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         x -= 32;
         ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, x, 216);
         ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, x, 248);
-        ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, 312, 248);
+        SceneActor_PlaceWithScale14000(0, 312, 248);
         Engine_EventShowMessage(speaker, 0);
         Korosseo_RestoreCompetitor(0);
         Engine_CameraFollowActor(0, 0);

@@ -138,14 +138,14 @@ void FieldScene_RunPillarSequence(void)
 
     r1 = ((s32 (*)())Object_GetById)(9);
     kind = *(s32 *)(r1 + 8) / 0x100000;
-    ((void (*)())Engine_EventBegin)();
+    Engine_EventBegin();
     if (kind == 25) {
         p0 = Object_GetById(11);
         zero = 0;
         p0[34] = 1;
         r2 = (s32)Object_GetById(11);
         Actor_SetSpriteFlags(r2, 0);
-        ((void (*)())ObjectGroup_ConfigureChildValue)(11, 14);
+        ObjectGroup_ConfigureChildValue(11, 14);
         r3 = (s32)Object_GetById(11);
         Object_SetBlendMode(r3, 1);
         Actor_SetPosition(11, 0x19e0000, 0xf00000);
@@ -154,7 +154,7 @@ void FieldScene_RunPillarSequence(void)
         Engine_TaskAddCallback(base, 0xc80);
         Audio_PlayCue(141);
         Actor_SetDestinationOffset(9, 1, 0);
-        ((void (*)())ObjectMotion_CommitCurrentPositionAndActivate)(9);
+        ObjectMotion_CommitCurrentPositionAndActivate(9);
         Event_Wait(10);
         Actor_SetDestinationOffset(9, 2, 0);
         Actor_WaitForMove(9);

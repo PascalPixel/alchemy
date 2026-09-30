@@ -456,7 +456,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     v6 = 160;
     record = (s32)Object_GetById(10);
     *(s32 *)(record + 40) = (v6 << 11);
-    ((void (*)())Engine_ActorSetAnimation)(10, 3);
+    Engine_ActorSetAnimation(10, 3);
     Call3(Engine_ActorMoveToAndWait, 10, 0x127, 215);
     Engine_ActorSetAnimation(10, 1);
     record = (s32)Object_GetById(10);

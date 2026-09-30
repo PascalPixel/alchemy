@@ -672,7 +672,7 @@ void Scene_EnterSolSanctum(void)
     Event_Begin();
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_OpenScreen();
-    ((void (*)())Engine_ActorSetAnimation)(0, 0);
+    Engine_ActorSetAnimation(0, 0);
     Event_Wait(4);
     Camera_MoveTo(-1, -1, -1, 0);
     Camera_SetSpeed(0x9999, 0x1333);
@@ -755,13 +755,13 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Event_OpenScreen();
     Event_WaitForScreen();
 
-    record = (u8 *)((s32 (*)())Object_GetById)(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0)
         Engine_ActorSetPosition(8, RECORD_A32(record), RECORD_B32(record));
-    record = (u8 *)((s32 (*)())Object_GetById)(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0)
         Engine_ActorSetPosition(5, RECORD_A32(record), RECORD_B32(record));
-    record = (u8 *)((s32 (*)())Object_GetById)(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0)
         Engine_ActorSetPosition(1, RECORD_A32(record), RECORD_B32(record));
 
@@ -919,15 +919,15 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Engine_EventWait(6);
     Engine_ActorSetAnimation(1, 2);
 
-    record = (u8 *)((s32 (*)())Object_GetById)(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0)
         Engine_ActorSetDestination(1, RECORD_A16(record), RECORD_B16(record));
     Engine_ActorSetAnimation(5, 2);
-    record = (u8 *)((s32 (*)())Object_GetById)(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0)
         Engine_ActorSetDestination(5, RECORD_A16(record), RECORD_B16(record));
     Engine_ActorSetAnimation(8, 2);
-    record = (u8 *)((s32 (*)())Object_GetById)(0);
+    record = (u8 *)Object_GetById(0);
     if (record != 0)
         Engine_ActorSetDestination(8, RECORD_A16(record), RECORD_B16(record));
 

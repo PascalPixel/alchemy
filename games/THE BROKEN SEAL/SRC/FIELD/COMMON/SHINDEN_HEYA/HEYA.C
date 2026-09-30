@@ -471,7 +471,7 @@ void FieldScene_RunScene378SequenceB(void)
 
     Event_Begin();
     Event_CallWithLastActiveObjectId((s32)ShindenHeya_PlacementSequenceB);
-    ((void (*)())Engine_TaskWait)(1);
+    Engine_TaskWait(1);
     Event_SetMessage((s32)MsgShindenRobinYourNewFriendsAdepts);
     Event_OpenMessage(9, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {

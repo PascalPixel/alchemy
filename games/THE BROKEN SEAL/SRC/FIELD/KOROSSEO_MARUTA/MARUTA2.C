@@ -200,7 +200,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     Engine_EventShowMessage(owner, 0);
     return;
 L_main:
-    ((void (*)())UiText_DrawQuantity)(obj, 1);
+    UiText_DrawQuantity(obj, 1);
     Engine_EventSetMessage((s32)MsgKorosseoRobinWillCheerForWay);
     Event_ShowMessage(owner, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);

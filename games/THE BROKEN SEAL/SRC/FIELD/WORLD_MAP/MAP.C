@@ -653,7 +653,7 @@ void RunEventScript01(void)
     }
     Actor_WaitForMove(12);
     Actor_SetPosition(12, 0, 0);
-    ((void (*)())Engine_EventWait)(60);
+    Engine_EventWait(60);
     Actor_SetAnimation(11, 2);
     record = Object_GetById(8);
     if (record != 0) {
@@ -661,7 +661,7 @@ void RunEventScript01(void)
     }
     Actor_WaitForMove(11);
     Actor_SetPosition(11, 0, 0);
-    ((void (*)())Engine_EventWait)(60);
+    Engine_EventWait(60);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
     record = Object_GetById(8);
     if (record != 0) {
@@ -669,7 +669,7 @@ void RunEventScript01(void)
     }
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    ((void (*)())Engine_EventWait)(60);
+    Engine_EventWait(60);
     Actor_SetSpeed(8, 0x8000, 0x4000);
     Actor_SetDestinationOffset(8, 56, 8);
     Actor_WaitForMove(8);

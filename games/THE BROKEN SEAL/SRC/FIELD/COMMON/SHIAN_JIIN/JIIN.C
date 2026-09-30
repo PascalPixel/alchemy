@@ -280,7 +280,7 @@ void Scene_RunScene39eSequenceB(void)
     } else {
         Event_SetMessage((s32)MsgShianMmmmWhoWhoSpeaksMy);
         FieldScene_SetFlag140AndFinishSequence(0, 8);
-        ((void (*)())Engine_EventWait)(30);
+        Engine_EventWait(30);
         Event_ShowMessage(8, 0);
         FieldScene_FinishSequence();
         Event_Wait(20);
@@ -298,7 +298,7 @@ void Scene_RunScene39eSequenceB(void)
             Actor_RunRepeatedMotion(8, 2);
             Event_Wait(20);
             Event_ShowMessage(8, 0);
-            ((void (*)())Engine_EventWait)(20);
+            Engine_EventWait(20);
             FieldScene_SetFlag140AndFinishSequence(8, 0);
             Event_Wait(30);
             Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -659,14 +659,14 @@ void ShianJiin_RunMasterScene(s32 mode)
     ShianJiin_WalkByFacing();
     Engine_ActorRunRepeatedMotion(15, 3);
     Call3((void (*)())Engine_ActorSetPosition, 19, 0xe80000, 0xa80000);
-    ((void (*)())Engine_ActorSetPosition)(20, 0xe80000, 0xa80000);
+    Engine_ActorSetPosition(20, 0xe80000, 0xa80000);
     Object_GetById(19)->y.fixed = 0xc0000;
     Object_GetById(19)->target_y = ACTOR_NO_TARGET;
     Object_GetById(19)->scale_x = 0xcccc;
     Object_GetById(19)->sprite->rotation = 0x8000;
     Engine_AudioPlayCue(124);
     Engine_EventWait(40);
-    ((void (*)())Engine_ActorWalkToAndWait)(15, 216, 152);
+    Engine_ActorWalkToAndWait(15, 216, 152);
     Call3((void (*)())Engine_ActorFaceDirection, 15, 0x2000, 30);
 }
 
@@ -688,7 +688,7 @@ void ShianJiin_RunGatheringScene(void)
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgShianLookTreeFell);
     Engine_EventShowMessageAndWait(15, 0, 20);
-    ((void (*)())Engine_EventShowMessageAndWait)(16, 0, 20);
+    Engine_EventShowMessageAndWait(16, 0, 20);
     Call3(Engine_ActorShowEmote, 18, 0x105, 60);
     Call3(Engine_ActorShowEmote, 16, 0x101, 60);
     Engine_EventShowMessageAndWait(16, 0, 20);
@@ -699,7 +699,7 @@ void ShianJiin_RunGatheringScene(void)
     Engine_EventShowMessageAndWait(16, 0, 20);
     Engine_ActorFaceEachOther(15, 18, 0);
     Engine_EventWait(20);
-    ((void (*)())Engine_ActorSetAnimationAndWait)(18, 3);
+    Engine_ActorSetAnimationAndWait(18, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(15, 3);
     Engine_EventWait(20);

@@ -298,7 +298,7 @@ void Scene_EnterStarRoom(void)
 
         *leader_sprite = shown;
     }
-    ((void (*)())Engine_ActorSetPosition)(8, 0, 0);
+    Engine_ActorSetPosition(8, 0, 0);
     Camera_WaitForMove();
     Event_Wait(20);
     Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
@@ -430,7 +430,7 @@ void Scene_EnterStarRoom(void)
         *sukureta_sprite = shown;
     }
     Actor_SetPosition(8, 0, 0);
-    ((void (*)())Engine_EventWait)(30);
+    Engine_EventWait(30);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x13333, 0x9999);
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x132);
     Event_Wait(20);

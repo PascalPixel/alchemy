@@ -466,7 +466,7 @@ void RunEventScript01(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 10);
     Event_ShowMessageAndWait(0x2002, 0, 10);
     Actor_ShowEmote(8, 0x107, 60);
-    ((void (*)())Engine_EventShowMessageAndWait)(8, 0, 10);
+    Engine_EventShowMessageAndWait(8, 0, 10);
     Actor_SetAnimationAndWait(8, 4);
     Event_OpenMessage(8, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
@@ -663,7 +663,7 @@ void RunEventScript01(void)
     Actor_SetAnimation(ACTOR_IVAN, 4);
     Event_ShowMessageAndWait(0x2002, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-    ((void (*)())Engine_EventShowMessageAndWait)(1, 0, 10);
+    Engine_EventShowMessageAndWait(1, 0, 10);
     Actor_RunRepeatedMotion(8, 1);
     Event_OpenMessage(8, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);

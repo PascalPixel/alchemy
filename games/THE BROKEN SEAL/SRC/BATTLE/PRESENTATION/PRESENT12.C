@@ -1,4 +1,10 @@
 #include "TYPES.H"
+#include "BATTLE_RUNTIME.H"
+#include "MOTION_OBJECT.H"
+#include "FIXED_MATH.H"
+#include "BATTLE_PARTY.H"
+#include "BATTLE_TARGET.H"
+#include "SYSTEM.H"
 
 extern u8 MsgBitterBlow[];
 extern u8 MsgDmgP[];
@@ -6,25 +12,28 @@ extern u8 MsgCritical[];
 extern u8 MsgDmgE[];
 extern u8 MsgGoesDown[];
 extern u8 MsgDowned[];
-
-
-struct CharacterRuntimeRecord {
-    u8 reserved_00[56];
-    s16 hp;
-};
-
-struct BattleMotionSlot {
-    void *actor;
-};
-
-struct CharacterRuntimeRecord *Owner_GetStateFar(s32 unit_id);
-struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void Object_SetMode(void *actor, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
+
+struct ActorData_080b8ec4 {
+  u8 padding_00[5];
+  s8 field_05;
+  u8 padding_06[0x10];
+  s8 field_16;
+};
+
+struct Actor_080b8ec4 {
+  u8 padding_00[0x28];
+  struct ActorData_080b8ec4 *field_28;
+};
+
+s32 AnimationObjects_SelectAnimationFar(void *, s32);
+s32 Map_RenderAnimatedTileFramesForObjectFar(void *);
+s32 ActivateBattleObjectSlot(s32);
 
 /* Takes damage from a unit's HP, stopping at zero, and reports it with the
  * unit posed in mode 5: an optional opening line (a bitter blow for units 0
@@ -34,8 +43,8 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
     u8 local_context[4];
-    struct CharacterRuntimeRecord *character;
-    struct BattleMotionSlot *slot;
+    struct BattleUnit *character;
+    struct BattleObjectSlot *slot;
 
     if (context == 0) {
         context = local_context;
@@ -51,7 +60,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
         character->hp = 0;
 
     slot = GetBattleObjectSlot(unit_id);
-    Object_SetMode(slot->actor, 5);
+    Object_SetMode(slot->object, 5);
     UiWindow_DrawPartyStatusContentsFar(0);
     UiWork_ClearValueNameTablesFar();
 
@@ -82,5 +91,50 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     }
 
     slot = GetBattleObjectSlot(unit_id);
-    Object_SetMode(slot->actor, 1);
+    Object_SetMode(slot->object, 1);
+}
+
+void BattleMotion_SetMode5AndActivateSlot(s32 arg0)
+{
+  struct ActorData_080b8ec4 *actor_data;
+  struct Actor_080b8ec4 *object;
+  if (Owner_GetStateFar(arg0)->hp <= 0)
+  {
+    object = GetBattleObjectSlot(arg0)->object->records;
+    AnimationObjects_SelectAnimationFar(object, 5);
+    actor_data = object->field_28;
+    actor_data->field_05 = 6;
+    actor_data->field_16 = 0xFF;
+    WaitFrames(4);
+    Map_RenderAnimatedTileFramesForObjectFar(object);
+    ActivateBattleObjectSlot(arg0);
+  }
+}
+
+s32 BattleTarget_ReplaceDefeated(const u8 *action)
+{
+    s16 living_units[14];
+    s32 target_id;
+    s32 living_count;
+
+    target_id = ((const s16 *)action)[5];
+    if (Owner_GetStateFar(target_id)->hp != 0) {
+        return target_id;
+    }
+
+    if (target_id > 0x7F) {
+        living_count = BattleParty_ListLivingUnits(
+            BATTLE_SIDE_ENEMIES,
+            living_units);
+    } else {
+        living_count = BattleParty_ListLivingUnits(
+            BATTLE_SIDE_PARTY,
+            living_units);
+    }
+
+    if (living_count == 0) {
+        return 0x100;
+    }
+
+    return living_units[(u32)(Random16() * living_count) >> 0x10];
 }

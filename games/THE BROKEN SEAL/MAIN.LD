@@ -1005,7 +1005,7 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.080b5218)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
         /* The tile bit decoder block 080c08ec copies to RAM, DECODE.S to BIT_COMMANDS.S. */
-        BitDecoder_Size = ABSOLUTE(BitDecoder_End - Func_080b5138);
+        BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
         "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
         "*/recon/tbs/raw/080b5534.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080b56e0.o"(.text .rodata .data .padding)

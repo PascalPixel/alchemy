@@ -1,7 +1,8 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
 struct MessageWork {
-    u8 unknown_000[0xeb0];
+    u8 unknown_000[RENDER_ENTRY_TBL_OFS];
     u16 text[513];
     u16 count;
 };

@@ -18,6 +18,7 @@ struct ReelWork {
 };
 
 extern u8 gBattleFxWork[];
+extern char MsgSlotsBet;
 extern const u8 ReelGame_TitleLetterWidths[];
 
 /* Reel game: clear every particle's variant, line the eight title letters
@@ -76,7 +77,7 @@ void ReelGame_InitTitle(void)
     *(volatile u16 *)0x04000050 = 0;
     window = UiWindow_CreateFar(18, 0, 12, 4, 6);
     state->sub_window = window;
-    message = 0x905;
+    message = (s32)&MsgSlotsBet;
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
     UiText_DrawCharacterAtOffsetFar(message - 1, state->sub_window, 0, 0);
 }

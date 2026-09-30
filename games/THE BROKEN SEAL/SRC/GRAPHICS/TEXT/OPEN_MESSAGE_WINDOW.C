@@ -1,11 +1,12 @@
 #include "RENDER_INPUT.H"
+#include "TBS_EDITION.H"
 
 /* The window work's message state. Its leading records hold words: typed
    as words, a store to the message cursor may alias the spilled x, so the
    spill keeps its place ahead of the cursor store. */
 struct MessageWindowWork {
-    s32 records[0xeb0 / 4];
-    u16 entries[(0x12f4 - 0xeb0) / 2];
+    s32 records[RENDER_ENTRY_TBL_OFS / 4];
+    u16 entries[(RENDER_RESULT_OFS - RENDER_ENTRY_TBL_OFS) / 2];
     u16 cursor;
     u16 scroll;
     u16 unknown_12f8;

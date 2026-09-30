@@ -9471,7 +9471,7 @@ msgctxt "message"
 msgid "02365"
 msgstr "{argument_actor_name:1} flüchtet!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "02366"
 msgstr "Doch es gibt kein Entrinnen!"
 
@@ -10227,7 +10227,7 @@ msgctxt "message"
 msgid "02554"
 msgstr "Tickets"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "02555"
 msgstr "Wette"
 
@@ -11079,7 +11079,7 @@ msgctxt "MsgPanelStatLabel"
 msgid "02767"
 msgstr "Attacke"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "02768"
 msgstr "Vert."
 
@@ -14267,7 +14267,7 @@ msgctxt "message"
 msgid "03564"
 msgstr "Habt ihr euch gut{line_break}erholt?{page_break}Beehrt uns bald wieder!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPonderEllipsis"
 msgid "03565"
 msgstr ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
 

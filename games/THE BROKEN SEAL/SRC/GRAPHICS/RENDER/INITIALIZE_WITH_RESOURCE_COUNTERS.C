@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "TBS_EDITION.H"
 
 /* The UI work block's counter limit. A member store keeps the halfword
    constant an immediate; a cast store sends it to the literal pool. */
@@ -26,9 +27,9 @@ void UiWork_InitializeWithResourceCounters(void)
     work = Runtime_AllocateBlock(15, 0x12fc);
     fill = 0;
     Dma_Set((const void *)&fill, work, 0x850004bf, (volatile u32 *)0x040000d4);
-    work[0xea3] = 1;
+    work[RENDER_DIRTY_OFS] = 1;
     ((struct UiWorkCounter *)work)->limit = 99;
-    work[0xea7] = 15;
+    work[RENDER_LEVEL_OFS] = 15;
     fill = 0xf000f000;
     Dma_Set((const void *)&fill, work, 0x85000140, (volatile u32 *)0x040000d4);
     UiWork_InitFreeList();

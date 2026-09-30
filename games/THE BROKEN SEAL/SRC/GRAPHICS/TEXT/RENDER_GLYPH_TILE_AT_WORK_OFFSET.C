@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
 struct Work_08017c1c {
     u8 pad_00[12];
@@ -21,10 +22,10 @@ void UiText_RenderGlyphTileAtWorkOffset(
     u32 cell;
 
     if (buffer == NULL) {
-        u16 *counter = (u16 *)(base + 0x12B2);
+        u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
 
-        index = *counter * 2 + 0xEB0;
-        buffer = (u16 *)(base + 0xEB0);
+        index = *counter * 2 + RENDER_ENTRY_TBL_OFS;
+        buffer = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
         *(u16 *)(base + index) = 0;
         *counter = (*counter + 1) & 0x1FF;
     }

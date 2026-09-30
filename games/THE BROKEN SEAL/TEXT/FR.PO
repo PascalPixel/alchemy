@@ -9471,7 +9471,7 @@ msgctxt "message"
 msgid "02365"
 msgstr "{argument_actor_name:1} fuit!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "02366"
 msgstr "Mais il échoue!"
 
@@ -10227,7 +10227,7 @@ msgctxt "message"
 msgid "02554"
 msgstr "Ticket"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "02555"
 msgstr "Pari"
 
@@ -11079,7 +11079,7 @@ msgctxt "MsgPanelStatLabel"
 msgid "02767"
 msgstr "Attaque"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "02768"
 msgstr "Défense"
 
@@ -14267,7 +14267,7 @@ msgctxt "message"
 msgid "03564"
 msgstr "Vous avez bien dormi?{line_break}Revenez bientôt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPonderEllipsis"
 msgid "03565"
 msgstr ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
 

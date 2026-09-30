@@ -80,6 +80,9 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Map_GetTerrainHeightFar:
 	overlay_veneer Func_080091a8
+	.global GetMapCellCollision
+	.thumb_func
+GetMapCellCollision:
 	overlay_veneer GetMapCellCollisionFar
 	.global Engine_MapCopyCells
 	.thumb_func

@@ -49,6 +49,9 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
+	.global Map_CopyMetatileIndicesRect
+	.thumb_func
+Map_CopyMetatileIndicesRect:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func

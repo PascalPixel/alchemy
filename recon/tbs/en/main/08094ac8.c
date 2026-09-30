@@ -1,4 +1,12 @@
-/* 2026-09-30 (Mercury): 46 differing halfwords, 242 of 244 bytes (was 73 at
+/* 2026-10-01 (matcher 2): 857. The particle loop is a goto loop and both
+   zero writes are literal 0, so the loop keeps its zero set and CSE hands
+   the same zero register to the blend's last write, as the reference
+   does; what remains is its register. Out of loop.c the zero's references
+   weigh 3 against one crossed call, so caller-saves never pays and it takes
+   r6; in a for, while or do-while loop the references weigh enough but
+   loop.c hoists the set (maybe_never is clear at the loop top). The
+   reference's r4 needs both: loop weights and a set loop.c leaves alone.
+   2026-09-30 (Mercury): 46 differing halfwords, 242 of 244 bytes (was 73 at
    238). The blend's last write takes a literal 0: with it written as zero,
    zero is used after the loop, loop.c hoists its set (life 41) and it lands
    in a call-saved register. The reference keeps the zero set in the loop
@@ -50,7 +58,6 @@ void Unnamed_08094ac8(void)
     volatile u32 fill;
     volatile u16 *blend;
     u32 i;
-    s32 zero;
     s32 value;
 
     work = (struct FxWork *)Runtime_AllocateBlock(29, 0x410);
@@ -64,14 +71,15 @@ void Unnamed_08094ac8(void)
     work->entry = Resource_FindFreeEntry();
     work->vram = VramBlock_LoadCached(work->entry, 0x300, buffer);
     Runtime_ReleaseHeapBlock(14);
-    for (i = 0; i < 32; i++) {
+    i = 0;
+    {
         s32 x;
         s32 z;
         u32 *words;
 
-        zero = 0;
+    next:
         words = (u32 *)particle;
-        *words++ = zero;
+        *words++ = 0;
         *words++ = 0x40000400;
         *words = 0xd400;
         x = origin[0];
@@ -81,6 +89,8 @@ void Unnamed_08094ac8(void)
         particle->y = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
         particle->frame = (i & 15) + 1;
         particle++;
+        if (++i < 32)
+            goto next;
     }
     blend = (volatile u16 *)0x04000050;
     value = 0x3f00;

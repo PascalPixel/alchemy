@@ -1404,6 +1404,9 @@ BattleParty_ListPresentEnemies:
 	.2byte 0x00ff
 	.2byte 0x0000
 .L_0811a31c:
+	.global BattleParty_ListActorIds
+	.thumb_func
+BattleParty_ListActorIds:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

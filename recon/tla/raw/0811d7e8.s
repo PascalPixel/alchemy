@@ -702,7 +702,7 @@ Func_0811d7e8:
 	ldrh	r1, [r3, #0]
 	movs	r0, #2
 	movs	r2, #0
-	bl	0x0812628c
+	bl	Func_0812628c
 	movs	r0, #195
 	lsls	r0, r0, #1
 	bl	Audio_PlayCue
@@ -1440,7 +1440,7 @@ Func_0811d7e8:
 	movs	r2, #0
 	movs	r3, #100
 	movs	r0, #0
-	bl	0x08126804
+	bl	Func_08126804
 	movs	r0, #1
 	bl	WaitFrames
 	movs	r0, #0

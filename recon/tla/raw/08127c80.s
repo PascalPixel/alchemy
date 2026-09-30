@@ -688,6 +688,9 @@ BattleFormation_SelectRandomAvailableMember:
 	pop	{pc}
 	.2byte 0x0d0c
 	.2byte 0x0813
+	.global Func_08128194
+	.thumb_func
+Func_08128194:
 	push	{lr}
 	movs	r3, #193
 	lsls	r3, r3, #1

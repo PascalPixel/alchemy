@@ -348,7 +348,7 @@ Func_08124cc4:
 	ldrh	r1, [r3, #0]
 	movs	r2, #0
 	movs	r0, #2
-	bl	0x0812628c
+	bl	Func_0812628c
 	ldr	r3, [pc, #348]
 	ldr	r2, [sp, #4]
 	ldr	r4, [r3, #4]

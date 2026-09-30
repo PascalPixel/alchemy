@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
 extern u8 MsgFuneAnotherMonsterIsntFirstClass[];
@@ -19,7 +20,6 @@ extern u8 MsgFuneShipsCrewReadyForAnything[];
 extern u8 MsgFuneThingHasKajaHisMen[];
 extern u8 MsgFuneWereSurroundedByMonstersStill[];
 
-
 struct SceneActor {
     u8 pad00[99];
     u8 mode;
@@ -37,17 +37,6 @@ extern u32 FuneHeya_TurnSteps[];
 s32 Object_GetByIdFar();
 s32 Object_CheckMovementCollision();
 s32 FuneHeya_FindFirstSetFlag();
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
 
 struct FieldActor *FindActorNearPosition(s32 x, s32 y);
 
@@ -87,23 +76,8 @@ s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
     return 1;
 }
 
-/*
- * Level selection from scene flags, overlay resource_3b1. Each callee name
- * refers to its own call word rather than to a shared runtime address.
- */
-
-/*
- * Actor 8 flag setup for overlay resource_3b1. Each callee name refers to
- * its own call word rather than to a shared runtime address.
- */
-
 /* Scene state helper for overlay resource_3b1. */
 
-/*
- * Picks a level from the highest flag that is set and applies it. The
- * 72-byte owner at 0x020012dc includes its three pool words, which are the
- * addresses taken as Value_0000092b, Value_0000092a and Value_00000929.
- */
 s32 SceneState_ApplyLevelFromFlags(void)
 {
     s32 ret = 0;
@@ -119,9 +93,6 @@ s32 SceneState_ApplyLevelFromFlags(void)
     return FuneHeya_FindFirstSetFlag(ret, 1);
 }
 
-/* Story selector owner at 0x02001324, 84 bytes; eight calls. Per-site call
- * veneers (raw asm confirms each callee slot uses a distinct local stub
- * even across the three near-identical "twin" owners at 0x1324/1378/13cc). */
 void SceneDialogue_ShowLine1ECETo1ED0(void)
 {
     Event_Begin();
@@ -131,8 +102,6 @@ void SceneDialogue_ShowLine1ECETo1ED0(void)
     Event_ShowMessage(0x12, 0); Event_End();
 }
 
-/* Story selector owner at 0x02001378, 84 bytes; eight calls. Per-site call
- * veneers (twin of 0x1324/0x13cc with distinct local stub addresses). */
 void SceneDialogue_RunActor19TwoFlagLineA(void)
 {
     Event_Begin();
@@ -142,8 +111,6 @@ void SceneDialogue_RunActor19TwoFlagLineA(void)
     Event_ShowMessage(0x13, 0); Event_End();
 }
 
-/* Story selector owner at 0x020013cc, 84 bytes; eight calls. Per-site call
- * veneers (twin of 0x1324/0x1378 with distinct local stub addresses). */
 void SceneDialogue_RunActor20TwoFlagLine(void)
 {
     Event_Begin();
@@ -153,7 +120,6 @@ void SceneDialogue_RunActor20TwoFlagLine(void)
     Event_ShowMessage(0x14, 0); Event_End();
 }
 
-/* Story selector owner at 0x02001420, 60 bytes; six calls. */
 void SceneDialogue_ShowLine1ED1Or1ED2(void)
 {
     Event_Begin();
@@ -162,7 +128,6 @@ void SceneDialogue_ShowLine1ED1Or1ED2(void)
     Event_ShowMessage(21, 0); Event_End();
 }
 
-/* Story selector owner at 0x0200145c, 84 bytes; eight calls. */
 void SceneDialogue_RunActor22TwoFlagLine(void)
 {
     Event_Begin();
@@ -172,7 +137,6 @@ void SceneDialogue_RunActor22TwoFlagLine(void)
     Event_ShowMessage(22, 0); Event_End();
 }
 
-/* Story selector owner at 0x020014b0, 84 bytes; eight calls. */
 void SceneDialogue_RunActor23BranchedDialogue(void)
 {
     Event_Begin();
@@ -182,7 +146,6 @@ void SceneDialogue_RunActor23BranchedDialogue(void)
     Event_ShowMessage(23, 0); Event_End();
 }
 
-/* Story selector owner at 0x02001504, 84 bytes; eight calls. */
 void SceneDialogue_RunActor24BranchedDialogue(void)
 {
     Event_Begin();
@@ -192,7 +155,6 @@ void SceneDialogue_RunActor24BranchedDialogue(void)
     Event_ShowMessage(24, 0); Event_End();
 }
 
-/* Story selector owner at 0x02001558, 60 bytes; six calls. */
 void SceneDialogue_RunActor25FlaggedLine(void)
 {
     Event_Begin();
@@ -201,7 +163,6 @@ void SceneDialogue_RunActor25FlaggedLine(void)
     Event_ShowMessage(25, 0); Event_End();
 }
 
-/* Second-phase story selector at 0x02001594, 84 bytes; eight calls. */
 void SceneDialogue_RunActor18TwoFlagLine(void)
 {
     Event_Begin();
@@ -211,7 +172,6 @@ void SceneDialogue_RunActor18TwoFlagLine(void)
     Event_ShowMessage(18, 0); Event_End();
 }
 
-/* Second-phase story selector at 0x020015e8, 84 bytes; eight calls. */
 void SceneDialogue_RunActor19TwoFlagLineB(void)
 {
     Event_Begin();
@@ -221,7 +181,6 @@ void SceneDialogue_RunActor19TwoFlagLineB(void)
     Event_ShowMessage(19, 0); Event_End();
 }
 
-/* Second-phase story selector at 0x0200163c, 84 bytes; eight calls. */
 void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
 {
     Event_Begin();
@@ -231,7 +190,6 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
     Event_ShowMessage(20, 0); Event_End();
 }
 
-/* Second-phase story selector at 0x02001690, 60 bytes; six calls. */
 void SceneDialogue_RunActor21FlaggedLine(void)
 {
     Event_Begin();
@@ -240,7 +198,6 @@ void SceneDialogue_RunActor21FlaggedLine(void)
     Event_ShowMessage(21, 0); Event_End();
 }
 
-/* Second-phase story selector at 0x020016cc, 84 bytes; eight calls. */
 void SceneDialogue_RunActor22BranchedDialogue(void)
 {
     Event_Begin();
@@ -250,7 +207,6 @@ void SceneDialogue_RunActor22BranchedDialogue(void)
     Event_ShowMessage(22, 0); Event_End();
 }
 
-/* Second-phase story selector at 0x02001720, 84 bytes; eight calls. */
 void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
 {
     Event_Begin();
@@ -260,7 +216,6 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
     Event_ShowMessage(23, 0); Event_End();
 }
 
-/* Second-phase story selector at 0x02001774, 84 bytes; eight calls. */
 void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
 {
     Event_Begin();
@@ -270,7 +225,6 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
     Event_ShowMessage(24, 0); Event_End();
 }
 
-/* Second-phase story selector at 0x020017c8, 60 bytes; six calls. */
 void SceneDialogue_ShowLine1EDEOr1EDF(void)
 {
     Event_Begin();

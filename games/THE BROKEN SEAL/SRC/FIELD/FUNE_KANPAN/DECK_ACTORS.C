@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "KANPAN.H"
 #include "FIELD_EVENT.H"
 extern u8 FuneKanpan_CrewScriptE[];
 extern struct MapRenderWork *gMapWork;
@@ -11,32 +12,6 @@ void Engine_ActorSetPosition();
 s32 Engine_GameFlagIsSet();
 void FuneKanpan_RunRobinTalk();
 void Engine_EventEnd();
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 /* Ship deck: place actors 21 to 23 for the crossing, facing them by flag
  * 0x903, and close the encounter when the state is 6. */

@@ -4,7 +4,6 @@
 extern u8 MsgKareiItsIvanHisCompanionsPerfect[];
 extern u8 MsgKareiWhenHeardWereBackIvan[];
 
-
 extern u8 KareiKyuden_PartyActions[];
 
 void Map_ClearLayerEntryFlag();
@@ -15,13 +14,6 @@ void SceneChannel_ConfigureUniformAndHandoff();
 s32 Object_SetActionCallbackAndRefreshById();
 
 /* Signed halfword table in RAM; index 225 selects the scene. */
-
-/*
- * Each Func_ symbol names the pre-relocation call word the image holds, not
- * a runtime address; imports are named by the main-image address in the
- * trailing word of the overlay veneer. Old-style declarations are required
- * here, because the arity varies from site to site.
- */
 
 /*
  * Call sites spelled through these wrappers pass their constants straight
@@ -41,9 +33,7 @@ static __inline__ void bump_step(s32 amount)
 {
     void Map_ClearLayerEntryFlag();
 
-    u8 *work = *(u8 **)&gEventWork;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
@@ -109,17 +99,9 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 
-    *(u16 *)(*(u8 **)&gEventWork + 0x1d8) += amount;
+    gEventWork->message += amount;
 }
 
-/*
- * The overlay's scene dispatcher, switching on the scene selector
- * Data_02000240[225]: 10 and 11 share a body and any other value does
- * nothing. The epilogue pops the return address into r0, so this is void
- * and takes no arguments; the 252-byte owner includes its seven pool words.
- * The locals holding the coordinates, the record's +6 halfword (named by
- * position only) and the fifth and sixth arguments force those to be built.
- */
 void FieldScene_DispatchSceneByIndex(void)
 {
     u8 *rec;
@@ -679,8 +661,8 @@ void Scene_RunPartySequence(void)
     Map_Redraw();
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3600000, 0x2760000);
-    *(s32 *)(*(u8 **)&gEventWork + 0x1c0) = v5 = 0x100;
-    *(s32 *)(*(u8 **)&gEventWork + 0x1c8) = 40;
+    gEventWork->start_transition = v5 = 0x100;
+    gEventWork->transition_frames = 40;
     Event_OpenScreen();
     Camera_SetSpeed(0x6666, 0xccc);
     Camera_MoveTo(0x3600000, -1, 0x1d80000, 1);

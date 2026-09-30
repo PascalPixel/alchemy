@@ -137,7 +137,6 @@ u8 *Object_GetByIdFar();
 
 /* Contiguous unnamed leaf-owner run for resource_3a8. */
 
-/* resource_3a8 owner at 0x02000504, 138 bytes. Scene arrival sequence. */
 static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
 {
     Actor_SetDestinationOffset(actor, axis, offset);

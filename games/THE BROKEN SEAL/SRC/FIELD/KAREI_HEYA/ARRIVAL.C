@@ -9,7 +9,6 @@ extern u8 MsgKareiGoingTolbiAlso[];
 extern u8 MsgKareiOurInnFeelsEmptyNow[];
 extern u8 MsgKareiPleaseFinishEatingIfTaking[];
 
-
 /* Table selection, dialogue and arrival scripts for resource_3a9. */
 typedef struct Placement {
     u32 destination;
@@ -38,9 +37,6 @@ void SceneDialogue_RunActor16Dialogue(void)
     Event_End();
 }
 
-/* Actor 8's dialogue, branched on flag 0x911. Engine_EventShowMessage and
- * Engine_EventSetMessage are two imports sharing one call word: the two-argument
- * gesture in the first arm, the one-argument message in the second. */
 void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
     u8 *p = Object_GetById(0);

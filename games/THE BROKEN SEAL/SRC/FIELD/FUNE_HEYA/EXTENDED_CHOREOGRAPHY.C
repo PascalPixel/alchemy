@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
 extern u8 MsgFuneIfWeArentGoingSet[];
@@ -8,7 +9,6 @@ extern u8 MsgFuneItsMyLuckyAnchor[];
 extern u8 MsgFuneWhereGoingSlay[];
 extern u8 MsgFuneWonderCouldHaveHappened[];
 extern u8 MsgFuneYoureTryingLaunchShip[];
-
 
 struct SceneActor {
     u8 pad00[99];
@@ -49,54 +49,11 @@ void PartyInventory_Discard();
  * fields the neighbouring scene sources touch; their meaning is not recovered.
  */
 
-/* Loader-relocated overlay calls: each Func_ symbol names the pre-relocation
- * call word the image holds.
- *
- * Three of those pre-relocation words repeat in this owner while reaching
- * different runtime helpers (0x0200af5a, 0x0200b0e8 and 0x0200b20c each cover
- * two distinct destinations), so one Func_ spelling cannot name both sites.
- * Those six sites are declared by their runtime address instead, which the
- * overlay symbol resolver binds directly. Registering this owner as a
- * translation unit with explicit absolute_symbols would let them go back to
- * suffixed Func_ spellings without changing a byte. */
-
-/* The scene work record pointer; +0x1c0 holds the scene request word. */
-
-/*
- * Actor slot search for resource_3b1.  The 48-byte owner at 0x02005038 has no
- * pool; the halfword at 0x02005066 is alignment before the next owner.
- */
-
 /*
  * Field scene beat for overlay resource_3b1.  Each callee is named for its own
  * call site: every call reaches its target through its own local veneer, even
  * where the same logical callee is used from more than one site.
  */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
 
 static __inline__ u8 *Pointer1(u8 *(*f)(), s32 id)
 {
@@ -125,11 +82,6 @@ void FieldScene_RunScene3b1SequenceD(void)
  * a prototype, because the two call sites pass different argument counts.
  */
 
-/*
- * Scene setup for resource_3b1.  The 212-byte owner at 0x02001a60 includes
- * the alignment halfword at 0x02001b1a and the six pool words that follow it,
- * ending before the next owner's prologue at 0x02001b34.
- */
 void FieldScene_RunFlagGatedThreeActorSetup(void)
 {
     if (GameFlag_IsSet(0x922) == 0)
@@ -564,9 +516,9 @@ void FieldScene_RunBranchingActorPresentation(void)
         Call1(FieldScene_RunStepThen10, 0x9009);
         Actor_ShowEmote(8, 0x108, 40);
         FieldScene_RunStepThen10(request_a);
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 2;
+        gEventWork->message += 2;
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 2;
+        gEventWork->message += 2;
         Actor_RunRepeatedMotion(9, 1);
         Call1(FieldScene_RunStepThen10, 0x9009);
         Actor_StartRepeatedMotion(8, 2);
@@ -660,9 +612,9 @@ void FieldScene_RunBranchingActorPresentation(void)
         FieldScene_RunStepThen10(request_b);
         Actor_StartRepeatedMotion(9, 1);
         Event_ShowMessageAndWait(0x9009, 0, 40);
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 3;
+        gEventWork->message += 3;
         Actor_StartRepeatedMotion(8, 3);
         Event_ShowMessageAndWait(8, 0, 40);
     }
@@ -719,9 +671,9 @@ void FieldScene_RunBranchingActorPresentation(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Actor_SetAnimationAndWait(8, 3);
         Call1(FieldScene_RunStepThen10, 0x1008);
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     } else {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
         Call1(FieldScene_RunStepThen10, 0x1008);
     }
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

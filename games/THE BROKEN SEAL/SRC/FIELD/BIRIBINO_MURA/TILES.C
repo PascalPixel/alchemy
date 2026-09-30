@@ -1,60 +1,46 @@
 #include "MURA.H"
 
-void OverlayObject_SpawnKind24AtActor(u8 *actor)
+/* Spawns the kind-24 effect where the actor stands, drawn translucent
+   behind the background layers. */
+void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
 {
-    u8 *obj;
-    u8 *child;
-    s32 mask;
+    struct FieldActor *effect;
+    struct FieldSprite *sprite;
 
-    obj = (u8 *)Engine_ObjectCreate(24,
-                            *(s32 *)(actor + 0x08),
-                            *(s32 *)(actor + 0x0c),
-                            *(s32 *)(actor + 0x10));
-    if (obj == 0)
+    effect = Engine_ObjectCreate(24, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    if (effect == NULL)
         return;
 
-    child = *(u8 **)(obj + 0x50);
-    Object_SetScript(obj, Mura_SpawnScript);
-    *(u8 *)(obj + 0x55) = 0;
-    *(u8 *)(obj + 0x22) = 1;
-    *(u8 *)(obj + 0x23) = 2;
-    if (child == 0)
+    sprite = effect->sprite;
+    Object_SetScript(effect, Mura_SpawnScript);
+    effect->motion_flags = 0;
+    effect->unknown_22 = 1;
+    effect->priority_flags = 2;
+    if (sprite == NULL)
         return;
 
-    AnimationObjects_SelectAnimation(child, 2);
-    *(u8 *)(child + 0x26) = 0;
-    mask = 13;
-    mask = -mask;
-    *(u8 *)(child + 5) = (u8)((*(u8 *)(child + 5) & mask) | 4);
-    *(u8 *)(child + 9) |= 12;
+    AnimationObjects_SelectAnimation(sprite, 2);
+    sprite->flags = 0;
+    sprite->blend_mode = 1;
+    sprite->priority = 3;
 }
 
+/* Opens the two gate cells on row 14 the actor stands in (z 6 or 9). */
 void FieldScene_DrawTilesByActor8Row(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
+
     actor = Actor_Get(8);
-    if (actor == 0)
+    if (actor == NULL)
         return;
 
-    {
-        s32 tile_z = *(s32 *)(actor + 0x10) >> 20;
-        if (tile_z == 6)
-            Map_CopyCellAttributes(2, 0, 1, 1, 14, 6);
-        else {
-            s32 x = 14;
-            s32 z = 6;
-            Map_CopyCellAttributes(0, 0, 1, 1, x, z);
-        }
-    }
+    if (actor->z.fixed >> 20 == 6)
+        Map_CopyCellAttributes(2, 0, 1, 1, 14, 6);
+    else
+        Map_CopyCellAttributes(0, 0, 1, 1, 14, 6);
 
-    {
-        s32 tile_z = *(s32 *)(actor + 0x10) >> 20;
-        if (tile_z == 9)
-            Map_CopyCellAttributes(2, 0, 1, 1, 14, 9);
-        else {
-            s32 x = 14;
-            s32 z = 9;
-            Map_CopyCellAttributes(1, 0, 1, 1, x, z);
-        }
-    }
+    if (actor->z.fixed >> 20 == 9)
+        Map_CopyCellAttributes(2, 0, 1, 1, 14, 9);
+    else
+        Map_CopyCellAttributes(1, 0, 1, 1, 14, 9);
 }

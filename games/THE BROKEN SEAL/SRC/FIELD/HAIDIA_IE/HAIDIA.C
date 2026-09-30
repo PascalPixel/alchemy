@@ -33,13 +33,6 @@ s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
     return 1;
 }
 
-/*
- * Table getter for resource_374. The owner at 0x02000088 is eight bytes and
- * includes its one pool word at 0x0200008c: the pc-relative load reads that
- * word, so the word belongs to this owner. The word is an address returned
- * without being dereferenced. Many getters share this body, but each returns
- * a different address.
- */
 u8 *SceneData_GetTableAfa0(void)
 {
     return Data_0200afa0;

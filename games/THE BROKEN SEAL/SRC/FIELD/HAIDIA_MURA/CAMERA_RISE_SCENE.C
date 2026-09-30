@@ -3,7 +3,6 @@ extern u8 MsgHaidiaPuppiesPlayingOver[];
 extern u8 MsgHaidiaRrruffRrrruff[];
 extern struct MapRenderWork *gMapWork;
 
-
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
 void Battle_WaitMode0();

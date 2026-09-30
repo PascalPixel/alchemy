@@ -3,11 +3,11 @@
 
 extern s32 FuneHeya_CueTimer;
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 
 #include "STAGED_ACTOR.H"
 extern u8 MsgFuneHeyAreYouOk[];
 extern u8 MsgFuneWonderWhatsWrongShipShouldnt[];
-
 
 struct SceneActor {
     u8 pad00[99];
@@ -44,47 +44,15 @@ s32 Scheduler_AddOrUpdateCallback();
  * fields the neighbouring scene sources touch; their meaning is not recovered.
  */
 
-/* Loader-relocated overlay calls: each Func_ symbol names the pre-relocation
- * call word the image holds.
- *
- * Three of those pre-relocation words repeat in this owner while reaching
- * different runtime helpers (0x0200af5a, 0x0200b0e8 and 0x0200b20c each cover
- * two distinct destinations), so one Func_ spelling cannot name both sites.
- * Those six sites are declared by their runtime address instead, which the
- * overlay symbol resolver binds directly. Registering this owner as a
- * translation unit with explicit absolute_symbols would let them go back to
- * suffixed Func_ spellings without changing a byte. */
-
-/* The scene work record pointer; +0x1c0 holds the scene request word. */
-
-/*
- * Actor slot search for resource_3b1.  The 48-byte owner at 0x02005038 has no
- * pool; the halfword at 0x02005066 is alignment before the next owner.
- */
-
 /*
  * Field scene beat for overlay resource_3b1.  Each callee is named for its own
  * call site: every call reaches its target through its own local veneer, even
  * where the same logical callee is used from more than one site.
  */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 void FieldScene_CallPairWith10(s32 a, u16 b);
 
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
 
 void SceneActor_SetFlagBit3ForActors28To35(void);
 void FieldScene_InstallFlaggedActors10To17(u8 *src);
@@ -161,7 +129,7 @@ void FieldScene_RunFormationAndEffectPresentation(void)
         FieldScene_RunStepThen10(27);
     } else {
         Actor_SetAnimationAndWait(27, 4);
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
         FieldScene_RunStepThen10(27);
         FieldScene_RunSceneStep(3, 2, 40);
         Actor_RunRepeatedMotion(27, 1);
@@ -233,10 +201,6 @@ void FieldScene_RunScene3b1_020056dc(void)
     Event_End();
 }
 
-/*
- * A flat setter sequence, no branches. The 108-byte owner at 0x02005780
- * includes its one pool word, the address taken as Value_0000092a.
- */
 void FieldScene_RunActors24And25SetupWithValue92a(void)
 {
     s32 handle = FuneHeya_FindFirstSetFlag(0, 0);

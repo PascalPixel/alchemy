@@ -107,7 +107,6 @@ static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 #include "TYPES.H"
 extern u8 MsgGomaGotWowThatsPrettyImpressive[];
 
-
 /* Sets bits in an actor's flag byte. */
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {

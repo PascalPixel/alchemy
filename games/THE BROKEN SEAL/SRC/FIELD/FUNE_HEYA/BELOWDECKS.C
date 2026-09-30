@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "HEYA.H"
 #include "STAGED_ACTOR.H"
 extern u8 MsgFuneMonstersBelowdecks[];
 
@@ -14,30 +15,6 @@ void Object_SetActionCallbackAndRefreshById();
  * straight into the argument registers; a direct call precomputes a costly
  * constant into a pseudo that the compiler then shares with later uses in
  * the block. A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
 
 void FieldScene_RunStepThen10(s32 a);
 void FieldScene_CallPairWith10(s32 a, u16 b);

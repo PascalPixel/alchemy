@@ -6,7 +6,6 @@ void Engine_ActorStartRepeatedMotion();
 void Engine_ActorJump();
 void Object_SetModeById();
 
-
 extern u8 *gWork;
 extern s16 Data_02000240[];
 

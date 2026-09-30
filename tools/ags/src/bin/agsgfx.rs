@@ -21,6 +21,8 @@ const USAGE: &str = "usage: agsgfx INPUT OUTPUT [options]
   X.4bpp | X.8bpp -> Y.png     tiles back to an indexed PNG (--palette P.gbapal|P.png; --width TILES and
                                -mwidth/-mheight, else the OBJ metatile shape and width at which
                                tile edges agree most)
+                               --map M.TSV --first N --count N [--frames]: the tiles as the
+                               picture tilemap M shows of that run, or its stacked frames
   X.bitmap -> Y.png            a linear 8-bit bitmap to an indexed PNG (--palette P --width PIXELS)
   X      -> Y.lz               compress (--lz general|palette|tagged|mtf4; the LZ kinds
                                take --machine WINDOW,READ_AHEAD,MAX_DISTANCE,PALETTE_READ_AHEAD)
@@ -120,37 +122,59 @@ fn run(args: &[String]) -> Result<(), String> {
             } else {
                 palette
             };
-            if options.iter().any(|arg| arg == "--sprites") {
-                return sprite_sheets(&data, &palette, bpp(&from), output);
+            if let Some(map) = option(options, "--map") {
+                let text = fs::read(&map).map_err(|error| format!("{map}: {error}"))?;
+                let (entries, wide) = ags::resource::tilemap(&map, &text)?;
+                let drawing = ags::graphics::MapDrawing::new(
+                    &entries,
+                    wide,
+                    number(options, "--first", 0)?,
+                    number(options, "--count", 0)?,
+                )?;
+                let frames = options.iter().any(|arg| arg == "--frames");
+                let (pixels, _) = drawing.draw(&data, bpp(&from), frames)?;
+                eprintln!(
+                    "{output}: cells {},{} {}x{} of the map, {} hidden tiles",
+                    drawing.left,
+                    drawing.top,
+                    drawing.wide,
+                    drawing.high,
+                    drawing.hidden.len()
+                );
+                png_from_bitmap(&pixels, &palette, drawing.wide * 8).map_err(|error| error.0)?
+            } else {
+                if options.iter().any(|arg| arg == "--sprites") {
+                    return sprite_sheets(&data, &palette, bpp(&from), output);
+                }
+                let layout = match option(options, "--width") {
+                    Some(_) => TileLayout {
+                        meta: (
+                            number(options, "-mwidth", 1)?,
+                            number(options, "-mheight", 1)?,
+                        ),
+                        tiles_wide: number(options, "--width", 0)?,
+                    },
+                    None => tile_sheet_layout(&data, bpp(&from)),
+                };
+                let (wide, high) = layout.meta;
+                let count = data.len() / if bpp(&from) == GbaBpp::Bpp4 { 32 } else { 64 };
+                if wide == 0
+                    || high == 0
+                    || layout.tiles_wide % wide != 0
+                    || count % (layout.tiles_wide * high).max(1) != 0
+                {
+                    return Err("--width must be whole metatiles and rows of them".into());
+                }
+                eprintln!(
+                    "{output}: {} tiles wide, metatiles {}x{} pixels",
+                    layout.tiles_wide,
+                    wide * 8,
+                    high * 8
+                );
+                let tiles = tiles_from_metatiles(&data, bpp(&from), layout);
+                png_from_gba_tiles(&tiles, &palette, bpp(&from), layout.tiles_wide)
+                    .map_err(|error| error.0)?
             }
-            let layout = match option(options, "--width") {
-                Some(_) => TileLayout {
-                    meta: (
-                        number(options, "-mwidth", 1)?,
-                        number(options, "-mheight", 1)?,
-                    ),
-                    tiles_wide: number(options, "--width", 0)?,
-                },
-                None => tile_sheet_layout(&data, bpp(&from)),
-            };
-            let (wide, high) = layout.meta;
-            let count = data.len() / if bpp(&from) == GbaBpp::Bpp4 { 32 } else { 64 };
-            if wide == 0
-                || high == 0
-                || layout.tiles_wide % wide != 0
-                || count % (layout.tiles_wide * high).max(1) != 0
-            {
-                return Err("--width must be whole metatiles and rows of them".into());
-            }
-            eprintln!(
-                "{output}: {} tiles wide, metatiles {}x{} pixels",
-                layout.tiles_wide,
-                wide * 8,
-                high * 8
-            );
-            let tiles = tiles_from_metatiles(&data, bpp(&from), layout);
-            png_from_gba_tiles(&tiles, &palette, bpp(&from), layout.tiles_wide)
-                .map_err(|error| error.0)?
         }
         ("bitmap", "png") => {
             let path = option(options, "--palette").ok_or("needs --palette")?;

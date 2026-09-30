@@ -68,7 +68,10 @@
 //!
 //! - `.parts`: each line names a part image beside the list and that part's
 //!   form, such as `BLUE_FLAME_COLUMN\tbitmap`, or `table` for a table beside
-//!   it; the parts are built in turn and joined.
+//!   it; the parts are built in turn and joined. A tile part may add
+//!   `MAP FIRST COUNT`: its image is then the picture the tilemap table
+//!   `MAP` shows of tiles FIRST..FIRST + COUNT, or with a further `frames`
+//!   that run's animation frames stacked (see `MapPart`).
 //!
 //! - `.icons4`: an icon bank of 4-bit icons, each with its own palette. Each
 //!   line names a 32x32 icon image beside the list, or `-` for an empty
@@ -91,7 +94,7 @@
 //! - or `.mtf`: the tag-2 tile compressor.
 //! - or `.d7`: the backdrop codec, each 7-bit pixel as a delta from the one
 //!   before it.
-use crate::graphics::{indices, metatiles};
+use crate::graphics::{indices, metatiles, MapDrawing};
 use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
 use psynergy::assets::compression::{
     encode_delta7, encode_icon4, encode_tilemap_delta, encode_zero_skip,
@@ -204,18 +207,116 @@ fn parts(
     let text = std::str::from_utf8(list).map_err(|_| format!("{built}: part list is not text"))?;
     let mut output = Vec::new();
     for line in text.lines().filter(|line| !line.trim().is_empty()) {
-        let (part, form) = line
-            .split_once('\t')
-            .ok_or_else(|| format!("{built}: {line:?} needs a part and its form"))?;
-        if (data_form(form) && !matches!(form, "table" | "plane")) || form == "font" {
+        let fields: Vec<&str> = line.split('\t').map(str::trim).collect();
+        let [part, form, drawing @ ..] = fields.as_slice() else {
+            return Err(format!("{built}: {line:?} needs a part and its form"));
+        };
+        if (data_form(form) && !matches!(*form, "table" | "plane")) || *form == "font" {
             return Err(format!(
                 "{built}: part {part} must be an image form or a table"
             ));
         }
         let name = format!("{part}.{form}");
-        output.extend(build_file(&name, &sibling(&input_name(&name)?)?)?);
+        let input = sibling(&input_name(&name)?)?;
+        if drawing.is_empty() {
+            output.extend(build_file(&name, &input)?);
+            continue;
+        }
+        let drawn = MapPart::parse(built, drawing)?;
+        let bpp = match *form {
+            "4bpp" => GbaBpp::Bpp4,
+            "8bpp" => GbaBpp::Bpp8,
+            _ => {
+                return Err(format!(
+                    "{built}: part {part} drawn by a tilemap must be .4bpp or .8bpp"
+                ))
+            }
+        };
+        let layout = drawn.layout(built, sibling)?;
+        let image = indexed_bitmap_png(&input).map_err(|error| format!("{name}: {}", error.0))?;
+        output.extend(
+            layout
+                .tiles(
+                    &indices(&image),
+                    image.width as usize,
+                    image.height as usize,
+                    bpp,
+                    drawn.frames,
+                )
+                .map_err(|error| format!("{name}: {error}"))?,
+        );
     }
     Ok(output)
+}
+
+/// A part drawn by a tilemap: `PART\tFORM\tMAP\tFIRST\tCOUNT[\tframes]`
+/// names the tilemap table `MAP` beside the list and the run of tiles
+/// `FIRST..FIRST + COUNT` its picture, or with `frames` each of its stacked
+/// frames, holds (see `graphics::MapDrawing`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct MapPart {
+    pub map: String,
+    pub first: usize,
+    pub count: usize,
+    pub frames: bool,
+}
+
+impl MapPart {
+    /// The drawing fields after a part's form.
+    pub fn parse(built: &str, fields: &[&str]) -> Result<Self, String> {
+        let number = |field: &str| {
+            match field.strip_prefix("0x") {
+                Some(hex) => usize::from_str_radix(hex, 16),
+                None => field.parse(),
+            }
+            .map_err(|_| format!("{built}: {field:?} is not a tile number"))
+        };
+        match fields {
+            [map, first, count] | [map, first, count, "frames"] => Ok(Self {
+                map: (*map).to_owned(),
+                first: number(first)?,
+                count: number(count)?,
+                frames: fields.len() == 4,
+            }),
+            _ => Err(format!(
+                "{built}: a drawn part reads MAP FIRST COUNT [frames]"
+            )),
+        }
+    }
+
+    /// Its layout, from its tilemap table beside the list.
+    pub fn layout(
+        &self,
+        built: &str,
+        sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+    ) -> Result<MapDrawing, String> {
+        let text = sibling(&format!("{}.TSV", self.map))?;
+        let (entries, wide) = tilemap(&format!("{}.table", self.map), &text)?;
+        MapDrawing::new(&entries, wide, self.first, self.count)
+            .map_err(|error| format!("{built}: {error}"))
+    }
+}
+
+/// A tilemap table's 16-bit entries and its width in cells: every column
+/// a u16.
+pub fn tilemap(built: &str, text: &[u8]) -> Result<(Vec<u16>, usize), String> {
+    let header = std::str::from_utf8(text)
+        .ok()
+        .and_then(|text| text.lines().next())
+        .ok_or_else(|| format!("{built}: table names no columns"))?;
+    let wide = header.split('\t').count();
+    if header.split('\t').any(|column| !column.ends_with(":u16")) {
+        return Err(format!("{built}: a tilemap's columns are u16"));
+    }
+    let bytes = table(built, text)?;
+    let entries: Vec<u16> = bytes
+        .chunks_exact(2)
+        .map(|pair| u16::from_le_bytes([pair[0], pair[1]]))
+        .collect();
+    if entries.len() % wide != 0 {
+        return Err(format!("{built}: a tilemap has whole rows"));
+    }
+    Ok((entries, wide))
 }
 
 /// A table's records, each field little-endian in its column's type.
@@ -627,6 +728,23 @@ mod tests {
         assert!(build_file("T.4bpp24x8", &sheet).is_err());
         assert!(build_file("T.4bpp32x32", &sheet).is_err());
         assert!(build_file("T.4bpp08x16", &sheet).is_err());
+    }
+
+    #[test]
+    fn part_lists_draw_tile_parts_by_their_tilemap() {
+        // A 2x1 map showing tiles 1 and 0: the picture's left cell is tile 1.
+        let left: Vec<u8> = (0..128).map(|i| u8::from(i % 16 < 8)).collect();
+        let joined = build_file_with("P.parts", b"M\ttable\nA\t8bpp\tM\t0\t2\n", &|name| {
+            Ok(match name {
+                "M.TSV" => b"a:u16\tb:u16\n1\t0\n".to_vec(),
+                _ => png_from_bitmap(&left, &[0, 0, 1, 0], 16).unwrap(),
+            })
+        })
+        .unwrap();
+        assert_eq!(&joined[..4], [1, 0, 0, 0]);
+        assert_eq!(joined[4..4 + 64], [0; 64]);
+        assert_eq!(joined[4 + 64..], [1; 64]);
+        assert!(build_file_with("P.parts", b"A\t8bpp\tM\t0\n", &|_| Ok(Vec::new())).is_err());
     }
 
     #[test]

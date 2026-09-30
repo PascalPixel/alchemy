@@ -1040,7 +1040,7 @@ Func_0813fd40:
 	ldr	r1, [pc, #912]
 	lsls	r0, r0, #10
 	adds	r0, r0, r1
-	bl	Math_Cosine
+	bl	Trig_Cos
 	movs	r3, #44
 	muls	r3, r0
 	asrs	r3, r3, #16
@@ -1087,7 +1087,7 @@ Func_0813fd40:
 	cmp	r0, #15
 	bhi.n	.L_0814039a
 	lsls	r0, r0, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [r5, #8]
 	movs	r2, #130
 	muls	r0, r3
@@ -1664,7 +1664,7 @@ Func_0813fd40:
 	str	r1, [sp, #16]
 	str	r2, [sp, #12]
 	str	r4, [sp, #8]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #196]
 	ldr	r2, [sp, #12]
 	ldr	r1, [sp, #16]
@@ -2140,7 +2140,7 @@ Func_0813fd40:
 	.2byte 0x2d0f
 	bhi.n	.L_08140cb0
 	lsls	r0, r5, #11
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [pc, #660]
 	mov	r1, sl
 	ldrb	r3, [r3, r1]
@@ -3781,7 +3781,7 @@ Func_0813fd40:
 	adds	r0, r4, #0
 	subs	r0, #32
 	lsls	r0, r0, #9
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r7, [sp, #56]
 	lsls	r0, r0, #2
 	asrs	r0, r0, #4
@@ -4177,7 +4177,7 @@ Func_0813fd40:
 	adds	r3, #170
 	adds	r0, r2, #0
 	muls	r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r3, #128
 	lsls	r3, r3, #7
 	movs	r1, #128
@@ -5122,7 +5122,7 @@ Func_0813fd40:
 	adds	r5, r0, #0
 	adds	r0, r2, #0
 	ands	r5, r1
-	bl	Math_Sine
+	bl	Trig_Sin
 	add	r5, r9
 	adds	r3, r5, #0
 	muls	r3, r0
@@ -5130,7 +5130,7 @@ Func_0813fd40:
 	adds	r3, r3, r7
 	adds	r0, r2, #0
 	str	r3, [r6, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	adds	r3, r3, r7
@@ -5285,7 +5285,7 @@ Func_0813fd40:
 	mov	fp, r0
 .L_08142606:
 	mov	r0, r9
-	bl	Math_Cosine
+	bl	Trig_Cos
 	negs	r0, r0
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
@@ -5293,7 +5293,7 @@ Func_0813fd40:
 	asrs	r3, r3, #16
 	mov	r0, r9
 	mov	r8, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r6, [pc, #312]
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
@@ -5305,7 +5305,7 @@ Func_0813fd40:
 	lsls	r5, r7, #12
 	adds	r0, r5, #0
 	str	r2, [sp, #12]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r2, [sp, #12]
 	mov	r1, r8
 	adds	r3, r2, #0
@@ -5314,7 +5314,7 @@ Func_0813fd40:
 	strb	r3, [r6, #0]
 	strb	r1, [r6, #1]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r2, [sp, #12]
 	adds	r7, #1
 	adds	r3, r2, #0

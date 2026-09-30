@@ -25,7 +25,7 @@ Func_080e9ee4:
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r3, [pc, #76]
 	mov	r1, sl
 	mov	r8, r3
@@ -35,7 +35,7 @@ Func_080e9ee4:
 	adds	r3, r3, r0
 	str	r3, [r7, #0]
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r1, sl
 	mov	lr, r8
 	.2byte 0xf800

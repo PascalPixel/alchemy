@@ -320,14 +320,14 @@ Func_0816fca8:
 	bl	0x0800206c
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r5, #32
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #7
 	str	r3, [r7, #12]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #6
@@ -487,7 +487,7 @@ Func_0816fca8:
 	adds	r5, r1, r5
 	bl	Random16
 	adds	r6, r0, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	asrs	r5, r5, #1
 	adds	r2, r5, #0
 	muls	r2, r0
@@ -504,7 +504,7 @@ Func_0816fca8:
 	mov	sl, r0
 	adds	r0, r6, #0
 	mov	r8, r1
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r6, [pc, #640]
 	ldr	r4, [sp, #12]
 	muls	r5, r0
@@ -1219,7 +1219,7 @@ Func_0816fca8:
 	movs	r5, #31
 	ands	r5, r0
 	adds	r0, r2, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r5, #16
 	adds	r3, r5, #0
 	muls	r3, r0
@@ -1230,7 +1230,7 @@ Func_0816fca8:
 	adds	r3, r3, r0
 	str	r3, [r6, #0]
 	adds	r0, r2, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	ldr	r1, [sp, #64]
@@ -1301,7 +1301,7 @@ Func_0816fca8:
 	adds	r1, r0, #0
 	lsls	r0, r2, #11
 	str	r1, [sp, #20]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r6, [sp, #76]
 	movs	r3, #108
 	eors	r3, r6
@@ -1364,7 +1364,7 @@ Func_0816fca8:
 	lsls	r0, r7, #12
 	adds	r0, r0, r1
 	str	r3, [sp, #12]
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [sp, #12]
 	ldr	r2, [sp, #80]
 	lsls	r0, r0, #3
@@ -1780,14 +1780,14 @@ Func_0816fca8:
 	str	r1, [r7, #0]
 	str	r3, [r7, #4]
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #5
 	str	r3, [r7, #16]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #5

@@ -582,7 +582,7 @@ Func_08122c88:
 	ldr	r3, [pc, #816]
 	ldr	r0, [r3, #0]
 	lsls	r0, r0, #12
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_0812315c
 	movs	r4, #254

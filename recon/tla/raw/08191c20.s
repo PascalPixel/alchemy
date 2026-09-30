@@ -538,7 +538,7 @@ Func_08191c20:
 .L_08192046:
 	ldr	r0, [r7, #4]
 	asrs	r0, r0, #5
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #5
 	bl	Math_Div
 	ldr	r2, [r7, #12]

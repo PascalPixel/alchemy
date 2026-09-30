@@ -782,13 +782,13 @@ Func_0818a220:
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	ands	r6, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r6, #0
 	muls	r3, r0
 	asrs	r3, r3, #5
 	str	r3, [r7, #12]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	muls	r6, r0
 	mov	r2, r9
 	asrs	r1, r6, #4
@@ -909,7 +909,7 @@ Func_0818a220:
 	adds	r3, #170
 	adds	r0, r1, #0
 	muls	r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	negs	r0, r0
 	lsls	r0, r0, #7
 	movs	r1, #0
@@ -923,7 +923,7 @@ Func_0818a220:
 	adds	r3, #170
 	adds	r0, r2, #0
 	muls	r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #0
 	lsls	r0, r0, #7
 	movs	r2, #0
@@ -1049,7 +1049,7 @@ Func_0818a220:
 .L_0818aa66:
 	ldr	r0, [r5, #16]
 	adds	r0, r0, r6
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_0818aa74
 	adds	r0, #15

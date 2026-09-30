@@ -1978,7 +1978,7 @@ Func_081b22b8:
 	lsls	r3, r3, #2
 	adds	r3, #170
 	muls	r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r0, r0, #6
 	b.n	.L_081b31ba
 .L_081b31aa:
@@ -1987,7 +1987,7 @@ Func_081b22b8:
 	ldr	r1, [pc, #212]
 	lsls	r0, r0, #12
 	adds	r0, r0, r1
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r0, r0, #2
 .L_081b31ba:
 	asrs	r0, r0, #16
@@ -2296,13 +2296,13 @@ Func_081b22b8:
 	adds	r5, r6, #0
 	muls	r5, r3
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsrs	r3, r3, #15
 	strh	r3, [r7, #0]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	movs	r2, #110
 	subs	r2, r2, r6
 	movs	r1, #155
@@ -3174,14 +3174,14 @@ Func_081b22b8:
 	str	r1, [r7, #4]
 	str	r0, [r7, #0]
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r5, #64
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #6
 	str	r3, [r7, #12]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	negs	r3, r3

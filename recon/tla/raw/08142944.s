@@ -366,14 +366,14 @@ Func_08142944:
 	adds	r0, r4, r0
 	str	r0, [r7, #4]
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r5, #32
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #3
 	str	r3, [r7, #12]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	movs	r0, #1
@@ -579,7 +579,7 @@ Func_08142944:
 	adds	r3, #170
 	adds	r0, r2, #0
 	muls	r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #128
 	add	r0, sl
 	lsls	r1, r1, #10

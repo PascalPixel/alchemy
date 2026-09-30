@@ -163,7 +163,7 @@ Func_0813cb34:
 	str	r3, [r6, #0]
 	ldr	r3, [r1, #16]
 	str	r3, [r6, #8]
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r3, r7, #0
 	muls	r3, r0
 	mov	r2, sl
@@ -178,7 +178,7 @@ Func_0813cb34:
 	lsls	r3, r3, #10
 	str	r3, [r6, #16]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r7, #0
 	muls	r3, r0
 	negs	r3, r3
@@ -192,7 +192,7 @@ Func_0813cb34:
 	lsls	r3, r3, #9
 	str	r3, [r6, #16]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r7, #0
 	muls	r3, r0
 	lsls	r3, r3, #1
@@ -278,7 +278,7 @@ Func_0813cb34:
 	lsls	r0, r4, #2
 	adds	r0, r0, r3
 	lsls	r0, r0, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [r6, #0]
 	lsls	r0, r0, #4
 	adds	r3, r3, r0

@@ -628,7 +628,7 @@ Func_080db0b0:
 	ldr	r0, [r7, #16]
 	ldr	r3, [pc, #220]
 	adds	r0, r0, r3
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r1, [r7, #4]
 	ldr	r5, [pc, #216]
 	lsls	r3, r1, #2
@@ -640,7 +640,7 @@ Func_080db0b0:
 	mov	lr, r5
 	.2byte 0xf800
 	.2byte 0x1c06
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r1, sl
 	mov	lr, r5
 	.2byte 0xf800
@@ -649,7 +649,7 @@ Func_080db0b0:
 	subs	r0, r4, r0
 	str	r0, [r1, #8]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r1, sl
 	mov	lr, r5
 	.2byte 0xf800

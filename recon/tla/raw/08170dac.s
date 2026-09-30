@@ -132,7 +132,7 @@ Func_08170dac:
 	movs	r6, #0
 .L_08170eac:
 	lsls	r0, r6, #9
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r3, r0, #6
 	subs	r3, r3, r0
 	asrs	r3, r3, #16
@@ -505,7 +505,7 @@ Func_08170dac:
 .L_081711a0:
 	lsls	r5, r6, #10
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r1, [sp, #40]
 	lsls	r2, r0, #2
 	ldr	r3, [r1, #12]
@@ -518,7 +518,7 @@ Func_08170dac:
 	mov	r4, r8
 	str	r3, [r4, #4]
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r5, [sp, #40]
 	lsls	r3, r0, #2
 	ldr	r2, [r5, #16]
@@ -752,7 +752,7 @@ Func_08170dac:
 	movs	r6, #0
 .L_0817138e:
 	lsls	r0, r6, #9
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r3, r0, #6
 	subs	r3, r3, r0
 	asrs	r3, r3, #16
@@ -1016,13 +1016,13 @@ Func_08170dac:
 	adds	r5, r0, #0
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r7, #32
 	adds	r3, r7, #0
 	muls	r3, r0
 	adds	r0, r5, #0
 	str	r3, [r6, #0]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r7, #0
 	muls	r3, r0
 	str	r3, [r6, #8]
@@ -1034,7 +1034,7 @@ Func_08170dac:
 	ands	r3, r0
 	adds	r0, r5, #0
 	adds	r7, r3, #4
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r4, [sp, #40]
 	adds	r2, r7, #0
 	muls	r2, r0
@@ -1042,7 +1042,7 @@ Func_08170dac:
 	adds	r0, r5, #0
 	adds	r3, r3, r2
 	str	r3, [r6, #12]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r7, #0
 	muls	r3, r0
 	ldr	r0, [sp, #40]
@@ -1135,7 +1135,7 @@ Func_08170dac:
 	b.n	.L_081717c2
 .L_081716bc:
 	lsls	r0, r0, #11
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r4, r8
 	ldr	r3, [r4, #12]
 	muls	r3, r0
@@ -1546,12 +1546,12 @@ Func_08170dac:
 	movs	r2, #128
 	lsls	r2, r2, #5
 	adds	r0, r1, r2
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r4, [sp, #48]
 	adds	r5, r0, #0
 	movs	r3, #54
 	ldrsh	r0, [r4, r3]
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r0, #0
 	ldr	r0, [sp, #20]
 	ldr	r4, [sp, #52]
@@ -1578,7 +1578,7 @@ Func_08170dac:
 	mov	sl, r0
 	movs	r3, #54
 	ldrsh	r0, [r4, r3]
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r1, [sp, #52]
 	adds	r2, r0, #0
 	mov	r0, r9
@@ -1601,7 +1601,7 @@ Func_08170dac:
 	ldr	r2, [pc, #92]
 	lsls	r0, r1, #9
 	adds	r0, r0, r2
-	bl	Math_Sine
+	bl	Trig_Sin
 	b.n	.L_08171a7e
 .L_08171a7a:
 	movs	r0, #128

@@ -948,7 +948,7 @@ Func_080de060:
 	ldrsh	r0, [r7, r3]
 	movs	r6, #128
 	lsls	r0, r0, #9
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r6, r6, #11
 	adds	r1, r0, #0
 	ldr	r3, [pc, #44]
@@ -1051,7 +1051,7 @@ Func_080de060:
 	cmp	r0, r2
 	beq.n	.L_080de940
 	lsls	r0, r0, #10
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r5, #192
 	lsls	r5, r5, #11
 	adds	r1, r0, #0

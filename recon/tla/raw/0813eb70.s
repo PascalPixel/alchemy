@@ -1574,14 +1574,14 @@ Func_0813f518:
 	asrs	r3, r2, #3
 	ldr	r0, [r5, #0]
 	adds	r6, r3, #1
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r3, [r5, #4]
 	muls	r3, r0
 	asrs	r3, r3, #16
 	adds	r3, #64
 	ldr	r0, [r5, #0]
 	mov	r8, r3
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r3, [r5, #4]
 	mov	r1, r9
 	muls	r3, r0

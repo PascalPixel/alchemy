@@ -170,7 +170,7 @@ Func_081823a8:
 	str	r4, [r7, #8]
 	str	r3, [r7, #4]
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r5, #128
 	adds	r3, r5, #0
 	muls	r3, r0
@@ -179,7 +179,7 @@ Func_081823a8:
 	str	r3, [r7, #12]
 	str	r1, [r7, #16]
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	asrs	r3, r3, #5

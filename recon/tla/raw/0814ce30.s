@@ -1333,7 +1333,7 @@ Func_0814ce30:
 	adds	r5, r7, #0
 	muls	r5, r3
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	lsls	r0, r0, #2
 	str	r0, [r6, #12]
 	bl	Random16
@@ -1346,7 +1346,7 @@ Func_0814ce30:
 	adds	r3, r3, r4
 	str	r3, [r6, #16]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	adds	r7, #1
 	lsls	r0, r0, #2
 	movs	r3, #0
@@ -3272,7 +3272,7 @@ Func_0814ce30:
 	adds	r5, r0, #0
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r2, r6, #0
 	muls	r2, r0
 	mov	r0, sl
@@ -3282,7 +3282,7 @@ Func_0814ce30:
 	adds	r2, r2, r3
 	str	r2, [r7, #0]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r1, sl
 	ldr	r3, [r1, #4]
 	adds	r2, r6, #0

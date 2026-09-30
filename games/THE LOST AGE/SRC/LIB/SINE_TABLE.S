@@ -1,5 +1,5 @@
 @ Sine table of TRIG.S: 1,024 signed Q14 halfwords over a full turn, which
-@ Math_Sine indexes with the top ten bits of the angle (add r0, pc, #8;
+@ Trig_Sin indexes with the top ten bits of the angle (add r0, pc, #8;
 @ ldrsh r0, [r0, r1]), after the zero halfword that aligns it to a word.
 @ Alignment and a data table carry no credit, as TBS LIB/SINE_TABLE.S.
 .syntax unified

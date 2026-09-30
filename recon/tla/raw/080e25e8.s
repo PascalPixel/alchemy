@@ -524,7 +524,7 @@ Func_080e28d4:
 	lsls	r0, r2, #15
 	str	r5, [r7, #8]
 	bl	Math_Div
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r2, r9
 	adds	r6, r0, #0
 	mov	r0, sl
@@ -583,11 +583,11 @@ Func_080e28d4:
 	movs	r7, #0
 .L_080e2a84:
 	adds	r0, r6, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	mov	r5, r8
 	muls	r5, r0
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	mov	r3, r8
 	muls	r3, r0
 	asrs	r3, r3, #16
@@ -974,7 +974,7 @@ Func_080e28d4:
 	lsls	r2, r7, #8
 	mov	fp, r2
 	mov	r0, fp
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r3, #216
 	lsls	r3, r3, #5
 	adds	r3, #24
@@ -1013,7 +1013,7 @@ Func_080e28d4:
 	adds	r3, r2, r3
 	mov	r0, fp
 	str	r3, [r5, #0]
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r1, #216
 	movs	r3, #217
 	lsls	r1, r1, #5
@@ -1154,7 +1154,7 @@ Func_080e28d4:
 .L_080e2f0a:
 	lsls	r0, r7, #8
 	str	r4, [sp, #0]
-	bl	Math_Sine
+	bl	Trig_Sin
 	movs	r2, #216
 	lsls	r2, r2, #5
 	adds	r2, #24

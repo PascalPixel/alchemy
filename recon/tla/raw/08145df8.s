@@ -153,7 +153,7 @@ Func_08145df8:
 	ldr	r2, [sp, #64]
 	lsls	r6, r2, #11
 	adds	r0, r6, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	add	r5, sp, #148
 	lsls	r3, r0, #2
 	ldr	r2, [r5, #0]
@@ -166,7 +166,7 @@ Func_08145df8:
 	subs	r3, #20
 	adds	r0, r6, #0
 	mov	r8, r3
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r3, [r5, #4]
 	ldr	r2, [sp, #76]
 	lsls	r0, r0, #2

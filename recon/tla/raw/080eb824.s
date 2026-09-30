@@ -775,7 +775,7 @@ Func_080ebc30:
 	asrs	r5, r3, #16
 	str	r6, [r7, #28]
 	adds	r0, r5, #0
-	bl	Math_Cosine
+	bl	Trig_Cos
 	ldr	r2, [pc, #48]
 	adds	r1, r6, #0
 	mov	r8, r2
@@ -785,7 +785,7 @@ Func_080ebc30:
 	adds	r3, r3, r0
 	str	r3, [r7, #4]
 	adds	r0, r5, #0
-	bl	Math_Sine
+	bl	Trig_Sin
 	adds	r1, r6, #0
 	mov	lr, r8
 	.2byte 0xf800

@@ -2252,7 +2252,7 @@ Func_08049a30:
 	ldr	r0, [r5, #0]
 	strh	r3, [r7, #8]
 	lsls	r0, r0, #12
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_0804ac0c
 	movs	r1, #254
@@ -3155,7 +3155,7 @@ Func_08049a30:
 	ldr	r3, [pc, #140]
 	ldr	r0, [r3, #0]
 	lsls	r0, r0, #12
-	bl	Math_Sine
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_0804b2e2
 	movs	r4, #254
@@ -3307,7 +3307,7 @@ Func_08049a30:
 	ldr	r3, [pc, #188]
 	ldr	r0, [r3, #0]
 	lsls	r0, r0, #12
-	bl	Math_Sine
+	bl	Trig_Sin
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	bge.n	.L_0804b416

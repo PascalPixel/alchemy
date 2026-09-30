@@ -4225,7 +4225,7 @@ Func_08157638:
 	bl	Func_081963ec
 	movs	r1, #3
 	mov	r0, r9
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r1, r0, #2
 	adds	r1, r1, r0
 	ldr	r3, [sp, #112]
@@ -4993,14 +4993,14 @@ Func_08157638:
 	adds	r7, r2, r1
 	mov	r0, r8
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r1, #96
 	ldr	r0, [r7, #24]
 	bl	Math_Div
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #384]
 	adds	r5, r5, r0
 	lsls	r3, r5, #1

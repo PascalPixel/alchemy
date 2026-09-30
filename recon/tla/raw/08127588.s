@@ -740,7 +740,7 @@ Summon_TakeCharge:
 	movs	r1, #9
 	adds	r0, #1
 	str	r4, [sp, #0]
-	bl	0x08002064
+	bl	Math_Mod
 	strb	r0, [r5, r6]
 	adds	r3, r7, #0
 	adds	r3, #28

@@ -299,7 +299,7 @@ Func_0813e3d0:
 	asrs	r0, r0, #2
 	movs	r1, #3
 	mov	r8, r0
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r5, r0, #0
 	lsls	r1, r5, #7
 	adds	r1, r1, r5
@@ -358,7 +358,7 @@ Func_0813e3d0:
 	.2byte 0xf800
 	.2byte 0x2103
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r5, r0, #0
 	lsls	r1, r5, #7
 	mov	r4, fp

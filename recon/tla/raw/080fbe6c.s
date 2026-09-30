@@ -122,7 +122,7 @@ Func_080fbe6c:
 	movs	r2, #0
 	add	r0, r8
 	str	r2, [sp, #12]
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r8, r0
 	adds	r0, r7, #0
 	bl	0x08038260
@@ -484,7 +484,7 @@ Func_080fbe6c:
 	adds	r0, r6, #2
 	movs	r1, #2
 	mov	r8, r3
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r6, r0, #0
 .L_080fc288:
 	ldr	r5, [pc, #80]
@@ -660,7 +660,7 @@ Func_080fbe6c:
 	adds	r0, #2
 	movs	r1, #2
 	str	r3, [sp, #8]
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r8, r0
 .L_080fc402:
 	ldr	r5, [pc, #120]
@@ -791,7 +791,7 @@ Func_080fbe6c:
 	movs	r1, #5
 	mov	r9, r0
 	adds	r0, r6, #0
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #5
 	mov	r8, r0
 	adds	r0, r7, #0
@@ -799,7 +799,7 @@ Func_080fbe6c:
 	movs	r1, #5
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	beq.n	.L_080fc536
 	adds	r5, #1
@@ -1336,7 +1336,7 @@ Func_080fbe6c:
 .L_080fc95c:
 	mov	r1, r9
 	adds	r0, r5, r1
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #129
 	adds	r5, r0, #0
 	lsls	r3, r3, #2

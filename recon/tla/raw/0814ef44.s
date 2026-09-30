@@ -1186,7 +1186,7 @@ Func_0814ef44:
 .L_0814f858:
 	add	r0, fp
 	movs	r1, #9
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r4, r0, #0
 .L_0814f862:
 	cmp	r7, #0

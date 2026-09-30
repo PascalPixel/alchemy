@@ -178,7 +178,7 @@ Func_0814512c:
 	mov	r8, r2
 .L_0814527e:
 	ldr	r0, [sp, #28]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #52]
 	lsls	r0, r0, #1
 	adds	r0, #36
@@ -372,7 +372,7 @@ Func_0814512c:
 	ldr	r3, [sp, #52]
 	adds	r0, r4, #0
 	ldr	r1, [r3, #20]
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [sp, #52]
 	lsls	r0, r0, #1
 	movs	r3, #16

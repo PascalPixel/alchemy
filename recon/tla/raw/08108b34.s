@@ -121,7 +121,7 @@ Func_08108b34:
 	movs	r1, #7
 	adds	r6, r0, #0
 	ldr	r0, [sp, #36]
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r0, #0
 	lsls	r1, r1, #5
 	ldr	r0, [sp, #28]

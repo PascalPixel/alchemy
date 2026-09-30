@@ -1037,7 +1037,7 @@ Func_080457d0:
 	ldr	r0, [r5, #0]
 	ldr	r1, [r6, #0]
 	adds	r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [r5, #0]
 	b.n	.L_08045fdc
 .L_08045faa:
@@ -1053,7 +1053,7 @@ Func_080457d0:
 	ldr	r1, [r2, #0]
 	adds	r0, r0, r1
 	subs	r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [r7, #0]
 	b.n	.L_08045fdc
 .L_08045fcc:

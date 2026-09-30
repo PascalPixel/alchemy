@@ -372,7 +372,7 @@
 	adds	r0, r7, #0
 	movs	r2, #3
 	movs	r3, #5
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	movs	r3, #42
 	adds	r3, #255
 	add	r3, sl

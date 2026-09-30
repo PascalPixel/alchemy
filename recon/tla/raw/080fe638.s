@@ -136,7 +136,7 @@ Func_080fe638:
 	adds	r0, r7, r0
 	movs	r1, #18
 	adds	r0, #7
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r3, fp
 	adds	r6, r3, r0
 	adds	r0, r6, #0
@@ -156,7 +156,7 @@ Func_080fe638:
 	mov	r0, r8
 	adds	r2, #1
 	adds	r3, r5, #0
-	bl	0x08038270
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r0, [pc, #116]
 	lsls	r3, r7, #3
 	mov	r2, sl
@@ -229,7 +229,7 @@ Func_080fe638:
 	ldr	r0, [sp, #28]
 	movs	r1, #2
 	adds	r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	str	r0, [sp, #28]
 	movs	r0, #111
 	bl	Audio_PlayCue

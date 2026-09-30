@@ -472,7 +472,7 @@ Func_080fae2c:
 .L_080fb1f6:
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #24
 	asrs	r7, r0, #24
 	movs	r1, #3
@@ -503,7 +503,7 @@ Func_080fae2c:
 	adds	r0, r7, #3
 	movs	r1, #3
 	mov	r9, r2
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, sl
 	adds	r2, #2
 	lsrs	r3, r2, #31

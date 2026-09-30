@@ -592,7 +592,7 @@ Func_080d7524:
 	movs	r1, #20
 	mov	r8, r0
 	adds	r0, r5, #0
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r5, #8
 	adds	r7, r0, #0
 	b.n	.L_080d7a10

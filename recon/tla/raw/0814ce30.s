@@ -361,7 +361,7 @@ Func_0814ce30:
 	movs	r1, #24
 	bl	Math_Div
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r4, #238
 	ldr	r2, [sp, #64]
 	ldr	r6, [pc, #320]
@@ -410,7 +410,7 @@ Func_0814ce30:
 .L_0814d170:
 	movs	r1, #5
 	asrs	r0, r0, #2
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r4, [pc, #232]
 	lsls	r1, r0, #1
 	ldrh	r1, [r4, r1]
@@ -658,7 +658,7 @@ Func_0814ce30:
 	movs	r1, #3
 	mov	r0, sl
 	mov	r8, r3
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [pc, #336]
 	adds	r1, r0, #0
 	ldrb	r4, [r3, r1]
@@ -716,7 +716,7 @@ Func_0814ce30:
 	blt.n	.L_0814d464
 	movs	r1, #5
 	mov	r0, sl
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #232]
 	lsls	r3, r0, #1
 	ldrh	r1, [r2, r3]
@@ -1935,7 +1935,7 @@ Func_0814ce30:
 .L_0814dd92:
 	mov	r0, r8
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r4, fp
 	lsls	r3, r0, #1
 	ldrh	r1, [r4, r3]
@@ -2299,7 +2299,7 @@ Func_0814ce30:
 	ble.n	.L_0814e0a4
 	mov	r0, r8
 	movs	r1, #7
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r4, r0, #4
 	b.n	.L_0814e0aa
 	.4byte 0x03001120
@@ -2414,7 +2414,7 @@ Func_0814ce30:
 	blt.n	.L_0814e1d0
 	mov	r0, r8
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r6, r8
 	movs	r3, #1
 	ands	r3, r6
@@ -2514,7 +2514,7 @@ Func_0814ce30:
 	lsrs	r3, r0, #31
 	adds	r0, r0, r3
 	asrs	r0, r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [pc, #260]
 	ldr	r2, [sp, #28]
 	ldrb	r4, [r3, r0]
@@ -2783,7 +2783,7 @@ Func_0814ce30:
 .L_0814e44a:
 	mov	r0, r8
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r3, r0, #1
 	ldrh	r1, [r7, r3]
 	ldr	r3, [sp, #44]
@@ -2884,7 +2884,7 @@ Func_0814ce30:
 	bgt.n	.L_0814e580
 	movs	r1, #3
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #444]
 	lsls	r3, r0, #1
 	ldrh	r1, [r2, r3]
@@ -3046,7 +3046,7 @@ Func_0814ce30:
 	adds	r0, r3, r0
 	movs	r1, #9
 	asrs	r0, r0, #1
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r3, [pc, #152]
 	ldr	r2, [sp, #28]
 	ldrb	r4, [r3, r0]
@@ -3402,7 +3402,7 @@ Func_0814ce30:
 	blt.n	.L_0814e9a6
 	movs	r1, #3
 	mov	r0, r8
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r2, [pc, #232]
 	adds	r0, #1
 	lsls	r4, r0, #1

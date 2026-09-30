@@ -273,7 +273,7 @@ Func_080405dc:
 	mov	r0, r8
 	add	r0, fp
 	mov	r1, fp
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r3, #160
 	lsls	r3, r3, #3
 	mov	r8, r0

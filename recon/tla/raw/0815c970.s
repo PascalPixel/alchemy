@@ -2494,7 +2494,7 @@ Func_0815c970:
 .L_0815dd30:
 	adds	r0, r6, #0
 	movs	r1, #6
-	bl	0x08002064
+	bl	Math_Mod
 	ldr	r1, [sp, #76]
 	adds	r5, r0, #0
 	movs	r2, #216

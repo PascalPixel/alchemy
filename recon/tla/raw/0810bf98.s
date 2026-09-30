@@ -32,7 +32,7 @@ Func_0810bf98:
 .L_0810bfd0:
 	adds	r0, r6, #0
 	movs	r1, #5
-	bl	0x08002064
+	bl	Math_Mod
 	movs	r1, #5
 	adds	r5, r0, #0
 	adds	r0, r6, #0

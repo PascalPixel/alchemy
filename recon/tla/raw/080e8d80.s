@@ -1134,7 +1134,7 @@ Func_080e8d80:
 	adds	r5, r0, r1
 	ldr	r0, [sp, #56]
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	cmp	r0, #0
 	bne.n	.L_080e966e
 	mov	r2, fp
@@ -1431,7 +1431,7 @@ Func_080e8d80:
 	adds	r6, r1, #0
 	adds	r0, #12
 	movs	r1, #24
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r5, r0, #0
 	ldr	r2, [pc, #136]
 	lsls	r5, r5, #18
@@ -1439,7 +1439,7 @@ Func_080e8d80:
 	adds	r0, r5, #0
 	movs	r1, #96
 	mov	r8, r2
-	bl	0x08002064
+	bl	Math_Mod
 	lsls	r0, r0, #16
 	mov	r2, r8
 	asrs	r0, r0, #16
@@ -1454,7 +1454,7 @@ Func_080e8d80:
 	movs	r1, #96
 	adds	r0, #32
 	mov	sl, r3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, r8
 	ldrb	r3, [r2, r0]
 	adds	r5, #64
@@ -1463,7 +1463,7 @@ Func_080e8d80:
 	adds	r0, r5, #0
 	movs	r1, #96
 	asrs	r7, r3, #16
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, r8
 	ldrb	r3, [r2, r0]
 	adds	r3, r3, r6
@@ -1613,7 +1613,7 @@ Func_080e8d80:
 	asrs	r0, r0, #18
 	movs	r1, #24
 	adds	r0, r0, r3
-	bl	0x08002064
+	bl	Math_Mod
 	adds	r1, r5, #0
 	cmp	r5, #15
 	bne.n	.L_080e9a18

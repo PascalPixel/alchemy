@@ -727,7 +727,7 @@
 	mov	r0, r8
 	adds	r0, #2
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, sl
 	mov	r8, r0
 	cmp	r2, #0
@@ -825,7 +825,7 @@
 	mov	r0, r8
 	adds	r0, #4
 	movs	r1, #3
-	bl	0x08002064
+	bl	Math_Mod
 	mov	r2, sl
 	mov	r8, r0
 	cmp	r2, #0

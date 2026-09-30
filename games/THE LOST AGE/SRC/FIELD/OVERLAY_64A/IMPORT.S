@@ -39,7 +39,7 @@
 	overlay_veneer Func_080381f8
 	overlay_veneer Func_08038210
 	overlay_veneer Func_08038260
-	overlay_veneer Func_08038270
+	overlay_veneer UiWindow_SetTilemapEntryFar
 	overlay_veneer Func_080382c0
 	overlay_veneer Func_080382c8
 	overlay_veneer Func_080382d0

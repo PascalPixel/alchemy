@@ -8,6 +8,7 @@
 
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)
 #define REG_VCOUNT (*(volatile u16 *)0x04000006)
+#define REG_BLDCNT (*(volatile u16 *)0x04000050)
 
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 

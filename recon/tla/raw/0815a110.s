@@ -936,7 +936,7 @@ BattlePres_RunBurstScene:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #188
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r2, [pc, #316]
 	lsls	r3, r7, #1
 	ldrh	r1, [r2, r3]

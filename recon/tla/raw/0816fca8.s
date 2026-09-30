@@ -525,7 +525,7 @@ Func_0816fca8:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #188
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r4, [sp, #12]
 	ldr	r2, [pc, #600]
 	lsls	r3, r4, #1
@@ -1881,7 +1881,7 @@ Func_0816fca8:
 	movs	r1, #7
 	str	r2, [sp, #0]
 	movs	r2, #7
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r4, [sp, #8]
 	ldr	r2, [pc, #404]
 	lsls	r3, r4, #1

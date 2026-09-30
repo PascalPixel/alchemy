@@ -1234,6 +1234,9 @@ Func_0813eb70:
 	.4byte 0x020038e0
 	.2byte 0x0208
 	.2byte 0x0400
+	.global Func_0813f518
+	.thumb_func
+Func_0813f518:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1526,7 +1529,7 @@ Func_0813eb70:
 	movs	r0, #188
 	movs	r2, #7
 	str	r6, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #188

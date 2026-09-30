@@ -1493,7 +1493,7 @@ Func_0818d5a8:
 	movs	r0, #104
 	str	r6, [sp, #0]
 	str	r4, [sp, #8]
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #104]

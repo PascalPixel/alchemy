@@ -1780,7 +1780,7 @@ Func_081548d0:
 	movs	r1, #7
 	str	r2, [sp, #0]
 	movs	r2, #7
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r4, [sp, #8]
 	ldr	r2, [pc, #332]
 	lsls	r3, r4, #1

@@ -526,7 +526,7 @@ Func_0814fab8:
 	movs	r2, #7
 	movs	r0, #104
 	str	r5, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #104]
@@ -540,7 +540,7 @@ Func_0814fab8:
 	movs	r1, #7
 	movs	r2, #7
 	str	r5, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #188
@@ -694,7 +694,7 @@ Func_0814fab8:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #104
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r4, #192
 	lsls	r4, r4, #18
 	ldr	r4, [r4, #104]
@@ -705,7 +705,7 @@ Func_0814fab8:
 	movs	r2, #7
 	str	r4, [sp, #60]
 	str	r5, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #188
@@ -911,7 +911,7 @@ Func_0814fab8:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #104
-	bl	0x08196404
+	bl	Func_08196404
 	lsls	r1, r5, #1
 	adds	r1, r1, r5
 	ldr	r3, [sp, #72]
@@ -972,7 +972,7 @@ Func_0814fab8:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #104
-	bl	0x08196404
+	bl	Func_08196404
 	lsls	r1, r5, #4
 	subs	r1, r1, r5
 	ldr	r5, [sp, #72]
@@ -1038,7 +1038,7 @@ Func_0814fab8:
 	movs	r2, #7
 	movs	r0, #104
 	str	r4, [sp, #0]
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r2, [sp, #72]
 	movs	r3, #200
 	movs	r1, #192
@@ -1096,7 +1096,7 @@ Func_0814fab8:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #104
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r2, #192
 	movs	r4, #1
 	lsls	r2, r2, #18
@@ -1110,7 +1110,7 @@ Func_0814fab8:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #188
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r1, [sp, #72]
@@ -1185,7 +1185,7 @@ Func_0814fab8:
 	ldr	r3, [sp, #48]
 	movs	r2, #7
 	movs	r0, #104
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r1, #192
 	lsls	r1, r1, #18
 	ldr	r4, [r1, #104]

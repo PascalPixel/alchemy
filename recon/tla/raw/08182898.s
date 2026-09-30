@@ -6841,7 +6841,7 @@ Func_08182898:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #188
-	bl	0x08196404
+	bl	Func_08196404
 	ldr	r4, [sp, #8]
 	ldr	r2, [pc, #496]
 	lsls	r3, r4, #1
@@ -9664,7 +9664,7 @@ Func_08182898:
 	movs	r3, #3
 	movs	r0, #188
 	movs	r1, #6
-	bl	0x08196404
+	bl	Func_08196404
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #188

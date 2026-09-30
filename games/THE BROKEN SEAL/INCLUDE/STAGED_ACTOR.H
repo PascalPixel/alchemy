@@ -70,14 +70,17 @@ typedef char StagedActor_movement_callback_offset[
 ];
 #undef STAGED_ACTOR_OFFSET
 
-/* Six-word record exchanged by the staged-actor target finder and sweep. */
+/* Six-word record exchanged by the staged-actor target finder and sweep:
+   StagedActor_FindClearPosition fills it with the square an actor can move
+   to, and SceneActor_MoveAndRedraw, passed it by value, moves the actor
+   there and runs the callback. */
 struct StagedActorProbe {
     s32 footprint_index;
     s32 actor_slot;
     s32 position_x;
     s32 position_y;
     s32 position_z;
-    s32 unknown_14;
+    void (*callback)(void);
 };
 
 struct StagedActorProbePosition {
@@ -170,19 +173,6 @@ typedef struct StagedActorPosition {
     s32 y;
 } StagedActorPosition;
 
-typedef struct StagedActorMovementRequestTail {
-    s32 target_y;
-    void (*callback)(void);
-} StagedActorMovementRequestTail;
-
-typedef struct StagedActorMovementRequest {
-    s32 movement_index;
-    s32 actor_id;
-    s32 target_x;
-    s32 target_depth;
-    StagedActorMovementRequestTail tail;
-} StagedActorMovementRequest;
-
 /* The staged-actor module, linked whole into each field overlay that stages
    actors (FIELD/COMMON/OBJECT/STAGED_ACTOR.C). */
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
@@ -192,7 +182,7 @@ s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u
 s32 StagedActor_StopBlockedMotion(struct StagedActor *actor);
 u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint);
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
-void SceneActor_MoveAndRedraw(StagedActorMovementRequest request);
+void SceneActor_MoveAndRedraw(struct StagedActorProbe probe);
 s32 FieldScene_RedrawActorFootprint(s32 id);
 
 #endif

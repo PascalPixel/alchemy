@@ -132,12 +132,12 @@ const struct ScenePlacement *Scene_GetPlacements(void) { return KorimaHashi_Plac
 /* Placement query followed by the tile-(10,20) scene transition. */
 void FieldScene_RunTile10x20Transition(void)
 {
-    StagedActorMovementRequest res;
+    struct StagedActorProbe res;
     Event_Begin();
 
-    if (StagedActor_FindClearPosition((struct StagedActorProbe *)&res)) {
+    if (StagedActor_FindClearPosition(&res)) {
         SceneActor_MoveAndRedraw(res);
-        if (res.actor_id == 10 && (res.target_x >> 20) == 20) {
+        if (res.actor_slot == 10 && (res.position_x >> 20) == 20) {
             u8 *actor;
             s32 zero;
 

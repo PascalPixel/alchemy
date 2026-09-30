@@ -1,3 +1,7 @@
+/*
+ * Draft: Resource_LoadIndexedEntryToBuffer does not yet match; it does not compile against ⚓️'s headers yet.
+ * Links as recon/tla/raw/080452bc.s.
+ */
 #include "TYPES.H"
 
 s32 Runtime_ReleaseHeapBlock(s32);

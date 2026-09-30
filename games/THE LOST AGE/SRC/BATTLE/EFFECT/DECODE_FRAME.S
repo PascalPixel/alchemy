@@ -17,6 +17,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, text decoder (instance 2)
 .syntax unified
 	.thumb
+	.global BattleFx_DecodeFrameCode
+BattleFx_DecodeFrameCode:
 	.global BattleFx_DecodeFrame
 	.thumb_func
 BattleFx_DecodeFrame:

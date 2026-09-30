@@ -3,21 +3,32 @@ pub type TargetExecutables = (&'static str, &'static [ExecutableDigests]);
 pub type HostTargets = (&'static str, &'static [TargetExecutables]);
 pub type HostDigests = (&'static str, &'static [&'static str]);
 
-// Licensed agscc 002c421: GCC 2.96 with its host ports and
-// -mthumb-split-constants, off by default; both games use this bundle and
-// TLA's game code turns the option on (Pascal, 2026-09-29).
+// Licensed agscc: GCC 2.96 with its host ports and TLA's two options, off
+// by default; both games use this bundle and TLA's game code turns them on.
+// The last digest of each is agscc 9c59c13, whose build no longer depends on
+// its folder (Pascal, 2026-09-30): built anywhere, it gives these bytes. The
+// earlier digests stay admitted until every worktree has the new build.
 const GAME: &[ExecutableDigests] = &[
     (
         "xgcc",
-        &["0ac37eee7e242069bad7a66e49f735712f136dad14408627f7755c6fd2e6a6ac"],
+        &[
+            "0ac37eee7e242069bad7a66e49f735712f136dad14408627f7755c6fd2e6a6ac",
+            "e4a9d313adfa3c310bf9c24a249c83c0eb2be04217c2c7b31d3dc07ed57e4ad4",
+        ],
     ),
     (
         "cpp0",
-        &["7ca2629e8f5df7c17f150abcf333b90a6fd4c03e32d94d70856b0f472151f382"],
+        &[
+            "7ca2629e8f5df7c17f150abcf333b90a6fd4c03e32d94d70856b0f472151f382",
+            "bf860686ff434508b62246f7dbc3807769440ab5410d6e3a514fb0aa8944fd2c",
+        ],
     ),
     (
         "tradcpp0",
-        &["0ffad7ce8988daa84f5868d6afb604202f50850c9894ed25a06c73cb8e3e74ac"],
+        &[
+            "0ffad7ce8988daa84f5868d6afb604202f50850c9894ed25a06c73cb8e3e74ac",
+            "9c0c3d4f2609e0dc1c8d7b9c25a068dee15220466a664d5adc593f1c3bbe2b7f",
+        ],
     ),
     (
         "cc1",
@@ -29,6 +40,8 @@ const GAME: &[ExecutableDigests] = &[
             "89182424c7f15cf31a905ca5ac4b608cd663c8b2869784fd3a113e4d732424ce",
             // agscc a3964ae adds -mthumb-call-via-lr (Pascal, 2026-09-30).
             "4396963c5e3846315f0c04da1d1700f12dc5bcbd3a37f3a0305711c5da396d3d",
+            // agscc 9c59c13, the same compiler built independent of its folder.
+            "023962d33de3283a9ed48f18c880df073b180a2a1e833580659de5949a8225d8",
         ],
     ),
     (

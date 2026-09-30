@@ -1,7 +1,7 @@
 #include "SCRIPT_OPERANDS.H"
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
-extern OperandFunc Data_0802f2dc[];
+extern OperandFunc Script_OperandHandlerTable[];
 
 void Script_SetOrCompareByte58(struct ScriptOperands *state, s32 operation, s32 value)
 {
@@ -198,4 +198,40 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 v
             result = 1;
         work->comparison_result = result;
     }
+}
+
+s32 Script_ApplyOperandSet(struct ScriptOperands *work)
+{
+    s16 index = (s16)work->cursor;
+    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
+    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+
+    if (callback != 0)
+        callback(work, 0, *(s32 *)(entry + 4));
+    work->cursor += 3;
+    return 1;
+}
+
+s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
+{
+    s16 index = (s16)work->cursor;
+    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
+    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+
+    if (callback != 0)
+        callback(work, 1, *(s32 *)(entry + 4));
+    work->cursor += 3;
+    return 1;
+}
+
+s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
+{
+    s16 index = (s16)work->cursor;
+    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
+    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+
+    if (callback != 0)
+        callback(work, 2, *(s32 *)(entry + 4));
+    work->cursor += 3;
+    return 1;
 }

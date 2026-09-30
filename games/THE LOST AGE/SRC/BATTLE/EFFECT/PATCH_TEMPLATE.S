@@ -10,6 +10,8 @@
 @ credit: handwritten — relocated ARM kernel, battle-effect patch template
 .syntax unified
 	.thumb
+	.global BattleFx_PatchTemplateCode
+BattleFx_PatchTemplateCode:
 	.global BattleFx_PatchTemplate
 	.thumb_func
 BattleFx_PatchTemplate:

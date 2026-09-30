@@ -11,6 +11,8 @@
 @ uncredited, apart from the 41 relocated case addresses of its tables.
 .syntax unified
 	.thumb
+	.global Tile_BuildMetatilesCode
+Tile_BuildMetatilesCode:
 	.global Tile_BuildMetatiles
 	.thumb_func
 Tile_BuildMetatiles:

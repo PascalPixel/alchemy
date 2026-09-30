@@ -12,6 +12,7 @@ pub mod editions;
 pub mod elf;
 pub mod lift;
 pub mod process;
+pub mod relist;
 pub mod sched;
 pub mod similar;
 pub mod thumb;

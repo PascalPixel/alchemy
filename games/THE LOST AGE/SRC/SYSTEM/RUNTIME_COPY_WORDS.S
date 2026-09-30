@@ -9,6 +9,8 @@
 .syntax unified
 	.arm
 	.thumb
+	.global IwramCopyWords
+IwramCopyWords:
 AlchemyUncredited_08000ce8:
 	bx	pc
 	.2byte	0x0200

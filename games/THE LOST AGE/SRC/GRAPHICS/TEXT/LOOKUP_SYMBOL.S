@@ -8,6 +8,8 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, symbol lookup
 .syntax unified
 	.thumb
+	.global Text_LookupSymbolCode
+Text_LookupSymbolCode:
 	.global Text_LookupSymbol
 	.thumb_func
 Text_LookupSymbol:

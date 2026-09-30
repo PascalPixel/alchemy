@@ -519,9 +519,7 @@ void HaidiaBabi_RunActorEightMessageScene(void)
     } else {
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(40);
-        do {
-            dream = (s32)MsgHaidiaUnnOhhKyle;
-        } while (0); /* FAKEMATCH: the wrap keeps the message id load after the wait. */
+        dream = (s32)MsgHaidiaUnnOhhKyle;
         Engine_EventSetMessage(dream);
         Engine_EventShowMessageAndWait(8, 0, 40);
         Engine_MessageShowCentered((dream + 1), 1);

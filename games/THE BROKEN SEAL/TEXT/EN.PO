@@ -8483,7 +8483,7 @@ msgctxt "message"
 msgid "02118"
 msgstr "{argument_actor_name:1} runs!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "02119"
 msgstr "But there's no escape!"
 
@@ -9243,7 +9243,7 @@ msgctxt "message"
 msgid "02308"
 msgstr "Game ticket"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "02309"
 msgstr "Bet"
 
@@ -11387,7 +11387,7 @@ msgctxt "MsgPanelStatLabel"
 msgid "02844"
 msgstr "Attack"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "02845"
 msgstr "Defense"
 
@@ -14387,7 +14387,7 @@ msgctxt "message"
 msgid "03594"
 msgstr "Gyorgis"
 
-msgctxt "message"
+msgctxt "MsgPonderEllipsis"
 msgid "03595"
 msgstr ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
 

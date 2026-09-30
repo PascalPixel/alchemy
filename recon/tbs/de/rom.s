@@ -34,8 +34,6 @@ Resource_GetTableEntry:
 	.thumb_func
 Resource_LoadCode:
 	.incbin "baserom.gba", 0x00002fe0, 0x00000058
-	.section .rom.0000303a, "ax"
-	.incbin "baserom.gba", 0x0000303a, 0x00000072
 	.section .rom.00003e88, "ax"
 	.global ResourceTable_AllocateBlocks
 	.type ResourceTable_AllocateBlocks, %function
@@ -85,6 +83,8 @@ SerialRuntime_StepBlockTransfer:
 	.section .rom.0000689e, "ax"
 	.incbin "baserom.gba", 0x0000689e, 0x00000002
 	.section .rom.00007350, "ax"
+	.global Runtime_IrqHandlers
+Runtime_IrqHandlers:
 	.incbin "baserom.gba", 0x00007350, 0x00000356
 	.global Math_ArcTanTable
 Math_ArcTanTable:
@@ -1183,14 +1183,8 @@ Event_SpawnObjectTable:
 	.incbin "baserom.gba", 0x0008f134, 0x00000118
 	.section .rom.0008fb00, "ax"
 	.incbin "baserom.gba", 0x0008fb00, 0x0000097c
-	.section .rom.00090a60, "ax"
-	.incbin "baserom.gba", 0x00090a60, 0x00000034
-	.section .rom.00090a94, "ax"
-	.global BattleFx_FindDescriptor
-	.type BattleFx_FindDescriptor, %function
-	.thumb_func
-BattleFx_FindDescriptor:
-	.incbin "baserom.gba", 0x00090a94, 0x0000092c
+	.section .rom.00090ef8, "ax"
+	.incbin "baserom.gba", 0x00090ef8, 0x000004c8
 	.section .rom.00091754, "ax"
 	.global Event_FindFacingTrigger
 	.type Event_FindFacingTrigger, %function
@@ -1260,7 +1254,13 @@ DisplayScroll_BuildAndSwapHBlankPage:
 	.section .rom.00097ebc, "ax"
 	.incbin "baserom.gba", 0x00097ebc, 0x00000188
 	.section .rom.00098164, "ax"
-	.incbin "baserom.gba", 0x00098164, 0x000003b4
+	.incbin "baserom.gba", 0x00098164, 0x000000f4
+	.section .rom.00098258, "ax"
+	.global Unnamed_08094bbc
+	.type Unnamed_08094bbc, %function
+	.thumb_func
+Unnamed_08094bbc:
+	.incbin "baserom.gba", 0x00098258, 0x000001e4
 	.section .rom.00099eac, "ax"
 	.global BattleFx_Run
 	.type BattleFx_Run, %function
@@ -1477,7 +1477,10 @@ ObjectMotion_TurnTowardLinkedScript:
 	.incbin "baserom.gba", 0x000a3694, 0x00000014
 	.global ObjectMotion_LinkedActionScript
 ObjectMotion_LinkedActionScript:
-	.incbin "baserom.gba", 0x000a36a8, 0x00000178
+	.incbin "baserom.gba", 0x000a36a8, 0x000000de
+	.global FieldFx_MoteTiles
+FieldFx_MoteTiles:
+	.incbin "baserom.gba", 0x000a3786, 0x0000009a
 	.global Data_080a00b8
 Data_080a00b8:
 	.incbin "baserom.gba", 0x000a3820, 0x00000050
@@ -1490,12 +1493,6 @@ BattleFx_UntargetedObjectScript:
 	.global gEffectScripts
 gEffectScripts:
 	.incbin "baserom.gba", 0x000a3894, 0x0000056c
-	.section .rom.000a43f0, "ax"
-	.global UiText_DrawStatComparison
-	.type UiText_DrawStatComparison, %function
-	.thumb_func
-UiText_DrawStatComparison:
-	.incbin "baserom.gba", 0x000a43f0, 0x0000013c
 	.section .rom.000a4670, "ax"
 	.global PsynergyMenu_InitializeEntryObjects
 	.type PsynergyMenu_InitializeEntryObjects, %function
@@ -1879,8 +1876,8 @@ BattlePresentation_AppendLinkedActions:
 	.incbin "baserom.gba", 0x000bbd3c, 0x00000190
 	.section .rom.000bc146, "ax"
 	.incbin "baserom.gba", 0x000bc146, 0x00000206
-	.section .rom.000bc3dc, "ax"
-	.incbin "baserom.gba", 0x000bc3dc, 0x000004b8
+	.section .rom.000bc4d8, "ax"
+	.incbin "baserom.gba", 0x000bc4d8, 0x000003bc
 	.section .rom.000bccc4, "ax"
 	.incbin "baserom.gba", 0x000bccc4, 0x0000026c
 	.section .rom.000bcf8e, "ax"
@@ -2399,7 +2396,7 @@ Unnamed_080f3078:
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x000f5768, 0x00001e98
 	.section .rom.000f7a40, "ax"
-	.incbin "baserom.gba", 0x000f7a40, 0x00001020
+	.incbin "baserom.gba", 0x000f7a40, 0x00000edc
 	.section .rom.000f8a60, "ax"
 	.global Unnamed_080f7460
 	.type Unnamed_080f7460, %function
@@ -2407,7 +2404,10 @@ LuckyDice_Run:
 Unnamed_080f7460:
 	.incbin "baserom.gba", 0x000f8a60, 0x00000954
 	.section .rom.000f9578, "ax"
-	.incbin "baserom.gba", 0x000f9578, 0x00000888
+	.incbin "baserom.gba", 0x000f9578, 0x000007be
+	.global ReelGame_TitleLetterWidths
+ReelGame_TitleLetterWidths:
+	.incbin "baserom.gba", 0x000f9d36, 0x000000ca
 	.section .rom.000fc5a0, "ax"
 	.global Sound_CommandTableTemplate
 Sound_CommandTableTemplate:

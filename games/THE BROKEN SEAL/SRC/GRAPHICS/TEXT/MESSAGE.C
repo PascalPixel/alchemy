@@ -102,11 +102,11 @@ s32 UiText_OpenEntryMessage(s32 no, s32 argument)
     /* FAKEMATCH: an unused buffer reproduces the reference's 16-byte frame. */
     u8 unused[8];
 
-    *(u16 *)(base + 0x12f4) = 0;
+    *(u16 *)(base + RENDER_RESULT_OFS) = 0;
     *(u16 *)(base + 0x12f6) = 0;
     entry = Func_08018038(argument, 1);
     entry_offset = entry * 2;
-    entry_offset += 0xeb0;
+    entry_offset += RENDER_ENTRY_TBL_OFS;
     if (*(u16 *)(base + entry_offset) == 0)
         return 0;
     if (no == 0)

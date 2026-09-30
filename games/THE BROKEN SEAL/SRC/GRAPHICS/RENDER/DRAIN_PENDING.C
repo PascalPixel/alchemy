@@ -45,7 +45,7 @@ void UiWork_DrainPending(void)
     u16 flag;
 
     state = gWindowWork;
-    slot = (struct WorkSlot *)(state + 0x620);
+    slot = (struct WorkSlot *)(state + RENDER_CHANNEL_OFS);
     direct = (struct DirectWork *)(state + 0x500);
     index = 0;
     do {
@@ -58,7 +58,7 @@ void UiWork_DrainPending(void)
 
 poll:
     done = 1;
-    slot = (struct WorkSlot *)(state + 0x620);
+    slot = (struct WorkSlot *)(state + RENDER_CHANNEL_OFS);
     index = 0;
     do {
         poll_work = slot->work;

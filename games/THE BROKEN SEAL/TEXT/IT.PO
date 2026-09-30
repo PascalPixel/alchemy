@@ -9471,7 +9471,7 @@ msgctxt "message"
 msgid "02365"
 msgstr "{argument_actor_name:1} fugge!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "02366"
 msgstr "Ma non si può scappare!"
 
@@ -10227,7 +10227,7 @@ msgctxt "message"
 msgid "02554"
 msgstr "Bigl. gioco"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "02555"
 msgstr "Scommetti"
 
@@ -11079,7 +11079,7 @@ msgctxt "MsgPanelStatLabel"
 msgid "02767"
 msgstr "Attacco"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "02768"
 msgstr "Difesa"
 
@@ -14267,7 +14267,7 @@ msgctxt "message"
 msgid "03564"
 msgstr "Hai fatto un buon{line_break}riposo? Torna a trovarci!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPonderEllipsis"
 msgid "03565"
 msgstr ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
 

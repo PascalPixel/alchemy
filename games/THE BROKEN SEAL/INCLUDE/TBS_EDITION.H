@@ -24,6 +24,9 @@
 #define RENDER_RESULT_OFS      0x1184
 #define RENDER_ENTRY_MASK      0xFF
 #define WINDOW_COUNT          12
+#define RENDER_LEVEL_OFS      0xF37
+#define RENDER_COUNTER_OFS    0x1146
+#define RENDER_WORK_SIZE      0x118C
 #define SELECT_MENU_WIDTH    5
 #define TYPE_MENU_WIDTH      4
 #define MENU_TEXT_X          100
@@ -50,6 +53,9 @@
 #define RENDER_RESULT_OFS      0x12F4
 #define RENDER_ENTRY_MASK      0x1FF
 #define WINDOW_COUNT          8
+#define RENDER_LEVEL_OFS      0xEA7
+#define RENDER_COUNTER_OFS    0x12B6
+#define RENDER_WORK_SIZE      0x12FC
 #define SELECT_MENU_WIDTH    7
 #define TYPE_MENU_WIDTH      7
 #define MENU_TEXT_X          74

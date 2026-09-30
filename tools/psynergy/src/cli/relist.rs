@@ -529,6 +529,13 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
         None => bytes.len() as u32,
     };
     let regions = regions(&options, &map);
+    // A name the script assigns aliases a place another name owns, or is a
+    // value: it is referred to, never turned into a label.
+    let aliases = if options.script.is_empty() {
+        BTreeSet::new()
+    } else {
+        relist::assigned(&read_text(&options.root.join(&options.script))?)
+    };
     let regenerated: BTreeSet<String> = regions
         .iter()
         .filter(|region| region.kind == RegionKind::Listing { regenerate: true })
@@ -546,7 +553,13 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
     };
     let input = Input {
         image,
-        names: names(&elf),
+        names: names(&elf)
+            .into_iter()
+            .map(|mut name| {
+                name.absolute |= aliases.contains(&name.name);
+                name
+            })
+            .collect(),
         external: external(&options, &map, &regenerated)?,
         incbin: load(&options.incbin)?,
         space: load(&options.space)?,

@@ -1,6 +1,7 @@
 #include "MAKYURI.H"
 #include "MAKYURI_HEYA.H"
 #include "CALL.H"
+extern u8 MsgMakyuriDidThat[];
 
 void SetEffectRecordMode();
 s32 OverlayObject_PrepareSpawnedObject();
@@ -30,7 +31,7 @@ void FieldScene_RunColumnChoreography(void)
         Battle_WaitMode0(20);
         Call3(Engine_ActorFaceDirection, 3, 0xd000, 0);
         Engine_ActorFaceDirection(0, 0x5000, 10);
-        Engine_EventSetMessage(0x157f);
+        Engine_EventSetMessage((s32)MsgMakyuriDidThat);
         Engine_EventOpenMessage(3, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;

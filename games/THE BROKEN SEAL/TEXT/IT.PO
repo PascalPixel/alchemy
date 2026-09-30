@@ -151,7 +151,7 @@ msgctxt "message"
 msgid "00035"
 msgstr "Fuggi"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00036"
 msgstr "Sì"
 
@@ -10295,7 +10295,7 @@ msgctxt "message"
 msgid "02571"
 msgstr "La squadra di {protagonist_name} è{line_break}annientata...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgActorUsesItem"
 msgid "02572"
 msgstr "{argument_actor_name:1} usa{line_break}{argument_item_name:1}.{end_wait}"
 
@@ -10319,7 +10319,7 @@ msgctxt "MsgDoesNotWorkHere"
 msgid "02577"
 msgstr "{argument_ability_name}...{page_break}Qui non funziona.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "02578"
 msgstr "Ora i mostri attaccheranno{line_break}più raramente.{end_wait}"
 
@@ -10327,7 +10327,7 @@ msgctxt "MsgAbilityWoreOff"
 msgid "02579"
 msgstr "Finito effetto di {argument_ability_name}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseItemQuestion"
 msgid "02580"
 msgstr "Usare {argument_item_name:1}?{end_now}"
 
@@ -21599,7 +21599,7 @@ msgctxt "message"
 msgid "05397"
 msgstr "{actor_name:4} si sta occupando{line_break}dei malati in città.{page_break}Non voglio{line_break}esserle{line_break}d'intralcio.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriOoohHelpMe"
 msgid "05398"
 msgstr "{text_effect:4}Oooh...{pause_20_skippable} Aiuto...{end_wait}"
 
@@ -21639,7 +21639,7 @@ msgctxt "message"
 msgid "05407"
 msgstr "Emana una luce azzurra{line_break}dalle mani...{line_break}Che non sia{pause_20_skippable} un angelo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriStoreClosedUntilWell"
 msgid "05408"
 msgstr "Il negozio rimarrà chiuso{line_break}finché non siamo guariti...{end_wait}"
 
@@ -21659,7 +21659,7 @@ msgctxt "message"
 msgid "05412"
 msgstr "Chi sono queste persone?{line_break}Devono essere fortissimi{line_break}per venire a Imil d'inverno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriTooSickBusiness"
 msgid "05413"
 msgstr "Mi spiace, oggi sto{line_break}troppo male per fare{line_break}affari... Tornate domani!{end_wait}"
 
@@ -21671,11 +21671,11 @@ msgctxt "message"
 msgid "05415"
 msgstr "Ma perché vengono sempre a{line_break}comprare quando sono malato?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriMomsSickGetWhatever"
 msgid "05416"
 msgstr "La mia mamma è malata,{line_break}ma posso portarvi io{line_break}ovunque vogliate...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDadLumberjack"
 msgid "05417"
 msgstr "Mio padre è un{line_break}boscaiolo. Lavora{line_break}a Kolima...{end_wait}"
 
@@ -21823,7 +21823,7 @@ msgctxt "message"
 msgid "05453"
 msgstr "Oh, no...{pause_20_skippable} Alex!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriFeelMuchBetter"
 msgid "05454"
 msgstr "Ora sto molto meglio{line_break}grazie a {actor_name:4}.{line_break}Me la caverò!{end_wait}"
 
@@ -21899,7 +21899,7 @@ msgctxt "message"
 msgid "05472"
 msgstr "Qualcuno non vuole{line_break}che entri dentro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDidThat"
 msgid "05473"
 msgstr "Chi è stato: tu?{end_now}"
 
@@ -22687,7 +22687,7 @@ msgctxt "message"
 msgid "05669"
 msgstr "Grazie all'acqua della fonte{line_break}il nonno è in gran forma!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriReallySayDie"
 msgid "05670"
 msgstr "Davvero ho detto che{line_break}pensavo di morire per{line_break}quella malattia?{end_now}"
 
@@ -22715,7 +22715,7 @@ msgctxt "message"
 msgid "05676"
 msgstr "Quella luce blu che{line_break}emanava dalle mani...{line_break}Sarà stata un angelo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriCatchUpLostOpportunity"
 msgid "05677"
 msgstr "Devo recuperare il{line_break}lavoro perduto!{line_break}È tempo d'affari!{end_wait}"
 
@@ -22723,7 +22723,7 @@ msgctxt "message"
 msgid "05678"
 msgstr "I clienti non sono certo{line_break}molti, ma non posso perderne{line_break}neppure uno!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriShameStoreClosed"
 msgid "05679"
 msgstr "È un peccato aver tenuto{line_break}chiuso il negozio{line_break}per un raffreddore.{end_wait}"
 
@@ -22731,7 +22731,7 @@ msgctxt "message"
 msgid "05680"
 msgstr "Sono tornati i clienti!{line_break}Credevo davvero di averli{line_break}persi tutti!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriRecoveredThanksFountain"
 msgid "05681"
 msgstr "Grazie alla fontana,{line_break}sono di nuovo in forma!{line_break}Posso tornare al lavoro!{end_wait}"
 

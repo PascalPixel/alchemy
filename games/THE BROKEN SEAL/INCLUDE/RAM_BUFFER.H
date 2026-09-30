@@ -10,6 +10,7 @@
  * the entry here; the build checks each entry against the object named beside
  * it. Everywhere else the label serves. */
 #define Ram_MapCellBuffer ((u8 *)0x02010000) /* gMapCellBuffer */
+#define Ram_DecodeBuffer ((u8 *)0x0201c000) /* gDecodeBuffer */
 #define Ram_MapBlocks ((u8 *)0x02020000) /* gMapBlocks */
 #define Ram_MapCollision ((u8 *)0x0202c000) /* gMapCollision */
 #define Ram_BgTileBuffer ((u8 *)0x02038000) /* gBgTileBuffer */

@@ -5,6 +5,7 @@
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "TBS_EDITION.H"
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -100,7 +101,7 @@ s32 PsynergyMenu_SelectAction(void)
     }
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
     Menu_SpawnIconEntries(menu, menu->icon_window);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->window, 80, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->window, SWITCH_HELP_X, -24);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 2, menu->window, 0, -24);
 
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
@@ -125,9 +126,13 @@ s32 PsynergyMenu_SelectAction(void)
                 WaitFrames(1);
             }
             WaitFrames(1);
-            nav = Menu_HandlePageInput(0, state.entry_count, 5, &state.row, &state.page);
+            nav = Menu_HandlePageInput(0, state.entry_count, PAGE_ROWS, &state.row, &state.page);
             menu->cursor->state = 1;
+#if defined(TBS_EDITION_JA)
+            UiMenu_PositionCursor(58, state.row * 16 + 52);
+#else
             UiMenu_PositionCursor(55, state.row * 16 + 60);
+#endif
             if (nav == 1) {
                 first = 1;
                 redraw = 1;

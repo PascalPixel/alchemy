@@ -1,5 +1,8 @@
 #include "IMIRU.H"
 #include "CALL.H"
+extern u8 MsgMakyuriReallySayDie[];
+extern u8 MsgMakyuriFeelMuchBetter[];
+extern u8 MsgMakyuriOoohHelpMe[];
 
 void SceneDialogue_RunActorEightFlagGatedDialogue(void)
 {
@@ -89,7 +92,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         Event_Begin();
         unused_actor9_record = Value3(Engine_ActorFaceActor, 9, 0, 0);
         Engine_EventWait(10);
-        Engine_EventSetMessage(5700);
+        Engine_EventSetMessage((s32)MsgMakyuriReallySayDie);
         Event_AskYesNo(9, 0);
         Event_End();
     } else {
@@ -97,7 +100,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Event_Begin();
             Actor_SetAnimation(9, 7);
             Engine_MapAnimateCells((s32)ImiruMura_CellStepsA, 10, 69);
-            Engine_EventSetMessage(5484);
+            Engine_EventSetMessage((s32)MsgMakyuriFeelMuchBetter);
             Event_ShowMessage(9, 0);
             Actor_SetAnimation(9, 8);
             Map_AnimateCells((s32)ImiruMura_CellStepsB, 10, 69);
@@ -107,7 +110,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             actor9_record = Object_GetById(9);
             ((struct SceneRecord *)actor9_record)->field_0x64 = 10;
             Engine_ActorEnableActionCallback(9, (s32)ImiruMura_ActorScriptA);
-            Engine_EventSetMessage(5428);
+            Engine_EventSetMessage((s32)MsgMakyuriOoohHelpMe);
             Engine_EventShowMessage(9, 0);
             Engine_ActorStop(8);
             Actor_ShowEmote(8, 256, 40);

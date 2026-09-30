@@ -141,14 +141,6 @@ Object_UpdateAllThumb:
 	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000dd70, "ax"
 	.incbin "baserom.gba", 0x0000dd70, 0x000004b0
-	.section .rom.0000ea60, "ax"
-	.incbin "baserom.gba", 0x0000ea60, 0x00000098
-	.section .rom.0000eaf8, "ax"
-	.global Field_CheckConfiguredKeys
-	.type Field_CheckConfiguredKeys, %function
-	.thumb_func
-Field_CheckConfiguredKeys:
-	.incbin "baserom.gba", 0x0000eaf8, 0x000000a8
 	.section .rom.0000ebec, "ax"
 	.incbin "baserom.gba", 0x0000ebec, 0x00000b50
 	.section .rom.0000f752, "ax"
@@ -584,8 +576,6 @@ BattleLayout_HighlightPartyPanels:
 	.incbin "baserom.gba", 0x00022ae2, 0x000026fa
 	.section .rom.0002525c, "ax"
 	.incbin "baserom.gba", 0x0002525c, 0x00001c80
-	.section .rom.00027004, "ax"
-	.incbin "baserom.gba", 0x00027004, 0x000000c4
 	.section .rom.00027134, "ax"
 	.incbin "baserom.gba", 0x00027134, 0x0000003c
 	.section .rom.00027170, "ax"
@@ -1240,8 +1230,6 @@ ItemMenu_Close:
 	.thumb_func
 ItemMenu_RunOwnerSelection:
 	.incbin "baserom.gba", 0x0009a4d0, 0x000002d0
-	.section .rom.0009a7c8, "ax"
-	.incbin "baserom.gba", 0x0009a7c8, 0x00000338
 	.section .rom.0009ade6, "ax"
 	.incbin "baserom.gba", 0x0009ade6, 0x00000002
 	.section .rom.0009ade8, "ax"
@@ -1266,12 +1254,6 @@ ItemMenu_DrawItemDetails:
 	.incbin "baserom.gba", 0x0009bdc0, 0x000002e8
 	.section .rom.0009c260, "ax"
 	.incbin "baserom.gba", 0x0009c260, 0x000001a8
-	.section .rom.0009c4e8, "ax"
-	.global ItemMenu_DrawItemDetailPage
-	.type ItemMenu_DrawItemDetailPage, %function
-	.thumb_func
-ItemMenu_DrawItemDetailPage:
-	.incbin "baserom.gba", 0x0009c4e8, 0x000000b4
 	.section .rom.0009cb94, "ax"
 	.global Menu_ResolveSelectedAction
 	.type Menu_ResolveSelectedAction, %function
@@ -1284,8 +1266,6 @@ Menu_ResolveSelectedAction:
 	.thumb_func
 PsynergyMenu_SetupActionIcons:
 	.incbin "baserom.gba", 0x0009cfb4, 0x000002a8
-	.section .rom.0009d2ba, "ax"
-	.incbin "baserom.gba", 0x0009d2ba, 0x00000202
 	.section .rom.0009d4ec, "ax"
 	.incbin "baserom.gba", 0x0009d4ec, 0x000001ec
 	.section .rom.0009d9dc, "ax"
@@ -1762,7 +1742,9 @@ BattleFx_RunParticlePool:
 	.type BattleFx_RunTwelveMode, %function
 	.thumb_func
 BattleFx_RunTwelveMode:
-	.incbin "baserom.gba", 0x000c160c, 0x000011ec
+	.incbin "baserom.gba", 0x000c160c, 0x00000b98
+	.section .rom.000c24ec, "ax"
+	.incbin "baserom.gba", 0x000c24ec, 0x0000030c
 	.section .rom.000c27f8, "ax"
 	.global Unnamed_080cb7f8
 	.type Unnamed_080cb7f8, %function

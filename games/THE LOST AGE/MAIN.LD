@@ -488,6 +488,7 @@ SECTIONS
         "*/recon/tla/raw/080464dc.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08049a04.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08049a30.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/BATTLE/CLASSIFY_ENTRY_KIND.o"(.text)
         "*/recon/tla/raw/0804b8b8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804bba8.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804cb92.o"(.text .rodata .data .padding)

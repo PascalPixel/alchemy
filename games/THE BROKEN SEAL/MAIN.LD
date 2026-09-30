@@ -591,7 +591,7 @@ SECTIONS
         "*/recon/tbs/raw/08026080.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/UPDATE_SESSION_COUNTDOWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/MSG_SHOW_LOCALIZED_MESSAGE_AND_WAIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/BATTLE/CLASSIFY_ENTRY_KIND.o"(.text)
+        "*/games/COMMON/SRC/BATTLE/CLASSIFY_ENTRY_KIND.o"(.text)
         "*/recon/tbs/raw/080270aa.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/DRAW_PARTY_PANELS_WITH_EMPTY_LIST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_LOCALIZED_RESOURCE.o"(.text)

@@ -3,9 +3,9 @@
 	.global Func_0814ce20
 	.thumb_func
 Func_0814ce20:
-	push	{lr}
-	movs	r0, #1
-	bl	Func_08143a88
-	bl	Func_08143bb8
-	pop	{pc}
+	push {lr}
+	movs r0, #1
+	bl Func_08143a88
+	bl Func_08143bb8
+	pop {pc}
 	.2byte 0x0000

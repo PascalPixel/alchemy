@@ -3,19 +3,19 @@
 	.global Func_081a81f4
 	.thumb_func
 Func_081a81f4:
-	push	{lr}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	adds	r3, #128
-	adds	r4, r1, #0
-	ldr	r1, [r3, #0]
-	cmp	r1, #0
-	beq.n	.L_081a8210
-	movs	r3, #128
-	lsls	r3, r3, #3
-	adds	r2, r1, r3
-	adds	r3, r4, #0
-	bl	0x081a7a28
+	push {lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	adds r3, #128
+	adds r4, r1, #0
+	ldr r1, [r3]
+	cmp r1, #0
+	beq .L_081a8210
+	movs r3, #128
+	lsls r3, r3, #3
+	adds r2, r1, r3
+	adds r3, r4, #0
+	bl Func_081a7a28
 .L_081a8210:
-	pop	{pc}
+	pop {pc}
 	.2byte 0x0000

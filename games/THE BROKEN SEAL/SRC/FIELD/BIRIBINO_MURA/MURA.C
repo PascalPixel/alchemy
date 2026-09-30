@@ -778,8 +778,7 @@ void BiribinoMura_UpdateCornerSpawn(void)
         } else {
             struct SpawnCounter *cnt = &gCornerSpawnCounter;
             struct SpawnCounter zero;
-            /* FAKEMATCH: retain destination setup before the aggregate reset. */
-            do { zero.frames = 0; } while (0);
+            zero.frames = 0;
             *cnt = zero;
         }
     }

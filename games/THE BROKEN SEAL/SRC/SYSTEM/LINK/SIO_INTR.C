@@ -85,12 +85,8 @@ void SerialRuntime_RemoveIrqHandlers(void)
     s32 handler;
 
     work = (s16 *)((u32)&gSerialExchangeActive);
-    do {
-        do {
-        } while (0);
-        *work = 0;
-        Runtime_SetIrqHandler(7, 0, (InterruptHandler)(handler = 0));
-    } while (0);
+    *work = 0;
+    Runtime_SetIrqHandler(7, 0, (InterruptHandler)(handler = 0));
     handler = 6;
     Runtime_SetIrqHandler(handler, 0, 0);
 }

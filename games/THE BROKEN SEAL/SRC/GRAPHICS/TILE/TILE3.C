@@ -5,9 +5,8 @@
    block 49 and run there; the palette load is queued for the next frame.
 
    FAKEMATCH: the queued palette load is QueueIoWriteDelay-style inline code
-   with the odd constructs of SYSTEM/IO_WRITE_QUEUE.C (one-pass loops around
-   the IME read and around everything after the queue pointer, and the count
-   stored through an explicit u16 pointer). */
+   with the odd constructs of SYSTEM/IO_WRITE_QUEUE.C (a one-pass loop around
+   the IME read, and the count stored through an explicit u16 pointer). */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
@@ -84,20 +83,18 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
 
         q = &gIoWriteQueue;
         do {
-            do {
-                ime = &REG_IME;
-                saved = *ime;
-            } while (0);
-            *ime = (u16)ime;
-            count = q->count;
-            if (count <= 31) {
-                u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
-                *(u16 *)&q->count = count + 1;
-                *destination++ = (u32)data;
-                *destination++ = palette;
-                *destination = 0x84000040;
-            }
-            *ime = saved;
+            ime = &REG_IME;
+            saved = *ime;
         } while (0);
+        *ime = (u16)ime;
+        count = q->count;
+        if (count <= 31) {
+            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
+            *(u16 *)&q->count = count + 1;
+            *destination++ = (u32)data;
+            *destination++ = palette;
+            *destination = 0x84000040;
+        }
+        *ime = saved;
     }
 }

@@ -322,11 +322,9 @@ void Scene_RunKorimaMagariSequence(void)
     KorimaMagari_ShakeChance = 0;
     ((void (*)())Engine_TaskAddCallback)((s32)State_CopyPresetA0d0WithOffsetB0, 0xc80);
     Engine_TaskWait(1);
-    /* FAKEMATCH: the two do/while (0) wraps keep the flag and the counter
+    Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
+    /* FAKEMATCH: the do/while (0) wrap keeps the flag and the counter
      * address in r6 and r5. */
-    do {
-        Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
-    } while (0);
     do {
         Engine_AudioPlayCue(231);
     } while (0);

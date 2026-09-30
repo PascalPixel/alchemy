@@ -16691,11 +16691,11 @@ msgctxt "message"
 msgid "04170"
 msgstr "Total number available"
 
-msgctxt "message"
+msgctxt "MsgPanelStatLabel"
 msgid "04171"
 msgstr "Attack"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "04172"
 msgstr "Defense"
 
@@ -16707,7 +16707,7 @@ msgctxt "message"
 msgid "04174"
 msgstr "Luck"
 
-msgctxt "message"
+msgctxt "MsgAgilityLabel"
 msgid "04175"
 msgstr "Agility"
 

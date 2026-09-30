@@ -16679,11 +16679,11 @@ msgctxt "message"
 msgid "04167"
 msgstr "もってるかず"
 
-msgctxt "message"
+msgctxt "MsgPanelStatLabel"
 msgid "04168"
 msgstr "こうげき"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "04169"
 msgstr "ぼうぎょ"
 
@@ -16695,7 +16695,7 @@ msgctxt "message"
 msgid "04171"
 msgstr "うんのよさ"
 
-msgctxt "message"
+msgctxt "MsgAgilityLabel"
 msgid "04172"
 msgstr "すばやさ"
 

@@ -531,10 +531,10 @@ Func_08016180:
 Func_08016348:
 	.incbin "baserom.gba", 0x00016374, 0x00000464
 	.section .rom.000167d8, "ax"
-	.global Func_080167ac
-	.type Func_080167ac, %function
+	.global SerialRuntime_RemoveIrqHandlers
+	.type SerialRuntime_RemoveIrqHandlers, %function
 	.thumb_func
-Func_080167ac:
+SerialRuntime_RemoveIrqHandlers:
 	.incbin "baserom.gba", 0x000167d8, 0x0000002c
 	.section .rom.00016804, "ax"
 	.global Func_080167d8

@@ -536,10 +536,10 @@ Func_08016180:
 Func_08016348:
 	.incbin "baserom.gba", 0x00016348, 0x00000464
 	.section .rom.000167ac, "ax"
-	.global Func_080167ac
-	.type Func_080167ac, %function
+	.global SerialRuntime_RemoveIrqHandlers
+	.type SerialRuntime_RemoveIrqHandlers, %function
 	.thumb_func
-Func_080167ac:
+SerialRuntime_RemoveIrqHandlers:
 	.incbin "baserom.gba", 0x000167ac, 0x0000002c
 	.section .rom.000167d8, "ax"
 	.global Func_080167d8
@@ -2631,7 +2631,7 @@ Object_LinkedMotionScript:
 	.section .rom.000f80c4, "ax"
 	.incbin "baserom.gba", 0x000f80c4, 0x00000058
 	.section .rom.000f8170, "ax"
-	.incbin "baserom.gba", 0x000f8170, 0x00000678
+	.incbin "baserom.gba", 0x000f8170, 0x00000540
 	.section .rom.000f8830, "ax"
 	.global UiIcon_PrepareObject
 	.type UiIcon_PrepareObject, %function
@@ -2701,7 +2701,12 @@ Func_080fe274:
 	.type Func_08100e7c, %function
 	.thumb_func
 Func_08100e7c:
-	.incbin "baserom.gba", 0x00100e84, 0x00003efc
+	.incbin "baserom.gba", 0x00100e84, 0x00003cac
+	.global UiIcon_CreateStatChangeArrow
+	.type UiIcon_CreateStatChangeArrow, %function
+	.thumb_func
+UiIcon_CreateStatChangeArrow:
+	.incbin "baserom.gba", 0x00104b30, 0x00000250
 	.section .rom.00104d80, "ax"
 	.global Menu_UpdateEntryObjectTransforms
 	.type Menu_UpdateEntryObjectTransforms, %function

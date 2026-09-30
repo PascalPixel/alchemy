@@ -42,7 +42,7 @@ Func_08016180:
 .L_080161cc:
 	.4byte 0x04000208
 .L_080161d0:
-	.4byte Func_08016694
+	.4byte SerialRuntime_HandleTransferInterrupt
 .L_080161d4:
 	.4byte 0x04000200
 .L_080161d8:

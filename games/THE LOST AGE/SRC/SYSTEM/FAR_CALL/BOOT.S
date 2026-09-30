@@ -352,7 +352,7 @@ Func_08000368:
 	.global Func_08000370
 	.thumb_func
 Func_08000370:
-	overlay_veneer Func_080167ac
+	overlay_veneer SerialRuntime_RemoveIrqHandlers
 	.global Sound_LoadPresetParametersFar
 	.thumb_func
 Sound_LoadPresetParametersFar:

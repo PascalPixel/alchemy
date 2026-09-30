@@ -6,17 +6,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/TABLES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/GET_PLACEMENTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/STEPS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/GET_EVENTS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/DIALOGUE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/GARDEN_EVENT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/GATE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/SCENE_INIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ENTRY_STATE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ARREST.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ORBITING.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/NIWA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/IMPORT.o"(.text)
         "*/resource_38e_overlay.o"(.rodata)
     }

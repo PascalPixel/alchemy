@@ -25,11 +25,11 @@ Func_080c8288:
 	.global Func_080c8290
 	.thumb_func
 Func_080c8290:
-	overlay_veneer Func_080d2c04
+	overlay_veneer Party_SetFields1eeAnd1f0
 	.global Func_080c8298
 	.thumb_func
 Func_080c8298:
-	overlay_veneer Func_080d2c1c
+	overlay_veneer Party_SetFields1f2And1f4
 	.global Func_080c82a0
 	.thumb_func
 Func_080c82a0:

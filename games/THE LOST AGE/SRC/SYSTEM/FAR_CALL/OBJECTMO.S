@@ -182,7 +182,7 @@ Func_080c8218:
 	.global Func_080c8220
 	.thumb_func
 Func_080c8220:
-	overlay_veneer Func_080d38d4
+	overlay_veneer ObjectVisual_CopyAttributes
 	.global Func_080c8228
 	.thumb_func
 Func_080c8228:

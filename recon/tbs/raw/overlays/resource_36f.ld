@@ -6,11 +6,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/ENTRY.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/TABLES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/RUN.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/SPRITES.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/REVEAL.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/BACKGROUND.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/TITLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/IMPORT.o"(.text)
         "*/resource_36f_overlay.o"(.rodata)
     }

@@ -47,7 +47,7 @@ Func_080d69f4:
 	movs r0, #0
 	adds r1, r6, #0
 	adds r2, r7, #0
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	movs r3, #120
 	strh r3, [r5, #28]
 	mov r3, r8

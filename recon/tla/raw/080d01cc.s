@@ -219,7 +219,7 @@ Func_080d01cc:
 	adds r3, r5, r2
 	strh r1, [r3]
 	movs r0, #15
-	bl Func_080d0b7c
+	bl DisplayTransition_FillTilemapAndSolidTile
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #144
@@ -274,7 +274,7 @@ Func_080d01cc:
 	strb r2, [r3]
 	b .L_080d0506
 .L_080d03fc:
-	.4byte Func_080d0a28
+	.4byte DisplayTransition_UpdateFrame
 .L_080d0400:
 	.4byte Data_020038e0
 .L_080d0404:

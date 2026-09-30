@@ -8,7 +8,7 @@
 	.global Func_080381e0
 	.thumb_func
 Func_080381e0:
-	overlay_veneer Func_0803d2f0
+	overlay_veneer Localization_LookupEntryId
 	.global Func_080381e8
 	.thumb_func
 Func_080381e8:

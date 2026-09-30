@@ -26,7 +26,7 @@ Func_081969ac:
 	str r2, [sp, #0]
 	lsls r3, r3, #16
 	str r3, [r5, #8]
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r3, [r5]
 	ldr r2, [sp, #0]
 	strh r3, [r6]

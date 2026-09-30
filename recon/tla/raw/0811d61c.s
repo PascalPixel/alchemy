@@ -64,9 +64,9 @@ Func_0811d61c:
 	beq .L_0811d6b8
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl Func_0811d414
+	bl BattlePresentation_AppendLinkedActions
 	adds r5, r0, #0
-	bl Func_081192d0
+	bl BattlePres_WaitSync
 	cmp r0, #0
 	blt .L_0811d6b2
 	adds r6, r6, r5
@@ -79,7 +79,7 @@ Func_0811d61c:
 .L_0811d6b8:
 	lsls r0, r6, #4
 	adds r0, r7, r0
-	bl Func_0811cfd0
+	bl BattlePres_BuildOpponentEntries
 	adds r6, r6, r0
 .L_0811d6c2:
 	adds r0, r7, #0

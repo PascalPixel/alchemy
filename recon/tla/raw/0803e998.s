@@ -31,7 +31,7 @@ Func_0803e998:
 	movs r0, #111
 	bl Audio_PlayCue
 	adds r0, r5, #0
-	bl Func_0803ebdc
+	bl Menu_StepRight
 	b .L_0803e9ee
 .L_0803e9d8:
 	ldr r3, [r6, #12]
@@ -42,7 +42,7 @@ Func_0803e998:
 	movs r0, #111
 	bl Audio_PlayCue
 	adds r0, r5, #0
-	bl Func_0803ed98
+	bl Menu_StepLeft
 .L_0803e9ee:
 	ldr r3, [r6, #4]
 	movs r2, #1

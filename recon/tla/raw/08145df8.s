@@ -286,7 +286,7 @@ Func_08145df8:
 	ldr r0, [sp, #56]
 	adds r1, r0, #0
 	adds r1, #12
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, [r6, #8]
 	add r5, sp, #112
 	str r3, [r5]

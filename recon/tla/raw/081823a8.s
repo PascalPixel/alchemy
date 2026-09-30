@@ -308,7 +308,7 @@ Func_081823a8:
 	bl Func_08014de4
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #20]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	mov r3, r10
 	adds r3, #4
 	cmp r9, r3

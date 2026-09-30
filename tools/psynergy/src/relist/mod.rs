@@ -22,7 +22,7 @@ pub mod flow;
 pub mod render;
 pub mod scaffold;
 
-pub use flow::{partition, trace, walk, Area, Entries, Function, Image, Segment};
+pub use flow::{partition, trace, walk, Area, Entries, Function, Image, Part, Segment};
 
 use crate::decode::Kind;
 use scaffold::{Layout, Scaffold};
@@ -118,6 +118,8 @@ pub fn placeholder(name: &str) -> bool {
 pub enum RegionKind {
     /// A listing: regenerated, or kept as written (hand-annotated pieces).
     Listing { regenerate: bool },
+    /// A listing of data words, regenerated: it holds no code.
+    Words,
     /// Included data: a section of the incbin scaffold with this index.
     Incbin { scaffold: usize },
     /// Reserved RAM: a section of the space scaffold with this index.
@@ -153,11 +155,14 @@ pub fn addressable(value: u32, rom_end: u32) -> bool {
         || (0x0800_0000..rom_end).contains(&value)
 }
 
-fn relisted(kind: &RegionKind) -> bool {
-    matches!(
-        kind,
-        RegionKind::Listing { regenerate: true } | RegionKind::Incbin { .. }
-    )
+/// What a region adds to an area, if it is relisted at all.
+fn part(kind: &RegionKind) -> Option<Part> {
+    match kind {
+        RegionKind::Listing { regenerate: true } => Some(Part::Code),
+        RegionKind::Words => Some(Part::Words),
+        RegionKind::Incbin { .. } => Some(Part::Included),
+        _ => None,
+    }
 }
 
 /// The areas of `regions`: each maximal run of side-by-side regenerated
@@ -165,21 +170,20 @@ fn relisted(kind: &RegionKind) -> bool {
 pub fn areas(regions: &[Region]) -> Vec<(Area, Vec<usize>)> {
     let mut areas: Vec<(Area, Vec<usize>)> = Vec::new();
     for (index, region) in regions.iter().enumerate() {
-        if !relisted(&region.kind) {
+        let Some(part) = part(&region.kind) else {
             continue;
-        }
-        let listing = region.kind == RegionKind::Listing { regenerate: true };
+        };
         match areas.last_mut() {
             Some((area, members))
                 if area.end() == region.start && members.last() == Some(&(index - 1)) =>
             {
-                area.parts.push((region.end, listing));
+                area.parts.push((region.end, part));
                 members.push(index);
             }
             _ => areas.push((
                 Area {
                     start: region.start,
-                    parts: vec![(region.end, listing)],
+                    parts: vec![(region.end, part)],
                 },
                 vec![index],
             )),
@@ -228,13 +232,13 @@ impl Plan {
 /// jump.
 pub fn plan(image: Image, regions: &[Region], names: &[Name]) -> Result<Plan, String> {
     let runs = areas(regions);
-    let area_of = |address: u32| -> Option<(usize, bool)> {
+    let area_of = |address: u32| -> Option<(usize, Part)> {
         let index = runs.partition_point(|(area, _)| area.start <= address);
         let index = index.checked_sub(1)?;
         let area = &runs[index].0;
         (address < area.end()).then(|| (index, area.part(address).2))
     };
-    let in_listing = |address: u32| area_of(address).is_some_and(|(_, listing)| listing);
+    let in_listing = |address: u32| area_of(address).is_some_and(|(_, part)| part == Part::Code);
     let mut firm: BTreeSet<u32> = runs
         .iter()
         .filter_map(|(area, _)| area.opening(image))
@@ -271,6 +275,26 @@ pub fn plan(image: Image, regions: &[Region], names: &[Name]) -> Result<Plan, St
             }
         }
     }
+    // Thumb pointers in listings of data words, into listings of code, at
+    // a word boundary where GCC begins a function; a pointer off one names
+    // a place inside a function, such as where a script resumes.
+    let mut tabled = BTreeSet::new();
+    for (area, _) in &runs {
+        let mut from = area.start;
+        for &(end, part) in &area.parts {
+            if part == Part::Words {
+                let mut at = from.next_multiple_of(4);
+                while at + 4 <= end {
+                    let value = image.word(at);
+                    if value & 3 == 1 && in_listing(value & !1) {
+                        tabled.insert(value & !1);
+                    }
+                    at += 4;
+                }
+            }
+            from = end;
+        }
+    }
     let mut entries = Entries {
         starts: firm.union(&weak).copied().collect(),
         far: BTreeSet::new(),
@@ -297,14 +321,14 @@ pub fn plan(image: Image, regions: &[Region], names: &[Name]) -> Result<Plan, St
         let mut inner = BTreeSet::new();
         for (run, function) in walks.values() {
             for &target in &function.calls {
-                let Some((target_run, listing)) = area_of(target) else {
+                let Some((target_run, part)) = area_of(target) else {
                     continue;
                 };
                 if firm.contains(&target) || entries.far.contains(&target) {
                     continue;
                 }
                 let own = function.start < target && target < function.end;
-                let unaligned = target % 4 != 0 && listing && target_run == *run;
+                let unaligned = target % 4 != 0 && part == Part::Code && target_run == *run;
                 if own || unaligned {
                     entries.far.insert(target);
                     entries.starts.remove(&target);
@@ -360,6 +384,23 @@ pub fn plan(image: Image, regions: &[Region], names: &[Name]) -> Result<Plan, St
                 }
             }
         }
+        // A listing of data words points at functions as pools do.
+        for &target in &tabled {
+            if entries.starts.contains(&target) || entries.far.contains(&target) {
+                continue;
+            }
+            if refused.contains(&target) || inside_function(target) {
+                inner.insert(target);
+                continue;
+            }
+            let run_end = runs[area_of(target).unwrap().0].0.end();
+            if walk(image, target, run_end, &entries)
+                .is_some_and(|candidate| flow::unnamed_function(image, &candidate))
+            {
+                entries.starts.insert(target);
+                changed = true;
+            }
+        }
         if !changed {
             let planned = runs
                 .iter()
@@ -390,12 +431,29 @@ pub struct Input<'a> {
     pub external: BTreeSet<String>,
     pub incbin: Vec<Scaffold>,
     pub space: Vec<Scaffold>,
+    /// Where cartridge ROM ends: words below it point into ROM.
+    pub rom_end: u32,
+    /// Another image's placed regions in address order, whose names this
+    /// image has as absolute ones: the main image, for an overlay.
+    pub foreign: Vec<Region>,
+    /// The address a new placeholder spells for the image's first byte.
+    pub spell: u32,
+    pub pieces: Pieces,
 }
 
-/// One entry of the linker script: a listing object, or a scaffold section.
+/// How new pieces are written: each its own listing, or each its own
+/// section of one listing object.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Pieces {
+    Files,
+    Sections { object: String },
+}
+
+/// One entry of the linker script: a listing object's section, or a
+/// scaffold section.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Entry {
-    Listing(String),
+    Listing { object: String, section: String },
     Incbin { scaffold: usize, section: String },
 }
 
@@ -403,6 +461,8 @@ pub enum Entry {
 pub struct Output {
     /// Each new listing piece by its first address, as source text.
     pub pieces: BTreeMap<u32, String>,
+    /// The pieces that hold only data words.
+    pub words: BTreeSet<u32>,
     pub incbin: Vec<Scaffold>,
     pub space: Vec<Scaffold>,
     /// Per area, the linker-script entries it had and the ones it has now.
@@ -412,11 +472,13 @@ pub struct Output {
     pub plan: Plan,
 }
 
-/// A piece: a function with the data that follows it, or leading data.
+/// A piece: a function with the data that follows it, leading data, or a
+/// listing of data words.
 struct Piece<'a> {
     start: u32,
     end: u32,
     functions: Vec<&'a Function>,
+    words: bool,
 }
 
 /// Names defined at addresses of pieces and scaffolds.
@@ -427,6 +489,10 @@ struct Registry {
     /// Placeholders of listings that nothing needs yet, by address.
     dormant: BTreeMap<u32, Vec<(String, bool)>>,
     taken: BTreeSet<String>,
+    /// What an address less this spells in a new placeholder.
+    shift: u32,
+    /// Names the script or another image gives a value.
+    reserved: BTreeSet<String>,
 }
 
 impl Registry {
@@ -451,9 +517,19 @@ impl Registry {
             .get(&address)
             .and_then(|names| names.iter().find(fits))
             .cloned();
-        let (name, is_thumb) = revived.unwrap_or_else(|| match thumb {
-            Some(false) => (format!("Data_{address:08x}"), false),
-            _ => (format!("Func_{address:08x}"), true),
+        let spell = |at: u32| match thumb {
+            Some(false) => (format!("Data_{at:08x}"), false),
+            _ => (format!("Func_{at:08x}"), true),
+        };
+        let (name, is_thumb) = revived.unwrap_or_else(|| {
+            // A spelling a name of another image has would hide that name:
+            // spell the address itself instead.
+            let spelled = spell(address - self.shift);
+            if self.reserved.contains(&spelled.0) {
+                spell(address)
+            } else {
+                spelled
+            }
         });
         self.define(address, name.clone(), is_thumb);
         name
@@ -491,12 +567,21 @@ impl World<'_> {
     /// The nearest name at or before `address` inside its region that a
     /// word can use: `(name, offset)` so that `name + offset` is `value`.
     fn nearest(&self, address: u32, value: u32) -> Option<String> {
-        let region = &self.input.regions[region_at(&self.input.regions, address)?];
         // A ROM copy of a section that runs elsewhere has only the script's
-        // names; any other region has only names of its own bytes.
-        let copy = region.object.starts_with("LOADADDR(");
+        // names, and another image's region only that image's; any other
+        // region has only names of its own bytes.
+        let (region, absolute) = match region_at(&self.input.regions, address) {
+            Some(index) => {
+                let region = &self.input.regions[index];
+                (region, region.object.starts_with("LOADADDR("))
+            }
+            None => (
+                &self.input.foreign[region_at(&self.input.foreign, address)?],
+                true,
+            ),
+        };
         for (&at, names) in self.by_address.range(region.start..=address).rev() {
-            for name in names.iter().filter(|name| name.absolute == copy) {
+            for name in names.iter().filter(|name| name.absolute == absolute) {
                 if !name.thumb {
                     return Some(expression(&name.name, value - at));
                 }
@@ -506,6 +591,14 @@ impl World<'_> {
             }
         }
         None
+    }
+    /// Whether a word can use `name` for `address`: a name the script or
+    /// another image gives a value serves only outside every region, or in
+    /// a ROM copy of a section that runs elsewhere.
+    fn usable(&self, name: &Name, address: u32) -> bool {
+        !name.absolute
+            || region_at(&self.input.regions, address)
+                .is_none_or(|index| self.input.regions[index].object.starts_with("LOADADDR("))
     }
     /// The nearest name for a branch into maintained code.
     fn nearest_code(&self, target: u32) -> Option<String> {
@@ -551,6 +644,15 @@ fn expression(name: &str, offset: u32) -> String {
         name.to_string()
     } else {
         format!("{name} + 0x{offset:x}")
+    }
+}
+
+/// The section of one listing object that holds the piece at `start`.
+pub fn section(start: u32, words: bool) -> String {
+    if words {
+        format!(".rodata.x{start:08x}")
+    } else {
+        format!(".text.x{start:08x}")
     }
 }
 
@@ -639,16 +741,19 @@ impl Resolver<'_, '_> {
             return self.registry.borrow_mut().name(value, Some(false));
         }
         if let Some(names) = world.by_address.get(&value) {
-            if let Some(name) = names.iter().find(|name| !name.thumb) {
+            if let Some(name) = names
+                .iter()
+                .find(|name| !name.thumb && world.usable(name, value))
+            {
                 return name.name.clone();
             }
         }
         if value & 1 == 1 {
-            if let Some(name) = world
-                .by_address
-                .get(&code)
-                .and_then(|names| names.iter().find(|name| name.thumb))
-            {
+            if let Some(name) = world.by_address.get(&code).and_then(|names| {
+                names
+                    .iter()
+                    .find(|name| name.thumb && world.usable(name, code))
+            }) {
                 return name.name.clone();
             }
         }
@@ -683,7 +788,6 @@ impl render::Refer for Resolver<'_, '_> {
 /// and scaffolds.
 pub fn relist(input: &Input) -> Result<Output, String> {
     let image = input.image;
-    let rom_end = image.base + image.bytes.len() as u32;
     let plan = plan(image, &input.regions, &input.names)?;
     // Pieces: each function with the listing data after it.
     let mut pieces: Vec<Piece> = Vec::new();
@@ -696,13 +800,14 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                         start: function.start,
                         end: function.end,
                         functions: vec![function],
+                        words: false,
                     });
                     open = true;
                 }
                 Segment::Data {
                     start,
                     end,
-                    listing: true,
+                    part: Part::Code,
                 } => match pieces.last_mut() {
                     Some(piece) if open && piece.end == *start => piece.end = *end,
                     _ => {
@@ -710,11 +815,28 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                             start: *start,
                             end: *end,
                             functions: Vec::new(),
+                            words: false,
                         });
                         open = true;
                     }
                 },
-                Segment::Data { listing: false, .. } => open = false,
+                Segment::Data {
+                    start,
+                    end,
+                    part: Part::Words,
+                } => {
+                    pieces.push(Piece {
+                        start: *start,
+                        end: *end,
+                        functions: Vec::new(),
+                        words: true,
+                    });
+                    open = false;
+                }
+                Segment::Data {
+                    part: Part::Included,
+                    ..
+                } => open = false,
             }
         }
     }
@@ -745,25 +867,36 @@ pub fn relist(input: &Input) -> Result<Output, String> {
     }
     // Listing bytes no flow reaches, read as words where they are aligned.
     let mut unreached: BTreeMap<u32, u32> = BTreeMap::new();
+    let mut words: BTreeMap<u32, u32> = BTreeMap::new();
     for planned in &plan.areas {
         for segment in &planned.segments {
-            if let Segment::Data {
-                start,
-                end,
-                listing: true,
-            } = segment
-            {
-                unreached.insert(*start, *end);
+            match segment {
+                Segment::Data {
+                    start,
+                    end,
+                    part: Part::Code,
+                } => {
+                    unreached.insert(*start, *end);
+                }
+                Segment::Data {
+                    start,
+                    end,
+                    part: Part::Words,
+                } => {
+                    words.insert(*start, *end);
+                }
+                _ => {}
             }
         }
     }
-    let data_word = |at: u32| {
+    let within = |runs: &BTreeMap<u32, u32>, at: u32| {
         at % 4 == 0
-            && unreached
+            && runs
                 .range(..=at)
                 .next_back()
                 .is_some_and(|(_, &end)| at + 4 <= end)
     };
+    let data_word = |at: u32| within(&unreached, at) || within(&words, at);
     // Unreached listing bytes are mostly ARM routines behind a Thumb entry;
     // the words their PC-relative loads read are pool words too.
     for (&start, &end) in &unreached {
@@ -781,6 +914,19 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                     pools.insert(target);
                     named.insert(image.word(target) & !1);
                 }
+            }
+            at += 4;
+        }
+    }
+    // A listing of data words is read as words, each one a pointer when it
+    // points into ROM or RAM.
+    for (&start, &end) in &words {
+        let mut at = start.next_multiple_of(4);
+        while at + 4 <= end {
+            let value = image.word(at);
+            if addressable(value, input.rom_end) {
+                pools.insert(at);
+                named.insert(value & !1);
             }
             at += 4;
         }
@@ -842,7 +988,7 @@ pub fn relist(input: &Input) -> Result<Output, String> {
             if let Segment::Data {
                 start,
                 end,
-                listing: false,
+                part: Part::Included,
             } = segment
             {
                 labelable.insert(*start, *end);
@@ -867,7 +1013,7 @@ pub fn relist(input: &Input) -> Result<Output, String> {
     let starts: BTreeSet<u32> = plan.functions().map(|function| function.start).collect();
     let world = World {
         input,
-        rom_end,
+        rom_end: input.rom_end,
         piece_at: pieces
             .iter()
             .enumerate()
@@ -884,7 +1030,16 @@ pub fn relist(input: &Input) -> Result<Output, String> {
     };
     // Names: those of scaffolds stay; a listing's stay when they are more
     // than a placeholder or something else refers to them.
-    let mut registry = Registry::default();
+    let mut registry = Registry {
+        shift: image.base - input.spell,
+        reserved: input
+            .names
+            .iter()
+            .filter(|name| name.absolute)
+            .map(|name| name.name.clone())
+            .collect(),
+        ..Registry::default()
+    };
     let in_pieces = |address: u32| world.piece(address).is_some();
     for name in input.names.iter().filter(|name| !name.absolute) {
         let keep = !in_pieces(name.address)
@@ -1014,7 +1169,7 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                         Segment::Data {
                             start,
                             end,
-                            listing: false,
+                            part: Part::Included,
                         } if *start >= region.start && *end <= region.end => Some((*start, *end)),
                         _ => None,
                     })
@@ -1090,7 +1245,10 @@ pub fn relist(input: &Input) -> Result<Output, String> {
                     scaffold,
                     section: region.section.clone(),
                 },
-                _ => Entry::Listing(region.object.clone()),
+                _ => Entry::Listing {
+                    object: region.object.clone(),
+                    section: region.section.clone(),
+                },
             }
         };
         let old: Vec<Entry> = planned.regions.iter().map(|&index| entry(index)).collect();
@@ -1098,7 +1256,16 @@ pub fn relist(input: &Input) -> Result<Output, String> {
         let mut cursor = planned.area.start;
         while cursor < planned.area.end() {
             if let Some(&index) = world.piece_at.get(&cursor) {
-                new.push(Entry::Listing(format!("{cursor:08x}")));
+                new.push(match &input.pieces {
+                    Pieces::Files => Entry::Listing {
+                        object: format!("{cursor:08x}"),
+                        section: ".text".into(),
+                    },
+                    Pieces::Sections { object } => Entry::Listing {
+                        object: object.clone(),
+                        section: section(cursor, pieces[index].words),
+                    },
+                });
                 cursor = pieces[index].end;
                 continue;
             }
@@ -1126,6 +1293,11 @@ pub fn relist(input: &Input) -> Result<Output, String> {
     notes.dedup();
     Ok(Output {
         pieces: texts,
+        words: pieces
+            .iter()
+            .filter(|piece| piece.words)
+            .map(|piece| piece.start)
+            .collect(),
         incbin,
         space,
         script,
@@ -1201,6 +1373,10 @@ mod tests {
             )
             .unwrap()],
             space: vec![scaffold::parse("\t.section .sym,\"aw\",%nobits\n\t.space 0x00000010\n").unwrap()],
+            rom_end: base + bytes.len() as u32,
+            foreign: Vec::new(),
+            spell: base,
+            pieces: Pieces::Files,
         };
         let output = relist(&input).unwrap();
         assert_eq!(
@@ -1230,19 +1406,135 @@ mod tests {
             scaffold: 0,
             section: section.into(),
         };
+        let listing = |object: &str| Entry::Listing {
+            object: object.into(),
+            section: ".text".into(),
+        };
         assert_eq!(
             output.script,
             vec![(
                 vec![
-                    Entry::Listing("08000000".into()),
-                    Entry::Listing("08000008".into()),
-                    Entry::Listing("08000010".into()),
+                    listing("08000000"),
+                    listing("08000008"),
+                    listing("08000010"),
                     incbin(".unidentified.08000014"),
                 ],
                 vec![
-                    Entry::Listing("08000000".into()),
-                    Entry::Listing("08000010".into()),
+                    listing("08000000"),
+                    listing("08000010"),
                     incbin(".unidentified.08000014"),
+                ],
+            )]
+        );
+    }
+
+    #[test]
+    fn an_overlay_listing_becomes_one_section_per_piece_with_its_data_words_named() {
+        let base = 0x0200_8000;
+        let mut bytes = halves(&[
+            0x4800, // ldr r0, [pc, #0]: the word at 0x04
+            0x4770, // bx lr
+        ]);
+        bytes.extend(0x0200_0010u32.to_le_bytes()); // 0x04: the main image's RAM
+        bytes.extend(halves(&[0x2001, 0x4770])); // 0x08: reached only from the table
+        bytes.extend(0x0200_8009u32.to_le_bytes()); // 0x0c: the table
+        bytes.extend(0x0200_800bu32.to_le_bytes()); // a place inside that function
+        bytes.extend(0x0800_0001u32.to_le_bytes()); // the main image's Thumb function
+        bytes.extend(0x0800_0004u32.to_le_bytes()); // inside it: no name reaches
+        bytes.extend(0x1234_5678u32.to_le_bytes());
+        let object = "resource_x_overlay";
+        let input = Input {
+            image: Image {
+                bytes: &bytes,
+                base,
+            },
+            regions: vec![
+                region(
+                    base,
+                    base + 0x0c,
+                    RegionKind::Listing { regenerate: true },
+                    object,
+                    ".text",
+                ),
+                region(
+                    base + 0x0c,
+                    base + 0x20,
+                    RegionKind::Words,
+                    object,
+                    ".rodata",
+                ),
+            ],
+            names: vec![
+                Name {
+                    name: "gMainBuffer".into(),
+                    address: 0x0200_0008,
+                    thumb: false,
+                    absolute: true,
+                },
+                Name {
+                    name: "Main_Function".into(),
+                    address: 0x0800_0000,
+                    thumb: true,
+                    absolute: true,
+                },
+            ],
+            external: BTreeSet::new(),
+            incbin: Vec::new(),
+            space: Vec::new(),
+            rom_end: 0x0900_0000,
+            foreign: vec![
+                region(
+                    0x0200_0000,
+                    0x0204_0000,
+                    RegionKind::Other,
+                    "sym_ewram",
+                    ".sym_ewram",
+                ),
+                region(0x0800_0000, 0x0800_0100, RegionKind::Other, "main", ".text"),
+            ],
+            spell: 0x0200_0000,
+            pieces: Pieces::Sections {
+                object: object.into(),
+            },
+        };
+        let output = relist(&input).unwrap();
+        assert_eq!(
+            output.pieces.keys().copied().collect::<Vec<_>>(),
+            vec![base, base + 8, base + 0x0c]
+        );
+        assert_eq!(output.words, BTreeSet::from([base + 0x0c]));
+        let first = &output.pieces[&base];
+        assert!(first.contains("\t.thumb_func\nFunc_02000000:\n"), "{first}");
+        assert!(first.contains("\t.4byte gMainBuffer + 0x8\n"), "{first}");
+        let second = &output.pieces[&(base + 8)];
+        assert!(
+            second.contains("\t.thumb_func\nFunc_02000008:\n"),
+            "{second}"
+        );
+        assert!(second.contains("Data_0200000a:\n\tbx lr\n"), "{second}");
+        let table = &output.pieces[&(base + 0x0c)];
+        assert!(
+            table.contains(
+                "\t.4byte Func_02000008\n\t.4byte Data_0200000a + 0x1\n\t.4byte Main_Function\n\t.4byte 0x08000004\n\t.4byte 0x12345678\n"
+            ),
+            "{table}"
+        );
+        assert_eq!(
+            output.notes,
+            vec!["02008018: word 08000004 in nothing placed names no place".to_string()]
+        );
+        let listing = |section: &str| Entry::Listing {
+            object: object.into(),
+            section: section.into(),
+        };
+        assert_eq!(
+            output.script,
+            vec![(
+                vec![listing(".text"), listing(".rodata")],
+                vec![
+                    listing(".text.x02008000"),
+                    listing(".text.x02008008"),
+                    listing(".rodata.x0200800c"),
                 ],
             )]
         );

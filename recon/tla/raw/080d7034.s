@@ -193,7 +193,7 @@ Func_080d7034:
 	mov r2, r8
 	str r0, [r7, #20]
 	movs r0, #0
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	ldr r3, .L_080d71c8
 	mov r1, r9
 	subs r3, r3, r1
@@ -236,7 +236,7 @@ Func_080d7034:
 	str r3, [r7, #20]
 	movs r0, #0
 	mov r1, r11
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	movs r3, #30
 	mov r2, r9
 	str r0, [r7, #16]

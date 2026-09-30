@@ -4,7 +4,7 @@
 	.thumb_func
 Func_080b039c:
 	push {lr}
-	bl Func_080b0378
+	bl BattleRandom16
 	movs r3, #100
 	muls r0, r3
 	lsrs r0, r0, #16

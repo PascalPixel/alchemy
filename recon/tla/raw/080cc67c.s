@@ -177,7 +177,7 @@ Func_080cc67c:
 .L_080cc7b4:
 	.4byte gPartyState
 .L_080cc7b8:
-	.4byte Data_02008000
+	.4byte gOverlayArea
 .L_080cc7bc:
 	.4byte 0xff100000
 .L_080cc7c0:

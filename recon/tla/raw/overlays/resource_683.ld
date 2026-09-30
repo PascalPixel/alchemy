@@ -5,9 +5,18 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_683/ENTRY.o"(.text)
-        "*/resource_683_overlay.o"(.text)
+        "*/resource_683_overlay.o"(.text.x02008038)
+        "*/resource_683_overlay.o"(.text.x02008040)
+        "*/resource_683_overlay.o"(.text.x02008044)
+        "*/resource_683_overlay.o"(.text.x0200804c)
+        "*/resource_683_overlay.o"(.text.x0200808c)
+        "*/resource_683_overlay.o"(.text.x02008098)
+        "*/resource_683_overlay.o"(.text.x020080a4)
+        "*/resource_683_overlay.o"(.text.x020080fc)
+        "*/resource_683_overlay.o"(.text.x02008148)
+        "*/resource_683_overlay.o"(.text.x0200814c)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_683/IMPORT.o"(.text)
-        "*/resource_683_overlay.o"(.rodata)
+        "*/resource_683_overlay.o"(.rodata.x02008188)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

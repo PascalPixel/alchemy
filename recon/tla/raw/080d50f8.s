@@ -148,14 +148,14 @@ Func_080d50f8:
 	lsls r2, r2, #16
 	mov r11, r1
 	str r2, [sp, #4]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	mov r2, r8
 	adds r2, #24
 	adds r5, r0, #0
 	lsls r2, r2, #16
 	ldrb r0, [r6]
 	mov r1, r11
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	cmp r5, r0
 	bgt .L_080d5228
 	b .L_080d53a0

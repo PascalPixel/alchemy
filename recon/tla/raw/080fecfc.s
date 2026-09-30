@@ -98,7 +98,7 @@ Func_080fecfc:
 	add r5, r8
 .L_080feda6:
 	ldrh r0, [r5]
-	bl Func_080ad110
+	bl Party_RemoveActiveOwnerFar
 	mov r2, r10
 	ldrb r3, [r2]
 	adds r6, #1

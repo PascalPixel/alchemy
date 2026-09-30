@@ -20,7 +20,7 @@ Func_0811c2b4:
 	bl Func_0811bd10
 	mov r1, r8
 	adds r0, r5, #0
-	bl Func_08015778
+	bl Render_ProjectPoint
 	ldr r1, [r6, #12]
 	ldr r6, .L_0811c310
 	mov lr, r6

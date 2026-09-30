@@ -6,42 +6,159 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Func_02000960
+	.thumb_func
+Func_02000960:
 	overlay_veneer Func_080003c8
+	.global Func_02000968
+	.thumb_func
+Func_02000968:
 	overlay_veneer Func_080003d0
+	.global Func_02000970
+	.thumb_func
+Func_02000970:
 	overlay_veneer Func_080003d8
+	.global ObjectDispatch_SetSingleChildField26
+	.thumb_func
+ObjectDispatch_SetSingleChildField26:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Func_02000980
+	.thumb_func
+Func_02000980:
 	overlay_veneer UiText_DrawQuantity
+	.global Func_02000988
+	.thumb_func
+Func_02000988:
 	overlay_veneer Item_Get
+	.global PartyInventory_FindOwner
+	.thumb_func
+PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
+	.global Party_AdjustSixDigitCounterA
+	.thumb_func
+Party_AdjustSixDigitCounterA:
 	overlay_veneer Party_AdjustSixDigitCounterAFar
+	.global Func_020009a0
+	.thumb_func
+Func_020009a0:
 	overlay_veneer Func_080ad2f0
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
+	.global Func_020009b0
+	.thumb_func
+Func_020009b0:
 	overlay_veneer Func_080c8018
+	.global Func_020009b8
+	.thumb_func
+Func_020009b8:
 	overlay_veneer Func_080c8020
+	.global PartyInventory_GiveItem
+	.thumb_func
+PartyInventory_GiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
+	.global Inventory_PromptAndSetObjectMode
+	.thumb_func
+Inventory_PromptAndSetObjectMode:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetSpeedParameters
+	.thumb_func
+ObjectMotion_SetSpeedParameters:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global ObjectMotion_ResetAndSetPosition
+	.thumb_func
+ObjectMotion_ResetAndSetPosition:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global ObjectMotion_ResetAndSetPositionInMode2
+	.thumb_func
+ObjectMotion_ResetAndSetPositionInMode2:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Func_020009f8
+	.thumb_func
+Func_020009f8:
 	overlay_veneer Func_080c80f8
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global ObjectMotion_SetVariantCallback
+	.thumb_func
+ObjectMotion_SetVariantCallback:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	.global Func_02000a10
+	.thumb_func
+Func_02000a10:
 	overlay_veneer Func_080c8158
+	.global Func_02000a18
+	.thumb_func
+Func_02000a18:
 	overlay_veneer Func_080c8180
+	.global Func_02000a20
+	.thumb_func
+Func_02000a20:
 	overlay_veneer Func_080c8188
+	.global Func_02000a28
+	.thumb_func
+Func_02000a28:
 	overlay_veneer Func_080c81a0
+	.global Func_02000a30
+	.thumb_func
+Func_02000a30:
 	overlay_veneer Func_080c81d0
+	.global Func_02000a38
+	.thumb_func
+Func_02000a38:
 	overlay_veneer Func_080c8200
+	.global Func_02000a40
+	.thumb_func
+Func_02000a40:
 	overlay_veneer Func_080c83e0
+	.global Func_02000a48
+	.thumb_func
+Func_02000a48:
 	overlay_veneer Func_080c8480
+	.global Func_02000a50
+	.thumb_func
+Func_02000a50:
 	overlay_veneer Func_080c84e0
+	.global Func_02000a58
+	.thumb_func
+Func_02000a58:
 	overlay_veneer Func_080c8778
+	.global Func_02000a60
+	.thumb_func
+Func_02000a60:
 	overlay_veneer Func_080c87b0
+	.global Func_02000a68
+	.thumb_func
+Func_02000a68:
 	overlay_veneer Func_08108008
+	.global Func_02000a70
+	.thumb_func
+Func_02000a70:
 	overlay_veneer Func_08108010
+	.global Func_02000a78
+	.thumb_func
+Func_02000a78:
 	overlay_veneer Func_08108018
+	.global Func_02000a80
+	.thumb_func
+Func_02000a80:
 	overlay_veneer Func_08108020
+	.global Func_02000a88
+	.thumb_func
+Func_02000a88:
 	overlay_veneer Func_08108098
+	.global Func_02000a90
+	.thumb_func
+Func_02000a90:
 	overlay_veneer Func_081080a0

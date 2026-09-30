@@ -22,4 +22,4 @@ Func_0802a52c:
 .L_0802a54a:
 	pop {pc}
 .L_0802a54c:
-	.4byte Data_080208a8
+	.4byte Runtime_ByteRemapTable

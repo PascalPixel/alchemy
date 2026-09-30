@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803ebdc
+	.global Menu_StepRight
 	.thumb_func
-Func_0803ebdc:
+Menu_StepRight:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

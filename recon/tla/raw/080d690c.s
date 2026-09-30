@@ -66,7 +66,7 @@ Func_080d690c:
 	str r2, [r7, #20]
 	str r1, [r7, #12]
 	str r4, [sp, #0]
-	bl Func_080201c0
+	bl Map_GetTerrainHeightFar
 	ldr r2, .L_080d69d4
 	adds r3, r5, #0
 	ands r3, r2

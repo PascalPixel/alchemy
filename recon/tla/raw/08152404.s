@@ -30,7 +30,7 @@ Func_08152404:
 	mov r11, r1
 .L_08152436:
 	mov r0, r9
-	bl Func_08020040
+	bl GetBattleEffectObject
 	str r0, [r5, r7]
 	cmp r0, #0
 	beq .L_0815245a

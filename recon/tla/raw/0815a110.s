@@ -784,7 +784,7 @@ BattlePres_RunBurstScene:
 	bl Func_08014de4
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #20]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	movs r1, #3
 	movs r0, #104
 	bl Func_081963ec

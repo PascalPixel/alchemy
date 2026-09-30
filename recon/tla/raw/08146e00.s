@@ -192,7 +192,7 @@ Func_08146e00:
 	bl Func_08014de4
 	ldr r0, [sp, #92]
 	ldr r1, [sp, #40]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r5, [sp, #84]
 	cmp r5, #16
 	bne .L_08146f92

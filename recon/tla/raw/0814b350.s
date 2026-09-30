@@ -183,7 +183,7 @@ Func_0814b350:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	mov r3, r9
 	subs r3, #30
 	cmp r3, #39
@@ -500,7 +500,7 @@ Func_0814b350:
 	adds r3, #12
 	adds r1, r3, #0
 	str r3, [sp, #28]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r5, [sp, #72]
 	ldr r3, [r5, #20]
 	lsls r3, r3, #3
@@ -576,7 +576,7 @@ Func_0814b350:
 	bl Func_08014de4
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #28]
-	bl Func_080156e8
+	bl Graphics_PrepareTransferInIwramWork
 	ldr r3, [r5, #8]
 	mov r1, r11
 	str r3, [r1]

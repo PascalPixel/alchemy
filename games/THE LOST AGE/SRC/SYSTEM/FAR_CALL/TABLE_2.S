@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08020040
+	.global GetBattleEffectObject
 	.thumb_func
-Func_08020040:
+GetBattleEffectObject:
 	overlay_veneer Func_08022d40
 	.global ResourceObject_ReleaseFar
 	.thumb_func

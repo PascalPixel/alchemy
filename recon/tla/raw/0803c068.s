@@ -29,7 +29,7 @@ Func_0803c068:
 	ldrh r3, [r3]
 	mov r11, r0
 	mov r8, r3
-	bl Func_08038eb0
+	bl RenderOutput_AcquireFree
 	adds r7, r0, #0
 	movs r0, #0
 	cmp r7, #0

@@ -287,7 +287,7 @@ Func_0815a9e4:
 	movs r0, #199
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Func_08020040
+	bl GetBattleEffectObject
 	ldr r1, [sp, #48]
 	str r0, [r5, r1]
 	cmp r0, #0

@@ -97,7 +97,7 @@ Func_0803bde4:
 	bne .L_0803bea0
 	b .L_0803c058
 .L_0803bea0:
-	bl Func_08038eb0
+	bl RenderOutput_AcquireFree
 	adds r5, r0, #0
 	movs r0, #0
 	cmp r5, #0

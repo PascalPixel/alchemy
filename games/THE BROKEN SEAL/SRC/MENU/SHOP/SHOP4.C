@@ -5,11 +5,11 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
 extern u8 gKeysRepeat[];
-
 s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_FindEquippedFar(s32, u8);
 s32 Party_AdjustSixDigitCounterAFar(s32);
@@ -17,6 +17,44 @@ s32 Party_AdjustSixDigitCounterBFar(s16);
 void UiMessage_ShowAndRestoreState(s32 message);
 void Audio_PlayCue(s32);
 extern char MsgHereYouGo;
+s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);
+s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
+void Inventory_EquipFar(s32 unit_id, s32 slot);
+void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);
+void UiMessage_ShowAndWait(s32 message);
+s32 UiMessage_ShowChoice(s32 value);
+void Shop_DrawUnitGrid(s32 value, s32 unit_id);
+void Audio_PlayCue(s32 cue);
+void UiWork_FinalizePendingCoreFar(void);
+s32 UiText_OpenMessageWindowFar(s32 a, s32 b, s32 c, s32 d);
+extern char MsgEquipNowPrompt;
+extern char MsgLookBolder;
+extern u8 MsgBecameCursed[];
+void Shop_SellItem(s32, s32, s32);
+void UiWork_FinalizeFar(s32, s32);
+s32 Inventory_CountFar(s32);
+void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);
+void Menu_ReleaseEntryObjectsFar(void);
+s32 Shop_SelSell(s32);
+void Shop_SelRepair(s32);
+void UiMessage_ShowAndWait(s32);
+extern u8 MsgItemPlainName;
+extern u8 MsgSellAnythingElse;
+extern u8 MsgNoItems;
+void UiWindow_Clear(s32 window);
+s32 Inventory_CountFar(s32 unit_id);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
+s32 Shop_GetSelectionState(s32, s32);
+s32 Shop_SelectQuantity(s32, s32, s32);
+void UiIcon_PrepareObjectFar(void *);
+extern char MsgHowManyToSell;
+
+extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
+extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];
+extern u8 MsgChangedMind[], MsgSold[], MsgKeepIt[];
+struct ItemDefinition *Item_Get(s32 item);
+void Func_080772b0(s32 unit_id, s32 slot);
 
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 {
@@ -44,22 +82,6 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
         Shop_SellOld(unit_id, replaced_slot);
     }
 }
-
-s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);
-s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
-void Inventory_EquipFar(s32 unit_id, s32 slot);
-void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);
-void UiMessage_ShowAndWait(s32 message);
-s32 UiMessage_ShowChoice(s32 value);
-void Shop_DrawUnitGrid(s32 value, s32 unit_id);
-void Audio_PlayCue(s32 cue);
-void UiWork_FinalizePendingCoreFar(void);
-s32 UiText_OpenMessageWindowFar(s32 a, s32 b, s32 c, s32 d);
-
-extern struct ShopRuntime *gMenuWork;
-extern char MsgEquipNowPrompt;
-extern char MsgLookBolder;
-extern u8 MsgBecameCursed[];
 
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
@@ -107,8 +129,6 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     return 1;
 }
 
-void Shop_SellItem(s32, s32, s32);
-
 s32 Shop_SellOld(s32 unit_id, s32 slot)
 {
     struct BattleUnit *unit;
@@ -155,13 +175,6 @@ s32 Shop_SalePrice(s32 item_id)
 #else
 #define BASE_W 12
 #endif
-
-void UiWork_FinalizeFar(s32, s32);
-s32 Inventory_CountFar(s32);
-void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);
-void Menu_ReleaseEntryObjectsFar(void);
-s32 Shop_SelSell(s32);
-void Shop_SelRepair(s32);
 
 /*
  * Keep an actor-selection menu active while dispatching the chosen actor into
@@ -239,11 +252,6 @@ s32 Shop_PickUnit(void)
         WaitFrames(1);
     }
 }
-
-void UiMessage_ShowAndWait(s32);
-
-extern u8 MsgItemPlainName;
-extern u8 MsgSellAnythingElse;
 
 /*
  * Sell flow reached from Shop_PickUnit when the shop's party action
@@ -357,13 +365,6 @@ done:
     return result;
 }
 
-extern u8 MsgNoItems;
-
-void UiWindow_Clear(s32 window);
-s32 Inventory_CountFar(s32 unit_id);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
-u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
-
 void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 {
     u8 *unit;
@@ -416,12 +417,6 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 #define EFFECT_X 0x80
 #endif
 
-s32 Shop_GetSelectionState(s32, s32);
-void UiMessage_ShowAndWait(s32);
-s32 Shop_SelectQuantity(s32, s32, s32);
-void UiIcon_PrepareObjectFar(void *);
-extern char MsgHowManyToSell;
-
 s32 Shop_SelSellNum(s32 unit_id, s32 slot)
 {
     s32 result;
@@ -454,6 +449,81 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
         WaitFrames(1);
         UiIcon_PrepareObjectFar(shop->cursor.anchor);
         Shop_PlaceCursor(NULL, saved_x, saved_y);
+    }
+    return result;
+}
+
+/* Sells count of one inventory slot (count -1 sells the whole stack as
+   one): refuses worthless and cursed-and-equipped items, picks the offer
+   text for broken, several, rare or ordinary items, and on agreement
+   removes the items and pays out. */
+void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
+{
+    struct ShopRuntime *shop = gMenuWork;
+    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
+    s32 item_id = unit->inventory[slot] & 0x1ff;
+    struct ItemDefinition *item = Item_Get(item_id);
+    u8 rare = item->flags & 4;
+    s32 all = 0;
+    s32 total;
+    s32 message;
+    s32 i;
+
+    if (count == -1) {
+        all = 1;
+        count = 1;
+    }
+    total = Shop_SalePrice(unit->inventory[slot]) * count;
+    if (total == 0) {
+        UiWork_PushValueSlotFar(item_id, 2);
+        UiMessage_ShowAndRestoreState((s32)MsgWeDoNotBuy);
+        return;
+    }
+    if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
+        UiWork_PushValueSlotFar(item_id, 2);
+        UiMessage_ShowAndRestoreState((s32)MsgCannotSellEquipped);
+        return;
+    }
+    if (all)
+        message = (s32)MsgOldItemSellOffer;
+    else if (unit->inventory[slot] & 0x400)
+        message = (s32)MsgDamagedSellOffer;
+    else if (count > 1)
+        message = (s32)MsgSellTotal;
+    else if (rare)
+        message = (s32)MsgRareSellOffer;
+    else
+        message = (s32)MsgSellOffer;
+    UiWork_PushValueSlotFar(item_id, 2);
+    UiWork_PushValueSlotFar(total, 5);
+    UiMessage_ShowAndRestoreState(message);
+    if (UiMessage_ShowChoice(0) != 0) {
+        if (rare || all)
+            message = (s32)MsgKeepIt;
+        else
+            message = (s32)MsgChangedMind;
+        UiMessage_ShowAndRestoreState(message);
+        return;
+    }
+    Audio_PlayCue(102);
+    for (i = 0; i < count; i++)
+        Func_080772b0(unit_id, slot);
+    Party_AdjustSixDigitCounterAFar(total);
+    Shop_DrawMoney();
+    Shop_DrawUnitGrid(shop->item_window, unit_id);
+    if (rare || all)
+        message = (s32)MsgSold;
+    else
+        message = (s32)MsgDeal;
+    UiMessage_ShowAndRestoreState(message);
+}
+
+s32 Shop_RepairPrice(s32 item_id)
+{
+    s32 result = Item_Get(item_id)->price / 4;
+
+    if ((item_id & 0x400) == 0) {
+        result = 0;
     }
     return result;
 }

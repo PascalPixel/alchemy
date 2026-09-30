@@ -1,14 +1,38 @@
+#include "TOPIC.H"
+#include "FIELD_SCENE.H"
+/* The two yes/no questions the spring's attendants ask. Each answer is the
+ * line after its question, yes first. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "CALL.H"
 #include "SCENE_IDS.H"
+
+extern const struct ScenePlacement gTorebiIzumiPlacements2[];
+extern const struct ScenePlacement gTorebiIzumiPlacementsOther[];
+
+extern u8 MsgTorebiLuckyMedal[];
+extern u8 MsgTorebiYerFirstTime[];
+
+s32 Engine_GameFlagIsSet();
+void TorebiIzumi_RiseAndFadeIn();
+void Engine_EventBegin();
+void Engine_ActorWalkToAndWait();
+void TorebiIzumi_RunSpringGame();
+void Engine_EventEnd();
+
+extern u8 MsgTorebiLuckyWheelsPrizesPrizesDetermined[];
+extern u8 MsgTorebiLuckyWheelsRulesPullLever[];
+
+extern const struct SceneEvent gTorebiIzumiEvents2[];
+extern const struct SceneEvent gTorebiIzumiEventsOther[];
+
 extern u8 MsgTorebiComeAgain[];
 extern u8 MsgTorebiCongratulations[];
 extern u8 MsgTorebiWonItemGo[];
 extern u8 MsgTorebiWonItemGo2[];
 extern u8 MsgTorebiYaLostNumber[];
 extern u8 MsgTorebiYaWonNumber[];
-extern u8 gOamCopyEnabled; /* OAM buffer pending */
-
+extern u8 gOamCopyEnabled;
 void SceneState_InitFourActorRecordsAndInstallTask(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
 void AudioCommand_WaitForStateByteClear(void);
@@ -24,6 +48,105 @@ static __inline__ void Io_SetBlendAlpha(s32 value)
 {
     *(volatile u16 *)0x04000052 = value;
 }
+
+u8 *SceneData_GetSceneTableA(void)
+{
+    return TorebiIzumi_SceneTableA;
+}
+
+s32 SceneData_ReturnZero(void)
+{
+    return 0;
+}
+
+u8 *SceneData_GetSceneTableB(void)
+{
+    return TorebiIzumi_SceneTableB;
+}
+
+/* The actors placed at the spring; its second row places its own. */
+const struct ScenePlacement *Scene_GetPlacements(void)
+{
+    if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
+        return gTorebiIzumiPlacements2;
+    }
+    return gTorebiIzumiPlacementsOther;
+}
+
+void TorebiIzumi_AskForLuckyMedal(s32 object)
+{
+    s32 question = (s32)MsgTorebiLuckyMedal;
+    Event_SetMessage(question);
+    Event_OpenMessage(object, 0);
+    if (Event_ChooseYesNo(0, 0) == 0) {
+        Event_Wait(10);
+        Event_SetMessage(question + 1);
+    } else {
+        Event_SetMessage(question + 2);
+    }
+    Event_ShowMessage(object, 0);
+}
+
+void TorebiIzumi_AskIfFirstTime(s32 object)
+{
+    s32 question = (s32)MsgTorebiYerFirstTime;
+    Event_SetMessage(question);
+    Event_OpenMessage(object, 0);
+    if (Event_ChooseYesNo(0, 0) == 0) {
+        Event_Wait(10);
+        Event_SetMessage(question + 1);
+    } else {
+        Event_SetMessage(question + 2);
+    }
+    Event_ShowMessage(object, 0);
+}
+
+void TorebiIzumi_WalkLeaderToSpring(void)
+{
+    s32 leader = gGameState.selected_actor;
+
+    if (Value1(Engine_GameFlagIsSet, 0x200) == 0) {
+        ((void (*)())Engine_GameFlagSet)(0x200);
+        TorebiIzumi_RiseAndFadeIn();
+    }
+    Engine_EventBegin();
+    Engine_ActorWalkToAndWait(leader, 120, 152);
+    ((s32 (*)())Engine_ActorFaceDirection)(leader, 0x4000, 0);
+    TorebiIzumi_RunSpringGame();
+    Engine_EventEnd();
+}
+
+void SceneDialogue_RunMessage0e34(void)
+{
+    Event_Begin();
+    Event_SetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
+    Event_OpenMessage(-1, 0);
+    Event_End();
+}
+
+void SceneDialogue_RunMessage0e35(void)
+{
+    Event_Begin();
+    Event_SetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
+    Event_OpenMessage(-1, 0);
+    Event_End();
+}
+
+void FieldScene_RunIndexedStep0(void)
+{
+    TorebiIzumi_OfferLuckyWheels(0);
+}
+
+/* What the spring answers; its second row answers its own way. */
+const struct SceneEvent *Scene_GetEvents(void)
+{
+    if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
+        return gTorebiIzumiEvents2;
+    }
+    return gTorebiIzumiEventsOther;
+}
+
+/* OAM buffer pending */
 
 /* Opens the Torebi spring scene: stages the blend and actors, reports the coin difference after a game, and hands out each prize item won. */
 s32 TorebiIzumi_OpenScene(void)

@@ -30,7 +30,7 @@ Func_0818ad40:
 	cmp r3, #0
 	bne .L_0818ad7e
 	adds r0, r5, #0
-	bl Func_08143b20
+	bl BattleFx_BeginTiledCanvas
 	b .L_0818ad84
 .L_0818ad7e:
 	adds r0, r5, #0

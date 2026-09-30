@@ -30,7 +30,7 @@ Func_08181910:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl Func_08143b20
+	bl BattleFx_BeginTiledCanvas
 .L_0818194a:
 	ldr r3, .L_08181978
 	movs r2, #128

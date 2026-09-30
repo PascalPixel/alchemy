@@ -155,6 +155,9 @@ Func_0802b7e0:
 	.4byte 0x0802f380
 	.2byte 0x026c
 	.2byte 0x0000
+	.global Func_0802b828
+	.thumb_func
+Func_0802b828:
 	push	{r5, lr}
 	ldr	r3, [pc, #56]
 	movs	r1, #253

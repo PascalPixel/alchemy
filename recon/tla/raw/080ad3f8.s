@@ -1032,6 +1032,9 @@ Owner_RecalculateStats:
 	pop	{r5, r6, r7, pc}
 	.2byte 0xd994
 	.2byte 0x080a
+	.global Func_080adbec
+	.thumb_func
+Func_080adbec:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1234,6 +1237,9 @@ Owner_RecalculateStats:
 .L_080add6e:
 	bl	.L_080adc90
 	pop	{r5, pc}
+	.global Func_080add74
+	.thumb_func
+Func_080add74:
 .L_080add74:
 	push	{r5, lr}
 	ldr	r0, [pc, #104]
@@ -1490,7 +1496,7 @@ Func_080addf0:
 	mov	r2, fp
 	strb	r6, [r3, #0]
 	str	r2, [r7, #0]
-	bl	.L_080add74
+	bl	Func_080add74
 	movs	r1, #182
 	lsls	r1, r1, #2
 	adds	r3, r7, r1

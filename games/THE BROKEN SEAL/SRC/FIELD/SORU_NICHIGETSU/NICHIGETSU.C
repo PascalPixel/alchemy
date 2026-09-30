@@ -1349,18 +1349,18 @@ s32 SoruNichigetsu_RestoreEntryState(void)
         if (CheckAllStatueLights() == 0) {
         } else {
             Call6(Engine_MapCopyCellsTo, 30, 44, 30, 38, 12, 5);
-            Call6(Engine_MapCopyCellsTo, 30, 44, 34, 37, 4, 1);
-            Call6(Engine_MapCopyCellsTo, 14, 41, 32, 41, 8, 4);
-            Call6(Engine_MapCopyCellsTo, 45, 28, 34, 10, 4, 2);
-            Call6(Engine_MapCopyCellsTo, 45, 30, 16, 10, 4, 2);
+            Engine_MapCopyCellsTo(30, 44, 34, 37, 4, 1);
+            Engine_MapCopyCellsTo(14, 41, 32, 41, 8, 4);
+            Engine_MapCopyCellsTo(45, 28, 34, 10, 4, 2);
+            Engine_MapCopyCellsTo(45, 30, 16, 10, 4, 2);
             Engine_MapCopyCellsTo(14, 45, 14, 41, 8, 4);
             if (gCell[225][0] != 8) {
                 if (Engine_GameFlagIsSet(0x814) == 0) {
                     if (Engine_GameFlagIsSet(0x819) != 0) {
-                        Call6(Engine_MapCopyCellsTo, 0, 32, 17, 39, 2, 1);
-                        Call6(Engine_MapCopyCellsTo, 42, 62, 17, 36, 2, 3);
-                        Call6(Engine_MapCopyCellsTo, 0, 32, 17, 40, 2, 1);
-                        Call6(Engine_MapCopyCellsTo, 0, 32, 17, 41, 2, 1);
+                        Engine_MapCopyCellsTo(0, 32, 17, 39, 2, 1);
+                        Engine_MapCopyCellsTo(42, 62, 17, 36, 2, 3);
+                        Engine_MapCopyCellsTo(0, 32, 17, 40, 2, 1);
+                        Engine_MapCopyCellsTo(0, 32, 17, 41, 2, 1);
                         Engine_MapCopyCellsTo(0, 32, 17, 42, 2, 3);
                     } else {
                         Engine_MapCopyCellsTo(44, 59, 17, 37, 2, 6);
@@ -1398,9 +1398,9 @@ s32 SoruNichigetsu_RestoreEntryState(void)
                 goto L_020024fc;
             }
         }
-        Call6(Engine_MapCopyCellsTo, 30, 43, 32, 40, 8, 3);
-        Call6(Engine_MapCopyCellsTo, 30, 43, 33, 39, 8, 1);
-        Call6(Engine_MapCopyCellsTo, 30, 43, 36, 38, 3, 3);
+        Engine_MapCopyCellsTo(30, 43, 32, 40, 8, 3);
+        Engine_MapCopyCellsTo(30, 43, 33, 39, 8, 1);
+        Engine_MapCopyCellsTo(30, 43, 36, 38, 3, 3);
         Engine_MapCopyCellsTo(36, 58, 32, 41, 8, 4);
         L_020024fc:;
         Call6(Engine_MapCopyCellAttributes, 15, 6, 2, 1, 17, 6);

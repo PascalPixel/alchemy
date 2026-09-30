@@ -3035,7 +3035,7 @@ void Scene_RunFourActorProgressPresentation(void)
     Call3(Engine_ActorFaceDirection, rec7, 0xd000, 0);
     Call3(Engine_ActorFaceDirection, rec2, 0xb000, 0);
     Call3(Engine_ActorFaceDirection, rec4, 0xd000, 0);
-    Call3(Engine_ActorFaceDirection, rec, 0xb000, 60);
+    Engine_ActorFaceDirection(rec, 0xb000, 60);
     if (Engine_GameFlagIsSet(0x934)) {
         v6 = 2;
     } else if (Engine_GameFlagIsSet(0x933) || Engine_GameFlagIsSet(0x92f)) {
@@ -3079,9 +3079,9 @@ void Scene_RunFourActorProgressPresentation(void)
     Call3(Engine_ActorFaceDirection, rec2, 0x5000, 0);
     Engine_ActorFaceDirection(rec4, 0, 0);
     Call3(Engine_ActorFaceDirection, rec, 0x8000, 40);
-    Call3(Engine_ActorFaceDirection, rec2, 0xd000, 0);
-    Call3(Engine_ActorFaceDirection, rec4, 0xb000, 0);
-    Call3(Engine_ActorFaceDirection, rec, 0x5000, 20);
+    Engine_ActorFaceDirection(rec2, 0xd000, 0);
+    Engine_ActorFaceDirection(rec4, 0xb000, 0);
+    Engine_ActorFaceDirection(rec, 0x5000, 20);
     Call3(Engine_ActorSetSpeed, rec2, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, rec4, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, rec, 0x10000, 0x8000);

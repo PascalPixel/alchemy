@@ -376,7 +376,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_ActorRunRepeatedMotion(11, 1);
     Engine_EventShowMessageAndWait(11, 0, 10);
     Engine_ActorRunRepeatedMotion(12, 1);
-    Value2(Engine_EventOpenMessage, 12, 0);
+    Engine_EventOpenMessage(12, 0);
     Call3(Engine_ActorFaceDirection, 0, 0xe000, 0);
     while (Engine_EventChooseYesNo(0, 0) != 0) {
         Engine_ActorShowEmote(12, 0x100, 60);

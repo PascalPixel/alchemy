@@ -1,84 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020082cc,"ax",%progbits
-	push	{r5, r6, r7, lr}
-	adds	r7, r0, #0
-	movs	r0, #0
-	bl 0x0200bb98
-	adds	r6, r0, #0
-	movs	r0, #8
-	bl 0x0200bb98
-	adds	r5, r0, #0
-	bl 0x0200bd00
-	bl 0x0200bb70
-	movs	r1, #22
-	movs	r0, #0
-	bl 0x0200bbf0
-	movs	r0, #10
-	bl 0x0200bb68
-	movs	r0, #152
-	bl 0x0200bd20
-	ldr	r1, [pc, #128]
-	ldr	r2, [pc, #132]
-	movs	r0, #0
-	bl 0x0200bba0
-	ldr	r1, [r5, #12]
-	ldr	r2, [r6, #12]
-	subs	r3, r1, r2
-	cmp	r3, #0
-	bge.n	.L_02000312
-	subs	r3, r2, r1
-.L_02000312:
-	asrs	r3, r3, #14
-	movs	r2, #128
-	lsls	r3, r3, #14
-	lsls	r2, r2, #11
-	adds	r3, r3, r2
-	str	r3, [r6, #40]
-	movs	r0, #0
-	movs	r1, #7
-	bl 0x0200bbf0
-	ldr	r1, [r5, #8]
-	ldr	r2, [r5, #12]
-	ldr	r3, [r5, #16]
-	adds	r0, r6, #0
-	bl 0x0200baf8
-	movs	r0, #10
-	bl 0x0200ba78
-	ldr	r1, [r6, #80]
-	ldrb	r3, [r1, #9]
-	movs	r2, #12
-	orrs	r3, r2
-	strb	r3, [r1, #9]
-	movs	r0, #0
-	bl 0x0200bbe0
-	b.n	.L_02000350
-.L_0200034a:
-	movs	r0, #1
-	bl 0x0200ba78
-.L_02000350:
-	ldr	r2, [r5, #12]
-	ldr	r3, [r6, #12]
-	asrs	r2, r2, #14
-	asrs	r3, r3, #14
-	cmp	r2, r3
-	blt.n	.L_0200034a
-	bl 0x0200bb78
-	movs	r0, #159
-	bl 0x0200bd20
-	adds	r0, r7, #0
-	movs	r1, #0
-	bl ArutinYama_RunRollingObject
-	movs	r0, #20
-	bl 0x0200ba78
-	bl 0x0200bd18
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x00033333
-	.2byte 0x9999
-	.2byte 0x0001
 	.section .text.x02008d2c,"ax",%progbits
 	.balign 4
 	push	{r5, r6, r7, lr}
@@ -1738,7 +1659,7 @@ gArutinYamaEvents3:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020082cd
+	.4byte ArutinYama_BeginRollingRide
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneState_SetByte22bTo3
@@ -1808,7 +1729,7 @@ gArutinYamaEvents5:
 	.4byte SceneState_SetByte22bTo3AndSend51
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020082cd
+	.4byte ArutinYama_BeginRollingRide
 	.4byte 0x00000003
 	.4byte 0xffff0032
 	.4byte FieldScene_RunLine1528Sequence
@@ -1849,7 +1770,7 @@ gArutinYamaEvents6:
 	.4byte SceneState_ApplyRectAndLowerActor9
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020082cd
+	.4byte ArutinYama_BeginRollingRide
 	.4byte 0x00000003
 	.4byte 0xffff0032
 	.4byte FieldScene_RunScene3a4SequenceC
@@ -1878,7 +1799,7 @@ gArutinYamaEvents7:
 	.4byte SceneState_SetValue14Mode23
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020082cd
+	.4byte ArutinYama_BeginRollingRide
 	.4byte 0x00000003
 	.4byte 0xffff0032
 	.4byte FieldScene_RunScene3a4SequenceD

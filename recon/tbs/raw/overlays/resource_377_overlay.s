@@ -471,432 +471,6 @@ FieldScene_RunComplexActorSequence:
 	.4byte 0x02009b04
 	.2byte 0x9b34
 	.2byte 0x0200
-	.global FieldScene_RunPaletteRampSequence
-	.thumb_func
-FieldScene_RunPaletteRampSequence:
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	movs	r0, #10
-	sub	sp, #8
-	bl 0x0200992c
-	adds	r5, r0, #0
-	ldr	r6, [r5, #80]
-	bl 0x0200990c
-	movs	r0, #11
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x02009974
-	movs	r0, #12
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x02009974
-	movs	r0, #13
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x02009974
-	movs	r0, #14
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x02009974
-	movs	r0, #15
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x02009974
-	movs	r0, #16
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x02009974
-	movs	r0, #8
-	ldr	r1, [pc, #868]
-	ldr	r2, [pc, #868]
-	bl 0x02009974
-	movs	r2, #202
-	lsls	r2, r2, #17
-	ldr	r1, [pc, #864]
-	movs	r0, #10
-.L_02000a72:
-	bl 0x02009974
-	movs	r0, #10
-	bl 0x0200992c
-	movs	r1, #0
-	bl 0x020098a4
-	adds	r1, r5, #0
-	adds	r1, #35
-	ldrb	r2, [r1, #0]
-	movs	r3, #254
-	ands	r3, r2
-	adds	r5, #85
-	movs	r2, #0
-	strb	r3, [r1, #0]
-	strb	r2, [r5, #0]
-	movs	r3, #13
-	ldrb	r2, [r6, #9]
-	negs	r3, r3
-	ands	r3, r2
-	movs	r2, #4
-	orrs	r3, r2
-	strb	r3, [r6, #9]
-	ldr	r1, [pc, #816]
-	movs	r0, #10
-	bl 0x0200993c
-	ldr	r2, [pc, #812]
-	ldr	r3, [r2, #0]
-	mov	sl, r2
-	movs	r2, #224
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	adds	r2, #65
-	str	r2, [r3, #0]
-	movs	r3, #4
-	str	r3, [sp, #4]
-	mov	r8, r3
-	movs	r5, #5
-	movs	r0, #83
-	movs	r1, #15
-	movs	r2, #83
-	movs	r3, #19
-	str	r5, [sp, #0]
-	bl 0x0200987c
-	mov	r2, r8
-	str	r2, [sp, #4]
-	movs	r0, #90
-	movs	r1, #16
-	movs	r2, #90
-	movs	r3, #20
-	str	r5, [sp, #0]
-	bl 0x0200987c
-	movs	r3, #7
-	str	r3, [sp, #4]
-	movs	r0, #77
-	movs	r1, #23
-	movs	r2, #82
-	movs	r3, #23
-	str	r5, [sp, #0]
-	bl 0x0200987c
-	movs	r5, #2
-	movs	r0, #83
-	movs	r1, #33
-	movs	r2, #85
-	movs	r3, #33
-	str	r5, [sp, #0]
-	str	r5, [sp, #4]
-	bl 0x0200987c
-	movs	r6, #1
-	movs	r0, #91
-	movs	r1, #28
-	movs	r2, #90
-	movs	r3, #28
-	str	r6, [sp, #0]
-	str	r6, [sp, #4]
-	bl 0x0200987c
-	movs	r0, #91
-	movs	r1, #28
-	movs	r2, #88
-	movs	r3, #30
-	str	r6, [sp, #0]
-	str	r6, [sp, #4]
-	bl 0x0200987c
-	movs	r3, #6
-	str	r3, [sp, #0]
-	mov	r3, r8
-	str	r3, [sp, #4]
-	movs	r0, #94
-	movs	r1, #27
-	movs	r2, #94
-	movs	r3, #23
-	bl 0x0200987c
-	mov	r2, r8
-	str	r2, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r0, #92
-	movs	r1, #28
-	movs	r2, #87
-	movs	r3, #23
-	bl 0x0200987c
-	movs	r0, #65
-	movs	r1, #53
-	movs	r2, #88
-	movs	r3, #24
-	str	r5, [sp, #0]
-	str	r5, [sp, #4]
-	bl 0x0200987c
-	bl 0x02009894
-	ldr	r2, [pc, #632]
-	ldr	r3, [pc, #632]
-	strh	r2, [r3, #0]
-	ldr	r3, [pc, #632]
-	ldr	r5, [pc, #636]
-	strh	r3, [r5, #0]
-	bl 0x02009a3c
-	mov	r2, sl
-	ldr	r3, [r2, #12]
-	ldr	r2, [pc, #628]
-	adds	r3, r3, r2
-	strh	r6, [r3, #0]
-	bl 0x02009a4c
-	movs	r0, #30
-	bl 0x02009814
-	movs	r0, #8
-	movs	r1, #1
-	bl 0x02009a14
-	movs	r1, #192
-	movs	r2, #192
-	movs	r0, #8
-	lsls	r1, r1, #9
-	lsls	r2, r2, #8
-	bl 0x02009934
-	movs	r1, #192
-	movs	r2, #192
-	movs	r0, #0
-	lsls	r1, r1, #9
-	lsls	r2, r2, #8
-	bl 0x02009934
-	movs	r1, #192
-	movs	r2, #192
-	lsls	r2, r2, #8
-	movs	r0, #9
-	lsls	r1, r1, #9
-	bl 0x02009934
-	ldr	r1, [pc, #564]
-	movs	r0, #0
-	bl 0x0200993c
-	ldr	r1, [pc, #560]
-	movs	r0, #8
-	bl 0x0200993c
-	bl 0x02009a5c
-	movs	r0, #8
-	bl 0x02009944
-	movs	r0, #158
-	bl 0x02009aac
-	movs	r1, #128
-	movs	r2, #0
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x02009a04
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200999c
-	movs	r1, #128
-	movs	r2, #10
-	movs	r0, #8
-	lsls	r1, r1, #7
-	bl 0x020099ec
-	movs	r0, #128
-	movs	r1, #128
-	lsls	r0, r0, #11
-	lsls	r1, r1, #8
-	bl 0x02009a1c
-	movs	r0, #207
-	movs	r1, #1
-	movs	r3, #1
-	lsls	r0, r0, #17
-	negs	r1, r1
-	ldr	r2, [pc, #488]
-	bl 0x02009a24
-	movs	r1, #207
-	movs	r0, #9
-	lsls	r1, r1, #17
-	ldr	r2, [pc, #476]
-	bl 0x02009974
-	ldr	r1, [pc, #472]
-	ldr	r2, [pc, #476]
-	movs	r0, #9
-	bl 0x0200996c
-	bl 0x02009a2c
-	ldr	r0, [pc, #468]
-	bl 0x020099c4
-	movs	r2, #10
-	ldr	r0, [pc, #464]
-	movs	r1, #0
-	bl 0x020099dc
-	movs	r0, #192
-	movs	r1, #192
-	lsls	r0, r0, #9
-	lsls	r1, r1, #6
-	bl 0x02009a1c
-	movs	r0, #240
-	movs	r1, #1
-	movs	r2, #222
-	movs	r3, #1
-	negs	r1, r1
-	lsls	r2, r2, #17
-	lsls	r0, r0, #17
-	bl 0x02009a24
-	bl 0x02009a2c
-	movs	r0, #20
-	bl 0x02009904
-	movs	r1, #128
-	movs	r2, #20
-	movs	r0, #8
-	lsls	r1, r1, #8
-	bl 0x020099ec
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200997c
-	movs	r0, #0
-	movs	r1, #3
-	bl 0x02009984
-	movs	r0, #9
-	movs	r1, #3
-	bl 0x02009984
-	ldr	r2, [pc, #384]
-	ldr	r1, [pc, #384]
-	movs	r0, #9
-	bl 0x02009964
-	movs	r0, #10
-	bl 0x02009904
-	ldr	r1, [pc, #376]
-	movs	r0, #8
-	bl 0x0200993c
-	ldr	r1, [pc, #372]
-	movs	r0, #0
-	bl 0x0200993c
-	movs	r0, #234
-	bl 0x02009aac
-	movs	r0, #20
-	bl 0x02009904
-	ldr	r1, [pc, #356]
-	movs	r0, #10
-	bl 0x0200993c
-	movs	r6, #0
-.L_02000cc0:
-	ldr	r2, [pc, #348]
-	adds	r3, r6, r2
-	strh	r3, [r5, #0]
-	movs	r0, #1
-	adds	r6, #1
-	bl 0x02009814
-	cmp	r6, #3
-	bls.n	.L_02000cc0
-	movs	r0, #202
-	bl 0x02009aac
-	movs	r0, #10
-	bl 0x02009814
-	ldr	r7, [pc, #324]
-	ldr	r5, [pc, #260]
-	movs	r6, #0
-.L_02000ce4:
-	subs	r3, r7, r6
-	strh	r3, [r5, #0]
-	movs	r0, #1
-	adds	r6, #1
-	bl 0x02009814
-	cmp	r6, #15
-	bls.n	.L_02000ce4
-	movs	r0, #0
-	bl 0x02009944
-	movs	r0, #8
-	movs	r1, #1
-	bl 0x0200997c
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x02009994
-	movs	r1, #2
-	movs	r0, #0
-	bl 0x0200999c
-	movs	r0, #10
-	bl 0x02009904
-	movs	r1, #192
-	movs	r0, #8
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x020099ec
-	movs	r1, #192
-	movs	r2, #20
-	movs	r0, #0
-	lsls	r1, r1, #8
-	bl 0x020099ec
-	movs	r1, #129
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x02009a0c
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r0, #0
-	bl 0x02009a0c
-	movs	r0, #80
-	bl 0x02009904
-	movs	r0, #9
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x02009974
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x020099ac
-	movs	r0, #8
-	movs	r1, #3
-	bl 0x0200997c
-	movs	r1, #3
-	movs	r0, #0
-	bl 0x02009984
-	movs	r0, #40
-	bl 0x02009904
-	ldr	r0, [pc, #176]
-	ldr	r1, [pc, #180]
-	bl 0x02009a1c
-	movs	r0, #8
-	movs	r1, #1
-	bl 0x02009a14
-	ldr	r5, [pc, #168]
-	movs	r0, #8
-	adds	r1, r5, #0
-	bl 0x0200993c
-	movs	r0, #0
-	adds	r1, r5, #0
-	bl 0x0200994c
-	ldr	r3, [pc, #64]
-	ldr	r1, [r3, #0]
-	movs	r3, #224
-	lsls	r3, r3, #1
-	adds	r2, r1, r3
-	subs	r3, #192
-	str	r3, [r2, #0]
-	adds	r3, #200
-	adds	r2, r1, r3
-	movs	r3, #32
-	str	r3, [r2, #0]
-	bl 0x02009a64
-	bl 0x02009a6c
-	movs	r0, #21
-	bl 0x02009a34
-	add	sp, #8
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.4byte 0x01af0000
-	.4byte 0x01870000
-	.4byte 0x01cf0000
-	.4byte 0x02009cec
-	.4byte 0x03001ebc
-	.4byte 0x00003f42
-	.4byte 0x04000050
-	.4byte 0x0000100c
-	.4byte 0x04000052
-	.4byte 0x00001f84
-	.4byte 0x02009bb4
-	.4byte 0x02009b78
-	.4byte 0x02120000
-	.4byte 0x000001ab
-	.4byte 0x000001e3
-	.4byte 0x00000e5b
-	.4byte 0x00008009
-	.4byte 0x0000024d
-	.4byte 0x0000019f
-	.4byte 0x02009c04
-	.4byte 0x02009c54
-	.4byte 0x02009d38
-	.4byte 0x0000100e
-	.4byte 0x0000100f
-	.4byte 0x0000cccc
-	.4byte 0x00001999
-	.2byte 0x9ca4
-	.2byte 0x0200
 	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002
@@ -947,6 +521,8 @@ FieldScene_RunPaletteRampSequence:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global gHaidiaBabiRampActor8Action
+gHaidiaBabiRampActor8Action:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -962,6 +538,8 @@ FieldScene_RunPaletteRampSequence:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gHaidiaBabiRampLeaderAction
+gHaidiaBabiRampLeaderAction:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -982,6 +560,8 @@ FieldScene_RunPaletteRampSequence:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gHaidiaBabiRampActor8ActionB
+gHaidiaBabiRampActor8ActionB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -1002,6 +582,8 @@ FieldScene_RunPaletteRampSequence:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gHaidiaBabiRampLeaderActionB
+gHaidiaBabiRampLeaderActionB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -1022,6 +604,8 @@ FieldScene_RunPaletteRampSequence:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gHaidiaBabiRampFinalAction
+gHaidiaBabiRampFinalAction:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -1040,6 +624,8 @@ FieldScene_RunPaletteRampSequence:
 	.4byte 0x024d0000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gHaidiaBabiRampActor10Action
+gHaidiaBabiRampActor10Action:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x0000e666
@@ -1059,6 +645,8 @@ FieldScene_RunPaletteRampSequence:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global gHaidiaBabiRampActor10ActionB
+gHaidiaBabiRampActor10ActionB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015

@@ -74,6 +74,9 @@ Map_ClearLayerEntryFlag:
 	.thumb_func
 Map_SetLayerEntryFlag:
 	overlay_veneer Map_SetLayerEntryFlagFar
+	.global DisplayBlend_EnableRunScript
+	.thumb_func
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
@@ -140,8 +143,17 @@ Engine_ActorGet:
 	.thumb_func
 Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Engine_ActorEnableActionCallback
+	.thumb_func
+Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
+	.global Object_SetActionCallbackAndRefreshById
+	.thumb_func
+Object_SetActionCallbackAndRefreshById:
 	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
 	.global Engine_ActorSetDestination
 	.thumb_func
@@ -151,6 +163,9 @@ Engine_ActorSetDestination:
 	.thumb_func
 Engine_ObjectMotionSetPositionAndCommit:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	.global Engine_ActorWalkToAndWait
 	.thumb_func
@@ -226,16 +241,25 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
 	.global Engine_CameraFollowActor
 	.thumb_func
 Engine_CameraFollowActor:
 	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Engine_CameraSetSpeed
+	.thumb_func
+Engine_CameraSetSpeed:
 	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Engine_CameraMoveTo
 	.thumb_func
 Engine_CameraMoveTo:
 	overlay_veneer Motion_CamBoundsFar
+	.global Engine_CameraWaitForMove
+	.thumb_func
+Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
 	.global Engine_EventRequestExit
 	.thumb_func

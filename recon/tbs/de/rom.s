@@ -1520,8 +1520,6 @@ BattleFx_RunProjectileVolley:
 	.incbin "baserom.gba", 0x000e0870, 0x00000e48
 	.section .rom.000e1c2a, "ax"
 	.incbin "baserom.gba", 0x000e1c2a, 0x00000002
-	.section .rom.000e2364, "ax"
-	.incbin "baserom.gba", 0x000e2364, 0x0000035c
 	.section .rom.000e2e40, "ax"
 	.incbin "baserom.gba", 0x000e2e40, 0x0000051c
 	.section .rom.000e33e8, "ax"

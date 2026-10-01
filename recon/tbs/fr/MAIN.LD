@@ -779,7 +779,6 @@
     "*/recon/tbs/fr/rom.o"(.rom.000e362a)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DJINN_BURSTS.o"(.text)
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000e3d64)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_REVEAL.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000e4840)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_SHAKE.o"(.text)

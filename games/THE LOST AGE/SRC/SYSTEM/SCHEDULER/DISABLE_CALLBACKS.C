@@ -1,12 +1,6 @@
 #include "TYPES.H"
 #include "IO_REG.H"
-
-struct SchedulerTask {
-    u32 callback;
-    u16 state;
-    u8 mask;
-    u8 reserved;
-};
+#include "CALLBACK_SCHEDULER.H"
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 extern volatile u8 gSchedulerStatus;

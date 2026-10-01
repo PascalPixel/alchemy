@@ -7,7 +7,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/MURA.o"(.text)
-        "*/resource_399_overlay.o"(.text.x020095b4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/CHOREOGRAPHY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/IMPORT.o"(.text)
         "*/resource_399_overlay.o"(.rodata.x0200a3f0)

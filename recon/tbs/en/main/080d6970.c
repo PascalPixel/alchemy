@@ -1,82 +1,44 @@
+/* Draft, not exact. */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
+#include "EFFECT_STEP.H"
+#include "MOTION_OBJECT.H"
+#include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
-/*
- * Draft for the battle-presentation sub-effect at 0x080d6970.
- *
- * Same 0x03001eec "battle work" subsystem as the recovered sibling
- * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C and the drafts
- * recon/tbs/en/main/080e08c0.c, 080d82b0.c, 080e01e4.c and
- * 080e7404.c; the field offsets, the heap_cache/cursor prologue, the
- * Value_XXXXXXXX effect-id idiom and the _call_via_rN trampoline calls all
- * follow those files.  The fill at 0x03000164 is called through its typed
- * function-pointer interface below; the nearby 080072e4 runtime entry is a
- * compiler veneer, not a game callee.
- *
- * The owner is one function.  The reference's `bl 0x080d6b76` at
- * 0x080d75de is a long unconditional jump, not a call: the 366-frame
- * loop body is 2664 bytes, past the +/-2KB reach of a Thumb `b`, so the
- * back edge has to be emitted as a BL pair.  That is what the current
- * intra_function_call_module classification is describing.
- *
- * Sequence: seed and shuffle an 8 x 128 byte dither permutation at
- * 0x02010000, spawn eight effect objects, load the effect graphics, seed
- * three particle banks (work + 0x7080, + 0x7240, + 0x7400), then run 366
- * frames.  Each frame draws whichever banks its frame window enables,
- * greys the effect palette across frames 224..247, punches dither holes
- * into the canvas after frame 232, reloads a second graphics set at frame
- * 302, and shakes the camera.
- *
- * Uncertain, stated rather than guessed:
- *   - the third argument of the 0x03000164 fill at frame 191 is the
- *     constant 3 the reference leaves in r2 from the `& 3` mask above it;
- *     no other evidence fixes that value.
- *   - the 31 masks in the palette-grey loop are spelled as plain
- *     literals; the reference loads one of the three from its literal
- *     pool, which an ordinary 31 does not produce.
- *   - Data_080ee958 / Data_080ee966 are read at the fixed byte offset 12
- *     (element 6); the reference keeps that offset in a register, so the
- *     original may have indexed them with a variable not recovered here.
- * 2026-09-29 slice 4: alchemy permute cannot parse this draft, because
- * M2C_FIELD takes a type as a macro argument. Preprocessed, it scores
- * 38,392 with 38 symbols the linked build does not define, too far for a
- * 10-minute search, so none was run.
- */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
+extern void *gWorkSlot[];
+extern u8 gBattleFxWork[];
+extern s32 gCameraWork[];
+extern volatile u32 gKeysRepeat;
 
-typedef void (*FillFn)(void *dest, s32 size, s32 value);
-
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
-u32 Random16(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
-void BattleFx_SelectLivingTargets(void *object);
+s32 BattleFx_EndCanvasLayer(void);
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
+void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void Audio_PlayCue(s32 id);
-void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 unk);
-void BattleFx_PlaceFormationObjects(s32 channel, s32 a, s32 b);
-void BattleEffect_RunImpactBurst(s32 channel, s32 a, s32 b);
-s32 __divsi3(s32 numerator, s32 denominator);
-s32 __modsi3(s32 numerator, s32 denominator);
-s32 __umodsi3(s32 numerator, s32 denominator);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
-void AnimationObjects_SelectAnimationFar(void *object, s32 value);
+struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
+void *GetMotionRecordFar(struct MotionObject *object, s32 index);
+void Object_InitializeMode(void *object, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
-void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
-void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
-void **GetBattleObjectSlotFar(s32 member_id);
-void *GetMotionRecordFar(void *object, s32 index);
-void BattleEventRuntime_BeginPhaseFar(s32 id);
-void Camera_ApplyShake(s32 a, s32 b);
+void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
+void Audio_PlayCue(s32 cue);
+void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
+    s32 slot, s32 delay);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 id);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 BattleFx_EndCanvasLayer(void);
+void Camera_ApplyShake(s32 x, s32 y);
 
 extern u8 Data_080ee910[];
 extern u16 Data_080ee916[];
@@ -92,764 +54,440 @@ extern u8 Data_080ee952[];
 extern u16 Data_080ee958[];
 extern u16 Data_080ee966[];
 
-extern u8 Value_00000000;
-extern u8 Value_00000098;
-extern u8 Value_000000b2;
-extern u8 Value_000000c0;
-extern u8 Value_00000100;
-extern u8 Value_00000177;
+/* The whole-pixel half of a 16.16 coordinate. */
+#define HI(v) (((s16 *)&(v))[1])
 
-void BattleEffect_RunDitherDissolveScene(void *object)
+/* The eight objects the effect spawns, kept in the work block. */
+#define WORK_OBJECTS(work) ((void **)((u8 *)(work) + 0x77d8))
+
+/* Battle effect: vines grow up through the ground under the enemy side,
+   thorns scatter, the picture dissolves through a shuffled dither, and
+   rings burst on every affected unit. */
+void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 {
-    s32 record[3];
-    s32 screen[3];
-    DrawRectangleFn rect[2];
+    void **cursor;
+    struct BattleEffectWork *work;
     void *canvas;
-    s32 t;
-    s32 fade;
-    s32 fade_step;
+    s32 frame;
+    s32 height;
+    s32 speed;
     s32 phase;
-    s32 limit;
-    s32 scroll;
-    DrawRectangleFn *rect_ptr;
-    void *work;
+    s32 rise;
+    s32 i;
+    s32 j;
+    s32 point[3];
+    struct EffectPosition screen;
+    DrawRectangle draw[2];
 
-    {
-        void **cursor;
+    cursor = (void **)gBattleFxWork;
+    work = *cursor++;
+    canvas = *cursor;
+    work->effect = effect;
+    BattleFx_SpawnObjects(8, 0x177, 1);
 
-        cursor = (void **)0x03001EEC;
-        work = *cursor++;
-        canvas = *cursor;
-    }
-    M2C_FIELD(work, void **, 0x7828) = object;
-    BattleFx_SpawnObjects(8, (s32) &Value_00000177, 1);
+    for (i = 0; i != 1024; i++)
+        Ram_MapCellBuffer[i] = i & 127;
+    for (i = 0; i != 8; i++) {
+        for (j = 0; j != 128; j++) {
+            s32 a = Random16() & 127;
+            s32 b = Random16() & 127;
+            u8 t = Ram_MapCellBuffer[i * 128 + b];
 
-    {
-        u8 *buf;
-        s32 i;
-
-        buf = (u8 *)0x02010000;
-        i = 0;
-        do {
-            *buf = (u8)(i & 0x7F);
-            i++;
-            buf++;
-        } while (i != 1024);
-    }
-    {
-        s32 row;
-        s32 base;
-
-        row = 0;
-        base = 0;
-        do {
-            s32 i;
-
-            i = 0;
-            do {
-                u8 *tbl;
-                s32 a;
-                s32 b;
-                u8 tmp;
-
-                tbl = (u8 *)0x02010000;
-                a = Random16() & 0x7F;
-                b = Random16() & 0x7F;
-                tmp = tbl[base + b];
-                tbl[base + b] = tbl[base + a];
-                tbl[base + a] = tmp;
-                i++;
-            } while (i != 128);
-            row++;
-            base += 128;
-        } while (row != 8);
+            Ram_MapCellBuffer[i * 128 + b] = Ram_MapCellBuffer[i * 128 + a];
+            Ram_MapCellBuffer[i * 128 + a] = t;
+        }
     }
 
     BattleFx_BeginCanvasLayer(0);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = (s16)(s32) &Value_00000100;
-    M2C_FIELD((void *)0x04000020, s16 *, 0x30) = (s16)(s32) &Value_00000000;
+    REG_BG2PA = 0x100;
+    REG_BLDCNT = 0;
+    Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work, 1, 1);
+    BattleEffect_LoadWork(46, 7, 7, 3, 1);
+    draw[0] = (DrawRectangle)gWorkSlot[46];
+    BattleEffect_LoadWork(47, 7, 7, 7, 1);
+    draw[1] = (DrawRectangle)gWorkSlot[47];
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    REG_BG2X = -0x2000;
 
-    Resource_LoadAndDecompress((s32) &Value_000000b2, work, 1, 1);
-    {
-        s32 status;
+    for (i = 0; i != 16; i++) {
+        struct EffectStep *vine = &work->particles[i];
 
-        status = BattleEffect_LoadWork(46, 7, 7, 3, 1);
-        rect[0] = (DrawRectangleFn)((void **)0x03001E50)[46];
-        status = BattleEffect_LoadWork(47, 7, 7, 7, 1);
-        rect_ptr = rect;
-        rect_ptr[1] = (DrawRectangleFn)((void **)0x03001E50)[47];
-    }
-
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = 0;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
-    M2C_FIELD((void *)0x04000028, s32 *, 0) = -0x2000;
-
-    {
-        s32 *ring;
-        s32 i;
-        s32 pos;
-        s32 vel;
-
-        ring = (s32 *)((u8 *)work + 0x7080);
-        i = 0;
-        pos = 0;
-        vel = -90;
-        do {
-            if (i <= 4) {
-                ring[0] = pos;
-                ring[1] = (Random16() & 7) + 104;
-            } else {
-                ring[0] = vel;
-                ring[1] = (Random16() & 7) + 108;
-            }
-            ring[4] = (Random16() & 7) + 4;
-            ring[6] = (Random16() & 15) + 16;
-            i++;
-            vel += 20;
-            pos += 20;
-            ring += 7;
-        } while (i != 16);
-    }
-    {
-        s32 *drop;
-        s32 i;
-
-        drop = (s32 *)((u8 *)work + 0x7240);
-        i = 0;
-        do {
-            s32 tmp;
-
-            drop[0] = (Random16() & 63) + 32;
-            drop[1] = (Random16() & 31) + 64;
-            tmp = Random16() & 7;
-            i++;
-            drop[6] = -tmp - 8;
-            drop += 7;
-        } while (i != 16);
-    }
-    {
-        s32 *spark;
-        s32 i;
-        s32 zero;
-
-        spark = (s32 *)((u8 *)work + 0x7400);
-        i = 0;
-        zero = 0;
-        do {
-            spark[0] = 0x800000;
-            spark[1] = 0x400000;
-            spark[3] = -((s32)(Random16() & 255) + 200) << 9;
-            spark[4] = zero;
-            spark[6] = zero;
-            i++;
-            spark += 7;
-        } while (i != 16);
-    }
-
-    BattleFx_SelectLivingTargets(M2C_FIELD(work, void **, 0x7828));
-
-    fade = -0x400000;
-    fade_step = 0;
-    t = 0;
-    do {
-        s32 facing;
-
-        facing = *(s32 *)0x03001E80;
-        if ((*(s32 *)0x03001B04 & 3) != 0 && t > 190 && t <= 285) {
-            ((FillFn)0x03000164)(canvas, 0x4000, 3);
-            t = 286;
+        if (i <= 4) {
+            vine->x = i * 20;
+            vine->y = (Random16() & 7) + 104;
+        } else {
+            vine->x = i * 20 - 90;
+            vine->y = (Random16() & 7) + 108;
         }
-        if (t == 224) {
-            M2C_FIELD(work, s32 *, 0x7780) = 0;
+        vine->velocity_y = (Random16() & 7) + 4;
+        vine->variant = (Random16() & 15) + 16;
+    }
+    for (i = 0; i != 16; i++) {
+        struct EffectStep *spark = &work->particles[16 + i];
+
+        spark->x = (Random16() & 63) + 32;
+        spark->y = (Random16() & 31) + 64;
+        spark->variant = -(Random16() & 7) - 8;
+    }
+    for (i = 0; i != 16; i++) {
+        struct EffectStep *thorn = &work->particles[32 + i];
+
+        thorn->x = 0x800000;
+        thorn->y = 0x400000;
+        thorn->velocity_x = -((Random16() & 255) + 200) << 9;
+        thorn->velocity_y = 0;
+        thorn->variant = 0;
+    }
+    BattleFx_SelectLivingTargets(work->effect);
+
+    height = -0x400000;
+    speed = 0;
+    for (frame = 0; frame != 366; frame++) {
+        s32 facing = gCameraWork[0];
+
+        if ((gKeysRepeat & 3) != 0 && frame > 190 && frame <= 285) {
+            Iwram_ClearWords(canvas, 0x4000);
+            frame = 286;
         }
+        if (frame == 224)
+            work->transfer_mode = 0;
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
-
-        if (t == 31) {
-            s32 member;
-
-            M2C_FIELD(work, s32 *, 0x77A8) = 8;
+        if (frame == 31) {
+            work->shake_frames = 8;
             Audio_PlayCue(157);
-            member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
-                s32 id_ofs;
-
-                id_ofs = 36;
-                do {
-                    BattleMotion_ApplyVariantMotionFar(
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                            id_ofs), 6);
-                    member++;
-                    id_ofs += 2;
-                } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
-            }
+            for (i = 0; i != work->effect->count; i++)
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
         }
-        if (t == 72) {
+        if (frame == 72)
             Audio_PlayCue(136);
-        }
-        if (t == 140) {
+        if (frame == 140)
             Audio_PlayCue(156);
+        speed += 0x4000;
+        height += speed;
+        if (height > 0x400000)
+            height = 0x400000;
+        BattleFx_PlaceFormationObjects(2, 0x800000, height);
+        if (frame >= 48 && frame <= 96) {
+            s32 pose = (frame - 48) / 24 % 3;
+
+            Object_InitializeMode(WORK_OBJECTS(work)[3], Data_080ee910[pose * 2]);
+            Object_InitializeMode(WORK_OBJECTS(work)[4], Data_080ee910[pose * 2 + 1]);
         }
+        if (frame >= 72 && frame <= 127) {
+            for (i = 0; i != 16; i++) {
+                struct EffectStep *thorn = &work->particles[32 + i];
 
-        fade_step += 0x4000;
-        fade += fade_step;
-        if (fade > 0x400000) {
-            fade = 0x400000;
-        }
-        BattleFx_PlaceFormationObjects(2, 0x800000, fade);
+                if (frame >= i + 72 && thorn->y <= 0x67ffff) {
+                    s32 cel = (frame + i) / 4 % 5;
+                    u32 width;
+                    u32 tall;
 
-        if ((u32)(t - 48) <= 48U) {
-            s32 cell;
-
-            cell = __modsi3(__divsi3(t - 48, 24), 3);
-            AnimationObjects_SelectAnimationFar(M2C_FIELD(work, void **, 0x77E4),
-                Data_080ee910[cell * 2]);
-            AnimationObjects_SelectAnimationFar(M2C_FIELD(work, void **, 0x77E8),
-                Data_080ee910[cell * 2 + 1]);
-        }
-
-        if ((u32)(t - 72) <= 55U) {
-            s32 *spark;
-            s32 i;
-
-            spark = (s32 *)((u8 *)work + 0x7400);
-            i = 0;
-            do {
-                if (t >= i + 72) {
-                    s32 y;
-
-                    y = spark[1];
-                    if (y <= 0x67FFFF) {
-                        s32 cell;
-                        u32 w;
-                        u32 h;
-
-                        cell = __modsi3((t + i) / 4, 5);
-                        w = Data_080ee920[cell];
-                        h = Data_080ee925[cell];
-                        rect[0](canvas,
-                            (u8 *)work + Data_080ee916[cell],
-                            M2C_FIELD(spark, s16 *, 2) - (w >> 1),
-                            (y >> 16) - (h >> 1), w, h);
-                    }
-                    EffectStep_AdvanceWithGravity2D(spark, 64, 0x1000);
+                    draw[0](canvas, (u8 *)work + Data_080ee916[cel],
+                        HI(thorn->x) - ((width = Data_080ee920[cel]) >> 1),
+                        (thorn->y >> 16) - ((tall = Data_080ee925[cel]) >> 1),
+                        width, tall);
+                    EffectStep_AdvanceWithGravity2D(thorn, 64, 0x1000);
                 }
-                i++;
-                spark += 7;
-            } while (i != 16);
-        }
-
-        if (t == 128) {
-            s32 *drop;
-            s32 i;
-
-            drop = (s32 *)((u8 *)work + 0x7240);
-            i = 0;
-            do {
-                drop[0] = __umodsi3(Random16(), 96) << 16;
-                drop[1] = ((Random16() & 7) + 88) << 16;
-                drop[3] = ((s32)(Random16() & 255) - 128) << 11;
-                drop[4] = -(s32)(Random16() & 255) << 11;
-                drop[6] = -(s32)(Random16() & 15) - 16;
-                i++;
-                drop += 7;
-            } while (i != 48);
-            M2C_FIELD((void *)0x04000028, s32 *, 0) = 0;
-        }
-
-        phase = t - 128;
-        if ((u32)phase <= 96U) {
-            s32 *ring;
-            s32 k;
-
-            limit = phase;
-            if (phase > 80) {
-                limit = 80;
-            } else {
-                M2C_FIELD(work, s32 *, 0x77A8) = 2;
             }
-            ring = (s32 *)((u8 *)work + 0x7080);
-            k = 0;
-            do {
-                if (limit > ring[6]) {
-                    void *sheet;
-                    s32 cnt;
-                    s32 j;
+        }
+        if (frame == 128) {
+            for (i = 0; i != 48; i++) {
+                struct EffectStep *chip = &work->particles[16 + i];
 
-                    sheet = work;
-                    if (k > 5) {
-                        sheet = (u8 *)work + 0x6C0;
-                    }
-                    scroll = (limit - ring[6]) * ring[4];
-                    cnt = scroll;
-                    while (cnt > 184) {
-                        cnt -= 64;
-                    }
-                    if (cnt <= 119) {
-                        rect_ptr[k & 1](canvas, sheet, ring[0],
-                            (ring[1] - cnt) - 8, 24, 8);
-                    }
-                    j = 0;
-                    do {
-                        s32 y;
-                        s32 h;
-                        s32 src;
+                chip->x = (Random16() % 96) << 16;
+                chip->y = ((Random16() & 7) + 88) << 16;
+                chip->velocity_x = ((Random16() & 255) - 128) << 11;
+                chip->velocity_y = -(Random16() & 255) << 11;
+                chip->variant = -(Random16() & 15) - 16;
+            }
+            REG_BG2X = 0;
+        }
 
-                        y = (ring[1] - cnt) + (j << 6);
-                        h = 64;
-                        src = 0;
+        phase = frame - 128;
+        if (phase >= 0 && phase <= 96) {
+            rise = phase;
+            if (rise > 80)
+                rise = 80;
+            else
+                work->shake_frames = 2;
+            for (i = 0; i != 10; i++) {
+                struct EffectStep *vine = &work->particles[i];
+
+                if (rise > vine->variant) {
+                    u8 *sheet = (u8 *)work;
+                    s32 top;
+                    s32 wrap;
+
+                    if (i > 5)
+                        sheet = (u8 *)work + 0x6c0;
+                    top = (rise - vine->variant) * vine->velocity_y;
+                    for (wrap = top; wrap > 184; wrap -= 64)
+                        ;
+                    if (wrap <= 119)
+                        draw[i & 1](canvas, sheet, vine->x, vine->y - wrap - 8, 24, 8);
+                    for (j = 0; j != 3; j++) {
+                        s32 y = vine->y - wrap + j * 64;
+                        s32 skip = 0;
+                        s32 rows = 64;
+
                         if (y >= -64) {
                             if (y < 0) {
-                                src = -y * 24;
-                                h = y + 64;
+                                skip = -y * 24;
+                                rows = y + 64;
                                 y = 0;
                             }
-                            if (y + h > ring[1]) {
-                                h -= (y + h) - ring[1];
-                            }
-                            rect_ptr[k & 1](canvas,
-                                ((u8 *)sheet + src) + 192, ring[0], y, 24, h);
-                        }
-                        j++;
-                    } while (j != 3);
-                    if ((k & 1) != 0) {
-                        s32 y;
-                        s32 cell;
-                        s32 w;
-                        s32 h;
-
-                        y = ((ring[1] - scroll) & 0x7F) - 16;
-                        cell = __modsi3(k, 3);
-                        w = Data_080ee930[cell];
-                        h = w;
-                        if (y + h > ring[1]) {
-                            h -= (y + h) - ring[1];
-                        }
-                        if (h > 0) {
-                            rect_ptr[k & 1](canvas,
-                                (u8 *)work + Data_080ee92a[cell],
-                                ring[0] + 8, y, (u32)w, (u32)h);
+                            if (y + rows > vine->y)
+                                rows -= y + rows - vine->y;
+                            draw[i & 1](canvas, sheet + skip + 192, vine->x, y, 24, rows);
                         }
                     }
-                }
-                k++;
-                ring += 7;
-            } while (k != 10);
-        }
+                    if ((i & 1) != 0) {
+                        s32 y = ((vine->y - top) & 127) - 16;
+                        s32 kind = i % 3;
+                        s32 full = Data_080ee930[kind];
+                        s32 rows = full;
 
-        if ((u32)phase <= 95U) {
-            s32 *spark;
-            s32 i;
-
-            spark = (s32 *)((u8 *)work + 0x7400);
-            i = 0;
-            do {
-                if (spark[6] >= 0) {
-                    s32 cell;
-                    s32 y;
-                    u32 w;
-                    u32 h;
-
-                    cell = __modsi3(i, 5);
-                    w = Data_080ee93e[cell];
-                    h = Data_080ee943[cell];
-                    rect[0](canvas, (u8 *)work + Data_080ee934[cell],
-                        M2C_FIELD(spark, s16 *, 2),
-                        M2C_FIELD(spark, s16 *, 6), w, h);
-                    spark[0] = spark[0] + spark[3];
-                    y = spark[1] + spark[4];
-                    spark[1] = y;
-                    spark[4] = spark[4] + 0x4000;
-                    if ((u32)y > 0x780000U && t <= 159) {
-                        spark[0] = __umodsi3(Random16(), 96) << 16;
-                        spark[1] = ((Random16() & 7) + 88) << 16;
-                        spark[3] = ((s32)(Random16() & 255) - 128) << 11;
-                        spark[4] = -(s32)(Random16() & 255) << 11;
+                        if (y + rows > vine->y)
+                            rows -= y + rows - vine->y;
+                        if (rows > 0)
+                            draw[i & 1](canvas, (u8 *)work + Data_080ee92a[kind],
+                                vine->x + 8, y, full, rows);
                     }
                 }
-                spark[6] = spark[6] + 1;
-                i++;
-                spark += 7;
-            } while (i != 32);
+            }
         }
+        if (phase >= 0 && phase <= 95) {
+            for (i = 0; i != 32; i++) {
+                struct EffectStep *chip = &work->particles[32 + i];
 
-        if ((u32)(t - 224) <= 23U && (t & 3) == 0) {
-            u16 *pal;
-            s32 i;
+                if (chip->variant >= 0) {
+                    s32 cel = i % 5;
 
-            pal = (u16 *)0x05000000;
-            i = 0;
-            do {
-                u16 colour;
-                s32 r;
-                s32 g;
-                s32 b;
-                s32 grey;
-
-                colour = *pal;
-                r = colour & 31;
-                g = (colour >> 5) & 31;
-                b = (colour >> 10) & 31;
-                grey = __divsi3(r + g + b, 3);
-                if (r > grey) {
-                    r--;
+                    draw[0](canvas, (u8 *)work + Data_080ee934[cel],
+                        HI(chip->x), HI(chip->y), Data_080ee93e[cel], Data_080ee943[cel]);
+                    chip->x += chip->velocity_x;
+                    chip->y += chip->velocity_y;
+                    chip->velocity_y += 0x4000;
+                    if ((u32)chip->y > 0x780000 && frame <= 159) {
+                        chip->x = (Random16() % 96) << 16;
+                        chip->y = ((Random16() & 7) + 88) << 16;
+                        chip->velocity_x = ((Random16() & 255) - 128) << 11;
+                        chip->velocity_y = -(Random16() & 255) << 11;
+                    }
                 }
-                if (r < grey) {
-                    r++;
-                }
-                if (g > grey) {
-                    g--;
-                }
-                if (g < grey) {
-                    g++;
-                }
-                if (b > grey) {
-                    b--;
-                }
-                if (b < grey) {
-                    b++;
-                }
-                i++;
-                *pal = (u16)((b << 10) | (g << 5) | r);
-                pal++;
-            } while (i != 64);
-        }
-
-        if ((u32)phase <= 172U) {
-            s32 member;
-
-            member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
-                s32 *screen_ptr;
-                s32 *record_ptr;
-                s32 slot;
-                s32 id_ofs;
-
-                screen_ptr = screen;
-                record_ptr = record;
-                slot = 0;
-                id_ofs = 36;
-                do {
-                    void *mp;
-                    s32 *drop;
-                    s32 i;
-
-                    mp = *GetBattleObjectSlotFar(
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                            id_ofs));
-                    record_ptr[0] = M2C_FIELD(mp, s32 *, 8);
-                    record_ptr[1] = M2C_FIELD(mp, s32 *, 12);
-                    record_ptr[2] = M2C_FIELD(mp, s32 *, 16);
-                    EffectPosition_ApplyBaseAndYOffset(record_ptr, screen_ptr);
-                    drop = (s32 *)((u8 *)work + 0x7240 + slot * 28);
-                    i = 0;
-                    do {
-                        s32 age;
-
-                        age = drop[6];
-                        if (age == 0) {
-                            drop[0] = (screen_ptr[0]
-                                + (s32)(Random16() & 15)) - 8;
-                            drop[1] = (screen_ptr[1]
-                                + (s32)(Random16() & 15)) - 40;
-                            age = drop[6];
-                        }
-                        if ((u32)age <= 4U) {
-                            u32 w;
-
-                            w = Data_080ee952[age];
-                            rect[0](canvas,
-                                (u8 *)work + Data_080ee948[age],
-                                drop[0] - (w >> 1), drop[1] - (w >> 1), w, w);
-                            age = drop[6];
-                        }
-                        age++;
-                        drop[6] = age;
-                        if (t <= 199 && age == 5) {
-                            drop[6] = -(s32)(Random16() & 7);
-                        }
-                        i++;
-                        drop += 7;
-                    } while (i != 6);
-                    member++;
-                    id_ofs += 2;
-                    slot += 6;
-                } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                chip->variant++;
             }
         }
 
-        if (t > 232) {
-            s32 base;
-            s32 x;
-            s32 row;
+        if (frame >= 224 && frame <= 247 && (frame & 3) == 0) {
+            u16 *color = (u16 *)BG_PLTT;
 
-            base = t * 2 - 496;
-            row = 0;
-            x = base;
-            do {
-                s32 j;
+            for (i = 0; i != 64; i++) {
+                s32 red = *color & 31;
+                s32 green = (*color >> 5) & 31;
+                s32 blue = (*color >> 10) & 31;
+                s32 grey = (red + green + blue) / 3;
 
-                j = 0;
-                do {
-                    if ((u32)x <= 127U) {
-                        s32 lo;
-                        s32 v;
-
-                        lo = x & 7;
-                        v = ((u8 *)0x02010000)[(((lo << 5) + row) << 2) + j];
-                        M2C_FIELD(canvas, u8 *,
-                            (((((x / 8) << 4) + (v / 8)) << 3) + lo) * 8
-                                + (v & 7)) = (u8)0;
-                    }
-                    j++;
-                } while (j != 4);
-                row++;
-                x++;
-            } while (row != 32);
-
-            row = 0;
-            x = base + 1;
-            do {
-                s32 j;
-
-                j = 0;
-                do {
-                    if ((u32)x <= 127U) {
-                        s32 lo;
-                        s32 v;
-
-                        lo = x & 7;
-                        v = ((u8 *)0x02010000)[(((lo << 5) + row) << 2) + j];
-                        M2C_FIELD(canvas, u8 *,
-                            (((((x / 8) << 4) + (v / 8)) << 3) + lo) * 8
-                                + (v & 7)) = (u8)0;
-                    }
-                    j++;
-                } while (j != 4);
-                row++;
-                x++;
-            } while (row != 32);
-        }
-
-        if ((u32)(t - 161) <= 62U) {
-            s32 member;
-
-            member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
-                do {
-                    if (t > member * 8 + 160) {
-                        void **holder;
-                        void *body;
-                        void *sub;
-                        s32 i;
-
-                        holder = GetBattleObjectSlotFar(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                                36 + member * 2));
-                        body = holder[0];
-                        M2C_FIELD(body, s32 *, 12) =
-                            M2C_FIELD(body, s32 *, 12) + 0x80000;
-                        if (M2C_FIELD(body, s32 *, 12) > 0x800000) {
-                            M2C_FIELD(body, s32 *, 12) = 0x800000;
-                        }
-                        M2C_FIELD(body, s32 *, 72) = 0;
-                        i = 0;
-                        while ((sub = GetMotionRecordFar(holder[0], i)) != 0) {
-                            AnimationObjects_SelectAnimationFar(sub, 5);
-                            i++;
-                        }
-                    }
-                    member++;
-                } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                if (red > grey)
+                    red--;
+                if (red < grey)
+                    red++;
+                if (green > grey)
+                    green--;
+                if (green < grey)
+                    green++;
+                if (blue > grey)
+                    blue--;
+                if (blue < grey)
+                    blue++;
+                *color++ = (blue << 10) | (green << 5) | red;
             }
         }
 
-        {
-            s32 member;
+        if (phase >= 0 && phase <= 172) {
+            for (i = 0; i != work->effect->count; i++) {
+                struct MotionObject *object =
+                    GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
-            member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
-                s32 cnt;
-                s32 id_ofs;
+                point[0] = object->x;
+                point[1] = object->y;
+                point[2] = object->z;
+                EffectPosition_ApplyBaseAndYOffset(point, &screen);
+                for (j = 0; j != 6; j++) {
+                    struct EffectStep *spark = &work->particles[16 + i * 6 + j];
 
-                cnt = 286;
-                id_ofs = 36;
-                do {
-                    if (t == cnt) {
-                        void *mp;
-
-                        mp = *GetBattleObjectSlotFar(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                                id_ofs));
-                        M2C_FIELD(mp, s32 *, 12) = 0x600000;
-                        M2C_FIELD(mp, s32 *, 72) = 0xAB85;
+                    if (spark->variant == 0) {
+                        spark->x = screen.x + (Random16() & 15) - 8;
+                        spark->y = screen.y + (Random16() & 15) - 40;
                     }
-                    if (t == cnt + 16) {
-                        ObjectGroup_UpdateMembers(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                                id_ofs), 7, -1, member, 8);
-                        Audio_PlayCue(134);
-                        M2C_FIELD(work, s32 *, 0x77A8) = 8;
+                    if ((u32)spark->variant <= 4) {
+                        u8 *cell = (u8 *)work + Data_080ee948[spark->variant];
+                        u32 size = Data_080ee952[spark->variant];
+                        u32 half = size >> 1;
+
+                        draw[0](canvas, cell, spark->x - half, spark->y - half, size, size);
                     }
-                    member++;
-                    id_ofs += 2;
-                    cnt += 5;
-                } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                    spark->variant++;
+                    if (frame <= 199 && spark->variant == 5)
+                        spark->variant = -(Random16() & 7);
+                }
             }
         }
 
-        if (t == 302) {
-            s32 status;
-            s32 member;
+        if (frame > 232) {
+            s32 row = frame * 2 - 496;
+            s32 line;
 
+            line = row;
+            for (i = 0; i != 32; i++) {
+                for (j = 0; j != 4; j++) {
+                    if ((u32)line <= 127) {
+                        s32 x = Ram_MapCellBuffer[((line & 7) * 32 + i) * 4 + j];
+
+                        ((u8 *)canvas)[((line / 8 * 16 + x / 8) * 8 + (line & 7)) * 8
+                            + (x & 7)] = 0;
+                    }
+                }
+                line++;
+            }
+            line = row + 1;
+            for (i = 0; i != 32; i++) {
+                for (j = 0; j != 4; j++) {
+                    if ((u32)line <= 127) {
+                        s32 x = Ram_MapCellBuffer[((line & 7) * 32 + i) * 4 + j];
+
+                        ((u8 *)canvas)[((line / 8 * 16 + x / 8) * 8 + (line & 7)) * 8
+                            + (x & 7)] = 0;
+                    }
+                }
+                line++;
+            }
+        }
+
+        if (frame >= 161 && frame <= 223) {
+            for (i = 0; i != work->effect->count; i++) {
+                if (frame > i * 8 + 160) {
+                    struct BattleObjectSlot *slot =
+                        GetBattleObjectSlotFar(work->effect->actors[i]);
+                    void *record;
+
+                    slot->object->y += 0x80000;
+                    if (slot->object->y > 0x800000)
+                        slot->object->y = 0x800000;
+                    slot->object->vertical_motion_strength = 0;
+                    for (j = 0; (record = GetMotionRecordFar(slot->object, j)) != 0; j++)
+                        Object_InitializeMode(record, 5);
+                }
+            }
+        }
+        for (i = 0; i != work->effect->count; i++) {
+            if (frame == i * 5 + 286) {
+                struct MotionObject *object =
+                    GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+                object->y = 0x600000;
+                object->vertical_motion_strength = 0xab85;
+            }
+            if (frame == i * 5 + 302) {
+                ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
+                Audio_PlayCue(134);
+                work->shake_frames = 8;
+            }
+        }
+
+        if (frame == 302) {
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
-            Resource_LoadAndDecompress((s32) &Value_00000098, work, 1, 0);
-            Resource_LoadAndDecompress((s32) &Value_000000c0, (u8 *)work + 0x1680, 1, 1);
-            status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
-            rect[0] = (DrawRectangleFn)((void **)0x03001E50)[46];
-            status = BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            rect_ptr[1] = (DrawRectangleFn)((void **)0x03001E50)[47];
-            M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F46;
-            M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x80;
-            M2C_FIELD((void *)0x04000028, s32 *, 0) = 0;
-            M2C_FIELD(work, s32 *, 0x7780) = 2;
-            M2C_FIELD(work, s32 *, 0x7784) = 75;
-            Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
-            member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
-                do {
-                    void *mp;
-                    s32 *ring;
-                    s32 i;
+            Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work, 1, 0);
+            Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, (u8 *)work + 0x1680, 1, 1);
+            BattleEffect_LoadWork(46, 7, 7, 3, 2);
+            draw[0] = (DrawRectangle)gWorkSlot[46];
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
+            draw[1] = (DrawRectangle)gWorkSlot[47];
+            REG_BLDCNT = 0x3f46;
+            REG_BG2PA = 0x80;
+            REG_BG2X = 0;
+            work->transfer_mode = 2;
+            work->transfer_value = 75;
+            Scheduler_AddOrUpdateCallback(
+                (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+            for (i = 0; i != work->effect->count; i++) {
+                struct MotionObject *object =
+                    GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
-                    mp = *GetBattleObjectSlotFar(
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                            36 + member * 2));
-                    ring = (s32 *)((u8 *)work + 0x7080 + member * 280);
-                    i = 0;
-                    do {
-                        s32 angle;
+                for (j = 0; j != 10; j++) {
+                    struct EffectStep *ember = &work->particles[i * 10 + j];
 
-                        ring[0] = M2C_FIELD(mp, s32 *, 8);
-                        ring[1] = 0x140000;
-                        ring[2] = M2C_FIELD(mp, s32 *, 16);
-                        angle = i * 13108;
-                        ring[3] = Trig_Sin(angle) << 2;
-                        ring[4] = (s32)(Random16() & 0x7FFF) + 0x10000;
-                        ring[5] = Trig_Cos(angle) << 2;
-                        ring[6] = 0;
-                        i++;
-                        ring += 7;
-                    } while (i != 10);
-                    member++;
-                } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                    ember->x = object->x;
+                    ember->y = 0x140000;
+                    ember->z = object->z;
+                    ember->velocity_x = Trig_Sin(j * 0x3334) << 2;
+                    ember->velocity_y = (Random16() & 0x7fff) + 0x10000;
+                    ember->velocity_z = Trig_Cos(j * 0x3334) << 2;
+                    ember->variant = 0;
+                }
+            }
+        }
+        if (frame > 301) {
+            for (i = 0; i != work->effect->count; i++) {
+                s32 start = i * 4 + 302;
+
+                if (frame >= start && frame < i * 4 + 314) {
+                    s32 cel = (frame - start) / 2;
+                    struct MotionObject *object =
+                        GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+                    point[0] = object->x;
+                    point[1] = 0;
+                    point[2] = object->z;
+                    EffectPosition_ApplyBaseAndYOffset(point, &screen);
+                    screen.x >>= 1;
+                    draw[0](canvas, (u8 *)work + cel * 480,
+                        screen.x - 20, screen.y - 24, 20, 24);
+                    draw[1](canvas, (u8 *)work + cel * 480,
+                        screen.x, screen.y - 24, 20, 24);
+                }
+                if (frame >= start + 6) {
+
+                    for (j = 0; j != 5; j++) {
+                        struct EffectStep *ember = &work->particles[i * 10 + j];
+
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)ember, &screen);
+                        screen.x >>= 1;
+                        if ((u32)ember->variant <= 26) {
+                            s32 cel = 6;
+                            u32 size = Data_080ee966[cel];
+
+                            draw[0](canvas, (u8 *)work + Data_080ee958[cel],
+                                screen.x - (size >> 1), screen.y - (size >> 1), size, size);
+                        }
+                        EffectStep_AdvanceWithGravity2D(ember, 60, 0x1000);
+                        ember->variant++;
+                    }
+                }
             }
         }
 
-        if (t > 301) {
-            s32 member;
-
-            member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
-                s32 *record_ptr;
-                s32 *screen_ptr;
-                s32 span;
-                s32 start;
-                s32 age;
-
-                record_ptr = record;
-                screen_ptr = screen;
-                span = t - 302;
-                start = 302;
-                age = 0;
-                do {
-                    if (t >= start && t < age + 314) {
-                        void *mp;
-                        s32 frame;
-
-                        frame = span / 2;
-                        mp = *GetBattleObjectSlotFar(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                                36 + member * 2));
-                        record_ptr[0] = M2C_FIELD(mp, s32 *, 8);
-                        record_ptr[1] = 0;
-                        record_ptr[2] = M2C_FIELD(mp, s32 *, 16);
-                        EffectPosition_ApplyBaseAndYOffset(record_ptr, screen_ptr);
-                        screen_ptr[0] = screen_ptr[0] >> 1;
-                        rect[0](canvas, (u8 *)work + frame * 480,
-                            screen_ptr[0] - 20, screen_ptr[1] - 24, 20, 24);
-                        rect_ptr[1](canvas, (u8 *)work + frame * 480,
-                            screen_ptr[0], screen_ptr[1] - 24, 20, 24);
-                    }
-                    if (t >= start + 6) {
-                        s32 *ring;
-                        s32 i;
-
-                        ring = (s32 *)((u8 *)work + 0x7080
-                            + (age + member) * 56);
-                        i = 0;
-                        do {
-                            EffectPosition_ApplyBaseAndYOffset(ring, screen_ptr);
-                            screen_ptr[0] = screen_ptr[0] >> 1;
-                            if ((u32)ring[6] <= 26U) {
-                                u32 w;
-
-                                w = Data_080ee966[6];
-                                rect[0](canvas,
-                                    (u8 *)work + Data_080ee958[6],
-                                    screen_ptr[0] - (w >> 1),
-                                    screen_ptr[1] - (w >> 1), w, w);
-                            }
-                            EffectStep_AdvanceWithGravity2D(ring, 60, 0x1000);
-                            ring[6] = ring[6] + 1;
-                            i++;
-                            ring += 7;
-                        } while (i != 5);
-                    }
-                    span -= 4;
-                    start += 4;
-                    age += 4;
-                    member++;
-                } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
-            }
-        }
-
-        if (t <= 127) {
+        if (frame <= 127)
             Camera_ApplyShake(4, 16);
-        } else if (t <= 301) {
+        else if (frame <= 301)
             Camera_ApplyShake(2, 2);
-        } else {
+        else
             Camera_ApplyShake(4, 8);
-        }
         ObjectGroup_TickMemberTimers();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
-        t++;
-    } while (t != 366);
+    }
 
-    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleEventRuntime_BeginPhaseFar(134);
-    BattleEffect_RunImpactBurst(2, 0x800000, fade);
-    {
-        void **cursor;
-        s32 i;
-
-        cursor = (void **)((u8 *)work + 0x77D8);
-        i = 0;
-        do {
-            ResourceObject_ReleaseFar(*cursor++);
-            i++;
-        } while (i != 8);
-    }
+    BattleEffect_RunImpactBurst(2, 0x800000, height);
+    for (i = 0; i != 8; i++)
+        ResourceObject_ReleaseFar(WORK_OBJECTS(work)[i]);
     BattleFx_EndCanvasLayer();
 }

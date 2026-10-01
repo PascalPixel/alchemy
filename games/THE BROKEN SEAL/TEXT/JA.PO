@@ -2627,7 +2627,7 @@ msgctxt "message"
 msgid "00654"
 msgstr "だてんしのゆびわ"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "00655"
 msgstr "???"
 

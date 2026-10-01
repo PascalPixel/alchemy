@@ -3615,7 +3615,7 @@ msgctxt "message"
 msgid "00901"
 msgstr "{article_class:4}Anillos Clericales"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "00902"
 msgstr "???"
 

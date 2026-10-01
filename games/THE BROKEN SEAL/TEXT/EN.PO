@@ -2627,7 +2627,7 @@ msgctxt "message"
 msgid "00654"
 msgstr "{article_class:2}Cleric's Ring"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "00655"
 msgstr "???"
 

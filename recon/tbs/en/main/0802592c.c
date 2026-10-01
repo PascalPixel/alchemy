@@ -14,29 +14,23 @@
  *
  * The paging state (page top, row within the page, and the row the player
  * prefers when moving horizontally) lives in the shared menu-navigation cell
- * at 0x03001f34 so that reopening the menu resumes where it left off.  The
- * same cell's +0x4c flag ends the loop from outside; UiText_ShowLocalizedMessage
- * AndWait (games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/MSG_SHOW_LOCALIZED_MESSAGE_AND_WAIT.C) polls the
- * identical pair of "0x03001c94 & 3" and "+0x4c" conditions.
+ * gLinkCountdownWork so that reopening the menu resumes where it left off.
+ * The same cell's +0x4c flag ends the loop from outside.
  *
- * Uncertain, and left as read from the reference:
- *  - The message-name text is fetched with the raw table word, while the glyph
- *    and the availability test mask it with 0x3fff first.  Both spellings are
- *    reproduced literally rather than made consistent.
- *  - Render-work byte 0xea7 has no established macro; it is written next to
- *    UiWork_SetParamNibble and evidently selects the same text colour.
- *  - The 0x0000f018/0x0000f019 arguments to Vram_CopyTile are tilemap-shaped
- *    words whose low ten bits that helper uses as a tile index.
- * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 21,667
- * candidates; the best scored 5113 against 12579 (34 register-only, 88
- * stack-only, 24 operand, 28 reordered, 11 inserted, 15 deleted) after 115
- * rewrites (reorder independent statements, swap commutative operands, test
- * truth or compare with zero, introduce a temporary), none of them kept.
- * One hundred fifteen rewrites, mostly statement moves and temporaries,
- * which trade register differences for 88 stack-only ones; they stay out of
- * the draft. Its pooled 0x53a is MsgAbilityDescription in the catalogs.
+ * Remaining difference (384 instructions, nearly all register choice): the
+ * listing keeps `page` on the stack and gives r8 and r9 to short-lived values
+ * of the entry-drawing loop (the action record, i * 2), because its loop pass
+ * moves nothing but &glyph out of that loop and reduces no induction value
+ * there, where this draft hoists render + RENDER_TEXT_COLOR_OFS and reduces
+ * three. agscc's loop dump (-dL) counts 132 insns in this draft's drawing
+ * loop and 25 in the first sprite loop; the listing's loops must count more
+ * (or hold a label between the two text-colour stores), as inlined helpers
+ * would give. The first sprite loop likewise leaves 0x1ff inside the loop.
+ * What already agrees: gWindowWork as the base both work pointers come from,
+ * the sprite words written through a union (so window->x is reread each
+ * pass), index-form tile stores, and the frame layout.
+ * Message 2279, shown for an empty list, has no name in the catalogs yet.
  */
-
 
 #define ACTION_ID_MASK 0x3fff
 #define PAGE_ROWS 5
@@ -62,49 +56,45 @@ struct BattleMenuNav {
     s32 active;                 /* 0x4c */
 };
 
-/*
- * Slot-list sprite record: a link word followed by the four object attribute
- * halfwords.  The two views share one storage so the whole attribute pair can
- * be cleared with a word store before the packed fields are written, which is
- * the shape Runtime_PushSlotEntry consumes.
- */
-union MenuSprite {
-    struct {
-        void *next;
-        u32 attr01;
-        u32 attr23;
-    } word;
-    struct {
-        void *next;
-        u8 y;                   /* 0x04 */
-        u8 field_05;
-        u16 x : 9;              /* 0x06 */
-        u16 field_06_9 : 5;
-        u16 size : 2;
-        u16 tile : 10;          /* 0x08 */
-        u16 field_08_a : 2;
-        u16 palette : 4;
-        u16 field_0a;
-    } attr;
+/* A queued sprite: the list link, then its OAM attributes as fields. */
+struct MenuSprite {
+    struct MenuSprite *next;
+    union {
+        struct {
+            u32 attr01;
+            u32 attr23;
+        } word;
+        struct {
+            u16 y : 8;
+            u16 affine : 2;
+            u16 mode : 2;
+            u16 mosaic : 1;
+            u16 colors : 1;
+            u16 shape : 2;
+            u16 x : 9;
+            u16 affine_index : 5;
+            u16 size : 2;
+            u16 tile : 10;
+            u16 priority : 2;
+            u16 palette : 4;
+            u16 unused;
+        } f;
+    } oam;
 };
 
 extern volatile s32 gKeyState;
 extern volatile s32 gKeysRepeat;
 extern volatile u32 gFrameCount;
 extern u8 Resource_FixedBlockBTiles[];
+extern u8 gWindowWork[];
+extern struct BattleMenuNav *gLinkCountdownWork;
 
 extern u8 MsgAbilityName;
-extern u8 Value_0000053a;
-extern u8 Value_000008e7;
-
-
-
-#define RenderWork (*(u8 **)0x03001e8c)
-#define MenuNav (*(struct BattleMenuNav **)0x03001f34)
+extern u8 MsgAbilityDescription;
 
 void WaitFrames(s32 frames);
 void Runtime_SetMainState19(void);
-void Runtime_PushSlotEntry(union MenuSprite *entry, s32 slot);
+void Runtime_PushSlotEntry(struct MenuSprite *entry, s32 slot);
 void Resource_ResetEntry(s32 handle);
 s32 Resource_LoadIntoFreeSlot(s32 kind);
 s32 Resource_GetBuffer(s32 handle, s32 source);
@@ -127,12 +117,13 @@ void UiWindow_DrawThreeTileColumn(
 void Ui_SetRectHighlight(s32 x, s32 y, s32 w, s32 h, s32 value);
 void Vram_CopyTile(s32 source, s32 destination);
 void Ui_FillVramBlockPattern(void);
-struct BattleUnit *Runtime_GetObject(s32 unit_id);
+struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 struct BattleAction *Ability_GetData(s32 action);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 {
+    u8 **globals;
     u8 *render;
     s32 drawn_page;
     s32 page;
@@ -142,7 +133,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     struct UiWindowWork *message_window;
     s32 icon_count;
     s32 preferred_row;
-    union MenuSprite *sprite;
+    struct MenuSprite *sprite;
     s32 *handle;
     struct BattleMenuNav *nav;
     struct BattleAction *action;
@@ -156,43 +147,43 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     s32 range;
     s32 result;
     s32 i;
-    union MenuSprite cursor;
+    struct MenuSprite cursor;
+    struct MenuSprite *spr;
     s16 buffer[64];
     s32 handles[PAGE_ROWS];
-    union MenuSprite sprites[PAGE_ROWS];
+    struct MenuSprite sprites[PAGE_ROWS];
     s32 glyph;
 
-    render = RenderWork;
+    globals = (u8 **)gWindowWork;
+    render = globals[0];
     drawn_row = -1;
     drawn_page = -1;
     cursor_handle = Resource_LoadIntoFreeSlot(128);
-    unit = Runtime_GetObject(unit_id);
+    unit = Owner_GetStateFar(unit_id);
     message_window = UiWindow_Create(0, 5, 30, 4, 42);
     icon_count = PAGE_ROWS;
-    nav = MenuNav;
+    nav = (struct BattleMenuNav *)globals[42];
     page = nav->page;
     row = nav->row;
     preferred_row = nav->preferred_row;
     window = UiWindow_Create(9, 9, 21, 11, 6);
 
     for (i = 0; i <= 4; i++) {
-        sprites[i].word.attr01 = 0x40000000;
-        sprites[i].word.attr23 = 0;
-        sprites[i].attr.x = window->x * 8 + 8;
-        sprites[i].attr.y = (i * 2 + window->y) * 8 + 4;
+        sprite = &sprites[i];
+        sprite->oam.word.attr01 = 0x40000000;
+        sprite->oam.word.attr23 = 0;
+        sprite->oam.f.x = window->x * 8 + 8;
+        sprite->oam.f.y = (i * 2 + window->y) * 8 + 4;
     }
 
     handle = handles;
-    sprite = sprites;
-    i = 4;
-    do {
+    for (i = 0; i < PAGE_ROWS; i++) {
         s32 slot;
 
         slot = Resource_LoadIntoFreeSlot(128);
         *handle++ = slot;
-        sprite->attr.tile = Resource_GetBuffer(slot, -1);
-        sprite++;
-    } while (--i >= 0);
+        sprites[i].oam.f.tile = Resource_GetBuffer(slot, -1);
+    }
 
     Vram_CopyTile(0xf018, 0x200);
     Vram_CopyTile(0xf018, 0x201);
@@ -212,11 +203,11 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
             if (count != 0) {
                 UiText_CopyMessageString(
                     (actions[page + row] & ACTION_ID_MASK) +
-                        (s32)&Value_0000053a,
+                        (s32)&MsgAbilityDescription,
                     buffer,
                     52);
             } else {
-                UiText_CopyMessageString((s32)&Value_000008e7, buffer, 52);
+                UiText_CopyMessageString(2279, buffer, 52);
             }
             UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
             drawn_row = row;
@@ -233,7 +224,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     UiWindow_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
                     Ability_LoadGlyph(
                         entry & ACTION_ID_MASK, 0, &handles[i], &glyph, 1);
-                    sprites[i].attr.tile = glyph;
+                    sprites[i].oam.f.tile = glyph;
 
                     if ((action->target_flags & 0x80) == 0) {
                         UiWork_SetParamNibble(4);
@@ -322,17 +313,18 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
         cursor_x = window->x * 8 - 4;
         cursor_y = (row * 2 + window->y) * 8 + 20;
-        cursor.word.attr01 = 0x40000000;
-        cursor.word.attr23 = 0;
-        cursor.attr.tile =
+        spr = &cursor;
+        spr->oam.word.attr01 = 0x40000000;
+        spr->oam.word.attr23 = 0;
+        spr->oam.f.tile =
             Resource_GetBuffer(cursor_handle, (s32)Resource_FixedBlockBTiles);
-        cursor.attr.x = cursor_x + ((gFrameCount & 4) >> 1) - 4;
-        cursor.attr.y = cursor_y - ((gFrameCount & 4) >> 2) - 8;
+        spr->oam.f.x = cursor_x + ((gFrameCount & 4) >> 1) - 4;
+        spr->oam.f.y = cursor_y - ((gFrameCount & 4) >> 2) - 8;
         if (count != 0) {
-            Runtime_PushSlotEntry(&cursor, 242);
+            Runtime_PushSlotEntry(spr, 242);
         }
 
-        nav = MenuNav;
+        nav = gLinkCountdownWork;
         nav->page = page;
         nav->row = row;
         nav->preferred_row = preferred_row;
@@ -349,21 +341,21 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 break;
             }
         } else if (nav->active == 0 || (gKeyState & 2) != 0) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             break;
         }
 
         if (count != 0) {
             if ((gKeysRepeat & 128) != 0) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 row++;
                 if (row == PAGE_ROWS || page + row == count) {
                     row = 0;
                 }
                 preferred_row = row;
             } else if ((gKeysRepeat & 64) != 0) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 row--;
                 if (row < 0) {
                     if (page == __divsi3(count - 1, PAGE_ROWS) * PAGE_ROWS) {
@@ -374,7 +366,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 }
                 preferred_row = row;
             } else if ((gKeysRepeat & 16) != 0) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
                 if (page + PAGE_ROWS >= count) {
                     if (page != 0) {
@@ -393,7 +385,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     }
                 }
             } else if ((gKeysRepeat & 32) != 0) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
                 if (page != 0) {
                     row = preferred_row;

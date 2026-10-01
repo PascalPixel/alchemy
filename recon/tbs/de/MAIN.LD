@@ -347,7 +347,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER2.o"(.text)
     "*/games/COMMON/SRC/GAME/PARTY/ADVANCE_OWNER_COUNT_TO_TARGET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/FLAGS/TEST.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0007d260)
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER3.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0007d924)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/RANDOM16.o"(.text)

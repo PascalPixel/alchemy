@@ -143,12 +143,6 @@ Map_CopyMetatileCellsRect:
 	.thumb_func
 Func_08010788:
 	.incbin "baserom.gba", 0x000106e8, 0x0000013c
-	.section .rom.00010f50, "ax"
-	.global MapAnimation_ApplyAffineFrame
-	.type MapAnimation_ApplyAffineFrame, %function
-	.thumb_func
-MapAnimation_ApplyAffineFrame:
-	.incbin "baserom.gba", 0x00010f50, 0x000000f0
 	.section .rom.00011b54, "ax"
 	.global Func_08011bf4
 	.type Func_08011bf4, %function

@@ -129,8 +129,8 @@ Curve_LerpWeightTable:
 	.global Curve_SampleIndexTable
 Curve_SampleIndexTable:
 	.incbin "baserom.gba", 0x000133fc, 0x00000100
-	.global Func_080134fc
-Func_080134fc:
+	.global Map_TerrainHeightFunctions
+Map_TerrainHeightFunctions:
 	.incbin "baserom.gba", 0x000134fc, 0x00000040
 	.global WorldMap_TerrainBehaviorTable
 WorldMap_TerrainBehaviorTable:

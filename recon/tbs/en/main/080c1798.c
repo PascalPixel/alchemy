@@ -3,30 +3,28 @@
    prepared scene, followed for 40; modes 2 and others launch an effect with
    an argument block built here.
 
-   2026-10-01 slice-6: rewritten from the listing, 64 instructions off (was
-   212). The 240-byte frame, the spilled session and brightness pointer, the
-   register-write macro and both loops' bodies agree in shape. Remaining:
-   - entry: the reference loads slot 12's address (gCameraWork) into r7 and
-     reads the session 12 bytes below it; this draft reads gBattleWork
-     directly. A cursor variable used once is folded to the one address, so
-     the cursor must have another use this draft does not have.
-   - mode 0 loop: the reference keeps the IME address in r7 and the position
-     in r6 across the loop, saved IME in r4, the origin address in r0; here
-     the IME address is rebuilt every frame (r0), the position is in r7 and
-     saved IME in r6. The work pointer is read as gWorkSlot plus 156 (base
-     reloaded, offset added) where this draft folds it to slot 39's address.
-   - mode 1 loop: the registers agree; the three preheader moves and one
-     temporary differ.
-   Tried: one pointer variable set to the gCameraWork symbol at entry (the
-     session read 12 bytes below it) and to the IME address before the mode
-     0 loop, the loop then using it without reloading. That gives the
-     reference shape (shared register at entry and in the loop, saved IME
-     in r4, origin address in r0) but the allocator ranks it just above the
-     hoisted position address (11 references over 118 against 7 over 54), so
-     it takes r6 and the position r7, the reverse of the reference, and the
-     hoisted 64 then outranks kind, which spills. Pinning that pointer to r7
-     miscompiles (the allocator reuses r7 for the work pointer).
+   2026-10-01 slice-6: rewritten from the listing, 49 instructions off (was
+   212): 31 register choices, 15 orderings, one instruction short. The
+   frame, every callee-saved register, the entry and both loops agree in
+   shape. What made them agree:
+   - one pointer variable holds the gCameraWork slot address at entry (the
+     session is read 12 bytes below it) and the IME address in mode 0. It
+     is assigned the IME address at the top of the mode 0 branch (the
+     scheduler sinks the load to the loop), which makes it live long enough
+     to rank below the hoisted position address: r7 and r6 as in the ROM.
+   - the brightness pointer is taken before the loop and spilled.
+   - the default launch stores kind first: kind then dies three
+     instructions earlier and outranks the hoisted constant 64 for r11.
+     Fragile: the two differ by 0.002.
+   Remaining:
+   - mode 0 loop: the reference reads the work pointer as gWorkSlot plus
+     156 (base loaded, offset added) and rebuilds 64 in r4; this draft
+     loads the one address of slot 39 and rebuilds 64 in r1, which rotates
+     the temporaries r0 to r4 through the loop body. The loop pass hoists
+     both the address and the 64 here and seemingly neither there.
+   - both preheaders: the same loads in other temporaries and order.
    - the unused 40 bytes at the top of the frame are a guess.
+   Pinning the pointer to r7 miscompiles (the allocator reuses r7).
    SparkWork's last three words are the BG2 origin and its pending flag;
    EFFECT3.C names them padding13c4 and unknown_13cc. */
 #include "TYPES.H"
@@ -81,6 +79,7 @@ struct EffectLaunch {
 };
 
 extern struct State gWorkSlot;
+extern u8 gCameraWork[];
 extern struct SparkWork *gBattleFxWork[2];
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade);
@@ -124,6 +123,26 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
         *ime = saved; \
     }
 
+#define QUEUE_BG2_ORIGIN_AT(ime, origin) \
+    { \
+        struct IoWriteQueue *q; \
+        u32 saved; \
+        s32 count; \
+ \
+        q = &gIoWriteQueue; \
+        saved = *ime; \
+        *ime = (u16)(u32)ime; \
+        count = q->count; \
+        if (count <= 31) { \
+            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4); \
+            *(u16 *)&q->count = count + 1; \
+            *destination++ = (u32)(origin); \
+            *destination++ = 0x04000028; \
+            *destination = 0x84000002; \
+        } \
+        *ime = saved; \
+    }
+
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 {
     u8 unused[40];
@@ -131,7 +150,8 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
     struct EffectPosition position2;
     struct EffectLaunch launch;
     struct EffectLaunch launch2;
-    struct BattleSession *session = gBattleWork;
+    volatile u16 *reg = (volatile u16 *)gCameraWork;
+    struct BattleSession *session = *(struct BattleSession **)((u8 *)reg - 12);
     struct SparkWork *work;
     s32 frame;
     s32 fade;
@@ -149,6 +169,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
     Io_Write16(*(u16 *)0x04000048, 63);
     Io_Write16(*(u16 *)0x0400004a, 17);
     if (mode == 0) {
+        reg = (volatile u16 *)0x04000208;
         QueueIoWriteDelay2(0x04000052, 0x100e);
         BattleFx_InitializeStarField(kind);
         brightness = &session->brightness;
@@ -159,7 +180,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
             BattleMotion_ProjectScaledPosition(unit, &position);
             work->origin_x = (64 - position.x) << 8;
             work->origin_y = (64 - position.y) << 8;
-            QUEUE_BG2_ORIGIN(&work->origin_x);
+            QUEUE_BG2_ORIGIN_AT(reg, &work->origin_x);
             work->origin_pending = 1;
             WaitFrames(1);
         }
@@ -187,11 +208,11 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         launch.unknown_0010 = 1;
         Func_080c9020(&launch);
     } else {
+        launch2.kind = kind;
         launch2.unknown_001c = 0;
         launch2.variant = 0;
         launch2.actor = unit;
         launch2.target = unit;
-        launch2.kind = kind;
         launch2.actors[0] = unit;
         launch2.count = 1;
         launch2.unknown_0010 = 1;

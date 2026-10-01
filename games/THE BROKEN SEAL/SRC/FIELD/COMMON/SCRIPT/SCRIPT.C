@@ -5,9 +5,6 @@
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "IWRAM_CALL.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep this function in their scaffolds for now. */
-
 struct WanderPosition {
     s32 x;
     s32 y;
@@ -140,7 +137,6 @@ done:
     object->script_cursor += 4;
     return 1;
 }
-#endif
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 extern OperandFunc Script_OperandHandlerTable[];

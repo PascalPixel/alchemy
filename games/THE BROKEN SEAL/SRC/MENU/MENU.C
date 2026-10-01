@@ -259,9 +259,6 @@ void Menu_SetupSelectionBothSides(void)
     Menu_SetupSelectionSide(state, 1);
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep this function in their scaffolds for now. */
-
 extern s32 Resource_FindFreeEntry(void);
 
 void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index)
@@ -305,4 +302,3 @@ void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index)
         entry->prio = 0;
     }
 }
-#endif

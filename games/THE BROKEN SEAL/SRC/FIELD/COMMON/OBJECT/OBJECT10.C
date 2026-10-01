@@ -82,9 +82,6 @@ struct DisplayScrollState {
 
 extern struct DisplayScrollState *gHBlankScrollWork;
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep this function in their scaffolds for now. */
-
 struct SceneFadeWork {
     u8 unknown_000[0x19e];
     s16 mode;
@@ -140,8 +137,6 @@ s32 Scene_FadeColorFromWhite(void)
         }
     }
 }
-
-#endif
 
 void ObjectEffect_PrepareContextEffect(s32 value)
 {

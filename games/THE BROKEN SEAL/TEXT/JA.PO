@@ -12779,7 +12779,7 @@ msgctxt "MsgPsynergyChooseTarget"
 msgid "03192"
 msgstr "だれにつかいますか?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyNeedMorePp"
 msgid "03193"
 msgstr "EPがたりません"
 
@@ -12947,7 +12947,7 @@ msgctxt "MsgCurrentDjinn"
 msgid "03234"
 msgstr "なかまのジンのいちらんです"
 
-msgctxt "message"
+msgctxt "MsgPanelHpMaxLabel"
 msgid "03235"
 msgstr "HP/さいだい"
 
@@ -12967,7 +12967,7 @@ msgctxt "MsgPanelDefenseLabel"
 msgid "03239"
 msgstr "ぼうぎょ"
 
-msgctxt "message"
+msgctxt "MsgPanelStatusLabel"
 msgid "03240"
 msgstr "じょうたい"
 

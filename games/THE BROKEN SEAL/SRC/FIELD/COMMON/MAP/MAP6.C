@@ -180,13 +180,13 @@ s32 Map_InitializePerspectiveScene(void)
     work->limit_y = 0x1fe00000;
     work->unknown_010 = 0;
     work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), (void *)0x0202d000);
-    MapAnimation_StartChannels((void *)0x0202d000);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), Ram_MapCollision + 0x1000);
+    MapAnimation_StartChannels(Ram_MapCollision + 0x1000);
     Io_Set16(0x3f9e, (u16 *)0x04000050);
     Io_Set16(0x1010, (u16 *)0x04000052);
     *(u16 *)0x04000054 = 0;
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), (void *)0x02010000);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), (void *)0x0202c000);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
     work->fade = 0x1f00;
     work->fade_step = 0x80;
     Io_Set16(0xa80a, (u16 *)0x0400000e);

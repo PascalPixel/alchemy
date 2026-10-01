@@ -227,6 +227,72 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
 
 #undef OBJECT_0808EEE4_OFFSET
 
+#if defined(TBS_EDITION_EN)
+/* The other editions keep this function in their scaffolds for now. */
+
+/* One of the ten cells a scene lists at gEventWork + 0x11c, in tiles. */
+struct ParticleCell {
+    u8 unknown_0[4];
+    u8 active;
+    u8 unknown_5;
+    u8 x;
+    u8 z;
+};
+
+/* The selected actor's object as this function moves it. */
+struct ParticleMover {
+    u8 unknown_00[8];
+    struct ParticlePosition position;
+    u8 unknown_14[0x24];
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
+};
+
+s32 ArcTan2(s32, s32);
+
+/* The Suhara desert calls this when a scene starts: the selected actor,
+   standing within a tile of the centre of one of the listed cells, is put
+   on that centre and pushed 0x140000 on along the angle it stood at from
+   it, with no move target. */
+void BattleFx_EmitRandomParticle(void)
+{
+    struct ParticleMover *object = ObjectTable_Get(gGameState.selected_actor);
+    struct ParticleCell *cell = (struct ParticleCell *)(gEventWork + 0x11c);
+    s32 i = 0;
+    s32 x;
+    s32 z;
+    s32 cx;
+    s32 cz;
+    s32 dx;
+    s32 dz;
+
+    if (cell->active != 0) {
+        x = object->position.x;
+        z = object->position.z;
+        for (;;) {
+            cx = cell->x << 20;
+            dx = x - cx - 0x80000;
+            cz = cell->z << 20;
+            dz = z - cz - 0x80000;
+            if ((u32)(dx + 0xfffff) <= 0x1ffffe && (u32)(dz + 0xfffff) <= 0x1ffffe) {
+                object->position.x = cx + 0x80000;
+                object->position.z = cz + 0x80000;
+                Vector_AddPolarOffset(0x140000, (u16)ArcTan2(dz, dx), &object->position);
+                object->target_x = 0x80000000;
+                object->target_y = 0x80000000;
+                object->target_z = 0x80000000;
+                return;
+            }
+            i++;
+            cell++;
+            if (i > 9 || cell->active == 0)
+                break;
+        }
+    }
+}
+#endif
+
 void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
 {
     struct ParticlePosition position;

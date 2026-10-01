@@ -653,7 +653,7 @@ Func_0808c4f8:
 	strh r3, [r1]
 	movs r1, #0
 	ldrsh r0, [r5, r1]
-	bl Func_080941e0
+	bl Scene_FadeColorFromWhite
 	movs r3, #212
 	lsls r3, r3, #1
 	ldr r2, .L_0808cac0

@@ -8,7 +8,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/HOOKS.o"(.text)
-        "*/resource_3bc_overlay.o"(.text.x0200804c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/MARUTA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/ACTOR_MOTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SOLO_COMPETITOR.o"(.text)

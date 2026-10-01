@@ -382,9 +382,9 @@ Soru_UpdateRing:
 	pop {r0}
 	bx r0
 .L_0200b2f4:
-	.4byte Data_02003a0c
+	.4byte Soru_RingDrift
 .L_0200b2f8:
-	.4byte Data_02003a2a
+	.4byte Soru_RingSwing
 .L_0200b2fc:
 	.4byte Soru_RingOffsetX
 .L_0200b300:
@@ -392,7 +392,7 @@ Soru_UpdateRing:
 .L_0200b304:
 	.4byte 0x00001999
 .L_0200b308:
-	.4byte Data_02003a48
+	.4byte Soru_RingDirection
 	.section .rodata.x0200b62c,"a",%progbits
 	.4byte 0x00000015
 	.4byte 0x0000000d
@@ -654,8 +654,8 @@ Funka_EmberScript:
 	.4byte 0x00000022
 	.4byte OverlayObject_SetRecordAngleFromHeading
 	.4byte 0x00000010
-	.global Data_02003a0c
-Data_02003a0c:
+	.global Soru_RingDrift
+Soru_RingDrift:
 	.4byte 0x04040404
 	.4byte 0x00040300
 	.4byte 0x04000404
@@ -664,8 +664,8 @@ Data_02003a0c:
 	.4byte 0x03000404
 	.4byte 0x02010002
 	.2byte 0x0200
-	.global Data_02003a2a
-Data_02003a2a:
+	.global Soru_RingSwing
+Soru_RingSwing:
 	.2byte 0x0101
 	.4byte 0x02000102
 	.4byte 0x01020001
@@ -674,8 +674,8 @@ Data_02003a2a:
 	.4byte 0x01020001
 	.4byte 0x00010200
 	.4byte 0x02000102
-	.global Data_02003a48
-Data_02003a48:
+	.global Soru_RingDirection
+Soru_RingDirection:
 	.4byte 0x01010101
 	.4byte 0x00010100
 	.4byte 0x0100ff01

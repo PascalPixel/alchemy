@@ -14639,11 +14639,11 @@ msgctxt "MsgTorebiCoins"
 msgid "03657"
 msgstr "Coins"
 
-msgctxt "message"
+msgctxt "MsgTorebiLuckyMedals"
 msgid "03658"
 msgstr "Lucky Medals"
 
-msgctxt "message"
+msgctxt "MsgTorebiCounterMarker"
 msgid "03659"
 msgstr "="
 

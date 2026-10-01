@@ -8,7 +8,15 @@
 	.global Func_080c82a8
 	.thumb_func
 Func_080c82a8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SelectSpawnObjectMode
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SelectSpawnObjectMode
+.else
 	overlay_veneer Func_080d5bec
+.endif
+.endif
 	.global Object_GetTriggerTileAheadOfCurrentFar
 	.thumb_func
 Object_GetTriggerTileAheadOfCurrentFar:
@@ -108,4 +116,12 @@ Func_080c8368:
 	.global Func_080c8370
 	.thumb_func
 Func_080c8370:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_ApplyColorToSourceBuffer
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_ApplyColorToSourceBuffer
+.else
 	overlay_veneer Func_080d1684
+.endif
+.endif

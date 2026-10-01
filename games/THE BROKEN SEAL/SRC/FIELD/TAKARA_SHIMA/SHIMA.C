@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "EDITION.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
@@ -656,9 +657,13 @@ void FieldScene_RunScene3b2SequenceA(void)
 
 void FieldScene_HandleEscapeColumn(void)
 {
+    /* FAKEMATCH: the block-local two preserves the sprite-flag registers;
+     * Japanese reuses a zero automatic across the waits and sprite reset.
+     * Literal zero clears make its complete function 12 bytes shorter. */
     u8 *entity;
     s16 *slot;
     s32 column;
+    s32 zero;
 
     entity = (u8 *)Object_GetById(8);
     column = *(s32 *)(entity + 8) >> 20;    /* 16.16 -> 16-pixel tile grid */
@@ -666,6 +671,7 @@ void FieldScene_HandleEscapeColumn(void)
         return;
     }
 
+#if EDITION_INTERNATIONAL
     {
         s32 off = 448;
         slot = (s16 *) ((u8 *) ((s16 *)&gGameState) + off);
@@ -673,19 +679,30 @@ void FieldScene_HandleEscapeColumn(void)
     if ((u8 *)Engine_GameFlagIsSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6)) != 0) {
         return;                             /* handled by 0x02001214 instead */
     }
+#endif
 
     entity[85] = 3;
+#if !EDITION_INTERNATIONAL
+    zero = 0;
+#endif
 
     Engine_EventWait(8);
     ((s32 (*)())SpawnRadialEffectBurst)(8);
     Engine_AudioPlayCue(136);
     Engine_EventWait(40);
 
+#if EDITION_INTERNATIONAL
     Engine_ActorSetSpriteFlags((u8 *)Object_GetById(8), 0);
+#else
+    Engine_ActorSetSpriteFlags((u8 *)Object_GetById(8), zero);
+#endif
     ObjectMotion_SetActionVariant(8, 3);
 
+#if EDITION_INTERNATIONAL
     entity[85] = 0;
-    /* FAKEMATCH: a temporary holding the 2 picks the reference registers. */
+#else
+    entity[85] = zero;
+#endif
     {
         s32 flags = 2;
 
@@ -695,6 +712,12 @@ void FieldScene_HandleEscapeColumn(void)
 
     Engine_MapCopyCellAttributes(42, 10, 1, 1, column, 10);
 
+#if !EDITION_INTERNATIONAL
+    {
+        s32 off = 448;
+        slot = (s16 *) ((u8 *) ((s16 *)&gGameState) + off);
+    }
+#endif
     Engine_GameFlagSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6));
 }
 
@@ -1096,6 +1119,7 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
 {
     u8 *state = &actor->f55;
     s32 saved_state = *state;
+#if EDITION_INTERNATIONAL
     struct V destination;
 
     destination.a = (actor->f08 & 0xfff00000) + 0x80000;
@@ -1107,6 +1131,9 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
         Vector_AddPolarOffset(0x200000, direction, &destination);
     }
     if (Object_CheckMovementCollision(actor, &destination) == 0) {
+#else
+    if (Object_CheckMovementCollision(actor, requested) == 0) {
+#endif
         s32 t;
 
         Engine_EventBegin();
@@ -1122,7 +1149,11 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
         *state = (u8)t;
         Engine_ActorSetSpriteFlags(actor, 0);
         {
+#if EDITION_INTERNATIONAL
             s16 *coordinates = (s16 *)&destination;
+#else
+            s16 *coordinates = (s16 *)requested;
+#endif
 
             Actor_MoveToAndWait(ACTOR_PARTY_LEADER, coordinates[1], coordinates[5]);
         }

@@ -8,7 +8,15 @@
 	.global Func_080c8390
 	.thumb_func
 Func_080c8390:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetBufferWord
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetBufferWord
+.else
 	overlay_veneer BattleFx_StartBufferInterpolation
+.endif
+.endif
 	.global Func_080c8398
 	.thumb_func
 Func_080c8398:

@@ -1,10 +1,41 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x02008974,"a",%progbits
+	.ifdef TBS_EDITION_ES
+SuharaGate_PatrolStartup:
+	.4byte 21, 30, 0
+	.else
+	.ifdef TBS_EDITION_FR
+SuharaGate_PatrolStartup:
+	.4byte 21, 30, 0
+	.else
+	.ifdef TBS_EDITION_IT
+SuharaGate_PatrolStartup:
+	.4byte 21, 30, 0
+	.else
+	.endif
+	.endif
+	.endif
 .L_02008974:
 	.4byte 0x0000001c
 	.4byte 0x00000005
 	.4byte 0x00000010
+	.ifdef TBS_EDITION_ES
+SuharaGate_FirstGuardStartup:
+	.4byte 21, 30, 0
+	.else
+	.ifdef TBS_EDITION_FR
+SuharaGate_FirstGuardStartup:
+	.4byte 21, 30, 0
+	.else
+	.ifdef TBS_EDITION_IT
+SuharaGate_FirstGuardStartup:
+	.4byte 21, 30, 0
+	.else
+	.endif
+	.endif
+	.endif
 .L_02008980:
 	.4byte 0x00000015
 	.4byte 0x00000009
@@ -221,22 +252,73 @@ gSuharaGatePlacements1:
 	.global gSuharaGatePlacements1Flagged
 gSuharaGatePlacements1Flagged:
 	.4byte 0xffff0098
+	.ifdef TBS_EDITION_ES
+	.4byte SuharaGate_FirstGuardStartup
+	.4byte 0x008c0000
+	.else
+	.ifdef TBS_EDITION_FR
+	.4byte SuharaGate_FirstGuardStartup
+	.4byte 0x008c0000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte SuharaGate_FirstGuardStartup
+	.4byte 0x008c0000
+	.else
 	.4byte .L_02008980
 	.4byte 0x00880000
+	.endif
+	.endif
+	.endif
 	.4byte 0x00000000
 	.4byte 0x01980000
 	.4byte 0x00004000
 	.4byte 0xffff0098
+	.ifdef TBS_EDITION_ES
+	.4byte SuharaGate_PatrolStartup
+	.4byte 0x00a40000
+	.else
+	.ifdef TBS_EDITION_FR
+	.4byte SuharaGate_PatrolStartup
+	.4byte 0x00a40000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte SuharaGate_PatrolStartup
+	.4byte 0x00a40000
+	.else
 	.4byte .L_02008974
 	.4byte 0x00a80000
+	.endif
+	.endif
+	.endif
 	.4byte 0x00000000
 	.4byte 0x01a80000
 	.4byte 0x00004000
 	.4byte 0xffff0098
+	.ifdef TBS_EDITION_ES
+	.4byte SuharaGate_PatrolStartup
+	.4byte 0x01dc0000
+	.4byte 0x00000000
+	.4byte 0x012c0000
+	.else
+	.ifdef TBS_EDITION_FR
+	.4byte SuharaGate_PatrolStartup
+	.4byte 0x01dc0000
+	.4byte 0x00000000
+	.4byte 0x012c0000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte SuharaGate_PatrolStartup
+	.4byte 0x01dc0000
+	.4byte 0x00000000
+	.4byte 0x012c0000
+	.else
 	.4byte .L_02008974
 	.4byte 0x01d80000
 	.4byte 0x00000000
 	.4byte 0x01300000
+	.endif
+	.endif
+	.endif
 	.4byte 0x00004000
 	.4byte 0xffff0039
 	.4byte 0x00000001

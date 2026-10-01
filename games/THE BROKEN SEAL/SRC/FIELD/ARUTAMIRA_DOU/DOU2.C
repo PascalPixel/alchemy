@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "EDITION.H"
 #include "ABILITY_IDS.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -1289,9 +1290,11 @@ s32 ArutamiraDou_ApplyEntryState(void)
             Object_GetById(11)->priority_flags |= 2;
         }
         Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
+#if EDITION_INTERNATIONAL
         if (Engine_GameFlagIsSet(0x212)) {
             Call6(Engine_MapCopyCellAttributes, 30, 20, 1, 1, 32, 20);
         }
+#endif
     }
     if (gGameState.scene == (s32)&SceneId_ArutamiraDou6) {
         Engine_GameFlagClear(0x200);

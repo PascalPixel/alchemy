@@ -25639,7 +25639,7 @@ msgctxt "message"
 msgid "06407"
 msgstr "We were fine because{line_break}our karma is good.{page_break}Only people with bad{line_break}karma got hurt, I'll bet...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraNeedEldersPermission"
 msgid "06408"
 msgstr "If you wanna cross here,{line_break}you'll need permission{line_break}from the town elder!{end_wait}"
 
@@ -25647,7 +25647,7 @@ msgctxt "message"
 msgid "06409"
 msgstr "Without permission, ain't{line_break}no one's gonna cross this{line_break}bridge, no matter what!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraGoingToOsenia"
 msgid "06410"
 msgstr "You goin' to Osenia?{end_now}"
 
@@ -25659,19 +25659,19 @@ msgctxt "message"
 msgid "06412"
 msgstr "Then get lost, pal.{line_break}These parts can be{line_break}dangerous...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraCanCrossWithPermission"
 msgid "06413"
 msgstr "If you have permission,{line_break}you can cross anytime.{page_break}But try to cross illegally,{line_break}and we'll throw you in the{line_break}hoosegow with Mr. Bluehair!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraForTheirSafety"
 msgid "06414"
 msgstr "I wish I could tell 'em{line_break}it's nothing personal...{line_break}It's for their own good.{page_break}Who knows what's{line_break}waiting to gobble 'em{line_break}up in Osenia!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraElderReturn"
 msgid "06415"
 msgstr "I'm startin' to wonder when{line_break}the elder and the others'll{line_break}come back from Osenia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraHeardAboutYou"
 msgid "06416"
 msgstr "Yeah, we heard about{line_break}you already.{page_break}If you're going to{line_break}Osenia, you'd better{line_break}get moving.{end_wait}"
 
@@ -25679,43 +25679,43 @@ msgctxt "message"
 msgid "06417"
 msgstr "Alhafra is up along the{line_break}northeast of Osenia...{line_break}You'll see it eventually.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraMikasaraVillage"
 msgid "06418"
 msgstr "Head to Southeast{line_break}Osenia, and you'll{line_break}hit Mikasalla.{page_break}It's a small village, though.{line_break}Probably not much to{line_break}interest you there.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraAvoidYanpiSabaku"
 msgid "06419"
 msgstr "If you try heading straight{line_break}through Osenia to Alhafra,{line_break}you'll hit Yampi Desert.{page_break}You'd be better off avoiding{line_break}the desert and just following{line_break}the coast to Alhafra instead.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraWouldNeedBoat"
 msgid "06420"
 msgstr "Unless I had a boat, I{line_break}wouldn't go to Osenia,{line_break}with permission or without.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraRatherStayHome"
 msgid "06421"
 msgstr "These guys must be looking{line_break}for trouble. Me, I'd rather{line_break}stay home and relax.{page_break}It's so pleasant and{line_break}comfortable.{pause_20_skippable} And safe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraChampaBoat"
 msgid "06422"
 msgstr "This is a Champa boat...{line_break}You can see their mark{line_break}on the flag there.{page_break}They must have been{line_break}run aground here by the{line_break}tidal wave.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraSailorNotChampa"
 msgid "06423"
 msgstr "Wait, if this is the Champa{line_break}ship, then that must mean{line_break}{actor_name:8} isn't a Champa!{page_break}So...why does the elder{line_break}still need Briggs to{line_break}clear his name?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraWaveDamage"
 msgid "06424"
 msgstr "Look at all the damage...{line_break}That wave must have{line_break}been gigantic...{page_break}I wonder how many{line_break}Champa died in the{line_break}wreck...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraCannotEscapeBySea"
 msgid "06425"
 msgstr "I guess even if they{line_break}did free Briggs...{page_break}They wouldn't have{line_break}been able to go back{line_break}out to sea...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraPayayamuNewShip"
 msgid "06426"
 msgstr "Briggs must be trying{line_break}to get a new ship in{line_break}Alhafra.{page_break}I hope the elder finds{line_break}him first!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraPirateAttackParties"
 msgid "06427"
 msgstr "They still had enough{line_break}men to dig that hole{line_break}and attack Madra.{page_break}And enough to form{line_break}two attack parties, too...{end_wait}"
 
@@ -27223,7 +27223,7 @@ msgctxt "message"
 msgid "06803"
 msgstr "Everyone's PP{line_break}was replenished!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWindStoneWarning"
 msgid "06804"
 msgstr "Beware the Wind Stones.{page_break}The stones magnify the power{line_break}of the wind. Use caution when{line_break}approaching Air's Rock.{end_wait}"
 
@@ -41483,7 +41483,7 @@ msgctxt "message"
 msgid "10368"
 msgstr "The door is locked... It sounds{line_break}as if there's a raucous caucus{line_break}going on inside...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAddressCompanion"
 msgid "10369"
 msgstr "Umm... {actor_name:8}?{end_now}"
 
@@ -44327,7 +44327,7 @@ msgctxt "message"
 msgid "11079"
 msgstr "We'll be expecting you. Don't{line_break}think you can sneak out of this!{line_break}You owe us an explanation!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorLocked"
 msgid "11080"
 msgstr "The door's locked.{end_wait}"
 
@@ -49839,11 +49839,11 @@ msgctxt "message"
 msgid "12457"
 msgstr "I am the guardian of fire.{line_break}If you want my power, prove{line_break}yourself in my crucible of flame.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSummonGuardianOfWind"
 msgid "12458"
 msgstr "I am the guardian of wind.{line_break}If you would claim my power,{line_break}you must prove your worth.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSummonInheritedEarthDarkness"
 msgid "12459"
 msgstr "We inherited the power of the{line_break}land to create a great darkness.{pause_60}{page_break}If you crave this power,{line_break}attack this slate!{end_wait}"
 

@@ -8,11 +8,27 @@
 	.global Func_080c8378
 	.thumb_func
 Func_080c8378:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_ComputeBufferSteps
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_ComputeBufferSteps
+.else
 	overlay_veneer Func_080d170c
+.endif
+.endif
 	.global Func_080c8380
 	.thumb_func
 Func_080c8380:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_StartBufferInterpolation
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_StartBufferInterpolation
+.else
 	overlay_veneer BattleFx_ApplyColorToSourceBuffer
+.endif
+.endif
 	.global Func_080c8388
 	.thumb_func
 Func_080c8388:

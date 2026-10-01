@@ -16211,11 +16211,11 @@ msgctxt "MsgTorebiCoins"
 msgid "04050"
 msgstr "コイン    "
 
-msgctxt "message"
+msgctxt "MsgTorebiLuckyMedals"
 msgid "04051"
 msgstr "ラッキーメダル"
 
-msgctxt "message"
+msgctxt "MsgTorebiCounterMarker"
 msgid "04052"
 msgstr "まい"
 

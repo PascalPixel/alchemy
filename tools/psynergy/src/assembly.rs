@@ -7,6 +7,8 @@
 use crate::decode::{decode_one, decode_window_at, Ins, Kind};
 use std::collections::{BTreeMap, BTreeSet};
 
+pub mod addresses;
+
 fn u16_at(image: &[u8], offset: usize) -> Result<u16, String> {
     let bytes = image
         .get(offset..offset + 2)

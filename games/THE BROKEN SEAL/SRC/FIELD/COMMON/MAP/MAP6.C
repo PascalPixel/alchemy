@@ -19,7 +19,10 @@ struct PerspectiveWork {
     u8 unknown_0fc[4];
     u16 window_top;                 /* 0x100 */
     u16 window_bottom;              /* 0x102 */
-    u8 unknown_104[0xc];
+    u16 shown_top;                  /* 0x104: the window the frame shows */
+    u16 shown_bottom;               /* 0x106 */
+    u16 window_pending;             /* 0x108 */
+    u8 unknown_10a[6];
     void *tiles;                    /* 0x110 */
     u8 unknown_114[4];
     u16 pitch;                      /* 0x118 */
@@ -435,4 +438,56 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
         Map_UpdateCurrentTileBlock();
     }
     Runtime_BumpFree(buffer);
+}
+
+/* Each frame: stops the HBlank DMA, loads this frame's BG2 and BG3 affine
+   parameters from the double-buffered line table and restarts the DMA to
+   stream the rest, latches the window the scene asked for, and puts the
+   display in the affine mode only while that window is on screen. */
+void MapAnimation_ApplyAffineFrame(void)
+{
+    u8 **pointers = &gMapAnimationPages;
+    u8 *lines = *pointers++ + 0xc80;
+    s32 dispcnt = (s16)(*(volatile u16 *)0x04000000 & 0xfff8);
+    u32 *dst = (u32 *)0x04000020;
+    struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers++;
+    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    u32 *src;
+    u32 mode;
+    u32 top;
+    u32 control;
+
+    channel[5] &= 0xc5ff;
+    channel[5] &= 0x7fff;
+    (void)channel[5];
+    if (lines != NULL) {
+        src = (u32 *)(lines + (gFrameCount & 1) * 0x1400);
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst = *src++;
+        Dma_Set(src, (void *)0x04000020, 0xa6600008, (volatile u32 *)channel);
+    }
+    work->shown_top = work->window_top;
+    work->shown_bottom = work->window_bottom;
+    top = work->shown_top;
+    mode = 0;
+    if (top < 200) {
+        u16 bottom = work->shown_bottom;
+
+        mode = (bottom != 0) << 1;
+        if (top <= bottom) {
+            mode = 0;
+            if (top == 0)
+                mode = 2;
+        }
+    }
+    dispcnt |= mode;
+    control = (u16)dispcnt;
+    *(volatile u16 *)0x04000000 = control;
+    work->window_pending = 0;
 }

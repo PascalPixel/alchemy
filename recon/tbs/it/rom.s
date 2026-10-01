@@ -336,12 +336,6 @@ ItemIcon_Compose:
 	.thumb_func
 MenuSelection_DrawFrame:
 	.incbin "baserom.gba", 0x0001a8f8, 0x00000560
-	.section .rom.0001b9d4, "ax"
-	.global Menu_ScrollSelectionList
-	.type Menu_ScrollSelectionList, %function
-	.thumb_func
-Menu_ScrollSelectionList:
-	.incbin "baserom.gba", 0x0001b9d4, 0x000001cc
 	.section .rom.0001bdec, "ax"
 	.global Menu_ConfirmSelection
 	.type Menu_ConfirmSelection, %function

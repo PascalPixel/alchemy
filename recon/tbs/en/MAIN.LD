@@ -291,7 +291,6 @@
         "*/recon/tbs/raw/0801a98c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU2.o"(.text)
-        "*/recon/tbs/raw/0801ba68.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESOURCE2.o"(.text)
         "*/recon/tbs/raw/0801be80.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RESOURCE.o"(.text)

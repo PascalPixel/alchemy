@@ -1092,6 +1092,8 @@ Data_080ee1b4:
 	.global VortexMotes_Counts
 VortexMotes_Counts:
 	.incbin "baserom.gba", 0x000ee1c4, 0x00000006
+	.global Tornado_Shapes
+Tornado_Shapes:
 	.incbin "baserom.gba", 0x000ee1ca, 0x00000009
 	.global Data_080ee1d3
 Data_080ee1d3:

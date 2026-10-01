@@ -1438,8 +1438,8 @@ BattleEffect_RunPaletteParticles:
 	.thumb_func
 BattleEffect_RunEmberColumns:
 	.incbin "baserom.gba", 0x000d4b98, 0x00000628
-	.section .rom.000d5654, "ax"
-	.incbin "baserom.gba", 0x000d5654, 0x00000898
+	.section .rom.000d5a80, "ax"
+	.incbin "baserom.gba", 0x000d5a80, 0x0000046c
 	.section .rom.000d5fa4, "ax"
 	.incbin "baserom.gba", 0x000d5fa4, 0x00000448
 	.section .rom.000d6404, "ax"
@@ -1682,7 +1682,10 @@ SpinningStars_Radii:
 	.global VortexMotes_Counts
 VortexMotes_Counts:
 	.incbin "baserom.gba", 0x000effc4, 0x00000006
-	.incbin "baserom.gba", 0x000effca, 0x000000ea
+	.global Tornado_Shapes
+Tornado_Shapes:
+	.incbin "baserom.gba", 0x000effca, 0x00000009
+	.incbin "baserom.gba", 0x000effd3, 0x000000e1
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000f00b4, 0x000006c0

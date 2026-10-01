@@ -737,7 +737,7 @@
     "*/recon/tbs/fr/rom.o"(.rom.000d5c64)
     "*/recon/tbs/fr/rom.o"(.rom.000d6598)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/VORTEX.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000d7054)
+    "*/recon/tbs/fr/rom.o"(.rom.000d7480)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/UPDATE_PHASE.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000d79a4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_TWO_MODE_B_MODE0.o"(.text)

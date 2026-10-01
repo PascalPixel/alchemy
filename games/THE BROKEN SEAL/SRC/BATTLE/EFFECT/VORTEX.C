@@ -23,6 +23,12 @@ extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 /* By variant: how many motes fly, and for how many frames. */
 extern u8 VortexMotes_Counts[];
+/* By variant: how many columns the tornado has, how far it sways, and how
+   hard the screen shakes. */
+extern u8 Tornado_Shapes[];
+extern u16 BattleFx_GlintCellOffsets[];
+extern u8 BattleFx_GlintCellWidths[];
+extern u8 BattleFx_GlintCellHeights[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
@@ -177,5 +183,118 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+}
+
+/*
+ * A swaying tornado of stacked segments, one column a variant step, with
+ * four glints circling each column. The canvas clears on seven beats, and
+ * each affected unit is struck on those beats three frames after the last.
+ */
+void BattleFx_RunTornado(struct BattleEffectArgument *effect)
+{
+    DrawRectangle draw[2];
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 wave;
+    u8 *palette;
+    struct EffectStep *point;
+    s32 frame;
+    s32 x;
+    s32 y;
+    s32 segment;
+    s32 cell;
+    s32 i;
+    s32 j;
+
+    heap_cache = (void **)(gWorkSlot + 39 * 4);
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(1);
+    *(u16 *)0x04000052 = 0x1010;
+    palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
+    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    palette += 128;
+    Resource_DecodeType01(palette, work);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw[0] = (DrawRectangle)heap_cache[7];
+    BattleEffect_LoadWork(47, 7, 7, 7, 2);
+    draw[1] = (DrawRectangle)heap_cache[8];
+    for (j = 0; j != 16; j++) {
+        point = &work->particles[j];
+        point->x = Random16() & 31;
+        point->y = (Random16() & 63) + 16;
+        point->variant = -(s32)(Random16() & 15);
+    }
+    work->transfer_mode = 2;
+    work->transfer_value = 50;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    *(u16 *)0x04000052 = 0x1000;
+    WaitFrames(1);
+    AudioCommand_PlayFar(141);
+
+    for (frame = 0; frame != 80; frame++) {
+        wave = Trig_Sin(frame << 10) << 4;
+        if (frame == 32)
+            BattleEventRuntime_BeginPhaseFar(133);
+        for (i = 0; i != 7; i++) {
+            if (frame == i * 8 + 16)
+                Iwram_FillWords(canvas, 0x4000, 0x08080808);
+        }
+        if (work->effect->side == 1)
+            wave += 0x200000;
+        else
+            wave -= 0x200000;
+        if (frame <= 16)
+            *(u16 *)0x04000052 = frame | 0x1000;
+        if (frame > 63)
+            *(u16 *)0x04000052 = (0x4f - frame) | 0x1000;
+        for (i = 0; i != Tornado_Shapes[work->effect->variant * 3]; i++) {
+            x = ((Tornado_Shapes[work->effect->variant * 3 + 1]
+                    * Trig_Sin((frame << 11) + i * 0x4000) + wave) >> 16) + 40;
+            y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
+            segment = (frame / 2) % 3;
+            draw[0](canvas, (u8 *)work + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
+            draw[0](canvas, (u8 *)work + segment * 0x500 + 0x2a56, x, y + 48, 40, 32);
+            draw[0](canvas, (u8 *)work + segment * 0xa00 + 0x1156, x, y + 80, 40, 32);
+            for (j = 0; j != 4; j++) {
+                point = &work->particles[i * 4 + j];
+                if (point->variant >= 0) {
+                    cell = point->variant / 2 + (j / 2) * 3;
+                    draw[j & 1](canvas, (u8 *)work + BattleFx_GlintCellOffsets[cell],
+                        point->x + x, point->y + y,
+                        BattleFx_GlintCellWidths[cell], BattleFx_GlintCellHeights[cell]);
+                }
+                point->variant++;
+                if (point->variant == 6) {
+                    point->x = Random16() & 31;
+                    point->y = (Random16() & 63) + 16;
+                    point->variant = 0;
+                }
+            }
+        }
+        for (j = 0; j != work->effect->count; j++) {
+            for (i = 0; i != 7; i++) {
+                if (frame == i * 8 + j * 3 + 16) {
+                    ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 4);
+                    BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
+                }
+            }
+        }
+        work->shake_frames = 1;
+        Camera_ApplyShake(Tornado_Shapes[work->effect->variant * 3 + 2],
+            Tornado_Shapes[work->effect->variant * 3 + 2] * 2);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

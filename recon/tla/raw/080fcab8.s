@@ -56,13 +56,13 @@ Func_080fcab8:
 	bl Func_080f9108
 	ldr r0, .L_080fcbc4
 	bl Link_DrawShiftedTilePairFar
-	bl Func_080f9448
+	bl Menu_CancelSoundReset
 	add r0, sp, #12
 	add r1, sp, #8
 	add r2, sp, #4
 	bl Func_080fcbd8
 	adds r7, r0, #0
-	bl Func_080f9464
+	bl Menu_EnsureCancelSound
 	cmp r7, #1
 	bne .L_080fcb74
 	movs r1, #182

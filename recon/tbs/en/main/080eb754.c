@@ -1,508 +1,487 @@
-#include "BATTLE_EFFECT_WORK.H"
-#include "EFFECT_STEP.H"
+/* Draft (2026-10-02, slice-11), rewritten on the shared effect structs with
+   no address constants. Battle effect in two timed loops: 120 frames that
+   sweep nine spawned objects across the screen behind a growing ring and a
+   64-record fire pool, then 96 frames in which the objects rise and each
+   affected unit bursts into 32 sparks as the row passes it.
+   Remaining difference: see the score line `make drafts` prints; nothing
+   here has been fitted yet beyond the statement order of the listing. */
+#include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "EFFECT_STEP.H"
+#include "MAP_SCROLL.H"
+#include "RAM_BUFFER.H"
+#include "RESOURCE_IDS.H"
+#include "SYSTEM.H"
 
-extern u16 gBgScroll[];
-extern u32 gProjection[];
-extern u32 gWorkSlot[];
-extern u8 gKeysRepeat[];
-extern u8 gMapCellBuffer[];
+/* The whole-pixel half of a 16.16 coordinate. */
+#define HI(v) (((s16 *)&(v))[1])
 
-/*
- * Battle-presentation scene at 0x080eb754.
- *
- * The routine takes over the frame scheduler for the length of one canned
- * battle presentation. It runs two timed loops over the 0x03001eec battle work
- * block: a 0x78-frame introduction that sweeps nine attached objects across the
- * screen, grows a ring of sprites and animates a 64-entry spark pool at
- * work+0x7080, and a 0x60-frame main phase that animates the 320-entry pool at
- * 0x02010000, emits a 32-record burst for each living member as the rising row
- * passes it, and finally releases the objects, the scheduler callback and the
- * scene heap block.
- *
- * Uncertain: the exact meaning of most work-block fields (0x7780/0x7784 look
- * like a mode/timer pair, 0x77a8 like a shake counter, 0x7824 like a redraw
- * request and 0x7828 like the current target-list object); the roles of the
- * two nine-entry ROM displacement tables at 0x080eef56 / 0x080eef5f; and the
- * meaning of the 0x080ede48 sprite-size table. Names are reading aids.
- *
- * Call bindings used here, from the owner's own resolved call sites:
- *   Scheduler_AddOrUpdateCallback Scheduler_AddOrUpdateCallback   Scheduler_RemoveCallback Scheduler_RemoveCallback
- *   Random16 random_16                       Runtime_ReleaseHeapBlock Runtime_ReleaseHeapBlock
- *   BattleFx_SpawnObjects BattleFx_SpawnObjects       BattleFx_SelectLivingTargets BattleFx_SelectLivingTargets
- *   Resource_LoadAndDecompress load_and_decompress             EffectPosition_ApplyAlternateStepAndYOffset apply_alternate_step_and_y_offset
- *   ObjectGroup_UpdateMembers update_members                  Camera_ApplyShake Camera_ApplyShake
- *   ObjectGroup_TickMemberTimers ObjectGroup_TickMemberTimers
- *
- * Indirect calls: the cached word at gWorkSlot[46] is a six
- * argument rectangle blitter. Every retained call site branches through the
- * `bx rN` veneer bank at 0x080072e4 (0x080072f4 is the r4 slot, 0x08007300 the
- * r7 slot), so this is one function pointer used five times, not two ROM
- * functions. See recon/tbs/en/main/080ed104.c for the same idiom.
- *
- * Pooled small constants: the reference loads 0, 7, 0x3a, 0x73, 0x80, 0x95,
- * 0xca and 0xf0 from its literal pool at sites where an ordinary integer
- * literal would have compiled to `mov rd, #imm8`. They are modelled with the
- * project's Value_<address> absolute-symbol idiom, matching 080ed104.c, so the
- * operands stay link-time values instead of inline immediates. Neighbouring
- * plain immediates (0x20, 0xf0 at 0x03001ce0+0x10) are left as literals
- * because the reference does emit `mov` for those.
- *
- * Stack layout recovered from the reference frame (176 bytes): outgoing
- * arguments 0x00-0x07, spill slots 0x08/0x0c, seventeen word locals
- * 0x10-0x50, the two eight-byte position pairs at 0x54 and 0x5c, the two
- * sixteen-byte object placement records at 0x64 and 0xa0, the fourteen-entry
- * per-member flag array at 0x74, the sixteen-entry jitter array at 0x84 and
- * the twelve-byte member position scratch at 0x94. The declaration order
- * below reproduces GCC 2.96's slot assignment for that frame.
- *
- * Residual, measured and not claimed as exact: candidate 2440 of 2444 bytes,
- * topology equal, 1158 differing halfwords. The remaining size gap is literal
- * pool placement - the reference spills nine inline pools with their jump-over
- * branches and alignment fill, the candidate fewer - and the candidate frame is
- * 180 bytes because GCC needs one extra spill slot in the first loop, which
- * shifts every sp-relative offset by four. Both are allocation and pool
- * scheduling decisions, not missing statements: every reference branch, loop,
- * call and side effect is represented here.
- */
+#define REG16(address) (*(volatile u16 *)(address))
 
-/* Only the m2c spelling this draft actually uses. */
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
-#define EFFECT_ARGUMENT(work) \
-    ((struct BattleEffectArgument *) \
-        ((struct BattleEffectWork *)(work))->effect)
+/* 320 burst records fill the map cell buffer, 32 for each affected unit. */
+#define BURST ((struct EffectStep *)Ram_MapCellBuffer)
 
-#define SPARK_POOL 0x7080  /* 64 records inside the battle work block */
-#define OBJECT_LIST 0x77D8 /* nine attached presentation objects */
-#define SCENE_POOL ((struct ScenePoint *)gMapCellBuffer) /* 320 records */
+/* The nine spawned objects, kept in the work block. */
+#define OBJECTS(work) ((struct FxObject **)((u8 *)(work) + 0x77d8))
 
-struct EffectPos {
+struct FxObject {
+    u8 unknown_00[9];
+    u8 flags;
+};
+
+/* A projected placement: a 16.16 position and two words around it. */
+struct FxPlacement {
     s32 x;
+    s32 scale;
     s32 y;
+    s32 unknown_0c;
 };
 
-/* 0x1c-byte animation record; used by both pools in this scene. */
-struct ScenePoint {
-    s32 x;         /* 0x00 */
-    s32 y;         /* 0x04, 16.16 in the scene pool */
-    s32 field_08;  /* 0x08 */
-    s32 vx;        /* 0x0c */
-    s32 vy;        /* 0x10 */
-    s32 field_14;  /* 0x14 */
-    s32 life;      /* 0x18 */
+struct FxPair {
+    s32 a;
+    s32 b;
 };
 
-typedef void (*BlitRectFn)(s32 dest, void *src, s32 x, s32 y, s32 w, s32 h);
+struct FxControl {
+    u8 unknown_00[16];
+    s32 active;
+};
 
-/* Link-time operands the reference keeps in its literal pool. */
-extern u8 Value_00000000;
-extern u8 Value_00000007;
-extern u8 Value_0000003a;
-extern u8 Value_00000073;
-extern u8 Value_00000080;
-extern u8 Value_00000095;
-extern u8 Value_000000ca;
-extern u8 Value_000000f0;
+extern void *gBattleFxWork[];
+extern void *gWorkSlot[];
+extern s32 gProjection[];
+extern u32 gKeysRepeat;
+extern u16 ParticleStreams_CellOffsets[];
+extern const u8 FallingSword_DustGravity[];
+extern const struct FxPair Data_080edac8[];
 
-void Unnamed_080eb754(s32 arg0) {
+/* Each object's column and row in the formation. */
+#define COLUMNS (FallingSword_DustGravity + 0x3e)
+#define ROWS (FallingSword_DustGravity + 0x47)
+
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattlePres_ConfigureEffectDisplay(void);
+void BattleEffect_WipeCanvas(s32 layer, s32 mode);
+void BattleFx_SpawnObjects(s32 count, s32 animation, s32 mode);
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleBackground_LoadFar(s32 layer, s32 resource_id, s32 mode);
+void BattleEffect_SetupBlendedDisplay(void);
+void Object_ApplyProjectedPlacementFar(struct FxObject *object, struct FxPlacement *placement, struct FxPair *pair, s32 mode);
+void ResourceObject_ReleaseFar(struct FxObject *object);
+s32 Trig_Cos(s32 angle);
+s32 Trig_Sin(s32 angle);
+void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void ObjectGroup_TickMemberTimers(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_EndCanvasLayer(void);
+void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
+void Camera_ApplyShake(s32 x, s32 y);
+void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
+void Audio_PlayCue(s32 cue);
+
+void Unnamed_080eb754(struct BattleEffectArgument *effect)
+{
     void **cursor;
-    u8 place[0x10];  /* object placement record, first loop */
-    struct EffectPosition mpos;
-    u8 jit_buf[0x10];  /* per-column jitter, 16 entries */
-    u8 hit_buf[14];    /* per-member "already emitted" flags */
-    u8 place2[0x10];  /* object placement record, second loop */
-    struct EffectPos pos1;
-    struct EffectPos pos2;
-    void *dest;
+    struct FxPlacement place;
+    struct EffectPosition unit;
+    u8 jitter_row[16];
+    u8 hit_row[14];
+    struct FxPlacement place2;
+    struct FxPair pair;
+    struct FxPair pair2;
+    void *canvas;
     struct BattleEffectWork *work;
-    BlitRectFn blit;
+    DrawRectangle blit;
     u8 *sheet;
     s32 base_x;
     s32 grow;
-    s32 saved_row;
-    void *ctrl;
+    s32 saved_x;
+    struct FxControl *control;
     s32 shift;
     s32 wave;
-    s32 radius_x;
-    s32 radius_y;
-    s32 half;
-    s32 row_y;
+    s32 row_x;
     u8 *hit;
     u8 *jitter;
     s32 slide;
-    s32 pool_ofs;
     s32 frame;
-    s32 cnt;
-    s32 num;
-    s32 amp;
-    s32 ang;
-    s32 lift;
-    s32 lo;
-    s32 hi;
-    s32 tmp;
-    s32 idx;
-    s32 k;
-    s32 m;
-    s32 slot;
-    s32 *objs;
-    struct ScenePoint *sp;
+    s32 i;
 
-    cursor = (void **)0x03001EF0;
-    dest = cursor[0];
+    cursor = gBattleFxWork + 1;
+    canvas = cursor[0];
     work = cursor[-1];
     sheet = cursor[1];
-    work->effect = (void *)arg0;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     BattlePres_ConfigureEffectDisplay();
-    *(u16 *)0x0400000c = 0x784;
-    M2C_FIELD((void *)0x05000000, s16 *, 0) = (s16) (s32) &Value_00000000;
-    M2C_FIELD((void *)0x05000000, s16 *, 2) = (s16) (s32) &Value_00000000;
+    REG16(0x0400000c) = 0x784;
+    REG16(0x05000000) = 0;
+    REG16(0x05000002) = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(1, 0);
     BattleFx_SpawnObjects(9, 0x175, 1);
-    gProjection[4] = 0xF0;
+    gProjection[4] = 240;
     BattleFx_SelectLivingTargets(work->effect);
-    *(u16 *)0x04000048 = 0x2737;
-    *(u16 *)0x04000038 = (u16) (s32) &Value_000000ca;
+    REG16(0x04000048) = 0x2737;
+    REG16(0x04000040) = 0xca;
     WaitFrames(1);
-    BattleBackground_LoadFar(1, (s32) &Value_0000003a, 0);
+    BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
     BattleEffect_WipeCanvas(1, 1);
-    Resource_LoadAndDecompress((s32) &Value_00000073, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32) &Value_00000095, work, 1, 1);
-    M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;
-    M2C_FIELD((void *)0x04000000, s16 *, 0x20) = (s16) (s32) &Value_00000080;
-    M2C_FIELD((void *)0x04000020, s16 *, 0x32) = 0x100E;
-    M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0x3F44;
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work, 1, 1);
+    REG16(0x04000000) = 0x7741;
+    REG16(0x04000020) = 0x80;
+    REG16(0x04000052) = 0x100e;
+    REG16(0x04000050) = 0x3f44;
+
     base_x = 0;
     grow = 0;
-    saved_row = (s32) gBgScroll[2];
-    ctrl = cursor[4];
+    saved_x = gBgScroll[1].x;
+    control = cursor[4];
     shift = 0;
     work->transfer_mode = 1;
     work->transfer_value = base_x;
-    M2C_FIELD(ctrl, s32 *, 0x10) = 1;
+    control->active = 1;
 
-    sp = (struct ScenePoint *)((s8 *)work + SPARK_POOL);
-    for (k = 0; k != 0x40; k++) {
-        sp[k].x = (s32) ((Random16() & 0x1F) + 0x10);
-        sp[k].y = (s32) (((Random16() & 0x1F) + 0x30) << 0x10);
-        sp[k].vy = (s32) (((Random16() & 0x1F) - 0x10) << 0x10);
-        sp[k].life = (s32) (__umodsi3(Random16(), 0x30) + 2);
-    }
+    i = 0;
+    do {
+        struct EffectStep *fire = &work->particles[i];
 
-    BattleEffect_LoadWork(0x2E, 7, 7, 3, 3);
-    blit = (BlitRectFn) gWorkSlot[46];
-    *(u16 *)0x0400000c = 0x786;
+        fire->x = (Random16() & 31) + 16;
+        fire->y = ((Random16() & 31) + 48) << 16;
+        fire->velocity_y = ((Random16() & 31) - 16) << 16;
+        fire->variant = (u32)Random16() % 48 + 2;
+        i++;
+    } while (i != 64);
 
-    for (frame = 0; frame != 0x78; frame++) {
+    BattleEffect_LoadWork(46, 7, 7, 3, 3);
+    blit = gWorkSlot[46];
+    REG16(0x0400000c) = 0x786;
+
+    for (frame = 0; frame != 120; frame++) {
         wave = 0;
         if (frame == 0) {
-            Audio_PlayCue(0x88);
+            Audio_PlayCue(136);
         }
-        if (frame == 0x1A) {
-            Audio_PlayCue(0x8D);
+        if (frame == 26) {
+            Audio_PlayCue(141);
         }
-        if (frame == 0x28) {
-            Audio_PlayCue(0x9A);
+        if (frame == 40) {
+            Audio_PlayCue(154);
         }
-        if (frame == 0x48) {
-            Audio_PlayCue(0x9A);
+        if (frame == 72) {
+            Audio_PlayCue(154);
         }
-        if (frame == 0x68) {
-            Audio_PlayCue(0x9A);
+        if (frame == 104) {
+            Audio_PlayCue(154);
         }
-        if ((*(s32 *)gKeysRepeat & 3) != 0) {
-            if (frame > 0x10) {
-                break;
-            }
+        if ((gKeysRepeat & 3) != 0 && frame > 16) {
+            break;
         }
-        if ((u32) (frame - 0x18) <= 0x1FU) {
-            shift += 1;
+
+        if ((u32)(frame - 24) <= 31) {
+            shift++;
         }
-        if (shift > 0x18) {
-            shift = 0x18;
+        if (shift > 24) {
+            shift = 24;
         }
-        if (frame <= 0x87) {
-            gBgScroll[2] -= shift;
+        if (frame <= 135) {
+            gBgScroll[1].x -= shift;
             grow += shift;
         }
-        if (frame <= 0x95) {
-            pos1 = *(const struct EffectPos *)0x080EDAD8;
+
+        if (frame <= 149) {
+            s32 lift;
+
+            pair = Data_080edac8[2];
             lift = 0;
-            if (frame > 0x67) {
-                lift = (frame * 0x10) + 0xFFFFF980;
+            if (frame > 103) {
+                lift = frame * 16 - 1664;
             }
-            if ((u32) (frame - 8) <= 0x17U) {
-                base_x = (base_x + shift) - 8;
+            if ((u32)(frame - 8) <= 23) {
+                base_x = base_x + shift - 8;
             }
             if (frame > 7) {
-                amp = 0x60;
-                if (frame <= 0x68) {
-                    amp = 0x20;
+                s32 amp;
+                s32 ang;
+
+                amp = 96;
+                if (frame <= 104) {
+                    amp = 32;
                 }
-                ang = ((frame << 0xA) + 0xFFFFE000) & 0xFFFF;
+                ang = (frame * 1024 - 0x2000) & 0xFFFF;
                 if (ang > 0x8000) {
-                    ang += 0xFFFF8000;
+                    ang -= 0x8000;
                 }
-                wave = (s32) (amp * Trig_Sin(ang)) >> 0x10;
-                if ((0x1F & frame) == 8) {
-                    M2C_FIELD(work, s32 *, 0x77A8) = 4;
-                }
-            }
-            M2C_FIELD(&place, s32 *, 0xC) = 0;
-            M2C_FIELD(&place, s32 *, 4) = 0xFF0000;
-            objs = (s32 *)((s8 *)work + OBJECT_LIST);
-            for (k = 0; k != 9; k++) {
-                M2C_FIELD(&place, s32 *, 0) =
-                    (s32) ((((base_x + *(u8 *)(0x080EEF56 + k)) - lift) << 0x10) + 0xE00000);
-                M2C_FIELD(&place, s32 *, 8) =
-                    (s32) (((*(u8 *)(0x080EEF5F + k) - wave) << 0x10) + 0x480000);
-                Object_ApplyProjectedPlacementFar(*objs++, &place, &pos1, 0);
-            }
-        }
-        if (frame <= 0x1A) {
-            cnt = grow + 4;
-            num = frame * 8;
-            if (cnt > 0xA) {
-                cnt = 0xA;
-            }
-            if (num > 0x40) {
-                num = 0x40;
-            }
-            if (num != 0) {
-                radius_x = grow * 2;
-                radius_y = (grow * 0xC) + 0x30;
-                idx = cnt * 2;
-                half = (s32) (cnt + ((u32) cnt >> 0x1F)) >> 1;
-                for (k = 0; k != num; k++) {
-                    ang = k << 0xA;
-                    lo = ((s32) ((radius_x + 8) * Trig_Sin(ang)) >> 0x10) + grow;
-                    hi = ((s32) (radius_y * Trig_Cos(ang)) >> 0x10) + 0x40;
-                    blit(dest,
-                         (void *) (sheet + *(u16 *)(0x080EDE48 + (idx - 2))),
-                         (lo + 0x60) - half, hi - cnt, cnt, idx);
+                wave = (Trig_Sin(ang) * amp) >> 16;
+                if ((frame & 31) == 8) {
+                    work->shake_frames = 4;
                 }
             }
+            place.unknown_0c = 0;
+            place.scale = 255 << 16;
+            i = 0;
+            do {
+                place.x = ((base_x + COLUMNS[i] - lift) << 16) + (224 << 16);
+                place.y = ((ROWS[i] - wave) << 16) + (144 << 15);
+                Object_ApplyProjectedPlacementFar(OBJECTS(work)[i], &place, &pair, 0);
+                i++;
+            } while (i != 9);
         }
-        if (frame == 0x18) {
-            ((struct BattleEffectWork *)work)->transfer_mode = 2;
-            ((struct BattleEffectWork *)work)->transfer_value = 0x32;
+
+        /* The ring: up to 64 cells on an ellipse that widens with the scroll. */
+        if (frame <= 26) {
+            s32 size = grow + 4;
+            s32 count = frame * 8;
+
+            if (size > 10) {
+                size = 10;
+            }
+            if (count > 64) {
+                count = 64;
+            }
+            for (i = 0; i != count; i++) {
+                s32 ang = i << 10;
+                s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow;
+                s32 y = (Trig_Cos(ang) * (grow * 12 + 48)) >> 16;
+
+                blit(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+                    x + 96 - size / 2, y + 64 - size, size, size * 2);
+            }
         }
-        if (frame == 0x1C) {
-            *(u16 *)0x0400000c = 0x784;
+
+        if (frame == 24) {
+            work->transfer_mode = 2;
+            work->transfer_value = 50;
         }
-        if (frame > 0x11) {
-            sp = (struct ScenePoint *)((s8 *)work + SPARK_POOL);
-            for (k = 0; k != 0x30; k++) {
-                if (sp->life == 0) {
-                    lo = __modsi3(k, 3) + 1;
-                    hi = lo * 2;
-                    blit(dest,
-                         (void *) (sheet + *(u16 *)(0x080EDE48 + (hi - 2))),
-                         sp->x, M2C_FIELD(sp, s16 *, 6) - lo, lo, hi);
-                    tmp = sp->vy;
-                    sp->x = (s32) (sp->x + 2);
-                    sp->y = (s32) (sp->y + tmp);
-                    tmp = tmp * 0x30;
-                    if (tmp < 0) {
-                        tmp += 0x3F;
-                    }
-                    sp->vy = (s32) (tmp >> 6);
+        if (frame == 28) {
+            REG16(0x0400000c) = 0x784;
+        }
+
+        if (frame > 17) {
+            i = 0;
+            do {
+                struct EffectStep *fire = &work->particles[i];
+
+                if (fire->variant == 0) {
+                    s32 size = i % 3 + 1;
+
+                    blit(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+                        fire->x, HI(fire->y) - size, size, size * 2);
+                    fire->x += 2;
+                    fire->y += fire->velocity_y;
+                    fire->velocity_y = fire->velocity_y * 48 / 64;
                 } else {
-                    sp->life = (s32) (sp->life - 1);
+                    fire->variant--;
                 }
-                if ((sp->x > 0x80) || (sp->life == 1)) {
-                    sp->x = (s32) ((Random16() & 0x1F) + base_x + 0xAC);
-                    sp->y = (s32) ((((Random16() & 0x1F) - wave) + 0x38) << 0x10);
-                    sp->vy = (s32) (((Random16() & 0x1F) - 0x10) << 0xF);
+                if (fire->x > 128 || fire->variant == 1) {
+                    fire->x = (Random16() & 31) + base_x + 172;
+                    fire->y = ((Random16() & 31) - wave + 56) << 16;
+                    fire->velocity_y = ((Random16() & 31) - 16) << 15;
                 }
-                sp++;
-            }
+                i++;
+            } while (i != 48);
         }
-        if (frame > 0x1F) {
-            tmp = frame - 0x20;
-            lift = (s32) (tmp + (tmp >> 0x1F)) >> 1;
-            if (lift > 0x28) {
-                lift = 0x28;
+
+        if (frame > 31) {
+            s32 rise = (frame - 32) / 2;
+            s32 y;
+
+            if (rise > 40) {
+                rise = 40;
             }
-            hi = 0;
-            for (k = 0; k != 6; k++) {
-                lo = (Random16() & 3) * 3;
-                blit(dest, (s8 *)work + (lo << 9), 0x78 - lift, hi, 0x30, 0x20);
-                hi += 0x12;
-            }
+            y = 0;
+            i = 0;
+            do {
+                blit(canvas, (u8 *)work + (Random16() & 3) * 0x600, 120 - rise, y, 48, 32);
+                i++;
+                y += 18;
+            } while (i != 6);
         }
-        tmp = M2C_FIELD(work, s32 *, 0x77A8);
-        if (tmp > 0) {
-            M2C_FIELD(work, s32 *, 0x77A8) = (s32) (tmp - 1);
-            gBgScroll[3] =
-                (Random16() & (s32) &Value_00000007) + 0x1C;
+
+        if (work->shake_frames > 0) {
+            work->shake_frames--;
+            gBgScroll[1].y = (Random16() & 7) + 28;
         } else {
-            gBgScroll[3] = 0x20;
+            gBgScroll[1].y = 32;
         }
-        ((struct BattleEffectWork *)work)->transfer_pending = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
     }
 
-    gBgScroll[2] = saved_row;
-    M2C_FIELD(ctrl, s32 *, 0x10) = 0;
+    gBgScroll[1].x = saved_x;
+    control->active = 0;
     BattleEffect_SetupBlendedDisplay();
-    *(u16 *)0x04000040 = (u16) (s32) &Value_000000f0;
+    REG16(0x04000040) = 0xf0;
 
-    objs = (s32 *)((s8 *)work + OBJECT_LIST);
-    for (k = 0; k != 9; k++) {
-        void *obj = (void *) *objs++;
-        M2C_FIELD(obj, u8 *, 9) = (u8) (M2C_FIELD(obj, u8 *, 9) | 0xC);
-    }
+    i = 0;
+    do {
+        struct FxObject *object = OBJECTS(work)[i];
 
-    hit = hit_buf;
-    row_y = 0xE0;
-    for (k = 0; k != 14; k++) {
-        hit[k] = 0;
-    }
-    jitter = jit_buf;
-    for (k = 0; k != 0x10; k++) {
-        jitter[k] = (u8) (Random16() & 0x1F);
-    }
-    for (k = 0; k != 0x140; k++) {
-        SCENE_POOL[k].life = 0;
-    }
-    ((struct BattleEffectWork *)work)->transfer_mode = 2;
-    ((struct BattleEffectWork *)work)->transfer_value = 0x4B;
-    *(u16 *)0x0400000c = 0x784;
-    *(u16 *)0x04000052 = 0x1010;
-    slide = 0xFFFFFE20;
+        object->flags |= 12;
+        i++;
+    } while (i != 9);
 
-    for (frame = 0; frame != 0x60; frame++) {
-        if (frame <= 0x17) {
-            pos2 = *(const struct EffectPos *)0x080EDAE0;
-            row_y -= 0x10;
+    hit = hit_row;
+    row_x = 224;
+    {
+        u8 *p;
+
+        for (p = hit; p != hit + 14; p++) {
+            *p = 0;
+        }
+    }
+    jitter = jitter_row;
+    {
+        u8 *p;
+
+        for (p = jitter; p != jitter + 16; p++) {
+            *p = Random16() & 31;
+        }
+    }
+    i = 0;
+    do {
+        BURST[i].variant = 0;
+        i++;
+    } while (i != 160 << 1);
+
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    REG16(0x0400000c) = 0x784;
+    REG16(0x04000052) = 0x1010;
+    slide = -480;
+
+    frame = 0;
+    do {
+        if (frame <= 23) {
+            s32 ang;
+            s32 rise;
+
+            pair2 = Data_080edac8[3];
+            row_x -= 16;
             if (frame <= 8) {
-                tmp = frame << 0xB;
-                ang = tmp + 0x4000;
+                ang = frame * 2048 + 0x4000;
                 if (ang > 0x8000) {
-                    ang = tmp + 0xFFFFC000;
+                    ang = frame * 2048 - 0x4000;
                 }
-                lo = Trig_Sin(ang) << 6;
+                rise = Trig_Sin(ang) << 6;
             } else {
-                tmp = frame << 0xB;
-                ang = tmp + 0x4000;
+                ang = frame * 2048 + 0x4000;
                 if (ang > 0x8000) {
-                    ang = tmp + 0xFFFFC000;
+                    ang = frame * 2048 - 0x4000;
                 }
-                lo = Trig_Sin(ang) << 5;
+                rise = Trig_Sin(ang) << 5;
             }
-            hi = lo >> 0x10;
-            M2C_FIELD(&place2, s32 *, 0xC) = 0;
-            M2C_FIELD(&place2, s32 *, 4) = 0xFF0000;
-            objs = (s32 *)((s8 *)work + OBJECT_LIST);
-            for (k = 0; k != 9; k++) {
-                M2C_FIELD(&place2, s32 *, 0) =
-                    (s32) ((row_y + *(u8 *)(0x080EEF56 + k)) << 0x10);
-                M2C_FIELD(&place2, s32 *, 8) =
-                    (s32) (((*(u8 *)(0x080EEF5F + k) - hi) << 0x10) + 0x480000);
-                Object_ApplyProjectedPlacementFar(*objs++, &place2, &pos2, 0);
-            }
-        }
-        if (frame == 8) {
-            M2C_FIELD(work, s32 *, 0x77A8) = frame;
-            Audio_PlayCue(0x91);
-        }
-        if (frame == 0xB) {
-            Audio_PlayCue(0x91);
-        }
-        if (frame == 0x2E) {
-            Audio_PlayCue(0x89);
-        }
-        m = 0;
-        if (EFFECT_ARGUMENT(work)->count != 0) {
-            pool_ofs = 0;
-            slot = 0x24;
+            rise >>= 16;
+            place2.unknown_0c = 0;
+            place2.scale = 255 << 16;
+            i = 0;
             do {
-                if (hit[m] == 0) {
-                    EffectPosition_ApplyAlternateStepAndYOffset(
-                        EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1],
-                        &mpos);
-                    if ((s32) M2C_FIELD(&mpos, s32 *, 0) > row_y) {
-                        hit[m] = 1;
-                        sp = (struct ScenePoint *)((s8 *)SCENE_POOL + pool_ofs);
-                        for (k = 0; k != 0x20; k++) {
-                            sp->x = (s32) (M2C_FIELD(&mpos, s32 *, 0) << 0xF);
-                            sp->y = (s32) ((M2C_FIELD(&mpos, s32 *, 4) - 0x10) << 0x10);
-                            sp->vx = (s32) ((Random16() - 0x80) << 0xA);
-                            tmp = Random16() - 0xC0;
-                            sp->vy = (s32) (tmp << 0xB);
-                            sp->x = (s32) (sp->x + (sp->vx * 4));
-                            sp->y = (s32) (sp->y + (tmp << 0xD));
-                            sp->life = (s32) ((0xF & Random16()) + 8);
-                            sp++;
-                        }
-                        BattleMotion_ApplyVariantMotionFar(
-                            EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1], 1);
-                        Audio_PlayCue(0x86);
-                    }
+                place2.x = (row_x + COLUMNS[i]) << 16;
+                place2.y = ((ROWS[i] - rise) << 16) + (144 << 15);
+                Object_ApplyProjectedPlacementFar(OBJECTS(work)[i], &place2, &pair2, 0);
+                i++;
+            } while (i != 9);
+        }
+
+        if (frame == 8) {
+            work->shake_frames = frame;
+            Audio_PlayCue(145);
+        }
+        if (frame == 11) {
+            Audio_PlayCue(145);
+        }
+        if (frame == 46) {
+            Audio_PlayCue(137);
+        }
+
+        /* Each unit bursts once, when the rising row has passed it. */
+        for (i = 0; i != work->effect->count; i++) {
+            if (hit[i] == 0) {
+                EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i], &unit);
+                if (unit.x > row_x) {
+                    s32 k;
+
+                    hit[i] = 1;
+                    k = 0;
+                    do {
+                        struct EffectStep *burst = &BURST[i * 32 + k];
+                        s32 up;
+
+                        burst->x = unit.x << 15;
+                        burst->y = (unit.y - 16) << 16;
+                        burst->velocity_x = ((Random16() & 255) - 128) << 10;
+                        up = (Random16() & 255) - 192;
+                        burst->velocity_y = up << 11;
+                        burst->x += burst->velocity_x * 4;
+                        burst->y += up << 13;
+                        burst->variant = (Random16() & 15) + 8;
+                        k++;
+                    } while (k != 32);
+                    BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 1);
+                    Audio_PlayCue(134);
                 }
-                pool_ofs += 0x380;
-                slot += 2;
-                m += 1;
-            } while (m != EFFECT_ARGUMENT(work)->count);
-        }
-        sp = SCENE_POOL;
-        for (k = 0; k != 0xC0; k++) {
-            if (sp->life > 0) {
-                blit(dest,
-                     (void *) (sheet + M2C_FIELD((void *)0x080EDE48, u16 *, 4)),
-                     M2C_FIELD(sp, s16 *, 2) - 1, M2C_FIELD(sp, s16 *, 6) - 3, 3, 6);
-                sp->x = (s32) (sp->x + sp->vx);
-                sp->y += sp->vy;
-                sp->life -= 1;
-            }
-            sp++;
-        }
-        if (frame == 0x30) {
-            Audio_PlayCue(0x88);
-        }
-        if (frame > 0x28) {
-            ((struct BattleEffectWork *)work)->transfer_mode = 0;
-            ((struct BattleEffectWork *)work)->transfer_value = 0x4B;
-            hi = -8;
-            for (k = 0; k != 0x10; k++) {
-                blit(dest, (s8 *)work + (((Random16() & 3) * 3) << 9),
-                     (jitter[k] - slide) + 0x78, hi, 0x30, 0x20);
-                hi += 8;
             }
         }
-        if (frame > 0x40) {
-            ((struct BattleEffectWork *)work)->transfer_mode = 2;
+
+        i = 0;
+        do {
+            struct EffectStep *burst = &BURST[i];
+
+            if (burst->variant > 0) {
+                blit(canvas, sheet + ParticleStreams_CellOffsets[2],
+                    HI(burst->x) - 1, HI(burst->y) - 3, 3, 6);
+                burst->x += burst->velocity_x;
+                burst->y += burst->velocity_y;
+                burst->variant--;
+            }
+            i++;
+        } while (i != 192);
+
+        if (frame == 48) {
+            Audio_PlayCue(136);
         }
-        if (frame == 0x3A) {
-            m = 0;
-            if (EFFECT_ARGUMENT(work)->count != 0) {
-                slot = 0x24;
-                do {
-                    ObjectGroup_UpdateMembers(
-                        EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1],
-                        0xE, 5, -1, 0);
-                    m += 1;
-                    slot += 2;
-                } while (m != EFFECT_ARGUMENT(work)->count);
+        if (frame > 40) {
+            s32 y;
+
+            work->transfer_mode = 0;
+            work->transfer_value = 75;
+            y = -8;
+            i = 0;
+            do {
+                blit(canvas, (u8 *)work + (Random16() & 3) * 0x600,
+                    jitter[i] - slide + 120, y, 48, 32);
+                i++;
+                y += 8;
+            } while (i != 16);
+        }
+        if (frame > 64) {
+            work->transfer_mode = 2;
+        }
+        if (frame == 58) {
+            for (i = 0; i != work->effect->count; i++) {
+                ObjectGroup_UpdateMembers(work->effect->actors[i], 14, 5, -1, 0);
             }
         }
+
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
-        ((struct BattleEffectWork *)work)->transfer_pending = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
-        slide += 0xC;
-    }
+        frame++;
+        slide += 12;
+    } while (frame != 96);
 
-    BattleEventRuntime_BeginPhaseFar(0x86);
-    objs = (s32 *)((s8 *)work + OBJECT_LIST);
-    for (k = 0; k != 9; k++) {
-        ResourceObject_ReleaseFar(*objs++);
-    }
-    Scheduler_RemoveCallback(0x080CD261);
-    Runtime_ReleaseHeapBlock(0x2E);
+    BattleEventRuntime_BeginPhaseFar(134);
+    i = 0;
+    do {
+        ResourceObject_ReleaseFar(OBJECTS(work)[i]);
+        i++;
+    } while (i != 9);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

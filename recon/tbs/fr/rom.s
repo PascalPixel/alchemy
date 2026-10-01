@@ -1451,7 +1451,7 @@ BattleEffect_RunEmberColumns:
 	.type BattleFx_RunSparkGroups, %function
 	.thumb_func
 BattleFx_RunSparkGroups:
-	.incbin "baserom.gba", 0x000d7e04, 0x00000c54
+	.incbin "baserom.gba", 0x000d7e04, 0x000006e4
 	.section .rom.000d8ac8, "ax"
 	.global BattleFx_RenderMode
 	.type BattleFx_RenderMode, %function
@@ -1648,7 +1648,16 @@ CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000f190c, 0x0000000e
 	.global CounterReveal_PanelY
 CounterReveal_PanelY:
-	.incbin "baserom.gba", 0x000f191a, 0x0000019a
+	.incbin "baserom.gba", 0x000f191a, 0x00000180
+	.global FirePillars_Counts
+FirePillars_Counts:
+	.incbin "baserom.gba", 0x000f1a9a, 0x00000003
+	.global FirePillars_Depths
+FirePillars_Depths:
+	.incbin "baserom.gba", 0x000f1a9d, 0x0000000c
+	.global FirePillars_StartFrames
+FirePillars_StartFrames:
+	.incbin "baserom.gba", 0x000f1aa9, 0x0000000b
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000f1ab4, 0x000006c0

@@ -1445,7 +1445,7 @@ SECTIONS
         "*/recon/tla/raw/080d45d8.o"(.text)
         "*/recon/tla/raw/080d46a4.o"(.text)
         "*/recon/tla/raw/080d4714.o"(.text)
-        "*/recon/tla/raw/080d476c.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COPY_LINKED_OBJECT_POSITION.o"(.text)
         "*/recon/tla/raw/080d47b4.o"(.text)
         "*/recon/tla/raw/080d4868.o"(.text)
         "*/recon/tla/raw/080d489c.o"(.text)

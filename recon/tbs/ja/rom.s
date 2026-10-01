@@ -2066,10 +2066,10 @@ RisingBurst_SparkSizes:
 	.section .rom.000e6014, "ax"
 	.incbin "baserom.gba", 0x000e6014, 0x00000fec
 	.section .rom.000e73f0, "ax"
-	.global Func_080f03f0
-	.type Func_080f03f0, %function
+	.global DisplayScroll_RunSlideshow
+	.type DisplayScroll_RunSlideshow, %function
 	.thumb_func
-Func_080f03f0:
+DisplayScroll_RunSlideshow:
 	.incbin "baserom.gba", 0x000e73f0, 0x00000148
 	.section .rom.000e77f0, "ax"
 	.global Func_080f07f0

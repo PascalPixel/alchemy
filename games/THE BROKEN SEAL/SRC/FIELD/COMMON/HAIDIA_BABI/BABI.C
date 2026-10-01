@@ -325,11 +325,6 @@ struct SceneMapState {
     u16 active;
 };
 
-struct SceneControlPointers {
-    struct EventWork *event_work;
-    u8 unknown_04[8];
-    struct SceneMapState *map_state;
-};
 
 extern const u8 gHaidiaBabiSharedAction[];
 extern const u8 gHaidiaBabiActorExitAction[];
@@ -393,14 +388,14 @@ void FieldScene_RunComplexActorSequence(void)
     struct FieldActor *p89;
     u8 *work;
     struct FieldActor *scene_actor;
-    struct SceneControlPointers *control;
+    struct EventWork **control;
     struct SceneHalf stopped;
     s32 ground;
 
-    control = (struct SceneControlPointers *)Ram_EventWork;
+    control = (struct EventWork **)Ram_EventWork;
     /* FAKEMATCH: stage the root reads before consuming the event record. */
     {
-        struct EventWork *event = control->event_work;
+        struct EventWork *event = *control;
 
         work = *(u8 **)Ram_MapWork;
         scene_actor = event->view_center;
@@ -443,10 +438,10 @@ void FieldScene_RunComplexActorSequence(void)
     scene_actor->z.fixed = 0x02b30000;
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    control->event_work->start_transition = 521;
-    control->event_work->transition_frames = 64;
+    (*control)->start_transition = 521;
+    (*control)->transition_frames = 64;
     BattleFx_StartTwelveFrameBlend();
-    control->map_state->active = 1;
+    (*(struct SceneMapState **)((u8 *)control + Ram_SceneMapStateOffset))->active = 1;
     BattleFx_SetBlock30Values12Zero();
     Engine_TaskWait(30);
     Engine_EventOpenScreen();
@@ -517,7 +512,7 @@ void FieldScene_RunComplexActorSequence(void)
     Actor_FaceDirection(8, 16384, 10);
     Event_OpenMessage(32776, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        control->event_work->message++;
+        (*control)->message++;
     }
     Engine_EventWait(20);
     Event_ShowMessageAndWait(32776, 0, 20);
@@ -527,8 +522,8 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_ActorEnableActionCallback(8, gHaidiaBabiActorExitAction);
     Engine_ActorEnableActionCallback(0, gHaidiaBabiLeaderExitAction);
     Engine_EventWait(20);
-    control->event_work->start_transition = 513;
-    control->event_work->transition_frames = 16;
+    (*control)->start_transition = 513;
+    (*control)->transition_frames = 16;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(20);

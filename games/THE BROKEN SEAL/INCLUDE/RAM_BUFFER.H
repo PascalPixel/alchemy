@@ -55,4 +55,8 @@
 #define Ram_EffectWork ((void **)0x03001f30) /* gEffectWork */
 #endif
 
+/* The scene map state pointer sits beside the event work pointer: GCC reads it
+ * from the event-work base it already holds, at this checked distance. */
+#define Ram_SceneMapStateOffset 0xc /* Data_03001ec8 - gEventWork */
+
 #endif

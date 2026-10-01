@@ -1,10 +1,9 @@
 #include "OWNER_STATE.H"
-s32 Inventory_AddItem(s32 owner, s32 item);
 
-void *Owner_GetState(s32);
 void Owner_RefreshClassActions(s32);
-s32 Owner_GetValueIfLevelThresholdReached(s32, s32);
 
+/* ☀️'s: give an owner an action, reusing its slot when it already has it,
+   and return the slot it ends in. */
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
     struct OwnerActionState *state = (struct OwnerActionState *)Owner_GetState(state_index);

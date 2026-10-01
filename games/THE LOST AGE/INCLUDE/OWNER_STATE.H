@@ -11,6 +11,16 @@ struct OwnerInventoryState {
     u16 class_id;
 };
 
+struct OwnerActionSlot {
+    u16 encoded_action;
+    u16 unknown_02;
+};
+
+struct OwnerActionState {
+    u8 unknown_000[0x58];
+    struct OwnerActionSlot action_slots[32];
+};
+
 struct OwnerLearnedState {
     u8 unknown_000[0x108];
     u32 learned[4];

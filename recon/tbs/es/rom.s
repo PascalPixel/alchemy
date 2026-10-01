@@ -27,16 +27,6 @@ SaveState_InitializeWorkspace:
 	.thumb_func
 SerialRuntime_CollectReceivedPayloads:
 	.incbin "baserom.gba", 0x000061bc, 0x000000e4
-	.section .rom.00006468, "ax"
-	.global SerialRuntime_BeginTransferB
-	.type SerialRuntime_BeginTransferB, %function
-	.thumb_func
-SerialRuntime_BeginTransferB:
-	.global Party_Check
-	.type Party_Check, %function
-	.thumb_func
-Party_Check:
-	.incbin "baserom.gba", 0x00006468, 0x00000050
 	.section .rom.000065bc, "ax"
 	.global SerialRuntime_StepBlockTransfer
 	.type SerialRuntime_StepBlockTransfer, %function

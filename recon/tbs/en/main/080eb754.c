@@ -23,8 +23,11 @@
 /* 320 burst records fill the map cell buffer, 32 for each affected unit. */
 #define BURST ((struct EffectStep *)Ram_MapCellBuffer)
 
+/* A spawned object: two words, then a byte and its flags. Word-aligned, so
+   the flags are stored as a plain byte. */
 struct FxObject {
-    u8 unknown_00[9];
+    s32 unknown_00[2];
+    u8 unknown_08;
     u8 flags;
 };
 
@@ -327,7 +330,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
     do {
         struct FxObject *object = work->objects[i];
 
-        object->flags |= 12;
+        ((u8 *)object)[9] |= 12;
         i++;
     } while (i != 9);
 

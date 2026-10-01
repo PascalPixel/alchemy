@@ -1364,8 +1364,6 @@ BattleFx_RunParticlePool:
 	.thumb_func
 BattleFx_RunTwelveMode:
 	.incbin "baserom.gba", 0x000c160c, 0x00000b98
-	.section .rom.000c24ec, "ax"
-	.incbin "baserom.gba", 0x000c24ec, 0x0000030c
 	.section .rom.000c27f8, "ax"
 	.global Unnamed_080cb7f8
 	.type Unnamed_080cb7f8, %function
@@ -1624,7 +1622,16 @@ BattleFx_GlintCellWidths:
 	.global BattleFx_GlintCellHeights
 BattleFx_GlintCellHeights:
 	.incbin "baserom.gba", 0x000e4ed0, 0x00000006
-	.incbin "baserom.gba", 0x000e4ed6, 0x0000018e
+	.incbin "baserom.gba", 0x000e4ed6, 0x000000a9
+	.global BladeRain_CellWidths
+BladeRain_CellWidths:
+	.incbin "baserom.gba", 0x000e4f7f, 0x00000004
+	.global BladeRain_CellHeights
+BladeRain_CellHeights:
+	.incbin "baserom.gba", 0x000e4f83, 0x00000005
+	.global BladeRain_CellSourceOffsets
+BladeRain_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000e4f88, 0x000000dc
 	.global TwoResource_CellWidths
 TwoResource_CellWidths:
 	.incbin "baserom.gba", 0x000e5064, 0x00000006

@@ -971,15 +971,15 @@ Data_080edf76:
 Data_080edf7b:
 	.incbin "baserom.gba", 0x000edf7b, 0x00000003
 	.incbin "baserom.gba", 0x000edf7e, 0x00000001
-	.global Data_080edf7f
-Data_080edf7f:
+	.global BladeRain_CellWidths
+BladeRain_CellWidths:
 	.incbin "baserom.gba", 0x000edf7f, 0x00000003
 	.incbin "baserom.gba", 0x000edf82, 0x00000001
-	.global Data_080edf83
-Data_080edf83:
+	.global BladeRain_CellHeights
+BladeRain_CellHeights:
 	.incbin "baserom.gba", 0x000edf83, 0x00000005
-	.global Data_080edf88
-Data_080edf88:
+	.global BladeRain_CellSourceOffsets
+BladeRain_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000edf88, 0x000000d0
 	.global Data_080ee058
 Data_080ee058:

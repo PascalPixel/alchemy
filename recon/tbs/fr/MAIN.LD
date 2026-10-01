@@ -710,7 +710,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TWELVE_MODE.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000cde0c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLIPPING_BURST.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000cecec)
     "*/recon/tbs/fr/rom.o"(.rom.000ceff8)
     "*/recon/tbs/fr/rom.o"(.rom.000cf40c)
     "*/recon/tbs/fr/rom.o"(.rom.000cfdd8)

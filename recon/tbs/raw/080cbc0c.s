@@ -460,9 +460,9 @@ BattleEffect_RunTileAndPaletteAnimation:
 .L_080cbfac:
 	.4byte gWorkSlot
 .L_080cbfb0:
-	.4byte Data_080edf88 + 0xaf
+	.4byte BladeRain_CellSourceOffsets + 0xaf
 .L_080cbfb4:
-	.4byte Data_080edf88 + 0x8e
+	.4byte BladeRain_CellSourceOffsets + 0x8e
 .L_080cbfb8:
 	.4byte 0xffe00000
 .L_080cbfbc:
@@ -1054,11 +1054,11 @@ BattleEffect_RunTileAndPaletteAnimation:
 .L_080cc3fc:
 	.4byte IwramCopyWords
 .L_080cc400:
-	.4byte Data_080edf88 + 0x4a
+	.4byte BladeRain_CellSourceOffsets + 0x4a
 .L_080cc404:
-	.4byte Data_080edf88 + 0x8
+	.4byte BladeRain_CellSourceOffsets + 0x8
 .L_080cc408:
-	.4byte Data_080edf88 + 0x29
+	.4byte BladeRain_CellSourceOffsets + 0x29
 .L_080cc40c:
 	.4byte 0x05000002
 .L_080cc410:

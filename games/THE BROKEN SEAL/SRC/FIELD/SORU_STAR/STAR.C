@@ -328,7 +328,7 @@ void Scene_HandOverStars(void)
     Scene_AlexTakesStars();
     GameFlag_Set(FLAG_STARS_GIVEN_TO_ALEX);
     Engine_EventEnd();
-    Func_0200227c();
+    SoruStar_LineUpFollowers();
 }
 
 void Scene_BagJupiterStar(void)
@@ -1112,4 +1112,74 @@ void Scene_AlexTakesStars(void)
     PartyInventory_Discard(220);
     PartyInventory_Discard(221);
     PartyInventory_Discard(223);
+}
+
+extern const s32 SoruStar_AngleScript[];
+
+/* An actor that turns with the leader, as this scene sets it up. */
+struct StarFollower {
+    u8 unknown_00[12];
+    s32 y;
+    u8 unknown_10[8];
+    s32 scale_x;
+    s32 scale_y;
+    u8 unknown_20[0x35];
+    u8 motion_flags;
+    u8 unknown_56[4];
+    u8 flags;
+    u8 unknown_5b[13];
+    struct FieldActor *leader;
+};
+
+/* Stands the party and the two thieves around the star's pedestal, each
+ * turning with the leader. */
+void SoruStar_LineUpFollowers(void)
+{
+    struct FieldActor *leader;
+    struct StarFollower *actor;
+    struct StarFollower *menardi;
+
+    leader = Object_GetById(0);
+    Engine_EventBegin();
+    Engine_ActorEnableActionCallback(5, (const u8 *)1);
+    Engine_ActorEnableActionCallback(9, (const u8 *)1);
+    Engine_ActorEnableActionCallback(11, (const u8 *)1);
+    Engine_ActorEnableActionCallback(10, (const u8 *)1);
+    Engine_ActorEnableActionCallback(14, (const u8 *)1);
+    Engine_ActorEnableActionCallback(13, (const u8 *)1);
+    Call3(Engine_ActorSetPosition, 5, 0x1db0000, 0x14c0000);
+    Call3(Engine_ActorSetPosition, 9, 0x1eb0000, 0x14c0000);
+    Call3(Engine_ActorSetPosition, 11, 0x1cb0000, 0x15c0000);
+    Call3(Engine_ActorSetPosition, 10, 0x1fb0000, 0x15c0000);
+    Call3(Engine_ActorSetPosition, 14, 0x1cc0000, 0x1680000);
+    Call3(Engine_ActorSetPosition, 13, 0x1d70000, 0x1320000);
+    actor = (struct StarFollower *)Object_GetById(5);
+    actor->leader = leader;
+    actor->flags |= 1;
+    Engine_ObjectSetScript((struct FieldActor *)actor, SoruStar_AngleScript);
+    actor = (struct StarFollower *)Object_GetById(9);
+    actor->leader = leader;
+    actor->flags |= 1;
+    Engine_ObjectSetScript((struct FieldActor *)actor, SoruStar_AngleScript);
+    actor = (struct StarFollower *)Object_GetById(11);
+    actor->leader = leader;
+    actor->flags |= 1;
+    Engine_ObjectSetScript((struct FieldActor *)actor, SoruStar_AngleScript);
+    actor = (struct StarFollower *)Object_GetById(10);
+    actor->leader = leader;
+    actor->flags |= 1;
+    Engine_ObjectSetScript((struct FieldActor *)actor, SoruStar_AngleScript);
+    menardi = (struct StarFollower *)Object_GetById(14);
+    menardi->leader = leader;
+    menardi->flags |= 1;
+    menardi->scale_x = 0x10000;
+    menardi->scale_y = 0x10000;
+    menardi->motion_flags = Object_GetById(11)->motion_flags;
+    menardi->y = 0;
+    Engine_ObjectSetScript((struct FieldActor *)menardi, SoruStar_AngleScript);
+    actor = (struct StarFollower *)Object_GetById(13);
+    actor->leader = leader;
+    actor->flags |= 1;
+    Engine_ObjectSetScript((struct FieldActor *)actor, SoruStar_AngleScript);
+    Engine_EventEnd();
 }

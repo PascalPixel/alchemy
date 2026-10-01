@@ -10,7 +10,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/STAR.o"(.text)
-        "*/resource_380_overlay.o"(.text.x0200a27c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/STAR2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RING_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/IMPORT.o"(.text)

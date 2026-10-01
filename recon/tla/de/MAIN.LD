@@ -692,7 +692,7 @@
     "*/recon/tla/de/rom.o"(.rom.000bd740)
     "*/recon/tla/de/rom.o"(.rom.000bd75c)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000bdb78)
+    "*/recon/tla/de/rom.o"(.rom.000bdbb6)
     "*/recon/tla/de/rom.o"(.rom.000bdbb8)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_2.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000bdc9a)

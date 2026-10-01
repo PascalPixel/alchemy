@@ -2266,12 +2266,8 @@ Func_080b0740:
 	.thumb_func
 Func_080b075c:
 	.incbin "baserom.gba", 0x000bd75c, 0x00000338
-	.section .rom.000bdb78, "ax"
-	.global Djinn_AddToOwner
-	.type Djinn_AddToOwner, %function
-	.thumb_func
-Djinn_AddToOwner:
-	.incbin "baserom.gba", 0x000bdb78, 0x00000040
+	.section .rom.000bdbb6, "ax"
+	.incbin "baserom.gba", 0x000bdbb6, 0x00000002
 	.section .rom.000bdbb8, "ax"
 	.global Trade_CanOfferDjinn
 	.type Trade_CanOfferDjinn, %function

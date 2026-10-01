@@ -943,7 +943,7 @@
         "*/recon/tbs/raw/080e3aa0.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080e40a4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STEP_PALETTE_TO_RESOURCE.o"(.text)
-        "*/recon/tbs/raw/080e47b8.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CASTING.o"(.text)
         "*/recon/tbs/raw/080e6638.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORE_OBJECT_AND_RUN_STEP7.o"(.text)
         "*/recon/tbs/raw/080e698c.o"(.text .rodata .data .padding)

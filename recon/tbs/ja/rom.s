@@ -1518,12 +1518,8 @@ BattlePres_RunBeamSequence:
 	.thumb_func
 Unnamed_080e40a4:
 	.incbin "baserom.gba", 0x000db0a4, 0x0000064c
-	.section .rom.000db7b8, "ax"
-	.global BattleFx_RunCastingImpact
-	.type BattleFx_RunCastingImpact, %function
-	.thumb_func
-BattleFx_RunCastingImpact:
-	.incbin "baserom.gba", 0x000db7b8, 0x00002190
+	.section .rom.000dd638, "ax"
+	.incbin "baserom.gba", 0x000dd638, 0x00000310
 	.section .rom.000dd98c, "ax"
 	.incbin "baserom.gba", 0x000dd98c, 0x000003b0
 	.section .rom.000de338, "ax"

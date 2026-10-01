@@ -278,7 +278,6 @@
     "*/recon/tla/it/rom.o"(.rom.00022f22)
     "*/recon/tla/it/rom.o"(.rom.00022f24)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/MAP/RENDER_ANIMATED_TILE_FRAME.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.0002301c)
     "*/recon/tla/it/rom.o"(.rom.00023088)
     "*/recon/tla/it/rom.o"(.rom.000230e0)
     "*/recon/tla/it/rom.o"(.rom.000231a4)

@@ -20,7 +20,7 @@ Func_0802c8a0:
 	mov r2, r8
 	strb r2, [r3]
 	ldr r0, .L_0802c964
-	bl Func_08014694
+	bl Scheduler_EnableCallbacks
 	movs r2, #144
 	lsls r2, r2, #4
 	adds r2, #114

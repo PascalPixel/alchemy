@@ -1,24 +1,17 @@
-/* 2026-09-29: eight minutes of permutation: 4760 -> 2865. The natural form
- * kept here scores 2885 (105 register-only, 11 operand, 10 reordered, 8
- * inserted, 7 deleted): cnt starts at zero in its declaration and is
- * cleared again after the index is formed and after the node search, and
- * the resource-reset walk is a while loop. The candidate's extra 20 came
- * from a dead assignment of the path head before its own for loop, not
- * kept. */
-/* Draft, not exact (2026-09-25): 580 of 580 bytes, 268 differing halfwords.
-   Menu_PushSelectedNode: walks to the node under the cursor, slides the other
-   nodes onto it and releases their resources, keeps it as the only node,
-   records top and cursor for this depth, and appends a copy (a free transfer
-   entry with a size-1 sprite) to the path list. Returns top + cursor.
-   What lined up: every statement, store order and the pool; the zero stores
-   after the pending transfer reset come from the count local (reset to 0 and
-   stored) as the ROM keeps them in r8; chained copies for x/target_x.
-   Remaining: register allocation only. The ROM gives state r5, node r6,
-   other r7, cnt r8, index r9 and the cursor address sl; here the other/entry
-   pseudo outranks state (65 refs over 111 insns against 22 over 172), so
-   state lands in r7, the cursor address in r5 and index in sl. Splitting the
-   entry pseudo, a work-pointer copy, an array for top/cursor and reusing node
-   for the tail walk moved nothing. */
+/* Draft, not exact (2026-10-01, slice-2): 580 of 580 bytes, score 2470,
+   176 instructions differ, every one a register. The listing carries two
+   labels at one address (Menu_ConfirmSelection, Menu_PushSelectedNode); one
+   has to go at adoption. Rewritten plainly: the screen holds its sixteen
+   52-byte records itself (the four zero stores are records 0, 1 and 14),
+   zeros are literal, and the other pointer starts null, which is the
+   register the reference stores those zeros from. The statements, stores,
+   loops and pool now line up.
+   Remaining: the reference gives state r5, node r6, other r7, the count
+   r8, the cursor address sl and the index r9; here node, other and state
+   take r5, r6, r7 because the allocator ranks node (51 references over 151
+   instructions) and other (66 over 268) above state (22 over 171). No
+   spelling tried moves state first; the earlier draft (141 instructions,
+   score 2885) stored the zeros through the count and had the same order. */
 #include "TYPES.H"
 
 struct PushSprite {
@@ -39,35 +32,28 @@ struct PushSprite {
 struct PushNode {
     struct PushNode *prev;
     struct PushNode *next;
-    u16 unk_08;
-    u16 active;
-    u16 id;
+    u16 base;
+    u16 kind;
+    u16 slot;
     u16 tile;
-    s16 x;
-    u16 y;
-    s16 step;
-    u16 speed;
-    s16 target_x;
-    u16 target_y;
-    u16 home_x;
+    s16 y;
+    u16 z;
+    s16 speed;
+    u16 speed_z;
+    s16 target_y;
+    u16 target_z;
     u16 home_y;
+    u16 home_z;
     u16 unk_20;
-    u16 scale_x;
+    u16 scale;
     u8 unk_24[2];
-    u16 scale_y;
+    u16 scale_target;
     struct PushSprite sprite;
 };
 
 struct PushMenu {
-    u8 unk_000[10];
-    u16 more_above;
-    u8 unk_00c[0x32];
-    u16 more_below;
-    u8 unk_040[0x2a2];
-    u16 unk_2e2;
-    u8 unk_2e4[0x16];
-    u16 unk_2fa;
-    u8 unk_2fc[0x4c];
+    struct PushNode records[16];
+    u8 unk_340[8];
     struct PushNode *nodes;
     struct PushNode *path;
     u8 unk_350[0x4a];
@@ -89,88 +75,88 @@ struct PushNode *Resource_FindFreeTransferEntry(s32 kind);
 
 u32 Menu_PushSelectedNode(struct PushMenu *state)
 {
-    struct PushNode *other;
     struct PushNode *node;
-    struct PushNode *last;
+    struct PushNode *other = NULL;
     u32 cnt = 0;
     u32 index;
+    struct PushSprite *sprite;
 
     index = state->top + state->cursor;
-    cnt = 0;
     Menu_SendNodeCountList(state);
     Menu_ReloadNodeResource(state, state->cursor);
     state->status = 33;
     WaitFrames(1);
-    state->more_above = 0;
-    state->more_below = 0;
-    state->unk_2e2 = 0;
-    state->unk_2fa = 0;
+    state->records[0].kind = 0;
+    state->records[1].kind = 0;
+    state->records[14].kind = 0;
+    state->records[14].scale = 0;
     Resource_ResetPendingTransfer();
-    for (node = state->nodes; node != NULL && state->cursor != cnt; cnt++)
+    node = state->nodes;
+    while (node != NULL && state->cursor != cnt) {
         node = node->next;
-    cnt = 0;
-    node->home_x = node->x;
+        cnt++;
+    }
     node->home_y = node->y;
+    node->home_z = node->z;
     for (other = state->nodes; other != NULL; other = other->next) {
         if (other != node) {
-            other->target_x = node->x;
-            other->step = (node->x - other->x) >> 1;
+            other->target_y = node->y;
+            other->speed = (node->y - other->y) >> 1;
         }
     }
     WaitFrames(2);
-    other = state->nodes;
-    while (other != NULL) {
+    for (other = state->nodes; other != NULL; other = other->next) {
         if (other != node) {
-            Resource_ResetEntry(other->id);
-            other->active = cnt;
+            Resource_ResetEntry(other->slot);
+            other->kind = 0;
         }
-        other = other->next;
     }
     state->nodes = node;
     node->prev = NULL;
     node->next = NULL;
-    node->target_x = 4;
+    node->target_y = 4;
     cnt = 0;
     for (other = state->path; other != NULL; other = other->next) {
-        node->target_x += 16;
+        node->target_y += 16;
         cnt++;
     }
     state->path_top[cnt] = state->top;
     state->path_cursor[cnt] = state->cursor;
-    node->step = (node->target_x - node->x) >> 1;
+    node->speed = (node->target_y - node->y) >> 1;
     cnt = 0;
-    state->unk_39a = cnt;
+    state->unk_39a = 0;
     state->cursor |= 0x80;
     WaitFrames(2);
     other = Resource_FindFreeTransferEntry(1);
-    other->active = node->active;
+    other->kind = node->kind;
     other->unk_20 = node->unk_20;
-    other->unk_08 = node->unk_08;
-    other->id = node->id;
+    other->base = node->base;
+    other->slot = node->slot;
     other->tile = node->tile;
-    other->target_x = other->x = node->x;
     other->target_y = other->y = node->y;
-    other->home_x = node->home_x;
+    other->target_z = other->z = node->z;
     other->home_y = node->home_y;
-    other->step = cnt;
-    other->speed = cnt;
-    other->scale_x = 0x100;
-    other->scale_y = 0x100;
-    other->sprite.blend_mode = 0;
-    other->sprite.full_color = 0;
-    other->sprite.mosaic = 0;
-    other->sprite.shape = 0;
-    other->sprite.size = 1;
-    other->sprite.palette = 0;
-    other->sprite.tile = other->tile;
-    node->active = cnt;
-    state->nodes = (struct PushNode *)cnt;
+    other->home_z = node->home_z;
+    other->speed = 0;
+    other->speed_z = 0;
+    other->scale = 0x100;
+    other->scale_target = 0x100;
+    sprite = &other->sprite;
+    sprite->blend_mode = 0;
+    sprite->full_color = 0;
+    sprite->mosaic = 0;
+    sprite->shape = 0;
+    sprite->size = 1;
+    sprite->palette = 0;
+    sprite->tile = other->tile;
+    node->kind = 0;
+    state->nodes = NULL;
     if (state->path != NULL) {
-        last = state->path;
-        while (last->next != NULL)
-            last = last->next;
-        last->next = other;
-        other->prev = last;
+        node = state->path;
+        while (node->next != NULL)
+            node = node->next;
+        node->next = other;
+        other->prev = node;
     } else {
         state->path = other;
         other->prev = NULL;

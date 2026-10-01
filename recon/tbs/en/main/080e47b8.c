@@ -4,6 +4,17 @@
  * literal pool at 0x080e54cc, three more stubs and the default arm at
  * 0x080e551a. 0x080e657c and 0x080e65f8 are tail blocks this routine
  * reaches by bl, not separate functions. */
+/* 2026-10-01 (wave 1, slice 10): still 100 (2 operand, 1 reordered), all at
+ * the first __divsi3. Only one sched2 choice is wrong: with the add last
+ * scheduled, the motion store and both reloads are ready at priority 125
+ * with five dependents each, and insn order takes the store. Once the
+ * store follows the reloads the rest falls out: both loads wait on it and
+ * position->x has four dependents to target->x's three. The store's
+ * priority is 125 because a store-to-load dependence off the stack costs 2
+ * (arm_adjust_cost), and reload always gives a spilled pseudo alias set 0
+ * (reload1.c), so no C form of motion removes it; the reference's RTL
+ * before sched2 must differ in insn order instead, which nothing tried
+ * here reaches without moving the slots. */
 /* 2026-10-01 (matcher 2): 120 (3 operand, 1 reordered); the operand row
  * at the pool word 0xfffff000 is the listing decoding that word as a bl
  * and is not a difference in bytes. Which dependence has to go: only the

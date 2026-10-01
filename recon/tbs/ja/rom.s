@@ -363,8 +363,6 @@ Menu_Check:
 	.thumb_func
 UiText_RenderStringTiles:
 	.incbin "baserom.gba", 0x0001de34, 0x00000424
-	.section .rom.0001f080, "ax"
-	.incbin "baserom.gba", 0x0001f080, 0x00000178
 	.section .rom.0001f1f8, "ax"
 	.global UiWindow_DrawPartyStatusContents
 	.type UiWindow_DrawPartyStatusContents, %function

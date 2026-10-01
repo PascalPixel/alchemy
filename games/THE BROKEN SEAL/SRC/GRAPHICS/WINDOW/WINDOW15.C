@@ -3,7 +3,13 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
+#include "IO_REG.H"
 
+/* The eight-pixel row `up` rows above the bottom row of a background tile
+   in the first character block. */
+#define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
+
+s32 Runtime_GetLowTableAddress(void);
 extern const u8 Tile_BuildMetatiles[];
 extern const s8 UiWindow_PartyColumnOffsets[];
 extern u8 Tile_BuildMetatilesCodeSize[];
@@ -174,4 +180,64 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
         *dest = 0xf082;
     }
     base[RENDER_DIRTY_OFS] = 1;
+}
+
+/* Recolours one five-tile status bar in place: value pixels of forty are
+   filled. In each tile's bottom row, or its bottom three rows for a bar
+   that is not empty, the bar colour 14 and its shadow 1 become 8 and 13
+   where filled and 2 and 12 where empty. Outside the menu it first loads
+   the bar palette. The epilogue keeps r0, so the function was declared
+   with a result; it never returns one. */
+s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
+{
+    s32 i;
+    u8 *base = Data_03001e8c;
+    s32 filled = value;
+    s32 row;
+    s32 col;
+    u32 id;
+    u32 light;
+    u32 dark;
+    u32 pixels;
+    u32 result;
+
+    if (base[RENDER_MENU_STATE_OFS] == 0) {
+        Dma_Set((const void *)Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(14, 0),
+            0x80000010, REG_DMA3);
+        BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
+    }
+    x += window->x;
+    y += window->y;
+    for (i = 0; i < 5; i++, x++) {
+        id = *(u16 *)(base + ((y * 32 + x) << 1));
+        light = 0x22222222;
+        dark = 0xcccccccc;
+        id &= 0x3ff;
+        if (value > 7) {
+            light = 0x88888888;
+            dark = 0xdddddddd;
+        } else if (value >= 0) {
+            light <<= value * 4;
+            light |= 0x88888888U >> (32 - value * 4);
+            dark <<= value * 4;
+            dark |= 0xddddddddU >> (32 - value * 4);
+        }
+        for (row = 0; row <= (filled != 0 ? 2 : 0); row++) {
+            pixels = *TILE_ROW_FROM_BOTTOM(id, row);
+            result = 0;
+            for (col = 0; col <= 7; col++) {
+                u32 color = pixels & 15;
+
+                if (color == 14)
+                    result |= light & (15U << (col * 4));
+                else if (color == 1)
+                    result |= dark & (15U << (col * 4));
+                else
+                    result |= color << (col * 4);
+                pixels >>= 4;
+            }
+            *TILE_ROW_FROM_BOTTOM(id, row) = result;
+        }
+        value -= 8;
+    }
 }

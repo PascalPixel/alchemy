@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU2.o"(.text)
         "*/resource_3a5_overlay.o"(.text.x02008e2c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU3.o"(.text)
@@ -21,5 +21,5 @@ SECTIONS
         "*/resource_3a5_overlay.o"(.rodata.x02009e88)
     }
     .bss ALIGN(16) (NOLOAD) : { "*/resource_3a5_overlay.o"(.bss) }
-    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

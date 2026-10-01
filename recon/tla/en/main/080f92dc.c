@@ -1,7 +1,7 @@
 /* Near miss: score 60. The menu page work is ⚓️'s heap slot menu_page_work,
    its icons 4 bytes later and its entry count at 0x214. ⚓️ reloads the
    stacked y argument (ldr r7, [sp, #32]) earlier; a load-scheduling
-   difference that -mtune=arm9tdmi narrows but does not close. */
+   difference with the approved game flags. */
 #include "TYPES.H"
 
 struct MenuPageIcon {

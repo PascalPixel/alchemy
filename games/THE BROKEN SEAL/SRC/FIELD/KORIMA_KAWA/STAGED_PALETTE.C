@@ -57,7 +57,7 @@ static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
     Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
 }
 
-s32 IwramSignedDivide();
+s32 Math_DivideSigned();
 
 u8 *MapStagedScene_SelectPrimaryData(void) { return Data_02008fc8; }
 
@@ -224,12 +224,12 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + IwramSignedDivide(
+    red = (s16)(red + Math_DivideSigned(
         red,
         (s32)((u32)adj << 2)
     ));
-    green = (s16)(green - IwramSignedDivide(green, adj));
-    blue = (s16)(blue - IwramSignedDivide(blue, adj));
+    green = (s16)(green - Math_DivideSigned(green, adj));
+    blue = (s16)(blue - Math_DivideSigned(blue, adj));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)

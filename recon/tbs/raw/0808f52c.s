@@ -268,7 +268,7 @@ DisplayTransition_UpdateScanlineTable:
 .L_0808f7d0:
 	.4byte 0x0000053a
 .L_0808f7d4:
-	.4byte IwramSignedDivideArm
+	.4byte IwramSignedDivide
 .L_0808f7d8:
 	.4byte 0x0000052a
 .L_0808f7dc:

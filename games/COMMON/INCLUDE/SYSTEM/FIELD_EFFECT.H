@@ -103,5 +103,7 @@ struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type);
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
                   const struct EffectOptions *options);
+void Effect_SpawnResident(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
+                          const struct EffectOptions *options);
 
 #endif

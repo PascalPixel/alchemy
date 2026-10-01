@@ -122,7 +122,7 @@ SECTIONS
         "*/games/COMMON/SRC/SYSTEM/SAVE/PROGRAM_FLASH_SECTOR_WITH_ERASE_RETRY.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.o"(.text)
         "*/recon/tbs/raw/08006f6a.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.o"(.text)
+        "*/games/COMMON/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/SAVE/PROGRAM_FLASH_SECTOR.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/SAVE/ERASE_ATMEL_FLASH_CHIP.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/SAVE/ERASE_ATMEL_FLASH_SECTOR.o"(.text)
@@ -141,7 +141,7 @@ SECTIONS
         "*/games/COMMON/SRC/SYSTEM/SAVE/READ_FLASH_CORE.o"(.rodata)
         "*/games/COMMON/SRC/SYSTEM/SAVE/FLASH_VERIFY.o"(.rodata)
         "*/games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.o"(.rodata)
-        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.o"(.rodata)
+        "*/games/COMMON/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE2.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE3.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE.o"(.rodata)
@@ -565,7 +565,7 @@ SECTIONS
         "*/recon/tbs/raw/0809a44a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_OBJECT_MOTION_SCALE_AND_LINKED_ANGLE.o"(.text)
         "*/recon/tbs/raw/0809a482.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT14.o"(.text)
         "*/recon/tbs/raw/0809a8c2.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT17.o"(.text)
@@ -2774,20 +2774,10 @@ SECTIONS
         "*/recon/tbs/overlays.o"(.overlays)
         "*/recon/tbs/unidentified.o"(.unidentified.087fd4b9)
     } > ROM
-    /* Field services that shared overlay C calls through its import veneers are
-       the far entries themselves in the main image (SPAWN.C links here too):
-       each overlay veneer targets that very entry, so one name cannot serve
-       both. */
-    Engine_ObjectCreate = Object_CreateFar;
-    Engine_ObjectSetScript = ObjectDispatch_InitializeFar;
-    /* FAKEMATCH aliases: LOAD_TABLE_ENTRY.C names one table four ways. */
-    RenderResource_PairSourceTable2 = RenderResource_PairSourceTable;
-    RenderResource_PairSourceTable3 = RenderResource_PairSourceTable;
-    RenderResource_PairSourceTable4 = RenderResource_PairSourceTable;
     /* Startup copies the resident runtime bank to IWRAM from its ROM image. */
     IwramRuntime_Rom = LOADADDR(.iwram_runtime);
     /* The sound mixer runs in IWRAM; its ROM copy is called in place for its return trampoline. */
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
-    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn) *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -1,8 +1,7 @@
 /* Near miss: score 60. ⚓️ reads the battle work through its heap slot
    battle_work, the owners from gPartyState and calls the owner state
    directly. It schedules sub sp, #4 straight after loading the battle work;
-   this draft after reading its flag. With -mtune=arm9tdmi this draft
-   compiles exactly. */
+   this draft after reading its flag with the approved game flags. */
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
 #include "BATTLE_WORK.H"

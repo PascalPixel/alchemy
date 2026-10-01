@@ -125,6 +125,7 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
         Event_Wait(30);
         Audio_PlayCue(86);
         Korosseo_LoadPortrait(8);
+        /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(ColossoLogRollingStage_InitializeModeTask, 3, 1);
         Event_Wait(-a0 * 60 + 60);
         kind = 0;
@@ -132,6 +133,7 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
         Event_Wait(30);
         Audio_PlayCue(a0 + 90);
         Korosseo_LoadPortrait(4);
+        /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(ColossoLogRollingStage_InitializeModeTask, 3, 0);
         Event_Wait(a0 * 60 + 60);
         kind = 8;

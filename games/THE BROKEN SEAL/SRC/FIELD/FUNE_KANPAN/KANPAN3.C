@@ -17,7 +17,6 @@ union Slot {
 
 extern s32 FuneKanpan_FlagGroupEntries[];
 extern u8 LinkedMessage_TheresNothingWeCanDo[];
-s32 BuildMotionCountdown(s32, s16);
 extern u16 FuneKanpan_SlotPhase[];
 extern u16 FuneKanpan_SlotValue[];
 void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot);

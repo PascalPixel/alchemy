@@ -1,4 +1,4 @@
-/* 2026-09-30 (Mercury): EXACT, 864 of 864 bytes with stock agscc and four
+/* 2026-09-30 (Mercury): EXACT, 864 of 864 bytes with approved agscc with the game build flags and four
    tagged loop-note FAKEMATCHes. It precedes
    FIELD/COMMON/MAP/SET_WINDOW_CELL_TILE, so its module is Mars's to choose;
    compile it under #if defined(TBS_EDITION_EN) until the other editions

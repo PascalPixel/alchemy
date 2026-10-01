@@ -2,16 +2,16 @@
 #define TOREBI_KYUDEN_KYUDEN_H
 extern struct EventWork *gEventWork;
 
-s32 Audio_PlayCueFromEventWorkFar();
+void Audio_PlayCueFromEventWorkFar(void);
 void Battle_ResetEffectCounterFar();
 void DisplayTransition_InitializeBattleEffectStateFar();
-s32 Event_SetStatus1c6Far();
-void Event_WaitValue1c8FramesFar();
+void Event_SetStatus1c6Far(void);
+void Event_WaitValue1c8FramesFar(void);
 void Inn_PlaySleepFar();
 void Map_ClearLayerEntryFlagFar();
 void Map_SetLayerEntryFlagFar();
 void Motion_LaunchFromFocusedObjectFar();
-s32 Object_AttachWorkTargetToObjectFar();
+void Object_AttachWorkTargetToObjectFar(s32 id, s32 flag);
 void Object_LinkObjectAndSetCallbackFar();
 void Object_RefreshSelectorByIdFar();
 void ObjectMotion_ResetAndSetPositionFar();

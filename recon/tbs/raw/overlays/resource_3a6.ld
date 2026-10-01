@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/DOU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/PROBED_COLUMN_SCENE.o"(.text)
@@ -20,5 +20,5 @@ SECTIONS
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3a6_overlay.o"(.rodata.x02009da0)
     }
-    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

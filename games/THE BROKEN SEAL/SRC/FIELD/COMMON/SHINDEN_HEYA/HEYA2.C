@@ -82,7 +82,7 @@ struct Spr5 { u8 pad[5]; u8 lo:5; u8 bit5:1; u8 hi:2; };
 extern const s32 ShindenHeya_SparkEndScript[];
 
 s32 Engine_RandomNext();
-s32 IwramUnsignedRemainder();
+s32 Math_RemainderUnsigned();
 void ShindenHeya_UpdateRisingSpark();
 
 struct Sprite378 {
@@ -502,7 +502,7 @@ void ShindenHeya_SpawnActorSpark(s32 id)
     actor = (u8 *)Object_GetById(id);
     if (actor == 0)
         return;
-    r = IwramUnsignedRemainder(Engine_RandomNext(), 20);
+    r = Math_RemainderUnsigned(Engine_RandomNext(), 20);
     x = *(s32 *)(actor + 8);
     x += r << 16;
     x += -0xa0000;
@@ -511,10 +511,10 @@ void ShindenHeya_SpawnActorSpark(s32 id)
         return;
     spr = *(struct Sprite378 **)(obj + 80);
     obj[85] = 0;
-    *(u16 *)(obj + 100) = IwramUnsignedRemainder(Engine_RandomNext(), 10) + 5;
+    *(u16 *)(obj + 100) = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
     /* FAKEMATCH: the spark frame zero held in a halfword struct. */
     zero.v = 0;
-    *(u16 *)(obj + 102) = IwramUnsignedRemainder(Engine_RandomNext(), 60) + 30;
+    *(u16 *)(obj + 102) = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
     *(s32 *)(obj + 108) = (s32)ShindenHeya_UpdateRisingSpark;
     ((u8 *)spr)[38] = zero.v;
     spr->layer = (*(struct Sprite378 **)(actor + 80))->layer;

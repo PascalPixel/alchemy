@@ -11,10 +11,10 @@ extern u8 MsgSoruJasmineWhatHappened[];
 extern u8 MsgSoruSomeoneIsLiftingIt[];
 extern u8 MsgSoruSukuretaCouldThatBeThe[];
 
-s32 IwramUnsignedDivide(s32 num, s32 den);
+s32 Math_DivideUnsigned(s32 num, s32 den);
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 s32 Engine_RandomNext(void);
-s32 IwramUnsignedRemainder(s32 value, s32 modulus);
+s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 s32 Engine_GameFlagIsSet(s32 flag);
 void Engine_AudioPlayCue(s32 cue);
 
@@ -678,7 +678,7 @@ void SoruFunka_StepEmbers(void)
     s32 z;
 
     work = (*(u8 * *)gParticleWork);
-    level = IwramUnsignedDivide(gEmberTimer, 10);
+    level = Math_DivideUnsigned(gEmberTimer, 10);
     if (level != 0) {
         *(s32 *)(work + 0x40c) = 0;
         Call3((void (*)())Engine_WorkSetValuesIfNonNegative, level << 16, level << 16, 0x10000);
@@ -720,7 +720,7 @@ void SoruFunka_StepEmbers(void)
     if (gEmberMask & gFrameCount)
         return;
     for (i = 0; i < 16; i++) {
-        angle = IwramUnsignedRemainder(Engine_RandomNext(), 0xffff);
+        angle = Math_RemainderUnsigned(Engine_RandomNext(), 0xffff);
         ember = (void *)Object_GetById(i + 16);
         if (gEmberState[i] == 0) {
             if (Engine_GameFlagIsSet(0x246) == 0)
@@ -1470,7 +1470,7 @@ void SceneState_ApplyRectPairByFlag(s32 a)
 void FieldScene_RunRandomHalfBranch(void)
 {
     if ((gFrameCount & 1) == 0) {
-        if ((u32)IwramUnsignedRemainder(Random_Next(), 100) > 50) {
+        if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
             SceneState_ApplyRectsByCondition(1);
         } else {
             SceneState_ApplyRectsByCondition(0);
@@ -1481,7 +1481,7 @@ void FieldScene_RunRandomHalfBranch(void)
 void FieldScene_RunLateRandomHalfBranch(void)
 {
     if ((gFrameCount & 1) == 0) {
-        if ((u32)IwramUnsignedRemainder(Random_Next(), 100) > 50) {
+        if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
             SceneState_ApplyRectPairByFlag(1);
         } else {
             SceneState_ApplyRectPairByFlag(0);
@@ -1680,7 +1680,7 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
     volatile u32 *p = &gFrameCount;
 
     if (*p & 1) {
-        Object_SetPartPalettes(a, (u32)IwramUnsignedRemainder(*p >> 1, 6));
+        Object_SetPartPalettes(a, (u32)Math_RemainderUnsigned(*p >> 1, 6));
     }
     if ((*p & 15) == 0) {
         SoruFunka_SpawnEffectPair(a);

@@ -1,6 +1,6 @@
 /* Near miss: score 60. ⚓️ shifts life << 17 into r0 between loading and
-   storing the middle coordinate, a load-delay fill; with -mtune=arm9tdmi
-   this draft compiles exactly. It would join
+   storing the middle coordinate, a load-delay fill that differs with the
+   approved game flags. It would join
    UPDATE_ORBITING_PARTICLE_MAIN.C after the fade. */
 #include "TYPES.H"
 #include "SCENE.H"

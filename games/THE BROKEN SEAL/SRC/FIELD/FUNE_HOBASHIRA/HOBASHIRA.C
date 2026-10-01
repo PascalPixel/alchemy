@@ -300,12 +300,22 @@ void FieldScene_RunScene3b0_0200040c(void)
 {
     u32 i;
     s32 record;
+    register s32 x asm("r0"); /* FAKEMATCH: preserve camera argument setup order. */
+    register s32 y asm("r1"); /* FAKEMATCH: preserve camera argument setup order. */
+    register s32 pan asm("r3"); /* FAKEMATCH: inherit camera pan from the byte store. */
+
+    /* FAKEMATCH: r3 carries the preceding zero byte store into the
+       camera's fourth argument. Capturing it reorders the x/y setup;
+       these two moves preserve that setup with all four arguments present. */
 
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
     *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
-    Call3(Engine_CameraMoveTo, 0xa40000, 0x400000, 0x1410000);
+    /* FAKEMATCH: keep y before x while capturing the store's zero in pan. */
+    asm ("mov %0, #128\n\tmov %1, #164"
+         : "=r" (y), "=r" (x), "=r" (pan));
+    Call4(Engine_CameraMoveTo, x << 16, y << 15, 0x1410000, pan);
     Map_Redraw();
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);

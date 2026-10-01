@@ -16,7 +16,6 @@ union Slot {
 };
 
 extern u8 LinkedMessage_TheresNothingWeCanDo[];
-s32 BuildMotionCountdown(s32, s16);
 
 void SceneEffect_InitSlotsEightToNineteen(void)
 {

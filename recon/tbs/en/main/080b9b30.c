@@ -2,7 +2,7 @@
    Job 7, iteration 11008; rewrites: 1x swap commutative operands, 1x reorder local declarations, 1x introduce a temporary, 1x share one temporary between two statements, 1x add a same-width cast, 1x drop a same-width cast, 1x toggle register. */
 /* 2026-09-29: callees carry the build's names and eight minutes of
  * permutation stored the action through pointer arithmetic (*(unit_stack +
- * 14)); alchemy permute scores 1935, from 2195. With stock agscc the work
+ * 14)); alchemy permute scores 1935, from 2195. With approved agscc with the game build flags the work
  * offsets 0x648 and 0x654 load from the pool as plain literals too, so the
  * Value_ symbols are gone: 1880. */
 /* Draft, not exact (2026-09-24): candidate=516 reference=516 differing_halfwords=147. Constants the reference loads from

@@ -1155,6 +1155,7 @@ void FieldScene_RunOpeningSequenceThird(void)
     /* Starting movement steps for the two thieves. */
     ((struct FieldActor *)actor24)->unknown_64 = 1;
     ((struct FieldActor *)actor25)->unknown_64 = 3;
+    /* FAKEMATCH: the void result is discarded; Call0 changes argument allocation. */
     Value0(Engine_EventEnd);
 }
 

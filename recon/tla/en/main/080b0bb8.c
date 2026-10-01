@@ -1,6 +1,6 @@
 /* Near miss: score 160 with temporaries for the owned and pledged words. ⚓️
    sets the 0 result between loading the pledged word and testing its bit;
-   this draft after. With -mtune=arm9tdmi this draft compiles exactly. */
+   this draft after with the approved game flags. */
 /*
  * Draft: Trade_CanOfferDjinn does not yet match; 8 bytes differ from +0x30.
  * Links as recon/tla/raw/080b0bb8.s.

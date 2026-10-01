@@ -40,7 +40,7 @@ built and compared, and README and both progress figures written and staged.\n\
        alchemy verify --pre-commit\n\
 The commit hooks' staged checks, on every branch; they build and publish nothing.\n\
        alchemy verify --pre-push\n\
-Checks outgoing publication history and the existing verified publication of an outgoing main tip.";
+Checks commits absent from remotes, each pushed tree and the verified publication of an outgoing main tip.";
 
 const STAGED: &[&str] = &[
     "index-sync-check",

@@ -41,6 +41,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Korosseo_FadeInCompetitor(0, 0x330, 200);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
+            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0xc000, 20);
             battle_owner_69();
             Camera_MoveTo(-1, -1, -1, 0);

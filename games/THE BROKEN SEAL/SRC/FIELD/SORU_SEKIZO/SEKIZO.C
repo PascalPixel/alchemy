@@ -890,7 +890,7 @@ void SoruSekizo_RunStatueDropScene(void)
                     Call4(Engine_CameraMoveTo, 0x11e0000, -1, 0x920000, 1);
                     Engine_CameraWaitForMove();
                     *(u8 *)((u8 *)Object_GetById(17) + 90) &= 254;
-                    Value3(Engine_ActorSetSpeed, 17, 0x30000, 0x10000);
+                    Call3(Engine_ActorSetSpeed, 17, 0x30000, 0x10000);
                     zero = 0;
                     rec8[85] = zero;
                     Engine_ActorSetSpritePriority(17, 3);

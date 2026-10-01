@@ -196,7 +196,7 @@ void Villager_ShowOffPsynergy(void)
         Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep17, 0xc80);
         Audio_PlayCue(107);
         for (i = 0; i != 180; i++) {
-            if (IwramUnsignedRemainder(i, 10) == 0) {
+            if (Math_RemainderUnsigned(i, 10) == 0) {
                 if ((1 & shakes) != 0) {
                     *origin -= 0x10000;
                 } else {
@@ -696,6 +696,7 @@ void FieldScene_RunElderAidEvent(void)
         Call4(Engine_CameraMoveTo, 0xcd0000, -1, 0x30a0000, 1);
         Actor_EnableActionCallback(22, (s32)Data_0200a874);
         Object_RefreshSelectorById(22);
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(SceneActor_SetPairZeroAndValue, 22, 0x2000, 60);
         Engine_ActorRunRepeatedMotion(19, 2);
         Event_SayThenWait(19, 10);
@@ -1035,9 +1036,9 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventWait(80);
     Call3(Engine_ActorShowEmote, 12, 0x101, 40);
     SceneActor_SetPairZeroAndValue(12, 0x7000, 20);
-    /* MsgHaidiaWhysEveryoneHanging and, below, MsgHaidiaFarewell stay
-       numbers: spelled as those link-time symbols, this scene is allocated
-       differently. */
+    /* FAKEMATCH: MsgHaidiaWhysEveryoneHanging (TEXT/EN.PO, 04602) must
+       stay immediate here. A symbol changes the opening stack-argument
+       allocation; the named-id attempt remains in recon/resource_374. */
     Call1(Engine_EventSetMessage, 0x11fa);
     Event_SayThenWait(12, 10);
     Call3(Engine_ActorShowEmote, 11, 0x102, 20);
@@ -1288,6 +1289,9 @@ void Scene_RunExtendedActorSequence(void)
     ObjectMotion_Launch(22, 4, 0);
     ObjectMotion_Launch(25, 4, 0);
     ObjectMotion_Launch(28, 4, 0);
+    /* FAKEMATCH: MsgHaidiaFarewell (TEXT/EN.PO, 04628) as a symbol
+       changes the closing actor-priority updates from the shared r5 value
+       to two immediate loads; recon/resource_374 keeps the named-id draft. */
     Engine_MessageShowCentered(0x1214, 1);
     v5 = 1;
     Engine_EventWait(80);
@@ -1352,7 +1356,7 @@ void SceneEffect_UpdateByFrameBits(s32 no)
 {
     volatile s32 *p = (volatile s32 *)&gFrameCount;
     if ((*p & 1) != 0) {
-        s32 t = IwramUnsignedRemainder((u32)*p >> 1, 6);
+        s32 t = Math_RemainderUnsigned((u32)*p >> 1, 6);
         Object_SetPartPalettes(no, t);
     }
     if ((*p & 15) == 0) {
@@ -1364,7 +1368,7 @@ void SceneEffect_UpdateByFrameBit(s32 no)
 {
     volatile s32 *p = (volatile s32 *)&gFrameCount;
     if ((*p & 1) != 0) {
-        s32 t = IwramUnsignedRemainder((u32)*p >> 1, 6);
+        s32 t = Math_RemainderUnsigned((u32)*p >> 1, 6);
         Object_SetPartPalettes(no, t);
     }
 }

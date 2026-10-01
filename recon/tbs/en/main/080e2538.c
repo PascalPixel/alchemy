@@ -1,5 +1,5 @@
 /* Draft, complete main:080e2538 [080e2538,080e28f4), 956 bytes.
-   2026-09-29, written fresh from the listing under stock agscc (it replaces
+   2026-09-29, written fresh from the listing under approved agscc with the game build flags (it replaces
    an unmeasured m2c draft): BattleFx_RunShatteringRocks, 960 of 956 bytes,
    323 differing lines, 151 aligned edits. The prologue, the camera pan,
    the transfer setup and the rock seeding loop match; the tables need

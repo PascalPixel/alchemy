@@ -526,7 +526,7 @@ BattleFx_BuildBuffer:
 .L_08090e50:
 	.4byte .L_08090b1c
 .L_08090e54:
-	.4byte IwramSignedDivideArm
+	.4byte IwramSignedDivide
 .L_08090e58:
 	.4byte Data_0809e96e
 .L_08090e5c:
@@ -850,7 +850,7 @@ BattleFx_BuildBuffer:
 	b .L_0809115e
 	.2byte 0x0000
 .L_080910dc:
-	.4byte IwramSignedDivideArm
+	.4byte IwramSignedDivide
 .L_080910e0:
 	.4byte IwramMulQ16ReturnIp
 .L_080910e4:

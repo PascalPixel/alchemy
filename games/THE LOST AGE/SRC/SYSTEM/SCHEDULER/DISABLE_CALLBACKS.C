@@ -12,11 +12,12 @@ s32 Scheduler_DisableCallbacks(u32 callback)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     task = gSchedulerTaskTable;
     result = -1;
+    /* FAKEMATCH: the two blocks that run once are meaningless. Without both, the
+     * interrupt-master save is scheduled ahead of the task table's address load. */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -33,9 +34,8 @@ s32 Scheduler_DisableCallbacks(u32 callback)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_DisableOverlayCallbacks(void)
@@ -43,11 +43,11 @@ s32 Scheduler_DisableOverlayCallbacks(void)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     task = gSchedulerTaskTable;
     result = -1;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_DisableCallbacks */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -64,8 +64,7 @@ s32 Scheduler_DisableOverlayCallbacks(void)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 

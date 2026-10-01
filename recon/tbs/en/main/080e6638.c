@@ -1,4 +1,11 @@
-/* Draft, not exact. */
+/* Draft, not exact: 235 (3 register-only, 2 operand, 3 reordered), all in the
+ * last loop. The reference loads the last ramp entry before the interrupt
+ * mask register ahead of the loop (here the mask pointer is assigned first
+ * and the ramp address hoisted after it), and loads the write queue before
+ * reading the mask. What settled the rest: the palette entry is stored
+ * through a chained assignment, so its address is live across the colour and
+ * the 0x05000000 reload takes r5, which puts r5 in the reload rotation; the
+ * ramp is one pointer variable; the two loops are plain for loops. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_REG.H"
@@ -44,11 +51,9 @@ void Func_080e6638(struct BattleEffectArgument *effect)
     s32 r;
     s32 g;
     s32 b;
-    u16 *shadow;
     s32 frame;
     s32 wave;
     s32 level;
-    u16 *last;
     u16 *pal;
     volatile u16 *ime;
     s32 angle;
@@ -86,7 +91,7 @@ void Func_080e6638(struct BattleEffectArgument *effect)
         }
     }
 
-    shadow = (u16 *)(Ram_MapCellBuffer + 2);
+    pal = (u16 *)Ram_MapCellBuffer;
     for (i = 1; i != 64; i++) {
         if (i > 31)
             t = 64 - i;
@@ -110,20 +115,15 @@ void Func_080e6638(struct BattleEffectArgument *effect)
         r >>= 3;
         g >>= 3;
         b >>= 3;
-        *shadow++ = ((u16 *)BG_PLTT)[i] = b << 10 | g << 5 | r;
+        pal[i] = ((u16 *)BG_PLTT)[i] = b << 10 | g << 5 | r;
     }
 
     draw[0](canvas, work, 0, 0, 128, 128);
     work->transfer_pending = 1;
     Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
 
-    pal = (u16 *)Ram_MapCellBuffer;
-    last = (u16 *)(Ram_MapCellBuffer + 0x7e);
     ime = &REG_IME;
-    frame = 0;
-    level = 0;
-loop:
-    {
+    for (frame = 0, level = 0; frame != 96; frame++, level += 2) {
         if (frame <= 8) {
             wave = level;
             REG_BLDALPHA = level | 0x1000;
@@ -134,8 +134,7 @@ loop:
             REG_BLDALPHA = (0xc0 - level) | 0x1000;
 
         line = work->bg2_x;
-        angle = -(wave << 9);
-        for (i = 0; i != 160; i++) {
+        for (i = 0, angle = -(wave << 9); i != 160; i++) {
             *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
             angle += 0x200;
         }
@@ -143,8 +142,8 @@ loop:
         if (frame > 127) {
             work->transfer_pending = 1;
         } else {
-            pal[1] = *last;
-            Dma_Set(Ram_MapCellBuffer + 0x7c, last, 0x80a0003e, REG_DMA3);
+            pal[1] = pal[63];
+            Dma_Set(pal + 62, pal + 63, 0x80a0003e, REG_DMA3);
             {
                 struct IoWriteQueue *q;
                 u32 saved;
@@ -157,7 +156,7 @@ loop:
                 if (count <= 31) {
                     u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
                     q->count = count + 1;
-                    *destination++ = (u32)(Ram_MapCellBuffer + 2);
+                    *destination++ = (u32)(pal + 1);
                     *destination++ = 0x05000002;
                     *destination = 0x8000003f;
                 }
@@ -165,10 +164,6 @@ loop:
             }
         }
         WaitFrames(1);
-        frame++;
-        level += 2;
-        if (frame != 96)
-            goto loop;
     }
 
     Scheduler_RemoveCallback((s32)BattleFx_ArmBg2AffineHBlankDma);

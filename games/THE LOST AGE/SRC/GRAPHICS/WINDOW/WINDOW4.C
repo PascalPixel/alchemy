@@ -1,17 +1,15 @@
 #include "TYPES.H"
-#include "SCENE.H"
+#include "RAM_BUFFER.H"
+
+/* Where ⚓️'s window work keeps its three channel slots and its twelve
+   directly drawn windows; ☀️'s Japanese build keeps eight at 0x500 and its
+   channels at 0x620. */
+#define RENDER_CHANNEL_OFS 0x6b8
+#define DIRECT_OFS 0x508
+#define WINDOW_COUNT 12
 
 void WaitFrames(s32);
-
-extern u8 RomBytes_08029a10[];
-extern u8 RomBytes_08029e00[];
-extern u8 RomBytes_0802de88[];
-extern u8 RomBytes_0802e108[];
-
-/* ui/render/drain_pending.c */
-extern void UiWork_Finalize(struct Work *work, s32 release);
-
-extern u8 *gWindowWork;
+void UiWork_Finalize(void *work, s32 release);
 
 struct PendingWork {
     u8 padding00[0x16];
@@ -42,9 +40,9 @@ void UiWork_DrainPending(void)
     s32 index;
     u16 flag;
 
-    state = gWindowWork;
-    slot = (struct WorkSlot *)(state + 0x620);
-    direct = (struct DirectWork *)(state + 0x500);
+    state = Ram_HeapSlots->window_tiles;
+    slot = (struct WorkSlot *)(state + RENDER_CHANNEL_OFS);
+    direct = (struct DirectWork *)(state + DIRECT_OFS);
     index = 0;
     do {
         work = slot->work;
@@ -56,7 +54,7 @@ void UiWork_DrainPending(void)
 
 poll:
     done = 1;
-    slot = (struct WorkSlot *)(state + 0x620);
+    slot = (struct WorkSlot *)(state + RENDER_CHANNEL_OFS);
     index = 0;
     do {
         poll_work = slot->work;
@@ -86,6 +84,6 @@ directLoop:
     direct++;
     index++;
 directTest:
-    if (index != 8)
+    if (index != WINDOW_COUNT)
         goto directLoop;
 }

@@ -900,7 +900,7 @@ Func_081197f0:
 .L_08119f4c:
 	bl Func_081195d4
 	movs r0, #0
-	bl Func_08014694
+	bl Scheduler_EnableCallbacks
 	ldr r3, .L_08119f70
 	movs r2, #128
 	lsls r2, r2, #19

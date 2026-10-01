@@ -238,48 +238,17 @@ Resource_FindFreeEntry:
 	.thumb_func
 Resource_GetBuffer:
 	.incbin "baserom.gba", 0x00014424, 0x000000c8
-	.section .rom.00014546, "ax"
-	.incbin "baserom.gba", 0x00014546, 0x00000052
-	.section .rom.00014598, "ax"
-	.global Func_0801456c
-	.type Func_0801456c, %function
-	.thumb_func
-Func_0801456c:
-	.incbin "baserom.gba", 0x00014598, 0x0000003c
-	.section .rom.000145d4, "ax"
-	.global Scheduler_AddOrUpdateCallback
-	.type Scheduler_AddOrUpdateCallback, %function
-	.thumb_func
-Scheduler_AddOrUpdateCallback:
-	.incbin "baserom.gba", 0x000145d4, 0x0000009c
-	.section .rom.00014670, "ax"
-	.global Scheduler_RemoveCallback
-	.type Scheduler_RemoveCallback, %function
-	.thumb_func
-Scheduler_RemoveCallback:
-	.incbin "baserom.gba", 0x00014670, 0x00000050
-	.section .rom.000146c0, "ax"
-	.global Func_08014694
-	.type Func_08014694, %function
-	.thumb_func
-Func_08014694:
-	.incbin "baserom.gba", 0x000146c0, 0x00000040
-	.global Scheduler_EnableUnmaskedOverlayCallbacks
-	.type Scheduler_EnableUnmaskedOverlayCallbacks, %function
-	.thumb_func
-Scheduler_EnableUnmaskedOverlayCallbacks:
-	.incbin "baserom.gba", 0x00014700, 0x00000048
 	.section .rom.00014748, "ax"
-	.global Func_0801471c
-	.type Func_0801471c, %function
+	.global Scheduler_SetCallbackMask
+	.type Scheduler_SetCallbackMask, %function
 	.thumb_func
-Func_0801471c:
+Scheduler_SetCallbackMask:
 	.incbin "baserom.gba", 0x00014748, 0x00000040
 	.section .rom.00014788, "ax"
-	.global Func_0801475c
-	.type Func_0801475c, %function
+	.global Scheduler_DisableCallbacks
+	.type Scheduler_DisableCallbacks, %function
 	.thumb_func
-Func_0801475c:
+Scheduler_DisableCallbacks:
 	.incbin "baserom.gba", 0x00014788, 0x00000040
 	.section .rom.000147c8, "ax"
 	.global Scheduler_DisableOverlayCallbacks

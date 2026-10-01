@@ -16,7 +16,7 @@ Func_0802cd70:
 	cmp r3, #0
 	bne .L_0802cd8e
 	ldr r0, .L_0802cd90
-	bl Func_0801475c
+	bl Scheduler_DisableCallbacks
 .L_0802cd8e:
 	pop {pc}
 .L_0802cd90:

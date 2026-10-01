@@ -28,7 +28,7 @@ Func_0802cb08:
 	bl Func_0801587c
 	bl Func_0802c4d8
 	ldr r0, .L_0802cb60
-	bl Func_0801475c
+	bl Scheduler_DisableCallbacks
 	movs r0, #1
 	bl WaitFrames
 	pop {pc}

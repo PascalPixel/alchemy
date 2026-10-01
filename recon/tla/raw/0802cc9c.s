@@ -75,7 +75,7 @@ Func_0802cc9c:
 	beq .L_0802cd3a
 	ldr r5, .L_0802cd48
 	adds r0, r5, #0
-	bl Func_0801456c
+	bl Scheduler_FindCallback
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3

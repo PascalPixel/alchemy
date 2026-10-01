@@ -23,7 +23,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        obj = Owner_GetState(gGameState.active_owners[n]);
+        obj = Owner_GetState(gPartyState.active_owners[n]);
 
         do {
             *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);

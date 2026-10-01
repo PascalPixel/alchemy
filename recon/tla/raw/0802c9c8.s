@@ -91,7 +91,7 @@ Func_0802c9c8:
 	adds r3, r6, r2
 	strb r5, [r3]
 	ldr r0, .L_0802caf4
-	bl Func_0801475c
+	bl Scheduler_DisableCallbacks
 	movs r2, #144
 	lsls r2, r2, #4
 	adds r2, #114

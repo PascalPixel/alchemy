@@ -1,10 +1,3 @@
-/* Draft (2026-10-02, slice-11), rewritten on the shared effect structs with
-   no address constants. Battle effect in two timed loops: 120 frames that
-   sweep nine spawned objects across the screen behind a growing ring and a
-   64-record fire pool, then 96 frames in which the objects rise and each
-   affected unit bursts into 32 sparks as the row passes it.
-   Remaining difference: see the score line `make drafts` prints; nothing
-   here has been fitted yet beyond the statement order of the listing. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -23,8 +16,8 @@
 /* 320 burst records fill the map cell buffer, 32 for each affected unit. */
 #define BURST ((struct EffectStep *)Ram_MapCellBuffer)
 
-/* A spawned object: two words, then a byte and its flags. Word-aligned, so
-   the flags are stored as a plain byte. */
+/* A spawned object: two words, then a byte and its flags. The flags are set
+   through a byte pointer below, the plain byte store the native code has. */
 struct FxObject {
     s32 unknown_00[2];
     u8 unknown_08;
@@ -97,7 +90,12 @@ void Camera_ApplyShake(s32 x, s32 y);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void Audio_PlayCue(s32 cue);
 
-void Unnamed_080eb754(struct BattleEffectArgument *effect)
+/* Battle effect in two timed loops: 120 frames that sweep nine spawned
+   objects across the screen behind a growing ring and a 64-record fire
+   pool, then 96 frames in which the objects rise and each affected unit
+   bursts into 32 sparks as the row passes it. A held button ends the first
+   loop after its seventeenth frame. */
+void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 {
     void **cursor;
     struct FxPlacement place;

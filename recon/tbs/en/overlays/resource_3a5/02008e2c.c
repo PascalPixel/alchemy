@@ -81,13 +81,13 @@ void RamakanSabaku_ReturnToSafePoint(void)
     Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0, 0x1c0000, &rising);
     Actor_ShowEmote(0, 0x104, 0);
     Actor_SetAnimation(0, 18);
-    zero = 0;
     do {
         shown_addr = (u16 *)(work + 0xcba);
         shown = 600;
         *shown_addr = shown;
         timer--;
         progress = &gGameState.unknown_232;
+        zero = 0;
         if (*progress != 0) {
             *progress -= 5;
             if (*progress <= 0)

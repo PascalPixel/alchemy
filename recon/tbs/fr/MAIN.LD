@@ -218,7 +218,6 @@
     "*/recon/tbs/fr/rom.o"(.rom.000154b0)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/OUTPUT_LIST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER3.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000157ba)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_PROCESS_RENDER_CHANNELS.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000158d0)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW2.o"(.text)

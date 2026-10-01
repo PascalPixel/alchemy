@@ -272,8 +272,6 @@ Tile_BuildMetatilesEnd:
 	.thumb_func
 UiWindow_ClearInteriorTiles:
 	.incbin "baserom.gba", 0x00016484, 0x00000098
-	.section .rom.0001678a, "ax"
-	.incbin "baserom.gba", 0x0001678a, 0x0000008a
 	.section .rom.000168a0, "ax"
 	.global UiWork_StepChannelScript
 	.type UiWork_StepChannelScript, %function

@@ -1,7 +1,37 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+#include "DMA.H"
+#include "IO_REG.H"
+#include "IWRAM_CALL.H"
 extern u8 Data_03001e8c[];
+
+/* The sliding panel's tile pixels in VRAM: thirty rows of thirty-two words,
+ * of which the last twenty-four are the panel. */
+#define PANEL_TILE_ROWS ((u32 *)0x06002500)
+#define PANEL_ROW_COUNT 30
+#define PANEL_ROW_WORDS 32
+#define PANEL_ROW_LEAD 8
+
+/*
+ * Slide the panel's pixels left by six words a step: every row's panel
+ * words move down over the first ones and the words uncovered at the end
+ * of the row are cleared.
+ */
+void UiWork_ShiftPanelRowsLeft(s32 step)
+{
+    s32 shift = step * 6;
+    u32 *base = PANEL_TILE_ROWS;
+    s32 n;
+
+    for (n = 0; n < PANEL_ROW_COUNT; n++) {
+        u32 *row = base + n * PANEL_ROW_WORDS;
+
+        Dma_Set(row + PANEL_ROW_LEAD + shift, row + PANEL_ROW_LEAD,
+                0x84000000 | (PANEL_ROW_WORDS - PANEL_ROW_LEAD - shift), REG_DMA3);
+        Iwram_FillWords(row + (PANEL_ROW_WORDS - shift), shift * 4, 0);
+    }
+}
 
 struct Work;
 

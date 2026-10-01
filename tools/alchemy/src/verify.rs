@@ -116,8 +116,8 @@ pub(crate) fn is_main(root: &Path) -> Result<bool, String> {
     Ok(output.stdout == b"refs/heads/main\n")
 }
 
-/// Main's subject prefix: each game's DONE from its byte-identical build, or
-/// `pending` while `rom.sha1` does not match it.
+/// Main's subject prefix: each game's DONE in all six editions from their
+/// byte-identical builds, or `pending` while `rom.sha1` does not match one.
 pub(crate) fn verified_subject(root: &Path) -> Result<String, String> {
     crate::coverage::progress::subject(root)
 }

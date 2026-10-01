@@ -1,8 +1,11 @@
 //! The tracked daily DONE history behind PROGRESS_CHART.png: one row per
 //! calendar day, the last measurement of the day winning. Early rows were
 //! seeded once from main's first-parent history and hold only the published
-//! percentage; later rows retain bytes as published at the time. Current
-//! verification status is recorded separately from those historical values.
+//! percentage; later rows retain bytes as published at the time: the English
+//! build's alone at first, and from the row whose note says so the sum over
+//! a game's six editions out of six times the English executable bytes.
+//! Current verification status is recorded separately from those historical
+//! values.
 use super::progress::GameDone;
 use super::sessions;
 use std::collections::BTreeMap;

@@ -97,6 +97,18 @@ impl DecompTarget {
             Some((game, lang)) => Some(["recon", game, lang, "MAIN.LD"].iter().collect()),
         }
     }
+    /// The six editions of this target's game, Japanese first.
+    pub fn editions(&self) -> [DecompTarget; 6] {
+        let first = self.id as usize / 6 * 6;
+        std::array::from_fn(|index| target_for(TARGET_IDS[first + index]))
+    }
+    /// The edition's language, the `ja` of `tbs-ja`.
+    pub fn language(&self) -> &'static str {
+        self.id
+            .as_str()
+            .split_once('-')
+            .map_or("", |(_, lang)| lang)
+    }
     /// The game's physical root, `games/THE BROKEN SEAL` or `games/THE LOST AGE`.
     pub fn game_dir(&self) -> &'static str {
         self.source_dir

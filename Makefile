@@ -47,7 +47,7 @@ help:
 	  'make test            Rust tests, formatting and source policy' \
 	  'make verify          verify source, publication and both ROM compositions' \
 	  'make coverage        update README and both published figures' \
-	  'make progress        report DONE from the linker maps of verified builds' \
+	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
 	  'make raw             generate private disassembly under out/' \
 	  'make drafts         compile and score every draft against its listing' \
 	  'make similar         rank not-yet-C functions against C into out/reports/similar.tsv' \
@@ -215,8 +215,9 @@ test:
 coverage:
 	$(CHECK) coverage --write --publication
 
-# Source and build defaults are Japanese. Published coverage/progress keep
-# their existing verified English counting inputs and calculation.
+# Source and build defaults are Japanese. Published coverage/progress count
+# each game's six editions together: the English build gives the bytes, and
+# an edition earns those of the objects its own verified build links.
 coverage-check:
 	$(CHECK) coverage --check
 

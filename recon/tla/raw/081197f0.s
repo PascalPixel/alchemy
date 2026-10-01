@@ -972,7 +972,7 @@ Func_081197f0:
 	bhi .L_08119ff2
 	bl Func_0811843c
 .L_08119ff2:
-	bl Func_08118d70
+	bl BattleParty_ResetActiveRuntimeFields
 	bl Func_08124cc0
 	bl BattlePlacement_UpdateTimedEntries
 	ldr r3, .L_0811a030

@@ -31,7 +31,7 @@ Func_081195ec:
 	str r0, [sp, #12]
 	adds r0, r2, #0
 	str r2, [sp, #0]
-	bl Func_0811a0b0
+	bl BattleParty_PrepareReserveOwners
 	cmp r8, r0
 	ble .L_08119632
 	mov r8, r0

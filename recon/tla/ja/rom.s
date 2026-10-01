@@ -2864,10 +2864,10 @@ Func_081197f0:
 BattleParty_PrepareActiveOwners:
 	.incbin "baserom.gba", 0x0011a034, 0x00000078
 	.section .rom.0011a0ac, "ax"
-	.global Func_0811a0b0
-	.type Func_0811a0b0, %function
+	.global BattleParty_PrepareReserveOwners
+	.type BattleParty_PrepareReserveOwners, %function
 	.thumb_func
-Func_0811a0b0:
+BattleParty_PrepareReserveOwners:
 	.incbin "baserom.gba", 0x0011a0ac, 0x000000d8
 	.section .rom.0011a248, "ax"
 	.incbin "baserom.gba", 0x0011a248, 0x000000d0

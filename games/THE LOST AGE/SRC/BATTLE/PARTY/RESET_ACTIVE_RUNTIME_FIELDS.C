@@ -1,10 +1,12 @@
-/* Battle: clear the active party members' status bytes and stat modifiers.
+/* Battle: clear the active and reserve party members' status bytes and stat
+   modifiers; ⚓️ adds the reserve members ☀️ does not have.
    Returns int: its epilogue returns through r1. */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners);
-struct BattleUnit *Owner_GetStateFar(s32 owner);
+s32 BattleParty_PrepareReserveOwners(u16 *owners);
+struct BattleUnit *Owner_GetState(s32 owner);
 void BattleUnit_Recalculate(s32 owner);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)
@@ -14,6 +16,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
     s32 i;
 
     count = BattleParty_PrepareActiveOwners(owners);
+    count += BattleParty_PrepareReserveOwners(owners + count);
 
     i = 0;
     if (i < count) {
@@ -22,9 +25,9 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
         s32 remaining;
 
         do {
-            unit = Owner_GetStateFar(owners[i]);
-            cursor = &unit->status_12f;
+            unit = Owner_GetState(owners[i]);
             remaining = 3;
+            cursor = &unit->status_12f;
 
             do {
                 remaining--;

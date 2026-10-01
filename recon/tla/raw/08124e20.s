@@ -230,7 +230,7 @@ Func_08124e20:
 	bne .L_08125004
 	lsls r0, r0, #1
 	add r0, r11
-	bl Func_0811a0b0
+	bl BattleParty_PrepareReserveOwners
 	add r8, r0
 .L_08125004:
 	movs r3, #0

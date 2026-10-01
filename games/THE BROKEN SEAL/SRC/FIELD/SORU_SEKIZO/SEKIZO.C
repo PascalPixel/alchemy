@@ -579,7 +579,12 @@ void SceneEffect_UpdateScrollingSpriteRows(void)
         {
             for (i = 0; i <= 8; i++) {
                 e->f06 = v;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+                /* The lower localized sprite row sits two pixels higher. */
+                e->f04 = sy + 6;
+#else
                 e->f04 = sy + 8;
+#endif
                 Runtime_PushSlotEntry(e, 0);
                 v += 32;
                 e++;

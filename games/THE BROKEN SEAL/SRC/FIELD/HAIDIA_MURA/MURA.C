@@ -1245,7 +1245,20 @@ s32 HaidiaMura_ApplyEntryState(void)
         actor->unknown_22 = 3;
         actor->motion_flags = 0;
         Engine_TaskAddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+        if (Engine_GameFlagIsSet(0x87a)) {
+            if (Engine_GameFlagIsSet(0x109)) {
+                if (Engine_GameFlagIsSet(0x204)) {
+                    Call6(Engine_MapCopyCellAttributes, 49, 53, 8, 4, 20, 50);
+                }
+                if (Engine_GameFlagIsSet(0x210)) {
+                    SceneState_Send210AndApplyRectAt40x84();
+                }
+            }
+        } else {
+#else
         if (!Engine_GameFlagIsSet(0x87a)) {
+#endif
             if (Value1(Engine_GameFlagIsSet, 0x815)) {
                 actor = Object_GetById(21);
                 Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
@@ -1277,7 +1290,24 @@ s32 HaidiaMura_ApplyEntryState(void)
                 Scene_RepairTheHouse();
                 Engine_GameFlagSet(0x308);
             }
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+            if (Engine_GameFlagIsSet(0x109)) {
+                if (Engine_GameFlagIsSet(0x204)) {
+                    Call6(Engine_MapCopyCellAttributes, 49, 53, 8, 4, 20, 50);
+                }
+                if (Engine_GameFlagIsSet(0x210)) {
+                    SceneState_Send210AndApplyRectAt40x84();
+                }
+            }
+            {
+                /* FAKEMATCH: direct and forwarded ES/IT calls load r0 first. */
+                register s32 priority asm("r1") = 2, actor asm("r0") = ACTOR_DORA;
+
+                Engine_ActorSetSpritePriority(actor, priority);
+            }
+#endif
         }
+#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_IT)
         if (Engine_GameFlagIsSet(0x109)) {
             if (Engine_GameFlagIsSet(0x204)) {
                 Call6(Engine_MapCopyCellAttributes, 49, 53, 8, 4, 20, 50);
@@ -1286,6 +1316,7 @@ s32 HaidiaMura_ApplyEntryState(void)
                 SceneState_Send210AndApplyRectAt40x84();
             }
         }
+#endif
         BattleFx_SetQueuedSoundAndPlay(170);
         Engine_MapRedraw();
         Engine_TaskWait(1);
@@ -1913,7 +1944,12 @@ void Scene_RepairTheHouse(void)
     s32 turn_back;
     s32 turn_side;
     u8 *turned;
+#if defined(TBS_EDITION_JA)
+    /* FAKEMATCH: the plain Japanese repair keeps zero in r5 and the mask in r6; the original stores zero through r6. */
+    register s32 none asm("r6");
+#else
     s32 none;
+#endif
     s32 flag;
     s32 callback_a;
     s32 callback_b;
@@ -2334,7 +2370,14 @@ void Scene_RepairTheHouse(void)
     Actor_SetPosition(ACTOR_DORA, 0, 0);
     Actor_SetSpeed(ACTOR_GERALD, 0x30000, 0x18000);
     Engine_ActorJump(ACTOR_GERALD, 6, 0);
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA)
     Actor_WalkToAndWait(ACTOR_GERALD, 374, 827);
+#else
+    /* The localized repair scene commits Gerald's landing two pixels
+       further south before the conversation resumes. */
+    Actor_WalkToAndWait(ACTOR_GERALD, 374, 829);
+    Actor_SetPosition(ACTOR_GERALD, PIXELS(374), PIXELS(829));
+#endif
     Event_ShowMessage(ACTOR_JASMINE, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xb000, 0);
     Actor_ShowEmote(ACTOR_JASMINE, 256, 0);
@@ -2398,7 +2441,11 @@ void Scene_RepairTheHouse(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x40000, 0x20000);
     rec = Actor_Get(ACTOR_GERALD);
     rec[90] &= 0xfe;
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA)
     Actor_SetDestination(ACTOR_GERALD, 403, 827);
+#else
+    Actor_SetDestination(ACTOR_GERALD, 403, 829);
+#endif
     Actor_SetAttachedEffect(ACTOR_JASMINE, 258);
     Actor_FaceDirection(ACTOR_JASMINE, 0xc000, 20);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 1);
@@ -2528,10 +2575,14 @@ void Scene_RepairTheHouse(void)
     Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
     GameFlag_Set(514);
     GameFlag_Clear(303);
+#if defined(TBS_EDITION_JA)
+    ((u8 *)Object_GetById(ACTOR_PARTY_LEADER))[85] = 3;
+#else
     scene[85] = 3;
     *(s32 *)(scene + 12) = 0xa00000;
     *(s32 *)(scene + 60) = 0x80000000;
     *(s32 *)(scene + 40) = none;
+#endif
     Engine_EventEnd();
 }
 
@@ -2738,8 +2789,18 @@ void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z)
 
 void SceneState_ApplyRectAndRunTwo(void)
 {
-    s32 e = 22;
-    s32 f = 36;
+    s32 e;
+    s32 f;
+#if defined(TBS_EDITION_JA)
+    /* FAKEMATCH: the Japanese scene looks up its current villager before
+       copying the lane cells and drops the returned record. */
+    if (GameFlag_IsSet(0x87a))
+        Actor_Get(ACTOR_DORA);
+    else
+        Actor_Get(20);
+#endif
+    e = 22;
+    f = 36;
     Map_CopyCellAttributes(17, 0, 3, 1, e, f);
     StagedActor_AdvancePair();
     HaidiaMura_OpenVillagerLane();

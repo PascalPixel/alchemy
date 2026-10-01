@@ -5,6 +5,9 @@
 #include "CALL.H"
 #include "STAGED_ACTOR.H"
 #include "SCENE_IDS.H"
+#include "text/MSG_IDS.H"
+
+TEXT_MESSAGE_ENUM(MsgMogoruMoriBrokenSign);
 
 s32 Engine_MathCos(s32 angle);
 s32 Engine_MathSin(s32 angle);
@@ -286,11 +289,17 @@ void MogoruMori_RunProbedActorNineScene(void)
 void SceneActor_PassOffsetPointOfActorZero(void)
 {
     s32 v[3];
+    #if defined(TBS_EDITION_JA)
+    v[0] = ((struct FieldActor *)Actor_Get(ACTOR_PARTY_LEADER))->x.fixed;
+    v[1] = ((struct FieldActor *)Actor_Get(ACTOR_PARTY_LEADER))->y.fixed;
+    v[2] = ((struct FieldActor *)Actor_Get(ACTOR_PARTY_LEADER))->z.fixed - 0x200000;
+#else
     s32 *p = Actor_Get(ACTOR_PARTY_LEADER);
 
     v[0] = (p[2] & 0xfff00000) + 0x80000;
     v[1] = p[3];
     v[2] = (p[4] & 0xfff00000) + 0xffe80000;
+#endif
     SceneActor_TryRunSlotZeroMoveStep(v);
 }
 
@@ -301,9 +310,15 @@ void SceneActor_BobActorZeroWhenAheadClear(void)
     u8 *fp = (u8 *)actor + 0x55;
     s32 saved = *fp;
 
+    #if defined(TBS_EDITION_JA)
+    pos[0] = ((struct FieldActor *)Actor_Get(ACTOR_PARTY_LEADER))->x.fixed;
+    pos[1] = ((struct FieldActor *)Actor_Get(ACTOR_PARTY_LEADER))->y.fixed;
+    pos[2] = ((struct FieldActor *)Actor_Get(ACTOR_PARTY_LEADER))->z.fixed + 0x200000;
+#else
     pos[0] = (actor[2] & 0xfff00000) + 0x80000;
     pos[1] = actor[3];
     pos[2] = (actor[4] & 0xfff00000) + 0x280000;
+#endif
     if (SceneActor_TryRunSlotZeroMoveStep(pos)!= 0) {
         Engine_EventBegin();
         *fp = 0;
@@ -328,7 +343,7 @@ void FieldScene_RunScriptedSteps0And17E6(void)
 {
     Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
-    Engine_MessageShowCentered(MSG_BROKEN_SIGN_READS_NORTH_FUCHIN, 1);
+    Engine_MessageShowCentered(MsgMogoruMoriBrokenSign, 1);
     Engine_EventEnd();
 }
 
@@ -1341,7 +1356,9 @@ s32 FieldScene_RunSceneEntryHook(void)
                 Object_SetModeById(10, 4);
                 *(u8 *)((u8 *)Object_GetById(10) + 35) = 2;
                 Call6(Map_CopyCellAttributeRect, 44, 30, 2, 4, 34, 30);
+                #if !defined(TBS_EDITION_JA)
                 StagedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, attr);
+#endif
             }
             FieldScene_RedrawActorFootprint(8);
             FieldScene_RedrawActorFootprint(9);
@@ -1464,6 +1481,10 @@ s32 FieldScene_RunSceneEntryHook(void)
                     Call3(Engine_ActorSetPosition, 22, 0x2e80000, 0x1f80000);
                     Call3(Engine_ActorSetPosition, 18, 0x2e80000, 0x1f80000);
                 }
+#if !defined(TBS_EDITION_EN) && !defined(TBS_EDITION_JA)
+            } else {
+                Engine_ActorSetPosition(18, 0, 0);
+#endif
             }
             FieldScene_RunSupplementalSequenceOne();
             break;

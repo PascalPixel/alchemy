@@ -296,7 +296,11 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     *(u16 *)((u8 *)Object_GetById(15) + 100) = mode;
     if (GameFlag_IsSet(0x858))
         Call3(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
-    if (gGameState.entrance <= 2 && !GameFlag_IsSet(52) && !GameFlag_IsSet(0x109))
+    if (gGameState.entrance <= 2 && !GameFlag_IsSet(52)
+#if !defined(TBS_EDITION_JA)
+        && !GameFlag_IsSet(0x109)
+#endif
+       )
         GameFlag_Clear(0x867);
     if (GameFlag_IsSet(0x867) && !GameFlag_IsSet(52))
         Call3(Engine_ActorSetPosition, 21, 0x1980000, 0x780000);

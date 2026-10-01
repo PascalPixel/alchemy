@@ -217,10 +217,26 @@ MenuTest_SlotValues:
 	.4byte SceneState_ApplyOne
 	.4byte 0x00000000
 	.4byte 0xffff000d
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	.ifdef TBS_EDITION_FR
+	.4byte DebugMenu_GiveItemToParty
+	.else
+	.4byte MsgTorebiFuneThenTheyAreDangerous
+	.endif
+	.else
 	.4byte SceneState_GetFarResult2418
+	.endif
+	.else
+	.4byte SceneState_GetFarResult2418
+	.endif
+	.else
+	.4byte SceneState_GetFarResult2418
+	.endif
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00000e5c
+	.4byte MsgHaidiaKyleAbleStop
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte SceneState_GetFarResult2384
@@ -245,6 +261,13 @@ MenuTest_SlotValues:
 	.4byte 0x00000400
 	.4byte 0xffff0011
 	.4byte SceneState_ApplyBlockDa2
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.4byte 0x00004400
+	.4byte 0xffff0011
+	.4byte DebugMenu_RunMessageTest
+	.endif
+	.endif
 	.4byte 0x00004e15
 	.4byte 0xffff000f
 	.4byte CommandTable_NoOpCallback

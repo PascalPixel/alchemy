@@ -309,7 +309,11 @@ gSuharaSabakuEventsOther:
 	.4byte 0x00000001
 	.4byte 0xffff0003
 	.4byte 0x00000003
+	.ifdef TBS_EDITION_JA
+	.4byte 0x00000001
+	.else
 	.4byte 0x0000c401
+	.endif
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x00000002

@@ -53,7 +53,23 @@ Func_0200122c:
 	.global Func_02001234
 	.thumb_func
 Func_02001234:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b8
+	.else
 	overlay_veneer Func_080201e8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -165,7 +181,15 @@ Event_ClearStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_0200131c
 	.thumb_func
 Func_0200131c:
@@ -185,7 +209,15 @@ Func_02001334:
 	.global Func_0200133c
 	.thumb_func
 Func_0200133c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8960
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8960
+	.else
 	overlay_veneer Func_080c8968
+	.endif
+	.endif
 	.global Func_02001344
 	.thumb_func
 Func_02001344:

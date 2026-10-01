@@ -2029,43 +2029,43 @@ HaidiaArashi_SceneTable3:
 	.4byte SceneDialogue_RunActorTenFlag30dDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00000ea6
+	.4byte MsgHaidiaHangOnGarsiaHelpIsOn
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00000ea7
+	.4byte MsgHaidiaDontLetGoGarsia
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00000ece
+	.4byte MsgHaidiaNoItCantBeKairuIt
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00000ecf
+	.4byte MsgHaidiaMomDadGarsiaPleaseDontLeave
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte FieldScene_RunScene372_02003e48
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001121
+	.4byte MsgHaidiaRockCannotBeMoved
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001121
+	.4byte MsgHaidiaRockCannotBeMoved
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001121
+	.4byte MsgHaidiaRockCannotBeMoved
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001121
+	.4byte MsgHaidiaRockCannotBeMoved
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001121
+	.4byte MsgHaidiaRockCannotBeMoved
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001121
+	.4byte MsgHaidiaRockCannotBeMoved
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001121
+	.4byte MsgHaidiaRockCannotBeMoved
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001121
+	.4byte MsgHaidiaRockCannotBeMoved
 	.4byte 0x00000002
 	.4byte 0xffff000f
 	.4byte SceneState_SetFlag210AndConfigureRegion40_84

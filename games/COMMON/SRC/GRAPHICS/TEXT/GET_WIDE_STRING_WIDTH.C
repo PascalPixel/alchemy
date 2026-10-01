@@ -13,9 +13,9 @@ extern const u8 UiText_Glyphs[];
 #define WIDE_WIDTH_FIXED 1
 #endif
 
-/* The bytes of one glyph record, its width first: the first Japanese
-   game's font packs its records into 26 bytes. */
-#if defined(TBS_EDITION_JA)
+/* The bytes of one glyph record, its width first: both Japanese fonts
+   pack their records into 26 bytes. */
+#if defined(TBS_EDITION_JA) || defined(TLA_EDITION_JA)
 #define GLYPH_RECORD_SIZE 26
 #else
 #define GLYPH_RECORD_SIZE 32

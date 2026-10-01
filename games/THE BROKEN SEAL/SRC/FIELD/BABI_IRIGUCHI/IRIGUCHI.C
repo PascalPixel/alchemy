@@ -1154,3 +1154,37 @@ void SceneState_ApplyRectsAtActors8And9(void)
         Iriguchi_CopyCellAttributes(3, 3, 1, 1, k5, k6);
     }
 }
+
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+/* Keep the two door-side actors on the leader's background layer. Actors
+   behind the leader use the next layer and enable depth sorting. */
+void BabiIriguchi_MatchLeaderPriority(void)
+{
+    struct FieldSprite *sprite;
+    struct FieldActor *actor;
+    s32 priority;
+
+    sprite = Object_GetById(ACTOR_PARTY_LEADER)->sprite;
+    actor = Object_GetById(8);
+    if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
+        Engine_ActorSetSpritePriority(8, sprite->priority);
+    } else {
+        priority = sprite->priority;
+        if (priority != 1)
+            priority--;
+        Engine_ActorSetSpritePriority(8, priority);
+        Object_GetById(8)->priority_flags |= 1;
+    }
+    actor = Object_GetById(9);
+    if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
+        Engine_ActorSetSpritePriority(9, sprite->priority);
+    } else {
+        priority = sprite->priority;
+        if (priority != 1)
+            priority--;
+        Engine_ActorSetSpritePriority(9, priority);
+        Object_GetById(9)->priority_flags |= 1;
+    }
+}
+#endif

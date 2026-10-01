@@ -7549,7 +7549,7 @@ Data_020046c4:
 	.4byte Func_020004e0
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000017c6
+	.4byte MsgFieldICantFindAnythingAroundHere
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

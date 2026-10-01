@@ -638,19 +638,19 @@ KuupuappuMura_Extras:
 	.4byte FieldScene_SetupScene13At152_264
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001222
+	.4byte MsgKuupuappuWelcomeToVaultTheTownAt
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_RunActor9LineAndAdvance
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001226
+	.4byte MsgKuupuappuMasterHammetAWealthyLandownerAnd
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActor11Line
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001228
+	.4byte MsgKuupuappuMasterHammetsServantCantReturnTo
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte ActorPresentation_RunActorThirteenSceneSetup
@@ -674,25 +674,25 @@ KuupuappuMura_Extras:
 	.4byte SceneDialogue_RunActor19Line
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x0000128f
+	.4byte MsgKuupuappuAFieryRockBurntAHole
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte Villager_LookForRoofer
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001236
+	.4byte MsgKuupuappuISupposeTheseChildrenCantGo
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001237
+	.4byte MsgKuupuappuMtAlephsEruptionWasBeyondDescription
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001238
+	.4byte MsgKuupuappuWhyDoesAWealthyManLike
 	.4byte 0x00008d15
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActor11FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000123a
+	.4byte MsgKuupuappuPoorIvanButTheRodMay
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte SceneDialogue_RunActor13FlaggedLine
@@ -707,16 +707,16 @@ KuupuappuMura_Extras:
 	.4byte ActorPresentation_RunActorSixteenScriptBranch
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000123f
+	.4byte MsgKuupuappuHmphItLooksLikeTheyreOnto
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001240
+	.4byte MsgKuupuappuIWasJustAboutToLeave
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte ActorPresentation_RunActorNineteenScriptBranch
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001295
+	.4byte MsgKuupuappuFixTheRoofWhyPayFor
 	.4byte 0x00008d15
 	.4byte 0xffff0015
 	.4byte SceneDialogue_RunActor21Line
@@ -778,10 +778,10 @@ KuupuappuMura_ExtrasFlag855:
 	.4byte ActorPresentation_RunActorEightSceneSetup
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001333
+	.4byte MsgKuupuappuSmokeIsStillRisingFromMt
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001334
+	.4byte MsgKuupuappuMasterHammetTheWealthyMerchantI
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActor11SecondLine
@@ -811,19 +811,19 @@ KuupuappuMura_ExtrasFlag855:
 	.4byte SceneDialogue_RunActor20Line
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001343
+	.4byte MsgKuupuappuYouveMadeOurTownPeacefulAt
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001344
+	.4byte MsgKuupuappuNowMtAlephHasCalmedDown
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001345
+	.4byte MsgKuupuappuOfAllThePlacesWhyWould
 	.4byte 0x00008d15
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActor11FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001347
+	.4byte MsgKuupuappuNobodyGetsIntoLunpaExceptFor
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte SceneDialogue_RunActor13FlaggedLine
@@ -838,13 +838,13 @@ KuupuappuMura_ExtrasFlag855:
 	.4byte ActorPresentation_RunActorSixteenScriptBranch
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000134d
+	.4byte MsgKuupuappuThereIsAlwaysAFightWhen
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte ActorPresentation_RunActorNineteenScriptBranch
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001383
+	.4byte MsgKuupuappuSniffAhTheSmellOfCooking
 	.4byte 0x00000003
 	.4byte 0xffff001e
 	.4byte FieldScene_RunActor23SequenceOnceByFlag867

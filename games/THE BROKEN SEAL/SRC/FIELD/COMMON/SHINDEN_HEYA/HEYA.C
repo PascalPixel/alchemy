@@ -470,15 +470,21 @@ void FieldScene_RunScene378SequenceB(void)
     s32 record;
 
     Engine_EventBegin();
+#if !defined(TBS_EDITION_JA)
     Event_CallWithLastActiveObjectId((s32)ShindenHeya_PlacementSequenceB);
     Engine_TaskWait(1);
+#endif
     Engine_EventSetMessage((s32)MsgShindenRobinYourNewFriendsAdepts);
     Event_OpenMessage(9, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(9, 0);
     } else {
         bump_step();
+#if defined(TBS_EDITION_JA)
+        Call11(Engine_EventShowTwoMessagesAndWait, 1, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
+#else
         Call11(Engine_EventShowTwoMessagesAndWait, 2, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
+#endif
         Event_ShowMessage(9, 0);
     }
     Engine_EventEnd();

@@ -105,7 +105,20 @@ KorimaHiroba_Actors:
 	.4byte 0x00000000
 	.4byte 0x01500000
 	.4byte 0x00024000
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	.2byte 0x0016
+	.2byte 0x0fd3
+	.else
 	.4byte 0x0fd00016
+	.endif
+	.else
+	.4byte 0x0fd00016
+	.endif
+	.else
+	.4byte 0x0fd00016
+	.endif
 	.4byte 0x00000007
 	.4byte 0x01180000
 	.4byte 0x00000000

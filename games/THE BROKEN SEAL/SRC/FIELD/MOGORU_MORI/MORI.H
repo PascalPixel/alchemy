@@ -18,10 +18,6 @@ enum {
     ITEM_NUT = 181
 };
 
-enum WaypointMessage {
-    MSG_BROKEN_SIGN_READS_NORTH_FUCHIN = 0x17e6
-};
-
 struct Owner {
     u8 unk0[9];
     u8 unk9_0 : 2;

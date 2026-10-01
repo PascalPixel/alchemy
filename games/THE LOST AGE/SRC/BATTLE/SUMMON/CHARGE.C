@@ -1,10 +1,11 @@
 #include "TYPES.H"
+#include "TLA_EDITION.H"
 #include "OWNER_STATE.H"
 #include "RAM_BUFFER.H"
 
 /* Summon charge channels: each class holds a mask of the channels in use,
    and a unit's name ends in the marker digit of its channel. */
-#define LIST_MARKER_CHAR 49
+#define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
 
 struct SummonChargeState {
     u8 unknown_00[0x10];

@@ -458,10 +458,10 @@ KuupuappuMuraSai_Extras:
 	.4byte SceneDialogue_RunActor8FlagScene
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001cac
+	.4byte MsgKuupuappuYouveProbablyAlreadyHeardButThe
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001cad
+	.4byte MsgKuupuappuIWonderWhatHappenedToHammet
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActor11Line
@@ -482,13 +482,13 @@ KuupuappuMuraSai_Extras:
 	.4byte SceneDialogue_RunActor16CountedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001cb8
+	.4byte MsgKuupuappuTheThievesEscapedButIThink
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte FieldScene_RunActorEighteenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001cf1
+	.4byte MsgKuupuappuThereYouSeeTheRoofRepairs
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte FieldScene_SetActor21Values0And4
@@ -500,13 +500,13 @@ KuupuappuMuraSai_Extras:
 	.4byte SceneDialogue_RunActorEightTimedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001cba
+	.4byte MsgKuupuappuICantBelieveTheyreHereWhat
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001cbb
+	.4byte MsgKuupuappuWhenThoseGuysFromKalayCame
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001cbc
+	.4byte MsgKuupuappuYeahSomeWarriorsFromKalayCame
 	.4byte 0x00008d15
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActor11AcceptanceDialogue
@@ -515,7 +515,7 @@ KuupuappuMuraSai_Extras:
 	.4byte SceneDialogue_RunActor12TimedTwoFlagScene
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001cbe
+	.4byte MsgKuupuappuThoseStupidThievesEscapedAndWe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte ActorPresentation_RunActor13AcceptanceDialogue
@@ -536,16 +536,16 @@ KuupuappuMuraSai_Extras:
 	.4byte FieldScene_RunScene385SequenceA
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001cc3
+	.4byte MsgKuupuappuIKeepWonderingWasOurStatue
 	.4byte 0x00008d15
 	.4byte 0x18580012
-	.4byte 0x000013ab
+	.4byte MsgKuupuappuCarefulSearchWillRevealPassage
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001cc4
+	.4byte MsgKuupuappuIfYouBringMeSomeBones
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001cf5
+	.4byte MsgKuupuappuThatsTheLastOfTheRoof
 	.4byte 0x00000003
 	.4byte 0xffff005a
 	.4byte SceneState_SetFlag947AndValue29dc

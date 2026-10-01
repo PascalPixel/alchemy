@@ -61,7 +61,23 @@ Func_02001840:
 	.global Func_02001848
 	.thumb_func
 Func_02001848:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b8
+	.else
 	overlay_veneer Func_080201e8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02001850
 	.thumb_func
 Func_02001850:
@@ -161,7 +177,15 @@ Event_SetStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Object_SetWideSprite
 	.thumb_func
 Object_SetWideSprite:
@@ -181,15 +205,39 @@ Func_02001930:
 	.global Func_02001938
 	.thumb_func
 Func_02001938:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Object_SetActionCallbackFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Object_SetActionCallbackFar
+	.else
 	overlay_veneer Func_080c8690
+	.endif
+	.endif
 	.global Func_02001940
 	.thumb_func
 Func_02001940:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8700
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8700
+	.else
 	overlay_veneer Func_080c8710
+	.endif
+	.endif
 	.global Func_02001948
 	.thumb_func
 Func_02001948:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8728
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8728
+	.else
 	overlay_veneer Func_080c8738
+	.endif
+	.endif
 	.global Func_02001950
 	.thumb_func
 Func_02001950:

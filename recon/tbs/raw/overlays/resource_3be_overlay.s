@@ -379,19 +379,19 @@ gKaragoruDouEvents1:
 	.4byte KaragoruDou_AskToCross
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000023cf
+	.4byte MsgKaragoruDouUsWereTheSoldiersWhoGuard
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000023d0
+	.4byte MsgKaragoruDouEvenIfYouHeadEastYou
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000023d1
+	.4byte MsgKaragoruDouThoseWhoGoToGondowanRarely
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte ActorPresentation_SelectActorNineScript
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000023d3
+	.4byte MsgKaragoruDouYoudThinkYouCouldGetThrough
 	.4byte 0x00000013
 	.4byte 0x0fa00064
 	.4byte 0x001000c1
@@ -417,28 +417,28 @@ gKaragoruDouEvents1Flag96f:
 	.4byte ActorPresentation_RunActorElevenRecoveryScene
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000023d6
+	.4byte MsgKaragoruDouWhyWouldIodemChooseToWait
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000023d7
+	.4byte MsgKaragoruDouWeHaventSeenAnybodyUnusualCrossing
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000023d8
+	.4byte MsgKaragoruDouEvenIfYouGoEastFrom
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte ActorPresentation_RunActorElevenRecoveryScene
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000023dd
+	.4byte MsgKaragoruDouIodemIsGoingToBabiLighthouse
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000023de
+	.4byte MsgKaragoruDouItsALotOfStressBut
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000023df
+	.4byte MsgKaragoruDouEveryoneComesDownThisWayWhen
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000023e0
+	.4byte MsgKaragoruDouWeHaveToHeadForThe
 	.4byte 0x00000013
 	.4byte 0x0fa00064
 	.4byte 0x001000c1

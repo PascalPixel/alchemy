@@ -1750,82 +1750,82 @@ Data_02001490:
 	.4byte DeriMura_TalkIndraMoved
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001719
+	.4byte MsgFieldISawABrightLightIn
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000171a
+	.4byte MsgFieldThankGoodnessForThatMountainRange
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000171b
+	.4byte MsgFieldOhhhThatWaveKnockedMeOver
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000171c
+	.4byte MsgFieldThatAncientTowerToTheEast
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000171d
+	.4byte MsgFieldRikiAndTaviSureAreOut
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000171e
+	.4byte MsgFieldIWonderIfThoseTwoAre
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000171f
+	.4byte MsgFieldOurVillageSurvivedTheWaveBut
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte DeriMura_TalkBoat
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001723
+	.4byte MsgFieldThatTidalWaveLeftALot
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001724
+	.4byte MsgFieldYaaayPuddlesInTheVillageYaaay
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001725
+	.4byte MsgFieldBleahIFellInAPuddle
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte Func_02000288
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001726
+	.4byte MsgFieldThatWaveTurnedThisPlaceInto
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001727
+	.4byte MsgFieldThatMustHaveBeenOneSerious
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001728
+	.4byte MsgFieldIThoughtISawSomeLights
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001729
+	.4byte MsgFieldTheSeaGodMustHaveSaved
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000172a
+	.4byte MsgFieldMyHipsKillingMeAndAll
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000172b
+	.4byte MsgFieldICantBelieveThoseChildrenPlay
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000172c
+	.4byte MsgFieldTheShrineOfTheSeaGod
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000172d
+	.4byte MsgFieldICantBelieveThoseLosersWere
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000172e
+	.4byte MsgFieldThatWaveWasBrutalItSmashed
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000172f
+	.4byte MsgFieldWithAllTheBoatsGoneWe
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001730
+	.4byte MsgFieldWithAllThisSaltWaterOn
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001731
+	.4byte MsgFieldYayWeNeverGetPuddlesLike
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001732
+	.4byte MsgFieldBleccchThisWatersSaaalty
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x0000174c
+	.4byte MsgFieldImSureThoseTwoWentTo
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
 	.4byte 0x0040303c
@@ -1878,85 +1878,85 @@ Data_02001664:
 	.4byte Func_02000c30
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000017e4
+	.4byte MsgFieldAfterThatWaveHitIWas
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000017e5
+	.4byte MsgFieldSureAreALotOfTravelers
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000017e6
+	.4byte MsgFieldThosePuddlesOfSeaWaterThe
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000017e7
+	.4byte MsgFieldAhTheSeaIsCalmAgain
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte DeriMura_TalkHip
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000017eb
+	.4byte MsgFieldIveAlwaysHeardThatTheShrine
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000017ec
+	.4byte MsgFieldTheDreadPirateBriggsWasCaptured
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000017ed
+	.4byte MsgFieldThoseTwoLosersAreBackHome
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000017ee
+	.4byte MsgFieldIThoughtISawSomethingWhen
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000017ef
+	.4byte MsgFieldSoIHearTheyCaughtThe
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000017f0
+	.4byte MsgFieldItWasCreepyRightBeforeThe
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000017f1
+	.4byte MsgFieldThePuddlesAreGoneAndNow
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000017f2
+	.4byte MsgFieldIGotHurtWhenIWas
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte Func_02000340
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000017f3
+	.4byte MsgFieldThankOurLuckyStarsOurLittle
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000017f4
+	.4byte MsgFieldIsThatGuyStillMeetingWith
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000017f5
+	.4byte MsgFieldThosePuddlesStankIThoughtId
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000017f6
+	.4byte MsgFieldImGladEverythingIsBackTo
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000017f7
+	.4byte MsgFieldNobodyBelievesAWaveCouldBe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000017f8
+	.4byte MsgFieldIdSureLikeToSeeWhat
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000017f9
+	.4byte MsgFieldIWonderWhatHappenedToBriggs
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000017fa
+	.4byte MsgFieldTaviAndRikiMustHaveBeen
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000017fb
+	.4byte MsgFieldItsProbablyNothingButJunkAnd
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000017fc
+	.4byte MsgFieldTheSeasArePeacefulAndFree
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000017fd
+	.4byte MsgFieldBeforeTheWaveHitTheTide
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000017fe
+	.4byte MsgFieldIHopeSomeOfTheLittle
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000017ff
+	.4byte MsgFieldICaughtMyFootOnSomething
 	.4byte 0x00008d15
 	.4byte 0xffff0015
 	.4byte 0x00001838

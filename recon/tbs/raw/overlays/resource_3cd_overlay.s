@@ -101,7 +101,19 @@ gItemLevelPlacements:
 	.4byte 0x00000000
 	.4byte 0xffff008f
 	.4byte 0x00000001
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	.4byte 0x00500000
+	.else
 	.4byte 0x03500000
+	.endif
+	.else
+	.4byte 0x03500000
+	.endif
+	.else
+	.4byte 0x03500000
+	.endif
 	.4byte 0x00000000
 	.4byte 0x03600000
 	.4byte 0x00015000
@@ -137,9 +149,24 @@ gItemLevelEvents:
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte FieldScene_RunCountAdjustPanel
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	.else
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte ItemLevel_SelectAbility
+	.endif
+	.else
+	.4byte 0x00000000
+	.4byte 0xffff000c
+	.4byte ItemLevel_SelectAbility
+	.endif
+	.else
+	.4byte 0x00000000
+	.4byte 0xffff000c
+	.4byte ItemLevel_SelectAbility
+	.endif
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte FieldScene_RunActor13Mode102Step

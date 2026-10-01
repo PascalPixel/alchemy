@@ -169,7 +169,15 @@ Event_ClearStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_02002044
 	.thumb_func
 Func_02002044:
@@ -177,7 +185,15 @@ Func_02002044:
 	.global Func_0200204c
 	.thumb_func
 Func_0200204c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8560
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8560
+	.else
 	overlay_veneer Func_080c8570
+	.endif
+	.endif
 	.global Func_02002054
 	.thumb_func
 Func_02002054:

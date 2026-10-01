@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -25,10 +26,8 @@ struct Actor {
 
 extern void KuupuappuDou_RaiseActorPriorities(void);
 
-enum SelectByRuntimeSelectorMessage {
-    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
-    MSG_ROBIN_FLIPPED_SWITCH = 0x1528
-};
+TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
+TEXT_MESSAGE_ENUM(MsgFieldFlippedSwitch);
 
 extern 
 
@@ -257,7 +256,7 @@ void SceneState_ApplyFlag300(void)
 
 void SceneState_SetFlag953(void)
 {
-    Engine_MessageShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
+    Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }
 
 /* What each area answers. */
@@ -645,7 +644,7 @@ void FieldScene_RunScene3a7SequenceB(void)
     s32 v6;
 
     if (GameFlag_IsSet(0x9a8) == 0) {
-        Engine_MessageShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
+        Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
         GameFlag_Set(0x9a8);
         v5 = 27;
         v6 = 92;

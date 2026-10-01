@@ -9,6 +9,40 @@ extern u8 gLinkStatus[];
 extern const s32 LinkLobby_SlotValues[];
 extern const u8 LinkLobby_SlotColumns[];
 
+/* Four-character wire tags identify the edition and each exchange phase. */
+#define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
+
+const s32 LinkLobby_SlotValues[] = {
+#if defined(TBS_EDITION_DE)
+    PEER_TAG('C', 'S', 'G', 'G'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'G', 'S', 'C')
+#elif defined(TBS_EDITION_ES)
+    PEER_TAG('C', 'S', 'S', 'G'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'S', 'S', 'C')
+#elif defined(TBS_EDITION_FR)
+    PEER_TAG('C', 'S', 'G', 'M'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('C', 'S', 'G', 'M')
+#elif defined(TBS_EDITION_IT)
+    PEER_TAG('S', 'G', 'I', 'C'), PEER_TAG('0', '1', '2', '3'),
+    PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
+    PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('C', 'I', 'G', 'S')
+#else
+#if defined(TBS_EDITION_JA)
+    PEER_TAG('C', 'M', 'G', 'S'),
+#else
+    PEER_TAG('S', 'G', 'M', 'C'),
+#endif
+    PEER_TAG('0', '1', '2', '3'), PEER_TAG('A', 'B', 'C', '1'),
+    PEER_TAG('C', 'D', 'E', '2'), PEER_TAG('E', 'F', 'G', '3'),
+    PEER_TAG('S', 'G', 'M', 'C')
+#endif
+};
+
+#undef PEER_TAG
+
 /* One linked player's six compared words. */
 struct LinkPeer {
     s32 values[6];

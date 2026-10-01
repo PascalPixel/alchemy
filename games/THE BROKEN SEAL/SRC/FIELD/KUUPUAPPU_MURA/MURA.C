@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "TBS_EDITION.H"
 
 struct EffectRecord {
     u8 pad[9];
@@ -180,9 +181,9 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
 
     /*
      * Widen the range when the scene counter at workspace + 376 is already
-     * running, or when the scene byte at scene + 0x0ea4 is set.
+     * running, or when the render mode byte is set.
      */
-    if (*(s16 *)(workspace + 376) != 0 || scene[0x0ea4] != 0) {
+    if (*(s16 *)(workspace + 376) != 0 || scene[RENDER_MODE_OFS] != 0) {
         range = 26;
         if ((*flags & 2) != 0) {
             force = 1;
@@ -205,7 +206,7 @@ s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
         return 0;
 
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (*(s16 *)(workspace + 376) != 0 || base[0x0ea4] != 0) {
+    if (*(s16 *)(workspace + 376) != 0 || base[RENDER_MODE_OFS] != 0) {
         selector = 26;
         flag = 1;
     }

@@ -1,3 +1,5 @@
+#include "TBS_EDITION.H"
+#include "TEXT_FONT.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "DMA.H"
@@ -237,6 +239,28 @@ void Clear_NameEntryCharacter(s32 cell, u8 *text)
 {
     text[1] = 0;
     text[2] = 0;
+#if TBS_EDITION_JA
+    /* Japanese grid entries use single glyphs, then glyph/dakuten pairs. */
+    if (cell <= 14)
+        text[0] = cell - 111;
+    else if (cell <= 44)
+        text[0] = cell - 47;
+    else if (cell == 45)
+        text[0] = 0x86;
+    else {
+        if (cell <= 55)
+            text[0] = cell + 104;
+        else if (cell == 56)
+            text[0] = 0xe0;
+        else if (cell == 57)
+            text[0] = 0xe3;
+        else if (cell == 58)
+            text[0] = 0xe4;
+        else
+            text[0] = cell - 81;
+        text[1] = TEXT_MARK_DAKUTEN;
+    }
+#else
     if (cell <= 7)
         text[0] = cell + 'A';
     else if (cell <= 12)
@@ -267,6 +291,7 @@ void Clear_NameEntryCharacter(s32 cell, u8 *text)
         text[0] = '+';
     else
         text[0] = '=';
+#endif
 }
 
 /* The clear screen's mode mask: once flag 324 is set, every scene but the

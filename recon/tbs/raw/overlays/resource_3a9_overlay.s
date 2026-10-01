@@ -418,88 +418,88 @@ gKareiHeyaEvents1:
 	.4byte FieldScene_RunArrivalPlacement
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001abf
+	.4byte MsgKareiHeyaImShockedToHearTheRighteous
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001ac0
+	.4byte MsgKareiHeyaLunpaWasAKindThiefHis
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001ac3
+	.4byte MsgKareiHeyaSomehowTheNorthHasBecomeThe
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001ac4
+	.4byte MsgKareiHeyaAMerchantFromVaultHadBeen
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001ac7
+	.4byte MsgKareiHeyaNoOneIsAllowedToGo
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001ac8
+	.4byte MsgKareiHeyaIDoNotWantMySon
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001acb
+	.4byte MsgKareiHeyaTheMostImportantSkillForA
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001acc
+	.4byte MsgKareiHeyaMySonReceivedHisKnackFor
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte SceneDialogue_RunActor16Dialogue
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001ae6
+	.4byte MsgKareiHeyaIBetterGetReadyTheColosso
 	.4byte 0x00000000
 	.4byte 0x09110012
-	.4byte 0x00001ae7
+	.4byte MsgKareiHeyaWeFledFromGondowanToThe
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001afe
+	.4byte MsgKareiHeyaWeCameHereToEscapeThe
 	.4byte 0x00000000
 	.4byte 0x09110013
-	.4byte 0x00001ae8
+	.4byte MsgKareiHeyaLaliveroWhereImFromIsThe
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001aff
+	.4byte MsgKareiHeyaWeEscapedFromTheNortheasternRegion
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001ac1
+	.4byte MsgKareiHeyaTheRegionNorthOfVaultWas
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001ac2
+	.4byte MsgKareiHeyaLunpasReputationIsVeryBadNowadays
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001ac5
+	.4byte MsgKareiHeyaThreeYearsAgoThievesRaidedMt
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001ac6
+	.4byte MsgKareiHeyaTheySayOtherNorthernPartsAre
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001ac9
+	.4byte MsgKareiHeyaImAnAdultNowIDont
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001aca
+	.4byte MsgKareiHeyaIDontCareHowMySon
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001acd
+	.4byte MsgKareiHeyaTheMostImportantThingIsNot
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001ace
+	.4byte MsgKareiHeyaMySonIsVeryTightWith
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001af5
+	.4byte MsgKareiHeyaPeopleFromTheContinentSouthOf
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001af6
+	.4byte MsgKareiHeyaImPrettyExcitedBecauseThisIs
 	.4byte 0x00008d15
 	.4byte 0x09110012
-	.4byte 0x00001af7
+	.4byte MsgKareiHeyaIFledAllThisWayNow
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001b03
+	.4byte MsgKareiHeyaIWonderWhatColossoIsLike
 	.4byte 0x00008d15
 	.4byte 0x09110013
-	.4byte 0x00001af8
+	.4byte MsgKareiHeyaItLooksLikeColossoWillSoon
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001b04
+	.4byte MsgKareiHeyaIWasSoScaredComingTo
 	.4byte 0x00000033
 	.4byte 0x0f830064
 	.4byte 0x0020000b
@@ -511,19 +511,24 @@ gKareiHeyaEvents1:
 	.4byte 0x001000bc
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x004029a8
+	.2byte MsgKareiHeyaShesToastingSomeBreadItSmells
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x004029a9
+	.2byte MsgKareiHeyaHesMakingCurryItsSpicyScent
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff0065
-	.4byte 0x004029aa
+	.2byte MsgKareiHeyaHesMakingRoastedEggplantWithCheese
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x004029ab
+	.2byte MsgKareiHeyaItsAKalaySaladWithCucumber
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte 0x004029ac
+	.2byte MsgKareiHeyaItsPicklesWithGarlicThePickle
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -558,88 +563,88 @@ gKareiHeyaEvents1Entrance9:
 	.4byte SceneDialogue_RunActor8FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x09110009
-	.4byte 0x00001ada
+	.4byte MsgKareiHeyaEveryoneIsGoingToTolbiTo
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001afc
+	.4byte MsgKareiHeyaEvenOurChefLeftSoWe
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001adb
+	.4byte MsgKareiHeyaIveSignedOnForATour
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001adc
+	.4byte MsgKareiHeyaTheColossoGladiatorsAreAllStrong
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte SceneDialogue_RunActor12DialogueAndSetFlag910
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001ade
+	.4byte MsgKareiHeyaEveryoneLooksForwardToGoingTo
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001adf
+	.4byte MsgKareiHeyaSurelyLordHammetWillPopUp
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001ae0
+	.4byte MsgKareiHeyaIWouldHaveEnteredColossoIf
 	.4byte 0x00000000
 	.4byte 0x09110010
-	.4byte 0x00001ae1
+	.4byte MsgKareiHeyaManyOfTheGuestsHereSeem
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001afd
+	.4byte MsgKareiHeyaUhOhHesStillHereEven
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001ae2
+	.4byte MsgKareiHeyaArentYouGoingToColossoYou
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001ae9
+	.4byte MsgKareiHeyaIfYouAreEnteringColossoYou
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001aea
+	.4byte MsgKareiHeyaWereSoStrongMakingTheFinals
 	.4byte 0x00008d15
 	.4byte 0x09110008
-	.4byte 0x00001aeb
+	.4byte MsgKareiHeyaHesAShrewdMerchantIfHe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001b00
+	.4byte MsgKareiHeyaIdHaveGoneOnTheColosso
 	.4byte 0x00008d15
 	.4byte 0x09110009
-	.4byte 0x00001aec
+	.4byte MsgKareiHeyaEveryYearEveryoneGoesToTolbi
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001b01
+	.4byte MsgKareiHeyaEvenIfMyHusbandWantedTo
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001aed
+	.4byte MsgKareiHeyaJoiningATourGroupIsThe
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001aee
+	.4byte MsgKareiHeyaIWonderWhichWarriorWillWin
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001aef
+	.4byte MsgKareiHeyaItsBusinessSoYouCantHelp
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001af0
+	.4byte MsgKareiHeyaImExhaustedFromPreparingThisTour
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001af1
+	.4byte MsgKareiHeyaIWasSoExcitedICouldnt
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001af2
+	.4byte MsgKareiHeyaMyAnimalInstinctsStartWakingUp
 	.4byte 0x00008d15
 	.4byte 0x09110010
-	.4byte 0x00001af3
+	.4byte MsgKareiHeyaColossoIsSoCommonWhatsSo
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001b02
+	.4byte MsgKareiHeyaICantSeemToRelaxNow
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001af4
+	.4byte MsgKareiHeyaImGoingToSignUpFor
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001af9
+	.4byte MsgKareiHeyaIHavePowerAndSeanHas
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001afa
+	.4byte MsgKareiHeyaWeAreTheToughestOfAll
 	.4byte 0x00000033
 	.4byte 0x0f830064
 	.4byte 0x0020000b
@@ -651,19 +656,24 @@ gKareiHeyaEvents1Entrance9:
 	.4byte 0x001000bc
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x004029a8
+	.2byte MsgKareiHeyaShesToastingSomeBreadItSmells
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x004029a9
+	.2byte MsgKareiHeyaHesMakingCurryItsSpicyScent
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff0065
-	.4byte 0x004029aa
+	.2byte MsgKareiHeyaHesMakingRoastedEggplantWithCheese
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x004029ab
+	.2byte MsgKareiHeyaItsAKalaySaladWithCucumber
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte 0x004029ac
+	.2byte MsgKareiHeyaItsPicklesWithGarlicThePickle
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -677,7 +687,7 @@ gKareiHeyaEvents2:
 	.4byte SceneDialogue_RunActor8FacingDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001a90
+	.4byte MsgKareiHeyaICameHereToSpreadGood
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -33,7 +33,23 @@ Func_02000ca4:
 	.global Func_02000cac
 	.thumb_func
 Func_02000cac:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b0
+	.else
 	overlay_veneer Func_080201e0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -169,7 +185,15 @@ Engine_EventPrepareSpeakers:
 	.global Func_02000dbc
 	.thumb_func
 Func_02000dbc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8548
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8548
+	.else
 	overlay_veneer Func_080c8558
+	.endif
+	.endif
 	.global Func_02000dc4
 	.thumb_func
 Func_02000dc4:
@@ -181,7 +205,15 @@ Func_02000dcc:
 	.global Func_02000dd4
 	.thumb_func
 Func_02000dd4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif
 	.global Func_02000ddc
 	.thumb_func
 Func_02000ddc:

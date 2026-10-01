@@ -113,6 +113,15 @@ fn function_bytes_from_object(
     names: &std::collections::BTreeSet<String>,
     size: i64,
 ) -> Result<i64, String> {
+    let symbols = section_function_symbols(bytes, section_name, size)?;
+    Ok(function_spans(&symbols, names, size))
+}
+
+fn section_function_symbols<'a>(
+    bytes: &'a [u8],
+    section_name: &str,
+    size: i64,
+) -> Result<Vec<(i64, &'a str)>, String> {
     let file = object::File::parse(bytes).map_err(|error| error.to_string())?;
     let section = file
         .section_by_name(section_name)
@@ -126,7 +135,26 @@ fn function_bytes_from_object(
         .filter_map(|symbol| symbol.name().ok().map(|name| ((symbol.address() & !1) as i64, name)))
         .collect::<Vec<_>>();
     symbols.sort_by_key(|(address, _)| *address);
-    Ok(function_spans(&symbols, names, size))
+    Ok(symbols)
+}
+
+/// Diagnostic names and complete section-local extents, including pools.
+pub(crate) fn placed_functions(
+    object: &str,
+    section: &str,
+    size: i64,
+) -> Result<Vec<(String, i64)>, String> {
+    let bytes = std::fs::read(object).map_err(|error| format!("{object}: {error}"))?;
+    let symbols = section_function_symbols(&bytes, section, size)
+        .map_err(|error| format!("{object}: {error}"))?;
+    Ok(symbols
+        .iter()
+        .filter_map(|(_, name)| {
+            let names = [name.to_string()].into_iter().collect();
+            let extent = function_spans(&symbols, &names, size);
+            (extent > 0).then(|| (name.to_string(), extent))
+        })
+        .collect())
 }
 
 /// Sum the spans of `names` among `symbols`, sorted by offset in a section
@@ -251,7 +279,7 @@ pub(crate) enum Language {
 
 /// Every input section the map places: name, size and object path. The
 /// discarded sections listed before the memory map are skipped.
-fn sections(map: &str) -> Vec<(&str, i64, &str)> {
+pub(crate) fn sections(map: &str) -> Vec<(&str, i64, &str)> {
     let mut found = Vec::new();
     let mut discarded = false;
     let mut lines = map.lines().peekable();
@@ -307,7 +335,11 @@ fn placement(text: &str) -> Option<(i64, &str)> {
 
 /// An object's path under its build directory's `obj/` (or, in an overlay
 /// map, under `overlays/`), and whether it sits in the overlay directory.
-fn relative_object<'a>(object: &'a str, output: &str, overlay: bool) -> Option<(&'a str, bool)> {
+pub(crate) fn relative_object<'a>(
+    object: &'a str,
+    output: &str,
+    overlay: bool,
+) -> Option<(&'a str, bool)> {
     let relative = |marker: &str| {
         let marker = format!("{output}/{marker}/");
         object
@@ -442,7 +474,7 @@ fn tally(
 }
 
 /// The language `build rom` compiled a `games/` object from.
-fn maintained_source(root: &Path, stem: &str) -> Option<Language> {
+pub(crate) fn maintained_source(root: &Path, stem: &str) -> Option<Language> {
     [
         ("C", Language::C),
         ("c", Language::C),

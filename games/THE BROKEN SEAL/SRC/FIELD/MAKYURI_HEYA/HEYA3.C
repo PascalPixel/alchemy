@@ -23,9 +23,15 @@ void MakyuriHeya_WalkLeaderIn(void)
     } else if (*(s16 *)(work + 0x16c) == 4) {
         Actor_SetDestination(0, 248, 792);
     } else {
+#if defined(TBS_EDITION_JA)
+        Call3(Engine_ActorSetDestination, 0, 696, 592);
+#else
         Call3(Engine_ActorMoveToAndWait, 0, 696, 592);
+#endif
+#if !defined(TBS_EDITION_JA)
         Actor_SetDestination(0, 696, 600);
         Battle_WaitMode0(30);
+#endif
     }
     ObjectMotion_CommitCurrentPositionAndActivate(0);
     SetFlagBits(&Object_GetById(0)->unknown_5a, 1);

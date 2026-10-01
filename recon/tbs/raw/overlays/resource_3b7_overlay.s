@@ -425,7 +425,15 @@ TorebiIzumi_RunSpringGame:
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0
+	.ifdef TBS_EDITION_EN
 	movs r2, #17
+	.else
+	.ifdef TBS_EDITION_JA
+	movs r2, #17
+	.else
+	movs r2, #19
+	.endif
+	.endif
 	movs r3, #4
 	movs r0, #0
 	bl UiWindow_Create
@@ -441,7 +449,15 @@ TorebiIzumi_RunSpringGame:
 	mov r0, r8
 	movs r1, #6
 	adds r2, r6, #0
+	.ifdef TBS_EDITION_EN
 	movs r3, #72
+	.else
+	.ifdef TBS_EDITION_JA
+	movs r3, #72
+	.else
+	movs r3, #88
+	.endif
+	.endif
 	bl UiText_DrawNumberInWindow
 	adds r0, r5, #1
 	adds r1, r6, #0
@@ -451,7 +467,15 @@ TorebiIzumi_RunSpringGame:
 	movs r3, #8
 	str r3, [sp, #0]
 	adds r2, r6, #0
+	.ifdef TBS_EDITION_EN
 	movs r3, #72
+	.else
+	.ifdef TBS_EDITION_JA
+	movs r3, #72
+	.else
+	movs r3, #88
+	.endif
+	.endif
 	movs r1, #6
 	adds r0, r7, #0
 	bl UiText_DrawNumberInWindow
@@ -520,9 +544,25 @@ TorebiIzumi_RunSpringGame:
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #15
+	.ifdef TBS_EDITION_EN
 	movs r2, #9
+	.else
+	.ifdef TBS_EDITION_JA
+	movs r2, #9
+	.else
+	movs r2, #10
+	.endif
+	.endif
 	movs r3, #4
+	.ifdef TBS_EDITION_EN
 	movs r0, #20
+	.else
+	.ifdef TBS_EDITION_JA
+	movs r0, #20
+	.else
+	movs r0, #19
+	.endif
+	.endif
 	bl UiWindow_Create
 	ldr r5, .L_02008d58
 	adds r6, r0, #0
@@ -694,19 +734,19 @@ TorebiIzumi_RunSpringGame:
 	pop {r1}
 	bx r1
 .L_02008d4c:
-	.4byte 0x00000e43
+	.4byte MsgTorebiThrow
 .L_02008d50:
 	.4byte gCell
 .L_02008d54:
-	.4byte 0x00000e49
+	.4byte MsgTorebiCoins
 .L_02008d58:
-	.4byte 0x00000e4c
+	.4byte MsgTorebiToss
 .L_02008d5c:
 	.4byte gKeyState
 .L_02008d60:
 	.4byte Data_0200200c
 .L_02008d64:
-	.4byte 0x00000e46
+	.4byte MsgTorebiWonNumberCoin
 .L_02008d68:
 	.4byte 0x0000011d
 .L_02008d6c:
@@ -2070,37 +2110,37 @@ gTorebiIzumiEventsOther:
 	.4byte FieldScene_RunIndexedStep0
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00000e51
+	.4byte MsgTorebiIzumiHmmIWonderIfTheseKids
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte TorebiIzumi_PayToPlay
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00000e11
+	.4byte MsgTorebiIzumiReadTheSignIfYaDont
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte TorebiIzumi_AskIfFirstTime
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00000e1c
+	.4byte MsgTorebiIzumiWhoaGettingTripleDigitsIsReal
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00000e1d
+	.4byte MsgTorebiIzumiIDontWantToStopPlaying
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00000e1e
+	.4byte MsgTorebiIzumiWinningOrLosingIsPureLuck
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00000e1f
+	.4byte MsgTorebiIzumiTheRulesForLuckyDiceAint
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00000e20
+	.4byte MsgTorebiIzumiSometimesPeopleWhoHaveNeverPlayed
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00000e21
+	.4byte MsgTorebiIzumiThinkingWontHelpYouWinThis
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00000e22
+	.4byte MsgTorebiIzumiMyLuckHasRunOutFor
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte SceneDialogue_RunMessage0e35
@@ -2109,22 +2149,22 @@ gTorebiIzumiEventsOther:
 	.4byte SceneDialogue_RunMessage0e34
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00000e15
+	.4byte MsgTorebiIzumiLuckyDiceThrowTheDiceOn
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00000e16
+	.4byte MsgTorebiIzumiLuckyDiceIfTwoNumbersMatch
 	.4byte 0x00000000
 	.4byte 0x09620011
-	.4byte 0x00001f9c
+	.4byte MsgTorebiIzumiYeahThatDiceGameLooksKinda
 	.4byte 0x00008d15
 	.4byte 0x09620011
-	.4byte 0x00001fb1
+	.4byte MsgTorebiIzumiILikePlayingLuckyDiceBut
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000021e9
+	.4byte MsgTorebiIzumiOhThereAreAlwaysScalpersAt
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000021fc
+	.4byte MsgTorebiIzumiTheresNoWayPoorSoldiersLike
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2138,28 +2178,28 @@ gTorebiIzumiEvents2:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00000e37
+	.4byte MsgTorebiTossLuckyMedal
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00000e36
+	.4byte MsgTorebiFaceAwayTolbi
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00000e38
+	.4byte MsgTorebiIzumiTolbiSpringHasMysteriousPowersStand
 	.4byte 0x00000000
 	.4byte 0xffff001b
 	.4byte TorebiIzumi_AskForLuckyMedal
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00000e3c
+	.4byte MsgTorebiIzumiTooBadIOnlyHaveOne
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00000e4e
+	.4byte MsgTorebiIzumiIGetNervousWhenIToss
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00000e4f
+	.4byte MsgTorebiIzumiWhyWontAnyoneGiveMeA
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00000e50
+	.4byte MsgTorebiIzumiThisIsALuckyMedalSo
 	.4byte 0x00000003
 	.4byte 0xffff0050
 	.4byte TorebiIzumi_WalkLeaderToSpring

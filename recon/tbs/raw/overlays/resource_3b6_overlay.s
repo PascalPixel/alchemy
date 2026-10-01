@@ -615,37 +615,37 @@ Data_02009310:
 	.4byte 0x00000013
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001fba
+	.4byte MsgTorebiHeyaTolbiIsPackedWithTouristsDuring
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_AskStay
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001fbe
+	.4byte MsgTorebiHeyaICouldntSleepAtAllLast
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001fbf
+	.4byte MsgTorebiHeyaTheCrowdsAtTheColosseumMade
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001fc4
+	.4byte MsgTorebiHeyaWePaidGoodMoneyToRent
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001fc6
+	.4byte MsgTorebiHeyaIReallyWantToSeeColosso
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001fc7
+	.4byte MsgTorebiHeyaWahhhIWantToSeeColosso
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001fca
+	.4byte MsgTorebiHeyaIWonderIfTheyReallyCant
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001fcb
+	.4byte MsgTorebiHeyaBabiWasntAtColossoAccordingTo
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001fce
+	.4byte MsgTorebiHeyaWereGoingToMakeSomeMoney
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001fcf
+	.4byte MsgTorebiHeyaIHeardBabiIsUsingThe
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte SceneDialogue_RunFacingActionPrompt
@@ -657,100 +657,100 @@ Data_02009310:
 	.4byte SceneDialogue_RunFacingAction
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001fdb
+	.4byte MsgTorebiHeyaWereFullyBookedWithReservationsDuring
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001fdc
+	.4byte MsgTorebiHeyaColossoIsTheBusiestTimeOf
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001fdd
+	.4byte MsgTorebiHeyaWereSoBusyRunningTheInn
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001fde
+	.4byte MsgTorebiHeyaATourGroupCameFromKalay
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00001fdf
+	.4byte MsgTorebiHeyaWeArentGoingToGetTo
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00001fe0
+	.4byte MsgTorebiHeyaImNotVeryInterestedInColosso
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00001fe1
+	.4byte MsgTorebiHeyaOhNoWeBarelyMadeIt
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00001fe2
+	.4byte MsgTorebiHeyaIfWedGottenHereJustA
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001fc0
+	.4byte MsgTorebiHeyaOnceColossoStartsWereGoingTo
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001fc1
+	.4byte MsgTorebiHeyaItsTooLateToStartLooking
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001fc2
+	.4byte MsgTorebiHeyaIfICouldHaveSleptLast
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001fc3
+	.4byte MsgTorebiHeyaHuhUhCrowdsAreADefinite
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001fc5
+	.4byte MsgTorebiHeyaWeGetToStayHereUntil
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001fc8
+	.4byte MsgTorebiHeyaIWasStubbornISaidIm
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001fc9
+	.4byte MsgTorebiHeyaIKeepOnCryingButDaddy
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001fcc
+	.4byte MsgTorebiHeyaItsStrangeThatBabisSoldiersAre
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001fcd
+	.4byte MsgTorebiHeyaItsStrangeBabiLovesColossoBut
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001fd0
+	.4byte MsgTorebiHeyaHeJustTakesACutOf
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001fd1
+	.4byte MsgTorebiHeyaNamingTheLighthouseHeBuiltAfter
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001fd4
+	.4byte MsgTorebiHeyaIGuessINeverWouldHave
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001fd8
+	.4byte MsgTorebiHeyaTheyHaveSomeNiceThingsFor
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001fda
+	.4byte MsgTorebiHeyaBabiChoosesColossosVictorsToBe
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001fe3
+	.4byte MsgTorebiHeyaTheTourGroupIsFeelingCramped
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001fe4
+	.4byte MsgTorebiHeyaWeCantHandleTooManyMore
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001fe5
+	.4byte MsgTorebiHeyaImGoingToGoToThe
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001fe6
+	.4byte MsgTorebiHeyaThereArentEnoughBedsForThe
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001fe7
+	.4byte MsgTorebiHeyaTheInnkeeperToldMeToCook
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00001fe8
+	.4byte MsgTorebiHeyaIHaveAHeadacheJustThinking
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00001fe9
+	.4byte MsgTorebiHeyaEvenThoughICantEnterColosso
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00001fea
+	.4byte MsgTorebiHeyaIfWeCouldHaveEnteredColosso
 	.4byte 0x00000000
 	.4byte 0xffff001e
 	.4byte SceneDialogue_RunFacingMessage
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00001fec
+	.4byte MsgTorebiHeyaIWonderHowTheTryoutsAre
 	.4byte 0x00000033
 	.4byte 0x0f9a0064
 	.4byte 0x001000b6
@@ -759,16 +759,20 @@ Data_02009310:
 	.4byte 0x001000e5
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x004029ad
+	.2byte MsgTorebiHeyaShesMakingTheWorldRenownedTolbi
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x004029ae
+	.2byte MsgTorebiHeyaHeIsBoilingThePastaIt
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x004029af
+	.2byte MsgTorebiHeyaItsTolbiSeafoodPastaWithLots
+	.2byte 0x40
 	.4byte 0x00000003
 	.4byte 0xffff0028
-	.4byte 0x00402075
+	.2byte MsgTorebiHeyaRobinCheckedTheSignInnFull
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -833,37 +837,37 @@ Data_02009670:
 	.4byte 0x00000013
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002201
+	.4byte MsgTorebiHeyaSoColossoHasAlreadyReachedThe
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002202
+	.4byte MsgTorebiHeyaTheFestivalScheduleWasDelayedFor
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002203
+	.4byte MsgTorebiHeyaThatsStrangeIWonderWhatHappened
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002204
+	.4byte MsgTorebiHeyaIJustSawBabiTheTowns
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002209
+	.4byte MsgTorebiHeyaHereIAmInTolbiFor
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000220b
+	.4byte MsgTorebiHeyaImGoingToWatchTheFinals
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000220c
+	.4byte MsgTorebiHeyaHoorayWereGoingToColossoNow
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002210
+	.4byte MsgTorebiHeyaWellIGuessSoSinceHes
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002211
+	.4byte MsgTorebiHeyaHuhThenTheyFoundHimIn
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002215
+	.4byte MsgTorebiHeyaBabiApparentlyHasSomeReasonFor
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002216
+	.4byte MsgTorebiHeyaIHeardBabiIsSearchingFor
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte SceneDialogue_RunFacingActionPrompt
@@ -875,100 +879,100 @@ Data_02009670:
 	.4byte SceneDialogue_RunFacingAction
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0000221f
+	.4byte MsgTorebiHeyaOnceTheFinalsBeginEveryoneTries
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002220
+	.4byte MsgTorebiHeyaThisYearImNotLettingAnyone
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00002221
+	.4byte MsgTorebiHeyaTheWifeHasACloseEye
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00002224
+	.4byte MsgTorebiHeyaHmmIThoughtAllMenLoved
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00002225
+	.4byte MsgTorebiHeyaTheMomentIHearTheFinals
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00002226
+	.4byte MsgTorebiHeyaSoColossoIsEndingSoonIts
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00002227
+	.4byte MsgTorebiHeyaTheColossoFinalsAreStartingSoon
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00002228
+	.4byte MsgTorebiHeyaMaybeIllDoSomeResearchOn
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002205
+	.4byte MsgTorebiHeyaAreWeMakingMoreMoneyNow
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002206
+	.4byte MsgTorebiHeyaSoTheyDidExtendTheFestival
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002207
+	.4byte MsgTorebiHeyaICantAffordToStayHere
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002208
+	.4byte MsgTorebiHeyaTheAirInTheColosseumIs
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000220a
+	.4byte MsgTorebiHeyaIfSomebodyElseWouldWatchThe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000220d
+	.4byte MsgTorebiHeyaColossoIsAlreadyAtTheFinals
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000220e
+	.4byte MsgTorebiHeyaSinceWeDidntGetToSee
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002213
+	.4byte MsgTorebiHeyaSoWhatWereBabisSoldiersDoing
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002214
+	.4byte MsgTorebiHeyaMaybeWatchingTheTrialsIsToo
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002217
+	.4byte MsgTorebiHeyaBeforeHeStartedTheLighthouseBabi
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002218
+	.4byte MsgTorebiHeyaBabiHasBeenMakingStrangeReferences
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000221a
+	.4byte MsgTorebiHeyaTheTouristsAllBuyWeaponsAnd
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x0000221c
+	.4byte MsgTorebiHeyaYouCouldSayTheWarriorsIn
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0000221e
+	.4byte MsgTorebiHeyaIfMomFindsOutIWent
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002229
+	.4byte MsgTorebiHeyaImTheOneWhoReallyWants
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x0000222a
+	.4byte MsgTorebiHeyaOnceThingsSettleDownImSure
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x0000222b
+	.4byte MsgTorebiHeyaIfTheMasterSlipsOutThe
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0000222c
+	.4byte MsgTorebiHeyaWeWomenAreTheOnlyOnes
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x0000222d
+	.4byte MsgTorebiHeyaHasntTheMasterGoneToColosso
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x0000222e
+	.4byte MsgTorebiHeyaIDontHaveAnyParticularInterest
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x0000222f
+	.4byte MsgTorebiHeyaIWantToSeeTheFinals
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00002230
+	.4byte MsgTorebiHeyaTheTrialBattlesWerentQuiteLike
 	.4byte 0x00000000
 	.4byte 0xffff001e
 	.4byte SceneDialogue_RunFacingMessage
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00002232
+	.4byte MsgTorebiHeyaIfYoureNotInterestedInThe
 	.4byte 0x00000033
 	.4byte 0x0f9a0064
 	.4byte 0x001000b6
@@ -977,16 +981,20 @@ Data_02009670:
 	.4byte 0x001000e5
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x004029ad
+	.2byte MsgTorebiHeyaShesMakingTheWorldRenownedTolbi
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x004029ae
+	.2byte MsgTorebiHeyaHeIsBoilingThePastaIt
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x004029af
+	.2byte MsgTorebiHeyaItsTolbiSeafoodPastaWithLots
+	.2byte 0x40
 	.4byte 0x00000003
 	.4byte 0xffff0028
-	.4byte 0x00402075
+	.2byte MsgTorebiHeyaRobinCheckedTheSignInnFull
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1051,34 +1059,34 @@ Data_020099d0:
 	.4byte 0x00000013
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002375
+	.4byte MsgTorebiHeyaNowThatColossoIsOverWeve
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002376
+	.4byte MsgTorebiHeyaWeHadALotOfGuests
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002379
+	.4byte MsgTorebiHeyaIRentedMyHouseToA
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000237a
+	.4byte MsgTorebiHeyaTheTouristsAreAllInA
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000237d
+	.4byte MsgTorebiHeyaIWasSoMovedByThis
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000237e
+	.4byte MsgTorebiHeyaThatLittleGuyJumpedStraightInto
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002381
+	.4byte MsgTorebiHeyaDidYouKnowMtAlephErupted
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002382
+	.4byte MsgTorebiHeyaMaybeAlephsEruptionCausedThoseSea
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002385
+	.4byte MsgTorebiHeyaTheWarriorsSaidTheyWouldRush
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002386
+	.4byte MsgTorebiHeyaThereWontBeManyCustomersUntil
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte SceneDialogue_RunFacingActionPrompt
@@ -1090,13 +1098,13 @@ Data_020099d0:
 	.4byte SceneDialogue_RunFacingAction
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00002391
+	.4byte MsgTorebiHeyaIThoughtWedHaveSomeFree
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002392
+	.4byte MsgTorebiHeyaTheSpectatorsFromTheEastCant
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00002393
+	.4byte MsgTorebiHeyaItsBusyAllDayEveryDay
 	.4byte 0x00000000
 	.4byte 0xffff0019
 	.4byte SceneDialogue_RunExcitedLines
@@ -1108,115 +1116,115 @@ Data_020099d0:
 	.4byte SceneDialogue_RunActorLine23a1
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x000023a2
+	.4byte MsgTorebiHeyaIWentToThePortBut
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x000023a3
+	.4byte MsgTorebiHeyaColossoHasEndedButWeStill
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002377
+	.4byte MsgTorebiHeyaSighMakingTheBedsHasWorn
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002378
+	.4byte MsgTorebiHeyaIdLoveAVacationButWhere
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000237b
+	.4byte MsgTorebiHeyaOnceTheShipsStartSailingAgain
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000237c
+	.4byte MsgTorebiHeyaIHeardOfACaveThat
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000237f
+	.4byte MsgTorebiHeyaTheWarriorsWhoFoughtInThe
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002380
+	.4byte MsgTorebiHeyaDaringAndBraveryAreNiceAnd
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002383
+	.4byte MsgTorebiHeyaTheSparklingStonesThatRainedFrom
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002384
+	.4byte MsgTorebiHeyaIllBetTheMonstersWereFrightened
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002387
+	.4byte MsgTorebiHeyaItBothersMeABitThat
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002388
+	.4byte MsgTorebiHeyaThereArentManyMerchantsAtThe
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000238c
+	.4byte MsgTorebiHeyaEvenWithoutTheShipsICould
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x0000238e
+	.4byte MsgTorebiHeyaDidAllTheWarriorsWhoFought
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002390
+	.4byte MsgTorebiHeyaImGonnaWatchTheFinalsNext
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x000023b0
+	.4byte MsgTorebiHeyaSinceTheShipsArentSailingThe
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x000023b1
+	.4byte MsgTorebiHeyaHeeHeeItsGreatTheInns
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x000023b2
+	.4byte MsgTorebiHeyaEveryoneIsWorkingOnBabiLighthouse
 	.4byte 0x00008d15
 	.4byte 0xffff0019
 	.4byte SceneDialogue_RunActor25FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x000023b5
+	.4byte MsgTorebiHeyaGrrrIDidntGetToSee
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x000023b6
+	.4byte MsgTorebiHeyaHeyChefSoWhatIfYou
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x000023b7
+	.4byte MsgTorebiHeyaITriedGoingToTheEastern
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x000023b8
+	.4byte MsgTorebiHeyaYoudThinkYouCouldGetThrough
 	.4byte 0x00000000
 	.4byte 0xffff001e
 	.4byte SceneDialogue_RunFacingMessage
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x000023c0
+	.4byte MsgTorebiHeyaYouAllGotToSeeColosso
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte FieldScene_RunScene3b6_02000898
 	.4byte 0x00000000
 	.4byte 0xffff0020
-	.4byte 0x000023a9
+	.4byte MsgTorebiHeyaOnceThisGuyGetsMadTheres
 	.4byte 0x00000000
 	.4byte 0xffff0021
-	.4byte 0x000023aa
+	.4byte MsgTorebiHeyaIWonderIfThisReallyIs
 	.4byte 0x00000000
 	.4byte 0xffff0022
-	.4byte 0x000023ab
+	.4byte MsgTorebiHeyaTolbiGetsSoBoringOnceThe
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x000023b9
+	.4byte MsgTorebiHeyaYoureSayingIfWeRowWe
 	.4byte 0x00008d15
 	.4byte 0xffff0020
-	.4byte 0x000023ba
+	.4byte MsgTorebiHeyaTheCrewIsSayingThatIf
 	.4byte 0x00008d15
 	.4byte 0xffff0021
-	.4byte 0x000023bb
+	.4byte MsgTorebiHeyaImSickOfStayingAtThis
 	.4byte 0x00008d15
 	.4byte 0xffff0022
-	.4byte 0x000023bc
+	.4byte MsgTorebiHeyaIfMomHadJustBoughtMe
 	.4byte 0x00000000
 	.4byte 0xffff0023
 	.4byte SceneDialogue_AskRememberWarrior
 	.4byte 0x00000000
 	.4byte 0xffff0024
-	.4byte 0x000023af
+	.4byte MsgTorebiHeyaIGotToSeeColossoSo
 	.4byte 0x00008d15
 	.4byte 0xffff0023
-	.4byte 0x000023bd
+	.4byte MsgTorebiHeyaThatVoyageAcrossTheSeaWas
 	.4byte 0x00008d15
 	.4byte 0xffff0024
-	.4byte 0x000023be
+	.4byte MsgTorebiHeyaNoMatterWhatHappensImComing
 	.4byte 0x00000033
 	.4byte 0x0f9a0064
 	.4byte 0x001000b6
@@ -1225,16 +1233,20 @@ Data_020099d0:
 	.4byte 0x001000e5
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x004029ad
+	.2byte MsgTorebiHeyaShesMakingTheWorldRenownedTolbi
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x004029ae
+	.2byte MsgTorebiHeyaHeIsBoilingThePastaIt
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x004029af
+	.2byte MsgTorebiHeyaItsTolbiSeafoodPastaWithLots
+	.2byte 0x40
 	.4byte 0x00000003
 	.4byte 0xffff0028
-	.4byte 0x00402075
+	.2byte MsgTorebiHeyaRobinCheckedTheSignInnFull
+	.2byte 0x40
 	.4byte 0x00000033
 	.4byte 0x08bd0066
 	.4byte 0x001000e5

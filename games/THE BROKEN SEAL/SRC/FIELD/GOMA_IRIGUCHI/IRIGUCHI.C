@@ -313,7 +313,9 @@ void FieldScene_RunScene387SequenceA(void)
     u32 i;
     s32 record;
 
+#if !defined(TBS_EDITION_JA)
     BattleFx_PlayQueuedSound();
+#endif
     Engine_EventBegin();
     Engine_EventWait(30);
     Engine_EventSetMessage((s32)MsgGomaNoUsePsynergy);
@@ -399,7 +401,9 @@ void FieldScene_RunScene387SequenceA(void)
         GomaIriguchi_SetEntranceFlag();
         Engine_ActorSetAnimation(ACTOR_IVAN, 1);
         Engine_EventWait(20);
+#if !defined(TBS_EDITION_JA)
         BattleFx_PlayQueuedSound();
+#endif
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x100, 60);
         Engine_ActorJump(ACTOR_GERALD, 2, 0);
@@ -658,8 +662,19 @@ void GomaIriguchi_GiveShamansRod(void)
     member = (struct Member_387 *)Owner_GetStateFar(2);
     tries = 0;
 retry:
-    if (++tries > 1000)
+    if (++tries > 1000) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        for (i = 0; i <= 14; i++) {
+            item = Item_Get(member->items[i]);
+            if (((u8 *)item)[3] != 8) {
+                Inventory_Discard(2, i);
+                break;
+            }
+        }
+        if (i == 15)
+#endif
         member->items[14] = 0;
+    }
     if (Inventory_AddItemFar(2, id) == -1) {
         for (i = 0; i <= 14; i++) {
             item = Item_Get(member->items[i]);

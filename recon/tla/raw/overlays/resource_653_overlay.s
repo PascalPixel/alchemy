@@ -10360,10 +10360,10 @@ Data_02005f40:
 	.4byte Func_0200269c
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000177a
+	.4byte MsgFieldItSeemsIMayNotHave
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000177b
+	.4byte MsgFieldIsItReallyPossibleForAnyone
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -10425,49 +10425,49 @@ Data_02005fc4:
 	.4byte Func_02001e30
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000175d
+	.4byte MsgFieldIDoNotUnderstandMasterPoi
 	.4byte 0x00008d15
 	.4byte 0x0846040a
 	.4byte Func_02001e44
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000175e
+	.4byte MsgFieldIWasHopingToHearMaster
 	.4byte 0x00000000
 	.4byte 0x0849000b
-	.4byte 0x0000175f
+	.4byte MsgFieldIHopeToEnterTheTemple
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000017b1
+	.4byte MsgFieldHeyWhatsAnOutsiderDoingOn
 	.4byte 0x00000000
 	.4byte 0x0849000c
-	.4byte 0x00001760
+	.4byte MsgFieldPleaseDontBreakMyConcentrationI
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000017b2
+	.4byte MsgFieldLooksLikeNoneOfOurBrothers
 	.4byte 0x00000000
 	.4byte 0x0849000d
-	.4byte 0x00001761
+	.4byte MsgFieldIAmNotJustMeditatingI
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000017b3
+	.4byte MsgFieldSomedayImGoingToBeA
 	.4byte 0x00008d15
 	.4byte 0x0849000b
-	.4byte 0x00001762
+	.4byte MsgFieldIStillCantBelieveThatThe
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000017b4
+	.4byte MsgFieldGahIKeptMyEyesShut
 	.4byte 0x00008d15
 	.4byte 0x0849000c
-	.4byte 0x00001763
+	.4byte MsgFieldMyMindIsEmptyMyBody
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000017b5
+	.4byte MsgFieldIveBeenMeditatingAllDayBut
 	.4byte 0x00008d15
 	.4byte 0x0849000d
-	.4byte 0x00001764
+	.4byte MsgFieldEmptyTheMindToLightenThe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000017b6
+	.4byte MsgFieldWheneverTheMasterGoesToTown
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -10508,46 +10508,46 @@ Data_0200615c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x0849000d
-	.4byte 0x00001776
+	.4byte MsgFieldHeWentInBeforeMeWhat
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_02001e0c
 	.4byte 0x00000000
 	.4byte 0x0849000e
-	.4byte 0x00001777
+	.4byte MsgFieldEmptyMindEmptyBodyByClearing
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000017ac
+	.4byte MsgFieldIHearThatSomeonePassedThe
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000017ad
+	.4byte MsgFieldWhenIAwokeILearnedThat
 	.4byte 0x00008d15
 	.4byte 0x0849000d
-	.4byte 0x00001778
+	.4byte MsgFieldTheresNoWayImRootingFor
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000017ae
+	.4byte MsgFieldTheMasterSeemedSoDisappointedThat
 	.4byte 0x00008d15
 	.4byte 0x0849000e
-	.4byte 0x00001779
+	.4byte MsgFieldArrghIWasSoCloseI
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000017af
+	.4byte MsgFieldIKnewItItShouldHave
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000017b0
+	.4byte MsgFieldBeforeIPassedOutISaw
 	.4byte 0x00000003
 	.4byte 0x084a0010
 	.4byte Func_020023e8
 	.4byte 0x00000000
 	.4byte 0x084a000c
-	.4byte 0x000017a0
+	.4byte MsgFieldTakeThePowerOfLashIt
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000017a7
+	.4byte MsgFieldIfYouWishToPracticeThese
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000017a8
+	.4byte MsgFieldHoHoIFeelTheStrength
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

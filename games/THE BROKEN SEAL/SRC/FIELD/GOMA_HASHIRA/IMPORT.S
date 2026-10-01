@@ -170,10 +170,12 @@ Engine_ActorShowEmote:
 	.thumb_func
 BattleFx_SetPhaseRequest:
 	overlay_veneer BattleFx_SetPhaseRequestFar
+.ifndef TBS_EDITION_JA
 	.global Field_TryJumpForward
 	.thumb_func
 Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
+.endif
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:

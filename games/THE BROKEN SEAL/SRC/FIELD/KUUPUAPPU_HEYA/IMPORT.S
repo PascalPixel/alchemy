@@ -76,6 +76,12 @@ Map_CopyMetatileCellsRect:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+.ifdef TBS_EDITION_JA
+	.global Object_CheckMovementCollision
+	.thumb_func
+Object_CheckMovementCollision:
+	overlay_veneer Func_080091d8
+.endif
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
@@ -293,6 +299,7 @@ Party_SetFields1ceAnd1d0:
 	.thumb_func
 Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
+.ifndef TBS_EDITION_JA
 	.global Engine_LeaderCheckAhead
 	.thumb_func
 Engine_LeaderCheckAhead:
@@ -301,6 +308,7 @@ Engine_LeaderCheckAhead:
 	.thumb_func
 Battle_InitializeRenderObject:
 	overlay_veneer Battle_InitializeRenderObjectFar
+.endif
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:

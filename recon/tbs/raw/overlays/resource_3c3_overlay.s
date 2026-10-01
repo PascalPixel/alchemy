@@ -275,25 +275,25 @@ gSuharaGateEventsOther:
 	.4byte Scene_RunScene3c3SequenceA
 	.4byte 0x00000000
 	.4byte 0x089f0008
-	.4byte 0x0000264d
+	.4byte MsgSuharaTravelPapersRequired
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002667
+	.4byte MsgSuharaSendHelpFromTower
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Scene_RunActorNinePromptDialogue
 	.4byte 0x00008d15
 	.4byte 0x089f0008
-	.4byte 0x00002652
+	.4byte MsgSuharaObeyBabiOrders
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002669
+	.4byte MsgSuharaAshamedBeforeYodemu
 	.4byte 0x00008d15
 	.4byte 0x089f0009
-	.4byte 0x00002653
+	.4byte MsgSuharaSeeKorosseoNextYear
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000266a
+	.4byte MsgSuharaSurvivedAttack
 	.4byte 0x00000000
 	.4byte 0x0897000a
 	.4byte Scene_RunActorTenRepeatedMotion

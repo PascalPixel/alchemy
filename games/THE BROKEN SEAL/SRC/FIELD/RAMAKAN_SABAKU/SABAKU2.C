@@ -1,4 +1,6 @@
 #include "RAMAKAN.H"
+#include "text/MSG_IDS.H"
+TEXT_MESSAGE_ENUM(MsgShianJiinIDoNotThinkMasterHama);
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -348,7 +350,7 @@ void FieldScene_RunScene3a5_02000c6c(s32 a0)
         }
     }
     Engine_EventBegin();
-    Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + 0x1a10);
+    Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + MsgShianJiinIDoNotThinkMasterHama);
     Event_ShowMessage((v6 + 1), 0);
     Engine_EventEnd();
 }

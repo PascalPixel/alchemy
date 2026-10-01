@@ -80,7 +80,17 @@ Func_080c88b0:
 	.global Func_080c88b8
 	.thumb_func
 Func_080c88b8:
-	overlay_veneer Func_080d1e18
+	ldr r4, [pc, #0]
+	bx r4
+	.ifdef TLA_EDITION_ES
+	.global BattleFx_DecodeFrameTranslationBase
+BattleFx_DecodeFrameTranslationBase:
+	.endif
+	.ifdef TLA_EDITION_IT
+	.global BattleFx_DecodeFrameTranslationBase
+BattleFx_DecodeFrameTranslationBase:
+	.endif
+	.4byte Func_080d1e18
 	.global ObjectGroup_ApplyRandomChildValuesFar
 	.thumb_func
 ObjectGroup_ApplyRandomChildValuesFar:

@@ -1180,37 +1180,38 @@ gKorashiamuIriguchiEvents1:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002069
+	.4byte MsgKorashiamuIriguchiGoForItThatsItIm
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000206a
+	.4byte MsgKorashiamuIriguchiWatchingTheTrialsMakesMeReally
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000206b
+	.4byte MsgKorashiamuIriguchiWatchingSuchProudSkilledWarriorsIn
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000206c
+	.4byte MsgKorashiamuIriguchiIveWaitedAWholeYearTo
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte FieldScene_RunConditionalSceneSetup
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002070
+	.4byte MsgKorashiamuIriguchiEvenTheSmallerWarriorsCanWin
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002071
+	.4byte MsgKorashiamuIriguchiTheseTrialsAreBasedOnPersonal
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002072
+	.4byte MsgKorashiamuIriguchiWhatFantasticPhysiquesWhyIfI
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002073
+	.4byte MsgKorosseoDidntThinkBattles
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002074
+	.4byte MsgKorashiamuIriguchiNoMatterHowGoodAWarrior
 	.4byte 0x00000003
 	.4byte 0xffff0032
-	.4byte 0x004018ad
+	.2byte MsgShianItIsLocked
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1224,37 +1225,37 @@ gKorashiamuIriguchiEvents3:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x09620008
-	.4byte 0x00002055
+	.4byte MsgKorashiamuIriguchiTheyreHoldingThePreliminaryColossoHeats
 	.4byte 0x00000000
 	.4byte 0x09500008
-	.4byte 0x0000224f
+	.4byte MsgKorashiamuIriguchiTheFinalsAreFinallyHereI
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000023c1
+	.4byte MsgKorashiamuIriguchiColossoIsOverAndTheColosseum
 	.4byte 0x00000000
 	.4byte 0x09620009
-	.4byte 0x00002056
+	.4byte MsgKorashiamuIriguchiSighTheColosseumIsPackedWith
 	.4byte 0x00000000
 	.4byte 0x09500009
-	.4byte 0x00002250
+	.4byte MsgKorashiamuIriguchiIHeardBabiHasPickedSome
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000023c8
+	.4byte MsgKorashiamuIriguchiTheColosseumIsClosedUntilNext
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte SceneDialogue_RunActor10MessageByFlag962
 	.4byte 0x00000000
 	.4byte 0x0962000b
-	.4byte 0x0000205a
+	.4byte MsgKorashiamuIriguchiIfYouHitItBigIn
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002252
+	.4byte MsgKorashiamuIriguchiAWarriorNamedRobinWasSelected
 	.4byte 0x00000000
 	.4byte 0x0962000c
-	.4byte 0x0000205b
+	.4byte MsgKorashiamuIriguchiIveBeenBettingOnTheLucky
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002253
+	.4byte MsgKorashiamuIriguchiHavingAWarriorWhoWasntIn
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte SceneDialogue_RunActor13MessageByFlag962
@@ -1266,58 +1267,58 @@ gKorashiamuIriguchiEvents3:
 	.4byte FieldScene_RunScene3b9_0200039c
 	.4byte 0x00008d15
 	.4byte 0x09620008
-	.4byte 0x00002061
+	.4byte MsgKorashiamuIriguchiIWonderWhichWarriorWillBe
 	.4byte 0x00008d15
 	.4byte 0x09500008
-	.4byte 0x0000225f
+	.4byte MsgKorashiamuIriguchiTheRealBattlesAreAboutTo
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000023c9
+	.4byte MsgKorashiamuIriguchiWhenTheColosseumGatesFinallyShut
 	.4byte 0x00008d15
 	.4byte 0x09620009
-	.4byte 0x00002062
+	.4byte MsgKorashiamuIriguchiHavingToArriveSoEarlyJust
 	.4byte 0x00008d15
 	.4byte 0x09500009
-	.4byte 0x00002260
+	.4byte MsgKorashiamuIriguchiTheWarriorNamedRobinIsSure
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000023cb
+	.4byte MsgKorashiamuIriguchiTheFightingAtThisYearsColosso
 	.4byte 0x00008d15
 	.4byte 0x0962000a
-	.4byte 0x00002063
+	.4byte MsgKorashiamuIriguchiThereAreSoManyPeopleWho
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002261
+	.4byte MsgKorashiamuIriguchiOfCourseItsTheRichWho
 	.4byte 0x00008d15
 	.4byte 0x0962000b
-	.4byte 0x00002064
+	.4byte MsgKorashiamuIriguchiImGoingToPickTheBiggest
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002262
+	.4byte MsgKorashiamuIriguchiThereCanBeUpsetsInThe
 	.4byte 0x00008d15
 	.4byte 0x0962000c
-	.4byte 0x00002065
+	.4byte MsgKorashiamuIriguchiImFeelingConfidentThisTimeIm
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002263
+	.4byte MsgKorashiamuIriguchiWhatKindOfWarriorIsThat
 	.4byte 0x00008d15
 	.4byte 0x0962000d
-	.4byte 0x00002066
+	.4byte MsgKorashiamuIriguchiEveryoneKeepsRiskingMoreAndMore
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002264
+	.4byte MsgKorashiamuIriguchiMaybeIWillBuyASeat
 	.4byte 0x00008d15
 	.4byte 0x0962000e
-	.4byte 0x00002067
+	.4byte MsgKorashiamuIriguchiEveryYearIGoAfterA
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002265
+	.4byte MsgKorashiamuIriguchiImGoingToBeInTrouble
 	.4byte 0x00008d15
 	.4byte 0x09620010
-	.4byte 0x00002068
+	.4byte MsgKorashiamuIriguchiOnceTheTrialsAreOverIts
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002266
+	.4byte MsgKorashiamuIriguchiAllOfTheProfitsFromThe
 	.4byte 0x00000002
 	.4byte 0x0950000a
 	.4byte Scene_RunBranchingActorPresentation
@@ -1328,7 +1329,7 @@ gKorashiamuIriguchiEvents3:
 gKorashiamuIriguchiEvents1Entrance12:
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002113
+	.4byte MsgKorashiamuIriguchiIAmMorganIAmThe
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte FieldScene_RunScene3b9_02000468
@@ -1352,13 +1353,13 @@ gKorashiamuIriguchiEvents1Entrance12:
 	.4byte FieldScene_RunScene3b9_020006bc
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002128
+	.4byte MsgKorashiamuIriguchiYouCannotLeaveUntilTheFinals
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002129
+	.4byte MsgKorashiamuIriguchiIFeelWeveBeenWaitingForever
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000212a
+	.4byte MsgKorashiamuIriguchiWhenTheGongSoundsTheFinals
 	.4byte 0x00000002
 	.4byte 0x0235000c
 	.4byte KorashiamuIriguchi_RunGatherScene

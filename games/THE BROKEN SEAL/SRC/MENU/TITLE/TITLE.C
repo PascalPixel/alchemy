@@ -70,23 +70,15 @@ static __inline__ void RestoreInterrupts(u32 saved)
         RestoreInterrupts(saved);                                           \
     } while (0)
 
-/* FAKEMATCH: the one-halfword record keeps the short-range pool zero, as
- * PALETTE_START.C does. */
-static __inline__ void ResetCounter(s16 *destination)
-{
-    struct { u16 value; } zero;
-
-    zero.value = 0;
-    *destination = zero.value;
-}
 
 extern struct MapRenderWork *gMapWork;
 extern u16 gBgScroll[];
 
-/* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and
-   reloads the cell buffer's address after it, as the game does. */
 static __inline__ void DecodeBackground(const u8 *res)
 {
+    /* FAKEMATCH: this call boundary keeps the source in r4 and reloads the
+       map-cell buffer after the decode; a direct call retains r5 and changes
+       the DMA literal pool in the retained draft. */
     Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
 }
 
@@ -210,13 +202,29 @@ void Title_LoadSprites(s32 unused)
 {
     u8 *buffer;
     volatile u32 *dma;
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    u8 *res;
 
+    /* The localized title fills four rows; its resource starts with the
+       full object palette, followed by the compressed tile sheet. */
+    buffer = Runtime_BumpAllocateAlternatePool(0x9600);
+    res = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
+    if (gTitleVramBlock == -1)
+        gTitleVramBlock = Resource_FindFreeEntry();
+    Dma_Set(res, (void *)0x05000200, 0x84000070, DMA3);
+    res += 0x1c0;
+    Resource_DecodeType01(res, buffer);
+    Call3((void (*)())VramBlock_LoadCached, gTitleVramBlock, 0x1e00,
+          (s32)(buffer + 0x7800));
+#else
     buffer = Runtime_BumpAllocateAlternatePool(0x520);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
     Dma_Set(buffer, (void *)0x050003e0, 0x84000008, DMA3);
     Call3((void (*)())VramBlock_LoadCached, gTitleVramBlock, 0x500, (s32)(buffer + 32));
+#endif
     dma = DMA3;
     while (dma[2] & 0x80000000)
         ;
@@ -237,6 +245,40 @@ void Title_RevealSpriteRow(void)
     s32 n;
     s32 y;
     s32 x;
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    s32 row;
+
+    p = gTitleSprites;
+    w = gTitleSprites[0].attr;
+    tile = gVramBlockCache[gTitleVramBlock].offset >> 5;
+    row = 0;
+    y = 128;
+    for (; row <= 3; row++) {
+        i = 0;
+localized_sprite:
+        {
+            /* FAKEMATCH: the explicit inner boundary keeps the record writer
+               independent of the sprite pointer; a nested for loop adds a
+               saved register and twelve bytes in the retained draft. */
+            *w++ = 0;
+            *w++ = (i * 8 << 16) | y | 0x2400;
+            *w++ = tile;
+            n = gTitleRevealFrame / 2 - i;
+            if (n < 0)
+                n = 0;
+            if (n <= 2 && (gFrameCount & 1))
+                n = 0;
+            if (n != 0)
+                Runtime_PushSlotEntry(p, 255);
+            p++;
+            tile += 2;
+        }
+        if (++i <= 29)
+            goto localized_sprite;
+        y += 8;
+    }
+#else
 
     p = gTitleSprites;
     w = gTitleSprites[0].attr;
@@ -260,6 +302,7 @@ loop:
     }
     if (++i <= 17)
         goto loop;
+#endif
     gTitleRevealFrame++;
 }
 
@@ -272,7 +315,7 @@ void Title_RevealScreen(s32 unused)
 
     Title_LoadBackground();
     Engine_EventWait(30);
-    ResetCounter(&gTitleRevealFrame);
+    gTitleRevealFrame = 0;
     Title_LoadSprites(0);
     Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
     QUEUE_WRITE(0x4000000, 0x1540);

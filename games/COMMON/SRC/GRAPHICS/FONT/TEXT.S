@@ -6,10 +6,16 @@
 	.global UiText_Glyphs
 UiText_Glyphs:
 	.ifdef TBS_EDITION_JA
-	.incbin "GRAPHICS/FONT/TEXT_JA.font"
+	.incbin "GRAPHICS/FONT/TEXT_JA.font", 0, (0x100 - 0x20) * (2 + 12 * 2)
+	.global UiText_KanjiGlyphs
+UiText_KanjiGlyphs:
+	.incbin "GRAPHICS/FONT/TEXT_JA.font", (0x100 - 0x20) * (2 + 12 * 2)
 	.else
 	.ifdef TLA_EDITION_JA
-	.incbin "GRAPHICS/FONT/TEXT_TLA_JA.font"
+	.incbin "GRAPHICS/FONT/TEXT_TLA_JA.font", 0, (0x100 - 0x20) * (2 + 12 * 2)
+	.global UiText_KanjiGlyphs
+UiText_KanjiGlyphs:
+	.incbin "GRAPHICS/FONT/TEXT_TLA_JA.font", (0x100 - 0x20) * (2 + 12 * 2)
 	.else
 	.ifdef TBS_EDITION_DE
 	.incbin "GRAPHICS/FONT/TEXT_DE.font"

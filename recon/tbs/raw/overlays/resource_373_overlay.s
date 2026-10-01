@@ -573,7 +573,15 @@ gHaidiaMuraPlacements:
 	.4byte 0x00000001
 	.4byte 0x01750000
 	.4byte 0x00000000
+	.ifdef TBS_EDITION_ES
+	.4byte 0x03770000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte 0x03770000
+	.else
 	.4byte 0x03790000
+	.endif
+	.endif
 	.4byte 0x00004000
 	.4byte 0xffff007a
 	.4byte 0x00000001
@@ -873,7 +881,15 @@ gHaidiaMuraPlacements4:
 	.4byte 0x00000001
 	.4byte 0x01750000
 	.4byte 0x00000000
+	.ifdef TBS_EDITION_ES
+	.4byte 0x03770000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte 0x03770000
+	.else
 	.4byte 0x03790000
+	.endif
+	.endif
 	.4byte 0x0000c000
 	.4byte 0xffff00ce
 	.4byte 0x00000001
@@ -909,22 +925,22 @@ gHaidiaMuraPlacements4:
 gHaidiaMuraEvents:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00000f7f
+	.4byte MsgHaidiaMtAlephLooksBeautifulTodayIts
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00000f80
+	.4byte MsgHaidiaValeStaysPristineBecauseOfMt
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte SceneDialogue_RunActorTenFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00000f79
+	.4byte MsgHaidiaThisPlaceLooksJustLikeIt
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00000f7a
+	.4byte MsgHaidiaRobinWatchOutDontGetToo
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00000f84
+	.4byte MsgHaidiaValeMustRemainHiddenPsynergysSecrets
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte SceneDialogue_RunActorFourteenTalk
@@ -933,13 +949,13 @@ gHaidiaMuraEvents:
 	.4byte FieldScene_RunFlag807BranchSequence
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00000f67
+	.4byte MsgHaidiaYoureInTroubleNowGeraldYour
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte SceneDialogue_RunActor21FlaggedLine
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00000fd1
+	.4byte MsgHaidiaMtAlephIsASacredPeak
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FieldScene_RunScene373_02000dc0
@@ -1025,64 +1041,64 @@ gHaidiaMuraEvents:
 gHaidiaMuraEvents2:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000011ca
+	.4byte MsgHaidiaValeIsSavedThanksToThe
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000011cb
+	.4byte MsgHaidiaEverSinceTheTremorsStartedMt
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte SceneDialogue_RunActorTenFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000011c5
+	.4byte MsgHaidiaSighNoLongerWillISee
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000011c6
+	.4byte MsgHaidiaIDontBlameGarsiaIfOnly
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000011cd
+	.4byte MsgHaidiaTheMayorWasTooKindTo
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte SceneDialogue_RunActorFourteenTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000011b4
+	.4byte MsgHaidiaYouGuysAreSoLuckyGerald
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000011b5
+	.4byte MsgHaidiaPleaseTakeCareOfMyBrother
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0000111d
+	.4byte MsgHaidiaItIsVeryDangerousToGo
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x0000111e
+	.4byte MsgHaidiaIAmAllAloneInThis
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000011e7
+	.4byte MsgHaidiaGeeIWishICouldSee
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000011e8
+	.4byte MsgHaidiaMyBrothersStrengthIsHisBest
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000011f2
+	.4byte MsgHaidiaImGladThatGarsiaIsAlive
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000011f3
+	.4byte MsgHaidiaGarsiaWasAGoodPersonI
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000011f5
+	.4byte MsgHaidiaPoorKradenWasTakenToSome
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000011f6
+	.4byte MsgHaidiaValeWasSavedBecausePeopleLike
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000011f7
+	.4byte MsgHaidiaICantBelieveAnyoneWouldClimb
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000011f8
+	.4byte MsgHaidiaIJustDontFeelSafeKnowing
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000011f9
+	.4byte MsgHaidiaThePeopleOfValeWillNever
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FieldScene_RunScene373_02000dc0
@@ -1171,31 +1187,31 @@ gHaidiaMuraEvents3:
 	.4byte FieldScene_RunSecondaryActorSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001c62
+	.4byte MsgHaidiaICanTellJustByLooking
 	.4byte 0x00000000
 	.4byte 0x03040009
 	.4byte FieldScene_RunPrimaryActorSequence
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001c63
+	.4byte MsgHaidiaIWillDoMyBestTo
 	.4byte 0x00000000
 	.4byte 0x081f000a
 	.4byte SceneDialogue_RunActor10LineAndFlag81f
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001c8e
+	.4byte MsgHaidiaPromiseMeRobinPromiseMeYoull
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001c90
+	.4byte MsgHaidiaIUsedToPlayHere
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001c99
+	.4byte MsgHaidiaMtAlephsEruptionWasSoPowerful
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte FieldScene_RunScene373_02000cd0
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001c9c
+	.4byte MsgHaidiaTheySayTheDangerIsGone
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte SceneDialogue_RunActorNineteenDialogue
@@ -1204,37 +1220,37 @@ gHaidiaMuraEvents3:
 	.4byte FieldScene_RunSecondaryActorSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001c64
+	.4byte MsgHaidiaYouGuysAreWorkingSoHard
 	.4byte 0x00008d15
 	.4byte 0x03040409
 	.4byte FieldScene_RunPrimaryActorSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001c65
+	.4byte MsgHaidiaICouldGoWithYouIf
 	.4byte 0x00008d15
 	.4byte 0x081f040a
 	.4byte SceneDialogue_RunActor10LineAndFlag81f
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001c8f
+	.4byte MsgHaidiaYouDidntBringJasminWithYou
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001c91
+	.4byte MsgHaidiaGarsiaMustBeProtectingJasminIm
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001ca7
+	.4byte MsgHaidiaTheEarthquakesArentCausedByEruptions
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001ca8
+	.4byte MsgHaidiaAhhICantStandTheseEarthquakes
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001ca9
+	.4byte MsgHaidiaTheSmokeFromMtAlephIsnt
 	.4byte 0x00008d15
 	.4byte 0x03070413
 	.4byte SceneDialogue_RunActorNineteenDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001caa
+	.4byte MsgHaidiaHavingNoTravelersIsNoFun
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FieldScene_RunScene373_02000dc0

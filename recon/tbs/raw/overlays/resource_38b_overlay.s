@@ -421,130 +421,130 @@ gBiribinoMuraEvents1:
 	.4byte SceneDialogue_ShowLine16BF
 	.4byte 0x00000000
 	.4byte 0x0845000a
-	.4byte 0x000013b1
+	.4byte MsgBilibinWelcomeToBilibinPleaseJustIgnore
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000016c2
+	.4byte MsgBilibinWelcomeToBilibinWellForgetThat
 	.4byte 0x00000000
 	.4byte 0x0845000b
-	.4byte 0x000013b2
+	.4byte MsgBilibinIHearALargeGroupCrossed
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000016c3
+	.4byte MsgBilibinIfYoureTalkingAboutTheTravelers
 	.4byte 0x00000000
 	.4byte 0x0845000c
 	.4byte SceneDialogue_RunActorTwelveDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000016c4
+	.4byte MsgBilibinYoureWonderingAboutTheTreeNear
 	.4byte 0x00000000
 	.4byte 0x0845000d
-	.4byte 0x000013b6
+	.4byte MsgBilibinLordMccoyHasBeenQuiteFrightened
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000016c5
+	.4byte MsgBilibinISawLordMccoyTheChief
 	.4byte 0x00000000
 	.4byte 0x0845000e
 	.4byte SceneDialogue_RunActorFourteenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000016c6
+	.4byte MsgBilibinIHearTheBarricadeGateThat
 	.4byte 0x00000000
 	.4byte 0x0845000f
-	.4byte 0x000013ba
+	.4byte MsgBilibinTheRoadToKolimaIsBlocked
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000016c7
+	.4byte MsgBilibinThoseThreeKidsVanishedDuringAll
 	.4byte 0x00000000
 	.4byte 0x08450010
-	.4byte 0x000013bb
+	.4byte MsgBilibinEverSinceThatManTurnedInto
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte SceneDialogue_RunActorSixteenDialogue
 	.4byte 0x00000000
 	.4byte 0x08450011
-	.4byte 0x000013bc
+	.4byte MsgBilibinIsItTrueThatAMountain
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000016cb
+	.4byte MsgBilibinLordMccoysMenSaidTheySaw
 	.4byte 0x00000000
 	.4byte 0x08450012
-	.4byte 0x000013bd
+	.4byte MsgBilibinTheresATowerAtTheTip
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte SceneDialogue_ShowLine16CC
 	.4byte 0x00000000
 	.4byte 0x08450013
-	.4byte 0x000013be
+	.4byte MsgBilibinSomethingChangedInTheEruptionNow
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000016cf
+	.4byte MsgBilibinTheEruptionOnTheOtherSide
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000013b0
+	.4byte MsgBilibinHelpMeSomebody
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000016d3
+	.4byte MsgBilibinINeverWantToBeTurned
 	.4byte 0x00008d15
 	.4byte 0x0845000a
-	.4byte 0x000013c6
+	.4byte MsgBilibinYouGuysAreSoUnluckyArriving
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000016d4
+	.4byte MsgBilibinNotManyLumberjacksAreWillingTo
 	.4byte 0x00008d15
 	.4byte 0x0845000b
-	.4byte 0x000013c7
+	.4byte MsgBilibinYouMustBeMadItsAlmost
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000016d5
+	.4byte MsgBilibinOneOfTheTwoPeopleThat
 	.4byte 0x00008d15
 	.4byte 0x0845000c
-	.4byte 0x000013c8
+	.4byte MsgBilibinWeEndedUpLikeThisBecause
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000016d6
+	.4byte MsgBilibinThatGuyMightTurnIntoA
 	.4byte 0x00008d15
 	.4byte 0x0845000d
-	.4byte 0x000013c9
+	.4byte MsgBilibinEveryoneGetsWorriedWhenTownLeaders
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000016d7
+	.4byte MsgBilibinLordMccoySeemsToBeHaving
 	.4byte 0x00008d15
 	.4byte 0x0845000e
-	.4byte 0x000013ca
+	.4byte MsgBilibinWhereDidTheseKidsComeFrom
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000016d8
+	.4byte MsgBilibinApparentlyJustAboutAnyoneCouldJust
 	.4byte 0x00008d15
 	.4byte 0x0845000f
-	.4byte 0x000013cb
+	.4byte MsgBilibinNoOneWouldDareGoAfter
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000016d9
+	.4byte MsgBilibinTheGangOfThreeHaTheyre
 	.4byte 0x00008d15
 	.4byte 0x08450010
-	.4byte 0x000013cc
+	.4byte MsgBilibinHeBeggedForHelpAsHe
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000016da
+	.4byte MsgBilibinImSureLordMccoyWillGive
 	.4byte 0x00008d15
 	.4byte 0x08450011
-	.4byte 0x000013cd
+	.4byte MsgBilibinIWantToSeeThatPretty
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000016db
+	.4byte MsgBilibinTheyMustBeReportingYourDeeds
 	.4byte 0x00008d15
 	.4byte 0x08450012
-	.4byte 0x000013ce
+	.4byte MsgBilibinOnlyGreatAdeptsCanEnterThe
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000016dc
+	.4byte MsgBilibinIWantToShareWithYou
 	.4byte 0x00008d15
 	.4byte 0x08450013
-	.4byte 0x000013cf
+	.4byte MsgBilibinThatExplosionMustHaveBeenA
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000016dd
+	.4byte MsgBilibinAsLongAsImOkayI
 	.4byte 0x00008c15
 	.4byte 0xffff0014
 	.4byte Scene_UpdatePuzzleActors
@@ -588,64 +588,65 @@ gBiribinoMuraEvents3:
 	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00008d15
 	.4byte 0x18810009
-	.4byte 0x00001771
+	.4byte MsgBilibinTheyCrossedTheRiverAfterPushing
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001471
+	.4byte MsgBilibinTheyreSoHeavy
 	.4byte 0x00008d15
 	.4byte 0x08480010
-	.4byte 0x00001772
+	.4byte MsgBilibinShellBeSweptDownstreamIfShe
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001770
+	.4byte MsgBilibinOhItLooksLikeSheIs
 	.4byte 0x00008d15
 	.4byte 0x0848000a
-	.4byte 0x00001772
+	.4byte MsgBilibinShellBeSweptDownstreamIfShe
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001770
+	.4byte MsgBilibinOhItLooksLikeSheIs
 	.4byte 0x00008d15
 	.4byte 0x0848000b
-	.4byte 0x00001773
+	.4byte MsgBilibinAhhhhPleaseAnyonePleaseHelp
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001774
+	.4byte MsgBiribinoThankSavedMeFromBeing
 	.4byte 0x00000000
 	.4byte 0x0848000c
-	.4byte 0x0000177f
+	.4byte MsgBilibinIHeardWeWereOnceCalled
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000177c
+	.4byte MsgBilibinItWasAwfulLuckBeingTurned
 	.4byte 0x00000000
 	.4byte 0x0848000d
-	.4byte 0x00001780
+	.4byte MsgBilibinIfOnlyWeHadntTriedGetting
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000177d
+	.4byte MsgBilibinIReallyLikeThisSpotBy
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000177e
+	.4byte MsgBilibinIWillThinkOfYouWhenever
 	.4byte 0x00008d15
 	.4byte 0x0848000c
-	.4byte 0x00001784
+	.4byte MsgBilibinWeWorkedSoHardIfOnly
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001781
+	.4byte MsgBilibinWhoseIdeaWasItToPick
 	.4byte 0x00008d15
 	.4byte 0x0848000d
-	.4byte 0x00001785
+	.4byte MsgBilibinWhatACruelWorldWeJust
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001782
+	.4byte MsgBilibinWellItWasntMyIdeaTo
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001783
+	.4byte MsgBilibinThesePersimmonsAreJustLikeMy
 	.4byte 0x00000003
 	.4byte 0xffff000b
 	.4byte FieldScene_RunScriptedStep1472
 	.4byte 0x00000003
 	.4byte 0xffff001e
-	.4byte 0x00400953
+	.2byte MsgFieldDoorTightlyLocked
+	.2byte 0x40
 	.4byte 0x00000002
 	.4byte 0x0849000d
 	.4byte FieldScene_RunScene38b_02000584

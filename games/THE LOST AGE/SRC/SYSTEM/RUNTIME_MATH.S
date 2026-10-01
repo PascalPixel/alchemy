@@ -85,7 +85,12 @@ AlchemyUncredited_080008cc:
 	.2byte	0x0200
 	.arm
 AlchemyUncreditedEnd_080008cc:
+@ Japanese glyph masks span twelve halfwords; localized masks span fourteen.
+	.ifdef TLA_EDITION_JA
+	add	ip, r0, #24
+	.else
 	add	ip, r0, #28
+	.endif
 .L_0300031c:
 	mov	r4, r1
 	ldrh	r3, [r0], #2

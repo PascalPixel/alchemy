@@ -1,16 +1,10 @@
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
 struct BattleEffectCounterState {
     u8 unk_000[0x154];
     s16 counters[12];
 };
-
-struct SystemWork {
-    u8 unk_00[0x6c];
-    struct BattleEffectCounterState *battle_effect_counters;
-};
-
-#define IWRAM_BASE ((struct SystemWork *)0x03000000)
 
 void BattleFx_ResetCounters(void)
 {
@@ -18,7 +12,7 @@ void BattleFx_ResetCounters(void)
     struct BattleEffectCounterState *state;
 
     value = 0;
-    state = IWRAM_BASE->battle_effect_counters;
+    state = Ram_HeapSlots->event_work;
     state->counters[0] = value;
     state->counters[1] = 0;
     state->counters[2] = 0;

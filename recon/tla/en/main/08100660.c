@@ -1,10 +1,15 @@
-/* Item menu: place the icon of each equipped item in the category page by
-   item type: types 1 to 4 each have a row; other types keep their
-   position. Each case stores its own column, as the reference keeps 216
-   in a register across the loop. */
-#include "ITEM.H"
-#include "LAYOUT_GUARD.H"
+/*
+ * Draft: ItemMenu_ArrangeCategoryItemIcons, ported from its ☀️ twin with the
+ * menu work from its heap slot and ⚓️'s icons at 0x4c. Remaining difference:
+ * two scheduling swaps in the loop (the listing advances the item pointer
+ * before copying the item, and spills r1 before masking the id).
+ */
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
+#include "ITEM.H"
+
+void ItemMenu_PosCategory(void);
+void UiIcon_PrepareObject(void *arg0);
 
 struct CategoryItemIcon {
     u8 reserved_00[6];
@@ -12,23 +17,11 @@ struct CategoryItemIcon {
     s16 y;
 };
 
+/* ⚓️ keeps the item icons four bytes later than ☀️. */
 struct CategoryItemIconState {
-    u8 reserved_00[72];
+    u8 reserved_00[76];
     struct CategoryItemIcon *icons[15];
 };
-
-LAYOUT_OFFSET_GUARD(CategoryItemIcon_X, struct CategoryItemIcon, x, 6);
-LAYOUT_OFFSET_GUARD(CategoryItemIcon_Y, struct CategoryItemIcon, y, 8);
-LAYOUT_OFFSET_GUARD(
-    CategoryItemIconState_Icons,
-    struct CategoryItemIconState,
-    icons,
-    72);
-
-extern struct CategoryItemIconState *Data_03001f2c;
-
-void ItemMenu_PosCategory(void);
-void UiIcon_PrepareObject(void *icon);
 
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
 {
@@ -36,7 +29,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
     struct CategoryItemIcon *icon;
     s32 i;
 
-    state = Data_03001f2c;
+    state = Ram_HeapSlots->menu_runtime;
     ItemMenu_PosCategory();
     for (i = 0; i < 15; i++) {
         if (items[i] != 0 && (items[i] & 0x200) != 0) {

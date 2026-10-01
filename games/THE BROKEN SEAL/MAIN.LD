@@ -777,7 +777,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_BURSTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STAGED_PARTICLES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT19.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000d4de0)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/LIGHTNING_BOLTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PREPARE_CANVAS_EFFECT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PROJECTILE_VOLLEY.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000d5a6e)

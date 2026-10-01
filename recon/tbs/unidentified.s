@@ -1353,14 +1353,14 @@ BattleFxPillar_PuffHeights:
 	.global BattleFxPillar_PuffCells
 BattleFxPillar_PuffCells:
 	.incbin "baserom.gba", 0x000eebc8, 0x0000000e
-	.global Data_080eebd6
-Data_080eebd6:
+	.global LightningBolts_Counts
+LightningBolts_Counts:
 	.incbin "baserom.gba", 0x000eebd6, 0x0000000c
-	.global Data_080eebe2
-Data_080eebe2:
+	.global LightningBolts_GlintPalettes
+LightningBolts_GlintPalettes:
 	.incbin "baserom.gba", 0x000eebe2, 0x00000004
-	.global Data_080eebe6
-Data_080eebe6:
+	.global LightningBolts_GlintModes
+LightningBolts_GlintModes:
 	.incbin "baserom.gba", 0x000eebe6, 0x00000002
 	.incbin "baserom.gba", 0x000eebe8, 0x00000001
 	.global Data_080eebe9

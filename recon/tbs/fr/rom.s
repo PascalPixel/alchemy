@@ -77,6 +77,8 @@ Flash_ChipAtmelLayout:
 	.section .rom.00007c74, "ax"
 	.incbin "baserom.gba", 0x00007c74, 0x00000b8c
 	.section .rom.00008ab8, "ax"
+	.global ResourceSlot_ConversionTables
+ResourceSlot_ConversionTables:
 	.incbin "baserom.gba", 0x00008ab8, 0x00000500
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
@@ -99,12 +101,6 @@ Object_UpdateAllEnd:
 	.thumb_func
 Func_0800aa0c:
 	.incbin "baserom.gba", 0x0000a20c, 0x00000668
-	.section .rom.0000aeb8, "ax"
-	.global ResourceSlot_Load
-	.type ResourceSlot_Load, %function
-	.thumb_func
-ResourceSlot_Load:
-	.incbin "baserom.gba", 0x0000aeb8, 0x000000e0
 	.section .rom.0000c2ca, "ax"
 	.incbin "baserom.gba", 0x0000c2ca, 0x00000002
 	.section .rom.0000c2cc, "ax"
@@ -196,7 +192,10 @@ Ui_RunIconMonitor:
 	.section .rom.00012720, "ax"
 	.global Object_ShadowTiles
 Object_ShadowTiles:
-	.incbin "baserom.gba", 0x00012720, 0x0000022c
+	.incbin "baserom.gba", 0x00012720, 0x00000080
+	.global ResourceSlot_NumberTable
+ResourceSlot_NumberTable:
+	.incbin "baserom.gba", 0x000127a0, 0x000001ac
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
 	.incbin "baserom.gba", 0x0001294c, 0x00000044

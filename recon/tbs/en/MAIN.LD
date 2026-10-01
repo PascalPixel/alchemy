@@ -165,7 +165,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_PROJECTED_SPRITE.o"(.text)
         "*/recon/tbs/raw/0800b682.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/GROUP_SET_CHILD_VALUE_UNLESS_FIFTEEN.o"(.text)
-        "*/recon/tbs/raw/0800b6b8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESOURCE3.o"(.text)
         "*/recon/tbs/raw/0800bc46.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/OBJECT.o"(.text)

@@ -15,8 +15,17 @@
      the IME address is rebuilt every frame (r0), the position is in r7 and
      saved IME in r6. The work pointer is read as gWorkSlot plus 156 (base
      reloaded, offset added) where this draft folds it to slot 39's address.
-   - mode 1 loop: r8, r9 and r11 hold the count, the queue and 64 in the
-     reference, a rotation of this draft's three.
+   - mode 1 loop: the registers agree; the three preheader moves and one
+     temporary differ.
+   Tried: one pointer variable set to the gCameraWork symbol at entry (the
+     session read 12 bytes below it) and to the IME address before the mode
+     0 loop, the loop then using it without reloading. That gives the
+     reference shape (shared register at entry and in the loop, saved IME
+     in r4, origin address in r0) but the allocator ranks it just above the
+     hoisted position address (11 references over 118 against 7 over 54), so
+     it takes r6 and the position r7, the reverse of the reference, and the
+     hoisted 64 then outranks kind, which spills. Pinning that pointer to r7
+     miscompiles (the allocator reuses r7 for the work pointer).
    - the unused 40 bytes at the top of the frame are a guess.
    SparkWork's last three words are the BG2 origin and its pending flag;
    EFFECT3.C names them padding13c4 and unknown_13cc. */

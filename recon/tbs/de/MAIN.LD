@@ -762,7 +762,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000dafdc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PALETTE_RAMP.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000db8e8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ROCKWALL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)

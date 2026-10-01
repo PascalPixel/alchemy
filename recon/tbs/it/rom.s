@@ -1507,7 +1507,7 @@ BattleFx_PrepareCanvasEffect:
 BattleFx_RunProjectileVolley:
 	.incbin "baserom.gba", 0x000dea70, 0x00000e48
 	.section .rom.000dfe2a, "ax"
-	.incbin "baserom.gba", 0x000dfe2a, 0x000003ba
+	.incbin "baserom.gba", 0x000dfe2a, 0x00000002
 	.section .rom.000e0564, "ax"
 	.incbin "baserom.gba", 0x000e0564, 0x0000035c
 	.section .rom.000e1040, "ax"
@@ -1760,7 +1760,10 @@ BattleFxPillar_PuffHeights:
 	.incbin "baserom.gba", 0x000eebc0, 0x00000008
 	.global BattleFxPillar_PuffCells
 BattleFxPillar_PuffCells:
-	.incbin "baserom.gba", 0x000eebc8, 0x00000097
+	.incbin "baserom.gba", 0x000eebc8, 0x00000092
+	.global MercuryDjinnFlames_LaunchFrames
+MercuryDjinnFlames_LaunchFrames:
+	.incbin "baserom.gba", 0x000eec5a, 0x00000005
 	.global ParticleReveal_CellWidths
 ParticleReveal_CellWidths:
 	.incbin "baserom.gba", 0x000eec5f, 0x00000004

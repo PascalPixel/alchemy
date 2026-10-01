@@ -315,12 +315,6 @@ UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x00018154, 0x00000480
 	.section .rom.00018bdc, "ax"
 	.incbin "baserom.gba", 0x00018bdc, 0x00000110
-	.section .rom.00019068, "ax"
-	.global ItemIcon_Compose
-	.type ItemIcon_Compose, %function
-	.thumb_func
-ItemIcon_Compose:
-	.incbin "baserom.gba", 0x00019068, 0x0000021c
 	.section .rom.0001996c, "ax"
 	.global MenuSelection_DrawFrame
 	.type MenuSelection_DrawFrame, %function
@@ -428,7 +422,13 @@ WorkspaceOptions_SliderTiles:
 UiIcon_FramePointerTable:
 	.global RomBytes_08029a10
 RomBytes_08029a10:
-	.incbin "baserom.gba", 0x00028bd0, 0x000003f0
+	.incbin "baserom.gba", 0x00028bd0, 0x000000bc
+	.global UiIcon_MarkPointers
+UiIcon_MarkPointers:
+	.incbin "baserom.gba", 0x00028c8c, 0x0000009c
+	.global UiIcon_DigitPointers
+UiIcon_DigitPointers:
+	.incbin "baserom.gba", 0x00028d28, 0x00000298
 	.global UiIcon_OverlayPointerTable
 UiIcon_OverlayPointerTable:
 	.incbin "baserom.gba", 0x00028fc0, 0x000000e4

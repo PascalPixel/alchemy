@@ -180,11 +180,11 @@ RomBytes_08029a10:
 	.global UiIcon_FramePointerTable
 UiIcon_FramePointerTable:
 	.incbin "baserom.gba", 0x00029a10, 0x000000bc
-	.global Data_08029acc
-Data_08029acc:
+	.global UiIcon_MarkPointers
+UiIcon_MarkPointers:
 	.incbin "baserom.gba", 0x00029acc, 0x0000009c
-	.global Data_08029b68
-Data_08029b68:
+	.global UiIcon_DigitPointers
+UiIcon_DigitPointers:
 	.incbin "baserom.gba", 0x00029b68, 0x00000298
 	.global UiIcon_OverlayPointerTable
 UiIcon_OverlayPointerTable:

@@ -401,7 +401,6 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE5.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.00095ac8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT12.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.00096324)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/START_FADE_OVERLAY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENT/EVENT.o"(.text)

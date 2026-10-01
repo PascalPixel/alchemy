@@ -363,8 +363,8 @@ Menu_Check:
 	.thumb_func
 UiText_RenderStringTiles:
 	.incbin "baserom.gba", 0x0001cdbc, 0x00000410
-	.section .rom.0001ded4, "ax"
-	.incbin "baserom.gba", 0x0001ded4, 0x00000298
+	.section .rom.0001dff4, "ax"
+	.incbin "baserom.gba", 0x0001dff4, 0x00000178
 	.section .rom.0001e16c, "ax"
 	.global UiWindow_DrawPartyStatusContents
 	.type UiWindow_DrawPartyStatusContents, %function
@@ -504,7 +504,10 @@ SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x000358a4, 0x00000028
 	.global SideObject_ActorKindIdMap
 SideObject_ActorKindIdMap:
-	.incbin "baserom.gba", 0x000358cc, 0x000009cc
+	.incbin "baserom.gba", 0x000358cc, 0x000009b8
+	.global UiWindow_PartyColumnOffsets
+UiWindow_PartyColumnOffsets:
+	.incbin "baserom.gba", 0x00036284, 0x00000014
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
 	.incbin "baserom.gba", 0x00036298, 0x00000028

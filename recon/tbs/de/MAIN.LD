@@ -292,7 +292,7 @@ iwram :
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BYTE5_AND_RESET_HALFWORD_C.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BYTE15_INVERTED.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW15.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0001dc0c)
+    "*/recon/tbs/de/rom.o"(.rom.0001dd2c)
     "*/recon/tbs/de/rom.o"(.rom.0001dea4)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE3.o"(.text)

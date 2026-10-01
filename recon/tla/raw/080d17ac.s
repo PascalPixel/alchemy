@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d17ac
+	.global BattleFx_StartBufferInterpolation
 	.thumb_func
-Func_080d17ac:
+BattleFx_StartBufferInterpolation:
 	push {r5, lr}
 	movs r3, #192
 	lsls r3, r3, #18

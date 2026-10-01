@@ -2679,10 +2679,10 @@ Func_080d16f8:
 Func_080d170c:
 	.incbin "baserom.gba", 0x000de70c, 0x00000020
 	.section .rom.000de72c, "ax"
-	.global Func_080d172c
-	.type Func_080d172c, %function
+	.global BattleFx_ApplyColorToSourceBuffer
+	.type BattleFx_ApplyColorToSourceBuffer, %function
 	.thumb_func
-Func_080d172c:
+BattleFx_ApplyColorToSourceBuffer:
 	.incbin "baserom.gba", 0x000de72c, 0x00000020
 	.section .rom.000de74c, "ax"
 	.global Func_080d174c
@@ -2697,10 +2697,10 @@ Func_080d174c:
 Func_080d1760:
 	.incbin "baserom.gba", 0x000de760, 0x0000004c
 	.section .rom.000de7ac, "ax"
-	.global Func_080d17ac
-	.type Func_080d17ac, %function
+	.global BattleFx_StartBufferInterpolation
+	.type BattleFx_StartBufferInterpolation, %function
 	.thumb_func
-Func_080d17ac:
+BattleFx_StartBufferInterpolation:
 	.incbin "baserom.gba", 0x000de7ac, 0x0000003c
 	.section .rom.000de7e8, "ax"
 	.global Func_080d17e8

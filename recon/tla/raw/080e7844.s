@@ -843,7 +843,7 @@ Func_080e7844:
 	movs r1, #0
 	bl Func_080d170c
 	movs r0, #100
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 .L_080e7ed6:
 	ldr r2, [sp, #56]
 	movs r1, #2

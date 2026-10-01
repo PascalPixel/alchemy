@@ -1207,7 +1207,7 @@ SECTIONS
         "*/recon/tla/raw/080cb2b8.o"(.text)
         "*/recon/tla/raw/080cb6c8.o"(.text)
         "*/recon/tla/raw/080cb6f4.o"(.text)
-        "*/recon/tla/raw/080cb788.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PARTY/APPLY_STATUS_DAMAGE.o"(.text)
         "*/recon/tla/raw/080cb82c.o"(.text)
         "*/recon/tla/raw/080cb8a4.o"(.text)
         "*/recon/tla/raw/080cb8e8.o"(.text)

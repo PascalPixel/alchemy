@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d172c
+	.global BattleFx_ApplyColorToSourceBuffer
 	.thumb_func
-Func_080d172c:
+BattleFx_ApplyColorToSourceBuffer:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

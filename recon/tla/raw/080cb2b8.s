@@ -265,7 +265,7 @@ Func_080cb2b8:
 	bl Audio_PlayCue
 .L_080cb4a8:
 	bl Event_ClearValidPackedIds
-	bl Func_080cb788
+	bl BattleParty_ApplyStatusDamage
 	str r0, [sp, #8]
 .L_080cb4b2:
 	ldr r4, .L_080cb504

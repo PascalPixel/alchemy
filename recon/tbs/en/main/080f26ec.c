@@ -1,5 +1,5 @@
 /* 2026-09-29: five minutes of permutation reached 2271 from 2911 through 33
- * rewrites; not kept, since the owner is far from exact. With stock agscc
+ * rewrites; not kept, since the owner is far from exact. With approved agscc with the game build flags
  * the Value_ constants (0, 0x16, 0x1440, 0x1540) compile better as plain
  * literals: 2681 (92 register-only, 1 stack-only, 12 operand, 11 reordered,
  * 5 inserted, 8 deleted). RegIme and GetResource are still names the build

@@ -10,10 +10,10 @@
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global IwramUnsignedRemainder
+	.global Math_RemainderUnsigned
 	.thumb_func
-IwramUnsignedRemainder:
-	overlay_veneer IwramUnsignedRemainderArm
+Math_RemainderUnsigned:
+	overlay_veneer IwramUnsignedRemainder
 	.global Engine_TaskWait
 	.thumb_func
 Engine_TaskWait:

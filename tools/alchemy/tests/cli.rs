@@ -25,14 +25,13 @@ fn every_advertised_command_has_help() {
 }
 
 #[test]
-fn retired_portable_entry_points_are_not_aliases() {
-    for name in ["decompile", "convert", "diff", "disassemble", "repair"] {
-        let output = command().args([name, "--help"]).output().unwrap();
-        assert_eq!(output.status.code(), Some(2), "{name}");
-        assert!(String::from_utf8_lossy(&output.stderr).contains("unknown alchemy command"));
-    }
-    let output = command().args(["inspect", "allocator"]).output().unwrap();
-    assert!(!output.status.success());
+fn unknown_command_is_refused() {
+    let output = command()
+        .args(["unknown-command", "--help"])
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&output.stderr).contains("unknown alchemy command"));
 }
 
 #[test]

@@ -11,7 +11,7 @@ extern u8 BabiFune_SceneTableD[];
 void DisplayScroll_InitializeHBlankDma(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void SceneEffect_LoadTablesAndStopDma0(void);
 
-s32 IwramUnsignedDivide();
+s32 Math_DivideUnsigned();
 extern u16 BabiFune_PaletteStep;
 extern const u16 BabiFune_PaletteFrames[];
 
@@ -93,7 +93,7 @@ void BabiFune_CyclePalette(void)
     s32 v;
 
     frame = &BabiFune_PaletteStep;
-    v = IwramUnsignedDivide(*frame, 6);
+    v = Math_DivideUnsigned(*frame, 6);
     Dma_Set((const void *)(((u32)(v << 16) >> 15) + (u32)BabiFune_PaletteFrames), (void *)0x050000e8, 0x80000006, (volatile u32 *)0x040000d4);
     {
         /* FAKEMATCH: n is a fresh scope so the store precedes the test. */

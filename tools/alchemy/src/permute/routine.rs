@@ -70,16 +70,6 @@ impl Symbols {
     pub fn get(&self, name: &str) -> Option<u32> {
         self.addresses.get(name).copied()
     }
-
-    #[cfg(test)]
-    pub fn from_pairs(pairs: &[(&str, u32)]) -> Symbols {
-        Symbols {
-            addresses: pairs
-                .iter()
-                .map(|(name, address)| (name.to_string(), *address))
-                .collect(),
-        }
-    }
 }
 
 #[derive(Clone, Debug)]

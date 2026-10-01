@@ -517,7 +517,7 @@ Graphics_TransformPaletteBuffer:
 .L_080f3458:
 	.4byte .L_080f3138
 .L_080f345c:
-	.4byte IwramSignedDivideArm
+	.4byte IwramSignedDivide
 .L_080f3460:
 	.4byte Data_080f3a2e
 .L_080f3464:
@@ -841,7 +841,7 @@ Graphics_TransformPaletteBuffer:
 	b .L_080f3766
 	.2byte 0x0000
 .L_080f36e4:
-	.4byte IwramSignedDivideArm
+	.4byte IwramSignedDivide
 .L_080f36e8:
 	.4byte IwramMulQ16ReturnIp
 .L_080f36ec:

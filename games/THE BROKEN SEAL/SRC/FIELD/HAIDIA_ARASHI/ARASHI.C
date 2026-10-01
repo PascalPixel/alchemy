@@ -107,7 +107,7 @@ s32 OverlayObject_SetField6OnCountdown(struct Object *object)
 
     if (loaded == 0) {
         object->x = Random_Next();
-        counter = IwramUnsignedRemainder(Random_Next(), 20) + 20;
+        counter = Math_RemainderUnsigned(Random_Next(), 20) + 20;
         object->counter = counter;
     }
     object->counter = counter - 1;
@@ -132,7 +132,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
     case 0:
         state->fixed_point_18 = 0x10000;
         state->fixed_point_1c = 0x10000;
-        state->countdown = (s16)(IwramUnsignedRemainder(Random_Next(), 90) + 60);
+        state->countdown = (s16)(Math_RemainderUnsigned(Random_Next(), 90) + 60);
         break;
     }
     state->countdown--;
@@ -457,7 +457,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             o = Actor_Get(9);
             h2 = 0xE000;
             *(u16 *)(o + 6) = h2;
-            v = IwramUnsignedRemainder(Random_Next(), 0x5A) + 60;
+            v = Math_RemainderUnsigned(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
             tbl = HaidiaArashi_ActorEightScript;
             o += 0x66;
@@ -471,7 +471,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             s32 v;
             o = Actor_Get(26);
             *(u16 *)(o + 6) = h2;
-            v = IwramUnsignedRemainder(Random_Next(), 0x5A) + 60;
+            v = Math_RemainderUnsigned(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
             o += 0x66;
             t = 2;
@@ -484,7 +484,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             s32 v;
             o = Actor_Get(22);
             *(u16 *)(o + 6) = h2;
-            v = IwramUnsignedRemainder(Random_Next(), 0x5A) + 60;
+            v = Math_RemainderUnsigned(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
             o += 0x66;
             t = 3;
@@ -497,7 +497,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             s32 v;
             o = Actor_Get(8);
             *(u16 *)(o + 6) = h2;
-            v = IwramUnsignedRemainder(Random_Next(), 0x5A) + 60;
+            v = Math_RemainderUnsigned(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
             o += 0x66;
             t = 4;
@@ -532,7 +532,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             u8 *o;
             s32 v;
             o = Actor_Get(10);
-            v = IwramUnsignedRemainder(Random_Next(), 0x5A) + 60;
+            v = Math_RemainderUnsigned(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
         }
         tbl = HaidiaArashi_ActorEightScript;
@@ -544,7 +544,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             u8 *o;
             s32 v;
             o = Actor_Get(24);
-            v = IwramUnsignedRemainder(Random_Next(), 0x5A) + 60;
+            v = Math_RemainderUnsigned(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
         }
         Actor_EnableActionCallback(24, tbl);
@@ -555,7 +555,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             u8 *o;
             s32 v;
             o = Actor_Get(25);
-            v = IwramUnsignedRemainder(Random_Next(), 0x5A) + 60;
+            v = Math_RemainderUnsigned(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
         }
         Actor_EnableActionCallback(25, tbl);
@@ -1481,7 +1481,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         u8 *o;
         s32 v;
         o = (u8 *)Object_GetById(10);
-        v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
+        v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
         tbl = HaidiaArashi_ActorEightScript;
         *(u16 *)(o + 0x64) = v;
         Engine_ActorEnableActionCallback(10, (s32)tbl);
@@ -1495,7 +1495,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         u8 *o;
         s32 v;
         o = (u8 *)Object_GetById(24);
-        v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
+        v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
         *(u16 *)(o + 0x64) = v;
         Engine_ActorEnableActionCallback(24, (s32)tbl);
     }
@@ -1506,7 +1506,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         u8 *o;
         s32 v;
         o = (u8 *)Object_GetById(25);
-        v = IwramUnsignedRemainder(Engine_RandomNext(), 0x5A) + 60;
+        v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
         *(u16 *)(o + 0x64) = v;
         Engine_ActorEnableActionCallback(25, (s32)tbl);
     }
@@ -1764,13 +1764,13 @@ void HaidiaArashi_RunRiverSearch(void)
      * the entry's field at offset 100. */
     entry = (s32)Actor_Get(10);
     record = Engine_RandomNext();
-    *(u16 *)(entry + 100) = (IwramUnsignedRemainder(record, 90) + 60);
+    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
     entry = (s32)Actor_Get(24);
     record = Engine_RandomNext();
-    *(u16 *)(entry + 100) = (IwramUnsignedRemainder(record, 90) + 60);
+    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
     entry = (s32)Actor_Get(25);
     record = Engine_RandomNext();
-    *(u16 *)(entry + 100) = (IwramUnsignedRemainder(record, 90) + 60);
+    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
     script = (s32)HaidiaArashi_ActorEightScript;
     Actor_EnableActionCallback(10, (const u8 *)script);
     Actor_EnableActionCallback(24, (const u8 *)script);
@@ -1895,7 +1895,7 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
         u8 *rec;
         s32 v;
         rec = Actor_Get(10);
-        v = IwramUnsignedRemainder(Random_Next(), 0x5A) + 60;
+        v = Math_RemainderUnsigned(Random_Next(), 0x5A) + 60;
         tbl = HaidiaArashi_ActorEightScript;
         *(u16 *)(rec + 0x64) = v;
         Actor_EnableActionCallback(10, tbl);

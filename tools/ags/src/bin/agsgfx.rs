@@ -16,7 +16,7 @@ const USAGE: &str = "usage: agsgfx INPUT OUTPUT [options]
   X.png  -> Y.4bpp | Y.8bpp    tiles, row-major or by metatile (-mwidth N -mheight N)
   X.png  -> Y.gbapal           the PNG's palette as little-endian BGR555
   X.png  -> Y.bitmap[.lz|.mtf] any build recipe, as the build makes it (see ags::resource)
-  X.bin  -> Y.delta1.lz        a data recipe from an identified BIN
+  X.tsv  -> Y.delta1.lz        a data recipe from an editable table
   X.tsv  -> Y.parts.lz         pictures joined from a part list
   X.4bpp | X.8bpp -> Y.png     tiles back to an indexed PNG (--palette P.gbapal|P.png; --width TILES and
                                -mwidth/-mheight, else the OBJ metatile shape and width at which

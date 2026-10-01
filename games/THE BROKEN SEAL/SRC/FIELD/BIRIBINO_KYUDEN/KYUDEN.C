@@ -512,12 +512,18 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 void Kyuden_RunKolimaRequest(void)
 {
     s32 record;
+    register s32 pan asm("r3"); /* FAKEMATCH: inherit camera pan from the byte store. */
+
+    /* FAKEMATCH: the ROM carries the zero used for the view-center byte
+       in r3 into the camera's fourth argument. Explicit zero emits another
+       mov; capturing r3 preserves the original store scheduling. */
 
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Engine_TaskWait(1);
     ((u8 *)Engine_EventGetViewCenter())[85] = 0;
-    Call3(Engine_CameraMoveTo, 0x37e0000, -1, 0x2980000);
+    asm ("" : "=r" (pan)); /* FAKEMATCH: capture the store's zero without another mov. */
+    Call4(Engine_CameraMoveTo, 0x37e0000, -1, 0x2980000, pan);
     Engine_TaskWait(1);
     Engine_ActorSetPosition(0, 0, 0);
     if (Value1(Engine_GameFlagIsSet, 0x85f) != 0) {

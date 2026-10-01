@@ -1457,6 +1457,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         Event_SetMessage((s32)MsgKorosseoObjectiveGetAcross);
         Event_ShowMessage(scene, 0);
     }
+    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(FieldScene_RunMiddleSequence, state, scene, 1);
     Engine_EventEnd();
 }
@@ -1486,6 +1487,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     Event_ShowMessage(scene, 0);
     Korosseo_FadeInCompetitor(0, 280, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
+    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, 280, 152);
     ColossoLogRollingStage_SpawnPositionedObject(0, 296, 152);
     Event_Wait(10);
@@ -1499,6 +1501,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     Camera_MoveTo(-1, -1, -1, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 15);
     Event_ShowMessage(scene, 0);
+    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(ColossoLogRollingStage_StartPaletteTask, 96, 40, 0);
     ColossoLogRollingStage_StartPaletteTaskFromState(128, 40, 10);
     Event_Wait(30);
@@ -1515,6 +1518,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
         Event_SetMessage((s32)MsgKorosseoYourGoalInStageSimple);
         Event_ShowMessage(scene, 0);
     }
+    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(FieldScene_RunMiddleSequence, state, scene, 2);
     Event_End();
 }
@@ -1545,6 +1549,7 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
             Engine_EventWait(60);
             Engine_EventShowMessage(a0, 0);
             Korosseo_FadeInCompetitor(0, 0x1f8, 200);
+            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             ColossoLogRollingStage_WaitForSceneTask();
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);

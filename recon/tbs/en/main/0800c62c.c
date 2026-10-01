@@ -1,4 +1,4 @@
-/* 2026-09-30 (Mercury): EXACT, 592 of 592 bytes with stock agscc and two
+/* 2026-09-30 (Mercury): EXACT, 592 of 592 bytes with approved agscc with the game build flags and two
    tagged FAKEMATCHes. It sits between
    FIELD/COMMON/OBJECT/DISPATCH_RETURN_TRUE and OBJECT2, so its module is
    Mars's to choose; compile it under #if defined(TBS_EDITION_EN) until the

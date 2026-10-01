@@ -112,7 +112,7 @@ extern u8 HaidiaArashi_LeaderScript[];
 extern u8 HaidiaArashi_ActorTwentyScript[];
 extern u8 HaidiaArashi_ActorTwentyTwoScript[];
 
-s32 IwramUnsignedRemainder(s32, s32);
+s32 Math_RemainderUnsigned(s32, s32);
 
 union PairObject;
 void HaidiaArashi_SpawnEffectPair(union PairObject *parent);

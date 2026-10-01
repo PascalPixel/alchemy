@@ -49,7 +49,7 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "games/COMMON/SRC/SYSTEM/SAVE/READ_FLASH_ID.C",
     "games/COMMON/SRC/SYSTEM/SAVE/START_FLASH_TIMER.C",
     "games/COMMON/SRC/SYSTEM/SAVE/VERIFY_FLASH_SECTOR.C",
-    "games/THE LOST AGE/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C",
+    "games/COMMON/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C",
 ];
 
 // Resident ARM routines, built with pret's agbcc_arm (Pascal, 2026-09-29):

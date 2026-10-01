@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA6.o"(.text)
@@ -24,5 +24,5 @@ SECTIONS
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c8_overlay.o"(.rodata.x0200d040)
     }
-    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

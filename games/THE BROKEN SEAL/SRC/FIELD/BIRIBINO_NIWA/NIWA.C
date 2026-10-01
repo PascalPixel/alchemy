@@ -328,7 +328,7 @@ void BiribinoNiwa_ApplyEntryState(void)
                 {
                     u8 *script = BiribinoNiwa_GuardScript;
 
-                    Value3(Engine_ObjectSetTargetAndCallback, 12, 0x10000, (s32)script);
+                    Call3(Engine_ObjectSetTargetAndCallback, 12, 0x10000, (s32)script);
                 }
             }
         }

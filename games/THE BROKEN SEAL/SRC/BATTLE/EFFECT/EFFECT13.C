@@ -43,7 +43,6 @@ extern void Audio_PlayCue(s32);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 s32 Object_CommitPosition();
 
-extern void Engine_ObjectSetScript(void *object, const void *script);
 extern void Object_Destroy(void *object);
 
 extern u8 gObjectSlots[];
@@ -235,7 +234,7 @@ void UpdateRisingParticleBurst(void *source)
                              *(s32 *)((s8 *)source + 12),
                              *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            Engine_ObjectSetScript(child, &BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar(child, &BattleFx_FragmentScript);
             {
                 s32 speed = Random16();
 

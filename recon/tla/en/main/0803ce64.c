@@ -1,7 +1,7 @@
 /* Near miss: score 100 beyond the trailing pad. The render work is ⚓️'s
    heap slot 0x3c, with its entries at 0xf40 and cursor at 0x1384. ⚓️
    reloads the window height (ldr r4, [sp, #8]) before subtracting the width
-   from 30; -mtune=arm9tdmi does not move it, nor 45 s of permuting. */
+   from 30; 45 s of permuting did not move it with the approved game flags. */
 #include "TYPES.H"
 
 struct CenteredTextWork {

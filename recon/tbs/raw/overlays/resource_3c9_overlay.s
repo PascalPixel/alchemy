@@ -1954,7 +1954,7 @@ SceneEffect_SpawnParticlesAboveActor:
 	ldr r3, .L_0200b710
 	movs r1, #3
 	ldr r0, [r3]
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	cmp r0, #0
 	bne .L_0200b7b8
 .L_0200b6ee:

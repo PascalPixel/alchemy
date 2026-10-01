@@ -138,7 +138,7 @@ s32 OverlayObject_StepScaleByCounter(Spr *s)
     case 0:
         s->unk18 += 0x800;
         s->unk1c += -0x400;
-        *p = IwramUnsignedRemainder(Engine_RandomNext(), 80) + 80;
+        *p = Math_RemainderUnsigned(Engine_RandomNext(), 80) + 80;
         break;
     }
     {
@@ -1256,7 +1256,7 @@ void SceneEffect_UpdateObjectByFrameParity(s32 a)
     } else {
         Object_SetPartPalettes(a, 0);
     }
-    if (IwramUnsignedRemainder(*(s32 *)&gFrameCount, 15) == 0) {
+    if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
         VinasuChojo_SpawnLinkedPairEffects(a);
     }
 }
@@ -1266,9 +1266,9 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
     volatile u32 *p = (u32 *)&gFrameCount;
 
     if (*p & 1) {
-        Object_SetPartPalettes(a, IwramUnsignedRemainder(*p >> 1, 6));
+        Object_SetPartPalettes(a, Math_RemainderUnsigned(*p >> 1, 6));
     }
-    if (IwramUnsignedRemainder(*p, 15) == 0) {
+    if (Math_RemainderUnsigned(*p, 15) == 0) {
         VinasuChojo_SpawnLinkedPairEffects(a);
     }
 }

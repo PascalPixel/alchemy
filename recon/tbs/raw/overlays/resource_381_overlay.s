@@ -152,7 +152,7 @@ Soru_UpdateRing:
 	movs r1, #250
 	lsls r0, r6, #16
 	lsls r1, r1, #2
-	bl IwramUnsignedDivide
+	bl Math_DivideUnsigned
 	adds r6, r0, #0
 	b .L_0200b14a
 .L_0200b148:
@@ -163,7 +163,7 @@ Soru_UpdateRing:
 	movs r1, #250
 	lsls r0, r7, #16
 	lsls r1, r1, #2
-	bl IwramUnsignedDivide
+	bl Math_DivideUnsigned
 	mov r9, r0
 	b .L_0200b160
 .L_0200b15c:
@@ -176,7 +176,7 @@ Soru_UpdateRing:
 	movs r1, #250
 	lsls r0, r3, #16
 	lsls r1, r1, #2
-	bl IwramUnsignedDivide
+	bl Math_DivideUnsigned
 	b .L_0200b174
 .L_0200b172:
 	movs r0, #0

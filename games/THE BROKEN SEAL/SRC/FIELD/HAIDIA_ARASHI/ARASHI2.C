@@ -334,7 +334,7 @@ void SceneActor_SetModeByFrameBit1(s32 o)
     {
         volatile s32 *q = (volatile s32 *)&gFrameCount;
         v = (HaidiaArashi_ShakeShift << 3) + 16;
-        if (IwramUnsignedRemainder(*q, v) == 0) {
+        if (Math_RemainderUnsigned(*q, v) == 0) {
             HaidiaArashi_SpawnEffectPair((union PairObject *)o);
         }
     }
@@ -348,10 +348,10 @@ void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
 
     if ((*fc & 1) != 0) {
         t = (s32)((u32)*fc >> 1);
-        Object_SetPartPalettes(obj, IwramUnsignedRemainder(t, 6));
+        Object_SetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
     }
     n = (HaidiaArashi_ShakeShift << 3) + 16;
-    if (IwramUnsignedRemainder(*fc, n) == 0) {
+    if (Math_RemainderUnsigned(*fc, n) == 0) {
         HaidiaArashi_SpawnEffectPair((union PairObject *)obj);
     }
 }
@@ -363,7 +363,7 @@ void OverlayObject_ApplyIwramWord1e40(s32 o)
 
     if ((*p & 1) != 0) {
         t = (s32)((u32)*p >> 1);
-        Object_SetPartPalettes(o, IwramUnsignedRemainder(t, 6));
+        Object_SetPartPalettes(o, Math_RemainderUnsigned(t, 6));
     }
 }
 

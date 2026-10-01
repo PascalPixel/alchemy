@@ -11,7 +11,6 @@ union Slot {
 };
 
 extern u8 LinkedMessage_TheresNothingWeCanDo[];
-s32 BuildMotionCountdown(s32, s16);
 
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
@@ -105,7 +104,7 @@ extern s16 gCell[][1];
 void Engine_ActorSetSpritePriority();
 s32 Engine_GameFlagIsSet();
 void Engine_ActorSetPosition();
-s32 IwramUnsignedRemainder();
+s32 Math_RemainderUnsigned();
 void Engine_ActorEnableActionCallback();
 
 extern u8 FuneKanpan_LeadActionsA[];
@@ -1044,7 +1043,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         record = Engine_RandomNext();
         {
             /* FAKEMATCH: the temporary makes the +60 add come before the +100. */
-            s32 t = IwramUnsignedRemainder(record, 90) + 60;
+            s32 t = Math_RemainderUnsigned(record, 90) + 60;
 
             a += 100;
             *(u16 *)a = t;
@@ -1054,7 +1053,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         a = Value1(Object_GetById, 24);
         record = Engine_RandomNext();
         a += 100;
-        *(u16 *)a = (IwramUnsignedRemainder(record, 90) + 60);
+        *(u16 *)a = (Math_RemainderUnsigned(record, 90) + 60);
         Engine_ActorEnableActionCallback(24, FuneKanpan_RandomActorActions);
         Engine_ActorSetPosition(22, 0, 0);
     } else {

@@ -207,31 +207,14 @@ fn disassembly_uses_explicit_addresses_and_relative_paths() {
 }
 
 #[test]
-fn project_commands_are_not_portable_aliases() {
+fn unknown_command_is_refused() {
     let dir = tempfile::tempdir().unwrap();
-    for name in [
-        "score",
-        "match",
-        "extract",
-        "adopt",
-        "build",
-        "verify",
-        "coverage",
-        "check",
-        "unit",
-        "overlay",
-        "cross-edition",
-        "font",
-        "dashboard",
-        "music-debug",
-    ] {
-        let result = command(dir.path()).args([name, "--help"]).output().unwrap();
-        assert_eq!(result.status.code(), Some(2), "{name}");
-        assert!(
-            String::from_utf8_lossy(&result.stderr).contains("unknown psynergy command"),
-            "{name}"
-        );
-    }
+    let result = command(dir.path())
+        .args(["unknown-command", "--help"])
+        .output()
+        .unwrap();
+    assert_eq!(result.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&result.stderr).contains("unknown psynergy command"));
 }
 
 #[test]

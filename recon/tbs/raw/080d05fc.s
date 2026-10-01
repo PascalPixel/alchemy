@@ -237,7 +237,7 @@ Func_080d05fc:
 	movs r3, #3
 	movs r0, #46
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080d0a90
 	adds r3, #184
 	ldr r3, [r3]
@@ -247,7 +247,7 @@ Func_080d05fc:
 	movs r3, #7
 	movs r0, #47
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080d0a94
 	ldr r1, [sp, #20]
 	ldr r3, [r2]

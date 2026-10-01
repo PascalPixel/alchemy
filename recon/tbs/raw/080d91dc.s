@@ -393,7 +393,7 @@ BattleEffectB:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, [sp, #36]
 	adds r3, #136
 	ldr r3, [r3]
@@ -405,7 +405,7 @@ BattleEffectB:
 	adds r3, r5, #0
 	movs r1, #7
 	movs r2, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080d9690
 	ldr r4, [r3]
 	mov r5, r11
@@ -535,7 +535,7 @@ BattleEffectB:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080d9694
 	ldr r2, [r2]
 	movs r3, #3
@@ -545,7 +545,7 @@ BattleEffectB:
 	movs r1, #7
 	movs r2, #7
 	ldr r3, [sp, #44]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r4, .L_080d9690
 	ldr r5, [sp, #72]
 	ldr r4, [r4]
@@ -770,7 +770,7 @@ BattleEffectB:
 	movs r2, #7
 	movs r0, #46
 	str r4, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	lsls r1, r5, #1
 	adds r1, r1, r5
 	lsls r1, r1, #3
@@ -827,7 +827,7 @@ BattleEffectB:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	lsls r1, r5, #4
 	ldr r2, .L_080d99c0
 	ldr r3, [sp, #68]
@@ -884,7 +884,7 @@ BattleEffectB:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080d99c0
 	ldr r3, [sp, #68]
 	ldr r0, .L_080d99c8
@@ -935,7 +935,7 @@ BattleEffectB:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080d99c0
 	movs r4, #2
 	ldr r3, [r3]
@@ -948,7 +948,7 @@ BattleEffectB:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r1, [sp, #68]
 	ldr r0, .L_080d99cc
 	ldr r2, .L_080d99c8
@@ -1032,7 +1032,7 @@ BattleEffectB:
 	ldr r3, [sp, #44]
 	movs r2, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	lsls r1, r5, #1
 	adds r1, r1, r5
 	lsls r1, r1, #3

@@ -471,7 +471,7 @@ BattleFx_RunTwelveMode:
 	movs r2, #7
 	movs r3, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080caa50
 	lsls r3, r6, #1
 	ldrh r1, [r2, r3]
@@ -553,7 +553,7 @@ BattleFx_RunTwelveMode:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080cacf8
 	lsls r3, r6, #1
 	ldrh r1, [r2, r3]
@@ -777,7 +777,7 @@ BattleFx_RunTwelveMode:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r0, [sp, #32]
 	lsls r5, r0, #3
 	ldr r2, [sp, #132]
@@ -814,7 +814,7 @@ BattleFx_RunTwelveMode:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, [sp, #132]
 	lsrs r3, r2, #31
 	adds r2, r2, r3
@@ -1053,7 +1053,7 @@ BattleFx_RunTwelveMode:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080cb09c
 	lsls r3, r7, #1
 	ldrh r1, [r2, r3]
@@ -1088,7 +1088,7 @@ BattleFx_RunTwelveMode:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r0, .L_080cb0a4
 	ldr r3, [r0]
 	movs r1, #7
@@ -1097,7 +1097,7 @@ BattleFx_RunTwelveMode:
 	movs r3, #3
 	movs r0, #47
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r1, .L_080cb0a0
 	ldr r2, [sp, #24]
 	ldr r3, [r1]

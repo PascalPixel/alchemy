@@ -114,7 +114,7 @@ BattleFx_RunFortyEightFrameEffect:
 	movs r3, #3
 	movs r0, #46
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, .L_080cf108
 	adds r3, r5, #0
 	adds r3, #184
@@ -136,7 +136,7 @@ BattleFx_RunFortyEightFrameEffect:
 .L_080cf10c:
 	movs r0, #47
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #239
 	lsls r3, r3, #7
 	ldr r2, .L_080cf280

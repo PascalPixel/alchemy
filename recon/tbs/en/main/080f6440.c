@@ -169,7 +169,7 @@ void ReelGame_RunFrame(void)
         REG_BLDALPHA = 0x10;
         if (work->pressed & 1) {
             work->state = 1;
-            fx->reel_stop_frames = 0;
+            fx->frame = 0;
             UiWork_FinalizeFar(work->window, 1);
             for (k = 0; k != work->bet; k++)
                 PartyInventory_RemoveFar(228);
@@ -185,7 +185,7 @@ void ReelGame_RunFrame(void)
             all = 1;
         if (work->pressed & 1) {
             work->timer = 0;
-            fx->reel_stop_frames = 0;
+            fx->frame = 0;
             if (work->spins == 4) {
                 work->spins = 0;
                 work->cursor = 0;
@@ -299,8 +299,8 @@ void ReelGame_RunFrame(void)
         if (work->timer == 16)
             AudioCommand_PlayFar(0x132);
         if (work->timer > 56) {
-            if (fx->reel_stop_frames > 31 || (work->pressed & 0x100)) {
-                fx->reel_stop_frames = 0;
+            if (fx->frame > 31 || (work->pressed & 0x100)) {
+                fx->frame = 0;
                 for (i = 0; i != 5; i++) {
                     if (work->row[i].held == 0 && work->row[i].stop == -1) {
                         work->row[i].stop = (Random16() & 3) + 4;
@@ -406,7 +406,7 @@ void ReelGame_RunFrame(void)
                 }
             }
         }
-        (fx->reel_stop_frames)++;
+        (fx->frame)++;
         work->timer++;
     }
 

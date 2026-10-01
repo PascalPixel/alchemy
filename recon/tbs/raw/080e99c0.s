@@ -44,7 +44,7 @@ Unnamed_080e99c0:
 	movs r3, #3
 	movs r0, #46
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r0, [r6, #28]
 	movs r3, #1
 	str r0, [sp, #24]
@@ -63,7 +63,7 @@ Unnamed_080e99c0:
 .L_080e9a38:
 	.4byte 0x04000052
 .L_080e9a3c:
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080e9c38
 	ldr r2, [sp, #36]
 	ldr r6, [r6, #32]

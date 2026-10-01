@@ -503,7 +503,7 @@ BattleEffect_RunParticleStreams:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, [r5, #8]
 	ldr r0, [sp, #60]
 	b .L_080e7850
@@ -1170,7 +1170,7 @@ BattleEffect_RunParticleStreams:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080e7d64
 	adds r3, #184
 	ldr r3, [r3]

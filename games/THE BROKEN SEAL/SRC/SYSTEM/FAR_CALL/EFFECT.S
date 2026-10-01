@@ -11,7 +11,7 @@ FarCall_EffectTable:
 	.global Func_080c9000
 	.thumb_func
 Func_080c9000:
-	overlay_veneer Unnamed_080ed408
+	overlay_veneer BattleEffect_LoadWork
 	.global BattleFx_DispatchByIdRangeFar
 	.thumb_func
 BattleFx_DispatchByIdRangeFar:

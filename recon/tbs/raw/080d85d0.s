@@ -150,7 +150,7 @@ Unnamed_080d85d0:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080d8928
 	adds r3, #184
 	ldr r3, [r3]

@@ -59,7 +59,7 @@ Region_080d0ee0:
 	movs r3, #3
 	movs r0, #46
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r0, #239
 	ldr r4, [sp, #76]
 	lsls r0, r0, #7

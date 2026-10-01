@@ -6,13 +6,10 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global IwramUnsignedRemainder
+	.global Math_RemainderUnsigned
 	.thumb_func
-IwramUnsignedRemainder:
-	.global BuildMotionCountdown
-	.thumb_func
-BuildMotionCountdown:
-	overlay_veneer IwramUnsignedRemainderArm
+Math_RemainderUnsigned:
+	overlay_veneer IwramUnsignedRemainder
 	.global WaitFrames
 	.thumb_func
 WaitFrames:

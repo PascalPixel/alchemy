@@ -1,8 +1,8 @@
 /* Near miss: score 100 beyond the trailing pad. ⚓️'s map work is its heap
    slot map_work, with a 32 x 32 tile window at 0x148 and the second layer's
    tiles 0x400 on. ⚓️ clears r6 before keeping the work pointer in r8 and
-   loading its position, a load-scheduling difference; with -mtune=arm9tdmi
-   this draft compiles exactly. */
+   loading its position, a load-scheduling difference with the approved
+   game flags. */
 #include "TYPES.H"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))

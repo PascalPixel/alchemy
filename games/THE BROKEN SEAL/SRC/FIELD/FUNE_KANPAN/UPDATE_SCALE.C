@@ -10,7 +10,7 @@ union Slot {
 
 extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
-s32 BuildMotionCountdown(s32, s16);
+s32 Math_RemainderUnsigned(s32, s16);
 
 /* Briefly stretches the sprite, then waits before the next pulse. */
 s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
@@ -35,7 +35,7 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
         actor->scale_x = 0x10000;
         actor->scale_y = 0x10000;
         (*(s16 *)&actor->unknown_64) =
-            (s16)(BuildMotionCountdown(Random_Next(), 90) + 60);
+            (s16)(Math_RemainderUnsigned(Random_Next(), 90) + 60);
         break;
     }
     (*(s16 *)&actor->unknown_64)--;

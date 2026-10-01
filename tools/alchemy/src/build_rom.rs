@@ -965,6 +965,7 @@ fn build_overlay(
     let stream = directory.join(format!("resource_{id}.lz"));
     let stamp = stream.with_extension("lz.key");
     let own_symbols = path(format!("resource_{id}.symbols.elf"));
+    let library = PathBuf::from("tools/out/compiler-runtime/libgcc.a");
     let mut link: Vec<String> = [
         "arm-none-eabi-ld",
         "--no-warn-mismatch",
@@ -985,7 +986,7 @@ fn build_overlay(
             .iter()
             .map(|path| path.to_string_lossy().into_owned()),
     );
-    link.push("tools/out/compiler-runtime/libgcc.a".into());
+    link.push(library.to_string_lossy().into_owned());
     let assemble = assembly_command(&listing.to_string_lossy(), &object);
     let steps = [
         link,
@@ -993,13 +994,7 @@ fn build_overlay(
             .map(String::from)
             .to_vec(),
     ];
-    let mut hasher = Sha256::new();
-    hasher.update(with_includes(&[root], &root.join(&listing))?);
-    hasher.update(fs::read(root.join(script)).map_err(|error| error.to_string())?);
-    for object in objects {
-        let stamp = object.with_extension("o.key");
-        hasher.update(fs::read(&stamp).map_err(|error| format!("{}: {error}", stamp.display()))?);
-    }
+    let mut hasher = overlay_inputs(root, &listing, script, objects, &library)?;
     for step in std::iter::once(&assemble).chain(&steps) {
         hasher.update(step.join("\0").as_bytes());
     }
@@ -1029,7 +1024,6 @@ fn build_overlay(
     // functions they reach) hide the main image's: the linker sees one each.
     // An overlay reaches only its own copies of the compiler library too.
     let mut own = String::new();
-    let library = PathBuf::from("tools/out/compiler-runtime/libgcc.a");
     for path in std::iter::once(PathBuf::from(&object))
         .chain(objects.iter().cloned())
         .chain(std::iter::once(library))
@@ -1071,6 +1065,26 @@ fn build_overlay(
     let encoded = compress_tagged(&decoded, &OVERLAY_MACHINE)?;
     fs::write(&stream, encoded).map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
+}
+
+/// Every file that feeds an overlay's link, including the compiler runtime
+/// archive. Keeping the same archive path does not keep its linked bytes.
+fn overlay_inputs(
+    root: &Path,
+    listing: &Path,
+    script: &Path,
+    objects: &[PathBuf],
+    library: &Path,
+) -> Result<Sha256, String> {
+    let mut hasher = Sha256::new();
+    hasher.update(with_includes(&[root], &root.join(listing))?);
+    for path in std::iter::once(root.join(script))
+        .chain(objects.iter().map(|object| object.with_extension("o.key")))
+        .chain(std::iter::once(root.join(library)))
+    {
+        hasher.update(fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?);
+    }
+    Ok(hasher)
 }
 
 /// Overlay code never branches straight into the main image: the gate reads
@@ -1165,6 +1179,34 @@ fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn overlay_cache_changes_when_the_runtime_archive_is_rebuilt_in_place() {
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path();
+        let listing = Path::new("overlay.s");
+        let script = Path::new("overlay.ld");
+        let library = Path::new("libgcc.a");
+        let objects = [root.join("code.o")];
+        fs::write(root.join(listing), ".thumb\nbx lr\n").unwrap();
+        fs::write(root.join(script), "SECTIONS { .text : { *(.text) } }\n").unwrap();
+        fs::write(objects[0].with_extension("o.key"), "unchanged-object-key").unwrap();
+        fs::write(root.join(library), b"first runtime archive").unwrap();
+        let key = || {
+            format!(
+                "{:x}",
+                overlay_inputs(root, listing, script, &objects, library)
+                    .unwrap()
+                    .finalize()
+            )
+        };
+        let before = key();
+        assert_eq!(key(), before);
+        fs::write(root.join(library), b"rebuilt runtime archive").unwrap();
+        assert_ne!(key(), before);
+        fs::remove_file(root.join(library)).unwrap();
+        assert!(overlay_inputs(root, listing, script, &objects, library).is_err());
+    }
 
     /// The loader's kernel, as PATCH_THUMB_BRANCH.S runs it on a block.
     fn patch_thumb_calls(block: &mut [u8]) {

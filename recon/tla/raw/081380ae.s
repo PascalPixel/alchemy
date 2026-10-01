@@ -247,7 +247,7 @@ Func_081380ae:
 	.4byte 0xe28dd02c
 	.4byte 0xe8bd47e0
 	.4byte 0xe12fff1e
-	.4byte 0x02004778
+	.4byte gModelTransformWork
 	.4byte 0xe92d47e0
 	.4byte 0xe24dd090
 	.4byte 0xe58d008c

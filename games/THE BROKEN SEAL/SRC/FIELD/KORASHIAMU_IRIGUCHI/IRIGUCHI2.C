@@ -174,6 +174,7 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_ActorStartRepeatedMotion(2, 2);
     Engine_ActorRunRepeatedMotion(3, 2);
     Engine_ActorSetAnimationAndWait(17, 3);
+    /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
     Value2(Engine_EventOpenMessage, 17, 0);
     Call3(Engine_ActorFaceDirection, 1, 0xe000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xa000, 0);
@@ -227,6 +228,7 @@ void Scene_RunBranchingActorPresentation(void)
         FieldScene_CallPairWith10(3);
         Engine_ActorSetAnimation(1, 4);
         Engine_EventWait(20);
+        /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(Engine_EventOpenMessage, 1, 0);
 
         record = Engine_EventChooseYesNo(0, 0);
@@ -305,6 +307,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
         Call3(Engine_ActorFaceDirection, 8, 0x3000, 20);
         Engine_ActorRunRepeatedMotion(8, 1);
         Engine_EventSetMessage((s32)MsgKorashiamuYouReadyForFinals);
+        /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(Engine_EventOpenMessage, 0x8008, 0);
         rec = Engine_EventChooseYesNo(0, 0);
         if (rec != 0) {

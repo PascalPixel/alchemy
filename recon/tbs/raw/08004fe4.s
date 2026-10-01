@@ -240,6 +240,6 @@ Graphics_PrepareTransfer:
 .L_080051cc:
 	.4byte IwramSqrt
 .L_080051d0:
-	.4byte IwramUnsignedDivideArm
+	.4byte IwramUnsignedDivide
 .L_080051d4:
 	.4byte IwramMulQ16ReturnIp

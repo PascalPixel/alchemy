@@ -96,7 +96,7 @@ void EffectSlot_Initialize(u8 *object, s32 type, s32 x, s32 z);
 void EffectSlot_SetCallback(u8 *object, void (*update)());
 void EffectSlot_SetObjectMode(u8 *object, s32 mode);
 void ObjectGroup_SetChildValueUnlessFifteen(s32 handle, s32 frame);
-s32 IwramUnsignedDivide(s32 value, s32 divisor);
+s32 Math_DivideUnsigned(s32 value, s32 divisor);
 void OverlayObject_UpdateThreeStateMotion();
 
 /* The overlay object records (72 bytes each), from +88. */
@@ -920,10 +920,10 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Call4(Motion_LaunchFromFocusedObject, 1, -16, 16, 0xc000);
     Call4(Motion_LaunchFromFocusedObject, 3, 0, 16, 0xc000);
-    Value4(Motion_LaunchFromFocusedObject, 2, 16, 16, 0xc000);
+    Call4(Motion_LaunchFromFocusedObject, 2, 16, 16, 0xc000);
     Engine_ActorWaitForMove(1);
     Engine_EventWait(20);
-    Value3(Engine_ActorShowEmote, 2, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 2, 0x102, 0);
     Engine_EventWait(40);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Engine_ActorRunRepeatedMotion(3, 2);
@@ -935,7 +935,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(10);
     Actor_FaceEachOther(ACTOR_GERALD, ACTOR_IVAN, 50);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Value3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
@@ -946,7 +946,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(20);
     Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Value3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(2, 0);
     Event_Wait(10);
@@ -1008,7 +1008,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         Engine_EventWait(20);
         Actor_ShowEmote(ACTOR_GERALD, 0x100, 40);
         Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
-        Value3(Engine_ActorWalkByAndWait, 1, 0, -16);
+        Call3(Engine_ActorWalkByAndWait, 1, 0, -16);
         Engine_EventWait(10);
         Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
         Engine_EventShowMessage(1, 0);
@@ -1016,7 +1016,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         Engine_EventSetMessage((s32)MsgArutamiraDontTrustAnyone);
         Engine_EventWait(10);
         Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-        Value3(Engine_ActorWalkByAndWait, 1, 0, -16);
+        Call3(Engine_ActorWalkByAndWait, 1, 0, -16);
         Engine_EventWait(10);
         Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
         Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
@@ -1028,7 +1028,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventSetMessage(line);
     Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
     Actor_SetSpeed(ACTOR_IVAN, 0x20000, 0x10000);
-    Value3(Engine_ActorWalkByAndWait, 2, 0, -16);
+    Call3(Engine_ActorWalkByAndWait, 2, 0, -16);
     Engine_EventWait(10);
     Actor_FaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
     Event_ShowMessage(ACTOR_IVAN, 0);
@@ -1061,7 +1061,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Value3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     line += 7;
     Engine_EventSetMessage(line);
     Engine_EventWait(30);
@@ -1085,7 +1085,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(10);
     Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Value3(Engine_ActorFaceDirection, 1, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
@@ -1096,7 +1096,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Event_Wait(10);
     Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Value3(Engine_ActorFaceDirection, 1, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(8, 0);
     Event_Wait(10);
@@ -1446,7 +1446,7 @@ void ArutamiraDou_ReleaseWallBurst(void)
         EffectSlot_SetCallback(object, OverlayObject_UpdateThreeStateMotion);
         EffectSlot_SetObjectMode(object, 7);
         ObjectGroup_SetChildValueUnlessFifteen(*(s32 *)object, (u32)(Engine_RandomNext() * 7) >> 16);
-        speed = IwramUnsignedDivide(Engine_RandomNext(), 3) + 0x18000;
+        speed = Math_DivideUnsigned(Engine_RandomNext(), 3) + 0x18000;
         *(s32 *)(object + 44) = speed;
         *(s32 *)(object + 40) = speed;
         Engine_TaskWait(1);

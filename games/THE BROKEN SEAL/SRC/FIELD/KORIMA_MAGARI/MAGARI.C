@@ -22,7 +22,7 @@ extern s16 *gOv;
 extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
-s32 IwramSignedDivide();
+s32 Math_DivideSigned();
 
 /* The board's records in the scene state, where the board setup points. */
 extern s16 *gKorimaMagariRecords;

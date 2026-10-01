@@ -1466,7 +1466,7 @@ void PlayStoryScene(void)
         Actor_WaitForMove(13);
         Engine_ActorFaceDirection(13, 20480, 0);
         Event_Wait(40);
-        Value3(ObjectMotion_OffsetPositionAndResetMotion, 13, -8, 8);
+        Call3(ObjectMotion_OffsetPositionAndResetMotion, 13, -8, 8);
         Actor_WaitForMove(13);
         Event_Wait(60);
         Audio_PlayCue(155);
@@ -1534,7 +1534,7 @@ void PlayStoryScene(void)
         Event_Wait(20);
         Engine_ActorFaceDirection(12, 45056, 0);
         Event_Wait(30);
-        Value3(Engine_ActorFaceDirection, 12, 20480, 0);
+        Call3(Engine_ActorFaceDirection, 12, 20480, 0);
         Event_Wait(30);
         Actor_FaceActor(12, ACTOR_IVAN, 0);
         Event_Wait(20);
@@ -1543,7 +1543,7 @@ void PlayStoryScene(void)
         Event_Wait(40);
         Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
         Event_Wait(20);
-        Value3(Engine_ActorShowEmote, 12, 264, 0);
+        Call3(Engine_ActorShowEmote, 12, 264, 0);
         Event_Wait(120);
         Event_SetMessage(text_line + 5);
         Event_ShowMessage(12, 0);
@@ -1587,7 +1587,7 @@ void PlayStoryScene(void)
         Actor_ShowEmote(ACTOR_IVAN, 258, 0);
         Actor_ShowEmote(ACTOR_GERALD, 258, 0);
         Actor_ShowEmote(ACTOR_MIA, 258, 0);
-        Value3(Engine_ActorShowEmote, 12, 258, 0);
+        Call3(Engine_ActorShowEmote, 12, 258, 0);
         Event_Wait(60);
         Actor_FaceActor(12, 13, 0);
         Actor_StartRepeatedMotion(12, 2);
@@ -1613,14 +1613,14 @@ void PlayStoryScene(void)
         Event_Wait(60);
         Event_SetMessage(text_line + 12);
         Event_ShowMessage(13, 0);
-        Value3(Engine_ActorShowEmote, 1, 259, 0);
+        Call3(Engine_ActorShowEmote, 1, 259, 0);
         Event_Wait(60);
         Actor_SetAnimation(13, 4);
         Event_SetMessage(text_line + 13);
         Event_ShowMessage(13, 0);
-        Value3(Engine_ActorWalkTo, 1, 456, 248);
+        Call3(Engine_ActorWalkTo, 1, 456, 248);
         Actor_WaitForMove(ACTOR_GERALD);
-        Value3(Engine_ActorFaceDirection, 1, 16384, 0);
+        Call3(Engine_ActorFaceDirection, 1, 16384, 0);
         Event_SetMessage(text_line + 14);
         Event_ShowMessage(ACTOR_GERALD, 0);
         Engine_ActorWalkTo(2, 472, 216);
@@ -1664,7 +1664,7 @@ void PlayStoryScene(void)
         Actor_WaitForMove(13);
         Engine_ActorFaceDirection(13, 20480, 0);
         Event_Wait(80);
-        Value3(ObjectMotion_OffsetPositionAndResetMotion, 13, -8, 8);
+        Call3(ObjectMotion_OffsetPositionAndResetMotion, 13, -8, 8);
         Actor_WaitForMove(13);
         Event_Wait(60);
         Audio_PlayCue(155);

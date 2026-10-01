@@ -169,7 +169,7 @@ Scene_RunActorGroupDepartureSequence:
 	adds r5, r0, #0
 	bl Engine_RandomNext
 	movs r1, #20
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r5, #100
 	ldr r2, .L_0200b394
 	adds r0, #20
@@ -182,7 +182,7 @@ Scene_RunActorGroupDepartureSequence:
 	adds r5, r0, #0
 	bl Engine_RandomNext
 	movs r1, #20
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r5, #100
 	adds r0, #20
 	strh r0, [r5]
@@ -191,7 +191,7 @@ Scene_RunActorGroupDepartureSequence:
 	adds r5, r0, #0
 	bl Engine_RandomNext
 	movs r1, #20
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r5, #100
 	adds r0, #20
 	strh r0, [r5]
@@ -227,7 +227,7 @@ Scene_RunActorGroupDepartureSequence:
 	adds r5, r0, #0
 	bl Engine_RandomNext
 	movs r1, #20
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r5, #100
 	adds r0, #20
 	strh r0, [r5]
@@ -236,7 +236,7 @@ Scene_RunActorGroupDepartureSequence:
 	adds r5, r0, #0
 	bl Engine_RandomNext
 	movs r1, #20
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r5, #100
 	adds r0, #20
 	strh r0, [r5]
@@ -897,7 +897,7 @@ Scene_RunActorGroupDepartureSequence:
 	strh r3, [r7, #6]
 	bl Engine_RandomNext
 	movs r1, #90
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r3, r7, #0
 	ldr r5, .L_0200bad0
 	adds r0, #60
@@ -925,7 +925,7 @@ Scene_RunActorGroupDepartureSequence:
 	strh r0, [r7, #6]
 	bl Engine_RandomNext
 	movs r1, #90
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r3, r7, #0
 	adds r0, #60
 	adds r3, #100
@@ -951,7 +951,7 @@ Scene_RunActorGroupDepartureSequence:
 	strh r2, [r7, #6]
 	bl Engine_RandomNext
 	movs r1, #90
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r3, r7, #0
 	b .L_0200badc
 .L_0200babc:
@@ -993,7 +993,7 @@ Scene_RunActorGroupDepartureSequence:
 	strh r3, [r7, #6]
 	bl Engine_RandomNext
 	movs r1, #90
-	bl IwramUnsignedRemainder
+	bl Math_RemainderUnsigned
 	adds r3, r7, #0
 	adds r0, #60
 	adds r3, #100

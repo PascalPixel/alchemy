@@ -107,7 +107,7 @@ Func_080212da:
 	.4byte 0xe12fff1e
 	.global Data_0802146c
 Data_0802146c:
-	.4byte 0x02004778
+	.4byte gModelTransformWork
 	.4byte 0xe92d47e0
 	.4byte 0xe1a05001
 	.4byte 0xe59f9200
@@ -240,7 +240,10 @@ Data_0802146c:
 	.4byte 0xe08330c2
 	.4byte 0xe586300c
 	.4byte 0xea00000d
-	.4byte 0x080000c0
+@ This is the table's data address, without its first entry's Thumb bit.
+1:
+	.4byte 0
+	.reloc 1b, R_ARM_ABS32_NOI, WaitFramesFar
 	.4byte Data_03001244
 	.4byte Data_030011ec
 	.4byte Data_0300122c

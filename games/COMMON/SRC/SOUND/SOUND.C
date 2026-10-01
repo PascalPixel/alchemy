@@ -1,6 +1,13 @@
 #include "AUDIO_ENGINE.H"
 #include "RAM_BUFFER.H"
 
+/* Shared driver settings, as MusicPlayer2000's C configuration supplies them. */
+#define SOUND_PLAYER_COUNT 8
+#define SOUND_MAX_LINES 0
+#define SOUND_CLEAR_CONTROL 0x05000040
+#define SOUND_STRINGIFY_IMPL(value) #value
+#define SOUND_STRINGIFY(value) SOUND_STRINGIFY_IMPL(value)
+
 void Sound_Mixer(void);
 void AudioEngine_Initialize(struct SoundWork *work);
 void CgbAudio_Initialize(struct SoundNote *notes);
@@ -17,7 +24,6 @@ extern struct SoundNote Sound_CgbNotes[4];
 extern u8 Sound_WorkBytes[];
 extern const struct PlayerSlot Sound_PlayerSlots[];
 extern const struct SongEntry Sound_SongTable[];
-extern u8 Sound_PlayerCount;
 
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicTrack_SetLfoSpeedFromCommand(struct SoundPlayer *player, struct SoundTrack *track);
@@ -32,7 +38,6 @@ void Cgb_UpdateChannels(void);
 void CgbChannel_Mute(u8 channel);
 s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
 extern SoundCommand Sound_CommandTable[36];
-extern u8 Sound_MaxLines;
 
 void Audio_ResumePlayer(struct SoundPlayer *player)
 {
@@ -57,21 +62,45 @@ void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed)
 void Audio_Initialize(void)
 {
     u16 count;
+    /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
+    u32 total;
     s32 i;
+    /* FAKEMATCH: keep the slot cursor in r5 across the library calls. */
+    register const struct PlayerSlot *slots asm("r5");
+    /* FAKEMATCH: the work-area literal loads straight into the store's r0. */
+    register u8 *bytes asm("r0");
 
     Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), Ram_SoundMixer, 0x04000100);
     AudioEngine_Initialize(&Sound_Work);
     CgbAudio_Initialize(Sound_CgbNotes);
     AudioEngine_SetMode(AUDIO_INITIAL_MODE);
-    count = (u32)&Sound_PlayerCount;
-    for (i = 0; i < count; i++) {
-        struct SoundPlayer *player = Sound_PlayerSlots[i].player;
+    /* FAKEMATCH: retain the count's literal load, extension and zero guard. */
+    asm volatile("ldr %0, .LSoundInitCount" : "=r"(total));
+    count = total;
+    if (count != 0) {
+        /* FAKEMATCH: this literal follows the count in the same local pool. */
+        asm volatile("ldr %0, .LSoundInitSlots" : "=r"(slots));
+        i = count;
+        do {
+            struct SoundPlayer *player = slots->player;
 
-        MusicPlayer_Initialize(player, Sound_PlayerSlots[i].tracks, Sound_PlayerSlots[i].track_count);
-        player->check_priority = Sound_PlayerSlots[i].check_priority;
-        player->work_bytes = Sound_WorkBytes;
+            MusicPlayer_Initialize(player, slots->tracks, slots->track_count);
+            player->check_priority = slots->check_priority;
+            /* FAKEMATCH: the loop reloads the work-area literal for each player. */
+            asm volatile("ldr %0, .LSoundInitBytes" : "=r"(bytes));
+            player->work_bytes = bytes;
+            slots++;
+            i--;
+        } while (i != 0);
     }
 }
+
+/* FAKEMATCH: retain the three local pool words and include them in the function extent. */
+asm(".align 2, 0\n"
+    ".LSoundInitCount:\n.word " SOUND_STRINGIFY(SOUND_PLAYER_COUNT) "\n"
+    ".LSoundInitSlots:\n.word Sound_PlayerSlots\n"
+    ".LSoundInitBytes:\n.word Sound_WorkBytes\n"
+    ".size Audio_Initialize, .-Audio_Initialize");
 
 void AudioEngine_RunMixer(void)
 {
@@ -139,12 +168,33 @@ void Audio_ResumeSound(u16 id)
 
 void Audio_StopAllPlayers(void)
 {
-    u16 count = (u32)&Sound_PlayerCount;
+    u16 count;
+    /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
+    u32 total;
     s32 i;
+    /* FAKEMATCH: keep the slot cursor in r5 and the countdown in r4. */
+    register const struct PlayerSlot *slots asm("r5");
 
-    for (i = 0; i < count; i++)
-        MusicPlayer_Stop(Sound_PlayerSlots[i].player);
+    /* FAKEMATCH: retain the count's literal load, extension and zero guard. */
+    asm volatile("ldr %0, .LSoundStopCount" : "=r"(total));
+    count = total;
+    if (count != 0) {
+        /* FAKEMATCH: retain the slot cursor's literal after the guard. */
+        asm volatile("ldr %0, .LSoundStopSlots" : "=r"(slots));
+        i = count;
+        do {
+            MusicPlayer_Stop(slots->player);
+            slots++;
+            i--;
+        } while (i != 0);
+    }
 }
+
+/* FAKEMATCH: source-owned settings and table name, both in the complete function extent. */
+asm(".align 2, 0\n"
+    ".LSoundStopCount:\n.word " SOUND_STRINGIFY(SOUND_PLAYER_COUNT) "\n"
+    ".LSoundStopSlots:\n.word Sound_PlayerSlots\n"
+    ".size Audio_StopAllPlayers, .-Audio_StopAllPlayers");
 
 void MusicPlayer_Resume(struct SoundPlayer *player)
 {
@@ -153,12 +203,33 @@ void MusicPlayer_Resume(struct SoundPlayer *player)
 
 void Audio_ResumeAllPlayers(void)
 {
-    u16 count = (u32)&Sound_PlayerCount;
+    u16 count;
+    /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
+    u32 total;
     s32 i;
+    /* FAKEMATCH: keep the slot cursor in r5 and the countdown in r4. */
+    register const struct PlayerSlot *slots asm("r5");
 
-    for (i = 0; i < count; i++)
-        Audio_ResumePlayer(Sound_PlayerSlots[i].player);
+    /* FAKEMATCH: retain the count's literal load, extension and zero guard. */
+    asm volatile("ldr %0, .LSoundResumeCount" : "=r"(total));
+    count = total;
+    if (count != 0) {
+        /* FAKEMATCH: retain the slot cursor's literal after the guard. */
+        asm volatile("ldr %0, .LSoundResumeSlots" : "=r"(slots));
+        i = count;
+        do {
+            Audio_ResumePlayer(slots->player);
+            slots++;
+            i--;
+        } while (i != 0);
+    }
 }
+
+/* FAKEMATCH: source-owned settings and table name, both in the complete function extent. */
+asm(".align 2, 0\n"
+    ".LSoundResumeCount:\n.word " SOUND_STRINGIFY(SOUND_PLAYER_COUNT) "\n"
+    ".LSoundResumeSlots:\n.word Sound_PlayerSlots\n"
+    ".size Audio_ResumeAllPlayers, .-Audio_ResumeAllPlayers");
 
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed)
 {
@@ -214,6 +285,9 @@ void CgbAudio_Initialize(struct SoundNote *notes)
     struct SoundWork *work;
     u32 lock;
     u32 zero;
+    /* FAKEMATCH: keep the configured limit and fill control as opaque literal outputs. */
+    u32 limit;
+    u32 control;
 
     *(u16 *)0x04000084 = 0x8F;
     *(u16 *)0x04000080 = 0;
@@ -246,10 +320,14 @@ void CgbAudio_Initialize(struct SoundNote *notes)
     work->cgb_update = Cgb_UpdateChannels;
     work->cgb_mute = CgbChannel_Mute;
     work->cgb_frequency = Cgb_KeyToFrequency;
-    work->max_lines = (u32)&Sound_MaxLines;
+    /* FAKEMATCH: plain zero removes this limit literal and changes register allocation. */
+    asm volatile("ldr %0, .LSoundMaxLines" : "=r"(limit));
+    work->max_lines = limit;
 
     zero = 0;
-    Bios_CpuSet(&zero, notes, 0x05000040);
+    /* FAKEMATCH: keep the following control word beside the limit; materialize zero first. */
+    asm volatile("ldr %0, .LSoundClearControl" : "=r"(control) : "m"(zero));
+    Bios_CpuSet(&zero, notes, control);
     notes[0].kind = 1;
     notes[0].channel_bits = 0x11;
     notes[1].kind = 2;
@@ -261,3 +339,9 @@ void CgbAudio_Initialize(struct SoundNote *notes)
 
     work->lock = lock;
 }
+
+/* FAKEMATCH: the two configured literals complete the initializer's existing pool. */
+asm(".align 2, 0\n"
+    ".LSoundMaxLines:\n.word " SOUND_STRINGIFY(SOUND_MAX_LINES) "\n"
+    ".LSoundClearControl:\n.word " SOUND_STRINGIFY(SOUND_CLEAR_CONTROL) "\n"
+    ".size CgbAudio_Initialize, .-CgbAudio_Initialize");

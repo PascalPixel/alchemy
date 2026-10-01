@@ -469,10 +469,11 @@ pub fn compiler_bundle_signature_checked() -> Result<String> {
     Ok(compiler_bundle_signature())
 }
 /// Identity of the tool code that decides what a build stage caches: the
-/// digest `build.rs` takes of every Alchemy and Psynergy source except the
-/// checks and reports that only read build outputs. A change to
-/// those rebuilds nothing, as a Makefile rebuilds only what a changed tool
-/// produces; any other tool change invalidates every cached object.
+/// digest `build.rs` takes of Alchemy's build sources, every Psynergy and
+/// ags source, the member crate manifests and lockfile. Alchemy's checks,
+/// reports and other readers of build outputs do not contribute: changing
+/// those readers rebuilds nothing. Changed build producers invalidate
+/// their cached outputs; the linked overlay also keys on libgcc's bytes.
 pub fn executable_signature() -> Result<String> {
     Ok(env!("ALCHEMY_BUILD_IMPLEMENTATION").to_string())
 }

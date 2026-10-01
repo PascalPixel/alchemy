@@ -71,7 +71,7 @@ void BattleFx_SpawnRadialParticleRing(struct RingOrigin *origin)
         velocity[1] = 0;
         sine = Trig_Sin(angle);
         velocity[2] = sine;
-        Effect_Spawn(origin->x, origin->y, origin->z, velocity[0], velocity[1], sine, 0x01090001, &options);
+        Effect_SpawnResident(origin->x, origin->y, origin->z, velocity[0], velocity[1], sine, 0x01090001, &options);
         i++;
     } while (i <= 16);
 }

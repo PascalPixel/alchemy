@@ -1982,7 +1982,7 @@ void Scene_RepairTheHouse(void)
     Engine_ActorEnableActionCallback(0, 1);
     *(s32 *)(scene + 24) = 0x10000;
     *(s32 *)(scene + 28) = 0x10000;
-    Call4(Engine_ActorFaceDirection, 0, 0xb000, 40, 0x10000);
+    Call3(Engine_ActorFaceDirection, 0, 0xb000, 40);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(10);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);

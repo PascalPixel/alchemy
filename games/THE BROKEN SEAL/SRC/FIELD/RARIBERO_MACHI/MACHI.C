@@ -168,10 +168,10 @@ void Scene_RunTableTransition(void)
     ((u8 *)Object_GetById(0))[85] = 2;
     Audio_PlayCue(158);
     if (no == 6) {
-        Value3(Engine_MapAnimateCells, (s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
+        Call3(Engine_MapAnimateCells, (s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
         Call3(Engine_ActorWalkBy, 0, 0, -16);
     } else {
-        Value3(Engine_MapAnimateCells, (s32)RariberoMachi_DoorOpenSteps, (u16)x, (u16)y);
+        Call3(Engine_MapAnimateCells, (s32)RariberoMachi_DoorOpenSteps, (u16)x, (u16)y);
         Call3(Engine_ActorCenterAndWalk, 0, 2, -16);
     }
     Event_Wait(10);

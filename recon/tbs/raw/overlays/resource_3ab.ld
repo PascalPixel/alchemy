@@ -8,11 +8,11 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/MURA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/IMPORT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/EFFECT.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/VILLAGE.o"(.rodata)
     }
-    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

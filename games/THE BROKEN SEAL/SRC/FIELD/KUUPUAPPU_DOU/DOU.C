@@ -14,7 +14,7 @@ void Object_SetMoveTarget(s32 *, s32, s32, s32);
 void KuupuappuDou_PushBlockAhead();
 s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor);
 void KuupuappuDou_SpawnPuffs();
-s32 IwramUnsignedRemainder();
+s32 Math_RemainderUnsigned();
 
 struct Actor {
     s32 f00;
@@ -762,7 +762,7 @@ void FieldScene_RunScene3a7SequenceD(void)
         if ((++KuupuappuDou_TickCounter & 63) == 0) {
             selected = &KuupuappuDou_TickValue;
             record = Random_Next();
-            record = IwramUnsignedRemainder(record, 6);
+            record = Math_RemainderUnsigned(record, 6);
             *selected = record;
             rec7 = Actor_Get((record + 10));
             *(s32 *)(rec7 + 72) = 0xa3d;

@@ -655,6 +655,8 @@ Funka_EmberScript:
 	.4byte 0x00000022
 	.4byte 0x02008f55
 	.4byte 0x00000010
+	.global Soru_RingDrift
+Soru_RingDrift:
 	.4byte 0x04040404
 	.4byte 0x00040300
 	.4byte 0x04000404
@@ -662,7 +664,10 @@ Funka_EmberScript:
 	.4byte 0x00060406
 	.4byte 0x03000404
 	.4byte 0x02010002
-	.4byte 0x01010200
+	.2byte 0x0200
+	.global Soru_RingSwing
+Soru_RingSwing:
+	.2byte 0x0101
 	.4byte 0x02000102
 	.4byte 0x01020001
 	.4byte 0x00010100
@@ -670,6 +675,8 @@ Funka_EmberScript:
 	.4byte 0x01020001
 	.4byte 0x00010200
 	.4byte 0x02000102
+	.global Soru_RingDirection
+Soru_RingDirection:
 	.4byte 0x01010101
 	.4byte 0x00010100
 	.4byte 0x0100ff01

@@ -55,9 +55,6 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
     }
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 
 /* Clears the highlight over the whole party panel strip, then highlights
@@ -88,4 +85,3 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids)
     }
     return 0;
 }
-#endif

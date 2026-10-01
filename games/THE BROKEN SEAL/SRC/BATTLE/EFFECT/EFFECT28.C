@@ -227,9 +227,6 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
 
 #undef OBJECT_0808EEE4_OFFSET
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep this function in their scaffolds for now. */
-
 /* One of the ten cells a scene lists at gEventWork + 0x11c, in tiles. */
 struct ParticleCell {
     u8 unknown_0[4];
@@ -291,7 +288,6 @@ void BattleFx_EmitRandomParticle(void)
         }
     }
 }
-#endif
 
 void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
 {

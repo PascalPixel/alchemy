@@ -146,3 +146,50 @@ begin_transfer:
 transfer_complete:
     return value;
 }
+
+s32 SerialRuntime_BeginTransferB(s32 value)
+{
+    volatile s32 *active;
+    struct SerialTransferState *state;
+    volatile u16 *ime;
+    u32 saved_interrupt_master;
+    s32 busy;
+
+    active = &SERIAL_ACTIVE_B;
+    busy = *active;
+    /* FAKEMATCH: the do/while blocks and the second active assignment are
+     * meaningless, as in SerialRuntime_BeginTransferA: they give active r5
+     * and state r6 and keep the stores in the reference order. */
+    do {
+        state = &gSerialTransfer;
+    } while (0);
+    active = &SERIAL_ACTIVE_B;
+    if (busy == 0)
+        goto begin_transfer;
+    value = -1;
+    goto transfer_complete;
+
+begin_transfer:
+    ime = &REG_IME;
+    saved_interrupt_master = *ime;
+    *ime = (u16)(u32)ime; /* its own address, 0x208: bit 0 clear */
+    do {
+        state->status = 0x81;
+        SERIAL_VALUE_B = 0;
+        state->active = 1;
+        *active = value;
+    } while (0);
+    {
+        /* The sequence clear stores a pooled halfword zero loaded into r0
+         * after the sequence's address, where CSE would store busy's zero. */
+        volatile u8 *sequence = &gSerialBlockSequence;
+        register u16 zero asm("r0") = 0; /* FAKEMATCH: the zero in r0, see above */
+        asm("" : "+l"(zero)); /* FAKEMATCH: hides the zero from CSE, see above */
+        *sequence = zero;
+    }
+    *ime = saved_interrupt_master;
+    value = 0;
+
+transfer_complete:
+    return value;
+}

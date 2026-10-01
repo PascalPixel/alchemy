@@ -7,6 +7,7 @@
 #include "VRAM_BLOCK.H"
 #include "SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "STRING.H"
 #include "IO_REG.H"
 #include "LOW_RUNTIME.H"
 
@@ -440,11 +441,11 @@ sort_pass:
     remaining = pass;
 next_task:
     if ((s16)task[1].state > (s16)task->state) {
-        __builtin_memcpy(&saved, task, sizeof(saved));
+        memcpy(&saved, task, sizeof(saved));
         base = task;
         task++;
-        __builtin_memcpy(base, task, sizeof(saved));
-        __builtin_memcpy(task, &saved, sizeof(saved));
+        memcpy(base, task, sizeof(saved));
+        memcpy(task, &saved, sizeof(saved));
     } else {
         task++;
     }

@@ -1,5 +1,5 @@
 /*
- * Draft: DjinnMenu_DrawStatPreview, 28 of 889 instructions off (score 1025),
+ * Draft: DjinnMenu_DrawStatPreview, 18 of 889 instructions off (score 615),
  * rewritten on 2026-10-02 (wave 1b slice 5) from the machine-lifted draft
  * that could not be scored. English edition only; the Japanese function is
  * shorter and draws its labels from message 0x8b0.
@@ -10,6 +10,8 @@
  * and the class name, changed-class, list-row and final copy calls set up
  * their arguments in another order. Djinn_AddToOwnerFar returning a value is
  * what orders the first case of the switch; no other callee return type helps.
+ * The changed-class arm keeps the pixel column in a variable, which computes
+ * it in the argument register as the listing does.
  *
  * i = 0 before the second page test is a dead store that only keeps the two
  * page tests apart: without it GCC threads the first test past the second and
@@ -156,10 +158,12 @@ s32 DjinnMenu_DrawStatPreview(struct RenderInput *window, s32 x, s32 y, s32 owne
     if (page == 0) {
         s32 column;
         s32 icon_x;
+        s32 px;
 
         if (saved->class_index != state->class_index) {
-            UiText_DrawCharacterAtOffsetFar(state->class_index + 0x741, window, x * 8, y * 8 + 48);
-            UiWindow_SetTilemapEntryFar(window, 0xf296, x + 2, 5, page);
+            px = x * 8;
+            UiText_DrawCharacterAtOffsetFar(state->class_index + 0x741, window, px, y * 8 + 48);
+            UiWindow_SetTilemapEntryFar(window, 0xf296, x + 2, 5, 0);
         }
         column = x;
         if (saved->class_index != state->class_index)
@@ -267,7 +271,7 @@ s32 DjinnMenu_DrawStatPreview(struct RenderInput *window, s32 x, s32 y, s32 owne
     }
 
     if (page == 0)
-        SideObject_CreateFar(owner, 0, side, window, page, page);
+        SideObject_CreateFar(owner, 0, side, window, 0, 0);
     Iwram_CopyWords(state, saved, sizeof(struct BattleUnit));
     Runtime_BumpFree(saved);
     return 1;

@@ -1,8 +1,9 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "STAGED_ACTOR.H"
 #include "CALL.H"
 #include "TBS_EDITION.H"
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 #include "FIXED_POINT_POSITION.H"
@@ -25,16 +26,16 @@ void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
 s32 Engine_RandomNext(void);
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 void Engine_MapRenderWaitForValues(void);
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 s32 Engine_GameFlagSet(s32 flag);
 #endif
 void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Audio_PlayCue(s32 cue);
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 u8 *Object_GetById();
 #endif
 void ObjectGroup_ConfigureChildValue();
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 void Engine_TaskAddCallback();
 void Engine_TaskRemoveCallback();
 #endif
@@ -43,7 +44,7 @@ void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPrimarySequence(void);
 void FieldScene_RunPillarBurst(void);
 
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 static __inline__ void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
 {
     /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
@@ -232,7 +233,9 @@ void FieldScene_RunFourStepSequence(void)
 
 void FieldScene_TryJumpForward(void)
 {
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+    Field_TryJumpForward();
+#else
     struct FieldActor *obj;
     struct FixedPointPosition target;
     struct FixedPointPosition *pos;
@@ -263,8 +266,6 @@ void FieldScene_TryJumpForward(void)
         *flags = saved;
         Engine_EventEnd();
     }
-#else
-    Field_TryJumpForward();
 #endif
 }
 

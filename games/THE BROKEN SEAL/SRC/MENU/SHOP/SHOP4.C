@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
 #include "TBS_EDITION.H"
@@ -170,10 +171,10 @@ s32 Shop_SalePrice(s32 item_id)
     return price;
 }
 
-#if defined(TBS_EDITION_JA)
-#define BASE_W 11
-#else
+#if EDITION_INTERNATIONAL
 #define BASE_W 12
+#else
+#define BASE_W 11
 #endif
 
 /*

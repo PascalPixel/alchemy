@@ -1,16 +1,17 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
 /* The Japanese item names and stats sit closer, and the page icons a little
    further right. */
-#if defined(TBS_EDITION_JA)
-#define SHOP_PAGE_ICONS_X 123
-#define SHOP_ITEM_NAME_X  136
-#define SHOP_STAT_X       72
-#else
+#if EDITION_INTERNATIONAL
 #define SHOP_PAGE_ICONS_X 119
 #define SHOP_ITEM_NAME_X  128
 #define SHOP_STAT_X       80
+#else
+#define SHOP_PAGE_ICONS_X 123
+#define SHOP_ITEM_NAME_X  136
+#define SHOP_STAT_X       72
 #endif
 
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */

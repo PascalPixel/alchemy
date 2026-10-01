@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
 #include "ITEM.H"
@@ -76,10 +77,10 @@ void ItemMenu_BuildCmd(s8 *command_states)
         command_states[5] = COMMAND_DISABLED;
 }
 
-#if defined(TBS_EDITION_JA)
-#define ITEM_TEXT_X 0x28
-#else
+#if EDITION_INTERNATIONAL
 #define ITEM_TEXT_X 0x20
+#else
+#define ITEM_TEXT_X 0x28
 #endif
 
 void ItemMenu_DrawCmd(void *command_states, s32 window)

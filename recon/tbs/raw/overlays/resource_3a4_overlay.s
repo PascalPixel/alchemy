@@ -1269,6 +1269,67 @@ gArutinYamaEntrances11:
 	.4byte 0x00000000
 	.global gArutinYamaRegions9
 gArutinYamaRegions9:
+	/* Europe combines the two ninth-room boxes and widens the tenth. */
+	.ifdef TBS_EDITION_ES
+	.4byte 0xff8c0310
+	.4byte 0x0320023c
+	.4byte 0x024cff9c
+	.4byte 0x0006ffff
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.global gArutinYamaRegions10
+gArutinYamaRegions10:
+	.4byte 0x00220050
+	.4byte 0x006001a0
+	.4byte 0x01b00032
+	.4byte 0x0001ffff
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.else
+	.ifdef TBS_EDITION_FR
+	.4byte 0xff8c0310
+	.4byte 0x0320023c
+	.4byte 0x024cff9c
+	.4byte 0x0006ffff
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.global gArutinYamaRegions10
+gArutinYamaRegions10:
+	.4byte 0x00220050
+	.4byte 0x006001a0
+	.4byte 0x01b00032
+	.4byte 0x0001ffff
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte 0xff8c0310
+	.4byte 0x0320023c
+	.4byte 0x024cff9c
+	.4byte 0x0006ffff
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.global gArutinYamaRegions10
+gArutinYamaRegions10:
+	.4byte 0x00220050
+	.4byte 0x006001a0
+	.4byte 0x01b00032
+	.4byte 0x0001ffff
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.else
 	.4byte 0xff960316
 	.4byte 0x031a023f
 	.4byte 0x0243ff9a
@@ -1291,6 +1352,9 @@ gArutinYamaRegions10:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.endif
+	.endif
+	.endif
 	.global ArutinYama_StatueTable
 ArutinYama_StatueTable:
 	.4byte 0x0000004d

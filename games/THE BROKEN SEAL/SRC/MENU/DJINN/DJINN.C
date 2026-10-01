@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "GLOBAL_CELLS.H"
@@ -47,10 +48,10 @@ s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
     return count;
 }
 
-#if defined(TBS_EDITION_JA)
-#define ALT_PARAM 4
-#else
+#if EDITION_INTERNATIONAL
 #define ALT_PARAM 2
+#else
+#define ALT_PARAM 4
 #endif
 
 s32 Menu_RunPairedEntryAction(s32 mode, s32 param)

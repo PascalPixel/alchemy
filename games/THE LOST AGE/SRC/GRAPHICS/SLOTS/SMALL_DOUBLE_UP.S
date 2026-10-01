@@ -1,9 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Slots_SmallDoubleUpBanner: its 16-colour palette, then 16 tiles of 4-bit colour packed
 @ by the resource packer.
 	.section .rodata
 	.global Slots_SmallDoubleUpBanner
 Slots_SmallDoubleUpBanner:
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.incbin "GRAPHICS/SLOTS/SMALL_DOUBLE_UP_JA.gbapal"
 	.incbin "GRAPHICS/SLOTS/SMALL_DOUBLE_UP_JA.4bpp16x16.lz"
 	.else

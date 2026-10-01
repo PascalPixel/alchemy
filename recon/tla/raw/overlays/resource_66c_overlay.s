@@ -112,7 +112,7 @@ Func_02000074:
 	pop {pc}
 	.2byte 0x0000
 .L_02008150:
-	.4byte 0x00001850
+	.4byte MsgKibonboWarriorsFound
 	.section .text.x02008154,"ax",%progbits
 	.global Func_02000154
 	.thumb_func
@@ -250,28 +250,28 @@ gSceneEvents:
 	.4byte Func_02000074
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001855
+	.4byte MsgKibonboWarriorIntroducesHimself
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001856
+	.4byte MsgKibonboWarriorsBlameContinentsCollision
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001857
+	.4byte MsgKibonboWarriorsClaimCamping
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001858
+	.4byte MsgKibonboWarriorsFriendsComing
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001859
+	.4byte MsgKibonboWarriorsRegretMadraRaid
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000185a
+	.4byte MsgKibonboWarriorsLostFood
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000185b
+	.4byte MsgKibonboWarriorsThreatenTown
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000185c
+	.4byte MsgKibonboWarriorsWonderAboutPrisoners
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 /* Moving and positioning actor zero. */
 #include "BABI.H"
 #include "TYPES.H"
@@ -65,10 +66,10 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     actor->flags &= (u8)0x7e;   /* masks the byte re-read here, not `saved` */
 
     Engine_ActorSetSpriteFlags(actor, 0);
-#if defined(TBS_EDITION_JA)
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, target->x.part.pixel, target->z.part.pixel);
-#else
+#if EDITION_INTERNATIONAL
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, ((target->x.fixed >> 20) << 4) + 8, ((target->z.fixed >> 20) << 4) + 8);
+#else
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, target->x.part.pixel, target->z.part.pixel);
 #endif
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);

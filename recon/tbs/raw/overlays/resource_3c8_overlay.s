@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x0200a47c,"ax",%progbits
@@ -309,7 +310,7 @@ Scene_RunScene3c8SequenceA:
 	str r0, [sp, #8]
 	bl Engine_EventBegin
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	bl Battle_ResetEffectCounter
 	.endif
@@ -3497,7 +3498,7 @@ gVinasuHeyaEvents2:
 	.4byte 0xffff000a
 	.4byte MsgVinasuHeyaIWonderWhatMysteriesTheStatue
 	.4byte 0x00000003
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte 0xffff0023
 	.4byte SceneDialogue_ReadRelief
 	.4byte 0x00000003

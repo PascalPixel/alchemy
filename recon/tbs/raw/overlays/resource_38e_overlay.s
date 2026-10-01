@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x02008bd4,"a",%progbits
@@ -93,7 +94,7 @@ gBiribinoNiwaPlacements:
 	.4byte 0x00024000
 	/* ES/FR/IT retain an extra actor in the garden placement group. */
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	.4byte 0xffff00f8
 	.4byte 0x00000001

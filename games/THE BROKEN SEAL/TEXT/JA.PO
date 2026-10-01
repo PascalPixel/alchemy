@@ -36455,7 +36455,7 @@ msgctxt "MsgTorebiHeyaSinceWeDidntGetToSee"
 msgid "09111"
 msgstr "コラシアムのトライアルは{line_break}見そこなっちゃったから{line_break}そのぶん もり上がるぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeyaBabiShowedHimselfAtFinals"
 msgid "09112"
 msgstr "バビ様 ファイナルには{line_break}すがたを見せたらしい{page_break}行方がわからない・・・ってのは{line_break}まちがいだったのかな?{end_now}"
 
@@ -36467,7 +36467,7 @@ msgctxt "MsgTorebiHeyaHuhThenTheyFoundHimIn"
 msgid "09114"
 msgstr "ん? じゃあ ファイナル前に{line_break}見つかったっていうのか・・・{line_break}そんなバカなことあるかい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeyaBabiDecidedShowUpForFinals"
 msgid "09115"
 msgstr "なんだあ バビ様は・・・{line_break}ファイナルには しっかり{line_break}すがたを見せたそうだぜ。{end_wait}"
 

@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x020083cc,"ax",%progbits
@@ -11,7 +12,7 @@ Func_020003cc:
 	push {r5, r6, r7}
 	mov r7, r8
 	push {r7}
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	sub sp, #488
 	movs r0, #0
 	.else
@@ -93,7 +94,7 @@ Func_020003cc:
 	bl UiWork_Finalize
 	movs r1, #2
 	ldr r0, [sp, #12]
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	bl UiWork_Finalize
 	movs r0, #1
 	bl WaitFrames
@@ -673,9 +674,9 @@ Clear_LoadFourthSlot:
 	.ifndef TBS_EDITION_EN
 	.ifndef TBS_EDITION_DE
 	.ifndef TBS_EDITION_FR
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.balign 4, 0
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 .L_020086b4:
 	.4byte 0xfffffddc
 	.endif
@@ -739,9 +740,9 @@ Clear_LoadFourthSlot:
 .L_020087ae:
 	movs r4, #0
 	b .L_0200895e
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.balign 4, 0
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 .L_020086b4:
 	.4byte 0xfffffddc
 	.endif
@@ -834,7 +835,7 @@ Clear_LoadFourthSlot:
 	str r3, [sp, #0]
 	movs r1, #5
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	movs r2, #22
 	movs r3, #8
 	movs r0, #4
@@ -991,7 +992,7 @@ Clear_LoadFourthSlot:
 	.ifdef TBS_EDITION_FR
 	cmp r3, #70
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	cmp r3, #67
 	.else
 	.ifdef TBS_EDITION_ES
@@ -1041,7 +1042,7 @@ Clear_LoadFourthSlot:
 	str r3, [sp, #0]
 	movs r1, #10
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	movs r2, #22
 	movs r3, #4
 	movs r0, #4
@@ -1131,7 +1132,7 @@ Clear_LoadFourthSlot:
 	.ifndef TBS_EDITION_EN
 	.ifndef TBS_EDITION_DE
 	.ifndef TBS_EDITION_FR
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	adds r0, r6, #0
 	bl RenderOutput_PrepareForRedraw
 	.endif
@@ -1139,7 +1140,7 @@ Clear_LoadFourthSlot:
 	movs r1, #2
 Clear_FinalizeAndWait:
 	bl UiWork_Finalize
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	movs r0, #1
 	bl WaitFrames
 	.endif
@@ -1197,7 +1198,7 @@ Clear_FinalizeAndWait:
 	bne .L_020089e4
 	b .L_020087dc
 .L_020089e4:
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	add r5, sp, #288
 	.else
 	add r5, sp, #348
@@ -1242,7 +1243,7 @@ Clear_FinalizeAndWait:
 	mov r8, r0
 	movs r1, #0
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	movs r2, #13
 	movs r3, #4
@@ -1284,7 +1285,7 @@ Clear_FinalizeAndWait:
 	str r0, [sp, #16]
 	ldr r1, [sp, #16]
 	subs r0, r5, #2
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	movs r2, #0
 	.else
 	movs r2, #80
@@ -1292,7 +1293,7 @@ Clear_FinalizeAndWait:
 	movs r3, #0
 	bl UiText_DrawCharacterAtOffset
 	b .L_02008a9e
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 .L_02008a82:
 	movs r1, #16
 	movs r2, #24
@@ -1302,7 +1303,7 @@ Clear_FinalizeAndWait:
 .L_02008a82:
 	movs r1, #16
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	movs r2, #30
 	movs r3, #3
 	movs r0, #0
@@ -1594,7 +1595,7 @@ Clear_FinalizeAndWait:
 	bl Battle_WaitMode0
 .L_02008cbe:
 	movs r0, #0
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	add sp, #488
 	.else
 	movs r3, #137
@@ -1623,7 +1624,7 @@ Clear_FinalizeAndWait:
 .L_02008cec:
 	.4byte gWindowWork
 .L_02008cf0:
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte 0x00000f33
 	.else
 	.4byte 0x00000ea3

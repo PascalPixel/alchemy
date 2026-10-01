@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -470,7 +471,7 @@ void FieldScene_RunScene378SequenceB(void)
     s32 record;
 
     Engine_EventBegin();
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     Event_CallWithLastActiveObjectId((s32)ShindenHeya_PlacementSequenceB);
     Engine_TaskWait(1);
 #endif
@@ -480,10 +481,10 @@ void FieldScene_RunScene378SequenceB(void)
         Event_ShowMessage(9, 0);
     } else {
         bump_step();
-#if defined(TBS_EDITION_JA)
-        Call11(Engine_EventShowTwoMessagesAndWait, 1, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
-#else
+#if EDITION_INTERNATIONAL
         Call11(Engine_EventShowTwoMessagesAndWait, 2, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
+#else
+        Call11(Engine_EventShowTwoMessagesAndWait, 1, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
 #endif
         Event_ShowMessage(9, 0);
     }

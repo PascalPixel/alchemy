@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
@@ -16,7 +17,8 @@ void BattleFx_CleanupResourcesAndWindow(void)
     UiWork_FinalizeFar(*(u32 *)(gMapCellBuffer + 0x1c), 2);
 }
 
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#else
 /* The European editions build the marker window their own way, which stays
    in their scaffolds for now. */
 

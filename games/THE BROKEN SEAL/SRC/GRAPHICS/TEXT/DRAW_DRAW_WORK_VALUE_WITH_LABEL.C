@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "M7_INTERFACES.H"
@@ -18,7 +19,7 @@ void UiText_DrawWorkValueWithLabel(s32 work)
 {
     UiText_DrawNumberAtOffsetFar(gGameState.resource, 7, work, 8, 0);
     UiText_DrawCharacterAtOffsetFar((s32)MsgCoinsLabel, work, 0x40, 0);
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     /* The Japanese window closes the coin count off with a short rule. */
     UiWindow_DrawDividerLineFar(work, 12, 0, 12, 2);
 #endif

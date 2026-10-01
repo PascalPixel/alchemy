@@ -18651,11 +18651,11 @@ msgctxt "message"
 msgid "04660"
 msgstr "Quitar"
 
-msgctxt "MsgCoins"
+msgctxt "message"
 msgid "04661"
 msgstr "Equipar no tiene efecto"
 
-msgctxt "MsgPiece"
+msgctxt "message"
 msgid "04662"
 msgstr "Efectos al equipar"
 
@@ -20519,11 +20519,11 @@ msgctxt "message"
 msgid "05127"
 msgstr "---"
 
-msgctxt "message"
+msgctxt "MsgCoins"
 msgid "05128"
 msgstr "Mon."
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "05129"
 msgstr "="
 
@@ -26735,7 +26735,7 @@ msgctxt "message"
 msgid "06681"
 msgstr "Busquemos un barco{line_break}que podamos usar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsFound"
 msgid "06682"
 msgstr "¡Nos han encontrado!{end_wait}"
 
@@ -26755,35 +26755,35 @@ msgctxt "message"
 msgid "06686"
 msgstr "Si crees que nosotros hemos{line_break}empezado todo esto, mejor será{line_break}que puedas demostrarlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorIntroducesHimself"
 msgid "06687"
 msgstr "Soy... eeeh... de Kibombo...{line_break}Es... un placer conoceros.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsBlameContinentsCollision"
 msgid "06688"
 msgstr "Ey, sólo estamos aquí para{line_break}terminar lo que vosotros{line_break}empezasteis, ¿vale?{page_break}Vosotros fuisteis los que{line_break}chocasteis contra nuestro,{line_break}continente, ¡no lo olvidéis!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsClaimCamping"
 msgid "06689"
 msgstr "Ey, sólo estamos, mmm...{line_break}acampando... Si te gusta{line_break}ir de acampada, ve a Indra.{page_break}Hemos venido para, ya sabes,{line_break}admirar las vistas y esas{line_break}cosas...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsFriendsComing"
 msgid "06690"
 msgstr "Nuestros amigos de Kibombo{line_break}llegarán pronto.{page_break}Cuando lleguen, les daremos{line_break}una gran bienvenida.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsRegretMadraRaid"
 msgid "06691"
 msgstr "Qué nervios... ¡La hemos{line_break}pifiado! ¡Vienen a por{line_break}nosotros, seguro!{page_break}¡No teníamos que haber{line_break}lanzado el ataque a Madra{line_break}sin los demás!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsLostFood"
 msgid "06692"
 msgstr "Mi familia perdió todas sus{line_break}reservas de comida; ¡meses{line_break}de sacrificio, esfumados!{page_break}¡Vamos a demostrarles a esos{line_break}forasteros que no pueden{line_break}salirse con la suya!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsThreatenTown"
 msgid "06693"
 msgstr "Cuando los guerreros kibombos{line_break}estén por todo el pueblo,{line_break}seremos amigos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
 msgid "06694"
 msgstr "Fue un buen ataque, pero,{line_break}después de tanto trabajo,{line_break}no hemos encontrado nada...{page_break}Me pregunto qué habrá pasado{line_break}con aquellos que escaparon de{line_break}la cárcel en la que irrumpimos.{end_wait}"
 
@@ -38931,11 +38931,11 @@ msgctxt "message"
 msgid "09730"
 msgstr "Las capturas son más reducidas{line_break}cada día... ¡Menuda pesadilla!{line_break}¿Dónde están los peces?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaCaptainLastHope"
 msgid "09731"
 msgstr "Briggs es nuestra última{line_break}esperanza para salir de{line_break}esta pobreza.{page_break}Debe volver pronto, antes{line_break}de que todos pierdan la{line_break}esperanza.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaNeedsCaptainTreasure"
 msgid "09732"
 msgstr "Espero que Briggs traiga algo...{line_break}Si no, será el fin de los champas.{end_wait}"
 
@@ -41455,11 +41455,11 @@ msgctxt "message"
 msgid "10361"
 msgstr "La única forma de conseguir{line_break}tu objetivo en la vida es{line_break}trabajando duro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaTreasureEncouragesLaziness"
 msgid "10362"
 msgstr "Las joyas de Briggs han{line_break}enriquecido esta pobre aldea,{line_break}aunque trajo demasiadas.{page_break}Ahora, los esforzados{line_break}trabajadores de Champa{line_break}han empezado a vaguear.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaVillagersStoppedWorking"
 msgid "10363"
 msgstr "Todos los aldeanos creen{line_break}que pueden vivir sin necesidad{line_break}de trabajar.{page_break}Han dejado sus trabajos y{line_break}se aferran solamente a lo{line_break}que Briggs pueda encontrar.{end_wait}"
 
@@ -49131,7 +49131,7 @@ msgctxt "message"
 msgid "12280"
 msgstr "¡No puede ser!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgImiruVoicesDisbeliefReply"
 msgid "12281"
 msgstr "¡No puede ser!{end_wait}"
 

@@ -1,4 +1,10 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
+
+/* The international glyph renderer. The Japanese renderer also combines
+   kana voicing marks; its remaining instruction-order draft lives in recon
+   until its complete extent matches. */
+#if EDITION_INTERNATIONAL
 
 extern u8 *gWindowWork;
 
@@ -86,3 +92,5 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
             ((struct WindowTilemap *)out)->tiles[pos] = tile | 0xf000;
     }
 }
+
+#endif

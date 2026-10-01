@@ -85,16 +85,16 @@ gSceneEvents:
 	.4byte Func_02000054
 	.4byte 0x00000000
 	.4byte 0x197f0008
-	.4byte 0x000026b0
+	.4byte MsgChanpaTreasureEncouragesLaziness
 	.4byte 0x00008d15
 	.4byte 0x197f0008
-	.4byte 0x000026b1
+	.4byte MsgChanpaVillagersStoppedWorking
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002439
+	.4byte MsgChanpaCaptainLastHope
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000243a
+	.4byte MsgChanpaNeedsCaptainTreasure
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "FORTRESS.H"
 #include "CALL.H"
 #include "SCENE_IDS.H"
@@ -1133,7 +1134,7 @@ void RunpaJo_RunGuardChallenge(void)
     Battle_WaitMode0(70);
     Actor_WalkTo(12, 0x2a0, 88);
     ObjectMotion_CommitCurrentPositionAndActivate(12);
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     /* The localized sequence adds this turn after actor 12 is placed. */
     Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
 #endif

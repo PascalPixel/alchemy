@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
@@ -161,20 +162,20 @@ done:
     return;
 }
 
-#if defined(TBS_EDITION_JA)
-#define TEXT_COUNT 32
-#else
+#if EDITION_INTERNATIONAL
 #define TEXT_COUNT 52
+#else
+#define TEXT_COUNT 32
 #endif
 
 /* The Japanese edition decodes the message where the others copy it. */
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 
-void UiText_DecodeMessage(s32, s16 *, s32);
+s32 UiText_CopyMessageString(s32, s16 *, s32);
 
 #else
 
-s32 UiText_CopyMessageString(s32, s16 *, s32);
+void UiText_DecodeMessage(s32, s16 *, s32);
 
 #endif
 
@@ -202,10 +203,10 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 active:
         work = UiWindow_Create(0, 7, 30, 4, 42);
         Ui_FillVramBlockPattern();
-#if defined(TBS_EDITION_JA)
-        UiText_DecodeMessage((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
-#else
+#if EDITION_INTERNATIONAL
         UiText_CopyMessageString((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
+#else
+        UiText_DecodeMessage((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
 #endif
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {

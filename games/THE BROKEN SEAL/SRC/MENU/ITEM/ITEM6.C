@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
 #include "OWNER_STATE.H"
@@ -69,10 +70,10 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 }
 
 /* Where the equipped names start: the Japanese edition indents them. */
-#if defined(TBS_EDITION_JA)
-#define NAME_X 16
-#else
+#if EDITION_INTERNATIONAL
 #define NAME_X 8
+#else
+#define NAME_X 16
 #endif
 
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items)

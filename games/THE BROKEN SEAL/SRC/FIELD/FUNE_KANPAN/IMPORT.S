@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Import veneers after the FUNE_KANPAN overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -183,7 +184,7 @@ Engine_ActorWalkToAndWait:
 ObjectMotion_SnapHeadingAndOffset:
 	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.global ObjectMotion_CommitCurrentPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:

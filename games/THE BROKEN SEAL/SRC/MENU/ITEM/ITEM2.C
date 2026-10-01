@@ -1,4 +1,5 @@
-#if !defined(TBS_EDITION_JA)
+#include "EDITION.H"
+#if EDITION_INTERNATIONAL
 /* These localization routines have no counterpart in Japanese TBS. */
 #include "INVENTORY_MENU.H"
 

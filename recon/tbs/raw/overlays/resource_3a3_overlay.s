@@ -57,7 +57,20 @@
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
+	/* The European sequence moves this scripted position four pixels. */
+	.ifdef TBS_EDITION_ES
+	.4byte 0x017c0000
+	.else
+	.ifdef TBS_EDITION_FR
+	.4byte 0x017c0000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte 0x017c0000
+	.else
 	.4byte 0x01800000
+	.endif
+	.endif
+	.endif
 	.4byte 0x00000000
 	.4byte 0x02ea0000
 	.4byte 0x00000001

@@ -36,7 +36,7 @@ const USAGE: &str = "usage: alchemy permute DRAFT.c [options]\n\
 Search semantics-preserving rewrites of one draft function until its code\n\
 matches the function's extent in its listing, assembled as the build\n\
 assembles listings. Candidates compile with the draft's routed compiler\n\
-command (stock agscc, the build's flags); the listing only scores them.\n\
+command (agscc, the build's flags); the listing only scores them.\n\
 Scores follow decomp-permuter: per aligned instruction 1 for a stack offset,\n\
 5 for registers only, 20 for another operand; 60 per reordered and 100 per\n\
 inserted or deleted instruction; 0 only for identical code.\n\
@@ -44,7 +44,7 @@ inserted or deleted instruction; 0 only for identical code.\n\
   --function NAME   function to match (default: the draft's only definition)\n\
   --listing FILE    target listing (default: recon/GAME/raw/DRAFT-STEM.s)\n\
   --symbol NAME     the function's name in the listing (default: its C name)\n\
-  --target ID       build target: routing, edition and build (default: tbs-en)\n\
+  --target ID       build target: routing, edition and build (default: tbs-ja)\n\
   --route FILE      source whose compiler route applies (default: the draft)\n\
   --elf FILE        linked build naming symbol addresses (default: out/ID/ID.elf)\n\
   --focus REGEX     rewrite only statements whose own text matches (for a loop\n\
@@ -382,7 +382,7 @@ impl Problem {
         };
         let symbol = config.symbol.clone().unwrap_or_else(|| name.clone());
         let linked = symbols.get(&symbol).map(|address| address & !1);
-        let object = assemble(&listing, &setup, &build)?;
+        let object = assemble(&listing, &setup, &build, config.target)?;
         let reference = routine(&object, &symbol, &symbols, linked)
             .map_err(|error| format!("{}: {error}", listing.display()))?;
         let mut problem = Problem {
@@ -918,7 +918,13 @@ mod tests {
             "\t.global MsgExample\n\t.set MsgExample, 10\n\t.text\n\t.global Fn\nFn:\n\t.4byte 0\n",
         )
         .unwrap();
-        let object = assemble(&listing, &work.path().join("out"), work.path()).unwrap();
+        let object = assemble(
+            &listing,
+            &work.path().join("out"),
+            work.path(),
+            decomp_target(None).unwrap(),
+        )
+        .unwrap();
         let path = work.path().join("VALUES.o");
         std::fs::write(&path, object).unwrap();
         let symbols = Symbols::load(&path).unwrap();

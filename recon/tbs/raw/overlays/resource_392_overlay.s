@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x02008ec8,"a",%progbits
@@ -106,7 +107,7 @@ KorimaHiroba_Actors:
 	.4byte 0x01500000
 	.4byte 0x00024000
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	.2byte 0x0016
 	.2byte 0x0fd3

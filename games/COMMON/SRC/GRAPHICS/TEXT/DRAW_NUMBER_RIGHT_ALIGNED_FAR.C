@@ -1,4 +1,5 @@
-#if !defined(TBS_EDITION_JA) && !defined(TLA_EDITION_JA)
+#include "EDITION.H"
+#if EDITION_INTERNATIONAL
 /* Japanese menus use fixed digit counts; this localization helper is absent
  * in both Japanese editions. */
 #include "TYPES.H"

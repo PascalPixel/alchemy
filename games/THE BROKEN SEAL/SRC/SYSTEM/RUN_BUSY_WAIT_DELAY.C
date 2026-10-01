@@ -1,4 +1,5 @@
-#if !defined(TBS_EDITION_JA)
+#include "EDITION.H"
+#if EDITION_INTERNATIONAL
 /* These localization routines have no counterpart in Japanese TBS. */
 /* Spin for 256 iterations. The loop is written with a label: as a
    structured loop, loop.c sees a counter used only by its own exit test

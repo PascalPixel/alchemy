@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #ifndef TOREBI_MACHI_MACHI_H
 #define TOREBI_MACHI_MACHI_H
 
@@ -23,6 +24,16 @@ extern u8 gWindowWork[];
  * the id of the object created earlier in the same function.
  */
 #define SCENE_OBJECT_ID (*(s32 *)((u8 *)gEventWork + 0x1f4))
+
+/* The Japanese scene record stores this flag after a larger prefix. */
+struct TorebiSceneWork {
+#if EDITION_INTERNATIONAL
+    u8 unknown_00[0xea4];
+#else
+    u8 unknown_00[0xf34];
+#endif
+    u8 widen_proximity;
+};
 
 struct SceneSetup {
     u16 *commands;

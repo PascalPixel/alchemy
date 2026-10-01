@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "STAGED_MOTION.H"
 #include "TYPES.H"
 #include "CALL.H"
@@ -1944,11 +1945,11 @@ void Scene_RepairTheHouse(void)
     s32 turn_back;
     s32 turn_side;
     u8 *turned;
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+    s32 none;
+#else
     /* FAKEMATCH: the plain Japanese repair keeps zero in r5 and the mask in r6; the original stores zero through r6. */
     register s32 none asm("r6");
-#else
-    s32 none;
 #endif
     s32 flag;
     s32 callback_a;
@@ -2370,13 +2371,13 @@ void Scene_RepairTheHouse(void)
     Actor_SetPosition(ACTOR_DORA, 0, 0);
     Actor_SetSpeed(ACTOR_GERALD, 0x30000, 0x18000);
     Engine_ActorJump(ACTOR_GERALD, 6, 0);
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA)
-    Actor_WalkToAndWait(ACTOR_GERALD, 374, 827);
-#else
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     /* The localized repair scene commits Gerald's landing two pixels
        further south before the conversation resumes. */
     Actor_WalkToAndWait(ACTOR_GERALD, 374, 829);
     Actor_SetPosition(ACTOR_GERALD, PIXELS(374), PIXELS(829));
+#else
+    Actor_WalkToAndWait(ACTOR_GERALD, 374, 827);
 #endif
     Event_ShowMessage(ACTOR_JASMINE, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xb000, 0);
@@ -2441,10 +2442,10 @@ void Scene_RepairTheHouse(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x40000, 0x20000);
     rec = Actor_Get(ACTOR_GERALD);
     rec[90] &= 0xfe;
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA)
-    Actor_SetDestination(ACTOR_GERALD, 403, 827);
-#else
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     Actor_SetDestination(ACTOR_GERALD, 403, 829);
+#else
+    Actor_SetDestination(ACTOR_GERALD, 403, 827);
 #endif
     Actor_SetAttachedEffect(ACTOR_JASMINE, 258);
     Actor_FaceDirection(ACTOR_JASMINE, 0xc000, 20);
@@ -2575,13 +2576,13 @@ void Scene_RepairTheHouse(void)
     Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
     GameFlag_Set(514);
     GameFlag_Clear(303);
-#if defined(TBS_EDITION_JA)
-    ((u8 *)Object_GetById(ACTOR_PARTY_LEADER))[85] = 3;
-#else
+#if EDITION_INTERNATIONAL
     scene[85] = 3;
     *(s32 *)(scene + 12) = 0xa00000;
     *(s32 *)(scene + 60) = 0x80000000;
     *(s32 *)(scene + 40) = none;
+#else
+    ((u8 *)Object_GetById(ACTOR_PARTY_LEADER))[85] = 3;
 #endif
     Engine_EventEnd();
 }
@@ -2791,7 +2792,7 @@ void SceneState_ApplyRectAndRunTwo(void)
 {
     s32 e;
     s32 f;
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     /* FAKEMATCH: the Japanese scene looks up its current villager before
        copying the lane cells and drops the returned record. */
     if (GameFlag_IsSet(0x87a))

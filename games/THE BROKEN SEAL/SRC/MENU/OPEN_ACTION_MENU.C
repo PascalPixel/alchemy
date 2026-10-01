@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
@@ -32,10 +33,10 @@ extern struct MenuObjectControl *gMenuCtrlWork;
 
 /* The bytes of BG character block 1 the menu saves and restores: the
    Japanese menu keeps 0x800 and leaves the block as it was. */
-#if defined(TBS_EDITION_JA)
-#define SAVED_TILE_BYTES 0x800
-#else
+#if EDITION_INTERNATIONAL
 #define SAVED_TILE_BYTES 0x2000
+#else
+#define SAVED_TILE_BYTES 0x800
 #endif
 
 struct ActionMenuState {
@@ -98,7 +99,7 @@ s32 ActionMenu_Open(void)
     state->character_count = Party_ListActiveOwnersFar(state->character_ids);
     Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
     CopyWords(Iwram_CopyWords, palette, (void *)0x05000000, 64);
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
 #endif
     Palette_LightenBankHighlight(14);
@@ -106,7 +107,7 @@ s32 ActionMenu_Open(void)
     Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, (volatile u32 *)0x040000d4);
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
     FillWords(Iwram_FillWords, (void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
     Func_080153e0(1);
@@ -132,7 +133,7 @@ s32 ActionMenu_Open(void)
     Scheduler_DisableOverlayCallbacksWithFlags();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     Func_080152a8();
     Func_080153e0(0);
     WaitFrames(1);

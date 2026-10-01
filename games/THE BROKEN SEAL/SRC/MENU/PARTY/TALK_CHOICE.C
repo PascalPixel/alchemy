@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "DMA.H"
 #include "RENDER_INPUT.H"
 #include "WORKSPACE_OPTIONS.H"
@@ -22,15 +23,15 @@ extern volatile u32 gKeysRepeat;
 
 /* The Spanish and Japanese choices are shorter: a narrower window further
    right. */
-#if defined(TBS_EDITION_ES)
-#define TALK_WINDOW_X     9
-#define TALK_WINDOW_WIDTH 12
-#elif defined(TBS_EDITION_JA)
-#define TALK_WINDOW_X     8
-#define TALK_WINDOW_WIDTH 16
-#else
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define TALK_WINDOW_X     7
 #define TALK_WINDOW_WIDTH 18
+#elif defined(TBS_EDITION_ES)
+#define TALK_WINDOW_X     9
+#define TALK_WINDOW_WIDTH 12
+#else
+#define TALK_WINDOW_X     8
+#define TALK_WINDOW_WIDTH 16
 #endif
 
 /* "Descriptions", "Cheer" or "Nothing": returns the row chosen with A, or -1

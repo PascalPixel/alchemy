@@ -90,10 +90,10 @@ impl DecompTarget {
     }
     /// The bodies another edition gives the game's output sections, beside
     /// its scaffold in `recon/<game>/<lang>`, as pret's early versions linked
-    /// through `baserom.gba`; English has none.
+    /// through `baserom.gba`; Japanese is the game's native composition.
     pub fn edition_script(&self) -> Option<std::path::PathBuf> {
         match self.id.as_str().split_once('-') {
-            Some((_, "en")) | None => None,
+            Some((_, "ja")) | None => None,
             Some((game, lang)) => Some(["recon", game, lang, "MAIN.LD"].iter().collect()),
         }
     }
@@ -121,7 +121,7 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, usize); 2] = [
         7,
     ),
 ];
-pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::TbsEn;
+pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::TbsJa;
 
 pub fn parse_decomp_target(value: &str) -> Result<DecompTargetId, String> {
     TARGET_IDS
@@ -188,12 +188,24 @@ fn self_test() -> Result<String, String> {
             return Err(format!("invalid target was accepted: {invalid}"));
         }
     }
-    Ok("self-test=ok build_targets=12 default=tbs-en".into())
+    Ok(format!(
+        "self-test=ok build_targets=12 default={DEFAULT_TARGET}"
+    ))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn an_unspecified_target_selects_the_native_japanese_game() {
+        let target = decomp_target(None).unwrap();
+        assert_eq!(target.id, DecompTargetId::TbsJa);
+        assert_eq!(target.output_dir, "out/tbs-ja");
+        assert_eq!(target.edition_define, "TBS_EDITION_JA");
+        assert!(target.edition_script().is_none());
+        assert!(target_for(DecompTargetId::TlaJa).edition_script().is_none());
+    }
 
     #[test]
     fn every_edition_links_through_its_games_script() {
@@ -206,7 +218,7 @@ mod tests {
             let (game, lang) = id.as_str().split_once('-').unwrap();
             assert_eq!(
                 target.edition_script(),
-                (lang != "en").then(|| format!("recon/{game}/{lang}/MAIN.LD").into())
+                (lang != "ja").then(|| format!("recon/{game}/{lang}/MAIN.LD").into())
             );
         }
     }
@@ -238,7 +250,7 @@ mod tests {
     fn registry_covers_isolated_targets() {
         assert_eq!(
             self_test().unwrap(),
-            "self-test=ok build_targets=12 default=tbs-en"
+            "self-test=ok build_targets=12 default=tbs-ja"
         );
     }
 }

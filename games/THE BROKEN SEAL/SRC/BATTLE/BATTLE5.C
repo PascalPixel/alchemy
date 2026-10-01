@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
@@ -314,10 +315,10 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 
 /* 召喚チャージ管理。クラスごとに使用中チャンネルのビットを持ち、 */
 /* 取得・解放・名前印のリセットを行う。 */
-#if defined(TBS_EDITION_JA)
-#define CH_CNT 26
-#else
+#if EDITION_INTERNATIONAL
 #define CH_CNT 9
+#else
+#define CH_CNT 26
 #endif
 
 /* 番号表を線形探索し、既存なら次の空きビットを剰余で回して確保、 */

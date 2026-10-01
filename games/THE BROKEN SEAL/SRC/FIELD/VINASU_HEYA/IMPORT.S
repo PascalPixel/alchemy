@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Import veneers after the VINASU_HEYA overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -30,7 +31,7 @@ Engine_MathSin:
 	.thumb_func
 Engine_MathCos:
 	overlay_veneer Trig_CosFar
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.global Vector_AddPolarOffset
 	.thumb_func
 Vector_AddPolarOffset:
@@ -301,7 +302,7 @@ Engine_EventWaitForScreen:
 BattleFx_StartFadeOverlay:
 	overlay_veneer BattleFx_StartFadeOverlayFar
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	.global Battle_ResetEffectCounter
 	.thumb_func

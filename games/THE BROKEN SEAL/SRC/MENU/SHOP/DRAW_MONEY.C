@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "SHOP.H"
 #include "PARTY_STATE.H"
 extern struct ShopRuntime *gMenuWork;
@@ -14,7 +15,10 @@ void Shop_DrawMoney(void)
     shop = gMenuWork;
     window = shop->money_window;
     if (window != 0) {
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+        UiText_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
+        UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0x20, 8);
+#else
         /* The Japanese count comes first and its coins label after it. */
         s32 msg = (s32)MsgYourCoins;
 
@@ -22,9 +26,6 @@ void Shop_DrawMoney(void)
         UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0, 8);
         /* The coins label, two messages before. */
         UiText_DrawCharacterAtOffsetFar(msg - 2, window, 48, 8);
-#else
-        UiText_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
-        UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0x20, 8);
 #endif
     }
 }

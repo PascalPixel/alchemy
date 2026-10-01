@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Import veneers after the MENU_TEST overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -135,7 +136,7 @@ Item_AdjustCounter:
 PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -145,7 +146,7 @@ PartyInventory_GiveItem:
 	.endif
 	.endif
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.global Event_SetValue1d8
 	.thumb_func
 Event_SetValue1d8:
@@ -170,7 +171,7 @@ Battle_ApplyPresetItemsAndFlags:
 Shop_ConfirmAct:
 	overlay_veneer Shop_ConfirmActFar
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.global Shop_ConfirmAct
 	.thumb_func
 Shop_ConfirmAct:

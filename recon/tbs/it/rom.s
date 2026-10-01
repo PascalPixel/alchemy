@@ -1829,7 +1829,9 @@ DisplayScroll_SlideResources:
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f12a8, 0x00000d58
 	.section .rom.000f2028, "ax"
-	.incbin "baserom.gba", 0x000f2028, 0x000006c4
+	.incbin "baserom.gba", 0x000f2028, 0x00000478
+	.section .rom.000f26ea, "ax"
+	.incbin "baserom.gba", 0x000f26ea, 0x00000002
 	.section .rom.000f26ec, "ax"
 	.global Func_080f26ec
 	.type Func_080f26ec, %function

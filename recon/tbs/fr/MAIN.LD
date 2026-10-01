@@ -822,6 +822,8 @@
     "*/recon/tbs/fr/rom.o"(.rom.000f37f0)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
     "*/recon/tbs/fr/rom.o"(.rom.000f5028)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)
+    "*/recon/tbs/fr/rom.o"(.rom.000f56ea)
     "*/recon/tbs/fr/rom.o"(.rom.000f56ec)
     "*/recon/tbs/fr/rom.o"(.rom.000f5b6c)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SPLASH.o"(.text)

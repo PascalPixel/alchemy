@@ -32,7 +32,7 @@ Func_080f26ec:
 	adds r2, r1, #0
 	strb r1, [r3]
 	strb r2, [r5]
-	bl Unnamed_080f24a0
+	bl Title_LoadIntroBackgrounds
 	bl TitlePalette_InitializeBuffers
 	movs r1, #0
 	movs r0, #2

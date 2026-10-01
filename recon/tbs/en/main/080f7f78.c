@@ -1,71 +1,33 @@
 #include "TYPES.H"
 
 /*
- * Sliding-window packer that drives the AudioTrack slot machinery at
- * 0x080f7db4..0x080f7f78 (reset_slot_buckets.c, insert_slot_node.c,
- * remove_slot_node.c, consume_slot_bytes.c, copy_buffered_bytes.c).
+ * Sliding-window packer over the AudioTrack slot work block that
+ * TRACK_SLOT_BUFFER.C maintains (reset, insert, remove, consume, copy).
+ * The block is the map cell buffer, published through Flash_Handler3.
  *
- * The work block lives at 0x02010000 and is published through the pointer
- * cell Flash_Handler3, exactly the block the four siblings already index.
- * Offsets recovered from the literal pools of recon/tbs/raw/080f7f78.s and
- * cross-checked against consume_slot_bytes.c:
+ * Output: a control byte whose set bits mark coded pairs, then per token one
+ * literal byte or a big-endian 16-bit code (distance bits 8..11 in the top
+ * nibble, length - 1 in the next, distance bits 0..7 below), with a third
+ * byte holding length - 17 when the length nibble is 0. A zero code ends it.
  *
- *   0x0000  nodes[0x400]      12-byte {prev, back, slot} chain records
- *   0x3000  bucket[0x100]     chain head per byte value
- *   0x3400  flag_mask         walking control-byte bit, 0x80 -> 0
- *   0x3404  val[0x400]        ring of decoded window bytes, -1 = end of input
- *   0x4404  out_cnt           bytes staged in out_buf
- *   0x4408  out_buf[0x24]     one control byte plus up to eight codes
- *   0x442c  match_ofs         best distance found by the last search
- *   0x4430  match_len         best length found by the last search
- *   0x4434  pos               current window slot
- *   0x4438  input_cursor      consume_slot_bytes.c: input_cursor
- *   0x443c  out_total         consume/copy: destination write cursor
- *   0x4440  input_limit       consume_slot_bytes.c: input_limit
+ * What the listing shows about the source, each confirmed by the compiler:
+ *   - the search is one inlined routine expanded three times; `len` is its
+ *     own local and `dist` is declared inside each chain walk (the two walks
+ *     hold it in different registers, the three expansions in the same ones);
+ *   - the run comparison is a for loop with a break, and the chain record's
+ *     slot is read again inside it (the wrapping walk's exit test is too long
+ *     to duplicate before the first loop pass, the other walk's is not);
+ *   - match_ofs is signed, so the code word is built in a signed short;
+ *   - the high byte is taken from the code as an unsigned short;
+ *   - the lazy test reads match_len again after copying it to `len`.
  *
- * Output format, read off the two encode blocks at 0x080f8528 and 0x080f8594:
- * a control byte whose set bits mark coded pairs, then per token either one
- * literal byte or a big-endian 16-bit code
- *   bits 12..15 = distance bits 8..11
- *   bits  8..11 = length - 1, or 0 for the extended form
- *   bits  0..7  = distance bits 0..7
- * with the extended form adding a third byte holding length - 17. Because the
- * search only ever accepts distances 1..63 the two distance fields overlap and
- * the high nibble is always zero; the reference builds it anyway, as a shift
- * left by four masked with ~0xfff. A zero code (distance 0, length nibble 0)
- * is written as the terminator.
- *
- * Uncertain, recorded rather than guessed:
- *   - 672 (0xa8 << 2) is the priming byte count handed to ConsumeSlotBytes and
- *     is also added to `pos` on every refill; its relation to the 0x124 skew
- *     inside consume_slot_bytes.c is not established here.
- *   - The three search sites are spelled as one inlined helper. The reference
- *     has three literal copies, each carrying both the wrapping and the
- *     non-wrapping index form; whether the original used a macro, an inline
- *     function or three hand-written copies is not recoverable.
- *   - out_buf is sized to the 0x24 bytes between 0x4408 and 0x442c; only the
- *     control byte plus eight three-byte codes (25 bytes) are ever staged.
- *   - match_ofs is typed u32 because the reference shifts it logically; the
- *     value it ever holds (1..63) does not distinguish the two signednesses.
- *
- * Residual against recon/tbs/raw/080f7f78.s: 1836 candidate bytes against
- * 1920, differing_halfwords=916. Both sides carry the same five calls in the
- * same order and the same six chain walks, and every reference branch, loop
- * and store is represented. What is left is allocation and placement, not
- * structure: the reference spills five more locals (44 bytes of frame against
- * 24), recomputes the loop-invariant &val[start + 1] once per chain node where
- * this source lets GCC hoist it above the walk, duplicates the outer loop's
- * exit test instead of sharing one copy, builds 0xf00 from the literal pool
- * rather than as a shifted immediate, and advances the staged count by
- * repeated +1 rather than by a constant. Spelling those byte writes with a
- * `cnt++` local was tried and rejected: it shortens the candidate to 1820
- * bytes and raises both residual counts.
+ * Remaining difference against recon/tbs/raw/080f7f78.s: 3 instructions.
+ * The reference keeps `len3` in a stack slot of its own (one more word of
+ * frame, one store before the compare, every stack offset above it shifted),
+ * and loads the constant offset of `pos` before it adds 1 to `len2` where
+ * this source adds first. Everything else is identical.
  */
 
-/* One record per window slot. insert_slot_node.c shows the chain is threaded
-   through field 0 toward the previously inserted slot holding the same byte
-   value, while field 4 holds the address of the pointer cell that refers to
-   this record. Only field 0 and the slot index are read here. */
 struct AudioSlotNode {
     struct AudioSlotNode *prev;
     struct AudioSlotNode **back;
@@ -79,7 +41,7 @@ struct AudioPackWork {
     s32 val[0x400];
     s32 out_cnt;
     u8 out_buf[0x24];
-    u32 match_ofs;
+    s32 match_ofs;
     s32 match_len;
     s32 pos;
     s32 input_cursor;
@@ -87,28 +49,23 @@ struct AudioPackWork {
     s32 input_limit;
 };
 
-/* The owner register carries no name for this address yet, so the readable
-   name is bound to the Func_<address> compatibility alias here. */
-
 extern struct AudioPackWork *Flash_Handler3;
+extern u8 gMapCellBuffer[];
 
 void AudioTrack_ResetSlotBuckets(void);
 void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input);
 void AudioTrack_CopyBufferedBytes(u8 *dst);
 
 #define WINDOW_MASK 0x3ff
-#define MATCH_MAX 271
+#define MATCH_MAX 272
 #define DIST_MAX 63
 #define PRIME_COUNT 672
 
-/* Longest run starting at `start` that repeats an earlier window slot on the
-   same byte-value chain. Leaves the result in match_len / match_ofs; a length
-   of 1 means "no usable match". Distances are limited to DIST_MAX. */
+/* Longest run at `start` that repeats an earlier slot on the same byte-value
+   chain, left in match_len and match_ofs; a length of 1 means no match. */
 static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 {
     struct AudioSlotNode *node;
-    s32 cand;
-    s32 dist;
     s32 len;
 
     Flash_Handler3->match_len = 1;
@@ -116,22 +73,22 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
         return;
     }
     node = Flash_Handler3->bucket[Flash_Handler3->val[start]];
-    if (start + (MATCH_MAX + 1) > WINDOW_MASK) {
-        /* The forward run can wrap the ring, so both sides need masking. */
+    if (start + MATCH_MAX > WINDOW_MASK) {
+        /* The run can wrap the ring, so both sides are masked. */
         while (node != NULL) {
-            cand = node->slot;
-            dist = (start - cand) & WINDOW_MASK;
-            if ((u32)(dist - 1) <= (u32)(DIST_MAX - 1)) {
-                len = 1;
-                while (len <= MATCH_MAX
-                       && Flash_Handler3->val[(start + len) & WINDOW_MASK]
-                          == Flash_Handler3->val[(cand + len) & WINDOW_MASK]) {
-                    len++;
+            s32 dist = (start - node->slot) & WINDOW_MASK;
+
+            if (dist > 0 && dist <= DIST_MAX) {
+                for (len = 1; len < MATCH_MAX; len++) {
+                    if (Flash_Handler3->val[(start + len) & WINDOW_MASK]
+                        != Flash_Handler3->val[(node->slot + len) & WINDOW_MASK]) {
+                        break;
+                    }
                 }
                 if (Flash_Handler3->match_len < len) {
                     Flash_Handler3->match_ofs = dist;
                     Flash_Handler3->match_len = len;
-                    if (len == MATCH_MAX + 1) {
+                    if (len == MATCH_MAX) {
                         return;
                     }
                 }
@@ -139,21 +96,20 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
             node = node->prev;
         }
     } else {
-        /* start + MATCH_MAX still fits the ring, so only the older side wraps. */
         while (node != NULL) {
-            cand = node->slot;
-            dist = (start - cand) & WINDOW_MASK;
-            if ((u32)(dist - 1) <= (u32)(DIST_MAX - 1)) {
-                len = 1;
-                while (len <= MATCH_MAX
-                       && Flash_Handler3->val[start + len]
-                          == Flash_Handler3->val[(cand + len) & WINDOW_MASK]) {
-                    len++;
+            s32 dist = (start - node->slot) & WINDOW_MASK;
+
+            if (dist > 0 && dist <= DIST_MAX) {
+                for (len = 1; len < MATCH_MAX; len++) {
+                    if (Flash_Handler3->val[start + len]
+                        != Flash_Handler3->val[(node->slot + len) & WINDOW_MASK]) {
+                        break;
+                    }
                 }
                 if (Flash_Handler3->match_len < len) {
                     Flash_Handler3->match_ofs = dist;
                     Flash_Handler3->match_len = len;
-                    if (len == MATCH_MAX + 1) {
+                    if (len == MATCH_MAX) {
                         return;
                     }
                 }
@@ -168,25 +124,21 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 {
     s32 defer;
     s32 len;
-    s32 ahead;
+    s32 save_ofs;
     s32 save_len;
-    u32 save_ofs;
-    s32 cnt;
-    u32 ofs;
-    u32 work;
+    s32 len3;
+    s32 len2;
     s16 code;
 
     defer = 0;
-    Flash_Handler3 = (struct AudioPackWork *)0x02010000;
+    Flash_Handler3 = (struct AudioPackWork *)gMapCellBuffer;
     AudioTrack_ResetSlotBuckets();
     Flash_Handler3->input_limit = size;
     Flash_Handler3->pos = 0;
     Flash_Handler3->input_cursor = 0;
     Flash_Handler3->out_total = 0;
     Flash_Handler3->flag_mask = 0x80;
-    /* The reference reads the low byte of the `defer` slot here, so the
-       cleared control byte and the cleared flag share one value. */
-    Flash_Handler3->out_buf[0] = (u8)defer;
+    Flash_Handler3->out_buf[0] = 0;
     Flash_Handler3->out_cnt = 1;
     AudioTrack_ConsumeSlotBytes(0, PRIME_COUNT, input);
 
@@ -194,21 +146,18 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
         AudioTrack_FindWindowMatch(Flash_Handler3->pos);
         if (defer == 0) {
             len = Flash_Handler3->match_len;
-            if (len > 1) {
-                /* Lazy evaluation: prefer one literal plus the match one slot
-                   later when that pair covers at least as much as this match
-                   plus whatever follows it. */
+            if (Flash_Handler3->match_len > 1) {
+                /* Lazy evaluation: take one literal now when the match one
+                   slot later reaches at least as far as this match followed
+                   by the best one after it. */
                 save_ofs = Flash_Handler3->match_ofs;
                 save_len = len;
                 AudioTrack_FindWindowMatch((Flash_Handler3->pos + 1) & WINDOW_MASK);
-                ahead = Flash_Handler3->match_len;
-                if (ahead > 2) {
-                    /* The reference forms ahead + 1 and spills it here, before
-                       the third search clobbers match_len, so the increment is
-                       written on the local rather than at the comparison. */
-                    ahead++;
+                if (Flash_Handler3->match_len > 2) {
+                    len2 = Flash_Handler3->match_len + 1;
                     AudioTrack_FindWindowMatch((Flash_Handler3->pos + len) & WINDOW_MASK);
-                    if (ahead >= Flash_Handler3->match_len + len) {
+                    len3 = Flash_Handler3->match_len + len;
+                    if (len2 >= len3) {
                         save_len = 1;
                         defer = 1;
                     }
@@ -220,38 +169,24 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 
         if (Flash_Handler3->match_len > 1) {
             defer = 0;
-            Flash_Handler3->out_buf[0] |= (u8)Flash_Handler3->flag_mask;
-            if (Flash_Handler3->match_len > 16) {
-                /* Extended form: empty length nibble, run length in a third
-                   byte. Lengths 17..272 map onto 0..255. */
-                ofs = Flash_Handler3->match_ofs;
-                work = ((ofs << 4) & ~0xfff) | (ofs & 0xff);
-                code = (s16)work;
-                cnt = Flash_Handler3->out_cnt;
-                Flash_Handler3->out_buf[cnt] = (u8)(code >> 8);
-                Flash_Handler3->out_cnt = cnt + 1;
-                Flash_Handler3->out_buf[cnt + 1] = (u8)code;
-                Flash_Handler3->out_cnt = cnt + 2;
-                Flash_Handler3->out_buf[cnt + 2] =
-                    (u8)(Flash_Handler3->match_len - 17);
-                Flash_Handler3->out_cnt = cnt + 3;
+            Flash_Handler3->out_buf[0] |= Flash_Handler3->flag_mask;
+            if (Flash_Handler3->match_len <= 16) {
+                code = ((Flash_Handler3->match_ofs << 4) & ~0xfff)
+                       | (Flash_Handler3->match_ofs & 0xff)
+                       | (((Flash_Handler3->match_len - 1) << 8) & 0xf00);
+                Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = (u16)code >> 8;
+                Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = code;
             } else {
-                /* Short form: lengths 2..16 fit the nibble as length - 1. */
-                ofs = Flash_Handler3->match_ofs;
-                work = ((ofs << 4) & ~0xfff) | (ofs & 0xff)
-                       | (((u32)(Flash_Handler3->match_len - 1) << 8) & 0xf00);
-                code = (s16)work;
-                cnt = Flash_Handler3->out_cnt;
-                Flash_Handler3->out_buf[cnt] = (u8)(code >> 8);
-                Flash_Handler3->out_cnt = cnt + 1;
-                Flash_Handler3->out_buf[cnt + 1] = (u8)code;
-                Flash_Handler3->out_cnt = cnt + 2;
+                code = ((Flash_Handler3->match_ofs << 4) & ~0xfff)
+                       | (Flash_Handler3->match_ofs & 0xff);
+                Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = (u16)code >> 8;
+                Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = code;
+                Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] =
+                    Flash_Handler3->match_len - 17;
             }
         } else {
-            cnt = Flash_Handler3->out_cnt;
-            Flash_Handler3->out_buf[cnt] =
-                (u8)Flash_Handler3->val[Flash_Handler3->pos];
-            Flash_Handler3->out_cnt = cnt + 1;
+            Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] =
+                Flash_Handler3->val[Flash_Handler3->pos];
             Flash_Handler3->match_len = 1;
         }
 
@@ -268,12 +203,9 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
         }
     }
 
-    Flash_Handler3->out_buf[0] |= (u8)Flash_Handler3->flag_mask;
-    cnt = Flash_Handler3->out_cnt;
-    Flash_Handler3->out_buf[cnt] = 0;
-    Flash_Handler3->out_cnt = cnt + 1;
-    Flash_Handler3->out_buf[cnt + 1] = 0;
-    Flash_Handler3->out_cnt = cnt + 2;
+    Flash_Handler3->out_buf[0] |= Flash_Handler3->flag_mask;
+    Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = 0;
+    Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = 0;
     AudioTrack_CopyBufferedBytes(dst);
     return Flash_Handler3->out_total;
 }

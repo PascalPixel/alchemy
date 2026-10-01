@@ -26,13 +26,13 @@ Engine_TaskAddCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
-	.global Trig_Sin
+	.global Engine_MathSin
 	.thumb_func
-Trig_Sin:
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
-	.global Trig_Cos
+	.global Engine_MathCos
 	.thumb_func
-Trig_Cos:
+Engine_MathCos:
 	overlay_veneer Trig_CosFar
 	.global Object_SetMode
 	.thumb_func

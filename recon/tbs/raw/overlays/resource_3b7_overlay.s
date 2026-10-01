@@ -1362,7 +1362,7 @@ FieldScene_RunSecondaryScript:
 	bl Object_SetMode
 	movs r1, #12
 	ldrsh r0, [r6, r1]
-	bl Trig_Sin
+	bl Engine_MathSin
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	movs r2, #224
@@ -1372,7 +1372,7 @@ FieldScene_RunSecondaryScript:
 	str r3, [r6]
 	movs r3, #12
 	ldrsh r0, [r6, r3]
-	bl Trig_Cos
+	bl Engine_MathCos
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	movs r4, #144
@@ -1433,7 +1433,7 @@ FieldScene_RunSecondaryScript:
 	bgt .L_020093fe
 	movs r4, #12
 	ldrsh r0, [r6, r4]
-	bl Trig_Sin
+	bl Engine_MathSin
 	movs r3, #52
 	muls r3, r0
 	movs r0, #224
@@ -1442,7 +1442,7 @@ FieldScene_RunSecondaryScript:
 	str r3, [r6]
 	movs r1, #12
 	ldrsh r0, [r6, r1]
-	bl Trig_Cos
+	bl Engine_MathCos
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	movs r2, #144

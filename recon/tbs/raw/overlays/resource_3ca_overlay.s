@@ -22,7 +22,7 @@ Func_02000194:
 	ldr r5, .L_02008368
 	ldr r0, [r5]
 	lsls r0, r0, #9
-	bl Trig_Sin
+	bl Engine_MathSin
 	ldr r3, .L_0200836c
 	movs r1, #3
 	mov r12, pc
@@ -50,7 +50,7 @@ Func_02000194:
 	ldr r0, [r2]
 	lsls r0, r0, #9
 	mov r11, r2
-	bl Trig_Sin
+	bl Engine_MathSin
 	ldr r3, .L_0200836c
 	movs r1, #2
 	mov r12, pc

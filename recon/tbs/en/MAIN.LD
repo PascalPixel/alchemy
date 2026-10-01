@@ -311,7 +311,6 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU14.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU15.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU3.o"(.text)
-        "*/recon/tbs/raw/0801d9d4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/RUN_WORKSPACE_SELECTION_LOOP.o"(.text)
         "*/recon/tbs/raw/0801dd28.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0801de5c.o"(.text .rodata .data .padding)

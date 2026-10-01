@@ -12,8 +12,9 @@ union MenuCursor {
     u8 data[0x10];
 };
 
-/* The options page of the workspace: five settings, each a value in
-   0..count-1, and the menu objects that show them. */
+/* The workspace menu's block: the selected row and its row icons, and the
+   options page with five settings, each a value in 0..count-1, and the
+   menu objects that show them. */
 struct WorkspaceWork {
     u8 unknown_000[0x574];
     u16 page;
@@ -27,6 +28,7 @@ struct WorkspaceWork {
     union MenuCursor marker[2];
     u8 unknown_5d4[0x18];
     struct RenderOutput *frame[3][3];
+    struct RenderOutput *icon[6];
 };
 
 extern struct WorkspaceWork *gSelectionWork;

@@ -275,7 +275,6 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU14.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU15.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU3.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.0001d970)
     "*/games/THE BROKEN SEAL/SRC/MENU/RUN_WORKSPACE_SELECTION_LOOP.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.0001dcc4)
     "*/recon/tbs/it/rom.o"(.rom.0001ddf8)

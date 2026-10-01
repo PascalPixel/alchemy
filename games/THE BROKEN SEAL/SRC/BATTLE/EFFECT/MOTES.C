@@ -1,9 +1,3 @@
-/* Draft, not exact: score 5782, 187 instructions differ (764 against 782).
-   Same frame and stack slots. The reference keeps the address of the timing
-   table in r9 outside the mote loop and loads it again after every inner
-   loop and call; here that register goes to nothing and every use loads the
-   address from the pool. What follows from it: r6 against r5 for the seed
-   pointer, and the argument order of two draw calls. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -32,16 +26,16 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
 
 extern u16 BattleFx_PuffCells[];
 extern u8 BattleFx_PuffSizes[];
-extern u8 Data_080eea62[];
-extern u8 Data_080eea88[];
-extern u8 Data_080eea91[];
-extern u8 Data_080eea99[];
-extern u16 Data_080eeaa2[];
-extern u16 Data_080eeab2[];
-extern u8 Data_080eeab8[];
-extern u8 Data_080eeabb[];
-extern u8 Data_080eeac3[];
-extern u16 Data_080eeacc[];
+extern u8 RisingMotes_ColumnSpots[];
+extern u8 RisingMotes_Timings[];
+extern u8 RisingMotes_MoteWidths[];
+extern u8 RisingMotes_MoteHeights[];
+extern u16 RisingMotes_MoteCells[];
+extern u16 RisingMotes_ColumnCells[];
+extern u8 RisingMotes_ColumnHeights[];
+extern u8 RisingMotes_EmberWidths[];
+extern u8 RisingMotes_EmberHeights[];
+extern u16 RisingMotes_EmberCells[];
 
 /* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
@@ -57,7 +51,7 @@ enum {
 /* Battle effect: motes circle down around the middle of the screen while
    columns rise one by one; on the variant's frame the motes shoot upwards,
    embers scatter, and puffs open over the band the motes and embers span. */
-void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
+void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
     void **cursor;
@@ -88,12 +82,12 @@ void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
     BattleFx_FetchRectangleBlitters(0, draw = callbacks);
 
-    mote = work->particles;
     for (i = 0; i != 64; i++) {
-        mote->x = Random16() & 0xffff;
-        mote->z = (Random16() & 63) + 56;
-        mote->y = ((Random16() & 31) - 64) << 16;
-        mote++;
+        struct EffectStep *seed = &work->particles[i];
+
+        seed->x = Random16() & 0xffff;
+        seed->z = (Random16() & 63) + 56;
+        seed->y = ((Random16() & 31) - 64) << 16;
     }
 
     work->transfer_mode = 2;
@@ -102,10 +96,10 @@ void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
     if (work->effect->side == 1)
         REG_BG2X = -0x7000;
 
-    for (frame = 0; frame != Data_080eea88[work->effect->variant * 3 + RISE_FRAME] + 75; frame++) {
+    for (frame = 0; frame != RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 75; frame++) {
         ymin = 0x780000;
         ymax = 0;
-        if (frame == Data_080eea88[work->effect->variant * 3 + RISE_FRAME] + 11)
+        if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 11)
             BattleEventRuntime_BeginPhaseFar(132);
         point[0] = 0;
         point[1] = 0;
@@ -121,32 +115,33 @@ void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
                 ObjectGroup_UpdateMembers(work->effect->actors[i], 9, 5, -1, 0);
         }
 
-        count = 16;
-        if (frame < Data_080eea88[work->effect->variant * 3 + RISE_FRAME])
-            count = Data_080eea88[work->effect->variant * 3 + RISE_MOTES];
-        if (frame < Data_080eea88[work->effect->variant * 3 + RISE_FRAME] + 35) {
+        if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+            count = RisingMotes_Timings[work->effect->variant * 3 + RISE_MOTES];
+        else
+            count = 16;
+        if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35) {
             for (i = 0; i != count; i++) {
                 if (frame > i) {
                     s32 slot = i % 8;
 
                     mote = &work->particles[i];
                     if (mote->y < (48 - i / 2) << 16 && mote->y > -0x300000) {
-                        struct EffectPosition *pos = &screen;
+                        struct EffectPosition *pos;
                         u32 width;
                         u32 height;
 
                         record[0] = mote->z * Trig_Sin(mote->x);
                         record[1] = mote->y;
                         record[2] = mote->z * Trig_Cos(mote->x);
-                        EffectPosition_ApplyBaseAndYOffset(record, pos);
+                        EffectPosition_ApplyBaseAndYOffset(record, pos = &screen);
                         pos->x = (pos->x >> 17) + 64;
                         pos->y = HI(pos->y) + 60;
-                        draw[1](canvas, (u8 *)work + Data_080eeaa2[slot],
-                            pos->x - ((width = Data_080eea91[slot]) >> 1),
-                            pos->y - ((height = Data_080eea99[slot]) >> 1),
+                        draw[1](canvas, (u8 *)work + RisingMotes_MoteCells[slot],
+                            pos->x - ((width = RisingMotes_MoteWidths[slot]) >> 1),
+                            pos->y - ((height = RisingMotes_MoteHeights[slot]) >> 1),
                             width, height);
                     }
-                    if (frame < Data_080eea88[work->effect->variant * 3 + RISE_FRAME]) {
+                    if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
                         if (frame > i + 16) {
                             if (mote->z > 4)
                                 mote->z -= 2;
@@ -168,28 +163,28 @@ void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
         ymin += 0x400000;
         ymax += 0x400000;
 
-        if (frame < Data_080eea88[work->effect->variant * 3 + RISE_FRAME]) {
-            for (i = 0; i != Data_080eea88[work->effect->variant * 3 + RISE_COLUMNS]; i++) {
+        if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
+            for (i = 0; i != RisingMotes_Timings[work->effect->variant * 3 + RISE_COLUMNS]; i++) {
                 if (i < (frame - 36) / 3) {
                     s32 image = i % 3;
                     u32 height;
 
-                    if (frame >= Data_080eea88[work->effect->variant * 3 + RISE_FRAME] - 7) {
-                        draw[1](canvas, (u8 *)work + Data_080eeab2[image],
-                            Data_080eea62[i * 2],
-                            Data_080eea62[i * 2 + 1] - (height = Data_080eeab8[image]),
+                    if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] - 7) {
+                        draw[1](canvas, (u8 *)work + RisingMotes_ColumnCells[image],
+                            RisingMotes_ColumnSpots[i * 2],
+                            RisingMotes_ColumnSpots[i * 2 + 1] - (height = RisingMotes_ColumnHeights[image]),
                             32, height);
                     } else {
-                        callbacks[0](canvas, (u8 *)work + Data_080eeab2[image],
-                            Data_080eea62[i * 2],
-                            Data_080eea62[i * 2 + 1] - (height = Data_080eeab8[image]),
+                        callbacks[0](canvas, (u8 *)work + RisingMotes_ColumnCells[image],
+                            RisingMotes_ColumnSpots[i * 2],
+                            RisingMotes_ColumnSpots[i * 2 + 1] - (height = RisingMotes_ColumnHeights[image]),
                             32, height);
                     }
                 }
             }
         }
 
-        if (frame == Data_080eea88[work->effect->variant * 3 + RISE_FRAME]) {
+        if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
             for (i = 0; i != 32; i++) {
                 struct EffectStep *ember = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
@@ -200,16 +195,16 @@ void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
                 ember->variant = (Random16() & 15) + 16;
             }
         }
-        if (frame >= Data_080eea88[work->effect->variant * 3 + RISE_FRAME]) {
+        if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
             for (i = 0; i != 24; i++) {
                 struct EffectStep *ember = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
                 if (ember->variant >= 0) {
                     s32 slot = i % 8;
 
-                    draw[1](canvas, (u8 *)work + Data_080eeacc[slot],
+                    draw[1](canvas, (u8 *)work + RisingMotes_EmberCells[slot],
                         HI(ember->x), HI(ember->y),
-                        Data_080eeabb[slot], Data_080eeac3[slot]);
+                        RisingMotes_EmberWidths[slot], RisingMotes_EmberHeights[slot]);
                     ember->x += ember->velocity_x;
                     ember->y += ember->velocity_y;
                     ember->variant--;
@@ -225,7 +220,7 @@ void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
         if (ymax <= ymin)
             ymax = ymin + 1;
 
-        if (frame == Data_080eea88[work->effect->variant * 3 + RISE_FRAME]) {
+        if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
             for (i = 0; i != 32; i++) {
                 struct EffectStep *puff = &work->particles[i];
 
@@ -237,8 +232,8 @@ void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
                 puff->variant = (Random16() & 15) + 20;
             }
         }
-        if (frame >= Data_080eea88[work->effect->variant * 3 + RISE_FRAME]) {
-            s32 drop = (frame - Data_080eea88[work->effect->variant * 3 + RISE_FRAME]) / 2;
+        if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
+            s32 drop = (frame - RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) / 2;
 
             for (i = 0; i != 32; i++) {
                 struct EffectStep *puff = &work->particles[i];
@@ -253,7 +248,7 @@ void BattleEffect_RunRisingMotes(struct BattleEffectArgument *effect)
                 }
                 puff->variant--;
                 if ((puff->variant == -1 || puff->variant == 17)
-                    && frame < Data_080eea88[work->effect->variant * 3 + RISE_FRAME] + 35) {
+                    && frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35) {
                     puff->variant = 17;
                     puff->velocity_x = (Random16() & 127) << 16;
                     puff->velocity_y = (Random16() % (u32)(ymax - ymin) + ymin) << 16;

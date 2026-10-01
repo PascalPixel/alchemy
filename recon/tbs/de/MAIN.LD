@@ -763,7 +763,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ROCKWALL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000dc974)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MOTES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BOLTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.o"(.text)

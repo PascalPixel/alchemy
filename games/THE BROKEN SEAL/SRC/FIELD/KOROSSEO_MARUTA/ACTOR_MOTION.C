@@ -80,13 +80,12 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
 
 void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)
 {
-    extern s32 *ObjectTable_Get();
     extern void ObjectDispatch_InitFromTable6();
     extern void Object_SetPosition();
 
     s32 *record;
 
-    record = ObjectTable_Get(selector);
+    record = (s32 *)Engine_ActorLookup(selector);
     if (record != 0) {
         ObjectDispatch_InitFromTable6();
         Object_SetMode(record, 5);
@@ -96,14 +95,13 @@ void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)
 
 void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x, s32 z)
 {
-    extern s32 *ObjectTable_Get();
     extern void ObjectDispatch_InitFromTable6();
     extern void Object_SetPosition();
     extern void Object_CommitPosition();
 
     s32 *record;
 
-    record = ObjectTable_Get(selector);
+    record = (s32 *)Engine_ActorLookup(selector);
     if (record != 0) {
         ObjectDispatch_InitFromTable6();
         Object_SetMode(record, 5);

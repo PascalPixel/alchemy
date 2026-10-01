@@ -385,12 +385,6 @@ SaveMenu_SelectSlot:
 	.thumb_func
 NameEntry_EditOwnerName:
 	.incbin "baserom.gba", 0x0001f87c, 0x000004b4
-	.section .rom.00020054, "ax"
-	.global Party_ShowJoinedMessage
-	.type Party_ShowJoinedMessage, %function
-	.thumb_func
-Party_ShowJoinedMessage:
-	.incbin "baserom.gba", 0x00020054, 0x000000f8
 	.section .rom.00020b2e, "ax"
 	.incbin "baserom.gba", 0x00020b2e, 0x000008fe
 	.section .rom.0002173e, "ax"

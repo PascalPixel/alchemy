@@ -732,7 +732,7 @@ Func_0813fd84:
 	adds r0, r2, #0
 	subs r0, #68
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	adds r6, r6, r0
 .L_08140332:
 	movs r5, #224
@@ -946,7 +946,7 @@ Func_0813fd84:
 	bl Func_08015160
 	movs r1, #3
 	adds r0, r7, #0
-	bl Math_Div
+	bl __divsi3
 	adds r1, r0, #0
 	asrs r0, r7, #1
 	mov r10, r0

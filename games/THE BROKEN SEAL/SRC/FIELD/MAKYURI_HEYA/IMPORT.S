@@ -6,16 +6,13 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Engine_MathDivide
+	.global __divsi3
 	.thumb_func
-Engine_MathDivide:
-	.global IwramSignedDivideEntry
-	.thumb_func
-IwramSignedDivideEntry:
+__divsi3:
 	overlay_veneer IwramSignedDivide
-	.global Engine_MathModulo
+	.global __umodsi3
 	.thumb_func
-Engine_MathModulo:
+__umodsi3:
 	overlay_veneer IwramUnsignedRemainder
 	.global WaitFrames
 	.thumb_func
@@ -53,9 +50,6 @@ Runtime_AllocateBlock:
 	.thumb_func
 AnimationObjects_SelectAnimation:
 	overlay_veneer AnimationObjects_SelectAnimationFar
-	.global Object_SetMode
-	.thumb_func
-Object_SetMode:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -192,9 +186,6 @@ Event_PrepareObjectAndApplyValue:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

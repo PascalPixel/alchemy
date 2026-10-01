@@ -413,7 +413,7 @@ Func_08148458:
 .L_08148798:
 	adds r0, r7, #0
 	movs r1, #104
-	bl Math_Mod
+	bl __modsi3
 	ldrb r3, [r6, #1]
 	ldrb r2, [r6]
 	adds r5, r0, #0
@@ -500,7 +500,7 @@ Func_08148458:
 .L_0814883c:
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [r5, #16]
 	adds r4, r0, #2
 	cmp r3, #0
@@ -669,7 +669,7 @@ Func_08148458:
 	cmp r0, #29
 	ble .L_081489cc
 	movs r1, #12
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_081489ac

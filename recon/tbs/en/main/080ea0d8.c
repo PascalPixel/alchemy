@@ -321,7 +321,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 }
                 z = scene[2] - 100;
                 scene[2] = z;
-                size = Math_Div(z, 100) + 1;
+                size = __divsi3(z, 100) + 1;
                 if (near > z) {
                     near = z;
                 }
@@ -363,7 +363,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                     scene[2] = 60;
                 }
                 scene[2] += 60;
-                size = Math_Div(scene[2], 20) + 2;
+                size = __divsi3(scene[2], 20) + 2;
                 scene[0] += 60;
                 scene[1] += 80;
                 draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
@@ -479,7 +479,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         work->objects[i12] = obj;
         if (obj != 0) {
             obj[38] = 0;
-            AnimationObjects_SelectAnimationFar(obj, Math_Mod(i12, 3));
+            AnimationObjects_SelectAnimationFar(obj, __modsi3(i12, 3));
             ((u8 *)work->objects[i12])[9] &= ~12;
         }
     }

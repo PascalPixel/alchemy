@@ -814,7 +814,7 @@ FieldScene_RunSecondaryScript:
 	mov r0, r8
 	muls r0, r7
 	mov r1, r10
-	bl Engine_MathDivide
+	bl __divsi3
 	mov r1, r9
 	ldr r3, [r1, #64]
 	adds r7, r3, r0
@@ -822,7 +822,7 @@ FieldScene_RunSecondaryScript:
 	mov r0, r8
 	muls r0, r6
 	mov r1, r10
-	bl Engine_MathDivide
+	bl __divsi3
 	mov r2, r9
 	ldr r3, [r2, #72]
 	adds r2, r3, r0
@@ -1030,7 +1030,7 @@ FieldScene_RunSecondaryScript:
 	muls r0, r2
 	movs r1, #18
 	str r4, [sp, #4]
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r1, #192
 	lsls r1, r1, #14
 	movs r3, #180
@@ -1061,7 +1061,7 @@ FieldScene_RunSecondaryScript:
 	adds r0, r0, r1
 	movs r1, #18
 	str r4, [sp, #4]
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r2, #192
 	lsls r2, r2, #14
 	movs r3, #180
@@ -1096,7 +1096,7 @@ FieldScene_RunSecondaryScript:
 	adds r0, r0, r3
 	lsls r0, r0, #1
 	movs r1, #42
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r2, #192
 	lsls r2, r2, #13
 	movs r3, #168
@@ -1126,7 +1126,7 @@ FieldScene_RunSecondaryScript:
 	lsls r0, r0, #1
 	adds r0, r0, r1
 	movs r1, #42
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r2, #192
 	lsls r2, r2, #13
 	movs r3, #168
@@ -1534,7 +1534,7 @@ FieldScene_RunSecondaryScript:
 	muls r0, r4
 	adds r1, r2, #0
 	str r2, [sp, #8]
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r2, [sp, #8]
 	ldr r4, [sp, #4]
 	negs r3, r5
@@ -1543,7 +1543,7 @@ FieldScene_RunSecondaryScript:
 	adds r0, r3, #0
 	muls r0, r4
 	adds r1, r2, #0
-	bl Engine_MathDivide
+	bl __divsi3
 	mov r2, r9
 	ldr r3, [r2, #76]
 	subs r3, #100
@@ -1557,7 +1557,7 @@ FieldScene_RunSecondaryScript:
 	ldrsh r0, [r6, r3]
 	movs r1, #3
 	adds r0, #1
-	bl Engine_MathRemainder
+	bl __modsi3
 	movs r3, #36
 	strh r3, [r6, #18]
 	movs r3, #30

@@ -22,8 +22,8 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
     if (count == 0)
         goto done;
     Link_DrawShiftedTilePairFar(0x06002500);
-    pages = Math_Div(count, per_page);
-    if (Math_Mod(count, per_page) != 0)
+    pages = __divsi3(count, per_page);
+    if (__modsi3(count, per_page) != 0)
         pages++;
     if (horizontal) {
         next = gKeysRepeat & 16;

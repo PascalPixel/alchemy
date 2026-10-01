@@ -2480,7 +2480,7 @@ Func_02001414:
 .L_02009428:
 	adds r0, r5, #0
 	movs r1, #10
-	bl Engine_MathRemainder
+	bl __modsi3
 	movs r3, #1
 	movs r2, #16
 	adds r1, r0, #0
@@ -2492,7 +2492,7 @@ Func_02001414:
 	bl Func_02001984
 	adds r0, r5, #0
 	movs r1, #10
-	bl Engine_MathDivide
+	bl __divsi3
 	adds r6, #1
 	adds r5, r0, #0
 	cmp r6, #2

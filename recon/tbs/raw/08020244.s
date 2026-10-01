@@ -561,7 +561,7 @@ SaveMenu_SelectSlot:
 	mov r0, r8
 	adds r0, #2
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r9
 	mov r8, r0
 	cmp r2, #0
@@ -628,7 +628,7 @@ SaveMenu_SelectSlot:
 	mov r0, r8
 	adds r0, #4
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r9
 	mov r8, r0
 	cmp r2, #0

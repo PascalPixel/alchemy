@@ -364,7 +364,7 @@ BattleUnit_ProcessTurnEnd:
 	ldrsh r3, [r2, r1]
 	movs r1, #10
 	muls r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, .L_080bffa8
 	adds r7, r0, #0
 	mov r1, r8

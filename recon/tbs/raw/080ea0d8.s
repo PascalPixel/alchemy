@@ -410,7 +410,7 @@ Unnamed_080ea0d8:
 	str r5, [r0, #8]
 	movs r1, #100
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r1, [sp, #64]
 	adds r4, r0, #1
 	cmp r1, r5
@@ -540,7 +540,7 @@ Unnamed_080ea0d8:
 	adds r0, #60
 	str r0, [r5, #8]
 	movs r1, #20
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, [r5]
 	ldr r3, [r5, #4]
 	adds r0, #2
@@ -1052,7 +1052,7 @@ Unnamed_080ea0d8:
 	strb r3, [r2]
 	movs r1, #3
 	adds r0, r7, #0
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Object_InitializeMode

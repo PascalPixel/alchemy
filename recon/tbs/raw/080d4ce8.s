@@ -278,7 +278,7 @@ Region_080d4ce8:
 	lsls r0, r1, #4
 	adds r0, r0, r3
 	movs r1, #104
-	bl Math_Mod
+	bl __modsi3
 	ldr r5, [sp, #32]
 	movs r3, #1
 	ands r5, r3

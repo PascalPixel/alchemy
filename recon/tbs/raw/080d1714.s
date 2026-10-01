@@ -483,7 +483,7 @@ Unnamed_080d1714:
 .L_080d1aca:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #48
 	subs r2, r3, r5
 	lsls r1, r0, #1
@@ -524,7 +524,7 @@ Unnamed_080d1714:
 .L_080d1b1a:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #64
 	subs r3, r3, r5
 	lsls r1, r0, #1
@@ -556,7 +556,7 @@ Unnamed_080d1714:
 .L_080d1b5a:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	ldr r7, [sp, #92]
@@ -825,7 +825,7 @@ Unnamed_080d1714:
 	str r3, [r7, #4]
 	bl Random16
 	movs r1, #200
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	movs r2, #1
 	movs r3, #0
 	subs r0, #100
@@ -1051,7 +1051,7 @@ Unnamed_080d1714:
 .L_080d1f42:
 	movs r1, #36
 	subs r0, #170
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #6
 	subs r4, r3, r0
 	lsls r0, r4, #1
@@ -1075,19 +1075,19 @@ Unnamed_080d1714:
 	ldr r5, [r6]
 	mov r1, r8
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	mov r1, r8
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	mov r1, r8
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #8]
 	b .L_080d1fe4
@@ -1140,7 +1140,7 @@ Unnamed_080d1714:
 	ble .L_080d2030
 	movs r1, #10
 	mov r0, r10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r4, r0, #1
 	lsls r0, r4, #1
 	ldr r2, .L_080d23a8
@@ -1267,7 +1267,7 @@ Unnamed_080d1714:
 .L_080d20fa:
 	movs r1, #90
 	subs r0, #170
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #3
 	subs r4, r3, r0
 	lsls r0, r4, #1
@@ -1499,7 +1499,7 @@ Unnamed_080d1714:
 .L_080d22c4:
 	movs r1, #90
 	subs r0, #170
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #3
 	subs r4, r3, r0
 	lsls r0, r4, #1

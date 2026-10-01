@@ -341,7 +341,7 @@ FieldScene_RunScene3bcSequenceB:
 	lsls r5, r5, #12
 	subs r0, r0, r3
 	adds r1, r5, #0
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r3, [sp, #16]
 	adds r3, #236
 	ldr r3, [r3]
@@ -351,7 +351,7 @@ FieldScene_RunScene3bcSequenceB:
 	adds r1, r5, #0
 	subs r0, r0, r3
 	str r4, [sp, #0]
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r3, [sp, #16]
 	adds r3, #218
 	movs r1, #0
@@ -406,7 +406,7 @@ FieldScene_RunScene3bcSequenceB:
 	lsls r5, r5, #12
 	subs r0, r0, r3
 	adds r1, r5, #0
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r3, [sp, #16]
 	adds r3, #236
 	ldr r3, [r3]
@@ -416,7 +416,7 @@ FieldScene_RunScene3bcSequenceB:
 	adds r1, r5, #0
 	subs r0, r0, r3
 	str r4, [sp, #0]
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r3, [sp, #16]
 	adds r3, #218
 	movs r1, #0

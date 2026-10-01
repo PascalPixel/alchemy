@@ -160,7 +160,7 @@ Func_080e3074:
 .L_080e31bc:
 	lsls r0, r7, #16
 	movs r1, #20
-	bl Math_Div
+	bl __divsi3
 	mov r1, r11
 	str r0, [r1, #28]
 	adds r7, #1

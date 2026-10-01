@@ -32,7 +32,7 @@ Func_080c977c:
 	movs r0, #52
 	ldrsh r1, [r6, r0]
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	movs r1, #128
 	lsls r1, r1, #7
 	cmp r0, r1
@@ -58,7 +58,7 @@ Func_080c977c:
 	movs r4, #54
 	ldrsh r1, [r6, r4]
 	lsls r0, r0, #14
-	bl Math_Div
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3

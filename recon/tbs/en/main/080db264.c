@@ -50,7 +50,7 @@ s32 Trig_Cos(s32);
 s32 Scheduler_AddOrUpdateCallback(void *, s32);
 void Audio_PlayCue(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
-s32 Math_Mod(s32, s32);
+s32 __modsi3(s32, s32);
 void EffectStep_AdvanceWithGravity2D(void *, s32, s32);
 void ObjectGroup_UpdateMembers(s16, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
@@ -138,7 +138,7 @@ void Unnamed_080db264(void *object)
         if (frame == 20)
             BattleEventRuntime_BeginPhaseFar(133);
         if (frame <= 15) {
-            if (Math_Mod(frame, 5) == 2)
+            if (__modsi3(frame, 5) == 2)
                 ((CopyFn)0x03000168)(canvas, (void *)0x10101010, 0x4000);
             pass = 0;
             angle = frame << 11;

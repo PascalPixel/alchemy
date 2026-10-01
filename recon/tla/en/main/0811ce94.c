@@ -13,7 +13,7 @@
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
 
-s32 Math_Div(s32, s32);
+s32 __divsi3(s32, s32);
 u32 Random16(void);
 
 struct BattleEscapeState {
@@ -48,7 +48,7 @@ s32 BattleEscape_CheckSuccess(void)
             level_total += ((u8 *)Owner_GetState(
                 (s32)living_units[unit_index]))[0x0f];
         }
-        chance += Math_Div(level_total * 0x1F4, living_count);
+        chance += __divsi3(level_total * 0x1F4, living_count);
         living_count = BattleParty_ListLivingUnits(
             BATTLE_SIDE_ENEMIES,
             living_units);
@@ -57,7 +57,7 @@ s32 BattleEscape_CheckSuccess(void)
             level_total += ((u8 *)Owner_GetState(
                 (s32)living_units[unit_index]))[0x0f];
         }
-        chance -= Math_Div(level_total * 0x1F4, living_count);
+        chance -= __divsi3(level_total * 0x1F4, living_count);
         if ((chance > 0) &&
             ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
             escaped = 1;

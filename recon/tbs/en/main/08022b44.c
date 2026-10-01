@@ -122,7 +122,7 @@ s32 Djinn_IsActiveFar(s32 owner, s32 col, s32 row);
 void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
 void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
 
-s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 void *Runtime_BumpAllocate(s32 size);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct BattleUnitRecord *Runtime_GetObject(s32 owner);
@@ -208,7 +208,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     BattleUnit_Recalculate(owner);
 
     total = DjinnMenu_ListChangedDjinn(snap->grid, unit->grid, list, &gained, &lost);
-    pages = FixedPoint_Ratio(total - 1, 5) + 1;
+    pages = __divsi3(total - 1, 5) + 1;
     *pageCount = pages;
     if (page * 5 - 5 >= total)
         page = pages;

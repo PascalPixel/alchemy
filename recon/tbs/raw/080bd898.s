@@ -754,7 +754,7 @@ BattleEvent_Playback:
 .L_080bde70:
 	asrs r0, r0, #3
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	adds r0, #1
 	mov r10, r0
 .L_080bde7c:

@@ -241,7 +241,7 @@ Func_08148e9c:
 	add r0, r11
 	movs r1, #3
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [sp, #36]
 	lsls r5, r0, #2
 	adds r5, r5, r0

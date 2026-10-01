@@ -60,8 +60,8 @@ s32 BattleFx_EndCanvasLayer(void);
 u32 Random16(void);
 void Audio_PlayCue(s32 id);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
-s32 Math_Mod(s32 a, s32 b);
-s32 Math_Div(s32 a, s32 b);
+s32 __modsi3(s32 a, s32 b);
+s32 __divsi3(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 a, s32 b);
@@ -191,9 +191,9 @@ void Unnamed_080d3c80(void *object)
                                 s32 y;
                                 s32 delta;
 
-                                idx = Math_Mod(j, 5) * 3
-                                    + Math_Mod(
-                                        Math_Div(
+                                idx = __modsi3(j, 5) * 3
+                                    + __modsi3(
+                                        __divsi3(
                                             M2C_FIELD(sub, s32 *, 0x18),
                                             0x60),
                                         3);

@@ -135,7 +135,7 @@ BattleFormation_BuildEnemyList:
 	movs r3, #2
 	subs r1, r3, r1
 	mov r0, r11
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r0, r5
 	bge .L_080c2106
 	adds r5, r0, #0

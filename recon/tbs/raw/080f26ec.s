@@ -107,7 +107,7 @@ Func_080f26ec:
 	ldr r5, [r1, #12]
 	movs r1, #3
 	adds r0, r5, #0
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	bne .L_080f280a
 	mov r0, r10
@@ -211,7 +211,7 @@ Func_080f26ec:
 	strh r2, [r3]
 	subs r0, r0, r1
 	movs r1, #160
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #4
 	subs r1, r1, r0
 	ldr r2, .L_080f28d4
@@ -500,7 +500,7 @@ Func_080f26ec:
 	bls .L_080f2aa8
 	movs r1, #60
 	adds r0, r7, #0
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	ldr r2, .L_080f2aec
 	b .L_080f2af0
 	.2byte 0x0000

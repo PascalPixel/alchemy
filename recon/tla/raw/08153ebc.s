@@ -284,7 +284,7 @@ Func_08153ebc:
 .L_08154108:
 	bl Random16
 	movs r1, #96
-	bl Math_ModU
+	bl __umodsi3
 	adds r0, #12
 	lsls r0, r0, #16
 	str r0, [r7]
@@ -974,7 +974,7 @@ Func_08153ebc:
 .L_08154660:
 	ldr r0, [sp, #48]
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [sp, #64]
 	ldr r3, [r2, #20]
 	cmp r0, r3
@@ -1196,7 +1196,7 @@ Func_08153ebc:
 	bl Audio_PlayCue
 	movs r1, #6
 	ldr r0, [sp, #48]
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #64]
 	adds r4, r0, #0
 	ldr r3, [r1, #20]

@@ -25,11 +25,11 @@ Func_080f8f9c:
 	bl Link_DrawShiftedTilePairFar
 	adds r1, r7, #0
 	mov r0, r8
-	bl Math_Div
+	bl __divsi3
 	adds r1, r7, #0
 	mov r9, r0
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	beq .L_080f8fde
 	movs r3, #1

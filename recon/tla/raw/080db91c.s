@@ -32,7 +32,7 @@ ObjectGroup_ApplyRandomChildValues:
 	mov r0, r8
 	movs r1, #6
 	str r2, [sp, #0]
-	bl Math_ModU
+	bl __umodsi3
 	ldmia r7!, {r5}
 	subs r6, #1
 	strb r0, [r5, #5]

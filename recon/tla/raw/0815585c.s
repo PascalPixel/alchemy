@@ -414,21 +414,21 @@ Func_0815585c:
 	ldr r0, [r5]
 	movs r1, #40
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [sp, #12]
 	str r0, [r1]
 	ldr r3, [r7, #4]
 	ldr r0, [r5, #4]
 	movs r1, #40
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r2, [sp, #12]
 	movs r1, #40
 	str r0, [r2, #4]
 	ldr r3, [r7, #8]
 	ldr r0, [r5, #8]
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [sp, #12]
 	movs r4, #0
 	str r0, [r3, #8]

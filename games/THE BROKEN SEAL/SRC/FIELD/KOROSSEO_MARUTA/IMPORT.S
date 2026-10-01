@@ -6,13 +6,13 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Engine_MathDivide
+	.global __divsi3
 	.thumb_func
-Engine_MathDivide:
+__divsi3:
 	overlay_veneer IwramSignedDivide
-	.global Engine_MathModulo
+	.global __modsi3
 	.thumb_func
-Engine_MathModulo:
+__modsi3:
 	overlay_veneer IwramSignedRemainder
 	.global Engine_TaskWait
 	.thumb_func

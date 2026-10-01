@@ -111,7 +111,7 @@ void **GetBattleObjectSlotFar(s32 member_id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 id);
@@ -273,9 +273,9 @@ void BattleFx_PrepareCanvasEffect(
         break;
     }
 
-    step[0] = Math_Div(target[0] - base[0], 40);
-    step[1] = Math_Div(target[1] - base[1], 40);
-    step[2] = Math_Div(target[2] - base[2], 40);
+    step[0] = __divsi3(target[0] - base[0], 40);
+    step[1] = __divsi3(target[1] - base[1], 40);
+    step[2] = __divsi3(target[2] - base[2], 40);
 
     frame = 0;
     if (total != 0) {

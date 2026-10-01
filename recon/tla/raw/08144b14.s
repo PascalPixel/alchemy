@@ -554,7 +554,7 @@ Func_08144b14:
 	movs r1, #3
 	subs r0, #88
 	str r2, [sp, #12]
-	bl Math_Div
+	bl __divsi3
 	mov r1, r10
 	ldr r2, [sp, #12]
 	subs r1, r1, r0

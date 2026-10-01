@@ -127,8 +127,8 @@ void **GetBattleObjectSlotFar(s32 member_id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 Math_Div(s32 value, s32 divisor);
-s32 Math_Mod(s32 value, s32 divisor);
+s32 __divsi3(s32 value, s32 divisor);
+s32 __modsi3(s32 value, s32 divisor);
 void Render_ResetTransformState(void);
 void Graphics_SaveTransferWorkOnce(void);
 void Graphics_RestoreTransferWork(void);
@@ -219,9 +219,9 @@ s32 BattleEffect_RunSparkTravel(void *object)
     target[0] = M2C_FIELD(goal, s32 *, 8);
     target[1] = 0x5A0000;
     target[2] = 0;
-    delta[0] = Math_Div(target[0] - pos[0], 40);
-    delta[1] = Math_Div(target[1] - pos[1], 40);
-    delta[2] = Math_Div(target[2] - pos[2], 40);
+    delta[0] = __divsi3(target[0] - pos[0], 40);
+    delta[1] = __divsi3(target[1] - pos[1], 40);
+    delta[2] = __divsi3(target[2] - pos[2], 40);
 
     frame = 0;
     do {
@@ -405,7 +405,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                                     if (view[2] > 634) {
                                         view[2] = 634;
                                     }
-                                    cel = Math_Mod(grain * 4 + frame, 9);
+                                    cel = __modsi3(grain * 4 + frame, 9);
                                     src = (u8 *)graphics + BattleFx_PuffCells[cel];
                                     size = BattleFx_PuffSizes[cel];
                                     half = (u32)size >> 1;
@@ -414,11 +414,11 @@ s32 BattleEffect_RunSparkTravel(void *object)
                                         view[0] - half,
                                         view[1] - half,
                                         size, size);
-                                    grain_step->x -= Math_Div(
+                                    grain_step->x -= __divsi3(
                                         grain_step->x, distance);
-                                    grain_step->y -= Math_Div(
+                                    grain_step->y -= __divsi3(
                                         grain_step->y, distance);
-                                    grain_step->z -= Math_Div(
+                                    grain_step->z -= __divsi3(
                                         grain_step->z, distance);
                                 }
                             }

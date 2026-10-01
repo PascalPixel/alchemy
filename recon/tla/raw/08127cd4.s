@@ -140,7 +140,7 @@ Func_08127cd4:
 	movs r3, #2
 	subs r1, r3, r1
 	ldr r0, [sp, #20]
-	bl Math_Div
+	bl __divsi3
 	cmp r0, r5
 	bge .L_08127de8
 	adds r5, r0, #0

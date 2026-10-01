@@ -351,7 +351,7 @@ ItemList_SelectEntry:
 	mov r0, r9
 	movs r1, #5
 	adds r6, r7, r2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	bne .L_080254d4
 	ldr r3, .L_08025540
@@ -372,7 +372,7 @@ ItemList_SelectEntry:
 .L_080254ee:
 	mov r0, r10
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r7, r5
 	blt .L_080254c0
@@ -428,7 +428,7 @@ ItemList_SelectEntry:
 	bhi .L_0802556c
 	mov r0, r9
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	bne .L_0802556c
 	ldr r2, .L_08025674
@@ -438,7 +438,7 @@ ItemList_SelectEntry:
 	movs r1, #5
 	mov r0, r10
 	ldrh r5, [r3, #8]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	adds r5, r5, r7
 	movs r1, #0
@@ -454,7 +454,7 @@ ItemList_SelectEntry:
 .L_08025592:
 	mov r0, r10
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	blt .L_0802554c
 	mov r3, r11
@@ -742,7 +742,7 @@ ItemList_SelectEntry:
 	ldr r0, [sp, #72]
 	movs r1, #5
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	cmp r9, r3
@@ -793,7 +793,7 @@ ItemList_SelectEntry:
 	subs r0, #1
 	movs r1, #5
 	mov r8, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	cmp r9, r3
@@ -832,7 +832,7 @@ ItemList_SelectEntry:
 	ldr r0, [sp, #72]
 	movs r1, #5
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	mov r9, r3

@@ -337,10 +337,10 @@ s32 Ui_RunSelectionScreen(s32 mode)
         }
         if (repeat & 0x90) {
             Audio_PlayCue(0x6f);
-            work->selection = Math_Mod(work->selection + 1, work->count);
+            work->selection = __modsi3(work->selection + 1, work->count);
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
-            work->selection = Math_Mod(work->selection + work->count - 1, work->count);
+            work->selection = __modsi3(work->selection + work->count - 1, work->count);
         } else if (gLinkCountdownWork->enabled == 0) {
             result = work->kinds[0];
             break;

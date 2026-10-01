@@ -361,7 +361,7 @@ Func_080e5d5c:
 	adds r0, r0, r3
 	movs r1, #10
 	lsls r0, r0, #1
-	bl Math_DivU
+	bl __udivsi3
 	movs r2, #160
 	lsls r2, r2, #10
 	adds r6, r0, #0

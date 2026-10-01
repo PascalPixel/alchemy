@@ -77,7 +77,7 @@ Func_080fb780:
 	adds r0, r6, #5
 	movs r1, #5
 	mov r10, r3
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r9
 	adds r6, r0, #0
 	adds r0, r7, #0

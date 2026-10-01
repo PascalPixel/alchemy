@@ -135,12 +135,12 @@ Func_080a414c:
 .L_080a4258:
 	movs r1, #3
 	adds r0, r5, #0
-	bl Math_Mod
+	bl __modsi3
 	lsls r0, r0, #24
 	asrs r7, r0, #24
 	movs r1, #3
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r0, r0, #24
 	asrs r0, r0, #24
 	mov r8, r0
@@ -168,7 +168,7 @@ Func_080a414c:
 	adds r0, r7, #3
 	mov r9, r1
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r8
 	adds r2, #2
 	lsrs r3, r2, #31

@@ -192,7 +192,6 @@ struct SparkAnchor {
 };
 
 extern u32 gFrameCount;
-u32 Math_ModU(u32 value, u32 divisor);
 
 void BattleFx_SwayParticle(u8 *object);
 
@@ -572,7 +571,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *object)
         (*phase)++;
         *phase = (*phase + 64) % 64;
     }
-    if (Math_ModU(gFrameCount, 3) == 0) {
+    if (gFrameCount % 3 == 0) {
         position[0] = object->x;
         position[1] = object->y + 0x20000;
         position[2] = object->z;

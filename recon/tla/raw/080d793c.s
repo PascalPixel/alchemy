@@ -99,11 +99,11 @@ Func_080d793c:
 	adds r5, r6, r1
 	adds r0, r5, #0
 	movs r1, #20
-	bl Math_Div
+	bl __divsi3
 	movs r1, #20
 	mov r8, r0
 	adds r0, r5, #0
-	bl Math_Mod
+	bl __modsi3
 	movs r5, #8
 	adds r7, r0, #0
 	b .L_080d7a10

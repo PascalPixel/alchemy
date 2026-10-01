@@ -145,21 +145,21 @@ Func_0814b350:
 	ldr r3, [r1]
 	movs r1, #40
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6]
 	mov r2, r11
 	ldr r3, [r2, #4]
 	ldr r0, [r5, #4]
 	movs r1, #40
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #4]
 	movs r1, #40
 	ldr r0, [r5, #8]
 	mov r5, r11
 	ldr r3, [r5, #8]
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #8]
 	movs r6, #0
 	mov r9, r6
@@ -694,7 +694,7 @@ Func_0814b350:
 	lsls r0, r3, #2
 	movs r1, #9
 	add r0, r9
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0814b9ac
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -718,19 +718,19 @@ Func_0814b350:
 	ldr r5, [r6]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #8]
 .L_0814b930:

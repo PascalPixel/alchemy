@@ -13,7 +13,6 @@ s32 GameState_InitDefaults();
 s32 Game_ResetForNewGameFar(s32);
 
 /* party/get_average_level.c */
-u32 Math_Div(s32, s32);
 
 struct OwnerState {
     u8 bytes[0x14c];
@@ -170,7 +169,7 @@ u32 Party_GetAverageLevel(void)
         total += ((u8 *)Owner_GetState(
             gGameState.active_owners[i]))[15];
     }
-    total = Math_Div(total, count);
+    total = total / count;
     return total;
 }
 
@@ -388,12 +387,12 @@ void Owner_RecalculateStats(s32 owner)
         {
             struct ClassRecord *class = Owner_GetRecordStride84(st->class_id);
 
-            work->hp = Math_Div(work->hp * class->hp, 10);
-            work->pp = Math_Div(work->pp * class->pp, 10);
-            work->attack = Math_Div(work->attack * class->attack, 10);
-            work->defense = Math_Div(work->defense * class->defense, 10);
-            work->agility = Math_Div(work->agility * class->agility, 10);
-            work->luck = Math_Div(work->luck * class->luck, 10);
+            work->hp = work->hp * class->hp / 10;
+            work->pp = work->pp * class->pp / 10;
+            work->attack = work->attack * class->attack / 10;
+            work->defense = work->defense * class->defense / 10;
+            work->agility = work->agility * class->agility / 10;
+            work->luck = work->luck * class->luck / 10;
         }
 
         for (i = 0; i < 15; i++) {
@@ -408,28 +407,28 @@ void Owner_RecalculateStats(s32 owner)
                 work->amount = amount;
                 switch (kind) {
                 case 0:
-                    work->hp = Math_Div(work->hp * work->amount, 10);
+                    work->hp = work->hp * work->amount / 10;
                     break;
                 case 1:
-                    work->stat_20 = Math_Div(work->stat_20 * work->amount, 10);
+                    work->stat_20 = work->stat_20 * work->amount / 10;
                     break;
                 case 2:
-                    work->pp = Math_Div(work->pp * work->amount, 10);
+                    work->pp = work->pp * work->amount / 10;
                     break;
                 case 3:
-                    work->stat_24 = Math_Div(work->stat_24 * work->amount, 10);
+                    work->stat_24 = work->stat_24 * work->amount / 10;
                     break;
                 case 4:
-                    work->attack = Math_Div(work->attack * work->amount, 10);
+                    work->attack = work->attack * work->amount / 10;
                     break;
                 case 5:
-                    work->defense = Math_Div(work->defense * work->amount, 10);
+                    work->defense = work->defense * work->amount / 10;
                     break;
                 case 6:
-                    work->agility = Math_Div(work->agility * work->amount, 10);
+                    work->agility = work->agility * work->amount / 10;
                     break;
                 case 7:
-                    work->luck = Math_Div(work->luck * work->amount, 10);
+                    work->luck = work->luck * work->amount / 10;
                     break;
                 }
             }

@@ -23,7 +23,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     struct BattleCamera *scene = *(struct BattleCamera **)gCameraWork;
     s32 *pos = scene->pos;
     s32 *hud = (s32 *)gProjection;
-    s32 scale = Math_Div(mode << 16, 100);
+    s32 scale = __divsi3(mode << 16, 100);
     s32 render_bounds[3];
     s32 measured_bounds[3];
     s32 source_bounds[3];

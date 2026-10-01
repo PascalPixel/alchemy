@@ -21,7 +21,7 @@ u16 RollWeaponUnleash(void *owner)
     if (FIELD_AT_OFFSET(item, u16, 0xE) == 0) {
         return 1;
     }
-    rate = Math_Div(
+    rate = __divsi3(
         (Equipment_GetUnleashRateBonus((s32)owner) +
          (FIELD_AT_OFFSET(item, u8, 0xB) * 5)) << 0x10,
         100);

@@ -120,7 +120,7 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 cou
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *work, void *transfer);
 s32 Render_ProjectPoint(void *point, s32 *out);
-u32 Math_ModU(u32 numerator, u32 denominator);
+u32 __umodsi3(u32 numerator, u32 denominator);
 void FarCall_WindowTable(void);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_FinalizeFar(s32 window, s32 mode);
@@ -271,9 +271,9 @@ void LuckyDice_Run(void)
     }
     results[0] = results[1] = results[2] = results[3] = 0;
     flash[0] = flash[1] = 0;
-    faces[0] = Math_ModU(Random16(), 6);
+    faces[0] = __umodsi3(Random16(), 6);
     do {
-        faces[1] = Math_ModU(Random16(), 6);
+        faces[1] = __umodsi3(Random16(), 6);
     } while (faces[0] == faces[1]);
     work->die[0].x = 0x280000;
     work->die[0].y = 0x600000;
@@ -455,8 +455,8 @@ void LuckyDice_Run(void)
                     die->vx = ((Random16() & 127) - 64) << 12;
                     die->vy = ((Random16() & 15) + 48) << 13;
                     n = Random16() & 63;
-                    die->vz = ((n + 140) << 12) + Math_Div(die->y, 6);
-                    die->angle = Math_ModU(Random16(), 0x4800);
+                    die->vz = ((n + 140) << 12) + __divsi3(die->y, 6);
+                    die->angle = __umodsi3(Random16(), 0x4800);
                     spin[i] = 300;
                     die++;
                 }
@@ -470,9 +470,9 @@ void LuckyDice_Run(void)
             work->die[1].x = -0x280000;
             work->die[1].y = 0x600000;
             work->die[1].z = -0xa00000;
-            faces[0] = Math_ModU(Random16(), 6);
+            faces[0] = __umodsi3(Random16(), 6);
             do {
-                faces[1] = Math_ModU(Random16(), 6);
+                faces[1] = __umodsi3(Random16(), 6);
             } while (faces[0] == faces[1]);
         }
 
@@ -496,7 +496,7 @@ void LuckyDice_Run(void)
                 proj[2] = 0x28a;
             }
             depth[order[i]] = proj[2] - 0x15e;
-            d = Math_Div(0x800, depth[order[i]] / 2 + 128);
+            d = __divsi3(0x800, depth[order[i]] / 2 + 128);
             x = proj[0] - d;
             y = proj[1] - d;
             if (y + 96 > -16) {
@@ -511,8 +511,8 @@ void LuckyDice_Run(void)
             for (i = 0; i != 2; i++) {
                 Render_ProjectPoint(die, proj);
                 n = depth[order[i]] / 2 + 128;
-                x = proj[0] - Math_Div(0x800, n);
-                y = proj[1] + Math_Div(0x300, n);
+                x = proj[0] - __divsi3(0x800, n);
+                y = proj[1] + __divsi3(0x300, n);
                 sprites->obj[count].attr01 = ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
                 if (i == 1) {
                     sprites->obj[count].attr01 |= 0x10000000;
@@ -561,9 +561,9 @@ void LuckyDice_Run(void)
                         dist = dx * dx + dy * dy + dz * dz;
                         if (dist <= 0x9c3) {
                             dist = LuckyDice_Sqrt(dist);
-                            die->vx += Math_Div(dx << 15, dist);
-                            die->vy += Math_Div(dy << 15, dist);
-                            die->vz += Math_Div(dz << 15, dist);
+                            die->vx += __divsi3(dx << 15, dist);
+                            die->vy += __divsi3(dy << 15, dist);
+                            die->vz += __divsi3(dz << 15, dist);
                         }
                     }
                     other++;
@@ -609,7 +609,7 @@ void LuckyDice_Run(void)
                         die->vz = 0;
                         spin[i] = 0;
                         n = die->angle;
-                        switch (Math_Mod(n / 1024, 3)) {
+                        switch (__modsi3(n / 1024, 3)) {
                         case 1:
                             die->angle = n + 0x800;
                             break;
@@ -630,7 +630,7 @@ void LuckyDice_Run(void)
                     spin[i]--;
                 }
                 if (die->vx == 0 && die->vy == 0 && die->vz == 0 && die->y == 0) {
-                    results[i] = Math_Div(die->angle, 0xc00);
+                    results[i] = __divsi3(die->angle, 0xc00);
                     for (j = 0; j != 6; j++) {
                         if (die->z > Data_080f541a[j] << 16) {
                             results[i + 2] = j;

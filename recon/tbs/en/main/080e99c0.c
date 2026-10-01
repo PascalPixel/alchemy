@@ -133,8 +133,8 @@ extern const u16 ParticleStreams_CellOffsets[];
 extern const u8 Data_080eef12[];
 extern const s32 Data_080eef18[];
 
-s32 Math_Div(s32 numerator, s32 denominator);
-s32 Math_Mod(s32 a, s32 b);
+s32 __divsi3(s32 numerator, s32 denominator);
+s32 __modsi3(s32 a, s32 b);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 /* Runtime_ReleaseHeapBlock */
@@ -297,7 +297,7 @@ void Unnamed_080e99c0(void *object)
                 if ((u32)life <= 17) {
                     draw(canvas,
                         (u8 *)work
-                            + (tbl[Math_Div(life, 3)] << 11)
+                            + (tbl[__divsi3(life, 3)] << 11)
                             + (221 << 4),
                         x - 16, y + 48, 32, 64);
                 }
@@ -351,7 +351,7 @@ void Unnamed_080e99c0(void *object)
 
         /* The same guard again: a 34x104 strip wrapping through 104 rows. */
         if ((u32)step <= 31) {
-            size = Math_Mod(frame * 16 - 256, 104);
+            size = __modsi3(frame * 16 - 256, 104);
             draw(canvas, work, half - 17, 4 - size, 34, 104);
             draw(canvas, work, half - 17, 108 - size, 34, size);
         }
@@ -360,7 +360,7 @@ void Unnamed_080e99c0(void *object)
             i = 0;
             do {
                 if (dust[i].variant >= 0) {
-                    size = Math_Mod(i, 3) + 2;
+                    size = __modsi3(i, 3) + 2;
                     if (dust[i].velocity_y > 0) {
                         size += 2;
                     }
@@ -437,7 +437,7 @@ void Unnamed_080e99c0(void *object)
                     } else {
                         x = spark[i].x;
                         if ((u32)x <= 0x007EFFFF && y >= 0) {
-                            size = Math_Div(spark[i].variant, 5) + 1;
+                            size = __divsi3(spark[i].variant, 5) + 1;
                             draw(canvas,
                                 (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
                                 (x >> 16) - size / 2, (y >> 16) - size,

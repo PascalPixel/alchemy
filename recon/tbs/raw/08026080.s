@@ -352,7 +352,7 @@ BattleTarget_RunSelection:
 	adds r0, r3, #0
 	adds r1, r4, #0
 	str r3, [sp, #68]
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #68]
 .L_08026308:
 	ldr r5, [sp, #68]
@@ -1774,7 +1774,7 @@ BattleTarget_RunSelection:
 	str r1, [sp, #68]
 	adds r0, r1, #0
 	ldr r1, [sp, #60]
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #68]
 	ldr r4, [sp, #28]
 	lsls r2, r0, #1
@@ -1799,7 +1799,7 @@ BattleTarget_RunSelection:
 	subs r3, #1
 	adds r0, r3, #0
 	str r3, [sp, #68]
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #68]
 	ldr r2, [sp, #28]
 	lsls r3, r0, #1

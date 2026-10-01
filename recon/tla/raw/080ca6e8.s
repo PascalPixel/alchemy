@@ -81,11 +81,11 @@ Event_SpawnObjectTable:
 	bhi .L_080ca7d4
 	movs r1, #20
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	movs r1, #20
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #19
 	bne .L_080ca7b6
 	movs r0, #200

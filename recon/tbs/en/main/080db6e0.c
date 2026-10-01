@@ -52,7 +52,7 @@ extern u16 ParticleStreams_CellOffsets[];
 extern u8 Data_080eeae2[];
 
 /* Sprite-offset / size halfword pair tables, indexed together by the same
-   Math_Div selection while a near-field particle is still growing. */
+   __divsi3 selection while a near-field particle is still growing. */
 extern u16 Data_080eeaec[];
 extern u16 Data_080eeafa[];
 
@@ -68,7 +68,7 @@ void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 void EffectStep_AdvanceWithGravity3D(void *record, s32 a, s32 b);
 s32 Random16(void);
-s32 Math_Div(s32 a, s32 b);
+s32 __divsi3(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 mode);
 void WaitFrames(s32 frames);
@@ -247,7 +247,7 @@ void RunParticleFieldEffect(void *object, s32 variant)
                         - 16;
                     age = M2C_FIELD(particle, s32 *, 24);
                     if ((u32)age <= 20) {
-                        which = Math_Div(age, 3);
+                        which = __divsi3(age, 3);
                         sprite_off = Data_080eeaec[which];
                         size = Data_080eeafa[which];
                         half = (u32) size >> 1;

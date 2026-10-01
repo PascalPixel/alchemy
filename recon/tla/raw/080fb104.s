@@ -124,12 +124,12 @@ Func_080fb104:
 .L_080fb1f6:
 	movs r1, #3
 	adds r0, r5, #0
-	bl Math_Mod
+	bl __modsi3
 	lsls r0, r0, #24
 	asrs r7, r0, #24
 	movs r1, #3
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	lsls r0, r0, #24
 	asrs r0, r0, #24
 	mov r10, r0
@@ -155,7 +155,7 @@ Func_080fb104:
 	adds r0, r7, #3
 	movs r1, #3
 	mov r9, r2
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r10
 	adds r2, #2
 	lsrs r3, r2, #31

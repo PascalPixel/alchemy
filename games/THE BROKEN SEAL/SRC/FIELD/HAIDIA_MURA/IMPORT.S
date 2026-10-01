@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global IwramUnsignedRemainderEntry
+	.global __umodsi3
 	.thumb_func
-IwramUnsignedRemainderEntry:
+__umodsi3:
 	overlay_veneer IwramUnsignedRemainder
 	.global WaitFrames
 	.thumb_func
@@ -65,9 +65,6 @@ Engine_VramLoad:
 	.thumb_func
 AnimationObjects_SelectAnimation:
 	overlay_veneer AnimationObjects_SelectAnimationFar
-	.global Object_SetMode
-	.thumb_func
-Object_SetMode:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -197,9 +194,6 @@ Engine_PartyGiveItem:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

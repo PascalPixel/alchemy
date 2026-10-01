@@ -27,7 +27,7 @@ struct TitleWork {
 extern u16 gBgScroll[];
 extern u8 Data_080f39ab[];
 
-s32 Math_Div(s32 value, s32 divisor);
+s32 __divsi3(s32 value, s32 divisor);
 
 #define WRAP256(v) \
     while ((v) > 255) (v) -= 256; \
@@ -35,7 +35,7 @@ s32 Math_Div(s32 value, s32 divisor);
 
 #define PLACE(i, half) \
     x = Data_080f39ab[i]; \
-    y = Math_Div(dist * (x - 104), 80) + base - (half); \
+    y = __divsi3(dist * (x - 104), 80) + base - (half); \
     x -= (half); \
     WRAP256(y)
 

@@ -585,7 +585,7 @@ Func_020004a4:
 	adds r7, r0, #0
 	lsls r1, r1, #11
 	adds r0, r6, #0
-	bl Engine_MathDivide
+	bl __divsi3
 	lsls r6, r0, #16
 	cmp r7, #0
 	beq .L_0200858a
@@ -5379,7 +5379,7 @@ Func_0200326c:
 	ldr r3, .L_0200b2ac
 	movs r1, #3
 	ldr r0, [r3]
-	bl Engine_MathModulo
+	bl __umodsi3
 	cmp r0, #0
 	bne .L_0200b350
 .L_0200b28c:
@@ -8944,7 +8944,7 @@ Func_02005268:
 	ldrb r0, [r6]
 	movs r1, #6
 	lsrs r0, r0, #1
-	bl Engine_MathModulo
+	bl __umodsi3
 	adds r1, r0, #0
 	lsls r1, r1, #24
 	lsrs r1, r1, #24

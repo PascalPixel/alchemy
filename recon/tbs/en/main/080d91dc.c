@@ -160,7 +160,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
                 M2C_FIELD(temp_r5_28, s32 *, 4) ^ temp_r3_29,
                 1, &sp50, &sp4C);
         }
-        sp50 = Math_Div(sp50 * 4, 5);
+        sp50 = __divsi3(sp50 * 4, 5);
     }
     *(u16 *)0x04000020 = 0xCC;
     Resource_LoadAndDecompress(0x76, sp44, 0, 0);
@@ -206,17 +206,17 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     var_r5_244 = (struct EffectScratch *)gMapCellBuffer;
     var_sl_245 = 0;
     do {
-        M2C_FIELD(var_r5_244, s32 *, 0) = (s32) ((Math_ModU(Random16(), 0xC8) - 0x64) << 0xE);
-        var_r5_244->field_0004 = (Math_ModU(Random16(), 0xC8) - 0x64) << 0xF;
+        M2C_FIELD(var_r5_244, s32 *, 0) = (s32) ((__umodsi3(Random16(), 0xC8) - 0x64) << 0xE);
+        var_r5_244->field_0004 = (__umodsi3(Random16(), 0xC8) - 0x64) << 0xF;
         var_sl_245 += 1;
-        var_r5_244->field_0008 = (Math_ModU(Random16(), 0xC8) - 0x64) << 0xE;
+        var_r5_244->field_0008 = (__umodsi3(Random16(), 0xC8) - 0x64) << 0xE;
         var_r5_244->field_0018 = 0;
         var_r5_244 = (void *)((u8 *)var_r5_244 + 0x1C);
     } while (var_sl_245 != 0x200);
     temp_r2_277 = M2C_FIELD(sp44, void **, 0x7828);
     if (M2C_FIELD(temp_r2_277, s32 *, 0x14) == 1) {
         EffectPosition_ApplyStepAndYOffset(M2C_FIELD(temp_r2_277, s16 *, 0x24), pos);
-        sp30 = Math_Div((0 - pos[0]) * 4, 5) + 0x40;
+        sp30 = __divsi3((0 - pos[0]) * 4, 5) + 0x40;
     } else {
         sp30 = -0x40;
         if (M2C_FIELD(temp_r2_277, s32 *, 4) != 1) {
@@ -286,7 +286,7 @@ loop_49:
             var_r9_478 = var_fp_344;
 loop_60:
             temp_r5_488 = GetBattleObjectSlotFar(M2C_FIELD(M2C_FIELD(sp44, void **, 0x7828), s16 *, spC));
-            temp_r7_496 = Math_Div(Battle_GetObjectTableValueFar(M2C_FIELD(M2C_FIELD(sp44, void **, 0x7828), s16 *, spC)) * 2, 3);
+            temp_r7_496 = __divsi3(Battle_GetObjectTableValueFar(M2C_FIELD(M2C_FIELD(sp44, void **, 0x7828), s16 *, spC)) * 2, 3);
             if (var_fp_344 == (sp10 + 0x50)) {
                 Audio_PlayCue(0xD4);
             }
@@ -341,7 +341,7 @@ loop_60:
                         if (temp_r7_649 != 0) {
                             EffectPosition_ApplyBaseAndYOffset(var_r6_626, temp_r8_625);
                             var_r2_661 = M2C_FIELD(temp_r8_625, s32 *, 8);
-                            M2C_FIELD(temp_r8_625, s32 *, 0) = Math_Div((s32) M2C_FIELD(temp_r8_625, s32 *, 0) * 4, 5) + sp30;
+                            M2C_FIELD(temp_r8_625, s32 *, 0) = __divsi3((s32) M2C_FIELD(temp_r8_625, s32 *, 0) * 4, 5) + sp30;
                             if (var_r2_661 <= 0x139) {
                                 M2C_FIELD(sp18, s32 *, 8) = 0x13A;
                                 var_r2_661 = 0x13A;
@@ -360,11 +360,11 @@ loop_60:
                             sp4 = temp_r4_689;
                             ((BattleEffectDrawFn)sp3C)(sp40, sp44 + *(const u16 *)(0x080EDE5C + temp_r4_689 - 2), M2C_FIELD(sp18, s32 *, 0) - temp_r0_688, M2C_FIELD(sp18, s32 *, 4) - temp_r0_688, temp_r4_689, temp_r4_689);
                             temp_r5_705 = M2C_FIELD(var_r6_626, s32 *, 0);
-                            M2C_FIELD(var_r6_626, s32 *, 0) = temp_r5_705 - Math_Div((s32) temp_r5_705, temp_r7_649);
+                            M2C_FIELD(var_r6_626, s32 *, 0) = temp_r5_705 - __divsi3((s32) temp_r5_705, temp_r7_649);
                             temp_r5_711 = M2C_FIELD(var_r6_626, s32 *, 4);
-                            M2C_FIELD(var_r6_626, s32 *, 4) = (s32) (temp_r5_711 - Math_Div(temp_r5_711, temp_r7_649));
+                            M2C_FIELD(var_r6_626, s32 *, 4) = (s32) (temp_r5_711 - __divsi3(temp_r5_711, temp_r7_649));
                             temp_r5_717 = M2C_FIELD(var_r6_626, s32 *, 8);
-                            temp_ret_720 = Math_Div(temp_r5_717, temp_r7_649);
+                            temp_ret_720 = __divsi3(temp_r5_717, temp_r7_649);
                             var_r1_620 = temp_r8_625;
                             M2C_FIELD(var_r6_626, s32 *, 8) = (s32) (temp_r5_717 - temp_ret_720);
                         }
@@ -379,13 +379,13 @@ loop_60:
             M2C_FIELD(sp14, s32 *, 4) = 0;
             M2C_FIELD(sp14, s32 *, 8) = 0;
             EffectPosition_ApplyBaseAndYOffset(sp14, projected);
-            projected[0] = Math_Div((s32) projected[0] * 4, 5) + sp30;
+            projected[0] = __divsi3((s32) projected[0] * 4, 5) + sp30;
             if ((var_fp_344 >= (s32) (sp10 + 0x34)) && (var_fp_344 < (s32) (sp10 + 0x4C))) {
                 var_r3_760 = var_r9_478 - 0x34;
                 if (var_r3_760 < 0) {
                     var_r3_760 += 3;
                 }
-                temp_r5_769 = Math_Mod(var_r3_760 >> 2, 6);
+                temp_r5_769 = __modsi3(var_r3_760 >> 2, 6);
                 sp0 = (s32 *)2;
                 BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                 sp0 = (s32 *)0x28;
@@ -405,7 +405,7 @@ loop_60:
                     if (var_r3_817 < 0) {
                         var_r3_817 += 3;
                     }
-                    temp_r5_826 = Math_Mod(var_r3_817 >> 2, 7);
+                    temp_r5_826 = __modsi3(var_r3_817 >> 2, 7);
                     sp0 = (s32 *)2;
                     BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                     sp0 = (s32 *)0x18;
@@ -427,7 +427,7 @@ block_112:
                     if (var_r3_874 < 0) {
                         var_r3_874 += 3;
                     }
-                    temp_r0_881 = Math_Mod(var_r3_874 >> 2, 6);
+                    temp_r0_881 = __modsi3(var_r3_874 >> 2, 6);
                     sp0 = (s32 *)2;
                     BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                     sp0 = (s32 *)0x20;
@@ -444,7 +444,7 @@ block_112:
 
                 } else {
                     temp_r0_927 = var_r9_478 - 0x50;
-                    temp_r0_932 = Math_Mod((s32) (temp_r0_927 + (temp_r0_927 >> 0x1F)) >> 1, 6);
+                    temp_r0_932 = __modsi3((s32) (temp_r0_927 + (temp_r0_927 >> 0x1F)) >> 1, 6);
                     sp0 = (s32 *)2;
                     BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                     sp0 = (s32 *)2;
@@ -471,7 +471,7 @@ block_112:
                     if (var_r3_1022 < 0) {
                         var_r3_1022 += 3;
                     }
-                    temp_r5_1031 = Math_Mod(var_r3_1022 >> 2, 6);
+                    temp_r5_1031 = __modsi3(var_r3_1022 >> 2, 6);
                     sp0 = (s32 *)3;
                     BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 3);
                     sp0 = (s32 *)0x28;

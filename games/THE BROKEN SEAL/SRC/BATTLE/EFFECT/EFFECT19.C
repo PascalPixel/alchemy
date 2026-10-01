@@ -67,7 +67,6 @@ extern s8 Data_080eeb79[];
 extern u8 Data_080eeb80[];
 extern u16 Data_080eeb88[];
 void BattleFx_BeginCanvasLayer(s32 mode);
-s32 Func_080022fc(s32 a, s32 b);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -236,7 +235,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
         seed->x = temp_r2_134;
         temp_r5_140 = (63 & Random16()) + 0x37;
         seed->height = temp_r5_140;
-        temp_r3_145 = Data_080eeb4b[Func_080022fc(i, 3)];
+        temp_r3_145 = Data_080eeb4b[i % 3];
         if (temp_r3_145 < temp_r5_140) {
             seed->height = temp_r3_145;
         }
@@ -273,7 +272,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                             work->cue = 2;
                         }
                         if (sp24 > sp0C) {
-                            u32 texture_index = Func_080022fc(i, 3);
+                            u32 texture_index = i % 3;
 
                             var_r5_297 = (sp24 - sp0C) * 8;
                             temp_r3_298 = column->height;
@@ -442,7 +441,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
                 *(s32 *)((u8 *)work + 0x77a8) = 2;
             offset = i * 2;
             if (frame > offset + 4) {
-                cell = Math_Mod(frame / 4 + i, 5);
+                cell = (frame / 4 + i) % 5;
                 if (frame < offset + 32) {
                     height = (frame - offset) * 4 - 16;
                     if (height > 32) height = 32;

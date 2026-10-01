@@ -68,7 +68,6 @@ extern u8 Data_03001f30[];
 void MapEvent_RunTileTriggerSequence(void);
 void FieldEvent_ShowStatusMessage(void);
 
-s32 Math_ModU(s32, s32) __attribute__((const));
 void Event_SetValue1d8(s32);
 void BattleEv_RunWait(s32, s32);
 void BattleFx_FinishAction();
@@ -330,7 +329,7 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
                 count = initial_count;
                 do {
                     current = *entry++;
-                    value = Math_ModU(*global, 6);
+                    value = (u32)*global % 6;
                     count--;
                     *(u8 *)((u8 *)current + 5) = value;
                 } while (count != 0);

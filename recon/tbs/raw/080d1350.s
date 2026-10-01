@@ -106,7 +106,7 @@ Unnamed_080d1350:
 	ldr r3, [r6]
 	movs r1, #12
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r6, #12]
 	ldr r0, [r7, #12]
 	ldr r3, [r6, #4]
@@ -115,13 +115,13 @@ Unnamed_080d1350:
 	lsls r3, r3, #13
 	adds r0, r0, r3
 	movs r1, #12
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r6, #16]
 	ldr r3, [r6, #8]
 	ldr r0, [r7, #16]
 	movs r1, #12
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r6, #20]
 	bl Random16
 	movs r3, #15
@@ -267,7 +267,7 @@ Unnamed_080d1350:
 	mov r0, r9
 	movs r1, #10
 	mov r10, r2
-	bl Math_Mod
+	bl __modsi3
 	add r0, r11
 	lsls r3, r0, #3
 	subs r3, r3, r0
@@ -286,7 +286,7 @@ Unnamed_080d1350:
 	muls r0, r3
 	movs r1, #12
 	str r4, [sp, #8]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r2, r8
 	adds r6, r6, r0
 	mov r0, r10
@@ -297,7 +297,7 @@ Unnamed_080d1350:
 	adds r0, r4, #0
 	muls r0, r3
 	movs r1, #12
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, .L_080d1704
 	movs r3, #4
 	subs r3, #2

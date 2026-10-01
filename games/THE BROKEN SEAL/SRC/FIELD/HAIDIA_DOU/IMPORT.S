@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global IwramSignedDivideEntry
+	.global __divsi3
 	.thumb_func
-IwramSignedDivideEntry:
+__divsi3:
 	overlay_veneer IwramSignedDivide
 	.global WaitFrames
 	.thumb_func
@@ -22,9 +22,6 @@ Engine_RandomNext:
 	.thumb_func
 ArcTan2:
 	overlay_veneer ArcTan2Far
-	.global Object_SetMode
-	.thumb_func
-Object_SetMode:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -93,9 +90,6 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

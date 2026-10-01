@@ -154,15 +154,15 @@ loop_15:
                             ((DrawRectangleFn)sp24)(
                                 (void *)sp2C,
                                 (u8 *)temp_sl_23
-                                    + Math_Mod(sp8, 3) * 0x240,
+                                    + __modsi3(sp8, 3) * 0x240,
                                 temp_r5_298 - 0xC, sp3C[1] - 0xC,
                                 0x18, 0x18);
                             temp_r5_318 = M2C_FIELD(var_r6_262, s32 *, 0);
-                            M2C_FIELD(var_r6_262, s32 *, 0) = (s32) (temp_r5_318 - Math_Div(temp_r5_318, temp_r7_288));
+                            M2C_FIELD(var_r6_262, s32 *, 0) = (s32) (temp_r5_318 - __divsi3(temp_r5_318, temp_r7_288));
                             temp_r5_324 = M2C_FIELD(var_r6_262, s32 *, 4);
-                            M2C_FIELD(var_r6_262, s32 *, 4) = (s32) (temp_r5_324 - Math_Div(temp_r5_324, temp_r7_288));
+                            M2C_FIELD(var_r6_262, s32 *, 4) = (s32) (temp_r5_324 - __divsi3(temp_r5_324, temp_r7_288));
                             temp_r5_330 = M2C_FIELD(var_r6_262, s32 *, 8);
-                            M2C_FIELD(var_r6_262, s32 *, 8) = (s32) (temp_r5_330 - Math_Div(temp_r5_330, temp_r7_288));
+                            M2C_FIELD(var_r6_262, s32 *, 8) = (s32) (temp_r5_330 - __divsi3(temp_r5_330, temp_r7_288));
                             M2C_FIELD(var_r6_262, s32 *, 0x18) = (s32) (M2C_FIELD(var_r6_262, s32 *, 0x18) + 1);
                             var_r4_260 = sp8;
                         }

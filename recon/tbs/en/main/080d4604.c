@@ -89,7 +89,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
@@ -309,7 +309,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                         if ((u32)timer <= 17) {
                             rectangle[0](canvas,
                                 (s8 *)work
-                                    + (Data_080ee294[Math_Div(timer, 3)]
+                                    + (Data_080ee294[__divsi3(timer, 3)]
                                         << 11),
                                 x - 16, y - 32, 32, 64);
                             timer = ring->timer;
@@ -353,7 +353,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                                     if ((u32)x <= 0x7EFFFF && y >= 0) {
                                         s32 size;
 
-                                        size = Math_Div(timer, 5) + 1;
+                                        size = __divsi3(timer, 5) + 1;
                                         rectangle_slot[i & 1](canvas,
                                             (s8 *)extra
                                                 + ParticleStreams_CellOffsets[size - 1],

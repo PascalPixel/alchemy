@@ -44,7 +44,7 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
     actor->x.fixed = ImiruMura_ArcOrigin + Iwram_MulQ16(0x60000, Engine_MathSin(*phase << 10));
     (*phase)++;
     *phase = (*phase + 64) % 64;
-    if (Engine_MathModulo((*(u32 *)&gFrameCount), 3) == 0) {
+    if (__umodsi3((*(u32 *)&gFrameCount), 3) == 0) {
         pos[0] = actor->x.fixed;
         pos[1] = actor->y.fixed + 0x20000;
         pos[2] = actor->z.fixed;

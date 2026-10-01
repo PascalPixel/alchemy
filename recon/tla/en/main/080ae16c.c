@@ -34,7 +34,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
         } while (0);
 
         v34 = *(s16 *)(obj + 0x34);
-        t = Math_Div(v34 << 14, v34);
+        t = __divsi3(v34 << 14, v34);
         v14 = 0x4000;
         if (t <= 0x4000) {
             v14 = 0;
@@ -48,7 +48,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
             *(s16 *)(obj + 0x14) = (s16)one;
         }
 
-        t = Math_Div(*(s16 *)(obj + 0x3A) << 14, *(s16 *)(obj + 0x36));
+        t = __divsi3(*(s16 *)(obj + 0x3A) << 14, *(s16 *)(obj + 0x36));
         v16 = 0x4000;
         if (t <= 0x4000) {
             v16 = 0;

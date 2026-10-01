@@ -41,13 +41,13 @@ Func_08102008:
 	ldrh r5, [r7, r3]
 	movs r1, #10
 	adds r0, r5, #0
-	bl Math_ModU
+	bl __umodsi3
 	lsls r0, r0, #16
 	lsrs r0, r0, #16
 	movs r1, #10
 	mov r11, r0
 	adds r0, r5, #0
-	bl Math_DivU
+	bl __udivsi3
 	mov r2, sp
 	adds r2, #104
 	lsls r0, r0, #16
@@ -286,12 +286,12 @@ Func_08102008:
 	ldrh r5, [r3]
 	movs r1, #10
 	adds r0, r5, #0
-	bl Math_ModU
+	bl __umodsi3
 	lsls r0, r0, #16
 	lsrs r6, r0, #16
 	movs r1, #10
 	adds r0, r5, #0
-	bl Math_DivU
+	bl __udivsi3
 	lsls r0, r0, #16
 	lsrs r2, r0, #16
 	adds r3, r6, #0

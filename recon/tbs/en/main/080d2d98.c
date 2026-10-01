@@ -139,7 +139,7 @@ void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 Math_Mod(s32 numerator, s32 denominator);
+s32 __modsi3(s32 numerator, s32 denominator);
 void **GetBattleObjectSlotFar(s32 member_id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Runtime_ReleaseHeapBlock(s32 id);
@@ -294,7 +294,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
             for (i = 0; i != 3; i++) {
                 s32 foot;
 
-                foot = Math_Mod(span, 104);
+                foot = __modsi3(span, 104);
                 ((DrawRectangleFn)rectangle[0])(
                     canvas, work->column_tiles,
                     tbl[0] - 17, (tbl[1] - foot) - 104, 34, 104);
@@ -319,7 +319,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
             if (particle->life >= 0) {
                 s32 size;
 
-                size = Math_Mod(i, 3) + 2;
+                size = __modsi3(i, 3) + 2;
                 if (particle->vy > 0)
                     size += 2;
                 if (frame > 68) {
@@ -372,7 +372,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
                     if (frame > 29) {
                         s32 step;
 
-                        step = Math_Mod(frame, 12);
+                        step = __modsi3(frame, 12);
                         if (step == 0) {
                             void *member;
 

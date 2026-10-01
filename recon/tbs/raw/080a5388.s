@@ -135,7 +135,7 @@ Unnamed_080a5388:
 	adds r0, #2
 	movs r1, #2
 	str r3, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	mov r8, r0
 .L_080a54aa:
 	ldr r1, .L_080a5530

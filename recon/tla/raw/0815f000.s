@@ -55,7 +55,7 @@ Func_0815f000:
 	movs r1, #100
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [r7, #16]
 	adds r1, r0, #0
 	movs r2, #0

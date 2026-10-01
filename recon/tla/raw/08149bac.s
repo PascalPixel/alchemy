@@ -597,7 +597,7 @@ BattleFx_RunSparkGroups:
 	cmp r0, #17
 	bhi .L_0814a06c
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	ldr r2, .L_0814a248
 	ldr r3, [sp, #48]
 	ldrb r1, [r2, r0]
@@ -712,7 +712,7 @@ BattleFx_RunSparkGroups:
 	movs r1, #5
 	adds r0, r3, #0
 	mov r8, r2
-	bl Math_Div
+	bl __divsi3
 	adds r0, #1
 	ldr r2, .L_0814a25c
 	mov r5, r9

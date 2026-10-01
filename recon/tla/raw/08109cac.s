@@ -84,11 +84,11 @@ Func_08109cac:
 	mov r2, r11
 	movs r1, #5
 	ldr r6, [r2, #36]
-	bl Math_Mod
+	bl __modsi3
 	movs r1, #5
 	adds r5, r0, #0
 	mov r0, r10
-	bl Math_Div
+	bl __divsi3
 	adds r2, r0, #0
 	lsls r5, r5, #4
 	lsls r2, r2, #4
@@ -245,7 +245,7 @@ Func_08109cac:
 	add r10, r3
 	add r0, r10
 	ldr r1, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, [sp, #4]
 	movs r1, #1
 	mov r10, r0
@@ -264,7 +264,7 @@ Func_08109cac:
 	add r10, r2
 	add r0, r10
 	ldr r1, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, [sp, #4]
 	movs r3, #1
 	mov r10, r0

@@ -71,7 +71,6 @@ void *Owner_GetStateFar(s32 owner);
 s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
 void EquipmentMenu_StartCompatibilityIndicators(void);
-s32 Math_Mod(s32 numerator, s32 denominator);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void UiWindow_DrawDividerLineFar(s32 window, s32 unused, s32 x, s32 y, s32 width);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
@@ -118,7 +117,7 @@ s8 ItemMenu_SelectTarget(s32 mode)
     while (!GameFlag_TestFar(0x150)) {
         if (pending) {
             pending = 0;
-            selection = Math_Mod(selection + count, count);
+            selection = (selection + count) % count;
             window = menu->item_window;
             Owner_GetStateFar(menu->owner_ids[selection]);
             marker = menu->marker;

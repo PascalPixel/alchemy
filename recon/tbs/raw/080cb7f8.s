@@ -314,7 +314,7 @@ Unnamed_080cb7f8:
 .L_080cba66:
 	movs r1, #3
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	adds r7, r0, #0
 	lsls r5, r7, #7
 	ldr r2, [sp, #8]

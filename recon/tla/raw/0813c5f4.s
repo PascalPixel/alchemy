@@ -171,7 +171,7 @@ Func_0813c5f4:
 	ldr r0, [r1, #8]
 	movs r1, #24
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [r7, #12]
 	mov r2, r8
 	ldr r0, [r2, #12]
@@ -180,13 +180,13 @@ Func_0813c5f4:
 	adds r0, r0, r3
 	movs r1, #24
 	subs r0, r0, r5
-	bl Math_Div
+	bl __divsi3
 	str r0, [r7, #16]
 	mov r4, r8
 	ldr r0, [r4, #16]
 	movs r1, #24
 	subs r0, r0, r6
-	bl Math_Div
+	bl __divsi3
 	str r0, [r7, #20]
 	movs r0, #1
 	add r11, r0
@@ -372,7 +372,7 @@ Func_0813c5f4:
 	lsls r5, r5, #3
 	asrs r0, r0, #1
 	adds r5, r5, r2
-	bl Math_Mod
+	bl __modsi3
 	lsls r2, r0, #2
 	adds r2, r2, r0
 	lsls r3, r2, #4

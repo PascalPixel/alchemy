@@ -59,7 +59,7 @@ Func_081b8180:
 .L_081b81e8:
 	movs r1, #10
 	str r4, [sp, #0]
-	bl Math_Div
+	bl __divsi3
 	adds r5, #1
 	ldr r4, [sp, #0]
 	cmp r5, r8
@@ -67,7 +67,7 @@ Func_081b8180:
 .L_081b81f8:
 	movs r1, #10
 	str r4, [sp, #0]
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	beq .L_081b820c

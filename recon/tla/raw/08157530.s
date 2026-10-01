@@ -27,7 +27,7 @@ Func_08157530:
 	muls r0, r3
 	movs r1, #100
 	mov r10, r2
-	bl Math_Div
+	bl __divsi3
 	mov r2, r8
 	ldr r3, [r2, #16]
 	ldr r2, [r6, #16]
@@ -37,7 +37,7 @@ Func_08157530:
 	muls r0, r3
 	movs r1, #100
 	mov r8, r2
-	bl Math_Div
+	bl __divsi3
 	add r10, r5
 	add r8, r0
 	asrs r5, r5, #8
@@ -53,7 +53,7 @@ Func_08157530:
 	.2byte 0xf800
 	mov r1, r11
 	lsls r0, r0, #8
-	bl Math_Div
+	bl __divsi3
 	adds r3, r6, #0
 	movs r1, #1
 	adds r3, #88

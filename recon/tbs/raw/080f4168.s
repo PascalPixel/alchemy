@@ -304,7 +304,7 @@ LuckyDice_Run:
 	str r2, [sp, #144]
 	bl Random16
 	movs r1, #6
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	mov r5, sp
 	adds r5, #136
 	str r0, [sp, #136]
@@ -312,7 +312,7 @@ LuckyDice_Run:
 .L_080f43f0:
 	bl Random16
 	movs r1, #6
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	ldr r6, [sp, #40]
 	str r0, [r6, #4]
 	ldr r3, [sp, #136]
@@ -1039,7 +1039,7 @@ LuckyDice_Run:
 	movs r1, #6
 	ands r5, r0
 	ldr r0, [r6, #4]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, #140
 	lsls r5, r5, #12
 	adds r5, r5, r0
@@ -1047,7 +1047,7 @@ LuckyDice_Run:
 	bl Random16
 	movs r1, #144
 	lsls r1, r1, #7
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	movs r3, #150
 	lsls r3, r3, #1
 	str r0, [r6, #24]
@@ -1090,12 +1090,12 @@ LuckyDice_Run:
 	str r1, [r3]
 	bl Random16
 	movs r1, #6
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	str r0, [sp, #136]
 .L_080f4a2c:
 	bl Random16
 	movs r1, #6
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	ldr r6, [sp, #40]
 	str r0, [r6, #4]
 	ldr r3, [sp, #136]
@@ -1259,7 +1259,7 @@ LuckyDice_Run:
 	adds r1, #128
 	lsls r0, r0, #4
 	str r4, [sp, #8]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [r6]
 	subs r2, r3, r0
 	ldr r3, [r6, #4]
@@ -1361,14 +1361,14 @@ LuckyDice_Run:
 	movs r0, #128
 	adds r1, r6, #0
 	lsls r0, r0, #4
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r1, r9
 	ldr r5, [r1]
 	subs r5, r5, r0
 	movs r0, #192
 	adds r1, r6, #0
 	lsls r0, r0, #2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r3, r9
 	ldr r2, [r3, #4]
 	movs r4, #158
@@ -1585,21 +1585,21 @@ LuckyDice_Run:
 	adds r5, r0, #0
 	adds r1, r5, #0
 	lsls r0, r6, #15
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [r7, #12]
 	ldr r4, [sp, #8]
 	adds r3, r3, r0
 	str r3, [r7, #12]
 	lsls r0, r4, #15
 	adds r1, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [r7, #16]
 	adds r3, r3, r0
 	str r3, [r7, #16]
 	mov r3, r8
 	lsls r0, r3, #15
 	adds r1, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [r7, #20]
 	adds r3, r3, r0
 	str r3, [r7, #20]
@@ -1833,7 +1833,7 @@ LuckyDice_Run:
 .L_080f4fc6:
 	asrs r0, r0, #10
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #1
 	bne .L_080f4fdc
 	movs r4, #128
@@ -1916,7 +1916,7 @@ LuckyDice_Run:
 	ldr r0, [r7, #24]
 	lsls r1, r1, #4
 	add r5, sp, #224
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r1, .L_080f5160
 	movs r3, #0
 	str r0, [r5, r6]

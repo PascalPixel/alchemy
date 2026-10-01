@@ -470,7 +470,7 @@ Func_080e92b4:
 	adds r5, r0, r1
 	ldr r0, [sp, #56]
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	bne .L_080e966e
 	mov r2, r11

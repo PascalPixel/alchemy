@@ -4,7 +4,7 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 ObjectDispatch_SetSingleChildField26Far(void *, s32);
-s32 Math_Div(s32, s32);
+s32 __divsi3(s32, s32);
 s32 Object_SetPosition(s32, s32, s32, s32);
 s32 Object_SetMode(s32, s32);
 
@@ -59,10 +59,10 @@ s32 ObjectMotion_MoveTowardTarget(s32 arg0)
         arg0 = *(s16 *)(object + 0x64);
         if (distance >= arg0) {
             newX = *(s32 *)(object + 8) +
-                Math_Div(cellX << 20, arg0);
+                __divsi3(cellX << 20, arg0);
             Object_SetPosition(object, newX, *(s32 *)(object + 0x0c),
                           *(s32 *)(object + 0x10) +
-                              Math_Div(cellY << 20, arg0));
+                              __divsi3(cellY << 20, arg0));
             Object_SetMode(object, 2);
         } else {
             Object_SetMode(object, 1);

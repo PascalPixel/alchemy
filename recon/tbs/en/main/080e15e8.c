@@ -456,7 +456,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                         s32 rx = Random16() & 3;
                         s32 ry = Random16() & 3;
                         BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                        ((DrawRectangleResult)SLOT(47))(dst, work->sheet + Math_Mod(i, 3) * 0x1440, rx - 3, ry + 32, 72, 72);
+                        ((DrawRectangleResult)SLOT(47))(dst, work->sheet + __modsi3(i, 3) * 0x1440, rx - 3, ry + 32, 72, 72);
                         Runtime_ReleaseHeapBlock(47);
                     }
                     if (frame == i * 2 + 80) {

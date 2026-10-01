@@ -79,7 +79,7 @@ void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
-s32 Math_Mod(s32 a, s32 b);
+s32 __modsi3(s32 a, s32 b);
 void Audio_PlayCue(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 a, s32 b);
@@ -236,7 +236,7 @@ void Unnamed_080da6cc(void *object)
                             s32 vy;
                             s32 vz;
 
-                            member_index = Math_Mod(idx,
+                            member_index = __modsi3(idx,
                                 M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                     s32 *, 0x14));
                             member_id = M2C_FIELD(
@@ -271,7 +271,7 @@ void Unnamed_080da6cc(void *object)
                                 cur->x = screen[0];
                                 cur->y = screen[1];
                                 Audio_PlayCue(136);
-                                landed_index = Math_Mod(idx,
+                                landed_index = __modsi3(idx,
                                     M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                         s32 *, 0x14));
                                 landed_id = M2C_FIELD(

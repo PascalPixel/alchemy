@@ -4187,7 +4187,7 @@ Func_0200260c:
 	lsls r0, r0, #16
 	movs r1, #96
 	asrs r0, r0, #16
-	bl Engine_MathRemainder
+	bl __modsi3
 	mov r3, r9
 	strh r0, [r3]
 	add sp, #8

@@ -70,7 +70,7 @@ struct WaveFxWork {
 extern struct WaveFxWork *gBattleBgFxWork;
 extern u8 Sound_MaxLines[];
 
-u32 Math_DivU(u32 numerator, u32 denominator);
+u32 __udivsi3(u32 numerator, u32 denominator);
 s32 Trig_Sin(s32 angle);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 mode);
@@ -106,7 +106,7 @@ void Func_08097644(void)
 
     line = work->lines[work->page ^ 1];
     for (i = 0; i < 160; i++)
-        *line++ = Trig_Sin(Math_DivU((work->phase + i * 8) << 16, 160)) >> 14;
+        *line++ = Trig_Sin(__udivsi3((work->phase + i * 8) << 16, 160)) >> 14;
     work->phase += 4;
     work->page ^= 1;
     if (work->page != 0) {

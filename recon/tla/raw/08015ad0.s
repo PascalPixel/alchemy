@@ -37,7 +37,7 @@ Func_08015ad0:
 .L_08015b0c:
 	bl Random16
 	adds r1, r6, #0
-	bl Math_ModU
+	bl __umodsi3
 	adds r5, r0, #0
 	mov r2, sp
 	lsls r3, r5, #2

@@ -379,7 +379,7 @@ Unnamed_080dab74:
 	str r3, [r6, #8]
 	movs r1, #5
 	mov r0, r10
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [r6, #4]
 	adds r0, #2
 	lsls r0, r0, #16
@@ -439,12 +439,12 @@ Unnamed_080dab74:
 .L_080daeca:
 	ldr r0, [sp, #12]
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r10, r0
 	bge .L_080daf84
 	movs r1, #3
 	mov r0, r10
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #16]
 	ldr r3, [r1]
 	ldr r2, [r3, #24]
@@ -718,7 +718,7 @@ Unnamed_080dab74:
 	ldr r2, [sp, #20]
 	ldr r3, [sp, #24]
 	subs r1, r2, r3
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	ldr r6, [sp, #24]
 	adds r0, r0, r6
 	lsls r0, r0, #16
@@ -825,7 +825,7 @@ Unnamed_080dab74:
 	ldr r6, [sp, #24]
 	ldr r3, [sp, #20]
 	subs r1, r3, r6
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	adds r0, r0, r6
 	lsls r0, r0, #16
 	str r0, [r5, #16]

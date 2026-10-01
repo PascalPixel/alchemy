@@ -293,7 +293,7 @@ Func_08189b14:
 	bl Random16
 	movs r1, #192
 	lsls r1, r1, #8
-	bl Math_ModU
+	bl __umodsi3
 	adds r5, r0, #0
 	bl Random16
 	lsls r6, r6, #6

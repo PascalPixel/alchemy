@@ -16,7 +16,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BuildWindowEdgeTable(void);
 
 void WaitFrames(s32);
-s32 Math_ModU(s32, s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
 void BattleFx_BeginCanvasLayer(s32);
@@ -219,7 +218,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         }
 
         for (i = 0; i != count; i++) {
-            s32 n = Math_Mod(i, 3);
+            s32 n = i % 3;
             blit46(dst, work->sheet + BattleFx10_RockCells[n],
                 BattleFx10_Points[i][0] - ox, BattleFx10_Points[i][1] - BattleFx10_RockHeights[n] - oy,
                 BattleFx10_RockWidths[n], BattleFx10_RockHeights[n]);
@@ -289,7 +288,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         }
         if (frame == 64) {
             for (i = 0; i != 32; i++) {
-                PARTICLES[i + 32].x = (Math_ModU(Random16(), 48) + 60) << 16;
+                PARTICLES[i + 32].x = (Random16() % 48 + 60) << 16;
                 PARTICLES[i + 32].y = ((Random16() & 31) + 52) << 16;
                 PARTICLES[i + 32].velocity_x = ((Random16() & 127) - 63) << 12;
                 PARTICLES[i + 32].velocity_y = ((-Random16() & 31) - 32) << 13;
@@ -311,7 +310,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
                 if (PARTICLES[i].variant >= 0) {
                     s32 n;
                     if (frame > 191) {
-                        n = Math_Mod(i, 7) + 4;
+                        n = i % 7 + 4;
                     } else {
                         n = i & 3;
                     }
@@ -336,7 +335,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
             }
             for (i = 0; i != 128; i++) {
                 if (frame >= i / 4 + 224) {
-                    s32 n = Math_Mod(i, 3);
+                    s32 n = i % 3;
                     if ((i & 1) == 0) {
                         blit46(dst, work->sheet + BattleFx10_SprayCells[n], HI(PARTICLES[i].x), HI(PARTICLES[i].y),
                             BattleFx10_SprayWidths[n], BattleFx10_SprayHeights[n]);
@@ -361,7 +360,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
             }
             for (i = 0, q = TRAILS, p = PARTICLES; i != 128; i++, q++, p++) {
                 if (frame >= i + 228) {
-                    s32 n = Math_Mod(q->variant / 2, 9);
+                    s32 n = q->variant / 2 % 9;
                     s32 sz = BattleFx_PuffSizes[n];
                     blit46(dst, aux + BattleFx_PuffCells[n], HI(q->x) - sz / 2, HI(q->y) - sz / 2, sz, sz);
                     if (++q->variant == 18) {
@@ -423,7 +422,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         }
         if (frame <= 71) {
             for (i = 0; i != count; i++) {
-                s32 n = Math_Mod(i, 3);
+                s32 n = i % 3;
                 blit46(dst, work->sheet + BattleFx10_BoulderCells[n],
                     BattleFx10_Points[i][0] - 56, BattleFx10_Points[i][1] - BattleFx10_BoulderHeights[n],
                     BattleFx10_BoulderWidths[n], BattleFx10_BoulderHeights[n]);
@@ -449,7 +448,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
                 q = &work->sparks[i];
                 y = HI(q->y);
                 if (y <= 135) {
-                    s32 n = Math_Mod(i, 3);
+                    s32 n = i % 3;
                     blit46(dst, work->sheet + BattleFx10_FallCells[n], HI(q->x), y - BattleFx10_FallHeights[n],
                         BattleFx10_FallWidths[n], BattleFx10_FallHeights[n]);
                     EffectStep_AdvanceWithGravity2D(q, 64, 0x10000);
@@ -482,7 +481,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         if (frame > 72) {
             for (i = 0; i != 64; i++) {
                 if ((u32)PARTICLES[i].variant < 18) {
-                    s32 n = Math_Mod(PARTICLES[i].variant / 2, 9);
+                    s32 n = PARTICLES[i].variant / 2 % 9;
                     s32 sz = BattleFx_PuffSizes[n];
                     blit46(dst, aux + BattleFx_PuffCells[n], PARTICLES[i].x - sz / 2, PARTICLES[i].y - sz / 2, sz, sz);
                 }

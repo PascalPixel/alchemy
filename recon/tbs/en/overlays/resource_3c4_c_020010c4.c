@@ -85,7 +85,7 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-s32 Engine_MathModulo(s32 value, s32 divisor);
+s32 __umodsi3(s32 value, s32 divisor);
 void Main_0808a118(s32 mode);
 void advance_effect_motion(union FieldObject *object);
 
@@ -117,11 +117,11 @@ void BabiChika_RunLeaderSpray(void)
         leader->target_y = leader->y.fixed;
         Engine_TaskWait(1);
         if (i & 1) {
-            s32 m = Engine_MathModulo(Engine_RandomNext(), 10) - 5;
+            s32 m = __umodsi3(Engine_RandomNext(), 10) - 5;
             s32 vx = m * 0x3332;
             s32 vz;
 
-            vz = Engine_MathModulo(Engine_RandomNext(), 10) * -0x1999 - 0x7ffd;
+            vz = __umodsi3(Engine_RandomNext(), 10) * -0x1999 - 0x7ffd;
 
             Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, vx, 0, vz, 0x1000001, o);
         }

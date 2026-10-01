@@ -58,7 +58,7 @@ s32 BattleEffect_SelectNearbyObject(s32 sourceId)
         squaredDistance = xSquared + ySquared + zSquared;
         distance = Iwram_Sqrt(squaredDistance);
         if ((candidate->unknown_56[3] & 4) != 0)
-            distance = Math_Div(distance * 10, 13);
+            distance = __divsi3(distance * 10, 13);
         if (distance >= bestDistance)
             continue;
 

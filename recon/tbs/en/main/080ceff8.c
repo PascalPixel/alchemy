@@ -54,7 +54,7 @@ extern u8 Value_000000cc;
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Audio_PlayCue(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -107,7 +107,7 @@ void BattleFx_RunFortyEightFrameEffect(void *object, s32 mode)
     } else {
         M2C_FIELD((void *)0x04000020, s16 *, 0) = (s16)(s32)&Value_000000cc;
         M2C_FIELD((void *)0x04000028, s32 *, 0) =
-            (Math_Div(-pos.x * 4, 5) + 64) << 8;
+            (__divsi3(-pos.x * 4, 5) + 64) << 8;
     }
 
     BattleEffect_LoadWork(46, 7, 7, 3, 2);

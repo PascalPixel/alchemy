@@ -73,7 +73,7 @@ void VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32, s32, struct RenderInput *, s32, s32);
-u32 Math_ModU(u32, u32);
+u32 __umodsi3(u32, u32);
 void RenderOutput_RedrawSavedRect(struct RenderInput *win);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 struct BattleAction *BattleAction_Get(s32 ability);
@@ -134,8 +134,8 @@ void Debug_SelectAbilityPair(void)
         if (redraw) {
             s32 tmp2;
             redraw = 0;
-            first = Math_ModU(first + count, count);
-            second = Math_ModU(second + count, count);
+            first = __umodsi3(first + count, count);
+            second = __umodsi3(second + count, count);
             tmp2 = (row + 2) % 2;
             row = tmp2;
             slot = (row << 4) + (win->y << 3) + 28;

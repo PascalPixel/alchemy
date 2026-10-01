@@ -2781,12 +2781,6 @@ SECTIONS
        both. */
     Engine_ObjectCreate = Object_CreateFar;
     Engine_ObjectSetScript = ObjectDispatch_InitializeFar;
-    /* The compiler calls its division helpers by their ABI names; here they are
-       the veneers into the resident IWRAM divider (DIVISION_ENTRY.S). */
-    __divsi3 = IwramSignedDivideEntry;
-    __udivsi3 = IwramUnsignedDivideEntry;
-    __modsi3 = IwramSignedRemainderEntry;
-    __umodsi3 = IwramUnsignedRemainderEntry;
     /* FAKEMATCH aliases: LOAD_TABLE_ENTRY.C names one table four ways. */
     RenderResource_PairSourceTable2 = RenderResource_PairSourceTable;
     RenderResource_PairSourceTable3 = RenderResource_PairSourceTable;

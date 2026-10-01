@@ -53,7 +53,7 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
             if (guard == 1)                                                   \
                 dmg /= 2;                                                     \
             else                                                              \
-                dmg = Math_Div(dmg, 10);                                      \
+                dmg /= 10;                                                    \
         }                                                                     \
     }
 
@@ -406,11 +406,9 @@ after_power:
                     bonus = 0;
                 apwr = action->power;
                 if (nibble == 4)
-                    dmg = Math_Div(
-                        Battle_CalcAttack(actor->attack, scale, 0,
+                    dmg = Battle_CalcAttack(actor->attack, scale, 0,
                                           bonus)
-                            * apwr,
-                        10);
+                            * apwr / 10;
                 else {
 
                     dmg = Battle_CalcAttack(actor->attack, scale, apwr,
@@ -422,7 +420,7 @@ after_power:
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
-                    dmg += (u8)Math_DivU(target->level, 5) + 6;
+                    dmg += (u8)(target->level / 5) + 6;
                     if (pass == 0) {
                         BattleEv_Push(BATTLE_EVENT_MARK, 0);
                         {
@@ -488,7 +486,7 @@ after_power:
             TAKE_BONUS();
             dmg = action->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
-            dmg = Math_Div(dmg * PpLossFalloff[offset], 100);
+            dmg = dmg * PpLossFalloff[offset] / 100;
             dmg *= adjust;
             APPLY_GUARD();
             if (action->effect == EFX_DRAIN_PP && dmg > pp)
@@ -524,7 +522,7 @@ after_power:
 
             dmg = action->power;
             dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(dmg * HpHealFalloff[offset], 100);
+            dmg = dmg * HpHealFalloff[offset] / 100;
             dmg *= adjust;
             dmg += BattleRandom16Far() & 3;
             cur += dmg;
@@ -554,7 +552,7 @@ after_power:
             TAKE_BONUS();
             dmg = action->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
-            dmg = Math_Div(dmg * PpDmgFalloff[offset], 100);
+            dmg = dmg * PpDmgFalloff[offset] / 100;
             dmg *= adjust;
             APPLY_GUARD();
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
@@ -623,19 +621,19 @@ after_power:
                             break;
                         }
                     }
-                    dmg += Math_Div(target->max_hp * kind, 100);
+                    dmg += target->max_hp * kind / 100;
                 }
                 dmg = Battle_CalcPower(dmg, bonus, 256);
                 dmg *= adjust;
                 switch (nibble & 15) {
                 case 5:
-                    dmg = Math_Div(HpDmgFalloff5[offset] * dmg, 100);
+                    dmg = HpDmgFalloff5[offset] * dmg / 100;
                     break;
                 case 8:
-                    dmg = Math_Div(dmg * HpDmgFalloff8[offset], 100);
+                    dmg = dmg * HpDmgFalloff8[offset] / 100;
                     break;
                 case 6:
-                    dmg = Math_Div(dmg * HpDmgFalloff6[offset], 100);
+                    dmg = dmg * HpDmgFalloff6[offset] / 100;
                     break;
                 }
                 dmg += BattleRandom16Far() & 3;
@@ -687,7 +685,7 @@ after_power:
             pp = target->pp;
             dmg = action->power;
             dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(dmg * PpHealFalloff[offset], 100);
+            dmg = dmg * PpHealFalloff[offset] / 100;
             dmg *= adjust;
             pp += dmg;
             if (pp > target->max_pp) {
@@ -722,7 +720,7 @@ pp_store:
             dmg = action->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg *= adjust;
-            dmg = Math_Div(dmg * HpDmgFalloff[offset], 100);
+            dmg = dmg * HpDmgFalloff[offset] / 100;
             APPLY_GUARD();
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
@@ -853,9 +851,9 @@ pp_store:
         maxu = *stat_ptr--;
         maxv = *(s16 *)(stat_ptr + 1);
         if (action->effect == EFX_HEAL_60)
-            heal += Math_Div(maxv * 60, 100);
+            heal += maxv * 60 / 100;
         else
-            heal += Math_Div(maxv * 30, 100);
+            heal += maxv * 30 / 100;
         if (heal > (s16)maxu)
             heal = (s16)maxu;
         tmp = heal - (s16)old;
@@ -883,7 +881,7 @@ pp_store:
         heal = target->pp;
         maxv = target->max_pp;
         old = heal;
-        heal += Math_Div(maxv * 7, 100);
+        heal += maxv * 7 / 100;
         if (heal > maxv)
             heal = maxv;
         tmp = heal - old;
@@ -1015,7 +1013,7 @@ pp_store:
         if (target->hp != 0)
             break;
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-        target->hp = (s16)Math_Div(target->max_hp * 8, 10);
+        target->hp = (s16)(target->max_hp * 8 / 10);
         Owner_RecalculateRatiosFar(target_id);
         break;
 
@@ -1182,7 +1180,7 @@ pp_store:
     }
 
     case EFX_PP_LEECH:
-        dmg = Math_Div(dealt, 10);
+        dmg = dealt / 10;
         if (target->pp < dmg)
             dmg = target->pp;
         if (actor->pp + dmg > actor->max_pp)

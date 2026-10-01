@@ -84,7 +84,7 @@ void BattleFx_UpdateScaledArcObjectA(struct ArcObject *obj);
 void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj);
 
 extern volatile s32 gFrameCount;
-s32 Math_ModU(s32, s32);
+s32 __umodsi3(s32, s32);
 void Animation_ApplyChildValuesFar(s32, s32);
 
 extern u8 Data_03001f30[];
@@ -212,7 +212,7 @@ void BattleFx_FlickerObjectAndTick(s32 arg0)
 void BattleFx_CycleObjectValueByCounter(s32 arg0)
 {
     if ((gFrameCount & 1) != 0) {
-        s32 value = Math_ModU((s32)((unsigned int)gFrameCount >> 1), 6);
+        s32 value = __umodsi3((s32)((unsigned int)gFrameCount >> 1), 6);
 
         Animation_ApplyChildValuesFar(arg0, value);
     }

@@ -56,7 +56,7 @@ Func_080d9194:
 	mov lr, r3
 	.2byte 0xf800
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	mov r3, r9
 	lsls r3, r3, #5
 	mov r9, r3

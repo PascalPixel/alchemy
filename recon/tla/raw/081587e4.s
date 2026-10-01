@@ -257,7 +257,7 @@ Func_081587e4:
 .L_081589e6:
 	bl Random16
 	movs r1, #6
-	bl Math_ModU
+	bl __umodsi3
 	adds r0, #3
 	str r0, [r5, #12]
 	bl Random16

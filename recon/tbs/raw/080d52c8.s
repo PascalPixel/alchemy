@@ -702,19 +702,19 @@ BattleFx_RenderMode:
 	ldr r5, [r7]
 	mov r1, r10
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r7]
 	ldr r5, [r7, #4]
 	mov r1, r10
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r7, #4]
 	ldr r5, [r7, #8]
 	mov r1, r10
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r7, #8]
 	b .L_080d5870

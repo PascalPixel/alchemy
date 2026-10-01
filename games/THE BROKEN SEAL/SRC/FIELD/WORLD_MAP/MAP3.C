@@ -21,7 +21,7 @@ enum {
 
 /* The motion script each transition effect runs. */
 extern const s32 gTransitionSparkScript[];
-s32 Engine_MathModulo(u32 value, s32 divisor);
+s32 __umodsi3(u32 value, s32 divisor);
 extern u32 gFrameCount;
 extern s32 gActorEightPuffScript[];
 
@@ -276,7 +276,7 @@ void StoryScene_UpdateTransitionEffect(void)
         Object_SetAnimation(object, 1);
         Object_SetScript(object, gTransitionSparkScript);
     }
-    if (Engine_MathModulo(gFrameCount, 3) == 0) {
+    if (gFrameCount % 3 == 0) {
         switch (((u32)Random_Next() << 2) >> 16) {
         case 0:
             Camera_MoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c69), 1);
@@ -589,7 +589,7 @@ void FieldScene_RunLateSequence(void)
     record = Actor_Get(gGameState.selected_actor);
     sx = *(s16 *)(record + 10);
     sy = *(s16 *)(record + 18);
-    if (Engine_MathModulo(*(volatile s32 *)&gFrameCount, 3) == 0) {
+    if ((u32)(*(volatile s32 *)&gFrameCount) % 3 == 0) {
         mode = (u32)(Random_Next() << 2) >> 16;
         switch (mode) {
         case 0:
@@ -714,7 +714,7 @@ void SceneActor_UpdateObjectByCounterBits(u8 *obj)
 void OverlayObject_UpdateOnFrameParity(u8 *obj)
 {
     if ((*(volatile u32 *)&gFrameCount & 1) != 0) {
-        Object_SetPartPalettes(obj, Engine_MathModulo((s32)(*(volatile u32 *)&gFrameCount >> 1), 6));
+        Object_SetPartPalettes(obj, __umodsi3((s32)(*(volatile u32 *)&gFrameCount >> 1), 6));
     }
     if ((*(volatile u32 *)&gFrameCount & 15) == 0) {
         WorldMap_CreateLinkedEffects(obj);
@@ -724,7 +724,7 @@ void OverlayObject_UpdateOnFrameParity(u8 *obj)
 void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 {
     if ((*(volatile s32 *)&gFrameCount & 1) != 0) {
-        s32 slot = Engine_MathModulo((u32)*(volatile s32 *)&gFrameCount >> 1, 6);
+        s32 slot = ((u32)*(volatile s32 *)&gFrameCount >> 1) % 6;
 
         Object_SetPartPalettes(arg0, slot);
     }

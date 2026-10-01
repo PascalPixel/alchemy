@@ -39,6 +39,5 @@ extern u8 TorebiIzumi_ActorRecords[];           /* 4 x 24 bytes */
 void FieldScene_RunSecondaryScript(void);
 
 void TorebiIzumi_OfferLuckyWheels(s32 wheel);
-s32 Engine_MathRemainder(s32 dividend, s32 divisor);
 
 #endif

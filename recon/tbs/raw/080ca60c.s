@@ -456,9 +456,9 @@ BattleFx_RunTwelveMode:
 .L_080ca9a4:
 	adds r1, r4, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r0, #0
 	ldr r0, [sp, #48]
 	ldr r3, [r0]
@@ -590,7 +590,7 @@ BattleFx_RunTwelveMode:
 	adds r1, r1, r5
 	lsls r1, r1, #1
 	ldr r0, [sp, #88]
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r5, #2
 	cmp r0, r5
 	beq .L_080caaca
@@ -678,7 +678,7 @@ BattleFx_RunTwelveMode:
 	adds r1, r1, r3
 	lsls r1, r1, #1
 	ldr r0, [sp, #88]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r0, r0, #5
 	add r0, r8
 	lsls r5, r0, #3
@@ -708,7 +708,7 @@ BattleFx_RunTwelveMode:
 .L_080cabaa:
 	ldr r0, [sp, #88]
 	adds r1, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r0, r0, #4
 	add r0, r8
 	lsls r3, r0, #3
@@ -747,7 +747,7 @@ BattleFx_RunTwelveMode:
 	bge .L_080cac0c
 	adds r0, r5, #0
 	adds r1, r4, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r0, #4
 	ble .L_080cac04
 .L_080cabfe:
@@ -836,7 +836,7 @@ BattleFx_RunTwelveMode:
 	ldrb r5, [r1, r6]
 	ldr r0, [sp, #88]
 	lsls r1, r5, #2
-	bl Math_Mod
+	bl __modsi3
 	lsls r3, r5, #1
 	adds r3, r3, r5
 	cmp r0, r3
@@ -906,7 +906,7 @@ BattleFx_RunTwelveMode:
 	adds r1, r1, r3
 	lsls r1, r1, #1
 	ldr r0, [sp, #88]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r0, r0, #6
 	add r0, r8
 	lsls r5, r0, #3
@@ -935,7 +935,7 @@ BattleFx_RunTwelveMode:
 .L_080cad72:
 	ldr r0, [sp, #88]
 	adds r1, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r0, r0, #4
 	add r0, r8
 	lsls r3, r0, #3
@@ -962,7 +962,7 @@ BattleFx_RunTwelveMode:
 .L_080cada8:
 	ldr r0, [sp, #88]
 	adds r1, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r0, r0, #4
 	add r0, r8
 	lsls r3, r0, #3

@@ -73,9 +73,9 @@ s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj)
         obj->x += 0x1000;
         obj->z += 0xfffff800;
         if (obj->mode != 0) {
-            obj->counter = Engine_MathModulo(Random_Next(), 40) + 40;
+            obj->counter = (u32)Random_Next() % 40 + 40;
         } else {
-            obj->counter = Engine_MathModulo(Random_Next(), 20) + 20;
+            obj->counter = (u32)Random_Next() % 20 + 20;
         }
         break;
     }

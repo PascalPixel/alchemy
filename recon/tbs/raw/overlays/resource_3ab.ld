@@ -15,7 +15,4 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/VILLAGE.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
-    /* The compiler calls its division helper by its ABI name; here it is the
-       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
-    __divsi3 = IwramSignedDivideEntry;
 }

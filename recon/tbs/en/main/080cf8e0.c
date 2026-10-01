@@ -168,7 +168,7 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleEventRuntime_BeginPhaseFar(s32 cue);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 void EffectStep_AdvanceWithGravity3D(void *record, s32 mode, s32 gravity);
 s32 Random16(void);
@@ -310,7 +310,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
                         BattleEventRuntime_BeginPhaseFar(133);
                     }
                     if (shard->frame >= 0) {
-                        cell = Math_Div(frame - start, 3);
+                        cell = __divsi3(frame - start, 3);
                         if (cell > 9)
                             cell = 9;
                         EffectPosition_ApplyBaseAndYOffset(shard, screen);
@@ -394,7 +394,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
                     s32 wide;
                     s32 high;
 
-                    index = Math_Div(spark->frame, 5);
+                    index = __divsi3(spark->frame, 5);
                     if ((i & 1) != 0)
                         index += 9;
                     side = object->direction;

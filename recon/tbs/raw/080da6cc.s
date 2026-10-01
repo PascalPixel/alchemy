@@ -352,7 +352,7 @@ Unnamed_080da6cc:
 	ldr r5, [r3]
 	mov r0, r10
 	ldr r1, [r5, #20]
-	bl Math_Mod
+	bl __modsi3
 	lsls r0, r0, #1
 	adds r0, #36
 	ldrsh r0, [r5, r0]
@@ -428,7 +428,7 @@ Unnamed_080da6cc:
 	ldr r5, [r3]
 	mov r0, r10
 	ldr r1, [r5, #20]
-	bl Math_Mod
+	bl __modsi3
 	adds r3, r0, #0
 	lsls r2, r3, #1
 	adds r2, #36

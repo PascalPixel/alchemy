@@ -89,7 +89,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                 }
                 if (changed) {
                     changed = 0;
-                    count = Math_Mod(count + maximum, maximum);
+                    count = (count + maximum) % maximum;
                     Dma_Set(Shop_QuantityTiles, buffer, 0x84000040, (volatile u32 *)0x040000d4);
                     Shop_FillSelector(30, 14, buffer);
                     Shop_FillSelector(minimum + maximum, 0, buffer);

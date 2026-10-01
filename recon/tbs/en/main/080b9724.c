@@ -19,7 +19,7 @@ extern s32 gBattleRandomSeed;
 extern s32 Data_03001cb4;
 extern volatile u16 gLinkStatus;
 extern volatile u16 gSerialReceivedSize;
-u32 Math_DivU(u32, u32);
+u32 __udivsi3(u32, u32);
 s32 SerialRuntime_BeginTransferA(void *, s32);
 s32 SerialRuntime_BeginTransferB(void *);
 s32 SerialRuntime_GetActiveTransfers(void);
@@ -100,14 +100,14 @@ s32 BattlePresentation_AppendLinkedActions(
             status = SerialRuntime_BeginTransferB(actions + count);
             if (status == -1) return status;
             while (SerialRuntime_GetActiveTransfers()) {
-                if (gSerialReceivedSize > Math_DivU(result * 16 + 19, 20) * 20) return -1;
+                if (gSerialReceivedSize > __udivsi3(result * 16 + 19, 20) * 20) return -1;
             WaitFrames(1);
             if (--timeout < 0) return -1;
             if ((gLinkStatus & 3) != 3) {
                 if (++disconnected > 24) return -1;
             } else disconnected = 0;
             }
-            if (gSerialReceivedSize != Math_DivU(result * 16 + 19, 20) * 20) return -1;
+            if (gSerialReceivedSize != __udivsi3(result * 16 + 19, 20) * 20) return -1;
         }
         return 0;
     }

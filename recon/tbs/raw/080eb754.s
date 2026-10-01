@@ -181,7 +181,7 @@ Unnamed_080eb754:
 	str r0, [r5, #16]
 	bl Random16
 	movs r1, #48
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	movs r4, #1
 	add r8, r4
 	adds r0, #2
@@ -468,7 +468,7 @@ Unnamed_080eb754:
 	bne .L_080ebb78
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	adds r0, #1
 	lsls r4, r0, #1
 	ldr r2, .L_080ebb34

@@ -251,7 +251,7 @@ Func_0818eda4:
 	movs r1, #190
 	lsls r1, r1, #7
 	adds r1, #255
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #160
 	lsls r1, r1, #7
 	adds r6, r0, #0

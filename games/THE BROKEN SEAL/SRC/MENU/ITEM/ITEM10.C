@@ -67,7 +67,6 @@ s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state);
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-s32 Math_Mod(s32 value, s32 divisor);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void ItemMenu_HideAllIcons(void);
 
@@ -178,7 +177,7 @@ s32 ItemMenu_SelectItem(void)
                     tab--;
                 for (i = 0; i <= 14; i++)
                     owner->inventory[i] = saved[i];
-                tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
+                tab = (tab + menu->owner_count) % menu->owner_count;
                 menu->field_008 = menu->owner_table[tab];
                 menu->owner_ids[0] = menu->owner_table[tab];
                 menu->tab_index[0] = tab;

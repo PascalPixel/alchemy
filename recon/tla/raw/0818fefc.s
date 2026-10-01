@@ -884,7 +884,7 @@ Func_0818fefc:
 	lsrs r0, r2, #31
 	adds r0, r2, r0
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [sp, #92]
 	lsls r0, r0, #10
 	movs r4, #184
@@ -1149,7 +1149,7 @@ Func_0818fefc:
 	str r0, [r5]
 	bl Random16
 	movs r1, #192
-	bl Math_ModU
+	bl __umodsi3
 	subs r0, #64
 	str r0, [r5, #4]
 	bl Random16

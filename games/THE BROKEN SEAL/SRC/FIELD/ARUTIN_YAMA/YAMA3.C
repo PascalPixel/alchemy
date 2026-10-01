@@ -584,11 +584,11 @@ void FieldScene_RunScene3a4SequenceG(void)
     s32 base6_3001e40;
 
     base6_3001e40 = (u32)&gFrameCount;
-    if (IwramUnsignedRemainderEntry(*(volatile s32 *)base6_3001e40, 3) == 0) {
+    if ((u32)(*(volatile s32 *)base6_3001e40) % 3 == 0) {
         value = Engine_RandomNext();
         rec7 = Value4(Engine_ObjectCreate, 200, ((((u32)(((value << 1) + value) << 4) >> 16) << 16) + 0x2fd0000), -0x400000, 0x2600000);
         if ((s32)rec7 != 0) {
-            if (IwramUnsignedRemainderEntry(*(volatile s32 *)base6_3001e40, 9) == 0) {
+            if ((u32)(*(volatile s32 *)base6_3001e40) % 9 == 0) {
                 {
                     s32 v2 = Random_Next();
                     if (((u32)(v2 << 1) >> 16) != 0) {

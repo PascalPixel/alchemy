@@ -1367,7 +1367,7 @@ Func_08158dc8:
 	bl Func_081963ec
 	movs r1, #3
 	mov r0, r9
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #2
 	adds r1, r1, r0
 	ldr r3, [sp, #112]

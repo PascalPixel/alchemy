@@ -316,7 +316,7 @@ Unnamed_080d0ad4:
 	movs r1, #3
 	str r3, [sp, #32]
 	str r7, [sp, #24]
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [sp, #28]
 	adds r0, r0, r2
 	lsls r3, r0, #3
@@ -348,7 +348,7 @@ Unnamed_080d0ad4:
 	muls r0, r3
 	movs r1, #24
 	str r4, [sp, #8]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r1, [sp, #32]
 	mov r5, r9
 	ldr r3, [r5, #16]
@@ -358,7 +358,7 @@ Unnamed_080d0ad4:
 	movs r1, #24
 	mov r0, r8
 	muls r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, .L_080d0ed4
 	subs r3, r7, #2
 	ldrh r1, [r2, r3]

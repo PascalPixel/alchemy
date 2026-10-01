@@ -356,7 +356,7 @@ Func_0816f928:
 	str r1, [r5]
 	bl Random16
 	movs r1, #12
-	bl Math_ModU
+	bl __umodsi3
 	subs r0, #6
 	lsls r0, r0, #15
 	str r0, [r5, #12]

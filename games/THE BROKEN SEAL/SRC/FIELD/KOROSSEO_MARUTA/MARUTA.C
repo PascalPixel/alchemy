@@ -1056,7 +1056,6 @@ s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle)
 
 void ColossoLogRollingStage_SpawnPeriodicParticle(void)
 {
-    extern s32 Engine_MathModulo(s32, s32);
 
     SceneParticle *particle;
     SceneParticle *source;
@@ -1071,7 +1070,7 @@ void ColossoLogRollingStage_SpawnPeriodicParticle(void)
     x = particle->x;
     y = particle->y;
     gColossoParticleCount = count;
-    switch (Engine_MathModulo(count, 180)) {
+    switch (count % 180) {
     case 10:
         break;
     case 20:

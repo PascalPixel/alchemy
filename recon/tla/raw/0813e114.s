@@ -92,7 +92,7 @@ Func_0813e114:
 .L_0813e1ca:
 	bl Random16
 	movs r1, #96
-	bl Math_ModU
+	bl __umodsi3
 	mov r2, r8
 	adds r0, #16
 	str r0, [r5]

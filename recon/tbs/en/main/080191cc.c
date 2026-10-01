@@ -15,7 +15,7 @@
  * Use the proven halfword Y/byte alias and the 12-byte embedded sprite.
  * Baseline result: 1136/1152 bytes, 398 aligned halfword edits, frame 8/24.
  * Complete diff: switch entries are semantically mapped but bodies are in
- * numeric rather than ROM order; mode 2 reloads attributes after Math_ModU
+ * numeric rather than ROM order; mode 2 reloads attributes after __umodsi3
  * instead of retaining their pre-call values. No exact bytes are adopted.
  * H1: recover the ROM's case-body order (2,5,6,7,4,17,14-16,18,8,9-12).
  * Prediction: switch destinations and shared reset/push tails align before
@@ -136,7 +136,7 @@ extern const u8 Data_08033e60[];
 extern const u8 Data_08033eb0[];
 extern const u8 Data_08033ee8[];
 
-u32 Math_ModU(u32 numerator, u32 denominator);
+u32 __umodsi3(u32 numerator, u32 denominator);
 u32 Random16(void);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 s32 AffineMatrix_BuildForEffect(struct UiEffect *effect);
@@ -185,7 +185,7 @@ void UiWork_AnimateSpriteSlots(void)
                     sprite->bytes.flags = flags;
                     y = *(u8 *)&item->y;
                     table = Data_08033e60;
-                    step = Math_ModU(gFrameTick, 80);
+                    step = __umodsi3(gFrameTick, 80);
                     sprite->fields.y = y + table[step] + 2;
                     sprite->bytes.flags = flags & ~3;
                     sprite->bytes.x_high = x_high & ~62;
@@ -231,9 +231,9 @@ void UiWork_AnimateSpriteSlots(void)
                 if (gFrameTick & 1)
                     item->frame++;
                 sprite->fields.x = item->x +
-                    (s8)Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2];
+                    (s8)Data_08033eb0[(u16)__umodsi3(item->frame, 20) * 2];
                 sprite->fields.y = *(u8 *)&item->y +
-                    Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2 + 1] - 2;
+                    Data_08033eb0[(u16)__umodsi3(item->frame, 20) * 2 + 1] - 2;
                 break;
             case 17:
                 item->frame++;

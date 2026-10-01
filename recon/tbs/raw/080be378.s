@@ -1432,7 +1432,7 @@ BattleCommand_BuildPlan:
 	bl Equipment_GetUnleashRateBonusFar
 	movs r1, #200
 	lsls r0, r0, #16
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r0, #0
 	bl BattleRandom16Far
 	ldr r3, .L_080bf1e8

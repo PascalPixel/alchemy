@@ -43,13 +43,13 @@ Func_08040a48:
 	movs r1, #4
 	adds r0, #4
 	mov r9, r3
-	bl Math_Mod
+	bl __modsi3
 	mov r4, r10
 	mov r8, r0
 	ldr r0, [r4, #12]
 	movs r1, #5
 	adds r0, #5
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r10
 	str r0, [r1, #12]
 	adds r0, r7, #0

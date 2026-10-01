@@ -68,7 +68,7 @@ Func_080b02dc:
 	subs r2, r2, r5
 	subs r0, r6, r0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	adds r0, r0, r5
 .L_080b0356:
 	mov r7, r8

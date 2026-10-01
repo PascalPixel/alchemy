@@ -414,7 +414,7 @@ BattleFx_RunSevenMode:
 	ldr r4, [sp, #12]
 	movs r1, #3
 	subs r0, r3, r4
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r5, #9
 	ble .L_080cfc1a
@@ -658,7 +658,7 @@ BattleFx_RunSevenMode:
 	mov r1, r8
 	ldr r0, [r1, #24]
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #1
 	mov r3, r10
 	ands r3, r1

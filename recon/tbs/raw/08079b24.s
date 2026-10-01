@@ -68,7 +68,7 @@ Curve_LookupScaledValue:
 	subs r2, r2, r5
 	subs r0, r6, r0
 	muls r0, r2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r0, r0, r5
 .L_08079b9e:
 	mov r7, r8

@@ -242,7 +242,7 @@ Func_0816fca8:
 	lsls r0, r0, #16
 	subs r0, r0, r3
 .L_0816fe78:
-	bl Math_Div
+	bl __divsi3
 	str r0, [r7, #12]
 	ldr r0, [r6, #4]
 	mov r1, r11
@@ -251,7 +251,7 @@ Func_0816fca8:
 	lsls r0, r0, #16
 	subs r0, r0, r3
 	ldr r1, [sp, #28]
-	bl Math_Div
+	bl __divsi3
 	mov r2, r11
 	str r0, [r2, #16]
 	movs r0, #221
@@ -322,7 +322,7 @@ Func_0816fca8:
 	bl Random16
 	movs r1, #200
 	lsls r1, r1, #1
-	bl Math_ModU
+	bl __umodsi3
 	adds r5, r0, #0
 	adds r0, r6, #0
 	bl Trig_Sin

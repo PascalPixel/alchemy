@@ -156,10 +156,10 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     if ((s32)(value + 1) > limit) {
         value = limit - 1;
     }
-    quotient = Math_Div(value, 5);
-    remainder = Math_Mod(value, 5);
-    groups = Math_Div(limit, 5);
-    if (Math_Mod(limit, 5) != 0) {
+    quotient = value / 5;
+    remainder = value % 5;
+    groups = limit / 5;
+    if (limit % 5 != 0) {
         groups++;
     }
     result->owner_state = encoded;
@@ -282,7 +282,7 @@ void InventoryMenu_ItemNamePageNoOp(void)
 }
 
 /*
- * types.h already supplies WaitFrames, Math_Mod, Audio_PlayCue, GameFlag_IsSet,
+ * types.h already supplies WaitFrames, __modsi3, Audio_PlayCue, GameFlag_IsSet,
  * Ability_GetData, UiText_DrawCharacterAtOffsetFar, UiIcon_PrepareObject and
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
@@ -409,7 +409,7 @@ s32 ItemMenu_RunList(s32 pane)
                         } else {
                             tab--;
                         }
-                        tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
+                        tab = (tab + menu->owner_count) % menu->owner_count;
                         menu->field_008 = menu->owner_table[tab];
                         menu->owner_ids[pane] = menu->owner_table[tab];
                         menu->tab_index[pane] = tab;

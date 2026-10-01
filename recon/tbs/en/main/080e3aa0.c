@@ -204,7 +204,7 @@ struct Member {
    the name `alchemy inspect` resolves for that target, where it has one.
    The ones with no comment have no resolved project name. */
 void WaitFrames(s32 frames);                      /* WaitFrames */
-s32 Math_Div(s32 numerator, s32 denominator);   /* FixedPoint_Ratio */
+s32 __divsi3(s32 numerator, s32 denominator);   /* __divsi3 */
 void Runtime_ReleaseHeapBlock(s32 id);                          /* Runtime_ReleaseHeapBlock */
 void *Resource_GetTableEntry(s32 id);                         /* get */
 u32 Random16(void);                             /* random_16 */
@@ -397,7 +397,7 @@ void BattlePres_RunBeamSequence(void *object)
             }
         } else {
             if (i <= 17) {
-                idx = Math_Div(i, 3);
+                idx = __divsi3(i, 3);
                 if (M2C_FIELD(STATE, s32 *, 4) == 0) {
                     blit[1](draw_target, work + Data_080eedbe[idx],
                         pos[0] + Data_080eedca[idx] + dx - 58,

@@ -50,7 +50,7 @@ Func_08013de4:
 	ldrb r1, [r7]
 	adds r0, r2, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r5, r5, r0

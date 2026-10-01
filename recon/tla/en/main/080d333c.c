@@ -6,7 +6,7 @@
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 
 /* Moves an object by its two drift values, lifts it by 1/64 of a unit and
    damps the drifts by 1/18 and 1/16. */
@@ -25,6 +25,6 @@ void Object_DriftAndDamp(struct ObjectRuntime *object)
     object->x = pos + drift_x;
     object->z += drift_z;
     object->y += 0x400;
-    object->speed_limit = drift_x - Math_Div(drift_x, 18);
+    object->speed_limit = drift_x - __divsi3(drift_x, 18);
     object->acceleration = drift_z - drift_z / 16;
 }

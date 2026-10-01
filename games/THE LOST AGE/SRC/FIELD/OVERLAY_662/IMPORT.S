@@ -133,7 +133,7 @@ Func_020018d0:
 	.global Func_020018d8
 	.thumb_func
 Func_020018d8:
-	overlay_veneer Func_080c8268
+	overlay_veneer Event_SetPairWork1c0Far
 	.global Func_020018e0
 	.thumb_func
 Func_020018e0:

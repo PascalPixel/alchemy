@@ -691,7 +691,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACTOR_SET_RECORD_MODE.o"(.text)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/PRESENT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT3.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000c5488)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE6.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000c57ae)
     "*/recon/tbs/es/rom.o"(.rom.000c57b0)

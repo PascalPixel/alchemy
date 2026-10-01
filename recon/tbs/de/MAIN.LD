@@ -695,7 +695,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACTOR_SET_RECORD_MODE.o"(.text)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/PRESENT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT3.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000c3a88)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE6.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000c3dae)
     "*/recon/tbs/de/rom.o"(.rom.000c3db0)

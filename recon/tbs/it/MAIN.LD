@@ -178,7 +178,6 @@
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/COPY_CELL_ATTRIBUTE_RECT.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00010788)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SET_WORK_FLAG_BITS9_11.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000108e4)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP6.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00010ff0)
     "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP4.o"(.text)

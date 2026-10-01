@@ -183,7 +183,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/COPY_CELL_ATTRIBUTE_RECT.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000ff88)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SET_WORK_FLAG_BITS9_11.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000100e4)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP6.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000107f0)
     "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP4.o"(.text)

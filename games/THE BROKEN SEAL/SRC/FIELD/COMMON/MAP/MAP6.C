@@ -26,7 +26,7 @@ struct PerspectiveWork {
     u16 yaw;                        /* 0x11a */
     u8 unknown_11c[0x1c];
     u16 lines[256];                 /* 0x138 */
-    u8 unknown_338[0x10];
+    u16 quarter_tiles[8];           /* 0x338: the tile in each layer quarter */
     s32 far_plane;                  /* 0x348 */
     s32 distance;                   /* 0x34c */
     u8 unknown_350[4];
@@ -127,6 +127,70 @@ struct WorldMapState {
     u8 unk_152[0x1a];
     u16 animated_b[3];
 };
+
+void Runtime_ReleaseHeapBlock(s32 slot);
+
+/* The world map's screen entries on its two layers: each of the four
+ * quarters of a layer is 32 by 32 entries at this base. */
+#define WORLD_SCREEN_ENTRIES 0x06004000
+
+/*
+ * Put one world map tile, 16 by 16 cells, in a quarter of a layer: decode
+ * the tile's cell ids, copy them into the block grid and, when asked, draw
+ * each cell's top and bottom screen entries. Nothing happens when the
+ * quarter already holds the tile, unless the draw is forced.
+ */
+s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
+{
+    struct PerspectiveWork *work = (struct PerspectiveWork *)gMapWork;
+    u32 *graphics = work->tiles;
+    u16 *shown;
+    u16 *buffer;
+    u16 *source;
+    u8 *blocks;
+    u16 *screen;
+    u32 i;
+    u32 j;
+    u32 id;
+
+    x &= 1;
+    y &= 1;
+    shown = &work->quarter_tiles[(layer * 2 + y) * 2 + x];
+    if (update == 0 && tile == *shown)
+        return 0;
+    *shown = tile;
+    buffer = (u16 *)Runtime_AllocateHeapBlock(14, 0x400);
+    Resource_DecodeByteLz((u8 *)graphics + graphics[tile], buffer);
+
+    source = buffer;
+    blocks = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
+    for (i = 0; i < 16; i++) {
+        Dma_Set(source, blocks, 0x84000010, (volatile u32 *)0x040000d4);
+        source += 32;
+        blocks += 128;
+    }
+
+    if (update != 0) {
+        screen = (u16 *)(WORLD_SCREEN_ENTRIES + ((((layer * 2 + y) << 6) + x) << 5));
+        source = buffer;
+        for (i = 0; i < 16; i++) {
+            for (j = 0; j < 16; j++) {
+                u16 *bottom;
+
+                id = *source;
+                screen[0] = *(u16 *)(Ram_MapCellBuffer + id * 4);
+                bottom = (u16 *)(Ram_MapCellBuffer + 2);
+                bottom = (u16 *)((u8 *)bottom + id * 4);
+                screen[32] = *bottom;
+                screen++;
+                source += 2;
+            }
+            screen += 48;
+        }
+    }
+    Runtime_ReleaseHeapBlock(14);
+    return 1;
+}
 
 /* Exact (2026-09-30): complete 864-byte extent, 0 differing halfwords.
  * The ROM keeps several statement groups in source order where sched2

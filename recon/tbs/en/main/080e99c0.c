@@ -222,9 +222,9 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                     dust->x = ((Trig_Sin(ang) * mag) >> 3) + origin;
                     dust->y = ((Trig_Cos(ang) * mag) >> 2) + (192 << 15);
                     dust->velocity_x = ((Random16() & 63) - 32) << 14;
-                    cnt++;
                     dust->velocity_y = (-(Random16() & 63) - 8) << 13;
                     dust->variant = 0;
+                    cnt++;
                     if (cnt == 16) {
                         break;
                     }

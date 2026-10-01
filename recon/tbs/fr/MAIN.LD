@@ -740,6 +740,7 @@
     "*/recon/tbs/fr/rom.o"(.rom.000d79a4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_TWO_MODE_B_MODE0.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000d7e04)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PILLARS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RENDER_MODE.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000d8ac8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT7.o"(.text)

@@ -1,449 +1,263 @@
+/* Draft, not exact: score 74, 15 instructions differ, same size and frame.
+   Four hoisted values sit in other stack slots than the reference's: it has
+   facing + 12 at 36, the blitter pair's address at 32, the point's at 28
+   and total - 32 at 24; here they are at 24, 36, 32 and 28. The palette copy
+   also shifts its destination before loading the routine. */
 #include "TYPES.H"
-#include "RESOURCE_IDS.H"
+#include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
+#include "EFFECT_STEP.H"
+#include "MOTION_OBJECT.H"
+#include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
-/*
- * Battle-presentation scene at main:080d52c8 (1768 bytes), a member of the
- * 0x03001eec "battle work" family already partly recovered in
- * recon/tbs/en/main/080ca60c.c, 080ea0d8.c and 080d5c48.c.  The shared
- * prologue (work = heap[0], draw destination = heap[1], effect state
- * republished at work + 0x7828), the `Value_XXXXXXXX` pooled resource-id
- * idiom, the BattleEffect_LoadWork(46/47, ...) blit-routine publication into
- * gWorkSlot[] and the BattleFx_GlintCell{Offsets,Widths,Heights} decoration tables are all
- * reused from those owners unchanged.
- *
- * Behaviour: the second argument selects one of eight scene variants.  The
- * variant chooses the palette resource fetched through Resource_GetTableEntry and
- * copied to 0x05000000, how many extra graphics sets are decompressed into
- * the work buffer, how many particles per member are animated (16, 24 or
- * 32), the seeding scale of the 512-record particle field at 0x02010000
- * (eight groups of 64, one group per member), the sprite geometry of the
- * per-particle blit, and whether the particles converge on the origin
- * (velocity decayed by 1/distance) or simply fall.
- *
- * The frame loop runs (state->count * 8 + 64) frames for the converging
- * variants and (state->count * 8 + 32) for the falling ones, one frame per
- * WaitFrames(1).  Each frame it rebuilds a 160-entry sine ramp at
- * work + 0x6980, then walks the members: member `i` starts at frame i * 8,
- * fires ObjectGroup_UpdateMembers at frame i * 8 + 16, and animates its own 64-record
- * particle group.  Variant 3 additionally scatters two random decorations
- * per member during the member's first 32 frames.
- *
- * `_call_via_r3` is not a real callee: it is the r3 entry of the
- * `_call_via_rN` trampoline bundle at recon/tbs/raw/080072e4.s, so the two
- * sites that reach it are spelled here as what they are -- typed indirect
- * calls to the fixed IWRAM block copier at 0x03001388 and the fixed IWRAM
- * integer square root at 0x030001d8, the same reading already adopted in
- * recon/tbs/en/main/080d1714.c and 08093af8.c.  The six-argument
- * rectangle blits reach the r4 entry (0x080072f4) and are ordinary indirect
- * calls through the DrawRectangleFn locals.
- *
- * Uncertain: the roles of the effect-state fields other than count (20),
- * field_08 (8) and member[] (36); the meaning of the work-buffer control
- * words at 0x7780, 0x7784, 0x77a8 and 0x7824; and whether the small
- * pool-loaded resource numbers spelled `&Value_XXXXXXXX` are link-time ids
- * (the family precedent) or plain literals the compiler chose to pool.
- * The asymmetric >> 17 / >> 16 pair in the variant-3 decoration placement is
- * what the reference computes, not a transcription slip.  `frame & 3` is
- * spelled as the constant it is; both compilers substitute the `kind`
- * register for the 3 inside the variant-3 block, which is why the reference
- * reads `ands r7, r1` there.
- *
- * Residual: this draft emits 1760 of the reference's 1768 bytes with the same
- * frame size (116), the same local-array offsets (80 / 92 / 104), the same
- * loop structure and the same call sequence, but it is not byte-exact
- * (505 differing halfwords).  What remains is allocation and cross-jumping:
- *   - `work` lands in fp where the reference uses r9 (the loop counter and
- *     `work` are ranked the other way round), which renames one operand in
- *     most of the body;
- *   - the reference keeps an extra un-reduced `i * 8` in its own stack slot
- *     beside the induction variable this draft leaves as the only copy;
- *   - the reference cross-jumps variant 5 into the default variant's shared
- *     Resource_LoadAndDecompress tail and leaves variants 1 and 4 separate; this draft
- *     does the opposite, which is where the eight missing bytes are.
- * Six source hypotheses were tried against these three; separating the
- * decoration angle from the ramp angle and loading the particle component
- * into a temporary before the decay call both closed real structure, and
- * three further splits of the shared loop counter made the allocation worse
- * and were reverted.
- * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 18,111
- * candidates; the best scored 4016 against 4540 (105 register-only, 21
- * stack-only, 38 operand, 8 reordered, 9 inserted, 13 deleted) after 51
- * rewrites (swap commutative operands, change loop form, introduce a
- * temporary, pointer arithmetic or indexing), none of them kept. Loop-form
- * changes and operand swaps across the function; its resource numbers are
- * pooled link-time Value_ symbols (six of the ten not in CONSTANTS.LD, all
- * small enough to become movs as plain numbers), which block adoption in
- * any case.
- */
-
-typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);
-typedef s32 (*IntegerSqrtFn)(s32 value);
-
-/* Heap-block cache: gWorkSlot[kind] holds the block BattleEffect_LoadWork
-   published for that display kind. */
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
+extern u8 gBattleFxWork[];
+extern s32 gCameraWork[];
 
-extern const u16 BattleFx_GlintCellOffsets[];
-extern const u8 BattleFx_GlintCellWidths[];
-extern const u8 BattleFx_GlintCellHeights[];
-extern const u8 Data_080ee2ae[];
-
-/* Value_ symbols carry a resource number the reference loads from its pool
-   rather than materializing with a mov. */
-extern u8 Value_0000008d;
-extern u8 Value_000000a0;
-extern u8 Value_000000a3;
-extern u8 Value_000000bb;
-extern u8 Value_000000c0;
-extern u8 Value_000000cd;
-
-/* Callees the project has not named yet keep their address spelling; the
-   names in comments are the ones `alchemy inspect` resolves. */
-s32 __divsi3(s32 numerator, s32 denominator);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
-/* Runtime_ReleaseHeapBlock */
-void Runtime_ReleaseHeapBlock(s32 kind);
-/* get */
-void *Resource_GetTableEntry(s32 id);
-void WaitFrames(s32 frames);
-/* Scheduler_AddOrUpdateCallback */
-/* Scheduler_RemoveCallback */
-/* random_16 */
-u32 Random16(void);
-/* Render_ResetTransformState */
-void Render_ResetTransformState(void);
-/* SceneTransform_ApplyPitch */
-void SceneTransform_ApplyPitch(s32 angle);
-/* SceneTransform_ApplyYaw */
-void SceneTransform_ApplyYaw(s32 angle);
-/* SceneTransform_ApplyPosition */
-void SceneTransform_ApplyPosition(const s32 *position);
-/* Graphics_PrepareTransferInIwramWork */
-void Graphics_PrepareTransferInIwramWork(void *source, void *target);
-void BattleMotion_ApproachTargetFar(s32 a, s32 member_id, s32 c, s32 d);
-void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 flag);
-void **GetBattleObjectSlotFar(s32 member_id);
-void BattleEventRuntime_BeginPhaseFar(s32 id);
-/* ObjectGroup_TickMemberTimers */
-void ObjectGroup_TickMemberTimers(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_ArmBg2AffineHBlankDma(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
-/* update_members */
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-/* load_and_decompress */
-/* Camera_ApplyShake */
-void Camera_ApplyShake(s32 a, s32 b);
-/* apply_base_and_y_offset */
-void EffectPosition_ApplyBaseAndYOffset(const void *source, s32 *screen);
-/* apply_step_and_y_offset */
-void EffectPosition_ApplyStepAndYOffset(s32 member_id, s32 *screen);
+void *Resource_GetTableEntry(s32 id);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyYaw(s32 angle);
+void SceneTransform_ApplyPitch(s32 angle);
+struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
+void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
+void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
+void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
+    s32 slot, s32 delay);
+void Camera_ApplyShake(s32 x, s32 y);
+void ObjectGroup_TickMemberTimers(void);
 
-/* 28-byte animation record.  512 of them live at 0x02010000: eight groups of
-   64, one group per battle member. */
-typedef struct {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 field_0c;
-    s32 field_10;
-    s32 field_14;
-    s32 tick;
-} Particle;
+extern u16 BattleFx_GlintCellOffsets[];
+extern u8 BattleFx_GlintCellWidths[];
+extern u8 BattleFx_GlintCellHeights[];
+extern u8 Data_080ee2ae[];
 
-/* The effect state handed in by the caller and republished at work + 0x7828
-   for the rest of the subsystem. */
-typedef struct {
-    s32 field_00;
-    s32 field_04;
-    s32 field_08;
-    s32 field_0c;
-    s32 field_10;
-    s32 count;
-    s32 field_18;
-    s32 field_1c;
-    s32 field_20;
-    s16 member[8];
-} Efx;
+/* The modes whose particles close in on the unit; the others rise. */
+#define CONVERGES(mode) \
+    ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
+#define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
-#define WORK_EFX (*(Efx **)((s8 *)work + 0x7828))
-#define WORK_S32(off) (*(s32 *)((s8 *)work + (off)))
-/* One unsigned 8-bit random sample, re-centred around zero. */
-#define RANDOM_BIASED(bias) ((s32)(Random16() & 0xFF) - (bias))
-
-void BattleFx_RenderMode(void *object, u32 kind)
+/* Battle effect: a cloud of particles around each affected unit, eight
+   frames apart, in one of eight modes that choose the picture, how many
+   particles there are and whether they close in on the unit or rise. */
+void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 {
-    void **heap;
     void **cursor;
-    void *work;
-    void *destination;
-    void *iwram;
-    void *member_object;
-    Particle *p;
-    s32 *ramp;
-    DrawRectangleFn blit[2];
-    s32 resource_id;
-    s32 count;
-    s32 total;
+    struct BattleEffectWork *work;
+    void *canvas;
     s32 frame;
-    s32 base_frame;
-    s32 angle;
-    s32 seed;
-    s32 radius;
-    s32 distance;
-    s32 cel;
-    s32 span;
-    s32 v;
-    s32 x;
-    s32 y;
+    s32 total;
+    s32 member;
+    s32 count;
+    s32 facing;
+    struct MotionObject *object;
+    struct EffectPosition screen;
+    s32 point[3];
+    struct EffectPosition base;
+    DrawRectangle draw[2];
+    void *palette;
+    s32 *row;
     s32 i;
-    s32 j;
-    s32 place[3];
-    s32 screen[3];
-    s32 base[3];
 
-    heap = (void **)0x03001EEC;
-    cursor = heap;
+    cursor = (void **)gBattleFxWork;
     work = *cursor++;
-    destination = *cursor;
+    canvas = *cursor;
     count = 16;
-    WORK_EFX = (Efx *)object;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work, 1, 1);
-
-    if (kind == 0) {
-        resource_id = (s32)&Value_000000a0;
-    } else if (kind == 1) {
-        resource_id = (s32)&Value_000000bb;
-    } else if (kind == 2) {
-        resource_id = (s32)&Value_000000a3;
-    } else if (kind == 3) {
-        resource_id = (s32)&Value_000000c0;
-    } else if (kind == 4) {
-        resource_id = (s32)&Value_000000bb;
-    } else if (kind == 5) {
-        resource_id = (s32)&ResourceId_GlowOrbSheet;
-        Resource_LoadAndDecompress(resource_id, work, 1, 0);
-    } else if (kind == 7) {
+    if (mode == 0) {
+        palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+    } else if (mode == 1) {
+        palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+    } else if (mode == 2) {
+        palette = Resource_GetTableEntry((s32)&ResourceId_CyanPalette);
+    } else if (mode == 3) {
+        palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
+    } else if (mode == 4) {
+        palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+    } else if (mode == 5) {
+        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work, 1, 0);
+        palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
+    } else if (mode == 7) {
         count = 24;
         Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work, 1, 0);
-        resource_id = (s32)&Value_0000008d;
+        palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     } else {
-        resource_id = (s32)&Value_000000cd;
         count = 32;
-        Resource_LoadAndDecompress(resource_id, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work, 1, 0);
+        palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
     }
-
-    ((WordCopyFn)0x03001388)(
-        (void *)0x05000000, Resource_GetTableEntry(resource_id), 128);
-
-    if (kind == 4) {
+    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+    if (mode == 4)
         Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work, 1, 1);
-    }
-    if (kind == 3) {
-        Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, (s8 *)work + (150 << 6), 1, 0);
-    }
+    if (mode == 3)
+        Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, (u8 *)work + 0x2580, 1, 0);
 
-    p = (Particle *)0x02010000;
-    j = 0;
-    do {
-        if (kind <= 1 || kind == 4 || kind == 5 || kind == 6 || kind == 7) {
-            p->x = RANDOM_BIASED(127) << 15;
-            p->y = RANDOM_BIASED(127) << 14;
-            p->z = RANDOM_BIASED(127) << 15;
+    for (i = 0; i != 512; i++) {
+        struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+        if (CONVERGES(mode)) {
+            mote->x = ((Random16() & 0xff) - 127) << 15;
+            mote->y = ((Random16() & 0xff) - 127) << 14;
+            mote->z = ((Random16() & 0xff) - 127) << 15;
         } else {
-            p->x = RANDOM_BIASED(127) << 13;
-            p->y = RANDOM_BIASED(255) << 13;
-            p->z = RANDOM_BIASED(127) << 13;
+            mote->x = ((Random16() & 0xff) - 127) << 13;
+            mote->y = ((Random16() & 0xff) - 255) << 13;
+            mote->z = ((Random16() & 0xff) - 127) << 13;
         }
-        p->tick = 0;
-        j++;
-        p++;
-    } while (j != 512);
-
-    if (kind <= 1 || kind == 4 || kind == 5 || kind == 6 || kind == 7) {
-        total = (WORK_EFX->count << 3) + 64;
-    } else {
-        total = (WORK_EFX->count << 3) + 32;
+        mote->variant = 0;
     }
 
-    if (!(kind <= 1 || kind == 3)) {
-        Scheduler_AddOrUpdateCallback((void *)0x080DBB9D, 0x480);
-    }
-    WORK_S32(0x7780) = 2;
-    WORK_S32(0x7784) = 75;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    if (CONVERGES(mode))
+        total = work->effect->count * 8 + 64;
+    else
+        total = work->effect->count * 8 + 32;
+    if (!(mode <= 1 || mode == 3))
+        Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
 
     for (frame = 0; frame != total; frame++) {
-        iwram = *(void **)0x03001E80;
-
-        if (kind == 7) {
-            if (frame == total - 46) {
-                BattleMotion_ApproachTargetFar(
-                    WORK_EFX->field_08, WORK_EFX->member[0], 16, 0);
-            }
+        facing = gCameraWork[0];
+        if (mode == 7) {
+            if (frame == total - 46)
+                BattleMotion_ApproachTargetFar(work->effect->actor,
+                    work->effect->actors[0], 16, 0);
             if (frame == total - 32) {
                 BattleEventRuntime_BeginPhaseFar(134);
-                BattleMotion_ApplyVariantMotionFar(WORK_EFX->member[0], 4);
-                WORK_S32(0x77A8) = 8;
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+                work->shake_frames = 8;
             }
         } else if (frame == total - 32) {
             BattleEventRuntime_BeginPhaseFar(133);
         }
+        row = work->bg2_x;
+        for (i = 0; i != 160; i++)
+            *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
 
-        ramp = (s32 *)((s8 *)work + (211 << 7));
-        angle = frame << 12;
-        j = 0;
-        do {
-            *ramp++ = ((128 << 11) - (Trig_Sin(angle) << 2)) >> 10;
-            angle += 128 << 4;
-            j++;
-        } while (j != 160);
+        for (member = 0; member != work->effect->count; member++) {
+            object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+            if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
+                EffectPosition_ApplyStepAndYOffset(work->effect->actors[member], &base);
+                for (i = 0; i != 2; i++) {
+                    s32 angle;
+                    s32 radius;
+                    s32 x;
+                    s32 y;
 
-        i = 0;
-        if (WORK_EFX->count != 0) {
-            do {
-                base_frame = i * 8;
-                member_object = *GetBattleObjectSlotFar(WORK_EFX->member[i]);
-
-                if (kind == 3 && frame > base_frame
-                    && frame < base_frame + 32) {
-                    EffectPosition_ApplyStepAndYOffset(WORK_EFX->member[i], base);
-                    j = 0;
-                    do {
-                        seed = (s32)(Random16() & 0xFFFF);
-                        radius = (s32)(Random16() & 31) + 4;
-                        x = ((base[0] / 2)
-                                + ((radius * Trig_Sin(seed)) >> 17))
-                            - (BattleFx_GlintCellWidths[frame & 3] >> 1);
-                        y = (base[1] - ((radius * Trig_Cos(seed)) >> 16))
-                            - (BattleFx_GlintCellHeights[frame & 3] >> 1);
-                        BattleEffect_LoadWork(47, 7, 7,
-                            3 | Data_080ee2ae[Random16() & 3], 2);
-                        ((DrawRectangleFn)gWorkSlot[47])(destination,
-                            ((s8 *)work + BattleFx_GlintCellOffsets[frame & 3])
-                                + (150 << 6),
-                            x, y + 16, BattleFx_GlintCellWidths[frame & 3],
-                            BattleFx_GlintCellHeights[frame & 3]);
-                        Runtime_ReleaseHeapBlock(47);
-                        j++;
-                    } while (j != 2);
+                    angle = Random16() & 0xffff;
+                    radius = (Random16() & 31) + 4;
+                    x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17)
+                        - (BattleFx_GlintCellWidths[frame & 3] >> 1);
+                    y = base.y - ((Trig_Cos(angle) * radius) >> 16)
+                        - (BattleFx_GlintCellHeights[frame & 3] >> 1);
+                    BattleEffect_LoadWork(47, 7, 7, 3 | Data_080ee2ae[Random16() & 3], 2);
+                    ((DrawRectangle)gWorkSlot[47])(canvas,
+                        (u8 *)work + BattleFx_GlintCellOffsets[frame & 3] + 0x2580,
+                        x, y + 16,
+                        BattleFx_GlintCellWidths[frame & 3],
+                        BattleFx_GlintCellHeights[frame & 3]);
+                    Runtime_ReleaseHeapBlock(47);
                 }
+            }
+            BattleEffect_LoadWork(46, 7, 7, 3, 3);
+            draw[0] = (DrawRectangle)gWorkSlot[46];
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
+            draw[1] = (DrawRectangle)gWorkSlot[47];
+            Render_ResetTransformState();
+            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            point[0] = object->x;
+            point[1] = 160 << 13;
+            point[2] = object->z;
+            SceneTransform_ApplyPosition(point);
+            if (frame > member * 8) {
+                SceneTransform_ApplyYaw(frame << 9);
+                if (mode <= 1 || mode == 4)
+                    SceneTransform_ApplyPitch(frame << 9);
+                for (i = 0; i != count; i++) {
+                    struct EffectStep *mote =
+                        &((struct EffectStep *)Ram_MapCellBuffer)[member * 64 + i];
+                    s32 distance;
 
-                BattleEffect_LoadWork(46, 7, 7, 3, 3);
-                blit[0] = (DrawRectangleFn)gWorkSlot[46];
-                BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                blit[1] = (DrawRectangleFn)gWorkSlot[47];
+                    if (frame > member * 8 + i) {
+                        s32 xx = (mote->x >> 8) * (mote->x >> 8);
+                        s32 yy = (mote->y >> 8) * (mote->y >> 8);
+                        s32 zz = (mote->z >> 8) * (mote->z >> 8);
 
-                Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(iwram, (s8 *)iwram + 12);
+                        distance = Iwram_Sqrt(xx + yy + zz) >> 9;
+                        if (distance != 0 && mote->variant <= 23) {
+                            s32 cel = mote->variant / 4;
 
-                screen[0] = *(s32 *)((s8 *)member_object + 8);
-                screen[1] = 160 << 13;
-                screen[2] = *(s32 *)((s8 *)member_object + 16);
-                SceneTransform_ApplyPosition(screen);
-
-                if (frame > base_frame) {
-                    SceneTransform_ApplyYaw(frame << 9);
-                    if (kind <= 1 || kind == 4) {
-                        SceneTransform_ApplyPitch(frame << 9);
-                    }
-
-                    j = 0;
-                    if (count != 0) {
-                        p = (Particle *)0x02010000 + i * 64;
-                        do {
-                            if (frame > base_frame + j) {
-                                distance = ((IntegerSqrtFn)0x030001D8)(
-                                               ((p->x >> 8) * (p->x >> 8))
-                                               + ((p->y >> 8) * (p->y >> 8))
-                                               + ((p->z >> 8) * (p->z >> 8)))
-                                    >> 9;
-                                if (distance != 0 && p->tick <= 23) {
-                                    cel = p->tick / 4;
-                                    EffectPosition_ApplyBaseAndYOffset(p, place);
-                                    place[0] = place[0] >> 1;
-
-                                    if (kind == 5 || kind == 7) {
-                                        blit[1](destination,
-                                            (s8 *)work + (cel * 25) * 64,
-                                            place[0] - 20,
-                                            place[1] - 20, 40, 40);
-                                    } else if (kind == 6) {
-                                        blit[1](destination,
-                                            (s8 *)work + (192 << 4),
-                                            place[0] - 6,
-                                            place[1] - 12, 12, 24);
-                                    } else if (kind == 4) {
-                                        blit[1](destination, work,
-                                            place[0] - 11,
-                                            place[1] - 21, 22, 42);
-                                    } else {
-                                        blit[(j & 3) != 0](destination,
-                                            (s8 *)work + (cel * 9) * 128,
-                                            place[0] - 12,
-                                            place[1] - 24, 24, 48);
-                                    }
-
-                                    if (kind <= 1 || kind == 4 || kind == 5
-                                        || kind == 6) {
-                                        v = p->x;
-                                        p->x = v - __divsi3(v, distance);
-                                        v = p->y;
-                                        p->y = v - __divsi3(v, distance);
-                                        v = p->z;
-                                        p->z = v - __divsi3(v, distance);
-                                    } else {
-                                        p->y += 128 << 9;
-                                    }
-
-                                    p->tick = p->tick + 1;
-                                    if (p->tick == 24) {
-                                        if (kind <= 1 || kind == 4 || kind == 5
-                                            || kind == 6) {
-                                            p->tick = 0;
-                                        } else {
-                                            p->x = RANDOM_BIASED(127) << 13;
-                                            p->y = RANDOM_BIASED(255) << 12;
-                                            p->z = RANDOM_BIASED(127) << 13;
-                                        }
-                                    }
+                            EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+                            screen.x >>= 1;
+                            if (mode == 5 || mode == 7)
+                                draw[1](canvas, (u8 *)work + cel * 1600,
+                                    screen.x - 20, screen.y - 20, 40, 40);
+                            else if (mode == 6)
+                                draw[1](canvas, (u8 *)work + 0xc00,
+                                    screen.x - 6, screen.y - 12, 12, 24);
+                            else if (mode == 4)
+                                draw[1](canvas, work,
+                                    screen.x - 11, screen.y - 21, 22, 42);
+                            else
+                                draw[(i & 3) != 0](canvas, (u8 *)work + cel * 1152,
+                                    screen.x - 12, screen.y - 24, 24, 48);
+                            if (DECAYS(mode)) {
+                                mote->x -= mote->x / distance;
+                                mote->y -= mote->y / distance;
+                                mote->z -= mote->z / distance;
+                            } else {
+                                mote->y += 0x10000;
+                            }
+                            mote->variant++;
+                            if (mote->variant == 24) {
+                                if (DECAYS(mode)) {
+                                    mote->variant = 0;
+                                } else {
+                                    mote->x = ((Random16() & 0xff) - 127) << 13;
+                                    mote->y = ((Random16() & 0xff) - 255) << 12;
+                                    mote->z = ((Random16() & 0xff) - 127) << 13;
                                 }
                             }
-                            j++;
-                            p++;
-                        } while (j != count);
+                        }
                     }
                 }
+            }
+            Runtime_ReleaseHeapBlock(47);
+            Runtime_ReleaseHeapBlock(46);
+            if (frame == member * 8 + 16) {
+                s32 delay = total - frame;
 
-                Runtime_ReleaseHeapBlock(47);
-                Runtime_ReleaseHeapBlock(46);
-
-                if (frame == base_frame + 16) {
-                    span = total - frame;
-                    if (span > 31) {
-                        span = 31;
-                    }
-                    ObjectGroup_UpdateMembers(WORK_EFX->member[i], 7, 5, i, span);
-                }
-
-                i++;
-            } while (i != WORK_EFX->count);
+                if (delay > 31)
+                    delay = 31;
+                ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, delay);
+            }
         }
-
         Camera_ApplyShake(16, 16);
         ObjectGroup_TickMemberTimers();
-        WORK_S32(0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((void *)0x080CD261);
-    if (!(kind <= 1 || kind == 3)) {
-        Scheduler_RemoveCallback((void *)0x080DBB9D);
-    }
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    if (!(mode <= 1 || mode == 3))
+        Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
     BattleFx_EndCanvasLayer();
 }

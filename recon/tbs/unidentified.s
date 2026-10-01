@@ -1109,16 +1109,16 @@ Data_080ee262:
 	.global Data_080ee294
 Data_080ee294:
 	.incbin "baserom.gba", 0x000ee294, 0x00000006
-	.global Data_080ee29a
-Data_080ee29a:
+	.global FirePillars_Counts
+FirePillars_Counts:
 	.incbin "baserom.gba", 0x000ee29a, 0x00000002
 	.incbin "baserom.gba", 0x000ee29c, 0x00000001
-	.global Data_080ee29d
-Data_080ee29d:
+	.global FirePillars_Depths
+FirePillars_Depths:
 	.incbin "baserom.gba", 0x000ee29d, 0x0000000b
 	.incbin "baserom.gba", 0x000ee2a8, 0x00000001
-	.global Data_080ee2a9
-Data_080ee2a9:
+	.global FirePillars_StartFrames
+FirePillars_StartFrames:
 	.incbin "baserom.gba", 0x000ee2a9, 0x00000005
 	.global Data_080ee2ae
 Data_080ee2ae:

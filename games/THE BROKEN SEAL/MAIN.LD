@@ -750,6 +750,7 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.000cb1a4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_TWO_MODE_B_MODE0.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000cb604)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PILLARS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RENDER_MODE.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000cc2c8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT7.o"(.text)

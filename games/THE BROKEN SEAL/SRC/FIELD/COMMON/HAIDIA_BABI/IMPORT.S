@@ -86,9 +86,21 @@ Engine_MapCopyCellAttributes:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Engine_MapRenderSetValues
+	.thumb_func
+Engine_MapRenderSetValues:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	.global Graphics_EnableObjLayerAndCallbacks
+	.thumb_func
+Graphics_EnableObjLayerAndCallbacks:
 	overlay_veneer Graphics_EnableObjLayerAndCallbacksFar
+	.global ObjectDispatch_StopCallbacksAndHideLayers
+	.thumb_func
+ObjectDispatch_StopCallbacksAndHideLayers:
 	overlay_veneer ObjectDispatch_StopCallbacksAndHideLayersFar
+	.global ObjectDispatch_RegisterChildMetadata
+	.thumb_func
+ObjectDispatch_RegisterChildMetadata:
 	overlay_veneer ObjectDispatch_RegisterChildMetadataFar
 	.global Engine_ObjectSetPartPalettes
 	.thumb_func
@@ -98,6 +110,9 @@ Engine_ObjectSetPartPalettes:
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global UiText_ShowCenteredMessage
+	.thumb_func
+UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
 	.global Engine_ItemLoadIcon
 	.thumb_func
@@ -159,9 +174,9 @@ Object_SetActionCallbackAndRefreshById:
 	.thumb_func
 Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
-	.global Engine_ObjectMotionSetPositionAndCommit
+	.global Engine_ActorMoveToAndWait
 	.thumb_func
-Engine_ObjectMotionSetPositionAndCommit:
+Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -203,6 +218,9 @@ Engine_ActorFaceActor:
 	.thumb_func
 Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Object_SetTargetAndCallback
 	.thumb_func
@@ -232,6 +250,9 @@ Engine_EventAskYesNo:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Ui_SetRenderResultFromObject
+	.thumb_func
+Ui_SetRenderResultFromObject:
 	overlay_veneer Ui_SetRenderResultFromObjectFar
 	.global Engine_ActorSetSpritePriority
 	.thumb_func

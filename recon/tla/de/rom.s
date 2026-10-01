@@ -2296,10 +2296,10 @@ Inventory_GetQuantity:
 Inventory_Find:
 	.incbin "baserom.gba", 0x000bbe98, 0x00000030
 	.section .rom.000bbf34, "ax"
-	.global Func_080aef34
-	.type Func_080aef34, %function
+	.global Inventory_Equip
+	.type Inventory_Equip, %function
 	.thumb_func
-Func_080aef34:
+Inventory_Equip:
 	.incbin "baserom.gba", 0x000bbf34, 0x000000d4
 	.section .rom.000bc0e2, "ax"
 	.incbin "baserom.gba", 0x000bc0e2, 0x00000002
@@ -2330,10 +2330,10 @@ Func_080af1fc:
 Func_080af244:
 	.incbin "baserom.gba", 0x000bc244, 0x00000054
 	.section .rom.000bc338, "ax"
-	.global Func_080af338
-	.type Func_080af338, %function
+	.global Item_GetTargetMode
+	.type Item_GetTargetMode, %function
 	.thumb_func
-Func_080af338:
+Item_GetTargetMode:
 	.incbin "baserom.gba", 0x000bc338, 0x00000040
 	.section .rom.000bc378, "ax"
 	.global Item_AdjustCounter
@@ -2342,10 +2342,10 @@ Func_080af338:
 Item_AdjustCounter:
 	.incbin "baserom.gba", 0x000bc378, 0x00000028
 	.section .rom.000bc43c, "ax"
-	.global Func_080af43c
-	.type Func_080af43c, %function
+	.global BattleAction_GetDirect
+	.type BattleAction_GetDirect, %function
 	.thumb_func
-Func_080af43c:
+BattleAction_GetDirect:
 	.incbin "baserom.gba", 0x000bc43c, 0x0000007c
 	.section .rom.000bc4b8, "ax"
 	.global Func_080af4b8
@@ -2523,7 +2523,10 @@ Func_080af0e4:
 	.incbin "baserom.gba", 0x000be002, 0x00001362
 	.global Item_DefinitionTable
 Item_DefinitionTable:
-	.incbin "baserom.gba", 0x000bf364, 0x0000f1a8
+	.incbin "baserom.gba", 0x000bf364, 0x000058b0
+	.global BattleAction_DefinitionTable
+BattleAction_DefinitionTable:
+	.incbin "baserom.gba", 0x000c4c14, 0x000098f8
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000ce50c, 0x000000e8

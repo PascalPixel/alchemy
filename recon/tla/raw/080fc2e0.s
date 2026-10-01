@@ -52,7 +52,7 @@ Func_080fc2e0:
 	mov r3, r10
 	ldrb r0, [r6]
 	ldrh r1, [r3]
-	bl Func_080ad048
+	bl Inventory_EquipFar
 	adds r0, #2
 	cmp r0, #1
 	bhi .L_080fc35c

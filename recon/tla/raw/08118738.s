@@ -205,7 +205,7 @@ DebugParty_LoadPreset:
 	bl Inventory_AddItemFar
 	adds r1, r0, #0
 	mov r0, r8
-	bl Func_080ad048
+	bl Inventory_EquipFar
 .L_081188dc:
 	subs r7, #1
 	adds r5, #2

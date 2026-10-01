@@ -106,7 +106,7 @@ Func_080af7ac:
 	adds r5, #1
 	ldr r0, [r2]
 	adds r6, #2
-	bl Func_080aef34
+	bl Inventory_Equip
 	cmp r5, #12
 	bls .L_080af860
 	mov r3, r8

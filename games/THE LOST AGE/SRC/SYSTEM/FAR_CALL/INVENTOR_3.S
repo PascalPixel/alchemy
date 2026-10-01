@@ -12,7 +12,7 @@ Inventory_GetEquippedItemFar:
 	.global BattleAction_Get
 	.thumb_func
 BattleAction_Get:
-	overlay_veneer Func_080af43c
+	overlay_veneer BattleAction_GetDirect
 	.global OwnerAction_AddFar
 	.thumb_func
 OwnerAction_AddFar:

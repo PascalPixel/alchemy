@@ -494,8 +494,8 @@ Data_080b2340:
 	.global Item_DefinitionTable
 Item_DefinitionTable:
 	.incbin "baserom.gba", 0x000b2364, 0x000058b0
-	.global Data_080b7c14
-Data_080b7c14:
+	.global BattleAction_DefinitionTable
+BattleAction_DefinitionTable:
 	.incbin "baserom.gba", 0x000b7c14, 0x00002268
 	.global Data_080b9e7c
 Data_080b9e7c:

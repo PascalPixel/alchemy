@@ -76,7 +76,7 @@ Func_0810993c:
 .L_081099d4:
 	mov r0, r8
 	mov r1, r9
-	bl Func_080ad048
+	bl Inventory_EquipFar
 	mov r3, r11
 	ldr r0, [r3, #36]
 	cmp r0, #0

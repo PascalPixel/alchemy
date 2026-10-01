@@ -1,11 +1,11 @@
 .syntax unified
 	.thumb
-	.global Func_080af338
+	.global Item_GetTargetMode
 	.thumb_func
-Func_080af338:
+Item_GetTargetMode:
 	push {lr}
 	bl Item_GetDirect
 	ldrh r0, [r0, #40]
-	bl Func_080af43c
+	bl BattleAction_GetDirect
 	ldrb r0, [r0]
 	pop {pc}

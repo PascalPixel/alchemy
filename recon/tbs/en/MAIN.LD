@@ -961,7 +961,7 @@
         "*/recon/tbs/raw/080e7404.o"(.text)
         "*/recon/tbs/raw/080e823c.o"(.text)
         "*/recon/tbs/raw/080e89ec.o"(.text)
-        "*/recon/tbs/raw/080e90a8.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
         "*/recon/tbs/raw/080e94b8.o"(.text)
         "*/recon/tbs/raw/080e99c0.o"(.text)
         "*/recon/tbs/raw/080ea0d8.o"(.text)

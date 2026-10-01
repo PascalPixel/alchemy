@@ -1567,7 +1567,9 @@ BattleEffect_RunParticleStreams:
 	.type BattleEffect_RunCirclingFallingScene, %function
 	.thumb_func
 BattleEffect_RunCirclingFallingScene:
-	.incbin "baserom.gba", 0x000df23c, 0x00001e9c
+	.incbin "baserom.gba", 0x000df23c, 0x00000e6c
+	.section .rom.000e04b8, "ax"
+	.incbin "baserom.gba", 0x000e04b8, 0x00000c20
 	.section .rom.000e10d8, "ax"
 	.global Unnamed_080ea0d8
 	.type Unnamed_080ea0d8, %function

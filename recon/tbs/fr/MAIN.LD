@@ -799,6 +799,8 @@
     "*/recon/tbs/fr/rom.o"(.rom.000eab38)
     "*/recon/tbs/fr/rom.o"(.rom.000eac04)
     "*/recon/tbs/fr/rom.o"(.rom.000eba3c)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
+    "*/recon/tbs/fr/rom.o"(.rom.000eccb8)
     "*/recon/tbs/fr/rom.o"(.rom.000ed8d8)
     "*/recon/tbs/fr/rom.o"(.rom.000eef54)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT10.o"(.text)

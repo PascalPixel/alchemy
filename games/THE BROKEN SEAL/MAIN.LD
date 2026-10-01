@@ -809,6 +809,8 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.000de338)
     "*/recon/tbs/ja/rom.o"(.rom.000de404)
     "*/recon/tbs/ja/rom.o"(.rom.000df23c)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
+    "*/recon/tbs/ja/rom.o"(.rom.000e04b8)
     "*/recon/tbs/ja/rom.o"(.rom.000e10d8)
     "*/recon/tbs/ja/rom.o"(.rom.000e2754)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT10.o"(.text)

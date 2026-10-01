@@ -27,7 +27,7 @@ Resource_DirectoryTable:
 	resource , FarCall_BattleTable
 	resource , FarCall_ScrollTable
 	resource PaletteFarCalls, FarCall_PaletteTable
-	resource , FarCall_EffectTable
+	resource EffectFarCalls, FarCall_EffectTable
 	resource , FarCall_BlankRunTable
 	resource , FarCall_BlankLoadTable
 	resource , FarCall_SoundTable
@@ -78,9 +78,9 @@ Resource_DirectoryTable:
 	resource DesertBackdrop, Battle_DesertBackdrop
 	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
 	resource , Battle_AerialViewBackdrop
-	resource , Slots_FramePicture
-	resource , Slots_Icons
-	resource , Slots_Jackpot
+	resource SlotsFramePicture, Slots_FramePicture
+	resource SlotsIcons, Slots_Icons
+	resource SlotsJackpot, Slots_Jackpot
 	resource , LuckyDice_Board
 	resource , LuckyDice_Sprites
 	resource TileAnimationMask, BattleFx_TileAnimationMask

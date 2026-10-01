@@ -1,16 +1,23 @@
 /* Draft, not exact: 235 (3 register-only, 2 operand, 3 reordered), all in the
- * last loop. The reference loads the last ramp entry before the interrupt
- * mask register ahead of the loop (here the mask pointer is assigned first
- * and the ramp address hoisted after it), and loads the write queue before
- * reading the mask. What settled the rest: the palette entry is stored
- * through a chained assignment, so its address is live across the colour and
- * the 0x05000000 reload takes r5, which puts r5 in the reload rotation; the
- * ramp is one pointer variable; the two loops are plain for loops.
- * Tried for the order: an explicit pointer to the last entry before the
- * mask pointer (it loses r9 to the hoisted blend register address), and
- * the mask pointer assigned inside the loop with or without a direct
- * restore (the loop pass then leaves it in r0). The reference hoists both,
- * the ramp address first, and leaves the blend address without a register. */
+ * last loop: the ROM loads the last ramp entry (r9) before the interrupt mask
+ * register (sl) ahead of the loop, with level set last, and in the queue
+ * block loads the write queue before reading the mask.
+ * What is settled: the palette entry is stored through a chained assignment
+ * (its address stays live, so the 0x05000000 reload takes r5 and joins the
+ * reload rotation); the ramp is one pointer variable; the two loops are plain
+ * for loops; frame lives in r4 across calls and level, the ramp end, the mask
+ * and work take r8, r9, sl and fp.
+ * Wave 1b, slice 10: the loop pass moves two constants ahead of the loop, the
+ * blend register address (two matched stores, it gets no register) and then
+ * the ramp end; they land after the mask pointer and the for initialisers,
+ * which gives mask, level, ramp end. The ROM order needs the ramp end and
+ * the mask both ahead of level. Tried: an explicit last-entry pointer before
+ * the mask pointer (18: it lives a few insns longer than the hoisted blend
+ * address and loses r9 to it); the mask pointer set inside the queue block,
+ * with the restore through it or direct (38-47: cse gives the restore the
+ * same register, so the set is used in two blocks after a jump and the loop
+ * pass cannot move it; the mask then gets no register and frame takes r8);
+ * level written as frame * 2 for strength reduction (27-40). */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_REG.H"

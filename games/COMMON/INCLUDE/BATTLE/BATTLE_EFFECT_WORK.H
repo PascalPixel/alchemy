@@ -14,7 +14,10 @@ struct BattleEffectWork {
     struct EffectStep particles[64];
     s32 transfer_mode;
     s32 transfer_value;
-    u8 unknown_7788[0x20];
+    u8 unknown_7788[4];
+    /* Frames since the reel game last let a reel stop. */
+    s32 reel_stop_frames;
+    u8 unknown_7790[0x18];
     s32 shake_frames;
     u8 unknown_77ac[0x8];
     s32 fade_frames;

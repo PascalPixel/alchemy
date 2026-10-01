@@ -65,7 +65,7 @@ Func_081587e4:
 	add r1, r9
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #216
 	lsls r1, r1, #7
 	adds r1, #192
@@ -73,7 +73,7 @@ Func_081587e4:
 	add r1, r9
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r9

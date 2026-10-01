@@ -202,7 +202,7 @@ Func_080e572c:
 	ldr r0, .L_080e5a58
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	mov r2, r9
@@ -271,7 +271,7 @@ Func_080e572c:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r1, [r3, #96]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r2, [sp, #20]
 	movs r3, #2
 	adds r2, #193

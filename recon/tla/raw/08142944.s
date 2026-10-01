@@ -52,7 +52,7 @@ Func_08142944:
 	ldr r0, .L_081429c8
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #48]
 	movs r2, #220
 	lsls r2, r2, #6
@@ -69,12 +69,12 @@ Func_08142944:
 .L_081429cc:
 	.4byte 0x000000c9
 .L_081429d0:
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_08142b5c
 	ldr r1, .L_08142b60
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #48]
 	movs r4, #239
 	lsls r4, r4, #7

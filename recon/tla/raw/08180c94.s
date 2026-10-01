@@ -65,7 +65,7 @@ Func_08180c94:
 	movs r2, #1
 	movs r3, #0
 	str r5, [sp, #20]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r10
@@ -501,7 +501,7 @@ Func_08180c94:
 	add r1, r10
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_08181080:
 	movs r0, #32
 	bl Runtime_BumpAllocateAlternatePool

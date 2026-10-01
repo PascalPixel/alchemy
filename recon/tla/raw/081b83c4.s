@@ -89,7 +89,7 @@ Func_081b83c4:
 	adds r0, r3, #0
 	ldr r1, .L_081b8620
 	str r3, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -115,7 +115,7 @@ Func_081b83c4:
 	adds r5, #128
 	adds r0, r5, #0
 	str r5, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -142,7 +142,7 @@ Func_081b83c4:
 	adds r6, #32
 	adds r0, r6, #0
 	str r6, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19
@@ -170,7 +170,7 @@ Func_081b83c4:
 	ldr r1, .L_081b8620
 	adds r0, #32
 	str r0, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -199,7 +199,7 @@ Func_081b83c4:
 	adds r5, #32
 	adds r0, r5, #0
 	str r5, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -228,7 +228,7 @@ Func_081b83c4:
 	adds r3, #32
 	adds r0, r3, #0
 	str r3, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19
@@ -354,7 +354,7 @@ Func_081b83c4:
 	adds r6, #32
 	adds r0, r6, #0
 	str r6, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2253,7 +2253,7 @@ Func_081b83c4:
 	ldr r1, .L_081b963c
 	adds r0, #32
 	str r0, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2288,7 +2288,7 @@ Func_081b83c4:
 	adds r3, #32
 	adds r0, r3, #0
 	str r3, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2444,7 +2444,7 @@ Func_081b83c4:
 	adds r5, #32
 	adds r0, r5, #0
 	str r5, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2470,7 +2470,7 @@ Func_081b83c4:
 	adds r6, #32
 	adds r0, r6, #0
 	str r6, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2509,7 +2509,7 @@ Func_081b83c4:
 	adds r5, #32
 	adds r0, r5, #0
 	str r5, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2545,7 +2545,7 @@ Func_081b83c4:
 	adds r3, #32
 	adds r0, r3, #0
 	str r3, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212

@@ -34,7 +34,7 @@ Func_0802c8a0:
 	ldr r0, [r6, #12]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802c968
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #151
 	lsls r3, r3, #4
 	adds r7, r5, r3
@@ -45,7 +45,7 @@ Func_0802c8a0:
 	ldr r0, [r6, #16]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802c96c
-	bl Func_0801587c
+	bl Resource_DecodeType01
 .L_0802c900:
 	movs r3, #0
 	strb r3, [r7]

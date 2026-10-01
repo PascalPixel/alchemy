@@ -122,7 +122,7 @@ Func_080e92b4:
 	adds r2, #32
 	adds r1, r2, #0
 	str r2, [sp, #20]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	lsls r1, r1, #3

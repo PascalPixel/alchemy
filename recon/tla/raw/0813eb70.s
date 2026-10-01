@@ -230,7 +230,7 @@ Func_0813eb70:
 	ldr r0, .L_0813ed70
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #48]
 	movs r5, #239
 	movs r7, #238
@@ -1010,7 +1010,7 @@ Func_0813eb70:
 	ldr r0, .L_0813f338
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #160
 	lsls r0, r0, #19
 	movs r6, #1

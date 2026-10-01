@@ -116,7 +116,7 @@ Func_081693d0:
 	adds r5, r5, r3
 	adds r0, r5, #0
 	mov r1, r8
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	mov r9, r6
 	ldr r5, .L_081695ac
 	ldr r6, [sp, #60]
@@ -175,7 +175,7 @@ Func_081693d0:
 	ldr r1, [sp, #56]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r2, [sp, #60]
 	movs r3, #224
 	lsls r3, r3, #3
@@ -183,7 +183,7 @@ Func_081693d0:
 	ldr r0, .L_081695c4
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r5, #170
 	ldr r4, [sp, #60]
 	lsls r5, r5, #7
@@ -192,7 +192,7 @@ Func_081693d0:
 	ldr r0, .L_081695c8
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, .L_0816959c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1490,7 +1490,7 @@ Func_081693d0:
 	movs r3, #1
 	ldr r0, .L_08169f80
 	adds r1, r5, r6
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #195
 	lsls r0, r0, #1
 	bl Audio_PlayCue

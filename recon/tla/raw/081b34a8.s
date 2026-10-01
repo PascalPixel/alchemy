@@ -121,7 +121,7 @@ Func_081b34a8:
 	ldr r0, .L_081b3650
 	bl Resource_GetTableEntry
 	ldr r1, [sp, #48]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_081b3654
 	bl Resource_GetTableEntry
 	movs r3, #128
@@ -137,7 +137,7 @@ Func_081b34a8:
 	adds r4, #32
 	adds r0, r4, #0
 	ldr r1, .L_081b365c
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_081b365c
 	ldr r7, .L_081b3660
 	movs r3, #0
@@ -420,7 +420,7 @@ Func_081b34a8:
 .L_081b37dc:
 	.4byte gMapCellBuffer
 .L_081b37e0:
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -444,7 +444,7 @@ Func_081b34a8:
 	adds r4, #32
 	adds r0, r4, #0
 	ldr r1, .L_081b38a0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212

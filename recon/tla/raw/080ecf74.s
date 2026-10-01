@@ -49,7 +49,7 @@ Func_080ecf74:
 	ldr r6, .L_080ed02c
 	adds r0, r7, r0
 	adds r1, r1, r6
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	mov r3, r8
 	movs r7, #0
 	cmp r3, #63

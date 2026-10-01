@@ -129,12 +129,12 @@ Func_0816b6ec:
 	ldr r0, .L_0816bb30
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0816bb34
 	adds r1, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #48]
 	movs r4, #156
 	lsls r4, r4, #6
@@ -142,7 +142,7 @@ Func_0816b6ec:
 	ldr r0, .L_0816bb38
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0816bb3c
 	movs r1, #4
 	movs r2, #32

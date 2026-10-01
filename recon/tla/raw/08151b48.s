@@ -82,12 +82,12 @@ Func_08151b48:
 .L_08151be0:
 	.4byte 0x00000188
 .L_08151be4:
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #0
 	ldr r1, [sp, #24]
 	ldr r0, .L_08151ec8
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r1, [sp, #40]
 	ldr r3, [r1, #24]
 	cmp r3, #2

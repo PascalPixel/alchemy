@@ -86,7 +86,7 @@ Func_080e09c0:
 	.4byte 0x000001ea
 .L_080e0a68:
 	mov r1, r10
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r5, #128
 	lsls r5, r5, #1
@@ -104,7 +104,7 @@ Func_080e09c0:
 	ldr r0, .L_080e0c78
 	bl Resource_GetTableEntry
 	mov r1, r10
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	adds r1, r5, #0
 	mov r2, r10

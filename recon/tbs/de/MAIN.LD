@@ -807,7 +807,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT21.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TILE/TRANSPOSE_COPY.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000e1c2a)
-    "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
+    "*/games/COMMON/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000e2364)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_REVEAL.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000e2e40)

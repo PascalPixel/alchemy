@@ -85,7 +85,7 @@ Func_080ea14c:
 	str r5, [sp, #12]
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	lsls r1, r1, #4
@@ -163,7 +163,7 @@ Func_080ea14c:
 	ldr r0, .L_080ea384
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r5, #128
 	lsls r5, r5, #4

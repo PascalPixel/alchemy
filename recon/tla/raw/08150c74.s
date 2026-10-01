@@ -40,7 +40,7 @@ Func_08150c74:
 	ldr r0, .L_08150ce8
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #128
 	ldr r3, .L_08150cec
 	ldr r0, .L_08150ce4

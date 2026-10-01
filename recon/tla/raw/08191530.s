@@ -93,7 +93,7 @@ Func_08191530:
 	.2byte 0xf800
 	adds r1, r5, #0
 	adds r0, r7, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_08191924
 	bl Resource_GetTableEntry
 	adds r7, r0, #0
@@ -148,7 +148,7 @@ Func_08191530:
 	mov r1, r9
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #128
 	movs r1, #0
 	movs r4, #1

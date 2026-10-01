@@ -114,7 +114,7 @@ Func_0814153c:
 	adds r5, r5, r4
 	adds r0, r5, #0
 	ldr r1, .L_081417ac
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_081417b0
 	ldr r1, .L_081417a4
 	ldr r2, [sp, #96]
@@ -177,7 +177,7 @@ Func_0814153c:
 	adds r5, r5, r4
 	ldr r1, .L_081417ac
 	adds r0, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r1, #32
 	ldr r2, .L_081417b4
 	movs r3, #0
@@ -251,7 +251,7 @@ Func_0814153c:
 	ldr r1, [sp, #72]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, .L_0814177c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -388,7 +388,7 @@ Func_0814153c:
 	ldr r1, .L_08141b38
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_08141856:
 	ldr r0, [sp, #84]
 	cmp r0, #136
@@ -878,7 +878,7 @@ Func_0814153c:
 	ldr r0, .L_08141e64
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #96]
 	movs r7, #142
 	lsls r7, r7, #7
@@ -886,7 +886,7 @@ Func_0814153c:
 	adds r1, r4, r7
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_08141c16:
 	movs r0, #32
 	bl Runtime_BumpAllocateAlternatePool
@@ -1490,7 +1490,7 @@ Func_0814153c:
 	movs r3, #0
 	ldr r0, .L_08142120
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r3, r8
 	mov r4, r10
 	strh r3, [r4]
@@ -1812,21 +1812,21 @@ Func_0814153c:
 	ldr r0, .L_0814271c
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #176
 	lsls r3, r3, #4
 	adds r1, r7, r3
 	ldr r0, .L_08142720
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r4, #253
 	lsls r4, r4, #6
 	adds r1, r7, r4
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_08142724
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, .L_08142728
 	ldr r1, [sp, #32]
 	movs r7, #0

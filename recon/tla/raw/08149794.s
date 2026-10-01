@@ -48,7 +48,7 @@ Func_08149794:
 	adds r1, r5, r7
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_08149808
 	movs r3, #0
 	b .L_0814980c
@@ -62,7 +62,7 @@ Func_08149794:
 .L_0814980c:
 	ldr r1, [sp, #24]
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r0, r9
 	ldr r3, [r0, #24]
 	cmp r3, #2

@@ -44,27 +44,27 @@ Func_0802c9c8:
 	ldr r0, [r5, #12]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cad0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #16]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cad4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #20]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cad8
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #24]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cadc
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #28]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cae0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #32]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cae4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r2, .L_0802cae8
 	ldr r3, .L_0802caec
 	movs r0, #1
@@ -83,7 +83,7 @@ Func_0802c9c8:
 	ldr r0, .L_0802caf0
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r5, .L_0802cac8
 	bl Func_0802c4d8
 	movs r2, #128

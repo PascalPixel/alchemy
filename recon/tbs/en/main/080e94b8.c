@@ -229,6 +229,7 @@ void Unnamed_080e94b8(struct BattleEffectArgument *effect)
                             x = spark->x;
                             if ((u32)x <= 0x007EFFFF && y >= 0) {
                                 u8 *cell;
+                                DrawRectangle blit;
                                 s32 py = y >> 16;
                                 s32 px = x >> 16;
 
@@ -236,7 +237,8 @@ void Unnamed_080e94b8(struct BattleEffectArgument *effect)
                                 cell = (u8 *)sheet + ParticleStreams_CellOffsets[size - 1];
                                 px -= size / 2;
                                 py -= size;
-                                routine[i & 1](canvas, cell, px, py, size, size * 2);
+                                blit = routine[i & 1];
+                                blit(canvas, cell, px, py, size, size * 2);
                             }
                         }
                     }

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080aef34
+	.global Inventory_Equip
 	.thumb_func
-Func_080aef34:
+Inventory_Equip:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

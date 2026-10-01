@@ -241,7 +241,7 @@ PartyInventory_Remove:
 	.global Func_020047a4
 	.thumb_func
 Func_020047a4:
-	overlay_veneer Func_080ad048
+	overlay_veneer Inventory_EquipFar
 	.global Owner_AdjustFirstValue
 	.thumb_func
 Owner_AdjustFirstValue:

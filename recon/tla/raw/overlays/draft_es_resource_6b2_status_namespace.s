@@ -1,3 +1,6 @@
+@ Complete import-bank near miss: status-set and delay imports are unbound in
+@ this edition; the clear import selects another complete resident owner.
+@ Preserved before the independently proved set/clear/wait target selection.
 @ Import veneers after the OVERLAY_6B2 overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -97,59 +100,27 @@ Func_020005c8:
 	.global Func_020005d0
 	.thumb_func
 Func_020005d0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8368
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8368
-	.else
 	overlay_veneer Func_080c8378
-	.endif
-	.endif
 	.global Func_020005d8
 	.thumb_func
 Func_020005d8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8380
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8380
-	.else
 	overlay_veneer Func_080c8390
-	.endif
-	.endif
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8398
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8398
-	.else
 	overlay_veneer Event_SetStatus1c6Far
-	.endif
-	.endif
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83a0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83a0
-	.else
 	overlay_veneer Event_ClearStatus1c6Far
-	.endif
-	.endif
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
+	overlay_veneer Event_SetStatus1c6Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
+	overlay_veneer Event_SetStatus1c6Far
 	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.endif
@@ -157,39 +128,15 @@ Event_WaitValue1c8Frames:
 	.global Func_020005f8
 	.thumb_func
 Func_020005f8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer Func_080c84e0
-	.endif
-	.endif
 	.global Func_02000600
 	.thumb_func
 Func_02000600:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c84d8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c84d8
-	.else
 	overlay_veneer Func_080c84e8
-	.endif
-	.endif
 	.global Func_02000608
 	.thumb_func
 Func_02000608:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c84e0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c84e0
-	.else
 	overlay_veneer Func_080c84f0
-	.endif
-	.endif
 	.global Func_02000610
 	.thumb_func
 Func_02000610:

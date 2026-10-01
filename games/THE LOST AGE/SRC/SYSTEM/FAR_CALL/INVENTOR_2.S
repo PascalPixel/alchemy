@@ -9,10 +9,10 @@
 	.thumb_func
 PartyInventory_RemoveFar:
 	overlay_veneer PartyInventory_Remove
-	.global Func_080ad048
+	.global Inventory_EquipFar
 	.thumb_func
-Func_080ad048:
-	overlay_veneer Func_080aef34
+Inventory_EquipFar:
+	overlay_veneer Inventory_Equip
 	.global Inventory_RemoveFar
 	.thumb_func
 Inventory_RemoveFar:
@@ -25,7 +25,7 @@ Inventory_BreakFar:
 	.thumb_func
 Inventory_RepairFar:
 	overlay_veneer Inventory_Repair
-	.global Func_080ad068
+	.global Item_GetTargetModeFar
 	.thumb_func
-Func_080ad068:
-	overlay_veneer Func_080af338
+Item_GetTargetModeFar:
+	overlay_veneer Item_GetTargetMode

@@ -1,3 +1,6 @@
+@ Complete import-bank near miss: status-set and delay imports are unbound in
+@ this edition; the clear import selects another complete resident owner.
+@ Preserved before the independently proved set/clear/wait target selection.
 @ Import veneers after the OVERLAY_688 overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -101,35 +104,19 @@ Func_020005ac:
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8398
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8398
-	.else
 	overlay_veneer Event_SetStatus1c6Far
-	.endif
-	.endif
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83a0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83a0
-	.else
 	overlay_veneer Event_ClearStatus1c6Far
-	.endif
-	.endif
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
+	overlay_veneer Event_SetStatus1c6Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
+	overlay_veneer Event_SetStatus1c6Far
 	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.endif
@@ -137,15 +124,7 @@ Event_WaitValue1c8Frames:
 	.global Func_020005cc
 	.thumb_func
 Func_020005cc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer Func_080c84e0
-	.endif
-	.endif
 	.global BattleFx_GetResourceId
 	.thumb_func
 BattleFx_GetResourceId:

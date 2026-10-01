@@ -1266,7 +1266,7 @@ Func_080f9644:
 	ldrh r1, [r3]
 	ldrb r0, [r7]
 	mov r10, r3
-	bl Func_080ad048
+	bl Inventory_EquipFar
 	movs r5, #1
 	movs r1, #1
 	adds r6, r0, #0

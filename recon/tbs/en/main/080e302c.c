@@ -1,19 +1,21 @@
 /* Draft, complete main:080e302c [080e302c,080e38b8), 2188 bytes, written
-   fresh from the listing in plain C. The frame matches (72 bytes) and so do
-   the set-up, the object and rock seeding and most of the frame loop.
-   Remaining difference, in three places:
-   1. The tile repack. The ROM reads a strip width once in the byte loop
-      preheader (after the entry test, which uses a per-strip read) and the
-      product of the last run once per entry. With the tables const GCC
-      produces exactly that, but then keeps table values in registers across
-      the blitter calls of the frame loop, where the ROM reads them again
-      after every call and does not hoist them out of the row loops: the
-      frame loop wants them non-const, as here, and this repack then reads
-      the width again for every byte.
-   2. The palette loop: the ROM keeps the pointer in r5 and blue, green and
-      red in r0, r1 and r4 with one hoisted 31; this has r0 and r3, r2, r1.
-   3. Register choices in the wall, dust and rock blocks of the frame loop
-      (the 48 and the wall pointer, x and y of the dust, the rock count). */
+   fresh from the listing in plain C; 205 instructions off. The frame (72
+   bytes), the set-up, the object and rock seeding, the mound and wall-row
+   blocks and the dust block match. Remaining difference:
+   1. The tile repack reads each strip width once in the byte loop
+      preheader, which is what const tables give; with them const the frame
+      loop then keeps table values in registers across the blitter calls
+      where the ROM reads them again after every call.
+   2. The palette loop: the ROM leaves the 32-bit 31 inside the loop and has
+      the pointer in r5 and blue, green, red in r0, r1, r4. The second loop
+      pass hoists the 31 here (30 against a loop of 29 instructions).
+   3. The standing-wall block: the ROM reads the 48 back before each call
+      (its frame loop hoists it: second loop pass, 15 x life 29 = 435
+      against 439 instructions here) and so keeps the wall pointer in r6.
+   4. The rock block: the ROM copies the unit scale as one struct, keeps
+      the scale address in r7 and the slot index out of i, with -1 in r4
+      saved around the placement call; trying that moved i from r7 to r6
+      everywhere, so the two have to be solved together. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -255,17 +257,20 @@ void Unnamed_080e302c(struct BattleEffectArgument *effect)
             }
         }
         if (frame >= 88 && frame <= 159) {
-            draw[0](canvas, (u8 *)work + 0x13c0, bias + 16, 0, 48, 96);
-            draw[1](canvas, (u8 *)work + 0x13c0, bias + 64, 0, 48, 96);
-            draw[0](canvas, (u8 *)work + 0x25c0, bias + 16, 96, 48, 21);
-            draw[1](canvas, (u8 *)work + 0x25c0, bias + 64, 96, 48, 21);
+            u8 *wall = (u8 *)work + 0x13c0;
+
+            draw[0](canvas, wall, bias + 16, 0, 48, 96);
+            draw[1](canvas, wall, bias + 64, 0, 48, 96);
+            wall = (u8 *)work + 0x25c0;
+            draw[0](canvas, wall, bias + 16, 96, 48, 21);
+            draw[1](canvas, wall, bias + 64, 96, 48, 21);
         }
         if (frame > 87) {
             for (i = 0; i != 64; i++) {
                 struct EffectStep *dust = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
                 if (dust->variant == 0) {
-                    u32 size = (i & 3) + 5;
+                    s32 size = (i & 3) + 5;
 
                     draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
                         HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);

@@ -11,4 +11,4 @@ FarCall_ScrollTable:
 	.global Func_080f0000
 	.thumb_func
 Func_080f0000:
-	overlay_veneer Func_080f03f0
+	overlay_veneer DisplayScroll_RunSlideshow

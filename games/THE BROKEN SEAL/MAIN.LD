@@ -201,7 +201,6 @@ SECTIONS
         "*/recon/tbs/raw/0800daf0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_AIM_APPROACH_LINKED_OBJECT.o"(.text)
         "*/recon/tbs/raw/0800dd70.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0800df04.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/SCRIPT.o"(.text)
         "*/recon/tbs/raw/0800ebec.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD.o"(.text)

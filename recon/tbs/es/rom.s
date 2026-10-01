@@ -174,18 +174,6 @@ Func_08011bf4:
 	.incbin "baserom.gba", 0x000113f4, 0x000000ec
 	.section .rom.00011752, "ax"
 	.incbin "baserom.gba", 0x00011752, 0x00000002
-	.section .rom.00011754, "ax"
-	.global Func_08011f54
-	.type Func_08011f54, %function
-	.thumb_func
-Func_08011f54:
-	.incbin "baserom.gba", 0x00011754, 0x00000084
-	.section .rom.000118dc, "ax"
-	.global Func_080120dc
-	.type Func_080120dc, %function
-	.thumb_func
-Func_080120dc:
-	.incbin "baserom.gba", 0x000118dc, 0x000000c0
 	.section .rom.00011d18, "ax"
 	.global Ui_RunIconMonitor
 	.type Ui_RunIconMonitor, %function
@@ -227,7 +215,10 @@ Curve_LerpWeightTable:
 	.incbin "baserom.gba", 0x00012afc, 0x00000100
 	.global Curve_SampleIndexTable
 Curve_SampleIndexTable:
-	.incbin "baserom.gba", 0x00012bfc, 0x00000140
+	.incbin "baserom.gba", 0x00012bfc, 0x00000100
+	.global Map_TerrainHeightFunctions
+Map_TerrainHeightFunctions:
+	.incbin "baserom.gba", 0x00012cfc, 0x00000040
 	.global WorldMap_TerrainBehaviorTable
 WorldMap_TerrainBehaviorTable:
 	.incbin "baserom.gba", 0x00012d3c, 0x00000048

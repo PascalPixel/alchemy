@@ -238,11 +238,11 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             }
             for (i = 0; i != count; i++) {
                 s32 ang = i << 10;
-                s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow;
-                s32 y = (Trig_Cos(ang) * (grow * 12 + 48)) >> 16;
+                s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
+                s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
 
                 blit(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
-                    x + 96 - size / 2, y + 64 - size, size, size * 2);
+                    x - size / 2, y - size, size, size * 2);
             }
         }
 
@@ -286,8 +286,8 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             if (rise > 40) {
                 rise = 40;
             }
-            y = 0;
             i = 0;
+            y = 0;
             do {
                 blit(canvas, (u8 *)work + (Random16() & 3) * 0x600, 120 - rise, y, 48, 32);
                 i++;
@@ -348,6 +348,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
         if (frame <= 23) {
             struct FxPair pair2 = ObjectRow_RisePair;
             s32 ang;
+            s32 swing;
             s32 rise;
 
             row_x -= 16;
@@ -356,15 +357,15 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
                 if (ang > 0x8000) {
                     ang -= 0x8000;
                 }
-                rise = Trig_Sin(ang) << 6;
+                swing = Trig_Sin(ang) << 6;
             } else {
                 ang = frame * 2048 + 0x4000;
                 if (ang > 0x8000) {
                     ang -= 0x8000;
                 }
-                rise = Trig_Sin(ang) << 5;
+                swing = Trig_Sin(ang) << 5;
             }
-            rise >>= 16;
+            rise = swing >> 16;
             place2.unknown_0c = 0;
             place2.scale = 255 << 16;
             i = 0;
@@ -439,8 +440,8 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
 
             work->transfer_mode = 0;
             work->transfer_value = 75;
-            y = -8;
             i = 0;
+            y = -8;
             do {
                 blit(canvas, (u8 *)work + (Random16() & 3) * 0x600,
                     jitter_row[i] - slide + 120, y, 48, 32);

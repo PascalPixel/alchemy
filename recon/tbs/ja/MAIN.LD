@@ -512,6 +512,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_WORK_VALUE_WITH_LABEL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU9.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.00099454)
+    "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN_COMMANDS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/USE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/INTERFACE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/PREPARE_OWNER_ITEMS.o"(.text)

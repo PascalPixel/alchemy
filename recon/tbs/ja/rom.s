@@ -975,12 +975,22 @@ UiMenu_SlideCursor:
 	.type RunAssetSelectionScreen, %function
 	.thumb_func
 RunAssetSelectionScreen:
-	.incbin "baserom.gba", 0x00099454, 0x00000d74
+	.incbin "baserom.gba", 0x00099454, 0x00000138
 	.section .rom.0009b008, "ax"
+	.global Func_080a414c
+	.type Func_080a414c, %function
+	.thumb_func
+Func_080a414c:
 	.incbin "baserom.gba", 0x0009b008, 0x00000330
 	.section .rom.0009bdc0, "ax"
+	.global Func_080a4f08
+Func_080a4f08:
 	.incbin "baserom.gba", 0x0009bdc0, 0x000002e8
 	.section .rom.0009c260, "ax"
+	.global Unnamed_080a5388
+	.type Unnamed_080a5388, %function
+	.thumb_func
+Unnamed_080a5388:
 	.incbin "baserom.gba", 0x0009c260, 0x000001a8
 	.section .rom.0009cb94, "ax"
 	.global Menu_ResolveSelectedAction

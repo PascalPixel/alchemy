@@ -132,7 +132,7 @@ Object_UpdateAllThumb:
 	.section .rom.0000d2f0, "ax"
 	.incbin "baserom.gba", 0x0000d2f0, 0x000001ec
 	.section .rom.0000d570, "ax"
-	.incbin "baserom.gba", 0x0000d570, 0x000004b0
+	.incbin "baserom.gba", 0x0000d570, 0x00000194
 	.section .rom.0000e3ec, "ax"
 	.incbin "baserom.gba", 0x0000e3ec, 0x0000070c
 	.section .rom.0000f338, "ax"
@@ -349,12 +349,6 @@ ItemIcon_Compose:
 	.thumb_func
 MenuSelection_DrawFrame:
 	.incbin "baserom.gba", 0x00019600, 0x00000560
-	.section .rom.00019ebc, "ax"
-	.global Menu_SetupSelectionSide
-	.type Menu_SetupSelectionSide, %function
-	.thumb_func
-Menu_SetupSelectionSide:
-	.incbin "baserom.gba", 0x00019ebc, 0x00000124
 	.section .rom.0001a6dc, "ax"
 	.global Menu_ScrollSelectionList
 	.type Menu_ScrollSelectionList, %function
@@ -421,12 +415,6 @@ Party_ShowJoinedMessage:
 	.incbin "baserom.gba", 0x00020054, 0x000000f8
 	.section .rom.00020b2e, "ax"
 	.incbin "baserom.gba", 0x00020b2e, 0x000008fe
-	.section .rom.000214e0, "ax"
-	.global BattleLayout_HighlightPartyPanels
-	.type BattleLayout_HighlightPartyPanels, %function
-	.thumb_func
-BattleLayout_HighlightPartyPanels:
-	.incbin "baserom.gba", 0x000214e0, 0x000000a0
 	.section .rom.0002173e, "ax"
 	.incbin "baserom.gba", 0x0002173e, 0x00002706
 	.section .rom.00023ec4, "ax"
@@ -704,12 +692,6 @@ Func_0808c4f8:
 	.incbin "baserom.gba", 0x0008fb00, 0x0000097c
 	.section .rom.00090fac, "ax"
 	.incbin "baserom.gba", 0x00090fac, 0x00000414
-	.section .rom.00092414, "ax"
-	.global BattleFx_EmitRandomParticle
-	.type BattleFx_EmitRandomParticle, %function
-	.thumb_func
-BattleFx_EmitRandomParticle:
-	.incbin "baserom.gba", 0x00092414, 0x000000d8
 	.section .rom.00092b98, "ax"
 	.global DisplayTransition_UpdateScanlineTable
 	.type DisplayTransition_UpdateScanlineTable, %function
@@ -746,8 +728,6 @@ UiText_OpenMessageAtObject:
 	.thumb_func
 battle_owner_69:
 	.incbin "baserom.gba", 0x0009763c, 0x000001b4
-	.section .rom.0009787a, "ax"
-	.incbin "baserom.gba", 0x0009787a, 0x00000102
 	.section .rom.00097be0, "ax"
 	.global DisplayScroll_BuildAndSwapHBlankPage
 	.type DisplayScroll_BuildAndSwapHBlankPage, %function
@@ -1432,12 +1412,8 @@ BattleEffect_RunTileAndPaletteAnimation:
 	.thumb_func
 Func_080cc5d8:
 	.incbin "baserom.gba", 0x000ce3d8, 0x00000388
-	.section .rom.000cea38, "ax"
-	.global BattleFx_RunTwoResource
-	.type BattleFx_RunTwoResource, %function
-	.thumb_func
-BattleFx_RunTwoResource:
-	.incbin "baserom.gba", 0x000cea38, 0x000004cc
+	.section .rom.000cecbc, "ax"
+	.incbin "baserom.gba", 0x000cecbc, 0x00000248
 	.section .rom.000cfe34, "ax"
 	.incbin "baserom.gba", 0x000cfe34, 0x00000828
 	.section .rom.000d0954, "ax"
@@ -1668,7 +1644,22 @@ PuffArc_CellBiasY:
 	.incbin "baserom.gba", 0x000efcab, 0x00000007
 	.global PuffArc_CellSourceOffsets
 PuffArc_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000efcb2, 0x0000025a
+	.incbin "baserom.gba", 0x000efcb2, 0x000001b2
+	.global TwoResource_CellWidths
+TwoResource_CellWidths:
+	.incbin "baserom.gba", 0x000efe64, 0x00000006
+	.global TwoResource_CellHeights
+TwoResource_CellHeights:
+	.incbin "baserom.gba", 0x000efe6a, 0x00000006
+	.global TwoResource_CellSourceOffsets
+TwoResource_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000efe70, 0x0000000c
+	.global TwoResource_CellX
+TwoResource_CellX:
+	.incbin "baserom.gba", 0x000efe7c, 0x0000000c
+	.global TwoResource_CellBiasY
+TwoResource_CellBiasY:
+	.incbin "baserom.gba", 0x000efe88, 0x00000084
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000eff0c, 0x0000000e
@@ -1830,16 +1821,13 @@ RisingBurst_SparkSizes:
 	.incbin "baserom.gba", 0x000f0d96, 0x0000000e
 	.section .rom.000f0e14, "ax"
 	.incbin "baserom.gba", 0x000f0e14, 0x000007ec
-	.section .rom.000f19f0, "ax"
-	.global DisplayScroll_RunSlideshow
-	.type DisplayScroll_RunSlideshow, %function
-	.thumb_func
-DisplayScroll_RunSlideshow:
-	.incbin "baserom.gba", 0x000f19f0, 0x00000148
 	.section .rom.000f1df0, "ax"
 	.global Func_080f07f0
 Func_080f07f0:
-	.incbin "baserom.gba", 0x000f1df0, 0x00000aac
+	.incbin "baserom.gba", 0x000f1df0, 0x0000026c
+	.global DisplayScroll_SlideResources
+DisplayScroll_SlideResources:
+	.incbin "baserom.gba", 0x000f205c, 0x00000840
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f289c, 0x00000d64

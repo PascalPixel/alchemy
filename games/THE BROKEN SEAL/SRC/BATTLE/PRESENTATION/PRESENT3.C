@@ -187,9 +187,6 @@ void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx)
     BattleFx_RunTwoResource(efx, 1);
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep this function in their scaffolds for now. */
-
 void **GetBattleObjectSlotFar(s32 member_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
@@ -299,4 +296,3 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }
-#endif

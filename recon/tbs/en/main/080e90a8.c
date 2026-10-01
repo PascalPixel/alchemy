@@ -57,7 +57,7 @@ struct SlotObject {
 };
 
 extern void *gWorkSlot[];
-extern const u16 ParticleStreams_CellOffsets[];
+extern u16 ParticleStreams_CellOffsets[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);

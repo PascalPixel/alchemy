@@ -53,7 +53,23 @@ Func_02000da4:
 	.global Func_02000dac
 	.thumb_func
 Func_02000dac:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b0
+	.else
 	overlay_veneer Func_080201e0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -201,11 +217,27 @@ Func_02000ecc:
 	.global Func_02000ed4
 	.thumb_func
 Func_02000ed4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87a0
+	.else
 	overlay_veneer Func_080c87b0
+	.endif
+	.endif
 	.global Func_02000edc
 	.thumb_func
 Func_02000edc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87a8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87a8
+	.else
 	overlay_veneer Func_080c87b8
+	.endif
+	.endif
 	.global Func_02000ee4
 	.thumb_func
 Func_02000ee4:
@@ -213,15 +245,39 @@ Func_02000ee4:
 	.global Func_02000eec
 	.thumb_func
 Func_02000eec:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87b8
+	.else
 	overlay_veneer Func_080c87c8
+	.endif
+	.endif
 	.global Func_02000ef4
 	.thumb_func
 Func_02000ef4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87d8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87d8
+	.else
 	overlay_veneer Func_080c87e8
+	.endif
+	.endif
 	.global Func_02000efc
 	.thumb_func
 Func_02000efc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87e0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87e0
+	.else
 	overlay_veneer Func_080c87f0
+	.endif
+	.endif
 	.global Func_02000f04
 	.thumb_func
 Func_02000f04:

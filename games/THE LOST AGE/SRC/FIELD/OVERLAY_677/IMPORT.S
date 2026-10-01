@@ -133,11 +133,27 @@ Func_02000a50:
 	.global Func_02000a58
 	.thumb_func
 Func_02000a58:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif
 	.global Func_02000a60
 	.thumb_func
 Func_02000a60:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87a0
+	.else
 	overlay_veneer Func_080c87b0
+	.endif
+	.endif
 	.global Func_02000a68
 	.thumb_func
 Func_02000a68:

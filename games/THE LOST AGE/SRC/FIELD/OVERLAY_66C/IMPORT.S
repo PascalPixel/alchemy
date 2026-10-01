@@ -73,4 +73,12 @@ Func_02000214:
 	.global Func_0200021c
 	.thumb_func
 Func_0200021c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif

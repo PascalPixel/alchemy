@@ -3,6 +3,7 @@
 #define IMIRU_H
 
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
@@ -10,36 +11,34 @@ extern struct MapRenderWork *gMapWork;
 extern u8 gEffectWork[];
 extern u8 gKeysHeld[];
 
-enum FlaggedChoreographyMessage {
-    MSG_BRRRRR_CHOO_IM_FREEZING_MIA = 0x1529,
-    MSG_HI_NEW_IN_IMIL = 0x152a,
-    MSG_ONE_TWO_THREE_FOUR = 0x152d,
-    MSG_MIA_SHOULD_HERE_BY_NOW = 0x152f,
-    MSG_MIA_RUNNING_AROUND_TOWN_CARING = 0x1533,
-    MSG_HES_ALWAYS_EXAGGERATING_THINGS_BUT = 0x153b,
-    MSG_DO_WANT_WEAPONS = 0x153f,
-    MSG_WHY_HAVE_TWO_GROUPS_TRAVELERS = 0x154b,
-    MSG_DO_WANT_SEE_RESTAURANT_MENU = 0x154d,
-    MSG_MAY_ONLY_STUDENT_BUT_CAN = 0x1553,
-    MSG_LOOKING_FOR_MIA = 0x1554,
-    MSG_HAVE_VISITED_OLD_COUPLE_WHO = 0x1557,
-    MSG_THESE_FOLK_OKAY_THEY_DONT = 0x155a,
-    MSG_MIA_WAS_SAYING_SHE_HAS = 0x155b,
-    MSG_HOW_FEELING = 0x155c,
-    MSG_HAPPENED_IN_LIGHTHOUSE_NORTHEAST = 0x156d,
-    MSG_MIA_GOOD_GIRL_WISH_HAD = 0x156e,
-    MSG_MIA_CLAN_ONCE_LIVED_HERE = 0x156f,
-    MSG_EVEN_IF_MIA_HEALS_US = 0x1570,
-    MSG_CANT_UNDERSTAND_WHY_ANY_ONE = 0x1571,
-    MSG_AM_HEALER_WHILE_MIA_OUT = 0x1572,
-    MSG_FEEL_LIKE_GROWN_UP_WHEN = 0x1573,
-    MSG_EVERYONE_COUNTS_ON_MIA_THATS = 0x1574,
-    MSG_WE_HAVE_DO_WHATEVER_WE = 0x1575,
-    MSG_ONE_TWO_THREE_FOUR_2 = 0x163c,
-    MSG_ITS_ALMOST_TIME_FOR_LEAVE = 0x1653,
-    MSG_MIA = 0x165b,
-    MSG_MIA_GOING_ON_JOURNEY_WITH = 0x1671
-};
+TEXT_MESSAGE_ENUM(MsgImiruBrrrrrChooImFreezingMary);
+TEXT_MESSAGE_ENUM(MsgImiruHiNewInImil);
+TEXT_MESSAGE_ENUM(MsgImiruOneTwoThreeFour);
+TEXT_MESSAGE_ENUM(MsgImiruMaryShouldHereByNow);
+TEXT_MESSAGE_ENUM(MsgImiruMaryRunningAroundTownCaring);
+TEXT_MESSAGE_ENUM(MsgImiruHesAlwaysExaggeratingThingsBut);
+TEXT_MESSAGE_ENUM(MsgImiruDoWantWeapons);
+TEXT_MESSAGE_ENUM(MsgImiruWhyHaveTwoGroupsTravelers);
+TEXT_MESSAGE_ENUM(MsgImiruDoWantSeeRestaurantMenu);
+TEXT_MESSAGE_ENUM(MsgImiruMayOnlyStudentButCan);
+TEXT_MESSAGE_ENUM(MsgImiruLookingForMary);
+extern u8 MsgImiruHaveVisitedOldCoupleWho[];
+TEXT_MESSAGE_ENUM(MsgImiruTheseFolkOkayTheyDont);
+TEXT_MESSAGE_ENUM(MsgImiruMaryWasSayingSheHas);
+TEXT_MESSAGE_ENUM(MsgImiruHowFeeling);
+TEXT_MESSAGE_ENUM(MsgImiruHappenedInLighthouseNortheast);
+TEXT_MESSAGE_ENUM(MsgImiruMuraMaryIsAGoodGirlI);
+TEXT_MESSAGE_ENUM(MsgImiruMaryClanOnceLivedHere);
+TEXT_MESSAGE_ENUM(MsgImiruEvenIfMaryHealsUs);
+TEXT_MESSAGE_ENUM(MsgImiruCantUnderstandWhyAnyOne);
+TEXT_MESSAGE_ENUM(MsgImiruAmHealerWhileMaryOut);
+TEXT_MESSAGE_ENUM(MsgImiruFeelLikeGrownUpWhen);
+TEXT_MESSAGE_ENUM(MsgImiruEveryoneCountsOnMaryThats);
+TEXT_MESSAGE_ENUM(MsgImiruWeHaveDoWhateverWe);
+TEXT_MESSAGE_ENUM(MsgImiruCountingAfterDeparture);
+TEXT_MESSAGE_ENUM(MsgImiruItsAlmostTimeForLeave);
+TEXT_MESSAGE_ENUM(MsgImiruMaryGoingOnJourneyWith);
+TEXT_MESSAGE_ENUM(MsgImiruMary);
 
 #define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))

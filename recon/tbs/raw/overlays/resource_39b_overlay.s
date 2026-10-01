@@ -589,10 +589,10 @@ MakyuriIriguchi_SceneTableD:
 	.4byte 0x00000010
 	.4byte 0x00000000
 	.4byte 0xffff0003
-	.4byte 0x0000158d
+	.4byte MsgMakyuriMonsterInsideTower
 	.4byte 0x00008d15
 	.4byte 0xffff0003
-	.4byte 0x0000158e
+	.4byte MsgMakyuriLetMePass
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte MakyuriIriguchi_OpenEntrance

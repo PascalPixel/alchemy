@@ -1,3 +1,4 @@
+#include "TBS_EDITION.H"
 #include "TYPES.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
@@ -290,7 +291,11 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_AudioPlayCue(67);
     MusicCommand_SetPitchAndUpdateFrequency(240);
     BabiFune_ScheduleFade();
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Engine_EventWait(30);
+#else
     Engine_EventWait(80);
+#endif
     scene = *(u8 **)gMapWork;
     p176 = (void *)Object_GetById(8);
     *(s32 *)(p176 + 52) = 131;

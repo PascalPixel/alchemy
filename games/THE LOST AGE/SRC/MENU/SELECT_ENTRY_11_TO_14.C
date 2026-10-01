@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TLA_EDITION.H"
 
 void *AffineEffect_InitializeWork(void);
 void Menu_EndResourceSelection(void);
@@ -16,7 +17,7 @@ s32 Menu_SelectEntry11To14(s32 arg0)
     Menu_AppendResourceEntry(0x12);
     Menu_AppendResourceEntry(0x13);
     Menu_AppendResourceEntry(0x14);
-    Menu_CenterResourceEntries(0x11, 7, 0);
+    Menu_CenterResourceEntries(0x11, SELECT_ENTRY_11_COLUMN, 0);
     ret = Menu_RunResourceSelectionLoop(arg0);
     Menu_EndResourceSelection();
     return ret;

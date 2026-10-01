@@ -538,55 +538,55 @@ gArutinMuraEvents1:
 	.4byte FieldScene_RunActorEightPromptDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001917
+	.4byte MsgArutinMuraThankYouSoMuchForDefeating
 	.4byte 0x00000000
 	.4byte 0x09090009
-	.4byte 0x000018c2
+	.4byte MsgArutinMuraHowCanThoseCreaturesSpitUp
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_ShowLine1918
 	.4byte 0x00000000
 	.4byte 0x0909000a
-	.4byte 0x000018c3
+	.4byte MsgArutinMuraHowHorribleMyHouseIsTotally
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000191b
+	.4byte MsgArutinMuraOnceTheMineOpensAgainWell
 	.4byte 0x00000000
 	.4byte 0x0909000b
-	.4byte 0x000018c4
+	.4byte MsgArutinMuraEvenTheMineIsSubmergedNo
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000191c
+	.4byte MsgArutinMuraTheyAlreadyStartedMiningTheUpper
 	.4byte 0x00000000
 	.4byte 0x0909000c
-	.4byte 0x000018c5
+	.4byte MsgArutinMuraIfWeCouldJustDestroyThe
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000191d
+	.4byte MsgArutinMuraTheWaterDrainedOutOfThe
 	.4byte 0x00000000
 	.4byte 0x0909000d
-	.4byte 0x000018c6
+	.4byte MsgArutinMuraAltinAlwaysUsedToRunShort
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000191e
+	.4byte MsgArutinMuraThankGoodnessTheVillageIsFree
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00000000
 	.4byte 0x0909000f
-	.4byte 0x000018c8
+	.4byte MsgArutinMuraTheWatersAroundHereHaveSubsided
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001922
+	.4byte MsgArutinMuraTheVillageWentRightBackTo
 	.4byte 0x00000000
 	.4byte 0x09090010
-	.4byte 0x000018c9
+	.4byte MsgArutinMuraTheWaterBeastsLookedExactlyLike
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001923
+	.4byte MsgArutinMuraSoThoseHydrosCreaturesReallyWere
 	.4byte 0x00000000
 	.4byte 0x09090011
-	.4byte 0x000018ca
+	.4byte MsgArutinMuraTheWatersHaveFlushedOutTons
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte SceneDialogue_RunActor17Message1924
@@ -598,70 +598,70 @@ gArutinMuraEvents1:
 	.4byte FieldScene_RunActorTwentyOneFlagBranch
 	.4byte 0x00008d15
 	.4byte 0x09090008
-	.4byte 0x000018cb
+	.4byte MsgArutinMuraYouCameToAltinAtA
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001927
+	.4byte MsgArutinMuraWeCanGoBackToWork
 	.4byte 0x00008d15
 	.4byte 0x09090009
-	.4byte 0x000018cc
+	.4byte MsgArutinMuraItsAlmostLikeTheyreTurningThe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001928
+	.4byte MsgArutinMuraIWasAfraidMoreWaterWould
 	.4byte 0x00008d15
 	.4byte 0x0909000a
-	.4byte 0x000018cd
+	.4byte MsgArutinMuraImGladISavedMyVery
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001929
+	.4byte MsgArutinMuraIHopeAltinMineWillThrive
 	.4byte 0x00008d15
 	.4byte 0x0909000b
-	.4byte 0x000018ce
+	.4byte MsgArutinMuraEvenTheToughestOfMinersCant
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000192a
+	.4byte MsgArutinMuraTheWaterSeepedIntoTheMine
 	.4byte 0x00008d15
 	.4byte 0x0909000c
-	.4byte 0x000018cf
+	.4byte MsgArutinMuraIfTheWaterBeastsContinueTo
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000192b
+	.4byte MsgArutinMuraItsSoHumidInsideThatCave
 	.4byte 0x00008d15
 	.4byte 0x0909000d
-	.4byte 0x000018d0
+	.4byte MsgArutinMuraWaterIsNiceButNotWhen
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000192c
+	.4byte MsgArutinMuraThatStrangeChamberInTheMines
 	.4byte 0x00008d15
 	.4byte 0x0909000e
-	.4byte 0x000018d1
+	.4byte MsgArutinMuraUghTheMonstersSpewedOutAll
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000192d
+	.4byte MsgArutinMuraYouFoughtPrettyWellDespiteAll
 	.4byte 0x00008d15
 	.4byte 0x0909000f
-	.4byte 0x000018d2
+	.4byte MsgArutinMuraAsTheMonstersGoAwayThe
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000192e
+	.4byte MsgArutinMuraThatMineIsFullOfHoles
 	.4byte 0x00008d15
 	.4byte 0x09090010
-	.4byte 0x000018d3
+	.4byte MsgArutinMuraComeToThinkOfItIt
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000192f
+	.4byte MsgArutinMuraTheOldGuardianStatuesAlwaysCreeped
 	.4byte 0x00008d15
 	.4byte 0x09090011
-	.4byte 0x000018d4
+	.4byte MsgArutinMuraItllBeBetterThanDiggingUp
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001930
+	.4byte MsgArutinMuraIUsedToFindAllSorts
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000018ef
+	.4byte MsgArutinMuraAllMyArmorInventoryIsRusting
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000018f3
+	.4byte MsgArutinMuraIfMyGoodsAreWetIll
 	.4byte 0x00008c15
 	.4byte 0xffff0013
 	.4byte SceneState_SetFlag906ByActorNineteenX
@@ -702,58 +702,58 @@ gArutinMuraEvents2:
 	.4byte 0x00000009
 	.4byte 0x00000000
 	.4byte 0x02400008
-	.4byte 0x00001902
+	.4byte MsgArutinMuraNoMatterWhatHappensIdNever
 	.4byte 0x00000000
 	.4byte 0x09090008
-	.4byte 0x000018d5
+	.4byte MsgArutinMuraOhNoTheWholeHouseIs
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001931
+	.4byte MsgArutinMuraIHearThatSilkRoadIs
 	.4byte 0x00000000
 	.4byte 0x02400009
-	.4byte 0x00001903
+	.4byte MsgArutinMuraOfCourseOurHouseWillBe
 	.4byte 0x00000000
 	.4byte 0x09090009
-	.4byte 0x000018d6
+	.4byte MsgArutinMuraIfTheMonsterThatDidThis
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_RunActor9Message1932
 	.4byte 0x00000000
 	.4byte 0x0241000a
-	.4byte 0x00001906
+	.4byte MsgArutinMuraNotManyPeopleComeUpSilk
 	.4byte 0x00000000
 	.4byte 0x0909000a
 	.4byte SceneDialogue_RunActor10Message18d9
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001937
+	.4byte MsgArutinMuraAncientRuinsAndTreasureDefinitelyGo
 	.4byte 0x00000000
 	.4byte 0x0241000b
-	.4byte 0x00001907
+	.4byte MsgArutinMuraItsBeenALongTimeSince
 	.4byte 0x00000000
 	.4byte 0x0909000b
-	.4byte 0x000018dc
+	.4byte MsgArutinMuraDontBeTooHarshOnThose
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001938
+	.4byte MsgArutinMuraIfOnlyTheyHadLeftA
 	.4byte 0x00000000
 	.4byte 0x0909000c
-	.4byte 0x000018df
+	.4byte MsgArutinMuraIDidntWantToLeaveMy
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000193b
+	.4byte MsgArutinMuraReallyAncientRuinsAtTheBottom
 	.4byte 0x00000000
 	.4byte 0x0909000d
-	.4byte 0x000018e0
+	.4byte MsgArutinMuraIHeardSomeoneKilledTheWater
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000193c
+	.4byte MsgArutinMuraThereProbablyIsntMuchTreasureIn
 	.4byte 0x00000000
 	.4byte 0x0909000e
 	.4byte SceneDialogue_RunActor14Message18e1
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000193d
+	.4byte MsgArutinMuraSomethingsWrongWithMomAndPop
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte FieldScene_RunActorFifteenFlagBranch
@@ -768,130 +768,130 @@ gArutinMuraEvents2:
 	.4byte FieldScene_RunFacingGatedDialogue18
 	.4byte 0x00000000
 	.4byte 0x09090013
-	.4byte 0x000018f8
+	.4byte MsgArutinMuraIdGiveAnythingForSomeoneTo
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001948
+	.4byte MsgArutinMuraThereIsAnEndlessDesertWest
 	.4byte 0x00000000
 	.4byte 0x09090014
-	.4byte 0x000018f9
+	.4byte MsgArutinMuraICameFromXianICook
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001949
+	.4byte MsgArutinMuraWestOfTheMountainsIsVery
 	.4byte 0x00000000
 	.4byte 0x02400015
-	.4byte 0x000018fa
+	.4byte MsgArutinMuraNoneOfUsCanGoHome
 	.4byte 0x00000000
 	.4byte 0x02410015
-	.4byte 0x000018fb
+	.4byte MsgArutinMuraTheGuestsInRoomOneMoved
 	.4byte 0x00000000
 	.4byte 0x09090015
-	.4byte 0x000018fc
+	.4byte MsgArutinMuraTheGuestsInRoomTwoAlso
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte SceneDialogue_RunActor21Message194a
 	.4byte 0x00008d15
 	.4byte 0x02400008
-	.4byte 0x00001904
+	.4byte MsgArutinMuraLeavingAltinForTolbiWellThats
 	.4byte 0x00008d15
 	.4byte 0x09090008
-	.4byte 0x000018d7
+	.4byte MsgArutinMuraItsGoingToTakeALot
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001935
+	.4byte MsgArutinMuraTheMerchantsMustBeHavingA
 	.4byte 0x00008d15
 	.4byte 0x02400009
-	.4byte 0x00001905
+	.4byte MsgArutinMuraNowIFinallyHaveAnExcuse
 	.4byte 0x00008d15
 	.4byte 0x09090009
-	.4byte 0x000018d8
+	.4byte MsgArutinMuraOneBlowsNotEnoughJabJab
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001936
+	.4byte MsgArutinMuraIWonderWhatBusinessThatGirl
 	.4byte 0x00008d15
 	.4byte 0x0241000a
-	.4byte 0x00001908
+	.4byte MsgArutinMuraOfCourseYouCantGoWest
 	.4byte 0x00008d15
 	.4byte 0x0909000a
-	.4byte 0x000018dd
+	.4byte MsgArutinMuraIThoughtTheVillageWasDone
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001939
+	.4byte MsgArutinMuraTheySayYouCanStillFind
 	.4byte 0x00008d15
 	.4byte 0x0241000b
-	.4byte 0x00001909
+	.4byte MsgArutinMuraIHateSittingAroundLikeThis
 	.4byte 0x00008d15
 	.4byte 0x0909000b
-	.4byte 0x000018de
+	.4byte MsgArutinMuraImJustGladToGetMy
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000193a
+	.4byte MsgArutinMuraHowCanITrulyBeHappy
 	.4byte 0x00008d15
 	.4byte 0x0909000c
-	.4byte 0x000018e4
+	.4byte MsgArutinMuraTheBottomOfTheMineThe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000193e
+	.4byte MsgArutinMuraCripesAncientRuinsDownInThe
 	.4byte 0x00008d15
 	.4byte 0x0909000d
-	.4byte 0x000018e5
+	.4byte MsgArutinMuraMyHusbandsSenseForFindingTreasure
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000193f
+	.4byte MsgArutinMuraIHadNoIdeaThereWere
 	.4byte 0x00008d15
 	.4byte 0x0909000e
-	.4byte 0x000018e6
+	.4byte MsgArutinMuraMomAndPopKnowSomethingAbout
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001940
+	.4byte MsgArutinMuraIWonderIfMomAndPop
 	.4byte 0x00008d15
 	.4byte 0x0242000f
-	.4byte 0x000018eb
+	.4byte MsgArutinMuraCripesIsThisHowMyWeapon
 	.4byte 0x00008d15
 	.4byte 0x0909000f
-	.4byte 0x000018ec
+	.4byte MsgArutinMuraOnlyAMerchantKnowsTheJoy
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001942
+	.4byte MsgArutinMuraIveHeardOfAPassageIn
 	.4byte 0x00008d15
 	.4byte 0x09090011
-	.4byte 0x000018f0
+	.4byte MsgArutinMuraWeDriedOffAllThatArmor
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001944
+	.4byte MsgArutinMuraWellIfYouAreImpressedThen
 	.4byte 0x00008d15
 	.4byte 0x09090010
-	.4byte 0x000018f4
+	.4byte MsgArutinMuraAFewThingsGotDampBut
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001946
+	.4byte MsgArutinMuraTheGirlFromXianBoughtAll
 	.4byte 0x00008d15
 	.4byte 0x09090012
-	.4byte 0x000018fd
+	.4byte MsgArutinMuraWellComeThroughThisAllRight
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000194d
+	.4byte MsgArutinMuraIThinkThatTempleWasCalled
 	.4byte 0x00008d15
 	.4byte 0x09090013
-	.4byte 0x000018fe
+	.4byte MsgArutinMuraIKnowTheyDontLookSo
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000194e
+	.4byte MsgArutinMuraYouWontBeAbleToGo
 	.4byte 0x00008d15
 	.4byte 0x09090014
-	.4byte 0x000018ff
+	.4byte MsgArutinMuraIBecameACookAfterI
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0000194f
+	.4byte MsgArutinMuraNoOneCanGoWestOf
 	.4byte 0x00008d15
 	.4byte 0x02400015
-	.4byte 0x00001900
+	.4byte MsgArutinMuraMostOfTheVillageIsStill
 	.4byte 0x00008d15
 	.4byte 0x09090015
-	.4byte 0x00001901
+	.4byte MsgArutinMuraItLooksLikeTheWaterHas
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001950
+	.4byte MsgArutinMuraItWillTakeSomeTimeBefore
 	.4byte 0x00000033
 	.4byte 0x0f730064
 	.4byte 0x001000b5
@@ -903,16 +903,20 @@ gArutinMuraEvents2:
 	.4byte 0x001000e3
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x004029a4
+	.2byte MsgArutinMuraThePotsAndPansAreRusted
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x004029a5
+	.2byte MsgArutinMuraHeIsMakingRoastBeefEven
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x004029a6
+	.2byte MsgArutinMuraHeIsMakingShrimpInA
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x004029a7
+	.2byte MsgArutinMuraThereIsABookTitledAltin
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

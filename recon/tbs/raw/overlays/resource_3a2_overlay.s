@@ -350,7 +350,7 @@ YamaRama_Events:
 	.4byte FieldScene_RunPrimaryScript
 	.4byte 0x00000000
 	.4byte 0x08b20009
-	.4byte 0x00001957
+	.4byte MsgYamaRamaThisIsLamaTempleWelcomeTravelers
 	.4byte 0x00000000
 	.4byte 0x08b2000a
 	.4byte SceneDialogue_RunMessage1958Step
@@ -359,61 +359,61 @@ YamaRama_Events:
 	.4byte SceneDialogue_RunActor11Message195d
 	.4byte 0x00000000
 	.4byte 0x08b2000c
-	.4byte 0x00001960
+	.4byte MsgYamaRamaYouWhoSpeakToMeI
 	.4byte 0x00000000
 	.4byte 0x08b2000d
 	.4byte SceneDialogue_RunActor13Message1961
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001a04
+	.4byte MsgYamaRamaItIsVeryDangerousToCross
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001a05
+	.4byte MsgYamaRamaTheEvilDesertIsHotterThan
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001a06
+	.4byte MsgYamaRamaIBelieveItIsPossibleTo
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001a07
+	.4byte MsgYamaRamaIWillBeMostThankfulOnce
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001a08
+	.4byte MsgYamaRamaWhenYourTemperatureReachesItsMaximum
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte SceneDialogue_RunActorFifteenByLeaderHeading
 	.4byte 0x00008d15
 	.4byte 0x08b20009
-	.4byte 0x00001964
+	.4byte MsgYamaRamaTheySeemToBeAnxiousThey
 	.4byte 0x00008d15
 	.4byte 0x08b2000a
-	.4byte 0x00001965
+	.4byte MsgYamaRamaTheySayAPersonCanOvercome
 	.4byte 0x00008d15
 	.4byte 0x08b2000b
-	.4byte 0x00001966
+	.4byte MsgYamaRamaIAmHungry
 	.4byte 0x00008d15
 	.4byte 0x08b2000c
-	.4byte 0x00001967
+	.4byte MsgYamaRamaISenseImpureThoughtsFromThe
 	.4byte 0x00008d15
 	.4byte 0x08b2000d
-	.4byte 0x00001968
+	.4byte MsgYamaRamaChiIsButAFragmentOf
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001a0b
+	.4byte MsgYamaRamaICannotCrossTheDesertIt
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001a0c
+	.4byte MsgYamaRamaTheEvilInTheDesertDistorts
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001a0d
+	.4byte MsgYamaRamaHowNiceItWouldBeIf
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001a0e
+	.4byte MsgYamaRamaMasterHamaWillBeVerySad
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001a0f
+	.4byte MsgYamaRamaWithRevealYouWillFindOases
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001a1f
+	.4byte MsgYamaRamaForSomeReasonThesePeopleGive
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte FieldScene_RunScene3a2_020008a8
@@ -466,40 +466,40 @@ YamaRama_TempleEvents:
 	.4byte Scene_RunActorCue
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000019d4
+	.4byte MsgYamaRamaWellRobinAdeptsYouCameTo
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000019d6
+	.4byte MsgYamaRamaIAmTrappedBetweenTheseTwo
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000019d5
+	.4byte MsgYamaRamaBeStrongHsuWeWillHelp
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001a20
+	.4byte MsgYamaRamaWeMovedTheRocksNowPeople
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001a21
+	.4byte MsgYamaRamaManyPeopleFromXianHelpedMove
 	.4byte 0x00008f15
 	.4byte 0x08b2000b
 	.4byte Scene_RunActorSequence
 	.4byte 0x00008d15
 	.4byte 0x0895000a
-	.4byte 0x000018bc
+	.4byte MsgYamaRamaHsuIsInDangerICan
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000019d7
+	.4byte MsgYamaRamaHowShouldWeMoveTheBoulders
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000019d9
+	.4byte MsgYamaRamaIWantToScreamButFeizhi
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000019d8
+	.4byte MsgYamaRamaHsuTiresHeLooksExhaustedI
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001a22
+	.4byte MsgYamaRamaWeClearedTheWayButWhat
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001a23
+	.4byte MsgYamaRamaIAlmostHurtMyBackIt
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte FieldScene_RunPairedLayoutStepsThenSetOne

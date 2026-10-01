@@ -744,13 +744,13 @@ gImiruMuraEventsOther:
 	.4byte SceneDialogue_RunActorEightFlagGatedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000163a
+	.4byte MsgImiruMuraTheMercuryLighthouseIsShiningMary
 	.4byte 0x00000000
 	.4byte 0x08810009
 	.4byte SceneDialogue_RunActor9Line
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000163b
+	.4byte MsgImiruMuraImilWillBeFineDiseaseIs
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte SceneDialogue_RunActorTenFlag881Dialogue
@@ -759,19 +759,19 @@ gImiruMuraEventsOther:
 	.4byte SceneDialogue_ShowLine1571Or152F
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001640
+	.4byte MsgImiruMuraMaryWasOnlyInImilTo
 	.4byte 0x00008d15
 	.4byte 0x08810009
-	.4byte 0x00001530
+	.4byte MsgImiruMuraWeveHadALotOfStrangers
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001641
+	.4byte MsgImiruMuraDontWorryAboutUsMaryWell
 	.4byte 0x00008d15
 	.4byte 0x0881000a
-	.4byte 0x00001531
+	.4byte MsgImiruMuraPeopleGetSickBecauseTheyStay
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001642
+	.4byte MsgImiruMuraNowThatIveLetMyGuard
 	.4byte 0x00000023
 	.4byte 0x0f5f0064
 	.4byte 0x00200009
@@ -788,22 +788,22 @@ gImiruMuraEventsOther:
 gImiruMuraEvents2:
 	.4byte 0x00000000
 	.4byte 0x082c0008
-	.4byte 0x00001532
+	.4byte MsgImiruMuraTheresBeenAnEpidemicGoingAround
 	.4byte 0x00000000
 	.4byte 0x082b0008
-	.4byte 0x00001539
+	.4byte MsgImiruMuraGetMaryHurry
 	.4byte 0x00000000
 	.4byte 0x08810008
 	.4byte FieldScene_RunScene399_020005dc
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001643
+	.4byte MsgImiruMuraThatFountainWaterReallyMadeGrandpa
 	.4byte 0x00000000
 	.4byte 0x082c0009
 	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00000000
 	.4byte 0x082b0009
-	.4byte 0x00001538
+	.4byte MsgImiruMuraItHurts
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte FieldScene_RunSupplementalSequenceOne
@@ -812,10 +812,10 @@ gImiruMuraEvents2:
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000000
 	.4byte 0x0881000b
-	.4byte 0x0000153c
+	.4byte MsgImiruMuraCoughTheEpidemicHasHitAlmost
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001649
+	.4byte MsgImiruMuraItsNiceThatTheFountainCan
 	.4byte 0x00000000
 	.4byte 0x0881000c
 	.4byte SceneDialogue_RunActor12Line
@@ -824,13 +824,13 @@ gImiruMuraEvents2:
 	.4byte ImiruMura_RunWeaponShop
 	.4byte 0x00000000
 	.4byte 0x0881000d
-	.4byte 0x00001544
+	.4byte MsgImiruMuraWereClosedSorryIGetA
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte ImiruMura_RunArmorShop
 	.4byte 0x00000000
 	.4byte 0x0881000f
-	.4byte 0x00001548
+	.4byte MsgImiruMuraIfYouWantToBuyAnything
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte ImiruMura_RunItemShop
@@ -839,22 +839,22 @@ gImiruMuraEvents2:
 	.4byte ImiruMura_RunItemShop
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001650
+	.4byte MsgImiruMuraImSoHappyThatMommyIs
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte FieldScene_RunScene399_02000a3c
 	.4byte 0x00000000
 	.4byte 0x08810011
-	.4byte 0x0000154c
+	.4byte MsgImiruMuraWereTheOnlyInnThatStays
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001656
+	.4byte MsgImiruMuraThankGoodnessTheTownIsBack
 	.4byte 0x00000000
 	.4byte 0x08810012
 	.4byte SceneDialogue_RunActor18Line
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001657
+	.4byte MsgImiruMuraImGladTheBeaconHasBeen
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte FieldScene_RunScene399_02000abc
@@ -863,88 +863,88 @@ gImiruMuraEvents2:
 	.4byte SceneDialogue_RunActor20BranchScene
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001672
+	.4byte MsgImiruMuraIWillBeAKindGirl
 	.4byte 0x00008d15
 	.4byte 0x08810008
 	.4byte SceneDialogue_RunActorEightBranchedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001647
+	.4byte MsgImiruMuraGrandpasAllBetterNowThanksTo
 	.4byte 0x00008d15
 	.4byte 0x082c0409
 	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00008d15
 	.4byte 0x082b0009
-	.4byte 0x0000153a
+	.4byte MsgImiruMuraOoohIDontFeelSoGood
 	.4byte 0x00008d15
 	.4byte 0x08810009
-	.4byte 0x0000156e
+	.4byte MsgImiruMuraMaryIsAGoodGirlI
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001648
+	.4byte MsgImiruMuraNowMaryCanLeaveTheVillage
 	.4byte 0x00008d15
 	.4byte 0x182b000a
 	.4byte SceneDialogue_ShowLine156E
 	.4byte 0x00008d15
 	.4byte 0x0881000b
-	.4byte 0x0000153d
+	.4byte MsgImiruMuraHerPalmsShineWithABlue
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000164a
+	.4byte MsgImiruMuraThatBlueLightFromHerHands
 	.4byte 0x00008d15
 	.4byte 0x0881000c
-	.4byte 0x00001542
+	.4byte MsgImiruMuraWhoAreThesePeopleTheyMust
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000164c
+	.4byte MsgImiruMuraCustomersAreHardToComeBy
 	.4byte 0x00008d15
 	.4byte 0x0881000d
-	.4byte 0x00001545
+	.4byte MsgImiruMuraWhyDoTheyAlwaysComeWhen
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000164e
+	.4byte MsgImiruMuraTheCustomersAreBackIThought
 	.4byte 0x00008d15
 	.4byte 0x0881000f
-	.4byte 0x0000154a
+	.4byte MsgImiruMuraIfOnlyWeHadSomeOf
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001651
+	.4byte MsgImiruMuraMarySaidItWouldntBeGood
 	.4byte 0x00008d15
 	.4byte 0x0881000e
-	.4byte 0x00001549
+	.4byte MsgImiruMuraIWonderIfTheyAreHeaded
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001652
+	.4byte MsgImiruMuraMyDaddysStillInKolimaIll
 	.4byte 0x00008d15
 	.4byte 0x08810010
-	.4byte 0x00001550
+	.4byte MsgImiruMuraSoManyCustomersItJustGoes
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001658
+	.4byte MsgImiruMuraMaryWillBeLeavingWithYou
 	.4byte 0x00008d15
 	.4byte 0x08810011
-	.4byte 0x00001551
+	.4byte MsgImiruMuraWintersAreToughHereSoIm
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001659
+	.4byte MsgImiruMuraTheyCameToOurVillageAnd
 	.4byte 0x00008d15
 	.4byte 0x08810012
-	.4byte 0x00001552
+	.4byte MsgImiruMuraWeDontGetToEatMany
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000165a
+	.4byte MsgImiruMuraINeverToldMaryThatI
 	.4byte 0x00008d15
 	.4byte 0x08810013
 	.4byte SceneDialogue_ShowLine1573Or155A
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001673
+	.4byte MsgImiruMuraMarysGoingToDefendTheHonor
 	.4byte 0x00008d15
 	.4byte 0x08810014
 	.4byte SceneDialogue_RunActor20FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001674
+	.4byte MsgImiruMuraImSorryMaryButICant
 	.4byte 0x0000c403
 	.4byte 0x0881000a
 	.4byte ImiruMura_RunWeaponShop
@@ -962,10 +962,12 @@ gImiruMuraEvents2:
 	.4byte 0x001000c4
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00402999
+	.2byte MsgImiruMuraItLooksLikePorridgeItIs
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff0066
-	.4byte 0x0040299a
+	.2byte MsgImiruMuraItsSomeHotStewItWarms
+	.2byte 0x40
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1073,7 +1075,7 @@ ImiruMura_CellStepsB:
 	.4byte 0x00020001
 	.4byte 0xffff000a
 	.section .bss,"aw",%nobits
-	.space 4
+	.balign 16
 	.global ImiruMura_ArcOrigin
 ImiruMura_ArcOrigin:
 	.space 12

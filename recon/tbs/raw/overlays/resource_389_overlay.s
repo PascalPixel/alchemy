@@ -222,16 +222,16 @@ GomaHashira_Extras:
 	.4byte ConfigureActorThirteenSceneParameters
 	.4byte 0x00000000
 	.4byte 0x00a8000d
-	.4byte 0x0000132b
+	.4byte MsgKuupuappuDidYouSeeSomethingStrangeOver
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000132c
+	.4byte MsgKuupuappuHmmmItMustBeHidingSomewhere
 	.4byte 0x00008d15
 	.4byte 0x00a8000d
-	.4byte 0x0000132d
+	.4byte MsgKuupuappuItJustWhackedMeInThe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000132e
+	.4byte MsgKuupuappuIKnowitsKindItllBeBack
 	.4byte 0x00008c15
 	.4byte 0xffff0008
 	.4byte ConfigureSceneForActorEightColumn

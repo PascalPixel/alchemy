@@ -113,7 +113,23 @@ Func_02005a64:
 	.global Func_02005a6c
 	.thumb_func
 Func_02005a6c:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b8
+	.else
 	overlay_veneer Func_080201e8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -313,7 +329,15 @@ Event_ClearStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_02005c04
 	.thumb_func
 Func_02005c04:
@@ -329,7 +353,15 @@ Func_02005c14:
 	.global Func_02005c1c
 	.thumb_func
 Func_02005c1c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Field_DispatchTypeHandlerFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Field_DispatchTypeHandlerFar
+	.else
 	overlay_veneer Func_080c84a8
+	.endif
+	.endif
 	.global Func_02005c24
 	.thumb_func
 Func_02005c24:
@@ -349,7 +381,15 @@ Func_02005c3c:
 	.global Func_02005c44
 	.thumb_func
 Func_02005c44:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8508
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8508
+	.else
 	overlay_veneer Func_080c8518
+	.endif
+	.endif
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -373,11 +413,27 @@ Func_02005c6c:
 	.global Func_02005c74
 	.thumb_func
 Func_02005c74:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87a0
+	.else
 	overlay_veneer Func_080c87b0
+	.endif
+	.endif
 	.global Func_02005c7c
 	.thumb_func
 Func_02005c7c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8920
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8920
+	.else
 	overlay_veneer Func_080c8930
+	.endif
+	.endif
 	.global Func_02005c84
 	.thumb_func
 Func_02005c84:

@@ -575,28 +575,28 @@ gKorimaMuraEvents:
 	.4byte 0x0000000a
 	.4byte 0x00000000
 	.4byte 0x18450008
-	.4byte 0x0000168d
+	.4byte MsgKorimaMuraThisIsKolimaVillageOfLumberjacks
 	.4byte 0x00000000
 	.4byte 0x18450009
-	.4byte 0x0000168e
+	.4byte MsgKorimaMuraWeRelyOnTheForestsSo
 	.4byte 0x00000000
 	.4byte 0x1845000a
-	.4byte 0x0000168f
+	.4byte MsgKorimaMuraYouKnowBeingATreeGives
 	.4byte 0x00000000
 	.4byte 0x1845000b
-	.4byte 0x00001690
+	.4byte MsgKorimaMuraITurnedIntoATreeRight
 	.4byte 0x00000000
 	.4byte 0x1845000c
-	.4byte 0x00001691
+	.4byte MsgKorimaMuraDontBlameTheVillagersForBeing
 	.4byte 0x00000000
 	.4byte 0x1845000d
-	.4byte 0x00001692
+	.4byte MsgKorimaMuraWhoWouldTryToUseThe
 	.4byte 0x00000000
 	.4byte 0x1845000e
-	.4byte 0x00001693
+	.4byte MsgKorimaMuraIDidntMindBeingATree
 	.4byte 0x00000000
 	.4byte 0x1845000f
-	.4byte 0x00001694
+	.4byte MsgKorimaMuraYawnTreesAreSoSleepy
 	.4byte 0x00000000
 	.4byte 0x18450010
 	.4byte FieldScene_RunActor16MessageBranch
@@ -605,58 +605,58 @@ gKorimaMuraEvents:
 	.4byte FieldScene_RunActor27Step
 	.4byte 0x00008d15
 	.4byte 0x18450008
-	.4byte 0x00001695
+	.4byte MsgKorimaMuraForAWhileIThoughtId
 	.4byte 0x00008d15
 	.4byte 0x18450009
-	.4byte 0x00001696
+	.4byte MsgKorimaMuraTheForestTreesAreAliveJust
 	.4byte 0x00008d15
 	.4byte 0x1845000a
-	.4byte 0x00001697
+	.4byte MsgKorimaMuraIWonderIfIdLiveLonger
 	.4byte 0x00008d15
 	.4byte 0x1845000b
-	.4byte 0x00001698
+	.4byte MsgKorimaMuraIfThoseSparklesStartFallingAgain
 	.4byte 0x00008d15
 	.4byte 0x1845000c
-	.4byte 0x00001699
+	.4byte MsgKorimaMuraIveBeenPoorAllMyLife
 	.4byte 0x00008d15
 	.4byte 0x1845000d
-	.4byte 0x0000169a
+	.4byte MsgKorimaMuraItsNotCalledTheHolyTree
 	.4byte 0x00008d15
 	.4byte 0x1845000e
-	.4byte 0x0000169b
+	.4byte MsgKorimaMuraIfWeWereAllTreesThered
 	.4byte 0x00008d15
 	.4byte 0x1845000f
-	.4byte 0x0000169c
+	.4byte MsgKorimaMuraNobodyYellsAtYouWhenYoure
 	.4byte 0x00008d15
 	.4byte 0x18450010
-	.4byte 0x000016b6
+	.4byte MsgKorimaMuraIfTheHolyTreeAloneCaused
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001675
+	.4byte MsgKorimaMuraIfICouldSpeakIdTell
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001676
+	.4byte MsgKorimaMuraHowCouldAnyoneTurnAGirl
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001677
+	.4byte MsgKorimaMuraThisIsADreamItHas
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001678
+	.4byte MsgKorimaMuraBeingUnableToMoveIsSo
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001679
+	.4byte MsgKorimaMuraIAmOldIveLivedA
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000167a
+	.4byte MsgKorimaMuraItsTheSacredTreesCurseWhy
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000167b
+	.4byte MsgKorimaMuraTheWaterAtMyFeetHuh
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000167c
+	.4byte MsgKorimaMuraIfICantMoveThenMom
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001688
+	.4byte MsgKorimaMuraMaybeIfIMeditateHarderIll
 	.4byte 0x00000023
 	.4byte 0x0f570064
 	.4byte 0x001000c1
@@ -679,10 +679,10 @@ gKorimaMuraEvents3:
 	.4byte KorimaMura_RunObjectSpreadScene
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001788
+	.4byte MsgKorimaMuraForAWhileIThoughtNo
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001789
+	.4byte MsgKorimaMuraYouWouldntUnderstandButItsTruly
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

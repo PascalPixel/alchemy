@@ -249,7 +249,11 @@ Func_02002398:
 	.global Func_020023a0
 	.thumb_func
 Func_020023a0:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080ad310
+	.else
 	overlay_veneer Func_080ad330
+	.endif
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -273,11 +277,27 @@ Event_ClearStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_020023d8
 	.thumb_func
 Func_020023d8:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8548
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8548
+	.else
 	overlay_veneer Func_080c8558
+	.endif
+	.endif
 	.global Func_020023e0
 	.thumb_func
 Func_020023e0:

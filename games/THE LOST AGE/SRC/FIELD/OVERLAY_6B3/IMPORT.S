@@ -97,7 +97,15 @@ Func_02000834:
 	.global Func_0200083c
 	.thumb_func
 Func_0200083c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87b8
+	.else
 	overlay_veneer Func_080c87c8
+	.endif
+	.endif
 	.global Func_02000844
 	.thumb_func
 Func_02000844:

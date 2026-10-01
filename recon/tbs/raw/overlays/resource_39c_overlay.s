@@ -1357,10 +1357,10 @@ gMakyuriHeyaEvents1:
 	.4byte MakyuriHeya_RunPushedBlockScene
 	.4byte 0x00000000
 	.4byte 0x08730003
-	.4byte 0x0000158f
+	.4byte MsgMakyuriHeyaThePathIsBlockedAgainWhat
 	.4byte 0x00008d15
 	.4byte 0x08730003
-	.4byte 0x00001590
+	.4byte MsgMakyuriHeyaThisStatueWasntHereBeforeI
 	.4byte 0x10009585
 	.4byte 0xffff0000
 	.4byte OverlayObject_ReleasePublishedAttachmentB
@@ -1585,31 +1585,31 @@ gMakyuriHeyaEventsOther:
 	.4byte SceneDialogue_RunActor3TimedLine
 	.4byte 0x00008d15
 	.4byte 0x08710003
-	.4byte 0x0000157e
+	.4byte MsgMakyuriHeyaSomeoneDoesntWantMeToGet
 	.4byte 0x00000000
 	.4byte 0x1881000e
-	.4byte 0x0000162a
+	.4byte MsgMakyuriHeyaTheLegendsSaidThatIfThe
 	.4byte 0x00000000
 	.4byte 0x1881000f
-	.4byte 0x0000162b
+	.4byte MsgMakyuriHeyaOurFountainIsBackTheySay
 	.4byte 0x00000000
 	.4byte 0x18810010
-	.4byte 0x0000162c
+	.4byte MsgMakyuriHeyaIDrankTheHealingWaterAnd
 	.4byte 0x00000000
 	.4byte 0x18810011
-	.4byte 0x0000162d
+	.4byte MsgMakyuriHeyaWeDontHaveToFearAny
 	.4byte 0x00008d15
 	.4byte 0x1881000e
-	.4byte 0x0000162e
+	.4byte MsgMakyuriHeyaHowDidTheFountainKnowThat
 	.4byte 0x00008d15
 	.4byte 0x1881000f
-	.4byte 0x0000162f
+	.4byte MsgMakyuriHeyaAllThatLivesThatMeansIt
 	.4byte 0x00008d15
 	.4byte 0x18810010
-	.4byte 0x00001630
+	.4byte MsgMakyuriHeyaIKnewItWouldWorkBut
 	.4byte 0x00008d15
 	.4byte 0x18810011
-	.4byte 0x00001631
+	.4byte MsgMakyuriHeyaINeverBelievedThoseStoriesBut
 	.4byte 0x00000003
 	.4byte 0xffff000a
 	.4byte SceneDialogue_RunLine1637

@@ -261,28 +261,28 @@ EntryLayout_FourthTable:
 	.4byte 0x0000000e
 	.4byte 0x00000000
 	.4byte 0x18450008
-	.4byte 0x0000169d
+	.4byte MsgKorimaHeyaIHeardThatTravelingWarriorsFrom
 	.4byte 0x00000000
 	.4byte 0x18450009
-	.4byte 0x0000169e
+	.4byte MsgKorimaHeyaBigStrongWarriorsWithGreatBeards
 	.4byte 0x00000000
 	.4byte 0x1845000a
-	.4byte 0x000016a1
+	.4byte MsgKorimaHeyaYouSavedKolimaWowThatMakes
 	.4byte 0x00000000
 	.4byte 0x1845000b
-	.4byte 0x000016a2
+	.4byte MsgKorimaHeyaMyHusbandSeemsToBeKeeping
 	.4byte 0x00000000
 	.4byte 0x1845000c
-	.4byte 0x000016a3
+	.4byte MsgKorimaHeyaDaddyToldMeHisSecret
 	.4byte 0x00000000
 	.4byte 0x1845000d
-	.4byte 0x000016a7
+	.4byte MsgKorimaHeyaImNeverGoingToUseAn
 	.4byte 0x00000000
 	.4byte 0x1845000e
-	.4byte 0x000016a8
+	.4byte MsgKorimaHeyaDadWillYouPleaseGoBack
 	.4byte 0x00000000
 	.4byte 0x1845000f
-	.4byte 0x000016a9
+	.4byte MsgKorimaHeyaDadHowAreWeGoingTo
 	.4byte 0x00000000
 	.4byte 0x18450010
 	.4byte FieldScene_RunActor16MessageBranch
@@ -297,103 +297,103 @@ EntryLayout_FourthTable:
 	.4byte FieldScene_RunActor19MessageBranch
 	.4byte 0x00000000
 	.4byte 0x18450014
-	.4byte 0x000016b8
+	.4byte MsgKorimaHeyaWithNoMoreWorkHereKolima
 	.4byte 0x00000000
 	.4byte 0x18450015
-	.4byte 0x000016b9
+	.4byte MsgKorimaHeyaIveBeenALumberjackForYears
 	.4byte 0x00000000
 	.4byte 0x18450016
-	.4byte 0x000016ba
+	.4byte MsgKorimaHeyaImOnlyAMerchantButI
 	.4byte 0x00008d15
 	.4byte 0x18450008
-	.4byte 0x0000169f
+	.4byte MsgKorimaHeyaIDontReallyKnowButYou
 	.4byte 0x00008d15
 	.4byte 0x18450009
-	.4byte 0x000016a0
+	.4byte MsgKorimaHeyaAllWarriorsAreBigAndAll
 	.4byte 0x00008d15
 	.4byte 0x1845000a
-	.4byte 0x000016a4
+	.4byte MsgKorimaHeyaItsHiddenDeepInTheForest
 	.4byte 0x00008d15
 	.4byte 0x1845000b
-	.4byte 0x000016a5
+	.4byte MsgKorimaHeyaIThinkHeFoundSomethingValuable
 	.4byte 0x00008d15
 	.4byte 0x1845000c
-	.4byte 0x000016a6
+	.4byte MsgKorimaHeyaStillTellingMeItsOutsideThe
 	.4byte 0x00008d15
 	.4byte 0x1845000d
-	.4byte 0x000016aa
+	.4byte MsgKorimaHeyaPeopleTurnedIntoTreesBecauseOf
 	.4byte 0x00008d15
 	.4byte 0x1845000e
-	.4byte 0x000016ab
+	.4byte MsgKorimaHeyaKnowingMyDadHellStartWorking
 	.4byte 0x00008d15
 	.4byte 0x1845000f
-	.4byte 0x000016ac
+	.4byte MsgKorimaHeyaHowAmISupposedToGrow
 	.4byte 0x00008d15
 	.4byte 0x18450010
-	.4byte 0x000016ae
+	.4byte MsgKorimaHeyaFuchinTemplesMasterNyunpaIsSaid
 	.4byte 0x00008d15
 	.4byte 0x18450011
-	.4byte 0x000016b0
+	.4byte MsgKorimaHeyaItsAShameWeHadTo
 	.4byte 0x00008d15
 	.4byte 0x18450012
-	.4byte 0x000016b2
+	.4byte MsgKorimaHeyaItFeltSoGoodWhenMy
 	.4byte 0x00008d15
 	.4byte 0x18450013
-	.4byte 0x000016bb
+	.4byte MsgKorimaHeyaTheVillageWasReallyBoomingWith
 	.4byte 0x00008d15
 	.4byte 0x18450014
-	.4byte 0x000016bc
+	.4byte MsgKorimaHeyaRemainingAQuietVillageMeansRemaining
 	.4byte 0x00008d15
 	.4byte 0x18450015
-	.4byte 0x000016bd
+	.4byte MsgKorimaHeyaImALumberjackAndImOkay
 	.4byte 0x00008d15
 	.4byte 0x18450016
-	.4byte 0x000016be
+	.4byte MsgKorimaHeyaIWishIdGrabbedSomeOf
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000167d
+	.4byte MsgKorimaHeyaWhatAreTheyStaringAtThey
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000167e
+	.4byte MsgKorimaHeyaIDreamtThatAMightyWarrior
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000167f
+	.4byte MsgKorimaHeyaWhatWillHappenToMyTreasure
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001680
+	.4byte MsgKorimaHeyaSoonAllOfKolimaWillBe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001681
+	.4byte MsgKorimaHeyaIWonderWhatFathersSecretIs
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001682
+	.4byte MsgKorimaHeyaMaybeWeTurnedIntoTreesBecause
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001683
+	.4byte MsgKorimaHeyaAtLeastMyFatherWasntThe
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001684
+	.4byte MsgKorimaHeyaTheHolyTreeOfKolimaHas
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001685
+	.4byte MsgKorimaHeyaIUsedToCarveWeaponsOut
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001686
+	.4byte MsgKorimaHeyaManImStuckInsideThatMeans
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001687
+	.4byte MsgKorimaHeyaNoIDontWantToBe
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001689
+	.4byte MsgKorimaHeyaWhoCausedAllThisSomeoneMust
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0000168a
+	.4byte MsgKorimaHeyaHowAmISupposedToCharge
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x0000168b
+	.4byte MsgKorimaHeyaTheVillagersWereRightINever
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x0000168c
+	.4byte MsgKorimaHeyaIfOnlyIdLeftTownA
 	.4byte 0x00000023
 	.4byte 0x0f590064
 	.4byte 0x001000e5
@@ -402,13 +402,16 @@ EntryLayout_FourthTable:
 	.4byte 0x00200007
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x004029d4
+	.2byte MsgKorimaHeyaTheresABookEntitledTheHoly
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029d5
+	.2byte MsgKorimaHeyaTheresABookEntitledDictionaryOf
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00ca
-	.4byte 0x004029d6
+	.2byte MsgKorimaHeyaTheresABookEntitledTheArt
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

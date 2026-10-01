@@ -30,10 +30,12 @@ Engine_MathSin:
 	.thumb_func
 Engine_MathCos:
 	overlay_veneer Trig_CosFar
+	.ifndef TBS_EDITION_JA
 	.global Vector_AddPolarOffset
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
+	.endif
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -298,6 +300,16 @@ Engine_EventWaitForScreen:
 	.thumb_func
 BattleFx_StartFadeOverlay:
 	overlay_veneer BattleFx_StartFadeOverlayFar
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	.global Battle_ResetEffectCounter
+	.thumb_func
+Battle_ResetEffectCounter:
+	overlay_veneer Battle_ResetEffectCounterFar
+	.endif
+	.endif
+	.endif
 	.global Engine_ActorWalkByAndWait
 	.thumb_func
 Engine_ActorWalkByAndWait:

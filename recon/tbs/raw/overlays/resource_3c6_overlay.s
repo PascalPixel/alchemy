@@ -497,70 +497,70 @@ Placement_Effects:
 	.4byte SceneState_SetWord1c8To16AndForward16c
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000026ad
+	.4byte MsgRariberoMachiUhhnnWeWereTakenBySurprise
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000026ae
+	.4byte MsgRariberoMachiTheyWereTerribleWeWereNo
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte SceneActor_StartLament
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000026b0
+	.4byte MsgRariberoMachiActorIsOurOnlyHopeIf
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000026b1
+	.4byte MsgRariberoMachiThisAllHappenedBecauseTolbiTook
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000026b2
+	.4byte MsgRariberoMachiFaranFollowedActorImSureHell
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000026b3
+	.4byte MsgRariberoMachiTheRumblingAtTheRuinsMust
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000026b4
+	.4byte MsgRariberoMachiThereWasAnEarthquakeAtThe
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000026b5
+	.4byte MsgRariberoMachiIfIWereBiggerIWould
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000026b6
+	.4byte MsgRariberoMachiIBetActorCanUseHer
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000026f8
+	.4byte MsgRariberoMachiBabisMostPreciousBelongingIsKept
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000026bb
+	.4byte MsgRariberoMachiIfOnlyTheyDidntHaveActor
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000026bc
+	.4byte MsgRariberoMachiTheyUsedFireOnUsThats
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000026bd
+	.4byte MsgRariberoMachiCursesWeCouldntStopActorAnd
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000026be
+	.4byte MsgRariberoMachiWhatDoTheyPlanToDo
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000026bf
+	.4byte MsgRariberoMachiWeNeverShouldHaveLetTolbi
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000026c0
+	.4byte MsgRariberoMachiFaranStillDoesNotReturnWhat
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000026c1
+	.4byte MsgRariberoMachiWeHaveSeenManyOmensOf
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000026c2
+	.4byte MsgRariberoMachiTheStonesWeStackedForThe
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000026c3
+	.4byte MsgRariberoMachiITriedToStepInFront
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000026c4
+	.4byte MsgRariberoMachiTheyAllHaveALessonComing
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000026f9
+	.4byte MsgRariberoMachiIWonderWhatBabisMostPrecious
 	.4byte 0x00000000
 	.4byte 0xffff0017
 	.4byte SceneActor_SetActor23Params2And6
@@ -625,73 +625,73 @@ Placement_Effects9a7:
 	.4byte SceneActor_SetupActor18Event
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028bb
+	.4byte MsgRariberoMachiHaHaIThoughtTheyHad
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000028bc
+	.4byte MsgRariberoMachiIWillNeverLetMyGuard
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000028bd
+	.4byte MsgRariberoMachiWhereCouldActorBeNowIm
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte RariberoMachi_AskLeaving
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000028c1
+	.4byte MsgRariberoMachiISawTheBeaconOfVenus
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000028c2
+	.4byte MsgRariberoMachiTheExplosionInTheVenusRuins
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000028c3
+	.4byte MsgRariberoMachiThePeninsulaBehindVenusLighthouseIs
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000028c4
+	.4byte MsgRariberoMachiICantBelieveYouEscapedVenus
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000028c5
+	.4byte MsgRariberoMachiIfYouDefeatedThatEvilBunch
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000028c6
+	.4byte MsgRariberoMachiActorJumpedIntoTheOceanFrom
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x000028c7
+	.4byte MsgRariberoMachiNoTrespassingDangerBeyondThisPoint
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000028b9
+	.4byte MsgRariberoMachiApparentlyAShipHasBeenDocked
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028c8
+	.4byte MsgRariberoMachiIAmAllHealedNowBut
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000028c9
+	.4byte MsgRariberoMachiIWantedToBeAPart
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000028ca
+	.4byte MsgRariberoMachiIfActorUsedHerGreatPowers
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000028cb
+	.4byte MsgRariberoMachiAfterEverythingThatsHappenedLaliveroNo
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000028cc
+	.4byte MsgRariberoMachiVenusLighthouseHasBeenTheSymbol
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000028cd
+	.4byte MsgRariberoMachiIodemOfTolbiDoesntSeemToo
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000028ce
+	.4byte MsgRariberoMachiTheOceanIsSoRoughSince
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000028cf
+	.4byte MsgRariberoMachiVenusLighthouseIsStillStandingStrong
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000028d0
+	.4byte MsgRariberoMachiYouMustBeGreatWarriorsTo
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000028d1
+	.4byte MsgRariberoMachiActorWouldBeFineEvenAfter
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000028ba
+	.4byte MsgRariberoMachiThisSureSeemsLikeAStrange
 	.4byte 0x00000000
 	.4byte 0xffff0017
 	.4byte SceneActor_SetActor23Params2And6

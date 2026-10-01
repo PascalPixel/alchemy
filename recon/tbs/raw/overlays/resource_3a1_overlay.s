@@ -256,22 +256,22 @@ ShianHeya_SceneTable3:
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x08950008
-	.4byte 0x0000180b
+	.4byte MsgShianHeyaTheMulberryHarvestIsOverNow
 	.4byte 0x00000000
 	.4byte 0x08950009
-	.4byte 0x0000180c
+	.4byte MsgShianHeyaFarmWorkIsVeryHardWarriors
 	.4byte 0x00000000
 	.4byte 0x0895000a
-	.4byte 0x0000180f
+	.4byte MsgShianHeyaXianSilkIsSentOnSilk
 	.4byte 0x00000000
 	.4byte 0x0895000b
-	.4byte 0x00001810
+	.4byte MsgShianHeyaSilkRoadEndsInTolbiIt
 	.4byte 0x00000000
 	.4byte 0x0895000c
-	.4byte 0x00001813
+	.4byte MsgShianHeyaFollowSilkRoadWhenYouSee
 	.4byte 0x00000000
 	.4byte 0x0895000d
-	.4byte 0x00001814
+	.4byte MsgShianHeyaThereIsAMineInAltin
 	.4byte 0x00000000
 	.4byte 0x0895000e
 	.4byte SceneDialogue_RunActor14FlaggedDialogue
@@ -286,28 +286,28 @@ ShianHeya_SceneTable3:
 	.4byte SceneDialogue_RunActor17FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x08950012
-	.4byte 0x0000181e
+	.4byte MsgShianHeyaNormallyManyMerchantsComeToThe
 	.4byte 0x00000000
 	.4byte 0x08950013
-	.4byte 0x0000181f
+	.4byte MsgShianHeyaAllThePeopleWhoCameTo
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001a36
+	.4byte MsgShianMuraWhereAreTheMerchantsNoOne
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001a37
+	.4byte MsgShianHeyaMerchantsBringUsCoinsTheyMust
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte SceneDialogue_RunActor10Dialogue
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001a3d
+	.4byte MsgShianHeyaNoneCanPassThroughLamakanThis
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte SceneDialogue_RunActor12Dialogue
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001a43
+	.4byte MsgShianHeyaTheMineInAltinFilledWith
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte SceneDialogue_RunActor14FlaggedDialogue
@@ -322,82 +322,82 @@ ShianHeya_SceneTable3:
 	.4byte SceneDialogue_RunActor17FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001a4f
+	.4byte MsgShianHeyaWhenLamakanDesertBurnsItIs
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001a50
+	.4byte MsgShianHeyaHotFoodIsGoodForCrossing
 	.4byte 0x00008d15
 	.4byte 0x08950008
-	.4byte 0x0000180d
+	.4byte MsgShianHeyaSoonMasterHammetWillComeHe
 	.4byte 0x00008d15
 	.4byte 0x08950009
-	.4byte 0x0000180e
+	.4byte MsgShianHeyaFarmWorkIsHardOnThe
 	.4byte 0x00008d15
 	.4byte 0x0895000a
-	.4byte 0x00001811
+	.4byte MsgShianHeyaSilkRoadIsFullOfSilk
 	.4byte 0x00008d15
 	.4byte 0x0895000b
-	.4byte 0x00001812
+	.4byte MsgShianHeyaMerchantsSayTolbiIsVeryBeautiful
 	.4byte 0x00008d15
 	.4byte 0x0895000c
-	.4byte 0x00001815
+	.4byte MsgShianHeyaAltinHasManyMenAllScary
 	.4byte 0x00008d15
 	.4byte 0x0895000d
-	.4byte 0x00001816
+	.4byte MsgShianHeyaMiningIsVeryHardWorkIt
 	.4byte 0x00008d15
 	.4byte 0x0895000e
-	.4byte 0x00001818
+	.4byte MsgShianHeyaSomeSayFightingWithWeaponsIs
 	.4byte 0x00008d15
 	.4byte 0x0895000f
-	.4byte 0x0000181a
+	.4byte MsgShianHeyaInWarriorBattlesYouFightWith
 	.4byte 0x00008d15
 	.4byte 0x08950010
-	.4byte 0x0000181c
+	.4byte MsgShianHeyaXianIsAVillageOfCraftsmen
 	.4byte 0x00008d15
 	.4byte 0x08950011
-	.4byte 0x00001820
+	.4byte MsgShianHeyaWhenYouGoToANew
 	.4byte 0x00008d15
 	.4byte 0x08950012
-	.4byte 0x00001821
+	.4byte MsgShianHeyaWhenManyMerchantsComeMyBusiness
 	.4byte 0x00008d15
 	.4byte 0x08950013
-	.4byte 0x00001822
+	.4byte MsgShianHeyaThereAreFewerTravelersSoFewer
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001a38
+	.4byte MsgShianHeyaWhyDoesMasterHammetNotCome
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001a39
+	.4byte MsgShianHeyaMerchantsSellSilkItIsLike
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001a3e
+	.4byte MsgShianHeyaFeizhiSaidTheDesertBecameEvil
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001a3f
+	.4byte MsgShianHeyaTheDesertWasVeryHotNow
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001a44
+	.4byte MsgShianHeyaTheVillageIsFloodedBecauseOf
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001a45
+	.4byte MsgShianHeyaWaterMonstersHowTerribleForAltin
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001a47
+	.4byte MsgShianHeyaHsuWasPummeledByHugeBoulders
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001a49
+	.4byte MsgShianHeyaWeShouldSellArmorToKung
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001a4d
+	.4byte MsgShianHeyaYouLoseStrengthInHeatUse
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001a51
+	.4byte MsgShianHeyaCaravansCannotBringMerchantsHereWhen
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001a52
+	.4byte MsgShianHeyaTheMerchantsDoNotComeBecause
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001a53
+	.4byte MsgShianHeyaEatWarriorIWillAddMany
 	.4byte 0x00000033
 	.4byte 0x0f6f0064
 	.4byte 0x001000bc
@@ -406,31 +406,40 @@ ShianHeya_SceneTable3:
 	.4byte 0x001000e3
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040299b
+	.2byte MsgShianHeyaTheyreMakingStirFryTheCabbage
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x0040299c
+	.2byte MsgShianHeyaItsTheXianGourmetTheBest
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x0040299d
+	.2byte MsgShianHeyaTheyreSteamedDumplingsTheyreGreatPiping
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x0040299e
+	.2byte MsgShianHeyaRobinAndHisFriendsAreShocked
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte 0x0040299f
+	.2byte MsgShianHeyaHesMakingHotBeanCurdTastes
+	.2byte 0x40
 	.4byte 0x0000c5b3
 	.4byte 0xffff00cd
-	.4byte 0x004029a0
+	.2byte MsgShianHeyaThereAreManyChopsticksButNot
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00ce
-	.4byte 0x004029a1
+	.2byte MsgShianHeyaThereAreMedicinalHerbsTheyHave
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00cf
-	.4byte 0x004029a2
+	.2byte MsgShianHeyaTheresAKimonoItLooksLike
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00d0
-	.4byte 0x004029a3
+	.2byte MsgShianHeyaItsJustASalesReportIt
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -441,40 +450,40 @@ ShianHeya_SceneTable3Entrance8:
 	.4byte 0x00000008
 	.4byte 0x00000000
 	.4byte 0x08b30008
-	.4byte 0x00001a67
+	.4byte MsgShianHeyaFeizhisPredictionCameTrueNowI
 	.4byte 0x00000000
 	.4byte 0x08b30009
 	.4byte SceneDialogue_RunActor9MotionDialogue
 	.4byte 0x00000000
 	.4byte 0x08b3000a
-	.4byte 0x00001a66
+	.4byte MsgShianHeyaIWasInjuredByRocksOn
 	.4byte 0x00008d15
 	.4byte 0x08b30008
-	.4byte 0x00001a6a
+	.4byte MsgShianHeyaFeizhisAbilityToSenseTroubleIs
 	.4byte 0x00008d15
 	.4byte 0x08b30009
-	.4byte 0x00001a68
+	.4byte MsgShianHeyaMasterHamaHasGreatPowerYou
 	.4byte 0x00008d15
 	.4byte 0x08b3000a
-	.4byte 0x00001a69
+	.4byte MsgShianHeyaIKnewHelpWouldComeWhen
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001a6d
+	.4byte MsgShianHeyaFeizhisPredictionCameTrueNowIBelieve
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001a6b
+	.4byte MsgShianHeyaHsuWasTrappedUnderTheRocks
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001a6c
+	.4byte MsgShianHeyaIWasInjuredByBouldersOn
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001a70
+	.4byte MsgShianHeyaFeizhisAbilityToForeseeIsReal
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001a6e
+	.4byte MsgShianHeyaMasterHamaHasGreatPowerSome
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001a6f
+	.4byte MsgShianHeyaIKnewHelpWouldComeWhenI
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

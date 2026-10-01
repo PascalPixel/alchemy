@@ -29,7 +29,31 @@ pub(crate) fn command(
 }
 
 pub(crate) fn fresh(root: &Path, target: DecompTarget, source: &str) -> Result<String, String> {
+    expansion(root, target, source, &[])
+}
+
+/// Preserve active macro definitions for source-name validation, in memory.
+#[cfg(test)]
+pub(crate) fn fresh_definitions(
+    root: &Path,
+    target: DecompTarget,
+    source: &str,
+) -> Result<String, String> {
+    expansion(root, target, source, &["-dD"])
+}
+
+fn expansion(
+    root: &Path,
+    target: DecompTarget,
+    source: &str,
+    extra: &[&str],
+) -> Result<String, String> {
     let mut command = command(target, source, true)?;
+    let imports = crate::build_text::fresh_c_imports(root, target)?;
+    if let Some(directory) = &imports {
+        command.insert(1, format!("-I{}", directory.path().display()));
+    }
+    command.extend(extra.iter().map(|flag| flag.to_string()));
     command.push(source.into());
     let output = Command::new(&command[0])
         .args(&command[1..])

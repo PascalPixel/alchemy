@@ -93,6 +93,19 @@ fn definitions(tokens: &[Token], origins: &[(String, usize)]) -> Result<Vec<Defi
     }).collect())
 }
 
+/// Fresh expanded function definitions owned by one source file. Diagnostic
+/// readers use this to distinguish an edition exclusion from an unlinked body.
+pub(crate) fn owned_definitions(text: &str, source: &str) -> Result<BTreeSet<String>, String> {
+    let tokens = lex(text)?;
+    let locations = origins(text, source);
+    let wanted = owner(source);
+    Ok(definitions(&tokens, &locations)?
+        .into_iter()
+        .filter(|definition| definition.owner == wanted)
+        .map(|definition| definition.name)
+        .collect())
+}
+
 /// Mask GNU assembly/attributes for the read-only C parser. Operand calls are
 /// retained in the original tokens and refused below if masking would hide one.
 fn c_only(text: &str, tokens: &[Token]) -> String {

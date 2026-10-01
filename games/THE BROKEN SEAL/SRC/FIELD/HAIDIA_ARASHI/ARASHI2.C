@@ -3,6 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 #include "FIELD_EFFECT.H"
+#include "TBS_EDITION.H"
 
 struct Pulse {
     u8 unknown_00[0x64];
@@ -510,10 +511,15 @@ void OverlayObject_CopyRecordField1ToSlots22And8(void)
     Ent *dst2;
 
     src = ((Rec *)Object_GetById(0))->f50;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    ObjectMotion_SetActionVariant(22, src->f);
+    ObjectMotion_SetActionVariant(8, src->f);
+#else
     dst = ((Rec *)Object_GetById(22))->f50;
     dst->f = src->f;
     dst2 = ((Rec *)Object_GetById(8))->f50;
     dst2->f = src->f;
+#endif
 }
 
 void SceneState_SetValueEe4(void)

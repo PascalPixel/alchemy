@@ -85,7 +85,23 @@ Animation_ApplyChildArgument:
 	.global ResourceMetadata_Register
 	.thumb_func
 ResourceMetadata_Register:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer InitializeAnimationObjectsFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer InitializeAnimationObjectsFar
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer InitializeAnimationObjectsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer InitializeAnimationObjectsFar
+	.else
 	overlay_veneer ResourceMetadata_RegisterFar
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02001c6c
 	.thumb_func
 Func_02001c6c:
@@ -261,7 +277,15 @@ Event_ClearStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_02001dcc
 	.thumb_func
 Func_02001dcc:
@@ -281,11 +305,27 @@ Func_02001de4:
 	.global Func_02001dec
 	.thumb_func
 Func_02001dec:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8678
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8678
+	.else
 	overlay_veneer Func_080c8688
+	.endif
+	.endif
 	.global Func_02001df4
 	.thumb_func
 Func_02001df4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Object_SetActionCallbackFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Object_SetActionCallbackFar
+	.else
 	overlay_veneer Func_080c8690
+	.endif
+	.endif
 	.global Func_02001dfc
 	.thumb_func
 Func_02001dfc:
@@ -301,7 +341,15 @@ Func_02001e0c:
 	.global Func_02001e14
 	.thumb_func
 Func_02001e14:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif
 	.global Func_02001e1c
 	.thumb_func
 Func_02001e1c:

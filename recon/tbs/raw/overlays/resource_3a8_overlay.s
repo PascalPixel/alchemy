@@ -1027,49 +1027,49 @@ gKareiMachiEvents1:
 	.4byte FieldScene_RunStagedGroupSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001a71
+	.4byte MsgKareiWelcomeInPeace
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001a72
+	.4byte MsgKareiSoldiersProtectPeace
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001a73
+	.4byte MsgKareiHammetGenerousMerchant
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001a74
+	.4byte MsgKareiHammetOnJourney
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001a75
+	.4byte MsgKareiNorthernBridgeRebuilt
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001a76
+	.4byte MsgKareiRamakanTrouble
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001a77
+	.4byte MsgKareiElderTownNews
 	.4byte 0x00000000
 	.4byte 0x0911000f
-	.4byte 0x00001a78
+	.4byte MsgKareiInnFestivalTourists
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001b9b
+	.4byte MsgKareiFormerInnFestivalTourists
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001a79
+	.4byte MsgKareiChildWantsFestival
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001a7a
+	.4byte MsgKareiTraderTownNews
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001a7b
+	.4byte MsgKareiHammetBusinessSkill
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte SceneDialogue_RunActorNineteenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001a7f
+	.4byte MsgKareiHammetCapturedRumor
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001a80
+	.4byte MsgKareiHammetWentNorth
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte SceneState_BranchOnSlotZeroFacing
@@ -1081,55 +1081,55 @@ gKareiMachiEvents1:
 	.4byte FieldScene_RunActorTwentyFourAngleDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001a81
+	.4byte MsgKareiWarriorHonestEyes
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001a82
+	.4byte MsgKareiGuardsJudgeVisitors
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001a83
+	.4byte MsgKareiHammetPeaceAndLiberty
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001a84
+	.4byte MsgKareiHammetCanBeRash
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001a85
+	.4byte MsgKareiSoldiersWentToKuupuappu
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001a86
+	.4byte MsgKareiStrangeEvents
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001a87
+	.4byte MsgKareiElderThoughts
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001a88
+	.4byte MsgKareiWishSavedForFestival
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001a89
+	.4byte MsgKareiChildFestivalDream
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001a8a
+	.4byte MsgKareiTraderThoughts
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001a8b
+	.4byte MsgKareiHammetValuesTrust
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001a8c
+	.4byte MsgKareiTrustAgainstForce
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001a8d
+	.4byte MsgKareiRunpaNorthOfKuupuappu
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001a8e
+	.4byte MsgKareiRumorsHideTruth
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001ad0
+	.4byte MsgKareiWishBetterWeapons
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001ad4
+	.4byte MsgKareiWeaponsHaveSoul
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001ad6
+	.4byte MsgKareiPalaceWaterSupply
 	.4byte 0x00008c15
 	.4byte 0xffff0019
 	.4byte 0x00000000
@@ -1158,16 +1158,16 @@ gKareiMachiEvents2:
 	.4byte RunSceneArrivalSetup
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001b97
+	.4byte MsgKareiSoldiersHandleAffairs
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001b98
+	.4byte MsgKareiSoldiersRescueHammet
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001b99
+	.4byte MsgKareiPrayForHammetSafety
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001b9a
+	.4byte MsgKareiWarriorsWillSaveHammet
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1184,7 +1184,7 @@ gKareiMachiEvents3:
 	.4byte FieldScene_RunSlotZeroFacingSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002587
+	.4byte MsgKareiPassageClosedByOrders
 	.4byte 0x00009415
 	.4byte 0x0fd6000c
 	.4byte FieldScene_RunStepWithValueFd6
@@ -1244,7 +1244,7 @@ gKareiMachiEvents6:
 	.4byte SceneDialogue_RunActorTenDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000025b6
+	.4byte MsgKareiTreasureBeyondDoors
 	.4byte 0x00008c15
 	.4byte 0x03020008
 	.4byte FieldScene_RunScene3a8SequenceB

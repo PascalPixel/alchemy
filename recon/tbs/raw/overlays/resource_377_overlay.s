@@ -779,34 +779,44 @@ gHaidiaBabiEvents4:
 	.4byte SceneState_ApplyValues123And11
 	.4byte 0x000000d3
 	.4byte 0xffff0064
-	.4byte 0x00400955
+	.2byte MsgHaidiaWoodenBoxEmpty
+	.2byte 0x40
 	.4byte 0x00000023
 	.4byte 0xffff0065
-	.4byte 0x0040094a
+	.2byte MsgHaidiaJarEmpty
+	.2byte 0x40
 	.4byte 0x00000033
 	.4byte 0xffff0066
-	.4byte 0x0040094b
+	.2byte MsgKuupuappuButDidntFindAnything
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x004029ca
+	.2byte MsgHaidiaNotebookStudyOfAlchemy
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x004029cb
+	.2byte MsgHaidiaBookAncientLemurians
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d0
-	.4byte 0x004029cc
+	.2byte MsgHaidiaBookFountainOfTolbi
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d1
-	.4byte 0x004029cd
+	.2byte MsgHaidiaEncyclopediaOfAlchemy
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d2
-	.4byte 0x004029ce
+	.2byte MsgHaidiaBookLegendOfAleph
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d3
-	.4byte 0x004029cf
+	.2byte MsgHaidiaBookBeingAdept
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d4
-	.4byte 0x004029d0
+	.2byte MsgHaidiaBookTravelersEtiquette
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -814,16 +824,16 @@ gHaidiaBabiEvents4:
 gHaidiaBabiEvents:
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00000f56
+	.4byte MsgHaidiaMyFatherAlsoDiedInThat
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00000f57
+	.4byte MsgHaidiaMySonIsStillYoungSo
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00000f59
+	.4byte MsgHaidiaOneOfTheMenFromThat
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00000f5a
+	.4byte MsgHaidiaTwoOfThoseThreeGuestsStaying
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte HaidiaBabi_RunHeyBoyScene
@@ -874,25 +884,32 @@ gHaidiaBabiEvents:
 	.4byte 0x00200001
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x004029ca
+	.2byte MsgHaidiaNotebookStudyOfAlchemy
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x004029cb
+	.2byte MsgHaidiaBookAncientLemurians
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d0
-	.4byte 0x004029cc
+	.2byte MsgHaidiaBookFountainOfTolbi
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d1
-	.4byte 0x004029cd
+	.2byte MsgHaidiaEncyclopediaOfAlchemy
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d2
-	.4byte 0x004029ce
+	.2byte MsgHaidiaBookLegendOfAleph
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d3
-	.4byte 0x004029cf
+	.2byte MsgHaidiaBookBeingAdept
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d4
-	.4byte 0x004029d0
+	.2byte MsgHaidiaBookTravelersEtiquette
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -900,34 +917,34 @@ gHaidiaBabiEvents:
 gHaidiaBabiEvents2:
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000011a7
+	.4byte MsgHaidiaComeBackAsAStrongWarrior
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000011a8
+	.4byte MsgHaidiaIWantedJasminToBeMy
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte SceneDialogue_RunActorFourteenDialogue11AA
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000011af
+	.4byte MsgHaidiaWereASmallHotelAndWe
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte HaidiaBabi_RunInnkeeperTalk
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000011de
+	.4byte MsgHaidiaIWillThinkOfJasminAs
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000011df
+	.4byte MsgHaidiaNowThatJasminIsGoneWe
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000011e1
+	.4byte MsgHaidiaIWonderIfGarsiaChangedMuch
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000011e2
+	.4byte MsgHaidiaGarsiaAndHisGangMustHave
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000011e0
+	.4byte MsgHaidiaWhoCouldHaveKnownThatMasked
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte SceneState_SetValue123Mode1
@@ -972,25 +989,32 @@ gHaidiaBabiEvents2:
 	.4byte 0x00200001
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x004029ca
+	.2byte MsgHaidiaNotebookStudyOfAlchemy
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x004029cb
+	.2byte MsgHaidiaBookAncientLemurians
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d0
-	.4byte 0x004029cc
+	.2byte MsgHaidiaBookFountainOfTolbi
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d1
-	.4byte 0x004029cd
+	.2byte MsgHaidiaEncyclopediaOfAlchemy
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d2
-	.4byte 0x004029ce
+	.2byte MsgHaidiaBookLegendOfAleph
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d3
-	.4byte 0x004029cf
+	.2byte MsgHaidiaBookBeingAdept
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d4
-	.4byte 0x004029d0
+	.2byte MsgHaidiaBookTravelersEtiquette
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -998,16 +1022,16 @@ gHaidiaBabiEvents2:
 gHaidiaBabiEvents3:
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001c0b
+	.4byte MsgHaidiaOwItsGonnaBeYearsBefore
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001c0c
+	.4byte MsgHaidiaWelcomeHomeRobinOhWhatHappened
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001c18
+	.4byte MsgHaidiaYouTraveledAroundTheEasternEdge
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001c19
+	.4byte MsgHaidiaArentYouGladToSeeThe
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte HaidiaBabi_RunInnkeeperTalk
@@ -1016,19 +1040,19 @@ gHaidiaBabiEvents3:
 	.4byte SceneDialogue_ShowLine1C13WithActor16Steps
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001c13
+	.4byte MsgHaidiaYouveGrownSoMuch
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001c10
+	.4byte MsgHaidiaIPromisedIdBecomeAGreat
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001c11
+	.4byte MsgHaidiaThatShyGirlWithRobinSure
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001c1c
+	.4byte MsgHaidiaIWonderIfRobinWillContinue
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001c1d
+	.4byte MsgHaidiaValeWillNeverChangeSoYou
 	.4byte 0x00008d15
 	.4byte 0x0300040d
 	.4byte HaidiaBabi_RunInnkeeperTalk
@@ -1052,10 +1076,10 @@ gHaidiaBabiEvents3:
 	.4byte HaidiaBabi_RunSickbedVisit
 	.4byte 0x00008d15
 	.4byte 0x02030008
-	.4byte 0x00001c7b
+	.4byte MsgHaidiaKairuWatchOutTheBoulderThe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001c78
+	.4byte MsgHaidiaImSorryISeemedSoHarsh
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte SceneState_SetValue123Mode1
@@ -1100,25 +1124,32 @@ gHaidiaBabiEvents3:
 	.4byte 0x00200001
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x004029ca
+	.2byte MsgHaidiaNotebookStudyOfAlchemy
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x004029cb
+	.2byte MsgHaidiaBookAncientLemurians
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d0
-	.4byte 0x004029cc
+	.2byte MsgHaidiaBookFountainOfTolbi
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d1
-	.4byte 0x004029cd
+	.2byte MsgHaidiaEncyclopediaOfAlchemy
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d2
-	.4byte 0x004029ce
+	.2byte MsgHaidiaBookLegendOfAleph
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d3
-	.4byte 0x004029cf
+	.2byte MsgHaidiaBookBeingAdept
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00d4
-	.4byte 0x004029d0
+	.2byte MsgHaidiaBookTravelersEtiquette
+	.2byte 0x40
 	.4byte 0x00000023
 	.4byte 0x08ad006c
 	.4byte 0x001000b6
@@ -1135,34 +1166,34 @@ gHaidiaBabiEvents3:
 gHaidiaBabiEvents5:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002017
+	.4byte MsgBabiOriginallyThereWereAncientRuinsAt
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002018
+	.4byte MsgBabiNoMatterHowManyTimesI
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002019
+	.4byte MsgBabiItIsSaidThatLongAgo
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000201a
+	.4byte MsgBabiOriginallyTheAncientVenusRuinsLay
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000201b
+	.4byte MsgBabiBabiMakesHisScholarsPerformAll
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000201c
+	.4byte MsgBabiNoOneHasEverReachedThe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000201d
+	.4byte MsgBabiStillMyExperimentsInAlchemyAre
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000201e
+	.4byte MsgBabiKradensJourneyWasMeantToRevive
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000201f
+	.4byte MsgBabiTheVenusRuinsAreTheRemnants
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002020
+	.4byte MsgBabiLordBabiExpectedGreatResultsFrom
 	.4byte 0x00000021
 	.4byte 0xffff0014
 	.4byte 0x00000013
@@ -1171,13 +1202,16 @@ gHaidiaBabiEvents5:
 	.4byte 0x001000c2
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x004029b7
+	.2byte MsgHaidiaTheresABookEntitledEncyclopediaOf
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d0
-	.4byte 0x004029b8
+	.2byte MsgHaidiaTheresANotebookEntitledExperimentsIn
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d1
-	.4byte 0x004029b9
+	.2byte MsgHaidiaTheresANotebookEntitledStudyOf
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1185,34 +1219,34 @@ gHaidiaBabiEvents5:
 gHaidiaBabiEvents6:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000022b8
+	.4byte MsgBabiOnceBabiLighthouseIsCompleteId
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte HaidiaBabi_AskAboutKraden
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000022bc
+	.4byte MsgBabiAlchemyTeachesThatTheFourElements
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000022bd
+	.4byte MsgBabiIfTheRiddleOfTheVenus
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000022be
+	.4byte MsgBabiImSureKradenWouldStopBy
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000022bf
+	.4byte MsgBabiTheRelationshipBetweenAlchemyAndThe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000022c0
+	.4byte MsgBabiIWantToSeeKradenAnd
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000022c1
+	.4byte MsgBabiTheresGotToBeAGood
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000022c2
+	.4byte MsgBabiWhatSortOfUnfathomableRiddlesAre
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000022c3
+	.4byte MsgBabiThereMustBeAReasonWhy
 	.4byte 0x00000021
 	.4byte 0xffff0014
 	.4byte 0x00000013
@@ -1221,13 +1255,16 @@ gHaidiaBabiEvents6:
 	.4byte 0x001000c2
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x004029b7
+	.2byte MsgHaidiaTheresABookEntitledEncyclopediaOf
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d0
-	.4byte 0x004029b8
+	.2byte MsgHaidiaTheresANotebookEntitledExperimentsIn
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d1
-	.4byte 0x004029b9
+	.2byte MsgHaidiaTheresANotebookEntitledStudyOf
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

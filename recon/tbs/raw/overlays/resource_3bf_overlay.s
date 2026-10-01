@@ -1222,16 +1222,16 @@ gRunpaJoEvents1:
 	.4byte RunActors13And21InteractionSequence
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002445
+	.4byte MsgRunpaDonpaResting
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002446
+	.4byte MsgRunpaWhereIsDodonpa
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002447
+	.4byte MsgRunpaHammetBuysDrink
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002448
+	.4byte MsgRunpaHammetMoneyTree
 	.4byte 0x00000000
 	.4byte 0xffff0014
 	.4byte RunActor20SceneSequence
@@ -1240,16 +1240,16 @@ gRunpaJoEvents1:
 	.4byte FieldScene_RunActorTwentyOneSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002449
+	.4byte MsgRunpaWhoFoughtDonpa
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000244a
+	.4byte MsgRunpaWifeSeeksDodonpa
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000244b
+	.4byte MsgRunpaKareiBuysDrink
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000244c
+	.4byte MsgRunpaHammetKeepsEarnings
 	.4byte 0x00008d15
 	.4byte 0xffff0014
 	.4byte FinishActor20SceneSequence
@@ -1395,19 +1395,19 @@ gRunpaJoEvents2:
 	.4byte ConfigureSceneActor18
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x0000245c
+	.4byte MsgRunpaChildMustGrowUp
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x0000245d
+	.4byte MsgRunpaPapaWatchesLadies
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x0000245e
+	.4byte MsgRunpaChildTooResponsible
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0000242c
+	.4byte MsgRunpaDonpaExhausted
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x0000242d
+	.4byte MsgRunpaWomenWantHome
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte ConfigureSceneActor12Variant
@@ -1428,31 +1428,31 @@ gRunpaJoEvents2:
 	.4byte ConfigureSceneActor26
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000245f
+	.4byte MsgRunpaDonpappaSuccessor
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002460
+	.4byte MsgRunpaDonpappaProtectsFortress
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002461
+	.4byte MsgRunpaDaughterWillNotMarryPapa
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002462
+	.4byte MsgRunpaDonpappaJudges
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002436
+	.4byte MsgRunpaFearWithoutDonpa
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002437
+	.4byte MsgRunpaHopeDonpaRecovers
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002442
+	.4byte MsgRunpaShouldNotHaveFought
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002443
+	.4byte MsgRunpaHammetInCave
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002444
+	.4byte MsgRunpaHiddenDoorSwitch
 	.4byte 0x00008d15
 	.4byte 0xffff0018
 	.4byte SelectActor24SceneVariant
@@ -1573,16 +1573,16 @@ gRunpaJoEventsOther:
 	.4byte PlayStoryScene
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000256a
+	.4byte MsgRunpaHammetStillInside
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000256b
+	.4byte MsgRunpaDodonpaSecretlyInside
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000256c
+	.4byte MsgRunpaWrongTurnOver
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000256d
+	.4byte MsgRunpaCantBelieveWhen
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte ConfigureActor13Interaction

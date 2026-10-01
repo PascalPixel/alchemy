@@ -4,6 +4,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
+TEXT_MESSAGE_ENUM(MsgVinasuThereWordsCarvedIntoRelief);
 
 extern u8 *gActorEffectWork;
 
@@ -30,7 +32,6 @@ extern u8 MsgFieldVenusLighthouseWasAttackedBy[];
 extern u8 MsgVinasuHmmmWeCantPushBlock[];
 extern u8 MsgVinasuIveWaitedLongSeeIts[];
 extern u8 MsgVinasuStatueSpeaksRobinSoulYe[];
-extern u8 MsgVinasuThereWordsCarvedIntoRelief[];
 
 extern u8 MsgVinasuThoughtIdExploreAfterDoor[];
 
@@ -611,20 +612,40 @@ s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
     u8 *state;
     u8 old;
     s32 m;
+#if defined(TBS_EDITION_JA)
+    u32 step;
+#endif
 
     obj = Actor_Get(ACTOR_PARTY_LEADER);
     state = &obj->state;
     old = *state;
+#if defined(TBS_EDITION_JA)
+    m = obj->angle >> 12;
+    step = StagedActor_DirectionSteps[m];
+    vec.x = obj->x + (step & 0xffff0000);
+    vec.y = obj->y;
+    step <<= 16;
+    vec.z = obj->z + step;
+#else
     vec.x = (obj->x & 0xfff00000) + 0x80000;
     vec.y = obj->y;
     vec.z = (obj->z & 0xfff00000) + 0x80000;
     m = (obj->angle + 0x2000) & 0xc000;
     Vector_AddPolarOffset(0x100000, m, &vec);
+#endif
     if (Object_CheckMovementCollision(obj, &vec) != 1 && SceneData_FindSlotAtPosition(&vec, obj) == 0) {
+#if defined(TBS_EDITION_JA)
+        step = StagedActor_DirectionSteps[m];
+        vec.x = obj->x + ((step & 0xffff0000) << 1);
+        vec.y = obj->y;
+        step <<= 17;
+        vec.z = obj->z + step;
+#else
         vec.x = (obj->x & 0xfff00000) + 0x80000;
         vec.y = obj->y;
         vec.z = (obj->z & 0xfff00000) + 0x80000;
         Vector_AddPolarOffset(0x200000, (obj->angle + 0x2000) & 0xc000, &vec);
+#endif
         if (SceneData_FindSlotAtPosition(&vec, obj) == 0 && Object_CheckMovementCollision(obj, &vec) == 0) {
             Engine_EventBegin();
             Object_SetMode(obj, 6);
@@ -771,18 +792,24 @@ void FieldScene_SetFlag987AtActorTwelveTile(void)
     Engine_EventEnd();
 }
 
-#if defined(TBS_EDITION_EN)
-
-/* Only the English edition reads the words carved into the relief. */
+/* The relief chooses its line from the trigger in front. */
 void SceneDialogue_ReadRelief(void)
 {
+#if defined(TBS_EDITION_EN)
     Engine_EventBegin();
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_MessageShowCentered((s32)MsgVinasuThereWordsCarvedIntoRelief, 1);
     Engine_EventEnd();
-}
+#else
+    struct EventWork *work = gEventWork;
 
+    Engine_EventBegin();
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_MessageShowCentered(work->facing_trigger +
+        MsgVinasuThereWordsCarvedIntoRelief - 35, 1);
+    Engine_EventEnd();
 #endif
+}
 
 void SceneState_ApplySixRectsAfter161(void)
 {
@@ -791,7 +818,9 @@ void SceneState_ApplySixRectsAfter161(void)
     s32 a;
     s32 b;
 
+#if !defined(TBS_EDITION_JA)
     GameFlag_Clear(0x161);
+#endif
     x = 23;
     y = 8;
     Map_CopyCellAttributes(35, 8, 1, 3, x, y);
@@ -813,7 +842,9 @@ void SceneState_ApplySixRectsAfterFlag161(void)
     s32 a;
     s32 b;
 
+#if !defined(TBS_EDITION_JA)
     GameFlag_Set(0x161);
+#endif
     x = 23;
     y = 8;
     Map_CopyCellAttributes(36, 8, 1, 3, x, y);
@@ -1085,10 +1116,20 @@ void Scene_RunActorLeapSequence(void)
     s32 rec7;
     s32 record;
     s32 zero;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    u8 *state;
+#endif
 
+#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
     zero = 0;
+#endif
     rec7 = (s32)Object_GetById(0);
     Engine_EventBegin();
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    state = (u8 *)(rec7 + 85);
+    zero = 0;
+    *state = zero;
+#endif
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     record = (s32)Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -1120,7 +1161,15 @@ void Scene_RunActorLeapSequence(void)
         *(s32 *)(rec7 + 68) = zero;
         OverlayObject_SpawnWithMode14(*(s32 *)(rec7 + 8), 0, z, 223);
     }
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    /* FAKEMATCH: the existing map adapter keeps destination setup and
+       zero/state scheduling; the direct Engine call changes nine instruction
+       bytes in this complete localized leap. */
+    Map_CopyCellAttributes(33, 35, 7, 1, 33, 34);
+    *state = 3;
+#else
     Engine_MapCopyCellAttributes(34, 35, 5, 1, 34, 34);
+#endif
     OverlayObject_WaitUntilIdle(0);
     Engine_ActorSetChildValue(0, 15);
     Engine_EventRequestExit(20);

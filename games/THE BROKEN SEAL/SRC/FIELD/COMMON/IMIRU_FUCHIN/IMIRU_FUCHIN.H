@@ -11,12 +11,6 @@ enum {
     ITEM_DRAGONS_EYE = 230
 };
 
-enum TransitionMessage {
-    MSG_DRAGONS_FLAME_ILLUMINATES_PATH_TRUTH = 0x17e1,
-    MSG_SECRET_KI_SHALL_REVEALED_DISCIPLES = 0x17e2,
-    MSG_RAYS_LIGHT_GIVE_BIRTH_SHADOWS = 0x17e3
-};
-
 #define NULL ((void *)0)
 
 /* The engine's heap-allocation cache: each slot holds its kind's block. */

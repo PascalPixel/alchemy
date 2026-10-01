@@ -647,6 +647,21 @@ void FuneKanpan_RunDeckStateEvent(void)
     Event_SetValue170(*(s16 *)(((s32)p6 + 0x16c)));
 }
 
+#if !defined(TBS_EDITION_EN) && !defined(TBS_EDITION_JA)
+/* The localized deck entrance aligns a leader approaching from this sector
+ * before running the requested deck state event. */
+void FuneKanpan_RunDeckStateEventFromEntry(void)
+{
+    /* FAKEMATCH: the measured Call3 spelling sets actor and x before shifting z; a direct call changes six bytes of argument setup. */
+    if ((u16)(Object_GetById(ACTOR_PARTY_LEADER)->facing - 0x6001) <= 0x3ffe) {
+        Engine_EventBegin();
+        Call3(Engine_ActorWalkTo, ACTOR_PARTY_LEADER, 214, 664);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+        FuneKanpan_RunDeckStateEvent();
+    }
+}
+#endif
+
 /* Gated on scene condition 0x911; when set, configures actors 20, 22 and
  * 23 (position, pose, movement and sprite flags) and their attached
  * effects, then advances the shared scene phase. */

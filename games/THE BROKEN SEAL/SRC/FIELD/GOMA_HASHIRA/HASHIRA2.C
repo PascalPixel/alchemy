@@ -1,6 +1,15 @@
 #include "TYPES.H"
 #include "STAGED_ACTOR.H"
 #include "CALL.H"
+#include "TBS_EDITION.H"
+#if defined(TBS_EDITION_JA)
+#define FIELD_STAGED_ACTOR_IMPORTS
+#include "FIELD_EVENT.H"
+#include "FIXED_POINT_POSITION.H"
+
+s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
+void WaitFrames(s32 frames);
+#endif
 
 extern u8 GomaHashira_Extras[];
 void Engine_EventBegin(void);
@@ -16,18 +25,25 @@ void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
 s32 Engine_RandomNext(void);
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 void Engine_MapRenderWaitForValues(void);
+#if !defined(TBS_EDITION_JA)
 s32 Engine_GameFlagSet(s32 flag);
+#endif
 void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Audio_PlayCue(s32 cue);
+#if !defined(TBS_EDITION_JA)
 u8 *Object_GetById();
+#endif
 void ObjectGroup_ConfigureChildValue();
+#if !defined(TBS_EDITION_JA)
 void Engine_TaskAddCallback();
 void Engine_TaskRemoveCallback();
+#endif
 void Field_TryJumpForward(void);
 void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPrimarySequence(void);
 void FieldScene_RunPillarBurst(void);
 
+#if !defined(TBS_EDITION_JA)
 static __inline__ void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
 {
     /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
@@ -40,6 +56,7 @@ static __inline__ void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s
     /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
 }
+#endif
 
 void Engine_ActorFaceDirection();
 void Engine_ActorShowEmote();
@@ -215,7 +232,40 @@ void FieldScene_RunFourStepSequence(void)
 
 void FieldScene_TryJumpForward(void)
 {
+#if defined(TBS_EDITION_JA)
+    struct FieldActor *obj;
+    struct FixedPointPosition target;
+    struct FixedPointPosition *pos;
+    u8 *flags;
+    u8 saved;
+
+    obj = Object_GetById(0);
+    flags = &obj->motion_flags;
+    saved = *flags;
+    target.x = Object_GetById(0)->x.fixed - 0x200000;
+    pos = &target;
+    pos->y = Object_GetById(0)->y.fixed;
+    pos->z = Object_GetById(0)->z.fixed;
+    if (Object_CheckMovementCollision(obj, pos) == 0) {
+        Engine_EventBegin();
+        Object_SetMode(obj, 6);
+        WaitFrames(6);
+        Audio_PlayCue(152);
+        Object_SetMode(obj, 7);
+        obj->speed = 0x30000;
+        obj->acceleration = 0x20000;
+        obj->velocity_y = 0x40000;
+        *flags &= 0x7e;
+        Engine_ActorSetSpriteFlags(obj, 0);
+        Engine_ActorMoveToAndWait(0, *(s16 *)((u8 *)pos + 2), *(s16 *)((u8 *)pos + 10));
+        Object_SetMode(obj, 6);
+        Engine_ActorSetSpriteFlags(obj, 1);
+        *flags = saved;
+        Engine_EventEnd();
+    }
+#else
     Field_TryJumpForward();
+#endif
 }
 
 u8 *SceneData_GetExtraTable(void)

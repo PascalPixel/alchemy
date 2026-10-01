@@ -35,10 +35,26 @@ gTitleEvents:
 gTitleVramBlock:
 	.2byte 0xffff
 	.section .bss,"aw",%nobits
+	.ifdef TBS_EDITION_EN
 	.space 58
+	.else
+	.ifdef TBS_EDITION_JA
+	.space 58
+	.else
+	.space 54
+	.endif
+	.endif
 	.global gTitleRevealFrame
 gTitleRevealFrame:
 	.space 20
 	.global gTitleSprites
 gTitleSprites:
+	.ifdef TBS_EDITION_EN
 	.space 216
+	.else
+	.ifdef TBS_EDITION_JA
+	.space 216
+	.else
+	.space 1440
+	.endif
+	.endif

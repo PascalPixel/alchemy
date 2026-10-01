@@ -609,7 +609,20 @@ Data_0200b108:
 	.4byte 0x00a01002
 	.4byte 0x00b0501c
 	.4byte 0x03214008
+	@ The late localizations use a different final first-visit script command.
+	.ifdef TBS_EDITION_FR
+	.4byte 0x0280000c
+	.else
+	.ifdef TBS_EDITION_ES
+	.4byte 0x0280000c
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte 0x0280000c
+	.else
 	.4byte 0x0280101e
+	.endif
+	.endif
+	.endif
 	.4byte 0x000001ff
 	.global Data_0200b144
 Data_0200b144:
@@ -822,9 +835,25 @@ Data_0200b380:
 	.4byte 0x00010000
 	.4byte 0xffff0074
 	.4byte 0x00000001
+	.ifdef TBS_EDITION_ES
+	.4byte 0x00c60000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte 0x00c60000
+	.else
 	.4byte 0x00cc0000
+	.endif
+	.endif
 	.4byte 0x00000000
+	.ifdef TBS_EDITION_ES
+	.4byte 0x030b0000
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte 0x030b0000
+	.else
 	.4byte 0x030f0000
+	.endif
+	.endif
 	.4byte 0x0001f000
 	.4byte 0xffff0075
 	.4byte 0x00000001
@@ -1134,10 +1163,10 @@ Data_0200b7d0:
 Data_0200b938:
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00000f3a
+	.4byte MsgHaidiaQuietDay
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00000f3b
+	.4byte MsgHaidiaSukuretaHadVisitors
 	.4byte 0x00000000
 	.4byte 0xffff0017
 	.4byte Villager_AskAboutMeditation
@@ -1146,25 +1175,25 @@ Data_0200b938:
 	.4byte Villager_RecallThreeYearsAgo
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00000f42
+	.4byte MsgHaidiaChosenPeople
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00000f43
+	.4byte MsgHaidiaProudOfAdeptGrandfather
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Villager_AskAboutTheTravelers
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00000f47
+	.4byte MsgHaidiaPracticePsynergy
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte Villager_ShowOffPsynergy
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00000f4c
+	.4byte MsgHaidiaWalkToRecoverPsynergy
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00000f7b
+	.4byte MsgHaidiaFoodStoredForWinter
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FieldScene_RunSupplementalSequenceOne
@@ -1214,13 +1243,13 @@ Data_0200ba64:
 	.4byte SceneDialogue_RunFlagGatedMessageStep
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00000eab
+	.4byte MsgHaidiaOldWomanCannotUsePsynergy
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00000eac
+	.4byte MsgHaidiaExhaustedFromFallingRocks
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00000ead
+	.4byte MsgHaidiaFelixFellInRiver
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte FieldScene_RunMiddleAuxiliarySequence
@@ -1229,7 +1258,7 @@ Data_0200ba64:
 	.4byte Villager_PointTheWay
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00000ec5
+	.4byte MsgHaidiaRaceAgainstTime
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FieldScene_RunSupplementalSequenceOne
@@ -1269,70 +1298,70 @@ Data_0200bb30:
 Data_0200bb3c:
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000118d
+	.4byte MsgHaidiaTremorsSettled
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000118e
+	.4byte MsgHaidiaRoadToKuupuappu
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x0000118f
+	.4byte MsgHaidiaRoadToGomaRange
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001190
+	.4byte MsgHaidiaPsynergyStonePowder
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunFlagGatedMessageStep
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001194
+	.4byte MsgHaidiaRunpaFoundedNorthernTown
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001195
+	.4byte MsgHaidiaDoraHasBeenCrying
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001196
+	.4byte MsgHaidiaStonesScatteredByEruption
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte Villager_ShowOffPsynergy
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0000119c
+	.4byte MsgHaidiaReplenishPsynergyBeforeDungeon
 	.4byte 0x00000000
 	.4byte 0xffff001a
 	.4byte Scene_StoneFellOnTheHut
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000011ce
+	.4byte MsgHaidiaWorriedAboutAnotherEruption
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000011cf
+	.4byte MsgHaidiaKuupuappuUndergroundPath
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x000011d0
+	.4byte MsgHaidiaGomaWinterCold
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x000011d1
+	.4byte MsgHaidiaStonesPowerAleph
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000011d2
+	.4byte MsgHaidiaProofOfWiseOne
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000011d3
+	.4byte MsgHaidiaRunpaThievesChanged
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000011d4
+	.4byte MsgHaidiaDoraMustBeLonely
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000011d5
+	.4byte MsgHaidiaLuckyToFindPsynergyStones
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000011d6
+	.4byte MsgHaidiaComeBackAlive
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000011d7
+	.4byte MsgHaidiaRecoverPsynergyByWalking
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x000011f4
+	.4byte MsgHaidiaStonesReplenishPsynergy
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FieldScene_RunSupplementalSequenceOne
@@ -1382,70 +1411,70 @@ Data_0200bcec:
 	.4byte Villager_WelcomeBack
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001be5
+	.4byte MsgHaidiaCameBackSooner
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001be6
+	.4byte MsgHaidiaMadeFriendsOnJourney
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001be7
+	.4byte MsgHaidiaRiverHeatedAndCooled
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte SceneDialogue_RunFlagGatedMessageStep
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001bed
+	.4byte MsgHaidiaReturnHowHaveYouBeen
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001bee
+	.4byte MsgHaidiaWelcomeHome
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001bef
+	.4byte MsgHaidiaWantToMakeFriends
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001bf0
+	.4byte MsgHaidiaEruptionMadeMess
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001bf1
+	.4byte MsgHaidiaNorthwestCrack
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte Scene_PsynergyStoneIsGone
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001bf2
+	.4byte MsgHaidiaSurprisedByEarlyReturn
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001bf3
+	.4byte MsgHaidiaRobinHasGrown
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001bf4
+	.4byte MsgHaidiaNewFriendsAreAdepts
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001bf5
+	.4byte MsgHaidiaEruptionHeatsRiver
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001bf6
+	.4byte MsgHaidiaStrangeEventsElsewhere
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001bf7
+	.4byte MsgHaidiaWhenDidYouReturn
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001bf8
+	.4byte MsgHaidiaPlayTogetherAgain
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001bf9
+	.4byte MsgHaidiaWantToJourney
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001bfa
+	.4byte MsgHaidiaLavaBurntOtherSide
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001bfb
+	.4byte MsgHaidiaCrackWidening
 	.4byte 0x00008d15
 	.4byte 0x03060415
 	.4byte Scene_PsynergyStoneIsGone
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001ca5
+	.4byte MsgHaidiaEruptionTooMuchForPeople
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FieldScene_RunSupplementalSequenceOne

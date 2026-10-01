@@ -715,7 +715,12 @@ gMogoruMoriPlacements3:
 	.4byte 0x00000000
 	.4byte 0x00500000
 	.4byte 0x00024000
-	.4byte 0x030b00bf
+	.2byte 0x00bf
+	.ifdef TBS_EDITION_EN
+	.2byte 0x030b
+	.else
+	.2byte 0xffff
+	.endif
 	.4byte .L_0200b084
 	.4byte 0x02e80000
 	.4byte 0x00000000
@@ -739,7 +744,12 @@ gMogoruMoriPlacements3:
 	.4byte 0x00000000
 	.4byte 0x00500000
 	.4byte 0x01024000
-	.4byte 0x030b0016
+	.2byte 0x0016
+	.ifdef TBS_EDITION_JA
+	.2byte 0xffff
+	.else
+	.2byte 0x030b
+	.endif
 	.4byte .L_0200b0bc
 	.4byte 0x02e80000
 	.4byte 0x00000000

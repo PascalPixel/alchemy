@@ -549,55 +549,72 @@ gValeHouseLateEvents:
 	.4byte FieldScene_RunIndexedStep8
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x004029c4
+	.2byte MsgHaidiaBooksAboutContinents
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029c5
+	.2byte MsgHaidiaBookLawsOfHaidia
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00ca
-	.4byte 0x004029c6
+	.2byte MsgHaidiaBookPowerOfNature
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cb
-	.4byte 0x004029c7
+	.2byte MsgHaidiaBookPsynergyStone
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cc
-	.4byte 0x004029c8
+	.2byte MsgHaidiaAuntNotebook
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cd
-	.4byte 0x004029c9
+	.2byte MsgHaidiaBookMakingGreatVillage
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x004029ca
+	.2byte MsgHaidiaNotebookStudyOfAlchemy
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x004029cb
+	.2byte MsgHaidiaBookAncientLemurians
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d0
-	.4byte 0x004029cc
+	.2byte MsgHaidiaBookFountainOfTolbi
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d1
-	.4byte 0x004029cd
+	.2byte MsgHaidiaEncyclopediaOfAlchemy
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d2
-	.4byte 0x004029ce
+	.2byte MsgHaidiaBookLegendOfAleph
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00d3
-	.4byte 0x004029cf
+	.2byte MsgHaidiaBookBeingAdept
+	.2byte 0x40
 	.4byte 0x00000033
 	.4byte 0xffff0064
-	.4byte 0x0040094b
+	.2byte MsgKuupuappuButDidntFindAnything
+	.2byte 0x40
 	.4byte 0x00000023
 	.4byte 0xffff0065
-	.4byte 0x0040094a
+	.2byte MsgHaidiaJarEmpty
+	.2byte 0x40
 	.4byte 0x00000023
 	.4byte 0xffff0066
-	.4byte 0x0040094a
+	.2byte MsgHaidiaJarEmpty
+	.2byte 0x40
 	.4byte 0x00000023
 	.4byte 0xffff0067
-	.4byte 0x0040094a
+	.2byte MsgHaidiaJarEmpty
+	.2byte 0x40
 	.4byte 0x00000023
 	.4byte 0xffff0068
-	.4byte 0x0040094a
+	.2byte MsgHaidiaJarEmpty
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -605,37 +622,37 @@ gValeHouseLateEvents:
 gValeHouseEvents:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00000f5f
+	.4byte MsgHaidiaAtTheVeryLeastVisitorsShould
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00000f60
+	.4byte MsgHaidiaIHearKradenHasGuestsAgain
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00000f61
+	.4byte MsgHaidiaGeraldHasGrownQuiteStrongIn
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00000f62
+	.4byte MsgHaidiaYouAndGeraldAreOlderNow
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00000f6a
+	.4byte MsgHaidiaMyGranddaughterJasminIsFinallyHappy
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00000f6b
+	.4byte MsgHaidiaIHopeYouTwoWontBe
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00000f6c
+	.4byte MsgHaidiaJasminIsTheSpittingImageOf
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Villager_AskWhySukuretaCame
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00000f70
+	.4byte MsgHaidiaIfThereAreVisitorsInTown
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00000f71
+	.4byte MsgHaidiaDoYouEverDreamOfSeeing
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00000f72
+	.4byte MsgHaidiaFewPeopleOutsideOfValePossess
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte Villager_PlanToScareVisitors
@@ -674,22 +691,28 @@ gValeHouseEvents:
 	.4byte FieldScene_RunIndexedStep8
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x004029c4
+	.2byte MsgHaidiaBooksAboutContinents
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029c5
+	.2byte MsgHaidiaBookLawsOfHaidia
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00ca
-	.4byte 0x004029c6
+	.2byte MsgHaidiaBookPowerOfNature
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cb
-	.4byte 0x004029c7
+	.2byte MsgHaidiaBookPsynergyStone
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cc
-	.4byte 0x004029c8
+	.2byte MsgHaidiaAuntNotebook
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cd
-	.4byte 0x004029c9
+	.2byte MsgHaidiaBookMakingGreatVillage
+	.2byte 0x40
 	.4byte 0x00000033
 	.4byte 0x0f420064
 	.4byte 0x001000bb
@@ -712,40 +735,40 @@ gValeHouseEvents:
 gValeHouseEventsAfterLeaving:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000011b0
+	.4byte MsgHaidiaRobinPleaseTakeCareOfMy
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000011b1
+	.4byte MsgHaidiaReceivingAQuestDirectlyFromThe
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000011b2
+	.4byte MsgHaidiaImProudOfYouGeraldMy
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000011b3
+	.4byte MsgHaidiaAsMothersDoraAndIWill
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000011ba
+	.4byte MsgHaidiaIHeardThatJasminBrotherGarsia
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000011bb
+	.4byte MsgHaidiaPleaseReturnMyPreciousGranddaughterJasmin
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000011bc
+	.4byte MsgHaidiaAfterJasminWasTakenGrandmotherGrew
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000011bd
+	.4byte MsgHaidiaItsBecauseKradenWasStudyingAlchemy
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Villager_AskAboutStrangePowers
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000011c1
+	.4byte MsgHaidiaImSoJealousOfYouBeing
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000011c2
+	.4byte MsgHaidiaOnceYouLeaveTownTakeCare
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000011c3
+	.4byte MsgHaidiaIHadNoIdeaThatSuch
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte FieldScene_RunByActorDirectionAndFlags
@@ -757,49 +780,49 @@ gValeHouseEventsAfterLeaving:
 	.4byte FieldScene_RunScene376_020005d4
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000011db
+	.4byte MsgHaidiaRobinYoureGoingOnADifficult
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x000011dc
+	.4byte MsgHaidiaIfYouFaceAnyHardshipIn
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000011dd
+	.4byte MsgHaidiaSoIfThatWasGarsiaWho
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000011e3
+	.4byte MsgHaidiaItsHardLettingMyPreciousGerald
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000011e4
+	.4byte MsgHaidiaTheWiseOneChoseGeraldHimself
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000011e5
+	.4byte MsgHaidiaOnceGeraldLeavesIWontBe
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000011e6
+	.4byte MsgHaidiaIAmConcernedForGeraldBut
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000011e9
+	.4byte MsgHaidiaGarsiaInheritedHisFathersSkillWith
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000011ea
+	.4byte MsgHaidiaJasminAnytimeYouFaceDangerJust
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000011eb
+	.4byte MsgHaidiaWhyWouldGarsiaTakeHisSister
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000011ec
+	.4byte MsgHaidiaWeAlmostLostTheTownOver
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000011ed
+	.4byte MsgHaidiaIdLikeToBelieveThatOnly
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000011ee
+	.4byte MsgHaidiaIfOnlyIdGoneToSol
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000011ef
+	.4byte MsgHaidiaValesLawsStateThatYouCannot
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000011f0
+	.4byte MsgHaidiaIWishIWereTheOne
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte FieldScene_RunIndexedStep1
@@ -841,22 +864,28 @@ gValeHouseEventsAfterLeaving:
 	.4byte 0x00200003
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x004029c4
+	.2byte MsgHaidiaBooksAboutContinents
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029c5
+	.2byte MsgHaidiaBookLawsOfHaidia
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00ca
-	.4byte 0x004029c6
+	.2byte MsgHaidiaBookPowerOfNature
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cb
-	.4byte 0x004029c7
+	.2byte MsgHaidiaBookPsynergyStone
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cc
-	.4byte 0x004029c8
+	.2byte MsgHaidiaAuntNotebook
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cd
-	.4byte 0x004029c9
+	.2byte MsgHaidiaBookMakingGreatVillage
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -864,10 +893,10 @@ gValeHouseEventsAfterLeaving:
 gValeHouseReturnEvents:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001c3b
+	.4byte MsgHaidiaMaryIsSuchANiceGirl
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001c3c
+	.4byte MsgHaidiaThatIvanSeemsToBeA
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Villager_AskAboutDora
@@ -876,28 +905,28 @@ gValeHouseReturnEvents:
 	.4byte HaidiaHeya_TalkHopeDidntGetSick
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001c7c
+	.4byte MsgHaidiaOhSoYouStillHaventRescued
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001c7d
+	.4byte MsgHaidiaIGetOverColdsQuicklyBut
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001c7e
+	.4byte MsgHaidiaAColdIsGoingAroundI
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001c82
+	.4byte MsgHaidiaWhatWasThatAlchemyThatKraden
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001c83
+	.4byte MsgHaidiaEarthquakesStillStrikeOnceInA
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001c86
+	.4byte MsgHaidiaTheMountainIsApparentlyStillCasting
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001c88
+	.4byte MsgHaidiaTheNorthwestFaceOfMtAleph
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001c8a
+	.4byte MsgHaidiaTheGreatHealersAreTooAfraid
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte FieldScene_RunByActorDirectionAndFlags
@@ -909,52 +938,52 @@ gValeHouseReturnEvents:
 	.4byte FieldScene_RunScene376_020005d4
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001c41
+	.4byte MsgHaidiaItMustBeNiceToBe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001c42
+	.4byte MsgHaidiaHisNewFriendsAreAllSo
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001c43
+	.4byte MsgHaidiaItWasntTooSmartToTalk
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001c44
+	.4byte MsgHaidiaGeraldSeemsToHaveGrownUp
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001c0d
+	.4byte MsgHaidiaWeveSeenManyMonstersLatelyAnd
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001c0e
+	.4byte MsgHaidiaIWishICouldLearnThe
 	.4byte 0x00008d15
 	.4byte 0x081b0014
-	.4byte 0x00001c12
+	.4byte MsgHaidiaWhatHappenedToJasminHaventYou
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001c0f
+	.4byte MsgHaidiaIGaveHimAFarewellGift
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001c7f
+	.4byte MsgHaidiaWillIEverSeeJasminAnd
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001c80
+	.4byte MsgHaidiaDoraSaysItsJustACold
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001c81
+	.4byte MsgHaidiaIKnowThatThereAreAlways
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001c84
+	.4byte MsgHaidiaEvenIfTheEruptionHadNo
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001c85
+	.4byte MsgHaidiaEveryTimeTheGroundShakesI
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001c87
+	.4byte MsgHaidiaIfThePsynergyStonesInThe
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001c89
+	.4byte MsgHaidiaTheySayTheLavaLookedLike
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001c8b
+	.4byte MsgHaidiaTheHealersAreSupposedToGuard
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte FieldScene_RunIndexedStep1
@@ -996,22 +1025,28 @@ gValeHouseReturnEvents:
 	.4byte 0x00200003
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x004029c4
+	.2byte MsgHaidiaBooksAboutContinents
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029c5
+	.2byte MsgHaidiaBookLawsOfHaidia
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00ca
-	.4byte 0x004029c6
+	.2byte MsgHaidiaBookPowerOfNature
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cb
-	.4byte 0x004029c7
+	.2byte MsgHaidiaBookPsynergyStone
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cc
-	.4byte 0x004029c8
+	.2byte MsgHaidiaAuntNotebook
+	.2byte 0x40
 	.4byte 0x0000c4f3
 	.4byte 0xffff00cd
-	.4byte 0x004029c9
+	.2byte MsgHaidiaBookMakingGreatVillage
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

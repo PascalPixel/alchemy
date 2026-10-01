@@ -2,6 +2,10 @@
 #include "HAIDIA.H"
 #include "MAP_SCROLL.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
+
+TEXT_MESSAGE_ENUM(MsgHaidiaWhysEveryoneHanging);
+TEXT_MESSAGE_ENUM(MsgHaidiaFarewell);
 
 extern u8 MsgHaidiaADifficultTimeThreeYears[];
 extern u8 MsgHaidiaCheckedThePsynergyStone[];
@@ -645,10 +649,16 @@ void FieldScene_RunElderAidEvent(void)
         Call3(Engine_ActorFaceDirection, 18, 0xf000, 10);
         Engine_ActorSetAnimationAndWait(19, 3);
         Call3(Engine_EventShowMessageAndWait, 0x4013, 0, 10);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+        Engine_ActorSetSpritePriority(18, 1);
+#endif
         Call3(Engine_ActorSetSpeed, 17, 0x19999, 0xcccc);
         Call3(Engine_ActorSetSpeed, 18, 0x19999, 0xcccc);
         Engine_ActorEnableActionCallback(17, (s32)Data_0200aef0);
         Engine_EventWait(20);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+        ((struct FieldActor *)Object_GetById(18))->priority_flags |= 1;
+#endif
         Engine_ActorEnableActionCallback(18, (s32)Data_0200aef0);
         Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
         Call3(Engine_ActorFaceDirection, 25, 0xc000, 60);
@@ -1036,10 +1046,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventWait(80);
     Call3(Engine_ActorShowEmote, 12, 0x101, 40);
     SceneActor_SetPairZeroAndValue(12, 0x7000, 20);
-    /* FAKEMATCH: MsgHaidiaWhysEveryoneHanging (TEXT/EN.PO, 04602) must
-       stay immediate here. A symbol changes the opening stack-argument
-       allocation; the named-id attempt remains in recon/resource_374. */
-    Call1(Engine_EventSetMessage, 0x11fa);
+    Call1(Engine_EventSetMessage, MsgHaidiaWhysEveryoneHanging);
     Event_SayThenWait(12, 10);
     Call3(Engine_ActorShowEmote, 11, 0x102, 20);
     SceneActor_SetPairZeroAndValue(11, 0x1000, 10);
@@ -1289,10 +1296,7 @@ void Scene_RunExtendedActorSequence(void)
     ObjectMotion_Launch(22, 4, 0);
     ObjectMotion_Launch(25, 4, 0);
     ObjectMotion_Launch(28, 4, 0);
-    /* FAKEMATCH: MsgHaidiaFarewell (TEXT/EN.PO, 04628) as a symbol
-       changes the closing actor-priority updates from the shared r5 value
-       to two immediate loads; recon/resource_374 keeps the named-id draft. */
-    Engine_MessageShowCentered(0x1214, 1);
+    Engine_MessageShowCentered(MsgHaidiaFarewell, 1);
     v5 = 1;
     Engine_EventWait(80);
     Object_GetById(0)->priority_flags |= v5;
@@ -1507,7 +1511,59 @@ void SceneState_SetValues352_365_2116_2117_40(void)
 {
     GameFlag_Set(352);
     GameFlag_Set(0x16d);
+#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    GameFlag_Set(0x830);
+    GameFlag_Set(0x831);
+    GameFlag_Set(0x832);
+    GameFlag_Set(0x833);
+    GameFlag_Set(0x835);
+    GameFlag_Set(0x836);
+    GameFlag_Set(0x837);
+    GameFlag_Set(0x838);
+    GameFlag_Set(0x839);
+    GameFlag_Set(0x83a);
+    GameFlag_Set(0x840);
+    GameFlag_Set(0x841);
+    GameFlag_Set(0x842);
+    GameFlag_Set(0x806);
+    GameFlag_Set(0x807);
+    GameFlag_Set(0x808);
+    GameFlag_Set(0x800);
+    GameFlag_Set(0x801);
+    GameFlag_Set(0x823);
+    GameFlag_Set(0x802);
+    GameFlag_Set(0xf01);
+    GameFlag_Set(0x81a);
+    GameFlag_Set(0x804);
+    GameFlag_Set(0xf02);
+    GameFlag_Set(0x821);
+    GameFlag_Set(0x825);
+    GameFlag_Set(0x809);
+    GameFlag_Set(0x80a);
+    GameFlag_Set(0x818);
+    GameFlag_Set(0x80b);
+    GameFlag_Set(0x80c);
+    GameFlag_Set(0x80d);
+    GameFlag_Set(0x80e);
+    GameFlag_Set(0x80f);
+    GameFlag_Set(0x813);
+    GameFlag_Set(0x810);
+    GameFlag_Set(0x811);
+    GameFlag_Set(0x819);
+    GameFlag_Set(0x83b);
+    GameFlag_Set(0x83c);
+    GameFlag_Set(0x83d);
+    GameFlag_Set(0x83e);
+    GameFlag_Set(0x83f);
+    GameFlag_Set(0x814);
+    GameFlag_Set(0x879);
+    GameFlag_Set(0x815);
+    GameFlag_Set(0x81b);
+    GameFlag_Set(0x81d);
+    GameFlag_Set(0x87a);
+#else
     GameFlag_Set(0x844);
     GameFlag_Set(0x845);
+#endif
     Engine_EventRequestExit(40);
 }

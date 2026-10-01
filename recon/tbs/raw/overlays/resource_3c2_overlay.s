@@ -319,61 +319,63 @@ gSuharaHeyaEvents:
 	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025c7
+	.4byte MsgSuharaHeyaMyFatherLovesPeopleSoMuch
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000025c8
+	.4byte MsgSuharaHeyaLetMeKnowIfYouHave
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000025c9
+	.4byte MsgSuharaHeyaWhenISeePeopleInTrouble
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000025ca
+	.4byte MsgSuharaHeyaIWantToHelpPeopleSo
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000025cb
+	.4byte MsgSuharaHeyaTolbiProbablyIgnoresSmallVillagesLike
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000025cc
+	.4byte MsgSuharaHeyaIfYouHeadEastAcrossSuhalla
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000025cd
+	.4byte MsgSuharaHeyaSuhallaIsADesertVillageI
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000025ce
+	.4byte MsgSuharaHeyaGoodThingItsNotEasyTo
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Dialogue_HandleFacingChoice
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000025d0
+	.4byte MsgSuharaHeyaAVillageThisSmallCantSupport
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Dialogue_HandleFacingBranch
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000025d2
+	.4byte MsgSuharaHeyaIWonderIfAnyCustomersCan
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000025d3
+	.4byte MsgSuharaHeyaOnceTheFestivalEndsTheTravelers
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000025d4
+	.4byte MsgSuharaHeyaForSomeReasonAnyoneWhoGets
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Dialogue_HandleFacingAction
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000025d6
+	.4byte MsgSuharaHeyaTheHolyChildActorWillSave
 	.4byte 0x00000173
 	.4byte 0x0fb00064
 	.4byte 0x001000e2
 	.4byte 0x00000173
 	.4byte 0xffff0064
-	.4byte 0x004029bd
+	.2byte MsgSuharaHeyaItsACactusSteakIWonder
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff0065
-	.4byte 0x004029bc
+	.2byte MsgSuharaHeyaHesMakingMulukhiyaSoupItTastes
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -411,91 +413,93 @@ gSuharaHeyaEvents96f:
 	.4byte State_ApplyCounter16cThenCall7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025e9
+	.4byte MsgSuharaHeyaTheWoundedAreSleepingSoDont
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000025ea
+	.4byte MsgSuharaHeyaIAmAmazedTheseSoldiersSurvived
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002612
+	.4byte MsgSuharaHeyaWhyWereTheyHeadedTowardEastern
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002613
+	.4byte MsgSuharaHeyaWhereIsActorWhatHasHappened
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002614
+	.4byte MsgSuharaHeyaTheseOldSoldiersMustRestUntil
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002615
+	.4byte MsgSuharaHeyaWhoCouldHaveDoneThisTo
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002616
+	.4byte MsgSuharaHeyaAColumnOfWaterShotUp
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002617
+	.4byte MsgSuharaHeyaActorWasNotFarBehindUs
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002618
+	.4byte MsgSuharaHeyaDoNotApproachTheLargeCyclones
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002619
+	.4byte MsgSuharaHeyaDeathStormsHuhThereWasA
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000261a
+	.4byte MsgSuharaHeyaOnceYouGetSweptUpIn
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000261b
+	.4byte MsgSuharaHeyaYeWhoSeekSomethingAboutEyes
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Dialogue_HandleFacingChoice
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000261f
+	.4byte MsgSuharaHeyaWeveHadMoreCustomersLatelyBecause
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Dialogue_HandleFacingBranch
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002621
+	.4byte MsgSuharaHeyaItWillTakeTimeForThe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002627
+	.4byte MsgSuharaHeyaTheSandstormsAreSendingCustomersOur
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002628
+	.4byte MsgSuharaHeyaPleaseGreatSandstormsSendUsMore
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002622
+	.4byte MsgSuharaHeyaWeWentIntoTheSuhallaTo
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002623
+	.4byte MsgSuharaHeyaTheSandstormsAreSoBadWeve
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte SuharaHeya_AskBlownHere
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002629
+	.4byte MsgSuharaHeyaEvenIfWeCantGoIt
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000262a
+	.4byte MsgSuharaHeyaSoShallWeGiveUpOn
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000262b
+	.4byte MsgSuharaHeyaWhenThatCycloneThrewUsInto
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Dialogue_HandleFacingAction
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000262d
+	.4byte MsgSuharaHeyaIShudderToThinkSandstormsWill
 	.4byte 0x00000173
 	.4byte 0x0fb00064
 	.4byte 0x001000e2
 	.4byte 0x00000173
 	.4byte 0xffff0064
-	.4byte 0x004029bd
+	.2byte MsgSuharaHeyaItsACactusSteakIWonder
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff0065
-	.4byte 0x004029bc
+	.2byte MsgSuharaHeyaHesMakingMulukhiyaSoupItTastes
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

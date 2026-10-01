@@ -3,6 +3,8 @@
 #include "FIELD_SCENE.H"
 #include "PROBE.H"
 
+extern u8 MsgMakyuriHeyaStrangeForcesBlockWay[];
+
 extern const struct SceneEntrance gMakyuriHeyaEntrances4[];
 extern const struct SceneEntrance gMakyuriHeyaEntrances3[];
 extern const struct SceneEntrance gMakyuriHeyaEntrances2[];
@@ -92,7 +94,7 @@ void FieldScene_CallHelper6364(void)
 void SceneDialogue_RunLine1637(void)
 {
     Engine_EventBegin();
-    Engine_MessageShowCentered(MSG_STRANGE_FORCES_AT_WORK_SEEMS, 1);
+    Engine_MessageShowCentered((s32)MsgMakyuriHeyaStrangeForcesBlockWay, 1);
     Engine_EventEnd();
 }
 

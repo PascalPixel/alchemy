@@ -636,12 +636,6 @@ Enemy_ElementPresetTable:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008926c, 0x00000d94
-	.section .rom.0008a8ec, "ax"
-	.global Game_ResetForNewGame
-	.type Game_ResetForNewGame, %function
-	.thumb_func
-Game_ResetForNewGame:
-	.incbin "baserom.gba", 0x0008a8ec, 0x00000264
 	.section .rom.0008b3f2, "ax"
 	.incbin "baserom.gba", 0x0008b3f2, 0x00000002
 	.section .rom.0008b3f4, "ax"

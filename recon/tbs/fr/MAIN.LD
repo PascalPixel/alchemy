@@ -369,7 +369,7 @@
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/OBJECT.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SELECT_GROUP_ENTRY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.0008f8ec)
+    "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SCENERUN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOAD_RESOURCE_GROUP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT24.o"(.text)

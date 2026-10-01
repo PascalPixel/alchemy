@@ -713,7 +713,7 @@
         BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
         "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
         "*/recon/tbs/raw/080b5534.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080b56e0.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/DEBUG/BATTLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT4.o"(.text)
         "*/recon/tbs/raw/080b5b16.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY2.o"(.text)

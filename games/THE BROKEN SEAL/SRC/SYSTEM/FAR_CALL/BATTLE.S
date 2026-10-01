@@ -11,7 +11,7 @@ FarCall_BattleTable:
 	.global Func_080b5000
 	.thumb_func
 Func_080b5000:
-	overlay_veneer Unnamed_080b56e0
+	overlay_veneer DebugBattle_RunMenu
 	overlay_veneer BattlePres_RunMosaicFadeOut
 	.global BattleActor_SpawnObjectsForListFar
 	.global Func_080b5010

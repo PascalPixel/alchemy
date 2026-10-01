@@ -1147,13 +1147,11 @@ Inn_PriceMultipliers:
 	.section .rom.000ac218, "ax"
 	.incbin "baserom.gba", 0x000ac218, 0x00000040
 	.section .rom.000ac534, "ax"
-	.incbin "baserom.gba", 0x000ac534, 0x000001ac
-	.section .rom.000ac6e0, "ax"
-	.global Unnamed_080b56e0
-	.type Unnamed_080b56e0, %function
+	.global DebugBattle_ViewMessages
+	.type DebugBattle_ViewMessages, %function
 	.thumb_func
-Unnamed_080b56e0:
-	.incbin "baserom.gba", 0x000ac6e0, 0x00000184
+DebugBattle_ViewMessages:
+	.incbin "baserom.gba", 0x000ac534, 0x000001ac
 	.section .rom.000ad3c8, "ax"
 	.global Battle_RunEncounter
 	.type Battle_RunEncounter, %function

@@ -112,7 +112,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         s32 mag;
         s32 ang;
 
-        mag = Random16() & 0x1FF;
+        mag = 0x1FF;
+        mag &= Random16();
         ang = Random16() & 0xFFFF;
         spark->x = origin;
         spark->y = 176 << 15;
@@ -164,8 +165,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                 s32 y;
 
                 x = HI(flash->x) + half;
-                life = flash->variant;
                 y = HI(flash->y);
+                life = flash->variant;
                 if ((u32)life <= 17) {
                     routine[0](canvas,
                         (u8 *)work
@@ -233,12 +234,14 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
 
         /* The same guard again: a 34x104 strip wrapping through 104 rows. */
         if ((u32)step <= 31) {
-            s32 width = 34;
+            s32 phase = frame * 16;
             s32 x = half - 17;
+            s32 width = 34;
             DrawRectangle blit = routine[0];
-            s32 size = (frame * 16 - 256) % 104;
+            s32 high = 104;
+            s32 size = (phase - 256) % high;
 
-            blit(canvas, work, x, 4 - size, width, 104);
+            blit(canvas, work, x, 4 - size, width, high);
             blit(canvas, work, x, 108 - size, width, size);
         }
 
@@ -341,8 +344,10 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
 
                             size = spark->variant / 5 + 1;
                             cell = (u8 *)sheet + ParticleStreams_CellOffsets[size - 1];
-                            x = (x >> 16) - size / 2;
-                            y = (y >> 16) - size;
+                            x >>= 16;
+                            y >>= 16;
+                            x -= size / 2;
+                            y -= size;
                             routine[0](canvas, cell, x, y, size, size * 2);
                         }
                     }

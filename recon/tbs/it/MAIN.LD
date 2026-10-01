@@ -733,6 +733,7 @@
     "*/recon/tbs/it/rom.o"(.rom.000cf8e0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT6.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000d05fc)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STARS.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000d1714)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_ANIMATION_MODE1.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000d2464)

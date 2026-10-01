@@ -1419,7 +1419,7 @@ BattleFx_RunMemberBeam:
 BattleFx_RunSevenMode:
 	.incbin "baserom.gba", 0x000d30e0, 0x00000614
 	.section .rom.000d3dfc, "ax"
-	.incbin "baserom.gba", 0x000d3dfc, 0x00001118
+	.incbin "baserom.gba", 0x000d3dfc, 0x00000d54
 	.section .rom.000d4f14, "ax"
 	.global Unnamed_080d1714
 	.type Unnamed_080d1714, %function
@@ -1663,7 +1663,11 @@ CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000f190c, 0x0000000e
 	.global CounterReveal_PanelY
 CounterReveal_PanelY:
-	.incbin "baserom.gba", 0x000f191a, 0x0000019a
+	.incbin "baserom.gba", 0x000f191a, 0x0000003e
+	.global SpinningStars_Radii
+SpinningStars_Radii:
+	.incbin "baserom.gba", 0x000f1958, 0x00000002
+	.incbin "baserom.gba", 0x000f195a, 0x0000015a
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000f1ab4, 0x000006c0

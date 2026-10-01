@@ -440,7 +440,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_DISARM_HBLANK_DMA.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.00097ebc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORM_FLASH.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00098164)
+    "*/recon/tbs/de/rom.o"(.rom.00098256)
     "*/recon/tbs/de/rom.o"(.rom.00098258)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT2.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET.o"(.text)

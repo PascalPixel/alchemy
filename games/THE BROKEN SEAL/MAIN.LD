@@ -447,7 +447,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_DISARM_HBLANK_DMA.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.0008b808)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORM_FLASH.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0008bab0)
+    "*/recon/tbs/ja/rom.o"(.rom.0008bba2)
     "*/recon/tbs/ja/rom.o"(.rom.0008bba4)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT2.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET.o"(.text)

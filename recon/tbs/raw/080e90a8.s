@@ -180,7 +180,7 @@ Unnamed_080e90a8:
 	movs r1, #7
 	movs r2, #7
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080e9232
 .L_080e9222:
 	movs r3, #3
@@ -189,7 +189,7 @@ Unnamed_080e90a8:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080e9232:
 	ldr r3, .L_080e9288
 	ldr r0, [sp, #20]
@@ -266,7 +266,7 @@ Unnamed_080e90a8:
 	movs r3, #3
 	movs r1, #7
 	movs r2, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080e948c
 	adds r3, #184
 	ldr r3, [r3]

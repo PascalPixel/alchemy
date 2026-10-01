@@ -86,7 +86,7 @@ Region_080d4ce8:
 	movs r3, #3
 	movs r0, #46
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, .L_080d505c
 	adds r3, r5, #0
 	adds r3, #184
@@ -97,7 +97,7 @@ Region_080d4ce8:
 	movs r3, #7
 	movs r0, #47
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	adds r5, #188
 	ldr r3, [r5]
 	mov r2, sp

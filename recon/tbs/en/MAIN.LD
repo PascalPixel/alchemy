@@ -970,7 +970,7 @@
         "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_THEN_SET_FIELD.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT22.o"(.text)
-        "*/recon/tbs/raw/080ed408.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI_BUILD.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.080eda78)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.080ede48)

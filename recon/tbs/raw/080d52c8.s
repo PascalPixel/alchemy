@@ -460,7 +460,7 @@ BattleFx_RenderMode:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080d58ac
 	ldr r4, .L_080d58a4
 	lsls r3, r7, #1
@@ -494,7 +494,7 @@ BattleFx_RenderMode:
 	movs r2, #7
 	movs r0, #46
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, [sp, #40]
 	adds r3, #184
 	ldr r3, [r3]
@@ -505,7 +505,7 @@ BattleFx_RenderMode:
 	movs r1, #7
 	movs r3, #3
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r0, .L_080d58b0
 	ldr r1, [sp, #32]
 	ldr r3, [r0]

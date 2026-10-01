@@ -95,14 +95,14 @@ BattleFx_PrepareCanvasEffect:
 	movs r2, #7
 	movs r3, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080de3de
 .L_080de3c0:
 	movs r3, #3
@@ -110,14 +110,14 @@ BattleFx_PrepareCanvasEffect:
 	movs r2, #7
 	movs r0, #46
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080de3de:
 	ldr r3, .L_080de540
 	ldr r4, [sp, #40]

@@ -1592,14 +1592,8 @@ Unnamed_080ea0d8:
 	.thumb_func
 Unnamed_080eb754:
 	.incbin "baserom.gba", 0x000eef54, 0x0000098c
-	.section .rom.000f0c08, "ax"
-	.global Unnamed_080ed408
-	.type Unnamed_080ed408, %function
-	.thumb_func
-Unnamed_080ed408:
-	.global BattleEffect_LoadWork
-BattleEffect_LoadWork:
-	.incbin "baserom.gba", 0x000f0c08, 0x00000678
+	.section .rom.000f1278, "ax"
+	.incbin "baserom.gba", 0x000f1278, 0x00000008
 	.global BattleFx10_UnitScale
 BattleFx10_UnitScale:
 	.incbin "baserom.gba", 0x000f1280, 0x00000038
@@ -1835,7 +1829,10 @@ RisingBurst_SparkCells:
 RisingBurst_SparkSizes:
 	.incbin "baserom.gba", 0x000f2796, 0x0000000e
 	.section .rom.000f2814, "ax"
-	.incbin "baserom.gba", 0x000f2814, 0x000007ec
+	.incbin "baserom.gba", 0x000f2814, 0x00000020
+	.global SentouKouka_BitOperands
+SentouKouka_BitOperands:
+	.incbin "baserom.gba", 0x000f2834, 0x000007cc
 	.section .rom.000f37f0, "ax"
 	.global Func_080f07f0
 Func_080f07f0:

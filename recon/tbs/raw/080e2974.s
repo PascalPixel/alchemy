@@ -309,14 +309,14 @@ BattlePres_RunBurstScene:
 	movs r1, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r2, #2
 	str r2, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #11
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080e2c12
 .L_080e2bf2:
 	movs r3, #2
@@ -325,14 +325,14 @@ BattlePres_RunBurstScene:
 	movs r2, #7
 	movs r3, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r4, #2
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #15
 	str r4, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080e2c12:
 	ldr r3, [sp, #44]
 	adds r3, #184
@@ -709,14 +709,14 @@ BattlePres_RunBurstScene:
 	movs r2, #7
 	movs r0, #46
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r4, #2
 	movs r1, #7
 	movs r3, #3
 	movs r0, #47
 	movs r2, #7
 	str r4, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, [sp, #44]
 	adds r3, #184
 	ldr r3, [r3]

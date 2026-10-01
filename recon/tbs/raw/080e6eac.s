@@ -48,7 +48,7 @@ BattleEffect_RunImpactBurst:
 	movs r3, #3
 	movs r0, #46
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r0, [r5, #28]
 	movs r3, #3
 	str r0, [sp, #16]
@@ -56,7 +56,7 @@ BattleEffect_RunImpactBurst:
 	movs r2, #7
 	movs r0, #47
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, [r5, #32]
 	b .L_080e6f30
 .L_080e6f20:

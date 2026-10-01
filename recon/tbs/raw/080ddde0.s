@@ -30,7 +30,7 @@ Region_080ddde0:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, [r5, #28]
 	ldr r0, .L_080de094
 	mov r1, r11
@@ -469,7 +469,7 @@ Region_080ddde0:
 	str r2, [sp, #0]
 	movs r1, #7
 	movs r2, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r4, [sp, #8]
 	ldr r2, .L_080de2dc
 	lsls r3, r4, #1

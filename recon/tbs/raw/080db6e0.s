@@ -161,7 +161,7 @@ RunParticleFieldEffect:
 	movs r3, #3
 	movs r0, #46
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080dba50
 	adds r3, #184
 	ldr r3, [r3]

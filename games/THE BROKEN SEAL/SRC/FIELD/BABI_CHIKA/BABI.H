@@ -3,6 +3,7 @@
 #define BABI_H
 
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -11,12 +12,10 @@
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"
 
-enum MapInitMessage {
-    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
-    MSG_STATUE_SPEAKS_ROBIN_SOUL_YE = 0x2689,
-    MSG_STATUE_SPEAKS_ROBIN_SOUL_YE_2 = 0x268a,
-    MSG_STATUE_SEEMS_SPEAK_YOUR_SOUL = 0x268b
-};
+TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
+TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksRobinSoulYe);
+TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksAfterAnswer);
+TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSeemsSpeakYourSoul);
 
 struct Owner {
     u8 unk0[9];
@@ -88,10 +87,12 @@ typedef struct Actor_02000cd0 {
     u8 flags;              /* +85 */
 } Actor_02000cd0;
 
+extern const s32 BabiChika_FlickerScript[];
+
 typedef struct Target_02000cd0 {
-    s32 x;                 /* +0, 12.20 fixed point */
+    union FieldCoordinate x;
     s32 pad4;
-    s32 z;                 /* +8, 12.20 fixed point */
+    union FieldCoordinate z;
 } Target_02000cd0;
 
 struct Actor_02000dc8 {

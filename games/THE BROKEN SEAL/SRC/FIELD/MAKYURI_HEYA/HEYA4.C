@@ -1,10 +1,21 @@
 #include "PROBE.H"
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
+
 #include "MAKYURI.H"
 #include "CALL.H"
 #include "MAKYURI_HEYA.H"
 #include "FIELD_SCENE.H"
 #include "MAP_RENDER_WORK.H"
+
+TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
+TEXT_MESSAGE_ENUM(MsgImiruHermesHealingWaterFountain);
+extern u8 MsgImiruSomebodyHere[];
+TEXT_MESSAGE_ENUM(MsgImiruStatueBlocksEntrance);
+TEXT_MESSAGE_ENUM(MsgMakyuriHeyaFountainFlowsWithWater);
+TEXT_MESSAGE_ENUM(MsgMakyuriHeyaFountainSeemsDry);
+TEXT_MESSAGE_ENUM(MsgMakyuriHeyaRobinGot);
+
 
 extern const u8 MakyuriHeya_PushScriptA[];
 extern const u8 MakyuriHeya_PushScriptB[];
@@ -360,7 +371,7 @@ void FieldScene_RunActorThreeBranchSequence(void)
     Engine_EventBegin();
     Actor_SetSpeed(3, FX16_0_8, FX16_0_4);
     Actor_SetSpeed(0, FX16_0_8, FX16_0_4);
-    Engine_EventSetMessage(MSG_SOMEBODY_HERE);
+    Engine_EventSetMessage((s32)MsgImiruSomebodyHere);
     Event_ShowMessageAndWait(3, 0, 20);
     Actor_WalkToAndWait(3, 0x348, 0x288);
     Actor_ShowEmote(3, 0x100, 60);
@@ -410,7 +421,7 @@ void SceneDialogue_RunActor3TimedLine(void)
     Engine_EventBegin();
     Engine_ActorSetAnimationAndWait(3, 4);
     Battle_WaitMode0(20);
-    Engine_EventSetMessage(MSG_STATUE_BLOCKING_ENTRANCE);
+    Engine_EventSetMessage(MsgImiruStatueBlocksEntrance);
     Event_ShowMessageAndWait(3, 0, 20);
     Engine_EventEnd();
 }
@@ -913,7 +924,7 @@ void FieldScene_RunScriptedSteps0And1576(void)
 {
     Engine_EventBegin();
     Object_SetModeById(0, 1);
-    Engine_MessageShowCentered(MSG_FOUNTAIN_HEALING_WATER_HERMES_BRINGS, 1);
+    Engine_MessageShowCentered(MsgImiruHermesHealingWaterFountain, 1);
     Engine_EventEnd();
 }
 
@@ -921,7 +932,7 @@ void FieldScene_RunScriptedSteps0And953(void)
 {
     Engine_EventBegin();
     Object_SetModeById(0, 1);
-    Engine_MessageShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
+    Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
     Engine_EventEnd();
 }
 
@@ -931,9 +942,9 @@ void FieldScene_RunFlag881Dialogue(void)
     Engine_EventBegin();
     Object_SetModeById(0, 1);
     if (GameFlag_IsSet(0x881) == 0)
-        Engine_MessageShowCentered(MSG_FOUNTAIN_SEEMS_DRY, 1);
+        Engine_MessageShowCentered(MsgMakyuriHeyaFountainSeemsDry, 1);
     else
-        Engine_MessageShowCentered(MSG_FOUNTAIN_FLOWING_WITH_WATER, 1);
+        Engine_MessageShowCentered(MsgMakyuriHeyaFountainFlowsWithWater, 1);
     if (PartyInventory_FindOwner(0xb9) != -1) {
         s16 *slot = (s16 *)gEventWork + 185;
         s32 one = 1;
@@ -951,7 +962,7 @@ void FieldScene_RunActor184Sequence(void)
     SceneState_SetRecordTableValue(0xb9, 0xb8);
     UiWork_PushValueSlot(PartyInventory_FindOwner(0xb8), 1);
     UiWork_PushValueSlot(0xb8, 2);
-    Engine_MessageShowCentered(MSG_ROBIN_GOT, 1);
+    Engine_MessageShowCentered(MsgMakyuriHeyaRobinGot, 1);
     GameFlag_Set(512);
     Engine_EventEnd();
 }
@@ -1289,6 +1300,9 @@ s32 Scene_Initialize(void)
                 Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
                 Call6((void (*)())Map_CopyCellAttributeRect, 9, 5, 1, 1, 9, 10);
             }
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            Engine_TaskAddCallback(MakyuriHeya_UpdateLeaderEffectTarget, 0xc80);
+#endif
             break;
         case 7:
         case 8:
@@ -1369,11 +1383,34 @@ s32 Scene_Initialize(void)
             break;
         case 16:
             WaitFrames(1);
+#if !defined(TBS_EDITION_EN) && !defined(TBS_EDITION_JA)
+            if (Engine_GameFlagIsSet(0x318))
+                Call3((void (*)())Engine_ActorSetPosition, 10, 204 << 18, 152 << 18);
+            if (Engine_GameFlagIsSet(0x31a))
+                Call3(Engine_ActorSetPosition, 11, 194 << 18, 144 << 18);
+            else if (Engine_GameFlagIsSet(0x319))
+                Call3(Engine_ActorSetPosition, 11, 190 << 18, 144 << 18);
+            else if (Engine_GameFlagIsSet(0x31b))
+                Call3(Engine_ActorSetPosition, 11, 214 << 18, 144 << 18);
+#else
             Call3((void (*)())Engine_ActorSetPosition, 10, 204 << 18, 152 << 18);
             Engine_ActorSetPosition(11, 194 << 18, 144 << 18);
+#endif
             SetEffectRecordMode(Object_GetById(0), 1);
             SceneEffect_SpawnParticleRowsByMode(0);
+#if !defined(TBS_EDITION_EN) && !defined(TBS_EDITION_JA)
+            if (Engine_GameFlagIsSet(0x319)) {
+                FieldScene_RunPrimarySequence(2);
+                if (Object_GetById(9)->z.fixed >> 20 == 44)
+                    Engine_TaskAddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
+            } else if (Engine_GameFlagIsSet(0x31a)) {
+                FieldScene_RunPrimarySequence(1);
+            } else if (!Engine_GameFlagIsSet(0x31b)) {
+                FieldScene_RunPrimarySequence(0);
+            }
+#else
             FieldScene_RunPrimarySequence(1);
+#endif
         case 14:
             if (gGameState.entrance == 14)
                 Audio_PlayCue(211);

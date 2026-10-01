@@ -1,4 +1,8 @@
+#include "TBS_EDITION.H"
 #include "KAREI.H"
+#include "text/MSG_IDS.H"
+TEXT_MESSAGE_ENUM(MsgYourCoins);
+TEXT_MESSAGE_ENUM(MsgCoins);
 #include "SCENE_IDS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -223,13 +227,21 @@ void FieldScene_RunScene3ae_020002dc(void)
     u32 i;
     s32 record;
 
+#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
     ((void)Object_GetById(0));
     Engine_EventBegin();
+#endif
     if (GameFlag_IsSet(0x8a7) != 0) {
         if (GameFlag_IsSet(0x8a9) != 0) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            Engine_EventBegin();
+#endif
             Engine_EventSetMessage((s32)MsgKareiFinishedOutHereBoardShip);
             Event_OpenMessage(12, 0);
             Actor_FaceDirection(12, 0x4000, 0);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            Engine_EventEnd();
+#endif
         }
     }
 }
@@ -323,6 +335,13 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 base6_2000240;
     s32 six00;
 
+#if defined(TBS_EDITION_JA)
+    /* FAKEMATCH: one coin-label selector keeps its saved register through
+       the number draw. Separate whole enum arguments rematerialize the unit
+       label and shorten the complete Japanese callback by twelve bytes. */
+    s32 msg;
+#endif
+
     six00 = 0x258;
     Engine_EventBegin();
     if (GameFlag_IsSet(0x8a5) != 0) {
@@ -337,10 +356,21 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             bump_step(1);
             UiWork_PushValueSlot(six00, 5);
             Event_OpenMessage(8, 0);
-            rec7 = UiWindow_Create(19, 8, 11, 4, 2);
-            UiText_DrawCharacterAtOffset(0xc8a, rec7, 0, 0);
+            rec7 = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
+#if defined(TBS_EDITION_JA)
+            msg = MsgYourCoins;
+            UiText_DrawCharacterAtOffset(msg, rec7, 0, 0);
+#else
+            UiText_DrawCharacterAtOffset(MsgYourCoins, rec7, 0, 0);
+#endif
             base6_2000240 = (s32)Data_02000240;
-            UiText_DrawNumberInWindow(*(s32 *)(base6_2000240 + 16), 6, rec7, 24, 8);
+#if defined(TBS_EDITION_JA)
+            msg += MsgCoins - MsgYourCoins;
+#endif
+            UiText_DrawNumberInWindow(*(s32 *)(base6_2000240 + 16), 6, rec7, TICKET_COUNTER_X, 8);
+#if defined(TBS_EDITION_JA)
+            UiText_DrawCharacterAtOffset(msg, rec7, 48, 8);
+#endif
             if (Engine_EventChooseYesNo(-1, 0) == 1) {
                 UiWork_Finalize(rec7, 2);
                 Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);

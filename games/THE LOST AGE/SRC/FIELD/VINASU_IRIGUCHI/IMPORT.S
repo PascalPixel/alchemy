@@ -253,7 +253,15 @@ Event_SetStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_020029cc
 	.thumb_func
 Func_020029cc:
@@ -281,11 +289,27 @@ Object_SetActionCallback:
 	.global Func_020029fc
 	.thumb_func
 Func_020029fc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8798
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8798
+	.else
 	overlay_veneer Func_080c87a8
+	.endif
+	.endif
 	.global Func_02002a04
 	.thumb_func
 Func_02002a04:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87a8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87a8
+	.else
 	overlay_veneer Func_080c87b8
+	.endif
+	.endif
 	.global Func_02002a0c
 	.thumb_func
 Func_02002a0c:
@@ -297,15 +321,39 @@ Func_02002a14:
 	.global Func_02002a1c
 	.thumb_func
 Func_02002a1c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87d0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87d0
+	.else
 	overlay_veneer Func_080c87e0
+	.endif
+	.endif
 	.global Func_02002a24
 	.thumb_func
 Func_02002a24:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87d8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87d8
+	.else
 	overlay_veneer Func_080c87e8
+	.endif
+	.endif
 	.global Func_02002a2c
 	.thumb_func
 Func_02002a2c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87e0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87e0
+	.else
 	overlay_veneer Func_080c87f0
+	.endif
+	.endif
 	.global Func_02002a34
 	.thumb_func
 Func_02002a34:
@@ -325,7 +373,15 @@ Func_02002a4c:
 	.global Func_02002a54
 	.thumb_func
 Func_02002a54:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8808
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8808
+	.else
 	overlay_veneer Func_080c8818
+	.endif
+	.endif
 	.global Func_02002a5c
 	.thumb_func
 Func_02002a5c:

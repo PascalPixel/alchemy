@@ -262,6 +262,8 @@ gEffectScripts:
 	.4byte 0x0000000a
 	.4byte 0x00019999
 	.4byte 0x00000010
+	.global BabiChika_FlickerScript
+BabiChika_FlickerScript:
 	.4byte 0x00000000
 	.4byte 0x00000023
 	.4byte 0x00000015
@@ -1149,19 +1151,19 @@ Data_0200bef4:
 	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000268c
+	.4byte MsgBabiChikaRedShinesNorthwestOfMe
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0000268d
+	.4byte MsgBabiChikaYellowShinesNortheastOfMe
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x0000268e
+	.4byte MsgBabiChikaRedShinesDueWestOfMe
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x0000268f
+	.4byte MsgBabiChikaVioletShinesSoutheastOfMe
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002690
+	.4byte MsgBabiChikaVioletPointsSoutheast
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

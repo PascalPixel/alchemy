@@ -481,7 +481,17 @@ Scene_RunScene3baSequenceA:
 	.global Korosseo_PortraitPaletteOffsets
 Korosseo_PortraitPaletteOffsets:
 	.4byte 0x20202000
-	.4byte 0x40404060
+	.2byte 0x4060
+	.byte 64
+	.ifdef TBS_EDITION_JA
+	.byte 64
+	.else
+	.ifdef TBS_EDITION_EN
+	.byte 64
+	.else
+	.byte 160
+	.endif
+	.endif
 	.2byte 0x0080
 	.global KorosseoKawa_ModeRecordTwo
 KorosseoKawa_ModeRecordTwo:
@@ -951,19 +961,19 @@ KorosseoKawa_SceneTableD:
 	.4byte Scene_RunSceneFourCoordinator
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000213c
+	.4byte MsgKorosseoKawaThisYearsFinalsAreIncredibleThis
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0000213d
+	.4byte MsgKorosseoKawaMovingSuchAHugeRockMust
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x0000213e
+	.4byte MsgKorosseoKawaTheresOnlyOneFinalAndThis
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x0000213f
+	.4byte MsgKorosseoKawaDidYouSeeHisMovesOut
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002140
+	.4byte MsgKorosseoKawaHowManyWarriorsHaveSwallowedTheir
 	.4byte 0x00000006
 	.4byte 0xffff0063
 	.4byte FieldScene_RunNearestActor165Scene
@@ -977,7 +987,12 @@ Korosseo_PortraitSlot:
 KorosseoKawa_RoundSpans:
 	.2byte 0x4000
 	.4byte 0x0800ff44
-	.4byte 0x01801000
+	.2byte 0x1000
+	.ifdef TBS_EDITION_JA
+	.2byte 0x0100
+	.else
+	.2byte 0x0180
+	.endif
 	.4byte 0x20000001
 	.4byte 0x00010010
 	.4byte 0x000e7fff
@@ -990,7 +1005,16 @@ KorosseoKawa_RoundSpans:
 	.global KorosseoKawa_ModeRecordFour
 KorosseoKawa_ModeRecordFour:
 	.2byte 0x1000
-	.4byte 0x00010200
+	.ifdef TBS_EDITION_ES
+	.2byte 0x0180
+	.else
+	.ifdef TBS_EDITION_IT
+	.2byte 0x0180
+	.else
+	.2byte 0x0200
+	.endif
+	.endif
+	.2byte 1
 	.4byte 0x00002000
 	.4byte 0x10000001
 	.4byte 0x00060100

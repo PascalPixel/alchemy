@@ -283,14 +283,6 @@ LinkLobby_SendPartyRecords:
 .L_020087ac:
 	.4byte gLinkStatus
 	.section .rodata.x02009928,"a",%progbits
-	.global LinkLobby_SlotValues
-LinkLobby_SlotValues:
-	.4byte 0x434d4753
-	.4byte 0x33323130
-	.4byte 0x31434241
-	.4byte 0x32454443
-	.4byte 0x33474645
-	.4byte 0x434d4753
 	.global LinkLobby_SlotColumns
 LinkLobby_SlotColumns:
 	.4byte 0x01010100
@@ -635,7 +627,7 @@ gLinkLobbyEvents:
 	.4byte State_ApplyValueAndGetResult
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000292f
+	.4byte MsgFieldWelcomeToBattleArenaWherePeople
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte LinkLobby_TalkToAttendant
@@ -653,28 +645,28 @@ gLinkLobbyEvents:
 	.4byte LinkLobby_TalkAlternating
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x0000298f
+	.4byte MsgFieldInTheLinkedFinalsYouCant
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002991
+	.4byte MsgFieldToUseSummonQuicklyDjinnMust
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002992
+	.4byte MsgFieldDoYouPutDjinnOnStandby
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002993
+	.4byte MsgFieldRemoveDjinnYouRarelyUseSo
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002990
+	.4byte MsgFieldMonsterBattleRulesSayYouAll
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte LinkLobby_ShowCountMessage
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002994
+	.4byte MsgFieldAllTheWarriorsAreImpressiveSo
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00002995
+	.4byte MsgFieldICouldEnterButIdJust
 	.4byte 0x00000002
 	.4byte 0xffff000a
 	.4byte LinkLobby_RunConnectionSequence

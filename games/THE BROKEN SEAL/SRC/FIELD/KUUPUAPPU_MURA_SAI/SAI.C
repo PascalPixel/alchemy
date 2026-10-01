@@ -2,6 +2,7 @@
 #include "IWRAM_CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "TBS_EDITION.H"
 
 extern u8 MsgKuupuappuRumorsThievesLunpa[];
 extern u8 MsgKuupuappuTalkingMayorStrong[];
@@ -225,7 +226,7 @@ s32 UpdateActorProximity(u8 *actor)
 
     player = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (*(s16 *)(work + 376) != 0 || scene[0x0ea4] != 0) {
+    if (*(s16 *)(work + 376) != 0 || scene[RENDER_MODE_OFS] != 0) {
         range = 26;
         if ((*flags & 2) != 0) {
             force = 1;

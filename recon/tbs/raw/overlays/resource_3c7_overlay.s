@@ -531,64 +531,64 @@ gRariberoEvents:
 	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000026c9
+	.4byte MsgRariberoHeyaOfCourseIHaveSeenActor
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000026ca
+	.4byte MsgRariberoHeyaThereAreSomeWhoDoNot
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000026cb
+	.4byte MsgRariberoHeyaCouldFaranHaveTrickedUsAll
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000026cc
+	.4byte MsgRariberoHeyaIfActorCantUseHerPowers
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000026cd
+	.4byte MsgRariberoHeyaActorCameFlyingToTheRuins
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000026ce
+	.4byte MsgRariberoHeyaEvenActorCouldntHaveEscapedSix
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000026cf
+	.4byte MsgRariberoHeyaTheySayAManNamedIodem
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000026d0
+	.4byte MsgRariberoHeyaNoOnesCalledMeSoMaybe
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000026d1
+	.4byte MsgRariberoHeyaActorSaidTheCaveAtThe
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000026d2
+	.4byte MsgRariberoHeyaTheRuinsThatFormTheLighthouse
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000026d6
+	.4byte MsgRariberoHeyaActorIfThePowerThatYou
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000026d7
+	.4byte MsgRariberoHeyaActorIsTheSaviorOfLalivero
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000026d8
+	.4byte MsgRariberoHeyaALegendarySaviorWillAppearIn
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000026d9
+	.4byte MsgRariberoHeyaIdLikeToBelieveInActor
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000026da
+	.4byte MsgRariberoHeyaEvenThoughSheFellOutOf
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000026db
+	.4byte MsgRariberoHeyaIfSomethingHappensToActorWhat
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000026dc
+	.4byte MsgRariberoHeyaWhenIodemGetsHereHesGoing
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000026dd
+	.4byte MsgRariberoHeyaItsBeenSoLongSinceI
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000026de
+	.4byte MsgRariberoHeyaIWonderHowActorKnewAbout
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000026df
+	.4byte MsgRariberoHeyaThoseCavesAreTooDangerousFor
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte RariberoHeya_RunItemShop
@@ -603,16 +603,16 @@ gRariberoEvents:
 	.4byte Dialogue_HandleFacingAction
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000026e6
+	.4byte MsgRariberoHeyaTheLaliveransAreATimidPeople
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000026e8
+	.4byte MsgRariberoHeyaICantRescueActorIfI
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000026ea
+	.4byte MsgRariberoHeyaIfAnythingHappensToActorIll
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000026f7
+	.4byte MsgRariberoHeyaIBetBabisTowerWillBe
 	.4byte 0x00000033
 	.4byte 0x0fb90064
 	.4byte 0x001000e5
@@ -621,13 +621,16 @@ gRariberoEvents:
 	.4byte 0x001000bb
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x004029be
+	.2byte MsgRariberoHeyaShesMakingMushroomSoupInLalivero
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x004029bf
+	.2byte MsgRariberoHeyaItsALaliveroSaladWithPotato
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x004029c0
+	.2byte MsgRariberoHeyaThePotIsFullOfA
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -665,64 +668,64 @@ gRariberoEvents9a7:
 	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028d2
+	.4byte MsgRariberoHeyaTheContinentBrokeApartAroundThe
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000028d3
+	.4byte MsgRariberoHeyaWhatHappenedToThoseLivingOn
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028d4
+	.4byte MsgRariberoHeyaIShudderToThinkWhatWould
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000028d5
+	.4byte MsgRariberoHeyaWereLuckyThatWeLiveNorth
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000028d6
+	.4byte MsgRariberoHeyaEveryoneSaysThatActorIsOkay
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000028d7
+	.4byte MsgRariberoHeyaIRealizedHowThoughtlessIWas
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000028d8
+	.4byte MsgRariberoHeyaIfSheIsIndeedTheChild
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000028d9
+	.4byte MsgRariberoHeyaWeWantToBelieveInSomething
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000028da
+	.4byte MsgRariberoHeyaActorShouldBeFineSheWas
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000028db
+	.4byte MsgRariberoHeyaActorWillWakeWhenTheBeacon
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000028dc
+	.4byte MsgRariberoHeyaSeeingActorDiveMustHaveBeen
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000028dd
+	.4byte MsgRariberoHeyaICantWaitUntilActorIs
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000028de
+	.4byte MsgRariberoHeyaBabiLighthouseCrumbledWhenAllThe
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000028df
+	.4byte MsgRariberoHeyaIAlwaysWantedABreakBut
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000028e0
+	.4byte MsgRariberoHeyaSoTheRuinsReallyAreConnected
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000028e1
+	.4byte MsgRariberoHeyaYouFinallySolvedTheMysteryOf
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000028e2
+	.4byte MsgRariberoHeyaWillTheyContinueOnOrQuit
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000028e3
+	.4byte MsgRariberoHeyaImWorriedThatWeWontGet
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000028e4
+	.4byte MsgRariberoHeyaWeCantPossiblyDigAHole
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000028e5
+	.4byte MsgRariberoHeyaTheMysteryOfTheRuinsShould
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte RariberoHeya_RunItemShop
@@ -737,16 +740,16 @@ gRariberoEvents9a7:
 	.4byte Dialogue_HandleFacingAction
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000028f1
+	.4byte MsgRariberoHeyaNoOneCouldPossiblySwimIn
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000028f3
+	.4byte MsgRariberoHeyaWhenWillTheOceanBeCalm
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000028f5
+	.4byte MsgRariberoHeyaTheChampaArePeopleFromA
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000028fd
+	.4byte MsgRariberoHeyaFirstTheLighthouseWasStruckDown
 	.4byte 0x00000033
 	.4byte 0x0fb90064
 	.4byte 0x001000e5
@@ -755,13 +758,16 @@ gRariberoEvents9a7:
 	.4byte 0x001000bb
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x004029be
+	.2byte MsgRariberoHeyaShesMakingMushroomSoupInLalivero
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x004029bf
+	.2byte MsgRariberoHeyaItsALaliveroSaladWithPotato
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x004029c0
+	.2byte MsgRariberoHeyaThePotIsFullOfA
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -799,22 +805,22 @@ gRariberoHeyaEvents:
 	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000026d3
+	.4byte MsgRariberoHeyaWeReceivedActorFromTheSky
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000026d4
+	.4byte MsgRariberoHeyaIJustKnowThatFatherWill
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000026d5
+	.4byte MsgRariberoHeyaHisWifeSeemsVeryCalmConsidering
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000026e0
+	.4byte MsgRariberoHeyaItsSoPainfulToEvenThink
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000026e1
+	.4byte MsgRariberoHeyaIJustWishSomeoneWouldPlease
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000026e2
+	.4byte MsgRariberoHeyaThatCoupleRaisedActorAsThough
 	.4byte 0x00000000
 	.4byte 0x0300000e
 	.4byte RariberoScene_PlayPoseSequence
@@ -826,31 +832,34 @@ gRariberoHeyaEvents:
 	.4byte Dialogue_HandleFacingCueBranch
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000026f0
+	.4byte MsgRariberoHeyaWorkingLikeThisKeepsMyMind
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000026f1
+	.4byte MsgRariberoHeyaWeMustObeyTolbiThatsWhat
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000026f2
+	.4byte MsgRariberoHeyaWhyDidThisHaveToHappen
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000026f3
+	.4byte MsgRariberoHeyaHousecleaningChangingSheetsItsAllDone
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000026f4
+	.4byte MsgRariberoHeyaOnceThisIncidentIsOverI
 	.4byte 0x00000033
 	.4byte 0x0fbb0066
 	.4byte 0x001000e5
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x004029c1
+	.2byte MsgRariberoHeyaShesFryingFreshwaterFishFromThe
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte 0x004029c2
+	.2byte MsgRariberoHeyaItsRiceMadeWithGrainsFrom
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cd
-	.4byte 0x004029c3
+	.2byte MsgRariberoHeyaShesMakingRoastChickenThisScent
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -894,67 +903,70 @@ gRariberoHeyaEvents9a7:
 	.4byte FieldScene_RunThreeCallSequence
 	.4byte 0x00008d15
 	.4byte 0x09ba000c
-	.4byte 0x0000288d
+	.4byte MsgRariberoHeyaIMustExplainTheirPromiseTo
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028e6
+	.4byte MsgRariberoHeyaFaranSaysKnowingHerPowersActor
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000028e7
+	.4byte MsgRariberoHeyaYouAreLeavingAfterAllArent
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000028e8
+	.4byte MsgRariberoHeyaTheySayTheLighthouseCrumbledDown
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000028e9
+	.4byte MsgRariberoHeyaYouWillFindJasminSomedayFarewell
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000028ea
+	.4byte MsgRariberoHeyaRobinThatBoatBelongsToYou
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028eb
+	.4byte MsgRariberoHeyaIDontNeedFameOrFortune
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000028ec
+	.4byte MsgRariberoHeyaWhyWontAnyoneStopRobinAnd
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000028ed
+	.4byte MsgRariberoHeyaTolbiIsToBeBlamedFor
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000028ee
+	.4byte MsgRariberoHeyaSoThereAreSomePeopleLike
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000028ef
+	.4byte MsgRariberoHeyaPleaseUseThatShipToFind
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Dialogue_HandleFacingCueBranch
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000028f7
+	.4byte MsgRariberoHeyaIMustSayItIsNice
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000028f8
+	.4byte MsgRariberoHeyaFishingIsSoDifficultNowadaysBecause
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000028f9
+	.4byte MsgRariberoHeyaWhyWouldTheLightingMakeSuch
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000028fa
+	.4byte MsgRariberoHeyaImSleepyTheseBrightNightsHave
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000028fb
+	.4byte MsgRariberoHeyaGeeWhatAmIGoingTo
 	.4byte 0x00000033
 	.4byte 0x0fbb0066
 	.4byte 0x001000e5
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x004029c1
+	.2byte MsgRariberoHeyaShesFryingFreshwaterFishFromThe
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte 0x004029c2
+	.2byte MsgRariberoHeyaItsRiceMadeWithGrainsFrom
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00cd
-	.4byte 0x004029c3
+	.2byte MsgRariberoHeyaShesMakingRoastChickenThisScent
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

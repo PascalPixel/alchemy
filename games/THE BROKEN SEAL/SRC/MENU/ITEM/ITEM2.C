@@ -1,3 +1,5 @@
+#if !defined(TBS_EDITION_JA)
+/* These localization routines have no counterpart in Japanese TBS. */
 #include "INVENTORY_MENU.H"
 
 extern s32 ItemMenu_CommandColumnXTable[];
@@ -20,3 +22,5 @@ s32 ItemMenu_CmdCursorY(s32 column, s32 row)
     }
     return y;
 }
+
+#endif

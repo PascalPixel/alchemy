@@ -207,13 +207,13 @@ Placement_Effects:
 	.4byte 0x0000000c
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001cc8
+	.4byte MsgKuupuappuWaahACatAteMyPrecious
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_RunActor9Line
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001ccc
+	.4byte MsgKuupuappuThePrisonersSaidTheyWantedTo
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActor11Line
@@ -222,7 +222,7 @@ Placement_Effects:
 	.4byte SceneDialogue_RunActor12Line
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001cd1
+	.4byte MsgKuupuappuTheWarriorsISawFightingAt
 	.4byte 0x00000000
 	.4byte 0x03000010
 	.4byte FieldScene_RunActor16Sequence
@@ -231,13 +231,13 @@ Placement_Effects:
 	.4byte SceneDialogue_RunActor16Line
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001cdb
+	.4byte MsgKuupuappuTheMayorsFamilyUrnIsOn
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001cdc
+	.4byte MsgKuupuappuThoseThievesYouGoToAll
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001cdd
+	.4byte MsgKuupuappuIHearThatABigFestival
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte FieldScene_RunActor19StepByPlace
@@ -252,7 +252,7 @@ Placement_Effects:
 	.4byte FieldScene_RunActor22StepByPlace
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001ced
+	.4byte MsgKuupuappuWeDontGetALotOf
 	.4byte 0x00000000
 	.4byte 0xffff0017
 	.4byte SceneDialogue_RunActor23Line
@@ -261,52 +261,52 @@ Placement_Effects:
 	.4byte FieldScene_RunActor18FlaggedSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001cca
+	.4byte MsgKuupuappuIfIdKnownThisWasGoing
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001ccb
+	.4byte MsgKuupuappuMyHusbandSaysMyCatAte
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001cce
+	.4byte MsgKuupuappuWhyDoYouSupposeThoseThieves
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001ccf
+	.4byte MsgKuupuappuDaddyHasntBeenPayingAttentionSince
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001cd2
+	.4byte MsgKuupuappuWheneverMyWifeUsedToGo
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001cd3
+	.4byte MsgKuupuappuLatelyMyHusbandsBeenGoingOn
 	.4byte 0x00008d15
 	.4byte 0x03000410
 	.4byte SceneActor_RunActor16StepWithFlag91
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001cde
+	.4byte MsgKuupuappuAsLongAsWeStayAlert
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001cdf
+	.4byte MsgKuupuappuWellBeSecuringItInA
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001ce0
+	.4byte MsgKuupuappuItsJustEmbarrassingThatWeLet
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001ce1
+	.4byte MsgKuupuappuILoveFestivalsIllBetColosso
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001ce3
+	.4byte MsgKuupuappuJustImagineHowTerribleItWould
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001ce5
+	.4byte MsgKuupuappuItsAGoodThingThatGiant
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001ce7
+	.4byte MsgKuupuappuWhyKeepTheStoreOpenIf
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001cf2
+	.4byte MsgKuupuappuWontAnyoneComeStayTheNight
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001cf3
+	.4byte MsgKuupuappuAfterYouveBeenInThisBusiness
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte SceneDialogue_RunActor18FlaggedLine
@@ -327,10 +327,12 @@ Placement_Effects:
 	.4byte 0x001000c3
 	.4byte 0x0000c4f3
 	.4byte 0xffff00c8
-	.4byte 0x004029d1
+	.2byte MsgKuupuappuTheresABookEntitledHistoryOf
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029d3
+	.2byte MsgKuupuappuTheresABookEntitledGemsOfAngara
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

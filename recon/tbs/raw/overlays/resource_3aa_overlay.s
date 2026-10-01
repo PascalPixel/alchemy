@@ -294,91 +294,91 @@ gKareiKyudenEvents:
 	.4byte FieldScene_RunScene3aa_02000184
 	.4byte 0x00000000
 	.4byte 0x03210008
-	.4byte 0x00001b81
+	.4byte MsgKareiKyudenDodonpaIsAVeryShrewdMan
 	.4byte 0x00000000
 	.4byte 0x09130008
 	.4byte FieldScene_RunActorEightTurnDialogue
 	.4byte 0x00000000
 	.4byte 0x09410008
-	.4byte 0x00001b95
+	.4byte MsgKareiKyudenDodonpaPlansToUseHammetTo
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025a6
+	.4byte MsgKareiKyudenNoOneInKalayKnowsHammet
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000025a5
+	.4byte MsgKareiKyudenTakeYourShamansRodAndSet
 	.4byte 0x00000000
 	.4byte 0x0941000c
-	.4byte 0x00001b82
+	.4byte MsgKareiKyudenTheTownsfolkDontKnowAboutLord
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000025a7
+	.4byte MsgKareiKyudenIHearHammetWasSavedBy
 	.4byte 0x00000000
 	.4byte 0x0941000d
 	.4byte SceneDialogue_RunActor13Message1b83
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000025a8
+	.4byte MsgKareiKyudenTheySayHammetsReturnIsSupposed
 	.4byte 0x00000000
 	.4byte 0x0941000e
-	.4byte 0x00001b86
+	.4byte MsgKareiKyudenLayanaIsPuttingUpAStrong
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000025a9
+	.4byte MsgKareiKyudenILeftTheDoorToThe
 	.4byte 0x00000000
 	.4byte 0x0941000f
-	.4byte 0x00001b87
+	.4byte MsgKareiKyudenMerchantsAreSupposedToBeProtected
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000025aa
+	.4byte MsgKareiKyudenIWonderIfAnyOfDodonpas
 	.4byte 0x00000000
 	.4byte 0x09410010
 	.4byte SceneDialogue_RunActor16Message1b88
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000025ab
+	.4byte MsgKareiKyudenTheSecretPassageIsLockedBecause
 	.4byte 0x00008d15
 	.4byte 0x09130008
-	.4byte 0x00001b8b
+	.4byte MsgKareiKyudenIsThisTheRightDecisionHammet
 	.4byte 0x00008d15
 	.4byte 0x09410008
-	.4byte 0x00001b96
+	.4byte MsgKareiKyudenIDontCareAboutTheMoney
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000025ad
+	.4byte MsgKareiKyudenImSoHappyHammetMadeIt
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000025ac
+	.4byte MsgKareiKyudenLayanasWordsPainHerMoreThan
 	.4byte 0x00008d15
 	.4byte 0x0941000c
-	.4byte 0x00001b8c
+	.4byte MsgKareiKyudenImSureTheVillagersWouldPanic
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000025ae
+	.4byte MsgKareiKyudenImSoRelievedHammetMadeIt
 	.4byte 0x00008d15
 	.4byte 0x0941000d
-	.4byte 0x00001b8d
+	.4byte MsgKareiKyudenEveryonesWorriedAboutLordHammetBut
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000025af
+	.4byte MsgKareiKyudenICantLetOnToThe
 	.4byte 0x00008d15
 	.4byte 0x0941000e
-	.4byte 0x00001b8e
+	.4byte MsgKareiKyudenLadyLayanaWasCryingAgainLast
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000025b0
+	.4byte MsgKareiKyudenLayanaOrderedTheDoorToThe
 	.4byte 0x00008d15
 	.4byte 0x0941000f
-	.4byte 0x00001b8f
+	.4byte MsgKareiKyudenAndToThinkIAlmostWent
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000025b1
+	.4byte MsgKareiKyudenWeWillNeverLetDodonpasHenchmen
 	.4byte 0x00008d15
 	.4byte 0x09410010
-	.4byte 0x00001b90
+	.4byte MsgKareiKyudenLordHammetIsALegendAmong
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000025b2
+	.4byte MsgKareiKyudenTheKeyToTheSecretPassage
 	.4byte 0x00000013
 	.4byte 0x0f860064
 	.4byte 0x0010005f
@@ -387,13 +387,16 @@ gKareiKyudenEvents:
 	.4byte 0x001000b5
 	.4byte 0x000001c3
 	.4byte 0xffff00c8
-	.4byte 0x004029d9
+	.2byte MsgKareiKyudenTheresATurbanItsTheSymbol
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029da
+	.2byte MsgKareiKyudenTheresABookEntitledBusinessAnd
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00ca
-	.4byte 0x004029db
+	.2byte MsgKareiKyudenTheresABookEntitledTheGood
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -415,6 +415,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/MENU_ICONS.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.080310a0)
         "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/MARK_CODES.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08033e24)
         "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08073808)

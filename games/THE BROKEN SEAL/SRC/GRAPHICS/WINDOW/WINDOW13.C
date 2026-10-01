@@ -1,3 +1,5 @@
+#if !defined(TBS_EDITION_JA)
+/* These localization routines have no counterpart in Japanese TBS. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
@@ -60,3 +62,5 @@ void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height)
         ((u8 *)map)[RENDER_DIRTY_OFS] = 1;
     }
 }
+
+#endif

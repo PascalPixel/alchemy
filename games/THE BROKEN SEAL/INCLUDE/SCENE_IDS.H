@@ -150,6 +150,7 @@ extern char SceneId_BabiChika2;
 extern char SceneId_BabiIriguchi1;
 extern char SceneId_BabiIriguchi2;
 extern char SceneId_BabiIriguchi3;
+extern char SceneId_BabiIriguchi4;
 extern char SceneId_RariberoHeya1;
 extern char SceneId_RariberoHeya2;
 extern char SceneId_VinasuHeya1;

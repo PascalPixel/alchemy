@@ -91,6 +91,19 @@ gBiribinoNiwaPlacements:
 	.4byte 0x00000000
 	.4byte 0x01580000
 	.4byte 0x00024000
+	/* ES/FR/IT retain an extra actor in the garden placement group. */
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	.4byte 0xffff00f8
+	.4byte 0x00000001
+	.4byte 0x00840000
+	.4byte 0x00000000
+	.4byte 0x01840000
+	.4byte 0x00024000
+	.endif
+	.endif
+	.endif
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -112,28 +125,28 @@ gBiribinoNiwaEvents:
 	.4byte FieldScene_RunScene38e_0200045c
 	.4byte 0x00000000
 	.4byte 0x08450008
-	.4byte 0x000013bf
+	.4byte MsgBilibinTheLumberIOrderedFromKolima
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000016d0
+	.4byte MsgBilibinNowThatTheCurseIsBroken
 	.4byte 0x00000000
 	.4byte 0x08450009
 	.4byte SceneDialogue_AskAboutBarricade
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000016d1
+	.4byte MsgBilibinItsOverOverMilordDecidedNot
 	.4byte 0x00000000
 	.4byte 0x0845000a
 	.4byte SceneDialogue_AskIfResponsible
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000016d2
+	.4byte MsgBilibinHmphMyPalaceIsNotFinished
 	.4byte 0x00000000
 	.4byte 0x084f000b
-	.4byte 0x0000140c
+	.4byte MsgBilibinLordMccoyIsSoUpsetAbout
 	.4byte 0x00000000
 	.4byte 0x084e000b
-	.4byte 0x00001468
+	.4byte MsgBilibinICantTellYouAnythingElse
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte SceneDialogue_AskIfFineWarrior
@@ -142,49 +155,49 @@ gBiribinoNiwaEvents:
 	.4byte BiribinoNiwa_RunGardenEvent
 	.4byte 0x00000000
 	.4byte 0x084e000c
-	.4byte 0x00001469
+	.4byte MsgBilibinWhatAShameHuhIGuess
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001754
+	.4byte MsgBilibinICouldNeverHaveGoneTo
 	.4byte 0x00008d15
 	.4byte 0x08450008
-	.4byte 0x000013d0
+	.4byte MsgBilibinIfThingsLikeThisAreGoing
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000016de
+	.4byte MsgBilibinWedStillBeWorkingIfWe
 	.4byte 0x00008d15
 	.4byte 0x08450009
-	.4byte 0x000013d1
+	.4byte MsgBilibinIAmGladIDidntKnow
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000016df
+	.4byte MsgBilibinThatWasCloseBuildingACursed
 	.4byte 0x00008d15
 	.4byte 0x0845000a
-	.4byte 0x000013d2
+	.4byte MsgBilibinIfAllThisTroubleWasCaused
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000016e0
+	.4byte MsgBilibinHeSaidHeStoppedConstructionSo
 	.4byte 0x00008d15
 	.4byte 0x084a000b
-	.4byte 0x00001417
+	.4byte MsgBilibinNoOneBelievedTheyWouldTurn
 	.4byte 0x00008d15
 	.4byte 0x084e000b
-	.4byte 0x0000146c
+	.4byte MsgBilibinThatBarricadeIsPrettyShabbyIt
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001757
+	.4byte MsgBilibinIWillBeAReliableWarrior
 	.4byte 0x00008d15
 	.4byte 0x084a000c
-	.4byte 0x00001418
+	.4byte MsgBilibinIsThereNoOneWhoCan
 	.4byte 0x00008d15
 	.4byte 0x084f000c
-	.4byte 0x00001419
+	.4byte MsgBilibinLordMccoyWouldNeverHireAnyone
 	.4byte 0x00008d15
 	.4byte 0x084e000c
-	.4byte 0x0000146d
+	.4byte MsgBilibinIDidntThinkTheydLetYou
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001758
+	.4byte MsgBilibinDontLeaveRobinBeMyMentor
 	.4byte 0x00000003
 	.4byte 0xffff005a
 	.4byte FieldScene_RunStepWithValue29de

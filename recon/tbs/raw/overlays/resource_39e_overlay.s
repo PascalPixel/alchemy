@@ -432,16 +432,16 @@ gShianJiinEvents1:
 	.4byte Scene_RunActorNineTransition
 	.4byte 0x00000000
 	.4byte 0x188f0008
-	.4byte 0x000017d2
+	.4byte MsgShianJiinTheFuchinTempleIsAPleasant
 	.4byte 0x00000000
 	.4byte 0x188f0009
-	.4byte 0x000017d3
+	.4byte MsgShianJiinOhRobinWhatTookYouSo
 	.4byte 0x00000000
 	.4byte 0x188f000a
-	.4byte 0x000017d4
+	.4byte MsgShianJiinAhhhMasterNyunpaHeHasPassed
 	.4byte 0x00000000
 	.4byte 0x188f000b
-	.4byte 0x000017d5
+	.4byte MsgShianJiinMasterNyunpaHasWastedAwayAt
 	.4byte 0x00000000
 	.4byte 0x188f000c
 	.4byte FieldScene_RunFlag88FBranch
@@ -453,22 +453,22 @@ gShianJiinEvents1:
 	.4byte FieldScene_RunScene39e_02000414
 	.4byte 0x00000000
 	.4byte 0x08910009
-	.4byte 0x00001791
+	.4byte MsgShianJiinOmOmBlueLightsInThe
 	.4byte 0x00000000
 	.4byte 0x08920009
 	.4byte ShianJiin_RunTempleWalkScene
 	.4byte 0x00000000
 	.4byte 0x0f140009
-	.4byte 0x000017b5
+	.4byte MsgShianJiinTheTestOfFuchinFallsIs
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000017bc
+	.4byte MsgShianJiinMasterNyunpaIsWaitingForYou
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001792
+	.4byte MsgShianJiinGemsFromTheSkyBlueLights
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001793
+	.4byte MsgShianJiinNyunpaHasNotEatenInDays
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte FieldScene_RunFlag88FBranch
@@ -480,49 +480,49 @@ gShianJiinEvents1:
 	.4byte 0x00300000
 	.4byte 0x00008d15
 	.4byte 0x188f0008
-	.4byte 0x000017d9
+	.4byte MsgShianJiinGemsFallingFromTheSkyMountains
 	.4byte 0x00008d15
 	.4byte 0x188f0009
-	.4byte 0x000017da
+	.4byte MsgShianJiinIKnewMasterNyunpaWasFasting
 	.4byte 0x00008d15
 	.4byte 0x188f000a
-	.4byte 0x000017db
+	.4byte MsgShianJiinMasterNyunpaReachedEnlightenmentDuringHis
 	.4byte 0x00008d15
 	.4byte 0x188f000b
-	.4byte 0x000017dc
+	.4byte MsgShianJiinMasterNyunpaIsNothingButSkin
 	.4byte 0x00008d15
 	.4byte 0x188f000c
-	.4byte 0x000017dd
+	.4byte MsgShianJiinHeCantLeaveUsYetHe
 	.4byte 0x00008d15
 	.4byte 0x08900008
-	.4byte 0x0000178d
+	.4byte MsgShianJiinIBeginningToThinkIllBe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001799
+	.4byte MsgShianJiinIDontFeelSafeGoingHome
 	.4byte 0x00008d15
 	.4byte 0x08910009
-	.4byte 0x0000179a
+	.4byte MsgShianJiinManyStarsFellFromTheSky
 	.4byte 0x00008d15
 	.4byte 0x08920009
-	.4byte 0x000017b6
+	.4byte MsgShianJiinCanSuchYoungWarriorsEndureThe
 	.4byte 0x00008d15
 	.4byte 0x0f140009
-	.4byte 0x000017b6
+	.4byte MsgShianJiinCanSuchYoungWarriorsEndureThe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000017bd
+	.4byte MsgShianJiinTheWarriorsHaveMasteredTheSecrets
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000179b
+	.4byte MsgShianJiinThereIsNoPointInTraining
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000179c
+	.4byte MsgShianJiinICantImagineFastingItGets
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000179d
+	.4byte MsgShianJiinIWillTrainToBecomeA
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001a1d
+	.4byte MsgShianJiinSinceImHereIdLikeTo
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -539,25 +539,25 @@ gShianJiinEvents:
 	.4byte StartSchoolDoorEvent
 	.4byte 0x00000000
 	.4byte 0x188f0008
-	.4byte 0x000017de
+	.4byte MsgShianJiin
 	.4byte 0x00000000
 	.4byte 0x18930008
-	.4byte 0x000017ce
+	.4byte MsgShianJiinUseThisEnergyToFindThe
 	.4byte 0x00000000
 	.4byte 0x18910008
-	.4byte 0x000017b0
+	.4byte MsgShianJiinSpeakToTheMonkStandingBeneath
 	.4byte 0x00000000
 	.4byte 0x13000008
 	.4byte Scene_RunScene39eSequenceB
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000179e
+	.4byte MsgShianNyunpaMeditates
 	.4byte 0x00008d15
 	.4byte 0x188f0008
 	.4byte FieldScene_ShowDialogue17DF
 	.4byte 0x00008d15
 	.4byte 0x18930008
-	.4byte 0x000017cf
+	.4byte MsgShianJiinNowThatIHavePassedMy
 	.4byte 0x00008d15
 	.4byte 0x18910408
 	.4byte FieldScene_ShowDialogue17B1
@@ -566,10 +566,10 @@ gShianJiinEvents:
 	.4byte Scene_RunScene39eSequenceB
 	.4byte 0x00000000
 	.4byte 0x18950009
-	.4byte 0x00001a56
+	.4byte MsgShianJiinThisIsMasterFehsKungFu
 	.4byte 0x00000000
 	.4byte 0x1895000a
-	.4byte 0x00001a57
+	.4byte MsgShianJiinBouldersOvercameHsuKungFuShould
 	.4byte 0x00000000
 	.4byte 0x1895000b
 	.4byte FieldScene_ShowDialogue1A58
@@ -578,202 +578,202 @@ gShianJiinEvents:
 	.4byte FieldScene_RunRoofSceneExit
 	.4byte 0x00000000
 	.4byte 0x1895000e
-	.4byte 0x00001a5c
+	.4byte MsgShianJiinFeizhiPredictedHsusDangerHerProphecy
 	.4byte 0x00000000
 	.4byte 0x18950010
-	.4byte 0x00001a5d
+	.4byte MsgShianJiinHsuIsRestingFeizhiIsWatching
 	.4byte 0x00000000
 	.4byte 0x189b0012
-	.4byte 0x0000189a
+	.4byte MsgShianJiinPracticeEveryoneChiHasItsLimits
 	.4byte 0x00000000
 	.4byte 0x189b0009
-	.4byte 0x0000189b
+	.4byte MsgShianJiinWarriorYouAreGreatYouHave
 	.4byte 0x00000000
 	.4byte 0x189b000a
-	.4byte 0x0000189c
+	.4byte MsgShianJiinEveryoneWantsToLearnTheChi
 	.4byte 0x00000000
 	.4byte 0x189b000b
-	.4byte 0x0000189d
+	.4byte MsgShianJiinConcentrateEnergyIntoTheHandsAnd
 	.4byte 0x00000000
 	.4byte 0x189b000c
 	.4byte FieldScene_RunRoofSceneExit
 	.4byte 0x00000000
 	.4byte 0x189b000d
-	.4byte 0x0000189f
+	.4byte MsgShianJiinIDidNotThinkMuchOf
 	.4byte 0x00000000
 	.4byte 0x189b000e
-	.4byte 0x000018a0
+	.4byte MsgShianJiinWhereDidFeizhiGoIAm
 	.4byte 0x00000000
 	.4byte 0x189b000f
-	.4byte 0x000018a1
+	.4byte MsgShianJiinMasterHsuIsLateICan
 	.4byte 0x00000000
 	.4byte 0x189b0010
-	.4byte 0x000018a2
+	.4byte MsgShianJiinIWillLearnChiIWill
 	.4byte 0x00000000
 	.4byte 0x13010012
-	.4byte 0x0000187f
+	.4byte MsgShianJiinWarriorUseYourChiFromThe
 	.4byte 0x00000000
 	.4byte 0x13010010
-	.4byte 0x00001880
+	.4byte MsgShianJiinWarriorPleaseUseYourChiFrom
 	.4byte 0x00000000
 	.4byte 0x18980012
-	.4byte 0x00001864
+	.4byte MsgShianJiinWarriorLetMeSeeYourChi
 	.4byte 0x00000000
 	.4byte 0x1898000d
-	.4byte 0x00001865
+	.4byte MsgShianJiinFeizhiIsGoneItIsDangerous
 	.4byte 0x00000000
 	.4byte 0x1898000e
-	.4byte 0x00001866
+	.4byte MsgShianJiinFeizhiIsStrongerThanSheLooks
 	.4byte 0x00000000
 	.4byte 0x1898000f
-	.4byte 0x00001867
+	.4byte MsgShianJiinWarriorShowUsYourChiLike
 	.4byte 0x00000000
 	.4byte 0x18980010
-	.4byte 0x00001868
+	.4byte MsgShianJiinWarriorThatWasGreatButMaster
 	.4byte 0x00000000
 	.4byte 0x18990012
 	.4byte FieldScene_RunSkippableStoryBeat
 	.4byte 0x00000000
 	.4byte 0x1899000d
-	.4byte 0x00001871
+	.4byte MsgShianJiinFeizhiIsGoneItIsDangerousOutside
 	.4byte 0x00000000
 	.4byte 0x1899000e
-	.4byte 0x00001872
+	.4byte MsgShianJiinFeizhiIsStrongerThanSheLooksShe
 	.4byte 0x00000000
 	.4byte 0x1899000f
-	.4byte 0x00001873
+	.4byte MsgShianJiinIKnowWhyYouCanUse
 	.4byte 0x00000000
 	.4byte 0x18990010
-	.4byte 0x00001874
+	.4byte MsgShianJiinWarriorChiIsAGreatPower
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte FieldScene_ShowDialogue1825
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001828
+	.4byte MsgShianJiinStrongKicksAreVeryImportantKick
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001829
+	.4byte MsgShianJiinIWantToLearnSoI
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte FieldScene_RunRoofSceneExit
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000182b
+	.4byte MsgShianJiinEveryoneInXianCanDoMartial
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000182c
+	.4byte MsgShianJiinJustListeningDoesNotMakeOne
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte FieldScene_ShowDialogue182D
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001830
+	.4byte MsgShianJiinMasterFehIsVeryBusyHe
 	.4byte 0x00008d15
 	.4byte 0x18950009
-	.4byte 0x00001a5e
+	.4byte MsgShianJiinPeaceHasReturnedToXianBut
 	.4byte 0x00008d15
 	.4byte 0x1895000a
-	.4byte 0x00001a5f
+	.4byte MsgShianJiinNoMatterHowMuchYouPractice
 	.4byte 0x00008d15
 	.4byte 0x1895000b
-	.4byte 0x00001a60
+	.4byte MsgShianJiinTheMonstersAreVeryLargeStriking
 	.4byte 0x00008d15
 	.4byte 0x1895000c
-	.4byte 0x00001a61
+	.4byte MsgShianJiinWhenABoulderFallsJumpRepeat
 	.4byte 0x00008d15
 	.4byte 0x1895000e
-	.4byte 0x00001a62
+	.4byte MsgShianJiinWhereDidFeizhiGainThePower
 	.4byte 0x00008d15
 	.4byte 0x18950010
-	.4byte 0x00001a63
+	.4byte MsgShianJiinMasterFehIsVeryWorriedAbout
 	.4byte 0x00008d15
 	.4byte 0x189b0012
-	.4byte 0x000018ab
+	.4byte MsgShianJiinCanSuchAYoungWarriorReally
 	.4byte 0x00008d15
 	.4byte 0x189b0009
-	.4byte 0x000018a3
+	.4byte MsgShianJiinYourChiIsFuchinTemplesHow
 	.4byte 0x00008d15
 	.4byte 0x189b000a
-	.4byte 0x000018a4
+	.4byte MsgShianJiinIDontCareWhichChiIt
 	.4byte 0x00008d15
 	.4byte 0x189b000b
-	.4byte 0x000018a5
+	.4byte MsgShianJiinMasterHamasChiCanShatterBoulders
 	.4byte 0x00008d15
 	.4byte 0x189b000c
-	.4byte 0x000018a6
+	.4byte MsgShianJiinFollowSilkRoadStraightPassThrough
 	.4byte 0x00008d15
 	.4byte 0x189b000d
-	.4byte 0x000018a7
+	.4byte MsgShianJiinWarriorYouUseWeaponsAndChi
 	.4byte 0x00008d15
 	.4byte 0x189b000e
-	.4byte 0x000018a8
+	.4byte MsgShianJiinFeizhiIsNotInTheFeh
 	.4byte 0x00008d15
 	.4byte 0x189b000f
-	.4byte 0x000018a9
+	.4byte MsgShianJiinFeizhiWorriesOnlyAboutMasterHsu
 	.4byte 0x00008d15
 	.4byte 0x189b0010
-	.4byte 0x000018aa
+	.4byte MsgShianJiinLearningChiIsVeryHardMaster
 	.4byte 0x00008d15
 	.4byte 0x13010012
-	.4byte 0x00001881
+	.4byte MsgShianJiinWarriorTheRulesRequireYouTo
 	.4byte 0x00008d15
 	.4byte 0x13010010
-	.4byte 0x00001882
+	.4byte MsgShianJiinSoCloseWarriorUseChiFrom
 	.4byte 0x00008d15
 	.4byte 0x18980012
-	.4byte 0x00001869
+	.4byte MsgShianJiinWarriorShowMeYourChiI
 	.4byte 0x00008d15
 	.4byte 0x1898000d
-	.4byte 0x0000186a
+	.4byte MsgShianJiinFeizhiIKnowIKnowHow
 	.4byte 0x00008d15
 	.4byte 0x1898000e
-	.4byte 0x0000186b
+	.4byte MsgShianJiinMyKickAndPunchAreVery
 	.4byte 0x00008d15
 	.4byte 0x1898000f
-	.4byte 0x0000186c
+	.4byte MsgShianJiinShowUsYourChiNowDo
 	.4byte 0x00008d15
 	.4byte 0x18980010
-	.4byte 0x0000186d
+	.4byte MsgShianJiinIAmShockedThatThisWarrior
 	.4byte 0x00008d15
 	.4byte 0x18990012
-	.4byte 0x00001875
+	.4byte MsgShianJiinIWantToSeeTheChi
 	.4byte 0x00008d15
 	.4byte 0x1899000d
-	.4byte 0x00001876
+	.4byte MsgShianJiinFeizhiIKnowHowYouFeel
 	.4byte 0x00008d15
 	.4byte 0x1899000e
-	.4byte 0x00001877
+	.4byte MsgShianJiinMyKickAndPunchAreVeryLoud
 	.4byte 0x00008d15
 	.4byte 0x1899000f
-	.4byte 0x00001878
+	.4byte MsgShianJiinWarriorShowMeYourChiNow
 	.4byte 0x00008d15
 	.4byte 0x18990010
-	.4byte 0x00001879
+	.4byte MsgShianJiinWarriorDoNotHideYourChi
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001831
+	.4byte MsgShianJiinWarriorsFightWithWeaponsKungFu
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001832
+	.4byte MsgShianJiinPracticingKicksHurtsMyFeetVery
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001833
+	.4byte MsgShianJiinThatPunchWasGoodYouSurprise
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001834
+	.4byte MsgShianJiinIMoveTooQuicklyYouCant
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001835
+	.4byte MsgShianJiinWarriorsCameToLearnTheFeh
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001836
+	.4byte MsgShianJiinGreatKickKickFromTheHip
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001837
+	.4byte MsgShianJiinYouAreTheWarriorsWhoCame
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001838
+	.4byte MsgShianJiinMasterFehIsTalkingWithFeizhi
 	.4byte 0x00008602
 	.4byte 0xffff000a
 	.4byte FieldScene_DispatchByFacing
@@ -808,16 +808,16 @@ gShianJiinEventsEntrance3:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001a09
+	.4byte MsgShianJiinMasterHamaIsMeditatingAskingFor
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001a0a
+	.4byte MsgShianJiinTheFutureHoldsManyHardshipsBut
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001a10
+	.4byte MsgShianJiinIDoNotThinkMasterHama
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001a11
+	.4byte MsgShianJiinICannotSeeYourFutureClearly
 	.4byte 0x00000023
 	.4byte 0x0f6a0066
 	.4byte 0x00200006

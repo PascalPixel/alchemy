@@ -394,22 +394,22 @@ FuneHobashira_SceneTableE:
 	.4byte FieldScene_CallHelper14d0
 	.4byte 0x00000000
 	.4byte 0x09280008
-	.4byte 0x00001e23
+	.4byte MsgFuneWatchSeasHelpKaja
 	.4byte 0x00000000
 	.4byte 0x08a00008
-	.4byte 0x00001e25
+	.4byte MsgFuneLookoutCannotRow
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001f63
+	.4byte MsgFuneIslandMonstersUnknown
 	.4byte 0x00008d15
 	.4byte 0x09280008
-	.4byte 0x00001e24
+	.4byte MsgFuneHiddenAnchorDiscovered
 	.4byte 0x00008d15
 	.4byte 0x08a00008
-	.4byte 0x00001e26
+	.4byte MsgFuneSeaTooVast
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001f64
+	.4byte MsgFuneIslandTreasures
 	.4byte 0x00000003
 	.4byte 0x0924000b
 	.4byte FieldScene_RunActor232SceneWhenFlag923Or922

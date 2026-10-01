@@ -1,6 +1,13 @@
 #ifndef GUARD_TBS_EDITION_H
 #define GUARD_TBS_EDITION_H
 
+/* The Japanese fortress passage returns through the ninth window variant. */
+#if defined(TBS_EDITION_JA)
+#define RUNPA_RETURN_TRANSITION_VARIANT 9
+#else
+#define RUNPA_RETURN_TRANSITION_VARIANT 0
+#endif
+
 /* The Japanese render work carries 0x90 more bytes before these flags:
    four more 0x24-byte window records, twelve against eight. */
 #if defined(TBS_EDITION_JA)
@@ -72,6 +79,31 @@
 #endif
 
 #define MENU_TEXT_Y 60
+
+/* The localized lettering sheet has one more sixteen-colour palette. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define KOROSSEO_PALETTE_BYTES 192
+#define LOBBY_PREFIX_LIMIT 7
+#else
+#define KOROSSEO_PALETTE_BYTES 160
+#define LOBBY_PREFIX_LIMIT 4
+#endif
+
+/* The localized ticket windows leave another column for the coin count. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define TICKET_COUNTER_WINDOW_X 18
+#define TICKET_COUNTER_WIDTH    12
+#define TICKET_COUNTER_X        32
+#else
+#define TICKET_COUNTER_WINDOW_X 19
+#define TICKET_COUNTER_WIDTH    11
+#if defined(TBS_EDITION_JA)
+#define TICKET_COUNTER_X        0
+#else
+#define TICKET_COUNTER_X        24
+#endif
+#endif
 
 /* The shops' item list window, where the character-change and switch help
    start, the rows a menu page holds and the rows of character positions: each
@@ -164,6 +196,27 @@
 #define RENDER_RESOURCE_BASE 0xBDF
 #else
 #define RENDER_RESOURCE_BASE 0x99B
+#endif
+
+/* The Psynergy list's range tiles, six Japanese rows and text columns. */
+#if defined(TBS_EDITION_JA)
+#define RANGE_ICON_TILE       0xf200
+#define LIST_FIRST_ROW        1
+#define LIST_ICONS_X          86
+#define LIST_ICONS_Y          53
+#define LIST_PP_X             144
+#define LIST_NAME_X           96
+#define LIST_PP_NUMBER_X      168
+#define LIST_EMPTY_Y          8
+#else
+#define RANGE_ICON_TILE       0xf280
+#define LIST_FIRST_ROW        2
+#define LIST_ICONS_X          80
+#define LIST_ICONS_Y          58
+#define LIST_PP_X             176
+#define LIST_NAME_X           88
+#define LIST_PP_NUMBER_X      176
+#define LIST_EMPTY_Y          17
 #endif
 
 #endif

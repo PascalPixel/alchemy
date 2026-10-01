@@ -65,7 +65,11 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     actor->flags &= (u8)0x7e;   /* masks the byte re-read here, not `saved` */
 
     Engine_ActorSetSpriteFlags(actor, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);
+#if defined(TBS_EDITION_JA)
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, target->x.part.pixel, target->z.part.pixel);
+#else
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, ((target->x.fixed >> 20) << 4) + 8, ((target->z.fixed >> 20) << 4) + 8);
+#endif
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);
     WaitFrames(6);

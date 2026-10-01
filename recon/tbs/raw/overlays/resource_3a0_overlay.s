@@ -444,31 +444,31 @@ gShianMuraEvents:
 	.4byte ShianMura_HopLeaderAhead
 	.4byte 0x00000000
 	.4byte 0x08950008
-	.4byte 0x000017e7
+	.4byte MsgShianMuraThisIsXianTravelersAreWelcome
 	.4byte 0x00000000
 	.4byte 0x08950009
 	.4byte SceneEffect_ShowActorSetupMessage
 	.4byte 0x00000000
 	.4byte 0x0895000a
-	.4byte 0x000017eb
+	.4byte MsgShianMuraXianIsTheVillageOfKinu
 	.4byte 0x00000000
 	.4byte 0x0895000b
-	.4byte 0x000017ef
+	.4byte MsgShianMuraMartialArtsAreVeryPopularIn
 	.4byte 0x00000000
 	.4byte 0x0895000c
-	.4byte 0x000017f0
+	.4byte MsgShianMuraYouWarriorsShouldVisitMasterFehs
 	.4byte 0x00000000
 	.4byte 0x0895000d
-	.4byte 0x000017f1
+	.4byte MsgShianMuraMyClothesAreNotSilkSilk
 	.4byte 0x00000000
 	.4byte 0x0895000e
 	.4byte ShianMura_RunNpcMeetScene
 	.4byte 0x00000000
 	.4byte 0x0895000f
-	.4byte 0x000017f5
+	.4byte MsgShianMuraDisastersFromTheSkyManyMany
 	.4byte 0x00000000
 	.4byte 0x08950010
-	.4byte 0x000017f6
+	.4byte MsgShianMuraThisIsTheMulberryOrchardWhen
 	.4byte 0x00000000
 	.4byte 0x08950011
 	.4byte SceneEffect_RunActorSceneMessage
@@ -477,31 +477,31 @@ gShianMuraEvents:
 	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001a24
+	.4byte MsgShianMuraXianIsAPeacefulVillageBut
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001a25
+	.4byte MsgShianMuraThereWasARockslideOnSilk
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001a26
+	.4byte MsgShianMuraIWentToHelpMoveBoulders
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001a27
+	.4byte MsgShianMuraThePeopleWhoClearedTheRockslide
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001a28
+	.4byte MsgShianMuraHsuIsVeryGoodAtKung
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001a29
+	.4byte MsgShianMuraThePeopleOfXianLoveTheir
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001a2a
+	.4byte MsgShianMuraAltinWasFloodedWithWaterBut
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001a2b
+	.4byte MsgShianMuraWeClearedTheRocksFromSilk
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001a2c
+	.4byte MsgShianMuraManyStrangeThingsHappenedAllAt
 	.4byte 0x10001815
 	.4byte 0x02010014
 	.4byte SceneEffect_ActivateNearbyActor
@@ -513,67 +513,67 @@ gShianMuraEvents:
 	.4byte Scene_RunActorNineteenScript
 	.4byte 0x00008d15
 	.4byte 0x08950008
-	.4byte 0x000017ff
+	.4byte MsgShianMuraTheseChildrenMustHaveComeTo
 	.4byte 0x00008d15
 	.4byte 0x08950009
-	.4byte 0x00001800
+	.4byte MsgShianMuraYouYoungWarriorsLookStrongBut
 	.4byte 0x00008d15
 	.4byte 0x0895000a
-	.4byte 0x00001801
+	.4byte MsgShianMuraIHopeManyPeopleComeTo
 	.4byte 0x00008d15
 	.4byte 0x0895000b
-	.4byte 0x00001803
+	.4byte MsgShianMuraFightingWithKicksAndPunchesIs
 	.4byte 0x00008d15
 	.4byte 0x0895000c
-	.4byte 0x00001804
+	.4byte MsgShianMuraMasterFehsSchoolIsTrainingIt
 	.4byte 0x00008d15
 	.4byte 0x0895000d
-	.4byte 0x00001805
+	.4byte MsgShianMuraSilkIsShinyAndSmoothIt
 	.4byte 0x00008d15
 	.4byte 0x0895000e
-	.4byte 0x00001806
+	.4byte MsgShianMuraBreakingTreesWithMyHandHurts
 	.4byte 0x00008d15
 	.4byte 0x0895000f
-	.4byte 0x00001807
+	.4byte MsgShianMuraMasterFehSaidYahAndThen
 	.4byte 0x00008d15
 	.4byte 0x08950010
-	.4byte 0x00001808
+	.4byte MsgShianMuraTheOrchardGivesTheVillageLife
 	.4byte 0x00008d15
 	.4byte 0x08950011
-	.4byte 0x00001809
+	.4byte MsgShianMuraGoingWestAloneIsVeryDangerous
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000180a
+	.4byte MsgShianMuraIMustCarryWaterEveryDay
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001a2d
+	.4byte MsgShianMuraHsuWasCaughtUnderABoulder
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001a2e
+	.4byte MsgShianMuraTheRocksThereWereVeryHard
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001a2f
+	.4byte MsgShianMuraSomePeopleDidNotCarryRocks
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001a30
+	.4byte MsgShianMuraSandIsTheColorOfThe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001a31
+	.4byte MsgShianMuraHsuIsStrongHeadedHeWould
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001a32
+	.4byte MsgShianMuraEveryoneStaysInXianTheyDo
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001a33
+	.4byte MsgShianMuraThisWarriorSavedAltinVillageNo
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001a34
+	.4byte MsgShianMuraItIsBadForXianIf
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001a35
+	.4byte MsgShianMuraIWasHappyToSeeGems
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001a36
+	.4byte MsgShianMuraWhereAreTheMerchantsNoOne
 	.4byte 0x00000023
 	.4byte 0x0f6e0065
 	.4byte 0x001000e5

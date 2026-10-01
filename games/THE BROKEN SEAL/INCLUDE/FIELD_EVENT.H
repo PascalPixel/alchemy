@@ -31,7 +31,10 @@ struct EventWork {
     s16 touched_trigger;
     u8 unknown_16e[4];
     u16 unknown_172;
-    u8 unknown_174[0xa];
+    u8 unknown_174[6];
+    /* The trigger tile just ahead of the leader. */
+    s16 facing_trigger;
+    u8 unknown_17c[2];
     /* Psynergy the player has asked to use, handled on the next frame. */
     s16 psynergy_request;
     u8 unknown_180[2];
@@ -53,6 +56,7 @@ struct EventWork {
 
 LAYOUT_OFFSET_GUARD(EventWork_PlacedActors, struct EventWork, placed_actors, 0x34);
 LAYOUT_OFFSET_GUARD(EventWork_TouchedTrigger, struct EventWork, touched_trigger, 0x16c);
+LAYOUT_OFFSET_GUARD(EventWork_FacingTrigger, struct EventWork, facing_trigger, 0x17a);
 LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork, psynergy_request, 0x17e);
 LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raised_trigger, 0x182);
 LAYOUT_OFFSET_GUARD(EventWork_StartTransition, struct EventWork, start_transition, 0x1c0);

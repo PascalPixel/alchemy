@@ -145,7 +145,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/FIELD.o"(.text .rodata .data .padding)
     "*/recon/tbs/de/rom.o"(.rom.00008ab8)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/DECODE.o"(.text .rodata .data .padding)
-    "*/recon/tbs/de/rom.o"(.rom.00009590)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/DECODE_DATA.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DRAW_MAP.o"(.text .rodata .data .padding)
     "*/recon/tbs/de/rom.o"(.rom.000098f8)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/CONVERT_MAP.o"(.text .rodata .data .padding)
@@ -2519,4 +2519,5 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.0077863b)
     "*/games/THE BROKEN SEAL/SRC/MAP/MAP_179/MAP.o"(.rodata)
     "*/recon/tbs/de/rom.o"(.rom.00778ea3)
+    "*/recon/tbs/de/overlays.o"(.overlays)
 }

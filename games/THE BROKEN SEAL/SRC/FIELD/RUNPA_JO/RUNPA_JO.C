@@ -1,6 +1,7 @@
 #include "FORTRESS.H"
 #include "CALL.H"
 #include "SCENE_IDS.H"
+#include "TBS_EDITION.H"
 
 extern const struct SceneEntrance gRunpaJoEntrances1[];
 extern const struct SceneEntrance gRunpaJoEntrances2[];
@@ -2881,7 +2882,7 @@ void FieldScene_SetupActorsForScene(void)
         }
         break;
     case 31:
-        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, RUNPA_RETURN_TRANSITION_VARIANT);
         FieldScene_RunSequenceTail();
         break;
     case 14:

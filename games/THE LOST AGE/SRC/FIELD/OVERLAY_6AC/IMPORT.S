@@ -65,7 +65,23 @@ GameFlag_ClearBit:
 	.global ResourceMetadata_ClearRecord
 	.thumb_func
 ResourceMetadata_ClearRecord:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer GetBattleEffectObject
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer GetBattleEffectObject
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer GetBattleEffectObject
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer GetBattleEffectObject
+	.else
 	overlay_veneer ResourceMetadata_ClearRecordFar
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02003118
 	.thumb_func
 Func_02003118:
@@ -109,15 +125,63 @@ Map_GetTerrainHeight:
 	.global Func_02003168
 	.thumb_func
 Func_02003168:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201a8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201a8
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201a8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201a8
+	.else
 	overlay_veneer Func_080201d8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02003170
 	.thumb_func
 Func_02003170:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b8
+	.else
 	overlay_veneer Func_080201e8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02003178
 	.thumb_func
 Func_02003178:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Map_GetTerrainHeightFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Map_GetTerrainHeightFar
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Map_GetTerrainHeightFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Map_GetTerrainHeightFar
+	.else
 	overlay_veneer Func_080201f0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02003180
 	.thumb_func
 Func_02003180:
@@ -145,7 +209,23 @@ Func_020031a8:
 	.global Func_020031b0
 	.thumb_func
 Func_020031b0:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020318
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08020318
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020318
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020318
+	.else
 	overlay_veneer Func_08020348
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_020031b8
 	.thumb_func
 Func_020031b8:
@@ -237,7 +317,15 @@ Event_SetStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_02003270
 	.thumb_func
 Func_02003270:
@@ -257,11 +345,27 @@ Func_02003288:
 	.global Func_02003290
 	.thumb_func
 Func_02003290:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8560
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8560
+	.else
 	overlay_veneer Func_080c8570
+	.endif
+	.endif
 	.global Func_02003298
 	.thumb_func
 Func_02003298:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif
 	.global Func_020032a0
 	.thumb_func
 Func_020032a0:

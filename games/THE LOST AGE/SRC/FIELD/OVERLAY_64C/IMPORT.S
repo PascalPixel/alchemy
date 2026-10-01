@@ -145,7 +145,23 @@ Animation_ApplyChildValues:
 	.global Func_02002004
 	.thumb_func
 Func_02002004:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020320
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08020320
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020320
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020320
+	.else
 	overlay_veneer Func_08020350
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_0200200c
 	.thumb_func
 Func_0200200c:
@@ -153,7 +169,11 @@ Func_0200200c:
 	.global Func_02002014
 	.thumb_func
 Func_02002014:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080ad2f8
+	.else
 	overlay_veneer Func_080ad318
+	.endif
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -197,15 +217,39 @@ Event_ClearStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_02002074
 	.thumb_func
 Func_02002074:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Object_SetWideSpriteFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Object_SetWideSpriteFar
+	.else
 	overlay_veneer Func_080c8430
+	.endif
+	.endif
 	.global Func_0200207c
 	.thumb_func
 Func_0200207c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8428
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8428
+	.else
 	overlay_veneer Func_080c8438
+	.endif
+	.endif
 	.global Func_02002084
 	.thumb_func
 Func_02002084:
@@ -221,15 +265,31 @@ Func_02002094:
 	.global Func_0200209c
 	.thumb_func
 Func_0200209c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif
 	.global Func_020020a4
 	.thumb_func
 Func_020020a4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8958
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8958
+	.else
 	overlay_veneer Func_080c8960
+	.endif
+	.endif
 	.global Func_020020ac
 	.thumb_func
 Func_020020ac:
-	overlay_veneer Func_081a0000
+	overlay_veneer Resource_FarCall00A + 1
 	.global Func_020020b4
 	.thumb_func
 Func_020020b4:

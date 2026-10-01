@@ -453,19 +453,19 @@ gTorebiMachiEvents:
 	.4byte SceneState_SetValue30ThenCall
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001f8d
+	.4byte MsgTorebiMachiTolbisAlwaysReallyBustlingDuringColosso
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001f8e
+	.4byte MsgTorebiMachiColossoIsHeldInTheColosseum
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001f8f
+	.4byte MsgTorebiMachiTryoutsStartedAtTheColosseumToday
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001f90
+	.4byte MsgTorebiMachiColossoShouldHaveStartedTodayWhat
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001f91
+	.4byte MsgTorebiMachiBabiWasAlreadyPrettyOldBack
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte SceneDialogue_RunActor15Message1f92
@@ -477,19 +477,19 @@ gTorebiMachiEvents:
 	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001f97
+	.4byte MsgTorebiMachiGetYourColossoSouvenirsTheyMake
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001f98
+	.4byte MsgTorebiMachiGetYourSnacksAndDrinksBefore
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001f99
+	.4byte MsgTorebiMachiIveDecidedNotToFightAt
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001f9a
+	.4byte MsgTorebiMachiWowTolbisFestivalIsHumongousJust
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001f9b
+	.4byte MsgTorebiMachiRatsWeOversleptAndNowThe
 	.4byte 0x00000000
 	.4byte 0xffff0018
 	.4byte SceneDialogue_RunActor24Message1f9d
@@ -507,25 +507,25 @@ gTorebiMachiEvents:
 	.4byte FieldScene_RunScene3b5SequenceA
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00000e40
+	.4byte MsgTorebiMachiAhIGuessIJustDont
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001fa4
+	.4byte MsgTorebiMachiTouristsArentTheOnlyOnesWho
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001fa5
+	.4byte MsgTorebiMachiTheTrialsAreStartingAtThe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001fa6
+	.4byte MsgTorebiMachiTheTrialsAreOkayButThe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001fa7
+	.4byte MsgTorebiMachiItsNotLikeThereHaveBeen
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001fa8
+	.4byte MsgTorebiMachiEveryYearIGetOlderAnd
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001fa9
+	.4byte MsgTorebiMachiWhatIfBabiIsActuallyA
 	.4byte 0x00008d15
 	.4byte 0xffff0010
 	.4byte FieldScene_RunSupplementalSequenceTwo
@@ -534,34 +534,34 @@ gTorebiMachiEvents:
 	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001fac
+	.4byte MsgTorebiMachiWeHaveToSellAllOf
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001fad
+	.4byte MsgTorebiMachiTheyreSellingTheseAtTheColosseum
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001fae
+	.4byte MsgTorebiMachiISawThePeopleWhoAre
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001faf
+	.4byte MsgTorebiMachiTolbiIsNotLikeXianIt
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001fb0
+	.4byte MsgTorebiMachiICantSayAnythingCauseIt
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001fb2
+	.4byte MsgTorebiMachiTheStuffTheyreSellingAtThe
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001fb3
+	.4byte MsgTorebiMachiWhyDoKidsWantSuchAwful
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001fb4
+	.4byte MsgTorebiMachiThoseSweetsSmellGreatImNot
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00001fb5
+	.4byte MsgTorebiMachiIveBeenGuardingOurSpotBut
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00000e41
+	.4byte MsgTorebiMachiIKeepLosingCoinsButI
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte SceneState_SetValues31_2_4
@@ -644,22 +644,22 @@ gTorebiMachiEvents2:
 	.4byte SceneState_SetValue30ThenCall
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000021dc
+	.4byte MsgTorebiMachiColossoWillReachItsApexAny
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000021dd
+	.4byte MsgTorebiMachiAreYouPlanningToWatchThe
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000021de
+	.4byte MsgTorebiMachiMyFamilySavedMeASeat
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000021df
+	.4byte MsgTorebiMachiIThoughtSomethingHappenedToBabi
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000021e0
+	.4byte MsgTorebiMachiTheColosseumWasSoFullThat
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000021e1
+	.4byte MsgTorebiMachiNobodyElseHasNoticedButThis
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte FieldScene_RunSupplementalSequenceTwo
@@ -668,19 +668,19 @@ gTorebiMachiEvents2:
 	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000021e4
+	.4byte MsgTorebiMachiHowAboutSomeColossoSouvenirsThis
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000021e5
+	.4byte MsgTorebiMachiTheFinalsAreSoLongIts
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000021e6
+	.4byte MsgTorebiMachiTheTrialsWereSoRivetingThe
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x000021e7
+	.4byte MsgTorebiMachiIHaveSeatsToTheFinals
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x000021e8
+	.4byte MsgTorebiMachiIOversleptAgainSoICant
 	.4byte 0x00000000
 	.4byte 0xffff0018
 	.4byte SceneDialogue_RunActor24Message1f9d
@@ -692,31 +692,31 @@ gTorebiMachiEvents2:
 	.4byte FieldScene_RunScene3b5_02000568
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x000021ee
+	.4byte MsgTorebiMachiTheFinalsStartTodayIWonder
 	.4byte 0x00000000
 	.4byte 0x08c1001c
 	.4byte FieldScene_RunScene3b5SequenceA
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00000e40
+	.4byte MsgTorebiMachiAhIGuessIJustDont
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000021ef
+	.4byte MsgTorebiMachiIveGotToGetToThe
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000021f0
+	.4byte MsgTorebiMachiABattleToTheDeathWith
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000021f1
+	.4byte MsgTorebiMachiTheFinalsStartOnBabisSignal
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000021f2
+	.4byte MsgTorebiMachiSoWhyWereTheSoldiersAll
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000021f3
+	.4byte MsgTorebiMachiICouldStillBuySeatsFrom
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000021f4
+	.4byte MsgTorebiMachiNoMatterHowIAddIt
 	.4byte 0x00008d15
 	.4byte 0xffff0010
 	.4byte FieldScene_RunSupplementalSequenceTwo
@@ -725,34 +725,34 @@ gTorebiMachiEvents2:
 	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000021f7
+	.4byte MsgTorebiMachiWeCantSellAnythingOnceThe
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000021f8
+	.4byte MsgTorebiMachiThisIsTheFinalPushAnything
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000021f9
+	.4byte MsgTorebiMachiFightingInColossoRequiresALot
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000021fa
+	.4byte MsgTorebiMachiTheyreSellingFinalsSeatsRightAt
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x000021fb
+	.4byte MsgTorebiMachiItsSupposedToBeFreeHaving
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x000021fd
+	.4byte MsgTorebiMachiOnceColossoEndsOurLivesCan
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x000021fe
+	.4byte MsgTorebiMachiFestivalsAreSoExpensiveMyWallets
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x000021ff
+	.4byte MsgTorebiMachiMomYouSaidYouWereAll
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00002200
+	.4byte MsgTorebiMachiTodayIsABigDayFor
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00000e41
+	.4byte MsgTorebiMachiIKeepLosingCoinsButI
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte SceneState_SetValues31_2_4
@@ -835,22 +835,22 @@ gTorebiMachiEvents3:
 	.4byte SceneState_SetValue30ThenCall
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000235d
+	.4byte MsgTorebiMachiWellThisYearsColossoHasEnded
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000235e
+	.4byte MsgTorebiMachiItsBackToOurNormalQuiet
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte SceneDialogue_RunActor24Message235f
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002362
+	.4byte MsgTorebiMachiWithAllThoseRevelersGoneThe
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002363
+	.4byte MsgTorebiMachiIHadNoLuckInThe
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002364
+	.4byte MsgTorebiMachiItsSoQuietTheHustleAnd
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte FieldScene_RunSupplementalSequenceTwo
@@ -859,7 +859,7 @@ gTorebiMachiEvents3:
 	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002367
+	.4byte MsgTorebiMachiIllBeBackToDoBusiness
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte FieldScene_RunScene3b5_020005dc
@@ -868,25 +868,25 @@ gTorebiMachiEvents3:
 	.4byte FieldScene_RunScene3b5SequenceA
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00000e40
+	.4byte MsgTorebiMachiAhIGuessIJustDont
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000236b
+	.4byte MsgTorebiMachiTheSpectatorsHaveAllLeftSo
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000236c
+	.4byte MsgTorebiMachiThinkHowFunItWouldBe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000236d
+	.4byte MsgTorebiMachiAllTheWarriorsWhoGainFame
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000236e
+	.4byte MsgTorebiMachiComeToThinkOfItNo
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000236f
+	.4byte MsgTorebiMachiHmmSinceColossoEndedSoDramatically
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002370
+	.4byte MsgTorebiMachiTheCalmAfterTheStormIs
 	.4byte 0x00008d15
 	.4byte 0xffff0010
 	.4byte FieldScene_RunSupplementalSequenceTwo
@@ -895,13 +895,13 @@ gTorebiMachiEvents3:
 	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002373
+	.4byte MsgTorebiMachiEveryYearITryToSell
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002374
+	.4byte MsgTorebiMachiHowCanWeGetHomeIf
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00000e41
+	.4byte MsgTorebiMachiIKeepLosingCoinsButI
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte SceneState_SetValues31_2_4

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TLA_EDITION.H"
 #include "RAM_BUFFER.H"
 
 /* Raises the window work's two busy flags selected by bits 0 and 1. */
@@ -10,7 +11,7 @@ void UiWork_SetBusyFlags(u32 flags)
     if (work == 0)
         return;
     if (flags & 1)
-        work[0x138a] = 1;
+        work[WINDOW_BUSY_FLAGS_OFS] = 1;
     if (flags & 2)
-        work[0x138b] = 1;
+        work[WINDOW_BUSY_FLAGS_OFS + 1] = 1;
 }

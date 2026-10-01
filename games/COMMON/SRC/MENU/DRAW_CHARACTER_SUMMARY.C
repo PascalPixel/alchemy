@@ -46,7 +46,7 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
 #endif
         UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
         UiText_DrawCharacterAtOffset(st[29] + (s32)&MsgClassName, surface, 0, 16);
-#if defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_JA) || defined(TLA_EDITION_JA)
         /* The Japanese summary puts the coins above the play time. */
         extra = 32;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 24, extra);

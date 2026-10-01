@@ -204,7 +204,7 @@ KorimaMagari_PushStepZ:
 	.4byte KorimaMagari_RunDepartSequence
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001526
+	.4byte MsgKorimaDoNotTouchFloodgate
 	.4byte 0x00000003
 	.4byte 0xffff0009
 	.4byte Scene_RunKorimaMagariSequence

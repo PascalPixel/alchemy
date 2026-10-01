@@ -23,17 +23,6 @@ enum {
     ITEM_HERMES_WATER = 184
 };
 
-enum FieldProbeSceneMessage {
-    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
-    MSG_FOUNTAIN_HEALING_WATER_HERMES_BRINGS = 0x1576,
-    MSG_SOMEBODY_HERE = 0x1577,
-    MSG_STATUE_BLOCKING_ENTRANCE = 0x157d,
-    MSG_FOUNTAIN_FLOWING_WITH_WATER = 0x1635,
-    MSG_FOUNTAIN_SEEMS_DRY = 0x1636,
-    MSG_STRANGE_FORCES_AT_WORK_SEEMS = 0x1637,
-    MSG_ROBIN_GOT = 0x1638
-};
-
 extern u8 gEffectWork[];
 
 /* The IWRAM work pointers from gWork: the event work, and 0x20 bytes on, the
@@ -120,6 +109,7 @@ void Makyuri_RunActorMove();
 void MakyuriIriguchi_RaisePillar();
 void MakyuriHeya_SyncBlockFlags(void);
 void MakyuriHeya_OpenThreeStepStair(void);
+void MakyuriHeya_UpdateLeaderEffectTarget(void);
 s32 MakyuriHeya_TrailSparks(struct FieldActor *actor);
 void SetEffectRecordMode(struct EffectWork *work, s32 mode);
 void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);

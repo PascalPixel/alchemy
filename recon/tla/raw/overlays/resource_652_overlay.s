@@ -2017,34 +2017,34 @@ Data_020016e4:
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001733
+	.4byte MsgFieldRikisReallyInForItWhen
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001734
+	.4byte MsgFieldThatNoGoodKidOfMine
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001737
+	.4byte MsgFieldIWonderWhereOurLittleTavi
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001738
+	.4byte MsgFieldTaviNeverMissesThreeOclockSnacksies
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000173b
+	.4byte MsgFieldIfYoureLookingForABoat
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000173c
+	.4byte MsgFieldIfYouHeadSouthYoullFind
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000173f
+	.4byte MsgFieldInAllMyYearsAsMayor
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001740
+	.4byte MsgFieldTheWaveWasAwfulButThe
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001741
+	.4byte MsgFieldALotOfFolkSaidThey
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001742
+	.4byte MsgFieldBetweenThePiratesAndTheTidal
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_02000270
@@ -2056,13 +2056,13 @@ Data_020016e4:
 	.4byte Func_02000330
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x0000174e
+	.4byte MsgFieldWeRunAVerySmallInn
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0000174f
+	.4byte MsgFieldIDontKnowWhenIllBe
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001750
+	.4byte MsgFieldIHearTheSeafoodInMadra
 	.4byte 0x00000000
 	.4byte 0xffff0018
 	.4byte 0x0000219c
@@ -2077,52 +2077,52 @@ Data_020016e4:
 	.4byte Func_020002d0
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001735
+	.4byte MsgFieldRikiTaviWhereAreYouWhat
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001736
+	.4byte MsgFieldThatTavisABadInfluenceOn
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001739
+	.4byte MsgFieldIllBetThatWhereverTaviIs
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000173a
+	.4byte MsgFieldIfTaviIsntHomeSoonWere
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000173d
+	.4byte MsgFieldIWonderHowTheRoadTo
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000173e
+	.4byte MsgFieldIWonderIfTheHolyMan
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001743
+	.4byte MsgFieldAtLeastNobodySeemsToHave
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001744
+	.4byte MsgFieldIStillDontKnowWhatThat
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001745
+	.4byte MsgFieldWeShouldFindADifferentWay
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001746
+	.4byte MsgFieldNowThatBriggsIsLockedAway
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001748
+	.4byte MsgFieldImGladImNotGoingTo
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000174a
+	.4byte MsgDeriHeyaScamps
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001751
+	.4byte MsgFieldWeCantSailAndWeCant
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001752
+	.4byte MsgFieldLookAtAllTheseGuestsWe
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001753
+	.4byte MsgFieldAfterAllThatShakingIWouldnt
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001754
+	.4byte MsgFieldImSoTornDoILike
 	.4byte 0x00008d15
 	.4byte 0xffff0018
 	.4byte 0x000021a1
@@ -2163,7 +2163,7 @@ Data_02001924:
 	.4byte Func_02000390
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001758
+	.4byte MsgFieldTravelersWithNowhereToGoThis
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2192,34 +2192,34 @@ Data_02001990:
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001800
+	.4byte MsgFieldLetMeTellYouKidsAre
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001801
+	.4byte MsgFieldWhoStaysOutsideUntilHesAbsolutely
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001806
+	.4byte MsgFieldOurLittleOneIsFinallyHome
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001807
+	.4byte MsgFieldTaviWolfedDownHisSnackAnd
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_02000614
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000180f
+	.4byte MsgFieldIThinkMadraIsEastOf
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte Func_0200066c
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000182c
+	.4byte MsgFieldItsTooDangerousToGoTo
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000182d
+	.4byte MsgFieldWhoWasThatGuyIWonder
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x0000182e
+	.4byte MsgFieldWhyDidThePirateBriggsPlague
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_020004f4
@@ -2240,10 +2240,10 @@ Data_02001990:
 	.4byte 0x0000183e
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001802
+	.4byte MsgFieldMmmMmnphDadWasSoMad
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001808
+	.4byte MsgFieldMmmphMmmmDontTellAnyoneWe
 	.4byte 0x00000000
 	.4byte 0xffff001a
 	.4byte Func_020006c4
@@ -2261,40 +2261,40 @@ Data_02001990:
 	.4byte Func_020002d0
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001803
+	.4byte MsgFieldDarnThatRikiAhImGlad
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001804
+	.4byte MsgFieldHeeHeeMyRikiIsMommys
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001809
+	.4byte MsgFieldIGuessRikiNextDoorMade
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000180a
+	.4byte MsgFieldOnceTaviFinishesEatingImPutting
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001810
+	.4byte MsgFieldDailaGotHitPrettyHardI
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001811
+	.4byte MsgFieldSomeoneShouldSeeHowTheRoad
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000182f
+	.4byte MsgFieldHeSaidHedPayMeA
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001830
+	.4byte MsgFieldTheRoadToMadraGoesThrough
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001831
+	.4byte MsgFieldMaybeThatGuyWashedUpOn
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001832
+	.4byte MsgFieldBriggsProbablyHasLotsOfMen
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001834
+	.4byte MsgFieldThisTownMayBeDirtPoor
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001836
+	.4byte MsgDeriHeyaMazeTreasure
 	.4byte 0x00008d15
 	.4byte 0xffff0014
 	.4byte 0x0000183f
@@ -2309,10 +2309,10 @@ Data_02001990:
 	.4byte 0x00001843
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001805
+	.4byte MsgFieldIStillWantToCatchThat
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0000180b
+	.4byte MsgFieldImSureGladIMadeIt
 	.4byte 0x00008d15
 	.4byte 0xffff001a
 	.4byte 0x00001841

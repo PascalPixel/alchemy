@@ -181,7 +181,15 @@ Object_LinkObjectAndSetCallback:
 	.global Func_0200291c
 	.thumb_func
 Func_0200291c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif
 	.global Func_02002924
 	.thumb_func
 Func_02002924:

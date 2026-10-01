@@ -245,46 +245,46 @@ SuharaMura_Extras:
 	.4byte 0x0000000c
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025b7
+	.4byte MsgSuharaMuraThisIsSuhallaDontTryCrossing
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SuharaMura_TalkLalivero
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000025bb
+	.4byte MsgSuharaMuraWeGondowansWillNeverTrustAnyone
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000025bc
+	.4byte MsgSuharaMuraItHasBeenSaidForAges
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000025bd
+	.4byte MsgSuharaMuraYouCantGetToSouthernGondowan
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000025be
+	.4byte MsgSuharaMuraTheWorkersSayTherereHugeFestivals
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000025bf
+	.4byte MsgSuharaMuraTheSandstormsSuddenlyIncreasedIHope
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000025c0
+	.4byte MsgSuharaMuraTheSuhallaHasLongBeenKnown
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000025c1
+	.4byte MsgSuharaMuraThePeopleOfLaliveroHaveBeen
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000025c2
+	.4byte MsgSuharaMuraTheRulerOfTolbiTookA
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000025c3
+	.4byte MsgSuharaMuraIKnowTheDesertSpiritsWill
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000025c4
+	.4byte MsgSuharaMuraSouthernGondowanIsGuardedByThe
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000025c5
+	.4byte MsgSuharaMuraIveHeardThatTolbisColossoIs
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000025c6
+	.4byte MsgSuharaMuraNoneOfTheGrownUpsIn
 	.4byte 0x00000013
 	.4byte 0x0fad0064
 	.4byte 0x001000c2
@@ -328,52 +328,52 @@ SuharaMura_ExtrasFlag96f:
 	.4byte 0x0000000c
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025d7
+	.4byte MsgSuharaMuraWelcomeToSuhallaIBetThe
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000025d8
+	.4byte MsgSuharaMuraTheDesertIsEnvelopedInSandstorms
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000025d9
+	.4byte MsgSuharaMuraSoldiersFromTolbiWereCaughtIn
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000025da
+	.4byte MsgSuharaMuraWeWereBroughtHereByThe
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000025db
+	.4byte MsgSuharaMuraThisSandstormIsTheFaultOf
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte SuharaMura_TalkSandstorm
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000025df
+	.4byte MsgSuharaMuraWhyAreTheSandstormsAttackingHumans
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000025e0
+	.4byte MsgSuharaMuraThoseSoldiersKeptMumblingAboutMonsters
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000025e1
+	.4byte MsgSuharaMuraIBetTheseWarriorsWereBrought
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000025e2
+	.4byte MsgSuharaMuraIWonderWhyThereAreSo
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000025e3
+	.4byte MsgSuharaMuraTheSoldiersFromTolbiWereCollapsing
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000025e4
+	.4byte MsgSuharaMuraAfterYouGetSwallowedByA
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000025e5
+	.4byte MsgSuharaMuraLatelyAllTheSandstormsHaveBeen
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000025e6
+	.4byte MsgSuharaMuraIfYouFightTheStormsYoull
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000025e7
+	.4byte MsgSuharaMuraGrownUpsSayTheSandstormsAttack
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000025e8
+	.4byte MsgSuharaMuraTheySayTheSoldiersWereRavaged
 	.4byte 0x00000013
 	.4byte 0x0fad0064
 	.4byte 0x001000c2

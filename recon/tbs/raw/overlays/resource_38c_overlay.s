@@ -247,28 +247,28 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x00000008
 	.4byte 0x00000000
 	.4byte 0x08450008
-	.4byte 0x000013d3
+	.4byte MsgBilibinThatTreeAtTheEntranceIs
 	.4byte 0x00000000
 	.4byte 0x08450009
-	.4byte 0x000013d4
+	.4byte MsgBilibinMccoyHadTheTreesCutDown
 	.4byte 0x00000000
 	.4byte 0x0845000a
-	.4byte 0x000013d7
+	.4byte MsgBilibinTheSnowIsAlreadyPilingUp
 	.4byte 0x00000000
 	.4byte 0x0845000b
-	.4byte 0x000013d8
+	.4byte MsgBilibinWeRarelySeeAnySnowAround
 	.4byte 0x00000000
 	.4byte 0x0845000c
-	.4byte 0x000013db
+	.4byte MsgBilibinHowArePeopleDoingInKolima
 	.4byte 0x00000000
 	.4byte 0x0845000d
-	.4byte 0x000013dc
+	.4byte MsgBilibinIKnowThatGuyWhoTurned
 	.4byte 0x00000000
 	.4byte 0x0845000e
-	.4byte 0x000013df
+	.4byte MsgBilibinLongAgoTheLighthouseNearImil
 	.4byte 0x00000000
 	.4byte 0x0845000f
-	.4byte 0x000013e0
+	.4byte MsgBilibinButEvenTheLegendaryWaterOf
 	.4byte 0x00000000
 	.4byte 0x08450010
 	.4byte FieldScene_RunActor16MessageBranch
@@ -283,61 +283,61 @@ BiribinoHeya_TertiaryTable:
 	.4byte FieldScene_RunActor19MessageBranch
 	.4byte 0x00000000
 	.4byte 0x08450014
-	.4byte 0x000013ec
+	.4byte MsgBilibinYouCantReachKolimaNoMatter
 	.4byte 0x00000000
 	.4byte 0x08450015
 	.4byte FieldScene_ConfigureActor21Scene
 	.4byte 0x00000000
 	.4byte 0x08450016
-	.4byte 0x000013ee
+	.4byte MsgBilibinHeyMisterHeadChefAreYou
 	.4byte 0x00000000
 	.4byte 0x08450017
-	.4byte 0x000013ef
+	.4byte MsgBilibinStartCookingAlready
 	.4byte 0x00000000
 	.4byte 0x08450018
 	.4byte FieldScene_RunActor24Sequence
 	.4byte 0x00000000
 	.4byte 0x08450019
-	.4byte 0x000013f4
+	.4byte MsgBilibinWeCameHereBecauseLordMccoy
 	.4byte 0x00000000
 	.4byte 0x0845001a
-	.4byte 0x000013f5
+	.4byte MsgBilibinIThinkThatBigTreeDeep
 	.4byte 0x00000000
 	.4byte 0x0845001b
 	.4byte FieldScene_RunActor27Sequence
 	.4byte 0x00000000
 	.4byte 0x0845001c
-	.4byte 0x000013f9
+	.4byte MsgBilibinICantWaitToSeeTodays
 	.4byte 0x00000000
 	.4byte 0x0845001d
-	.4byte 0x000013fa
+	.4byte MsgBilibinIWentToLordMccoyLooking
 	.4byte 0x00000000
 	.4byte 0x0845001e
-	.4byte 0x000013fb
+	.4byte MsgBilibinIveHeardSongsThatTellOf
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte FieldScene_RunActor8Message
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000016e4
+	.4byte MsgBilibinThankGoodnessTheyStoppedConstructionOf
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000016e7
+	.4byte MsgBilibinIAlwaysMissAltinInThe
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000016e8
+	.4byte MsgBilibinMyFatherSaysThatItsWarm
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000016eb
+	.4byte MsgBilibinTheRoadToKolimaIsOpen
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte FieldScene_RunActor13Message
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000016f1
+	.4byte MsgBilibinIThoughtISawLightsIn
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000016f2
+	.4byte MsgBilibinHisEyesAreRedBecauseHe
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte FieldScene_RunActor16MessageBranch
@@ -352,7 +352,7 @@ BiribinoHeya_TertiaryTable:
 	.4byte FieldScene_RunActor19MessageBranch
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000016fe
+	.4byte MsgBilibinThereWillBeFewerGuestsNow
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte FieldScene_RunActor21SequenceOnFlag300
@@ -364,163 +364,163 @@ BiribinoHeya_TertiaryTable:
 	.4byte FieldScene_ConfigureActor23Scene
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001707
+	.4byte MsgBilibinImALittleSurprisedThatThe
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001708
+	.4byte MsgBilibinTheresNoBusinessHereSoIm
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00001709
+	.4byte MsgBilibinTheyServedSoMuchFoodToday
 	.4byte 0x00000000
 	.4byte 0xffff001b
 	.4byte FieldScene_RunActor27Message
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x0000170d
+	.4byte MsgBilibinOooohThatsItITriedMy
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x0000170e
+	.4byte MsgBilibinTheIncidentWasResolvedBeforeI
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x0000170f
+	.4byte MsgBilibinIWonderWhatThatEerieHowling
 	.4byte 0x00008d15
 	.4byte 0x08450008
-	.4byte 0x000013d5
+	.4byte MsgBilibinThisIsAllLordMccoysFault
 	.4byte 0x00008d15
 	.4byte 0x08450009
-	.4byte 0x000013d6
+	.4byte MsgBilibinAhLadyMccoyIWouldJust
 	.4byte 0x00008d15
 	.4byte 0x0845000a
 	.4byte FieldScene_RunActor10MessageBranch
 	.4byte 0x00008d15
 	.4byte 0x0845000b
-	.4byte 0x000013da
+	.4byte MsgBilibinItMustBeDifficultToLive
 	.4byte 0x00008d15
 	.4byte 0x0845000c
-	.4byte 0x000013dd
+	.4byte MsgBilibinICantImagineThatEveryoneIn
 	.4byte 0x00008d15
 	.4byte 0x0845000d
-	.4byte 0x000013de
+	.4byte MsgBilibinHeSeemedSoHappyAndThen
 	.4byte 0x00008d15
 	.4byte 0x0845000e
-	.4byte 0x000013e1
+	.4byte MsgBilibinCouldTheWaterOfHermesSave
 	.4byte 0x00008d15
 	.4byte 0x0845000f
-	.4byte 0x000013e2
+	.4byte MsgBilibinTheWaterOfHermesVanishedLong
 	.4byte 0x00008d15
 	.4byte 0x08450010
-	.4byte 0x000013e4
+	.4byte MsgBilibinTheWorldWillNeverSeeSuch
 	.4byte 0x00008d15
 	.4byte 0x08450011
-	.4byte 0x000013e8
+	.4byte MsgBilibinIWishICouldSeeAnother
 	.4byte 0x00008d15
 	.4byte 0x08450012
-	.4byte 0x000013ea
+	.4byte MsgBilibinOnlySomeoneReallyBraveWouldGo
 	.4byte 0x00008d15
 	.4byte 0x08450013
-	.4byte 0x000013fc
+	.4byte MsgBilibinIDontBelieveInCursesFrom
 	.4byte 0x00008d15
 	.4byte 0x08450014
-	.4byte 0x000013fd
+	.4byte MsgBilibinAnyTravelersHeadingEastAreStuck
 	.4byte 0x00008d15
 	.4byte 0x08450015
-	.4byte 0x000013fe
+	.4byte MsgBilibinFatherMotherIHopeTheyreAll
 	.4byte 0x00008d15
 	.4byte 0x08450016
-	.4byte 0x000013ff
+	.4byte MsgBilibinShouldIJustForgetThatIm
 	.4byte 0x00008d15
 	.4byte 0x08450017
-	.4byte 0x00001400
+	.4byte MsgBilibinIveHadAllTheCustomerComplaints
 	.4byte 0x00008d15
 	.4byte 0x08450018
-	.4byte 0x00001401
+	.4byte MsgBilibinArghhhThatsItIJustWant
 	.4byte 0x00008d15
 	.4byte 0x08450019
-	.4byte 0x00001402
+	.4byte MsgBilibinICameToBilibinHopingTo
 	.4byte 0x00008d15
 	.4byte 0x0845001a
-	.4byte 0x00001403
+	.4byte MsgBilibinISeeWhyTheyCallThat
 	.4byte 0x00008d15
 	.4byte 0x0845001b
-	.4byte 0x00001404
+	.4byte MsgBilibinIDontCareWhoDoesIt
 	.4byte 0x00008d15
 	.4byte 0x0845001c
-	.4byte 0x00001405
+	.4byte MsgBilibinYippeeIsItReadyYetMy
 	.4byte 0x00008d15
 	.4byte 0x0845001d
-	.4byte 0x00001406
+	.4byte MsgBilibinImGettingALittleScaredHearing
 	.4byte 0x00008d15
 	.4byte 0x0845001e
-	.4byte 0x00001407
+	.4byte MsgBilibinItHasBeenSaidThatA
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000016e5
+	.4byte MsgBilibinItTakesManyYearsForA
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000016e6
+	.4byte MsgBilibinSometimesIWishICouldSee
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000016e9
+	.4byte MsgBilibinIWonderIfThereAreStill
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000016ea
+	.4byte MsgBilibinMyFatherHasTraveledAllOver
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000016ef
+	.4byte MsgBilibinTravelingMakesYoungWarriorsStronger
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000016f0
+	.4byte MsgBilibinClothesMadeWithSilkAreSo
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000016f3
+	.4byte MsgBilibinTheresNoDoubtAboutItIts
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000016f4
+	.4byte MsgBilibinWhatsTheBigDealWhyAre
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000016f6
+	.4byte MsgBilibinAltinsGotGoodWeaponsButI
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000016f8
+	.4byte MsgBilibinIWishICouldGoOut
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000016fa
+	.4byte MsgBilibinTheyCallThemselvesWarriorsButYou
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001710
+	.4byte MsgBilibinWellIWasOnlyActingScared
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001711
+	.4byte MsgBilibinItdBeBetterForBusinessIf
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001712
+	.4byte MsgBilibinIllGoToKolimaWhenThe
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001713
+	.4byte MsgBilibinLetsSeeSoupSaladAndI
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001714
+	.4byte MsgBilibinTheHeadChefWasSoLazy
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001715
+	.4byte MsgBilibinItUsedToTakeThemSo
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001716
+	.4byte MsgBilibinWhenTheyStoppedBuildingThePalace
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001717
+	.4byte MsgBilibinIWishICouldEatLike
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00001718
+	.4byte MsgBilibinIdBetterEatALotThat
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00001719
+	.4byte MsgBilibinTheFoodIsSuchAGood
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x0000171a
+	.4byte MsgBilibinIfAKidLikeThisCould
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x0000171b
+	.4byte MsgBilibinItLooksLikeScaryThingsAre
 	.4byte 0x00000033
 	.4byte 0x0f520064
 	.4byte 0x001000bb
@@ -532,13 +532,16 @@ BiribinoHeya_TertiaryTable:
 	.4byte 0x001000c2
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00402996
+	.2byte MsgBilibinLooksLikeEggSoupSoftEggs
+	.2byte 0x40
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00402997
+	.2byte MsgBilibinFreshOmelettesBilibinoOmelettesUseWild
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00ca
-	.4byte 0x00402998
+	.2byte MsgBilibinTheresABookEntitledAllAbout
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

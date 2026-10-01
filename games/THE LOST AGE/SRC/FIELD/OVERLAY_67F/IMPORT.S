@@ -65,7 +65,23 @@ Map_GetTerrainHeight:
 	.global Func_02001460
 	.thumb_func
 Func_02001460:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b8
+	.else
 	overlay_veneer Func_080201e8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -81,7 +97,15 @@ Func_02001478:
 	.global Func_02001480
 	.thumb_func
 Func_02001480:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020330
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020330
+	.else
 	overlay_veneer Func_08020360
+	.endif
+	.endif
 	.global Func_02001488
 	.thumb_func
 Func_02001488:
@@ -137,7 +161,15 @@ Func_020014e8:
 	.global Func_020014f0
 	.thumb_func
 Func_020014f0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8508
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8508
+	.else
 	overlay_veneer Func_080c8518
+	.endif
+	.endif
 	.global Func_020014f8
 	.thumb_func
 Func_020014f8:
@@ -149,7 +181,15 @@ Func_02001500:
 	.global Func_02001508
 	.thumb_func
 Func_02001508:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8700
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8700
+	.else
 	overlay_veneer Func_080c8710
+	.endif
+	.endif
 	.global Func_02001510
 	.thumb_func
 Func_02001510:
@@ -165,11 +205,27 @@ Func_02001520:
 	.global Func_02001528
 	.thumb_func
 Func_02001528:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8720
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8720
+	.else
 	overlay_veneer Func_080c8730
+	.endif
+	.endif
 	.global Func_02001530
 	.thumb_func
 Func_02001530:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8728
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8728
+	.else
 	overlay_veneer Func_080c8738
+	.endif
+	.endif
 	.global Func_02001538
 	.thumb_func
 Func_02001538:

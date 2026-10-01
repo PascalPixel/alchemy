@@ -124,10 +124,12 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.ifndef TBS_EDITION_JA
 	.global Event_CallWithLastActiveObjectId
 	.thumb_func
 Event_CallWithLastActiveObjectId:
 	overlay_veneer Event_CallWithLastActiveObjectIdFar
+	.endif
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:

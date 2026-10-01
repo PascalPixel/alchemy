@@ -4,6 +4,11 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+extern u8 MsgFuchinDragonFlameShowsPath[];
+extern u8 MsgFuchinSecretKiRevealed[];
+extern u8 MsgFuchinLightRevealsShadows[];
+extern u8 MsgFuchinEyelessDragon[];
+extern u8 MsgFuchinDragonRedEyes[];
 /* Spawn a scripted effect with optional palette, priority and scale rates.
  * Complete 352-byte owner, including its three-word pool, matches exactly.
  * FAKEMATCH: retain the local script-table copy and branch-local divide
@@ -1487,21 +1492,21 @@ void FieldScene_RunFourPassCallbackSequence(void)
 void SceneState_SetValue17e1(void)
 {
     Engine_EventBegin();
-    Engine_MessageShowCentered(MSG_DRAGONS_FLAME_ILLUMINATES_PATH_TRUTH, 1);
+    Engine_MessageShowCentered((s32)MsgFuchinDragonFlameShowsPath, 1);
     Engine_EventEnd();
 }
 
 void SceneDialogue_RunLine17e2(void)
 {
     Engine_EventBegin();
-    Engine_MessageShowCentered(MSG_SECRET_KI_SHALL_REVEALED_DISCIPLES, 1);
+    Engine_MessageShowCentered((s32)MsgFuchinSecretKiRevealed, 1);
     Engine_EventEnd();
 }
 
 void FieldScene_RunScriptedStep17E3(void)
 {
     Engine_EventBegin();
-    Engine_MessageShowCentered(MSG_RAYS_LIGHT_GIVE_BIRTH_SHADOWS, 1);
+    Engine_MessageShowCentered((s32)MsgFuchinLightRevealsShadows, 1);
     Engine_EventEnd();
 }
 
@@ -1517,9 +1522,9 @@ void SceneState_SetWorkspace370ByFlag820(void)
     Engine_EventBegin();
     /* movs r0,#0x82 / lsls r0,#4 builds 0x820. */
     if (GameFlag_IsSet((s32)0x820) != 0) {
-        Engine_MessageShowCentered((s32)0x17e5, 1);
+        Engine_MessageShowCentered((s32)MsgFuchinDragonRedEyes, 1);
     } else {
-        Engine_MessageShowCentered((s32)0x17e4, 1);
+        Engine_MessageShowCentered((s32)MsgFuchinEyelessDragon, 1);
         if (PartyInventory_FindOwner((s32)0xe6) != -1) {
             u8 *workspace = (u8 *)gEventWork;
 

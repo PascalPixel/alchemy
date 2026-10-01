@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
+#include "TLA_EDITION.H"
 
 s32 Party_Check(void);
 void SerialRuntime_WaitForTransferB(void);
@@ -39,12 +40,18 @@ s32 UpdateNameEntries(void)
         if (name_text[i] != 0) {
             do {
                 i += 1;
-                if (i > 4) {
+                if (i > NAME_PREFIX_LAST_INDEX) {
                     break;
                 }
             } while (name_text[i] != 0);
         }
+#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+        name_text[i] = ' ';
+        len = i + 1;
+#else
         len = i;
+#endif
         for (i = 14; i >= len; i--) {
             name_entry[i] = name_entry[i - len];
         }

@@ -451,8 +451,16 @@ void FieldScene_RunSecondarySequence(void)
     Audio_PlayCue(158);
     Engine_EventWait(20);
     Actor_SetPosition(22, 0x480000, 0x1380000);
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Object_GetById(22)->target_z = ACTOR_NO_TARGET;
+    Actor_SetPosition(22, 0x480000, 0x1380000);
+    Engine_EventWait(20);
+    Actor_WalkToAndWait(22, 72, 328);
+#else
     Engine_EventWait(20);
     Actor_WalkByAndWait(22, 0, 16);
+#endif
     Engine_MapCopyCellsTo(32, 0, 1, 2, 4, 18);
     Audio_PlayCue(159);
     Engine_EventWait(20);

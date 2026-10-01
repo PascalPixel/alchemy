@@ -1398,8 +1398,6 @@ BattleEffect_RunTileAndPaletteAnimation:
 	.thumb_func
 Func_080cc5d8:
 	.incbin "baserom.gba", 0x000ce3d8, 0x00000388
-	.section .rom.000cecbc, "ax"
-	.incbin "baserom.gba", 0x000cecbc, 0x00000248
 	.section .rom.000cfe34, "ax"
 	.incbin "baserom.gba", 0x000cfe34, 0x00000828
 	.section .rom.000d0954, "ax"

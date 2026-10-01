@@ -716,7 +716,6 @@
     "*/recon/tbs/es/rom.o"(.rom.000cf40c)
     "*/recon/tbs/es/rom.o"(.rom.000cfdd8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT3.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000d06bc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT44.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT45.o"(.text)

@@ -38,6 +38,7 @@ void RamakanSabaku_ReturnToSafePoint(void)
     s32 shown;
     u16 *shown_addr;
     struct FieldActor *leader;
+    struct FieldActor *actor;
     struct EffectOptions rising;
     struct EffectOptions landing;
 
@@ -71,13 +72,13 @@ void RamakanSabaku_ReturnToSafePoint(void)
     Audio_PlayCue(152);
     OverlayObject_WaitUntilField12BelowLimit(Actor_Get(0), Actor_Get(0)->y.fixed);
     Audio_PlayCue(241);
-    leader = Actor_Get(0);
+    actor = Actor_Get(0);
     rising.type = 214;
     rising.start_scale_x = 0x8000;
     rising.start_scale_y = 0xcccc;
     rising.target_scale_x = 0x10000;
     rising.target_scale_y = 0x13333;
-    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0, 0, 0, 0x1c0000, &rising);
+    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0, 0x1c0000, &rising);
     Actor_ShowEmote(0, 0x104, 0);
     Actor_SetAnimation(0, 18);
     zero = 0;
@@ -98,8 +99,8 @@ void RamakanSabaku_ReturnToSafePoint(void)
     } while (timer != 0);
     leader = Actor_Get(0);
     landing.type = 214;
-    landing.start_scale_y = 0xcccc;
     landing.start_scale_x = 0x8000;
+    landing.start_scale_y = 0xcccc;
     landing.target_scale_x = 0x8000;
     landing.target_scale_y = 0x13333;
     Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0, 0, 0, 0x1c0000, &landing);

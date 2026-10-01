@@ -215,18 +215,24 @@ void Unnamed_080e94b8(struct BattleEffectArgument *effect)
                         s32 size;
 
                         EffectStep_AdvanceWithGravity2D(spark, 64, 128 << 5);
-                        y = spark->y;
                         spark->variant--;
+                        y = spark->y;
                         if (y > (216 << 15)) {
                             spark->velocity_y = -spark->velocity_y / 2;
                         } else {
                             x = spark->x;
                             if ((u32)x <= 0x007EFFFF && y >= 0) {
+                                u8 *cell;
+                                s32 lane;
                                 s32 py = y >> 16;
                                 s32 px = x >> 16;
 
                                 size = spark->variant / 5 + 1;
-                                routine[i & 1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1], px -= size / 2, py -= size, size, size * 2);
+                                lane = i & 1;
+                                cell = (u8 *)sheet + ParticleStreams_CellOffsets[size - 1];
+                                px -= size / 2;
+                                py -= size;
+                                routine[lane](canvas, cell, px, py, size, size * 2);
                             }
                         }
                     }

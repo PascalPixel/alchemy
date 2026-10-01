@@ -495,9 +495,9 @@ Unnamed_080eb754:
 .L_080ebb28:
 	.4byte 0x000077d8
 .L_080ebb2c:
-	.4byte Data_080eef18 + 0x3e
+	.4byte FallingSword_DustGravity + 0x3e
 .L_080ebb30:
-	.4byte Data_080eef18 + 0x47
+	.4byte FallingSword_DustGravity + 0x47
 .L_080ebb34:
 	.4byte ParticleStreams_CellOffsets
 .L_080ebb38:
@@ -1216,9 +1216,9 @@ Unnamed_080eb754:
 .L_080ec0b8:
 	.4byte 0x000077d8
 .L_080ec0bc:
-	.4byte Data_080eef18 + 0x3e
+	.4byte FallingSword_DustGravity + 0x3e
 .L_080ec0c0:
-	.4byte Data_080eef18 + 0x47
+	.4byte FallingSword_DustGravity + 0x47
 .L_080ec0c4:
 	.4byte 0x000077a8
 .L_080ec0c8:

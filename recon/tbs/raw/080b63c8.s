@@ -599,7 +599,7 @@ Battle_RunEncounter:
 	movs r1, #24
 	adds r5, r0, #0
 	movs r0, #92
-	bl Unnamed_080bb7c0
+	bl BattlePresentation_WaitForPromptAt
 	adds r0, r5, #0
 	movs r1, #1
 	bl UiWork_FinalizeFar

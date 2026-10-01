@@ -17,10 +17,21 @@ struct GameState {
     s16 entrance;
     s16 saved_scene;
     s16 saved_entrance;
-    u8 unknown_1c8[0x0e];
+    /* Where a scene change goes when it names no scene or entrance. */
+    s16 default_scene;
+    s16 default_entrance;
+    u8 unknown_1cc[2];
+    /* The scene and entrance a scene change asked for, -1 for the default. */
+    s16 next_scene;
+    s16 next_entrance;
+    /* Where the party wakes after falling in battle, -1 for the default. */
+    s16 defeat_scene;
+    s16 defeat_entrance;
     /* The value Event_GetSpecialValue returns, which battle effects set. */
     s16 special;
-    u8 unknown_1d8[4];
+    u8 unknown_1d8[2];
+    /* The map the current scene shows, from its row of the scene table. */
+    u16 map;
     /* The party's position on the map, in 16.16 fixed point. */
     s32 x;
     s32 y;
@@ -38,12 +49,21 @@ struct GameState {
     s32 selected_actor;
     /* The ids of the party's active members, 0xff after the last. */
     u8 active_owners[8];
-    u8 unknown_200[0x2c];
+    u8 unknown_200[5];
+    /* The two values the palette glow is restored from. */
+    u8 palette_glow[2];
+    u8 unknown_207[0x17];
+    /* The cue a scene the party returns to plays, -1 for the scene's own. */
+    s16 return_cue;
+    u8 unknown_220[0x0c];
     u16 unknown_22c;
     u16 unknown_22e;
     u16 unknown_230;
     s16 unknown_232;
-    u8 unknown_234[0x0a];
+    u8 unknown_234[2];
+    /* Why the scene is changing: -1 when the party fell in battle. */
+    s16 scene_change_reason;
+    u8 unknown_238[6];
     s16 unknown_23e;
     /* Where Retreat returns the party. */
     s16 retreat_scene;

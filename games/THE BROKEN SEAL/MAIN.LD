@@ -617,7 +617,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000ac534)
-    "*/recon/tbs/ja/rom.o"(.rom.000ac6e0)
+    "*/games/THE BROKEN SEAL/SRC/DEBUG/BATTLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/UPDATE_AVAILABILITY.o"(.text)

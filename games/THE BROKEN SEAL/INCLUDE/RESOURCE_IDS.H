@@ -16,6 +16,7 @@ extern char ResourceId_CamelotLogo;
 extern char ResourceId_GoldenSunLogo;
 extern char ResourceId_WorldMapPicture;
 extern char ResourceId_IntroTilesB;
+extern char ResourceId_SuharaGateBackdrop;
 extern char ResourceId_VinasuChojoStormBackdrop;
 extern char ResourceId_BeachBackdrop;
 extern char ResourceId_SnowfieldBackdrop;

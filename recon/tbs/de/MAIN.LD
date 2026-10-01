@@ -612,7 +612,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000b7b34)
-    "*/recon/tbs/de/rom.o"(.rom.000b7ce0)
+    "*/games/THE BROKEN SEAL/SRC/DEBUG/BATTLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/UPDATE_AVAILABILITY.o"(.text)

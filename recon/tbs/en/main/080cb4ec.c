@@ -1,240 +1,156 @@
-/* 2026-09-29 alchemy permute: score 4332 to 3242 on the permuter's scorer
-   (0 is exact); remaining 63 register-only, 2 stack-only, 10 operand, 16
-   reordered, 13 inserted, 4 deleted. Kept rewrites: 8x reorder independent
-   statements, 7x swap commutative operands, 6x introduce a temporary, 3x
-   reorder local declarations, 3x add a same-width cast, 3x move an
-   assignment into or out of a condition, 2x remove a temporary, 2x drop a
-   same-width cast, 2x change loop form, 2x test truth or compare with
-   zero. FAKEMATCH: the permuter's temporaries, register hints and swapped
-   operand orders below only steer allocation and scheduling; no programmer
-   would write them, so they stay tagged until a natural spelling replaces
-   them. */
-/* Draft, not exact (2026-09-26): baseline 792 of 780 bytes, 153 aligned edits.
-   Complete owner and frame (36 bytes); remaining branch stores hoist 3 and 2
-   into saved registers instead of the reference's shared immediate/store tail;
-   rectangle-slot spill formation, particle draw registers and literal offsets differ.
-   Bounded trials: union word/halfword position views emitted the same 792-byte,
-   153-edit result: GCC already selects ldrsh at particle +2/+6 from the shifts.
-   A pooled Value_00000078 call operand alone gave 796 bytes / 155 edits, placing
-   its word in the first rather than the second pool. A scalar drift bucket plus
-   that symbol gave 772 / 177: constants stayed inside branches, but CSE removed
-   the reference store/reload at +12 and merged the branch tails. Neither spelling
-   is retained. Need a new alias/control-flow fact, not high-half respelling. */
+/* Battle effect: a rain of blades. Sixty-four blades are seeded at random
+   columns with a sideways drift set by the column; each of 120 frames draws
+   sixteen of them, falling once their turn comes and then shrinking, while
+   the screen shakes and the first target is hit every fourth frame from
+   frame 23 to 87.
+
+   2026-10-01 slice-6: rewritten from the listing after its matched sibling
+   BattleFx_RunTwoResource (PRESENT3.C), 27 instructions off (was 106), all
+   in the two draw calls of the inner loop and all one rotation of three
+   registers: the reference holds the drift in r6, the cell in r4, the
+   width in r5 and the height in r4; this draft the drift in r4, the cell
+   in r5, the width in r6 and the height in r5. The allocator ranks the
+   drift first here (18 weighted references over 10 instructions) because
+   the blitter index, drift >> 31, is computed before the call's operands;
+   the reference computes it after them, which keeps the drift alive past
+   the width and height loads and ranks it below both. Loading the operands
+   in statements before the call does that but moves 62 other registers;
+   the permuter (60 s) found nothing. The width and height must each be
+   loaded once (assigned inside the operand list), or 132 instructions
+   differ.
+   Data_080edf7f, Data_080edf83 and Data_080edf88 (cell widths, heights and
+   sheet offsets) are labelled in the English scaffold only; the other five
+   editions need the same three labels when this is adopted. Resource 0x78
+   is ResourceId_SwordSlashSheet. */
 #include "TYPES.H"
+#include "SYSTEM.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
 
-/*
- * Battle-presentation sub-effect at 0x080cb4ec, part of the same
- * 0x03001eec "battle work" family as games/THE BROKEN SEAL/src/battle/effects/puff_arc
- * (0x080d9fc8, the closest structural template, score 8362/10000) and
- * games/THE BROKEN SEAL/src/battle/effects/member_orbit (0x080ce85c). This owner is
- * 780 bytes against the template's 644: it shares the template's overall
- * shape (WORK_EFX republish, BattleFx_BeginCanvasLayer, two BattleEffect_LoadWork heap-kind
- * loads, Resource_LoadAndDecompress, a fixed-length outer frame loop, the
- * Scheduler_AddOrUpdateCallback/RemoveCallback bracket at 0x080CD261, and
- * the Runtime_ReleaseHeapBlock(47)/Runtime_ReleaseHeapBlock(46) unload order also seen in
- * member_orbit) but replaces the template's 9-puff sine/cosine arc with a
- * 64-particle randomized field seeded by Random16()/UnsignedModulo, and
- * replaces the template's single draw callback with member_orbit's
- * two-callback (heap kinds 46 and 47) selection idiom, chosen here per
- * particle by the sign of its drift velocity rather than by frame parity.
- *
- * Each frame redraws 16 of the 64 particles (the ones seeded at array
- * indices 0..15, walked back to front) through a 4-entry size/offset table
- * keyed by the particle's |drift bucket| (0..3), and after each particle's
- * staggered opening window elapses further, draws it with height reduced by
- * 4 rather than advancing its position -- a fade/settle tail rather than the
- * template's continued motion.
- */
-
+extern u8 gBattleFxWork[];
+/* Per drift step 0..3: the cell's width and height and its offset in the
+   sheet. */
+extern const u8 Data_080edf7f[];
+extern const u8 Data_080edf83[];
+extern const u16 Data_080edf88[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 interval);
-void Scheduler_RemoveCallback(s32 callback);
-void Audio_PlayCue(s32 cue);
-void EffectPosition_ApplyStepAndYOffset(
-    s32 actor, struct EffectPosition *position);
-u32 Random16(void);
-s32 __umodsi3(u32 value, s32 modulus);
-void ObjectGroup_UpdateMembers(s32 a, s32 b, s32 c, s32 d, s32 e);
-void Camera_ApplyShake(s32 a, u32 b);
-void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
-
-/* Size/offset table for the four |drift bucket| classes (0..3): source data
-   offset within the work block, width, and height. This owner's own table,
-   distinct from puff_arc's PuffArc_CellWidths/PuffArc_CellHeights/PuffArc_CellSourceOffsets. */
-extern const u16 Data_080edf88[4];
-extern const u8 Data_080edf7f[4];
-extern const u8 Data_080edf83[4];
-
-/* Same effect-state layout established by puff_arc/run.c, republished at
-   work + 0x7828. */
-#define WORK_EFX (*(struct BattleEffectArgument **)(work + 0x7828))
-
-/* One 28-byte particle record, matching the template's Puff stride. Only
-   offsets 0, 4, 0xC and 0x10 are ever touched by this owner; offset 8 and
-   the tail bytes are unused padding. pos_x/pos_y are 16.16 fixed point --
-   only their integer half is ever read back. vel_x doubles as the per-
-   particle |drift bucket| << 17 at init and as the signed per-frame "age"
-   test afterward. */
-typedef struct Particle {
-    s32 pos_x;
-    s32 pos_y;
-    s32 pad08;
-    s32 vel_x;
-    s32 vel_y;
-    u8 pad14[8];
-} Particle;
+void Audio_PlayCue(s32 cue);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_TickMemberTimers(void);
+void Camera_ApplyShake(s32 x, s32 y);
 
 void Unnamed_080cb4ec(struct BattleEffectArgument *efx)
 {
+    struct EffectPosition position;
+    DrawRectangle draw[2];
     void **heap_cache;
     void **cursor;
+    struct BattleEffectWork *work;
     void *canvas;
-    u8 *work;
-    struct EffectPosition pos;
-    void *rectangle[2];
-    void **rectangle_slot;
+    DrawRectangle *blit;
+    struct EffectStep *blade;
     s32 frame;
     s32 i;
-    Particle *p;
-    s32 tmp2;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    WORK_EFX = efx;
+    work->effect = efx;
     BattleFx_BeginCanvasLayer(1);
-    *(s16 *)0x04000020 = 0x0100;
-    *(s16 *)0x04000052 = 0x1000;
+    *(u16 *)0x04000020 = 0x100;
+    *(u16 *)0x04000052 = 0x1000;
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
-    rectangle[0] = heap_cache[7];
+    draw[0] = (DrawRectangle)heap_cache[46 - 39];
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
-    rectangle[1] = heap_cache[8];
-    rectangle_slot = rectangle;
-    Resource_LoadAndDecompress((void *)0x78, work, 1, 1);
-    *(s32 *)(work + 0x7780) = 1;
-    *(s32 *)(work + 0x7784) = 0;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[0], &pos);
-    tmp2 = (0x40 - pos.x) << 8;
-    *(s32 *)0x04000028 = tmp2;
-    {
-        i = 0;
-        p = (Particle *)(work + 0x7080);
-        while (1) {
-            s32 v;
-            v = __umodsi3(Random16(), 0x60) + 16;
-            p->pos_x = v;
-            p->pos_y = (24 - i / 4) << 16;
-            if (v <= 0x2B) {
-                p->vel_x = 3;
-            } else if (v <= 0x33) {
-                p->vel_x = 2;
-            } else if (v <= 0x3B) {
-                p->vel_x = 1;
-            } else if (v <= 0x43) {
-                p->vel_x = 0;
-            } else {
-                if (v <= 0x4B) {
-                    p->vel_x = 1;
-                } else if (v <= 0x53) {
-                    p->vel_x = 2;
-                } else {
-                    p->vel_x = 3;
-                }
-                p->vel_x = -p->vel_x;
-            }
-            p->vel_x = p->vel_x << 17;
-            p->vel_y = 0x80000;
-            i += 1;
-            p->pos_x = p->pos_x << 16;
-            p += 1;
-            if (i == 64)
-                break;
-        }
+    draw[1] = (DrawRectangle)heap_cache[47 - 39];
+    blit = draw;
+    Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work, 1, 1);
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
+    *(s32 *)0x04000028 = (64 - position.x) << 8;
+    for (i = 0; i != 64; i++) {
+        s32 column;
+
+        blade = &work->particles[i];
+        column = Random16() % 96 + 16;
+        blade->x = column;
+        blade->y = (24 - i / 4) << 16;
+        if (column <= 43)
+            blade->velocity_x = 3;
+        else if (column <= 51)
+            blade->velocity_x = 2;
+        else if (column <= 59)
+            blade->velocity_x = 1;
+        else if (column <= 67)
+            blade->velocity_x = 0;
+        else if (column <= 75)
+            blade->velocity_x = -1;
+        else if (column <= 83)
+            blade->velocity_x = -2;
+        else
+            blade->velocity_x = -3;
+        blade->velocity_x <<= 17;
+        blade->velocity_y = 0x80000;
+        blade->x <<= 16;
     }
-    Audio_PlayCue(0xD4);
-    frame = 0;
-    do {
-        u8 *tmp5;
-        if (0x10 >= frame) {
-            *(s16 *)0x04000052 = frame | 0x1000;
-            if (frame == 0x10) {
-                *(s16 *)0x04000050 = 0;
-            }
+    Audio_PlayCue(212);
+    for (frame = 0; frame != 120; frame++) {
+        if (frame <= 16) {
+            *(u16 *)0x04000052 = frame | 0x1000;
+            if (frame == 16)
+                *(u16 *)0x04000050 = 0;
         }
-        if (0x67 < frame) {
-            *(s16 *)0x04000052 = (0x78 - frame) | 0x1000;
-            if (frame == 0x68) {
-                *(s16 *)0x04000050 = 0x3F44;
-            }
+        if (frame > 103) {
+            *(u16 *)0x04000052 = (0x78 - frame) | 0x1000;
+            if (frame == 104)
+                *(u16 *)0x04000050 = 0x3f44;
         }
-        i = 15;
-        p = (Particle *)(work + 0x7224);
-        while (1 != 0) {
-            s32 tick;
+        for (i = 15; i != -1; i--) {
+            s32 drift;
             s32 cell;
-            s32 threshold;
-            s32 width;
-            s32 height;
-            s32 x;
-            s32 y;
-            void *src;
-            tick = p->vel_x;
-            cell = (0 > tick ? -tick : tick) >> 17;
-            if (frame < (threshold = (u32)(i * 4)) + 25) {
-                u8 *tmp3;
-                tmp3 = Data_080edf88[cell] + work;
-                width = Data_080edf7f[cell];
-                x = (p->pos_x >> 16) - width / 2;
-                src = tmp3;
-                height = Data_080edf83[cell];
-                y = (p->pos_y >> 16) - height / 2;
-                ((DrawRectangleFn)rectangle_slot[(u32)tick >> 31])(canvas, src, x, y, width, height);
-                if (frame >= threshold + 16) {
-                    p->pos_x += p->vel_x;
-                    p->pos_y += p->vel_y;
+            u32 wide;
+            u32 high;
+
+            blade = &work->particles[i];
+            drift = blade->velocity_x;
+            cell = (drift < 0 ? -drift : drift) >> 17;
+            if (frame < i * 4 + 25) {
+                blit[(u32)drift >> 31](canvas, (u8 *)work + Data_080edf88[cell],
+                    (blade->x >> 16) - ((wide = Data_080edf7f[cell]) >> 1),
+                    (blade->y >> 16) - ((high = Data_080edf83[cell]) >> 1),
+                    wide, high);
+                if (frame >= i * 4 + 16) {
+                    blade->x += blade->velocity_x;
+                    blade->y += blade->velocity_y;
                 }
             } else {
-                s32 tmp;
-                u8 *tmp4;
-                width = Data_080edf7f[cell];
-                x = (p->pos_x >> 16) - width / 2;
-                tmp4 = work + Data_080edf88[cell];
-                height = Data_080edf83[cell];
-                tmp = height / 2;
-                y = (p->pos_y >> 16) - tmp;
-                src = tmp4;
-                height -= 4;
-                ((DrawRectangleFn)rectangle_slot[(u32)tick >> 31])(canvas, src, x, y, width, height);
+                blit[(u32)drift >> 31](canvas, (u8 *)work + Data_080edf88[cell],
+                    (blade->x >> 16) - ((wide = Data_080edf7f[cell]) >> 1),
+                    (blade->y >> 16) - ((high = Data_080edf83[cell]) >> 1),
+                    wide, high - 4);
             }
-            i -= 1;
-            p -= 1;
-            if (-1 == i)
-                break;
         }
-        if ((u32)(frame - 0x17) <= 0x40 && !(3 & frame)) {
-            ObjectGroup_UpdateMembers(WORK_EFX->actors[0], 7, 5, 0, 2);
-            *(s32 *)(work + 0x77A8) = 1;
-            if (!((7 & frame) != 0)) {
-                Audio_PlayCue(0x85);
-            }
+        if (frame >= 23 && frame <= 87 && (frame & 3) == 0) {
+            ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 2);
+            work->shake_frames = 1;
+            if ((frame & 7) == 0)
+                Audio_PlayCue(133);
         }
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
-        tmp5 = work + 0x7824;
-        *(s32 *)tmp5 = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
-        frame += 1;
-    } while (frame != 0x78);
-    Scheduler_RemoveCallback(0x080CD261);
+    }
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

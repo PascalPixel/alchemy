@@ -1,9 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Slots_TripleBanner: its 16-colour palette, then 128 tiles of 4-bit colour packed
 @ by the resource packer.
 	.section .rodata
 	.global Slots_TripleBanner
 Slots_TripleBanner:
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.incbin "GRAPHICS/SLOTS/TRIPLE_JA.gbapal"
 	.incbin "GRAPHICS/SLOTS/TRIPLE_JA.4bpp.lz"
 	.else

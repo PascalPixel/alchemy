@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "HASHIRA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -55,9 +56,17 @@ void SceneActor_CheckActors8To11NearSlotZero(void);
 void TakaraHashira_PrepLoweredActor();
 void FieldScene_RunScene3b3_0200263c();
 
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+
 void FieldScene_RunScene3b3_02001fd4(void)
 {
     Engine_EventBegin();
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    ((struct FieldActor *)Object_GetById(0))->y.fixed = Map_GetTerrainHeightFar(
+        ((struct FieldActor *)Object_GetById(0))->unknown_22,
+        ((struct FieldActor *)Object_GetById(0))->x.fixed,
+        ((struct FieldActor *)Object_GetById(0))->z.fixed);
+#endif
     if (FieldScene_RunScene3b3SequenceD() == 0) {
         *((u8 *)Object_GetById(0) + 85) &= 254;
         *((u8 *)Object_GetById(0) + 35) &= 254;
@@ -599,9 +608,11 @@ s32 TakaraHashira_SetupArea(void)
             Engine_ActorSetChildValue(10, 6);
             FieldScene_RedrawActorFootprint(8);
             FieldScene_RedrawActorFootprint(9);
+#if EDITION_INTERNATIONAL
             v5 = 0;
             *((u8 *)Object_GetById(8) + 85) = v5;
             *((u8 *)Object_GetById(9) + 85) = v5;
+#endif
             TakaraHashira_DropActorTen();
             TakaraHashira_PrepLoweredActor(11);
             TakaraHashira_PrepLoweredActor(12);
@@ -610,7 +621,11 @@ s32 TakaraHashira_SetupArea(void)
             FieldScene_RunScene3b3_0200263c(12);
             FieldScene_RunScene3b3_0200263c(13);
             record = (u8 *)Object_GetById(13);
+#if EDITION_INTERNATIONAL
             *(s32 *)((s32)record + 108) = v5;
+#else
+            *(s32 *)((s32)record + 108) = 0;
+#endif
             TakaraHashira_PrepLoweredActor(14);
             {
                 u8 *record = (u8 *)Object_GetById(14);

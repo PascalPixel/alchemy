@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "LAYOUT_GUARD.H"
@@ -185,10 +186,10 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     combined += *(s32 *)(state + 16);
     *(s32 *)(state + 24) = combined;
 
-#if defined(TBS_EDITION_JA)
-    RenderOutput_ClearListFar(*(s32 *)(menu + 44));
-#else
+#if EDITION_INTERNATIONAL
     RenderOutput_RedrawSavedRectFar(*(s32 *)(menu + 44));
+#else
+    RenderOutput_ClearListFar(*(s32 *)(menu + 44));
 #endif
     WaitFrames(1);
 
@@ -196,10 +197,10 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     off = combined * 2 + 456;
     if (*(u16 *)((char *)menu + off) != 0) {
         s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&MsgItemPlainName;
-#if defined(TBS_EDITION_JA)
-        UiText_DrawMessageAt(masked, *(s32 *)(menu + 44), 0, 0);
-#else
+#if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar(masked, *(s32 *)(menu + 44), 0, 0);
+#else
+        UiText_DrawMessageAt(masked, *(s32 *)(menu + 44), 0, 0);
 #endif
     }
 
@@ -217,12 +218,12 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     return 1;
 }
 
-#if defined(TBS_EDITION_JA)
-#define PAGE_X  120
-#define ENTRY_X 32
-#else
+#if EDITION_INTERNATIONAL
 #define PAGE_X  116
 #define ENTRY_X 24
+#else
+#define PAGE_X  120
+#define ENTRY_X 32
 #endif
 
 s32 ItemMenu_DrawNamePage(

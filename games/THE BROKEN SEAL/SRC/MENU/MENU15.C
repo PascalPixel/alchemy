@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_REG.H"
@@ -77,14 +78,14 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     UiText_DrawCharacterAtOffset(msg, win, 8, 0);
     msg++;
     UiText_DrawCharacterAtOffset(msg, win, 8, 16);
-#if defined(TBS_EDITION_JA)
-    /* The Japanese speed caption is one line, level with its frames. */
-    UiText_DrawCharacterAtOffset((s32)&MsgMessageSpeedLabel, win, 8, 40);
-#else
+#if EDITION_INTERNATIONAL
     msg = (s32)&MsgMessageSpeedLabel;
     UiText_DrawCharacterAtOffset(msg, win, 8, 32);
     msg++;
     UiText_DrawCharacterAtOffset(msg, win, 32, 40);
+#else
+    /* The Japanese speed caption is one line, level with its frames. */
+    UiText_DrawCharacterAtOffset((s32)&MsgMessageSpeedLabel, win, 8, 40);
 #endif
     UiText_DrawCharacterAtOffset((s32)MsgSpeechLabel, win, 8, 64);
     UiText_DrawCharacterAtOffset((s32)MsgAutoSleepLabel, win, 8, 88);

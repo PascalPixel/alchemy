@@ -1,4 +1,5 @@
 .syntax unified
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 	.thumb
 	.section .rodata.x02008a90,"a",%progbits
 .L_02008a90:
@@ -77,6 +78,7 @@
 	.4byte 0x00000000
 	.global Data_02008bb4
 Data_02008bb4:
+	/* Room camera bounds: Japanese door views stop eight pixels earlier. */
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -142,55 +144,91 @@ Data_02008bb4:
 	.4byte 0x40000270
 	.4byte 0x01400000
 	.4byte 0x02680238
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x000002e0
+.else
 	.4byte 0x000002e8
+.endif
 	.4byte 0xffff000c
 	.4byte 0x00000188
 	.4byte 0xc00002d8
 	.4byte 0x01400000
 	.4byte 0x02680238
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x000002e0
+.else
 	.4byte 0x000002e8
+.endif
 	.4byte 0xffff000d
 	.4byte 0x00000218
 	.4byte 0xc00002d8
 	.4byte 0x01400000
 	.4byte 0x02680238
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x000002e0
+.else
 	.4byte 0x000002e8
+.endif
 	.4byte 0xffff000e
 	.4byte 0x00000188
 	.4byte 0x400002a8
 	.4byte 0x01400000
 	.4byte 0x02680238
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x000002e0
+.else
 	.4byte 0x000002e8
+.endif
 	.4byte 0xffff000f
 	.4byte 0x00000218
 	.4byte 0x400002a8
 	.4byte 0x01400000
 	.4byte 0x02680238
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x000002e0
+.else
 	.4byte 0x000002e8
+.endif
 	.4byte 0xffff0010
 	.4byte 0x00000328
 	.4byte 0x40000298
 	.4byte 0x02c00000
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x03b00260
+.else
 	.4byte 0x03b80260
+.endif
 	.4byte 0x00000300
 	.4byte 0xffff0011
 	.4byte 0x00000348
 	.4byte 0x40000338
 	.4byte 0x02c00000
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x03b00300
+.else
 	.4byte 0x03b80300
+.endif
 	.4byte 0x000003a0
 	.4byte 0xffff0012
 	.4byte 0x000001b8
 	.4byte 0xc0000398
 	.4byte 0x01200000
 	.4byte 0x02100300
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x000003a0
+.else
 	.4byte 0x000003a8
+.endif
 	.4byte 0xffff0013
 	.4byte 0x00000248
 	.4byte 0xc0000398
 	.4byte 0x01f00000
 	.4byte 0x02e00300
+.ifeq EDITION_INTERNATIONAL
+	.4byte 0x000003a0
+.else
 	.4byte 0x000003a8
+.endif
 	.4byte 0xffff001e
 	.4byte 0x00000338
 	.4byte 0xc0000160
@@ -858,10 +896,26 @@ Data_02009670:
 	.4byte MsgTorebiHeyaHoorayWereGoingToColossoNow
 	.4byte 0x00000000
 	.4byte 0xffff000f
+.ifdef TBS_EDITION_ES
+	.4byte SceneDialogue_AskBabiWasMissing
+.else
+.ifdef TBS_EDITION_IT
+	.4byte SceneDialogue_AskBabiWasMissing
+.else
 	.4byte MsgTorebiHeyaWellIGuessSoSinceHes
+.endif
+.endif
 	.4byte 0x00000000
 	.4byte 0xffff0010
+.ifdef TBS_EDITION_ES
+	.4byte MsgTorebiHeyaBabiDecidedShowUpForFinals
+.else
+.ifdef TBS_EDITION_IT
+	.4byte MsgTorebiHeyaBabiDecidedShowUpForFinals
+.else
 	.4byte MsgTorebiHeyaHuhThenTheyFoundHimIn
+.endif
+.endif
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte MsgTorebiHeyaBabiApparentlyHasSomeReasonFor

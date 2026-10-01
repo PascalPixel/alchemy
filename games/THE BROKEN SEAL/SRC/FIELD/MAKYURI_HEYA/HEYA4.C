@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "PROBE.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
@@ -1383,7 +1384,7 @@ s32 Scene_Initialize(void)
             break;
         case 16:
             WaitFrames(1);
-#if !defined(TBS_EDITION_EN) && !defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             if (Engine_GameFlagIsSet(0x318))
                 Call3((void (*)())Engine_ActorSetPosition, 10, 204 << 18, 152 << 18);
             if (Engine_GameFlagIsSet(0x31a))
@@ -1398,7 +1399,7 @@ s32 Scene_Initialize(void)
 #endif
             SetEffectRecordMode(Object_GetById(0), 1);
             SceneEffect_SpawnParticleRowsByMode(0);
-#if !defined(TBS_EDITION_EN) && !defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             if (Engine_GameFlagIsSet(0x319)) {
                 FieldScene_RunPrimarySequence(2);
                 if (Object_GetById(9)->z.fixed >> 20 == 44)

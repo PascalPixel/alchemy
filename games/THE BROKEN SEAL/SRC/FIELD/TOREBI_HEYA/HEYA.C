@@ -34,6 +34,7 @@ extern u8 MsgTorebiWarriorRemember[];
 extern u8 MsgTorebiMissFinalsTolbis[];
 extern u8 MsgTorebiShipsArentGoing[];
 extern u8 MsgTorebiWasteStuckHereWhenSuch[];
+extern u8 MsgTorebiHeyaBabiShowedHimselfAtFinals[];
 
 u8 *SceneData_GetTable8BB4(void)
 {
@@ -57,6 +58,24 @@ s32 SceneData_SelectTable8e00ByFlag(void)
     }
     return (s32)Data_02008e00;
 }
+
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+void SceneDialogue_AskBabiWasMissing(s32 subject)
+{
+    s32 msg;
+
+    msg = (s32)MsgTorebiHeyaBabiShowedHimselfAtFinals;
+    Engine_EventSetMessage(msg);
+    Engine_EventOpenMessage(subject, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(msg + 1);
+    } else {
+        Engine_EventSetMessage(msg + 2);
+    }
+    Engine_EventShowMessage(subject, 0);
+}
+#endif
 
 u8 *SceneData_SelectTable9310ByFlags(void)
 {

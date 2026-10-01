@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
+/* Shared effects default to ☀️'s Japanese motion entry. ⚓️'s Japanese
+   version uses a different dispatch entry; its international versions use
+   the shared call again. */
 #if defined(TLA_EDITION_JA)
 void Func_08118068(s32, s16, s32, s32);
 #else

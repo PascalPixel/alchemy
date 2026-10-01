@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Word clearing and filling, integer square root and bit-run expansion of
 @ TLA's resident runtime, each routine behind a 4-byte Thumb entry (bx pc).
 @ The clearer sets the fill value to zero and runs into the fill through the
@@ -86,7 +87,7 @@ AlchemyUncredited_080008cc:
 	.arm
 AlchemyUncreditedEnd_080008cc:
 @ Japanese glyph masks span twelve halfwords; localized masks span fourteen.
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	add	ip, r0, #24
 	.else
 	add	ip, r0, #28

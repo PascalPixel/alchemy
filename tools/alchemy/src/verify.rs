@@ -382,7 +382,7 @@ fn make_arguments(
         format!("ALCHEMY={}", executable.display()),
     ];
     if main_commit {
-        arguments.push("TARGET=tbs-en".into());
+        arguments.push("TARGET=tbs-ja".into());
     }
     for done in finished {
         arguments.push("-o".into());
@@ -468,7 +468,7 @@ mod tests {
     fn main_default_gates_override_an_ambient_tla_target() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
-        std::fs::write(root.join("Makefile"), "build-full coverage:\n\t@printf '%s\\n' '$(TARGET)'\ncompare-tla:\n\t@printf '%s\\n' tla-en\n").unwrap();
+        std::fs::write(root.join("Makefile"), "build-full coverage:\n\t@printf '%s\\n' '$(TARGET)'\ncompare-tla:\n\t@printf '%s\\n' tla-ja\n").unwrap();
         for gate in ["build-full", "coverage", "compare-tla"] {
             let arguments = make_arguments(Path::new("/unused/alchemy"), &[], gate, true);
             let output = Command::new("make")
@@ -479,9 +479,9 @@ mod tests {
                 .unwrap();
             assert!(output.status.success());
             let expected = if gate == "compare-tla" {
-                "tla-en\n"
+                "tla-ja\n"
             } else {
-                "tbs-en\n"
+                "tbs-ja\n"
             };
             assert_eq!(String::from_utf8(output.stdout).unwrap(), expected);
         }

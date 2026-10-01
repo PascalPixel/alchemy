@@ -1,3 +1,4 @@
+#include "EDITION.H"
 /* The link lobby: its scene tables and the serial query with interrupts held. */
 #include "LOBBY.H"
 #include "TYPES.H"
@@ -30,10 +31,10 @@ const s32 LinkLobby_SlotValues[] = {
     PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
     PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('C', 'I', 'G', 'S')
 #else
-#if defined(TBS_EDITION_JA)
-    PEER_TAG('C', 'M', 'G', 'S'),
-#else
+#if EDITION_INTERNATIONAL
     PEER_TAG('S', 'G', 'M', 'C'),
+#else
+    PEER_TAG('C', 'M', 'G', 'S'),
 #endif
     PEER_TAG('0', '1', '2', '3'), PEER_TAG('A', 'B', 'C', '1'),
     PEER_TAG('C', 'D', 'E', '2'), PEER_TAG('E', 'F', 'G', '3'),

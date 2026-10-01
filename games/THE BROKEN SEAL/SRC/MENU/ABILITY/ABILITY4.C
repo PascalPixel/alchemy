@@ -1,3 +1,4 @@
+#include "EDITION.H"
 /* Browse the current owner's Psynergy from the status menu. L/R changes owners;
  * A advances to Item and B returns to character selection. The row coordinates
  * are signed because this view hides the four owner slots above the screen. */
@@ -124,10 +125,10 @@ s32 PsynergyMenu_SelectAction(void)
             WaitFrames(1);
             nav = Menu_HandlePageInput(0, state.entry_count, PAGE_ROWS, &state.row, &state.page);
             menu->cursor->state = 1;
-#if defined(TBS_EDITION_JA)
-            UiMenu_PositionCursor(58, state.row * 16 + 52);
-#else
+#if EDITION_INTERNATIONAL
             UiMenu_PositionCursor(55, state.row * 16 + 60);
+#else
+            UiMenu_PositionCursor(58, state.row * 16 + 52);
 #endif
             if (nav == 1) {
                 first = 1;

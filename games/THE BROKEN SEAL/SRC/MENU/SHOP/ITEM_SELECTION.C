@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "SHOP.H"
 extern struct ShopRuntime *gMenuWork;
 void *Runtime_GetObject(s32);
@@ -159,10 +160,10 @@ s32 Shop_SelUse(s32 actor)
     count = 1;
     result = 0;
     redraw = 1;
-#if defined(TBS_EDITION_JA)
-    win1 = UiWindow_CreateFar(16, 8, 14, 4, 2);
-#else
+#if EDITION_INTERNATIONAL
     win1 = UiWindow_CreateFar(14, 8, 16, 4, 2);
+#else
+    win1 = UiWindow_CreateFar(16, 8, 14, 4, 2);
 #endif
     win2 = UiWindow_CreateFar(0, 5, 30, 3, 2);
     shop->cursor.anchor->kind = 18;
@@ -292,16 +293,16 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         result = Inventory_CheckDiscardFar(unit_id, item_id);
         /* The Japanese notes start a character in. */
         if (result == -4) {
-#if defined(TBS_EDITION_JA)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 8, 8);
-#else
+#if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 0, 8);
+#else
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 8, 8);
 #endif
         } else if (result == -3) {
-#if defined(TBS_EDITION_JA)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 8, 8);
-#else
+#if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 0, 8);
+#else
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 8, 8);
 #endif
         } else {
             s32 qty;
@@ -312,10 +313,10 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 
 /* The price line: the Japanese edition counts the coins with the word
    before the heading, the others name them with MsgCoins, five before. */
-#if defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
             UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 1, window, 80, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 80, 8);
 #elif defined(TBS_EDITION_DE)
             UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 0, 8);
             UiNumber_DrawAt(total, 5, window, 32, 8);
@@ -331,7 +332,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 #else
             UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 80, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 1, window, 80, 8);
 #endif
         }
     }

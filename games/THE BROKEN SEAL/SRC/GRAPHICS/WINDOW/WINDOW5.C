@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
@@ -12,10 +13,10 @@ extern s32 Localization_LookupEntryId();
 extern s32 UiWindow_Create();
 extern s32 CreateSideObject();
 
-#if defined(TBS_EDITION_JA)
-#define WORK_NO 0x8BE
-#else
+#if EDITION_INTERNATIONAL
 #define WORK_NO 0x976
+#else
+#define WORK_NO 0x8BE
 #endif
 
 /* 連続する2要素へ0x3e7を設定する。 */

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_TYPES.H"
@@ -92,10 +93,10 @@ s32 ItemMenu_SelectItem(void)
         result = 0;
         Owner_GetStateFar(menu->owner_table[id]);
     }
-#if defined(TBS_EDITION_JA)
-    UiWindow_UpdateOrCreate(&menu->equip_window, 0, 10, 13, 10, 2);
-#else
+#if EDITION_INTERNATIONAL
     UiWindow_UpdateOrCreate(&menu->equip_window, 0, 10, 15, 10, 2);
+#else
+    UiWindow_UpdateOrCreate(&menu->equip_window, 0, 10, 13, 10, 2);
 #endif
     ItemMenu_PosCategory();
 

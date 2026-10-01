@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SAVE_STATE.H"
 extern u8 gTitleExtraOptionEnabled[];
@@ -89,10 +90,10 @@ s32 Menu_SelectResource(s32, s32);
 void UiWork_CloseAndRelease(void);
 
 /* The Japanese list of four entries is centred two rows higher. */
-#if defined(TBS_EDITION_JA)
-#define ANIMATE_ENTRIES_ROW 5
-#else
+#if EDITION_INTERNATIONAL
 #define ANIMATE_ENTRIES_ROW 7
+#else
+#define ANIMATE_ENTRIES_ROW 5
 #endif
 
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
@@ -177,12 +178,12 @@ extern void UiWindow_ClearInteriorTiles(void *, s32, s32, s32, s32);
 extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 /* The Japanese mode labels start further left in a narrower cleared box. */
-#if defined(TBS_EDITION_JA)
-#define MODE_LABEL_X     8
-#define MODE_LABEL_RIGHT 80
-#else
+#if EDITION_INTERNATIONAL
 #define MODE_LABEL_X     18
 #define MODE_LABEL_RIGHT 144
+#else
+#define MODE_LABEL_X     8
+#define MODE_LABEL_RIGHT 80
 #endif
 
 void Menu_DrawModeLabel(void)
@@ -241,10 +242,10 @@ extern u8 MsgPasswordTransferHelp;
 extern u8 MsgCableTransferHelp;
 
 /* The Japanese password help starts at the window edge. */
-#if defined(TBS_EDITION_JA)
-#define PASSWORD_HELP_X 0
-#else
+#if EDITION_INTERNATIONAL
 #define PASSWORD_HELP_X 16
+#else
+#define PASSWORD_HELP_X 0
 #endif
 
 #if defined(TBS_EDITION_FR)

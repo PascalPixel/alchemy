@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OBJECT_RUNTIME.H"
@@ -68,7 +69,7 @@ extern u8 Runtime_ByteRemapTable[];
 
 /* The Japanese edition steers on the world map its own way, which stays in
    its scaffold for now. */
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 
 /*
  * World-map player movement: pick the heading from the pad, probe the map
@@ -285,7 +286,7 @@ movement_done:
     return 1;
 }
 
-#endif /* !TBS_EDITION_JA */
+#endif /* EDITION_INTERNATIONAL */
 
 s32 Field_CheckConfiguredKeysAndCount(void *work)
 {

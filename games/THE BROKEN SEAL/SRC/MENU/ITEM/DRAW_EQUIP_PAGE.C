@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "ITEM.H"
@@ -7,12 +8,12 @@
 #include "TBS_EDITION.H"
 
 /* The equipment slots' highlight: the Japanese slot names are narrower. */
-#if defined(TBS_EDITION_JA)
-#define EQUIP_SLOT_X     2
-#define EQUIP_SLOT_WIDTH 9
-#else
+#if EDITION_INTERNATIONAL
 #define EQUIP_SLOT_X     1
 #define EQUIP_SLOT_WIDTH 12
+#else
+#define EQUIP_SLOT_X     2
+#define EQUIP_SLOT_WIDTH 9
 #endif
 
 struct MenuEntryIcon {
@@ -85,24 +86,24 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     menu = gMenuWork;
     base = state->page * PAGE_ROWS;
     state->selected_index = base + state->row;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     /* Spanish and Italian clear the info window's top row instead. */
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
-#elif defined(TBS_EDITION_JA)
+#else
     /* Japanese clears the info window's list and names the item with
        UiText_DrawMessageAt. */
     RenderOutput_ClearListFar((s32)menu->info_window);
-#else
-    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
 #endif
     WaitFrames(1);
     if (menu->items[state->selected_index] != 0) {
-#if defined(TBS_EDITION_JA)
-        UiText_DrawMessageAt((menu->items[state->selected_index] & ITEM_ID_MASK)
+#if EDITION_INTERNATIONAL
+        UiText_DrawCharacterAtOffsetFar((menu->items[state->selected_index] & ITEM_ID_MASK)
                 + (s32)&MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
 #else
-        UiText_DrawCharacterAtOffsetFar((menu->items[state->selected_index] & ITEM_ID_MASK)
+        UiText_DrawMessageAt((menu->items[state->selected_index] & ITEM_ID_MASK)
                 + (s32)&MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
 #endif

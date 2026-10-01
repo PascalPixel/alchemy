@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
@@ -75,7 +76,7 @@ extern u8 MsgAbilityDescription;
 extern u8 MsgUsableInBattle;
 extern u8 MsgUsableInField;
 extern u8 MsgUsableAnywhere;
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
 extern u8 MsgCanBeUsed;
 #endif
 
@@ -102,39 +103,26 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 
     menu = (struct PsynergyListWork *)gMenuWork;
     state->selected_index = state->page * PAGE_ROWS + state->row;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     /* Spanish and Italian clear the info window's top row instead. */
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
-#elif defined(TBS_EDITION_JA)
-    RenderOutput_ClearListFar((s32)menu->info_window);
 #else
-    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+    RenderOutput_ClearListFar((s32)menu->info_window);
 #endif
     WaitFrames(1);
     if (menu->psynergies[state->selected_index] != 0) {
-#if defined(TBS_EDITION_JA)
-        UiText_DrawMessageAt(
-#else
+#if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar(
+#else
+        UiText_DrawMessageAt(
 #endif
             (menu->psynergies[state->selected_index] & ACTION_ID_MASK)
                 + (s32)&MsgAbilityDescription,
             (s32)menu->info_window, 0, 0);
         ability = BattleAction_Get(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
-#if defined(TBS_EDITION_JA)
-        /* Japanese lists each usable location before the closing phrase. */
-        UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
-        row = 0;
-        if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInField, window, 0, 72);
-            row = 1;
-        }
-        if ((ability->target_flags & 0x80) != 0) {
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, row * 8 + 72);
-            row++;
-        }
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgCanBeUsed, window, 0, row * 8 + 72);
-#else
+#if EDITION_INTERNATIONAL
         UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
         row = 0;
         if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
@@ -150,6 +138,19 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
         } else if (row == 1) {
             UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, 96);
         }
+#else
+        /* Japanese lists each usable location before the closing phrase. */
+        UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
+        row = 0;
+        if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInField, window, 0, 72);
+            row = 1;
+        }
+        if ((ability->target_flags & 0x80) != 0) {
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, row * 8 + 72);
+            row++;
+        }
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgCanBeUsed, window, 0, row * 8 + 72);
 #endif
     }
 

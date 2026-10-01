@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 
@@ -53,22 +54,22 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
     }
     RenderOutput_RedrawSavedRectFar(window);
     RenderOutput_ClearListFar(window);
-#if defined(TBS_EDITION_JA)
-    /* The Japanese menu draws every message the same way and leaves the
-       sized window open. */
-    Func_08015078(message, window, 0, 0);
-#else
+#if EDITION_INTERNATIONAL
     if (y == -1)
         UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
     else
         Func_08015078(message, window, 0, 0);
+#else
+    /* The Japanese menu draws every message the same way and leaves the
+       sized window open. */
+    Func_08015078(message, window, 0, 0);
 #endif
     if (x != -1) {
         WaitFrames(1);
         do {
             WaitFrames(1);
         } while (!(*(volatile u32 *)gKeyState & 1) && !(*(volatile u32 *)gKeyState & 2) && !(*(volatile u32 *)gKeyState & 8));
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
         if (y == -1)
             RenderOutput_RedrawSavedRectFar(window);
 #endif
@@ -78,7 +79,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
     }
     menu->refresh = 1;
     menu->icon->state = 1;
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     if (y != -1)
         UiWindow_CloseIfOpen(&menu->window, 1);
 #endif

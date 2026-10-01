@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "MENU_TEST.H"
 #include "CALL.H"
 #include "TYPES.H"
@@ -756,7 +757,8 @@ s32 SceneState_GetFarResult2384(void)
     return DebugMenu_BrowseIcons();
 }
 
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA) || defined(TBS_EDITION_DE)
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#else
 s32 SceneState_GetFarResult2418(void)
 {
     return Shop_ConfirmAct();

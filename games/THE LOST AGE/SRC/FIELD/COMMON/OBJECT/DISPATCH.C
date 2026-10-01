@@ -100,6 +100,6 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 val
     if (object != 0 && (object->kind & 0xf) == 1) {
         struct DispatchChild *child = object->target.child;
         if (value >= 0)
-            ResourceMetadata_Register(child);
+            ResourceMetadata_Register(child, value);
     }
 }

@@ -2,12 +2,6 @@
 
 u8 *Owner_GetState(s32 owner);
 
-#if defined(TBS_EDITION_JA)
-#define GROUP_LEN 6
-#else
-#define GROUP_LEN 5
-#endif
-
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
     u8 *state;

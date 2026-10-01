@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -13,12 +14,12 @@ void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 /* The Japanese rows' highlight starts a tile in and is a tile narrower. */
-#if defined(TBS_EDITION_JA)
-#define DETAIL_ROW_X     1
-#define DETAIL_ROW_WIDTH 14
-#else
+#if EDITION_INTERNATIONAL
 #define DETAIL_ROW_X     0
 #define DETAIL_ROW_WIDTH 15
+#else
+#define DETAIL_ROW_X     1
+#define DETAIL_ROW_WIDTH 14
 #endif
 
 /* The Psynergy counterpart of ItemMenu_DrawItemDetailPage: while flag
@@ -37,10 +38,10 @@ s32 PsynergyMenu_DrawDetailPage(s32 arg0, s32 arg1, void *state)
     *(s32 *)(state + 24) = combined;
 
     if (GameFlag_TestFar(0x151) == 0) {
-#if defined(TBS_EDITION_JA)
-        RenderOutput_ClearListFar(*(s32 *)(menu + 44));
-#else
+#if EDITION_INTERNATIONAL
         RenderOutput_RedrawSavedRectFar(*(s32 *)(menu + 44));
+#else
+        RenderOutput_ClearListFar(*(s32 *)(menu + 44));
 #endif
         WaitFrames(1);
 
@@ -48,10 +49,10 @@ s32 PsynergyMenu_DrawDetailPage(s32 arg0, s32 arg1, void *state)
         off = combined * 2 + 456;
         if (*(u16 *)((char *)menu + off) != 0) {
             s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&MsgAbilityDescription;
-#if defined(TBS_EDITION_JA)
-            UiText_DrawMessageAt(masked, *(s32 *)(menu + 44), 0, 0);
-#else
+#if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar(masked, *(s32 *)(menu + 44), 0, 0);
+#else
+            UiText_DrawMessageAt(masked, *(s32 *)(menu + 44), 0, 0);
 #endif
         }
     } else {

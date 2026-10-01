@@ -1,15 +1,16 @@
-//! `alchemy drafts`: compile every C draft under `recon/<game>/en` and score
+//! `alchemy drafts`: compile every C draft under `recon/<game>` and score
 //! each function it defines against that function's listing, as pret compiled
 //! its NONMATCHING C beside the assembly it replaced, so a draft's recorded
 //! difference never goes stale. The scores print to stdout; nothing is stored.
 use super::parse::definitions;
 use super::{Config, Problem};
 use crate::compiler::routing::root;
-use crate::targets::decomp_target;
+use crate::targets::{decomp_target, TARGET_IDS};
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = "usage: alchemy drafts [DRAFT.c...]\n\
-Compile each C draft under recon/tbs/en and recon/tla/en (or the drafts named)\n\
+Compile each C draft under recon/tbs and recon/tla (or the drafts named)\n\
+for its language folder, or Japanese when no language folder is specified,\n\
 with its routed compiler, and score every function it defines against the\n\
 function's listing with the permuter's scores, where 0 is exact. Prints one\n\
 line per function, best first: score, differing instructions, function and\n\
@@ -137,23 +138,32 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-/// The build target a draft is scored for, from the game folder it sits in.
+/// The build target a draft is scored for, from its game and language folders.
+/// Drafts with no explicit language use that game's Japanese source edition.
 fn game_of(draft: &Path) -> Option<&'static str> {
-    let text = draft.to_string_lossy();
-    if text.contains("recon/tbs/") {
-        Some("tbs-en")
-    } else if text.contains("recon/tla/") {
-        Some("tla-en")
-    } else {
-        None
-    }
+    let components: Vec<_> = draft.components().collect();
+    let folder = components.windows(3).find(|parts| {
+        parts[0].as_os_str() == "recon"
+            && matches!(parts[1].as_os_str().to_str(), Some("tbs" | "tla"))
+    })?;
+    let game = folder[1].as_os_str().to_str()?;
+    let language = folder[2].as_os_str().to_str()?;
+    TARGET_IDS
+        .into_iter()
+        .map(|id| id.as_str())
+        .find(|id| id.split_once('-') == Some((game, language)))
+        .or(match game {
+            "tbs" => Some("tbs-ja"),
+            "tla" => Some("tla-ja"),
+            _ => None,
+        })
 }
 
-/// Every C draft under `recon/<game>/en`, except the permuter's written
+/// Every C draft under `recon/<game>`, except the permuter's written
 /// candidates and the `units` wrappers that only include a draft.
 fn all_drafts(root: &Path) -> Result<Vec<PathBuf>, String> {
     let mut drafts = Vec::new();
-    for game in ["recon/tbs/en", "recon/tla/en"] {
+    for game in ["recon/tbs", "recon/tla"] {
         let directory = root.join(game);
         if !directory.is_dir() {
             continue;
@@ -162,9 +172,11 @@ fn all_drafts(root: &Path) -> Result<Vec<PathBuf>, String> {
             let entry = entry.map_err(|error| error.to_string())?;
             let path = entry.path();
             let name = path.file_name().unwrap_or_default().to_string_lossy();
-            let wrapper = path
-                .strip_prefix(&directory)
-                .is_ok_and(|relative| relative.starts_with("units"));
+            let wrapper = path.strip_prefix(&directory).is_ok_and(|relative| {
+                relative
+                    .components()
+                    .any(|part| part.as_os_str() == "units")
+            });
             if entry.file_type().is_file()
                 && name.ends_with(".c")
                 && !name.ends_with(".permute.c")
@@ -182,15 +194,26 @@ fn all_drafts(root: &Path) -> Result<Vec<PathBuf>, String> {
 fn listing_labels(raw: &Path) -> std::collections::HashMap<String, PathBuf> {
     let label = regex::Regex::new(r"(?m)^([A-Za-z_][A-Za-z0-9_]*):").expect("static pattern");
     let mut found = std::collections::HashMap::new();
-    for entry in walkdir::WalkDir::new(raw).into_iter().flatten() {
-        let path = entry.path();
-        if path.extension().is_some_and(|extension| extension == "s") {
-            if let Ok(text) = std::fs::read_to_string(path) {
-                for capture in label.captures_iter(&text) {
-                    found
-                        .entry(capture[1].to_string())
-                        .or_insert_with(|| path.to_path_buf());
-                }
+    let mut listings: Vec<_> = walkdir::WalkDir::new(raw)
+        .into_iter()
+        .flatten()
+        .filter(|entry| {
+            entry.file_type().is_file()
+                && entry
+                    .path()
+                    .extension()
+                    .is_some_and(|extension| extension == "s")
+                && !entry.file_name().to_string_lossy().starts_with("draft_")
+        })
+        .map(|entry| entry.into_path())
+        .collect();
+    listings.sort();
+    for path in listings {
+        if let Ok(text) = std::fs::read_to_string(&path) {
+            for capture in label.captures_iter(&text) {
+                found
+                    .entry(capture[1].to_string())
+                    .or_insert_with(|| path.clone());
             }
         }
     }
@@ -224,6 +247,10 @@ mod tests {
             "recon/tbs/en/party_active_owners.c",
             "recon/tla/en/main/08026278.c",
             "recon/tla/en/main/notes.h",
+            "recon/tbs/ja/main/japanese.c",
+            "recon/tla/fr/main/french.c",
+            "recon/tla/fr/units/include.c",
+            "recon/tla/raw/shared.c",
         ] {
             std::fs::create_dir_all(root.join(path).parent().unwrap()).unwrap();
             std::fs::write(root.join(path), "").unwrap();
@@ -239,7 +266,10 @@ mod tests {
                 "recon/tbs/en/main/08003e58.c",
                 "recon/tbs/en/overlays/resource_372.c",
                 "recon/tbs/en/party_active_owners.c",
+                "recon/tbs/ja/main/japanese.c",
                 "recon/tla/en/main/08026278.c",
+                "recon/tla/fr/main/french.c",
+                "recon/tla/raw/shared.c",
             ]
         );
         assert_eq!(
@@ -247,6 +277,60 @@ mod tests {
             Some("tla-en")
         );
         assert_eq!(game_of(Path::new("games/X.C")), None);
+    }
+
+    #[test]
+    fn language_folders_preserve_every_explicit_target() {
+        for id in TARGET_IDS {
+            let (game, language) = id.as_str().split_once('-').unwrap();
+            let path = PathBuf::from(format!("recon/{game}/{language}/main/draft.c"));
+            assert_eq!(game_of(&path), Some(id.as_str()));
+            assert_eq!(
+                game_of(&Path::new("/work/alchemy").join(path)),
+                Some(id.as_str())
+            );
+        }
+        assert_eq!(game_of(Path::new("recon/tbs/raw/draft.c")), Some("tbs-ja"));
+        assert_eq!(game_of(Path::new("recon/tla/draft.c")), Some("tla-ja"));
+        assert_eq!(game_of(Path::new("other-recon/tbs/en/draft.c")), None);
+        assert_eq!(game_of(Path::new("recon/tbs-other/en/draft.c")), None);
+    }
+
+    #[test]
+    fn discovery_includes_all_twelve_language_folders() {
+        let temp = tempfile::tempdir().unwrap();
+        for id in TARGET_IDS {
+            let (game, language) = id.as_str().split_once('-').unwrap();
+            let path = temp
+                .path()
+                .join(format!("recon/{game}/{language}/main/draft.c"));
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, "").unwrap();
+        }
+        let drafts = all_drafts(temp.path()).unwrap();
+        assert_eq!(drafts.len(), TARGET_IDS.len());
+        let selected: std::collections::HashSet<_> =
+            drafts.iter().filter_map(|path| game_of(path)).collect();
+        assert_eq!(
+            selected,
+            TARGET_IDS.into_iter().map(|id| id.as_str()).collect()
+        );
+    }
+
+    #[test]
+    fn listing_ownership_skips_preserved_attempts_and_has_stable_order() {
+        let temp = tempfile::tempdir().unwrap();
+        for (path, text) in [
+            ("draft_attempt.s", "OnlyAttempt:\nShared:\n"),
+            ("z_listing.s", "Shared:\n"),
+            ("a_listing.s", "Shared:\nMaintained:\n"),
+        ] {
+            std::fs::write(temp.path().join(path), text).unwrap();
+        }
+        let labels = listing_labels(temp.path());
+        assert!(!labels.contains_key("OnlyAttempt"));
+        assert_eq!(labels["Shared"], temp.path().join("a_listing.s"));
+        assert_eq!(labels["Maintained"], temp.path().join("a_listing.s"));
     }
 
     #[test]

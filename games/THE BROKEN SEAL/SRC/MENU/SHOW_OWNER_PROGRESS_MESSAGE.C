@@ -1,3 +1,4 @@
+#include "EDITION.H"
 /* NONMATCHING: 3 halfwords. Reload loads the 0x0be6 message base into r3; the
  * reference reloads it into r0, the call's own argument register. Spellings
  * of the sum (temporary, nested call, split add, base variable) move nothing.
@@ -30,10 +31,10 @@ void Runtime_BumpFree(void *buffer);
 extern u8 MsgProgressHelp;
 
 /* The characters of the help line: the Japanese line is shorter. */
-#if defined(TBS_EDITION_JA)
-#define PROGRESS_TEXT_MAX 0x40
-#else
+#if EDITION_INTERNATIONAL
 #define PROGRESS_TEXT_MAX 0x80
+#else
+#define PROGRESS_TEXT_MAX 0x40
 #endif
 
 
@@ -55,11 +56,11 @@ void StatusMenu_ShowOwnerProgressMessage(
         if (owner->level == 99) {
             message_variant = 8;
         } else {
-#if defined(TBS_EDITION_JA)
-            u32 remaining = Owner_GetLevelThresholdFar(menu->owner_id, owner->level + 1) -
+#if EDITION_INTERNATIONAL
+            u64 remaining = Owner_GetLevelThresholdFar(menu->owner_id, owner->level + 1) -
                 owner->experience;
 #else
-            u64 remaining = Owner_GetLevelThresholdFar(menu->owner_id, owner->level + 1) -
+            u32 remaining = Owner_GetLevelThresholdFar(menu->owner_id, owner->level + 1) -
                 owner->experience;
 #endif
             UiWork_PushValueSlotFar(remaining, 5);

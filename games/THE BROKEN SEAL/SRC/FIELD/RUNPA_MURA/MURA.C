@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "VILLAGE.H"
 
 extern u8 MsgFieldPeeredWell[];
@@ -631,10 +632,10 @@ void Cloak_End(void)
     if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240)
         && leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
         Engine_TaskRemoveCallback(Guards_Watch);
-#if defined(TBS_EDITION_JA)
-        Guards_CatchParty();
-#else
+#if EDITION_INTERNATIONAL
         work->raised_trigger = TRIGGER_PARTY_SPOTTED;
+#else
+        Guards_CatchParty();
 #endif
     }
     Gateway_Reopen();

@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x020096b8,"a",%progbits
@@ -573,7 +574,7 @@ gKareiTorebiEvents1:
 	.4byte 0x08a9000c
 	.4byte SceneDialogue_RunActor12Event
 	.ifndef TBS_EDITION_EN
-.ifndef TBS_EDITION_JA
+.if EDITION_INTERNATIONAL
 .ifndef TBS_EDITION_DE
 	.4byte 0x0000c400
 	.4byte 0x18a9000c

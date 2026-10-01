@@ -1,9 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Slots_PerfectBanner: its 16-colour palette, then 128 tiles of 4-bit colour packed
 @ by the resource packer.
 	.section .rodata
 	.global Slots_PerfectBanner
 Slots_PerfectBanner:
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.incbin "GRAPHICS/SLOTS/PERFECT_JA.gbapal"
 	.incbin "GRAPHICS/SLOTS/PERFECT_JA.4bpp.lz"
 	.else

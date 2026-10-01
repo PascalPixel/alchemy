@@ -9,7 +9,7 @@ ALCHEMY ?= $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
 ALCHEMY_BIN := $(CARGO_TARGET_DIR)/release/alchemy
 BUILD := $(ALCHEMY) build
 CHECK := $(ALCHEMY) check
-TARGET ?= tbs-en
+TARGET ?= tbs-ja
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 
@@ -43,7 +43,7 @@ help:
 	@printf '%s\n' \
 	  'make bootstrap       install the approved toolchain from pinned source' \
 	  'make compare-all     compare linked source and both private ROM compositions' \
-	  'make compare-editions  compare all twelve editions, the other ten through their recon scaffold' \
+	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
 	  'make test            Rust tests, formatting and source policy' \
 	  'make verify          verify source, publication and both ROM compositions' \
 	  'make coverage        update README and both published figures' \
@@ -93,22 +93,24 @@ build-tools:
 	$(CARGO) build --offline --release --workspace --manifest-path $(TOOLS)/Cargo.toml
 
 compare:
-	$(BUILD) rom --target tbs-en
-	@grep -F ' out/tbs-en/' rom.sha1 | $(SHA1) -
+	$(BUILD) rom --target tbs-ja
+	@grep -F ' out/tbs-ja/' rom.sha1 | $(SHA1) -
 
 compare-tla:
-	$(BUILD) rom --target tla-en
-	@grep -F ' out/tla-en/' rom.sha1 | $(SHA1) -
+	$(BUILD) rom --target tla-ja
+	@grep -F ' out/tla-ja/' rom.sha1 | $(SHA1) -
 
 compare-all: compare compare-tla
 
 # The other ten editions link through their scaffold under recon/<game>/<lang>,
 # as pret's early builds linked a version through baserom.gba.
-EDITIONS := tbs-ja tbs-de tbs-es tbs-fr tbs-it tla-ja tla-de tla-es tla-fr tla-it
+EDITIONS := tbs-en tbs-de tbs-es tbs-fr tbs-it tla-en tla-de tla-es tla-fr tla-it
 COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
-.PHONY: compare-editions compare-other-editions $(COMPARE_EDITIONS)
+.PHONY: compare-editions compare-other-editions compare-tbs-ja compare-tla-ja $(COMPARE_EDITIONS)
 compare-editions: compare-all compare-other-editions
 compare-other-editions: $(COMPARE_EDITIONS)
+compare-tbs-ja: compare
+compare-tla-ja: compare-tla
 $(COMPARE_EDITIONS): compare-%:
 	$(BUILD) rom --target $*
 	@grep -F ' out/$*/' rom.sha1 | $(SHA1) -
@@ -118,7 +120,7 @@ build-full build-rom:
 
 # Reading local references does not restore source catalogs or award credit.
 prepare-inputs:
-	@test -f roms/tbs-en.gba && test -f roms/tla-en.gba
+	@test -f roms/tbs-ja.gba && test -f roms/tla-ja.gba
 
 raw:
 	$(ALCHEMY) raw rebuild --target $(TARGET)
@@ -169,11 +171,15 @@ native-format-check:
 	$(ALCHEMY) format --check
 
 lint lint-production: standard-check compiler-source-check rustfmt-check
+	$(CHECK) no-asm --target tbs-ja
+	$(CHECK) no-asm --target tla-ja
 	$(CHECK) no-asm --target tbs-en
 	$(CHECK) no-asm --target tla-en
 
 lint-staged: standard-check compiler-source-check
 	@set -e; git diff --cached --name-only --diff-filter=d -- '*.rs' | while IFS= read -r source; do rustfmt --edition 2021 --check "$$source"; done
+	$(CHECK) no-asm --target tbs-ja
+	$(CHECK) no-asm --target tla-ja
 	$(CHECK) no-asm --target tbs-en
 	$(CHECK) no-asm --target tla-en
 
@@ -212,6 +218,8 @@ test:
 coverage:
 	$(CHECK) coverage --write --publication
 
+# Source and build defaults are Japanese. Published coverage/progress keep
+# their existing verified English counting inputs and calculation.
 coverage-check:
 	$(CHECK) coverage --check
 
@@ -233,12 +241,12 @@ drafts:
 	$(ALCHEMY) drafts
 
 similar:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- similar --build out/tbs-en --build out/tla-en \
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- similar --build out/tbs-ja --build out/tla-ja \
 	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)
 
 # A report for people only: the build and the count never read it.
 deps:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- deps --build out/tbs-en --build out/tla-en \
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- deps --build out/tbs-ja --build out/tla-ja \
 	    --out-dir out/reports $(DEPS_FLAGS)
 
 progress-check:

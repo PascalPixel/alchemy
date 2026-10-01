@@ -83,14 +83,70 @@ impl Toolchain {
 }
 
 /// Assemble `listing` as the build assembles listings, with the build
-/// directory on the include path as the build has it.
-pub fn assemble(listing: &Path, directory: &Path, build: &Path) -> Result<Vec<u8>, String> {
+/// directory on the include path and its explicit edition selection.
+pub fn assemble(
+    listing: &Path,
+    directory: &Path,
+    build: &Path,
+    target: DecompTarget,
+) -> Result<Vec<u8>, String> {
     prefer_installed_binutils();
     fs::create_dir_all(directory).map_err(|error| format!("{}: {error}", directory.display()))?;
     let object = directory.join("listing.o");
     let _ = fs::remove_file(&object);
     let mut step = assembly_command(&listing.to_string_lossy(), &object.to_string_lossy());
-    step.insert(1, format!("-I{}", build.display()));
+    step.splice(
+        1..1,
+        [
+            "--defsym".into(),
+            format!("{}=1", target.edition_define),
+            format!("-I{}", build.display()),
+        ],
+    );
     run(&step, root())?;
     fs::read(&object).map_err(|error| format!("{}: {error}", object.display()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::targets::decomp_target;
+    use object::{Object, ObjectSection};
+
+    #[test]
+    fn listing_assembly_selects_edition_and_game_like_the_build() {
+        let work = tempfile::tempdir().unwrap();
+        let listing = work.path().join("EDITION.s");
+        fs::write(
+            &listing,
+            format!(
+                ".include \"{}/games/COMMON/INCLUDE/GAME/ED_ASM.H\"\n\
+                 .text\n\
+                 .if EDITION_INTERNATIONAL\n.byte 2\n.else\n.byte 1\n.endif\n\
+                 .ifdef TLA_EDITION_JA\n.byte 3\n.else\n.byte 4\n.endif\n",
+                root().display()
+            ),
+        )
+        .unwrap();
+        for (id, expected) in [
+            ("tbs-ja", [1, 4]),
+            ("tbs-en", [2, 4]),
+            ("tla-ja", [1, 3]),
+            ("tla-en", [2, 4]),
+        ] {
+            let object = assemble(
+                &listing,
+                &work.path().join(id),
+                work.path(),
+                decomp_target(Some(id)).unwrap(),
+            )
+            .unwrap();
+            let file = object::File::parse(object.as_slice()).unwrap();
+            assert_eq!(
+                file.section_by_name(".text").unwrap().data().unwrap(),
+                expected,
+                "{id}"
+            );
+        }
+    }
 }

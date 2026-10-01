@@ -18599,7 +18599,7 @@ msgctxt "MsgCoins"
 msgid "04647"
 msgstr "コイン"
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "04648"
 msgstr "コ"
 
@@ -18655,7 +18655,7 @@ msgctxt "message"
 msgid "04661"
 msgstr "すてられません!{end_wait}"
 
-msgctxt "MsgPiece"
+msgctxt "message"
 msgid "04662"
 msgstr "はずせません!{end_wait}"
 
@@ -25995,7 +25995,7 @@ msgctxt "message"
 msgid "06496"
 msgstr "さあ 船を手に入れるため{line_break}出発するとしよう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsFound"
 msgid "06497"
 msgstr "わわっ 見つかった。{end_wait}"
 
@@ -26015,35 +26015,35 @@ msgctxt "message"
 msgid "06501"
 msgstr "オレたちが やったというなら{line_break}しょうこを見せてみろよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorIntroducesHimself"
 msgid "06502"
 msgstr "オレ キボンボからきたんだ{line_break}ど どうか よろしく。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsBlameContinentsCollision"
 msgid "06503"
 msgstr "わが ゴンドワナ大陸に{line_break}大陸をぶつけてくるとは{line_break}いいどきょうだぜ{page_break}売られたケンカだから{line_break}かってやりにきたのよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsClaimCamping"
 msgid "06504"
 msgstr "えへへ インドラの人たち{line_break}みんな いい人ですよね{page_break}そんなインドラの人たちと{line_break}ともだちになりたくて{line_break}キボンボから きました。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsFriendsComing"
 msgid "06505"
 msgstr "もうすぐ キボンボから{line_break}なかまが やってくるぜ{page_break}そうしたら あらためて{line_break}あいさつに行ってやるよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsRegretMadraRaid"
 msgid "06506"
 msgstr "あわわ やっべー・・・{line_break}バレちゃたのかなあ{page_break}だから オレたちだけで{line_break}マドラで あばれるのは{line_break}はんたいだったんだよぉ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsLostFood"
 msgid "06507"
 msgstr "大陸をぶつけられたために{line_break}オレのいえの しょくじは{line_break}パアになっちまったんだ{page_break}このかりは しっかり{line_break}かえしてやるからな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsThreatenTown"
 msgid "06508"
 msgstr "これから キボンボ戦士が{line_break}たくさん やってくるのも{line_break}知らないで いい気なもんさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
 msgid "06509"
 msgstr "あれだけの さわぎがおきて{line_break}なにもないなんて・・・{line_break}おかしいと おもったよ{page_break}そうだ オレたちがこわした{line_break}ろうやからにげたヤツ・・・{line_break}どこに行っただろう。{end_wait}"
 
@@ -38303,11 +38303,11 @@ msgctxt "message"
 msgid "09573"
 msgstr "ああ サカナがとれないなんて{line_break}まるで あくむを見てるみたい{line_break}サカナはどこへ行ったのかしら。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaCaptainLastHope"
 msgid "09574"
 msgstr "まずしいチャンパにとっては{line_break}パヤヤーム殿こそ この村の{line_break}さいごのきぼうの星なのです{page_break}村の者が しつぼうする前に{line_break}はやく もどってほしいですぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaNeedsCaptainTreasure"
 msgid "09575"
 msgstr "パヤヤーム殿が見つけたという{line_break}かいぞくの宝をもちかえらないと{line_break}チャンパは おしまいなのだ。{end_wait}"
 
@@ -40827,11 +40827,11 @@ msgctxt "message"
 msgid "10204"
 msgstr "人は あせ水をたらしてはたらき{line_break}せいかつすることによって・・・{line_break}生きることの いみを知るのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaTreasureEncouragesLaziness"
 msgid "10205"
 msgstr "パヤヤーム殿が もってきた宝は{line_break}まずしいチャンパをゆたかにしたが{line_break}あまりにも 宝がおおすぎた・・・{page_break}まじめだったチャンパの者たちは{line_break}なまけることをおぼえてしまった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaVillagersStoppedWorking"
 msgid "10206"
 msgstr "はたらかずとも くらしていけると{line_break}村の者たちが おもってしまって{line_break}みんな はたらくのをやめたのです。{end_wait}"
 
@@ -48507,7 +48507,7 @@ msgctxt "message"
 msgid "12124"
 msgstr "まあ あなた まさか・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgImiruVoicesDisbeliefReply"
 msgid "12125"
 msgstr "まあ あなた まさか・・・。{end_wait}"
 

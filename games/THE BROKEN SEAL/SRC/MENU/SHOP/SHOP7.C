@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -222,10 +223,10 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     shop->cursor.anchor->kind = saved_kind;
 }
 
-#if defined(TBS_EDITION_JA)
-#define MESSAGE_WINDOW_ROWS 11
-#else
+#if EDITION_INTERNATIONAL
 #define MESSAGE_WINDOW_ROWS 12
+#else
+#define MESSAGE_WINDOW_ROWS 11
 #endif
 
 s32 Inn_RoomPrice(s32 mode)

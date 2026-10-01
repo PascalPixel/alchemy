@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x0200a8a0,"ax",%progbits
@@ -75,7 +76,7 @@ BabiIriguchi_SetupScene:
 	movs r0, #9
 	movs r1, #6
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	movs r0, #9
 	movs r1, #6
 	.else
@@ -85,7 +86,7 @@ BabiIriguchi_SetupScene:
 	.endif
 	bl Engine_ActorSetChildValue
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	movs r0, #8
 	bl Object_GetById
 	ldr r5, .L_BabiLeaderPriority
@@ -96,7 +97,7 @@ BabiIriguchi_SetupScene:
 	.endif
 	movs r2, #225
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	str r5, [r0, #108]
 	.endif
 	.endif
@@ -190,7 +191,7 @@ BabiIriguchi_SetupScene:
 .L_0200a9ec:
 	.4byte 0x00000000
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 .L_BabiLeaderPriority:
 	.4byte BabiIriguchi_MatchLeaderPriority
 	.endif

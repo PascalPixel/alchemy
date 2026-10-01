@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 void *AffineEffect_InitializeWork(void);
 void Menu_EndResourceSelection(void);
@@ -14,12 +15,12 @@ s32 Menu_SelectEntry11To14(s32 arg0)
     Menu_AppendResourceEntry(0x12);
     Menu_AppendResourceEntry(0x13);
     Menu_AppendResourceEntry(0x14);
-#if defined(TBS_EDITION_JA)
-    Menu_CenterResourceEntries(0x11, 6, 0);
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Menu_CenterResourceEntries(0x11, 7, 0);
 #elif defined(TBS_EDITION_DE)
     Menu_CenterResourceEntries(0x11, 8, 0);
 #else
-    Menu_CenterResourceEntries(0x11, 7, 0);
+    Menu_CenterResourceEntries(0x11, 6, 0);
 #endif
     ret = Menu_RunResourceSelectionLoop(arg0);
     Menu_EndResourceSelection();
@@ -35,10 +36,10 @@ s32 Menu_SelectEntry19To1c(s32 arg0)
     Menu_AppendResourceEntry(0x1A);
     Menu_AppendResourceEntry(0x1B);
     Menu_AppendResourceEntry(0x1C);
-#if defined(TBS_EDITION_JA)
-    Menu_CenterResourceEntries(0x11, 8, 0);
-#else
+#if EDITION_INTERNATIONAL
     Menu_CenterResourceEntries(0x11, 0xA, 0);
+#else
+    Menu_CenterResourceEntries(0x11, 8, 0);
 #endif
     ret = Menu_RunResourceSelectionLoop(arg0);
     Menu_EndResourceSelection();

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 
@@ -9,10 +10,10 @@ extern volatile u32 gKeyState;
 void WaitFrames(s32);
 
 /* What holding Select answers: each edition's build has its own value. */
-#if defined(TBS_EDITION_JA)
-#define DEBUG_SELECT_VALUE 480
-#else
+#if EDITION_INTERNATIONAL
 #define DEBUG_SELECT_VALUE 0x18f
+#else
+#define DEBUG_SELECT_VALUE 480
 #endif
 
 s32 Runtime_AdjustDebugValueWithButtons(s32 ret)

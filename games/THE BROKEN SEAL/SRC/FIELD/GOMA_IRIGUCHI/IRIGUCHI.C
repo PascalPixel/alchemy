@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -313,7 +314,7 @@ void FieldScene_RunScene387SequenceA(void)
     u32 i;
     s32 record;
 
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     BattleFx_PlayQueuedSound();
 #endif
     Engine_EventBegin();
@@ -401,7 +402,7 @@ void FieldScene_RunScene387SequenceA(void)
         GomaIriguchi_SetEntranceFlag();
         Engine_ActorSetAnimation(ACTOR_IVAN, 1);
         Engine_EventWait(20);
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
         BattleFx_PlayQueuedSound();
 #endif
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);

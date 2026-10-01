@@ -10,7 +10,7 @@ use std::fs;
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 
-/// The script `target` links with: the game's `MAIN.LD` for English, or for
+/// The script `target` links with: the game's `MAIN.LD` for Japanese, or for
 /// another edition the game's script with the edition's bodies, written
 /// beside the build as pret writes its preprocessed `ld_script.ld`.
 pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result<PathBuf, String> {
@@ -26,8 +26,21 @@ pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result
         .expect("an edition script has a directory")
         .to_string_lossy()
         .into_owned();
-    let text = derive(&read(&game)?, &read(&edition)?, &format!("\"*/{own}/"))
-        .map_err(|error| format!("{}: {error}", edition.display()))?;
+    // English declares its native physical composition explicitly. Its object
+    // order also admits the shared international source objects, including
+    // those not reconstructed in Japanese yet. The other international
+    // editions retain the same subsequence and whole-object checks as before.
+    // These are source declarations; no reference image or report selects them.
+    let product = target.id.as_str().split_once('-').unwrap().0;
+    let international_path = Path::new("recon").join(product).join("en/MAIN.LD");
+    let international = native(&read(&game)?, &read(&international_path)?)
+        .map_err(|error| format!("{}: {error}", international_path.display()))?;
+    let text = if edition == international_path {
+        international
+    } else {
+        derive(&international, &read(&edition)?, &format!("\"*/{own}/"))
+            .map_err(|error| format!("{}: {error}", edition.display()))?
+    };
     let path = root.join(output).join(format!("{}.ld", target.id));
     fs::create_dir_all(root.join(output)).map_err(|error| error.to_string())?;
     if fs::read_to_string(&path).ok().as_deref() != Some(text.as_str()) {
@@ -146,6 +159,45 @@ fn output_sections(text: &str) -> Result<Vec<Group>, String> {
     groups(text, sections.body.clone())
 }
 
+/// A native language composition supplies its section bodies directly. The
+/// game's Japanese script owns the common memory map and section headers;
+/// the English declaration owns the international object's physical order.
+/// Native compositions cannot add sections or change those headers.
+fn native(game: &str, edition: &str) -> Result<String, String> {
+    let sections = output_sections(game)?;
+    let mut bodies = BTreeMap::new();
+    for group in groups(edition, 0..edition.len())? {
+        let name = group.name();
+        if group.header != format!("{name} :") {
+            return Err(format!(
+                "{:?} is not an output section's name",
+                group.header
+            ));
+        }
+        let [section] = sections
+            .iter()
+            .filter(|section| section.name() == name)
+            .collect::<Vec<_>>()[..]
+        else {
+            return Err(format!("the game script has no one output section {name}"));
+        };
+        if bodies
+            .insert(
+                section.body.start,
+                (section.body.clone(), &edition[group.body.clone()]),
+            )
+            .is_some()
+        {
+            return Err(format!("{name} is given twice"));
+        }
+    }
+    let mut text = game.to_owned();
+    for (range, body) in bodies.values().rev() {
+        text.replace_range(range.clone(), body);
+    }
+    Ok(text)
+}
+
 /// The game script `game` with each output section `edition` lists taking
 /// the edition's body. An edition body links the game's own lines of that
 /// section in the game's order, and any line naming `own`, its scaffold;
@@ -249,5 +301,33 @@ mod tests {
         // The game's own statements may come along, in their place.
         let edition = ".rom_start :\n{\n    \"*/games/G/SRC/A.o\"(.text)\n    Size = End - Start;\n}\n.rom_tail :\n{\n    \"*/games/G/SRC/C.o\"(.rodata)\n}\n";
         derive(GAME, edition, own).unwrap();
+    }
+
+    #[test]
+    fn japanese_is_native_and_international_editions_keep_their_source_order_checks() {
+        let japanese = ".rom_start :\n{\n    \"*/recon/g/ja/rom.o\"(.rom.00000000)\n    \"*/games/G/SRC/B.o\"(.text)\n}\n.rom_tail :\n{\n    \"*/games/G/SRC/B.o\"(.rodata)\n}\n";
+        let game = native(GAME, japanese).unwrap();
+        assert!(!game.contains("SRC/A.o") && !game.contains("SRC/C.o"));
+        let english = ".rom_start :\n{\n    \"*/games/G/SRC/A.o\"(.text)\n    \"*/recon/g/raw/0800.o\"(.text)\n    \"*/games/G/SRC/B.o\"(.text)\n    Size = End - Start;\n}\n.rom_tail :\n{\n    \"*/games/G/SRC/B.o\"(.rodata)\n    \"*/games/G/SRC/C.o\"(.rodata)\n}\n";
+        let international = native(&game, english).unwrap();
+        assert!(international.contains("SRC/A.o") && international.contains("SRC/C.o"));
+        assert!(international.contains("Size = End - Start;"));
+        assert!(international.contains("ORIGIN = 0x8000000"));
+        let localized = ".rom_start :\n{\n    \"*/games/G/SRC/A.o\"(.text)\n    \"*/recon/g/de/rom.o\"(.rom.00000020)\n    \"*/games/G/SRC/B.o\"(.text)\n}\n.rom_tail :\n{\n    \"*/games/G/SRC/B.o\"(.rodata)\n}\n";
+        derive(&international, localized, "\"*/recon/g/de/").unwrap();
+        for rejected in [
+            ".rom_start :\n{\n    \"*/games/G/SRC/B.o\"(.text)\n    \"*/games/G/SRC/A.o\"(.text)\n}\n",
+            ".rom_start :\n{\n    \"*/games/G/SRC/D.o\"(.text)\n}\n",
+            ".rom_start :\n{\n    \"*/games/G/SRC/B.o\"(.text)\n}\n.rom_tail :\n{\n}\n",
+        ] {
+            assert!(derive(&international, rejected, "\"*/recon/g/de/").is_err());
+        }
+        for rejected in [
+            ".missing :\n{\n}\n",
+            ".rom_start 0x8000000 :\n{\n}\n",
+            ".rom_start :\n{\n}\n.rom_start :\n{\n}\n",
+        ] {
+            assert!(native(&game, rejected).is_err());
+        }
     }
 }

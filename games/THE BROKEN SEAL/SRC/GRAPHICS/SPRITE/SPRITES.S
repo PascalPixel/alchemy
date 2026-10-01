@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Character_DescriptorTable: the field sprite bank. Each sprite's record
 @ gives its size, scale, drawing and frame codec and points at its frame
 @ list and animation list; SPRITES.TSV holds the records, each SPR_NNN.PNG
@@ -10,7 +11,7 @@
 	.section .rodata
 	.global Character_DescriptorTable
 Character_DescriptorTable:
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.include "GRAPHICS/SPRITE/SPRITEJA.spriteblocks"
 	.else
 	.ifdef TBS_EDITION_IT

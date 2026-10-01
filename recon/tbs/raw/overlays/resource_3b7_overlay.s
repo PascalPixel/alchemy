@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x020084bc,"ax",%progbits
@@ -428,7 +429,7 @@ TorebiIzumi_RunSpringGame:
 	.ifdef TBS_EDITION_EN
 	movs r2, #17
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	movs r2, #17
 	.else
 	movs r2, #19
@@ -452,7 +453,7 @@ TorebiIzumi_RunSpringGame:
 	.ifdef TBS_EDITION_EN
 	movs r3, #72
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	movs r3, #72
 	.else
 	movs r3, #88
@@ -470,7 +471,7 @@ TorebiIzumi_RunSpringGame:
 	.ifdef TBS_EDITION_EN
 	movs r3, #72
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	movs r3, #72
 	.else
 	movs r3, #88
@@ -547,7 +548,7 @@ TorebiIzumi_RunSpringGame:
 	.ifdef TBS_EDITION_EN
 	movs r2, #9
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	movs r2, #9
 	.else
 	movs r2, #10
@@ -557,7 +558,7 @@ TorebiIzumi_RunSpringGame:
 	.ifdef TBS_EDITION_EN
 	movs r0, #20
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	movs r0, #20
 	.else
 	movs r0, #19

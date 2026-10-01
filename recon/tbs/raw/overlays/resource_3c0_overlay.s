@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x0200937c,"a",%progbits
@@ -309,7 +310,7 @@ gSuharaSabakuEventsOther:
 	.4byte 0x00000001
 	.4byte 0xffff0003
 	.4byte 0x00000003
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte 0x00000001
 	.else
 	.4byte 0x0000c401

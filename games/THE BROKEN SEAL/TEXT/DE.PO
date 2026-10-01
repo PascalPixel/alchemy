@@ -34763,7 +34763,7 @@ msgctxt "MsgTorebiHeyaSinceWeDidntGetToSee"
 msgid "08688"
 msgstr "Da wir die Vorausscheidung{line_break}nicht gesehen haben, sind wir{line_break}jetzt so richtig gespannt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeyaBabiShowedHimselfAtFinals"
 msgid "08689"
 msgstr "Babi war beim Finale{line_break}persönlich anwesend.{page_break}Also war die Geschichte,{line_break}dass er vermisst wird, nur{line_break}ein Missverständnis?{end_now}"
 
@@ -34775,7 +34775,7 @@ msgctxt "MsgTorebiHeyaHuhThenTheyFoundHimIn"
 msgid "08691"
 msgstr "Wie? Man fand ihn noch{line_break}rechtzeitig vor dem Finale?{line_break}Das klingt ja haarsträubend!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeyaBabiDecidedShowUpForFinals"
 msgid "08692"
 msgstr "Was ist los? Babi hat sich{line_break}entschieden, dem Finale{line_break}beizuwohnen?{end_wait}"
 

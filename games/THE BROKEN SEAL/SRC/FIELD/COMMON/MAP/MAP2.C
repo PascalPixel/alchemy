@@ -1,6 +1,7 @@
 #include "DMA.H"
 #include "MAP.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE_IDS.H"
 #include "RAM_BUFFER.H"
 #include "SYSTEM.H"
@@ -20,7 +21,6 @@ struct MapAnimationWork {
     u16 limit;
 };
 
-s32 Scheduler_EnableCallbacks(void (*callback)(void));
 void WaitFrames(s32 frames);
 void Resource_RunCopiedDecoder(void *source, void *destination);
 
@@ -28,7 +28,6 @@ u32 Resource_GetTableEntry(u32 index);
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);
-void Scheduler_DisableCallbacks(void *keep);
 void Map_ShowBg1FromBuffer(void);
 extern u8 *gCam;
 #define BG_PALETTE ((s16 *)0x05000000)
@@ -71,7 +70,7 @@ void MapAnimation_Start(void)
     s32 one = 1;
 
     work->active = one;
-    Scheduler_EnableCallbacks(MapAnimation_Update);
+    Scheduler_EnableCallbacks((u32)(MapAnimation_Update));
     Dma_Set((const void *)0x06004000, (void *)gDecodeBuffer, 0x84000800, (volatile u32 *)0x040000d4);
     WaitFrames(1);
     Resource_RunCopiedDecoder(pages + (*(u32 *)&gFrameCount & one) * 0x1400 + 0xc80, (void *)gMapCellBuffer);
@@ -124,7 +123,7 @@ void Map_LoadAreaGraphics(void)
     value = 0;
     Map_UpdateCurrentTileBlock();
     state[252] = value;
-    Scheduler_DisableCallbacks(MapAnimation_Update);
+    Scheduler_DisableCallbacks((u32)(MapAnimation_Update));
     WaitFrames(1);
 }
 

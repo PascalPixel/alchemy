@@ -57,11 +57,6 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
-{
-    Actor_SetPosition(actor, x, y);
-}
-
 extern u8 MsgKaragoruWarriorsHaveBeenFightingWhile[];
 extern u8 MsgKaragoruWeMissedColossoBecauseWe[];
 
@@ -156,7 +151,7 @@ void FieldScene_RunScene3beSequenceB(void)
     struct FieldActor *leader;
 
     if (GameFlag_IsSet(0x98a) == 0 && GameFlag_IsSet(0x9a0) != 0) {
-        Event_Begin();
+        Engine_EventBegin();
         ObjectMotion_SetSpeedParameters(11, 0x10000, 0x8000);
         leader = Actor_Get(ACTOR_PARTY_LEADER);
         if (leader != 0) {
@@ -167,9 +162,9 @@ void FieldScene_RunScene3beSequenceB(void)
         Actor_FaceDirection(11, 0xd000, 0);
         Battle_WaitMode0(10);
         Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-        Event_SetMessage((s32)MsgKaragoruWhyGoingBackRobinDo);
+        Engine_EventSetMessage((s32)MsgKaragoruWhyGoingBackRobinDo);
         Event_OpenMessage(11, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             Event_ShowMessage(11, 0);
             Actor_WalkTo(11, 152, 232);
             GameFlag_Clear(0x9a0);
@@ -193,32 +188,32 @@ void FieldScene_RunScene3beSequenceB(void)
             ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
             Object_SetModeById(ACTOR_PARTY_LEADER, 1);
         }
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
 void ActorPresentation_RunActorElevenRecoveryScene(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Event_Wait(10);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
-    Event_SetMessage((s32)MsgKaragoruIveBeenWaitingForRobin);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_EventWait(10);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_EventSetMessage((s32)MsgKaragoruIveBeenWaitingForRobin);
     Event_ShowMessage(11, 0);
-    Actor_SetAnimation(11, 2);
+    Engine_ActorSetAnimation(11, 2);
     {
         s16 *position = Actor_Get(ACTOR_PARTY_LEADER);
 
         if (position != 0)
             Actor_SetDestination(11, position[5], position[9]);
     }
-    Actor_WaitForMove(11);
+    Engine_ActorWaitForMove(11);
     Actor_SetPosition(11, 0, 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     GameFlag_Set(2464);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void KaragoruDou_AskToCross(void)
@@ -226,12 +221,12 @@ void KaragoruDou_AskToCross(void)
     s32 base;
 
     base = (s32)MsgKaragoruDoYouWishCrossInto;
-    Event_SetMessage(base);
+    Engine_EventSetMessage(base);
     Event_OpenMessage(8, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         if (GameFlag_IsSet(0x950) != 0) {
             if (GameFlag_IsSet(0x96f) == 0) {
-                Event_SetMessage((base + 8));
+                Engine_EventSetMessage((base + 8));
             }
         }
         Event_ShowMessage(8, 0);
@@ -244,9 +239,9 @@ void KaragoruDou_AskToCross(void)
 void ActorPresentation_SelectActorNineScript(void)
 {
     if (GameFlag_IsSet(2384) != 0 && GameFlag_IsSet(2415) == 0)
-        Event_SetMessage((s32)MsgKaragoruWeMissedColossoBecauseWe);
+        Engine_EventSetMessage((s32)MsgKaragoruWeMissedColossoBecauseWe);
     else
-        Event_SetMessage((s32)MsgKaragoruWarriorsHaveBeenFightingWhile);
+        Engine_EventSetMessage((s32)MsgKaragoruWarriorsHaveBeenFightingWhile);
     Event_ShowMessage(9, 0);
 }
 
@@ -257,7 +252,7 @@ void FieldScene_RunScene3be_02001080(void)
     u8 *work;
 
     work = Data_03001ebc;
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x204) != 0) {
         GameFlag_Clear(0x9a3);
         GameFlag_Clear(0x9a5);
@@ -266,21 +261,21 @@ void FieldScene_RunScene3be_02001080(void)
         GameFlag_Set(0x9a5);
         GameFlag_Set(0x9a4);
     }
-    Event_RequestExit(*(s16 *)(work + 0x16c));
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    Engine_EventRequestExit(*(s16 *)(work + 0x16c));
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventEnd();
 }
 
 void StagedActorPairScene_RunStep(void)
 {
-    Leader_CheckAhead();
+    Engine_LeaderCheckAhead();
 }
 
 void ActorPresentation_RunActorEightThresholdScene(void)
 {
     Actor_Get(8);
-    Event_Begin();
+    Engine_EventBegin();
     {
         s32 *actor = Actor_Get(8);
 
@@ -295,7 +290,7 @@ void ActorPresentation_RunActorEightThresholdScene(void)
             GameFlag_Set(2466);
         }
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void StagedActorPairScene_RunUpdate(void)
@@ -306,20 +301,20 @@ void StagedActorPairScene_RunUpdate(void)
 
 void ActorPresentation_RunActorNineThresholdScene(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if ((((s32 *)Object_GetById(9))[2] >> 20) > 42) {
         s32 x = 107;
         s32 y = 17;
 
         Map_CopyCellAttributes(108, 17, 1, 1, x, y);
-        Event_Wait(8);
+        Engine_EventWait(8);
         Actor_SetPosition(9, 0, 0);
-        PlaceActor(10, 45613056, 18874368);
-        Actor_SetAnimation(10, 3);
+        Actor_SetPosition(10, 45613056, 18874368);
+        Engine_ActorSetAnimation(10, 3);
         Audio_PlayCue(154);
         GameFlag_Set(2469);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void StagedActorPairScene_NoopActorCallback(void){}
@@ -339,7 +334,7 @@ void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object,
     s32 frames = 40;
 
     while (frames != 0) {
-        Task_Wait(1);
+        Engine_TaskWait(1);
         frames--;
         if (object->height <= limit) {
             break;
@@ -422,16 +417,16 @@ s32 Scene_Initialize(void)
         }
         if (GameFlag_IsSet(0x9a2) != 0) {
             Actor_SetPosition(8, 0x1b80000, 0x1340000);
-            Actor_SetAnimation(8, 2);
+            Engine_ActorSetAnimation(8, 2);
             Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
         }
         if (GameFlag_IsSet(0x9a5) != 0) {
             Actor_SetPosition(9, 0, 0);
             Actor_SetPosition(10, 0x2b80000, 0x1200000);
-            Actor_SetAnimation(10, 2);
+            Engine_ActorSetAnimation(10, 2);
         }
         actor = Actor_Get(12);
-        Actor_SetSpriteFlags(actor, 0);
+        Engine_ActorSetSpriteFlags(actor, 0);
     }
     return 0;
 }

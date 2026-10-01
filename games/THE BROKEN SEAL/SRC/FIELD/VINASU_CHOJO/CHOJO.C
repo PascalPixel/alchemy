@@ -2,6 +2,7 @@
 #include "CHOJO.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -63,7 +64,6 @@ void Party_SetFields1ceAnd1d0(u16 first, u16 second);
 s32 PartyInventory_Remove();
 s32 PartyInventory_FindOwner();
 void FieldScene_ForwardValue81fc();
-s32 Scheduler_RemoveCallback();
 void FieldScene_RunStep6(void);
 
 struct StagedVerticalEffect;
@@ -286,19 +286,19 @@ void InitializeActorZeroMotion(void)
     if (Object_CheckMovementCollision(actor, position) == 0) {
         GameFlag_Clear(592);
         SceneActor_SetByte55ForActorZeroAnd12To17();
-        Object_SetAnimation(actor, 6);
-        Task_Wait(6);
-        Object_SetAnimation(actor, 7);
+        Object_SetMode(actor, 6);
+        Engine_TaskWait(6);
+        Object_SetMode(actor, 7);
         actor->motion30 = 0x30000;
         actor->motion34 = 0x20000;
         Audio_PlayCue(152);
         actor->motion28 = 0x40000;
         actor->flags55 &= 0x7e;
-        Actor_SetSpriteFlags(actor, 0);
+        Engine_ActorSetSpriteFlags(actor, 0);
         Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)(position[0] >> 16),
                          (s16)(position[2] >> 16));
-        Object_SetAnimation(actor, 6);
-        Actor_SetSpriteFlags(actor, 1);
+        Object_SetMode(actor, 6);
+        Engine_ActorSetSpriteFlags(actor, 1);
         actor->flags55 = flags;
     }
 }
@@ -310,7 +310,7 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
     Spr_020005ec *r;
     s32 k;
 
-    Event_Begin();
+    Engine_EventBegin();
     r = SceneActor_FindNearestSlotOfKindF2();
     Data_0200e6e8 = r;
     if (r != 0) {
@@ -321,25 +321,25 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
         b->unk0c += (s32)0xfffd0000;
         a->unk0c += (s32)0xfffd0000;
         a->unk14 += (s32)0xfffd0000;
-        Task_Wait(2);
+        Engine_TaskWait(2);
         b->unk0c += (s32)0xfffe0000;
         a->unk0c += (s32)0xfffe0000;
         a->unk14 += (s32)0xfffe0000;
-        Task_Wait(10);
+        Engine_TaskWait(10);
         k = 0x20000;
         b->unk0c += k;
         a->unk0c += k;
         a->unk14 += k;
-        Task_Wait(4);
+        Engine_TaskWait(4);
         b->unk0c += k;
         a->unk0c += k;
         a->unk14 += k;
-        Task_Wait(4);
+        Engine_TaskWait(4);
         b->unk0c += 0x10000;
         a->unk0c += 0x10000;
         a->unk14 += 0x10000;
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneActor_SetByte55ForActorZeroAnd12To17(void)
@@ -370,12 +370,12 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
     Spr_0200071c *obj;
 
     GameFlag_Set(324);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     GameFlag_Set(272);
-    Actor_SetSpriteFlags(Actor_Get(8), 0);
-    Actor_SetSpriteFlags(Actor_Get(9), 0);
-    Actor_SetSpriteFlags(Actor_Get(10), 0);
-    Actor_SetSpriteFlags(Actor_Get(11), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(8), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(9), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(10), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(11), 0);
     v = (s32)0xffff0000;
     Object_GetById(10)->scale_x = v;
     Object_GetById(11)->scale_x = v;
@@ -383,8 +383,8 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
     z = 0;
     do {
         obj = Actor_Get(i);
-        Actor_SetSpriteFlags(Actor_Get(i), z);
-        Actor_SetSpritePriority(i, 1);
+        Engine_ActorSetSpriteFlags(Actor_Get(i), z);
+        Engine_ActorSetSpritePriority(i, 1);
         obj->unk55 = 4;
         obj->unk23 |= 2;
         obj->unk0c = 0x8000;
@@ -412,7 +412,7 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
         FieldScene_RunScene3c9_02003924();
         break;
     case 9:
-        Event_Begin();
+        Engine_EventBegin();
         if (GameFlag_IsSet(0x345) != 0) {
             Inventory_AddItem(0, 65);
         } else if (GameFlag_IsSet(0x346) != 0) {
@@ -422,7 +422,7 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
         } else {
             Inventory_AddItem(3, 65);
         }
-        Event_RequestExit(9);
+        Engine_EventRequestExit(9);
         break;
     }
 
@@ -442,7 +442,7 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
 void VinasuChojo_ShowMessage(s32 speaker)
 {
     Event_ShowMessage(speaker, 0);
-    Event_Wait(10);
+    Engine_EventWait(10);
 }
 
 void VinasuChojo_FaceActor(s32 actor, s32 facing)
@@ -778,12 +778,12 @@ void FieldScene_RunScene3c9_02001280(s32 a0, s32 a1)
     if (a1 != 0) {
         Actor_SetChildValue(a0, 0);
         record = Actor_Get(a0);
-        Actor_SetSpriteFlags(record, 1);
+        Engine_ActorSetSpriteFlags(record, 1);
         Actor_SetSpeed(a0, 0xcccc, 0x6666);
     } else {
         Actor_SetChildValue(a0, 15);
         record = Actor_Get(a0);
-        Actor_SetSpriteFlags(record, 0);
+        Engine_ActorSetSpriteFlags(record, 0);
     }
 }
 
@@ -809,7 +809,7 @@ void Scene_RunActorEntrySequence(void)
     const s32 *pairActions;
     s32 sharedData;
 
-    Event_Begin();
+    Engine_EventBegin();
     hidden = 0;
     Engine_EventGetViewCenter()->motion_flags = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);
@@ -817,8 +817,8 @@ void Scene_RunActorEntrySequence(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x154, 184);
     VinasuChojo_FaceActor(0, 0x8000);
-    Actor_RunRepeatedMotion(21, 1);
-    Event_SetMessage((s32)MsgVinasuRobin);
+    Engine_ActorRunRepeatedMotion(21, 1);
+    Engine_EventSetMessage((s32)MsgVinasuRobin);
     VinasuChojo_ShowMessage(0x9015);
     Engine_EventGetViewCenter()->motion_flags = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);
@@ -841,34 +841,34 @@ void Scene_RunActorEntrySequence(void)
     Actor_WalkTo(ACTOR_GERALD, 0x148, 168);
     Actor_WalkTo(ACTOR_IVAN, 0x154, 196);
     Actor_WalkToAndWait(ACTOR_MIA, 0x146, 204);
-    Actor_SetAnimation(ACTOR_GERALD, 1);
-    Actor_SetAnimation(ACTOR_IVAN, 1);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 1);
     Engine_ActorFaceDirection(1, 0x8000, 0);
     Engine_ActorFaceDirection(2, 0x8000, 0);
     VinasuChojo_FaceActor(3, 0x8000);
     Engine_ActorFaceDirection(20, 0, 0);
     Engine_ActorFaceDirection(19, 0, 40);
-    Actor_RunRepeatedMotion(20, 2);
+    Engine_ActorRunRepeatedMotion(20, 2);
     VinasuChojo_ShowMessage(20);
     VinasuChojo_FaceActor(19, 0x8000);
     VinasuChojo_ShowMessage(0x2013);
     Actor_ShowEmote(21, 0x103, 20);
     VinasuChojo_ShowMessage(21);
-    Actor_StartRepeatedMotion(21, 2);
+    Engine_ActorStartRepeatedMotion(21, 2);
     Event_ShowMessageAndWait(21, 0, 20);
     Engine_ActorFaceDirection(21, 0xd000, 40);
     VinasuChojo_ShowMessage(21);
-    Actor_SetAnimationAndWait(21, 4);
+    Engine_ActorSetAnimationAndWait(21, 4);
     VinasuChojo_FaceActor(21, 0);
     Event_ShowMessageAndWait(21, 0, 20);
     actor20Key = 0x2014;
-    Actor_RunRepeatedMotion(20, 1);
+    Engine_ActorRunRepeatedMotion(20, 1);
     VinasuChojo_FaceActor(20, 0x8000);
     VinasuChojo_ShowMessage(actor20Key);
     Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
-    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
     VinasuChojo_ShowMessage(3);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     VinasuChojo_ShowMessage(2);
     VinasuChojo_FaceActor(19, 0);
     VinasuChojo_ShowMessage(19);
@@ -897,11 +897,11 @@ void Scene_RunActorEntrySequence(void)
     VinasuChojo_ShowMessage(6);
     Actor_ShowEmote(20, 0x103, 20);
     VinasuChojo_ShowMessage(actor20Key);
-    Actor_RunRepeatedMotion(6, 2);
-    Event_Wait(20);
-    Actor_SetAnimation(6, 3);
+    Engine_ActorRunRepeatedMotion(6, 2);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimation(6, 3);
     VinasuChojo_ShowMessage(6);
-    Actor_SetAnimationAndWait(20, 3);
+    Engine_ActorSetAnimationAndWait(20, 3);
     VinasuChojo_ShowMessage(actor20Key);
     Actor_SetSpeed(6, 0xcccc, 0x6666);
     Actor_WalkToAndWait(6, 0x104, 186);
@@ -913,10 +913,10 @@ void Scene_RunActorEntrySequence(void)
 
         *(u16 *)((s32)object + 6) = shown;
     }
-    Task_Wait(1);
-    Actor_StartRepeatedMotion(19, 2);
+    Engine_TaskWait(1);
+    Engine_ActorStartRepeatedMotion(19, 2);
     VinasuChojo_ShowMessage(0x2013);
-    Actor_Jump(6, 2, 20);
+    Engine_ActorJump(6, 2, 20);
     Actor_SetSpeed(6, 0x26666, 0x13333);
     Actor_WalkToAndWait(6, 0x104, 186);
     Engine_ActorFaceDirection(21, 0x8000, 0);
@@ -924,20 +924,20 @@ void Scene_RunActorEntrySequence(void)
     Engine_ActorFaceDirection(19, 0x8000, 0);
     Engine_ActorFaceDirection(21, 0x8000, 0);
     Engine_ActorFaceDirection(6, 0, 20);
-    Actor_SetAnimationAndWait(6, 3);
-    Event_Wait(40);
+    Engine_ActorSetAnimationAndWait(6, 3);
+    Engine_EventWait(40);
     SceneState_ApplyPair140And0();
-    Task_Wait(1);
+    Engine_TaskWait(1);
     frame = 0;
     do {
         object = Object_GetById(6);
         SceneEffect_UpdateObjectByFrameParity((s32)object);
         frame = (frame + 1);
-        Task_Wait(1);
+        Engine_TaskWait(1);
     } while ((u32)frame <= 39);
     effectCallback = (s32)FieldScene_RunStep6;
     Engine_TaskAddCallback(effectCallback, 0xc80);
-    Event_Wait(80);
+    Engine_EventWait(80);
     Call3(Engine_ActorFaceDirection, 0, 0xa000, 0);
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0x6000, 0);
@@ -951,23 +951,23 @@ void Scene_RunActorEntrySequence(void)
     Actor_ShowEmote(20, 0x101, 40);
     Event_ShowMessageAndWait(0x2014, 0, 20);
     Actor_ShowEmote(6, 0x105, 80);
-    Actor_StartRepeatedMotion(19, 2);
+    Engine_ActorStartRepeatedMotion(19, 2);
     VinasuChojo_ShowMessage(0x2013);
-    Scheduler_RemoveCallback(effectCallback);
-    Task_Wait(1);
+    Scheduler_RemoveCallback((u32)(effectCallback));
+    Engine_TaskWait(1);
     Actor_SetChildValue(6, 0);
-    Task_Wait(10);
+    Engine_TaskWait(10);
     FieldScene_ForwardValue81fc();
-    Actor_Jump(6, 2, 40);
+    Engine_ActorJump(6, 2, 40);
     VinasuChojo_ShowMessage(6);
     Actor_ShowEmote(20, 0x103, 20);
     VinasuChojo_ShowMessage(0x2014);
     disableMask = 254;
-    Actor_RunRepeatedMotion(6, 2);
+    Engine_ActorRunRepeatedMotion(6, 2);
     *(u8 *)((u8 *)Object_GetById(6) + 90) &= disableMask;
     Actor_WalkToAndWait(6, 250, 176);
     enableMask = 1;
-    Event_Wait(1);
+    Engine_EventWait(1);
     {
         u8 *actor = Object_GetById(6);
         s32 flags = actor[90];
@@ -977,37 +977,37 @@ void Scene_RunActorEntrySequence(void)
     Actor_ShowEmote(21, 0x103, 20);
     Engine_ActorFaceDirection(21, 0, 20);
     VinasuChojo_ShowMessage(21);
-    Actor_SetAnimationAndWait(19, 4);
+    Engine_ActorSetAnimationAndWait(19, 4);
     VinasuChojo_ShowMessage(0x2013);
-    Actor_RunRepeatedMotion(6, 2);
-    Event_Wait(40);
+    Engine_ActorRunRepeatedMotion(6, 2);
+    Engine_EventWait(40);
     Actor_SetSpeed(6, 0x9999, 0x4ccc);
     *(u8 *)((u8 *)Object_GetById(6) + 90) &= disableMask;
     Actor_WalkToAndWait(6, 248, 172);
-    Event_Wait(1);
+    Engine_EventWait(1);
     {
         u8 *object = Object_GetById(6);
         enableMask |= object[90];
         object[90] = enableMask;
     }
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(6, 3);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(19, 3);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(6, 3);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(19, 3);
     VinasuChojo_ShowMessage(0x2013);
-    Actor_SetAnimationAndWait(6, 3);
+    Engine_ActorSetAnimationAndWait(6, 3);
     VinasuChojo_ShowMessage(6);
     Call3(Engine_ActorFaceDirection, 19, 0x3000, 0);
     Call3(Engine_ActorFaceDirection, 20, 0xb000, 20);
     Actor_ShowEmote(19, 0x105, 0);
     Actor_ShowEmote(20, 0x105, 60);
-    Actor_SetAnimation(20, 4);
+    Engine_ActorSetAnimation(20, 4);
     VinasuChojo_ShowMessage(0x2014);
     Actor_ShowEmote(19, 0x101, 40);
     VinasuChojo_ShowMessage(19);
     Actor_ShowEmote(20, 0x105, 100);
-    Actor_RunRepeatedMotion(20, 1);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(20, 1);
+    Engine_EventWait(20);
     VinasuChojo_FaceActor(20, 0);
     VinasuChojo_FaceActor(19, 0);
     Event_OpenMessage(20, 0);
@@ -1015,12 +1015,12 @@ void Scene_RunActorEntrySequence(void)
     Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xe000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(20, 3);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimationAndWait(20, 3);
         advanceStep = 1;
     } else {
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(20, 4);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimationAndWait(20, 4);
         *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
         advanceStep = 0;
     }
@@ -1037,12 +1037,12 @@ void Scene_RunActorEntrySequence(void)
     Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xe000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Event_Wait(20);
-        Actor_SetAnimation(ACTOR_IVAN, 3);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimation(ACTOR_IVAN, 3);
         advanceStep = 1;
     } else {
-        Event_Wait(20);
-        Actor_SetAnimation(ACTOR_IVAN, 4);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimation(ACTOR_IVAN, 4);
         *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
         advanceStep = 0;
     }
@@ -1050,68 +1050,68 @@ void Scene_RunActorEntrySequence(void)
     if (advanceStep != 0) {
         *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
     }
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     VinasuChojo_FaceActor(1, 0x4000);
     VinasuChojo_ShowMessage(1);
-    Actor_RunRepeatedMotion(19, 1);
+    Engine_ActorRunRepeatedMotion(19, 1);
     VinasuChojo_ShowMessage(19);
     Call3(Engine_ActorFaceDirection, 1, 0x8000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0x8000, 0);
     VinasuChojo_FaceActor(3, 0x8000);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
-    Actor_SetAnimationAndWait(20, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
+    Engine_ActorSetAnimationAndWait(20, 3);
     Event_ShowMessageAndWait(20, 0, 20);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     VinasuChojo_FaceActor(19, 0x3000);
-    Actor_SetAnimation(19, 3);
+    Engine_ActorSetAnimation(19, 3);
     VinasuChojo_ShowMessage(19);
     Call3(Engine_ActorFaceDirection, 20, 0xb000, 20);
-    Actor_SetAnimationAndWait(20, 3);
+    Engine_ActorSetAnimationAndWait(20, 3);
     actor20LateKey = 0x2014;
-    Event_Wait(40);
+    Engine_EventWait(40);
     VinasuChojo_FaceActor(20, 0x8000);
     VinasuChojo_ShowMessage(actor20LateKey);
-    Actor_RunRepeatedMotion(21, 2);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(21, 2);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(21, 0, 40);
     VinasuChojo_ShowMessage(actor20LateKey);
     Actor_ShowEmote(21, 0x103, 60);
     VinasuChojo_FaceActor(19, 0x8000);
-    Actor_RunRepeatedMotion(19, 1);
+    Engine_ActorRunRepeatedMotion(19, 1);
     VinasuChojo_ShowMessage(0x2013);
     Actor_ShowEmote(21, 0x105, 60);
-    Actor_SetAnimationAndWait(21, 3);
-    Event_Wait(20);
+    Engine_ActorSetAnimationAndWait(21, 3);
+    Engine_EventWait(20);
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Actor_WalkToAndWait(21, 0x120, 192);
     Engine_ActorFaceDirection(19, 0, 0);
     Engine_ActorFaceDirection(20, 0, 0);
     Actor_WalkToAndWait(21, 0x136, 192);
     Actor_WalkToAndWait(21, 0x148, 186);
-    Event_Wait(20);
-    Actor_RunRepeatedMotion(21, 2);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(21, 2);
     /* The message is a link-time name, loaded from the literal pool after
        the two preceding calls, as the game loads it. */
     message = (s32)MsgVinasuRobinHandedOverShamansRod;
-    Message_ShowCentered(message, 1);
+    Engine_MessageShowCentered(message, 1);
     Actor_WalkToAndWait(21, 0x136, 192);
     Engine_ActorFaceDirection(19, 0x8000, 0);
     Engine_ActorFaceDirection(20, 0x8000, 0);
     Actor_WalkToAndWait(21, 0x120, 192);
     Actor_WalkToAndWait(21, 0x106, 176);
     Engine_ActorFaceDirection(21, 0, 40);
-    Event_SetMessage((message + 1));
+    Engine_EventSetMessage((message + 1));
     VinasuChojo_ShowMessage(21);
-    Actor_SetAnimationAndWait(20, 3);
+    Engine_ActorSetAnimationAndWait(20, 3);
     VinasuChojo_ShowMessage(actor20LateKey);
-    Actor_SetAnimationAndWait(21, 3);
+    Engine_ActorSetAnimationAndWait(21, 3);
     VinasuChojo_FaceActor(20, 0);
     VinasuChojo_FaceActor(21, 0x8000);
-    Actor_SetAnimationAndWait(21, 3);
-    Actor_SetAnimationAndWait(6, 3);
+    Engine_ActorSetAnimationAndWait(21, 3);
+    Engine_ActorSetAnimationAndWait(6, 3);
     Actor_SetSpeed(6, 0xcccc, 0x6666);
     Actor_WalkToAndWait(6, 0x104, 186);
     Engine_ActorFaceDirection(21, 0x3000, 0);
@@ -1120,14 +1120,14 @@ void Scene_RunActorEntrySequence(void)
     facing = 160;
     object = Object_GetById(19);
     *(u16 *)((s32)object + 6) = (facing << 7);
-    Task_Wait(1);
-    Actor_RunRepeatedMotion(19, 1);
+    Engine_TaskWait(1);
+    Engine_ActorRunRepeatedMotion(19, 1);
     VinasuChojo_ShowMessage(19);
-    Actor_RunRepeatedMotion(6, 2);
+    Engine_ActorRunRepeatedMotion(6, 2);
     Engine_ActorFaceDirection(21, 0, 0);
     Engine_ActorFaceDirection(20, (facing << 7), 0);
     Call3(Engine_ActorFaceDirection, 6, 0xd000, 20);
-    Actor_Jump(ACTOR_MIA, 2, 20);
+    Engine_ActorJump(ACTOR_MIA, 2, 20);
     VinasuChojo_FaceActor(3, 0xa000);
     VinasuChojo_ShowMessage(3);
     Engine_ActorFaceDirection(21, 0, 0);
@@ -1140,14 +1140,14 @@ void Scene_RunActorEntrySequence(void)
     VinasuChojo_ShowMessage(20);
     Engine_ActorFaceDirection(21, 0x3000, 0);
     Call3(Engine_ActorFaceDirection, 6, 0xb000, 20);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
     VinasuChojo_ShowMessage(2);
     VinasuChojo_FaceActor(19, 0x3000);
-    Actor_SetAnimationAndWait(19, 3);
+    Engine_ActorSetAnimationAndWait(19, 3);
     VinasuChojo_ShowMessage(19);
     Engine_ActorFaceDirection(21, 0, 0);
     VinasuChojo_FaceActor(6, 0xd000);
-    Actor_SetAnimation(ACTOR_MIA, 3);
+    Engine_ActorSetAnimation(ACTOR_MIA, 3);
     VinasuChojo_ShowMessage(3);
     Actor_ShowEmote(20, 0x100, 20);
     Engine_ActorFaceDirection(20, 0x3000, 20);
@@ -1157,48 +1157,48 @@ void Scene_RunActorEntrySequence(void)
     Engine_ActorFaceDirection(6, 0, 0);
     VinasuChojo_FaceActor(21, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x103, 40);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     VinasuChojo_ShowMessage(1);
     VinasuChojo_FaceActor(19, 0);
-    Actor_SetAnimationAndWait(19, 4);
+    Engine_ActorSetAnimationAndWait(19, 4);
     VinasuChojo_ShowMessage(19);
     VinasuChojo_FaceActor(20, 0);
-    Actor_SetAnimation(20, 4);
+    Engine_ActorSetAnimation(20, 4);
     VinasuChojo_ShowMessage(20);
     Engine_ActorFaceDirection(6, 0xd000, 0);
     Actor_ShowEmote(6, 0x101, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
     VinasuChojo_FaceActor(19, 0x3000);
-    Actor_SetAnimation(19, 4);
+    Engine_ActorSetAnimation(19, 4);
     VinasuChojo_ShowMessage(19);
     Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     VinasuChojo_FaceActor(19, 0);
-    Actor_SetAnimationAndWait(20, 3);
+    Engine_ActorSetAnimationAndWait(20, 3);
     VinasuChojo_ShowMessage(20);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
-    Actor_RunRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
     Engine_ActorFaceDirection(0, 0xa000, 0);
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0x6000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xe000, 40);
-    Actor_RunRepeatedMotion(ACTOR_MIA, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
     VinasuChojo_FaceActor(3, 0xa000);
     VinasuChojo_ShowMessage(3);
     Engine_ActorFaceDirection(1, 0x8000, 20);
     Actor_ShowEmote(ACTOR_GERALD, 0x103, 20);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     VinasuChojo_ShowMessage(1);
     Engine_ActorFaceDirection(6, 0, 0);
     Engine_ActorFaceDirection(0, 0x8000, 0);
     Engine_ActorFaceDirection(2, 0x8000, 40);
     Actor_ShowEmote(20, 0x103, 40);
-    Actor_StartRepeatedMotion(20, 2);
+    Engine_ActorStartRepeatedMotion(20, 2);
     VinasuChojo_ShowMessage(20);
-    Actor_RunRepeatedMotion(19, 1);
+    Engine_ActorRunRepeatedMotion(19, 1);
     VinasuChojo_ShowMessage(19);
     itemOwner = PartyInventory_FindOwner(65);
     GameFlag_Set(itemOwner + 0x345);
@@ -1218,14 +1218,14 @@ void Scene_RunActorEntrySequence(void)
         finalMask &= *actor;
         *actor = finalMask;
     }
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, groupActions);
-    Actor_EnableActionCallback(ACTOR_GERALD, groupActions);
-    Actor_EnableActionCallback(ACTOR_IVAN, groupActions);
-    Actor_EnableActionCallback(ACTOR_MIA, groupActions);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, groupActions);
+    Engine_ActorEnableActionCallback(ACTOR_GERALD, groupActions);
+    Engine_ActorEnableActionCallback(ACTOR_IVAN, groupActions);
+    Engine_ActorEnableActionCallback(ACTOR_MIA, groupActions);
     pairActions = SceneAction_EntryPair;
-    Actor_EnableActionCallback(19, pairActions);
-    Actor_EnableActionCallback(20, pairActions);
-    Actor_EnableActionCallback(21, groupActions);
+    Engine_ActorEnableActionCallback(19, pairActions);
+    Engine_ActorEnableActionCallback(20, pairActions);
+    Engine_ActorEnableActionCallback(21, groupActions);
     Object_SetActionCallbackAndRefreshById(6, groupActions);
     /* These tables are shared by the final actor-action assignments. */
     /* FAKEMATCH: an empty do-while around these statements; it only changes instruction scheduling. */
@@ -1252,9 +1252,9 @@ void Scene_RunActorEntrySequence(void)
 void SceneEffect_UpdateObjectByFrameParity(s32 a)
 {
     if (*(s32 *)&gFrameCount & 2) {
-        Object_SetPartPalettes(a, 7);
+        Engine_ObjectSetPartPalettes(a, 7);
     } else {
-        Object_SetPartPalettes(a, 0);
+        Engine_ObjectSetPartPalettes(a, 0);
     }
     if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
         VinasuChojo_SpawnLinkedPairEffects(a);
@@ -1266,7 +1266,7 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
     volatile u32 *p = (u32 *)&gFrameCount;
 
     if (*p & 1) {
-        Object_SetPartPalettes(a, Math_RemainderUnsigned(*p >> 1, 6));
+        Engine_ObjectSetPartPalettes(a, Math_RemainderUnsigned(*p >> 1, 6));
     }
     if (Math_RemainderUnsigned(*p, 15) == 0) {
         VinasuChojo_SpawnLinkedPairEffects(a);
@@ -1280,7 +1280,7 @@ void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect)
     if (frame > 31) {
         Engine_ObjectDispatchRelease((s32)effect);
     } else {
-        s32 amplitude = Math_Sin(frame << 10);
+        s32 amplitude = Engine_MathSin(frame << 10);
         s32 offset;
         effect->f18 = amplitude;
         effect->f1c = amplitude;
@@ -1298,7 +1298,7 @@ void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect)
     if (frame > 31) {
         Engine_ObjectDispatchRelease((s32)effect);
     } else {
-        s32 amplitude = Math_Sin(frame << 10);
+        s32 amplitude = Engine_MathSin(frame << 10);
         s32 offset;
         effect->f18 = amplitude;
         effect->f1c = -amplitude;
@@ -1369,7 +1369,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 /* Small scene steps. */
 void SceneState_ApplyPair140And0(void)
 {
-    Psynergy_Begin(140, 0);
+    Engine_PsynergyBegin(140, 0);
 }
 
 void FieldScene_ForwardValue81fc(s32 a)

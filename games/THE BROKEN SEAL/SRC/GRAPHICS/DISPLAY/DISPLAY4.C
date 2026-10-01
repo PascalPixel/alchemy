@@ -1,12 +1,10 @@
 #include "DMA.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "MAP.H"
 
 extern struct MapState *gMapWork;
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 flags);
-s32 Scheduler_EnableCallbacks(u32 value);
-s32 Scheduler_DisableCallbacks(u32 value);
 
 struct SubQueueItem_08011b00 {
     u32 unknown_00;
@@ -41,7 +39,6 @@ struct PaletteSnapshotWork {
 extern struct PaletteSnapshotWork *gPaletteWork;
 
 extern u8 Func_08011bf4;
-void Scheduler_RemoveCallback(void *);
 
 /* Blend script runner: a halfword script in the map work that writes
    BLDCNT and the alpha or brightness level on a frame delay. */
@@ -121,7 +118,7 @@ void DisplayBlend_StartScript(u16 *script)
         started = 1;
     }
     if (started)
-        Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)(DisplayBlend_RunScript), 0xc80);
 }
 
 void DisplayBlend_EnableRunScript(void)
@@ -186,6 +183,6 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 value, s16 count)
 
 void Runtime_ScheduleCallbackAndReleaseBlock28(void)
 {
-    Scheduler_RemoveCallback(&Func_08011bf4);
+    Scheduler_RemoveCallback((u32)(&Func_08011bf4));
     Runtime_ReleaseHeapBlock(0x1C);
 }

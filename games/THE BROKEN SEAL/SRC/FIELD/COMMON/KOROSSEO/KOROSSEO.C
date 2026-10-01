@@ -58,7 +58,7 @@ extern void Runtime_PushSlotEntry(void *sprite, s32 priority);
 { \
     u32 saved; \
     s32 cnt; \
-    do { saved = *ime; } while (0); \
+    do { /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ saved = *ime; } while (0); \
     *ime = (u16)(u32)ime; \
     cnt = queue->count; \
     if (cnt < 32) { \

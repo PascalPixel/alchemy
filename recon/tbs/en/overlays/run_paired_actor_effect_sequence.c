@@ -5,6 +5,138 @@
 #include "TYPES.H"
 #include "VINASU.H"
 #include "FIELD_EFFECT.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline void Event_Begin(void)
+{
+    Engine_EventBegin();
+}
+
+static inline void Event_Wait(s32 frames)
+{
+    Engine_EventWait(frames);
+}
+
+static inline void Task_Wait(s32 frames)
+{
+    Engine_TaskWait(frames);
+}
+
+static inline void Event_SetMessage(s32 message)
+{
+    Engine_EventSetMessage(message);
+}
+
+static inline s32 Event_ChooseYesNo(s32 actor, s32 flags)
+{
+    return Engine_EventChooseYesNo(actor, flags);
+}
+
+static inline void Event_OpenScreen(void)
+{
+    Engine_EventOpenScreen();
+}
+
+static inline void Event_WaitForScreen(void)
+{
+    Engine_EventWaitForScreen();
+}
+
+static inline void Actor_TurnToAngle(s32 actor, s32 angle, s32 frames)
+{
+    Engine_ActorTurnToAngle(actor, angle, frames);
+}
+
+static inline void Actor_SetAnimation(s32 actor, s32 animation)
+{
+    Engine_ActorSetAnimation(actor, animation);
+}
+
+static inline void Actor_SetAnimationAndWait(s32 actor, s32 animation)
+{
+    Engine_ActorSetAnimationAndWait(actor, animation);
+}
+
+static inline void Actor_StartRepeatedMotion(s32 actor, s32 repeats)
+{
+    Engine_ActorStartRepeatedMotion(actor, repeats);
+}
+
+static inline void Actor_RunRepeatedMotion(s32 actor, s32 repeats)
+{
+    Engine_ActorRunRepeatedMotion(actor, repeats);
+}
+
+static inline void Actor_SetSpritePriority(s32 actor, s32 priority)
+{
+    Engine_ActorSetSpritePriority(actor, priority);
+}
+
+static inline void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags)
+{
+    Engine_ActorSetSpriteFlags(actor, flags);
+}
+
+static inline void Map_Redraw(void)
+{
+    Engine_MapRedraw();
+}
+
+static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
+{
+    return Engine_TaskAddCallback(callback, priority);
+}
+
+static inline s32 Math_Sin(s32 angle)
+{
+    return Engine_MathSin(angle);
+}
+
+static inline s32 Math_Cos(s32 angle)
+{
+    return Engine_MathCos(angle);
+}
+
+static inline void *Heap_Allocate(s32 slot, s32 size)
+{
+    return Engine_HeapAllocate(slot, size);
+}
+
+static inline void Heap_Release(s32 slot)
+{
+    Engine_HeapRelease(slot);
+}
+
+static inline s32 Vram_Load(s32 block, s32 size, const void *data)
+{
+    return Engine_VramLoad(block, size, data);
+}
+
+static inline void Item_LoadIcon(s32 item)
+{
+    Engine_ItemLoadIcon(item);
+}
+
+static inline void Actor_Stop(s32 actor)
+{
+    Engine_ActorStop(actor);
+}
+
+static inline struct FieldActor *Event_GetViewCenter(void)
+{
+    return Engine_EventGetViewCenter();
+}
+
+static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
+{
+    Engine_ActorEnableActionCallback(actor, table);
+}
+
+static inline void ColorBuffer_Interpolate(s32 frames)
+{
+    Engine_ColorBufferInterpolate(frames);
+}
+
 #include "FIELD_EVENT.H"
 extern u8 MsgVinasuBeatEm[];
 

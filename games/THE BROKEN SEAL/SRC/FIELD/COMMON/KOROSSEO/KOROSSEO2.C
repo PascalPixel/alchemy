@@ -15,14 +15,16 @@ extern s32 Korosseo_CompetitorStartAngle;
 /* FAKEMATCH: the loop around the IME read preserves its saved-copy order;
  * the count store's cast preserves the queue entry scheduling. */
 #define QUEUE_IO_WRITE(address, value, delay)                                \
-    do {                                                                     \
+    do { \
+        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
         volatile u16 *ime;                                                   \
         struct IoWriteQueue *q;                                              \
         u32 saved;                                                           \
         s32 count;                                                           \
                                                                              \
         q = &gIoWriteQueue;                                                  \
-        do {                                                                 \
+        do { \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
             ime = &REG_IME;                                                  \
             saved = *ime;                                                    \
         } while (0);                                                         \

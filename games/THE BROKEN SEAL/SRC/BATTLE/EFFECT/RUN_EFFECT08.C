@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 
 struct EffectState {
     u8 unknown_000[0x52a];
@@ -40,7 +41,6 @@ s32 BattleFx_FindMatchingEvent(s32, s32, s32 *);
 void BattleFx_RunEventAction(s32, s32, s32);
 void Audio_PlayCue(s32);
 void FieldEffect_SpawnNearbyMarkers(void);
-s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void FieldEffect_WatchLeaderDistance(void);
 
 static __inline__ s32 *PartyTarget_Slot(s32 base)
@@ -91,5 +91,5 @@ void RunBattleEffect08(void)
         work->frame = frame;
         frame++;
     } while (frame <= 18);
-    Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FieldEffect_WatchLeaderDistance), 0xc80);
 }

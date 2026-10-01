@@ -26,41 +26,6 @@ void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPillarSequence(void);
 void GomaHashira_DriveActor13Idle(void);
 
-/*
- * The event services under the names the staged-actor module gives their
- * imports, spelled as FIELD_EVENT.H spells its own.
- */
-static __inline__ void Goma_Wait(s32 frames)
-{
-    Battle_WaitMode0(frames);
-}
-
-static __inline__ void Goma_SetSpeed(s32 actor, s32 speed, s32 acceleration)
-{
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static __inline__ void Goma_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
-                                               s32 dest_x, s32 dest_y)
-{
-    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
-}
-
-static __inline__ void ConfigureFirst(s32 actor, s32 angle, s32 zero)
-{
-    Actor_ShowEmote(actor, angle, zero);
-}
-
-static __inline__ void ConfigureSecond(s32 actor, s32 mode, s32 zero)
-{
-    Actor_Jump(actor, mode, zero);
-}
-
-static __inline__ void ConfigureThird(s32 actor, s32 value)
-{
-    BattleFx_SetPhaseRequest(actor, value);
-}
-
 enum StagedPlacementMessage {
     MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
 };
@@ -91,9 +56,9 @@ struct Sprite389 {
  */
 void ConfigureActorThirteenSceneParameters(void)
 {
-    ConfigureFirst(13, 256, 0);
-    ConfigureSecond(13, 2, 0);
-    ConfigureThird(12, 40);
+    Actor_ShowEmote(13, 256, 0);
+    Engine_ActorJump(13, 2, 0);
+    BattleFx_SetPhaseRequest(12, 40);
 }
 
 void SceneEffect_AdvancePositionByAxisMode(u8 *o)
@@ -192,19 +157,19 @@ void ConfigureSceneForActorEightColumn(void)
     if (x < 0)
         x += 0xfffff;
     x >>= 20;
-    Event_Begin();
+    Engine_EventBegin();
     if (x == 20) {
         a4 = 18;
         a5 = 6;
-        Goma_CopyCellAttributes(18, 40, 6, 3, a4, a5);
+        Map_CopyCellAttributeRect(18, 40, 6, 3, a4, a5);
         GameFlag_Clear(0x302);
     } else {
         a4 = 18;
         a5 = 6;
-        Goma_CopyCellAttributes(24, 40, 6, 3, a4, a5);
+        Map_CopyCellAttributeRect(24, 40, 6, 3, a4, a5);
         GameFlag_Set(0x302);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunPrimarySequence(void)

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
 
 extern u16 KuupuappuHeya_StopTimer;
@@ -9,7 +10,6 @@ struct Half {
     u16 v;
 };
 void FieldScene_ConfigurePairedActors();
-void Scheduler_AddOrUpdateCallback();
 void Engine_GameFlagClear();
 void Engine_EventBegin();
 void Engine_EventEnd();

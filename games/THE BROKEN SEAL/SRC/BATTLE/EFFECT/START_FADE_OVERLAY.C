@@ -5,7 +5,6 @@ u8 *Runtime_AllocateBlock(s32 slot, u32 size);
 u8 *Runtime_AllocateHeapBlock(s32 slot, u32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void VramBlock_LoadCached(s32 slot, s32 size, const void *source);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 void *ObjectTable_Get(u32 object);
 void Object_EffectSpawnCallback(void);
 
@@ -27,7 +26,7 @@ void BattleFx_StartFadeOverlay(void *object)
     Dma_Set((const void *)&fill, tiles, 0x85000080, (volatile u32 *)0x040000d4);
     VramBlock_LoadCached(94, 0x200, tiles);
     Runtime_ReleaseHeapBlock(14);
-    Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Object_EffectSpawnCallback), 0xc80);
     /* FAKEMATCH: the blend values pass through an int and one register
        pointer so GCC builds them with mov and steps the address. */
     value = 0x3f9e;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 
 struct ResourceMenuWork {
     u8 unknown_00[124];
@@ -13,8 +14,6 @@ extern u8 MsgPasswordSelection[];
 void *AffineEffect_InitializeWork(void);
 void Menu_AppendResourceEntry(s32);
 void Menu_CenterResourceEntries(s32, s32, s32);
-s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
-void Scheduler_RemoveCallback(void (*)(void));
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawResource(s32, s32, s32, s32);
 s32 Menu_RunResourceSelectionLoop(s32);
@@ -56,7 +55,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
     Menu_CenterResourceEntries(17, 7, 0);
 #endif
     if (mode != 0) {
-        Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
+        Scheduler_AddOrUpdateCallback((s32)(Menu_DrawModeLabel), 0xc76);
         work->selection = 0xffff;
 #if defined(TBS_EDITION_FR)
         window = UiWindow_Create(5, 0, 22, 4, 2);
@@ -91,7 +90,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
         UiText_DrawResource(msg, work->lower_window, 8, 22);
 #endif
     } else {
-        Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
+        Scheduler_AddOrUpdateCallback((s32)(Menu_DrawModeIndicator), 0xc76);
         work->selection = 0xffff;
 #if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
         window = UiWindow_Create(5, 0, 20, 4, 2);
@@ -119,9 +118,9 @@ s32 Menu_SelectResourceLayout(s32 mode)
     }
     result = Menu_RunResourceSelectionLoop(0);
     if (mode != 0)
-        Scheduler_RemoveCallback(Menu_DrawModeLabel);
+        Scheduler_RemoveCallback((u32)(Menu_DrawModeLabel));
     else
-        Scheduler_RemoveCallback(Menu_DrawModeIndicator);
+        Scheduler_RemoveCallback((u32)(Menu_DrawModeIndicator));
     RenderOutput_PrepareForRedraw(*upper);
     RenderOutput_PrepareForRedraw(work->lower_window);
     UiWork_Finalize(*upper, 2);

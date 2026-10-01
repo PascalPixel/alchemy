@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
 
@@ -22,20 +23,17 @@ void Audio_PlayCue(s32 cue);
 s32 GameFlag_Test(s32);
 s32 GameFlag_SetBit(s32);
 s32 GameFlag_ClearBit(s32);
-s32 Scheduler_AddOrUpdateCallback(s32, s32);
-s32 Scheduler_RemoveCallback(s32);
 s32 UiWork_SetParamNibbleFar(s32);
 
-/* FAKEMATCH: ⚓️ loads the source before the routine and its destination */
 static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst, s32 size)
 {
+    /* FAKEMATCH: a direct call changes Menu_CancelSoundTick from ldr r1, .L0+4 to ldr r0, .L0+4 (67/67 assembly lines). */
     copy(dst, src, size);
 }
 
-/* FAKEMATCH: ⚓️ loads the fill routine before its destination and value; a
-   plain Iwram_FillWords call loads the destination first */
 static __inline__ void FillWords(FillFn fill, void *dst, s32 size, u32 value)
 {
+    /* FAKEMATCH: a direct call changes Menu_CancelSoundTick from ldr r3, .L0+16 to ldr r0, .L0+12 (67/67 assembly lines). */
     fill(dst, size, value);
 }
 
@@ -65,7 +63,7 @@ void Menu_CancelSoundTick(void)
     if (input->pressed & mask) {
         Audio_PlayCue(113);
         GameFlag_SetBit(0x150);
-        Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);
+        Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
     }
     wait = (u32 *)(Ram_HeapSlots->window_tiles + 0xE30);
     while ((wait = (u32 *)*wait) != 0)
@@ -81,7 +79,7 @@ void Menu_CancelSoundReset(void)
 void Menu_EnsureCancelSound(void)
 {
     if (GameFlag_Test(0x150) == 0) {
-        Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);
+        Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
     }
 }
 

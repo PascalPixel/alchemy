@@ -124,20 +124,20 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void FieldScene_RunStepWithValueFd2(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(0xD, 0, 0);
     GameFlag_Set(0xFD2);
-    Item_ShowFound(ITEM_NUT, 3);
-    Party_GiveItem(ITEM_NUT, 0);
-    Event_End();
+    Engine_ItemShowFound(ITEM_NUT, 3);
+    Engine_PartyGiveItem(ITEM_NUT, 0);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunStepWithValue29de(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
-    Message_ShowCentered((s32)MsgBiribinoUponCloserInspectionSeemsDried, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
+    Engine_MessageShowCentered((s32)MsgBiribinoUponCloserInspectionSeemsDried, 1);
+    Engine_EventEnd();
 }
 
 /* What the garden answers. */
@@ -151,26 +151,26 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void SceneDialogue_AskAboutBarricade(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
     Event_AskYesNo(9, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_AskIfResponsible(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgBiribinoTellingMeImResponsibleFor);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgBiribinoTellingMeImResponsibleFor);
     Event_AskYesNo(10, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_AskIfFineWarrior(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgBiribinoDoThinkCanBecomeAs);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgBiribinoDoThinkCanBecomeAs);
     Event_AskYesNo(11, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void BiribinoNiwa_RunGardenEvent(void)
@@ -259,17 +259,17 @@ void BiribinoNiwa_RunGardenEvent(void)
 
 void FieldScene_RunScene38e_0200045c(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x200) == 0) {
         FieldScene_OpenGate();
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-    Event_Wait(16);
-    Event_RequestExit(2);
-    Event_End();
+    Engine_EventWait(16);
+    Engine_EventRequestExit(2);
+    Engine_EventEnd();
 }
 
 /*
@@ -455,14 +455,14 @@ s32 SceneEffect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
     s32 tilt;
     s32 step;
 
-    vertical = Math_Sin(entity->phase) * 2;
+    vertical = Engine_MathSin(entity->phase) * 2;
     if (vertical > 0) vertical = -vertical;
 
-    entity->x = entity->origin_x + Math_Cos(entity->phase) * 2;
+    entity->x = entity->origin_x + Engine_MathCos(entity->phase) * 2;
     entity->y = entity->origin_y + vertical;
 
     /* A quarter turn on from the position phase. */
-    tilt = Math_Cos(entity->phase + 0x8000);
+    tilt = Engine_MathCos(entity->phase + 0x8000);
     /* Bias then shift: division by 8 rounded toward zero. */
     if (tilt < 0) tilt += 7;
     handle->field1e = (s16)(tilt >> 3);
@@ -490,7 +490,7 @@ void InitializeOrbitingSceneEntity(s32 id)
 
     zero = 0;
     sprite->state = zero;
-    Actor_SetSpriteFlags(actor, zero);
+    Engine_ActorSetSpriteFlags(actor, zero);
     actor->active = zero;
     actor->mode = zero;
 
@@ -501,10 +501,10 @@ void InitializeOrbitingSceneEntity(s32 id)
     actor->visible = 1;
 
     transfer = (u8 *)Engine_HeapAllocate(17, 0x608);
-    Item_LoadIcon(ITEM_NUT);
+    Engine_ItemLoadIcon(ITEM_NUT);
     transfer += 0x400;
-    Vram_Load(sprite->palette, 128, transfer);
-    Heap_Release(17);
+    Engine_VramLoad(sprite->palette, 128, transfer);
+    Engine_HeapRelease(17);
 
     actor->orbit_center_x = actor->x;
     actor->orbit_angle = zero;

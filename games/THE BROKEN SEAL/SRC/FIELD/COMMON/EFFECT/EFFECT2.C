@@ -1,5 +1,6 @@
 /* Field effects: set up 32 motes on the terrain around the map position, the blend registers and their update callback. */
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
@@ -142,7 +143,6 @@ static __inline__ void ClearDustWork(struct DustWork *work)
     Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
 }
 
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mode);
 void BattleFx_InterpolateBuffers(s16 *from, s16 *to, s16 *step, s32 frames);
 void BattleFx_UpdateStormFlash(void);
@@ -190,7 +190,7 @@ void FieldMotes_Start(void)
         mote++;
     }
     do { s32 v; v = 0x3f00; reg = (volatile u16 *)0x04000050; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
-    Scheduler_AddOrUpdateCallback(Unnamed_08094bbc, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Unnamed_08094bbc), 0xc80);
 }
 
 /* field/common/effect/sparkles.c */
@@ -329,7 +329,7 @@ loop:
     p++;
     if (i < 32)
         goto loop;
-    Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FieldEffect_UpdateSparkles), 0xc80);
 }
 
 /* Builds two 0xa80-byte buffers and the per-frame step between them for a
@@ -361,7 +361,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     work += 0x1f82;
     one = 1;
     *(u16 *)work = one;
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateStormFlash, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
 }
 
 void BattleFx_SetBlock30ValuesMaxZero(void)
@@ -414,5 +414,5 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     *frames = value;
     value = 0;
     *(u16 *)(work + 0x1f82) = value;
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateStormFlash, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
 }

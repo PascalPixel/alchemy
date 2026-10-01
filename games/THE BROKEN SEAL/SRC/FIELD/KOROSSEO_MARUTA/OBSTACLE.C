@@ -51,7 +51,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     table = (s16 *)&gGameState;
     active_slot = *(s32 *)&table[250];
     target = Object_GetById(active_slot);
-    Event_Begin();
+    Engine_EventBegin();
     for (slot = 8; slot <= 66; slot++) {
         actor = Object_GetById(slot);
         if (actor == 0) {
@@ -80,27 +80,27 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
             best = adx + dz;
         }
     }
-    Event_SetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
+    Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Event_ShowMessage(best_slot, 0);
     frame = (s32 *)(state + 448);
     *frame = 0x200;
     *(s32 *)(state + 456) = 15;
-    Event_Wait(20);
-    Event_CloseScreen();
-    Event_WaitForScreen();
+    Engine_EventWait(20);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
     base = active_slot * 16;
     GameFlag_SetByte(base + 880, target->x >> 20);
     z = target->z >> 20;
     GameFlag_SetByte(base + 888, z);
     active_slot = active_slot + 1;
     if (active_slot > 3) {
-        Event_RequestExit(10);
+        Engine_EventRequestExit(10);
         GameFlag_Set(282);
     } else {
         Korosseo_SelectSoloCompetitor(active_slot);
-        Event_OpenScreen();
-        Event_WaitForScreen();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
         *frame = 0;
     }
-    Event_End();
+    Engine_EventEnd();
 }

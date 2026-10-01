@@ -102,8 +102,8 @@ void FieldScene_RunPrimarySequence(void)
     Call3(Engine_MapAnimateCells, Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *(u8 *)((s32)Object_GetById(0) + 85) = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    Event_RequestExit(*(s16 *)p6);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+    Engine_EventRequestExit(*(s16 *)p6);
 }
 
 void FieldScene_RunScene3b6SequenceA(void)
@@ -112,96 +112,96 @@ void FieldScene_RunScene3b6SequenceA(void)
     s32 rec7;
     s32 record;
 
-    Event_Begin();
-    Event_SetMessage((s32)MsgTorebiHeyWhatsThis);
-    Event_Wait(40);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgTorebiHeyWhatsThis);
+    Engine_EventWait(40);
     rec7 = Engine_ObjectCreate(0x11c, 0x2580000, 0, 0x3380000);
-    Actor_SetSpriteFlags(rec7, 0);
-    Object_SetAnimation(rec7, 6);
-    Event_Wait(10);
-    Object_SetAnimation(rec7, 1);
-    Event_Wait(40);
+    Engine_ActorSetSpriteFlags(rec7, 0);
+    Object_SetMode(rec7, 6);
+    Engine_EventWait(10);
+    Object_SetMode(rec7, 1);
+    Engine_EventWait(40);
     Engine_ObjectDispatchRelease(rec7);
-    Event_Wait(2);
+    Engine_EventWait(2);
     Actor_ShowEmote(25, 0x100, 50);
     Actor_SetSpeed(25, 0x10000, 0x8000);
     Actor_WalkToAndWait(25, 0x258, 0x350);
     Actor_FaceDirection(25, 0xc000, 0);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Event_ShowMessage(25, 0);
-    Actor_RunRepeatedMotion(25, 2);
-    Event_Wait(30);
+    Engine_ActorRunRepeatedMotion(25, 2);
+    Engine_EventWait(30);
     Actor_WalkToAndWait(25, 0x238, 0x350);
     Actor_FaceDirection(25, 0xc000, 0);
-    Event_Wait(30);
+    Engine_EventWait(30);
     Actor_ShowEmote(25, 0x108, 50);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_FaceDirection(25, 0x3000, 0);
-    Event_Wait(30);
-    Actor_RunRepeatedMotion(25, 2);
-    Event_Wait(20);
+    Engine_EventWait(30);
+    Engine_ActorRunRepeatedMotion(25, 2);
+    Engine_EventWait(20);
     Event_ShowMessage(25, 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 50);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(25, 4);
-    Event_Wait(20);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(25, 4);
+    Engine_EventWait(20);
     Event_ShowMessage(25, 0);
-    Event_Wait(30);
+    Engine_EventWait(30);
     Actor_ShowEmote(25, 0x102, 50);
     Event_ShowMessage(25, 0);
     Actor_SetSpeed(25, 0x16666, 0xb333);
     Actor_WalkByAndWait(25, 16, 0);
     Actor_WalkByAndWait(25, 0, 32);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(25, 3);
-    Event_Wait(20);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(25, 3);
+    Engine_EventWait(20);
     Event_ShowMessage(25, 0);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_SetSpeed(25, 0x1cccc, 0xe666);
     Actor_WalkByAndWait(25, 0, 48);
     Actor_SetPosition(25, 0, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
 {
-    void Event_Wait(s32);
-    void Event_SetMessage(s32);
+    void Engine_EventWait(s32);
+    void Engine_EventSetMessage(s32);
 
-    Event_Begin();
-    Event_SetMessage((s32)MsgTorebiHeWontSailShipEven);
-    Event_Wait(30);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgTorebiHeWontSailShipEven);
+    Engine_EventWait(30);
     /* Same import, same first two arguments, differing only in the third.
      * Two call sites, not a loop. */
-    Actor_Jump(31, 4, 13);
-    Actor_Jump(31, 4, 30);
+    Engine_ActorJump(31, 4, 13);
+    Engine_ActorJump(31, 4, 30);
     Event_ShowMessage(31, 0);
-    Event_Wait(10);
+    Engine_EventWait(10);
     /* r1 = 129 << 1 = 0x102. Argument registers are set r1, r2, r0. */
     Actor_ShowEmote(32, 0x102, 50);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(32, 3);
-    Event_Wait(30);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(32, 3);
+    Engine_EventWait(30);
     Event_ShowMessage(32, 0);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(33, 4);
-    Event_Wait(20);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(33, 4);
+    Engine_EventWait(20);
     Event_ShowMessage(33, 0);
-    Event_Wait(10);
-    Actor_RunRepeatedMotion(31, 2);
-    Event_Wait(20);
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(31, 2);
+    Engine_EventWait(20);
     Event_ShowMessage(31, 0);
-    Event_Wait(10);
+    Engine_EventWait(10);
     /* Repeats the (32, 3) call made above; a second site, deliberately not
      * folded with the first. */
-    Actor_SetAnimationAndWait(32, 3);
-    Event_Wait(30);
-    Event_End();
+    Engine_ActorSetAnimationAndWait(32, 3);
+    Engine_EventWait(30);
+    Engine_EventEnd();
 }
 
 /* Keep the first byte store and zero initialization as one assignment. */
@@ -226,14 +226,14 @@ s32 Scene_InitFacingActors(void)
         if (gGameState.entrance == 19) {
             if (Value1(Engine_GameFlagIsSet, 0x8bc) == 0) {
                 Engine_GameFlagSet(0x8bc);
-                Event_OpenScreen();
+                Engine_EventOpenScreen();
                 FieldScene_RunScene3b6SequenceA();
             }
         }
         if (gGameState.entrance == 16) {
             if (Value1(Engine_GameFlagIsSet, 0x300) == 0) {
                 Engine_GameFlagSet(0x300);
-                Event_OpenScreen();
+                Engine_EventOpenScreen();
                 FieldScene_RunActorsThirtyOneToThirtyThreeChoreography();
             }
         }
@@ -253,7 +253,7 @@ void SceneDialogue_RunFacingPrompt(s32 no)
     u8 *actor = Object_GetById(0);
     s32 msg;
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0x8000) {
-        Shop_Open(28, no);
+        Engine_ShopOpen(28, no);
     } else if (GameFlag_IsSet(0x950) != 0) {
         Engine_EventSetMessage((s32)MsgTorebiRightOneWell);
         Event_ShowMessage(no, 0);
@@ -262,13 +262,13 @@ void SceneDialogue_RunFacingPrompt(s32 no)
         Event_ShowMessage(no, 0);
     } else {
         msg = (s32)MsgTorebiFirstTimeTolbi;
-        Event_SetMessage(msg);
+        Engine_EventSetMessage(msg);
         Engine_EventOpenMessage(no, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
-            Event_Wait(10);
-            Event_SetMessage(msg + 1);
+            Engine_EventWait(10);
+            Engine_EventSetMessage(msg + 1);
         } else {
-            Event_SetMessage(msg + 2);
+            Engine_EventSetMessage(msg + 2);
         }
         Event_ShowMessage(no, 0);
     }
@@ -279,16 +279,16 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
     u8 *actor = Object_GetById(0);
     s32 msg;
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
-        Shop_Open(26, no);
+        Engine_ShopOpen(26, no);
     } else if (GameFlag_IsSet(0x950) != 0) {
         msg = (s32)MsgTorebiComeWayKalay;
-        Event_SetMessage(msg);
+        Engine_EventSetMessage(msg);
         Engine_EventOpenMessage(no, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
-            Event_Wait(10);
-            Event_SetMessage(msg + 1);
+            Engine_EventWait(10);
+            Engine_EventSetMessage(msg + 1);
         } else {
-            Event_SetMessage(msg + 2);
+            Engine_EventSetMessage(msg + 2);
         }
         Event_ShowMessage(no, 0);
     } else if (GameFlag_IsSet(0x962) != 0) {
@@ -298,7 +298,7 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
         Engine_EventSetMessage((s32)MsgTorebiLookStrongGo);
         Event_ShowMessage(no, 0);
         Engine_ActorShowEmote(no, 0x106, 0);
-        Event_Wait(40);
+        Engine_EventWait(40);
         Event_ShowMessage(no, 0);
     }
 }
@@ -308,7 +308,7 @@ void SceneDialogue_RunFacingAction(s32 no)
 {
     u8 *actor = Object_GetById(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
-        Shop_Open(27, no);
+        Engine_ShopOpen(27, no);
     } else {
         if (GameFlag_IsSet(0x950) != 0) {
             Engine_EventSetMessage((s32)MsgTorebiWasntAbleWatch);
@@ -317,7 +317,7 @@ void SceneDialogue_RunFacingAction(s32 no)
             Engine_EventSetMessage((s32)MsgTorebiMaybeCloseShop);
             Event_ShowMessage(no, 0);
         } else {
-            Event_SetMessage((s32)MsgTorebiIfCanMakeNameFor);
+            Engine_EventSetMessage((s32)MsgTorebiIfCanMakeNameFor);
             Event_ShowMessage(no, 0);
         }
     }
@@ -328,29 +328,29 @@ void SceneDialogue_AskWatchingColosso(s32 subject)
 {
     s32 message;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     message = (s32)MsgTorebiLookLikeWarrior;
-    Event_SetMessage(message);
+    Engine_EventSetMessage(message);
     Event_OpenMessage(subject, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(message + 1);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(message + 1);
     } else {
-        Event_SetMessage(message + 2);
+        Engine_EventSetMessage(message + 2);
     }
 
     Event_ShowMessage(subject, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The chef's line. */
 void SceneDialogue_RunActorLine23a1(s32 no)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgTorebiGrrrChefInBadMood);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgTorebiGrrrChefInBadMood);
     Event_ShowMessage(no, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The offer to stay, and the excited girl's lines. */
@@ -358,66 +358,66 @@ void SceneDialogue_AskStay(s32 subject)
 {
     s32 msg;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     msg = (s32)MsgTorebiWantStay;
-    Event_SetMessage(msg);
+    Engine_EventSetMessage(msg);
     Event_OpenMessage(subject, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(msg + 1);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(msg + 1);
     } else {
-        Event_SetMessage(msg + 2);
+        Engine_EventSetMessage(msg + 2);
     }
 
     Event_ShowMessage(subject, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunExcitedLines(s32 a0)
 {
     s32 msg;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x8bd) == 0) {
         msg = (s32)MsgTorebiHeeHeeLook;
-        Event_SetMessage(msg);
+        Engine_EventSetMessage(msg);
         Event_OpenMessage(a0, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_Wait(10);
-            Event_SetMessage(msg + 1);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
+            Engine_EventWait(10);
+            Engine_EventSetMessage(msg + 1);
         } else {
-            Event_SetMessage(msg + 2);
+            Engine_EventSetMessage(msg + 2);
         }
         Event_ShowMessage(a0, 0);
     } else {
         if (GameFlag_IsSet(0x8be) == 0) {
             GameFlag_Set(0x8be);
-            Event_SetMessage((s32)MsgTorebiHello);
+            Engine_EventSetMessage((s32)MsgTorebiHello);
             Event_ShowMessage(a0, 0);
-            Event_Wait(10);
-            Actor_RunRepeatedMotion(a0, 2);
-            Event_Wait(20);
+            Engine_EventWait(10);
+            Engine_ActorRunRepeatedMotion(a0, 2);
+            Engine_EventWait(20);
         }
-        Event_SetMessage((s32)MsgTorebiHoHumFine);
+        Engine_EventSetMessage((s32)MsgTorebiHoHumFine);
         Event_ShowMessage(a0, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Flagged lines. */
 void SceneDialogue_RunActor25FlaggedLine(void)
 {
-    void Event_Begin(void);
+    void Engine_EventBegin(void);
 
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x8BE) == 0) {
-        Event_SetMessage((s32)MsgTorebiHehHehSheJustHid);
+        Engine_EventSetMessage((s32)MsgTorebiHehHehSheJustHid);
     } else {
-        Event_SetMessage((s32)MsgTorebiThingFoundDefinitelySameAs);
+        Engine_EventSetMessage((s32)MsgTorebiThingFoundDefinitelySameAs);
     }
     Event_ShowMessage(25, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene3b6_02000898(s32 a0)
@@ -425,11 +425,11 @@ void FieldScene_RunScene3b6_02000898(s32 a0)
     u32 i;
     s32 record;
 
-    Event_Begin();
-    Event_SetMessage((s32)MsgTorebiGrrrScamWhyWontThey);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgTorebiGrrrScamWhyWontThey);
     Actor_ShowEmote(31, 0x103, 40);
     Event_ShowMessage(a0, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Asks whether the would-be warrior remembers the speaker. */
@@ -437,20 +437,20 @@ void SceneDialogue_AskRememberWarrior(s32 subject)
 {
     s32 message;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     message = (s32)MsgTorebiWarriorRemember;
-    Event_SetMessage(message);
+    Engine_EventSetMessage(message);
     Event_OpenMessage(subject, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(message + 1);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(message + 1);
     } else {
-        Event_SetMessage(message + 2);
+        Engine_EventSetMessage(message + 2);
     }
 
     Event_ShowMessage(subject, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The facing message. */
@@ -460,7 +460,7 @@ void SceneDialogue_RunFacingMessage(s32 no)
 
     u8 *actor = Object_GetById(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
-        Sanctum_Open(no);
+        Engine_SanctumOpen(no);
     } else {
         if (GameFlag_IsSet(0x950) != 0) {
             Engine_EventSetMessage((s32)MsgTorebiShipsArentGoing);
@@ -469,7 +469,7 @@ void SceneDialogue_RunFacingMessage(s32 no)
             Engine_EventSetMessage((s32)MsgTorebiMissFinalsTolbis);
             Event_ShowMessage(no, 0);
         } else {
-            Event_SetMessage((s32)MsgTorebiWasteStuckHereWhenSuch);
+            Engine_EventSetMessage((s32)MsgTorebiWasteStuckHereWhenSuch);
             Event_ShowMessage(no, 0);
         }
     }

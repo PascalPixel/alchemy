@@ -4,9 +4,9 @@
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
-/* A menu cursor record (object pointer and cursor state).
-   FAKEMATCH: declared as a union so the stores of its object pointer stay
-   ordered against the window reads that follow them. */
+/* A menu cursor record (object pointer and cursor state). The union keeps
+   pointer stores ordered against the window reads that follow them;
+   the two affected callers record their measured steering reason. */
 union MenuCursor {
     struct RenderOutput *output;
     u8 data[0x10];

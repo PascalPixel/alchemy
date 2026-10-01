@@ -11,10 +11,10 @@ void ActorDraw_SetupActorSceneCells(void)
     Audio_PlayCue(188);
     Map_CopyCells(42, 33, 34, 16, 2, 2);
     Map_CopyCells(42, 35, 36, 16, 2, 2);
-    Event_Wait(4);
+    Engine_EventWait(4);
     Map_CopyCells(40, 33, 34, 16, 2, 2);
     Map_CopyCells(40, 35, 36, 16, 2, 2);
-    Event_Wait(4);
+    Engine_EventWait(4);
     {
         s32 dest_x = 3;
         s32 dest_y = 16;

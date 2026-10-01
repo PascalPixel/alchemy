@@ -76,13 +76,13 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 void TorebiIzumi_AskForLuckyMedal(s32 object)
 {
     s32 question = (s32)MsgTorebiLuckyMedal;
-    Event_SetMessage(question);
+    Engine_EventSetMessage(question);
     Event_OpenMessage(object, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(question + 1);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(question + 1);
     } else {
-        Event_SetMessage(question + 2);
+        Engine_EventSetMessage(question + 2);
     }
     Event_ShowMessage(object, 0);
 }
@@ -90,13 +90,13 @@ void TorebiIzumi_AskForLuckyMedal(s32 object)
 void TorebiIzumi_AskIfFirstTime(s32 object)
 {
     s32 question = (s32)MsgTorebiYerFirstTime;
-    Event_SetMessage(question);
+    Engine_EventSetMessage(question);
     Event_OpenMessage(object, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(question + 1);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(question + 1);
     } else {
-        Event_SetMessage(question + 2);
+        Engine_EventSetMessage(question + 2);
     }
     Event_ShowMessage(object, 0);
 }
@@ -119,18 +119,18 @@ void TorebiIzumi_WalkLeaderToSpring(void)
 
 void SceneDialogue_RunMessage0e34(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
     Event_OpenMessage(-1, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunMessage0e35(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
     Event_OpenMessage(-1, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunIndexedStep0(void)

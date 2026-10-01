@@ -63,8 +63,6 @@ extern u8 Data_03001ae8[];
 s32 Object_GetById(u32);
 extern s32 gGameState[];
 extern u8 gEventWork[];
-s32 Scheduler_EnableUnmaskedOverlayCallbacks(void);
-s32 Scheduler_DisableOverlayCallbacks(void);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Battle_InitializeRenderObject(void);
 void BattleFx_ScheduleRatioTransition(s32, s32);
@@ -120,6 +118,7 @@ void Map_ShowWorldMap(void)
     BattleFx_CleanupResourcesAndWindow();
     {
         s32 v;
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             v = 64;
         } while (0);
@@ -133,6 +132,7 @@ void Map_ShowWorldMap(void)
         s32 count;
 
         q = &gIoWriteQueue;
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             ime = &REG_IME;
             saved = *ime;
@@ -148,6 +148,7 @@ void Map_ShowWorldMap(void)
         }
         *ime = saved;
     }
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do {
         layer = map->layers;
     } while (0);

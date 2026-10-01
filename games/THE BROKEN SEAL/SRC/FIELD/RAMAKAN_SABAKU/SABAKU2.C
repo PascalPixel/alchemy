@@ -61,7 +61,7 @@ void OverlayObject_WaitUntilField12BelowLimit(u8 *o, s32 limit)
     s32 frames = 60;
 
     while (frames != 0) {
-        Task_Wait(1);
+        Engine_TaskWait(1);
         frames--;
         if (*(s32 *)(o + 12) <= limit) break;
     }
@@ -145,7 +145,7 @@ void FieldScene_RunFlags8B2And8B3Steps(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x8b2) == 0) {
         if (GameFlag_IsSet(0x8b3) == 0) {
             GameFlag_Set(0x8b3);
@@ -153,8 +153,8 @@ void FieldScene_RunFlags8B2And8B3Steps(void)
         }
     }
     Audio_PlayCue(123);
-    Event_RequestExit(3);
-    Event_End();
+    Engine_EventRequestExit(3);
+    Engine_EventEnd();
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
@@ -317,7 +317,7 @@ s32 RamakanSabaku_ConfigureAreaLayout(void)
    desert's third area by its fifth entrance. */
 void RamakanSabaku_ReturnToArea3(void)
 {
-    Actor_RunRepeatedMotion(8, 2);
+    Engine_ActorRunRepeatedMotion(8, 2);
     Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
     /* FAKEMATCH: the do/while loads the game state's base before the 0x22b
        offset, which fixes their registers and literal-pool order. */
@@ -347,10 +347,10 @@ void FieldScene_RunScene3a5_02000c6c(s32 a0)
             break;
         }
     }
-    Event_Begin();
-    Event_SetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + 0x1a10);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + 0x1a10);
     Event_ShowMessage((v6 + 1), 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The desert crossing in quarters: the percentage of the way the party has

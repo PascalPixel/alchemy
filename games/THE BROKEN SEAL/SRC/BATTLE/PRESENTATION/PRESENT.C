@@ -6,6 +6,7 @@
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
+    /* FAKEMATCH: a direct call changes BattlePresentation_BuildTilemap from push {r5, r6, lr} to push {r5, r6, r7, lr} (45/44 assembly lines). */
     Iwram_FillWords(dst, size, value);
 }
 

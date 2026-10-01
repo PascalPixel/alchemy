@@ -43,9 +43,4 @@ static __inline__ void AdvanceMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ void FaceActor(s32 actor, s32 direction, s32 frames)
-{
-    Actor_FaceDirection(actor, direction, frames);
-}
-
 #endif

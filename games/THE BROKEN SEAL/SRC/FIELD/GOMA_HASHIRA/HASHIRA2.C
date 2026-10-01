@@ -28,79 +28,16 @@ void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPrimarySequence(void);
 void FieldScene_RunPillarBurst(void);
 
-static __inline__ void Event_Begin(void)
-{
-    Engine_EventBegin();
-}
-
-static __inline__ void Event_End(void)
-{
-    Engine_EventEnd();
-}
-
-static __inline__ void Event_Wait(s32 frames)
-{
-    Battle_WaitMode0(frames);
-}
-
-static __inline__ void Actor_SetSpriteFlags(void *actor, s32 flags)
-{
-    Engine_ActorSetSpriteFlags(actor, flags);
-}
-
-static __inline__ void Object_SetBlendMode(void *object, s32 mode)
-{
-    Engine_ObjectSetBlendMode(object, mode);
-}
-
-static __inline__ void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
-{
-    Engine_ActorSetPosition(actor, fixed_x, fixed_z);
-}
-
-static __inline__ void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz)
-{
-    ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
-}
-
-static __inline__ void Actor_WaitForMove(s32 actor)
-{
-    ObjectMotion_CommitCurrentPositionAndActivate(actor);
-}
-
-static __inline__ void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
-{
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static __inline__ void Actor_SetDestination(s32 actor, s32 x, s32 z)
-{
-    Engine_ActorSetDestination(actor, x, z);
-}
-
-static __inline__ s32 Random_Next(void)
-{
-    return Engine_RandomNext();
-}
-
 static __inline__ void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_WorkSetValuesIfNonNegative(first, second, third);
-}
-
-static __inline__ void MapRender_WaitForValues(void)
-{
-    Engine_MapRenderWaitForValues();
-}
-
-static __inline__ s32 GameFlag_Set(s32 flag)
-{
-    return Engine_GameFlagSet(flag);
 }
 
 static __inline__ void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                               s32 dest_x, s32 dest_y)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
 }
 
@@ -144,32 +81,32 @@ void FieldScene_RunPillarSequence(void)
         zero = 0;
         p0[34] = 1;
         r2 = (s32)Object_GetById(11);
-        Actor_SetSpriteFlags(r2, 0);
+        Engine_ActorSetSpriteFlags(r2, 0);
         ObjectGroup_ConfigureChildValue(11, 14);
         r3 = (s32)Object_GetById(11);
-        Object_SetBlendMode(r3, 1);
-        Actor_SetPosition(11, 0x19e0000, 0xf00000);
-        Event_Wait(10);
+        Engine_ObjectSetBlendMode(r3, 1);
+        Engine_ActorSetPosition(11, 0x19e0000, 0xf00000);
+        Battle_WaitMode0(10);
         base = (s32)FieldScene_RunPrimarySequence;
         Engine_TaskAddCallback(base, 0xc80);
         Audio_PlayCue(141);
-        Actor_SetDestinationOffset(9, 1, 0);
+        ObjectMotion_OffsetPositionAndResetMotion(9, 1, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
-        Event_Wait(10);
-        Actor_SetDestinationOffset(9, 2, 0);
-        Actor_WaitForMove(9);
+        Battle_WaitMode0(10);
+        ObjectMotion_OffsetPositionAndResetMotion(9, 2, 0);
+        ObjectMotion_CommitCurrentPositionAndActivate(9);
         r4 = (s32)Object_GetById(9);
         *(s32 *)(r4 + 68) = zero;
         r5 = (s32)Object_GetById(9);
         *(s32 *)(r5 + 72) = 0x9999;
-        Event_Wait(3);
-        Actor_SetSpeed(9, 0x28000, 0x4000);
+        Battle_WaitMode0(3);
+        ObjectMotion_SetSpeedParameters(9, 0x28000, 0x4000);
         Audio_PlayCue(0x120);
-        Actor_SetDestination(9, 0x1a0, 200);
+        Engine_ActorSetDestination(9, 0x1a0, 200);
         r6 = (s32)Object_GetById(9);
-        Actor_SetSpriteFlags(r6, 0);
+        Engine_ActorSetSpriteFlags(r6, 0);
         Engine_TaskRemoveCallback(base);
-        Event_Wait(12);
+        Battle_WaitMode0(12);
         Audio_PlayCue(189);
         rec7 = ((s32 (*)())Object_GetById)(9);
         v1 = Engine_RandomNext();
@@ -186,20 +123,20 @@ void FieldScene_RunPillarSequence(void)
         n = n - u;
         n = n << 3;
         n = n + t;
-        v3 = Random_Next();
+        v3 = Engine_RandomNext();
         n = -n;
         Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, zero, n, (s32)((u32)(v3 << 1) >> 16), zero);
-        Event_Wait(20);
+        Battle_WaitMode0(20);
         Audio_PlayCue(154);
         Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-        MapRender_WaitForValues();
-        Actor_SetPosition(9, 0, 0);
-        Actor_SetPosition(11, 0, 0);
-        GameFlag_Set(0x300);
+        Engine_MapRenderWaitForValues();
+        Engine_ActorSetPosition(9, 0, 0);
+        Engine_ActorSetPosition(11, 0, 0);
+        Engine_GameFlagSet(0x300);
         Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunPillarBurst(void)
@@ -256,24 +193,24 @@ void FieldScene_RunPillarBurst(void)
             g6c = (s32)Object_GetById(10);
             GomaHashira_SpawnPillarEffect(*(s32 *)(g6a + 8), *(s32 *)(g6b + 12),
                   *(s32 *)(g6c + 16), c2, c2, 0, 1);
-            GameFlag_Set(0x301);
+            Engine_GameFlagSet(0x301);
         }
     }
 }
 
 void FieldScene_RunThreeCallSequence(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     FieldScene_RunPillarBurst();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunFourStepSequence(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     StagedActor_AdvancePair();
     FieldScene_RunPillarBurst();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_TryJumpForward(void)

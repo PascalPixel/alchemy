@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
-s32 Scheduler_EnableCallbacks(u32 callback);
 void Object_EffectSpawnCallback(void);
 
 void Object_EnableEffectSpawnCallback(void)
@@ -9,7 +9,6 @@ void Object_EnableEffectSpawnCallback(void)
     Scheduler_EnableCallbacks((u32)Object_EffectSpawnCallback);
 }
 
-s32 Scheduler_DisableCallbacks(u32 callback);
 void Object_EffectSpawnCallback(void);
 
 void Object_DisableEffectSpawnCallback(void)
@@ -117,7 +116,6 @@ void Battle_InitializeRenderObject(void)
 void UiTimedNotice_CloseIfActiveFar(void);
 void Battle_InitializeRenderObject(void);
 void Battle_ResetEffectCounter(void);
-void Scheduler_AddOrUpdateCallback(const void *, s32);
 u32 GameFlag_ClearBitFar(s32);
 
 void Battle_Reset(void)
@@ -138,14 +136,13 @@ void Battle_Reset(void)
         runtime->unknown_1da = 0xFFFF;
         runtime->unknown_1dc = -1;
         runtime->unknown_1de = -1;
-        Scheduler_AddOrUpdateCallback((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
+        Scheduler_AddOrUpdateCallback((s32)((const void *)Battle_UpdateModeFromShoulderButtons), 0xC80);
         GameFlag_ClearBitFar(0x132);
         runtime->object_id = Data_02000240.object_id;
         runtime->unknown_1f8 = zero;
     }
 }
 
-void Scheduler_RemoveCallback(u32);
 void GameFlag_RefreshLureCapFar(void);
 void Object_AttachWorkTargetToObject(s32 value, s32 enabled);
 

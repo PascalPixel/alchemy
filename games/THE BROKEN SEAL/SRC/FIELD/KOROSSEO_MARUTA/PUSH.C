@@ -88,8 +88,8 @@ void ColossoLogRollingStage_PushStagedActor(void)
         return;
     }
 
-    Object_SetAnimation(subject, 8);
-    Task_Wait(15);
+    Object_SetMode(subject, 8);
+    Engine_TaskWait(15);
 
     target->rate_x = 0x3333;
     target->rate_z = 0x3333;
@@ -108,7 +108,7 @@ void ColossoLogRollingStage_PushStagedActor(void)
     target->motion_24 = zero;
     target->motion_2c = zero;
 
-    Object_SetAnimation(subject, 1);
+    Object_SetMode(subject, 1);
 }
 
 /* This overlay's own byte-exact occupancy lookup. */

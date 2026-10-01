@@ -41,11 +41,6 @@ void BattleFx_EmitRandomParticle();
 
 /* Actor id operated on throughout this scene. */
 
-static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
-{
-    Actor_SetPosition(actor, x, y);
-}
-
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 
 struct EffectRecord {

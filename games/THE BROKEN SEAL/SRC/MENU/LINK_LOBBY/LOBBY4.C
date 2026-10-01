@@ -2,6 +2,7 @@
    first and the child receives first; the received count is kept in flag
    byte 0x3f0, and any failure resets the serial transfer. */
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "SERIAL_RUNTIME.H"
 #include "SCENE_IDS.H"
@@ -22,7 +23,6 @@ s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 void UiWork_Finalize(s32 window, s32 flags);
 u8 *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Scheduler_SetCallbackMask(void (*callback)(void), s32 mask);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(s32 layer);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
@@ -174,7 +174,7 @@ s32 LinkLobby_RunConnectionSequence(void)
                 LinkLobby_WriteSlotValue(0);
                 LinkLobby_WriteSlotValue(4);
                 Engine_TaskAddCallback(LinkLobby_PollPeerReady, 0xc80);
-                Scheduler_SetCallbackMask(LinkLobby_PollPeerReady, 1);
+                Scheduler_SetCallbackMask((u32)(LinkLobby_PollPeerReady), 1);
                 Engine_GameFlagClear(0x201);
                 Engine_GameFlagClear(0x202);
                 Engine_GameFlagClear(0x303);

@@ -239,12 +239,12 @@ void FieldScene_RunScene3a5_020014b0(void)
             *(s32 *)(record + 56) = -0x80000000;
             record = Actor_Get(ACTOR_PARTY_LEADER);
             *(s32 *)(record + 64) = -0x80000000;
-            Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-            Event_Wait(40);
-            Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+            Engine_EventWait(40);
+            Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
             Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-            Event_Wait(40);
+            Engine_EventWait(40);
             *((u8 *)Object_GetById(0) + 90) &= 254;
             rect[0] = rec8;
             rect[1] = rec8;
@@ -252,15 +252,15 @@ void FieldScene_RunScene3a5_020014b0(void)
             record = Actor_Get(ACTOR_PARTY_LEADER);
             Call3(Vector_AddPolarOffset, -0x100000, *(u16 *)(record + 6), (s32)rect);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-            Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
             Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000, rect[2] / 0x10000);
-            Actor_WaitForMove(ACTOR_PARTY_LEADER);
-            Event_Wait(2);
+            Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+            Engine_EventWait(2);
             *((u8 *)Object_GetById(0) + 90) |= 1;
-            Event_Wait(30);
+            Engine_EventWait(30);
             Audio_PlayCue(148);
-            Actor_RunRepeatedMotion(8, 2);
-            Event_Wait(20);
+            Engine_ActorRunRepeatedMotion(8, 2);
+            Engine_EventWait(20);
             Actor_SetSpeed(8, 0x28000, 0x14000);
             Actor_WalkToAndWait(8, 168, 104);
             Actor_SetSpeed(8, 0x8000, 0x4000);
@@ -332,7 +332,7 @@ void FieldScene_RunScene3a5_02001874(void)
     s32 record;
 
     Actor_SetSpeed(8, 0x8000, 0x4000);
-    Actor_SetAnimation(8, 1);
+    Engine_ActorSetAnimation(8, 1);
     Actor_WalkToAndWait(8, 168, 96);
-    Actor_SetAnimation(8, 2);
+    Engine_ActorSetAnimation(8, 2);
 }

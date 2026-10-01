@@ -20,9 +20,9 @@ void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
         sprite[9] = mask;
         effect[0x55] = 0;
         effect[0x59] = 8;
-        Actor_SetSpriteFlags(effect, 0);
-        Object_SetPalette(effect, 14);
-        Object_SetBlendMode(effect, 1);
+        Engine_ActorSetSpriteFlags(effect, 0);
+        ObjectGroup_SetChildValue(effect, 14);
+        Engine_ObjectSetBlendMode(effect, 1);
         return effect;
     }
     return NULL;
@@ -44,8 +44,8 @@ void *SceneEffect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
         sprite[9] = mask;
         effect[0x55] = 0;
         effect[0x59] = 8;
-        Actor_SetSpriteFlags(effect, 0);
-        Object_SetPalette(effect, 15);
+        Engine_ActorSetSpriteFlags(effect, 0);
+        ObjectGroup_SetChildValue(effect, 15);
         effect[0x23] = (effect[0x23] & 0xfe) | 2;
         return effect;
     }

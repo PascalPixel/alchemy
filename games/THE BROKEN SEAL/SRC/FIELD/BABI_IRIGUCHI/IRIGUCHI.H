@@ -84,34 +84,17 @@ void BabiIriguchi_JumpFromLedge();
 
 /* The event services the entrance's scripts use, wrapped as the field event
  * header wraps its own but reaching the imports by the names above. */
-static __inline__ void Iriguchi_Wait(s32 frames)
-{
-    Battle_WaitMode0(frames);
-}
-
-static __inline__ void Iriguchi_TaskWait(s32 frames)
-{
-    WaitFrames(frames);
-}
 
 static __inline__ void Iriguchi_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static __inline__ void Iriguchi_WaitForMove(s32 actor)
-{
-    ObjectMotion_CommitCurrentPositionAndActivate(actor);
-}
-
-static __inline__ void Iriguchi_SetAnimation(s32 actor, s32 animation)
-{
-    Object_SetModeById(actor, animation);
 }
 
 static __inline__ void Iriguchi_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                                    s32 dest_x, s32 dest_y)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
 }
 
@@ -141,10 +124,6 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
  * at 0x020027f4-0x02002820; its stack frame holds arguments five and six for
  * the first call.
  */
-static __inline__ void ResetSceneParameters(s32 a, s32 b, s32 c, s32 mode)
-{
-    Camera_MoveTo(a, b, c, mode);
-}
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02001238(s32 amount)

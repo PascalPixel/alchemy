@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 extern u8 *gResQueueWork;
@@ -51,7 +52,6 @@ block_10:
 }
 
 /* resource/Resource_ScheduleOwnerResetDelayed.c */
-s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void MenuSelection_DrawFrame(void);
 
 void Resource_ScheduleOwnerResetDelayed(void)
@@ -60,9 +60,8 @@ void Resource_ScheduleOwnerResetDelayed(void)
 }
 
 /* resource/Resource_ScheduleOwnerReset.c */
-s32 Scheduler_RemoveCallback(s32);
 
 void Resource_ScheduleOwnerReset(void)
 {
-    Scheduler_RemoveCallback((s32)MenuSelection_DrawFrame);
+    Scheduler_RemoveCallback((u32)((s32)MenuSelection_DrawFrame));
 }

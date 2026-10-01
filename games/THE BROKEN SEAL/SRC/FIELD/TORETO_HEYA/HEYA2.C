@@ -236,7 +236,7 @@ void FieldScene_RunStep214(void) { ToretoHeya_HandleFloorSwitch(0x214, 84, 35, 5
 
 void SceneState_ClearStoryVariantWhenIdle(void)
 {
-    if (Leader_CheckAhead() == 0)
+    if (Engine_LeaderCheckAhead() == 0)
         *ToretoHeya_PaletteBuffer = -1;
 }
 
@@ -344,12 +344,12 @@ void FieldScene_RunFourActorEncounter(void)
 
     rec = GameFlag_IsSet(3);
     *((u8 *)Object_GetById(3) + 35) &= 254;
-    Actor_SetSpritePriority(ACTOR_MIA, 2);
+    Engine_ActorSetSpritePriority(ACTOR_MIA, 2);
     *((u8 *)Object_GetById(0) + 35) &= 254;
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     PartyInventory_FindOwner(184);
     Audio_PlayCue(17);
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
@@ -370,39 +370,39 @@ void FieldScene_RunFourActorEncounter(void)
         *(u16 *)(record + 6) = (v6 << 8);
     }
     ToretoHeya_PlayGesture(0);
-    Task_Wait(10);
+    Engine_TaskWait(10);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gEventWork->transition_frames = 48;
-    Event_OpenScreen();
-    Event_WaitForScreen();
-    Event_Wait(20);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(20);
     Camera_SetSpeed(0x13333, 0x2666);
     Camera_MoveTo(0xa80000, -1, 0x980000, 1);
-    Camera_WaitForMove();
-    Event_Wait(10);
+    Engine_CameraWaitForMove();
+    Engine_EventWait(10);
     v5 = 10;
     Audio_PlayCue(123);
     Map_CopyCellAttributes(26, 3, 1, 2, v5, 8);
     Map_CopyCells(26, 38, 1, 1, v5, 43);
-    Task_Wait(4);
+    Engine_TaskWait(4);
     Map_CopyCells(26, 37, 1, 2, v5, 42);
-    Task_Wait(4);
+    Engine_TaskWait(4);
     Map_CopyCells(26, 36, 1, 3, v5, 41);
-    Task_Wait(4);
+    Engine_TaskWait(4);
     Map_CopyCells(26, 35, 1, 4, v5, 40);
-    Task_Wait(80);
-    Event_SetMessage((s32)MsgToretoMmmmm);
+    Engine_TaskWait(80);
+    Engine_EventSetMessage((s32)MsgToretoMmmmm);
     Event_ShowMessageAndWait(0x8009, 0, 20);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_Wait(20);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_EventWait(20);
     Camera_MoveTo(0xa80000, -1, 0x5a0000, 1);
-    Camera_WaitForMove();
-    Event_Wait(40);
+    Engine_CameraWaitForMove();
+    Engine_EventWait(40);
     ToretoHeya_PlayGesture(1);
-    Event_Wait(60);
+    Engine_EventWait(60);
     Audio_PlayCue(21);
     ToretoHeya_PlayGesture(4);
     Event_ShowMessageAndWait(0x8009, 0, 20);
@@ -411,37 +411,37 @@ void FieldScene_RunFourActorEncounter(void)
     Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 80);
     Event_ShowMessage(0x8009, 0);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Event_ShowMessageAndWait(0x8009, 0, 20);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Event_Wait(20);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(0x8009, 0, 20);
     ToretoHeya_PlayGesture(0);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Event_ShowMessageAndWait(0x8009, 0, 20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
     Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
     Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
-    Event_Wait(60);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_EventWait(60);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 10);
     Event_ShowMessageAndWait(0x8001, 0, 10);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
     Event_ShowMessageAndWait(0x8002, 0, 20);
     ToretoHeya_PlayGesture(0);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Event_ShowMessageAndWait(0x8009, 0, 10);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, (v6 << 8), 0);
     Engine_ActorFaceDirection(1, (v6 << 8), 0);
     Actor_FaceDirection(ACTOR_IVAN, (v6 << 8), 40);
@@ -449,33 +449,33 @@ void FieldScene_RunFourActorEncounter(void)
     Event_OpenMessage(0x8009, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
-    if (Event_ChooseYesNo(0, 0) != 0) {
+    if (Engine_EventChooseYesNo(0, 0) != 0) {
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 20);
-        Actor_SetAnimation(ACTOR_GERALD, 4);
-        Event_SetMessage((s32)MsgToretoDoingNowsNot);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 4);
+        Engine_EventSetMessage((s32)MsgToretoDoingNowsNot);
         Event_ShowMessage(0x8001, 0);
         Actor_ShowEmote(ACTOR_IVAN, 0x103, 10);
-        Actor_SetAnimation(ACTOR_IVAN, 3);
+        Engine_ActorSetAnimation(ACTOR_IVAN, 3);
         Event_ShowMessage(0x8002, 0);
     }
-    Event_Wait(20);
+    Engine_EventWait(20);
     ToretoHeya_PlayGesture(4);
-    Event_SetMessage((s32)MsgToretoTurnedPeopleKolima);
+    Engine_EventSetMessage((s32)MsgToretoTurnedPeopleKolima);
     Event_ShowMessageAndWait(0x8009, 0, 20);
     Event_ShowMessageAndWait(0x8009, 0, 10);
     ToretoHeya_PlayGesture(0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     ColorBuffer_ApplySource(0x10000, 0);
     ColorBuffer_ApplyTarget(0x406218, 1);
-    ColorBuffer_Interpolate(20);
-    Task_Wait(40);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ColorBufferInterpolate(20);
+    Engine_TaskWait(40);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Actor_FaceDirection(ACTOR_GERALD, (v6 << 8), 0);
     Actor_FaceDirection(ACTOR_IVAN, (v6 << 8), 20);
-    Event_Wait(20);
+    Engine_EventWait(20);
     *(s32 *)ToretoHeya_SparkCounter = 0;
     {
         s32 *bank = (s32 *)ToretoHeya_SparkOrigin;
@@ -485,18 +485,18 @@ void FieldScene_RunFourActorEncounter(void)
         bank[2] = 0x340000;
     }
     Call2(Engine_TaskAddCallback, base5_200962d, 0xc80);
-    Event_Wait(220);
+    Engine_EventWait(220);
     Engine_TaskRemoveCallback(base5_200962d);
     ColorBuffer_ApplyTarget(0x10000, 1);
-    ColorBuffer_Interpolate(20);
-    Task_Wait(40);
+    Engine_ColorBufferInterpolate(20);
+    Engine_TaskWait(40);
     ToretoHeya_PlayGesture(4);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(0x8009, 0, 10);
     ToretoHeya_PlayGesture(0);
     Event_ShowMessage(0x8009, 0);
     Object_SetActionCallbackAndRefreshById(8, (s32)ToretoHeya_ActionTable1);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
     Event_ShowMessage(0x8001, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x102, 10);
@@ -504,29 +504,29 @@ void FieldScene_RunFourActorEncounter(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
     Event_ShowMessageAndWait(0x8001, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     Event_ShowMessageAndWait(0x8002, 0, 10);
     if (rec != 0) {
-        Actor_RunRepeatedMotion(ACTOR_MIA, 1);
+        Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
         Engine_EventShowMessageAndWait(0x8003, 0, 10);
     }
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     base5_2009ec8 = (s32)ToretoHeya_ActionTable2;
-    Actor_EnableActionCallback(ACTOR_GERALD, base5_2009ec8);
+    Engine_ActorEnableActionCallback(ACTOR_GERALD, base5_2009ec8);
     if (rec != 0) {
-        Actor_EnableActionCallback(ACTOR_MIA, base5_2009ec8);
+        Engine_ActorEnableActionCallback(ACTOR_MIA, base5_2009ec8);
     }
     Object_SetActionCallbackAndRefreshById(2, base5_2009ec8);
-    Event_Wait(20);
+    Engine_EventWait(20);
     *((u8 *)Object_GetById(0) + 35) |= 1;
     GameFlag_Set(0x844);
     Engine_TaskAddCallback((s32)ToretoPalette_ApplyTint, 0xc80);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneState_ApplyRectsByFlag844(s32 flag)
@@ -534,7 +534,7 @@ void SceneState_ApplyRectsByFlag844(s32 flag)
     if (flag != 0 && GameFlag_IsSet(0x109) == 0)
         FieldScene_RunFourActorEncounter();
 
-    Task_Wait(1);
+    Engine_TaskWait(1);
     if (GameFlag_IsSet(0x844) != 0) {
         s32 w1 = 10;
         Map_CopyCells(121, 34, 3, 1, 93, w1);
@@ -898,6 +898,7 @@ void ToretoHeya_AdvanceEffectMotion(struct Effect *effect)
     s32 velocity_x;
 
     /* This block orders the Z load after the Y store; do not flatten it. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do {
         velocity_x = effect->velocity_x;
         effect->position[0] += velocity_x;

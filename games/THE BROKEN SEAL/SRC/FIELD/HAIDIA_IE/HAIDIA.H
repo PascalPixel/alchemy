@@ -5,6 +5,7 @@
 #define HAIDIA_H
 
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define NULL ((void *)0)
 
@@ -137,9 +138,7 @@ extern struct WorldMapVramBlock ResourceTableEntries[];
 
 void BattleEffect_CleanupSceneObjects(void);
 void BattleFx_SetBlock30ValuesMaxZero(void);
-void Scheduler_RemoveCallback();
 s32 Math_RemainderUnsigned();
-s32 Scheduler_AddOrUpdateCallback();
 void UiWork_FinalizePendingCore(void);
 void BattleParty_ApplyDrain(s32, s32);
 s32 ArcTan2(s32, s32);

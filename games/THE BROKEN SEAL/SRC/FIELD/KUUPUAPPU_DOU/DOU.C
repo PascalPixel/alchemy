@@ -257,7 +257,7 @@ void SceneState_ApplyFlag300(void)
 
 void SceneState_SetFlag953(void)
 {
-    Message_ShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
+    Engine_MessageShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
 }
 
 /* What each area answers. */
@@ -494,7 +494,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
     Map_CopyCellAttributes(26, 30, 1, 1, a5, a6);
 
     if (p != 0) {
-        Actor_SetSpriteFlags(p, 0);
+        Engine_ActorSetSpriteFlags(p, 0);
         /* The record is reloaded with the same selector before this store. */
         ((u8 *)Object_GetById(19))[85] = 0;
         p[35] = 1;
@@ -515,7 +515,7 @@ void SceneActor_SetupSlotTwenty(void)
     Map_CopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (rec != 0) {
-        Actor_SetSpriteFlags(rec, 0);
+        Engine_ActorSetSpriteFlags(rec, 0);
         /* The rec is reloaded with the same selector before this store. */
         ((u8 *)Object_GetById(20))[85] = 0;
         rec[35] = 1;
@@ -536,7 +536,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
     Map_CopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (record != 0) {
-        Actor_SetSpriteFlags(record, 0);
+        Engine_ActorSetSpriteFlags(record, 0);
         /* The record is reloaded with the same selector before this store. */
         ((u8 *)Object_GetById(21))[85] = 0;
         record[35] = 1;
@@ -597,7 +597,7 @@ void KuupuappuDou_RunRumble(void)
     s32 evb;
     s32 top;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (gFrameCount & 1) {
         shake->direction_x = 1;
         shake->direction_z = 1;
@@ -612,7 +612,7 @@ void KuupuappuDou_RunRumble(void)
         u32 drift = (u32)(Random_Next() << 11) >> 16;
 
         shake->scroll = (double)shake->scroll - (4718.592 - (double)drift);
-        Event_Wait(1);
+        Engine_EventWait(1);
     }
     eva = 6;
     evb = 6;
@@ -620,7 +620,7 @@ void KuupuappuDou_RunRumble(void)
     top = eva << 10;
     do {
         QueueIoWriteDelay2(0x4000052, top | (eva << 5) | evb);
-        Event_Wait(1);
+        Engine_EventWait(1);
         if (frames % 20 == 0) {
             evb--;
             eva--;
@@ -629,9 +629,9 @@ void KuupuappuDou_RunRumble(void)
     } while (frames <= 69);
     Map_CopyCells(19, 83, 15, 8, 19, 91);
     Audio_PlayCue(0x120);
-    Map_Redraw();
+    Engine_MapRedraw();
     Engine_MapRenderWaitForValues();
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
@@ -645,21 +645,21 @@ void FieldScene_RunScene3a7SequenceB(void)
     s32 v6;
 
     if (GameFlag_IsSet(0x9a8) == 0) {
-        Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
+        Engine_MessageShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
         GameFlag_Set(0x9a8);
         v5 = 27;
         v6 = 92;
         Audio_PlayCue(155);
         Map_CopyCells(107, 27, 1, 1, v6, v5);
-        Event_Wait(39);
+        Engine_EventWait(39);
         Map_CopyCells(108, 27, 1, 1, v6, v5);
-        Event_Wait(50);
+        Engine_EventWait(50);
         v6 = 25;
         Audio_PlayCue(156);
         Map_CopyCells(1, 24, 1, 2, v6, v5);
-        Event_Wait(40);
+        Engine_EventWait(40);
         Map_CopyCells(2, 24, 1, 2, v6, v5);
-        Event_Wait(40);
+        Engine_EventWait(40);
         KuupuappuDou_RunRumble();
     }
 }
@@ -735,7 +735,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             }
         }
         if (SceneActor_LiftLowActorOnSubjectTile(10) != 0) {
-            Actor_SetAnimation(10, 1);
+            Engine_ActorSetAnimation(10, 1);
             if (GameFlag_IsSet(0x207) == 0) {
                 GameFlag_Set(0x207);
                 Audio_PlayCue(204);
@@ -847,7 +847,7 @@ void SceneActor_InitSlots10To15AndStartTask(void)
     do {
         s32 *record;
 
-        Actor_SetSpriteFlags(Actor_Get(selector), 0);
+        Engine_ActorSetSpriteFlags(Actor_Get(selector), 0);
         record = Actor_Get(selector);
         record[17] = 0x1999;
         record[18] = 0;
@@ -871,12 +871,12 @@ void SceneActor_SetupActors11To14AndInstallTask(void)
     do {
         s32 *rec;
 
-        Actor_SetSpriteFlags(Actor_Get(no), 0);
+        Engine_ActorSetSpriteFlags(Actor_Get(no), 0);
         rec = Actor_Get(no);
         rec[17] = 0x1999;
         rec[18] = 0;
         rec[3] = 0x00ff0000;
-        Actor_SetSpritePriority(i + 11, 1);
+        Engine_ActorSetSpritePriority(i + 11, 1);
         i++;
         no++;
     } while (i <= 3);

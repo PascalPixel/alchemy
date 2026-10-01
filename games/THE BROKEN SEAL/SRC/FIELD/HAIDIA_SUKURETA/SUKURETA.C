@@ -132,27 +132,27 @@ void Scene_RunActorTwelveDialogue(void)
 {
     s32 base;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        Event_SetMessage((s32)MsgHaidiaIllClimbTheFenceSomeday);
+        Engine_EventSetMessage((s32)MsgHaidiaIllClimbTheFenceSomeday);
         Event_ShowMessage(12, 0);
     } else {
         base = (s32)MsgHaidiaHearAwfulGrowls;
-        Event_SetMessage(base);
+        Engine_EventSetMessage(base);
         Actor_FaceActor(12, ACTOR_PARTY_LEADER, 10);
-        Actor_RunRepeatedMotion(12, 2);
-        Event_Wait(6);
+        Engine_ActorRunRepeatedMotion(12, 2);
+        Engine_EventWait(6);
         Event_OpenMessage(12, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage(base + 1);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
+            Engine_EventSetMessage(base + 1);
         } else {
-            Event_SetMessage(base + 2);
+            Engine_EventSetMessage(base + 2);
         }
-        Actor_StartRepeatedMotion(12, 3);
+        Engine_ActorStartRepeatedMotion(12, 3);
         Event_ShowMessage(12, 0);
-        Scene_SetActorDirection(12, 49152, 10);
+        Actor_FaceDirection(12, 49152, 10);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void Scene_PlanSanctumVisit(void)
@@ -162,14 +162,14 @@ void Scene_PlanSanctumVisit(void)
     s32 sneak;
 
     if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
-        Event_Begin();
+        Engine_EventBegin();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-        Event_SetMessage((s32)MsgHaidiaSukuretaOhRobin);
-        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 1);
+        Engine_EventSetMessage((s32)MsgHaidiaSukuretaOhRobin);
+        Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 1);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 0x108);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
-        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SUKURETA, 20);
-        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
+        Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SUKURETA, 20);
+        Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
         record = (u8 *)Object_GetById(0);
         x = *(s16 *)(record + 10);
@@ -180,41 +180,41 @@ void Scene_PlanSanctumVisit(void)
         Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
         Actor_WalkTo(ACTOR_JASMINE, 248, 0x108);
         Actor_WalkToAndWait(ACTOR_GERALD, 216, 0x108);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-        Actor_SetAnimation(ACTOR_JASMINE, 1);
-        Actor_SetAnimation(ACTOR_GERALD, 1);
-        Event_Wait(4);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+        Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 1);
+        Engine_EventWait(4);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 0);
         Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
-        Actor_SetAnimationAndWait(ACTOR_JASMINE, 4);
-        Event_Wait(10);
+        Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 4);
+        Engine_EventWait(10);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
-        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 1);
-        Event_Wait(10);
+        Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 1);
+        Engine_EventWait(10);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
         Actor_FaceDirection(ACTOR_GERALD, 0x3000, 40);
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 10);
-        Actor_SetAnimation(ACTOR_SUKURETA, 3);
+        Engine_ActorSetAnimation(ACTOR_SUKURETA, 3);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 8);
         Actor_FaceDirection(ACTOR_JASMINE, 0x3000, 20);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
-        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
-        Event_Wait(10);
+        Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
+        Engine_EventWait(10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
         Actor_ShowEmote(ACTOR_JASMINE, 0x101, 60);
         Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 20);
-        Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
         Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
-        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
+        Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
         Actor_FaceDirection(ACTOR_GERALD, 0, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 20);
@@ -226,67 +226,67 @@ void Scene_PlanSanctumVisit(void)
         Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 40);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
         Event_OpenMessage(ACTOR_SUKURETA, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage((s32)MsgHaidiaYouCannotEnterMtAleph);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
+            Engine_EventSetMessage((s32)MsgHaidiaYouCannotEnterMtAleph);
         } else {
-            Event_SetMessage((s32)MsgHaidiaSukuretaIWaitedYearsFor);
+            Engine_EventSetMessage((s32)MsgHaidiaSukuretaIWaitedYearsFor);
         }
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
-        Event_Wait(10);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
+        Engine_EventWait(10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-        Event_SetMessage((s32)MsgHaidiaJasmineTheyMightBeThieves);
-        Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+        Engine_EventSetMessage((s32)MsgHaidiaJasmineTheyMightBeThieves);
+        Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
         Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 30);
-        Actor_Jump(ACTOR_GERALD, 4, 30);
+        Engine_ActorJump(ACTOR_GERALD, 4, 30);
         Actor_FaceDirection(ACTOR_GERALD, 0, 10);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
-        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 10);
-        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
+        Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 10);
+        Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
         Actor_FaceActor(ACTOR_SUKURETA, ACTOR_GERALD, 10);
         Actor_FaceActor(ACTOR_SUKURETA, ACTOR_JASMINE, 10);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-        Actor_SetAnimation(ACTOR_GERALD, 3);
-        Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
-        Event_Wait(10);
-        Actor_SetAnimation(ACTOR_JASMINE, 1);
-        Actor_SetAnimation(ACTOR_GERALD, 1);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 3);
+        Engine_EventWait(10);
+        Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 1);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
         Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 16);
         Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
-        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 3);
-        Event_Wait(10);
+        Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 3);
+        Engine_EventWait(10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
         Actor_ShowEmote(ACTOR_JASMINE, 0x100, 40);
-        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
-        Event_Wait(10);
+        Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
+        Engine_EventWait(10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
-        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 1);
+        Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 1);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 10);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
-        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
-        Event_Wait(6);
+        Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
+        Engine_EventWait(6);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-        Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
-        Actor_Jump(ACTOR_GERALD, 2, 0);
-        Actor_Jump(ACTOR_JASMINE, 2, 10);
+        Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
+        Engine_ActorJump(ACTOR_GERALD, 2, 0);
+        Engine_ActorJump(ACTOR_JASMINE, 2, 10);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 10);
-        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
-        Event_Wait(16);
-        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 40);
+        Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
+        Engine_EventWait(16);
+        Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 40);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
-        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
@@ -294,74 +294,74 @@ void Scene_PlanSanctumVisit(void)
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
         Actor_ShowEmote(ACTOR_JASMINE, 0x105, 80);
-        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
+        Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
         Event_OpenMessage(ACTOR_SUKURETA, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckThe);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
+            Engine_EventSetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckThe);
         } else {
-            Event_SetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckMt);
+            Engine_EventSetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckMt);
         }
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
         sneak = (s32)MsgHaidiaFineIfTheyDontSee;
-        Event_SetMessage(sneak);
+        Engine_EventSetMessage(sneak);
         Actor_FaceDirection(ACTOR_GERALD, 0, 10);
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
         Event_OpenMessage(ACTOR_GERALD, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage((sneak + 1));
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
+            Engine_EventSetMessage((sneak + 1));
         } else {
-            Event_SetMessage((sneak + 2));
+            Engine_EventSetMessage((sneak + 2));
         }
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
-        Event_SetMessage((s32)MsgHaidiaJasmineOurSecret);
+        Engine_EventSetMessage((s32)MsgHaidiaJasmineOurSecret);
         Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
-        Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
+        Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
         Event_OpenMessage(ACTOR_JASMINE, 0);
-        Event_Wait(4);
-        if (Event_ChooseYesNo(0, 0) == 1) {
-            Actor_Jump(ACTOR_JASMINE, 2, 20);
+        Engine_EventWait(4);
+        if (Engine_EventChooseYesNo(0, 0) == 1) {
+            Engine_ActorJump(ACTOR_JASMINE, 2, 20);
             Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
         } else {
-            Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-            Actor_SetAnimation(ACTOR_GERALD, 3);
-            Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
-            Event_Wait(8);
-            Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+            Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+            Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 3);
+            Engine_EventWait(8);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
             bump_step(1);
         }
-        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
-        Event_Wait(10);
+        Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
+        Engine_EventWait(10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 10);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-        Actor_SetAnimation(ACTOR_GERALD, 3);
-        Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
-        Event_Wait(10);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
-        Event_Wait(20);
-        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 3);
+        Engine_EventWait(10);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
+        Engine_EventWait(20);
+        Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
         Event_OpenMessage(ACTOR_SUKURETA, 0);
-        Event_Wait(4);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage((s32)MsgHaidiaGeraldYouCanHandleThe);
+        Engine_EventWait(4);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
+            Engine_EventSetMessage((s32)MsgHaidiaGeraldYouCanHandleThe);
         } else {
-            Event_SetMessage((s32)MsgHaidiaGeraldIllTakeOverIf);
+            Engine_EventSetMessage((s32)MsgHaidiaGeraldIllTakeOverIf);
         }
         Engine_EventWait(10);
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
         Actor_FaceDirection(ACTOR_GERALD, 0, 10);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
         Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
-        Actor_SetAnimationAndWait(ACTOR_JASMINE, 4);
+        Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 4);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
         Actor_FaceDirection(ACTOR_GERALD, 0x8000, 10);
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 30);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
         Actor_ShowEmote(ACTOR_SUKURETA, 0x100, 40);
-        Actor_Jump(ACTOR_SUKURETA, 4, 40);
+        Engine_ActorJump(ACTOR_SUKURETA, 4, 40);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 20);
@@ -375,10 +375,10 @@ void Scene_PlanSanctumVisit(void)
         Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
         Actor_ShowEmote(ACTOR_JASMINE, 0x101, 60);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-        Event_CloseScreen();
-        Event_WaitForScreen();
-        Event_RequestExit(13);
-        Event_End();
+        Engine_EventCloseScreen();
+        Engine_EventWaitForScreen();
+        Engine_EventRequestExit(13);
+        Engine_EventEnd();
     }
 }
 
@@ -387,7 +387,7 @@ void Scene_LeaveForMtAleph(void)
     s32 record;
     s32 facing;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
     Actor_SetPosition(ACTOR_GERALD, 0xd80000, 0x1080000);
     Actor_SetPosition(ACTOR_JASMINE, 0xf80000, 0x1080000);
@@ -398,63 +398,63 @@ void Scene_LeaveForMtAleph(void)
     *(u16 *)(record + 6) = facing;
     Map_AnimateCells(Sukureta_GateCells, 43, 8);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-    Event_OpenScreen();
-    Event_WaitForScreen();
-    Event_Wait(40);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(40);
     Actor_SetSpeed(ACTOR_SUKURETA, 0xcccc, 0x6666);
     Actor_SetPosition(ACTOR_SUKURETA, 0xe60000, 0xdc0000);
     Actor_WalkToAndWait(ACTOR_SUKURETA, 230, 232);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
-    Event_SetMessage((s32)MsgHaidiaSukuretaOurBestBet);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
+    Engine_EventSetMessage((s32)MsgHaidiaSukuretaOurBestBet);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Actor_FaceDirection(ACTOR_GERALD, 0, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
-    Event_Wait(20);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
+    Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
-    Actor_SetAnimation(ACTOR_JASMINE, 3);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
+    Engine_ActorSetAnimation(ACTOR_JASMINE, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_JASMINE, 0xcccc, 0x6666);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_SetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_SetAnimation(ACTOR_JASMINE, 2);
+    Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
     record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_SetAnimation(ACTOR_SUKURETA, 2);
+    Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
     record = ((s32 (*)())Object_GetById)(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(ACTOR_GERALD);
+    Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);
-    Actor_WaitForMove(ACTOR_SUKURETA);
+    Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
-    Actor_SetAnimation(ACTOR_GERALD, 1);
-    Actor_SetAnimation(ACTOR_JASMINE, 1);
-    Actor_SetAnimation(ACTOR_SUKURETA, 1);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
+    Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
+    Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
     Actor_SetPosition(ACTOR_SATUROS, 0, 0);
     Actor_SetPosition(ACTOR_MENARDI, 0, 0);
     GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplySource(0x10000, 0);
     GameFlag_Set(0x242);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
@@ -464,7 +464,7 @@ void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
         Map_AnimateCells(Sukureta_GateCells, 0x2B, 8);
     }
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0xE5, 0xD9);
-    Event_RequestExit(3);
+    Engine_EventRequestExit(3);
 }
 
 void Scene_OverhearSaturosAndMenardi(void)
@@ -478,12 +478,12 @@ void Scene_OverhearSaturosAndMenardi(void)
         return;
     }
 
-    Event_Begin();
+    Engine_EventBegin();
     Audio_PlayCue(17);
     GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
     evt = (s32)MsgHaidiaTheyKnowLittleOfThe;
-    Event_SetMessage(evt);
+    Engine_EventSetMessage(evt);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
 
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
@@ -501,9 +501,9 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
     Actor_WalkTo(ACTOR_JASMINE, 0x178, 0x148);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x198, 0x148);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
-    Actor_SetAnimation(ACTOR_JASMINE, 0);
-    Actor_SetAnimation(ACTOR_GERALD, 0);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
+    Engine_ActorSetAnimation(ACTOR_JASMINE, 0);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
@@ -515,26 +515,26 @@ void Scene_OverhearSaturosAndMenardi(void)
     Camera_SetSpeed(0x60000, 0xc000);
     Camera_MoveTo(0xd70000, -1, 0x1590000, 1);
     Engine_CameraWaitForMove();
-    Event_Wait(20);
+    Engine_EventWait(20);
     Audio_PlayCue(61);
 
-    Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
-    Actor_SetAnimation(ACTOR_SATUROS, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
+    Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
     Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
     Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 10);
-    Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
     Actor_FaceDirection(ACTOR_MENARDI, 0x4000, 60);
-    Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
     Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-    Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
-    Actor_SetAnimationAndWait(ACTOR_MENARDI, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
     Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 6);
     Actor_ShowEmote(ACTOR_SATUROS, 0x100, 0);
-    Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
+    Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
     Actor_ShowEmote(ACTOR_MENARDI, 0x101, 40);
     Actor_FaceDirection(ACTOR_SATUROS, 0, 60);
@@ -542,8 +542,8 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_FaceDirection(ACTOR_SATUROS, 0, 40);
     Actor_WalkToAndWait(ACTOR_SATUROS, 232, 0x168);
     Actor_FaceDirection(ACTOR_SATUROS, 0, 10);
-    Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
-    Event_Wait(10);
+    Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
+    Engine_EventWait(10);
     Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x168);
     Actor_WalkToAndWait(ACTOR_MENARDI, 216, 0x168);
     Actor_WalkTo(ACTOR_MENARDI, 0x178, 0x168);
@@ -553,80 +553,80 @@ void Scene_OverhearSaturosAndMenardi(void)
     Camera_MoveTo(0x1890000, -1, 0x1530000, 1);
     Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x168);
     Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x168);
-    Actor_SetAnimation(ACTOR_SATUROS, 0);
-    Actor_SetAnimation(ACTOR_MENARDI, 0);
+    Engine_ActorSetAnimation(ACTOR_SATUROS, 0);
+    Engine_ActorSetAnimation(ACTOR_MENARDI, 0);
     Actor_FaceDirection(ACTOR_SATUROS, 0xd000, 0);
     Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 30);
-    Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
     Actor_ShowEmote(ACTOR_GERALD, 258, 60);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-    Actor_SetAnimationAndWait(ACTOR_MENARDI, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
     Event_OpenMessage(0x100f, 0);
 
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(evt + 10);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventSetMessage(evt + 10);
     } else {
-        Event_SetMessage(evt + 11);
+        Engine_EventSetMessage(evt + 11);
     }
 
     Event_ShowMessageAndWait(0x100f, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
 
     evt2 = (s32)MsgHaidiaYoureTheOnesSneakingAround;
-    Event_SetMessage(evt2);
+    Engine_EventSetMessage(evt2);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
-    Actor_FaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
+    Engine_ActorFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
     Actor_FaceDirection(ACTOR_SATUROS, 0xd000, 0);
     Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 20);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 60);
-    Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
+    Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
     Event_ShowMessageAndWait(0x100f, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
-    Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
+    Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
+    Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 3);
     Event_ShowMessageAndWait(0x1005, 0, 20);
-    Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
     Actor_FaceDirection(ACTOR_SATUROS, 0xa000, 20);
     Event_OpenMessage(ACTOR_SATUROS, 0);
 
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(evt2 + 5);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventSetMessage(evt2 + 5);
     } else {
-        Event_SetMessage(evt2 + 6);
+        Engine_EventSetMessage(evt2 + 6);
     }
 
     Actor_FaceDirection(ACTOR_JASMINE, 0, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 20);
-    Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
     Actor_FaceActor(ACTOR_SATUROS, ACTOR_GERALD, 30);
     Actor_FaceActor(ACTOR_SATUROS, ACTOR_JASMINE, 30);
     Actor_ShowEmote(ACTOR_SATUROS, 0x105, 80);
-    Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
-    Event_SetMessage((s32)MsgHaidiaSaturosGo);
+    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
+    Engine_EventSetMessage((s32)MsgHaidiaSaturosGo);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 6);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
     Actor_ShowEmote(ACTOR_JASMINE, 0x100, 0);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
-    Actor_StartRepeatedMotion(ACTOR_JASMINE, 1);
-    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Event_Wait(40);
-    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_ActorStartRepeatedMotion(ACTOR_JASMINE, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+    Engine_EventWait(40);
+    Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 10);
     Event_ShowMessageAndWait(0x1005, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
     Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
     Event_ShowMessageAndWait(0x100f, 0, 10);
     Actor_FaceDirection(ACTOR_SATUROS, 0x8000, 20);
-    Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
-    Event_Wait(10);
+    Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
+    Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_SATUROS, 0xb000, 0);
     Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 20);
     Actor_SetSpeed(ACTOR_MENARDI, 0x8000, 0x4000);
@@ -639,7 +639,7 @@ void Scene_OverhearSaturosAndMenardi(void)
 
     Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x178);
     Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x178);
-    Event_Wait(6);
+    Engine_EventWait(6);
 
     record = (u8 *)Object_GetById(14);
     *(record + 90) |= 1;
@@ -654,35 +654,35 @@ void Scene_OverhearSaturosAndMenardi(void)
         *(record + 90) = merged;
     }
 
-    Actor_SetAnimation(ACTOR_SATUROS, 0);
-    Actor_SetAnimation(ACTOR_MENARDI, 0);
-    Event_Wait(20);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(ACTOR_SATUROS, 0);
+    Engine_ActorSetAnimation(ACTOR_MENARDI, 0);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
     Audio_PlayCue(17);
 
-    Actor_SetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = (u8 *)Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(ACTOR_GERALD);
+    Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
 
-    Actor_SetAnimation(ACTOR_JASMINE, 2);
+    Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
     record = (u8 *)Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(ACTOR_JASMINE);
+    Engine_ActorWaitForMove(ACTOR_JASMINE);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);
     Call3(Object_SetTargetAndCallback, 14, 0x10000, (s32)Sukureta_StrangerActions);
     Call3(Object_SetTargetAndCallback, 15, 0x10000, (s32)Sukureta_StrangerActions);
     Audio_PlayCueFromEventWork();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void HaidiaSukureta_RunArrivalScene(void)
@@ -938,7 +938,7 @@ void SceneState_SetWorkAndFlag87d(void)
 {
     u8 *work;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     work = *(u8 **)&gEventWork;
     *(u32 *)(work + 448) = 512;
@@ -947,14 +947,14 @@ void SceneState_SetWorkAndFlag87d(void)
     GameFlag_Set(0x87D);
     BattleFx_SetWeightedResult(12, 0);
     GameFlag_Set(0x900);   /* 144 << 4 */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneState_SetWorkAndFlag87e(void)
 {
     u8 *work;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     work = *(u8 **)&gEventWork;
     *(u32 *)(work + 448) = 512;
@@ -963,13 +963,13 @@ void SceneState_SetWorkAndFlag87e(void)
     GameFlag_Set(0x87E);
     BattleFx_SetWeightedResult(12, 1);
     GameFlag_Set(0x900);   /* 144 << 4 */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActorSixteenDialogue(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgHaidiaMemoriesOfThisCottage);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgHaidiaMemoriesOfThisCottage);
     Event_AskYesNo(16, 0);
-    Event_End();
+    Engine_EventEnd();
 }

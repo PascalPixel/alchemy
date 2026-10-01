@@ -136,7 +136,7 @@ void FieldScene_RunNearestActor165Scene(void)
     s32 *q;
     s32 base;
 
-    Event_Begin();
+    Engine_EventBegin();
     for (i = 8; i <= 66; i++) {
         struct FieldActor *o = Object_GetById(i);
 
@@ -158,14 +158,14 @@ void FieldScene_RunNearestActor165Scene(void)
             }
         }
     }
-    Event_SetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
+    Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Event_ShowMessage(best, 0);
     q = (s32 *)(state + 448);
     *q = 512;
     *(s32 *)(state + 456) = 15;
-    Event_Wait(20);
-    Event_CloseScreen();
-    Event_WaitForScreen();
+    Engine_EventWait(20);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
     base = n << 4;
     GameFlag_SetByte(base + 880, p->x.fixed >> 20);
     {
@@ -175,13 +175,13 @@ void FieldScene_RunNearestActor165Scene(void)
     }
     n++;
     if (n > 3) {
-        Event_RequestExit(10);
+        Engine_EventRequestExit(10);
         GameFlag_Set(282);
     } else {
         Korosseo_SelectSoloCompetitor(n);
-        Event_OpenScreen();
-        Event_WaitForScreen();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
         *q = 0;
     }
-    Event_End();
+    Engine_EventEnd();
 }

@@ -13,14 +13,12 @@ int ObjectMotion_Launch();
 
 void BattleFx_FinishHeavyImpact(s32 arg)
 {
-    s8 *head;
     struct {
         s32 x;
         s32 y;
         s32 z;
     } pos;
     s32 value;
-    s8 *zptr;
     s32 base;
     s32 id;
     s32 count;
@@ -30,6 +28,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     id = arg;
     ctx = Object_GetById();
     /* The single-pass block preserves the first call's argument schedule. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do
     {
         if (ctx == ((void *)0))
@@ -46,6 +45,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     Audio_PlayCue(0xAE);
     Motion_SetVarCbAndRefresh(id, 1);
     /* A second boundary gives the third repeated call its observed order. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do
     {
         Audio_PlayCue(0xAF);
@@ -58,7 +58,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         ObjectMotion_Launch(id, 0xC, 0x16);
         pos.x = ((s32)(*((s32 *)(((s8 *)ctx) + 8))));
         pos.y = ((s32)(*((s32 *)(((s8 *)ctx) + 0xC))));
-        pos.z = ((s32)(*((s32 *)(zptr = (((s8 *)ctx) + 0x10)))));
+        pos.z = ((s32)(*((s32 *)(((s8 *)ctx) + 0x10))));
         Camera_WorldToScreen(&pos);
         Object_Destroy(ctx);
         Audio_PlayCue(0xA4);
@@ -69,12 +69,13 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             EffectSlot_Initialize(work, 0x11C, pos.x, pos.z);
             EffectSlot_SetCallback(work, (s32)BattleFx_RunAngledApproachPhases);
             /* This boundary keeps the work pointer ahead of the constant. */
+            /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
             do
             {
             EffectSlot_SetObjectMode(work, 7);
             }
             while (0);
-            ObjectGroup_SetChildValueUnlessFifteenFar(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
+            ObjectGroup_SetChildValueUnlessFifteenFar(*((s32 *)work), ((u32)(Random16() * 7)) >> 0x10);
             value = ((u32)Random16() / 3 + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;

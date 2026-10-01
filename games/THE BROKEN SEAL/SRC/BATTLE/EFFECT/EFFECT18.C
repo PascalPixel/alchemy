@@ -53,6 +53,7 @@ typedef struct Spark {
 
 static __inline__ void CopyPalette(CopyWords copy, void *destination, const void *source, s32 size)
 {
+    /* FAKEMATCH: a direct call shifts the palette destination before loading the routine. */
     copy(destination, source, size);
 }
 

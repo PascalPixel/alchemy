@@ -45,6 +45,7 @@ void SceneEffect_AdjustPaletteColors(s32 a);
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
+    /* FAKEMATCH: a direct call builds both stacked literals in r3; the reference builds palette 16 in r2 first. */
     void Actor_SetAnimation(s32, s32); u8 *Object_GetById(s32);
 
     Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
@@ -53,7 +54,7 @@ static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
 static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-
+    /* FAKEMATCH: a direct call builds both stacked literals in r3; the reference builds palette 16 in r2 first. */
     Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
 }
 
@@ -79,6 +80,7 @@ u8 *MapStagedScene_SelectTertiaryData(void) { return Data_02009038; }
 
 void FieldScene_RunActorTenPlacementScene(void)
 {
+    /* FAKEMATCH: replacing the live zero below with 0 changes r5 allocation and the outgoing stack store order. */
     void Object_SetModeById(s32, s32); u8 *Object_GetById(s32);
 
     struct StagedActorProbe result;
@@ -204,6 +206,7 @@ void SceneEffect_AdjustPaletteColors(s32 a)
             *pal = SceneEffect_AdjustColorChannels(*pal, a);
         }
         {
+            /* FAKEMATCH: using x directly removes the r3 result copy and changes the loop's compare register. */
             u32 nx = x + 0x10000;
             x = nx;
             if (nx > 0xdf0000) {

@@ -638,27 +638,27 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
     Vector_AddPolarOffset(0x80000, facing, point);
     actor = run->object;
     quarter = facing / 0x4000;
-    Event_Begin();
-    Actor_SetAnimation(0, 8);
-    Event_Wait(6);
+    Engine_EventBegin();
+    Engine_ActorSetAnimation(0, 8);
+    Engine_EventWait(6);
     actor->speed = 0x8000;
     actor->acceleration = 0x3333;
     Audio_PlayCue(239);
-    Object_SetAnimation(actor, KorimaMagari_PushAnimations[quarter]);
+    Object_SetMode(actor, KorimaMagari_PushAnimations[quarter]);
     Object_SetPosition(actor, x, 0, z);
-    Event_Wait(6);
-    Actor_SetAnimation(0, 2);
+    Engine_EventWait(6);
+    Engine_ActorSetAnimation(0, 2);
     ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);
     Actor_SetSpeed(0, 0x4ccc, 0x3333);
     Actor_SetDestinationOffset(0, KorimaMagari_PushStepX[quarter], KorimaMagari_PushStepZ[quarter]);
-    Event_Wait(24);
-    Actor_SetAnimation(0, 1);
+    Engine_EventWait(24);
+    Engine_ActorSetAnimation(0, 1);
     Object_CommitPosition(actor);
-    Object_SetAnimation(actor, 1);
+    Object_SetMode(actor, 1);
     Audio_PlayCue(0x120);
     Audio_PlayCue(213);
-    Event_Wait(15);
-    Event_End();
+    Engine_EventWait(15);
+    Engine_EventEnd();
 }
 
 /* Adjust every palette colour but for colours 17 to 23 and 193 to 200 by

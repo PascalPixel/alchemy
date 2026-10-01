@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "FOUR_OBJECT_MOTION.H"
 void ResourceObject_ReleaseFar(void *);
@@ -13,7 +14,6 @@ extern s32 RomBytes_080af304[];
 void *ResourceObject_CreateFar(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 
-s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void FourObjectMotion_UpdateAllPositions(void);
 void FourObjectMotion_UpdateBottomRow(void);
 
@@ -41,11 +41,10 @@ void FourObjectMotion_InitializeTopRow(void)
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0x20;
     }
-    Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateAllPositions, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateAllPositions), 0xc80);
 }
 
 /* object/motion/four_object/FourObjectMotion_ClearSlotsAndSchedule.c */
-void Scheduler_RemoveCallback(s32);
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)
 {
@@ -61,7 +60,7 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
         }
         index++;
     } while (index < 4);
-    Scheduler_RemoveCallback((s32)&FourObjectMotion_UpdateAllPositions);
+    Scheduler_RemoveCallback((u32)((s32)&FourObjectMotion_UpdateAllPositions));
 }
 
 /* object/motion/four_object/FourObjectMotion_UpdateAllPositions.c */

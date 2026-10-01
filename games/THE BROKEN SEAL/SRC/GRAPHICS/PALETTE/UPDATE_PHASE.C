@@ -7,6 +7,7 @@ typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
 static __inline__ void CopyPalette(WordCopy copy, void *destination,
                                    const void *source, s32 size)
 {
+    /* FAKEMATCH: a direct call adds an r9 save and changes allocation throughout the palette loop. */
     copy(destination, source, size);
 }
 

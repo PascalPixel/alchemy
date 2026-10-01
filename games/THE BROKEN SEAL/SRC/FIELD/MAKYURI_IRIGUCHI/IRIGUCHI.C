@@ -86,30 +86,30 @@ void *SceneData_GetSceneTableC(void) { return MakyuriIriguchi_SceneTableC; }
 /* Apply the overlay's common actor-0 presentation preset. */
 void FieldScene_RunStepWithValue1632(void)
 {
-    Event_Begin();
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Message_ShowCentered((s32)MsgMakyuriWhoHonorsHeart, 1);
-    Event_End();
+    Engine_EventBegin();
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Engine_MessageShowCentered((s32)MsgMakyuriWhoHonorsHeart, 1);
+    Engine_EventEnd();
 }
 
 void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
     u8 *v = Actor_Get(ACTOR_PARTY_LEADER);
-    Event_Begin();
+    Engine_EventBegin();
     Audio_PlayCue(0xe4);
     F(v, s32, 0x6c) = (s32)MakyuriIriguchi_TrailSparks;
     F(v, s32, 0x30) = 0x3333;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 2);
+    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     F(v, s32, 0x6c) = 0;
-    Event_Wait(30);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_RequestExit(a);
-    Event_End();
+    Battle_WaitMode0(30);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventRequestExit(a);
+    Engine_EventEnd();
 }
 
 void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
@@ -117,16 +117,16 @@ void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Audio_PlayCue(228);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -8);
     record = Actor_Get(ACTOR_PARTY_LEADER);
-    Actor_SetSpriteFlags(record, 0);
-    Event_Wait(8);
+    Engine_ActorSetSpriteFlags(record, 0);
+    Battle_WaitMode0(8);
     Actor_SetPosition(ACTOR_PARTY_LEADER, ((a0 << 19) + 0x80000), 0);
-    Event_Wait(30);
+    Battle_WaitMode0(30);
 }
 
 /* Contiguous unnamed leaf-owner run for resource_39b. */
@@ -165,13 +165,13 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     a = *(s32 *)(Value1(Object_GetById, ACTOR_PARTY_LEADER) + 8) / 0x100000;
     b = *(s32 *)(Value1(Object_GetById, ACTOR_PARTY_LEADER) + 16) / 0x100000;
     if (a == 12 && b == 32) {
-        Event_Begin();
+        Engine_EventBegin();
         ColorBuffer_ApplyTarget(0x10000, 0);
-        ColorBuffer_Interpolate(60);
-        Event_Wait(120);
+        Engine_ColorBufferInterpolate(60);
+        Battle_WaitMode0(120);
         ColorBuffer_ApplyTarget(0x10005, 1);
-        ColorBuffer_Interpolate(60);
-        Event_Wait(40);
+        Engine_ColorBufferInterpolate(60);
+        Battle_WaitMode0(40);
         counter = 0;
         slot = slot16;
         zero = 0;
@@ -189,25 +189,25 @@ void FieldScene_RunSupplementalSequenceTwo(void)
             t = ((u32)(Engine_RandomNext() << 2) >> 16);
             record = Math_Divide((((t << 4) - t) << 16) + 0x3c0000, 100);
             Effect_Spawn(x << 16, 0, y << 16, 0, record, zero, 0x320001, slot);
-            Event_Wait(4);
+            Battle_WaitMode0(4);
             counter = counter + 1;
         } while ((u32)counter <= 14);
         Audio_PlayCue(220);
-        Event_Wait(60);
+        Battle_WaitMode0(60);
         GameFlag_Set(0x875);
         Engine_TaskAddCallback((s32)Makyuri_CyclePalette, 0xc80);
         Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
         Map_CopyCellAttributes(70, 32, 13, 7, 6, 32);
         ColorBuffer_ApplyTarget(0x10000, 0);
-        ColorBuffer_Interpolate(60);
-        Event_Wait(120);
-        Event_End();
+        Engine_ColorBufferInterpolate(60);
+        Battle_WaitMode0(120);
+        Engine_EventEnd();
     }
 }
 
 void FieldScene_RunIndexedStep63(void)
 {
-    Event_RequestExit(63);
+    Engine_EventRequestExit(63);
 }
 
 void FieldScene_RunActor8StepWithTableA820(void)
@@ -238,9 +238,9 @@ void MakyuriIriguchi_OpenEntrance(void)
 {
     s32 game;
 
-    Event_Begin();
+    Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(8, 2);
-    Event_Wait(20);
+    Battle_WaitMode0(20);
     gEventWork->start_transition = 0x200;
     Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
     game = (s32)&gGameState;
@@ -250,7 +250,7 @@ void MakyuriIriguchi_OpenEntrance(void)
         *(u8 *)(game + 0x22b) = 3;
         BattleFx_SetWeightedResult(36, 1);
     } while (0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void MakyuriIriguchi_ArriveWithSparks(void)
@@ -262,28 +262,28 @@ void MakyuriIriguchi_ArriveWithSparks(void)
     actor = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
     flag = GameFlag_IsSet(0x109);
     if (flag == 0) {
-        Event_Begin();
+        Engine_EventBegin();
         Camera_MoveTo(-1, -1, -1, 0);
         actor->motion_flags = 0;
         Engine_ActorSetPosition(0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) + -0x100000);
         Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
         record = Actor_Get(ACTOR_PARTY_LEADER);
-        Actor_SetSpriteFlags(record, 0);
-        Event_OpenScreen();
-        Event_WaitForScreen();
+        Engine_ActorSetSpriteFlags(record, 0);
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
         Audio_PlayCue(228);
         actor->update = (void (*)(union FieldObject *))MakyuriIriguchi_TrailSparks;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
         Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
         Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
         record = Actor_Get(ACTOR_PARTY_LEADER);
-        Actor_SetSpriteFlags(record, 1);
+        Engine_ActorSetSpriteFlags(record, 1);
         actor->sprite->priority = 1;
         Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
         actor->motion_flags = 3;
         actor->update = NULL;
         BattleFx_PlayQueuedSound();
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -323,12 +323,12 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
     switch (gGameState.entrance) {
     case 1:
         if (!GameFlag_IsSet(0x872))
-            Event_RequestExit(20);
+            Engine_EventRequestExit(20);
     case 2:
         Actor_Get(12)->scale_x = -0x10000;
         Actor_Get(13)->scale_x = -0x10000;
         Actor_Get(14)->scale_x = -0x10000;
-        Task_Wait(1);
+        WaitFrames(1);
         break;
     case 7:
     case 8:
@@ -348,8 +348,8 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
         if (GameFlag_IsSet(0x875)) {
             Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
-            Map_Redraw();
-            Task_Wait(1);
+            Engine_MapRedraw();
+            WaitFrames(1);
             Map_CopyCellAttributes(70, 32, 13, 7, 6, 32);
         }
         if (gGameState.entrance != 6)
@@ -358,27 +358,27 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         if (flag != 0)
             break;
         GameFlag_Set(0x251);
-        Event_Begin();
+        Engine_EventBegin();
         Camera_MoveTo(-1, -1, -1, 0);
-        Map_Redraw();
-        Task_Wait(1);
+        Engine_MapRedraw();
+        WaitFrames(1);
         Actor_Get(0)->y.fixed = 0x820000;
         ACTOR_LIFT(Actor_Get(0))->rise = 0x8000;
         ACTOR_LIFT(Actor_Get(0))->gravity = flag;
         Actor_Get(0)->motion_flags = flag;
-        Event_OpenScreen();
-        Event_WaitForScreen();
-        Event_Wait(30);
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
+        Battle_WaitMode0(30);
         Actor_Get(0)->motion_flags = 3;
         Audio_PlayCue(204);
-        Event_Wait(24);
+        Battle_WaitMode0(24);
         actor = Actor_Get(0);
         options.palette = 7;
         for (i = 0; i <= 16; i++) {
             angle = i << 12;
-            velocity[0] = Math_Cos(angle);
+            velocity[0] = Engine_MathCos(angle);
             velocity[1] = 0;
-            velocity[2] = Math_Sin(angle);
+            velocity[2] = Engine_MathSin(angle);
             velocity[0] -= velocity[0] / 4;
             velocity[2] -= velocity[2] / 2;
             Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0], velocity[1],
@@ -396,15 +396,15 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         if (!GameFlag_IsSet(0x875)) {
             ColorBuffer_ApplySource(0x10000, 0);
             ColorBuffer_ApplyTarget(0x10003, 1);
-            ColorBuffer_Interpolate(30);
-            Event_WaitForScreen();
+            Engine_ColorBufferInterpolate(30);
+            Engine_EventWaitForScreen();
             Object_SetModeById(0, 1);
-            Event_Wait(30);
+            Battle_WaitMode0(30);
             UiText_ShowCenteredMessage((s32)MsgMakyuriWhoHonorsHeart, 0, 0);
             ColorBuffer_ApplyTarget(0x10000, 0);
-            ColorBuffer_Interpolate(30);
+            Engine_ColorBufferInterpolate(30);
         }
-        Event_End();
+        Engine_EventEnd();
         break;
     case 18:
     case 19:
@@ -415,16 +415,16 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         break;
     case 25:
         Actor_SetChildValue(0, 15);
-        Actor_SetSpriteFlags(Actor_Get(0), 0);
-        Event_Begin();
-        Map_Redraw();
-        Task_Wait(1);
+        Engine_ActorSetSpriteFlags(Actor_Get(0), 0);
+        Engine_EventBegin();
+        Engine_MapRedraw();
+        WaitFrames(1);
         gEventWork->start_transition = 0x100;
-        Event_OpenScreen();
-        Event_WaitForScreen();
-        Event_Wait(120);
-        Event_RequestExit(50);
-        Event_End();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
+        Battle_WaitMode0(120);
+        Engine_EventRequestExit(50);
+        Engine_EventEnd();
         break;
     case 30:
         if (!GameFlag_IsSet(0x109))
@@ -522,7 +522,7 @@ void MakyuriIriguchi_RunDoorScene(void)
 
     if (GameFlag_IsSet(0x250) == 0) {
         GameFlag_Set(0x250);
-        Event_Begin();
+        Engine_EventBegin();
         record = Actor_Get(12);
         *(s32 *)(record + 24) = -0x10000;
         record = Object_GetById(13);
@@ -532,19 +532,19 @@ void MakyuriIriguchi_RunDoorScene(void)
         Actor_SetPosition(ACTOR_MIA, 0x880000, 0x900000);
         Actor_FaceDirection(ACTOR_MIA, 0x4000, 10);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-        Event_OpenScreen();
-        Event_WaitForScreen();
-        Event_Wait(60);
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
+        Battle_WaitMode0(60);
         Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-        Actor_SetAnimationAndWait(ACTOR_MIA, 3);
-        Event_Wait(30);
+        Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+        Battle_WaitMode0(30);
         Actor_WalkTo(ACTOR_MIA, 136, 72);
-        Event_Wait(40);
-        Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-        Actor_WaitForMove(ACTOR_MIA);
+        Battle_WaitMode0(40);
+        Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
         Actor_SetPosition(ACTOR_MIA, 0, 0);
         GameFlag_Set(0x872);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-        Event_End();
+        Engine_EventEnd();
     }
 }

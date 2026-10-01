@@ -2,11 +2,6 @@
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
-extern volatile u8 gSchedulerStatus;
-extern u8 gSchedulerTaskCount;
-extern struct SchedulerTask gSchedulerTaskTable[24];
-
 s32 Scheduler_DisableCallbacks(u32 callback)
 {
     struct SchedulerTask *task;
@@ -67,4 +62,3 @@ s32 Scheduler_DisableOverlayCallbacks(void)
     } while (0);
     return result;
 }
-

@@ -34,6 +34,7 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 static __inline__ void CopyWords(WordCopy copy, void *destination,
                                  const void *source, s32 size)
 {
+    /* FAKEMATCH: a direct call loads the destination and source before the routine, changing pool order. */
     copy(destination, source, size);
 }
 

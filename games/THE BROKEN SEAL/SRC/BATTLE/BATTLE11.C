@@ -3,7 +3,6 @@
 
 extern u8 Data_03001e74[];
 
-void Scheduler_RemoveCallback(void *);
 void BattleEvent_Playback(void);
 
 u32 BattleEventRuntime_Reset(void)
@@ -36,6 +35,6 @@ s32 BattleEventRuntime_WaitForReady(void)
             WaitFrames(1U);
         } while (runtime->phase != 4);
     }
-    Scheduler_RemoveCallback((void *)BattleEvent_Playback);
+    Scheduler_RemoveCallback((u32)((void *)BattleEvent_Playback));
     return BattleEventRuntime_Reset();
 }

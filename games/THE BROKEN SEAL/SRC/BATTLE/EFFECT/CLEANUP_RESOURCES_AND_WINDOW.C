@@ -93,7 +93,8 @@ void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
         s32 count;                                                          \
                                                                             \
         /* FAKEMATCH: a block of its own keeps the saved IME read first. */ \
-        do {                                                                \
+        do { \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \

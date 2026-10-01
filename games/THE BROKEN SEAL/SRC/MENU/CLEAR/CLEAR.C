@@ -52,7 +52,8 @@ static __inline__ void RestoreInterrupts(u32 saved)
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        do {                                                                \
+        do { \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
             ime = &REG_IME;                                           \
             saved = *ime;                                                   \
         } while (0);                                                        \

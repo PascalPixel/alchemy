@@ -58,6 +58,38 @@
  * Stop at three structural hypotheses. No credit until every byte matches. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline void Event_Begin(void)
+{
+    Engine_EventBegin();
+}
+
+static inline void Event_End(void)
+{
+    Engine_EventEnd();
+}
+
+static inline void Event_Wait(s32 frames)
+{
+    Engine_EventWait(frames);
+}
+
+static inline void Task_Wait(s32 frames)
+{
+    Engine_TaskWait(frames);
+}
+
+static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
+{
+    return Engine_TaskAddCallback(callback, priority);
+}
+
+static inline s32 Task_RemoveCallback(void (*callback)(void))
+{
+    return Engine_TaskRemoveCallback(callback);
+}
+
 #include "MAP_SCROLL.H"
 
 extern u32 Data_020097e8;

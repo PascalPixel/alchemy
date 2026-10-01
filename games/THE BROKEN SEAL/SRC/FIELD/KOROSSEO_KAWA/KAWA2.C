@@ -132,27 +132,27 @@ void RunPartyCountInteraction(s32 actorId)
     record = GetPartyInteractionRecord();
     x = record->x;
     y = record->y;
-    Event_Begin();
+    Engine_EventBegin();
 
     if (GetPartyMemberCount() <= 1) {
-        Event_SetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
+        Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
         if (Event_AskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
             Actor_WalkTo(actorId, x, y + 0x40);
-            Event_Wait(15);
+            Engine_EventWait(15);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
-            Event_CloseScreen();
-            Event_WaitForScreen();
-            Event_RequestExit(11);
+            Engine_EventCloseScreen();
+            Engine_EventWaitForScreen();
+            Engine_EventRequestExit(11);
         }
     } else {
-        Event_SetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
+        Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
         Event_ShowMessage(actorId, 0);
     }
 
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunSixSteps380To3A8(void)
@@ -186,7 +186,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
     } else {
         message = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
-    Event_SetMessage(message);
+    Engine_EventSetMessage(message);
     Event_ShowMessage(speaker, 0);
     if (GameFlag_IsSet(competitor + 512) != 0) {
         return 2;
@@ -202,9 +202,9 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
         return choice;
     }
     GameFlag_Set(competitor + 520);
-    Event_SetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
+    Engine_EventSetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
     Event_OpenMessage(speaker, 0);
-    return Event_ChooseYesNo(0, 0);
+    return Engine_EventChooseYesNo(0, 0);
 }
 
 /* The line after the stage's finals announcement. */
@@ -222,7 +222,7 @@ void SceneState_SendIdBySceneId(s32 speaker, s32 competitor)
     } else {
         message = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
-    Event_SetMessage(message + 1);
+    Engine_EventSetMessage(message + 1);
     Event_ShowMessage(speaker, 0);
 }
 
@@ -282,22 +282,22 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             buf[i] = Data_02000240[504 + i];
         }
         if (count <= 1) {
-            Event_SetMessage((s32)MsgKorosseoDoYourBest);
+            Engine_EventSetMessage((s32)MsgKorosseoDoYourBest);
             Event_ShowMessage(owner, 0);
             return;
         }
         if (GameFlag_IsSet(base + 512) != 0) {
-            Event_SetMessage((s32)MsgKorosseoUnfortunatelyWeHaveFullHouse);
+            Engine_EventSetMessage((s32)MsgKorosseoUnfortunatelyWeHaveFullHouse);
             Event_ShowMessage(owner, 0);
             return;
         }
         if (mode == 2) {
             state = 0;
-            Task_Wait(6);
+            Engine_TaskWait(6);
         } else {
-            Event_SetMessage((s32)MsgKorosseoWouldLikeFriendCheerFor);
+            Engine_EventSetMessage((s32)MsgKorosseoWouldLikeFriendCheerFor);
             Event_OpenMessage(owner, 0);
-            state = Event_ChooseYesNo(0, 0);
+            state = Engine_EventChooseYesNo(0, 0);
         }
         if (state == 0) {
             if (state < count) {
@@ -322,12 +322,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             }
         }
     }
-    Event_SetMessage((s32)MsgKorosseoIfKnowWhoWantCheer);
+    Engine_EventSetMessage((s32)MsgKorosseoIfKnowWhoWantCheer);
     Event_ShowMessage(owner, 0);
     return;
 L_main:
     UiWork_PushValueSlot(obj, 1);
-    Event_SetMessage((s32)MsgKorosseoRobinWillCheerForWay);
+    Engine_EventSetMessage((s32)MsgKorosseoRobinWillCheerForWay);
     Event_ShowMessage(owner, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);
@@ -341,14 +341,14 @@ L_main:
     lo = p9 + 16;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, lo, hi);
     Engine_ActorFaceEachOther(obj, 0, 30);
-    Actor_SetAnimation(obj, 3);
+    Engine_ActorSetAnimation(obj, 3);
     tail = hi - 32;
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Actor_WalkToAndWait(owner, p9, tail);
     Actor_WalkTo(owner, lo, tail);
     Object_LinkObjectAndSetCallback(0, obj);
     Actor_WalkToAndWait(obj, p9, tail);
-    Actor_SetAnimation(owner, 1);
+    Engine_ActorSetAnimation(owner, 1);
     Actor_FaceDirection(owner, 0x8000, 0);
     Actor_WalkToAndWait(obj, p9, p11 - 48);
     Actor_WalkToAndWait(owner, p9, tail);

@@ -14,6 +14,7 @@ extern u8 Tile_ConvertMapCodeSize[];
 
 static __inline__ void CopyWords(void *dst, const void *src, s32 size)
 {
+    /* FAKEMATCH: a direct call changes Tilemap_ConvertBuffer from mov r6, r8 to mov r6, sl (52/56 assembly lines). */
     Iwram_CopyWords(dst, src, size);
 }
 

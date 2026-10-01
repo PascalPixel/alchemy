@@ -349,11 +349,6 @@ s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void);
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor);
 
-static __inline__ void SetActorDirection(s32 actor, s32 direction, s32 duration)
-{
-    Actor_FaceDirection(actor, direction, duration);
-}
-
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {
     *flags |= bits;

@@ -33,11 +33,11 @@ extern volatile u32 gKeysRepeat;
 #define TALK_WINDOW_WIDTH 18
 #endif
 
-/* FAKEMATCH: the shared MenuCursor union preserves pointer-store ordering. */
 /* "Descriptions", "Cheer" or "Nothing": returns the row chosen with A, or -1
    when B cancels. */
 s32 PartyTalkMenu_Choose(void)
 {
+    /* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an equal-size struct changes stack-address construction in all six editions. */
     struct RenderInput *window;
     union MenuCursor cursor;
     s32 slot;

@@ -1396,12 +1396,6 @@ Func_080cc5d8:
 	.thumb_func
 BattleFx_RunMemberBurst:
 	.incbin "baserom.gba", 0x000ceb54, 0x00000410
-	.section .rom.000ceff8, "ax"
-	.global BattleFx_RunFortyEightFrameEffect
-	.type BattleFx_RunFortyEightFrameEffect, %function
-	.thumb_func
-BattleFx_RunFortyEightFrameEffect:
-	.incbin "baserom.gba", 0x000ceff8, 0x000002a8
 	.section .rom.000cf2b8, "ax"
 	.global BattleFx_RunMemberBeam
 	.type BattleFx_RunMemberBeam, %function
@@ -1643,7 +1637,17 @@ TwoResource_CellX:
 	.incbin "baserom.gba", 0x000ee07c, 0x0000000c
 	.global TwoResource_CellBiasY
 TwoResource_CellBiasY:
-	.incbin "baserom.gba", 0x000ee088, 0x00000084
+	.incbin "baserom.gba", 0x000ee088, 0x0000000e
+	.global EarthWall_CellSourceOffsets
+EarthWall_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000ee096, 0x00000006
+	.global EarthWall_CellWidths
+EarthWall_CellWidths:
+	.incbin "baserom.gba", 0x000ee09c, 0x00000003
+	.global EarthWall_CellHeights
+EarthWall_CellHeights:
+	.incbin "baserom.gba", 0x000ee09f, 0x00000003
+	.incbin "baserom.gba", 0x000ee0a2, 0x0000006a
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000ee10c, 0x0000000e

@@ -735,7 +735,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT4.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000c5b54)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT5.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000c5ff8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_BEAM.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000c62b8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SEVEN_MODE_DISPATCH.o"(.text)

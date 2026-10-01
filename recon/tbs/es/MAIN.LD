@@ -726,7 +726,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT4.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000d2354)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT5.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000d27f8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_BEAM.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000d2ab8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SEVEN_MODE_DISPATCH.o"(.text)

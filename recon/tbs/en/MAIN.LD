@@ -865,7 +865,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT4.o"(.text)
         "*/recon/tbs/raw/080ceb54.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT5.o"(.text)
-        "*/recon/tbs/raw/080ceff8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_BEAM.o"(.text)
         "*/recon/tbs/raw/080cf2b8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SEVEN_MODE_DISPATCH.o"(.text)

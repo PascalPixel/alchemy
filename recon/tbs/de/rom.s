@@ -956,12 +956,6 @@ Func_080a414c:
 	.global Func_080a4f08
 Func_080a4f08:
 	.incbin "baserom.gba", 0x000a7d08, 0x000002c8
-	.section .rom.000a8188, "ax"
-	.global Unnamed_080a5388
-	.type Unnamed_080a5388, %function
-	.thumb_func
-Unnamed_080a5388:
-	.incbin "baserom.gba", 0x000a8188, 0x000001ac
 	.section .rom.000a8b3c, "ax"
 	.global Menu_ResolveSelectedAction
 	.type Menu_ResolveSelectedAction, %function

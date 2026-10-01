@@ -354,13 +354,13 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             if (frame <= 8) {
                 ang = frame * 2048 + 0x4000;
                 if (ang > 0x8000) {
-                    ang = frame * 2048 - 0x4000;
+                    ang -= 0x8000;
                 }
                 rise = Trig_Sin(ang) << 6;
             } else {
                 ang = frame * 2048 + 0x4000;
                 if (ang > 0x8000) {
-                    ang = frame * 2048 - 0x4000;
+                    ang -= 0x8000;
                 }
                 rise = Trig_Sin(ang) << 5;
             }
@@ -434,6 +434,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             Audio_PlayCue(136);
         }
         if (frame > 40) {
+            s32 slide = (frame - 40) * 12;
             s32 y;
 
             work->transfer_mode = 0;
@@ -442,7 +443,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             i = 0;
             do {
                 blit(canvas, (u8 *)work + (Random16() & 3) * 0x600,
-                    jitter_row[i] - (frame - 40) * 12 + 120, y, 48, 32);
+                    jitter_row[i] - slide + 120, y, 48, 32);
                 i++;
                 y += 8;
             } while (i != 16);

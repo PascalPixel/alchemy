@@ -126,10 +126,9 @@
 #define SPARK ((struct EffectStep *)0x02014AD0)
 
 
-extern char Value_000000c0;
-extern char Value_000000c4;
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
-extern const u16 ParticleStreams_CellOffsets[];
+extern u16 ParticleStreams_CellOffsets[];
 extern const u8 Data_080eef12[];
 extern const s32 Data_080eef18[];
 
@@ -205,7 +204,7 @@ void Unnamed_080e99c0(void *object)
 
     *(void **)((u8 *)work + 0x7828) = object;
     BattleFx_BeginCanvasLayer(1);
-    *(u16 *)0x04000052 = 0x1010;
+    *(volatile u16 *)0x04000052 = 0x1010;
     EffectPosition_ApplyAlternateStepAndYOffset(
         *(s16 *)((u8 *)(*(void **)((u8 *)work + 0x7828)) + 0x24), &pos);
     half = pos.x / 2;
@@ -222,7 +221,7 @@ void Unnamed_080e99c0(void *object)
 
     *(s32 *)((u8 *)work + (239 << 7)) = 2;
     *(s32 *)((u8 *)work + 0x7784) = 75;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 144 << 3);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 144 << 3);
 
     /* Sixteen drawn billboards (the table holds more) at work + 0x7080. */
     i = 0;
@@ -258,10 +257,10 @@ void Unnamed_080e99c0(void *object)
     frame = 0;
     do {
         if (frame >= 25 && frame <= 47) {
-            BattleFx_StepPaletteToResource((s32)&Value_000000c0);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_BlastSheet);
         }
         if (frame > 56) {
-            BattleFx_StepPaletteToResource((s32)&Value_000000c4);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_LightningBoltSheet);
         }
 
         if (frame == 8) {
@@ -485,7 +484,7 @@ void Unnamed_080e99c0(void *object)
         frame++;
     } while (frame != 102);
 
-    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

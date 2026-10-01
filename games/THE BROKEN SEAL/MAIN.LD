@@ -745,7 +745,7 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.000c8714)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_ANIMATION_MODE1.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000c9464)
-    "*/recon/tbs/ja/rom.o"(.rom.000c9d98)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/VORTEX.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CRYSTAL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/UPDATE_PHASE.o"(.text)

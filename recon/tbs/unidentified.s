@@ -1007,7 +1007,16 @@ TwoResource_CellBiasY:
 	.incbin "baserom.gba", 0x000ee088, 0x00000008
 	.global Data_080ee090
 Data_080ee090:
-	.incbin "baserom.gba", 0x000ee090, 0x00000012
+	.incbin "baserom.gba", 0x000ee090, 0x00000006
+	.global EarthWall_CellSourceOffsets
+EarthWall_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000ee096, 0x00000006
+	.global EarthWall_CellWidths
+EarthWall_CellWidths:
+	.incbin "baserom.gba", 0x000ee09c, 0x00000003
+	.global EarthWall_CellHeights
+EarthWall_CellHeights:
+	.incbin "baserom.gba", 0x000ee09f, 0x00000003
 	.global Data_080ee0a2
 Data_080ee0a2:
 	.incbin "baserom.gba", 0x000ee0a2, 0x00000008

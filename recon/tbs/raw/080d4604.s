@@ -75,7 +75,7 @@ BattleFx_RunSparkGroups:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, .L_080d46c8
 	adds r3, r5, #0
 	adds r3, #184
@@ -86,7 +86,7 @@ BattleFx_RunSparkGroups:
 	movs r3, #3
 	movs r0, #47
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	adds r5, #188
 	ldr r3, [r5]
 	mov r0, sp

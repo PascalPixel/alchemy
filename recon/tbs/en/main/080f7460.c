@@ -256,7 +256,7 @@ void Scene_RunParticleSequence(void)
     state->state = 0;
     state->cursor = 0;
     state->spins = 0;
-    work->reel_stop_frames = 0;
+    work->frame = 0;
     state->timer = 0;
 
     resource = (u8 *)Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);

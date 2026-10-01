@@ -42,7 +42,7 @@ BattleEffect_RunPaletteParticles:
 	mov r8, r3
 	movs r0, #46
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r4, [r5, #24]
 	movs r3, #3
 	movs r1, #7
@@ -50,7 +50,7 @@ BattleEffect_RunPaletteParticles:
 	movs r0, #47
 	str r4, [sp, #40]
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, [r5, #28]
 	ldr r0, .L_080d24ec
 	str r5, [sp, #44]

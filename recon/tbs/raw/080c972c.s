@@ -72,7 +72,7 @@ Func_080c972c:
 .L_080c97b8:
 	.4byte 0x04000050
 .L_080c97bc:
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, [r5, #28]
 	movs r3, #3
 	str r2, [sp, #16]
@@ -81,7 +81,7 @@ Func_080c972c:
 	movs r2, #7
 	movs r3, #2
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, [r5, #32]
 	movs r3, #0
 	mov r8, r3

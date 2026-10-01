@@ -149,7 +149,7 @@ Unnamed_080d0ad4:
 	movs r3, #3
 	movs r0, #46
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080d0ec4
 	adds r3, #184
 	ldr r3, [r3]
@@ -159,7 +159,7 @@ Unnamed_080d0ad4:
 	movs r3, #7
 	movs r2, #7
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080d0ec8
 	ldr r4, [sp, #60]
 	ldr r3, [r3]

@@ -140,7 +140,7 @@ Func_080da2ac:
 	movs r3, #3
 	movs r1, #7
 	movs r2, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080da6a8
 	adds r3, #184
 	ldr r3, [r3]

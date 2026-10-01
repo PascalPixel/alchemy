@@ -1,5 +1,5 @@
 @ ARM instruction templates for the battle-effect blitter generator. The C
-@ generator at 0x080ed408 copies chosen fragments word by word into a routine
+@ generator, SENTOU_KOUKA_GOUSEI_BUILD.C, copies chosen fragments into a routine
 @ in a heap slot, adding to their immediate fields, and the battle effects
 @ later call the routine it built; the fragments never run where they lie.
 @ The short fragments on fixed registers (source r1, destination r9, byte r5)

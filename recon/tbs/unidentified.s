@@ -904,7 +904,13 @@ Data_080edac0:
 	.incbin "baserom.gba", 0x000edac0, 0x00000008
 	.global Data_080edac8
 Data_080edac8:
-	.incbin "baserom.gba", 0x000edac8, 0x00000020
+	.incbin "baserom.gba", 0x000edac8, 0x00000010
+	.global ObjectRow_SweepPair
+ObjectRow_SweepPair:
+	.incbin "baserom.gba", 0x000edad8, 0x00000008
+	.global ObjectRow_RisePair
+ObjectRow_RisePair:
+	.incbin "baserom.gba", 0x000edae0, 0x00000008
 	.global BattleFx6_UnitScale
 BattleFx6_UnitScale:
 	.incbin "baserom.gba", 0x000edae8, 0x00000008
@@ -1506,7 +1512,13 @@ FallingSword_FlashCells:
 	.incbin "baserom.gba", 0x000eef12, 0x00000006
 	.global FallingSword_DustGravity
 FallingSword_DustGravity:
-	.incbin "baserom.gba", 0x000eef18, 0x00000050
+	.incbin "baserom.gba", 0x000eef18, 0x0000003e
+	.global ObjectRow_Columns
+ObjectRow_Columns:
+	.incbin "baserom.gba", 0x000eef56, 0x00000009
+	.global ObjectRow_Rows
+ObjectRow_Rows:
+	.incbin "baserom.gba", 0x000eef5f, 0x00000009
 	.global BattleFx6_ObjectX
 BattleFx6_ObjectX:
 	.incbin "baserom.gba", 0x000eef68, 0x00000008

@@ -1224,14 +1224,14 @@ BattleFx10_FallCells:
 	.global IceShardBursts_Gravities
 IceShardBursts_Gravities:
 	.incbin "baserom.gba", 0x000ee9f8, 0x00000010
-	.global Data_080eea08
-Data_080eea08:
+	.global PaletteRamp_ShardCells
+PaletteRamp_ShardCells:
 	.incbin "baserom.gba", 0x000eea08, 0x00000018
-	.global Data_080eea20
-Data_080eea20:
+	.global PaletteRamp_ShardWidths
+PaletteRamp_ShardWidths:
 	.incbin "baserom.gba", 0x000eea20, 0x0000000c
-	.global Data_080eea2c
-Data_080eea2c:
+	.global PaletteRamp_ShardHeights
+PaletteRamp_ShardHeights:
 	.incbin "baserom.gba", 0x000eea2c, 0x0000000c
 	.global RockWall_Timings
 RockWall_Timings:

@@ -767,7 +767,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000d01dc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PALETTE_RAMP.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000d0ae8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ROCKWALL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)

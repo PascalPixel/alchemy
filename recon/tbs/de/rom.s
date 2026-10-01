@@ -1480,12 +1480,6 @@ BattleEffectA:
 	.thumb_func
 BattleEffectB:
 	.incbin "baserom.gba", 0x000dafdc, 0x000008dc
-	.section .rom.000db8e8, "ax"
-	.global RunPaletteRampEffect
-	.type RunPaletteRampEffect, %function
-	.thumb_func
-RunPaletteRampEffect:
-	.incbin "baserom.gba", 0x000db8e8, 0x000004e0
 	.section .rom.000dc974, "ax"
 	.incbin "baserom.gba", 0x000dc974, 0x000006f0
 	.section .rom.000de768, "ax"
@@ -1716,7 +1710,16 @@ BattleFx10_FallCells:
 	.incbin "baserom.gba", 0x000f07f2, 0x00000006
 	.global IceShardBursts_Gravities
 IceShardBursts_Gravities:
-	.incbin "baserom.gba", 0x000f07f8, 0x00000040
+	.incbin "baserom.gba", 0x000f07f8, 0x00000010
+	.global PaletteRamp_ShardCells
+PaletteRamp_ShardCells:
+	.incbin "baserom.gba", 0x000f0808, 0x00000018
+	.global PaletteRamp_ShardWidths
+PaletteRamp_ShardWidths:
+	.incbin "baserom.gba", 0x000f0820, 0x0000000c
+	.global PaletteRamp_ShardHeights
+PaletteRamp_ShardHeights:
+	.incbin "baserom.gba", 0x000f082c, 0x0000000c
 	.global RockWall_Timings
 RockWall_Timings:
 	.incbin "baserom.gba", 0x000f0838, 0x00000009

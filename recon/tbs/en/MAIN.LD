@@ -907,7 +907,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.o"(.text)
         "*/recon/tbs/raw/080d91dc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PALETTE_RAMP.o"(.text)
-        "*/recon/tbs/raw/080d9ae8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ROCKWALL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)

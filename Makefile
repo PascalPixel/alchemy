@@ -36,7 +36,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-full build-rom
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check untracked-check
-.PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check steering-debt-check
+.PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
 .PHONY: progress progress-subject progress-report progress-check prepare-inputs raw drafts similar deps clean
 
 help:
@@ -182,9 +182,6 @@ lint-staged: standard-check compiler-source-check
 	$(CHECK) no-asm --target tla-ja
 	$(CHECK) no-asm --target tbs-en
 	$(CHECK) no-asm --target tla-en
-
-steering-debt-check:
-	$(CHECK) steering-debt
 
 language-check:
 	@set -eu; scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(js|mjs|cjs|py|sh)$$' || true); \

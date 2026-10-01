@@ -1120,8 +1120,8 @@ FirePillars_Depths:
 	.global FirePillars_StartFrames
 FirePillars_StartFrames:
 	.incbin "baserom.gba", 0x000ee2a9, 0x00000005
-	.global Data_080ee2ae
-Data_080ee2ae:
+	.global RenderMode_GlintFlips
+RenderMode_GlintFlips:
 	.incbin "baserom.gba", 0x000ee2ae, 0x00000006
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:

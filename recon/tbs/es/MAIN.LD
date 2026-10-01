@@ -743,7 +743,6 @@
     "*/recon/tbs/es/rom.o"(.rom.000d7e04)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PILLARS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RENDER_MODE.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000d8ac8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT7.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000d9654)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_PHASED_DELTA.o"(.text)

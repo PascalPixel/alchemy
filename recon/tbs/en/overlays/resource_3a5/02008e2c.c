@@ -33,6 +33,10 @@ void RamakanSabaku_ReturnToSafePoint(void)
     s32 left;
     s32 nearest;
     s32 distance;
+    s16 *progress;
+    s32 zero;
+    s32 shown;
+    u16 *shown_addr;
     struct FieldActor *leader;
     struct EffectOptions rising;
     struct EffectOptions landing;
@@ -76,13 +80,17 @@ void RamakanSabaku_ReturnToSafePoint(void)
     Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0, 0, 0, 0x1c0000, &rising);
     Actor_ShowEmote(0, 0x104, 0);
     Actor_SetAnimation(0, 18);
+    zero = 0;
     do {
-        *(u16 *)(work + 0xcba) = 600;
+        shown_addr = (u16 *)(work + 0xcba);
+        shown = 600;
+        *shown_addr = shown;
         timer--;
-        if (gGameState.unknown_232 != 0) {
-            gGameState.unknown_232 -= 5;
-            if (gGameState.unknown_232 <= 0)
-                gGameState.unknown_232 = 0;
+        progress = &gGameState.unknown_232;
+        if (*progress != 0) {
+            *progress -= 5;
+            if (*progress <= 0)
+                *progress = zero;
             else if (timer == 0)
                 timer = 1;
         }
